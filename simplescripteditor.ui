@@ -1,0 +1,106 @@
+<ui version="4.0" >
+ <class>SimpleScriptEditor</class>
+ <widget class="QDialog" name="SimpleScriptEditor" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>551</width>
+    <height>407</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Simple Script Editor</string>
+  </property>
+  <layout class="QGridLayout" >
+   <property name="margin" >
+    <number>9</number>
+   </property>
+   <property name="spacing" >
+    <number>6</number>
+   </property>
+   <item row="4" column="1" >
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" >
+      <size>
+       <width>75</width>
+       <height>211</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="3" column="1" >
+    <widget class="QPushButton" name="saveAsButton" >
+     <property name="text" >
+      <string>Save as</string>
+     </property>
+     <property name="shortcut" >
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1" >
+    <widget class="QPushButton" name="saveButton" >
+     <property name="text" >
+      <string>Save</string>
+     </property>
+     <property name="shortcut" >
+      <string>Qt::CTRL + Qt::Key_S</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1" >
+    <widget class="QPushButton" name="openButton" >
+     <property name="text" >
+      <string>Open</string>
+     </property>
+     <property name="shortcut" >
+      <string>Qt::CTRL +Qt::Key_O</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1" >
+    <widget class="QPushButton" name="runButton" >
+     <property name="text" >
+      <string>Run</string>
+     </property>
+     <property name="shortcut" >
+      <string>Qt::CTRL + Qt::Key_R</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="1" >
+    <widget class="QPushButton" name="closeButton" >
+     <property name="text" >
+      <string>Close</string>
+     </property>
+    </widget>
+   </item>
+   <item rowspan="6" row="0" column="0" >
+    <widget class="QTextEdit" name="editor" />
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>closeButton</sender>
+   <signal>clicked()</signal>
+   <receiver>SimpleScriptEditor</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>519</x>
+     <y>390</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>-25</x>
+     <y>-275</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

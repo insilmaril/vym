@@ -1,0 +1,47 @@
+Installation of vym - view your mind
+====================================
+
+Contents
+--------
+
+A) openSUSE 10.2
+B) Mac OS X 10.3+
+
+More systems like Debian are likely to be added later. Please
+send feedback about installation on your Operating System to
+vym@InSilmaril.de
+
+For general questions please contact the vym mailinglist:
+
+	vym-forum@lists.sourceforge.net
+
+
+A) openSUSE 10.2
+================
+
+vym needs a newer version of Trolltechs Qt libraries than the one on the
+10.2 installation media. This new version can be installed easily in
+YaST:
+
+	- Select "Installation Source"
+	- Add a HTTP source:
+		        Server: repos.opensuse.org
+		     Directory: /KDE:/Qt/openSUSE_10.2/
+		Authentication: Anonymous
+
+	- Select "Software Management"
+	- Search for "libqt4"
+	- Install all found packages. (They have a version >= 4.3.0-55.1)
+
+B) Mac OS X 10.3+
+=================
+
+After opening the disk image vym-1.9.0.dmg you can copy vym.app to
+/Applications. This will need administrator rights.
+
+
+This release of vym includes the Qt libraries. For more information on
+Qt see http://www.trolltech.com.
+		
+
+

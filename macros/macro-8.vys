@@ -1,0 +1,3 @@
+# Macro F8
+colorSubtree ("#616147");
+toggleFlag ("clock");
