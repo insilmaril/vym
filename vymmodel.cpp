@@ -2672,8 +2672,8 @@ void VymModel::deleteSelection()    //FIXME-2 no undo for deleting MC
     }
 }
 
-void VymModel::deleteKeepChildren(bool saveStateFlag)	//FIXME-3 does not work yet for mapcenters 
-//deleteKeePChilderen FIXME-3 children of scrolled branch stay invisible...
+void VymModel::deleteKeepChildren(bool saveStateFlag)	//FIXME-2 does not work yet for mapcenters 
+//deleteKeePChilderen FIXME-2 children of scrolled branch stay invisible...
 
 {
     BranchItem *selbi=getSelectedBranch();

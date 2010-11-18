@@ -118,7 +118,7 @@ void BranchObj::setParObjTmp(LinkableMapObj* dst, QPointF m, int off)
 
 	    // new parent is just a branch, link to it
 	    bodst->calcBBoxSizeWithChildren();
-	    QRectF t=bodst->getBBoxSizeWithChildren();
+	    QRectF t=bodst->getTotalBBox();
 	    if (dsti->getLastBranch())
 		y=t.y() + t.height() ;
 	    else
@@ -343,7 +343,7 @@ void BranchObj::calcBBoxSize()
     
     // Finally set size
     bbox.setSize (QSizeF (w,h));
-    if (debug) qDebug()<<"BO::calcBBox "<<treeItem->getHeading()<<" bbox="<<bbox;
+    if (debug) qDebug()<<"BO: calcBBox "<<treeItem->getHeading()<<" bbox="<<bbox;
 }
 
 void BranchObj::setDockPos()
@@ -359,14 +359,19 @@ void BranchObj::setDockPos()
 
     } else
     {
-	// Sets childpos and parpos depending on orientation
-	if (getOrientation()==LinkableMapObj::LeftOfCenter )
+	if (orientation==LinkableMapObj::LeftOfCenter )
 	{
-	    childPos=QPointF (ornamentsBBox.bottomLeft().x(),  bottomlineY);
+	    if ( ((BranchItem*)treeItem)->getFrameIncludeChildren() )
+		childPos=QPointF (ornamentsBBox.bottomLeft().x(),  bottomlineY);
+	    else	
+		childPos=QPointF (ornamentsBBox.bottomLeft().x()-frame->getPadding(),  bottomlineY);
 	    parPos=QPointF   (ornamentsBBox.bottomRight().x(), bottomlineY);
 	} else
 	{
-	    childPos=QPointF(ornamentsBBox.bottomRight().x(), bottomlineY);
+	    if ( ((BranchItem*)treeItem)->getFrameIncludeChildren() )
+		childPos=QPointF(ornamentsBBox.bottomRight().x(), bottomlineY);
+	    else	
+		childPos=QPointF(ornamentsBBox.bottomRight().x()+ frame->getPadding(), bottomlineY);
 	    parPos=QPointF ( ornamentsBBox.bottomLeft().x(),  bottomlineY);
 	}
     }
@@ -551,18 +556,11 @@ if (debug)
 	ref2.setX(childPos.x() + linkwidth);
 
     if (depth==1)
-	{
-	    ref2.setY(absPos.y()-(bboxTotal.height()-bbox.height())/2);
-	    //ref2.setY(absPos.y()-bboxTotal.height()/2);
-	    //ref2.setY(absPos.y());
-	    if (debug) qDebug()<<" **ping***";
-	}
+	ref2.setY(absPos.y()-(bboxTotal.height()-bbox.height())/2 + frame->getPadding() );
     else    
-//FIXME-2	ref2.setY(ref.y() );	
-//	ref2.setY (childPos.y() - (bboxTotal.height())/2 );
-	ref2.setY (ref.y() );
+	ref2.setY (ref.y() + frame->getPadding());  
 
-    if (debug) qDebug() <<"   ref2="<<ref2<<"  bbox="<<bbox<<"  bboxTotal="<<bboxTotal;
+    //if (debug) qDebug() <<"   ref2="<<ref2<<"  bbox="<<bbox<<"  bboxTotal="<<bboxTotal;	//FIXME-2
 
     // Align the attribute children depending on reference point 
     // on top like in TreeEditor
@@ -575,7 +573,7 @@ if (debug)
 	    bo->alignRelativeTo (ref2,true);
 
 	    // append next branch below current one
-	    ref2.setY(ref2.y() + bo->getBBoxSizeWithChildren().height() );
+	    ref2.setY(ref2.y() + bo->getTotalBBox().height() );
 	}
     }
     // Align the branch children depending on reference point 
@@ -586,7 +584,7 @@ if (debug)
 	    treeItem->getBranchObjNum(i)->alignRelativeTo (ref2,true);
 
 	    // append next branch below current one
-	    ref2.setY(ref2.y() + treeItem->getBranchObjNum(i)->getBBoxSizeWithChildren().height() );
+	    ref2.setY(ref2.y() + treeItem->getBranchObjNum(i)->getTotalBBox().height() );
 	}
     }
 }
@@ -611,7 +609,7 @@ void BranchObj::reposition()
 			// due to excessive moving of a FIO
 
 	alignRelativeTo ( QPointF (absPos.x(),
-	    absPos.y()-(bboxTotal.height()-bbox.height())/2) );	//FIXME-2x needed?
+	    absPos.y()-(bboxTotal.height()-bbox.height())/2) );	
 	    //absPos.y() ) );
 	positionBBox();	// Reposition bbox and contents
     } else
@@ -619,8 +617,7 @@ void BranchObj::reposition()
 	// This is only important for moving branches:
 	// For editing a branch it isn't called...
 	alignRelativeTo ( QPointF (absPos.x(),
-			    absPos.y()-(bboxTotal.height()-bbox.height())/2) );	//FIXME-2x needed?
-	//    absPos.y() ) );
+			    absPos.y()-(bboxTotal.height()-bbox.height())/2) );	
     }
 }
 
@@ -631,7 +628,7 @@ void BranchObj::unsetAllRepositionRequests()
 	treeItem->getBranchObjNum(i)->unsetAllRepositionRequests();
 }
 
-QRectF BranchObj::getBBoxSizeWithChildren()
+QRectF BranchObj::getTotalBBox()
 {
     return bboxTotal;
 }
@@ -654,7 +651,7 @@ ConvexPolygon BranchObj::getBoundingPolygon()
 	return MapObj::getBoundingPolygon();
     }
 
-    calcBBoxSizeWithChildren();	//FIXME-3 really needed?
+//    calcBBoxSizeWithChildren();	//FIXME-3 really needed?
     QPolygonF p;
     p<<bboxTotal.topLeft();
     p<<bboxTotal.topRight();
@@ -666,14 +663,14 @@ ConvexPolygon BranchObj::getBoundingPolygon()
     return p;
 }
 
-void BranchObj::calcBBoxSizeWithChildren()  //FIXME-2 cleanup testcode
+void BranchObj::calcBBoxSizeWithChildren()  //FIXME-3 cleanup testcode
 {   
     // This is initially called only from reposition and
     // and only for mapcenter. So it won't be
     // called more than once for a single user 
     // action
 
-    if (debug) qDebug()<<"BO::calcBBoxSizwWithChildren a) for "<<treeItem->getHeading();
+    if (debug) qDebug()<<"BO: calcBBoxSizwWithChildren a) for "<<treeItem->getHeading();
 
     // Calculate size of LMO including all children (to align them later)
     //bboxTotal.setX(bbox.x() );
@@ -685,7 +682,7 @@ void BranchObj::calcBBoxSizeWithChildren()  //FIXME-2 cleanup testcode
     {
 	bboxTotal.setWidth (bbox.width());
 	bboxTotal.setHeight(bbox.height());
-	if (debug) qDebug()<<"BO::calcBBoxSizwWithChildren abort scrolled";
+	if (debug) qDebug()<<"BO: calcBBoxSizwWithChildren abort scrolled";
 	return;
     }
     
@@ -704,7 +701,7 @@ void BranchObj::calcBBoxSizeWithChildren()  //FIXME-2 cleanup testcode
 	    bboxTotal.setY (bbox.y());
 	}
 	*/
-	if (debug) qDebug()<<"BO::calcBBoxSizeWithChildren abort hidden";
+	if (debug) qDebug()<<"BO: calcBBoxSizeWithChildren abort hidden";
 	return;
     }
     
@@ -720,7 +717,7 @@ void BranchObj::calcBBoxSizeWithChildren()  //FIXME-2 cleanup testcode
 	{
 	    BranchObj *bo=bi->getBranchObjNum(i);
 	    bo->calcBBoxSizeWithChildren();
-	    br=bo->getBBoxSizeWithChildren();
+	    br=bo->getTotalBBox();
 	    r.setWidth( max (br.width(), r.width() ));
 	    r.setHeight(br.height() + r.height() );
 	    if (debug)
@@ -740,7 +737,7 @@ void BranchObj::calcBBoxSizeWithChildren()  //FIXME-2 cleanup testcode
 	{
 	    BranchObj *bo=bi->getAttributeNum(i)->getBranchObj();
 	    bo->calcBBoxSizeWithChildren();
-	    br=bo->getBBoxSizeWithChildren();
+	    br=bo->getTotalBBox();
 	    r.setWidth( max (br.width(), r.width() ));
 	    r.setHeight(br.height() + r.height() );
 	    if (br.y()<bboxTotal.y()) bboxTotal.setY(br.y());
@@ -750,19 +747,20 @@ void BranchObj::calcBBoxSizeWithChildren()  //FIXME-2 cleanup testcode
     */
     // Add myself and also
     // add width of link to sum if necessary
-    if (debug) qDebug()<<"BO::calcBBoxSizeWithChildren c) for "<<treeItem->getHeading()<<" bbox="<<bbox<<" r="<<r;
+    if (debug) qDebug()<<"BO: calcBBoxSizeWithChildren c) for "<<treeItem->getHeading()<<" bbox="<<bbox<<" r="<<r;
 
 if (bi->branchCount()<1)
 	bboxTotal.setWidth (bbox.width() + r.width()  );
     else    
 	bboxTotal.setWidth (bbox.width() + r.width() + linkwidth );
-//if (bi->branchCount()<1)
+//if (bi->branchCount()<1)	//FIXME-3
 //	bboxTotal.setWidth (bbox.width() + r.width() + frame->getPadding()*2);
 //    else    
 //	bboxTotal.setWidth (bbox.width() + r.width() + linkwidth + frame->getPadding()*2);
     
-    bboxTotal.setHeight(max (r.height(),  bbox.height()));
-    if (debug) qDebug()<<"BO::calcBBoxSizeWithChildren d) for "<<treeItem->getHeading()<< "bboxTotal="<<bboxTotal;
+    // bbox already contains frame->padding()*2	    
+    bboxTotal.setHeight(max (r.height() + frame->getPadding()*2,  bbox.height()) );
+    if (debug) qDebug()<<"BO: calcBBoxSizeWithChildren d) for "<<treeItem->getHeading()<< "bboxTotal="<<bboxTotal;
 
 }
 

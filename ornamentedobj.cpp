@@ -194,13 +194,17 @@ void OrnamentedObj::positionContents()	//FIXME-3 called multiple times for each 
     double dp=frame->getPadding();
     double dp2=dp/2;
     double dp4=dp/4;
-    double ox=leftPad + dp;
+    double ox;
+//    if (orientation==LinkableMapObj::LeftOfCenter)
+//	ox=leftPad - dp;
+//    else	
+	ox=leftPad + dp;
     double oy=topPad + dp;
     
     double d=dZ_DEPTH*treeItem->depth();
 
 if (debug)
-    qDebug()<< "OO::positionContents "<<treeItem->getHeading()<<" dp="<<dp<<" absPos=="<<absPos<<" bboxTotal="<<bboxTotal<<"  ox="<<ox<<" oy="<<oy;
+    qDebug()<< "OO: positionContents "<<treeItem->getHeading()<<" dp="<<dp<<" absPos=="<<absPos<<" bboxTotal="<<bboxTotal<<"  ox="<<ox<<" oy="<<oy;
     // vertical align heading to bottom
     heading->setZValue (d + dZ_TEXT);
     heading->move (ox + x + systemFlags->getBBox().width(),
@@ -216,12 +220,18 @@ if (debug)
     clickBox.moveTopLeft (QPointF (ox + x, oy + y));
 
     // Update bboxTotal coordinate (size set already)
-
-    bboxTotal.setRect (
-	bbox.x(), 
-	bbox.y()+bbox.height()/2 - bboxTotal.height()/2,
-	bboxTotal.width(),
-	bboxTotal.height());;
+    if (orientation==LinkableMapObj::LeftOfCenter )
+	bboxTotal.setRect (
+	    bbox.x()+(bbox.width() - bboxTotal.width()) , 
+	    bbox.y()+bbox.height()/2 - bboxTotal.height()/2,
+	    bboxTotal.width(),
+	    bboxTotal.height());
+    else
+	bboxTotal.setRect (
+	    bbox.x(), 
+	    bbox.y()+bbox.height()/2 - bboxTotal.height()/2,
+	    bboxTotal.width(),
+	    bboxTotal.height());
 
     // Update frame
     frame->setZValue (d + dZ_FRAME_HIGH);
@@ -233,21 +243,13 @@ if (debug)
 	    bboxTotal.x()+dp2,
 	    bboxTotal.y()+dp2,
 	    bboxTotal.width()-dp,
-	    bboxTotal.height()-dp/2));
+	    bboxTotal.height()-dp));
      else
-	frame->setRect(bbox);
-
-    //FIXME-0 notes  16.10.
-    // - width of bbox seems ok, but childPos goes to far to right
-    // - bboxTotal a bit to high. Should be positioned like bbox for 
-    //   selection?
-    //
-    // FIXME-0 18.10
-    // - what belongs into bbox, what into bboxTotal?
-    //   Currently frame is in bbox, that confuses alignRelTo
-    //   Still the height is needed, there, too.
-    //   Maybe need to introduce yet another rectangle :-(
-
+	frame->setRect( QRectF(
+	    bbox.x()+dp2,
+	    bbox.y()+dp2,
+	    bbox.width()-dp,
+	    bbox.height()-dp));
 }
 
 void OrnamentedObj::move (double x, double y)

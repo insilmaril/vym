@@ -8,10 +8,10 @@
 
 #define dZ_BBOX         0   // testing
 #define dZ_DEPTH      100
-#define dZ_XLINK       10
 #define dZ_FRAME_LOW   10	
 #define dZ_LINK        20
 #define dZ_FRAME_HIGH  30	
+#define dZ_XLINK       40
 #define dZ_SELBOX      60
 #define dZ_FLOATIMG    70
 #define dZ_ICON        80

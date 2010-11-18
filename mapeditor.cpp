@@ -1821,18 +1821,21 @@ void MapEditor::updateSelection(QItemSelection newsel,QItemSelection oldsel)
     }
 
     // Reposition rectangles
-    QRectF bbox;
+    QRectF box;
     QModelIndex index;
 
     LinkableMapObj *lmo;
     for (int i=0; i<treeItemsNew.count();++i)
     {
 	lmo=((MapItem*)treeItemsNew.at(i) )->getLMO();
-	bbox=lmo->getBBox();
+	// Don't draw huge selBox if children are included in frame
+	if (treeItemsNew.at(i)->isBranchLikeType() && 
+	    ((BranchItem*)treeItemsNew.at(i))->getFrameIncludeChildren() )
+	    box=lmo->getClickBox();
+	else
+	    box=lmo->getBBox();
 	sb=selboxList.at(i);
-	sb->setRect (
-	    bbox.x(),bbox.y(), 
-	    bbox.width(), bbox.height());
+	sb->setRect (box);
 	sb->setPen (selectionColor);	
 	sb->setBrush (selectionColor);	
 	sb->setZValue (dZ_DEPTH*treeItemsNew.at(i)->depth() + dZ_SELBOX);

@@ -46,7 +46,7 @@ public:
     virtual void reposition();
     virtual void unsetAllRepositionRequests();
 
-    virtual QRectF getBBoxSizeWithChildren();	// return size of BBox including children  
+    virtual QRectF getTotalBBox();	// return size of BBox including children  
     virtual ConvexPolygon getBoundingPolygon();
     virtual void calcBBoxSizeWithChildren();	// calc size of  BBox including children recursivly
 
