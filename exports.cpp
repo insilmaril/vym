@@ -237,9 +237,11 @@ void ExportAO::doExport()
 	cur=model->nextBranch(cur,prev);
     }
     file.close();
+    QString cmd="exportAO";
     settings.setLocalEntry ( model->getFilePath(), "/export/last/exportPath",outputFile);
-    settings.setLocalEntry ( model->getFilePath(), "/export/last/command","exportAO");
+    settings.setLocalEntry ( model->getFilePath(), "/export/last/command",cmd);
     settings.setLocalEntry ( model->getFilePath(), "/export/last/description","A&O report");
+    mainWindow->statusMessage(cmd + ": " + outputFile);
 }
 
 QString ExportAO::underline (const QString &text, const QString &line)
@@ -334,9 +336,11 @@ void ExportASCII::doExport()
 	cur=model->nextBranch(cur,prev);
     }
     file.close();
+    QString cmd="exportASCII";
     settings.setLocalEntry ( model->getFilePath(), "/export/last/exportPath",outputFile);
-    settings.setLocalEntry ( model->getFilePath(), "/export/last/command","exportASCII");
+    settings.setLocalEntry ( model->getFilePath(), "/export/last/command",cmd);
     settings.setLocalEntry ( model->getFilePath(), "/export/last/description","ASCII");
+    mainWindow->statusMessage(cmd + ": " + outputFile);
 }
 
 QString ExportASCII::underline (const QString &text, const QString &line)
@@ -771,9 +775,11 @@ void ExportHTML::doExport(bool useDialog)
 	p.runScript (dia.postscript,d.path()+"/"+model->getMapName()+".html");
     }
 
+    QString cmd="exportHTML";
     settings.setLocalEntry (model->getFilePath(),"/export/last/exportPath",d.path());
     settings.setLocalEntry ( model->getFilePath(), "/export/last/command","exportHTML");
     settings.setLocalEntry ( model->getFilePath(), "/export/last/description","HTML");
+    mainWindow->statusMessage(cmd + ": " + outputFile);
     model->setChanged();
 
     dia.saveSettings();
