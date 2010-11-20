@@ -1829,11 +1829,21 @@ void VymModel::setFrameType(const QString &s)	//FIXME-4 not saved if there is no
     }
 }
 
-void VymModel::setFrameIncludeChildren (bool b)	    //FIXME-2 no savestate
+void VymModel::setFrameIncludeChildren (bool b)	    
 {
     BranchItem *bi=getSelectedBranch();
     if (bi)
     {
+	QString u= b ? "false" : "true";
+	QString r=!b ? "false" : "true";
+	
+	saveState(
+	    bi,
+	    QString("setFrameIncludeChildren(%1)").arg(u),
+	    bi, 
+	    QString("setFrameIncludeChildren(%1)").arg(r),
+	    QString("Include children in %1").arg(getObjectName(bi))
+	);  
 	bi->setFrameIncludeChildren (b);
 	emitDataHasChanged (bi);
 	reposition();
@@ -3982,6 +3992,20 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	    s=parser.parString(ok,0);
 	    if (ok) 
 		selbi->activateStandardFlag(s);
+	}
+    /////////////////////////////////////////////////////////////////////
+    } else if (com=="setFrameIncludeChildren")
+    {
+	if (!selti )
+	{
+	    parser.setError (Aborted,"Nothing selected");
+	} else if (! selbi )
+	{		  
+	    parser.setError (Aborted,"Type of selection is not a branch");
+	} else if (parser.checkParCount(1))
+	{   
+	    b=parser.parBool(ok,0);
+	    if (ok) setFrameIncludeChildren(b);
 	}
     /////////////////////////////////////////////////////////////////////
     } else if (com=="setFrameType")
