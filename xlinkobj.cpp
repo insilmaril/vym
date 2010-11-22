@@ -4,6 +4,7 @@
 
 #include "branchobj.h"
 #include "branchitem.h"
+#include "misc.h"	// max
 
 /////////////////////////////////////////////////////////////////
 // XLinkObj
@@ -115,8 +116,10 @@ void XLinkObj::updateXLink()
     poly->setBrush (link->getColor() );
     line->setPen (pen);
     line->setLine(a.x(), a.y(), b.x(), b.y());
-    //line->setZValue (treeItem->depth()*dZ_DEPTH + dZ_LINK);
-    //line->setZValue (Z_XLINK); //FIXME-2
+    BranchItem *bi_begin=link->getBeginBranch();
+    BranchItem *bi_end  =link->getEndBranch();
+    if (bi_begin && bi_end)
+	line->setZValue (dZ_DEPTH * max(bi_begin->depth(),bi_end->depth()) + dZ_XLINK); 
 }
 
 void XLinkObj::positionBBox()

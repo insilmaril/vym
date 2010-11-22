@@ -256,10 +256,6 @@ void BranchObj::positionBBox()
     bbox.moveTopLeft (ap);
     positionContents();
 
-    // set the frame    // FIXME-4 shouldn't this be done in OrnObj? (called in above positionContents()
-    //frame->setRect(QRectF(bbox.x(),bbox.y(),bbox.width(),bbox.height() ) );
-    //frame->setRect(bboxTotal);//FIXME-2 testing
-
     //Update links to other branches	
     XLinkObj *xlo;
     for (int i=0; i<treeItem->xlinkCount(); ++i)    
@@ -362,17 +358,25 @@ void BranchObj::setDockPos()
 	if (orientation==LinkableMapObj::LeftOfCenter )
 	{
 	    if ( ((BranchItem*)treeItem)->getFrameIncludeChildren() )
+	    {
 		childPos=QPointF (ornamentsBBox.bottomLeft().x(),  bottomlineY);
-	    else	
+		parPos=QPointF   (bboxTotal.bottomRight().x()-frame->getPadding()/2, bottomlineY);
+	    } else	
+	    {
 		childPos=QPointF (ornamentsBBox.bottomLeft().x()-frame->getPadding(),  bottomlineY);
-	    parPos=QPointF   (ornamentsBBox.bottomRight().x(), bottomlineY);
+		parPos=QPointF   (ornamentsBBox.bottomRight().x(), bottomlineY);
+	    }
 	} else
 	{
 	    if ( ((BranchItem*)treeItem)->getFrameIncludeChildren() )
+	    {
 		childPos=QPointF(ornamentsBBox.bottomRight().x(), bottomlineY);
-	    else	
+		parPos=QPointF ( bboxTotal.bottomLeft().x()+frame->getPadding()/2,  bottomlineY);
+	    } else	
+	    {
 		childPos=QPointF(ornamentsBBox.bottomRight().x()+ frame->getPadding(), bottomlineY);
-	    parPos=QPointF ( ornamentsBBox.bottomLeft().x(),  bottomlineY);
+		parPos=QPointF ( ornamentsBBox.bottomLeft().x(),  bottomlineY);
+	    }
 	}
     }
 }
@@ -559,8 +563,6 @@ if (debug)
 	ref2.setY(absPos.y()-(bboxTotal.height()-bbox.height())/2 + frame->getPadding() );
     else    
 	ref2.setY (ref.y() + frame->getPadding());  
-
-    //if (debug) qDebug() <<"   ref2="<<ref2<<"  bbox="<<bbox<<"  bboxTotal="<<bboxTotal;	//FIXME-2
 
     // Align the attribute children depending on reference point 
     // on top like in TreeEditor

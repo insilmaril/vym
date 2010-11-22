@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon Nov 22 08:49:54 CET 2010 - vym@insilmaril.de
+
+- Bugfix: Fixed x-coord of parPos for frames incl. children
+
+-------------------------------------------------------------------
 Sat Nov 20 21:58:58 CET 2010 - vym@insilmaril.de
 
 - Bugfix: Added undo for setFrameIncludeChildren
