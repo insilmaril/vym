@@ -110,7 +110,7 @@ private slots:
     void fileExportLast();
     bool fileCloseMap();
     void filePrint();
-    void fileExitVYM();
+    bool fileExitVYM();
 
 public slots:
     void editUndo();	

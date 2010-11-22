@@ -169,7 +169,6 @@ QMainWindow(parent,name,f)
 	findResultWidget, SIGNAL (findPressed (QString) ), 
 	this, SLOT (editFindNext(QString) ) );
 
-
     // Satellite windows //////////////////////////////////////////
     // history window
     historyWindow=new HistoryWindow();
@@ -389,9 +388,12 @@ void Main::removeProgressCounter()
     progressDialog.hide();
 }
 
-void Main::closeEvent (QCloseEvent* )
+void Main::closeEvent (QCloseEvent* event)
 {
-    fileExitVYM();
+    if (fileExitVYM())
+	event->ignore();
+    else	
+	event->accept();
 }
 
 // File Actions
@@ -2730,7 +2732,7 @@ void Main::filePrint()
 	currentMapEditor()->print();
 }
 
-void Main::fileExitVYM()    
+bool Main::fileExitVYM()    
 {
     // Check if one or more editors have changed
     int i=0;
@@ -2738,9 +2740,10 @@ void Main::fileExitVYM()
     {
 	//qDebug()<<"Main::fileExitVym  count="<<vymViews.count();
 	tabWidget->setCurrentPage(i);
-	if (fileCloseMap()) return;
+	if (fileCloseMap()) return true;
     } 
     qApp->quit();
+    return false;
 }
 
 void Main::editUndo()
