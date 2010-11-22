@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Nov 22 10:36:32 CET 2010 - vym@insilmaril.de
+
+- Bugfix: Closing vym by closing window ignored cancel button 
+          in unsaved maps dialog
+
+-------------------------------------------------------------------
 Mon Nov 22 08:49:54 CET 2010 - vym@insilmaril.de
 
 - Bugfix: Fixed x-coord of parPos for frames incl. children
