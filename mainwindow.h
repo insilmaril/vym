@@ -178,6 +178,7 @@ private slots:
     void editDeleteSelection();
     void editLoadImage();
     void editSaveImage();
+    void editFollowXLink (QAction *);
     void editEditXLink (QAction *);
 
     void formatSelectColor();

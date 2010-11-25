@@ -66,6 +66,7 @@ QMenu* branchAddContextMenu;
 QMenu* branchRemoveContextMenu;
 QMenu* branchLinksContextMenu;
 QMenu* branchXLinksContextMenuEdit;
+QMenu* branchXLinksContextMenuFollow;
 QMenu* floatimageContextMenu;
 QMenu* canvasContextMenu;
 QMenu* fileLastMapsMenu;
@@ -1923,7 +1924,14 @@ void Main::setupContextMenus()
     // This will be populated "on demand" in MapEditor::updateActions
     branchContextMenu->addSeparator();	
     branchXLinksContextMenuEdit =branchContextMenu->addMenu (tr ("Edit XLink","Context menu name"));
-    connect( branchXLinksContextMenuEdit, SIGNAL( triggered(QAction *) ), this, SLOT( editEditXLink(QAction * ) ) );
+    connect( 
+	branchXLinksContextMenuEdit, SIGNAL( triggered(QAction *) ), 
+	this, SLOT( editEditXLink(QAction * ) ) );
+    branchXLinksContextMenuFollow =branchContextMenu->addMenu (tr ("Follow XLink","Context menu name"));
+    connect( 
+	branchXLinksContextMenuFollow, SIGNAL( triggered(QAction *) ), 
+	this, SLOT( editFollowXLink(QAction * ) ) );
+
 
 
     // Context menu for floatimage
@@ -3391,6 +3399,15 @@ void Main::editEditXLink(QAction *a)
 	m->editXLink(branchXLinksContextMenuEdit->actions().indexOf(a));
 }
 
+void Main::editFollowXLink(QAction *a)
+{
+    VymModel *m=currentModel();
+
+    if (m)
+	m->followXLink(branchXLinksContextMenuFollow->actions().indexOf(a));
+}
+
+
 void Main::formatSelectColor()
 {
     QColor col = QColorDialog::getColor((currentColor ), this );
@@ -3912,6 +3929,7 @@ void Main::updateActions()
 
 		// Take care of xlinks  
 		branchXLinksContextMenuEdit->clear();
+		branchXLinksContextMenuFollow->clear();
 		if (selbi->xlinkCount()>0)
 		{
 		    BranchItem *bi;
@@ -3925,6 +3943,7 @@ void Main::updateActions()
 			    if (s.length()>xLinkMenuWidth)
 				s=s.left(xLinkMenuWidth)+"...";
 			    branchXLinksContextMenuEdit->addAction (s);
+			    branchXLinksContextMenuFollow->addAction (s);
 			}   
 		    }
 		}
