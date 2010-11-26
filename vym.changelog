@@ -1,6 +1,12 @@
 -------------------------------------------------------------------
+Fri Nov 26 14:36:01 CET 2010 - vym@insilmaril.de
+
+- Feature: Added Shortcut to follow XLink
+
+-------------------------------------------------------------------
 Thu Nov 25 10:30:40 CET 2010 - vym@insilmaril.de
 
+- Version 1.13.18
 - Feature: Re-added context menu entry for following XLink
 
 -------------------------------------------------------------------

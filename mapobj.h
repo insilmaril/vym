@@ -16,7 +16,7 @@
 #define dZ_FLOATIMG    70
 #define dZ_ICON        80
 #define dZ_TEXT        90
-#define  Z_INIT         0
+#define  Z_INIT      9999
 #define  Z_LINEEDIT 10000 
 
 class ConvexPolygon;

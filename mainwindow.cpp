@@ -1927,6 +1927,13 @@ void Main::setupContextMenus()
     connect( 
 	branchXLinksContextMenuEdit, SIGNAL( triggered(QAction *) ), 
 	this, SLOT( editEditXLink(QAction * ) ) );
+    QAction *a;
+    a = new QAction( tr("Follow XLink","Context menu") , this);
+    a->setShortcut (Qt::Key_F); 
+    switchboard.addConnection(a,tr("Edit","Shortcut group"));
+    addAction (a);
+    connect( a, SIGNAL( triggered() ), this, SLOT( popupFollowXLink() ) );
+
     branchXLinksContextMenuFollow =branchContextMenu->addMenu (tr ("Follow XLink","Context menu name"));
     connect( 
 	branchXLinksContextMenuFollow, SIGNAL( triggered(QAction *) ), 
@@ -1936,7 +1943,7 @@ void Main::setupContextMenus()
 
     // Context menu for floatimage
     floatimageContextMenu =new QMenu (this);
-    QAction *a= new QAction (tr ("Save image","Context action"),this);
+    a= new QAction (tr ("Save image","Context action"),this);
     connect (a, SIGNAL (triggered()), this, SLOT (editSaveImage()));
     floatimageContextMenu->addAction (a);
 
@@ -3356,7 +3363,7 @@ void Main::editImportReplace()
     fileLoad (ImportReplace);
 }
 
-void Main::editSaveBranch()
+void Main::editSaveBranch() //FIXME-2 not working properly
 {
     fileSaveAs (PartOfMap);
 }
@@ -3397,6 +3404,11 @@ void Main::editEditXLink(QAction *a)
     VymModel *m=currentModel();
     if (m)
 	m->editXLink(branchXLinksContextMenuEdit->actions().indexOf(a));
+}
+
+void Main::popupFollowXLink()
+{
+    branchXLinksContextMenuFollow->exec( QCursor::pos());
 }
 
 void Main::editFollowXLink(QAction *a)
@@ -3928,9 +3940,12 @@ void Main::updateActions()
 		actionHeading2URL->setEnabled (true);  
 
 		// Take care of xlinks  
+		int b=selbi->xlinkCount();
+		branchXLinksContextMenuEdit->setEnabled(b);
+		branchXLinksContextMenuFollow->setEnabled(b);
 		branchXLinksContextMenuEdit->clear();
 		branchXLinksContextMenuFollow->clear();
-		if (selbi->xlinkCount()>0)
+		if (b)
 		{
 		    BranchItem *bi;
 		    QString s;
