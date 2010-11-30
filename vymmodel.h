@@ -291,7 +291,7 @@ private:
 
 public:
     void findDuplicateURLs();		    // find duplicate URLs, testing only so far
-    void findAll (FindResultModel*, QString s, Qt::CaseSensitivity cs);	// Search all objects at once, also notes
+    bool findAll (FindResultModel*, QString s, Qt::CaseSensitivity cs);	// Search all objects at once, also notes
     BranchItem* findText(QString s,Qt::CaseSensitivity cs); // Find object, also in note
     void findReset();			    // Reset Search
 private:    

@@ -104,8 +104,8 @@ QMainWindow(parent,name,f)
     else
     #endif
     {
-	resize (settings.value("/mainwindow/geometry/size", QSize (800,600)).toSize());
-	move   (settings.value("/mainwindow/geometry/pos",  QPoint(300,100)).toPoint());
+	resize (settings.value("/mainwindow/geometry/size", QSize (1024,900)).toSize());
+	move   (settings.value("/mainwindow/geometry/pos",  QPoint(50,50)).toPoint());
     }
 
     // Sometimes we may need to remember old selections
@@ -143,17 +143,16 @@ QMainWindow(parent,name,f)
 	dw = new QDockWidget (tr("Note Editor"),this);
 	dw->setWidget (noteEditor);
 	dw->setObjectName ("NoteEditor");
-	dw->show();
+	dw->hide();
 	noteEditorDW=dw;
 	addDockWidget (Qt::LeftDockWidgetArea,dw);
     } else
 	noteEditorDW=NULL;
 
-
     dw = new QDockWidget (tr("Heading Editor"),this);
     dw->setWidget (headingEditor);
     dw->setObjectName ("HeadingEditor");
-    dw->show();
+    dw->hide();
     headingEditorDW=dw;
     addDockWidget (Qt::BottomDockWidgetArea,dw);
 
@@ -177,6 +176,7 @@ QMainWindow(parent,name,f)
 
     // properties window
     branchPropertyWindow = new BranchPropertyWindow();
+    branchPropertyWindow->hide();
     connect (branchPropertyWindow, SIGNAL (windowClosed() ), this, SLOT (updateActions()));
 
     // Connect NoteEditor, so that we can update flags if text changes
@@ -2800,8 +2800,10 @@ void Main::editCut()
 void Main::editOpenFindResultWidget()  
 {
     if (!findResultWidget->parentWidget()->isVisible())
-	findResultWidget->parentWidget()->show();
-    else 
+    {
+//	findResultWidget->parentWidget()->show();
+	findResultWidget->popup();
+    } else 
 	findResultWidget->parentWidget()->hide();
 }
 
@@ -2815,21 +2817,17 @@ void Main::editHideFindWidget()
 }
 */
 
+#include "findwidget.h" // FIXME-3 Integrated FRW and FW
 void Main::editFindNext(QString s)  
 {
     Qt::CaseSensitivity cs=Qt::CaseInsensitive;
     VymModel *m=currentModel();
     if (m) 
     {
-	m->findAll (findResultWidget->getResultModel(),s,cs);
-
-	/*
-	BranchItem *bi=m->findText(s, cs);
-	if (bi)
-	    findWidget->setStatus (FindWidget::Success);
+	if (m->findAll (findResultWidget->getResultModel(),s,cs) )
+	    findResultWidget->setStatus (FindWidget::Success);
 	else
-	    findWidget->setStatus (FindWidget::Failed);
-	*/    
+	    findResultWidget->setStatus (FindWidget::Failed);
     }
 }
 
@@ -4282,7 +4280,7 @@ void Main::callMacro ()
     if (action)
     {
         i=action->data().toInt();
-	QString mDir (settings.value ("macros/macroDir").toString() );
+	QString mDir (settings.value ("macros/macroDir",vymBaseDir.path()+"/macros").toString() );
 
 	QString fn=mDir + QString("/macro-%1.vys").arg(i+1);
 	QFile f (fn);

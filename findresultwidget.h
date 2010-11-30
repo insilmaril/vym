@@ -4,6 +4,8 @@
 #include <QItemSelection>
 #include <QWidget>
 
+#include "findwidget.h"
+
 class FindResultModel;
 class TreeItem;
 class VymModel;
@@ -27,16 +29,18 @@ public slots:
     void cancelPressed();
     void nextButtonPressed (QString);
     void updateSelection(QItemSelection ,QItemSelection);
+    void setStatus (FindWidget::Status st);
 
 signals:
     void hideFindResultWidget();
     void noteSelected (QString , int );
     void findPressed (QString);
 
+public:
+    FindWidget *findWidget;
 private:
     FindResultModel *resultsModel;
     QTreeView *view;
-    FindWidget *findWidget;
 };
 
 #endif

@@ -1636,11 +1636,13 @@ void VymModel::findDuplicateURLs()  // FIXME-3 needs GUI
     }
 }
 
-void  VymModel::findAll (FindResultModel *rmodel, QString s, Qt::CaseSensitivity cs)   
+bool  VymModel::findAll (FindResultModel *rmodel, QString s, Qt::CaseSensitivity cs)   
 {
     rmodel->clear();
     rmodel->setSearchString (s);
     rmodel->setSearchFlags (0);	//FIXME-3 translate cs to QTextDocument::FindFlag
+    bool hit=false;
+
     BranchItem *cur=NULL;
     BranchItem *prev=NULL;
     nextBranch(cur,prev);
@@ -1650,7 +1652,10 @@ void  VymModel::findAll (FindResultModel *rmodel, QString s, Qt::CaseSensitivity
     {
 	lastParent=NULL;
 	if (cur->getHeading().contains (s,cs))
+	{
 	    lastParent=rmodel->addItem (cur);
+	    hit=true;
+	}
 	QString n=cur->getNoteASCII();
 	int i=0;
 	int j=0;
@@ -1663,6 +1668,7 @@ void  VymModel::findAll (FindResultModel *rmodel, QString s, Qt::CaseSensitivity
 		if (!lastParent)
 		{
 		    lastParent=rmodel->addItem (cur);
+		    hit=true;
 		    if (!lastParent)
 			qWarning()<<"VymModel::findAll still no lastParent?!";
 		    /*
@@ -1681,6 +1687,7 @@ void  VymModel::findAll (FindResultModel *rmodel, QString s, Qt::CaseSensitivity
 	} 
 	nextBranch(cur,prev);
     }
+    return hit;
 }
 
 BranchItem* VymModel::findText (QString s,Qt::CaseSensitivity cs)

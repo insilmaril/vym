@@ -5,7 +5,6 @@
 
 #include "findresultitem.h"
 #include "findresultmodel.h"
-#include "findwidget.h"
 #include "vymmodel.h"
 
 extern QString iconPath;
@@ -96,6 +95,7 @@ void FindResultWidget::popup()
 {
     show();
     parentWidget()->show();
+    findWidget->setFocus();
 }
 
 void FindResultWidget::cancelPressed()
@@ -125,6 +125,11 @@ void FindResultWidget::updateSelection(QItemSelection newsel,QItemSelection)
 	    }	
 	}
     }
+}
+
+void FindResultWidget::setStatus (FindWidget::Status st)
+{
+    findWidget->setStatus (st);
 }
 
 

@@ -64,14 +64,6 @@ QString FindWidget::getFindText()
     return findcombo->currentText();
 }
 
-void FindWidget::popup()
-{
-    show();
-    findcombo->lineEdit()->selectAll();
-    findcombo->setFocus();
-    setStatus (Undefined);
-}
-
 void FindWidget::cancelPressed()
 {
     hide();
@@ -90,7 +82,8 @@ void FindWidget::findTextChanged(const QString&)
 
 void FindWidget::setFocus()
 {
-    findcombo->setFocus();
+    findcombo->lineEdit()->selectAll();
+    findcombo->lineEdit()->setFocus();
 }
 
 void FindWidget::setStatus (Status st)

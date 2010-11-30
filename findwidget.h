@@ -19,7 +19,6 @@ public:
     QString getFindText ();
 
 public slots:	
-    void popup();
     void cancelPressed();
     void nextPressed();
     void findTextChanged(const QString&);
@@ -34,8 +33,8 @@ signals:
     void nextButton(QString);
 
 private:
-    QGroupBox *findbox;
     QComboBox *findcombo;
+    QGroupBox *findbox;
     QPushButton *nextbutton;
 };
 
