@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Wed Dec  1 12:06:24 CET 2010 - vym@insilmaril.de
+
+- Bugfix: Undo after delete MapCenter
+
+-------------------------------------------------------------------
 Tue Nov 30 16:11:15 CET 2010 - vym@insilmaril.de
 
 - Bugfix: Background color of lineedit in findresultwidget

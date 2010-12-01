@@ -373,6 +373,7 @@ ErrorCode VymModel::loadMap (
 
     bool zipped_org=zipped;
 
+
     if (lmode==NewMap)
     {
 	// Reset timestamp to check for later updates of file
@@ -381,22 +382,24 @@ ErrorCode VymModel::loadMap (
 	selModel->clearSelection();
     } else
     {
-	if (!selbi) return aborted;
-	if (lmode==ImportAdd)
-	    if (saveStateFlag) saveStateChangingPart(
-		selbi,
-		selbi,
-		QString("addMapInsert (%1)").arg(fname),
-		QString("Add map %1 to %2").arg(fname).arg(getObjectName(selbi)));
-	if (lmode==ImportReplace)
+	if (selbi) 
 	{
-	    if (saveStateFlag) saveStateChangingPart(
-		selbi,
-		selbi,
-		QString("addMapReplace(%1)").arg(fname),
-		QString("Add map %1 to %2").arg(fname).arg(getObjectName(selbi)));
-	    newbi=addNewBranchInt (selbi,-1);	// Add below selection	
-	    select (newbi);
+	    if (lmode==ImportAdd)
+		if (saveStateFlag) saveStateChangingPart(
+		    selbi,
+		    selbi,
+		    QString("addMapInsert (%1)").arg(fname),
+		    QString("Add map %1 to %2").arg(fname).arg(getObjectName(selbi)));
+	    if (lmode==ImportReplace)
+	    {
+		if (saveStateFlag) saveStateChangingPart(
+		    selbi,
+		    selbi,
+		    QString("addMapReplace(%1)").arg(fname),
+		    QString("Add map %1 to %2").arg(fname).arg(getObjectName(selbi)));
+		newbi=addNewBranchInt (selbi,-1);	// Add below selection	
+		select (newbi);
+	    }
 	}
     }	
     
@@ -516,11 +519,7 @@ ErrorCode VymModel::loadMap (
 		select (newbi);
 		deleteKeepChildren (false);
 	    }
-
-	    if (debug) qDebug()<<"VM::load reposition first";	//FIXME-3 why calling reposition twice?
 	    reposition();   // to generate bbox sizes
-	    //qDebug()<<"VM::load reposition second";
-	    //reposition();   // to also position totalBBoxes
 	    emitSelectionChanged();
 	} else 
 	{
@@ -2165,7 +2164,7 @@ void VymModel::detach()
 	BranchObj *bo=selbi->getBranchObj();
 	if (bo) p=bo->getAbsPos();
 	QString parsel=getSelectString(selbi->parent());
-	if ( relinkBranch (selbi,rootItem,-1) )	//FIXME-1 undo does not work for detach branch???
+	if ( relinkBranch (selbi,rootItem,-1) )	
 	    saveState (
 		getSelectString (selbi),
 		QString("relinkTo (\"%1\",%2,%3,%4)").arg(parsel).arg(n).arg(p.x()).arg(p.y()),
@@ -2660,7 +2659,7 @@ void VymModel::deleteSelection()    //FIXME-2 no undo for deleting MC
 	    select (pi);
 	    emitShowSelection();
 	} else
-	    emitDataHasChanged(rootItem); //FIXME-1 crash...
+	    emitDataHasChanged(rootItem);
 	return;
     }
 
@@ -3372,7 +3371,6 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
     {
 	if (parser.parCount()==2)
 	{
-
 	    if (!selti)
 	    {
 		parser.setError (Aborted,"Nothing selected");

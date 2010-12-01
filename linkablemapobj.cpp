@@ -499,7 +499,7 @@ void LinkableMapObj::updateLinkGeometry()
     else	
 	d=treeItem->depth()*dZ_DEPTH + dZ_LINK;
 
-    // Draw the horizontal line below heading (from ChildPos to ParPos)	//FIXME-2 hide bottomline, if framed, or at least lower below frame
+    // Draw the horizontal line below heading (from ChildPos to ParPos)	
     bottomline->setLine (QLine (qRound(childPos.x()),
 	qRound(childPos.y()),
 	qRound(p1x),

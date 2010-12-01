@@ -101,10 +101,7 @@ void BranchPropertyWindow::setItem (TreeItem *ti)
 		ui.frameWidthSpinBox->setValue (branchObj->getFrameBorderWidth());
 		ui.framePaddingLabel->setEnabled (true);
 		ui.frameBorderLabel->setEnabled (true);
-		if (settings.value( "/mainwindow/showTestMenu",false).toBool())	//FIXME-2
-		    ui.includeChildrenCheckBox->setEnabled (true);
-		else    
-		    ui.includeChildrenCheckBox->setEnabled (false);
+		ui.includeChildrenCheckBox->setEnabled (true);
 
 		switch (t)
 		{
