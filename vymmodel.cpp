@@ -2641,7 +2641,7 @@ void VymModel::deleteLater(uint id)
 	deleteLaterIDs.append (id);
 }
 
-void VymModel::deleteSelection()    //FIXME-2 no undo for deleting MC
+void VymModel::deleteSelection()    
 {
     BranchItem *selbi=getSelectedBranch();
 
@@ -2688,8 +2688,10 @@ void VymModel::deleteSelection()    //FIXME-2 no undo for deleting MC
     }
 }
 
-void VymModel::deleteKeepChildren(bool saveStateFlag)	//FIXME-2 does not work yet for mapcenters 
-//deleteKeePChilderen FIXME-2 children of scrolled branch stay invisible...
+void VymModel::deleteKeepChildren(bool saveStateFlag)
+//deleteKeepChildren FIXME-2 does not work yet for mapcenters 
+//deleteKeepChildren FIXME-2 children of scrolled branch stay invisible...
+//deleteKeepChildren FIXME-2 xlinks in children are lost with undo (Maybe use saveStateChangingPart?)
 
 {
     BranchItem *selbi=getSelectedBranch();

@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue Dec  7 09:47:30 CET 2010 - vym@insilmaril.de
+
+- Bugfix: No progress bar when loading a recent map
+
+-------------------------------------------------------------------
 Wed Dec  1 12:06:24 CET 2010 - vym@insilmaril.de
 
 - Bugfix: Undo after delete MapCenter

@@ -1435,6 +1435,8 @@ void Main::setupFlagActions()
     flag=new Flag(flagsPath+"flag-hideexport.png");
     setupFlag (flag,tb,"system-hideInExport",tr("Hide object in exported maps","SystemFlag"));
 
+    addToolBarBreak();
+
     // Create Standard Flags
     tb=addToolBar (tr ("Standard Flags toolbar","Standard Flag Toolbar"));
     tb->setObjectName ("standardFlagTB");
@@ -2125,7 +2127,7 @@ void Main::fileNewCopy()
     }
 }
 
-ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode, const FileType &ftype)
+ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode, const FileType &ftype) 
 {
     ErrorCode err=success;
 
@@ -2318,7 +2320,11 @@ void Main::fileLoadRecent()
 {
     QAction *action = qobject_cast<QAction *>(sender());
     if (action)
+    {
+	progressCounterTotal=1;
         fileLoad (action->data().toString(), NewMap);
+	removeProgressCounter();
+    }
 }
 
 void Main::addRecentMap (const QString &fileName)
@@ -2701,7 +2707,6 @@ bool Main::fileCloseMap()
     VymModel *m=currentModel();
     if (m)
     {
-	//qDebug()<<"Main::fileCloseMap  currentIndex="<<tabWidget->currentIndex();
 	if (m->hasChanged())
 	{
 	    QMessageBox mb( vymName,
@@ -2753,7 +2758,6 @@ bool Main::fileExitVYM()
     int i=0;
     while (vymViews.count()>0)
     {
-	//qDebug()<<"Main::fileExitVym  count="<<vymViews.count();
 	tabWidget->setCurrentPage(i);
 	if (fileCloseMap()) return true;
     } 
@@ -2995,7 +2999,6 @@ void Main::editLocalURL()
 
 void Main::editHeading2URL()
 {
-    qDebug()<<"Main::editHeading2URL";
     VymModel *m=currentModel();
     if (m) m->editHeading2URL();
 }
@@ -3361,7 +3364,7 @@ void Main::editImportReplace()
     fileLoad (ImportReplace);
 }
 
-void Main::editSaveBranch() //FIXME-2 not working properly
+void Main::editSaveBranch() 
 {
     fileSaveAs (PartOfMap);
 }
