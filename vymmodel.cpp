@@ -2175,7 +2175,7 @@ void VymModel::detach()
     }
 }
 
-void VymModel::sortChildren(bool inverse)
+void VymModel::sortChildren(bool inverse) 
 {
     BranchItem* selbi=getSelectedBranch();
     if (selbi)
@@ -2183,12 +2183,16 @@ void VymModel::sortChildren(bool inverse)
 	if(selbi->branchCount()>1)
 	{
 	    if (!inverse)
-	    {
-	    saveStateChangingPart(
-		selbi,selbi, "sortChildren ()",
-		QString("Sort children of %1").arg(getObjectName(selbi)));
-	    }
+		saveStateChangingPart(
+		    selbi,selbi, "sortChildren ()",
+		    QString("Sort children of %1").arg(getObjectName(selbi)));
+	    else	    
+		saveStateChangingPart(
+		    selbi,selbi, "sortChildren (false)",
+		    QString("Inverse sort children of %1").arg(getObjectName(selbi)));
+
 	    selbi->sortChildren(inverse);
+	    select(selbi);
 	    reposition();
 	    emitShowSelection();
 	}

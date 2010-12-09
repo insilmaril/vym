@@ -277,7 +277,7 @@ bool BranchItem::resetTmpUnscroll()
     return result;
 }
 
-void BranchItem::sortChildren(bool inverse)
+void BranchItem::sortChildren(bool inverse) //FIXME-3 optimize by not using moveUp/Down
 {
     int childCount=branchCounter; 
     int curChildIndex;
@@ -309,10 +309,6 @@ void BranchItem::sortChildren(bool inverse)
 void BranchItem::setIncludeImagesVer(bool b)
 {
     includeImagesVer=b;
-    /* calcBBoxSize(); FIXME-3
-    positionBBox();
-    requestReposition();
-    */
 }
 
 bool BranchItem::getIncludeImagesVer()
