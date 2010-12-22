@@ -788,6 +788,7 @@ void Main::setupEditActions()
     a = new QAction( QPixmap(iconPath+"editsort.png" ), tr( "Sort children","Edit menu" ), this );
     connect( a, SIGNAL( activated() ), this, SLOT( editSortChildren() ) );
     a->setEnabled (true);
+    a->setShortcut ( Qt::Key_O );		    // Detach branch
     a->addTo( tb );
     switchboard.addConnection(a,tr("Edit","Shortcut group"));
     editMenu->addAction (a);
@@ -796,6 +797,7 @@ void Main::setupEditActions()
     a = new QAction( QPixmap(iconPath+"editsortback.png" ), tr( "Sort children backwards","Edit menu" ), this );
     connect( a, SIGNAL( activated() ), this, SLOT( editSortBackChildren() ) );
     a->setEnabled (true);
+    a->setShortcut ( Qt::SHIFT + Qt::Key_O );		    // Detach branch
     a->addTo( tb );
     switchboard.addConnection(a,tr("Edit","Shortcut group"));
     editMenu->addAction (a);

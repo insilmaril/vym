@@ -343,7 +343,7 @@ QString VymModel::getDestPath()
     return destPath;
 }
 
-ErrorCode VymModel::loadMap (
+ErrorCode VymModel::loadMap (	//FIXME-2 Check: insert with zeitplanung.vym replaced current branch. Later segfault...
     QString fname, 
     const LoadMode &lmode, 
     bool saveStateFlag, 
@@ -2879,7 +2879,7 @@ bool VymModel::unscrollBranch(BranchItem *bi)
     return false;
 }
 
-void VymModel::toggleScroll()	
+void VymModel::toggleScroll()	//FIXME-2 doesn't seem to update frame with frame including children (setting a standard flag does!)
 {
     BranchItem *bi=(BranchItem*)getSelectedBranch();
     if (bi && bi->isBranchLikeType() )
@@ -2916,6 +2916,7 @@ void VymModel::unscrollChildren()
 	}   
 	updateActions();
 	reposition();
+	// Would this help??? emitSelectionChanged();	
     }	
 }
 
