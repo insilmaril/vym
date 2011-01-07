@@ -1,0 +1,1486 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{verbatim}
+\usepackage{hyperref}
+\usepackage{graphicx}
+%\usepackage{longtable}
+
+\setlength{\headheight}{0cm}
+\setlength{\headsep}{0cm}
+\setlength{\topskip}{0cm}
+\setlength{\topmargin}{-0.5cm}
+
+\setlength{\parskip}{1.5ex}
+\setlength{\parindent}{0cm}
+\setlength{\oddsidemargin}{0cm}
+\setlength{\textwidth}{16cm}
+\setlength{\textheight}{27cm}
+
+\newlength{\maximgwidth}
+\setlength{\maximgwidth}{14cm}
+\newcommand{\maximage}[1]{  
+    \begin{center}
+        \includegraphics[width=\maximgwidth]{#1} 
+    \end{center}
+}
+\newcommand{\hint}[1]{
+    \begin{center} 
+        \begin{tabular}{|rp{12cm}|} \hline
+            {\bf Hint}:& #1\\   \hline
+        \end{tabular}
+            \marginpar{\Huge !} 
+    \end{center} 
+}
+
+\newcommand{\vym}{{\sc vym }}
+\newcommand{\ra}{$\longrightarrow$}
+\newcommand{\la}{$\longleftarrow$}
+\newcommand{\ua}{$\uparrow$}
+\newcommand{\da}{$\downarrow$}
+\newcommand{\key}[1]{[#1]}
+
+\newenvironment{code}[1] { \verbatim #1}{\endverbatim  }
+
+\hypersetup{bookmarks, bookmarksopen,
+  pdftitle={VYM - a tool for visual thinking },
+  pdfauthor={Uwe Drechsel},    
+  pdfsubject={map},
+  pdfkeywords={map, tool},
+  pdfpagemode={UseOutlines},                                 
+  bookmarksopenlevel={1},   
+  colorlinks={true},     
+  linkcolor={blue},
+  urlcolor={green},
+  citecolor={red}} 
+
+
+\begin{document}
+\title{
+    \includegraphics[width=8cm]{images/vym-logo-new.png}
+    \\
+VYM \\ -- \\View Your Mind\\ {\small Version 1.12.0}}
+\author{\textcopyright Uwe Drechsel  }
+
+
+\maketitle
+
+\newpage
+
+\tableofcontents
+
+\newpage
+
+\section*{Credits}
+Many people have sent me their feedback and ideas, and all of that has
+helped a lot to make \vym better. Thanks to all of you!
+
+For this manual I would like to send some special thanks to
+
+\begin{itemize}
+    \item {\em Peter Adamson} for lots of feedback and proofreading of my
+          far from perfect english
+    \item The team of {\em AClibre (Academia y Conocimiento Libre)}
+          in Colombia for their translation of
+          the manual to spanish:
+          \begin{center}
+            \begin{tabular}{|p{7cm}|p{5.5cm}|} \hline
+                Encargado & Actividad \\ \hline
+                \begin{itemize}
+                   \item Vanessa Carolina Guti\'errez Sanchez
+                   \item Erika Tatiana Luque Melo
+                   \item Jeffrey Steve Borb\'on Sanabria
+                   \item John Edisson Ortiz Rom\'an
+                \end{itemize} &
+                \begin{itemize}
+                    \item Traducci\'onl
+                    \item Revisi\'on y correcciones varias
+                    \item Estructuraci\'on y exporte
+                    \item Revisi\'on y correcciones varias
+                \end{itemize}     \\ \hline
+            \end{tabular}   
+        \end{center}
+\end{itemize}
+\newpage
+
+
+\section{Introduction}
+\subsection{What is a \vym map?}
+A \vym map (abbreviated below as {\em map}) is a tree-like structure:
+\maximage{images/example1.png}
+Such maps can be drawn by hand on a sheet of paper or flip chart and help to
+structure your thoughts. While a tree like structure like the illustration above can be
+drawn manually \vym offers much more features to work with such maps.
+\vym is not just another drawing software application, but a tool to store and modify
+information in an intuitive way. For example you can reorder parts of
+the map by pressing a key or add various pieces of information like a complete
+email by a simple mouse click.
+
+Once you have finished collecting and organising your ideas, you can
+easily generate a variety of outputs including for example a
+presentation in Open~Office based on a {\em map}.
+
+\hint{You find the map shown above and others by clicking \begin{center}Help \ra Open vym
+examples\end{center} in the menu bar.}
+
+\subsection{Why should I use {\em maps}? Time, Space and your Brain.}
+\subsubsection*{Space}
+A {\em map} can concentrate very complex content in a small space such as a
+piece of paper. It helps to use both sides of your brain: the logical
+side and also your creative side (e.g. by using pictures, colours and
+keywords in a map, often called {\em anchors}).  It is a technique to help
+organize the way you think and stimulate your creativity: It can help you by developing, sorting and helping to memorise your ideas. 
+
+\subsubsection*{Time}
+Because you just use keywords and drawings, it is much faster than good
+old fashioned 'notes'. Your brain memorizes things by associating them with
+other things -- a {\em map} makes use of those connections and stimulates
+new asccociations. 
+
+
+\subsubsection*{Your Brain}
+In 1960 Prof. {\sc Roger Sperry} discovered that both hemispheres
+of the human brain undertake different tasks (of course both of them
+basically {\em can} do the same): 
+\begin{center}
+\begin{tabular}{|p{5.5cm}|p{5.5cm}|} \hline
+    Left side & Right side \\ \hline
+    \begin{itemize}
+       \item verbal speech and writing 
+       \item numbers
+       \item logical thinking
+       \item analysing and details
+       \item science
+       \item linear thinking
+       \item concept of time
+    \end{itemize} &
+    \begin{itemize}
+        \item body language
+        \item visual thinking, day dreams
+        \item intuition and emotion
+        \item overview of things
+        \item creativity
+        \item art, music, dancing
+        \item non-linear thinking, connecting things
+        \item spatial awareness
+    \end{itemize}     \\ \hline
+\end{tabular}   
+\end{center}
+In our science oriented western society we have learned to mainly rely on our
+left side of the brain, the "rational" one. In other cultures, such as the native americans and other "old" cultures, the right
+side is much more important. {\em Map} are just one way to stimulate the
+other side and make use of additional resources we all have.
+
+
+\subsection{Where could I use a {\em map}?}
+Here are some examples, how you can use those {\em maps}
+\begin{itemize}
+    \item to prepare articles, papers, books, talks, \ldots
+    \item to sort complex data
+    \item to memorize facts, peoples names, vocabulary, \ldots
+    \item to sort emails, files and bookmarks on your computer
+    \item to moderate conferences
+    \item to brainstorm solutions to problems
+    \item to record the tasks when planning a project
+\end{itemize}
+
+\subsection{What you shouldn't do with a {\em map}...}
+A {\em map} drawn by somebody shows the way that the author thinks. There is
+no question of right or wrong in the way it is drawn, so there is no way to criticise
+it. "It is, what it is" ({\sc F.~Lehmann}).The tool will be of considerable use to the author and only very limited use to anyone else. 
+
+However, when groups share in creating a {\em map} all of the group will benefit from its use. An example of such use is when a Tutor develops a {\em map} with a group of students during instruction. Another group use is when a Project leader gathers a group of specialists to help {\em map} the tasks that will be required to deliver a project.
+
+%\section{Tutorials}
+%TODO
+
+\subsection{Internet Ressources} 
+A good starting point to learn more about Mindmaps in general is Wikipedia:
+\begin{itemize}
+    \item English: 
+        \href{http://en.wikipedia.org/wiki/Mind_map}{http://en.wikipedia.org/wiki/Mind\_map}
+    \item German: 
+        \href{http://de.wikipedia.org/wiki/Mindmap}{http://de.wikipedia.org/wiki/Mindmap}
+\end{itemize}
+
+
+
+
+\section{The Concept of the \vym application}
+%TODO may add a general introduction here...
+\subsection{The Mainwindow and its satellites} \label{satellite}
+\vym comes with several windows, the central one being the {\em
+mapeditor}.
+More windows, each having a special purpose, can be opened and arranged
+around the mainwindow\footnote{
+    The advantage of having separate window instead of integrating them
+    in a combined workspace is flexibility in arranging the windows. For
+    example I usually have the {\em noteeditor} "behind" the {\em
+    mapeditor}. On Linux my windowmanager (KDE) allows me to enter text
+    into a small visible corner of the {\em noteeditor} withour clicking
+    the mouse button in it. I just push the mouse around to set the
+    window focus, a concept which is useful also working with 
+    \href{http://www.gimp.org}{http://www.gimp.org}.
+}. 
+The image below shows the {\em mapeditor}
+together with the often used {\em noteeditor}: 
+\maximage{images/windows.png}
+Most of the time you will work in the {\em mapeditor} by just adding new
+branches, moving around and reordering them. The various ways to do this
+will be explained in \ref{mapeditor}. You can store additional
+information e.g. the content of a email easily in a {\em branch}: Just
+type or copy\&paste it into the {\em noteeditor}. Working with notes is
+explained in \ref{noteeditor}
+ 
+Here is a list of the available satellite windows:
+\begin{itemize}
+    \item Noteeditor (see \ref {noteeditor})
+    \item Historywindow (see \ref{historywindow})
+    \item Branch Property Window (see \ref{propwindow})
+\end{itemize}
+
+
+\subsection{Menus and Context menus}
+At the top of each window you will find the menubar. The options provided there
+are similar to those you are probably used to from other applications. Note that
+many (and even more) options are available via {\em context menus}. Those
+are available if you right-click onto an object in a map (on Mac~OS~X
+Command-Click).
+
+\subsection{Toolbars}
+The toolbars in the mainwindows give quick access to many functions and
+also display the state of selected objects in the map. For example a
+branch may show certain {\em flags}, the corresponding flags are also
+set in the toolbar. 
+
+\hint {You can reposition all toolbars by simply grabbing and
+dragging them with the toolbar handle to a new position. For example you
+can move the flags-toolbar from its original horizontal position on top
+of the mapeditor to a vertical position on the right side.  Or just
+insert it again at its original position. Also hiding some of the
+toolbars is possible by right-clicking on the toolbar handle.}
+
+\subsection{Maps}
+The  {\em map} itself has always a {\em mapcenter}.  The
+mapcenter has {\em branches} radiating out from the centre just like the trunk 
+of a tree. Each branch in turn may have branches again.
+    \maximage{images/branches.png}
+We will call a branch directly connected to the mapcenter a {\em
+mainbranch}, because it determines the position of all its child
+branches.
+
+The mapcenter and the branches all have a {\em heading}. This is the
+text you see in the mapeditor. Usually it should just be one or a few
+key words, so that one can easily keep track of the whole map.
+
+
+In the toolbar above the mapeditor you see various symbols.
+    \maximage{images/default-flags.png}
+These are called {\em flags} and can be used to mark branches in the
+{\em map}, e.g. if something is important or questionable. 
+There are also more flags set by \vym automatically to show additional
+information, e.g. when a note is attached to a  particular branch.
+
+By default some of these flags are set exclusively e.g. when the 
+"thumb-up" flag is set, then the "thumb down" is reset and vice
+versa. You can change this default behaviour in the settings menu (see
+\ref{settings}).
+
+\section{Mapeditor} \label {mapeditor}
+\subsection{Start a new map}
+After \vym is started two windows will open: the {\em mapeditor} and the {\em noteditor}. Usually you will work in both windows, but at the moment we
+will just need the mapeditor. 
+
+Select the mapcenter "New map" in the middle of the mapeditor by
+left-clicking with the mouse. It will be highlighted yellow to show that is
+selected. There are several ways to add a new branch to the center:
+\begin{itemize}
+    \item Using the mouse: Open the context menu by clicking with the
+    right mouse button (CTRL-Click on Mac) onto the
+    mapcenter and choose Add \ra Add branch as child
+    \item Press \key{Ins} or \key{A}
+\end{itemize}
+A new branch will appear and you will be able to type the heading of the
+branch. Finish adding the new branch by pressing \key{Enter}.
+%tipp
+Sometimes it comes in handy to be able to add a new branch above or below the current
+one. 
+\begin{itemize}
+    \item Use \key{Shift-A} to add a branch above the selected one or... 
+    \item \key{Ctrl-A} to add one below. 
+\end{itemize}
+It is also
+possible to add a branch in such a way, that the current selection
+becomes the child of the new branch, which is like inserting it {\em
+before} the selection. This can be done using the context menu.
+
+\hint{To delete a branch press \key{CTRL-X}. If enabled in the Settings
+menu (see \ref{settings}), you can also use the \key{Del} key.}
+
+\subsection{Navigate through a map}
+\subsubsection*{Select branches}
+To select branches you can use the left button of your mouse or also the
+arrow keys. Depending on the {\em orientation} of a branch tap
+\key{\la} or \key{\ra} to move nearer to the mapcenter or deeper
+down into the branches. Within a set of branches, let's call them a 
+{\em subtree}, you can use \key{PgUp} and \key{PgDn} to go up and down. You can
+also use \key{Home} and \key{End} to select the first and last branch.
+
+
+\subsubsection*{Panning the view of a map}
+While adding more and more branches the size of the map may become
+larger than the mapeditor window. You can use the scrollbars on the
+right and the bottom of your mapeditor window to scroll the view up or down or left or right. It is easier to just scroll using the left mouse button: Click anywhere on the {\em canvas} itself. Choose an empty space somewhere between the branches. The
+mouse pointer will change from an arrow to a hand, now move or drag the visible
+map to show the desired part.
+
+If you select branches using the arrow keys, the map will scroll
+to ensure that the selected branch is always visible.
+
+\subsubsection*{Zooming the view of a map}
+Working with huge maps, the {\em zoom}-function comes in handy: You can
+use 
+\begin{itemize}
+    \item from the menu: View \ra Zoom in, View \ra Zoom out, View \ra reset Zoom.
+    \item the toolbar buttons 
+        \begin{center}
+            \includegraphics[width=3cm]{images/zoom-buttons.png}
+        \end{center}    
+\end{itemize}   
+Clicking the crossed magnifying lens icon will reset the zoomed view to its original size.
+
+
+\subsubsection*{Find Function} \label{findwindow}
+With huge maps there is the need to have a
+find function. Choose Edit \ra Find to open the Find Window:
+\begin{center}
+    \includegraphics[width=6cm]{images/find-window.png}
+\end{center}    
+The find function will search for, the text you enter here, in all the branch headings and also in the associated notes. Everytime you press the "Find"-button it will look for the next occurence, which will then be selected automatically. If the search
+fails, a short message "Nothing found" will appear for a few
+seconds in the {\em statusbar} on the bottom of the mapeditor.
+
+\subsubsection*{Keep the overview -- scroll a part of the map}
+A very big subtree of a map e.g. a branch with hundreds of child branches would make
+it very hard to keep an overview over the whole map. You can hide all
+the children of a branch by {\em scrolling} it -- this function is often called {\em folding}. Think of the whole subtree as painted onto a
+broadsheet newspaper. You can scroll or fold the paper to a small roll, leaving just
+the headline visible.
+
+To scroll or unscroll a branch and its children,
+\begin{itemize}
+    \item press the \key{S}
+    \item press the middle-mouse button or
+    \item choose the scroll icon from the toolbar.
+\end{itemize}
+If you select parts of a scrolled branch e.g. using the find function or
+by using the arrow-keys, it will unscroll temporary. This is shown as a
+scroll with a little hour glass. If the temporary unscrolled part is no
+longer needed, it will be hidden again automatically. It is also
+possible to unscroll all branches using "Edit\ra Unscroll all scrolled
+branches".
+
+You can also hide parts of the map while exporting it e.g. to a webpage
+or a presentation, see \ref{hideexport} for details.
+
+\subsection{Modify and move branches}
+\subsubsection*{Modify the heading}
+You can edit the heading by selecting the branch and then
+\begin{itemize}
+    \item pressing \key{Enter}
+    \item pressing \key{F2}
+    \item double-clicking with left mouse.
+\end{itemize}
+Just type the new heading (or edit the old one) and press \key{Enter}.
+
+\subsubsection*{Move a branch}
+The easiest way to move a branch is to select it with left-mouse and
+drag it to the destination while keeping the mouse button pressed.
+Depending on the branch  it will be
+\begin{itemize}
+    \item moved to the destination or
+    \item {\em linked} to a new {\em parent} (mapcenter or branch)
+\end{itemize}
+If you drag the branch over another one or over the mapcenter, you will
+notice that the  link connecting it to the old parent will be changed to
+lead to the  new parent which is now under your mousepointer. 
+If you release the button now, the branch will be relinked.
+
+If you release the button in the middle of nowhere, the result will
+depend on the type of branch you are releasing:
+\begin{itemize}
+    \item A mainbranch is directly connected to the mapcenter.
+        It will stay on its new position.
+    \item An ordinary branch will "jump" back to its original position. 
+\end{itemize}
+Thus you can easily rearrange the layout of the mainbranches to avoid
+overlapping of their subtrees.
+There is another convenient way to move branches, especially if you want
+to {\em reorder} a subtree: You can move a branch up or down in a
+subtree by
+\begin{itemize}
+    \item pressing \key{\ua} and \key {\da}
+    \item selecting Edit \ra Move branch
+    \item clicking on the toolbar buttons:
+        \begin{center}
+            \includegraphics[width=1.5cm]{images/move-buttons.png}
+        \end{center}    
+\end{itemize}
+%tipp
+There is yet another way to move branches: If you press \key{Shift} or
+\key{Ctrl} while moving with the mouse, the branch will be added above
+or below the one the mouse pointer is over. This can also be used to reorder branches in a map.
+
+\subsection{Colours and Images - Using the right side of your brain}
+\subsubsection*{Change colour of a heading}
+You can also use colours to add more information to a map, e.g. use
+red, green and more colours to prioritize tasks. Again you can
+\begin{itemize}
+    \item use the menu and choose e.g Format \ra Set Color
+    \item use the toolbar
+        \begin{center}
+            \includegraphics[width=3cm]{images/color-buttons.png}
+        \end{center}    
+\end{itemize}
+The first button (black in the graphic above) shows the current colour.
+Clicking on it let's you choose another colour. You can also "pick"
+another colour by selecting a branch with the desired colour and using the
+"pick colour" button. Both of the icons showing a palette actually apply
+the current colour to the selected branch. While the first one just
+colours the heading of the selection, the last one also colours all the
+children of the selected branch.
+
+%tipp
+A very useful function is the "copy colour" using the mouse: Select the
+branch which should get the new colour, then press \key{Ctrl} and
+simultanously click with left-mouse on another branch to copy its colour
+to the first one. Here the children of the selection also will get the new
+colour, if you just want to colour the selection itself, additionally
+press \key{Shift}.
+
+\subsubsection*{Use flags}
+\vym provides various flags. They are usually displayed in the toolbar on top of the
+mapeditor window. (Note: Like all toolbars you can also move them to the
+left or the right side of the window or even detach them. Just grab the
+very left "dotted" part of the toolbar with your left-mouse button.) 
+    \maximage{images/default-flags.png}
+If you have a branch selected, you can set any number of flags by
+clicking them in the toolbar. The toolbar buttons change their state and
+always reflect the flags set in the selected branch. So, to remove a flag from a branch, select the branch and then click the highlighted flag on the toolbar.
+
+At present \vym uses two kinds of flags: {\em System Flags} and {\em
+Standard Flags}. The standard flags are those shown in the toolbar.
+System flags are set by \vym to indicate e.g. that there is additional
+information in a note (more on this in \ref{noteeditor}). Later versions
+of \vym may have another kind of flags, which may be edited by the user.
+
+\subsubsection*{Images}
+The easiest way to add an image to a branch is by dragging it e.g. from a
+webbrowser to the mapeditor while a branch is selected there.
+
+You can also add an image to a branch by opening the context menu of the
+branch. Right click the selected branch, choose "Add Image". A
+dialog window enables you choose the image to load. 
+\footnote{Supported image types are: PNG, BMP, XBM, XPM and PNM. It may
+    also support JPEG, MNG and GIF, if specially configured during
+    compilation (as done when \vym is part of SUSE LINUX).}
+While an image is selected in the dialog, a preview of the
+image is displayed. It is also possible to select multiple images.  
+
+You can position the image anywhere you want, just drag it with left
+mouse. To relink it to another branch, press \key{Shift} while moving
+it. To delete it, press \key{Del}. 
+
+If you right-click onto an image, a context menu will open which let's
+you first choose one of several image formats. Then a file dialog opens
+to save the image. 
+
+Hint: This is used to "export" the image, it will be
+saved anyway in the map itself! You can also cut and
+copy images, but it is not possible to add objects to an image\footnote{
+    Images are regarded as "extra feature". It would make working with
+    the map much more complex if e.g. images could be linked to images.}
+
+The option \lq{\bf Use for export} \rq controls the output of exports
+e.g. to HTML: If set to no, the image won't appear in the {\em text}
+part of the output. This is useful for large images or if images are
+used as a kind of frame e.g. the famous cloud symbol around a part of
+the map. Those shouldn't appear in the middle of the text.
+
+At the moment image support is preliminary: Images will be saved
+together with all the other data of a map in the {\tt .vym}-file.
+Later versions will include more functionality like resizing the images,
+changing its z-value (put it into background) etc.
+
+\subsubsection*{Frames}
+A frame can be added to a branch in the {\em property window} (see
+\ref{propwindow}). 
+Alternatively, you can use use images as frames. Have a look at the demo
+map {\tt todo.vym} as an example, where the mapcenter is a cloud. You
+can use an external drawing program like {\tt gimp} to create an image,
+preferable with an transparency channel, so that you can design frames
+which don't use a rectangular borderline, just like that cloud.
+
+
+\subsection{Design of map background and connecting links }
+The design of the background of a map and also of the links connecting
+various parts of the map can be changed by
+\begin{itemize}
+    \item Selecting Format from the menu
+    \item Right clicking on the canvas, which will open a context menu
+\end{itemize}
+
+\subsubsection*{Background }
+The colour is set (and also displayed) as "Set background colour".
+Alternatevily you can set an background image, though this is not
+recommended in general. Working on the map becomes slow and the image
+currently cannot be positioned freely.
+
+\subsubsection*{Link colour}
+Links connecting branches can be coloured in one of two ways:
+\begin{itemize}
+    \item use the same colour for the heading and for the branch link line.
+    \item use {\em one} colour for all links and choose different colours for the branch headings text. The default colour for branch link lines is blue.
+\end{itemize}
+The latter can be set with "Set link colour". Check or uncheck the "Use
+colour of heading for link" option to toggle between the two designs for
+your map.
+
+\subsubsection*{Link style}
+\vym offers four different styles for the appearences of links:
+\begin{itemize}
+    \item Line
+    \item Parabel
+    \item Thick Line
+    \item Thick Parabel
+\end{itemize}
+The "thick" styles only apply to links starting at the mapcenter, link lines for the rest
+of the map are always painted "thin".
+
+
+\subsection{Links to other documents and webpages}
+\vym supports two kind of external links:
+\begin{itemize}
+    \item Document, which will be opened in an external webbrowser
+    \item \vym map, which will be opened in \vym itself
+\end{itemize}
+In addition to the external links there also internal ones, leading from one
+branch in a map to another one. Those are called {\em XLinks} and are explained
+in section~\ref{xlinks}.
+
+\subsubsection*{Webbrowser}
+Modern Webbrowsers like {\tt konqueror and Firefox} are able to display various
+types of files, both local or on the internet. To enter the URL of
+any document, press \key{U} or right-click  onto a branch to open the contextmenu then choose
+"References\ra Edit URL". If you want to use a file dialog to
+conveniently choose a local file you can use~\key{U}.
+
+After an URL was entered, a little globe will appear in the branch. By
+clicking on the globe in the toolbar or the context menu an external
+browser\footnote{
+    The browser can be changed in the Settings Menu (see \ref{settings}).}
+will be launched.
+\begin{center}
+    \includegraphics[width=0.5cm]{images/flag-url.png}
+\end{center}
+For more information on working with bookmarks and webbrowsers see
+section \ref{bookmarks}.
+
+In the context menu there is also an option to open all URLs found
+in the selected subtree of the map. That's useful to simultanously open
+a collection of URLs in the webbrowser, especially if the browser can
+open them in tabs (like Konqueror).
+
+
+\subsubsection*{\vym map}
+To link to to another map right click on a branch and choose "Edit \vym link". A file dialog opens where you can choose the map. A
+branch with a link is marked with 
+\begin{center}
+    \includegraphics[width=0.5cm]{images/flag-vymlink.png}
+\end{center}
+Clicking this flag beside the branch heading, in the toolbar or in the context menu of a branch will open the map in another tab (see \ref{tabs} for working with
+multiple maps). To delete an existing link, just right click the branch and select "Delete \vym link".
+
+In the context menu there is also an option to open all vymlinks found
+in the selected subtree of the map. That's useful to simultanously open
+a collection of related maps.
+
+Technical note: Internally \vym uses absolute paths, to avoid opening
+several tabs containing the same map. When a map is saved, this path is
+converted to a relative one (e.g. {\tt /home/user/vym.map} might become
+{\tt ./vym.map}. This makes it fairly easy to use multiple maps on
+different computers or export them to HTML in future.
+
+\subsection{Multiple maps} \label{tabs}
+You can work on multiple maps at the same time. Each new map is opened
+in another {\em tab}. The available tabs are shown just above the
+mapeditor. You can use the normal cut/copy/paste functions to
+copy data from one map to another.
+
+%todo
+
+%TODO
+%\subsubsection{Menus}
+%\subsubsection{Keyboard shortcuts}
+
+% Settings
+% Images
+% Copy & Paste
+% Working with tabs (multiple maps)
+% Exporting
+% Scrolling
+
+\section{Noteeditor} \label {noteeditor}
+If you want to attach more text to a branch e.g. a complete email, a
+cooking recipe, or the whole source code of a software project, you can
+use the noteeditor. 
+    \maximage{images/noteeditor.png}
+This editor displays text associated with a branch selected in the mapeditor. The noteeditor
+shows different background colours depending on whether text is associated with a selected branch.
+
+\subsection{States}
+Before you can type or paste text into it, you have
+to select a branch in the mapeditor. Note that the background colour
+of the noteeditor indicates its state:
+\begin{itemize}
+    \item grey: no text entered yet
+    \item white: some text has been entered
+\end{itemize}   
+In the mapeditor itself, to signal that there is a note with more
+information for a particular branch, a little "note" flag will appear next
+to the heading of the branch. This is illustrated in the lower branch on the right hand side:
+    \maximage{images/branches-flags.png}
+
+\subsection{Import and export notes}
+The note is always saved automatically within the \vym map itself.
+Nevertheless sometimes it is nice to import a note from an external file
+or write it. In the Note Editor use "File\ra~Import" and "File\ra~Export" to do so. 
+
+\subsection{Edit and print note}
+Editing works like in any simple texteditor, including undo and redo
+functions. You can delete the complete note by clicking the
+trashcan. Only the note itself is printed by clicking the printer icon.
+
+\subsection{RichText: Colours, paragraphs and formatted text}
+\vym supports formatted text (QT Rich Text) in the noteeditor since
+version 1.4.7.  Colours and text attributes (e.g. italic, bold) can be
+set with the buttons above the text.  
+%The text itself is divided into
+%paragraphs. For each paragraph the format can be set (e.g. centered,
+%right). A paragraph is ended when a \key{Return} is entered. If you just
+%want to begin a new line, press \key{CTRL-Return}.
+
+\subsection{Fonts and how to switch them quickly}
+The noteeditor is designed to be used for simple notes, not really as a full
+featured word processor. Because of many requests \vym supports 
+formatted text in the noteeditor\footnote{
+    \vym uses the QRichtText format, which is basically a subset of the
+    formatting provided in HTML.}
+Two default fonts are supported which can be set in the Settings menu
+(see \ref{settings}).
+One is a fixed width font, the other has variable width. The fixed font
+is usually used for emails, source code etc.\ while the variable font is
+used for simple notes, where one doesn't need fixed character widths.
+Both fonts can easily switched using the following symbol from the
+toolbar:
+\begin{center}
+    \includegraphics[width=0.5cm]{images/formatfixedfont.png}
+\end{center}
+In the Settings menu both fonts can be set. The default font can also be toggled between the fixed and variable font by selecting or deselecting the "fixed font is default" menu item.
+
+Additionally to the default fonts any font installed on your system can
+be used. Please note, that the chosen font also will be used for HTML
+exports, so if youy VYM mind map could ever be exported to a web or intranet page you should only use fonts which are available generally.
+
+\subsection{Find text}
+The noteeditor itself has no Find function, use Find in the mapeditor,
+which will also search all notes (see \ref{findwindow}).
+
+\subsection{Paste text into note editor}
+Often you will paste text into the editor from another application e.g.
+an email. Normally \vym will generate a new paragraph for each new line.
+This usually is not what you want, so you can choose from the menu
+
+
+\section{Hello world}
+This section is about how \vym can interact with other applications.
+Many applications can now read and write their data using XML, the
+eXtensible Markup Language. \vym also uses XML to save its maps, see
+\ref{fileformat} for a more detailed description. 
+
+So if you make use of another application that understands XML, chances are good that someone
+could write import/export filters for \vym. Volunteers are always
+welcome ;-)
+
+\subsection{Import} \label{import}
+
+\subsubsection*{KDE Bookmarks}
+The integrated bookmark editor in KDE (Konqueror etc.) is somewhat limited, so why not
+use \vym to maintain the bookmark mess? To create a new map containing
+your current KDE bookmarks just choose
+\begin{itemize}
+    \item File \ra Import\ra KDE Bookmarks
+\end{itemize}
+
+\subsubsection*{Mind Manager}
+\vym has currently a very basic import filter to convert maps created by
+{\em Mind Manager}\footnote{Mind Manager is a commercial i.e. non free, software application by Mindjet for Windows and the Mac. Both names are registered trademarks by Mindjet. For more information see their website at
+\href{http://mindjet.com}{http://mindjet.com}} into \vym maps. Notes and
+pictures are not converted at the moment. You can import files with
+\begin{itemize}
+    \item File \ra Import\ra Mind Manager
+\end{itemize}
+
+
+\subsubsection*{Directory structure}
+\vym can read a directory structure. This is mainly for
+testing \vym e.g. to easily create huge maps used for benchmarks (yes,
+there is still room to optimize \vym ;-)
+
+
+
+
+\subsection{Export}  \label{export}
+\label{hideexport}
+Often you may not want to export the whole map, but just parts of it. For
+example you may have additional info you want to talk about in a
+presentation, while those parts should not be visible to the audience.
+To achieve this you can "hide" parts of the map during exports by
+setting the "hide in export" flag.
+\begin{center}
+    \includegraphics[width=0.5cm]{images/flag-hideexport.png}
+\end{center}
+You can toggle this flag in the toolbar or by pressing \key{H}.
+Note that there is a global option in the settings menu (
+\ref{settings}) to toggle the use of this flag. By default the flag is
+enabled.
+
+\subsubsection*{Open Office}
+Open Office beginning with version~2 uses the so called "Open Document Format", which can be written by \vym. The options are
+currently limited, but it possible to export presentations which can be
+opened in Open Office Impress. By selecting
+\begin{itemize}
+    \item File  \ra Export\ra Open Office
+\end{itemize}
+you get a file dialogue where you can choose the output file and the
+file type:
+    \maximage{images/export-oo.png}
+The file types represent various templates, which can be created with
+some manual work from an existing Open Office document. The structure of
+\vym map is then inserted into a template. 
+There are some limitations at the moment:
+\begin{itemize}
+    \item \vym can't take care of page lengths, so you have to check and
+    probably reedit in Open Office to avoid text running over the end of
+    a page
+    \item Images and flags are not used at the moment
+    \item Notes are just written as plain text, without RichText 
+    \item The full range of templates are not available in all distributions.   
+\end{itemize}
+Some of the templates make use of {\em sections} i.e sections insert the
+headings of mainbranches as chapters for sections into the presentation.
+
+\subsubsection*{Image}
+\vym supports all image formats which are natively supported by the
+QT~toolkit:
+BMP, JPEG, PBM, PGM, PNG, PPN, XPM, and XBM.
+For use in websites and for sending images by email PNG is a good
+recommodation regarding quality and size of the image. \vym uses QTs
+default options for compressing the images.
+
+\subsubsection*{ASCII}
+Exporting an image as text is somewhat experimental at the moment. Later
+this will probably be done using stylesheets. So the output may change in
+future versions of \vym.
+
+\subsubsection*{\LaTeX}
+\vym can generate an input file for \LaTeX. Currently this is considered
+as experimental, there are no options (yet). 
+By selecting
+\begin{itemize}
+    \item File  \ra Export\ra \LaTeX 
+\end{itemize}
+you will be asked in a file dialog for the name of the output file. This
+file may then be included in a \LaTeX document using command: 
+\begin{verbatim}
+    \include{inputfile.tex}
+\end{verbatim}
+
+\subsubsection*{KDE Bookmarks}
+\vym will overwrite the KDE bookmarks file and then try to notify
+running Konquerors via DCOP of the changed file. \vym does not create a
+backup!
+\begin{itemize}
+    \item File \ra Export \ra KDE Bookmarks
+\end{itemize}
+
+
+\subsubsection*{XHTML (Webpages)}
+
+This is the format to use if you wish to create a webpage. To see an example
+visit the \vym homepage: 
+\href{http://www.InSilmaril.de/vym}{www.InSilmaril.de/vym}
+
+Some explanation on how this works: 
+Before a map is exported as XHTML, it will be first written as XML into a
+directory (see \ref{xmlexport}). Then the external program {\tt
+xsltproc}\footnote{On SUSE Linux and some other distributions {\tt xsltproc} is installed by
+default.}
+will be called to process the XML file and generate HTML code.
+A dialog allows the user to set various options:
+\begin{itemize}
+    \item {\bf Include image:} If set, \vym will creat an image map at
+    the top of the HTML output. Clicking on a branch in the map will
+    jump to the corresponding section in the output.
+
+    \item {\bf Colored headings:}
+    If set to yes, \vym will colour the headings in the text part  with the
+    same colours used in the \vym map.
+    \item {\bf Show Warnings:}
+    If set to yes, \vym will ask before overwriting data.
+    \item {\bf Show output:}
+    This is useful mainly for debugging. It will show how the processing of
+    the XML file works by calling the external {\tt xsltproc}.
+\end{itemize}
+Additionally the paths to the CSS and XSL stylesheets can be set. By
+default on SUSE~Linux they will be in {\tt /usr/share/vym/styles}.
+
+
+\subsubsection*{XML} \label{xmlexport}
+The map is written into a directory both as an image and as an XML file. The
+directory is set in a file dialog. If the directory is not empty, you
+will be warned and offered choices if you are at risk of overwriting existing contents.
+
+It is possible to export different maps into the same directory. Each
+file generated will have the map's name as prefix, e.g. {\tt todo.vym}
+becomes {\tt todo.xml}, {\tt todo.png}, {\tt todo-image-1.png} and so
+on. This is useful if, for example, a website comprises several combined maps that have to be stored in the same directory.
+
+\subsubsection*{Export a part of a map}
+Select a branch you want to export together with its children, then open
+the context menu and choose {\em Save Selection}. This will create a
+file with the suffix {\tt .vyp}, which is an abbreviation for \lq vym
+part\rq.
+
+
+\section{Advanced Editing}
+
+\subsection{Properties of an object} 
+For any branch you can open a satellite window (see \ref{satellite}):
+the {\em property window}:
+\begin{center}
+    \includegraphics[width=8cm]{images/propwindow.png}
+    \label{propwindow}
+\end{center}
+%FIXME create screenshot
+%FIXME explain the tabs
+
+\begin{itemize}
+    \item Frame
+    \item Link (see \ref{hideunselected})
+    \item Layout (see \ref{incimg})
+\end{itemize}
+
+\subsection{Changing the history: Undo and Redo}
+\vym keeps track of all changes done in a map. The default number of
+changes which can be undone is~75. The complete history can be seen in
+the {\em historywindow}:
+    \maximage{images/historywindow.png}
+    \label{historywindow}
+A single step back be undone or redone with \key{CTRL-Z} or \key{CTRL-Y},
+or by using the buttons in the toolbar or the {\em historywindow}.
+Inside the {\em historywindow}, you can click on a line to unwind all
+actions done until that point in time -- or redo all changes by clicking
+on the last line.
+
+\hint{
+    You can "paste from the past": Go back in time by e.g. with
+    \key{CTRL-Z}, then copy to clipboard by pressing \key{CTRL-C}.
+
+    Now do all actions again, e.g. by \key{CTRL-Y} or clicking on the
+    last action in {\em historywindow}. Now paste from the past with
+    \key{CTRL-V}.
+}
+
+\subsection{Macros} \label{macros}
+Macros have been added to \vym in version~1.9.0. 
+So far they have a preliminary character, maybe they are going to be
+replaced by full-featured scripting functionality later (though the
+commands will be more or less the same).
+
+Each function key
+\key{F1} to \key{F12} holds a macro, which is executed on the current
+selection if the key is pressed. The default macros change the colour of
+a subtree or set the frame of a branch:
+\begin{center}
+    \includegraphics[width=8cm]{images/macros.png}
+\end{center}
+Each macro is a \vym script, which is executed when the associated key
+is pressed. The default location of the scripts can be changed in the
+Settings menu. More information on using scripts in \vym is found in
+[\ref{settings})
+appendix~\ref{scripts}.
+
+\subsection{Bookmarks} \label{bookmarks}
+\subsubsection*{Open new tabs instead of new windows}
+If you use konqueror as your browser, \vym will remember the konqueror session which
+was opened first by \vym. You can also press \key{Ctrl} and click to
+open the link in a new tab.
+
+\vym can also open a new tab in Mozilla or Firefox using the remote
+command\footnote{\href{http://www.mozilla.org/unix/remote.html}{http://www.mozilla.org/unix/remote.html}}
+of these browsers.
+
+\subsubsection*{Drag and Drop}
+If you want to keep bookmarks in a map, select a branch where you want
+to add the bookmark, then simply drag the URL from your browser to the
+map. Also you could use an existing heading as URL: Right click onto the
+branch and select "Use heading for URL".
+
+
+\subsubsection*{Directly access bookmark lists of a browser}
+Please see the sections \ref{import} and \ref{export} about
+Import and Export filters.
+
+\subsubsection*{Special URLs}
+\vym can turn an existing heading of a branch into an URL. Currently
+this works for Bugentries in the Novell Bugtracking system: Open the
+context menu of a branch (usually by right-clicking it) and select
+\begin{itemize}
+    \item Create URL to Bugzilla
+\end{itemize}
+The URL will be build from the number in the heading.
+
+\subsection{Associating images with a branch} \label{incimg}
+The default setting for an image is for it to float "freely". Images can be
+positioned anywhere on the canvas, but may end up in the same place as other
+parts of the map obscuring that part of the map.
+
+The solution is to insert or include them "into" a branch. This can be done via
+the property window (see \ref{propwindow}):
+\begin{itemize}
+    \item Include images horizontally
+    \item Include images vertically
+\end{itemize}
+The image is still positioned relative to its parent branch, but the
+heading and border of the branch frame adapt to the floating image, see below: 
+    \maximage{images/includeImages.png}
+
+\subsection{Modifier Modes} 
+Modifiers are for example the \key{Shift}- the \key{Ctrl}- ot the \key{Alt}-keys. When
+pressed while applying mouse actions, they will cause \vym to use
+a "modified" version of the action which usually would be done. 
+
+%\key{Ctrl} or \key{Alt}is pressed while releasing the branch, it will be
+%added above/below the target, not as child of the target.
+
+Without a modifier key pressed, the first mouse click on a branch just selects
+it. For the behaviour of the \key{Ctrl} modifier there are several
+options, which can be set from the modifier toolbar:
+\begin{center}
+    \includegraphics[width=3cm]{images/modmodes.png}
+\end{center}
+The default mode is to copy the colour from the clicked branch to the already
+selected branch. The figure above shows the toolbar with the default modifier 
+selected. The second modifier
+let's you easily copy a whole branch with a single click. The third
+modifier lets you create links between branches called {\em xLinks}.
+They will be explained in the next section \ref{xlinks}.
+
+\subsection{Hide links of unselected objects} \label{hidelink}
+Sometimes it would be useful to position a branch freely, just like a
+mainbranch or an image. This is possible for all
+branches, you can use a mainbranch and hide its connecting link to the
+mapcenter or hide the link between a child branch and its parent. This can be used e.g. for legends or a collection of vymLinks
+pointing to other maps:
+\begin{center}
+    \includegraphics[width=9cm]{images/hiddenlink.png}
+\end{center}
+To hide the link between a branch and its parent open the
+\ref{propwindow} and check "Hide link if object is not selected" on
+"Link" tab.
+
+
+\subsection{XLinks} \label{xlinks}
+So far all the data in the \vym map has been treelike. Using xLinks you
+can link one branch to any other, just like attaching a rope between two
+branches in a real tree. This is especially useful in complex maps,
+where you want to have crossreferences which can not be displayed on the same
+visible area of the {\em mapeditor} window. The following example map still fits on one screen, but shows how data can be crosslinked. In the graphics there is a link from a task (prepare a presentation) to general information:
+    \maximage{images/xlink.png}
+Note that a xLink which points to a branch that is not visible (because
+it is scrolled), is just shown as a little horizontal arrow. In the
+screenshot above have a look at the \lq Tuesday\rq\ branch.
+
+\subsubsection*{Create a xLink}
+Choose the link mode from the modifier toolbar (by clicking the toolbar icon or pressing
+\key{L}). Select the branch, where the xLink should start. Press the
+modifier key \key{Ctrl} and then click on the selected branch where the
+link should start and drag the mouse pointer to the branch where the link is to end. (The link is drawn to follow the mouse pointer). When you release the mouse over a branch the xLink becomes permanent.
+
+\subsubsection*{Modify or delete a xLink}
+First select a branch at either end of the xLink. Then open the context
+menu and select \lq Edit xLink\rq. A submenu contains all the xLinks of
+the branch (if there are any). They are named like the branches, where
+they end. Choose one and the xLink dialogue opens, where you can set
+colour, width and also delete the xLink.
+
+\subsubsection*{Follow a xLink}
+In a complex \vym map it sometimes comes in handy to be able to jump to the other end
+of a xLink. You can do this by opening the context menu of the branch
+and clicking on \lq Goto xLink\rq and selecting the xLink you want to
+follow.
+
+
+
+\subsection{Adding and removing branches}
+The context menu of a branch shows some more ways to add and delete data
+e.g. you can delete a branch while keeping its children. The children become
+linked to the parent of the previously removed branch.
+Similar branches can be inserted into existing maps. For keyboard
+shortcuts also have a look at the context menu.
+
+\subsection{Adding a whole map or a part of a map}
+Select a branch where you want to add a previously saved map ({\tt
+.vym})or a part of a map ({\tt .vyp}) , then open the context menu and
+choose {\em Add \ra Add Map (Insert)}. For the import you can choose
+between {\em Add Map (Insert)} and {\em Add Map (Replace)}: The imported
+data will be added after the selected branch.
+
+
+\section{\vym on Mac OS X}
+\subsection{Overview}
+Basically there are two ways to run \vym on Macs:
+\subsubsection*{Qt Mac Edition:}
+    \vym here provides the well known Mac look and feel.  \vym is
+    available as Mac OS X application package in contained in a disk
+    image ({\tt vym.dmg}. It has been compiled and tested in
+    Mac~OS~10.4.  This package includes  runtime libraries of Qt by
+    Trolltech.
+    
+\subsubsection*{X11 version} \vym can also be run using the Linux
+version, but then menus and handling will also be those of the Linux
+version e.g. The menu bar will look different. 
+
+\subsection {Contextmenu and special keys}
+Most Macs unfortunatly just have a single mouse button. In order to show
+the context menu which usually would be opened with the right mouse
+button, you can click while pressing the \key{kommand}-key.
+
+Especially on Laptops some of the keys usually used on PC keyboards seem
+to be missing. The QT-Mac Edition of \vym has its own keyboard
+shortcuts. To find the shortcuts just have a look at all the menu
+entries, the shortcut is visible next to an entry. Toolbar buttons also
+may have shortcuts, just position the mouse pointer over a button and
+wait for the little help window to appear. 
+
+\subsection {Viewing external links}
+\vym on Mac uses the system call {\tt /usr/bin/open} to view links.
+Mac~OS determines automatically if the link is a pdf or www page and
+opens the right browser.
+
+
+\newpage
+
+\begin{appendix}
+
+\section{\vym initialisation process and configuration}
+\subsection {Settings menu}
+    The {\em Settings} menu allows to configure \vym to your needs:
+
+\subsubsection*{Set application to open PDF files} Choose a PDF
+    viewer like {\tt acrobat} or {\tt konqueror} which is installed on
+    your system.
+
+\subsubsection*{Set application to open external links}
+    Choose your favourite webbrowser here.
+
+\subsubsection*{Set path for macros}
+    Set the default search path for macros, which will be executed when
+    you press one of the function keys. Each key corresponds to a file
+    ({\tt macro-1.vys..macro12.vys}) in the search path.
+
+\subsubsection*{Set number of undo levels}
+    Sets the number of undo/redo levels. The default setting is
+    75~levels.
+
+\subsubsection*{Autosave and autosave time}
+    Automatic saving of modified maps can be toggled on or off. The
+    autosave time is entered in seconds.
+
+\subsubsection*{Write backup on save}
+    When saving a map called {\tt example.vym}, \vym will rename the
+    existing file to {\tt example.vym\~{}} before writing the {\tt
+    example.vym} itself.
+
+\subsubsection*{Edit branch after adding it}
+    If set, the heading of a new branch will be edited immediatly after
+    adding the branch.
+
+\subsubsection*{Select branch after adding it}
+    If set, a new branch will be selected immediatly after adding it.
+    When you "brainstorm" on a given keyword, you don't want to go
+    deeper and deeper into details, but keep the focus on the keyword.
+    So the default setting here is to {\em not} select the freshly added
+    branch.
+    
+\subsubsection*{Select existing heading}
+    If set and you begin to edit the heading of a branch, the heading text in
+    the dialog will be selected. Usefully to copy\&paste to other
+    applications.
+
+\subsubsection*{Delete key}
+    If set, the \key{Delete} is enabled to, well, delete objects. This
+    can be switched off to avoid confusing with the nearby
+    \key{Insert}-key on PC keyboards.
+
+\subsubsection*{Exclusive flags}
+    If set, some of the standard flags can only be used exclusively,
+    e.g.~the smileys.
+
+\subsubsection*{Use hide flags}
+    If set, every branch which also has the hide flag set (see
+    \ref{hideexport}) will be hidden in exports.
+
+\subsection{Configuration file}
+On startup \vym will look for a configuration for user specific settings
+like window positions, toolbars etc. If this file does not already
+exist, it will be created. The file is located in the users home
+directory. The exact position depends on the platform:
+\begin{center}
+\begin{tabular}{cl}
+    {\bf Platform}  & {\bf Configuration file} \\ \hline
+    Linux       & {\tt $\sim$/.config/InSilmaril/vym.conf  } \\
+    Mac OS X    & {\tt /Users/NAME/Library/Preferences/com.insilmaril.vym.plist  } \\
+\end{tabular}
+\end{center}
+The file can be edited manually, or on Mac~OS~X with Property List
+Editor (installed with xtools).
+
+\subsection{Path to ressources}
+\vym will try to find its ressources (images, stylesheets, filters,
+etc.) in the following places:
+\begin{enumerate}
+    \item Path given by the environment variable {\tt VYMHOME}.
+    \item If called with the local option (see \ref{options} below),
+          \vym will look for its data in the current directory.
+    \item {\tt /usr/share/vym}
+    \item {\tt /usr/local/share/vym}
+\end{enumerate}
+
+\subsection{Command line options} \label{options}
+\vym has the following options:
+\begin{center}
+\begin{tabular}{cccp{8cm}}\\ 
+\bf Option  & \bf Comment & \bf Argument & \bf Description \\ \hline
+v & version &           & Show version and codename of \vym\\
+l & local   &           & Use local paths to stylesheets, translations, icons, 
+                          etc. instead of system paths. Useful for testing\\
+h & help    &           & Show help\\
+r & run     & filename  & Load and run script\\
+q & quit    &           & Quit immediatly after startup. Useful for benchmarks.\\
+\end{tabular}
+\end{center}
+You can also give several filenames at the commandline to let \vym open
+several maps at once.
+ 
+
+\section{Scripts} \label{scripts}   %FIXME
+
+TODO: This section of the \vym manual is not complete yet, sorry.
+
+\subsection{Example scripts}
+\subsubsection{Export a set of maps}
+\begin{code}
+\# Simple vym script to export images of various maps simultanously
+exportImage ();
+\end{code}
+The script above can be used to export all maps in a directory
+automatically. If the script is named {\tt export-image.vys}, call \vym with
+\begin{code}
+\$ vym --quit --run export-image.vys *.vym
+\end{code}
+
+
+\section{Contributing to \vym}
+So far I'd say I have written 98\% of the code on my own. No surprise,
+that \vym exactly fits my own needs. Nevertheless I would like to
+encourage all users of  \vym to contribute. Maybe not only with feature
+requests, but also with code, new import/export filters, translations
+etc. In this appendix I'll try to show how easy it is to expand the
+things you can do already with \vym. I really look forward to hear from
+you!
+
+\subsection{Getting help}
+
+\subsubsection*{Frequently asked questions}
+Please refer to the FAQ available on the \vym website:
+\begin{center}
+\href{http://www.InSilmaril.de/vym/faq.html}{http://www.InSilmaril.de/vym/faq.html}
+\end{center}
+
+\subsubsection*{Mailinglists}
+There are two mailinglists: {\tt vym-forum} is the \vym users forum to
+discuss various questions, while {\tt vym-devel} is intended for people
+interested in contributing to \vym. You can view the archives and
+subscribe at
+\begin{center}
+\href{https://sourceforge.net/mail/?group_id=127802}{https://sourceforge.net/mail/?group\_id=127802}
+\end{center}
+
+\subsubsection*{Contacting the author}\label{author}
+Especially for support questions please try the mailinglists first. If
+everything else fails you can contact the author Uwe Drechsel at
+\begin{center}
+\href{mailto:vym@InSilmaril.de}{vym@InSilmaril.de}
+\end{center}
+
+
+
+\subsection{How to report bugs}
+Though Sourceforge has its own bugreporting system, I'd rather prefer if
+you contact me directly (see \ref{author}) or even better: You can file
+a bugreport in Bugzilla, the bugtracking system of openSUSE:
+\begin{center}
+\href{http://en.opensuse.org/Submit_a_bug}{http://en.opensuse.org/Submit\_a\_bug}
+\end{center}
+I build \vym regulary for openSUSE, so you may report it against a
+recent version there, even if you  use another Operating System.
+Please don't forget to tell me what you are using:
+\begin{itemize}
+    \item the exact steps needed to reproduce the bug
+    \item the version and build date of \vym (see the Help \ra About
+    \vym)
+    \item hardware and Operating System
+\end{itemize}
+
+\subsection{Compiling from the sources}
+\subsubsection{Getting the sources} \label{getsources}
+You find the latest version of \vym at the project site:
+\begin{center}
+\href{https://sourceforge.net/projects/vym/}{https://sourceforge.net/projects/vym/}
+\end{center}
+There you can check them out of the source repository (CVS):\\
+
+\begin{verbatim}
+cvs -d:pserver:anonymous@cvs.sf.net:/cvsroot/vym checkout code
+\end{verbatim}
+
+\subsubsection{The Qt toolkit}
+Qt is C++ toolkit for multiplatform GUI and application development. It
+provides single-source portability across MS~Windows, Mac~OS~X, Linux
+and all major commercial Unix variants. Qt is also available for
+embedded devices. Qt is a Trolltech product. For more information see 
+\begin{center}
+\href{http://www.trolltech.com/qt/}{www.trolltech.com/qt} 
+\end{center}
+
+
+\subsubsection{Compiling \vym }
+Make sure you have installed your Qt environment properly, see the Qt
+documentation for details. You need to have the Qt command {\tt qmake}
+in your {\tt PATH}-environment, then run
+\begin{code}
+\$ qmake
+$ make  
+$ make install
+\end{code}
+The last command {\tt make install} needs root-permissions. Of course it
+may be omitted, if you just want to test \vym.
+
+%\subsubsection*{Compiling \vym on Macs}
+%FIXME
+
+\subsection{\vym file format} \label{fileformat}
+\vym maps usually have the suffix "{\tt .vym}" and represent a
+compressed archive of data. If you want to have a
+closer look into the data structure map called "mapname.vym", 
+just uncompress the map manually using
+\begin{code}
+\$ unzip mapname.vym
+\end{code}
+This will create directories named {\tt images} and {\tt flags} in your
+current directory and also the map itself, usually named {\tt
+mapname.xml}.
+The XML structure of \vym is pretty self explaining, just have a look at
+{\tt mapname.xml}.
+
+This XML file can be loaded directly into \vym, it does not have to be
+compressed. If you want to compress all the data yourself, use
+\begin{code}
+\$ zip -r mapname.vym .
+\end{code}
+to compress all data in your current directory.
+
+\subsection{New features}
+There are lots of features which might find their way into \vym.
+Together with \vym you should have received a directory with several
+example maps. You find them by clicking Help \ra Open~vym~example~maps.
+There you will find the map {\tt vym-projectplan.vym}. It lists quite a
+lot of things to be done in future. If you have more ideas, contact the
+development team at {\tt vym-devel@lists.sourceforge.net}.
+
+
+\subsection{New languages support}
+In order to add a new language to \vym you need 
+the sources (see \ref{getsources}) and
+an installation of Trolltechs QT. A part of QT are the development
+tools, from those tools especially the translation tool "Linguist" is
+needed. 
+
+In some Linux distributions the development tools are in an extra package, e.g. on SUSE LINUX you should have installed:
+\begin{code}
+libqt4-devel.rpm
+libqt4-devel-doc.rpm
+libqt4-devel-tools.rpm
+\end{code}
+If you don't have QT in your system, you can get it from 
+    \href{http://www.trolltech.com}{http://www.trolltech.com} Once you
+    are able to compile vym yourself, you can translate the text in vym
+    itself by performing the following steps:
+\begin{itemize}
+    \item Let's assume now your encoding is "NEW" instead of for example
+    "de" for german or "en" for english
+    
+    \item Copy the file {\tt lang/vym\_en.ts} to l{\tt ang/vym\_NEW.ts} (The code
+    itself contains the english version.)
+        
+    \item Add {\tt lang/vym\_NEW.ts} to the TRANSLATIONS section of vym.pro
+
+    \item Run Linguist on {\tt vym\_NEW.ts} and do the translation
+
+    \item Run {\tt lrelease} to create {\tt vym\_NEW.qm}
+
+    \item Do a make install to install the new vym and check your translation
+\end{itemize}
+
+If you feel brave, you can also translate the manual. It is written in
+LaTeX, you just have to change the file tex/vym.tex. (Linguist and QT
+are not needed, but it is useful to know how to work with LaTeX and esp.
+pdflatex to create the PDF.) 
+
+Please mail me every translation you have done. I can also give you a
+developer access to the project, if you want to provide translations
+regulary.  
+
+\subsection{New export/import filters}
+\vym supports various kinds of filters. Data can be written directly,
+inserted into templates or it can be written as XML data and then
+processed by XSL transformations. 
+
+Most of the import/export functionality is available in the classes
+ImportBase and ExportBase and subclasses. All of them can be found in
+{\tt imports.h} and {\tt exports.h}.
+
+\subsubsection*{Direct import/export}
+An example for a direct export is the XML export. This method touches
+the implementation of nearly every object of \vym, so whenever possible
+you should better use a XSL transformation instead.
+
+If you still want to know how it is done, start looking at 
+{\tt MapEditor::saveToDir} in {\tt mapeditor.cpp}.
+
+\subsubsection*{Templates}
+Templates have been introduced to export to opendoc format used e.g. by
+Open~Office. While I read the spec ($>$ 500 pages) about the format\footnote{
+\href{http://www.oasis-open.org/}{http://www.oasis-open.org/}}\ 
+I had the feeling that I did not want to write the export from scratch. 
+It would be too complex to adapt the styles to your own wishes, e.g. the
+layout.
+
+Instead I analyzed existing Open~Office documents. I found out that
+there are lots of redundant bits of information in a standard
+presentation, for example each list item is contained in its own list.
+In the end I came up with the default presentation style, which still
+could be simplified, just in case you have free time\ldots
+
+The existing templates are still work in progress, before you spend too
+much time developing your own style, please contact me.  Basically the
+following steps are needed to build your own style:
+\begin{enumerate}
+    \item Create an example in Open Office. Use a title, authors name,
+    page heading etc.\ which you can easily grep for in the output file.
+    
+    \item Unzip  the Open Office document into a directory.
+
+    \item The main file is called {\tt content.xml}. All data is in one
+    single line. You can split the XML tags using the script {\tt
+    scripts/niceXML}, which is part of the \vym distribution.
+
+    \item Copy the output of {\tt niceXML} to {\tt
+    content-template.xml}.
+
+    \item Looking closer you will find lots of unused definitions, for
+    example of styles. You can delete or simply ignore them.
+
+    \item Try to find your title, authors name. \vym will replace the
+    following strings while exporting:
+    \begin{center}
+    \begin{tabular}{lp{4cm}}
+        {\tt <!-- INSERT TITLE -->}     & title of map \\
+        {\tt <!-- INSERT AUTHOR-->  }   & author \\
+        {\tt <!-- INSERT COMMENT -->}   & comment \\
+        {\tt <!-- INSERT PAGES-->}      & content of map \\
+    \end{tabular}
+    \end{center}
+    The content itself is generated in a similar way by inserting lists
+    into {\tt page-template}. Here the following substitutions are made:
+    \begin{center}
+    \begin{tabular}{lp{7cm}}
+        {\tt <!-- INSERT PAGE HEADING-->}       & heading of a page
+        (mainbranch or child of mainbranch, depending on the use of
+        sections) \\
+        {\tt <!-- INSERT LIST -->   }   & all children of the branch above \\
+    \end{tabular}
+    \end{center}
+\end{enumerate}
+Currently images are exported and notes just will appear as text
+without formatting and colours.
+
+
+
+
+\subsubsection*{XSL Transformation}
+\vym uses XSL transformations while exporting (e.g. XHTML) and importing
+data (e.g. KDE bookmarks). There is a little code needed to provide the
+GUI, the rest is done using the {\tt .xsl} stylesheet and calling the
+{\tt xsltproc} processor, which is part of libxslt, the XSLT
+C  library  for  GNOME. 
+
+\end{appendix}
+\end{document}
+
+%TODO
+%\subsubsection{Menus}
+%\subsubsection{Keyboard shortcuts}
+%Where does vym save its settings? -> ~/.qt/vymrc
+
+
+% INDEX
+% mapeditor
+% noteditor
+% branch
+% mapcenter
+% heading
+% flag
+% orientation 
+% zoom
+% orientation
+% Toolbar
+% Zoom
+% Find
+% statusbar
+% link
+% mainbranch
+% subtree
+% reorder
+% scroll
+% fold
+% vymlink
+% xlink
+% modMode
+% context menu
+% Mac OS X
+
+
+
+\end{document}

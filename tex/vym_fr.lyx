@@ -1,0 +1,11687 @@
+#LyX 1.6.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 345
+\begin_document
+\begin_header
+\textclass article
+\begin_preamble
+
+
+
+\usepackage{hyperref}
+
+
+%\usepackage{longtable}
+
+
+\setlength{\headheight}{0cm}
+\setlength{\headsep}{0cm}
+\setlength{\topskip}{0cm}
+\setlength{\topmargin}{-0.5cm}
+
+\setlength{\parskip}{1.5ex}
+\setlength{\parindent}{0cm}
+\setlength{\oddsidemargin}{0cm}
+\setlength{\textwidth}{16cm}
+\setlength{\textheight}{27cm}
+
+\newlength{\maximgwidth}
+\setlength{\maximgwidth}{14cm}
+\newcommand{\maximage}[1]{	
+\begin{center}
+\includegraphics[width=\maximgwidth]{#1} 
+\end{center}
+}
+\newcommand{\hint}[1]{
+\begin{center} 
+\begin{tabular}{|rp{12cm}|} \hline
+{\bf Astuce }:& #1\\	\hline
+\end{tabular}
+\marginpar{\Huge !} 
+\end{center} 
+}
+
+\newcommand{\vym}{{\sc vym }}
+\newcommand{\ra}{$\longrightarrow$}
+\newcommand{\la}{$\longleftarrow$}
+\newcommand{\ua}{$\uparrow$}
+\newcommand{\da}{$\downarrow$}
+\newcommand{\key}[1]{[#1]}
+
+%\newenvironment{code}[1]{ \verbatim #1}{\endverbatim  }
+
+\hypersetup{bookmarks, bookmarksopen,
+  pdftitle={VYM - a tool for visual thinking },
+  pdfauthor={Uwe Drechsel},    
+  pdfsubject={map},
+  pdfkeywords={map, tool},
+  pdfpagemode={UseOutlines},                                 
+  bookmarksopenlevel={1},   
+  colorlinks={true},     
+  linkcolor={blue},
+  urlcolor={green},
+  citecolor={red}} 
+\end_preamble
+\options a4paper
+\use_default_options false
+\language french
+\inputencoding utf8
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\paperfontsize 12
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_amsmath 0
+\use_esint 0
+\cite_engine basic
+\use_bibtopic false
+\paperorientation portrait
+\secnumdepth 2
+\tocdepth 2
+\paragraph_separation indent
+\defskip medskip
+\quotes_language french
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\author "" 
+\author "" 
+\end_header
+
+\begin_body
+
+\begin_layout Title
+\begin_inset Graphics
+	filename images/vym-logo-new.png
+	width 8cm
+
+\end_inset
+
+ 
+\begin_inset Newline newline
+\end_inset
+
+ VYM 
+\begin_inset Newline newline
+\end_inset
+
+ -- 
+\begin_inset Newline newline
+\end_inset
+
+View Your Mind
+\begin_inset Newline newline
+\end_inset
+
+ 
+\size small
+Version 1.12.2
+\begin_inset Newline newline
+\end_inset
+
+(version française)
+\end_layout
+
+\begin_layout Author
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+textcopyright
+\end_layout
+
+\end_inset
+
+ Uwe Drechsel 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset toc
+LatexCommand tableofcontents
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section*
+Remerciements
+\end_layout
+
+\begin_layout Standard
+Beaucoup de gens m'ont envoyé leurs impressions et leurs idées et tout cela
+ m'a aidé à faire 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ meilleur.
+ Merci à tous !
+\end_layout
+
+\begin_layout Standard
+Pour ce manuel, je remercie particulièrement :
+\end_layout
+
+\begin_layout Itemize
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+em
+\end_layout
+
+\end_inset
+
+ Peter Adamson
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ pour un grand nombre de retours et pour la relecture de mon anglais très
+ imparfait,
+\end_layout
+
+\begin_layout Itemize
+L'équite du 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+em
+\end_layout
+
+\end_inset
+
+ AClibre (Academia y Conocimiento Libre)
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ en Colombie pour leur traduction du manuel en espagnol : 
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="2" columns="2">
+<features>
+<column alignment="none" valignment="top" width="7cm">
+<column alignment="none" valignment="top" width="5.5cm">
+<row>
+<cell alignment="none" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Encargado 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Actividad 
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="none" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Itemize
+Vanessa Carolina Gutiérrez Sanchez 
+\end_layout
+
+\begin_layout Itemize
+Erika Tatiana Luque Melo 
+\end_layout
+
+\begin_layout Itemize
+Jeffrey Steve Borbón Sanabria 
+\end_layout
+
+\begin_layout Itemize
+John Edisson Ortiz Román 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Itemize
+Traducciónl 
+\end_layout
+
+\begin_layout Itemize
+Revisión y correcciones varias 
+\end_layout
+
+\begin_layout Itemize
+Estructuración y exporte 
+\end_layout
+
+\begin_layout Itemize
+Revisión y correcciones varias 
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section*
+Note du traducteur
+\end_layout
+
+\begin_layout Standard
+Correspondances entre les mots de la version originale en anglais et la
+ version française.
+ Certains mots trop spécifiques à 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym 
+\end_layout
+
+\end_inset
+
+ ont été gardés en anglais.
+\end_layout
+
+\begin_layout Subsection*
+traduits
+\end_layout
+
+\begin_layout Description
+ancre 
+\emph on
+anchor 
+\end_layout
+
+\begin_layout Description
+canevas 
+\emph on
+layout 
+\end_layout
+
+\begin_layout Description
+carte 
+\emph on
+map 
+\end_layout
+
+\begin_layout Description
+défaire/refaire 
+\emph on
+undo/redo 
+\end_layout
+
+\begin_layout Description
+emoticon
+\emph on
+ smiley 
+\end_layout
+
+\begin_layout Description
+escamotage 
+\emph on
+folding 
+\end_layout
+
+\begin_layout Description
+fils 
+\emph on
+child 
+\end_layout
+
+\begin_layout Description
+indicateur 
+\emph on
+flag 
+\end_layout
+
+\begin_layout Description
+menu
+\begin_inset space ~
+\end_inset
+
+de
+\begin_inset space ~
+\end_inset
+
+contexte 
+\emph on
+context menu
+\emph default
+ 
+\end_layout
+
+\begin_layout Description
+menu
+\begin_inset space ~
+\end_inset
+
+des
+\begin_inset space ~
+\end_inset
+
+préférences 
+\emph on
+settings menu 
+\end_layout
+
+\begin_layout Description
+mode
+\begin_inset space ~
+\end_inset
+
+modificateur 
+\emph on
+modifier (CTRL) 
+\end_layout
+
+\begin_layout Description
+navigateur 
+\emph on
+webbrowser 
+\end_layout
+
+\begin_layout Description
+onglets 
+\emph on
+bookmark 
+\end_layout
+
+\begin_layout Description
+patrons 
+\emph on
+frame 
+\end_layout
+
+\begin_layout Description
+titre 
+\emph on
+heading 
+\end_layout
+
+\begin_layout Description
+signets 
+\emph on
+bookmark 
+\end_layout
+
+\begin_layout Description
+sous-arbre 
+\emph on
+jeu de branches en dessous
+\end_layout
+
+\begin_layout Description
+barre
+\begin_inset space ~
+\end_inset
+
+de
+\begin_inset space ~
+\end_inset
+
+travail
+\emph on
+ toolbars
+\end_layout
+
+\begin_layout Subsection*
+non traduits
+\end_layout
+
+\begin_layout Description
+mapeditor fenêtre d'édition de la carte 
+\end_layout
+
+\begin_layout Description
+mapcenter milieu du mapeditor 
+\end_layout
+
+\begin_layout Description
+noteeditor fenêtre d'édition des notes
+\end_layout
+
+\begin_layout Description
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+clearpage 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Introduction
+\end_layout
+
+\begin_layout Subsection
+Qu'est-ce qu'une carte 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ ?
+\end_layout
+
+\begin_layout Standard
+Une carte 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ (on abrégera sous le nom de 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+em
+\end_layout
+
+\end_inset
+
+ carte
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+) est une structure en forme d'arbre:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename images/example1_fr.png
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+De telles cartes peuvent être faites à la main sur une feuille de papier
+ ou en brouillon et aident à structurer vos pensées.
+ Alors qu'une structure en forme d'arbre comme sur l'image ci-dessus peut
+ être tracée à la main, 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ offre des possibilités supplémentaires.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ n'est pas un logiciel de dessin supplémentaire, mais un outil pour mémoriser
+ et modifier l'information de façon intuitive.
+ Par exemple, vous pouvez réorganiser des parties de la carte en appuyant
+ sur une touche ou ajouter des informations comme un email complet simplement
+ par un clic de souris.
+\end_layout
+
+\begin_layout Standard
+Un fois que vous avez fini de rassembler et d'organiser vos idées vous pouvez
+ générer des sorties ---basées sur une 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+em
+\end_layout
+
+\end_inset
+
+ carte
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+--- sous divers formats incluant une présentation dans Open-Office.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+hint{
+\end_layout
+
+\end_inset
+
+Vous trouverez la carte ci-dessus et les autres en cliquant :
+\end_layout
+
+\begin_layout Standard
+\align center
+Help 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+ra
+\end_layout
+
+\end_inset
+
+ Open vym examples 
+\end_layout
+
+\begin_layout Standard
+dans la barre de menu.
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Pourquoi utiliser des 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+em
+\end_layout
+
+\end_inset
+
+ cartes
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+? l'Espace, le Temps et votre cerveau
+\end_layout
+
+\begin_layout Subsubsection*
+Espace
+\end_layout
+
+\begin_layout Standard
+Une 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+em
+\end_layout
+
+\end_inset
+
+ carte
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ peut concentrer un contenu très complexe sur un petit espace comme une
+ feuille de papier.
+ Cela aide les deux côtés de votre cerveau : le côté logique et le côté
+ créatif (par exemple en utilisant des dessins, des couleurs et des mots
+ clé, souvent appelés 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+em
+\end_layout
+
+\end_inset
+
+ ancres
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+.
+ C'est une technique pour aider à organiser votre façon de penser et stimuler
+ votre créativité : cela vous aide en développant, classant et mémorisant
+ vos idées.
+\end_layout
+
+\begin_layout Subsubsection*
+Temps
+\end_layout
+
+\begin_layout Standard
+Parce que vous utilisez des mots clé et des dessins, c'est plus rapide que
+ les bonnes vieilles 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+og
+\end_layout
+
+\end_inset
+
+ notes 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+fg
+\end_layout
+
+\end_inset
+
+.
+ Votre cerveau mémorise les choses par association avec d'autres choses
+ -- une 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+em
+\end_layout
+
+\end_inset
+
+ carte
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ utilise ces connexions et stimule de nouvelles associations.
+\end_layout
+
+\begin_layout Subsubsection*
+Votre cerveau
+\end_layout
+
+\begin_layout Standard
+En 1960 le professeur 
+\shape smallcaps
+Roger Sperry
+\shape default
+ découvre que les deux hémisphères du cerveau humain s'occupent de domaines
+ différents mais 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+em
+\end_layout
+
+\end_inset
+
+ peuvent 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ faire les mêmes choses : 
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="2" columns="2">
+<features>
+<column alignment="none" valignment="top" width="5.5cm">
+<column alignment="none" valignment="top" width="5.5cm">
+<row>
+<cell alignment="none" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Côté gauche 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Côté droit
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="none" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Itemize
+expression verbale et écrite,
+\end_layout
+
+\begin_layout Itemize
+nombres,
+\end_layout
+
+\begin_layout Itemize
+pensée logique, 
+\end_layout
+
+\begin_layout Itemize
+analyse et détails,
+\end_layout
+
+\begin_layout Itemize
+science,
+\end_layout
+
+\begin_layout Itemize
+pensée linéaire,
+\end_layout
+
+\begin_layout Itemize
+concept de temps.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Itemize
+langage du corps, 
+\end_layout
+
+\begin_layout Itemize
+pensée visuelle, rêves éveillés,
+\end_layout
+
+\begin_layout Itemize
+intuition et émotion,
+\end_layout
+
+\begin_layout Itemize
+capacité de synthèse,
+\end_layout
+
+\begin_layout Itemize
+créativité,
+\end_layout
+
+\begin_layout Itemize
+art, musique, danse, 
+\end_layout
+
+\begin_layout Itemize
+pensée non linéaire, relation entre les choses,
+\end_layout
+
+\begin_layout Itemize
+conscience spatiale.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Dans notre société des sciences occidentales, nous avons appris à relier
+ principalement le côté gauche de notre cerveau, le côté 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+og
+\end_layout
+
+\end_inset
+
+ rationel 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+fg
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{}
+\end_layout
+
+\end_inset
+
+.
+ Dans d'autres cultures, comme celles des vieilles cultures indiennes ou
+ d'autres 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+og
+\end_layout
+
+\end_inset
+
+ vieilles
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+fg
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{}
+\end_layout
+
+\end_inset
+
+ cultures, l'autre côté (le droit) est plus important.
+ Les 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+em
+\end_layout
+
+\end_inset
+
+ cartes
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ sont juste un moyen de stimuler l'autre coté et d'utiliser les capacités
+ supplémentaires dont nous disposons tous.
+\end_layout
+
+\begin_layout Subsection
+Où puis-je utiliser une 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+em
+\end_layout
+
+\end_inset
+
+ carte
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+?
+\end_layout
+
+\begin_layout Standard
+Voici quelques exemples et comment vous pouvez utiliser ces 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+em
+\end_layout
+
+\end_inset
+
+ cartes
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ : 
+\end_layout
+
+\begin_layout Itemize
+pour préparer des articles, des papiers, des livres, des discussions, etc,
+ 
+\end_layout
+
+\begin_layout Itemize
+pour trier des idées complexes, 
+\end_layout
+
+\begin_layout Itemize
+pour mémoriser des faits, des noms de personnes, du vocabulaire, etc, 
+\end_layout
+
+\begin_layout Itemize
+pour trier des emails, des fichiers et les signets de votre ordinateur,
+ 
+\end_layout
+
+\begin_layout Itemize
+la préparation d'un exposé, 
+\end_layout
+
+\begin_layout Itemize
+des séances de remue-méninges pour résoudre des problèmes, 
+\end_layout
+
+\begin_layout Itemize
+pour enregistrer les tâches lors de l'organisation d'un projet.
+ 
+\end_layout
+
+\begin_layout Subsection
+Ce que vous ne pouvez pas faire avec une 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+em
+\end_layout
+
+\end_inset
+
+ carte
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+...
+\end_layout
+
+\begin_layout Standard
+Une 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+em
+\end_layout
+
+\end_inset
+
+ carte
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ tracée par quelqu'un montre la façon de penser de son auteur.
+ Elle n'a pas à être juste ou fausse, elle n'est pas criticable.
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+og
+\end_layout
+
+\end_inset
+
+ C'est ce que c'est 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+fg
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{}
+\end_layout
+
+\end_inset
+
+(
+\shape smallcaps
+F.
+\begin_inset space ~
+\end_inset
+
+Lehmann
+\shape default
+).
+ L'outil est d'une très utile à son créateur mais d'un usage très limité
+ pour les autres.
+\end_layout
+
+\begin_layout Standard
+Cependant quand un groupe s'investit dans la création d'une 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+em
+\end_layout
+
+\end_inset
+
+ carte
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+, tout le groupe bénéficie de son utilisation.
+ Quand un professeur développe une 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+em
+\end_layout
+
+\end_inset
+
+ carte
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ avec un groupe d'élèves pendant un cours ou quand un chef de projet recueille
+ les informations d'un groupe de spcialistes pour l'aider à 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+og
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{}
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+em
+\end_layout
+
+\end_inset
+
+ encarter
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+fg
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{}
+\end_layout
+
+\end_inset
+
+ les tâches nécessaires pour réaliser ce projet.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+%
+\backslash
+section{Tutorials}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+%TODO
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Ressources internet
+\end_layout
+
+\begin_layout Standard
+Un bon point de départ est d'en apprendre plus sur les 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+em
+\end_layout
+
+\end_inset
+
+ cartes heuristiques
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ dans Wikipedia : 
+\end_layout
+
+\begin_layout Itemize
+Anglais : 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+href{http://en.wikipedia.org/wiki/Mind_map}{
+\end_layout
+
+\end_inset
+
+http://en.wikipedia.org/wiki/Mind_map
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Itemize
+Allemand : 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+href{http://de.wikipedia.org/wiki/Mindmap}{
+\end_layout
+
+\end_inset
+
+http://de.wikipedia.org/wiki/Mindmap
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Itemize
+Français : 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+href{http://fr.wikipedia.org/wiki/Mindmap}{
+\end_layout
+
+\end_inset
+
+http://fr.wikipedia.org/wiki/Mindmap
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ (N.d.T.)
+\end_layout
+
+\begin_layout Section
+Le Concept de 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+%TODO may add a general introduction here...
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+La fenêtre principale et ses satellites
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "satellite"
+
+\end_inset
+
+ 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ vient avec plusieurs fenêtres, celle centrale est le 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+em
+\end_layout
+
+\end_inset
+
+ mapeditor
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+.
+ D'autres fenêtres, chacune avec une fonction particulière peut être ouverte
+ et installée à côté de la fenêtre principale
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+L'avantage des fenêtres séparées par rapport à une seule est une plus grande
+ flexibilité dans leur position.
+ Par exemple j'utilise le 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+em
+\end_layout
+
+\end_inset
+
+ noteeditor
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset Quotes fld
+\end_inset
+
+derrière
+\begin_inset Quotes frd
+\end_inset
+
+ le 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+em
+\end_layout
+
+\end_inset
+
+ mapeditor
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+.
+ Sur Linux mon gestionnaire de fenêtres (KDE) me permet de rentrer du texte
+ dans un petit coin visible du 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+em
+\end_layout
+
+\end_inset
+
+ noteeditor
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ sans cliquer dessus avec la souris.
+ Je positionne la souris sur la fenêtre pour y concentrer le focus, un concept
+ utile aussi lorsqu'on travaille avec 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+href{http://www.gimp.org}{
+\end_layout
+
+\end_inset
+
+http://www.gimp.org
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+.
+ 
+\end_layout
+
+\end_inset
+
+.
+ L'image en dessous montre le 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+em
+\end_layout
+
+\end_inset
+
+ mapeditor
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ avec le 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+em
+\end_layout
+
+\end_inset
+
+ noteeditor
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+} 
+\end_layout
+
+\end_inset
+
+souvent utilisé:
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Graphics
+	filename images/windows_fr.png
+	width 10cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+La plupart du temps vous travaillerez dans le 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+em
+\end_layout
+
+\end_inset
+
+ mapeditor
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ en ajoutant des nouvelles branches, en les déplaçant et en les réarrangeant.
+ Les diverses manières de le faire sont expliquées dans 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "mapeditor"
+
+\end_inset
+
+.
+ Vous pouvez enregistrer des informations complémentaires par exemple le
+ contenu d'un email facilement dans une 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+em
+\end_layout
+
+\end_inset
+
+ branche
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+: copiez et collez dans le 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+em
+\end_layout
+
+\end_inset
+
+ noteeditor
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+.
+ La façon de travailler avec des notes est expliqué dans 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "noteeditor"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Les fenêtres auxiliaires sont : 
+\end_layout
+
+\begin_layout Itemize
+Noteeditor (voir 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "noteeditor"
+
+\end_inset
+
+) 
+\end_layout
+
+\begin_layout Itemize
+Fenêtre historique (voir 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "historywindow"
+
+\end_inset
+
+) 
+\end_layout
+
+\begin_layout Itemize
+Fenêtre des propriétés des branches (voir 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "propwindow"
+
+\end_inset
+
+) 
+\end_layout
+
+\begin_layout Subsection
+Menus et menus de contexte
+\end_layout
+
+\begin_layout Standard
+En haut de chaque fenêtre se trouve la barre de menus.
+ Certaines options sont sans doute similaires à celles d'autres applications.
+ Notez que beaucoup (et sans doute plus) sont disponibles à travers les
+ 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+em
+\end_layout
+
+\end_inset
+
+ menus de contexte
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+.
+ Ceux-ci sont disponibles si vous appuyez sur bouton droite de la souris
+ en pointant un objet (sur Mac
+\begin_inset space ~
+\end_inset
+
+OS
+\begin_inset space ~
+\end_inset
+
+X Command-Click).
+\end_layout
+
+\begin_layout Standard
+
+\end_layout
+
+\begin_layout Subsection
+Barres de travail
+\end_layout
+
+\begin_layout Standard
+Les barres de travail dans les fenêtres permettent un accès rapide à beaucoup
+ de fonctions et affichent l'état des objets sélectionnés dans la carte.
+ Par exemple une branche peut avoir certains 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+em
+\end_layout
+
+\end_inset
+
+ indicateurs
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ positionnés, ils sont aussi positionnés dans la barre de travail.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+hint{
+\end_layout
+
+\end_inset
+
+Vous pouvez repositionner toutes les barres de travail en les déplaçant
+ simplement par la poignée.
+ Par exemple vous pouvez déplacer le menu de travail des indicateurs de
+ sa position d'origine en haut du mapeditor pour une position verticale
+ sur le côté droit, ou le remettre dans sa position originale.
+ Il est possible de cacher certains menus de travail en pointant sa poignée
+ et en cliquant sur le bouton droit de la souris.
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Cartes
+\end_layout
+
+\begin_layout Standard
+Chaque 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+em
+\end_layout
+
+\end_inset
+
+ carte
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ a son centre 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+em
+\end_layout
+
+\end_inset
+
+ mapcenter
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+.
+ Ce centre a des branches partant dans tous les sens comme celles d'un arbre.
+ Chaque branche peut aussi avoir d'autres branches.
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Graphics
+	filename images/branches_fr.png
+	width 12cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Nous appellerons un branche directement connectée au mapcenter une 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\backslash
+em 
+\end_layout
+
+\end_inset
+
+branche principale
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ car elle détermine la position des autres branches 
+\begin_inset Quotes fld
+\end_inset
+
+fils
+\begin_inset Quotes frd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Le mapcenter et les branches ont un 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+em
+\end_layout
+
+\end_inset
+
+ titre
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+.
+ C'est le texte que vous voyez dans le mapeditor.
+ C'est ordinairement un ou plusieurs mots clé, permettant de comprendre
+ facilement toute la carte.
+\end_layout
+
+\begin_layout Standard
+Dans la barre de menus au-dessous du  mapeditor on voit des symboles variés.
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Graphics
+	filename images/default-flags.png
+	width 10cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Nous les appellerons 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+em
+\end_layout
+
+\end_inset
+
+ indicateurs
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+.
+ Ils sont utilisés pour marquer les branches dans la 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+em
+\end_layout
+
+\end_inset
+
+ carte
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+, par exemple si quelque chose est important ou douteux.
+ Il y a aussi des indicateurs positionnés automatiquement par 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ pour des informations supplémentaires, par exemple qu'une note est attachée
+ à une branche particulière.
+\end_layout
+
+\begin_layout Standard
+Par défaut certains de ces indicateurs sont affichés uniquement quand l'indicate
+ur 
+\begin_inset Quotes fld
+\end_inset
+
+pouce vers le haut
+\begin_inset Quotes frd
+\end_inset
+
+ est positionné.
+ Ils ne le sont plus lorsque l'indicateur 
+\begin_inset Quotes fld
+\end_inset
+
+pouce en bas
+\begin_inset Quotes frd
+\end_inset
+
+ est positionné.
+ Vous pouvez changer ce comportement par défaut dans le menu des préférences
+ (voir 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "settings"
+
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Section
+Mapeditor
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "mapeditor"
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Subsection
+Commencer une nouvelle carte
+\end_layout
+
+\begin_layout Standard
+Au démarrage de 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ deux fenêtres vont s'ouvrir : le 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+em
+\end_layout
+
+\end_inset
+
+ mapeditor
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ et le 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+em
+\end_layout
+
+\end_inset
+
+ noteditor
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+.
+ Vous travaillerez avec les deux fenêtres mais pour l'instant nous n'avons
+ besoin que du mapeditor.
+\end_layout
+
+\begin_layout Standard
+Sélectionner le milieu de la carte 
+\begin_inset Quotes fld
+\end_inset
+
+NEW MAP
+\begin_inset Quotes frd
+\end_inset
+
+ dans le milieu du mapeditor en cliquant le bouton gauche de la souris.
+ Il va s'allumer en jaune pour montrer qu'il est sélectionné.
+ Il y a plusieurs moyens d'ajouter une nouvelle branche au centre :
+\end_layout
+
+\begin_layout Itemize
+avec la souris : ouvrir le menu du contexte en cliquant le bouton droit
+ de la souris (CTRL-Click sur Mac) sur le milieu de la carte et choisir
+ 
+\begin_inset Quotes fld
+\end_inset
+
+Add
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+ra 
+\end_layout
+
+\end_inset
+
+Add branch as child
+\begin_inset Quotes frd
+\end_inset
+
+ (ajouter une branche comme fils).
+\end_layout
+
+\begin_layout Itemize
+Appuyer sur les touches 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+key{
+\end_layout
+
+\end_inset
+
+Ins
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ ou 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+key{
+\end_layout
+
+\end_inset
+
+A
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Standard
+Une nouvelle branche va apparaître et vous pouvez taper le titre de la branche.
+ Terminer l'ajout en appuyant sur 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+key{
+\end_layout
+
+\end_inset
+
+Enter
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+.
+ 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+%tipp
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+Quelquefois il est pratique d'ajouter une nouvelle branche au-dessus ou
+ au-dessous de la branche courante en faisant au choix :
+\end_layout
+
+\begin_layout Itemize
+Touche 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+key{
+\end_layout
+
+\end_inset
+
+Shift-A
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ pour ajouter un branche au-dessus de celle sélectionnée,
+\end_layout
+
+\begin_layout Itemize
+Touche 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+key{
+\end_layout
+
+\end_inset
+
+Ctrl-A
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ pour ajouter une branche en dessous.
+\end_layout
+
+\begin_layout Standard
+Il est aussi possible d'ajouter une branche qui soit le 
+\begin_inset Quotes fld
+\end_inset
+
+père
+\begin_inset Quotes frd
+\end_inset
+
+ de la branche courante, c'est à dire insérer 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\backslash
+em 
+\end_layout
+
+\end_inset
+
+devant
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+} 
+\end_layout
+
+\end_inset
+
+ la branche courante.
+ Cela peut-être fait par le menu de contexte.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+hint{
+\end_layout
+
+\end_inset
+
+Pour effacer une branche appuyer sur 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+key{
+\end_layout
+
+\end_inset
+
+CTRL-X
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+.
+ Si cela est validé dans le menu des préférences (voir 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "settings"
+
+\end_inset
+
+), vous pouvez aussi utiliser la touche 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+key{
+\end_layout
+
+\end_inset
+
+Del
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+.
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Circuler dans une carte
+\end_layout
+
+\begin_layout Subsubsection*
+Sélectionner des branches
+\end_layout
+
+\begin_layout Standard
+Pour sélectionner des branches vous pouvez utiliser le bouton gauche de
+ la souris ou les flèches de direction.
+ Suivant l'
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+em
+\end_layout
+
+\end_inset
+
+ orientation
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ du départ de la branche utiliser la touche 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+key{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+la
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ ou 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+key{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+ra
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ pour se déplacer plus près de la racine ou plus profondément dans les branches.
+ Dans un jeu de branches que nous appellerons 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+em
+\end_layout
+
+\end_inset
+
+ sous-arbre
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+, vous pouvez utiliser 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+key{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+ua
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ et 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+key{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+da
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ pour monter et descendre.
+ Vous pouvez aussi utilisez 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+key{
+\end_layout
+
+\end_inset
+
+Home
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ et 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+key{
+\end_layout
+
+\end_inset
+
+End
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ pour sélectionner la première ou la dernière branche.
+\end_layout
+
+\begin_layout Subsubsection*
+Déplacer la partie visible de la carte
+\end_layout
+
+\begin_layout Standard
+À force d'ajouter des branches, la carte peut devenir plus grande que la
+ fenêtre du mapeditor.
+ Vous pouvez utiliser les ascenseurs à droite et en bas de la fenêtre pour
+ déplacer la vue.
+ C'est plus facile en utilisant le bouton gauche de la souris.
+ Cliquez n'importe où sur la 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\backslash
+em 
+\end_layout
+
+\end_inset
+
+surface active de la fenêtre
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ : choisissez un espace libre entre des branches.
+ Le pointeur de la souris va se transformer en main, maintenant déplacez
+ la souris pour voir la partie désirée.
+\end_layout
+
+\begin_layout Standard
+Si vous sélectionnez les branches en utilisant les flèches, la carte va
+ se déplacer pour que la branche sélectionnée soit toujours visible.
+\end_layout
+
+\begin_layout Subsubsection*
+Zoomer la carte
+\end_layout
+
+\begin_layout Standard
+Lorsqu'on travaille sur des grandes cartes, la fonction 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+em
+\end_layout
+
+\end_inset
+
+ zoom
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ devient pratique.
+ Vous pouvez utiliser :
+\end_layout
+
+\begin_layout Itemize
+à partir du menu : View 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+ra
+\end_layout
+
+\end_inset
+
+ Zoom in, View 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+ra
+\end_layout
+
+\end_inset
+
+ Zoom out, View 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+ra
+\end_layout
+
+\end_inset
+
+ reset Zoom.
+ 
+\end_layout
+
+\begin_layout Itemize
+la barre de fonction
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset Graphics
+	filename images/zoom-buttons.png
+	width 3cm
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Standard
+Cliquer sur la loupe avec la croix rouge ré-affiche la carte à sa taille
+ originale.
+\end_layout
+
+\begin_layout Subsubsection*
+Fonction de recherche
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "findwindow"
+
+\end_inset
+
+ Avec une grande carte, une fonction de recherche devient nécessaire.
+ Ouvrir la fenêtre de recherche :
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Graphics
+	filename images/find-window.png
+	width 6cm
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Standard
+La fonction va rechercher le texte dans toutes les branches et dans les
+ notes associées.
+ À chaque fois que vous appuyez sur le bouton 
+\begin_inset Quotes fld
+\end_inset
+
+Find
+\begin_inset Quotes frd
+\end_inset
+
+ il va rechercher la prochaine occurrence qui est sélectionnée automatiquement.
+ Si la recherche échoue, un court mess sage 
+\begin_inset Quotes fld
+\end_inset
+
+Nothing found
+\begin_inset Quotes frd
+\end_inset
+
+ (rien trouvé) va apparaître en bas dans la 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+em
+\end_layout
+
+\end_inset
+
+ barre de status
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ du mapeditor.
+\end_layout
+
+\begin_layout Subsubsection*
+\begin_inset CommandInset label
+LatexCommand label
+name "hideunselected"
+
+\end_inset
+
+Garder la visibilité, cacher une partie de la carte
+\end_layout
+
+\begin_layout Standard
+Une très grande arborescence (une branche avec une centaine d'enfants par
+ exemple) rend difficile la vue d'ensemble de la carte.
+ Vous pouvez cacher les enfants en les 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+em
+\end_layout
+
+\end_inset
+
+ enroulant
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+.
+ Cette fonction est souvent appelée 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+em
+\end_layout
+
+\end_inset
+
+ escamotage
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ (folding).
+ Pensez que tout le sous-arbre est dessiné sur un rouleau de papier.
+ Vous pouvez le dérouler ou l'enrouler pour ne voir que la première ligne.
+\end_layout
+
+\begin_layout Standard
+Pour escamoter ou ré-afficher une branche et ses fils vous pouvez au choix
+ : 
+\end_layout
+
+\begin_layout Itemize
+appuyez sur 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+key{
+\end_layout
+
+\end_inset
+
+Scroll Lock
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ ou 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+key{
+\end_layout
+
+\end_inset
+
+S
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+,
+\end_layout
+
+\begin_layout Itemize
+appuyer sur le bouton milieu de la souris,
+\end_layout
+
+\begin_layout Itemize
+choisir l'icône sur le menu de travail.
+\end_layout
+
+\begin_layout Standard
+Si vous sélectionnez une branche cachée --par la fonction de recherche ou
+ en utilisant les flèches de direction par exemple-- elle va devenir provisoirem
+ent visible.
+ Cela est montré comme un défilement avec une petite loupe.
+ Si la partie 
+\begin_inset Quotes fld
+\end_inset
+
+dé-cachée
+\begin_inset Quotes frd
+\end_inset
+
+ n'est plus nécessaire, elle est de nouveau cachée automatiquement.
+ Il est possible de rendre toutes les branches visibles en utilisant le
+ menu 
+\begin_inset Quotes fld
+\end_inset
+
+Edit
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+ra
+\end_layout
+
+\end_inset
+
+ Unscroll all scrolled branches
+\begin_inset Quotes frd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Vous pouvez cacher des parties de la carte pour l'exporter dans une page
+ web ou pour une présentation par exemple voir 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "hideexport"
+
+\end_inset
+
+ pour plus de détails.
+\end_layout
+
+\begin_layout Subsection
+Modifier et déplacer les branches
+\end_layout
+
+\begin_layout Subsubsection*
+Modifier le titre
+\end_layout
+
+\begin_layout Standard
+On peut éditer le titre en sélectionnant la branche puis au choix :
+\end_layout
+
+\begin_layout Itemize
+appuyer sur 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+key{
+\end_layout
+
+\end_inset
+
+Enter
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Itemize
+ou 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+key{
+\end_layout
+
+\end_inset
+
+F2
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Itemize
+faire un double clic avec le bouton gauche de la souris.
+\end_layout
+
+\begin_layout Standard
+Écrivez votre nouveau titre (ou éditez le) puis appuyez sur 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+key{
+\end_layout
+
+\end_inset
+
+Enter
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ pour valider.
+\end_layout
+
+\begin_layout Subsubsection*
+Déplacer une branche
+\end_layout
+
+\begin_layout Standard
+Le moyen le plus simple de déplacer une branche est de la sélectionner avec
+ le bouton gauche de la souris et de la déplacer à sa destination en maintenant
+ le bouton enfoncé.
+ Suivant la branche elle sera :
+\end_layout
+
+\begin_layout Itemize
+déplacée vers la destination,
+\end_layout
+
+\begin_layout Itemize
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+em
+\end_layout
+
+\end_inset
+
+ liée 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ à un nouveau 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+em
+\end_layout
+
+\end_inset
+
+ parent
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ (mapcenter ou branche) 
+\end_layout
+
+\begin_layout Standard
+Si vous déplacez la branche au dessus d'une autre ou du mapcenter, vous
+ pourrez constater que le lien le connectant à l'ancien parent va être changé
+ pour aller au nouveau situé sous le curseur de la souris.
+ Si vous relâchez alors le bouton, la branche va être reliée.
+\end_layout
+
+\begin_layout Standard
+Si vous relâchez le bouton n'importe où, le résultat dépendra du type de
+ branche que vous déplacez :
+\end_layout
+
+\begin_layout Itemize
+Une branche principale directement connectée au mapcenter.
+ Il va rester à sa nouvelle position,
+\end_layout
+
+\begin_layout Itemize
+Une autre branche 
+\begin_inset Quotes fld
+\end_inset
+
+ordinaire
+\begin_inset Quotes frd
+\end_inset
+
+ va rejoindre sa position d'origine.
+\end_layout
+
+\begin_layout Standard
+Vous pouvez ainsi facilement réarranger la disposition des branches principales
+ pour qu'elles ne recouvrent pas leurs branches filles.
+ Il y a un autre avantage à déplacer les branches, surtout si vous voulez
+ 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+em
+\end_layout
+
+\end_inset
+
+ réorganiser
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ un sous-arbre.
+ Vous pouvez monter ou descendre une branche par l'action suivante au choix
+ :
+\end_layout
+
+\begin_layout Itemize
+appuyer sur 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+key{
+\end_layout
+
+\end_inset
+
+Page Up
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ ou 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+key{
+\end_layout
+
+\end_inset
+
+Page Down
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+,
+\end_layout
+
+\begin_layout Itemize
+sélectionner Edit 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+ra
+\end_layout
+
+\end_inset
+
+ Move branch,
+\end_layout
+
+\begin_layout Itemize
+appuyer sur les icônes de la barre de menu : 
+\begin_inset Graphics
+	filename images/move-buttons.png
+	width 1.5cm
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+%tipp
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+Il y a un autre moyen de déplacer des branches : si vous appuyez sur 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+key{
+\end_layout
+
+\end_inset
+
+Shift
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ or 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+key{
+\end_layout
+
+\end_inset
+
+Ctrl
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ en bougeant la souris, la branche va être ajoutée au-dessus ou au-dessous
+ de la branche sur laquelle la souris est.
+ Cela peut être utilisé pour classer les branches dans une carte.
+\end_layout
+
+\begin_layout Subsection
+Des couleurs et des images : utiliser le côté droit de votre cerveau
+\end_layout
+
+\begin_layout Subsubsection*
+Changer la couler d'un titre
+\end_layout
+
+\begin_layout Standard
+Vous pouvez utiliser des couleurs pour mettre plus d'informations sur la
+ carte par exemple mettre du rouge, du vert et d'autres couleurs pour montrer
+ la priorité des tâches.
+ Pour ce faire : 
+\end_layout
+
+\begin_layout Itemize
+utiliser le menu et choisir : Format 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+ra
+\end_layout
+
+\end_inset
+
+ Set Color 
+\end_layout
+
+\begin_layout Itemize
+utiliser la barre de menu :
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\align center
+\begin_inset Graphics
+	filename images/color-buttons.png
+	width 3cm
+
+\end_inset
+
+ 
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+Le premier bouton (noir dans la figure ci-dessus) montre la couleur courante.
+ Cliquer dessus vous permet de choisir une autre couleur.
+ Vous pouvez 
+\begin_inset Quotes fld
+\end_inset
+
+piquer
+\begin_inset Quotes frd
+\end_inset
+
+ la couleur d'une autre branche en la sélectionnant et en utilisant le bouton
+ 
+\begin_inset Quotes fld
+\end_inset
+
+pipette
+\begin_inset Quotes frd
+\end_inset
+
+.
+ Les deux icônes avec une palette colorent la branche sélectionnée avec
+ la couleur courante.
+ Alors que la première ne colore que la sélection, la deuxième colore tous
+ les fils de la branche sélectionnée.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+%tipp
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+Une autre fonction très utile est le 
+\begin_inset Quotes fld
+\end_inset
+
+copier couleur
+\begin_inset Quotes frd
+\end_inset
+
+ en utilisant la souris : sélectionner une branche qui doit avoir la nouvelle
+ couleur appuyez 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+key{
+\end_layout
+
+\end_inset
+
+Ctrl
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ et simultanément cliquez avec le bouton gauche sur une autre branche pour
+ copier sa couleur dans la branche sélectionnée.
+ Tout le sous-arbre sera coloré.
+ Si vous ne voulez colorer que la sélection appuyez sur 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+key{
+\end_layout
+
+\end_inset
+
+Shift
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ au lieu de 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+key{
+\end_layout
+
+\end_inset
+
+Ctrl
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsubsection*
+Utiliser les indicateurs
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ possède des indicateurs variés.
+ Ils sont visibles dans la barre de menu en haut de la mapeditor.
+ (Note : Comme toutes les barres de menu, vous pouvez les déplacer sur le
+ côté droit ou gauche ou même les détacher.
+ Prenez la ligne pointillée à gauche de la barre de menu avec le bouton
+ gauche de la souris.)
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Graphics
+	filename images/default-flags.png
+	width 10cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Si vous avez une branche sélectionnée, vous pouvez positionner n'importe
+ quel indicateur en les cliquant sur la barre de menu.
+ Les boutons de la barre de menu changent d'état et reflètent l'état des
+ indicateurs de la branche sélectionnée.
+ Ainsi pour effacer un indicateur d'une branche, sélectionnez la branche
+ et cliquez sur le bouton de la barre de menu enfonce.
+\end_layout
+
+\begin_layout Standard
+Pour l'instant 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ utilise deux sortes d'indicateurs : les 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+em
+\end_layout
+
+\end_inset
+
+ Indicateurs Standard
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ et les 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+em
+\end_layout
+
+\end_inset
+
+ Indicateurs Système
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+.
+ Les indicateurs standard sont ceux que l'on voit dans la barre de menu.
+ Les Indicateurs Système sont positionnés par 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ pour indiquer qu'il y a par exemple de l'information supplémentaire dans
+ une note (plus d'information dans 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "noteeditor"
+
+\end_inset
+
+).
+ Dans des versions futures de 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ il pourra y avoir une autre sorte d'indicateurs éditables par l'utilisateur.
+\end_layout
+
+\begin_layout Subsubsection*
+Images
+\end_layout
+
+\begin_layout Standard
+Le moyen le plus simple pour ajouter une image à une branche est de la déplaçer
+ par exemple à partir d'un navigateur dans le mapeditor pendant qu'elle
+ branche est sélectionnée.
+\end_layout
+
+\begin_layout Standard
+Vous pouvez aussi ajouter une image en ouvrant le menu contextuel d'une
+ branche.
+ Cliquez à droite sur la branche sélectionnée, choisissez 
+\begin_inset Quotes fld
+\end_inset
+
+Add Image
+\begin_inset Quotes frd
+\end_inset
+
+.
+ Une fenêtre de dialogue vous permet de la choisir.
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+Les formats d'images supportés sont : PNG, BMP, XBM, XPM et PNM.
+ Sont aussi supportables JPEG, MNG et GIF, si spécialement configuré pendant
+ la compilation dans  SUSE LINUX).
+\end_layout
+
+\end_inset
+
+ Quand une image est sélectionnée dans le dialogue, un aperçu est affiché.
+ Il est possible de sélectionner plusieurs images.
+\end_layout
+
+\begin_layout Standard
+Vous pouvez placer l'image où vous voulez, vous n'avez qu'à la déplacer
+ avec la souris en appuyant sur le bouton gauche.
+ Pour la lier à une autre branche, appuyer sur la touche 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+key{
+\end_layout
+
+\end_inset
+
+Shift
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ en la déplaçant.
+ Pour l'effacer appuyer sur la touche 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+key{
+\end_layout
+
+\end_inset
+
+Del
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Si vous cliquez à droite sur une image, un menu de contexte s'ouvre qui
+ vous permet de sélectionner un des multiples format d'image.
+ Puis une fenêtre s'affiche pour sauver l'image.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+hint{
+\end_layout
+
+\end_inset
+
+On utilise cela  pour 
+\begin_inset Quotes fld
+\end_inset
+
+exporter
+\begin_inset Quotes frd
+\end_inset
+
+ l'image, l'image sera sauvegardée dans la carte elle-même.
+ Vous pouvez aussi copier-coller des images mais il n'est pas possible de
+ lui ajouter des objets.
+ Les images sont considérées comme des 
+\begin_inset Quotes fld
+\end_inset
+
+particularités supplémentaires
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+extra feature (N.d.T.)
+\end_layout
+
+\end_inset
+
+
+\begin_inset Quotes frd
+\end_inset
+
+.
+ Elles pourraient rendre le travail avec la carte beaucoup plus complexe
+ par exemple en liant des images à des images.
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+L'option 
+\begin_inset Quotes fld
+\end_inset
+
+Use for export
+\begin_inset Quotes frd
+\end_inset
+
+ contrôle la sortie des exportations par exemple en HTML : si positionné
+ à NON, l'image n'apparaîtra pas dans le 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+em
+\end_layout
+
+\end_inset
+
+ texte
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ de la sortie.
+ C'est utile pour les grandes images ou si des images sont utilisées comme
+ trames comme par exemple le nuage autour d'une partie de la carte.
+ Elle n'apparaîtront pas au milieu du texte.
+\end_layout
+
+\begin_layout Standard
+Pour le moment le support des images est provisoire : les images sont sauvées
+ avec les autres données de la carte dans le fichier 
+\family typewriter
+.vym
+\family default
+.
+ Des versions futures incluront plus de possibilités comme le redimensionnement
+ des images et changer sa transparence et l'inclure dans le fond de la carte),
+ etc.
+\end_layout
+
+\begin_layout Subsubsection*
+Trames
+\end_layout
+
+\begin_layout Standard
+Une trame peut être ajoutée à une branche dans la 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+em
+\end_layout
+
+\end_inset
+
+ fenêtre des propriétés
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ (voir 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "propwindow"
+
+\end_inset
+
+).
+ Vous pouvez aussi utiliser des images comme trames.
+ Regardez la carte de démonstration 
+\family typewriter
+todo.vym
+\family default
+ comme exemple, où le mapcenter est un nuage.
+ Vous pouvez utiliser un programme de dessin externe comme
+\family typewriter
+ gimp
+\family default
+ pour créer une image, de préférence avec un canal de transparence, ainsi
+ vous pouvez créer des trames qui n'ont pas de bord rectangulaire, comme
+ un nuage.
+\end_layout
+
+\begin_layout Subsection
+Conception du fond des cartes et des liens de connections
+\end_layout
+
+\begin_layout Standard
+La conception du fond d'une carte et aussi des liens reliant les diverses
+ parties de la carte peuvent être changés par :
+\end_layout
+
+\begin_layout Itemize
+la sélection du format à partir du menu,
+\end_layout
+
+\begin_layout Itemize
+en cliquant à droite sur le fond de la carte, ce qui ouvre un menu de contexte.
+\end_layout
+
+\begin_layout Subsubsection*
+Trame de fond
+\end_layout
+
+\begin_layout Standard
+La couleur est choisie (et aussi affichée) par 
+\begin_inset Quotes fld
+\end_inset
+
+Set background colour
+\begin_inset Quotes frd
+\end_inset
+
+.
+ Vous pouvez aussi choisir une image de fond d'écran quoique cela ne soit
+ pas recommandé.
+ Travailler sur la carte devient lent et l'image ne peut être positionnée
+ librement.
+\end_layout
+
+\begin_layout Subsubsection*
+Couleur des liaisons
+\end_layout
+
+\begin_layout Standard
+Les liaisons reliant les branches peuvent être colorées de deux façons :
+ 
+\end_layout
+
+\begin_layout Itemize
+utiliser la même couleur pour le titre et la ligne représentant la liaison,
+\end_layout
+
+\begin_layout Itemize
+utiliser 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+em
+\end_layout
+
+\end_inset
+
+ une
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ couleur pour toutes les liaisons et choisir des couleurs différentes pour
+ les titres.
+ La couleur par défaut des liaisons des branches est bleu.
+\end_layout
+
+\begin_layout Standard
+Cette dernière couleur peut être choisie par 
+\begin_inset Quotes fld
+\end_inset
+
+Set link colour
+\begin_inset Quotes frd
+\end_inset
+
+.
+ Positionner ou invalider l'option 
+\begin_inset Quotes fld
+\end_inset
+
+Use colour of heading for link
+\begin_inset Quotes frd
+\end_inset
+
+ pour basculer entre deux choix dans votre dessin.
+\end_layout
+
+\begin_layout Subsubsection*
+Style de liaison
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ offre quatre styles différents pour l'apparence des liaisons :
+\end_layout
+
+\begin_layout Itemize
+ligne,
+\end_layout
+
+\begin_layout Itemize
+parabole,
+\end_layout
+
+\begin_layout Itemize
+grosse ligne,
+\end_layout
+
+\begin_layout Itemize
+parabole épaisse.
+\end_layout
+
+\begin_layout Standard
+Les styles 
+\begin_inset Quotes fld
+\end_inset
+
+épais
+\begin_inset Quotes frd
+\end_inset
+
+ ne sont actifs que pour les liaisons partant du mapcenter, les liaisons
+ pour le reste de la carte sont toujours 
+\begin_inset Quotes fld
+\end_inset
+
+fines
+\begin_inset Quotes frd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsection
+Liens à d'autres documents et aux pages web
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ admet deux types de liens externes :
+\end_layout
+
+\begin_layout Itemize
+document qui va être ouvert dans un navigateur externe,
+\end_layout
+
+\begin_layout Itemize
+carte 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+, qui sera ouverte par 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ lui-même.
+\end_layout
+
+\begin_layout Standard
+En supplément aux liens externes, il y en a d'autres internes, reliant une
+ branche à une autre sur la même carte.
+ Elles sont appelées 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+em
+\end_layout
+
+\end_inset
+
+ XLinks
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ et sont expliquées à la section 
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "xlinks"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsubsection*
+navigateur
+\end_layout
+
+\begin_layout Standard
+Les navigateurs modernes comme 
+\family typewriter
+konqueror et Firefox
+\family default
+ sont capables d'afficher des types de fichiers variés locaux ou sur Internet.
+ Pour saisir l'
+\begin_inset space ~
+\end_inset
+
+URL d'un document appuyez sur la touche 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+key{
+\end_layout
+
+\end_inset
+
+U
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ ou cliquez à droite sur une branche pour ouvrir le menu contextuel puis
+ choisir 
+\begin_inset Quotes fld
+\end_inset
+
+References
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+ra
+\end_layout
+
+\end_inset
+
+ Edit URL
+\begin_inset Quotes frd
+\end_inset
+
+.
+ Si vous voulez ouvrir une fenêtre de dialogue pour choisir plus facilement
+ un fichier local tapez 
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+key{
+\end_layout
+
+\end_inset
+
+SHIFT-U
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Lorsqu'une URL a été entrée, un petit globe apparaît dans la branche.
+ On cliquant sur ce globe ou dans le menu contextuel, le navigateur
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+Le navigateur peut être changé dans le menu Settings (voir 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "settings"
+
+\end_inset
+
+).
+\end_layout
+
+\end_inset
+
+ externe sera lancé :
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Graphics
+	filename images/flag-url.png
+	width 0.5cm
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Standard
+Pour plus d'informations sur le travail avec les signets et les navigateurs
+ voir 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "bookmarks"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Dans le menu de contexte, il y a une option pour ouvrir toutes les URL trouvées
+ dans le sous-arbre de la branche sélectionnée.
+ C'est très pratique pour ouvrir tout un jeu de liens dans le navigateur
+ surtout si celui-ci dispose d'index (comme 
+\family typewriter
+konqueror
+\family default
+
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+ou 
+\family typewriter
+firefox
+\family default
+ (N.
+ d.
+ T.)
+\end_layout
+
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Subsubsection*
+carte 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Standard
+Pour lier une branche à une autre carte 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym 
+\end_layout
+
+\end_inset
+
+ cliquer à droite sur une branche et choisir : 
+\begin_inset Quotes fld
+\end_inset
+
+Édit 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ links
+\begin_inset Quotes frd
+\end_inset
+
+.
+ Une fenêtre de dialogue sur les fichiers s'ouvre pour vous permettre de
+ choisir le fichier voulu.
+ Une branche avec un lien est marquée par :
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Graphics
+	filename images/flag-vymlink.png
+	width 0.5cm
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Standard
+Cliquer sur cet indicateur, dans la barre de menu ou dans le menu de contexte
+ va ouvrir cette carte dans un autre onglet.
+ (voir 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tabs"
+
+\end_inset
+
+ pour le travail sur plusieurs cartes).
+ Pour effacer un lien existant, cliquer à droite sur la branche et choisir
+ 
+\begin_inset Quotes fld
+\end_inset
+
+Delete 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ link
+\begin_inset Quotes frd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Dans le menu contextuel, il y a aussi une option pour ouvrir tous les liens
+ vers des fichiers 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym 
+\end_layout
+
+\end_inset
+
+ du sous-arbre de la branche sélectionnée dans la carte.
+ C'est utile pour ouvrir simultanément une collection de cartes en relation
+ avec la carte courante.
+\end_layout
+
+\begin_layout Standard
+Note technique : en interne 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ utilise des chemins absolus, pour éviter d'ouvrir plusieurs fois la même
+ carte.
+ Quand la carte est sauvegardée, le chemin est converti en relatif (par
+ exemple 
+\family typewriter
+/home/user/vym.map
+\family default
+ devient
+\family typewriter
+ ./vym.map
+\family default
+.
+ Cela rend aisé d'utiliser des cartes différentes sur plusieurs ordinateurs
+ et de les exporter en HTML pour plus tard.
+\end_layout
+
+\begin_layout Subsection
+cartes multiples
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "tabs"
+
+\end_inset
+
+ Vous pouvez travailler sur plusieurs cartes en même temps.
+ Chaque nouvelle carte est ouverte dans un 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+em
+\end_layout
+
+\end_inset
+
+ onglet
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+.
+ Les onglets des cartes disponibles sont situés en haut du mapeditor.
+ Vous pouvez utiliser les fonctions couper-copier-coller pour transférer
+ des données d'une carte à l'autre.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+%todo
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+%TODO
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+%
+\backslash
+subsubsection{Menus}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+%
+\backslash
+subsubsection{Keyboard shortcuts}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+% Settings
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+% Images
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+% Copy & Paste
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+% Working with tabs (multiple maps)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+% Exporting
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+% Scrolling
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Noteeditor
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "noteeditor"
+
+\end_inset
+
+Si vous voulez mettre plus de texte sur une branche (par exemple un email
+ complet ou une recette de cuisine ou une palanquée de code source) vous
+ pouvez utiliser le noteeditor.
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Graphics
+	filename images/noteeditor_fr.png
+	width 10cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Cet éditeur affiche le texte associé à la branche sélectionnée dans le mapeditor.
+ 
+\end_layout
+
+\begin_layout Subsection
+États
+\end_layout
+
+\begin_layout Standard
+Avant de pouvoir écrire ou mettre du texte dans le noteeditor, vous devez
+ sélectionner une branche dans le mapeditor.
+ La couleur du fond du noteeditor indique son état : 
+\end_layout
+
+\begin_layout Itemize
+gris : pas de texte,
+\end_layout
+
+\begin_layout Itemize
+blanc : du texte existe.
+\end_layout
+
+\begin_layout Standard
+Dans le mapeditor, pour signaler qu'il y a une note avec plus d'informations
+ pour une branche particulière, un petit indicateur 
+\begin_inset Quotes fld
+\end_inset
+
+note
+\begin_inset Quotes frd
+\end_inset
+
+ apparaît dans l'entête de la branche.
+ Regardez dans la branche en bas à droite de la carte suivante:
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Graphics
+	filename images/branches-flags_fr.png
+	width 10cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Importer et exporter des notes 
+\end_layout
+
+\begin_layout Standard
+Une note est automatiquement sauvée dans la carte 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+.
+ Il est agréable d'importer une note à partir d'un fichier externe ou d'écrire
+ cette note dans un fichier externe.
+ Dans le noteeditor utiliser 
+\begin_inset Quotes fld
+\end_inset
+
+File
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+ra
+\end_layout
+
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+Import
+\begin_inset Quotes frd
+\end_inset
+
+ et 
+\begin_inset Quotes fld
+\end_inset
+
+File
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+ra
+\end_layout
+
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+Export
+\begin_inset Quotes frd
+\end_inset
+
+ pour l'import-export.
+\end_layout
+
+\begin_layout Subsection
+Éditer et imprimer une note
+\end_layout
+
+\begin_layout Standard
+L'édition fonctionne comme un éditeur de texte classique, incluant les fonctions
+ annule-recommence.
+ Vous pouvez effacer entièrement la note en cliquant sur la corbeille.
+ En cliquant sur le bouton d'impression seule la note et imprimée.
+\end_layout
+
+\begin_layout Subsection
+RichText: couleurs, paragraphes et texte formatté
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ supporte le texte formatté (QT Rich Text) dans le noteeditor depuis la
+ version 1.4.7.
+ Les couleurs et les attributs de texte (par exemple italique, gras) sont
+ positionnés avec les boutons au-dessus du texte.
+ Le texte lui-même est divisé en paragraphes.
+ Pour chaque paragraphe l'alignement peut être spécifié (par exemple centré
+ ou à droite).
+ Un paragraphe est terminé par appui sur la touche 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+key{
+\end_layout
+
+\end_inset
+
+Return
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+.
+ Si vous voulez juste commencer une nouvelle ligne tapez 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+key{
+\end_layout
+
+\end_inset
+
+CTRL-Return
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsection
+Les fontes et comment les changer rapidement
+\end_layout
+
+\begin_layout Standard
+Le noteeditor est fait pour éditer de petites notes, ce n'est pas un traitement
+ de texte complet.
+ Suite à beaucoup de demandes, 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ supporte le texte formatté dans le noteeditor
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ utilise le format QRichtText, qui est un sous-ensemble du formattage fourni
+ en HTML.
+\end_layout
+
+\end_inset
+
+.
+ Deux fontes par défaut sont installées qui peuvent être choisies par le
+ 
+\begin_inset Quotes fld
+\end_inset
+
+Settings menu
+\begin_inset Quotes frd
+\end_inset
+
+ (voir 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "settings"
+
+\end_inset
+
+).
+ Une fonte à chasse fixe, l'autre variable.
+ La fonte à chasse fixe est utilisée pour les emails, le code source, etc
+ l'autre pour les simples notes.
+ Les deux fontes peuvent être facilement commutées en cliquant sur le bouton
+ suivant dans la barre de menu :
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Graphics
+	filename images/formatfixedfont.png
+	width 0.5cm
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Standard
+Dans le 
+\begin_inset Quotes fld
+\end_inset
+
+Settings menu
+\begin_inset Quotes frd
+\end_inset
+
+ les deux fontes peuvent être choisies.
+ La fonte par défaut peut aussi être changée en sélectionnant ou désélectionnant
+ 
+\begin_inset Quotes fld
+\end_inset
+
+fixed font is default
+\begin_inset Quotes frd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+En supplément toute fonte installée sur votre système peut être utilisée.
+ Notez que la fonte choisie sera aussi utilisée pour les exports HTML, si
+ vous voulez exporter votre carte 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym 
+\end_layout
+
+\end_inset
+
+ l'intranet ou sur le web, vous devrez utiliser des fontes disponibles partout.
+\end_layout
+
+\begin_layout Subsection
+Recherche de texte
+\end_layout
+
+\begin_layout Standard
+Le noteeditor n'a pas sa propre fonction de recherche, utiliser 
+\begin_inset Quotes fld
+\end_inset
+
+Find
+\begin_inset Quotes frd
+\end_inset
+
+ dans le mapeditor qui recherche également dans toutes les notes (voir 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "findwindow"
+
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Subsection
+Coller du texte dans le noteeditor
+\end_layout
+
+\begin_layout Standard
+Vous voulez souvent coller du texte dans le noteeditor à partir d'une autre
+ application par exemple un email.
+ Normalement 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ va créer un nouveau paragraphe pour chaque ligne.
+ Si ce n'est pas ce que voulez vous pouvez choisir à partir de la barre
+ de menu
+\end_layout
+
+\begin_layout Section
+Hello world
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Quotes fld
+\end_inset
+
+bonjour monde
+\begin_inset Quotes frd
+\end_inset
+
+ ou comment faire une carte de base
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Cette section décrit comment 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ réagit au contact d'autres applications.
+ Maintenant beaucoup d'applications lisent et écrivent leurs données en
+ XML, le 
+\begin_inset Quotes fld
+\end_inset
+
+eXtensible Markup Language
+\begin_inset Quotes frd
+\end_inset
+
+.
+ 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ utilise aussi XML pour sauver ses cartes, voir 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fileformat"
+
+\end_inset
+
+ pour une description plus détaillée.
+\end_layout
+
+\begin_layout Standard
+Si vous utilisez une autre application qui utilise le XML, il est possible
+ de faire un filtre d'import-export pour 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+.
+ Les volontaires sont accueillis avec plaisir ;-)
+\end_layout
+
+\begin_layout Subsection
+Import
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "import"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection*
+Signets KDE 
+\end_layout
+
+\begin_layout Standard
+L'éditeur de signets intégrés à KDE (Konqueror etc.) est limité, ainsi pourquoi
+ ne pas utiliser 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ pour gérer les signets? Pour créer une nouvelle carte contenant contenant
+ les signets courants choisir : 
+\begin_inset Quotes fld
+\end_inset
+
+File 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+ra
+\end_layout
+
+\end_inset
+
+ Import
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+ra
+\end_layout
+
+\end_inset
+
+ KDE Bookmarks
+\begin_inset Quotes frd
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection*
+Mind Manager
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ a pour l'instant un filtre d'importation rudimentaire pour convertir les
+ cartes créées par 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+em
+\end_layout
+
+\end_inset
+
+ Mind Manager
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+Mind Manager est un logiciel commercial c'est à dire non libre.
+ Il est développée par Mindjet pour Windows et le Mac.
+ Les deux sont des marques enregistrées par Mindjet.
+ Pour plus d'informations voir leur site web 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+href{http://mindjet.com}{
+\end_layout
+
+\end_inset
+
+http://mindjet.com
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+ en cartes 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+.
+ Les notes et les images ne sont pas converties pour l'instant.
+ Vous pouvez importer des fichiers avec : 
+\begin_inset Quotes fld
+\end_inset
+
+File 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+ra
+\end_layout
+
+\end_inset
+
+ Import
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+ra
+\end_layout
+
+\end_inset
+
+ Mind Manager
+\begin_inset Quotes frd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsubsection*
+Structure et répertoires
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ peut lire une structure de répertoires.
+ C'est pour tester 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+, par exemple pour créer facilement de très grandes cartes utilisées pour
+ les essais (oui il y a encore de la place pour optimiser 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ ;-)
+\end_layout
+
+\begin_layout Subsection
+Export
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "export"
+
+\end_inset
+
+ 
+\begin_inset CommandInset label
+LatexCommand label
+name "hideexport"
+
+\end_inset
+
+ Souvent vous ne voulez pas exporter la carte entière, juste une partie.
+ Par exemple, vous pouvez avoir une information supplémentaire dont vous
+ voulez parler dans une présentation, alors que ces parties ne seront pas
+ visibles pendant la présentation.
+ Pour y arriver, vous pouvez 
+\begin_inset Quotes fld
+\end_inset
+
+cacher
+\begin_inset Quotes frd
+\end_inset
+
+ des parties de la carte pendant les exports en positionnant l'indicateur
+ 
+\begin_inset Quotes fld
+\end_inset
+
+hide in export
+\begin_inset Quotes frd
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Graphics
+	filename images/flag-hideexport.png
+	width 0.5cm
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Standard
+Vous pouvez basculer cet indicateur à partir de la barre de menu ou en tapant
+ 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+key{
+\end_layout
+
+\end_inset
+
+H
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+.
+ Notez qu'il y a une option globale dans le menu de préférences( 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "settings"
+
+\end_inset
+
+) pour basculer l'utilisation de cet indicateur.
+ Par défaut cet indicateur est validé.
+\end_layout
+
+\begin_layout Subsubsection*
+Open Office
+\end_layout
+
+\begin_layout Standard
+À partir de la version 2 Open utilise le 
+\begin_inset Quotes fld
+\end_inset
+
+Open Document Format
+\begin_inset Quotes frd
+\end_inset
+
+, qui peut être écrit par 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+.
+ Les options sont actuellement limitées.
+ Il est possible d'exporter des présentations qui peuvent être ouvertes
+ par Open Office Impress.
+ En sélectionnant : 
+\begin_inset Quotes fld
+\end_inset
+
+File 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+ra
+\end_layout
+
+\end_inset
+
+ Export
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+ra
+\end_layout
+
+\end_inset
+
+ Open Office
+\begin_inset Quotes frd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Vous obtenez une fenêtre de dialogue où vous pouvez choisir le fichier de
+ sortie et le type de fichier:
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Graphics
+	filename images/export-oo_es.png
+	width 10cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\align center
+Les types de fichiers représentent différents types de patrons, qui peuvent
+ être créés à partir d'un document Open Office avec un peu de travail manuel.
+ La structure de la carte 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ est alors insérée dans ce patron.
+ Il y a pour l'instant quelque limitations :
+\end_layout
+
+\begin_layout Itemize
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ ne peut gérer la longueur des pages, vous devez tester et sans doute re-éditer
+ le document Open Office pour éviter que le texte ne continue après la fin
+ de la page,
+\end_layout
+
+\begin_layout Itemize
+images et les indicateurs ne sont pas utilisés pour le moment,
+\end_layout
+
+\begin_layout Itemize
+les notes sont écrites en texte brut , sans RichText 
+\end_layout
+
+\begin_layout Itemize
+la gamme complète des patrons n'est pas disponible dans toutes les distributions.
+\end_layout
+
+\begin_layout Standard
+Certains patrons utilisent des 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+em
+\end_layout
+
+\end_inset
+
+ sections
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ c'est à dire qu'ils insèrent le titre des branches principales comme des
+ titres de section dans la présentation.
+\end_layout
+
+\begin_layout Subsubsection*
+Image
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ supporte tous les formats d'image qui sont nativement supportés par le
+ QT
+\begin_inset space ~
+\end_inset
+
+toolkit : BMP, JPEG, PBM, PGM, PNG, PPN, XPM et XBM.
+ Pour utilisation sur les sites web ou envoyer des images par email, PNG
+ est un bon compromis taille/qualité.
+ 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ utilise les options par défaut de Qt pour comprimer les images.
+\end_layout
+
+\begin_layout Subsubsection*
+ASCII
+\end_layout
+
+\begin_layout Standard
+L'exportation en image est expérimental en ce moment.
+ Plus tard cela sans doute fait avec des feuilles de style.
+ La forme de la sortie risque de changer dans de futures versions de 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsubsection*
+LaTeX
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ peut générer un fichier d'entrée pour LaTeX.
+ C'est actuellement en développement, il n'y a pas d'option.
+ En sélectionnant : 
+\begin_inset Quotes fld
+\end_inset
+
+File 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+ra
+\end_layout
+
+\end_inset
+
+ Export
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+ra
+\end_layout
+
+\end_inset
+
+ LaTeX
+\begin_inset Quotes frd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Vous allez ouvrir une fenêtre de dialogue pour le nom du fichier de sortie.
+ Cette feuille peut ensuite être inclue dans un document en utilisant la
+ commande : 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{verbatim}
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset CommandInset include
+LatexCommand include
+filename "inputfile.tex"
+
+\end_inset
+
+ 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{verbatim}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection*
+Bookmarks KDE 
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ va écraser le fichier des bookmarks KDE puis tenter de le notifier à Konqueror
+ en fonctionnement puis essayera de le notifier via DCOP que le fichier
+ a changé.
+ 
+\emph on
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ ne crée pas de sauvegarde ! 
+\emph default
+ Accessible par le menu : 
+\begin_inset Quotes fld
+\end_inset
+
+File 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+ra
+\end_layout
+
+\end_inset
+
+ Export 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+ra
+\end_layout
+
+\end_inset
+
+ KDE Bookmarks
+\begin_inset Quotes frd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsubsection*
+XHTML (Webpages)
+\end_layout
+
+\begin_layout Standard
+C'est le format à utiliser si vous voulez créer une page web.
+ Pour voir un exemple visitez la page d'entrée de 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ : 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+href{http://www.InSilmaril.de/vym}{
+\end_layout
+
+\end_inset
+
+www.InSilmaril.de/vym
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Quelque explications sur son fonctionnement : avant d'exporter une carte
+ en XHTML, elle est d'abord écrite en XML dans un répertoire (voir 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "xmlexport"
+
+\end_inset
+
+).
+ Puis le programme externe 
+\family typewriter
+xsltproc
+\family default
+
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+Sur la distribution SUSE Linux et quelques autres distributions 
+\family typewriter
+xsltproc
+\family default
+ est installé par défaut.
+\end_layout
+
+\end_inset
+
+ va être appelé pour traiter le fichier XML et générer le code HTML.
+ Un dialogue permet à l'utilisateur de positionner diverses options :
+\end_layout
+
+\begin_layout Description
+
+\series bold
+Include image:
+\series default
+ si positionné, 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ va créer une une image de la carte au début de la sortie HTML.
+ Cliquer sur une branche va faire sauter à la section correspondante de
+ la sortie.
+\end_layout
+
+\begin_layout Description
+
+\series bold
+Colored headings:
+\series default
+ Si positionné à OUI, 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ va mettre les titres en couleur dans la partie texte avec les mêmes couleurs
+ que celles utilisées dans la carte 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Description
+
+\series bold
+Show warnings:
+\series default
+ Si positionné, 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ va demander avant d'écrire les données.
+\end_layout
+
+\begin_layout Description
+
+\series bold
+Show output:
+\series default
+ Cela est utilisé principalement pour le dégogage.
+ On va voir comment s'effectue le traitement du fichier XML en appelant
+ le programme externe 
+\family typewriter
+xsltproc
+\family default
+.
+ 
+\end_layout
+
+\begin_layout Standard
+En complément les chemins des feuilles de styles CSS et XSL peuvent être
+ indiqués.
+ Par défaut sur SUSE
+\begin_inset space ~
+\end_inset
+
+Linux elles sont dans : 
+\family typewriter
+/usr/share/vym/styles
+\family default
+
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+N.dT.
+ idem pour la version 1.10.0 sur Debian Etch
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsubsection*
+XML
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "xmlexport"
+
+\end_inset
+
+ La carte est écrite dans un répertoire à la fois comme une image et comme
+ un fichier XML.
+ Le répertoire est choisi dans une fenêtre de dialogue.
+ Si le répertoire n'est pas vide, vous allez être averti et on va vous prévenir
+ que vous risquez d'écraser des fichiers.
+\end_layout
+
+\begin_layout Standard
+Il est possible d'exporter des cartes différentes dans le même répertoire.
+ Chaque fichier généré va avoir le nom de la carte comme préfixe, par exemple
+ e.g.
+ 
+\family typewriter
+todo.vym
+\family default
+ devient 
+\family typewriter
+todo.xml
+\family default
+, 
+\family typewriter
+todo.png
+\family default
+, 
+\family typewriter
+todo-image-1.png
+\family default
+ et ainsi de suite.
+ C'est utile si par exemple un site web comporte des cartes liées qui doivent
+ être rangées dans le même répertoire.
+\end_layout
+
+\begin_layout Subsubsection*
+Export d'une partie d'une carte
+\end_layout
+
+\begin_layout Standard
+Sélectionnez la branche que vous voulez exporter avec ses fils, puis ouvrez
+ le menu contextuel et choisissez 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+em
+\end_layout
+
+\end_inset
+
+ Save Selection
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+.
+ Cela va créer un fichier avec le suffixe 
+\family typewriter
+.vyp
+\family default
+, qui est une abréviation de 
+\begin_inset Quotes fld
+\end_inset
+
+vym part
+\begin_inset Quotes frd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Section
+Édition avancée
+\end_layout
+
+\begin_layout Subsection
+Propriétés d'un objet
+\end_layout
+
+\begin_layout Standard
+Pour chacune des branches vous pouvez ouvrir une fenêtre auxiliaire (voir
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "satellite"
+
+\end_inset
+
+): la 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+em
+\end_layout
+
+\end_inset
+
+ property window
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+fenêtre des propriétés
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+: 
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Graphics
+	filename images/propwindow.png
+	width 8cm
+
+\end_inset
+
+ 
+\begin_inset CommandInset label
+LatexCommand label
+name "propwindow"
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+%FIXME create screenshot
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+%FIXME explain the tabs
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+trame,
+\end_layout
+
+\begin_layout Itemize
+lien (voir 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "hideunselected"
+
+\end_inset
+
+) 
+\end_layout
+
+\begin_layout Itemize
+Layout (voir 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "incimg"
+
+\end_inset
+
+) 
+\end_layout
+
+\begin_layout Subsection
+Revoir l'histoire : défaire et refaire 
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+Undo and Redo
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ garde la trace de tous les changements faits à une carte.
+ Le nombre de modifications qui peuvent être défaites est de 75 par défaut.
+ L'historique complet peut être vu dans la 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+em
+\end_layout
+
+\end_inset
+
+ fenêtre d'historique
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Graphics
+	filename images/historywindow.png
+	width 10cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset CommandInset label
+LatexCommand label
+name "historywindow"
+
+\end_inset
+
+ un simple pas en arrière peut être défait ou refait en tapant 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+key{
+\end_layout
+
+\end_inset
+
+CTRL-Z
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ ou 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+key{
+\end_layout
+
+\end_inset
+
+CTRL-Y
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+, ou en utilisant les boutons de la barre de menu ou la 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+em
+\end_layout
+
+\end_inset
+
+ fenêtre d'historique
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+.
+ Dans la 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+em
+\end_layout
+
+\end_inset
+
+ fenêtre d'historique
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+, vous pouvez cliquer sur une ligne pour détailler toutes les actions faites
+ jusqu'à ce moment, ou refaire toutes les actions en cliquant sur la dernière
+ ligne.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+hint{
+\end_layout
+
+\end_inset
+
+ Vous pouvez 
+\begin_inset Quotes fld
+\end_inset
+
+coller à partir du passé
+\begin_inset Quotes frd
+\end_inset
+
+ : aller en arrière dans le temps avec la touche 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+key{
+\end_layout
+
+\end_inset
+
+CTRL-Z
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+, puis copier dans le tampon en tapant 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+key{
+\end_layout
+
+\end_inset
+
+CTRL-C
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Maintenant pour refaire toutes les actions, par exemple en tapant sur la
+ touche 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+key{
+\end_layout
+
+\end_inset
+
+CTRL-Y
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ ou en cliquant sur la dernière action dans la 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+em
+\end_layout
+
+\end_inset
+
+ fenêtre d'historique
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+.
+ Maintenant collez à partir du passé avec la touche 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+key{
+\end_layout
+
+\end_inset
+
+CTRL-V
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+.
+ 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Macros
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "macros"
+
+\end_inset
+
+ Les macros ont été ajoutées à 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ à la version
+\begin_inset space ~
+\end_inset
+
+1.9.0.
+ Jusqu'à présent elles sont provisoires, elles vont peut-être être remplacées
+ par un langage de script plus performant (les commandes seront approximativemen
+t les mêmes).
+\end_layout
+
+\begin_layout Standard
+Chaque touche de fonction (touches 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+key{
+\end_layout
+
+\end_inset
+
+F1
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ à 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+key{
+\end_layout
+
+\end_inset
+
+F12
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+) contient une macro, qui est exécutée sur la sélection courante lorsque
+ la touche est enfoncée.
+ Les macros par défaut changent la couleur d'un sous arbre ou positionnent
+ la trame d'une branche : 
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Graphics
+	filename images/macros_fr.png
+	width 8cm
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Standard
+Chaque macro est un script 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ qui est exécuté lorsque la touche correspondante est appuyée.
+ L'emplacement par défaut des macros peut être changé dans le 
+\begin_inset Quotes fld
+\end_inset
+
+Settings menu
+\begin_inset Quotes frd
+\end_inset
+
+.
+ Plus d'informations sur l'utilisation des scripts dans 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ peut être trouvé en appendice
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "scripts"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsection
+Signets
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "bookmarks"
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Subsubsection*
+Ouvrir des nouveaux signets au lieu de nouvelles fenêtres
+\end_layout
+
+\begin_layout Standard
+Si vous utilisez 
+\family typewriter
+konqueror
+\family default
+ comme navigateur, 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ peut se rappeler de la session de 
+\family typewriter
+konqueror 
+\family default
+qui était ouverte en premier par 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+.
+ Vous pouvez appuyer sur les touches 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+key{
+\end_layout
+
+\end_inset
+
+Ctrl
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ et cliquer pour ouvrir le lien dans un nouvel onglet.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ peut aussi ouvrir une nouvel onglet dans Mozilla ou Firefox en utilisant
+ la commande à distance 
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+(remote command) à 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+href{http://www.mozilla.org/unix/remote.html}{
+\end_layout
+
+\end_inset
+
+http://www.mozilla.org/unix/remote.html
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+ de ces navigateurs.
+\end_layout
+
+\begin_layout Subsubsection*
+Copier/coller
+\end_layout
+
+\begin_layout Standard
+Si vous voulez mettre vos bookmarks dans une carte, sélectionnez une branche
+ où vous voulez ajouter le bookmark, puis collez simplement l'URL dans la
+ carte à partir de votre navigateur.
+ Vous pouvez aussi utiliser un titre existant comme URL : cliquez à droite
+ sur la branche et sélectionnez : 
+\begin_inset Quotes fld
+\end_inset
+
+Use heading for URL
+\begin_inset Quotes frd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsubsection*
+Accès direct à la liste des bookmarks d'un navigateur
+\end_layout
+
+\begin_layout Standard
+Voir les sections 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "import"
+
+\end_inset
+
+ et 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "export"
+
+\end_inset
+
+ sur les filtres d'import-export.
+\end_layout
+
+\begin_layout Subsubsection*
+URL spéciales
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ peut convertir un titre d'une branche existante en URL.
+ Cela marche pour Bugentries dans le système Novell Bugtracking : ouvrez
+ le menu de contexte d'une branche (en cliquant à droite) et sélectionnez
+ : 
+\begin_inset Quotes fld
+\end_inset
+
+Create URL to Bugzilla
+\begin_inset Quotes frd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+L'URL sera créé à partir du titre.
+\end_layout
+
+\begin_layout Subsection
+Associer des images à une branche
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "incimg"
+
+\end_inset
+
+ La configuration par défaut d'une image est de flotter 
+\begin_inset Quotes fld
+\end_inset
+
+librement
+\begin_inset Quotes frd
+\end_inset
+
+.
+ Les images peuvent être positionnées n'importe où dans le canevas cachant
+ la partie correspondante de la carte.
+\end_layout
+
+\begin_layout Standard
+La solution est de l'insérer ou de l'inclure 
+\begin_inset Quotes fld
+\end_inset
+
+dans
+\begin_inset Quotes frd
+\end_inset
+
+ une branche.
+ Cela est fait au travers de la fenêtre de propriétés (voir 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "propwindow"
+
+\end_inset
+
+) par les menus : 
+\end_layout
+
+\begin_layout Itemize
+include images horizontally 
+\end_layout
+
+\begin_layout Itemize
+include images vertically 
+\end_layout
+
+\begin_layout Standard
+L'images est positionnée relativement à sa branche mère, mais le titre et
+ la bordure s'adapte à l'image flottante, voir en dessous:
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Graphics
+	filename images/includeImages_fr.png
+	width 10cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Mode modificateur
+\end_layout
+
+\begin_layout Standard
+Les modificateurs sont par exemple la touche 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+key{
+\end_layout
+
+\end_inset
+
+Shift
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+, 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+key{
+\end_layout
+
+\end_inset
+
+Ctrl
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ ou 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+key{
+\end_layout
+
+\end_inset
+
+Alt
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+.
+ Quand on appuie dessus pendant une action de la souris, 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ va effectuer une action différente de celle habituelle.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+%
+\backslash
+key{Ctrl} or 
+\backslash
+key{Alt}is pressed while releasing the branch, it will be
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+%added above/below the target, not as child of the target.
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Sans appuyer sur un modificateur, le premier clic sur la souris sélectionne
+ une branche.
+ Le comportement avec le modificateur 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+key{
+\end_layout
+
+\end_inset
+
+Ctrl
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ est sujet à à plusieurs options, qui peuvent être positionnées dans la
+ barre de menu :
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Graphics
+	filename images/modmodes.png
+	width 3cm
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Standard
+Le mode par défaut est de copier la couleur de la branche cliquée vers la
+ branche sélectionnée.
+ La figure au-dessus montre la barre de menu avec le modificateur par défaut
+ sélectionné.
+ Le deuxième modificateur vous permet de couper une branche complète avec
+ un simple clic.
+ Le troisième modificateur vous permet de créer des liens entre branches
+ appelés 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+em
+\end_layout
+
+\end_inset
+
+ xLinks
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+.
+ Cela est expliqué dans la section suivante 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "xlinks"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsection
+Cacher les liens d'objets non sélectionnés
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "hidelink"
+
+\end_inset
+
+ Il est pratique de positionner librement une branche, comme une branche
+ principale ou une image.
+ Cela est possible pour toutes les branches, vous pouvez utiliser une branche
+ principale et cacher ses liens de connexion au centre de la carte ou cacher
+ le lien entre une branche fils et son parent.
+ C'est utile par exemple pour les légendes ou pour une collection de liens
+ 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym 
+\end_layout
+
+\end_inset
+
+ pointant vers d'autres cartes : 
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Graphics
+	filename images/hiddenlink_fr.png
+	width 9cm
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Standard
+Pour cacher le lien entre la branche et son parent ouvrir la fenêtre de
+ propriétés et sélectionner 
+\begin_inset Quotes fld
+\end_inset
+
+Hide link if object is not selected
+\begin_inset Quotes frd
+\end_inset
+
+ sur l'onglet 
+\begin_inset Quotes fld
+\end_inset
+
+Link
+\begin_inset Quotes frd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsection
+XLinks
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "xlinks"
+
+\end_inset
+
+ Jusqu'à maintenant les données dans la carte 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ étaient sous forme d'arbre.
+ En utilisant les xLinks vous pouvez lier une branche à n'importe quelle
+ autre, comme en attachant une corde entre deux branches dans un vrai arbre.
+ C'est très pratique dans des cartes compliquées, où vous avez des renvois
+ qui ne peuvent être affichés dans la même zone visible de la fenêtre du
+ 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+em
+\end_layout
+
+\end_inset
+
+ mapeditor
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+.
+ La carte suivante tient sur un écran, mais montre comment les données peuvent
+ être reliées.
+ Dans le graphisme il y a un lien à partir d'une tâche (prepare a presentation)
+ à l'information générale:
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Graphics
+	filename images/xlink.png
+	width 10cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\align left
+Notez qu'un xLink qui pointe sur une branche non visible (parce qu'elle
+ est 
+\begin_inset Quotes fld
+\end_inset
+
+enroulée
+\begin_inset Quotes frd
+\end_inset
+
+), est montrée par une flèche horizontale.
+ Regardez la branche 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+lq
+\end_layout
+
+\end_inset
+
+ Tuesday
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+rq
+\end_layout
+
+\end_inset
+
+ dans la capture d'écran ci-dessus.
+\end_layout
+
+\begin_layout Subsubsection*
+Créer un xLink
+\end_layout
+
+\begin_layout Standard
+Choisir le type de lien à partir de la barre de modifier (en cliquant l'icône
+ de la barre de menu ou en tapant 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+key{
+\end_layout
+
+\end_inset
+
+L
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+).
+ Sélectionner la branche d'où le xLink doit partir.
+ Appuyer sur le modifier 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+key{
+\end_layout
+
+\end_inset
+
+Ctrl
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ puis cliquez la branche et amenez le curseur de la souris où le lien doit
+ se terminer.
+ Un lien est tracé qui suit le pointeur de la souris.
+ Le lien devient permanent quand vous relâchez le bouton de la souris .
+\end_layout
+
+\begin_layout Subsubsection*
+Modifier ou effacer un xLink
+\end_layout
+
+\begin_layout Standard
+Sélectionner une extrémité du xLink.
+ Ouvrir le menu contextuel et sélectionnez 
+\begin_inset Quotes fld
+\end_inset
+
+ Edit xLink
+\begin_inset Quotes frd
+\end_inset
+
+.
+ Un sous menu contenant tous les xLinks de la branche apparaît.
+ Sélectionnez en un et la fenêtre de dialogue xLink dialogue s'ouvre, où
+ vous pouvez sélectionner la couleur, la largeur et aussi effacer le xLink.
+\end_layout
+
+\begin_layout Subsubsection*
+Suivre un xLink
+\end_layout
+
+\begin_layout Standard
+Dans une carte 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ compliquée il est commode de sauter à l'autre extrémité d'un xLink.
+ Vous pouvez le faire en ouvrant le menu contextuel et en cliquant 
+\begin_inset Quotes fld
+\end_inset
+
+ Goto xLink
+\begin_inset Quotes frd
+\end_inset
+
+ puis en sélectionnant le xLink qui vous intéresse.
+\end_layout
+
+\begin_layout Subsection
+Ajouter et supprimer des branches
+\end_layout
+
+\begin_layout Standard
+Le menu contextuel d'une branche montre quelques moyens supplémentaires
+ pour ajouter ou supprimer des données.
+ Vous pouvez supprimer une branche tout en gardant ses enfants.
+ Les enfants sont alors liés au parent de la branche supprimée (son 
+\begin_inset Quotes fld
+\end_inset
+
+grand-parent
+\begin_inset Quotes frd
+\end_inset
+
+).
+ Des branches identiques peuvent être ajoutées à des cartes existantes.
+ Pour les raccourcis clavier regarder également dans le menu contextuel.
+\end_layout
+
+\begin_layout Subsection
+Ajouter une carte complète ou une partie
+\end_layout
+
+\begin_layout Standard
+Sélectionner la branche où vous voulez ajouter une carte sauvée précédemment
+ (
+\family typewriter
+.vym
+\family default
+) ou une partie de carte (
+\family typewriter
+.vyp
+\family default
+), puis ouvrez le menu contextuel et choisissez 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+em
+\end_layout
+
+\end_inset
+
+ Add 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+ra
+\end_layout
+
+\end_inset
+
+ Add Map (Insert)
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+.
+ Pour l'importation vous pouvez choisir entre 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+em
+\end_layout
+
+\end_inset
+
+ Add Map (Insert)
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ ou 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+em
+\end_layout
+
+\end_inset
+
+ Add Map (Replace)
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+: les données importées vont être ajoutées à la branche sélectionnée.
+\end_layout
+
+\begin_layout Section
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ sur Mac OS X
+\end_layout
+
+\begin_layout Subsection
+Vue d'ensemble
+\end_layout
+
+\begin_layout Standard
+Il y a deux moyens de faire fonctionner 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ sur les Macs : 
+\end_layout
+
+\begin_layout Subsubsection*
+Qt Mac Edition:
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ a là une l'apparence bien connue de Mac.
+ 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ est disponible comme paquet d'application Mac OS X dans une image disque
+ (
+\family typewriter
+vym.dmg
+\family default
+).
+ Il a été compilé et testé sur Mac
+\begin_inset space ~
+\end_inset
+
+OS
+\begin_inset space ~
+\end_inset
+
+10.4.
+ Ce paquet inclut les librairies Qt de Trolltech.
+\end_layout
+
+\begin_layout Subsubsection*
+version X11 
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ peut aussi être lancé dans sa version Linux, mais les menus et l'utilisation
+ seront ceux de Linux c'est à dire que les barres de menu sont différentes.
+\end_layout
+
+\begin_layout Subsection
+Menu de contexte et touches spéciales
+\end_layout
+
+\begin_layout Standard
+La majorité des Macs n'a malheureusement qu'un bouton de souris.
+ Pour pour voir le menu contextuel qui normalement est ouvert avec un clic
+ droit, vous devez cliquer en appuyant sur la touche 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+key{
+\end_layout
+
+\end_inset
+
+command
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Surtout sur les portables quelques touches utilisées sur les PC sont manquantes.
+ La version de 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ avec QT-Mac a ses propres raccourcis clavier.
+ Pour les trouver regardez les entrées des menus, les raccourcis visibles
+ à côté de cette entrée.
+ Les boutons de la barre de menu peuvent aussi avoir des raccourcis, positionnez
+ le curseur de la souris sur un bouton et la fenêtre d'aide apparaîtra.
+\end_layout
+
+\begin_layout Subsection
+Voir des liens externes
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ sur Mac utilise le système d'appel 
+\family typewriter
+/usr/bin/open
+\family default
+ pour voir les liens.
+ Mac
+\begin_inset space ~
+\end_inset
+
+OS détermine automatiquement si le lien est un pdf ou une page web et ouvre
+ le bon visionneur.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+appendix 
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+\begin_inset CommandInset label
+LatexCommand label
+name "settings"
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ : processus d'initialisation et de configuration
+\end_layout
+
+\begin_layout Subsection
+Menu des préférences (Settings menu)
+\end_layout
+
+\begin_layout Standard
+Le 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+em
+\end_layout
+
+\end_inset
+
+ Menu des préférences 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ vous permet de configurer 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ suivant vos besoins :
+\end_layout
+
+\begin_layout Subsubsection*
+Choisir l'application pour ouvrir les fichiers PDF 
+\end_layout
+
+\begin_layout Standard
+Choisir un visionneur PDF installé sur votre système.
+\end_layout
+
+\begin_layout Subsubsection*
+Choisir le navigateur (vers les liens externes)
+\end_layout
+
+\begin_layout Standard
+Choisissez votre navigateur favori.
+\end_layout
+
+\begin_layout Subsubsection*
+Positionner le chemin pour les macros
+\end_layout
+
+\begin_layout Standard
+Le chemin par défaut pour exécuter les macros correspondantes quand vous
+ appuyez sur une des touches de fonction.
+ Chaque touche correspond à un fichier (
+\family typewriter
+macro-1.vys..macro12.vys
+\family default
+) dans le chemin de recherche.
+\end_layout
+
+\begin_layout Subsubsection*
+Niveaux défaire/refaire
+\end_layout
+
+\begin_layout Standard
+Fixer le nombre de défaire/refaire.
+ Par défaut :75.
+\end_layout
+
+\begin_layout Subsubsection*
+Sauvegarde automatique et temps entre sauvegardes
+\end_layout
+
+\begin_layout Standard
+La sauvegarde automatique des cartes peut être désactivée.
+ Le temps entre sauvegardes est indiqué en secondes.
+ 
+\end_layout
+
+\begin_layout Standard
+Quand la sauvegarde d'une carte est demandée 
+\family typewriter
+example.vym
+\family default
+, 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym 
+\end_layout
+
+\end_inset
+
+ renomme le fichier existant en 
+\family typewriter
+example.vym~
+\family default
+ avant d'écrire le fichier 
+\family typewriter
+example.vym.
+\end_layout
+
+\begin_layout Subsubsection*
+Éditer la branche après l'avoir créée
+\end_layout
+
+\begin_layout Standard
+Si positionné, le titre de la nouvelle branche va être édité immédiatement
+ après avoir été créé.
+\end_layout
+
+\begin_layout Subsubsection*
+Sélectionner la branche après l'avoir créé
+\end_layout
+
+\begin_layout Standard
+Si positionné, la nouvelle branche va être sélectionnée après avoir été
+ créée.
+ Quand vous réfléchissez sur un mot donné, vous ne voulez pas aller dans
+ les détails, mais garder l'attention sur ce mot.
+ Le choix par défaut est de 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\backslash
+em 
+\end_layout
+
+\end_inset
+
+ne pas
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+} 
+\end_layout
+
+\end_inset
+
+ sélectionner la nouvelle branche créée.
+\end_layout
+
+\begin_layout Subsubsection*
+Sélectionner la branche existante
+\end_layout
+
+\begin_layout Standard
+Si positionné et que vous commencez à éditer le titre de la branche, le
+ texte du titre va être sélectionné.
+ Pratique pour copier/coller dans d'autres applications.
+\end_layout
+
+\begin_layout Subsubsection*
+Touche effacement
+\end_layout
+
+\begin_layout Standard
+Si positionné, la touche 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+key{
+\end_layout
+
+\end_inset
+
+Delete
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ est validée pour détruire les objets.
+ Attention aux confusions avec la touche 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+key{
+\end_layout
+
+\end_inset
+
+Insert
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+sur les claviers de PC.
+\end_layout
+
+\begin_layout Subsubsection*
+Indicateurs exclusif
+\end_layout
+
+\begin_layout Standard
+Si positionné quelques indicateurs peuvent être exclusifs, par exemple les
+ émoticons.
+\end_layout
+
+\begin_layout Subsubsection*
+Autoriser l'indicateur caché
+\end_layout
+
+\begin_layout Standard
+Si positionné, chaque branche qui a l'indicateur caché associé (voir 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "hideexport"
+
+\end_inset
+
+) ne sera pas présente dans les exports.
+\end_layout
+
+\begin_layout Subsection
+Fichier de configuration
+\end_layout
+
+\begin_layout Standard
+Au démarrage, 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ va regarder un fichier de configuration spécifique à l'utilisateur contenant
+ ses réglages personnels comme la position des fenêtres, les menus de travail,
+ etc.
+ Si ce fichier n'existe pas, il sera créé.
+ Le fichier est localisé dans la racine du répertoire de l'utilisateur.
+ Sa position exacte dépend de la plate-forme :
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="3" columns="2">
+<features>
+<column alignment="center" valignment="top" width="0">
+<column alignment="left" valignment="top" width="0">
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+Plate-forme
+\series default
+ 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+Fichier de configuration 
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Linux 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+\begin_inset Formula $\sim$
+\end_inset
+
+/.config/InSilmaril/vym.conf
+\family default
+  
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Mac OS X 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+/Users/NAME/Library/Preferences/com.insilmaril.vym.plist
+\family default
+  
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Le fichier peut être édité manuellement ou sur Mac
+\begin_inset space ~
+\end_inset
+
+OS
+\begin_inset space ~
+\end_inset
+
+X avec le Property List Editor (installé avec xtools).
+\end_layout
+
+\begin_layout Subsection
+Chemin vers les ressources
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ va essayer de trouver ses ressources (images, feuilles de style, filtres,
+ etc) aux endroits suivants :
+\end_layout
+
+\begin_layout Enumerate
+chemin donné par la variable d'environnement
+\family typewriter
+ VYMHOME
+\family default
+.
+ 
+\end_layout
+
+\begin_layout Enumerate
+Si appelé avec l'option 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\backslash
+em 
+\end_layout
+
+\end_inset
+
+local
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+} 
+\end_layout
+
+\end_inset
+
+ (voir 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "options"
+
+\end_inset
+
+ en dessous), 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ va chercher ses ressource dans le répertoire courant.
+\end_layout
+
+\begin_layout Enumerate
+
+\family typewriter
+/usr/share/vym
+\family default
+ 
+\end_layout
+
+\begin_layout Enumerate
+
+\family typewriter
+/usr/local/share/vym
+\family default
+ 
+\end_layout
+
+\begin_layout Subsection
+Options de la ligne de commande
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "options"
+
+\end_inset
+
+ 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ a les options suivantes lors de l'appel en ligne de commande
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+chaque option doit être précédé du 
+\begin_inset Quotes fld
+\end_inset
+
+-
+\begin_inset Quotes frd
+\end_inset
+
+ classique (N.d.T.)
+\end_layout
+
+\end_inset
+
+ :
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="7" columns="4">
+<features>
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="none" valignment="top" width="8cm">
+<row>
+<cell alignment="none" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+Option 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+Résumé 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+Argument 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+Description 
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+v 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+version 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+indiquer la version et le nom de code de 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+l 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+local 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Utiliser les chemins locaux pour les feuilles de style,les traductions,
+ les icônes, etc.
+\end_layout
+
+\begin_layout Plain Layout
+Pratique pour les tests
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+h 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+aide 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+montrer l'aide
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+r 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+lancement 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+fichier 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+charger et lancer un script
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+q 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+quitter 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+quitter après le démarrage.
+ Utile pour les benchmarks.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Vous pouvez aussi donner plusieurs noms de fichiers dans la ligne de commande
+ pour laisser 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ ouvrir plusieurs cartes à la fois.
+\end_layout
+
+\begin_layout Section
+Scripts
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "scripts"
+
+\end_inset
+
+ 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+%FIXME
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+TODO: désolé cette section du manuel de 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ est provisoire.
+\end_layout
+
+\begin_layout Subsection
+Exemple de scripts
+\end_layout
+
+\begin_layout Subsubsection
+Exporter un jeu de cartes
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{verbatim}
+\end_layout
+
+\end_inset
+
+ # Simple vym script to export images of various maps simultanously exportImage
+ (); 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{verbatim}
+\end_layout
+
+\end_inset
+
+ Le script au-dessus peut être utilisé pour exporter automatiquement toutes
+ les cartes d'un répertoire.
+ Si le script a pour nom 
+\family typewriter
+export-image.vys
+\family default
+, appeler 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ avec
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{verbatim}
+\end_layout
+
+\end_inset
+
+ vym --quit --run export-image.vys *.vym 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{verbatim}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Aider 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+J'ai écrit personnellement 98% du code moi-même.
+ Aucune surprise : 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ correspond exactement à mes besoins.
+ Néanmoins j'encourage tous les utilisateurs de 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ à contribuer.
+ Peut-être pas seulement avec des demandes d'extensions, mais aussi avec
+ du code, de nouveaux filtres import/export, des traductions, etc.
+ Dans cet appendice, je vais essayer de montrer combien il est facile de
+ développer avec 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+.
+ J'attends vraiment de vos nouvelles au sujet de vos futures extensions
+ !
+\end_layout
+
+\begin_layout Section
+Obtenir de l'aide
+\end_layout
+
+\begin_layout Subsection*
+Foire Aux Questions
+\end_layout
+
+\begin_layout Standard
+Pointer la FAQ disponible sur le site de 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ (en anglais) :
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+href{http://www.InSilmaril.de/vym/faq.html}{
+\end_layout
+
+\end_inset
+
+http://www.InSilmaril.de/vym/faq.html
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Subsection*
+Mailinglists
+\end_layout
+
+\begin_layout Standard
+Il y a deux mailinglists: 
+\end_layout
+
+\begin_layout Itemize
+
+\family typewriter
+vym-forum
+\family default
+ est le forum des utilisateurs 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ pour discuter de points divers, 
+\end_layout
+
+\begin_layout Itemize
+
+\family typewriter
+vym-devel
+\family default
+ est fait pour les gens qui veulent contribuer à 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+Vous pouvez voir les archives et vous inscrire à :
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+href{https://sourceforge.net/mail/?group_id=127802}{
+\end_layout
+
+\end_inset
+
+https://sourceforge.net/mail/?group_id=127802
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Subsection*
+Contacter l'auteur
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "author"
+
+\end_inset
+
+ En premier essayer les mailinglists.
+ Pour tout autre problème contacter l'auteur Uwe Drechsel à :
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+href{mailto:vym@InSilmaril.de}{
+\end_layout
+
+\end_inset
+
+vym@InSilmaril.de
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Section
+Comment reporter un bug
+\end_layout
+
+\begin_layout Standard
+Quoique Sourceforge ait son propre système de rapport de bugs, je préfère
+ que vous me contactiez directement (voir 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "author"
+
+\end_inset
+
+) ou encore mieux : vous pouvez mettre un rapport de bug dans Bugzilla,
+ le système de rapport de bugs de openSUSE : 
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+href{http://en.opensuse.org/Submit_a_bug}{
+\end_layout
+
+\end_inset
+
+http://en.opensuse.org/Submit_a_bug
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Standard
+Je construis 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ régulièrement pour openSUSE, vous pouvez faire un rapport pour une autre
+ version , même si vous utilisez un autre système d'exploitation.
+ N'oubliez pas de me dire lequel vous utilisez :
+\end_layout
+
+\begin_layout Itemize
+les manipulations exactes pour reproduire le bug,
+\end_layout
+
+\begin_layout Itemize
+la version et la date de construction de 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ (voir l'aide Help 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+ra
+\end_layout
+
+\end_inset
+
+ About 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+) 
+\end_layout
+
+\begin_layout Itemize
+le matériel et le système d'exploitation
+\end_layout
+
+\begin_layout Section
+Compiler à partir des sources 
+\end_layout
+
+\begin_layout Subsection
+Obtenir les sources
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "getsources"
+
+\end_inset
+
+ Vous pouvez trouver la dernière version de 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ sur le site du projet :
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+href{https://sourceforge.net/projects/vym/}{
+\end_layout
+
+\end_inset
+
+https://sourceforge.net/projects/vym/
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Standard
+Là vous pouvez les extraire à partir à partir du dépot des source (CVS):
+\begin_inset Newline newline
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{verbatim}
+\end_layout
+
+\end_inset
+
+ cvs -d:pserver:anonymous@cvs.sf.net:/cvsroot/vym checkout code 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{verbatim}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+le toolkit Qt 
+\end_layout
+
+\begin_layout Standard
+Qt est une trousse à outils C++ multiplateforme pour les GUI
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+GUI Graphical User Interface interface graphique pour l'utilisateur (N.d.T.)
+\end_layout
+
+\end_inset
+
+ et le développent d'applications.
+ Il fournit une portabilité avec le même source sur MS
+\begin_inset space ~
+\end_inset
+
+Windows, Mac
+\begin_inset space ~
+\end_inset
+
+OS
+\begin_inset space ~
+\end_inset
+
+X, Linux et toutes les versions principales commerciales d'Unix.
+ Qt est aussi disponible pour les systèmes embarqués.
+ Qt est un produit de la société Trolltech.
+ Pour plus d'informations voir :
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+href{http://www.trolltech.com/qt/}{
+\end_layout
+
+\end_inset
+
+www.trolltech.com/qt
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Subsection
+Compiler 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Standard
+Assurez vous que vous avez installé l'environnement QT proprement, voir
+ la documentation pour les détails.
+ Vous devez avoir la commande Qt
+\family typewriter
+ qmake
+\family default
+ dans votre variable d'environnement 
+\family typewriter
+PATH
+\family default
+, pusi lancez 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{verbatim}
+\end_layout
+
+\end_inset
+
+ $ qmake 
+\begin_inset Formula $make$
+\end_inset
+
+ make install 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{verbatim}
+\end_layout
+
+\end_inset
+
+ La dernière commande 
+\family typewriter
+make install
+\family default
+ a besoin des droits root.
+ Elle n'est pas nécessaire si vous voulez juste tester 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+%
+\backslash
+subsubsection*{Compiling 
+\backslash
+vym on Macs}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+%FIXME
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+format des fichiers de 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "fileformat"
+
+\end_inset
+
+Les cartes 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ ont un suffixe 
+\family typewriter
+
+\begin_inset Quotes fld
+\end_inset
+
+.vym
+\family default
+
+\begin_inset Quotes frd
+\end_inset
+
+ et représentent une archive compressée des données.
+ Si vous voulez avoir une vue plus précise de la structure des données dans
+ la carte 
+\begin_inset Quotes fld
+\end_inset
+
+mapname.vym
+\begin_inset Quotes frd
+\end_inset
+
+, décompressez la en lançant la commande : 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{verbatim}
+\end_layout
+
+\end_inset
+
+ $ unzip mapname.vym 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{verbatim}
+\end_layout
+
+\end_inset
+
+ Cela va créer les répertoires 
+\family typewriter
+images
+\family default
+ et
+\family typewriter
+ flags
+\family default
+ dans votre répertoire courant et aussi la carte elle-même, normalement
+ appelée 
+\family typewriter
+mapname.xml
+\family default
+.
+ La structure XML de 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ s'explique d'elle-même, jetez un 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+oe 
+\end_layout
+
+\end_inset
+
+il sur le fichier 
+\family typewriter
+mapname.xml
+\family default
+.
+\end_layout
+
+\begin_layout Standard
+Ce fichier XML peut être chargé directement dans 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+, il n'a pas besoin d'être compressé.
+ Si vous voulez compresser toutes les données vous-même faites 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{verbatim}
+\end_layout
+
+\end_inset
+
+ $ zip -r mapname.vym .
+ 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{verbatim}
+\end_layout
+
+\end_inset
+
+ pour compresser toutes vos données dans le répertoire courant.
+\end_layout
+
+\begin_layout Subsection
+Nouvelles fonctionnalités
+\end_layout
+
+\begin_layout Standard
+Il y a beaucoup de nouvelles fonctionnalités qui sont installées dans 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+.
+ Avec 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ vous avez reçu un répertoire avec un bon nombre d'exemples de cartes.
+ Vous les trouverez en cliquant Help 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+ra
+\end_layout
+
+\end_inset
+
+ Open
+\begin_inset space ~
+\end_inset
+
+vym
+\begin_inset space ~
+\end_inset
+
+example
+\begin_inset space ~
+\end_inset
+
+maps.
+ Vous y trouverez la carte 
+\family typewriter
+vym-projectplan.vym
+\family default
+.
+ Elle liste une foule de choses qui seront faites dans le futur.
+ Si vous avez d'autres idées, contactez l'équipe de développement à 
+\family typewriter
+vym-devel@lists.sourceforge.net
+\family default
+.
+\end_layout
+
+\begin_layout Subsection
+support pour de nouvelles langues
+\end_layout
+
+\begin_layout Standard
+Pour pouvoir ajouter une nouvelle langue à 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+, vous devez disposer des sources (voir 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "getsources"
+
+\end_inset
+
+) et de l'installation de Trolltechs QT.
+ une partie de QT sont des outils de développement, et particulièrement
+ l'outil de traduction 
+\begin_inset Quotes fld
+\end_inset
+
+Linguist
+\begin_inset Quotes frd
+\end_inset
+
+ qui est nécessaire.
+\end_layout
+
+\begin_layout Standard
+Dans quelques distributions Linux, les outils de développement sont un paquetage
+ spécial, par exemple sur SUSE LINUX vous devez avoir installé : 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{verbatim}
+\end_layout
+
+\end_inset
+
+ libqt4-devel.rpm libqt4-devel-doc.rpm libqt4-devel-tools.rpm 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{verbatim}
+\end_layout
+
+\end_inset
+
+ Si vous n'avez pas QT de base sur votre système, vous pouvez l'obtenir
+ à : 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+href{http://www.trolltech.com}{
+\end_layout
+
+\end_inset
+
+http://www.trolltech.com
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ Une fois que vous êtes capable de compiler, vous pouvez traduire le texte
+ dans 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym 
+\end_layout
+
+\end_inset
+
+ lui-même en faisant les actions suivantes :
+\end_layout
+
+\begin_layout Itemize
+supposons que nous voulons traduire une nouvelle langue 
+\begin_inset Quotes fld
+\end_inset
+
+NEW
+\begin_inset Quotes frd
+\end_inset
+
+ au lieu de 
+\begin_inset Quotes fld
+\end_inset
+
+de
+\begin_inset Quotes frd
+\end_inset
+
+ en allemand ou 
+\begin_inset Quotes fld
+\end_inset
+
+en
+\begin_inset Quotes frd
+\end_inset
+
+ en anglais,
+\end_layout
+
+\begin_layout Itemize
+copier le fichier 
+\family typewriter
+lang/vym_en.ts
+\family default
+ to l
+\family typewriter
+ang/vym_NEW.ts
+\family default
+ (Le code lui-même contient la version anglaise),
+\end_layout
+
+\begin_layout Itemize
+ajouter 
+\family typewriter
+lang/vym_NEW.ts
+\family default
+ dans la section TRANSLATIONS de vym.pro,
+\end_layout
+
+\begin_layout Itemize
+lancer Linguist sur 
+\family typewriter
+vym_NEW.ts
+\family default
+ et faire la traduction,
+\end_layout
+
+\begin_layout Itemize
+lancer 
+\family typewriter
+lrelease
+\family default
+ pour créer 
+\family typewriter
+vym_NEW.qm.
+\end_layout
+
+\begin_layout Itemize
+faire un make install pour installer le nouveau 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym 
+\end_layout
+
+\end_inset
+
+ et tester la traduction
+\end_layout
+
+\begin_layout Standard
+Si vous vous sentez courageux, vous pouvez traduire le manuel.
+ Il est écrit en LaTeX, vous devez juste changer le fichier 
+\family typewriter
+/tex/vym.tex
+\family default
+.
+ (Linguist et QT ne sont pas nécessaires, mais il est utile de savoir comment
+ travailler avec LaTeX et pdflatex pour créer le PDF.)
+\end_layout
+
+\begin_layout Standard
+S'il vous plaît envoyez moi la traduction que vous avez faite.
+ Je peux aussi vous donner une accès de développeur au projet, si vous voulez
+ fournir régulièrement des traductions.
+\end_layout
+
+\begin_layout Subsection
+Nouveaux filtres d'export/import 
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ supporte des types de filtres variés.
+ Les données peuvent être écrites directement, insérées dans des patrons
+ ou peuvent être écrites en données XML et  ensuite être travaillées par
+ des transformations XSL.
+\end_layout
+
+\begin_layout Standard
+La plupart des fonctionnalités d'import-export est disponible dans les classes
+ ImportBase, ExportBase et les classes dérivées.
+ Le tout se trouve dans 
+\family typewriter
+les fichiers imports.h
+\family default
+ et 
+\family typewriter
+exports.h
+\family default
+.
+\end_layout
+
+\begin_layout Subsection*
+import/export direct
+\end_layout
+
+\begin_layout Standard
+Un exemple pour l'export direct est l'export XML.
+ Cette méthode touche l'implémentation de pratiquement tous les objets de
+ 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+, aussi autant que possible utilisez une transformation XSL à la place.
+\end_layout
+
+\begin_layout Standard
+Si vous voulez savoir comment cela est fait, commencez à regarder 
+\family typewriter
+MapEditor::saveToDir
+\family default
+ in 
+\family typewriter
+mapeditor.cpp
+\family default
+.
+\end_layout
+
+\begin_layout Subsection*
+patrons
+\end_layout
+
+\begin_layout Standard
+Les patrons ont été introduits pour exporter dans le format opendoc utilisé
+ par Open
+\begin_inset space ~
+\end_inset
+
+Office.
+ Pendant que je lisais la spécification du format (plus de 500 pages),
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+ 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+href{http://www.oasis-open.org/}{
+\end_layout
+
+\end_inset
+
+http://www.oasis-open.org/
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+ j'avais le sentiment que je ne voulais pas écrire l'export à partir de
+ rien.
+ Cela serait trop difficile pour adapter les styles à vos propres besoins
+ par exemple le canevas.
+\end_layout
+
+\begin_layout Standard
+En analysant un document Open
+\begin_inset space ~
+\end_inset
+
+Office existant, je trouvais qu'il y avait un grand nombre d'informations
+ redondantes dans une présentation standard, par exemple chaque Item d'une
+ liste est contenu dans sa propre liste.
+ À la fin j'en arrivai à un style de présentation par défaut, qui peut encore
+ être simplifié, si j'ai du temps de libre \SpecialChar \ldots{}
+
+\end_layout
+
+\begin_layout Standard
+Les patrons existants sont encore en évolution, avant de développer votre
+ propre style contactez moi.
+ De base les étapes suivantes sont nécessaires pour que vous construisiez
+ votre propre style :
+\end_layout
+
+\begin_layout Enumerate
+créer un exemple dans Open Office.
+ Utilisez un titre, les noms de auteurs, les entêtes de page, etc que vous
+ pourrez facilement piquer dans le fichier de sortie,
+\end_layout
+
+\begin_layout Enumerate
+décompressez le document Open Office dans un répertoire,
+\end_layout
+
+\begin_layout Enumerate
+le fichier principal est appelé
+\family typewriter
+ content.xml
+\family default
+.
+ Toutes les données sont sur une seule ligne.
+ Vous pouvez exploser les marques XML en utilisant le script 
+\family typewriter
+scripts/niceXML
+\family default
+, qui fait partie de la distribution de 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Enumerate
+copiez la sortie de 
+\family typewriter
+niceXML
+\family default
+ dans 
+\family typewriter
+content-template.xml
+\family default
+.
+\end_layout
+
+\begin_layout Enumerate
+en regardant dans le détail , vous trouverez nombre de définitions inutilisées,
+ par exemple les styles.
+ Vous pouvez les effacer ou simplement les ignorer.
+\end_layout
+
+\begin_layout Enumerate
+Essayez de trouver votre titre, le nom de auteurs.
+ 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ va remplacer les chaînes suivantes lors de l'export :
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="4" columns="2">
+<features>
+<column alignment="left" valignment="top" width="0">
+<column alignment="none" valignment="top" width="4cm">
+<row>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+<!-- INSERT TITLE -->
+\family default
+ 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+titre de la carte 
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+<!-- INSERT AUTHOR-->
+\family default
+  
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+auteur
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+<!-- INSERT COMMENT -->
+\family default
+ 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+commentaire
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+<!-- INSERT PAGES-->
+\family default
+ 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+contenu de la carte 
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Le contenu lui-même est généré d'une manière similaire en insérant des listes
+ dans 
+\family typewriter
+page-template
+\family default
+.
+ Les remplacements suivants sont effectues :
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="2" columns="2">
+<features>
+<column alignment="left" valignment="top" width="0">
+<column alignment="none" valignment="top" width="7cm">
+<row>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+<!-- INSERT PAGE HEADING-->
+\family default
+ 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+entête de la page (branche principale ou fils, dépendant de l'utilisation
+ des sections) 
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+<!-- INSERT LIST -->
+\family default
+  
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+tous les fils de la branche du dessus
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+Actuellement les images sont exportées et les notes vont apparaître comme
+ du texte sans mise au format ni couleur.
+\end_layout
+
+\begin_layout Subsection*
+XSL Transformation
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+vym
+\end_layout
+
+\end_inset
+
+ utilise des transformations XSL pour l'exportation (par exemple en XHTML)
+ et pour l'importation des données(par exemple les bookmarks KDE).
+ Il faut écrire un peu de code pour fournir le GUI, le reste est fait en
+ utilisant la feuille de style 
+\family typewriter
+.xsl
+\family default
+ et en appelant le processeur 
+\family typewriter
+xsltproc, 
+\family default
+qui fait partie de libxslun, la librairie C XSLT pour GNOME.
+\end_layout
+
+\end_body
+\end_document
