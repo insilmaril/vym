@@ -102,9 +102,8 @@ void BranchObj::setParObjTmp(LinkableMapObj* dst, QPointF m, int off)
     if (dsti->depth()==0)   
     {	// new parent is a mapcenter
 	Vector v= ( m - bodst->getChildPos());
-	if (v.x()<0) v.setX( v.x()-bbox.width() );
 	v.normalize();
-	v.scale (100);
+	v.scale (150);
 	move2RelPos (v.toQPointF());
     } else
     {	
