@@ -318,10 +318,6 @@ bool BranchItem::getIncludeImagesVer()
 void BranchItem::setIncludeImagesHor(bool b)
 {
     includeImagesHor=b;
-    /* calcBBoxSize(); FIXME-3
-    positionBBox();
-    requestReposition();
-    */
 }
 
 bool BranchItem::getIncludeImagesHor()

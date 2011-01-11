@@ -2831,7 +2831,6 @@ bool VymModel::scrollBranch(BranchItem *bi)
 	if (bi->depth()==0) return false;
 	if (bi->toggleScroll())
 	{
-	    //reposition();
 	    QString u,r;
 	    r="scroll";
 	    u="unscroll";
@@ -2846,7 +2845,6 @@ bool VymModel::scrollBranch(BranchItem *bi)
 	    emitSelectionChanged();
 	    reposition();
 	    mapEditor->getScene()->update(); //Needed for _quick_ update,  even in 1.13.x 
-	    //reposition();
 	    return true;
 	}
     }	
