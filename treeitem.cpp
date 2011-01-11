@@ -507,7 +507,7 @@ void TreeItem::deactivateAllStandardFlags ()
 void TreeItem::toggleStandardFlag(const QString &name, FlagRow *master)
 {
     standardFlags.toggle (name,master);
-    model->emitDataHasChanged(this);
+    model->emitDataHasChanged(this);	// FIXME-3 better call from VM?
 }
 
 bool TreeItem::isActiveStandardFlag (const QString &name)

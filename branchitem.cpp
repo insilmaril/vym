@@ -213,7 +213,6 @@ bool BranchItem::toggleScroll()
 	    }
 	}
     }
-    //model->reposition();  // FIXME-3 we don't really want to update view from here...
     return true;
 }
 
