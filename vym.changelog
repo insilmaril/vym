@@ -1,4 +1,17 @@
 -------------------------------------------------------------------
+Thu Jan 13 15:00:32 CET 2011 - vym@insilmaril.de
+
+
+- Version 1.13.19
+- Feature: Shortcuts for sorting
+- Feature: svg export
+- Feature: pdf export
+- Feature: batch mode to run scripts without showing GUI
+- Bugfix: temporary relinking to mapcenter
+- Bugfix: Fixed missing savestate for reverse sort
+- Bugfix: no updated frame including children when toggling scrollstate
+
+-------------------------------------------------------------------
 Tue Dec  7 09:47:30 CET 2010 - vym@insilmaril.de
 
 - Bugfix: No progress bar when loading a recent map

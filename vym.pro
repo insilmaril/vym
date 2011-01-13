@@ -2,9 +2,9 @@ TARGET	    = vym
 TEMPLATE    = app
 LANGUAGE    = C++
 
-CONFIG	+= qt warn_on debug x86 ppc qdbus
+CONFIG	+= qt warn_on debug x86 ppc qdbus 
 
-QT += qt3support network xml
+QT += qt3support network xml svg
 
 # Only needed with Qt < 4.6
 # include (/data/qtanimationframework-2.3-opensource/src/qtanimationframework.pri)

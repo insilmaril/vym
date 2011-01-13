@@ -52,6 +52,8 @@ Highlighter::Highlighter(QTextDocument *parent)
 		    << "\\bexportASCII\\b"
 		    << "\\bexportHTML\\b"
 		    << "\\bexportImage\\b"
+		    << "\\bexportPDF\\b"
+		    << "\\bexportSVG\\b"
 		    << "\\bexportXML\\b"
 		    << "\\bimportDir\\b"
 		    << "\\blinkTo\\b" 

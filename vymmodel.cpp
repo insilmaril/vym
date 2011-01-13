@@ -3620,6 +3620,30 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	    exportImage (fname,false,format);
 	}
     /////////////////////////////////////////////////////////////////////
+    } else if (com=="exportPDF")
+    {
+	QString fname="";
+	ok=true;
+	if (parser.parCount()>=2)
+	    // Hey, we even have a filename
+	    fname=parser.parString(ok,0); 
+	if (!ok)
+	    parser.setError (Aborted,"Could not read filename");
+	else
+	    exportPDF(fname,false);
+    /////////////////////////////////////////////////////////////////////
+    } else if (com=="exportSVG")
+    {
+	QString fname="";
+	ok=true;
+	if (parser.parCount()>=2)
+	    // Hey, we even have a filename
+	    fname=parser.parString(ok,0); 
+	if (!ok)
+	    parser.setError (Aborted,"Could not read filename");
+	else
+	    exportSVG(fname,false);
+    /////////////////////////////////////////////////////////////////////
     } else if (com=="exportXML")
     {
 	QString fname="";
@@ -4420,6 +4444,97 @@ QPointF VymModel::exportImage(QString fname, bool askName, QString format)
     QImage img (mapEditor->getImage(offset));
     img.save(fname, format);
     setExportMode (false);
+    return offset;
+}
+
+QPointF VymModel::exportPDF (QString fname, bool askName)
+{
+    if (fname=="")
+    {
+	fname=getMapName()+".pdf";
+    }	
+
+    if (askName)
+    {
+	QStringList fl;
+	QFileDialog *fd=new QFileDialog (NULL);
+	fd->setCaption (tr("Export map as PDF"));
+	fd->setDirectory (lastImageDir);
+	fd->setFileMode(QFileDialog::AnyFile);
+	QStringList filters;
+	filters<<"PDF (*.pdf)"<<"All (* *.*)";
+	fd->setFilters  (filters);
+	if (fd->exec())
+	{
+	    fl=fd->selectedFiles();
+	    fname=fl.first();
+	} 
+    }
+
+    setExportMode (true);
+    QPointF offset;
+
+    // To PDF
+    QPrinter printer(QPrinter::HighResolution);
+    printer.setOutputFormat(QPrinter::PdfFormat);
+    printer.setOutputFileName(fname+".pdf");
+    printer.setPageSize(QPrinter::A0);
+    QPainter *pdfPainter = new QPainter(&printer);
+    getScene()->render(pdfPainter);
+    pdfPainter->end();
+
+    setExportMode (false);
+    return offset;
+}
+
+#include <QSvgGenerator>
+QPointF VymModel::exportSVG (QString fname, bool askName)
+{
+    if (fname=="")
+    {
+	fname=getMapName()+".svg";
+    }	
+
+    if (askName)
+    {
+	QStringList fl;
+	QFileDialog *fd=new QFileDialog (NULL);
+	fd->setCaption (tr("Export map as SVG"));
+	fd->setDirectory (lastImageDir);
+	fd->setFileMode(QFileDialog::AnyFile);
+	QStringList filters;
+	filters<<"SVG (*.svg)"<<"All (* *.*)";
+	fd->setFilters  (filters);
+	if (fd->exec())
+	{
+	    fl=fd->selectedFiles();
+	    fname=fl.first();
+	} 
+    }
+
+    setExportMode (true);
+    QPointF offset;
+
+    QSvgGenerator generator;
+    generator.setFileName(fname);
+    QSize sceneSize = getScene()->sceneRect().size().toSize();
+    generator.setSize(sceneSize);
+    generator.setViewBox(QRect(0, 0, sceneSize.width(), sceneSize.height()));
+    QPainter *svgPainter = new QPainter(&generator);
+    getScene()->render(svgPainter);
+    svgPainter->end();
+
+    setExportMode (false);
+
+    // To PDF
+    QPrinter printer(QPrinter::HighResolution);
+    printer.setOutputFormat(QPrinter::PdfFormat);
+    printer.setOutputFileName(fname+".pdf");
+    printer.setPageSize(QPrinter::A0);
+    QPainter *pdfPainter = new QPainter(&printer);
+    getScene()->render(pdfPainter);
+    pdfPainter->end();
+
     return offset;
 }
 

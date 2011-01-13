@@ -75,6 +75,7 @@ int main(int argc, char* argv[])
     vymCodeName=__VYM_CODENAME;
 
     // Reading and initializing options commandline options
+    options.add ("batch", Option::Switch, "b", "batch");
     options.add ("debug", Option::Switch, "d", "debug");
     options.add ("help", Option::Switch, "h", "help");
     options.add ("local", Option::Switch, "l", "local");
@@ -93,6 +94,7 @@ int main(int argc, char* argv[])
 	"http://www.InSilmaril.de/vym\n\n"
 	"Usage: vym [OPTION]... [FILE]... \n"
 	"Open FILEs with vym\n\n"
+	"-b           batch       batch mode: hide windows\n"
 	"-d           debug       Show debugging output\n"
 	"-h           help        Show this help text\n"
 	"-l           local       Run with ressources in current directory\n"
@@ -226,12 +228,16 @@ int main(int argc, char* argv[])
     Main m;
 #endif
 
-    //m.resize(m.sizeHint());
     m.setIcon (QPixmap (iconPath+"vym.png"));
-    m.show();
     m.fileNew();
-    // Paint Mainwindow first time
-    qApp->processEvents();
+    if (options.isOn ("batch"))
+	m.hide();
+    else	
+    {
+	// Paint Mainwindow first time
+	qApp->processEvents();
+	m.show();
+    }
 
     m.loadCmdLine();
 
@@ -245,9 +251,12 @@ int main(int argc, char* argv[])
 	    QFile f( fn );
 	    if ( !f.open( QIODevice::ReadOnly ) )
 	    {
-		QMessageBox::warning(0, 
-		    QObject::tr("Error"),
-		    QObject::tr("Couldn't open %1.\n").arg(fn));
+		QString error (QObject::tr("Error"));
+		QString msg (QObject::tr("Couldn't open \"%1\".").arg(fn));
+		if (options.isOn("batch"))
+		    qWarning (error+": "+msg);
+		else    
+		    QMessageBox::warning(0, error,msg);
 		return 0;
 	    }	
 
@@ -260,10 +269,7 @@ int main(int argc, char* argv[])
     }	    
     
     // For benchmarking we may want to quit instead of entering event loop
-    if (options.isOn ("quit"))
-    {
-	return 0;
-    }	
+    if (options.isOn ("quit")) return 0;
 
     // Enable some last minute cleanup
     QObject::connect( &app, SIGNAL(lastWindowClosed()), &app, SLOT(quit()) );

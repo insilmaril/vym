@@ -362,7 +362,10 @@ void Main::setProgressMaximum (int max)	{
 
     progressMax=max*1000;
     //cout << "Main  max="<<max<<"  v="<<progressDialog.value()<<endl;
-    progressDialog.show();
+    if (!options.isOn("batch"))
+	progressDialog.show();
+    else	
+	progressDialog.hide();
 }
 
 void Main::addProgressValue (float v) 
@@ -375,7 +378,10 @@ void Main::addProgressValue (float v)
 	 <<"  pCounterTotal="<<progressCounterTotal
 	 <<endl;
 	 */
-    progressDialog.show();
+    if (!options.isOn("batch"))
+	progressDialog.show();
+    else	
+	progressDialog.hide();
     progressDialog.setValue ( (v + progressCounter -1)*1000/progressCounterTotal );
     progressDialog.repaint();
 }
@@ -496,6 +502,18 @@ void Main::setupFileActions()
     a->setStatusTip( tr( "Export map as image","status tip file menu" ));
     switchboard.addConnection(a,tr("File","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( fileExportImage() ) );
+    fileExportMenu->addAction (a);
+
+    a = new QAction( tr("PDF%1","File export menu").arg("..."), this);
+    a->setStatusTip( tr( "Export map as PDF","status tip file menu" ));
+    switchboard.addConnection(a,tr("File","Shortcut group"));
+    connect( a, SIGNAL( triggered() ), this, SLOT( fileExportPDF() ) );
+    fileExportMenu->addAction (a);
+
+    a = new QAction( tr("SVG%1","File export menu").arg("..."), this);
+    a->setStatusTip( tr( "Export map as SVG","status tip file menu" ));
+    switchboard.addConnection(a,tr("File","Shortcut group"));
+    connect( a, SIGNAL( triggered() ), this, SLOT( fileExportSVG() ) );
     fileExportMenu->addAction (a);
 
     a = new QAction( "Open Office...", this);
@@ -2573,6 +2591,18 @@ void Main::fileExportImage()
 {
     VymModel *m=currentModel();
     if (m) m->exportImage();
+}
+
+void Main::fileExportPDF()	
+{
+    VymModel *m=currentModel();
+    if (m) m->exportPDF();
+}
+
+void Main::fileExportSVG()	
+{
+    VymModel *m=currentModel();
+    if (m) m->exportSVG();
 }
 
 void Main::fileExportAO()

@@ -99,6 +99,8 @@ private slots:
     void fileExportXML();
     void fileExportHTML();
     void fileExportImage();
+    void fileExportPDF();
+    void fileExportSVG();
     void fileExportAO();
     void fileExportASCII();
     void fileExportCSV();
