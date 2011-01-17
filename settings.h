@@ -18,9 +18,9 @@ public:
     void clear();
     void readSettings(const QString &);
     void writeSettings(const QString &);
-    QString readEntry (const QString &key, const QString &def=QString());
-    int readNumEntry (const QString &, const int &def=0);
-    void setEntry (const QString &,const QString &);
+    QString value (const QString &key, const QString &def=QString());
+    int readNumValue (const QString &, const int &def=0);
+    void setValue (const QString &,const QString &);
 private:    
     QStringList keylist;
     QStringList valuelist;
@@ -37,8 +37,8 @@ public:
     ~Settings ();
     void clear();
     void clearLocal (const QString &);
-    QString readLocalEntry ( const QString &, const QString &, const QString &);
-    void setLocalEntry (const QString &, const QString &, const QString &);
+    QVariant localValue ( const QString &, const QString &, const QString &);
+    void setLocalValue (const QString &, const QString &, const QString &);
     QString getDataXML (const QString &);
 
 protected:

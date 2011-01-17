@@ -30,7 +30,7 @@ void Process::clear()
 void Process::runScript(QString spath, QString fpath)
 {
     spath.replace ("%f",fpath);
-    QStringList args=QStringList::split (' ',spath,false);
+    QStringList args=spath.split (' ');
     spath=args.takeFirst();
 	
     if (debug)

@@ -121,9 +121,9 @@ void VymModel::init ()
     findReset();
 
     // animations   // FIXME-4 switch to new animation system 
-    animationUse=settings.readBoolEntry("/animation/use",false);    // FIXME-4 add options to control _what_ is animated
-    animationTicks=settings.readNumEntry("/animation/ticks",10);
-    animationInterval=settings.readNumEntry("/animation/interval",50);
+    animationUse=settings.value ("/animation/use",false).toBool();    // FIXME-4 add options to control _what_ is animated
+    animationTicks=settings.value("/animation/ticks",10).toInt();
+    animationInterval=settings.value("/animation/interval",50).toInt();
     animObjList.clear();    
     animationTimer=new QTimer (this);
     connect(animationTimer, SIGNAL(timeout()), this, SLOT(animate()));
@@ -306,15 +306,15 @@ void VymModel::setFilePath(QString fpath, QString destname)
 	destPath=destname;  // needed for vymlinks and during load to reset fileChangedTime
 
 	// If fpath is not an absolute path, complete it
-	filePath=QDir(fpath).absPath();
-	fileDir=filePath.left (1+filePath.findRev ("/"));
+	filePath=QDir(fpath).absolutePath();
+	fileDir=filePath.left (1+filePath.lastIndexOf ("/"));
 
 	// Set short name, too. Search from behind:
-	int i=fileName.findRev("/");
+	int i=fileName.lastIndexOf("/");
 	if (i>=0) fileName=fileName.remove (0,i+1);
 
 	// Forget the .vym (or .xml) for name of map
-	mapName=fileName.left(fileName.findRev(".",-1,true) );
+	mapName=fileName.left(fileName.lastIndexOf(".",-1,Qt::CaseSensitive) );
     }
 }
 
@@ -426,7 +426,7 @@ ErrorCode VymModel::loadMap (	//FIXME-2 Check: insert with zeitplanung.vym repla
 	zipped=true;
 	
 	// Look for mapname.xml
-	xmlfile= fname.left(fname.findRev(".",-1,true));
+	xmlfile= fname.left(fname.lastIndexOf(".",-1,Qt::CaseSensitive));
 	xmlfile=xmlfile.section( '/', -1 );
 	QFile mfile( tmpZipDir + "/" + xmlfile + ".xml");
 	if (!mfile.exists() )
@@ -435,7 +435,9 @@ ErrorCode VymModel::loadMap (	//FIXME-2 Check: insert with zeitplanung.vym repla
 	    // maybe someone renamed the mapname.vym file...
 	    // Try to find any .xml in the toplevel 
 	    // directory of the .vym file
-	    QStringList flist=QDir (tmpZipDir).entryList("*.xml");
+	    QStringList filters;
+	    filters<<"*.xml";
+	    QStringList flist=QDir (tmpZipDir).entryList(filters);
 	    if (flist.count()==1) 
 	    {
 		// Only one entry, take this one
@@ -458,7 +460,7 @@ ErrorCode VymModel::loadMap (	//FIXME-2 Check: insert with zeitplanung.vym repla
 	    }	
 	} //file doesn't exist	
 	else
-	    xmlfile=mfile.name();
+	    xmlfile=mfile.fileName();
     }
 
     QFile file( xmlfile);
@@ -468,7 +470,7 @@ ErrorCode VymModel::loadMap (	//FIXME-2 Check: insert with zeitplanung.vym repla
     if (!file.exists() )
     {
 	QMessageBox::critical( 0, tr( "Critical Parse Error" ),
-		   tr(QString("Couldn't open map %1").arg(file.name())));
+		   tr(QString("Couldn't open map %1").arg(file.fileName()).toUtf8()));
 	err=aborted;	
     } else
     {
@@ -476,7 +478,7 @@ ErrorCode VymModel::loadMap (	//FIXME-2 Check: insert with zeitplanung.vym repla
 	blockReposition=true;
 	blockSaveState=true;
 	mapEditor->setViewportUpdateMode (QGraphicsView::NoViewportUpdate);
-	QXmlInputSource source( file);
+	QXmlInputSource source( &file);
 	QXmlSimpleReader reader;
 	reader.setContentHandler( handler );
 	reader.setErrorHandler( handler );
@@ -488,9 +490,9 @@ ErrorCode VymModel::loadMap (	//FIXME-2 Check: insert with zeitplanung.vym repla
 	if (zipped)
 	    tmpdir=tmpZipDir;
 	else
-	    tmpdir=fname.left(fname.findRev("/",-1));	
+	    tmpdir=fname.left(fname.lastIndexOf("/",-1));	
 	handler->setTmpDir (tmpdir);
-	handler->setInputFile (file.name());
+	handler->setInputFile (file.fileName());
 	if (lmode==ImportReplace)
 	    handler->setLoadMode (ImportAdd,pos);
 	else	
@@ -524,7 +526,7 @@ ErrorCode VymModel::loadMap (	//FIXME-2 Check: insert with zeitplanung.vym repla
 	} else 
 	{
 	    QMessageBox::critical( 0, tr( "Critical Parse Error" ),
-		       tr( handler->errorProtocol() ) );
+		       tr( handler->errorProtocol().toUtf8() ) );
 	    // returnCode=1;	
 	    // Still return "success": the map maybe at least
 	    // partially read by the parser
@@ -695,22 +697,18 @@ void VymModel::loadFloatImage ()
     BranchItem *selbi=getSelectedBranch();
     if (selbi)
     {
-
-	Q3FileDialog *fd=new Q3FileDialog( NULL);   // FIXME-4 get rid of Q3FileDialog
-	fd->setMode (Q3FileDialog::ExistingFiles);
-	fd->addFilter (QString (tr("Images") + " (*.png *.bmp *.xbm *.jpg *.png *.xpm *.gif *.pnm)"));
-	ImagePreview *p =new ImagePreview (fd);
-	fd->setContentsPreviewEnabled( TRUE );
-	fd->setContentsPreview( p, p );
-	fd->setPreviewMode( Q3FileDialog::Contents );
-	fd->setCaption(vymName+" - " +tr("Load image"));
-	fd->setDir (lastImageDir);
+	QStringList filters;
+	filters<< QString (tr("Images") + " (*.png *.bmp *.xbm *.jpg *.png *.xpm *.gif *.pnm)");
+	QFileDialog *fd=new QFileDialog( NULL);   
+	fd->setFileMode (QFileDialog::ExistingFiles);
+	fd->setWindowTitle(vymName+" - " +tr("Load image"));
+	fd->setDirectory (lastImageDir);
 	fd->show();
 
 	if ( fd->exec() == QDialog::Accepted )
 	{
 	    // TODO loadFIO in QT4 use:	lastImageDir=fd->directory();
-	    lastImageDir=QDir (fd->dirPath());
+	    lastImageDir=QDir (fd->directory());
 	    QString s;
 	    ImageItem *ii;
 	    for (int j=0; j<fd->selectedFiles().count(); j++)
@@ -728,10 +726,9 @@ void VymModel::loadFloatImage ()
 		    );
 		else
 		    // TODO loadFIO error handling
-		    qWarning ("Failed to load "+s);
+		    qWarning ()<<"Failed to load "+s;
 	    }
 	}
-	delete (p);
 	delete (fd);
     }
 }
@@ -748,7 +745,7 @@ void VymModel::saveFloatImage ()
     {
 	QFileDialog *fd=new QFileDialog( NULL);
 	fd->setFilters (imageIO.getFilters());
-	fd->setCaption(vymName+" - " +tr("Save image"));
+	fd->setWindowTitle(vymName+" - " +tr("Save image"));
 	fd->setFileMode( QFileDialog::AnyFile );
 	fd->setDirectory (lastImageDir);
 //	fd->setSelection (fio->getOriginalFilename());
@@ -862,15 +859,15 @@ void VymModel::importDir()  //FIXME-3 check me... (not tested yet)
 	QStringList filters;
 	filters <<"VYM map (*.vym)";
 	QFileDialog *fd=new QFileDialog( NULL,vymName+ " - " +tr("Choose directory structure to import"));
-	fd->setMode (QFileDialog::DirectoryOnly);
+	fd->setFileMode (QFileDialog::DirectoryOnly);
 	fd->setFilters (filters);
-	fd->setCaption(vymName+" - " +tr("Choose directory structure to import"));
+	fd->setWindowTitle(vymName+" - " +tr("Choose directory structure to import"));
 	fd->show();
 
 	QString fn;
-	if ( fd->exec() == QDialog::Accepted )
+	if ( fd->exec() == QDialog::Accepted &&!fd->selectedFiles().isEmpty() )
 	{
-	    importDirInt (fd->selectedFile() );
+	    importDirInt (fd->selectedFiles().first() );
 	    reposition();
 	}
     }	
@@ -888,7 +885,7 @@ void VymModel::autosave()
     QDateTime now=QDateTime().currentDateTime();
 
     // Disable autosave, while we have gone back in history
-    int redosAvail=undoSet.readNumEntry (QString("/history/redosAvail"));
+    int redosAvail=undoSet.readNumValue (QString("/history/redosAvail"));
     if (redosAvail>0) return;
 
     // Also disable autosave for new map without filename
@@ -994,12 +991,12 @@ void VymModel::redo()
     if (undosAvail<stepsTotal) undosAvail++;
     curStep++;
     if (curStep>stepsTotal) curStep=1;
-    QString undoCommand=  undoSet.readEntry (QString("/history/step-%1/undoCommand").arg(curStep));
-    QString undoSelection=undoSet.readEntry (QString("/history/step-%1/undoSelection").arg(curStep));
-    QString redoCommand=  undoSet.readEntry (QString("/history/step-%1/redoCommand").arg(curStep));
-    QString redoSelection=undoSet.readEntry (QString("/history/step-%1/redoSelection").arg(curStep));
-    QString comment=undoSet.readEntry (QString("/history/step-%1/comment").arg(curStep));
-    QString version=undoSet.readEntry ("/history/version");
+    QString undoCommand=  undoSet.value (QString("/history/step-%1/undoCommand").arg(curStep));
+    QString undoSelection=undoSet.value (QString("/history/step-%1/undoSelection").arg(curStep));
+    QString redoCommand=  undoSet.value (QString("/history/step-%1/redoCommand").arg(curStep));
+    QString redoSelection=undoSet.value (QString("/history/step-%1/redoSelection").arg(curStep));
+    QString comment=undoSet.value (QString("/history/step-%1/comment").arg(curStep));
+    QString version=undoSet.value ("/history/version");
 
     /* TODO Maybe check for version, if we save the history
     if (!checkVersion(version))
@@ -1036,9 +1033,9 @@ void VymModel::redo()
 
     blockSaveState=blockSaveStateOrg;
 
-    undoSet.setEntry ("/history/undosAvail",QString::number(undosAvail));
-    undoSet.setEntry ("/history/redosAvail",QString::number(redosAvail));
-    undoSet.setEntry ("/history/curStep",QString::number(curStep));
+    undoSet.setValue ("/history/undosAvail",QString::number(undosAvail));
+    undoSet.setValue ("/history/redosAvail",QString::number(redosAvail));
+    undoSet.setValue ("/history/curStep",QString::number(curStep));
     undoSet.writeSettings(histPath);
 
     mainWindow->updateHistory (undoSet);
@@ -1057,10 +1054,9 @@ void VymModel::redo()
 
 bool VymModel::isRedoAvailable()
 {
-    if (undoSet.readNumEntry("/history/redosAvail",0)>0)
+    if (undoSet.readNumValue("/history/redosAvail",0)>0)
 	return true;
-    else    
-	return false;
+    return false;
 }
 
 void VymModel::undo()	
@@ -1073,12 +1069,12 @@ void VymModel::undo()
     bool blockSaveStateOrg=blockSaveState;
     blockSaveState=true;
     
-    QString undoCommand=  undoSet.readEntry (QString("/history/step-%1/undoCommand").arg(curStep));
-    QString undoSelection=undoSet.readEntry (QString("/history/step-%1/undoSelection").arg(curStep));
-    QString redoCommand=  undoSet.readEntry (QString("/history/step-%1/redoCommand").arg(curStep));
-    QString redoSelection=undoSet.readEntry (QString("/history/step-%1/redoSelection").arg(curStep));
-    QString comment=undoSet.readEntry (QString("/history/step-%1/comment").arg(curStep));
-    QString version=undoSet.readEntry ("/history/version");
+    QString undoCommand=  undoSet.value (QString("/history/step-%1/undoCommand").arg(curStep));
+    QString undoSelection=undoSet.value (QString("/history/step-%1/undoSelection").arg(curStep));
+    QString redoCommand=  undoSet.value (QString("/history/step-%1/redoCommand").arg(curStep));
+    QString redoSelection=undoSet.value (QString("/history/step-%1/redoSelection").arg(curStep));
+    QString comment=undoSet.value (QString("/history/step-%1/comment").arg(curStep));
+    QString version=undoSet.value ("/history/version");
 
     /* TODO Maybe check for version, if we save the history
     if (!checkVersion(version))
@@ -1131,9 +1127,9 @@ void VymModel::undo()
     cout << "    ---------------------------"<<endl<<endl;
 */
 
-    undoSet.setEntry ("/history/undosAvail",QString::number(undosAvail));
-    undoSet.setEntry ("/history/redosAvail",QString::number(redosAvail));
-    undoSet.setEntry ("/history/curStep",QString::number(curStep));
+    undoSet.setValue ("/history/undosAvail",QString::number(undosAvail));
+    undoSet.setValue ("/history/redosAvail",QString::number(redosAvail));
+    undoSet.setValue ("/history/curStep",QString::number(curStep));
     undoSet.writeSettings(histPath);
 
     mainWindow->updateHistory (undoSet);
@@ -1143,17 +1139,16 @@ void VymModel::undo()
 
 bool VymModel::isUndoAvailable()
 {
-    if (undoSet.readNumEntry("/history/undosAvail",0)>0)
+    if (undoSet.readNumValue("/history/undosAvail",0)>0)
 	return true;
-    else    
-	return false;
+    return false;
 }
 
 void VymModel::gotoHistoryStep (int i)
 {
     // Restore variables
-    int undosAvail=undoSet.readNumEntry (QString("/history/undosAvail"));
-    int redosAvail=undoSet.readNumEntry (QString("/history/redosAvail"));
+    int undosAvail=undoSet.readNumValue (QString("/history/undosAvail"));
+    int redosAvail=undoSet.readNumValue (QString("/history/redosAvail"));
 
     if (i<0) i=undosAvail+redosAvail;
 
@@ -1187,8 +1182,8 @@ void VymModel::resetHistory()
     redosAvail=0;
     undosAvail=0;
 
-    stepsTotal=settings.readNumEntry("/history/stepsTotal",100);
-    undoSet.setEntry ("/history/stepsTotal",QString::number(stepsTotal));
+    stepsTotal=settings.value("/history/stepsTotal",100).toInt();
+    undoSet.setValue ("/history/stepsTotal",QString::number(stepsTotal));
     mainWindow->updateHistory (undoSet);
 }
 
@@ -1243,15 +1238,15 @@ void VymModel::saveState(const SaveMode &savemode, const QString &undoSelection,
     redosAvail=0;
 
     // Write the current state to disk
-    undoSet.setEntry ("/history/undosAvail",QString::number(undosAvail));
-    undoSet.setEntry ("/history/redosAvail",QString::number(redosAvail));
-    undoSet.setEntry ("/history/curStep",QString::number(curStep));
-    undoSet.setEntry (QString("/history/step-%1/undoCommand").arg(curStep),undoCommand);
-    undoSet.setEntry (QString("/history/step-%1/undoSelection").arg(curStep),undoSelection);
-    undoSet.setEntry (QString("/history/step-%1/redoCommand").arg(curStep),redoCom);
-    undoSet.setEntry (QString("/history/step-%1/redoSelection").arg(curStep),redoSelection);
-    undoSet.setEntry (QString("/history/step-%1/comment").arg(curStep),comment);
-    undoSet.setEntry (QString("/history/version"),vymVersion);
+    undoSet.setValue ("/history/undosAvail",QString::number(undosAvail));
+    undoSet.setValue ("/history/redosAvail",QString::number(redosAvail));
+    undoSet.setValue ("/history/curStep",QString::number(curStep));
+    undoSet.setValue (QString("/history/step-%1/undoCommand").arg(curStep),undoCommand);
+    undoSet.setValue (QString("/history/step-%1/undoSelection").arg(curStep),undoSelection);
+    undoSet.setValue (QString("/history/step-%1/redoCommand").arg(curStep),redoCom);
+    undoSet.setValue (QString("/history/step-%1/redoSelection").arg(curStep),redoSelection);
+    undoSet.setValue (QString("/history/step-%1/comment").arg(curStep),comment);
+    undoSet.setValue (QString("/history/version"),vymVersion);
     undoSet.writeSettings(histPath);
 
     if (debug)
@@ -3046,8 +3041,9 @@ void VymModel::editURL()
     {	    
 	bool ok;
 	QString text = QInputDialog::getText(
-		"VYM", tr("Enter URL:"), QLineEdit::Normal,
-		selti->getURL(), &ok, NULL);
+	    NULL,
+	    "VYM", tr("Enter URL:"), QLineEdit::Normal,
+	    selti->getURL(), &ok);
 	if ( ok) 
 	    // user entered something and pressed OK
 	    setURL(text);
@@ -3065,18 +3061,18 @@ void VymModel::editLocalURL()
 	filters << tr("Spreadsheet","Filedialog") + " (*.odp,*.sxc)";
 	filters << tr("Textdocument","Filedialog") +" (*.odw,*.sxw)";
 	filters << tr("Images","Filedialog") + " (*.png *.bmp *.xbm *.jpg *.png *.xpm *.gif *.pnm)";
-	QFileDialog *fd=new QFileDialog( NULL,vymName+" - " +tr("Set URL to a local file"));
+	QFileDialog *fd=new QFileDialog( NULL,vymName+" - " +tr("Set URL to a local file")); //FIXME-2 delete fd and check also other fds
 	fd->setFilters (filters);
-	fd->setCaption(vymName+" - " +tr("Set URL to a local file"));
+	fd->setWindowTitle(vymName+" - " +tr("Set URL to a local file"));
 	fd->setDirectory (lastFileDir);
 	if (! selti->getVymLink().isEmpty() )
 	    fd->selectFile( selti->getURL() );
 	fd->show();
 
-	if ( fd->exec() == QDialog::Accepted )
+	if ( fd->exec() == QDialog::Accepted &&!fd->selectedFiles().isEmpty() )
 	{
 	    lastFileDir=QDir (fd->directory().path());
-	    setURL (fd->selectedFile() );
+	    setURL (fd->selectedFiles().first() );
 	}
     }
 }
@@ -3114,7 +3110,7 @@ void VymModel::getBugzillaData(bool subtree)
 	    QObject::tr("Alternatively you can also add the repository\n"
 	    "and install the perl module for Bugzilla access using YaST","VymModel, how to install Bugzilla client module")
 	);
-	dia.setCaption(QObject::tr("Warning: Couldn't find Bugzilla client","VymModel"));
+	dia.setWindowTitle(QObject::tr("Warning: Couldn't find Bugzilla client","VymModel"));
 	dia.setShowAgainName("/BugzillaClient/missing");
 	dia.exec();
 	return;
@@ -3173,24 +3169,25 @@ void VymModel::editVymLink()
 	filters <<"VYM map (*.vym)";
 	QFileDialog *fd=new QFileDialog( NULL,vymName+" - " +tr("Link to another map"));
 	fd->setFilters (filters);
-	fd->setCaption(vymName+" - " +tr("Link to another map"));
+	fd->setWindowTitle(vymName+" - " +tr("Link to another map"));
 	fd->setDirectory (lastFileDir);
 	if (! bi->getVymLink().isEmpty() )
 	    fd->selectFile( bi->getVymLink() );
 	fd->show();
 
 	QString fn;
-	if ( fd->exec() == QDialog::Accepted )
+	if ( fd->exec() == QDialog::Accepted &&!fd->selectedFiles().isEmpty() )
 	{
+	    QString fn=fd->selectedFiles().first();
 	    lastFileDir=QDir (fd->directory().path());
 	    saveState(
 		bi,
 		"setVymLink (\""+bi->getVymLink()+"\")",
 		bi,
-		"setVymLink (\""+fd->selectedFile()+"\")",
-		QString("Set vymlink of %1 to %2").arg(getObjectName(bi)).arg(fd->selectedFile())
+		"setVymLink (\""+fn+"\")",
+		QString("Set vymlink of %1 to %2").arg(getObjectName(bi)).arg(fn)
 	    );	
-	    setVymLink (fd->selectedFile() );	
+	    setVymLink (fn);
 	}
     }
 }
@@ -4381,7 +4378,7 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	// TODO Error handling
 	qWarning("VymModel::parseAtom: Error!");
 
-	qWarning(parser.errorMessage());
+	qWarning()<<parser.errorMessage();
 	noErr=false;
 	errorMsg=parser.errorMessage();
 	returnValue=errorMsg;
@@ -4427,7 +4424,7 @@ QPointF VymModel::exportImage(QString fname, bool askName, QString format)
     {
 	QStringList fl;
 	QFileDialog *fd=new QFileDialog (NULL);
-	fd->setCaption (tr("Export map as image"));
+	fd->setWindowTitle (tr("Export map as image"));
 	fd->setDirectory (lastImageDir);
 	fd->setFileMode(QFileDialog::AnyFile);
 	fd->setFilters  (imageIO.getFilters() );
@@ -4442,7 +4439,7 @@ QPointF VymModel::exportImage(QString fname, bool askName, QString format)
     setExportMode (true);
     QPointF offset;
     QImage img (mapEditor->getImage(offset));
-    img.save(fname, format);
+    img.save(fname, format.toAscii());
     setExportMode (false);
     return offset;
 }
@@ -4458,7 +4455,7 @@ QPointF VymModel::exportPDF (QString fname, bool askName)
     {
 	QStringList fl;
 	QFileDialog *fd=new QFileDialog (NULL);
-	fd->setCaption (tr("Export map as PDF"));
+	fd->setWindowTitle (tr("Export map as PDF"));
 	fd->setDirectory (lastImageDir);
 	fd->setFileMode(QFileDialog::AnyFile);
 	QStringList filters;
@@ -4499,7 +4496,7 @@ QPointF VymModel::exportSVG (QString fname, bool askName)
     {
 	QStringList fl;
 	QFileDialog *fd=new QFileDialog (NULL);
-	fd->setCaption (tr("Export map as SVG"));
+	fd->setWindowTitle (tr("Export map as SVG"));
 	fd->setDirectory (lastImageDir);
 	fd->setFileMode(QFileDialog::AnyFile);
 	QStringList filters;
@@ -4561,17 +4558,17 @@ void VymModel::exportXML(QString dir, bool askForName)
     QString saveFile=saveToDir (dir,mapName+"-",true,offset,NULL); 
     QFile file;
 
-    file.setName ( dir + "/"+mapName+".xml");
+    file.setFileName ( dir + "/"+mapName+".xml");
     if ( !file.open( QIODevice::WriteOnly ) )
     {
 	// This should neverever happen
-	QMessageBox::critical (0,tr("Critical Export Error"),QString("VymModel::exportXML couldn't open %1").arg(file.name()));
+	QMessageBox::critical (0,tr("Critical Export Error"),QString("VymModel::exportXML couldn't open %1").arg(file.fileName()));
 	return;
     }	
 
     // Write it finally, and write in UTF8, no matter what 
     QTextStream ts( &file );
-    ts.setEncoding (QTextStream::UnicodeUTF8);
+    //ts.setEncoding (QTextStream::UnicodeUTF8);//FIXME-3 check...
     ts << saveFile;
     file.close();
 
@@ -4591,7 +4588,7 @@ void VymModel::exportAO (QString fname,bool askName)
     {
 	//ex.addFilter ("TXT (*.txt)");
 	ex.setDir(lastImageDir);
-	//ex.setCaption(vymName+ " -" +tr("Export as A&O report")+" "+tr("(still experimental)"));
+	//ex.setWindowTitle(vymName+ " -" +tr("Export as A&O report")+" "+tr("(still experimental)"));
 	ex.execDialog("A&O") ; 
     } 
     if (!ex.canceled())
@@ -4615,7 +4612,7 @@ void VymModel::exportASCII(QString fname,bool askName)
     {
 	//ex.addFilter ("TXT (*.txt)");
 	ex.setDir(lastImageDir);
-	//ex.setCaption(vymName+ " -" +tr("Export as ASCII")+" "+tr("(still experimental)"));
+	//ex.setWindowTitle(vymName+ " -" +tr("Export as ASCII")+" "+tr("(still experimental)"));
 	ex.execDialog("ASCII") ; 
     } 
     if (!ex.canceled())
@@ -4648,9 +4645,9 @@ void VymModel::exportOOPresentation(const QString &fn, const QString &cf)
 
 bool VymModel::exportLastAvailable(QString &description, QString &command, QString &path)
 {
-    command=settings.readLocalEntry(filePath,"/export/last/command","");
-    description=settings.readLocalEntry(filePath,"/export/last/description","");
-    path=settings.readLocalEntry(filePath,"/export/last/exportPath","");
+    command=settings.localValue(filePath,"/export/last/command","").toString();
+    description=settings.localValue(filePath,"/export/last/description","").toString();
+    path=settings.localValue(filePath,"/export/last/exportPath","").toString();
     if (!command.isEmpty() && command.startsWith("export") && !path.isEmpty())
 	return true;
     else
@@ -4867,22 +4864,19 @@ void VymModel::toggleMapLinkColorHint()
 
 void VymModel::selectMapBackgroundImage ()  // FIXME-3 for using background image: view.setCacheMode(QGraphicsView::CacheBackground);  Also this belongs into ME
 {
-    Q3FileDialog *fd=new Q3FileDialog( NULL);
-    fd->setMode (Q3FileDialog::ExistingFile);
-    fd->addFilter (QString (tr("Images") + " (*.png *.bmp *.xbm *.jpg *.png *.xpm *.gif *.pnm)"));
-    ImagePreview *p =new ImagePreview (fd);
-    fd->setContentsPreviewEnabled( TRUE );
-    fd->setContentsPreview( p, p );
-    fd->setPreviewMode( Q3FileDialog::Contents );
-    fd->setCaption(vymName+" - " +tr("Load background image"));
-    fd->setDir (lastImageDir);
+    QStringList filters;
+    filters<< tr("Images") + " (*.png *.bmp *.xbm *.jpg *.png *.xpm *.gif *.pnm)";
+    QFileDialog *fd=new QFileDialog( NULL);
+    fd->setFileMode (QFileDialog::ExistingFile);
+    fd->setWindowTitle(vymName+" - " +tr("Load background image"));
+    fd->setDirectory (lastImageDir);
     fd->show();
 
-    if ( fd->exec() == QDialog::Accepted )
+    if ( fd->exec() == QDialog::Accepted &&!fd->selectedFiles().isEmpty())
     {
 	// TODO selectMapBackgroundImg in QT4 use:  lastImageDir=fd->directory();
-	lastImageDir=QDir (fd->dirPath());
-	setMapBackgroundImage (fd->selectedFile());
+	lastImageDir=QDir (fd->directory().path());
+	setMapBackgroundImage (fd->selectedFiles().first());
     }
 }   
 
@@ -4898,7 +4892,7 @@ void VymModel::setMapBackgroundImage (const QString &fn)    //FIXME-3 missing sa
 	QString("Set background color of map to %1").arg(col.name()));
     */	
     QBrush brush;
-    brush.setTextureImage (QPixmap (fn));
+    brush.setTextureImage (QImage (fn));
     mapEditor->getScene()->setBackgroundBrush(brush);
 }
 

@@ -69,7 +69,7 @@ bool parseBaseHandler::fatalError( const QXmlParseException& exception )
     QString s;
     if (loadStringFromDisk (inputFile,s))
     {
-	QStringList sl=QStringList::split ("\n",s);
+	QStringList sl=s.split ("\n");
 	int i=1;
 	QStringList::Iterator it = sl.begin();
 	while (i<exception.lineNumber())

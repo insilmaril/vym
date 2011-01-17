@@ -227,7 +227,7 @@ bool parseFreemindHandler::characters   ( const QString& ch)
     //cout << "characters \""<<qPrintable(ch)<<"\"  state="<<state <<"  laststate="<<laststate<<endl;
 
     QString ch_org=quotemeta (ch);
-    QString ch_simplified=ch.simplifyWhiteSpace();
+    QString ch_simplified=ch.simplified();
     if ( ch_simplified.isEmpty() ) return true;
 
     switch ( state ) 

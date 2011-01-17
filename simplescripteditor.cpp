@@ -37,7 +37,7 @@ void SimpleScriptEditor::saveScript()
     }
 
     QTextStream t( &f );
-    t << ui.editor->text();
+    t << ui.editor->toPlainText();
     f.close();
 }
 
@@ -102,29 +102,27 @@ void SimpleScriptEditor::openClicked()
 	    "All         (*)" ;
     fd->setFilters (types);
     fd->setDirectory (QDir().current());
-    fd->setCaption (vymName + " - " + tr("Load script"));
+    fd->setWindowTitle (vymName + " - " + tr("Load script"));
     fd->show();
-    if ( fd->exec() == QDialog::Accepted )
-	filename = fd->selectedFile();
+    if ( fd->exec() == QDialog::Accepted &&!fd->selectedFiles().isEmpty() )
+    
+	filename = fd->selectedFiles().first();
 
-    if ( !filename.isEmpty() )
+    QFile f( filename );
+    if ( !f.open( QIODevice::ReadOnly ) )
     {
-	QFile f( filename );
-	if ( !f.open( QIODevice::ReadOnly ) )
-	{
-	    QMessageBox::warning(0, 
-		tr("Error"),
-		tr("Couldn't open %1.\n").arg(filename));
-	    return;
-	}   
+	QMessageBox::warning(0, 
+	    tr("Error"),
+	    tr("Couldn't open %1.\n").arg(filename));
+	return;
+    }   
 
-	QTextStream ts( &f );
-	ui.editor->setText( ts.read() );
-	f.close();
-    }
+    QTextStream ts( &f );
+    ui.editor->setText( ts.readAll() );
+    f.close();
 }
 
 void SimpleScriptEditor::runClicked()
 {
-    emit runScript (ui.editor->text() );
+    emit runScript (ui.editor->toPlainText() );
 }

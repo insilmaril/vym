@@ -12,14 +12,14 @@ extern QString vymVersion;
 extern QString vymBuildDate;
 extern QString vymCodeName;
 
-AboutDialog::AboutDialog( QWidget *parent, const char *name)
-    : QDialog( parent, name)
+AboutDialog::AboutDialog( QWidget *parent)
+    : QDialog( parent)
 {
  
-    mainLayout=new QVBoxLayout( this, 10);
+    mainLayout=new QVBoxLayout( this);
 
     tabs=new QTabWidget (this);
-    credits=new AboutTextBrowser (parent,"credits");
+    credits=new AboutTextBrowser (parent);
 
     credits->setHtml(
     "<center><img src=\""+iconPath+"vym-128x128.png\"></center>"
@@ -86,7 +86,7 @@ AboutDialog::AboutDialog( QWidget *parent, const char *name)
     credits->setFrameStyle( QFrame::Panel | QFrame::Plain );
     tabs->addTab (credits,"Credits");
 
-    license=new AboutTextBrowser (parent,"license");
+    license=new AboutTextBrowser (parent);
     license->setText (
     "<center>"
     "<h3>VYM - View Your Mind</h3>"
@@ -203,9 +203,9 @@ AboutDialog::AboutDialog( QWidget *parent, const char *name)
     tabs->addTab (license,"License");
 
     mainLayout->addWidget (tabs);
-    tabs->showPage (credits);
+    //FIXME-2 tabs->showPage (credits);
 
-    okbutton =new QPushButton (this,"okbutton");
+    okbutton =new QPushButton (this);
     okbutton->setText (tr("Ok","Ok Button"));
     okbutton->setMaximumSize (QSize (50,30));
     okbutton->setAutoDefault (true);
@@ -214,8 +214,8 @@ AboutDialog::AboutDialog( QWidget *parent, const char *name)
     connect( okbutton, SIGNAL( clicked() ), this, SLOT( accept() ) );
 }
 
-AboutTextBrowser::AboutTextBrowser(QWidget *parent, const char *name)
-    : QTextBrowser(parent, name)
+AboutTextBrowser::AboutTextBrowser(QWidget *parent)
+    : QTextBrowser(parent)
 {
 }
 
@@ -227,7 +227,7 @@ void AboutTextBrowser::setSource(const QUrl &url )
     if (!proc->waitForStarted() )
 	QMessageBox::warning(0, 
 	tr("Warning","About window"),
-	tr("Couldn't find a viewer to open %1.\n","About window").arg(url)+
+	tr("Couldn't find a viewer to open %1.\n","About window").arg(url.toString())+
 	tr("Please use Settings->")+tr("Set application to open an URL..."));
 
 }

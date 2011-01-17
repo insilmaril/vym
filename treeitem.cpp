@@ -416,9 +416,9 @@ void TreeItem::setVymLink (const QString &vl)
 	if (!d.path().startsWith ("/"))
 	{
 	    QString p=model->getDestPath();
-	    int i=p.findRev("/",-1);
+	    int i=p.lastIndexOf("/",-1); //FIXME-2 test
 	    d.setPath(p.left(i)+"/"+vl);
-	    d.convertToAbs();
+	    d.makeAbsolute();
 	}
 	vymLink=d.path();
 	systemFlags.activate("system-vymLink");

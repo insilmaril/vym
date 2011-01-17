@@ -1,4 +1,4 @@
-#include "exporthtmldialog.h"
+#include "exporthtmldialog.h"	//FIXME-2 fix layout in designer
 
 #include <QFileDialog>
 #include <QMessageBox>
@@ -38,36 +38,36 @@ ExportHTMLDialog::ExportHTMLDialog(QWidget* parent) : QDialog(parent)
 void ExportHTMLDialog::readSettings()
 {
 
-    dir=settings.readLocalEntry (filepath,"/export/html/exportDir",vymBaseDir.currentDirPath() );
+    dir=settings.localValue (filepath,"/export/html/exportDir",vymBaseDir.currentPath() ).toString();
     ui.lineEditDir->setText(dir);
     
-    if ( settings.readLocalEntry (filepath,"/export/html/useImage","yes")=="yes")
+    if ( settings.localValue (filepath,"/export/html/useImage","yes")=="yes")
 	useImage=true;
     else    
 	useImage=false;
     ui.imageButton->setChecked(useImage);
 	
-    if ( settings.readLocalEntry (filepath,"/export/html/useTextColor","no")=="yes")
+    if ( settings.localValue (filepath,"/export/html/useTextColor","no")=="yes")
 	useTextColor=true;
     else    
 	useTextColor=false;
     ui.textColorButton->setChecked(useTextColor);
     
 /* TODO this was used in old html export, is not yet in new stylesheet
-    if ( settings.readEntry ("/export/html/useHeading","no")=="yes")
+    if ( settings.readValue ("/export/html/useHeading","no")=="yes")
 	useHeading=true;
     else    
 	useHeading=false;
     checkBox4_2->setChecked(useHeading);
 */	
 
-    if ( settings.readLocalEntry (filepath,"/export/html/saveSettingsInMap","no")=="yes")
+    if ( settings.localValue (filepath,"/export/html/saveSettingsInMap","no")=="yes")
 	saveSettingsInMap=true;
     else    
 	saveSettingsInMap=false;
     ui.saveSettingsInMapButton->setChecked(saveSettingsInMap);
 
-    if ( settings.readEntry ("/export/html/showOutput","no")=="yes")
+    if ( settings.value ("/export/html/showOutput","no").toBool())
 	showOutput=true;
     else    
 	showOutput=false;
@@ -80,13 +80,13 @@ void ExportHTMLDialog::readSettings()
 	css=defcss;
     } else
     {
-	css=settings.readLocalEntry 
-	    (filepath,"/export/html/css",defcss);   
+	css=settings.localValue 
+	    (filepath,"/export/html/css",defcss).toString();   
     }
     ui.lineEditCSS->setText(css);
     
-    postscript=settings.readLocalEntry
-	(filepath,"/export/html/postscript","");
+    postscript=settings.localValue
+	(filepath,"/export/html/postscript","").toString();
     ui.lineEditPostScript->setText (postscript);    
 
     if (!postscript.isEmpty())
@@ -116,15 +116,15 @@ void ExportHTMLDialog::dirChanged()
 void ExportHTMLDialog::browseDirectoryPressed()
 {
     QFileDialog fd( this);
-    fd.setMode (QFileDialog::DirectoryOnly);
-    fd.setCaption(tr("VYM - Export HTML to directory"));
+    fd.setFileMode (QFileDialog::DirectoryOnly);
+    fd.setWindowTitle (tr("VYM - Export HTML to directory"));
     fd.setModal (true);
     fd.setDirectory (QDir::current());
     fd.show();
 
     if ( fd.exec() == QDialog::Accepted )
     {
-	QDir dir=fd.selectedFile();
+	QDir dir=fd.directory();
 	ui.lineEditDir->setText (dir.path() );
 	settingsChanged=true;
     }
@@ -182,9 +182,12 @@ void ExportHTMLDialog::browseCSSPressed()
 
     if ( fd.exec() == QDialog::Accepted )
     {
-	css=fd.selectedFile();
-	ui.lineEditCSS->setText (css );
-	settingsChanged=true;
+	if (!fd.selectedFiles().isEmpty())
+	{
+	    css=fd.selectedFiles().first();
+	    ui.lineEditCSS->setText (css );
+	    settingsChanged=true;
+	}
     }
 }
 
@@ -204,9 +207,12 @@ void ExportHTMLDialog::browsePostExportButtonPressed()
 
     if ( fd.exec() == QDialog::Accepted )
     {
-	postscript=fd.selectedFile();
-	ui.lineEditPostScript->setText (postscript );
-	settingsChanged=true;
+	if (!fd.selectedFiles().isEmpty())
+	{
+	    postscript=fd.selectedFiles().first();
+	    ui.lineEditPostScript->setText (postscript );
+	    settingsChanged=true;
+       } 
     }
 }
 
@@ -216,41 +222,41 @@ void ExportHTMLDialog::saveSettings ()
     // Save options to settings file 
     // (but don't save at destructor, which
     // is called for "cancel", too)
-    settings.setLocalEntry (filepath,"/export/html/exportDir",dir);
-    settings.setLocalEntry (filepath,"/export/html/postscript",postscript);
+    settings.setLocalValue (filepath,"/export/html/exportDir",dir);
+    settings.setLocalValue (filepath,"/export/html/postscript",postscript);
 
     if (useImage)
-	settings.setLocalEntry (filepath,"/export/html/useImage","yes");
+	settings.setLocalValue (filepath,"/export/html/useImage","yes");
     else
-	settings.setLocalEntry (filepath,"/export/html/useImage","no");	
+	settings.setLocalValue (filepath,"/export/html/useImage","no");	
     
   if (useTextColor)
-	settings.setLocalEntry (filepath,"/export/html/useTextColor","yes");
+	settings.setLocalValue (filepath,"/export/html/useTextColor","yes");
     else
-	settings.setLocalEntry (filepath,"/export/html/useTextColor","no"); 
+	settings.setLocalValue (filepath,"/export/html/useTextColor","no"); 
     
    if (showWarnings)
-	settings.writeEntry ("/export/html/showWarnings","yes");
+	settings.setValue ("/export/html/showWarnings","yes");
     else
-	settings.writeEntry ("/export/html/showWarnings","no");	
+	settings.setValue ("/export/html/showWarnings","no");	
 	    
     if (showOutput)
-	settings.writeEntry ("/export/html/showOutput","yes");
+	settings.setValue ("/export/html/showOutput","yes");
     else
-	settings.writeEntry ("/export/html/showOutput","no");	
+	settings.setValue ("/export/html/showOutput","no");	
 
     QString ipath;  
     ipath=vymBaseDir.path()+"/flags/flag-url-16x16.png";
     if (!options.isOn ("local"))
     {
-	settings.setLocalEntry 
+	settings.setLocalValue 
 	    (filepath,"/export/html/css",css);	
     }
 
     if (!saveSettingsInMap)
 	settings.clearLocal("/export/html");
     else    
-	settings.setLocalEntry 
+	settings.setLocalValue 
 	    (filepath,"/export/html/saveSettingsInMap","yes");
 
 }

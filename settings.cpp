@@ -1,4 +1,7 @@
 #include <iostream>
+
+#include <QDebug>
+
 #include <qregexp.h>
 #include "settings.h"
 #include "file.h"
@@ -26,16 +29,16 @@ void SimpleSettings::readSettings (const QString &path)
     QString s;
     if (!loadStringFromDisk(path,s)) 
     {
-	qWarning ("SimpleSettings::readSettings() Couldn't read "+path);
+	qWarning ()<<"SimpleSettings::readSettings() Couldn't read "+path;
 	return;
     }	
     QStringList lines;
-    lines=QStringList::split (QRegExp("\n"),s,false);
+    lines=s.split (QRegExp("\n"));
     int i;
     QStringList::Iterator it=lines.begin();
     while (it !=lines.end() )
     {
-	i=(*it).find("=",0);
+	i=(*it).indexOf("=",0);
 	keylist.append((*it).left(i));
 	valuelist.append((*it).right((*it).length()-i-1));
 	it++;
@@ -56,11 +59,11 @@ void SimpleSettings::writeSettings (const QString &path)
 	itv++;
     }
     if (!saveStringToDisk(path,s)) 
-	qWarning ("SimpleSettings::writeSettings() Couldn't write "+path);
+	qWarning ()<<"SimpleSettings::writeSettings() Couldn't write "+path;
 }
 
 /*
-QString SimpleSettings::readEntry (const QString &key)
+QString SimpleSettings::readValue (const QString &key)
 {
     QStringList::Iterator itk=keylist.begin();
     QStringList::Iterator itv=valuelist.begin();
@@ -73,12 +76,12 @@ QString SimpleSettings::readEntry (const QString &key)
 	itk++;
 	itv++;
     }
-    qWarning ("SimpleSettings::readEntry()  Couldn't find key "+key);
+    qWarning ("SimpleSettings::readValue()  Couldn't find key "+key);
     return "";
 }
 */
 
-QString SimpleSettings::readEntry (const QString &key, const QString &def)
+QString SimpleSettings::value (const QString &key, const QString &def)
 {
     QStringList::Iterator itk=keylist.begin();
     QStringList::Iterator itv=valuelist.begin();
@@ -94,7 +97,7 @@ QString SimpleSettings::readEntry (const QString &key, const QString &def)
     return def;
 }
 
-int SimpleSettings::readNumEntry (const QString &key, const int &def)
+int SimpleSettings::readNumValue (const QString &key, const int &def)
 {
     QStringList::Iterator itk=keylist.begin();
     QStringList::Iterator itv=valuelist.begin();
@@ -117,14 +120,14 @@ int SimpleSettings::readNumEntry (const QString &key, const int &def)
     return def;
 }
 
-void SimpleSettings::setEntry (const QString &key, const QString &value)
+void SimpleSettings::setValue (const QString &key, const QString &value)
 {
     QStringList::Iterator itk=keylist.begin();
     QStringList::Iterator itv=valuelist.begin();
 
     if (!key.isEmpty() )
     {
-	// Search for existing entry first
+	// Search for existing Value first
 	while (itk !=keylist.end() )
 	{
 	    if (*itk == key)
@@ -140,7 +143,7 @@ void SimpleSettings::setEntry (const QString &key, const QString &value)
 	    itv++;
 	}
 	
-	// If no entry exists, append a new one
+	// If no Value exists, append a new one
 	keylist.append (key);
 	valuelist.append (value);
     }
@@ -182,9 +185,9 @@ void Settings::clearLocal(const QString &s)
     {
 	if ((*itk).startsWith (s))
 	{
-	    itp=pathlist.remove (itp);
-	    itk=keylist.remove (itk);
-	    itv=valuelist.remove (itv);
+	    itp=pathlist.erase (itp);
+	    itk=keylist.erase (itk);
+	    itv=valuelist.erase (itv);
 	}   else
 	{
 	    itp++;
@@ -194,7 +197,7 @@ void Settings::clearLocal(const QString &s)
     }
 }
 
-QString Settings::readLocalEntry ( const QString &fpath, const QString & key, const QString & def = QString::null ) 
+QVariant Settings::localValue ( const QString &fpath, const QString & key, const QString & def = QString::null ) 
 {
     QStringList::Iterator itp=pathlist.begin();
     QStringList::Iterator itk=keylist.begin();
@@ -211,11 +214,10 @@ QString Settings::readLocalEntry ( const QString &fpath, const QString & key, co
     }
 
     // Fall back to global vym settings
-    bool ok;
-    return readEntry (key,def, &ok);
+    return value (key,def);
 }   
 
-void Settings::setLocalEntry (const QString &fpath, const QString &key, const QString &value)
+void Settings::setLocalValue (const QString &fpath, const QString &key, const QString &value)
 {
     QStringList::Iterator itp=pathlist.begin();
     QStringList::Iterator itk=keylist.begin();
@@ -223,7 +225,7 @@ void Settings::setLocalEntry (const QString &fpath, const QString &key, const QS
 
     if (!fpath.isEmpty() && !key.isEmpty() && !value.isEmpty() )
     {
-	// Search for existing entry first
+	// Search for existing Value first
 	while (itp !=pathlist.end() )
 	{
 	    if (*itp == fpath && *itk == key)
@@ -236,7 +238,7 @@ void Settings::setLocalEntry (const QString &fpath, const QString &key, const QS
 	    itv++;
 	}
 	
-	// If no entry exists, append a new one
+	// If no Value exists, append a new one
 	pathlist.append (fpath);
 	keylist.append (key);
 	valuelist.append (value);

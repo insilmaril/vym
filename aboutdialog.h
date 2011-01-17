@@ -44,7 +44,7 @@ class AboutDialog :public QDialog
     Q_OBJECT
 
 public:
-    AboutDialog(QWidget* parent = 0, const char* name = 0);
+    AboutDialog(QWidget* parent = 0);
 
 private:
     QTabWidget *tabs;
@@ -64,7 +64,7 @@ class AboutTextBrowser : public QTextBrowser
 {
   Q_OBJECT;
  public:
-  AboutTextBrowser(QWidget *parent, const char *name = 0);
+  AboutTextBrowser(QWidget *parent);
  public slots:
     virtual void setSource(const QUrl &url);
 };

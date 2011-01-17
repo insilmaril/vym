@@ -4,10 +4,9 @@ LANGUAGE    = C++
 
 CONFIG	+= qt warn_on debug x86 ppc qdbus 
 
-QT += qt3support network xml svg
+QT += network xml svg
 
-# Only needed with Qt < 4.6
-# include (/data/qtanimationframework-2.3-opensource/src/qtanimationframework.pri)
+#include(test/modeltest/modeltest.pri)
 
 TRANSLATIONS += lang/vym_de.ts
 TRANSLATIONS += lang/vym_en.ts
@@ -194,8 +193,6 @@ win32 {
     win32:DEFINES *= _USE_MATH_DEFINES
 }
 
-#The following lines were inserted by qt3to4
-
 isEmpty( PREFIX ) {
     PREFIX = /usr/local
     count( INSTALLDIR, 1 ) {
@@ -229,4 +226,3 @@ doc.path = $${DOCDIR}
 INSTALLS += doc
 DEFINES += VYM_DOCDIR=\\\"$${DOCDIR}\\\"
 
-#include(test/modeltest/modeltest.pri)

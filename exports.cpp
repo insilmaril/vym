@@ -1,5 +1,7 @@
 #include "exports.h"
 
+#include <QDebug>
+
 #include "branchitem.h"
 #include "file.h"
 #include "linkablemapobj.h"
@@ -63,7 +65,7 @@ void ExportBase::setModel(VymModel *m)
     model=m;
 }
 
-void ExportBase::setCaption (const QString &s)
+void ExportBase::setWindowTitle (const QString &s)
 {
     caption=s;
 }
@@ -78,18 +80,20 @@ bool ExportBase::execDialog(const QString &overwriteWarning)
     {
 	QFileDialog *fd=new QFileDialog( 0, caption);
 	fd->setFilter (filter);
-	fd->setCaption(caption);
-	fd->setMode( QFileDialog::AnyFile );
-	fd->setDir (outDir);
+	fd->setWindowTitle (caption);
+	fd->setFileMode( QFileDialog::AnyFile );
+	fd->setDirectory (outDir);
 	fd->show();
 
 	if ( fd->exec() == QDialog::Accepted )
 	{
-	    if (QFile (fd->selectedFile()).exists() )
+	    if (fd->selectedFiles().isEmpty()) return false;
+	    QString fn=fd->selectedFiles().first();
+	    if (QFile (fn).exists() ) 
 	    {
 		WarningDialog dia;
 		dia.showCancelButton (true);
-		dia.setText(QObject::tr("Exporting to %1 will overwrite the existing file:\n%2").arg(overwriteWarning).arg(fd->selectedFile()));
+		dia.setText(QObject::tr("Exporting to %1 will overwrite the existing file:\n%2").arg(overwriteWarning).arg(fn));
 		dia.setCaption(QObject::tr("Warning: Overwriting file"));
 		dia.setShowAgainName("/exports/overwrite/"+overwriteWarning);
 		if (!dia.exec()==QDialog::Accepted)
@@ -98,7 +102,7 @@ bool ExportBase::execDialog(const QString &overwriteWarning)
 		    return false;
 		}
 	    }
-	    outputFile=fd->selectedFile();
+	    outputFile=fn;
 	    return true;
 	}
     }
@@ -140,13 +144,13 @@ void ExportAO::doExport()
     QFile file (outputFile);
     if ( !file.open( QIODevice::WriteOnly ) )
     {
-	qWarning ("ExportAO::doExport couldn't open "+outputFile);
+	qWarning()<<"ExportAO::doExport couldn't open "+outputFile;//FIXME-1 missing GUI warning
 	return;
     }
 
-    settings.setLocalEntry (model->getFilePath(),"/export/last/exportDir",outputFile);
-    settings.setLocalEntry ( model->getFilePath(), "/export/last/command","exportAO");
-    settings.setLocalEntry ( model->getFilePath(), "/export/last/description","A&O report");
+    settings.setLocalValue (model->getFilePath(),"/export/last/exportDir",outputFile);
+    settings.setLocalValue ( model->getFilePath(), "/export/last/command","exportAO");
+    settings.setLocalValue ( model->getFilePath(), "/export/last/description","A&O report");
     model->setChanged();
 
 
@@ -238,9 +242,9 @@ void ExportAO::doExport()
     }
     file.close();
     QString cmd="exportAO";
-    settings.setLocalEntry ( model->getFilePath(), "/export/last/exportPath",outputFile);
-    settings.setLocalEntry ( model->getFilePath(), "/export/last/command",cmd);
-    settings.setLocalEntry ( model->getFilePath(), "/export/last/description","A&O report");
+    settings.setLocalValue ( model->getFilePath(), "/export/last/exportPath",outputFile);
+    settings.setLocalValue ( model->getFilePath(), "/export/last/command",cmd);
+    settings.setLocalValue ( model->getFilePath(), "/export/last/description","A&O report");
     mainWindow->statusMessage(cmd + ": " + outputFile);
 }
 
@@ -264,7 +268,7 @@ void ExportASCII::doExport()
     QFile file (outputFile);
     if ( !file.open( QIODevice::WriteOnly ) )
     {
-	qWarning ("ExportASCII::doExport couldn't open "+outputFile);
+	qWarning ()<<"ExportASCII::doExport couldn't open "+outputFile;
 	return;
     }
     QTextStream ts( &file );	// use LANG decoding here...
@@ -337,9 +341,9 @@ void ExportASCII::doExport()
     }
     file.close();
     QString cmd="exportASCII";
-    settings.setLocalEntry ( model->getFilePath(), "/export/last/exportPath",outputFile);
-    settings.setLocalEntry ( model->getFilePath(), "/export/last/command",cmd);
-    settings.setLocalEntry ( model->getFilePath(), "/export/last/description","ASCII");
+    settings.setLocalValue ( model->getFilePath(), "/export/last/exportPath",outputFile);
+    settings.setLocalValue ( model->getFilePath(), "/export/last/command",cmd);
+    settings.setLocalValue ( model->getFilePath(), "/export/last/description","ASCII");
     mainWindow->statusMessage(cmd + ": " + outputFile);
 }
 
@@ -357,7 +361,7 @@ void ExportCSV::doExport()
     QFile file (outputFile);
     if ( !file.open( QIODevice::WriteOnly ) )
     {
-	qWarning ("ExportBase::exportXML  couldn't open "+outputFile);
+	qWarning ()<<"ExportBase::exportXML  couldn't open "+outputFile;
 	return;
     }
     QTextStream ts( &file );	// use LANG decoding here...
@@ -673,11 +677,9 @@ void ExportHTML::doExport(bool useDialog)
 		QObject::tr("Could not open %1").arg(css_dst.fileName()));
 	else
 	{   
+	    if (!css_src.copy (css_dst.fileName() ) )
+		qWarning()<<"Couldn't copy "<<css_src.fileName()<<" to "<<css_dst.fileName();
 	
-	    QTextStream tsout( &css_dst);
-	    QTextStream tsin ( &css_src);
-	    QString s= tsin.read();
-	    tsout << s;
 	    css_dst.close();
 	}   
 	css_src.close();
@@ -722,7 +724,7 @@ void ExportHTML::doExport(bool useDialog)
 	return;
     }
     QTextStream ts( &file );	// use LANG decoding here...
-    ts.setEncoding (QTextStream::UnicodeUTF8); // Force UTF8
+    //FIXME-3 ts.setEncoding (QTextStream::UnicodeUTF8); // Force UTF8
 
     // Include image (be careful: this resets Export mode, so call before exporting branches)
     if (dia.useImage)
@@ -776,9 +778,9 @@ void ExportHTML::doExport(bool useDialog)
     }
 
     QString cmd="exportHTML";
-    settings.setLocalEntry (model->getFilePath(),"/export/last/exportPath",d.path());
-    settings.setLocalEntry ( model->getFilePath(), "/export/last/command","exportHTML");
-    settings.setLocalEntry ( model->getFilePath(), "/export/last/description","HTML");
+    settings.setLocalValue (model->getFilePath(),"/export/last/exportPath",d.path());
+    settings.setLocalValue ( model->getFilePath(), "/export/last/command","exportHTML");
+    settings.setLocalValue ( model->getFilePath(), "/export/last/description","HTML");
     mainWindow->statusMessage(cmd + ": " + outputFile);
     model->setChanged();
 
@@ -813,7 +815,7 @@ void ExportLaTeX::doExport()
     return;
   }
   QTextStream ts( &file );  // use LANG decoding here...
-  ts.setEncoding (QTextStream::UnicodeUTF8); // Force UTF8
+  //FIXME-3 ts.setEncoding (QTextStream::UnicodeUTF8); // Force UTF8
   
   // Main loop over all branches
   QString s;
@@ -996,18 +998,18 @@ void ExportOO::exportPresentation()
 bool ExportOO::setConfigFile (const QString &cf)
 {
     configFile=cf;
-    int i=cf.findRev ("/");
+    int i=cf.lastIndexOf ("/");
     if (i>=0) configDir=cf.left(i);
     SimpleSettings set;
     set.readSettings(configFile);
 
     // set paths
-    templateDir=configDir+"/"+set.readEntry ("Template");
+    templateDir=configDir+"/"+set.value ("Template");
 
     QDir d (templateDir);
     if (!d.exists())
     {
-	QMessageBox::critical (0,QObject::tr("Critical Export Error"),QObject::tr("Check \"%1\" in\n%2").arg("Template="+set.readEntry ("Template")).arg(configFile));
+	QMessageBox::critical (0,QObject::tr("Critical Export Error"),QObject::tr("Check \"%1\" in\n%2").arg("Template="+set.value ("Template")).arg(configFile));
 	return false;
 
     }
@@ -1017,11 +1019,11 @@ bool ExportOO::setConfigFile (const QString &cf)
     pageTemplateFile=templateDir+"page-template.xml";
     sectionTemplateFile=templateDir+"section-template.xml";
 
-    if (set.readEntry("useSections").contains("yes"))
+    if (set.value("useSections").contains("yes"))
 	useSections=true;
 
-    // Copy template to tmpdir
-    system ("cp -r "+templateDir+"* "+tmpDir.path());
+    // Copy template to tmpdir	
+    copyDir (templateDir,tmpDir);
 
     // Read content-template
     if (!loadStringFromDisk (contentTemplateFile,content))

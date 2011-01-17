@@ -81,7 +81,7 @@ void ImageItem::setOriginalFilename(const QString & fn)
     originalFilename=fn;
 
     // Set short name. Search from behind:
-    int i=originalFilename.findRev("/");
+    int i=originalFilename.lastIndexOf("/");
     if (i>=0) originalFilename=originalFilename.remove (0,i+1);
     setHeading (originalFilename);
 }

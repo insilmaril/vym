@@ -362,7 +362,7 @@ bool parseVYMHandler::characters   ( const QString& ch)
     //cout << "characters \""<<ch.toStdString()<<"\"  state="<<state <<"  laststate="<<laststate<<endl;
 
     QString ch_org=quotemeta (ch);
-    QString ch_simplified=ch.simplifyWhiteSpace();
+    QString ch_simplified=ch.simplified();
     if ( ch_simplified.isEmpty() ) return true;
 
     switch ( state ) 
@@ -541,7 +541,7 @@ bool parseVYMHandler::readNoteAttr (const QXmlAttributes& a)
 
 	if ( !file.open( QIODevice::ReadOnly) )
 	{
-	    qWarning ("parseVYMHandler::readNoteAttr:  Couldn't load "+fn);
+	    qWarning ()<<"parseVYMHandler::readNoteAttr:  Couldn't load "+fn;
 	    return false;
 	}   
 	QTextStream stream( &file );
@@ -699,7 +699,7 @@ bool parseVYMHandler::readSettingAttr (const QXmlAttributes& a)
     if (!a.value( "key").isEmpty() ) 
     {
 	if (!a.value( "value").isEmpty() ) 
-	    settings.setLocalEntry (model->getDestPath(), a.value ("key"), a.value ("value"));
+	    settings.setLocalValue(model->getDestPath(), a.value ("key"), a.value ("value"));
 	else
 	    return false;
 	

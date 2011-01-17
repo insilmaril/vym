@@ -396,9 +396,9 @@ void MapEditor::print()
 	model->reselect();
 
 	// Save settings in vymrc   //FIXME-3 do this in mainwindow.cpp
-	settings.writeEntry("/mainwindow/printerName",printer->printerName());
-	settings.writeEntry("/mainwindow/printerFormat",printer->outputFormat());
-	settings.writeEntry("/mainwindow/printerFileName",printer->outputFileName());
+	settings.setValue("/mainwindow/printerName",printer->printerName());
+	settings.setValue("/mainwindow/printerFormat",printer->outputFormat());
+	settings.setValue("/mainwindow/printerFileName",printer->outputFileName());
     }
 }
 
@@ -1049,7 +1049,7 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
 	    model->select (lmo);    
 	    if (foname.contains("system-url")) 
 	    {
-		if (e->state() & Qt::ControlModifier)
+		if (e->modifiers() & Qt::ControlModifier)
 		    mainWindow->editOpenURLTab();
 		else	
 		    mainWindow->editOpenURL();
@@ -1104,7 +1104,7 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
     }	
 
     // No system flag clicked, take care of modmodes (CTRL-Click)
-    if (e->state() & Qt::ControlModifier)
+    if (e->modifiers() & Qt::ControlModifier)
     {
 	if (mainWindow->getModMode()==Main::ModModeColor)
 	{
@@ -1158,7 +1158,7 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
 	    // If modMode==copy, then we want to "move" the _new_ object around
 	    // then we need the offset from p to the _old_ selection, because of tmp
 	    if (mainWindow->getModMode()==Main::ModModeCopy &&
-		e->state() & Qt::ControlModifier)
+		e->modifiers() & Qt::ControlModifier)
 	    {
 		BranchItem *bi=model->getSelectedBranch();
 		if (bi)
@@ -1383,7 +1383,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent* e)
 	// Check if we are over another branch
 	if (dst) 
 	{   
-	    if (e->state() & Qt::ShiftModifier)
+	    if (e->modifiers() & Qt::ShiftModifier)
 		model->colorBranch (((BranchObj*)dst)->getColor());
 	    else    
 		model->colorSubtree (((BranchObj*)dst)->getColor());
@@ -1484,12 +1484,12 @@ void MapEditor::mouseReleaseEvent(QMouseEvent* e)
 		QString preDstParStr;
 		bool relinked;
 
-		if (e->state() & Qt::ShiftModifier && dst->getParObj())
+		if (e->modifiers() & Qt::ShiftModifier && dst->getParObj())
 		{   // Link above dst
 		    preDstParStr=model->getSelectString (dst->getParObj());
 		    relinked=model->relinkBranch ((BranchItem*)seli,(BranchItem*)dsti->parent(),((BranchItem*)dsti)->num());
 		} else 
-		if (e->state() & Qt::ControlModifier && dst->getParObj())
+		if (e->modifiers() & Qt::ControlModifier && dst->getParObj())
 		{
 		    // Link below dst
 		    preDstParStr=model->getSelectString (dst->getParObj());
@@ -1640,8 +1640,8 @@ void MapEditor::dropEvent(QDropEvent *event)
 	{
 	    foreach (QString format,event->mimeData()->formats()) 
 		qDebug()<< "MapEditor: Dropped format: "<<qPrintable (format);
-	    foreach (QString url,event->mimeData()->urls())
-		qDebug()<< "  URL:"<<url;
+	    foreach (QUrl url,event->mimeData()->urls())
+		qDebug()<< "  URL:"<<url.path();
 	    //foreach (QString plain,event->mimeData()->text())
 	    //	qDebug()<< "   PLAIN:"<<plain;
 	    QByteArray ba=event->mimeData()->data("STRING");
@@ -1694,7 +1694,7 @@ void MapEditor::dropEvent(QDropEvent *event)
 			   QString file = QDir::fromNativeSeparators(s);
 			   heading = QFileInfo(file).baseName();
 			   files.append(file);
-			   if (file.endsWith(".vym", false))
+			   if (file.endsWith(".vym", Qt::CaseInsensitive))
 			       model->setVymLink(file);
 			   else
 			       model->setURL(u);

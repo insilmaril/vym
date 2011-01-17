@@ -20,7 +20,6 @@ public:
     ExportOOFileDialog (QWidget * parent , const  QString &caption=QString());
     bool foundConfig();
     QString selectedConfig();
-    QString selectedFile();
     void show();
      
 private slots:

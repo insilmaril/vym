@@ -142,13 +142,13 @@ void HeadingObj::setText (QString s)
 	while (s.length()>0)
 	{
 	    // ok, some people wanted manual linebreaks, here we go
-	    k=re.search (s,i);
+	    k=re.indexIn (s,i);
 	    if (k>=0)
 	    {
 		br=re.cap(0).length();
 		i=k;
 	    } else
-		i=s.find (" ",i,false);
+		i=s.indexOf (" ",i);
 	    if (i<0 && j==0)
 	    {   // no ws found at all in s
 		// append whole s

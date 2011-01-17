@@ -52,11 +52,11 @@ NoteEditor::NoteEditor()
     QString s=settings.value ("/satellite/noteeditor/fonts/fonthintDefault","variable").toString();
     if (s == "fixed")
     {	
-	actionSettingsFonthintDefault->setOn (true);
+	actionSettingsFonthintDefault->setChecked (true);
 	e->setCurrentFont (fixedFont);
     } else  
     {
-	actionSettingsFonthintDefault->setOn (false);
+	actionSettingsFonthintDefault->setChecked (false);
 	e->setCurrentFont (varFont);
     }	
 
@@ -75,7 +75,7 @@ NoteEditor::~NoteEditor()
     settings.setValue( "/satellite/noteeditor/showWithMain",showwithmain);
 
     QString s;
-    if (actionSettingsFonthintDefault->isOn() )
+    if (actionSettingsFonthintDefault->isChecked() )
 	s="fixed";
     else    
 	s="variable";

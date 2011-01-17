@@ -143,7 +143,7 @@ int main(int argc, char* argv[])
     // First try options
     if (options.isOn ("local"))
     {
-	vymBaseDir.setPath (vymBaseDir.currentDirPath());
+	vymBaseDir.setPath (vymBaseDir.currentPath());
     } else
     // then look for environment variable
     if (getenv("VYMHOME")!=0)
@@ -153,7 +153,7 @@ int main(int argc, char* argv[])
     // ok, let's find my way on my own
     {
 	#if defined (Q_OS_MACX)
-	    vymBaseDir.setPath(vymBaseDir.currentDirPath() +"/vym.app/Contents/Resources");
+	    vymBaseDir.setPath(vymBaseDir.currentPath() +"/vym.app/Contents/Resources");
 
         #elif defined (Q_OS_WIN32)
             QString basePath;
@@ -182,7 +182,7 @@ int main(int argc, char* argv[])
 	    {
 		vymBaseDir.setPath ("/usr/local/share/vym");
 		if (!vymBaseDir.exists())
-		    vymBaseDir.setPath(vymBaseDir.currentDirPath() );
+		    vymBaseDir.setPath(vymBaseDir.currentPath() );
 	    }	    
 	#endif
     }
@@ -202,7 +202,10 @@ int main(int argc, char* argv[])
 
     // Initialize translations
     QTranslator translator (0);
-    translator.load( QString("vym_")+QTextCodec::locale(), vymBaseDir.path() + "/lang");
+    //translator.load( QString("vym_")+QTextCodec::locale(), vymBaseDir.path() + "/lang");
+    translator.load( QString("vym_")+QLocale().name(), vymBaseDir.path() + "/lang");
+    //FIXME-0 testing
+    qDebug()<<"Locale="<<QLocale().name();
     app.installTranslator( &translator );
 
     // Initializing the master rows of flags
@@ -213,7 +216,7 @@ int main(int argc, char* argv[])
 
     // Initialize window of NoteEditor
     noteEditor = new NoteEditor();
-    noteEditor->setIcon (QPixmap (iconPath+"vym-editor.png"));
+    noteEditor->setWindowIcon (QPixmap (iconPath+"vym-editor.png"));
 
     headingEditor = new HeadingEditor();
 
@@ -223,12 +226,12 @@ int main(int argc, char* argv[])
 
     // Initialize mainwindow 
 #if defined(Q_OS_WIN32)
-    Main m(0, 0, (Qt::Window | Qt::MSWindowsOwnDC));
+    Main m(0, Qt::Window | Qt::MSWindowsOwnDC);
 #else
     Main m;
 #endif
 
-    m.setIcon (QPixmap (iconPath+"vym.png"));
+    m.setWindowIcon (QPixmap (iconPath+"vym.png"));
     m.fileNew();
     if (options.isOn ("batch"))
 	m.hide();
@@ -249,19 +252,19 @@ int main(int argc, char* argv[])
 	if ( !fn.isEmpty() )
 	{
 	    QFile f( fn );
-	    if ( !f.open( QIODevice::ReadOnly ) )
+	    if ( !f.open( QFile::ReadOnly|QFile::Text ) )
 	    {
 		QString error (QObject::tr("Error"));
-		QString msg (QObject::tr("Couldn't open \"%1\".").arg(fn));
+		QString msg (QObject::tr("Couldn't open \"%1\"\n%2.").arg(fn).arg(f.errorString()));
 		if (options.isOn("batch"))
-		    qWarning (error+": "+msg);
+		    qWarning ()<<error+": "+msg;
 		else    
 		    QMessageBox::warning(0, error,msg);
 		return 0;
 	    }	
 
-	    QTextStream ts( &f );
-	    script= ts.read();
+	    QTextStream in( &f );
+	    script= in.readAll();
 	    f.close();
 	    m.setScript (script);
 	    m.runScriptEverywhere (script);

@@ -153,7 +153,7 @@ void FlagRowObj::deactivate (const QString &foname)
     FlagObj *fo=findFlag (foname);
     if (fo) 
     {
-	flag.remove(fo);
+	flag.removeAll(fo);
 	delete (fo);
     }	
     calcBBoxSize();

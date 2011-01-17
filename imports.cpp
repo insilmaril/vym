@@ -102,7 +102,7 @@ bool ImportMM::transform()
 	
 	// Set short name, too. Search from behind:
 	transformedFile=inputFile;
-	int i=transformedFile.findRev("/");
+	int i=transformedFile.lastIndexOf ("/");
 	if (i>=0) transformedFile=transformedFile.remove (0,i+1);
 	transformedFile.replace(".mmap",".xml");
 	transformedFile=tmpDir.path()+"/"+transformedFile;

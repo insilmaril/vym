@@ -37,12 +37,6 @@ void ExportOOFileDialog::newConfigPath(const QString &s)
     lastFilter=s;
 }
 
-QString ExportOOFileDialog::selectedFile()
-{
-    return QFileDialog::selectedFile();
-}
-
-
 void ExportOOFileDialog::show()
 {
     setFilters (filters);
@@ -51,11 +45,11 @@ void ExportOOFileDialog::show()
 
 void ExportOOFileDialog::init()
 {
-    setMode( QFileDialog::AnyFile );
+    setFileMode( QFileDialog::AnyFile );
     QDir d;
     d.setPath ("/usr/share/vym/exports");
     scanExportConfigs(d);
-    d.setPath (d.homeDirPath()+"/.vym/exports");
+    d.setPath (d.homePath()+"/.vym/exports");
     scanExportConfigs(d);
     d.setPath (d.currentPath()+"/exports");
     scanExportConfigs(d);
@@ -87,10 +81,10 @@ void ExportOOFileDialog::scanExportConfigs(QDir dir)
 
 	    if (fi.fileName().endsWith(".conf") )
 	    {
-		configPaths.append (fi.absFilePath());
+		configPaths.append (fi.absolutePath());
 		set.clear();
-		set.readSettings (fi.absFilePath());
-		addFilter (set.readEntry(QString("Name")) + " (*.odp)");
+		set.readSettings (fi.absolutePath());
+		addFilter (set.value (QString("Name")) + " (*.odp)");
 	    }	    
         }
     }	    

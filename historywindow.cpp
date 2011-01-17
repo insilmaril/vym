@@ -68,22 +68,22 @@ void HistoryWindow::updateRow(int row, int step, SimpleSettings &set)
 {
     QTableWidgetItem *item;
 
-    item= new QTableWidgetItem(set.readEntry(QString("/history/step-%1/redoCommand").arg(step)));
+    item= new QTableWidgetItem(set.value(QString("/history/step-%1/redoCommand").arg(step)));
     ui.historyTable->setItem(row, 0, item);
 
-    item= new QTableWidgetItem(set.readEntry(QString("/history/step-%1/comment").arg(step)));
+    item= new QTableWidgetItem(set.value(QString("/history/step-%1/comment").arg(step)));
     ui.historyTable->setItem(row, 1, item);
 
-    item=new QTableWidgetItem(set.readEntry(QString("/history/step-%1/undoCommand").arg(step)));
+    item=new QTableWidgetItem(set.value(QString("/history/step-%1/undoCommand").arg(step)));
     ui.historyTable->setItem(row, 2, item);
 }
 
 void HistoryWindow::update(SimpleSettings &set)
 {
-    int undosAvail=set.readNumEntry("/history/undosAvail",0);
-    int redosAvail=set.readNumEntry("/history/redosAvail",0);
-    int stepsTotal=set.readNumEntry("/history/stepsTotal",0);
-    int curStep=set.readNumEntry ("/history/curStep");
+    int undosAvail=set.readNumValue("/history/undosAvail",0);
+    int redosAvail=set.readNumValue("/history/redosAvail",0);
+    int stepsTotal=set.readNumValue("/history/stepsTotal",0);
+    int curStep=set.readNumValue ("/history/curStep");
     int i;
     int s=curStep;
     int r=undosAvail-1;

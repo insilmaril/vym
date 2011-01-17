@@ -59,5 +59,5 @@ void WarningDialog::setText (const QString &s)
 
 void WarningDialog::setCaption(const QString &s)
 {
-    QDialog::setCaption("VYM - "+s);
+    QDialog::setWindowTitle("VYM - "+s);
 }

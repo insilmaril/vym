@@ -39,7 +39,7 @@ void EditXLinkDialog::widthChanged( int  w)
 void EditXLinkDialog::setLink( Link * l)
 {
     link=l;
-    ui.colorButton->setPaletteBackgroundColor (link->getColor() );
+    //FIXME-0 ui.colorButton->setPaletteBackgroundColor (link->getColor() );
     ui.widthBox->setValue(link->getWidth());
 }
 
@@ -55,7 +55,7 @@ void EditXLinkDialog::colorButtonPressed()
 	QColor col = QColorDialog::getColor(link->getColor(), this );
 	if ( !col.isValid() ) return;
 	link->setColor( col );
-	ui.colorButton->setPaletteBackgroundColor (col);
+	//FIXME-0 ui.colorButton->setPaletteBackgroundColor (col);
     }
 }
 
@@ -67,7 +67,7 @@ void EditXLinkDialog::setColorHeadingButtonPressed()
 	{
 	    QColor col=selbi->getHeadingColor();
 	    link->setColor(col);
-	    ui.colorButton->setPaletteBackgroundColor (col);
+	    //FIXME-0 ui.colorButton->setPaletteBackgroundColor (col);
 	}
     }
 }

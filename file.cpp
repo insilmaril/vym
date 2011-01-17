@@ -30,7 +30,7 @@ QString convertToRel (const QString &src, const QString &dst)
     {
 	// Special case, we just need the name of the file,
 	// not the complete path
-	i=d.findRev ("/");
+	i=d.lastIndexOf ("/");
 	d=d.right (d.length()-i-1);
     } else
     {
@@ -46,7 +46,7 @@ QString convertToRel (const QString &src, const QString &dst)
 	// remove identical left parts
 	while (s.section("/",0,0) == d.section("/",0,0) ) 
 	{
-	    i=s.find ("/");
+	    i=s.indexOf ("/");
 	    s=s.right (s.length()-i-1);
 	    d=d.right (d.length()-i-1);
 	}
@@ -75,13 +75,13 @@ extern QDir lastFileDir;
 QString browseDirectory (QWidget *parent,const QString &caption)
 {
     QFileDialog fd(parent,caption);
-    fd.setMode (QFileDialog::DirectoryOnly);
-    fd.setCaption(vymName+ " - "+caption);
-    fd.setDir (lastFileDir);
+    fd.setFileMode (QFileDialog::DirectoryOnly);
+    fd.setWindowTitle (vymName+ " - "+caption);
+    fd.setDirectory (lastFileDir);
     fd.show();
     
-    if ( fd.exec() == QDialog::Accepted )
-	return fd.selectedFile();
+    if ( fd.exec() == QDialog::Accepted && !fd.selectedFiles().isEmpty() )
+	return fd.selectedFiles().first();
     else
 	return "";
 }
@@ -146,7 +146,7 @@ QString makeUniqueDir (bool &ok,QString s)
     p=(char*) malloc (bytes+1);
     int i;
     for (i=0;i<bytes;i++)
-	p[i]=s.at(i).latin1();
+	p[i]=s.at(i).unicode();
     p[bytes]=0;	
 
     QString r=mkdtemp (p);
@@ -160,7 +160,7 @@ void removeDir(QDir d)
     // This check should_ not be necessary, but proved to be useful ;-)
     if (!isInTmpDir(d.path()))
     {
-	qWarning ("file.cpp::removeDir should remove "+d.path()+" - aborted.");
+	qWarning ()<<"file.cpp::removeDir should remove "+d.path()+" - aborted.";
 	return;
     }
 
@@ -175,7 +175,7 @@ void removeDir(QDir d)
 	if (fi.fileName() != "." && fi.fileName() != ".." )
 	{
 	    if ( !d.cd(fi.fileName()) ) 
-		qWarning ("removeDir() cannot find the directory "+fi.fileName());
+		qWarning ()<<"removeDir() cannot find the directory "+fi.fileName();
 	    else 
 	    {
 		// Recursively remove subdirs
@@ -196,12 +196,12 @@ void removeDir(QDir d)
     }	
 
     if (!d.rmdir(d.path()))
-	qWarning ("removeDir("+d.path()+") failed!");
+	qWarning ()<<"removeDir("+d.path()+") failed!";
 }	
 
-void copyDir (QDir src, QDir dst)
+void copyDir (QDir src, QDir dst)   //FIXME-3 don't use system call
 {
-    system ("cp -r "+src.path()+"/* "+dst.path());
+    system (QString ("cp -r "+src.path()+"/* "+dst.path()).toUtf8() );
 
     /*
     ErrorCode err=success;
@@ -387,78 +387,33 @@ ErrorCode unzipDir (const QDir &zipDir, const QString &zipName)
 bool loadStringFromDisk (const QString &fname, QString &s)
 {
     s="";
-    QFile file ( fname);
-    if ( !file.open( QIODevice::ReadOnly ) ) return false;
+    QFile file(fname);
+    if (!file.open(QFile::ReadOnly | QFile::Text)) {
+	qWarning()<<QString("loadStringFromDisk: Cannot read file %1\n%2")
+	.arg(fname)
+	.arg(file.errorString());
+	return false;
+    }
 
-    QTextStream ts( &file );
-    ts.setEncoding (QTextStream::UnicodeUTF8);
-    while ( !ts.atEnd() ) 
-	s+=ts.readLine()+"\n"; 
-    file.close();
+    QTextStream in(&file);
+    s=in.readAll();
     return true;
 }
 
 bool saveStringToDisk (const QString &fname, const QString &s)
 {
-    QFile file( fname);
+    QFile file(fname);
+    if (!file.open(QFile::WriteOnly | QFile::Text)) {
+         qWarning()<<QString("saveStringToDisk: Cannot write file %1:\n%2.")
+	      .arg(fname)
+	      .arg(file.errorString());
+         return false;
+    }
 
-    file.setName ( fname);
-    if ( !file.open( QIODevice::WriteOnly ) ) 
-    {
-	file.close();
-	return false;
-    }	
+    QTextStream out(&file);
+    out << s;
 
-    // Write it finally, and write in UTF8, no matter what 
-    QTextStream ts( &file );
-    ts.setEncoding (QTextStream::UnicodeUTF8);
-    ts << s;
-    file.close();
     return true;
-}
-
-
-ImagePreview::ImagePreview (QWidget *par=0): QLabel (par)
-{
-    fdia=(Q3FileDialog*)par;
-}
-
-void ImagePreview::previewUrl( const Q3Url &u )
-{
-    QString path = u.path();
-    QPixmap pix( path );
-    if ( pix.isNull() )
-    {
-	// Strange: If we have fd->setMode (QFileDialog::ExistingFiles)
-	// in the filedialog, then there are 3 calls to previewURL 
-	// for each selection. And only the first is the actual selected file
-	// while the following 2 point to the directory above the current one.
-	// So here's my workaround:
-	
-	if (fdia && fdia->selectedFiles().count()==0)
-	    setText( QObject::tr("This is not an image.") );
-	if (fdia &&fdia->selectedFiles().count()>1)
-	    setText( QObject::tr("Sorry, no preview for\nmultiple selected files.") );
-    }	
-    else
-    {
-	float max_w=300;
-	float max_h=300;
-	float r;
-	if (pix.width()>max_w)
-	{
-	    r=max_w / pix.width();
-	    pix.resize(qRound(pix.width()*r), qRound(pix.height()*r));
-	    // TODO not a resize, but a shrink/enlarge is needed here...
-	}
-	if (pix.height()>max_h)
-	{
-	    r=max_h / pix.height();
-	    pix.resize(qRound(pix.width()*r), qRound(pix.height()*r));
-	    // TODO not a resize, but a shrink/enlarge is needed here...
-	}
-        setPixmap( pix );
-    }	
 }
 
 ImageIO::ImageIO ()

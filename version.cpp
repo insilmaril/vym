@@ -1,5 +1,6 @@
 #include "version.h"
 
+#include <QDebug>
 #include <QRegExp>
 
 bool checkVersion (const QString &v)
@@ -28,7 +29,7 @@ bool checkVersion (const QString &v, const QString &d)
 	v2=rx.cap(2).toInt(&ok);
 	v3=rx.cap(3).toInt(&ok);
     } else
-	qWarning (QString ("Warning: Checking version failed for v=%1").arg(v));
+	qWarning ()<<QString ("Warning: Checking version failed for v=%1").arg(v);
 
     pos=rx.indexIn (d);
     if (pos>-1)
@@ -37,7 +38,7 @@ bool checkVersion (const QString &v, const QString &d)
 	d2=rx.cap(2).toInt(&ok);
 	d3=rx.cap(3).toInt(&ok);
     } else
-	qWarning (QString ("Warning: Checking version failed for d=%1").arg(d));
+	qWarning ()<<QString ("Warning: Checking version failed for d=%1").arg(d);
 
     
     if (d1 > v1)

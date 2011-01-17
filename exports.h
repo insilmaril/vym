@@ -25,7 +25,7 @@ public:
     virtual void setFile(const QString &);
     virtual QString getFile ();
     virtual void setModel (VymModel *m);
-    virtual void setCaption(const QString &);
+    virtual void setWindowTitle (const QString &);
     virtual void addFilter (const QString &);
     virtual bool execDialog(const QString &overwriteWarning=QString());
     virtual bool canceled();

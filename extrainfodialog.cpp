@@ -19,7 +19,7 @@ void ExtraInfoDialog::setComment (const QString &s)
 
 QString ExtraInfoDialog::getComment()
 {
-    return ui.commentTE->text();
+    return ui.commentTE->toHtml();
 }   
 
 

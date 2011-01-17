@@ -14,7 +14,7 @@ BranchPropertyWindow::BranchPropertyWindow (QWidget *parent): QDialog (parent)
 {
     ui.setupUi (this);
 
-    setCaption(vymName +" - " +tr ("Property Editor","Window caption"));
+    setWindowTitle (vymName +" - " +tr ("Property Editor","Window caption"));
 
     branchObj=NULL;
     branchItem=NULL;
@@ -26,8 +26,8 @@ BranchPropertyWindow::BranchPropertyWindow (QWidget *parent): QDialog (parent)
     brushColor=QColor (Qt::black);
     QPixmap pix( 16,16);
     pix.fill (penColor);
-    ui.framePenColorButton->setPixmap (pix);
-    ui.frameBrushColorButton->setPixmap (pix);
+    ui.framePenColorButton->setIcon (pix);
+    ui.frameBrushColorButton->setIcon (pix);
 
     // Create Model and View to hold attributes	    // FIXME-3
     /*
@@ -91,9 +91,9 @@ void BranchPropertyWindow::setItem (TreeItem *ti)
 		brushColor=branchObj->getFrameBrushColor();
 		QPixmap pix( 16,16);
 		pix.fill (penColor);
-		ui.framePenColorButton->setPixmap (pix);
+		ui.framePenColorButton->setIcon (pix);
 		pix.fill (brushColor);
-		ui.frameBrushColorButton->setPixmap (pix);
+		ui.frameBrushColorButton->setIcon (pix);
 		ui.colorGroupBox->setEnabled (true);
 		ui.framePaddingSpinBox->setEnabled (true);
 		ui.framePaddingSpinBox->setValue (branchObj->getFramePadding());

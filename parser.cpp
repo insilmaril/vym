@@ -34,20 +34,20 @@ void Parser::parseAtom (QString s)
     // Strip WS at beginning
     re.setPattern ("\\w");
     re.setMinimal (true);
-    pos=re.search (atom);
+    pos=re.indexIn (atom);
     if (pos>=0)
 	s=s.right(s.length()-pos);
 
     // Get command
     re.setPattern ("\\b(.*)(\\s|\\()");
-    pos=re.search (s);
+    pos=re.indexIn (s);
     if (pos>=0)
 	com=re.cap(1);
 
     // Get parameters
     paramList.clear();
     re.setPattern ("\\((.*)\\)");
-    pos=re.search (s);
+    pos=re.indexIn (s);
     //cout << "  s="<<qPrintable(s)<<endl;
     //cout << "com="<<qPrintable(com)<<"  pos="<<pos<<endl<<endl;
     if (pos>=0)
@@ -223,7 +223,7 @@ QString Parser::parString (bool &ok,const int &index)
     // a variable later
     QString r;
     QRegExp re("\"(.*)\"");
-    int pos=re.search (paramList[index]);
+    int pos=re.indexIn (paramList[index]);
     if (pos>=0)
 	r=re.cap (1);
     else    
@@ -254,7 +254,7 @@ QColor Parser::parColor(bool &ok,const int &index)
     QString r;
     QColor c;
     QRegExp re("\"(.*)\"");
-    int pos=re.search (paramList[index]);
+    int pos=re.indexIn (paramList[index]);
     if (pos>=0)
     {
 	r=re.cap (1);

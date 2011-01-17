@@ -80,8 +80,6 @@ void FlagRow::activate (const QString &name)
 {
     if (!isActive (name))
 	activeNames.append (name);
-    //else
-    //	qWarning (QString("FlagRow::activate - %1 is already active").arg(name));
 }
 
 
@@ -91,7 +89,7 @@ void FlagRow::deactivate (const QString &name)	//FIXME-4 complaints if CTRL-E is
     if (n>=0)
 	activeNames.removeAt(n);
     else
-	qWarning (QString("FlagRow::deactivate - %1 is not active").arg(name));
+	qWarning ()<<QString("FlagRow::deactivate - %1 is not active").arg(name);
 }
 
 void FlagRow::deactivateAll ()

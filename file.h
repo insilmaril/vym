@@ -27,21 +27,6 @@ ErrorCode unzipDir (const QDir &,const QString&);
 bool loadStringFromDisk (const QString &fn, QString &s);
 bool saveStringToDisk (const QString &fn, const QString &s);
 
-/////////////////////////////////////////////////////////////////////////////
-#include <QLabel>
-#include <q3filedialog.h>
-#include <QPixmap>
-
-class ImagePreview : public QLabel, public Q3FilePreview
-{
-public:
-    ImagePreview( QWidget * );
-    void previewUrl( const Q3Url & );
-protected:
-    Q3FileDialog *fdia;
-};
-
-
 //////////////////////////////////////////////////////////
 // Helper function to select image format while in SaveDialogs
 

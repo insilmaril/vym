@@ -4,6 +4,7 @@
 #include <QGraphicsView>
 #include <QItemSelectionModel>
 
+#include <QLineEdit>	
 #include <QPropertyAnimation>	
 
 #include "attribute.h"
