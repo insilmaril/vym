@@ -27,16 +27,21 @@ protected:
 public:	
     virtual ImageType getImageType();
 
-    virtual void load (const QPixmap &pm);
+    virtual void load (const QImage &img);
     virtual bool load (const QString &fname);
     virtual FloatImageObj* createMapObj(QGraphicsScene *scene);	    //! Create classic object in GraphicsView
-
 protected:  
-    QPixmap pixmap;
+    qreal scaleX;
+    qreal scaleY;
+    QImage  originalImage;
     QString originalFilename;
     int zValue;
 
 public:	
+    virtual qreal getScaleX();
+    virtual qreal getScaleY();
+    virtual void setScale (qreal,qreal);
+
     virtual void setZValue(int z);
     virtual void setOriginalFilename(const QString &);
     virtual QString getOriginalFilename();

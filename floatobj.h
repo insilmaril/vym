@@ -13,7 +13,6 @@ public:
     ~FloatObj ();
     virtual void init ();
     virtual void copy (FloatObj*);
-    virtual bool load (const QString&)=0;
     virtual void setZValue(const int&);	    // set zPlane
     virtual int zValue();
 

@@ -892,6 +892,27 @@ void Main::setupEditActions()
     editMenu->addAction (a);
     connect( a, SIGNAL( triggered() ), this, SLOT( editUnscrollChildren() ) );
 
+    a = new QAction( tr( "Grow selection","Edit menu" ), this);
+    a->setStatusTip (tr( "Grow selection, e.g. make image larger" ));
+    a->setShortcut ( Qt::CTRL + Qt::Key_Plus);	    // Grow selection
+    switchboard.addConnection(a,tr("Edit","Shortcut group"));
+    editMenu->addAction (a);
+    connect( a, SIGNAL( triggered() ), this, SLOT( editGrowSelectionSize() ) );
+
+    a = new QAction( tr( "Shrink selection","Edit menu" ), this);
+    a->setStatusTip (tr( "Shrink selection, e.g. make image smaller" ));
+    a->setShortcut ( Qt::CTRL + Qt::Key_Minus);	    // Shrink selection
+    switchboard.addConnection(a,tr("Edit","Shortcut group"));
+    editMenu->addAction (a);
+    connect( a, SIGNAL( triggered() ), this, SLOT( editShrinkSelectionSize() ) );
+
+    a = new QAction( tr( "Reset selection size","Edit menu" ), this);
+    a->setStatusTip (tr( "Reset selection size to original" ));
+    a->setShortcut ( Qt::CTRL + Qt::Key_0);	    // Shrink selection
+    switchboard.addConnection(a,tr("Edit","Shortcut group"));
+    editMenu->addAction (a);
+    connect( a, SIGNAL( triggered() ), this, SLOT( editResetSelectionSize() ) );
+
     editMenu->addSeparator();
 
     a = new QAction( QPixmap(iconPath+"find.png"), tr( "Find...","Edit menu"), this);
@@ -3289,6 +3310,24 @@ void Main::editUnscrollChildren()
 {
     VymModel *m=currentModel();
     if (m) m->unscrollChildren();
+}
+
+void Main::editGrowSelectionSize()
+{
+    VymModel *m=currentModel();
+    if (m) m->growSelectionSize();
+}
+
+void Main::editShrinkSelectionSize()
+{
+    VymModel *m=currentModel();
+    if (m) m->shrinkSelectionSize();
+}
+
+void Main::editResetSelectionSize()
+{
+    VymModel *m=currentModel();
+    if (m) m->resetSelectionSize();
 }
 
 void Main::editAddAttribute()

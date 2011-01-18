@@ -19,11 +19,7 @@ public:
     virtual void setZValue (const int&);
     virtual int z();
 
-    virtual void load (const QPixmap &);
-    virtual bool load (const QString &);
-    virtual void save (const QString &, const QString&);
-    virtual void setOriginalFilename(const QString &);
-    virtual QString getOriginalFilename();
+    virtual void load (const QImage &);
     virtual void setVisibility(bool);	    // set vis. for w
     virtual void move (double x,double y);
     virtual void move (QPointF);
@@ -34,9 +30,6 @@ public:
 
 protected:
     ImageObj *icon;
-    QString filetype;
-    QString filename;
-    QString originalFilename;
 };
 
 #endif

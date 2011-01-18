@@ -101,7 +101,7 @@ void TextEditor::reset()
     e->clear();
     actionFormatUseFixedFont->setChecked (false);
     actionTextBold->setChecked (false);
-    e->setFontWeight(QFont::Bold);
+    e->setFontWeight(QFont::Normal);
 
     actionTextUnderline->setChecked (false);
     e->setFontUnderline (false);

@@ -597,6 +597,22 @@ bool parseVYMHandler::readImageAttr (const QXmlAttributes& a)
 	}           
     }	
     
+    // Scale image	
+    x=y=1;
+    if (!a.value( "scaleX").isEmpty() ) 
+    {
+	x=a.value("scaleX").toFloat (&okx);
+	if (!okx ) return false;  
+    }	
+    
+    if (!a.value( "scaleY").isEmpty() ) 
+    {
+	y=a.value("scaleY").toFloat (&oky);
+	if (!oky ) return false;  
+    }	
+    if (x!=1 || y!=1)
+	lastImage->setScale (x,y);
+    
     if (!readOOAttr(a)) return false;
 
     if (!a.value ("originalName").isEmpty() )

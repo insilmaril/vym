@@ -2917,6 +2917,65 @@ void VymModel::unscrollChildren()
     }	
 }
 
+void VymModel::growSelectionSize() 
+{
+    ImageItem *selii=getSelectedImage();
+    if (selii)
+    {
+	qreal f=0.2;
+	selii->setScale (selii->getScaleX()+f,selii->getScaleY()+f);
+    /*
+	saveStateChangingPart(
+	    selbi,
+	    selbi,
+	    QString ("unscrollChildren ()"),
+	    QString ("unscroll all children of %1").arg(getObjectName(selbi))
+	);  
+       */ 
+	reposition();
+	emitSelectionChanged();
+    }	
+}
+
+void VymModel::shrinkSelectionSize() 
+{
+    ImageItem *selii=getSelectedImage();
+    if (selii)
+    {
+	qreal f=0.2;
+	selii->setScale (selii->getScaleX()-f,selii->getScaleY()-f);
+    /*
+	saveStateChangingPart(
+	    selbi,
+	    selbi,
+	    QString ("unscrollChildren ()"),
+	    QString ("unscroll all children of %1").arg(getObjectName(selbi))
+	);  
+       */ 
+	reposition();
+	emitSelectionChanged();
+    }	
+}
+
+void VymModel::resetSelectionSize() 
+{
+    ImageItem *selii=getSelectedImage();
+    if (selii)
+    {
+	selii->setScale (1,1);
+    /*
+	saveStateChangingPart(
+	    selbi,
+	    selbi,
+	    QString ("unscrollChildren ()"),
+	    QString ("unscroll all children of %1").arg(getObjectName(selbi))
+	);  
+       */ 
+	reposition();
+	emitSelectionChanged();
+    }	
+}
+
 void VymModel::emitExpandAll()	
 {
     emit (expandAll() );
@@ -2965,7 +3024,7 @@ void VymModel::toggleStandardFlag (const QString &name, FlagRow *master)
     }
 }
 
-void VymModel::addFloatImage (const QPixmap &img) 
+void VymModel::addFloatImage (const QImage &img) 
 {
     BranchItem *selbi=getSelectedBranch();
     if (selbi)

@@ -404,6 +404,9 @@ public:
     bool unscrollBranch(BranchItem *);
     void toggleScroll();
     void unscrollChildren();
+    void growSelectionSize();
+    void shrinkSelectionSize();
+    void resetSelectionSize();
     void emitExpandAll();
     void emitExpandOneLevel();
     void emitCollapseOneLevel();
@@ -416,7 +419,7 @@ signals:
 
 public:	
     void toggleStandardFlag (const QString &name, FlagRow *master=NULL);
-    void addFloatImage(const QPixmap &img);
+    void addFloatImage(const QImage &img);
 
     void colorBranch(QColor);
     void colorSubtree(QColor);

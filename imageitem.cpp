@@ -30,6 +30,8 @@ void ImageItem::init()
     hideLinkUnselected=true;
     originalFilename="no original name available";
     zValue=Z_INIT;
+    scaleX=1;
+    scaleY=1;
     posMode=Relative;
 }
 
@@ -38,20 +40,20 @@ ImageItem::ImageType ImageItem::getImageType()
     return imageType;
 }
 
-void ImageItem::load(const QPixmap &pm)
+void ImageItem::load(const QImage &img)
 {
-    pixmap=pm;
-    if (lmo) ((FloatImageObj*)lmo)->load (pixmap);
+    originalImage=img;
+    if (lmo) ((FloatImageObj*)lmo)->load (originalImage);
 }
 
 bool ImageItem::load(const QString &fname)
 {
-    bool ok=pixmap.load (fname);
+    bool ok=originalImage.load (fname);    //FIXME-4 Error handling missing
     if (lmo && ok)
     {
 	setOriginalFilename (fname);
 	setHeading (originalFilename);
-	((FloatImageObj*)lmo)->load (pixmap);
+	((FloatImageObj*)lmo)->load (originalImage);
     }	
     return ok;	
 }
@@ -68,6 +70,25 @@ FloatImageObj* ImageItem::createMapObj(QGraphicsScene *scene)
     fio->setRelPos (pos);
     //cout << "II::createMO   fio="<<fio<<"   tI="<<fio->getTreeItem()<<endl;
     return fio;
+}
+
+void ImageItem::setScale (qreal sx, qreal sy)
+{
+    scaleX=sx;
+    scaleY=sy;
+    int w=originalImage.width()*scaleX;
+    int h=originalImage.height()*scaleY;
+    if (lmo) ((FloatImageObj*)lmo)->load (originalImage.scaled (w,h));
+}
+
+qreal ImageItem::getScaleX ()
+{
+    return scaleX;
+}
+
+qreal ImageItem::getScaleY ()
+{
+    return scaleY;
 }
 
 void ImageItem::setZValue(int z)
@@ -93,7 +114,7 @@ QString ImageItem::getOriginalFilename()
 
 void ImageItem::save(const QString &fn, const QString &format)
 {
-    pixmap.save (fn,qPrintable (format));
+    originalImage.save (fn,qPrintable (format));
 }
 
 QString ImageItem::saveToDir (const QString &tmpdir,const QString &prefix) 
@@ -108,9 +129,13 @@ QString ImageItem::saveToDir (const QString &tmpdir,const QString &prefix)
     url="images/"+prefix+"image-" + QString().number(n,10) + ".png" ;
 
     // And really save the image
-    pixmap.save (tmpdir +"/"+ url, "PNG");
+    originalImage.save (tmpdir +"/"+ url, "PNG");
  
     QString nameAttr=attribut ("originalName",originalFilename);
+
+    QString scaleAttr=
+	attribut ("scaleX",QString().setNum(scaleX))+
+	attribut ("scaleY",QString().setNum(scaleY));
 
     return singleElement ("floatimage",  
 	getMapAttr() 
@@ -118,6 +143,7 @@ QString ImageItem::saveToDir (const QString &tmpdir,const QString &prefix)
 	+zAttr  
 	+attribut ("href",QString ("file:")+url)
 	+nameAttr
+	+scaleAttr
     );	
 }
 

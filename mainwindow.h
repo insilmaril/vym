@@ -166,6 +166,9 @@ private slots:
     void editCollapseOneLevel();
     void editCollapseUnselected();
     void editUnscrollChildren();
+    void editGrowSelectionSize();
+    void editShrinkSelectionSize();
+    void editResetSelectionSize();
     void editAddAttribute();
     void editAddMapCenter();
     void editNewBranch();
