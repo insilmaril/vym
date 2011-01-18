@@ -8,7 +8,7 @@ QT += network xml svg
 
 #include(test/modeltest/modeltest.pri)
 
-TRANSLATIONS += lang/vym_de.ts
+TRANSLATIONS += lang/vym_de_DE.ts
 TRANSLATIONS += lang/vym_en.ts
 TRANSLATIONS += lang/vym_es.ts
 TRANSLATIONS += lang/vym_fr.ts
