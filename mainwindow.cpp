@@ -1861,7 +1861,7 @@ void Main::setupTestActions()
     testMenu->addAction (a);
     connect( a, SIGNAL( triggered() ), this, SLOT( testFunction2() ) );
 
-    a = new QAction( "Command" , this);
+    a = new QAction( "Command" , this);		//FIXME-2 Make this available in release?
     a->setStatusTip( "Enter command to call in editor" );
     switchboard.addConnection(a,tr("Test shortcuts","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( testCommand() ) );

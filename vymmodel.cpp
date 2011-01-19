@@ -2937,7 +2937,7 @@ void VymModel::setScale(qreal xn, qreal yn)
     }	
 }
 
-void VymModel::growSelectionSize() 
+void VymModel::growSelectionSize()  //FIXME-2 Also for heading in BranchItem?
 {
     ImageItem *selii=getSelectedImage();
     if (selii)
@@ -2945,16 +2945,7 @@ void VymModel::growSelectionSize()
 	qreal f=0.2;
 	qreal sx=selii->getScaleX();
 	qreal sy=selii->getScaleY();
-	selii->setScale (sx+f,sy+f);
-	saveState ( 
-	    selii,
-	    QString ("setScale(%1,%2)").arg(sx-f).arg(sy-f),
-	    selii,
-	    QString ("setScale(%1,%2)").arg(sx).arg(sy),
-	    QString ("Scale %1").arg(getObjectName(selii))
-	);  
-	reposition();
-	emitSelectionChanged();
+	setScale (sx+f,sy+f);
     }	
 }
 
@@ -2966,37 +2957,14 @@ void VymModel::shrinkSelectionSize()
 	qreal f=0.2;
 	qreal sx=selii->getScaleX();
 	qreal sy=selii->getScaleY();
-	selii->setScale (sx-f,sy-f);
-	saveState ( 
-	    selii,
-	    QString ("setScale(%1,%2)").arg(sx+f).arg(sy+f),
-	    selii,
-	    QString ("setScale(%1,%2)").arg(sx).arg(sy),
-	    QString ("Scale %1").arg(getObjectName(selii))
-	);  
-	reposition();
-	emitSelectionChanged();
+	setScale (sx-f,sy-f);
     }	
 }
 
 void VymModel::resetSelectionSize() 
 {
     ImageItem *selii=getSelectedImage();
-    if (selii)
-    {
-	qreal sx=selii->getScaleX();
-	qreal sy=selii->getScaleY();
-	selii->setScale (1,1);
-	saveState ( 
-	    selii,
-	    QString ("setScale(%1,%2)").arg(sx).arg(sy),
-	    selii,
-	    QString ("setScale(1,1)"),
-	    QString ("Scale %1").arg(getObjectName(selii))
-	);  
-	reposition();
-	emitSelectionChanged();
-    }	
+    if (selii) setScale (1,1);
 }
 
 void VymModel::emitExpandAll()	
