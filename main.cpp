@@ -204,8 +204,6 @@ int main(int argc, char* argv[])
     QTranslator translator (0);
     //translator.load( QString("vym_")+QTextCodec::locale(), vymBaseDir.path() + "/lang");
     translator.load( QString("vym_")+QLocale().name(), vymBaseDir.path() + "/lang");
-    //FIXME-0 testing
-    qDebug()<<"Locale="<<QLocale().name();
     app.installTranslator( &translator );
 
     // Initializing the master rows of flags

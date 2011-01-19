@@ -1668,7 +1668,7 @@ void MapEditor::dropEvent(QDropEvent *event)
 	if (event->mimeData()->hasImage()) 
 	{
 	     QVariant imageData = event->mimeData()->imageData();
-	     model->addFloatImage (qvariant_cast<QPixmap>(imageData));
+	     model->addFloatImage (qvariant_cast<QImage>(imageData));
 	} else
 	if (event->mimeData()->hasUrls())
 	{

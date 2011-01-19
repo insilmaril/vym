@@ -693,7 +693,7 @@ void Main::setupEditActions()
 
     // Shortcut to add mapcenter
     a= new QAction(QPixmap(iconPath+"newmapcenter.png"),tr( "Add mapcenter","Canvas context menu" ), this);
-    a->setShortcut ( Qt::Key_M);    
+    a->setShortcut ( Qt::Key_C);    
     a->setShortcutContext (Qt::WindowShortcut);
     switchboard.addConnection(a,tr("Edit","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( editAddMapCenter() ) );
@@ -709,11 +709,6 @@ void Main::setupEditActions()
     a->setShortcutContext (Qt::WindowShortcut);
     switchboard.addConnection(a,tr("Edit","Shortcut group"));
     addAction (a);
-    connect( a, SIGNAL( triggered() ), this, SLOT( editNewBranch() ) );
-    a = new QAction(QPixmap(iconPath+"newbranch.png"), tr( "Add branch as child","Edit menu" ), this);
-    a->setStatusTip ( tr( "Add a branch as child of selection" ));
-    a->setShortcut (Qt::Key_Insert);		    //Add branch
-    switchboard.addConnection(a,tr("Edit","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( editNewBranch() ) );
     actionListBranches.append(a);
     actionAddBranch=a;
@@ -891,6 +886,27 @@ void Main::setupEditActions()
     switchboard.addConnection(a,tr("Edit","Shortcut group"));
     editMenu->addAction (a);
     connect( a, SIGNAL( triggered() ), this, SLOT( editUnscrollChildren() ) );
+
+    a = new QAction( tr( "Grow selection","Edit menu" ), this);
+    a->setStatusTip (tr( "Grow selection, e.g. make image larger" ));
+    a->setShortcut ( Qt::CTRL + Qt::Key_Plus);	    // Grow selection
+    switchboard.addConnection(a,tr("Edit","Shortcut group"));
+    editMenu->addAction (a);
+    connect( a, SIGNAL( triggered() ), this, SLOT( editGrowSelectionSize() ) );
+
+    a = new QAction( tr( "Shrink selection","Edit menu" ), this);
+    a->setStatusTip (tr( "Shrink selection, e.g. make image smaller" ));
+    a->setShortcut ( Qt::CTRL + Qt::Key_Minus);	    // Shrink selection
+    switchboard.addConnection(a,tr("Edit","Shortcut group"));
+    editMenu->addAction (a);
+    connect( a, SIGNAL( triggered() ), this, SLOT( editShrinkSelectionSize() ) );
+
+    a = new QAction( tr( "Reset selection size","Edit menu" ), this);
+    a->setStatusTip (tr( "Reset selection size to original" ));
+    a->setShortcut ( Qt::CTRL + Qt::Key_0);	    // Shrink selection
+    switchboard.addConnection(a,tr("Edit","Shortcut group"));
+    editMenu->addAction (a);
+    connect( a, SIGNAL( triggered() ), this, SLOT( editResetSelectionSize() ) );
 
     editMenu->addSeparator();
 
@@ -1125,7 +1141,10 @@ void Main::setupEditActions()
 
     a = new QAction( tr( "Add Image...","Edit menu" ), this);
     a->setStatusTip (tr( "Add Image" ));
+    a->setShortcutContext (Qt::WindowShortcut);
+    a->setShortcut (Qt::Key_I );    //FIXME-2 not working???
     switchboard.addConnection(a,tr("Edit","Shortcut group"));
+    addAction (a);
     connect( a, SIGNAL( triggered() ), this, SLOT( editLoadImage() ) );
     actionLoadImage=a;
 
@@ -3289,6 +3308,24 @@ void Main::editUnscrollChildren()
 {
     VymModel *m=currentModel();
     if (m) m->unscrollChildren();
+}
+
+void Main::editGrowSelectionSize()
+{
+    VymModel *m=currentModel();
+    if (m) m->growSelectionSize();
+}
+
+void Main::editShrinkSelectionSize()
+{
+    VymModel *m=currentModel();
+    if (m) m->shrinkSelectionSize();
+}
+
+void Main::editResetSelectionSize()
+{
+    VymModel *m=currentModel();
+    if (m) m->resetSelectionSize();
 }
 
 void Main::editAddAttribute()

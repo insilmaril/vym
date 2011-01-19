@@ -93,6 +93,8 @@ Highlighter::Highlighter(QTextDocument *parent)
 		    << "\\bsetURL\\b" 
 		    << "\\bsetVymLink\\b" 
 		    << "\\bsetFlag\\b" 
+		    << "\\bsetScale\\b" 
+		    << "\\bsetSelectionColor\\b" 
 		    << "\\bsortChildren\\b" 
 		    << "\\btoggleFlag\\b" 
 		    << "\\bunscroll\\b" 
