@@ -693,7 +693,7 @@ void Main::setupEditActions()
 
     // Shortcut to add mapcenter
     a= new QAction(QPixmap(iconPath+"newmapcenter.png"),tr( "Add mapcenter","Canvas context menu" ), this);
-    a->setShortcut ( Qt::Key_M);    
+    a->setShortcut ( Qt::Key_C);    
     a->setShortcutContext (Qt::WindowShortcut);
     switchboard.addConnection(a,tr("Edit","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( editAddMapCenter() ) );
