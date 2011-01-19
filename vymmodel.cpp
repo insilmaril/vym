@@ -2917,21 +2917,42 @@ void VymModel::unscrollChildren()
     }	
 }
 
+void VymModel::setScale(qreal xn, qreal yn) 
+{
+    ImageItem *selii=getSelectedImage();
+    if (selii)
+    {
+	qreal sx=selii->getScaleX();
+	qreal sy=selii->getScaleY();
+	selii->setScale (xn,yn);
+	saveState ( 
+	    selii,
+	    QString ("setScale(%1,%2)").arg(sx).arg(sy),
+	    selii,
+	    QString ("setScale(%1,%2)").arg(xn).arg(yn),
+	    QString ("Scale %1").arg(getObjectName(selii))
+	);  
+	reposition();
+	emitSelectionChanged();
+    }	
+}
+
 void VymModel::growSelectionSize() 
 {
     ImageItem *selii=getSelectedImage();
     if (selii)
     {
 	qreal f=0.2;
-	selii->setScale (selii->getScaleX()+f,selii->getScaleY()+f);
-    /*
-	saveStateChangingPart(
-	    selbi,
-	    selbi,
-	    QString ("unscrollChildren ()"),
-	    QString ("unscroll all children of %1").arg(getObjectName(selbi))
+	qreal sx=selii->getScaleX();
+	qreal sy=selii->getScaleY();
+	selii->setScale (sx+f,sy+f);
+	saveState ( 
+	    selii,
+	    QString ("setScale(%1,%2)").arg(sx-f).arg(sy-f),
+	    selii,
+	    QString ("setScale(%1,%2)").arg(sx).arg(sy),
+	    QString ("Scale %1").arg(getObjectName(selii))
 	);  
-       */ 
 	reposition();
 	emitSelectionChanged();
     }	
@@ -2943,15 +2964,16 @@ void VymModel::shrinkSelectionSize()
     if (selii)
     {
 	qreal f=0.2;
-	selii->setScale (selii->getScaleX()-f,selii->getScaleY()-f);
-    /*
-	saveStateChangingPart(
-	    selbi,
-	    selbi,
-	    QString ("unscrollChildren ()"),
-	    QString ("unscroll all children of %1").arg(getObjectName(selbi))
+	qreal sx=selii->getScaleX();
+	qreal sy=selii->getScaleY();
+	selii->setScale (sx-f,sy-f);
+	saveState ( 
+	    selii,
+	    QString ("setScale(%1,%2)").arg(sx+f).arg(sy+f),
+	    selii,
+	    QString ("setScale(%1,%2)").arg(sx).arg(sy),
+	    QString ("Scale %1").arg(getObjectName(selii))
 	);  
-       */ 
 	reposition();
 	emitSelectionChanged();
     }	
@@ -2962,15 +2984,16 @@ void VymModel::resetSelectionSize()
     ImageItem *selii=getSelectedImage();
     if (selii)
     {
+	qreal sx=selii->getScaleX();
+	qreal sy=selii->getScaleY();
 	selii->setScale (1,1);
-    /*
-	saveStateChangingPart(
-	    selbi,
-	    selbi,
-	    QString ("unscrollChildren ()"),
-	    QString ("unscroll all children of %1").arg(getObjectName(selbi))
+	saveState ( 
+	    selii,
+	    QString ("setScale(%1,%2)").arg(sx).arg(sy),
+	    selii,
+	    QString ("setScale(1,1)"),
+	    QString ("Scale %1").arg(getObjectName(selii))
 	);  
-       */ 
 	reposition();
 	emitSelectionChanged();
     }	
@@ -4310,16 +4333,32 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	} else if (parser.checkParCount(1))
 	{
 	    s=parser.parString (ok,0);
-	    if (ok) 
-		setNote (s);
+	    if (ok) setNote (s);
 	}   
+    /////////////////////////////////////////////////////////////////////
+    } else if (com=="setScale")
+    {
+	if (!selti )
+	{
+	    parser.setError (Aborted,"Nothing selected");
+	} else if (! selti->getType()==TreeItem::Image )
+	{		  
+	    parser.setError (Aborted,"Type of selection is not an image");
+	} else if (parser.checkParCount(2))
+	{
+	    x=parser.parDouble (ok,0);
+	    bool ok2;
+	    y=parser.parDouble (ok2,1);
+	    if (ok && ok2) setScale (x,y);
+	} 
     /////////////////////////////////////////////////////////////////////
     } else if (com=="setSelectionColor")
     {
 	if (parser.checkParCount(1))
 	{
 	    QColor c=parser.parColor (ok,0);
-	    if (ok) setSelectionColorInt (c);
+            if (ok) setSelectionColorInt (c);
+
 	}   
     /////////////////////////////////////////////////////////////////////
     } else if (com=="setURL")

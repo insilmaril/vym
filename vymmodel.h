@@ -404,6 +404,7 @@ public:
     bool unscrollBranch(BranchItem *);
     void toggleScroll();
     void unscrollChildren();
+    void setScale (qreal,qreal);
     void growSelectionSize();
     void shrinkSelectionSize();
     void resetSelectionSize();

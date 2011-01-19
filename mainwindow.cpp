@@ -710,11 +710,6 @@ void Main::setupEditActions()
     switchboard.addConnection(a,tr("Edit","Shortcut group"));
     addAction (a);
     connect( a, SIGNAL( triggered() ), this, SLOT( editNewBranch() ) );
-    a = new QAction(QPixmap(iconPath+"newbranch.png"), tr( "Add branch as child","Edit menu" ), this);
-    a->setStatusTip ( tr( "Add a branch as child of selection" ));
-    a->setShortcut (Qt::Key_Insert);		    //Add branch
-    switchboard.addConnection(a,tr("Edit","Shortcut group"));
-    connect( a, SIGNAL( triggered() ), this, SLOT( editNewBranch() ) );
     actionListBranches.append(a);
     actionAddBranch=a;
     editMenu->addAction (actionAddBranch);
@@ -1146,7 +1141,10 @@ void Main::setupEditActions()
 
     a = new QAction( tr( "Add Image...","Edit menu" ), this);
     a->setStatusTip (tr( "Add Image" ));
+    a->setShortcutContext (Qt::WindowShortcut);
+    a->setShortcut (Qt::Key_I );    //FIXME-2 not working???
     switchboard.addConnection(a,tr("Edit","Shortcut group"));
+    addAction (a);
     connect( a, SIGNAL( triggered() ), this, SLOT( editLoadImage() ) );
     actionLoadImage=a;
 
