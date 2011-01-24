@@ -2102,7 +2102,7 @@ void VymModel::cut()
 bool VymModel::moveUp(BranchItem *bi)	
 {
     if (bi && bi->canMoveUp()) 
-	return relinkBranch (bi,(BranchItem*)bi->parent(),bi->num()-1);
+	return relinkBranch (bi,(BranchItem*)bi->parent(),bi->num()-1,true);
     else    
 	return false;
 }
@@ -2124,7 +2124,7 @@ void VymModel::moveUp()
 bool VymModel::moveDown(BranchItem *bi)	
 {
     if (bi && bi->canMoveDown())
-	return relinkBranch (bi,(BranchItem*)bi->parent(),bi->num()+1);
+	return relinkBranch (bi,(BranchItem*)bi->parent(),bi->num()+1,true);
     else
 	return false;
 }
@@ -2159,7 +2159,7 @@ void VymModel::detach()
 	BranchObj *bo=selbi->getBranchObj();
 	if (bo) p=bo->getAbsPos();
 	QString parsel=getSelectString(selbi->parent());
-	if ( relinkBranch (selbi,rootItem,-1) )	
+	if ( relinkBranch (selbi,rootItem,-1,true) )	
 	    saveState (
 		getSelectString (selbi),
 		QString("relinkTo (\"%1\",%2,%3,%4)").arg(parsel).arg(n).arg(p.x()).arg(p.y()),
@@ -2509,7 +2509,7 @@ BranchItem* VymModel::addNewBranchBefore()
 	    //newbi->move2RelPos (p);
 
 	    // Move selection to new branch
-	    relinkBranch (selbi,newbi,0);
+	    relinkBranch (selbi,newbi,0,true);
 
 	    // Use color of child instead of parent
 	    newbi->setHeadingColor (selbi->getHeadingColor() );
@@ -2525,11 +2525,11 @@ BranchItem* VymModel::addNewBranchBefore()
     return newbi;
 }
 
-bool VymModel::relinkBranch (BranchItem *branch, BranchItem *dst, int pos)
+bool VymModel::relinkBranch (BranchItem *branch, BranchItem *dst, int pos, bool updateSelection)
 {
     if (branch && dst)
     {
-	unselect();
+	if (updateSelection) unselect();
  
 	// Do we need to update frame type?
 	bool keepFrame=false;
@@ -2572,13 +2572,17 @@ bool VymModel::relinkBranch (BranchItem *branch, BranchItem *dst, int pos)
 
 	emit (layoutChanged() );
 	reposition();	// both for moveUp/Down and relinking
-	if (dst->isScrolled() )
+
+	if (updateSelection)
 	{
-	    select (dst);   
-	    branch->updateVisibility();
+	    if (dst->isScrolled() )
+	    {
+		select (dst);   
+		branch->updateVisibility();
+	    }
+	    else	
+		select (branch);
 	}
-	else	
-	    select (branch);
 	return true;
     }
     return false;
@@ -2723,7 +2727,7 @@ void VymModel::deleteKeepChildren(bool saveStateFlag)
 	BranchItem *bi=selbi->getFirstBranch();
 	while (bi)
 	{
-	    relinkBranch (bi,pi,pos);
+	    relinkBranch (bi,pi,pos,true);
 	    bi=selbi->getFirstBranch();
 	    pos++;
 	}
@@ -2878,13 +2882,13 @@ void VymModel::toggleScroll()	//FIXME-2 doesn't seem to update frame with frame 
 // and seems to weork with 2 (!) system flage?!?
 //FIXME-3 check calls from BI->toggleScroll to model->emitDataHasChanged  - redundant? also for toggleStandardFlag
 {
-    BranchItem *bi=(BranchItem*)getSelectedBranch();
-    if (bi && bi->isBranchLikeType() )
+    BranchItem *selbi=getSelectedBranch();
+    if (selbi)
     {
-	if (bi->isScrolled())
-	    unscrollBranch (bi);
+	if (selbi->isScrolled())
+	    unscrollBranch (selbi);
 	else
-	    scrollBranch (bi);
+	    scrollBranch (selbi);
     }
     // saveState & reposition are called in above functions
 }
@@ -2985,6 +2989,36 @@ void VymModel::emitCollapseOneLevel()
 void VymModel::emitCollapseUnselected()	
 {
     emit (collapseUnselected() );
+}
+
+void VymModel::toggleTarget()
+{
+    BranchItem *selbi=getSelectedBranch();
+    if (selbi)
+    {
+	selbi->toggleTarget(); 
+	reposition();
+	emitSelectionChanged();
+    }
+}
+
+ItemList VymModel::getTargets()	
+{
+    ItemList targets;
+    
+    //rmodel->setSearchString (s);
+
+    BranchItem *cur=NULL;
+    BranchItem *prev=NULL;
+    nextBranch(cur,prev);
+
+    while (cur) 
+    {
+	if (cur->isActiveSystemFlag("system-target"))
+	    targets[cur->getID()]=cur->getHeading();
+	nextBranch(cur,prev);
+    }
+    return targets; 
 }
 
 void VymModel::toggleStandardFlag (const QString &name, FlagRow *master)
@@ -3750,12 +3784,12 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 			n=parser.parInt (ok,1);
 			if (ok)
 			{
-			    relinkBranch (selbi,(BranchItem*)dst,n);
+			    relinkBranch (selbi,(BranchItem*)dst,n,true);
 			    emitSelectionChanged();
 			}   
 		    } else if (dst->getType()==TreeItem::MapCenter) 
 		    {
-			relinkBranch (selbi,(BranchItem*)dst);
+			relinkBranch (selbi,(BranchItem*)dst,-1,true);
 			// Get coordinates of mainbranch
 			x=parser.parDouble(ok,2);
 			if (ok)

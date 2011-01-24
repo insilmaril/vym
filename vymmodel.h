@@ -25,6 +25,8 @@ class XLinkItem;
 
 class QGraphicsScene;
 
+typedef QMap<uint,QString> ItemList ;
+
 class VymModel :  public TreeModel {	    
     Q_OBJECT
     Q_CLASSINFO("D-Bus Interface", "org.insilmaril.vym.VymModel-h")
@@ -384,7 +386,7 @@ public:
 	different needs to call saveState
 	Returns true if relinking was successful.
     */	
-    bool relinkBranch (BranchItem* branch, BranchItem* dst, int pos =-1);   
+    bool relinkBranch (BranchItem* branch, BranchItem* dst, int pos =-1, bool updateSelection=false);   
     bool relinkImage  (ImageItem* image, BranchItem* dst);  
 
 private:
@@ -419,6 +421,9 @@ signals:
     void collapseUnselected();
 
 public:	
+    void toggleTarget();
+    ItemList getTargets();
+
     void toggleStandardFlag (const QString &name, FlagRow *master=NULL);
     void addFloatImage(const QImage &img);
 

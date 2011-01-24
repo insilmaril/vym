@@ -61,6 +61,7 @@ extern QString vymBuildDate;
 extern bool debug;
 extern bool bugzillaClientAvailable;
 
+QMenu* targetsContextMenu;
 QMenu* branchContextMenu;
 QMenu* branchAddContextMenu;
 QMenu* branchRemoveContextMenu;
@@ -910,6 +911,27 @@ void Main::setupEditActions()
 
     editMenu->addSeparator();
 
+    a = new QAction( QPixmap(), tr( "Toggle target...","Edit menu"), this);
+    a->setStatusTip (tr( "Toggle target" ) );
+    a->setShortcut (Qt::SHIFT + Qt::Key_T );			//Goto target
+    switchboard.addConnection(a,tr("Edit","Shortcut group"));
+    editMenu->addAction (a);
+    connect( a, SIGNAL( triggered() ), this, SLOT( editToggleTarget() ) );
+
+    a = new QAction( QPixmap(), tr( "Goto target...","Edit menu"), this);
+    a->setStatusTip (tr( "Goto target" ) );
+    a->setShortcut (Qt::Key_G );			//Goto target
+    switchboard.addConnection(a,tr("Edit","Shortcut group"));
+    editMenu->addAction (a);
+    connect( a, SIGNAL( triggered() ), this, SLOT( editGoToTarget() ) );
+
+    a = new QAction( QPixmap(), tr( "Move to target...","Edit menu"), this);
+    a->setStatusTip (tr( "Move to target" ) );
+    a->setShortcut (Qt::Key_M );			//Goto target
+    switchboard.addConnection(a,tr("Edit","Shortcut group"));
+    editMenu->addAction (a);
+    connect( a, SIGNAL( triggered() ), this, SLOT( editMoveToTarget() ) );
+
     a = new QAction( QPixmap(iconPath+"find.png"), tr( "Find...","Edit menu"), this);
     a->setStatusTip (tr( "Find" ) );
     a->setShortcut (Qt::CTRL + Qt::Key_F );		//Find
@@ -1461,6 +1483,9 @@ void Main::setupFlagActions()
     flag=new Flag(flagsPath+"flag-url-bugzilla-novell-closed.png");
     setupFlag (flag,tb,"system-url-bugzilla-novell-closed",tr("URL to Bugzilla ","SystemFlag"));
 
+    flag=new Flag(flagsPath+"flag-target.png");
+    setupFlag (flag,tb,"system-target",tr("Map target","SystemFlag"));
+
     flag=new Flag(flagsPath+"flag-vymlink.png");
     setupFlag (flag,tb,"system-vymLink",tr("Link to another vym map","SystemFlag"));
 
@@ -1849,7 +1874,6 @@ void Main::setupTestActions()
     QAction *a;
     a = new QAction( "Test function 1" , this);
     a->setStatusTip( "Call test function 1" );
-    a->setShortcut (Qt::SHIFT + Qt::Key_T); // Test function 1  
     switchboard.addConnection(a,tr("Test shortcuts","Shortcut group"));
     testMenu->addAction (a);
     connect( a, SIGNAL( triggered() ), this, SLOT( testFunction1() ) );
@@ -1900,6 +1924,9 @@ void Main::setupHelpActions()
 // Context Menus
 void Main::setupContextMenus()
 {
+    // Context menu for goto/move targets  (populated on demand)
+    targetsContextMenu = new QMenu (this);
+
     // Context Menu for branch or mapcenter
     branchContextMenu =new QMenu (this);
     branchContextMenu->addAction (actionViewTogglePropertyWindow);
@@ -2859,6 +2886,60 @@ void Main::editCut()
 {
     VymModel *m=currentModel();
     if (m) m->cut();
+}
+
+void Main::editToggleTarget()  
+{
+    VymModel *m=currentModel();
+    if (m) m->toggleTarget();
+}
+
+void Main::editGoToTarget()  
+{
+    VymModel *m=currentModel();
+    if (m) 
+    {
+	targetsContextMenu->clear();
+
+	ItemList targets=m->getTargets();
+	QMap<uint,QString>::const_iterator i = targets.constBegin();
+	while (i != targets.constEnd()) 
+	{
+	    (targetsContextMenu->addAction (i.value() ) )->setData (i.key());
+	    ++i;
+	}
+	QAction *a=targetsContextMenu->exec (QCursor::pos());
+	if (a) m->select (m->findID (a->data().toUInt() ) );
+    }
+}
+
+void Main::editMoveToTarget()  
+{
+    VymModel *m=currentModel();
+    if (m) 
+    {
+	targetsContextMenu->clear();
+
+	ItemList targets=m->getTargets();
+	QMap<uint,QString>::const_iterator i = targets.constBegin();
+	while (i != targets.constEnd()) 
+	{
+	    (targetsContextMenu->addAction (i.value() ) )->setData (i.key());
+	    ++i;
+	}
+	QAction *a=targetsContextMenu->exec (QCursor::pos());
+	if (a) 
+	{
+	    TreeItem *ti=m->findID (a->data().toUInt());
+	    BranchItem *selbi=m->getSelectedBranch();
+	    if (ti && ti->isBranchLikeType() && selbi)
+	    {
+		BranchItem *pi =selbi->parentBranch();
+		m->relinkBranch ( selbi, (BranchItem*)ti);
+		if (pi) m->select (pi);
+	    }	    
+	}
+    }
 }
 
 void Main::editOpenFindResultWidget()  
