@@ -2573,16 +2573,13 @@ bool VymModel::relinkBranch (BranchItem *branch, BranchItem *dst, int pos, bool 
 	emit (layoutChanged() );
 	reposition();	// both for moveUp/Down and relinking
 
-	if (updateSelection)
+	if (dst->isScrolled() )
 	{
-	    if (dst->isScrolled() )
-	    {
-		select (dst);   
-		branch->updateVisibility();
-	    }
-	    else	
-		select (branch);
+	    if (updateSelection) select (dst);
+	    branch->updateVisibility();
 	}
+	else	
+	    if (updateSelection) select (branch);
 	return true;
     }
     return false;
