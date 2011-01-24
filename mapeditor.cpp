@@ -1487,17 +1487,29 @@ void MapEditor::mouseReleaseEvent(QMouseEvent* e)
 		if (e->modifiers() & Qt::ShiftModifier && dst->getParObj())
 		{   // Link above dst
 		    preDstParStr=model->getSelectString (dst->getParObj());
-		    relinked=model->relinkBranch ((BranchItem*)seli,(BranchItem*)dsti->parent(),((BranchItem*)dsti)->num());
+		    relinked=model->relinkBranch (
+			(BranchItem*)seli,
+			(BranchItem*)dsti->parent(),
+			((BranchItem*)dsti)->num(),
+			true);
 		} else 
 		if (e->modifiers() & Qt::ControlModifier && dst->getParObj())
 		{
 		    // Link below dst
 		    preDstParStr=model->getSelectString (dst->getParObj());
-		    relinked=model->relinkBranch ((BranchItem*)seli,(BranchItem*)dsti->parent(),((BranchItem*)dsti)->num()+1);
+		    relinked=model->relinkBranch (
+			(BranchItem*)seli,
+			(BranchItem*)dsti->parent(),
+			((BranchItem*)dsti)->num()+1,
+			true);
 		} else	
 		{   // Append to dst
 		    preDstParStr=model->getSelectString(dst);
-		    relinked=model->relinkBranch ((BranchItem*)seli,(BranchItem*)dsti);
+		    relinked=model->relinkBranch (
+			(BranchItem*)seli,
+			(BranchItem*)dsti,
+			-1,
+			true);
 		    if (dsti->depth()==0) bsel->move (savePos);
 		} 
 		if (relinked)

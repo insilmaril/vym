@@ -101,6 +101,11 @@ public:
     void setVymLink (const QString &url);	    //! Set URL
     QString getVymLink ();			    //! Get URL
 
+protected:
+    bool target;
+public:    
+    void toggleTarget();			//! Toggle target status
+    bool isTarget();				//! Returns true if item is is a target
 
 protected:
     NoteObj note;
@@ -130,7 +135,9 @@ public:
 	be active simultanously, the others get deactivated.
     */	
     virtual void toggleStandardFlag(const QString &flag, FlagRow *master=NULL);
+    virtual void toggleSystemFlag  (const QString &flag, FlagRow *master=NULL);
     virtual bool isActiveStandardFlag (const QString &flag);
+    virtual bool isActiveSystemFlag   (const QString &flag);
     virtual QStringList activeStandardFlagNames();
     virtual FlagRow* getStandardFlagRow ();
 

@@ -524,6 +524,10 @@ bool parseVYMHandler::readOOAttr (const QXmlAttributes& a)
 	    else    
 		lastMI->setHideLinkUnselected(false);
 	}   
+
+	if (!a.value( "localTarget").isEmpty() )
+	    if (a.value ("localTarget")=="true")
+		lastMI->toggleTarget();
     }
     return true;    
 }

@@ -122,6 +122,9 @@ private slots:
     void editCopy();	
     void editPaste();	
     void editCut(); 
+    void editToggleTarget();
+    void editGoToTarget();
+    void editMoveToTarget();
     void editOpenFindResultWidget();
     void editFindNext(QString s);
     void editFindDuplicateURLs();

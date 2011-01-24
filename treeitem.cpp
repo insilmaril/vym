@@ -78,6 +78,8 @@ void TreeItem::init()
     xlinkCounter=0;
     xlinkOffset=0;
 
+    target=false;
+
     note.setNote(""); 
     // note.setFontHint (textEditor->getFontHintDefault() );	//FIXME-3
     // isNoteInEditor=false;
@@ -435,6 +437,19 @@ QString TreeItem::getVymLink ()
     return vymLink;
 }
 
+void TreeItem::toggleTarget ()
+{
+    systemFlags.toggle ("system-target");
+    target= systemFlags.isActive("system-target");
+    //qDebug()<<"TI::toggleTarget target="<<target<<"  for "<<getHeading(); //FIXME-1 still testing load/save
+    model->emitDataHasChanged(this);	// FIXME-3 better call from VM?
+}
+
+bool TreeItem::isTarget ()
+{
+    return target;
+}
+
 void TreeItem::setNote(const QString &s)
 {
     NoteObj n;
@@ -510,9 +525,20 @@ void TreeItem::toggleStandardFlag(const QString &name, FlagRow *master)
     model->emitDataHasChanged(this);	// FIXME-3 better call from VM?
 }
 
+void TreeItem::toggleSystemFlag(const QString &name, FlagRow *master)
+{
+    systemFlags.toggle (name,master);
+    model->emitDataHasChanged(this);	// FIXME-3 better call from VM?
+}
+
 bool TreeItem::isActiveStandardFlag (const QString &name)
 {
     return standardFlags.isActive (name);
+}
+
+bool TreeItem::isActiveSystemFlag (const QString &name)
+{
+    return systemFlags.isActive (name);
 }
 
 QStringList TreeItem::activeStandardFlagNames ()
@@ -773,6 +799,8 @@ QString TreeItem::getGeneralAttr()
 	s+=attribut ("url",url);
     if (!vymLink.isEmpty())
 	s+=attribut ("vymLink",convertToRel (model->getDestPath(),vymLink));
+    if (target)
+	s+=attribut ("localTarget","true");
     return s;	
 }
 
