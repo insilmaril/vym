@@ -2256,7 +2256,7 @@ ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode, const FileType &ftyp
 	    vymViews.append (vv);
 	    tabWidget->addTab (vv,fn);
 	    tabIndex=tabWidget->count()-1;
-	    tabWidget->setCurrentIndex (tabIndex);
+	    //tabWidget->setCurrentIndex (tabIndex);
 	    vv->initFocus();
 	}
 	
@@ -2291,9 +2291,7 @@ ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode, const FileType &ftyp
 	    }
 	}   
 
-
-	//tabWidget->currentPage() won't be NULL here, because of above...
-	tabWidget->setCurrentIndex (tabIndex);
+	//tabWidget->setCurrentIndex (tabIndex);
 
 	if (err!=aborted)
 	{
@@ -2824,8 +2822,7 @@ bool Main::fileCloseMap()
 	vymViews.removeAt (tabWidget->currentIndex() );
 	tabWidget->removeTab (tabWidget->currentIndex() );
 
-	delete (m); // changing model still will try to update selection in editors, remove model first
-	//delete (m->getMapEditor());
+	delete (m); 
 
 	updateActions();
 	return false;

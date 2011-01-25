@@ -67,6 +67,7 @@ VymModel::~VymModel()
     //qDebug() << "Destr VymModel begin this="<<this;
     autosaveTimer->stop();
     fileChangedTimer->stop();
+
     //qApp->processEvents();	// Update view (scene()->update() is not enough)
     //qDebug() << "Destr VymModel end   this="<<this;
 }   
