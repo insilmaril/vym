@@ -488,7 +488,6 @@ void BranchObj::alignRelativeTo (QPointF ref,bool alignSelf)
     if (parObj)	depth=1 + parObj->getTreeItem()->depth();
 // TODO testing
 /*
-*/
 if (debug)
 {
     QString h=QString (depth+1,' ');
@@ -513,6 +512,7 @@ if (debug)
 //	"  hidden="<<hidden<<
 //	"  th="<<th<<
 }
+*/
 
     setOrientation();
     //updateLinkGeometry();
@@ -671,7 +671,7 @@ void BranchObj::calcBBoxSizeWithChildren()  //FIXME-3 cleanup testcode
     // called more than once for a single user 
     // action
 
-    if (debug) qDebug()<<"BO: calcBBoxSizwWithChildren a) for "<<treeItem->getHeading();
+    //if (debug) qDebug()<<"BO: calcBBoxSizwWithChildren a) for "<<treeItem->getHeading();
 
     // Calculate size of LMO including all children (to align them later)
     //bboxTotal.setX(bbox.x() );
@@ -683,7 +683,7 @@ void BranchObj::calcBBoxSizeWithChildren()  //FIXME-3 cleanup testcode
     {
 	bboxTotal.setWidth (bbox.width());
 	bboxTotal.setHeight(bbox.height());
-	if (debug) qDebug()<<"BO: calcBBoxSizwWithChildren abort scrolled";
+	//if (debug) qDebug()<<"BO: calcBBoxSizwWithChildren abort scrolled";
 	return;
     }
     
@@ -702,7 +702,7 @@ void BranchObj::calcBBoxSizeWithChildren()  //FIXME-3 cleanup testcode
 	    bboxTotal.setY (bbox.y());
 	}
 	*/
-	if (debug) qDebug()<<"BO: calcBBoxSizeWithChildren abort hidden";
+	//if (debug) qDebug()<<"BO: calcBBoxSizeWithChildren abort hidden";
 	return;
     }
     
@@ -721,12 +721,14 @@ void BranchObj::calcBBoxSizeWithChildren()  //FIXME-3 cleanup testcode
 	    br=bo->getTotalBBox();
 	    r.setWidth( max (br.width(), r.width() ));
 	    r.setHeight(br.height() + r.height() );
+	    /*
 	    if (debug)
 	    {
 		qDebug()<<"  adding: "<<bo->getTreeItem()->getHeading() <<" to "<<bi->getHeading();
 		qDebug()<<"      bo: "<<br;
 		qDebug()<<"       r: "<<r;
 	    }
+	    */
 	    //if (br.y()<bboxTotal.y()) bboxTotal.setY(br.y());
 	    //if (br.x()<bboxTotal.x()) bboxTotal.setX(br.x());
 	}

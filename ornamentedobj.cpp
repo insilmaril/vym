@@ -203,8 +203,7 @@ void OrnamentedObj::positionContents()	//FIXME-3 called multiple times for each 
     
     double d=dZ_DEPTH*treeItem->depth();
 
-if (debug)
-    qDebug()<< "OO: positionContents "<<treeItem->getHeading()<<" dp="<<dp<<" absPos=="<<absPos<<" bboxTotal="<<bboxTotal<<"  ox="<<ox<<" oy="<<oy;
+//    if (debug) qDebug()<< "OO: positionContents "<<treeItem->getHeading()<<" dp="<<dp<<" absPos=="<<absPos<<" bboxTotal="<<bboxTotal<<"  ox="<<ox<<" oy="<<oy;
     // vertical align heading to bottom
     heading->setZValue (d + dZ_TEXT);
     heading->move (ox + x + systemFlags->getBBox().width(),

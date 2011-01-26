@@ -3148,7 +3148,36 @@ QColor VymModel::getCurrentHeadingColor()
     return Qt::black;
 }
 
+void VymModel::note2URLs()    
+{
+    BranchItem *selbi=getSelectedBranch();
+    if (selbi)
+    {	    
+	saveStateChangingPart(
+	    selbi,
+	    selbi,
+	    QString ("note2URLs()"),
+	    QString ("Extract URLs from note of %1").arg(getObjectName(selbi))
+	);  
 
+	QString n=selbi->getNote();
+	if (n.isEmpty()) return;
+	QRegExp re ("(http.*)(\\s|\"|')");
+	re.setMinimal (true);
+
+	BranchItem *bi;
+	int pos = 0;
+	while ((pos = re.indexIn(n, pos)) != -1) 
+	{
+	    bi=createBranch (selbi);
+	    bi->setHeading (re.cap(1));
+	    bi->setURL (re.cap(1));
+	    emitDataHasChanged (bi);
+	    pos += re.matchedLength();
+	}
+	
+    }
+}
 
 void VymModel::editURL()    
 {
@@ -3953,6 +3982,18 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
     } else if (com=="nop")
     {
     /////////////////////////////////////////////////////////////////////
+    } else if (com=="note2URLs")
+    {
+	if (!selti )
+	{
+	    parser.setError (Aborted,"Nothing selected");
+	} else if (! selbi )
+	{		  
+	    parser.setError (Aborted,"Type of selection is not a branch");
+	} else if (parser.checkParCount(0))
+	{   
+	    note2URLs();
+	}   
     } else if (com=="paste")
     {
 	if (!selti )
