@@ -139,6 +139,7 @@ public slots:
 private slots:
     void editOpenMultipleVisURLTabs(bool ignoreScrolled=true);
     void editOpenMultipleURLTabs();
+    void editNote2URLs();
     void editURL();
     void editLocalURL();
     void editHeading2URL();

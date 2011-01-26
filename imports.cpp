@@ -59,7 +59,7 @@ bool ImportKDE3Bookmarks::transform()
 }
 
 /////////////////////////////////////////////////
-bool ImportKDE4Bookmarks::transform()
+bool ImportKDE4Bookmarks::transform() //FIXME-2 hm, seems to work on macbook
 {
     transformedFile=tmpDir.path()+"/bookmarks.xml";
 
