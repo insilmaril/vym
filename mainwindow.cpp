@@ -982,6 +982,16 @@ void Main::setupEditActions()
     connect( a, SIGNAL( triggered() ), this, SLOT( editOpenMultipleURLTabs() ) );
     actionOpenMultipleURLTabs=a;
 
+    a = new QAction(QPixmap(), tr( "Extract URLs from note","Edit menu"), this);
+    a->setStatusTip ( tr( "Extract URLs from note" ) );
+    a->setShortcut ( Qt::SHIFT + Qt::Key_N );
+    a->setShortcutContext (Qt::WindowShortcut);
+    switchboard.addConnection(a,tr("Edit","Shortcut group"));
+    actionListBranches.append(a);
+    addAction(a);
+    connect( a, SIGNAL( triggered() ), this, SLOT( editNote2URLs() ) );
+    actionURL=a;
+
     a = new QAction(QPixmap(), tr( "Edit URL...","Edit menu"), this);
     a->setStatusTip ( tr( "Edit URL" ) );
     a->setShortcut ( Qt::Key_U );
@@ -3122,6 +3132,11 @@ void Main::editOpenMultipleURLTabs()
     editOpenMultipleVisURLTabs (false);
 }
 
+void Main::editNote2URLs()
+{
+    VymModel *m=currentModel();
+    if (m) m->note2URLs();
+}
 
 void Main::editURL()
 {

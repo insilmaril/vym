@@ -8,7 +8,7 @@ extern Settings settings;
 ///////////////////////////////////////////////////////////////////////
 
 
-HeadingEditor::HeadingEditor()
+HeadingEditor::HeadingEditor()	//FIXME-3 simplify comments
 {
     //qDebug()<<"Constr HeadingEditor";
     // Load Settings

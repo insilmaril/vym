@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Sat Jan 29 16:52:31 CET 2011 - vym@insilmaril.de
+
+- Bugfix: Crash when trying to print note
+
+-------------------------------------------------------------------
 Wed Jan 26 18:03:00 CET 2011 - vym@insilmaril.de
 
 - Feature: URLs can be extraced from notes

@@ -2410,7 +2410,7 @@ BranchItem* VymModel::addNewBranchInt(BranchItem *dst,int num)
     QList<QVariant> cData;
     cData << "" << "undef";
 
-    BranchItem *parbi;
+    BranchItem *parbi;	// FIXME-2 parbi uninitialized for n>=0
     QModelIndex parix;
     int n;
     BranchItem *newbi=new BranchItem (cData);	
@@ -4624,7 +4624,9 @@ QPointF VymModel::exportPDF (QString fname, bool askName)
 }
 
 #include <QSvgGenerator>
-QPointF VymModel::exportSVG (QString fname, bool askName)
+QPointF VymModel::exportSVG (QString fname, bool askName) // FIXME-2 
+// svg + pdf 
+// Printer already defined globally
 {
     if (fname=="")
     {

@@ -76,7 +76,6 @@ private slots:
     void setState (EditorState);
 
 protected:
-    QPrinter *printer;
     QTextEdit *e;
     QPoint lastPos;	    // save last position of window
     QString filename;

@@ -736,9 +736,8 @@ void TextEditor::textExportAsASCII()
 }
 
 
-void TextEditor::textPrint()	//FIXME-0 crashes (also in Qt3 version...)
+void TextEditor::textPrint()
 {
-
     QTextDocument *document = e->document();
 
     QPrintDialog dialog (printer, this);
