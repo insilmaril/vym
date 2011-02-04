@@ -990,7 +990,7 @@ void Main::setupEditActions()
     actionListBranches.append(a);
     addAction(a);
     connect( a, SIGNAL( triggered() ), this, SLOT( editNote2URLs() ) );
-    actionURL=a;
+    actionGetURLsFromNote=a;
 
     a = new QAction(QPixmap(), tr( "Edit URL...","Edit menu"), this);
     a->setStatusTip ( tr( "Edit URL" ) );
@@ -1982,6 +1982,7 @@ void Main::setupContextMenus()
 	branchLinksContextMenu->addAction ( actionOpenMultipleURLTabs );
 	branchLinksContextMenu->addAction ( actionURL );
 	branchLinksContextMenu->addAction ( actionLocalURL );
+	branchLinksContextMenu->addAction ( actionGetURLsFromNote );
 	branchLinksContextMenu->addAction ( actionHeading2URL );
 	branchLinksContextMenu->addAction ( actionBugzilla2URL );
 	if (settings.value( "/mainwindow/showTestMenu",false).toBool() )
@@ -4112,6 +4113,9 @@ void Main::updateActions()
 	    if (selbi)	
 	    {
 		actionHeading2URL->setEnabled (true);  
+
+		// Note
+		actionGetURLsFromNote->setEnabled (!selbi->getNote().isEmpty());
 
 		// Take care of xlinks  
 		int b=selbi->xlinkCount();

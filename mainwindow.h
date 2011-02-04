@@ -327,6 +327,7 @@ private:
     QAction* actionOpenURLTab;
     QAction* actionOpenMultipleVisURLTabs;
     QAction* actionOpenMultipleURLTabs;
+    QAction* actionGetURLsFromNote;
     QAction* actionURL;
     QAction* actionLocalURL;
     QAction* actionHeading2URL;
