@@ -90,7 +90,7 @@ AboutDialog::AboutDialog( QWidget *parent)
     license->setText (
     "<center>"
     "<h3>VYM - View Your Mind</h3>"
-    "<p>Copyright (C) 2004-2009  Uwe Drechsel</p>"  
+    "<p>Copyright (C) 2004-2011  Uwe Drechsel</p>"  
     "</center>"
 
     "<p>This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License version 2 as published by the Free Software Foundation.</p>"
@@ -203,7 +203,6 @@ AboutDialog::AboutDialog( QWidget *parent)
     tabs->addTab (license,"License");
 
     mainLayout->addWidget (tabs);
-    //FIXME-2 tabs->showPage (credits);
 
     okbutton =new QPushButton (this);
     okbutton->setText (tr("Ok","Ok Button"));

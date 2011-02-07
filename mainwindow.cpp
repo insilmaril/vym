@@ -1174,7 +1174,7 @@ void Main::setupEditActions()
     a = new QAction( tr( "Add Image...","Edit menu" ), this);
     a->setStatusTip (tr( "Add Image" ));
     a->setShortcutContext (Qt::WindowShortcut);
-    a->setShortcut (Qt::Key_I );    //FIXME-2 not working???
+    a->setShortcut (Qt::Key_I );    
     switchboard.addConnection(a,tr("Edit","Shortcut group"));
     addAction (a);
     connect( a, SIGNAL( triggered() ), this, SLOT( editLoadImage() ) );
@@ -1895,7 +1895,7 @@ void Main::setupTestActions()
     testMenu->addAction (a);
     connect( a, SIGNAL( triggered() ), this, SLOT( testFunction2() ) );
 
-    a = new QAction( "Command" , this);		//FIXME-2 Make this available in release?
+    a = new QAction( "Command" , this);		//FIXME-3+ Make this available in release?
     a->setStatusTip( "Enter command to call in editor" );
     switchboard.addConnection(a,tr("Test shortcuts","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( testCommand() ) );
@@ -2990,7 +2990,7 @@ void Main::editFindDuplicateURLs() //FIXME-4 feature: use FindResultWidget for d
     if (m) m->findDuplicateURLs();
 }
 
-void Main::updateQueries (VymModel* m) //FIXME-2 disabled for now to avoid selection in FRW
+void Main::updateQueries (VymModel* m) //FIXME-3 disabled for now to avoid selection in FRW
 {
  //   qDebug() << "MW::updateQueries m="<<m<<"   cM="<<currentModel();
     return;

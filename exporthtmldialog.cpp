@@ -1,4 +1,4 @@
-#include "exporthtmldialog.h"	//FIXME-2 fix layout in designer
+#include "exporthtmldialog.h"	
 
 #include <QFileDialog>
 #include <QMessageBox>

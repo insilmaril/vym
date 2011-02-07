@@ -390,14 +390,13 @@ void TextEditor::setupFormatActions()
     comboFont->insertItems ( 0,fontDB.families() );
     connect( comboFont, SIGNAL( activated( const QString & ) ),
 	 this, SLOT( textFamily( const QString & ) ) );
-    //comboFont->addItems( QApplication::font().family() ); //FIXME-2 not needed anymore?
 
     comboSize = new QComboBox;
     tb->addWidget (comboSize);
     QList<int> sizes=fontDB.standardSizes();
     QList<int>::iterator it = sizes.begin();
     int i=0;
-    while (it != sizes.end()) //FIXME-1 check and make better...
+    while (it != sizes.end()) //FIXME-3 check and make better...
     {
 	i++;
 	++it; // increment i before using it
@@ -405,7 +404,6 @@ void TextEditor::setupFormatActions()
     }	
     connect( comboSize, SIGNAL( activated( const QString & ) ),
 	 this, SLOT( textSize( const QString & ) ) );
-    //comboSize->addItem ( QString::number( QApplication::font().pointSize() ) ); //FIXME-2 not needed anymore?
 
     formatMenu->addSeparator();
 
@@ -624,7 +622,7 @@ void TextEditor::editCopyAll()
 void TextEditor::textSaveAs()
 {
     QString caption=tr ("Export Note to single file");
-    QString fn = QFileDialog::getSaveFileName(this, caption, QString::null, "VYM Note (HTML) (*.html);;All files (*)" );	//FIXME-2 test...
+    QString fn = QFileDialog::getSaveFileName(this, caption, QString::null, "VYM Note (HTML) (*.html);;All files (*)" );
 
     if ( !fn.isEmpty() ) 
     {
@@ -668,7 +666,7 @@ void TextEditor::textSave()
 	return;
     }
 
-    QString text = e->toHtml(); //FIXME-2 or plaintext? check...
+    QString text = e->toHtml(); //FIXME-3 or plaintext? check...
     QFile f( filename );
     if ( !f.open( QIODevice::WriteOnly ) ) 
     {
@@ -699,7 +697,7 @@ void TextEditor::textExportAsASCII()
     } else  
 	s=QString::null;
     QString caption=tr("Export Note to single file (ASCII)");
-    fn = QFileDialog::getSaveFileName(this, caption, s, "VYM Note (ASCII) (*.txt);;All files (*)" );	//FIXME-2 test...
+    fn = QFileDialog::getSaveFileName(this, caption, s, "VYM Note (ASCII) (*.txt);;All files (*)" );
     int ret=-1;
 
     if ( !fn.isEmpty() ) 

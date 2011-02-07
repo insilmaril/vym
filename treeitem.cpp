@@ -418,7 +418,7 @@ void TreeItem::setVymLink (const QString &vl)
 	if (!d.path().startsWith ("/"))
 	{
 	    QString p=model->getDestPath();
-	    int i=p.lastIndexOf("/",-1); //FIXME-2 test
+	    int i=p.lastIndexOf("/",-1);
 	    d.setPath(p.left(i)+"/"+vl);
 	    d.makeAbsolute();
 	}
@@ -441,7 +441,6 @@ void TreeItem::toggleTarget ()
 {
     systemFlags.toggle ("system-target");
     target= systemFlags.isActive("system-target");
-    //qDebug()<<"TI::toggleTarget target="<<target<<"  for "<<getHeading(); //FIXME-1 still testing load/save
     model->emitDataHasChanged(this);	// FIXME-3 better call from VM?
 }
 

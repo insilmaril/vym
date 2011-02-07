@@ -345,7 +345,7 @@ QString VymModel::getDestPath()
     return destPath;
 }
 
-ErrorCode VymModel::loadMap (	//FIXME-2 Check: insert with zeitplanung.vym replaced current branch. Later segfault...
+ErrorCode VymModel::loadMap (
     QString fname, 
     const LoadMode &lmode, 
     bool saveStateFlag, 
@@ -1521,7 +1521,7 @@ void VymModel::setHeading(const QString &s)
 	    "setHeading (\""+s+"\")", 
 	    QString("Set heading of %1 to \"%2\"").arg(getObjectName(selbi)).arg(s) );
 	selbi->setHeading(s );
-	emitDataHasChanged ( selbi);	//FIXME-4 maybe emit signal from TreeItem?   //FIXME-2 called 2x ???
+	emitDataHasChanged ( selbi);	//FIXME-4 maybe emit signal from TreeItem?   //FIXME-3 called 2x ???
 	emitUpdateQueries ();
 	reposition();
 	emitSelectionChanged();
@@ -2411,7 +2411,7 @@ BranchItem* VymModel::addNewBranchInt(BranchItem *dst,int num)
     QList<QVariant> cData;
     cData << "" << "undef";
 
-    BranchItem *parbi;	// FIXME-2 parbi uninitialized for n>=0
+    BranchItem *parbi;	// FIXME-3 parbi uninitialized for n>=0
     QModelIndex parix;
     int n;
     BranchItem *newbi=new BranchItem (cData);	
@@ -2691,8 +2691,8 @@ void VymModel::deleteSelection()
 }
 
 void VymModel::deleteKeepChildren(bool saveStateFlag)
-//deleteKeepChildren FIXME-2 does not work yet for mapcenters 
-//deleteKeepChildren FIXME-2 children of scrolled branch stay invisible...
+//deleteKeepChildren FIXME-3+ does not work yet for mapcenters 
+//deleteKeepChildren FIXME-3+ children of scrolled branch stay invisible...
 //deleteKeepChildren FIXME-2 xlinks in children are lost with undo (Maybe use saveStateChangingPart?)
 
 {
@@ -2877,7 +2877,7 @@ bool VymModel::unscrollBranch(BranchItem *bi)
     return false;
 }
 
-void VymModel::toggleScroll()	//FIXME-2 doesn't seem to update frame with frame including children (setting a standard flag does!) (changes are done for a child of framed branch)
+void VymModel::toggleScroll()	//FIXME-3 doesn't seem to update frame with frame including children (setting a standard flag does!) (changes are done for a child of framed branch)
 // and seems to weork with 2 (!) system flage?!?
 //FIXME-3 check calls from BI->toggleScroll to model->emitDataHasChanged  - redundant? also for toggleStandardFlag
 {
@@ -2940,7 +2940,7 @@ void VymModel::setScale(qreal xn, qreal yn)
     }	
 }
 
-void VymModel::growSelectionSize()  //FIXME-2 Also for heading in BranchItem?
+void VymModel::growSelectionSize()  //FIXME-3 Also for heading in BranchItem?
 {
     ImageItem *selii=getSelectedImage();
     if (selii)
@@ -3169,22 +3169,23 @@ void VymModel::editLocalURL()
     {	    
 	QStringList filters;
 	filters <<"All files (*)";
+	filters << tr("HTML","Filedialog") + " (*.html,*.htm)";
 	filters << tr("Text","Filedialog") + " (*.txt)";
 	filters << tr("Spreadsheet","Filedialog") + " (*.odp,*.sxc)";
 	filters << tr("Textdocument","Filedialog") +" (*.odw,*.sxw)";
 	filters << tr("Images","Filedialog") + " (*.png *.bmp *.xbm *.jpg *.png *.xpm *.gif *.pnm)";
-	QFileDialog *fd=new QFileDialog( NULL,vymName+" - " +tr("Set URL to a local file")); //FIXME-2 delete fd and check also other fds
-	fd->setFilters (filters);
-	fd->setWindowTitle(vymName+" - " +tr("Set URL to a local file"));
-	fd->setDirectory (lastFileDir);
+	QFileDialog fd( NULL,vymName+" - " +tr("Set URL to a local file")); 
+	fd.setFilters (filters);
+	fd.setWindowTitle(vymName+" - " +tr("Set URL to a local file"));
+	fd.setDirectory (lastFileDir);
 	if (! selti->getVymLink().isEmpty() )
-	    fd->selectFile( selti->getURL() );
-	fd->show();
+	    fd.selectFile( selti->getURL() );
+	fd.show();
 
-	if ( fd->exec() == QDialog::Accepted &&!fd->selectedFiles().isEmpty() )
+	if ( fd.exec() == QDialog::Accepted &&!fd.selectedFiles().isEmpty() )
 	{
-	    lastFileDir=QDir (fd->directory().path());
-	    setURL (fd->selectedFiles().first() );
+	    lastFileDir=QDir (fd.directory().path());
+	    setURL (fd.selectedFiles().first() );
 	}
     }
 }

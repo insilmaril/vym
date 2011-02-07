@@ -144,7 +144,7 @@ void ExportAO::doExport()
     QFile file (outputFile);
     if ( !file.open( QIODevice::WriteOnly ) )
     {
-	qWarning()<<"ExportAO::doExport couldn't open "+outputFile;//FIXME-1 missing GUI warning
+	qWarning()<<"ExportAO::doExport couldn't open "+outputFile;//FIXME-3 missing GUI warning
 	return;
     }
 
