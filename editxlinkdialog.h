@@ -26,6 +26,7 @@ private slots:
     void deleteButtonPressed();
     void widthChanged (int);
     void colorButtonPressed();
+    void colorChanged(QColor c);
     void setColorHeadingButtonPressed ();
 
 private:
