@@ -1,4 +1,5 @@
 #include <QApplication>
+#include <QSvgGenerator>
 #include <typeinfo>
 
 #include "vymmodel.h"
@@ -4613,7 +4614,7 @@ QPointF VymModel::exportPDF (QString fname, bool askName)
     // To PDF
     QPrinter printer(QPrinter::HighResolution);
     printer.setOutputFormat(QPrinter::PdfFormat);
-    printer.setOutputFileName(fname+".pdf");
+    printer.setOutputFileName(fname);
     printer.setPageSize(QPrinter::A0);
     QPainter *pdfPainter = new QPainter(&printer);
     getScene()->render(pdfPainter);
@@ -4623,9 +4624,7 @@ QPointF VymModel::exportPDF (QString fname, bool askName)
     return offset;
 }
 
-#include <QSvgGenerator>
-QPointF VymModel::exportSVG (QString fname, bool askName) // FIXME-2 
-// svg + pdf 
+QPointF VymModel::exportSVG (QString fname, bool askName) 
 // Printer already defined globally
 {
     if (fname=="")
@@ -4664,18 +4663,8 @@ QPointF VymModel::exportSVG (QString fname, bool askName) // FIXME-2
 
     setExportMode (false);
 
-    // To PDF
-    QPrinter printer(QPrinter::HighResolution);
-    printer.setOutputFormat(QPrinter::PdfFormat);
-    printer.setOutputFileName(fname+".pdf");
-    printer.setPageSize(QPrinter::A0);
-    QPainter *pdfPainter = new QPainter(&printer);
-    getScene()->render(pdfPainter);
-    pdfPainter->end();
-
     return offset;
 }
-
 
 void VymModel::exportXML(QString dir, bool askForName)
 {
