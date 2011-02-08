@@ -122,6 +122,10 @@
         <comment>Window caption</comment>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Include children</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>EditXLinkDialog</name>
@@ -398,16 +402,6 @@ want to allow this in your system!</source>
     <message>
         <source>Find:</source>
         <comment>FindWidget</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Next</source>
-        <comment>Find widget</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Show all</source>
-        <comment>Find widget</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2669,10 +2663,6 @@ to confusion when finishing working with vym.Do you want to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Export in last used format (%1)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Information</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2683,6 +2673,108 @@ to confusion when finishing working with vym.Do you want to</source>
     <message>
         <source>Export in last used format (%1)</source>
         <comment>status tip</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>PDF%1</source>
+        <comment>File export menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export map as PDF</source>
+        <comment>status tip file menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>SVG%1</source>
+        <comment>File export menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export map as SVG</source>
+        <comment>status tip file menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Repeat last export (%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Grow selection</source>
+        <comment>Edit menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Grow selection, e.g. make image larger</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Shrink selection</source>
+        <comment>Edit menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Shrink selection, e.g. make image smaller</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Reset selection size</source>
+        <comment>Edit menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Reset selection size to original</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Toggle target...</source>
+        <comment>Edit menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Toggle target</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Goto target...</source>
+        <comment>Edit menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Goto target</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Move to target...</source>
+        <comment>Edit menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Move to target</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Extract URLs from note</source>
+        <comment>Edit menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Extract URLs from note</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Map target</source>
+        <comment>SystemFlag</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Follow XLink</source>
+        <comment>Context menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Follow XLink</source>
+        <comment>Context menu name</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2822,7 +2914,7 @@ to notifiy Browsers of changed bookmarks.</source>
     <name>QObject</name>
     <message>
         <source>This is not an image.</source>
-        <translation>這並非圖像。</translation>
+        <translation type="obsolete">這並非圖像。</translation>
     </message>
     <message>
         <source>Critical Export Error</source>
@@ -2890,7 +2982,7 @@ Do you want to overwrite it?</source>
     <message>
         <source>Sorry, no preview for
 multiple selected files.</source>
-        <translation>抱歉，無法預覽多個已選檔案。</translation>
+        <translation type="obsolete">抱歉，無法預覽多個已選檔案。</translation>
     </message>
     <message>
         <source>Exporting the %1 bookmarks will overwrite
@@ -2996,11 +3088,6 @@ Do you risk to overwrite its contents?</source>
 您要冒險覆寫它的內容嗎？</translation>
     </message>
     <message>
-        <source>Couldn&apos;t open %1.
-</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>No Bugzilla client found.  For openSUSE you can install by (running as root):
 
 </source>
@@ -3016,6 +3103,11 @@ and install the perl module for Bugzilla access using YaST</source>
     <message>
         <source>Warning: Couldn&apos;t find Bugzilla client</source>
         <comment>VymModel</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t open &quot;%1&quot;
+%2.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3685,6 +3777,19 @@ Do you want to reload that map with the new file?</source>
     </message>
     <message>
         <source>Load background image</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>HTML</source>
+        <comment>Filedialog</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export map as PDF</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export map as SVG</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

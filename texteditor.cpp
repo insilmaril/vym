@@ -251,7 +251,6 @@ void TextEditor::setupFileActions()
 
     QAction *a;
     a = new QAction( QPixmap( iconPath+"fileopen.png"), tr( "&Import..." ),this);
-    a->setStatusTip (tr( "Import","Status tip for Note menu" ) );
     a->setShortcut( Qt::CTRL + Qt::Key_O );
     connect( a, SIGNAL( activated() ), this, SLOT( textLoad() ) );
     tb->addAction (a);
@@ -260,7 +259,6 @@ void TextEditor::setupFileActions()
 
     fileMenu->addSeparator();
     a = new QAction( QPixmap(iconPath+"filesave.png" ), tr( "&Export..." ),this);
-    a->setStatusTip (tr( "Export Note (HTML)","Status tip for Note menu" ) );
     a->setShortcut( Qt::CTRL + Qt::Key_S );
     a->setShortcutContext (Qt::WidgetShortcut);
     connect( a, SIGNAL( activated() ), this, SLOT( textSave() ) );
@@ -269,13 +267,11 @@ void TextEditor::setupFileActions()
     actionFileSave=a;
     
     a = new QAction(  QPixmap(), tr( "Export &As... (HTML)" ), this);
-    a->setStatusTip (tr( "Export Note As (HTML) ","Status tip for Note Menu"  ));
     connect( a, SIGNAL( activated() ), this, SLOT( textSaveAs() ) );
     fileMenu->addAction (a);
     actionFileSaveAs=a;
 
     a = new QAction(QPixmap(), tr( "Export &As...(ASCII)" ), this);
-    a->setStatusTip ( tr( "Export Note As (ASCII) ","Status tip for note menu" ) );
     a->setShortcut(Qt::ALT + Qt::Key_X );
     connect( a, SIGNAL( activated() ), this, SLOT( textExportAsASCII() ) );
     fileMenu->addAction (a);
@@ -283,7 +279,6 @@ void TextEditor::setupFileActions()
 
     fileMenu->addSeparator();
     a = new QAction( QPixmap(iconPath+"fileprint.png" ), tr( "&Print..." ),this);
-    a->setStatusTip (tr( "Print Note","Status tip for note menu" ) );
     a->setShortcut( Qt::CTRL + Qt::Key_P );
     connect( a, SIGNAL( activated() ), this, SLOT( textPrint() ) );
     tb->addAction (a);
@@ -291,7 +286,6 @@ void TextEditor::setupFileActions()
     actionFilePrint=a;
     
     a = new QAction( QPixmap( iconPath+"edittrash.png"), tr( "&Delete All" ), this);
-    a->setStatusTip (tr( "Delete all","Status tip for note menu" ) );
     connect( a, SIGNAL( activated() ), e, SLOT( clear() ) );
     fileMenu->addAction (a);
     tb->addAction (a);
@@ -308,7 +302,6 @@ void TextEditor::setupEditActions()
 
     QAction *a;
     a = new QAction(QPixmap(iconPath+"undo.png"), tr( "&Undo" ), this );
-    a->setStatusTip ( tr( "Undo","Status tip for note menu" ) );
     a->setShortcut(Qt::CTRL + Qt::Key_Z );
     connect( a, SIGNAL( activated() ), e, SLOT( undo() ) );
     editMenu->addAction (a);
@@ -316,7 +309,6 @@ void TextEditor::setupEditActions()
     actionEditUndo=a;
     
     a = new QAction(QPixmap(iconPath+"redo.png" ), tr( "&Redo" ),this); 
-    a->setStatusTip ( tr( "Redo","Status tip for note menu" ) );
     a->setShortcut( Qt::CTRL + Qt::Key_Y );
     connect( a, SIGNAL( activated() ), e, SLOT( redo() ) );
     editMenu->addAction (a);
@@ -325,14 +317,12 @@ void TextEditor::setupEditActions()
 
     editMenu->addSeparator();
     a = new QAction(QPixmap(), tr( "Select and copy &all" ),this); 
-    a->setStatusTip ( tr( "Select and copy all","Status tip for note menu" ) );
     a->setShortcut( Qt::CTRL + Qt::Key_A );
     connect( a, SIGNAL( activated() ), this, SLOT( editCopyAll() ) );
     editMenu->addAction (a);
 
     editMenu->addSeparator();
     a = new QAction(QPixmap(iconPath+"editcopy.png" ), tr( "&Copy" ),this);
-    a->setStatusTip ( tr( "Copy","Status tip for note menu" ) );
     a->setShortcut( Qt::CTRL + Qt::Key_C );
     connect( a, SIGNAL( activated() ), e, SLOT( copy() ) );
     editMenu->addAction (a);
@@ -340,7 +330,6 @@ void TextEditor::setupEditActions()
     actionEditCopy=a;
     
     a = new QAction(QPixmap(iconPath+"editcut.png" ), tr( "Cu&t" ),this);
-    a->setStatusTip ( tr( "Cut","Status tip for note menu" ) );
     a->setShortcut( Qt::CTRL + Qt::Key_X );
     connect( a, SIGNAL( activated() ), e, SLOT( cut() ) );
     editMenu->addAction (a);
@@ -348,7 +337,6 @@ void TextEditor::setupEditActions()
     actionEditCut=a;
 
     a = new QAction(QPixmap(iconPath+"editpaste.png" ), tr( "&Paste" ),this);
-    a->setStatusTip ( tr( "Paste","Status tip for note menu" ) );
     a->setShortcut( Qt::CTRL + Qt::Key_V );
     connect( a, SIGNAL( activated() ), e, SLOT( paste() ) );
     editMenu->addAction (a);
@@ -366,7 +354,6 @@ void TextEditor::setupFormatActions()
 
     a = new QAction( QPixmap(iconPath+"formatfixedfont.png"), tr( "&Font hint" ), this );
     a->setShortcut(Qt::ALT + Qt::Key_I);
-    a->setStatusTip (tr( "Toggle font hint for the whole text","Status tip for note menu" ) );
     a->setCheckable (true);
     a->setChecked (settings.value("/noteeditor/fonts/useFixedByDefault",false).toBool() );
     connect( a, SIGNAL( activated() ), this, SLOT( toggleFonthint() ) );
@@ -376,7 +363,6 @@ void TextEditor::setupFormatActions()
 
     a = new QAction( QPixmap(), tr( "&Richtext" ), this );
     a->setShortcut (Qt::ALT + Qt::Key_R);
-    a->setStatusTip (tr( "Toggle richtext format","Status tip for note menu" ) );
     a->setCheckable (true);
     //a->setChecked (settings.value("/noteeditor/fonts/useFixedByDefault",false).toBool() );
     connect( a, SIGNAL( activated() ), this, SLOT( toggleRichText() ) );
@@ -495,19 +481,16 @@ void TextEditor::setupSettingsActions()
 
     QAction *a;
     a = new QAction(tr( "Set &fixed font" ), this);
-    a->setStatusTip ( tr( "Set fixed font","Status tip for note menu" ));
     connect( a, SIGNAL( activated() ), this, SLOT( setFixedFont() ) );
     settingsMenu->addAction (a);
     actionSettingsFixedFont=a;
 
     a = new QAction(tr( "Set &variable font" ), this);
-    a->setStatusTip ( tr( "Set variable font","Status tip for note menu" ) );
     connect( a, SIGNAL( activated() ), this, SLOT( setVarFont() ) );
     settingsMenu->addAction (a);
     actionSettingsVarFont=a;
 
     a = new QAction(tr( "&fixed font is default" ),  this);
-    a->setStatusTip (tr( "Used fixed font by default","Status tip for note menu" ) );
     a->setCheckable (true);
     // set state later in constructor...
     settingsMenu->addAction (a);

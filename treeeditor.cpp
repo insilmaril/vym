@@ -19,14 +19,12 @@ TreeEditor::TreeEditor(VymModel *m)
     QAction *a;
     // Shortcuts for navigating with cursor:
     a = new QAction(tr( "Select upper object","Tree Editor" ), this);
-    a->setStatusTip ( tr( "Select upper object" ));
     a->setShortcut (Qt::Key_Up );
     a->setShortcutContext (Qt::WidgetShortcut);
     addAction (a);
     connect( a, SIGNAL( triggered() ), this, SLOT( cursorUp() ) );
 
     a = new QAction( tr( "Select lower object","Tree Editor" ),this);
-    a->setStatusTip (tr( "Select lower object" ));
     a->setShortcut ( Qt::Key_Down );
     a->setShortcutContext (Qt::WidgetShortcut);
     addAction (a);

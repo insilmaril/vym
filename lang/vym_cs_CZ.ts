@@ -8,7 +8,7 @@
         <translation type="obsolete">Ok</translation>
     </message>
     <message>
-        <location filename="../aboutdialog.cpp" line="209"/>
+        <location filename="../aboutdialog.cpp" line="208"/>
         <source>Ok</source>
         <comment>Ok Button</comment>
         <translation>OK</translation>
@@ -26,7 +26,7 @@
         <translation type="obsolete">Konnte kein Programm zum Öffnen von %1 finden.</translation>
     </message>
     <message>
-        <location filename="../aboutdialog.cpp" line="231"/>
+        <location filename="../aboutdialog.cpp" line="230"/>
         <source>Please use Settings-&gt;</source>
         <translation>Použijte, prosím, nastavení -&gt;</translation>
     </message>
@@ -35,13 +35,13 @@
         <translation type="obsolete">Nastavit prokram pro otevírání adres (URL)...</translation>
     </message>
     <message>
-        <location filename="../aboutdialog.cpp" line="229"/>
+        <location filename="../aboutdialog.cpp" line="228"/>
         <source>Warning</source>
         <comment>About window</comment>
         <translation>Varování</translation>
     </message>
     <message>
-        <location filename="../aboutdialog.cpp" line="230"/>
+        <location filename="../aboutdialog.cpp" line="229"/>
         <source>Couldn&apos;t find a viewer to open %1.
 </source>
         <comment>About window</comment>
@@ -49,7 +49,7 @@
 </translation>
     </message>
     <message>
-        <location filename="../aboutdialog.cpp" line="231"/>
+        <location filename="../aboutdialog.cpp" line="230"/>
         <source>Set application to open an URL...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -111,102 +111,107 @@
         <translation type="obsolete">Typ</translation>
     </message>
     <message>
-        <location filename="../branchpropwindow.ui" line="19"/>
+        <location filename="../branchpropwindow.ui" line="20"/>
         <source>Branch Property Editor</source>
         <translation>Editor vlastností větve</translation>
     </message>
     <message>
-        <location filename="../branchpropwindow.ui" line="29"/>
+        <location filename="../branchpropwindow.ui" line="30"/>
         <source>Frame</source>
         <translation>Rámeček</translation>
     </message>
     <message>
-        <location filename="../branchpropwindow.ui" line="50"/>
+        <location filename="../branchpropwindow.ui" line="42"/>
         <source>Geometry</source>
         <translation>Uspořádání</translation>
     </message>
     <message>
-        <location filename="../branchpropwindow.ui" line="63"/>
+        <location filename="../branchpropwindow.ui" line="55"/>
         <source>No Frame</source>
         <translation>Žádný rámeček</translation>
     </message>
     <message>
-        <location filename="../branchpropwindow.ui" line="68"/>
+        <location filename="../branchpropwindow.ui" line="60"/>
         <source>Rectangle</source>
         <translation>Obdélník</translation>
     </message>
     <message>
-        <location filename="../branchpropwindow.ui" line="73"/>
+        <location filename="../branchpropwindow.ui" line="65"/>
         <source>Ellipse</source>
         <translation>Elipsa</translation>
     </message>
     <message>
-        <location filename="../branchpropwindow.ui" line="94"/>
+        <location filename="../branchpropwindow.ui" line="86"/>
         <source>Padding</source>
         <translation>Odstup</translation>
     </message>
     <message>
-        <location filename="../branchpropwindow.ui" line="101"/>
+        <location filename="../branchpropwindow.ui" line="93"/>
         <source>Borderline width</source>
         <translation>Šířka dělicí čáry</translation>
     </message>
     <message>
-        <location filename="../branchpropwindow.ui" line="151"/>
+        <location filename="../branchpropwindow.ui" line="117"/>
+        <source>Include children</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../branchpropwindow.ui" line="141"/>
         <source>Colors</source>
         <translation>Barvy</translation>
     </message>
     <message>
-        <location filename="../branchpropwindow.ui" line="194"/>
+        <location filename="../branchpropwindow.ui" line="172"/>
         <source>Borderline color</source>
         <translation>Barva dělicí čáry</translation>
     </message>
     <message>
-        <location filename="../branchpropwindow.ui" line="217"/>
+        <location filename="../branchpropwindow.ui" line="195"/>
         <source>Background color</source>
         <translation>Barva pozadí</translation>
     </message>
     <message>
-        <location filename="../branchpropwindow.ui" line="246"/>
+        <location filename="../branchpropwindow.ui" line="224"/>
         <source>Layout</source>
         <translation>Rozvržení</translation>
     </message>
     <message>
-        <location filename="../branchpropwindow.ui" line="254"/>
+        <location filename="../branchpropwindow.ui" line="232"/>
         <source>Include images horizontally</source>
         <translation>Přihlédnout k levým a pravým okrajům obrázků</translation>
     </message>
     <message>
-        <location filename="../branchpropwindow.ui" line="261"/>
+        <location filename="../branchpropwindow.ui" line="239"/>
         <source>Include images vertically</source>
         <translation>Přihlédnout k horním a dolním okrajům obrázků</translation>
     </message>
     <message>
-        <location filename="../branchpropwindow.ui" line="284"/>
+        <location filename="../branchpropwindow.ui" line="262"/>
         <source>Link</source>
         <translation>Spojení</translation>
     </message>
     <message>
-        <location filename="../branchpropwindow.ui" line="290"/>
+        <location filename="../branchpropwindow.ui" line="268"/>
         <source>Hide link if unselected</source>
         <translation>Skrýt spojení, není-li vybráno</translation>
     </message>
     <message>
-        <location filename="../branchpropwindow.ui" line="311"/>
+        <location filename="../branchpropwindow.ui" line="289"/>
         <source>Attributes</source>
         <translation>Vlastnosti</translation>
     </message>
     <message>
-        <location filename="../branchpropwindow.ui" line="337"/>
+        <location filename="../branchpropwindow.ui" line="306"/>
         <source>+</source>
         <translation>+</translation>
     </message>
     <message>
-        <location filename="../branchpropwindow.ui" line="344"/>
+        <location filename="../branchpropwindow.ui" line="313"/>
         <source>-</source>
         <translation>-</translation>
     </message>
     <message>
-        <location filename="../branchpropwindow.ui" line="413"/>
+        <location filename="../branchpropwindow.ui" line="373"/>
         <source>Close</source>
         <translation>Zavřít</translation>
     </message>
@@ -265,54 +270,54 @@
         <translation type="obsolete">Verzeichnis:</translation>
     </message>
     <message>
-        <location filename="../exporthtmldialog.ui" line="46"/>
+        <location filename="../exporthtmldialog.ui" line="52"/>
         <source>Export to directory:</source>
         <translation type="unfinished">Vyvést do adresáře:</translation>
     </message>
     <message>
-        <location filename="../exporthtmldialog.ui" line="69"/>
-        <location filename="../exporthtmldialog.ui" line="221"/>
-        <location filename="../exporthtmldialog.ui" line="296"/>
+        <location filename="../exporthtmldialog.ui" line="81"/>
+        <location filename="../exporthtmldialog.ui" line="244"/>
+        <location filename="../exporthtmldialog.ui" line="317"/>
         <source>Browse</source>
         <translation type="unfinished">Durchsuchen</translation>
     </message>
     <message>
-        <location filename="../exporthtmldialog.ui" line="90"/>
+        <location filename="../exporthtmldialog.ui" line="108"/>
         <source>Options</source>
         <translation type="unfinished">Optionen</translation>
     </message>
     <message>
-        <location filename="../exporthtmldialog.ui" line="111"/>
+        <location filename="../exporthtmldialog.ui" line="129"/>
         <source>Include image</source>
         <translation type="unfinished">Vyrobit obrázek</translation>
     </message>
     <message>
-        <location filename="../exporthtmldialog.ui" line="124"/>
+        <location filename="../exporthtmldialog.ui" line="142"/>
         <source>Colored headings in text</source>
         <translation type="unfinished">Barevné popisy v textu</translation>
     </message>
     <message>
-        <location filename="../exporthtmldialog.ui" line="137"/>
+        <location filename="../exporthtmldialog.ui" line="155"/>
         <source>Save settings in map</source>
         <translation type="unfinished">Uložit nastavení do mapy</translation>
     </message>
     <message>
-        <location filename="../exporthtmldialog.ui" line="167"/>
+        <location filename="../exporthtmldialog.ui" line="185"/>
         <source>Stylesheets</source>
         <translation type="unfinished">Stylové listy</translation>
     </message>
     <message>
-        <location filename="../exporthtmldialog.ui" line="202"/>
+        <location filename="../exporthtmldialog.ui" line="218"/>
         <source>CSS:</source>
         <translation type="unfinished">CSS:</translation>
     </message>
     <message>
-        <location filename="../exporthtmldialog.ui" line="239"/>
+        <location filename="../exporthtmldialog.ui" line="261"/>
         <source>Scripts</source>
         <translation type="unfinished">Skripty</translation>
     </message>
     <message>
-        <location filename="../exporthtmldialog.ui" line="277"/>
+        <location filename="../exporthtmldialog.ui" line="291"/>
         <source>After Export:</source>
         <translation type="unfinished">Po vyvedení:</translation>
     </message>
@@ -329,12 +334,12 @@
         <translation type="obsolete">Ausgabe der Scripte anzeigen</translation>
     </message>
     <message>
-        <location filename="../exporthtmldialog.ui" line="349"/>
+        <location filename="../exporthtmldialog.ui" line="355"/>
         <source>Export</source>
         <translation type="unfinished">Exportieren</translation>
     </message>
     <message>
-        <location filename="../exporthtmldialog.ui" line="342"/>
+        <location filename="../exporthtmldialog.ui" line="348"/>
         <source>Cancel</source>
         <translation type="unfinished">Abbrechen</translation>
     </message>
@@ -375,7 +380,7 @@ want to allow this in your system!</source>
         <translation type="obsolete">Verwende Globus Symbol für URLs</translation>
     </message>
     <message>
-        <location filename="../exporthtmldialog.ui" line="150"/>
+        <location filename="../exporthtmldialog.ui" line="168"/>
         <source>show output of external scripts</source>
         <translation type="unfinished">Zeige Ausgabe der externen Skripte</translation>
     </message>
@@ -566,37 +571,37 @@ dovolit!</translation>
 <context>
     <name>ExtraInfoDialog</name>
     <message>
-        <location filename="../extrainfodialog.ui" line="16"/>
+        <location filename="../extrainfodialog.ui" line="15"/>
         <source>VYM - Info</source>
         <translation>VYM - Informace</translation>
     </message>
     <message>
-        <location filename="../extrainfodialog.ui" line="28"/>
+        <location filename="../extrainfodialog.ui" line="27"/>
         <source>Map:</source>
         <translation>Mapa:</translation>
     </message>
     <message>
-        <location filename="../extrainfodialog.ui" line="42"/>
+        <location filename="../extrainfodialog.ui" line="41"/>
         <source>Author:</source>
         <translation>Autor:</translation>
     </message>
     <message>
-        <location filename="../extrainfodialog.ui" line="52"/>
+        <location filename="../extrainfodialog.ui" line="51"/>
         <source>Comment:</source>
         <translation>Poznámka:</translation>
     </message>
     <message>
-        <location filename="../extrainfodialog.ui" line="77"/>
+        <location filename="../extrainfodialog.ui" line="61"/>
         <source>Statistics:</source>
         <translation>Statistiky:</translation>
     </message>
     <message>
-        <location filename="../extrainfodialog.ui" line="129"/>
+        <location filename="../extrainfodialog.ui" line="95"/>
         <source>Cancel</source>
         <translation>Zrušit</translation>
     </message>
     <message>
-        <location filename="../extrainfodialog.ui" line="136"/>
+        <location filename="../extrainfodialog.ui" line="102"/>
         <source>Close</source>
         <translation>Zavřít</translation>
     </message>
@@ -604,21 +609,9 @@ dovolit!</translation>
 <context>
     <name>FindWidget</name>
     <message>
-        <location filename="../findwidget.cpp" line="33"/>
+        <location filename="../findwidget.cpp" line="26"/>
         <source>Find:</source>
         <comment>FindWidget</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../findwidget.cpp" line="48"/>
-        <source>Next</source>
-        <comment>Find widget</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../findwidget.cpp" line="59"/>
-        <source>Show all</source>
-        <comment>Find widget</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -648,7 +641,7 @@ dovolit!</translation>
 <context>
     <name>Heading of mapcenter in new map</name>
     <message>
-        <location filename="../vymmodel.cpp" line="2337"/>
+        <location filename="../vymmodel.cpp" line="2383"/>
         <source>New map</source>
         <translation>Nová mapa</translation>
     </message>
@@ -769,7 +762,7 @@ dovolit!</translation>
         <translation type="obsolete">&amp;Drucken...</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="584"/>
+        <location filename="../mainwindow.cpp" line="599"/>
         <source>Close Map</source>
         <translation>Zavřít mapu</translation>
     </message>
@@ -790,7 +783,7 @@ dovolit!</translation>
         <translation type="obsolete">&amp;Bearbeiten</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="609"/>
+        <location filename="../mainwindow.cpp" line="624"/>
         <source>Undo</source>
         <translation>Zpět</translation>
     </message>
@@ -799,7 +792,7 @@ dovolit!</translation>
         <translation type="obsolete">&amp;Rückgängig</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="628"/>
+        <location filename="../mainwindow.cpp" line="643"/>
         <source>Copy</source>
         <translation>Kopírovat</translation>
     </message>
@@ -808,7 +801,7 @@ dovolit!</translation>
         <translation type="obsolete">&amp;Kopieren</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="638"/>
+        <location filename="../mainwindow.cpp" line="653"/>
         <source>Cut</source>
         <translation>Vyjmout</translation>
     </message>
@@ -817,7 +810,7 @@ dovolit!</translation>
         <translation type="obsolete">&amp;Ausschneiden</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="649"/>
+        <location filename="../mainwindow.cpp" line="664"/>
         <source>Paste</source>
         <translation>Vložit</translation>
     </message>
@@ -826,7 +819,7 @@ dovolit!</translation>
         <translation type="obsolete">Ein&amp;fügen</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="762"/>
+        <location filename="../mainwindow.cpp" line="772"/>
         <source>Move branch up</source>
         <translation>Posunout větev nahoru</translation>
     </message>
@@ -835,7 +828,7 @@ dovolit!</translation>
         <translation type="obsolete">Zweig nach oben</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="774"/>
+        <location filename="../mainwindow.cpp" line="784"/>
         <source>Move branch down</source>
         <translation>Posunout větev dolů</translation>
     </message>
@@ -844,7 +837,7 @@ dovolit!</translation>
         <translation type="obsolete">Zweig nach unten</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="809"/>
+        <location filename="../mainwindow.cpp" line="821"/>
         <source>Scroll branch</source>
         <translation>Svinout větev</translation>
     </message>
@@ -857,7 +850,7 @@ dovolit!</translation>
         <translation type="obsolete">Alle eingerollten Zweige aufrollen</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="882"/>
+        <location filename="../mainwindow.cpp" line="936"/>
         <source>Find</source>
         <translation>Najít</translation>
     </message>
@@ -866,12 +859,12 @@ dovolit!</translation>
         <translation type="obsolete">Otevřít adresu (URL)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="932"/>
+        <location filename="../mainwindow.cpp" line="996"/>
         <source>Edit URL</source>
         <translation>Upravit adresu (URL)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="952"/>
+        <location filename="../mainwindow.cpp" line="1016"/>
         <source>Use heading of selected branch as URL</source>
         <translation>Použít popis této větve jako adresu (URL)</translation>
     </message>
@@ -880,7 +873,7 @@ dovolit!</translation>
         <translation type="obsolete">Beschriftung als URL übernehmen</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1000"/>
+        <location filename="../mainwindow.cpp" line="1067"/>
         <source>Jump to another vym map, if needed load it first</source>
         <translation>Jít na další mapu. Je-li to nezbytné, je mapa předtím otevřena</translation>
     </message>
@@ -889,7 +882,7 @@ dovolit!</translation>
         <translation type="obsolete">Gehe zu einer weiteren Map.</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1018"/>
+        <location filename="../mainwindow.cpp" line="1085"/>
         <source>Edit link to another vym map</source>
         <translation>Upravit odkaz na jinou mapu</translation>
     </message>
@@ -906,13 +899,12 @@ dovolit!</translation>
         <translation type="obsolete">Bearbeite Zweig-Überschrift</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="659"/>
+        <location filename="../mainwindow.cpp" line="674"/>
         <source>Delete Selection</source>
         <translation>Smazat výběr</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="693"/>
-        <location filename="../mainwindow.cpp" line="700"/>
+        <location filename="../mainwindow.cpp" line="708"/>
         <source>Add a branch as child of selection</source>
         <translation>Přidat novou větev jako vedlejší větev výběru</translation>
     </message>
@@ -921,8 +913,8 @@ dovolit!</translation>
         <translation type="obsolete">Neuer Zweig </translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="723"/>
         <location filename="../mainwindow.cpp" line="733"/>
+        <location filename="../mainwindow.cpp" line="743"/>
         <source>Add a branch above selection</source>
         <translation>Přidat novou větev nad výběrem</translation>
     </message>
@@ -931,8 +923,8 @@ dovolit!</translation>
         <translation type="obsolete">Neuer Zweig - oben</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="743"/>
         <location filename="../mainwindow.cpp" line="753"/>
+        <location filename="../mainwindow.cpp" line="763"/>
         <source>Add a branch below selection</source>
         <translation>Přidat novou větev pod výběrem</translation>
     </message>
@@ -969,7 +961,7 @@ dovolit!</translation>
         <translation type="obsolete">Vybrat nejspodnější větev</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1108"/>
+        <location filename="../mainwindow.cpp" line="1175"/>
         <source>Add Image</source>
         <translation>Přidat obrázek</translation>
     </message>
@@ -978,17 +970,17 @@ dovolit!</translation>
         <translation type="obsolete">&amp;Format</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1135"/>
+        <location filename="../mainwindow.cpp" line="1205"/>
         <source>Set Color</source>
         <translation>Nastavit barvu</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1134"/>
+        <location filename="../mainwindow.cpp" line="1204"/>
         <source>Set &amp;Color</source>
         <translation>Nastavit &amp;barvu</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1141"/>
+        <location filename="../mainwindow.cpp" line="1211"/>
         <source>Pick color
 Hint: You can pick a color from another branch and color using CTRL+Left Button</source>
         <translation>Převzít barvu
@@ -999,7 +991,7 @@ Rada: Pro kopírování barvy lze využít také CTRL+levé tlačítko myši.</t
         <translation type="obsolete">Farbe &amp;übernehmen</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1151"/>
+        <location filename="../mainwindow.cpp" line="1221"/>
         <source>Color branch</source>
         <translation>Obarvit větev</translation>
     </message>
@@ -1008,7 +1000,7 @@ Rada: Pro kopírování barvy lze využít také CTRL+levé tlačítko myši.</t
         <translation type="obsolete">Zweig &amp;färben</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1161"/>
+        <location filename="../mainwindow.cpp" line="1231"/>
         <source>Color Subtree</source>
         <translation>Obarvit vedlejší strom</translation>
     </message>
@@ -1017,13 +1009,13 @@ Rada: Pro kopírování barvy lze využít také CTRL+levé tlačítko myši.</t
         <translation type="obsolete">&amp;Unterbaum färben</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1174"/>
-        <location filename="../mainwindow.cpp" line="1180"/>
+        <location filename="../mainwindow.cpp" line="1244"/>
+        <location filename="../mainwindow.cpp" line="1250"/>
         <source>Line</source>
         <translation>Čára</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1173"/>
+        <location filename="../mainwindow.cpp" line="1243"/>
         <source>Linkstyle Line</source>
         <translation>Styl spojení čára</translation>
     </message>
@@ -1032,17 +1024,17 @@ Rada: Pro kopírování barvy lze využít také CTRL+levé tlačítko myši.</t
         <translation type="obsolete">Verbindungsstil Parabel</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1186"/>
+        <location filename="../mainwindow.cpp" line="1256"/>
         <source>PolyLine</source>
         <translation>Vícečára</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1185"/>
+        <location filename="../mainwindow.cpp" line="1255"/>
         <source>Linkstyle Thick Line</source>
         <translation>Styl spojení silná čára</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1192"/>
+        <location filename="../mainwindow.cpp" line="1262"/>
         <source>PolyParabel</source>
         <translation>Víceparabola</translation>
     </message>
@@ -1059,7 +1051,7 @@ Rada: Pro kopírování barvy lze využít také CTRL+levé tlačítko myši.</t
         <translation type="obsolete">Rechteck</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1207"/>
+        <location filename="../mainwindow.cpp" line="1277"/>
         <source>Use same color for links and headings</source>
         <translation>Použít stejnou barvu pro spojení a popisy</translation>
     </message>
@@ -1068,32 +1060,32 @@ Rada: Pro kopírování barvy lze využít také CTRL+levé tlačítko myši.</t
         <translation type="obsolete">&amp;Verbindungen haben Farbe der Beschriftungen</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1215"/>
+        <location filename="../mainwindow.cpp" line="1285"/>
         <source>Set Link Color</source>
         <translation>Nastavit barvu spojení</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1214"/>
+        <location filename="../mainwindow.cpp" line="1284"/>
         <source>Set &amp;Link Color</source>
         <translation>Nastavit barvu &amp;spojení</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1227"/>
+        <location filename="../mainwindow.cpp" line="1297"/>
         <source>Set Background Color</source>
         <translation>Nastavit barvu pozadí</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1226"/>
+        <location filename="../mainwindow.cpp" line="1296"/>
         <source>Set &amp;Background Color</source>
         <translation>Nastavit barvu &amp;pozadí</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1244"/>
+        <location filename="../mainwindow.cpp" line="1314"/>
         <source>&amp;View</source>
         <translation>&amp;Pohled</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1265"/>
+        <location filename="../mainwindow.cpp" line="1335"/>
         <source>Zoom reset</source>
         <translation>Žádné zvětšení</translation>
     </message>
@@ -1102,12 +1094,12 @@ Rada: Pro kopírování barvy lze využít také CTRL+levé tlačítko myši.</t
         <translation type="obsolete">Keine Vergrösserung</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1249"/>
+        <location filename="../mainwindow.cpp" line="1319"/>
         <source>Zoom in</source>
         <translation>Přiblížit</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1257"/>
+        <location filename="../mainwindow.cpp" line="1327"/>
         <source>Zoom out</source>
         <translation>Oddálit</translation>
     </message>
@@ -1132,34 +1124,34 @@ Rada: Pro kopírování barvy lze využít také CTRL+levé tlačítko myši.</t
         <translation type="obsolete">Vorheriges Fenster</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1682"/>
+        <location filename="../mainwindow.cpp" line="1757"/>
         <source>&amp;Settings</source>
         <translation>&amp;Nastavení</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1687"/>
+        <location filename="../mainwindow.cpp" line="1762"/>
         <source>Set application to open pdf files</source>
         <translation>Nastavit program pro otevírání souborů PDF</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2847"/>
-        <location filename="../mainwindow.cpp" line="2922"/>
-        <location filename="../mainwindow.cpp" line="3552"/>
+        <location filename="../mainwindow.cpp" line="3029"/>
+        <location filename="../mainwindow.cpp" line="3104"/>
+        <location filename="../mainwindow.cpp" line="3774"/>
         <source>Set application to open an URL</source>
         <translation>Nastavit program pro otevírání adres (URL)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1733"/>
+        <location filename="../mainwindow.cpp" line="1808"/>
         <source>Edit branch after adding it</source>
         <translation>Upravit větev po jejím přidání (znovu ji popsat)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1740"/>
+        <location filename="../mainwindow.cpp" line="1815"/>
         <source>Select branch after adding it</source>
         <translation>Vybrat větev po jejím přidání</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1747"/>
+        <location filename="../mainwindow.cpp" line="1822"/>
         <source>Select heading before editing</source>
         <translation>Vybrat popis před jeho úpravou</translation>
     </message>
@@ -1220,7 +1212,7 @@ Rada: Pro kopírování barvy lze využít také CTRL+levé tlačítko myši.</t
         <translation type="obsolete">&amp;Hilfe</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1838"/>
+        <location filename="../mainwindow.cpp" line="1912"/>
         <source>Open VYM Documentation (pdf)</source>
         <translation>Otevřít dokumentaci k VYM (pdf)</translation>
     </message>
@@ -1233,12 +1225,12 @@ Rada: Pro kopírování barvy lze využít také CTRL+levé tlačítko myši.</t
         <translation type="obsolete">Information über VYM</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1850"/>
+        <location filename="../mainwindow.cpp" line="1924"/>
         <source>About VYM</source>
         <translation>O programu VYM</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1855"/>
+        <location filename="../mainwindow.cpp" line="1929"/>
         <source>Information about QT toolkit</source>
         <translation>Informace o souboru nástrojů QT</translation>
     </message>
@@ -1260,14 +1252,14 @@ exists already. Do you want to</source>
         <translation type="obsolete">gibt es bereits. Wollen Sie sie</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2373"/>
+        <location filename="../mainwindow.cpp" line="2482"/>
         <source>Overwrite</source>
         <translation>Přepsat</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2137"/>
-        <location filename="../mainwindow.cpp" line="2186"/>
-        <location filename="../mainwindow.cpp" line="2374"/>
+        <location filename="../mainwindow.cpp" line="2237"/>
+        <location filename="../mainwindow.cpp" line="2286"/>
+        <location filename="../mainwindow.cpp" line="2483"/>
         <source>Cancel</source>
         <translation>Zrušit</translation>
     </message>
@@ -1280,7 +1272,7 @@ exists already. Do you want to</source>
         <translation type="obsolete">Datei gespeichert: </translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2338"/>
+        <location filename="../mainwindow.cpp" line="2440"/>
         <source>Couldn&apos;t save </source>
         <translation>Tento soubor se nepodařilo uložit: </translation>
     </message>
@@ -1293,12 +1285,12 @@ exists already. Do you want to</source>
         <translation type="obsolete">wurde verändert aber noch nicht gespeichert. Wollen Sie</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2691"/>
+        <location filename="../mainwindow.cpp" line="2814"/>
         <source>Save modified map before closing it</source>
         <translation>Uložit upravenou mapu před jejím zavřením</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2692"/>
+        <location filename="../mainwindow.cpp" line="2815"/>
         <source>Discard changes</source>
         <translation>Zahodit změny</translation>
     </message>
@@ -1311,7 +1303,7 @@ exists already. Do you want to</source>
         <translation type="obsolete">Uložit mapu</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3049"/>
+        <location filename="../mainwindow.cpp" line="3237"/>
         <source>Critical Error</source>
         <translation>Vážná chyba</translation>
     </message>
@@ -1348,7 +1340,7 @@ exists already. Do you want to</source>
         <translation type="obsolete">als ASCII</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1053"/>
+        <location filename="../mainwindow.cpp" line="1120"/>
         <source>Edit Map Info</source>
         <translation>Upravit informace o mapě</translation>
     </message>
@@ -1377,7 +1369,7 @@ ist bereits geöffnet. Die gleiche Map mehrfach in verschiedenen Ansichten zu ö
 kann beim Beenden von vym zu Problemen führen. Wollen Sie</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2136"/>
+        <location filename="../mainwindow.cpp" line="2236"/>
         <source>Open anyway</source>
         <translation>Přesto otevřít</translation>
     </message>
@@ -1386,7 +1378,7 @@ kann beim Beenden von vym zu Problemen führen. Wollen Sie</translation>
         <translation type="obsolete">Exportiere XML in Verzeichnis</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="4154"/>
+        <location filename="../mainwindow.cpp" line="4386"/>
         <source>Critcal error</source>
         <translation>Vážná chyba</translation>
     </message>
@@ -1413,7 +1405,7 @@ finden. Bitte benutzen Sie Einstellungen-&gt;</translation>
 Wollen Sie eine neue anlegen?</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2185"/>
+        <location filename="../mainwindow.cpp" line="2285"/>
         <source>Create</source>
         <translation>Vytvořit</translation>
     </message>
@@ -1426,7 +1418,7 @@ Wollen Sie eine neue anlegen?</translation>
         <translation type="obsolete">vym Verknüpfung ändern</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1025"/>
+        <location filename="../mainwindow.cpp" line="1092"/>
         <source>Delete link to another vym map</source>
         <translation>Smazat odkaz na jinou mapu vym</translation>
     </message>
@@ -1488,7 +1480,7 @@ und dabei evtl. andere Daten im Verzeichnis überschrieben</translation>
         <translation type="obsolete">Gespeichert: </translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3584"/>
+        <location filename="../mainwindow.cpp" line="3806"/>
         <source>VYM -Information:</source>
         <translation>Informace VYM:</translation>
     </message>
@@ -1529,7 +1521,7 @@ Wollen Sie die Map beim Schreiben</translation>
         <translation type="obsolete">Benutze für Export</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1061"/>
+        <location filename="../mainwindow.cpp" line="1128"/>
         <source>Add map at selection</source>
         <translation>Přidat mapu k výběru</translation>
     </message>
@@ -1538,7 +1530,7 @@ Wollen Sie die Map beim Schreiben</translation>
         <translation type="obsolete">Import (hinzufügen)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1070"/>
+        <location filename="../mainwindow.cpp" line="1137"/>
         <source>Replace selection with map</source>
         <translation>Nahradit výběr mapou</translation>
     </message>
@@ -1551,22 +1543,22 @@ Wollen Sie die Map beim Schreiben</translation>
         <translation type="obsolete">Auswahl speichern</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1079"/>
+        <location filename="../mainwindow.cpp" line="1146"/>
         <source>Save selection</source>
         <translation>Uložit výběr</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2260"/>
+        <location filename="../mainwindow.cpp" line="2358"/>
         <source>Load vym map</source>
         <translation>Nahrát mapu vym</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2263"/>
+        <location filename="../mainwindow.cpp" line="2361"/>
         <source>Import: Add vym map to selection</source>
         <translation>Zavedení: Přidat mapu k výběru</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2266"/>
+        <location filename="../mainwindow.cpp" line="2364"/>
         <source>Import: Replace selection with vym map</source>
         <translation>Zavedení: Nahradit výběr mapou</translation>
     </message>
@@ -1581,7 +1573,7 @@ could not be removed before saving</source>
 konnte vor dem Speichern nicht gelöscht werden</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1385"/>
+        <location filename="../mainwindow.cpp" line="1455"/>
         <source>Use modifier to color branches</source>
         <translation>Použít upravovač k obarvení větví</translation>
     </message>
@@ -1600,7 +1592,7 @@ konnte vor dem Speichern nicht gelöscht werden</translation>
         <translation type="obsolete">Modes beim Benutzen von Modifizierern</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="712"/>
+        <location filename="../mainwindow.cpp" line="722"/>
         <source>Add a branch by inserting and making selection its child</source>
         <translation>Přidat novou větev vložením a připojením výběru jako její vedlejší větve</translation>
     </message>
@@ -1625,12 +1617,12 @@ konnte vor dem Speichern nicht gelöscht werden</translation>
         <translation type="obsolete">Unterzweige entfernen</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1394"/>
+        <location filename="../mainwindow.cpp" line="1464"/>
         <source>Use modifier to copy</source>
         <translation>Použít upravovač pro kopírování</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1869"/>
+        <location filename="../mainwindow.cpp" line="1946"/>
         <source>Add</source>
         <translation>Přidat</translation>
     </message>
@@ -1658,12 +1650,12 @@ Do you want to create a new one?</source>
         <translation type="obsolete">Wollen Sie eine neue anlegen?</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1402"/>
+        <location filename="../mainwindow.cpp" line="1472"/>
         <source>Use modifier to draw xLinks</source>
         <translation>Použít upravovač pro založení xLinks</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1762"/>
+        <location filename="../mainwindow.cpp" line="1837"/>
         <source>Use exclusive flags in flag toolbars</source>
         <translation>Používat výhradní příznaky v nástrojových pruzích příznakůFlags in den Toolbars exklusiv verwenden</translation>
     </message>
@@ -1672,7 +1664,7 @@ Do you want to create a new one?</source>
         <translation type="obsolete">Exklusive Flags</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1692"/>
+        <location filename="../mainwindow.cpp" line="1767"/>
         <source>Set application to open external links</source>
         <translation>Nastavit program pro otevírání vnějších odkazů</translation>
     </message>
@@ -1685,7 +1677,7 @@ Do you want to create a new one?</source>
         <translation type="obsolete">In neuen Zweig einfügen</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1754"/>
+        <location filename="../mainwindow.cpp" line="1829"/>
         <source>Delete key for deleting branches</source>
         <translation>Odstranit klávesu pro mazání větví</translation>
     </message>
@@ -1704,7 +1696,7 @@ Do you risk to overwrite its contents?</source>
 Riskieren Sie es dessen Inhalt zu überschreiben?</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2128"/>
+        <location filename="../mainwindow.cpp" line="2228"/>
         <source>The map %1
 is already opened.Opening the same map in multiple editors may lead 
 to confusion when finishing working with vym.Do you want to</source>
@@ -1714,7 +1706,7 @@ při ukončení práce s programem vym vést ke zmatení.
 Chcete </translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2179"/>
+        <location filename="../mainwindow.cpp" line="2279"/>
         <source>This map does not exist:
   %1
 Do you want to create a new one?</source>
@@ -1740,19 +1732,19 @@ Wollen Sie
 </translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2333"/>
+        <location filename="../mainwindow.cpp" line="2435"/>
         <source>Saved  %1</source>
         <translation>%1 uloženo</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2368"/>
+        <location filename="../mainwindow.cpp" line="2477"/>
         <source>The file %1
 exists already. Do you want to</source>
         <translation>Soubor %1 již existuje.
 Chcete jej přepsat?</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2686"/>
+        <location filename="../mainwindow.cpp" line="2809"/>
         <source>The map %1 has been modified but not saved yet. Do you want to</source>
         <translation>Mapa %1 byla změněna,
 ale ještě nebyla uložena. Chcete </translation>
@@ -1762,7 +1754,7 @@ ale ještě nebyla uložena. Chcete </translation>
         <translation type="obsolete">Kein Treffer gefunden für &lt;b&gt;%1&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3050"/>
+        <location filename="../mainwindow.cpp" line="3238"/>
         <source>Couldn&apos;t open map %1</source>
         <translation>Mapu %1 se nepodařilo otevřít</translation>
     </message>
@@ -1775,7 +1767,7 @@ ale ještě nebyla uložena. Chcete </translation>
         <translation type="obsolete">Anwendung zum Öffnen externer Verweise...</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="591"/>
+        <location filename="../mainwindow.cpp" line="606"/>
         <source>Exit</source>
         <translation>Ukončit</translation>
     </message>
@@ -1784,7 +1776,7 @@ ale ještě nebyla uložena. Chcete </translation>
         <translation type="obsolete">B&amp;eenden</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="618"/>
+        <location filename="../mainwindow.cpp" line="633"/>
         <source>Redo</source>
         <translation>Znovu</translation>
     </message>
@@ -1813,7 +1805,7 @@ ale ještě nebyla uložena. Chcete </translation>
         <translation type="obsolete">Linke und rechte Bildkanten berücksichtigen</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1200"/>
+        <location filename="../mainwindow.cpp" line="1270"/>
         <source>Hide link</source>
         <translation>Skrýt spojení</translation>
     </message>
@@ -1847,13 +1839,13 @@ ale ještě nebyla uložena. Chcete </translation>
         <translation type="obsolete">Teilbaum ist momentan ausgerollt</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1445"/>
+        <location filename="../mainwindow.cpp" line="1520"/>
         <source>Take care!</source>
         <comment>Standardflag</comment>
         <translation>Opatrně!</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1449"/>
+        <location filename="../mainwindow.cpp" line="1524"/>
         <source>Really?</source>
         <comment>Standardflag</comment>
         <translation>Skutečně?</translation>
@@ -1869,55 +1861,55 @@ ale ještě nebyla uložena. Chcete </translation>
         <translation type="obsolete">Není to OK!</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1465"/>
+        <location filename="../mainwindow.cpp" line="1540"/>
         <source>This won&apos;t work!</source>
         <comment>Standardflag</comment>
         <translation>To nepůjde!</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1469"/>
+        <location filename="../mainwindow.cpp" line="1544"/>
         <source>Good</source>
         <comment>Standardflag</comment>
         <translation>Dobré</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1473"/>
+        <location filename="../mainwindow.cpp" line="1548"/>
         <source>Bad</source>
         <comment>Standardflag</comment>
         <translation>Špatné</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1482"/>
+        <location filename="../mainwindow.cpp" line="1557"/>
         <source>Time critical</source>
         <comment>Standardflag</comment>
         <translation>Dobově zásadní</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1488"/>
+        <location filename="../mainwindow.cpp" line="1563"/>
         <source>Idea!</source>
         <comment>Standardflag</comment>
         <translation>Nápad!</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1492"/>
+        <location filename="../mainwindow.cpp" line="1567"/>
         <source>Important</source>
         <comment>Standardflag</comment>
         <translation>Důležité</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1496"/>
+        <location filename="../mainwindow.cpp" line="1571"/>
         <source>Unimportant</source>
         <comment>Standardflag</comment>
         <translation>Nedůležité</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1509"/>
+        <location filename="../mainwindow.cpp" line="1584"/>
         <source>I like this</source>
         <comment>Standardflag</comment>
         <translation>Líbí se mi to</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1513"/>
+        <location filename="../mainwindow.cpp" line="1588"/>
         <source>I do not like this</source>
         <comment>Standardflag</comment>
         <translation>Nelíbí se mi to</translation>
@@ -1928,13 +1920,13 @@ ale ještě nebyla uložena. Chcete </translation>
         <translation type="obsolete">Das liebe ich!</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1526"/>
+        <location filename="../mainwindow.cpp" line="1601"/>
         <source>Dangerous</source>
         <comment>Standardflag</comment>
         <translation>Nebezpečné</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1534"/>
+        <location filename="../mainwindow.cpp" line="1609"/>
         <source>This will help</source>
         <comment>Standardflag</comment>
         <translation>To by mohlo pomoci</translation>
@@ -1956,8 +1948,8 @@ ale ještě nebyla uložena. Chcete </translation>
         <translation type="obsolete">Exportiere als Bild</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2443"/>
-        <location filename="../mainwindow.cpp" line="2503"/>
+        <location filename="../mainwindow.cpp" line="2551"/>
+        <location filename="../mainwindow.cpp" line="2613"/>
         <source>Import</source>
         <translation>Zavést</translation>
     </message>
@@ -1986,19 +1978,19 @@ ale ještě nebyla uložena. Chcete </translation>
         <translation type="obsolete">Exportiere als ASCII</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="525"/>
-        <location filename="../mainwindow.cpp" line="531"/>
-        <location filename="../mainwindow.cpp" line="537"/>
-        <location filename="../mainwindow.cpp" line="555"/>
-        <location filename="../mainwindow.cpp" line="561"/>
-        <location filename="../mainwindow.cpp" line="2569"/>
-        <location filename="../mainwindow.cpp" line="2588"/>
-        <location filename="../mainwindow.cpp" line="2627"/>
+        <location filename="../mainwindow.cpp" line="540"/>
+        <location filename="../mainwindow.cpp" line="546"/>
+        <location filename="../mainwindow.cpp" line="552"/>
+        <location filename="../mainwindow.cpp" line="570"/>
+        <location filename="../mainwindow.cpp" line="576"/>
+        <location filename="../mainwindow.cpp" line="2691"/>
+        <location filename="../mainwindow.cpp" line="2710"/>
+        <location filename="../mainwindow.cpp" line="2749"/>
         <source>(still experimental)</source>
         <translation>(stále pokusné)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2588"/>
+        <location filename="../mainwindow.cpp" line="2710"/>
         <source>Export as LaTeX</source>
         <translation>Vyvést jako LaTeXový soubor</translation>
     </message>
@@ -2007,7 +1999,7 @@ ale ještě nebyla uložena. Chcete </translation>
         <translation type="obsolete">Mind Manager</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="574"/>
+        <location filename="../mainwindow.cpp" line="589"/>
         <source>&amp;Print</source>
         <translation>&amp;Tisk</translation>
     </message>
@@ -2024,14 +2016,14 @@ ale ještě nebyla uložena. Chcete </translation>
         <translation type="obsolete">Exportieren als</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2627"/>
-        <location filename="../mainwindow.cpp" line="2641"/>
-        <location filename="../mainwindow.cpp" line="2647"/>
+        <location filename="../mainwindow.cpp" line="2749"/>
+        <location filename="../mainwindow.cpp" line="2763"/>
+        <location filename="../mainwindow.cpp" line="2769"/>
         <source>Export to</source>
         <translation>Vyvést jako</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1032"/>
+        <location filename="../mainwindow.cpp" line="1099"/>
         <source>Hide object in exports</source>
         <translation>Neukazovat předměty při vyvádění</translation>
     </message>
@@ -2045,7 +2037,7 @@ ale ještě nebyla uložena. Chcete </translation>
         <translation type="obsolete">Objekt beim Exportieren nicht anzeigen</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1769"/>
+        <location filename="../mainwindow.cpp" line="1844"/>
         <source>Use hide flag during exports </source>
         <translation>Používat při vyvádění příznak &quot;Skrýt&quot;</translation>
     </message>
@@ -2054,513 +2046,600 @@ ale ještě nebyla uložena. Chcete </translation>
         <translation type="obsolete">Während des Exports das &quot;Verbergen&quot; Flag verwenden </translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="907"/>
+        <location filename="../mainwindow.cpp" line="961"/>
         <source>Open URL in new tab</source>
         <translation>Otevřít odkazy (URL) v nové kartě</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2666"/>
-        <location filename="../mainwindow.cpp" line="2845"/>
-        <location filename="../mainwindow.cpp" line="2878"/>
-        <location filename="../mainwindow.cpp" line="2892"/>
-        <location filename="../mainwindow.cpp" line="2897"/>
-        <location filename="../mainwindow.cpp" line="2920"/>
-        <location filename="../mainwindow.cpp" line="4167"/>
-        <location filename="../mainwindow.cpp" line="4238"/>
+        <location filename="../mainwindow.cpp" line="2790"/>
+        <location filename="../mainwindow.cpp" line="3027"/>
+        <location filename="../mainwindow.cpp" line="3060"/>
+        <location filename="../mainwindow.cpp" line="3074"/>
+        <location filename="../mainwindow.cpp" line="3079"/>
+        <location filename="../mainwindow.cpp" line="3102"/>
+        <location filename="../mainwindow.cpp" line="4399"/>
+        <location filename="../mainwindow.cpp" line="4469"/>
         <source>Warning</source>
         <translation>Varování</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2846"/>
-        <location filename="../mainwindow.cpp" line="2921"/>
-        <location filename="../mainwindow.cpp" line="4168"/>
+        <location filename="../mainwindow.cpp" line="3028"/>
+        <location filename="../mainwindow.cpp" line="3103"/>
+        <location filename="../mainwindow.cpp" line="4400"/>
         <source>Couldn&apos;t find a viewer to open %1.
 </source>
         <translation>Nepodařilo se nalézt žádný program pro otevření %1.
 </translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2847"/>
-        <location filename="../mainwindow.cpp" line="2922"/>
-        <location filename="../mainwindow.cpp" line="4169"/>
-        <location filename="../mainwindow.cpp" line="4240"/>
+        <location filename="../mainwindow.cpp" line="3029"/>
+        <location filename="../mainwindow.cpp" line="3104"/>
+        <location filename="../mainwindow.cpp" line="4401"/>
+        <location filename="../mainwindow.cpp" line="4471"/>
         <source>Please use Settings-&gt;</source>
         <translation>Použijte, prosím, nastavení -&gt;</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2879"/>
+        <location filename="../mainwindow.cpp" line="3061"/>
         <source>Couldn&apos;t start %1 to open a new tab in %2.</source>
         <translation>Nepodařilo se spustit %1 pro otevření nové karty v %2.</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3539"/>
-        <location filename="../mainwindow.cpp" line="4169"/>
+        <location filename="../mainwindow.cpp" line="3760"/>
+        <location filename="../mainwindow.cpp" line="4401"/>
         <source>Set application to open PDF files</source>
         <translation>Nastavit program pro otevírání souborů PDF</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1477"/>
+        <location filename="../mainwindow.cpp" line="1552"/>
         <source>Oh no!</source>
         <comment>Standardflag</comment>
         <translation>Ach ne!</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="144"/>
+        <location filename="../mainwindow.cpp" line="143"/>
         <source>Note Editor</source>
         <translation type="unfinished">Editor poznámek</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="154"/>
+        <location filename="../mainwindow.cpp" line="152"/>
         <source>Heading Editor</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="162"/>
+        <location filename="../mainwindow.cpp" line="160"/>
         <source>Search results list</source>
         <comment>FindResultWidget</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="281"/>
+        <location filename="../mainwindow.cpp" line="272"/>
         <source>Loading maps</source>
         <comment>Mainwindow</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="406"/>
+        <location filename="../mainwindow.cpp" line="409"/>
         <source>&amp;Map</source>
         <comment>Toolbar for file actions</comment>
         <translation type="unfinished">&amp;Mapa</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="407"/>
+        <location filename="../mainwindow.cpp" line="410"/>
         <source>File actions toolbar</source>
         <comment>Toolbar for file actions</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="414"/>
-        <location filename="../mainwindow.cpp" line="422"/>
-        <location filename="../mainwindow.cpp" line="430"/>
-        <location filename="../mainwindow.cpp" line="441"/>
-        <location filename="../mainwindow.cpp" line="449"/>
-        <location filename="../mainwindow.cpp" line="459"/>
-        <location filename="../mainwindow.cpp" line="466"/>
-        <location filename="../mainwindow.cpp" line="474"/>
-        <location filename="../mainwindow.cpp" line="480"/>
-        <location filename="../mainwindow.cpp" line="486"/>
-        <location filename="../mainwindow.cpp" line="492"/>
-        <location filename="../mainwindow.cpp" line="500"/>
-        <location filename="../mainwindow.cpp" line="506"/>
-        <location filename="../mainwindow.cpp" line="511"/>
-        <location filename="../mainwindow.cpp" line="520"/>
-        <location filename="../mainwindow.cpp" line="526"/>
-        <location filename="../mainwindow.cpp" line="532"/>
-        <location filename="../mainwindow.cpp" line="538"/>
-        <location filename="../mainwindow.cpp" line="544"/>
-        <location filename="../mainwindow.cpp" line="550"/>
-        <location filename="../mainwindow.cpp" line="556"/>
-        <location filename="../mainwindow.cpp" line="562"/>
-        <location filename="../mainwindow.cpp" line="568"/>
-        <location filename="../mainwindow.cpp" line="578"/>
-        <location filename="../mainwindow.cpp" line="586"/>
+        <location filename="../mainwindow.cpp" line="417"/>
+        <location filename="../mainwindow.cpp" line="425"/>
+        <location filename="../mainwindow.cpp" line="433"/>
+        <location filename="../mainwindow.cpp" line="444"/>
+        <location filename="../mainwindow.cpp" line="452"/>
+        <location filename="../mainwindow.cpp" line="462"/>
+        <location filename="../mainwindow.cpp" line="469"/>
+        <location filename="../mainwindow.cpp" line="477"/>
+        <location filename="../mainwindow.cpp" line="483"/>
+        <location filename="../mainwindow.cpp" line="489"/>
+        <location filename="../mainwindow.cpp" line="495"/>
+        <location filename="../mainwindow.cpp" line="503"/>
+        <location filename="../mainwindow.cpp" line="509"/>
+        <location filename="../mainwindow.cpp" line="515"/>
+        <location filename="../mainwindow.cpp" line="521"/>
+        <location filename="../mainwindow.cpp" line="527"/>
+        <location filename="../mainwindow.cpp" line="535"/>
+        <location filename="../mainwindow.cpp" line="541"/>
+        <location filename="../mainwindow.cpp" line="547"/>
+        <location filename="../mainwindow.cpp" line="553"/>
+        <location filename="../mainwindow.cpp" line="559"/>
+        <location filename="../mainwindow.cpp" line="565"/>
+        <location filename="../mainwindow.cpp" line="571"/>
+        <location filename="../mainwindow.cpp" line="577"/>
+        <location filename="../mainwindow.cpp" line="583"/>
         <location filename="../mainwindow.cpp" line="593"/>
+        <location filename="../mainwindow.cpp" line="601"/>
+        <location filename="../mainwindow.cpp" line="608"/>
         <source>File</source>
         <comment>Shortcut group</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="457"/>
-        <location filename="../mainwindow.cpp" line="543"/>
+        <location filename="../mainwindow.cpp" line="460"/>
+        <location filename="../mainwindow.cpp" line="558"/>
         <source>KDE 3 Bookmarks</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="458"/>
+        <location filename="../mainwindow.cpp" line="461"/>
         <source>KDE 3 bookmarks</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="463"/>
-        <location filename="../mainwindow.cpp" line="549"/>
+        <location filename="../mainwindow.cpp" line="466"/>
+        <location filename="../mainwindow.cpp" line="564"/>
         <source>KDE 4 Bookmarks</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="464"/>
+        <location filename="../mainwindow.cpp" line="467"/>
         <source>KDE 4 bookmarks</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="510"/>
-        <source>Export in last used format (%1)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="519"/>
+        <location filename="../mainwindow.cpp" line="534"/>
         <source> webpage (HTML)</source>
         <comment>status tip file menu</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="542"/>
+        <location filename="../mainwindow.cpp" line="557"/>
         <source>KDE 3 Bookmarks</source>
         <comment>File menu</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="548"/>
+        <location filename="../mainwindow.cpp" line="563"/>
         <source>KDE 4 Bookmarks</source>
         <comment>File menu</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="602"/>
+        <location filename="../mainwindow.cpp" line="617"/>
         <source>Edit actions toolbar</source>
         <comment>Toolbar name</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="612"/>
-        <location filename="../mainwindow.cpp" line="620"/>
-        <location filename="../mainwindow.cpp" line="631"/>
-        <location filename="../mainwindow.cpp" line="642"/>
-        <location filename="../mainwindow.cpp" line="653"/>
-        <location filename="../mainwindow.cpp" line="662"/>
-        <location filename="../mainwindow.cpp" line="673"/>
-        <location filename="../mainwindow.cpp" line="684"/>
-        <location filename="../mainwindow.cpp" line="696"/>
-        <location filename="../mainwindow.cpp" line="702"/>
-        <location filename="../mainwindow.cpp" line="715"/>
-        <location filename="../mainwindow.cpp" line="726"/>
+        <location filename="../mainwindow.cpp" line="627"/>
+        <location filename="../mainwindow.cpp" line="635"/>
+        <location filename="../mainwindow.cpp" line="646"/>
+        <location filename="../mainwindow.cpp" line="657"/>
+        <location filename="../mainwindow.cpp" line="668"/>
+        <location filename="../mainwindow.cpp" line="677"/>
+        <location filename="../mainwindow.cpp" line="688"/>
+        <location filename="../mainwindow.cpp" line="699"/>
+        <location filename="../mainwindow.cpp" line="711"/>
+        <location filename="../mainwindow.cpp" line="725"/>
         <location filename="../mainwindow.cpp" line="736"/>
         <location filename="../mainwindow.cpp" line="746"/>
         <location filename="../mainwindow.cpp" line="756"/>
         <location filename="../mainwindow.cpp" line="766"/>
-        <location filename="../mainwindow.cpp" line="778"/>
-        <location filename="../mainwindow.cpp" line="786"/>
-        <location filename="../mainwindow.cpp" line="795"/>
-        <location filename="../mainwindow.cpp" line="803"/>
-        <location filename="../mainwindow.cpp" line="810"/>
-        <location filename="../mainwindow.cpp" line="824"/>
+        <location filename="../mainwindow.cpp" line="776"/>
+        <location filename="../mainwindow.cpp" line="788"/>
+        <location filename="../mainwindow.cpp" line="796"/>
+        <location filename="../mainwindow.cpp" line="806"/>
+        <location filename="../mainwindow.cpp" line="815"/>
+        <location filename="../mainwindow.cpp" line="822"/>
         <location filename="../mainwindow.cpp" line="836"/>
-        <location filename="../mainwindow.cpp" line="849"/>
-        <location filename="../mainwindow.cpp" line="862"/>
-        <location filename="../mainwindow.cpp" line="875"/>
-        <location filename="../mainwindow.cpp" line="884"/>
-        <location filename="../mainwindow.cpp" line="891"/>
-        <location filename="../mainwindow.cpp" line="900"/>
-        <location filename="../mainwindow.cpp" line="909"/>
+        <location filename="../mainwindow.cpp" line="848"/>
+        <location filename="../mainwindow.cpp" line="861"/>
+        <location filename="../mainwindow.cpp" line="874"/>
+        <location filename="../mainwindow.cpp" line="887"/>
+        <location filename="../mainwindow.cpp" line="894"/>
+        <location filename="../mainwindow.cpp" line="901"/>
+        <location filename="../mainwindow.cpp" line="908"/>
         <location filename="../mainwindow.cpp" line="917"/>
-        <location filename="../mainwindow.cpp" line="925"/>
-        <location filename="../mainwindow.cpp" line="935"/>
+        <location filename="../mainwindow.cpp" line="924"/>
+        <location filename="../mainwindow.cpp" line="931"/>
+        <location filename="../mainwindow.cpp" line="938"/>
         <location filename="../mainwindow.cpp" line="945"/>
         <location filename="../mainwindow.cpp" line="954"/>
-        <location filename="../mainwindow.cpp" line="965"/>
-        <location filename="../mainwindow.cpp" line="975"/>
-        <location filename="../mainwindow.cpp" line="985"/>
-        <location filename="../mainwindow.cpp" line="994"/>
-        <location filename="../mainwindow.cpp" line="1003"/>
-        <location filename="../mainwindow.cpp" line="1010"/>
-        <location filename="../mainwindow.cpp" line="1019"/>
-        <location filename="../mainwindow.cpp" line="1027"/>
-        <location filename="../mainwindow.cpp" line="1037"/>
-        <location filename="../mainwindow.cpp" line="1047"/>
-        <location filename="../mainwindow.cpp" line="1055"/>
-        <location filename="../mainwindow.cpp" line="1064"/>
-        <location filename="../mainwindow.cpp" line="1071"/>
-        <location filename="../mainwindow.cpp" line="1082"/>
-        <location filename="../mainwindow.cpp" line="1092"/>
-        <location filename="../mainwindow.cpp" line="1101"/>
-        <location filename="../mainwindow.cpp" line="1109"/>
+        <location filename="../mainwindow.cpp" line="963"/>
+        <location filename="../mainwindow.cpp" line="971"/>
+        <location filename="../mainwindow.cpp" line="979"/>
+        <location filename="../mainwindow.cpp" line="989"/>
+        <location filename="../mainwindow.cpp" line="999"/>
+        <location filename="../mainwindow.cpp" line="1009"/>
+        <location filename="../mainwindow.cpp" line="1020"/>
+        <location filename="../mainwindow.cpp" line="1032"/>
+        <location filename="../mainwindow.cpp" line="1042"/>
+        <location filename="../mainwindow.cpp" line="1052"/>
+        <location filename="../mainwindow.cpp" line="1061"/>
+        <location filename="../mainwindow.cpp" line="1070"/>
+        <location filename="../mainwindow.cpp" line="1077"/>
+        <location filename="../mainwindow.cpp" line="1086"/>
+        <location filename="../mainwindow.cpp" line="1094"/>
+        <location filename="../mainwindow.cpp" line="1104"/>
+        <location filename="../mainwindow.cpp" line="1114"/>
+        <location filename="../mainwindow.cpp" line="1122"/>
+        <location filename="../mainwindow.cpp" line="1131"/>
+        <location filename="../mainwindow.cpp" line="1138"/>
+        <location filename="../mainwindow.cpp" line="1149"/>
+        <location filename="../mainwindow.cpp" line="1159"/>
+        <location filename="../mainwindow.cpp" line="1168"/>
+        <location filename="../mainwindow.cpp" line="1178"/>
+        <location filename="../mainwindow.cpp" line="2011"/>
         <source>Edit</source>
         <comment>Shortcut group</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="668"/>
+        <location filename="../mainwindow.cpp" line="683"/>
         <source>Add attribute</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="783"/>
+        <location filename="../mainwindow.cpp" line="793"/>
         <source>&amp;Detach</source>
         <comment>Context menu</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="784"/>
+        <location filename="../mainwindow.cpp" line="794"/>
         <source>Detach branch and use as mapcenter</source>
         <comment>Context menu</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="799"/>
+        <location filename="../mainwindow.cpp" line="810"/>
         <source>Sort children backwards</source>
         <comment>Edit menu</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="821"/>
+        <location filename="../mainwindow.cpp" line="833"/>
         <source>Expand all branches</source>
         <comment>Edit menu</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="823"/>
+        <location filename="../mainwindow.cpp" line="835"/>
         <source>Expand all branches</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="834"/>
+        <location filename="../mainwindow.cpp" line="846"/>
         <source>Expand one level</source>
         <comment>Edit menu</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="837"/>
+        <location filename="../mainwindow.cpp" line="849"/>
         <source>Expand one level in tree editor</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="847"/>
+        <location filename="../mainwindow.cpp" line="859"/>
         <source>Collapse one level</source>
         <comment>Edit menu</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="850"/>
+        <location filename="../mainwindow.cpp" line="862"/>
         <source>Collapse one level in tree editor</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="860"/>
+        <location filename="../mainwindow.cpp" line="872"/>
         <source>Collapse unselected levels</source>
         <comment>Edit menu</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="863"/>
+        <location filename="../mainwindow.cpp" line="875"/>
         <source>Collapse unselected levels in tree editor</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="873"/>
+        <location filename="../mainwindow.cpp" line="885"/>
         <source>Unscroll children</source>
         <comment>Edit menu</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="888"/>
-        <source>Find duplicate URLs</source>
+        <location filename="../mainwindow.cpp" line="891"/>
+        <source>Grow selection</source>
         <comment>Edit menu</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../mainwindow.cpp" line="892"/>
+        <source>Grow selection, e.g. make image larger</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="898"/>
+        <source>Shrink selection</source>
+        <comment>Edit menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="899"/>
+        <source>Shrink selection, e.g. make image smaller</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="905"/>
+        <source>Reset selection size</source>
+        <comment>Edit menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="906"/>
+        <source>Reset selection size to original</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../mainwindow.cpp" line="914"/>
-        <source>Open all URLs in subtree (including scrolled branches)</source>
+        <source>Toggle target...</source>
         <comment>Edit menu</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="915"/>
+        <source>Toggle target</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="921"/>
+        <source>Goto target...</source>
+        <comment>Edit menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="922"/>
+        <source>Goto target</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="928"/>
+        <source>Move to target...</source>
+        <comment>Edit menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="929"/>
+        <source>Move to target</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="942"/>
+        <source>Find duplicate URLs</source>
+        <comment>Edit menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="968"/>
+        <source>Open all URLs in subtree (including scrolled branches)</source>
+        <comment>Edit menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="969"/>
         <source>Open all URLs in subtree (including scrolled branches)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="971"/>
+        <location filename="../mainwindow.cpp" line="985"/>
+        <source>Extract URLs from note</source>
+        <comment>Edit menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="986"/>
+        <source>Extract URLs from note</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="1038"/>
         <source>Get data from Novell Bugzilla</source>
         <comment>Edit menu</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="972"/>
+        <location filename="../mainwindow.cpp" line="1039"/>
         <source>Get data from Novell Bugzilla</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="981"/>
+        <location filename="../mainwindow.cpp" line="1048"/>
         <source>Get data from Novell Bugzilla for subtree</source>
         <comment>Edit menu</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="982"/>
+        <location filename="../mainwindow.cpp" line="1049"/>
         <source>Update all Novell bugs in subtree</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1041"/>
+        <location filename="../mainwindow.cpp" line="1108"/>
         <source>Add timestamp</source>
         <comment>Edit menu</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1042"/>
+        <location filename="../mainwindow.cpp" line="1109"/>
         <source>Add timestamp</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1088"/>
+        <location filename="../mainwindow.cpp" line="1155"/>
         <source>Remove only branch and keep its children</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1098"/>
+        <location filename="../mainwindow.cpp" line="1165"/>
         <source>Remove children</source>
         <comment>Edit menu</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1099"/>
+        <location filename="../mainwindow.cpp" line="1166"/>
         <source>Remove children of branch</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1114"/>
+        <location filename="../mainwindow.cpp" line="1184"/>
         <source>Toggle property window to set properties for selection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1118"/>
-        <location filename="../mainwindow.cpp" line="1251"/>
-        <location filename="../mainwindow.cpp" line="1259"/>
-        <location filename="../mainwindow.cpp" line="1267"/>
-        <location filename="../mainwindow.cpp" line="1275"/>
-        <location filename="../mainwindow.cpp" line="1292"/>
-        <location filename="../mainwindow.cpp" line="1306"/>
-        <location filename="../mainwindow.cpp" line="1317"/>
-        <location filename="../mainwindow.cpp" line="1327"/>
-        <location filename="../mainwindow.cpp" line="1342"/>
-        <location filename="../mainwindow.cpp" line="1351"/>
-        <location filename="../mainwindow.cpp" line="1359"/>
-        <location filename="../mainwindow.cpp" line="1366"/>
+        <location filename="../mainwindow.cpp" line="1188"/>
+        <location filename="../mainwindow.cpp" line="1321"/>
+        <location filename="../mainwindow.cpp" line="1329"/>
+        <location filename="../mainwindow.cpp" line="1337"/>
+        <location filename="../mainwindow.cpp" line="1345"/>
+        <location filename="../mainwindow.cpp" line="1362"/>
+        <location filename="../mainwindow.cpp" line="1376"/>
+        <location filename="../mainwindow.cpp" line="1387"/>
+        <location filename="../mainwindow.cpp" line="1397"/>
+        <location filename="../mainwindow.cpp" line="1412"/>
+        <location filename="../mainwindow.cpp" line="1421"/>
+        <location filename="../mainwindow.cpp" line="1429"/>
+        <location filename="../mainwindow.cpp" line="1436"/>
         <source>View shortcuts</source>
         <comment>Shortcut group</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1129"/>
+        <location filename="../mainwindow.cpp" line="1199"/>
         <source>Format toolbar</source>
         <comment>Format Toolbar name</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1242"/>
+        <location filename="../mainwindow.cpp" line="1312"/>
         <source>Zoom toolbar</source>
         <comment>View Toolbar name</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1272"/>
+        <location filename="../mainwindow.cpp" line="1342"/>
         <source>Center on selection</source>
         <comment>View action</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1282"/>
+        <location filename="../mainwindow.cpp" line="1352"/>
         <source>Editors toolbar</source>
         <comment>Editor Toolbar name</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1304"/>
+        <location filename="../mainwindow.cpp" line="1374"/>
         <source>Toggle Heading editor</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1314"/>
+        <location filename="../mainwindow.cpp" line="1384"/>
         <source>Toggle Tree editor</source>
         <comment>View action</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1315"/>
+        <location filename="../mainwindow.cpp" line="1385"/>
         <source>Toggle tree editor</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1325"/>
+        <location filename="../mainwindow.cpp" line="1395"/>
         <source>Toggle History Window</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1377"/>
+        <location filename="../mainwindow.cpp" line="1447"/>
         <source>Modifier modes toolbar</source>
         <comment>Modifier Toolbar name</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1384"/>
-        <location filename="../mainwindow.cpp" line="1393"/>
-        <location filename="../mainwindow.cpp" line="1401"/>
+        <location filename="../mainwindow.cpp" line="1454"/>
+        <location filename="../mainwindow.cpp" line="1463"/>
+        <location filename="../mainwindow.cpp" line="1471"/>
         <source>Modes</source>
         <comment>Shortcut group</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1421"/>
-        <location filename="../mainwindow.cpp" line="1424"/>
+        <location filename="../mainwindow.cpp" line="1491"/>
+        <location filename="../mainwindow.cpp" line="1494"/>
         <source>URL to Bugzilla </source>
         <comment>SystemFlag</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1439"/>
+        <location filename="../mainwindow.cpp" line="1497"/>
+        <source>Map target</source>
+        <comment>SystemFlag</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="1514"/>
         <source>Standard Flags toolbar</source>
         <comment>Standard Flag Toolbar</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1453"/>
+        <location filename="../mainwindow.cpp" line="1528"/>
         <source>Status - ok,done</source>
         <comment>Standardflag</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1457"/>
+        <location filename="../mainwindow.cpp" line="1532"/>
         <source>Status - work in progress</source>
         <comment>Standardflag</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1461"/>
+        <location filename="../mainwindow.cpp" line="1536"/>
         <source>Status - missing, not started</source>
         <comment>Standardflag</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1485"/>
+        <location filename="../mainwindow.cpp" line="1560"/>
         <source>Call...</source>
         <comment>Standardflag</comment>
         <translation>Zavolat...</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1500"/>
+        <location filename="../mainwindow.cpp" line="1575"/>
         <source>Very important!</source>
         <comment>Standardflag</comment>
         <translation>Velmi důležité!</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1504"/>
+        <location filename="../mainwindow.cpp" line="1579"/>
         <source>Very unimportant!</source>
         <comment>Standardflag</comment>
         <translation>Velice nedůležité!</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1517"/>
+        <location filename="../mainwindow.cpp" line="1592"/>
         <source>Rose</source>
         <comment>Standardflag</comment>
         <translation>Růže</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1523"/>
+        <location filename="../mainwindow.cpp" line="1598"/>
         <source>Surprise!</source>
         <comment>Standardflag</comment>
         <translation>Překvapení!</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1530"/>
+        <location filename="../mainwindow.cpp" line="1605"/>
         <source>Info</source>
         <comment>Standardflag</comment>
         <translation>Informace</translation>
@@ -2570,7 +2649,7 @@ ale ještě nebyla uložena. Chcete </translation>
         <translation type="obsolete">Zeige Verlaufsfenster</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="472"/>
+        <location filename="../mainwindow.cpp" line="475"/>
         <source>Firefox Bookmarks</source>
         <translation>Záložky Firefoxu</translation>
     </message>
@@ -2579,7 +2658,7 @@ ale ještě nebyla uložena. Chcete </translation>
         <translation type="obsolete">F&amp;ormat</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1290"/>
+        <location filename="../mainwindow.cpp" line="1360"/>
         <source>Show Note Editor</source>
         <translation>Ukázat editor poznámek</translation>
     </message>
@@ -2588,13 +2667,13 @@ ale ještě nebyla uložena. Chcete </translation>
         <translation type="obsolete">Zeige Verlaufsfenster</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2442"/>
-        <location filename="../mainwindow.cpp" line="2443"/>
+        <location filename="../mainwindow.cpp" line="2549"/>
+        <location filename="../mainwindow.cpp" line="2551"/>
         <source>Bookmarks</source>
         <translation>Záložky</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2893"/>
+        <location filename="../mainwindow.cpp" line="3075"/>
         <source>Couldn&apos;t start %1 to open a new tab</source>
         <translation>Nepodařilo se spustit %1 pro otevření nové karty</translation>
     </message>
@@ -2627,7 +2706,7 @@ ale ještě nebyla uložena. Chcete </translation>
         <translation type="obsolete">XLink folgen</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2667"/>
+        <location filename="../mainwindow.cpp" line="2791"/>
         <source>Couldn&apos;t find configuration for export to Open Office
 </source>
         <translation>Nepodařilo se najít žádná nastavení pro vyvedení do programu Open Office
@@ -2646,12 +2725,12 @@ ale ještě nebyla uložena. Chcete </translation>
         <translation type="obsolete">&amp;Aktionen</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="924"/>
+        <location filename="../mainwindow.cpp" line="978"/>
         <source>Open all URLs in subtree</source>
         <translation>Otevřít všechny adresy (URL) ve vedlejším stromu</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1008"/>
+        <location filename="../mainwindow.cpp" line="1075"/>
         <source>Open all vym links in subtree</source>
         <translation>Otevřít všechna spojení k mapám vym ve vedlejším stromu</translation>
     </message>
@@ -2695,63 +2774,63 @@ ale ještě nebyla uložena. Chcete </translation>
         <translation type="obsolete">Neue Map anlegen</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="412"/>
+        <location filename="../mainwindow.cpp" line="415"/>
         <source>New map</source>
         <comment>Status tip File menu</comment>
         <translation>Nová mapa</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="427"/>
+        <location filename="../mainwindow.cpp" line="430"/>
         <source>&amp;Open...</source>
         <comment>File menu</comment>
         <translation>&amp;Otevřít...</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="428"/>
+        <location filename="../mainwindow.cpp" line="431"/>
         <source>Open</source>
         <comment>Status tip File menu</comment>
         <translation>Otevřít</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="435"/>
+        <location filename="../mainwindow.cpp" line="438"/>
         <source>Open Recent</source>
         <comment>File menu</comment>
         <translation>Otevřít nedávný</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="438"/>
+        <location filename="../mainwindow.cpp" line="441"/>
         <source>&amp;Save...</source>
         <comment>File menu</comment>
         <translation>&amp;Uložit...</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="439"/>
+        <location filename="../mainwindow.cpp" line="442"/>
         <source>Save</source>
         <comment>Status tip file menu</comment>
         <translation>Uložit</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="447"/>
+        <location filename="../mainwindow.cpp" line="450"/>
         <source>Save &amp;As...</source>
         <comment>File menu</comment>
         <translation>Uložit &amp;jako...</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="448"/>
+        <location filename="../mainwindow.cpp" line="451"/>
         <source>Save &amp;As</source>
         <comment>Status tip file menu</comment>
         <translation>Uložit &amp;jako</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="455"/>
+        <location filename="../mainwindow.cpp" line="458"/>
         <source>Import</source>
         <comment>File menu</comment>
         <translation>Zavést</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="458"/>
-        <location filename="../mainwindow.cpp" line="464"/>
-        <location filename="../mainwindow.cpp" line="472"/>
+        <location filename="../mainwindow.cpp" line="461"/>
+        <location filename="../mainwindow.cpp" line="467"/>
+        <location filename="../mainwindow.cpp" line="475"/>
         <source>Import %1</source>
         <comment>Status tip file menu</comment>
         <translation>Zavést %1</translation>
@@ -2761,56 +2840,85 @@ ale ještě nebyla uložena. Chcete </translation>
         <translation type="obsolete">Záložky KDE</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="471"/>
+        <location filename="../mainwindow.cpp" line="474"/>
         <source>Firefox Bookmarks</source>
         <comment>File menu</comment>
         <translation>Záložky Firefoxu</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="479"/>
-        <location filename="../mainwindow.cpp" line="485"/>
+        <location filename="../mainwindow.cpp" line="482"/>
+        <location filename="../mainwindow.cpp" line="488"/>
         <source>Import %1</source>
         <comment>status tip file menu</comment>
         <translation>Zavést %1</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="490"/>
+        <location filename="../mainwindow.cpp" line="493"/>
         <source>Import Dir%1</source>
         <comment>File menu</comment>
         <translation>Zavést adresář %1</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="491"/>
+        <location filename="../mainwindow.cpp" line="494"/>
         <source>Import directory structure (experimental)</source>
         <comment>status tip file menu</comment>
         <translation>Zavést adresářovou strukturu (pokusná funkce)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="496"/>
+        <location filename="../mainwindow.cpp" line="499"/>
         <source>Export</source>
         <comment>File menu</comment>
         <translation>Vyvést</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="498"/>
+        <location filename="../mainwindow.cpp" line="501"/>
         <source>Image%1</source>
         <comment>File export menu</comment>
         <translation>Obrázek %1</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="499"/>
+        <location filename="../mainwindow.cpp" line="502"/>
         <source>Export map as image</source>
         <comment>status tip file menu</comment>
         <translation>Vyvést mapu jako obrázek</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="505"/>
+        <location filename="../mainwindow.cpp" line="507"/>
+        <source>PDF%1</source>
+        <comment>File export menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="508"/>
+        <source>Export map as PDF</source>
+        <comment>status tip file menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="513"/>
+        <source>SVG%1</source>
+        <comment>File export menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="514"/>
+        <source>Export map as SVG</source>
+        <comment>status tip file menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="520"/>
         <source>Export in Open Document Format used e.g. in Open Office </source>
         <comment>status tip file menu</comment>
         <translation>Vyvést ve formátu Open Document, který používá například program Open Office</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="519"/>
+        <location filename="../mainwindow.cpp" line="525"/>
+        <source>Repeat last export (%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="534"/>
         <source>Export as %1</source>
         <comment>status tip file menu</comment>
         <translation>Vyvést jako %1</translation>
@@ -2821,14 +2929,14 @@ ale ještě nebyla uložena. Chcete </translation>
         <translation type="obsolete"> Internetová stránka (XHTML)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="525"/>
-        <location filename="../mainwindow.cpp" line="531"/>
-        <location filename="../mainwindow.cpp" line="537"/>
-        <location filename="../mainwindow.cpp" line="543"/>
-        <location filename="../mainwindow.cpp" line="549"/>
-        <location filename="../mainwindow.cpp" line="555"/>
-        <location filename="../mainwindow.cpp" line="561"/>
-        <location filename="../mainwindow.cpp" line="567"/>
+        <location filename="../mainwindow.cpp" line="540"/>
+        <location filename="../mainwindow.cpp" line="546"/>
+        <location filename="../mainwindow.cpp" line="552"/>
+        <location filename="../mainwindow.cpp" line="558"/>
+        <location filename="../mainwindow.cpp" line="564"/>
+        <location filename="../mainwindow.cpp" line="570"/>
+        <location filename="../mainwindow.cpp" line="576"/>
+        <location filename="../mainwindow.cpp" line="582"/>
         <source>Export as %1</source>
         <translation>Vyvést jako %1</translation>
     </message>
@@ -2838,19 +2946,19 @@ ale ještě nebyla uložena. Chcete </translation>
         <translation type="obsolete">Záložky KDE</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="575"/>
+        <location filename="../mainwindow.cpp" line="590"/>
         <source>Print</source>
         <comment>File menu</comment>
         <translation>Tisk</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="583"/>
+        <location filename="../mainwindow.cpp" line="598"/>
         <source>&amp;Close Map</source>
         <comment>File menu</comment>
         <translation>&amp;Zavřít mapu</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="590"/>
+        <location filename="../mainwindow.cpp" line="605"/>
         <source>E&amp;xit</source>
         <comment>File menu</comment>
         <translation>&amp;Ukončit</translation>
@@ -2861,37 +2969,37 @@ ale ještě nebyla uložena. Chcete </translation>
         <translation type="obsolete">Nástrojový pruh &amp;činností</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="604"/>
+        <location filename="../mainwindow.cpp" line="619"/>
         <source>&amp;Edit</source>
         <comment>Edit menu</comment>
         <translation>&amp;Úpravy</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="607"/>
+        <location filename="../mainwindow.cpp" line="622"/>
         <source>&amp;Undo</source>
         <comment>Edit menu</comment>
         <translation>&amp;Zpět</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="617"/>
+        <location filename="../mainwindow.cpp" line="632"/>
         <source>&amp;Redo</source>
         <comment>Edit menu</comment>
         <translation>&amp;Znovu</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="627"/>
+        <location filename="../mainwindow.cpp" line="642"/>
         <source>&amp;Copy</source>
         <comment>Edit menu</comment>
         <translation>&amp;Kopírovat</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="637"/>
+        <location filename="../mainwindow.cpp" line="652"/>
         <source>Cu&amp;t</source>
         <comment>Edit menu</comment>
         <translation>Vyj&amp;mout</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="647"/>
+        <location filename="../mainwindow.cpp" line="662"/>
         <source>&amp;Paste</source>
         <comment>Edit menu</comment>
         <translation>&amp;Vložit</translation>
@@ -2902,52 +3010,51 @@ ale ještě nebyla uložena. Chcete </translation>
         <translation type="obsolete">Upravit popis větve</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="658"/>
+        <location filename="../mainwindow.cpp" line="673"/>
         <source>Delete Selection</source>
         <comment>Edit menu</comment>
         <translation>Smazat výběr</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="692"/>
-        <location filename="../mainwindow.cpp" line="699"/>
+        <location filename="../mainwindow.cpp" line="707"/>
         <source>Add branch as child</source>
         <comment>Edit menu</comment>
         <translation>Přidat novou větev jako vedlejší větev</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="711"/>
+        <location filename="../mainwindow.cpp" line="721"/>
         <source>Add branch (insert)</source>
         <comment>Edit menu</comment>
         <translation>Přidat novou větev</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="722"/>
         <location filename="../mainwindow.cpp" line="732"/>
+        <location filename="../mainwindow.cpp" line="742"/>
         <source>Add branch above</source>
         <comment>Edit menu</comment>
         <translation>Přidat novou větev nahoře</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="742"/>
         <location filename="../mainwindow.cpp" line="752"/>
+        <location filename="../mainwindow.cpp" line="762"/>
         <source>Add branch below</source>
         <comment>Edit menu</comment>
         <translation>Přidat novou větev dole</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="761"/>
+        <location filename="../mainwindow.cpp" line="771"/>
         <source>Move up</source>
         <comment>Edit menu</comment>
         <translation>Posunout větev nahoru</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="772"/>
+        <location filename="../mainwindow.cpp" line="782"/>
         <source>Move down</source>
         <comment>Edit menu</comment>
         <translation>Posunout větev dolů</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="807"/>
+        <location filename="../mainwindow.cpp" line="819"/>
         <source>Scroll branch</source>
         <comment>Edit menu</comment>
         <translation>Svinout větev</translation>
@@ -2958,37 +3065,37 @@ ale ještě nebyla uložena. Chcete </translation>
         <translation type="obsolete">Alle eingerollten Zweige aufrollen</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="881"/>
+        <location filename="../mainwindow.cpp" line="935"/>
         <source>Find...</source>
         <comment>Edit menu</comment>
         <translation>Najít...</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="898"/>
+        <location filename="../mainwindow.cpp" line="952"/>
         <source>Open URL</source>
         <comment>Edit menu</comment>
         <translation>Otevřít adresu (URL)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="906"/>
+        <location filename="../mainwindow.cpp" line="960"/>
         <source>Open URL in new tab</source>
         <comment>Edit menu</comment>
         <translation>Otevřít odkazy (URL) v nové kartě</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="923"/>
+        <location filename="../mainwindow.cpp" line="977"/>
         <source>Open all URLs in subtree</source>
         <comment>Edit menu</comment>
         <translation>Otevřít všechny adresy (URL) ve vedlejším stromu</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="931"/>
+        <location filename="../mainwindow.cpp" line="995"/>
         <source>Edit URL...</source>
         <comment>Edit menu</comment>
         <translation>Upravit adresy (URL)...</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="951"/>
+        <location filename="../mainwindow.cpp" line="1015"/>
         <source>Use heading for URL</source>
         <comment>Edit menu</comment>
         <translation>Převzít popis jako adresu (URL)</translation>
@@ -3004,61 +3111,61 @@ ale ještě nebyla uložena. Chcete </translation>
         <translation type="obsolete">URL für FATE anlegen</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="999"/>
+        <location filename="../mainwindow.cpp" line="1066"/>
         <source>Open linked map</source>
         <comment>Edit menu</comment>
         <translation>Otevřít spojenou mapu</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1007"/>
+        <location filename="../mainwindow.cpp" line="1074"/>
         <source>Open all vym links in subtree</source>
         <comment>Edit menu</comment>
         <translation>Otevřít všechna spojení k mapám vym ve vedlejším stromu</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1016"/>
+        <location filename="../mainwindow.cpp" line="1083"/>
         <source>Edit vym link...</source>
         <comment>Edit menu</comment>
         <translation>Upravit spojení vym...</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1024"/>
+        <location filename="../mainwindow.cpp" line="1091"/>
         <source>Delete vym link</source>
         <comment>Edit menu</comment>
         <translation>Smazat spojení vym</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1031"/>
+        <location filename="../mainwindow.cpp" line="1098"/>
         <source>Hide in exports</source>
         <comment>Edit menu</comment>
         <translation>Neukazovat ve vyvedení</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1052"/>
+        <location filename="../mainwindow.cpp" line="1119"/>
         <source>Edit Map Info...</source>
         <comment>Edit menu</comment>
         <translation>Upravit informace o mapě...</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1060"/>
+        <location filename="../mainwindow.cpp" line="1127"/>
         <source>Add map (insert)</source>
         <comment>Edit menu</comment>
         <translation>Vložit mapu (přidat do výběru)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1069"/>
+        <location filename="../mainwindow.cpp" line="1136"/>
         <source>Add map (replace)</source>
         <comment>Edit menu</comment>
         <translation>Vložit mapu (nahradit výběr)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1078"/>
+        <location filename="../mainwindow.cpp" line="1145"/>
         <source>Save selection</source>
         <comment>Edit menu</comment>
         <translation>Uložit výběr</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1087"/>
+        <location filename="../mainwindow.cpp" line="1154"/>
         <source>Remove only branch </source>
         <comment>Edit menu</comment>
         <translation>Odstranit větev, vedlejší větve zachovat</translation>
@@ -3099,13 +3206,13 @@ ale ještě nebyla uložena. Chcete </translation>
         <translation type="obsolete">Vybrat nejspodnější větev</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1107"/>
+        <location filename="../mainwindow.cpp" line="1174"/>
         <source>Add Image...</source>
         <comment>Edit menu</comment>
         <translation>Přidat obrázek...</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1127"/>
+        <location filename="../mainwindow.cpp" line="1197"/>
         <source>F&amp;ormat</source>
         <comment>Format menu</comment>
         <translation>F&amp;ormát</translation>
@@ -3116,19 +3223,19 @@ ale ještě nebyla uložena. Chcete </translation>
         <translation type="obsolete">Činnosti formátu</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1140"/>
+        <location filename="../mainwindow.cpp" line="1210"/>
         <source>Pic&amp;k color</source>
         <comment>Edit menu</comment>
         <translation>Pře&amp;vzít barvu</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1150"/>
+        <location filename="../mainwindow.cpp" line="1220"/>
         <source>Color &amp;branch</source>
         <comment>Edit menu</comment>
         <translation>Obarvit vě&amp;tev</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1160"/>
+        <location filename="../mainwindow.cpp" line="1230"/>
         <source>Color sub&amp;tree</source>
         <comment>Edit menu</comment>
         <translation>Obarvit vedlejší &amp;strom</translation>
@@ -3153,13 +3260,13 @@ ale ještě nebyla uložena. Chcete </translation>
         <translation type="obsolete">Linke und rechte Bildkanten berücksichtigen</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1199"/>
+        <location filename="../mainwindow.cpp" line="1269"/>
         <source>Hide link if object is not selected</source>
         <comment>Branch attribute</comment>
         <translation>Skrýt spojení, není-li vybrán předmět</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1206"/>
+        <location filename="../mainwindow.cpp" line="1276"/>
         <source>&amp;Use color of heading for link</source>
         <comment>Branch attribute</comment>
         <translation>&amp;Použít barev popisů pro spojení</translation>
@@ -3170,25 +3277,25 @@ ale ještě nebyla uložena. Chcete </translation>
         <translation type="obsolete">Činnosti zobrazení</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1264"/>
+        <location filename="../mainwindow.cpp" line="1334"/>
         <source>reset Zoom</source>
         <comment>View action</comment>
         <translation>Žádné zvětšení</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1248"/>
+        <location filename="../mainwindow.cpp" line="1318"/>
         <source>Zoom in</source>
         <comment>View action</comment>
         <translation>Přiblížit</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1256"/>
+        <location filename="../mainwindow.cpp" line="1326"/>
         <source>Zoom out</source>
         <comment>View action</comment>
         <translation>Oddálit</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1289"/>
+        <location filename="../mainwindow.cpp" line="1359"/>
         <source>Show Note Editor</source>
         <comment>View action</comment>
         <translation>Ukázat editor poznámek</translation>
@@ -3214,109 +3321,109 @@ ale ještě nebyla uložena. Chcete </translation>
         <translation type="obsolete">Režimy při používání upravovačů</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1382"/>
+        <location filename="../mainwindow.cpp" line="1452"/>
         <source>Use modifier to color branches</source>
         <comment>Mode modifier</comment>
         <translation>Použít upravovač k obarvení větví</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1391"/>
+        <location filename="../mainwindow.cpp" line="1461"/>
         <source>Use modifier to copy</source>
         <comment>Mode modifier</comment>
         <translation>Použít upravovač pro kopírování</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1399"/>
+        <location filename="../mainwindow.cpp" line="1469"/>
         <source>Use modifier to draw xLinks</source>
         <comment>Mode modifier</comment>
         <translation>Použít upravovač pro založení xLinks</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1555"/>
+        <location filename="../mainwindow.cpp" line="1630"/>
         <source>forward</source>
         <comment>Freemind-Flag</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1567"/>
+        <location filename="../mainwindow.cpp" line="1642"/>
         <source>Don&apos;t flagrget</source>
         <comment>Freemind-Flag</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1686"/>
+        <location filename="../mainwindow.cpp" line="1761"/>
         <source>Set application to open pdf files</source>
         <comment>Settings action</comment>
         <translation>Nastavit program pro otevírání souborů PDF</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1691"/>
+        <location filename="../mainwindow.cpp" line="1766"/>
         <source>Set application to open external links</source>
         <comment>Settings action</comment>
         <translation>Nastavit program pro otevírání vnějších odkazů</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1732"/>
+        <location filename="../mainwindow.cpp" line="1807"/>
         <source>Edit branch after adding it</source>
         <comment>Settings action</comment>
         <translation>Upravit větev po jejím přidání (znovu ji popsat)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1739"/>
+        <location filename="../mainwindow.cpp" line="1814"/>
         <source>Select branch after adding it</source>
         <comment>Settings action</comment>
         <translation>Vybrat větev po jejím přidání</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1746"/>
+        <location filename="../mainwindow.cpp" line="1821"/>
         <source>Select existing heading</source>
         <comment>Settings action</comment>
         <translation>Vybrat stávající popis</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1753"/>
+        <location filename="../mainwindow.cpp" line="1828"/>
         <source>Delete key</source>
         <comment>Settings action</comment>
         <translation>Smazat klávesu</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1761"/>
+        <location filename="../mainwindow.cpp" line="1836"/>
         <source>Exclusive flags</source>
         <comment>Settings action</comment>
         <translation>Výhradní příznaky</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1768"/>
+        <location filename="../mainwindow.cpp" line="1843"/>
         <source>Use hide flags</source>
         <comment>Settings action</comment>
         <translation>Používat během vyvádění příznak &quot;Skrýt&quot;</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1834"/>
+        <location filename="../mainwindow.cpp" line="1908"/>
         <source>&amp;Help</source>
         <comment>Help menubar entry</comment>
         <translation>&amp;Nápověda</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1837"/>
+        <location filename="../mainwindow.cpp" line="1911"/>
         <source>Open VYM Documentation (pdf) </source>
         <comment>Help action</comment>
         <translation>Otevřít dokumentaci k VYM (pdf)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1849"/>
+        <location filename="../mainwindow.cpp" line="1923"/>
         <source>About VYM</source>
         <comment>Help action</comment>
         <translation>O programu VYM</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1854"/>
+        <location filename="../mainwindow.cpp" line="1928"/>
         <source>About QT</source>
         <comment>Help action</comment>
         <translation>O Qt</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1881"/>
+        <location filename="../mainwindow.cpp" line="1958"/>
         <source>Remove</source>
         <comment>Context menu name</comment>
         <translation>Odstranit</translation>
@@ -3327,18 +3434,19 @@ ale ještě nebyla uložena. Chcete </translation>
         <translation type="obsolete">URLs und Verbindungen zu vym maps</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1926"/>
+        <location filename="../mainwindow.cpp" line="2004"/>
         <source>Edit XLink</source>
         <comment>Context menu name</comment>
         <translation>Upravit xLink</translation>
     </message>
     <message>
+        <location filename="../mainwindow.cpp" line="2015"/>
         <source>Follow XLink</source>
         <comment>Context menu name</comment>
-        <translation type="obsolete">Sledovat xLink</translation>
+        <translation type="unfinished">Sledovat xLink</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1932"/>
+        <location filename="../mainwindow.cpp" line="2024"/>
         <source>Save image</source>
         <comment>Context action</comment>
         <translation>Uložit obrázek</translation>
@@ -3351,31 +3459,31 @@ Do you risk to overwrite its contents?</source>
 Riskieren Sie es dessen Inhalt zu überschreiben?</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="411"/>
+        <location filename="../mainwindow.cpp" line="414"/>
         <source>&amp;New map</source>
         <comment>File menu</comment>
         <translation>&amp;Nová mapa</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="419"/>
+        <location filename="../mainwindow.cpp" line="422"/>
         <source>&amp;Copy to new map</source>
         <comment>File menu</comment>
         <translation>&amp;Kopírovat do nové mapy</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="420"/>
+        <location filename="../mainwindow.cpp" line="423"/>
         <source>Copy selection to mapcenter of a new map</source>
         <comment>Status tip File menu</comment>
         <translation>Kopírovat výběr do mapového středu nové mapy</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="681"/>
+        <location filename="../mainwindow.cpp" line="696"/>
         <source>Add mapcenter</source>
         <comment>Canvas context menu</comment>
         <translation>Přidat mapový střed</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="791"/>
+        <location filename="../mainwindow.cpp" line="801"/>
         <source>Sort children</source>
         <comment>Edit menu</comment>
         <translation>Roztřídit vedlejší větve</translation>
@@ -3386,45 +3494,45 @@ Riskieren Sie es dessen Inhalt zu überschreiben?</translation>
         <translation type="obsolete">Rozvinout vedlejší větve</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="874"/>
+        <location filename="../mainwindow.cpp" line="886"/>
         <source>Unscroll all scrolled branches in selected subtree</source>
         <translation>Rozvinout všechny svinuté větve ve vybraném vedlejším stromu</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="941"/>
+        <location filename="../mainwindow.cpp" line="1005"/>
         <source>Edit local URL...</source>
         <comment>Edit menu</comment>
         <translation>Upravit místní adresu (URL)...</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="942"/>
+        <location filename="../mainwindow.cpp" line="1006"/>
         <source>Edit local URL</source>
         <translation>Upravit místní adresu (URL)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="959"/>
+        <location filename="../mainwindow.cpp" line="1026"/>
         <source>Create URL to Novell Bugzilla</source>
         <comment>Edit menu</comment>
         <translation>Vytvořit adresu (URL) k Novell Bugzilla</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="960"/>
+        <location filename="../mainwindow.cpp" line="1027"/>
         <source>Create URL to Novell Bugzilla</source>
         <translation>Vytvořit adresu (URL) k Novell Bugzilla</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="991"/>
+        <location filename="../mainwindow.cpp" line="1058"/>
         <source>Create URL to Novell FATE</source>
         <comment>Edit menu</comment>
         <translation>Vytvořit adresu (URL) k Novell FATE</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="992"/>
+        <location filename="../mainwindow.cpp" line="1059"/>
         <source>Create URL to Novell FATE</source>
         <translation>Vytvořit adresu (URL) k Novell FATE</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1113"/>
+        <location filename="../mainwindow.cpp" line="1183"/>
         <source>Property window</source>
         <comment>Dialog to edit properties of selection</comment>
         <translation>Okno vlastností</translation>
@@ -3434,32 +3542,32 @@ Riskieren Sie es dessen Inhalt zu überschreiben?</translation>
         <translation type="obsolete">Nastavit vlastnosti pro výběr</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1179"/>
+        <location filename="../mainwindow.cpp" line="1249"/>
         <source>Linkstyle Curve</source>
         <translation>Styl spojení křivka</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1191"/>
+        <location filename="../mainwindow.cpp" line="1261"/>
         <source>Linkstyle Thick Curve</source>
         <translation>Styl spojení silná křivka</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1220"/>
+        <location filename="../mainwindow.cpp" line="1290"/>
         <source>Set &amp;Selection Color</source>
         <translation>Nastavit barvu &amp;výběru</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1221"/>
+        <location filename="../mainwindow.cpp" line="1291"/>
         <source>Set Selection Color</source>
         <translation>Nastavit barvu výběru</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1232"/>
+        <location filename="../mainwindow.cpp" line="1302"/>
         <source>Set &amp;Background image</source>
         <translation>Nastavit &amp;obrázek pozadí</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1233"/>
+        <location filename="../mainwindow.cpp" line="1303"/>
         <source>Set Background image</source>
         <translation>Nastavit obrázek pozadí</translation>
     </message>
@@ -3469,12 +3577,12 @@ Riskieren Sie es dessen Inhalt zu überschreiben?</translation>
         <translation type="obsolete">Ukázat výběr</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1273"/>
+        <location filename="../mainwindow.cpp" line="1343"/>
         <source>Show selection</source>
         <translation>Ukázat výběr</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1324"/>
+        <location filename="../mainwindow.cpp" line="1394"/>
         <source>History Window</source>
         <comment>View action</comment>
         <translation>Okno s historií</translation>
@@ -3484,90 +3592,90 @@ Riskieren Sie es dessen Inhalt zu überschreiben?</translation>
         <translation type="obsolete">Ukázat okno s historií</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1338"/>
+        <location filename="../mainwindow.cpp" line="1408"/>
         <source>Antialiasing</source>
         <comment>View action</comment>
         <translation>Vyhlazování</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1339"/>
+        <location filename="../mainwindow.cpp" line="1409"/>
         <source>Antialiasing</source>
         <translation>Vyhlazování</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1347"/>
+        <location filename="../mainwindow.cpp" line="1417"/>
         <source>Smooth pixmap transformations</source>
         <comment>View action</comment>
         <translation>Jemné zobrazení pixmapy</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1356"/>
+        <location filename="../mainwindow.cpp" line="1426"/>
         <source>Next Map</source>
         <comment>View action</comment>
         <translation>Další mapa</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1363"/>
+        <location filename="../mainwindow.cpp" line="1433"/>
         <source>Previous Map</source>
         <comment>View action</comment>
         <translation>Předchozí mapa</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1415"/>
+        <location filename="../mainwindow.cpp" line="1485"/>
         <source>Note</source>
         <comment>SystemFlag</comment>
         <translation>Poznámka</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1418"/>
+        <location filename="../mainwindow.cpp" line="1488"/>
         <source>URL to Document </source>
         <comment>SystemFlag</comment>
         <translation>Adresa (URL) k dokumentu</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1427"/>
+        <location filename="../mainwindow.cpp" line="1500"/>
         <source>Link to another vym map</source>
         <comment>SystemFlag</comment>
         <translation>Odkaz na jinou mapu programu vym</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1430"/>
+        <location filename="../mainwindow.cpp" line="1503"/>
         <source>subtree is scrolled</source>
         <comment>SystemFlag</comment>
         <translation>Vedlejší strom je svinut</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1433"/>
+        <location filename="../mainwindow.cpp" line="1506"/>
         <source>subtree is temporary scrolled</source>
         <comment>SystemFlag</comment>
         <translation>Vedlejší strom je dočasně svinut</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1436"/>
+        <location filename="../mainwindow.cpp" line="1509"/>
         <source>Hide object in exported maps</source>
         <comment>SystemFlag</comment>
         <translation>Neukazovat předměty ve vyvedených mapách</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1520"/>
+        <location filename="../mainwindow.cpp" line="1595"/>
         <source>I just love...</source>
         <comment>Standardflag</comment>
         <translation>Jednoduše miluju...</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1539"/>
+        <location filename="../mainwindow.cpp" line="1614"/>
         <source>Important</source>
         <comment>Freemind-Flag</comment>
         <translation>Důležité</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1546"/>
+        <location filename="../mainwindow.cpp" line="1621"/>
         <source>Priority</source>
         <comment>Freemind-Flag</comment>
         <translation>Přednost</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1551"/>
+        <location filename="../mainwindow.cpp" line="1626"/>
         <source>Back</source>
         <comment>Freemind-Flag</comment>
         <translation>Zpět</translation>
@@ -3578,13 +3686,13 @@ Riskieren Sie es dessen Inhalt zu überschreiben?</translation>
         <translation type="obsolete">Dopředu</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1559"/>
+        <location filename="../mainwindow.cpp" line="1634"/>
         <source>Look here</source>
         <comment>Freemind-Flag</comment>
         <translation>Podívat se sem</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1563"/>
+        <location filename="../mainwindow.cpp" line="1638"/>
         <source>Dangerous</source>
         <comment>Freemind-Flag</comment>
         <translation>Nebezpečné</translation>
@@ -3595,264 +3703,270 @@ Riskieren Sie es dessen Inhalt zu überschreiben?</translation>
         <translation type="obsolete">Nezapomenout</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1571"/>
+        <location filename="../mainwindow.cpp" line="1646"/>
         <source>Flag</source>
         <comment>Freemind-Flag</comment>
         <translation>Příznak</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1576"/>
+        <location filename="../mainwindow.cpp" line="1651"/>
         <source>Home</source>
         <comment>Freemind-Flag</comment>
         <translation>Domov</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1580"/>
+        <location filename="../mainwindow.cpp" line="1655"/>
         <source>Telephone</source>
         <comment>Freemind-Flag</comment>
         <translation>Telefon</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1584"/>
+        <location filename="../mainwindow.cpp" line="1659"/>
         <source>Music</source>
         <comment>Freemind-Flag</comment>
         <translation>Hudba</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1588"/>
+        <location filename="../mainwindow.cpp" line="1663"/>
         <source>Mailbox</source>
         <comment>Freemind-Flag</comment>
         <translation>Poštovní schránka</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1592"/>
+        <location filename="../mainwindow.cpp" line="1667"/>
         <source>Maix</source>
         <comment>Freemind-Flag</comment>
         <translation>Poštovní schránka</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1596"/>
+        <location filename="../mainwindow.cpp" line="1671"/>
         <source>Password</source>
         <comment>Freemind-Flag</comment>
         <translation>Heslo</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1600"/>
+        <location filename="../mainwindow.cpp" line="1675"/>
         <source>To be improved</source>
         <comment>Freemind-Flag</comment>
         <translation>Ke zlepšení</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1604"/>
+        <location filename="../mainwindow.cpp" line="1679"/>
         <source>Stop</source>
         <comment>Freemind-Flag</comment>
         <translation>Zastavit</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1608"/>
+        <location filename="../mainwindow.cpp" line="1683"/>
         <source>Magic</source>
         <comment>Freemind-Flag</comment>
         <translation>Kouzlo</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1612"/>
+        <location filename="../mainwindow.cpp" line="1687"/>
         <source>To be discussed</source>
         <comment>Freemind-Flag</comment>
         <translation>K probrání</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1616"/>
+        <location filename="../mainwindow.cpp" line="1691"/>
         <source>Reminder</source>
         <comment>Freemind-Flag</comment>
         <translation>Připomínka</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1620"/>
+        <location filename="../mainwindow.cpp" line="1695"/>
         <source>Excellent</source>
         <comment>Freemind-Flag</comment>
         <translation>Vynikající</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1624"/>
+        <location filename="../mainwindow.cpp" line="1699"/>
         <source>Linux</source>
         <comment>Freemind-Flag</comment>
         <translation>Linux</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1628"/>
+        <location filename="../mainwindow.cpp" line="1703"/>
         <source>Sweet</source>
         <comment>Freemind-Flag</comment>
         <translation>Milé</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1667"/>
-        <location filename="../mainwindow.cpp" line="1674"/>
+        <location filename="../mainwindow.cpp" line="1742"/>
+        <location filename="../mainwindow.cpp" line="1749"/>
         <source>Network shortcuts</source>
         <comment>Shortcut group</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1696"/>
+        <location filename="../mainwindow.cpp" line="1771"/>
         <source>Set path for macros</source>
         <comment>Settings action</comment>
         <translation>Nastavit cestu pro makra</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1697"/>
+        <location filename="../mainwindow.cpp" line="1772"/>
         <source>Set path for macros</source>
         <translation>Nastavit cestu pro makra</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1701"/>
+        <location filename="../mainwindow.cpp" line="1776"/>
         <source>Set number of undo levels</source>
         <comment>Settings action</comment>
         <translation>Nastavit počet kroků zpět</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1702"/>
+        <location filename="../mainwindow.cpp" line="1777"/>
         <source>Set number of undo levels</source>
         <translation>Nastavit počet kroků zpět</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1708"/>
+        <location filename="../mainwindow.cpp" line="1783"/>
         <source>Autosave</source>
         <comment>Settings action</comment>
         <translation>Automaticky uložit</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1709"/>
+        <location filename="../mainwindow.cpp" line="1784"/>
         <source>Autosave</source>
         <translation>Automaticky uložit</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1716"/>
+        <location filename="../mainwindow.cpp" line="1791"/>
         <source>Autosave time</source>
         <comment>Settings action</comment>
         <translation>Čas automatického ukládání</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1717"/>
+        <location filename="../mainwindow.cpp" line="1792"/>
         <source>Autosave time</source>
         <translation>Čas automatického ukládání</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1722"/>
+        <location filename="../mainwindow.cpp" line="1797"/>
         <source>Write backup file on save</source>
         <comment>Settings action</comment>
         <translation>Zapsat při ukládání zálohovací soubor</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1723"/>
+        <location filename="../mainwindow.cpp" line="1798"/>
         <source>Write backup file on save</source>
         <translation>Zapsat při ukládání zálohovací soubor</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1775"/>
+        <location filename="../mainwindow.cpp" line="1850"/>
         <source>Note editor is dockable</source>
         <comment>Settings action</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1776"/>
+        <location filename="../mainwindow.cpp" line="1851"/>
         <source>If Note editor is dockable, it is always on top, also when floating</source>
         <comment>Explanation for note editor handling</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1786"/>
+        <location filename="../mainwindow.cpp" line="1861"/>
         <source>Animation</source>
         <comment>Settings action</comment>
         <translation>Pohyblivé obrázky</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1787"/>
+        <location filename="../mainwindow.cpp" line="1862"/>
         <source>Animation</source>
         <translation>Pohyblivé obrázky</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1794"/>
+        <location filename="../mainwindow.cpp" line="1869"/>
         <source>Automatic layout</source>
         <comment>Settings action</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1795"/>
+        <location filename="../mainwindow.cpp" line="1870"/>
         <source>Automatic layout</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1807"/>
+        <location filename="../mainwindow.cpp" line="1882"/>
         <source>Test</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1813"/>
-        <location filename="../mainwindow.cpp" line="1820"/>
-        <location filename="../mainwindow.cpp" line="1826"/>
+        <location filename="../mainwindow.cpp" line="1887"/>
+        <location filename="../mainwindow.cpp" line="1894"/>
+        <location filename="../mainwindow.cpp" line="1900"/>
         <source>Test shortcuts</source>
         <comment>Shortcut group</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1839"/>
-        <location filename="../mainwindow.cpp" line="1845"/>
+        <location filename="../mainwindow.cpp" line="1913"/>
+        <location filename="../mainwindow.cpp" line="1919"/>
         <source>Help shortcuts</source>
         <comment>Shortcut group</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1843"/>
+        <location filename="../mainwindow.cpp" line="1917"/>
         <source>Open VYM example maps </source>
         <comment>Help action</comment>
         <translation>Otevřít příkladové mapy programu VYM</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1844"/>
+        <location filename="../mainwindow.cpp" line="1918"/>
         <source>Open VYM example maps </source>
         <translation>Otevřít příkladové mapy programu VYM</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1901"/>
+        <location filename="../mainwindow.cpp" line="1978"/>
         <source>References (URLs, vymLinks, ...)</source>
         <comment>Context menu name</comment>
         <translation>Odkazy (adresy, spojení vym, ...)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1977"/>
+        <location filename="../mainwindow.cpp" line="2009"/>
+        <source>Follow XLink</source>
+        <comment>Context menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2069"/>
         <source>&amp;%1 %2</source>
         <translation>&amp;%1 %2</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2080"/>
+        <location filename="../mainwindow.cpp" line="2177"/>
         <source>unnamed</source>
         <comment>MainWindow: name for new and empty file</comment>
         <translation type="unfinished">nepojmenovaný</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2472"/>
+        <location filename="../mainwindow.cpp" line="2580"/>
         <source>Load Freemind map</source>
         <translation>Nahrát mapu pro otevřenou mysl</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2569"/>
+        <location filename="../mainwindow.cpp" line="2691"/>
         <source>Export as CSV</source>
         <translation>Vyvést jako CSV</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2898"/>
+        <location filename="../mainwindow.cpp" line="3080"/>
         <source>Sorry, currently only Konqueror supports integrated tabbed browsing.</source>
         <comment>Mainwindow, open URL</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2899"/>
+        <location filename="../mainwindow.cpp" line="3081"/>
         <source>Currently vym is using %1 to open external links.
 (Change in Settings menu)</source>
         <comment>Mainwindow, open URL</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3121"/>
+        <location filename="../mainwindow.cpp" line="3309"/>
         <source>%1 items on map
 </source>
         <comment>Info about map</comment>
@@ -3860,77 +3974,77 @@ Riskieren Sie es dessen Inhalt zu überschreiben?</translation>
 </translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3567"/>
+        <location filename="../mainwindow.cpp" line="3789"/>
         <source>Directory with vym macros:</source>
         <translation>Adresář s makry vym:</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3579"/>
-        <location filename="../mainwindow.cpp" line="3599"/>
+        <location filename="../mainwindow.cpp" line="3801"/>
+        <location filename="../mainwindow.cpp" line="3821"/>
         <source>QInputDialog::getInteger()</source>
         <translation>QInputDialog::getInteger()</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3580"/>
+        <location filename="../mainwindow.cpp" line="3802"/>
         <source>Number of undo/redo levels:</source>
         <translation>Počet kroků zpět/znovu:</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3585"/>
+        <location filename="../mainwindow.cpp" line="3807"/>
         <source>Settings have been changed. The next map opened will have &quot;%1&quot; undo/redo levels</source>
         <translation>Nastavení byla změněna. Následující otevřená mapa bude mít &quot;%1&quot; kroků zpět/znovu</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3600"/>
+        <location filename="../mainwindow.cpp" line="3822"/>
         <source>Number of seconds before autosave:</source>
         <translation>Počet sekund před automatickým uložením:</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3618"/>
+        <location filename="../mainwindow.cpp" line="3840"/>
         <source>Information</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3619"/>
+        <location filename="../mainwindow.cpp" line="3841"/>
         <source>Changed settings will be applied after restarting vym</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3824"/>
+        <location filename="../mainwindow.cpp" line="4046"/>
         <source>History for %1</source>
         <comment>Window Caption</comment>
         <translation>Historie pro %1</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3870"/>
-        <location filename="../mainwindow.cpp" line="3871"/>
-        <location filename="../mainwindow.cpp" line="3876"/>
-        <location filename="../mainwindow.cpp" line="3877"/>
+        <location filename="../mainwindow.cpp" line="4092"/>
+        <location filename="../mainwindow.cpp" line="4093"/>
+        <location filename="../mainwindow.cpp" line="4098"/>
+        <location filename="../mainwindow.cpp" line="4099"/>
         <source>Export in last used format (%1)</source>
         <comment>status tip</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="4155"/>
+        <location filename="../mainwindow.cpp" line="4387"/>
         <source>Couldn&apos;t find the documentation %1 in:
 %2</source>
         <translation>Dokumentaci %1 se v:
 %2 nepodařilo najít</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="4190"/>
+        <location filename="../mainwindow.cpp" line="4422"/>
         <source>Load vym example map</source>
         <translation>Otevřít příkladovou mapu programu VYM</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="4239"/>
+        <location filename="../mainwindow.cpp" line="4470"/>
         <source>Couldn&apos;t find a macro at  %1.
 </source>
         <translation>Nepodařilo se najít makro v %1.
 </translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="4240"/>
+        <location filename="../mainwindow.cpp" line="4471"/>
         <source>Set directory for vym macros</source>
         <translation>Nastavit adresář pro makra programu vym</translation>
     </message>
@@ -4533,14 +4647,14 @@ Chcete mapu nahrát znovu s novým souborem?</translation>
         <translation type="obsolete">Nebrat v úvahu</translation>
     </message>
     <message>
-        <location filename="../mapeditor.cpp" line="120"/>
-        <location filename="../mapeditor.cpp" line="125"/>
+        <location filename="../mapeditor.cpp" line="119"/>
+        <location filename="../mapeditor.cpp" line="124"/>
         <source>Edit heading</source>
         <comment>MapEditor</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mapeditor.cpp" line="338"/>
+        <location filename="../mapeditor.cpp" line="337"/>
         <source>Print vym map</source>
         <comment>MapEditor</comment>
         <translation type="unfinished"></translation>
@@ -4583,122 +4697,121 @@ Chcete mapu nahrát znovu s novým souborem?</translation>
         <translation type="obsolete">Neue Map</translation>
     </message>
     <message>
-        <location filename="../file.cpp" line="439"/>
         <source>This is not an image.</source>
-        <translation>Toto není obrázek.</translation>
+        <translation type="obsolete">Toto není obrázek.</translation>
     </message>
     <message>
-        <location filename="../exports.cpp" line="708"/>
-        <location filename="../exports.cpp" line="799"/>
-        <location filename="../exports.cpp" line="899"/>
-        <location filename="../exports.cpp" line="971"/>
-        <location filename="../exports.cpp" line="998"/>
-        <location filename="../exports.cpp" line="1017"/>
-        <location filename="../exports.cpp" line="1024"/>
+        <location filename="../exports.cpp" line="720"/>
+        <location filename="../exports.cpp" line="813"/>
+        <location filename="../exports.cpp" line="913"/>
+        <location filename="../exports.cpp" line="985"/>
+        <location filename="../exports.cpp" line="1012"/>
         <location filename="../exports.cpp" line="1031"/>
+        <location filename="../exports.cpp" line="1038"/>
+        <location filename="../exports.cpp" line="1045"/>
         <source>Critical Export Error</source>
         <translation>Vážná chyba při vyvádění</translation>
     </message>
     <message>
-        <location filename="../exports.cpp" line="701"/>
-        <location filename="../exports.cpp" line="710"/>
-        <location filename="../exports.cpp" line="799"/>
-        <location filename="../exports.cpp" line="971"/>
+        <location filename="../exports.cpp" line="713"/>
+        <location filename="../exports.cpp" line="722"/>
+        <location filename="../exports.cpp" line="813"/>
+        <location filename="../exports.cpp" line="985"/>
         <source>Could not write %1</source>
         <translation>Nepodařilo se zapsat %1</translation>
     </message>
     <message>
-        <location filename="../exports.cpp" line="92"/>
+        <location filename="../exports.cpp" line="96"/>
         <source>Exporting to %1 will overwrite the existing file:
 %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../exports.cpp" line="93"/>
+        <location filename="../exports.cpp" line="97"/>
         <source>Warning: Overwriting file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../exports.cpp" line="641"/>
+        <location filename="../exports.cpp" line="655"/>
         <source>Export aborted.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../exports.cpp" line="654"/>
+        <location filename="../exports.cpp" line="668"/>
         <source>Warning</source>
         <comment>ExportHTML</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../exports.cpp" line="655"/>
+        <location filename="../exports.cpp" line="669"/>
         <source>Trying to load stylesheet:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../exports.cpp" line="656"/>
+        <location filename="../exports.cpp" line="670"/>
         <source>Could not open %1</source>
         <comment>ExportHTML</comment>
         <translation type="unfinished">Nepodařilo se otevřít %1</translation>
     </message>
     <message>
-        <location filename="../exports.cpp" line="662"/>
+        <location filename="../exports.cpp" line="676"/>
         <source>Trying to save stylesheet:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../exports.cpp" line="663"/>
-        <location filename="../exports.cpp" line="685"/>
+        <location filename="../exports.cpp" line="677"/>
+        <location filename="../exports.cpp" line="697"/>
         <source>Could not open %1</source>
         <translation type="unfinished">Nepodařilo se otevřít %1</translation>
     </message>
     <message>
-        <location filename="../exports.cpp" line="684"/>
+        <location filename="../exports.cpp" line="696"/>
         <source>Trying to load small icon for URLs:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../exports.cpp" line="694"/>
+        <location filename="../exports.cpp" line="706"/>
         <source>Trying to create directory for flags:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../exports.cpp" line="695"/>
+        <location filename="../exports.cpp" line="707"/>
         <source>Could not create %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../exports.cpp" line="700"/>
+        <location filename="../exports.cpp" line="712"/>
         <source>Trying to save small icon for URLs:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../exports.cpp" line="709"/>
+        <location filename="../exports.cpp" line="721"/>
         <source>Trying to save HTML file:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../exports.cpp" line="711"/>
-        <location filename="../exports.cpp" line="800"/>
-        <location filename="../exports.cpp" line="972"/>
+        <location filename="../exports.cpp" line="723"/>
+        <location filename="../exports.cpp" line="814"/>
+        <location filename="../exports.cpp" line="986"/>
         <source>Export failed.</source>
         <translation>Vyvedení se nezdařilo.</translation>
     </message>
     <message>
-        <location filename="../exports.cpp" line="899"/>
+        <location filename="../exports.cpp" line="913"/>
         <source>No objects in map!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../exports.cpp" line="998"/>
+        <location filename="../exports.cpp" line="1012"/>
         <source>Check &quot;%1&quot; in
 %2</source>
         <translation>Prověřte, prosím, &quot;%1&quot; v
 %2</translation>
     </message>
     <message>
-        <location filename="../exports.cpp" line="1017"/>
-        <location filename="../exports.cpp" line="1024"/>
         <location filename="../exports.cpp" line="1031"/>
+        <location filename="../exports.cpp" line="1038"/>
+        <location filename="../exports.cpp" line="1045"/>
         <source>Could not read %1</source>
         <translation>Nepodařilo se přečíst %1</translation>
     </message>
@@ -4761,41 +4874,40 @@ Chcete jej přepsat?</translation>
         <translation>Zrušit</translation>
     </message>
     <message>
-        <location filename="../file.cpp" line="441"/>
         <source>Sorry, no preview for
 multiple selected files.</source>
-        <translation>Bohužel není možný náhled
+        <translation type="obsolete">Bohužel není možný náhled
 na hromadný výběr souborů.</translation>
     </message>
     <message>
-        <location filename="../exports.cpp" line="396"/>
-        <location filename="../exports.cpp" line="426"/>
-        <location filename="../exports.cpp" line="456"/>
+        <location filename="../exports.cpp" line="410"/>
+        <location filename="../exports.cpp" line="440"/>
+        <location filename="../exports.cpp" line="470"/>
         <source>Exporting the %1 bookmarks will overwrite
 your existing bookmarks file.</source>
         <translation>Vyvedení %1 záložek přepíše váš
 stávající soubor se záložkami.</translation>
     </message>
     <message>
-        <location filename="../exports.cpp" line="397"/>
-        <location filename="../exports.cpp" line="427"/>
-        <location filename="../exports.cpp" line="457"/>
+        <location filename="../exports.cpp" line="411"/>
+        <location filename="../exports.cpp" line="441"/>
+        <location filename="../exports.cpp" line="471"/>
         <source>Warning: Overwriting %1 bookmarks</source>
         <translation>Varování: Přepisuje se %1 záložek</translation>
     </message>
     <message>
-        <location filename="../exports.cpp" line="415"/>
-        <location filename="../exports.cpp" line="445"/>
-        <location filename="../exports.cpp" line="661"/>
-        <location filename="../exports.cpp" line="683"/>
-        <location filename="../exports.cpp" line="693"/>
-        <location filename="../exports.cpp" line="699"/>
+        <location filename="../exports.cpp" line="429"/>
+        <location filename="../exports.cpp" line="459"/>
+        <location filename="../exports.cpp" line="675"/>
+        <location filename="../exports.cpp" line="695"/>
+        <location filename="../exports.cpp" line="705"/>
+        <location filename="../exports.cpp" line="711"/>
         <source>Warning</source>
         <translation>Varování</translation>
     </message>
     <message>
-        <location filename="../exports.cpp" line="416"/>
-        <location filename="../exports.cpp" line="446"/>
+        <location filename="../exports.cpp" line="430"/>
+        <location filename="../exports.cpp" line="460"/>
         <source>Couldn&apos;t find script %1
 to notifiy Browsers of changed bookmarks.</source>
         <translation>Nepodařilo se nalézt skript %1,
@@ -4803,14 +4915,14 @@ který je nutný pro oznámení prohlížečům,
 že záložky byly změněny.</translation>
     </message>
     <message>
-        <location filename="../exports.cpp" line="41"/>
+        <location filename="../exports.cpp" line="43"/>
         <location filename="../imports.cpp" line="16"/>
-        <location filename="../main.cpp" line="249"/>
+        <location filename="../main.cpp" line="255"/>
         <source>Error</source>
         <translation>Chyba</translation>
     </message>
     <message>
-        <location filename="../exports.cpp" line="42"/>
+        <location filename="../exports.cpp" line="44"/>
         <location filename="../imports.cpp" line="17"/>
         <source>Couldn&apos;t access temporary directory
 </source>
@@ -4818,14 +4930,14 @@ který je nutný pro oznámení prohlížečům,
 </translation>
     </message>
     <message>
-        <location filename="../exports.cpp" line="135"/>
-        <location filename="../exports.cpp" line="254"/>
+        <location filename="../exports.cpp" line="139"/>
+        <location filename="../exports.cpp" line="263"/>
         <source>Export as ASCII</source>
         <translation>Vyvést jako ASCII</translation>
     </message>
     <message>
-        <location filename="../exports.cpp" line="135"/>
-        <location filename="../exports.cpp" line="254"/>
+        <location filename="../exports.cpp" line="139"/>
+        <location filename="../exports.cpp" line="263"/>
         <source>(still experimental)</source>
         <translation>(stále pokusné)</translation>
     </message>
@@ -4838,14 +4950,13 @@ Do you risk to overwrite its contents?</source>
 Odvážíte se přepsat jeho obsah?</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="250"/>
         <source>Couldn&apos;t open %1.
 </source>
-        <translation>Nepodařilo se otevřít %1.
+        <translation type="obsolete">Nepodařilo se otevřít %1.
 </translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="3055"/>
+        <location filename="../vymmodel.cpp" line="3219"/>
         <source>No Bugzilla client found.  For openSUSE you can install by (running as root):
 
 </source>
@@ -4853,16 +4964,22 @@ Odvážíte se přepsat jeho obsah?</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="3059"/>
+        <location filename="../vymmodel.cpp" line="3223"/>
         <source>Alternatively you can also add the repository
 and install the perl module for Bugzilla access using YaST</source>
         <comment>VymModel, how to install Bugzilla client module</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="3062"/>
+        <location filename="../vymmodel.cpp" line="3226"/>
         <source>Warning: Couldn&apos;t find Bugzilla client</source>
         <comment>VymModel</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../main.cpp" line="256"/>
+        <source>Couldn&apos;t open &quot;%1&quot;
+%2.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4919,12 +5036,12 @@ Chcete jej přepsat?</translation>
         <translation>Nahrát skript</translation>
     </message>
     <message>
-        <location filename="../simplescripteditor.cpp" line="116"/>
+        <location filename="../simplescripteditor.cpp" line="115"/>
         <source>Error</source>
         <translation>Chyba</translation>
     </message>
     <message>
-        <location filename="../simplescripteditor.cpp" line="117"/>
+        <location filename="../simplescripteditor.cpp" line="116"/>
         <source>Couldn&apos;t open %1.
 </source>
         <translation>Nepodařilo se otevřít %1.
@@ -5098,7 +5215,7 @@ Chcete jej přepsat?</translation>
         <translation type="obsolete">&amp;fixe Zeichenbreite</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="492"/>
+        <location filename="../texteditor.cpp" line="494"/>
         <source>&amp;Settings</source>
         <translation>&amp;Nastavení</translation>
     </message>
@@ -5107,7 +5224,7 @@ Chcete jej přepsat?</translation>
         <translation type="obsolete">Wähle Zeichensatz mit fixer Breite</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="495"/>
+        <location filename="../texteditor.cpp" line="497"/>
         <source>Set &amp;fixed font</source>
         <translation>Zvolit písmo s &amp;pevnou šířkou</translation>
     </message>
@@ -5116,7 +5233,7 @@ Chcete jej přepsat?</translation>
         <translation type="obsolete">Wähle Zeichensatz mit variabler Breite</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="501"/>
+        <location filename="../texteditor.cpp" line="503"/>
         <source>Set &amp;variable font</source>
         <translation>Zvolit písmo s p&amp;roměnlivou šířkou</translation>
     </message>
@@ -5125,7 +5242,7 @@ Chcete jej přepsat?</translation>
         <translation type="obsolete">Verwende fixen Zeichensatz per default</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="507"/>
+        <location filename="../texteditor.cpp" line="509"/>
         <source>&amp;fixed font is default</source>
         <translation>Používat písmo s &amp;pevnou šířkou jako výchozí</translation>
     </message>
@@ -5156,47 +5273,47 @@ Chcete jej přepsat?</translation>
         <translation type="obsolete">Feste Zeichenbreite für den Text verwenden</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="410"/>
+        <location filename="../texteditor.cpp" line="412"/>
         <source>&amp;Color...</source>
         <translation>B&amp;arva...</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="416"/>
+        <location filename="../texteditor.cpp" line="418"/>
         <source>&amp;Bold</source>
         <translation>&amp;Tučné</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="424"/>
+        <location filename="../texteditor.cpp" line="426"/>
         <source>&amp;Italic</source>
         <translation>&amp;Kurzíva</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="432"/>
+        <location filename="../texteditor.cpp" line="434"/>
         <source>&amp;Underline</source>
         <translation>&amp;Podtržení</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="464"/>
+        <location filename="../texteditor.cpp" line="466"/>
         <source>&amp;Left</source>
         <translation>&amp;Vlevo</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="470"/>
+        <location filename="../texteditor.cpp" line="472"/>
         <source>C&amp;enter</source>
         <translation>&amp;Na střed</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="476"/>
+        <location filename="../texteditor.cpp" line="478"/>
         <source>&amp;Right</source>
         <translation>&amp;Vpravo</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="482"/>
+        <location filename="../texteditor.cpp" line="484"/>
         <source>&amp;Justify</source>
         <translation>&amp;Zarovnat do bloku</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="623"/>
+        <location filename="../texteditor.cpp" line="624"/>
         <source>Export Note to single file</source>
         <translation>Vyvést poznámku do souboru</translation>
     </message>
@@ -5209,14 +5326,14 @@ Chcete jej přepsat?</translation>
         <translation type="obsolete">gibt es bereits. Wollen Sie sie</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="636"/>
-        <location filename="../texteditor.cpp" line="711"/>
+        <location filename="../texteditor.cpp" line="638"/>
+        <location filename="../texteditor.cpp" line="714"/>
         <source>Overwrite</source>
         <translation>Přepsat</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="637"/>
-        <location filename="../texteditor.cpp" line="712"/>
+        <location filename="../texteditor.cpp" line="639"/>
+        <location filename="../texteditor.cpp" line="715"/>
         <source>Cancel</source>
         <translation>Zrušit</translation>
     </message>
@@ -5225,7 +5342,7 @@ Chcete jej přepsat?</translation>
         <translation type="obsolete">Konnte Notiz nicht exportieren</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="697"/>
+        <location filename="../texteditor.cpp" line="699"/>
         <source>Export Note to single file (ASCII)</source>
         <translation>Vyvést poznámku do souboru jako ASCII</translation>
     </message>
@@ -5255,17 +5372,17 @@ Chcete jej přepsat?</translation>
         <translation>Naznačení &amp;písma</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="444"/>
+        <location filename="../texteditor.cpp" line="446"/>
         <source>Subs&amp;cript</source>
         <translation>&amp;Dolní index</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="452"/>
+        <location filename="../texteditor.cpp" line="454"/>
         <source>Su&amp;perscript</source>
         <translation>&amp;Horní index</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="521"/>
+        <location filename="../texteditor.cpp" line="523"/>
         <source>Note Editor</source>
         <translation>Editor poznámek</translation>
     </message>
@@ -5399,43 +5516,43 @@ Chcete jej přepsat?</translation>
         <translation>Smazat vše</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="368"/>
+        <location filename="../texteditor.cpp" line="369"/>
         <source>Toggle font hint for the whole text</source>
         <comment>Status tip for note menu</comment>
         <translation>Přepnout písmo pro celý text</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="376"/>
+        <location filename="../texteditor.cpp" line="377"/>
         <source>&amp;Richtext</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="377"/>
+        <location filename="../texteditor.cpp" line="379"/>
         <source>Toggle richtext format</source>
         <comment>Status tip for note menu</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="496"/>
+        <location filename="../texteditor.cpp" line="498"/>
         <source>Set fixed font</source>
         <comment>Status tip for note menu</comment>
         <translation>Zvolit písmo s pevnou šířkou</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="502"/>
+        <location filename="../texteditor.cpp" line="504"/>
         <source>Set variable font</source>
         <comment>Status tip for note menu</comment>
         <translation>Zvolit písmo s proměnlivou šířkou</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="508"/>
+        <location filename="../texteditor.cpp" line="510"/>
         <source>Used fixed font by default</source>
         <comment>Status tip for note menu</comment>
         <translation>Používat písmo s pevnou šířkou jako výchozí</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="631"/>
-        <location filename="../texteditor.cpp" line="706"/>
+        <location filename="../texteditor.cpp" line="633"/>
+        <location filename="../texteditor.cpp" line="709"/>
         <source>The file %1
 exists already.
 Do you want to overwrite it?</source>
@@ -5444,13 +5561,13 @@ Do you want to overwrite it?</source>
 Chcete jej přepsat?</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="655"/>
+        <location filename="../texteditor.cpp" line="657"/>
         <source>Couldn&apos;t export note </source>
         <comment>dialog &apos;save note as&apos;</comment>
         <translation>Nepodařilo se vyvést poznámku </translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="740"/>
+        <location filename="../texteditor.cpp" line="742"/>
         <source>Print</source>
         <comment>TextEditor</comment>
         <translation type="unfinished"></translation>
@@ -5484,38 +5601,38 @@ Chcete jej přepsat?</translation>
 <context>
     <name>VymModel</name>
     <message>
-        <location filename="../vymmodel.cpp" line="103"/>
+        <location filename="../vymmodel.cpp" line="105"/>
         <source>unnamed</source>
         <translation type="unfinished">nepojmenovaný</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="373"/>
-        <location filename="../vymmodel.cpp" line="471"/>
-        <location filename="../vymmodel.cpp" line="529"/>
+        <location filename="../vymmodel.cpp" line="371"/>
+        <location filename="../vymmodel.cpp" line="474"/>
+        <location filename="../vymmodel.cpp" line="530"/>
         <source>Critical Parse Error</source>
         <translation type="unfinished">Vážná chyba při zpracování</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="413"/>
-        <location filename="../vymmodel.cpp" line="456"/>
-        <location filename="../vymmodel.cpp" line="628"/>
+        <location filename="../vymmodel.cpp" line="414"/>
+        <location filename="../vymmodel.cpp" line="459"/>
+        <location filename="../vymmodel.cpp" line="631"/>
         <source>Critical Load Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="414"/>
+        <location filename="../vymmodel.cpp" line="415"/>
         <source>Couldn&apos;t create temporary directory before load
 </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="457"/>
+        <location filename="../vymmodel.cpp" line="460"/>
         <source>Couldn&apos;t find a map (*.xml) in .vym archive.
 </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="571"/>
+        <location filename="../vymmodel.cpp" line="574"/>
         <source>The map %1
 did not use the compressed vym file format.
 Writing it uncompressed will also write images 
@@ -5525,93 +5642,93 @@ Do you want to write the map</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="579"/>
+        <location filename="../vymmodel.cpp" line="582"/>
         <source>compressed (vym default)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="580"/>
+        <location filename="../vymmodel.cpp" line="583"/>
         <source>uncompressed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="581"/>
-        <location filename="../vymmodel.cpp" line="773"/>
+        <location filename="../vymmodel.cpp" line="584"/>
+        <location filename="../vymmodel.cpp" line="771"/>
         <source>Cancel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="610"/>
-        <location filename="../vymmodel.cpp" line="615"/>
+        <location filename="../vymmodel.cpp" line="613"/>
+        <location filename="../vymmodel.cpp" line="618"/>
         <source>Save Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="611"/>
+        <location filename="../vymmodel.cpp" line="614"/>
         <source>%1
 could not be removed before saving</source>
         <translation type="unfinished">%1
 se nepodařilo odstranit před uložením</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="616"/>
+        <location filename="../vymmodel.cpp" line="619"/>
         <source>%1
 could not be renamed before saving</source>
         <translation type="unfinished">%1
 se nepodařilo přejmenovat před uložením</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="629"/>
+        <location filename="../vymmodel.cpp" line="632"/>
         <source>Couldn&apos;t create temporary directory before save
 </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="702"/>
-        <location filename="../vymmodel.cpp" line="4693"/>
+        <location filename="../vymmodel.cpp" line="703"/>
+        <location filename="../vymmodel.cpp" line="4999"/>
         <source>Images</source>
         <translation type="unfinished">Obrázky</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="707"/>
+        <location filename="../vymmodel.cpp" line="706"/>
         <source>Load image</source>
         <translation type="unfinished">Nahrát obrázek</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="752"/>
+        <location filename="../vymmodel.cpp" line="750"/>
         <source>Save image</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="765"/>
+        <location filename="../vymmodel.cpp" line="763"/>
         <source>The file %1 exists already.
 Do you want to overwrite it?</source>
         <translation type="unfinished">Soubor %1 již existuje.
 Chcete jej přepsat?</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="772"/>
+        <location filename="../vymmodel.cpp" line="770"/>
         <source>Overwrite</source>
         <translation type="unfinished">Přepsat</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="815"/>
+        <location filename="../vymmodel.cpp" line="813"/>
         <source>Critical Import Error</source>
         <translation type="unfinished">Vážná chyba při zavádění</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="815"/>
+        <location filename="../vymmodel.cpp" line="813"/>
         <source>Cannot find the directory %1</source>
         <translation type="unfinished">Nepodařilo se najít adresář %1</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="865"/>
-        <location filename="../vymmodel.cpp" line="868"/>
+        <location filename="../vymmodel.cpp" line="863"/>
+        <location filename="../vymmodel.cpp" line="866"/>
         <source>Choose directory structure to import</source>
         <translation type="unfinished">Vybrat adresář pro zavedení</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="920"/>
+        <location filename="../vymmodel.cpp" line="918"/>
         <source>The file of the map  on disk has changed:
 
    %1
@@ -5624,90 +5741,106 @@ Do you want to reload that map with the new file?</source>
 Chcete mapu nahrát znovu s novým souborem?</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="927"/>
+        <location filename="../vymmodel.cpp" line="925"/>
         <source>Reload</source>
         <translation type="unfinished">Nahrát znovu</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="928"/>
+        <location filename="../vymmodel.cpp" line="926"/>
         <source>Ignore</source>
         <translation type="unfinished">Nebrat v úvahu</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="1072"/>
+        <location filename="../vymmodel.cpp" line="1069"/>
         <source>Autosave disabled during undo.</source>
         <translation type="unfinished">Automatické ukládání zakázáno během kroku &quot;Zpět&quot;.</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="1676"/>
+        <location filename="../vymmodel.cpp" line="1679"/>
         <source>Note</source>
         <comment>FindAll in VymModel</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="2994"/>
+        <location filename="../vymmodel.cpp" line="3157"/>
         <source>Enter URL:</source>
         <translation type="unfinished">Zadat novou adresu (URL):</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="3009"/>
+        <location filename="../vymmodel.cpp" line="3172"/>
+        <source>HTML</source>
+        <comment>Filedialog</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../vymmodel.cpp" line="3173"/>
         <source>Text</source>
         <comment>Filedialog</comment>
         <translation type="unfinished">Text</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="3010"/>
+        <location filename="../vymmodel.cpp" line="3174"/>
         <source>Spreadsheet</source>
         <comment>Filedialog</comment>
         <translation type="unfinished">Tabulkový dokument</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="3011"/>
+        <location filename="../vymmodel.cpp" line="3175"/>
         <source>Textdocument</source>
         <comment>Filedialog</comment>
         <translation type="unfinished">Textový dokument</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="3012"/>
+        <location filename="../vymmodel.cpp" line="3176"/>
         <source>Images</source>
         <comment>Filedialog</comment>
         <translation type="unfinished">Obrázky</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="3013"/>
-        <location filename="../vymmodel.cpp" line="3015"/>
+        <location filename="../vymmodel.cpp" line="3177"/>
+        <location filename="../vymmodel.cpp" line="3179"/>
         <source>Set URL to a local file</source>
         <translation type="unfinished">Nastavit adresu (URL) k místnímu souboru</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="3083"/>
+        <location filename="../vymmodel.cpp" line="3247"/>
         <source>Contacting Bugzilla...</source>
         <comment>VymModel</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="3119"/>
-        <location filename="../vymmodel.cpp" line="3121"/>
+        <location filename="../vymmodel.cpp" line="3283"/>
+        <location filename="../vymmodel.cpp" line="3285"/>
         <source>Link to another map</source>
         <translation type="unfinished">Odkaz na jinou mapu</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="4338"/>
+        <location filename="../vymmodel.cpp" line="4568"/>
         <source>Export map as image</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="4363"/>
+        <location filename="../vymmodel.cpp" line="4599"/>
+        <source>Export map as PDF</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../vymmodel.cpp" line="4640"/>
+        <source>Export map as SVG</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../vymmodel.cpp" line="4674"/>
         <source>Export XML to directory</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="4385"/>
+        <location filename="../vymmodel.cpp" line="4696"/>
         <source>Critical Export Error</source>
         <translation type="unfinished">Vážná chyba při vyvádění</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="4698"/>
+        <location filename="../vymmodel.cpp" line="5002"/>
         <source>Load background image</source>
         <translation type="unfinished">Nahrát obrázek pozadí</translation>
     </message>
