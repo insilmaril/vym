@@ -1935,7 +1935,7 @@ void Main::setupRecentMapsMenu()
     int numRecentFiles = qMin(files.size(), (int)MaxRecentFiles);
 
     for (int i = 0; i < numRecentFiles; ++i) {
-	QString text = tr("&%1 %2").arg(i + 1).arg(files[i]);
+	QString text = QString("&%1 %2").arg(i + 1).arg(files[i]);
 	recentFileActions[i]->setText(text);
 	recentFileActions[i]->setData(files[i]);
 	recentFileActions[i]->setVisible(true);
@@ -3667,7 +3667,7 @@ void Main::settingsUndoLevels()
     bool ok;
     int i = QInputDialog::getInteger(
 	this, 
-	tr("QInputDialog::getInteger()"),
+	"QInputDialog::getInteger()",
 	tr("Number of undo/redo levels:"), settings.value("/mapeditor/stepsTotal").toInt(), 0, 1000, 1, &ok);
     if (ok)
     {
@@ -3687,7 +3687,7 @@ void Main::settingsAutosaveTime()
     bool ok;
     int i = QInputDialog::getInteger(
 	this, 
-	tr("QInputDialog::getInteger()"),
+	"QInputDialog::getInteger()",
 	tr("Number of seconds before autosave:"), settings.value("/mainwindow/autosave/ms").toInt() / 1000, 10, 60000, 1, &ok);
     if (ok)
 	settings.setValue ("/mainwindow/autosave/ms",i * 1000);

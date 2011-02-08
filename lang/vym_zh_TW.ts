@@ -514,7 +514,7 @@ want to allow this in your system!</source>
     </message>
     <message>
         <source>Close Map</source>
-        <translation>關閉圖譜</translation>
+        <translation type="obsolete">關閉圖譜</translation>
     </message>
     <message>
         <source>&amp;Close Map</source>
@@ -526,7 +526,7 @@ want to allow this in your system!</source>
     </message>
     <message>
         <source>Undo</source>
-        <translation>復原</translation>
+        <translation type="obsolete">復原</translation>
     </message>
     <message>
         <source>&amp;Undo</source>
@@ -534,7 +534,7 @@ want to allow this in your system!</source>
     </message>
     <message>
         <source>Copy</source>
-        <translation>複製</translation>
+        <translation type="obsolete">複製</translation>
     </message>
     <message>
         <source>&amp;Copy</source>
@@ -542,7 +542,7 @@ want to allow this in your system!</source>
     </message>
     <message>
         <source>Cut</source>
-        <translation>剪下</translation>
+        <translation type="obsolete">剪下</translation>
     </message>
     <message>
         <source>Cu&amp;t</source>
@@ -550,7 +550,7 @@ want to allow this in your system!</source>
     </message>
     <message>
         <source>Paste</source>
-        <translation>貼上</translation>
+        <translation type="obsolete">貼上</translation>
     </message>
     <message>
         <source>&amp;Paste</source>
@@ -558,7 +558,7 @@ want to allow this in your system!</source>
     </message>
     <message>
         <source>Move branch up</source>
-        <translation>向上移動分支</translation>
+        <translation type="obsolete">向上移動分支</translation>
     </message>
     <message>
         <source>Move up</source>
@@ -566,7 +566,7 @@ want to allow this in your system!</source>
     </message>
     <message>
         <source>Move branch down</source>
-        <translation>向下移動分支</translation>
+        <translation type="obsolete">向下移動分支</translation>
     </message>
     <message>
         <source>Move down</source>
@@ -574,7 +574,7 @@ want to allow this in your system!</source>
     </message>
     <message>
         <source>Scroll branch</source>
-        <translation>捲曲分支</translation>
+        <translation type="obsolete">捲曲分支</translation>
     </message>
     <message>
         <source>Unscroll all</source>
@@ -586,7 +586,7 @@ want to allow this in your system!</source>
     </message>
     <message>
         <source>Find</source>
-        <translation>尋找</translation>
+        <translation type="obsolete">尋找</translation>
     </message>
     <message>
         <source>Find...</source>
@@ -598,7 +598,7 @@ want to allow this in your system!</source>
     </message>
     <message>
         <source>Edit URL</source>
-        <translation>編輯 URL</translation>
+        <translation type="obsolete">編輯 URL</translation>
     </message>
     <message>
         <source>Edit URL...</source>
@@ -606,7 +606,7 @@ want to allow this in your system!</source>
     </message>
     <message>
         <source>Use heading of selected branch as URL</source>
-        <translation>使用已選取分支的標頭做為 URL</translation>
+        <translation type="obsolete">使用已選取分支的標頭做為 URL</translation>
     </message>
     <message>
         <source>Use heading for URL</source>
@@ -614,7 +614,7 @@ want to allow this in your system!</source>
     </message>
     <message>
         <source>Jump to another vym map, if needed load it first</source>
-        <translation>跳到另外的 vym 圖譜，如果有需要就先載入它</translation>
+        <translation type="obsolete">跳到另外的 vym 圖譜，如果有需要就先載入它</translation>
     </message>
     <message>
         <source>Jump to map</source>
@@ -622,7 +622,7 @@ want to allow this in your system!</source>
     </message>
     <message>
         <source>Edit link to another vym map</source>
-        <translation>編輯到另外 vym 圖譜的連結</translation>
+        <translation type="obsolete">編輯到另外 vym 圖譜的連結</translation>
     </message>
     <message>
         <source>edit Heading</source>
@@ -634,11 +634,11 @@ want to allow this in your system!</source>
     </message>
     <message>
         <source>Delete Selection</source>
-        <translation>刪除選擇</translation>
+        <translation type="obsolete">刪除選擇</translation>
     </message>
     <message>
         <source>Add a branch as child of selection</source>
-        <translation>加入分支做為所選子項</translation>
+        <translation type="obsolete">加入分支做為所選子項</translation>
     </message>
     <message>
         <source>Add branch as child</source>
@@ -646,7 +646,7 @@ want to allow this in your system!</source>
     </message>
     <message>
         <source>Add a branch above selection</source>
-        <translation>在所選之上加入分支</translation>
+        <translation type="obsolete">在所選之上加入分支</translation>
     </message>
     <message>
         <source>Add branch above</source>
@@ -654,7 +654,7 @@ want to allow this in your system!</source>
     </message>
     <message>
         <source>Add a branch below selection</source>
-        <translation>在所選之下加入分支</translation>
+        <translation type="obsolete">在所選之下加入分支</translation>
     </message>
     <message>
         <source>Add branch below</source>
@@ -690,11 +690,11 @@ want to allow this in your system!</source>
     </message>
     <message>
         <source>Add Image</source>
-        <translation>加入圖像</translation>
+        <translation type="obsolete">加入圖像</translation>
     </message>
     <message>
         <source>Set Color</source>
-        <translation>設定顏色</translation>
+        <translation type="obsolete">設定顏色</translation>
     </message>
     <message>
         <source>Set &amp;Color</source>
@@ -703,7 +703,7 @@ want to allow this in your system!</source>
     <message>
         <source>Pick color
 Hint: You can pick a color from another branch and color using CTRL+Left Button</source>
-        <translation>揀取顏色
+        <translation type="obsolete">揀取顏色
 提示：您可以使用 CTRL+Left 按鈕，從另外的分支和顏色去揀取顏色</translation>
     </message>
     <message>
@@ -712,7 +712,7 @@ Hint: You can pick a color from another branch and color using CTRL+Left Button<
     </message>
     <message>
         <source>Color branch</source>
-        <translation>顏色分支</translation>
+        <translation type="obsolete">顏色分支</translation>
     </message>
     <message>
         <source>Color &amp;branch</source>
@@ -720,7 +720,7 @@ Hint: You can pick a color from another branch and color using CTRL+Left Button<
     </message>
     <message>
         <source>Color Subtree</source>
-        <translation>顏色子樹</translation>
+        <translation type="obsolete">顏色子樹</translation>
     </message>
     <message>
         <source>Color sub&amp;tree</source>
@@ -728,7 +728,7 @@ Hint: You can pick a color from another branch and color using CTRL+Left Button<
     </message>
     <message>
         <source>Line</source>
-        <translation>直線</translation>
+        <translation type="obsolete">直線</translation>
     </message>
     <message>
         <source>Linkstyle Line</source>
@@ -740,7 +740,7 @@ Hint: You can pick a color from another branch and color using CTRL+Left Button<
     </message>
     <message>
         <source>PolyLine</source>
-        <translation>多重直線</translation>
+        <translation type="obsolete">多重直線</translation>
     </message>
     <message>
         <source>Linkstyle Thick Line</source>
@@ -748,7 +748,7 @@ Hint: You can pick a color from another branch and color using CTRL+Left Button<
     </message>
     <message>
         <source>PolyParabel</source>
-        <translation>多重拋物線</translation>
+        <translation type="obsolete">多重拋物線</translation>
     </message>
     <message>
         <source>Linkstyle Thick Parabel</source>
@@ -764,7 +764,7 @@ Hint: You can pick a color from another branch and color using CTRL+Left Button<
     </message>
     <message>
         <source>Use same color for links and headings</source>
-        <translation>使用相同顏色做為連結和標頭</translation>
+        <translation type="obsolete">使用相同顏色做為連結和標頭</translation>
     </message>
     <message>
         <source>&amp;Use color of heading for link</source>
@@ -772,7 +772,7 @@ Hint: You can pick a color from another branch and color using CTRL+Left Button<
     </message>
     <message>
         <source>Set Link Color</source>
-        <translation>設定連結顏色</translation>
+        <translation type="obsolete">設定連結顏色</translation>
     </message>
     <message>
         <source>Set &amp;Link Color...</source>
@@ -780,7 +780,7 @@ Hint: You can pick a color from another branch and color using CTRL+Left Button<
     </message>
     <message>
         <source>Set Background Color</source>
-        <translation>設定背景顏色</translation>
+        <translation type="obsolete">設定背景顏色</translation>
     </message>
     <message>
         <source>Set &amp;Background Color</source>
@@ -792,7 +792,7 @@ Hint: You can pick a color from another branch and color using CTRL+Left Button<
     </message>
     <message>
         <source>Zoom reset</source>
-        <translation>重置縮放</translation>
+        <translation type="obsolete">重置縮放</translation>
     </message>
     <message>
         <source>reset Zoom</source>
@@ -800,11 +800,11 @@ Hint: You can pick a color from another branch and color using CTRL+Left Button<
     </message>
     <message>
         <source>Zoom in</source>
-        <translation>放大</translation>
+        <translation type="obsolete">放大</translation>
     </message>
     <message>
         <source>Zoom out</source>
-        <translation>縮小</translation>
+        <translation type="obsolete">縮小</translation>
     </message>
     <message>
         <source>&amp;Next Window</source>
@@ -828,7 +828,7 @@ Hint: You can pick a color from another branch and color using CTRL+Left Button<
     </message>
     <message>
         <source>Set application to open pdf files</source>
-        <translation>設定開啟 pdf 檔案的應用程式</translation>
+        <translation type="obsolete">設定開啟 pdf 檔案的應用程式</translation>
     </message>
     <message>
         <source>Set application to open an URL</source>
@@ -836,15 +836,15 @@ Hint: You can pick a color from another branch and color using CTRL+Left Button<
     </message>
     <message>
         <source>Edit branch after adding it</source>
-        <translation>加入分支之後編輯它</translation>
+        <translation type="obsolete">加入分支之後編輯它</translation>
     </message>
     <message>
         <source>Select branch after adding it</source>
-        <translation>加入分支之後選取它</translation>
+        <translation type="obsolete">加入分支之後選取它</translation>
     </message>
     <message>
         <source>Select heading before editing</source>
-        <translation>編輯標頭之前選取它</translation>
+        <translation type="obsolete">編輯標頭之前選取它</translation>
     </message>
     <message>
         <source>Select existing heading</source>
@@ -864,15 +864,15 @@ Hint: You can pick a color from another branch and color using CTRL+Left Button<
     </message>
     <message>
         <source>Open VYM Documentation (pdf)</source>
-        <translation>開啟 VYM 文件 (pdf)</translation>
+        <translation type="obsolete">開啟 VYM 文件 (pdf)</translation>
     </message>
     <message>
         <source>About VYM</source>
-        <translation>關於 VYM</translation>
+        <translation type="obsolete">關於 VYM</translation>
     </message>
     <message>
         <source>Information about QT toolkit</source>
-        <translation>關於 QT 工具組的資訊</translation>
+        <translation type="obsolete">關於 QT 工具組的資訊</translation>
     </message>
     <message>
         <source>About QT</source>
@@ -928,7 +928,7 @@ Hint: You can pick a color from another branch and color using CTRL+Left Button<
     </message>
     <message>
         <source>Edit Map Info</source>
-        <translation>編輯圖譜資訊</translation>
+        <translation type="obsolete">編輯圖譜資訊</translation>
     </message>
     <message>
         <source>Edit Map Info...</source>
@@ -961,7 +961,7 @@ vym.pdf in various places.</source>
     </message>
     <message>
         <source>Delete link to another vym map</source>
-        <translation>刪除到另外 vym 圖譜的連結</translation>
+        <translation type="obsolete">刪除到另外 vym 圖譜的連結</translation>
     </message>
     <message>
         <source>Edit vym link</source>
@@ -998,15 +998,15 @@ vym.pdf in various places.</source>
     </message>
     <message>
         <source>Add map at selection</source>
-        <translation>於所選處加入圖譜</translation>
+        <translation type="obsolete">於所選處加入圖譜</translation>
     </message>
     <message>
         <source>Replace selection with map</source>
-        <translation>以圖譜置換所選</translation>
+        <translation type="obsolete">以圖譜置換所選</translation>
     </message>
     <message>
         <source>Save selection</source>
-        <translation>儲存所選</translation>
+        <translation type="obsolete">儲存所選</translation>
     </message>
     <message>
         <source>Load vym map</source>
@@ -1031,7 +1031,7 @@ could not be removed before saving</source>
     </message>
     <message>
         <source>Use modifier to color branches</source>
-        <translation>於顏色分支使用修飾鍵</translation>
+        <translation type="obsolete">於顏色分支使用修飾鍵</translation>
     </message>
     <message>
         <source>New map</source>
@@ -1065,7 +1065,7 @@ could not be removed before saving</source>
     </message>
     <message>
         <source>Add a branch by inserting and making selection its child</source>
-        <translation>藉由插入加入分支並選擇它的子項</translation>
+        <translation type="obsolete">藉由插入加入分支並選擇它的子項</translation>
     </message>
     <message>
         <source>Add branch (insert)</source>
@@ -1089,7 +1089,7 @@ could not be removed before saving</source>
     </message>
     <message>
         <source>Use modifier to copy</source>
-        <translation>使用修飾鍵去複製</translation>
+        <translation type="obsolete">使用修飾鍵去複製</translation>
     </message>
     <message>
         <source>Add</source>
@@ -1113,15 +1113,15 @@ could not be removed before saving</source>
     </message>
     <message>
         <source>Use modifier to draw xLinks</source>
-        <translation>使用修飾鍵去繪製 xLinks</translation>
+        <translation type="obsolete">使用修飾鍵去繪製 xLinks</translation>
     </message>
     <message>
         <source>Use exclusive flags in flag toolbars</source>
-        <translation>在旗標工具列中使用互斥旗標</translation>
+        <translation type="obsolete">在旗標工具列中使用互斥旗標</translation>
     </message>
     <message>
         <source>Set application to open external links</source>
-        <translation>設定開啟外部連結的應用程式</translation>
+        <translation type="obsolete">設定開啟外部連結的應用程式</translation>
     </message>
     <message>
         <source>Pasting into new branch</source>
@@ -1133,7 +1133,7 @@ could not be removed before saving</source>
     </message>
     <message>
         <source>Delete key for deleting branches</source>
-        <translation>用於刪除分支的刪除鍵</translation>
+        <translation type="obsolete">用於刪除分支的刪除鍵</translation>
     </message>
     <message>
         <source>Delete key</source>
@@ -1207,7 +1207,7 @@ exists already. Do you want to</source>
     </message>
     <message>
         <source>Exit</source>
-        <translation>離開</translation>
+        <translation type="obsolete">離開</translation>
     </message>
     <message>
         <source>E&amp;xit</source>
@@ -1215,7 +1215,7 @@ exists already. Do you want to</source>
     </message>
     <message>
         <source>Redo</source>
-        <translation>重做</translation>
+        <translation type="obsolete">重做</translation>
     </message>
     <message>
         <source>&amp;Redo</source>
@@ -1243,7 +1243,7 @@ exists already. Do you want to</source>
     </message>
     <message>
         <source>Hide link</source>
-        <translation>隱藏連結</translation>
+        <translation type="obsolete">隱藏連結</translation>
     </message>
     <message>
         <source>Hide link if object is not selected</source>
@@ -1408,7 +1408,7 @@ exists already. Do you want to</source>
     </message>
     <message>
         <source>Hide object in exports</source>
-        <translation>在匯出中隱藏物件</translation>
+        <translation type="obsolete">在匯出中隱藏物件</translation>
     </message>
     <message>
         <source>Hide in exports</source>
@@ -1421,7 +1421,7 @@ exists already. Do you want to</source>
     </message>
     <message>
         <source>Use hide flag during exports </source>
-        <translation>在匯出期間使用隱藏旗標 </translation>
+        <translation type="obsolete">在匯出期間使用隱藏旗標 </translation>
     </message>
     <message>
         <source>Use hide flags</source>
@@ -1429,7 +1429,7 @@ exists already. Do you want to</source>
     </message>
     <message>
         <source>Open URL in new tab</source>
-        <translation>在新頁標中開啟 URL</translation>
+        <translation type="obsolete">在新頁標中開啟 URL</translation>
     </message>
     <message>
         <source>Warning</source>
@@ -1489,7 +1489,7 @@ exists already. Do you want to</source>
     </message>
     <message>
         <source>Firefox Bookmarks</source>
-        <translation>Firefox 書籤</translation>
+        <translation type="obsolete">Firefox 書籤</translation>
     </message>
     <message>
         <source>F&amp;ormat</source>
@@ -1497,7 +1497,7 @@ exists already. Do you want to</source>
     </message>
     <message>
         <source>Show Note Editor</source>
-        <translation>顯示註記編輯器</translation>
+        <translation type="obsolete">顯示註記編輯器</translation>
     </message>
     <message>
         <source>Show history window</source>
@@ -1556,7 +1556,7 @@ exists already. Do you want to</source>
     <message>
         <source>New map</source>
         <comment>Status tip File menu</comment>
-        <translation type="unfinished">新圖譜</translation>
+        <translation type="obsolete">新圖譜</translation>
     </message>
     <message>
         <source>File</source>
@@ -1569,11 +1569,6 @@ exists already. Do you want to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Copy selection to mapcenter of a new map</source>
-        <comment>Status tip File menu</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>&amp;Open...</source>
         <comment>File menu</comment>
         <translation type="unfinished">開啟(&amp;O)…</translation>
@@ -1581,7 +1576,7 @@ exists already. Do you want to</source>
     <message>
         <source>Open</source>
         <comment>Status tip File menu</comment>
-        <translation type="unfinished">開啟</translation>
+        <translation type="obsolete">開啟</translation>
     </message>
     <message>
         <source>Open Recent</source>
@@ -1596,7 +1591,7 @@ exists already. Do you want to</source>
     <message>
         <source>Save</source>
         <comment>Status tip file menu</comment>
-        <translation type="unfinished">儲存</translation>
+        <translation type="obsolete">儲存</translation>
     </message>
     <message>
         <source>Save &amp;As...</source>
@@ -1606,7 +1601,7 @@ exists already. Do you want to</source>
     <message>
         <source>Save &amp;As</source>
         <comment>Status tip file menu</comment>
-        <translation type="unfinished">另存新檔(&amp;A)</translation>
+        <translation type="obsolete">另存新檔(&amp;A)</translation>
     </message>
     <message>
         <source>Import</source>
@@ -1614,45 +1609,14 @@ exists already. Do you want to</source>
         <translation type="unfinished">匯入</translation>
     </message>
     <message>
-        <source>KDE 3 Bookmarks</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Import %1</source>
-        <comment>Status tip file menu</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>KDE 3 bookmarks</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>KDE 4 Bookmarks</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>KDE 4 bookmarks</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Firefox Bookmarks</source>
         <comment>File menu</comment>
-        <translation type="unfinished">Firefox 書籤</translation>
-    </message>
-    <message>
-        <source>Import %1</source>
-        <comment>status tip file menu</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Import Dir%1</source>
-        <comment>File menu</comment>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Firefox 書籤</translation>
     </message>
     <message>
         <source>Import directory structure (experimental)</source>
         <comment>status tip file menu</comment>
-        <translation type="unfinished">匯入目錄結構 (實驗性質)</translation>
+        <translation type="obsolete">匯入目錄結構 (實驗性質)</translation>
     </message>
     <message>
         <source>Export</source>
@@ -1665,28 +1629,9 @@ exists already. Do you want to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Export map as image</source>
-        <comment>status tip file menu</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Export in Open Document Format used e.g. in Open Office </source>
         <comment>status tip file menu</comment>
-        <translation type="unfinished">匯出例如在 OpenOffice.org 使用的開放文件格式</translation>
-    </message>
-    <message>
-        <source>Export as %1</source>
-        <comment>status tip file menu</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source> webpage (HTML)</source>
-        <comment>status tip file menu</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Export as %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">匯出例如在 OpenOffice.org 使用的開放文件格式</translation>
     </message>
     <message>
         <source>KDE 3 Bookmarks</source>
@@ -1701,7 +1646,7 @@ exists already. Do you want to</source>
     <message>
         <source>Print</source>
         <comment>File menu</comment>
-        <translation type="unfinished">列印</translation>
+        <translation type="obsolete">列印</translation>
     </message>
     <message>
         <source>&amp;Close Map</source>
@@ -1828,16 +1773,8 @@ exists already. Do you want to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Expand all branches</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Expand one level</source>
         <comment>Edit menu</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Expand one level in tree editor</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1846,25 +1783,13 @@ exists already. Do you want to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Collapse one level in tree editor</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Collapse unselected levels</source>
         <comment>Edit menu</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Collapse unselected levels in tree editor</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Unscroll children</source>
         <comment>Edit menu</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Unscroll all scrolled branches in selected subtree</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1893,16 +1818,8 @@ exists already. Do you want to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Open all URLs in subtree (including scrolled branches)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Open all URLs in subtree</source>
         <comment>Edit menu</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Open all URLs in subtree</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1916,10 +1833,6 @@ exists already. Do you want to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Edit local URL</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Use heading for URL</source>
         <comment>Edit menu</comment>
         <translation type="unfinished">使用標頭做為 URL</translation>
@@ -1930,16 +1843,8 @@ exists already. Do you want to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Create URL to Novell Bugzilla</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Get data from Novell Bugzilla</source>
         <comment>Edit menu</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Get data from Novell Bugzilla</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1948,16 +1853,8 @@ exists already. Do you want to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Update all Novell bugs in subtree</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Create URL to Novell FATE</source>
         <comment>Edit menu</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Create URL to Novell FATE</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1968,10 +1865,6 @@ exists already. Do you want to</source>
     <message>
         <source>Open all vym links in subtree</source>
         <comment>Edit menu</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Open all vym links in subtree</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1992,10 +1885,6 @@ exists already. Do you want to</source>
     <message>
         <source>Add timestamp</source>
         <comment>Edit menu</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add timestamp</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2021,19 +1910,11 @@ exists already. Do you want to</source>
     <message>
         <source>Remove only branch </source>
         <comment>Edit menu</comment>
-        <translation type="unfinished">只移除分支 </translation>
-    </message>
-    <message>
-        <source>Remove only branch and keep its children</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">只移除分支 </translation>
     </message>
     <message>
         <source>Remove children</source>
         <comment>Edit menu</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove children of branch</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2044,10 +1925,6 @@ exists already. Do you want to</source>
     <message>
         <source>Property window</source>
         <comment>Dialog to edit properties of selection</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Toggle property window to set properties for selection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2107,15 +1984,7 @@ exists already. Do you want to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Set Selection Color</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Set &amp;Background image</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Set Background image</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2144,10 +2013,6 @@ exists already. Do you want to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Show selection</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Editors toolbar</source>
         <comment>Editor Toolbar name</comment>
         <translation type="unfinished"></translation>
@@ -2158,16 +2023,8 @@ exists already. Do you want to</source>
         <translation type="unfinished">顯示註記編輯器</translation>
     </message>
     <message>
-        <source>Toggle Heading editor</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Toggle Tree editor</source>
         <comment>View action</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Toggle tree editor</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2176,16 +2033,8 @@ exists already. Do you want to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Toggle History Window</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Antialiasing</source>
         <comment>View action</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Antialiasing</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2419,16 +2268,8 @@ exists already. Do you want to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Set path for macros</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Set number of undo levels</source>
         <comment>Settings action</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Set number of undo levels</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2437,25 +2278,13 @@ exists already. Do you want to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Autosave</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Autosave time</source>
         <comment>Settings action</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Autosave time</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Write backup file on save</source>
         <comment>Settings action</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Write backup file on save</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2494,26 +2323,13 @@ exists already. Do you want to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>If Note editor is dockable, it is always on top, also when floating</source>
-        <comment>Explanation for note editor handling</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Animation</source>
         <comment>Settings action</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Animation</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Automatic layout</source>
         <comment>Settings action</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Automatic layout</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2546,10 +2362,6 @@ exists already. Do you want to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Open VYM example maps </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>About VYM</source>
         <comment>Help action</comment>
         <translation type="unfinished">關於 VYM</translation>
@@ -2578,10 +2390,6 @@ exists already. Do you want to</source>
         <source>Save image</source>
         <comment>Context action</comment>
         <translation type="unfinished">儲存圖像</translation>
-    </message>
-    <message>
-        <source>&amp;%1 %2</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>unnamed</source>
@@ -2621,10 +2429,6 @@ to confusion when finishing working with vym.Do you want to</source>
     </message>
     <message>
         <source>Directory with vym macros:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>QInputDialog::getInteger()</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2681,18 +2485,8 @@ to confusion when finishing working with vym.Do you want to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Export map as PDF</source>
-        <comment>status tip file menu</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>SVG%1</source>
         <comment>File export menu</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Export map as SVG</source>
-        <comment>status tip file menu</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2705,16 +2499,8 @@ to confusion when finishing working with vym.Do you want to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Grow selection, e.g. make image larger</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Shrink selection</source>
         <comment>Edit menu</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Shrink selection, e.g. make image smaller</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2723,16 +2509,8 @@ to confusion when finishing working with vym.Do you want to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Reset selection size to original</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Toggle target...</source>
         <comment>Edit menu</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Toggle target</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2741,25 +2519,13 @@ to confusion when finishing working with vym.Do you want to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Goto target</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Move to target...</source>
         <comment>Edit menu</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Move to target</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Extract URLs from note</source>
         <comment>Edit menu</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Extract URLs from note</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2775,6 +2541,31 @@ to confusion when finishing working with vym.Do you want to</source>
     <message>
         <source>Follow XLink</source>
         <comment>Context menu name</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>KDE 3 Bookmarks</source>
+        <comment>Import filters</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>KDE 4 Bookmarks</source>
+        <comment>Import filters</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Firefox Bookmarks</source>
+        <comment>Import filters</comment>
+        <translation type="unfinished">Firefox 書籤</translation>
+    </message>
+    <message>
+        <source>Import Dir%1</source>
+        <comment>Import Filters</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove only branch and keep its children </source>
+        <comment>Edit menu</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3464,27 +3255,27 @@ Do you want to overwrite it?</source>
     <message>
         <source>Import</source>
         <comment>Status tip for Note menu</comment>
-        <translation type="unfinished">匯入</translation>
+        <translation type="obsolete">匯入</translation>
     </message>
     <message>
         <source>Export Note (HTML)</source>
         <comment>Status tip for Note menu</comment>
-        <translation type="unfinished">匯出註記 (HTML)</translation>
+        <translation type="obsolete">匯出註記 (HTML)</translation>
     </message>
     <message>
         <source>Export Note As (HTML) </source>
         <comment>Status tip for Note Menu</comment>
-        <translation type="unfinished">匯出註記為 (HTML) </translation>
+        <translation type="obsolete">匯出註記為 (HTML) </translation>
     </message>
     <message>
         <source>Export Note As (ASCII) </source>
         <comment>Status tip for note menu</comment>
-        <translation type="unfinished">匯出註記為 (ASCII) </translation>
+        <translation type="obsolete">匯出註記為 (ASCII) </translation>
     </message>
     <message>
         <source>Print Note</source>
         <comment>Status tip for note menu</comment>
-        <translation type="unfinished">列印註記</translation>
+        <translation type="obsolete">列印註記</translation>
     </message>
     <message>
         <source>Edit Actions</source>
@@ -3493,37 +3284,37 @@ Do you want to overwrite it?</source>
     <message>
         <source>Undo</source>
         <comment>Status tip for note menu</comment>
-        <translation type="unfinished">復原</translation>
+        <translation type="obsolete">復原</translation>
     </message>
     <message>
         <source>Redo</source>
         <comment>Status tip for note menu</comment>
-        <translation type="unfinished">重做</translation>
+        <translation type="obsolete">重做</translation>
     </message>
     <message>
         <source>Select and copy all</source>
         <comment>Status tip for note menu</comment>
-        <translation type="unfinished">全部選取並複製</translation>
+        <translation type="obsolete">全部選取並複製</translation>
     </message>
     <message>
         <source>Copy</source>
         <comment>Status tip for note menu</comment>
-        <translation type="unfinished">複製</translation>
+        <translation type="obsolete">複製</translation>
     </message>
     <message>
         <source>Cut</source>
         <comment>Status tip for note menu</comment>
-        <translation type="unfinished">剪下</translation>
+        <translation type="obsolete">剪下</translation>
     </message>
     <message>
         <source>Paste</source>
         <comment>Status tip for note menu</comment>
-        <translation type="unfinished">貼上</translation>
+        <translation type="obsolete">貼上</translation>
     </message>
     <message>
         <source>Delete all</source>
         <comment>Status tip for note menu</comment>
-        <translation type="unfinished">刪除全部</translation>
+        <translation type="obsolete">刪除全部</translation>
     </message>
     <message>
         <source>Format Actions</source>
@@ -3532,31 +3323,26 @@ Do you want to overwrite it?</source>
     <message>
         <source>Toggle font hint for the whole text</source>
         <comment>Status tip for note menu</comment>
-        <translation type="unfinished">切換整篇文字的字型修飾</translation>
+        <translation type="obsolete">切換整篇文字的字型修飾</translation>
     </message>
     <message>
         <source>&amp;Richtext</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Toggle richtext format</source>
-        <comment>Status tip for note menu</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Set fixed font</source>
         <comment>Status tip for note menu</comment>
-        <translation type="unfinished">設定定寬字型</translation>
+        <translation type="obsolete">設定定寬字型</translation>
     </message>
     <message>
         <source>Set variable font</source>
         <comment>Status tip for note menu</comment>
-        <translation type="unfinished">設定變寬字型</translation>
+        <translation type="obsolete">設定變寬字型</translation>
     </message>
     <message>
         <source>Used fixed font by default</source>
         <comment>Status tip for note menu</comment>
-        <translation type="unfinished">預設使用的定寬字型</translation>
+        <translation type="obsolete">預設使用的定寬字型</translation>
     </message>
     <message>
         <source>The file %1
@@ -3586,16 +3372,8 @@ Do you want to overwrite it?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Select upper object</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Select lower object</source>
         <comment>Tree Editor</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Select lower object</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
