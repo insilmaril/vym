@@ -279,7 +279,7 @@ signals:
     void sortFilterChanged (QString );	    //!< Notify editors of new filter
 
 public:
-    void setHeading(const QString &s, BranchItem *bi=NULL);	    //!< Set heading of item	
+    void setHeading(const QString &);	    //!< Set heading of item	
     QString getHeading ();		    //!< Get heading of item
     void setNote(const QString &s);	    //!< Set note text
     QString getNote();			    //!< Get note text
@@ -378,7 +378,7 @@ public:
 	 0 as child of selection
 	 1 below selection
     */
-    BranchItem* addNewBranch(int pos=0,BranchItem *bi=NULL);	
+    BranchItem* addNewBranch(int pos=0);	
     BranchItem* addNewBranchBefore();	    //!< Insert branch between selection and its parent
     /*! \brief Relink a branch to a new destination dst 
 	Relinks branch to dst at branch position pos. There is no saveState
@@ -428,7 +428,7 @@ public:
     void addFloatImage(const QImage &img);
 
     void colorBranch(QColor);
-    void colorSubtree(QColor,BranchItem *bi=NULL);
+    void colorSubtree(QColor);
     QColor getCurrentHeadingColor();
 
 

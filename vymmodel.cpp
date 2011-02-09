@@ -1508,23 +1508,23 @@ QString VymModel::getSortFilter ()
     return sortFilter;
 }
 
-void VymModel::setHeading(const QString &s, BranchItem *bi) 
+void VymModel::setHeading(const QString &s) 
 {
-    if (!bi) bi=getSelectedBranch();
-    if (bi)
+    BranchItem *selbi=getSelectedBranch();
+    if (selbi->getHeading()==s) return;
+    if (selbi)
     {
-	if (bi->getHeading()==s) return;
 	saveState(
-	    bi,
-	    "setHeading (\""+bi->getHeading()+"\")", 
-	    bi,
+	    selbi,
+	    "setHeading (\""+selbi->getHeading()+"\")", 
+	    selbi,
 	    "setHeading (\""+s+"\")", 
-	    QString("Set heading of %1 to \"%2\"").arg(getObjectName(bi)).arg(s) );
-	bi->setHeading(s );
-	emitDataHasChanged ( bi);	//FIXME-4 maybe emit signal from TreeItem?   //FIXME-3 called 2x ???
+	    QString("Set heading of %1 to \"%2\"").arg(getObjectName(selbi)).arg(s) );
+	selbi->setHeading(s );
+	emitDataHasChanged ( selbi);	//FIXME-4 maybe emit signal from TreeItem?   //FIXME-3 called 2x ???
 	emitUpdateQueries ();
 	reposition();
-	emitDataHasChanged(bi);
+	emitSelectionChanged();
     }
 }
 
@@ -2450,21 +2450,21 @@ BranchItem* VymModel::addNewBranchInt(BranchItem *dst,int num)
     return newbi;
 }   
 
-BranchItem* VymModel::addNewBranch(int pos,BranchItem *bi)
+BranchItem* VymModel::addNewBranch(int pos)
 {
     // Different meaning than num in addNewBranchInt!
     // -1   add above
     //  0   add as child
     // +1   add below
     BranchItem *newbi=NULL;
-    if (!bi) bi=getSelectedBranch();
+    BranchItem *selbi=getSelectedBranch();
 
-    if (bi)
+    if (selbi)
     {
 	// FIXME-3 setCursor (Qt::ArrowCursor);  //Still needed?
 
-	QString redosel=getSelectString(bi);
-	newbi=addNewBranchInt (bi,pos-2);
+	QString redosel=getSelectString(selbi);
+	newbi=addNewBranchInt (selbi,pos-2);
 	QString undosel=getSelectString(newbi);
 
 	if (newbi)
@@ -2474,7 +2474,7 @@ BranchItem* VymModel::addNewBranch(int pos,BranchItem *bi)
 		"delete ()",
 		redosel,
 		QString ("addBranch (%1)").arg(pos),
-		QString ("Add new branch to %1").arg(getObjectName(bi)));	
+		QString ("Add new branch to %1").arg(getObjectName(selbi)));	
 
 	    reposition();
 	    // emitSelectionChanged(); FIXME-3
@@ -3083,24 +3083,24 @@ void VymModel::colorBranch (QColor c)
     }
 }
 
-void VymModel::colorSubtree (QColor c, BranchItem *bi) 
+void VymModel::colorSubtree (QColor c) 
 {
-    if (!bi) bi=getSelectedBranch();
-    if (bi)
+    BranchItem *selbi=getSelectedBranch();
+    if (selbi)
     {
 	saveStateChangingPart(
-	    bi,
-	    bi,
+	    selbi,
+	    selbi,
 	    QString ("colorSubtree (\"%1\")").arg(c.name()),
-	    QString ("Set color of %1 and children to %2").arg(getObjectName(bi)).arg(c.name())
+	    QString ("Set color of %1 and children to %2").arg(getObjectName(selbi)).arg(c.name())
 	);  
 	BranchItem *prev=NULL;
-	BranchItem *cur=bi;
+	BranchItem *cur=selbi;
 	while (cur) 
 	{
 	    cur->setHeadingColor(c); // color links, color children
 	    emitDataHasChanged (cur);
-	    cur=nextBranch (cur,prev,true,bi);
+	    cur=nextBranch (cur,prev,true,selbi);
 	}   
     mapEditor->getScene()->update();
     }

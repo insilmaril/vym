@@ -1534,6 +1534,11 @@ exists already. Do you want to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Loading maps</source>
+        <comment>Mainwindow</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>&amp;Map</source>
         <comment>Toolbar for file actions</comment>
         <translation type="unfinished"></translation>
@@ -2561,11 +2566,6 @@ to confusion when finishing working with vym.Do you want to</source>
     <message>
         <source>Remove only branch and keep its children </source>
         <comment>Edit menu</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Loading: %1</source>
-        <comment>Progress dialog while loading maps</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>

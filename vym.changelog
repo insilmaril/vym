@@ -1,16 +1,4 @@
 -------------------------------------------------------------------
-Wed Feb  9 08:46:22 CET 2011 - vym@insilmaril.de
-
-- Version 1.13.25
-- Bugfix: Don't select while updating Bugzilla links automatically
-
--------------------------------------------------------------------
-Mon Feb  7 14:37:00 CET 2011 - vym@insilmaril.de
-
-- Version 1.13.24
-- Feature: German translation
-
--------------------------------------------------------------------
 Mon Feb  7 14:37:00 CET 2011 - vym@insilmaril.de
 
 - Version 1.13.23
