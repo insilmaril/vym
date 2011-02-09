@@ -1081,9 +1081,9 @@ Tipp: Zum Kopieren einer Farbe kann man auch CTRL+linke Maustaste nehmen.</trans
         <translation type="obsolete">pdf-Dateien öffnen mit...</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2898"/>
-        <location filename="../mainwindow.cpp" line="2973"/>
-        <location filename="../mainwindow.cpp" line="3643"/>
+        <location filename="../mainwindow.cpp" line="2899"/>
+        <location filename="../mainwindow.cpp" line="2974"/>
+        <location filename="../mainwindow.cpp" line="3644"/>
         <source>Set application to open an URL</source>
         <translation>URLs öffnen mit...</translation>
     </message>
@@ -1193,14 +1193,14 @@ exists already. Do you want to</source>
         <translation type="obsolete">gibt es bereits. Wollen Sie sie</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2351"/>
+        <location filename="../mainwindow.cpp" line="2352"/>
         <source>Overwrite</source>
         <translation>Überschreiben</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2106"/>
         <location filename="../mainwindow.cpp" line="2155"/>
-        <location filename="../mainwindow.cpp" line="2352"/>
+        <location filename="../mainwindow.cpp" line="2353"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
@@ -1213,7 +1213,7 @@ exists already. Do you want to</source>
         <translation type="obsolete">Datei gespeichert: </translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2309"/>
+        <location filename="../mainwindow.cpp" line="2310"/>
         <source>Couldn&apos;t save </source>
         <translation>Diese Datei konnte nicht gespeichert werden: </translation>
     </message>
@@ -1226,12 +1226,12 @@ exists already. Do you want to</source>
         <translation type="obsolete">wurde verändert aber noch nicht gespeichert. Wollen Sie</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2683"/>
+        <location filename="../mainwindow.cpp" line="2684"/>
         <source>Save modified map before closing it</source>
         <translation>Speichern und Map schliessen</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2684"/>
+        <location filename="../mainwindow.cpp" line="2685"/>
         <source>Discard changes</source>
         <translation>Änderungen verwerfen</translation>
     </message>
@@ -1244,7 +1244,7 @@ exists already. Do you want to</source>
         <translation type="obsolete">Speichern</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3106"/>
+        <location filename="../mainwindow.cpp" line="3107"/>
         <source>Critical Error</source>
         <translation>Kritischer Fehler</translation>
     </message>
@@ -1318,7 +1318,7 @@ kann beim Beenden von vym zu Problemen führen. Wollen Sie</translation>
         <translation type="obsolete">Exportiere XML in Verzeichnis</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="4253"/>
+        <location filename="../mainwindow.cpp" line="4254"/>
         <source>Critcal error</source>
         <translation>Kritischer Fehler</translation>
     </message>
@@ -1419,7 +1419,7 @@ und dabei evtl. andere Daten im Verzeichnis überschrieben</translation>
         <translation type="obsolete">Gespeichert: </translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3675"/>
+        <location filename="../mainwindow.cpp" line="3676"/>
         <source>VYM -Information:</source>
         <translation>vym-Information:</translation>
     </message>
@@ -1484,17 +1484,17 @@ Wollen Sie die Map beim Schreiben</translation>
         <translation type="obsolete">Auswahl speichern</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2227"/>
+        <location filename="../mainwindow.cpp" line="2228"/>
         <source>Load vym map</source>
         <translation>Lade vym Map</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2230"/>
+        <location filename="../mainwindow.cpp" line="2231"/>
         <source>Import: Add vym map to selection</source>
         <translation>Import: Füge Map zu Auswahl hinzu</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2233"/>
+        <location filename="../mainwindow.cpp" line="2234"/>
         <source>Import: Replace selection with vym map</source>
         <translation>Import: Ersetze Auswahl mit Map</translation>
     </message>
@@ -1661,19 +1661,19 @@ Wollen Sie
 </translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2304"/>
+        <location filename="../mainwindow.cpp" line="2305"/>
         <source>Saved  %1</source>
         <translation>%1 gespeichert</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2346"/>
+        <location filename="../mainwindow.cpp" line="2347"/>
         <source>The file %1
 exists already. Do you want to</source>
         <translation>Die Datei %1 gibt es bereits.
 Wollen Sie sie überschreiben?</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2678"/>
+        <location filename="../mainwindow.cpp" line="2679"/>
         <source>The map %1 has been modified but not saved yet. Do you want to</source>
         <translation>Die Map %1 wurde geändert,
 aber noch nicht gespeichert. Wollen Sie </translation>
@@ -1683,7 +1683,7 @@ aber noch nicht gespeichert. Wollen Sie </translation>
         <translation type="obsolete">Kein Treffer gefunden für &lt;b&gt;%1&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3107"/>
+        <location filename="../mainwindow.cpp" line="3108"/>
         <source>Couldn&apos;t open map %1</source>
         <translation>Konnte die Map %1 nicht öffnen</translation>
     </message>
@@ -1874,8 +1874,8 @@ aber noch nicht gespeichert. Wollen Sie </translation>
         <translation type="obsolete">Exportiere als Bild</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2420"/>
-        <location filename="../mainwindow.cpp" line="2482"/>
+        <location filename="../mainwindow.cpp" line="2421"/>
+        <location filename="../mainwindow.cpp" line="2483"/>
         <source>Import</source>
         <translation>Importieren</translation>
     </message>
@@ -1904,14 +1904,14 @@ aber noch nicht gespeichert. Wollen Sie </translation>
         <translation type="obsolete">Exportiere als ASCII</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2560"/>
-        <location filename="../mainwindow.cpp" line="2579"/>
-        <location filename="../mainwindow.cpp" line="2618"/>
+        <location filename="../mainwindow.cpp" line="2561"/>
+        <location filename="../mainwindow.cpp" line="2580"/>
+        <location filename="../mainwindow.cpp" line="2619"/>
         <source>(still experimental)</source>
         <translation>(noch experimentelle Funktion)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2579"/>
+        <location filename="../mainwindow.cpp" line="2580"/>
         <source>Export as LaTeX</source>
         <translation>Exportiere als LaTeX Datei</translation>
     </message>
@@ -1937,9 +1937,9 @@ aber noch nicht gespeichert. Wollen Sie </translation>
         <translation type="obsolete">Exportieren als</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2618"/>
-        <location filename="../mainwindow.cpp" line="2632"/>
-        <location filename="../mainwindow.cpp" line="2638"/>
+        <location filename="../mainwindow.cpp" line="2619"/>
+        <location filename="../mainwindow.cpp" line="2633"/>
+        <location filename="../mainwindow.cpp" line="2639"/>
         <source>Export to</source>
         <translation>Exportieren als</translation>
     </message>
@@ -1969,41 +1969,41 @@ aber noch nicht gespeichert. Wollen Sie </translation>
         <translation type="obsolete">URL in neuen Tab öffnen</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2659"/>
-        <location filename="../mainwindow.cpp" line="2896"/>
-        <location filename="../mainwindow.cpp" line="2929"/>
-        <location filename="../mainwindow.cpp" line="2943"/>
-        <location filename="../mainwindow.cpp" line="2948"/>
-        <location filename="../mainwindow.cpp" line="2971"/>
-        <location filename="../mainwindow.cpp" line="4266"/>
-        <location filename="../mainwindow.cpp" line="4336"/>
-        <source>Warning</source>
-        <translation>Warnung</translation>
-    </message>
-    <message>
+        <location filename="../mainwindow.cpp" line="2660"/>
         <location filename="../mainwindow.cpp" line="2897"/>
+        <location filename="../mainwindow.cpp" line="2930"/>
+        <location filename="../mainwindow.cpp" line="2944"/>
+        <location filename="../mainwindow.cpp" line="2949"/>
         <location filename="../mainwindow.cpp" line="2972"/>
         <location filename="../mainwindow.cpp" line="4267"/>
-        <source>Couldn&apos;t find a viewer to open %1.
-</source>
-        <translation>Konnte kein Programm zum Öffnen von %1 finden.</translation>
+        <location filename="../mainwindow.cpp" line="4337"/>
+        <source>Warning</source>
+        <translation>Warnung</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2898"/>
         <location filename="../mainwindow.cpp" line="2973"/>
         <location filename="../mainwindow.cpp" line="4268"/>
-        <location filename="../mainwindow.cpp" line="4338"/>
+        <source>Couldn&apos;t find a viewer to open %1.
+</source>
+        <translation>Konnte kein Programm zum Öffnen von %1 finden.</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2899"/>
+        <location filename="../mainwindow.cpp" line="2974"/>
+        <location filename="../mainwindow.cpp" line="4269"/>
+        <location filename="../mainwindow.cpp" line="4339"/>
         <source>Please use Settings-&gt;</source>
         <translation>Bitte setzen sie einen Pfad in Einstellungen-&gt;</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2930"/>
+        <location filename="../mainwindow.cpp" line="2931"/>
         <source>Couldn&apos;t start %1 to open a new tab in %2.</source>
         <translation>Konnte %1 nicht starten um einen neuen Tab mit %2 zu öffnen.</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3629"/>
-        <location filename="../mainwindow.cpp" line="4268"/>
+        <location filename="../mainwindow.cpp" line="3630"/>
+        <location filename="../mainwindow.cpp" line="4269"/>
         <source>Set application to open PDF files</source>
         <translation>PDFs öffnen mit</translation>
     </message>
@@ -2030,10 +2030,9 @@ aber noch nicht gespeichert. Wollen Sie </translation>
         <translation>Liste der Suchergebnisse</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="272"/>
         <source>Loading maps</source>
         <comment>Mainwindow</comment>
-        <translation>Lade maps</translation>
+        <translation type="obsolete">Lade maps</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="409"/>
@@ -2558,13 +2557,13 @@ aber noch nicht gespeichert. Wollen Sie </translation>
         <translation type="obsolete">Zeige Verlaufsfenster</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2418"/>
-        <location filename="../mainwindow.cpp" line="2420"/>
+        <location filename="../mainwindow.cpp" line="2419"/>
+        <location filename="../mainwindow.cpp" line="2421"/>
         <source>Bookmarks</source>
         <translation>Lesezeichen</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2944"/>
+        <location filename="../mainwindow.cpp" line="2945"/>
         <source>Couldn&apos;t start %1 to open a new tab</source>
         <translation>Konnte %1 nicht starten um einen neuen Tab zu öffnen.</translation>
     </message>
@@ -2597,7 +2596,7 @@ aber noch nicht gespeichert. Wollen Sie </translation>
         <translation type="obsolete">XLink folgen</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2660"/>
+        <location filename="../mainwindow.cpp" line="2661"/>
         <source>Couldn&apos;t find configuration for export to Open Office
 </source>
         <translation>Konnte keine EInstellungen zum Export nach Open Office finden
@@ -3752,23 +3751,29 @@ Riskieren Sie es dessen Inhalt zu überschreiben?</translation>
         <translation>unbenannt</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2449"/>
+        <location filename="../mainwindow.cpp" line="2182"/>
+        <source>Loading: %1</source>
+        <comment>Progress dialog while loading maps</comment>
+        <translation>Lade: %1</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2450"/>
         <source>Load Freemind map</source>
         <translation>Lade Freemind map</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2560"/>
+        <location filename="../mainwindow.cpp" line="2561"/>
         <source>Export as CSV</source>
         <translation>Exportiere als CSV</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2949"/>
+        <location filename="../mainwindow.cpp" line="2950"/>
         <source>Sorry, currently only Konqueror supports integrated tabbed browsing.</source>
         <comment>Mainwindow, open URL</comment>
         <translation>Sorry, im Moment unterstützen nur Konqueror und Mozilla tabbed browsing.</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2950"/>
+        <location filename="../mainwindow.cpp" line="2951"/>
         <source>Currently vym is using %1 to open external links.
 (Change in Settings menu)</source>
         <comment>Mainwindow, open URL</comment>
@@ -3776,7 +3781,7 @@ Riskieren Sie es dessen Inhalt zu überschreiben?</translation>
 (Ändern im Einstellungs Menu)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3178"/>
+        <location filename="../mainwindow.cpp" line="3179"/>
         <source>%1 items on map
 </source>
         <comment>Info about map</comment>
@@ -3784,70 +3789,70 @@ Riskieren Sie es dessen Inhalt zu überschreiben?</translation>
 </translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3658"/>
+        <location filename="../mainwindow.cpp" line="3659"/>
         <source>Directory with vym macros:</source>
         <translation>Verzeichnis mit vym Makros</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3671"/>
+        <location filename="../mainwindow.cpp" line="3672"/>
         <source>Number of undo/redo levels:</source>
         <translation>Anzahl der Rückgängig Aktionen</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3676"/>
+        <location filename="../mainwindow.cpp" line="3677"/>
         <source>Settings have been changed. The next map opened will have &quot;%1&quot; undo/redo levels</source>
         <translation>Die Einstellungen wurden geändert. Die nächste geöffnete Map
 wird %1 Rückgängig Schritte haben.</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3691"/>
+        <location filename="../mainwindow.cpp" line="3692"/>
         <source>Number of seconds before autosave:</source>
         <translation>Anzahl der Sekunden vor automatischem Speichern</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3709"/>
+        <location filename="../mainwindow.cpp" line="3710"/>
         <source>Information</source>
         <translation>Information</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3710"/>
+        <location filename="../mainwindow.cpp" line="3711"/>
         <source>Changed settings will be applied after restarting vym</source>
         <translation>Änderungen werden nach einem Neustart von vym übernommen</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3915"/>
+        <location filename="../mainwindow.cpp" line="3916"/>
         <source>History for %1</source>
         <comment>Window Caption</comment>
         <translation>Verlauf von %1</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3961"/>
-        <location filename="../mainwindow.cpp" line="3966"/>
+        <location filename="../mainwindow.cpp" line="3962"/>
+        <location filename="../mainwindow.cpp" line="3967"/>
         <source>Export in last used format (%1)</source>
         <comment>status tip</comment>
         <translation>Exporte im zuletzt benutztem Format</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="4254"/>
+        <location filename="../mainwindow.cpp" line="4255"/>
         <source>Couldn&apos;t find the documentation %1 in:
 %2</source>
         <translation>Konnte die Dokumentation %1 nicht finden in
 %2</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="4289"/>
+        <location filename="../mainwindow.cpp" line="4290"/>
         <source>Load vym example map</source>
         <translation>Lade vym Beispiel Map</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="4337"/>
+        <location filename="../mainwindow.cpp" line="4338"/>
         <source>Couldn&apos;t find a macro at  %1.
 </source>
         <translation>Konnte Makro nicht finden in
 %1</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="4338"/>
+        <location filename="../mainwindow.cpp" line="4339"/>
         <source>Set directory for vym macros</source>
         <translation>Verzeichnis für vym Makros</translation>
     </message>

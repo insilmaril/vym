@@ -883,14 +883,14 @@ Hint: You can pick a color from another branch and color using CTRL+Left Button<
         <translation type="obsolete">关于 QT 工具包的信息</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2351"/>
+        <location filename="../mainwindow.cpp" line="2352"/>
         <source>Overwrite</source>
         <translation>覆盖</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2106"/>
         <location filename="../mainwindow.cpp" line="2155"/>
-        <location filename="../mainwindow.cpp" line="2352"/>
+        <location filename="../mainwindow.cpp" line="2353"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
@@ -915,17 +915,17 @@ Hint: You can pick a color from another branch and color using CTRL+Left Button<
 </translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2227"/>
+        <location filename="../mainwindow.cpp" line="2228"/>
         <source>Load vym map</source>
         <translation>载入 vym 导图</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2230"/>
+        <location filename="../mainwindow.cpp" line="2231"/>
         <source>Import: Add vym map to selection</source>
         <translation>导入：将 vym 导图添加至选中项</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2233"/>
+        <location filename="../mainwindow.cpp" line="2234"/>
         <source>Import: Replace selection with vym map</source>
         <translation>导入：将选中项替换为 vym 导图</translation>
     </message>
@@ -952,12 +952,12 @@ could not be removed before saving</source>
         <translation type="obsolete">导出 XML 至目录</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2683"/>
+        <location filename="../mainwindow.cpp" line="2684"/>
         <source>Save modified map before closing it</source>
         <translation>关闭前保存已修改的导图</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2684"/>
+        <location filename="../mainwindow.cpp" line="2685"/>
         <source>Discard changes</source>
         <translation>丢弃修改</translation>
     </message>
@@ -970,17 +970,17 @@ could not be removed before saving</source>
         <translation type="obsolete">保存导图</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3675"/>
+        <location filename="../mainwindow.cpp" line="3676"/>
         <source>VYM -Information:</source>
         <translation>VYM - 信息：</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3106"/>
+        <location filename="../mainwindow.cpp" line="3107"/>
         <source>Critical Error</source>
         <translation>严重错误</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="4253"/>
+        <location filename="../mainwindow.cpp" line="4254"/>
         <source>Critcal error</source>
         <translation>严重错误</translation>
     </message>
@@ -1059,29 +1059,29 @@ Do you want to write the map</source>
 您希望写入导图吗</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2304"/>
+        <location filename="../mainwindow.cpp" line="2305"/>
         <source>Saved  %1</source>
         <translation>已保存	%1</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2309"/>
+        <location filename="../mainwindow.cpp" line="2310"/>
         <source>Couldn&apos;t save </source>
         <translation>无法保存	</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2346"/>
+        <location filename="../mainwindow.cpp" line="2347"/>
         <source>The file %1
 exists already. Do you want to</source>
         <translation>文件 %1
 已存在。您希望</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2678"/>
+        <location filename="../mainwindow.cpp" line="2679"/>
         <source>The map %1 has been modified but not saved yet. Do you want to</source>
         <translation>导图 %1 已更改但尚未保存。您希望</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3107"/>
+        <location filename="../mainwindow.cpp" line="3108"/>
         <source>Couldn&apos;t open map %1</source>
         <translation>无法打开导图 %1</translation>
     </message>
@@ -1232,8 +1232,8 @@ exists already. Do you want to</source>
         <translation type="obsolete">关于 VYM</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2420"/>
-        <location filename="../mainwindow.cpp" line="2482"/>
+        <location filename="../mainwindow.cpp" line="2421"/>
+        <location filename="../mainwindow.cpp" line="2483"/>
         <source>Import</source>
         <translation>导入</translation>
     </message>
@@ -1246,14 +1246,14 @@ exists already. Do you want to</source>
         <translation type="obsolete">导出为 ASCII</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2560"/>
-        <location filename="../mainwindow.cpp" line="2579"/>
-        <location filename="../mainwindow.cpp" line="2618"/>
+        <location filename="../mainwindow.cpp" line="2561"/>
+        <location filename="../mainwindow.cpp" line="2580"/>
+        <location filename="../mainwindow.cpp" line="2619"/>
         <source>(still experimental)</source>
         <translation>(仍处于试验阶段)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2579"/>
+        <location filename="../mainwindow.cpp" line="2580"/>
         <source>Export as LaTeX</source>
         <translation>导出为 LaTeX</translation>
     </message>
@@ -1263,9 +1263,9 @@ exists already. Do you want to</source>
         <translation>打印(&amp;P)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2618"/>
-        <location filename="../mainwindow.cpp" line="2632"/>
-        <location filename="../mainwindow.cpp" line="2638"/>
+        <location filename="../mainwindow.cpp" line="2619"/>
+        <location filename="../mainwindow.cpp" line="2633"/>
+        <location filename="../mainwindow.cpp" line="2639"/>
         <source>Export to</source>
         <translation>导出至</translation>
     </message>
@@ -1300,12 +1300,6 @@ exists already. Do you want to</source>
         <location filename="../mainwindow.cpp" line="160"/>
         <source>Search results list</source>
         <comment>FindResultWidget</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="272"/>
-        <source>Loading maps</source>
-        <comment>Mainwindow</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1729,69 +1723,75 @@ exists already. Do you want to</source>
         <translation type="unfinished">未命名</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2659"/>
-        <location filename="../mainwindow.cpp" line="2896"/>
-        <location filename="../mainwindow.cpp" line="2929"/>
-        <location filename="../mainwindow.cpp" line="2943"/>
-        <location filename="../mainwindow.cpp" line="2948"/>
-        <location filename="../mainwindow.cpp" line="2971"/>
-        <location filename="../mainwindow.cpp" line="4266"/>
-        <location filename="../mainwindow.cpp" line="4336"/>
+        <location filename="../mainwindow.cpp" line="2182"/>
+        <source>Loading: %1</source>
+        <comment>Progress dialog while loading maps</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2660"/>
+        <location filename="../mainwindow.cpp" line="2897"/>
+        <location filename="../mainwindow.cpp" line="2930"/>
+        <location filename="../mainwindow.cpp" line="2944"/>
+        <location filename="../mainwindow.cpp" line="2949"/>
+        <location filename="../mainwindow.cpp" line="2972"/>
+        <location filename="../mainwindow.cpp" line="4267"/>
+        <location filename="../mainwindow.cpp" line="4337"/>
         <source>Warning</source>
         <translation>警告</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2897"/>
-        <location filename="../mainwindow.cpp" line="2972"/>
-        <location filename="../mainwindow.cpp" line="4267"/>
+        <location filename="../mainwindow.cpp" line="2898"/>
+        <location filename="../mainwindow.cpp" line="2973"/>
+        <location filename="../mainwindow.cpp" line="4268"/>
         <source>Couldn&apos;t find a viewer to open %1.
 </source>
         <translation>无法找到阅读器以打开 %1。
 </translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2898"/>
-        <location filename="../mainwindow.cpp" line="2973"/>
-        <location filename="../mainwindow.cpp" line="4268"/>
-        <location filename="../mainwindow.cpp" line="4338"/>
+        <location filename="../mainwindow.cpp" line="2899"/>
+        <location filename="../mainwindow.cpp" line="2974"/>
+        <location filename="../mainwindow.cpp" line="4269"/>
+        <location filename="../mainwindow.cpp" line="4339"/>
         <source>Please use Settings-&gt;</source>
         <translation>请使用 &quot;设置&quot;-&gt;</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2898"/>
-        <location filename="../mainwindow.cpp" line="2973"/>
-        <location filename="../mainwindow.cpp" line="3643"/>
+        <location filename="../mainwindow.cpp" line="2899"/>
+        <location filename="../mainwindow.cpp" line="2974"/>
+        <location filename="../mainwindow.cpp" line="3644"/>
         <source>Set application to open an URL</source>
         <translation>设置用于打开 URL 的应用程序</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2930"/>
+        <location filename="../mainwindow.cpp" line="2931"/>
         <source>Couldn&apos;t start %1 to open a new tab in %2.</source>
         <translation>无法在 %2 中启动 %1 以打开一个新标签。</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2949"/>
+        <location filename="../mainwindow.cpp" line="2950"/>
         <source>Sorry, currently only Konqueror supports integrated tabbed browsing.</source>
         <comment>Mainwindow, open URL</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2950"/>
+        <location filename="../mainwindow.cpp" line="2951"/>
         <source>Currently vym is using %1 to open external links.
 (Change in Settings menu)</source>
         <comment>Mainwindow, open URL</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3178"/>
+        <location filename="../mainwindow.cpp" line="3179"/>
         <source>%1 items on map
 </source>
         <comment>Info about map</comment>
         <translation type="unfinished">在导图上的 %1 条目</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3629"/>
-        <location filename="../mainwindow.cpp" line="4268"/>
+        <location filename="../mainwindow.cpp" line="3630"/>
+        <location filename="../mainwindow.cpp" line="4269"/>
         <source>Set application to open PDF files</source>
         <translation>设置用于打开 pdf 文件的应用程序</translation>
     </message>
@@ -1880,13 +1880,13 @@ exists already. Do you want to</source>
         <translation type="obsolete">显示历史窗口</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2418"/>
-        <location filename="../mainwindow.cpp" line="2420"/>
+        <location filename="../mainwindow.cpp" line="2419"/>
+        <location filename="../mainwindow.cpp" line="2421"/>
         <source>Bookmarks</source>
         <translation>书签</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2944"/>
+        <location filename="../mainwindow.cpp" line="2945"/>
         <source>Couldn&apos;t start %1 to open a new tab</source>
         <translation>无法启动 %1 以打开一个新标签。</translation>
     </message>
@@ -1900,7 +1900,7 @@ exists already. Do you want to</source>
         <translation type="obsolete">标记工具栏</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2660"/>
+        <location filename="../mainwindow.cpp" line="2661"/>
         <source>Couldn&apos;t find configuration for export to Open Office
 </source>
         <translation>无法找到配置以导出成 OpenOffice.org
@@ -2989,17 +2989,17 @@ Do you risk to overwrite its contents?</source>
         <translation type="obsolete">&amp;%1 %2</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2449"/>
+        <location filename="../mainwindow.cpp" line="2450"/>
         <source>Load Freemind map</source>
         <translation>导入 Freemid 导图</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2560"/>
+        <location filename="../mainwindow.cpp" line="2561"/>
         <source>Export as CSV</source>
         <translation>导出为 CSV</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3658"/>
+        <location filename="../mainwindow.cpp" line="3659"/>
         <source>Directory with vym macros:</source>
         <translation>vym宏的目录:</translation>
     </message>
@@ -3008,64 +3008,64 @@ Do you risk to overwrite its contents?</source>
         <translation type="obsolete">QInputDialog::getInteger()</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3671"/>
+        <location filename="../mainwindow.cpp" line="3672"/>
         <source>Number of undo/redo levels:</source>
         <translation>撤消级别 :</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3676"/>
+        <location filename="../mainwindow.cpp" line="3677"/>
         <source>Settings have been changed. The next map opened will have &quot;%1&quot; undo/redo levels</source>
         <translation>设置已更改。下一个导图将有 %1 个撤消级别</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3691"/>
+        <location filename="../mainwindow.cpp" line="3692"/>
         <source>Number of seconds before autosave:</source>
         <translation>自动保存的秒数:</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3709"/>
+        <location filename="../mainwindow.cpp" line="3710"/>
         <source>Information</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3710"/>
+        <location filename="../mainwindow.cpp" line="3711"/>
         <source>Changed settings will be applied after restarting vym</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3915"/>
+        <location filename="../mainwindow.cpp" line="3916"/>
         <source>History for %1</source>
         <comment>Window Caption</comment>
         <translation>%1 的历史</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3961"/>
-        <location filename="../mainwindow.cpp" line="3966"/>
+        <location filename="../mainwindow.cpp" line="3962"/>
+        <location filename="../mainwindow.cpp" line="3967"/>
         <source>Export in last used format (%1)</source>
         <comment>status tip</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="4254"/>
+        <location filename="../mainwindow.cpp" line="4255"/>
         <source>Couldn&apos;t find the documentation %1 in:
 %2</source>
         <translation>在:
 %2 中找不到%1 的文档 </translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="4289"/>
+        <location filename="../mainwindow.cpp" line="4290"/>
         <source>Load vym example map</source>
         <translation>载入 vym 例子导图</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="4337"/>
+        <location filename="../mainwindow.cpp" line="4338"/>
         <source>Couldn&apos;t find a macro at  %1.
 </source>
         <translation>在 %1 不能找到宏
 </translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="4338"/>
+        <location filename="../mainwindow.cpp" line="4339"/>
         <source>Set directory for vym macros</source>
         <translation>设置宏目录</translation>
     </message>

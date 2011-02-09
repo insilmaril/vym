@@ -1099,9 +1099,9 @@ Rada: Pro kopírování barvy lze využít také CTRL+levé tlačítko myši.</t
         <translation type="obsolete">Nastavit program pro otevírání souborů PDF</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2898"/>
-        <location filename="../mainwindow.cpp" line="2973"/>
-        <location filename="../mainwindow.cpp" line="3643"/>
+        <location filename="../mainwindow.cpp" line="2899"/>
+        <location filename="../mainwindow.cpp" line="2974"/>
+        <location filename="../mainwindow.cpp" line="3644"/>
         <source>Set application to open an URL</source>
         <translation>Nastavit program pro otevírání adres (URL)</translation>
     </message>
@@ -1211,14 +1211,14 @@ exists already. Do you want to</source>
         <translation type="obsolete">gibt es bereits. Wollen Sie sie</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2351"/>
+        <location filename="../mainwindow.cpp" line="2352"/>
         <source>Overwrite</source>
         <translation>Přepsat</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2106"/>
         <location filename="../mainwindow.cpp" line="2155"/>
-        <location filename="../mainwindow.cpp" line="2352"/>
+        <location filename="../mainwindow.cpp" line="2353"/>
         <source>Cancel</source>
         <translation>Zrušit</translation>
     </message>
@@ -1231,7 +1231,7 @@ exists already. Do you want to</source>
         <translation type="obsolete">Datei gespeichert: </translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2309"/>
+        <location filename="../mainwindow.cpp" line="2310"/>
         <source>Couldn&apos;t save </source>
         <translation>Tento soubor se nepodařilo uložit: </translation>
     </message>
@@ -1244,12 +1244,12 @@ exists already. Do you want to</source>
         <translation type="obsolete">wurde verändert aber noch nicht gespeichert. Wollen Sie</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2683"/>
+        <location filename="../mainwindow.cpp" line="2684"/>
         <source>Save modified map before closing it</source>
         <translation>Uložit upravenou mapu před jejím zavřením</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2684"/>
+        <location filename="../mainwindow.cpp" line="2685"/>
         <source>Discard changes</source>
         <translation>Zahodit změny</translation>
     </message>
@@ -1262,7 +1262,7 @@ exists already. Do you want to</source>
         <translation type="obsolete">Uložit mapu</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3106"/>
+        <location filename="../mainwindow.cpp" line="3107"/>
         <source>Critical Error</source>
         <translation>Vážná chyba</translation>
     </message>
@@ -1336,7 +1336,7 @@ kann beim Beenden von vym zu Problemen führen. Wollen Sie</translation>
         <translation type="obsolete">Exportiere XML in Verzeichnis</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="4253"/>
+        <location filename="../mainwindow.cpp" line="4254"/>
         <source>Critcal error</source>
         <translation>Vážná chyba</translation>
     </message>
@@ -1437,7 +1437,7 @@ und dabei evtl. andere Daten im Verzeichnis überschrieben</translation>
         <translation type="obsolete">Gespeichert: </translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3675"/>
+        <location filename="../mainwindow.cpp" line="3676"/>
         <source>VYM -Information:</source>
         <translation>Informace VYM:</translation>
     </message>
@@ -1502,17 +1502,17 @@ Wollen Sie die Map beim Schreiben</translation>
         <translation type="obsolete">Uložit výběr</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2227"/>
+        <location filename="../mainwindow.cpp" line="2228"/>
         <source>Load vym map</source>
         <translation>Nahrát mapu vym</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2230"/>
+        <location filename="../mainwindow.cpp" line="2231"/>
         <source>Import: Add vym map to selection</source>
         <translation>Zavedení: Přidat mapu k výběru</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2233"/>
+        <location filename="../mainwindow.cpp" line="2234"/>
         <source>Import: Replace selection with vym map</source>
         <translation>Zavedení: Nahradit výběr mapou</translation>
     </message>
@@ -1679,19 +1679,19 @@ Wollen Sie
 </translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2304"/>
+        <location filename="../mainwindow.cpp" line="2305"/>
         <source>Saved  %1</source>
         <translation>%1 uloženo</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2346"/>
+        <location filename="../mainwindow.cpp" line="2347"/>
         <source>The file %1
 exists already. Do you want to</source>
         <translation>Soubor %1 již existuje.
 Chcete jej přepsat?</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2678"/>
+        <location filename="../mainwindow.cpp" line="2679"/>
         <source>The map %1 has been modified but not saved yet. Do you want to</source>
         <translation>Mapa %1 byla změněna,
 ale ještě nebyla uložena. Chcete </translation>
@@ -1701,7 +1701,7 @@ ale ještě nebyla uložena. Chcete </translation>
         <translation type="obsolete">Kein Treffer gefunden für &lt;b&gt;%1&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3107"/>
+        <location filename="../mainwindow.cpp" line="3108"/>
         <source>Couldn&apos;t open map %1</source>
         <translation>Mapu %1 se nepodařilo otevřít</translation>
     </message>
@@ -1892,8 +1892,8 @@ ale ještě nebyla uložena. Chcete </translation>
         <translation type="obsolete">Exportiere als Bild</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2420"/>
-        <location filename="../mainwindow.cpp" line="2482"/>
+        <location filename="../mainwindow.cpp" line="2421"/>
+        <location filename="../mainwindow.cpp" line="2483"/>
         <source>Import</source>
         <translation>Zavést</translation>
     </message>
@@ -1922,14 +1922,14 @@ ale ještě nebyla uložena. Chcete </translation>
         <translation type="obsolete">Exportiere als ASCII</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2560"/>
-        <location filename="../mainwindow.cpp" line="2579"/>
-        <location filename="../mainwindow.cpp" line="2618"/>
+        <location filename="../mainwindow.cpp" line="2561"/>
+        <location filename="../mainwindow.cpp" line="2580"/>
+        <location filename="../mainwindow.cpp" line="2619"/>
         <source>(still experimental)</source>
         <translation>(stále pokusné)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2579"/>
+        <location filename="../mainwindow.cpp" line="2580"/>
         <source>Export as LaTeX</source>
         <translation>Vyvést jako LaTeXový soubor</translation>
     </message>
@@ -1955,9 +1955,9 @@ ale ještě nebyla uložena. Chcete </translation>
         <translation type="obsolete">Exportieren als</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2618"/>
-        <location filename="../mainwindow.cpp" line="2632"/>
-        <location filename="../mainwindow.cpp" line="2638"/>
+        <location filename="../mainwindow.cpp" line="2619"/>
+        <location filename="../mainwindow.cpp" line="2633"/>
+        <location filename="../mainwindow.cpp" line="2639"/>
         <source>Export to</source>
         <translation>Vyvést jako</translation>
     </message>
@@ -1987,42 +1987,42 @@ ale ještě nebyla uložena. Chcete </translation>
         <translation type="obsolete">Otevřít odkazy (URL) v nové kartě</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2659"/>
-        <location filename="../mainwindow.cpp" line="2896"/>
-        <location filename="../mainwindow.cpp" line="2929"/>
-        <location filename="../mainwindow.cpp" line="2943"/>
-        <location filename="../mainwindow.cpp" line="2948"/>
-        <location filename="../mainwindow.cpp" line="2971"/>
-        <location filename="../mainwindow.cpp" line="4266"/>
-        <location filename="../mainwindow.cpp" line="4336"/>
+        <location filename="../mainwindow.cpp" line="2660"/>
+        <location filename="../mainwindow.cpp" line="2897"/>
+        <location filename="../mainwindow.cpp" line="2930"/>
+        <location filename="../mainwindow.cpp" line="2944"/>
+        <location filename="../mainwindow.cpp" line="2949"/>
+        <location filename="../mainwindow.cpp" line="2972"/>
+        <location filename="../mainwindow.cpp" line="4267"/>
+        <location filename="../mainwindow.cpp" line="4337"/>
         <source>Warning</source>
         <translation>Varování</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2897"/>
-        <location filename="../mainwindow.cpp" line="2972"/>
-        <location filename="../mainwindow.cpp" line="4267"/>
+        <location filename="../mainwindow.cpp" line="2898"/>
+        <location filename="../mainwindow.cpp" line="2973"/>
+        <location filename="../mainwindow.cpp" line="4268"/>
         <source>Couldn&apos;t find a viewer to open %1.
 </source>
         <translation>Nepodařilo se nalézt žádný program pro otevření %1.
 </translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2898"/>
-        <location filename="../mainwindow.cpp" line="2973"/>
-        <location filename="../mainwindow.cpp" line="4268"/>
-        <location filename="../mainwindow.cpp" line="4338"/>
+        <location filename="../mainwindow.cpp" line="2899"/>
+        <location filename="../mainwindow.cpp" line="2974"/>
+        <location filename="../mainwindow.cpp" line="4269"/>
+        <location filename="../mainwindow.cpp" line="4339"/>
         <source>Please use Settings-&gt;</source>
         <translation>Použijte, prosím, nastavení -&gt;</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2930"/>
+        <location filename="../mainwindow.cpp" line="2931"/>
         <source>Couldn&apos;t start %1 to open a new tab in %2.</source>
         <translation>Nepodařilo se spustit %1 pro otevření nové karty v %2.</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3629"/>
-        <location filename="../mainwindow.cpp" line="4268"/>
+        <location filename="../mainwindow.cpp" line="3630"/>
+        <location filename="../mainwindow.cpp" line="4269"/>
         <source>Set application to open PDF files</source>
         <translation>Nastavit program pro otevírání souborů PDF</translation>
     </message>
@@ -2046,12 +2046,6 @@ ale ještě nebyla uložena. Chcete </translation>
         <location filename="../mainwindow.cpp" line="160"/>
         <source>Search results list</source>
         <comment>FindResultWidget</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="272"/>
-        <source>Loading maps</source>
-        <comment>Mainwindow</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2468,13 +2462,13 @@ ale ještě nebyla uložena. Chcete </translation>
         <translation type="obsolete">Zeige Verlaufsfenster</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2418"/>
-        <location filename="../mainwindow.cpp" line="2420"/>
+        <location filename="../mainwindow.cpp" line="2419"/>
+        <location filename="../mainwindow.cpp" line="2421"/>
         <source>Bookmarks</source>
         <translation>Záložky</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2944"/>
+        <location filename="../mainwindow.cpp" line="2945"/>
         <source>Couldn&apos;t start %1 to open a new tab</source>
         <translation>Nepodařilo se spustit %1 pro otevření nové karty</translation>
     </message>
@@ -2507,7 +2501,7 @@ ale ještě nebyla uložena. Chcete </translation>
         <translation type="obsolete">XLink folgen</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2660"/>
+        <location filename="../mainwindow.cpp" line="2661"/>
         <source>Couldn&apos;t find configuration for export to Open Office
 </source>
         <translation>Nepodařilo se najít žádná nastavení pro vyvedení do programu Open Office
@@ -3707,30 +3701,36 @@ Riskieren Sie es dessen Inhalt zu überschreiben?</translation>
         <translation type="unfinished">nepojmenovaný</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2449"/>
+        <location filename="../mainwindow.cpp" line="2182"/>
+        <source>Loading: %1</source>
+        <comment>Progress dialog while loading maps</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2450"/>
         <source>Load Freemind map</source>
         <translation>Nahrát mapu pro otevřenou mysl</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2560"/>
+        <location filename="../mainwindow.cpp" line="2561"/>
         <source>Export as CSV</source>
         <translation>Vyvést jako CSV</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2949"/>
+        <location filename="../mainwindow.cpp" line="2950"/>
         <source>Sorry, currently only Konqueror supports integrated tabbed browsing.</source>
         <comment>Mainwindow, open URL</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2950"/>
+        <location filename="../mainwindow.cpp" line="2951"/>
         <source>Currently vym is using %1 to open external links.
 (Change in Settings menu)</source>
         <comment>Mainwindow, open URL</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3178"/>
+        <location filename="../mainwindow.cpp" line="3179"/>
         <source>%1 items on map
 </source>
         <comment>Info about map</comment>
@@ -3738,7 +3738,7 @@ Riskieren Sie es dessen Inhalt zu überschreiben?</translation>
 </translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3658"/>
+        <location filename="../mainwindow.cpp" line="3659"/>
         <source>Directory with vym macros:</source>
         <translation>Adresář s makry vym:</translation>
     </message>
@@ -3747,64 +3747,64 @@ Riskieren Sie es dessen Inhalt zu überschreiben?</translation>
         <translation type="obsolete">QInputDialog::getInteger()</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3671"/>
+        <location filename="../mainwindow.cpp" line="3672"/>
         <source>Number of undo/redo levels:</source>
         <translation>Počet kroků zpět/znovu:</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3676"/>
+        <location filename="../mainwindow.cpp" line="3677"/>
         <source>Settings have been changed. The next map opened will have &quot;%1&quot; undo/redo levels</source>
         <translation>Nastavení byla změněna. Následující otevřená mapa bude mít &quot;%1&quot; kroků zpět/znovu</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3691"/>
+        <location filename="../mainwindow.cpp" line="3692"/>
         <source>Number of seconds before autosave:</source>
         <translation>Počet sekund před automatickým uložením:</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3709"/>
+        <location filename="../mainwindow.cpp" line="3710"/>
         <source>Information</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3710"/>
+        <location filename="../mainwindow.cpp" line="3711"/>
         <source>Changed settings will be applied after restarting vym</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3915"/>
+        <location filename="../mainwindow.cpp" line="3916"/>
         <source>History for %1</source>
         <comment>Window Caption</comment>
         <translation>Historie pro %1</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3961"/>
-        <location filename="../mainwindow.cpp" line="3966"/>
+        <location filename="../mainwindow.cpp" line="3962"/>
+        <location filename="../mainwindow.cpp" line="3967"/>
         <source>Export in last used format (%1)</source>
         <comment>status tip</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="4254"/>
+        <location filename="../mainwindow.cpp" line="4255"/>
         <source>Couldn&apos;t find the documentation %1 in:
 %2</source>
         <translation>Dokumentaci %1 se v:
 %2 nepodařilo najít</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="4289"/>
+        <location filename="../mainwindow.cpp" line="4290"/>
         <source>Load vym example map</source>
         <translation>Otevřít příkladovou mapu programu VYM</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="4337"/>
+        <location filename="../mainwindow.cpp" line="4338"/>
         <source>Couldn&apos;t find a macro at  %1.
 </source>
         <translation>Nepodařilo se najít makro v %1.
 </translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="4338"/>
+        <location filename="../mainwindow.cpp" line="4339"/>
         <source>Set directory for vym macros</source>
         <translation>Nastavit adresář pro makra programu vym</translation>
     </message>

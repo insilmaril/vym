@@ -70,12 +70,7 @@ BugAgent::BugAgent (BranchItem *bi,const QString &u)
 
     // Visual hint that we are doing something
     if (missionType==SingleBug)
-    {
-	BranchItem *oldBI=model->getSelectedBranch();
-	model->select (bi);
-	model->setHeading ("Updating: "+bi->getHeadingPlain() );//FIXME-4 translation needed?
-	model->select (oldBI);
-    }
+	model->setHeading ("Updating: "+bi->getHeadingPlain(),bi );//FIXME-4 translation needed?
 	
 }
 
@@ -112,8 +107,6 @@ void BugAgent::processBugzillaData()
 	if (missionBI)
 	{
 	    // Here we go...
-	    QString oldsel=model->getSelectString ();
-	    model->select (missionBI);
 
 	    QRegExp re("(\\d*):(\\S*):\"(.*)\"");
 	    re.setMinimal(false);
@@ -179,8 +172,7 @@ void BugAgent::processBugzillaData()
 		foreach (QString b,bugs)
 		{
 		    //qDebug ()<<" -> "<<b<<" "<<bug_desc[b];
-		    model->select (missionBI);	
-		    newbi=model->addNewBranch();    
+		    newbi=model->addNewBranch(0,missionBI);    
 		    newbi->setURL ("https://bugzilla.novell.com/show_bug.cgi?id="+b);
 		    if (!newbi)
 			qWarning()<<"BugAgent: Couldn't create new branch?!";
@@ -188,9 +180,6 @@ void BugAgent::processBugzillaData()
 			setModelBugzillaData (model, newbi,b);
 		}
 	    } 
-
-	    // Select old selection, before mission was started
-	    model->select (oldsel);
 	} else
 	    qWarning ()<<"BugAgent: Found model, but not branch #"<<branchID;
     } else
@@ -201,16 +190,15 @@ void BugAgent::processBugzillaData()
 
 void BugAgent::setModelBugzillaData (VymModel *model, BranchItem *bi, const QString &bugID)
 {
-    model->select (bi);
     QString ps=bug_prio[bugID];
     if (bug_whiteboard[bugID].contains ("PNEW")) ps=ps+"/"+bug_sev[bugID];
     if (bug_status[bugID]=="CLOSED" 
 	|| bug_status[bugID]=="VERIFIED"
 	|| bug_status[bugID]=="RESOLVED")
     {
-	model->setHeading ("("+ps+") - " + bugID + " - " + bug_desc[bugID]);
-	model->colorSubtree (Qt::blue);
+	model->setHeading ("("+ps+") - " + bugID + " - " + bug_desc[bugID],bi);
+	model->colorSubtree (Qt::blue,bi);
     }else   
-	model->setHeading (ps+ " - " + bugID + " - " + bug_desc[bugID]);
+	model->setHeading (ps+ " - " + bugID + " - " + bug_desc[bugID],bi);
 }
 
