@@ -1534,11 +1534,6 @@ exists already. Do you want to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Loading maps</source>
-        <comment>Mainwindow</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>&amp;Map</source>
         <comment>Toolbar for file actions</comment>
         <translation type="unfinished"></translation>
@@ -2475,11 +2470,6 @@ to confusion when finishing working with vym.Do you want to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Export in last used format (%1)</source>
-        <comment>status tip</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>PDF%1</source>
         <comment>File export menu</comment>
         <translation type="unfinished"></translation>
@@ -2566,6 +2556,16 @@ to confusion when finishing working with vym.Do you want to</source>
     <message>
         <source>Remove only branch and keep its children </source>
         <comment>Edit menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Loading: %1</source>
+        <comment>Progress dialog while loading maps</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export in last used format (%1) to: %2</source>
+        <comment>status tip</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2899,6 +2899,10 @@ and install the perl module for Bugzilla access using YaST</source>
     <message>
         <source>Couldn&apos;t open &quot;%1&quot;
 %2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t read settings from &quot;%1&quot;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3568,6 +3572,22 @@ Do you want to reload that map with the new file?</source>
     </message>
     <message>
         <source>Export map as SVG</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Critical Error</source>
+        <translation type="unfinished">嚴重錯誤</translation>
+    </message>
+    <message>
+        <source>Unsupported format in %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t save %1</source>
+        <translation type="unfinished">無法儲存 %1</translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t save QImage %1 in format %2</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -542,7 +542,7 @@ want to allow this in your system!</source>
 <context>
     <name>Heading of mapcenter in new map</name>
     <message>
-        <location filename="../vymmodel.cpp" line="2383"/>
+        <location filename="../vymmodel.cpp" line="2388"/>
         <source>New map</source>
         <translation>新建导图</translation>
     </message>
@@ -915,17 +915,17 @@ Hint: You can pick a color from another branch and color using CTRL+Left Button<
 </translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2227"/>
+        <location filename="../mainwindow.cpp" line="2229"/>
         <source>Load vym map</source>
         <translation>载入 vym 导图</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2230"/>
+        <location filename="../mainwindow.cpp" line="2232"/>
         <source>Import: Add vym map to selection</source>
         <translation>导入：将 vym 导图添加至选中项</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2233"/>
+        <location filename="../mainwindow.cpp" line="2235"/>
         <source>Import: Replace selection with vym map</source>
         <translation>导入：将选中项替换为 vym 导图</translation>
     </message>
@@ -952,12 +952,12 @@ could not be removed before saving</source>
         <translation type="obsolete">导出 XML 至目录</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2683"/>
+        <location filename="../mainwindow.cpp" line="2677"/>
         <source>Save modified map before closing it</source>
         <translation>关闭前保存已修改的导图</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2684"/>
+        <location filename="../mainwindow.cpp" line="2678"/>
         <source>Discard changes</source>
         <translation>丢弃修改</translation>
     </message>
@@ -970,17 +970,23 @@ could not be removed before saving</source>
         <translation type="obsolete">保存导图</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3675"/>
+        <location filename="../mainwindow.cpp" line="3669"/>
         <source>VYM -Information:</source>
         <translation>VYM - 信息：</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3106"/>
+        <location filename="../mainwindow.cpp" line="3100"/>
         <source>Critical Error</source>
         <translation>严重错误</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="4253"/>
+        <location filename="../mainwindow.cpp" line="3960"/>
+        <source>Export in last used format (%1) to: %2</source>
+        <comment>status tip</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="4247"/>
         <source>Critcal error</source>
         <translation>严重错误</translation>
     </message>
@@ -1076,12 +1082,12 @@ exists already. Do you want to</source>
 已存在。您希望</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2678"/>
+        <location filename="../mainwindow.cpp" line="2672"/>
         <source>The map %1 has been modified but not saved yet. Do you want to</source>
         <translation>导图 %1 已更改但尚未保存。您希望</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3107"/>
+        <location filename="../mainwindow.cpp" line="3101"/>
         <source>Couldn&apos;t open map %1</source>
         <translation>无法打开导图 %1</translation>
     </message>
@@ -1232,8 +1238,8 @@ exists already. Do you want to</source>
         <translation type="obsolete">关于 VYM</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2420"/>
-        <location filename="../mainwindow.cpp" line="2482"/>
+        <location filename="../mainwindow.cpp" line="2421"/>
+        <location filename="../mainwindow.cpp" line="2481"/>
         <source>Import</source>
         <translation>导入</translation>
     </message>
@@ -1246,14 +1252,14 @@ exists already. Do you want to</source>
         <translation type="obsolete">导出为 ASCII</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2560"/>
-        <location filename="../mainwindow.cpp" line="2579"/>
-        <location filename="../mainwindow.cpp" line="2618"/>
+        <location filename="../mainwindow.cpp" line="2557"/>
+        <location filename="../mainwindow.cpp" line="2576"/>
+        <location filename="../mainwindow.cpp" line="2615"/>
         <source>(still experimental)</source>
         <translation>(仍处于试验阶段)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2579"/>
+        <location filename="../mainwindow.cpp" line="2576"/>
         <source>Export as LaTeX</source>
         <translation>导出为 LaTeX</translation>
     </message>
@@ -1263,9 +1269,8 @@ exists already. Do you want to</source>
         <translation>打印(&amp;P)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2618"/>
+        <location filename="../mainwindow.cpp" line="2615"/>
         <location filename="../mainwindow.cpp" line="2632"/>
-        <location filename="../mainwindow.cpp" line="2638"/>
         <source>Export to</source>
         <translation>导出至</translation>
     </message>
@@ -1300,12 +1305,6 @@ exists already. Do you want to</source>
         <location filename="../mainwindow.cpp" line="160"/>
         <source>Search results list</source>
         <comment>FindResultWidget</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="272"/>
-        <source>Loading maps</source>
-        <comment>Mainwindow</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1729,69 +1728,75 @@ exists already. Do you want to</source>
         <translation type="unfinished">未命名</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2659"/>
-        <location filename="../mainwindow.cpp" line="2896"/>
-        <location filename="../mainwindow.cpp" line="2929"/>
-        <location filename="../mainwindow.cpp" line="2943"/>
-        <location filename="../mainwindow.cpp" line="2948"/>
-        <location filename="../mainwindow.cpp" line="2971"/>
-        <location filename="../mainwindow.cpp" line="4266"/>
-        <location filename="../mainwindow.cpp" line="4336"/>
+        <location filename="../mainwindow.cpp" line="2182"/>
+        <source>Loading: %1</source>
+        <comment>Progress dialog while loading maps</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2653"/>
+        <location filename="../mainwindow.cpp" line="2890"/>
+        <location filename="../mainwindow.cpp" line="2923"/>
+        <location filename="../mainwindow.cpp" line="2937"/>
+        <location filename="../mainwindow.cpp" line="2942"/>
+        <location filename="../mainwindow.cpp" line="2965"/>
+        <location filename="../mainwindow.cpp" line="4260"/>
+        <location filename="../mainwindow.cpp" line="4329"/>
         <source>Warning</source>
         <translation>警告</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2897"/>
-        <location filename="../mainwindow.cpp" line="2972"/>
-        <location filename="../mainwindow.cpp" line="4267"/>
+        <location filename="../mainwindow.cpp" line="2891"/>
+        <location filename="../mainwindow.cpp" line="2966"/>
+        <location filename="../mainwindow.cpp" line="4261"/>
         <source>Couldn&apos;t find a viewer to open %1.
 </source>
         <translation>无法找到阅读器以打开 %1。
 </translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2898"/>
-        <location filename="../mainwindow.cpp" line="2973"/>
-        <location filename="../mainwindow.cpp" line="4268"/>
-        <location filename="../mainwindow.cpp" line="4338"/>
+        <location filename="../mainwindow.cpp" line="2892"/>
+        <location filename="../mainwindow.cpp" line="2967"/>
+        <location filename="../mainwindow.cpp" line="4262"/>
+        <location filename="../mainwindow.cpp" line="4331"/>
         <source>Please use Settings-&gt;</source>
         <translation>请使用 &quot;设置&quot;-&gt;</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2898"/>
-        <location filename="../mainwindow.cpp" line="2973"/>
-        <location filename="../mainwindow.cpp" line="3643"/>
+        <location filename="../mainwindow.cpp" line="2892"/>
+        <location filename="../mainwindow.cpp" line="2967"/>
+        <location filename="../mainwindow.cpp" line="3637"/>
         <source>Set application to open an URL</source>
         <translation>设置用于打开 URL 的应用程序</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2930"/>
+        <location filename="../mainwindow.cpp" line="2924"/>
         <source>Couldn&apos;t start %1 to open a new tab in %2.</source>
         <translation>无法在 %2 中启动 %1 以打开一个新标签。</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2949"/>
+        <location filename="../mainwindow.cpp" line="2943"/>
         <source>Sorry, currently only Konqueror supports integrated tabbed browsing.</source>
         <comment>Mainwindow, open URL</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2950"/>
+        <location filename="../mainwindow.cpp" line="2944"/>
         <source>Currently vym is using %1 to open external links.
 (Change in Settings menu)</source>
         <comment>Mainwindow, open URL</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3178"/>
+        <location filename="../mainwindow.cpp" line="3172"/>
         <source>%1 items on map
 </source>
         <comment>Info about map</comment>
         <translation type="unfinished">在导图上的 %1 条目</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3629"/>
-        <location filename="../mainwindow.cpp" line="4268"/>
+        <location filename="../mainwindow.cpp" line="3623"/>
+        <location filename="../mainwindow.cpp" line="4262"/>
         <source>Set application to open PDF files</source>
         <translation>设置用于打开 pdf 文件的应用程序</translation>
     </message>
@@ -1881,12 +1886,12 @@ exists already. Do you want to</source>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2418"/>
-        <location filename="../mainwindow.cpp" line="2420"/>
+        <location filename="../mainwindow.cpp" line="2421"/>
         <source>Bookmarks</source>
         <translation>书签</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2944"/>
+        <location filename="../mainwindow.cpp" line="2938"/>
         <source>Couldn&apos;t start %1 to open a new tab</source>
         <translation>无法启动 %1 以打开一个新标签。</translation>
     </message>
@@ -1900,7 +1905,7 @@ exists already. Do you want to</source>
         <translation type="obsolete">标记工具栏</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2660"/>
+        <location filename="../mainwindow.cpp" line="2654"/>
         <source>Couldn&apos;t find configuration for export to Open Office
 </source>
         <translation>无法找到配置以导出成 OpenOffice.org
@@ -2989,17 +2994,17 @@ Do you risk to overwrite its contents?</source>
         <translation type="obsolete">&amp;%1 %2</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2449"/>
+        <location filename="../mainwindow.cpp" line="2448"/>
         <source>Load Freemind map</source>
         <translation>导入 Freemid 导图</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2560"/>
+        <location filename="../mainwindow.cpp" line="2557"/>
         <source>Export as CSV</source>
         <translation>导出为 CSV</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3658"/>
+        <location filename="../mainwindow.cpp" line="3652"/>
         <source>Directory with vym macros:</source>
         <translation>vym宏的目录:</translation>
     </message>
@@ -3008,64 +3013,57 @@ Do you risk to overwrite its contents?</source>
         <translation type="obsolete">QInputDialog::getInteger()</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3671"/>
+        <location filename="../mainwindow.cpp" line="3665"/>
         <source>Number of undo/redo levels:</source>
         <translation>撤消级别 :</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3676"/>
+        <location filename="../mainwindow.cpp" line="3670"/>
         <source>Settings have been changed. The next map opened will have &quot;%1&quot; undo/redo levels</source>
         <translation>设置已更改。下一个导图将有 %1 个撤消级别</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3691"/>
+        <location filename="../mainwindow.cpp" line="3685"/>
         <source>Number of seconds before autosave:</source>
         <translation>自动保存的秒数:</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3709"/>
+        <location filename="../mainwindow.cpp" line="3703"/>
         <source>Information</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3710"/>
+        <location filename="../mainwindow.cpp" line="3704"/>
         <source>Changed settings will be applied after restarting vym</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3915"/>
+        <location filename="../mainwindow.cpp" line="3909"/>
         <source>History for %1</source>
         <comment>Window Caption</comment>
         <translation>%1 的历史</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3961"/>
-        <location filename="../mainwindow.cpp" line="3966"/>
-        <source>Export in last used format (%1)</source>
-        <comment>status tip</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="4254"/>
+        <location filename="../mainwindow.cpp" line="4248"/>
         <source>Couldn&apos;t find the documentation %1 in:
 %2</source>
         <translation>在:
 %2 中找不到%1 的文档 </translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="4289"/>
+        <location filename="../mainwindow.cpp" line="4283"/>
         <source>Load vym example map</source>
         <translation>载入 vym 例子导图</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="4337"/>
+        <location filename="../mainwindow.cpp" line="4330"/>
         <source>Couldn&apos;t find a macro at  %1.
 </source>
         <translation>在 %1 不能找到宏
 </translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="4338"/>
+        <location filename="../mainwindow.cpp" line="4331"/>
         <source>Set directory for vym macros</source>
         <translation>设置宏目录</translation>
     </message>
@@ -3338,10 +3336,11 @@ Do you want to reload that map with the new file?</source>
         <location filename="../exports.cpp" line="813"/>
         <location filename="../exports.cpp" line="913"/>
         <location filename="../exports.cpp" line="985"/>
-        <location filename="../exports.cpp" line="1012"/>
-        <location filename="../exports.cpp" line="1031"/>
-        <location filename="../exports.cpp" line="1038"/>
-        <location filename="../exports.cpp" line="1045"/>
+        <location filename="../exports.cpp" line="1007"/>
+        <location filename="../exports.cpp" line="1017"/>
+        <location filename="../exports.cpp" line="1036"/>
+        <location filename="../exports.cpp" line="1043"/>
+        <location filename="../exports.cpp" line="1050"/>
         <source>Critical Export Error</source>
         <translation>严重导出错误</translation>
     </message>
@@ -3435,48 +3434,53 @@ Do you want to reload that map with the new file?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../exports.cpp" line="1012"/>
+        <location filename="../exports.cpp" line="1007"/>
+        <source>Couldn&apos;t read settings from &quot;%1&quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../exports.cpp" line="1017"/>
         <source>Check &quot;%1&quot; in
 %2</source>
         <translation>在 %2 中检查
 &quot;%1&quot;</translation>
     </message>
     <message>
-        <location filename="../exports.cpp" line="1031"/>
-        <location filename="../exports.cpp" line="1038"/>
-        <location filename="../exports.cpp" line="1045"/>
+        <location filename="../exports.cpp" line="1036"/>
+        <location filename="../exports.cpp" line="1043"/>
+        <location filename="../exports.cpp" line="1050"/>
         <source>Could not read %1</source>
         <translation>无法读取 %1</translation>
     </message>
     <message>
-        <location filename="../file.cpp" line="271"/>
-        <location filename="../file.cpp" line="280"/>
-        <location filename="../file.cpp" line="288"/>
-        <location filename="../file.cpp" line="315"/>
-        <location filename="../file.cpp" line="324"/>
-        <location filename="../file.cpp" line="337"/>
+        <location filename="../file.cpp" line="252"/>
+        <location filename="../file.cpp" line="261"/>
+        <location filename="../file.cpp" line="269"/>
+        <location filename="../file.cpp" line="296"/>
+        <location filename="../file.cpp" line="305"/>
+        <location filename="../file.cpp" line="318"/>
         <location filename="../xsltproc.cpp" line="78"/>
         <location filename="../xsltproc.cpp" line="84"/>
         <source>Critical Error</source>
         <translation>严重错误</translation>
     </message>
     <message>
-        <location filename="../file.cpp" line="272"/>
+        <location filename="../file.cpp" line="253"/>
         <source>Couldn&apos;t start zip to compress data.</source>
         <translation>无法启动 zip 以压缩数据。</translation>
     </message>
     <message>
-        <location filename="../file.cpp" line="281"/>
+        <location filename="../file.cpp" line="262"/>
         <source>zip didn&apos;t exit normally</source>
         <translation>zip 未正常退出</translation>
     </message>
     <message>
-        <location filename="../file.cpp" line="316"/>
+        <location filename="../file.cpp" line="297"/>
         <source>Couldn&apos;t start unzip to decompress data.</source>
         <translation>无法启动 unzip 以解压数据。</translation>
     </message>
     <message>
-        <location filename="../file.cpp" line="325"/>
+        <location filename="../file.cpp" line="306"/>
         <source>unzip didn&apos;t exit normally</source>
         <translation>unzip 未正常退出</translation>
     </message>
@@ -3496,12 +3500,12 @@ Do you want to overwrite it?</source>
         <translation type="obsolete">文件 %1 已存在。您希望覆盖它吗？</translation>
     </message>
     <message>
-        <location filename="../file.cpp" line="105"/>
+        <location filename="../file.cpp" line="86"/>
         <source>Overwrite</source>
         <translation>覆盖</translation>
     </message>
     <message>
-        <location filename="../file.cpp" line="106"/>
+        <location filename="../file.cpp" line="87"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
@@ -3572,7 +3576,7 @@ to notifiy Browsers of changed bookmarks.</source>
         <translation>(仍处于试验阶段)</translation>
     </message>
     <message>
-        <location filename="../file.cpp" line="99"/>
+        <location filename="../file.cpp" line="80"/>
         <source>The directory %1 is not empty.
 Do you risk to overwrite its contents?</source>
         <comment>write directory</comment>
@@ -3586,7 +3590,7 @@ Do you risk to overwrite its contents?</source>
 </translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="3219"/>
+        <location filename="../vymmodel.cpp" line="3225"/>
         <source>No Bugzilla client found.  For openSUSE you can install by (running as root):
 
 </source>
@@ -3594,14 +3598,14 @@ Do you risk to overwrite its contents?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="3223"/>
+        <location filename="../vymmodel.cpp" line="3229"/>
         <source>Alternatively you can also add the repository
 and install the perl module for Bugzilla access using YaST</source>
         <comment>VymModel, how to install Bugzilla client module</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="3226"/>
+        <location filename="../vymmodel.cpp" line="3232"/>
         <source>Warning: Couldn&apos;t find Bugzilla client</source>
         <comment>VymModel</comment>
         <translation type="unfinished"></translation>
@@ -4123,7 +4127,7 @@ Do you want to write the map</source>
     </message>
     <message>
         <location filename="../vymmodel.cpp" line="584"/>
-        <location filename="../vymmodel.cpp" line="771"/>
+        <location filename="../vymmodel.cpp" line="773"/>
         <source>Cancel</source>
         <translation type="unfinished">取消</translation>
     </message>
@@ -4155,7 +4159,8 @@ could not be renamed before saving</source>
     </message>
     <message>
         <location filename="../vymmodel.cpp" line="703"/>
-        <location filename="../vymmodel.cpp" line="4999"/>
+        <location filename="../vymmodel.cpp" line="750"/>
+        <location filename="../vymmodel.cpp" line="5044"/>
         <source>Images</source>
         <translation type="unfinished">图象</translation>
     </message>
@@ -4165,40 +4170,59 @@ could not be renamed before saving</source>
         <translation type="unfinished">载入图象</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="750"/>
+        <location filename="../vymmodel.cpp" line="752"/>
         <source>Save image</source>
         <translation type="unfinished">保存图象</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="763"/>
+        <location filename="../vymmodel.cpp" line="765"/>
         <source>The file %1 exists already.
 Do you want to overwrite it?</source>
         <translation type="unfinished">文件 %1 已存在。
 您希望覆盖它吗？ {1 ?}</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="770"/>
+        <location filename="../vymmodel.cpp" line="772"/>
         <source>Overwrite</source>
         <translation type="unfinished">覆盖</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="813"/>
+        <location filename="../vymmodel.cpp" line="787"/>
+        <location filename="../vymmodel.cpp" line="789"/>
+        <location filename="../vymmodel.cpp" line="4588"/>
+        <location filename="../vymmodel.cpp" line="4598"/>
+        <source>Critical Error</source>
+        <translation type="unfinished">严重错误</translation>
+    </message>
+    <message>
+        <location filename="../vymmodel.cpp" line="787"/>
+        <location filename="../vymmodel.cpp" line="4588"/>
+        <source>Unsupported format in %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../vymmodel.cpp" line="789"/>
+        <source>Couldn&apos;t save %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../vymmodel.cpp" line="817"/>
         <source>Critical Import Error</source>
         <translation type="unfinished">严重导入错误</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="813"/>
+        <location filename="../vymmodel.cpp" line="817"/>
         <source>Cannot find the directory %1</source>
         <translation type="unfinished">无法找到目录 %1</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="863"/>
-        <location filename="../vymmodel.cpp" line="866"/>
+        <location filename="../vymmodel.cpp" line="868"/>
+        <location filename="../vymmodel.cpp" line="871"/>
         <source>Choose directory structure to import</source>
         <translation type="unfinished">请选择要导入的目录结构</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="918"/>
+        <location filename="../vymmodel.cpp" line="923"/>
         <source>The file of the map  on disk has changed:
 
    %1
@@ -4211,106 +4235,111 @@ Do you want to reload that map with the new file?</source>
 您想要从新文件中重新载入吗？</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="925"/>
+        <location filename="../vymmodel.cpp" line="930"/>
         <source>Reload</source>
         <translation type="unfinished">重新载入</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="926"/>
+        <location filename="../vymmodel.cpp" line="931"/>
         <source>Ignore</source>
         <translation type="unfinished">忽略</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="1069"/>
+        <location filename="../vymmodel.cpp" line="1074"/>
         <source>Autosave disabled during undo.</source>
         <translation type="unfinished">在撤消时禁用自动保存。</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="1679"/>
+        <location filename="../vymmodel.cpp" line="1684"/>
         <source>Note</source>
         <comment>FindAll in VymModel</comment>
         <translation type="unfinished">注解</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="3157"/>
+        <location filename="../vymmodel.cpp" line="3162"/>
         <source>Enter URL:</source>
         <translation type="unfinished">请输入 URL：</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="3172"/>
+        <location filename="../vymmodel.cpp" line="3177"/>
         <source>HTML</source>
         <comment>Filedialog</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="3173"/>
+        <location filename="../vymmodel.cpp" line="3178"/>
         <source>Text</source>
         <comment>Filedialog</comment>
         <translation type="unfinished">文本</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="3174"/>
+        <location filename="../vymmodel.cpp" line="3179"/>
         <source>Spreadsheet</source>
         <comment>Filedialog</comment>
         <translation type="unfinished">电子表格</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="3175"/>
+        <location filename="../vymmodel.cpp" line="3180"/>
         <source>Textdocument</source>
         <comment>Filedialog</comment>
         <translation type="unfinished">文本文档</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="3176"/>
+        <location filename="../vymmodel.cpp" line="3181"/>
         <source>Images</source>
         <comment>Filedialog</comment>
         <translation type="unfinished">图象</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="3177"/>
-        <location filename="../vymmodel.cpp" line="3179"/>
+        <location filename="../vymmodel.cpp" line="3182"/>
+        <location filename="../vymmodel.cpp" line="3184"/>
         <source>Set URL to a local file</source>
         <translation type="unfinished">设置到本地文档的 URL</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="3247"/>
+        <location filename="../vymmodel.cpp" line="3253"/>
         <source>Contacting Bugzilla...</source>
         <comment>VymModel</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="3283"/>
-        <location filename="../vymmodel.cpp" line="3285"/>
+        <location filename="../vymmodel.cpp" line="3290"/>
+        <location filename="../vymmodel.cpp" line="3292"/>
         <source>Link to another map</source>
         <translation type="unfinished">至另一导图的链接</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="4568"/>
+        <location filename="../vymmodel.cpp" line="4576"/>
         <source>Export map as image</source>
         <translation type="unfinished">将导图导出为图象</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="4599"/>
+        <location filename="../vymmodel.cpp" line="4598"/>
+        <source>Couldn&apos;t save QImage %1 in format %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../vymmodel.cpp" line="4622"/>
         <source>Export map as PDF</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="4640"/>
+        <location filename="../vymmodel.cpp" line="4665"/>
         <source>Export map as SVG</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="4674"/>
+        <location filename="../vymmodel.cpp" line="4702"/>
         <source>Export XML to directory</source>
         <translation type="unfinished">导出 XML 至目录</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="4696"/>
+        <location filename="../vymmodel.cpp" line="4741"/>
         <source>Critical Export Error</source>
         <translation type="unfinished">严重导出错误</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="5002"/>
+        <location filename="../vymmodel.cpp" line="5047"/>
         <source>Load background image</source>
         <translation type="unfinished">载入背景图像</translation>
     </message>
