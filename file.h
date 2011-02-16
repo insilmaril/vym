@@ -36,6 +36,7 @@ public:
     ImageIO ();
     QStringList getFilters();
     QString getType ( QString );
+    QString guessType ( QString );
 
 private:    
     QStringList imageFilters;

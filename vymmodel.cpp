@@ -701,21 +701,22 @@ void VymModel::loadFloatImage ()
     {
 	QStringList filters;
 	filters<< QString (tr("Images") + " (*.png *.bmp *.xbm *.jpg *.png *.xpm *.gif *.pnm)");
-	QFileDialog *fd=new QFileDialog( NULL);   
-	fd->setFileMode (QFileDialog::ExistingFiles);
-	fd->setWindowTitle(vymName+" - " +tr("Load image"));
-	fd->setDirectory (lastImageDir);
-	fd->show();
+	QFileDialog fd;
+	fd.setFileMode (QFileDialog::ExistingFiles);
+	fd.setWindowTitle(vymName+" - " +tr("Load image"));
+	fd.setDirectory (lastImageDir);
+	fd.setFilters (filters);
+	fd.setAcceptMode (QFileDialog::AcceptOpen);
 
-	if ( fd->exec() == QDialog::Accepted )
+	if ( fd.exec() == QDialog::Accepted )
 	{
-	    // TODO loadFIO in QT4 use:	lastImageDir=fd->directory();
-	    lastImageDir=QDir (fd->directory());
+	    // TODO loadFIO in QT4 use:	lastImageDir=fd.directory();
+	    lastImageDir=QDir (fd.directory());
 	    QString s;
 	    ImageItem *ii;
-	    for (int j=0; j<fd->selectedFiles().count(); j++)
+	    for (int j=0; j<fd.selectedFiles().count(); j++)
 	    {
-		s=fd->selectedFiles().at(j);
+		s=fd.selectedFiles().at(j);
 		ii=loadFloatImageInt (selbi,s);
 		//FIXME-3 check savestate for loadImage 
 		if (ii)
@@ -731,13 +732,12 @@ void VymModel::loadFloatImage ()
 		    qWarning ()<<"Failed to load "+s;
 	    }
 	}
-	delete (fd);
     }
 }
 
-void VymModel::saveFloatImageInt  (ImageItem *ii, const QString &type, const QString &fn)
+bool VymModel::saveFloatImageInt  (ImageItem *ii, const QString &format, const QString &fn)
 {
-    ii->save (fn,type);
+    return ii->save (fn,format);
 }
 
 void VymModel::saveFloatImage ()
@@ -745,18 +745,20 @@ void VymModel::saveFloatImage ()
     ImageItem *ii=getSelectedImage();
     if (ii)
     {
-	QFileDialog *fd=new QFileDialog( NULL);
-	fd->setFilters (imageIO.getFilters());
-	fd->setWindowTitle(vymName+" - " +tr("Save image"));
-	fd->setFileMode( QFileDialog::AnyFile );
-	fd->setDirectory (lastImageDir);
-//	fd->setSelection (fio->getOriginalFilename());
-	fd->show();
+	QFileDialog fd;
+	QStringList filters;
+	filters<< QString (tr("Images") + " (*.png *.bmp *.xbm *.jpg *.png *.xpm *.gif *.pnm)");
+	fd.setFilters (filters);
+	fd.setWindowTitle(vymName+" - " +tr("Save image"));
+	fd.setFileMode( QFileDialog::AnyFile );
+	fd.setDirectory (lastImageDir);
+	fd.setAcceptMode (QFileDialog::AcceptSave);
+//	fd.setSelection (fio->getOriginalFilename());
 
 	QString fn;
-	if ( fd->exec() == QDialog::Accepted && fd->selectedFiles().count()==1)
+	if ( fd.exec() == QDialog::Accepted && fd.selectedFiles().count()==1)
 	{
-	    fn=fd->selectedFiles().at(0);
+	    fn=fd.selectedFiles().at(0);
 	    if (QFile (fn).exists() )
 	    {
 		QMessageBox mb( vymName,
@@ -776,14 +778,16 @@ void VymModel::saveFloatImage ()
 			break;
 		    case QMessageBox::Cancel:
 			// do nothing
-			delete (fd);
 			return;
 			break;
 		}
 	    }
-	    saveFloatImageInt (ii,fd->selectedFilter(),fn );
-	}
-	delete (fd);
+	    QString format=imageIO.guessType(fn);
+	    if (format.isEmpty())
+		QMessageBox::critical (0,tr("Critical Error"),tr("Unsupported format in %1").arg(fn));
+	    else if (!saveFloatImageInt (ii,format,fn ))
+		QMessageBox::critical (0,tr("Critical Error"),tr("Couldn't save %1").arg(fn));
+	} 
     }
 }
 
@@ -820,7 +824,7 @@ void VymModel::importDirInt(BranchItem *dst, QDir d)
 		emitDataHasChanged(bi);
 	    }	
 	}	
-	// Traverse files
+	// Traverse files   //FIXME-3 problems loading .files
 	d.setFilter( QDir::Files| QDir::Hidden | QDir::NoSymLinks );
 	list = d.entryInfoList();
 
@@ -860,16 +864,17 @@ void VymModel::importDir()  //FIXME-3 check me... (not tested yet)
     {
 	QStringList filters;
 	filters <<"VYM map (*.vym)";
-	QFileDialog *fd=new QFileDialog( NULL,vymName+ " - " +tr("Choose directory structure to import"));
-	fd->setFileMode (QFileDialog::DirectoryOnly);
-	fd->setFilters (filters);
-	fd->setWindowTitle(vymName+" - " +tr("Choose directory structure to import"));
-	fd->show();
+	QFileDialog fd;
+	fd.setWindowTitle (vymName+ " - " +tr("Choose directory structure to import"));
+	fd.setFileMode (QFileDialog::DirectoryOnly);
+	fd.setFilters (filters);
+	fd.setWindowTitle(vymName+" - " +tr("Choose directory structure to import"));
+	fd.setAcceptMode (QFileDialog::AcceptOpen);
 
 	QString fn;
-	if ( fd->exec() == QDialog::Accepted &&!fd->selectedFiles().isEmpty() )
+	if ( fd.exec() == QDialog::Accepted &&!fd.selectedFiles().isEmpty() )
 	{
-	    importDirInt (fd->selectedFiles().first() );
+	    importDirInt (fd.selectedFiles().first() );
 	    reposition();
 	}
     }	
@@ -1508,23 +1513,23 @@ QString VymModel::getSortFilter ()
     return sortFilter;
 }
 
-void VymModel::setHeading(const QString &s) 
+void VymModel::setHeading(const QString &s, BranchItem *bi) 
 {
-    BranchItem *selbi=getSelectedBranch();
-    if (selbi->getHeading()==s) return;
-    if (selbi)
+    if (!bi) bi=getSelectedBranch();
+    if (bi)
     {
+	if (bi->getHeading()==s) return;
 	saveState(
-	    selbi,
-	    "setHeading (\""+selbi->getHeading()+"\")", 
-	    selbi,
+	    bi,
+	    "setHeading (\""+bi->getHeading()+"\")", 
+	    bi,
 	    "setHeading (\""+s+"\")", 
-	    QString("Set heading of %1 to \"%2\"").arg(getObjectName(selbi)).arg(s) );
-	selbi->setHeading(s );
-	emitDataHasChanged ( selbi);	//FIXME-4 maybe emit signal from TreeItem?   //FIXME-3 called 2x ???
+	    QString("Set heading of %1 to \"%2\"").arg(getObjectName(bi)).arg(s) );
+	bi->setHeading(s );
+	emitDataHasChanged ( bi);	//FIXME-4 maybe emit signal from TreeItem?   //FIXME-3 called 2x ???
 	emitUpdateQueries ();
 	reposition();
-	emitSelectionChanged();
+	emitDataHasChanged(bi);
     }
 }
 
@@ -2450,21 +2455,21 @@ BranchItem* VymModel::addNewBranchInt(BranchItem *dst,int num)
     return newbi;
 }   
 
-BranchItem* VymModel::addNewBranch(int pos)
+BranchItem* VymModel::addNewBranch(int pos,BranchItem *bi)
 {
     // Different meaning than num in addNewBranchInt!
     // -1   add above
     //  0   add as child
     // +1   add below
     BranchItem *newbi=NULL;
-    BranchItem *selbi=getSelectedBranch();
+    if (!bi) bi=getSelectedBranch();
 
-    if (selbi)
+    if (bi)
     {
 	// FIXME-3 setCursor (Qt::ArrowCursor);  //Still needed?
 
-	QString redosel=getSelectString(selbi);
-	newbi=addNewBranchInt (selbi,pos-2);
+	QString redosel=getSelectString(bi);
+	newbi=addNewBranchInt (bi,pos-2);
 	QString undosel=getSelectString(newbi);
 
 	if (newbi)
@@ -2474,7 +2479,7 @@ BranchItem* VymModel::addNewBranch(int pos)
 		"delete ()",
 		redosel,
 		QString ("addBranch (%1)").arg(pos),
-		QString ("Add new branch to %1").arg(getObjectName(selbi)));	
+		QString ("Add new branch to %1").arg(getObjectName(bi)));	
 
 	    reposition();
 	    // emitSelectionChanged(); FIXME-3
@@ -3083,24 +3088,24 @@ void VymModel::colorBranch (QColor c)
     }
 }
 
-void VymModel::colorSubtree (QColor c) 
+void VymModel::colorSubtree (QColor c, BranchItem *bi) 
 {
-    BranchItem *selbi=getSelectedBranch();
-    if (selbi)
+    if (!bi) bi=getSelectedBranch();
+    if (bi)
     {
 	saveStateChangingPart(
-	    selbi,
-	    selbi,
+	    bi,
+	    bi,
 	    QString ("colorSubtree (\"%1\")").arg(c.name()),
-	    QString ("Set color of %1 and children to %2").arg(getObjectName(selbi)).arg(c.name())
+	    QString ("Set color of %1 and children to %2").arg(getObjectName(bi)).arg(c.name())
 	);  
 	BranchItem *prev=NULL;
-	BranchItem *cur=selbi;
+	BranchItem *cur=bi;
 	while (cur) 
 	{
 	    cur->setHeadingColor(c); // color links, color children
 	    emitDataHasChanged (cur);
-	    cur=nextBranch (cur,prev,true,selbi);
+	    cur=nextBranch (cur,prev,true,bi);
 	}   
     mapEditor->getScene()->update();
     }
@@ -3178,6 +3183,7 @@ void VymModel::editLocalURL()
 	fd.setFilters (filters);
 	fd.setWindowTitle(vymName+" - " +tr("Set URL to a local file"));
 	fd.setDirectory (lastFileDir);
+	fd.setAcceptMode (QFileDialog::AcceptOpen);
 	if (! selti->getVymLink().isEmpty() )
 	    fd.selectFile( selti->getURL() );
 	fd.show();
@@ -3280,19 +3286,21 @@ void VymModel::editVymLink()
     {	    
 	QStringList filters;
 	filters <<"VYM map (*.vym)";
-	QFileDialog *fd=new QFileDialog( NULL,vymName+" - " +tr("Link to another map"));
-	fd->setFilters (filters);
-	fd->setWindowTitle(vymName+" - " +tr("Link to another map"));
-	fd->setDirectory (lastFileDir);
+	QFileDialog fd;
+	fd.setWindowTitle (vymName+" - " +tr("Link to another map"));
+	fd.setFilters (filters);
+	fd.setWindowTitle(vymName+" - " +tr("Link to another map"));
+	fd.setDirectory (lastFileDir);
+	fd.setAcceptMode (QFileDialog::AcceptOpen);
 	if (! bi->getVymLink().isEmpty() )
-	    fd->selectFile( bi->getVymLink() );
-	fd->show();
+	    fd.selectFile( bi->getVymLink() );
+	fd.show();
 
 	QString fn;
-	if ( fd->exec() == QDialog::Accepted &&!fd->selectedFiles().isEmpty() )
+	if ( fd.exec() == QDialog::Accepted &&!fd.selectedFiles().isEmpty() )
 	{
-	    QString fn=fd->selectedFiles().first();
-	    lastFileDir=QDir (fd->directory().path());
+	    QString fn=fd.selectedFiles().first();
+	    lastFileDir=QDir (fd.directory().path());
 	    saveState(
 		bi,
 		"setVymLink (\""+bi->getVymLink()+"\")",
@@ -3713,8 +3721,8 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
     } else if (com=="exportImage")
     {
 	QString fname="";
-	ok=true;
-	if (parser.parCount()>=2)
+	ok=false;
+	if (parser.parCount()>=1)
 	    // Hey, we even have a filename
 	    fname=parser.parString(ok,0); 
 	if (!ok)
@@ -4553,7 +4561,7 @@ void VymModel::setExportMode (bool b)
 	setHideTmpMode (TreeItem::HideNone);
 }
 
-QPointF VymModel::exportImage(QString fname, bool askName, QString format)
+QPointF VymModel::exportImage(QString fname, bool askName, QString format)  
 {
     if (fname=="")
     {
@@ -4564,24 +4572,39 @@ QPointF VymModel::exportImage(QString fname, bool askName, QString format)
     if (askName)
     {
 	QStringList fl;
-	QFileDialog *fd=new QFileDialog (NULL);
-	fd->setWindowTitle (tr("Export map as image"));
-	fd->setDirectory (lastImageDir);
-	fd->setFileMode(QFileDialog::AnyFile);
-	fd->setFilters  (imageIO.getFilters() );
-	if (fd->exec())
+	QFileDialog fd;
+	fd.setWindowTitle (tr("Export map as image"));
+	fd.setDirectory (lastImageDir);
+	fd.setFileMode(QFileDialog::AnyFile);
+	fd.setFilters  (imageIO.getFilters() );
+	fd.setAcceptMode (QFileDialog::AcceptSave);
+	if (fd.exec())
 	{
-	    fl=fd->selectedFiles();
+	    fl=fd.selectedFiles();
 	    fname=fl.first();
-	    format=imageIO.getType(fd->selectedFilter());
+	    format=imageIO.guessType(fname);
+	    if (format.isEmpty())
+	    {
+		QMessageBox::critical (0,tr("Critical Error"),tr("Unsupported format in %1").arg(fname));
+		return QPointF();   //FIXME-3 not needed
+	    }	
 	} 
     }
 
     setExportMode (true);
     QPointF offset;
     QImage img (mapEditor->getImage(offset));
-    img.save(fname, format.toAscii());
+    if (!img.save(fname, format.toAscii()))
+	QMessageBox::critical (0,tr("Critical Error"),tr("Couldn't save QImage %1 in format %2").arg(fname).arg(format));
     setExportMode (false);
+
+    QString cmd="exportImage";
+    settings.setLocalValue ( filePath, "/export/last/exportPath",fname);
+    settings.setLocalValue ( filePath, "/export/last/command",cmd);
+    settings.setLocalValue ( filePath, "/export/last/description","Image");
+    mainWindow->statusMessage(cmd + ": " + fname);
+    setChanged();
+
     return offset;
 }
 
@@ -4595,16 +4618,17 @@ QPointF VymModel::exportPDF (QString fname, bool askName)
     if (askName)
     {
 	QStringList fl;
-	QFileDialog *fd=new QFileDialog (NULL);
-	fd->setWindowTitle (tr("Export map as PDF"));
-	fd->setDirectory (lastImageDir);
-	fd->setFileMode(QFileDialog::AnyFile);
+	QFileDialog fd;
+	fd.setWindowTitle (tr("Export map as PDF"));
+	fd.setDirectory (lastImageDir);
+	fd.setFileMode(QFileDialog::AnyFile);
+	fd.setAcceptMode (QFileDialog::AcceptSave);
 	QStringList filters;
 	filters<<"PDF (*.pdf)"<<"All (* *.*)";
-	fd->setFilters  (filters);
-	if (fd->exec())
+	fd.setFilters  (filters);
+	if (fd.exec())
 	{
-	    fl=fd->selectedFiles();
+	    fl=fd.selectedFiles();
 	    fname=fl.first();
 	} 
     }
@@ -4620,6 +4644,7 @@ QPointF VymModel::exportPDF (QString fname, bool askName)
     QPainter *pdfPainter = new QPainter(&printer);
     getScene()->render(pdfPainter);
     pdfPainter->end();
+    delete pdfPainter;
 
     setExportMode (false);
     return offset;
@@ -4636,16 +4661,17 @@ QPointF VymModel::exportSVG (QString fname, bool askName)
     if (askName)
     {
 	QStringList fl;
-	QFileDialog *fd=new QFileDialog (NULL);
-	fd->setWindowTitle (tr("Export map as SVG"));
-	fd->setDirectory (lastImageDir);
-	fd->setFileMode(QFileDialog::AnyFile);
+	QFileDialog fd;
+	fd.setWindowTitle (tr("Export map as SVG"));
+	fd.setDirectory (lastImageDir);
+	fd.setFileMode(QFileDialog::AnyFile);
 	QStringList filters;
 	filters<<"SVG (*.svg)"<<"All (* *.*)";
-	fd->setFilters  (filters);
-	if (fd->exec())
+	fd.setFilters  (filters);
+	fd.setAcceptMode (QFileDialog::AcceptSave);
+	if (fd.exec())
 	{
-	    fl=fd->selectedFiles();
+	    fl=fd.selectedFiles();
 	    fname=fl.first();
 	} 
     }
@@ -4661,6 +4687,7 @@ QPointF VymModel::exportSVG (QString fname, bool askName)
     QPainter *svgPainter = new QPainter(&generator);
     getScene()->render(svgPainter);
     svgPainter->end();
+    delete svgPainter;
 
     setExportMode (false);
 
@@ -4671,9 +4698,27 @@ void VymModel::exportXML(QString dir, bool askForName)
 {
     if (askForName)
     {
-	dir=browseDirectory(NULL,tr("Export XML to directory"));
+    	QFileDialog fd;
+	fd.setWindowTitle (vymName+ " - " + tr("Export XML to directory"));
+	fd.setFileMode (QFileDialog::DirectoryOnly);
+	QStringList filters;
+	filters <<"XML data (*.xml)";
+	fd.setFilters (filters);
+	fd.setAcceptMode (QFileDialog::AcceptSave);
+
+	QString fn;
+	if (fd.exec() != QDialog::Accepted || fd.selectedFiles().isEmpty() )
+	{
+	    qDebug()<<"exportXML returning1";
+	    return;
+	    }
+	dir=fd.selectedFiles().first();
+
 	if (dir =="" && !reallyWriteDirectory(dir) )
-	return;
+	{
+	    qDebug()<<"exportXML returning2";
+	    return;
+	    }
     }
 
     // Hide stuff during export, if settings want this
@@ -4761,7 +4806,7 @@ void VymModel::exportHTML (const QString &dir, bool useDialog)
     ex.doExport(useDialog);
 }
 
-void VymModel::exportOOPresentation(const QString &fn, const QString &cf)
+void VymModel::exportOOPresentation(const QString &fn, const QString &cf) //FIXME-3 No exportLast and command yet
 {
     ExportOO ex;
     ex.setFile (fn);
@@ -4997,17 +5042,17 @@ void VymModel::selectMapBackgroundImage ()  // FIXME-3 for using background imag
 {
     QStringList filters;
     filters<< tr("Images") + " (*.png *.bmp *.xbm *.jpg *.png *.xpm *.gif *.pnm)";
-    QFileDialog *fd=new QFileDialog( NULL);
-    fd->setFileMode (QFileDialog::ExistingFile);
-    fd->setWindowTitle(vymName+" - " +tr("Load background image"));
-    fd->setDirectory (lastImageDir);
-    fd->show();
+    QFileDialog fd;
+    fd.setFileMode (QFileDialog::ExistingFile);
+    fd.setWindowTitle(vymName+" - " +tr("Load background image"));
+    fd.setDirectory (lastImageDir);
+    fd.setAcceptMode (QFileDialog::AcceptOpen);
 
-    if ( fd->exec() == QDialog::Accepted &&!fd->selectedFiles().isEmpty())
+    if ( fd.exec() == QDialog::Accepted &&!fd.selectedFiles().isEmpty())
     {
-	// TODO selectMapBackgroundImg in QT4 use:  lastImageDir=fd->directory();
-	lastImageDir=QDir (fd->directory().path());
-	setMapBackgroundImage (fd->selectedFiles().first());
+	// TODO selectMapBackgroundImg in QT4 use:  lastImageDir=fd.directory();
+	lastImageDir=QDir (fd.directory().path());
+	setMapBackgroundImage (fd.selectedFiles().first());
     }
 }   
 

@@ -3,6 +3,7 @@
 #include "branchitem.h"
 #include "mapobj.h"	// z-values
 
+#include <QDebug>
 #include <QString>
 #include <iostream>
 using namespace std;
@@ -54,7 +55,8 @@ bool ImageItem::load(const QString &fname)
 	setOriginalFilename (fname);
 	setHeading (originalFilename);
 	((FloatImageObj*)lmo)->load (originalImage);
-    }	
+    }	else
+	qDebug() <<"ImageItem::load failed for "<<fname;
     return ok;	
 }
 
@@ -112,9 +114,9 @@ QString ImageItem::getOriginalFilename()
     return originalFilename;
 }
 
-void ImageItem::save(const QString &fn, const QString &format)
+bool ImageItem::save(const QString &fn, const QString &format)
 {
-    originalImage.save (fn,qPrintable (format));
+    return originalImage.save (fn,qPrintable (format)); 
 }
 
 QString ImageItem::saveToDir (const QString &tmpdir,const QString &prefix) 

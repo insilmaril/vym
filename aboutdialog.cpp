@@ -57,7 +57,7 @@ AboutDialog::AboutDialog( QWidget *parent)
     "    <li>French: Philippe Caillaud and Claude </li>"
     "    <li>Italian: Seyed Puria Nafisi Azizi </li>"
     "    <li>Brasilian: Amadeu Júnior</li>"
-    "    <li>Russion: Anton Olenev</li>"
+    "    <li>Russian: Anton Olenev</li>"
     "    <li>Simplified Chinese: Moligaloo</li>"
     "    <li>Traditional Chinese: Wei-Lun Chao </li>"
     "  </ul>"

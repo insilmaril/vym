@@ -24,13 +24,13 @@ void SimpleSettings::clear()
     valuelist.clear();
 }
 
-void SimpleSettings::readSettings (const QString &path)
+bool SimpleSettings::readSettings (const QString &path)
 {
     QString s;
     if (!loadStringFromDisk(path,s)) 
     {
 	qWarning ()<<"SimpleSettings::readSettings() Couldn't read "+path;
-	return;
+	return false;
     }	
     QStringList lines;
     lines=s.split (QRegExp("\n"));
@@ -43,6 +43,7 @@ void SimpleSettings::readSettings (const QString &path)
 	valuelist.append((*it).right((*it).length()-i-1));
 	it++;
     }
+    return true;
 }
 
 void SimpleSettings::writeSettings (const QString &path)

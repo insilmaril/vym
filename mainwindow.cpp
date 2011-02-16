@@ -2218,29 +2218,29 @@ void Main::fileLoad(const LoadMode &lmode)
 {
     QStringList filters;
     filters <<"VYM map (*.vym *.vyp)"<<"VYM Backups (*.vym~)"<<"XML (*.xml)"<<"All (* *.*)";
-    QFileDialog *fd=new QFileDialog( this);
-    fd->setDirectory (lastFileDir);
-    fd->setFileMode (QFileDialog::ExistingFiles);
-    fd->setFilters (filters);
+    QFileDialog fd;
+    fd.setDirectory (lastFileDir);
+    fd.setFileMode (QFileDialog::ExistingFiles);
+    fd.setFilters (filters);
+    fd.setAcceptMode (QFileDialog::AcceptOpen);
     switch (lmode)
     {
 	case NewMap:
-	    fd->setWindowTitle(vymName+ " - " +tr("Load vym map"));
+	    fd.setWindowTitle(vymName+ " - " +tr("Load vym map"));
 	    break;
 	case ImportAdd:
-	    fd->setWindowTitle(vymName+ " - " +tr("Import: Add vym map to selection"));
+	    fd.setWindowTitle(vymName+ " - " +tr("Import: Add vym map to selection"));
 	    break;
 	case ImportReplace:
-	    fd->setWindowTitle(vymName+ " - " +tr("Import: Replace selection with vym map"));
+	    fd.setWindowTitle(vymName+ " - " +tr("Import: Replace selection with vym map"));
 	    break;
     }
-    fd->show();
 
     QString fn;
-    if ( fd->exec() == QDialog::Accepted )
+    if ( fd.exec() == QDialog::Accepted )
     {
-	lastFileDir=fd->directory().path();
-	QStringList flist = fd->selectedFiles();
+	lastFileDir=fd.directory().path();
+	QStringList flist = fd.selectedFiles();
 	QStringList::Iterator it = flist.begin();
 	
 	progressCounterTotal=flist.count();
@@ -2252,7 +2252,6 @@ void Main::fileLoad(const LoadMode &lmode)
 	}
     }
     removeProgressCounter();
-    delete (fd);
 }
 
 void Main::fileLoad()
@@ -2331,15 +2330,15 @@ void Main::fileSaveAs(const SaveMode& savemode)
 	else    
 	    filters<<"VYM part of map (*vyp)";
 	filters<<"All (* *.*)";
-	QFileDialog *fd=new QFileDialog( this);
-	fd->setDirectory (lastFileDir);
-	fd->setFileMode (QFileDialog::ExistingFiles);
-	fd->setFilters (filters);
-	fd->show();
+	QFileDialog fd;
+	fd.setDirectory (lastFileDir);
+	fd.setFileMode (QFileDialog::AnyFile);
+	fd.setFilters (filters);
+	fd.setAcceptMode (QFileDialog::AcceptSave);
 
-	if ( fd->exec() == QDialog::Accepted && !fd->selectedFiles().isEmpty())
+	if ( fd.exec() == QDialog::Accepted && !fd.selectedFiles().isEmpty())
 	{
-	    QString fn=fd->selectedFiles().first();
+	    QString fn=fd.selectedFiles().first();
 	    // Check for existing file
 	    if (QFile (fn).exists())
 	    {
@@ -2412,19 +2411,19 @@ void Main::fileImportKDE4Bookmarks()
 
 void Main::fileImportFirefoxBookmarks()
 {
-    QFileDialog *fd=new QFileDialog( this);
-    fd->setDirectory (vymBaseDir.homePath()+"/.mozilla/firefox");
-    fd->setFileMode (QFileDialog::ExistingFiles);
+    QFileDialog fd;
+    fd.setDirectory (vymBaseDir.homePath()+"/.mozilla/firefox");
+    fd.setFileMode (QFileDialog::ExistingFiles);
     QStringList filters;
     filters<<"Firefox "+tr("Bookmarks")+" (*.html)";
-    fd->setFilters(filters);
-    fd->setWindowTitle(tr("Import")+" "+"Firefox "+tr("Bookmarks"));
-    fd->show();
+    fd.setFilters(filters);
+    fd.setAcceptMode (QFileDialog::AcceptOpen);
+    fd.setWindowTitle(tr("Import")+" "+"Firefox "+tr("Bookmarks"));
 
-    if ( fd->exec() == QDialog::Accepted )
+    if ( fd.exec() == QDialog::Accepted )
     {
 	ImportFirefoxBookmarks im;
-	QStringList flist = fd->selectedFiles();
+	QStringList flist = fd.selectedFiles();
 	QStringList::Iterator it = flist.begin();
 	while( it != flist.end() ) 
 	{
@@ -2436,25 +2435,24 @@ void Main::fileImportFirefoxBookmarks()
 	    ++it;
 	}
     }
-    delete (fd);
 }
 
 void Main::fileImportFreemind()
 {
     QStringList filters;
     filters <<"Freemind map (*.mm)"<<"All files (*)";
-    QFileDialog *fd=new QFileDialog( this);
-    fd->setDirectory (lastFileDir);
-    fd->setFileMode (QFileDialog::ExistingFiles);
-    fd->setFilters (filters);
-    fd->setWindowTitle(vymName+ " - " +tr("Load Freemind map"));
-    fd->show();
+    QFileDialog fd;
+    fd.setDirectory (lastFileDir);
+    fd.setFileMode (QFileDialog::ExistingFiles);
+    fd.setFilters (filters);
+    fd.setWindowTitle(vymName+ " - " +tr("Load Freemind map"));
+    fd.setAcceptMode (QFileDialog::AcceptOpen);
 
     QString fn;
-    if ( fd->exec() == QDialog::Accepted )
+    if ( fd.exec() == QDialog::Accepted )
     {
-	lastFileDir=fd->directory().path();
-	QStringList flist = fd->selectedFiles();
+	lastFileDir=fd.directory().path();
+	QStringList flist = fd.selectedFiles();
 	QStringList::Iterator it = flist.begin();
 	while( it != flist.end() ) 
 	{
@@ -2466,7 +2464,6 @@ void Main::fileImportFreemind()
 	    ++it;
 	}
     }
-    delete (fd);
 }
 
 
@@ -2474,19 +2471,19 @@ void Main::fileImportMM()
 {
     ImportMM im;
 
-    QFileDialog *fd=new QFileDialog( this);
-    fd->setDirectory (lastFileDir);
-    fd->setFileMode (QFileDialog::ExistingFiles);
+    QFileDialog fd;
+    fd.setDirectory (lastFileDir);
+    fd.setFileMode (QFileDialog::ExistingFiles);
     QStringList filters;
     filters<<"Mind Manager (*.mmap)";
-    fd->setFilters (filters);
-    fd->setWindowTitle(tr("Import")+" "+"Mind Manager");
-    fd->show();
+    fd.setFilters (filters);
+    fd.setAcceptMode (QFileDialog::AcceptOpen);
+    fd.setWindowTitle(tr("Import")+" "+"Mind Manager");
 
-    if ( fd->exec() == QDialog::Accepted )
+    if ( fd.exec() == QDialog::Accepted )
     {
-	lastFileDir=fd->directory();
-	QStringList flist = fd->selectedFiles();
+	lastFileDir=fd.directory();
+	QStringList flist = fd.selectedFiles();
 	QStringList::Iterator it = flist.begin();
 	while( it != flist.end() ) 
 	{
@@ -2498,7 +2495,6 @@ void Main::fileImportMM()
 	    ++it;
 	}
     }
-    delete (fd);
 }
 
 void Main::fileImportDir()
@@ -2619,6 +2615,7 @@ void Main::fileExportTaskjuggler()  //FIXME-3 not scriptable yet
 	ex.setWindowTitle ( vymName+" - "+tr("Export to")+" Taskjuggler"+tr("(still experimental)"));
 	ex.setDir(lastImageDir);
 	ex.addFilter ("Taskjuggler (*.tjp)");
+
 	if (ex.execDialog() ) 
 	{
 	    m->setExportMode(true);
@@ -2630,28 +2627,24 @@ void Main::fileExportTaskjuggler()  //FIXME-3 not scriptable yet
 
 void Main::fileExportOOPresentation()	//FIXME-3 not scriptable yet
 {
-    ExportOOFileDialog *fd=new ExportOOFileDialog( this,vymName+" - "+tr("Export to")+" Open Office");
+    ExportOOFileDialog fd;
     // TODO add preview in dialog
-    //ImagePreview *p =new ImagePreview (fd);
-    //fd->setContentsPreviewEnabled( TRUE );
-    //fd->setContentsPreview( p, p );
-    //fd->setPreviewMode( QFileDialog::Contents );
-    fd->setWindowTitle(vymName+" - " +tr("Export to")+" Open Office");
-    fd->setDirectory (QDir().current());
-    if (fd->foundConfig())
+    fd.setWindowTitle(vymName+" - "+tr("Export to")+" Open Office");
+    fd.setDirectory (QDir().current());
+    fd.setAcceptMode (QFileDialog::AcceptSave);
+    fd.setFileMode (QFileDialog::AnyFile);
+    if (fd.foundConfig())
     {
-	fd->show();
-
-	if ( fd->exec() == QDialog::Accepted )
+	if ( fd.exec() == QDialog::Accepted )
 	{
-	    if (!fd->selectedFiles().isEmpty())
+	    if (!fd.selectedFiles().isEmpty())
 	    {
-		QString fn=fd->selectedFiles().first();
+		QString fn=fd.selectedFiles().first();
 		if (!fn.contains (".odp")) fn +=".odp";
 
 		//lastImageDir=fn.left(fn.findRev ("/"));
 		VymModel *m=currentModel();
-		if (m) m->exportOOPresentation(fn,fd->selectedConfig());	
+		if (m) m->exportOOPresentation(fn,fd.selectedConfig());	
 	    }
 	}
     } else
@@ -3957,14 +3950,14 @@ void Main::updateActions()
     // Export last
     QString s, t, u;
     if (m && m->exportLastAvailable(s,t,u) )
-    {
 	actionFileExportLast->setEnabled (true);
-	actionFileExportLast->setText( tr( "Export in last used format (%1)","status tip" ).arg(s));
-
-    }	
     else
+    {
 	actionFileExportLast->setEnabled (false);
-    actionFileExportLast->setText( tr( "Export in last used format (%1)","status tip" ).arg(s));
+	t=u="";
+	s=" - ";
+    }	
+    actionFileExportLast->setText( tr( "Export in last used format (%1) to: %2","status tip" ).arg(s).arg(u));
 
     if (m)
     {
@@ -4277,24 +4270,24 @@ void Main::helpDemo()
 {
     QStringList filters;
     filters <<"VYM example map (*.vym)";
-    QFileDialog *fd=new QFileDialog( this);
+    QFileDialog fd;
     #if defined(Q_OS_MACX)
-	fd->setDir (QDir("./vym.app/Contents/Resources/demos"));
+	fd.setDir (QDir("./vym.app/Contents/Resources/demos"));
     #else
 	// default path in SUSE LINUX
-	fd->setDirectory (QDir(vymBaseDir.path()+"/demos"));
+	fd.setDirectory (QDir(vymBaseDir.path()+"/demos"));
     #endif
 
-    fd->setFileMode (QFileDialog::ExistingFiles);
-    fd->setFilters (filters);
-    fd->setWindowTitle (vymName+ " - " +tr("Load vym example map"));
-    fd->show();
+    fd.setFileMode (QFileDialog::ExistingFiles);
+    fd.setFilters (filters);
+    fd.setWindowTitle (vymName+ " - " +tr("Load vym example map"));
+    fd.setAcceptMode (QFileDialog::AcceptOpen);
 
     QString fn;
-    if ( fd->exec() == QDialog::Accepted )
+    if ( fd.exec() == QDialog::Accepted )
     {
-	lastFileDir=fd->directory().path();
-	QStringList flist = fd->selectedFiles();
+	lastFileDir=fd.directory().path();
+	QStringList flist = fd.selectedFiles();
 	QStringList::Iterator it = flist.begin();
 	while( it != flist.end() ) 
 	{
@@ -4303,7 +4296,6 @@ void Main::helpDemo()
 	    ++it;
 	}
     }
-    delete (fd);
 }
 
 

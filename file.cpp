@@ -68,26 +68,7 @@ QString convertToRel (const QString &src, const QString &dst)
     return d;
 }
 
-#include <QFileDialog>
 extern QString vymName;
-extern QDir lastFileDir;
-
-QString browseDirectory (QWidget *parent,const QString &caption)
-{
-    QFileDialog fd(parent,caption);
-    fd.setFileMode (QFileDialog::DirectoryOnly);
-    fd.setWindowTitle (vymName+ " - "+caption);
-    fd.setDirectory (lastFileDir);
-    fd.show();
-    
-    if ( fd.exec() == QDialog::Accepted && !fd.selectedFiles().isEmpty() )
-	return fd.selectedFiles().first();
-    else
-	return "";
-}
-
-
-
 bool reallyWriteDirectory(const QString &dir)
 {
     QStringList eList = QDir(dir).entryList();
@@ -448,7 +429,19 @@ QString ImageIO::getType(QString filter)
 {
     for (int i=0;i<imageFilters.count()+1;i++)
 	if (imageFilters.at(i)==filter) return imageTypes.at(i);
-    return QString();	
+    return QString();
+}
+
+QString ImageIO::guessType(QString fn)
+{
+    int i=fn.lastIndexOf(".");
+    if (i>=0)
+    {
+	QString postfix=fn.mid(i+1);
+	for (int i=1;i<imageFilters.count();i++)
+	    if (imageFilters.at(i).contains(postfix)) return imageTypes.at(i);
+    }
+    return QString();
 }
 
 

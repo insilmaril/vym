@@ -1,5 +1,3 @@
-#include <iostream>
-
 #include "exportoofiledialog.h"
 
 ExportOOFileDialog::ExportOOFileDialog():QFileDialog()
@@ -24,7 +22,7 @@ QString ExportOOFileDialog::selectedConfig()
     QStringList::Iterator itf=filters.begin();
     while (itf != filters.end()) 
     {
-	if (*itf==selectedFilter()) return *itpath;
+	if (*itf==selectedNameFilter()) return *itpath;
 	itpath++;   
 	itf++;
     }
@@ -54,6 +52,7 @@ void ExportOOFileDialog::init()
     d.setPath (d.currentPath()+"/exports");
     scanExportConfigs(d);
 
+    setNameFilters (filters);
     connect (
 	this,SIGNAL (filterSelected(const QString&)),
 	this, SLOT( newConfigPath(const QString &)));
@@ -81,9 +80,9 @@ void ExportOOFileDialog::scanExportConfigs(QDir dir)
 
 	    if (fi.fileName().endsWith(".conf") )
 	    {
-		configPaths.append (fi.absolutePath());
+		configPaths.append (fi.absoluteFilePath());
 		set.clear();
-		set.readSettings (fi.absolutePath());
+		set.readSettings (fi.absoluteFilePath());
 		addFilter (set.value (QString("Name")) + " (*.odp)");
 	    }	    
         }

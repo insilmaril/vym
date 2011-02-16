@@ -119,8 +119,13 @@ QString NoteObj::getNoteOpenDoc()
 
     QString r=note;
 
+    // Remove header
+    QRegExp re("<head>.*</head>");
+    re.setMinimal(true);
+    r.replace (re,"");
+
     // convert all "<br*>"
-    QRegExp re("<br.*>");
+    re.setPattern ("<br.*>");
     re.setMinimal(true);
     r.replace (re,"<text:line-break/>");
 
@@ -131,8 +136,6 @@ QString NoteObj::getNoteOpenDoc()
     // Remove all other tags, e.g. paragraphs will be added in 
     // templates used during export
     re.setPattern ("</?html.*>");
-    r.replace (re,"");
-    re.setPattern ("</?head.*>");
     r.replace (re,"");
     re.setPattern ("</?body.*>");
     r.replace (re,"");

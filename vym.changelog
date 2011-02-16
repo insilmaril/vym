@@ -1,4 +1,35 @@
 -------------------------------------------------------------------
+Tue Feb 15 11:40:21 CET 2011 - vym@insilmaril.de
+
+- Version: 1.13.16 
+- Bugfix: Image export (exportLast)
+- Bugfix: Image export (including all images now)
+- Bugfix: OpenOffice export
+
+-------------------------------------------------------------------
+Fri Feb 11 14:52:52 CET 2011 - vym@insilmaril.de
+
+- Bugfix: Open/Save wrong in many filedialogs
+
+-------------------------------------------------------------------
+Thu Feb 10 20:30:54 CET 2011 - vym@insilmaril.de
+
+- Bugfix: SaveAs works again for non-existing files
+- Bugfix: Saving images
+
+-------------------------------------------------------------------
+Wed Feb  9 08:46:22 CET 2011 - vym@insilmaril.de
+
+- Version 1.13.25
+- Bugfix: Don't select while updating Bugzilla links automatically
+
+-------------------------------------------------------------------
+Mon Feb  7 14:37:00 CET 2011 - vym@insilmaril.de
+
+- Version 1.13.24
+- Feature: German translation
+
+-------------------------------------------------------------------
 Mon Feb  7 14:37:00 CET 2011 - vym@insilmaril.de
 
 - Version 1.13.23

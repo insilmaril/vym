@@ -16,7 +16,7 @@ public:
     SimpleSettings ();
     ~SimpleSettings ();
     void clear();
-    void readSettings(const QString &);
+    bool readSettings(const QString &);
     void writeSettings(const QString &);
     QString value (const QString &key, const QString &def=QString());
     int readNumValue (const QString &, const int &def=0);

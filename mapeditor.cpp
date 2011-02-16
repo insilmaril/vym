@@ -417,6 +417,7 @@ QRectF MapEditor::getTotalBBox()
     {
 	if (!cur->hasHiddenExportParent())
 	{
+	    // Branches
 	    bo=(BranchObj*)(cur->getLMO());
 	    if (bo && bo->isVisibleObj())
 	    {
@@ -425,6 +426,14 @@ QRectF MapEditor::getTotalBBox()
 
 		if (rt.isNull()) rt=r1;
 		rt=addBBox (r1, rt);
+	    }
+
+	    // Images
+	    FloatImageObj *fio;
+	    for (int i=0; i<cur->imageCount(); i++)
+	    {
+		fio=cur->getImageObjNum (i);
+		if (fio) rt=addBBox (fio->getBBox(),rt);
 	    }
 	}
 	model->nextBranch(cur,prev);

@@ -78,17 +78,17 @@ void ExportBase::addFilter(const QString &s)
 bool ExportBase::execDialog(const QString &overwriteWarning)
 {
     {
-	QFileDialog *fd=new QFileDialog( 0, caption);
-	fd->setFilter (filter);
-	fd->setWindowTitle (caption);
-	fd->setFileMode( QFileDialog::AnyFile );
-	fd->setDirectory (outDir);
-	fd->show();
+	QFileDialog fd;
+	fd.setFilter (filter);
+	fd.setWindowTitle (caption);
+	fd.setFileMode( QFileDialog::AnyFile );
+	fd.setDirectory (outDir);
+	fd.setAcceptMode (QFileDialog::AcceptSave);
 
-	if ( fd->exec() == QDialog::Accepted )
+	if ( fd.exec() == QDialog::Accepted )
 	{
-	    if (fd->selectedFiles().isEmpty()) return false;
-	    QString fn=fd->selectedFiles().first();
+	    if (fd.selectedFiles().isEmpty()) return false;
+	    QString fn=fd.selectedFiles().first();
 	    if (QFile (fn).exists() ) 
 	    {
 		WarningDialog dia;
@@ -1001,7 +1001,12 @@ bool ExportOO::setConfigFile (const QString &cf)
     int i=cf.lastIndexOf ("/");
     if (i>=0) configDir=cf.left(i);
     SimpleSettings set;
-    set.readSettings(configFile);
+
+    if (!set.readSettings(configFile))
+    {
+	QMessageBox::critical (0,QObject::tr("Critical Export Error"),QObject::tr("Couldn't read settings from \"%1\"").arg(configFile));
+	return false;
+    }
 
     // set paths
     templateDir=configDir+"/"+set.value ("Template");
