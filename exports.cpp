@@ -661,28 +661,22 @@ void ExportHTML::doExport(bool useDialog)
     setCSSPath( dia.getCSSPath() ); 
 
     // Copy CSS file
-    QFile css_src (cssOriginalPath);
-    QFile css_dst (d.path()+"/"+cssFileName);
-    if (!css_src.open ( QIODevice::ReadOnly))
+    QString css;
+
+    QString css_src (cssOriginalPath);
+    QString css_dst (d.path()+"/"+cssFileName);
+    if (!loadStringFromDisk (css_src,css))
 	QMessageBox::warning( 0, 
 	    QObject::tr( "Warning","ExportHTML" ),
 	    QObject::tr("Trying to load stylesheet:")+"\n\n"+
 	    QObject::tr("Could not open %1","ExportHTML").arg(cssOriginalPath));
     else
     {
-	if (!css_dst.open( QIODevice::WriteOnly))
+	if (!saveStringToDisk (css_dst,css))
 	    QMessageBox::warning( 0, 
 		QObject::tr( "Warning" ), 
 		QObject::tr("Trying to save stylesheet:")+"\n\n"+
-		QObject::tr("Could not open %1").arg(css_dst.fileName()));
-	else
-	{   
-	    if (!css_src.copy (css_dst.fileName() ) )
-		qWarning()<<"Couldn't copy "<<css_src.fileName()<<" to "<<css_dst.fileName();
-	
-	    css_dst.close();
-	}   
-	css_src.close();
+		QObject::tr("Could not open %1").arg(css_dst));
     }
 
     // Provide a smaller URL-icon to improve Layout 
