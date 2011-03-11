@@ -861,19 +861,19 @@ void Main::setupEditActions()
 
     editMenu->addSeparator();
 
-    a = new QAction( QPixmap(), tr( "Toggle target...","Edit menu"), this);
+    a = new QAction( QPixmap(flagsPath + "flag-target"), tr( "Toggle target...","Edit menu"), this);
     a->setShortcut (Qt::SHIFT + Qt::Key_T );			//Goto target
     switchboard.addConnection(a,tr("Edit","Shortcut group"));
     editMenu->addAction (a);
     connect( a, SIGNAL( triggered() ), this, SLOT( editToggleTarget() ) );
 
-    a = new QAction( QPixmap(), tr( "Goto target...","Edit menu"), this);
+    a = new QAction( QPixmap(flagsPath + "flag-target"), tr( "Goto target...","Edit menu"), this);
     a->setShortcut (Qt::Key_G );			//Goto target
     switchboard.addConnection(a,tr("Edit","Shortcut group"));
     editMenu->addAction (a);
     connect( a, SIGNAL( triggered() ), this, SLOT( editGoToTarget() ) );
 
-    a = new QAction( QPixmap(), tr( "Move to target...","Edit menu"), this);
+    a = new QAction( QPixmap(flagsPath + "flag-target"), tr( "Move to target...","Edit menu"), this);
     a->setShortcut (Qt::Key_M );			//Goto target
     switchboard.addConnection(a,tr("Edit","Shortcut group"));
     editMenu->addAction (a);
