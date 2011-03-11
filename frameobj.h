@@ -11,7 +11,7 @@ class FrameObj:public MapObj {
 public:
 
     /*! \brief Supported frame types */
-    enum FrameType {NoFrame,Rectangle,Ellipse};
+    enum FrameType {NoFrame,Rectangle,Ellipse,Cloud};
 
     FrameObj();
     FrameObj(QGraphicsScene*);
@@ -22,6 +22,7 @@ public:
     void moveBy (double x,double y);// move to relative Position
     void positionBBox();	     
     void calcBBoxSize();	    
+    float roof (float x);	    // "roof" function
     void setRect (const QRectF &);   // set dimensions		
     void setPadding(const int &);
     int getPadding();
@@ -46,6 +47,7 @@ private:
     FrameType type;	    //!< Frame type
     QGraphicsRectItem * rectFrame;
     QGraphicsEllipseItem * ellipseFrame;
+    QGraphicsPathItem *pathFrame;
     int padding;	    // distance text - frame
     int borderWidth;
     QColor penColor;

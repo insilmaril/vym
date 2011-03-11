@@ -65,6 +65,11 @@
               <string>Ellipse</string>
              </property>
             </item>
+            <item>
+             <property name="text">
+              <string>Cloud</string>
+             </property>
+            </item>
            </widget>
           </item>
           <item row="2" column="3">

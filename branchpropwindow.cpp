@@ -111,6 +111,9 @@ void BranchPropertyWindow::setItem (TreeItem *ti)
 		    case FrameObj::Ellipse: 
 			ui.frameTypeCombo->setCurrentIndex (2);
 			break;
+		    case FrameObj::Cloud: 
+			ui.frameTypeCombo->setCurrentIndex (3);
+			break;
 		    default: 
 			break;
 		}
@@ -195,6 +198,10 @@ void BranchPropertyWindow::frameTypeChanged (int i)
 		break;
 	    case 2: 
 		model->setFrameType (FrameObj::Ellipse); 
+		model->setFramePadding (5); 
+		break;
+	    case 3: 
+		model->setFrameType (FrameObj::Cloud); 
 		model->setFramePadding (5); 
 		break;
 	}

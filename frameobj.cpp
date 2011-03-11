@@ -45,6 +45,9 @@ void FrameObj::clear()
 	case Ellipse:
 	    delete ellipseFrame;
 	    break;
+	case Cloud:
+	    delete pathFrame;
+	    break;
     }
     type=NoFrame;
     padding=0;
@@ -61,6 +64,8 @@ void FrameObj::move(double x, double y)
 	    break;
 	case Ellipse:
 	    ellipseFrame->setPos (x,y);
+	case Cloud:
+	    pathFrame->setPos (x,y);
 	    break;
     }
 }
@@ -78,6 +83,14 @@ void FrameObj::calcBBoxSize()
 {
 }
 
+float FrameObj::roof (float x)
+{
+    if (x<=0.5)
+	return  x;
+    else
+	return 1-x;
+}
+
 void FrameObj::setRect(const QRectF &r)
 {
     bbox=r;
@@ -86,12 +99,66 @@ void FrameObj::setRect(const QRectF &r)
 	case NoFrame:
 	    break;
 	case Rectangle:
-	//  rectFrame->prepareGeometryChange();
 	    rectFrame->setRect (QRectF(bbox.x(),bbox.y(),bbox.width(),bbox.height() ));
 	    break;
 	case Ellipse:
-	//  ellipseFrame->prepareGeometryChange();
 	    ellipseFrame->setRect (QRectF(bbox.x(),bbox.y(),bbox.width(),bbox.height() ));
+	    break;
+	case Cloud:
+	    QPointF tl=bbox.topLeft();
+	    QPointF tr=bbox.topRight();
+	    QPointF bl=bbox.bottomLeft();
+	    QPainterPath path;
+	    path.moveTo (tl);
+
+	    float w=bbox.width();   // width
+	    float h=bbox.height();  // height
+	    int n=w/40;		    // number of intervalls
+	    float d=w/n;	    // width of interwall
+
+	    // Top path
+	    for (float i=0; i<n; i++)
+	    {
+		//qDebug()<<"i="<<i<<"  n="<<n<<"  r="<<roof ((i+1)/n)<<"  r2="<<roof((i+0.5)/n);
+		path.cubicTo (
+		    tl.x() + i*d,     tl.y()- 100*roof ((i+0.5)/n) , 
+		    tl.x() + (i+1)*d, tl.y()- 100*roof ((i+0.5)/n) , 
+		    tl.x() + (i+1)*d + 20*roof ((i+1)/n), tl.y()- 50*roof((i+1)/n) );
+	    }
+	    // Right path
+	    n=h/20;
+	    d=h/n;
+	    for (float i=0; i<n; i++)
+	    {
+		//qDebug()<<"i="<<i<<"  n="<<n<<"  r="<<roof ((i+1)/n)<<"  r2="<<roof((i+0.5)/n);
+		path.cubicTo (
+		    tr.x()+ 100*roof ((i+0.5)/n)        , tr.y() + i*d,
+		    tr.x()+ 100*roof ((i+0.5)/n)        , tr.y() + (i+1)*d,
+		    tr.x() + 60*roof ((i+1)/n)          , tr.y() + (i+1)*d );
+	    }
+	    n=w/60;
+	    d=w/n;
+	    // Bottom path
+	    for (float i=n; i>0; i--)
+	    {
+		//qDebug()<<"i="<<i<<"  n="<<n<<"  r="<<roof ((i+1)/n)<<"  r2="<<roof((i+0.5)/n);
+		path.cubicTo (
+		    bl.x() + i*d,  bl.y()+ 100*roof ((i-0.5)/n) , 
+		    bl.x() + (i-1)*d,      bl.y()+ 100*roof ((i-0.5)/n) , 
+		    bl.x() + (i-1)*d + 20*roof ((i-1)/n), bl.y()+ 50*roof((i-1)/n) );
+	    }
+	    // Left path
+	    n=h/20;
+	    d=h/n;
+	    for (float i=n; i>0; i--)
+	    {
+		//qDebug()<<"i="<<i<<"  n="<<n<<"  r="<<roof ((i+1)/n)<<"  r2="<<roof((i+0.5)/n);
+		path.cubicTo (
+		    tl.x()- 100*roof ((i-0.5)/n)        , tr.y() + i*d,
+		    tl.x()- 100*roof ((i-0.5)/n)        , tr.y() + (i-1)*d,
+		    tl.x()-  60*roof ((i-1)/n)          , tr.y() + (i-1)*d );
+	    }
+	    pathFrame->setPath(path);
 	    break;
     }
 }
@@ -136,6 +203,9 @@ QString FrameObj::getFrameTypeName()
 	case Ellipse:
 	    return "Ellipse";
 	    break;
+	case Cloud:
+	    return "Cloud";
+	    break;
 	default:
 	    return "NoFrame";
     }
@@ -160,6 +230,12 @@ void FrameObj::setFrameType(const FrameType &t)
 	    ellipseFrame = scene->addEllipse(QRectF(0,0,0,0), QPen(penColor), brushColor);
 	    ellipseFrame->setZValue(Z_INIT);
 	    ellipseFrame->show();
+	case Cloud:
+	    //FIXME-0
+	    QPainterPath path;
+	    pathFrame = scene->addPath(path, QPen(penColor), brushColor);
+	    pathFrame->setZValue(Z_INIT);
+	    pathFrame->show();
 	    break;
 	}
     }
@@ -172,6 +248,8 @@ void FrameObj::setFrameType(const QString &t)
 	FrameObj::setFrameType (Rectangle);
     else if (t=="Ellipse")  
 	FrameObj::setFrameType (Ellipse);
+    else if (t=="Cloud")  
+	FrameObj::setFrameType (Cloud);
     else    
 	FrameObj::setFrameType (NoFrame);
 }
@@ -226,6 +304,10 @@ void FrameObj::repaint()
 	    ellipseFrame->setPen   (pen);
 	    ellipseFrame->setBrush (brush);
 	    break;
+	case Cloud:
+	    pathFrame->setPen   (pen);
+	    pathFrame->setBrush (brush);
+	    break;
 	default:
 	    break;
     }
@@ -242,6 +324,9 @@ void FrameObj::setZValue (double z)
 	    break;
 	case Ellipse:
 	    ellipseFrame->setZValue (z);
+	    break;
+	case Cloud:
+	    pathFrame->setZValue (z);
 	    break;
     }
 }
@@ -264,6 +349,12 @@ void FrameObj::setVisibility (bool v)
 		ellipseFrame->show();
 	    else    
 		ellipseFrame->hide();
+	    break;
+	case Cloud:
+	    if (visible)
+		pathFrame->show();
+	    else    
+		pathFrame->hide();
 	    break;
     }
 }
