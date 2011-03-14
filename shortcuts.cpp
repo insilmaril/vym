@@ -30,13 +30,15 @@ void Switchboard::print ()
     QString g;
     foreach (g,actions.uniqueKeys())
     {
-	cout <<"Group: "<<g.toStdString()<<endl;
+	cout << qPrintable(g)<<endl;
 	QList <QAction*> values=actions.values(g);
 	for (int i=0;i<values.size();++i)
 	{
-	    cout<<QString ("  %1: %2") 
-		.arg(values.at(i)->text().left(30),30)
-		.arg(values.at(i)->shortcut().toString()).toStdString()<<endl;
+	    QString desc=values.at(i)->text();
+	    QString   sc=values.at(i)->shortcut().toString();
+	    desc=desc.remove('&');
+	    desc=desc.remove("...");
+	    printf (" %10s: %s\n",qPrintable(sc),qPrintable(desc));
 	}
 	cout <<endl;
     }
@@ -47,13 +49,17 @@ void Switchboard::printLaTeX ()
     QString g;
     foreach (g,actions.uniqueKeys())
     {
-	cout <<"Group: "<<g.toStdString()<<endl;
+	cout <<"Group: "<<qPrintable(g)<<"\\\\ \\hline"<<endl;
 	QList <QAction*> values=actions.values(g);
 	for (int i=0;i<values.size();++i)
 	    if (!values.at(i)->shortcut().toString().isEmpty())
-		cout<<QString ("  %1& %2\\\\ ") 
-		    .arg(values.at(i)->text().left(30),30)
-		    .arg(values.at(i)->shortcut().toString()).toStdString()<<endl;
+	    {
+		QString desc=values.at(i)->text();
+		QString   sc=values.at(i)->shortcut().toString();
+		desc=desc.remove('&');
+		desc=desc.remove("...");
+		printf (" %10s & %s\\\\ \n",qPrintable(sc),qPrintable(desc));
+	    }
 	cout <<endl;
     }
 }
