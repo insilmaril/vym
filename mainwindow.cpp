@@ -487,6 +487,14 @@ void Main::setupFileActions()
 
     fileExportMenu = fileMenu->addMenu (tr("Export","File menu"));
 
+    a = new QAction( QPixmap(iconPath+"file-document-export.png"),tr("Repeat last export (%1)").arg("-"), this);
+    a->setShortcut (Qt::ALT + Qt::Key_E);	    
+    switchboard.addConnection(a,tr("File","Shortcut group"));
+    connect( a, SIGNAL( triggered() ), this, SLOT( fileExportLast() ) );
+    tb->addAction(a);
+    actionFileExportLast=a;
+    fileExportMenu->addAction (a);
+
     a = new QAction( tr("Image%1","File export menu").arg("..."), this);
     switchboard.addConnection(a,tr("File","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( fileExportImage() ) );
@@ -505,14 +513,6 @@ void Main::setupFileActions()
     a = new QAction( "Open Office...", this);
     switchboard.addConnection(a,tr("File","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( fileExportOOPresentation() ) );
-    fileExportMenu->addAction (a);
-
-    a = new QAction( QPixmap(iconPath+"file-document-export.png"),tr("Repeat last export (%1)").arg("-"), this);
-    a->setShortcut (Qt::ALT + Qt::Key_E);	    
-    switchboard.addConnection(a,tr("File","Shortcut group"));
-    connect( a, SIGNAL( triggered() ), this, SLOT( fileExportLast() ) );
-    tb->addAction(a);
-    actionFileExportLast=a;
     fileExportMenu->addAction (a);
 
     a = new QAction(  "Webpage (HTML)...",this );
