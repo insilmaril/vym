@@ -7,6 +7,7 @@
 #include <QHash>
 
 extern Main *mainWindow;
+extern QDir vymBaseDir;
 extern bool debug;
 
 
@@ -54,7 +55,7 @@ BugAgent::BugAgent (BranchItem *bi,const QString &u)
     }
 	
 
-    bugScript="bugger";
+    bugScript=vymBaseDir.path()+"/scripts/bugger";
 
     p=new Process;
 

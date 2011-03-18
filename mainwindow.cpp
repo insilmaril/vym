@@ -968,7 +968,6 @@ void Main::setupEditActions()
     a->setShortcutContext (Qt::WindowShortcut);
     switchboard.addConnection(a,tr("Edit","Shortcut group"));
     addAction(a);
-    actionListBranches.append(a);
     connect( a, SIGNAL( triggered() ), this, SLOT( editBugzilla2URL() ) );
     actionBugzilla2URL=a;
 
@@ -977,7 +976,6 @@ void Main::setupEditActions()
     a->setShortcutContext (Qt::WindowShortcut);
     switchboard.addConnection(a,tr("Edit","Shortcut group"));
     addAction(a);
-    a->setEnabled (bugzillaClientAvailable);
     connect( a, SIGNAL( triggered() ), this, SLOT( getBugzillaData() ) );
     actionGetBugzillaData=a;
 
@@ -986,7 +984,6 @@ void Main::setupEditActions()
     a->setShortcutContext (Qt::WindowShortcut);
     switchboard.addConnection(a,tr("Edit","Shortcut group"));
     addAction(a);
-    a->setEnabled (bugzillaClientAvailable);
     connect( a, SIGNAL( triggered() ), this, SLOT( getBugzillaDataSubtree() ) );
     actionGetBugzillaDataSubtree=a;
 
@@ -1854,12 +1851,10 @@ void Main::setupContextMenus()
 	branchLinksContextMenu->addAction ( actionGetURLsFromNote );
 	branchLinksContextMenu->addAction ( actionHeading2URL );
 	branchLinksContextMenu->addAction ( actionBugzilla2URL );
+	branchLinksContextMenu->addAction ( actionGetBugzillaData );
+	branchLinksContextMenu->addAction ( actionGetBugzillaDataSubtree );
 	if (settings.value( "/mainwindow/showTestMenu",false).toBool() )
-	{
-	    branchLinksContextMenu->addAction ( actionGetBugzillaData );
-	    branchLinksContextMenu->addAction ( actionGetBugzillaDataSubtree );
 	    branchLinksContextMenu->addAction ( actionFATE2URL );
-	}   
 	branchLinksContextMenu->addSeparator();	
 	branchLinksContextMenu->addAction ( actionOpenVymLink );
 	branchLinksContextMenu->addAction ( actionOpenMultipleVymLinks );
@@ -4015,11 +4010,16 @@ void Main::updateActions()
 		{
 		    actionOpenURL->setEnabled (false);
 		    actionOpenURLTab->setEnabled (false);
+		    actionGetBugzillaData->setEnabled (false);
+		    actionGetBugzillaDataSubtree->setEnabled (false);
 		}   
 		else	
 		{
 		    actionOpenURL->setEnabled (true);
 		    actionOpenURLTab->setEnabled (true);
+		    bool f=selti->getURL().contains("bugzilla");
+		    actionGetBugzillaData->setEnabled (f && bugzillaClientAvailable);
+		    actionGetBugzillaDataSubtree->setEnabled (f && bugzillaClientAvailable);
 		}
 		if ( selti->getVymLink().isEmpty() )
 		{

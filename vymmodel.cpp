@@ -3224,8 +3224,9 @@ void VymModel::getBugzillaData(bool subtree)
 	dia.setText(
 	    QObject::tr("No Bugzilla client found. "
 	    " For openSUSE you can install by (running as root):\n\n","VymModel, how to install Bugzilla client module")+
-	    "  zypper ar http://download.opensuse.org/repositories/openSUSE:/Tools/openSUSE_11.2/ openSUSE:Tools_11.2\n"+
+	    "  zypper ar http://download.opensuse.org/repositories/openSUSE:/Tools/openSUSE_XX.Y/ openSUSE:Tools_XX.Y\n"+
 	    "  zypper in perl-SUSE-BugzillaClient\n\n"+
+	    "  and replace XX.Y with your version of openSUSE, e.g. 11.4\n\n"+
 	    QObject::tr("Alternatively you can also add the repository\n"
 	    "and install the perl module for Bugzilla access using YaST","VymModel, how to install Bugzilla client module")
 	);
