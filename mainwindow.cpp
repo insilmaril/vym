@@ -4006,20 +4006,19 @@ void Main::updateActions()
 		else	
 		    actionToggleScroll->setChecked(false);
 
+		actionGetBugzillaDataSubtree->setEnabled (bugzillaClientAvailable);
 		if ( selti->getURL().isEmpty() )
 		{
 		    actionOpenURL->setEnabled (false);
 		    actionOpenURLTab->setEnabled (false);
 		    actionGetBugzillaData->setEnabled (false);
-		    actionGetBugzillaDataSubtree->setEnabled (false);
 		}   
 		else	
 		{
 		    actionOpenURL->setEnabled (true);
 		    actionOpenURLTab->setEnabled (true);
-		    bool f=selti->getURL().contains("bugzilla");
-		    actionGetBugzillaData->setEnabled (f && bugzillaClientAvailable);
-		    actionGetBugzillaDataSubtree->setEnabled (f && bugzillaClientAvailable);
+		    actionGetBugzillaData->setEnabled (
+			selti->getURL().contains("bugzilla") && bugzillaClientAvailable);
 		}
 		if ( selti->getVymLink().isEmpty() )
 		{
