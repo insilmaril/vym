@@ -23,7 +23,6 @@ ExportHTMLDialog::ExportHTMLDialog(QWidget* parent) : QDialog(parent)
 
     // signals and slots connections
     connect(ui.browseExportDirButton, SIGNAL(pressed()), this, SLOT(browseDirectoryPressed()));
-    connect(ui.outputButton, SIGNAL(toggled(bool)), this, SLOT(outputButtonPressed(bool)));
     connect(ui.browseCSSButton, SIGNAL(pressed()), this, SLOT(browseCSSPressed()));
     connect(ui.imageButton, SIGNAL(toggled(bool)), this, SLOT(imageButtonPressed(bool)));
     connect(ui.textColorButton, SIGNAL(toggled(bool)), this, SLOT(textcolorButtonPressed(bool)));
@@ -67,11 +66,13 @@ void ExportHTMLDialog::readSettings()
 	saveSettingsInMap=false;
     ui.saveSettingsInMapButton->setChecked(saveSettingsInMap);
 
+/*
     if ( settings.value ("/export/html/showOutput","no").toBool())
 	showOutput=true;
     else    
 	showOutput=false;
     ui.outputButton->setChecked(showOutput);
+    */
 
     // For testing better use local styles
     const QString defcss(vymBaseDir.path() + "/styles/vym.css");

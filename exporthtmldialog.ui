@@ -156,19 +156,6 @@
          </property>
         </widget>
        </item>
-       <item>
-        <widget class="QCheckBox" name="outputButton">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="text">
-          <string>show output of external scripts</string>
-         </property>
-        </widget>
-       </item>
       </layout>
      </widget>
     </widget>
@@ -320,8 +307,6 @@
        </item>
       </layout>
      </widget>
-     <zorder>layoutWidget</zorder>
-     <zorder>groupBox</zorder>
     </widget>
    </item>
    <item>
@@ -364,11 +349,8 @@
   </layout>
   <zorder>groupBox_2</zorder>
   <zorder>groupBox_3</zorder>
-  <zorder>layoutWidget</zorder>
   <zorder>groupBox</zorder>
-  <zorder>textLabel1</zorder>
   <zorder></zorder>
-  <zorder>layoutWidget</zorder>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>

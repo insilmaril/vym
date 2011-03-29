@@ -231,7 +231,6 @@ void FrameObj::setFrameType(const FrameType &t)
 	    ellipseFrame->setZValue(Z_INIT);
 	    ellipseFrame->show();
 	case Cloud:
-	    //FIXME-0
 	    QPainterPath path;
 	    pathFrame = scene->addPath(path, QPen(penColor), brushColor);
 	    pathFrame->setZValue(Z_INIT);
