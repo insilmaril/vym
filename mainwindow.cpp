@@ -3070,11 +3070,12 @@ void Main::editHeadingFinished(VymModel *m)
 void Main::openVymLinks(const QStringList &vl)
 {
     QStringList vlmin;
+    int index;
     for (int j=0; j<vl.size(); ++j)
     {
 	// compare path with already loaded maps
-	int index=-1;
 	int i;
+	index=-1;
 	for (i=0;i<=vymViews.count() -1;i++)
 	{
 	    if (vl.at(j)==vymViews.at(i)->getModel()->getFilePath() )
@@ -3099,9 +3100,10 @@ void Main::openVymLinks(const QStringList &vl)
 	    fileLoad (vlmin.at(j), NewMap);
 	    tabWidget->setCurrentIndex (tabWidget->count()-1);	
 	}
-	// Go to tab containing the map
-	//tabWidget->setCurrentIndex (index);	
     }	    
+    // Go to tab containing the map
+    if (index>=0)
+	tabWidget->setCurrentIndex (index);	
     removeProgressCounter();
 }
 
