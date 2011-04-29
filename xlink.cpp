@@ -134,7 +134,6 @@ bool Link::activate ()
 	
 	if (beginBranch==endBranch) return false;
 	xLinkState=activeXLink;
-
 	model->updateActions();
 	return true;
     } else
@@ -204,6 +203,7 @@ XLinkObj* Link::getXLinkObj()
 XLinkObj* Link::createMapObj(QGraphicsScene *scene)  
 {
     if (!xlo) xlo=new XLinkObj (scene,this);  
+    xlo->setVisibility();
     return xlo;
 }
 
