@@ -1173,6 +1173,7 @@ void Main::setupFormatActions()
     a->setChecked (true);
     connect( a, SIGNAL( triggered() ), this, SLOT( formatLinkStylePolyParabel() ) );
     formatMenu->addAction (a);
+    formatMenu->addSeparator();
     actionFormatLinkStylePolyParabel=a;
 
     a = new QAction( tr( "Hide link if object is not selected","Branch attribute" ), this);
@@ -1180,7 +1181,6 @@ void Main::setupFormatActions()
     connect( a, SIGNAL( triggered() ), this, SLOT( formatHideLinkUnselected() ) );
     actionFormatHideLinkUnselected=a;
 
-    formatMenu->addSeparator();
     a= new QAction( tr( "&Use color of heading for link","Branch attribute" ),  this);
     a->setCheckable(true);
     connect( a, SIGNAL( triggered() ), this, SLOT( formatToggleLinkColorHint() ) );
@@ -1900,11 +1900,12 @@ void Main::setupContextMenus()
     // Context menu for canvas
     canvasContextMenu =new QMenu (this);
     canvasContextMenu->addAction (actionAddMapCenter);
-    canvasContextMenu->addAction (actionMapInfo);
+    canvasContextMenu->addAction (actionMapInfo);   //FIXME-3 move to File menu?
     canvasContextMenu->insertSeparator(actionMapInfo);   
     canvasContextMenu->addActions(actionGroupFormatLinkStyles->actions() );
-    canvasContextMenu->insertSeparator(actionGroupFormatLinkStyles->actions().last() );   
+    canvasContextMenu->insertSeparator(actionGroupFormatLinkStyles->actions().first() );   
     canvasContextMenu->addAction(actionFormatLinkColorHint);
+    canvasContextMenu->insertSeparator(actionFormatLinkColorHint);
     canvasContextMenu->addAction(actionFormatLinkColor);
     canvasContextMenu->addAction(actionFormatSelectionColor);
     canvasContextMenu->addAction(actionFormatBackColor);
