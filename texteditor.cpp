@@ -522,7 +522,7 @@ void TextEditor::textLoad()
 	types<< "Text (*.txt *.html)"<<
 	    "VYM notes and HTML (*.html)" <<
 	    "ASCII texts (*.txt)" <<
-	    "All filed (*)";
+	    "All files (*)";
 	fd->setFilters (types);
 	fd->setDirectory (QDir().current());
 	fd->show();
