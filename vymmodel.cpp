@@ -2580,10 +2580,12 @@ bool VymModel::relinkBranch (BranchItem *branch, BranchItem *dst, int pos, bool 
 	emit (layoutChanged() );
 	reposition();	// both for moveUp/Down and relinking
 
+	// New parent might be invisible
+	branch->updateVisibility();
+
 	if (dst->isScrolled() )
 	{
 	    if (updateSelection) select (dst);
-	    branch->updateVisibility();
 	}
 	else	
 	    if (updateSelection) select (branch);
