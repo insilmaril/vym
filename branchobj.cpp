@@ -289,7 +289,7 @@ void BranchObj::calcBBoxSize()
     ornamentsBBox.setSize ( QSizeF(w,h));
 
     // clickBox includes Flags and Heading
-    clickBox.setSize (ornamentsBBox.size() );
+    clickPoly=QPolygonF (ornamentsBBox);
 
     // Floatimages 
     QPointF rp;
@@ -346,8 +346,9 @@ void BranchObj::setDockPos()
     if (treeItem->getType()==TreeItem::MapCenter)
     {
 	// set childPos to middle of MapCenterObj
-	childPos.setX( clickBox.topLeft().x() + clickBox.width()/2 );
-	childPos.setY( clickBox.topLeft().y() + clickBox.height()/2 );
+	QRectF r=clickPoly.boundingRect();
+	childPos.setX( r.topLeft().x() + r.width()/2 );
+	childPos.setY( r.topLeft().y() + r.height()/2 );
 	parPos=childPos;	
 	for (int i=0; i<treeItem->branchCount(); ++i)
 	    treeItem->getBranchObjNum(i)->updateLinkGeometry();

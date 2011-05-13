@@ -99,7 +99,7 @@ protected:
     virtual void mouseReleaseEvent(QMouseEvent*);
     virtual void mouseDoubleClickEvent(QMouseEvent*);
     virtual void wheelEvent(QWheelEvent*);
-
+    virtual void focusOutEvent (QFocusEvent*);
     virtual void resizeEvent( QResizeEvent * );
 
     void dragEnterEvent (QDragEnterEvent *);
@@ -146,7 +146,7 @@ signals:
     void selectionChanged(const QItemSelection &, const QItemSelection &);
 
 private:    
-    QList <QGraphicsRectItem*> selboxList;
+    QList <QGraphicsPolygonItem*> selPolyList;
     QColor selectionColor;
 
 public slots:

@@ -430,7 +430,6 @@ TreeItem* BranchItem::findMapItem (QPointF p, TreeItem* excludeTI)
 	    mo->isVisibleObj() 
 	) return ai;
     }
-
     return NULL;
 }
 

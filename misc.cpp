@@ -42,6 +42,26 @@ ostream &operator<< (ostream &stream, Vector const &p)
 
 qreal getAngle(const QPointF &p)
 {   
+    // Calculate angle of vector to x-axis
+    if (p.x()==0)
+    {
+	if (p.y()>=0)
+	    return M_PI_2;
+	else
+	    return 3* M_PI_2;
+    } else
+    {
+	if (p.x()>0) 
+	{
+	    if (p.y()<0)
+		return (qreal)( - atan ( (qreal)(p.y()) / (qreal)(p.x()) ) );
+	    else	
+		return (qreal)( 2*M_PI - atan ( (qreal)(p.y()) / (qreal)(p.x()) ) );
+	}    
+	else	
+	    return (qreal)(M_PI -atan ( (qreal)(p.y()) / (qreal)(p.x()) ) );
+    }	
+    /*
     // Calculate angle of vector to y-axis
     if (p.y()==0)
     {
@@ -59,6 +79,14 @@ qreal getAngle(const QPointF &p)
 	    else    
 		return (qreal)( - atan ( (qreal)(p.x()) / (qreal)(p.y()) ) );
     }	
+    */
+}
+
+qreal min(qreal a, qreal b)
+{
+    if (a<b)
+	return a;
+    return b;
 }
 
 qreal max(qreal a, qreal b)

@@ -27,7 +27,7 @@ void FloatImageObj::init ()
     icon->setVisibility (true);
     setZValue (Z_INIT);
     bbox.setSize (QSizeF(icon->boundingRect().width(), icon->boundingRect().height()));
-    clickBox.setSize (QSizeF(icon->boundingRect().width(), icon->boundingRect().height()));
+    clickPoly=QPolygonF (bbox);
     useRelPos=true;
 
     //Hide flags
@@ -56,7 +56,7 @@ void FloatImageObj::load (const QImage &img)
 {
     icon->load(QPixmap::fromImage(img));
     bbox.setSize (QSizeF(icon->boundingRect().width()+8, icon->boundingRect().height()+8));
-    clickBox.setSize (QSizeF(icon->boundingRect().width()+8, icon->boundingRect().height()+8));
+    clickPoly=QPolygonF (bbox);
     positionBBox();
 }
 
@@ -83,7 +83,7 @@ void FloatImageObj::move (QPointF p)
 
 void FloatImageObj::positionBBox()
 {
-    clickBox=bbox;
+    clickPoly=QPolygonF(bbox);
 }
 
 void FloatImageObj::calcBBoxSize()

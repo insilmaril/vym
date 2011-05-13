@@ -94,7 +94,7 @@ QStringList FlagRowObj::activeFlagNames()
 void FlagRowObj::positionBBox()
 {
     bbox.moveTopLeft(absPos );
-    clickBox.moveTopLeft(absPos );
+    clickPoly=QPolygonF (bbox);
 }
 
 void FlagRowObj::calcBBoxSize()
@@ -111,14 +111,14 @@ void FlagRowObj::calcBBoxSize()
 	    boxsize.setHeight(size.height() );
     }
     bbox.setSize (boxsize);
-    clickBox.setSize (boxsize);
+    clickPoly=QPolygonF (bbox);
 }
 
 QString FlagRowObj::getFlagName (const QPointF &p)
 {
-    if (!isInBox (p,clickBox)) return "";
+    if (!isInBox (p,clickPoly.boundingRect() )) return "";
     for (int i=0; i<flag.size(); ++i)
-	if (isInBox (p,flag.at(i)->getClickBox ())) return flag.at(i)->getName();
+	if (isInBox (p,flag.at(i)->getClickPoly().boundingRect() )) return flag.at(i)->getName();
     return "";	
 
     

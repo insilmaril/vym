@@ -216,7 +216,7 @@ void OrnamentedObj::positionContents()	//FIXME-3 called multiple times for each 
     standardFlags->setZValue (d + dZ_ICON);
 
     ornamentsBBox.moveTopLeft ( QPointF (ox+x,oy+y));
-    clickBox.moveTopLeft (QPointF (ox + x, oy + y));
+    clickPoly=QPolygonF (ornamentsBBox);
 
     // Update bboxTotal coordinate (size set already)
     if (orientation==LinkableMapObj::LeftOfCenter )

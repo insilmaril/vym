@@ -158,7 +158,7 @@ void FlagObj::saveToDir (const QString &tmpdir, const QString &prefix)
 void FlagObj::positionBBox()
 {
     bbox.moveTopLeft (absPos );
-    clickBox.moveTopLeft (absPos );
+    clickPoly=QPolygonF (bbox);
 }
 
 void FlagObj::calcBBoxSize()
@@ -169,6 +169,6 @@ void FlagObj::calcBBoxSize()
 	    icon->boundingRect().height() ) );
     else
 	bbox.setSize (QSizeF(0,0));
-    clickBox.setSize (bbox.size());
+    clickPoly= QPolygonF (bbox); 
 }
 

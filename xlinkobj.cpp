@@ -4,6 +4,7 @@
 
 #include "branchobj.h"
 #include "branchitem.h"
+#include "math.h"	// atan
 #include "misc.h"	// max
 
 /////////////////////////////////////////////////////////////////
@@ -37,9 +38,9 @@ void XLinkObj::init ()
     pen.setWidth ( link->getWidth() );
     pen.setCapStyle (  Qt::RoundCap );
     line=scene->addLine(QLineF(1,1,1,1),pen);
-    line->setZValue (dZ_LINK);
-    poly=scene->addPolygon(QPolygonF(),pen, link->getColor());
-    poly->setZValue (dZ_LINK);
+    line->setZValue (Z_INIT);
+    poly=scene->addPolygon(QPolygonF(),pen, link->getColor());	//FIXME-2 needed???
+    poly->setZValue (Z_INIT);
     setVisibility (true);
 }
 
@@ -111,6 +112,19 @@ void XLinkObj::updateXLink()
 
     beginPos=a;
     endPos=b;
+
+    // Recalc clickBox
+    qreal w= - getAngle (b-a);
+    QPointF v(0,1);
+    QPointF vn(v.x()*cos (w) - v.y()*sin(w),v.y()*cos (w) + v.x()*sin(w));
+
+    clickPoly.clear();
+    clickPoly << a + vn *clickBorder;
+    clickPoly << b + vn *clickBorder;
+    clickPoly << b - vn *clickBorder;
+    clickPoly << a - vn *clickBorder;
+
+
     pen.setColor ( link->getColor() );
     pen.setWidth ( link->getWidth() );
     poly->setBrush (link->getColor() );
@@ -118,8 +132,11 @@ void XLinkObj::updateXLink()
     line->setLine(a.x(), a.y(), b.x(), b.y());
     BranchItem *bi_begin=link->getBeginBranch();
     BranchItem *bi_end  =link->getEndBranch();
-    if (bi_begin && bi_end)
+    if (bi_begin && bi_end && link->getState()==Link::activeXLink)
+	// FIXME-2 z-values: it may happen, that XLink is hidden below a separate rectFrame. Could lead to jumping on releasing mouse button
 	line->setZValue (dZ_DEPTH * max(bi_begin->depth(),bi_end->depth()) + dZ_XLINK); 
+    else	
+	line->setZValue (Z_INIT);
 }
 
 void XLinkObj::positionBBox()

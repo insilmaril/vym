@@ -207,4 +207,8 @@ XLinkObj* Link::createMapObj(QGraphicsScene *scene)
     return xlo;
 }
 
+MapObj* Link::getMO()
+{
+    return xlo;
+}
 

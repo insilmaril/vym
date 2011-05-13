@@ -9,6 +9,8 @@ class BranchItem;
 
 /*! \brief xlinks are used to draw arbitrary connections between branches (BranchObj) in the map. */
 
+#define clickBorder 8
+
 /////////////////////////////////////////////////////////////////////////////
 class XLinkObj:public MapObj {
 public:

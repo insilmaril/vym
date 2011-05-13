@@ -135,6 +135,11 @@ QRectF MapItem::getBBoxFlag (const QString &fname)
 	return QRectF ();
 }
 
+MapObj* MapItem::getMO()
+{
+    return (MapObj*)lmo;
+}
+
 LinkableMapObj* MapItem::getLMO()
 {
     return lmo;

@@ -50,7 +50,7 @@ public:
     virtual void moveBy (double x,double y);    //! move to relative Position
     virtual QRectF getBBox();			//! returns bounding box
     virtual ConvexPolygon getBoundingPolygon();	//! return bounding convex polygon
-    virtual QRectF getClickBox();		//! returns box to click
+    virtual QPolygonF getClickPoly();		//! returns polygon to click
     virtual bool isInClickBox (const QPointF &p);   //! Checks if p is in clickBox
     virtual QSizeF getSize();			//! returns size of bounding box
     virtual bool isVisibleObj();
@@ -60,7 +60,7 @@ public:
 protected:  
     QGraphicsScene* scene;
     QRectF bbox;		    // bounding box of MO itself
-    QRectF clickBox;		    // area where mouseclicks are found
+    QPolygonF clickPoly;		    // area where mouseclicks are found
     QPointF absPos;		    // Position on canvas
     bool visible;
 

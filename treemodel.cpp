@@ -293,3 +293,17 @@ BranchItem *TreeModel::getRootItem()
     return rootItem;
 }
 
+int TreeModel::xlinkCount()
+{
+    return xlinks.count();
+}
+
+Link* TreeModel::getXLinkNum (const int &n)
+{
+    if (n>=0 && n<xlinks.count())
+	return xlinks.at(n);
+    else
+	return NULL;
+
+}
+

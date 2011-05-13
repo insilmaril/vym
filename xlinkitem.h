@@ -22,7 +22,9 @@ public:
     void setLink (Link*);
     Link* getLink ();
     void updateXLink();
+    MapObj* getMO();
     BranchItem* getPartnerBranch ();
+
 
 private:
     Link *link;

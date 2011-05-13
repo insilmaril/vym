@@ -5,6 +5,7 @@
 
 #include "treeitem.h"
 
+class MapObj;
 class LinkableMapObj;
 
 /*! /brief MapItem is used to store information of MapObj and inherited
@@ -63,6 +64,7 @@ protected:
     LinkableMapObj *lmo;
 public:
     /*! Returns pointer to related LinkableMapObj in QGraphicsView */
+    virtual         MapObj* getMO();
     virtual LinkableMapObj* getLMO();
 
     /*! Set pointer to related LinkableMapObj in QGraphicsView */

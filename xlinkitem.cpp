@@ -53,6 +53,13 @@ void XLinkItem::updateXLink()
 	link->updateLink();
 }
 
+MapObj* XLinkItem::getMO()
+{
+    if (link)
+	return link->getMO();
+    return NULL;	
+}
+
 BranchItem* XLinkItem::getPartnerBranch()
 {
     if (link && link->getBeginBranch() && link->getEndBranch())

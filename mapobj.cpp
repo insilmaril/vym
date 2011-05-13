@@ -99,21 +99,21 @@ void MapObj::move (double x, double y)
     absPos.setX( x);
     absPos.setY( y);
     bbox.moveTo(QPointF(x,y));
-    clickBox.moveTo(QPointF(x,y));
+    clickPoly=QPolygonF (bbox); 
 }
 
 void MapObj::move (QPointF p)
 {
     absPos=p;
     bbox.moveTo (p);
-    clickBox.moveTo (p);
+    clickPoly=QPolygonF (bbox);
 }
 
 void MapObj::moveBy (double x, double y) 
 {
     MapObj::move (x+absPos.x(),y+absPos.y() );
     bbox.moveTo (bbox.x()+x,bbox.y()+y);
-    clickBox.moveTo (clickBox.x()+x,clickBox.y()+y);
+    clickPoly.translate (x,y);
 }
 
 QRectF MapObj::getBBox()
@@ -128,14 +128,14 @@ ConvexPolygon MapObj::getBoundingPolygon()
     return p;
 }
 
-QRectF MapObj::getClickBox()
+QPolygonF MapObj::getClickPoly()
 {
-    return clickBox;
+    return clickPoly;
 }
 
 bool MapObj::isInClickBox (const QPointF &p)
 {
-    return isInBox (p,clickBox);
+    return  clickPoly.containsPoint (p,Qt::OddEvenFill);
 }
 
 QSizeF MapObj::getSize()

@@ -38,6 +38,8 @@ public:
     TreeItem* getItem (const QModelIndex &index) const;
     BranchItem* getRootItem();
 
+    virtual int xlinkCount();
+    virtual Link* getXLinkNum (const int &n); 
 
 protected:
     BranchItem *rootItem;

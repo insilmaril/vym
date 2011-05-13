@@ -450,8 +450,9 @@ void LinkableMapObj::updateLinkGeometry()
     if (!parObj)        {
 	// If I am a mapcenter, set childPos to middle of MapCenterObj // FIXME-3 isn't that also done already in BO::setDockPos ?
 
-	childPos.setX( clickBox.topLeft().x() + clickBox.width()/2 );
-	childPos.setY( clickBox.topLeft().y() + clickBox.height()/2 );
+	QRectF br=clickPoly.boundingRect();
+	childPos.setX( br.topLeft().x() + br.width()/2 );
+	childPos.setY( br.topLeft().y() + br.height()/2 );
 	parPos=childPos;	
 	// Redraw links to children
 	for (int i=0; i<treeItem->branchCount(); ++i)

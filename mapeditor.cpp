@@ -129,7 +129,6 @@ MapEditor::MapEditor( VymModel *vm)
     // Selections
     selectionColor =QColor (255,255,0);
     
-
     // Attributes   //FIXME-3 testing only...
     QString k;
     AttributeDef *ad;
@@ -603,6 +602,7 @@ void MapEditor::autoLayout()
 
 TreeItem* MapEditor::findMapItem (QPointF p,TreeItem *exclude)
 {
+    // Search branches (and their childs, e.g. images
     // Start with mapcenter, no images allowed at rootItem
     int i=0;
     BranchItem *bi=model->getRootItem()->getFirstBranch();
@@ -614,6 +614,19 @@ TreeItem* MapEditor::findMapItem (QPointF p,TreeItem *exclude)
 	i++;
 	bi=model->getRootItem()->getBranchNum(i);
     }
+    
+    // Search XLinks
+    Link *link;
+    for (int i=0; i<model->xlinkCount(); i++ )
+    {
+	link=model->getXLinkNum(i);
+	if (link)
+	{
+	    XLinkObj *xlo=link->getXLinkObj();
+	    if (xlo && xlo->isInClickBox (p)) return link->getBeginLinkItem();
+	}
+    }
+
     return NULL;
 }
 
@@ -1075,8 +1088,9 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
 	    return; 
 	} else
 	{
-	    // Take care of xLink
-	    if (ti->xlinkCount()>0 && lmo->getBBox().width()>30)
+	    // Take care of xLink: Open context menu with targets
+	    // if clicked near to begin of xlink
+	    if (ti->xlinkCount()>0 && ti->getType() != TreeItem::MapCenter && lmo->getBBox().width()>30)
 	    {
 		if ((lmo->getOrientation()!=LinkableMapObj::RightOfCenter && p.x() < lmo->getBBox().left()+20)  ||
 		    (lmo->getOrientation()!=LinkableMapObj::LeftOfCenter && p.x() > lmo->getBBox().right()-20) ) 
@@ -1131,8 +1145,8 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
 		tmpLink->setBeginBranch (bi_begin);
 		tmpLink->setColor(model->getMapDefXLinkColor());
 		tmpLink->setWidth(model->getMapDefXLinkWidth());
-		tmpLink->setEndPoint   (p);
 		tmpLink->createMapObj(mapScene);
+		tmpLink->setEndPoint   (p);
 		tmpLink->updateLink();
 		return;
 	    } 
@@ -1144,7 +1158,7 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
     /*
 	qDebug() << "ME::mouse pressed\n";
 	qDebug() << "  lmo="<<lmo;
-	qDebug() << "   ti="<<ti->getHeadingStd();
+	qDebug() << "   ti="<<ti->getHeading();
     */
 	// Select the clicked object
 
@@ -1189,19 +1203,24 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
 	    if (e->button() == Qt::MidButton )
 		model->toggleScroll();
     } else 
-    { // No MapObj found, we are on the scene itself
-	// Left Button	    move Pos of sceneView
-	if (e->button() == Qt::LeftButton )
-	{
-	    movingObj=NULL; // move Content not Obj
-	    movingObj_start=e->globalPos();
-	    movingCont_start=QPointF (
-		horizontalScrollBar()->value(),
-		verticalScrollBar()->value());
-	    movingVec=QPointF(0,0);
-	    setCursor(HandOpenCursor);
+    {
+	if (ti)
+	    model->select(ti);
+	else    
+	{ // No MapObj found, we are on the scene itself
+	    // Left Button	    move Pos of sceneView
+	    if (e->button() == Qt::LeftButton )
+	    {
+		movingObj=NULL; // move Content not Obj
+		movingObj_start=e->globalPos();
+		movingCont_start=QPointF (
+		    horizontalScrollBar()->value(),
+		    verticalScrollBar()->value());
+		movingVec=QPointF(0,0);
+		setCursor(HandOpenCursor);
+	    } 
 	} 
-    } 
+    }
     QGraphicsView::mousePressEvent(e);
 }
 
@@ -1626,6 +1645,12 @@ void MapEditor::wheelEvent(QWheelEvent* e)
     QGraphicsView::wheelEvent (e);
 }
 
+void MapEditor::focusOutEvent (QFocusEvent* e)
+{
+    //qDebug()<<"ME::focusOutEvent"<<e->reason();
+    if (editingHeading) editHeadingFinished();
+}
+
 void MapEditor::resizeEvent (QResizeEvent* e)
 {
     QGraphicsView::resizeEvent( e );
@@ -1752,8 +1777,8 @@ void MapEditor::updateSelection(QItemSelection newsel,QItemSelection oldsel)
     // is not yet implemented elsewhere
 
     // Here in MapEditor we can only select Branches and Images
-    QList <TreeItem*> treeItemsNew;
-    QList <TreeItem*> treeItemsOld;
+    QList <MapItem*> itemsNew;
+    QList <MapItem*> itemsOld;
 
     QModelIndex newIndex;
 
@@ -1762,20 +1787,24 @@ void MapEditor::updateSelection(QItemSelection newsel,QItemSelection oldsel)
     QModelIndex ix;
     foreach (ix,newsel.indexes() )
     {
-	TreeItem *ti= static_cast<TreeItem*>(ix.internalPointer());
-	if (ti->isBranchLikeType() || ti->getType()==TreeItem::Image )
-	    if (!treeItemsNew.contains(ti)) treeItemsNew.append (ti);
+	MapItem *mi= static_cast<MapItem*>(ix.internalPointer());
+	if (mi->isBranchLikeType() 
+	    ||mi->getType()==TreeItem::Image 
+	    ||mi->getType()==TreeItem::XLink)
+	    if (!itemsNew.contains(mi)) itemsNew.append (mi);
     }
     foreach (ix,oldsel.indexes() )
     {
-	TreeItem *ti= static_cast<TreeItem*>(ix.internalPointer());
-	if (ti->isBranchLikeType() || ti->getType()==TreeItem::Image )
-	    if (!treeItemsOld.contains(ti)) treeItemsOld.append (ti);
+	MapItem *mi= static_cast<MapItem*>(ix.internalPointer());
+	if (mi->isBranchLikeType() 
+	    ||mi->getType()==TreeItem::Image 
+	    ||mi->getType()==TreeItem::XLink)
+	    if (!itemsOld.contains(mi)) itemsOld.append (mi);
     }
 
-    // Trim list of selection rectangles 
-    while (treeItemsNew.count() < selboxList.count() )
-	delete selboxList.takeFirst();
+    // Trim list of selection polygons 
+    while (itemsNew.count() < selPolyList.count() )
+	delete selPolyList.takeFirst();
 
     // Take care to tmp scroll/unscroll
     if (!oldsel.isEmpty())
@@ -1783,24 +1812,24 @@ void MapEditor::updateSelection(QItemSelection newsel,QItemSelection oldsel)
 	QModelIndex ix=oldsel.indexes().first(); 
 	if (ix.isValid() )
 	{
-	    TreeItem *ti= static_cast<TreeItem*>(ix.internalPointer());
-	    if (ti)
+	    MapItem *mi= static_cast<MapItem*>(ix.internalPointer());
+	    if (mi)
 	    {
-		if (ti->isBranchLikeType() )
+		if (mi->isBranchLikeType() )
 		{
 		    // reset tmp scrolled branches
-		    BranchItem *bi=(BranchItem*)ti;
+		    BranchItem *bi=(BranchItem*)mi;
 		    if (bi->resetTmpUnscroll() )
 			do_reposition=true;
 		}
-		if (ti->isBranchLikeType() || ti->getType()==TreeItem::Image)
+		if (mi->isBranchLikeType() || mi->getType()==TreeItem::Image)
 		    // Hide link if not needed
-		    ((MapItem*)ti)->getLMO()->updateVisibility();
+		    mi->getLMO()->updateVisibility();
 	    }
 	}
     }
 
-    if (!treeItemsNew.isEmpty())
+    if (!itemsNew.isEmpty())
     {
 	QModelIndex ix=newsel.indexes().first(); 
 	if (ix.isValid() )
@@ -1808,58 +1837,61 @@ void MapEditor::updateSelection(QItemSelection newsel,QItemSelection oldsel)
 	    newIndex=ix;
 
 	    // Temporary unscroll if necessary
-	    TreeItem *ti= static_cast<TreeItem*>(ix.internalPointer());
-	    if (ti->isBranchLikeType() )
+	    MapItem *mi= static_cast<MapItem*>(ix.internalPointer());
+	    if (mi->isBranchLikeType() )
 	    {
-		BranchItem *bi=(BranchItem*)ti;
+		BranchItem *bi=(BranchItem*)mi;
 		if (bi->hasScrolledParent(bi) )
 		{
 		    if (bi->parentBranch()->tmpUnscroll() )
 			do_reposition=true;
 		}   
 	    }
-	    if (ti->isBranchLikeType() || ti->getType()==TreeItem::Image)
+	    if (mi->isBranchLikeType() || mi->getType()==TreeItem::Image)
 		// Show link if needed
-		((MapItem*)ti)->getLMO()->updateVisibility();
+		mi->getLMO()->updateVisibility();
 	}
     }
     if (do_reposition) model->reposition();
 
-    // Reduce rectangles
-    while (treeItemsNew.count() < selboxList.count() )
-	delete selboxList.takeFirst();
+    // Reduce polygons
+    while (itemsNew.count() < selPolyList.count() )
+	delete selPolyList.takeFirst();
 
-    // Add additonal rectangles
-    QGraphicsRectItem *sb;
-    while (treeItemsNew.count() > selboxList.count() )
+    // Add additonal polygons
+    QGraphicsPolygonItem *sp;
+    while (itemsNew.count() > selPolyList.count() )
     {
-	sb = mapScene->addRect(
-	    QRectF(0,0,0,0), 
+	sp = mapScene->addPolygon(
+	    QPolygon(), 
 	    QPen(selectionColor),
 	    selectionColor);
-	sb->show();
-	selboxList.append (sb);
+	sp->show();
+	selPolyList.append (sp);
     }
 
-    // Reposition rectangles
-    QRectF box;
+    // Reposition polygons
+    QPolygonF poly;
     QModelIndex index;
 
-    LinkableMapObj *lmo;
-    for (int i=0; i<treeItemsNew.count();++i)
+    MapObj *mo;
+    for (int i=0; i<itemsNew.count();++i)
     {
-	lmo=((MapItem*)treeItemsNew.at(i) )->getLMO();
+	mo=itemsNew.at(i)->getMO();
 	// Don't draw huge selBox if children are included in frame
-	if (treeItemsNew.at(i)->isBranchLikeType() && 
-	    ((BranchItem*)treeItemsNew.at(i))->getFrameIncludeChildren() )
-	    box=lmo->getClickBox();
+	/*
+	if (itemsNew.at(i)->isBranchLikeType() && 
+	    ((BranchItem*)itemsNew.at(i))->getFrameIncludeChildren() )
+	    poly=lmo->getClickPoly();
 	else
-	    box=lmo->getBBox();
-	sb=selboxList.at(i);
-	sb->setRect (box);
-	sb->setPen (selectionColor);	
-	sb->setBrush (selectionColor);	
-	sb->setZValue (dZ_DEPTH*treeItemsNew.at(i)->depth() + dZ_SELBOX);
+	    poly=QPolygonF (lmo->getBBox());
+	    */
+	poly=mo->getClickPoly();    
+	sp=selPolyList.at(i);
+	sp->setPolygon (poly);
+	sp->setPen (selectionColor);	
+	sp->setBrush (selectionColor);	
+	sp->setZValue (dZ_DEPTH*itemsNew.at(i)->depth() + dZ_SELBOX);
 	i++;
     }
 
