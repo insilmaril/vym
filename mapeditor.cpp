@@ -1052,6 +1052,13 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
 	return;
     }
 
+    // Check if we need to reset zoomFactor
+    if (e->button() == Qt::MiddleButton && e->modifiers() & Qt::ControlModifier )
+    {
+	setZoomFactorTarget (1);
+	return;
+    }
+
     QPointF p = mapToScene(e->pos());
     TreeItem *ti=findMapItem (p, NULL);
     LinkableMapObj* lmo=NULL;
@@ -1640,12 +1647,17 @@ void MapEditor::mouseDoubleClickEvent(QMouseEvent* e)
 
 void MapEditor::wheelEvent(QWheelEvent* e)
 {
-    //qDebug ()<<"ME::wheelEvent";  //FIXME-3 stop all animations in vymModel here
-    //model->stopAllAnimation();
-    QGraphicsView::wheelEvent (e);
+    if (e->modifiers() & Qt::ControlModifier && e->orientation()==Qt::Vertical)
+    {
+	if (e->delta()>0)
+	    setZoomFactorTarget (zoomFactorTarget*1.15);
+	else    
+	    setZoomFactorTarget (zoomFactorTarget*0.85);
+    } else	
+	QGraphicsView::wheelEvent (e);
 }
 
-void MapEditor::focusOutEvent (QFocusEvent* e)
+void MapEditor::focusOutEvent (QFocusEvent*)
 {
     //qDebug()<<"ME::focusOutEvent"<<e->reason();
     if (editingHeading) editHeadingFinished();
