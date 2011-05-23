@@ -30,6 +30,10 @@ BranchPropertyWindow::BranchPropertyWindow (QWidget *parent): QDialog (parent)
     ui.frameBrushColorButton->setIcon (pix);
 
     // Create Model and View to hold attributes	    // FIXME-3
+    if (!settings.value( "/mainwindow/showTestMenu",false).toBool() )
+	ui.tabWidget->widget (3)->hide();
+
+	
     /*
     attributeModel = new QStandardItemModel (1,3,this);
     attributeModel->setHeaderData(0, Qt::Horizontal, tr("Name","Branchprop window: Attribute name"));
