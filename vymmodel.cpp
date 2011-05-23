@@ -3376,7 +3376,6 @@ QStringList VymModel::getVymLinks()
 
 void VymModel::followXLink(int i)   
 {
-    i=0;
     BranchItem *selbi=getSelectedBranch();
     if (selbi)
     {
