@@ -445,7 +445,7 @@ public:
     QString getVymLink();		    // return path to map
     QStringList getVymLinks();		    // return paths in subtree
     void followXLink (int);
-    void editXLink (int i=0);
+    void editXLink ();
 
 
 
@@ -679,6 +679,8 @@ public:
     BranchObj* getSelectedBranchObj();	
     BranchItem* getSelectedBranch();
     ImageItem* getSelectedImage();
+    XLinkItem* getSelectedXLinkItem();
+    Link* getSelectedXLink();
     AttributeItem* getSelectedAttribute();
     TreeItem* getSelectedItem();
     QModelIndex getSelectedIndex();

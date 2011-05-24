@@ -973,16 +973,11 @@ void MapEditor::contextMenuEvent ( QContextMenuEvent * e )
 
     QPointF p = mapToScene(e->pos());
     TreeItem *ti=findMapItem (p, NULL);
-    LinkableMapObj* lmo=NULL;
-    if (ti) lmo=((MapItem*)ti)->getLMO();
     
-    if (lmo) 
+    if (ti) 
     {	// MapObj was found
-	if (model->getSelectedLMO() != lmo)
-	{
-	    // select the MapObj
-	    model->select(lmo);
-	}
+	model->select (ti);
+
 	// Context Menu 
 	if (model->getSelectedBranchObj() ) 
 	{
@@ -994,7 +989,13 @@ void MapEditor::contextMenuEvent ( QContextMenuEvent * e )
 	    {
 		// Context Menu on floatimage
 		floatimageContextMenu->popup(e->globalPos() );
-	    }	
+	    } else
+	    {
+		if (model->getSelectedXLink() )
+		    // Context Menu on XLink
+		    model->editXLink();
+	    }
+
 	}   
     } else 
     { // No MapObj found, we are on the Canvas itself
@@ -1102,6 +1103,7 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
 		if ((lmo->getOrientation()!=LinkableMapObj::RightOfCenter && p.x() < lmo->getBBox().left()+20)  ||
 		    (lmo->getOrientation()!=LinkableMapObj::LeftOfCenter && p.x() > lmo->getBBox().right()-20) ) 
 		{
+		    //FIXME-0 similar code in mainwindow
 		    QMenu menu;
 		    QList <QAction*> alist;
 		    QList <BranchItem*> blist;

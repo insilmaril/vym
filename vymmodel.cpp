@@ -3384,28 +3384,23 @@ void VymModel::followXLink(int i)
     }
 }
 
-void VymModel::editXLink(int i)
+void VymModel::editXLink()
 {
-    BranchItem *selbi=getSelectedBranch();
-    if (selbi)
+    Link *l=getSelectedXLink();
+    if (l) 
     {
-	Link *l=selbi->getXLinkItemNum(i)->getLink();
-	if (l) 
+	EditXLinkDialog dia;
+	dia.setLink (l);
+	if (dia.exec() == QDialog::Accepted)
 	{
-	    EditXLinkDialog dia;
-	    dia.setLink (l);
-	    dia.setSelection(selbi);
-	    if (dia.exec() == QDialog::Accepted)
+	    if (dia.useSettingsGlobal() )
 	    {
-		if (dia.useSettingsGlobal() )
-		{
-		    setMapDefXLinkColor (l->getColor() );
-		    setMapDefXLinkWidth (l->getWidth() );
-		}
-		if (dia.deleteXLink()) delete (l);
+		setMapDefXLinkColor (l->getColor() );
+		setMapDefXLinkWidth (l->getWidth() );
 	    }
-	}   
-    }
+	    if (dia.deleteXLink()) delete (l);
+	}
+    }   
 }
 
 //////////////////////////////////////////////
@@ -5717,6 +5712,25 @@ ImageItem* VymModel::getSelectedImage()
 	TreeItem *ti=getItem (list.first());
 	if (ti && ti->getType()==TreeItem::Image)
 	    return (ImageItem*)ti;
+    }
+    return NULL;
+}
+
+Link* VymModel::getSelectedXLink()
+{
+    XLinkItem *xli=getSelectedXLinkItem();
+    if (xli) return xli->getLink();
+    return NULL;
+}
+
+XLinkItem* VymModel::getSelectedXLinkItem()
+{
+    QModelIndexList list=selModel->selectedIndexes();
+    if (!list.isEmpty())
+    {
+	TreeItem *ti=getItem (list.first());
+	if (ti && ti->getType()==TreeItem::XLink)
+	    return (XLinkItem*)ti;
     }
     return NULL;
 }

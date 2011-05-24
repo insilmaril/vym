@@ -18,7 +18,6 @@ class EditXLinkDialog:public QDialog
 public:
     EditXLinkDialog (QWidget *parent=0);
     void setLink (Link *);
-    void setSelection (BranchItem*);
     bool useSettingsGlobal();
     bool deleteXLink();
 
@@ -33,7 +32,6 @@ private:
     Ui::EditXLinkDialog ui;
     bool delink;
     Link *link;
-    BranchItem *selbi;
 };
 
 #endif // EDITXLINKDIALOG_H

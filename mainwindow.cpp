@@ -3437,7 +3437,15 @@ void Main::editEditXLink(QAction *a)
 {
     VymModel *m=currentModel();
     if (m)
-	m->editXLink(branchXLinksContextMenuEdit->actions().indexOf(a));
+    {
+	BranchItem *selbi=m->getSelectedBranch();
+	if (selbi)
+	{
+	    Link *l=selbi->getXLinkItemNum(branchXLinksContextMenuEdit->actions().indexOf(a))->getLink();
+	    if (l && m->select (l->getBeginLinkItem() ) )
+		m->editXLink();
+	}    
+    }	
 }
 
 void Main::popupFollowXLink()
@@ -3977,6 +3985,7 @@ void Main::updateActions()
 		actionGetURLsFromNote->setEnabled (!selbi->getNote().isEmpty());
 
 		// Take care of xlinks  
+		// FIXME-0 similar code in mapeditor
 		int b=selbi->xlinkCount();
 		branchXLinksContextMenuEdit->setEnabled(b);
 		branchXLinksContextMenuFollow->setEnabled(b);
