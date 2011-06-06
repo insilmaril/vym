@@ -491,27 +491,36 @@ void BranchObj::alignRelativeTo (QPointF ref,bool alignSelf)
 /*
 if (debug)
 {
+    QString o;
+    switch (orientation)
+    {	
+	case UndefinedOrientation: o="UndefOrientation";
+	case LeftOfCenter: o="LeftOfCenter";
+	case RightOfCenter: o="RightOfCenter";
+    }
+	
     QString h=QString (depth+1,' ');
     h+=treeItem->getHeading();
     h+=QString (15,' ');
     h.truncate (15);
     QPointF pp; 
     if (parObj) pp=parObj->getChildPos();
-    qDebug() << "BO::alignRelTo "<<h;
+    qDebug() << "BO::alignRelTo for "<<h;
     qDebug() << "    d="<<depth;
     qDebug() <<"  parO="<<parObj;
     qDebug() <<"   ref="<<ref;
     //qDebug() <<   "  bbox.tL="<<bboxTotal.topLeft();
-    qDebug() <<"absPos="<<absPos<<
-	"  relPos="<<relPos<<
-//	"  parPos="<<pp<<
-	"  bbox="<<bbox;
-//	"  orient="<<orientation<<
-//	"  alignSelf="<<alignSelf<<
-//	"  scrolled="<<((BranchItem*)treeItem)->isScrolled()<<
-//	"  pad="<<topPad<<","<<botPad<<","<<leftPad<<","<<rightPad<<
-//	"  hidden="<<hidden<<
-//	"  th="<<th<<
+    qDebug() <<"absPos="<<absPos
+	<< "  relPos="<<relPos
+//	<< "  parPos="<<pp
+	<< "  bbox="<<bbox
+	<< "  orient="<<o<<" "<<orientation;
+//	<< "  alignSelf="<<alignSelf
+//	<< "  scrolled="<<((BranchItem*)treeItem)->isScrolled()
+//	<< "  pad="<<topPad<<","<<botPad<<","<<leftPad<<","<<rightPad
+//	<< "  hidden="<<hidden
+//	<< "  th="<<th
+    ;
 }
 */
 
@@ -521,6 +530,19 @@ if (debug)
     if (depth==1)
     {
 	move2RelPos (getRelPos() );
+	setOrientation();
+	switch (orientation) 
+	{
+	    case LinkableMapObj::LeftOfCenter:
+		move (absPos.x() - bbox.width(), absPos.y() + (th-bbox.height())/2 );
+	    break;
+	    case LinkableMapObj::RightOfCenter:	
+		move (absPos.x() ,absPos.y() + (th-bbox.height())/2  );
+	    break;
+	    default:
+		qWarning ("LMO::alignRelativeTo: oops, no orientation given for MCO...");
+	    break;
+    }
     }
     if (depth>1)
     {
@@ -532,8 +554,6 @@ if (debug)
 	    move2RelPos(anim);
 	} else
 	{
-	    LinkableMapObj::Orientation o;
-	    o=parObj->getOrientation();
 	    if (alignSelf)
 		switch (orientation) 
 		{
@@ -544,7 +564,7 @@ if (debug)
 			move (ref.x() , ref.y() + (th-bbox.height())/2  );
 		    break;
 		    default:
-			qWarning ("LMO::alignRelativeTo: oops, no orientation given...");
+			qWarning ("LMO::alignRelativeTo: oops, no orientation given for BO...");
 		    break;
 	    }
 	}
@@ -751,7 +771,7 @@ void BranchObj::calcBBoxSizeWithChildren()  //FIXME-3 cleanup testcode
     */
     // Add myself and also
     // add width of link to sum if necessary
-    if (debug) qDebug()<<"BO: calcBBoxSizeWithChildren c) for "<<treeItem->getHeading()<<" bbox="<<bbox<<" r="<<r;
+    //if (debug) qDebug()<<"BO: calcBBoxSizeWithChildren c) for "<<treeItem->getHeading()<<" bbox="<<bbox<<" r="<<r;
 
 if (bi->branchCount()<1)
 	bboxTotal.setWidth (bbox.width() + r.width()  );
@@ -764,7 +784,7 @@ if (bi->branchCount()<1)
     
     // bbox already contains frame->padding()*2	    
     bboxTotal.setHeight(max (r.height() + frame->getPadding()*2,  bbox.height()) );
-    if (debug) qDebug()<<"BO: calcBBoxSizeWithChildren d) for "<<treeItem->getHeading()<< "bboxTotal="<<bboxTotal;
+    //if (debug) qDebug()<<"BO: calcBBoxSizeWithChildren d) for "<<treeItem->getHeading()<< "bboxTotal="<<bboxTotal;
 
 }
 
