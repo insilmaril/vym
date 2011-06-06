@@ -140,9 +140,8 @@ bool LinkableMapObj::getUseRelPos ()
 void LinkableMapObj::setRelPos()
 {
     if (parObj)
-    {	
 	setRelPos (absPos - parObj->getChildPos() );
-    }	else
+    else
 	qWarning ("LMO::setRelPos() parObj==0");
 }
 
@@ -152,6 +151,7 @@ void LinkableMapObj::setRelPos(const QPointF &p)
     {	    
 	relPos=p;
 	useRelPos=true;
+	setOrientation();
 	parObj->calcBBoxSize();
 	requestReposition();
     }	else
@@ -362,10 +362,17 @@ void LinkableMapObj::setOrientation()
     else
     {
 	// calc orientation depending on position rel to parent
-	if (absPos.x() < QPointF(parObj->getChildPos() ).x() )
-	    orientation=LeftOfCenter; 
-	else
-	    orientation=RightOfCenter;
+	if (useRelPos)
+	{
+	    if (relPos.x() < 0)
+		orientation=LeftOfCenter; 
+	    else
+		orientation=RightOfCenter;
+	}  else
+	    if (absPos.x() < QPointF(parObj->getChildPos() ).x() )
+		orientation=LeftOfCenter; 
+	    else
+		orientation=RightOfCenter;
     }
     if (orientOld!=orientation) requestReposition();
 }
