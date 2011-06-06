@@ -69,7 +69,6 @@ public:
     void testFunction1();		// just testing new stuff
     void testFunction2();		// just testing new stuff
 
-protected:  
     BranchItem* getBranchDirectAbove(BranchItem *bi);	//!  get branch direct above bi (in TreeView) 
     BranchItem* getBranchAbove(BranchItem *bi);		//! get branch above bi (in TreeView) 
     BranchItem* getBranchDirectBelow(BranchItem *bi);	//!  bet branch direct below bi (in TreeView)

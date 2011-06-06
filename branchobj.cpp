@@ -528,31 +528,15 @@ if (debug)
     //updateLinkGeometry();
 
     if (depth==1)
-    {
 	move2RelPos (getRelPos() );
-	setOrientation();
-	switch (orientation) 
-	{
-	    case LinkableMapObj::LeftOfCenter:
-		move (absPos.x() - bbox.width(), absPos.y() + (th-bbox.height())/2 );
-	    break;
-	    case LinkableMapObj::RightOfCenter:	
-		move (absPos.x() ,absPos.y() + (th-bbox.height())/2  );
-	    break;
-	    default:
-		qWarning ("LMO::alignRelativeTo: oops, no orientation given for MCO...");
-	    break;
-    }
-    }
-    if (depth>1)
+    else if (depth>1)
     {
 	// Align myself depending on orientation and parent, but
 	// only if I am not a mainbranch or mapcenter itself
 
 	if (anim.isAnimated())
-	{
 	    move2RelPos(anim);
-	} else
+	else
 	{
 	    if (alignSelf)
 		switch (orientation) 

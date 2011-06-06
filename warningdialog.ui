@@ -1,32 +1,27 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>WarningDialog</class>
- <widget class="QDialog" name="WarningDialog" >
-  <property name="geometry" >
+ <widget class="QDialog" name="WarningDialog">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>543</width>
-    <height>264</height>
+    <width>545</width>
+    <height>256</height>
    </rect>
   </property>
-  <property name="windowTitle" >
-   <string>VYM - Warning : Foo...</string>
+  <property name="windowTitle">
+   <string>Dialog</string>
   </property>
-  <layout class="QVBoxLayout" >
-   <property name="margin" >
-    <number>9</number>
-   </property>
-   <property name="spacing" >
-    <number>6</number>
-   </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QTextEdit" name="warningTE" >
-     <property name="palette" >
+    <widget class="QTextEdit" name="warningTE">
+     <property name="palette">
       <palette>
        <active>
-        <colorrole role="Base" >
-         <brush brushstyle="SolidPattern" >
-          <color alpha="255" >
+        <colorrole role="Base">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
            <red>238</red>
            <green>238</green>
            <blue>238</blue>
@@ -35,9 +30,9 @@
         </colorrole>
        </active>
        <inactive>
-        <colorrole role="Base" >
-         <brush brushstyle="SolidPattern" >
-          <color alpha="255" >
+        <colorrole role="Base">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
            <red>238</red>
            <green>238</green>
            <blue>238</blue>
@@ -46,9 +41,9 @@
         </colorrole>
        </inactive>
        <disabled>
-        <colorrole role="Base" >
-         <brush brushstyle="SolidPattern" >
-          <color alpha="255" >
+        <colorrole role="Base">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
            <red>238</red>
            <green>238</green>
            <blue>238</blue>
@@ -58,67 +53,57 @@
        </disabled>
       </palette>
      </property>
-     <property name="frameShape" >
+     <property name="frameShape">
       <enum>QFrame::NoFrame</enum>
      </property>
-     <property name="frameShadow" >
+     <property name="frameShadow">
       <enum>QFrame::Plain</enum>
      </property>
-     <property name="readOnly" >
+     <property name="readOnly">
       <bool>true</bool>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QLabel" name="warningSign" >
-     <property name="text" >
-      <string/>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <spacer>
-     <property name="orientation" >
+    <spacer name="verticalSpacer">
+     <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
-     <property name="sizeType" >
-      <enum>QSizePolicy::Expanding</enum>
-     </property>
-     <property name="sizeHint" >
+     <property name="sizeHint" stdset="0">
       <size>
-       <width>525</width>
-       <height>16</height>
+       <width>20</width>
+       <height>26</height>
       </size>
      </property>
     </spacer>
    </item>
    <item>
-    <layout class="QHBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
-     </property>
-     <property name="spacing" >
+    <layout class="QHBoxLayout">
+     <property name="spacing">
       <number>6</number>
      </property>
+     <property name="margin">
+      <number>0</number>
+     </property>
      <item>
-      <widget class="QCheckBox" name="showAgainBox" >
-       <property name="text" >
+      <widget class="QCheckBox" name="showAgainBox">
+       <property name="text">
         <string>showAgainBox</string>
        </property>
-       <property name="checked" >
+       <property name="checked">
         <bool>true</bool>
        </property>
       </widget>
      </item>
      <item>
       <spacer>
-       <property name="orientation" >
+       <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="sizeType" >
+       <property name="sizeType">
         <enum>QSizePolicy::Expanding</enum>
        </property>
-       <property name="sizeHint" >
+       <property name="sizeHint" stdset="0">
         <size>
          <width>73</width>
          <height>31</height>
@@ -127,15 +112,15 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="cancelButton" >
-       <property name="text" >
+      <widget class="QPushButton" name="cancelButton">
+       <property name="text">
         <string>Cancel</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="okButton" >
-       <property name="text" >
+      <widget class="QPushButton" name="okButton">
+       <property name="text">
         <string>Ok</string>
        </property>
       </widget>
@@ -144,39 +129,37 @@
    </item>
   </layout>
  </widget>
- <layoutdefault spacing="6" margin="11" />
- <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <resources/>
  <connections>
   <connection>
-   <sender>cancelButton</sender>
-   <signal>clicked()</signal>
+   <sender>okButton</sender>
+   <signal>pressed()</signal>
    <receiver>WarningDialog</receiver>
-   <slot>reject()</slot>
+   <slot>accept()</slot>
    <hints>
-    <hint type="sourcelabel" >
-     <x>131</x>
-     <y>244</y>
+    <hint type="sourcelabel">
+     <x>518</x>
+     <y>234</y>
     </hint>
-    <hint type="destinationlabel" >
-     <x>266</x>
-     <y>135</y>
+    <hint type="destinationlabel">
+     <x>272</x>
+     <y>127</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>okButton</sender>
-   <signal>clicked()</signal>
+   <sender>cancelButton</sender>
+   <signal>pressed()</signal>
    <receiver>WarningDialog</receiver>
-   <slot>accept()</slot>
+   <slot>reject()</slot>
    <hints>
-    <hint type="sourcelabel" >
-     <x>222</x>
-     <y>244</y>
+    <hint type="sourcelabel">
+     <x>436</x>
+     <y>232</y>
     </hint>
-    <hint type="destinationlabel" >
-     <x>266</x>
-     <y>135</y>
+    <hint type="destinationlabel">
+     <x>219</x>
+     <y>223</y>
     </hint>
    </hints>
   </connection>

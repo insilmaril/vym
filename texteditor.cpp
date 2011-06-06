@@ -602,10 +602,10 @@ void TextEditor::editCopyAll()
     e->copy();
 }
 
-void TextEditor::textSaveAs()
+void TextEditor::textSaveAs()	//FIXME-3 Use WarningDialog
 {
     QString caption=tr ("Export Note to single file");
-    QString fn = QFileDialog::getSaveFileName(this, caption, QString::null, "VYM Note (HTML) (*.html);;All files (*)" );
+    QString fn = QFileDialog::getSaveFileName(this, caption, QString::null, "VYM Note (HTML) (*.html);;All files (*)",0,QFileDialog::DontConfirmOverwrite );
 
     if ( !fn.isEmpty() ) 
     {

@@ -47,7 +47,8 @@ extern QString vymVersion;
 extern QDir vymBaseDir;
 
 extern QDir lastImageDir;
-extern QDir lastFileDir;
+extern QDir lastMapDir;
+extern QDir lastExportDir;
 
 extern bool bugzillaClientAvailable;
 
@@ -753,6 +754,7 @@ void VymModel::saveFloatImage ()
 	fd.setFileMode( QFileDialog::AnyFile );
 	fd.setDirectory (lastImageDir);
 	fd.setAcceptMode (QFileDialog::AcceptSave);
+	fd.setConfirmOverwrite (false);
 //	fd.setSelection (fio->getOriginalFilename());
 
 	QString fn;
@@ -3184,7 +3186,7 @@ void VymModel::editLocalURL()
 	QFileDialog fd( NULL,vymName+" - " +tr("Set URL to a local file")); 
 	fd.setFilters (filters);
 	fd.setWindowTitle(vymName+" - " +tr("Set URL to a local file"));
-	fd.setDirectory (lastFileDir);
+	fd.setDirectory (lastMapDir);
 	fd.setAcceptMode (QFileDialog::AcceptOpen);
 	if (! selti->getVymLink().isEmpty() )
 	    fd.selectFile( selti->getURL() );
@@ -3192,7 +3194,7 @@ void VymModel::editLocalURL()
 
 	if ( fd.exec() == QDialog::Accepted &&!fd.selectedFiles().isEmpty() )
 	{
-	    lastFileDir=QDir (fd.directory().path());
+	    lastMapDir=QDir (fd.directory().path());
 	    setURL (fd.selectedFiles().first() );
 	}
     }
@@ -3293,7 +3295,7 @@ void VymModel::editVymLink()
 	fd.setWindowTitle (vymName+" - " +tr("Link to another map"));
 	fd.setFilters (filters);
 	fd.setWindowTitle(vymName+" - " +tr("Link to another map"));
-	fd.setDirectory (lastFileDir);
+	fd.setDirectory (lastMapDir);
 	fd.setAcceptMode (QFileDialog::AcceptOpen);
 	if (! bi->getVymLink().isEmpty() )
 	    fd.selectFile( bi->getVymLink() );
@@ -3303,7 +3305,7 @@ void VymModel::editVymLink()
 	if ( fd.exec() == QDialog::Accepted &&!fd.selectedFiles().isEmpty() )
 	{
 	    QString fn=fd.selectedFiles().first();
-	    lastFileDir=QDir (fd.directory().path());
+	    lastMapDir=QDir (fd.directory().path());
 	    saveState(
 		bi,
 		"setVymLink (\""+bi->getVymLink()+"\")",
@@ -4575,6 +4577,7 @@ QPointF VymModel::exportImage(QString fname, bool askName, QString format)
 	fd.setFileMode(QFileDialog::AnyFile);
 	fd.setFilters  (imageIO.getFilters() );
 	fd.setAcceptMode (QFileDialog::AcceptSave);
+	fd.setConfirmOverwrite (false);
 	if (fd.exec())
 	{
 	    fl=fd.selectedFiles();
@@ -4623,6 +4626,7 @@ QPointF VymModel::exportPDF (QString fname, bool askName)
 	QStringList filters;
 	filters<<"PDF (*.pdf)"<<"All (* *.*)";
 	fd.setFilters  (filters);
+	fd.setConfirmOverwrite (false);
 	if (fd.exec())
 	{
 	    fl=fd.selectedFiles();
@@ -4666,6 +4670,7 @@ QPointF VymModel::exportSVG (QString fname, bool askName)
 	filters<<"SVG (*.svg)"<<"All (* *.*)";
 	fd.setFilters  (filters);
 	fd.setAcceptMode (QFileDialog::AcceptSave);
+	fd.setConfirmOverwrite (false);
 	if (fd.exec())
 	{
 	    fl=fd.selectedFiles();
@@ -4701,6 +4706,7 @@ void VymModel::exportXML(QString dir, bool askForName)
 	QStringList filters;
 	filters <<"XML data (*.xml)";
 	fd.setFilters (filters);
+	fd.setConfirmOverwrite (false);
 	fd.setAcceptMode (QFileDialog::AcceptSave);
 
 	QString fn;
@@ -4760,7 +4766,7 @@ void VymModel::exportAO (QString fname,bool askName)
     if (askName)
     {
 	//ex.addFilter ("TXT (*.txt)");
-	ex.setDir(lastImageDir);
+	//ex.setDir(lastExportDir);
 	//ex.setWindowTitle(vymName+ " -" +tr("Export as A&O report")+" "+tr("(still experimental)"));
 	ex.execDialog("A&O") ; 
     } 
@@ -4784,7 +4790,7 @@ void VymModel::exportASCII(QString fname,bool askName)
     if (askName)
     {
 	//ex.addFilter ("TXT (*.txt)");
-	ex.setDir(lastImageDir);
+	//ex.setDir(lastExportDir);
 	//ex.setWindowTitle(vymName+ " -" +tr("Export as ASCII")+" "+tr("(still experimental)"));
 	ex.execDialog("ASCII") ; 
     } 

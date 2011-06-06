@@ -15,7 +15,9 @@ extern Main *mainWindow;
 extern QDir vymBaseDir;
 extern QString flagsPath;
 extern QString vymName;
+extern QString vymVersion;
 extern Settings settings;
+extern QDir lastExportDir;
 
 ExportBase::ExportBase()
 {
@@ -24,14 +26,17 @@ ExportBase::ExportBase()
 
 ExportBase::ExportBase(VymModel *m)
 {
-    init();
     model=m;
+    init();
 }
 
 ExportBase::~ExportBase()
 {
     // Cleanup tmpdir
     removeDir (tmpDir);
+
+    // Remember current directory
+    lastExportDir=outDir;
 }
 
 void ExportBase::init()
@@ -43,6 +48,7 @@ void ExportBase::init()
 	QMessageBox::critical( 0, QObject::tr( "Error" ),
 		       QObject::tr("Couldn't access temporary directory\n"));
     cancelFlag=false;		       
+    outDir=lastExportDir;
 }
 
 void ExportBase::setDir(const QDir &d)
@@ -77,34 +83,34 @@ void ExportBase::addFilter(const QString &s)
 
 bool ExportBase::execDialog(const QString &overwriteWarning)
 {
-    {
-	QFileDialog fd;
-	fd.setFilter (filter);
-	fd.setWindowTitle (caption);
-	fd.setFileMode( QFileDialog::AnyFile );
-	fd.setDirectory (outDir);
-	fd.setAcceptMode (QFileDialog::AcceptSave);
+    QFileDialog fd;
+    fd.setFilter (filter);
+    fd.setWindowTitle (caption);
+    fd.setDirectory (outDir);
+    fd.setFileMode( QFileDialog::AnyFile );
+    fd.setAcceptMode (QFileDialog::AcceptSave);
+    fd.setConfirmOverwrite (false);
 
-	if ( fd.exec() == QDialog::Accepted )
+    if ( fd.exec() == QDialog::Accepted )
+    {
+	if (fd.selectedFiles().isEmpty()) return false;
+	QString fn=fd.selectedFiles().first();
+	if (QFile (fn).exists() ) 
 	{
-	    if (fd.selectedFiles().isEmpty()) return false;
-	    QString fn=fd.selectedFiles().first();
-	    if (QFile (fn).exists() ) 
+	    WarningDialog dia;
+	    dia.showCancelButton (true);
+	    dia.setText(QObject::tr("Exporting to %1 will overwrite the existing file:\n%2").arg(overwriteWarning).arg(fn));
+	    dia.setCaption(QObject::tr("Warning: Overwriting file"));
+	    dia.setShowAgainName("/exports/overwrite/"+overwriteWarning);
+	    if (!dia.exec()==QDialog::Accepted)
 	    {
-		WarningDialog dia;
-		dia.showCancelButton (true);
-		dia.setText(QObject::tr("Exporting to %1 will overwrite the existing file:\n%2").arg(overwriteWarning).arg(fn));
-		dia.setCaption(QObject::tr("Warning: Overwriting file"));
-		dia.setShowAgainName("/exports/overwrite/"+overwriteWarning);
-		if (!dia.exec()==QDialog::Accepted)
-		{
-		    cancelFlag=true;
-		    return false;
-		}
+		cancelFlag=true;
+		return false;
 	    }
-	    outputFile=fn;
-	    return true;
 	}
+	outDir=fd.directory();
+	outputFile=fn;
+	return true;
     }
     return false;
 }
@@ -257,10 +263,10 @@ QString ExportAO::underline (const QString &text, const QString &line)
 
 
 ////////////////////////////////////////////////////////////////////////
-ExportASCII::ExportASCII()
+ExportASCII::ExportASCII() 
 {
     filter="TXT (*.txt)";
-    caption=vymName+ " -" +QObject::tr("Export as ASCII")+" "+QObject::tr("(still experimental)");
+    caption=vymName+ " -" +QObject::tr("Export as ASCII");
 }
 
 void ExportASCII::doExport()	
@@ -759,7 +765,7 @@ void ExportHTML::doExport(bool useDialog)
       <tr> \n\
         <td class=\"vym-footerL\">"+model->getFileName()+"</td> \n\
         <td class=\"vym-footerC\">"+model->getDate()+"</td> \n\
-        <td class=\"vym-footerR\"> vym "+model->getVersion()+"</td> \n\
+        <td class=\"vym-footerR\"> vym "+vymVersion+"</td> \n\
       </tr> \n \
     </table>\n";
     ts<<"</body></html>";

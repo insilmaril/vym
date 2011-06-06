@@ -81,7 +81,7 @@ extern ImageIO imageIO;
 
 extern QDir vymBaseDir;
 extern QDir lastImageDir;
-extern QDir lastFileDir;
+extern QDir lastMapDir;
 #if defined(Q_OS_WIN32)
 extern QDir vymInstallDir;
 #endif
@@ -525,7 +525,7 @@ void Main::setupFileActions()
     connect( a, SIGNAL( triggered() ), this, SLOT( fileExportAO() ) );
     fileExportMenu->addAction (a);
 
-    a = new QAction( "Text (ASCII)... (experimental)", this);
+    a = new QAction( "Text (ASCII)...", this);
     switchboard.addConnection(a,tr("File","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( fileExportASCII() ) );
     fileExportMenu->addAction (a);
@@ -2215,10 +2215,11 @@ void Main::fileLoad(const LoadMode &lmode)
     QStringList filters;
     filters <<"VYM map (*.vym *.vyp)"<<"VYM Backups (*.vym~)"<<"XML (*.xml)"<<"All (* *.*)";
     QFileDialog fd;
-    fd.setDirectory (lastFileDir);
+    fd.setDirectory (lastMapDir);
     fd.setFileMode (QFileDialog::ExistingFiles);
     fd.setFilters (filters);
     fd.setAcceptMode (QFileDialog::AcceptOpen);
+
     switch (lmode)
     {
 	case NewMap:
@@ -2235,7 +2236,7 @@ void Main::fileLoad(const LoadMode &lmode)
     QString fn;
     if ( fd.exec() == QDialog::Accepted )
     {
-	lastFileDir=fd.directory().path();
+	lastMapDir=fd.directory().path();
 	QStringList flist = fd.selectedFiles();
 	QStringList::Iterator it = flist.begin();
 	
@@ -2327,10 +2328,11 @@ void Main::fileSaveAs(const SaveMode& savemode)
 	    filters<<"VYM part of map (*vyp)";
 	filters<<"All (* *.*)";
 	QFileDialog fd;
-	fd.setDirectory (lastFileDir);
+	fd.setDirectory (lastMapDir);
 	fd.setFileMode (QFileDialog::AnyFile);
 	fd.setFilters (filters);
 	fd.setAcceptMode (QFileDialog::AcceptSave);
+	fd.setConfirmOverwrite (false);
 
 	if ( fd.exec() == QDialog::Accepted && !fd.selectedFiles().isEmpty())
 	{
@@ -2438,7 +2440,7 @@ void Main::fileImportFreemind()
     QStringList filters;
     filters <<"Freemind map (*.mm)"<<"All files (*)";
     QFileDialog fd;
-    fd.setDirectory (lastFileDir);
+    fd.setDirectory (lastMapDir);
     fd.setFileMode (QFileDialog::ExistingFiles);
     fd.setFilters (filters);
     fd.setWindowTitle(vymName+ " - " +tr("Load Freemind map"));
@@ -2447,7 +2449,7 @@ void Main::fileImportFreemind()
     QString fn;
     if ( fd.exec() == QDialog::Accepted )
     {
-	lastFileDir=fd.directory().path();
+	lastMapDir=fd.directory().path();
 	QStringList flist = fd.selectedFiles();
 	QStringList::Iterator it = flist.begin();
 	while( it != flist.end() ) 
@@ -2468,7 +2470,7 @@ void Main::fileImportMM()
     ImportMM im;
 
     QFileDialog fd;
-    fd.setDirectory (lastFileDir);
+    fd.setDirectory (lastMapDir);
     fd.setFileMode (QFileDialog::ExistingFiles);
     QStringList filters;
     filters<<"Mind Manager (*.mmap)";
@@ -2478,7 +2480,7 @@ void Main::fileImportMM()
 
     if ( fd.exec() == QDialog::Accepted )
     {
-	lastFileDir=fd.directory();
+	lastMapDir=fd.directory();
 	QStringList flist = fd.selectedFiles();
 	QStringList::Iterator it = flist.begin();
 	while( it != flist.end() ) 
@@ -2799,11 +2801,42 @@ void Main::editMoveToTarget()
 	{
 	    TreeItem *ti=m->findID (a->data().toUInt());
 	    BranchItem *selbi=m->getSelectedBranch();
+	    BranchItem *below=NULL;
+	    MapEditor *me=currentMapEditor();
+	    // If branch below exists, select that one
+	    // Makes it easier to quickly resort using the MoveTo function
+	    if (me) below=me->getBranchBelow(selbi);
 	    if (ti && ti->isBranchLikeType() && selbi)
 	    {
 		BranchItem *pi =selbi->parentBranch();
+		QString preNum=QString::number (selbi->num(),10);
+		LinkableMapObj *lmo=selbi->getLMO();
+		QPointF orgPos;
+		if (lmo) orgPos=lmo->getAbsPos();
+
 		m->relinkBranch ( selbi, (BranchItem*)ti);
-		if (pi) m->select (pi);
+
+/* void Main::editMoveToTarget()  FIXME-0 no savestate. Better have one relinkBranch in vymmodel, which also takes care of savestate
+		QString postSelStr=m->getSelectString(lmosel);
+		QString postNum=QString::number (seli->num(),10);
+
+		QString undoCom="relinkTo (\""+ 
+		    preParStr+ "\"," + preNum  +"," + 
+		    QString ("%1,%2").arg(orgPos.x()).arg(orgPos.y())+ ")";
+
+		QString redoCom="relinkTo (\""+ 
+		    preDstParStr + "\"," + postNum + "," +
+		    QString ("%1,%2").arg(orgPos.x()).arg(orgPos.y())+ ")";
+
+		model->saveState (
+		    postSelStr,undoCom,
+		    preSelStr, redoCom,
+		    QString("Relink %1 to %2").arg(model->getObjectName(bsel)).arg(model->getObjectName(dst)) );
+*/
+		if (below) 
+		    m->select (below);
+		else    
+		    if (pi) m->select (pi);
 	    }	    
 	}
     }
@@ -4190,6 +4223,21 @@ void Main::standardFlagChanged()
 
 void Main::testFunction1()
 {
+    QFileDialog fd;
+    //fd.setFilter (filter);
+    //fd.setWindowTitle (caption);
+    fd.setDirectory ("/suse/uwedr/vym/code/v");
+//    fd.setFileMode( QFileDialog::AnyFile );
+    fd.setFileMode( QFileDialog::ExistingFile );
+//    fd.setAcceptMode (QFileDialog::AcceptSave);
+//    fd.setConfirmOverwrite (false);
+
+    if ( fd.exec() == QDialog::Accepted )
+    {
+	qDebug() <<"Main::test1 "<<fd.selectedFiles();
+    }
+    return;
+
     if (!currentMapEditor()) return;
     currentMapEditor()->testFunction1();
 }
@@ -4297,7 +4345,7 @@ void Main::helpDemo()
     QString fn;
     if ( fd.exec() == QDialog::Accepted )
     {
-	lastFileDir=fd.directory().path();
+	lastMapDir=fd.directory().path();
 	QStringList flist = fd.selectedFiles();
 	QStringList::Iterator it = flist.begin();
 	while( it != flist.end() ) 

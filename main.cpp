@@ -45,7 +45,8 @@ QString clipboardDir;		// Clipboard used in all mapEditors
 QString clipboardFile;		// Clipboard used in all mapEditors
 QDir vymBaseDir;		// Containing all styles, scripts, images, ...
 QDir lastImageDir;
-QDir lastFileDir;
+QDir lastMapDir;
+QDir lastExportDir;
 #if defined(Q_OS_WIN32)
 QDir vymInstallDir;
 #endif
@@ -191,8 +192,14 @@ int main(int argc, char* argv[])
     flagsPath=vymBaseDir.path()+"/flags/";
 
     // Some directories
-    lastImageDir=QDir().current();
-    lastFileDir=QDir().current();
+    QDir useDir;
+    if (options.isOn ("local"))
+	useDir=QDir().current();
+    else
+	useDir=QDir().home();
+    lastImageDir=useDir;
+    lastMapDir=useDir;
+    lastExportDir=useDir;
 
     if (options.isOn ("help"))
     {
