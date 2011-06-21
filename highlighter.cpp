@@ -67,6 +67,7 @@ Highlighter::Highlighter(QTextDocument *parent)
 		    << "\\bnote2URLs\\b"
 		    << "\\bpaste\\b" 
 		    << "\\bqa\\b" 
+		    << "\\brelinkTo\\b" 
 		    << "\\bsaveImage\\b" 
 		    << "\\bsaveNote\\b" 
 		    << "\\bscroll\\b" 

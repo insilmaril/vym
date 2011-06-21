@@ -6,6 +6,7 @@
 #include <QtDBus/QDBusAbstractAdaptor>
 #include <QtDBus/QDBusVariant>
 
+#include <QPointF>
 #include <QTextCursor>
 
 #include "adaptormodel.h"
@@ -386,7 +387,13 @@ public:
 	different needs to call saveState
 	Returns true if relinking was successful.
     */	
-    bool relinkBranch (BranchItem* branch, BranchItem* dst, int pos =-1, bool updateSelection=false);   
+    bool relinkBranch (
+	BranchItem* branch, 
+	BranchItem* dst, 
+	int pos =-1, 
+	bool updateSelection=false, 
+	QPointF orgPos=QPointF() 
+    );   
     bool relinkImage  (ImageItem* image, BranchItem* dst);  
 
 private:

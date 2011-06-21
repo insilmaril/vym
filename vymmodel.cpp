@@ -2534,7 +2534,12 @@ BranchItem* VymModel::addNewBranchBefore()
     return newbi;
 }
 
-bool VymModel::relinkBranch (BranchItem *branch, BranchItem *dst, int pos, bool updateSelection)
+bool VymModel::relinkBranch (
+    BranchItem *branch, 
+    BranchItem *dst, 
+    int pos, 
+    bool updateSelection,
+    QPointF orgPos)
 {
     if (branch && dst)
     {
@@ -2543,20 +2548,16 @@ bool VymModel::relinkBranch (BranchItem *branch, BranchItem *dst, int pos, bool 
 	// Do we need to update frame type?
 	bool keepFrame=false;
 	 
+	// Save old position for savestate
+	QString preSelStr=getSelectString (branch);
+	QString preNum=QString::number (branch->num(),10);
+	QString preParStr=getSelectString (branch->parent());
 
 	emit (layoutAboutToBeChanged() );
 	BranchItem *branchpi=(BranchItem*)branch->parent();
 	// Remove at current position
 	int n=branch->childNum();
 
-/* FIXME-4 seg since 20091207, if ModelTest active. strange.
-	// error occured if relinking branch to empty mainbranch
-	cout<<"VM::relinkBranch:\n";
-	cout<<"    b="<<branch->getHeadingStd()<<endl;
-	cout<<"  dst="<<dst->getHeadingStd()<<endl;
-	cout<<"  pos="<<pos<<endl;
-	cout<<"   n1="<<n<<endl;
-*/	
 	beginRemoveRows (index(branchpi),n,n);
 	branchpi->removeChild (n);
 	endRemoveRows();
@@ -2581,6 +2582,27 @@ bool VymModel::relinkBranch (BranchItem *branch, BranchItem *dst, int pos, bool 
 
 	emit (layoutChanged() );
 	reposition();	// both for moveUp/Down and relinking
+
+	// Savestate
+	QString postSelStr=getSelectString(branch);
+	QString postNum=QString::number (branch->num(),10);
+
+	QPointF savePos;
+	LinkableMapObj *lmosel=branch->getLMO();
+	if (lmosel) savePos=lmosel->getAbsPos();
+
+	QString undoCom="relinkTo (\""+ 
+	    preParStr+ "\"," + preNum  +"," + 
+	    QString ("%1,%2").arg(orgPos.x()).arg(orgPos.y())+ ")";
+
+	QString redoCom="relinkTo (\""+ 
+	    getSelectString (dst)  + "\"," + postNum + "," +
+	    QString ("%1,%2").arg(savePos.x()).arg(savePos.y())+ ")";
+
+	saveState (
+	    postSelStr,undoCom,
+	    preSelStr, redoCom,
+	    QString("Relink %1 to %2").arg(getObjectName(branch)).arg(getObjectName(dst)) );
 
 	// New parent might be invisible
 	branch->updateVisibility();
@@ -3814,7 +3836,7 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 		TreeItem *dst=findBySelectString (s);
 		if (dst)
 		{   
-		    if (dst->getType()==TreeItem::Branch) 
+		    if (dst->getType()==TreeItem::Branch ) 
 		    {
 			// Get number in parent
 			n=parser.parInt (ok,1);
@@ -3833,10 +3855,15 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 			    y=parser.parDouble(ok,3);
 			    if (ok) 
 			    {
-				if (selbi->getLMO()) selbi->getLMO()->move (x,y);
-				emitSelectionChanged();
+				if (selbi->getLMO()) 
+				{
+				    ((BranchObj*)selbi->getLMO())->move (x,y);
+				    ((BranchObj*)selbi->getLMO())->setRelPos();
+				}
 			    }
 			}
+			reposition();
+			emitSelectionChanged();
 		    }	
 		}   
 	    }	

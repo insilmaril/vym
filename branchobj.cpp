@@ -338,7 +338,7 @@ void BranchObj::calcBBoxSize()
     
     // Finally set size
     bbox.setSize (QSizeF (w,h));
-    if (debug) qDebug()<<"BO: calcBBox "<<treeItem->getHeading()<<" bbox="<<bbox;
+    //if (debug) qDebug()<<"BO: calcBBox "<<treeItem->getHeading()<<" bbox="<<bbox;
 }
 
 void BranchObj::setDockPos()

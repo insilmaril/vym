@@ -122,7 +122,7 @@ Main::Main(QWidget* parent, Qt::WFlags f) : QMainWindow(parent,f)
 	qWarning ("Mainwindow: Could not create temporary directory, failed to start vym");
 	exit (1);
     }
-    if (debug) qDebug ()<<QString("vym tmpDir=%1").arg(tmpVymDir) ;
+    if (debug) qDebug ()<<"tmpDir="<<tmpVymDir;
 
     // Create direcctory for clipboard
     clipboardDir=tmpVymDir+"/clipboard";
@@ -2809,30 +2809,12 @@ void Main::editMoveToTarget()
 	    if (ti && ti->isBranchLikeType() && selbi)
 	    {
 		BranchItem *pi =selbi->parentBranch();
-		QString preNum=QString::number (selbi->num(),10);
 		LinkableMapObj *lmo=selbi->getLMO();
 		QPointF orgPos;
 		if (lmo) orgPos=lmo->getAbsPos();
 
-		m->relinkBranch ( selbi, (BranchItem*)ti);
+		m->relinkBranch ( selbi, (BranchItem*)ti,-1,true,orgPos);
 
-/* void Main::editMoveToTarget()  FIXME-0 no savestate. Better have one relinkBranch in vymmodel, which also takes care of savestate
-		QString postSelStr=m->getSelectString(lmosel);
-		QString postNum=QString::number (seli->num(),10);
-
-		QString undoCom="relinkTo (\""+ 
-		    preParStr+ "\"," + preNum  +"," + 
-		    QString ("%1,%2").arg(orgPos.x()).arg(orgPos.y())+ ")";
-
-		QString redoCom="relinkTo (\""+ 
-		    preDstParStr + "\"," + postNum + "," +
-		    QString ("%1,%2").arg(orgPos.x()).arg(orgPos.y())+ ")";
-
-		model->saveState (
-		    postSelStr,undoCom,
-		    preSelStr, redoCom,
-		    QString("Relink %1 to %2").arg(model->getObjectName(bsel)).arg(model->getObjectName(dst)) );
-*/
 		if (below) 
 		    m->select (below);
 		else    
@@ -4018,7 +4000,7 @@ void Main::updateActions()
 		actionGetURLsFromNote->setEnabled (!selbi->getNote().isEmpty());
 
 		// Take care of xlinks  
-		// FIXME-0 similar code in mapeditor
+		// FIXME-2 similar code in mapeditor
 		int b=selbi->xlinkCount();
 		branchXLinksContextMenuEdit->setEnabled(b);
 		branchXLinksContextMenuFollow->setEnabled(b);

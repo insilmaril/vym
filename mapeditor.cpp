@@ -231,7 +231,7 @@ void MapEditor::setScrollBarPosTarget (const QRectF &rect)
             scrollBarPosTarget.setY(int(viewRect.bottom() - height + ymargin + 0.5));
     }
 
-    if (scrollBarPosTarget==getScrollBarPos()) return;
+//    if (scrollBarPosTarget==getScrollBarPos()) return;
 
     if (scrollBarPosAnimation.state()==QAbstractAnimation::Running)
 	scrollBarPosAnimation.stop();
@@ -1522,7 +1522,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent* e)
 		bool relinked;
 
 		if (e->modifiers() & Qt::ShiftModifier && dst->getParObj())
-		{   // Link above dst
+		{   // Link above dst	//FIXME-0
 		    preDstParStr=model->getSelectString (dst->getParObj());
 		    relinked=model->relinkBranch (
 			(BranchItem*)seli,
@@ -1532,7 +1532,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent* e)
 		} else 
 		if (e->modifiers() & Qt::ControlModifier && dst->getParObj())
 		{
-		    // Link below dst
+		    // Link below dst	//FIXME-0
 		    preDstParStr=model->getSelectString (dst->getParObj());
 		    relinked=model->relinkBranch (
 			(BranchItem*)seli,
@@ -1546,11 +1546,16 @@ void MapEditor::mouseReleaseEvent(QMouseEvent* e)
 			(BranchItem*)seli,
 			(BranchItem*)dsti,
 			-1,
-			true);
+			true,
+			movingObj_orgPos);
+		    qDebug()<<"ME::releaseMouse movOrgPos="<<movingObj_orgPos;		
+		    qDebug()<<"ME::releaseMouse   savePos="<<savePos;		
+		    qDebug()<<"ME::releaseMouse   dsti.d="<<dsti->depth();		
 		    if (dsti->depth()==0) bsel->move (savePos);
 		} 
-		if (relinked)
+		if (true )//FIXME-0 not needed
 		{
+		/*
 		    QString postSelStr=model->getSelectString(lmosel);
 		    QString postNum=QString::number (seli->num(),10);
 
@@ -1562,11 +1567,14 @@ void MapEditor::mouseReleaseEvent(QMouseEvent* e)
 			preDstParStr + "\"," + postNum + "," +
 			QString ("%1,%2").arg(savePos.x()).arg(savePos.y())+ ")";
 
+		    qDebug()<<"ME::releaseMouse undoCom="<<undoCom;
+		    qDebug()<<"ME::releaseMouse redoCom="<<redoCom;
 		    model->saveState (
 			postSelStr,undoCom,
 			preSelStr, redoCom,
 			QString("Relink %1 to %2").arg(model->getObjectName(bsel)).arg(model->getObjectName(dst)) );
 
+		    */
 		}
 	    } else
 	    {
