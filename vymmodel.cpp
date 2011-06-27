@@ -3236,7 +3236,7 @@ void VymModel::editBugzilla2URL()
     if (selti)
     {	    
 	QString h=selti->getHeading();
-	QRegExp rx("^(\\d+)");
+	QRegExp rx("(\\d+)");
 	if (rx.indexIn(h) !=-1)
 	    setURL ("https://bugzilla.novell.com/show_bug.cgi?id="+rx.cap(1) );
     }
