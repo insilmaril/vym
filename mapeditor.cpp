@@ -1603,14 +1603,6 @@ void MapEditor::mouseReleaseEvent(QMouseEvent* e)
 
 void MapEditor::mouseDoubleClickEvent(QMouseEvent* e)
 {
-
-/*
-    if (model->isSelectionBlocked() ) 
-    {
-	e->ignore();
-	return;
-    }
-*/
     if (e->button() == Qt::LeftButton )
     {
 	QPointF p = mapToScene(e->pos());
