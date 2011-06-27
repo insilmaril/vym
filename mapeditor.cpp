@@ -1548,34 +1548,8 @@ void MapEditor::mouseReleaseEvent(QMouseEvent* e)
 			-1,
 			true,
 			movingObj_orgPos);
-		    qDebug()<<"ME::releaseMouse movOrgPos="<<movingObj_orgPos;		
-		    qDebug()<<"ME::releaseMouse   savePos="<<savePos;		
-		    qDebug()<<"ME::releaseMouse   dsti.d="<<dsti->depth();		
 		    if (dsti->depth()==0) bsel->move (savePos);
 		} 
-		if (true )//FIXME-0 not needed
-		{
-		/*
-		    QString postSelStr=model->getSelectString(lmosel);
-		    QString postNum=QString::number (seli->num(),10);
-
-		    QString undoCom="relinkTo (\""+ 
-			preParStr+ "\"," + preNum  +"," + 
-			QString ("%1,%2").arg(movingObj_orgPos.x()).arg(movingObj_orgPos.y())+ ")";
-
-		    QString redoCom="relinkTo (\""+ 
-			preDstParStr + "\"," + postNum + "," +
-			QString ("%1,%2").arg(savePos.x()).arg(savePos.y())+ ")";
-
-		    qDebug()<<"ME::releaseMouse undoCom="<<undoCom;
-		    qDebug()<<"ME::releaseMouse redoCom="<<redoCom;
-		    model->saveState (
-			postSelStr,undoCom,
-			preSelStr, redoCom,
-			QString("Relink %1 to %2").arg(model->getObjectName(bsel)).arg(model->getObjectName(dst)) );
-
-		    */
-		}
 	    } else
 	    {
 		// No destination, undo  temporary move	
