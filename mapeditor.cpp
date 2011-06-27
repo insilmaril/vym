@@ -1603,12 +1603,6 @@ void MapEditor::mouseReleaseEvent(QMouseEvent* e)
 
 void MapEditor::mouseDoubleClickEvent(QMouseEvent* e)
 {
-    if (debug) 
-    {
-	qDebug()<< "ME p="<<mapToScene (e->pos())<<"  scrollBarPos="<<getScrollBarPos() <<
-		   "  min="<<QPointF(horizontalScrollBar()->minimum(),verticalScrollBar()->minimum());
-    }
-
 
 /*
     if (model->isSelectionBlocked() ) 
@@ -1621,8 +1615,9 @@ void MapEditor::mouseDoubleClickEvent(QMouseEvent* e)
     {
 	QPointF p = mapToScene(e->pos());
 	TreeItem *ti=findMapItem (p, NULL);
-	if (ti) {   // MapObj was found
-	    // First select the MapObj than edit heading
+	if (ti) 
+	{   
+	    if (editingHeading) editHeadingFinished();
 	    model->select (ti);
 	    editHeading();
 	}
