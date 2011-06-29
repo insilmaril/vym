@@ -701,7 +701,7 @@ void VymModel::loadFloatImage ()
     if (selbi)
     {
 	QStringList filters;
-	filters<< QString (tr("Images") + " (*.png *.bmp *.xbm *.jpg *.png *.xpm *.gif *.pnm)");
+	filters<< QString (tr("Images") + " (*.png *.bmp *.xbm *.jpg *.png *.xpm *.gif *.pnm *.svg)");
 	QFileDialog fd;
 	fd.setFileMode (QFileDialog::ExistingFiles);
 	fd.setWindowTitle(vymName+" - " +tr("Load image"));
@@ -2722,6 +2722,7 @@ void VymModel::deleteSelection()
 }
 
 void VymModel::deleteKeepChildren(bool saveStateFlag)
+//deleteKeepChildren FIXME-1  does not work 
 //deleteKeepChildren FIXME-3+ does not work yet for mapcenters 
 //deleteKeepChildren FIXME-3+ children of scrolled branch stay invisible...
 //deleteKeepChildren FIXME-2 xlinks in children are lost with undo (Maybe use saveStateChangingPart?)
