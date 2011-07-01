@@ -469,6 +469,7 @@ BranchObj* BranchItem::createMapObj(QGraphicsScene *scene)  // FIXME-4 maybe mov
 	if (parentItem!=rootItem && 
 	    ( ((BranchItem*)parentItem)->scrolled || !((MapItem*)parentItem)->getLMO()->isVisibleObj() ) )
 	    newbo->setVisibility (false);
+	    if (depth()==1) newbo->setRelPos (newbo->getRandPos());
     }
     newbo->setDefAttr(BranchObj::NewBranch);
     initLMO();
