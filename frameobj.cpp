@@ -193,6 +193,17 @@ FrameObj::FrameType FrameObj::getFrameType()
     return type;
 }
 
+FrameObj::FrameType FrameObj::getFrameType(const QString &s)
+{
+    if (s=="Rectangle")
+	return Rectangle;
+    else if (s=="Ellipse")
+	return Ellipse;
+    else if (s=="Cloud")
+	return Cloud;
+    return NoFrame;	
+}
+
 QString FrameObj::getFrameTypeName()
 {
     switch (type)

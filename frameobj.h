@@ -29,6 +29,7 @@ public:
     void setBorderWidth (const int &);
     int getBorderWidth ();
     FrameType getFrameType ();
+    FrameType getFrameType (const QString &);
     QString getFrameTypeName ();
     void setFrameType (const FrameType &);
     void setFrameType (const QString &);

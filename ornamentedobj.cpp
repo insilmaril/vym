@@ -116,17 +116,9 @@ void OrnamentedObj::setFrameType(const FrameObj::FrameType &t)
     requestReposition();
 }
 
-void OrnamentedObj::setFrameType(const QString &t)
+void OrnamentedObj::setFrameType(const QString &s)
 {
-    frame->setFrameType(t);
-    if (frame->getFrameType() == FrameObj::NoFrame)
-	linkpos=LinkableMapObj::Bottom;
-    else    
-	linkpos=LinkableMapObj::Middle;
-
-    calcBBoxSize();
-    positionBBox();
-    requestReposition();
+    setFrameType(frame->getFrameType (s));
 }
 
 void OrnamentedObj::setFramePadding (const int &i)
