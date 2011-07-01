@@ -2110,10 +2110,13 @@ void VymModel::cut()
 
 bool VymModel::moveUp(BranchItem *bi)	
 {
+    bool oldState=blockSaveState;
+    blockSaveState=true;
+    bool result=false;
     if (bi && bi->canMoveUp()) 
-	return relinkBranch (bi,(BranchItem*)bi->parent(),bi->num()-1,true);
-    else    
-	return false;
+	result=relinkBranch (bi,(BranchItem*)bi->parent(),bi->num()-1,true);
+    blockSaveState=oldState;
+    return result;
 }
 
 void VymModel::moveUp()	
@@ -2132,10 +2135,13 @@ void VymModel::moveUp()
 
 bool VymModel::moveDown(BranchItem *bi)	
 {
-    if (bi && bi->canMoveDown())
-	return relinkBranch (bi,(BranchItem*)bi->parent(),bi->num()+1,true);
-    else
-	return false;
+    bool oldState=blockSaveState;
+    blockSaveState=true;
+    bool result=false;
+    if (bi && bi->canMoveDown()) 
+	result=relinkBranch (bi,(BranchItem*)bi->parent(),bi->num()+1,true);
+    blockSaveState=oldState;
+    return result;
 }
 
 void VymModel::moveDown()   
