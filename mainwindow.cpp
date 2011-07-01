@@ -3311,7 +3311,16 @@ void Main::editAddAttribute()
 void Main::editAddMapCenter()
 {
     VymModel *m=currentModel();
-    if (m) m->select (m->addMapCenter ());
+    if (m) 
+    {
+	m->select (m->addMapCenter ());
+	MapEditor *me=currentMapEditor();
+	if (me) 
+	{
+	    m->setHeading("");
+	    me->editHeading();
+	}    
+    }
 }
 
 void Main::editNewBranch()
