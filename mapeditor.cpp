@@ -471,7 +471,6 @@ void MapEditor::setSmoothPixmap(bool b)
     setRenderHint(QPainter::SmoothPixmapTransform,b);
 }
 
-#include <iostream>
 void MapEditor::autoLayout()
 {
     // Create list with all bounding polygons
@@ -536,17 +535,16 @@ void MapEditor::autoLayout()
 			collisions++;
 			if (debug) qDebug() << "Collision: "<<headings[i]<<" - "<<headings[j];
 			v=polys.at(j).centroid()-polys.at(i).centroid();
-			// Move also away if centroids are identical
-			if (v.isNull()) 
+			v.normalize();
+			// Add random direction, if only two polygons with identical y or x
+			if (v.x()==0 || v.y()==0) 
 			{
-			    v.setX (rand()%200 -100);
-			    v.setY (rand()%200 -100);
+			    Vector w (cos (rand()%1000),sin(rand()%1000));
+			    w.normalize();
+			    v=v+w;
 			}
-			// Add random direction
-			Vector w (cos (rand()%1000),sin(rand()%1000));
 			
 			// Scale translation vector by area of polygons
-			v.normalize();
 			vectors[j]=v*10000/polys.at(j).weight();	
 			vectors[i]=v*10000/polys.at(i).weight();	
 			vectors[i].invert();
@@ -574,11 +572,11 @@ void MapEditor::autoLayout()
 	    orients.append (mapobjects[i]->getOrientation());
 	    if (!v.isNull())
 	    {
-		if (debug) cout<<" Moving "<<polys.at(i).weight()<<" "<<mapobjects[i]->getAbsPos()<<" -> "<<mapobjects[i]->getAbsPos() + v<<"  "<<headings[i].toStdString()<<endl;
+		if (debug) qDebug()<<" Moving "<<polys.at(i).weight()<<" "<<mapobjects[i]->getAbsPos()<<" -> "<<mapobjects[i]->getAbsPos() + v<<"  "<<headings[i];
 		//mapobjects[i]->moveBy(v.x(),v.y() );
 		//mapobjects[i]->setRelPos();
 		model->startAnimation ((BranchObj*)mapobjects[i], v);
-		if (debug) cout<<i<< " Weight: "<<polys.at(i).weight()<<" "<<v<<" "<<headings.at(i).toStdString()<<endl;
+		if (debug) qDebug()<<i<< " Weight: "<<polys.at(i).weight()<<" "<<v<<" "<<headings.at(i);
 	    }
 	}   
 	/*
@@ -1103,7 +1101,7 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
 		if ((lmo->getOrientation()!=LinkableMapObj::RightOfCenter && p.x() < lmo->getBBox().left()+20)  ||
 		    (lmo->getOrientation()!=LinkableMapObj::LeftOfCenter && p.x() > lmo->getBBox().right()-20) ) 
 		{
-		    //FIXME-0 similar code in mainwindow
+		    //FIXME-2 similar code in mainwindow
 		    QMenu menu;
 		    QList <QAction*> alist;
 		    QList <BranchItem*> blist;
@@ -1155,7 +1153,7 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
 		tmpLink->setColor(model->getMapDefXLinkColor());
 		tmpLink->setWidth(model->getMapDefXLinkWidth());
 		tmpLink->createMapObj(mapScene);
-		tmpLink->setEndPoint   (p);
+		
 		tmpLink->updateLink();
 		return;
 	    } 
@@ -1690,14 +1688,15 @@ void MapEditor::dropEvent(QDropEvent *event)
 	    ba=event->mimeData()->data("text/x-moz-url");
 	    s=ba;
 	    qDebug() << "   x-moz-url:" <<s;
-	    foreach (char b,ba)
-		if (b!=0) qDebug() << "b="<<b;
+	    //foreach (char b,ba) if (b!=0) qDebug() << "b="<<b;
 	}
 
-	if (event->mimeData()->hasImage()) 
+	if (event->mimeData()->hasImage()) //FIXME-1 Usually not there anymore :-(
 	{
+	    if (debug) qDebug()<<"MapEditor::dropEvent hasImage!";
 	     QVariant imageData = event->mimeData()->imageData();
 	     model->addFloatImage (qvariant_cast<QImage>(imageData));
+
 	} else
 	if (event->mimeData()->hasUrls())
 	{
@@ -1720,35 +1719,25 @@ void MapEditor::dropEvent(QDropEvent *event)
 			s=uris.at(i).toLocalFile();
 			if (!s.isEmpty()) 
 			{
-			   QString file = QDir::fromNativeSeparators(s);
-			   heading = QFileInfo(file).baseName();
-			   files.append(file);
-			   if (file.endsWith(".vym", Qt::CaseInsensitive))
+			    QString file = QDir::fromNativeSeparators(s);
+			    heading = QFileInfo(file).baseName();
+			    files.append(file);
+			    if (file.endsWith(".vym", Qt::CaseInsensitive))
 			       model->setVymLink(file);
-			   else
+			    else
 			       model->setURL(u);
-		       } else 
-		       {
+			} else 
 			    model->setURL(u);
 
-/*
-			    // Automatically try to fetch data from Bugzilla
-			    if (settings.value( "/mainwindow/showTestMenu",false).toBool() 
-				&& u.contains ("https://bugzilla.novell.com"))
-				model->getBugzillaData();
-*/				
-		       }
-
-		       if (!heading.isEmpty())
+			if (!heading.isEmpty())
 			   model->setHeading(heading);
-		       else
+			else
 			   model->setHeading(u);
 			   
 			model->select (bi->parent());	   
 		    }
 		}
 	    }
-	    //model->reposition();
 	}
     }	
     event->acceptProposedAction();
