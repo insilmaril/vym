@@ -133,11 +133,10 @@ void VymModel::init ()
 
     // View - map
     defLinkColor=QColor (0,0,255);
-    defXLinkColor=QColor (180,180,180);
     linkcolorhint=LinkableMapObj::DefaultColor;
     linkstyle=LinkableMapObj::PolyParabel;
     defXLinkWidth=1;
-    defXLinkColor=QColor (230,230,230);
+    defXLinkColor=QColor (50,50,255);
     zoomFactor=1;
 
     hidemode=TreeItem::HideNone;
@@ -1804,7 +1803,7 @@ QStringList VymModel::getURLs(bool ignoreScrolled)
 }
 
 
-void VymModel::setFrameType(const FrameObj::FrameType &t)   //FIXME-4 not saved if there is no LMO
+void VymModel::setFrameType(const FrameObj::FrameType &t)   //FIXME-3 not saved if there is no LMO
 {
     BranchItem *bi=getSelectedBranch();
     if (bi)
@@ -1822,7 +1821,7 @@ void VymModel::setFrameType(const FrameObj::FrameType &t)   //FIXME-4 not saved 
     }
 }
 
-void VymModel::setFrameType(const QString &s)	//FIXME-4 not saved if there is no LMO
+void VymModel::setFrameType(const QString &s)	//FIXME-3 not saved if there is no LMO
 {
     BranchItem *bi=getSelectedBranch();
     if (bi)
@@ -2552,7 +2551,7 @@ bool VymModel::relinkBranch (
 	if (updateSelection) unselect();
  
 	// Do we need to update frame type?
-	bool keepFrame=false;
+	bool keepFrame=true;
 	 
 	// Save old position for savestate
 	QString preSelStr=getSelectString (branch);
@@ -2581,7 +2580,10 @@ bool VymModel::relinkBranch (
 
 	// Correct type if necessesary
 	if (branch->getType()==TreeItem::MapCenter) 
+	{
 	    branch->setType(TreeItem::Branch);
+	    keepFrame=false;
+	}
 
 	// reset parObj, fonts, frame, etc in related LMO or other view-objects
 	branch->updateStyles(keepFrame);

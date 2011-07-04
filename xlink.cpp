@@ -13,8 +13,8 @@
 Link::Link (VymModel *m)
 {
     //qDebug() << "Const Link () this="<<this;
-    init();
     model=m;
+    init();
 }
 
 Link::~Link ()
@@ -33,8 +33,8 @@ void Link::init ()
     endLinkItem=NULL;
     xLinkState=Link::undefinedXLink;
 
-    color=QColor (180,180,180);
-    width=1;
+    color=model->getMapDefXLinkColor();
+    width=model->getMapDefXLinkWidth();
 }
 
 void Link::setBeginBranch (BranchItem *bi)
