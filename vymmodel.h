@@ -522,6 +522,7 @@ public:
     void setMapZoomFactor (const double &); 
 private: 
     double zoomFactor;
+    bool hasContextPos;			//!< True, if we have a context pos
     QPointF contextPos;			//!< local position during context menu
 public:
     void setContextPos (QPointF);	//!< local position during context menu

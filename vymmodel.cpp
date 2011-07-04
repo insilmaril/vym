@@ -139,6 +139,8 @@ void VymModel::init ()
     defXLinkColor=QColor (50,50,255);
     zoomFactor=1;
 
+    hasContextPos=false;
+
     hidemode=TreeItem::HideNone;
 
     // Avoid recursions later
@@ -2368,6 +2370,26 @@ AttributeItem* VymModel::addAttribute(BranchItem *dst,AttributeItem *ai){
 
 BranchItem* VymModel::addMapCenter (bool saveStateFlag)
 {
+    if (!hasContextPos) 
+    {
+	// E.g. when called via keypresss:
+	// Place new MCO in middle of existing ones,
+	// Useful for "brainstorming" mode...
+	contextPos=QPointF();
+	BranchItem *bi;
+	BranchObj *bo;
+	for (int i=0;i<rootItem->branchCount();++i)
+	{
+	    bi=rootItem->getBranchNum (i);
+	    bo=(BranchObj*)bi->getLMO();
+	    if (bo) contextPos+=bo->getAbsPos();
+	    
+	}	    
+	if (rootItem->branchCount()>1) 
+	    contextPos*=1/(qreal)(rootItem->branchCount());
+    }
+
+
     BranchItem *bi=addMapCenter (contextPos);
     updateActions();
     emitShowSelection();
@@ -4909,11 +4931,13 @@ void VymModel::setMapZoomFactor (const double &d)
 void VymModel::setContextPos(QPointF p)
 {
     contextPos=p;
+    hasContextPos=true;
 }
 
 void VymModel::unsetContextPos()
 {
     contextPos=QPointF();
+    hasContextPos=false;
 }
 
 void VymModel::updateNoteFlag()
