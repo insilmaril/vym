@@ -475,6 +475,10 @@ void BranchObj::setDefAttr (BranchModification mod, bool keepFrame)
 	setColor (treeItem->getHeadingColor() );
     else
     {
+	// Relinked mapcenters
+	if (!keepFrame && getFrameType()!=FrameObj::NoFrame)
+	    setFrameType (FrameObj::NoFrame);
+
 	// Also set styles for children
 	for (int i=0; i<treeItem->branchCount(); ++i)
 	    treeItem->getBranchObjNum(i)->setDefAttr(MovedBranch);
