@@ -481,7 +481,7 @@ void BranchObj::setDefAttr (BranchModification mod, bool keepFrame)
 
 	// Also set styles for children
 	for (int i=0; i<treeItem->branchCount(); ++i)
-	    treeItem->getBranchObjNum(i)->setDefAttr(MovedBranch);
+	    treeItem->getBranchObjNum(i)->setDefAttr(MovedBranch, keepFrame);
     }	    
     calcBBoxSize();
 }
