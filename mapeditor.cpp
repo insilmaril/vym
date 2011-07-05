@@ -926,11 +926,9 @@ void MapEditor::editHeading()
 	lineEdit->setCursorPosition(1);
 
 	QPoint p = mapTo (this,bo->getAbsPos().toPoint() );
-//	qDebug()<<"ME::editHeading a) p="<<p;
 
 	scene()->update();
 	p = mapTo (this,bo->getAbsPos().toPoint() );
-//	qDebug()<<"ME::editHeading b) p="<<p;
 
 	lineEdit->setGeometry(p.x(),p.y(),230,25);
 	lineEdit->setText (bi->getHeading());
@@ -955,6 +953,10 @@ void MapEditor::editHeadingFinished()
 
     // Maybe reselect previous branch 
     mainWindow->editHeadingFinished (model);
+
+    //Autolayout to avoid overlapping branches with longer headings
+    if (settings.value("/mainwindow/autoLayout/use","true")=="true")
+	autoLayout();
 
 /*
     //FIXME testing
@@ -1867,6 +1869,11 @@ void MapEditor::updateSelection(QItemSelection newsel,QItemSelection oldsel)
 	i++;
     }
 
+    if (editingHeading && lineEdit && !itemsNew.isEmpty() )
+    {
+	mo=itemsNew.first()->getLMO();
+	if (mo) lineEdit->move ( mapTo (this,mo->getAbsPos().toPoint() ) );
+    }
     scene()->update();  
 }
 
