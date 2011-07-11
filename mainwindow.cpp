@@ -2801,14 +2801,14 @@ void Main::editMoveToTarget()
 	{
 	    TreeItem *ti=m->findID (a->data().toUInt());
 	    BranchItem *selbi=m->getSelectedBranch();
-	    BranchItem *below=NULL;
-	    MapEditor *me=currentMapEditor();
-	    // If branch below exists, select that one
-	    // Makes it easier to quickly resort using the MoveTo function
-	    if (me) below=me->getBranchBelow(selbi);
+	    if (!selbi) return;
+
 	    if (ti && ti->isBranchLikeType() && selbi)
 	    {
 		BranchItem *pi =selbi->parentBranch();
+		// If branch below exists, select that one
+		// Makes it easier to quickly resort using the MoveTo function
+		BranchItem *below=pi->getBranchNum(selbi->num()+1);
 		LinkableMapObj *lmo=selbi->getLMO();
 		QPointF orgPos;
 		if (lmo) orgPos=lmo->getAbsPos();
@@ -4214,6 +4214,7 @@ void Main::standardFlagChanged()
 
 void Main::testFunction1()
 {
+/*
     QFileDialog fd;
     //fd.setFilter (filter);
     //fd.setWindowTitle (caption);
@@ -4228,7 +4229,7 @@ void Main::testFunction1()
 	qDebug() <<"Main::test1 "<<fd.selectedFiles();
     }
     return;
-
+*/
     if (!currentMapEditor()) return;
     currentMapEditor()->testFunction1();
 }
