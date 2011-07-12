@@ -257,6 +257,8 @@ Main::Main(QWidget* parent, Qt::WFlags f) : QMainWindow(parent,f)
     setupSettingsActions();
     setupContextMenus();
     setupMacros();
+    setupToolbars();
+
     if (options.isOn("shortcuts")) switchboard.print();
     if (options.isOn("shortcutsLaTeX")) switchboard.printLaTeX();
 
@@ -407,16 +409,14 @@ void Main::closeEvent (QCloseEvent* event)
 void Main::setupFileActions()
 {
     QMenu *fileMenu = menuBar()->addMenu ( tr ("&Map","Toolbar for file actions") );
-    QToolBar *tb = addToolBar( tr ("File actions toolbar","Toolbar for file actions"));
-    tb->setObjectName ("fileTB");
 
     QAction *a;
     a = new QAction(QPixmap( iconPath+"filenew.png"), tr( "&New map","File menu" ),this);
     a->setShortcut ( Qt::CTRL + Qt::Key_N );	    //New map
     switchboard.addConnection(a,tr("File","Shortcut group"));
-    tb->addAction(a);
     fileMenu->addAction (a);
     connect( a, SIGNAL( triggered() ), this, SLOT( fileNew() ) );
+    actionFileNew=a;
 
     a = new QAction(QPixmap( iconPath+"filenewcopy.png"), tr( "&Copy to new map","File menu" ),this);
     a->setShortcut ( Qt::CTRL +Qt::SHIFT + Qt::Key_N );	    //New map
@@ -428,9 +428,9 @@ void Main::setupFileActions()
     a = new QAction( QPixmap( iconPath+"fileopen.png"), tr( "&Open..." ,"File menu"),this);
     a->setShortcut ( Qt::CTRL + Qt::Key_O );	    //Open map
     switchboard.addConnection(a,tr("File","Shortcut group"));
-    tb->addAction(a);
     fileMenu->addAction (a);
     connect( a, SIGNAL( triggered() ), this, SLOT( fileLoad() ) );
+    actionFileOpen=a;
 
     fileLastMapsMenu = fileMenu->addMenu (tr("Open Recent","File menu"));
     fileMenu->addSeparator();
@@ -438,7 +438,6 @@ void Main::setupFileActions()
     a = new QAction( QPixmap( iconPath+"filesave.png"), tr( "&Save...","File menu" ), this);
     a->setShortcut (Qt::CTRL + Qt::Key_S );	    //Save map
     switchboard.addConnection(a,tr("File","Shortcut group"));
-    tb->addAction(a);
     fileMenu->addAction (a);
     connect( a, SIGNAL( triggered() ), this, SLOT( fileSave() ) );
     actionFileSave=a;
@@ -491,7 +490,6 @@ void Main::setupFileActions()
     a->setShortcut (Qt::ALT + Qt::Key_E);	    
     switchboard.addConnection(a,tr("File","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( fileExportLast() ) );
-    tb->addAction(a);
     actionFileExportLast=a;
     fileExportMenu->addAction (a);
 
@@ -564,7 +562,6 @@ void Main::setupFileActions()
 
     a = new QAction(QPixmap( iconPath+"fileprint.png"), tr( "&Print")+QString("..."), this);
     a->setShortcut (Qt::CTRL + Qt::Key_P );	    //Print map
-    tb->addAction(a);
     switchboard.addConnection(a,tr("File","Shortcut group"));
     fileMenu->addAction (a);
     connect( a, SIGNAL( triggered() ), this, SLOT( filePrint() ) );
@@ -587,8 +584,6 @@ void Main::setupFileActions()
 //Edit Actions
 void Main::setupEditActions()
 {
-    QToolBar *tb = addToolBar( tr ("Edit actions toolbar","Toolbar name") );
-    tb->setObjectName ("actionsTB");
     QMenu *editMenu = menuBar()->addMenu( tr("&Edit","Edit menu") );
 
     QAction *a;
@@ -597,14 +592,12 @@ void Main::setupEditActions()
     a->setShortcut ( Qt::CTRL + Qt::Key_Z );	    //Undo last action
     a->setEnabled (false);
     switchboard.addConnection(a,tr("Edit","Shortcut group"));
-    tb->addAction (a);
     editMenu->addAction (a);
     actionUndo=a;
 
     a = new QAction( QPixmap( iconPath+"redo.png"), tr( "&Redo","Edit menu" ), this); 
     a->setShortcut (Qt::CTRL + Qt::Key_Y );	    //Redo last action
     switchboard.addConnection(a,tr("Edit","Shortcut group"));
-    tb->addAction (a);
     editMenu->addAction (a);
     connect( a, SIGNAL( triggered() ), this, SLOT( editRedo() ) );
     actionRedo=a;
@@ -614,7 +607,6 @@ void Main::setupEditActions()
     a->setShortcut (Qt::CTRL + Qt::Key_C );	    //Copy
     a->setEnabled (false);
     switchboard.addConnection(a,tr("Edit","Shortcut group"));
-    tb->addAction (a);
     editMenu->addAction (a);
     connect( a, SIGNAL( triggered() ), this, SLOT( editCopy() ) );
     actionCopy=a;
@@ -622,7 +614,6 @@ void Main::setupEditActions()
     a = new QAction(QPixmap( iconPath+"editcut.png" ), tr( "Cu&t","Edit menu" ), this);
     a->setShortcut (Qt::CTRL + Qt::Key_X );	    //Cut
     a->setEnabled (false);
-    tb->addAction (a);
     switchboard.addConnection(a,tr("Edit","Shortcut group"));
     editMenu->addAction (a);
     actionCut=a;
@@ -632,7 +623,6 @@ void Main::setupEditActions()
     connect( a, SIGNAL( triggered() ), this, SLOT( editPaste() ) );
     a->setShortcut ( Qt::CTRL + Qt::Key_V );	    //Paste
     a->setEnabled (false);
-    tb->addAction (a);
     switchboard.addConnection(a,tr("Edit","Shortcut group"));
     editMenu->addAction (a);
     actionPaste=a;
@@ -666,7 +656,6 @@ void Main::setupEditActions()
     switchboard.addConnection(a,tr("Edit","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( editAddMapCenter() ) );
     //actionListBranches.append(a);
-    tb->addAction (a);
     actionAddMapCenter = a;
 
 
@@ -680,7 +669,6 @@ void Main::setupEditActions()
     actionListBranches.append(a);
     actionAddBranch=a;
     editMenu->addAction (actionAddBranch);
-    tb->addAction (actionAddBranch);
 
 
     // Add branch by inserting it at selection
@@ -734,7 +722,6 @@ void Main::setupEditActions()
     a->setShortcutContext (Qt::WidgetShortcut);
     a->setEnabled (false);
     switchboard.addConnection(a,tr("Edit","Shortcut group"));
-    tb->addAction (a);
     editMenu->addAction (a);
     connect( a, SIGNAL( triggered() ), this, SLOT( editMoveUp() ) );
     actionMoveUp=a;
@@ -745,7 +732,6 @@ void Main::setupEditActions()
     a->setShortcutContext (Qt::WidgetShortcut);
     a->setEnabled (false);
     switchboard.addConnection(a,tr("Edit","Shortcut group"));
-    tb->addAction (a);
     editMenu->addAction (a);
     actionMoveDown=a;
 
@@ -761,7 +747,6 @@ void Main::setupEditActions()
     connect( a, SIGNAL( activated() ), this, SLOT( editSortChildren() ) );
     a->setEnabled (true);
     a->setShortcut ( Qt::Key_O );		    // Detach branch
-    tb->addAction(a);
     switchboard.addConnection(a,tr("Edit","Shortcut group"));
     editMenu->addAction (a);
     actionSortChildren=a;
@@ -770,7 +755,6 @@ void Main::setupEditActions()
     connect( a, SIGNAL( activated() ), this, SLOT( editSortBackChildren() ) );
     a->setEnabled (true);
     a->setShortcut ( Qt::SHIFT + Qt::Key_O );		    // Detach branch
-    tb->addAction(a);
     switchboard.addConnection(a,tr("Edit","Shortcut group"));
     editMenu->addAction (a);
     actionSortBackChildren=a;	
@@ -782,7 +766,6 @@ void Main::setupEditActions()
     a->setEnabled (false);
     a->setCheckable(true);
     actionToggleScroll=a;
-    tb->addAction (actionToggleScroll);
     editMenu->addAction ( actionToggleScroll);
     editMenu->addAction (actionToggleScroll);
     addAction (a);
@@ -795,7 +778,6 @@ void Main::setupEditActions()
     actionExpandAll=a;
     actionExpandAll->setEnabled (false);
     actionExpandAll->setCheckable(false);
-    //tb->addAction (actionExpandAll);
     editMenu->addAction ( actionExpandAll);
     addAction (a);
     actionListBranches.append(actionExpandAll);
@@ -807,7 +789,6 @@ void Main::setupEditActions()
     a->setEnabled (false);
     a->setCheckable(false);
     actionExpandOneLevel=a;
-    //tb->addAction (a);
     editMenu->addAction ( a);
     addAction (a);
     actionListBranches.append(a);
@@ -819,7 +800,6 @@ void Main::setupEditActions()
     a->setEnabled (false);
     a->setCheckable(false);
     actionCollapseOneLevel=a;
-    //tb->addAction (a);
     editMenu->addAction ( a);
     addAction (a);
     actionListBranches.append(a);
@@ -831,7 +811,6 @@ void Main::setupEditActions()
     a->setEnabled (false);
     a->setCheckable(false);
     actionCollapseUnselected=a;
-    //tb->addAction (a);
     editMenu->addAction ( a);
     addAction (a);
     actionListBranches.append(a);
@@ -897,7 +876,6 @@ void Main::setupEditActions()
     a = new QAction( QPixmap(flagsPath+"flag-url.png"), tr( "Open URL","Edit menu" ), this);
     a->setShortcut (Qt::SHIFT + Qt::Key_U );
     switchboard.addConnection(a,tr("Edit","Shortcut group"));
-    tb->addAction (a);
     addAction(a);
     connect( a, SIGNAL( triggered() ), this, SLOT( editOpenURL() ) );
     actionOpenURL=a;
@@ -995,7 +973,6 @@ void Main::setupEditActions()
     actionFATE2URL=a;
 
     a = new QAction(QPixmap(flagsPath+"flag-vymlink.png"), tr( "Open linked map","Edit menu" ), this);
-    tb->addAction (a);
     a->setEnabled (false);
     switchboard.addConnection(a,tr("Edit","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( editOpenVymLink() ) );
@@ -1025,7 +1002,6 @@ void Main::setupEditActions()
     a = new QAction(QPixmap(flagsPath+"flag-hideexport.png"), tr( "Hide in exports","Edit menu" ), this);
     a->setShortcut (Qt::Key_H );
     a->setCheckable(true);
-    tb->addAction (a);
     a->setEnabled (false);
     switchboard.addConnection(a,tr("Edit","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( editToggleHideExport() ) );
@@ -1113,21 +1089,17 @@ void Main::setupFormatActions()
 {
     QMenu *formatMenu = menuBar()->addMenu (tr ("F&ormat","Format menu"));
 
-    QToolBar *tb = addToolBar( tr("Format toolbar","Format Toolbar name"));
-    tb->setObjectName ("formatTB");
     QAction *a;
     QPixmap pix( 16,16);
     pix.fill (Qt::black);
     a= new QAction(pix, tr( "Set &Color" )+QString("..."), this);
     connect( a, SIGNAL( triggered() ), this, SLOT( formatSelectColor() ) );
-    tb->addAction(a);
     formatMenu->addAction (a);
     actionFormatColor=a;
     a= new QAction( QPixmap(iconPath+"formatcolorpicker.png"), tr( "Pic&k color","Edit menu" ), this);
     a->setShortcut (Qt::CTRL + Qt::Key_K );
     connect( a, SIGNAL( triggered() ), this, SLOT( formatPickColor() ) );
     a->setEnabled (false);
-    tb->addAction(a);
     formatMenu->addAction (a);
     actionListBranches.append(a);
     actionFormatPickColor=a;
@@ -1136,17 +1108,15 @@ void Main::setupFormatActions()
     //a->setShortcut (Qt::CTRL + Qt::Key_B + Qt::SHIFT);
     connect( a, SIGNAL( triggered() ), this, SLOT( formatColorBranch() ) );
     a->setEnabled (false);
-    tb->addAction(a);
     formatMenu->addAction (a);
     actionListBranches.append(a);
-    actionFormatColorSubtree=a;
+    actionFormatColorBranch=a;
 
     a= new QAction(QPixmap(iconPath+"formatcolorsubtree.png"), tr( "Color sub&tree","Edit menu" ), this);
     //a->setShortcut (Qt::CTRL + Qt::Key_B);	// Color subtree
     connect( a, SIGNAL( triggered() ), this, SLOT( formatColorSubtree() ) );
     a->setEnabled (false);
     formatMenu->addAction (a);
-    tb->addAction(a);
     actionListBranches.append(a);
     actionFormatColorSubtree=a;
 
@@ -1212,45 +1182,40 @@ void Main::setupFormatActions()
 // View Actions
 void Main::setupViewActions()
 {
-    QToolBar *tb = addToolBar( tr("Zoom toolbar","View Toolbar name") );
-    tb->setObjectName ("viewTB");
     QMenu *viewMenu = menuBar()->addMenu ( tr( "&View" ));
-
+    toolbarsMenu=viewMenu->addMenu (tr("Toolbars","Toolbars overview in view menu") );
+    viewMenu->addSeparator();	
 
     QAction *a;
     a = new QAction( QPixmap(iconPath+"viewmag+.png"), tr( "Zoom in","View action" ), this);
     a->setShortcut(Qt::Key_Plus);
     switchboard.addConnection(a,tr("View shortcuts","Shortcut group"));
-    tb->addAction(a);
     viewMenu->addAction (a);
     connect( a, SIGNAL( triggered() ), this, SLOT(viewZoomIn() ) );
+    actionZoomIn=a;
 
     a = new QAction( QPixmap(iconPath+"viewmag-.png"), tr( "Zoom out","View action" ), this);
     a->setShortcut(Qt::Key_Minus);
     switchboard.addConnection(a,tr("View shortcuts","Shortcut group"));
-    tb->addAction(a);
     viewMenu->addAction (a);
     connect( a, SIGNAL( triggered() ), this, SLOT( viewZoomOut() ) );
+    actionZoomOut=a;
 
     a = new QAction(QPixmap(iconPath+"viewmag-reset.png"), tr( "reset Zoom","View action" ), this);
     a->setShortcut (Qt::Key_Comma); // Reset zoom
     switchboard.addConnection(a,tr("View shortcuts","Shortcut group"));
-    tb->addAction(a);
     viewMenu->addAction (a);
     connect( a, SIGNAL( triggered() ), this, SLOT(viewZoomReset() ) );
+    actionZoomReset=a;
 
     a = new QAction( QPixmap(iconPath+"viewshowsel.png"), tr( "Center on selection","View action" ), this);
     a->setShortcut(Qt::Key_Period);
     switchboard.addConnection(a,tr("View shortcuts","Shortcut group"));
-    tb->addAction(a);
     viewMenu->addAction (a);
     connect( a, SIGNAL( triggered() ), this, SLOT( viewCenter() ) );
+    actionCenterOn=a;
 
     viewMenu->addSeparator();	
-
-    tb = addToolBar( tr("Editors toolbar","Editor Toolbar name") );
-    //tb->setLabel( "Editor Toolbar" );
-    tb->setObjectName ("editorTB");
 
     if (noteEditorDW)
 	a=noteEditorDW->toggleViewAction();
@@ -1259,7 +1224,6 @@ void Main::setupViewActions()
     a->setShortcut ( Qt::Key_N );   // Toggle Note Editor
     switchboard.addConnection(a,tr("View shortcuts","Shortcut group"));
     a->setCheckable(true);
-    tb->addAction(a);
     a->setIcon (QPixmap(flagsPath+"flag-note.png"));
     viewMenu->addAction (a);
     actionViewToggleNoteEditor=a;
@@ -1272,7 +1236,6 @@ void Main::setupViewActions()
     a->setShortcut ( Qt::Key_E );   // Toggle Heading Editor
     switchboard.addConnection(a,tr("View shortcuts","Shortcut group"));
     a->setCheckable(true);
-    tb->addAction(a);
     a->setIcon (QPixmap(iconPath+"headingeditor.png"));
     viewMenu->addAction (a);
     actionViewToggleHeadingEditor=a;
@@ -1282,7 +1245,6 @@ void Main::setupViewActions()
     a->setShortcut ( Qt::CTRL + Qt::Key_T );	// Toggle Tree Editor 
     switchboard.addConnection(a,tr("View shortcuts","Shortcut group"));
     a->setCheckable(true);
-    tb->addAction(a);
     viewMenu->addAction (a);
     connect( a, SIGNAL( triggered() ), this, SLOT(windowToggleTreeEditor() ) );
     actionViewToggleTreeEditor=a;
@@ -1291,7 +1253,6 @@ void Main::setupViewActions()
     a->setShortcut ( Qt::CTRL + Qt::Key_H  );	// Toggle history window
     switchboard.addConnection(a,tr("View shortcuts","Shortcut group"));
     a->setCheckable(true);
-    tb->addAction(a);
     viewMenu->addAction (a);
     connect( a, SIGNAL( triggered() ), this, SLOT(windowToggleHistory() ) );
     actionViewToggleHistoryWindow=a;
@@ -1338,8 +1299,6 @@ void Main::setupModeActions()
     //QPopupMenu *menu = new QPopupMenu( this );
     //menuBar()->insertItem( tr( "&Mode (using modifiers)" ), menu );
 
-    QToolBar *tb = addToolBar( tr ("Modifier modes toolbar","Modifier Toolbar name") );
-    tb->setObjectName ("modesTB");
     QAction *a;
     actionGroupModModes=new QActionGroup ( this);
     actionGroupModModes->setExclusive (true);
@@ -1347,7 +1306,6 @@ void Main::setupModeActions()
     a->setShortcut (Qt::Key_J);
     switchboard.addConnection(a,tr("Modes","Shortcut group"));
     a->setCheckable(true);
-    tb->addAction(a);
     a->setChecked(true);
     actionModModeColor=a;
 
@@ -1355,14 +1313,12 @@ void Main::setupModeActions()
     a->setShortcut( Qt::Key_K); 
     switchboard.addConnection(a,tr("Modes","Shortcut group"));
     a->setCheckable(true);
-    tb->addAction(a);
     actionModModeCopy=a;
 
     a= new QAction(QPixmap(iconPath+"modelink.png"), tr( "Use modifier to draw xLinks","Mode modifier" ), actionGroupModModes );
     a->setShortcut (Qt::Key_L);
     switchboard.addConnection(a,tr("Modes","Shortcut group"));
     a->setCheckable(true);
-    tb->addAction(a);
     actionModModeXLink=a;
 }
 
@@ -1370,228 +1326,226 @@ void Main::setupModeActions()
 void Main::setupFlagActions()
 {
     // Create System Flags
-    QToolBar *tb=NULL;
-
     Flag *flag=new Flag(flagsPath+"flag-note.png");
-    setupFlag (flag,tb,"system-note",tr("Note","SystemFlag"));
+    setupFlag (flag,NULL,"system-note",tr("Note","SystemFlag"));
 
     flag=new Flag(flagsPath+"flag-url.png");
-    setupFlag (flag,tb,"system-url",tr("URL to Document ","SystemFlag"));
+    setupFlag (flag,NULL,"system-url",tr("URL to Document ","SystemFlag"));
 
     flag=new Flag(flagsPath+"flag-url-bugzilla-novell.png");
-    setupFlag (flag,tb,"system-url-bugzilla-novell",tr("URL to Bugzilla ","SystemFlag"));
+    setupFlag (flag,NULL,"system-url-bugzilla-novell",tr("URL to Bugzilla ","SystemFlag"));
 
     flag=new Flag(flagsPath+"flag-url-bugzilla-novell-closed.png");
-    setupFlag (flag,tb,"system-url-bugzilla-novell-closed",tr("URL to Bugzilla ","SystemFlag"));
+    setupFlag (flag,NULL,"system-url-bugzilla-novell-closed",tr("URL to Bugzilla ","SystemFlag"));
 
     flag=new Flag(flagsPath+"flag-target.png");
-    setupFlag (flag,tb,"system-target",tr("Map target","SystemFlag"));
+    setupFlag (flag,NULL,"system-target",tr("Map target","SystemFlag"));
 
     flag=new Flag(flagsPath+"flag-vymlink.png");
-    setupFlag (flag,tb,"system-vymLink",tr("Link to another vym map","SystemFlag"));
+    setupFlag (flag,NULL,"system-vymLink",tr("Link to another vym map","SystemFlag"));
 
     flag=new Flag(flagsPath+"flag-scrolled-right.png");
-    setupFlag (flag,tb,"system-scrolledright",tr("subtree is scrolled","SystemFlag"));
+    setupFlag (flag,NULL,"system-scrolledright",tr("subtree is scrolled","SystemFlag"));
 
     flag=new Flag(flagsPath+"flag-tmpUnscrolled-right.png");
-    setupFlag (flag,tb,"system-tmpUnscrolledRight",tr("subtree is temporary scrolled","SystemFlag"));
+    setupFlag (flag,NULL,"system-tmpUnscrolledRight",tr("subtree is temporary scrolled","SystemFlag"));
 
     flag=new Flag(flagsPath+"flag-hideexport.png");
-    setupFlag (flag,tb,"system-hideInExport",tr("Hide object in exported maps","SystemFlag"));
+    setupFlag (flag,NULL,"system-hideInExport",tr("Hide object in exported maps","SystemFlag"));
 
     addToolBarBreak();
 
     // Create Standard Flags
-    tb=addToolBar (tr ("Standard Flags toolbar","Standard Flag Toolbar"));
-    tb->setObjectName ("standardFlagTB");
-    standardFlagsMaster->setToolBar (tb);
+    standardFlagsToolbar=addToolBar (tr ("Standard Flags toolbar","Standard Flag Toolbar"));
+    standardFlagsToolbar->setObjectName ("standardFlagTB");
+    standardFlagsMaster->setToolBar (standardFlagsToolbar);
 
     flag=new Flag(flagsPath+"flag-exclamationmark.png");
     flag->setGroup("standard-mark");
-    setupFlag (flag,tb,"exclamationmark",tr("Take care!","Standardflag"));
+    setupFlag (flag,standardFlagsToolbar,"exclamationmark",tr("Take care!","Standardflag"));
 
     flag=new Flag(flagsPath+"flag-questionmark.png");
     flag->setGroup("standard-mark");
-    setupFlag (flag,tb,"questionmark",tr("Really?","Standardflag"));
+    setupFlag (flag,standardFlagsToolbar,"questionmark",tr("Really?","Standardflag"));
 
     flag=new Flag(flagsPath+"flag-hook-green.png");
     flag->setGroup("standard-status");
-    setupFlag (flag,tb,"hook-green",tr("Status - ok,done","Standardflag"));
+    setupFlag (flag,standardFlagsToolbar,"hook-green",tr("Status - ok,done","Standardflag"));
 
     flag=new Flag(flagsPath+"flag-wip.png");
     flag->setGroup("standard-status");
-    setupFlag (flag,tb,"wip",tr("Status - work in progress","Standardflag"));
+    setupFlag (flag,standardFlagsToolbar,"wip",tr("Status - work in progress","Standardflag"));
 
     flag=new Flag(flagsPath+"flag-cross-red.png");
     flag->setGroup("standard-status");
-    setupFlag (flag,tb,"cross-red",tr("Status - missing, not started","Standardflag"));
+    setupFlag (flag,standardFlagsToolbar,"cross-red",tr("Status - missing, not started","Standardflag"));
     flag->unsetGroup();
 
     flag=new Flag(flagsPath+"flag-stopsign.png");
-    setupFlag (flag,tb,"stopsign",tr("This won't work!","Standardflag"));
+    setupFlag (flag,standardFlagsToolbar,"stopsign",tr("This won't work!","Standardflag"));
 
     flag=new Flag(flagsPath+"flag-smiley-good.png");
     flag->setGroup("standard-smiley");
-    setupFlag (flag,tb,"smiley-good",tr("Good","Standardflag"));
+    setupFlag (flag,standardFlagsToolbar,"smiley-good",tr("Good","Standardflag"));
 
     flag=new Flag(flagsPath+"flag-smiley-sad.png");
     flag->setGroup("standard-smiley");
-    setupFlag (flag,tb,"smiley-sad",tr("Bad","Standardflag"));
+    setupFlag (flag,standardFlagsToolbar,"smiley-sad",tr("Bad","Standardflag"));
 
     flag=new Flag(flagsPath+"flag-smiley-omg.png");
     flag->setGroup("standard-smiley");
-    setupFlag (flag,tb,"smiley-omb",tr("Oh no!","Standardflag"));
+    setupFlag (flag,standardFlagsToolbar,"smiley-omb",tr("Oh no!","Standardflag"));
     // Original omg.png (in KDE emoticons)
     flag->unsetGroup();
 
     flag=new Flag(flagsPath+"flag-kalarm.png");
-    setupFlag (flag,tb,"clock",tr("Time critical","Standardflag"));
+    setupFlag (flag,standardFlagsToolbar,"clock",tr("Time critical","Standardflag"));
 
     flag=new Flag(flagsPath+"flag-phone.png");
-    setupFlag (flag,tb,"phone",tr("Call...","Standardflag"));
+    setupFlag (flag,standardFlagsToolbar,"phone",tr("Call...","Standardflag"));
 
     flag=new Flag(flagsPath+"flag-lamp.png");
-    setupFlag (flag,tb,"lamp",tr("Idea!","Standardflag"));
+    setupFlag (flag,standardFlagsToolbar,"lamp",tr("Idea!","Standardflag"));
 
     flag=new Flag(flagsPath+"flag-arrow-up.png");
     flag->setGroup("standard-arrow");
-    setupFlag (flag,tb,"arrow-up",tr("Important","Standardflag"));
+    setupFlag (flag,standardFlagsToolbar,"arrow-up",tr("Important","Standardflag"));
 
     flag=new Flag(flagsPath+"flag-arrow-down.png");
     flag->setGroup("standard-arrow");
-    setupFlag (flag,tb,"arrow-down",tr("Unimportant","Standardflag"));
+    setupFlag (flag,standardFlagsToolbar,"arrow-down",tr("Unimportant","Standardflag"));
 
     flag=new Flag(flagsPath+"flag-arrow-2up.png");
     flag->setGroup("standard-arrow");
-    setupFlag (flag,tb,"2arrow-up",tr("Very important!","Standardflag"));
+    setupFlag (flag,standardFlagsToolbar,"2arrow-up",tr("Very important!","Standardflag"));
 
     flag=new Flag(flagsPath+"flag-arrow-2down.png");
     flag->setGroup("standard-arrow");
-    setupFlag (flag,tb,"2arrow-down",tr("Very unimportant!","Standardflag"));
+    setupFlag (flag,standardFlagsToolbar,"2arrow-down",tr("Very unimportant!","Standardflag"));
     flag->unsetGroup();
 
     flag=new Flag(flagsPath+"flag-thumb-up.png");
     flag->setGroup("standard-thumb");
-    setupFlag (flag,tb,"thumb-up",tr("I like this","Standardflag"));
+    setupFlag (flag,standardFlagsToolbar,"thumb-up",tr("I like this","Standardflag"));
 
     flag=new Flag(flagsPath+"flag-thumb-down.png");
     flag->setGroup("standard-thumb");
-    setupFlag (flag,tb,"thumb-down",tr("I do not like this","Standardflag"));
+    setupFlag (flag,standardFlagsToolbar,"thumb-down",tr("I do not like this","Standardflag"));
     flag->unsetGroup();
 
     flag=new Flag(flagsPath+"flag-rose.png");
-    setupFlag (flag,tb,"rose",tr("Rose","Standardflag"));
+    setupFlag (flag,standardFlagsToolbar,"rose",tr("Rose","Standardflag"));
 
     flag=new Flag(flagsPath+"flag-heart.png");
-    setupFlag (flag,tb,"heart",tr("I just love...","Standardflag"));
+    setupFlag (flag,standardFlagsToolbar,"heart",tr("I just love...","Standardflag"));
 
     flag=new Flag(flagsPath+"flag-present.png");
-    setupFlag (flag,tb,"present",tr("Surprise!","Standardflag"));
+    setupFlag (flag,standardFlagsToolbar,"present",tr("Surprise!","Standardflag"));
 
     flag=new Flag(flagsPath+"flag-flash.png");
-    setupFlag (flag,tb,"flash",tr("Dangerous","Standardflag"));
+    setupFlag (flag,standardFlagsToolbar,"flash",tr("Dangerous","Standardflag"));
 
     // Original: xsldbg_output.png
     flag=new Flag(flagsPath+"flag-info.png");
-    setupFlag (flag,tb,"info",tr("Info","Standardflag"));
+    setupFlag (flag,standardFlagsToolbar,"info",tr("Info","Standardflag"));
 
     // Original khelpcenter.png
     flag=new Flag(flagsPath+"flag-lifebelt.png");
-    setupFlag (flag,tb,"lifebelt",tr("This will help","Standardflag"));
+    setupFlag (flag,standardFlagsToolbar,"lifebelt",tr("This will help","Standardflag"));
 
     // Freemind flags
     flag=new Flag(flagsPath+"freemind/warning.png");
     flag->setVisible(false);
-    setupFlag (flag,tb,  "freemind-warning",tr("Important","Freemind-Flag"));
+    setupFlag (flag,standardFlagsToolbar,  "freemind-warning",tr("Important","Freemind-Flag"));
 
     for (int i=1; i<8; i++)
     {
 	flag=new Flag(flagsPath+QString("freemind/priority-%1.png").arg(i));
 	flag->setVisible(false);
 	flag->setGroup ("Freemind-priority");
-	setupFlag (flag,tb, QString("freemind-priority-%1").arg(i),tr("Priority","Freemind-Flag"));
+	setupFlag (flag,standardFlagsToolbar, QString("freemind-priority-%1").arg(i),tr("Priority","Freemind-Flag"));
     }
 
     flag=new Flag(flagsPath+"freemind/back.png");
     flag->setVisible(false);
-    setupFlag (flag,tb,"freemind-back",tr("Back","Freemind-Flag"));
+    setupFlag (flag,standardFlagsToolbar,"freemind-back",tr("Back","Freemind-Flag"));
 
     flag=new Flag(flagsPath+"freemind/forward.png");
     flag->setVisible(false);
-    setupFlag (flag,tb,"freemind-forward",tr("forward","Freemind-Flag"));
+    setupFlag (flag,standardFlagsToolbar,"freemind-forward",tr("forward","Freemind-Flag"));
 
     flag=new Flag(flagsPath+"freemind/attach.png");
     flag->setVisible(false);
-    setupFlag (flag,tb,"freemind-attach",tr("Look here","Freemind-Flag"));
+    setupFlag (flag,standardFlagsToolbar,"freemind-attach",tr("Look here","Freemind-Flag"));
 
     flag=new Flag(flagsPath+"freemind/clanbomber.png");
     flag->setVisible(false);
-    setupFlag (flag,tb,"freemind-clanbomber",tr("Dangerous","Freemind-Flag"));
+    setupFlag (flag,standardFlagsToolbar,"freemind-clanbomber",tr("Dangerous","Freemind-Flag"));
 
     flag=new Flag(flagsPath+"freemind/desktopnew.png");
     flag->setVisible(false);
-    setupFlag (flag,tb,"freemind-desktopnew",tr("Don't flagrget","Freemind-Flag"));
+    setupFlag (flag,standardFlagsToolbar,"freemind-desktopnew",tr("Don't flagrget","Freemind-Flag"));
 
     flag=new Flag(flagsPath+"freemind/flag.png");
     flag->setVisible(false);
-    setupFlag (flag,tb,"freemind-flag",tr("Flag","Freemind-Flag"));
+    setupFlag (flag,standardFlagsToolbar,"freemind-flag",tr("Flag","Freemind-Flag"));
 
 
     flag=new Flag(flagsPath+"freemind/gohome.png");
     flag->setVisible(false);
-    setupFlag (flag,tb,"freemind-gohome",tr("Home","Freemind-Flag"));
+    setupFlag (flag,standardFlagsToolbar,"freemind-gohome",tr("Home","Freemind-Flag"));
 
     flag=new Flag(flagsPath+"freemind/kaddressbook.png");
     flag->setVisible(false);
-    setupFlag (flag,tb,"freemind-kaddressbook",tr("Telephone","Freemind-Flag"));
+    setupFlag (flag,standardFlagsToolbar,"freemind-kaddressbook",tr("Telephone","Freemind-Flag"));
 
     flag=new Flag(flagsPath+"freemind/knotify.png");
     flag->setVisible(false);
-    setupFlag (flag,tb,"freemind-knotify",tr("Music","Freemind-Flag"));
+    setupFlag (flag,standardFlagsToolbar,"freemind-knotify",tr("Music","Freemind-Flag"));
 
     flag=new Flag(flagsPath+"freemind/korn.png");
     flag->setVisible(false);
-    setupFlag (flag,tb,"freemind-korn",tr("Mailbox","Freemind-Flag"));
+    setupFlag (flag,standardFlagsToolbar,"freemind-korn",tr("Mailbox","Freemind-Flag"));
 
     flag=new Flag(flagsPath+"freemind/mail.png");
     flag->setVisible(false);
-    setupFlag (flag,tb,"freemind-mail",tr("Maix","Freemind-Flag"));
+    setupFlag (flag,standardFlagsToolbar,"freemind-mail",tr("Maix","Freemind-Flag"));
 
     flag=new Flag(flagsPath+"freemind/password.png");
     flag->setVisible(false);
-    setupFlag (flag,tb,"freemind-password",tr("Password","Freemind-Flag"));
+    setupFlag (flag,standardFlagsToolbar,"freemind-password",tr("Password","Freemind-Flag"));
 
     flag=new Flag(flagsPath+"freemind/pencil.png");
     flag->setVisible(false);
-    setupFlag (flag,tb,"freemind-pencil",tr("To be improved","Freemind-Flag"));
+    setupFlag (flag,standardFlagsToolbar,"freemind-pencil",tr("To be improved","Freemind-Flag"));
 
     flag=new Flag(flagsPath+"freemind/stop.png");
     flag->setVisible(false);
-    setupFlag (flag,tb,"freemind-stop",tr("Stop","Freemind-Flag"));
+    setupFlag (flag,standardFlagsToolbar,"freemind-stop",tr("Stop","Freemind-Flag"));
 
     flag=new Flag(flagsPath+"freemind/wizard.png");
     flag->setVisible(false);
-    setupFlag (flag,tb,"freemind-wizard",tr("Magic","Freemind-Flag"));
+    setupFlag (flag,standardFlagsToolbar,"freemind-wizard",tr("Magic","Freemind-Flag"));
 
     flag=new Flag(flagsPath+"freemind/xmag.png");
     flag->setVisible(false);
-    setupFlag (flag,tb,"freemind-xmag",tr("To be discussed","Freemind-Flag"));
+    setupFlag (flag,standardFlagsToolbar,"freemind-xmag",tr("To be discussed","Freemind-Flag"));
 
     flag=new Flag(flagsPath+"freemind/bell.png");
     flag->setVisible(false);
-    setupFlag (flag,tb,"freemind-bell",tr("Reminder","Freemind-Flag"));
+    setupFlag (flag,standardFlagsToolbar,"freemind-bell",tr("Reminder","Freemind-Flag"));
 
     flag=new Flag(flagsPath+"freemind/bookmark.png");
     flag->setVisible(false);
-    setupFlag (flag,tb,"freemind-bookmark",tr("Excellent","Freemind-Flag"));
+    setupFlag (flag,standardFlagsToolbar,"freemind-bookmark",tr("Excellent","Freemind-Flag"));
 
     flag= new Flag(flagsPath+"freemind/penguin.png");
     flag->setVisible(false);
-    setupFlag (flag,tb,"freemind-penguin",tr("Linux","Freemind-Flag"));
+    setupFlag (flag,standardFlagsToolbar,"freemind-penguin",tr("Linux","Freemind-Flag"));
 
     flag=new Flag (flagsPath+"freemind/licq.png");
     flag->setVisible(false);
-    setupFlag (flag,tb,"freemind-licq",tr("Sweet","Freemind-Flag"));
+    setupFlag (flag,standardFlagsToolbar,"freemind-licq",tr("Sweet","Freemind-Flag"));
 }
 
 void Main::setupFlag (Flag *flag, QToolBar *tb, const QString &name, const QString &tooltip)
@@ -1963,6 +1917,93 @@ void Main::setupMacros()
     macroActions[9]->setShortcut ( Qt::Key_F10 );
     macroActions[10]->setShortcut ( Qt::Key_F11 );
     macroActions[11]->setShortcut ( Qt::Key_F12 );
+}
+
+void Main::setupToolbars()
+{
+    // File actions
+    fileToolbar = addToolBar( tr ("File actions toolbar","Toolbar for file actions"));
+    fileToolbar->setObjectName ("fileTB");
+    fileToolbar->addAction(actionFileNew);
+    fileToolbar->addAction(actionFileOpen);
+    fileToolbar->addAction(actionFileSave);
+    fileToolbar->addAction(actionFileExportLast);
+    fileToolbar->addAction(actionFilePrint);
+
+    // Undo/Redo and clipboard
+    clipboardToolbar =addToolBar( tr ("Undo and clipboard toolbar","Toolbar for redo/undo and clipboard"));
+    clipboardToolbar->setObjectName ("clipboard toolbar");
+    clipboardToolbar->addAction (actionUndo);
+    clipboardToolbar->addAction (actionRedo);
+    clipboardToolbar->addAction (actionCopy);
+    clipboardToolbar->addAction (actionCut);
+    clipboardToolbar->addAction (actionPaste);
+
+    // Basic edits
+    editActionsToolbar = addToolBar( tr ("Edit actions toolbar","Toolbar name") );
+    editActionsToolbar->setObjectName ("basic edit actions TB");
+    editActionsToolbar->addAction (actionAddMapCenter);
+    editActionsToolbar->addAction (actionAddBranch);
+    editActionsToolbar->addAction (actionMoveUp);
+    editActionsToolbar->addAction (actionMoveDown);
+    editActionsToolbar->addAction (actionSortChildren);
+    editActionsToolbar->addAction (actionSortBackChildren);
+    editActionsToolbar->addAction (actionToggleScroll);
+    editActionsToolbar->addAction (actionToggleHideExport);
+    //editActionsToolbar->addAction (actionExpandAll);
+    //editActionsToolbar->addAction (actionExpandOneLevel);
+    //editActionsToolbar->addAction (actionCollapseOneLevel);
+    //editActionsToolbar->addAction (actionCollapseUnselected);
+
+    // URLs and vymLinks
+    referencesToolbar=addToolBar( tr ("URLs and vymLinks toolbar","Toolbar for URLs and vymlinks"));
+    referencesToolbar->setObjectName ("URLs and vymlinks toolbar");
+    referencesToolbar->addAction (actionOpenURL);
+    referencesToolbar->addAction (actionOpenVymLink);
+
+    // Format and colors
+    colorsToolbar = addToolBar( tr("Colors toolbar","Colors toolbar name"));
+    colorsToolbar->setObjectName ("colorsTB");
+    colorsToolbar->addAction(actionFormatColor);
+    colorsToolbar->addAction(actionFormatPickColor);
+    colorsToolbar->addAction(actionFormatColorBranch);
+    colorsToolbar->addAction(actionFormatColorSubtree);
+
+    // Zoom
+    zoomToolbar = addToolBar( tr("Zoom toolbar","View Toolbar name") );
+    zoomToolbar->setObjectName ("viewTB");
+    zoomToolbar->addAction(actionZoomIn);
+    zoomToolbar->addAction(actionZoomOut);
+    zoomToolbar->addAction(actionZoomReset);
+    zoomToolbar->addAction(actionCenterOn);
+
+
+    // Editors
+    editorsToolbar = addToolBar( tr("Editors toolbar","Editor Toolbar name") );
+    editorsToolbar->setObjectName ("editorsTB");
+    editorsToolbar->addAction (actionViewToggleNoteEditor);
+    editorsToolbar->addAction (actionViewToggleHeadingEditor);
+    editorsToolbar->addAction (actionViewToggleTreeEditor);
+    editorsToolbar->addAction (actionViewToggleHistoryWindow);
+
+
+    // Modifier modes
+    modModesToolbar = addToolBar( tr ("Modifier modes toolbar","Modifier Toolbar name") );
+    modModesToolbar->setObjectName ("modesTB");
+    modModesToolbar->addAction(actionModModeColor);
+    modModesToolbar->addAction(actionModModeCopy);
+    modModesToolbar->addAction(actionModModeXLink);
+
+    // Add all toolbars to View menu
+    toolbarsMenu->addAction (fileToolbar->toggleViewAction() );
+    toolbarsMenu->addAction (clipboardToolbar->toggleViewAction() );
+    toolbarsMenu->addAction (editActionsToolbar->toggleViewAction() );
+    toolbarsMenu->addAction (colorsToolbar->toggleViewAction() );
+    toolbarsMenu->addAction (zoomToolbar->toggleViewAction() );
+    toolbarsMenu->addAction (standardFlagsToolbar->toggleViewAction() );
+    toolbarsMenu->addAction (modModesToolbar->toggleViewAction() );
+    toolbarsMenu->addAction (referencesToolbar->toggleViewAction() );
+    toolbarsMenu->addAction (editorsToolbar->toggleViewAction() );
 }
 
 void Main::hideEvent (QHideEvent * )

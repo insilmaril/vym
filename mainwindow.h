@@ -67,6 +67,7 @@ private:
     void setupContextMenus();
     void setupRecentMapsMenu();
     void setupMacros();
+    void setupToolbars();
     void hideEvent (QHideEvent * );
     void showEvent (QShowEvent * );
     MapEditor* currentMapEditor() const;
@@ -304,7 +305,20 @@ private:
 
     Switchboard switchboard;
 
+    QMenu *toolbarsMenu;
+    QToolBar *fileToolbar;
+    QToolBar *clipboardToolbar;
+    QToolBar *editActionsToolbar;
+    QToolBar *editorsToolbar;
+    QToolBar *colorsToolbar;
+    QToolBar *zoomToolbar;
+    QToolBar *modModesToolbar;
+    QToolBar *referencesToolbar;
+    QToolBar *standardFlagsToolbar;
+
+    QAction* actionFileNew;
     QAction* actionFileNewCopy;
+    QAction* actionFileOpen;
     QAction* actionFileSave;
     QAction* actionFilePrint;
     QAction* actionFileExportLast;
@@ -369,6 +383,11 @@ private:
     QAction* actionFormatBackImage;
     QAction* actionFormatLinkColor;
     QAction* actionFormatSelectionColor;
+
+    QAction* actionZoomIn;
+    QAction* actionZoomOut;
+    QAction* actionZoomReset;
+    QAction* actionCenterOn;
 
     QActionGroup* actionGroupModModes;
     QAction* actionModModeColor;
