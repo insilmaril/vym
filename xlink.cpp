@@ -186,9 +186,15 @@ QString Link::saveToDir ()
 	{
 	    QString colAttr=attribut ("color",color.name());
 	    QString widAttr=attribut ("width",QString().setNum(width,10));
+	    QString typeAttr=attribut("type","line");
 	    QString begSelAttr=attribut ("beginID",model->getSelectString(beginBranch));
 	    QString endSelAttr=attribut ("endID",  model->getSelectString(endBranch));
-	    s=singleElement ("xlink", colAttr +widAttr +begSelAttr +endSelAttr);
+	    s=singleElement ("xlink", 
+		colAttr 
+		+widAttr 
+		+typeAttr 
+		+begSelAttr 
+		+endSelAttr);
 
 	}
     }
