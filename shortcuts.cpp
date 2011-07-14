@@ -20,9 +20,15 @@ Switchboard::Switchboard ()
 {
 }
 
-void Switchboard::addConnection (QAction *a, const QString &group)
+void Switchboard::addConnection (QAction *a, const QString &group)  //FIXME-2 obsolete
 {   
     actions.insert(group,a);
+}
+
+void Switchboard::addConnection (QWidget *w, QAction *a, const QString &group)
+{   
+    actions.insert(group,a);
+    if (w) w->addAction (a);
 }
 
 void Switchboard::print ()

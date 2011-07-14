@@ -22,6 +22,7 @@ class Switchboard {
 public:
     Switchboard ();
     void addConnection(QAction *a,const QString &s);
+    void addConnection(QWidget *w, QAction *a,const QString &s);
     void print();
     void printLaTeX();
 protected:  
