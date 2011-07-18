@@ -1057,7 +1057,7 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
     }
 
     // Check if we need to reset zoomFactor
-    if (e->button() == Qt::MiddleButton && e->modifiers() & Qt::ControlModifier )
+    if (e->button() == Qt::MidButton && e->modifiers() & Qt::ControlModifier )
     {
 	setZoomFactorTarget (1);
 	return;
