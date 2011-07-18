@@ -6,7 +6,13 @@
 #include <QDebug>
 #include <QString>
 #include <iostream>
-using namespace std;
+
+bool isImage (const QString &fname)
+{
+    QRegExp rx("(jpg|jpeg|png|xmp|gif|svg)");
+    rx.setCaseSensitivity (Qt::CaseInsensitive);
+    return fname.contains (rx);
+}
 
 ImageItem::ImageItem()
 {

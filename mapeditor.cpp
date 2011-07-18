@@ -635,6 +635,9 @@ AttributeTable* MapEditor::attributeTable()
 
 void MapEditor::testFunction1()
 {
+    //model->fetchData (QUrl ("http://www.insilmaril.de/index.html"));
+
+    
 /*
     qDebug()<< "ME::test1  selected TI="<<model->getSelectedItem();
     model->setExportMode (true);
@@ -1522,7 +1525,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent* e)
 		bool relinked;
 
 		if (e->modifiers() & Qt::ShiftModifier && dst->getParObj())
-		{   // Link above dst	//FIXME-0
+		{   // Link above dst	
 		    preDstParStr=model->getSelectString (dst->getParObj());
 		    relinked=model->relinkBranch (
 			(BranchItem*)seli,
@@ -1532,7 +1535,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent* e)
 		} else 
 		if (e->modifiers() & Qt::ControlModifier && dst->getParObj())
 		{
-		    // Link below dst	//FIXME-0
+		    // Link below dst	
 		    preDstParStr=model->getSelectString (dst->getParObj());
 		    relinked=model->relinkBranch (
 			(BranchItem*)seli,
@@ -1693,50 +1696,50 @@ void MapEditor::dropEvent(QDropEvent *event)
 	    //foreach (char b,ba) if (b!=0) qDebug() << "b="<<b;
 	}
 
-	if (event->mimeData()->hasImage()) //FIXME-1 Usually not there anymore :-(
+	/*
+	if (event->mimeData()->hasImage()) //Usually not there anymore :-(
 	{
 	    if (debug) qDebug()<<"MapEditor::dropEvent hasImage!";
 	     QVariant imageData = event->mimeData()->imageData();
 	     model->addFloatImage (qvariant_cast<QImage>(imageData));
 
 	} else
+	*/
 	if (event->mimeData()->hasUrls())
 	{
 	    //model->selectLastBranch();
 	    QList <QUrl> uris=event->mimeData()->urls();
-	    QStringList files;
-	    QString s;
 	    QString heading;
 	    BranchItem *bi;
 	    for (int i=0; i<uris.count();i++)
 	    {
+		if (debug) qDebug()<<"ME::dropEvent  uri="<<uris.at(i).toString();
 		// Workaround to avoid adding empty branches
 		if (!uris.at(i).toString().isEmpty())
 		{
-		    bi=model->addNewBranch();
-		    if (bi)
+		    QString u=uris.at(i).toString();
+		    heading=u;
+		    if (isImage (u))
 		    {
-			model->select(bi);
-			QString u=uris.at(i).toString();
-			s=uris.at(i).toLocalFile();
-			if (!s.isEmpty()) 
+			// Image, try to download or set image from local file
+			model->fetchData (uris.at(i),bi);
+		    } else
+		    {
+			bi=model->addNewBranch();
+			if (bi)
 			{
-			    QString file = QDir::fromNativeSeparators(s);
-			    heading = QFileInfo(file).baseName();
-			    files.append(file);
-			    if (file.endsWith(".vym", Qt::CaseInsensitive))
-			       model->setVymLink(file);
+			    model->select(bi);
+			    if (u.startsWith("file:")) 
+				heading = QFileInfo( QDir::fromNativeSeparators(u) ).baseName();
+
+			    model->setHeading(heading);
+			    if (u.endsWith(".vym", Qt::CaseInsensitive))
+			       model->setVymLink(u.replace ("file://","") );
 			    else
 			       model->setURL(u);
-			} else 
-			    model->setURL(u);
 
-			if (!heading.isEmpty())
-			   model->setHeading(heading);
-			else
-			   model->setHeading(u);
-			   
-			model->select (bi->parent());	   
+			    model->select (bi->parent());	   
+			}
 		    }
 		}
 	    }

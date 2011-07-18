@@ -149,6 +149,9 @@ void VymModel::init ()
     // Network
     netstate=Offline;
 
+    connect(&networkManager, SIGNAL(finished(QNetworkReply*)),
+            SLOT(downloadFinished(QNetworkReply*)));
+
     //Initialize DBUS object
     adaptorModel=new AdaptorModel(this);    // Created and not deleted as documented in Qt
     if (!dbusConnection.registerObject (QString("/vymmodel_%1").arg(mapID),this))
@@ -188,6 +191,7 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix, bool w
 {
     // tmpdir	    temporary directory to which data will be written
     // prefix	    mapname, which will be appended to images etc.
+    // 
     // writeflags   Only write flags for "real" save of map, not undo
     // offset	    offset of bbox of whole map in scene. 
     //		    Needed for XML export
@@ -347,7 +351,7 @@ QString VymModel::getDestPath()
     return destPath;
 }
 
-ErrorCode VymModel::loadMap (
+ErrorCode VymModel::loadMap (	//FIXME-2 reload of map has broken progress bar, which also doesn't close
     QString fname, 
     const LoadMode &lmode, 
     bool saveStateFlag, 
@@ -712,16 +716,16 @@ void VymModel::loadFloatImage ()
 
 	if ( fd.exec() == QDialog::Accepted )
 	{
-	    // TODO loadFIO in QT4 use:	lastImageDir=fd.directory();
-	    lastImageDir=QDir (fd.directory());
+	    lastImageDir=fd.directory();
 	    QString s;
 	    ImageItem *ii;
 	    for (int j=0; j<fd.selectedFiles().count(); j++)
 	    {
 		s=fd.selectedFiles().at(j);
 		ii=loadFloatImageInt (selbi,s);
-		//FIXME-3 check savestate for loadImage 
+
 		if (ii)
+		{
 		    saveState(
 			(TreeItem*)ii,
 			"delete ()",
@@ -729,10 +733,19 @@ void VymModel::loadFloatImage ()
 			QString ("loadImage (\"%1\")").arg(s ),
 			QString("Add image %1 to %2").arg(s).arg(getObjectName(selbi))
 		    );
-		else
-		    // TODO loadFIO error handling
+		    // Find nice position
+		    FloatImageObj *fio=(FloatImageObj*)(ii->getMO() );
+		    if (fio)
+			fio->move2RelPos (0,0);
+
+		    // On default include image // FIXME-3 check, if we change default settings...
+		    setIncludeImagesHor (true);
+		    setIncludeImagesVer (true);
+		} else
+		    // FIXME-4 loadFIO error handling
 		    qWarning ()<<"Failed to load "+s;
 	    }
+
 	}
     }
 }
@@ -1931,7 +1944,7 @@ void VymModel::setFrameBorderWidth(const int &i) //FIXME-4 not saved if there is
 void VymModel::setIncludeImagesVer(bool b)
 {
     BranchItem *bi=getSelectedBranch();
-    if (bi)
+    if (bi && b!=bi->getIncludeImagesVer() )
     {
 	QString u= b ? "false" : "true";
 	QString r=!b ? "false" : "true";
@@ -1952,7 +1965,7 @@ void VymModel::setIncludeImagesVer(bool b)
 void VymModel::setIncludeImagesHor(bool b)  
 {
     BranchItem *bi=getSelectedBranch();
-    if (bi)
+    if (bi && b!=bi->getIncludeImagesHor() )
     {
 	QString u= b ? "false" : "true";
 	QString r=!b ? "false" : "true";
@@ -2835,6 +2848,9 @@ TreeItem* VymModel::deleteItem (TreeItem *ti)
     {
 	TreeItem *pi=ti->parent();
 	//qDebug()<<"VM::deleteItem  start ti="<<ti<<"  "<<ti->getHeading()<<"  pi="<<pi<<"="<<pi->getHeading();
+
+	TreeItem::Type t=ti->getType();
+	
 	QModelIndex parentIndex=index(pi);
 
 	emit (layoutAboutToBeChanged() );
@@ -2843,11 +2859,20 @@ TreeItem* VymModel::deleteItem (TreeItem *ti)
 	beginRemoveRows (parentIndex,n,n);
 	removeRows (n,1,parentIndex);
 	endRemoveRows();
+
+	// Size of parent branch might change when deleting images
+	if (t==TreeItem::Image)
+	{
+	    BranchObj *bo=(BranchObj*) ( ((BranchItem*)pi)->getMO() );
+	    if (bo) bo->calcBBoxSize();
+	}
+
 	reposition();
 
 	emit (layoutChanged() );
 	emitUpdateQueries ();
 	if (!cleaningUpLinks) cleanupItems();
+
 	//qDebug()<<"VM::deleteItem  end   ti="<<ti;
 	if (pi->depth()>=0) return pi;
     }	
@@ -5454,6 +5479,55 @@ void VymModel::displayNetworkError(QAbstractSocket::SocketError socketError)
                                  QString("The following error occurred: %1.")
                                  .arg(clientSocket->errorString()));
     }
+}
+
+void VymModel::fetchData (const QUrl &url, BranchItem *bi)
+{
+    qDebug()<<"VM::doDownload "<<url;
+    /*
+    QString local=uris.at(i).toLocalFile();
+    if (!local.isEmpty())
+    {
+    }
+*/
+    QNetworkRequest request(url);
+    QNetworkReply *reply = networkManager.get(request);
+
+    currentDownloads.append(reply);
+}
+
+void VymModel::downloadFinished(QNetworkReply *reply)
+{
+    qDebug()<<"VM::downloadFinished";
+    QUrl url = reply->url();
+    if (reply->error()) 
+    {
+	fprintf(stderr, "VymModel: Download of %s failed: %s\n", url.toEncoded().constData(),
+	qPrintable(reply->errorString()));
+    } else 
+    {
+	QByteArray a=reply->readAll();
+	BranchItem *dst=getSelectedBranch();
+	if (dst)
+	{
+	    ImageItem *ii=createImage(dst);
+	    if (ii)
+	    {
+		QImage i;
+		if (!i.loadFromData (a))
+		    fprintf(stderr, "VymModel: Adding of %s failed.\n", url.toEncoded().constData());
+		else
+		{
+		    ii->load (i);
+		    reposition();
+		}
+	    }
+	}
+    }
+
+    currentDownloads.removeAll(reply);
+    reply->deleteLater();
+
 }
 
 /* FIXME-4 Playing with DBUS...

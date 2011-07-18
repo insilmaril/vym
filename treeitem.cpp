@@ -797,7 +797,8 @@ QString TreeItem::getGeneralAttr()
     if (!url.isEmpty())
 	s+=attribut ("url",url);
     if (!vymLink.isEmpty())
-	s+=attribut ("vymLink",convertToRel (model->getDestPath(),vymLink));
+	s+=attribut ("vymLink",convertToRel (model->getDestPath(),vymLink));	//FIXME-2 Check if vymlinks are relative to current map
+
     if (target)
 	s+=attribut ("localTarget","true");
     return s;	

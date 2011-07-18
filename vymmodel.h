@@ -623,8 +623,6 @@ private:
     QString server;		// server address of this client
     int port;			// server port of this client
 
-
-
 protected:
     void sendSelection();
 
@@ -637,6 +635,16 @@ private slots:
     void sendData(const QString &s);
     void readData();
     void displayNetworkError (QAbstractSocket::SocketError);
+
+private:
+    QNetworkAccessManager networkManager;
+    QList <QNetworkReply*> currentDownloads;
+
+public:
+    void fetchData (const QUrl &url, BranchItem *bi);
+
+public slots:
+    void downloadFinished (QNetworkReply*);
 
 ////////////////////////////////////////////
 // DBUS related 

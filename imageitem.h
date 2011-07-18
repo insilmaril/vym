@@ -9,6 +9,7 @@
 //#include "treeitem.h"
 #include "mapitem.h"
 
+bool isImage (const QString &fname);
 
 class ImageItem: public MapItem
 {
