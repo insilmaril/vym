@@ -162,8 +162,6 @@ void BugAgent::processBugzillaData()
 	    else if (missionType==SingleBug)
 	    {
 		// Only single bug changed
-		QHash<QString, QString>::const_iterator i=bug_desc.constBegin();
-		//qDebug()<< i.key() << ": " << i.value();
 		QString b=bugs.first();
 		setModelBugzillaData (model, missionBI,b);
 	    } else

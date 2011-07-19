@@ -5146,8 +5146,8 @@ void VymModel::selectMapBackgroundImage ()  // FIXME-3 for using background imag
 
 void VymModel::setMapBackgroundImage (const QString &fn)    //FIXME-3 missing savestate, move to ME
 {
-    QColor oldcol=mapEditor->getScene()->backgroundBrush().color();
     /*
+    QColor oldcol=mapEditor->getScene()->backgroundBrush().color();
     saveState(
 	selection,
 	QString ("setMapBackgroundImage (%1)").arg(oldcol.name()),
@@ -5216,7 +5216,6 @@ int VymModel::getMapDefXLinkWidth() // FIXME-3 move to ME
 
 void VymModel::move(const double &x, const double &y)
 {
-    int i=x; i=y;
     MapItem *seli = (MapItem*)getSelectedItem();
     if (seli && (seli->isBranchLikeType() || seli->getType()==TreeItem::Image))
     {
@@ -5243,7 +5242,6 @@ void VymModel::move(const double &x, const double &y)
 
 void VymModel::moveRel (const double &x, const double &y)   
 {
-    int i=x; i=y;
     MapItem *seli = (MapItem*)getSelectedItem();
     if (seli && (seli->isBranchLikeType() || seli->getType()==TreeItem::Image))
     {
@@ -5483,7 +5481,7 @@ void VymModel::displayNetworkError(QAbstractSocket::SocketError socketError)
 
 void VymModel::fetchData (const QUrl &url, BranchItem *bi)
 {
-    qDebug()<<"VM::doDownload "<<url;
+    //qDebug()<<"VM::doDownload "<<url; //FIXME-2
     /*
     QString local=uris.at(i).toLocalFile();
     if (!local.isEmpty())
@@ -5498,7 +5496,7 @@ void VymModel::fetchData (const QUrl &url, BranchItem *bi)
 
 void VymModel::downloadFinished(QNetworkReply *reply)
 {
-    qDebug()<<"VM::downloadFinished";
+    //qDebug()<<"VM::downloadFinished";
     QUrl url = reply->url();
     if (reply->error()) 
     {

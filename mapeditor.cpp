@@ -1522,12 +1522,11 @@ void MapEditor::mouseReleaseEvent(QMouseEvent* e)
 		QString preParStr=model->getSelectString (bsel->getParObj());
 		QString preNum=QString::number (seli->num(),10);
 		QString preDstParStr;
-		bool relinked;
 
 		if (e->modifiers() & Qt::ShiftModifier && dst->getParObj())
 		{   // Link above dst	
 		    preDstParStr=model->getSelectString (dst->getParObj());
-		    relinked=model->relinkBranch (
+		    model->relinkBranch (
 			(BranchItem*)seli,
 			(BranchItem*)dsti->parent(),
 			((BranchItem*)dsti)->num(),
@@ -1537,7 +1536,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent* e)
 		{
 		    // Link below dst	
 		    preDstParStr=model->getSelectString (dst->getParObj());
-		    relinked=model->relinkBranch (
+		    model->relinkBranch (
 			(BranchItem*)seli,
 			(BranchItem*)dsti->parent(),
 			((BranchItem*)dsti)->num()+1,
@@ -1545,7 +1544,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent* e)
 		} else	
 		{   // Append to dst
 		    preDstParStr=model->getSelectString(dst);
-		    relinked=model->relinkBranch (
+		    model->relinkBranch (
 			(BranchItem*)seli,
 			(BranchItem*)dsti,
 			-1,
