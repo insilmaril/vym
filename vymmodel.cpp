@@ -2765,7 +2765,6 @@ void VymModel::deleteSelection()
 }
 
 void VymModel::deleteKeepChildren(bool saveStateFlag)
-//deleteKeepChildren FIXME-1  does not work 
 //deleteKeepChildren FIXME-3+ does not work yet for mapcenters 
 //deleteKeepChildren FIXME-3+ children of scrolled branch stay invisible...
 //deleteKeepChildren FIXME-2 xlinks in children are lost with undo (Maybe use saveStateChangingPart?)
@@ -2789,7 +2788,7 @@ void VymModel::deleteKeepChildren(bool saveStateFlag)
 	QPointF p;
 	if (selbi->getLMO()) p=selbi->getLMO()->getRelPos();
 	if (saveStateFlag) saveStateChangingPart(
-	    pi,
+	    selbi,
 	    selbi,
 	    "deleteKeepChildren ()",
 	    QString("Remove %1 and keep its children").arg(getObjectName(selbi))
@@ -2797,6 +2796,8 @@ void VymModel::deleteKeepChildren(bool saveStateFlag)
 
 	QString sel=getSelectString(selbi);
 	unselect();
+	bool oldSaveState=blockSaveState;
+	blockSaveState=true;
 	int pos=selbi->num();
 	BranchItem *bi=selbi->getFirstBranch();
 	while (bi)
@@ -2814,6 +2815,7 @@ void VymModel::deleteKeepChildren(bool saveStateFlag)
 	    bo->move2RelPos (p);
 	    reposition();
 	}
+	blockSaveState=oldSaveState;
     }	
 }
 
@@ -5481,7 +5483,7 @@ void VymModel::displayNetworkError(QAbstractSocket::SocketError socketError)
 
 void VymModel::fetchData (const QUrl &url, BranchItem *bi)
 {
-    //qDebug()<<"VM::doDownload "<<url; //FIXME-2
+    qDebug()<<"VM::doDownload "<<url;
     /*
     QString local=uris.at(i).toLocalFile();
     if (!local.isEmpty())
@@ -5496,7 +5498,7 @@ void VymModel::fetchData (const QUrl &url, BranchItem *bi)
 
 void VymModel::downloadFinished(QNetworkReply *reply)
 {
-    //qDebug()<<"VM::downloadFinished";
+    qDebug()<<"VM::downloadFinished";
     QUrl url = reply->url();
     if (reply->error()) 
     {
