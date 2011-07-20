@@ -23,6 +23,8 @@ BugAgent::BugAgent (BranchItem *bi,const QString &u)
     VymModel *model=bi->getModel();
     modelID=model->getID();
 
+    //qDebug()<<"Constr. BugAgent for "<<branchID;
+
     url=u;
 
     QStringList args;
@@ -77,6 +79,7 @@ BugAgent::BugAgent (BranchItem *bi,const QString &u)
 
 BugAgent::~BugAgent ()
 {
+    //qDebug()<<"Destr. BugAgent for "<<branchID;
     delete p;
 }
 
@@ -93,7 +96,7 @@ void BugAgent::processFinished(int exitCode, QProcess::ExitStatus exitStatus)
 
     } else	
 	qWarning()<< "BugAgent: Process finished with exitCode="<<exitCode;
-    delete (this);
+    deleteLater();
 }
 
 
