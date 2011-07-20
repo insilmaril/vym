@@ -75,7 +75,6 @@ void DownloadAgent::downloadFinished (QNetworkReply *reply)
     currentDownloads.removeAll(reply);
     reply->deleteLater();
 
-    //delete (this);  //FIXME-2 deleteLAter ?
     deleteLater();
 }
 
