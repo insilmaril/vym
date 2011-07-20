@@ -636,15 +636,8 @@ private slots:
     void readData();
     void displayNetworkError (QAbstractSocket::SocketError);
 
-private:
-    QNetworkAccessManager networkManager;
-    QList <QNetworkReply*> currentDownloads;
-
 public:
-    void fetchData (const QUrl &url, BranchItem *bi);
-
-public slots:
-    void downloadFinished (QNetworkReply*);
+    void download (const QUrl &url, BranchItem *bi=NULL);
 
 ////////////////////////////////////////////
 // DBUS related 

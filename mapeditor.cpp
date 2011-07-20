@@ -1721,7 +1721,7 @@ void MapEditor::dropEvent(QDropEvent *event)
 		    if (isImage (u))
 		    {
 			// Image, try to download or set image from local file
-			model->fetchData (uris.at(i),bi);
+			model->download (uris.at(i));
 		    } else
 		    {
 			bi=model->addNewBranch();

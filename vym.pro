@@ -36,6 +36,7 @@ HEADERS	+= \
     branchobj.h \
     branchpropwindow.h\
     bugagent.h \
+    downloadagent.h \
     editxlinkdialog.h \
     exportoofiledialog.h \
     exporthtmldialog.h\
@@ -110,6 +111,7 @@ SOURCES	+= \
     branchobj.cpp \
     branchpropwindow.cpp \
     bugagent.cpp \
+    downloadagent.cpp \
     editxlinkdialog.cpp \
     exportoofiledialog.cpp \
     exports.cpp \

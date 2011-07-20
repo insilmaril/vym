@@ -8,6 +8,7 @@
 #include "treeitem.h"
 #include "branchitem.h"
 #include "bugagent.h"
+#include "downloadagent.h"
 #include "editxlinkdialog.h"
 #include "exports.h"
 #include "exporthtmldialog.h"
@@ -149,10 +150,7 @@ void VymModel::init ()
     // Network
     netstate=Offline;
 
-    connect(&networkManager, SIGNAL(finished(QNetworkReply*)),
-            SLOT(downloadFinished(QNetworkReply*)));
-
-    //Initialize DBUS object
+     //Initialize DBUS object
     adaptorModel=new AdaptorModel(this);    // Created and not deleted as documented in Qt
     if (!dbusConnection.registerObject (QString("/vymmodel_%1").arg(mapID),this))
 	qWarning ("VymModel: Couldn't register DBUS object!");
@@ -5481,53 +5479,17 @@ void VymModel::displayNetworkError(QAbstractSocket::SocketError socketError)
     }
 }
 
-void VymModel::fetchData (const QUrl &url, BranchItem *bi)
+void VymModel::download (const QUrl &url, BranchItem *bi) //FIXME-2 create own agent to get and integrate data
 {
-    qDebug()<<"VM::doDownload "<<url;
-    /*
-    QString local=uris.at(i).toLocalFile();
-    if (!local.isEmpty())
+    //qDebug()<<"VM::download "<<url; 
+    if (!bi) bi=getSelectedBranch();
+    if (!bi) 
     {
-    }
-*/
-    QNetworkRequest request(url);
-    QNetworkReply *reply = networkManager.get(request);
-
-    currentDownloads.append(reply);
-}
-
-void VymModel::downloadFinished(QNetworkReply *reply)
-{
-    qDebug()<<"VM::downloadFinished";
-    QUrl url = reply->url();
-    if (reply->error()) 
-    {
-	fprintf(stderr, "VymModel: Download of %s failed: %s\n", url.toEncoded().constData(),
-	qPrintable(reply->errorString()));
-    } else 
-    {
-	QByteArray a=reply->readAll();
-	BranchItem *dst=getSelectedBranch();
-	if (dst)
-	{
-	    ImageItem *ii=createImage(dst);
-	    if (ii)
-	    {
-		QImage i;
-		if (!i.loadFromData (a))
-		    fprintf(stderr, "VymModel: Adding of %s failed.\n", url.toEncoded().constData());
-		else
-		{
-		    ii->load (i);
-		    reposition();
-		}
-	    }
-	}
+	qWarning ("VM::download bi==NULL");
+	return;
     }
 
-    currentDownloads.removeAll(reply);
-    reply->deleteLater();
-
+    new DownloadAgent (url,bi);
 }
 
 /* FIXME-4 Playing with DBUS...
