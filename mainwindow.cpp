@@ -275,7 +275,7 @@ Main::Main(QWidget* parent, Qt::WFlags f) : QMainWindow(parent,f)
     progressDialog.setAutoClose(false);
     progressDialog.setMinimumWidth (600);
     //progressDialog.setWindowModality (Qt::WindowModal);   // That forces mainwindo to update and slows down
-    //progressDialog.setCancelButton (NULL);
+    progressDialog.setCancelButton (NULL);
 
     restoreState (settings.value("/mainwindow/state",0).toByteArray());
 
@@ -3987,7 +3987,7 @@ void Main::updateActions()
 		actionGetURLsFromNote->setEnabled (!selbi->getNote().isEmpty());
 
 		// Take care of xlinks  
-		// FIXME-2 similar code in mapeditor
+		// FIXME-3 similar code in mapeditor mousePressEvent
 		int b=selbi->xlinkCount();
 		branchXLinksContextMenuEdit->setEnabled(b);
 		branchXLinksContextMenuFollow->setEnabled(b);
