@@ -1106,7 +1106,7 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
 		if ((lmo->getOrientation()!=LinkableMapObj::RightOfCenter && p.x() < lmo->getBBox().left()+20)  ||
 		    (lmo->getOrientation()!=LinkableMapObj::LeftOfCenter && p.x() > lmo->getBBox().right()-20) ) 
 		{
-		    //FIXME-2 similar code in mainwindow
+		    //FIXME-3 similar code in mainwindow::updateActions
 		    QMenu menu;
 		    QList <QAction*> alist;
 		    QList <BranchItem*> blist;

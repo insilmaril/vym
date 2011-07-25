@@ -20,7 +20,7 @@ Switchboard::Switchboard ()
 {
 }
 
-void Switchboard::addConnection (QAction *a, const QString &group)  //FIXME-2 obsolete
+void Switchboard::addConnection (QAction *a, const QString &group)  //FIXME-4 obsolete
 {   
     actions.insert(group,a);
 }

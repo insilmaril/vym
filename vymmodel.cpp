@@ -452,7 +452,7 @@ ErrorCode VymModel::loadMap (	//FIXME-2 reload of map has broken progress bar, w
 	    {
 		for ( QStringList::Iterator it = flist.begin(); it != flist.end(); ++it ) 
 		    *it=tmpZipDir + "/" + *it;
-		// TODO Multiple entries, load all (but only the first one into this ME)
+		// FIXME-4 Multiple entries, load all (but only the first one into this ME)
 		//mainWindow->fileLoadFromTmp (flist);
 		//returnCode=1;	// Silently forget this attempt to load
 		qWarning ("MainWindow::load (fn)  multimap found...");
@@ -5479,7 +5479,7 @@ void VymModel::displayNetworkError(QAbstractSocket::SocketError socketError)
     }
 }
 
-void VymModel::download (const QUrl &url, BranchItem *bi) //FIXME-2 create own agent to get and integrate data
+void VymModel::download (const QUrl &url, BranchItem *bi) 
 {
     //qDebug()<<"VM::download "<<url; 
     if (!bi) bi=getSelectedBranch();

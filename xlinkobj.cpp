@@ -39,7 +39,7 @@ void XLinkObj::init ()
     pen.setCapStyle (  Qt::RoundCap );
     line=scene->addLine(QLineF(1,1,1,1),pen);
     line->setZValue (Z_INIT);
-    poly=scene->addPolygon(QPolygonF(),pen, link->getColor());	//FIXME-2 needed???
+    poly=scene->addPolygon(QPolygonF(),pen, link->getColor());	
     poly->setZValue (Z_INIT);
     setVisibility (true);
 }

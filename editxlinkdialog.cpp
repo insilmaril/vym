@@ -14,7 +14,7 @@ EditXLinkDialog::EditXLinkDialog (QWidget *parent):QDialog (parent)
 
     connect ( ui.widthBox, SIGNAL (valueChanged( int)), this, SLOT (widthChanged (int)));
     connect ( ui.colorButton, SIGNAL (clicked( )), this, SLOT (colorButtonPressed()));
-    //FIXME-2 connect ( ui.setColorHeadingButton, SIGNAL (clicked( )), this, SLOT (setColorHeadingButtonPressed()));
+    //FIXME-3 connect ( ui.setColorHeadingButton, SIGNAL (clicked( )), this, SLOT (setColorHeadingButtonPressed()));
     ui.setColorHeadingButton->hide();
     connect ( ui.deleteButton, SIGNAL (clicked( )), this, SLOT (deleteButtonPressed()));
 }
@@ -62,7 +62,7 @@ void EditXLinkDialog::colorChanged (QColor c)
     ui.colorButton->setIcon( pix );
 }
 
-void EditXLinkDialog::setColorHeadingButtonPressed()	//FIXME-2 add 2nd button for begin/end and include beginnings of headings
+void EditXLinkDialog::setColorHeadingButtonPressed()	//FIXME-3 add 2nd button for begin/end and include beginnings of headings
 {
     if (link)
     {	
