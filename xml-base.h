@@ -38,12 +38,7 @@ protected:
     int insertPos;
 
     bool isVymPart;
-//  State state;	     
-//  State laststate;
-//  QList <State> stateStack;
-//  QString htmldata;
     int branchDepth; 
-//  NoteObj no;
     VymModel *model;
     QString tmpDir; 
     QString inputFile;

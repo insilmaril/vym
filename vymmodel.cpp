@@ -363,7 +363,6 @@ ErrorCode VymModel::loadMap (	//FIXME-2 reload of map has broken progress bar, w
 
     // For ImportReplace let's insert a new branch and replace that
     BranchItem *selbi=getSelectedBranch();
-    BranchItem *newbi=NULL;
 
     parseBaseHandler *handler;
     fileType=ftype;
@@ -398,17 +397,15 @@ ErrorCode VymModel::loadMap (	//FIXME-2 reload of map has broken progress bar, w
 		    QString("Add map %1 to %2").arg(fname).arg(getObjectName(selbi)));
 	    if (lmode==ImportReplace)
 	    {
+		BranchItem *pi=(BranchItem*)(selbi->parent());
 		if (saveStateFlag) saveStateChangingPart(
-		    selbi,
-		    selbi,
+		    pi,
+		    pi,
 		    QString("addMapReplace(%1)").arg(fname),
 		    QString("Add map %1 to %2").arg(fname).arg(getObjectName(selbi)));
-		newbi=addNewBranchInt (selbi,-1);	// Add below selection	
-		select (newbi);
 	    }
 	}
     }	
-    
 
     // Create temporary directory for packing
     bool ok;
@@ -500,7 +497,7 @@ ErrorCode VymModel::loadMap (	//FIXME-2 reload of map has broken progress bar, w
 	handler->setTmpDir (tmpdir);
 	handler->setInputFile (file.fileName());
 	if (lmode==ImportReplace)
-	    handler->setLoadMode (ImportAdd,pos);
+	    handler->setLoadMode (ImportReplace,pos);
 	else	
 	    handler->setLoadMode (lmode,pos);
 
@@ -521,12 +518,6 @@ ErrorCode VymModel::loadMap (	//FIXME-2 reload of map has broken progress bar, w
 		resetHistory();
 	    }
     
-	    if (lmode==ImportReplace)
-	    {
-		deleteItem (selbi);
-		select (newbi);
-		deleteKeepChildren (false);
-	    }
 	    reposition();   // to generate bbox sizes
 	    emitSelectionChanged();
 	} else 
@@ -2270,74 +2261,72 @@ ImageItem* VymModel::createImage(BranchItem *dst)
 
 bool VymModel::createLink(Link *link, bool createMO)
 {
-	BranchItem *begin=link->getBeginBranch();
-	BranchItem *end  =link->getEndBranch();
+    BranchItem *begin=link->getBeginBranch();
+    BranchItem *end  =link->getEndBranch();
 
-	if (!begin || !end)
+    if (!begin || !end)
+    {
+	qWarning ()<<"VM::createXLinkNew part of XLink is NULL";
+	return false;
+    }
+
+    if (begin==end)
+    {
+	if (debug) qDebug()<<"VymModel::createLink begin==end, aborting";
+	return false;
+    }
+
+    // check, if link already exists
+    foreach (Link* l, xlinks)
+    {
+	if ( (l->getBeginBranch()==begin && l->getEndBranch()==end ) ||
+	     (l->getBeginBranch()==end   && l->getEndBranch()==begin) )
 	{
-	    qWarning ()<<"VM::createXLinkNew part of XLink is NULL";
+	    if (debug) qDebug()<<"VymModel::createLink link exists already, aborting";
 	    return false;
 	}
+    }
 
-	if (begin==end)
-	{
-	    if (debug) qDebug()<<"VymModel::createLink begin==end, aborting";
-	    return false;
-	}
+    QModelIndex parix;
+    int n;
 
-	// check, if link already exists
-	foreach (Link* l, xlinks)
-	{
-	    if ( (l->getBeginBranch()==begin && l->getEndBranch()==end ) ||
-		 (l->getBeginBranch()==end   && l->getEndBranch()==begin) )
-	    {
-		if (debug) qDebug()<<"VymModel::createLink link exists already, aborting";
-		return false;
-	    }
-	}
+    QList<QVariant> cData;
 
-	QModelIndex parix;
-	int n;
+    cData << "new Link begin"<<"undef";
+    XLinkItem *newli=new XLinkItem(cData) ;	
+    newli->setLink (link);
+    link->setBeginLinkItem (newli);
 
-	QList<QVariant> cData;
+    emit (layoutAboutToBeChanged() );
 
-	cData << "new Link begin"<<"undef";
-	XLinkItem *newli=new XLinkItem(cData) ;	
-	newli->setLink (link);
-	link->setBeginLinkItem (newli);
+	parix=index(begin);
+	n=begin->getRowNumAppend(newli);
+	beginInsertRows (parix,n,n);
+	begin->appendChild (newli);	
+	endInsertRows ();
 
-	emit (layoutAboutToBeChanged() );
+    cData.clear();
+    cData << "new Link end"<<"undef";
+    newli=new XLinkItem(cData) ;	
+    newli->setLink (link);
+    link->setEndLinkItem (newli);
 
-	    parix=index(begin);
-	    n=begin->getRowNumAppend(newli);
-	    beginInsertRows (parix,n,n);
-	    begin->appendChild (newli);	
-	    endInsertRows ();
+	parix=index(end);
+	n=end->getRowNumAppend(newli);
+	beginInsertRows (parix,n,n);
+	end->appendChild (newli);	
+	endInsertRows ();
 
-	cData.clear();
-	cData << "new Link end"<<"undef";
-	newli=new XLinkItem(cData) ;	
-	newli->setLink (link);
-	link->setEndLinkItem (newli);
+    emit (layoutChanged() );
 
-	    parix=index(end);
-	    n=end->getRowNumAppend(newli);
-	    beginInsertRows (parix,n,n);
-	    end->appendChild (newli);	
-	    endInsertRows ();
+    xlinks.append (link);
+    link->activate();
 
-	emit (layoutChanged() );
-
-	xlinks.append (link);
-	link->activate();
-
-	if (createMO) 
-	{
-	    link->createMapObj(mapEditor->getScene() );
-	    reposition();
-	}
-//  } 
-    //return newli;
+    if (createMO) 
+    {
+	link->createMapObj(mapEditor->getScene() );
+	reposition();
+    }
     return true;
 }
 
@@ -2765,8 +2754,6 @@ void VymModel::deleteSelection()
 void VymModel::deleteKeepChildren(bool saveStateFlag)
 //deleteKeepChildren FIXME-3+ does not work yet for mapcenters 
 //deleteKeepChildren FIXME-3+ children of scrolled branch stay invisible...
-//deleteKeepChildren FIXME-2 xlinks in children are lost with undo (Maybe use saveStateChangingPart?)
-
 {
     BranchItem *selbi=getSelectedBranch();
     BranchItem *pi;
@@ -2786,8 +2773,8 @@ void VymModel::deleteKeepChildren(bool saveStateFlag)
 	QPointF p;
 	if (selbi->getLMO()) p=selbi->getLMO()->getRelPos();
 	if (saveStateFlag) saveStateChangingPart(
-	    selbi,
-	    selbi,
+	    pi,
+	    pi,
 	    "deleteKeepChildren ()",
 	    QString("Remove %1 and keep its children").arg(getObjectName(selbi))
 	);
@@ -3568,7 +3555,7 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	    //s=parser.parString (ok,0);    // selection
 	    t=parser.parString (ok,0);	// path to map
 	    if (QDir::isRelativePath(t)) t=(tmpMapDir + "/"+t);
-	    loadMap (t,ImportReplace,false,VymMap,n);
+	    loadMap (t,ImportReplace,false,VymMap);	
 	}
     /////////////////////////////////////////////////////////////////////
     } else if (com==QString("addMapInsert"))

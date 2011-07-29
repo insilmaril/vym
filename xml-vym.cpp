@@ -151,9 +151,18 @@ bool parseVYMHandler::startElement  ( const QString&, const QString&,
 		} else  
 		{
 		    // Import Replace 
-		    // Parser should not be called with ImportReplace any longer,
-		    // that's done in VymModel now.
-		    qDebug()<<"xml-vym:  ImportReplace  ?!"; 
+		    if (insertPos<0) 
+		    {
+			insertPos=lastBranch->num();
+			model->clearItem (lastBranch);
+		    } else
+		    {
+			TreeItem *pi=lastBranch->parent();
+			if (pi && pi->isBranchLikeType())
+			    lastBranch=model->addNewBranch(insertPos,lastBranch);
+			else
+			    qDebug()<<"xml-vym:  pi is no branch?!";
+		    }
 		}
 	    } else
 		// add mapCenter without parent

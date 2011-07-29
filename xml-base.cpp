@@ -9,14 +9,6 @@
 #include "settings.h"
 #include "linkablemapobj.h"
 
-/*
-static BranchObj *lastBranch;
-static FloatObj *lastFloat;
-static OrnamentedObj *lastOO;
-
-extern Settings settings;
-extern QString vymVersion;
-*/
 
 parseBaseHandler::parseBaseHandler() {}
 
@@ -24,21 +16,6 @@ parseBaseHandler::~parseBaseHandler() {}
 
 QString parseBaseHandler::errorProtocol() { return errorProt; }
 
-
-/*
-bool parseBaseHandler::startDocument()
-{
-    errorProt = "";
-    state = StateInit;
-    laststate = StateInit;
-    stateStack.clear();
-    stateStack.append(StateInit);
-    branchDepth=0;
-    htmldata="";
-    isVymPart=false;
-    return true;
-}
-*/
 
 QString parseBaseHandler::parseHREF(QString href)
 {
@@ -49,14 +26,6 @@ QString parseBaseHandler::parseHREF(QString href)
     else    
 	return tmpDir + path;
 }
-
-
-/*
-QString parseBaseHandler::errorString() 
-{
-    return "the document is not in the VYM file format";
-}
-*/
 
 bool parseBaseHandler::fatalError( const QXmlParseException& exception ) 
 {
