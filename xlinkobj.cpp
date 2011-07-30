@@ -133,7 +133,7 @@ void XLinkObj::updateXLink()
     BranchItem *bi_begin=link->getBeginBranch();
     BranchItem *bi_end  =link->getEndBranch();
     if (bi_begin && bi_end && link->getState()==Link::activeXLink)
-	// FIXME-2 z-values: it may happen, that XLink is hidden below a separate rectFrame. Could lead to jumping on releasing mouse button
+	// FIXME-3 z-values: it may happen, that XLink is hidden below a separate rectFrame. Could lead to jumping on releasing mouse button
 	line->setZValue (dZ_DEPTH * max(bi_begin->depth(),bi_end->depth()) + dZ_XLINK); 
     else	
 	line->setZValue (Z_INIT);
