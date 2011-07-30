@@ -349,7 +349,7 @@ QString VymModel::getDestPath()
     return destPath;
 }
 
-ErrorCode VymModel::loadMap (	//FIXME-2 reload of map has broken progress bar, which also doesn't close
+ErrorCode VymModel::loadMap (	
     QString fname, 
     const LoadMode &lmode, 
     bool saveStateFlag, 
@@ -938,7 +938,10 @@ void VymModel::fileChanged()
 	    {
 		case QMessageBox::Yes:
 		    // Reload map
+		    mainWindow->initProgressCounter (1);
 		    loadMap (filePath);
+		    mainWindow->removeProgressCounter ();
+		    break;
 		case QMessageBox::Cancel:
 		    fileChangedTime=tmod; // allow autosave to overwrite newer file!
 	    }

@@ -334,7 +334,7 @@ void Main::loadCmdLine()
     QStringList flist=options.getFileList();
     QStringList::Iterator it=flist.begin();
 
-    progressCounterTotal=flist.count();
+    initProgressCounter (flist.count());
     while (it !=flist.end() )
     {
 	fileLoad (*it, NewMap);
@@ -386,6 +386,11 @@ void Main::addProgressValue (float v)
 	progressDialog.hide();
     progressDialog.setValue ( (v + progressCounter -1)*1000/progressCounterTotal );
     progressDialog.repaint();
+}
+
+void Main::initProgressCounter(uint n)
+{
+    progressCounterTotal=n;
 }
 
 void Main::removeProgressCounter()
@@ -2239,7 +2244,7 @@ void Main::fileLoadRecent()
     QAction *action = qobject_cast<QAction *>(sender());
     if (action)
     {
-	progressCounterTotal=1;
+	initProgressCounter ();
         fileLoad (action->data().toString(), NewMap);
 	removeProgressCounter();
     }

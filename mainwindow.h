@@ -42,6 +42,7 @@ public:
     void statusMessage (const QString &);
     void setProgressMaximum (int max);
     void addProgressValue (float v);
+    void initProgressCounter(uint n=1);
     void removeProgressCounter();
 
 public slots:
