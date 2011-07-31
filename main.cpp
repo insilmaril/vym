@@ -83,6 +83,7 @@ int main(int argc, char* argv[])
     options.add ("name", Option::String, "n", "name");
     options.add ("quit", Option::Switch, "q", "quit");
     options.add ("run", Option::String, "r", "run");
+    options.add ("restore", Option::Switch, "R", "restore");
     options.add ("shortcuts", Option::Switch, "s", "shortcuts");
     options.add ("shortcutsLaTeX", Option::Switch, "sl", "shortcutsLaTeX");
     options.add ("version", Option::Switch, "v","version");
@@ -102,6 +103,7 @@ int main(int argc, char* argv[])
 	"-n  STRING   name        Set name of instance for DBus access\n"
 	"-q           quit        Quit immediatly after start for benchmarking\n"
 	"-r  FILE     run         Run script\n"
+	"-R           restore     Restore last session\n"
 	"-s           shortcuts   Show Keyboard shortcuts on start\n"
 	"-sl          LaTeX       Show Keyboard shortcuts in LaTeX format on start\n"
 	"-v           version     Show vym version\n"
@@ -248,6 +250,10 @@ int main(int argc, char* argv[])
     }
 
     m.loadCmdLine();
+
+    // Restore last session
+    if (options.isOn ("restore"))
+	m.fileRestoreSession();
 
     // Run script
     if (options.isOn ("run"))

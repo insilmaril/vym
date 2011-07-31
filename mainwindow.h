@@ -83,6 +83,10 @@ private slots:
     ErrorCode fileLoad(QString ,const LoadMode &, const FileType & ftype=VymMap);
     void fileLoad(const LoadMode &);
     void fileLoad();
+    void fileSaveSession();
+public slots:    
+    void fileRestoreSession();
+private slots:    
     void fileLoadRecent();
     void addRecentMap (const QString &);
     void fileSave(VymModel*, const SaveMode & );

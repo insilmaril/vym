@@ -325,12 +325,6 @@ Main::~Main()
 
 void Main::loadCmdLine()
 {
-    /* TODO draw some kind of splashscreen while loading...
-    if (qApp->argc()>1)
-    {
-    }
-    */
-
     QStringList flist=options.getFileList();
     QStringList::Iterator it=flist.begin();
 
@@ -433,6 +427,10 @@ void Main::setupFileActions()
     switchboard.addConnection(fileMenu, a,tr("File","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( fileLoad() ) );
     actionFileOpen=a;
+
+    a = new QAction( tr( "&Restore last session" ,"File menu"),this);
+    switchboard.addConnection(fileMenu, a,tr("File","Shortcut group"));
+    connect( a, SIGNAL( triggered() ), this, SLOT( fileRestoreSession() ) );
 
     fileLastMapsMenu = fileMenu->addMenu (tr("Open Recent","File menu"));
     fileMenu->addSeparator();
@@ -2232,11 +2230,35 @@ void Main::fileLoad(const LoadMode &lmode)
 	}
     }
     removeProgressCounter();
+
+    fileSaveSession();
 }
 
 void Main::fileLoad()
 {
     fileLoad (NewMap);
+}
+
+void Main::fileSaveSession()
+{
+    QStringList flist;
+    for (int i=0;i<vymViews.count(); i++)
+	flist.append (vymViews.at(i)->getModel()->getFilePath() );
+    settings.setValue("/mainwindow/sessionFileList", flist);
+}
+
+void Main::fileRestoreSession()
+{
+    QStringList flist= settings.value("/mainwindow/sessionFileList").toStringList();
+    QStringList::Iterator it=flist.begin();
+
+    initProgressCounter (flist.count());
+    while (it !=flist.end() )
+    {
+	fileLoad (*it, NewMap);
+	*it++;
+    }	
+    removeProgressCounter();
 }
 
 void Main::fileLoadRecent()
@@ -2284,6 +2306,7 @@ void Main::fileSave(VymModel *m, const SaveMode &savemode)
 	    tr("Saved  %1").arg(m->getFilePath()), 
 	    statusbarTime );
 	addRecentMap (m->getFilePath() );
+	fileSaveSession();
     } else	
 	statusBar()->showMessage( 
 	    tr("Couldn't save ").arg(m->getFilePath()), 
@@ -2693,6 +2716,8 @@ void Main::filePrint()
 
 bool Main::fileExitVYM()    
 {
+    fileSaveSession();
+
     // Check if one or more editors have changed
     int i=0;
     while (vymViews.count()>0)
