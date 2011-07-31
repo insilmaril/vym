@@ -1,5 +1,5 @@
-VYM - View Your Mind - 1.10.0  (c) 2007 by Uwe Drechsel
-======================================================
+VYM - View Your Mind - 2.0.0  (c) 2007-2011 by Uwe Drechsel
+===========================================================
 
 
 
@@ -12,16 +12,6 @@ viewer is installed. It also can be downloaded from the vym site at
 Sourceforge:
 
 https://sourceforge.net/projects/vym/
-
-
-Versioning scheme
------------------
-
-Beginning with this version of vym (1.10.0) the versioning is similar to
-that of the Linux Kernel:
-
-Odd versions (like 1.9, 1.11, ...) are developer versions, the stable
-"public" ones will have 1.10 or 1.12.
 
 
 Questions and feedback
