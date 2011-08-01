@@ -442,26 +442,25 @@ void BranchObj::updateData()
 
 void BranchObj::setDefAttr (BranchModification mod, bool keepFrame)
 {
-    int fontsize;
+    QFont font=treeItem->getModel()->getMapDefaultFont();
+    qreal fontsize=treeItem->getModel()->getMapDefaultFontSize();
     switch (treeItem->depth())
     {
 	case 0: 
-	    fontsize=16; 
 	    break;
 	case 1: 
-	    fontsize=14; 
+	    fontsize=fontsize-2; 
 	    break;
 	case 2: 
-	    fontsize=12; 
+	    fontsize=fontsize-4; 
 	    break;
 	default: 
-	    fontsize=10; 
+	    fontsize=fontsize-6; 
 	    break;
     }	
     setLinkStyle(getDefLinkStyle(treeItem->parent() ));
     setLinkColor ();
-    QFont font("Sans Serif,8,-1,5,50,0,0,0,0,0");
-    font.setPointSize(fontsize);
+    font.setPointSizeF (fontsize);
     heading->setFont(font );
 
     if (mod==NewBranch && !keepFrame)

@@ -312,7 +312,7 @@ Main::~Main()
     settings.setValue( "/export/useHideExport",actionSettingsUseHideExport->isChecked() );
     settings.setValue( "/satellite/noteeditor/isDockWindow",actionSettingsNoteEditorIsDockWindow->isChecked());
 
-    //TODO save scriptEditor settings
+    //FIXME-4 save scriptEditor settings
 
     // call the destructors
     delete noteEditor;	    // FIXME-3 shouldn't this be done in main?
@@ -323,7 +323,7 @@ Main::~Main()
     removeDir (QDir(tmpVymDir));
 }
 
-void Main::loadCmdLine()
+void Main::loadCmdLine()//FIXME-0 Load bug, when loading several maps and one doesn't exist, previous map get's deleted!
 {
     QStringList flist=options.getFileList();
     QStringList::Iterator it=flist.begin();
@@ -1070,6 +1070,15 @@ void Main::setupFormatActions()
     actionFormatColorSubtree=a;
 
     formatMenu->addSeparator();
+
+    a= new QAction( tr( "Select default font","Branch attribute" )+"...",  this);
+    a->setCheckable(false);
+    connect( a, SIGNAL( triggered() ), this, SLOT( formatSelectFont() ) );
+    formatMenu->addAction (a);
+    actionFormatFont=a;
+
+    formatMenu->addSeparator();
+
     actionGroupFormatLinkStyles=new QActionGroup ( this);
     actionGroupFormatLinkStyles->setExclusive (true);
     a= new QAction( tr( "Linkstyle Line" ), actionGroupFormatLinkStyles);
@@ -1796,6 +1805,10 @@ void Main::setupContextMenus()
     canvasContextMenu->addAction (actionAddMapCenter);
     canvasContextMenu->addAction (actionMapInfo);   //FIXME-3 move to File menu?
     canvasContextMenu->insertSeparator(actionMapInfo);   
+
+    canvasContextMenu->addAction(actionFormatFont);
+    canvasContextMenu->insertSeparator(actionFormatFont);
+
     canvasContextMenu->addActions(actionGroupFormatLinkStyles->actions() );
     canvasContextMenu->insertSeparator(actionGroupFormatLinkStyles->actions().first() );   
     canvasContextMenu->addAction(actionFormatLinkColorHint);
@@ -2035,7 +2048,7 @@ void Main::fileNew()
     tabWidget->setCurrentIndex (tabWidget->count() -1);
 }
 
-void Main::fileNewCopy()
+void Main::fileNewCopy() //FIXME-0 Crashes
 {
     QString fn="unnamed";
     VymModel *srcModel=currentModel();
@@ -3316,7 +3329,7 @@ void Main::editAddAttribute()
     }
 }
 
-void Main::editAddMapCenter()
+void Main::editAddMapCenter() //FIXME-2 try to get mouse position in ME  and add there...
 {
     VymModel *m=currentModel();
     if (m) 
@@ -3602,12 +3615,26 @@ void Main::formatSelectSelectionColor()
 
 }
 
+void Main::formatSelectFont()
+{
+    VymModel *m=currentModel();
+    if (m) 
+    {
+	bool ok;
+	QFont font = QFontDialog::getFont( &ok, m->getMapDefaultFont(), this);
+	if (ok) 
+	{
+	    m->setMapDefaultFont (font);
+	    m->setMapDefaultFontSize (font.pointSizeF() );
+	}
+    }
+}
+
 void Main::formatToggleLinkColorHint()
 {
     VymModel *m=currentModel();
     if (m) m->toggleMapLinkColorHint();
 }
-
 
 void Main::formatHideLinkUnselected()	//FIXME-3 get rid of this with imagepropertydialog
 {

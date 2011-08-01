@@ -76,6 +76,15 @@ bool parseVYMHandler::startElement  ( const QString&, const QString&,
 		col.setNamedColor(atts.value("backgroundColor"));
 		model->getScene()->setBackgroundBrush(col);
 	    }	    
+	    if (!atts.value( "defaultFont").isEmpty() )
+	    {
+		QFont font (atts.value("defaultFont"));
+		model->setMapDefaultFont (font);
+	    }	    
+	    if (!atts.value( "defaultFontSize").isEmpty() )
+	    {
+		model->setMapDefaultFontSize (atts.value ("defaultFontSize").toDouble() );
+	    }	    
 	    if (!atts.value( "selectionColor").isEmpty() )
 	    {
 		col.setNamedColor(atts.value("selectionColor"));

@@ -133,6 +133,8 @@ void VymModel::init ()
     connect(animationTimer, SIGNAL(timeout()), this, SLOT(animate()));
 
     // View - map
+    defaultFont=QFont ("Sans Serif,8,-1,5,50,0,0,0,0,0");
+    defaultFontSize=16;
     defLinkColor=QColor (0,0,255);
     linkcolorhint=LinkableMapObj::DefaultColor;
     linkstyle=LinkableMapObj::PolyParabel;
@@ -227,6 +229,8 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix, bool w
 		  xml.attribut("date",getDate()) +
 		  xml.attribut("branchCount", QString().number(branchCount())) +
 		  xml.attribut("backgroundColor", mapEditor->getScene()->backgroundBrush().color().name() ) +
+		  xml.attribut("defaultFont", defaultFont.toString() ) +
+		  xml.attribut("defaultFontSize", QString().setNum(defaultFontSize )) +
 		  xml.attribut("selectionColor", mapEditor->getSelectionColor().name() ) +
 		  xml.attribut("linkStyle", ls ) +
 		  xml.attribut("linkColor", defLinkColor.name() ) +
@@ -234,7 +238,7 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix, bool w
 		  xml.attribut("defXLinkWidth", QString().setNum(defXLinkWidth,10) ) +
 		  xml.attribut("mapZoomFactor", QString().setNum(mapEditor->getZoomFactorTarget()) ) +
 		  colhint; 
-    s+=xml.beginElement("vymmap",mapAttr);
+    s+=xml.beginElement("vymmap",mapAttr); //FIXME-2 default font missing
     xml.incIndent();
 
     // Find the used flags while traversing the tree	// FIXME-4 this can be done local to vymmodel maybe...
@@ -5173,6 +5177,25 @@ QColor VymModel::getMapBackgroundColor()    // FIXME-3 move to ME
     return mapEditor->getScene()->backgroundBrush().color();
 }
 
+QFont VymModel::getMapDefaultFont ()  
+{
+    return defaultFont;
+}
+
+void VymModel::setMapDefaultFont (const QFont &f)  
+{
+    defaultFont=f;
+}
+
+qreal VymModel::getMapDefaultFontSize ()  
+{
+    return defaultFontSize;
+}
+
+void VymModel::setMapDefaultFontSize (const qreal &s)  
+{
+    defaultFontSize=s;
+}
 
 LinkableMapObj::ColorHint VymModel::getMapLinkColorHint()   // FIXME-3 move to ME
 {

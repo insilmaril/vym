@@ -551,6 +551,8 @@ private:
     int defXLinkWidth;		// default width for xlinks
     LinkableMapObj::ColorHint linkcolorhint;// use heading color or own color
     LinkableMapObj::Style linkstyle;	    // default style for links
+    QFont defaultFont;
+    qreal defaultFontSize;
 
 public:
     void setMapLinkStyle (const QString &); // Set style of link
@@ -565,6 +567,10 @@ public:
     void setMapBackgroundColor(QColor);
     QColor getMapBackgroundColor();
 
+    QFont getMapDefaultFont();
+    void setMapDefaultFont (const QFont&);
+    qreal getMapDefaultFontSize();
+    void setMapDefaultFontSize (const qreal&);
 
     LinkableMapObj::ColorHint getMapLinkColorHint();
     QColor getMapDefLinkColor();

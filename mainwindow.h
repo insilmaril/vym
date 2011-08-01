@@ -210,6 +210,7 @@ private slots:
     void formatSelectBackImage();
     void formatSelectLinkColor();
     void formatSelectSelectionColor();
+    void formatSelectFont();
     void formatToggleLinkColorHint();
     void formatHideLinkUnselected();
 
@@ -388,6 +389,7 @@ private:
     QAction* actionFormatBackImage;
     QAction* actionFormatLinkColor;
     QAction* actionFormatSelectionColor;
+    QAction* actionFormatFont;
 
     QAction* actionZoomIn;
     QAction* actionZoomOut;

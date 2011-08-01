@@ -7,7 +7,7 @@
 #define __VYM_VERSION "1.13.37"
 //#define __VYM_CODENAME "Codename: RC-3"
 #define __VYM_CODENAME "Codename: development version, not for production!"
-#define __VYM_BUILD_DATE "2011-07-29"
+#define __VYM_BUILD_DATE "2011-08-01"
 
 
 bool checkVersion(const QString &);
