@@ -2048,7 +2048,7 @@ void Main::fileNew()
     tabWidget->setCurrentIndex (tabWidget->count() -1);
 }
 
-void Main::fileNewCopy() //FIXME-0 Crashes
+void Main::fileNewCopy() 
 {
     QString fn="unnamed";
     VymModel *srcModel=currentModel();
@@ -2057,8 +2057,10 @@ void Main::fileNewCopy() //FIXME-0 Crashes
 	srcModel->copy();
 	fileNew();
 	VymModel *dstModel=vymViews.last()->getModel();
-	dstModel->select("mc:");
-	dstModel->loadMap (clipboardDir+"/"+clipboardFile,ImportReplace);
+	if (dstModel->select("mc:0"))
+	    dstModel->loadMap (clipboardDir+"/"+clipboardFile,ImportReplace,false);
+	else
+	    qWarning ()<<"Main::fileNewCopy couldn't select mapcenter";
     }
 }
 
