@@ -323,7 +323,7 @@ Main::~Main()
     removeDir (QDir(tmpVymDir));
 }
 
-void Main::loadCmdLine()//FIXME-0 Load bug, when loading several maps and one doesn't exist, previous map get's deleted!
+void Main::loadCmdLine()
 {
     QStringList flist=options.getFileList();
     QStringList::Iterator it=flist.begin();
@@ -2157,7 +2157,10 @@ ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode, const FileType &ftyp
 		case QMessageBox::Cancel:
 		    // don't create new map
 		    statusBar()->showMessage( "Loading " + fn + " failed!", statusbarTime );
+		    int cur=tabWidget->currentIndex();
+		    tabWidget->setCurrentIndex (tabWidget->count()-1);
 		    fileCloseMap();
+		    tabWidget->setCurrentIndex (cur);
 		    return aborted;
 	    }
 	}   
