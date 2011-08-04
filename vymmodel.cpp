@@ -126,8 +126,8 @@ void VymModel::init ()
 
     // animations   // FIXME-4 switch to new animation system 
     animationUse=settings.value ("/animation/use",false).toBool();    // FIXME-4 add options to control _what_ is animated
-    animationTicks=settings.value("/animation/ticks",10).toInt();
-    animationInterval=settings.value("/animation/interval",50).toInt();
+    animationTicks=settings.value("/animation/ticks",20).toInt();
+    animationInterval=settings.value("/animation/interval",5).toInt();
     animObjList.clear();    
     animationTimer=new QTimer (this);
     connect(animationTimer, SIGNAL(timeout()), this, SLOT(animate()));

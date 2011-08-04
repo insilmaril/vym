@@ -240,7 +240,7 @@ void MapEditor::setScrollBarPosTarget (const QRectF &rect)
     {
 	scrollBarPosAnimation.setTargetObject (this);
 	scrollBarPosAnimation.setPropertyName ("scrollBarPos");
-	scrollBarPosAnimation.setDuration(1000);
+	scrollBarPosAnimation.setDuration(settings.value("/animation/duration/scrollbar",2000).toInt() );
 	scrollBarPosAnimation.setEasingCurve ( QEasingCurve::OutQuint);
 	scrollBarPosAnimation.setStartValue(
 	    QPointF (horizontalScrollBar()->value() ,
@@ -279,7 +279,7 @@ void MapEditor::setZoomFactorTarget (const qreal &zft)
     {
 	zoomAnimation.setTargetObject (this);
 	zoomAnimation.setPropertyName ("zoomFactor");
-	zoomAnimation.setDuration(1000);
+	zoomAnimation.setDuration(settings.value("/animation/duration/zoom",2000).toInt() );
 	zoomAnimation.setEasingCurve ( QEasingCurve::OutQuint);
 	zoomAnimation.setStartValue(zoomFactor);
 	zoomAnimation.setEndValue(zft);
