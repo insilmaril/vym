@@ -734,7 +734,6 @@ void Main::setupEditActions()
     actionListBranches.append(actionToggleScroll);
 
     a = new QAction( QPixmap(), tr( "Expand all branches","Edit menu" ), this);
-    a->setShortcut ( Qt::SHIFT + Qt::Key_X );	    // Expand all branches 
     switchboard.addConnection(editMenu, a,tr("Edit","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( editExpandAll() ) );
     actionExpandAll=a;
@@ -1008,7 +1007,7 @@ void Main::setupEditActions()
 
     // Only remove children of a branch
     a = new QAction( tr( "Remove children","Edit menu" ), this);
-    a->setShortcut (Qt::SHIFT + Qt::Key_Delete );
+    a->setShortcut (Qt::SHIFT + Qt::Key_X );
     switchboard.addConnection(a,tr("Edit","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( editDeleteChildren() ) );
     a->setEnabled (false);
@@ -4127,6 +4126,7 @@ void Main::updateActions()
 		for (int i=0; i<actionListBranches.size(); ++i)	
 		    actionListBranches.at(i)->setEnabled(true);
 		actionDelete->setEnabled (true);
+		actionDeleteChildren->setEnabled (true);
 	    }	// Branch
 	    if ( selti->getType()==TreeItem::Image)
 	    {
@@ -4161,6 +4161,7 @@ void Main::updateActions()
 	    actionDeleteVymLink->setEnabled (false);	
 	    actionHeading2URL->setEnabled (false);  
 	    actionDelete->setEnabled (false);
+	    actionDeleteChildren->setEnabled (false);
 	    actionMoveUp->setEnabled (false);
 	    actionMoveDown->setEnabled (false);
 	    actionFormatHideLinkUnselected->setEnabled (false);
