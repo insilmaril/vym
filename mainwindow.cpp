@@ -3333,7 +3333,7 @@ void Main::editAddAttribute()
     }
 }
 
-void Main::editAddMapCenter() //FIXME-2 try to get mouse position in ME  and add there...
+void Main::editAddMapCenter() 
 {
     VymModel *m=currentModel();
     if (m) 

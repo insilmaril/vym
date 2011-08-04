@@ -238,7 +238,7 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix, bool w
 		  xml.attribut("defXLinkWidth", QString().setNum(defXLinkWidth,10) ) +
 		  xml.attribut("mapZoomFactor", QString().setNum(mapEditor->getZoomFactorTarget()) ) +
 		  colhint; 
-    s+=xml.beginElement("vymmap",mapAttr); //FIXME-2 default font missing
+    s+=xml.beginElement("vymmap",mapAttr); 
     xml.incIndent();
 
     // Find the used flags while traversing the tree	// FIXME-4 this can be done local to vymmodel maybe...
