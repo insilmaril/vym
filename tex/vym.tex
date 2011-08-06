@@ -650,11 +650,27 @@ lines for the rest of the map are always painted "thin".
 \end{itemize}
 
 \subsubsection{How to create an URL} 
-To enter the URL of any document, press \key{U} or right-click  onto a
-branch to open the contextmenu then choose "References\ra Edit URL". If
-you want to use a file dialog to conveniently choose a local file you
-can use~\key{U}. Also drag and drop from a browser can be used to create
-a new branch with an URL.
+Use one of the following:
+\begin{itemize}
+\item{Drag and drop URL from a webbrowser}
+\item{Use the "URLs and vymlinks toolbal:}
+    \begin{center}
+	\includegraphics[width=0.5cm]{images/flag-urlnew.png}
+    \end{center}
+\item{Keyboard shortcut:}
+    Press \key{U} or right-click  onto a
+    branch to open the contextmenu then choose "References\ra Edit URL". If
+    you want to use a file dialog to conveniently choose a local file you
+    can use~\key{U}. Also drag and drop from a browser can be used to create
+    a new branch with an URL.
+\item{Context menu:} 
+    Right click onto branch,
+    in the context menu there is also an option to open all URLs found
+    in the selected subtree of the map. That's useful to simultanously open
+    a collection of URLs in the webbrowser, especially if the browser can
+    open them in tabs.
+
+\end{itemize}
 
 After an URL was entered, a little globe will appear in the branch. By
 clicking on the globe in the toolbar or the context menu an external
@@ -664,18 +680,18 @@ will be launched.
 For more information on working with bookmarks and webbrowsers see
 section \ref{bookmarks}.
 
-In the context menu there is also an option to open all URLs found
-in the selected subtree of the map. That's useful to simultanously open
-a collection of URLs in the webbrowser, especially if the browser can
-open them in tabs.
-
 If support for Bugzilla is enabled (see \ref{bugzilla}), all Bugzilla
 references in a subtree can be updated automatically e.g. by pressing
 \key{CTRL-B}.
 
 \subsubsection{How to create a vymlink}
-To link to to another map right click on a branch and choose "Edit \vym
-link". A file dialog opens where you can choose the map. 
+Creation is possible both from the "URLs and vymlinks" toolbar or from
+the context menu of a branch:
+    \begin{center}
+	\includegraphics[width=0.5cm]{images/flag-vymlinknew.png}
+    \end{center}
+
+A file dialog opens where you can choose the map. 
 Clicking this flag beside the branch heading, in the toolbar or in the
 context menu of a branch will open the map in another tab (see
 \ref{tabs} for working with multiple maps). To delete an existing link,

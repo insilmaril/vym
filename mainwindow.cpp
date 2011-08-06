@@ -860,14 +860,14 @@ void Main::setupEditActions()
     connect( a, SIGNAL( triggered() ), this, SLOT( editNote2URLs() ) );
     actionGetURLsFromNote=a;
 
-    a = new QAction(QPixmap(), tr( "Edit URL...","Edit menu"), this);
+    a = new QAction(QPixmap(flagsPath+"flag-url.png"), tr( "Edit URL...","Edit menu"), this);
     a->setShortcut ( Qt::Key_U );
     a->setShortcutContext (Qt::WindowShortcut);
     switchboard.addConnection(a,tr("Edit","Shortcut group"));
     actionListBranches.append(a);
     addAction(a);
     connect( a, SIGNAL( triggered() ), this, SLOT( editURL() ) );
-    actionURL=a;
+    actionURLNew=a;
 
     a = new QAction(QPixmap(), tr( "Edit local URL...","Edit menu"), this);
     //a->setShortcut (Qt::SHIFT +  Qt::Key_U );
@@ -935,12 +935,12 @@ void Main::setupEditActions()
     actionOpenMultipleVymLinks=a;
 
 
-    a = new QAction(tr( "Edit vym link...","Edit menu" ), this);
+    a = new QAction(QPixmap(flagsPath+"flag-vymlinknew.png"), tr( "Edit vym link...","Edit menu" ), this);
     a->setEnabled (false);
     switchboard.addConnection(a,tr("Edit","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( editVymLink() ) );
     actionListBranches.append(a);
-    actionVymLink=a;
+    actionEditVymLink=a;
 
     a = new QAction(tr( "Delete vym link","Edit menu" ),this);
     a->setEnabled (false);
@@ -1749,7 +1749,7 @@ void Main::setupContextMenus()
 	branchLinksContextMenu->addAction ( actionOpenURLTab );
 	branchLinksContextMenu->addAction ( actionOpenMultipleVisURLTabs );
 	branchLinksContextMenu->addAction ( actionOpenMultipleURLTabs );
-	branchLinksContextMenu->addAction ( actionURL );
+	branchLinksContextMenu->addAction ( actionURLNew );
 	branchLinksContextMenu->addAction ( actionLocalURL );
 	branchLinksContextMenu->addAction ( actionGetURLsFromNote );
 	branchLinksContextMenu->addAction ( actionHeading2URL );
@@ -1761,7 +1761,7 @@ void Main::setupContextMenus()
 	branchLinksContextMenu->addSeparator();	
 	branchLinksContextMenu->addAction ( actionOpenVymLink );
 	branchLinksContextMenu->addAction ( actionOpenMultipleVymLinks );
-	branchLinksContextMenu->addAction ( actionVymLink );
+	branchLinksContextMenu->addAction ( actionEditVymLink );
 	branchLinksContextMenu->addAction ( actionDeleteVymLink );
 	
 
@@ -1911,7 +1911,9 @@ void Main::setupToolbars()
     referencesToolbar=addToolBar( tr ("URLs and vymLinks toolbar","Toolbar for URLs and vymlinks"));
     referencesToolbar->setObjectName ("URLs and vymlinks toolbar");
     referencesToolbar->addAction (actionOpenURL);
+    referencesToolbar->addAction (actionURLNew);
     referencesToolbar->addAction (actionOpenVymLink);
+    referencesToolbar->addAction (actionEditVymLink);
 
     // Format and colors
     colorsToolbar = addToolBar( tr("Colors toolbar","Colors toolbar name"));

@@ -34,15 +34,6 @@ QString convertToRel (const QString &src, const QString &dst)
 	d=d.right (d.length()-i-1);
     } else
     {
-	// Find relative path from src to dst
-
-	// Remove the first "/"
-	if (s.section ("/",0,0).isEmpty()) 
-	{
-	    s=s.right (s.length()-1);
-	    d=d.right (d.length()-1);
-	}
-	
 	// remove identical left parts
 	while (s.section("/",0,0) == d.section("/",0,0) ) 
 	{
@@ -54,16 +45,12 @@ QString convertToRel (const QString &src, const QString &dst)
 	// Now take care of paths where we have to go back first
 	int srcsep=s.count("/");
 	int dstsep=d.count("/");
-	if (srcsep <=  dstsep )
+	// find path to go up first and then back to dst
+	while (srcsep > 0 )
 	{
-	    // find path to go up first and then back to dst
-	    i=1;
-	    while (i<=srcsep) 
-	    {
-		d="../"+d;
-		i++;
-	    }	
-	}
+	    d="../"+d;
+	    srcsep--;
+	} 
     }	
     return d;
 }

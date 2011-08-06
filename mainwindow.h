@@ -348,7 +348,7 @@ private:
     QAction* actionOpenMultipleVisURLTabs;
     QAction* actionOpenMultipleURLTabs;
     QAction* actionGetURLsFromNote;
-    QAction* actionURL;
+    QAction* actionURLNew;
     QAction* actionLocalURL;
     QAction* actionHeading2URL;
     QAction* actionBugzilla2URL;
@@ -357,7 +357,7 @@ private:
     QAction* actionFATE2URL;
     QAction *actionOpenVymLink;
     QAction *actionOpenMultipleVymLinks;
-    QAction *actionVymLink;
+    QAction *actionEditVymLink;
     QAction *actionDeleteVymLink;
     QAction *actionAddTimestamp;
     QAction *actionToggleHideExport;
