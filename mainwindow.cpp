@@ -1011,6 +1011,7 @@ void Main::setupEditActions()
     switchboard.addConnection(a,tr("Edit","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( editDeleteChildren() ) );
     a->setEnabled (false);
+    addAction (a);
     actionListBranches.append(a);
     actionDeleteChildren=a;
 
