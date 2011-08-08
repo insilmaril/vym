@@ -644,46 +644,27 @@ QRectF BranchObj::getTotalBBox()
 
 ConvexPolygon BranchObj::getBoundingPolygon()	
 {
-/*
-    if (!pi)	//FIXME-3 Testing only
-    {
-	pi=scene->addPolygon(MapObj::getBoundingPolygon() );
-	pi->setPen(Qt::NoPen);
-	pi->setBrush( QColor(qrand()%32*8,qrand()%32*8,qrand()%32*8) );
-	pi->setZValue(Z_BBOX);
-    }
-    */
-
     if (treeItem->branchCount()==0 || treeItem->depth()==0)
     {
 	if (pi) pi->setPolygon (MapObj::getBoundingPolygon() );
 	return MapObj::getBoundingPolygon();
     }
 
-//    calcBBoxSizeWithChildren();	//FIXME-3 really needed?
     QPolygonF p;
     p<<bboxTotal.topLeft();
     p<<bboxTotal.topRight();
     p<<bboxTotal.bottomRight();
     p<<bboxTotal.bottomLeft();
-    //cout << "BO::getBP (total)  "<<treeItem->getHeadingStd()<<"  tL="<<bboxTotal.topLeft()<<"  bR="<<bboxTotal.bottomRight()<<endl;
-    //cout << "                   "<<"  tL="<<bbox.topLeft()<<"  bR="<<bbox.bottomRight()<<endl;
     if (pi) pi->setPolygon (p );
     return p;
 }
 
-void BranchObj::calcBBoxSizeWithChildren()  //FIXME-3 cleanup testcode
+void BranchObj::calcBBoxSizeWithChildren()  
 {   
     // This is initially called only from reposition and
     // and only for mapcenter. So it won't be
     // called more than once for a single user 
     // action
-
-    //if (debug) qDebug()<<"BO: calcBBoxSizwWithChildren a) for "<<treeItem->getHeading();
-
-    // Calculate size of LMO including all children (to align them later)
-    //bboxTotal.setX(bbox.x() );
-    //bboxTotal.setY(bbox.y() );
 
     // if branch is scrolled, ignore children, but still consider floatimages
     BranchItem *bi=(BranchItem*)treeItem;
@@ -691,7 +672,6 @@ void BranchObj::calcBBoxSizeWithChildren()  //FIXME-3 cleanup testcode
     {
 	bboxTotal.setWidth (bbox.width());
 	bboxTotal.setHeight(bbox.height());
-	//if (debug) qDebug()<<"BO: calcBBoxSizwWithChildren abort scrolled";
 	return;
     }
     
@@ -699,18 +679,6 @@ void BranchObj::calcBBoxSizeWithChildren()  //FIXME-3 cleanup testcode
     {
 	bboxTotal.setWidth (0);
 	bboxTotal.setHeight(0);
-	/*
-	if (parObj)
-	{
-	    bboxTotal.setX (parObj->x());
-	    bboxTotal.setY (parObj->y());
-	} else
-	{
-	    bboxTotal.setX (bbox.x());
-	    bboxTotal.setY (bbox.y());
-	}
-	*/
-	//if (debug) qDebug()<<"BO: calcBBoxSizeWithChildren abort hidden";
 	return;
     }
     
@@ -729,49 +697,17 @@ void BranchObj::calcBBoxSizeWithChildren()  //FIXME-3 cleanup testcode
 	    br=bo->getTotalBBox();
 	    r.setWidth( max (br.width(), r.width() ));
 	    r.setHeight(br.height() + r.height() );
-	    /*
-	    if (debug)
-	    {
-		qDebug()<<"  adding: "<<bo->getTreeItem()->getHeading() <<" to "<<bi->getHeading();
-		qDebug()<<"      bo: "<<br;
-		qDebug()<<"       r: "<<r;
-	    }
-	    */
-	    //if (br.y()<bboxTotal.y()) bboxTotal.setY(br.y());
-	    //if (br.x()<bboxTotal.x()) bboxTotal.setX(br.x());
 	}
     }
-    /*
-    for (int i=0; i<treeItem->attributeCount(); i++)
-    {
-	if (!bi->getAttributeNum(i)->isHidden())
-	{
-	    BranchObj *bo=bi->getAttributeNum(i)->getBranchObj();
-	    bo->calcBBoxSizeWithChildren();
-	    br=bo->getTotalBBox();
-	    r.setWidth( max (br.width(), r.width() ));
-	    r.setHeight(br.height() + r.height() );
-	    if (br.y()<bboxTotal.y()) bboxTotal.setY(br.y());
-	    if (br.x()<bboxTotal.x()) bboxTotal.setX(br.x());
-	}
-    }
-    */
     // Add myself and also
     // add width of link to sum if necessary
-    //if (debug) qDebug()<<"BO: calcBBoxSizeWithChildren c) for "<<treeItem->getHeading()<<" bbox="<<bbox<<" r="<<r;
-
-if (bi->branchCount()<1)
+    if (bi->branchCount()<1)
 	bboxTotal.setWidth (bbox.width() + r.width()  );
     else    
 	bboxTotal.setWidth (bbox.width() + r.width() + linkwidth );
-//if (bi->branchCount()<1)	//FIXME-3
-//	bboxTotal.setWidth (bbox.width() + r.width() + frame->getPadding()*2);
-//    else    
-//	bboxTotal.setWidth (bbox.width() + r.width() + linkwidth + frame->getPadding()*2);
     
     // bbox already contains frame->padding()*2	    
     bboxTotal.setHeight(max (r.height() + frame->getPadding()*2,  bbox.height()) );
-    //if (debug) qDebug()<<"BO: calcBBoxSizeWithChildren d) for "<<treeItem->getHeading()<< "bboxTotal="<<bboxTotal;
 
 }
 

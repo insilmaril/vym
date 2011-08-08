@@ -112,7 +112,7 @@ void VymModel::init ()
     autosaveTimer=new QTimer (this);
     connect(autosaveTimer, SIGNAL(timeout()), this, SLOT(autosave()));
 
-    fileChangedTimer=new QTimer (this);	//FIXME-4 use QFileSystemWatcher
+    fileChangedTimer=new QTimer (this);	/FIXME-4 use QFileSystemWatcher
     fileChangedTimer->start(3000);
     connect(fileChangedTimer, SIGNAL(timeout()), this, SLOT(fileChanged()));
 
@@ -178,9 +178,8 @@ bool VymModel::isRepositionBlocked()
     return blockReposition;
 }
 
-void VymModel::updateActions()	// FIXME-4  maybe don't update if blockReposition is set
+void VymModel::updateActions()	
 {
-    //cout << "VM::updateActions \n";
     // Tell mainwindow to update states of actions
     mainWindow->updateActions();
 }
@@ -241,7 +240,7 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix, bool w
     s+=xml.beginElement("vymmap",mapAttr); 
     xml.incIndent();
 
-    // Find the used flags while traversing the tree	// FIXME-4 this can be done local to vymmodel maybe...
+    // Find the used flags while traversing the tree	
     standardFlagsMaster->resetUsedCounter();
     
 
@@ -820,7 +819,7 @@ void VymModel::importDirInt(BranchItem *dst, QDir d)
 	    if (fi.fileName() != "." && fi.fileName() != ".." )
 	    {
 		bi=addNewBranchInt(dst,-2);
-		bi->setHeading (fi.fileName() );    // FIXME-3 check this
+		bi->setHeading (fi.fileName() );   
 		bi->setHeadingColor (QColor("blue"));
 		if ( !d.cd(fi.fileName()) ) 
 		    QMessageBox::critical (0,tr("Critical Import Error"),tr("Cannot find the directory %1").arg(fi.fileName()));
@@ -833,7 +832,7 @@ void VymModel::importDirInt(BranchItem *dst, QDir d)
 		emitDataHasChanged(bi);
 	    }	
 	}	
-	// Traverse files   //FIXME-3 problems loading .files
+	// Traverse files   //FIXME-2 problems loading .files
 	d.setFilter( QDir::Files| QDir::Hidden | QDir::NoSymLinks );
 	list = d.entryInfoList();
 
@@ -866,7 +865,7 @@ void VymModel::importDirInt (const QString &s)
     }
 }   
 
-void VymModel::importDir()  //FIXME-3 check me... (not tested yet)
+void VymModel::importDir()  
 {
     BranchItem *selbi=getSelectedBranch();
     if (selbi)
@@ -2502,8 +2501,6 @@ BranchItem* VymModel::addNewBranch(int pos,BranchItem *bi)
 
     if (bi)
     {
-	// FIXME-3 setCursor (Qt::ArrowCursor);  //Still needed?
-
 	QString redosel=getSelectString(bi);
 	newbi=addNewBranchInt (bi,pos-2);
 	QString undosel=getSelectString(newbi);
@@ -2518,7 +2515,6 @@ BranchItem* VymModel::addNewBranch(int pos,BranchItem *bi)
 		QString ("Add new branch to %1").arg(getObjectName(bi)));	
 
 	    reposition();
-	    // emitSelectionChanged(); FIXME-3
 	    latestAddedItem=newbi;
 	    // In Network mode, the client needs to know where the new branch is,
 	    // so we have to pass on this information via saveState.
@@ -5138,7 +5134,7 @@ void VymModel::selectMapBackgroundImage ()  // FIXME-3 for using background imag
     }
 }   
 
-void VymModel::setMapBackgroundImage (const QString &fn)    //FIXME-3 missing savestate, move to ME
+void VymModel::setMapBackgroundImage (const QString &fn)    //FIXME-4 missing savestate, move to ME
 {
     /*
     QColor oldcol=mapEditor->getScene()->backgroundBrush().color();
