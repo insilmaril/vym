@@ -57,7 +57,7 @@
 \title{
     \includegraphics[width=8cm]{images/vym-logo-new.png}
     \\
-VYM \\ -- \\View Your Mind\\ {\small Version 1.13.35}}
+VYM \\ -- \\View Your Mind\\ {\small Version 1.13.38}}
 \author{\textcopyright Uwe Drechsel  }
 
 
@@ -482,15 +482,23 @@ move a branch up or down in a subtree by
     \item pressing \key{\ua} and \key {\da}
     \item selecting Edit \ra Move branch
     \item clicking on the toolbar buttons:
+\end{itemize}
         \begin{center}
             \includegraphics[width=1.5cm]{images/move-buttons.png}
         \end{center}    
-\end{itemize}
 %tipp
 There is yet another way to move branches: If you press \key{Shift} or
 \key{Ctrl} while moving with the mouse, the branch will be added above
 or below the one the mouse pointer is over. This can also be used to
 reorder branches in a map.
+
+Another special way to move or select branches are {\em targets}, see
+\ref{targets}. Branches with targets use this flag:
+\begin{center}
+    \includegraphics[width=0.5cm]{images/flag-target.png}
+    \label{propwindow}
+\end{center}
+
 
 \subsection{Colours and Images - Using the right side of your brain}
 \subsubsection*{Change colour of a heading}
@@ -1000,6 +1008,23 @@ part\rq.
 
 
 \section{Advanced usage}
+
+\subsection{Quickly sorting branches or postponing actions} \label{targets}
+Sometimes it's very handy to have a small number of shortcuts to quickly
+select a certain branch or move something somewhere and proceed with
+next item. This can be used for quick sorting to a number of
+destination. For example if used in timeplanning, you could quickly move something
+to "next tuesday". The destinations are called {\em targets} and are
+marked with 
+\begin{center}
+    \includegraphics[width=0.5cm]{images/flag-target.png}
+    \label{propwindow}
+\end{center}
+The target flag is toggled with \key{T}. If you want to "Goto" a target,
+press \key{G}. Similar if you want to "Move" a branch, press \key{M}.
+A context menu will open and lets you select the target.
+
+
 
 \subsection{Properties of an object} 
 For any branch you can open a satellite window (see \ref{satellite}):
