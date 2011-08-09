@@ -44,8 +44,6 @@ QString convertToRel (const QString &src, const QString &dst)
 
 	// Now take care of paths where we have to go back first
 	int srcsep=s.count("/");
-	int dstsep=d.count("/");
-	// find path to go up first and then back to dst
 	while (srcsep > 0 )
 	{
 	    d="../"+d;

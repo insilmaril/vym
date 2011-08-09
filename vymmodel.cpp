@@ -112,7 +112,7 @@ void VymModel::init ()
     autosaveTimer=new QTimer (this);
     connect(autosaveTimer, SIGNAL(timeout()), this, SLOT(autosave()));
 
-    fileChangedTimer=new QTimer (this);	/FIXME-4 use QFileSystemWatcher
+    fileChangedTimer=new QTimer (this);	
     fileChangedTimer->start(3000);
     connect(fileChangedTimer, SIGNAL(timeout()), this, SLOT(fileChanged()));
 
