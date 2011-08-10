@@ -1396,6 +1396,7 @@ void MapEditor::mouseMoveEvent(QMouseEvent* e)
 	movingVec.setY(-p.y() + movingObj_start.y() );
 	horizontalScrollBar()->setSliderPosition((int)( movingCont_start.x()+movingVec.x() ));
 	verticalScrollBar()->setSliderPosition((int)( movingCont_start.y()+movingVec.y() ) );
+	scrollBarPosAnimation.stop();	// Avoid flickering
     }
     QGraphicsView::mouseMoveEvent (e);	
 }
