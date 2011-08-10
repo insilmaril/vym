@@ -808,15 +808,15 @@ void VymModel::importDirInt(BranchItem *dst, QDir d)
     {
 	int beginDepth=selbi->depth();
 
-	// Traverse directories
-	d.setFilter( QDir::Dirs| QDir::Hidden | QDir::NoSymLinks );
+	d.setFilter(QDir::AllEntries | QDir::Hidden);
 	QFileInfoList list = d.entryInfoList();
 	QFileInfo fi;
 
+	// Traverse directories
 	for (int i = 0; i < list.size(); ++i) 
 	{
 	    fi=list.at(i);
-	    if (fi.fileName() != "." && fi.fileName() != ".." )
+	    if (fi.isDir() && fi.fileName() != "." && fi.fileName() != ".." )
 	    {
 		bi=addNewBranchInt(dst,-2);
 		bi->setHeading (fi.fileName() );   
@@ -832,19 +832,19 @@ void VymModel::importDirInt(BranchItem *dst, QDir d)
 		emitDataHasChanged(bi);
 	    }	
 	}	
-	// Traverse files   //FIXME-2 problems loading .files
-	d.setFilter( QDir::Files| QDir::Hidden | QDir::NoSymLinks );
-	list = d.entryInfoList();
 
 	for (int i = 0; i < list.size(); ++i) 
 	{
 	    fi=list.at(i);
-	    bi=addNewBranchInt (dst,-2);
-	    bi->setHeading (fi.fileName() );
-	    bi->setHeadingColor (QColor("black"));
-	    if (fi.fileName().right(4) == ".vym" )
-		bi->setVymLink (fi.filePath());
-	    emitDataHasChanged(bi);
+	    if (fi.isFile())
+	    {
+		bi=addNewBranchInt (dst,-2);
+		bi->setHeading (fi.fileName() );
+		bi->setHeadingColor (QColor("black"));
+		if (fi.fileName().right(4) == ".vym" )
+		    bi->setVymLink (fi.filePath());
+		emitDataHasChanged(bi);
+	    }
 	}   
 
 	// Scroll at least some stuff
