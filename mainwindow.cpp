@@ -2204,6 +2204,7 @@ ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode, const FileType &ftyp
 		}
 		actionFilePrint->setEnabled (true);
 	    }	
+	    vm->emitShowSelection();
 	    statusBar()->showMessage( "Loaded " + fn, statusbarTime );
 	}   
     }
