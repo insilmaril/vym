@@ -3049,7 +3049,7 @@ void Main::editURL()
     {
 	QInputDialog dia (this);
 	dia.setLabelText (tr("Enter URL:"));
-	dia.setWindowTitle ("VYM");
+	dia.setWindowTitle (vymName);
 	dia.setInputMode (QInputDialog::TextInput);
 	TreeItem *selti=m->getSelectedItem();
 	if (selti) dia.setTextValue (selti->getURL());
@@ -3062,7 +3062,34 @@ void Main::editURL()
 void Main::editLocalURL()
 {
     VymModel *m=currentModel();
-    if (m) m->editLocalURL();
+    if (m) 
+    {
+	TreeItem *selti=m->getSelectedItem();
+	if (selti)
+	{	    
+	    QStringList filters;
+	    filters <<"All files (*)";
+	    filters << tr("HTML","Filedialog") + " (*.html,*.htm)";
+	    filters << tr("Text","Filedialog") + " (*.txt)";
+	    filters << tr("Spreadsheet","Filedialog") + " (*.odp,*.sxc)";
+	    filters << tr("Textdocument","Filedialog") +" (*.odw,*.sxw)";
+	    filters << tr("Images","Filedialog") + " (*.png *.bmp *.xbm *.jpg *.png *.xpm *.gif *.pnm)";
+	    QFileDialog fd( NULL,vymName+" - " +tr("Set URL to a local file")); 
+	    fd.setFilters (filters);
+	    fd.setWindowTitle(vymName+" - " +tr("Set URL to a local file"));
+	    fd.setDirectory (lastMapDir);
+	    fd.setAcceptMode (QFileDialog::AcceptOpen);
+	    if (! selti->getVymLink().isEmpty() )
+		fd.selectFile( selti->getURL() );
+	    fd.show();
+
+	    if ( fd.exec() == QDialog::Accepted &&!fd.selectedFiles().isEmpty() )
+	    {
+		lastMapDir=QDir (fd.directory().path());
+		m->setURL (fd.selectedFiles().first() );
+	    }
+	}
+    }
 }
 
 void Main::editHeading2URL()
@@ -3189,7 +3216,31 @@ void Main::editVymLink()
 {
     VymModel *m=currentModel();
     if (m)
-	m->editVymLink();   
+    {
+	BranchItem *bi=m->getSelectedBranch();
+	if (bi)
+	{	    
+	    QStringList filters;
+	    filters <<"VYM map (*.vym)";
+	    QFileDialog fd;
+	    fd.setWindowTitle (vymName+" - " +tr("Link to another map"));
+	    fd.setFilters (filters);
+	    fd.setWindowTitle(vymName+" - " +tr("Link to another map"));
+	    fd.setDirectory (lastMapDir);
+	    fd.setAcceptMode (QFileDialog::AcceptOpen);
+	    if (! bi->getVymLink().isEmpty() )
+		fd.selectFile( bi->getVymLink() );
+	    fd.show();
+
+	    QString fn;
+	    if ( fd.exec() == QDialog::Accepted &&!fd.selectedFiles().isEmpty() )
+	    {
+		QString fn=fd.selectedFiles().first();
+		lastMapDir=QDir (fd.directory().path());
+		m->setVymLink (fn);
+	    }
+	}
+    }
 }
 
 void Main::editDeleteVymLink()

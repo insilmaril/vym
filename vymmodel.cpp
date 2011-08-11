@@ -800,8 +800,10 @@ void VymModel::saveFloatImage ()
 }
 
 
-void VymModel::importDirInt(BranchItem *dst, QDir d)
+void VymModel::importDirInt(BranchItem *dst, QDir d) 
 {
+    bool oldSaveState=blockSaveState;
+    blockSaveState=true;
     BranchItem *selbi=getSelectedBranch();
     BranchItem *bi;
     if (selbi)
@@ -851,6 +853,7 @@ void VymModel::importDirInt(BranchItem *dst, QDir d)
 	if (dst->branchCount()>1 && dst->depth()-beginDepth>2)
 	    dst->toggleScroll();
     }	    
+    blockSaveState=oldSaveState;
 }
 
 void VymModel::importDirInt (const QString &s)	
@@ -3223,36 +3226,6 @@ void VymModel::note2URLs()
     }
 }
 
-void VymModel::editLocalURL()	//FIXME-3 move to MainWindow
-{
-    TreeItem *selti=getSelectedItem();
-    if (selti)
-    {	    
-	QStringList filters;
-	filters <<"All files (*)";
-	filters << tr("HTML","Filedialog") + " (*.html,*.htm)";
-	filters << tr("Text","Filedialog") + " (*.txt)";
-	filters << tr("Spreadsheet","Filedialog") + " (*.odp,*.sxc)";
-	filters << tr("Textdocument","Filedialog") +" (*.odw,*.sxw)";
-	filters << tr("Images","Filedialog") + " (*.png *.bmp *.xbm *.jpg *.png *.xpm *.gif *.pnm)";
-	QFileDialog fd( NULL,vymName+" - " +tr("Set URL to a local file")); 
-	fd.setFilters (filters);
-	fd.setWindowTitle(vymName+" - " +tr("Set URL to a local file"));
-	fd.setDirectory (lastMapDir);
-	fd.setAcceptMode (QFileDialog::AcceptOpen);
-	if (! selti->getVymLink().isEmpty() )
-	    fd.selectFile( selti->getURL() );
-	fd.show();
-
-	if ( fd.exec() == QDialog::Accepted &&!fd.selectedFiles().isEmpty() )
-	{
-	    lastMapDir=QDir (fd.directory().path());
-	    setURL (fd.selectedFiles().first() );
-	}
-    }
-}
-
-
 void VymModel::editHeading2URL() 
 {
     TreeItem *selti=getSelectedItem();
@@ -3336,48 +3309,20 @@ void VymModel::editFATE2URL()
     }
 }   
 
-void VymModel::editVymLink()
+void VymModel::setVymLink (const QString &s)
 {
     BranchItem *bi=getSelectedBranch();
     if (bi)
-    {	    
-	QStringList filters;
-	filters <<"VYM map (*.vym)";
-	QFileDialog fd;
-	fd.setWindowTitle (vymName+" - " +tr("Link to another map"));
-	fd.setFilters (filters);
-	fd.setWindowTitle(vymName+" - " +tr("Link to another map"));
-	fd.setDirectory (lastMapDir);
-	fd.setAcceptMode (QFileDialog::AcceptOpen);
-	if (! bi->getVymLink().isEmpty() )
-	    fd.selectFile( bi->getVymLink() );
-	fd.show();
-
-	QString fn;
-	if ( fd.exec() == QDialog::Accepted &&!fd.selectedFiles().isEmpty() )
-	{
-	    QString fn=fd.selectedFiles().first();
-	    lastMapDir=QDir (fd.directory().path());
-	    saveState(
-		bi,
-		"setVymLink (\""+bi->getVymLink()+"\")",
-		bi,
-		"setVymLink (\""+fn+"\")",
-		QString("Set vymlink of %1 to %2").arg(getObjectName(bi)).arg(fn)
-	    );	
-	    setVymLink (fn);
-	}
-    }
-}
-
-void VymModel::setVymLink (const QString &s)
-{
-    // Internal function, no saveState needed
-    TreeItem *selti=getSelectedItem();
-    if (selti)
     {
-	selti->setVymLink(s);
-	emitDataHasChanged (selti);
+	saveState(
+	    bi,
+	    "setVymLink (\""+bi->getVymLink()+"\")", 
+	    bi,
+	    "setVymLink (\""+s+"\")", 
+	    QString("Set vymlink of %1 to %2").arg(getObjectName(bi)).arg(s)
+	);  
+	bi->setVymLink(s);
+	emitDataHasChanged (bi);
 	reposition();
 	emitSelectionChanged();
     }

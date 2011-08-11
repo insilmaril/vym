@@ -440,12 +440,10 @@ public:
 
 
     void note2URLs();			    // get URLs from note
-    void editLocalURL();		    // edit URL to local file
     void editHeading2URL();		    // copy heading to URL
     void editBugzilla2URL();		    // create URL to Bugzilla
     void getBugzillaData(bool subtree);	    // get data from Novell Bugzilla
     void editFATE2URL();		    // create URL to FATE
-    void editVymLink();			    // edit link to another map
     void setVymLink (const QString &);	// Set vymLink for selection
     void deleteVymLink();		    // delete link to another map
     QString getVymLink();		    // return path to map
