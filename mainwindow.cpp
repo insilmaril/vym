@@ -3044,7 +3044,18 @@ void Main::editNote2URLs()
 void Main::editURL()
 {
     VymModel *m=currentModel();
-    if (m) m->editURL();
+    if (m) 
+    {
+	QInputDialog dia (this);
+	dia.setLabelText (tr("Enter URL:"));
+	dia.setWindowTitle ("VYM");
+	dia.setInputMode (QInputDialog::TextInput);
+	TreeItem *selti=m->getSelectedItem();
+	if (selti) dia.setTextValue (selti->getURL());
+	dia.resize(width()*0.8,0);
+
+	if ( dia.exec() ) m->setURL(dia.textValue() );
+    }
 }
 
 void Main::editLocalURL()

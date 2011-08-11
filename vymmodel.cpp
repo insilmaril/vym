@@ -3223,23 +3223,7 @@ void VymModel::note2URLs()
     }
 }
 
-void VymModel::editURL()    
-{
-    TreeItem *selti=getSelectedItem();
-    if (selti)
-    {	    
-	bool ok;
-	QString text = QInputDialog::getText(
-	    NULL,
-	    "VYM", tr("Enter URL:"), QLineEdit::Normal,
-	    selti->getURL(), &ok);
-	if ( ok) 
-	    // user entered something and pressed OK
-	    setURL(text);
-    }
-}
-
-void VymModel::editLocalURL()
+void VymModel::editLocalURL()	//FIXME-3 move to MainWindow
 {
     TreeItem *selti=getSelectedItem();
     if (selti)

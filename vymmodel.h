@@ -440,7 +440,6 @@ public:
 
 
     void note2URLs();			    // get URLs from note
-    void editURL();			    // edit URL
     void editLocalURL();		    // edit URL to local file
     void editHeading2URL();		    // copy heading to URL
     void editBugzilla2URL();		    // create URL to Bugzilla
