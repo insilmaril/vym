@@ -546,7 +546,6 @@ ErrorCode VymModel::loadMap (
 
     if (mapEditor) mapEditor->setZoomFactorTarget (zoomFactor);
 
-    //Update view (scene()->update() is not enough)
     qApp->processEvents();  // Update view (scene()->update() is not enough)
     return err;
 }
@@ -5278,7 +5277,7 @@ void VymModel::moveRel (const double &x, const double &y)
 }
 
 
-void VymModel::animate()    
+void VymModel::animate()   
 {
     animationTimer->stop();
     BranchObj *bo;
@@ -5298,10 +5297,9 @@ void VymModel::animate()
 	i++;
     } 
     QItemSelection sel=selModel->selection();
-    emit (selectionChanged(sel,sel));
+    emit (selectionChanged(sel,sel));	
 
-    mapEditor->getScene()->update();
-    if (!animObjList.isEmpty()) animationTimer->start();
+    if (!animObjList.isEmpty()) animationTimer->start(animationInterval);
 }
 
 
@@ -5675,8 +5673,7 @@ bool VymModel::reselect()
 
 void VymModel::emitShowSelection()  
 {
-    if (!blockReposition)
-	emit (showSelection() );
+    if (!blockReposition) emit (showSelection() );
 }
 
 void VymModel::emitNoteHasChanged (TreeItem *ti)

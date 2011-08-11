@@ -130,7 +130,7 @@ void VymView::initFocus()
 
 void VymView::changeSelection (const QItemSelection &newsel, const QItemSelection &oldsel)  
 {
-    //cout << "VV::changeSelection   newsel.count="<<newsel.indexes().count()<<endl;
+    //qDebug() << "VV::changeSelection   newsel.count="<<newsel.indexes().count();
 
     mainWindow->changeSelection (model,newsel,oldsel);	
     mapEditor->updateSelection (newsel,oldsel);

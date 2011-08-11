@@ -1628,7 +1628,10 @@ void MapEditor::wheelEvent(QWheelEvent* e)
 	else    
 	    setZoomFactorTarget (zoomFactorTarget*0.85);
     } else	
+    {
+	scrollBarPosAnimation.stop();
 	QGraphicsView::wheelEvent (e);
+    }
 }
 
 void MapEditor::focusOutEvent (QFocusEvent*)
