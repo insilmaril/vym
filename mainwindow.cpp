@@ -1337,10 +1337,11 @@ void Main::setupFlagActions()
     flag=new Flag(flagsPath+"flag-cross-red.png");
     flag->setGroup("standard-status");
     setupFlag (flag,standardFlagsToolbar,"cross-red",tr("Status - missing, not started","Standardflag"));
-    flag->unsetGroup();
 
     flag=new Flag(flagsPath+"flag-stopsign.png");
+    flag->setGroup("standard-status");
     setupFlag (flag,standardFlagsToolbar,"stopsign",tr("This won't work!","Standardflag"));
+    flag->unsetGroup();
 
     flag=new Flag(flagsPath+"flag-smiley-good.png");
     flag->setGroup("standard-smiley");
