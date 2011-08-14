@@ -559,7 +559,7 @@ void Main::setupFileActions()
 //Edit Actions
 void Main::setupEditActions()
 {
-    QMenu *editMenu = menuBar()->addMenu( tr("&Edit","Edit menu") );
+    QMenu *editMenu = menuBar()->addMenu( tr("E&dit","Edit menu") );
 
     QAction *a;
     a = new QAction( QPixmap( iconPath+"undo.png"), tr( "&Undo","Edit menu" ),this);
