@@ -441,22 +441,21 @@ QRectF MapEditor::getTotalBBox()
 }
 
 
-QImage MapEditor::getImage( QPointF &offset)
+QImage MapEditor::getImage( QPointF &offset) 
 {
-    //mapScene->update();   //FIXME-3 needed?
-
     QRectF mapRect=getTotalBBox();
     
     offset=QPointF (mapRect.x(), mapRect.y() );
-    QImage pix (mapRect.width()+2, mapRect.height()+2,QImage::Format_RGB32);
+    int d=20;	// border
+    QImage pix (mapRect.width()+d, mapRect.height()+d,QImage::Format_RGB32);
 
     QPainter pp (&pix);
-
     pp.setRenderHints(renderHints());
     mapScene->render (	&pp, 
-	QRectF(0,0,mapRect.width()+2,mapRect.height()+2),
-	QRectF(mapRect.x(),mapRect.y(),mapRect.width()+2,mapRect.height()+2));
-	//mapRect );
+	// Destination:
+	QRectF(0,0,mapRect.width()+d,mapRect.height()+d),   
+	// Source in scene:
+	QRectF(mapRect.x()-d/2,mapRect.y()-d/2,mapRect.width()+d,mapRect.height()+d));
     return pix;
 }
 
@@ -1363,7 +1362,7 @@ void MapEditor::mouseMoveEvent(QMouseEvent* e)
 	    QItemSelection sel=model->getSelectionModel()->selection();
 	    updateSelection(sel,sel);	// position has changed
 
-	    //scrollTo (model->index (seli->parent()));	
+	    //scrollTo (model->index (seli->parent()));	//FIXME-3
 
 	} // no FloatImageObj
 

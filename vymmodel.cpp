@@ -4590,6 +4590,7 @@ QPointF VymModel::exportImage(QString fname, bool askName, QString format)
 		QMessageBox::critical (0,tr("Critical Error"),tr("Unsupported format in %1").arg(fname));
 		return QPointF();   //FIXME-3 not needed
 	    }	
+	    setChanged();
 	} 
     }
 
@@ -4605,7 +4606,6 @@ QPointF VymModel::exportImage(QString fname, bool askName, QString format)
     settings.setLocalValue ( filePath, "/export/last/command",cmd);
     settings.setLocalValue ( filePath, "/export/last/description","Image");
     mainWindow->statusMessage(cmd + ": " + fname);
-    setChanged();
 
     return offset;
 }
@@ -4634,6 +4634,7 @@ QPointF VymModel::exportPDF (QString fname, bool askName)
 	    fl=fd.selectedFiles();
 	    fname=fl.first();
 	} 
+	setChanged();
     }
 
     setExportMode (true);
@@ -4678,6 +4679,7 @@ QPointF VymModel::exportSVG (QString fname, bool askName)
 	    fl=fd.selectedFiles();
 	    fname=fl.first();
 	} 
+	setChanged();
     }
 
     setExportMode (true);
@@ -4723,7 +4725,8 @@ void VymModel::exportXML(QString dir, bool askForName)
 	{
 	    qDebug()<<"exportXML returning2";
 	    return;
-	    }
+	}
+	setChanged();
     }
 
     // Hide stuff during export, if settings want this
@@ -4840,12 +4843,6 @@ void VymModel::exportLast()
     QString path;
     QString command;
     QString desc;
-/* FIXME-3
-    qDebug()<<"vm::exportLast";
-    qDebug()<<exportDir;
-    qDebug()<<command;
-    qDebug()<<desc;
-*/  
     QString s;
     if (exportLastAvailable(desc,command,path) )
 	runScript (QString ("%1 (\"%2\")").arg(command).arg(path) );

@@ -110,6 +110,7 @@ bool ExportBase::execDialog(const QString &overwriteWarning)
 	}
 	outDir=fd.directory();
 	outputFile=fn;
+	if (model) model->setChanged();
 	return true;
     }
     return false;
@@ -157,8 +158,6 @@ void ExportAO::doExport()
     settings.setLocalValue (model->getFilePath(),"/export/last/exportDir",outputFile);
     settings.setLocalValue ( model->getFilePath(), "/export/last/command","exportAO");
     settings.setLocalValue ( model->getFilePath(), "/export/last/description","A&O report");
-    model->setChanged();
-
 
     QTextStream ts( &file );	// use LANG decoding here...
 
@@ -640,7 +639,11 @@ void ExportHTML::doExport(bool useDialog)
     dia.setFilePath (model->getFilePath());
     dia.setMapName (model->getMapName());
     dia.readSettings();
-    if (useDialog && dia.exec()!=QDialog::Accepted) return;
+    if (useDialog)
+    {
+	if (dia.exec()!=QDialog::Accepted) return;
+	model->setChanged();
+    }
 
     // Check if destination is not empty
     QDir d=dia.getDir();
@@ -782,7 +785,6 @@ void ExportHTML::doExport(bool useDialog)
     settings.setLocalValue ( model->getFilePath(), "/export/last/command","exportHTML");
     settings.setLocalValue ( model->getFilePath(), "/export/last/description","HTML");
     mainWindow->statusMessage(cmd + ": " + outputFile);
-    model->setChanged();
 
     dia.saveSettings();
     model->setExportMode (false);
