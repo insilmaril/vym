@@ -126,6 +126,10 @@
         <source>Include children</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Cloud</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>EditXLinkDialog</name>
@@ -194,7 +198,7 @@
     </message>
     <message>
         <source>show output of external scripts</source>
-        <translation type="unfinished">顯示外部命令稿的輸出</translation>
+        <translation type="obsolete">顯示外部命令稿的輸出</translation>
     </message>
     <message>
         <source>Stylesheets</source>
@@ -1661,7 +1665,7 @@ exists already. Do you want to</source>
     <message>
         <source>&amp;Edit</source>
         <comment>Edit menu</comment>
-        <translation type="unfinished">編輯(&amp;E)</translation>
+        <translation type="obsolete">編輯(&amp;E)</translation>
     </message>
     <message>
         <source>&amp;Undo</source>
@@ -1931,11 +1935,6 @@ exists already. Do you want to</source>
         <source>F&amp;ormat</source>
         <comment>Format menu</comment>
         <translation type="unfinished">格式(&amp;O)</translation>
-    </message>
-    <message>
-        <source>Format toolbar</source>
-        <comment>Format Toolbar name</comment>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Pic&amp;k color</source>
@@ -2567,6 +2566,83 @@ to confusion when finishing working with vym.Do you want to</source>
         <source>Export in last used format (%1) to: %2</source>
         <comment>status tip</comment>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Restore last session</source>
+        <comment>File menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>E&amp;dit</source>
+        <comment>Edit menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Format shortcuts</source>
+        <comment>Shortcut group</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select default font</source>
+        <comment>Branch attribute</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Toolbars</source>
+        <comment>Toolbars overview in view menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Undo and clipboard toolbar</source>
+        <comment>Toolbar for redo/undo and clipboard</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>URLs and vymLinks toolbar</source>
+        <comment>Toolbar for URLs and vymlinks</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Colors toolbar</source>
+        <comment>Colors toolbar name</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enter URL:</source>
+        <translation type="unfinished">輸入 URL：</translation>
+    </message>
+    <message>
+        <source>HTML</source>
+        <comment>Filedialog</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Text</source>
+        <comment>Filedialog</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Spreadsheet</source>
+        <comment>Filedialog</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Textdocument</source>
+        <comment>Filedialog</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Images</source>
+        <comment>Filedialog</comment>
+        <translation type="unfinished">圖像</translation>
+    </message>
+    <message>
+        <source>Set URL to a local file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Link to another map</source>
+        <translation type="unfinished">連結到另外的圖譜</translation>
     </message>
 </context>
 <context>
@@ -3510,31 +3586,12 @@ Do you want to reload that map with the new file?</source>
     </message>
     <message>
         <source>Enter URL:</source>
-        <translation type="unfinished">輸入 URL：</translation>
-    </message>
-    <message>
-        <source>Text</source>
-        <comment>Filedialog</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Spreadsheet</source>
-        <comment>Filedialog</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Textdocument</source>
-        <comment>Filedialog</comment>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">輸入 URL：</translation>
     </message>
     <message>
         <source>Images</source>
         <comment>Filedialog</comment>
-        <translation type="unfinished">圖像</translation>
-    </message>
-    <message>
-        <source>Set URL to a local file</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">圖像</translation>
     </message>
     <message>
         <source>Contacting Bugzilla...</source>
@@ -3543,7 +3600,7 @@ Do you want to reload that map with the new file?</source>
     </message>
     <message>
         <source>Link to another map</source>
-        <translation type="unfinished">連結到另外的圖譜</translation>
+        <translation type="obsolete">連結到另外的圖譜</translation>
     </message>
     <message>
         <source>Export map as image</source>
@@ -3559,11 +3616,6 @@ Do you want to reload that map with the new file?</source>
     </message>
     <message>
         <source>Load background image</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>HTML</source>
-        <comment>Filedialog</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3595,7 +3647,7 @@ Do you want to reload that map with the new file?</source>
     <name>WarningDialog</name>
     <message>
         <source>VYM - Warning : Foo...</source>
-        <translation>VYM - 警告：Foo…</translation>
+        <translation type="obsolete">VYM - 警告：Foo…</translation>
     </message>
     <message>
         <source>textLabel</source>
@@ -3620,6 +3672,10 @@ Do you want to reload that map with the new file?</source>
     <message>
         <source>Ok</source>
         <translation>確定</translation>
+    </message>
+    <message>
+        <source>Dialog</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>
