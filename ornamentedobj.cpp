@@ -185,7 +185,6 @@ void OrnamentedObj::positionContents()	//FIXME-3 called multiple times for each 
     double y=absPos.y();
     double dp=frame->getPadding();
     double dp2=dp/2;
-    double dp4=dp/4;
     double ox;
 //    if (orientation==LinkableMapObj::LeftOfCenter)
 //	ox=leftPad - dp;

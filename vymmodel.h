@@ -657,6 +657,9 @@ public slots:
 ////////////////////////////////////////////
 private:
     TreeItem *latestAddedItem;		    // latest added object, reset on setChanged()
+    QList <uint> selectionHistory;
+    int currentSelection;
+    bool keepSelectionHistory;			    // If set, selection doesn't change history
 
 public:
     void setSelectionModel(QItemSelectionModel *);	// Set common selectionModel
@@ -673,6 +676,10 @@ public:
     bool select (const QModelIndex &index); //! Select by ModelIndex
     void unselect();
     bool reselect();
+    bool canSelectPrevious();
+    bool selectPrevious();
+    bool canSelectNext();
+    bool selectNext();
 
     void emitShowSelection();		    //!< Show selection in all views
 signals:

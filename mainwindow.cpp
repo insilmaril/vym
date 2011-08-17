@@ -249,6 +249,7 @@ Main::Main(QWidget* parent, Qt::WFlags f) : QMainWindow(parent,f)
 
     setupFileActions();
     setupEditActions();
+    setupSelectActions();
     setupFormatActions();
     setupViewActions();
     setupModeActions();
@@ -423,7 +424,7 @@ void Main::setupFileActions()
     actionFileNewCopy=a;
 
     a = new QAction( QPixmap( iconPath+"fileopen.png"), tr( "&Open..." ,"File menu"),this);
-    a->setShortcut ( Qt::CTRL + Qt::Key_O );	    //Open map
+    a->setShortcut ( Qt::CTRL + Qt::Key_L );	    //Open map
     switchboard.addConnection(fileMenu, a,tr("File","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( fileLoad() ) );
     actionFileOpen=a;
@@ -712,14 +713,14 @@ void Main::setupEditActions()
     a = new QAction( QPixmap(iconPath+"editsort.png" ), tr( "Sort children","Edit menu" ), this );
     connect( a, SIGNAL( activated() ), this, SLOT( editSortChildren() ) );
     a->setEnabled (true);
-    a->setShortcut ( Qt::Key_O );		    // Detach branch
+    a->setShortcut ( Qt::Key_O );		    // Sort children
     switchboard.addConnection(editMenu, a,tr("Edit","Shortcut group"));
     actionSortChildren=a;
 
     a = new QAction( QPixmap(iconPath+"editsortback.png" ), tr( "Sort children backwards","Edit menu" ), this );
     connect( a, SIGNAL( activated() ), this, SLOT( editSortBackChildren() ) );
     a->setEnabled (true);
-    a->setShortcut ( Qt::SHIFT + Qt::Key_O );		    // Detach branch
+    a->setShortcut ( Qt::SHIFT + Qt::Key_O );		    // Reverse sort children 
     switchboard.addConnection(editMenu, a,tr("Edit","Shortcut group"));
     actionSortBackChildren=a;	
 
@@ -790,35 +791,6 @@ void Main::setupEditActions()
     a->setShortcut ( Qt::CTRL + Qt::Key_0);	    // Shrink selection
     switchboard.addConnection(editMenu, a,tr("Edit","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( editResetSelectionSize() ) );
-
-    editMenu->addSeparator();
-
-    a = new QAction( QPixmap(flagsPath + "flag-target"), tr( "Toggle target...","Edit menu"), this);
-    a->setShortcut (Qt::SHIFT + Qt::Key_T );			//Goto target
-    switchboard.addConnection(editMenu, a,tr("Edit","Shortcut group"));
-    connect( a, SIGNAL( triggered() ), this, SLOT( editToggleTarget() ) );
-
-    a = new QAction( QPixmap(flagsPath + "flag-target"), tr( "Goto target...","Edit menu"), this);
-    a->setShortcut (Qt::Key_G );			//Goto target
-    switchboard.addConnection(editMenu, a,tr("Edit","Shortcut group"));
-    connect( a, SIGNAL( triggered() ), this, SLOT( editGoToTarget() ) );
-
-    a = new QAction( QPixmap(flagsPath + "flag-target"), tr( "Move to target...","Edit menu"), this);
-    a->setShortcut (Qt::Key_M );			//Goto target
-    switchboard.addConnection(editMenu, a,tr("Edit","Shortcut group"));
-    connect( a, SIGNAL( triggered() ), this, SLOT( editMoveToTarget() ) );
-
-    a = new QAction( QPixmap(iconPath+"find.png"), tr( "Find...","Edit menu"), this);
-    a->setShortcut (Qt::CTRL + Qt::Key_F );		//Find
-    switchboard.addConnection(editMenu, a,tr("Edit","Shortcut group"));
-    connect( a, SIGNAL( triggered() ), this, SLOT( editOpenFindResultWidget() ) );
-
-    a = new QAction( tr( "Find duplicate URLs","Edit menu"), this);
-    a->setShortcut (Qt::SHIFT + Qt::Key_F);		//Find duplicate URLs
-    switchboard.addConnection(a,tr("Edit","Shortcut group"));
-    if (settings.value( "/mainwindow/showTestMenu",false).toBool() ) 
-	editMenu->addAction (a);
-    connect( a, SIGNAL( triggered() ), this, SLOT( editFindDuplicateURLs() ) );
 
     editMenu->addSeparator();
 
@@ -1033,6 +1005,52 @@ void Main::setupEditActions()
     actionViewTogglePropertyWindow=a;
 }
 
+// Select Actions
+void Main::setupSelectActions()
+{
+    QMenu *selectMenu = menuBar()->addMenu( tr("&Select","Select menu") );
+    QAction *a;
+    a = new QAction( QPixmap(flagsPath + "flag-target"), tr( "Toggle target...","Edit menu"), this);
+    a->setShortcut (Qt::SHIFT + Qt::Key_T );			//Goto target
+    switchboard.addConnection(selectMenu, a,tr("Edit","Shortcut group"));
+    connect( a, SIGNAL( triggered() ), this, SLOT( editToggleTarget() ) );
+
+    a = new QAction( QPixmap(flagsPath + "flag-target"), tr( "Goto target...","Edit menu"), this);
+    a->setShortcut (Qt::Key_G );			//Goto target
+    switchboard.addConnection(selectMenu, a,tr("Edit","Shortcut group"));
+    connect( a, SIGNAL( triggered() ), this, SLOT( editGoToTarget() ) );
+
+    a = new QAction( QPixmap(flagsPath + "flag-target"), tr( "Move to target...","Edit menu"), this);
+    a->setShortcut (Qt::Key_M );			//Move to target
+    switchboard.addConnection(selectMenu, a,tr("Edit","Shortcut group"));
+    connect( a, SIGNAL( triggered() ), this, SLOT( editMoveToTarget() ) );
+
+    a = new QAction( QPixmap(iconPath + "selectprevious.png"), tr( "Select previous","Edit menu"), this);
+    a->setShortcut (Qt::CTRL+ Qt::Key_O );	
+    switchboard.addConnection(selectMenu, a,tr("Edit","Shortcut group"));
+    connect( a, SIGNAL( triggered() ), this, SLOT( editSelectPrevious() ) );
+    actionSelectPrevious=a;
+
+    a = new QAction( QPixmap(iconPath + "selectnext.png"), tr( "Select next","Edit menu"), this);
+    a->setShortcut (Qt::CTRL + Qt::Key_I );
+    switchboard.addConnection(selectMenu, a,tr("Edit","Shortcut group"));
+    connect( a, SIGNAL( triggered() ), this, SLOT( editSelectNext() ) );
+    actionSelectNext=a;
+
+    a = new QAction( QPixmap(iconPath+"find.png"), tr( "Find...","Edit menu"), this);
+    a->setShortcut (Qt::CTRL + Qt::Key_F );		//Find
+    switchboard.addConnection(selectMenu, a,tr("Edit","Shortcut group"));
+    connect( a, SIGNAL( triggered() ), this, SLOT( editOpenFindResultWidget() ) );
+
+    a = new QAction( tr( "Find duplicate URLs","Edit menu"), this);
+    a->setShortcut (Qt::SHIFT + Qt::Key_F);		//Find duplicate URLs
+    switchboard.addConnection(a,tr("Edit","Shortcut group"));
+    if (settings.value( "/mainwindow/showTestMenu",false).toBool() ) 
+	selectMenu->addAction (a);
+    connect( a, SIGNAL( triggered() ), this, SLOT( editFindDuplicateURLs() ) );
+
+}
+
 // Format Actions
 void Main::setupFormatActions()
 {
@@ -1238,14 +1256,14 @@ void Main::setupViewActions()
 
     a = new QAction(tr( "Next Map","View action" ), this);
     a->setStatusTip (a->text());
-    a->setShortcut (Qt::ALT + Qt::Key_N );
+    a->setShortcut (Qt::SHIFT+ Qt::Key_Right );
     switchboard.addConnection(a,tr("View shortcuts","Shortcut group"));
     viewMenu->addAction (a);
     connect( a, SIGNAL( triggered() ), this, SLOT(windowNextEditor() ) );
 
     a = new QAction (tr( "Previous Map","View action" ), this );
     a->setStatusTip (a->text());
-    a->setShortcut (Qt::ALT + Qt::Key_P );
+    a->setShortcut (Qt::SHIFT+ Qt::Key_Left );
     switchboard.addConnection(a,tr("View shortcuts","Shortcut group"));
     viewMenu->addAction (a);
     connect( a, SIGNAL( triggered() ), this, SLOT(windowPreviousEditor() ) );
@@ -2787,124 +2805,6 @@ void Main::editCut()
     if (m) m->cut();
 }
 
-void Main::editToggleTarget()  
-{
-    VymModel *m=currentModel();
-    if (m) m->toggleTarget();
-}
-
-void Main::editGoToTarget()  
-{
-    VymModel *m=currentModel();
-    if (m) 
-    {
-	targetsContextMenu->clear();
-
-	ItemList targets=m->getTargets();
-	QMap<uint,QString>::const_iterator i = targets.constBegin();
-	while (i != targets.constEnd()) 
-	{
-	    (targetsContextMenu->addAction (i.value() ) )->setData (i.key());
-	    ++i;
-	}
-	QAction *a=targetsContextMenu->exec (QCursor::pos());
-	if (a) m->select (m->findID (a->data().toUInt() ) );
-    }
-}
-
-void Main::editMoveToTarget()  
-{
-    VymModel *m=currentModel();
-    if (m) 
-    {
-	targetsContextMenu->clear();
-
-	ItemList targets=m->getTargets();
-	QMap<uint,QString>::const_iterator i = targets.constBegin();
-	while (i != targets.constEnd()) 
-	{
-	    (targetsContextMenu->addAction (i.value() ) )->setData (i.key());
-	    ++i;
-	}
-	QAction *a=targetsContextMenu->exec (QCursor::pos());
-	if (a) 
-	{
-	    TreeItem *ti=m->findID (a->data().toUInt());
-	    BranchItem *selbi=m->getSelectedBranch();
-	    if (!selbi) return;
-
-	    if (ti && ti->isBranchLikeType() && selbi)
-	    {
-		BranchItem *pi =selbi->parentBranch();
-		// If branch below exists, select that one
-		// Makes it easier to quickly resort using the MoveTo function
-		BranchItem *below=pi->getBranchNum(selbi->num()+1);
-		LinkableMapObj *lmo=selbi->getLMO();
-		QPointF orgPos;
-		if (lmo) orgPos=lmo->getAbsPos();
-
-		m->relinkBranch ( selbi, (BranchItem*)ti,-1,true,orgPos);
-
-		if (below) 
-		    m->select (below);
-		else    
-		    if (pi) m->select (pi);
-	    }	    
-	}
-    }
-}
-
-void Main::editOpenFindResultWidget()  
-{
-    if (!findResultWidget->parentWidget()->isVisible())
-    {
-//	findResultWidget->parentWidget()->show();
-	findResultWidget->popup();
-    } else 
-	findResultWidget->parentWidget()->hide();
-}
-
-/* FIXME-3 not needed
-void Main::editHideFindWidget()
-{
-    // findWidget hides itself, but we want
-    // to have focus back at mapEditor usually
-    MapEditor *me=currentMapEditor();
-    if (me) me->setFocus();
-}
-*/
-
-#include "findwidget.h" // FIXME-3 Integrated FRW and FW
-void Main::editFindNext(QString s)  
-{
-    Qt::CaseSensitivity cs=Qt::CaseInsensitive;
-    VymModel *m=currentModel();
-    if (m) 
-    {
-	if (m->findAll (findResultWidget->getResultModel(),s,cs) )
-	    findResultWidget->setStatus (FindWidget::Success);
-	else
-	    findResultWidget->setStatus (FindWidget::Failed);
-    }
-}
-
-void Main::editFindDuplicateURLs() //FIXME-4 feature: use FindResultWidget for display
-{
-    VymModel *m=currentModel();
-    if (m) m->findDuplicateURLs();
-}
-
-void Main::updateQueries (VymModel* m) //FIXME-3 disabled for now to avoid selection in FRW
-{
- //   qDebug() << "MW::updateQueries m="<<m<<"   cM="<<currentModel();
-    return;
-    if (m && currentModel()==m)
-    {
-	QString s=findResultWidget->getFindText();
-	if (!s.isEmpty() ) editFindNext (s);
-    }	
-}
-
 void Main::openTabs(QStringList urls)
 {
     if (!urls.isEmpty())
@@ -3577,6 +3477,136 @@ void Main::editFollowXLink(QAction *a)
 	m->followXLink(branchXLinksContextMenuFollow->actions().indexOf(a));
 }
 
+void Main::editToggleTarget()  
+{
+    VymModel *m=currentModel();
+    if (m) m->toggleTarget();
+}
+
+void Main::editGoToTarget()  
+{
+    VymModel *m=currentModel();
+    if (m) 
+    {
+	targetsContextMenu->clear();
+
+	ItemList targets=m->getTargets();
+	QMap<uint,QString>::const_iterator i = targets.constBegin();
+	while (i != targets.constEnd()) 
+	{
+	    (targetsContextMenu->addAction (i.value() ) )->setData (i.key());
+	    ++i;
+	}
+	QAction *a=targetsContextMenu->exec (QCursor::pos());
+	if (a) m->select (m->findID (a->data().toUInt() ) );
+    }
+}
+
+void Main::editMoveToTarget()  
+{
+    VymModel *m=currentModel();
+    if (m) 
+    {
+	targetsContextMenu->clear();
+
+	ItemList targets=m->getTargets();
+	QMap<uint,QString>::const_iterator i = targets.constBegin();
+	while (i != targets.constEnd()) 
+	{
+	    (targetsContextMenu->addAction (i.value() ) )->setData (i.key());
+	    ++i;
+	}
+	QAction *a=targetsContextMenu->exec (QCursor::pos());
+	if (a) 
+	{
+	    TreeItem *ti=m->findID (a->data().toUInt());
+	    BranchItem *selbi=m->getSelectedBranch();
+	    if (!selbi) return;
+
+	    if (ti && ti->isBranchLikeType() && selbi)
+	    {
+		BranchItem *pi =selbi->parentBranch();
+		// If branch below exists, select that one
+		// Makes it easier to quickly resort using the MoveTo function
+		BranchItem *below=pi->getBranchNum(selbi->num()+1);
+		LinkableMapObj *lmo=selbi->getLMO();
+		QPointF orgPos;
+		if (lmo) orgPos=lmo->getAbsPos();
+
+		m->relinkBranch ( selbi, (BranchItem*)ti,-1,true,orgPos);
+
+		if (below) 
+		    m->select (below);
+		else    
+		    if (pi) m->select (pi);
+	    }	    
+	}
+    }
+}
+
+void Main::editSelectPrevious()  
+{
+    VymModel *m=currentModel();
+    if (m) m->selectPrevious();
+}
+
+void Main::editSelectNext()  
+{
+    VymModel *m=currentModel();
+    if (m) m->selectNext();
+}
+
+void Main::editOpenFindResultWidget()  
+{
+    if (!findResultWidget->parentWidget()->isVisible())
+    {
+//	findResultWidget->parentWidget()->show();
+	findResultWidget->popup();
+    } else 
+	findResultWidget->parentWidget()->hide();
+}
+
+/* FIXME-3 not needed
+void Main::editHideFindWidget()
+{
+    // findWidget hides itself, but we want
+    // to have focus back at mapEditor usually
+    MapEditor *me=currentMapEditor();
+    if (me) me->setFocus();
+}
+*/
+
+#include "findwidget.h" // FIXME-3 Integrated FRW and FW
+void Main::editFindNext(QString s)  
+{
+    Qt::CaseSensitivity cs=Qt::CaseInsensitive;
+    VymModel *m=currentModel();
+    if (m) 
+    {
+	if (m->findAll (findResultWidget->getResultModel(),s,cs) )
+	    findResultWidget->setStatus (FindWidget::Success);
+	else
+	    findResultWidget->setStatus (FindWidget::Failed);
+    }
+}
+
+void Main::editFindDuplicateURLs() //FIXME-4 feature: use FindResultWidget for display
+{
+    VymModel *m=currentModel();
+    if (m) m->findDuplicateURLs();
+}
+
+void Main::updateQueries (VymModel* m) //FIXME-3 disabled for now to avoid selection in FRW
+{
+ //   qDebug() << "MW::updateQueries m="<<m<<"   cM="<<currentModel();
+    return;
+    if (m && currentModel()==m)
+    {
+	QString s=findResultWidget->getFindText();
+	if (!s.isEmpty() ) editFindNext (s);
+    }	
+}
+
 
 void Main::formatSelectColor()
 {
@@ -4041,6 +4071,18 @@ void Main::updateActions()
 	pix.fill( m->getMapDefLinkColor() );
 	actionFormatLinkColor->setIcon( pix );
 
+	// Selection history
+	if (m->canSelectPrevious() )
+	    actionSelectPrevious->setEnabled(true);
+	 else
+	    actionSelectPrevious->setEnabled(false);
+	    
+
+	if (m->canSelectNext() )
+	    actionSelectNext->setEnabled(true);
+	else    
+	    actionSelectNext->setEnabled(false);
+	    
 	// History window
 	historyWindow->setWindowTitle (vymName + " - " +tr("History for %1","Window Caption").arg(m->getFileName()));
 

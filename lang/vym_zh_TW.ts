@@ -2644,6 +2644,21 @@ to confusion when finishing working with vym.Do you want to</source>
         <source>Link to another map</source>
         <translation type="unfinished">連結到另外的圖譜</translation>
     </message>
+    <message>
+        <source>&amp;Select</source>
+        <comment>Select menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select previous</source>
+        <comment>Edit menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select next</source>
+        <comment>Edit menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MapEditor</name>

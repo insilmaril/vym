@@ -97,6 +97,11 @@ void VymModel::init ()
     mapDefault=true;
     mapUnsaved=false;
 
+    // Selection history
+    keepSelectionHistory=false;
+    currentSelection=0;
+    selectionHistory.clear();
+
     resetHistory();
 
     // Create tmp dirs
@@ -5571,13 +5576,21 @@ bool VymModel::select (TreeItem *ti, int i)
     return true;    
 }
 
-bool VymModel::select (const QModelIndex &index)
+bool VymModel::select (const QModelIndex &index) //FIXME-0 check...
 {
     if (index.isValid() )
     {
 	selModel->select (index,QItemSelectionModel::ClearAndSelect  );
-	BranchItem *bi=getSelectedBranch();
-	if (bi) bi->setLastSelectedBranch();
+	uint id=0;
+	TreeItem *ti=getSelectedItem();
+	if (ti && !keepSelectionHistory) 
+	{
+	    if (ti->isBranchLikeType())
+		((BranchItem*)ti)->setLastSelectedBranch();
+	    id=ti->getID();	
+	    selectionHistory.append (id);
+	    currentSelection=selectionHistory.count()-1;
+	}
 	return true;
     }
     return false;
@@ -5595,6 +5608,59 @@ void VymModel::unselect()
 bool VymModel::reselect()
 {
     return select (lastSelectString);
+}   
+
+bool VymModel::canSelectPrevious()
+{
+    if (currentSelection<=0)
+	return false;
+    else
+	return true;
+}
+
+bool VymModel::selectPrevious()
+{
+    keepSelectionHistory=true;
+    bool result=false;
+    while (currentSelection>0)
+    {
+	currentSelection--;
+	TreeItem *ti=findID (selectionHistory.at(currentSelection));
+	if (ti) 
+	{
+	    result=select (ti);
+	    break;
+	} else
+	    selectionHistory.removeAt (currentSelection);
+    } 
+    keepSelectionHistory=false;
+    return result;
+}   
+
+bool VymModel::canSelectNext()
+{
+    if (currentSelection>=0 >=selectionHistory.count()-1 )
+	return false;
+    else
+	return true;
+}
+
+bool VymModel::selectNext()
+{
+    keepSelectionHistory=true;
+    bool result=false;
+    while (currentSelection<selectionHistory.count()-1)
+    {
+	currentSelection++;
+	TreeItem *ti=findID (selectionHistory.at(currentSelection));
+	if (ti) 
+	{
+	    result=select (ti);
+	} else
+	    selectionHistory.removeAt (currentSelection);
+    } 
+    keepSelectionHistory=false;
+    return result;
 }   
 
 void VymModel::emitShowSelection()  

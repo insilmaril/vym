@@ -55,6 +55,7 @@ protected:
 private:
     void setupFileActions();
     void setupEditActions();
+    void setupSelectActions();
     void setupFormatActions();
     void setupViewActions();
     void setupModeActions();
@@ -128,12 +129,6 @@ private slots:
     void editCopy();	
     void editPaste();	
     void editCut(); 
-    void editToggleTarget();
-    void editGoToTarget();
-    void editMoveToTarget();
-    void editOpenFindResultWidget();
-    void editFindNext(QString s);
-    void editFindDuplicateURLs();
 
 public slots:    
     void updateQueries (VymModel*);
@@ -197,6 +192,17 @@ private slots:
     void editFollowXLink (QAction *);
     void editEditXLink (QAction *);
 
+private slots:    
+    void editToggleTarget();
+    void editGoToTarget();
+    void editMoveToTarget();
+    void editSelectPrevious();
+    void editSelectNext();
+    void editOpenFindResultWidget();
+    void editFindNext(QString s);
+    void editFindDuplicateURLs();
+
+private slots:    
     void formatSelectColor();
     void formatPickColor();
     void colorChanged(QColor);
@@ -380,26 +386,29 @@ private:
     QAction *actionSaveBranch;
     QAction *actionLoadImage;
 
-    QAction* actionFormatColor;
-    QAction* actionFormatPickColor;
-    QAction* actionFormatColorBranch;
-    QAction* actionFormatColorSubtree;
-    QAction* actionFormatLinkColorHint;
-    QAction* actionFormatBackColor;
-    QAction* actionFormatBackImage;
-    QAction* actionFormatLinkColor;
-    QAction* actionFormatSelectionColor;
-    QAction* actionFormatFont;
+    QAction *actionSelectPrevious;
+    QAction *actionSelectNext;
 
-    QAction* actionZoomIn;
-    QAction* actionZoomOut;
-    QAction* actionZoomReset;
-    QAction* actionCenterOn;
+    QAction *actionFormatColor;
+    QAction *actionFormatPickColor;
+    QAction *actionFormatColorBranch;
+    QAction *actionFormatColorSubtree;
+    QAction *actionFormatLinkColorHint;
+    QAction *actionFormatBackColor;
+    QAction *actionFormatBackImage;
+    QAction *actionFormatLinkColor;
+    QAction *actionFormatSelectionColor;
+    QAction *actionFormatFont;
 
-    QActionGroup* actionGroupModModes;
-    QAction* actionModModeColor;
-    QAction* actionModModeXLink;
-    QAction* actionModModeCopy;
+    QAction *actionZoomIn;
+    QAction *actionZoomOut;
+    QAction *actionZoomReset;
+    QAction *actionCenterOn;
+
+    QActionGroup *actionGroupModModes;
+    QAction *actionModModeColor;
+    QAction *actionModModeXLink;
+    QAction *actionModModeCopy;
 
     QActionGroup *actionGroupFormatFrameTypes;
 
