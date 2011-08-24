@@ -98,9 +98,9 @@ void VymModel::init ()
     mapUnsaved=false;
 
     // Selection history
-    keepSelectionHistory=false;
-    currentSelection=0;
-    selectionHistory.clear();
+    selModel=NULL;
+    selectionBlocked=false;
+    resetSelectionHistory();
 
     resetHistory();
 
@@ -122,10 +122,6 @@ void VymModel::init ()
     fileChangedTimer->start(3000);
     connect(fileChangedTimer, SIGNAL(timeout()), this, SLOT(fileChanged()));
 
-
-    // selections
-    selModel=NULL;
-    selectionBlocked=false;
 
     // find routine
     findReset();
@@ -525,6 +521,7 @@ ErrorCode VymModel::loadMap (
 		autosaveTimer->stop();
 
 		resetHistory();
+		resetSelectionHistory();
 	    }
     
 	    reposition();   // to generate bbox sizes
@@ -5562,35 +5559,12 @@ bool VymModel::select (TreeItem *ti)
     return false;
 }
 
-bool VymModel::select (TreeItem *ti, int i)
-{
-    if (!ti || i<0) return false;
-    if (select (index(ti)))
-    {
-	qDebug ()<<"VM::select with index: "<<i<<" Trying to find text in note ";
-	QTextCursor c=noteEditor->getTextCursor();
-	c.setPosition (i-1,QTextCursor::MoveAnchor);
-	noteEditor->setTextCursor (c);
-    } else  
-	qDebug ()<<"VM::select with index: "<<i<<" Giving up to find text in note ";
-    return true;    
-}
-
-bool VymModel::select (const QModelIndex &index) //FIXME-0 check...
+bool VymModel::select (const QModelIndex &index) 
 {
     if (index.isValid() )
     {
 	selModel->select (index,QItemSelectionModel::ClearAndSelect  );
-	uint id=0;
-	TreeItem *ti=getSelectedItem();
-	if (ti && !keepSelectionHistory) 
-	{
-	    if (ti->isBranchLikeType())
-		((BranchItem*)ti)->setLastSelectedBranch();
-	    id=ti->getID();	
-	    selectionHistory.append (id);
-	    currentSelection=selectionHistory.count()-1;
-	}
+	appendSelection();
 	return true;
     }
     return false;
@@ -5612,10 +5586,10 @@ bool VymModel::reselect()
 
 bool VymModel::canSelectPrevious()
 {
-    if (currentSelection<=0)
-	return false;
-    else
+    if (currentSelection>0)
 	return true;
+    else
+	return false;
 }
 
 bool VymModel::selectPrevious()
@@ -5639,10 +5613,10 @@ bool VymModel::selectPrevious()
 
 bool VymModel::canSelectNext()
 {
-    if (currentSelection>=0 >=selectionHistory.count()-1 )
-	return false;
-    else
+    if (currentSelection < selectionHistory.count()-1 )
 	return true;
+    else
+	return false;
 }
 
 bool VymModel::selectNext()
@@ -5656,12 +5630,36 @@ bool VymModel::selectNext()
 	if (ti) 
 	{
 	    result=select (ti);
+	    break;
 	} else
 	    selectionHistory.removeAt (currentSelection);
     } 
     keepSelectionHistory=false;
     return result;
 }   
+
+void VymModel::resetSelectionHistory()
+{
+    selectionHistory.clear();
+    currentSelection=-1;
+    keepSelectionHistory=false;
+    appendSelection();
+}
+
+void VymModel::appendSelection()
+{
+    uint id=0;
+    TreeItem *ti=getSelectedItem();
+    if (ti && !keepSelectionHistory) 
+    {
+	if (ti->isBranchLikeType())
+	    ((BranchItem*)ti)->setLastSelectedBranch();
+	id=ti->getID();	
+	selectionHistory.append (id);
+	currentSelection=selectionHistory.count()-1;
+	mainWindow->updateActions();
+    }
+}
 
 void VymModel::emitShowSelection()  
 {
@@ -5851,6 +5849,7 @@ AttributeItem* VymModel::getSelectedAttribute()
 
 TreeItem* VymModel::getSelectedItem()	
 {
+    if (!selModel) return NULL;
     QModelIndexList list=selModel->selectedIndexes();
     if (!list.isEmpty() )
 	return getItem (list.first() );

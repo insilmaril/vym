@@ -1012,8 +1012,10 @@ void Main::setupSelectActions()
     QAction *a;
     a = new QAction( QPixmap(flagsPath + "flag-target"), tr( "Toggle target...","Edit menu"), this);
     a->setShortcut (Qt::SHIFT + Qt::Key_T );			//Goto target
+    a->setCheckable(true);
     switchboard.addConnection(selectMenu, a,tr("Edit","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( editToggleTarget() ) );
+    actionToggleTarget=a;
 
     a = new QAction( QPixmap(flagsPath + "flag-target"), tr( "Goto target...","Edit menu"), this);
     a->setShortcut (Qt::Key_G );			//Goto target
@@ -1041,6 +1043,7 @@ void Main::setupSelectActions()
     a->setShortcut (Qt::CTRL + Qt::Key_F );		//Find
     switchboard.addConnection(selectMenu, a,tr("Edit","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( editOpenFindResultWidget() ) );
+    actionFind=a;
 
     a = new QAction( tr( "Find duplicate URLs","Edit menu"), this);
     a->setShortcut (Qt::SHIFT + Qt::Key_F);		//Find duplicate URLs
@@ -1927,6 +1930,14 @@ void Main::setupToolbars()
     //editActionsToolbar->addAction (actionCollapseOneLevel);
     //editActionsToolbar->addAction (actionCollapseUnselected);
 
+    // Selections
+    selectionToolbar = addToolBar( tr ("Selection toolbar","Toolbar name") );
+    selectionToolbar->setObjectName ("toolbar for selecting items");
+    selectionToolbar->addAction (actionToggleTarget);
+    selectionToolbar->addAction (actionSelectPrevious);
+    selectionToolbar->addAction (actionSelectNext);
+    selectionToolbar->addAction (actionFind);
+
     // URLs and vymLinks
     referencesToolbar=addToolBar( tr ("URLs and vymLinks toolbar","Toolbar for URLs and vymlinks"));
     referencesToolbar->setObjectName ("URLs and vymlinks toolbar");
@@ -1972,6 +1983,7 @@ void Main::setupToolbars()
     toolbarsMenu->addAction (fileToolbar->toggleViewAction() );
     toolbarsMenu->addAction (clipboardToolbar->toggleViewAction() );
     toolbarsMenu->addAction (editActionsToolbar->toggleViewAction() );
+    toolbarsMenu->addAction (selectionToolbar->toggleViewAction() );
     toolbarsMenu->addAction (colorsToolbar->toggleViewAction() );
     toolbarsMenu->addAction (zoomToolbar->toggleViewAction() );
     toolbarsMenu->addAction (standardFlagsToolbar->toggleViewAction() );
@@ -4074,10 +4086,8 @@ void Main::updateActions()
 	// Selection history
 	if (m->canSelectPrevious() )
 	    actionSelectPrevious->setEnabled(true);
-	 else
+	else
 	    actionSelectPrevious->setEnabled(false);
-	    
-
 	if (m->canSelectNext() )
 	    actionSelectNext->setEnabled(true);
 	else    
@@ -4143,6 +4153,8 @@ void Main::updateActions()
 	BranchItem *selbi=m->getSelectedBranch();
 	if (selti)
 	{
+	    actionToggleTarget->setChecked (selti->isTarget() );
+
 	    if (selbi || selti->getType()==TreeItem::Image)
 	    {
 		actionFormatHideLinkUnselected->setChecked (((MapItem*)selti)->getHideLinkUnselected());
@@ -4280,6 +4292,7 @@ void Main::updateActions()
 	    actionSortChildren->setEnabled (false);
 	    actionSortBackChildren->setEnabled (false);
 	    actionToggleHideExport->setEnabled (false);	
+	    actionToggleTarget->setChecked (false);
 	}   
     } // m
 }

@@ -672,7 +672,6 @@ public:
     bool select (const QString &);	    //! Select by string
     bool select (LinkableMapObj *lmo);	    //! Select by pointer to LMO
     bool select (TreeItem *ti );	    //! Select by pointer to TreeItem
-    bool select (TreeItem *ti,int i );	    //! Select by pointer to TreeItem and index in note
     bool select (const QModelIndex &index); //! Select by ModelIndex
     void unselect();
     bool reselect();
@@ -680,6 +679,8 @@ public:
     bool selectPrevious();
     bool canSelectNext();
     bool selectNext();
+    void resetSelectionHistory();
+    void appendSelection();
 
     void emitShowSelection();		    //!< Show selection in all views
 signals:

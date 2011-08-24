@@ -321,6 +321,7 @@ private:
     QToolBar *fileToolbar;
     QToolBar *clipboardToolbar;
     QToolBar *editActionsToolbar;
+    QToolBar *selectionToolbar;
     QToolBar *editorsToolbar;
     QToolBar *colorsToolbar;
     QToolBar *zoomToolbar;
@@ -386,8 +387,10 @@ private:
     QAction *actionSaveBranch;
     QAction *actionLoadImage;
 
+    QAction *actionToggleTarget;
     QAction *actionSelectPrevious;
     QAction *actionSelectNext;
+    QAction *actionFind;
 
     QAction *actionFormatColor;
     QAction *actionFormatPickColor;
