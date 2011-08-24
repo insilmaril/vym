@@ -87,16 +87,6 @@ a:hover               { text-decoration:underline; }
 	font-weight: normal;
 }
 
-.vym-htmlnote{ 
-	width:96%; 
-	border: solid 1px black; 
-	border-color: #000000;
-	background-color: #eeeeee; 
-	font-size: small;
-	font-weight: normal;
-	padding: 5px;
-}
-
 .vym-note { 
 	width:100%; 
 	border: solid 1px black; 

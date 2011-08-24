@@ -578,7 +578,7 @@ QString ExportHTML::getBranchText(BranchItem *current)
 		n=current->getNote();
 	    else
 		n="<pre>"+current->getNoteASCII().replace ("<","&lt;").replace (">","&gt;") +"</pre>";
-	    s+="\n<table border=1><tr><td>\n"+n+"\n</td></tr></table>\n";
+	    s+="\n<table class=\"vym-note\"><tr><td>\n"+n+"\n</td></tr></table>\n";
 	}   
 
 	return s;
