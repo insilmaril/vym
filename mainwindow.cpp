@@ -253,12 +253,12 @@ Main::Main(QWidget* parent, Qt::WFlags f) : QMainWindow(parent,f)
     setupFormatActions();
     setupViewActions();
     setupModeActions();
-    setupFlagActions();
     setupNetworkActions();
     setupSettingsActions();
     setupContextMenus();
     setupMacros();
     setupToolbars();
+    setupFlagActions();
 
     if (options.isOn("shortcuts")) switchboard.print();
     if (options.isOn("shortcutsLaTeX")) switchboard.printLaTeX();
@@ -1339,6 +1339,10 @@ void Main::setupFlagActions()
     standardFlagsToolbar->setObjectName ("standardFlagTB");
     standardFlagsMaster->setToolBar (standardFlagsToolbar);
 
+    // Add entry now, to avoid chicken and egg problem and position toolbar 
+    // after all others:
+    toolbarsMenu->addAction (standardFlagsToolbar->toggleViewAction() );
+
     flag=new Flag(flagsPath+"flag-exclamationmark.png");
     flag->setGroup("standard-mark");
     setupFlag (flag,standardFlagsToolbar,"exclamationmark",tr("Take care!","Standardflag"));
@@ -1986,10 +1990,21 @@ void Main::setupToolbars()
     toolbarsMenu->addAction (selectionToolbar->toggleViewAction() );
     toolbarsMenu->addAction (colorsToolbar->toggleViewAction() );
     toolbarsMenu->addAction (zoomToolbar->toggleViewAction() );
-    toolbarsMenu->addAction (standardFlagsToolbar->toggleViewAction() );
     toolbarsMenu->addAction (modModesToolbar->toggleViewAction() );
     toolbarsMenu->addAction (referencesToolbar->toggleViewAction() );
     toolbarsMenu->addAction (editorsToolbar->toggleViewAction() );
+
+    // Default visibility to not overload new users
+    fileToolbar->show();
+    clipboardToolbar->show();
+    editActionsToolbar->show();
+    selectionToolbar->hide();
+    colorsToolbar->show();
+    zoomToolbar->show();
+    modModesToolbar->hide();
+    referencesToolbar->hide();
+    editorsToolbar->hide();
+
 }
 
 void Main::hideEvent (QHideEvent * )
