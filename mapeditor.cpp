@@ -445,8 +445,8 @@ QImage MapEditor::getImage( QPointF &offset)
 {
     QRectF mapRect=getTotalBBox();
     
-    offset=QPointF (mapRect.x(), mapRect.y() );
     int d=20;	// border
+    offset=QPointF (mapRect.x()-d/2, mapRect.y()-d/2 );
     QImage pix (mapRect.width()+d, mapRect.height()+d,QImage::Format_RGB32);
 
     QPainter pp (&pix);
