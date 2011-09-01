@@ -2659,6 +2659,11 @@ to confusion when finishing working with vym.Do you want to</source>
         <comment>Edit menu</comment>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Selection toolbar</source>
+        <comment>Toolbar name</comment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MapEditor</name>
