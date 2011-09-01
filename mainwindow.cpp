@@ -1691,11 +1691,11 @@ void Main::setupTestActions()
 
     QAction *a;
     a = new QAction( "Test function 1" , this);
+    a->setShortcut (Qt::ALT + Qt::Key_T);   // Test function 
     switchboard.addConnection(testMenu, a, tr("Test shortcuts","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( testFunction1() ) );
 
     a = new QAction( "Test function 2" , this);
-    a->setShortcut (Qt::ALT + Qt::Key_T);   // Test function 2
     switchboard.addConnection(testMenu, a, tr("Test shortcuts","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( testFunction2() ) );
 
@@ -4392,22 +4392,6 @@ void Main::standardFlagChanged()
 
 void Main::testFunction1()
 {
-/*
-    QFileDialog fd;
-    //fd.setFilter (filter);
-    //fd.setWindowTitle (caption);
-    fd.setDirectory ("/suse/uwedr/vym/code/v");
-//    fd.setFileMode( QFileDialog::AnyFile );
-    fd.setFileMode( QFileDialog::ExistingFile );
-//    fd.setAcceptMode (QFileDialog::AcceptSave);
-//    fd.setConfirmOverwrite (false);
-
-    if ( fd.exec() == QDialog::Accepted )
-    {
-	qDebug() <<"Main::test1 "<<fd.selectedFiles();
-    }
-    return;
-*/
     if (!currentMapEditor()) return;
     currentMapEditor()->testFunction1();
 }
@@ -4422,12 +4406,6 @@ void Main::testCommand()
 {
     if (!currentMapEditor()) return;
     scriptEditor->show();
-    /*
-    bool ok;
-    QString com = QInputDialog::getText(
-	    vymName, "Enter Command:", QLineEdit::Normal,"command", &ok, this );
-    if (ok) currentMapEditor()->parseAtom(com);
-    */
 }
 
 void Main::helpDoc()

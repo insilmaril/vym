@@ -129,6 +129,11 @@ MapEditor::MapEditor( VymModel *vm)
     // Selections
     selectionColor =QColor (255,255,0);
     
+    // Panning 
+    panningTimer=new QTimer (this);
+    vPan=QPointF();
+    connect (panningTimer, SIGNAL (timeout()), this, SLOT (panView() ));
+
     // Attributes   //FIXME-3 testing only...
     QString k;
     AttributeDef *ad;
@@ -177,6 +182,43 @@ QGraphicsScene * MapEditor::getScene()
     return mapScene;
 }
 
+void MapEditor::panView()
+{
+    if (!vPan.isNull() ) 
+    {
+	// Scroll if needed
+	// To avoid jumping of the sceneView, only 
+	// show selection, if not tmp linked
+	qreal px=0;
+	qreal py=0;
+	if (vPan.x()<0) 
+	    px=vPan.x();
+	else if (vPan.x()>0 )
+	    px=width()+vPan.x();
+	if (vPan.y()<0) 
+	    py=vPan.y();
+	else if (vPan.y()>0 ) 
+	    py=height()+vPan.y();
+
+	QPointF q=mapToScene (QPoint(px,py));
+	QRectF r=QRectF (q,QPointF (q.x()+1,q.y()+1));
+
+	// Expand view if necessary
+	setScrollBarPosTarget (r);
+
+	// Stop possible other animations
+	if (scrollBarPosAnimation.state()==QAbstractAnimation::Running)
+	    scrollBarPosAnimation.stop();
+
+	// Do linear animation
+	horizontalScrollBar()->setValue(horizontalScrollBar()->value() + vPan.x() );
+	verticalScrollBar()->setValue  (  verticalScrollBar()->value() + vPan.y() );
+
+	// Update currently moving object
+	moveObject ();
+    }
+}
+
 void MapEditor::scrollTo (const QModelIndex &index) 
 {
     if (index.isValid())
@@ -189,16 +231,24 @@ void MapEditor::scrollTo (const QModelIndex &index)
 	{
 	    QRectF r=lmo->getBBox();
 	    setScrollBarPosTarget (r);
+	    animateScrollBars();
 	}   
     }
 }
 
-void MapEditor::setScrollBarPosTarget (const QRectF &rect)
+void MapEditor::setScrollBarPosTarget (QRectF rect)
 {
-    // Code copied from Qt sources
-    int xmargin=50;
-    int ymargin=50;
+    // Expand viewport, if rect is not contained
+    if (!sceneRect().contains (rect) )
+    {
+	rect=sceneRect().united (rect);
+	setSceneRect(rect);
+    }
 
+    int xmargin=0;
+    int ymargin=0;
+
+    // Prepare scrolling
     qreal width = viewport()->width();
     qreal height = viewport()->height();
     QRectF viewRect = matrix().mapRect(rect);
@@ -212,43 +262,21 @@ void MapEditor::setScrollBarPosTarget (const QRectF &rect)
 
     if (viewRect.left() <= left + xmargin) {
         // need to scroll from the left
-  //      if (!d->leftIndent)
             scrollBarPosTarget.setX(int(viewRect.left() - xmargin - 0.5));
     }
     if (viewRect.right() >= right - xmargin) {
         // need to scroll from the right
-//        if (!d->leftIndent)
             scrollBarPosTarget.setX(int(viewRect.right() - width + xmargin + 0.5));
     }
     if (viewRect.top() <= top + ymargin) {
         // need to scroll from the top
-   //     if (!d->topIndent)
             scrollBarPosTarget.setY(int(viewRect.top() - ymargin - 0.5));
     }
     if (viewRect.bottom() >= bottom - ymargin) {
         // need to scroll from the bottom
-//        if (!d->topIndent)
             scrollBarPosTarget.setY(int(viewRect.bottom() - height + ymargin + 0.5));
     }
 
-//    if (scrollBarPosTarget==getScrollBarPos()) return;
-
-    if (scrollBarPosAnimation.state()==QAbstractAnimation::Running)
-	scrollBarPosAnimation.stop();
-    
-    if (settings.value ("/animation/use/",true).toBool() )
-    {
-	scrollBarPosAnimation.setTargetObject (this);
-	scrollBarPosAnimation.setPropertyName ("scrollBarPos");
-	scrollBarPosAnimation.setDuration(settings.value("/animation/duration/scrollbar",2000).toInt() );
-	scrollBarPosAnimation.setEasingCurve ( QEasingCurve::OutQuint);
-	scrollBarPosAnimation.setStartValue(
-	    QPointF (horizontalScrollBar()->value() ,
-		     verticalScrollBar()->value() ) );
-	scrollBarPosAnimation.setEndValue(scrollBarPosTarget);
-	scrollBarPosAnimation.start();
-    } else
-	setScrollBarPos (scrollBarPosTarget);
 }
 
 QPointF MapEditor::getScrollBarPosTarget()
@@ -268,6 +296,26 @@ QPointF MapEditor::getScrollBarPos()
 {
     return QPointF (horizontalScrollBar()->value(),verticalScrollBar()->value());
     //return scrollBarPos;
+}
+
+void MapEditor::animateScrollBars()
+{
+    if (scrollBarPosAnimation.state()==QAbstractAnimation::Running)
+	scrollBarPosAnimation.stop();
+    
+    if (settings.value ("/animation/use/",true).toBool() )
+    {
+	scrollBarPosAnimation.setTargetObject (this);
+	scrollBarPosAnimation.setPropertyName ("scrollBarPos");
+	scrollBarPosAnimation.setDuration(settings.value("/animation/duration/scrollbar",2000).toInt() );
+	scrollBarPosAnimation.setEasingCurve ( QEasingCurve::OutQuint);
+	scrollBarPosAnimation.setStartValue(
+	    QPointF (horizontalScrollBar()->value() ,
+		     verticalScrollBar()->value() ) );
+	scrollBarPosAnimation.setEndValue(scrollBarPosTarget);
+	scrollBarPosAnimation.start();
+    } else
+	setScrollBarPos (scrollBarPosTarget);
 }
 
 void MapEditor::setZoomFactorTarget (const qreal &zft)
@@ -634,9 +682,8 @@ AttributeTable* MapEditor::attributeTable()
 
 void MapEditor::testFunction1()
 {
-    //model->fetchData (QUrl ("http://www.insilmaril.de/index.html"));
+    vPan=QPointF (0,-10);
 
-    
 /*
     qDebug()<< "ME::test1  selected TI="<<model->getSelectedItem();
     model->setExportMode (true);
@@ -1179,8 +1226,8 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
 	// Left Button	    Move Branches
 	if (e->button() == Qt::LeftButton )
 	{
-	    movingObj_start.setX( p.x() - lmo->x() );	
-	    movingObj_start.setY( p.y() - lmo->y() );	
+	    movingObj_offset.setX( p.x() - lmo->x() );	
+	    movingObj_offset.setY( p.y() - lmo->y() );	
 	    movingObj_orgPos.setX (lmo->x() );
 	    movingObj_orgPos.setY (lmo->y() );
 	    if (ti->depth()>0)
@@ -1223,7 +1270,7 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
 	    if (e->button() == Qt::LeftButton )
 	    {
 		movingObj=NULL; // move Content not Obj
-		movingObj_start=e->globalPos();
+		movingObj_offset=e->globalPos();
 		movingCont_start=QPointF (
 		    horizontalScrollBar()->value(),
 		    verticalScrollBar()->value());
@@ -1237,11 +1284,6 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
 
 void MapEditor::mouseMoveEvent(QMouseEvent* e)
 {
-
-    QPointF p = mapToScene(e->pos());
-
-    if (debug) mainWindow->statusMessage (QString ("Mouse: scene: %1 widget: %2").arg(qpointFToString(p)).arg(qpointFToString(e->pos())));
-
     TreeItem *seli=model->getSelectedItem();
     LinkableMapObj* lmosel=NULL;    
     if (seli && (seli->isBranchLikeType() ||seli->getType()==TreeItem::Image))
@@ -1250,149 +1292,38 @@ void MapEditor::mouseMoveEvent(QMouseEvent* e)
     // Move the selected MapObj
     if ( lmosel && movingObj) 
     {	
-	objectMoved=true;
-	// reset cursor if we are moving and don't copy
-	if (mainWindow->getModMode()!=Main::ModModeCopy)
-	    setCursor (Qt::ArrowCursor);
+	int margin=50;
 
-	// Now move the selection, but add relative position 
-	// (movingObj_start) where selection was chosen with 
-	// mousepointer. (This avoids flickering resp. jumping 
-	// of selection back to absPos)
-	
-	// Check if we could link 
-	TreeItem *ti=findMapItem (p, seli);
-	BranchItem *dsti=NULL;
-	LinkableMapObj* dst=NULL;
-	if (ti && ti!=seli && ti->isBranchLikeType())
-	{
-	    dsti=(BranchItem*)ti;
-	    dst=dsti->getLMO(); 
-	} else
-	    dsti=NULL;
-	
+	// Check if we have to scroll
+	vPan.setX(0);
+	vPan.setY(0);
+	if (e->y() >=0 && e->y() <= margin)
+	    vPan.setY( e->y() - margin );
+	else if ( e->y() <= height() && e->y() > height()-margin )
+	    vPan.setY(e->y() - height() + margin );
+	if ( e->x() >=0 && e->x() <= margin)
+	    vPan.setX( e->x() - margin );
+	else if ( e->x() <= width() && e->x() > width()-margin )
+	    vPan.setX(e->x() - width() + margin );
 
-	if (lmosel && seli->getType()==TreeItem::Image)	
-	{
-	    FloatObj *fio=(FloatImageObj*)lmosel;
-	    fio->move   (p.x() -movingObj_start.x(), p.y()-movingObj_start.y() );	
-	    fio->setRelPos();
-	    fio->updateLinkGeometry(); //no need for reposition, if we update link here
-	    model->emitSelectionChanged();  // position has changed
-
-	    // Relink float to new mapcenter or branch, if shift is pressed 
-	    // Only relink, if selection really has a new parent
-	    if ( e->modifiers()==Qt::ShiftModifier && dsti &&  dsti != seli->parent()  )
-	    {
-		// Also save the move which was done so far
-		QString pold=qpointFToString(movingObj_orgRelPos);
-		QString pnow=qpointFToString(fio->getRelPos());
-		model->saveState(
-		    seli,
-		    "moveRel "+pold,
-		    seli,
-		    "moveRel "+pnow,
-		    QString("Move %1 to relative position %2").arg(model->getObjectName(fio)).arg(pnow));
-		fio->getParObj()->requestReposition();
-		model->reposition();
-
-		model->relinkImage ((ImageItem*) seli,dsti);
-		model->select (seli);
-
-		model->reposition();
-	    }
-	} else	
-	{   // selection != a FloatObj
-	    if (seli->depth()==0)	
-	    {
-		// Move mapcenter
-		lmosel->move   (p-movingObj_start);	
-		if (e->buttons()== Qt::LeftButton && e->modifiers()==Qt::ShiftModifier) 
-		{
-		    // Move only mapcenter, leave its children where they are
-		    QPointF v;
-		    v=lmosel->getAbsPos();
-		    for (int i=0; i<seli->branchCount(); ++i)
-		    {
-			seli->getBranchObjNum(i)->setRelPos();
-			seli->getBranchObjNum(i)->setOrientation();
-		    }
-		}   
-		lmosel->move   (p-movingObj_start);	
-	    } else
-	    {	
-		if (seli->depth()==1)
-		{
-		    // Move mainbranch
-		    if (!lmosel->hasParObjTmp())
-			lmosel->move(p-movingObj_start);	
-		    lmosel->setRelPos();
-		} else
-		{
-		    // Move ordinary branch
-		    if (lmosel->getOrientation() == LinkableMapObj::LeftOfCenter)
-			// Add width of bbox here, otherwise alignRelTo will cause jumping around
-			lmosel->move(p.x() -movingObj_start.x() , //lmosel->getBBox().width(), 
-			    p.y()-movingObj_start.y() +lmosel->getTopPad() );	    
-		    else    
-			lmosel->move(p.x() -movingObj_start.x(), p.y()-movingObj_start.y() -lmosel->getTopPad());
-		    lmosel->setRelPos();    
-		} 
-
-	    } // depth>0
-
-	    // Maybe we can relink temporary?
-	    if (dsti)
-	    {
-		if (e->modifiers()==Qt::ControlModifier)
-		{
-		    // Special case: CTRL to link below dst
-		    lmosel->setParObjTmp (dst,p,+1);
-		} else if (e->modifiers()==Qt::ShiftModifier)
-		    lmosel->setParObjTmp (dst,p,-1);
-		else
-		    lmosel->setParObjTmp (dst,p,0);
-	    } else  
-	    {
-		lmosel->unsetParObjTmp();
-	    }	    
-	    // reposition subbranch
-	    lmosel->reposition();
-
-	    QItemSelection sel=model->getSelectionModel()->selection();
-	    updateSelection(sel,sel);	// position has changed
-
-	    //scrollTo (model->index (seli->parent()));	//FIXME-3
-
-	} // no FloatImageObj
-
-
-	if (!lmosel->hasParObjTmp())
-	    // Scroll if needed
-	    // To avoid jumping of the sceneView, only 
-	    // show selection, if not tmp linked
-	    {
-		model->emitShowSelection();	//FIXME-3 better use scrollArea at borders of MapEditor. Also necessary for drag&drop to TreeEditor
-	    }
-	
-	scene()->update();
-
-	return;
+	pointerPos=e->pos();
+	pointerMod=e->modifiers();
+	moveObject ();
     } // selection && moving_obj
 	
     // Draw a link from one branch to another
     if (drawingLink)
     {
-	 tmpLink->setEndPoint (p);
-	 tmpLink->updateLink();
+	tmpLink->setEndPoint ( mapToScene (e->pos() ) );
+	tmpLink->updateLink();
     }	 
     
     // Move sceneView 
     if (!movingObj && !pickingColor &&!drawingLink && e->buttons() == Qt::LeftButton ) 
     {
 	QPointF p=e->globalPos();
-	movingVec.setX(-p.x() + movingObj_start.x() );
-	movingVec.setY(-p.y() + movingObj_start.y() );
+	movingVec.setX(-p.x() + movingObj_offset.x() );
+	movingVec.setY(-p.y() + movingObj_offset.y() );
 	horizontalScrollBar()->setSliderPosition((int)( movingCont_start.x()+movingVec.x() ));
 	verticalScrollBar()->setSliderPosition((int)( movingCont_start.y()+movingVec.y() ) );
 	scrollBarPosAnimation.stop();	// Avoid flickering
@@ -1400,6 +1331,135 @@ void MapEditor::mouseMoveEvent(QMouseEvent* e)
     QGraphicsView::mouseMoveEvent (e);	
 }
 
+void MapEditor::moveObject ()	
+{
+    if (!panningTimer->isActive() )
+	panningTimer->start(50);
+
+    QPointF p = mapToScene(pointerPos);
+    TreeItem *seli=model->getSelectedItem();
+    LinkableMapObj* lmosel=NULL;    
+    if (seli && (seli->isBranchLikeType() ||seli->getType()==TreeItem::Image))
+	lmosel=((MapItem*)seli)->getLMO();
+
+    objectMoved=true;
+    // reset cursor if we are moving and don't copy
+    if (mainWindow->getModMode()!=Main::ModModeCopy)
+	setCursor (Qt::ArrowCursor);
+
+    // Now move the selection, but add relative position 
+    // (movingObj_offset) where selection was chosen with 
+    // mousepointer. (This avoids flickering resp. jumping 
+    // of selection back to absPos)
+    
+    // Check if we could link 
+    TreeItem *ti=findMapItem (p, seli);
+    BranchItem *dsti=NULL;
+    LinkableMapObj* dst=NULL;
+    if (ti && ti!=seli && ti->isBranchLikeType())
+    {
+	dsti=(BranchItem*)ti;
+	dst=dsti->getLMO(); 
+    } else
+	dsti=NULL;
+    
+
+    if (lmosel && seli->getType()==TreeItem::Image)	
+    {
+	FloatObj *fio=(FloatImageObj*)lmosel;
+	fio->move   (p.x() -movingObj_offset.x(), p.y()-movingObj_offset.y() );	
+	fio->setRelPos();
+	fio->updateLinkGeometry(); //no need for reposition, if we update link here
+	model->emitSelectionChanged();  // position has changed
+
+	// Relink float to new mapcenter or branch, if shift is pressed 
+	// Only relink, if selection really has a new parent
+	if ( pointerMod==Qt::ShiftModifier && dsti &&  dsti != seli->parent()  )
+	{
+	    // Also save the move which was done so far
+	    QString pold=qpointFToString(movingObj_orgRelPos);
+	    QString pnow=qpointFToString(fio->getRelPos());
+	    model->saveState(
+		seli,
+		"moveRel "+pold,
+		seli,
+		"moveRel "+pnow,
+		QString("Move %1 to relative position %2").arg(model->getObjectName(fio)).arg(pnow));
+	    fio->getParObj()->requestReposition();
+	    model->reposition();
+
+	    model->relinkImage ((ImageItem*) seli,dsti);
+	    model->select (seli);
+
+	    model->reposition();
+	}
+    } else	
+    {   // selection != a FloatObj
+	if (seli->depth()==0)	
+	{
+	    // Move mapcenter
+	    lmosel->move   (p-movingObj_offset);	
+	    if (pointerMod==Qt::ShiftModifier) 
+	    {
+		// Move only mapcenter, leave its children where they are
+		QPointF v;
+		v=lmosel->getAbsPos();
+		for (int i=0; i<seli->branchCount(); ++i)
+		{
+		    seli->getBranchObjNum(i)->setRelPos();
+		    seli->getBranchObjNum(i)->setOrientation();
+		}
+	    } 
+	    lmosel->move   (p-movingObj_offset);	
+	} else
+	{	
+	    if (seli->depth()==1)
+	    {
+		// Move mainbranch
+		if (!lmosel->hasParObjTmp())
+		    lmosel->move(p-movingObj_offset);	
+		lmosel->setRelPos();
+	    } else
+	    {
+		// Move ordinary branch
+		if (lmosel->getOrientation() == LinkableMapObj::LeftOfCenter)
+		    // Add width of bbox here, otherwise alignRelTo will cause jumping around
+		    lmosel->move(
+			p.x()  - movingObj_offset.x(), 
+			p.y()  - movingObj_offset.y() + lmosel->getTopPad() );	    
+		else    
+		    lmosel->move(p.x() - movingObj_offset.x(), p.y() - movingObj_offset.y() - lmosel->getTopPad());
+		lmosel->setRelPos();    
+	    } 
+
+	} // depth>0
+
+	// Maybe we can relink temporary?
+	if (dsti)
+	{
+	    if (pointerMod==Qt::ControlModifier)
+	    {
+		// Special case: CTRL to link below dst
+		lmosel->setParObjTmp (dst,p,+1);
+	    } else if (pointerMod==Qt::ShiftModifier)
+		lmosel->setParObjTmp (dst,p,-1);
+	    else
+		lmosel->setParObjTmp (dst,p,0);
+	} else  
+	    lmosel->unsetParObjTmp();
+
+	// reposition subbranch
+	lmosel->reposition();
+
+	QItemSelection sel=model->getSelectionModel()->selection();
+	updateSelection(sel,sel);	// position has changed
+
+    } // no FloatImageObj
+
+    scene()->update();
+
+    return;
+}
 
 void MapEditor::mouseReleaseEvent(QMouseEvent* e)
 {
@@ -1461,6 +1521,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent* e)
     // Have we been moving something?
     if ( seli && movingObj ) 
     {	
+	panningTimer->stop();
 	if (seli->getType()==TreeItem::Image)
 	{
 	    FloatImageObj *fio=(FloatImageObj*)( ((MapItem*)seli)->getLMO());
@@ -1595,7 +1656,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent* e)
 	scene()->update();
 	movingObj=NULL;	    
 	objectMoved=false;
-
+	vPan=QPoint ();
     } else 
 	// maybe we moved View: set old cursor
 	setCursor (Qt::ArrowCursor);

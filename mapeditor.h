@@ -3,7 +3,6 @@
 
 #include <QGraphicsView>
 #include <QItemSelectionModel>
-
 #include <QLineEdit>	
 #include <QPropertyAnimation>	
 
@@ -34,12 +33,21 @@ protected:
     QPointF scrollBarPos;
     QPointF scrollBarPosTarget;
     QPropertyAnimation scrollBarPosAnimation;
+    QTimer *panningTimer;
+    QPointF vPan;		        //! Direction of panning during moving of object
+    QPoint pointerPos;			//! Pointer position in widget coordinates
+    Qt::KeyboardModifiers pointerMod;	//! modifiers of move event
+
+private slots:
+    void panView();
+
 public:
     void scrollTo (const QModelIndex &index);
-    void setScrollBarPosTarget (const QRectF &rect);	//!  ensureVisible of rect
+    void setScrollBarPosTarget (QRectF rect);	//!  ensureVisible of rect
     QPointF getScrollBarPosTarget ();
     void setScrollBarPos (const QPointF &p);
     QPointF getScrollBarPos();
+    void animateScrollBars();
 
 Q_PROPERTY(qreal zoomFactor READ getZoomFactor WRITE setZoomFactor)
 
@@ -95,6 +103,7 @@ protected:
     virtual void keyReleaseEvent(QKeyEvent*);
     virtual void mousePressEvent(QMouseEvent*);
     virtual void mouseMoveEvent(QMouseEvent*);
+    void moveObject ();
     virtual void mouseReleaseEvent(QMouseEvent*);
     virtual void mouseDoubleClickEvent(QMouseEvent*);
     virtual void wheelEvent(QWheelEvent*);
@@ -127,7 +136,7 @@ private:
     MapObj* movingObj;		    // moving a MapObj
     QPointF movingObj_orgPos;	    // org. pos of mouse before move
     QPointF movingObj_orgRelPos;    // org. relative pos of mouse before move
-    QPointF movingObj_start;	    // rel. pos of mouse to absPos 
+    QPointF movingObj_offset;	    // offset of mousepointer to object
     QPointF movingCont_start;	    // inital pos of moving Content or
     QPointF movingVec;		    // how far has Content moved
 

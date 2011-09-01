@@ -86,7 +86,7 @@ void BranchObj::setParObjTmp(LinkableMapObj* dst, QPointF m, int off)
 	parObjTmpBuf=parObj;
     }
 
-    if (pi_depth<2) off=0;
+    if (pi_depth<1) off=0;
     if (off==0)
 	link2ParPos=false;
     else
@@ -116,7 +116,7 @@ void BranchObj::setParObjTmp(LinkableMapObj* dst, QPointF m, int off)
 		calcBBoxSizeWithChildren(); 
 
 	    // new parent is just a branch, link to it
-	    bodst->calcBBoxSizeWithChildren();
+	    bodst->calcBBoxSizeWithChildren();	
 	    QRectF t=bodst->getTotalBBox();
 	    if (dsti->getLastBranch())
 		y=t.y() + t.height() ;
@@ -129,7 +129,7 @@ void BranchObj::setParObjTmp(LinkableMapObj* dst, QPointF m, int off)
 	{
 	    if (off<0)
 		// we want to link above dst
-		y=bodst->y() - height() + 5;
+		y=bodst->y() - height() + 12;
 	    else    
 		// we want to link below dst
 		// Bottom of sel should be 5 pixels above
@@ -516,8 +516,8 @@ if (debug)
     qDebug() <<"absPos="<<absPos
 	<< "  relPos="<<relPos
 //	<< "  parPos="<<pp
-	<< "  bbox="<<bbox
-	<< "  orient="<<o<<" "<<orientation;
+//	<< "  bbox="<<bbox
+//	<< "  orient="<<o<<" "<<orientation;
 //	<< "  alignSelf="<<alignSelf
 //	<< "  scrolled="<<((BranchItem*)treeItem)->isScrolled()
 //	<< "  pad="<<topPad<<","<<botPad<<","<<leftPad<<","<<rightPad
@@ -603,7 +603,7 @@ void BranchObj::reposition()
 {   
 /* TODO testing only
     if (!treeItem->getHeading().isEmpty())
-	qDebug()<< "BO::reposition  "<<treeItem->depth()<<" "<<treeItem->getHeading()<<endl;
+	qDebug()<< "BO::reposition  "<<treeItem->depth()<<" "<<treeItem->getHeading();
     else    
 	qDebug()<< "BO::reposition  ???";
 */	

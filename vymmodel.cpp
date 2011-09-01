@@ -4590,7 +4590,7 @@ QPointF VymModel::exportImage(QString fname, bool askName, QString format)
 	    if (format.isEmpty())
 	    {
 		QMessageBox::critical (0,tr("Critical Error"),tr("Unsupported format in %1").arg(fname));
-		return QPointF();   //FIXME-3 not needed
+		return QPointF();  
 	    }	
 	    setChanged();
 	} 
