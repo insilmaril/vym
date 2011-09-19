@@ -4,7 +4,7 @@
 <context>
     <name>AboutDialog</name>
     <message>
-        <location filename="../aboutdialog.cpp" line="216"/>
+        <location filename="../aboutdialog.cpp" line="208"/>
         <source>Ok</source>
         <comment>Ok Button</comment>
         <translation>OK</translation>
@@ -13,7 +13,7 @@
 <context>
     <name>AboutTextBrowser</name>
     <message>
-        <location filename="../aboutdialog.cpp" line="238"/>
+        <location filename="../aboutdialog.cpp" line="230"/>
         <source>Please use Settings-&gt;</source>
         <translation>Por favor use Configurações-&gt;</translation>
     </message>
@@ -22,13 +22,13 @@
         <translation type="obsolete">Definir aplicação externa para abrir URL</translation>
     </message>
     <message>
-        <location filename="../aboutdialog.cpp" line="236"/>
+        <location filename="../aboutdialog.cpp" line="228"/>
         <source>Warning</source>
         <comment>About window</comment>
         <translation>Aviso</translation>
     </message>
     <message>
-        <location filename="../aboutdialog.cpp" line="237"/>
+        <location filename="../aboutdialog.cpp" line="229"/>
         <source>Couldn&apos;t find a viewer to open %1.
 </source>
         <comment>About window</comment>
@@ -36,7 +36,7 @@
 </translation>
     </message>
     <message>
-        <location filename="../aboutdialog.cpp" line="238"/>
+        <location filename="../aboutdialog.cpp" line="230"/>
         <source>Set application to open an URL...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -501,7 +501,7 @@ realmente quer permitir isso!</translation>
 <context>
     <name>Heading of mapcenter in new map</name>
     <message>
-        <location filename="../vymmodel.cpp" line="2427"/>
+        <location filename="../vymmodel.cpp" line="2428"/>
         <source>New map</source>
         <translation type="unfinished">Novo mapa</translation>
     </message>
@@ -3496,7 +3496,7 @@ Do you risk to overwrite its contents?</source>
 Deseja sobrescrever o conteúdo?</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="3255"/>
+        <location filename="../vymmodel.cpp" line="3256"/>
         <source>No Bugzilla client found.  For openSUSE you can install by (running as root):
 
 </source>
@@ -3504,14 +3504,14 @@ Deseja sobrescrever o conteúdo?</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="3260"/>
+        <location filename="../vymmodel.cpp" line="3261"/>
         <source>Alternatively you can also add the repository
 and install the perl module for Bugzilla access using YaST</source>
         <comment>VymModel, how to install Bugzilla client module</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="3263"/>
+        <location filename="../vymmodel.cpp" line="3264"/>
         <source>Warning: Couldn&apos;t find Bugzilla client</source>
         <comment>VymModel</comment>
         <translation type="unfinished"></translation>
@@ -3628,22 +3628,22 @@ Deseja sobrescrevê-lo?</translation>
 <context>
     <name>TextEditor</name>
     <message>
-        <location filename="../texteditor.cpp" line="252"/>
+        <location filename="../texteditor.cpp" line="253"/>
         <source>&amp;Import...</source>
         <translation>&amp;Importar...</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="260"/>
+        <location filename="../texteditor.cpp" line="261"/>
         <source>&amp;Export...</source>
         <translation>E&amp;xportar...</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="268"/>
+        <location filename="../texteditor.cpp" line="269"/>
         <source>Export &amp;As... (HTML)</source>
         <translation>Exportar Como... (&amp;HTML)</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="273"/>
+        <location filename="../texteditor.cpp" line="274"/>
         <source>Export &amp;As...(ASCII)</source>
         <translation>Exportar Como... (&amp;Texto)</translation>
     </message>
@@ -3652,197 +3652,197 @@ Deseja sobrescrevê-lo?</translation>
         <translation type="obsolete">Imprimir Nota</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="280"/>
+        <location filename="../texteditor.cpp" line="281"/>
         <source>&amp;Print...</source>
         <translation>Im&amp;primir...</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="300"/>
+        <location filename="../texteditor.cpp" line="301"/>
         <source>&amp;Edit</source>
         <translation>&amp;Editar</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="303"/>
+        <location filename="../texteditor.cpp" line="304"/>
         <source>&amp;Undo</source>
         <translation>Desfa&amp;zer</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="310"/>
+        <location filename="../texteditor.cpp" line="311"/>
         <source>&amp;Redo</source>
         <translation>&amp;Refazer</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="318"/>
+        <location filename="../texteditor.cpp" line="319"/>
         <source>Select and copy &amp;all</source>
         <translation>Selecionar e copiar &amp;tudo</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="324"/>
+        <location filename="../texteditor.cpp" line="325"/>
         <source>&amp;Copy</source>
         <translation>&amp;Copiar</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="331"/>
+        <location filename="../texteditor.cpp" line="332"/>
         <source>Cu&amp;t</source>
         <translation>Recor&amp;tar</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="338"/>
+        <location filename="../texteditor.cpp" line="339"/>
         <source>&amp;Paste</source>
         <translation>C&amp;olar</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="287"/>
+        <location filename="../texteditor.cpp" line="288"/>
         <source>&amp;Delete All</source>
         <translation>&amp;Apagar Tudo</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="354"/>
+        <location filename="../texteditor.cpp" line="355"/>
         <source>&amp;Font hint</source>
         <translation>&amp;Fonte Sugerida</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="363"/>
+        <location filename="../texteditor.cpp" line="364"/>
         <source>&amp;Richtext</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="397"/>
+        <location filename="../texteditor.cpp" line="398"/>
         <source>&amp;Color...</source>
         <translation>&amp;Cor...</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="403"/>
+        <location filename="../texteditor.cpp" line="404"/>
         <source>&amp;Bold</source>
         <translation>&amp;Negrito</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="411"/>
+        <location filename="../texteditor.cpp" line="412"/>
         <source>&amp;Italic</source>
         <translation>&amp;Itálico</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="419"/>
+        <location filename="../texteditor.cpp" line="420"/>
         <source>&amp;Underline</source>
         <translation>&amp;Sublinhado</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="451"/>
+        <location filename="../texteditor.cpp" line="452"/>
         <source>&amp;Left</source>
         <translation>&amp;Esquerda</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="457"/>
+        <location filename="../texteditor.cpp" line="458"/>
         <source>C&amp;enter</source>
         <translation>Ce&amp;ntralizado</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="463"/>
+        <location filename="../texteditor.cpp" line="464"/>
         <source>&amp;Right</source>
         <translation>&amp;Direita</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="469"/>
+        <location filename="../texteditor.cpp" line="470"/>
         <source>&amp;Justify</source>
         <translation>&amp;Justificado</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="479"/>
+        <location filename="../texteditor.cpp" line="480"/>
         <source>&amp;Settings</source>
         <translation>&amp;Configurações</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="482"/>
+        <location filename="../texteditor.cpp" line="483"/>
         <source>Set &amp;fixed font</source>
         <translation>Definir fonte fi&amp;xa</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="487"/>
+        <location filename="../texteditor.cpp" line="488"/>
         <source>Set &amp;variable font</source>
         <translation>Definir fonte &amp;variável</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="492"/>
+        <location filename="../texteditor.cpp" line="493"/>
         <source>&amp;fixed font is default</source>
         <translation>Fonte fi&amp;xa como padrão</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="606"/>
+        <location filename="../texteditor.cpp" line="607"/>
         <source>Export Note to single file</source>
         <translation>Exportar Nota como Arquivo</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="620"/>
-        <location filename="../texteditor.cpp" line="696"/>
+        <location filename="../texteditor.cpp" line="621"/>
+        <location filename="../texteditor.cpp" line="697"/>
         <source>Overwrite</source>
         <translation>Sobrescrever</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="621"/>
-        <location filename="../texteditor.cpp" line="697"/>
+        <location filename="../texteditor.cpp" line="622"/>
+        <location filename="../texteditor.cpp" line="698"/>
         <source>Cancel</source>
         <translation>Cancelar</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="681"/>
+        <location filename="../texteditor.cpp" line="682"/>
         <source>Export Note to single file (ASCII)</source>
         <translation>Exportar Nota para Arquivo (Texto)</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="724"/>
+        <location filename="../texteditor.cpp" line="725"/>
         <source>Print</source>
         <comment>TextEditor</comment>
         <translation type="unfinished">Imprimir</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="431"/>
+        <location filename="../texteditor.cpp" line="432"/>
         <source>Subs&amp;cript</source>
         <translation>S&amp;ubscrito</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="37"/>
+        <location filename="../texteditor.cpp" line="38"/>
         <source>Text Editor</source>
         <comment>Text Editor Window caption</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="439"/>
+        <location filename="../texteditor.cpp" line="440"/>
         <source>Su&amp;perscript</source>
         <translation>So&amp;brescrito</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="505"/>
+        <location filename="../texteditor.cpp" line="506"/>
         <source>Note Editor</source>
         <translation>Editor de Notas</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="350"/>
+        <location filename="../texteditor.cpp" line="351"/>
         <source>F&amp;ormat</source>
         <translation>&amp;Formatação</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="297"/>
+        <location filename="../texteditor.cpp" line="298"/>
         <source>Edit Actions</source>
         <translation>Ações de Edição</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="348"/>
+        <location filename="../texteditor.cpp" line="349"/>
         <source>Format Actions</source>
         <translation>Ações de Formatação</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="247"/>
+        <location filename="../texteditor.cpp" line="248"/>
         <source>Note Actions</source>
         <translation>Ações de Notas</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="36"/>
+        <location filename="../texteditor.cpp" line="37"/>
         <source>Ready</source>
         <comment>Statusbar message</comment>
         <translation>Pronto</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="173"/>
+        <location filename="../texteditor.cpp" line="174"/>
         <source>No filename available for this note.</source>
         <comment>Statusbar message</comment>
         <translation>Nenhum arquivo está disponível para esta nota.</translation>
@@ -3853,7 +3853,7 @@ Deseja sobrescrevê-lo?</translation>
         <translation type="obsolete">Editor de Notas</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="249"/>
+        <location filename="../texteditor.cpp" line="250"/>
         <source>&amp;Note</source>
         <comment>Menubar</comment>
         <translation>&amp;Nota</translation>
@@ -3939,8 +3939,8 @@ Deseja sobrescrevê-lo?</translation>
         <translation type="obsolete">Usar fonte fixa pro padrão</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="615"/>
-        <location filename="../texteditor.cpp" line="691"/>
+        <location filename="../texteditor.cpp" line="616"/>
+        <location filename="../texteditor.cpp" line="692"/>
         <source>The file %1
 exists already.
 Do you want to overwrite it?</source>
@@ -3950,7 +3950,7 @@ já existe.
 Deseja sobrescrevê-lo?</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="639"/>
+        <location filename="../texteditor.cpp" line="640"/>
         <source>Couldn&apos;t export note </source>
         <comment>dialog &apos;save note as&apos;</comment>
         <translation>Não foi possível exportar nota</translation>
@@ -3974,40 +3974,40 @@ Deseja sobrescrevê-lo?</translation>
 <context>
     <name>VymModel</name>
     <message>
-        <location filename="../vymmodel.cpp" line="112"/>
+        <location filename="../vymmodel.cpp" line="113"/>
         <source>unnamed</source>
         <translation type="unfinished">sem nome</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="378"/>
-        <location filename="../vymmodel.cpp" line="479"/>
-        <location filename="../vymmodel.cpp" line="530"/>
+        <location filename="../vymmodel.cpp" line="379"/>
+        <location filename="../vymmodel.cpp" line="480"/>
+        <location filename="../vymmodel.cpp" line="531"/>
         <source>Critical Parse Error</source>
         <translation type="unfinished">Erro Crítico ao Ler</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="419"/>
-        <location filename="../vymmodel.cpp" line="464"/>
-        <location filename="../vymmodel.cpp" line="630"/>
+        <location filename="../vymmodel.cpp" line="420"/>
+        <location filename="../vymmodel.cpp" line="465"/>
+        <location filename="../vymmodel.cpp" line="631"/>
         <source>Critical Load Error</source>
         <translation type="unfinished">Erro Crítico ao Carregar</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="420"/>
+        <location filename="../vymmodel.cpp" line="421"/>
         <source>Couldn&apos;t create temporary directory before load
 </source>
         <translation type="unfinished">Não foi possível criar diretório temporário antes de carregar
 </translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="465"/>
+        <location filename="../vymmodel.cpp" line="466"/>
         <source>Couldn&apos;t find a map (*.xml) in .vym archive.
 </source>
         <translation type="unfinished">Não foi possível encontrar um mapa (.xml) dentro do arquivo .vym.
 </translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="573"/>
+        <location filename="../vymmodel.cpp" line="574"/>
         <source>The map %1
 did not use the compressed vym file format.
 Writing it uncompressed will also write images 
@@ -4021,112 +4021,112 @@ e emblemas que podem sobrescrever arquivos já presentes no diretório.
 Deseja continuar salvando este mapa?</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="581"/>
+        <location filename="../vymmodel.cpp" line="582"/>
         <source>compressed (vym default)</source>
         <translation type="unfinished">comprimido (padrão)</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="582"/>
+        <location filename="../vymmodel.cpp" line="583"/>
         <source>uncompressed</source>
         <translation type="unfinished">descomprimido</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="583"/>
-        <location filename="../vymmodel.cpp" line="782"/>
+        <location filename="../vymmodel.cpp" line="584"/>
+        <location filename="../vymmodel.cpp" line="783"/>
         <source>Cancel</source>
         <translation type="unfinished">Cancelar</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="612"/>
-        <location filename="../vymmodel.cpp" line="617"/>
+        <location filename="../vymmodel.cpp" line="613"/>
+        <location filename="../vymmodel.cpp" line="618"/>
         <source>Save Error</source>
         <translation type="unfinished">Erro ao Salvar</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="613"/>
+        <location filename="../vymmodel.cpp" line="614"/>
         <source>%1
 could not be removed before saving</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="618"/>
+        <location filename="../vymmodel.cpp" line="619"/>
         <source>%1
 could not be renamed before saving</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="631"/>
+        <location filename="../vymmodel.cpp" line="632"/>
         <source>Couldn&apos;t create temporary directory before save
 </source>
         <translation type="unfinished">Não foi possível criar diretório temporário antes de salvar
 </translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="702"/>
-        <location filename="../vymmodel.cpp" line="758"/>
-        <location filename="../vymmodel.cpp" line="5049"/>
+        <location filename="../vymmodel.cpp" line="703"/>
+        <location filename="../vymmodel.cpp" line="759"/>
+        <location filename="../vymmodel.cpp" line="5050"/>
         <source>Images</source>
         <translation type="unfinished">Imagens</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="705"/>
+        <location filename="../vymmodel.cpp" line="706"/>
         <source>Load image</source>
         <translation type="unfinished">Carregar imagem</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="760"/>
+        <location filename="../vymmodel.cpp" line="761"/>
         <source>Save image</source>
         <translation type="unfinished">Salvar imagem</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="774"/>
+        <location filename="../vymmodel.cpp" line="775"/>
         <source>The file %1 exists already.
 Do you want to overwrite it?</source>
         <translation type="unfinished">O arquivo %1 já existe.
 Deseja sobrescrevê-lo?</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="781"/>
+        <location filename="../vymmodel.cpp" line="782"/>
         <source>Overwrite</source>
         <translation type="unfinished">Sobrescrever</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="796"/>
-        <location filename="../vymmodel.cpp" line="798"/>
-        <location filename="../vymmodel.cpp" line="4591"/>
-        <location filename="../vymmodel.cpp" line="4602"/>
+        <location filename="../vymmodel.cpp" line="797"/>
+        <location filename="../vymmodel.cpp" line="799"/>
+        <location filename="../vymmodel.cpp" line="4592"/>
+        <location filename="../vymmodel.cpp" line="4603"/>
         <source>Critical Error</source>
         <translation type="unfinished">Erro Crítico</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="796"/>
-        <location filename="../vymmodel.cpp" line="4591"/>
+        <location filename="../vymmodel.cpp" line="797"/>
+        <location filename="../vymmodel.cpp" line="4592"/>
         <source>Unsupported format in %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="798"/>
+        <location filename="../vymmodel.cpp" line="799"/>
         <source>Couldn&apos;t save %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="828"/>
+        <location filename="../vymmodel.cpp" line="829"/>
         <source>Critical Import Error</source>
         <translation type="unfinished">Erro Crítico ao Importar</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="828"/>
+        <location filename="../vymmodel.cpp" line="829"/>
         <source>Cannot find the directory %1</source>
         <translation type="unfinished">Não foi possível encontrar o diretório %1</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="880"/>
-        <location filename="../vymmodel.cpp" line="883"/>
+        <location filename="../vymmodel.cpp" line="881"/>
+        <location filename="../vymmodel.cpp" line="884"/>
         <source>Choose directory structure to import</source>
         <translation type="unfinished">Escolha o diretório para importar</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="935"/>
+        <location filename="../vymmodel.cpp" line="936"/>
         <source>The file of the map  on disk has changed:
 
    %1
@@ -4135,22 +4135,22 @@ Do you want to reload that map with the new file?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="942"/>
+        <location filename="../vymmodel.cpp" line="943"/>
         <source>Reload</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="943"/>
+        <location filename="../vymmodel.cpp" line="944"/>
         <source>Ignore</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="1089"/>
+        <location filename="../vymmodel.cpp" line="1090"/>
         <source>Autosave disabled during undo.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="1699"/>
+        <location filename="../vymmodel.cpp" line="1700"/>
         <source>Note</source>
         <comment>FindAll in VymModel</comment>
         <translation type="unfinished">Nota</translation>
@@ -4165,7 +4165,7 @@ Do you want to reload that map with the new file?</source>
         <translation type="obsolete">Imagens</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="3284"/>
+        <location filename="../vymmodel.cpp" line="3285"/>
         <source>Contacting Bugzilla...</source>
         <comment>VymModel</comment>
         <translation type="unfinished"></translation>
@@ -4175,37 +4175,37 @@ Do you want to reload that map with the new file?</source>
         <translation type="obsolete">Ligar a outro mapa</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="4578"/>
+        <location filename="../vymmodel.cpp" line="4579"/>
         <source>Export map as image</source>
         <translation type="unfinished">Exportar mapa como imagem</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="4602"/>
+        <location filename="../vymmodel.cpp" line="4603"/>
         <source>Couldn&apos;t save QImage %1 in format %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="4625"/>
+        <location filename="../vymmodel.cpp" line="4626"/>
         <source>Export map as PDF</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="4670"/>
+        <location filename="../vymmodel.cpp" line="4671"/>
         <source>Export map as SVG</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="4709"/>
+        <location filename="../vymmodel.cpp" line="4710"/>
         <source>Export XML to directory</source>
         <translation type="unfinished">Exportar XML para diretório</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="4750"/>
+        <location filename="../vymmodel.cpp" line="4751"/>
         <source>Critical Export Error</source>
         <translation type="unfinished">Erro Crítico ao Exportar</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="5052"/>
+        <location filename="../vymmodel.cpp" line="5053"/>
         <source>Load background image</source>
         <translation type="unfinished"></translation>
     </message>
