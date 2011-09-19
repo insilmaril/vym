@@ -4,7 +4,7 @@
 <context>
     <name>AboutDialog</name>
     <message>
-        <location filename="../aboutdialog.cpp" line="208"/>
+        <location filename="../aboutdialog.cpp" line="216"/>
         <source>Ok</source>
         <comment>Ok Button</comment>
         <translation></translation>
@@ -13,7 +13,7 @@
 <context>
     <name>AboutTextBrowser</name>
     <message>
-        <location filename="../aboutdialog.cpp" line="230"/>
+        <location filename="../aboutdialog.cpp" line="238"/>
         <source>Please use Settings-&gt;</source>
         <translation> Используйте пункт &quot;Настройки&quot;-&gt;</translation>
     </message>
@@ -22,13 +22,13 @@
         <translation type="obsolete">Выберите приложение для открытия URL</translation>
     </message>
     <message>
-        <location filename="../aboutdialog.cpp" line="228"/>
+        <location filename="../aboutdialog.cpp" line="236"/>
         <source>Warning</source>
         <comment>About window</comment>
         <translation>Внимание</translation>
     </message>
     <message>
-        <location filename="../aboutdialog.cpp" line="229"/>
+        <location filename="../aboutdialog.cpp" line="237"/>
         <source>Couldn&apos;t find a viewer to open %1.
 </source>
         <comment>About window</comment>
@@ -36,7 +36,7 @@
 </translation>
     </message>
     <message>
-        <location filename="../aboutdialog.cpp" line="230"/>
+        <location filename="../aboutdialog.cpp" line="238"/>
         <source>Set application to open an URL...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -522,7 +522,7 @@ want to allow this in your system!</translation>
 <context>
     <name>Heading of mapcenter in new map</name>
     <message>
-        <location filename="../vymmodel.cpp" line="2428"/>
+        <location filename="../vymmodel.cpp" line="2427"/>
         <source>New map</source>
         <translation>Новая Карта</translation>
     </message>
@@ -3382,7 +3382,7 @@ Do you risk to overwrite its contents?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="3256"/>
+        <location filename="../vymmodel.cpp" line="3255"/>
         <source>No Bugzilla client found.  For openSUSE you can install by (running as root):
 
 </source>
@@ -3390,14 +3390,14 @@ Do you risk to overwrite its contents?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="3261"/>
+        <location filename="../vymmodel.cpp" line="3260"/>
         <source>Alternatively you can also add the repository
 and install the perl module for Bugzilla access using YaST</source>
         <comment>VymModel, how to install Bugzilla client module</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="3264"/>
+        <location filename="../vymmodel.cpp" line="3263"/>
         <source>Warning: Couldn&apos;t find Bugzilla client</source>
         <comment>VymModel</comment>
         <translation type="unfinished"></translation>
@@ -3509,22 +3509,22 @@ Do you want to overwrite it?</source>
 <context>
     <name>TextEditor</name>
     <message>
-        <location filename="../texteditor.cpp" line="253"/>
+        <location filename="../texteditor.cpp" line="252"/>
         <source>&amp;Import...</source>
         <translation>&amp;Импортировать...</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="261"/>
+        <location filename="../texteditor.cpp" line="260"/>
         <source>&amp;Export...</source>
         <translation>&amp;Экспортировать...</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="269"/>
+        <location filename="../texteditor.cpp" line="268"/>
         <source>Export &amp;As... (HTML)</source>
         <translation>Экспортировать &amp;как... (HTML)</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="274"/>
+        <location filename="../texteditor.cpp" line="273"/>
         <source>Export &amp;As...(ASCII)</source>
         <translation>Экспортировать &amp;как... (ASСII)</translation>
     </message>
@@ -3533,197 +3533,197 @@ Do you want to overwrite it?</source>
         <translation type="obsolete">Печать Заметки</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="281"/>
+        <location filename="../texteditor.cpp" line="280"/>
         <source>&amp;Print...</source>
         <translation>&amp;PПечать...</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="301"/>
+        <location filename="../texteditor.cpp" line="300"/>
         <source>&amp;Edit</source>
         <translation>&amp;Правка</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="304"/>
+        <location filename="../texteditor.cpp" line="303"/>
         <source>&amp;Undo</source>
         <translation>&amp;Отменить</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="311"/>
+        <location filename="../texteditor.cpp" line="310"/>
         <source>&amp;Redo</source>
         <translation>&amp;Вернуть</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="319"/>
+        <location filename="../texteditor.cpp" line="318"/>
         <source>Select and copy &amp;all</source>
         <translation>Выбрать и копировать &amp;всё</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="325"/>
+        <location filename="../texteditor.cpp" line="324"/>
         <source>&amp;Copy</source>
         <translation>&amp;Копировать</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="332"/>
+        <location filename="../texteditor.cpp" line="331"/>
         <source>Cu&amp;t</source>
         <translation>Выреза&amp;ть</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="339"/>
+        <location filename="../texteditor.cpp" line="338"/>
         <source>&amp;Paste</source>
         <translation>&amp;Вставить</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="288"/>
+        <location filename="../texteditor.cpp" line="287"/>
         <source>&amp;Delete All</source>
         <translation>&amp;Удалить всё</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="38"/>
+        <location filename="../texteditor.cpp" line="37"/>
         <source>Text Editor</source>
         <comment>Text Editor Window caption</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="355"/>
+        <location filename="../texteditor.cpp" line="354"/>
         <source>&amp;Font hint</source>
         <translation>&amp;Font hint</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="364"/>
+        <location filename="../texteditor.cpp" line="363"/>
         <source>&amp;Richtext</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="398"/>
+        <location filename="../texteditor.cpp" line="397"/>
         <source>&amp;Color...</source>
         <translation>&amp;Цвет...</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="404"/>
+        <location filename="../texteditor.cpp" line="403"/>
         <source>&amp;Bold</source>
         <translation>&amp;Полужирный</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="412"/>
+        <location filename="../texteditor.cpp" line="411"/>
         <source>&amp;Italic</source>
         <translation>&amp;Курсив</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="420"/>
+        <location filename="../texteditor.cpp" line="419"/>
         <source>&amp;Underline</source>
         <translation>&amp;Подчеркивание</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="452"/>
+        <location filename="../texteditor.cpp" line="451"/>
         <source>&amp;Left</source>
         <translation>&amp;Слева</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="458"/>
+        <location filename="../texteditor.cpp" line="457"/>
         <source>C&amp;enter</source>
         <translation>&amp;Центр</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="464"/>
+        <location filename="../texteditor.cpp" line="463"/>
         <source>&amp;Right</source>
         <translation>&amp;Справа</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="470"/>
+        <location filename="../texteditor.cpp" line="469"/>
         <source>&amp;Justify</source>
         <translation>&amp;Растянуть</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="480"/>
+        <location filename="../texteditor.cpp" line="479"/>
         <source>&amp;Settings</source>
         <translation>&amp;Настройки</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="483"/>
+        <location filename="../texteditor.cpp" line="482"/>
         <source>Set &amp;fixed font</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="488"/>
+        <location filename="../texteditor.cpp" line="487"/>
         <source>Set &amp;variable font</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="493"/>
+        <location filename="../texteditor.cpp" line="492"/>
         <source>&amp;fixed font is default</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="607"/>
+        <location filename="../texteditor.cpp" line="606"/>
         <source>Export Note to single file</source>
         <translation>Экспортировать заметки в один файл</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="621"/>
-        <location filename="../texteditor.cpp" line="697"/>
+        <location filename="../texteditor.cpp" line="620"/>
+        <location filename="../texteditor.cpp" line="696"/>
         <source>Overwrite</source>
         <translation>Перезаписать</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="622"/>
-        <location filename="../texteditor.cpp" line="698"/>
+        <location filename="../texteditor.cpp" line="621"/>
+        <location filename="../texteditor.cpp" line="697"/>
         <source>Cancel</source>
         <translation>Отмена</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="682"/>
+        <location filename="../texteditor.cpp" line="681"/>
         <source>Export Note to single file (ASCII)</source>
         <translation>Экспортировать Заметку в один файл (ASCII)</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="725"/>
+        <location filename="../texteditor.cpp" line="724"/>
         <source>Print</source>
         <comment>TextEditor</comment>
         <translation type="unfinished">Печать</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="432"/>
+        <location filename="../texteditor.cpp" line="431"/>
         <source>Subs&amp;cript</source>
         <translation>Под&amp;строчный</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="440"/>
+        <location filename="../texteditor.cpp" line="439"/>
         <source>Su&amp;perscript</source>
         <translation>На&amp;дстрочный</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="506"/>
+        <location filename="../texteditor.cpp" line="505"/>
         <source>Note Editor</source>
         <translation>Редактор Заметок</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="351"/>
+        <location filename="../texteditor.cpp" line="350"/>
         <source>F&amp;ormat</source>
         <translation>Ф&amp;ормат</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="298"/>
+        <location filename="../texteditor.cpp" line="297"/>
         <source>Edit Actions</source>
         <translation>Edit Actions</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="349"/>
+        <location filename="../texteditor.cpp" line="348"/>
         <source>Format Actions</source>
         <translation>Format Actions</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="248"/>
+        <location filename="../texteditor.cpp" line="247"/>
         <source>Note Actions</source>
         <translation>Note Actions</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="37"/>
+        <location filename="../texteditor.cpp" line="36"/>
         <source>Ready</source>
         <comment>Statusbar message</comment>
         <translation>Готово</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="174"/>
+        <location filename="../texteditor.cpp" line="173"/>
         <source>No filename available for this note.</source>
         <comment>Statusbar message</comment>
         <translation>Не задано имя файла для текущей заметки.</translation>
@@ -3734,7 +3734,7 @@ Do you want to overwrite it?</source>
         <translation type="obsolete">Редактор Заметок</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="250"/>
+        <location filename="../texteditor.cpp" line="249"/>
         <source>&amp;Note</source>
         <comment>Menubar</comment>
         <translation>Заме&amp;тка</translation>
@@ -3800,8 +3800,8 @@ Do you want to overwrite it?</source>
         <translation type="obsolete">Удалить всё</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="616"/>
-        <location filename="../texteditor.cpp" line="692"/>
+        <location filename="../texteditor.cpp" line="615"/>
+        <location filename="../texteditor.cpp" line="691"/>
         <source>The file %1
 exists already.
 Do you want to overwrite it?</source>
@@ -3809,7 +3809,7 @@ Do you want to overwrite it?</source>
         <translation type="unfinished">Файл %1 ￼уже существует. ￼Перезаписать?</translation>
     </message>
     <message>
-        <location filename="../texteditor.cpp" line="640"/>
+        <location filename="../texteditor.cpp" line="639"/>
         <source>Couldn&apos;t export note </source>
         <comment>dialog &apos;save note as&apos;</comment>
         <translation>Ошибка при экспорте Заметок</translation>
@@ -3833,39 +3833,39 @@ Do you want to overwrite it?</source>
 <context>
     <name>VymModel</name>
     <message>
-        <location filename="../vymmodel.cpp" line="113"/>
+        <location filename="../vymmodel.cpp" line="112"/>
         <source>unnamed</source>
         <translation type="unfinished">vym-map</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="379"/>
-        <location filename="../vymmodel.cpp" line="480"/>
-        <location filename="../vymmodel.cpp" line="531"/>
+        <location filename="../vymmodel.cpp" line="378"/>
+        <location filename="../vymmodel.cpp" line="479"/>
+        <location filename="../vymmodel.cpp" line="530"/>
         <source>Critical Parse Error</source>
         <translation type="unfinished">Критическая ошибка Разбора</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="420"/>
-        <location filename="../vymmodel.cpp" line="465"/>
-        <location filename="../vymmodel.cpp" line="631"/>
+        <location filename="../vymmodel.cpp" line="419"/>
+        <location filename="../vymmodel.cpp" line="464"/>
+        <location filename="../vymmodel.cpp" line="630"/>
         <source>Critical Load Error</source>
         <translation type="unfinished">Критическая ошибка Загрузки</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="421"/>
+        <location filename="../vymmodel.cpp" line="420"/>
         <source>Couldn&apos;t create temporary directory before load
 </source>
         <translation type="unfinished">Ошибка при создании временной папки перед загрузкой</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="466"/>
+        <location filename="../vymmodel.cpp" line="465"/>
         <source>Couldn&apos;t find a map (*.xml) in .vym archive.
 </source>
         <translation type="unfinished">Не найдена Карта (*.xml) в .vym архиве.
 </translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="574"/>
+        <location filename="../vymmodel.cpp" line="573"/>
         <source>The map %1
 did not use the compressed vym file format.
 Writing it uncompressed will also write images 
@@ -3880,65 +3880,65 @@ and flags and thus may overwrite files in the given directory
 Do you want to write the map</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="582"/>
+        <location filename="../vymmodel.cpp" line="581"/>
         <source>compressed (vym default)</source>
         <translation type="unfinished">compressed (vym default)</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="583"/>
+        <location filename="../vymmodel.cpp" line="582"/>
         <source>uncompressed</source>
         <translation type="unfinished">uncompressed</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="584"/>
-        <location filename="../vymmodel.cpp" line="783"/>
+        <location filename="../vymmodel.cpp" line="583"/>
+        <location filename="../vymmodel.cpp" line="782"/>
         <source>Cancel</source>
         <translation type="unfinished">Отмена</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="613"/>
-        <location filename="../vymmodel.cpp" line="618"/>
+        <location filename="../vymmodel.cpp" line="612"/>
+        <location filename="../vymmodel.cpp" line="617"/>
         <source>Save Error</source>
         <translation type="unfinished">Ошибка сохранения</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="614"/>
+        <location filename="../vymmodel.cpp" line="613"/>
         <source>%1
 could not be removed before saving</source>
         <translation type="unfinished">%1 не может быть удалено перед сохранением</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="619"/>
+        <location filename="../vymmodel.cpp" line="618"/>
         <source>%1
 could not be renamed before saving</source>
         <translation type="unfinished">%1 не может быть удалено перед сохранением</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="632"/>
+        <location filename="../vymmodel.cpp" line="631"/>
         <source>Couldn&apos;t create temporary directory before save
 </source>
         <translation type="unfinished">Ошибка при создании временной папки перед сохранением
 </translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="703"/>
-        <location filename="../vymmodel.cpp" line="759"/>
-        <location filename="../vymmodel.cpp" line="5050"/>
+        <location filename="../vymmodel.cpp" line="702"/>
+        <location filename="../vymmodel.cpp" line="758"/>
+        <location filename="../vymmodel.cpp" line="5049"/>
         <source>Images</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="706"/>
+        <location filename="../vymmodel.cpp" line="705"/>
         <source>Load image</source>
         <translation type="unfinished">Загрузить изображение</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="761"/>
+        <location filename="../vymmodel.cpp" line="760"/>
         <source>Save image</source>
         <translation type="unfinished">Сохранить изображение</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="775"/>
+        <location filename="../vymmodel.cpp" line="774"/>
         <source>The file %1 exists already.
 Do you want to overwrite it?</source>
         <translation type="unfinished">Файл %1
@@ -3946,47 +3946,47 @@ Do you want to overwrite it?</source>
 Перезаписать? {1 ?}</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="782"/>
+        <location filename="../vymmodel.cpp" line="781"/>
         <source>Overwrite</source>
         <translation type="unfinished">Перезаписать</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="797"/>
-        <location filename="../vymmodel.cpp" line="799"/>
-        <location filename="../vymmodel.cpp" line="4592"/>
-        <location filename="../vymmodel.cpp" line="4603"/>
+        <location filename="../vymmodel.cpp" line="796"/>
+        <location filename="../vymmodel.cpp" line="798"/>
+        <location filename="../vymmodel.cpp" line="4591"/>
+        <location filename="../vymmodel.cpp" line="4602"/>
         <source>Critical Error</source>
         <translation type="unfinished">Критическая ошибка</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="797"/>
-        <location filename="../vymmodel.cpp" line="4592"/>
+        <location filename="../vymmodel.cpp" line="796"/>
+        <location filename="../vymmodel.cpp" line="4591"/>
         <source>Unsupported format in %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="799"/>
+        <location filename="../vymmodel.cpp" line="798"/>
         <source>Couldn&apos;t save %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="829"/>
+        <location filename="../vymmodel.cpp" line="828"/>
         <source>Critical Import Error</source>
         <translation type="unfinished">Критическая ошибка Импорта</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="829"/>
+        <location filename="../vymmodel.cpp" line="828"/>
         <source>Cannot find the directory %1</source>
         <translation type="unfinished">Папка %1 не найдена</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="881"/>
-        <location filename="../vymmodel.cpp" line="884"/>
+        <location filename="../vymmodel.cpp" line="880"/>
+        <location filename="../vymmodel.cpp" line="883"/>
         <source>Choose directory structure to import</source>
         <translation type="unfinished">Выберите структуруа папок для экспорта</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="936"/>
+        <location filename="../vymmodel.cpp" line="935"/>
         <source>The file of the map  on disk has changed:
 
    %1
@@ -3999,22 +3999,22 @@ Do you want to reload that map with the new file?</source>
 Вы хотите загрузить изменненую карту с диска?</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="943"/>
+        <location filename="../vymmodel.cpp" line="942"/>
         <source>Reload</source>
         <translation type="unfinished">Перезагрузить</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="944"/>
+        <location filename="../vymmodel.cpp" line="943"/>
         <source>Ignore</source>
         <translation type="unfinished">Пропустить</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="1090"/>
+        <location filename="../vymmodel.cpp" line="1089"/>
         <source>Autosave disabled during undo.</source>
         <translation type="unfinished">Автосохранение отключено во время &quot;отмены&quot;.</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="1700"/>
+        <location filename="../vymmodel.cpp" line="1699"/>
         <source>Note</source>
         <comment>FindAll in VymModel</comment>
         <translation type="unfinished">Заметки</translation>
@@ -4043,7 +4043,7 @@ Do you want to reload that map with the new file?</source>
         <translation type="obsolete">Задать URL на локальный файл</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="3285"/>
+        <location filename="../vymmodel.cpp" line="3284"/>
         <source>Contacting Bugzilla...</source>
         <comment>VymModel</comment>
         <translation type="unfinished"></translation>
@@ -4053,37 +4053,37 @@ Do you want to reload that map with the new file?</source>
         <translation type="obsolete">Ссылка на другую Карту</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="4579"/>
+        <location filename="../vymmodel.cpp" line="4578"/>
         <source>Export map as image</source>
         <translation type="unfinished">Экспортировать Карту как изображение</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="4603"/>
+        <location filename="../vymmodel.cpp" line="4602"/>
         <source>Couldn&apos;t save QImage %1 in format %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="4626"/>
+        <location filename="../vymmodel.cpp" line="4625"/>
         <source>Export map as PDF</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="4671"/>
+        <location filename="../vymmodel.cpp" line="4670"/>
         <source>Export map as SVG</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="4710"/>
+        <location filename="../vymmodel.cpp" line="4709"/>
         <source>Export XML to directory</source>
         <translation type="unfinished">Экспортировать XML в папку</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="4751"/>
+        <location filename="../vymmodel.cpp" line="4750"/>
         <source>Critical Export Error</source>
         <translation type="unfinished">Критическая ошибка Экспорта</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="5053"/>
+        <location filename="../vymmodel.cpp" line="5052"/>
         <source>Load background image</source>
         <translation type="unfinished">Загрузить фоновый рисунок</translation>
     </message>
