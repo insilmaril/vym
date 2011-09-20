@@ -1,6 +1,5 @@
 #include "texteditor.h"
 
-#include <cstdlib>
 #include <typeinfo>
 
 #include "noteobj.h"	//Still needed for ascii conversion
