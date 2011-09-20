@@ -2609,7 +2609,7 @@ bool VymModel::relinkBranch (
 	endInsertRows();
 
 	// Correct type if necessesary
-	if (branch->getType()==TreeItem::MapCenter) 
+	if ( branch->getType()==TreeItem::MapCenter && branch->depth() >0 ) 
 	{
 	    branch->setType(TreeItem::Branch);
 	    keepFrame=false;
