@@ -34,12 +34,15 @@ VymView::VymView(VymModel *m)
     if (!mapEditor) mapEditor=new MapEditor (model);
 
     // Create Layout 
+
+    /*
     QVBoxLayout* mainLayout = new QVBoxLayout (this); 
     QSplitter *splitter= new QSplitter (this);
 
     QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     splitter->setSizePolicy(sizePolicy);
     mainLayout->addWidget (splitter);
+    */
 
     // Connect selections
 
@@ -93,6 +96,22 @@ VymView::VymView(VymModel *m)
     mapEditor->setAntiAlias (mainWindow->isAliased());
     mapEditor->setSmoothPixmap(mainWindow->hasSmoothPixmapTransform());
 
+    setCentralWidget (mapEditor);
+    QDockWidget *dw;
+    /*
+    dw = new QDockWidget("MapEditor", this);
+    //dw->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+    dw->setWidget (mapEditor);
+    addDockWidget(Qt::RightDockWidgetArea, dw);
+    */
+
+    dw = new QDockWidget("TreeEditor", this);
+    //dw->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+    dw->setWidget (treeEditor);
+    addDockWidget(Qt::LeftDockWidgetArea, dw);
+    treeEditorDW=dw;
+
+    /*
     splitter->addWidget (treeEditor);
     splitter->addWidget (mapEditor);
 
@@ -101,11 +120,12 @@ VymView::VymView(VymModel *m)
     widths<<200;
     widths<<600;
     splitter->setSizes(widths);
+    */
 }
 
 VymView::~VymView()
 {
-    //cout << "Destructor VymView\n";
+    //qDebug()<< "Destructor VymView";
 }
 
 VymModel* VymView::getModel()

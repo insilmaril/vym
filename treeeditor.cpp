@@ -13,9 +13,12 @@ extern Main *mainWindow;
 TreeEditor::TreeEditor(VymModel *m)
 {
     model=m;
+    if (model) setModel(model);
+    init();
+}
 
-    setModel(m);
-
+void TreeEditor::init()
+{
     QAction *a;
     // Shortcuts for navigating with cursor:
     a = new QAction(tr( "Select upper object","Tree Editor" ), this);

@@ -2,6 +2,7 @@
 #define VYMVIEW_H
 
 #include <QItemSelectionModel>
+#include <QMainWindow>
 #include <QWidget>
 
 class VymModel;
@@ -10,7 +11,7 @@ class TreeEditor;
 
 class QTreeView;
 
-class VymView:public QWidget
+class VymView:public QMainWindow
 {
     Q_OBJECT
 public:
@@ -32,7 +33,7 @@ public slots:
 
 private:
     VymModel *model;
-    TreeEditor *treeEditor;
+    QDockWidget *TreeEditorDW;
     QItemSelectionModel *selModel;
     MapEditor *mapEditor;
 };
