@@ -19,7 +19,7 @@ public:
     ~VymView();
     VymModel* getModel();
     MapEditor* getMapEditor();
-    TreeEditor* getTreeEditor();
+    bool treeEditorIsVisible();
     void initFocus();
 
 public slots:
@@ -33,7 +33,8 @@ public slots:
 
 private:
     VymModel *model;
-    QDockWidget *TreeEditorDW;
+    TreeEditor *treeEditor;
+    QDockWidget *treeEditorDW;
     QItemSelectionModel *selModel;
     MapEditor *mapEditor;
 };

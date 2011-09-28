@@ -98,35 +98,25 @@ VymView::VymView(VymModel *m)
 
     setCentralWidget (mapEditor);
     QDockWidget *dw;
+    dw = new QDockWidget("TreeEditor", this);
+    //dw->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+    dw->setWidget (treeEditor);
+    addDockWidget(Qt::LeftDockWidgetArea, dw);
+    treeEditorDW=dw;
+    connect (
+	treeEditorDW, SIGNAL (visibilityChanged(bool) ), 
+	mainWindow,SLOT (updateActions() ) );
+
+
     /*
     dw = new QDockWidget("MapEditor", this);
     //dw->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
     dw->setWidget (mapEditor);
     addDockWidget(Qt::RightDockWidgetArea, dw);
     */
-
-    dw = new QDockWidget("TreeEditor", this);
-    //dw->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
-    dw->setWidget (treeEditor);
-    addDockWidget(Qt::LeftDockWidgetArea, dw);
-    treeEditorDW=dw;
-
-    /*
-    splitter->addWidget (treeEditor);
-    splitter->addWidget (mapEditor);
-
-    // Set geometry
-    QList <int> widths;
-    widths<<200;
-    widths<<600;
-    splitter->setSizes(widths);
-    */
 }
 
-VymView::~VymView()
-{
-    //qDebug()<< "Destructor VymView";
-}
+VymView::~VymView() {}
 
 VymModel* VymView::getModel()
 {
@@ -138,9 +128,9 @@ MapEditor* VymView::getMapEditor()
     return mapEditor;
 }
 
-TreeEditor* VymView::getTreeEditor()
+bool VymView::treeEditorIsVisible()
 {
-    return treeEditor;
+    return treeEditorDW->isVisible();
 }
 
 void VymView::initFocus()
@@ -270,10 +260,10 @@ void VymView::showSelection()
 
 void VymView::toggleTreeEditor()
 {
-    if (treeEditor->isVisible() )
-	treeEditor->hide();
+    if (treeEditorDW->isVisible() )
+	treeEditorDW->hide();
     else
-	treeEditor->show();
+	treeEditorDW->show();
 }
 
 

@@ -19,6 +19,8 @@ TreeEditor::TreeEditor(VymModel *m)
 
 void TreeEditor::init()
 {
+    header()->hide();
+
     QAction *a;
     // Shortcuts for navigating with cursor:
     a = new QAction(tr( "Select upper object","Tree Editor" ), this);
@@ -48,7 +50,7 @@ void TreeEditor::init()
 
 TreeEditor::~TreeEditor()
 {
-    //cout <<"Destructor TreeEditor for "<<model->getMapName().toStdString()<<endl;
+    //qDebug()<<"Destructor TreeEditor for "<<model->getMapName();
 }
 
 QModelIndex TreeEditor::getSelectedIndex()
