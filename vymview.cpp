@@ -1,6 +1,7 @@
 #include "vymview.h"
 
 #include "branchitem.h"
+#include "dockeditor.h"
 #include "mainwindow.h"
 #include "mapeditor.h"
 #include "treedelegate.h"
@@ -97,23 +98,22 @@ VymView::VymView(VymModel *m)
     mapEditor->setSmoothPixmap(mainWindow->hasSmoothPixmapTransform());
 
     setCentralWidget (mapEditor);
-    QDockWidget *dw;
-    dw = new QDockWidget("TreeEditor", this);
-    //dw->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
-    dw->setWidget (treeEditor);
-    addDockWidget(Qt::LeftDockWidgetArea, dw);
-    treeEditorDW=dw;
+    DockEditor *de;
+    de = new DockEditor (tr("TreeEditor","Title of dockable editor widget"), this, model);
+    de->setWidget (treeEditor);
+    addDockWidget(Qt::LeftDockWidgetArea, de);
+    treeEditorDE=de;
     connect (
-	treeEditorDW, SIGNAL (visibilityChanged(bool) ), 
+	treeEditorDE, SIGNAL (visibilityChanged(bool) ), 
 	mainWindow,SLOT (updateActions() ) );
 
-
-    /*
-    dw = new QDockWidget("MapEditor", this);
-    //dw->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
-    dw->setWidget (mapEditor);
-    addDockWidget(Qt::RightDockWidgetArea, dw);
-    */
+    de = new DockEditor (tr("MapEditor","Title of dockable editor widget"), this, model);
+    de->setWidget (mapEditor);
+    addDockWidget(Qt::RightDockWidgetArea, de);
+    mapEditorDE=de;
+    connect (
+	mapEditorDE, SIGNAL (visibilityChanged(bool) ), 
+	mainWindow,SLOT (updateActions() ) );
 }
 
 VymView::~VymView() {}
@@ -130,7 +130,7 @@ MapEditor* VymView::getMapEditor()
 
 bool VymView::treeEditorIsVisible()
 {
-    return treeEditorDW->isVisible();
+    return treeEditorDE->isVisible();
 }
 
 void VymView::initFocus()
@@ -260,10 +260,10 @@ void VymView::showSelection()
 
 void VymView::toggleTreeEditor()
 {
-    if (treeEditorDW->isVisible() )
-	treeEditorDW->hide();
+    if (treeEditorDE->isVisible() )
+	treeEditorDE->hide();
     else
-	treeEditorDW->show();
+	treeEditorDE->show();
 }
 
 

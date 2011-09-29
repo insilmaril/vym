@@ -5,10 +5,10 @@
 #include <QMainWindow>
 #include <QWidget>
 
+class DockEditor;
 class VymModel;
 class MapEditor;
 class TreeEditor;
-
 class QTreeView;
 
 class VymView:public QMainWindow
@@ -34,9 +34,10 @@ public slots:
 private:
     VymModel *model;
     TreeEditor *treeEditor;
-    QDockWidget *treeEditorDW;
-    QItemSelectionModel *selModel;
+    DockEditor *treeEditorDE;
     MapEditor *mapEditor;
+    DockEditor *mapEditorDE;
+    QItemSelectionModel *selModel;
 };
 
 
