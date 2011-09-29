@@ -62,6 +62,13 @@ QModelIndex TreeEditor::getSelectedIndex()
 	return list.first();
 }
 
+/*
+QSize TreeEditor::sizeHint() const
+{
+    qDebug()<<"TR::sH";
+    return QSize(200,-1);
+}
+*/
 void TreeEditor::cursorUp()
 {
     QModelIndex ix=getSelectedIndex();

@@ -36,7 +36,7 @@ private:
     TreeEditor *treeEditor;
     DockEditor *treeEditorDE;
     MapEditor *mapEditor;
-    DockEditor *mapEditorDE;
+    //DockEditor *mapEditorDE;
     QItemSelectionModel *selModel;
 };
 

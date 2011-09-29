@@ -19,13 +19,13 @@ VymView::VymView(VymModel *m)
     //treeEditor->setModel ((QAbstractItemModel*)model);
     //treeEditor->setMinimumWidth (50);
 
-    treeEditor->setColumnWidth (0,150);
-    treeEditor->setAnimated (true);
-
     selModel=new QItemSelectionModel (model);
 
     model->setSelectionModel (selModel);
     treeEditor->setSelectionModel (selModel);
+    treeEditor->setColumnWidth (0,150);
+    treeEditor->setAnimated (true);
+    treeEditor->resize ( 20,200);
 
     TreeDelegate *delegate=new TreeDelegate (this);
     treeEditor->setItemDelegate (delegate);
@@ -33,6 +33,7 @@ VymView::VymView(VymModel *m)
     // Create good old MapEditor
     mapEditor=model->getMapEditor();
     if (!mapEditor) mapEditor=new MapEditor (model);
+    setCentralWidget (mapEditor);
 
     // Create Layout 
 
@@ -97,23 +98,26 @@ VymView::VymView(VymModel *m)
     mapEditor->setAntiAlias (mainWindow->isAliased());
     mapEditor->setSmoothPixmap(mainWindow->hasSmoothPixmapTransform());
 
-    setCentralWidget (mapEditor);
     DockEditor *de;
     de = new DockEditor (tr("TreeEditor","Title of dockable editor widget"), this, model);
     de->setWidget (treeEditor);
+    de->setAllowedAreas (Qt::AllDockWidgetAreas);
     addDockWidget(Qt::LeftDockWidgetArea, de);
     treeEditorDE=de;
+
     connect (
 	treeEditorDE, SIGNAL (visibilityChanged(bool) ), 
 	mainWindow,SLOT (updateActions() ) );
 
-    de = new DockEditor (tr("MapEditor","Title of dockable editor widget"), this, model);
-    de->setWidget (mapEditor);
+/*
+    de = new DockEditor (tr("MapEditor2","Title of dockable editor widget"), this, model);
+    de->setWidget (mapEditor2);
     addDockWidget(Qt::RightDockWidgetArea, de);
     mapEditorDE=de;
     connect (
 	mapEditorDE, SIGNAL (visibilityChanged(bool) ), 
 	mainWindow,SLOT (updateActions() ) );
+*/
 }
 
 VymView::~VymView() {}

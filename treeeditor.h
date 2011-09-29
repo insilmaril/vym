@@ -17,7 +17,7 @@ public:
     ~TreeEditor();
     void init();
     QModelIndex getSelectedIndex();
-
+//    virtual QSize sizeHint() const;
 private slots:
     void cursorUp();
     void cursorDown();
