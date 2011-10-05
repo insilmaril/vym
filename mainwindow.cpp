@@ -832,7 +832,7 @@ void Main::setupEditActions()
     connect( a, SIGNAL( triggered() ), this, SLOT( editNote2URLs() ) );
     actionGetURLsFromNote=a;
 
-    a = new QAction(QPixmap(flagsPath+"flag-url.png"), tr( "Edit URL...","Edit menu"), this);
+    a = new QAction(QPixmap(flagsPath+"flag-urlnew.png"), tr( "Edit URL...","Edit menu"), this);
     a->setShortcut ( Qt::Key_U );
     a->setShortcutContext (Qt::WindowShortcut);
     switchboard.addConnection(a,tr("Edit","Shortcut group"));
