@@ -21,7 +21,7 @@ DownloadAgent::DownloadAgent (const QUrl &url, BranchItem *bi)
     VymModel *model=bi->getModel();
     modelID=model->getID();
 
-    qDebug()<<"Constr. DownloadAgent for "<<branchID;
+   //qDebug()<<"Constr. DownloadAgent for "<<branchID;
 
    connect(&networkManager, SIGNAL(finished(QNetworkReply*)),
             SLOT(downloadFinished(QNetworkReply*)));
@@ -35,7 +35,7 @@ DownloadAgent::DownloadAgent (const QUrl &url, BranchItem *bi)
 
 DownloadAgent::~DownloadAgent ()
 {
-    qDebug()<<"Destr. DownloadAgent for "<<branchID;
+    //qDebug()<<"Destr. DownloadAgent for "<<branchID;
 }
 
 void DownloadAgent::downloadFinished (QNetworkReply *reply)
