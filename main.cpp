@@ -221,7 +221,7 @@ int main(int argc, char* argv[])
     standardFlagsMaster=new FlagRow;
     standardFlagsMaster->setName ("standardFlagsMaster");
 
-    // Initialize window of NoteEditor
+    // Initialize editors
     noteEditor = new NoteEditor();
     noteEditor->setWindowIcon (QPixmap (iconPath+"vym-editor.png"));
 

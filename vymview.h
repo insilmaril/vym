@@ -2,15 +2,16 @@
 #define VYMVIEW_H
 
 #include <QItemSelectionModel>
+#include <QMainWindow>
 #include <QWidget>
 
+class DockEditor;
 class VymModel;
 class MapEditor;
 class TreeEditor;
-
 class QTreeView;
 
-class VymView:public QWidget
+class VymView:public QMainWindow
 {
     Q_OBJECT
 public:
@@ -18,7 +19,7 @@ public:
     ~VymView();
     VymModel* getModel();
     MapEditor* getMapEditor();
-    TreeEditor* getTreeEditor();
+    bool treeEditorIsVisible();
     void initFocus();
 
 public slots:
@@ -33,8 +34,10 @@ public slots:
 private:
     VymModel *model;
     TreeEditor *treeEditor;
-    QItemSelectionModel *selModel;
+    DockEditor *treeEditorDE;
     MapEditor *mapEditor;
+    //DockEditor *mapEditorDE;
+    QItemSelectionModel *selModel;
 };
 
 

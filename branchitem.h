@@ -2,7 +2,6 @@
 #define BRANCHITEM_H
 
 #include "mapitem.h"
-//#include "xlink.h"
 
 #include <QList>
 

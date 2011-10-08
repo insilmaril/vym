@@ -13,8 +13,13 @@ extern Main *mainWindow;
 TreeEditor::TreeEditor(VymModel *m)
 {
     model=m;
+    if (model) setModel(model);
+    init();
+}
 
-    setModel(m);
+void TreeEditor::init()
+{
+    header()->hide();
 
     QAction *a;
     // Shortcuts for navigating with cursor:
@@ -45,7 +50,7 @@ TreeEditor::TreeEditor(VymModel *m)
 
 TreeEditor::~TreeEditor()
 {
-    //cout <<"Destructor TreeEditor for "<<model->getMapName().toStdString()<<endl;
+    //qDebug()<<"Destructor TreeEditor for "<<model->getMapName();
 }
 
 QModelIndex TreeEditor::getSelectedIndex()
@@ -57,6 +62,13 @@ QModelIndex TreeEditor::getSelectedIndex()
 	return list.first();
 }
 
+/*
+QSize TreeEditor::sizeHint() const
+{
+    qDebug()<<"TR::sH";
+    return QSize(200,-1);
+}
+*/
 void TreeEditor::cursorUp()
 {
     QModelIndex ix=getSelectedIndex();

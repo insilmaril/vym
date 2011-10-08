@@ -4061,9 +4061,8 @@ void Main::updateActions()
     actionViewTogglePropertyWindow->setChecked (branchPropertyWindow->isVisible());
     if ( tabWidget->currentWidget())
 	actionViewToggleTreeEditor->setChecked (
-	    vymViews.at(tabWidget->currentIndex())->getTreeEditor()->isVisible()
+	    vymViews.at(tabWidget->currentIndex())->treeEditorIsVisible()
 	);
-
     VymModel  *m =currentModel();
     if (m) 
     {
