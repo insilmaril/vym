@@ -142,6 +142,7 @@ void VymModel::init ()
     defXLinkWidth=1;
     defXLinkColor=QColor (50,50,255);
     zoomFactor=1;
+    rotationAngle=0;
 
     hasContextPos=false;
 
@@ -237,6 +238,7 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix, bool w
 		  xml.attribut("defXLinkColor", defXLinkColor.name() ) +
 		  xml.attribut("defXLinkWidth", QString().setNum(defXLinkWidth,10) ) +
 		  xml.attribut("mapZoomFactor", QString().setNum(mapEditor->getZoomFactorTarget()) ) +
+		  xml.attribut("mapRotationAngle", QString().setNum(mapEditor->getAngleTarget()) ) +
 		  colhint; 
     s+=xml.beginElement("vymmap",mapAttr); 
     xml.incIndent();
@@ -363,7 +365,11 @@ ErrorCode VymModel::loadMap (
     ErrorCode err=success;
 
     // Get updated zoomFactor, before applying one read from file in the end
-    if (mapEditor) zoomFactor=mapEditor->getZoomFactorTarget();
+    if (mapEditor) 
+    {
+	zoomFactor=mapEditor->getZoomFactorTarget();	
+	rotationAngle=mapEditor->getAngleTarget();
+    }
 
     // For ImportReplace let's insert a new branch and replace that
     BranchItem *selbi=getSelectedBranch();
@@ -545,7 +551,11 @@ ErrorCode VymModel::loadMap (
     
     if (lmode!=NewMap) emitUpdateQueries();
 
-    if (mapEditor) mapEditor->setZoomFactorTarget (zoomFactor);
+    if (mapEditor) 
+    {
+	mapEditor->setZoomFactorTarget (zoomFactor);
+	mapEditor->setAngleTarget (rotationAngle);
+    }
 
     qApp->processEvents();  // Update view (scene()->update() is not enough)
     return err;
@@ -4868,6 +4878,11 @@ void VymModel::unregisterEditor(QWidget *)
 void VymModel::setMapZoomFactor (const double &d)
 {
     zoomFactor=d;
+}
+
+void VymModel::setMapRotationAngle(const double &d)
+{
+    rotationAngle=d;
 }
 
 void VymModel::setContextPos(QPointF p)

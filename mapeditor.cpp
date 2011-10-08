@@ -34,6 +34,7 @@ MapEditor::MapEditor( VymModel *vm)
     mapScene->setBackgroundBrush (QBrush(Qt::white, Qt::SolidPattern));
 
     zoomFactor=zoomFactorTarget=1;
+    angle=angleTarget=0;
 
     model=vm;
     model->registerEditor(this);
@@ -345,7 +346,7 @@ qreal MapEditor::getZoomFactorTarget()
 void MapEditor::setZoomFactor(const qreal &zf)
 {
     zoomFactor=zf;
-    setMatrix (QMatrix(zf, 0, 0, zf, 0, 0),false );
+    updateMatrix();
 }
 
 qreal MapEditor::getZoomFactor()
@@ -353,19 +354,55 @@ qreal MapEditor::getZoomFactor()
     return zoomFactor;
 }
 
+void MapEditor::setAngleTarget (const qreal &at)
+{
+    angleTarget=at;
+    if (rotationAnimation.state()==QAbstractAnimation::Running)
+	rotationAnimation.stop();
+    if (settings.value ("/animation/use/",true).toBool() )
+    {
+	rotationAnimation.setTargetObject (this);
+	rotationAnimation.setPropertyName ("angle");
+	rotationAnimation.setDuration(settings.value("/animation/duration/rotation",2000).toInt() );
+	rotationAnimation.setEasingCurve ( QEasingCurve::OutQuint);
+	rotationAnimation.setStartValue(angle);
+	rotationAnimation.setEndValue(at);
+	rotationAnimation.start();
+    } else
+	setAngle (angleTarget);
+}
+
+qreal MapEditor::getAngleTarget()
+{
+    return angleTarget;
+}
+
+
+void MapEditor::setAngle(const qreal &a)
+{
+    angle=a;
+    updateMatrix();
+}
+
+qreal MapEditor::getAngle()
+{
+    return angle;
+}
+
+void MapEditor::updateMatrix()
+{
+    double a    = M_PI/180 * angle;
+    double sina = sin(a);
+    double cosa = cos(a);
+
+    QMatrix zm(zoomFactor, 0, 0, zoomFactor, 0, 0);
+    //QMatrix translationMatrix(1, 0, 0, 1, 50.0, 50.0);
+    QMatrix rm(cosa, sina, -sina, cosa, 0, 0);
+    setMatrix (zm * rm);
+}
+
 void MapEditor::print()
 {
-/*
-    if ( !printer ) //FIXME-3 printer always true meanwhile
-    {
-	qDebug()<<"ME::print creating printer";
-	//printer = new QPrinter;   //FIXME-3 use global printer
-	printer->setColorMode (QPrinter::Color);
-	printer->setPrinterName (settings.value("/mainwindow/printerName",printer->printerName()).toString());
-	printer->setOutputFormat((QPrinter::OutputFormat)settings.value("/mainwindow/printerFormat",printer->outputFormat()).toInt());
-	printer->setOutputFileName(settings.value("/mainwindow/printerFileName",printer->outputFileName()).toString());
-    }
-*/
     QRectF totalBBox=getTotalBBox();
 
     // Try to set orientation automagically
@@ -682,7 +719,8 @@ AttributeTable* MapEditor::attributeTable()
 
 void MapEditor::testFunction1()
 {
-    vPan=QPointF (0,-10);
+    angle+=10;
+    updateMatrix();
 
 /*
     qDebug()<< "ME::test1  selected TI="<<model->getSelectedItem();
@@ -1106,6 +1144,7 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
     if (e->button() == Qt::MidButton && e->modifiers() & Qt::ControlModifier )
     {
 	setZoomFactorTarget (1);
+	setAngleTarget (0);
 	return;
     }
 

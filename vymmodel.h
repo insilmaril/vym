@@ -517,8 +517,10 @@ public:
     void unregisterEditor (QWidget *);
 
     void setMapZoomFactor (const double &); 
+    void setMapRotationAngle (const double&);
 private: 
     double zoomFactor;
+    double rotationAngle;
     bool hasContextPos;			//!< True, if we have a context pos
     QPointF contextPos;			//!< local position during context menu
 public:

@@ -62,6 +62,20 @@ public:
     void setZoomFactor (const qreal &zf);
     qreal getZoomFactor();
 
+Q_PROPERTY(qreal angle READ getAngle WRITE setAngle)
+
+protected:
+    qreal angle;
+    qreal angleTarget;
+    QPropertyAnimation rotationAnimation;
+
+public:
+    void setAngleTarget (const qreal &a);
+    qreal getAngleTarget();
+    void setAngle (const qreal &a);
+    qreal getAngle();
+
+    void updateMatrix();
 public:
     void print();		    //!< Print the map
     QRectF getTotalBBox();	    //!< Bounding box of all items in map

@@ -1180,6 +1180,20 @@ void Main::setupViewActions()
     connect( a, SIGNAL( triggered() ), this, SLOT( viewZoomOut() ) );
     actionZoomOut=a;
 
+    a = new QAction( QPixmap(iconPath+"rotate-ccw.png"), tr( "Rotate counterclockwise","View action" ), this);
+    a->setShortcut( Qt::SHIFT + Qt::Key_R);
+    switchboard.addConnection(a,tr("View shortcuts","Shortcut group"));
+    viewMenu->addAction (a);
+    connect( a, SIGNAL( triggered() ), this, SLOT( viewRotateCounterClockwise() ) );
+    actionRotateCounterClockwise=a;
+
+    a = new QAction( QPixmap(iconPath+"rotate-cw.png"), tr( "Rotate rclockwise","View action" ), this);
+    a->setShortcut(Qt::Key_R);
+    switchboard.addConnection(a,tr("View shortcuts","Shortcut group"));
+    viewMenu->addAction (a);
+    connect( a, SIGNAL( triggered() ), this, SLOT( viewRotateClockwise() ) );
+    actionRotateClockwise=a;
+
     a = new QAction(QPixmap(iconPath+"viewmag-reset.png"), tr( "reset Zoom","View action" ), this);
     a->setShortcut (Qt::Key_Comma); // Reset zoom
     switchboard.addConnection(a,tr("View shortcuts","Shortcut group"));
@@ -1965,7 +1979,8 @@ void Main::setupToolbars()
     zoomToolbar->addAction(actionZoomOut);
     zoomToolbar->addAction(actionZoomReset);
     zoomToolbar->addAction(actionCenterOn);
-
+    zoomToolbar->addAction(actionRotateCounterClockwise);
+    zoomToolbar->addAction(actionRotateClockwise);
 
     // Editors
     editorsToolbar = addToolBar( tr("Editors toolbar","Editor Toolbar name") );
@@ -3774,7 +3789,11 @@ void Main::formatHideLinkUnselected()	//FIXME-3 get rid of this with imageproper
 void Main::viewZoomReset()
 {
     MapEditor *me=currentMapEditor();
-    if (me) me->setZoomFactorTarget (1);
+    if (me) 
+    {
+	me->setZoomFactorTarget (1);
+	me->setAngleTarget (0);
+    }	
 }
 
 void Main::viewZoomIn()
@@ -3787,6 +3806,18 @@ void Main::viewZoomOut()
 {
     MapEditor *me=currentMapEditor();
     if (me) me->setZoomFactorTarget (me->getZoomFactorTarget()*0.85);
+}
+
+void Main::viewRotateCounterClockwise()
+{
+    MapEditor *me=currentMapEditor();
+    if (me) me->setAngleTarget (me->getAngleTarget()-10);
+}
+
+void Main::viewRotateClockwise()
+{
+    MapEditor *me=currentMapEditor();
+    if (me) me->setAngleTarget (me->getAngleTarget()+10);
 }
 
 void Main::viewCenter()

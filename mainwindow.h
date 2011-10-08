@@ -224,6 +224,8 @@ public slots:
     void viewZoomReset();
     void viewZoomIn();
     void viewZoomOut();
+    void viewRotateCounterClockwise();
+    void viewRotateClockwise();
     void viewCenter();
 
 public slots:
@@ -406,6 +408,8 @@ private:
     QAction *actionZoomIn;
     QAction *actionZoomOut;
     QAction *actionZoomReset;
+    QAction *actionRotateCounterClockwise;
+    QAction *actionRotateClockwise;
     QAction *actionCenterOn;
 
     QActionGroup *actionGroupModModes;

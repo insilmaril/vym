@@ -113,6 +113,8 @@ bool parseVYMHandler::startElement  ( const QString&, const QString&,
 		model->setMapDefXLinkWidth(atts.value("defXLinkWidth").toInt ());
 	    if (!atts.value( "mapZoomFactor").isEmpty() ) 
 		model->setMapZoomFactor(atts.value("mapZoomFactor").toDouble());
+	    if (!atts.value( "mapRotationAngle").isEmpty() ) 
+		model->setMapRotationAngle(atts.value("mapRotationAngle").toDouble());
 	}   
 	// Check version
 	if (!atts.value( "version").isEmpty() ) 
