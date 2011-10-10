@@ -153,7 +153,6 @@ public:
     virtual uint getID ();
 
     // Navigation and selection
-    virtual TreeItem* findID (const uint &n);
     virtual TreeItem* getChildNum(const int &n);
     virtual BranchItem* getFirstBranch();
     virtual BranchItem* getLastBranch();

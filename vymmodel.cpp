@@ -1452,14 +1452,28 @@ TreeItem* VymModel::findBySelectString(QString s)
     return  ti;
 }
 
-TreeItem* VymModel::findID (const uint &i)  //FIXME-3 Search also other types...
+TreeItem* VymModel::findID (const uint &id)  //FIXME-3 Search also other types...
 {
     BranchItem *cur=NULL;
     BranchItem *prev=NULL;
     nextBranch(cur,prev);
     while (cur) 
     {
-	if (i==cur->getID() ) return cur;
+	if (id==cur->getID() ) return cur;
+	int j=0;
+	while (j<cur->xlinkCount() )
+	{
+	    XLinkItem *xli=cur->getXLinkItemNum (j);
+	    if (id==xli->getID() ) return xli;
+	    j++;
+	}
+	j=0;
+	while (j<cur->imageCount() )
+	{
+	    ImageItem *ii=cur->getImageNum (j);
+	    if (id==ii->getID() ) return ii;
+	    j++;
+	}
 	nextBranch(cur,prev);
     }
     return NULL;
@@ -2710,8 +2724,8 @@ void VymModel::cleanupItems()
 
     while (!deleteLaterIDs.isEmpty())
     {
-	TreeItem *ti=rootItem->findID (deleteLaterIDs.takeFirst());
-	if (ti) delete (ti);
+	TreeItem *ti=findID (deleteLaterIDs.takeFirst());
+	if (ti) deleteItem (ti);
     }
 }
 
