@@ -594,15 +594,6 @@ uint TreeItem::getID()
     return id;
 }
 
-TreeItem* TreeItem::findID (const uint &n)
-{
-    for (int i=0;i<childItems.count(); i++)
-	if (n==childItems.at(i)->id)
-	    return childItems.at(n);
-    return NULL;
-}
-
-
 TreeItem* TreeItem::getChildNum(const int &n)
 {
     if (n>=0 && n<childItems.count() )
