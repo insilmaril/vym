@@ -18,12 +18,9 @@ VymView::VymView(VymModel *m)
     // Create TreeView
     treeEditor=new TreeEditor (model);
 
-    // Create SlideEditor
-    slideEditor=new SlideEditor (model);
-
     selModel=new QItemSelectionModel (model);
-
     model->setSelectionModel (selModel);
+
     treeEditor->setSelectionModel (selModel);
     treeEditor->setColumnWidth (0,150);
     treeEditor->setAnimated (true);
@@ -32,13 +29,34 @@ VymView::VymView(VymModel *m)
     TreeDelegate *delegate=new TreeDelegate (this);
     treeEditor->setItemDelegate (delegate);
 
+    DockEditor *de;
+    de = new DockEditor (tr("TreeEditor","Title of dockable editor widget"), this, model);
+    de->setWidget (treeEditor);
+    de->setAllowedAreas (Qt::AllDockWidgetAreas);
+    addDockWidget(Qt::LeftDockWidgetArea, de);
+    treeEditorDE=de;
+
+    connect (
+	treeEditorDE, SIGNAL (visibilityChanged(bool) ), 
+	mainWindow,SLOT (updateActions() ) );
+
     // Create good old MapEditor
     mapEditor=model->getMapEditor();
     if (!mapEditor) mapEditor=new MapEditor (model);
     setCentralWidget (mapEditor);
 
-    // Create Layout 
+    // Create SlideEditor
+    slideEditor=new SlideEditor (model);
 
+    de = new DockEditor (tr("SlideEditor","Title of dockable editor widget"), this, model);
+    de->setWidget (slideEditor);
+    de->setAllowedAreas (Qt::AllDockWidgetAreas);
+    addDockWidget(Qt::RightDockWidgetArea, de);
+    slideEditorDE=de;
+    slideEditor->show();
+
+
+    // Create Layout 
     /*
     QVBoxLayout* mainLayout = new QVBoxLayout (this); 
     QSplitter *splitter= new QSplitter (this);
@@ -99,28 +117,6 @@ VymView::VymView(VymModel *m)
 	
     mapEditor->setAntiAlias (mainWindow->isAliased());
     mapEditor->setSmoothPixmap(mainWindow->hasSmoothPixmapTransform());
-
-    DockEditor *de;
-    de = new DockEditor (tr("TreeEditor","Title of dockable editor widget"), this, model);
-    de->setWidget (treeEditor);
-    de->setAllowedAreas (Qt::AllDockWidgetAreas);
-    addDockWidget(Qt::LeftDockWidgetArea, de);
-    treeEditorDE=de;
-    connect (
-	treeEditorDE, SIGNAL (visibilityChanged(bool) ), 
-	mainWindow,SLOT (updateActions() ) );
-
-    de = new DockEditor (tr("SlideEditor","Title of dockable editor widget"), this, model);
-    de->setWidget (slideEditor);
-    de->setAllowedAreas (Qt::AllDockWidgetAreas);
-    addDockWidget(Qt::RightDockWidgetArea, de);
-    slideEditorDE=de;
-    slideEditor->show();
-/*
-    connect (
-	treeEditorDE, SIGNAL (visibilityChanged(bool) ), 
-	mainWindow,SLOT (updateActions() ) );
-*/
 
 /*
     de = new DockEditor (tr("MapEditor2","Title of dockable editor widget"), this, model);
