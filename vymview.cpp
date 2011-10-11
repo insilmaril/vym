@@ -58,8 +58,6 @@ VymView::VymView(VymModel *m)
 	slideEditorDE, SIGNAL (visibilityChanged(bool) ), 
 	mainWindow,SLOT (updateActions() ) );
 
-
-
     // Create Layout 
     /*
     QVBoxLayout* mainLayout = new QVBoxLayout (this); 
