@@ -81,6 +81,10 @@ HEADERS	+= \
     shortcuts.h\
     showtextdialog.h\
     simplescripteditor.h\
+    slidecontrolwidget.h\
+    slideeditor.h\
+    slideitem.h\
+    slidemodel.h\
     treedelegate.h \
     treeeditor.h \
     treeitem.h \
@@ -157,6 +161,10 @@ SOURCES	+= \
     shortcuts.cpp\
     showtextdialog.cpp \
     simplescripteditor.cpp \
+    slidecontrolwidget.cpp \
+    slideeditor.cpp \
+    slideitem.cpp \
+    slidemodel.cpp \
     texteditor.cpp \
     treedelegate.cpp \
     treeeditor.cpp \

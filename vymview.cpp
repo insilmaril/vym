@@ -5,6 +5,7 @@
 #include "mainwindow.h"
 #include "mapeditor.h"
 #include "treedelegate.h"
+#include "slideeditor.h"
 #include "treeeditor.h"
 
 extern Main *mainWindow;
@@ -16,8 +17,9 @@ VymView::VymView(VymModel *m)
 
     // Create TreeView
     treeEditor=new TreeEditor (model);
-    //treeEditor->setModel ((QAbstractItemModel*)model);
-    //treeEditor->setMinimumWidth (50);
+
+    // Create SlideEditor
+    slideEditor=new SlideEditor (model);
 
     selModel=new QItemSelectionModel (model);
 
@@ -104,10 +106,21 @@ VymView::VymView(VymModel *m)
     de->setAllowedAreas (Qt::AllDockWidgetAreas);
     addDockWidget(Qt::LeftDockWidgetArea, de);
     treeEditorDE=de;
-
     connect (
 	treeEditorDE, SIGNAL (visibilityChanged(bool) ), 
 	mainWindow,SLOT (updateActions() ) );
+
+    de = new DockEditor (tr("SlideEditor","Title of dockable editor widget"), this, model);
+    de->setWidget (slideEditor);
+    de->setAllowedAreas (Qt::AllDockWidgetAreas);
+    addDockWidget(Qt::RightDockWidgetArea, de);
+    slideEditorDE=de;
+    slideEditor->show();
+/*
+    connect (
+	treeEditorDE, SIGNAL (visibilityChanged(bool) ), 
+	mainWindow,SLOT (updateActions() ) );
+*/
 
 /*
     de = new DockEditor (tr("MapEditor2","Title of dockable editor widget"), this, model);

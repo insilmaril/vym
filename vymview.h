@@ -8,6 +8,7 @@
 class DockEditor;
 class VymModel;
 class MapEditor;
+class SlideEditor;
 class TreeEditor;
 class QTreeView;
 
@@ -35,6 +36,9 @@ private:
     VymModel *model;
     TreeEditor *treeEditor;
     DockEditor *treeEditorDE;
+    SlideEditor *slideEditor;
+    DockEditor  *slideEditorDE;
+
     MapEditor *mapEditor;
     //DockEditor *mapEditorDE;
     QItemSelectionModel *selModel;
