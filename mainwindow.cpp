@@ -1242,6 +1242,14 @@ void Main::setupViewActions()
     connect( a, SIGNAL( triggered() ), this, SLOT(windowToggleTreeEditor() ) );
     actionViewToggleTreeEditor=a;
 
+    a = new QAction(QPixmap(""), tr( "Toggle Slide editor","View action" ),this);
+ //   a->setShortcut ( Qt::CTRL + Qt::Key_T );	// Toggle Tree Editor 
+    switchboard.addConnection(a,tr("View shortcuts","Shortcut group"));
+    a->setCheckable(true);
+    viewMenu->addAction (a);
+    connect( a, SIGNAL( triggered() ), this, SLOT(windowToggleSlideEditor() ) );
+    actionViewToggleSlideEditor=a;
+
     a = new QAction(QPixmap(iconPath+"history.png"),  tr( "History Window","View action" ),this );
     a->setShortcut ( Qt::CTRL + Qt::Key_H  );	// Toggle history window
     switchboard.addConnection(a,tr("View shortcuts","Shortcut group"));
@@ -1988,6 +1996,7 @@ void Main::setupToolbars()
     editorsToolbar->addAction (actionViewToggleNoteEditor);
     editorsToolbar->addAction (actionViewToggleHeadingEditor);
     editorsToolbar->addAction (actionViewToggleTreeEditor);
+    editorsToolbar->addAction (actionViewToggleSlideEditor);
     editorsToolbar->addAction (actionViewToggleHistoryWindow);
 
 
@@ -3958,6 +3967,12 @@ void Main::windowToggleTreeEditor()
 	vymViews.at(tabWidget->currentIndex())->toggleTreeEditor();
 }
 
+void Main::windowToggleSlideEditor()
+{
+    if ( tabWidget->currentWidget())
+	vymViews.at(tabWidget->currentIndex())->toggleSlideEditor();
+}
+
 void Main::windowToggleHistory()
 {
     if (historyWindow->isVisible())
@@ -4091,11 +4106,18 @@ void Main::updateActions()
     actionViewToggleHistoryWindow->setChecked (historyWindow->isVisible());
     actionViewTogglePropertyWindow->setChecked (branchPropertyWindow->isVisible());
     if ( tabWidget->currentWidget() && tabWidget->currentIndex()>=0 )
+    {
 	actionViewToggleTreeEditor->setChecked (
 	    vymViews.at(tabWidget->currentIndex())->treeEditorIsVisible()
 	);
-    else	
-	actionViewToggleTreeEditor->setChecked ( false );
+	actionViewToggleSlideEditor->setChecked (
+	    vymViews.at(tabWidget->currentIndex())->slideEditorIsVisible()
+	);
+    } else	
+    {
+	actionViewToggleTreeEditor->setChecked  ( false );
+	actionViewToggleSlideEditor->setChecked ( false );
+    }
     VymModel  *m =currentModel();
     if (m) 
     {

@@ -21,6 +21,7 @@ public:
     VymModel* getModel();
     MapEditor* getMapEditor();
     bool treeEditorIsVisible();
+    bool slideEditorIsVisible();
     void initFocus();
 
 public slots:
@@ -31,6 +32,7 @@ public slots:
     void collapseUnselected();
     void showSelection ();
     void toggleTreeEditor();
+    void toggleSlideEditor();
 
 private:
     VymModel *model;

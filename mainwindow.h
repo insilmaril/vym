@@ -245,6 +245,7 @@ public slots:
 
     void windowToggleNoteEditor();
     void windowToggleTreeEditor();
+    void windowToggleSlideEditor();
     void windowToggleHistory();
     void windowToggleProperty();
     void updateHistory(SimpleSettings &);
@@ -430,6 +431,7 @@ private:
     QAction *actionViewToggleNoteEditor;
     QAction *actionViewToggleHeadingEditor;
     QAction *actionViewToggleTreeEditor;
+    QAction *actionViewToggleSlideEditor;
     QAction *actionViewToggleHistoryWindow;
     QAction *actionViewTogglePropertyWindow;
     QAction *actionViewToggleAntiAlias;

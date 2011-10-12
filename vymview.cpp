@@ -53,7 +53,11 @@ VymView::VymView(VymModel *m)
     de->setAllowedAreas (Qt::AllDockWidgetAreas);
     addDockWidget(Qt::RightDockWidgetArea, de);
     slideEditorDE=de;
-    slideEditor->show();
+    slideEditorDE->hide();
+    connect (
+	slideEditorDE, SIGNAL (visibilityChanged(bool) ), 
+	mainWindow,SLOT (updateActions() ) );
+
 
 
     // Create Layout 
@@ -144,6 +148,11 @@ MapEditor* VymView::getMapEditor()
 bool VymView::treeEditorIsVisible()
 {
     return treeEditorDE->isVisible();
+}
+
+bool VymView::slideEditorIsVisible()
+{
+    return slideEditorDE->isVisible();
 }
 
 void VymView::initFocus()
@@ -277,6 +286,14 @@ void VymView::toggleTreeEditor()
 	treeEditorDE->hide();
     else
 	treeEditorDE->show();
+}
+
+void VymView::toggleSlideEditor()
+{
+    if (slideEditorDE->isVisible() )
+	slideEditorDE->hide();
+    else
+	slideEditorDE->show();
 }
 
 
