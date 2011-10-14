@@ -1,4 +1,4 @@
-VYM - View Your Mind - 1.99.0  (c) 2007-2011 by Uwe Drechsel
+VYM - View Your Mind - 2.0.0  (c) 2007-2011 by Uwe Drechsel
 ===========================================================
 
 Binaries
