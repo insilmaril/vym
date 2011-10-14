@@ -1,6 +1,7 @@
 #!/usr/bin/perl 
 #
 # (c) by Uwe Drechsel
+# 0.07	2011-10-14  Newer perl lib
 # 0.06	2011-03-17  Added config file
 # 0.05	2010-11-08  Showing severity only for PNEW bugs iwtn option -i
 # 0.04	2010-11-04  Getting severity, too	
@@ -8,7 +9,7 @@
 # 0.02	2010-01-21  Adaption to be used in vym
 # 0.01	2004-05-28  Initial version
 
-my $VERSION=0.06;
+my $VERSION=0.07;
 
 # BugzillaClient can be installed from
 # openSUSE:Tools
