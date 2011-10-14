@@ -13,7 +13,7 @@ my $VERSION=0.06;
 # BugzillaClient can be installed from
 # openSUSE:Tools
 
-use lib '/usr/lib/perl5/vendor_perl/5.12.1/SUSE';
+use lib '/usr/lib/perl5/vendor_perl/5.14.1/SUSE';
 use BugzillaClient;
 use POSIX qw(strftime);			# For time string in title
 
