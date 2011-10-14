@@ -719,8 +719,7 @@ AttributeTable* MapEditor::attributeTable()
 
 void MapEditor::testFunction1()
 {
-    angle+=10;
-    updateMatrix();
+    qDebug()<<"ME::scrollBarPos="<<getScrollBarPos();
 
 /*
     qDebug()<< "ME::test1  selected TI="<<model->getSelectedItem();
