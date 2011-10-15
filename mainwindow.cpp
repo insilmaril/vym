@@ -2058,7 +2058,9 @@ uint  Main::currentModelID() const
 
 VymModel* Main::currentModel() const
 {
-    if ( tabWidget->currentWidget() && tabWidget->currentIndex() >=0)
+    if ( tabWidget->currentWidget() 
+	&& tabWidget->currentIndex() >=0 
+	&& tabWidget->currentIndex() < vymViews.count() )
 	return vymViews.at(tabWidget->currentIndex())->getModel();
     return NULL;    
 }
@@ -4105,7 +4107,9 @@ void Main::updateActions()
     actionViewToggleNoteEditor->setChecked (noteEditor->isVisible());
     actionViewToggleHistoryWindow->setChecked (historyWindow->isVisible());
     actionViewTogglePropertyWindow->setChecked (branchPropertyWindow->isVisible());
-    if ( tabWidget->currentWidget() && tabWidget->currentIndex()>=0 )
+    if ( tabWidget->currentWidget() 
+	&& tabWidget->currentIndex()>=0 
+	&& tabWidget->currentIndex()<vymViews.count())
     {
 	actionViewToggleTreeEditor->setChecked (
 	    vymViews.at(tabWidget->currentIndex())->treeEditorIsVisible()
