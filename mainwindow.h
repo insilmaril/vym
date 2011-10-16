@@ -72,6 +72,7 @@ private:
     void setupToolbars();
     void hideEvent (QHideEvent * );
     void showEvent (QShowEvent * );
+    int currentView() const;
     MapEditor* currentMapEditor() const;
     VymModel* currentModel() const;
 public:	

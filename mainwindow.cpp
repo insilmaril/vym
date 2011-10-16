@@ -2041,6 +2041,15 @@ void Main::showEvent (QShowEvent * )
     if (actionViewToggleNoteEditor->isChecked()) noteEditor->showNormal();
 }
 
+int Main::currentView() const
+{
+    if ( tabWidget->currentWidget() )
+    {
+	int i=tabWidget->currentIndex();
+	if (i>=0 && i< vymViews.count() ) return i;
+    }
+    return -1;
+}
 
 MapEditor* Main::currentMapEditor() const
 {
@@ -2051,16 +2060,20 @@ MapEditor* Main::currentMapEditor() const
 
 uint  Main::currentModelID() const
 {
-    if (currentModel())
-	return currentModel()->getID();
-    return 0;	
+    VymModel *m=currentModel();
+    if (m)
+	return m->getID();
+    else
+	return 0;    
 }
 
 VymModel* Main::currentModel() const
 {
-    if ( tabWidget->currentWidget() && tabWidget->currentIndex() >=0)
-	return vymViews.at(tabWidget->currentIndex())->getModel();
-    return NULL;    
+    int cv=currentView();
+    if (cv>=0) 
+	return vymViews.at(cv)->getModel();
+    else
+	return NULL;    
 }
 
 VymModel* Main::getModel(uint id) const	
@@ -4105,14 +4118,11 @@ void Main::updateActions()
     actionViewToggleNoteEditor->setChecked (noteEditor->isVisible());
     actionViewToggleHistoryWindow->setChecked (historyWindow->isVisible());
     actionViewTogglePropertyWindow->setChecked (branchPropertyWindow->isVisible());
-    if ( tabWidget->currentWidget() && tabWidget->currentIndex()>=0 )
+    int cv=currentView();
+    if ( cv>=0 )
     {
-	actionViewToggleTreeEditor->setChecked (
-	    vymViews.at(tabWidget->currentIndex())->treeEditorIsVisible()
-	);
-	actionViewToggleSlideEditor->setChecked (
-	    vymViews.at(tabWidget->currentIndex())->slideEditorIsVisible()
-	);
+	actionViewToggleTreeEditor->setChecked ( vymViews.at(cv)->treeEditorIsVisible() );
+	actionViewToggleSlideEditor->setChecked( vymViews.at(cv)->slideEditorIsVisible() );
     } else	
     {
 	actionViewToggleTreeEditor->setChecked  ( false );
