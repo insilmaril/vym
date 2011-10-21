@@ -1012,12 +1012,12 @@ void MapEditor::editHeading()
 	lineEdit->setCursor(Qt::IBeamCursor);
 	lineEdit->setCursorPosition(1);
 
-	QPoint p = mapTo (this,bo->getAbsPos().toPoint() );
-
-	scene()->update();
-	p = mapTo (this,bo->getAbsPos().toPoint() );
-
-	lineEdit->setGeometry(p.x(),p.y(),230,25);
+	QPointF tl=bo->getAbsPos();
+	QPointF br=tl + QPointF (230,30);
+	QRectF r (tl, br);
+	lineEdit->setGeometry(r.toRect() );
+	setScrollBarPosTarget ( r );
+	animateScrollBars();
 	lineEdit->setText (bi->getHeading());
 	lineEdit->setFocus();
 	lineEdit->selectAll();	// Hack to enable cursor in lineEdit
@@ -1025,8 +1025,8 @@ void MapEditor::editHeading()
 	lineEdit->grabKeyboard();   //FIXME-3 reactived for tests...
 	editingHeading=true;
     }
-
 }
+
 void MapEditor::editHeadingFinished()
 {
     editingHeading=false;
