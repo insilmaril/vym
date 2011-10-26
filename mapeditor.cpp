@@ -242,13 +242,10 @@ void MapEditor::setScrollBarPosTarget (QRectF rect)
     // Expand viewport, if rect is not contained
     if (!sceneRect().contains (rect) )
     {
-	//FIXME-0 qDebug()<<"ME::setScrollBarPosTarget expanding scene: rect="<<rect<<"  sceneRect="<<sceneRect();
 	int v=horizontalScrollBar()->value();
 	int min=horizontalScrollBar()->minimum();
 	int max=horizontalScrollBar()->maximum();
-	//qDebug()<<"    horSB="<<min<<" -> "<<v<<" <- "<<max;
 	setSceneRect(sceneRect().united (rect));
-	//qDebug()<<"             new sceneRect="<<sceneRect();
     }
 
     int xmargin=0;
@@ -266,24 +263,19 @@ void MapEditor::setScrollBarPosTarget (QRectF rect)
 
     scrollBarPosTarget=getScrollBarPos();
 
-    //qDebug()<<"ME::vR="<<viewRect;
     if (viewRect.left() <= left + xmargin) {
-	//qDebug()<<" from left: vR="<<viewRect.left()<<"  left="<<left;
         // need to scroll from the left
 	scrollBarPosTarget.setX(int(viewRect.left() - xmargin - 0.5));
     }
     if (viewRect.right() >= right - xmargin) {
-	//qDebug()<<" from right: vR="<<viewRect.right()<<"  right="<<right;
         // need to scroll from the right
 	scrollBarPosTarget.setX(int(viewRect.right() - width + xmargin + 0.5));
     }
     if (viewRect.top() <= top + ymargin) {
-	//qDebug()<<" from top: vR="<<viewRect.top()<<"  top="<<top;
         // need to scroll from the top
 	scrollBarPosTarget.setY(int(viewRect.top() - ymargin - 0.5));
     }
     if (viewRect.bottom() >= bottom - ymargin) {
-	//qDebug()<<" from bottom: vR="<<viewRect.bottom()<<"  bottom="<<bottom;
         // need to scroll from the bottom
 	scrollBarPosTarget.setY(int(viewRect.bottom() - height + ymargin + 0.5));
     }
@@ -1148,6 +1140,7 @@ void MapEditor::keyReleaseEvent(QKeyEvent* e)
 void MapEditor::mousePressEvent(QMouseEvent* e)
 {
     // Debugging: Show position
+    /*
     if (debug && 
 	e->button() == Qt::LeftButton && 
 	e->modifiers() & Qt::ControlModifier )
@@ -1156,11 +1149,11 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
 	int min=horizontalScrollBar()->minimum();
 	int max=horizontalScrollBar()->maximum();
 	qDebug()<<"    horSB="<<min<<" -> "<<v<<" <- "<<max;
+    */	
 
     // Ignore right clicks or wile editing heading
     if (e->button() == Qt::RightButton or model->isSelectionBlocked() )
     {
-	//qDebug() << "  ME::ignoring right mouse event...\n";
 	e->ignore();
 	QGraphicsView::mousePressEvent(e);
 	return;
@@ -2003,11 +1996,7 @@ void MapEditor::updateSelection(QItemSelection newsel,QItemSelection oldsel)
     if (editingHeading && lineEdit && !itemsNew.isEmpty() )
     {
 	mo=itemsNew.first()->getLMO();
-	if (mo) 
-	{
-	    qDebug()<<"ME::updateSel  moving LE to "<<mo->getAbsPos(); // FIXME-0
-	    lineEdit->move ( mapTo (this,mo->getAbsPos().toPoint() ) );
-	}
+	if (mo) lineEdit->move ( mapTo (this,mo->getAbsPos().toPoint() ) );
     }
     scene()->update();  
 }
