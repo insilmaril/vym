@@ -47,11 +47,7 @@ BranchObj::~BranchObj ()
 
 void BranchObj::init () 
 {
-    if (parObj)
-    {
-	absPos=getRandPos();
-	absPos+=parObj->getChildPos();
-    }
+    if (parObj) absPos=parObj->getChildPos();
 }
 
 void BranchObj::copy (BranchObj* other)

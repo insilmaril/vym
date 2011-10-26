@@ -242,8 +242,13 @@ void MapEditor::setScrollBarPosTarget (QRectF rect)
     // Expand viewport, if rect is not contained
     if (!sceneRect().contains (rect) )
     {
-	rect=sceneRect().united (rect);
-	setSceneRect(rect);
+	//FIXME-0 qDebug()<<"ME::setScrollBarPosTarget expanding scene: rect="<<rect<<"  sceneRect="<<sceneRect();
+	int v=horizontalScrollBar()->value();
+	int min=horizontalScrollBar()->minimum();
+	int max=horizontalScrollBar()->maximum();
+	//qDebug()<<"    horSB="<<min<<" -> "<<v<<" <- "<<max;
+	setSceneRect(sceneRect().united (rect));
+	//qDebug()<<"             new sceneRect="<<sceneRect();
     }
 
     int xmargin=0;
@@ -261,21 +266,26 @@ void MapEditor::setScrollBarPosTarget (QRectF rect)
 
     scrollBarPosTarget=getScrollBarPos();
 
+    //qDebug()<<"ME::vR="<<viewRect;
     if (viewRect.left() <= left + xmargin) {
+	//qDebug()<<" from left: vR="<<viewRect.left()<<"  left="<<left;
         // need to scroll from the left
-            scrollBarPosTarget.setX(int(viewRect.left() - xmargin - 0.5));
+	scrollBarPosTarget.setX(int(viewRect.left() - xmargin - 0.5));
     }
     if (viewRect.right() >= right - xmargin) {
+	//qDebug()<<" from right: vR="<<viewRect.right()<<"  right="<<right;
         // need to scroll from the right
-            scrollBarPosTarget.setX(int(viewRect.right() - width + xmargin + 0.5));
+	scrollBarPosTarget.setX(int(viewRect.right() - width + xmargin + 0.5));
     }
     if (viewRect.top() <= top + ymargin) {
+	//qDebug()<<" from top: vR="<<viewRect.top()<<"  top="<<top;
         // need to scroll from the top
-            scrollBarPosTarget.setY(int(viewRect.top() - ymargin - 0.5));
+	scrollBarPosTarget.setY(int(viewRect.top() - ymargin - 0.5));
     }
     if (viewRect.bottom() >= bottom - ymargin) {
+	//qDebug()<<" from bottom: vR="<<viewRect.bottom()<<"  bottom="<<bottom;
         // need to scroll from the bottom
-            scrollBarPosTarget.setY(int(viewRect.bottom() - height + ymargin + 0.5));
+	scrollBarPosTarget.setY(int(viewRect.bottom() - height + ymargin + 0.5));
     }
 
 }
@@ -1016,7 +1026,11 @@ void MapEditor::editHeading()
 	QPointF br=tl + QPointF (230,30);
 	QRectF r (tl, br);
 	lineEdit->setGeometry(r.toRect() );
+
+
 	setScrollBarPosTarget ( r );
+	scene()->update();
+
 	animateScrollBars();
 	lineEdit->setText (bi->getHeading());
 	lineEdit->setFocus();
@@ -1037,6 +1051,8 @@ void MapEditor::editHeadingFinished()
     model->setHeading (s);
     model->setSelectionBlocked(false);
     delete (lineEdit);
+
+    animateScrollBars();
 
     // Maybe reselect previous branch 
     mainWindow->editHeadingFinished (model);
@@ -1131,6 +1147,16 @@ void MapEditor::keyReleaseEvent(QKeyEvent* e)
 
 void MapEditor::mousePressEvent(QMouseEvent* e)
 {
+    // Debugging: Show position
+    if (debug && 
+	e->button() == Qt::LeftButton && 
+	e->modifiers() & Qt::ControlModifier )
+	qDebug()<<"ME::mousePressEvent  Scene: "<<mapToScene (e->pos())<<"  widget: "<<e->pos();
+	int v=horizontalScrollBar()->value();
+	int min=horizontalScrollBar()->minimum();
+	int max=horizontalScrollBar()->maximum();
+	qDebug()<<"    horSB="<<min<<" -> "<<v<<" <- "<<max;
+
     // Ignore right clicks or wile editing heading
     if (e->button() == Qt::RightButton or model->isSelectionBlocked() )
     {
@@ -1977,7 +2003,11 @@ void MapEditor::updateSelection(QItemSelection newsel,QItemSelection oldsel)
     if (editingHeading && lineEdit && !itemsNew.isEmpty() )
     {
 	mo=itemsNew.first()->getLMO();
-	if (mo) lineEdit->move ( mapTo (this,mo->getAbsPos().toPoint() ) );
+	if (mo) 
+	{
+	    qDebug()<<"ME::updateSel  moving LE to "<<mo->getAbsPos(); // FIXME-0
+	    lineEdit->move ( mapTo (this,mo->getAbsPos().toPoint() ) );
+	}
     }
     scene()->update();  
 }

@@ -584,14 +584,6 @@ LinkableMapObj::Orientation LinkableMapObj::getOrientation()
     return orientation;
 }
 
-QPointF LinkableMapObj::getRandPos()
-{
-    // Choose a random position with given distance to parent:
-    double a=rand()%360 * 2 * M_PI / 360;
-    return QPointF ( (int)( + 90*cos (a)),
-                    (int)( + 90*sin (a)));
-}
-
 void LinkableMapObj::reposition()
 {
 }

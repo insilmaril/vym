@@ -95,7 +95,6 @@ public:
     QPointF getChildPos();		    // returns pos where children dock
     QPointF getParPos();			// returns pos where parents dock
     Orientation getOrientation();	    // get orientation
-    virtual QPointF getRandPos();	    // make randomised position
 
     virtual void reposition();
     virtual void requestReposition();	    // do reposition after next user event
