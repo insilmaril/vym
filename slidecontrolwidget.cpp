@@ -20,45 +20,37 @@ SlideControlWidget::SlideControlWidget(QWidget *)
     QHBoxLayout *row2Layout = new QHBoxLayout;
     
     previousButton = new QPushButton;
- //   previousButton->setIcon (QPixmap(iconPath+"SlideControl.png"));
-    previousButton->setText (tr("Previous slide","SlideControl widget"));
+    previousButton->setIcon ( QPixmap( iconPath + "selectprevious.png") );
     connect ( previousButton, SIGNAL( clicked() ), this, SLOT( previousPressed() ) );
 
     nextButton = new QPushButton;
- //   nextButton->setIcon (QPixmap(iconPath+"SlideControl.png"));
-    nextButton->setText (tr("Next slide","SlideControl widget"));
+    nextButton->setIcon ( QPixmap( iconPath + "selectnext.png") );
     connect ( nextButton, SIGNAL( clicked() ), this, SLOT( nextPressed() ) );
 
-    // QAction needed to only activate shortcut while SlideControlWidget has focus
- //   a=new QAction (nextButton->text(),this);
-//    a->setShortcut (Qt::Key_Return);
-//    a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
-//    connect ( a, SIGNAL( triggered() ), this, SLOT( nextPressed() ) );
-//    addAction (a);
+    upButton = new QPushButton;
+    upButton->setIcon ( QPixmap( iconPath + "up.png") );
+    connect ( upButton, SIGNAL( clicked() ), this, SLOT( upPressed() ) );
 
- //   connect (     nextButton, SIGNAL( clicked() ), this, SLOT(     nextPressed() ) );
-
-    // QAction needed to only activate shortcut while SlideControlWidget has focus
-  //  QAction *a=new QAction (previousButton->text(),this);
-//    a->setShortcut (Qt::Key_Return);
-//    a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
-//    addAction (a);
+    downButton = new QPushButton;
+    downButton->setIcon ( QPixmap( iconPath + "down.png") );
+    connect ( downButton, SIGNAL( clicked() ), this, SLOT( downPressed() ) );
 
     snapshotButton = new QPushButton;
  //   snapshotButton->setIcon (QPixmap(iconPath+"SlideControl.png"));
     snapshotButton->setText (tr("Take snapshot","SlideControl widget"));
     connect ( snapshotButton, SIGNAL( clicked() ), this, SLOT( snapshotPressed() ) );
 
-    // QAction needed to only activate shortcut while SlideControlWidget has focus
-//    a=new QAction (snapshotButton->text(),this);
-//    a->setShortcut (Qt::Key_Return);
-//    a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
-//    connect ( a, SIGNAL( triggered() ), this, SLOT( snapshotPressed() ) );
-//    addAction (a);
+    deleteButton = new QPushButton;
+ //   deleteButton->setIcon (QPixmap(iconPath+"SlideControl.png"));
+    deleteButton->setText (tr("Delete slide","SlideControl widget"));
+    connect ( deleteButton, SIGNAL( clicked() ), this, SLOT( deletePressed() ) );
 
     row2Layout->addWidget(previousButton);
-    row2Layout->addWidget(snapshotButton);
     row2Layout->addWidget(nextButton);
+    row2Layout->addWidget(snapshotButton);
+    row2Layout->addWidget(deleteButton);
+    row2Layout->addWidget(upButton);
+    row2Layout->addWidget(downButton);
 
     mainLayout->addLayout (row2Layout);
 
@@ -70,6 +62,11 @@ void SlideControlWidget::snapshotPressed()
     emit (takeSnapshot() );
 }
 
+void SlideControlWidget::deletePressed()
+{
+    emit (deleteButtonPressed() );
+}
+
 void SlideControlWidget::previousPressed()
 {
     emit (previousButtonPressed() );
@@ -78,6 +75,16 @@ void SlideControlWidget::previousPressed()
 void SlideControlWidget::nextPressed()
 {
     emit (nextButtonPressed() );
+}
+
+void SlideControlWidget::upPressed()
+{
+    emit (upButtonPressed() );
+}
+
+void SlideControlWidget::downPressed()
+{
+    emit (downButtonPressed() );
 }
 
 

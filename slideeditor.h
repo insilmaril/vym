@@ -5,9 +5,7 @@
 #include <QWidget>
 
 class SlideModel;
-//class TreeItem;
 class QTreeView;
-//class QPushButton;
 class SlideControlWidget;
 class VymModel;
 
@@ -17,18 +15,19 @@ class SlideEditor: public QWidget
 
 public:
     SlideEditor (VymModel *);
-    QModelIndex getSelectedIndex();
-    void addItem (const QString &s);
 
 public slots:	
 //    void popup();
     void previousSlide();
     void nextSlide();
-    void takeSnapshot();
+    void addSlide();
+    void deleteSlide();
+    void moveSlideUp();
+    void moveSlideDown();
     void updateSelection(QItemSelection ,QItemSelection);
 
 private:
-    VymModel *model;
+    VymModel *vymModel;
     SlideModel *slideModel;
     QTreeView *view;
     SlideControlWidget *slideControl;

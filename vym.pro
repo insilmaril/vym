@@ -6,7 +6,7 @@ CONFIG	+= qt warn_on debug x86 ppc qdbus
 
 QT += network xml svg
 
-#include(test/modeltest/modeltest.pri)
+// include(test/modeltest/modeltest.pri)
 
 TRANSLATIONS += lang/vym_de_DE.ts
 TRANSLATIONS += lang/vym_en.ts

@@ -165,7 +165,7 @@ void TreeItem::appendChild(TreeItem *item)
 void TreeItem::removeChild(int row)
 {
     if (row<0 || row > childItems.size()-1)
-	qWarning ("TreeItem::removeChild tried to remove non existing item?!\n");
+	qWarning ("TreeItem::removeChild tried to remove non existing item?!");
     else
     {
 	if (childItems.at(row)->type==Attribute)

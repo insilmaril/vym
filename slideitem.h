@@ -19,6 +19,8 @@ public:
     int columnCount() const;
     QVariant data(int column) const;
     int row() const;
+    void insertItem (int pos, SlideItem *si);
+    void removeItem (int pos);
     bool insertChildren(int position, int count, int columns);
     bool insertColumns(int position, int columns);
     SlideItem *parent();

@@ -1,6 +1,10 @@
+#include "slidemodel.h"
+
 #include "slideitem.h"
 
-#include "slidemodel.h"
+#include <QDebug>
+#include <QItemSelectionModel>
+
 
 SlideModel::SlideModel( QObject *parent)
     : QAbstractItemModel(parent)
@@ -58,7 +62,7 @@ QVariant SlideModel::headerData(int section, Qt::Orientation orientation,
 
 QModelIndex SlideModel::index (SlideItem *fri)
 {
-    if (!fri->parent())
+    if (!fri || !fri->parent())
 	return QModelIndex();
     else    
 	return createIndex (fri->row(),0,fri);
@@ -178,6 +182,71 @@ bool SlideModel::setHeaderData(int section, Qt::Orientation orientation,
     return result;
 }
 
+SlideItem*  SlideModel::addItem (SlideItem *dst, int n)
+{
+    SlideItem *ni=NULL;
+    if (!dst) dst=rootItem;
+
+    emit (layoutAboutToBeChanged() );
+
+    QModelIndex parix=index (dst);
+    if (n<0) n=dst->childCount();
+    beginInsertRows (parix,n,n);
+    if (rootItem->insertChildren (n,1,0) )
+    {
+	QModelIndex ix=index(n,0,QModelIndex());
+	ni=getItem(ix);
+    }
+    endInsertRows ();
+    emit (layoutChanged() );
+    	
+    return ni;
+}
+
+void SlideModel::deleteItem (SlideItem *si)
+{
+    QModelIndex ix=index(si);
+    if (ix.isValid())
+    {
+	QModelIndex px=ix.parent();
+	int n=si->childNumber();
+	removeRows (n,1,px);
+    }
+}
+
+bool SlideModel::relinkItem (
+    SlideItem *si,
+    SlideItem *dst,
+    int pos)
+{
+   if (si && dst)
+   {
+	emit (layoutAboutToBeChanged() );
+	SlideItem *pi=si->parent();
+
+	// Remove at current position
+	int n=si->childNumber();
+
+	beginRemoveRows (index(pi),n,n);
+	pi->removeItem (n);
+	endRemoveRows();
+
+	if (pos<0 ||pos>dst->childCount() ) pos=dst->childCount();
+    
+	// Insert at new position
+	beginInsertRows (index(dst),pos,pos);
+	dst->insertItem (pos, si);
+	endInsertRows();
+
+	emit (layoutChanged() );
+
+	selModel->select (index (si),QItemSelectionModel::ClearAndSelect  );
+
+	return true;
+    }
+    return false;
+}
+
 SlideItem* SlideModel::getItem(const QModelIndex &index) const
 {
     if (index.isValid()) {
@@ -186,59 +255,6 @@ SlideItem* SlideModel::getItem(const QModelIndex &index) const
     }
     return rootItem;
 }
-
-SlideItem*  SlideModel::addItem (const QString &s)
-{
-    SlideItem *ni=NULL;
-
-    QModelIndex parix (index (rootItem));
-    
-    emit (layoutAboutToBeChanged() );
-
-    int n=rowCount (parix);
-    beginInsertRows (parix,n,n);
-    if (rootItem->insertChildren (n,1,0) )
-    {
-	QModelIndex ix=index(n,0,QModelIndex());
-	setData (ix,QVariant(s),Qt::EditRole);
-	ni=getItem(ix);
-	//ni->setOriginal (ti);
-    }
-    endInsertRows ();
-
-    emit (layoutChanged() );
-    
-    return ni;
-}
-
-/*
-SlideItem*  SlideModel::addSubItem (SlideItem *parent,const QString &s, TreeItem *pi, int i)
-{
-    SlideItem *ni=NULL;
-    if (pi && parent)
-    {
-	QModelIndex parix ( index (parent));
-	
-	emit (layoutAboutToBeChanged() );
-
-	int n=rowCount (parix);
-	beginInsertRows (parix,n,n);
-
-	QModelIndex ix;
-	if (parent->insertChildren (n,1,0))
-	{
-	    ix=index(n,0,parix);
-	    setData (ix,QVariant(s),Qt::EditRole);
-	    ni=getItem(ix);
-	    ni->setTreeItem (pi);
-	    //ni->setOriginalIndex (i);
-	}
-	endInsertRows ();
-	emit (layoutChanged() );
-    }
-    return ni;
-}
-*/
 
 void SlideModel::setSearchString( const QString &s)
 {
@@ -258,5 +274,34 @@ void SlideModel::setSearchFlags( QTextDocument::FindFlags f)
 QTextDocument::FindFlags SlideModel::getSearchFlags()
 {
     return searchFlags;
+}
+
+void SlideModel::setSelectionModel(QItemSelectionModel *sm)
+{
+    selModel=sm;
+}
+
+QItemSelectionModel* SlideModel::getSelectionModel()
+{
+    return selModel;
+}
+
+QModelIndex SlideModel::getSelectedIndex()
+{
+    if (!selModel)
+    {
+	qDebug ()<<"SlideModel: No selection model!";
+	return QModelIndex();
+    }
+    QModelIndexList list=selModel->selectedIndexes();
+    if (!list.isEmpty() ) return list.first();
+    return QModelIndex();	
+}
+
+SlideItem* SlideModel::getSelectedItem ()
+{
+    QModelIndex ix=getSelectedIndex();
+    if (ix.isValid() ) return getItem (ix);
+    return NULL;
 }
 

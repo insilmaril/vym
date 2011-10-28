@@ -55,6 +55,23 @@ int SlideItem::row() const
     return 0;
 }
 
+void SlideItem::insertItem (int pos, SlideItem *si)
+{
+    if (pos<0) pos=0;
+    if (pos>childItems.count() ) pos=childItems.count();
+    childItems.insert (pos,si);
+    si->parentItem=this;
+}
+
+void SlideItem::removeItem (int pos)
+{
+    // Remove, but don't delete (needed for relinking)
+    if (pos<0 || pos > childItems.size()-1)
+	qWarning ("TreeItem::removeChild tried to remove non existing item?!");
+    else
+	childItems.removeAt (pos);
+}
+
 bool SlideItem::insertChildren(int position, int count, int columns)
 {
     if (position < 0 || position > childItems.size())

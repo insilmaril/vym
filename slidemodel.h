@@ -6,6 +6,7 @@
 #include <QTextDocument>
 #include <QVariant>
 
+class QItemSelectionModel;
 class SlideItem;
 class TreeItem;
 
@@ -45,17 +46,27 @@ public:
     bool removeRows(int position, int rows,
                     const QModelIndex &parent = QModelIndex());
 
+    SlideItem* addItem (SlideItem *dst=NULL, int n=-1);
+    void deleteItem (SlideItem *si);
+    bool relinkItem ( SlideItem *si, SlideItem *dst, int pos);
+
     SlideItem* getItem(const QModelIndex &index) const;
-    SlideItem* addItem (const QString &);
-//    SlideItem* addSubItem (SlideItem *parent,const QString &s, TreeItem *pi, int i);
 
     void setSearchString( const QString &s);
     QString getSearchString();
     void setSearchFlags( QTextDocument::FindFlags f);
     QTextDocument::FindFlags getSearchFlags();
 
+// Selection related
+public:
+    void setSelectionModel(QItemSelectionModel *);
+    QItemSelectionModel* getSelectionModel();
+    QModelIndex getSelectedIndex();
+    SlideItem* getSelectedItem();
 private:
+    QItemSelectionModel *selModel;
 
+private:
     SlideItem *rootItem;
 
     QString searchString;

@@ -241,12 +241,7 @@ void MapEditor::setScrollBarPosTarget (QRectF rect)
 {
     // Expand viewport, if rect is not contained
     if (!sceneRect().contains (rect) )
-    {
-	int v=horizontalScrollBar()->value();
-	int min=horizontalScrollBar()->minimum();
-	int max=horizontalScrollBar()->maximum();
 	setSceneRect(sceneRect().united (rect));
-    }
 
     int xmargin=0;
     int ymargin=0;

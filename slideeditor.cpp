@@ -12,30 +12,41 @@ extern QString iconPath;
 
 SlideEditor::SlideEditor(VymModel *m)
 {
-    model=m;
+    vymModel=m;
 
     // Create slides model
-    slideModel=new SlideModel;
+    slideModel=vymModel->getSlideModel();
 
     // Create TreeView
     view = new QTreeView (this);
     view->setModel (slideModel);
+    
+    slideModel->setSelectionModel ( view->selectionModel() );
 
     // Create ControlWidget
     slideControl= new SlideControlWidget (this);
     connect (
 	slideControl, SIGNAL (takeSnapshot() ), 
-	this, SLOT (takeSnapshot () ) );
+	this, SLOT (addSlide() ) );
+    connect (
+	slideControl, SIGNAL (deleteButtonPressed() ), 
+	this, SLOT (deleteSlide() ) );
     connect (
 	slideControl, SIGNAL (previousButtonPressed() ), 
 	this, SLOT (previousSlide() ) );
     connect (
 	slideControl, SIGNAL (nextButtonPressed() ), 
 	this, SLOT (nextSlide() ) );
+    connect (
+	slideControl, SIGNAL (upButtonPressed() ), 
+	this, SLOT (moveSlideUp() ) );
+    connect (
+	slideControl, SIGNAL (downButtonPressed() ), 
+	this, SLOT (moveSlideDown() ) );
 
     QVBoxLayout* mainLayout = new QVBoxLayout;
 
-    /* FIXME-3 testing QMenuBar *mb=new QMenuBar;
+    /* FIXME-2 testing QMenuBar *mb=new QMenuBar;
     QAction *a=new  QAction ("Foo action",NULL);
     mb->addAction (a);
     mb->insertSeparator();
@@ -48,34 +59,11 @@ SlideEditor::SlideEditor(VymModel *m)
 
     // Selection
     connect (view->selectionModel(),SIGNAL (selectionChanged (QItemSelection,QItemSelection)),
+	vymModel, SLOT (updateSlideSelection (QItemSelection,QItemSelection)));
+    connect (view->selectionModel(),SIGNAL (selectionChanged (QItemSelection,QItemSelection)),
 	this, SLOT (updateSelection (QItemSelection,QItemSelection)));
 
 //    connect (resultsModel, SIGNAL(layoutChanged() ), view, SLOT (expandAll() ));    
-}
-
-QModelIndex SlideEditor::getSelectedIndex()
-{
-    QModelIndexList list=view->selectionModel()->selectedIndexes();
-    if (list.isEmpty() )
-	return QModelIndex();
-    else
-	return list.first();
-}
-
-void SlideEditor::addItem (const QString &s)
-{
-    if (!s.isEmpty())
-    {
-	QModelIndex index = view->selectionModel()->currentIndex();
-	
-	if (!slideModel->insertRow(index.row()+1, index.parent()))
-	    return;
-
-	for (int column = 0; column < slideModel->columnCount(index.parent()); ++column) {
-	    QModelIndex child = slideModel->index(index.row()+1, column, index.parent());
-	    slideModel->setData(child, QVariant(s), Qt::EditRole);
-	}
-    }
 }
 
 /*
@@ -89,7 +77,7 @@ void SlideEditor::popup()
 
 void SlideEditor::previousSlide()
 {
-    QModelIndex ix=getSelectedIndex();
+    QModelIndex ix=slideModel->getSelectedIndex();
     ix=view->indexAbove (ix);
     if (ix.isValid())
     view->selectionModel()->select (ix,QItemSelectionModel::ClearAndSelect );
@@ -97,43 +85,35 @@ void SlideEditor::previousSlide()
 
 void SlideEditor::nextSlide()
 {
-    QModelIndex ix=getSelectedIndex();
+    QModelIndex ix=slideModel->getSelectedIndex();
     ix=view->indexBelow (ix);
     if (ix.isValid())
     view->selectionModel()->select (ix,QItemSelectionModel::ClearAndSelect );
 }
 
-void SlideEditor::takeSnapshot()
+void SlideEditor::addSlide()
 {
-    SlideItem *si=slideModel->addItem (model->getHeading() );
-    si->setTreeItem (model->getSelectedItem() );
-    si->setZoomFactor   (model->getMapEditor()->getZoomFactorTarget() );
-    si->setRotationAngle (model->getMapEditor()->getAngleTarget() );
+    vymModel->addSlide();
+}
+
+void SlideEditor::deleteSlide() 
+{
+    SlideItem *si=slideModel->getSelectedItem();
+    vymModel->deleteSlide(si);
+}
+
+void SlideEditor::moveSlideUp() 
+{
+    vymModel->moveSlideUp ();	
+}
+
+void SlideEditor::moveSlideDown() 
+{
+    vymModel->moveSlideDown ();	
 }
 
 void SlideEditor::updateSelection(QItemSelection newsel,QItemSelection)
 {
-    QModelIndex ix;
-    foreach (ix,newsel.indexes() )
-    {
-	SlideItem *fri= static_cast<SlideItem*>(ix.internalPointer());
-	int id=fri->getTreeItemID();
-	if (id>0)
-	{
-	    TreeItem *ti=model->findID(id);
-	    if (ti)
-	    {
-		model->select (ti);
-		MapEditor *me=model->getMapEditor();
-		if (me)
-		{
-		    qreal q=fri->getZoomFactor();
-		    if (q>0) me->setZoomFactorTarget (q); 
-		    q=fri->getRotationAngle();
-		    me->setAngleTarget (q);
-		}
-	    }	
-	}
-    }
+    // FIXME-1 updateActions missing, e.g. state for moveUp/down
 }
 

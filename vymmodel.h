@@ -20,8 +20,10 @@
 class AttributeItem;
 class BranchItem;
 class FindResultModel;
-class MapEditor;
 class Link;
+class MapEditor;
+class SlideItem;
+class SlideModel;
 class XLinkItem;
 
 class QGraphicsScene;
@@ -729,6 +731,21 @@ private:
 public:	
     void setSelectionColor(QColor);
     QColor getSelectionColor();
-};
 
+////////////////////////////////////////////
+// Slide related
+////////////////////////////////////////////
+public:
+    SlideModel* getSlideModel();
+    void addSlide ();
+    void deleteSlide (SlideItem *si);
+    void moveSlideUp();
+    void moveSlideDown();
+public slots:
+    void updateSlideSelection (QItemSelection ,QItemSelection);
+private:
+    SlideModel* slideModel;
+    bool blockSlideSelection;
+
+};
 #endif

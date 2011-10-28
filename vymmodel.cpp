@@ -18,13 +18,14 @@
 #include "noteeditor.h"
 #include "parser.h"
 #include "process.h"
+#include "slideitem.h"
+#include "slidemodel.h"
 #include "warningdialog.h"
 #include "xlinkitem.h"
 #include "xlinkobj.h"
 #include "xml-freemind.h"
 #include "xmlobj.h"
 #include "xml-vym.h"
-
 
 extern bool debug;
 extern Main *mainWindow;
@@ -147,6 +148,10 @@ void VymModel::init ()
     hasContextPos=false;
 
     hidemode=TreeItem::HideNone;
+
+    // Initialize presentation slides
+    slideModel=new SlideModel;
+    blockSlideSelection=false;
 
     // Avoid recursions later
     cleaningUpLinks=false;
@@ -5932,4 +5937,92 @@ QString VymModel::getSelectString (BranchItem *bi)
 {
     return getSelectString ((TreeItem*)bi);
 }
+
+SlideModel* VymModel::getSlideModel()
+{
+    return slideModel;
+}
+
+void VymModel::addSlide()   //FIXME-1 missing saveState
+{
+    SlideItem *si=slideModel->getSelectedItem();
+    if (si)
+	si=slideModel->addItem (NULL,si->childNumber()+1 );
+    else
+	si=slideModel->addItem ();
+    
+    if (si)
+    {
+	si->setTreeItem (getSelectedItem() );
+	si->setZoomFactor   (getMapEditor()->getZoomFactorTarget() );
+	si->setRotationAngle (getMapEditor()->getAngleTarget() );
+	slideModel->setData ( slideModel->index(si), getHeading() );
+    }
+}
+
+void VymModel::deleteSlide(SlideItem *si)   //FIXME-1 missing saveState
+{
+    if (si)
+    {
+	slideModel->deleteItem (si);
+    }
+}
+
+void VymModel::moveSlideUp()   //FIXME-1 missing saveState
+{
+    SlideItem *si=slideModel->getSelectedItem();
+    if (si)
+    {
+	int n=si->childNumber();
+	if (n>0)
+	{
+	    blockSlideSelection=true;
+	    slideModel->relinkItem (si, si->parent(), n-1);
+	    blockSlideSelection=false;
+	}
+    }
+}
+
+void VymModel::moveSlideDown()   //FIXME-1 missing saveState
+{
+    SlideItem *si=slideModel->getSelectedItem();
+    if (si)
+    {
+	int n=si->childNumber();
+	SlideItem *pi=si->parent();
+	if (n<pi->childCount() )
+	{
+	    blockSlideSelection=true;
+	    slideModel->relinkItem (si, si->parent(), n+1);
+	    blockSlideSelection=false;
+	}
+    }
+}
+
+void VymModel::updateSlideSelection (QItemSelection newsel,QItemSelection)
+{
+    if (blockSlideSelection) return;
+    QModelIndex ix;
+    foreach (ix,newsel.indexes() )
+    {
+	SlideItem *fri= static_cast<SlideItem*>(ix.internalPointer());
+	int id=fri->getTreeItemID();
+	if (id>0)
+	{
+	    TreeItem *ti=findID(id);
+	    if (ti)
+	    {
+		select (ti);
+		if (mapEditor)
+		{
+		    qreal q=fri->getZoomFactor();
+		    if (q>0) mapEditor->setZoomFactorTarget (q); 
+		    q=fri->getRotationAngle();
+		    mapEditor->setAngleTarget (q);
+		}
+	    }	
+	}
+    }
+}
+
 
