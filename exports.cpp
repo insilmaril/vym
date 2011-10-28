@@ -823,14 +823,11 @@ void ExportLaTeX::doExport()
   QString s;
   // QString curIndent("");
   // int i;
-  BranchObj *bo;
   BranchItem *cur=NULL;
   BranchItem *prev=NULL;
   model->nextBranch(cur,prev);
   while (cur) 
   {
-    bo=(BranchObj*)(cur->getLMO());
-
     if (!cur->hasHiddenExportParent() )
     {
 	switch (cur->depth() ) 
