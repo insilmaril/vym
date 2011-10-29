@@ -712,6 +712,7 @@ public:
     QString getSelectString (LinkableMapObj *lmo);
     QString getSelectString (TreeItem *item);
     QString getSelectString (BranchItem *item);
+    QString getSelectString (const uint &i);
     
     
 signals:
@@ -737,7 +738,7 @@ public:
 ////////////////////////////////////////////
 public:
     SlideModel* getSlideModel();
-    void addSlide ();
+    SlideItem* addSlide ();
     void deleteSlide (SlideItem *si);
     void moveSlideUp();
     void moveSlideDown();

@@ -139,9 +139,22 @@ bool SlideItem::setData(int column, const QVariant &value)
     return true;
 }
 
+void SlideItem::setName (const QString &n)
+{
+    setData ( 0, QVariant (n) );
+}
+
+QString SlideItem::getName ()
+{
+    return data(0).toString();
+}
+
 void SlideItem::setTreeItem (TreeItem *ti)
 {
-    if (ti) treeItemID=ti->getID();
+    if (ti) 
+	treeItemID=ti->getID();
+    else
+	qWarning()<<"SlideItem::setTreeItem no ID!";
 }
 
 int SlideItem::getTreeItemID()

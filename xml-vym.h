@@ -3,7 +3,12 @@
 
 #include "xml-base.h"
 
+#include "noteobj.h"
+
 class BranchItem;
+class ImageItem;
+class MapItem;
+class SlideItem;
 
 /*! \brief Parsing VYM maps from XML documents */
 
@@ -16,15 +21,16 @@ public:
     bool   endElement ( const QString&, const QString&, const QString& ); 
     bool characters   ( const QString&);
     QString errorString();
-    bool readBranchAttr (const QXmlAttributes&);
-    bool readFrameAttr (const QXmlAttributes&);
-    bool readOOAttr (const QXmlAttributes&);
-    bool readNoteAttr (const QXmlAttributes&);
-    bool readImageAttr (const QXmlAttributes&);
-    bool readXLinkAttr (const QXmlAttributes&);
+    bool readBranchAttr  (const QXmlAttributes&);
+    bool readFrameAttr   (const QXmlAttributes&);
+    bool readOOAttr      (const QXmlAttributes&);
+    bool readNoteAttr    (const QXmlAttributes&);
+    bool readImageAttr   (const QXmlAttributes&);
+    bool readXLinkAttr   (const QXmlAttributes&);
     bool readLinkNewAttr (const QXmlAttributes&);
-    bool readHtmlAttr (const QXmlAttributes&);
+    bool readHtmlAttr    (const QXmlAttributes&);
     bool readSettingAttr (const QXmlAttributes&);
+    bool readSlideAttr   (const QXmlAttributes&);
 
 private:
     enum State 
@@ -33,6 +39,7 @@ private:
 	StateMap, 
 	StateMapSelect, 
 	StateMapSetting,
+	StateMapSlide,
 	StateMapCenter, 
 	StateBranch, 
 	StateBranchXLink,	    // Obsolete
@@ -60,6 +67,7 @@ private:
     BranchItem* lastBranch;
     ImageItem* lastImage;
     MapItem* lastMI;
+    SlideItem *lastSlide;
 
     bool useProgress;
 }; 

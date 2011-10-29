@@ -6,19 +6,22 @@
 #include <QTextDocument>
 #include <QVariant>
 
+#include "xmlobj.h"
+
 class QItemSelectionModel;
 class SlideItem;
 class TreeItem;
+class VymModel;
 
-class SlideModel : public QAbstractItemModel
+class SlideModel : public QAbstractItemModel, XMLObj
 {
     Q_OBJECT
 
 public:
-    SlideModel( QObject *parent = 0);
+    SlideModel( VymModel *vm);
     ~SlideModel();
     void clear();
-
+    
     QVariant data(const QModelIndex &index, int role) const;
     QVariant headerData(int section, Qt::Orientation orientation,
                         int role = Qt::DisplayRole) const;
@@ -52,6 +55,8 @@ public:
 
     SlideItem* getItem(const QModelIndex &index) const;
 
+    QString saveToDir ();
+
     void setSearchString( const QString &s);
     QString getSearchString();
     void setSearchFlags( QTextDocument::FindFlags f);
@@ -65,6 +70,7 @@ public:
     SlideItem* getSelectedItem();
 private:
     QItemSelectionModel *selModel;
+    VymModel *vymModel;	// needed for saveToDir
 
 private:
     SlideItem *rootItem;

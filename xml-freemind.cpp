@@ -1,17 +1,10 @@
 #include "xml-freemind.h"
 
 #include <QMessageBox>
-#include <QColor>
-#include <QTextStream>
-#include <iostream>
 
 #include "branchitem.h"
-#include "misc.h"
-#include "settings.h"
-#include "linkablemapobj.h"
 #include "version.h"
-
-//static FloatObj *lastFloat;
+#include "vymmodel.h"
 
 extern Settings settings;
 extern QString vymVersion;

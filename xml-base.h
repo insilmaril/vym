@@ -2,13 +2,12 @@
 #define XML_BASE
 
 
-#include <QString>
+//#include <QString>
 #include <QXmlAttributes>
 
 #include "file.h"
-#include "mapeditor.h"
-#include "vymmodel.h"
 
+class VymModel;
 
 /*! \brief Base class for parsing maps from XML documents */
 

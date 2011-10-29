@@ -8,7 +8,7 @@
 class TreeItem;
 class VymModel;
 
-class SlideItem
+class SlideItem 
 {
 public:
     SlideItem(const QVector<QVariant> &data, SlideItem *parent = 0);
@@ -23,11 +23,13 @@ public:
     void removeItem (int pos);
     bool insertChildren(int position, int count, int columns);
     bool insertColumns(int position, int columns);
-    SlideItem *parent();
+    SlideItem* parent();
     bool removeChildren(int position, int count);
     bool removeColumns(int position, int columns);
     int childNumber() const;
     bool setData(int column, const QVariant &value);
+    void setName (const QString &n);
+    QString getName ();
     void setTreeItem (TreeItem *ti);
     int getTreeItemID();
     void setZoomFactor(const qreal &);

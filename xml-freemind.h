@@ -3,6 +3,8 @@
 
 #include "xml-base.h"
 
+class BranchItem;
+class VymModel;
 
 /*! \brief Parsing Freemind maps from XML documents */
 

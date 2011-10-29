@@ -1,17 +1,19 @@
 #include "slidemodel.h"
 
 #include "slideitem.h"
+#include "vymmodel.h"
 
 #include <QDebug>
 #include <QItemSelectionModel>
 
 
-SlideModel::SlideModel( QObject *parent)
-    : QAbstractItemModel(parent)
+SlideModel::SlideModel( VymModel *vm)
+    : QAbstractItemModel(NULL)
 {
     QVector<QVariant> rootData;
     rootData << "Slide";
     rootItem = new SlideItem(rootData);
+    vymModel=vm;
 }
 
 SlideModel::~SlideModel()
@@ -254,6 +256,29 @@ SlideItem* SlideModel::getItem(const QModelIndex &index) const
         if (item) return item;
     }
     return rootItem;
+}
+
+QString SlideModel::saveToDir()
+{
+    QString s;
+    for (int i=0; i<rootItem->childCount(); i++)
+    {
+	SlideItem *si=rootItem->child(i);
+	s+=singleElement ("slide",
+	    attribut ("name",si->data(0).toString() ) +
+	    attribut ("zoom",QString().setNum (si->getZoomFactor() ) ) +
+	    attribut ("rotation",QString().setNum (si->getRotationAngle() ) ) +
+	    attribut ("mapitem",vymModel->getSelectString (si->getTreeItemID() ) )
+	    );
+	    /*
+	    attribut ( "id", vymModel->getSelectString (
+		vymModel->findID (si->getTreeItemID() ) ) 
+	    ) 
+	);
+	*/
+    }
+    return s;
+
 }
 
 void SlideModel::setSearchString( const QString &s)

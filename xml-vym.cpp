@@ -3,7 +3,6 @@
 #include <QMessageBox>
 #include <QColor>
 #include <QTextStream>
-#include <iostream>
 #include <typeinfo>
 
 #include "attributeitem.h"
@@ -12,6 +11,7 @@
 #include "settings.h"
 #include "linkablemapobj.h"
 #include "mainwindow.h"
+#include "slideitem.h"
 #include "version.h"
 #include "xlinkitem.h"
 
@@ -37,12 +37,11 @@ bool parseVYMHandler::startElement  ( const QString&, const QString&,
 {
     QColor col;
     /* Testing
-    cout << "startElement <"<< qPrintable(eName)
+    qDebug()<< "startElement <"<< eName
 	<<">  state="<<state 
 	<<"  laststate="<<stateStack.last()
 	<<"   loadMode="<<loadMode
-    //	<<"       line="<<QXmlDefaultHandler::lineNumber()
-	<<endl;
+    	<<"       line="<<QXmlDefaultHandler::lineNumber();
     */	
     stateStack.append (state);	
     if ( state == StateInit && (eName == "vymmap")  ) 
@@ -140,6 +139,12 @@ bool parseVYMHandler::startElement  ( const QString&, const QString&,
 	state=StateMapSetting;
 	if (loadMode==NewMap)
 	    readSettingAttr (atts);
+    } else if ( eName == "slide" && state == StateMap ) 
+    {
+	state=StateMapSlide;
+	lastSlide=model->addSlide();
+	readSlideAttr(atts);
+	lastSlide=NULL;
     } else if ( eName == "mapcenter" && state == StateMap ) 
     {
 	state=StateMapCenter;
@@ -325,12 +330,11 @@ bool parseVYMHandler::startElement  ( const QString&, const QString&,
 bool parseVYMHandler::endElement  ( const QString&, const QString&, const QString &eName)
 {
     /* Testing
-    cout << "endElement </" <<qPrintable(eName)
+    qDebug()<< "endElement </" <<eName
 	<<">  state=" <<state 
     //	<<"  laststate=" <<laststate
     //	<<"  stateStack="<<stateStack.last() 
-    //	<<"  selString="<<model->getSelectString().toStdString()
-	<<endl;
+    //	<<"  selString="<<model->getSelectString().toStdString();
     */
     switch ( state ) 
     {
@@ -379,7 +383,7 @@ bool parseVYMHandler::endElement  ( const QString&, const QString&, const QStrin
 
 bool parseVYMHandler::characters   ( const QString& ch)
 {
-    //cout << "characters \""<<ch.toStdString()<<"\"  state="<<state <<"  laststate="<<laststate<<endl;
+    //qDebug()<< "characters \""<<ch.toStdString()<<"\"  state="<<state <<"  laststate="<<laststate;
 
     QString ch_org=quotemeta (ch);
     QString ch_simplified=ch.simplified();
@@ -746,5 +750,35 @@ bool parseVYMHandler::readSettingAttr (const QXmlAttributes& a)
     } else
 	return false;
     
+    return true;
+}
+
+bool parseVYMHandler::readSlideAttr (const QXmlAttributes& a)
+{
+    if (!lastSlide) return false;
+    {
+	if (!a.value( "name").isEmpty() ) 
+	    lastSlide->setName (a.value( "name" ) );
+	if (!a.value( "zoom").isEmpty() ) 
+	{
+	    bool ok;
+	    qreal z=a.value ("zoom").toDouble(&ok);
+	    if (!ok) return false;
+	    lastSlide->setZoomFactor (z);
+	}
+	if (!a.value( "rotation").isEmpty() ) 
+	{
+	    bool ok;
+	    qreal z=a.value ("rotation").toDouble(&ok);
+	    if (!ok) return false;
+	    lastSlide->setRotationAngle (z);
+	}
+	if (!a.value( "mapitem").isEmpty() ) 
+	{
+	    TreeItem *ti=model->findBySelectString ( a.value( "mapitem") );
+	    if (!ti) return false;
+	    lastSlide->setTreeItem (ti);
+	}
+    }
     return true;
 }

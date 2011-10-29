@@ -1,4 +1,5 @@
 #include <QApplication>
+
 #include <QSvgGenerator>
 
 #include "vymmodel.h"
@@ -150,7 +151,7 @@ void VymModel::init ()
     hidemode=TreeItem::HideNone;
 
     // Initialize presentation slides
-    slideModel=new SlideModel;
+    slideModel=new SlideModel (this);
     blockSlideSelection=false;
 
     // Avoid recursions later
@@ -293,6 +294,9 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix, bool w
     // Save XLinks
     for (int i=0; i<tmpLinks.count();++i)
 	s+=tmpLinks.at(i)->saveToDir();
+
+    // Save slides  // FIXME-2 preliminary, format may change!
+    s+=slideModel->saveToDir();
 
     xml.decIndent();
     s+=xml.endElement("vymmap");
@@ -1431,8 +1435,7 @@ TreeItem* VymModel::findBySelectString(QString s)
     if (s.isEmpty() ) return NULL;
 
     // Old maps don't have multiple mapcenters and don't save full path
-    if (s.left(2) !="mc")
-	s="mc:0,"+s;
+    if (s.left(2) !="mc") s="mc:0,"+s;
 
     QStringList parts=s.split (",");
     QString typ;
@@ -5938,26 +5941,34 @@ QString VymModel::getSelectString (BranchItem *bi)
     return getSelectString ((TreeItem*)bi);
 }
 
+QString VymModel::getSelectString (const uint &i)
+{
+    return getSelectString ( findID (i) );
+}
+
 SlideModel* VymModel::getSlideModel()
 {
     return slideModel;
 }
 
-void VymModel::addSlide()   //FIXME-1 missing saveState
+SlideItem* VymModel::addSlide()   //FIXME-1 missing saveState
 {
-    SlideItem *si=slideModel->getSelectedItem();
+    SlideItem *si=slideModel->getSelectedItem();  
     if (si)
 	si=slideModel->addItem (NULL,si->childNumber()+1 );
     else
 	si=slideModel->addItem ();
     
-    if (si)
+    TreeItem *seli=getSelectedItem();
+
+    if (si && seli)
     {
-	si->setTreeItem (getSelectedItem() );
+	si->setTreeItem (seli);
 	si->setZoomFactor   (getMapEditor()->getZoomFactorTarget() );
 	si->setRotationAngle (getMapEditor()->getAngleTarget() );
 	slideModel->setData ( slideModel->index(si), getHeading() );
     }
+    return si;
 }
 
 void VymModel::deleteSlide(SlideItem *si)   //FIXME-1 missing saveState

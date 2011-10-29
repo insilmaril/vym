@@ -1,14 +1,6 @@
 #include "xml-base.h"
 
-#include <QMessageBox>
-#include <QColor>
-#include <QTextStream>
-#include <iostream>
-
-#include "misc.h"
-#include "settings.h"
-#include "linkablemapobj.h"
-
+#include "vymmodel.h"
 
 parseBaseHandler::parseBaseHandler() {}
 
