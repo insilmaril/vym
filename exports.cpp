@@ -144,6 +144,7 @@ ExportAO::ExportAO()
 {
     filter="TXT (*.txt)";
     caption=vymName+ " -" +QObject::tr("Export as ASCII")+" "+QObject::tr("(still experimental)");
+    indentPerDepth=" ";
 }
 
 void ExportAO::doExport()   
@@ -186,13 +187,13 @@ void ExportAO::doExport()
 	    {
 		col=cur->getHeadingColor();
 		if (col==QColor (255,0,0))
-		    colString="[R]";
+		    colString="[R] ";
 		else if (col==QColor (217,81,0))
-		    colString="[O]";
+		    colString="[O ]";
 		else if (col==QColor (0,85,0))
-		    colString="[G]";
+		    colString="[G] ";
 		else	
-		    colString="";
+		    colString="  - ";
 
 		dashIndent="";	
 		switch (cur->depth())
@@ -212,20 +213,20 @@ void ExportAO::doExport()
 			ts << "\n";
 			break;
 		    case 3: // Achievement, Bonus, Objective ...
-			ts << "\n\n";
+			ts << "\n";
 			ts << underline ( cur->getHeadingPlain(), "-");
-			ts << "\n\n";
+			ts << "\n";
 			break;
 		    default:	// depth 4 are the items we need to know
 			if (cur->depth()>4) ts<<curIndent;
 			if (cur->isActiveStandardFlag ("hook-green"))
-			    ts <<colString+" "+cur->getHeadingPlain()<< " [DONE] ";
+			    ts <<colString+cur->getHeadingPlain()<< " [DONE] ";
 			else	if (cur->isActiveStandardFlag ("wip"))
-			    ts <<colString+" "+cur->getHeadingPlain()<< " [WIP] ";
+			    ts <<colString+cur->getHeadingPlain()<< " [WIP] ";
 			else	if (cur->isActiveStandardFlag ("cross-red"))
-			    ts <<colString+" "+cur->getHeadingPlain()<< " [NOT STARTED] ";
+			    ts <<colString+cur->getHeadingPlain()<< " [NOT STARTED] ";
 			else	
-			    ts << " - " <<cur->getHeadingPlain();
+			    ts <<"  - "+cur->getHeadingPlain();
 			ts << "\n";
 			break;
 		}
