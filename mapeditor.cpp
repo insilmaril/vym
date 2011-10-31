@@ -386,6 +386,74 @@ qreal MapEditor::getAngle()
     return angle;
 }
 
+void MapEditor::setViewCenterTarget (const QPointF &p, const qreal &zft, const qreal &at)
+{
+    viewCenterTarget=p;
+    zoomFactorTarget=zft;
+    angleTarget=at;
+
+    viewCenter=mapToScene(viewport()->geometry()).boundingRect().center();
+
+    QEasingCurve ecurve=QEasingCurve::OutQuint;
+    int duration=2000;
+
+    if (viewCenterAnimation.state()==QAbstractAnimation::Running)
+	viewCenterAnimation.stop();
+    if (rotationAnimation.state()==QAbstractAnimation::Running)
+	rotationAnimation.stop();
+    if (zoomAnimation.state()==QAbstractAnimation::Running)
+	zoomAnimation.stop();
+    
+    if (settings.value ("/animation/use/",true).toBool() )
+    {
+	viewCenterAnimation.setTargetObject (this);
+	viewCenterAnimation.setPropertyName ("viewCenter");
+	viewCenterAnimation.setDuration(
+	    settings.value("/animation/duration/scrollbar",duration).toInt() );//FIXME-1
+	viewCenterAnimation.setEasingCurve (ecurve);
+	viewCenterAnimation.setStartValue( viewCenter );
+	viewCenterAnimation.setEndValue(viewCenterTarget);
+	viewCenterAnimation.start();
+
+	rotationAnimation.setTargetObject (this);
+	rotationAnimation.setPropertyName ("angle");
+	rotationAnimation.setDuration(settings.value("/animation/duration/rotation",duration).toInt() );
+	rotationAnimation.setEasingCurve ( ecurve);
+	rotationAnimation.setStartValue(angle);
+	rotationAnimation.setEndValue(angleTarget);
+	rotationAnimation.start();
+
+	zoomAnimation.setTargetObject (this);
+	zoomAnimation.setPropertyName ("zoomFactor");
+	zoomAnimation.setDuration(settings.value("/animation/duration/zoom",duration).toInt() );
+	zoomAnimation.setEasingCurve ( ecurve);
+	zoomAnimation.setStartValue(zoomFactor);
+	zoomAnimation.setEndValue(zoomFactorTarget);
+	zoomAnimation.start();
+
+    } else
+    {
+	setAngle (angleTarget);
+	setZoomFactor (zft);
+	setViewCenter (viewCenterTarget);
+    }
+}
+
+QPointF MapEditor::getViewCenterTarget ()
+{
+    return viewCenterTarget;
+}
+
+void MapEditor::setViewCenter (const QPointF &vc)
+{
+    centerOn (vc);
+}
+
+QPointF MapEditor::getViewCenter()
+{
+    return viewCenter;
+}
+
 void MapEditor::updateMatrix()
 {
     double a    = M_PI/180 * angle;
@@ -716,81 +784,13 @@ AttributeTable* MapEditor::attributeTable()
 
 void MapEditor::testFunction1()
 {
-    angle+=10;
-    updateMatrix();
-
-/*
-    qDebug()<< "ME::test1  selected TI="<<model->getSelectedItem();
-    model->setExportMode (true);
-*/
-
-    /*
-    // Code copied from Qt sources
-    QRectF rect=model->getSelectedBranchObj()->getBBox();
-    int xmargin=50;
-    int ymargin=50;
-
-    qreal width = viewport()->width();
-    qreal height = viewport()->height();
-    QRectF viewRect = matrix().mapRect(rect);
-
-    qreal left = horizontalScrollBar()->value();
-    qreal right = left + width;
-    qreal top = verticalScrollBar()->value();
-    qreal bottom = top + height;
-
-    if (viewRect.left() <= left + xmargin) {
-        // need to scroll from the left
-  //      if (!d->leftIndent)
-            horizontalScrollBar()->setValue(int(viewRect.left() - xmargin - 0.5));
+    BranchItem *sebi=(BranchItem*)(model->findBySelectString ("mc:0"));
+    if (sebi)
+    {
+	QPointF p=sebi->getLMO()->getBBox().center();
+	setViewCenterTarget (p,2,20);
+	//animateViewPoint();
     }
-    if (viewRect.right() >= right - xmargin) {
-        // need to scroll from the right
-//        if (!d->leftIndent)
-            horizontalScrollBar()->setValue(int(viewRect.right() - width + xmargin + 0.5));
-    }
-    if (viewRect.top() <= top + ymargin) {
-        // need to scroll from the top
-   //     if (!d->topIndent)
-            verticalScrollBar()->setValue(int(viewRect.top() - ymargin - 0.5));
-    }
-    if (viewRect.bottom() >= bottom - ymargin) {
-        // need to scroll from the bottom
-//        if (!d->topIndent)
-            verticalScrollBar()->setValue(int(viewRect.bottom() - height + ymargin + 0.5));
-    }
-    qDebug() << "test1:  hor="<<horizontalScrollBar()->value();
-    qDebug() << "test1:  ver="<<verticalScrollBar()->value();
-}
-
-*/
-/*
-     QtPropertyAnimation *animation=new QtPropertyAnimation(this, "sceneRect");
-     animation->setDuration(5000);
-     //animation->setEasingCurve ( QtEasingCurve::OutElastic);
-     animation->setEasingCurve ( QtEasingCurve::OutQuint);
-     animation->setStartValue(sceneRect() );
-     animation->setEndValue(QRectF(50, 50, 1000, 1000));
-
-     animation->start();
-*/   
-/*
-    QDialog *dia= new QDialog (this);
-    dia->setGeometry (50,50,10,10);
-
-     dia->show();
-     dia ->raise();
-
-     QtPropertyAnimation *animation=new QtPropertyAnimation(dia, "geometry");
-     animation->setDuration(1000);
-     //animation->setEasingCurve ( QtEasingCurve::OutElastic);
-     animation->setEasingCurve ( QtEasingCurve::OutQuint);
-     animation->setStartValue(QRect(50, 50, 10, 10));
-     animation->setEndValue(QRect(250, 250, 100, 100));
-
-     animation->start();
- */
-
 }
     
 void MapEditor::testFunction2()

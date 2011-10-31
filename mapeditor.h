@@ -27,6 +27,7 @@ public:
     VymModel* getModel();
     QGraphicsScene * getScene();
 
+// Animation of scrollbars
 Q_PROPERTY(QPointF scrollBarPos READ getScrollBarPos WRITE setScrollBarPos)
 
 protected:
@@ -49,6 +50,7 @@ public:
     QPointF getScrollBarPos();
     void animateScrollBars();
 
+// Animation of zoom
 Q_PROPERTY(qreal zoomFactor READ getZoomFactor WRITE setZoomFactor)
 
 protected:
@@ -62,6 +64,7 @@ public:
     void setZoomFactor (const qreal &zf);
     qreal getZoomFactor();
 
+// Animation of rotation
 Q_PROPERTY(qreal angle READ getAngle WRITE setAngle)
 
 protected:
@@ -75,7 +78,23 @@ public:
     void setAngle (const qreal &a);
     qreal getAngle();
 
-    void updateMatrix();
+
+// Animation of viewCenter    
+Q_PROPERTY (QPointF viewCenter READ getViewCenter WRITE setViewCenter)
+
+protected:
+    QPointF viewCenter;
+    QPointF viewCenterTarget;
+
+public:
+    void setViewCenterTarget (const QPointF &p, const qreal &zft, const qreal &at);
+    QPointF getViewCenterTarget();
+    void setViewCenter (const QPointF &p);
+    QPointF getViewCenter();
+    QPropertyAnimation viewCenterAnimation;
+
+    void updateMatrix();	    //! Sets transformation matrix with current rotation and zoom values
+
 public:
     void print();		    //!< Print the map
     QRectF getTotalBBox();	    //!< Bounding box of all items in map
@@ -87,13 +106,13 @@ public slots:
 public:
     TreeItem *findMapItem (QPointF p,TreeItem *exclude);    //! find item in map at position p. Ignore item exclude 
 
-    AttributeTable* attributeTable();	// FIXME-3
-    void testFunction1();		// just testing new stuff
-    void testFunction2();		// just testing new stuff
+    AttributeTable* attributeTable();	// FIXME-3 Not used, testing only
+    void testFunction1();		//! just testing new stuff
+    void testFunction2();		//! just testing new stuff
 
-    BranchItem* getBranchDirectAbove(BranchItem *bi);	//!  get branch direct above bi (in TreeView) 
+    BranchItem* getBranchDirectAbove(BranchItem *bi);	//! get branch direct above bi (in TreeView) 
     BranchItem* getBranchAbove(BranchItem *bi);		//! get branch above bi (in TreeView) 
-    BranchItem* getBranchDirectBelow(BranchItem *bi);	//!  bet branch direct below bi (in TreeView)
+    BranchItem* getBranchDirectBelow(BranchItem *bi);	//! bet branch direct below bi (in TreeView)
     BranchItem* getBranchBelow(BranchItem *bi);		//! bet branch below bi (in TreeView)
     BranchItem* getLeftBranch(BranchItem *bi);		//! bet branch left of bi (in TreeView)
     BranchItem* getRightBranch(BranchItem *bi);		//! bet branch right of bi (in TreeView)

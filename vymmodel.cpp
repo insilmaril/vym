@@ -6026,10 +6026,13 @@ void VymModel::updateSlideSelection (QItemSelection newsel,QItemSelection)
 		select (ti);
 		if (mapEditor)
 		{
-		    qreal q=fri->getZoomFactor();
-		    if (q>0) mapEditor->setZoomFactorTarget (q); 
-		    q=fri->getRotationAngle();
-		    mapEditor->setAngleTarget (q);
+		    LinkableMapObj *lmo=((MapItem*)ti)->getLMO();
+		    qreal zf=fri->getZoomFactor();
+		    if (zf>0 && lmo)
+			mapEditor->setViewCenterTarget (
+			    lmo->getBBox().center(),
+			    zf,
+			    fri->getRotationAngle() );
 		}
 	    }	
 	}
