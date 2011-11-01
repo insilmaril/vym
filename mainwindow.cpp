@@ -626,7 +626,6 @@ void Main::setupEditActions()
     a->setShortcutContext (Qt::WindowShortcut);
     switchboard.addConnection(editMenu, a,tr("Edit","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( editAddMapCenter() ) );
-    //actionListBranches.append(a);
     actionAddMapCenter = a;
 
 
@@ -715,6 +714,7 @@ void Main::setupEditActions()
     a->setEnabled (true);
     a->setShortcut ( Qt::Key_O );		    // Sort children
     switchboard.addConnection(editMenu, a,tr("Edit","Shortcut group"));
+    actionListBranches.append (a);
     actionSortChildren=a;
 
     a = new QAction( QPixmap(iconPath+"editsortback.png" ), tr( "Sort children backwards","Edit menu" ), this );
@@ -722,6 +722,7 @@ void Main::setupEditActions()
     a->setEnabled (true);
     a->setShortcut ( Qt::SHIFT + Qt::Key_O );		    // Reverse sort children 
     switchboard.addConnection(editMenu, a,tr("Edit","Shortcut group"));
+    actionListBranches.append (a);
     actionSortBackChildren=a;	
 
     a = new QAction( QPixmap(flagsPath+"flag-scrolled-right.png"), tr( "Scroll branch","Edit menu" ), this);
@@ -1015,6 +1016,7 @@ void Main::setupSelectActions()
     a->setCheckable(true);
     switchboard.addConnection(selectMenu, a,tr("Edit","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( editToggleTarget() ) );
+    actionListBranches.append (a);
     actionToggleTarget=a;
 
     a = new QAction( QPixmap(flagsPath + "flag-target"), tr( "Goto target...","Edit menu"), this);
@@ -1038,6 +1040,12 @@ void Main::setupSelectActions()
     switchboard.addConnection(selectMenu, a,tr("Edit","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( editSelectNext() ) );
     actionSelectNext=a;
+
+    a = new QAction( tr( "Unselect all","Edit menu"), this);
+    //a->setShortcut (Qt::CTRL + Qt::Key_I );
+    switchboard.addConnection(selectMenu, a,tr("Edit","Shortcut group"));
+    connect( a, SIGNAL( triggered() ), this, SLOT( editSelectNothing() ) );
+    actionSelectNothing=a;
 
     a = new QAction( QPixmap(iconPath+"find.png"), tr( "Find...","Edit menu"), this);
     a->setShortcut (Qt::CTRL + Qt::Key_F );		//Find
@@ -3620,6 +3628,12 @@ void Main::editSelectNext()
     if (m) m->selectNext();
 }
 
+void Main::editSelectNothing()  
+{
+    VymModel *m=currentModel();
+    if (m) m->unselect();
+}
+
 void Main::editOpenFindResultWidget()  
 {
     if (!findResultWidget->parentWidget()->isVisible())
@@ -3654,7 +3668,7 @@ void Main::editFindNext(QString s)
     }
 }
 
-void Main::editFindDuplicateURLs() //FIXME-4 feature: use FindResultWidget for display
+void Main::editFindDuplicateURLs() //FIXME-2 feature: use FindResultWidget for display
 {
     VymModel *m=currentModel();
     if (m) m->findDuplicateURLs();
@@ -4131,6 +4145,8 @@ void Main::updateActions()
     VymModel  *m =currentModel();
     if (m) 
     {
+	actionFind->setEnabled (true);
+
 	// Printing
 	actionFilePrint->setEnabled (true);
 
@@ -4167,11 +4183,17 @@ void Main::updateActions()
 	    actionSelectPrevious->setEnabled(true);
 	else
 	    actionSelectPrevious->setEnabled(false);
+
 	if (m->canSelectNext() )
 	    actionSelectNext->setEnabled(true);
 	else    
 	    actionSelectNext->setEnabled(false);
 	    
+	if (m->getSelectedItem() )
+	    actionSelectNothing->setEnabled (true);
+	else
+	    actionSelectNothing->setEnabled (false);
+
 	// History window
 	historyWindow->setWindowTitle (vymName + " - " +tr("History for %1","Window Caption").arg(m->getFileName()));
 
@@ -4230,6 +4252,9 @@ void Main::updateActions()
     {
 	TreeItem *selti=m->getSelectedItem();
 	BranchItem *selbi=m->getSelectedBranch();
+
+	actionAddMapCenter->setEnabled (true);
+
 	if (selti)
 	{
 	    actionToggleTarget->setChecked (selti->isTarget() );
@@ -4246,6 +4271,8 @@ void Main::updateActions()
 
 		// Note
 		actionGetURLsFromNote->setEnabled (!selbi->getNote().isEmpty());
+
+		standardFlagsMaster->setEnabled (true);
 
 		// Take care of xlinks  
 		// FIXME-3 similar code in mapeditor mousePressEvent
@@ -4330,15 +4357,21 @@ void Main::updateActions()
 		    actionListBranches.at(i)->setEnabled(true);
 		actionDelete->setEnabled (true);
 		actionDeleteChildren->setEnabled (true);
-	    }	// Branch
+
+		actionToggleTarget->setEnabled (true);
+		return;
+	    }	// Image
 	    if ( selti->getType()==TreeItem::Image)
 	    {
+		standardFlagsMaster->setEnabled (false);
+
 		actionOpenURL->setEnabled (false);
 		actionOpenVymLink->setEnabled (false);
 		actionDeleteVymLink->setEnabled (false);    
 		actionToggleHideExport->setEnabled (true);  
 		actionToggleHideExport->setChecked (selti->hideInExport() );	
 
+		actionToggleTarget->setEnabled (true);
 
 		actionCopy->setEnabled (true);
 		actionCut->setEnabled (true);	
@@ -4349,31 +4382,40 @@ void Main::updateActions()
 		actionMoveUp->setEnabled (false);
 		actionMoveDown->setEnabled (false);
 	    }	// Image
+	    return;
 
-	} else
-	{   // !selti
-	    actionCopy->setEnabled (false); 
-	    actionCut->setEnabled (false);  
-	    actionPaste->setEnabled (false);	
-	    for (int i=0; i<actionListBranches.size(); ++i) 
-		actionListBranches.at(i)->setEnabled(false);
-
-	    actionToggleScroll->setEnabled (false);
-	    actionOpenURL->setEnabled (false);
-	    actionOpenVymLink->setEnabled (false);
-	    actionDeleteVymLink->setEnabled (false);	
-	    actionHeading2URL->setEnabled (false);  
-	    actionDelete->setEnabled (false);
-	    actionDeleteChildren->setEnabled (false);
-	    actionMoveUp->setEnabled (false);
-	    actionMoveDown->setEnabled (false);
-	    actionFormatHideLinkUnselected->setEnabled (false);
-	    actionSortChildren->setEnabled (false);
-	    actionSortBackChildren->setEnabled (false);
-	    actionToggleHideExport->setEnabled (false);	
-	    actionToggleTarget->setChecked (false);
-	}   
+	} 
     } // m
+
+    // !selti || !m
+    actionCopy->setEnabled (false); 
+    actionCut->setEnabled (false);  
+    actionPaste->setEnabled (false);	
+    for (int i=0; i<actionListBranches.size(); ++i) 
+	actionListBranches.at(i)->setEnabled(false);
+
+    actionDetach->setEnabled (false);
+    actionAddMapCenter->setEnabled (false);
+    actionFind->setEnabled (false);
+    actionToggleScroll->setEnabled (false);
+    actionOpenURL->setEnabled (false);
+    actionOpenVymLink->setEnabled (false);
+    actionDeleteVymLink->setEnabled (false);	
+    actionHeading2URL->setEnabled (false);  
+    actionDelete->setEnabled (false);
+    actionDeleteChildren->setEnabled (false);
+    actionMoveUp->setEnabled (false);
+    actionMoveDown->setEnabled (false);
+    actionFormatHideLinkUnselected->setEnabled (false);
+    actionSortChildren->setEnabled (false);
+    actionSortBackChildren->setEnabled (false);
+    actionToggleHideExport->setEnabled (false);	
+    actionToggleTarget->setEnabled (false);
+
+    actionSelectPrevious->setEnabled (false);
+    actionSelectNext->setEnabled (false);
+
+    standardFlagsMaster->setEnabled (false);
 }
 
 Main::ModMode Main::getModMode()

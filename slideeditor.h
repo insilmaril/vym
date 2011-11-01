@@ -17,7 +17,6 @@ public:
     SlideEditor (VymModel *);
 
 public slots:	
-//    void popup();
     void previousSlide();
     void nextSlide();
     void addSlide();

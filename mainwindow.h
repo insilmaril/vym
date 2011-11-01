@@ -199,6 +199,7 @@ private slots:
     void editMoveToTarget();
     void editSelectPrevious();
     void editSelectNext();
+    void editSelectNothing();
     void editOpenFindResultWidget();
     void editFindNext(QString s);
     void editFindDuplicateURLs();
@@ -394,6 +395,7 @@ private:
     QAction *actionToggleTarget;
     QAction *actionSelectPrevious;
     QAction *actionSelectNext;
+    QAction *actionSelectNothing;
     QAction *actionFind;
 
     QAction *actionFormatColor;

@@ -6023,7 +6023,7 @@ void VymModel::updateSlideSelection (QItemSelection newsel,QItemSelection)
 	    TreeItem *ti=findID(id);
 	    if (ti)
 	    {
-		select (ti);
+		//select (ti); FIXME-2 select or not select??
 		if (mapEditor)
 		{
 		    LinkableMapObj *lmo=((MapItem*)ti)->getLMO();

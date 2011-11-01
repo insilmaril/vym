@@ -32,7 +32,6 @@ public:
     void deactivate(const QString&);
     void deactivateAll();
     void setEnabled (bool);
-    void setShowFlags (bool);
     void resetUsedCounter();
     QString saveToDir (const QString &,const QString &,bool);
     void setName (const QString&);	    // prefix for exporting flags to dir

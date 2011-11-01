@@ -46,7 +46,7 @@ QStringList FlagRow::activeFlagNames()
 }
 
 
-bool FlagRow::isActive (const QString &name)
+bool FlagRow::isActive (const QString &name)	//FIXME-2 Better use "checke" instead of "active" ...
 {
     QString n;
     foreach (n,activeNames)
@@ -97,6 +97,10 @@ void FlagRow::deactivateAll ()
     if (!toolBar) activeNames.clear();
 }
 
+void FlagRow::setEnabled (bool b)
+{
+    toolBar->setEnabled (b);
+}
 
 void FlagRow::resetUsedCounter()
 {

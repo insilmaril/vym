@@ -66,15 +66,6 @@ SlideEditor::SlideEditor(VymModel *m)
 //    connect (resultsModel, SIGNAL(layoutChanged() ), view, SLOT (expandAll() ));    
 }
 
-/*
-void SlideEditor::popup()
-{
-    show();
-    parentWidget()->show();
- //   findWidget->setFocus();
-}
-*/
-
 void SlideEditor::previousSlide()
 {
     QModelIndex ix=slideModel->getSelectedIndex();
