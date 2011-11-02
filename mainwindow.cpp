@@ -440,6 +440,7 @@ void Main::setupFileActions()
     a->setShortcut (Qt::CTRL + Qt::Key_S );	    //Save map
     switchboard.addConnection(fileMenu, a,tr("File","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( fileSave() ) );
+    actionListMap.append (a);
     actionFileSave=a;
 
     a = new QAction( QPixmap(iconPath+"filesaveas.png"), tr( "Save &As...","File menu" ), this);
@@ -543,6 +544,7 @@ void Main::setupFileActions()
     a->setShortcut (Qt::CTRL + Qt::Key_P );	    //Print map
     switchboard.addConnection(fileMenu, a,tr("File","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( filePrint() ) );
+    actionListMap.append (a);
     actionFilePrint=a;
 
     a = new QAction( QPixmap(iconPath+"fileclose.png"), tr( "&Close Map","File menu" ), this);
@@ -568,12 +570,14 @@ void Main::setupEditActions()
     a->setShortcut ( Qt::CTRL + Qt::Key_Z );	    //Undo last action
     a->setEnabled (false);
     switchboard.addConnection(editMenu, a,tr("Edit","Shortcut group"));
+    actionListMap.append (a);
     actionUndo=a;
 
     a = new QAction( QPixmap( iconPath+"redo.png"), tr( "&Redo","Edit menu" ), this); 
     a->setShortcut (Qt::CTRL + Qt::Key_Y );	    //Redo last action
     switchboard.addConnection(editMenu, a,tr("Edit","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( editRedo() ) );
+    actionListMap.append (a);
     actionRedo=a;
 
     editMenu->addSeparator();
@@ -582,20 +586,23 @@ void Main::setupEditActions()
     a->setEnabled (false);
     switchboard.addConnection(editMenu, a,tr("Edit","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( editCopy() ) );
+    actionListMap.append(a);
     actionCopy=a;
 
     a = new QAction(QPixmap( iconPath+"editcut.png" ), tr( "Cu&t","Edit menu" ), this);
     a->setShortcut (Qt::CTRL + Qt::Key_X );	    //Cut
     a->setEnabled (false);
     switchboard.addConnection(editMenu, a,tr("Edit","Shortcut group"));
-    actionCut=a;
     connect( a, SIGNAL( triggered() ), this, SLOT( editCut() ) );
+    actionListMap.append(a);
+    actionCut=a;
 
     a = new QAction(QPixmap( iconPath+"editpaste.png"), tr( "&Paste","Edit menu" ),this);
     connect( a, SIGNAL( triggered() ), this, SLOT( editPaste() ) );
     a->setShortcut ( Qt::CTRL + Qt::Key_V );	    //Paste
     a->setEnabled (false);
     switchboard.addConnection(editMenu, a,tr("Edit","Shortcut group"));
+    actionListMap.append(a);
     actionPaste=a;
 
     // Shortcut to delete selection
@@ -605,6 +612,7 @@ void Main::setupEditActions()
     switchboard.addConnection(a,tr("Edit","Shortcut group"));
     addAction (a);
     connect( a, SIGNAL( triggered() ), this, SLOT( editDeleteSelection() ) );
+    actionListItems.append (a);
     actionDelete=a;
 
     // Shortcut to add attribute
@@ -626,6 +634,7 @@ void Main::setupEditActions()
     a->setShortcutContext (Qt::WindowShortcut);
     switchboard.addConnection(editMenu, a,tr("Edit","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( editAddMapCenter() ) );
+    actionListMap.append (a);
     actionAddMapCenter = a;
 
 
@@ -692,6 +701,7 @@ void Main::setupEditActions()
     a->setEnabled (false);
     switchboard.addConnection(editMenu, a,tr("Edit","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( editMoveUp() ) );
+    actionListBranches.append (a);
     actionMoveUp=a;
 
     a = new QAction( QPixmap( iconPath+"down.png"), tr( "Move down","Edit menu" ),this);
@@ -700,6 +710,7 @@ void Main::setupEditActions()
     a->setShortcutContext (Qt::WidgetShortcut);
     a->setEnabled (false);
     switchboard.addConnection(editMenu, a,tr("Edit","Shortcut group"));
+    actionListBranches.append (a);
     actionMoveDown=a;
 
     a = new QAction(QPixmap(), tr( "&Detach","Context menu" ),this);
@@ -707,6 +718,7 @@ void Main::setupEditActions()
     a->setShortcut ( Qt::Key_D );		    // Detach branch
     switchboard.addConnection(editMenu, a,tr("Edit","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( editDetach() ) );
+    actionListItems.append (a);
     actionDetach=a;
 
     a = new QAction( QPixmap(iconPath+"editsort.png" ), tr( "Sort children","Edit menu" ), this );
@@ -731,9 +743,9 @@ void Main::setupEditActions()
     connect( a, SIGNAL( triggered() ), this, SLOT( editToggleScroll() ) );
     a->setEnabled (false);
     a->setCheckable(true);
-    actionToggleScroll=a;
     addAction (a);
-    actionListBranches.append(actionToggleScroll);
+    actionListBranches.append(a);
+    actionToggleScroll=a;
 
     a = new QAction( QPixmap(), tr( "Expand all branches","Edit menu" ), this);
     switchboard.addConnection(editMenu, a,tr("Edit","Shortcut group"));
@@ -741,8 +753,8 @@ void Main::setupEditActions()
     actionExpandAll=a;
     actionExpandAll->setEnabled (false);
     actionExpandAll->setCheckable(false);
-    addAction (a);
     actionListBranches.append(actionExpandAll);
+    addAction (a);
 
     a = new QAction( QPixmap(), tr( "Expand one level","Edit menu" ), this);
     a->setShortcut ( Qt::Key_Greater );	    // Expand one level in tree editor
@@ -750,9 +762,9 @@ void Main::setupEditActions()
     connect( a, SIGNAL( triggered() ), this, SLOT( editExpandOneLevel() ) );
     a->setEnabled (false);
     a->setCheckable(false);
-    actionExpandOneLevel=a;
     addAction (a);
     actionListBranches.append(a);
+    actionExpandOneLevel=a;
 
     a = new QAction( QPixmap(), tr( "Collapse one level","Edit menu" ), this);
     a->setShortcut ( Qt::Key_Less + Qt::CTRL);		// Collapse one level in tree editor
@@ -760,9 +772,9 @@ void Main::setupEditActions()
     connect( a, SIGNAL( triggered() ), this, SLOT( editCollapseOneLevel() ) );
     a->setEnabled (false);
     a->setCheckable(false);
-    actionCollapseOneLevel=a;
-    addAction (a);
     actionListBranches.append(a);
+    addAction (a);
+    actionCollapseOneLevel=a;
 
     a = new QAction( QPixmap(), tr( "Collapse unselected levels","Edit menu" ), this);
     a->setShortcut ( Qt::Key_Less);	    // Collapse all branches with greater depth than current selection
@@ -770,28 +782,32 @@ void Main::setupEditActions()
     connect( a, SIGNAL( triggered() ), this, SLOT( editCollapseUnselected() ) );
     a->setEnabled (false);
     a->setCheckable(false);
-    actionCollapseUnselected=a;
-    addAction (a);
     actionListBranches.append(a);
+    addAction (a);
+    actionCollapseUnselected=a;
 
     a = new QAction( tr( "Unscroll children","Edit menu" ), this);
     switchboard.addConnection(editMenu, a,tr("Edit","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( editUnscrollChildren() ) );
+    actionListBranches.append (a);
 
     a = new QAction( tr( "Grow selection","Edit menu" ), this);
     a->setShortcut ( Qt::CTRL + Qt::Key_Plus);	    // Grow selection
     switchboard.addConnection(editMenu, a,tr("Edit","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( editGrowSelectionSize() ) );
+    actionListItems.append (a);
 
     a = new QAction( tr( "Shrink selection","Edit menu" ), this);
     a->setShortcut ( Qt::CTRL + Qt::Key_Minus);	    // Shrink selection
     switchboard.addConnection(editMenu, a,tr("Edit","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( editShrinkSelectionSize() ) );
+    actionListItems.append (a);
 
     a = new QAction( tr( "Reset selection size","Edit menu" ), this);
     a->setShortcut ( Qt::CTRL + Qt::Key_0);	    // Shrink selection
     switchboard.addConnection(editMenu, a,tr("Edit","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( editResetSelectionSize() ) );
+    actionListItems.append (a);
 
     editMenu->addSeparator();
 
@@ -800,6 +816,7 @@ void Main::setupEditActions()
     switchboard.addConnection(a,tr("Edit","Shortcut group"));
     addAction(a);
     connect( a, SIGNAL( triggered() ), this, SLOT( editOpenURL() ) );
+    actionListBranches.append (a);
     actionOpenURL=a;
 
     a = new QAction( tr( "Open URL in new tab","Edit menu" ), this);
@@ -807,48 +824,49 @@ void Main::setupEditActions()
     switchboard.addConnection(a,tr("Edit","Shortcut group"));
     addAction(a);
     connect( a, SIGNAL( triggered() ), this, SLOT( editOpenURLTab() ) );
+    actionListBranches.append (a);
     actionOpenURLTab=a;
 
     a = new QAction( tr( "Open all URLs in subtree (including scrolled branches)","Edit menu" ), this);
     a->setShortcut ( Qt::CTRL + Qt::Key_U );
     switchboard.addConnection(a,tr("Edit","Shortcut group"));
     addAction(a);
-    actionListBranches.append(a);
     connect( a, SIGNAL( triggered() ), this, SLOT( editOpenMultipleVisURLTabs() ) );
+    actionListBranches.append(a);
     actionOpenMultipleVisURLTabs=a;
 
     a = new QAction( tr( "Open all URLs in subtree","Edit menu" ), this);
     switchboard.addConnection(a,tr("Edit","Shortcut group"));
     addAction(a);
-    actionListBranches.append(a);
     connect( a, SIGNAL( triggered() ), this, SLOT( editOpenMultipleURLTabs() ) );
+    actionListBranches.append(a);
     actionOpenMultipleURLTabs=a;
 
     a = new QAction(QPixmap(), tr( "Extract URLs from note","Edit menu"), this);
     a->setShortcut ( Qt::SHIFT + Qt::Key_N );
     a->setShortcutContext (Qt::WindowShortcut);
     switchboard.addConnection(a,tr("Edit","Shortcut group"));
-    actionListBranches.append(a);
     addAction(a);
     connect( a, SIGNAL( triggered() ), this, SLOT( editNote2URLs() ) );
+    actionListBranches.append(a);
     actionGetURLsFromNote=a;
 
     a = new QAction(QPixmap(flagsPath+"flag-urlnew.png"), tr( "Edit URL...","Edit menu"), this);
     a->setShortcut ( Qt::Key_U );
     a->setShortcutContext (Qt::WindowShortcut);
     switchboard.addConnection(a,tr("Edit","Shortcut group"));
-    actionListBranches.append(a);
     addAction(a);
     connect( a, SIGNAL( triggered() ), this, SLOT( editURL() ) );
+    actionListBranches.append(a);
     actionURLNew=a;
 
     a = new QAction(QPixmap(), tr( "Edit local URL...","Edit menu"), this);
     //a->setShortcut (Qt::SHIFT +  Qt::Key_U );
     a->setShortcutContext (Qt::WindowShortcut);
     switchboard.addConnection(a,tr("Edit","Shortcut group"));
-    actionListBranches.append(a);
     addAction(a);
     connect( a, SIGNAL( triggered() ), this, SLOT( editLocalURL() ) );
+    actionListBranches.append(a);
     actionLocalURL=a;
 
     a = new QAction( tr( "Use heading for URL","Edit menu" ), this);
@@ -856,9 +874,9 @@ void Main::setupEditActions()
     a->setShortcutContext (Qt::ApplicationShortcut);
     a->setEnabled (false);
     switchboard.addConnection(a,tr("Edit","Shortcut group"));
-    actionListBranches.append(a);
     addAction(a);
     connect( a, SIGNAL( triggered() ), this, SLOT( editHeading2URL() ) );
+    actionListBranches.append(a);
     actionHeading2URL=a;
 
     a = new QAction(tr( "Create URL to Novell Bugzilla","Edit menu" ), this);
@@ -869,6 +887,7 @@ void Main::setupEditActions()
     switchboard.addConnection(a,tr("Edit","Shortcut group"));
     addAction(a);
     connect( a, SIGNAL( triggered() ), this, SLOT( editBugzilla2URL() ) );
+    actionListBranches.append(a);
     actionBugzilla2URL=a;
 
     a = new QAction(tr( "Get data from Novell Bugzilla","Edit menu" ), this);
@@ -877,6 +896,7 @@ void Main::setupEditActions()
     switchboard.addConnection(a,tr("Edit","Shortcut group"));
     addAction(a);
     connect( a, SIGNAL( triggered() ), this, SLOT( getBugzillaData() ) );
+    actionListBranches.append(a);
     actionGetBugzillaData=a;
 
     a = new QAction(tr( "Get data from Novell Bugzilla for subtree","Edit menu" ), this);
@@ -885,6 +905,7 @@ void Main::setupEditActions()
     switchboard.addConnection(a,tr("Edit","Shortcut group"));
     addAction(a);
     connect( a, SIGNAL( triggered() ), this, SLOT( getBugzillaDataSubtree() ) );
+    actionListBranches.append(a);
     actionGetBugzillaDataSubtree=a;
 
     a = new QAction(tr( "Create URL to Novell FATE","Edit menu" ), this);
@@ -892,19 +913,21 @@ void Main::setupEditActions()
     switchboard.addConnection(a,tr("Edit","Shortcut group"));
     actionListBranches.append(a);
     connect( a, SIGNAL( triggered() ), this, SLOT( editFATE2URL() ) );
+    actionListBranches.append(a);
     actionFATE2URL=a;
 
     a = new QAction(QPixmap(flagsPath+"flag-vymlink.png"), tr( "Open linked map","Edit menu" ), this);
     a->setEnabled (false);
     switchboard.addConnection(a,tr("Edit","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( editOpenVymLink() ) );
+    actionListBranches.append (a);
     actionOpenVymLink=a;
 
     a = new QAction(QPixmap(), tr( "Open all vym links in subtree","Edit menu" ), this);
     a->setEnabled (false);
     switchboard.addConnection(a,tr("Edit","Shortcut group"));
-    actionListBranches.append(a);
     connect( a, SIGNAL( triggered() ), this, SLOT( editOpenMultipleVymLinks() ) );
+    actionListBranches.append(a);
     actionOpenMultipleVymLinks=a;
 
 
@@ -919,6 +942,7 @@ void Main::setupEditActions()
     a->setEnabled (false);
     switchboard.addConnection(a,tr("Edit","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( editDeleteVymLink() ) );
+    actionListBranches.append(a);
     actionDeleteVymLink=a;
 
     a = new QAction(QPixmap(flagsPath+"flag-hideexport.png"), tr( "Hide in exports","Edit menu" ), this);
@@ -928,6 +952,7 @@ void Main::setupEditActions()
     a->setEnabled (false);
     switchboard.addConnection(this, a,tr("Edit","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( editToggleHideExport() ) );
+    actionListItems.append (a);
     actionToggleHideExport=a;
 
     a = new QAction(tr( "Add timestamp","Edit menu" ), this);
@@ -937,12 +962,14 @@ void Main::setupEditActions()
     a->setShortcutContext (Qt::WindowShortcut);
     switchboard.addConnection(this, a,tr("Edit","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( editAddTimestamp() ) );
+    actionListBranches.append (a);
     actionAddTimestamp=a;
 
     a = new QAction(tr( "Edit Map Info...","Edit menu" ),this);
     a->setEnabled (true);
     switchboard.addConnection(NULL, a,tr("Edit","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( editMapInfo() ) );
+    actionListMap.append (a);
     actionMapInfo=a;
 
     // Import at selection (adding to selection)
@@ -1023,34 +1050,42 @@ void Main::setupSelectActions()
     a->setShortcut (Qt::Key_G );			//Goto target
     switchboard.addConnection(selectMenu, a,tr("Edit","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( editGoToTarget() ) );
+    actionListBranches.append (a);
+    actionGoToTarget=a;
 
     a = new QAction( QPixmap(flagsPath + "flag-target"), tr( "Move to target...","Edit menu"), this);
     a->setShortcut (Qt::Key_M );			//Move to target
     switchboard.addConnection(selectMenu, a,tr("Edit","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( editMoveToTarget() ) );
+    actionListBranches.append (a);
+    actionMoveToTarget=a;
 
     a = new QAction( QPixmap(iconPath + "selectprevious.png"), tr( "Select previous","Edit menu"), this);
     a->setShortcut (Qt::CTRL+ Qt::Key_O );	
     switchboard.addConnection(selectMenu, a,tr("Edit","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( editSelectPrevious() ) );
+    actionListMap.append (a);
     actionSelectPrevious=a;
 
     a = new QAction( QPixmap(iconPath + "selectnext.png"), tr( "Select next","Edit menu"), this);
     a->setShortcut (Qt::CTRL + Qt::Key_I );
     switchboard.addConnection(selectMenu, a,tr("Edit","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( editSelectNext() ) );
+    actionListMap.append (a);
     actionSelectNext=a;
 
     a = new QAction( tr( "Unselect all","Edit menu"), this);
     //a->setShortcut (Qt::CTRL + Qt::Key_I );
     switchboard.addConnection(selectMenu, a,tr("Edit","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( editSelectNothing() ) );
+    actionListMap.append (a);
     actionSelectNothing=a;
 
     a = new QAction( QPixmap(iconPath+"find.png"), tr( "Find...","Edit menu"), this);
     a->setShortcut (Qt::CTRL + Qt::Key_F );		//Find
     switchboard.addConnection(selectMenu, a,tr("Edit","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( editOpenFindResultWidget() ) );
+    actionListMap.append(a);
     actionFind=a;
 
     a = new QAction( tr( "Find duplicate URLs","Edit menu"), this);
@@ -1074,6 +1109,7 @@ void Main::setupFormatActions()
     switchboard.addConnection(formatMenu, a,tr("Format shortcuts","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( formatSelectColor() ) );
     actionFormatColor=a;
+
     a= new QAction( QPixmap(iconPath+"formatcolorpicker.png"), tr( "Pic&k color","Edit menu" ), this);
     a->setShortcut (Qt::CTRL + Qt::Key_K );
     switchboard.addConnection(formatMenu, a,tr("Format shortcuts","Shortcut group"));
@@ -1136,6 +1172,7 @@ void Main::setupFormatActions()
     a = new QAction( tr( "Hide link if object is not selected","Branch attribute" ), this);
     a->setCheckable(true);
     connect( a, SIGNAL( triggered() ), this, SLOT( formatHideLinkUnselected() ) );
+    actionListBranches.append (a);
     actionFormatHideLinkUnselected=a;
 
     a= new QAction( tr( "&Use color of heading for link","Branch attribute" ),  this);
@@ -1179,6 +1216,7 @@ void Main::setupViewActions()
     switchboard.addConnection(a,tr("View shortcuts","Shortcut group"));
     viewMenu->addAction (a);
     connect( a, SIGNAL( triggered() ), this, SLOT(viewZoomIn() ) );
+    actionListMap.append (a);
     actionZoomIn=a;
 
     a = new QAction( QPixmap(iconPath+"viewmag-.png"), tr( "Zoom out","View action" ), this);
@@ -1186,6 +1224,7 @@ void Main::setupViewActions()
     switchboard.addConnection(a,tr("View shortcuts","Shortcut group"));
     viewMenu->addAction (a);
     connect( a, SIGNAL( triggered() ), this, SLOT( viewZoomOut() ) );
+    actionListMap.append (a);
     actionZoomOut=a;
 
     a = new QAction( QPixmap(iconPath+"rotate-ccw.png"), tr( "Rotate counterclockwise","View action" ), this);
@@ -1193,6 +1232,7 @@ void Main::setupViewActions()
     switchboard.addConnection(a,tr("View shortcuts","Shortcut group"));
     viewMenu->addAction (a);
     connect( a, SIGNAL( triggered() ), this, SLOT( viewRotateCounterClockwise() ) );
+    actionListMap.append (a);
     actionRotateCounterClockwise=a;
 
     a = new QAction( QPixmap(iconPath+"rotate-cw.png"), tr( "Rotate rclockwise","View action" ), this);
@@ -1200,6 +1240,7 @@ void Main::setupViewActions()
     switchboard.addConnection(a,tr("View shortcuts","Shortcut group"));
     viewMenu->addAction (a);
     connect( a, SIGNAL( triggered() ), this, SLOT( viewRotateClockwise() ) );
+    actionListMap.append (a);
     actionRotateClockwise=a;
 
     a = new QAction(QPixmap(iconPath+"viewmag-reset.png"), tr( "reset Zoom","View action" ), this);
@@ -1207,6 +1248,7 @@ void Main::setupViewActions()
     switchboard.addConnection(a,tr("View shortcuts","Shortcut group"));
     viewMenu->addAction (a);
     connect( a, SIGNAL( triggered() ), this, SLOT(viewZoomReset() ) );
+    actionListMap.append (a);
     actionZoomReset=a;
 
     a = new QAction( QPixmap(iconPath+"viewshowsel.png"), tr( "Center on selection","View action" ), this);
@@ -1214,6 +1256,7 @@ void Main::setupViewActions()
     switchboard.addConnection(a,tr("View shortcuts","Shortcut group"));
     viewMenu->addAction (a);
     connect( a, SIGNAL( triggered() ), this, SLOT( viewCenter() ) );
+    actionListMap.append (a);
     actionCenterOn=a;
 
     viewMenu->addSeparator();	
@@ -1316,18 +1359,21 @@ void Main::setupModeActions()
     switchboard.addConnection(this,a,tr("Modes","Shortcut group"));
     a->setCheckable(true);
     a->setChecked(true);
+    actionListMap.append (a);
     actionModModeColor=a;
 
     a= new QAction( QPixmap(iconPath+"modecopy.png"), tr( "Use modifier to copy","Mode modifier" ), actionGroupModModes );
     a->setShortcut( Qt::Key_K); 
     switchboard.addConnection(this,a,tr("Modes","Shortcut group"));
     a->setCheckable(true);
+    actionListMap.append (a);
     actionModModeCopy=a;
 
     a= new QAction(QPixmap(iconPath+"modelink.png"), tr( "Use modifier to draw xLinks","Mode modifier" ), actionGroupModModes );
     a->setShortcut (Qt::Key_L);
     switchboard.addConnection(this,a,tr("Modes","Shortcut group"));
     a->setCheckable(true);
+    actionListMap.append (a);
     actionModModeXLink=a;
 }
 
@@ -4142,13 +4188,13 @@ void Main::updateActions()
 	actionViewToggleTreeEditor->setChecked  ( false );
 	actionViewToggleSlideEditor->setChecked ( false );
     }
-    VymModel  *m =currentModel();
-    if (m) 
-    {
-	actionFind->setEnabled (true);
 
-	// Printing
-	actionFilePrint->setEnabled (true);
+    VymModel  *m =currentModel();
+    if (m)
+    {
+	// Enable all map actions first
+	for (int i=0; i<actionListMap.size(); ++i)	
+	    actionListMap.at(i)->setEnabled(true);
 
 	// Link style in context menu
 	switch (m->getMapLinkStyle())
@@ -4179,20 +4225,25 @@ void Main::updateActions()
 	actionFormatLinkColor->setIcon( pix );
 
 	// Selection history
-	if (m->canSelectPrevious() )
-	    actionSelectPrevious->setEnabled(true);
-	else
+	if (!m->canSelectPrevious() )
 	    actionSelectPrevious->setEnabled(false);
 
-	if (m->canSelectNext() )
-	    actionSelectNext->setEnabled(true);
-	else    
+	if (!m->canSelectNext() )
 	    actionSelectNext->setEnabled(false);
 	    
-	if (m->getSelectedItem() )
-	    actionSelectNothing->setEnabled (true);
-	else
+	if (!m->getSelectedItem() )
 	    actionSelectNothing->setEnabled (false);
+
+	// Save
+	if (! m->hasChanged() )
+	    actionFileSave->setEnabled( false);
+
+	// Undo/Redo
+	if (! m->isUndoAvailable())
+	    actionUndo->setEnabled( false);
+
+	if (! m->isRedoAvailable())
+	    actionRedo->setEnabled( false);
 
 	// History window
 	historyWindow->setWindowTitle (vymName + " - " +tr("History for %1","Window Caption").arg(m->getFileName()));
@@ -4204,56 +4255,26 @@ void Main::updateActions()
 	actionCollapseOneLevel->setEnabled (true);
 	actionCollapseUnselected->setEnabled (true);
 
-    } else
-    {
-	// Printing
-	actionFilePrint->setEnabled (false);
-
-	// Expanding/collapsing
-	actionExpandAll->setEnabled (false);
-	actionExpandOneLevel->setEnabled (false);
-	actionCollapseOneLevel->setEnabled (false);
-	actionCollapseUnselected->setEnabled (false);
-    }
-
-    if (m && m->getMapLinkColorHint()==LinkableMapObj::HeadingColor) 
-	actionFormatLinkColorHint->setChecked(true);
-    else    
-	actionFormatLinkColorHint->setChecked(false);
+	if (m->getMapLinkColorHint()==LinkableMapObj::HeadingColor) 
+	    actionFormatLinkColorHint->setChecked(true);
+	else    
+	    actionFormatLinkColorHint->setChecked(false);
 
 
-    if (m && m->hasChanged() )
-	actionFileSave->setEnabled( true);
-    else    
-	actionFileSave->setEnabled( false);
-    if (m && m->isUndoAvailable())
-	actionUndo->setEnabled( true);
-    else    
-	actionUndo->setEnabled( false);
-
-    if (m && m->isRedoAvailable())
-	actionRedo->setEnabled( true);
-    else    
-	actionRedo->setEnabled( false);
-
-    // Export last
-    QString s, t, u;
-    if (m && m->exportLastAvailable(s,t,u) )
-	actionFileExportLast->setEnabled (true);
-    else
-    {
-	actionFileExportLast->setEnabled (false);
-	t=u="";
-	s=" - ";
-    }	
-    actionFileExportLast->setText( tr( "Export in last used format (%1) to: %2","status tip" ).arg(s).arg(u));
-
-    if (m)
-    {
+	// Export last
+	QString s, t, u;
+	if (m && m->exportLastAvailable(s,t,u) )
+	    actionFileExportLast->setEnabled (true);
+	else
+	{
+	    actionFileExportLast->setEnabled (false);
+	    t=u="";
+	    s=" - ";
+	}	
+	actionFileExportLast->setText( tr( "Export in last used format (%1) to: %2","status tip" ).arg(s).arg(u));
+/////////////////////////////////new
 	TreeItem *selti=m->getSelectedItem();
 	BranchItem *selbi=m->getSelectedBranch();
-
-	actionAddMapCenter->setEnabled (true);
 
 	if (selti)
 	{
@@ -4347,8 +4368,6 @@ void Main::updateActions()
 		actionToggleHideExport->setEnabled (true);  
 		actionToggleHideExport->setChecked (selbi->hideInExport() );	
 
-		actionCopy->setEnabled (true);	
-		actionCut->setEnabled (true);	
 		if (!clipboardEmpty)
 		    actionPaste->setEnabled (true); 
 		else	
@@ -4363,6 +4382,9 @@ void Main::updateActions()
 	    }	// Image
 	    if ( selti->getType()==TreeItem::Image)
 	    {
+		for (int i=0; i<actionListBranches.size(); ++i)	
+		    actionListBranches.at(i)->setEnabled(false);
+
 		standardFlagsMaster->setEnabled (false);
 
 		actionOpenURL->setEnabled (false);
@@ -4373,48 +4395,25 @@ void Main::updateActions()
 
 		actionToggleTarget->setEnabled (true);
 
-		actionCopy->setEnabled (true);
-		actionCut->setEnabled (true);	
-		actionPaste->setEnabled (false);    //FIXME-4 why not allowing copy of images?
-		for (int i=0; i<actionListBranches.size(); ++i)	
-		    actionListBranches.at(i)->setEnabled(false);
+		actionPaste->setEnabled (false); 
 		actionDelete->setEnabled (true);
-		actionMoveUp->setEnabled (false);
-		actionMoveDown->setEnabled (false);
 	    }	// Image
 	    return;
 
 	} 
-    } // m
+    } 
 
-    // !selti || !m
-    actionCopy->setEnabled (false); 
-    actionCut->setEnabled (false);  
-    actionPaste->setEnabled (false);	
+    // No map available and of course no item selected
+    for (int i=0; i<actionListMap.size(); ++i)	
+	actionListMap.at(i)->setEnabled(false);
+
     for (int i=0; i<actionListBranches.size(); ++i) 
 	actionListBranches.at(i)->setEnabled(false);
 
-    actionDetach->setEnabled (false);
-    actionAddMapCenter->setEnabled (false);
-    actionFind->setEnabled (false);
-    actionToggleScroll->setEnabled (false);
-    actionOpenURL->setEnabled (false);
-    actionOpenVymLink->setEnabled (false);
-    actionDeleteVymLink->setEnabled (false);	
-    actionHeading2URL->setEnabled (false);  
-    actionDelete->setEnabled (false);
-    actionDeleteChildren->setEnabled (false);
-    actionMoveUp->setEnabled (false);
-    actionMoveDown->setEnabled (false);
-    actionFormatHideLinkUnselected->setEnabled (false);
-    actionSortChildren->setEnabled (false);
-    actionSortBackChildren->setEnabled (false);
-    actionToggleHideExport->setEnabled (false);	
-    actionToggleTarget->setEnabled (false);
+    for (int i=0; i<actionListItems.size(); ++i) 
+	actionListItems.at(i)->setEnabled(false);
 
-    actionSelectPrevious->setEnabled (false);
-    actionSelectNext->setEnabled (false);
-
+    // Disable standard flags toolbar
     standardFlagsMaster->setEnabled (false);
 }
 

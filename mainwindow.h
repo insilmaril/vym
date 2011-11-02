@@ -307,7 +307,9 @@ private:
     BranchPropertyWindow *branchPropertyWindow;
     SimpleScriptEditor *scriptEditor;
 
+    QList <QAction*> actionListMap;
     QList <QAction*> actionListBranches;
+    QList <QAction*> actionListItems;
 
     QColor currentColor;
 
@@ -393,6 +395,8 @@ private:
     QAction *actionLoadImage;
 
     QAction *actionToggleTarget;
+    QAction *actionGoToTarget;
+    QAction *actionMoveToTarget;
     QAction *actionSelectPrevious;
     QAction *actionSelectNext;
     QAction *actionSelectNothing;
