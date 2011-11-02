@@ -1250,7 +1250,7 @@ void Main::setupViewActions()
     connect( a, SIGNAL( triggered() ), this, SLOT(windowToggleTreeEditor() ) );
     actionViewToggleTreeEditor=a;
 
-    a = new QAction(QPixmap(""), tr( "Toggle Slide editor","View action" ),this);
+    a = new QAction(QPixmap(iconPath+"slideeditor.png"), tr( "Toggle Slide editor","View action" ),this);
     a->setShortcut ( Qt::SHIFT + Qt::Key_S );	// Toggle Slide Editor 
     switchboard.addConnection(a,tr("View shortcuts","Shortcut group"));
     a->setCheckable(true);
