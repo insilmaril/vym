@@ -345,7 +345,7 @@ void TextEditor::setupEditActions()
 
 void TextEditor::setupFormatActions()
 {
-    QToolBar *fontHintsToolBar = addToolBar ( tr("Fonts","toolbar in texteditor" ));
+    QToolBar *fontHintsToolBar = addToolBar ( tr("Font hints","toolbar in texteditor" ));
     fontHintsToolBar->setObjectName ("noteEditorFontToolBar");
     QMenu *formatMenu = menuBar()->addMenu ( tr( "F&ormat" ));
 
