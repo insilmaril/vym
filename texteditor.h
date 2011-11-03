@@ -93,6 +93,10 @@ protected:
     QComboBox *comboFont, *comboSize;
     
     QToolBar *editToolBar;
+    QToolBar *fontToolBar;
+    QToolBar *fontHintsToolBar;
+    QToolBar *formatToolBar;
+
     QAction *actionFileLoad,
     *actionFileSave,
     *actionFileSaveAs,

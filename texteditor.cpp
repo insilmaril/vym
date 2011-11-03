@@ -345,8 +345,8 @@ void TextEditor::setupEditActions()
 
 void TextEditor::setupFormatActions()
 {
-    QToolBar *tb = addToolBar ( tr("Format Actions" ));
-    tb->setObjectName ("noteEditorFormatActions");
+    QToolBar *fontHintsToolBar = addToolBar ( tr("Fonts","toolbar in texteditor" ));
+    fontHintsToolBar->setObjectName ("noteEditorFontToolBar");
     QMenu *formatMenu = menuBar()->addMenu ( tr( "F&ormat" ));
 
     QAction *a;
@@ -357,27 +357,30 @@ void TextEditor::setupFormatActions()
     a->setChecked (settings.value("/noteeditor/fonts/useFixedByDefault",false).toBool() );
     connect( a, SIGNAL( activated() ), this, SLOT( toggleFonthint() ) );
     formatMenu->addAction (a);
-    tb->addAction (a);
+    fontHintsToolBar->addAction (a);
     actionFormatUseFixedFont=a;
 
-    a = new QAction( QPixmap(), tr( "&Richtext" ), this );
+    a = new QAction( QPixmap(), tr( "&Richtext" ), this ); // FIXME-2 Icon missing
     a->setShortcut (Qt::ALT + Qt::Key_R);
     a->setCheckable (true);
     //a->setChecked (settings.value("/noteeditor/fonts/useFixedByDefault",false).toBool() );
     connect( a, SIGNAL( activated() ), this, SLOT( toggleRichText() ) );
     formatMenu->addAction (a);
-    tb->addAction (a);
+    fontHintsToolBar->addAction (a);
     actionFormatRichText=a;
 
+    QToolBar *fontToolBar = addToolBar ( tr("Fonts","toolbar in texteditor" ));
+    fontToolBar->setObjectName ("noteEditorFontToolBar");
+
     comboFont = new QComboBox;
-    tb->addWidget (comboFont);
+    fontToolBar->addWidget (comboFont);
     QFontDatabase fontDB;
     comboFont->insertItems ( 0,fontDB.families() );
     connect( comboFont, SIGNAL( activated( const QString & ) ),
 	 this, SLOT( textFamily( const QString & ) ) );
 
     comboSize = new QComboBox;
-    tb->addWidget (comboSize);
+    fontToolBar->addWidget (comboSize);
     QList<int> sizes=fontDB.standardSizes();
     QList<int>::iterator it = sizes.begin();
     int i=0;
@@ -392,18 +395,21 @@ void TextEditor::setupFormatActions()
 
     formatMenu->addSeparator();
 
+    QToolBar *formatToolBar = addToolBar ( tr("Format","toolbar in texteditor" ));
+    formatToolBar->setObjectName ("noteEditorFormatToolBar");
+
     QPixmap pix( 16, 16 );
     pix.fill( e->textColor());
     a = new QAction( pix, tr( "&Color..." ), this);
     formatMenu->addAction (a);
-    tb->addAction (a);
+    formatToolBar->addAction (a);
     connect( a, SIGNAL( activated() ), this, SLOT( textColor() ) );
     actionTextColor=a;
 
     a = new QAction( QPixmap (iconPath+"text_bold.png"), tr( "&Bold" ), this);
     a->setShortcut(Qt::CTRL + Qt::Key_B );
     connect( a, SIGNAL( activated() ), this, SLOT( textBold() ) );
-    tb->addAction (a);
+    formatToolBar->addAction (a);
     formatMenu->addAction (a);
     a->setCheckable( true );
     actionTextBold=a;
@@ -411,7 +417,7 @@ void TextEditor::setupFormatActions()
     a = new QAction( QPixmap(iconPath+"text_italic.png"), tr( "&Italic" ),  this);
     a->setShortcut(Qt::CTRL + Qt::Key_I);
     connect( a, SIGNAL( activated() ), this, SLOT( textItalic() ) );
-    tb->addAction (a);
+    formatToolBar->addAction (a);
     formatMenu->addAction (a);
     a->setCheckable( true );
     actionTextItalic=a;
@@ -419,7 +425,7 @@ void TextEditor::setupFormatActions()
     a = new QAction( QPixmap (iconPath+"text_under.png"), tr( "&Underline" ), this);
     a->setShortcut(Qt::CTRL + Qt::Key_U );
     connect( a, SIGNAL( activated() ), this, SLOT( textUnderline() ) );
-    tb->addAction (a);
+    formatToolBar->addAction (a);
     formatMenu->addAction (a);
     a->setCheckable( true );
     //richTextWidgets.append((QWidget*)a);
@@ -431,7 +437,7 @@ void TextEditor::setupFormatActions()
     a = new QAction( QPixmap (iconPath+"text_sub.png"), tr( "Subs&cript" ),grp2 );
     a->setShortcut( Qt::CTRL + Qt::SHIFT + Qt::Key_B );
     a->setCheckable( true );
-    tb->addAction (a);
+    formatToolBar->addAction (a);
     formatMenu->addAction (a);
     connect(a, SIGNAL(activated()), this, SLOT(textVAlign()));
     actionAlignSubScript=a;
@@ -439,7 +445,7 @@ void TextEditor::setupFormatActions()
     a = new QAction( QPixmap (iconPath+"text_super.png"), tr( "Su&perscript" ),grp2  );
     a->setShortcut( Qt::CTRL + Qt::SHIFT + Qt::Key_P );
     a->setCheckable( true );
-    tb->addAction (a);
+    formatToolBar->addAction (a);
     formatMenu->addAction (a);
     connect(a, SIGNAL(activated()), this, SLOT(textVAlign()));
     actionAlignSuperScript=a;
@@ -451,25 +457,25 @@ void TextEditor::setupFormatActions()
     a = new QAction( QPixmap (iconPath+"text_left.png"), tr( "&Left" ),grp );
     //a->setShortcut( Qt::CTRL+Qt::Key_L );
     a->setCheckable( true );
-    tb->addAction (a);
+    formatToolBar->addAction (a);
     formatMenu->addAction (a);
     actionAlignLeft=a;
     a = new QAction( QPixmap (iconPath+"text_center.png"), tr( "C&enter" ),grp);
     //a->setShortcut(  Qt::CTRL + Qt::Key_E);
     a->setCheckable( true );
-    tb->addAction (a);
+    formatToolBar->addAction (a);
     formatMenu->addAction (a);
     actionAlignCenter=a;
     a = new QAction( QPixmap (iconPath+"text_right.png" ), tr( "&Right" ), grp);
     //a->setShortcut(Qt::CTRL + Qt::Key_R );
     a->setCheckable( true );
-    tb->addAction (a);
+    formatToolBar->addAction (a);
     formatMenu->addAction (a);
     actionAlignRight=a;
     a = new QAction( QPixmap ( iconPath+"text_block.png"), tr( "&Justify" ), grp );
     //a->setShortcut(Qt::CTRL + Qt::Key_J );
     a->setCheckable( true );
-    tb->addAction (a);
+    formatToolBar->addAction (a);
     formatMenu->addAction (a);
     actionAlignJustify=a;
 }
