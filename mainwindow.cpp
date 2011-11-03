@@ -4272,12 +4272,12 @@ void Main::updateActions()
 	    s=" - ";
 	}	
 	actionFileExportLast->setText( tr( "Export in last used format (%1) to: %2","status tip" ).arg(s).arg(u));
-/////////////////////////////////new
+
 	TreeItem *selti=m->getSelectedItem();
 	BranchItem *selbi=m->getSelectedBranch();
 
 	if (selti)
-	{
+	{   // Tree Item selected
 	    actionToggleTarget->setChecked (selti->isTarget() );
 
 	    if (selbi || selti->getType()==TreeItem::Image)
@@ -4287,7 +4287,10 @@ void Main::updateActions()
 	    }
 
 	    if (selbi)	
-	    {
+	    {	// Branch Item selected
+		for (int i=0; i<actionListBranches.size(); ++i)	
+		    actionListBranches.at(i)->setEnabled(true);
+
 		actionHeading2URL->setEnabled (true);  
 
 		// Note
@@ -4353,17 +4356,16 @@ void Main::updateActions()
 		    actionDeleteVymLink->setEnabled (true);
 		}   
 
-		if (selbi->canMoveUp()) 
-		    actionMoveUp->setEnabled (true);
-		else	
+		if (!selbi->canMoveUp()) 
 		    actionMoveUp->setEnabled (false);
-		if (selbi->canMoveDown()) 
-		    actionMoveDown->setEnabled (true);
-		else	
+		if (!selbi->canMoveDown()) 
 		    actionMoveDown->setEnabled (false);
 
-		actionSortChildren->setEnabled (true);
-		actionSortBackChildren->setEnabled (true);
+		if (selbi->branchCount() <2 )
+		{
+		    actionSortChildren->setEnabled (false);
+		    actionSortBackChildren->setEnabled (false);
+		}
 
 		actionToggleHideExport->setEnabled (true);  
 		actionToggleHideExport->setChecked (selbi->hideInExport() );	
@@ -4372,14 +4374,13 @@ void Main::updateActions()
 		    actionPaste->setEnabled (true); 
 		else	
 		    actionPaste->setEnabled (false);	
-		for (int i=0; i<actionListBranches.size(); ++i)	
-		    actionListBranches.at(i)->setEnabled(true);
 		actionDelete->setEnabled (true);
 		actionDeleteChildren->setEnabled (true);
 
 		actionToggleTarget->setEnabled (true);
 		return;
-	    }	// Image
+	    }	// end of BranchItem
+
 	    if ( selti->getType()==TreeItem::Image)
 	    {
 		for (int i=0; i<actionListBranches.size(); ++i)	
