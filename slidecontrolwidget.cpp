@@ -20,11 +20,11 @@ SlideControlWidget::SlideControlWidget(QWidget *)
     QHBoxLayout *row2Layout = new QHBoxLayout;
     
     previousButton = new QPushButton;
-    previousButton->setIcon ( QPixmap( iconPath + "selectprevious.png") );
+    previousButton->setIcon ( QPixmap( iconPath + "slideprevious.png") );
     connect ( previousButton, SIGNAL( clicked() ), this, SLOT( previousPressed() ) );
 
     nextButton = new QPushButton;
-    nextButton->setIcon ( QPixmap( iconPath + "selectnext.png") );
+    nextButton->setIcon ( QPixmap( iconPath + "slidenext.png") );
     connect ( nextButton, SIGNAL( clicked() ), this, SLOT( nextPressed() ) );
 
     upButton = new QPushButton;
@@ -36,13 +36,11 @@ SlideControlWidget::SlideControlWidget(QWidget *)
     connect ( downButton, SIGNAL( clicked() ), this, SLOT( downPressed() ) );
 
     snapshotButton = new QPushButton;
- //   snapshotButton->setIcon (QPixmap(iconPath+"SlideControl.png"));
-    snapshotButton->setText (tr("Take snapshot","SlideControl widget"));
+    snapshotButton->setIcon (QPixmap ( iconPath + "sliderecord.png" ));
     connect ( snapshotButton, SIGNAL( clicked() ), this, SLOT( snapshotPressed() ) );
 
     deleteButton = new QPushButton;
- //   deleteButton->setIcon (QPixmap(iconPath+"SlideControl.png"));
-    deleteButton->setText (tr("Delete slide","SlideControl widget"));
+    deleteButton->setIcon (QPixmap ( iconPath + "edittrash.png" ));
     connect ( deleteButton, SIGNAL( clicked() ), this, SLOT( deletePressed() ) );
 
     row2Layout->addWidget(previousButton);
