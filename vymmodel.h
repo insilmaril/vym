@@ -310,6 +310,7 @@ public:
 
     void setFrameType(const FrameObj::FrameType &);
     void setFrameType(const QString &);
+    void toggleFrameIncludeChildren ();
     void setFrameIncludeChildren (bool);
     void setFramePenColor (const QColor &);
     void setFrameBrushColor (const QColor &);

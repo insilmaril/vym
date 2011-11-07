@@ -1884,6 +1884,16 @@ void VymModel::setFrameType(const QString &s)	//FIXME-3 not saved if there is no
     }
 }
 
+void VymModel::toggleFrameIncludeChildren ()	  
+{
+    BranchItem *bi=getSelectedBranch();
+    if (bi)
+    {
+	bool b=bi->getFrameIncludeChildren();
+	setFrameIncludeChildren (!b);
+    }
+}
+
 void VymModel::setFrameIncludeChildren (bool b)	    
 {
     BranchItem *bi=getSelectedBranch();
@@ -4194,6 +4204,19 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	    s=parser.parString(ok,0);
 	    if (ok) 
 		selbi->activateStandardFlag(s);
+	}
+    /////////////////////////////////////////////////////////////////////
+    } else if (com=="toggleFrameIncludeChildren")
+    {
+	if (!selti )
+	{
+	    parser.setError (Aborted,"Nothing selected");
+	} else if (! selbi )
+	{		  
+	    parser.setError (Aborted,"Type of selection is not a branch");
+	} else if (parser.checkParCount(0))
+	{   
+	    toggleFrameIncludeChildren();
 	}
     /////////////////////////////////////////////////////////////////////
     } else if (com=="setFrameIncludeChildren")

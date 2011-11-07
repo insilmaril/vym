@@ -80,6 +80,7 @@ Highlighter::Highlighter(QTextDocument *parent)
 		    << "\\bsetFrameBrushColor\\b" 
 		    << "\\bsetFramePadding\\b" 
 		    << "\\bsetFrameBorderWidth\\b" 
+		    << "\\btoggleFrameIncludeChildren\\b" 
 		    << "\\bsetFrameIncludeChildren\\b" 
 		    << "\\bsetHideLinkUnselected\\b" 
 		    << "\\bsetMapAuthor\\b" 

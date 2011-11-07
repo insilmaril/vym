@@ -1,2 +1,2 @@
 # Macro F9
-clearFlags();
+toggleFrameIncludeChildren();
