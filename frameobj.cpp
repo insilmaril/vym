@@ -50,7 +50,7 @@ void FrameObj::clear()
 	    break;
     }
     type=NoFrame;
-    padding=0;
+    padding=0;	//FIXME-2 removing this doesn't update sceneRect correctly - Huuuhhh???
 }
 
 void FrameObj::move(double x, double y)
@@ -166,15 +166,11 @@ void FrameObj::setRect(const QRectF &r)
 void FrameObj::setPadding (const int &i)
 {
     padding=i;
-    repaint();
 }
 
 int FrameObj::getPadding()
 {
-    if (type==NoFrame) 
-	return 0;
-    else    
-	return padding;
+    return padding;
 }
 
 void FrameObj::setBorderWidth (const int &i)

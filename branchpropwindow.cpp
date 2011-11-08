@@ -10,7 +10,8 @@ extern Settings settings;
 extern QString vymName;
 
 
-BranchPropertyWindow::BranchPropertyWindow (QWidget *parent): QDialog (parent)
+BranchPropertyWindow::BranchPropertyWindow (QWidget *parent): QDialog (parent)	// FIXME-1 not updating when data is set elsewhere (connect to dataCHanged)
+
 {
     ui.setupUi (this);
 
@@ -202,11 +203,9 @@ void BranchPropertyWindow::frameTypeChanged (int i)
 		break;
 	    case 2: 
 		model->setFrameType (FrameObj::Ellipse); 
-		model->setFramePadding (5); 
 		break;
 	    case 3: 
 		model->setFrameType (FrameObj::Cloud); 
-		model->setFramePadding (5); 
 		break;
 	}
 	setItem (branchItem);

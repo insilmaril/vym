@@ -4603,7 +4603,7 @@ QVariant VymModel::runScript (const QString &script)
     {
 	r=parseAtom(parser.getAtom(),noErr,errMsg);
 	if (!noErr) //FIXME-3 need dialog box here
-	    cout << "VM::runScript aborted:\n"<<errMsg.toStdString()<<endl;
+	    qWarning()<< "VM::runScript aborted:\n"<<errMsg;
     }	
     return r;
 }
