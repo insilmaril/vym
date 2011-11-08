@@ -26,7 +26,7 @@ FrameObj::~FrameObj()
 void FrameObj::init()
 {
     type=NoFrame;
-    padding=10;
+    padding=5;
     borderWidth=1;
     penColor=QColor (Qt::black);
     brushColor=QColor (Qt::white);
@@ -50,7 +50,6 @@ void FrameObj::clear()
 	    break;
     }
     type=NoFrame;
-    padding=0;	//FIXME-2 removing this doesn't update sceneRect correctly - Huuuhhh???
 }
 
 void FrameObj::move(double x, double y)
@@ -170,7 +169,10 @@ void FrameObj::setPadding (const int &i)
 
 int FrameObj::getPadding()
 {
-    return padding;
+    if (type==NoFrame)
+	return 0;
+    else
+	return padding;
 }
 
 void FrameObj::setBorderWidth (const int &i)
