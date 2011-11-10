@@ -32,6 +32,9 @@ public:
     QColor getColor ();		    // get color of heading
     QRectF getBBoxHeading();
 
+    virtual qreal getRotation();
+    virtual void setRotation (const qreal &a);
+
     virtual FrameObj* getFrame();
     virtual FrameObj::FrameType getFrameType ();
     virtual QString getFrameTypeName ();
@@ -67,6 +70,8 @@ protected:
     FlagRowObj *standardFlags;	    // Standard Flags
     FrameObj *frame;		// frame around object
     QRectF ornamentsBBox;	// bbox of flags and heading
+
+    qreal angle;
 };
 
 #endif

@@ -92,7 +92,6 @@ void HeadingObj::calcBBoxSize()
     bbox.setSize (QSizeF(w,h));
 }
 
-//QGraphicsSimpleTextItem* HeadingObj::newLine(QString s)
 QGraphicsTextItem* HeadingObj::newLine(QString s)
 {
     //QGraphicsSimpleTextItem *t=new QGraphicsSimpleTextItem (s,0,scene);
@@ -104,6 +103,28 @@ QGraphicsTextItem* HeadingObj::newLine(QString s)
     // SimpleTextItem
     //t->setBrush(color);
     return t;
+}
+
+void HeadingObj::setTransformOriginPoint (const QPointF & p)
+{
+    for (int i=0; i<textline.size(); i++)
+    {
+	textline.at(i)->setTransformOriginPoint (p);
+    }
+}
+
+void HeadingObj::setRotation (const qreal &a)
+{
+    angle=a;
+    for (int i=0; i<textline.size(); i++)
+    {
+	textline.at(i)->setRotation (angle);
+    }
+}
+
+qreal HeadingObj::getRotation()
+{
+    return angle;
 }
 
 void HeadingObj::setText (QString s)

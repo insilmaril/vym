@@ -43,6 +43,8 @@ void OrnamentedObj::init ()
 
     frame = new FrameObj (scene);
     frame->setTreeItem (treeItem);
+
+    angle=0;
 }
 
 void OrnamentedObj::copy (OrnamentedObj* other)
@@ -81,6 +83,17 @@ QColor OrnamentedObj::getColor ()
 QRectF OrnamentedObj::getBBoxHeading()
 {
     return heading->getBBox();
+}
+
+qreal OrnamentedObj::getRotation()
+{
+    return angle;
+}
+
+void OrnamentedObj::setRotation (const qreal &a)
+{
+    angle=a;
+    heading->setRotation(a);
 }
 
 FrameObj* OrnamentedObj::getFrame()
@@ -185,11 +198,7 @@ void OrnamentedObj::positionContents()	//FIXME-3 called multiple times for each 
     double y=absPos.y();
     double dp=frame->getPadding();
     double dp2=dp/2;
-    double ox;
-//    if (orientation==LinkableMapObj::LeftOfCenter)
-//	ox=leftPad - dp;
-//    else	
-	ox=leftPad + dp;
+    double ox=leftPad + dp;
     double oy=topPad + dp;
     
     double d=dZ_DEPTH*treeItem->depth();
@@ -197,6 +206,10 @@ void OrnamentedObj::positionContents()	//FIXME-3 called multiple times for each 
 //    if (debug) qDebug()<< "OO: positionContents "<<treeItem->getHeading()<<" dp="<<dp<<" absPos=="<<absPos<<" bboxTotal="<<bboxTotal<<"  ox="<<ox<<" oy="<<oy;
     // vertical align heading to bottom
     heading->setZValue (d + dZ_TEXT);
+    heading->setTransformOriginPoint (
+	QPointF ( ox + systemFlags->getBBox().width(),
+		  oy + ornamentsBBox.height() - heading->getHeight() 
+		) );
     heading->move (ox + x + systemFlags->getBBox().width(),
 		   oy + y + ornamentsBBox.height() - heading->getHeight() 
 		    );

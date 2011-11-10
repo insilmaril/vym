@@ -20,6 +20,13 @@ private:
 //    QGraphicsSimpleTextItem* newLine(QString);		// generate new textline
     QGraphicsTextItem* newLine(QString);		// generate new textline
 public:    
+    virtual void setTransformOriginPoint (const QPointF &);
+    virtual void setRotation (qreal const &a);
+    virtual qreal getRotation();
+private:
+    qreal angle;    // FIXME-2 maybe to mapobj...
+
+public:    
     virtual void setText(QString);
     virtual QString text();
     virtual void setFont(QFont);
@@ -34,8 +41,7 @@ public:
 protected:
     QString heading;
     int textwidth;								// width for formatting text
-//    QList <QGraphicsSimpleTextItem*> textline;	// a part of e.g. the parabel
-    QList <QGraphicsTextItem*> textline;	// a part of e.g. the parabel
+    QList <QGraphicsTextItem*> textline;
     QColor color;
     QFont font;
 };

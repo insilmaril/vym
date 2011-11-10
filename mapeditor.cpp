@@ -791,11 +791,11 @@ AttributeTable* MapEditor::attributeTable()
 
 void MapEditor::testFunction1()
 {
-    BranchItem *selbi=model->getSelectedBranch();
-    if (selbi)
+    BranchItem *sebi=model->getSelectedBranch();
+    if (sebi)
     {
-	QPointF p=selbi->getLMO()->getBBox().center();
-	setViewCenterTarget (p,1,0);
+	OrnamentedObj *oo=(OrnamentedObj*)(sebi->getLMO());
+	oo->setRotation (oo->getRotation()+10);
     }
 }
     
