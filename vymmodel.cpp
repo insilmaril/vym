@@ -5629,6 +5629,17 @@ bool VymModel::select (const QModelIndex &index)
     return false;
 }
 
+bool VymModel::selectToggle (TreeItem *ti)
+{
+    if (ti) 
+    {
+	selModel->select ( index(ti), QItemSelectionModel::Toggle);
+	//appendSelection();	// FIXME-2 selection history not ready for multiselections yet
+	return true;
+    }
+    return false;
+}
+
 void VymModel::unselect()
 {
     if (!selModel->selectedIndexes().isEmpty())
@@ -5705,7 +5716,7 @@ void VymModel::resetSelectionHistory()
     appendSelection();
 }
 
-void VymModel::appendSelection()
+void VymModel::appendSelection()    // FIXME-2 history unable to cope with multiple selections
 {
     uint id=0;
     TreeItem *ti=getSelectedItem();
@@ -5820,17 +5831,17 @@ bool VymModel::selectParent()
 
 TreeItem::Type VymModel::selectionType()
 {
-    QModelIndexList list=selModel->selectedIndexes();
-    if (list.isEmpty()) return TreeItem::Undefined; 
-    TreeItem *ti = getItem (list.first() );
-    return ti->getType();
-
+    TreeItem *ti = getSelectedItem();
+    if (ti)
+	return ti->getType();
+    else
+	return TreeItem::Undefined;
 }
 
 LinkableMapObj* VymModel::getSelectedLMO()
 {
     QModelIndexList list=selModel->selectedIndexes();
-    if (!list.isEmpty() )
+    if (list.count()==1 )
     {
 	TreeItem *ti = getItem (list.first() );
 	TreeItem::Type type=ti->getType();
@@ -5851,10 +5862,9 @@ BranchObj* VymModel::getSelectedBranchObj() // convenience function
 
 BranchItem* VymModel::getSelectedBranch()
 {
-    QModelIndexList list=selModel->selectedIndexes();
-    if (!list.isEmpty() )
+    TreeItem *ti=getSelectedItem();
+    if (ti)
     {
-	TreeItem *ti = getItem (list.first() );
 	TreeItem::Type type=ti->getType();
 	if (type ==TreeItem::Branch || type==TreeItem::MapCenter)
 	    return (BranchItem*)ti;
@@ -5864,14 +5874,11 @@ BranchItem* VymModel::getSelectedBranch()
 
 ImageItem* VymModel::getSelectedImage()
 {
-    QModelIndexList list=selModel->selectedIndexes();
-    if (!list.isEmpty())
-    {
-	TreeItem *ti=getItem (list.first());
-	if (ti && ti->getType()==TreeItem::Image)
-	    return (ImageItem*)ti;
-    }
-    return NULL;
+    TreeItem *ti=getSelectedItem();
+    if (ti && ti->getType()==TreeItem::Image)
+	return (ImageItem*)ti;
+    else
+	return NULL;
 }
 
 Link* VymModel::getSelectedXLink()
@@ -5883,34 +5890,27 @@ Link* VymModel::getSelectedXLink()
 
 XLinkItem* VymModel::getSelectedXLinkItem()
 {
-    QModelIndexList list=selModel->selectedIndexes();
-    if (!list.isEmpty())
-    {
-	TreeItem *ti=getItem (list.first());
-	if (ti && ti->getType()==TreeItem::XLink)
-	    return (XLinkItem*)ti;
-    }
-    return NULL;
+    TreeItem *ti=getSelectedItem();
+    if (ti && ti->getType()==TreeItem::XLink)
+	return (XLinkItem*)ti;
+    else
+	return NULL;
 }
 
 AttributeItem* VymModel::getSelectedAttribute()	
 {
-    QModelIndexList list=selModel->selectedIndexes();
-    if (!list.isEmpty() )
-    {
-	TreeItem *ti = getItem (list.first() );
-	TreeItem::Type type=ti->getType();
-	if (type ==TreeItem::Attribute)
-	    return (AttributeItem*)ti;
-    } 
-    return NULL;
+    TreeItem *ti=getSelectedItem();
+    if (ti && ti->getType()==TreeItem::Attribute)
+	return (AttributeItem*)ti;
+    else
+	return NULL;
 }
 
 TreeItem* VymModel::getSelectedItem()	
 {
     if (!selModel) return NULL;
     QModelIndexList list=selModel->selectedIndexes();
-    if (!list.isEmpty() )
+    if (list.count()==1 )
 	return getItem (list.first() );
     else    
 	return NULL;
@@ -5919,10 +5919,10 @@ TreeItem* VymModel::getSelectedItem()
 QModelIndex VymModel::getSelectedIndex()
 {
     QModelIndexList list=selModel->selectedIndexes();
-    if (list.isEmpty() )
-	return QModelIndex();
-    else
+    if (list.count()==1 )
 	return list.first();
+    else
+	return QModelIndex();
 }
 
 QString VymModel::getSelectString ()

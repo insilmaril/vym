@@ -19,6 +19,7 @@ TreeEditor::TreeEditor(VymModel *m)
 
 void TreeEditor::init()
 {
+    setSelectionMode (QAbstractItemView::ExtendedSelection);
     header()->hide();
 
     QAction *a;

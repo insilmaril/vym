@@ -27,7 +27,7 @@ extern QString iconPath;
 
 ///////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////
-MapEditor::MapEditor( VymModel *vm) 
+MapEditor::MapEditor( VymModel *vm)	//FIXME-3 change ME from GraphicsScene to ItemView...
 {
     //qDebug() << "Constructor ME "<<this;
     mapScene= new QGraphicsScene(NULL);
@@ -1237,8 +1237,8 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
 	}
     }	
 
-    // No system flag clicked, take care of modmodes (CTRL-Click)
-    if (e->modifiers() & Qt::ControlModifier)
+    // No system flag clicked, take care of modmodes (Shift-Click)
+    if (e->modifiers() & Qt::ShiftModifier)
     {
 	if (mainWindow->getModMode()==Main::ModModeColor)
 	{
@@ -1272,9 +1272,10 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
 	qDebug() << "   ti="<<ti->getHeading();
     */
 	// Select the clicked object
-
-	// Get clicked LMO
-	model->select (ti);
+	if (e->modifiers() & Qt::ControlModifier)
+	    model->selectToggle (ti);
+	else
+	    model->select (ti);
 
 	// Left Button	    Move Branches
 	if (e->button() == Qt::LeftButton )
@@ -1704,7 +1705,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent* e)
 		    model->reposition();
 	    }
 	}
-	model->emitSelectionChanged();  //FIXME-3 needed? at least not after pos of selection has changed...
+	//model->emitSelectionChanged();  //FIXME-1 needed? at least not after pos of selection has changed... Also has now oldsel set, might confuse with multiple selections...
 	// Finally resize scene, if needed
 	scene()->update();
 	movingObj=NULL;	    
@@ -1864,96 +1865,74 @@ void MapEditor::dropEvent(QDropEvent *event)
     event->acceptProposedAction();
 }
 
-void MapEditor::updateSelection(QItemSelection newsel,QItemSelection oldsel)
+void MapEditor::updateSelection(QItemSelection ,QItemSelection desel)	
 {
-    // Note: Here we are prepared for multiple selections, though this 
-    // is not yet implemented elsewhere
-
-    // Here in MapEditor we can only select Branches and Images
-    QList <MapItem*> itemsNew;
-    QList <MapItem*> itemsOld;
-
-    QModelIndex newIndex;
+    QList <MapItem*> itemsSelected;
+    QList <MapItem*> itemsDeselected;
 
     bool do_reposition=false;
 
-    QModelIndex ix;
-    foreach (ix,newsel.indexes() )
+    QItemSelection sel=model->getSelectionModel()->selection();
+    foreach (QModelIndex ix,sel.indexes() )
     {
 	MapItem *mi= static_cast<MapItem*>(ix.internalPointer());
 	if (mi->isBranchLikeType() 
 	    ||mi->getType()==TreeItem::Image 
 	    ||mi->getType()==TreeItem::XLink)
-	    if (!itemsNew.contains(mi)) itemsNew.append (mi);
+	    if (!itemsSelected.contains(mi)) itemsSelected.append (mi);
     }
-    foreach (ix,oldsel.indexes() )
+    foreach (QModelIndex ix,desel.indexes() )
     {
 	MapItem *mi= static_cast<MapItem*>(ix.internalPointer());
 	if (mi->isBranchLikeType() 
 	    ||mi->getType()==TreeItem::Image 
 	    ||mi->getType()==TreeItem::XLink)
-	    if (!itemsOld.contains(mi)) itemsOld.append (mi);
+	    if (!itemsDeselected.contains(mi)) itemsDeselected.append (mi);
     }
 
     // Trim list of selection polygons 
-    while (itemsNew.count() < selPolyList.count() )
+    while (itemsSelected.count() < selPolyList.count() )
 	delete selPolyList.takeFirst();
 
     // Take care to tmp scroll/unscroll
-    if (!oldsel.isEmpty())
+    foreach (MapItem *mi,itemsDeselected)
     {
-	QModelIndex ix=oldsel.indexes().first(); 
-	if (ix.isValid() )
+	if (mi->isBranchLikeType() )
 	{
-	    MapItem *mi= static_cast<MapItem*>(ix.internalPointer());
-	    if (mi)
-	    {
-		if (mi->isBranchLikeType() )
-		{
-		    // reset tmp scrolled branches
-		    BranchItem *bi=(BranchItem*)mi;
-		    if (bi->resetTmpUnscroll() )
-			do_reposition=true;
-		}
-		if (mi->isBranchLikeType() || mi->getType()==TreeItem::Image)
-		    // Hide link if not needed
-		    mi->getLMO()->updateVisibility();
-	    }
+	    // reset tmp scrolled branches
+	    BranchItem *bi=(BranchItem*)mi;
+	    if (bi->resetTmpUnscroll() )
+		do_reposition=true;
 	}
+	if (mi->isBranchLikeType() || mi->getType()==TreeItem::Image)
+	    // Hide link if not needed
+	    mi->getLMO()->updateVisibility();
     }
 
-    if (!itemsNew.isEmpty())
+    foreach (MapItem *mi, itemsSelected)
     {
-	QModelIndex ix=newsel.indexes().first(); 
-	if (ix.isValid() )
+	if (mi->isBranchLikeType() )
 	{
-	    newIndex=ix;
-
-	    // Temporary unscroll if necessary
-	    MapItem *mi= static_cast<MapItem*>(ix.internalPointer());
-	    if (mi->isBranchLikeType() )
+	    BranchItem *bi=(BranchItem*)mi;
+	    if (bi->hasScrolledParent(bi) )
 	    {
-		BranchItem *bi=(BranchItem*)mi;
-		if (bi->hasScrolledParent(bi) )
-		{
-		    if (bi->parentBranch()->tmpUnscroll() )
-			do_reposition=true;
-		}   
-	    }
-	    if (mi->isBranchLikeType() || mi->getType()==TreeItem::Image)
-		// Show link if needed
-		mi->getLMO()->updateVisibility();
+		if (bi->parentBranch()->tmpUnscroll() )
+		    do_reposition=true;
+	    }   
 	}
+	if (mi->isBranchLikeType() || mi->getType()==TreeItem::Image)
+	    // Show link if needed
+	    mi->getLMO()->updateVisibility();
     }
     if (do_reposition) model->reposition();
 
     // Reduce polygons
-    while (itemsNew.count() < selPolyList.count() )
+    while (itemsSelected.count() < selPolyList.count() )
 	delete selPolyList.takeFirst();
 
     // Add additonal polygons
     QGraphicsPolygonItem *sp;
-    while (itemsNew.count() > selPolyList.count() )
+    while (itemsSelected.count() > selPolyList.count() )
     {
 	sp = mapScene->addPolygon(
 	    QPolygon(), 
@@ -1964,35 +1943,24 @@ void MapEditor::updateSelection(QItemSelection newsel,QItemSelection oldsel)
     }
 
     // Reposition polygons
-    QPolygonF poly;
-    QModelIndex index;
-
-    MapObj *mo;
-    for (int i=0; i<itemsNew.count();++i)
+    for (int i=0; i<itemsSelected.count();++i)
     {
-	mo=itemsNew.at(i)->getMO();
-	// Don't draw huge selBox if children are included in frame
-	/*
-	if (itemsNew.at(i)->isBranchLikeType() && 
-	    ((BranchItem*)itemsNew.at(i))->getFrameIncludeChildren() )
-	    poly=lmo->getClickPoly();
-	else
-	    poly=QPolygonF (lmo->getBBox());
-	    */
-	poly=mo->getClickPoly();    
+	MapObj *mo=itemsSelected.at(i)->getMO();
+	QPolygonF poly=mo->getClickPoly();    
 	sp=selPolyList.at(i);
 	sp->setPolygon (poly);
 	sp->setPen (selectionColor);	
 	sp->setBrush (selectionColor);	
-	sp->setZValue (dZ_DEPTH*itemsNew.at(i)->depth() + dZ_SELBOX);
-	i++;
+	sp->setZValue (dZ_DEPTH*itemsSelected.at(i)->depth() + dZ_SELBOX);
     }
 
-    if (editingHeading && lineEdit && !itemsNew.isEmpty() )
+
+/*    if (editingHeading && lineEdit && !itemsSelected.isEmpty() ) // FIXME-2 ???
     {
-	mo=itemsNew.first()->getLMO();
+	MapObj *mo=itemsSelected.first()->getLMO();
 	if (mo) lineEdit->move ( mapTo (this,mo->getAbsPos().toPoint() ) );
     }
+*/
     scene()->update();  
 }
 

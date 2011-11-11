@@ -158,23 +158,11 @@ void VymView::initFocus()
     mapEditor->setFocus();
 }
 
-void VymView::changeSelection (const QItemSelection &newsel, const QItemSelection &oldsel)  
+void VymView::changeSelection (const QItemSelection &newsel, const QItemSelection &desel)  //FIXME-3 could be replaced by signals directly
 {
-    //qDebug() << "VV::changeSelection   newsel.count="<<newsel.indexes().count();
-
-    mainWindow->changeSelection (model,newsel,oldsel);	
-    mapEditor->updateSelection (newsel,oldsel);
-
-    if (newsel.indexes().count()>0)
-    {
-
-	
-	QModelIndex ix=newsel.indexes().first();
-	selModel->setCurrentIndex (ix,QItemSelectionModel::ClearAndSelect  );
-	treeEditor->setCurrentIndex (ix);
-	showSelection();
-	
-    }
+    mainWindow->changeSelection (model,newsel,desel);	
+    mapEditor->updateSelection (newsel,desel);
+    showSelection();
 }
 
 void VymView::expandAll()

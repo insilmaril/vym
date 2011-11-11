@@ -678,6 +678,7 @@ public:
     bool select (LinkableMapObj *lmo);	    //! Select by pointer to LMO
     bool select (TreeItem *ti );	    //! Select by pointer to TreeItem
     bool select (const QModelIndex &index); //! Select by ModelIndex
+    bool selectToggle (TreeItem *ti);	    //! Toggle select state
     void unselect();
     bool reselect();
     bool canSelectPrevious();
