@@ -3551,7 +3551,7 @@ void Main::editDeleteChildren()
 void Main::editDeleteSelection()
 {
     VymModel *m=currentModel();
-    if (m && actionSettingsUseDelKey->isChecked())
+    if (m && actionSettingsUseDelKey->isChecked())  //FIXME-2 remove this setting
 	m->deleteSelection();
 }
 
@@ -3962,7 +3962,7 @@ void Main::settingsMacroDir()
 	settings.setValue ("/macros/macroDir",dir.absolutePath());
 }
 
-void Main::settingsUndoLevels()
+void Main::settingsUndoLevels()	    // FIXME-2 default level? should be >=1000
 {
     bool ok;
     int i = QInputDialog::getInteger(
@@ -4400,8 +4400,19 @@ void Main::updateActions()
 		actionDelete->setEnabled (true);
 	    }	// Image
 	    return;
+	} // TreeItem 
+	
+	// Check (at least for some) multiple selection //FIXME-2
+	QList <TreeItem*> selItems=m->getSelectedItems();
+	if (selItems.count()>0 )
+	    actionDelete->setEnabled (true);
 
-	} 
+	QList <BranchItem*> selbis=m->getSelectedBranches();
+	if (selbis.count()>0 )
+	{
+	    actionFormatColorBranch->setEnabled (true);
+	}
+	return;
     } 
 
     // No map available and of course no item selected

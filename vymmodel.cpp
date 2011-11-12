@@ -2755,48 +2755,51 @@ void VymModel::deleteLater(uint id)
 
 void VymModel::deleteSelection()    
 {
-    BranchItem *selbi=getSelectedBranch();
-
-    if (selbi)
-    {	// Delete branch
-	unselect();
-	saveStateRemovingPart (selbi, QString ("Delete %1").arg(getObjectName(selbi)));
-
-	BranchItem *pi=(BranchItem*)(deleteItem (selbi));
-	if (pi)
-	{
-	    if (pi->isScrolled() && pi->branchCount()==0)
-		pi->unScroll();
-	    emitDataHasChanged(pi);
-	    select (pi);
-	    emitShowSelection();
-	} else
-	    emitDataHasChanged(rootItem);
-	return;
-    }
-
-    TreeItem *ti=getSelectedItem();
-
-    if (ti)
-    {	// Delete other item
-	TreeItem *pi=ti->parent();
-	if (!pi) return;
-	if (ti->getType()==TreeItem::Image || ti->getType()==TreeItem::Attribute||ti->getType()==TreeItem::XLink)
-	{
-	    saveStateChangingPart(
-		pi, 
-		ti,
-		"delete ()",
-		QString("Delete %1").arg(getObjectName(ti))
-	    );
+    QList <uint> selectedIDs=getSelectedIDs();
+    foreach (uint id, selectedIDs)
+    {
+	TreeItem *ti=findID (id);
+	if (ti && ti->isBranchLikeType ())
+	{   // Delete branch
+	    BranchItem *selbi=(BranchItem*)ti;
 	    unselect();
-	    deleteItem (ti);
-	    emitDataHasChanged (pi);
-	    select (pi);
-	    reposition();
-	    emitShowSelection();
-	} else
-	    qWarning ("VymmModel::deleteSelection()  unknown type?!");
+	    saveStateRemovingPart (selbi, QString ("Delete %1").arg(getObjectName(selbi)));
+
+	    BranchItem *pi=(BranchItem*)(deleteItem (selbi));
+	    if (pi)
+	    {
+		if (pi->isScrolled() && pi->branchCount()==0)
+		    pi->unScroll();
+		emitDataHasChanged(pi);// FIXME-2 emit later...
+		select (pi);
+		emitShowSelection();
+	    } else
+		emitDataHasChanged(rootItem); // FIXME-2 emit later...
+	    ti=NULL;		
+	}
+
+	// Delete other item
+	if (ti)
+	{
+	    TreeItem *pi=ti->parent(); 
+	    if (!pi) return;
+	    if (ti->getType()==TreeItem::Image || ti->getType()==TreeItem::Attribute||ti->getType()==TreeItem::XLink)
+	    {
+		saveStateChangingPart(
+		    pi, 
+		    ti,
+		    "delete ()",
+		    QString("Delete %1").arg(getObjectName(ti))
+		);
+		unselect();
+		deleteItem (ti);
+		emitDataHasChanged (pi);
+		select (pi);
+		reposition();
+		emitShowSelection();
+	    } else
+		qWarning ("VymmModel::deleteSelection()  unknown type?!");
+	}
     }
 }
 
@@ -3190,8 +3193,8 @@ void VymModel::addFloatImage (const QImage &img)
 
 void VymModel::colorBranch (QColor c)	
 {
-    BranchItem *selbi=getSelectedBranch();
-    if (selbi)
+    QList <BranchItem*> selbis=getSelectedBranches();
+    foreach (BranchItem* selbi, selbis)
     {
 	saveState(
 	    selbi, 
@@ -3202,14 +3205,18 @@ void VymModel::colorBranch (QColor c)
 	);  
 	selbi->setHeadingColor(c); // color branch
 	emitDataHasChanged (selbi);
-	mapEditor->getScene()->update();
     }
+    mapEditor->getScene()->update();    
 }
 
-void VymModel::colorSubtree (QColor c, BranchItem *bi) 
+void VymModel::colorSubtree (QColor c, BranchItem *b) 
 {
-    if (!bi) bi=getSelectedBranch();
-    if (bi)
+    QList <BranchItem*> selbis;
+    if (b) 
+	selbis.append (b);
+    else
+	selbis=getSelectedBranches();
+    foreach (BranchItem *bi,selbis)
     {
 	saveStateChangingPart(
 	    bi,
@@ -3225,8 +3232,8 @@ void VymModel::colorSubtree (QColor c, BranchItem *bi)
 	    emitDataHasChanged (cur);
 	    cur=nextBranch (cur,prev,true,bi);
 	}   
-    mapEditor->getScene()->update();
     }
+    mapEditor->getScene()->update();
 }
 
 QColor VymModel::getCurrentHeadingColor()   
@@ -5872,6 +5879,18 @@ BranchItem* VymModel::getSelectedBranch()
     return NULL;
 }
 
+QList <BranchItem*> VymModel::getSelectedBranches()
+{
+    QList <BranchItem*> bis;
+    foreach (TreeItem *ti,getSelectedItems() )
+    {
+	TreeItem::Type type=ti->getType();
+	if (type ==TreeItem::Branch || type==TreeItem::MapCenter)
+	    bis.append ( (BranchItem*)ti );
+    }
+    return bis;
+}
+
 ImageItem* VymModel::getSelectedImage()
 {
     TreeItem *ti=getSelectedItem();
@@ -5916,6 +5935,16 @@ TreeItem* VymModel::getSelectedItem()
 	return NULL;
 }
 
+QList <TreeItem*> VymModel::getSelectedItems()	
+{
+    QList <TreeItem*> l;
+    if (!selModel) return l;
+    QModelIndexList list=selModel->selectedIndexes();
+    foreach (QModelIndex ix,list)
+	l.append (getItem (ix) );
+    return l;
+}
+
 QModelIndex VymModel::getSelectedIndex()
 {
     QModelIndexList list=selModel->selectedIndexes();
@@ -5923,6 +5952,14 @@ QModelIndex VymModel::getSelectedIndex()
 	return list.first();
     else
 	return QModelIndex();
+}
+
+QList <uint> VymModel::getSelectedIDs()
+{
+    QList <uint> uids;
+    foreach (TreeItem* ti,getSelectedItems() )
+	uids.append (ti->getID() );
+    return uids;	
 }
 
 QString VymModel::getSelectString ()

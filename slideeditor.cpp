@@ -103,7 +103,7 @@ void SlideEditor::moveSlideDown()
     vymModel->moveSlideDown ();	
 }
 
-void SlideEditor::updateSelection(QItemSelection newsel,QItemSelection)
+void SlideEditor::updateSelection(QItemSelection, QItemSelection)
 {
     // FIXME-1 updateActions missing, e.g. state for moveUp/down
 }

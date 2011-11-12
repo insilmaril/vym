@@ -704,12 +704,15 @@ public:
     LinkableMapObj* getSelectedLMO();
     BranchObj* getSelectedBranchObj();	
     BranchItem* getSelectedBranch();
+    QList <BranchItem*> getSelectedBranches();
     ImageItem* getSelectedImage();
     XLinkItem* getSelectedXLinkItem();
     Link* getSelectedXLink();
     AttributeItem* getSelectedAttribute();
     TreeItem* getSelectedItem();
+    QList <TreeItem*> getSelectedItems();
     QModelIndex getSelectedIndex();
+    QList <uint> getSelectedIDs();
     QString getSelectString ();
     QString getSelectString (LinkableMapObj *lmo);
     QString getSelectString (TreeItem *item);
