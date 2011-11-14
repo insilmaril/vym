@@ -917,7 +917,7 @@ void VymModel::autosave()
     if (filePath=="") 
     {
 	if (debug)
-	    cout << "VymModel::autosave rejected due to missing filePath\n";
+	    qDebug() << "VymModel::autosave rejected due to missing filePath\n";
     }
 
     QDateTime now=QDateTime().currentDateTime();
@@ -936,7 +936,7 @@ void VymModel::autosave()
 	    mainWindow->fileSave (this);
 	else
 	    if (debug)
-		cout <<"  ME::autosave  rejected, file on disk is newer than last save.\n"; 
+		qDebug() <<"  ME::autosave  rejected, file on disk is newer than last save.\n"; 
 
     }	
 }
@@ -1050,17 +1050,17 @@ void VymModel::redo()
 
     if (debug)
     {
-	cout << "VymModel::redo() begin\n";
-	cout << "    undosAvail="<<undosAvail<<endl;
-	cout << "    redosAvail="<<redosAvail<<endl;
-	cout << "       curStep="<<curStep<<endl;
-	cout << "    ---------------------------"<<endl;
-	cout << "    comment="<<comment.toStdString()<<endl;
-	cout << "    undoCom="<<undoCommand.toStdString()<<endl;
-	cout << "    undoSel="<<undoSelection.toStdString()<<endl;
-	cout << "    redoCom="<<redoCommand.toStdString()<<endl;
-	cout << "    redoSel="<<redoSelection.toStdString()<<endl;
-	cout << "    ---------------------------"<<endl<<endl;
+	qDebug() << "VymModel::redo() begin\n";
+	qDebug() << "    undosAvail="<<undosAvail;
+	qDebug() << "    redosAvail="<<redosAvail;
+	qDebug() << "       curStep="<<curStep;
+	qDebug() << "    ---------------------------";
+	qDebug() << "    comment="<<comment;
+	qDebug() << "    undoCom="<<undoCommand;
+	qDebug() << "    undoSel="<<undoSelection;
+	qDebug() << "    redoCom="<<redoCommand;
+	qDebug() << "    redoSel="<<redoSelection;
+	qDebug() << "    ---------------------------";
     }
 
     // select  object before redo
@@ -1083,11 +1083,11 @@ void VymModel::redo()
     updateActions();
 
     /* TODO remove testing
-    cout << "ME::redo() end\n";
-    cout << "    undosAvail="<<undosAvail<<endl;
-    cout << "    redosAvail="<<redosAvail<<endl;
-    cout << "       curStep="<<curStep<<endl;
-    cout << "    ---------------------------"<<endl<<endl;
+    qDebug() << "ME::redo() end\n";
+    qDebug() << "    undosAvail="<<undosAvail;
+    qDebug() << "    redosAvail="<<redosAvail;
+    qDebug() << "       curStep="<<curStep;
+    qDebug() << "    ---------------------------";
     */
 
 
@@ -1136,17 +1136,17 @@ void VymModel::undo()
 
     if (debug)
     {
-	cout << "VymModel::undo() begin\n";
-	cout << "    undosAvail="<<undosAvail<<endl;
-	cout << "    redosAvail="<<redosAvail<<endl;
-	cout << "       curStep="<<curStep<<endl;
-	cout << "    ---------------------------"<<endl;
-	cout << "    comment="<<comment.toStdString()<<endl;
-	cout << "    undoCom="<<undoCommand.toStdString()<<endl;
-	cout << "    undoSel="<<undoSelection.toStdString()<<endl;
-	cout << "    redoCom="<<redoCommand.toStdString()<<endl;
-	cout << "    redoSel="<<redoSelection.toStdString()<<endl;
-	cout << "    ---------------------------"<<endl<<endl;
+	qDebug() << "VymModel::undo() begin\n";
+	qDebug() << "    undosAvail="<<undosAvail;
+	qDebug() << "    redosAvail="<<redosAvail;
+	qDebug() << "       curStep="<<curStep;
+	qDebug() << "    ---------------------------";
+	qDebug() << "    comment="<<comment;
+	qDebug() << "    undoCom="<<undoCommand;
+	qDebug() << "    undoSel="<<undoSelection;
+	qDebug() << "    redoCom="<<redoCommand;
+	qDebug() << "    redoSel="<<redoSelection;
+	qDebug() << "    ---------------------------";
     }	
 
     bool noErr;
@@ -1161,11 +1161,11 @@ void VymModel::undo()
 
     blockSaveState=blockSaveStateOrg;
 /* testing only
-    cout << "VymModel::undo() end\n";
-    cout << "    undosAvail="<<undosAvail<<endl;
-    cout << "    redosAvail="<<redosAvail<<endl;
-    cout << "       curStep="<<curStep<<endl;
-    cout << "    ---------------------------"<<endl<<endl;
+    qDebug() << "VymModel::undo() end\n";
+    qDebug() << "    undosAvail="<<undosAvail;
+    qDebug() << "    redosAvail="<<redosAvail;
+    qDebug() << "       curStep="<<curStep;
+    qDebug() << "    ---------------------------";
 */
 
     undoSet.setValue ("/history/undosAvail",QString::number(undosAvail));
@@ -1203,7 +1203,7 @@ void VymModel::gotoHistoryStep (int i)
     if (i>undosAvail) 
 	for (int j=undosAvail; j<i; j++) 
 	{
-	    if (debug) cout << "VymModel::gotoHistoryStep redo "<<j<<"/"<<undosAvail<<" i="<<i<<endl;
+	    if (debug) qDebug() << "VymModel::gotoHistoryStep redo "<<j<<"/"<<undosAvail<<" i="<<i;
 	    redo();
 	}
 
@@ -1237,7 +1237,7 @@ void VymModel::saveState(const SaveMode &savemode, const QString &undoSelection,
 
     if (blockSaveState) return;
 
-    if (debug) cout << "VM::saveState() for  "<<qPrintable (mapName)<<endl;
+    if (debug) qDebug() << "VM::saveState() for  "<<qPrintable (mapName);
     
     // Find out current undo directory
     if (undosAvail<stepsTotal) undosAvail++;
@@ -1292,20 +1292,19 @@ void VymModel::saveState(const SaveMode &savemode, const QString &undoSelection,
 
     if (debug)
     {
-	// TODO remove after testing
-	//cout << "          into="<< histPath.toStdString()<<endl;
-	cout << "    stepsTotal="<<stepsTotal<<
+	//qDebug() << "          into="<< histPath;
+	qDebug() << "    stepsTotal="<<stepsTotal<<
 	", undosAvail="<<undosAvail<<
 	", redosAvail="<<redosAvail<<
-	", curStep="<<curStep<<endl;
-	cout << "    ---------------------------"<<endl;
-	cout << "    comment="<<comment.toStdString()<<endl;
-	cout << "    undoCom="<<undoCommand.toStdString()<<endl;
-	cout << "    undoSel="<<undoSelection.toStdString()<<endl;
-	cout << "    redoCom="<<redoCom.toStdString()<<endl;
-	cout << "    redoSel="<<redoSelection.toStdString()<<endl;
-	if (saveSel) cout << "    saveSel="<<qPrintable (getSelectString(saveSel))<<endl;
-	cout << "    ---------------------------"<<endl;
+	", curStep="<<curStep;
+	qDebug() << "    ---------------------------";
+	qDebug() << "    comment="<<comment;
+	qDebug() << "    undoCom="<<undoCommand;
+	qDebug() << "    undoSel="<<undoSelection;
+	qDebug() << "    redoCom="<<redoCom;
+	qDebug() << "    redoSel="<<redoSelection;
+	if (saveSel) qDebug() << "    saveSel="<<qPrintable (getSelectString(saveSel));
+	qDebug() << "    ---------------------------";
     }
 
     mainWindow->updateHistory (undoSet);
@@ -1673,10 +1672,10 @@ void VymModel::findDuplicateURLs()  // FIXME-3 needs GUI
 	{
 	    if (  i-1==firstdup )
 	    {
-		cout << firstdup.key().toStdString() << endl;
-		cout << " - "<< firstdup.value() <<" - "<<firstdup.value()->getHeadingStd()<<endl;
+		qDebug() << firstdup.key();
+		qDebug() << " - "<< firstdup.value() <<" - "<<firstdup.value()->getHeading();
 	    }	
-	    cout << " - "<< i.value() <<" - "<<i.value()->getHeadingStd()<<endl;
+	    qDebug() << " - "<< i.value() <<" - "<<i.value()->getHeading();
 	} else
 	    firstdup=i;
 
@@ -2294,7 +2293,7 @@ ImageItem* VymModel::createImage(BranchItem *dst)
 	emit (layoutAboutToBeChanged() );
 
 	    parix=index(dst);
-	    if (!parix.isValid()) cout << "VM::createII invalid index\n";
+	    if (!parix.isValid()) qDebug() << "VM::createII invalid index\n";
 	    n=dst->getRowNumAppend(newii);
 	    beginInsertRows (parix,n,n);
 	    dst->appendChild (newii);	
@@ -4087,10 +4086,10 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 				    {
 					if (selbi->getHeading() == u)
 					{
-					    cout << "PASSED: " << qPrintable (c)  << endl;
+					    qDebug() << "PASSED: " << qPrintable (c);
 					} else
 					{
-					    cout << "FAILED: " << qPrintable (c)  << endl;
+					    qDebug() << "FAILED: " << qPrintable (c);
 					}
 				    }
 				}
@@ -4970,7 +4969,7 @@ void VymModel::updateNoteFlag()
 
 void VymModel::reposition() //FIXME-4 VM should have no need to reposition, but the views...
 {
-    //cout << "VM::reposition blocked="<<blockReposition<<endl;
+    //qDebug() << "VM::reposition blocked="<<blockReposition;
     if (blockReposition) return;
 
     BranchObj *bo;
@@ -5365,7 +5364,7 @@ void VymModel::newServer()
     }
     connect(tcpServer, SIGNAL(newConnection()), this, SLOT(newClient()));
     netstate=Server;
-    cout<<"Server is running on port "<<tcpServer->serverPort()<<endl;
+    qDebug()<<"Server is running on port "<<tcpServer->serverPort();
 }
 
 void VymModel::connectToServer()
@@ -5380,7 +5379,7 @@ void VymModel::connectToServer()
     connect(clientSocket, SIGNAL(error(QAbstractSocket::SocketError)),
             this, SLOT(displayNetworkError(QAbstractSocket::SocketError)));
     netstate=Client;	    
-    cout<<"connected to "<<qPrintable (server)<<" port "<<port<<endl;
+    qDebug()<<"connected to "<<qPrintable (server)<<" port "<<port;
 
     
 }
@@ -5391,7 +5390,7 @@ void VymModel::newClient()
     connect(newClient, SIGNAL(disconnected()),
             newClient, SLOT(deleteLater()));
 
-    cout <<"ME::newClient  at "<<qPrintable( newClient->peerAddress().toString() )<<endl;
+    qDebug() <<"ME::newClient  at "<<qPrintable( newClient->peerAddress().toString() );
 
     clientList.append (newClient);
 }
@@ -5421,11 +5420,11 @@ void VymModel::sendData(const QString &s)
     out << bs;
 
     if (debug)
-	cout << "ME::sendData  bs="<<bs<<"  counter="<<sendCounter<<"  s="<<qPrintable(s)<<endl;
+	qDebug() << "ME::sendData  bs="<<bs<<"  counter="<<sendCounter<<"  s="<<qPrintable(s);
 
     for (int i=0; i<clientList.size(); ++i)
     {
-	//cout << "Sending \""<<qPrintable (s)<<"\" to "<<qPrintable (clientList.at(i)->peerAddress().toString())<<endl;
+	//qDebug() << "Sending \""<<qPrintable (s)<<"\" to "<<qPrintable (clientList.at(i)->peerAddress().toString());
 	clientList.at(i)->write (block);
     }
 }
@@ -5435,7 +5434,7 @@ void VymModel::readData ()
     while (clientSocket->bytesAvailable() >=(int)sizeof(quint16) )
     {
 	if (debug)
-	    cout <<"readData  bytesAvail="<<clientSocket->bytesAvailable();
+	    qDebug() <<"readData  bytesAvail="<<clientSocket->bytesAvailable();
 	quint16 recCounter;
 	quint16 blockSize;
 
@@ -5448,7 +5447,7 @@ void VymModel::readData ()
 	QString t;
 	in >>t;
 	if (debug)
-	    cout << "VymModel::readData  command="<<qPrintable (t)<<endl;
+	    qDebug() << "VymModel::readData  command="<<qPrintable (t);
 	bool noErr;
 	QString errMsg;
 	parseAtom (t,noErr,errMsg);
@@ -5507,7 +5506,7 @@ QDBusVariant VymModel::query (const QString &query)
 
 void VymModel::testslot()   //FIXME-4 Playing with DBUS
 {
-    cout << "VM::testslot called\n";
+    qDebug() << "VM::testslot called\n";
 }
 
 void VymModel::selectMapSelectionColor()
