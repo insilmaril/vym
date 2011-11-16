@@ -2042,11 +2042,13 @@ void VymModel::setHideLinkUnselected (bool b)
     }
 }
 
-void VymModel::setHideExport(bool b)
+void VymModel::setHideExport(bool b, TreeItem *ti)
 {
-    TreeItem *ti=getSelectedItem();
+    if (!ti) ti=getSelectedItem();
     if (ti && 
-	(ti->getType()==TreeItem::Image ||ti->isBranchLikeType()))
+	(ti->getType()==TreeItem::Image ||ti->isBranchLikeType()) &&
+	ti->hideInExport() !=b
+	)
     {
 	ti->setHideInExport (b);
 	QString u= b ? "false" : "true";
@@ -2061,8 +2063,8 @@ void VymModel::setHideExport(bool b)
 	);  
 	    emitDataHasChanged(ti);
 	    emitSelectionChanged();
-	updateActions();
-	reposition();
+	updateActions();    //FIXME-2 really? Here?
+	reposition(); //FIXME-2 reposition now or better requestRepo
 	// emitSelectionChanged();
 	// FIXME-3 VM needed? scene()->update();
     }
@@ -2070,9 +2072,13 @@ void VymModel::setHideExport(bool b)
 
 void VymModel::toggleHideExport()
 {
-    TreeItem *selti=getSelectedItem();
-    if (selti)
-	setHideExport ( !selti->hideInExport() );
+    QList <TreeItem*> selItems=getSelectedItems();
+    if (selItems.count()>0 )
+    {
+	bool b=!selItems.first()->hideInExport();
+	foreach (TreeItem* ti, selItems)
+	    setHideExport (b,ti );
+    }
 }
 
 void VymModel::addTimestamp()	//FIXME-3 new function, localize

@@ -321,7 +321,7 @@ public:
     void setHideLinkUnselected (bool);
 
     /*! Should object be hidden in exports (clouded)? */
-    void setHideExport(bool);		
+    void setHideExport(bool, TreeItem* ti=NULL);		
 
     /*! Should object be hidden in exports (clouded)? */
     void toggleHideExport();	    

@@ -718,7 +718,7 @@ void Main::setupEditActions()
     a->setShortcut ( Qt::Key_D );		    // Detach branch
     switchboard.addConnection(editMenu, a,tr("Edit","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( editDetach() ) );
-    actionListItems.append (a);
+    actionListBranches.append (a);
     actionDetach=a;
 
     a = new QAction( QPixmap(iconPath+"editsort.png" ), tr( "Sort children","Edit menu" ), this );
@@ -1869,7 +1869,7 @@ void Main::setupContextMenus()
 	
 
     // Context Menu for XLinks in a branch menu
-    // This will be populated "on demand" in MapEditor::updateActions
+    // This will be populated "on demand" in updateActions
     branchContextMenu->addSeparator();	
     branchXLinksContextMenuEdit =branchContextMenu->addMenu (tr ("Edit XLink","Context menu name"));
     connect( 
@@ -4196,6 +4196,13 @@ void Main::updateActions()
 	for (int i=0; i<actionListMap.size(); ++i)	
 	    actionListMap.at(i)->setEnabled(true);
 
+	// Disable other actions for now
+	for (int i=0; i<actionListBranches.size(); ++i) 
+	    actionListBranches.at(i)->setEnabled(false);
+
+	for (int i=0; i<actionListItems.size(); ++i) 
+	    actionListItems.at(i)->setEnabled(false);
+
 	// Link style in context menu
 	switch (m->getMapLinkStyle())
 	{
@@ -4405,25 +4412,22 @@ void Main::updateActions()
 	// Check (at least for some) multiple selection //FIXME-2
 	QList <TreeItem*> selItems=m->getSelectedItems();
 	if (selItems.count()>0 )
+	{
 	    actionDelete->setEnabled (true);
+	    actionToggleHideExport->setEnabled (true);  
+	    actionToggleHideExport->setChecked (false);	
+	}
 
 	QList <BranchItem*> selbis=m->getSelectedBranches();
 	if (selbis.count()>0 )
-	{
 	    actionFormatColorBranch->setEnabled (true);
-	}
+
 	return;
     } 
 
-    // No map available and of course no item selected
+    // No map available 
     for (int i=0; i<actionListMap.size(); ++i)	
 	actionListMap.at(i)->setEnabled(false);
-
-    for (int i=0; i<actionListBranches.size(); ++i) 
-	actionListBranches.at(i)->setEnabled(false);
-
-    for (int i=0; i<actionListItems.size(); ++i) 
-	actionListItems.at(i)->setEnabled(false);
 
     // Disable standard flags toolbar
     standardFlagsMaster->setEnabled (false);
