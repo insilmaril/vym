@@ -1459,7 +1459,7 @@ TreeItem* VymModel::findBySelectString(QString s)
     return  ti;
 }
 
-TreeItem* VymModel::findID (const uint &id)  //FIXME-3 Search also other types...
+TreeItem* VymModel::findID (const uint &id)  
 {
     BranchItem *cur=NULL;
     BranchItem *prev=NULL;

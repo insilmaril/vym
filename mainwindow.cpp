@@ -3551,7 +3551,7 @@ void Main::editDeleteChildren()
 void Main::editDeleteSelection()
 {
     VymModel *m=currentModel();
-    if (m && actionSettingsUseDelKey->isChecked())  //FIXME-2 remove this setting
+    if (m) // && actionSettingsUseDelKey->isChecked())  //FIXME-2 remove this setting
 	m->deleteSelection();
 }
 
@@ -4286,6 +4286,8 @@ void Main::updateActions()
 	if (selti)
 	{   // Tree Item selected
 	    actionToggleTarget->setChecked (selti->isTarget() );
+	    actionDelete->setEnabled (true);
+	    actionDeleteChildren->setEnabled (true);
 
 	    if (selbi || selti->getType()==TreeItem::Image)
 	    {
@@ -4381,8 +4383,6 @@ void Main::updateActions()
 		    actionPaste->setEnabled (true); 
 		else	
 		    actionPaste->setEnabled (false);	
-		actionDelete->setEnabled (true);
-		actionDeleteChildren->setEnabled (true);
 
 		actionToggleTarget->setEnabled (true);
 		return;

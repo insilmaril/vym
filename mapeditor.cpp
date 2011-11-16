@@ -1336,7 +1336,7 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
     QGraphicsView::mousePressEvent(e);
 }
 
-void MapEditor::mouseMoveEvent(QMouseEvent* e)
+void MapEditor::mouseMoveEvent(QMouseEvent* e)  //FIXME-0 don't move XLinks, this causes jumping of screen
 {
     TreeItem *seli=model->getSelectedItem();
     LinkableMapObj* lmosel=NULL;    
