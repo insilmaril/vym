@@ -3731,27 +3731,31 @@ void Main::updateQueries (VymModel* m) //FIXME-3 disabled for now to avoid selec
     }	
 }
 
-
-void Main::formatSelectColor()
-{
-    QColor col = QColorDialog::getColor((currentColor ), this );
-    if ( !col.isValid() ) return;
-    colorChanged( col );
-}
-
 void Main::formatPickColor()
 {
     VymModel *m=currentModel();
     if (m)
-	colorChanged( m->getCurrentHeadingColor() );
+	setCurrentColor ( m->getCurrentHeadingColor() );
 }
 
-void Main::colorChanged(QColor c)
+QColor Main::getCurrentColor()
+{
+    return currentColor;
+}
+
+void Main::setCurrentColor(QColor c)
 {
     QPixmap pix( 16, 16 );
     pix.fill( c );
     actionFormatColor->setIcon( pix );
     currentColor=c;
+}
+
+void Main::formatSelectColor()
+{
+    QColor col = QColorDialog::getColor((currentColor ), this );
+    if ( !col.isValid() ) return;
+    setCurrentColor( col );
 }
 
 void Main::formatColorBranch()

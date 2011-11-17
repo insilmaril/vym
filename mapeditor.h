@@ -127,7 +127,6 @@ public slots:
     void editHeading();
     void editHeadingFinished();
 private:
-    bool editingHeading;
     QLineEdit *lineEdit;
 
 protected:
@@ -160,10 +159,23 @@ private:
     QCursor PickColorCursor;	// cursor while picking color 
     QCursor CopyCursor;		// cursor while picking color 
     QCursor XLinkCursor;	// cursor while picking color 
-    bool pickingColor;
+    enum EditorState {
+	Neutral,
+	EditingHeading,
+	MovingObject,
+	MovingView,
+	PickingColor,
+	CopyingObject,
+	DrawingLink
+    };
+    EditorState state; 
+    void setState (EditorState);
+/*
     bool drawingLink;		// true while creating a link
     bool copyingObj;		// true while modModeCopy
+*/
     bool objectMoved;		// true if object was not clicked, but moved with mouse
+
     Link* tmpLink;
 
     MapObj* movingObj;		    // moving a MapObj

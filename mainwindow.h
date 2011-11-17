@@ -204,10 +204,13 @@ private slots:
     void editFindNext(QString s);
     void editFindDuplicateURLs();
 
+public slots:
+    void formatPickColor();
+    QColor getCurrentColor();
+    void setCurrentColor(QColor);
+
 private slots:    
     void formatSelectColor();
-    void formatPickColor();
-    void colorChanged(QColor);
     void formatColorBranch();
     void formatColorSubtree();
     void formatLinkStyleLine();
