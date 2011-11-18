@@ -1118,7 +1118,7 @@ void MapEditor::keyPressEvent(QKeyEvent* e)
 		break;
 	} 
     }	
-    // FIXME-0 needed? QGraphicsView::keyPressEvent(e);
+    QGraphicsView::keyPressEvent(e); 
 }
 
 void MapEditor::keyReleaseEvent(QKeyEvent* e)
@@ -1331,7 +1331,6 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
 	    } 
 	} 
     }
-   //FIXME-2 needed? QGraphicsView::mousePressEvent(e);
 }
 
 void MapEditor::mouseMoveEvent(QMouseEvent* e)  
@@ -1380,7 +1379,6 @@ void MapEditor::mouseMoveEvent(QMouseEvent* e)
 	verticalScrollBar()->setSliderPosition((int)( movingCont_start.y()+movingVec.y() ) );
 	scrollBarPosAnimation.stop();	// Avoid flickering
     }
-   // QGraphicsView::mouseMoveEvent (e);	//FIXME-2 needed?
 }
 
 void MapEditor::moveObject ()	
@@ -1973,14 +1971,6 @@ void MapEditor::updateSelection(QItemSelection ,QItemSelection desel)
 	sp->setBrush (selectionColor);	
 	sp->setZValue (dZ_DEPTH*itemsSelected.at(i)->depth() + dZ_SELBOX);
     }
-
-
-/*    if (state==EditingHeading && lineEdit && !itemsSelected.isEmpty() ) // FIXME-2 ???
-    {
-	MapObj *mo=itemsSelected.first()->getLMO();
-	if (mo) lineEdit->move ( mapTo (this,mo->getAbsPos().toPoint() ) );
-    }
-*/
     scene()->update();  
 }
 
