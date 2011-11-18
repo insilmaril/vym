@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0" language="it">
+<TS version="2.0" language="it" sourcelanguage="en">
 <context>
     <name>AboutDialog</name>
     <message>
@@ -36,12 +36,12 @@
         <source>Couldn&apos;t find a viewer to open %1.
 </source>
         <comment>About window</comment>
-        <translation>Non è possibile trovare un applicazione per aprire %1.</translation>
+        <translation>Non è possibile trovare un&apos; applicazione per aprire %1.</translation>
     </message>
     <message>
         <location filename="../aboutdialog.cpp" line="230"/>
         <source>Set application to open an URL...</source>
-        <translation type="unfinished"></translation>
+        <translation>Impostare un&apos;applicazione per aprire una URL...</translation>
     </message>
 </context>
 <context>
@@ -83,7 +83,7 @@
         <location filename="../branchpropwindow.cpp" line="17"/>
         <source>Property Editor</source>
         <comment>Window caption</comment>
-        <translation>Editor di Proprieta</translation>
+        <translation>Editor di Proprietà</translation>
     </message>
     <message>
         <source>Name</source>
@@ -103,7 +103,7 @@
     <message>
         <location filename="../branchpropwindow.ui" line="20"/>
         <source>Branch Property Editor</source>
-        <translation>Editor di proprieta del Ramo</translation>
+        <translation>Editor di proprietà del Ramo</translation>
     </message>
     <message>
         <location filename="../branchpropwindow.ui" line="30"/>
@@ -133,7 +133,7 @@
     <message>
         <location filename="../branchpropwindow.ui" line="70"/>
         <source>Cloud</source>
-        <translation type="unfinished"></translation>
+        <translation>Cloud</translation>
     </message>
     <message>
         <location filename="../branchpropwindow.ui" line="91"/>
@@ -148,7 +148,7 @@
     <message>
         <location filename="../branchpropwindow.ui" line="122"/>
         <source>Include children</source>
-        <translation type="unfinished"></translation>
+        <translation>Include figli</translation>
     </message>
     <message>
         <location filename="../branchpropwindow.ui" line="146"/>
@@ -226,7 +226,7 @@
     <message>
         <location filename="../editxlinkdialog.ui" line="72"/>
         <source>Set color of heading</source>
-        <translation>Cambia colore del titolo</translation>
+        <translation>Imposta colore del titolo</translation>
     </message>
     <message>
         <location filename="../editxlinkdialog.ui" line="102"/>
@@ -258,7 +258,7 @@
     <message>
         <location filename="../exporthtmldialog.ui" line="26"/>
         <source>Export HTML</source>
-        <translation type="unfinished">Esporta in HTML</translation>
+        <translation>Esporta in HTML</translation>
     </message>
     <message>
         <source>Directory:</source>
@@ -267,34 +267,34 @@
     <message>
         <location filename="../exporthtmldialog.ui" line="52"/>
         <source>Export to directory:</source>
-        <translation type="unfinished">Esporta nella cartella:</translation>
+        <translation>Esporta nella cartella:</translation>
     </message>
     <message>
         <location filename="../exporthtmldialog.ui" line="81"/>
         <location filename="../exporthtmldialog.ui" line="231"/>
         <location filename="../exporthtmldialog.ui" line="304"/>
         <source>Browse</source>
-        <translation type="unfinished">Naviga</translation>
+        <translation>Naviga</translation>
     </message>
     <message>
         <location filename="../exporthtmldialog.ui" line="108"/>
         <source>Options</source>
-        <translation type="unfinished">Opzioni</translation>
+        <translation>Opzioni</translation>
     </message>
     <message>
         <location filename="../exporthtmldialog.ui" line="129"/>
         <source>Include image</source>
-        <translation type="unfinished">Includi immagine</translation>
+        <translation>Includi immagine</translation>
     </message>
     <message>
         <location filename="../exporthtmldialog.ui" line="142"/>
         <source>Colored headings in text</source>
-        <translation type="unfinished">Colori i titoli nel testo</translation>
+        <translation>Colori i titoli nel testo</translation>
     </message>
     <message>
         <location filename="../exporthtmldialog.ui" line="155"/>
         <source>Save settings in map</source>
-        <translation type="unfinished">Salva le impostazioni della mappa</translation>
+        <translation>Salva le impostazioni della mappa</translation>
     </message>
     <message>
         <source>Include image of map</source>
@@ -327,37 +327,37 @@
     <message>
         <location filename="../exporthtmldialog.ui" line="172"/>
         <source>Stylesheets</source>
-        <translation type="unfinished">Foglio di Stile</translation>
+        <translation>Foglio di Stile</translation>
     </message>
     <message>
         <location filename="../exporthtmldialog.ui" line="205"/>
         <source>CSS:</source>
-        <translation type="unfinished">CSS:</translation>
+        <translation>CSS:</translation>
     </message>
     <message>
         <location filename="../exporthtmldialog.ui" line="248"/>
         <source>Scripts</source>
-        <translation type="unfinished">Script</translation>
+        <translation>Script</translation>
     </message>
     <message>
         <location filename="../exporthtmldialog.ui" line="278"/>
         <source>After Export:</source>
-        <translation type="unfinished">Dopo l&apos;esportazione:</translation>
+        <translation>Dopo l&apos;esportazione:</translation>
     </message>
     <message>
         <location filename="../exporthtmldialog.ui" line="340"/>
         <source>Export</source>
-        <translation type="unfinished">Esporta</translation>
+        <translation>Esporta</translation>
     </message>
     <message>
         <location filename="../exporthtmldialog.ui" line="333"/>
         <source>Cancel</source>
-        <translation type="unfinished">Cancella</translation>
+        <translation>Cancella</translation>
     </message>
     <message>
         <location filename="../exporthtmldialog.cpp" line="95"/>
         <source>Warning</source>
-        <translation type="unfinished"></translation>
+        <translation>Attenzione</translation>
     </message>
     <message>
         <location filename="../exporthtmldialog.cpp" line="95"/>
@@ -367,12 +367,17 @@
 
 Please check, if you really
 want to allow this in your system!</source>
-        <translation type="unfinished"></translation>
+        <translation>Le preferenze salvate nella mappa vorrebbero eseguire lo script
+
+%1
+
+Per favore verifica se davvero tu
+voglia permettere ciò nel tuo sistema!</translation>
     </message>
     <message>
         <location filename="../exporthtmldialog.cpp" line="121"/>
         <source>VYM - Export HTML to directory</source>
-        <translation type="unfinished">VYM - Esporta l&apos;HTML nella cartella</translation>
+        <translation>VYM - Esporta l&apos;HTML nella cartella</translation>
     </message>
     <message>
         <source>Critcal export error</source>
@@ -590,7 +595,7 @@ permettere questo sul vostro sistema!</translation>
         <location filename="../findwidget.cpp" line="26"/>
         <source>Find:</source>
         <comment>FindWidget</comment>
-        <translation type="unfinished"></translation>
+        <translation>Trova:</translation>
     </message>
 </context>
 <context>
@@ -1831,30 +1836,30 @@ exists already. Do you want to</source>
     <message>
         <location filename="../mainwindow.cpp" line="143"/>
         <source>Note Editor</source>
-        <translation type="unfinished">Editor di Note</translation>
+        <translation>Editor di Note</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="152"/>
         <source>Heading Editor</source>
-        <translation type="unfinished"></translation>
+        <translation>Editor intestazione</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="160"/>
         <source>Search results list</source>
         <comment>FindResultWidget</comment>
-        <translation type="unfinished"></translation>
+        <translation>Cerca lista dei risultati</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="411"/>
         <source>&amp;Map</source>
         <comment>Toolbar for file actions</comment>
-        <translation type="unfinished">&amp;Mappa</translation>
+        <translation>&amp;Mappa</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1904"/>
         <source>File actions toolbar</source>
         <comment>Toolbar for file actions</comment>
-        <translation type="unfinished"></translation>
+        <translation>Barra strumenti azioni di file</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="416"/>
@@ -1888,25 +1893,25 @@ exists already. Do you want to</source>
         <location filename="../mainwindow.cpp" line="555"/>
         <source>File</source>
         <comment>Shortcut group</comment>
-        <translation type="unfinished"></translation>
+        <translation>File</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="520"/>
         <source>KDE 3 Bookmarks</source>
         <comment>File menu</comment>
-        <translation type="unfinished"></translation>
+        <translation>Segnalibri di KDE 3</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="524"/>
         <source>KDE 4 Bookmarks</source>
         <comment>File menu</comment>
-        <translation type="unfinished"></translation>
+        <translation>Segnalibri di KDE 4</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1922"/>
         <source>Edit actions toolbar</source>
         <comment>Toolbar name</comment>
-        <translation type="unfinished"></translation>
+        <translation>Barra di azioni di Edit</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="570"/>
@@ -1972,150 +1977,150 @@ exists already. Do you want to</source>
         <location filename="../mainwindow.cpp" line="1805"/>
         <source>Edit</source>
         <comment>Shortcut group</comment>
-        <translation type="unfinished"></translation>
+        <translation>Edita</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="432"/>
         <source>&amp;Restore last session</source>
         <comment>File menu</comment>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Ripristina ultima sessione</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="563"/>
         <source>E&amp;dit</source>
         <comment>Edit menu</comment>
-        <translation type="unfinished"></translation>
+        <translation>E&amp;dit</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="611"/>
         <source>Add attribute</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggiunge attributo</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="706"/>
         <source>&amp;Detach</source>
         <comment>Context menu</comment>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Stacca</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="707"/>
         <source>Detach branch and use as mapcenter</source>
         <comment>Context menu</comment>
-        <translation type="unfinished"></translation>
+        <translation>Stacca ramp e usa come centro di mappa</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="720"/>
         <source>Sort children backwards</source>
         <comment>Edit menu</comment>
-        <translation type="unfinished"></translation>
+        <translation>Ordina figli in modo inverso</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="737"/>
         <source>Expand all branches</source>
         <comment>Edit menu</comment>
-        <translation type="unfinished"></translation>
+        <translation>Espande tutti i rami</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="746"/>
         <source>Expand one level</source>
         <comment>Edit menu</comment>
-        <translation type="unfinished"></translation>
+        <translation>Espande un livello</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="756"/>
         <source>Collapse one level</source>
         <comment>Edit menu</comment>
-        <translation type="unfinished"></translation>
+        <translation>Collassa un livello</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="766"/>
         <source>Collapse unselected levels</source>
         <comment>Edit menu</comment>
-        <translation type="unfinished"></translation>
+        <translation>Collassa livelli non selezionati</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="776"/>
         <source>Unscroll children</source>
         <comment>Edit menu</comment>
-        <translation type="unfinished"></translation>
+        <translation>Non scorre i figli</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="780"/>
         <source>Grow selection</source>
         <comment>Edit menu</comment>
-        <translation type="unfinished"></translation>
+        <translation>Amplia selezione</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="785"/>
         <source>Shrink selection</source>
         <comment>Edit menu</comment>
-        <translation type="unfinished"></translation>
+        <translation>Contrae selezione</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="790"/>
         <source>Reset selection size</source>
         <comment>Edit menu</comment>
-        <translation type="unfinished"></translation>
+        <translation>Riazzera dimensione della selezione</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1013"/>
         <source>Toggle target...</source>
         <comment>Edit menu</comment>
-        <translation type="unfinished"></translation>
+        <translation>Commuta obiettivo...</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1020"/>
         <source>Goto target...</source>
         <comment>Edit menu</comment>
-        <translation type="unfinished"></translation>
+        <translation>Va a obiettivo...</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1025"/>
         <source>Move to target...</source>
         <comment>Edit menu</comment>
-        <translation type="unfinished"></translation>
+        <translation>Sposta a obiettivo...</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1048"/>
         <source>Find duplicate URLs</source>
         <comment>Edit menu</comment>
-        <translation type="unfinished"></translation>
+        <translation>Trova URL duplicate</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="811"/>
         <source>Open all URLs in subtree (including scrolled branches)</source>
         <comment>Edit menu</comment>
-        <translation type="unfinished"></translation>
+        <translation>Apre tutte le URL in un sottoalbero (inclusi i rami scorsi)</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="826"/>
         <source>Extract URLs from note</source>
         <comment>Edit menu</comment>
-        <translation type="unfinished"></translation>
+        <translation>Estrae URL dalla nota</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="873"/>
         <source>Get data from Novell Bugzilla</source>
         <comment>Edit menu</comment>
-        <translation type="unfinished"></translation>
+        <translation>Ottiene i dati da Bugzilla di Novell</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="881"/>
         <source>Get data from Novell Bugzilla for subtree</source>
         <comment>Edit menu</comment>
-        <translation type="unfinished"></translation>
+        <translation>Ottiene i dati da Bugzilla di Novell per il sotto albero</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="932"/>
         <source>Add timestamp</source>
         <comment>Edit menu</comment>
-        <translation type="unfinished"></translation>
+        <translation>Aggiunge una marca temporale</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="981"/>
         <source>Remove children</source>
         <comment>Edit menu</comment>
-        <translation type="unfinished"></translation>
+        <translation>Rimuove i figli</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1002"/>
@@ -2133,37 +2138,37 @@ exists already. Do you want to</source>
         <location filename="../mainwindow.cpp" line="1270"/>
         <source>View shortcuts</source>
         <comment>Shortcut group</comment>
-        <translation type="unfinished"></translation>
+        <translation>Vedi scorciatoie</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1962"/>
         <source>Zoom toolbar</source>
         <comment>View Toolbar name</comment>
-        <translation type="unfinished"></translation>
+        <translation>Barra di strumento di Zoom</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1190"/>
         <source>Center on selection</source>
         <comment>View action</comment>
-        <translation type="unfinished"></translation>
+        <translation>Centra su selezione</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1971"/>
         <source>Editors toolbar</source>
         <comment>Editor Toolbar name</comment>
-        <translation type="unfinished"></translation>
+        <translation>Barra di strumenti per editor</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1223"/>
         <source>Toggle Tree editor</source>
         <comment>View action</comment>
-        <translation type="unfinished"></translation>
+        <translation>Commuta editor di albero</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1980"/>
         <source>Modifier modes toolbar</source>
         <comment>Modifier Toolbar name</comment>
-        <translation type="unfinished"></translation>
+        <translation>Barra di strumenti per i modi del Modificatore</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1286"/>
@@ -2171,25 +2176,25 @@ exists already. Do you want to</source>
         <location filename="../mainwindow.cpp" line="1299"/>
         <source>Modes</source>
         <comment>Shortcut group</comment>
-        <translation type="unfinished"></translation>
+        <translation>Modi</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1011"/>
         <source>&amp;Select</source>
         <comment>Select menu</comment>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Seleziona</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1030"/>
         <source>Select previous</source>
         <comment>Edit menu</comment>
-        <translation type="unfinished"></translation>
+        <translation>Seleziona il precedente</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1036"/>
         <source>Select next</source>
         <comment>Edit menu</comment>
-        <translation type="unfinished"></translation>
+        <translation>Seleziona il prossimo</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1066"/>
@@ -2198,56 +2203,71 @@ exists already. Do you want to</source>
         <location filename="../mainwindow.cpp" line="1087"/>
         <source>Format shortcuts</source>
         <comment>Shortcut group</comment>
-        <translation type="unfinished"></translation>
+        <translation>Inizializza scorciatoie</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1095"/>
         <source>Select default font</source>
         <comment>Branch attribute</comment>
-        <translation type="unfinished"></translation>
+        <translation>Seleziona il font predefinito</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1165"/>
         <source>Toolbars</source>
         <comment>Toolbars overview in view menu</comment>
-        <translation type="unfinished"></translation>
+        <translation>Barre di strumenti</translation>
+    </message>
+    <message>
+        <source>Rotate counterclockwise</source>
+        <comment>View action</comment>
+        <translation type="obsolete">Ruota in modo antiorario</translation>
+    </message>
+    <message>
+        <source>Rotate rclockwise</source>
+        <comment>View action</comment>
+        <translation type="obsolete">Ruota in moto orario</translation>
+    </message>
+    <message>
+        <source>Toggle Slide editor</source>
+        <comment>View action</comment>
+        <translation type="obsolete">Commuyta editor di slide</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1315"/>
         <location filename="../mainwindow.cpp" line="1318"/>
         <source>URL to Bugzilla </source>
         <comment>SystemFlag</comment>
-        <translation type="unfinished"></translation>
+        <translation>URL verso Bugzilla</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1321"/>
         <source>Map target</source>
         <comment>SystemFlag</comment>
-        <translation type="unfinished"></translation>
+        <translation>Mappa obiettivo</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1338"/>
         <source>Standard Flags toolbar</source>
         <comment>Standard Flag Toolbar</comment>
-        <translation type="unfinished"></translation>
+        <translation>Barra strumenti di Flags Standard</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1356"/>
         <source>Status - ok,done</source>
         <comment>Standardflag</comment>
-        <translation type="unfinished"></translation>
+        <translation>Stato - ok, fatto</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1360"/>
         <source>Status - work in progress</source>
         <comment>Standardflag</comment>
-        <translation type="unfinished"></translation>
+        <translation>Stato - in progressione</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1364"/>
         <source>Status - missing, not started</source>
         <comment>Standardflag</comment>
-        <translation type="unfinished"></translation>
+        <translation>Stato - mancante, non iniziato</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1389"/>
@@ -2289,78 +2309,78 @@ exists already. Do you want to</source>
         <location filename="../mainwindow.cpp" line="1913"/>
         <source>Undo and clipboard toolbar</source>
         <comment>Toolbar for redo/undo and clipboard</comment>
-        <translation type="unfinished"></translation>
+        <translation>Strumento di annullamento e clipboard</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1938"/>
         <source>Selection toolbar</source>
         <comment>Toolbar name</comment>
-        <translation type="unfinished"></translation>
+        <translation>barra di strumenti di selezione</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1946"/>
         <source>URLs and vymLinks toolbar</source>
         <comment>Toolbar for URLs and vymlinks</comment>
-        <translation type="unfinished"></translation>
+        <translation>Barra di strumenti per URL e collegamenti di vym</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1954"/>
         <source>Colors toolbar</source>
         <comment>Colors toolbar name</comment>
-        <translation type="unfinished"></translation>
+        <translation>Barra di strumenti dei colori</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2979"/>
         <source>Enter URL:</source>
-        <translation type="unfinished">Inserisci URL:</translation>
+        <translation>Inserisci URL:</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="3000"/>
         <source>HTML</source>
         <comment>Filedialog</comment>
-        <translation type="unfinished"></translation>
+        <translation>HTML</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="3001"/>
         <source>Text</source>
         <comment>Filedialog</comment>
-        <translation type="unfinished">Testo</translation>
+        <translation>Testo</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="3002"/>
         <source>Spreadsheet</source>
         <comment>Filedialog</comment>
-        <translation type="unfinished">Foglio di calcolo</translation>
+        <translation>Foglio di calcolo</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="3003"/>
         <source>Textdocument</source>
         <comment>Filedialog</comment>
-        <translation type="unfinished">Documento di testo</translation>
+        <translation>Documento di testo</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="3004"/>
         <source>Images</source>
         <comment>Filedialog</comment>
-        <translation type="unfinished">Immagini</translation>
+        <translation>Immagini</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="3005"/>
         <location filename="../mainwindow.cpp" line="3007"/>
         <source>Set URL to a local file</source>
-        <translation type="unfinished">Imposta URL come file locale</translation>
+        <translation>Imposta URL come file locale</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="3154"/>
         <location filename="../mainwindow.cpp" line="3156"/>
         <source>Link to another map</source>
-        <translation type="unfinished">Collega ad un&apos;altra mappa vym</translation>
+        <translation>Collega ad un&apos;altra mappa vym</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="4163"/>
         <source>Export in last used format (%1) to: %2</source>
         <comment>status tip</comment>
-        <translation type="unfinished"></translation>
+        <translation>Esporta nell&apos;ultimo formato usato (%1) in %2</translation>
     </message>
     <message>
         <source>Firefox Bookmarks</source>
@@ -2538,13 +2558,13 @@ exists already. Do you want to</source>
         <location filename="../mainwindow.cpp" line="492"/>
         <source>PDF%1</source>
         <comment>File export menu</comment>
-        <translation type="unfinished"></translation>
+        <translation>PDF%1</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="496"/>
         <source>SVG%1</source>
         <comment>File export menu</comment>
-        <translation type="unfinished"></translation>
+        <translation>SVG%1</translation>
     </message>
     <message>
         <source>Export in Open Document Format used e.g. in Open Office </source>
@@ -2554,7 +2574,7 @@ exists already. Do you want to</source>
     <message>
         <location filename="../mainwindow.cpp" line="482"/>
         <source>Repeat last export (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Ripete l&apos;ultima esportazione (%1)</translation>
     </message>
     <message>
         <source>Export as %1</source>
@@ -2919,31 +2939,31 @@ exists already. Do you want to</source>
         <location filename="../mainwindow.cpp" line="453"/>
         <source>KDE 3 Bookmarks</source>
         <comment>Import filters</comment>
-        <translation type="unfinished"></translation>
+        <translation>Segnalibri di KDE 3</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="457"/>
         <source>KDE 4 Bookmarks</source>
         <comment>Import filters</comment>
-        <translation type="unfinished"></translation>
+        <translation>Segnalibri di KDE 4</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="463"/>
         <source>Firefox Bookmarks</source>
         <comment>Import filters</comment>
-        <translation type="unfinished">Segnalibri di Firefox</translation>
+        <translation>Segnalibri di Firefox</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="476"/>
         <source>Import Dir%1</source>
         <comment>Import Filters</comment>
-        <translation type="unfinished">Importa Cartella%1</translation>
+        <translation>Importa Cartella%1</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="972"/>
         <source>Remove only branch and keep its children </source>
         <comment>Edit menu</comment>
-        <translation type="unfinished"></translation>
+        <translation>Rimuove solamente i rami e mantiene i figli</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1176"/>
@@ -2999,13 +3019,13 @@ exists already. Do you want to</source>
         <location filename="../mainwindow.cpp" line="1459"/>
         <source>forward</source>
         <comment>Freemind-Flag</comment>
-        <translation type="unfinished"></translation>
+        <translation>avanti</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1471"/>
         <source>Don&apos;t flagrget</source>
         <comment>Freemind-Flag</comment>
-        <translation type="unfinished"></translation>
+        <translation>Non fare flagrget</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1586"/>
@@ -3100,7 +3120,7 @@ exists already. Do you want to</source>
         <location filename="../mainwindow.cpp" line="1808"/>
         <source>Follow XLink</source>
         <comment>Context menu name</comment>
-        <translation type="unfinished">Segui XLink</translation>
+        <translation>Segui XLink</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1817"/>
@@ -3254,7 +3274,7 @@ Si rischia di sovvrascrivere i contenuti?</translation>
         <location filename="../mainwindow.cpp" line="1251"/>
         <source>Smooth pixmap transformations</source>
         <comment>View action</comment>
-        <translation type="unfinished"></translation>
+        <translation>Appiana trasformazioni di pixmap</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1260"/>
@@ -3384,7 +3404,7 @@ Si rischia di sovvrascrivere i contenuti?</translation>
         <location filename="../mainwindow.cpp" line="1496"/>
         <source>Maix</source>
         <comment>Freemind-Flag</comment>
-        <translation type="unfinished"></translation>
+        <translation>Maix</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1500"/>
@@ -3445,13 +3465,13 @@ Si rischia di sovvrascrivere i contenuti?</translation>
         <location filename="../mainwindow.cpp" line="1575"/>
         <source>Network shortcuts</source>
         <comment>Shortcut group</comment>
-        <translation type="unfinished"></translation>
+        <translation>Scorciatoie di Rete</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1594"/>
         <source>Set path for macros</source>
         <comment>Settings action</comment>
-        <translation>Specifica percorso per i macro</translation>
+        <translation>Specifica percorso per le macro</translation>
     </message>
     <message>
         <source>Set path for macros</source>
@@ -3501,7 +3521,7 @@ Si rischia di sovvrascrivere i contenuti?</translation>
         <location filename="../mainwindow.cpp" line="1662"/>
         <source>Note editor is dockable</source>
         <comment>Settings action</comment>
-        <translation type="unfinished"></translation>
+        <translation>Editor di note è agganciabile</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1671"/>
@@ -3517,12 +3537,12 @@ Si rischia di sovvrascrivere i contenuti?</translation>
         <location filename="../mainwindow.cpp" line="1678"/>
         <source>Automatic layout</source>
         <comment>Settings action</comment>
-        <translation type="unfinished"></translation>
+        <translation>Disposizione automatica</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1690"/>
         <source>Test</source>
-        <translation type="unfinished"></translation>
+        <translation>test</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1695"/>
@@ -3530,14 +3550,14 @@ Si rischia di sovvrascrivere i contenuti?</translation>
         <location filename="../mainwindow.cpp" line="1703"/>
         <source>Test shortcuts</source>
         <comment>Shortcut group</comment>
-        <translation type="unfinished"></translation>
+        <translation>Scorciatoie di test</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1714"/>
         <location filename="../mainwindow.cpp" line="1718"/>
         <source>Help shortcuts</source>
         <comment>Shortcut group</comment>
-        <translation type="unfinished"></translation>
+        <translation>Scorciatoie di aiuto</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1717"/>
@@ -3559,7 +3579,7 @@ Si rischia di sovvrascrivere i contenuti?</translation>
         <location filename="../mainwindow.cpp" line="1803"/>
         <source>Follow XLink</source>
         <comment>Context menu</comment>
-        <translation type="unfinished">Segui XLink</translation>
+        <translation>Segui XLink</translation>
     </message>
     <message>
         <source>&amp;%1 %2</source>
@@ -3569,13 +3589,13 @@ Si rischia di sovvrascrivere i contenuti?</translation>
         <location filename="../mainwindow.cpp" line="2084"/>
         <source>unnamed</source>
         <comment>MainWindow: name for new and empty file</comment>
-        <translation type="unfinished">senza nome</translation>
+        <translation>senza nome</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2225"/>
         <source>Loading: %1</source>
         <comment>Progress dialog while loading maps</comment>
-        <translation type="unfinished"></translation>
+        <translation>Caricante %1</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2519"/>
@@ -3591,21 +3611,22 @@ Si rischia di sovvrascrivere i contenuti?</translation>
         <location filename="../mainwindow.cpp" line="2911"/>
         <source>Sorry, currently only Konqueror supports integrated tabbed browsing.</source>
         <comment>Mainwindow, open URL</comment>
-        <translation type="unfinished"></translation>
+        <translation>Spiacente, in questo momento solo Konqueror supporta la navigazione catalogata integrata.</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2912"/>
         <source>Currently vym is using %1 to open external links.
 (Change in Settings menu)</source>
         <comment>Mainwindow, open URL</comment>
-        <translation type="unfinished"></translation>
+        <translation>Correntemente vym sta usando %1 per aprire collegamenti esterni.
+(modifica nel menu delle Preferenze)</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="3204"/>
         <source>%1 items on map
 </source>
         <comment>Info about map</comment>
-        <translation type="unfinished">%1 cose nella mappa
+        <translation>%1 cose nella mappa
 </translation>
     </message>
     <message>
@@ -3635,12 +3656,12 @@ Si rischia di sovvrascrivere i contenuti?</translation>
     <message>
         <location filename="../mainwindow.cpp" line="3896"/>
         <source>Information</source>
-        <translation type="unfinished"></translation>
+        <translation>Informazione</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="3897"/>
         <source>Changed settings will be applied after restarting vym</source>
-        <translation type="unfinished"></translation>
+        <translation>Le preferenze modificate saranno applicate dopo il riavvio di vym</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="4112"/>
@@ -4088,13 +4109,13 @@ Vuoi ricaricarela mappa in un nuovo file?</translation>
         <location filename="../mapeditor.cpp" line="124"/>
         <source>Edit heading</source>
         <comment>MapEditor</comment>
-        <translation type="unfinished">Edita Titolo</translation>
+        <translation>Edita Titolo</translation>
     </message>
     <message>
         <location filename="../mapeditor.cpp" line="384"/>
         <source>Print vym map</source>
         <comment>MapEditor</comment>
-        <translation type="unfinished"></translation>
+        <translation>Stampa Mappa di vym</translation>
     </message>
 </context>
 <context>
@@ -4103,17 +4124,17 @@ Vuoi ricaricarela mappa in un nuovo file?</translation>
         <location filename="../process.cpp" line="42"/>
         <location filename="../process.cpp" line="47"/>
         <source>Critical Error</source>
-        <translation type="unfinished">Errore Critico</translation>
+        <translation>Errore Critico</translation>
     </message>
     <message>
         <location filename="../process.cpp" line="43"/>
         <source>Could not start %1</source>
-        <translation type="unfinished">Non è possibile iniziare %1</translation>
+        <translation>Non è possibile iniziare %1</translation>
     </message>
     <message>
         <location filename="../process.cpp" line="48"/>
         <source>%1 didn&apos;t exit normally</source>
-        <translation type="unfinished">%1 non è terminato normalmente</translation>
+        <translation>%1 non è terminato normalmente</translation>
     </message>
 </context>
 <context>
@@ -4130,7 +4151,7 @@ Do you want to overwrite it?</source>
     <message>
         <location filename="../file.cpp" line="71"/>
         <source>Overwrite</source>
-        <translation>Sovvrascrivi</translation>
+        <translation>Sovrascrivi</translation>
     </message>
     <message>
         <location filename="../file.cpp" line="72"/>
@@ -4162,70 +4183,71 @@ Do you want to overwrite it?</source>
         <location filename="../exports.cpp" line="102"/>
         <source>Exporting to %1 will overwrite the existing file:
 %2</source>
-        <translation type="unfinished"></translation>
+        <translation>L&apos;esposrtazione di %1 sovrascriverà il file esistente
+%2 </translation>
     </message>
     <message>
         <location filename="../exports.cpp" line="103"/>
         <source>Warning: Overwriting file</source>
-        <translation type="unfinished"></translation>
+        <translation>Attenzione:  si sovrascrive il file</translation>
     </message>
     <message>
         <location filename="../exports.cpp" line="664"/>
         <source>Export aborted.</source>
-        <translation type="unfinished"></translation>
+        <translation>Esportazione abortita.</translation>
     </message>
     <message>
         <location filename="../exports.cpp" line="679"/>
         <source>Warning</source>
         <comment>ExportHTML</comment>
-        <translation type="unfinished"></translation>
+        <translation>Attenzione</translation>
     </message>
     <message>
         <location filename="../exports.cpp" line="680"/>
         <source>Trying to load stylesheet:</source>
-        <translation type="unfinished"></translation>
+        <translation>Si cerca di caricare il foglio di stile:</translation>
     </message>
     <message>
         <location filename="../exports.cpp" line="681"/>
         <source>Could not open %1</source>
         <comment>ExportHTML</comment>
-        <translation type="unfinished">Non è possibile %1</translation>
+        <translation>Non è possibile aprire %1</translation>
     </message>
     <message>
         <location filename="../exports.cpp" line="687"/>
         <source>Trying to save stylesheet:</source>
-        <translation type="unfinished"></translation>
+        <translation>Si cerca di salvare il foglio di stile:</translation>
     </message>
     <message>
         <location filename="../exports.cpp" line="688"/>
         <location filename="../exports.cpp" line="700"/>
         <source>Could not open %1</source>
-        <translation type="unfinished">Non è possibile %1</translation>
+        <translation>Non è possibile aprire %1</translation>
     </message>
     <message>
         <location filename="../exports.cpp" line="699"/>
         <source>Trying to load small icon for URLs:</source>
-        <translation type="unfinished"></translation>
+        <translation>Si cerca di caricare icone piccole per le URL:</translation>
     </message>
     <message>
         <location filename="../exports.cpp" line="709"/>
         <source>Trying to create directory for flags:</source>
-        <translation type="unfinished"></translation>
+        <translation>Si cerca di creare una cartella per i flags:</translation>
     </message>
     <message>
         <location filename="../exports.cpp" line="710"/>
         <source>Could not create %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Non è possibile creare %1</translation>
     </message>
     <message>
         <location filename="../exports.cpp" line="715"/>
         <source>Trying to save small icon for URLs:</source>
-        <translation type="unfinished"></translation>
+        <translation>Si cerca di salvare l&apos;icona piccola per le URL:</translation>
     </message>
     <message>
         <location filename="../exports.cpp" line="724"/>
         <source>Trying to save HTML file:</source>
-        <translation type="unfinished"></translation>
+        <translation>Si cerca di salvare il file HTML:</translation>
     </message>
     <message>
         <location filename="../exports.cpp" line="726"/>
@@ -4237,12 +4259,12 @@ Do you want to overwrite it?</source>
     <message>
         <location filename="../exports.cpp" line="915"/>
         <source>No objects in map!</source>
-        <translation type="unfinished"></translation>
+        <translation>Nessun oggetto nella mappa!</translation>
     </message>
     <message>
         <location filename="../exports.cpp" line="1009"/>
         <source>Couldn&apos;t read settings from &quot;%1&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation>Non possono essere lette le preferenze da &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="../exports.cpp" line="1019"/>
@@ -4386,26 +4408,30 @@ Vuoi rischiare di sovvrascrivere i contenuti?</translation>
 
 </source>
         <comment>VymModel, how to install Bugzilla client module</comment>
-        <translation type="unfinished"></translation>
+        <translation>Non si trova alcun cliente di Bugzilla. Per OpenSUSE è possibile installarlo con (eseguito come root):
+
+</translation>
     </message>
     <message>
         <location filename="../vymmodel.cpp" line="3261"/>
         <source>Alternatively you can also add the repository
 and install the perl module for Bugzilla access using YaST</source>
         <comment>VymModel, how to install Bugzilla client module</comment>
-        <translation type="unfinished"></translation>
+        <translation>In alternativa è anche possibile aggiungere il repository
+e installare il modulo perl per accedere a Bugzilla tramite YaST</translation>
     </message>
     <message>
         <location filename="../vymmodel.cpp" line="3264"/>
         <source>Warning: Couldn&apos;t find Bugzilla client</source>
         <comment>VymModel</comment>
-        <translation type="unfinished"></translation>
+        <translation>Attenzione: non si trova il cliente di Bugzilla</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="269"/>
         <source>Couldn&apos;t open &quot;%1&quot;
 %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Non si può aprire &quot;%1&quot;
+%2.</translation>
     </message>
 </context>
 <context>
@@ -4513,6 +4539,24 @@ Vuoi sovvrascriverlo?</translation>
         <location filename="../simplescripteditor.ui" line="78"/>
         <source>Close</source>
         <translation>Chiudi</translation>
+    </message>
+</context>
+<context>
+    <name>SlideControlWidget</name>
+    <message>
+        <source>Previous slide</source>
+        <comment>SlideControl widget</comment>
+        <translation type="obsolete">Diapositiva precedente</translation>
+    </message>
+    <message>
+        <source>Next slide</source>
+        <comment>SlideControl widget</comment>
+        <translation type="obsolete">Diapositiva successiva</translation>
+    </message>
+    <message>
+        <source>Take snapshot</source>
+        <comment>SlideControl widget</comment>
+        <translation type="obsolete">Fai uno scatto</translation>
     </message>
 </context>
 <context>
@@ -4778,7 +4822,7 @@ Vuoi sovvrascriverlo?</translation>
         <location filename="../texteditor.cpp" line="38"/>
         <source>Text Editor</source>
         <comment>Text Editor Window caption</comment>
-        <translation type="unfinished"></translation>
+        <translation>Editor di testo</translation>
     </message>
     <message>
         <location filename="../texteditor.cpp" line="432"/>
@@ -4901,7 +4945,7 @@ Vuoi sovvrascriverlo?</translation>
     <message>
         <location filename="../texteditor.cpp" line="364"/>
         <source>&amp;Richtext</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Richtext</translation>
     </message>
     <message>
         <source>Set fixed font</source>
@@ -4939,7 +4983,7 @@ Vuoi sovvrascriverlo?</translation>
         <location filename="../texteditor.cpp" line="725"/>
         <source>Print</source>
         <comment>TextEditor</comment>
-        <translation type="unfinished">Stampa</translation>
+        <translation>Stampa</translation>
     </message>
 </context>
 <context>
@@ -4948,13 +4992,13 @@ Vuoi sovvrascriverlo?</translation>
         <location filename="../treeeditor.cpp" line="21"/>
         <source>Select upper object</source>
         <comment>Tree Editor</comment>
-        <translation type="unfinished"></translation>
+        <translation>Seleziona l&apos;oggetto superiore</translation>
     </message>
     <message>
         <location filename="../treeeditor.cpp" line="27"/>
         <source>Select lower object</source>
         <comment>Tree Editor</comment>
-        <translation type="unfinished"></translation>
+        <translation>Seleziona l&apos;oggetto inferiore</translation>
     </message>
 </context>
 <context>
@@ -4962,33 +5006,34 @@ Vuoi sovvrascriverlo?</translation>
     <message>
         <location filename="../vymmodel.cpp" line="113"/>
         <source>unnamed</source>
-        <translation type="unfinished">senza nome</translation>
+        <translation>senza nome</translation>
     </message>
     <message>
         <location filename="../vymmodel.cpp" line="379"/>
         <location filename="../vymmodel.cpp" line="480"/>
         <location filename="../vymmodel.cpp" line="531"/>
         <source>Critical Parse Error</source>
-        <translation type="unfinished">Errore Critico di Interpretazione</translation>
+        <translation>Errore Critico di Interpretazione</translation>
     </message>
     <message>
         <location filename="../vymmodel.cpp" line="420"/>
         <location filename="../vymmodel.cpp" line="465"/>
         <location filename="../vymmodel.cpp" line="631"/>
         <source>Critical Load Error</source>
-        <translation type="unfinished">Errore Critico di Caricamento</translation>
+        <translation>Errore Critico di Caricamento</translation>
     </message>
     <message>
         <location filename="../vymmodel.cpp" line="421"/>
         <source>Couldn&apos;t create temporary directory before load
 </source>
-        <translation type="unfinished"></translation>
+        <translation>Non si può creare unaa cartella temporanea prima di caricare
+</translation>
     </message>
     <message>
         <location filename="../vymmodel.cpp" line="466"/>
         <source>Couldn&apos;t find a map (*.xml) in .vym archive.
 </source>
-        <translation type="unfinished">Non è possibile trovare una mappa (*.xml) nell&apos;archivio .vym.
+        <translation>Non è possibile trovare una mappa (*.xml) nell&apos;archivio .vym.
 </translation>
     </message>
     <message>
@@ -4999,53 +5044,53 @@ Writing it uncompressed will also write images
 and flags and thus may overwrite files in the given directory
 
 Do you want to write the map</source>
-        <translation type="unfinished">La mappa %1
+        <translation>La mappa %1
 non usa il formato di compressione vym.
 Salvandolo in modo non compresso, salva anche le immagini 
-e le flag e quindi potrebbe sovvrascrivere dei file in questa cartella
+e i flag e quindi potrebbe sovrascrivere dei file in questa cartella
 Si vuole salvare la mappa</translation>
     </message>
     <message>
         <location filename="../vymmodel.cpp" line="582"/>
         <source>compressed (vym default)</source>
-        <translation type="unfinished"></translation>
+        <translation>compressi (predefiniti di vym)</translation>
     </message>
     <message>
         <location filename="../vymmodel.cpp" line="583"/>
         <source>uncompressed</source>
-        <translation type="unfinished">non compresso</translation>
+        <translation>non compresso</translation>
     </message>
     <message>
         <location filename="../vymmodel.cpp" line="584"/>
         <location filename="../vymmodel.cpp" line="783"/>
         <source>Cancel</source>
-        <translation type="unfinished">Cancella</translation>
+        <translation>Cancella</translation>
     </message>
     <message>
         <location filename="../vymmodel.cpp" line="613"/>
         <location filename="../vymmodel.cpp" line="618"/>
         <source>Save Error</source>
-        <translation type="unfinished">Errore di Salvataggio</translation>
+        <translation>Errore di Salvataggio</translation>
     </message>
     <message>
         <location filename="../vymmodel.cpp" line="614"/>
         <source>%1
 could not be removed before saving</source>
-        <translation type="unfinished">%1
+        <translation>%1
 non puo&apos; essere rimosso prima del salvataggio</translation>
     </message>
     <message>
         <location filename="../vymmodel.cpp" line="619"/>
         <source>%1
 could not be renamed before saving</source>
-        <translation type="unfinished">%1
+        <translation>%1
 non puo&apos; essere rinominato prima del salvataggio</translation>
     </message>
     <message>
         <location filename="../vymmodel.cpp" line="632"/>
         <source>Couldn&apos;t create temporary directory before save
 </source>
-        <translation type="unfinished">Non è possibile creare una cartella temporanea prima di salvare
+        <translation>Non è possibile creare una cartella temporanea prima di salvare
 </translation>
     </message>
     <message>
@@ -5053,30 +5098,29 @@ non puo&apos; essere rinominato prima del salvataggio</translation>
         <location filename="../vymmodel.cpp" line="759"/>
         <location filename="../vymmodel.cpp" line="5050"/>
         <source>Images</source>
-        <translation type="unfinished">Immagini</translation>
+        <translation>Immagini</translation>
     </message>
     <message>
         <location filename="../vymmodel.cpp" line="706"/>
         <source>Load image</source>
-        <translation type="unfinished">Carica immagine</translation>
+        <translation>Carica immagine</translation>
     </message>
     <message>
         <location filename="../vymmodel.cpp" line="761"/>
         <source>Save image</source>
-        <translation type="unfinished">Salva immagine</translation>
+        <translation>Salva immagine</translation>
     </message>
     <message>
         <location filename="../vymmodel.cpp" line="775"/>
         <source>The file %1 exists already.
 Do you want to overwrite it?</source>
-        <translation type="unfinished">Il file %1 
-esiste già.
-Vuoi sovvrascriverlo? {1 ?}</translation>
+        <translation>Il file %1 esiste già.
+Vuoi sovrascriverlo? </translation>
     </message>
     <message>
         <location filename="../vymmodel.cpp" line="782"/>
         <source>Overwrite</source>
-        <translation type="unfinished">Sovvrascrivi</translation>
+        <translation>Sovrascrivi</translation>
     </message>
     <message>
         <location filename="../vymmodel.cpp" line="797"/>
@@ -5084,34 +5128,34 @@ Vuoi sovvrascriverlo? {1 ?}</translation>
         <location filename="../vymmodel.cpp" line="4592"/>
         <location filename="../vymmodel.cpp" line="4603"/>
         <source>Critical Error</source>
-        <translation type="unfinished">Errore Critico</translation>
+        <translation>Errore Critico</translation>
     </message>
     <message>
         <location filename="../vymmodel.cpp" line="797"/>
         <location filename="../vymmodel.cpp" line="4592"/>
         <source>Unsupported format in %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Formato non supportato in  %1</translation>
     </message>
     <message>
         <location filename="../vymmodel.cpp" line="799"/>
         <source>Couldn&apos;t save %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Non è possibile salvare %1</translation>
     </message>
     <message>
         <location filename="../vymmodel.cpp" line="829"/>
         <source>Critical Import Error</source>
-        <translation type="unfinished">Errore critico nell&apos;importazione</translation>
+        <translation>Errore critico nell&apos;importazione</translation>
     </message>
     <message>
         <location filename="../vymmodel.cpp" line="829"/>
         <source>Cannot find the directory %1</source>
-        <translation type="unfinished">Non è possibile trovare la cartella %1</translation>
+        <translation>Non è possibile trovare la cartella %1</translation>
     </message>
     <message>
         <location filename="../vymmodel.cpp" line="881"/>
         <location filename="../vymmodel.cpp" line="884"/>
         <source>Choose directory structure to import</source>
-        <translation type="unfinished">Scegliere la struttura delle cartelle da importare</translation>
+        <translation>Scegliere la struttura delle cartelle da importare</translation>
     </message>
     <message>
         <location filename="../vymmodel.cpp" line="936"/>
@@ -5120,32 +5164,32 @@ Vuoi sovvrascriverlo? {1 ?}</translation>
    %1
 
 Do you want to reload that map with the new file?</source>
-        <translation type="unfinished">Il file della mappa sul disco è cambiata:
+        <translation>Il file della mappa sul disco è cambiata:
 
 %1
 
-Vuoi ricaricarela mappa in un nuovo file?</translation>
+Vuoi ricaricare la mappa in un nuovo file?</translation>
     </message>
     <message>
         <location filename="../vymmodel.cpp" line="943"/>
         <source>Reload</source>
-        <translation type="unfinished">Ricarica</translation>
+        <translation>Ricarica</translation>
     </message>
     <message>
         <location filename="../vymmodel.cpp" line="944"/>
         <source>Ignore</source>
-        <translation type="unfinished">Ignora</translation>
+        <translation>Ignora</translation>
     </message>
     <message>
         <location filename="../vymmodel.cpp" line="1090"/>
         <source>Autosave disabled during undo.</source>
-        <translation type="unfinished">Salvataggio automatico disabilitato durante il cancella.</translation>
+        <translation>Salvataggio automatico disabilitato durante il cancella.</translation>
     </message>
     <message>
         <location filename="../vymmodel.cpp" line="1700"/>
         <source>Note</source>
         <comment>FindAll in VymModel</comment>
-        <translation type="unfinished">Note</translation>
+        <translation>Note</translation>
     </message>
     <message>
         <source>Enter URL:</source>
@@ -5179,7 +5223,7 @@ Vuoi ricaricarela mappa in un nuovo file?</translation>
         <location filename="../vymmodel.cpp" line="3285"/>
         <source>Contacting Bugzilla...</source>
         <comment>VymModel</comment>
-        <translation type="unfinished"></translation>
+        <translation>Contattante Bugzilla...</translation>
     </message>
     <message>
         <source>Link to another map</source>
@@ -5188,37 +5232,50 @@ Vuoi ricaricarela mappa in un nuovo file?</translation>
     <message>
         <location filename="../vymmodel.cpp" line="4579"/>
         <source>Export map as image</source>
-        <translation type="unfinished">Esporta mappa come immagine</translation>
+        <translation>Esporta mappa come immagine</translation>
     </message>
     <message>
         <location filename="../vymmodel.cpp" line="4603"/>
         <source>Couldn&apos;t save QImage %1 in format %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Non è possibile salvare QImage %1 nel formato %2</translation>
     </message>
     <message>
         <location filename="../vymmodel.cpp" line="4626"/>
         <source>Export map as PDF</source>
-        <translation type="unfinished"></translation>
+        <translation>Esporta mappa come PDF</translation>
     </message>
     <message>
         <location filename="../vymmodel.cpp" line="4671"/>
         <source>Export map as SVG</source>
-        <translation type="unfinished"></translation>
+        <translation>Esporta mappa come SVG</translation>
     </message>
     <message>
         <location filename="../vymmodel.cpp" line="4710"/>
         <source>Export XML to directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Esporta XML in una cartella</translation>
     </message>
     <message>
         <location filename="../vymmodel.cpp" line="4751"/>
         <source>Critical Export Error</source>
-        <translation type="unfinished">Errore critico nell&apos;esportazione</translation>
+        <translation>Errore critico nell&apos;esportazione</translation>
     </message>
     <message>
         <location filename="../vymmodel.cpp" line="5053"/>
         <source>Load background image</source>
-        <translation type="unfinished">Carica immagine di sfondo</translation>
+        <translation>Carica immagine di sfondo</translation>
+    </message>
+</context>
+<context>
+    <name>VymView</name>
+    <message>
+        <source>TreeEditor</source>
+        <comment>Title of dockable editor widget</comment>
+        <translation type="obsolete">Editor di albero</translation>
+    </message>
+    <message>
+        <source>SlideEditor</source>
+        <comment>Title of dockable editor widget</comment>
+        <translation type="obsolete">Editor di Diapositiva</translation>
     </message>
 </context>
 <context>
@@ -5226,7 +5283,7 @@ Vuoi ricaricarela mappa in un nuovo file?</translation>
     <message>
         <location filename="../warningdialog.ui" line="14"/>
         <source>Dialog</source>
-        <translation type="unfinished">Finestra di Dialogo</translation>
+        <translation>Finestra di Dialogo</translation>
     </message>
     <message>
         <location filename="../warningdialog.ui" line="117"/>
