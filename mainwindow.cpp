@@ -4182,8 +4182,14 @@ void Main::updateActions()
     actionViewToggleNoteEditor->setChecked (noteEditor->isVisible());
     actionViewToggleHistoryWindow->setChecked (historyWindow->isVisible());
     actionViewTogglePropertyWindow->setChecked (branchPropertyWindow->isVisible());
+<<<<<<< HEAD
     int cv=currentView();
     if ( cv>=0 )
+=======
+    if ( tabWidget->currentWidget() 
+	&& tabWidget->currentIndex()>=0 
+	&& tabWidget->currentIndex()<vymViews.count())
+>>>>>>> ebd6953231c38c7f0bbd86321e106c4bb743919c
     {
 	actionViewToggleTreeEditor->setChecked ( vymViews.at(cv)->treeEditorIsVisible() );
 	actionViewToggleSlideEditor->setChecked( vymViews.at(cv)->slideEditorIsVisible() );
