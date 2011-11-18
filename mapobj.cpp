@@ -36,7 +36,7 @@ void MapObj::init ()
 {
     absPos=QPointF(0,0);
     visible=true;
-    pi=NULL;
+    boundingPolygon=NULL;
 }
 
 void MapObj::copy(MapObj* other)

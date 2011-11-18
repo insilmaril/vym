@@ -642,7 +642,8 @@ ConvexPolygon BranchObj::getBoundingPolygon()
 {
     if (treeItem->branchCount()==0 || treeItem->depth()==0)
     {
-	if (pi) pi->setPolygon (MapObj::getBoundingPolygon() );
+	if (boundingPolygon) 
+	    boundingPolygon->setPolygon (MapObj::getBoundingPolygon() );
 	return MapObj::getBoundingPolygon();
     }
 
@@ -651,7 +652,7 @@ ConvexPolygon BranchObj::getBoundingPolygon()
     p<<bboxTotal.topRight();
     p<<bboxTotal.bottomRight();
     p<<bboxTotal.bottomLeft();
-    if (pi) pi->setPolygon (p );
+    if (boundingPolygon) boundingPolygon->setPolygon (p );
     return p;
 }
 

@@ -66,7 +66,7 @@ protected:
 
     TreeItem *treeItem;		    //! Crossrefence to treemodel
 
-    QGraphicsPolygonItem *pi;	//FIXME-3 testing only
+    QGraphicsPolygonItem *boundingPolygon;	//FIXME-3 testing only
 };
 
 #endif
