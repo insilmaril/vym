@@ -434,6 +434,17 @@ void MapEditor::setViewCenterTarget (const QPointF &p, const qreal &zft, const q
     }
 }
 
+void MapEditor::setViewCenterTarget ()
+{
+    MapItem *selti=(MapItem*)(model->getSelectedItem() );
+    if (selti)
+    {
+	LinkableMapObj *lmo=selti->getLMO();
+	if (lmo)
+	    setViewCenterTarget (lmo->getBBox().center(), 1, 0);
+    }
+}
+
 QPointF MapEditor::getViewCenterTarget ()
 {
     return viewCenterTarget;
@@ -779,12 +790,11 @@ AttributeTable* MapEditor::attributeTable()
 
 void MapEditor::testFunction1()
 {
-    BranchItem *sebi=(BranchItem*)(model->findBySelectString ("mc:0"));
-    if (sebi)
+    BranchItem *selbi=model->getSelectedBranch();
+    if (selbi)
     {
-	QPointF p=sebi->getLMO()->getBBox().center();
-	setViewCenterTarget (p,2,20);
-	//animateViewPoint();
+	QPointF p=selbi->getLMO()->getBBox().center();
+	setViewCenterTarget (p,1,0);
     }
 }
     

@@ -3875,11 +3875,7 @@ void Main::formatHideLinkUnselected()	//FIXME-3 get rid of this with imageproper
 void Main::viewZoomReset()
 {
     MapEditor *me=currentMapEditor();
-    if (me) 
-    {
-	me->setZoomFactorTarget (1);
-	me->setAngleTarget (0);
-    }	
+    if (me) me->setViewCenterTarget();
 }
 
 void Main::viewZoomIn()

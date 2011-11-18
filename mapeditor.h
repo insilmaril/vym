@@ -88,6 +88,7 @@ protected:
 
 public:
     void setViewCenterTarget (const QPointF &p, const qreal &zft, const qreal &at);
+    void setViewCenterTarget ();    //! Convenience function, center on selected item
     QPointF getViewCenterTarget();
     void setViewCenter (const QPointF &p);
     QPointF getViewCenter();
