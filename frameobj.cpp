@@ -3,18 +3,18 @@
 #include <QColor>
 #include <QDebug>
 
+#include "misc.h"  //for roof function
+
 /////////////////////////////////////////////////////////////////
 // FrameObj
 /////////////////////////////////////////////////////////////////
 FrameObj::FrameObj() : MapObj()
 {
-//    cout << "Const FrameObj ()\n";
     init ();
 }
 
 FrameObj::FrameObj(QGraphicsScene *s) :MapObj(s)
 {
-//    cout << "Const FrameObj\n";
     init ();
 }
 
@@ -81,14 +81,6 @@ void FrameObj::positionBBox()
 
 void FrameObj::calcBBoxSize()
 {
-}
-
-float FrameObj::roof (float x)
-{
-    if (x<=0.5)
-	return  x;
-    else
-	return 1-x;
 }
 
 void FrameObj::setRect(const QRectF &r)

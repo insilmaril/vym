@@ -96,3 +96,11 @@ qreal max(qreal a, qreal b)
     return b;
 }
 
+qreal roof (qreal x)
+{
+    if (x<=0.5)
+	return  x;
+    else
+	return 1-x;
+}
+

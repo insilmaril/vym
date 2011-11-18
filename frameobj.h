@@ -22,7 +22,6 @@ public:
     void moveBy (double x,double y);// move to relative Position
     void positionBBox();	     
     void calcBBoxSize();	    
-    float roof (float x);	    // "roof" function
     void setRect (const QRectF &);   // set dimensions		
     void setPadding(const int &);
     int getPadding();
