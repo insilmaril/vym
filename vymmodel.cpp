@@ -2850,6 +2850,7 @@ void VymModel::deleteKeepChildren(bool saveStateFlag)
 	}
 	deleteItem (selbi);
 	reposition();
+	emitDataHasChanged(pi);
 	select (sel);
 	BranchObj *bo=getSelectedBranchObj();
 	if (bo) 
