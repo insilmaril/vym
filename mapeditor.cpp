@@ -1174,10 +1174,10 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
     if (ti) lmo=((MapItem*)ti)->getLMO();
     
     /*
+    */
     qDebug() << "ME::mouse pressed\n";
     qDebug() << "  lmo="<<lmo;
     if (ti) qDebug() << "   ti="<<ti->getHeading();
-    */
     
     e->accept();
 
@@ -1715,11 +1715,11 @@ void MapEditor::mouseReleaseEvent(QMouseEvent* e)
 	movingObj=NULL;	    
 	objectMoved=false;
 	vPan=QPoint ();
+	setState (Neutral);
     } else 
 	// maybe we moved View: set old cursor
 	setCursor (Qt::ArrowCursor);
 
-    setState (Neutral);
     QGraphicsView::mouseReleaseEvent(e);
 }
 
