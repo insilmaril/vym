@@ -2174,7 +2174,7 @@ bool VymModel::moveUp(BranchItem *bi)
     blockSaveState=true;
     bool result=false;
     if (bi && bi->canMoveUp()) 
-	result=relinkBranch (bi,(BranchItem*)bi->parent(),bi->num()-1,true);
+	result=relinkBranch (bi,(BranchItem*)bi->parent(),bi->num()-1,false);
     blockSaveState=oldState;
     return result;
 }
@@ -2186,10 +2186,13 @@ void VymModel::moveUp()
     {
 	QString oldsel=getSelectString();
 	if (moveUp (selbi))
+	{
 	    saveState (
 		getSelectString(),"moveDown ()",
 		oldsel,"moveUp ()",
 		QString("Move up %1").arg(getObjectName(selbi)));
+	    select (selbi);		
+	}
     }
 }
 
@@ -2199,7 +2202,7 @@ bool VymModel::moveDown(BranchItem *bi)
     blockSaveState=true;
     bool result=false;
     if (bi && bi->canMoveDown()) 
-	result=relinkBranch (bi,(BranchItem*)bi->parent(),bi->num()+1,true);
+	result=relinkBranch (bi,(BranchItem*)bi->parent(),bi->num()+1,false);
     blockSaveState=oldState;
     return result;
 }
@@ -2211,10 +2214,13 @@ void VymModel::moveDown()
     {
 	QString oldsel=getSelectString();
 	if ( moveDown(selbi))
+	{
 	    saveState (
 		getSelectString(),"moveUp ()",
 		oldsel,"moveDown ()",
 		QString("Move down %1").arg(getObjectName(selbi)));
+	    select (selbi);
+	}
     }
 }
 
@@ -2675,18 +2681,21 @@ bool VymModel::relinkBranch (
 	LinkableMapObj *lmosel=branch->getLMO();
 	if (lmosel) savePos=lmosel->getAbsPos();
 
-	QString undoCom="relinkTo (\""+ 
-	    preParStr+ "\"," + preNum  +"," + 
-	    QString ("%1,%2").arg(orgPos.x()).arg(orgPos.y())+ ")";
+	if (!blockSaveState)
+	{   // Don't build strings when moving up/down
+	    QString undoCom="relinkTo (\""+ 
+		preParStr+ "\"," + preNum  +"," + 
+		QString ("%1,%2").arg(orgPos.x()).arg(orgPos.y())+ ")";
 
-	QString redoCom="relinkTo (\""+ 
-	    getSelectString (dst)  + "\"," + postNum + "," +
-	    QString ("%1,%2").arg(savePos.x()).arg(savePos.y())+ ")";
+	    QString redoCom="relinkTo (\""+ 
+		getSelectString (dst)  + "\"," + postNum + "," +
+		QString ("%1,%2").arg(savePos.x()).arg(savePos.y())+ ")";
 
-	saveState (
-	    postSelStr,undoCom,
-	    preSelStr, redoCom,
-	    QString("Relink %1 to %2").arg(getObjectName(branch)).arg(getObjectName(dst)) );
+	    saveState (
+		postSelStr,undoCom,
+		preSelStr, redoCom,
+		QString("Relink %1 to %2").arg(getObjectName(branch)).arg(getObjectName(dst)) );
+	}
 
 	// New parent might be invisible
 	branch->updateVisibility();
