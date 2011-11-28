@@ -237,8 +237,8 @@ int main(int argc, char* argv[])
 
     headingEditor = new HeadingEditor();
 
-    // Check if there is a BugzillaClient
-    QFileInfo fi("/var/adm/perl-modules/perl-SUSE-BugzillaClient");
+    // Check if there is a BugzillaClient  
+    QFileInfo fi(vymBaseDir.path()+"/scripts/BugzillaClient.pm");
     bugzillaClientAvailable=fi.exists();
 
     // Initialize mainwindow 
