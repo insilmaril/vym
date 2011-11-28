@@ -1715,10 +1715,11 @@ void MapEditor::mouseReleaseEvent(QMouseEvent* e)
 	movingObj=NULL;	    
 	objectMoved=false;
 	vPan=QPoint ();
-	setState (Neutral);
     } else 
 	// maybe we moved View: set old cursor
 	setCursor (Qt::ArrowCursor);
+
+    setState (Neutral);
 
     QGraphicsView::mouseReleaseEvent(e);
 }
