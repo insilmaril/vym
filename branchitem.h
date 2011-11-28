@@ -2,6 +2,7 @@
 #define BRANCHITEM_H
 
 #include "mapitem.h"
+#include "task.h"
 
 #include <QList>
 
@@ -30,6 +31,13 @@ public:
 protected:  
     bool scrolled;	// true if all children are scrolled and thus invisible
     bool tmpUnscrolled;	    // can only be true (temporary) for a scrolled subtree
+
+public:
+    void setTask (Task* t);
+    Task* getTask();
+private:
+    Task* task;
+
 public:
     virtual void unScroll();		
     virtual bool toggleScroll();	// scroll or unscroll

@@ -147,8 +147,8 @@ public:
     virtual bool canMoveUp();
 
 protected:
-    static uint idLast;		// the last used unique ID
     uint id;
+
 public:
     virtual uint getID ();
 

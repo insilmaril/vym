@@ -159,6 +159,7 @@ public slots:
 private slots:
     void editDeleteVymLink();
     void editToggleHideExport();
+    void editToggleTask();
     void editAddTimestamp();
     void editMapInfo();
     void editMoveUp();	
@@ -250,6 +251,7 @@ public slots:
 
     void windowToggleNoteEditor();
     void windowToggleTreeEditor();
+    void windowToggleTaskEditor();
     void windowToggleSlideEditor();
     void windowToggleHistory();
     void windowToggleProperty();
@@ -377,6 +379,7 @@ private:
     QAction *actionEditVymLink;
     QAction *actionDeleteVymLink;
     QAction *actionAddTimestamp;
+    QAction *actionToggleTask;
     QAction *actionToggleHideExport;
     QAction *actionMapInfo;
     QAction *actionHeading;
@@ -441,6 +444,7 @@ private:
     QAction *actionViewToggleNoteEditor;
     QAction *actionViewToggleHeadingEditor;
     QAction *actionViewToggleTreeEditor;
+    QAction *actionViewToggleTaskEditor;
     QAction *actionViewToggleSlideEditor;
     QAction *actionViewToggleHistoryWindow;
     QAction *actionViewTogglePropertyWindow;

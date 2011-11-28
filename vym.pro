@@ -86,6 +86,9 @@ HEADERS	+= \
     slideeditor.h\
     slideitem.h\
     slidemodel.h\
+    task.h\
+    taskeditor.h\
+    taskmodel.h\
     treedelegate.h \
     treeeditor.h \
     treeitem.h \
@@ -166,6 +169,9 @@ SOURCES	+= \
     slideeditor.cpp \
     slideitem.cpp \
     slidemodel.cpp \
+    task.cpp \
+    taskeditor.cpp \
+    taskmodel.cpp \
     texteditor.cpp \
     treedelegate.cpp \
     treeeditor.cpp \

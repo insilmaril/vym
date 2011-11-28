@@ -19,7 +19,7 @@ DownloadAgent::DownloadAgent (const QUrl &url, BranchItem *bi)
     }
     branchID=bi->getID();
     VymModel *model=bi->getModel();
-    modelID=model->getID();
+    modelID=model->getModelID();
 
    //qDebug()<<"Constr. DownloadAgent for "<<branchID;
 

@@ -21,7 +21,7 @@ BugAgent::BugAgent (BranchItem *bi,const QString &u)
     }
     branchID=bi->getID();
     VymModel *model=bi->getModel();
-    modelID=model->getID();
+    modelID=model->getModelID();
 
     //qDebug()<<"Constr. BugAgent for "<<branchID;
 

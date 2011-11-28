@@ -23,6 +23,8 @@
 #include "settings.h"
 #include "shortcuts.h"
 #include "noteeditor.h"
+#include "task.h"
+#include "taskeditor.h"
 #include "treeeditor.h"
 #include "warningdialog.h"
 #include "xlinkitem.h"
@@ -47,7 +49,8 @@ typedef struct _PROCESS_INFORMATION
 extern NoteEditor    *noteEditor;
 extern HeadingEditor *headingEditor;
 extern Main *mainWindow;
-extern FindResultWidget *findResultWidget;
+extern FindResultWidget *findResultWidget;  
+extern TaskEditor *taskEditor;
 extern QString tmpVymDir;
 extern QString clipboardDir;
 extern QString clipboardFile;
@@ -169,6 +172,14 @@ Main::Main(QWidget* parent, Qt::WFlags f) : QMainWindow(parent,f)
 	findResultWidget, SIGNAL (findPressed (QString) ), 
 	this, SLOT (editFindNext(QString) ) );
 
+    taskEditor = new TaskEditor ();
+    dw= new QDockWidget (tr ("Task list","TaskEditor"),this);
+    dw->setWidget (taskEditor);
+    dw->setObjectName ("TaskEditor");
+    dw->hide();	
+    addDockWidget (Qt::LeftDockWidgetArea,dw);
+
+    addDockWidget (Qt::RightDockWidgetArea,dw);
     // Satellite windows //////////////////////////////////////////
     // history window
     historyWindow=new HistoryWindow();
@@ -619,7 +630,7 @@ void Main::setupEditActions()
     a= new QAction(tr( "Add attribute" ), this);
     if (settings.value( "/mainwindow/showTestMenu",false).toBool() )
     {
-	a->setShortcut ( Qt::Key_Q);	
+	//a->setShortcut ( Qt::Key_Q);	
 	a->setShortcutContext (Qt::WindowShortcut);
 	switchboard.addConnection(a,tr("Edit","Shortcut group"));
     }
@@ -954,6 +965,16 @@ void Main::setupEditActions()
     connect( a, SIGNAL( triggered() ), this, SLOT( editToggleHideExport() ) );
     actionListItems.append (a);
     actionToggleHideExport=a;
+
+    a = new QAction(QPixmap(), tr( "Toggle task","Edit menu" ), this);
+    a->setShortcut (Qt::Key_W );
+    a->setShortcutContext (Qt::WindowShortcut);
+    a->setCheckable(true);
+    a->setEnabled (false);
+    switchboard.addConnection(this, a,tr("Edit","Shortcut group"));
+    connect( a, SIGNAL( triggered() ), this, SLOT( editToggleTask() ) );
+    actionListItems.append (a);
+    actionToggleTask=a;
 
     a = new QAction(tr( "Add timestamp","Edit menu" ), this);
     a->setEnabled (false);
@@ -1293,6 +1314,14 @@ void Main::setupViewActions()
     connect( a, SIGNAL( triggered() ), this, SLOT(windowToggleTreeEditor() ) );
     actionViewToggleTreeEditor=a;
 
+    a = new QAction(QPixmap(), tr( "Toggle Task editor","View action" ),this);
+    a->setShortcut ( Qt::Key_Q );	// Toggle Tree Editor 
+    switchboard.addConnection(a,tr("View shortcuts","Shortcut group"));
+    a->setCheckable(true);
+    viewMenu->addAction (a);
+    connect( a, SIGNAL( triggered() ), this, SLOT(windowToggleTaskEditor() ) );
+    actionViewToggleTaskEditor=a;
+
     a = new QAction(QPixmap(iconPath+"slideeditor.png"), tr( "Toggle Slide editor","View action" ),this);
     a->setShortcut ( Qt::SHIFT + Qt::Key_S );	// Toggle Slide Editor 
     switchboard.addConnection(a,tr("View shortcuts","Shortcut group"));
@@ -1381,7 +1410,19 @@ void Main::setupModeActions()
 void Main::setupFlagActions()
 {
     // Create System Flags
-    Flag *flag=new Flag(flagsPath+"flag-note.png");
+    Flag *flag;
+
+    // Origin: ./share/icons/oxygen/48x48/status/task-reject.png
+    flag=new Flag(flagsPath+"flag-task-new.png");
+    setupFlag (flag,NULL,"system-task-new",tr("Note","SystemFlag"));
+    // Origin: ./share/icons/oxygen/48x48/status/task-reject.png
+    flag=new Flag(flagsPath+"flag-task-new.png");
+    setupFlag (flag,NULL,"system-task-wip",tr("Note","SystemFlag"));
+    // Origin: ./share/icons/oxygen/48x48/status/task-complete.png
+    flag=new Flag(flagsPath+"flag-task-finished.png");
+    setupFlag (flag,NULL,"system-task-finished",tr("Note","SystemFlag"));
+
+    flag=new Flag(flagsPath+"flag-note.png");
     setupFlag (flag,NULL,"system-note",tr("Note","SystemFlag"));
 
     flag=new Flag(flagsPath+"flag-url.png");
@@ -2005,6 +2046,7 @@ void Main::setupToolbars()
     editActionsToolbar->addAction (actionSortBackChildren);
     editActionsToolbar->addAction (actionToggleScroll);
     editActionsToolbar->addAction (actionToggleHideExport);
+    editActionsToolbar->addAction (actionToggleTask);
     //editActionsToolbar->addAction (actionExpandAll);
     //editActionsToolbar->addAction (actionExpandOneLevel);
     //editActionsToolbar->addAction (actionCollapseOneLevel);
@@ -2050,6 +2092,7 @@ void Main::setupToolbars()
     editorsToolbar->addAction (actionViewToggleNoteEditor);
     editorsToolbar->addAction (actionViewToggleHeadingEditor);
     editorsToolbar->addAction (actionViewToggleTreeEditor);
+    editorsToolbar->addAction (actionViewToggleTaskEditor);
     editorsToolbar->addAction (actionViewToggleSlideEditor);
     editorsToolbar->addAction (actionViewToggleHistoryWindow);
 
@@ -2116,7 +2159,7 @@ uint  Main::currentModelID() const
 {
     VymModel *m=currentModel();
     if (m)
-	return m->getID();
+	return m->getModelID();
     else
 	return 0;    
 }
@@ -2134,7 +2177,7 @@ VymModel* Main::getModel(uint id) const
 {
     // Used in BugAgent
     for (int i=0; i<vymViews.count();i++)
-	if (vymViews.at(i)->getModel()->getID()==id)
+	if (vymViews.at(i)->getModel()->getModelID()==id)
 	    return vymViews.at(i)->getModel();
     return NULL;    
 }
@@ -3274,6 +3317,12 @@ void Main::editToggleHideExport()
     if (m) m->toggleHideExport();   
 }
 
+void Main::editToggleTask()
+{
+    VymModel *m=currentModel();
+    if (m) m->toggleTask();   
+}
+
 void Main::editAddTimestamp()
 {
     VymModel *m=currentModel();
@@ -4040,6 +4089,19 @@ void Main::windowToggleTreeEditor()
 	vymViews.at(tabWidget->currentIndex())->toggleTreeEditor();
 }
 
+void Main::windowToggleTaskEditor()
+{
+    if (taskEditor->parentWidget()->isVisible() )
+    {
+	taskEditor->parentWidget()->hide();
+	actionViewToggleTaskEditor->setChecked (false);
+    } else
+    {
+	taskEditor->parentWidget()->show();
+	actionViewToggleTaskEditor->setChecked (true);
+    }
+}
+
 void Main::windowToggleSlideEditor()
 {
     if ( tabWidget->currentWidget())
@@ -4378,6 +4440,12 @@ void Main::updateActions()
 
 		actionToggleHideExport->setEnabled (true);  
 		actionToggleHideExport->setChecked (selbi->hideInExport() );	
+
+		actionToggleTask->setEnabled (true);  
+		if (!selbi->getTask() )
+		    actionToggleTask->setChecked (false);
+		else
+		    actionToggleTask->setChecked (true);
 
 		if (!clipboardEmpty)
 		    actionPaste->setEnabled (true); 

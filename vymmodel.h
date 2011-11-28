@@ -44,7 +44,7 @@ private:
     QDate date;
 
     static uint idLast;	    //! the last used unique ID
-    uint mapID;
+    uint modelID;
 
 public:
     VymModel();
@@ -54,7 +54,7 @@ public:
     void makeTmpDirectories();	    //!< create temporary directories e.g. for history
 
     MapEditor* getMapEditor();		
-    uint getID();			//! Return unique ID of model
+    uint getModelID();			//! Return unique ID of model
 
     bool isRepositionBlocked();	    //!< While load or undo there is no need to update graphicsview
 
@@ -325,6 +325,9 @@ public:
 
     /*! Should object be hidden in exports (clouded)? */
     void toggleHideExport();	    
+
+    /*! Toggle task for branch */
+    void toggleTask();	    
 
     void addTimestamp();	
 

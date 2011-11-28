@@ -2,11 +2,12 @@
 
 #include "attributeitem.h"
 #include "branchobj.h"
+#include "task.h"
 #include "vymmodel.h"
 #include "xlink.h"
 #include "xlinkitem.h"
 
-#include <QDir>
+//#include <QDir>
 
 BranchItem::BranchItem(const QList<QVariant> &data, TreeItem *parent):MapItem (data,parent)
 {
@@ -28,6 +29,8 @@ BranchItem::BranchItem(const QList<QVariant> &data, TreeItem *parent):MapItem (d
      
     lastSelectedBranchNum=-1;
     lastSelectedBranchNumAlt=-1;
+
+    task=NULL;
 }
 
 BranchItem::~BranchItem()
@@ -38,9 +41,10 @@ BranchItem::~BranchItem()
 	delete lmo;
 	lmo=NULL;
     }
+    // FIXME-0 remove task, if existent
 }
 
-void BranchItem::copy (BranchItem *other)
+void BranchItem::copy (BranchItem *other)  // FIXME-3 lacks most of data...
 {
     scrolled=other->scrolled;
     tmpUnscrolled=other->tmpUnscrolled;
@@ -177,6 +181,43 @@ void BranchItem::setHeadingColor (QColor color)
 {
     TreeItem::setHeadingColor (color);
     if (lmo) ((BranchObj*)lmo)->setColor (color);
+}
+
+void BranchItem::setTask(Task *t) // FIXME-0 use flag groups
+{
+    task=t;
+    if (task)
+    {
+	switch (t->getStatus() ) 
+	{
+	    case Task::NotStarted: 
+		systemFlags.activate("system-task-new");
+//		systemFlags.deactivate("system-task-wip");
+//		systemFlags.deactivate("system-task-finished");
+		break;
+	    case Task::WIP: 
+		systemFlags.deactivate("system-task-new");
+//		systemFlags.activate("system-task-wip");
+//		systemFlags.deactivate("system-task-finished");
+		break;
+	    case Task::Finished: 
+		systemFlags.deactivate("system-task-new");
+//		systemFlags.deactivate("system-task-wip");
+//		systemFlags.activate("system-task-finished");
+		break;
+	}
+    } else
+    {
+	systemFlags.deactivate("system-task-new");
+//	systemFlags.deactivate("system-task-wip");
+//	systemFlags.deactivate("system-task-finished");
+	// FIXME-0 create/delete
+    }
+}
+
+Task* BranchItem::getTask()
+{
+    return task;
 }
 
 void BranchItem::unScroll()

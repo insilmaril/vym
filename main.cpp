@@ -13,6 +13,8 @@ using namespace std;
 #include "noteeditor.h"
 #include "options.h"
 #include "settings.h"
+#include "taskeditor.h"
+#include "taskmodel.h"
 #include "version.h"
 
 #if defined(Q_OS_WIN32)
@@ -31,6 +33,9 @@ QString vymInstanceName;
 
 bool bugzillaClientAvailable;	// openSUSE specific currently
 
+TaskEditor *taskEditor;
+TaskModel* taskModel;
+
 HeadingEditor *headingEditor;	    
 NoteEditor    *noteEditor;	// used in Constr. of LinkableMapObj
 				// initialized in mainwindow
@@ -39,6 +44,8 @@ FindWidget *findWidget;
 FindResultWidget *findResultWidget;
 
 QDBusConnection dbusConnection= QDBusConnection::sessionBus();
+
+uint itemLastID=0;		// Unique ID for all items in all models
 
 QString tmpVymDir;		// All temp files go there, created in mainwindow
 QString clipboardDir;		// Clipboard used in all mapEditors
@@ -108,6 +115,9 @@ int main(int argc, char* argv[])
 	"-sl          LaTeX       Show Keyboard shortcuts in LaTeX format on start\n"
 	"-v           version     Show vym version\n"
     );
+
+    taskModel = new TaskModel();
+
     if (options.parse())
     {
 	cout << endl << qPrintable( options.getHelpText())<<endl;

@@ -21,6 +21,7 @@
 #include "process.h"
 #include "slideitem.h"
 #include "slidemodel.h"
+#include "taskmodel.h"
 #include "warningdialog.h"
 #include "xlinkitem.h"
 #include "xlinkobj.h"
@@ -43,6 +44,8 @@ extern QString clipboardFile;
 extern bool clipboardEmpty;
 
 extern ImageIO imageIO;
+
+extern TaskModel* taskModel;
 
 extern QString vymName;
 extern QString vymVersion;
@@ -93,7 +96,7 @@ void VymModel::init ()
 
     // States and IDs
     idLast++;
-    mapID=idLast;
+    modelID=idLast;
     mapChanged=false;
     mapDefault=true;
     mapUnsaved=false;
@@ -162,14 +165,14 @@ void VymModel::init ()
 
      //Initialize DBUS object
     adaptorModel=new AdaptorModel(this);    // Created and not deleted as documented in Qt
-    if (!dbusConnection.registerObject (QString("/vymmodel_%1").arg(mapID),this))
+    if (!dbusConnection.registerObject (QString("/vymmodel_%1").arg(modelID),this))
 	qWarning ("VymModel: Couldn't register DBUS object!");
 }
 
 void VymModel::makeTmpDirectories()
 {
     // Create unique temporary directories
-    tmpMapDir = tmpVymDir+QString("/model-%1").arg(mapID);
+    tmpMapDir = tmpVymDir+QString("/model-%1").arg(modelID);
     histPath = tmpMapDir+"/history";
     QDir d;
     d.mkdir (tmpMapDir);
@@ -2075,9 +2078,26 @@ void VymModel::toggleHideExport()
     QList <TreeItem*> selItems=getSelectedItems();
     if (selItems.count()>0 )
     {
-	bool b=!selItems.first()->hideInExport();
 	foreach (TreeItem* ti, selItems)
+	{
+	    bool b=!ti->hideInExport();
 	    setHideExport (b,ti );
+	}
+    }
+}
+
+void VymModel::toggleTask() // FIXME-0 Testing for now, no savestate...
+{
+    BranchItem *selbi=getSelectedBranch();
+    if (selbi) 
+    {
+	if (!selbi->getTask() )
+	    selbi->setTask (taskModel->createTask (selbi) );
+	else
+	    selbi->setTask (NULL);
+	emitDataHasChanged(selbi);
+	emitSelectionChanged();
+	reposition();
     }
 }
 
@@ -5058,9 +5078,9 @@ LinkableMapObj::Style VymModel::getMapLinkStyle ()
     return linkstyle;
 }   
 
-uint VymModel::getID()
+uint VymModel::getModelID()
 {
-    return mapID;
+    return modelID;
 }
 
 void VymModel::setMapDefLinkColor(QColor col)

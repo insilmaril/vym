@@ -11,9 +11,8 @@
 
 using namespace std;
 
+extern uint itemLastID;
 extern FlagRow* standardFlagsMaster;
-
-uint TreeItem::idLast=0;    // Create instance
 
 TreeItem::TreeItem()
 {
@@ -63,8 +62,8 @@ void TreeItem::init()
     model=NULL;
 
     // Assign ID  
-    idLast++;
-    id=idLast;
+    itemLastID++;
+    id=itemLastID;
 
     branchOffset=0;
     branchCounter=0;
