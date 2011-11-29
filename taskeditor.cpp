@@ -9,6 +9,7 @@
 #include "branchitem.h"
 #include "task.h"
 #include "taskmodel.h"
+#include "vymmodel.h"
 
 extern TaskModel* taskModel;
 
@@ -31,11 +32,33 @@ TaskEditor::TaskEditor(QWidget *)
 
     view->setModel (proxyModel);
     view->setSelectionBehavior(QAbstractItemView::SelectRows);
+    view->setSelectionMode(QAbstractItemView::SingleSelection);
     view->horizontalHeader()->setStretchLastSection(true);
     view->verticalHeader()->hide();
     view->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    view->setSelectionMode(QAbstractItemView::SingleSelection);
     view->setSortingEnabled(true);
 
+    connect (
+	view->selectionModel(),SIGNAL (selectionChanged (QItemSelection,QItemSelection)),
+	this, SLOT (selectionChanged (QItemSelection,QItemSelection)));
+
+
 }
+
+
+void TaskEditor::selectionChanged ( const QItemSelection & selected, const QItemSelection & deselected )
+{
+    QModelIndex ix;
+    foreach (ix,selected.indexes() )
+    {
+	Task *t=taskModel->getTask (ix);
+	if (t) 
+	{
+	    BranchItem *bi=t->getBranch();
+	    if (bi) bi->getModel()->select (bi);
+	}
+    }
+}
+
+
 

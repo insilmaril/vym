@@ -16,6 +16,9 @@ class TaskEditor: public QWidget
 
 public:
     TaskEditor (QWidget *parent=NULL);
+
+private slots:
+    void selectionChanged (const QItemSelection & selected, const QItemSelection & deselected );
 private:
     QTableView *view;
     QSortFilterProxyModel *proxyModel;

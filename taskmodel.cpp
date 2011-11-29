@@ -20,6 +20,13 @@ QModelIndex TaskModel::index (Task* t)
 	return createIndex (n,0,t);
 }
 
+Task* TaskModel::getTask (const QModelIndex &ix) const
+{
+    if (ix.isValid() )
+	return tasks.at (ix.row() );
+    else
+	return NULL;
+}
 
 int TaskModel::rowCount(const QModelIndex &parent) const
 {

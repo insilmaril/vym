@@ -15,6 +15,7 @@ class TaskModel : public QAbstractTableModel
 public:
     TaskModel(QObject *parent=0);
     QModelIndex index (Task* t);
+    Task* getTask (const QModelIndex &ix) const;
     int rowCount(const QModelIndex &parent) const;
     int columnCount(const QModelIndex &parent) const;
     QVariant data(const QModelIndex &index, int role) const;
