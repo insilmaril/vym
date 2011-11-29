@@ -33,6 +33,7 @@ protected:
     bool tmpUnscrolled;	    // can only be true (temporary) for a scrolled subtree
 
 public:
+    void updateTaskFlag();
     void setTask (Task* t);
     Task* getTask();
 private:

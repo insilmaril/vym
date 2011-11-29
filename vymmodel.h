@@ -329,6 +329,9 @@ public:
     /*! Toggle task for branch */
     void toggleTask();	    
 
+    /*! Cylce through task states */
+    void cycleTaskStatus();	    
+
     void addTimestamp();	
 
     void copy();			//!< Copy to clipboard
@@ -534,6 +537,7 @@ public:
     void unsetContextPos ();		//!< forget local position after context menu
 
     void updateNoteFlag();		//!< Signal origination in TextEditor
+    void updateTaskFlag();		//!< Update system flags for task status
     void reposition();			//!< Call reposition for all MCOs
     void setHideTmpMode (TreeItem::HideTmpMode mode);	
 

@@ -160,6 +160,7 @@ private slots:
     void editDeleteVymLink();
     void editToggleHideExport();
     void editToggleTask();
+    void editCycleTaskStatus();
     void editAddTimestamp();
     void editMapInfo();
     void editMoveUp();	
@@ -380,6 +381,7 @@ private:
     QAction *actionDeleteVymLink;
     QAction *actionAddTimestamp;
     QAction *actionToggleTask;
+    QAction *actionCycleTaskStatus;
     QAction *actionToggleHideExport;
     QAction *actionMapInfo;
     QAction *actionHeading;

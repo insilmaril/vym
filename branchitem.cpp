@@ -3,9 +3,12 @@
 #include "attributeitem.h"
 #include "branchobj.h"
 #include "task.h"
+#include "taskmodel.h"
 #include "vymmodel.h"
 #include "xlink.h"
 #include "xlinkitem.h"
+
+extern TaskModel *taskModel;
 
 //#include <QDir>
 
@@ -41,7 +44,8 @@ BranchItem::~BranchItem()
 	delete lmo;
 	lmo=NULL;
     }
-    // FIXME-0 remove task, if existent
+    if (task) 
+	taskModel->deleteTask (task);
 }
 
 void BranchItem::copy (BranchItem *other)  // FIXME-3 lacks most of data...
@@ -183,36 +187,33 @@ void BranchItem::setHeadingColor (QColor color)
     if (lmo) ((BranchObj*)lmo)->setColor (color);
 }
 
-void BranchItem::setTask(Task *t) // FIXME-0 use flag groups
+void BranchItem::updateTaskFlag()
 {
-    task=t;
+    // FIXME-0 use systemFlags::deactivateGroup ("system-tasks");
+    systemFlags.deactivate("system-task-new");
+    systemFlags.deactivate("system-task-wip");
+    systemFlags.deactivate("system-task-finished");
     if (task)
     {
-	switch (t->getStatus() ) 
+	switch (task->getStatus() ) 
 	{
 	    case Task::NotStarted: 
 		systemFlags.activate("system-task-new");
-//		systemFlags.deactivate("system-task-wip");
-//		systemFlags.deactivate("system-task-finished");
 		break;
 	    case Task::WIP: 
-		systemFlags.deactivate("system-task-new");
-//		systemFlags.activate("system-task-wip");
-//		systemFlags.deactivate("system-task-finished");
+		systemFlags.activate("system-task-wip");
 		break;
 	    case Task::Finished: 
-		systemFlags.deactivate("system-task-new");
-//		systemFlags.deactivate("system-task-wip");
-//		systemFlags.activate("system-task-finished");
+		systemFlags.activate("system-task-finished");
 		break;
 	}
-    } else
-    {
-	systemFlags.deactivate("system-task-new");
-//	systemFlags.deactivate("system-task-wip");
-//	systemFlags.deactivate("system-task-finished");
-	// FIXME-0 create/delete
-    }
+    } 
+}
+
+void BranchItem::setTask(Task *t) // FIXME-0 use flag groups
+{
+    task=t;
+    updateTaskFlag();
 }
 
 Task* BranchItem::getTask()

@@ -177,9 +177,8 @@ Main::Main(QWidget* parent, Qt::WFlags f) : QMainWindow(parent,f)
     dw->setWidget (taskEditor);
     dw->setObjectName ("TaskEditor");
     dw->hide();	
-    addDockWidget (Qt::LeftDockWidgetArea,dw);
+    addDockWidget (Qt::TopDockWidgetArea,dw);
 
-    addDockWidget (Qt::RightDockWidgetArea,dw);
     // Satellite windows //////////////////////////////////////////
     // history window
     historyWindow=new HistoryWindow();
@@ -967,14 +966,24 @@ void Main::setupEditActions()
     actionToggleHideExport=a;
 
     a = new QAction(QPixmap(), tr( "Toggle task","Edit menu" ), this);
-    a->setShortcut (Qt::Key_W );
+    a->setShortcut (Qt::Key_W + Qt::SHIFT);
     a->setShortcutContext (Qt::WindowShortcut);
     a->setCheckable(true);
     a->setEnabled (false);
     switchboard.addConnection(this, a,tr("Edit","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( editToggleTask() ) );
-    actionListItems.append (a);
+    actionListBranches.append (a);
     actionToggleTask=a;
+
+    a = new QAction(QPixmap(), tr( "Cycle task status","Edit menu" ), this);
+    a->setShortcut (Qt::Key_W );
+    a->setShortcutContext (Qt::WindowShortcut);
+    a->setCheckable(false);
+    a->setEnabled (false);
+    switchboard.addConnection(this, a,tr("Edit","Shortcut group"));
+    connect( a, SIGNAL( triggered() ), this, SLOT( editCycleTaskStatus() ) );
+    actionListBranches.append (a);
+    actionCycleTaskStatus=a;
 
     a = new QAction(tr( "Add timestamp","Edit menu" ), this);
     a->setEnabled (false);
@@ -1412,14 +1421,18 @@ void Main::setupFlagActions()
     // Create System Flags
     Flag *flag;
 
-    // Origin: ./share/icons/oxygen/48x48/status/task-reject.png
+    // Tasks
     flag=new Flag(flagsPath+"flag-task-new.png");
+    // Origin: ./share/icons/oxygen/48x48/status/task-reject.png
+    flag->setGroup("system-tasks");
     setupFlag (flag,NULL,"system-task-new",tr("Note","SystemFlag"));
+    flag=new Flag(flagsPath+"flag-task-wip.png");
     // Origin: ./share/icons/oxygen/48x48/status/task-reject.png
-    flag=new Flag(flagsPath+"flag-task-new.png");
+    flag->setGroup("system-tasks");
     setupFlag (flag,NULL,"system-task-wip",tr("Note","SystemFlag"));
-    // Origin: ./share/icons/oxygen/48x48/status/task-complete.png
     flag=new Flag(flagsPath+"flag-task-finished.png");
+    // Origin: ./share/icons/oxygen/48x48/status/task-complete.png
+    flag->setGroup("system-tasks");
     setupFlag (flag,NULL,"system-task-finished",tr("Note","SystemFlag"));
 
     flag=new Flag(flagsPath+"flag-note.png");
@@ -3321,6 +3334,12 @@ void Main::editToggleTask()
 {
     VymModel *m=currentModel();
     if (m) m->toggleTask();   
+}
+
+void Main::editCycleTaskStatus()
+{
+    VymModel *m=currentModel();
+    if (m) m->cycleTaskStatus();   
 }
 
 void Main::editAddTimestamp()

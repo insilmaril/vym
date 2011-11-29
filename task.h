@@ -5,12 +5,16 @@
 
 class BranchItem;
 class QString;
+class TaskModel;
 
 class Task{
 public:
     enum Status {NotStarted, WIP, Finished};
 
-    Task();
+    Task(TaskModel* tm);
+    ~Task();
+    void setModel (TaskModel* tm);
+    void cycleStatus();
     void setStatus(Status ts);
     Status getStatus();	
     QString getStatusString();
@@ -18,8 +22,10 @@ public:
     QChar getPriority();
     QString getName();
     void setBranch (BranchItem *bi);
+    BranchItem* getBranch();
 
 private:
+    TaskModel* model;
     Status status; 
     QChar prio;
     BranchItem *branch;

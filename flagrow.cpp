@@ -2,6 +2,8 @@
 
 #include "flagrow.h"
 
+extern bool debug;
+
 /////////////////////////////////////////////////////////////////
 // FlagRow
 /////////////////////////////////////////////////////////////////
@@ -9,15 +11,12 @@ FlagRow::FlagRow()
 {
     toolBar=NULL;
     masterRow=NULL;
-//    cout << "Const FlagRow ()\n";
-//    init ();
+//    qDebug()<< "Const FlagRow ()";
 }
 
 FlagRow::~FlagRow()
 {
-    //cout << "Destr FlagRow\n";
-//  while (!flag.isEmpty())
-//	delete (flag.takeFirst() );
+    //qDebug()<< "Destr FlagRow";
 }
 
 void FlagRow::addFlag (Flag *flag)
@@ -89,7 +88,11 @@ void FlagRow::deactivate (const QString &name)	//FIXME-4 complaints if CTRL-E is
     if (n>=0)
 	activeNames.removeAt(n);
     else
-	qWarning ()<<QString("FlagRow::deactivate - %1 is not active").arg(name);
+	if (debug) qWarning ()<<QString("FlagRow::deactivate - %1 is not active").arg(name);
+}
+
+void FlagRow::deactivateGroup (const QString &name) //  FIXME-0 not implemented yet, can be used to completely disable all tasks in vymmodel
+{
 }
 
 void FlagRow::deactivateAll ()

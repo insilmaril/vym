@@ -30,6 +30,7 @@ public:
     void toggle (const QString&, FlagRow *masterRow=NULL);
     void activate(const QString&);
     void deactivate(const QString&);
+    void deactivateGroup(const QString&);
     void deactivateAll();
     void setEnabled (bool);
     void resetUsedCounter();

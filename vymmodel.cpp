@@ -2091,14 +2091,27 @@ void VymModel::toggleTask() // FIXME-0 Testing for now, no savestate...
     BranchItem *selbi=getSelectedBranch();
     if (selbi) 
     {
-	if (!selbi->getTask() )
-	    selbi->setTask (taskModel->createTask (selbi) );
+	Task *task=selbi->getTask();
+	if (!task )
+	    taskModel->createTask (selbi);
 	else
-	    selbi->setTask (NULL);
+	    taskModel->deleteTask (task);
+
 	emitDataHasChanged(selbi);
 	emitSelectionChanged();
 	reposition();
     }
+}
+
+void VymModel::cycleTaskStatus() // FIXME-0 Testing for now, no savestate...
+{
+    BranchItem *selbi=getSelectedBranch();
+    if (selbi) 
+    {
+	Task *task=selbi->getTask();
+	if (task ) task->cycleStatus();
+    }
+    updateTaskFlag();
 }
 
 void VymModel::addTimestamp()	//FIXME-3 new function, localize
@@ -5000,6 +5013,33 @@ void VymModel::updateNoteFlag()
 	else
 	    selti->setNote (noteEditor->getText());
 	emitDataHasChanged(selti);	
+    }
+}
+
+void VymModel::updateTaskFlag()
+{
+    BranchItem *selbi=getSelectedBranch();
+    if (selbi)
+    {
+	Task* task=selbi->getTask();
+	if (task)
+	{
+	    switch (task->getStatus() ) 
+	    {
+		case Task::NotStarted: 
+		    //systemFlags.activate("system-task-new");  //FIXME-0
+		    break;
+		case Task::WIP: 
+		    //systemFlags.activate("system-task-wip");
+		    break;
+		case Task::Finished: 
+		    //systemFlags.deactivate("system-task-finished");
+		    break;
+	    }
+	    emitDataHasChanged(selbi);	
+	    emitSelectionChanged();
+	    reposition();
+	}
     }
 }
 

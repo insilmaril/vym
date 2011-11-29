@@ -1019,7 +1019,6 @@ void MapEditor::editHeading()
 	QRectF r (tl, br);
 	lineEdit->setGeometry(r.toRect() );
 
-
 	setScrollBarPosTarget ( r );
 	scene()->update();
 
@@ -1206,6 +1205,8 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
 		mainWindow->windowToggleNoteEditor();
 	    else if (foname=="hideInExport")	    
 		model->toggleHideExport();
+	    else if (foname.startsWith("system-task-") )
+		model->cycleTaskStatus();
 	    return; 
 	} else
 	{
@@ -1719,21 +1720,30 @@ void MapEditor::mouseReleaseEvent(QMouseEvent* e)
 	// maybe we moved View: set old cursor
 	setCursor (Qt::ArrowCursor);
 
-    setState (Neutral);
+    if (state!=EditingHeading) setState (Neutral);   // Continue editing after double click!
 
     QGraphicsView::mouseReleaseEvent(e);
 }
 
-void MapEditor::mouseDoubleClickEvent(QMouseEvent* e)
+void MapEditor::mouseDoubleClickEvent(QMouseEvent* e) //FIXME-0 doesn't close, also filter out system flags
 {
     if (e->button() == Qt::LeftButton )
     {
 	QPointF p = mapToScene(e->pos());
 	TreeItem *ti=findMapItem (p, NULL);
+	LinkableMapObj *lmo;
 	if (ti) 
 	{   
-	    if (state==EditingHeading) editHeadingFinished();
 	    model->select (ti);
+	    BranchItem* selbi=model->getSelectedBranch();
+	    if (selbi)
+	    {
+		lmo=((MapItem*)ti)->getLMO();
+		QString foname=((BranchObj*)lmo)->getSystemFlagName(p);
+		if (!foname.isEmpty()) return;	// Don't edit heading when double clicking system flag
+
+	    }
+	    e->accept();
 	    editHeading();
 	}
     }
