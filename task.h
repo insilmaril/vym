@@ -3,11 +3,13 @@
 
 #include <QString>
 
+#include "xmlobj.h"
+
 class BranchItem;
 class QString;
 class TaskModel;
 
-class Task{
+class Task:public XMLObj {
 public:
     enum Status {NotStarted, WIP, Finished};
 
@@ -15,6 +17,7 @@ public:
     ~Task();
     void setModel (TaskModel* tm);
     void cycleStatus();
+    void setStatus(const QString &s);
     void setStatus(Status ts);
     Status getStatus();	
     QString getStatusString();
@@ -23,6 +26,7 @@ public:
     QString getName();
     void setBranch (BranchItem *bi);
     BranchItem* getBranch();
+    QString saveToDir();
 
 private:
     TaskModel* model;

@@ -9,6 +9,7 @@ class BranchItem;
 class ImageItem;
 class MapItem;
 class SlideItem;
+class Task;
 
 /*! \brief Parsing VYM maps from XML documents */
 
@@ -31,6 +32,7 @@ public:
     bool readHtmlAttr    (const QXmlAttributes&);
     bool readSettingAttr (const QXmlAttributes&);
     bool readSlideAttr   (const QXmlAttributes&);
+    bool readTaskAttr    (const QXmlAttributes&);
 
 private:
     enum State 
@@ -52,7 +54,8 @@ private:
 	StateImage,
 	StateHeading,
 	StateLink,
-	StateAttribute
+	StateAttribute,
+	StateTask
      };
 
      int branchesCounter;
@@ -68,6 +71,7 @@ private:
     ImageItem* lastImage;
     MapItem* lastMI;
     SlideItem *lastSlide;
+    Task *lastTask;
 
     bool useProgress;
 }; 

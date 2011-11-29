@@ -44,6 +44,18 @@ void Task::cycleStatus()
     if (branch) branch->updateTaskFlag();
 }
 
+void Task::setStatus(const QString &s)
+{
+    if (s=="NotStarted")
+	status=NotStarted;
+    else if (s=="WIP")
+	status=WIP;
+    else if (s=="Finished")
+	status=Finished;
+    else
+	qWarning()<<"Task::setStatus s="<<s;
+}
+
 void Task::setStatus(Status s)
 {
     status=s;
@@ -95,3 +107,8 @@ QString Task::getName ()
 	return "UNDEFINED";
     }
 }
+QString Task::saveToDir()
+{
+    return singleElement ("task", attribut ("status",getStatusString() ) );
+}
+

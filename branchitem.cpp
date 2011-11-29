@@ -148,6 +148,10 @@ QString BranchItem::saveToDir (const QString &tmpdir,const QString &prefix, cons
     if (!note.isEmpty() )
 	s+=note.saveToDir();
     
+    // save task
+    if (task)
+	s+=task->saveToDir();
+
     // Save branches
     int i=0;
     TreeItem *ti=getBranchNum(i);

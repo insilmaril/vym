@@ -12,11 +12,14 @@
 #include "linkablemapobj.h"
 #include "mainwindow.h"
 #include "slideitem.h"
+#include "task.h"
+#include "taskmodel.h"
 #include "version.h"
 #include "xlinkitem.h"
 
 extern Main *mainWindow;
 extern Settings settings;
+extern TaskModel *taskModel;
 extern QString vymVersion;
 
 bool parseVYMHandler::startDocument()
@@ -199,6 +202,12 @@ bool parseVYMHandler::startElement  ( const QString&, const QString&,
 	    col.setNamedColor(atts.value("textColor"));
 	    lastBranch->setHeadingColor(col );
 	}	
+    } else if ( eName == "task" && (state == StateMapCenter||state==StateBranch)) 
+    {
+	laststate=state;
+	state=StateTask;
+	lastTask=taskModel->createTask (lastBranch);
+	if (!readTaskAttr(atts)) return false;
     } else if ( eName == "note" && 
 		(state == StateMapCenter ||state==StateBranch))
     {	// only for backward compatibility (<1.4.6). Use htmlnote now.
@@ -782,3 +791,14 @@ bool parseVYMHandler::readSlideAttr (const QXmlAttributes& a)
     }
     return true;
 }
+
+bool parseVYMHandler::readTaskAttr (const QXmlAttributes& a)
+{
+    if (!lastTask) return false;
+    {
+	if (!a.value( "status").isEmpty() ) 
+	    lastTask->setStatus (a.value( "status" ) );
+    }
+    return true;
+}
+
