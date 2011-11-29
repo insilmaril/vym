@@ -28,7 +28,7 @@ TaskEditor::TaskEditor(QWidget *)
     proxyModel->setSourceModel(taskModel);
     proxyModel->setSortCaseSensitivity (Qt::CaseInsensitive);
     proxyModel->setDynamicSortFilter (true);
-    proxyModel->sort(0, Qt::DescendingOrder);
+    proxyModel->sort(2, Qt::DescendingOrder);
 
     view->setModel (proxyModel);
     view->setSelectionBehavior(QAbstractItemView::SelectRows);

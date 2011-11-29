@@ -5828,6 +5828,8 @@ void VymModel::emitDataHasChanged (TreeItem *ti)
 {
     QModelIndex ix=index(ti);
     emit (dataChanged (ix,ix) );
+    if (ti->isBranchLikeType() && ((BranchItem*)ti)->getTask()  )
+	taskModel->emitDataHasChanged ( ((BranchItem*)ti)->getTask() );
 }
 
 void VymModel::emitUpdateQueries ()

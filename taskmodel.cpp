@@ -48,6 +48,8 @@ QVariant TaskModel::data(const QModelIndex &index, int role) const
     if (index.row() >= tasks.size() || index.row() < 0)
         return QVariant();
 
+    BranchItem *bi=tasks.at(index.row())->getBranch();
+
     if (role == Qt::DisplayRole) 
     {
         if (index.column() == 0)
@@ -58,13 +60,18 @@ QVariant TaskModel::data(const QModelIndex &index, int role) const
 	    return tasks.at(index.row())->getAge();
         else if (index.column() == 3)
 	{
-	    BranchItem *bi=tasks.at(index.row())->getBranch();
 	    if (bi) return bi->getModel()->getMapName();
             return "?";	// Should never happen
 	}
         else if (index.column() == 4)
             return tasks.at(index.row())->getName();
     }
+    else // role != Qt::DisplayRole
+    {
+	if (role == Qt::ForegroundRole && bi ) 
+	    return bi->getHeadingColor();
+    }	
+
     return QVariant();
 }
 
