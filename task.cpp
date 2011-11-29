@@ -31,13 +31,13 @@ void Task::cycleStatus()
     switch (status)
     {
 	case Task::NotStarted: 
-	    status=WIP;
+	    setStatus(WIP);
 	    break;
 	case Task::WIP: 
-	    status=Finished;
+	    setStatus(Finished);
 	    break;
 	case Task::Finished: 
-	    status=NotStarted;
+	    setStatus(NotStarted);
 	    break;
     }
     if (model) model->emitDataHasChanged (this);
@@ -47,11 +47,11 @@ void Task::cycleStatus()
 void Task::setStatus(const QString &s)
 {
     if (s=="NotStarted")
-	status=NotStarted;
+	setStatus(NotStarted);
     else if (s=="WIP")
-	status=WIP;
+	setStatus(WIP);
     else if (s=="Finished")
-	status=Finished;
+	setStatus(Finished);
     else
 	qWarning()<<"Task::setStatus s="<<s;
 }
@@ -59,6 +59,7 @@ void Task::setStatus(const QString &s)
 void Task::setStatus(Status s)
 {
     status=s;
+    model->recalcPriorities();
 }
 
 Task::Status Task::getStatus()
@@ -70,19 +71,19 @@ QString Task::getStatusString()	    // FIXME-2 translate?
 {
     switch (status)
     {
-	case NotStarted: return "Not started";
+	case NotStarted: return "NotStarted";
 	case WIP: return "WIP";
 	case Finished: return "Finished";
     }
     return "Undefined";
 }
 
-void Task::setPriority (QChar p)
+void Task::setPriority (int p)
 {
     prio=p;
 }
 
-QChar Task::getPriority()
+int Task::getPriority()
 {
     return prio;
 }

@@ -177,9 +177,15 @@ void TaskModel::deleteTask (Task* t)
 	removeRows(pos, 1,QModelIndex() );
 }
 
-void TaskModel::recalcPriorities()  //FIXME-1 not implemented yet, also add SortModel
+void TaskModel::recalcPriorities()  //FIXME-1 not implemented yet
 {
-//        QModelIndex index = taskModel->index(0, 0, QModelIndex());
-//        table->setData(index, name, Qt::EditRole);
+    foreach (Task *t,tasks)
+    {   
+	int p=0;
+	p+=(t->getStatus())*100;
+	p+=tasks.indexOf(t);
+	t->setPriority (p);
+	emitDataHasChanged (t);
+    }
 }
 

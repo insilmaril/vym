@@ -32,6 +32,6 @@ public:
 
 private:
     QList <Task*> tasks;
-};
+ };
 
 #endif

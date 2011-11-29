@@ -11,7 +11,7 @@ class TaskModel;
 
 class Task:public XMLObj {
 public:
-    enum Status {NotStarted, WIP, Finished};
+    enum Status {Finished,WIP,NotStarted};
 
     Task(TaskModel* tm);
     ~Task();
@@ -21,8 +21,8 @@ public:
     void setStatus(Status ts);
     Status getStatus();	
     QString getStatusString();
-    void setPriority(QChar p);
-    QChar getPriority();
+    void setPriority(int  p);
+    int getPriority();
     QString getName();
     void setBranch (BranchItem *bi);
     BranchItem* getBranch();
@@ -31,7 +31,7 @@ public:
 private:
     TaskModel* model;
     Status status; 
-    QChar prio;
+    int prio;
     BranchItem *branch;
 };
 
