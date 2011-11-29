@@ -37,7 +37,7 @@ int TaskModel::rowCount(const QModelIndex &parent) const
 int TaskModel::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    return 4;
+    return 5;
 }
 
 QVariant TaskModel::data(const QModelIndex &index, int role) const
@@ -51,17 +51,19 @@ QVariant TaskModel::data(const QModelIndex &index, int role) const
     if (role == Qt::DisplayRole) 
     {
         if (index.column() == 0)
-            return tasks.at(index.row())->getPriority();
+            return maxPrio +1 - tasks.at(index.row())->getPriority();
         else if (index.column() == 1)
             return tasks.at(index.row())->getStatusString();
         else if (index.column() == 2)
-            return tasks.at(index.row())->getName();
+	    return tasks.at(index.row())->getAge();
         else if (index.column() == 3)
 	{
 	    BranchItem *bi=tasks.at(index.row())->getBranch();
 	    if (bi) return bi->getModel()->getMapName();
             return "?";	// Should never happen
 	}
+        else if (index.column() == 4)
+            return tasks.at(index.row())->getName();
     }
     return QVariant();
 }
@@ -78,10 +80,11 @@ QVariant TaskModel::headerData(int section, Qt::Orientation orientation, int rol
             case 1:
                 return tr("Status","TaskEditor");
             case 2:
-                return tr("Task","TaskEditor");
+                return tr("Age","TaskEditor");
             case 3:
                 return tr("Map","TaskEditor");
-
+            case 4:
+                return tr("Task","TaskEditor");
             default:
                 return QVariant();
         }
@@ -186,6 +189,7 @@ void TaskModel::deleteTask (Task* t)
 
 void TaskModel::recalcPriorities()  //FIXME-1 not implemented yet
 {
+    maxPrio=0;
     foreach (Task *t,tasks)
     {   
 	int p=0;
@@ -193,6 +197,7 @@ void TaskModel::recalcPriorities()  //FIXME-1 not implemented yet
 	p+=tasks.indexOf(t);
 	t->setPriority (p);
 	emitDataHasChanged (t);
+	if (p>maxPrio) maxPrio=p;
     }
 }
 

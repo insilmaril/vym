@@ -28,7 +28,7 @@ TaskEditor::TaskEditor(QWidget *)
     proxyModel->setSourceModel(taskModel);
     proxyModel->setSortCaseSensitivity (Qt::CaseInsensitive);
     proxyModel->setDynamicSortFilter (true);
-    proxyModel->sort(0, Qt::AscendingOrder);
+    proxyModel->sort(0, Qt::DescendingOrder);
 
     view->setModel (proxyModel);
     view->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -49,9 +49,11 @@ TaskEditor::TaskEditor(QWidget *)
 void TaskEditor::selectionChanged ( const QItemSelection & selected, const QItemSelection & deselected )
 {
     QModelIndex ix;
+    QModelIndex ix_org;
     foreach (ix,selected.indexes() )
     {
-	Task *t=taskModel->getTask (ix);
+	ix_org= proxyModel->mapToSource(ix);
+	Task *t=taskModel->getTask (ix_org);
 	if (t) 
 	{
 	    BranchItem *bi=t->getBranch();

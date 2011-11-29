@@ -59,6 +59,7 @@ void Task::setStatus(const QString &s)
 void Task::setStatus(Status s)
 {
     status=s;
+    if (branch) branch->updateTaskFlag();
     model->recalcPriorities();
 }
 
@@ -84,6 +85,11 @@ void Task::setPriority (int p)
 }
 
 int Task::getPriority()
+{
+    return prio;
+}
+
+int Task::getAge()
 {
     return prio;
 }

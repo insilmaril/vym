@@ -3,6 +3,7 @@
 
 #include <QString>
 
+#include <QDateTime>
 #include "xmlobj.h"
 
 class BranchItem;
@@ -23,6 +24,7 @@ public:
     QString getStatusString();
     void setPriority(int  p);
     int getPriority();
+    int getAge();
     QString getName();
     void setBranch (BranchItem *bi);
     BranchItem* getBranch();
@@ -33,6 +35,7 @@ private:
     Status status; 
     int prio;
     BranchItem *branch;
+    QDateTime date_creation;
 };
 
 #endif
