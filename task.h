@@ -25,6 +25,7 @@ public:
     void setPriority(int  p);
     int getPriority();
     int getAge();
+    void setDateCreation (const QString &s);
     QString getName();
     void setBranch (BranchItem *bi);
     BranchItem* getBranch();

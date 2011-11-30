@@ -13,6 +13,7 @@ Task::Task(TaskModel *tm)
     branch=NULL;
     prio='X';
     model=tm;
+    date_creation=QDateTime::currentDateTime();
 }
 
 Task::~Task()
@@ -91,7 +92,12 @@ int Task::getPriority()
 
 int Task::getAge()
 {
-    return prio;
+    return date_creation.daysTo (QDateTime::currentDateTime() );
+}
+
+void Task::setDateCreation (const QString &s)
+{
+    date_creation=QDateTime().fromString (s,Qt::ISODate);
 }
 
 void Task::setBranch (BranchItem *bi)
@@ -116,6 +122,9 @@ QString Task::getName ()
 }
 QString Task::saveToDir()
 {
-    return singleElement ("task", attribut ("status",getStatusString() ) );
+    return singleElement ("task",
+	attribut ("status",getStatusString() ) +
+	attribut ("date_creation",date_creation.toString (Qt::ISODate) )
+     );
 }
 

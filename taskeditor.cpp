@@ -48,7 +48,7 @@ TaskEditor::TaskEditor(QWidget *)
 }
 
 
-void TaskEditor::selectionChanged ( const QItemSelection & selected, const QItemSelection & deselected )
+void TaskEditor::selectionChanged ( const QItemSelection & selected, const QItemSelection & )
 {
     QModelIndex ix;
     QModelIndex ix_org;

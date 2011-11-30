@@ -70,6 +70,8 @@ QVariant TaskModel::data(const QModelIndex &index, int role) const
     {
 	if (role == Qt::ForegroundRole && bi ) 
 	    return bi->getHeadingColor();
+	if (role == Qt::BackgroundRole && bi ) 
+	    return bi->getModel()->getMapBackgroundColor();
     }	
 
     return QVariant();
