@@ -73,11 +73,12 @@ private:
     void hideEvent (QHideEvent * );
     void showEvent (QShowEvent * );
     int currentView() const;
+public:	
     MapEditor* currentMapEditor() const;
     VymModel* currentModel() const;
-public:	
     uint currentModelID() const;
     VymModel* getModel(uint) const;
+    void gotoModel (VymModel *m);
     
 private slots:
     void editorChanged(QWidget*);

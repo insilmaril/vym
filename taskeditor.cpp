@@ -7,11 +7,13 @@
 #include <QVBoxLayout>
 
 #include "branchitem.h"
+#include "mainwindow.h"
 #include "task.h"
 #include "taskmodel.h"
 #include "vymmodel.h"
 
 extern TaskModel* taskModel;
+extern Main *mainWindow;
 
 //extern QString iconPath;
 
@@ -57,7 +59,13 @@ void TaskEditor::selectionChanged ( const QItemSelection & selected, const QItem
 	if (t) 
 	{
 	    BranchItem *bi=t->getBranch();
-	    if (bi) bi->getModel()->select (bi);
+	    if (bi) 
+	    {
+		VymModel *m=bi->getModel();
+		m->select (bi);
+		if (m!=mainWindow->currentModel() )
+		    mainWindow->gotoModel (m);
+	    }
 	}
     }
 }

@@ -2195,6 +2195,15 @@ VymModel* Main::getModel(uint id) const
     return NULL;    
 }
 
+void Main::gotoModel (VymModel *m)
+{
+    for (int i=0; i<vymViews.count();i++)
+	if (vymViews.at(i)->getModel()==m)
+	{
+	    tabWidget->setCurrentIndex (i);
+	    return;
+	}
+}
 
 void Main::editorChanged(QWidget *)
 {
