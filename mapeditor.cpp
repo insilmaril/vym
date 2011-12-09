@@ -1082,10 +1082,8 @@ void MapEditor::contextMenuEvent ( QContextMenuEvent * e )
 	{
 	    QString foname=((BranchObj*)lmo)->getSystemFlagName(p);
 	    if (foname.startsWith ("system-task")) 
-	    {
-		qDebug()<<"Task flag clicked for context menu";
 		taskContextMenu->popup (e->globalPos() );
-	    } else	
+	    else	
 		// Context Menu on branch or mapcenter
 		branchContextMenu->popup(e->globalPos() );
 	} else

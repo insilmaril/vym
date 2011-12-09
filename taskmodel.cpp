@@ -234,7 +234,7 @@ void TaskModel::recalcPriorities()
 
 	// Sleeping?
 	if (t->getDaysSleep() >0)
-	    p+=1000;
+	    p+=1000 + 5*t->getDaysSleep();
 
 	t->setPriority (p);
 	if (p<minPrio) minPrio=p;

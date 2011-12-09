@@ -2130,7 +2130,7 @@ void VymModel::cycleTaskStatus() // FIXME-0 Testing for now, no savestate...
 void VymModel::setTaskSleep(int n) // FIXME-0 Testing for now, no savestate...
 {
     BranchItem *selbi=getSelectedBranch();
-    if (selbi) 
+    if (selbi ) 
     {
 	Task *task=selbi->getTask();
 	if (task ) 

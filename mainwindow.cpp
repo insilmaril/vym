@@ -995,6 +995,15 @@ void Main::setupEditActions()
     actionListBranches.append (a);
     actionTaskSleep1=a;
 
+    a = new QAction(QPixmap(), tr( "Reset sleep","Task sleep" ), this);
+    a->setShortcutContext (Qt::WindowShortcut);
+    a->setCheckable(false);
+    a->setEnabled (false);
+    switchboard.addConnection(this, a,tr("Edit","Shortcut group"));
+    connect( a, SIGNAL( triggered() ), this, SLOT( editTaskSleep0() ) );
+    actionListBranches.append (a);
+    actionTaskSleep0=a;
+
     a = new QAction(QPixmap(), tr( "Sleep %1 days","Task sleep" ).arg(3), this);
     a->setShortcutContext (Qt::WindowShortcut);
     a->setCheckable(false);
@@ -1009,9 +1018,27 @@ void Main::setupEditActions()
     a->setCheckable(false);
     a->setEnabled (false);
     switchboard.addConnection(this, a,tr("Edit","Shortcut group"));
-    connect( a, SIGNAL( triggered() ), this, SLOT( editTaskSleep3() ) );
+    connect( a, SIGNAL( triggered() ), this, SLOT( editTaskSleep7() ) );
     actionListBranches.append (a);
     actionTaskSleep7=a;
+
+    a = new QAction(QPixmap(), tr( "Sleep %1 weeks","Task sleep" ).arg(2), this);
+    a->setShortcutContext (Qt::WindowShortcut);
+    a->setCheckable(false);
+    a->setEnabled (false);
+    switchboard.addConnection(this, a,tr("Edit","Shortcut group"));
+    connect( a, SIGNAL( triggered() ), this, SLOT( editTaskSleep14() ) );
+    actionListBranches.append (a);
+    actionTaskSleep14=a;
+
+    a = new QAction(QPixmap(), tr( "Sleep %1 weeks","Task sleep" ).arg(4), this);
+    a->setShortcutContext (Qt::WindowShortcut);
+    a->setCheckable(false);
+    a->setEnabled (false);
+    switchboard.addConnection(this, a,tr("Edit","Shortcut group"));
+    connect( a, SIGNAL( triggered() ), this, SLOT( editTaskSleep28() ) );
+    actionListBranches.append (a);
+    actionTaskSleep28=a;
 
     a = new QAction(tr( "Add timestamp","Edit menu" ), this);
     a->setEnabled (false);
@@ -1924,10 +1951,24 @@ void Main::setupContextMenus()
     if (settings.value( "/mainwindow/showTestMenu",false).toBool() )
 	branchContextMenu->addAction ( actionAddAttribute);
 
+
+    branchContextMenu->addSeparator();  
+
+    // Context menu for tasks
+    taskContextMenu = branchContextMenu->addMenu (tr("Tasks","Context menu"));
+	taskContextMenu->addAction (actionToggleTask);
+	taskContextMenu->addAction (actionCycleTaskStatus);
+	taskContextMenu->addSeparator();
+	taskContextMenu->addAction (actionTaskSleep0);
+	taskContextMenu->addAction (actionTaskSleep1);
+	taskContextMenu->addAction (actionTaskSleep3);
+	taskContextMenu->addAction (actionTaskSleep7);
+	taskContextMenu->addAction (actionTaskSleep14);
+	taskContextMenu->addAction (actionTaskSleep28);
+
     // Submenu for Links (URLs, vymLinks)
     branchLinksContextMenu =new QMenu (this);
 
-	branchContextMenu->addSeparator();  
 	branchLinksContextMenu=branchContextMenu->addMenu(tr("References (URLs, vymLinks, ...)","Context menu name"));	
 	branchLinksContextMenu->addAction ( actionOpenURL );
 	branchLinksContextMenu->addAction ( actionOpenURLTab );
@@ -1981,15 +2022,6 @@ void Main::setupContextMenus()
 
     floatimageContextMenu->addSeparator();  
     floatimageContextMenu->addAction ( actionFormatHideLinkUnselected );
-
-    // Context menu for tasks
-    taskContextMenu =new QMenu (this);
-    taskContextMenu->addAction (actionToggleTask);
-    taskContextMenu->addAction (actionCycleTaskStatus);
-    taskContextMenu->addSeparator();
-    taskContextMenu->addAction (actionTaskSleep1);
-    taskContextMenu->addAction (actionTaskSleep3);
-    taskContextMenu->addAction (actionTaskSleep7);
 
     // Context menu for canvas
     canvasContextMenu =new QMenu (this);
@@ -3386,6 +3418,12 @@ void Main::editCycleTaskStatus()
     if (m) m->cycleTaskStatus();   
 }
 
+void Main::editTaskSleep0()
+{
+    VymModel *m=currentModel();
+    if (m) m->setTaskSleep(0);   
+}
+
 void Main::editTaskSleep1()
 {
     VymModel *m=currentModel();
@@ -3402,6 +3440,18 @@ void Main::editTaskSleep7()
 {
     VymModel *m=currentModel();
     if (m) m->setTaskSleep(7);   
+}
+
+void Main::editTaskSleep14()
+{
+    VymModel *m=currentModel();
+    if (m) m->setTaskSleep(14);   
+}
+
+void Main::editTaskSleep28()
+{
+    VymModel *m=currentModel();
+    if (m) m->setTaskSleep(28);   
 }
 
 void Main::editAddTimestamp()

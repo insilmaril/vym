@@ -123,6 +123,8 @@ void Task::setDateSleep(int n)
 {
     if (n>0)
 	date_sleep=QDate::currentDate().addDays (n);
+    else
+	date_sleep.setDate (-1,-1,-1);	// Create invalid date
 }
 
 void Task::setDateSleep(const QString &s)
