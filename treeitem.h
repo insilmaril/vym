@@ -136,8 +136,8 @@ public:
     */	
     virtual void toggleStandardFlag(const QString &flag, FlagRow *master=NULL);
     virtual void toggleSystemFlag  (const QString &flag, FlagRow *master=NULL);
-    virtual bool isActiveStandardFlag (const QString &flag);
-    virtual bool isActiveSystemFlag   (const QString &flag);
+    virtual bool hasActiveStandardFlag (const QString &flag);
+    virtual bool hasActiveSystemFlag   (const QString &flag);
     virtual QStringList activeStandardFlagNames();
     virtual FlagRow* getStandardFlagRow ();
 

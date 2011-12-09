@@ -14,6 +14,7 @@ Task::Task(TaskModel *tm)
     prio='X';
     model=tm;
     date_creation=QDateTime::currentDateTime();
+    date_sleep=QDateTime::currentDateTime();
 }
 
 Task::~Task()
@@ -61,7 +62,6 @@ void Task::setStatus(Status s)
 {
     status=s;
     if (branch) branch->updateTaskFlag();
-    model->recalcPriorities();
 }
 
 Task::Status Task::getStatus()
@@ -90,14 +90,48 @@ int Task::getPriority()
     return prio;
 }
 
-int Task::getAge()
+int Task::getAgeCreation()
 {
     return date_creation.daysTo (QDateTime::currentDateTime() );
+}
+
+int Task::getAgeModified()
+{
+    if (date_modified.isValid() )
+	return date_modified.daysTo (QDateTime::currentDateTime() );
+    else
+	return getAgeCreation();
 }
 
 void Task::setDateCreation (const QString &s)
 {
     date_creation=QDateTime().fromString (s,Qt::ISODate);
+}
+
+
+void Task::setDateModified()
+{
+    date_modified=QDateTime::currentDateTime();
+}
+
+void Task::setDateModified(const QString &s)
+{
+    date_modified=QDateTime().fromString (s,Qt::ISODate);
+}
+
+void Task::setDateSleep(const QString &s)
+{
+    date_sleep=QDateTime().fromString (s,Qt::ISODate);
+    // Let's forget the time here:
+    date_sleep.setTime (QTime (0,0,0) );
+}
+
+int Task::getDaysSleep()
+{
+    if (date_sleep.isValid() )
+	return QDateTime::currentDateTime().daysTo (date_sleep);
+    else
+	return 0;
 }
 
 void Task::setBranch (BranchItem *bi)
@@ -124,7 +158,9 @@ QString Task::saveToDir()
 {
     return singleElement ("task",
 	attribut ("status",getStatusString() ) +
-	attribut ("date_creation",date_creation.toString (Qt::ISODate) )
+	attribut ("date_creation",date_creation.toString (Qt::ISODate) ) +
+	attribut ("date_modified",date_modified.toString (Qt::ISODate) ) +
+	attribut ("date_sleep",date_sleep.toString (Qt::ISODate) )
      );
 }
 

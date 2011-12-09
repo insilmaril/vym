@@ -19,8 +19,9 @@ extern bool debug;
 extern QPrinter *printer;
 
 extern QMenu* branchContextMenu;
-extern QMenu* floatimageContextMenu;
 extern QMenu* canvasContextMenu;
+extern QMenu* floatimageContextMenu;
+extern QMenu* taskContextMenu;
 
 extern Settings settings;
 extern QString iconPath;
@@ -1072,11 +1073,21 @@ void MapEditor::contextMenuEvent ( QContextMenuEvent * e )
     {	// MapObj was found
 	model->select (ti);
 
+	LinkableMapObj* lmo=NULL;
+	BranchItem* selbi=model->getSelectedBranch();
+	if (ti) lmo=((MapItem*)ti)->getLMO();
+
 	// Context Menu 
-	if (model->getSelectedBranchObj() ) 
+	if (lmo && selbi )
 	{
-	    // Context Menu on branch or mapcenter
-	    branchContextMenu->popup(e->globalPos() );
+	    QString foname=((BranchObj*)lmo)->getSystemFlagName(p);
+	    if (foname.startsWith ("system-task")) 
+	    {
+		qDebug()<<"Task flag clicked for context menu";
+		taskContextMenu->popup (e->globalPos() );
+	    } else	
+		// Context Menu on branch or mapcenter
+		branchContextMenu->popup(e->globalPos() );
 	} else
 	{
 	    if (model->getSelectedImage() )
@@ -1089,7 +1100,6 @@ void MapEditor::contextMenuEvent ( QContextMenuEvent * e )
 		    // Context Menu on XLink
 		    model->editXLink();
 	    }
-
 	}   
     } else 
     { // No MapObj found, we are on the Canvas itself

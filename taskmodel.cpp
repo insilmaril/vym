@@ -37,7 +37,7 @@ int TaskModel::rowCount(const QModelIndex &parent) const
 int TaskModel::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    return 5;
+    return 7;
 }
 
 QVariant TaskModel::data(const QModelIndex &index, int role) const
@@ -53,17 +53,21 @@ QVariant TaskModel::data(const QModelIndex &index, int role) const
     if (role == Qt::DisplayRole) 
     {
         if (index.column() == 0)
-            return maxPrio +1 - tasks.at(index.row())->getPriority();
+            return tasks.at(index.row())->getPriority();
         else if (index.column() == 1)
             return tasks.at(index.row())->getStatusString();
         else if (index.column() == 2)
-	    return tasks.at(index.row())->getAge();
+	    return tasks.at(index.row())->getAgeCreation();
         else if (index.column() == 3)
+	    return tasks.at(index.row())->getAgeModified();
+        else if (index.column() == 4)
+	    return tasks.at(index.row())->getDaysSleep();
+        else if (index.column() == 5)
 	{
 	    if (bi) return bi->getModel()->getMapName();
             return "?";	// Should never happen
 	}
-        else if (index.column() == 4)
+        else if (index.column() == 6)
             return tasks.at(index.row())->getName();
     }
     else // role != Qt::DisplayRole
@@ -89,10 +93,14 @@ QVariant TaskModel::headerData(int section, Qt::Orientation orientation, int rol
             case 1:
                 return tr("Status","TaskEditor");
             case 2:
-                return tr("Age","TaskEditor");
+                return tr("Age total","TaskEditor");
             case 3:
-                return tr("Map","TaskEditor");
+                return tr("Age mod.","TaskEditor");
             case 4:
+                return tr("Sleep","TaskEditor");
+            case 5:
+                return tr("Map","TaskEditor");
+            case 6:
                 return tr("Task","TaskEditor");
             default:
                 return QVariant();
@@ -182,7 +190,6 @@ Task* TaskModel::createTask (BranchItem *bi)
 
 	bi->setTask (task);
 
-	recalcPriorities();
 	return task;
     }
     qWarning()<<"TaskEditor::addItem - item exists";
@@ -196,17 +203,47 @@ void TaskModel::deleteTask (Task* t)
 	removeRows(pos, 1,QModelIndex() );
 }
 
-void TaskModel::recalcPriorities()  //FIXME-1 not implemented yet
+void TaskModel::recalcPriorities() 
 {
-    maxPrio=0;
+    int minPrio=1000000;
     foreach (Task *t,tasks)
     {   
 	int p=0;
-	p+=(t->getStatus())*100;
-	p+=tasks.indexOf(t);
+	BranchItem *bi=t->getBranch();
+
+	// Status
+	switch (t->getStatus() )
+	{
+	    case Task::Finished: p+=2000; break;
+	    case Task::WIP: p+=100; break;
+	    case Task::NotStarted: break;
+	}
+
+	// Color (importance)
+	QColor c=bi->getHeadingColor();
+	if (c==QColor ("#ff0000") ) p-=40;
+	if (c==QColor ("#d95100") ) p-=30;
+	if (c==QColor ("#005500") ) p-=20;
+	if (c==QColor ("#00aa7f") ) p-=10;
+
+	// Stopsign
+	if (bi->hasActiveStandardFlag ("stopsign") ) p-=100;
+
+	// Age
+	p-=t->getAgeModified();
+
+	// Sleeping?
+	if (t->getDaysSleep() >0)
+	    p+=1000;
+
 	t->setPriority (p);
+	if (p<minPrio) minPrio=p;
+    }
+    // Normalize, so that most important task has prio 1
+    foreach (Task *t,tasks)
+    {   
+	t->setPriority (1-  minPrio + t->getPriority() );
 	emitDataHasChanged (t);
-	if (p>maxPrio) maxPrio=p;
     }
 }
 

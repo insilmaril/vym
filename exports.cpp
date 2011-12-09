@@ -219,11 +219,11 @@ void ExportAO::doExport()
 			break;
 		    default:	// depth 4 are the items we need to know
 			if (cur->depth()>4) ts<<curIndent;
-			if (cur->isActiveStandardFlag ("hook-green"))
+			if (cur->hasActiveStandardFlag ("hook-green"))
 			    ts <<colString+cur->getHeadingPlain()<< " [DONE] ";
-			else	if (cur->isActiveStandardFlag ("wip"))
+			else	if (cur->hasActiveStandardFlag ("wip"))
 			    ts <<colString+cur->getHeadingPlain()<< " [WIP] ";
-			else	if (cur->isActiveStandardFlag ("cross-red"))
+			else	if (cur->hasActiveStandardFlag ("cross-red"))
 			    ts <<colString+cur->getHeadingPlain()<< " [NOT STARTED] ";
 			else	
 			    ts <<"  - "+cur->getHeadingPlain();

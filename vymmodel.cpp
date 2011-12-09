@@ -21,6 +21,7 @@
 #include "process.h"
 #include "slideitem.h"
 #include "slidemodel.h"
+#include "taskeditor.h"
 #include "taskmodel.h"
 #include "warningdialog.h"
 #include "xlinkitem.h"
@@ -37,6 +38,7 @@ extern Settings settings;
 extern QString tmpVymDir;
 
 extern NoteEditor *noteEditor;
+extern TaskEditor *taskEditor;
 extern FlagRow *standardFlagsMaster;
 
 extern QString clipboardDir;
@@ -139,8 +141,10 @@ void VymModel::init ()
     connect(animationTimer, SIGNAL(timeout()), this, SLOT(animate()));
 
     // View - map
-    defaultFont=QFont ("Sans Serif,8,-1,5,50,0,0,0,0,0");
-    defaultFontSize=16;
+    //defaultFont=QFont ("Sans Serif,8,-1,5,50,0,0,0,0,0,0");
+    defaultFont=QFont ();
+qDebug()<<"VM::constr  f="<<defaultFont.toString();
+    //defaultFontSize=16;
     defLinkColor=QColor (0,0,255);
     linkcolorhint=LinkableMapObj::DefaultColor;
     linkstyle=LinkableMapObj::PolyParabel;
@@ -232,6 +236,8 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix, bool w
     if (linkcolorhint==LinkableMapObj::HeadingColor) 
 	colhint=xml.attribut("linkColorHint","HeadingColor");
 
+    qDebug()<<"VM::saveToDir f="<<defaultFont.toString()<<"\nsaveSel="<<saveSel;
+
     QString mapAttr=xml.attribut("version",vymVersion);
     if (!saveSel)
 	mapAttr+= xml.attribut("author",author) +
@@ -263,7 +269,7 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix, bool w
     if (!saveSel)
     {
 	// Save all mapcenters as complete map, if saveSel not set
-	    s+=saveTreeToDir(tmpdir,prefix,offset,tmpLinks);
+	s+=saveTreeToDir(tmpdir,prefix,offset,tmpLinks);
 
 	// Save local settings
 	s+=settings.getDataXML (destPath);
@@ -298,8 +304,10 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix, bool w
     for (int i=0; i<tmpLinks.count();++i)
 	s+=tmpLinks.at(i)->saveToDir();
 
+    qDebug()<<"VM::saveToDir  i)";
     // Save slides  // FIXME-2 preliminary, format may change!
-    s+=slideModel->saveToDir();
+    s+=slideModel->saveToDir();	//FIXME-0 saves same slides several times. Also shouldn't save for selection
+    qDebug()<<"VM::saveToDir  j)";
 
     xml.decIndent();
     s+=xml.endElement("vymmap");
@@ -543,6 +551,8 @@ ErrorCode VymModel::loadMap (
     
 	    reposition();   // to generate bbox sizes
 	    emitSelectionChanged();
+	    taskModel->recalcPriorities();
+	    taskEditor->sort();
 	} else 
 	{
 	    QMessageBox::critical( 0, tr( "Critical Parse Error" ),
@@ -1240,7 +1250,7 @@ void VymModel::saveState(const SaveMode &savemode, const QString &undoSelection,
 
     if (blockSaveState) return;
 
-    if (debug) qDebug() << "VM::saveState() for  "<<qPrintable (mapName);
+    if (debug) qDebug() << "VM::saveState() for  "<<mapName;
     
     // Find out current undo directory
     if (undosAvail<stepsTotal) undosAvail++;
@@ -1271,7 +1281,6 @@ void VymModel::saveState(const SaveMode &savemode, const QString &undoSelection,
 	undoCommand=undoCom;
 	undoCommand.replace ("PATH",bakMapPath);
     }
-
 
     if (!backupXML.isEmpty())
 	// Write XML Data to disk
@@ -2109,7 +2118,11 @@ void VymModel::cycleTaskStatus() // FIXME-0 Testing for now, no savestate...
     if (selbi) 
     {
 	Task *task=selbi->getTask();
-	if (task ) task->cycleStatus();
+	if (task ) 
+	{
+	    task->cycleStatus();
+	    task->setDateModified();
+	}
     }
     updateTaskFlag();
 }
@@ -3187,7 +3200,7 @@ ItemList VymModel::getTargets()
 
     while (cur) 
     {
-	if (cur->isActiveSystemFlag("system-target"))
+	if (cur->hasActiveSystemFlag("system-target"))
 	    targets[cur->getID()]=cur->getHeading();
 	nextBranch(cur,prev);
     }
@@ -3200,7 +3213,7 @@ void VymModel::toggleStandardFlag (const QString &name, FlagRow *master)
     if (bi) 
     {
 	QString u,r;
-	if (bi->isActiveStandardFlag(name))
+	if (bi->hasActiveStandardFlag(name))
 	{
 	    r="unsetFlag";
 	    u="setFlag";
@@ -5250,6 +5263,7 @@ QFont VymModel::getMapDefaultFont ()
 void VymModel::setMapDefaultFont (const QFont &f)  
 {
     defaultFont=f;
+    qDebug()<<"VM::setMapDefFont f="<<f.toString();
 }
 
 qreal VymModel::getMapDefaultFontSize ()  
@@ -5829,7 +5843,10 @@ void VymModel::emitDataHasChanged (TreeItem *ti)
     QModelIndex ix=index(ti);
     emit (dataChanged (ix,ix) );
     if (ti->isBranchLikeType() && ((BranchItem*)ti)->getTask()  )
+    {
 	taskModel->emitDataHasChanged ( ((BranchItem*)ti)->getTask() );
+	taskModel->recalcPriorities();
+    }
 }
 
 void VymModel::emitUpdateQueries ()

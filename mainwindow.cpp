@@ -64,15 +64,16 @@ extern QString vymBuildDate;
 extern bool debug;
 extern bool bugzillaClientAvailable;
 
-QMenu* targetsContextMenu;
-QMenu* branchContextMenu;
 QMenu* branchAddContextMenu;
-QMenu* branchRemoveContextMenu;
+QMenu* branchContextMenu;
 QMenu* branchLinksContextMenu;
+QMenu* branchRemoveContextMenu;
 QMenu* branchXLinksContextMenuEdit;
 QMenu* branchXLinksContextMenuFollow;
-QMenu* floatimageContextMenu;
 QMenu* canvasContextMenu;
+QMenu* floatimageContextMenu;
+QMenu* targetsContextMenu;
+QMenu* taskContextMenu;
 QMenu* fileLastMapsMenu;
 QMenu* fileImportMenu;
 QMenu* fileExportMenu;
@@ -965,7 +966,7 @@ void Main::setupEditActions()
     actionListItems.append (a);
     actionToggleHideExport=a;
 
-    a = new QAction(QPixmap(), tr( "Toggle task","Edit menu" ), this);
+    a = new QAction(QPixmap(flagsPath+"flag-task.png"), tr( "Toggle task","Edit menu" ), this);
     a->setShortcut (Qt::Key_W + Qt::SHIFT);
     a->setShortcutContext (Qt::WindowShortcut);
     a->setCheckable(true);
@@ -1323,7 +1324,7 @@ void Main::setupViewActions()
     connect( a, SIGNAL( triggered() ), this, SLOT(windowToggleTreeEditor() ) );
     actionViewToggleTreeEditor=a;
 
-    a = new QAction(QPixmap(), tr( "Toggle Task editor","View action" ),this);
+    a = new QAction(QPixmap(iconPath+"taskeditor.png"), tr( "Toggle Task editor","View action" ),this);
     a->setShortcut ( Qt::Key_Q );	// Toggle Tree Editor 
     switchboard.addConnection(a,tr("View shortcuts","Shortcut group"));
     a->setCheckable(true);
@@ -1400,7 +1401,6 @@ void Main::setupModeActions()
     actionListMap.append (a);
     actionModModeColor=a;
 
-    a= new QAction( QPixmap(iconPath+"modecopy.png"), tr( "Use modifier to copy","Mode modifier" ), actionGroupModModes );
     a->setShortcut( Qt::Key_K); 
     switchboard.addConnection(this,a,tr("Modes","Shortcut group"));
     a->setCheckable(true);
@@ -1955,6 +1955,10 @@ void Main::setupContextMenus()
     floatimageContextMenu->addSeparator();  
     floatimageContextMenu->addAction ( actionFormatHideLinkUnselected );
 
+    // Context menu for tasks
+    taskContextMenu =new QMenu (this);
+    taskContextMenu->addAction (actionToggleTask);
+    taskContextMenu->addAction (actionCycleTaskStatus);
 
     // Context menu for canvas
     canvasContextMenu =new QMenu (this);
@@ -2116,7 +2120,7 @@ void Main::setupToolbars()
     modModesToolbar->addAction(actionModModeColor);
     modModesToolbar->addAction(actionModModeCopy);
     modModesToolbar->addAction(actionModModeXLink);
-
+    
     // Add all toolbars to View menu
     toolbarsMenu->addAction (fileToolbar->toggleViewAction() );
     toolbarsMenu->addAction (clipboardToolbar->toggleViewAction() );
@@ -3357,7 +3361,7 @@ void Main::editAddTimestamp()
     if (m) m->addTimestamp();	
 }
 
-void Main::editMapInfo()
+void Main::editMapInfo()    //FIXME-2 add slides and tasks
 {
     VymModel *m=currentModel();
     if (!m) return;
@@ -4255,6 +4259,10 @@ void Main::changeSelection (VymModel *model, const QItemSelection &newsel, const
 	    if (!status.isEmpty() ) statusMessage (status);
 
 	    headingEditor->setText (ti->getHeading() );
+
+	    // Select in TaskEditor, if necessary
+	    if (ti->isBranchLikeType() )
+		taskEditor->select ( ((BranchItem*)ti)->getTask() );
 	} else
 	    noteEditor->setInactive();
 
@@ -4609,8 +4617,11 @@ void Main::standardFlagChanged()
 
 void Main::testFunction1()
 {
+/*
     if (!currentMapEditor()) return;
     currentMapEditor()->testFunction1();
+*/
+    taskEditor->sort();
 }
 
 void Main::testFunction2()

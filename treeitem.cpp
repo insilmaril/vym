@@ -529,12 +529,12 @@ void TreeItem::toggleSystemFlag(const QString &name, FlagRow *master)
     model->emitDataHasChanged(this);	// FIXME-3 better call from VM?
 }
 
-bool TreeItem::isActiveStandardFlag (const QString &name)
+bool TreeItem::hasActiveStandardFlag (const QString &name)
 {
     return standardFlags.isActive (name);
 }
 
-bool TreeItem::isActiveSystemFlag (const QString &name)
+bool TreeItem::hasActiveSystemFlag (const QString &name)
 {
     return systemFlags.isActive (name);
 }

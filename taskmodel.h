@@ -33,7 +33,6 @@ public:
 
 private:
     QList <Task*> tasks;
-    int maxPrio;
  };
 
 #endif
