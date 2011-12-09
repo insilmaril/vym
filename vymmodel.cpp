@@ -2127,6 +2127,21 @@ void VymModel::cycleTaskStatus() // FIXME-0 Testing for now, no savestate...
     updateTaskFlag();
 }
 
+void VymModel::setTaskSleep(int n) // FIXME-0 Testing for now, no savestate...
+{
+    BranchItem *selbi=getSelectedBranch();
+    if (selbi) 
+    {
+	Task *task=selbi->getTask();
+	if (task ) 
+	{
+	    task->setDateSleep (n);
+	    task->setDateModified();
+	}
+    }
+    updateTaskFlag();
+}
+
 void VymModel::addTimestamp()	//FIXME-3 new function, localize
 {
     BranchItem *selbi=addNewBranch();

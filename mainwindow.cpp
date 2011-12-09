@@ -986,6 +986,33 @@ void Main::setupEditActions()
     actionListBranches.append (a);
     actionCycleTaskStatus=a;
 
+    a = new QAction(QPixmap(), tr( "Sleep %1 day","Task sleep" ).arg(1), this);
+    a->setShortcutContext (Qt::WindowShortcut);
+    a->setCheckable(false);
+    a->setEnabled (false);
+    switchboard.addConnection(this, a,tr("Edit","Shortcut group"));
+    connect( a, SIGNAL( triggered() ), this, SLOT( editTaskSleep1() ) );
+    actionListBranches.append (a);
+    actionTaskSleep1=a;
+
+    a = new QAction(QPixmap(), tr( "Sleep %1 days","Task sleep" ).arg(3), this);
+    a->setShortcutContext (Qt::WindowShortcut);
+    a->setCheckable(false);
+    a->setEnabled (false);
+    switchboard.addConnection(this, a,tr("Edit","Shortcut group"));
+    connect( a, SIGNAL( triggered() ), this, SLOT( editTaskSleep3() ) );
+    actionListBranches.append (a);
+    actionTaskSleep3=a;
+
+    a = new QAction(QPixmap(), tr( "Sleep %1 days","Task sleep" ).arg(7), this);
+    a->setShortcutContext (Qt::WindowShortcut);
+    a->setCheckable(false);
+    a->setEnabled (false);
+    switchboard.addConnection(this, a,tr("Edit","Shortcut group"));
+    connect( a, SIGNAL( triggered() ), this, SLOT( editTaskSleep3() ) );
+    actionListBranches.append (a);
+    actionTaskSleep7=a;
+
     a = new QAction(tr( "Add timestamp","Edit menu" ), this);
     a->setEnabled (false);
     actionListBranches.append(a);
@@ -1959,6 +1986,10 @@ void Main::setupContextMenus()
     taskContextMenu =new QMenu (this);
     taskContextMenu->addAction (actionToggleTask);
     taskContextMenu->addAction (actionCycleTaskStatus);
+    taskContextMenu->addSeparator();
+    taskContextMenu->addAction (actionTaskSleep1);
+    taskContextMenu->addAction (actionTaskSleep3);
+    taskContextMenu->addAction (actionTaskSleep7);
 
     // Context menu for canvas
     canvasContextMenu =new QMenu (this);
@@ -3353,6 +3384,24 @@ void Main::editCycleTaskStatus()
 {
     VymModel *m=currentModel();
     if (m) m->cycleTaskStatus();   
+}
+
+void Main::editTaskSleep1()
+{
+    VymModel *m=currentModel();
+    if (m) m->setTaskSleep(1);   
+}
+
+void Main::editTaskSleep3()
+{
+    VymModel *m=currentModel();
+    if (m) m->setTaskSleep(3);   
+}
+
+void Main::editTaskSleep7()
+{
+    VymModel *m=currentModel();
+    if (m) m->setTaskSleep(7);   
 }
 
 void Main::editAddTimestamp()

@@ -332,6 +332,9 @@ public:
     /*! Cylce through task states */
     void cycleTaskStatus();	    
 
+    /*! Set task to sleep for n days */
+    void setTaskSleep(int n);
+
     void addTimestamp();	
 
     void copy();			//!< Copy to clipboard

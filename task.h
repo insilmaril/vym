@@ -29,6 +29,7 @@ public:
     void setDateCreation (const QString &s);
     void setDateModified ();
     void setDateModified (const QString &s);
+    void setDateSleep    (int n);
     void setDateSleep    (const QString &s);
     int getDaysSleep();
     QString getName();
@@ -43,7 +44,7 @@ private:
     BranchItem *branch;
     QDateTime date_creation;
     QDateTime date_modified;
-    QDateTime date_sleep;
+    QDate     date_sleep;
 };
 
 #endif

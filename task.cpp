@@ -14,7 +14,7 @@ Task::Task(TaskModel *tm)
     prio='X';
     model=tm;
     date_creation=QDateTime::currentDateTime();
-    date_sleep=QDateTime::currentDateTime();
+    date_sleep=QDate::currentDate();
 }
 
 Task::~Task()
@@ -119,17 +119,21 @@ void Task::setDateModified(const QString &s)
     date_modified=QDateTime().fromString (s,Qt::ISODate);
 }
 
+void Task::setDateSleep(int n)
+{
+    if (n>0)
+	date_sleep=QDate::currentDate().addDays (n);
+}
+
 void Task::setDateSleep(const QString &s)
 {
-    date_sleep=QDateTime().fromString (s,Qt::ISODate);
-    // Let's forget the time here:
-    date_sleep.setTime (QTime (0,0,0) );
+    date_sleep=QDate().fromString (s,Qt::ISODate);
 }
 
 int Task::getDaysSleep()
 {
     if (date_sleep.isValid() )
-	return QDateTime::currentDateTime().daysTo (date_sleep);
+	return QDate::currentDate().daysTo (date_sleep);
     else
 	return 0;
 }
