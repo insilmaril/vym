@@ -26,9 +26,9 @@ TaskEditor::TaskEditor(QWidget *)
     mainLayout->addWidget (view);
     setLayout (mainLayout);
 
+    view->verticalHeader()->hide();
     view->setSelectionBehavior(QAbstractItemView::SelectRows);
     view->horizontalHeader()->setStretchLastSection(true);
-    view->verticalHeader()->hide();
     view->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
     proxyModel = new QSortFilterProxyModel();
@@ -89,5 +89,7 @@ void TaskEditor::selectionChanged ( const QItemSelection & selected, const QItem
 	    }
 	}
     }
+    view->resizeColumnsToContents();
+    view->horizontalHeader()->setStretchLastSection(true);
 }
 
