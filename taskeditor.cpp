@@ -54,11 +54,15 @@ void TaskEditor::sort()
     proxyModel->sort( proxyModel->sortColumn(), proxyModel->sortOrder() );
 }
 
-bool TaskEditor::select (Task *task)	//FIXME-0 select whole row
+bool TaskEditor::select (Task *task)	
 {
     if (task)
     {
-	view->selectionModel()->select (proxyModel->mapFromSource(taskModel->index (task) ), QItemSelectionModel::ClearAndSelect  );
+	QItemSelection sel (
+	    proxyModel->mapFromSource(taskModel->index (task) ), 
+	    proxyModel->mapFromSource(taskModel->indexRowEnd (task) ) ); 
+
+	view->selectionModel()->select (sel, QItemSelectionModel::ClearAndSelect  );
 	return true;
     }
     return false;

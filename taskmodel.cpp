@@ -20,6 +20,15 @@ QModelIndex TaskModel::index (Task* t)
 	return createIndex (n,0,t);
 }
 
+QModelIndex TaskModel::indexRowEnd (Task* t)
+{
+    int n=tasks.indexOf (t);
+    if (n<0)
+	return QModelIndex();
+    else    
+	return createIndex (n,6,t);
+}
+
 Task* TaskModel::getTask (const QModelIndex &ix) const
 {
     if (ix.isValid() )
