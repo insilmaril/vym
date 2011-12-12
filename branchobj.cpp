@@ -439,7 +439,7 @@ void BranchObj::updateData()
 void BranchObj::setDefAttr (BranchModification mod, bool keepFrame)
 {
     QFont font=treeItem->getModel()->getMapDefaultFont();
-    qreal fontsize=treeItem->getModel()->getMapDefaultFontSize();
+    qreal fontsize=font.pointSizeF();
     switch (treeItem->depth())
     {
 	case 0: 

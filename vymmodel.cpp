@@ -141,10 +141,7 @@ void VymModel::init ()
     connect(animationTimer, SIGNAL(timeout()), this, SLOT(animate()));
 
     // View - map
-    //defaultFont=QFont ("Sans Serif,8,-1,5,50,0,0,0,0,0,0");
-    defaultFont=QFont ();
-qDebug()<<"VM::constr  f="<<defaultFont.toString();
-    //defaultFontSize=16;
+    defaultFont.setPointSizeF (16);
     defLinkColor=QColor (0,0,255);
     linkcolorhint=LinkableMapObj::DefaultColor;
     linkstyle=LinkableMapObj::PolyParabel;
@@ -231,12 +228,11 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix, bool w
 	    break;
     }	
 
+qDebug()<<"VM::save font="<<defaultFont.toString();
     QString s="<?xml version=\"1.0\" encoding=\"utf-8\"?><!DOCTYPE vymmap>\n";
     QString colhint="";
     if (linkcolorhint==LinkableMapObj::HeadingColor) 
 	colhint=xml.attribut("linkColorHint","HeadingColor");
-
-    qDebug()<<"VM::saveToDir f="<<defaultFont.toString()<<"\nsaveSel="<<saveSel;
 
     QString mapAttr=xml.attribut("version",vymVersion);
     if (!saveSel)
@@ -246,7 +242,6 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix, bool w
 		  xml.attribut("branchCount", QString().number(branchCount())) +
 		  xml.attribut("backgroundColor", mapEditor->getScene()->backgroundBrush().color().name() ) +
 		  xml.attribut("defaultFont", defaultFont.toString() ) +
-		  xml.attribut("defaultFontSize", QString().setNum(defaultFontSize )) +
 		  xml.attribut("selectionColor", mapEditor->getSelectionColor().name() ) +
 		  xml.attribut("linkStyle", ls ) +
 		  xml.attribut("linkColor", defLinkColor.name() ) +
@@ -5278,17 +5273,6 @@ QFont VymModel::getMapDefaultFont ()
 void VymModel::setMapDefaultFont (const QFont &f)  
 {
     defaultFont=f;
-    qDebug()<<"VM::setMapDefFont f="<<f.toString();
-}
-
-qreal VymModel::getMapDefaultFontSize ()  
-{
-    return defaultFontSize;
-}
-
-void VymModel::setMapDefaultFontSize (const qreal &s)  
-{
-    defaultFontSize=s;
 }
 
 LinkableMapObj::ColorHint VymModel::getMapLinkColorHint()   // FIXME-3 move to ME

@@ -80,12 +80,9 @@ bool parseVYMHandler::startElement  ( const QString&, const QString&,
 	    }	    
 	    if (!atts.value( "defaultFont").isEmpty() )
 	    {
-		QFont font (atts.value("defaultFont"));
+		QFont font;
+		font.fromString(atts.value("defaultFont"));
 		model->setMapDefaultFont (font);
-	    }	    
-	    if (!atts.value( "defaultFontSize").isEmpty() )
-	    {
-		model->setMapDefaultFontSize (atts.value ("defaultFontSize").toDouble() );
 	    }	    
 	    if (!atts.value( "selectionColor").isEmpty() )
 	    {

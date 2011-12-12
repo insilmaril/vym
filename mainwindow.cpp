@@ -4031,11 +4031,7 @@ void Main::formatSelectFont()
     {
 	bool ok;
 	QFont font = QFontDialog::getFont( &ok, m->getMapDefaultFont(), this);
-	if (ok) 
-	{
-	    m->setMapDefaultFont (font);
-	    m->setMapDefaultFontSize (font.pointSizeF() );
-	}
+	if (ok) m->setMapDefaultFont (font);
     }
 }
 
