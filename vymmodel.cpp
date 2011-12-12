@@ -228,7 +228,6 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix, bool w
 	    break;
     }	
 
-qDebug()<<"VM::save font="<<defaultFont.toString();
     QString s="<?xml version=\"1.0\" encoding=\"utf-8\"?><!DOCTYPE vymmap>\n";
     QString colhint="";
     if (linkcolorhint==LinkableMapObj::HeadingColor) 
@@ -299,10 +298,8 @@ qDebug()<<"VM::save font="<<defaultFont.toString();
     for (int i=0; i<tmpLinks.count();++i)
 	s+=tmpLinks.at(i)->saveToDir();
 
-    qDebug()<<"VM::saveToDir  i)";
     // Save slides  // FIXME-2 preliminary, format may change!
     s+=slideModel->saveToDir();	//FIXME-0 saves same slides several times. Also shouldn't save for selection
-    qDebug()<<"VM::saveToDir  j)";
 
     xml.decIndent();
     s+=xml.endElement("vymmap");
@@ -2090,7 +2087,7 @@ void VymModel::toggleHideExport()
     }
 }
 
-void VymModel::toggleTask() // FIXME-0 Testing for now, no savestate...
+void VymModel::toggleTask() // FIXME-1 Testing for now, no savestate...
 {
     BranchItem *selbi=getSelectedBranch();
     if (selbi) 
@@ -2107,7 +2104,7 @@ void VymModel::toggleTask() // FIXME-0 Testing for now, no savestate...
     }
 }
 
-void VymModel::cycleTaskStatus() // FIXME-0 Testing for now, no savestate...
+void VymModel::cycleTaskStatus() // FIXME-1 Testing for now, no savestate...
 {
     BranchItem *selbi=getSelectedBranch();
     if (selbi) 
@@ -2122,7 +2119,7 @@ void VymModel::cycleTaskStatus() // FIXME-0 Testing for now, no savestate...
     updateTaskFlag();
 }
 
-void VymModel::setTaskSleep(int n) // FIXME-0 Testing for now, no savestate...
+void VymModel::setTaskSleep(int n) // FIXME-1 Testing for now, no savestate...
 {
     BranchItem *selbi=getSelectedBranch();
     if (selbi ) 
@@ -5050,7 +5047,7 @@ void VymModel::updateTaskFlag()
 	    switch (task->getStatus() ) 
 	    {
 		case Task::NotStarted: 
-		    //systemFlags.activate("system-task-new");  //FIXME-0
+		    //systemFlags.activate("system-task-new");  //FIXME-1
 		    break;
 		case Task::WIP: 
 		    //systemFlags.activate("system-task-wip");
