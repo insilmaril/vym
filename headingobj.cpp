@@ -31,6 +31,7 @@ void HeadingObj::init()
     color=QColor ("black");
     font=QFont();
     heading="";
+    angle=0;
 }
 
 void HeadingObj::copy(HeadingObj *other)
