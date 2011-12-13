@@ -145,8 +145,7 @@ QRectF MapItem::getBBoxFlag (const QString &fname)
 void MapItem::setRotation(const qreal &a)
 {
     angle=a;
-    if (lmo)
-	((OrnamentedObj*)lmo)->setRotation (a);
+    if (lmo) ((OrnamentedObj*)lmo)->setRotation (a);
 }
 
 MapObj* MapItem::getMO()

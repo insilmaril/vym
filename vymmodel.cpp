@@ -2087,11 +2087,12 @@ void VymModel::toggleHideExport()
     }
 }
 
-void VymModel::toggleTask() // FIXME-2 Testing for now, no savestate...
+void VymModel::toggleTask() 
 {
     BranchItem *selbi=getSelectedBranch();
     if (selbi) 
     {
+	setChanged(); // FIXME-1 Testing for now, no savestate...
 	Task *task=selbi->getTask();
 	if (!task )
 	    taskModel->createTask (selbi);
@@ -2104,11 +2105,12 @@ void VymModel::toggleTask() // FIXME-2 Testing for now, no savestate...
     }
 }
 
-void VymModel::cycleTaskStatus() // FIXME-2 Testing for now, no savestate...
+void VymModel::cycleTaskStatus() 
 {
     BranchItem *selbi=getSelectedBranch();
     if (selbi) 
     {
+	setChanged(); // FIXME-1 Testing for now, no savestate...
 	Task *task=selbi->getTask();
 	if (task ) 
 	{
@@ -2119,11 +2121,12 @@ void VymModel::cycleTaskStatus() // FIXME-2 Testing for now, no savestate...
     updateTaskFlag();
 }
 
-void VymModel::setTaskSleep(int n) // FIXME-2 Testing for now, no savestate...
+void VymModel::setTaskSleep(int n) 
 {
     BranchItem *selbi=getSelectedBranch();
     if (selbi ) 
     {
+	setChanged(); // FIXME-1 Testing for now, no savestate...
 	Task *task=selbi->getTask();
 	if (task ) 
 	{
