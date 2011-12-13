@@ -4712,11 +4712,8 @@ void Main::standardFlagChanged()
 
 void Main::testFunction1()
 {
-/*
     if (!currentMapEditor()) return;
     currentMapEditor()->testFunction1();
-*/
-    taskEditor->sort();
 }
 
 void Main::testFunction2()
