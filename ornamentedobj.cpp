@@ -85,15 +85,10 @@ QRectF OrnamentedObj::getBBoxHeading()
     return heading->getBBox();
 }
 
-qreal OrnamentedObj::getRotation()
-{
-    return angle;
-}
-
 void OrnamentedObj::setRotation (const qreal &a)
 {
-    angle=a;
-    heading->setRotation(a);
+    MapObj::setRotation (a);
+    heading->setRotation(a); // FIXME-2 duplicated code...
 }
 
 FrameObj* OrnamentedObj::getFrame()

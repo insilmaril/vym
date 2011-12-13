@@ -53,6 +53,9 @@ public:
     virtual QPolygonF getClickPoly();		//! returns polygon to click
     virtual bool isInClickBox (const QPointF &p);   //! Checks if p is in clickBox
     virtual QSizeF getSize();			//! returns size of bounding box
+
+    virtual void setRotation(const qreal &a);
+    virtual qreal getRotation();
     virtual bool isVisibleObj();
     virtual void setVisibility(bool);
     virtual void positionBBox()=0;       
@@ -63,6 +66,8 @@ protected:
     QPolygonF clickPoly;		    // area where mouseclicks are found
     QPointF absPos;		    // Position on canvas
     bool visible;
+
+    qreal angle;		    //! Rotation angle
 
     TreeItem *treeItem;		    //! Crossrefence to treemodel
 

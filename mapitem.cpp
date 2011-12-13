@@ -113,6 +113,13 @@ QString MapItem::getMapAttr ()
 	s+=attribut ("hideLink","true");
     else
 	s+=attribut ("hideLink","false");
+
+    // Rotation angle
+    if (lmo)
+	angle=lmo->getRotation();
+    if (angle!=0)	
+	s+=attribut("rotation",QString().setNum(angle) );
+	
     return s;
 }
 
@@ -133,6 +140,13 @@ QRectF MapItem::getBBoxFlag (const QString &fname)
 	return ((OrnamentedObj*)lmo)->getBBoxFlag (fname);
     else    
 	return QRectF ();
+}
+
+void MapItem::setRotation(const qreal &a)
+{
+    angle=a;
+    if (lmo)
+	((OrnamentedObj*)lmo)->setRotation (a);
 }
 
 MapObj* MapItem::getMO()

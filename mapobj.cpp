@@ -144,6 +144,16 @@ QSizeF MapObj::getSize()
 }
 
 
+void MapObj::setRotation (const qreal &a)
+{
+    angle=a;
+}
+
+qreal MapObj::getRotation ()
+{
+    return angle;
+}
+
 bool MapObj::isVisibleObj()
 {
     return visible;

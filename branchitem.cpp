@@ -120,7 +120,6 @@ QString BranchItem::saveToDir (const QString &tmpdir,const QString &prefix, cons
 	+getMapAttr()
 	+getGeneralAttr()
 	+scrolledAttr 
-    //	+areaAttr   // FIXME-4 not needed anymore. Wait until end of 2010 before removing...
 	+getIncludeImageAttr() 
 	);
     incIndent();
@@ -132,6 +131,10 @@ QString BranchItem::saveToDir (const QString &tmpdir,const QString &prefix, cons
     // Save frame  //FIXME-4 not saved if there is no LMO
     if (lmo && ((OrnamentedObj*)lmo)->getFrame()->getFrameType()!=FrameObj::NoFrame) 
 	s+=((OrnamentedObj*)lmo)->getFrame()->saveToDir ();
+
+    // Save rotation
+    if (lmo && ((OrnamentedObj*)lmo)->getRotation() !=0 )
+	s+=attribut ("rotation",QString().setNum (((OrnamentedObj*)lmo)->getRotation() ) );
 
     // save names of flags set
     s+=standardFlags.saveToDir(tmpdir,prefix,0);

@@ -8,19 +8,19 @@
 /////////////////////////////////////////////////////////////////
 HeadingObj::HeadingObj() : MapObj()
 {
-//    cout << "Const HeadingObj ()\n";
+//    qDebug() << "Const HeadingObj ()";
     init ();
 }
 
 HeadingObj::HeadingObj(QGraphicsScene *s) :MapObj(s)
 {
-//    cout << "Const HeadingObj (s)\n";
+//    qDebug() << "Const HeadingObj (s)";
     init ();
 }
 
 HeadingObj::~HeadingObj()
 {
-//  cout << "Destr. HeadingObj "<<qPrintable(heading)<<endl;
+//  qDebug() << "Destr. HeadingObj "<<heading;
     while (!textline.isEmpty())
 	delete textline.takeFirst();
 }
@@ -117,9 +117,7 @@ void HeadingObj::setRotation (const qreal &a)
 {
     angle=a;
     for (int i=0; i<textline.size(); i++)
-    {
 	textline.at(i)->setRotation (angle);
-    }
 }
 
 qreal HeadingObj::getRotation()
@@ -230,6 +228,7 @@ void HeadingObj::setText (QString s)
     } // ASCII heading with multiple lines
     setVisibility (visible);
     move (absPos.x(),absPos.y());
+    setRotation (angle);    //FIXME-2 should not be necessary here?
     calcBBoxSize();
 }
 

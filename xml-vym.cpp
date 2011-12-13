@@ -558,6 +558,14 @@ bool parseVYMHandler::readOOAttr (const QXmlAttributes& a)
 	if (!a.value( "localTarget").isEmpty() )
 	    if (a.value ("localTarget")=="true")
 		lastMI->toggleTarget();
+	if (!a.value( "rotation").isEmpty() ) 
+	{
+	    x=a.value("rotation").toFloat (&okx);
+	    if (okx )
+		lastMI->setRotation (x);
+	    else	
+		return false;   // Couldn't read rotation
+	}           
     }
     return true;    
 }

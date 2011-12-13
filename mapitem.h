@@ -58,10 +58,13 @@ public:
 
     virtual QRectF getBBoxURLFlag();//! get bbox of url flag
     virtual QRectF getBBoxFlag   (const QString &fname);    //! get bbox of flag
+    virtual void setRotation (const qreal &a);
 
 
 protected:
     LinkableMapObj *lmo;
+    qreal angle;
+
 public:
     /*! Returns pointer to related LinkableMapObj in QGraphicsView */
     virtual         MapObj* getMO();
