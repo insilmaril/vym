@@ -1718,7 +1718,6 @@ void MapEditor::mouseReleaseEvent(QMouseEvent* e)
 		    model->reposition();
 	    }
 	}
-	//model->emitSelectionChanged();  //FIXME-1 needed? at least not after pos of selection has changed... Also has now oldsel set, might confuse with multiple selections...
 	// Finally resize scene, if needed
 	scene()->update();
 	movingObj=NULL;	    
@@ -1733,7 +1732,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent* e)
     QGraphicsView::mouseReleaseEvent(e);
 }
 
-void MapEditor::mouseDoubleClickEvent(QMouseEvent* e) //FIXME-0 doesn't close, also filter out system flags
+void MapEditor::mouseDoubleClickEvent(QMouseEvent* e)
 {
     if (e->button() == Qt::LeftButton )
     {

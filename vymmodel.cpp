@@ -299,7 +299,7 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix, bool w
 	s+=tmpLinks.at(i)->saveToDir();
 
     // Save slides  // FIXME-2 preliminary, format may change!
-    s+=slideModel->saveToDir();	//FIXME-0 saves same slides several times. Also shouldn't save for selection
+    s+=slideModel->saveToDir();	
 
     xml.decIndent();
     s+=xml.endElement("vymmap");
@@ -2087,7 +2087,7 @@ void VymModel::toggleHideExport()
     }
 }
 
-void VymModel::toggleTask() // FIXME-1 Testing for now, no savestate...
+void VymModel::toggleTask() // FIXME-2 Testing for now, no savestate...
 {
     BranchItem *selbi=getSelectedBranch();
     if (selbi) 
@@ -2104,7 +2104,7 @@ void VymModel::toggleTask() // FIXME-1 Testing for now, no savestate...
     }
 }
 
-void VymModel::cycleTaskStatus() // FIXME-1 Testing for now, no savestate...
+void VymModel::cycleTaskStatus() // FIXME-2 Testing for now, no savestate...
 {
     BranchItem *selbi=getSelectedBranch();
     if (selbi) 
@@ -2119,7 +2119,7 @@ void VymModel::cycleTaskStatus() // FIXME-1 Testing for now, no savestate...
     updateTaskFlag();
 }
 
-void VymModel::setTaskSleep(int n) // FIXME-1 Testing for now, no savestate...
+void VymModel::setTaskSleep(int n) // FIXME-2 Testing for now, no savestate...
 {
     BranchItem *selbi=getSelectedBranch();
     if (selbi ) 
@@ -5047,7 +5047,7 @@ void VymModel::updateTaskFlag()
 	    switch (task->getStatus() ) 
 	    {
 		case Task::NotStarted: 
-		    //systemFlags.activate("system-task-new");  //FIXME-1
+		    //systemFlags.activate("system-task-new");  //FIXME-2
 		    break;
 		case Task::WIP: 
 		    //systemFlags.activate("system-task-wip");
@@ -6101,7 +6101,7 @@ SlideModel* VymModel::getSlideModel()
     return slideModel;
 }
 
-SlideItem* VymModel::addSlide()   //FIXME-1 missing saveState
+SlideItem* VymModel::addSlide()   //FIXME-2 missing saveState
 {
     SlideItem *si=slideModel->getSelectedItem();  
     if (si)
@@ -6121,7 +6121,7 @@ SlideItem* VymModel::addSlide()   //FIXME-1 missing saveState
     return si;
 }
 
-void VymModel::deleteSlide(SlideItem *si)   //FIXME-1 missing saveState
+void VymModel::deleteSlide(SlideItem *si)   //FIXME-2 missing saveState
 {
     if (si)
     {
@@ -6129,7 +6129,7 @@ void VymModel::deleteSlide(SlideItem *si)   //FIXME-1 missing saveState
     }
 }
 
-void VymModel::moveSlideUp()   //FIXME-1 missing saveState
+void VymModel::moveSlideUp()   //FIXME-2 missing saveState
 {
     SlideItem *si=slideModel->getSelectedItem();
     if (si)
@@ -6144,7 +6144,7 @@ void VymModel::moveSlideUp()   //FIXME-1 missing saveState
     }
 }
 
-void VymModel::moveSlideDown()   //FIXME-1 missing saveState
+void VymModel::moveSlideDown()   //FIXME-2 missing saveState
 {
     SlideItem *si=slideModel->getSelectedItem();
     if (si)
@@ -6174,6 +6174,7 @@ void VymModel::updateSlideSelection (QItemSelection newsel,QItemSelection)
 	    if (ti)
 	    {
 		//select (ti); FIXME-2 select or not select??
+                               // Maybe optionally fade out selection?
 		if (mapEditor)
 		{
 		    LinkableMapObj *lmo=((MapItem*)ti)->getLMO();

@@ -183,7 +183,7 @@ Qt::ItemFlags TaskModel::flags(const QModelIndex &index) const
 
 Task* TaskModel::createTask (BranchItem *bi)
 {
-    if (bi)// FIXME-0 Check for already existing item
+    if (bi)
     {
 	foreach (Task* t, tasks)
 	{
