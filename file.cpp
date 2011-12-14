@@ -377,6 +377,7 @@ bool saveStringToDisk (const QString &fname, const QString &s)
     }
 
     QTextStream out(&file);
+    out.setCodec("UTF-8");
     out << s;
 
     return true;

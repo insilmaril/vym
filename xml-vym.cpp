@@ -389,7 +389,7 @@ bool parseVYMHandler::endElement  ( const QString&, const QString&, const QStrin
 
 bool parseVYMHandler::characters   ( const QString& ch)
 {
-    //qDebug()<< "characters \""<<ch.toStdString()<<"\"  state="<<state <<"  laststate="<<laststate;
+    //qDebug()<< "xml-vym: characters \""<<ch<<"\"  state="<<state <<"  laststate="<<laststate;
 
     QString ch_org=quotemeta (ch);
     QString ch_simplified=ch.simplified();
