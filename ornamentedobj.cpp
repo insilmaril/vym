@@ -11,16 +11,11 @@ extern bool debug;
 // OrnamentedObj
 /////////////////////////////////////////////////////////////////
 
-OrnamentedObj::OrnamentedObj(QGraphicsScene* s,TreeItem *ti) :LinkableMapObj(s,ti)
+OrnamentedObj::OrnamentedObj(QGraphicsItem *parent,TreeItem *ti) :LinkableMapObj(parent,ti)
 {
     //qDebug()<< "Const OrnamentedObj (s,ti) ti="<<ti;
     treeItem=ti;
     init ();
-}
-
-OrnamentedObj::OrnamentedObj (OrnamentedObj* lmo) : LinkableMapObj (lmo->scene)
-{
-    copy (lmo);
 }
 
 OrnamentedObj::~OrnamentedObj()
@@ -34,14 +29,14 @@ OrnamentedObj::~OrnamentedObj()
 
 void OrnamentedObj::init ()
 {
-    heading = new HeadingObj(scene);
+    heading = new HeadingObj(this);
     heading->setTreeItem (treeItem);
     heading->move (absPos.x(), absPos.y());
 
-    systemFlags=new FlagRowObj(scene);
-    standardFlags=new FlagRowObj(scene);
+    systemFlags=new FlagRowObj(this);
+    standardFlags=new FlagRowObj(this);
 
-    frame = new FrameObj (scene);
+    frame = new FrameObj (this);
     frame->setTreeItem (treeItem);
 
     angle=0;

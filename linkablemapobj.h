@@ -48,11 +48,13 @@ public:
     };
 
     LinkableMapObj ();
-    LinkableMapObj (QGraphicsScene*, TreeItem *ti=NULL);
-    LinkableMapObj (LinkableMapObj*);
+    LinkableMapObj (QGraphicsItem*, TreeItem *ti=NULL);
     virtual ~LinkableMapObj ();
-    virtual void delLink();
+protected:
     virtual void init ();
+    virtual void createBottomLine();
+public:
+    virtual void delLink();
     virtual void copy (LinkableMapObj*);
 
     void setChildObj (LinkableMapObj*);

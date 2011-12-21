@@ -11,61 +11,21 @@ using namespace std;
 // LinkableMapObj
 /////////////////////////////////////////////////////////////////
 
-/* FIXME-3
-LinkableMapObj::LinkableMapObj():MapObj()
+LinkableMapObj::LinkableMapObj(QGraphicsItem* parent, TreeItem *ti) :MapObj(parent,ti)
 {
-  //  cout << "Const LinkableMapObj ()\n";
+    //qDebug() << "Const LinkableMapObj this="<<this<<"  ti="<<ti<<"  treeItem="<<treeItem;
+    parObj=(LinkableMapObj*)parent; //FIXME-2 try to get rid of parObj and use parentItem() instead
     init ();
-}
-*/
-
-LinkableMapObj::LinkableMapObj(QGraphicsScene* s, TreeItem *ti) :MapObj(s,ti)
-{
-//    cout << "Const LinkableMapObj s="<<s<<"  ti="<<ti<<"  treeItem="<<treeItem<<endl;
-    init ();
-}
-
-LinkableMapObj::LinkableMapObj (LinkableMapObj* lmo) : MapObj (lmo->scene)
-{
-    copy (lmo);
 }
 
 LinkableMapObj::~LinkableMapObj()
 {
-    //cout<< "Destructor LMO style="<<style<<" l="<<l<<"  p="<<p<<"  segment="<<segment.count()<<endl;
-    if (bottomline)
-    {
-	delete (bottomline);
-	bottomline=NULL;
-    }	
+    //qDebug()<< "Destructor LMO  this="<<this<<" style="<<style<<" l="<<l<<"  p="<<p<<"  segment="<<segment.count();
     delLink();
-}
-
-void LinkableMapObj::delLink()
-{
-    //bottomline->hide();
-    switch (style)
-    {
-	case Line:
-	    delete (l);
-	    break;
-	case Parabel:
-	    while (!segment.isEmpty()) delete segment.takeFirst();
-	    break;
-	case PolyLine:
-	    delete (p);
-	    break;
-	case PolyParabel:
-	    delete (p);
-	    break;
-	default:
-	    break;
-    }	    
 }
 
 void LinkableMapObj::init ()
 {
-    parObj=NULL;
     parObjTmpBuf=NULL;
     tmpParent=false;
     parPos=QPointF(0,0);
@@ -85,10 +45,8 @@ void LinkableMapObj::init ()
     pen.setColor (linkcolor);
     pen.setCapStyle ( Qt::RoundCap );
 
-    useBottomline=true;
-    bottomline=scene->addLine(QLineF(1,1,1,1),pen);
-    bottomline->setZValue(dZ_LINK);
-    bottomline->show();
+    useBottomline=false;
+    bottomline=NULL;
 
     topPad=botPad=leftPad=rightPad=0;
 
@@ -97,6 +55,40 @@ void LinkableMapObj::init ()
     // Rel Positions
     relPos=QPointF(0,0);
     useRelPos=false;
+}
+
+void LinkableMapObj::createBottomLine()
+{
+    useBottomline=true;
+    bottomline=scene()->addLine(QLineF(1,1,1,1),pen);
+    bottomline->setZValue(dZ_LINK);
+    bottomline->show();
+}
+
+void LinkableMapObj::delLink()
+{
+    if (bottomline)
+    {
+	//delete (bottomline);	// FIXME-2 testing only
+    }	
+	bottomline=NULL;
+    switch (style)
+    {
+	case Line:
+	    delete (l);
+	    break;
+	case Parabel:
+	    while (!segment.isEmpty()) delete segment.takeFirst();
+	    break;
+	case PolyLine:
+	    delete (p);
+	    break;
+	case PolyParabel:
+	    delete (p);
+	    break;
+	default:
+	    break;
+    }	    
 }
 
 void LinkableMapObj::copy (LinkableMapObj* other)
@@ -112,6 +104,7 @@ void LinkableMapObj::copy (LinkableMapObj* other)
 void LinkableMapObj::setParObj(LinkableMapObj* o)
 {
     parObj=o;
+    setParentItem (parObj);
 }
 
 void LinkableMapObj::setParObjTmp(LinkableMapObj*,QPointF,int)	// FIXME-3 make pure virtual
@@ -142,7 +135,7 @@ void LinkableMapObj::setRelPos()
     if (parObj)
 	setRelPos (absPos - parObj->getChildPos() );
     else
-	qWarning ("LMO::setRelPos() parObj==0");
+	qWarning()<<"LMO::setRelPos parObj==0   this="<<this;
 }
 
 void LinkableMapObj::setRelPos(const QPointF &p)
@@ -155,14 +148,14 @@ void LinkableMapObj::setRelPos(const QPointF &p)
 	parObj->calcBBoxSize();
 	requestReposition();
     }	else
-	qWarning ("LMO::setRelPos (p) parObj==0");
+	qWarning()<<"LMO::setRelPos (p)  parObj==0   this="<<this;
 }
 
 QPointF LinkableMapObj::getRelPos()
 {
     if (!parObj) 
     {
-	qWarning("LMO::getRelPos parObj==0");
+	qWarning()<<"LMO::getRelPos parObj==0   this="<<this;
 	return QPointF();
     }
     return relPos;
@@ -222,65 +215,65 @@ LinkableMapObj::Style LinkableMapObj::getDefLinkStyle (TreeItem *parent)
 
 void LinkableMapObj::setLinkStyle(Style newstyle)
 {
+    //qDebug()<<"LMO::setLinkStyle s="<<newstyle;	//FIXME-2 called very often?!?!
+    //qDebug()<<"LMO::setLinkStyle s="<<newstyle<<" for "<<this<<" "<<treeItem->getHeading()<<"  parObj="<<parObj;
     delLink();
 	
     style=newstyle;
 
     int d=treeItem->depth();
 
-    if (parObj != NULL)
+    QGraphicsLineItem *cl;
+    switch (style)
     {
-	QGraphicsLineItem *cl;
-	switch (style)
-	{
-	    case UndefinedStyle:
-		bottomline->hide();
-		break;
-	    case Line: 
-		l = scene->addLine(QLineF(1,1,1,1),pen);
-		l->setZValue(d*dZ_DEPTH + dZ_LINK);
+	case Line: 
+	    l = scene()->addLine(QLineF(1,1,1,1),pen);
+	    l->setZValue(d*dZ_DEPTH + dZ_LINK);
+	    if (visible)
+		l->show();
+	    else
+		l->hide();
+	    createBottomLine();
+	    break;
+	case Parabel:
+	    for (int i=0;i<arcsegs;i++)
+	    {
+		cl = scene()->addLine(QLineF(i*5,0,i*10,100),pen);
+		cl->setZValue(d*dZ_DEPTH + dZ_LINK);
 		if (visible)
-		    l->show();
+		    cl->show();
 		else
-		    l->hide();
-		break;
-	    case Parabel:
-		for (int i=0;i<arcsegs;i++)
-		{
-		    cl = scene->addLine(QLineF(i*5,0,i*10,100),pen);
-		    cl->setZValue(d*dZ_DEPTH + dZ_LINK);
-		    if (visible)
-			cl->show();
-		    else
-			cl->hide();
-		    segment.append(cl);
-		}
-		pa0.resize (arcsegs+1);
-		break;
-	    case PolyLine:  
-		p =scene->addPolygon(QPolygonF(),pen,linkcolor);
-		p->setZValue(d*dZ_DEPTH + dZ_LINK);
-		if (visible)
-		    p->show();
-		else
-		    p->hide();
-		pa0.resize (3);
-		break;
-	    case PolyParabel:	
-		p = scene->addPolygon(QPolygonF(),pen,linkcolor);
-		p->setZValue(d*dZ_DEPTH + dZ_LINK);
-		if (visible)
-		    p->show();
-		else
-		    p->hide();
-		pa0.resize (arcsegs*2+2);
-		pa1.resize (arcsegs+1);
-		pa2.resize (arcsegs+1);
-		break;
-	    default: 
-		break;	
-	}   
-    } 
+		    cl->hide();
+		segment.append(cl);
+	    }
+	    pa0.resize (arcsegs+1);
+	    createBottomLine();
+	    break;
+	case PolyLine:  
+	    p =scene()->addPolygon(QPolygonF(),pen,linkcolor);
+	    p->setZValue(d*dZ_DEPTH + dZ_LINK);
+	    if (visible)
+		p->show();
+	    else
+		p->hide();
+	    pa0.resize (3);
+	    createBottomLine();
+	    break;
+	case PolyParabel:	
+	    p = scene()->addPolygon(QPolygonF(),pen,linkcolor);
+	    p->setZValue(d*dZ_DEPTH + dZ_LINK);
+	    if (visible)
+		p->show();
+	    else
+		p->hide();
+	    pa0.resize (arcsegs*2+2);
+	    pa1.resize (arcsegs+1);
+	    pa2.resize (arcsegs+1);
+	    createBottomLine();
+	    break;
+	default: 
+	    break;	
+    }   
 }
 
 LinkableMapObj::Style LinkableMapObj::getLinkStyle()
@@ -311,7 +304,7 @@ void LinkableMapObj::setLinkColor(QColor col)
 {
     linkcolor=col;
     pen.setColor(col);
-    bottomline->setPen( pen );
+    if (bottomline) bottomline->setPen( pen );
     switch (style)
     {
 	case Line:
@@ -387,10 +380,13 @@ void LinkableMapObj::updateVisibility()
 
     if (visnow) 
     {
-	if (useBottomline)
-	    bottomline->show();
-	else	
-	    bottomline->hide();
+	if (bottomline)
+	{
+	    if (useBottomline)
+		bottomline->show();
+	    else	
+		bottomline->hide();
+	}
 
 	switch (style)
 	{
@@ -402,11 +398,11 @@ void LinkableMapObj::updateVisibility()
 		    segment.at(i)->show();
 		break;	
 	    case PolyLine:
-		if (!p) cout << "LMO::updateVis p==0 (PolyLine)\n"; //FIXME-3
+		if (!p) qDebug()<< "LMO::updateVis p==0 (PolyLine)"; //FIXME-3
 		if (p) p->show();
 		break;
 	    case PolyParabel:	
-		if (!p) cout << "LMO::updateVis p==0 (PolyParabel) "<<treeItem->getHeading().toStdString()<<endl; //FIXME-3
+		if (!p) qDebug()<< "LMO::updateVis p==0 (PolyParabel) "<<treeItem->getHeading(); //FIXME-3
 		if (p) p->show();
 		break;
 	    default:
@@ -414,7 +410,7 @@ void LinkableMapObj::updateVisibility()
 	}
     } else 
     {
-	bottomline->hide();
+	if (bottomline) bottomline->hide();
 	switch (style)
 	{
 	    case Line:
@@ -453,7 +449,7 @@ void LinkableMapObj::updateLinkGeometry()
     // updateLinkGeometry is called from move, but called from constructor we don't
     // have parents yet...
 
-    //cout <<"LMO::updateLinkGeometry: "<<treeItem->getHeadingStd()<<"  "<<parObj<<endl;
+    //qDebug()<<"LMO::updateLinkGeometry: "<<treeItem->getHeading()<<"  "<<style<<"  parObj="<<parObj;
     if (!parObj)        {
 	// If I am a mapcenter, set childPos to middle of MapCenterObj // FIXME-3 isn't that also done already in BO::setDockPos ?
 
@@ -500,19 +496,22 @@ void LinkableMapObj::updateLinkGeometry()
     double vx=p2x - p1x;    // V=P2-P1
     double vy=p2y - p1y;
 
-    double d;
+    int z;
     // Hack to z-move links to MapCenter (d==1) below MCOs frame (d==0)
     if (treeItem->depth()<2)
-	d=(treeItem->depth() -2)*dZ_DEPTH + dZ_LINK;
+	z=(treeItem->depth() -2)*dZ_DEPTH + dZ_LINK;
     else	
-	d=treeItem->depth()*dZ_DEPTH + dZ_LINK;
+	z=treeItem->depth()*dZ_DEPTH + dZ_LINK;
+
+    //qDebug()<<"LMO::updateGeo d="<<treeItem->depth()<<"  this="<<this<<"  "<<treeItem->getHeading();
 
     // Draw the horizontal line below heading (from ChildPos to ParPos)	
-    bottomline->setLine (QLine (qRound(childPos.x()),
+
+    if (bottomline) bottomline->setLine (QLine (qRound(childPos.x()),
 	qRound(childPos.y()),
 	qRound(p1x),
 	qRound(p1y) ));
-    bottomline->setZValue (d);
+    if (bottomline) bottomline->setZValue (z);
 
     double a;	// angle
     if (vx > -0.000001 && vx < 0.000001)
@@ -530,14 +529,15 @@ void LinkableMapObj::updateLinkGeometry()
 		qRound(parPos.y()),
 		qRound(p2x),
 		qRound(p2y) ));
-	    l->setZValue (d);
+	    l->setZValue (z);
 	    break;  
 	case Parabel:	
 	    parabel (pa0, p1x,p1y,p2x,p2y);
 	    for (int i=0; i<segment.size(); ++i)
 	    {
 		segment.at(i)->setLine(QLineF( pa0.at(i).x(), pa0.at(i).y(),pa0.at(i+1).x(),pa0.at(i+1).y()));
-		segment.at(i)->setZValue (d);
+		segment.at(i)->setZValue (z);
+		//segment.at(i)->setVisible(true); // FIXME-2 testing
 	    }
 	    break;
 	case PolyLine:
@@ -546,7 +546,7 @@ void LinkableMapObj::updateLinkGeometry()
 	    pa0<<QPointF (qRound(p2x-tp.x()), qRound(p2y-tp.y()));
 	    pa0<<QPointF (qRound (parPos.x()), qRound(parPos.y()) );
 	    p->setPolygon(QPolygonF (pa0));
-	    p->setZValue (d);
+	    p->setZValue (z);
 	    break;
 	case PolyParabel:   
 	    parabel (pa1, p1x,p1y,p2x+tp.x(),p2y+tp.y());
@@ -557,15 +557,17 @@ void LinkableMapObj::updateLinkGeometry()
 	    for (int i=0;i<=arcsegs;i++)
 		pa0 << QPointF (pa2.at(arcsegs-i));
 	    p->setPolygon(QPolygonF (pa0));
-	    p->setZValue (d);
+	    p->setZValue (z);
 	    break;
 	default:
 	    break;
     } 
 }
     
-LinkableMapObj* LinkableMapObj::getParObj()
+LinkableMapObj* LinkableMapObj::getParObj() // FIXME-2 shouldn't be necessary as GraphicsItem
 {
+    if (parObj!=parentItem()) 
+	qWarning()<<"!!!!!!!!!!!!!!!!!!LMO::getParObj  parObj != parentItem()"; //FIXME-1 testing to remove this method later...
     return parObj;
 }
 
@@ -588,7 +590,7 @@ void LinkableMapObj::reposition()
 {
 }
 
-void LinkableMapObj::requestReposition()    //FIXME-3 needed?
+void LinkableMapObj::requestReposition()    //FIXME-2 needed? doesn't seem so...
 {
     if (!repositionRequest)
     {

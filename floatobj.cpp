@@ -1,3 +1,5 @@
+#include <QDebug>
+
 #include "floatobj.h"
 #include "mapitem.h"
 
@@ -5,21 +7,19 @@
 // FloatObj
 /////////////////////////////////////////////////////////////////
 
-FloatObj::FloatObj (QGraphicsScene* s, TreeItem *ti):OrnamentedObj(s,ti)
+FloatObj::FloatObj (QGraphicsItem *parent, TreeItem *ti):OrnamentedObj(parent,ti)
 {
-    //cout << "Const FloatObj s="<<s<<"  ti="<<ti<<"  treeItem="<<treeItem<<endl;
-    setParObj (this);	
+    //qDebug() << "Const FloatObj s="<<s<<"  ti="<<ti<<"  treeItem="<<treeItem;
     init();
 }
 
 FloatObj::~FloatObj ()
 {
-//   cout << "Destr FloatObj\n";
+//   qDebug() << "Destr FloatObj";
 }
 
 void FloatObj::init () 
 {
-    zPlane=Z_INIT;
     setLinkStyle (LinkableMapObj::Parabel);
     ((MapItem*)treeItem)->setHideLinkUnselected(true);
 }
@@ -28,16 +28,6 @@ void FloatObj::copy (FloatObj* other)
 {
     LinkableMapObj::copy (other);
     setVisibility (other->visible);
-}
-
-void FloatObj::setZValue(const int &i)
-{
-    zPlane=i;
-}
-
-int FloatObj::zValue()
-{
-    return zPlane;
 }
 
 void FloatObj::move (double x, double y)

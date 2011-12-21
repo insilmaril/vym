@@ -2,21 +2,20 @@
 #include "mapobj.h"
 
 /////////////////////////////////////////////////////////////////
-// ImageObj
+// ImageObj	//FIXME-2 maybe join IO and FIO (or use FIO for svg?)
 /////////////////////////////////////////////////////////////////
-ImageObj::ImageObj( QGraphicsScene *scene) : QGraphicsPixmapItem (NULL,scene )
+ImageObj::ImageObj( QGraphicsItem *parent) : QGraphicsPixmapItem (parent )
 {
-//  cout << "Const ImageObj (scene)\n";
+//  qDebug() << "Const ImageObj (scene)";
 
     setShapeMode (QGraphicsPixmapItem::BoundingRectShape);
     setZValue(Z_INIT);	
-    mapScene=scene;
     hide();
 }
 
 ImageObj::~ImageObj()
 {
- //  cout << "Destr ImageObj\n";
+ //  qDebug() << "Destr ImageObj";
 }
 
 void ImageObj::copy(ImageObj* other)

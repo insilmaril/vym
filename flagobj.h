@@ -18,10 +18,7 @@
 /////////////////////////////////////////////////////////////////////////////
 class FlagObj:public MapObj {
 public:
-    FlagObj ();
-    FlagObj (QGraphicsScene*);
-    FlagObj (FlagObj*);
-    FlagObj (Flag*);
+    FlagObj (QGraphicsItem *);
     ~FlagObj ();
     virtual void init ();
     virtual void copy (FlagObj*);

@@ -22,6 +22,7 @@ FlagRow::~FlagRow()
 void FlagRow::addFlag (Flag *flag)
 {
     Flag *f=new Flag;
+;
     f->copy (flag);
     flags.append (f);
     activeNames.append (flag->getName());

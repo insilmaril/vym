@@ -1,3 +1,4 @@
+#include <QDebug>
 #include <QImageReader>
 
 #include "floatimageobj.h"
@@ -7,31 +8,25 @@
 // FloatImageObj
 /////////////////////////////////////////////////////////////////
 
-FloatImageObj::FloatImageObj (QGraphicsScene* s,TreeItem *ti):FloatObj(s,ti)
+FloatImageObj::FloatImageObj (QGraphicsItem * parent,TreeItem *ti):FloatObj(parent,ti)
 {
-   //cout << "Const FloatImageObj s="<<s<<"  ti="<<ti<<endl;
-    setParObj (this);	
-    init();
-}
-
-FloatImageObj::~FloatImageObj ()
-{
-//  cout << "Destr FloatImageObj "<<this<<"\n";
-    delete(icon);
-}
-
-void FloatImageObj::init () 
-{
-    icon=new ImageObj (scene);
+    //qDebug() << "Const FloatImageObj this="<<this<<"  ti="<<ti;
+    icon=new ImageObj (parent);
     icon->setPos (absPos.x(), absPos.y() );
     icon->setVisibility (true);
-    setZValue (Z_INIT);
-    bbox.setSize (QSizeF(icon->boundingRect().width(), icon->boundingRect().height()));
-    clickPoly=QPolygonF (bbox);
+    clickPoly=bbox;
     useRelPos=true;
 
     //Hide flags
     systemFlags->setShowFlags(false);
+
+//    setLinkStyle (LinkableMapObj::Parabel);
+}
+
+FloatImageObj::~FloatImageObj ()
+{
+//  qDebug() << "Destr FloatImageObj "<<this<<"";
+    delete(icon);
 }
 
 void FloatImageObj::copy (FloatImageObj* other)
@@ -43,8 +38,11 @@ void FloatImageObj::copy (FloatImageObj* other)
 
 void FloatImageObj::setZValue (const int &i)
 {
+
+//FIXME-2    qDebug()<<"FIO::setZValue z="<<i;
+//    qDebug()<<"  icon="<<icon;
+//    qDebug()<<"  this="<<this;	 
     icon->setZValue (i);
-    zPlane=i;
 }
 
 int FloatImageObj::z ()
@@ -55,9 +53,22 @@ int FloatImageObj::z ()
 void FloatImageObj::load (const QImage &img)
 {
     icon->load(QPixmap::fromImage(img));
+    if (!icon->parentItem() ) icon->setParentItem(this);  // Add to scene initially
     bbox.setSize (QSizeF(icon->boundingRect().width()+8, icon->boundingRect().height()+8));
-    clickPoly=QPolygonF (bbox);
+    clickPoly=bbox;
     positionBBox();
+}
+
+void FloatImageObj::setParObj (QGraphicsItem *p)
+{
+    setParentItem (p);
+    icon->setParentItem (p);
+    parObj=(LinkableMapObj*)p;
+/*
+    qDebug()<<"FIO::setParentItem";
+    qDebug()<<"  this="<<this;
+    qDebug()<<"  icon="<<icon;
+*/
 }
 
 void FloatImageObj::setVisibility(bool v)
@@ -84,6 +95,8 @@ void FloatImageObj::move (QPointF p)
 void FloatImageObj::positionBBox()
 {
     clickPoly=QPolygonF(bbox);
+    setZValue (treeItem->depth()*dZ_DEPTH + dZ_ICON);
+    qDebug()<<"FIO::posBB d="<<treeItem->depth()<<"  z="<<icon->zValue()<<"  ti="<<treeItem->getHeading();
 }
 
 void FloatImageObj::calcBBoxSize()

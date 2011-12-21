@@ -2443,7 +2443,7 @@ bool VymModel::createLink(Link *link, bool createMO)
 
     if (createMO) 
     {
-	link->createMapObj(mapEditor->getScene() );
+	link->createMapObj();
 	reposition();
     }
     return true;
@@ -5080,7 +5080,6 @@ void VymModel::reposition() //FIXME-4 VM should have no need to reposition, but 
 	else
 	    qDebug()<<"VM::reposition bo=0";
     }	
-    //emitSelectionChanged();	
 }
 
 
@@ -6053,6 +6052,11 @@ QList <uint> VymModel::getSelectedIDs()
     foreach (TreeItem* ti,getSelectedItems() )
 	uids.append (ti->getID() );
     return uids;	
+}
+
+bool VymModel::isSelected(TreeItem *ti)
+{
+    return getSelectedItems().contains (ti);
 }
 
 QString VymModel::getSelectString ()

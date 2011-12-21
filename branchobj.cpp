@@ -17,14 +17,13 @@ extern bool debug;
 // BranchObj
 /////////////////////////////////////////////////////////////////
 
-BranchObj::BranchObj (QGraphicsScene* s,TreeItem *ti):OrnamentedObj (s,ti)
+BranchObj::BranchObj (QGraphicsItem *parent,TreeItem *ti):OrnamentedObj (parent,ti)
 {
-    //qDebug ()<< "Const BranchObj (s,ti) ti="<<ti;
-    scene=s;
+    //qDebug ()<< "Const BranchObj  (s,ti) ti="<<ti;
     treeItem=ti;
     BranchItem *pi=(BranchItem*)(ti->parent());
     if (pi && pi!=ti->getModel()->getRootItem() )
-	parObj=pi->getLMO();
+	parObj=pi->getLMO();	// FIXME-2 could be set directly from parent
     else
 	parObj=NULL;
     init();
@@ -32,7 +31,7 @@ BranchObj::BranchObj (QGraphicsScene* s,TreeItem *ti):OrnamentedObj (s,ti)
 
 BranchObj::~BranchObj ()
 {
-    //qDebug()<< "Destr BranchObj of "<<this<<" ("<<treeItem->getHeading()<<")";
+    //qDebug()<< "Destr BranchObj  of "<<this;
 
     // If I'm animated, I need to un-animate myself first
     if (anim.isAnimated() )
@@ -61,7 +60,6 @@ void BranchObj::copy (BranchObj* other)
 
 void BranchObj::clear() 
 {
-    //setVisibility (true); //FIXME-4 needed?
 }
 
 void BranchObj::setParObjTmp(LinkableMapObj* dst, QPointF m, int off)	
@@ -242,6 +240,14 @@ void BranchObj::moveBy (QPointF p)
     moveBy (p.x(), p.y());
 }
 
+
+QRectF QGraphicsItem::boundingRect () const 
+{
+}
+
+void QGraphicsItem::paint(QPainter*, const QStyleOptionGraphicsItem*, QWidget*)
+{
+}
 
 void BranchObj::positionBBox()
 {

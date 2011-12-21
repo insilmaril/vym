@@ -14,7 +14,7 @@ extern TaskModel *taskModel;
 
 BranchItem::BranchItem(const QList<QVariant> &data, TreeItem *parent):MapItem (data,parent)
 {
-    //qDebug()<< "Constr. BranchItem";
+    //qDebug()<< "Constr. BranchItem this="<<this;
 
     // Set type if parent is known yet 
     // if not, type is set in insertBranch or TreeItem::appendChild
@@ -38,7 +38,7 @@ BranchItem::BranchItem(const QList<QVariant> &data, TreeItem *parent):MapItem (d
 
 BranchItem::~BranchItem()
 {
-    //qDebug()<< "Destr. BranchItem this="<<this<<"  "<<getHeading();
+    //qDebug()<< "Destr. BranchItem  this="<<this<<"  "<<getHeading();
     if (lmo) 
     {
 	delete lmo;
@@ -496,24 +496,24 @@ void BranchItem::updateStyles(const bool &keepFrame)
     }
 }
 
-BranchObj* BranchItem::getBranchObj()	// FIXME-3 only for transition BO->BI
+BranchObj* BranchItem::getBranchObj()	
 {
     return (BranchObj*)lmo;
 }
 
-BranchObj* BranchItem::createMapObj(QGraphicsScene *scene)  // FIXME-4 maybe move this into MapEditor to get rid of scene in VymModel?
+BranchObj* BranchItem::createMapObj(QGraphicsScene *scene)  // FIXME-3 maybe move this into MapEditor to get rid of scene in VymModel?
 {
     BranchObj *newbo;
-    newbo=new BranchObj(scene,this);
-    lmo=newbo;
 
     if (parentItem==rootItem)
     {
-	newbo->setParObj(NULL);
-	//newbo->setFrameType (FrameObj::Rectangle);	//FIXME-4 maybe call updateStyles?
+	newbo=new BranchObj(NULL,this);
+	lmo=newbo;
+	scene->addItem (newbo);
     } else
     {
-	newbo->setParObj( ((MapItem*)parentItem)->getLMO() );
+	newbo=new BranchObj( ((MapItem*)parentItem)->getLMO(),this);
+	lmo=newbo;
 	// Set visibility depending on parents
 	if (parentItem!=rootItem && 
 	    ( ((BranchItem*)parentItem)->scrolled || !((MapItem*)parentItem)->getLMO()->isVisibleObj() ) )
@@ -535,8 +535,6 @@ BranchObj* BranchItem::createMapObj(QGraphicsScene *scene)  // FIXME-4 maybe mov
 	newbo->setColor (headingColor);
     }	
 	
-    //newbo->updateLinkGeometry();  //FIXME-3
-
     return newbo;
 }
 

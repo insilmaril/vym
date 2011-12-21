@@ -7,8 +7,7 @@
 
 class HeadingObj:public MapObj {
 public:
-    HeadingObj();
-    HeadingObj(QGraphicsScene*);
+    HeadingObj(QGraphicsItem*);
     virtual ~HeadingObj();
     virtual void init();
     virtual void copy(HeadingObj*);

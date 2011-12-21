@@ -2,18 +2,14 @@
 
 #include <QColor>
 #include <QDebug>
+#include <QGraphicsScene>
 
 #include "misc.h"  //for roof function
 
 /////////////////////////////////////////////////////////////////
 // FrameObj
 /////////////////////////////////////////////////////////////////
-FrameObj::FrameObj() : MapObj()
-{
-    init ();
-}
-
-FrameObj::FrameObj(QGraphicsScene *s) :MapObj(s)
+FrameObj::FrameObj(QGraphicsItem *parent) :MapObj(parent)
 {
     init ();
 }
@@ -224,17 +220,17 @@ void FrameObj::setFrameType(const FrameType &t)
 	case NoFrame:
 	    break;
 	case Rectangle:
-	    rectFrame = scene->addRect(QRectF(0,0,0,0), QPen(penColor), brushColor);
+	    rectFrame = scene()->addRect(QRectF(0,0,0,0), QPen(penColor), brushColor);
 	    rectFrame->setZValue(Z_INIT);
 	    rectFrame->show();
 	    break;
 	case Ellipse:
-	    ellipseFrame = scene->addEllipse(QRectF(0,0,0,0), QPen(penColor), brushColor);
+	    ellipseFrame = scene()->addEllipse(QRectF(0,0,0,0), QPen(penColor), brushColor);
 	    ellipseFrame->setZValue(Z_INIT);
 	    ellipseFrame->show();
 	case Cloud:
 	    QPainterPath path;
-	    pathFrame = scene->addPath(path, QPen(penColor), brushColor);
+	    pathFrame = scene()->addPath(path, QPen(penColor), brushColor);
 	    pathFrame->setZValue(Z_INIT);
 	    pathFrame->show();
 	    break;

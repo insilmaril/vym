@@ -1267,7 +1267,7 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
 	tmpLink->setBeginBranch (selbi);
 	tmpLink->setColor(model->getMapDefXLinkColor());
 	tmpLink->setWidth(model->getMapDefXLinkWidth());
-	tmpLink->createMapObj(mapScene);
+	tmpLink->createMapObj();
 	tmpLink->setEndPoint ( mapToScene (e->pos() ) );
 	tmpLink->updateLink();
 	return;
@@ -1607,7 +1607,6 @@ void MapEditor::mouseReleaseEvent(QMouseEvent* e)
 		    "moveRel "+pnow,
 		    QString("Move %1 to relative position %2").arg(model->getObjectName(seli)).arg(pnow));
 
-		fio->getParObj()->requestReposition();
 		model->reposition();
 	    }	
 	}
@@ -1997,7 +1996,15 @@ void MapEditor::updateSelection(QItemSelection ,QItemSelection desel)
 	sp->setPolygon (poly);
 	sp->setPen (selectionColor);	
 	sp->setBrush (selectionColor);	
+	//sp->setZValue (-1);	//FIXME-2 only dZ needed, no DEPTH*dZ
+	//qDebug()<<"    sel ="<<itemsSelected.at(i); 
+	//qDebug()<<"     mo ="<<mo; 
+	sp->setParentItem (mo); 
 	sp->setZValue (dZ_DEPTH*itemsSelected.at(i)->depth() + dZ_SELBOX);
+	//qDebug()<<"    zsel="<<sp->zValue()<< "  zlmo="<< itemsSelected.at(i)->getLMO()->zValue();
+	//qDebug()<<"    sp        ="<<sp; 
+	//qDebug()<<"    sp->parent="<<sp->parentItem(); 
+	mo->setVisibility(true);
     }
     scene()->update();  
 }

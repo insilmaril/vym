@@ -13,8 +13,7 @@ public:
     /*! \brief Supported frame types */
     enum FrameType {NoFrame,Rectangle,Ellipse,Cloud};
 
-    FrameObj();
-    FrameObj(QGraphicsScene*);
+    FrameObj(QGraphicsItem *parent);
     ~FrameObj();
     void init();
     void clear();

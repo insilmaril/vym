@@ -13,9 +13,9 @@
 
 int XLinkObj::arrowSize=10;		    // make instances
 
-XLinkObj::XLinkObj (QGraphicsScene* scene,Link *l):MapObj(scene)
+XLinkObj::XLinkObj (QGraphicsItem* parent,Link *l):MapObj(parent)
 {
-    //qDebug()<< "Const XLinkObj (s,Link)";
+    //qDebug()<< "Const XLinkObj (parent,Link)";
     link=l;
     init();
 }
@@ -37,9 +37,9 @@ void XLinkObj::init ()
     pen.setColor ( link->getColor() );
     pen.setWidth ( link->getWidth() );
     pen.setCapStyle (  Qt::RoundCap );
-    line=scene->addLine(QLineF(1,1,1,1),pen);
+    line=scene()->addLine(QLineF(1,1,1,1),pen);
     line->setZValue (Z_INIT);
-    poly=scene->addPolygon(QPolygonF(),pen, link->getColor());	
+    poly=scene()->addPolygon(QPolygonF(),pen, link->getColor());	
     poly->setZValue (Z_INIT);
     setVisibility (true);
 }

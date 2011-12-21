@@ -1,7 +1,5 @@
+#include <QDebug>
 #include <QToolBar>
-
-#include <iostream>
-using namespace std;
 
 #include "flag.h"
 #include "flagrowobj.h"
@@ -13,19 +11,19 @@ using namespace std;
 /////////////////////////////////////////////////////////////////
 FlagRowObj::FlagRowObj()
 {
-//    cout << "Const FlagRowObj ()\n";
+//    qDebug() << "Const FlagRowObj ()";
     init ();
 }
 
-FlagRowObj::FlagRowObj(QGraphicsScene* s):MapObj(s) 
+FlagRowObj::FlagRowObj(QGraphicsItem *parent):MapObj(parent) 
 {
-//    cout << "Const FlagRowObj (s)\n";
+//    qDebug() << "Const FlagRowObj (p)";
     init ();
 }
 
 FlagRowObj::~FlagRowObj()
 {
-    //cout << "Destr FlagRowObj\n";
+    //qDebug() << "Destr FlagRowObj";
     while (!flag.isEmpty())
 	delete (flag.takeFirst() );
 }
@@ -74,7 +72,7 @@ void FlagRowObj::setVisibility (bool v)
 
 FlagObj* FlagRowObj::addFlag (FlagObj *fo)
 {
-    FlagObj *newfo=new FlagObj (scene);
+    FlagObj *newfo=new FlagObj (this);
     newfo->copy (fo);	// create a deep copy of fo
     newfo->move (absPos.x() + bbox.width(), absPos.y() );
     flag.append(newfo);
@@ -138,7 +136,9 @@ void FlagRowObj::activate (Flag *flag)
 {
     if (flag) 
     {
-	FlagObj *fo=addFlag (new FlagObj (flag));
+	FlagObj *fo=addFlag (new FlagObj (this));
+	fo->load (flag->getPixmap() );
+	fo->setName (flag->getName() );
 	fo->activate();
 	if (showFlags)	// FIXME-3 necessary? only called from FIO::init
 	    fo->setVisibility (visible);

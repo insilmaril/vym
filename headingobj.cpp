@@ -1,20 +1,15 @@
 #include <QDebug>
 #include <QRegExp>
+#include <QGraphicsScene>
 
 #include "headingobj.h"
 
 /////////////////////////////////////////////////////////////////
 // HeadingObj
 /////////////////////////////////////////////////////////////////
-HeadingObj::HeadingObj() : MapObj()
+HeadingObj::HeadingObj(QGraphicsItem *parent) :MapObj(parent)
 {
-//    qDebug() << "Const HeadingObj ()";
-    init ();
-}
-
-HeadingObj::HeadingObj(QGraphicsScene *s) :MapObj(s)
-{
-//    qDebug() << "Const HeadingObj (s)";
+    //qDebug() << "Const HeadingObj (s) ";
     init ();
 }
 
@@ -96,7 +91,7 @@ void HeadingObj::calcBBoxSize()
 QGraphicsTextItem* HeadingObj::newLine(QString s)
 {
     //QGraphicsSimpleTextItem *t=new QGraphicsSimpleTextItem (s,0,scene);
-    QGraphicsTextItem *t=new QGraphicsTextItem (s,0,scene);
+    QGraphicsTextItem *t=new QGraphicsTextItem (s,0,scene());
     t->setFont (font);
     t->setZValue(dZ_DEPTH * treeItem->depth() + dZ_TEXT);
     // TextItem
@@ -143,7 +138,7 @@ void HeadingObj::setText (QString s)
 	t->setZValue(dZ_DEPTH*treeItem->depth() + dZ_TEXT);
 	t->setHtml (s);
 	t->setDefaultTextColor(color);
-	scene->addItem (t);
+	scene()->addItem (t);
 	textline.append (t);
     } else
     {

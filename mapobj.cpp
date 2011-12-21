@@ -1,3 +1,5 @@
+#include <QDebug>
+
 #include "geometry.h"
 #include "mapobj.h"
 #include "misc.h"
@@ -5,31 +7,19 @@
 /////////////////////////////////////////////////////////////////
 // MapObj
 /////////////////////////////////////////////////////////////////
-MapObj::MapObj ()
+MapObj::MapObj (QGraphicsItem *parent, TreeItem *ti):QGraphicsItem (parent)
 {
-    //qWarning ( "Const MapObj (): Please set scene somehow!!!");
-    scene=NULL;
-    init ();
-}
-
-MapObj::MapObj (QGraphicsScene *s, TreeItem *ti)
-{
-//  cout << "Const MapObj\n";
-    scene=s;
+    //qDebug() << "Const MapObj (this,ti)=("<<this<<","<<ti<<")";
     treeItem=ti;
     init ();
 }
 
-
-MapObj::MapObj (MapObj* mo)
-{
-//    cout << "CopyConst MapObj\n";
-    copy (mo);
-}
-
 MapObj::~MapObj ()
 {
-//    cout << "Destr MapObj\n";
+    //qDebug() << "Destr MapObj "<<this;
+    foreach (QGraphicsItem *i,childItems() ) 
+	// Avoid tha QGraphicsScene deletes children
+	i->setParentItem (NULL);
 }
 
 void MapObj::init ()
@@ -41,7 +31,6 @@ void MapObj::init ()
 
 void MapObj::copy(MapObj* other)
 {
-//    scene=other->scene;   // already set in constr. of child, use that one...
     absPos=other->absPos;
     bbox.setX (other->bbox.x() );
     bbox.setY (other->bbox.y() );
@@ -56,12 +45,6 @@ void MapObj::setTreeItem (TreeItem *ti)
 TreeItem* MapObj::getTreeItem () const
 {
     return treeItem;
-}
-
-
-QGraphicsScene* MapObj::getScene()
-{
-    return scene;
 }
 
 qreal MapObj::x() 
@@ -114,6 +97,15 @@ void MapObj::moveBy (double x, double y)
     MapObj::move (x+absPos.x(),y+absPos.y() );
     bbox.moveTo (bbox.x()+x,bbox.y()+y);
     clickPoly.translate (x,y);
+}
+
+QRectF MapObj::boundingRect () const 
+{
+    return QRectF();
+}
+
+void MapObj::paint(QPainter*, const QStyleOptionGraphicsItem*, QWidget*)
+{
 }
 
 QRectF MapObj::getBBox()

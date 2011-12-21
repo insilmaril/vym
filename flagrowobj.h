@@ -16,7 +16,7 @@ class Flag;
 class FlagRowObj:public MapObj {
 public:
     FlagRowObj ();
-    FlagRowObj (QGraphicsScene *);
+    FlagRowObj (QGraphicsItem*);
     ~FlagRowObj ();
     virtual void init ();
     virtual void copy (FlagRowObj*);

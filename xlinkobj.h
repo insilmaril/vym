@@ -1,6 +1,7 @@
 #ifndef XLINKOBJ_H
 #define XLINKOBJ_H
 
+#include <QPen>
 #include "mapobj.h"
 #include "xlink.h"
 
@@ -14,7 +15,7 @@ class BranchItem;
 /////////////////////////////////////////////////////////////////////////////
 class XLinkObj:public MapObj {
 public:
-    XLinkObj (QGraphicsScene* scene, Link* l );
+    XLinkObj (QGraphicsItem*, Link* l );
     virtual ~XLinkObj ();
     virtual void init ();
     virtual void setEnd (QPointF);

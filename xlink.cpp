@@ -2,6 +2,7 @@
 
 #include "xlink.h"
 
+#include "branchitem.h"
 #include "vymmodel.h"
 #include "xlinkitem.h"
 #include "xlinkobj.h"
@@ -206,9 +207,9 @@ XLinkObj* Link::getXLinkObj()
     return xlo;
 }
 
-XLinkObj* Link::createMapObj(QGraphicsScene *scene)  
+XLinkObj* Link::createMapObj()  
 {
-    if (!xlo) xlo=new XLinkObj (scene,this);  
+    if (!xlo) xlo=new XLinkObj (beginBranch->getLMO(),this);  
     xlo->setVisibility();
     return xlo;
 }

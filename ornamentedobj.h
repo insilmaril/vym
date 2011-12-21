@@ -20,8 +20,7 @@ The ornaments are:
 
 class OrnamentedObj:public LinkableMapObj {
 public:	
-    OrnamentedObj (QGraphicsScene*, TreeItem *ti=NULL);
-    OrnamentedObj (OrnamentedObj*);
+    OrnamentedObj (QGraphicsItem* parent, TreeItem *ti=NULL);
     virtual ~OrnamentedObj ();
     virtual void init ();
     virtual void copy (OrnamentedObj*);

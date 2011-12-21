@@ -10,14 +10,12 @@
 class ImageObj: public QGraphicsPixmapItem
 {
 public:
-    ImageObj( QGraphicsScene *);
+    ImageObj( QGraphicsItem*);
     ~ImageObj();
     void copy (ImageObj*);
     void setVisibility(bool);
     void save (const QString &, const char *);
     bool load (const QString &);
     bool load (const QPixmap &);
-private:
-    QGraphicsScene *mapScene;
 };
 #endif

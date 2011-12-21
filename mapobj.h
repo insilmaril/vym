@@ -1,7 +1,6 @@
 #ifndef MAPOBJ_H
 #define MAPOBJ_H
 
-#include <QGraphicsScene>
 #include <QGraphicsItem>
 
 #include "xmlobj.h"
@@ -26,11 +25,9 @@ class ConvexPolygon;
 /*! \brief Base class for all objects visible on a map
 */
 
-class MapObj:public XMLObj {
+class MapObj:public XMLObj, public QGraphicsItem {
 public:
-    MapObj ();
-    MapObj (QGraphicsScene *scene,TreeItem *ti=NULL);
-    MapObj (MapObj*);
+    MapObj (QGraphicsItem *parent=NULL,TreeItem *ti=NULL);
     virtual ~MapObj ();
     virtual void init ();
     virtual void copy (MapObj*);
@@ -38,7 +35,6 @@ public:
     virtual void setTreeItem(TreeItem *);
     virtual TreeItem* getTreeItem() const;
 
-    virtual QGraphicsScene* getScene();
     virtual qreal x();
     virtual qreal y();
     virtual qreal width();
@@ -48,6 +44,10 @@ public:
     virtual void move (double x,double y);      //! move to absolute Position
     virtual void move (QPointF p);
     virtual void moveBy (double x,double y);    //! move to relative Position
+
+    virtual QRectF boundingRect () const;    
+    virtual void paint(QPainter*, const QStyleOptionGraphicsItem*, QWidget*);
+
     virtual QRectF getBBox();			//! returns bounding box
     virtual ConvexPolygon getBoundingPolygon();	//! return bounding convex polygon
     virtual QPolygonF getClickPoly();		//! returns polygon to click
@@ -60,8 +60,8 @@ public:
     virtual void setVisibility(bool);
     virtual void positionBBox()=0;       
     virtual void calcBBoxSize()=0;
+
 protected:  
-    QGraphicsScene* scene;
     QRectF bbox;		    // bounding box of MO itself
     QPolygonF clickPoly;		    // area where mouseclicks are found
     QPointF absPos;		    // Position on canvas

@@ -46,7 +46,7 @@ public:
     void updateLink();
     QString saveToDir ();
     XLinkObj* getXLinkObj();
-    XLinkObj* createMapObj(QGraphicsScene *scene);
+    XLinkObj* createMapObj();
     MapObj* getMO();
 
 private:

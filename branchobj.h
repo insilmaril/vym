@@ -14,7 +14,7 @@ public:
     /*! New branches will get use same color for heading as parent */
     enum BranchModification {NewBranch, MovedBranch};
 
-    BranchObj (QGraphicsScene*,TreeItem *ti=NULL);
+    BranchObj (QGraphicsItem *parent=NULL,TreeItem *ti=NULL);
     ~BranchObj ();
     virtual void init ();
     virtual void copy (BranchObj*);
@@ -33,6 +33,7 @@ public:
     virtual void move (QPointF);
     virtual void moveBy (double x,double y);
     virtual void moveBy (QPointF);
+
     virtual void positionBBox();
     virtual void calcBBoxSize();
     virtual void setDockPos();

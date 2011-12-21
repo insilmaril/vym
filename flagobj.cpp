@@ -1,35 +1,19 @@
+#include <QDebug>
+
 #include "flagobj.h"
 
 /////////////////////////////////////////////////////////////////
 // FlagObj
 /////////////////////////////////////////////////////////////////
-FlagObj::FlagObj()
+FlagObj::FlagObj(QGraphicsItem *parent):MapObj(parent) 
 {
-//  cout << "Const FlagObj ()\n";
+//  qDebug() << "Const FlagObj  this="<<this<<"  scene="<<s;
     init ();
-}
-
-FlagObj::FlagObj(QGraphicsScene* s):MapObj(s) 
-{
-//  cout << "Const FlagObj  this="<<this<<"  scene="<<s<<endl;
-    init ();
-}
-
-FlagObj::FlagObj (FlagObj* io)
-{
-    copy (io);
-}
-
-FlagObj::FlagObj (Flag* f)
-{
-    init();
-    name=f->getName();
-    icon->load(f->getPixmap());
 }
 
 FlagObj::~FlagObj()
 {
-//   cout << "Destr FlagObj  this="<<this <<"  " << qPrintable(name) << "\n";
+//   qDebug() << "Destr FlagObj  this="<<this <<"  " <<name;
     if (icon) delete (icon);
 }
 
@@ -38,7 +22,7 @@ void FlagObj::init ()
 {
     name="undefined";
 
-    icon=new ImageObj (scene);
+    icon=new ImageObj (this);
     icon->setPos (absPos.x(), absPos.y() );
     state=false;
     avis=true;

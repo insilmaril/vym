@@ -720,6 +720,7 @@ public:
     QList <TreeItem*> getSelectedItems();
     QModelIndex getSelectedIndex();
     QList <uint> getSelectedIDs();
+    bool isSelected(TreeItem*);
     QString getSelectString ();
     QString getSelectString (LinkableMapObj *lmo);
     QString getSelectString (TreeItem *item);

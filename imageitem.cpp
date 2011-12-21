@@ -16,6 +16,7 @@ bool isImage (const QString &fname)
 
 ImageItem::ImageItem()
 {
+    //qDebug()<<"Constr ImageItem";
     init();
 }
 
@@ -26,7 +27,7 @@ ImageItem::ImageItem (const QList<QVariant> &data, TreeItem *parent):MapItem (da
 
 ImageItem::~ImageItem()
 {
-    //cout <<"Destr ImageItem\n";
+    //qDebug()<<"Destr ImageItem";
     if (lmo) delete lmo;
 }
 
@@ -68,15 +69,13 @@ bool ImageItem::load(const QString &fname)
 
 FloatImageObj* ImageItem::createMapObj(QGraphicsScene *scene)
 {
-    FloatImageObj *fio=new FloatImageObj (scene,this);
+    FloatImageObj *fio=new FloatImageObj ( ((MapItem*)parentItem)->getLMO(),this);
     lmo=fio;
-    fio->setParObj ( ((MapItem*)parentItem)->getLMO());
     if (((BranchItem*)parentItem)->isScrolled() || !((MapItem*)parentItem)->getLMO()->isVisibleObj() )
 	    fio->setVisibility (false);
-    initLMO();
+    initLMO();	// set rel/abs position in mapitem
     fio->setZValue(zValue);
     fio->setRelPos (pos);
-    //cout << "II::createMO   fio="<<fio<<"   tI="<<fio->getTreeItem()<<endl;
     return fio;
 }
 

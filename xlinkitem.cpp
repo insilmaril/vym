@@ -48,7 +48,6 @@ Link* XLinkItem::getLink ()
 
 void XLinkItem::updateXLink()
 {
-    qDebug()<<"XLI::updateXLink";
     if (link)
 	link->updateLink();
 }
