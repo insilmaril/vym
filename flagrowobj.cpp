@@ -72,7 +72,7 @@ void FlagRowObj::setVisibility (bool v)
 
 FlagObj* FlagRowObj::addFlag (FlagObj *fo)
 {
-    FlagObj *newfo=new FlagObj (this);
+    FlagObj *newfo=new FlagObj (parentItem() );
     newfo->copy (fo);	// create a deep copy of fo
     newfo->move (absPos.x() + bbox.width(), absPos.y() );
     flag.append(newfo);

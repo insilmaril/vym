@@ -221,17 +221,20 @@ void FrameObj::setFrameType(const FrameType &t)
 	    break;
 	case Rectangle:
 	    rectFrame = scene()->addRect(QRectF(0,0,0,0), QPen(penColor), brushColor);
-	    rectFrame->setZValue(Z_INIT);
+	    rectFrame->setZValue(dZ_FRAME_LOW);
+	    rectFrame->setParentItem (this);
 	    rectFrame->show();
 	    break;
 	case Ellipse:
 	    ellipseFrame = scene()->addEllipse(QRectF(0,0,0,0), QPen(penColor), brushColor);
-	    ellipseFrame->setZValue(Z_INIT);
+	    ellipseFrame->setZValue(dZ_FRAME_LOW);
+	    ellipseFrame->setParentItem (this);
 	    ellipseFrame->show();
 	case Cloud:
 	    QPainterPath path;
 	    pathFrame = scene()->addPath(path, QPen(penColor), brushColor);
-	    pathFrame->setZValue(Z_INIT);
+	    pathFrame->setZValue(dZ_FRAME_LOW);
+	    pathFrame->setParentItem (this);
 	    pathFrame->show();
 	    break;
 	}

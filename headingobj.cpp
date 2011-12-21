@@ -93,7 +93,7 @@ QGraphicsTextItem* HeadingObj::newLine(QString s)
     //QGraphicsSimpleTextItem *t=new QGraphicsSimpleTextItem (s,0,scene);
     QGraphicsTextItem *t=new QGraphicsTextItem (s,0,scene());
     t->setFont (font);
-    t->setZValue(dZ_DEPTH * treeItem->depth() + dZ_TEXT);
+    t->setZValue(dZ_TEXT);
     // TextItem
     t->setDefaultTextColor(color);
     // SimpleTextItem
@@ -135,7 +135,7 @@ void HeadingObj::setText (QString s)
     {
 	QGraphicsTextItem *t=new QGraphicsTextItem ();
 	t->setFont (font);
-	t->setZValue(dZ_DEPTH*treeItem->depth() + dZ_TEXT);
+	t->setZValue(dZ_TEXT);
 	t->setHtml (s);
 	t->setDefaultTextColor(color);
 	scene()->addItem (t);

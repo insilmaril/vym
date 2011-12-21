@@ -95,8 +95,7 @@ void FloatImageObj::move (QPointF p)
 void FloatImageObj::positionBBox()
 {
     clickPoly=QPolygonF(bbox);
-    setZValue (treeItem->depth()*dZ_DEPTH + dZ_ICON);
-    qDebug()<<"FIO::posBB d="<<treeItem->depth()<<"  z="<<icon->zValue()<<"  ti="<<treeItem->getHeading();
+    setZValue (dZ_FLOATIMG);
 }
 
 void FloatImageObj::calcBBoxSize()

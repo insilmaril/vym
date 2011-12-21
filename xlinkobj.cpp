@@ -134,7 +134,9 @@ void XLinkObj::updateXLink()
     BranchItem *bi_end  =link->getEndBranch();
     if (bi_begin && bi_end && link->getState()==Link::activeXLink)
 	// FIXME-3 z-values: it may happen, that XLink is hidden below a separate rectFrame. Could lead to jumping on releasing mouse button
-	line->setZValue (dZ_DEPTH * max(bi_begin->depth(),bi_end->depth()) + dZ_XLINK); 
+	// Note: with MapObj being a GraphicsItem now, maybe better reparent the xlinkobj
+	//line->setZValue (dZ_DEPTH * max(bi_begin->depth(),bi_end->depth()) + dZ_XLINK); 
+	line->setZValue (dZ_XLINK); 
     else	
 	line->setZValue (Z_INIT);
 }

@@ -22,7 +22,7 @@ void FlagObj::init ()
 {
     name="undefined";
 
-    icon=new ImageObj (this);
+    icon=new ImageObj (parentItem());
     icon->setPos (absPos.x(), absPos.y() );
     state=false;
     avis=true;

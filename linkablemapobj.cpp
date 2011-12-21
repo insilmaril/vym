@@ -69,9 +69,9 @@ void LinkableMapObj::delLink()
 {
     if (bottomline)
     {
-	//delete (bottomline);	// FIXME-2 testing only
-    }	
+	delete (bottomline);
 	bottomline=NULL;
+    }	
     switch (style)
     {
 	case Line:
@@ -221,14 +221,12 @@ void LinkableMapObj::setLinkStyle(Style newstyle)
 	
     style=newstyle;
 
-    int d=treeItem->depth();
-
     QGraphicsLineItem *cl;
     switch (style)
     {
 	case Line: 
 	    l = scene()->addLine(QLineF(1,1,1,1),pen);
-	    l->setZValue(d*dZ_DEPTH + dZ_LINK);
+	    l->setZValue(dZ_LINK);
 	    if (visible)
 		l->show();
 	    else
@@ -239,7 +237,7 @@ void LinkableMapObj::setLinkStyle(Style newstyle)
 	    for (int i=0;i<arcsegs;i++)
 	    {
 		cl = scene()->addLine(QLineF(i*5,0,i*10,100),pen);
-		cl->setZValue(d*dZ_DEPTH + dZ_LINK);
+		cl->setZValue(dZ_LINK);
 		if (visible)
 		    cl->show();
 		else
@@ -251,7 +249,7 @@ void LinkableMapObj::setLinkStyle(Style newstyle)
 	    break;
 	case PolyLine:  
 	    p =scene()->addPolygon(QPolygonF(),pen,linkcolor);
-	    p->setZValue(d*dZ_DEPTH + dZ_LINK);
+	    p->setZValue(dZ_LINK);
 	    if (visible)
 		p->show();
 	    else
@@ -261,7 +259,7 @@ void LinkableMapObj::setLinkStyle(Style newstyle)
 	    break;
 	case PolyParabel:	
 	    p = scene()->addPolygon(QPolygonF(),pen,linkcolor);
-	    p->setZValue(d*dZ_DEPTH + dZ_LINK);
+	    p->setZValue(dZ_LINK);
 	    if (visible)
 		p->show();
 	    else
@@ -499,9 +497,10 @@ void LinkableMapObj::updateLinkGeometry()
     int z;
     // Hack to z-move links to MapCenter (d==1) below MCOs frame (d==0)
     if (treeItem->depth()<2)
-	z=(treeItem->depth() -2)*dZ_DEPTH + dZ_LINK;
+	//z=(treeItem->depth() -2)*dZ_DEPTH + dZ_LINK; //FIXME-1
+	z=- dZ_LINK;
     else	
-	z=treeItem->depth()*dZ_DEPTH + dZ_LINK;
+	z=dZ_LINK;
 
     //qDebug()<<"LMO::updateGeo d="<<treeItem->depth()<<"  this="<<this<<"  "<<treeItem->getHeading();
 

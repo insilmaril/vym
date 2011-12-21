@@ -1996,15 +1996,8 @@ void MapEditor::updateSelection(QItemSelection ,QItemSelection desel)
 	sp->setPolygon (poly);
 	sp->setPen (selectionColor);	
 	sp->setBrush (selectionColor);	
-	//sp->setZValue (-1);	//FIXME-2 only dZ needed, no DEPTH*dZ
-	//qDebug()<<"    sel ="<<itemsSelected.at(i); 
-	//qDebug()<<"     mo ="<<mo; 
 	sp->setParentItem (mo); 
-	sp->setZValue (dZ_DEPTH*itemsSelected.at(i)->depth() + dZ_SELBOX);
-	//qDebug()<<"    zsel="<<sp->zValue()<< "  zlmo="<< itemsSelected.at(i)->getLMO()->zValue();
-	//qDebug()<<"    sp        ="<<sp; 
-	//qDebug()<<"    sp->parent="<<sp->parentItem(); 
-	mo->setVisibility(true);
+	sp->setZValue (dZ_SELBOX);
     }
     scene()->update();  
 }

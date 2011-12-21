@@ -191,11 +191,9 @@ void OrnamentedObj::positionContents()	//FIXME-3 called multiple times for each 
     double ox=leftPad + dp;
     double oy=topPad + dp;
     
-    double d=dZ_DEPTH*treeItem->depth();
-
-//    if (debug) qDebug()<< "OO: positionContents "<<treeItem->getHeading()<<" dp="<<dp<<" absPos=="<<absPos<<" bboxTotal="<<bboxTotal<<"  ox="<<ox<<" oy="<<oy;
+    //if (debug) qDebug()<< "OO: positionContents "<<treeItem->getHeading()<<"  this="<<this;// dp="<<dp<<" absPos=="<<absPos<<" bboxTotal="<<bboxTotal<<"  ox="<<ox<<" oy="<<oy;
     // vertical align heading to bottom
-    heading->setZValue (d + dZ_TEXT);
+    heading->setZValue (dZ_TEXT);
     heading->setTransformOriginPoint (
 	QPointF ( ox + systemFlags->getBBox().width(),
 		  oy + ornamentsBBox.height() - heading->getHeight() 
@@ -205,9 +203,9 @@ void OrnamentedObj::positionContents()	//FIXME-3 called multiple times for each 
 		    );
     // Flags
     systemFlags-> move (ox +x , oy + y );
-    systemFlags->setZValue (d + dZ_ICON);
+    systemFlags->setZValue (dZ_ICON);
     standardFlags->move (ox +x + heading->getWidth() + systemFlags->getBBox().width() , oy + y );
-    standardFlags->setZValue (d + dZ_ICON);
+    standardFlags->setZValue (dZ_ICON);
 
     ornamentsBBox.moveTopLeft ( QPointF (ox+x,oy+y));
     clickPoly=QPolygonF (ornamentsBBox);
@@ -227,7 +225,7 @@ void OrnamentedObj::positionContents()	//FIXME-3 called multiple times for each 
 	    bboxTotal.height());
 
     // Update frame
-    frame->setZValue (d + dZ_FRAME_HIGH);
+    frame->setZValue (dZ_FRAME_HIGH);
     if (treeItem && 
 	treeItem->isBranchLikeType() && 
 	((BranchItem*)treeItem)->getFrameIncludeChildren() 
