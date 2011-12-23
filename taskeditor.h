@@ -19,6 +19,7 @@ public:
     TaskEditor (QWidget *parent=NULL);
     void sort();
     bool select (Task *task);
+    void contextMenuEvent ( QContextMenuEvent * e );
 
 private slots:
     void selectionChanged (const QItemSelection & selected, const QItemSelection & );
