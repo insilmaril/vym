@@ -9,7 +9,7 @@ ImageObj::ImageObj( QGraphicsItem *parent) : QGraphicsPixmapItem (parent )
 //  qDebug() << "Const ImageObj (scene)";
 
     setShapeMode (QGraphicsPixmapItem::BoundingRectShape);
-    setZValue(Z_INIT);	
+    setZValue(dZ_FLOATIMG);	
     hide();
 }
 

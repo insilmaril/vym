@@ -11,7 +11,7 @@ extern Settings settings;
 ///////////////////////////////////////////////////////////////////////
 
 
-NoteEditor::NoteEditor()
+NoteEditor::NoteEditor()    //FIXME-2 Fixed font toggling does not work
 {
 
     //qDebug()<<"Constr. NoteEditor";

@@ -37,7 +37,7 @@ void ImageItem::init()
     imageType=Undefined;
     hideLinkUnselected=true;
     originalFilename="no original name available";
-    zValue=Z_INIT;
+    zValue=dZ_FLOATIMG;
     scaleX=1;
     scaleY=1;
     posMode=Relative;

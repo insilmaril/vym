@@ -3074,7 +3074,7 @@ bool VymModel::unscrollBranch(BranchItem *bi)
     return false;
 }
 
-void VymModel::toggleScroll()	//FIXME-3 doesn't seem to update frame with frame including children (setting a standard flag does!) (changes are done for a child of framed branch)
+void VymModel::toggleScroll()	//FIXME-2 doesn't seem to update frame with frame including children (setting a standard flag does!) (changes are done for a child of framed branch)
 // and seems to weork with 2 (!) system flage?!?
 //FIXME-3 check calls from BI->toggleScroll to model->emitDataHasChanged  - redundant? also for toggleStandardFlag
 {

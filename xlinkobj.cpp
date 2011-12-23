@@ -38,9 +38,9 @@ void XLinkObj::init ()
     pen.setWidth ( link->getWidth() );
     pen.setCapStyle (  Qt::RoundCap );
     line=scene()->addLine(QLineF(1,1,1,1),pen);
-    line->setZValue (Z_INIT);
+    line->setZValue (dZ_XLINK);
     poly=scene()->addPolygon(QPolygonF(),pen, link->getColor());	
-    poly->setZValue (Z_INIT);
+    poly->setZValue (dZ_XLINK);
     setVisibility (true);
 }
 
@@ -138,7 +138,7 @@ void XLinkObj::updateXLink()
 	//line->setZValue (dZ_DEPTH * max(bi_begin->depth(),bi_end->depth()) + dZ_XLINK); 
 	line->setZValue (dZ_XLINK); 
     else	
-	line->setZValue (Z_INIT);
+	line->setZValue (dZ_XLINK);
 }
 
 void XLinkObj::positionBBox()

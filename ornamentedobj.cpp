@@ -113,7 +113,7 @@ void OrnamentedObj::setFrameType(const FrameObj::FrameType &t)
 	linkpos=LinkableMapObj::Middle;
 	useBottomline=false;
     }
-
+    updateVisibility();	// Update bottomline
     calcBBoxSize();
     positionBBox();
     requestReposition();
@@ -225,7 +225,7 @@ void OrnamentedObj::positionContents()	//FIXME-3 called multiple times for each 
 	    bboxTotal.height());
 
     // Update frame
-    frame->setZValue (dZ_FRAME_HIGH);
+    frame->setZValue (dZ_FRAME_LOW);
     if (treeItem && 
 	treeItem->isBranchLikeType() && 
 	((BranchItem*)treeItem)->getFrameIncludeChildren() 

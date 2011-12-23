@@ -5,8 +5,6 @@
 #include "branchobj.h"
 #include "vymmodel.h"
 
-using namespace std;
-
 /////////////////////////////////////////////////////////////////
 // LinkableMapObj
 /////////////////////////////////////////////////////////////////
@@ -59,10 +57,8 @@ void LinkableMapObj::init ()
 
 void LinkableMapObj::createBottomLine()
 {
-    useBottomline=true;
     bottomline=scene()->addLine(QLineF(1,1,1,1),pen);
     bottomline->setZValue(dZ_LINK);
-    bottomline->show();
 }
 
 void LinkableMapObj::delLink()
@@ -373,7 +369,7 @@ void LinkableMapObj::updateVisibility()
     bool visnow=visible;
 
     if (((MapItem*)treeItem)->getHideLinkUnselected()
-	&& treeItem->getModel()->getSelectedLMO() !=this)
+	&& !treeItem->getModel()->isSelected(treeItem) )
 	visnow=false;
 
     if (visnow) 
@@ -495,9 +491,9 @@ void LinkableMapObj::updateLinkGeometry()
     double vy=p2y - p1y;
 
     int z;
-    // Hack to z-move links to MapCenter (d==1) below MCOs frame (d==0)
+    // Hack to z-move links to MapCenter (d==1) below MCOs frame (d==0) //FIXME-1 no longer used?
     if (treeItem->depth()<2)
-	//z=(treeItem->depth() -2)*dZ_DEPTH + dZ_LINK; //FIXME-1
+	//z=(treeItem->depth() -2)*dZ_DEPTH + dZ_LINK; 
 	z=- dZ_LINK;
     else	
 	z=dZ_LINK;
