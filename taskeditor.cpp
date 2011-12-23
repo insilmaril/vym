@@ -13,6 +13,7 @@
 #include "vymmodel.h"
 
 extern TaskModel* taskModel;
+extern QMenu* taskContextMenu;
 extern Main *mainWindow;
 
 //extern QString iconPath;
@@ -66,6 +67,11 @@ bool TaskEditor::select (Task *task)
 	return true;
     }
     return false;
+}
+
+void TaskEditor::contextMenuEvent ( QContextMenuEvent * e )
+{
+    taskContextMenu->popup (e->globalPos() );
 }
 
 void TaskEditor::selectionChanged ( const QItemSelection & selected, const QItemSelection & )
