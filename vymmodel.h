@@ -24,6 +24,7 @@ class Link;
 class MapEditor;
 class SlideItem;
 class SlideModel;
+class Task;
 class XLinkItem;
 
 class QGraphicsScene;
@@ -713,6 +714,7 @@ public:
     BranchItem* getSelectedBranch();
     QList <BranchItem*> getSelectedBranches();
     ImageItem* getSelectedImage();
+    Task *getSelectedTask();
     XLinkItem* getSelectedXLinkItem();
     Link* getSelectedXLink();
     AttributeItem* getSelectedAttribute();

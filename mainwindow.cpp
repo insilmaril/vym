@@ -986,39 +986,63 @@ void Main::setupEditActions()
     actionListBranches.append (a);
     actionCycleTaskStatus=a;
 
-    a = new QAction(QPixmap(), tr( "Sleep %1 day","Task sleep" ).arg(1), this);
-    a->setShortcutContext (Qt::WindowShortcut);
-    a->setCheckable(false);
-    a->setEnabled (false);
-    switchboard.addConnection(this, a,tr("Edit","Shortcut group"));
-    connect( a, SIGNAL( triggered() ), this, SLOT( editTaskSleep1() ) );
-    actionListBranches.append (a);
-    actionTaskSleep1=a;
-
     a = new QAction(QPixmap(), tr( "Reset sleep","Task sleep" ), this);
     a->setShortcutContext (Qt::WindowShortcut);
     a->setCheckable(false);
     a->setEnabled (false);
+    a->setData (0);
     switchboard.addConnection(this, a,tr("Edit","Shortcut group"));
-    connect( a, SIGNAL( triggered() ), this, SLOT( editTaskSleep0() ) );
+    connect( a, SIGNAL( triggered() ), this, SLOT( editTaskSleepN() ) );
     actionListBranches.append (a);
     actionTaskSleep0=a;
+
+    a = new QAction(QPixmap(), tr( "Sleep %1 days","Task sleep" ).arg("n")+"...", this);
+    a->setShortcutContext (Qt::WindowShortcut);
+    a->setCheckable(false);
+    a->setEnabled (false);
+    a->setData (-1);
+    switchboard.addConnection(this, a,tr("Edit","Shortcut group"));
+    connect( a, SIGNAL( triggered() ), this, SLOT( editTaskSleepN() ) );
+    actionListBranches.append (a);
+    actionTaskSleepN=a;
+
+    a = new QAction(QPixmap(), tr( "Sleep %1 day","Task sleep" ).arg(1), this);
+    a->setShortcutContext (Qt::WindowShortcut);
+    a->setCheckable(false);
+    a->setEnabled (false);
+    a->setData (1);
+    switchboard.addConnection(this, a,tr("Edit","Shortcut group"));
+    connect( a, SIGNAL( triggered() ), this, SLOT( editTaskSleepN() ) );
+    actionListBranches.append (a);
+    actionTaskSleep1=a;
 
     a = new QAction(QPixmap(), tr( "Sleep %1 days","Task sleep" ).arg(3), this);
     a->setShortcutContext (Qt::WindowShortcut);
     a->setCheckable(false);
     a->setEnabled (false);
+    a->setData (3);
     switchboard.addConnection(this, a,tr("Edit","Shortcut group"));
-    connect( a, SIGNAL( triggered() ), this, SLOT( editTaskSleep3() ) );
+    connect( a, SIGNAL( triggered() ), this, SLOT( editTaskSleepN() ) );
     actionListBranches.append (a);
     actionTaskSleep3=a;
+
+    a = new QAction(QPixmap(), tr( "Sleep %1 days","Task sleep" ).arg(5), this);    //FIXME-2 replace with Dialog for n days
+    a->setShortcutContext (Qt::WindowShortcut);
+    a->setCheckable(false);
+    a->setEnabled (false);
+    a->setData (5);
+    switchboard.addConnection(this, a,tr("Edit","Shortcut group"));
+    connect( a, SIGNAL( triggered() ), this, SLOT( editTaskSleepN() ) );
+    actionListBranches.append (a);
+    actionTaskSleep5=a;
 
     a = new QAction(QPixmap(), tr( "Sleep %1 days","Task sleep" ).arg(7), this);
     a->setShortcutContext (Qt::WindowShortcut);
     a->setCheckable(false);
     a->setEnabled (false);
+    a->setData (7);
     switchboard.addConnection(this, a,tr("Edit","Shortcut group"));
-    connect( a, SIGNAL( triggered() ), this, SLOT( editTaskSleep7() ) );
+    connect( a, SIGNAL( triggered() ), this, SLOT( editTaskSleepN() ) );
     actionListBranches.append (a);
     actionTaskSleep7=a;
 
@@ -1026,8 +1050,9 @@ void Main::setupEditActions()
     a->setShortcutContext (Qt::WindowShortcut);
     a->setCheckable(false);
     a->setEnabled (false);
+    a->setData (14);
     switchboard.addConnection(this, a,tr("Edit","Shortcut group"));
-    connect( a, SIGNAL( triggered() ), this, SLOT( editTaskSleep14() ) );
+    connect( a, SIGNAL( triggered() ), this, SLOT( editTaskSleepN() ) );
     actionListBranches.append (a);
     actionTaskSleep14=a;
 
@@ -1035,8 +1060,9 @@ void Main::setupEditActions()
     a->setShortcutContext (Qt::WindowShortcut);
     a->setCheckable(false);
     a->setEnabled (false);
+    a->setData (28);
     switchboard.addConnection(this, a,tr("Edit","Shortcut group"));
-    connect( a, SIGNAL( triggered() ), this, SLOT( editTaskSleep28() ) );
+    connect( a, SIGNAL( triggered() ), this, SLOT( editTaskSleepN() ) );
     actionListBranches.append (a);
     actionTaskSleep28=a;
 
@@ -1960,8 +1986,10 @@ void Main::setupContextMenus()
 	taskContextMenu->addAction (actionCycleTaskStatus);
 	taskContextMenu->addSeparator();
 	taskContextMenu->addAction (actionTaskSleep0);
+	taskContextMenu->addAction (actionTaskSleepN);
 	taskContextMenu->addAction (actionTaskSleep1);
 	taskContextMenu->addAction (actionTaskSleep3);
+	taskContextMenu->addAction (actionTaskSleep5);
 	taskContextMenu->addAction (actionTaskSleep7);
 	taskContextMenu->addAction (actionTaskSleep14);
 	taskContextMenu->addAction (actionTaskSleep28);
@@ -3418,40 +3446,25 @@ void Main::editCycleTaskStatus()
     if (m) m->cycleTaskStatus();   
 }
 
-void Main::editTaskSleep0()
+void Main::editTaskSleepN()
 {
     VymModel *m=currentModel();
-    if (m) m->setTaskSleep(0);   
-}
-
-void Main::editTaskSleep1()
-{
-    VymModel *m=currentModel();
-    if (m) m->setTaskSleep(1);   
-}
-
-void Main::editTaskSleep3()
-{
-    VymModel *m=currentModel();
-    if (m) m->setTaskSleep(3);   
-}
-
-void Main::editTaskSleep7()
-{
-    VymModel *m=currentModel();
-    if (m) m->setTaskSleep(7);   
-}
-
-void Main::editTaskSleep14()
-{
-    VymModel *m=currentModel();
-    if (m) m->setTaskSleep(14);   
-}
-
-void Main::editTaskSleep28()
-{
-    VymModel *m=currentModel();
-    if (m) m->setTaskSleep(28);   
+    if (m) 
+    {
+	int n=((QAction*)sender())->data().toInt();
+	Task *task=m->getSelectedTask();
+	if (task)
+	{
+	    bool ok=true;
+	    if (n<0)
+		n=QInputDialog::getInt (
+		    this, 
+		    vymName + " " + tr("Task","Task dialog"), 
+		    tr("Task sleep (days):","Task dialog"), 
+		    n, 0, 2147483647, 1, &ok);
+	    if (ok) m->setTaskSleep(n);   
+	}
+    }
 }
 
 void Main::editAddTimestamp()

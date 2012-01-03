@@ -5992,6 +5992,15 @@ ImageItem* VymModel::getSelectedImage()
 	return NULL;
 }
 
+Task* VymModel::getSelectedTask()
+{
+    BranchItem *selbi=getSelectedBranch();
+    if (selbi)
+	return selbi->getTask();
+    else
+	return NULL;
+}
+
 Link* VymModel::getSelectedXLink()
 {
     XLinkItem *xli=getSelectedXLinkItem();

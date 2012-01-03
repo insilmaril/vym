@@ -162,12 +162,7 @@ private slots:
     void editToggleHideExport();
     void editToggleTask();
     void editCycleTaskStatus();
-    void editTaskSleep0();
-    void editTaskSleep1();
-    void editTaskSleep3();
-    void editTaskSleep7();
-    void editTaskSleep14();
-    void editTaskSleep28();
+    void editTaskSleepN();
     void editAddTimestamp();
     void editMapInfo();
     void editMoveUp();	
@@ -390,8 +385,10 @@ private:
     QAction *actionToggleTask;
     QAction *actionCycleTaskStatus;
     QAction *actionTaskSleep0;
+    QAction *actionTaskSleepN;
     QAction *actionTaskSleep1;
     QAction *actionTaskSleep3;
+    QAction *actionTaskSleep5;
     QAction *actionTaskSleep7;
     QAction *actionTaskSleep14;
     QAction *actionTaskSleep28;
