@@ -142,9 +142,12 @@ bool parseVYMHandler::startElement  ( const QString&, const QString&,
     } else if ( eName == "slide" && state == StateMap ) 
     {
 	state=StateMapSlide;
-	lastSlide=model->addSlide();
-	readSlideAttr(atts);
-	lastSlide=NULL;
+	if (loadMode==NewMap)
+	{   
+	    // Ignore slides during paste
+	    lastSlide=model->addSlide();
+	    readSlideAttr(atts);
+	}
     } else if ( eName == "mapcenter" && state == StateMap ) 
     {
 	state=StateMapCenter;
@@ -364,6 +367,9 @@ bool parseVYMHandler::endElement  ( const QString&, const QString&, const QStrin
 	case StateHtmlNote: 
 	    no.setNote (textdata);  // Richtext note, needed anyway for backward compatibility
 	    lastBranch->setNoteObj (no);
+	    break;  
+	case StateMapSlide: 
+	    lastSlide=NULL;
 	    break;  
 	case StateVymNote:	    // Might be richtext or plaintext with 
 				    // version >= 1.13.8
