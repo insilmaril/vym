@@ -474,7 +474,7 @@ TreeItem* BranchItem::findMapItem (QPointF p, TreeItem* excludeTI)
 	ai=getAttributeNum (i);
 	LinkableMapObj *mo=ai->getLMO();
 	if (mo && mo->isInClickBox(p) && 
-	    (ii != excludeTI) && 
+	    (ai != excludeTI) && 
 	    this!= excludeTI &&
 	    mo->isVisibleObj() 
 	) return ai;
