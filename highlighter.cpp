@@ -100,6 +100,7 @@ Highlighter::Highlighter(QTextDocument *parent)
 		    << "\\bsetSelectionColor\\b"
 		    << "\\bsortChildren\\b"
 		    << "\\btoggleFlag\\b"
+		    << "\\btoggleTask\\b"
 		    << "\\bunscroll\\b"
 		    << "\\bunscrollChilds\\b"
 		    << "\\bunsetFlag\\b"

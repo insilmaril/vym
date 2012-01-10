@@ -2092,7 +2092,11 @@ void VymModel::toggleTask()
     BranchItem *selbi=getSelectedBranch();
     if (selbi) 
     {
-	setChanged(); // FIXME-1 Testing for now, no savestate...
+	saveStateChangingPart (
+	    selbi,
+	    selbi,
+	    QString ("toggleTask()"),
+	    QString ("Toggle task of %1").arg(getObjectName (selbi)) );
 	Task *task=selbi->getTask();
 	if (!task )
 	    taskModel->createTask (selbi);
@@ -2371,7 +2375,7 @@ ImageItem* VymModel::createImage(BranchItem *dst)
 
 	// save scroll state. If scrolled, automatically select
 	// new branch in order to tmp unscroll parent...
-	newii->createMapObj(mapEditor->getScene());
+	newii->createMapObj();
 	reposition();
 	return newii;
     } 
@@ -4609,6 +4613,19 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	    s=parser.parString(ok,0);
 	    if (ok) 
 		selbi->toggleStandardFlag(s);	
+	}
+    /////////////////////////////////////////////////////////////////////
+    } else if (com=="toggleTask")
+    {
+	if (!selti )
+	{
+	    parser.setError (Aborted,"Nothing selected");
+	} else if (! selbi )
+	{		  
+	    parser.setError (Aborted,"Type of selection is not a branch");
+	} else if (parser.checkParCount(0))
+	{
+	    toggleTask();	
 	}
     /////////////////////////////////////////////////////////////////////
     } else  if (com=="unscroll")
