@@ -30,6 +30,7 @@ public:
     TreeItem(const QList<QVariant> &data, TreeItem *parent = 0);
     virtual ~TreeItem();
     void init();
+    virtual void clear()=0;
 
     // General housekeeping
     virtual void setModel (VymModel *m);

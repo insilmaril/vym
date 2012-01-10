@@ -92,7 +92,6 @@ void TreeItem::init()
     standardFlags.setMasterRow (standardFlagsMaster);
 }
 
-
 void TreeItem::setModel (VymModel *m)
 {
     model=m;

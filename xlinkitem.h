@@ -17,8 +17,9 @@ public:
     enum XLinkState {undefinedXLink,initXLink,activeXLink,deleteXLink};	
 
     XLinkItem (const QList<QVariant> &data, TreeItem *parent=NULL);
-    virtual ~XLinkItem ();
-    virtual void init ();
+    ~XLinkItem ();
+    void init ();
+    void clear ();
     void setLink (Link*);
     Link* getLink ();
     void updateXLink();

@@ -43,6 +43,10 @@ void ImageItem::init()
     posMode=Relative;
 }
 
+void ImageItem::clear()
+{
+}
+
 ImageItem::ImageType ImageItem::getImageType()
 {
     return imageType;
@@ -67,7 +71,7 @@ bool ImageItem::load(const QString &fname)
     return ok;	
 }
 
-FloatImageObj* ImageItem::createMapObj(QGraphicsScene *scene)
+FloatImageObj* ImageItem::createMapObj()
 {
     FloatImageObj *fio=new FloatImageObj ( ((MapItem*)parentItem)->getLMO(),this);
     lmo=fio;

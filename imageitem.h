@@ -24,13 +24,14 @@ public:
 
 protected:  
     void init();
+    void clear();
     ImageType imageType;
 public:	
     virtual ImageType getImageType();
 
     virtual void load (const QImage &img);
     virtual bool load (const QString &fname);
-    virtual FloatImageObj* createMapObj(QGraphicsScene *scene);	    //! Create classic object in GraphicsView
+    virtual FloatImageObj* createMapObj();	    //! Create classic object in GraphicsView
 protected:  
     qreal scaleX;
     qreal scaleY;

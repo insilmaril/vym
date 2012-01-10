@@ -44,8 +44,12 @@ BranchItem::~BranchItem()
 	delete lmo;
 	lmo=NULL;
     }
-    if (task) 
-	taskModel->deleteTask (task);
+    clear();
+}
+
+void BranchItem::clear()
+{
+    if (task) taskModel->deleteTask (task);
 }
 
 void BranchItem::copy (BranchItem *other)  // FIXME-3 lacks most of data...

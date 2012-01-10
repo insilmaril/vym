@@ -36,6 +36,10 @@ void XLinkItem::init ()
     link=NULL;
 }
 
+void XLinkItem::clear() 
+{
+}
+
 void XLinkItem::setLink (Link *l)
 {
     link=l;

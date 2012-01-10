@@ -17,6 +17,7 @@ class BranchItem:public MapItem
 public:
     BranchItem(const QList<QVariant> &data, TreeItem *parent = 0);
     virtual ~BranchItem();
+    virtual void clear();
     virtual void copy (BranchItem *item);
     virtual BranchItem* parentBranch();
 
