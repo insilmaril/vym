@@ -19,7 +19,7 @@ public:
     QString endElement  (QString);		    // name
     QString attribut    (QString,QString);	    // name, val
     QString valueElement(QString,QString);	    // name, val
-    QString valueElement(QString,QString,QString);  // name, attr, val
+    QString valueElement(QString,QString,QString);  // name, val, attr
     void incIndent();
     void decIndent();
     static int actindent;
