@@ -128,7 +128,7 @@ int main(int argc, char* argv[])
 
     if (options.isOn ("version"))
     {
-	cout << "VYM - View Your Mind (c) 2004-2011 Uwe Drechsel "  << endl
+	cout << "VYM - View Your Mind (c) 2004-"<< QDate::currentDate().year()<<" Uwe Drechsel "  << endl
 	    <<"   Version: "<<__VYM_VERSION <<endl
 	    <<"Build date: "<<__VYM_BUILD_DATE << endl
 	    <<"  "<<__VYM_CODENAME<<endl;
