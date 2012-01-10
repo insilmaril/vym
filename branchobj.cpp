@@ -241,7 +241,7 @@ void BranchObj::moveBy (QPointF p)
 }
 
 
-QRectF QGraphicsItem::boundingRect () const 
+QRectF QGraphicsItem::boundingRect () const // FIXME-2 no return, make abstract...
 {
 }
 
