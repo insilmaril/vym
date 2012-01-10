@@ -5039,7 +5039,7 @@ void VymModel::updateNoteFlag()
 	if (noteEditor->isEmpty()) 
 	    selti->clearNote();
 	else
-	    selti->setNote (noteEditor->getText());
+	    selti->setNoteObj (noteEditor->getNote());
 	emitDataHasChanged(selti);	
     }
 }

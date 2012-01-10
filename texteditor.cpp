@@ -92,7 +92,6 @@ TextEditor::TextEditor()
 
 TextEditor::~TextEditor()
 {
-// FIXME-3    if (printer) delete printer;
 }
 
 void TextEditor::reset()
@@ -205,6 +204,14 @@ QString TextEditor::getText()
 	else
 	    return e->toPlainText();
     }
+
+NoteObj TextEditor::getNote()
+{
+    NoteObj n;
+    n.setNote (getText() );
+    n.setFontHint ( getFontHint() );
+    return n;
+}
 
 bool TextEditor::findText(const QString &t, const QTextDocument::FindFlags &flags)
 {

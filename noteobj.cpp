@@ -248,6 +248,6 @@ QString NoteObj::saveToDir ()
 	    "\n" +
 	    endElement ("vymnote"); 
     } 
-    return valueElement("vymnote", quotemeta(note));
+    return valueElement("vymnote", quotemeta(note), attribut("fonthint",fonthint));
 }
 

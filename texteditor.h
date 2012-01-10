@@ -3,6 +3,8 @@
 
 #include <QtGui>
 
+#include "noteobj.h"
+
 enum EditorState {inactiveEditor,emptyEditor,filledEditor};
 
 class TextEditor :public QMainWindow
@@ -23,6 +25,7 @@ public:
     void setFilenameHint (const QString&);
     QString getFilenameHint ();
     QString getText();
+    NoteObj getNote();
 
     bool findText(const QString &, const QTextDocument::FindFlags &); 
     bool findText(const QString &, const QTextDocument::FindFlags &,int i); 
