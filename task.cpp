@@ -31,14 +31,13 @@ void Task::setModel (TaskModel* tm)
 void Task::cycleStatus(bool reverse)
 {
     int i=status;
-    qDebug()<<"Task i="<<i<<"  rev="<<reverse;
     if (reverse) 
 	i--;
     else
 	i++;
 
-    if (i<0) i=Task::NotStarted;
-    if (i>2) i=Task::Finished;
+    if (i<0) i=2;
+    if (i>2) i=0;
 
     setStatus ( (Task::Status) i );
 
