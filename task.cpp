@@ -28,20 +28,20 @@ void Task::setModel (TaskModel* tm)
     model=tm;
 }
 
-void Task::cycleStatus()
+void Task::cycleStatus(bool reverse)
 {
-    switch (status)
-    {
-	case Task::NotStarted: 
-	    setStatus(WIP);
-	    break;
-	case Task::WIP: 
-	    setStatus(Finished);
-	    break;
-	case Task::Finished: 
-	    setStatus(NotStarted);
-	    break;
-    }
+    int i=status;
+    qDebug()<<"Task i="<<i<<"  rev="<<reverse;
+    if (reverse) 
+	i--;
+    else
+	i++;
+
+    if (i<0) i=Task::NotStarted;
+    if (i>2) i=Task::Finished;
+
+    setStatus ( (Task::Status) i );
+
     if (model) model->emitDataHasChanged (this);
     if (branch) branch->updateTaskFlag();
 }

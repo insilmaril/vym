@@ -1400,7 +1400,7 @@ void MapEditor::mouseMoveEvent(QMouseEvent* e)
     }
 }
 
-void MapEditor::moveObject ()	
+void MapEditor::moveObject ()	//FIXME-1 no visual move, if obj has scrolled parent. only during tmp relink
 {
     if (!panningTimer->isActive() )
 	panningTimer->start(50);

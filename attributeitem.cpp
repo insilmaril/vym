@@ -13,7 +13,7 @@ AttributeItem::~AttributeItem()
 {
 }
 
-void AttributeItem::set (const QString &k, const QString &v, const Type &t)
+void AttributeItem::set (const QString &k, const QString &v, const Type &)
 {
     key=k;
     value=QVariant (v);

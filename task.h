@@ -12,12 +12,12 @@ class TaskModel;
 
 class Task:public XMLObj {
 public:
-    enum Status {Finished,WIP,NotStarted};
+    enum Status {NotStarted,WIP,Finished};
 
     Task(TaskModel* tm);
     ~Task();
     void setModel (TaskModel* tm);
-    void cycleStatus();
+    void cycleStatus(bool reverse=false);
     void setStatus(const QString &s);
     void setStatus(Status ts);
     Status getStatus();	

@@ -2109,20 +2109,26 @@ void VymModel::toggleTask()
     }
 }
 
-void VymModel::cycleTaskStatus() 
+void VymModel::cycleTaskStatus(bool reverse)
 {
     BranchItem *selbi=getSelectedBranch();
     if (selbi) 
     {
-	setChanged(); // FIXME-1 Testing for now, no savestate...
+	setChanged(); 
 	Task *task=selbi->getTask();
 	if (task ) 
 	{
-	    task->cycleStatus();
+	    saveState (
+		selbi,
+		"cycleTask (true)",
+		selbi,
+		"cycleTask ()",
+		" cycleTask ()");
+	    task->cycleStatus(reverse);
 	    task->setDateModified();
+	    updateTaskFlag();
 	}
     }
-    updateTaskFlag();
 }
 
 void VymModel::setTaskSleep(int n) 
@@ -3196,7 +3202,7 @@ void VymModel::emitCollapseUnselected()
     emit (collapseUnselected() );
 }
 
-void VymModel::toggleTarget()
+void VymModel::toggleTarget()	//FIXME-2 no savestate
 {
     BranchItem *selbi=getSelectedBranch();
     if (selbi)
@@ -3755,6 +3761,28 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	} else if (parser.checkParCount(0))
 	{   
 	    cut();
+	}   
+    } else if (com=="cycleTask")
+    {
+	if (!selti)
+	{
+	    parser.setError (Aborted,"Nothing selected");
+	} else if ( selectionType()!=TreeItem::Branch  && 
+		    selectionType()!=TreeItem::MapCenter  &&
+		    selectionType()!=TreeItem::Image )
+	{		  
+	    parser.setError (Aborted,"Type of selection is not a branch or floatimage");
+	} else 
+	{   
+	    if (parser.parCount()>2)
+		parser.setError (Aborted,"Too many parameters");
+	    else 
+	    {
+		ok=true;
+		if (parser.parCount()==0) b=false;
+		if (parser.parCount()==1) b=parser.parBool(ok,0);
+		if (ok) cycleTaskStatus (b);
+	    }
 	}   
     /////////////////////////////////////////////////////////////////////
     } else if (com=="delete")

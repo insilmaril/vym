@@ -330,8 +330,8 @@ public:
     /*! Toggle task for branch */
     void toggleTask();	    
 
-    /*! Cylce through task states */
-    void cycleTaskStatus();	    
+    /*! Cycle through task states */
+    void cycleTaskStatus(bool reverse=false);	    
 
     /*! Set task to sleep for n days */
     void setTaskSleep(int n);
