@@ -2114,7 +2114,6 @@ void VymModel::cycleTaskStatus(bool reverse)
     BranchItem *selbi=getSelectedBranch();
     if (selbi) 
     {
-	setChanged(); 
 	Task *task=selbi->getTask();
 	if (task ) 
 	{
@@ -2136,12 +2135,18 @@ void VymModel::setTaskSleep(int n)
     BranchItem *selbi=getSelectedBranch();
     if (selbi ) 
     {
-	setChanged(); // FIXME-1 Testing for now, no savestate...
 	Task *task=selbi->getTask();
 	if (task ) 
 	{
+	    int oldsleep=task->getDaysSleep();
 	    task->setDateSleep (n);
 	    task->setDateModified();
+	    saveState (
+		selbi,
+		QString("setTaskSleep (%1)").arg(oldsleep),
+		selbi,
+		QString("setTaskSleep (%1)").arg(n),
+		QString("setTaskSleep (%1)").arg(n) );
 	}
     }
     updateTaskFlag();
@@ -4319,6 +4324,21 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	    s=parser.parString(ok,0);
 	    if (ok) 
 		selbi->activateStandardFlag(s);
+	}
+    /////////////////////////////////////////////////////////////////////
+    } else if (com=="setTaskSleep")
+    {
+	if (!selti )
+	{
+	    parser.setError (Aborted,"Nothing selected");
+	} else if (! selbi )
+	{		  
+	    parser.setError (Aborted,"Type of selection is not a branch");
+	} else if (parser.checkParCount(1))
+	{
+	    n=parser.parInt(ok,0);
+	    if (ok) 
+		setTaskSleep (n);
 	}
     /////////////////////////////////////////////////////////////////////
     } else if (com=="toggleFrameIncludeChildren")
