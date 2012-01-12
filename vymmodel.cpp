@@ -2128,7 +2128,7 @@ void VymModel::cycleTaskStatus(bool reverse)
 	    updateTaskFlag();
 	    
 	    // make sure task is still visible
-	    emitDataHasChanged (selbi);	
+	    taskEditor->showSelection(); 
 	}
     }
 }
@@ -3299,6 +3299,7 @@ void VymModel::colorBranch (QColor c)
 	);  
 	selbi->setHeadingColor(c); // color branch
 	emitDataHasChanged (selbi);
+	taskEditor->showSelection();
     }
     mapEditor->getScene()->update();    
 }
@@ -3327,6 +3328,7 @@ void VymModel::colorSubtree (QColor c, BranchItem *b)
 	    cur=nextBranch (cur,prev,true,bi);
 	}   
     }
+    taskEditor->showSelection();
     mapEditor->getScene()->update();
 }
 
@@ -5917,7 +5919,6 @@ void VymModel::emitDataHasChanged (TreeItem *ti)
     {
 	taskModel->emitDataHasChanged ( ((BranchItem*)ti)->getTask() );
 	taskModel->recalcPriorities();
-	taskEditor->showSelection(); 
     }
 }
 
