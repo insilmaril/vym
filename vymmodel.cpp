@@ -2126,6 +2126,9 @@ void VymModel::cycleTaskStatus(bool reverse)
 	    task->cycleStatus(reverse);
 	    task->setDateModified();
 	    updateTaskFlag();
+	    
+	    // make sure task is still visible
+	    emitDataHasChanged (selbi);	
 	}
     }
 }
@@ -5914,6 +5917,7 @@ void VymModel::emitDataHasChanged (TreeItem *ti)
     {
 	taskModel->emitDataHasChanged ( ((BranchItem*)ti)->getTask() );
 	taskModel->recalcPriorities();
+	taskEditor->showSelection(); 
     }
 }
 

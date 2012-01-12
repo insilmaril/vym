@@ -55,6 +55,14 @@ void TaskEditor::sort()
     proxyModel->sort( proxyModel->sortColumn(), proxyModel->sortOrder() );
 }
 
+void TaskEditor::showSelection()
+{
+    QModelIndexList list=view->selectionModel()->selectedIndexes();
+    if (list.count()>0)
+	// Usually whole row is selected, so just go for first cell
+	view->scrollTo( list.first(), QAbstractItemView::EnsureVisible);
+}
+
 bool TaskEditor::select (Task *task)	
 {
     if (task)

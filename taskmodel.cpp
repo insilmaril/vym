@@ -240,6 +240,7 @@ void TaskModel::recalcPriorities()
 
 	// Age
 	p-=t->getAgeModified();
+	p-=t->getAgeCreation();
 
 	// Sleeping?
 	if (t->getDaysSleep() >0)
