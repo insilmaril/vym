@@ -221,7 +221,7 @@ void BranchItem::updateTaskFlag()
     } 
 }
 
-void BranchItem::setTask(Task *t) // FIXME-1 use flag groups
+void BranchItem::setTask(Task *t) // FIXME-2 use flag groups
 {
     task=t;
     updateTaskFlag();

@@ -10,7 +10,7 @@ extern Settings settings;
 extern QString vymName;
 
 
-BranchPropertyWindow::BranchPropertyWindow (QWidget *parent): QDialog (parent)	// FIXME-1 not updating when data is set elsewhere (connect to dataCHanged)
+BranchPropertyWindow::BranchPropertyWindow (QWidget *parent): QDialog (parent)	// FIXME-2 not updating when data is set elsewhere (connect to dataCHanged)
 
 {
     ui.setupUi (this);

@@ -491,7 +491,7 @@ void LinkableMapObj::updateLinkGeometry()
     double vy=p2y - p1y;
 
     int z;
-    // Hack to z-move links to MapCenter (d==1) below MCOs frame (d==0) //FIXME-1 no longer used?
+    // Hack to z-move links to MapCenter (d==1) below MCOs frame (d==0) //FIXME-3 no longer used?
     if (treeItem->depth()<2)
 	//z=(treeItem->depth() -2)*dZ_DEPTH + dZ_LINK; 
 	z=- dZ_LINK;
@@ -562,7 +562,7 @@ void LinkableMapObj::updateLinkGeometry()
 LinkableMapObj* LinkableMapObj::getParObj() // FIXME-2 shouldn't be necessary as GraphicsItem
 {
     if (parObj!=parentItem()) 
-	qWarning()<<"!!!!!!!!!!!!!!!!!!LMO::getParObj  parObj != parentItem()"; //FIXME-1 testing to remove this method later...
+	qWarning()<<"!!!!!!!!!!!!!!!!!!LMO::getParObj  parObj != parentItem()"; //FIXME-3 testing to remove this method later...
     return parObj;
 }
 
@@ -585,7 +585,7 @@ void LinkableMapObj::reposition()
 {
 }
 
-void LinkableMapObj::requestReposition()    //FIXME-2 needed? doesn't seem so...
+void LinkableMapObj::requestReposition()    //FIXME-3 still needed? doesn't seem so...
 {
     if (!repositionRequest)
     {

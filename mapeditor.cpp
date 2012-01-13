@@ -405,7 +405,7 @@ void MapEditor::setViewCenterTarget (const QPointF &p, const qreal &zft, const q
 	viewCenterAnimation.setTargetObject (this);
 	viewCenterAnimation.setPropertyName ("viewCenter");
 	viewCenterAnimation.setDuration(
-	    settings.value("/animation/duration/scrollbar",duration).toInt() );//FIXME-1
+	    settings.value("/animation/duration/scrollbar",duration).toInt() );
 	viewCenterAnimation.setEasingCurve (ecurve);
 	viewCenterAnimation.setStartValue( viewCenter );
 	viewCenterAnimation.setEndValue(viewCenterTarget);

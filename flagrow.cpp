@@ -92,7 +92,7 @@ void FlagRow::deactivate (const QString &name)	//FIXME-4 complaints if CTRL-E is
 	if (debug) qWarning ()<<QString("FlagRow::deactivate - %1 is not active").arg(name);
 }
 
-void FlagRow::deactivateGroup (const QString &) //  FIXME-1 not implemented yet, can be used to completely disable all tasks in vymmodel
+void FlagRow::deactivateGroup (const QString &) //  FIXME-3 not implemented yet, can be used to completely disable all tasks in vymmodel
 {
 }
 
