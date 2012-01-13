@@ -13,6 +13,7 @@ class TaskModel;
 class Task:public XMLObj {
 public:
     enum Status {NotStarted,WIP,Finished};
+    enum Awake {Sleeping,Morning,WideAwake};
 
     Task(TaskModel* tm);
     ~Task();
@@ -22,6 +23,10 @@ public:
     void setStatus(Status ts);
     Status getStatus();	
     QString getStatusString();
+    void setAwake(const QString &s);
+    void setAwake(Awake a);
+    Awake getAwake();
+    QString getAwakeString();
     void setPriority(int  p);
     int getPriority();
     int getAgeCreation();
@@ -40,6 +45,7 @@ public:
 private:
     TaskModel* model;
     Status status; 
+    Awake awake;
     int prio;
     BranchItem *branch;
     QDateTime date_creation;

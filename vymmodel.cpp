@@ -2115,14 +2115,13 @@ void VymModel::cycleTaskStatus(bool reverse)
     if (selbi) 
     {
 	Task *task=selbi->getTask();
-	if (task ) 
+	if (task) 
 	{
-	    saveState (
+	    saveStateChangingPart (
 		selbi,
-		"cycleTask (true)",
 		selbi,
-		"cycleTask ()",
-		" cycleTask ()");
+		QString ("cycleTask()"),
+		QString ("Toggle task of %1").arg(getObjectName (selbi)) );
 	    task->cycleStatus(reverse);
 	    task->setDateModified();
 	    updateTaskFlag();

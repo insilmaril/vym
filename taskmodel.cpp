@@ -61,16 +61,17 @@ QVariant TaskModel::data(const QModelIndex &index, int role) const
 
     if (role == Qt::DisplayRole) 
     {
+	Task *t=tasks.at(index.row() );
         if (index.column() == 0)
-            return tasks.at(index.row())->getPriority();
+            return t->getPriority();
         else if (index.column() == 1)
-            return tasks.at(index.row())->getStatusString();
+            return t->getStatusString() + " - " +t->getAwakeString();
         else if (index.column() == 2)
-	    return tasks.at(index.row())->getAgeCreation();
+	    return t->getAgeCreation();
         else if (index.column() == 3)
-	    return tasks.at(index.row())->getAgeModified();
+	    return t->getAgeModified();
         else if (index.column() == 4)
-	    return tasks.at(index.row())->getDaysSleep();
+	    return t->getDaysSleep();
         else if (index.column() == 5)
 	{
 	    if (bi) return bi->getModel()->getMapName();
@@ -228,6 +229,16 @@ void TaskModel::recalcPriorities()
 	    case Task::NotStarted: break;
 	}
 
+	// Awake and sleeping
+	if (t->getDaysSleep() <= 0 && t->getAwake()==Task::Sleeping)
+		t->setAwake(Task::Morning);
+	switch (t->getAwake() )
+	{
+	    case Task::Sleeping: p+=1000 + 5*t->getDaysSleep(); break;
+	    case Task::Morning: p-=1000; break;
+	    case Task::WideAwake: break;
+	}
+
 	// Color (importance)
 	QColor c=bi->getHeadingColor();
 	if (c==QColor ("#ff0000") ) p-=40;
@@ -241,10 +252,6 @@ void TaskModel::recalcPriorities()
 	// Age
 	p-=t->getAgeModified();
 	p-=t->getAgeCreation();
-
-	// Sleeping?
-	if (t->getDaysSleep() >0)
-	    p+=1000 + 5*t->getDaysSleep();
 
 	t->setPriority (p);
 	if (p<minPrio) minPrio=p;

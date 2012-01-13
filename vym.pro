@@ -42,7 +42,6 @@ HEADERS	+= \
     editxlinkdialog.h \
     exportoofiledialog.h \
     exporthtmldialog.h\
-    exporthtmldialog.h\
     exports.h \
     extrainfodialog.h \
     file.h \
