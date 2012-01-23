@@ -17,17 +17,29 @@ class TaskEditor: public QWidget
 
 public:
     TaskEditor (QWidget *parent=NULL);
+    ~TaskEditor ();
     void sort();
+    void setMapName (const QString &);
+    bool isUsedFilterMap ();
+    void setFilterMap  ();
+    bool isUsedFilterSleeping ();
+    void setFilterSleeping (bool);
     bool select (Task *task);
     void showSelection();
     void contextMenuEvent ( QContextMenuEvent * e );
 
 private slots:
     void selectionChanged (const QItemSelection & selected, const QItemSelection & );
+    void toggleFilterMap ();
+    void toggleFilterSleeping ();
 
 private:
     QTableView *view;
-    QSortFilterProxyModel *proxyModel;
+    QSortFilterProxyModel *filterMapModel;
+    QSortFilterProxyModel *filterSleepingModel;
+    QString mapName;
+    QAction *actionToggleFilterMap;
+    QAction *actionToggleFilterSleeping;
 };
 
 #endif

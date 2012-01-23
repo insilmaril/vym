@@ -4,6 +4,7 @@
 #include <QDebug>
 #include <QHeaderView>
 #include <QSortFilterProxyModel>
+#include <QToolBar>
 #include <QVBoxLayout>
 
 #include "branchitem.h"
@@ -12,18 +13,41 @@
 #include "taskmodel.h"
 #include "vymmodel.h"
 
-extern TaskModel* taskModel;
-extern QMenu* taskContextMenu;
 extern Main *mainWindow;
+extern Settings settings;
+extern QMenu* taskContextMenu;
+extern TaskModel* taskModel;
 
 //extern QString iconPath;
 
 TaskEditor::TaskEditor(QWidget *)
 {
-    // Create Table view
+    // Creat Table view
     view = new QTableView; 
 
     QVBoxLayout* mainLayout = new QVBoxLayout;
+
+    QToolBar *tb=new QToolBar ("test");
+    mainLayout->addWidget (tb);
+
+    QAction *a = new QAction(QPixmap(),  tr( "Toggle map filter","TaskEditor" ),this );
+    //a->setShortcut ( Qt::CTRL + Qt::Key_H  );	// Toggle history window
+    //switchboard.addConnection(a,tr("View shortcuts","Shortcut group"));
+    a->setCheckable(true);
+    a->setChecked  (settings.value("/taskeditor/filterMap", false).toBool());
+    tb->addAction (a);
+    connect( a, SIGNAL( triggered() ), this, SLOT(toggleFilterMap() ) );
+    actionToggleFilterMap=a;
+
+    a = new QAction(QPixmap(),  tr( "Toggle sleeping filter","TaskEditor" ),this );
+    //a->setShortcut ( Qt::CTRL + Qt::Key_H  );	// Toggle history window
+    //switchboard.addConnection(a,tr("View shortcuts","Shortcut group"));
+    a->setCheckable(true);
+    a->setChecked  (settings.value("/taskeditor/filterSleeping", false).toBool());
+    tb->addAction (a);
+    connect( a, SIGNAL( triggered() ), this, SLOT(toggleFilterSleeping() ) );
+    actionToggleFilterSleeping=a;
+
     mainLayout->addWidget (view);
     setLayout (mainLayout);
 
@@ -32,15 +56,16 @@ TaskEditor::TaskEditor(QWidget *)
     view->verticalHeader()->hide();
     view->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
-    proxyModel = new QSortFilterProxyModel();
-    proxyModel->setSourceModel(taskModel);
-    proxyModel->setSortCaseSensitivity (Qt::CaseInsensitive);
-//    proxyModel->setFilterRegExp(QRegExp("WIP", Qt::CaseInsensitive));
-//    proxyModel->setFilterKeyColumn(1);
+    filterMapModel = new QSortFilterProxyModel();
+    filterMapModel->setSourceModel(taskModel);
+    filterMapModel->setSortCaseSensitivity (Qt::CaseInsensitive);
 
-    proxyModel->setDynamicSortFilter (true);
+    filterMapModel->setDynamicSortFilter (true);
 
-    view->setModel (proxyModel);
+    filterSleepingModel = new QSortFilterProxyModel();
+    //filterSleepingModel->setSourceModel(filterMapModel);
+
+    view->setModel (filterMapModel);
     view->horizontalHeader()->setSortIndicator (0,Qt::AscendingOrder);
     view->setSortingEnabled(true);
 
@@ -49,10 +74,54 @@ TaskEditor::TaskEditor(QWidget *)
 	this, SLOT (selectionChanged (QItemSelection,QItemSelection)));
 }
 
+TaskEditor::~TaskEditor()
+{
+    settings.setValue ("/taskeditor/filterMap",actionToggleFilterMap->isChecked());
+    settings.setValue ("/taskeditor/filterSleeping",actionToggleFilterSleeping->isChecked());
+}
+
 void TaskEditor::sort()
 {
     taskModel->recalcPriorities();
-    proxyModel->sort( proxyModel->sortColumn(), proxyModel->sortOrder() );
+    filterMapModel->sort( filterMapModel->sortColumn(), filterMapModel->sortOrder() );
+}
+
+void TaskEditor::setMapName (const QString &n)
+{
+    mapName=n;
+    setFilterMap ();
+}
+
+bool TaskEditor::isUsedFilterMap()
+{
+    return actionToggleFilterMap->isChecked();
+}
+
+void TaskEditor::setFilterMap () //FIXME-1 use exact match, not regex
+{
+    if (actionToggleFilterMap->isChecked() )
+    {
+	filterMapModel->setFilterRegExp(QRegExp(mapName, Qt::CaseInsensitive));
+	filterMapModel->setFilterKeyColumn(5);
+    } else
+	filterMapModel->setFilterRegExp(QRegExp());
+}
+
+bool TaskEditor::isUsedFilterSleeping()
+{
+    return actionToggleFilterSleeping->isChecked();
+}
+
+void TaskEditor::setFilterSleeping (bool b)
+{
+/* FIXME-1
+    if (b)
+    {
+	filterMapModel->setFilterRegExp(QRegExp(mapName, Qt::CaseInsensitive));
+	filterMapModel->setFilterKeyColumn(5);
+    } else
+	filterMapModel->setFilterRegExp(QRegExp());
+*/
 }
 
 void TaskEditor::showSelection()
@@ -68,8 +137,8 @@ bool TaskEditor::select (Task *task)
     if (task)
     {
 	QItemSelection sel (
-	    proxyModel->mapFromSource(taskModel->index (task) ), 
-	    proxyModel->mapFromSource(taskModel->indexRowEnd (task) ) ); 
+	    filterMapModel->mapFromSource(taskModel->index (task) ), 
+	    filterMapModel->mapFromSource(taskModel->indexRowEnd (task) ) ); 
 
 	view->selectionModel()->select (sel, QItemSelectionModel::ClearAndSelect  );
 	return true;
@@ -89,7 +158,7 @@ void TaskEditor::selectionChanged ( const QItemSelection & selected, const QItem
     foreach (ix,selected.indexes() )	// FIXME-3 what, if multiple selection in MapEditor?
     {
 	// Also select in other editors
-	ix_org= proxyModel->mapToSource(ix);
+	ix_org= filterMapModel->mapToSource(ix);
 	Task *t=taskModel->getTask (ix_org);
 	if (t) 
 	{
@@ -107,5 +176,17 @@ void TaskEditor::selectionChanged ( const QItemSelection & selected, const QItem
 	    }
 	}
     }
+}
+
+void TaskEditor::toggleFilterMap ()
+{
+    qDebug()<<"TE::toggleFilterMap";
+    setFilterMap ();
+}
+
+void TaskEditor::toggleFilterSleeping ()
+{
+    qDebug()<<"TE::toggleFilterSleeping";
+    //setFilterMapName (!actionToggleMapFilter->isChecked() );
 }
 

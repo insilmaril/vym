@@ -2315,11 +2315,12 @@ void Main::editorChanged(QWidget *)
     {	
 	m->reselect();
 	updateQueries (m);
+
+	taskEditor->setMapName (m->getMapName() );
     }	
 
     // Update actions to in menus and toolbars according to editor
     updateActions();
-
 }
 
 void Main::fileNew()
@@ -2501,6 +2502,7 @@ ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode, const FileType &ftyp
 		}
 		actionFilePrint->setEnabled (true);
 	    }	
+	    editorChanged(this);
 	    vm->emitShowSelection();
 	    statusBar()->showMessage( "Loaded " + fn, statusbarTime );
 	}   

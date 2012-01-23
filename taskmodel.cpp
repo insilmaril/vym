@@ -224,9 +224,9 @@ void TaskModel::recalcPriorities()
 	// Status
 	switch (t->getStatus() )
 	{
-	    case Task::Finished: p+=2000; break;
-	    case Task::WIP: p+=100; break;
 	    case Task::NotStarted: break;
+	    case Task::WIP: p+=100; break;
+	    case Task::Finished: p+=2000; break;
 	}
 
 	// Awake and sleeping
@@ -234,24 +234,24 @@ void TaskModel::recalcPriorities()
 		t->setAwake(Task::Morning);
 	switch (t->getAwake() )
 	{
-	    case Task::Sleeping: p+=1000 + 5*t->getDaysSleep(); break;
 	    case Task::Morning: p-=1000; break;
 	    case Task::WideAwake: break;
+	    case Task::Sleeping: p+=1000 + 5*t->getDaysSleep(); break;
 	}
 
 	// Color (importance)
 	QColor c=bi->getHeadingColor();
-	if (c==QColor ("#ff0000") ) p-=40;
-	if (c==QColor ("#d95100") ) p-=30;
-	if (c==QColor ("#005500") ) p-=20;
 	if (c==QColor ("#00aa7f") ) p-=10;
+	if (c==QColor ("#005500") ) p-=20;
+	if (c==QColor ("#d95100") ) p-=30;
+	if (c==QColor ("#ff0000") ) p-=40;
 
-	// Stopsign
+	// Flags
 	if (bi->hasActiveStandardFlag ("stopsign") ) p-=100;
 
 	// Age
 	p-=t->getAgeModified();
-	p-=t->getAgeCreation();
+	//p-=t->getAgeCreation();
 
 	t->setPriority (p);
 	if (p<minPrio) minPrio=p;
