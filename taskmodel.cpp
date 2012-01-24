@@ -225,7 +225,7 @@ void TaskModel::recalcPriorities()
 	switch (t->getStatus() )
 	{
 	    case Task::NotStarted: break;
-	    case Task::WIP: p+=100; break;
+	    case Task::WIP: p+=10; break;
 	    case Task::Finished: p+=2000; break;
 	}
 
