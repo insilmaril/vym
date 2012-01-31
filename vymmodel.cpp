@@ -1804,10 +1804,11 @@ void VymModel::findReset()
     EOFind=false;
 }
 
-void VymModel::setURL(const QString &url) 
+void VymModel::setURL(QString url) 
 {
     TreeItem *selti=getSelectedItem();
     if (selti->getURL()==url) return;
+    if (!url.startsWith("http") ) url="http://"+url;
     if (selti)
     {
 	QString oldurl=selti->getURL();

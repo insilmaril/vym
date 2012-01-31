@@ -304,7 +304,7 @@ private:
     QString findString;
 
 public:
-    void setURL(const QString &url);
+    void setURL(QString url);
     QString getURL();			    // returns URL of selection or ""
     QStringList getURLs(bool ignoreScrolled=true);  // returns URLs of subtree
 
