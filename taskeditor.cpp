@@ -30,7 +30,7 @@ TaskEditor::TaskEditor(QWidget *)
     QToolBar *tb=new QToolBar ("test");
     mainLayout->addWidget (tb);
 
-    QAction *a = new QAction(QPixmap(),  tr( "Toggle map filter","TaskEditor" ),this );
+    QAction *a = new QAction(QPixmap(),  tr( "Current map","TaskEditor" ),this );
     //a->setShortcut ( Qt::CTRL + Qt::Key_H  );	// Toggle history window
     //switchboard.addConnection(a,tr("View shortcuts","Shortcut group"));
     a->setCheckable(true);
@@ -39,12 +39,12 @@ TaskEditor::TaskEditor(QWidget *)
     connect( a, SIGNAL( triggered() ), this, SLOT(toggleFilterMap() ) );
     actionToggleFilterMap=a;
 
-    a = new QAction(QPixmap(),  tr( "Toggle sleeping filter","TaskEditor" ),this );
+    a = new QAction(QPixmap(),  tr( "Awake only","TaskEditor" ),this );
     //a->setShortcut ( Qt::CTRL + Qt::Key_H  );	// Toggle history window
     //switchboard.addConnection(a,tr("View shortcuts","Shortcut group"));
     a->setCheckable(true);
     a->setChecked  (settings.value("/taskeditor/filterSleeping", false).toBool());
-    tb->addAction (a);
+    //tb->addAction (a);
     connect( a, SIGNAL( triggered() ), this, SLOT(toggleFilterSleeping() ) );
     actionToggleFilterSleeping=a;
 
@@ -101,7 +101,7 @@ void TaskEditor::setFilterMap () //FIXME-1 use exact match, not regex
 {
     if (actionToggleFilterMap->isChecked() )
     {
-	filterMapModel->setFilterRegExp(QRegExp(mapName, Qt::CaseInsensitive));
+	filterMapModel->setFilterRegExp(QRegExp("^" + mapName + "$", Qt::CaseInsensitive));
 	filterMapModel->setFilterKeyColumn(5);
     } else
 	filterMapModel->setFilterRegExp(QRegExp());
