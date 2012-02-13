@@ -18,7 +18,7 @@ extern Settings settings;
 extern QMenu* taskContextMenu;
 extern TaskModel* taskModel;
 
-//extern QString iconPath;
+extern QString iconPath;
 
 TaskEditor::TaskEditor(QWidget *)
 {
@@ -28,9 +28,13 @@ TaskEditor::TaskEditor(QWidget *)
     QVBoxLayout* mainLayout = new QVBoxLayout;
 
     QToolBar *tb=new QToolBar ("test");
+    tb->setToolButtonStyle (Qt::ToolButtonTextBesideIcon);
     mainLayout->addWidget (tb);
 
-    QAction *a = new QAction(QPixmap(),  tr( "Current map","TaskEditor" ),this );
+    // Original icon from KDE: /usr/share/icons/oxygen/16x16/actions/view-filter.png
+
+    QIcon icon=QIcon (iconPath + "view-filter.png");
+    QAction *a = new QAction(icon,  tr( "Current map","TaskEditor" ),this );
     //a->setShortcut ( Qt::CTRL + Qt::Key_H  );	// Toggle history window
     //switchboard.addConnection(a,tr("View shortcuts","Shortcut group"));
     a->setCheckable(true);
@@ -39,7 +43,7 @@ TaskEditor::TaskEditor(QWidget *)
     connect( a, SIGNAL( triggered() ), this, SLOT(toggleFilterMap() ) );
     actionToggleFilterMap=a;
 
-    a = new QAction(QPixmap(),  tr( "Awake only","TaskEditor" ),this );
+    a = new QAction(icon,  tr( "Awake only","TaskEditor" ),this );
     //a->setShortcut ( Qt::CTRL + Qt::Key_H  );	// Toggle history window
     //switchboard.addConnection(a,tr("View shortcuts","Shortcut group"));
     a->setCheckable(true);
