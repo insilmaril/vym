@@ -236,7 +236,7 @@ void TaskModel::recalcPriorities()
 	{
 	    case Task::Morning: p-=1000; break;
 	    case Task::WideAwake: break;
-	    case Task::Sleeping: p+=1000 + 5*t->getDaysSleep(); break;
+	    case Task::Sleeping: p+=1000 + t->getDaysSleep(); break;
 	}
 
 	// Color (importance)
