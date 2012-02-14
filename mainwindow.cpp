@@ -541,6 +541,10 @@ void Main::setupFileActions()
     switchboard.addConnection(fileExportMenu, a,tr("File","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( fileExportTaskjuggler() ) );
 
+    a = new QAction( "OrgMode... (experimental)", this);
+    switchboard.addConnection(fileExportMenu, a,tr("File","Shortcut group"));
+    connect( a, SIGNAL( triggered() ), this, SLOT( fileExportOrgMode() ) );
+
     a = new QAction( "LaTeX... (experimental)", this);
     switchboard.addConnection(fileExportMenu, a,tr("File","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( fileExportLaTeX() ) );
@@ -2898,6 +2902,25 @@ void Main::fileExportLaTeX()	//FIXME-3 not scriptable yet
 	ex.addFilter ("Tex (*.tex)");
 	ex.setDir(lastImageDir);
 	ex.setWindowTitle(vymName+ " -" +tr("Export as LaTeX")+" "+tr("(still experimental)"));
+	if (ex.execDialog() ) 
+	{
+	    m->setExportMode(true);
+	    ex.doExport();
+	    m->setExportMode(false);
+	}
+    }
+}
+
+void Main::fileExportOrgMode()	//FIXME-3 not scriptable yet
+{
+    VymModel *m=currentModel();
+    if (m)
+    {
+	ExportOrgMode ex;
+	ex.setModel (m);
+	ex.addFilter ("org-mode (*.org)");
+	ex.setDir(lastImageDir);
+	ex.setWindowTitle(vymName+ " -" +tr("Export as org-mode")+" "+tr("(still experimental)"));
 	if (ex.execDialog() ) 
 	{
 	    m->setExportMode(true);

@@ -804,6 +804,50 @@ void ExportTaskjuggler::doExport()
 }
 
 ////////////////////////////////////////////////////////////////////////
+void ExportOrgMode::doExport() 
+{
+    // Exports a map to an org-mode file.  
+    // This file needs to be read 
+    // by EMACS into an org mode buffer
+    QFile file (outputFile);
+    if ( !file.open( QIODevice::WriteOnly ) ) 
+    {
+	QMessageBox::critical (0,QObject::tr("Critical Export Error"),QObject::tr("Could not write %1").arg(outputFile));
+	mainWindow->statusMessage(QString(QObject::tr("Export failed.")));
+	return;
+    }
+    QTextStream ts( &file );  // use LANG decoding here...
+    //FIXME-3 ts.setEncoding (QTextStream::UnicodeUTF8); // Force UTF8
+
+    // Main loop over all branches
+    QString s;
+    int i;
+    BranchObj *bo;
+    BranchItem *cur=NULL;
+    BranchItem *prev=NULL;
+    model->nextBranch(cur,prev);
+    while (cur) 
+    {
+	bo=(BranchObj*)(cur->getLMO());
+
+	if (!cur->hasHiddenExportParent() )
+	{
+	    for(i=0;i<=cur->depth();i++)
+		ts << ("*");
+	    ts << (" " + cur->getHeadingPlain()+ "\n");
+	    // If necessary, write note
+	    if (!cur->getNoteObj().isEmpty()) 
+	    {
+		ts << (cur->getNoteASCII());
+		ts << ("\n");
+	    }
+	}
+	cur=model->nextBranch(cur,prev);
+    }
+    file.close();
+}
+
+////////////////////////////////////////////////////////////////////////
 void ExportLaTeX::doExport() 
 {
     // Exports a map to a LaTex file.  

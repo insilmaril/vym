@@ -113,6 +113,7 @@ private slots:
     void fileExportAO();
     void fileExportASCII();
     void fileExportCSV();
+    void fileExportOrgMode();
     void fileExportLaTeX();
     void fileExportKDE3Bookmarks();
     void fileExportKDE4Bookmarks();
