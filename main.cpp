@@ -72,6 +72,32 @@ ImageIO imageIO;
 
 int statusbarTime=10000;
 
+int warningCount=0;
+int criticalCount=0;
+int fatalCount=0;
+
+void msgHandler (QtMsgType type, const char *msg)
+{
+    switch (type) 
+    {
+	case QtDebugMsg:
+	    fprintf(stderr, "%s\n", msg);
+	    break;
+	case QtWarningMsg:
+	    fprintf(stderr, "Warning: %s\n", msg);
+	    warningCount++;
+	    break;
+	case QtCriticalMsg:
+	    fprintf(stderr, "Critical: %s\n", msg);
+	    criticalCount++;
+	    break;
+	case QtFatalMsg:
+	    fprintf(stderr, "Fatal: %s\n", msg);
+	    fatalCount++;
+	    //abort();
+    }
+}
+
 int main(int argc, char* argv[])
 {
     //Q_INIT_RESOURCE (application);
@@ -83,6 +109,9 @@ int main(int argc, char* argv[])
     vymBuildDate=__VYM_BUILD_DATE;
     vymCodeName=__VYM_CODENAME;
     vymHome=__VYM_HOME;
+
+    // Install our own handler for messages
+    qInstallMsgHandler(msgHandler);
 
     // Reading and initializing options commandline options
     options.add ("batch", Option::Switch, "b", "batch");
@@ -300,5 +329,8 @@ int main(int argc, char* argv[])
     // Enable some last minute cleanup
     QObject::connect( &app, SIGNAL(lastWindowClosed()), &app, SLOT(quit()) );
 
-    return app.exec();
+    app.exec();
+    int s=warningCount + criticalCount + fatalCount;
+    if (s>0) qDebug()<<"vym exiting with:\n"<<warningCount<<" warning messages\n"<<criticalCount<<" critical messages\n"<<fatalCount<<" fatal messages";
+    return s;
 }
