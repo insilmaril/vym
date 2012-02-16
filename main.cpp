@@ -27,6 +27,7 @@ using namespace std;
 
 QString vymName;
 QString vymVersion;
+QString vymHome;
 QString vymBuildDate;
 QString vymCodeName;
 QString vymInstanceName;
@@ -81,6 +82,7 @@ int main(int argc, char* argv[])
     vymVersion=__VYM_VERSION;
     vymBuildDate=__VYM_BUILD_DATE;
     vymCodeName=__VYM_CODENAME;
+    vymHome=__VYM_HOME;
 
     // Reading and initializing options commandline options
     options.add ("batch", Option::Switch, "b", "batch");

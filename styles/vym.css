@@ -90,10 +90,14 @@ a:hover               { text-decoration:underline; }
 .vym-note { 
 	width:100%; 
 	border: solid 1px black; 
+	border-radius: 0.6em 0.6em 0.6em 0.6em;
 	border-color: #000000;
 	background-color: #eeeeee; 
 	font-size: small;
 	font-weight: normal;
+	overflow: auto;
+	padding: 1em 1em;
+
 }
 
 .standardflag { 

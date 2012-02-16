@@ -16,6 +16,7 @@ extern QDir vymBaseDir;
 extern QString flagsPath;
 extern QString vymName;
 extern QString vymVersion;
+extern QString vymHome;
 extern Settings settings;
 extern QDir lastExportDir;
 
@@ -743,6 +744,9 @@ void ExportHTML::doExport(bool useDialog)
     // Write header
     ts<<"<html>";
     ts<<"<meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\"> ";
+    ts<<"<meta name=\"generator=\" content=\" vym - view your mind - " + vymHome + "\">"; 
+    ts<<"<meta name=\"author\" content=\"" + model->getAuthor() + "\"> ";
+    ts<<"<meta name=\"description\" content=\"" + model->getComment() + "\"> ";
     ts<<"<title>"+model->getMapName()<<"</title><body>";
     ts<<" <link rel='stylesheet' id='css.stylesheet' href='"<<cssFileName<<"' />\n";
 
@@ -769,7 +773,7 @@ void ExportHTML::doExport(bool useDialog)
       <tr> \n\
         <td class=\"vym-footerL\">"+model->getFileName()+"</td> \n\
         <td class=\"vym-footerC\">"+model->getDate()+"</td> \n\
-        <td class=\"vym-footerR\"> vym "+vymVersion+"</td> \n\
+        <td class=\"vym-footerR\"> <a href='" + vymHome + "'>vym "+vymVersion+"</a></td> \n\
       </tr> \n \
     </table>\n";
     ts<<"</body></html>";
