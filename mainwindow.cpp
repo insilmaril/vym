@@ -2714,12 +2714,15 @@ void Main::fileSaveAs(const SaveMode& savemode)
     
 	    // Save now
 	    VymModel *m=currentModel();
+	    QString fn_org=m->getFilePath(); // Restore fn later, if savemode != CompleteMap
 	    m->setFilePath(fn);
 	    fileSave(m, savemode);
 
 	    // Set name of tab, assuming current tab is the one we just saved
 	    if (savemode==CompleteMap)
 		tabWidget->setTabText (tabWidget->currentIndex(), m->getFileName() );
+	    else
+		m->setFilePath (fn_org);
 	    return; 
 	}
     }
