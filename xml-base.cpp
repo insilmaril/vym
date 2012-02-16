@@ -66,3 +66,11 @@ void parseBaseHandler::setLoadMode (const LoadMode &lm, int p)
     insertPos=p;
 }
 
+bool parseBaseHandler::readHtmlAttr (const QXmlAttributes& a)
+{
+    for (int i=1; i<=a.count(); i++)
+	htmldata+=" "+a.localName(i-1)+"=\""+a.value(i-1)+"\"";
+    return true;
+}
+
+

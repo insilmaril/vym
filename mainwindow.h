@@ -83,7 +83,7 @@ public:
 private slots:
     void editorChanged(QWidget*);
 
-    ErrorCode fileLoad(QString ,const LoadMode &, const FileType & ftype=VymMap);
+    ErrorCode fileLoad(QString ,const LoadMode &, const FileType &ftype);
     void fileLoad(const LoadMode &);
     void fileLoad();
     void fileSaveSession();

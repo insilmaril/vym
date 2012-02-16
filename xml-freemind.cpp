@@ -1,5 +1,6 @@
 #include "xml-freemind.h"
 
+#include <QDebug>
 #include <QMessageBox>
 
 #include "branchitem.h"
@@ -8,14 +9,12 @@
 
 extern Settings settings;
 extern QString vymVersion;
-
 extern QString flagsPath;
 
 bool parseFreemindHandler::startDocument()
 {
     errorProt = "";
     state = StateInit;
-    laststate = StateInit;
     stateStack.clear();
     stateStack.append(StateInit);
     isVymPart=false;
@@ -38,12 +37,12 @@ bool parseFreemindHandler::startElement  ( const QString&, const QString&,
 {
     QColor col;
     /* Testing
-    cout << "startElement <"<< qPrintable(eName)
+    qDebug() << "startElement <"<< qPrintable(eName)
 	<<">  state="<<state 
-	<<"  laststate="<<stateStack.last()
+	<<"  stateStack="<<stateStack.last()
 	<<"   loadMode="<<loadMode
     //	<<"       line="<<qPrintable (QXmlDefaultHandler::lineNumber())
-	<<endl;
+	;
     */	
     stateStack.append (state);	
     if ( state == StateInit && (eName == "map")  ) 
@@ -51,63 +50,47 @@ bool parseFreemindHandler::startElement  ( const QString&, const QString&,
         state = StateMap;
 	if (!atts.value( "version").isEmpty() ) 
 	{
-	    QString v="0.8.0";
+	    QString v="0.9.0";
 	    if (!checkVersion(atts.value("version"),v))
 		QMessageBox::warning( 0, "Warning: Version Problem" ,
 		   "<h3>Freemind map is newer than version " +v +" </h3>"
 		   "<p>The map you are just trying to load was "
 		   "saved using freemind " +atts.value("version")+". "
-		   "The version of this vym can parse freemind " + v +"."); 
+		   "Your version of vym can parse freemind " + v +"."); 
 	}
-	//FIXME-3 TreeItem *ti=model->first();	//  this will be NULL !!!
-	TreeItem *ti=NULL;
+	// Create mapcenter
+	model->clear();
+	mapCenter=model->createMapCenter();
+	lastBranch=mapCenter;
 
-	if (ti->getType()!=TreeItem::MapCenter)
-	    qWarning ("parseFreeMindHandler::startElement  no mapCenter!!");
+	// Create two hidden branches, because Freemind has no relative 
+	// positioning for mainbranches
+	mainBranchLeft  = model->createBranch (lastBranch);
+	mainBranchRight = model->createBranch (lastBranch);
 
-	//cout <<"model="<<model<<"   first="<<model->first()<<endl;
-
-	lastBranchItem=model->createBranch(lastBranchItem);
-
-	//FIXME-3 lastBranch->move2RelPos (200,0);
-	lastBranchItem->setHeading ("  ");
-	//FIXME-3 lastBranch->move2RelPos (-200,0);
-	lastBranchItem->setHeading ("  ");
-	lastBranchItem=(BranchItem*)lastBranchItem->parent();
-
-    } else if ( eName == "node" &&  (state == StateMap || state == StateNode )) 
+	mainBranchLeft->setRelPos ( QPointF(-200,0));
+	mainBranchLeft->setHeading ("  ");
+	mainBranchRight->setRelPos ( QPointF(200,0));
+	mainBranchRight->setHeading ("  ");
+    } else if ( eName == "attribute_registry" &&  state == StateMap ) 
     {
-	if (!atts.value( "POSITION").isEmpty() )
-	{
-	    if (atts.value ("POSITION")=="left")
-	    {
-		model->select ("bo:1");
-		lastBranchItem=model->getSelectedBranch();
-		if (lastBranchItem)
-		{   
-		    lastBranchItem=model->createBranch(lastBranchItem);
-		    readNodeAttr (atts);
-		}   
-	    } else if (atts.value ("POSITION")=="right")
-	    {
-		model->select ("bo:0");
-		lastBranchItem=model->getSelectedBranch();
-		if (lastBranchItem)
-		{   
-		    lastBranchItem=model->createBranch(lastBranchItem);
-		    readNodeAttr (atts);
-		}   
-	    }
-	} else
-	{
-	    if (state!=StateMap)
-	    {
-		lastBranchItem=model->createBranch(lastBranchItem);
-	    }
-	    readNodeAttr (atts);
-	}
+        state = StateAttributeRegistry;
+    } else if ( eName == "attribute_name" &&  state == StateAttributeRegistry) 
+    {
+        state = StateAttributeName;
+    } else if ( eName == "attribute_value" &&  state == StateAttributeName) 
+    {
+        state = StateAttributeValue;
+    } else if ( eName == "node" &&  state == StateMap ) 
+    {
 	state=StateNode;
-    } else if ( eName == "font" && state == StateNode) 
+	readNodeAttr (atts);
+    } else if ( eName == "node" &&  state == StateNode ) 
+    {
+	lastBranch=model->createBranch(lastBranch);
+	state=StateNode;
+	readNodeAttr (atts);
+    } else if ( eName == "font" && state == StateNode) //FIXME-0 sets font for a node
     {
 	state=StateFont;
     } else if ( eName == "edge" && state == StateNode) 
@@ -177,8 +160,10 @@ bool parseFreemindHandler::startElement  ( const QString&, const QString&,
 		v="freemind-penguin"; 
 	    else if (f=="licq")
 		v="freemind-licq"; 
+	    else 
+		qWarning()<<"parseFreemindHandler: Unknown icon found: "<<f;
 
-	    //FIXME-3 lastBranch->activateStandardFlag( v);
+	    lastBranch->activateStandardFlag (v);
 	}
     } else if ( eName == "arrowlink" && state == StateNode) 
     {
@@ -186,28 +171,71 @@ bool parseFreemindHandler::startElement  ( const QString&, const QString&,
     } else if ( eName == "cloud" && state == StateNode) 
     {
 	state=StateCloud;
+    } else if ( eName == "richcontent" && state == StateNode) 
+    {
+	state=StateRichContent;
+	return readRichContentAttr (atts);
+    } else if ( eName == "html" && state == StateRichContent) 
+    {
+	state=StateHtml;
+	htmldata="<"+eName;
+	readHtmlAttr(atts);
+	htmldata+=">";
     } else if ( eName == "text" && state == StateHook) 
     {
 	state=StateText;
+    } else if ( state == StateHtml ) 
+    {
+	// accept all while in html mode,
+	htmldata+="<"+eName;
+	readHtmlAttr(atts);
+	htmldata+=">";
     } else 
         return false;   // Error
     return true;
 }
 
-bool parseFreemindHandler::endElement  ( const QString&, const QString&, const QString&)
+bool parseFreemindHandler::endElement  ( const QString &, const QString&, const QString &eName)
 {
     /* Testing
-    cout << "endElement </" <<qPrintable(eName)
+    qDebug() << "endElement </" <<qPrintable(eName)
 	<<">  state=" <<state 
-	<<"  laststate=" <<laststate
 	<<"  stateStack="<<stateStack.last() 
-	<<endl;
+	;
     */
     switch ( state ) 
     {
+	case StateMap:
+	    // Freemind does not have the two "extra" mainbranches used here,
+	    // so we have to update mapcenter
+	    model->emitDataHasChanged (mapCenter);
+
+	    // Remove helper branches, if not needed
+	    if (mainBranchLeft->childCount()==0) model->deleteItem (mainBranchLeft);
+	    if (mainBranchRight->childCount()==0) model->deleteItem (mainBranchRight);
+	    break;
         case StateNode: 
-	    lastBranchItem=(BranchItem*)lastBranchItem->parent();
+	    model->emitDataHasChanged (lastBranch);
+	    lastBranch=(BranchItem*)lastBranch->parent();
+	    lastBranch->setLastSelectedBranch (0);  
             break;
+	case StateRichContent:
+	    if (!htmldata.isEmpty()) 
+	    {
+		if (htmlPurpose==Node)
+		    lastBranch->setHeading (htmldata);
+		else if (htmlPurpose==Note)
+		    lastBranch->setNote (htmldata);
+	    }	
+	    break;
+        case StateHtml: 
+	    htmldata+="</"+eName+">";
+	    if (eName=="html")
+	    {
+		//state=StateHtmlNote;  
+		htmldata.replace ("<br></br>","<br />");
+	    }	
+	    break;
 	default: 
 	    break;
     }  
@@ -217,7 +245,7 @@ bool parseFreemindHandler::endElement  ( const QString&, const QString&, const Q
 
 bool parseFreemindHandler::characters   ( const QString& ch)
 {
-    //cout << "characters \""<<qPrintable(ch)<<"\"  state="<<state <<"  laststate="<<laststate<<endl;
+    //qDebug() << "characters \""<<qPrintable(ch)<<"\"  state="<<state;
 
     QString ch_org=quotemeta (ch);
     QString ch_simplified=ch.simplified();
@@ -235,8 +263,11 @@ bool parseFreemindHandler::characters   ( const QString& ch)
         case StateFont: break; 
         case StateHook: break; 
         case StateText: 
-	    lastBranchItem->setNote (ch_simplified);
+	    lastBranch->setNote (ch_simplified);
 	    break; 
+        case StateHtml:
+	    htmldata+=ch_org;
+	    break;
         default: 
 	    return false;
     }
@@ -248,23 +279,47 @@ QString parseFreemindHandler::errorString()
     return "the document is not in the Freemind file format";
 }
 
-bool parseFreemindHandler::readNodeAttr (const QXmlAttributes& a)   //FIXME-3
+bool parseFreemindHandler::readNodeAttr (const QXmlAttributes& a)  
 {
-    //lastBranchItem=(BranchItem*)(lastBranch->getTreeItem() );
+    // Freemind has a different concept for mainbranches
+    if (!a.value( "POSITION").isEmpty() )
+    {
+	if (a.value ("POSITION")=="left")
+	    model->relinkBranch (lastBranch, mainBranchLeft);
+	else if (a.value ("POSITION")=="right")
+	    model->relinkBranch (lastBranch, mainBranchRight);
+    } 
 
     if (a.value( "FOLDED")=="true" )
-	lastBranchItem->toggleScroll();
-/*
+	lastBranch->toggleScroll();
+
     if (!a.value( "TEXT").isEmpty() )
+    {
 	lastBranch->setHeading (a.value ("TEXT"));
+	//model->setHeading (a.value ("TEXT"), lastBranch);
+    }
 
     if (!a.value( "COLOR").isEmpty() )
-	lastBranch->setColor (QColor (a.value ("COLOR")));
+	lastBranch->setHeadingColor (QColor (a.value ("COLOR")));
 
-    if (!a.value( "LINK").isEmpty() )
+    if (!a.value( "LINK").isEmpty() )	
 	lastBranch->setURL (a.value ("LINK"));
-*/
     return true;    
 }
 
+
+bool parseFreemindHandler::readRichContentAttr (const QXmlAttributes& a)  
+{
+    if (a.value ("TYPE")=="NODE" )
+	htmlPurpose=Node;
+    else if (a.value ("TYPE")=="NOTE" )
+	htmlPurpose=Note;
+    else
+    {
+	htmlPurpose=Unknown;
+	qWarning()<<"parseFreemindHandler: Unknown purpose of richContent found";
+	return false;
+    }	
+    return true;
+}
 

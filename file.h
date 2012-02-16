@@ -5,7 +5,7 @@
 
 enum LoadMode {NewMap,ImportAdd,ImportReplace};
 enum SaveMode {PartOfMap,CompleteMap,UndoCommand};
-enum FileType {VymMap, FreemindMap};
+enum FileType {VymMap, FreemindMap,UnknownMap};
 enum ErrorCode {success,aborted,nozip};
 
 
@@ -26,6 +26,8 @@ ErrorCode zipDir (const QDir &,const QString&);
 ErrorCode unzipDir (const QDir &,const QString&);
 bool loadStringFromDisk (const QString &fn, QString &s);
 bool saveStringToDisk (const QString &fn, const QString &s);
+
+FileType getMapType ( const QString &fn);
 
 //////////////////////////////////////////////////////////
 // Helper function to select image format while in SaveDialogs

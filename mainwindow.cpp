@@ -343,7 +343,8 @@ void Main::loadCmdLine()
     initProgressCounter (flist.count());
     while (it !=flist.end() )
     {
-	fileLoad (*it, NewMap);
+	FileType type=getMapType (*it);
+	fileLoad (*it, NewMap,type);
 	*it++;
     }	
     removeProgressCounter();
@@ -2518,7 +2519,12 @@ ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode, const FileType &ftyp
 void Main::fileLoad(const LoadMode &lmode)
 {
     QStringList filters;
-    filters <<"VYM map (*.vym *.vyp)"<<"VYM Backups (*.vym~)"<<"XML (*.xml)"<<"All (* *.*)";
+    filters <<"VYM map or Freemind map (*.vym *.vyp *.mm)"
+	<<"VYM map (*.vym *.vyp)"
+	<<"VYM Backups (*.vym~)"
+	<<"Freemind map (*.mm)"
+	<<"XML (*.xml)"
+	<<"All (* *.*)";
     QFileDialog fd;
     fd.setDirectory (lastMapDir);
     fd.setFileMode (QFileDialog::ExistingFiles);
@@ -2548,8 +2554,8 @@ void Main::fileLoad(const LoadMode &lmode)
 	progressCounterTotal=flist.count();
 	while( it != flist.end() ) 
 	{
-	    fn = *it;
-	    fileLoad(*it, lmode);		   
+	    FileType type=getMapType (*it);
+	    fileLoad(*it, lmode,type);		   
 	    ++it;
 	}
     }
@@ -2579,7 +2585,8 @@ void Main::fileRestoreSession()
     initProgressCounter (flist.count());
     while (it !=flist.end() )
     {
-	fileLoad (*it, NewMap);
+	FileType type=getMapType (*it);
+	fileLoad (*it, NewMap,type);
 	*it++;
     }	
     removeProgressCounter();
@@ -2591,7 +2598,9 @@ void Main::fileLoadRecent()
     if (action)
     {
 	initProgressCounter ();
-        fileLoad (action->data().toString(), NewMap);
+        QString fn=action->data().toString();
+	FileType type=getMapType (fn);
+        fileLoad (fn, NewMap,type);
 	removeProgressCounter();
     }
 }
@@ -2725,7 +2734,7 @@ void Main::fileImportKDE3Bookmarks()
 {
     ImportKDE3Bookmarks im;
     im.transform();
-    if (aborted!=fileLoad (im.getTransformedFile(),NewMap) && currentMapEditor() )
+    if (aborted!=fileLoad (im.getTransformedFile(),NewMap,VymMap) && currentMapEditor() )
 	currentMapEditor()->getModel()->setFilePath ("");
 }
 
@@ -2733,7 +2742,7 @@ void Main::fileImportKDE4Bookmarks()
 {
     ImportKDE4Bookmarks im;
     im.transform();
-    if (aborted!=fileLoad (im.getTransformedFile(),NewMap) && currentMapEditor() )
+    if (aborted!=fileLoad (im.getTransformedFile(),NewMap,VymMap) && currentMapEditor() )
 	currentMapEditor()->getModel()->setFilePath ("");
 }
 
@@ -2817,7 +2826,7 @@ void Main::fileImportMM()
 	{
 	    im.setFile (*it);
 	    if (im.transform() && 
-		success==fileLoad (im.getTransformedFile(),NewMap) && 
+		success==fileLoad (im.getTransformedFile(),NewMap,VymMap) && 
 		currentMapEditor() )
 		currentMapEditor()->getModel()->setFilePath ("");
 	    ++it;
@@ -3384,7 +3393,7 @@ void Main::openVymLinks(const QStringList &vl)
 	       tr("Couldn't open map %1").arg(vlmin.at(j)));
 	else
 	{
-	    fileLoad (vlmin.at(j), NewMap);
+	    fileLoad (vlmin.at(j), NewMap,VymMap);
 	    tabWidget->setCurrentIndex (tabWidget->count()-1);	
 	}
     }	    
@@ -4857,7 +4866,7 @@ void Main::helpDemo()
 	while( it != flist.end() ) 
 	{
 	    fn = *it;
-	    fileLoad(*it, NewMap);		   
+	    fileLoad(*it, NewMap,VymMap);		   
 	    ++it;
 	}
     }

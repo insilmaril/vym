@@ -29,6 +29,7 @@ public:
     void setTmpDir (QString);
     void setInputFile (QString);
     void setLoadMode (const LoadMode &,int p=-1);
+    bool readHtmlAttr    (const QXmlAttributes&);
 
 protected:
     QString     errorProt;
@@ -41,5 +42,6 @@ protected:
     VymModel *model;
     QString tmpDir; 
     QString inputFile;
+    QString htmldata;
 }; 
 #endif

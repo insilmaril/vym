@@ -29,7 +29,6 @@ public:
     bool readImageAttr   (const QXmlAttributes&);
     bool readXLinkAttr   (const QXmlAttributes&);
     bool readLinkNewAttr (const QXmlAttributes&);
-    bool readHtmlAttr    (const QXmlAttributes&);
     bool readSettingAttr (const QXmlAttributes&);
     bool readSlideAttr   (const QXmlAttributes&);
     bool readTaskAttr    (const QXmlAttributes&);
@@ -62,9 +61,7 @@ private:
      int branchesTotal;
 
     State state;	     
-    State laststate;
     QList <State> stateStack;
-    QString textdata;
     NoteObj no;
 
     BranchItem* lastBranch;

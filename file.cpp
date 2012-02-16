@@ -383,6 +383,18 @@ bool saveStringToDisk (const QString &fname, const QString &s)
     return true;
 }
 
+FileType getMapType (const QString &fn)
+{
+    int i=fn.lastIndexOf(".");
+    if (i>=0)
+    {
+	QString postfix=fn.mid(i+1);
+	if (postfix=="vym" || postfix=="vyp") return VymMap;
+	if (postfix=="mm") return FreemindMap;	//FIXME-1 could also be MindManager?
+    }
+    return UnknownMap;
+}
+
 ImageIO::ImageIO ()
 {
     // Create list with supported image types
@@ -429,5 +441,4 @@ QString ImageIO::guessType(QString fn)
     }
     return QString();
 }
-
 

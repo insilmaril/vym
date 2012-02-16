@@ -19,12 +19,16 @@ public:
     bool characters   ( const QString&);
     QString errorString();
     bool readNodeAttr (const QXmlAttributes&);
+    bool readRichContentAttr (const QXmlAttributes&);
 
 private:
     QString     errorProt;
     enum State 
     { 
 	StateInit, 
+	StateAttributeRegistry,
+	StateAttributeName,
+	StateAttributeValue,
 	StateMap, 
 	StateNode, 
 	StateCloud,
@@ -33,12 +37,18 @@ private:
 	StateFont,
 	StateArrowLink,
 	StateHook,
-	StateText
+	StateText,
+	StateRichContent,
+	StateHtml
      };
+    enum HtmlPurpose {Node,Note,Unknown};
+    HtmlPurpose htmlPurpose;
 		 
     State state;	     
-    State laststate;
     QList <State> stateStack;
-    BranchItem *lastBranchItem;
+    BranchItem *lastBranch;
+    BranchItem *mapCenter;
+    BranchItem *mainBranchLeft;
+    BranchItem *mainBranchRight;
 }; 
 #endif

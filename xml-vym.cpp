@@ -26,10 +26,9 @@ bool parseVYMHandler::startDocument()
 {
     errorProt = "";
     state = StateInit;
-    laststate = StateInit;
     stateStack.clear();
     stateStack.append(StateInit);
-    textdata="";
+    htmldata="";
     isVymPart=false;
     useProgress=false;
     return true;
@@ -195,7 +194,6 @@ bool parseVYMHandler::startElement  ( const QString&, const QString&,
 	state=StateStandardFlag;
     } else if ( eName == "heading" && (state == StateMapCenter||state==StateBranch)) 
     {
-	laststate=state;
 	state=StateHeading;
 	if (!atts.value( "textColor").isEmpty() ) 
 	{
@@ -204,7 +202,6 @@ bool parseVYMHandler::startElement  ( const QString&, const QString&,
 	}	
     } else if ( eName == "task" && (state == StateMapCenter||state==StateBranch)) 
     {
-	laststate=state;
 	state=StateTask;
 	lastTask=taskModel->createTask (lastBranch);
 	if (!readTaskAttr(atts)) return false;
@@ -215,7 +212,6 @@ bool parseVYMHandler::startElement  ( const QString&, const QString&,
 	if (!readNoteAttr (atts) ) return false;
     } else if ( eName == "htmlnote" && state == StateMapCenter) 
     {
-	laststate=state;
 	state=StateHtmlNote;
 	no.clear();
 	if (!atts.value( "fonthint").isEmpty() ) 
@@ -223,7 +219,6 @@ bool parseVYMHandler::startElement  ( const QString&, const QString&,
     } else if ( eName == "vymnote" && 
 		(state == StateMapCenter ||state==StateBranch)) 
     {
-	laststate=state;
 	state=StateVymNote;
 	no.clear();
 	if (!atts.value( "fonthint").isEmpty() ) 
@@ -279,14 +274,12 @@ bool parseVYMHandler::startElement  ( const QString&, const QString&,
 	readBranchAttr (atts);
     } else if ( eName == "htmlnote" && state == StateBranch) 
     {
-	laststate=state;
 	state=StateHtmlNote;
 	no.clear();
 	if (!atts.value( "fonthint").isEmpty() ) 
 	    no.setFontHint(atts.value ("fonthint") );
     } else if ( eName == "frame" && (state == StateBranch||state==StateMapCenter)) 
     {
-	laststate=state;
 	state=StateFrame;
 	if (!readFrameAttr(atts)) return false;
     } else if ( eName == "xlink" && state == StateBranch ) 
@@ -305,9 +298,9 @@ bool parseVYMHandler::startElement  ( const QString&, const QString&,
 	(state == StateHtmlNote || state == StateVymNote) ) 
     {
 	state=StateHtml;
-	textdata="<"+eName;
+	htmldata="<"+eName;
 	readHtmlAttr(atts);
-	textdata+=">";
+	htmldata+=">";
     } else if ( eName == "attribute" && 
 	(state == StateBranch || state == StateMapCenter ) ) 
     {
@@ -328,9 +321,9 @@ bool parseVYMHandler::startElement  ( const QString&, const QString&,
     } else if ( state == StateHtml ) 
     {
 	// accept all while in html mode,
-	textdata+="<"+eName;
+	htmldata+="<"+eName;
 	readHtmlAttr(atts);
-	textdata+=">";
+	htmldata+=">";
     } else
         return false;   // Error
     return true;
@@ -341,7 +334,6 @@ bool parseVYMHandler::endElement  ( const QString&, const QString&, const QStrin
     /* Testing
     qDebug()<< "endElement </" <<eName
 	<<">  state=" <<state 
-    //	<<"  laststate=" <<laststate
     //	<<"  stateStack="<<stateStack.last() 
     //	<<"  selString="<<model->getSelectString().toStdString();
     */
@@ -352,7 +344,6 @@ bool parseVYMHandler::endElement  ( const QString&, const QString&, const QStrin
         case StateMapCenter: 
 	    model->emitDataHasChanged (lastBranch);
 	    lastBranch=(BranchItem*)(lastBranch->parent());
-	//  lastBranch->setLastSelectedBranch (0);  // Reset last selected to first child branch
             break;
         case StateBranch: 
 	    // Empty branches may not be scrolled 
@@ -362,10 +353,10 @@ bool parseVYMHandler::endElement  ( const QString&, const QString&, const QStrin
 	    model->emitDataHasChanged (lastBranch);
 
 	    lastBranch=(BranchItem*)(lastBranch->parent());
-	    lastBranch->setLastSelectedBranch (0);  // Reset last selected to first child branch
+	    lastBranch->setLastSelectedBranch (0);  
             break;
 	case StateHtmlNote: 
-	    no.setNote (textdata);  // Richtext note, needed anyway for backward compatibility
+	    no.setNote (htmldata);  // Richtext note, needed anyway for backward compatibility
 	    lastBranch->setNoteObj (no);
 	    break;  
 	case StateMapSlide: 
@@ -373,17 +364,17 @@ bool parseVYMHandler::endElement  ( const QString&, const QString&, const QStrin
 	    break;  
 	case StateVymNote:	    // Might be richtext or plaintext with 
 				    // version >= 1.13.8
-	    no.setNote (textdata);
+	    no.setNote (htmldata);
 	    if (!no.isRichText())
-		no.setNoteMasked (textdata);
+		no.setNoteMasked (htmldata);
 	    lastBranch->setNoteObj (no);
 	    break;  
         case StateHtml: 
-	    textdata+="</"+eName+">";
+	    htmldata+="</"+eName+">";
 	    if (eName=="html")
 	    {
 		//state=StateHtmlNote;  
-		textdata.replace ("<br></br>","<br />");
+		htmldata.replace ("<br></br>","<br />");
 	    }	
 	    break;
 	default: 
@@ -395,7 +386,7 @@ bool parseVYMHandler::endElement  ( const QString&, const QString&, const QStrin
 
 bool parseVYMHandler::characters   ( const QString& ch)
 {
-    //qDebug()<< "xml-vym: characters \""<<ch<<"\"  state="<<state <<"  laststate="<<laststate;
+    //qDebug()<< "xml-vym: characters \""<<ch<<"\"  state="<<state;
 
     QString ch_org=quotemeta (ch);
     QString ch_simplified=ch.simplified();
@@ -419,13 +410,13 @@ bool parseVYMHandler::characters   ( const QString& ch)
             break;
         case StateImage: break;
         case StateVymNote: 
-	    textdata=ch;
+	    htmldata=ch;
 	    break;
         case StateHtmlNote: 
-	    textdata=ch;
+	    htmldata=ch;
 	    break;
         case StateHtml:
-	    textdata+=ch_org;
+	    htmldata+=ch_org;
 	    break;
         case StateHeading: 
             lastBranch->setHeading(ch);
@@ -749,13 +740,6 @@ bool parseVYMHandler::readLinkNewAttr (const QXmlAttributes& a)
 	}           
     }	
     return true;    
-}
-
-bool parseVYMHandler::readHtmlAttr (const QXmlAttributes& a)
-{
-    for (int i=1; i<=a.count(); i++)
-	textdata+=" "+a.localName(i-1)+"=\""+a.value(i-1)+"\"";
-    return true;
 }
 
 bool parseVYMHandler::readSettingAttr (const QXmlAttributes& a)
