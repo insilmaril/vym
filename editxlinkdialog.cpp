@@ -16,19 +16,7 @@ EditXLinkDialog::EditXLinkDialog (QWidget *parent):QDialog (parent)
     connect ( ui.colorButton, SIGNAL (clicked( )), this, SLOT (colorButtonPressed()));
     //FIXME-3 connect ( ui.setColorHeadingButton, SIGNAL (clicked( )), this, SLOT (setColorHeadingButtonPressed()));
     ui.setColorHeadingButton->hide();
-    connect ( ui.deleteButton, SIGNAL (clicked( )), this, SLOT (deleteButtonPressed()));
 }
-
-void EditXLinkDialog::deleteButtonPressed()
-{
-    delink=true;
-    accept();
-}
-
-bool EditXLinkDialog::deleteXLink()
-{
-    return delink;
-}   
 
 
 void EditXLinkDialog::widthChanged( int  w)

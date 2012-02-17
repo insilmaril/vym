@@ -19,10 +19,8 @@ public:
     EditXLinkDialog (QWidget *parent=0);
     void setLink (Link *);
     bool useSettingsGlobal();
-    bool deleteXLink();
 
 private slots:
-    void deleteButtonPressed();
     void widthChanged (int);
     void colorButtonPressed();
     void colorChanged(QColor c);

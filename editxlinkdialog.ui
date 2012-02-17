@@ -191,13 +191,6 @@
       <number>0</number>
      </property>
      <item>
-      <widget class="QPushButton" name="deleteButton">
-       <property name="text">
-        <string>Quit and delete XLink</string>
-       </property>
-      </widget>
-     </item>
-     <item>
       <spacer>
        <property name="orientation">
         <enum>Qt::Horizontal</enum>

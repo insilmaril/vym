@@ -3542,7 +3542,6 @@ void VymModel::editXLink()
 		setMapDefXLinkColor (l->getColor() );
 		setMapDefXLinkWidth (l->getWidth() );
 	    }
-	    if (dia.deleteXLink()) delete (l);
 	}
     }   
 }
