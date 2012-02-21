@@ -184,13 +184,12 @@ void TaskEditor::selectionChanged ( const QItemSelection & selected, const QItem
 
 void TaskEditor::toggleFilterMap ()
 {
-    qDebug()<<"TE::toggleFilterMap";
     setFilterMap ();
 }
 
 void TaskEditor::toggleFilterSleeping ()
 {
-    qDebug()<<"TE::toggleFilterSleeping";
+    qDebug()<<"TE::toggleFilterSleeping"; 
     //setFilterMapName (!actionToggleMapFilter->isChecked() );
 }
 

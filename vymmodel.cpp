@@ -1575,10 +1575,10 @@ void VymModel::setHeading(const QString &s, BranchItem *bi)
 	    "setHeading (\""+s+"\")", 
 	    QString("Set heading of %1 to \"%2\"").arg(getObjectName(bi)).arg(s) );
 	bi->setHeading(s );
-	emitDataHasChanged ( bi);	//FIXME-4 maybe emit signal from TreeItem?   //FIXME-3 called 2x ???
+	emitDataHasChanged ( bi);
 	emitUpdateQueries ();
 	reposition();
-	emitDataHasChanged(bi);
+	emitSelectionChanged(); // Update _after_ reposition
     }
 }
 
@@ -5912,7 +5912,8 @@ void VymModel::emitNoteHasChanged (TreeItem *ti)
 void VymModel::emitDataHasChanged (TreeItem *ti)
 {
     QModelIndex ix=index(ti);
-    emit (dataChanged (ix,ix) );
+    emit ( dataChanged (ix,ix) );
+    //emitSelectionChanged ();
     if (ti->isBranchLikeType() && ((BranchItem*)ti)->getTask()  )
     {
 	taskModel->emitDataHasChanged ( ((BranchItem*)ti)->getTask() );
