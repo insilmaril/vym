@@ -498,7 +498,7 @@ void MapEditor::print()
 	pp.setRenderHint(QPainter::Antialiasing,true);
 
 	// Don't print the visualisation of selection
-	model->unselect();
+	model->unselectAll();
 
 	QRectF mapRect=totalBBox;
 	QGraphicsRectItem *frame=NULL;
@@ -1400,7 +1400,7 @@ void MapEditor::mouseMoveEvent(QMouseEvent* e)
     }
 }
 
-void MapEditor::moveObject ()	//FIXME-1 no visual move, if obj has scrolled parent. only during tmp relink
+void MapEditor::moveObject ()	//FIXME-2 wrong pos for tmp relink, when orientedLeft 
 {
     if (!panningTimer->isActive() )
 	panningTimer->start(50);
@@ -1416,11 +1416,6 @@ void MapEditor::moveObject ()	//FIXME-1 no visual move, if obj has scrolled pare
     if (mainWindow->getModMode()!=Main::ModModeCopy)
 	setCursor (Qt::ArrowCursor);
 
-    // Now move the selection, but add relative position 
-    // (movingObj_offset) where selection was chosen with 
-    // mousepointer. (This avoids flickering resp. jumping 
-    // of selection back to absPos)
-    
     // Check if we could link 
     TreeItem *ti=findMapItem (p, seli);
     BranchItem *dsti=NULL;
@@ -1915,8 +1910,6 @@ void MapEditor::updateSelection(QItemSelection ,QItemSelection desel)
     QList <MapItem*> itemsSelected;
     QList <MapItem*> itemsDeselected;
 
-    bool do_reposition=false;
-
     QItemSelection sel=model->getSelectionModel()->selection();
     foreach (QModelIndex ix,sel.indexes() )
     {
@@ -1938,38 +1931,6 @@ void MapEditor::updateSelection(QItemSelection ,QItemSelection desel)
     // Trim list of selection polygons 
     while (itemsSelected.count() < selPolyList.count() )
 	delete selPolyList.takeFirst();
-
-    // Take care to tmp scroll/unscroll
-    foreach (MapItem *mi,itemsDeselected)
-    {
-	if (mi->isBranchLikeType() )
-	{
-	    // reset tmp scrolled branches
-	    BranchItem *bi=(BranchItem*)mi;
-	    if (bi->resetTmpUnscroll() )
-		do_reposition=true;
-	}
-	if (mi->isBranchLikeType() || mi->getType()==TreeItem::Image)
-	    // Hide link if not needed
-	    mi->getLMO()->updateVisibility();
-    }
-
-    foreach (MapItem *mi, itemsSelected)
-    {
-	if (mi->isBranchLikeType() )
-	{
-	    BranchItem *bi=(BranchItem*)mi;
-	    if (bi->hasScrolledParent(bi) )
-	    {
-		if (bi->parentBranch()->tmpUnscroll() )
-		    do_reposition=true;
-	    }   
-	}
-	if (mi->isBranchLikeType() || mi->getType()==TreeItem::Image)
-	    // Show link if needed
-	    mi->getLMO()->updateVisibility();
-    }
-    if (do_reposition) model->reposition();
 
     // Reduce polygons
     while (itemsSelected.count() < selPolyList.count() )

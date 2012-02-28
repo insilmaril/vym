@@ -73,6 +73,8 @@ TaskEditor::TaskEditor(QWidget *)
     view->horizontalHeader()->setSortIndicator (0,Qt::AscendingOrder);
     view->setSortingEnabled(true);
 
+    blockExternalSelect=false;
+
     connect (
 	view->selectionModel(),SIGNAL (selectionChanged (QItemSelection,QItemSelection)),
 	this, SLOT (selectionChanged (QItemSelection,QItemSelection)));
@@ -101,7 +103,7 @@ bool TaskEditor::isUsedFilterMap()
     return actionToggleFilterMap->isChecked();
 }
 
-void TaskEditor::setFilterMap () //FIXME-1 use exact match, not regex
+void TaskEditor::setFilterMap () 
 {
     if (actionToggleFilterMap->isChecked() )
     {
@@ -118,7 +120,7 @@ bool TaskEditor::isUsedFilterSleeping()
 
 void TaskEditor::setFilterSleeping (bool b)
 {
-/* FIXME-1
+/* FIXME-2
     if (b)
     {
 	filterMapModel->setFilterRegExp(QRegExp(mapName, Qt::CaseInsensitive));
@@ -140,11 +142,13 @@ bool TaskEditor::select (Task *task)
 {
     if (task)
     {
+	blockExternalSelect=true;
 	QItemSelection sel (
 	    filterMapModel->mapFromSource(taskModel->index (task) ), 
 	    filterMapModel->mapFromSource(taskModel->indexRowEnd (task) ) ); 
 
 	view->selectionModel()->select (sel, QItemSelectionModel::ClearAndSelect  );
+	blockExternalSelect=false;
 	return true;
     }
     return false;
@@ -170,7 +174,7 @@ void TaskEditor::selectionChanged ( const QItemSelection & selected, const QItem
 	    if (bi) 
 	    {
 		VymModel *m=bi->getModel();
-		m->select (bi);
+		if (!blockExternalSelect) m->select (bi);
 		if (m!=mainWindow->currentModel() )
 		    mainWindow->gotoModel (m);
 		view->setStyleSheet( 

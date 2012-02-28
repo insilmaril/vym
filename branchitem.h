@@ -44,8 +44,8 @@ public:
     virtual void unScroll();		
     virtual bool toggleScroll();	// scroll or unscroll
     virtual bool isScrolled();		// returns scroll state
-    virtual bool hasScrolledParent(BranchItem*);    // true, if any of the parents is scrolled
-    virtual bool tmpUnscroll();		// unscroll scrolled parents temporary e.g. during "find" process
+    virtual bool hasScrolledParent(BranchItem* start=NULL);    // true, if any of the parents is scrolled
+    virtual bool tmpUnscroll(BranchItem* start=NULL);		// unscroll scrolled parents temporary e.g. during "find" process
     virtual bool resetTmpUnscroll();	    // scroll all tmp scrolled parents again e.g. when unselecting
     virtual void sortChildren(bool inverse=false);  //! Sort children 
 

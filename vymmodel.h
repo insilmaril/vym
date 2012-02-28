@@ -674,6 +674,9 @@ private:
     int currentSelection;
     bool keepSelectionHistory;			    // If set, selection doesn't change history
 
+public slots:
+    void updateSelection(QItemSelection ,QItemSelection); // update selection
+
 public:
     void setSelectionModel(QItemSelectionModel *);	// Set common selectionModel
     QItemSelectionModel* getSelectionModel();
@@ -681,13 +684,13 @@ public:
     void setSelectionBlocked(bool);
     bool isSelectionBlocked();
 
-    bool select ();			    //! select by using common QItemSelectionModel
     bool select (const QString &);	    //! Select by string
     bool select (LinkableMapObj *lmo);	    //! Select by pointer to LMO
+    bool selectToggle (TreeItem *ti);	    //! Toggle select state
     bool select (TreeItem *ti );	    //! Select by pointer to TreeItem
     bool select (const QModelIndex &index); //! Select by ModelIndex
-    bool selectToggle (TreeItem *ti);	    //! Toggle select state
-    void unselect();
+    void unselectAll ();
+    void unselect (QItemSelection desel);
     bool reselect();
     bool canSelectPrevious();
     bool selectPrevious();

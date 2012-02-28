@@ -185,7 +185,7 @@ void BranchItem::updateVisibility()
     // Needed to hide relinked branch, if parent is scrolled
     if (lmo)
     {
-	if (hasScrolledParent(this) || hidden)
+	if (hasScrolledParent() || hidden)
 	    lmo->setVisibility (false);
 	else	
 	    lmo->setVisibility (true);
@@ -289,21 +289,23 @@ bool BranchItem::hasScrolledParent(BranchItem *start)
 	return false;
 }
 
-bool BranchItem::tmpUnscroll()
+bool BranchItem::tmpUnscroll(BranchItem *start)
 {
     bool result=false;
 
+    if (!start) start=this;
+
     // Unscroll parent (recursivly)
     BranchItem * pi=(BranchItem*)parentItem;
-    if (pi && pi->isBranchLikeType() ) result=pi->tmpUnscroll();
+    if (pi && pi->isBranchLikeType() ) result=pi->tmpUnscroll(start);
 	
     // Unscroll myself
-    if (scrolled)
+    if (start !=this && scrolled)
     {
 	tmpUnscrolled=true;
 	systemFlags.activate("system-tmpUnscrolledRight");
 	toggleScroll();
-	model->emitDataHasChanged (this);
+	model->emitDataHasChanged (this); 
 	result=true;
     }	
     return result;
@@ -329,7 +331,7 @@ bool BranchItem::resetTmpUnscroll()
     return result;
 }
 
-void BranchItem::sortChildren(bool inverse) //FIXME-3 optimize by not using moveUp/Down
+void BranchItem::sortChildren(bool inverse) //FIXME-4 optimize by not using moveUp/Down
 {
     int childCount=branchCounter; 
     int curChildIndex;

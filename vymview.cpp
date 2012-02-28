@@ -75,7 +75,7 @@ VymView::VymView(VymModel *m)
 	    selModel, SIGNAL (selectionChanged(const QItemSelection &, const QItemSelection &)), 
 	    this,SLOT (changeSelection(const QItemSelection &,const QItemSelection &)));
 
-	// Needed to update selbox during animation
+	// Needed to update selbox during animation // FIXME-2 really needed HERE?
 	connect (
 	    model, SIGNAL (selectionChanged(const QItemSelection &, const QItemSelection &)), 
 	    mapEditor,SLOT (updateSelection(const QItemSelection &,const QItemSelection &)));
@@ -119,16 +119,6 @@ VymView::VymView(VymModel *m)
 	
     mapEditor->setAntiAlias (mainWindow->isAliased());
     mapEditor->setSmoothPixmap(mainWindow->hasSmoothPixmapTransform());
-
-/*
-    de = new DockEditor (tr("MapEditor2","Title of dockable editor widget"), this, model);
-    de->setWidget (mapEditor2);
-    addDockWidget(Qt::RightDockWidgetArea, de);
-    mapEditorDE=de;
-    connect (
-	mapEditorDE, SIGNAL (visibilityChanged(bool) ), 
-	mainWindow,SLOT (updateActions() ) );
-*/
 }
 
 VymView::~VymView() {}
@@ -158,8 +148,10 @@ void VymView::initFocus()
     mapEditor->setFocus();
 }
 
-void VymView::changeSelection (const QItemSelection &newsel, const QItemSelection &desel)  //FIXME-3 could be replaced by signals directly
+void VymView::changeSelection (const QItemSelection &newsel, const QItemSelection &desel)  
 {
+    // Update note editor and heading editor // FIXME-3 improve this, evtl. move from mainwindow to here
+    model->updateSelection (newsel,desel);
     mainWindow->changeSelection (model,newsel,desel);	
     mapEditor->updateSelection (newsel,desel);
     showSelection();

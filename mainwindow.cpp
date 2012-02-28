@@ -2313,7 +2313,7 @@ void Main::editorChanged(QWidget *)
     for (int i=0;i<=tabWidget->count() -1;i++)
     {
 	m= vymViews.at(i)->getModel();
-	if (m) m->unselect();
+	if (m) m->unselectAll();
     }
     m=currentModel();
     if (m) 
@@ -3907,7 +3907,7 @@ void Main::editSelectNext()
 void Main::editSelectNothing()  
 {
     VymModel *m=currentModel();
-    if (m) m->unselect();
+    if (m) m->unselectAll();
 }
 
 void Main::editOpenFindResultWidget()  
@@ -4378,16 +4378,7 @@ void Main::changeSelection (VymModel *model, const QItemSelection &newsel, const
 
     if (model && model==currentModel() )
     {
-	// NoteEditor
 	TreeItem *ti;
-	if (!oldsel.indexes().isEmpty() )
-	{
-	    ti=model->getItem(oldsel.indexes().first());
-
-	    // Don't update note if both treeItem and noteEditor are empty
-	    //if (! (ti->hasEmptyNote() && noteEditor->isEmpty() ))
-	    //	ti->setNoteObj (noteEditor->getNoteObj(),false );
-	} 
 	if (!newsel.indexes().isEmpty() )
 	{
 	    ti=model->getItem(newsel.indexes().first());
@@ -4405,7 +4396,7 @@ void Main::changeSelection (VymModel *model, const QItemSelection &newsel, const
 
 	    headingEditor->setText (ti->getHeading() );
 
-	    // Select in TaskEditor, if necessary
+	    // Select in TaskEditor, if necessary 
 	    if (ti->isBranchLikeType() )
 		taskEditor->select ( ((BranchItem*)ti)->getTask() );
 	} else
@@ -4848,7 +4839,7 @@ void Main::helpDemo()
     QStringList filters;
     filters <<"VYM example map (*.vym)";
     QFileDialog fd;
-    #if defined(Q_OS_MACX)
+    #if defined(Q_OS_MACX)  //FIXME-2 cherry-pick 093c8ebc6bfc91b5b4c821d533f0e86d89f7379c from maintained-release
 	fd.setDir (QDir("./vym.app/Contents/Resources/demos"));
     #else
 	// default path in SUSE LINUX

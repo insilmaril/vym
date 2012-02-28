@@ -40,6 +40,7 @@ private:
     QString mapName;
     QAction *actionToggleFilterMap;
     QAction *actionToggleFilterSleeping;
+    bool blockExternalSelect;
 };
 
 #endif

@@ -1844,7 +1844,7 @@ QStringList VymModel::getURLs(bool ignoreScrolled)
     BranchItem *prev=NULL;
     while (cur) 
     {
-	if (!cur->getURL().isEmpty()  && !(ignoreScrolled && cur->hasScrolledParent(cur) )) 
+	if (!cur->getURL().isEmpty()  && !(ignoreScrolled && cur->hasScrolledParent() )) 
 	    urls.append( cur->getURL());
 	cur=nextBranch (cur,prev,true,selbi);
     }	
@@ -2068,9 +2068,7 @@ void VymModel::setHideExport(bool b, TreeItem *ti)
 	    emitDataHasChanged(ti);
 	    emitSelectionChanged();
 	updateActions();    //FIXME-2 really? Here?
-	reposition(); //FIXME-2 reposition now or better requestRepo
-	// emitSelectionChanged();
-	// FIXME-3 VM needed? scene()->update();
+	reposition(); 
     }
 }
 
@@ -2703,7 +2701,7 @@ bool VymModel::relinkBranch (
 {
     if (branch && dst)
     {
-	if (updateSelection) unselect();
+	if (updateSelection) unselectAll();
  
 	// Do we need to update frame type?
 	bool keepFrame=true;
@@ -2849,7 +2847,7 @@ void VymModel::deleteSelection()
 	if (ti && ti->isBranchLikeType ())
 	{   // Delete branch
 	    BranchItem *selbi=(BranchItem*)ti;
-	    unselect();
+	    unselectAll();
 	    saveStateRemovingPart (selbi, QString ("Delete %1").arg(getObjectName(selbi)));
 
 	    BranchItem *pi=(BranchItem*)(deleteItem (selbi));
@@ -2878,7 +2876,7 @@ void VymModel::deleteSelection()
 		    "delete ()",
 		    QString("Delete %1").arg(getObjectName(ti))
 		);
-		unselect();
+		unselectAll();
 		deleteItem (ti);
 		emitDataHasChanged (pi);
 		select (pi);
@@ -2919,7 +2917,7 @@ void VymModel::deleteKeepChildren(bool saveStateFlag)
 	);
 
 	QString sel=getSelectString(selbi);
-	unselect();
+	unselectAll();
 	bool oldSaveState=blockSaveState;
 	blockSaveState=true;
 	int pos=selbi->num();
@@ -5723,7 +5721,7 @@ void VymModel::setHideTmpMode (TreeItem::HideTmpMode mode)
 	rootItem->getBranchNum(i)->setHideTmp (mode);	
     reposition();
     if (mode==TreeItem::HideExport)
-	unselect();
+	unselectAll();
     else
 	reselect();
 }
@@ -5731,6 +5729,39 @@ void VymModel::setHideTmpMode (TreeItem::HideTmpMode mode)
 //////////////////////////////////////////////
 // Selection related
 //////////////////////////////////////////////
+
+void VymModel::updateSelection(QItemSelection newsel,QItemSelection dsel)	
+{
+    QModelIndex ix;
+    MapItem *mi;
+    bool do_reposition=false;
+    if (!dsel.isEmpty() )
+    {
+	foreach (ix, dsel.indexes() )
+	{
+	    mi = static_cast<MapItem*>(ix.internalPointer());
+	    if (mi->isBranchLikeType() )
+		do_reposition=do_reposition || ((BranchItem*)mi)->resetTmpUnscroll();
+	}    
+    }
+    if (!newsel.isEmpty() )
+    {
+	foreach (ix, newsel.indexes() )
+	{
+	    mi = static_cast<MapItem*>(ix.internalPointer());
+	    if (mi->isBranchLikeType() )
+	    {
+		BranchItem *bi=(BranchItem*)mi;
+		if (bi->hasScrolledParent() )
+		{
+		    bi->tmpUnscroll();
+		    do_reposition=true;
+		}
+	    }
+	}    
+    }	
+    if ( do_reposition ) reposition();
+}
 
 void VymModel::setSelectionModel (QItemSelectionModel *sm)
 {
@@ -5752,18 +5783,9 @@ bool VymModel::isSelectionBlocked()
     return selectionBlocked;
 }
 
-bool VymModel::select ()
-{
-    return select (selModel->selectedIndexes().first());    // TODO no multiselections yet
-}
-
 bool VymModel::select (const QString &s)
 {
-    if (s.isEmpty())
-    {
-	unselect();
-	return true;
-    }
+    if (s.isEmpty()) return true;
     TreeItem *ti=findBySelectString(s);
     if (ti) return select (index(ti));
     return false;
@@ -5774,21 +5796,38 @@ bool VymModel::select (LinkableMapObj *lmo)
     QItemSelection oldsel=selModel->selection();
 
     if (lmo)
-	return select (index (lmo->getTreeItem()) );
+	return select (lmo->getTreeItem() );
     else    
 	return false;
 }
 
+bool VymModel::selectToggle (TreeItem *ti)
+{
+    if (ti) 
+    { 
+	selModel->select ( index(ti), QItemSelectionModel::Toggle);
+	//appendSelection();	// FIXME-2 selection history not implemented yet for multiselections 
+	return true;
+    }
+    return false;
+}
+
 bool VymModel::select (TreeItem *ti)
 {
-    if (ti) return select (index(ti));
-    return false;
+    if (ti) 
+	return select (index(ti));
+    else
+	return false;
 }
 
 bool VymModel::select (const QModelIndex &index) 
 {
     if (index.isValid() )
     {
+	TreeItem *ti=getItem (index);
+	if (ti->isBranchLikeType() )
+	    ((BranchItem*)ti)->tmpUnscroll(); 
+	reposition();
 	selModel->select (index,QItemSelectionModel::ClearAndSelect  );
 	appendSelection();
 	return true;
@@ -5796,23 +5835,17 @@ bool VymModel::select (const QModelIndex &index)
     return false;
 }
 
-bool VymModel::selectToggle (TreeItem *ti)
+void VymModel::unselectAll ()    
 {
-    if (ti) 
-    {
-	selModel->select ( index(ti), QItemSelectionModel::Toggle);
-	//appendSelection();	// FIXME-2 selection history not ready for multiselections yet
-	return true;
-    }
-    return false;
+    unselect (selModel->selection() );
 }
 
-void VymModel::unselect()
+void VymModel::unselect(QItemSelection desel)  
 {
-    if (!selModel->selectedIndexes().isEmpty())
+    if (desel.isEmpty())
     {
 	lastSelectString=getSelectString();
-	selModel->clearSelection();
+	selModel->clearSelection(); 
     }
 }   
 
@@ -5909,12 +5942,11 @@ void VymModel::emitNoteHasChanged (TreeItem *ti)
     emit (noteHasChanged (ix) );
 }
 
-void VymModel::emitDataHasChanged (TreeItem *ti)
+void VymModel::emitDataHasChanged (TreeItem *ti)    
 {
     QModelIndex ix=index(ti);
     emit ( dataChanged (ix,ix) );
-    //emitSelectionChanged ();
-    if (ti->isBranchLikeType() && ((BranchItem*)ti)->getTask()  )
+    if (!blockReposition && ti->isBranchLikeType() && ((BranchItem*)ti)->getTask()  )
     {
 	taskModel->emitDataHasChanged ( ((BranchItem*)ti)->getTask() );
 	taskModel->recalcPriorities();

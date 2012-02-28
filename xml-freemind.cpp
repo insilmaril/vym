@@ -90,10 +90,10 @@ bool parseFreemindHandler::startElement  ( const QString&, const QString&,
 	lastBranch=model->createBranch(lastBranch);
 	state=StateNode;
 	readNodeAttr (atts);
-    } else if ( eName == "font" && state == StateNode) //FIXME-0 sets font for a node
+    } else if ( eName == "font" && state == StateNode) //FIXME-2 not implemented
     {
 	state=StateFont;
-    } else if ( eName == "edge" && state == StateNode) 
+    } else if ( eName == "edge" && state == StateNode) //FIXME-2 xlink not implemented
     {
 	state=StateEdge;
     } else if ( eName == "hook" && state == StateNode) 

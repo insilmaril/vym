@@ -390,7 +390,7 @@ FileType getMapType (const QString &fn)
     {
 	QString postfix=fn.mid(i+1);
 	if (postfix=="vym" || postfix=="vyp") return VymMap;
-	if (postfix=="mm") return FreemindMap;	//FIXME-1 could also be MindManager?
+	if (postfix=="mm") return FreemindMap;	
     }
     return UnknownMap;
 }
