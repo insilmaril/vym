@@ -102,7 +102,7 @@ void ExportHTMLDialog::readSettings()
     }
 }
 
-void ExportHTMLDialog::setDir(const QString &d)
+void ExportHTMLDialog::setDirectory (const QString &d)
 {
     dir=d;
     if (dir.right(1)!="/") dir+="/";
@@ -110,7 +110,7 @@ void ExportHTMLDialog::setDir(const QString &d)
 
 void ExportHTMLDialog::dirChanged()
 {
-    setDir (ui.lineEditDir->text());
+    setDirectory (ui.lineEditDir->text());
     settingsChanged=true;
 }
 

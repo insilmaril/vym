@@ -2893,7 +2893,7 @@ void Main::fileExportCSV()  //FIXME-3 not scriptable yet
 	ExportCSV ex;
 	ex.setModel (m);
 	ex.addFilter ("CSV (*.csv)");
-	ex.setDir(lastImageDir);
+	ex.setDirectory(lastImageDir);
 	ex.setWindowTitle(vymName+ " -" +tr("Export as CSV")+" "+tr("(still experimental)"));
 	if (ex.execDialog() ) 
 	{
@@ -2912,7 +2912,7 @@ void Main::fileExportLaTeX()	//FIXME-3 not scriptable yet
 	ExportLaTeX ex;
 	ex.setModel (m);
 	ex.addFilter ("Tex (*.tex)");
-	ex.setDir(lastImageDir);
+	ex.setDirectory(lastImageDir);
 	ex.setWindowTitle(vymName+ " -" +tr("Export as LaTeX")+" "+tr("(still experimental)"));
 	if (ex.execDialog() ) 
 	{
@@ -2931,7 +2931,7 @@ void Main::fileExportOrgMode()	//FIXME-3 not scriptable yet
 	ExportOrgMode ex;
 	ex.setModel (m);
 	ex.addFilter ("org-mode (*.org)");
-	ex.setDir(lastImageDir);
+	ex.setDirectory (lastImageDir);
 	ex.setWindowTitle(vymName+ " -" +tr("Export as org-mode")+" "+tr("(still experimental)"));
 	if (ex.execDialog() ) 
 	{
@@ -2972,7 +2972,7 @@ void Main::fileExportTaskjuggler()  //FIXME-3 not scriptable yet
     {
 	ex.setModel (m);
 	ex.setWindowTitle ( vymName+" - "+tr("Export to")+" Taskjuggler"+tr("(still experimental)"));
-	ex.setDir(lastImageDir);
+	ex.setDirectory (lastImageDir);
 	ex.addFilter ("Taskjuggler (*.tjp)");
 
 	if (ex.execDialog() ) 
@@ -4839,8 +4839,8 @@ void Main::helpDemo()
     QStringList filters;
     filters <<"VYM example map (*.vym)";
     QFileDialog fd;
-    #if defined(Q_OS_MACX)  //FIXME-2 cherry-pick 093c8ebc6bfc91b5b4c821d533f0e86d89f7379c from maintained-release
-	fd.setDir (QDir("./vym.app/Contents/Resources/demos"));
+    #if defined(Q_OS_MACX)
+	fd.setDirectory (QDir("./vym.app/Contents/Resources/demos"));
     #else
 	// default path in SUSE LINUX
 	fd.setDirectory (QDir(vymBaseDir.path()+"/demos"));

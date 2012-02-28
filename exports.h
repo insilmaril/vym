@@ -21,8 +21,8 @@ public:
     ExportBase(VymModel *m);
     virtual ~ExportBase();
     virtual void init();
-    virtual void setDir(const QDir&);
-    virtual void setFile(const QString &);
+    virtual void setDirectory (const QDir&);
+    virtual void setFile (const QString &);
     virtual QString getFile ();
     virtual void setModel (VymModel *m);
     virtual void setWindowTitle (const QString &);

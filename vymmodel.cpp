@@ -5014,7 +5014,7 @@ void VymModel::exportASCII(QString fname,bool askName)
 void VymModel::exportHTML (const QString &dir, bool useDialog)	
 {
     ExportHTML ex (this);
-    ex.setDir (dir);
+    ex.setDirectory (dir);
     ex.doExport(useDialog);
 }
 

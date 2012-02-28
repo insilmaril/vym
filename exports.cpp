@@ -52,7 +52,7 @@ void ExportBase::init()
     outDir=lastExportDir;
 }
 
-void ExportBase::setDir(const QDir &d)
+void ExportBase::setDirectory (const QDir &d)
 {
     outDir=d;
 }

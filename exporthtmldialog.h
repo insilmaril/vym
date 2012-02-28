@@ -21,7 +21,7 @@ public:
 
 public slots:
     virtual void readSettings();
-    virtual void setDir (const QString&);
+    virtual void setDirectory (const QString&);
     virtual void dirChanged();
     virtual void browseDirectoryPressed();
     virtual void imageButtonPressed( bool b );
