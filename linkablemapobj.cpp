@@ -558,13 +558,6 @@ void LinkableMapObj::updateLinkGeometry()
     } 
 }
     
-LinkableMapObj* LinkableMapObj::getParObj() // FIXME-2 shouldn't be necessary as GraphicsItem
-{
-    if (parObj!=parentItem()) 
-	qWarning()<<"!!!!!!!!!!!!!!!!!!LMO::getParObj  parObj != parentItem()"; //FIXME-3 testing to remove this method later...
-    return parObj;
-}
-
 QPointF LinkableMapObj::getChildPos()
 {
     return childPos;

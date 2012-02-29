@@ -91,8 +91,6 @@ public:
 	redraw link with given style */
     virtual void updateLinkGeometry();	    
 
-    LinkableMapObj* getChildObj();	    // returns pointer to fromObj
-    LinkableMapObj* getParObj();	    // returns pointer to toObj
     virtual void setDockPos()=0;		// sets childPos and parPos
     QPointF getChildPos();		    // returns pos where children dock
     QPointF getParPos();			// returns pos where parents dock

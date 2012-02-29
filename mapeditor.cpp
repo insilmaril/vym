@@ -1641,23 +1641,23 @@ void MapEditor::mouseReleaseEvent(QMouseEvent* e)
 		// We have a destination, relink to that
 		BranchObj* selbo=model->getSelectedBranchObj();
 
-		QString preParStr=model->getSelectString (selbo->getParObj());
+		QString preParStr=model->getSelectString (seli->parent() );
 		QString preNum=QString::number (seli->num(),10);
 		QString preDstParStr;
 
-		if (e->modifiers() & Qt::ShiftModifier && dst->getParObj())
+		if (e->modifiers() & Qt::ShiftModifier && dsti->parent() )
 		{   // Link above dst	
-		    preDstParStr=model->getSelectString (dst->getParObj());
+		    preDstParStr=model->getSelectString (dsti->parent() );
 		    model->relinkBranch (
 			(BranchItem*)seli,
 			(BranchItem*)dsti->parent(),
 			((BranchItem*)dsti)->num(),
 			true);
 		} else 
-		if (e->modifiers() & Qt::ControlModifier && dst->getParObj())
+		if (e->modifiers() & Qt::ControlModifier && dsti->parent() )
 		{
 		    // Link below dst	
-		    preDstParStr=model->getSelectString (dst->getParObj());
+		    preDstParStr=model->getSelectString (dsti->parent() );
 		    model->relinkBranch (
 			(BranchItem*)seli,
 			(BranchItem*)dsti->parent(),
@@ -1665,7 +1665,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent* e)
 			true);
 		} else	
 		{   // Append to dst
-		    preDstParStr=model->getSelectString(dst);
+		    preDstParStr=model->getSelectString(dsti);
 		    model->relinkBranch (
 			(BranchItem*)seli,
 			(BranchItem*)dsti,
