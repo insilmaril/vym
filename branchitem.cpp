@@ -185,7 +185,7 @@ void BranchItem::updateVisibility()
     // Needed to hide relinked branch, if parent is scrolled
     if (lmo)
     {
-	if (hasScrolledParent() || hidden)
+	if (hasScrolledParent(this) || hidden)
 	    lmo->setVisibility (false);
 	else	
 	    lmo->setVisibility (true);
