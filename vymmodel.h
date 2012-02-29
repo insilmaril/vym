@@ -335,6 +335,8 @@ public:
 
     /*! Set task to sleep for n days */
     void setTaskSleep(int n);
+    /*! count tasks in this model */
+    int taskCount();
 
     void addTimestamp();	
 
@@ -756,6 +758,7 @@ public:
 ////////////////////////////////////////////
 public:
     SlideModel* getSlideModel();
+    int slideCount();
     SlideItem* addSlide ();
     void deleteSlide (SlideItem *si);
     void moveSlideUp();

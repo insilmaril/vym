@@ -182,6 +182,14 @@ Qt::ItemFlags TaskModel::flags(const QModelIndex &index) const
     return QAbstractTableModel::flags(index) | Qt::ItemIsEditable;
 }
 
+int TaskModel::count (VymModel *model)
+{
+    if (!model) return tasks.size();
+    int n=0;
+    foreach (Task *t,tasks) if (t->getBranch()->getModel()==model) n++;
+    return n;
+}
+
 Task* TaskModel::createTask (BranchItem *bi)
 {
     if (bi)

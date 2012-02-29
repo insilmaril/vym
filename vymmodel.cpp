@@ -2148,6 +2148,11 @@ void VymModel::setTaskSleep(int n)
     updateTaskFlag();
 }
 
+int VymModel::taskCount()
+{
+    return taskModel->count (this);
+}
+
 void VymModel::addTimestamp()	//FIXME-3 new function, localize
 {
     BranchItem *selbi=addNewBranch();
@@ -6210,6 +6215,11 @@ QString VymModel::getSelectString (const uint &i)
 SlideModel* VymModel::getSlideModel()
 {
     return slideModel;
+}
+
+int VymModel::slideCount() 
+{
+    return slideModel->count();
 }
 
 SlideItem* VymModel::addSlide()   //FIXME-2 missing saveState

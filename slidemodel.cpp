@@ -148,6 +148,11 @@ bool SlideModel::removeRows(int position, int rows, const QModelIndex &parent)
     return success;
 }
 
+int SlideModel::count()
+{
+    return rootItem->childCount();
+}
+
 int SlideModel::rowCount(const QModelIndex &parent) const
 {
     SlideItem *parentItem = getItem(parent);

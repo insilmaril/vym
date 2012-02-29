@@ -7,6 +7,7 @@
 #include "task.h"
 
 class BranchItem;
+class VymModel;
 
 class TaskModel : public QAbstractTableModel
 {
@@ -28,6 +29,7 @@ public:
     bool insertRows(int position, int rows, const QModelIndex &index=QModelIndex(),Task *t=NULL);
     bool removeRows(int position, int rows, const QModelIndex &index=QModelIndex());
 
+    int count (VymModel *model=NULL);
     Task* createTask (BranchItem *bi);
     void deleteTask (Task* t);
     void recalcPriorities();

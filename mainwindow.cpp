@@ -3510,7 +3510,7 @@ void Main::editAddTimestamp()
     if (m) m->addTimestamp();	
 }
 
-void Main::editMapInfo()    //FIXME-2 add slides and tasks
+void Main::editMapInfo()    
 {
     VymModel *m=currentModel();
     if (!m) return;
@@ -3540,10 +3540,12 @@ void Main::editMapInfo()    //FIXME-2 add slides and tasks
 	m->nextBranch(cur,prev);
     }
 
-    stats+=QString ("%1 xLinks \n").arg (xl/2,6);
+    stats+=QString ("%1 branches\n").arg (m->branchCount(),6);
     stats+=QString ("%1 notes\n").arg (n,6);
     stats+=QString ("%1 images\n").arg (f,6);
-    stats+=QString ("%1 branches\n").arg (m->branchCount(),6);
+    stats+=QString ("%1 tasks\n").arg (m->taskCount(),6 );;
+    stats+=QString ("%1 slides\n").arg (m->slideCount(),6 );;
+    stats+=QString ("%1 xLinks \n").arg (xl/2,6);
     dia.setStats (stats);
 
     // Finally show dialog
