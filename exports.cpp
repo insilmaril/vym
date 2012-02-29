@@ -826,14 +826,11 @@ void ExportOrgMode::doExport()
     // Main loop over all branches
     QString s;
     int i;
-    BranchObj *bo;
     BranchItem *cur=NULL;
     BranchItem *prev=NULL;
     model->nextBranch(cur,prev);
     while (cur) 
     {
-	bo=(BranchObj*)(cur->getLMO());
-
 	if (!cur->hasHiddenExportParent() )
 	{
 	    for(i=0;i<=cur->depth();i++)

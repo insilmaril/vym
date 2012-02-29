@@ -13,6 +13,7 @@ using namespace std;
 
 extern uint itemLastID;
 extern FlagRow* standardFlagsMaster;
+extern FlagRow* systemFlagsMaster;
 
 TreeItem::TreeItem()
 {
@@ -90,6 +91,7 @@ void TreeItem::init()
     backgroundColor=Qt::transparent;
 
     standardFlags.setMasterRow (standardFlagsMaster);
+    systemFlags.setMasterRow (systemFlagsMaster);
 }
 
 void TreeItem::setModel (VymModel *m)

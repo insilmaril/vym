@@ -4372,7 +4372,7 @@ void Main::selectInNoteEditor(QString s,int i)
     noteEditor->findText (s,0,i);
 }
 
-void Main::changeSelection (VymModel *model, const QItemSelection &newsel, const QItemSelection &oldsel)
+void Main::changeSelection (VymModel *model, const QItemSelection &newsel, const QItemSelection &)
 {
     branchPropertyWindow->setModel (model ); //FIXME-3 this used to be called from BranchObj::select(). Maybe use signal now...
 

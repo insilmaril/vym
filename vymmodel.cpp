@@ -297,7 +297,7 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix, bool w
     for (int i=0; i<tmpLinks.count();++i)
 	s+=tmpLinks.at(i)->saveToDir();
 
-    // Save slides  // FIXME-2 preliminary, format may change!
+    // Save slides  
     s+=slideModel->saveToDir();	
 
     xml.decIndent();
@@ -2067,7 +2067,6 @@ void VymModel::setHideExport(bool b, TreeItem *ti)
 	);  
 	    emitDataHasChanged(ti);
 	    emitSelectionChanged();
-	updateActions();    //FIXME-2 really? Here?
 	reposition(); 
     }
 }

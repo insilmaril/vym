@@ -118,9 +118,9 @@ bool TaskEditor::isUsedFilterSleeping()
     return actionToggleFilterSleeping->isChecked();
 }
 
-void TaskEditor::setFilterSleeping (bool b)
+void TaskEditor::setFilterSleeping (bool ) // FIXME-3 not implemented yet
 {
-/* FIXME-2
+/* 
     if (b)
     {
 	filterMapModel->setFilterRegExp(QRegExp(mapName, Qt::CaseInsensitive));

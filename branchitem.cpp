@@ -200,10 +200,7 @@ void BranchItem::setHeadingColor (QColor color)
 
 void BranchItem::updateTaskFlag()
 {
-    // FIXME-2 use systemFlags::deactivateGroup ("system-tasks");
-    systemFlags.deactivate("system-task-new");
-    systemFlags.deactivate("system-task-wip");
-    systemFlags.deactivate("system-task-finished");
+    systemFlags.deactivateGroup ("system-tasks");
     if (task)
     {
 	switch (task->getStatus() ) 
@@ -221,7 +218,7 @@ void BranchItem::updateTaskFlag()
     } 
 }
 
-void BranchItem::setTask(Task *t) // FIXME-2 use flag groups
+void BranchItem::setTask(Task *t) 
 {
     task=t;
     updateTaskFlag();

@@ -12,7 +12,7 @@
 LinkableMapObj::LinkableMapObj(QGraphicsItem* parent, TreeItem *ti) :MapObj(parent,ti)
 {
     //qDebug() << "Const LinkableMapObj this="<<this<<"  ti="<<ti<<"  treeItem="<<treeItem;
-    parObj=(LinkableMapObj*)parent; //FIXME-2 try to get rid of parObj and use parentItem() instead
+    parObj=(LinkableMapObj*)parent; //FIXME-4 try to get rid of parObj and use parentItem() instead
     init ();
 }
 
@@ -211,7 +211,7 @@ LinkableMapObj::Style LinkableMapObj::getDefLinkStyle (TreeItem *parent)
 
 void LinkableMapObj::setLinkStyle(Style newstyle)
 {
-    //qDebug()<<"LMO::setLinkStyle s="<<newstyle;	//FIXME-2 called very often?!?!
+    //qDebug()<<"LMO::setLinkStyle s="<<newstyle;	//FIXME-3 called very often?!?!
     //qDebug()<<"LMO::setLinkStyle s="<<newstyle<<" for "<<this<<" "<<treeItem->getHeading()<<"  parObj="<<parObj;
     delLink();
 	
@@ -532,7 +532,6 @@ void LinkableMapObj::updateLinkGeometry()
 	    {
 		segment.at(i)->setLine(QLineF( pa0.at(i).x(), pa0.at(i).y(),pa0.at(i+1).x(),pa0.at(i+1).y()));
 		segment.at(i)->setZValue (z);
-		//segment.at(i)->setVisible(true); // FIXME-2 testing
 	    }
 	    break;
 	case PolyLine:

@@ -1400,7 +1400,7 @@ void MapEditor::mouseMoveEvent(QMouseEvent* e)
     }
 }
 
-void MapEditor::moveObject ()	//FIXME-2 wrong pos for tmp relink, when orientedLeft 
+void MapEditor::moveObject ()	
 {
     if (!panningTimer->isActive() )
 	panningTimer->start(50);
