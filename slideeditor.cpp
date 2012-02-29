@@ -46,12 +46,6 @@ SlideEditor::SlideEditor(VymModel *m)
 
     QVBoxLayout* mainLayout = new QVBoxLayout;
 
-    /* FIXME-2 testing QMenuBar *mb=new QMenuBar;
-    QAction *a=new  QAction ("Foo action",NULL);
-    mb->addAction (a);
-    mb->insertSeparator();
-    mainLayout->addWidget(mb);
-    */
     mainLayout->addWidget(view);
     mainLayout->addWidget(slideControl);
 

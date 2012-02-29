@@ -242,13 +242,51 @@ void VymView::collapseUnselected()
 
     // collapse all to level
     model->nextBranch(cur,prev);
+    bool b=false;
     while (cur) 
     {
 	pix=model->index (cur);
 	if (treeEditor->isExpanded(pix) &&  level <= cur->depth())
+	{
 	    treeEditor->setExpanded(pix,false);
+	    b=true;
+	}
 	model->nextBranch(cur,prev);	
     }
+
+/* FIXME-2 unimplemented yet
+    if (b) return;
+
+    // If we didn't collapse anything so far collapse more
+    qDebug()<<"VM::collapse more";
+    cur=NULL;
+    prev=NULL;
+
+    // Find level to collapse
+    model->nextBranch(cur,prev);
+    while (cur) 
+    {
+	pix=model->index (cur);
+	d=cur->depth();
+	if (treeEditor->isExpanded(pix) && d > level && )
+	    level=d;
+	model->nextBranch(cur,prev);	
+    }
+
+    // collapse all to level
+    model->nextBranch(cur,prev);
+    bool b=false;
+    while (cur) 
+    {
+	pix=model->index (cur);
+	if (treeEditor->isExpanded(pix) &&  level <= cur->depth())
+	{
+	    treeEditor->setExpanded(pix,false);
+	    b=true;
+	}
+	model->nextBranch(cur,prev);	
+    }
+*/
 }
 
 void VymView::showSelection()

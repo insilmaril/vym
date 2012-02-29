@@ -2240,7 +2240,7 @@ void VymModel::cut()
     }
 }
 
-bool VymModel::moveUp(BranchItem *bi)	
+bool VymModel::moveUp(BranchItem *bi)
 {
     bool oldState=blockSaveState;
     blockSaveState=true;
@@ -5103,7 +5103,7 @@ void VymModel::updateNoteFlag()
     }
 }
 
-void VymModel::updateTaskFlag()
+void VymModel::updateTaskFlag()// FIXME-1 have visual clue in icon, that task is sleeping/awake
 {
     BranchItem *selbi=getSelectedBranch();
     if (selbi)
@@ -5114,7 +5114,7 @@ void VymModel::updateTaskFlag()
 	    switch (task->getStatus() ) 
 	    {
 		case Task::NotStarted: 
-		    //systemFlags.activate("system-task-new");  //FIXME-2
+		    //systemFlags.activate("system-task-new");  //FIXME-1   no code here???
 		    break;
 		case Task::WIP: 
 		    //systemFlags.activate("system-task-wip");
@@ -5124,7 +5124,6 @@ void VymModel::updateTaskFlag()
 		    break;
 	    }
 	    emitDataHasChanged(selbi);	
-	    emitSelectionChanged();
 	    reposition();
 	}
     }
@@ -5910,7 +5909,7 @@ void VymModel::resetSelectionHistory()
     appendSelection();
 }
 
-void VymModel::appendSelection()    // FIXME-2 history unable to cope with multiple selections
+void VymModel::appendSelection()    // FIXME-3 history unable to cope with multiple selections
 {
     uint id=0;
     TreeItem *ti=getSelectedItem();
@@ -6294,8 +6293,7 @@ void VymModel::updateSlideSelection (QItemSelection newsel,QItemSelection)
 	    TreeItem *ti=findID(id);
 	    if (ti)
 	    {
-		//select (ti); FIXME-2 select or not select??
-                               // Maybe optionally fade out selection?
+		//select (ti); FIXME-3 select or not select in MapEdirot? Maybe optionally fade out selection?
 		if (mapEditor)
 		{
 		    LinkableMapObj *lmo=((MapItem*)ti)->getLMO();
