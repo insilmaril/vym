@@ -183,7 +183,7 @@ void AttributeDef::setKey (const QString &k)
     key=k;
 }
 
-void AttributeDef::setValue (const QString &v)
+void AttributeDef::setValue (const QString &)
 {
 }
 

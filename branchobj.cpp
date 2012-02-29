@@ -23,7 +23,7 @@ BranchObj::BranchObj (QGraphicsItem *parent,TreeItem *ti):OrnamentedObj (parent,
     treeItem=ti;
     BranchItem *pi=(BranchItem*)(ti->parent());
     if (pi && pi!=ti->getModel()->getRootItem() )
-	parObj=pi->getLMO();	// FIXME-2 could be set directly from parent
+	parObj=pi->getLMO();
     else
 	parObj=NULL;
     init();
@@ -238,12 +238,6 @@ void BranchObj::moveBy (double x, double y)
 void BranchObj::moveBy (QPointF p)
 {
     moveBy (p.x(), p.y());
-}
-
-
-QRectF QGraphicsItem::boundingRect () const 
-{
-    return QRectF();// FIXME-2 no return, make abstract...
 }
 
 void QGraphicsItem::paint(QPainter*, const QStyleOptionGraphicsItem*, QWidget*)

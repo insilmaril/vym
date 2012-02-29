@@ -2,7 +2,7 @@
 #include "mapobj.h"
 
 /////////////////////////////////////////////////////////////////
-// ImageObj	//FIXME-2 maybe join IO and FIO (or use FIO for svg?)
+// ImageObj	//FIXME-3 maybe join IO and FIO (or use FIO for svg?)
 /////////////////////////////////////////////////////////////////
 ImageObj::ImageObj( QGraphicsItem *parent) : QGraphicsPixmapItem (parent )
 {

@@ -1428,7 +1428,7 @@ void MapEditor::moveObject ()
 	dsti=NULL;
     
 
-    if (lmosel && seli->getType()==TreeItem::Image)	
+    if (lmosel && seli->getType()==TreeItem::Image)	//FIXME-2 selbox not correctly positioned after releasing image
     {
 	FloatObj *fio=(FloatImageObj*)lmosel;
 	fio->move   (p.x() -movingObj_offset.x(), p.y()-movingObj_offset.y() );	
@@ -1448,8 +1448,7 @@ void MapEditor::moveObject ()
 		"moveRel "+pold,
 		seli,
 		"moveRel "+pnow,
-		QString("Move %1 to relative position %2").arg(model->getObjectName(fio)).arg(pnow));
-	    fio->getParObj()->requestReposition();
+		QString("Move %1 to relative position %2").arg(model->getObjectName(lmosel)).arg(pnow));
 	    model->reposition();
 
 	    model->relinkImage ((ImageItem*) seli,dsti);
@@ -1603,6 +1602,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent* e)
 		    QString("Move %1 to relative position %2").arg(model->getObjectName(seli)).arg(pnow));
 
 		model->reposition();
+		model->emitDataHasChanged (seli);
 	    }	
 	}
 

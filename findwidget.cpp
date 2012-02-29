@@ -19,7 +19,7 @@ extern Main *mainWindow;
 
 FindWidget::FindWidget(QWidget *)
 {
-    QVBoxLayout* mainLayout = new QVBoxLayout;	//FIXME-2 needed?
+    QVBoxLayout* mainLayout = new QVBoxLayout;	
     QHBoxLayout *row2Layout = new QHBoxLayout;
     
     QLabel *label=new QLabel;

@@ -39,7 +39,7 @@ void FloatImageObj::copy (FloatImageObj* other)
 void FloatImageObj::setZValue (const int &i)
 {
 
-//FIXME-2    qDebug()<<"FIO::setZValue z="<<i;
+//    qDebug()<<"FIO::setZValue z="<<i;
 //    qDebug()<<"  icon="<<icon;
 //    qDebug()<<"  this="<<this;	 
     icon->setZValue (i);

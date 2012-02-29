@@ -1578,7 +1578,6 @@ void VymModel::setHeading(const QString &s, BranchItem *bi)
 	emitDataHasChanged ( bi);
 	emitUpdateQueries ();
 	reposition();
-	emitSelectionChanged(); // Update _after_ reposition
     }
 }
 
