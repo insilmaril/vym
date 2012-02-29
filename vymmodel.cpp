@@ -1822,7 +1822,6 @@ void VymModel::setURL(QString url)
 	    getBugzillaData(false);
 	emitDataHasChanged (selti);
 	reposition();
-	emitSelectionChanged();
     }
 }   
 
@@ -1962,7 +1961,6 @@ void VymModel::setFramePadding (const int &i) //FIXME-4 not saved if there is no
 	    bo->setFramePadding (i);
 	    reposition();
 	    bo->updateLinkGeometry();
-	    emitSelectionChanged();
 	}   
     }	
 }
@@ -2339,7 +2337,6 @@ void VymModel::sortChildren(bool inverse)
 	    selbi->sortChildren(inverse);
 	    select(selbi);
 	    reposition();
-	    emitShowSelection();
 	}
     }
 }
@@ -2879,7 +2876,6 @@ void VymModel::deleteSelection()
 		emitDataHasChanged (pi);
 		select (pi);
 		reposition();
-		emitShowSelection();
 	    } else
 		qWarning ("VymmModel::deleteSelection()  unknown type?!");
 	}
@@ -3151,7 +3147,6 @@ void VymModel::setScale(qreal xn, qreal yn)
 	    QString ("Scale %1").arg(getObjectName(selii))
 	);  
 	reposition();
-	emitSelectionChanged();
     }	
 }
 
@@ -3212,7 +3207,6 @@ void VymModel::toggleTarget()	//FIXME-2 no savestate
     {
 	selbi->toggleTarget(); 
 	reposition();
-	emitSelectionChanged();
     }
 }
 
@@ -3259,7 +3253,6 @@ void VymModel::toggleStandardFlag (const QString &name, FlagRow *master)
 	    QString("Toggling standard flag \"%1\" of %2").arg(name).arg(getObjectName(bi)));
 	    bi->toggleStandardFlag (name, master);
 	reposition();
-	emitSelectionChanged();	
     }
 }
 
@@ -3465,7 +3458,6 @@ void VymModel::setVymLink (const QString &s)
 	bi->setVymLink(s);
 	emitDataHasChanged (bi);
 	reposition();
-	emitSelectionChanged();
     }
 }
 
@@ -3484,7 +3476,6 @@ void VymModel::deleteVymLink()
 	bi->setVymLink ("");
 	emitDataHasChanged (bi);
 	reposition();
-	emitSelectionChanged();
 	updateActions();
     }
 }
@@ -3705,7 +3696,6 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	    selbi->deactivateAllStandardFlags();
 	    reposition();
 	    emitDataHasChanged(selbi);
-	    emitSelectionChanged();
 	    setChanged();
 	}
     /////////////////////////////////////////////////////////////////////
@@ -5149,6 +5139,7 @@ void VymModel::reposition() //FIXME-4 VM should have no need to reposition, but 
 	else
 	    qDebug()<<"VM::reposition bo=0";
     }	
+    emitSelectionChanged();
 }
 
 
