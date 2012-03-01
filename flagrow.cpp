@@ -46,7 +46,7 @@ QStringList FlagRow::activeFlagNames()
 }
 
 
-bool FlagRow::isActive (const QString &name)	//FIXME-2 Better use "checke" instead of "active" ...
+bool FlagRow::isActive (const QString &name)	
 {
     QString n;
     foreach (n,activeNames)

@@ -75,7 +75,7 @@ VymView::VymView(VymModel *m)
 	    selModel, SIGNAL (selectionChanged(const QItemSelection &, const QItemSelection &)), 
 	    this,SLOT (changeSelection(const QItemSelection &,const QItemSelection &)));
 
-	// Needed to update selbox during animation // FIXME-2 really needed HERE?
+	// Needed to update selbox during animation 
 	connect (
 	    model, SIGNAL (selectionChanged(const QItemSelection &, const QItemSelection &)), 
 	    mapEditor,SLOT (updateSelection(const QItemSelection &,const QItemSelection &)));

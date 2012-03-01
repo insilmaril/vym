@@ -10,7 +10,7 @@ extern Settings settings;
 extern QString vymName;
 
 
-BranchPropertyWindow::BranchPropertyWindow (QWidget *parent): QDialog (parent)	// FIXME-2 not updating when data is set elsewhere (connect to dataCHanged)
+BranchPropertyWindow::BranchPropertyWindow (QWidget *parent): QDialog (parent)	// FIXME-3 not updating when data is set elsewhere (connect to dataCHanged)
 
 {
     ui.setupUi (this);
@@ -30,12 +30,11 @@ BranchPropertyWindow::BranchPropertyWindow (QWidget *parent): QDialog (parent)	/
     ui.framePenColorButton->setIcon (pix);
     ui.frameBrushColorButton->setIcon (pix);
 
-    // Create Model and View to hold attributes	    // FIXME-3
     if (!settings.value( "/mainwindow/showTestMenu",false).toBool() )
 	ui.tabWidget->widget (3)->hide();
 
 	
-    /*
+    /* Create Model and View to hold attributes	    // FIXME-3
     attributeModel = new QStandardItemModel (1,3,this);
     attributeModel->setHeaderData(0, Qt::Horizontal, tr("Name","Branchprop window: Attribute name"));
     attributeModel->setHeaderData(1, Qt::Horizontal, tr("Value","Branchprop window: Attribute value"));

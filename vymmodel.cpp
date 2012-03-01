@@ -542,7 +542,8 @@ ErrorCode VymModel::loadMap (
     
 	    reposition();   // to generate bbox sizes
 	    emitSelectionChanged();
-	    taskModel->recalcPriorities();
+
+	    // Recalc priorities and sort   //FIXME-2 not enough to force resorting on initial load :-(
 	    taskEditor->sort();
 	} else 
 	{
@@ -2855,11 +2856,10 @@ void VymModel::deleteSelection()
 	    {
 		if (pi->isScrolled() && pi->branchCount()==0)
 		    pi->unScroll();
-		emitDataHasChanged(pi);// FIXME-2 emit later...
+		emitDataHasChanged(pi);
 		select (pi);
-		emitShowSelection();
 	    } else
-		emitDataHasChanged(rootItem); // FIXME-2 emit later...
+		emitDataHasChanged(rootItem); 
 	    ti=NULL;		
 	}
 
