@@ -77,23 +77,11 @@ QModelIndex TreeModel::index(int row, int column, const QModelIndex &parent)
     TreeItem *parentItem;
 
     if (!parent.isValid())
-    {
         parentItem = rootItem;
-	/*
-	cout << "TM::index()  no parent?! xxx\n";
-	cout << "   row="<<row<<"  col="<<column<<endl;
-	cout << "   parent.internal="<< parent.internalPointer()<<endl;
-	*/
-	// Somehow index is requested where parentIndex is invalid.
-	// what's happening here...?
-	// Check if Qt examples also return index of rootIem then...
-
-    }	
     else
         parentItem = getItem (parent);
 
     TreeItem *childItem = parentItem->child(row);
-    //cout << "TM::index  parentItem="<<parentItem<<"  childItem="<<childItem<<"  row="<<row<<" col="<<column<<endl;
     if (childItem)
         return createIndex(row, column, childItem);
     else
@@ -105,22 +93,9 @@ QModelIndex TreeModel::parent(const QModelIndex &index) const
     if (!index.isValid())
         return QModelIndex();
 
-    //FIXME-3 cout << "TM::parent  ri="<<rootItem<< "  row="<<index.row()<<"  col="<<index.column()<<endl;
     TreeItem *ti= getItem (index);
-    //cout << "            ti="<<ti<<endl;
-    //cout << "               "<<ti->getHeadingStd()<<endl;
     TreeItem *parentItem = ti->parent();
-    //cout << "            pi="<<parentItem<<endl;
-
-    //cout << "TreeModel::parent  ti="<<ti<<" "<<ti->getHeading().toStdString()<<"  pi="<<parentItem<<"  "<<endl;
-    if (parentItem == rootItem)
-        return QModelIndex();
-
-/*
-    if (!parentItem)
-        return QModelIndex();	// FIXME-3 do this to avoid segfault, but why?
-				// see also my question on qt-interest in march
-*/
+    if (parentItem == rootItem) return QModelIndex();
     return createIndex(parentItem->childNumber(), 0, parentItem);
 }
 
@@ -140,15 +115,9 @@ int TreeModel::columnCount(const QModelIndex &parent) const
 {
     int c;
     if (parent.isValid())
-    {
         c= getItem (parent)->columnCount();
-	//cout << "TM::colCount  c="<<c<<"  parent="<<getItem (parent)<<endl;	
-    }
     else
-    {
         c= rootItem->columnCount();
-	//cout << "TM::colCount  c="<<c<<"  parent=invalid"<<endl;  
-    }
     return c;
 }
 
@@ -215,13 +184,6 @@ BranchItem* TreeModel::nextBranch (BranchItem* &current, BranchItem* &previous, 
 
     } else
     {
-/*FIXME-3
-	cout << "TM::nextBranch shallow\n"; 
-	std::string ch="()"; if (current) ch=current->getHeadingStd();
-	std::string ph="()"; if (previous) ph=previous->getHeadingStd();
-	cout << "  cur="<<ch << " prev="<<ph<<endl;
-*/
-
 	// Try to find sibling with same depth
 	BranchItem *sibling=current->parent()->getBranchNum (current->num()+1);
 	if (sibling)
@@ -238,25 +200,6 @@ BranchItem* TreeModel::nextBranch (BranchItem* &current, BranchItem* &previous, 
 	    current=NULL;
 	    return current;
 	}
-
-
-	/*
-    while (ix.isValid())
-    {
-	TreeItem *ti=model->getItem (ix);
-	cout << "  level="<<level<<"  ix=";
-	if (ti) cout << ti->getHeadingStd();
-	row=ix.row();
-	col=ix.column();
-	if (! treeEditor->isExpanded(ix))
-	    cout <<"  expand!";
-	else	
-	    cout <<"  is expanded.";
-	cout <<endl;
-	ix=ix.sibling(row+1,col);
-    }
-    */
-
     }
 }
 
@@ -270,7 +213,6 @@ bool TreeModel::removeRows ( int row, int count, const QModelIndex & parent)
 	pi=rootItem;
     TreeItem *ti;
 
-    //cout << "TM::removeRows  pi="<<pi<<"  row="<<row<<"  count="<<count<<endl;
     for (int i=row; i<=last; i++)
     {
 	ti=pi->getChildNum (row);

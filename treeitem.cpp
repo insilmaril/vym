@@ -39,20 +39,10 @@ TreeItem::TreeItem(const QList<QVariant> &data, TreeItem *parent)
 TreeItem::~TreeItem()
 {
     //qDebug()<<"Destr TreeItem this="<<this<<"  childcount="<<childItems.count();
-    /*
-    qDeleteAll(childItems); // Call delete  //FIXME-3 use this instead of below
-    qDebug()<<"  ok1";
-    childItems.clear();	    // and clear list
-    qDebug()<<"  ok2";use
-    */
-
-    //qDebug()<<"                   ="<<getHeading();
     TreeItem *ti;
     while (!childItems.isEmpty())
     {
-	//qDebug()<<"    ="<<ti->getHeading();
 	ti=childItems.takeFirst();
-	//qDebug()<<"  ti="<<ti;
 	delete ti;
     }
 }
