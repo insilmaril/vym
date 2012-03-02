@@ -371,6 +371,7 @@ ErrorCode VymModel::loadMap (
     const LoadMode &lmode, 
     bool saveStateFlag, 
     const FileType &ftype,
+    const int &contentFilter,
     int pos)
 {
     ErrorCode err=success;
@@ -389,7 +390,10 @@ ErrorCode VymModel::loadMap (
     fileType=ftype;
     switch (fileType)
     {
-	case VymMap: handler=new parseVYMHandler; break;
+	case VymMap: 
+	    handler=new parseVYMHandler; 
+	    ((parseVYMHandler*)handler)->setContentFilter (contentFilter);
+	    break;
 	case FreemindMap : handler=new parseFreemindHandler; break;
 	default: 
 	    QMessageBox::critical( 0, tr( "Critical Parse Error" ),
@@ -507,7 +511,6 @@ ErrorCode VymModel::loadMap (
 	reader.setContentHandler( handler );
 	reader.setErrorHandler( handler );
 	handler->setModel ( this);
-
 
 	// We need to set the tmpDir in order  to load files with rel. path
 	QString tmpdir;
@@ -1105,7 +1108,7 @@ bool VymModel::isRedoAvailable()
     return false;
 }
 
-void VymModel::undo()	
+void VymModel::undo()	//FIXME-3 undo delete xlink to scrolled branch unscrolls branch
 {
     // Can we undo at all?
     if (undosAvail<1) return;
@@ -1233,12 +1236,19 @@ void VymModel::resetHistory()
     mainWindow->updateHistory (undoSet);
 }
 
-void VymModel::saveState(const SaveMode &savemode, const QString &undoSelection, const QString &undoCom, const QString &redoSelection, const QString &redoCom, const QString &comment, TreeItem *saveSel)
+void VymModel::saveState(
+    const SaveMode &savemode, 
+    const QString &undoSelection, 
+    const QString &undoCom, 
+    const QString &redoSelection, 
+    const QString &redoCom, 
+    const QString &comment, 
+    TreeItem *saveSel, 
+    QString dataXML)
 {
     sendData(redoCom);	//FIXME-4 testing
 
     // Main saveState
-
 
     if (blockSaveState) return;
 
@@ -1249,7 +1259,6 @@ void VymModel::saveState(const SaveMode &savemode, const QString &undoSelection,
     curStep++;
     if (curStep>stepsTotal) curStep=1;
     
-    QString backupXML="";
     QString histDir=getHistoryPath();
     QString bakMapPath=histDir+"/map.xml";
 
@@ -1261,7 +1270,7 @@ void VymModel::saveState(const SaveMode &savemode, const QString &undoSelection,
     // Save depending on how much needs to be saved 
     QList <Link*> tmpLinks;
     if (saveSel)
-	backupXML=saveToDir (histDir,mapName+"-",false, QPointF (),saveSel);
+	dataXML=saveToDir (histDir,mapName+"-",false, QPointF (),saveSel);
 	
     QString undoCommand="";
     if (savemode==UndoCommand)
@@ -1274,9 +1283,9 @@ void VymModel::saveState(const SaveMode &savemode, const QString &undoSelection,
 	undoCommand.replace ("PATH",bakMapPath);
     }
 
-    if (!backupXML.isEmpty())
+    if (!dataXML.isEmpty())
 	// Write XML Data to disk
-	saveStringToDisk (bakMapPath,backupXML);
+	saveStringToDisk (bakMapPath,dataXML);
 
     // We would have to save all actions in a tree, to keep track of 
     // possible redos after a action. Possible, but we are too lazy: forget about redos.
@@ -1368,7 +1377,6 @@ void VymModel::saveStateRemovingPart(TreeItem* redoSel, const QString &comment)
 	    redoSel);
     }
 }
-
 
 void VymModel::saveState(TreeItem *undoSel, const QString &uc, TreeItem *redoSel, const QString &rc, const QString &comment) 
 {
@@ -3641,7 +3649,7 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 		t=parser.parString (ok,0);  // path to map
 		n=parser.parInt(ok,1);	    // position
 		if (QDir::isRelativePath(t)) t=(tmpMapDir + "/"+t);
-		loadMap (t,ImportAdd,false,VymMap,n);
+		loadMap (t,ImportAdd,false,VymMap,0xffff,n);
 	    }
 	} else if (parser.parCount()==1)
 	{
@@ -3824,6 +3832,14 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	} else if (parser.checkParCount(0))
 	{   
 	    deleteChildren();
+	}   
+    /////////////////////////////////////////////////////////////////////
+    } else if (com=="deleteSlide")   
+    {
+	if (parser.checkParCount(1))
+	{   
+	    n=parser.parInt(ok,0);	    // position
+	    if (ok) deleteSlide(n);
 	}   
     /////////////////////////////////////////////////////////////////////
     } else if (com=="exportAO")
@@ -6225,9 +6241,9 @@ SlideItem* VymModel::addSlide()   //FIXME-2 missing saveState
 {
     SlideItem *si=slideModel->getSelectedItem();  
     if (si)
-	si=slideModel->addItem (NULL,si->childNumber()+1 );
+	si=slideModel->addSlide (NULL,si->childNumber()+1 );
     else
-	si=slideModel->addItem ();
+	si=slideModel->addSlide();
     
     TreeItem *seli=getSelectedItem();
 
@@ -6241,16 +6257,41 @@ SlideItem* VymModel::addSlide()   //FIXME-2 missing saveState
     return si;
 }
 
-void VymModel::deleteSlide(SlideItem *si)   //FIXME-2 missing saveState
+void VymModel::deleteSlide(SlideItem *si)  
 {
     if (si)
     {
-	slideModel->deleteItem (si);
+	QString s="<vymmap>" + si->saveToDir() + "</vymmap>";
+	qDebug()<<"VM::deleteSlide  slide="<<s;
+	int pos=si->childNumber();
+	saveState (
+	    PartOfMap,
+	    getSelectString(), QString("addMapInsert (\"PATH\",%1)").arg(pos),
+	    getSelectString(), QString("deleteSlide (%1)").arg(pos),
+	    "Delete slide",
+	    NULL,
+	    s );
+	slideModel->deleteSlide (si);
     }
+}
+
+void VymModel::deleteSlide(int n)  
+{
+    deleteSlide (slideModel->getSlide (n));
+}
+
+void VymModel::relinkSlide(SlideItem *si, int pos)
+{
+    if (si && pos>=0) 
+	slideModel->relinkSlide (si, si->parent(), pos);
 }
 
 void VymModel::moveSlideUp()   //FIXME-2 missing saveState
 {
+    //FIXME-0 testing
+    loadMap ("/suse/uwedr/vym/code/x.xml",ImportReplace,false,VymMap,0xffff);
+    return;
+
     SlideItem *si=slideModel->getSelectedItem();
     if (si)
     {
@@ -6258,7 +6299,7 @@ void VymModel::moveSlideUp()   //FIXME-2 missing saveState
 	if (n>0)
 	{
 	    blockSlideSelection=true;
-	    slideModel->relinkItem (si, si->parent(), n-1);
+	    slideModel->relinkSlide (si, si->parent(), n-1);
 	    blockSlideSelection=false;
 	}
     }
@@ -6274,7 +6315,7 @@ void VymModel::moveSlideDown()   //FIXME-2 missing saveState
 	if (n<pi->childCount() )
 	{
 	    blockSlideSelection=true;
-	    slideModel->relinkItem (si, si->parent(), n+1);
+	    slideModel->relinkSlide (si, si->parent(), n+1);
 	    blockSlideSelection=false;
 	}
     }
@@ -6293,7 +6334,7 @@ void VymModel::updateSlideSelection (QItemSelection newsel,QItemSelection)
 	    TreeItem *ti=findID(id);
 	    if (ti)
 	    {
-		//select (ti); FIXME-3 select or not select in MapEdirot? Maybe optionally fade out selection?
+		//select (ti); FIXME-3 select or not select in MapEditor? Maybe optionally fade out selection?
 		if (mapEditor)
 		{
 		    LinkableMapObj *lmo=((MapItem*)ti)->getLMO();

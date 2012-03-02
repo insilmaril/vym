@@ -12,7 +12,7 @@ SlideModel::SlideModel( VymModel *vm)
 {
     QVector<QVariant> rootData;
     rootData << "Slide";
-    rootItem = new SlideItem(rootData);
+    rootItem = new SlideItem(rootData, NULL,this);
     vymModel=vm;
 }
 
@@ -25,6 +25,11 @@ void SlideModel::clear()
 {
     if (rootItem->childCount()>0)
 	removeRows (0,rowCount (QModelIndex ()));
+}
+
+VymModel* SlideModel::getVymModel()
+{
+    return vymModel;
 }
 
 int SlideModel::columnCount(const QModelIndex & /* parent */) const
@@ -189,9 +194,9 @@ bool SlideModel::setHeaderData(int section, Qt::Orientation orientation,
     return result;
 }
 
-SlideItem*  SlideModel::addItem (SlideItem *dst, int n)
+SlideItem*  SlideModel::addSlide(SlideItem *dst, int n)
 {
-    SlideItem *ni=NULL;
+    SlideItem *si=NULL;
     if (!dst) dst=rootItem;
 
     emit (layoutAboutToBeChanged() );
@@ -202,15 +207,15 @@ SlideItem*  SlideModel::addItem (SlideItem *dst, int n)
     if (rootItem->insertChildren (n,1,0) )
     {
 	QModelIndex ix=index(n,0,QModelIndex());
-	ni=getItem(ix);
+	si=getItem(ix);
     }
     endInsertRows ();
     emit (layoutChanged() );
     	
-    return ni;
+    return si;
 }
 
-void SlideModel::deleteItem (SlideItem *si)
+void SlideModel::deleteSlide(SlideItem *si)
 {
     QModelIndex ix=index(si);
     if (ix.isValid())
@@ -221,7 +226,7 @@ void SlideModel::deleteItem (SlideItem *si)
     }
 }
 
-bool SlideModel::relinkItem (
+bool SlideModel::relinkSlide(
     SlideItem *si,
     SlideItem *dst,
     int pos)
@@ -254,7 +259,7 @@ bool SlideModel::relinkItem (
     return false;
 }
 
-SlideItem* SlideModel::getItem(const QModelIndex &index) const
+SlideItem* SlideModel::getItem (const QModelIndex &index) const
 {
     if (index.isValid()) {
         SlideItem *item = static_cast<SlideItem*>(index.internalPointer());
@@ -263,27 +268,18 @@ SlideItem* SlideModel::getItem(const QModelIndex &index) const
     return rootItem;
 }
 
+SlideItem* SlideModel::getSlide (int n)
+{
+    if (n>=count() || n<0) return NULL;
+    return getItem (index (n, 0, QModelIndex() ));
+}
+
 QString SlideModel::saveToDir()
 {
     QString s;
     for (int i=0; i<rootItem->childCount(); i++)
-    {
-	SlideItem *si=rootItem->child(i);
-	s+=singleElement ("slide",
-	    attribut ("name",si->data(0).toString() ) +
-	    attribut ("zoom",QString().setNum (si->getZoomFactor() ) ) +
-	    attribut ("rotation",QString().setNum (si->getRotationAngle() ) ) +
-	    attribut ("mapitem",vymModel->getSelectString (si->getTreeItemID() ) )
-	    );
-	    /*
-	    attribut ( "id", vymModel->getSelectString (
-		vymModel->findID (si->getTreeItemID() ) ) 
-	    ) 
-	);
-	*/
-    }
+	s+=rootItem->child(i)->saveToDir();
     return s;
-
 }
 
 void SlideModel::setSearchString( const QString &s)

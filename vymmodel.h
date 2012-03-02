@@ -123,6 +123,7 @@ public:
 	const LoadMode &lmode=NewMap,	//!< New map, replace or add to selection
 	bool saveStateFlag=true,	//!< If called internally for history, don't save
 	const FileType &ftype=VymMap,	//!< VymMap or FreeMind
+	const int &contentFilter=0xffff,//!< For undo types of content can be filterd
 	int pos=-1			//!< Optionally tell position where to add data
     );	
 
@@ -205,7 +206,8 @@ public:
 	const QString &redoSelection, 
 	const QString &redoCommand, 
 	const QString &comment, 
-	TreeItem *saveSelection);
+	TreeItem *saveSelection,
+	QString dataXML="");
 
     /*! Overloaded for convenience */
     void saveStateChangingPart(
@@ -761,6 +763,8 @@ public:
     int slideCount();
     SlideItem* addSlide ();
     void deleteSlide (SlideItem *si);
+    void deleteSlide (int n);
+    void relinkSlide (SlideItem *si, int pos);
     void moveSlideUp();
     void moveSlideDown();
 public slots:

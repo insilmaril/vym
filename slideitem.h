@@ -5,15 +5,17 @@
 #include <QVariant>
 #include <QVector>
 
-class TreeItem;
-class VymModel;
+#include "xmlobj.h"
 
-class SlideItem 
+class TreeItem;
+class SlideModel;
+
+class SlideItem : public XMLObj 
 {
 public:
-    SlideItem(const QVector<QVariant> &data, SlideItem *parent = 0);
+    SlideItem(const QVector<QVariant> &data, SlideItem *parent = 0, SlideModel *sm = 0 );
     ~SlideItem();
-
+    SlideModel* getModel(); 
     SlideItem *child(int number);
     int childCount() const;
     int columnCount() const;
@@ -36,8 +38,10 @@ public:
     qreal getZoomFactor ();
     void setRotationAngle(const qreal &);
     qreal getRotationAngle ();
+    QString saveToDir();
 
 private:
+    SlideModel *model;
     QList<SlideItem*> childItems;
     QVector<QVariant> itemData;
     SlideItem *parentItem;

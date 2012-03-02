@@ -254,7 +254,7 @@ void VymView::collapseUnselected()
 	model->nextBranch(cur,prev);	
     }
 
-/* FIXME-2 unimplemented yet
+/* FIXME-2 "collapse more" unimplemented yet
     if (b) return;
 
     // If we didn't collapse anything so far collapse more

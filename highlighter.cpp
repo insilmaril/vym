@@ -49,6 +49,7 @@ Highlighter::Highlighter(QTextDocument *parent)
 		    << "\\bdelete\\b"
 		    << "\\bdeleteKeepChilds\\b"
 		    << "\\bdeleteChilds\\b"
+		    << "\\bdeleteSlide\\b"
 		    << "\\bexportAO\\b"
 		    << "\\bexportASCII\\b"
 		    << "\\bexportHTML\\b"

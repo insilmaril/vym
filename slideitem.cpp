@@ -1,22 +1,34 @@
 #include <QStringList>
 
+#include "slideitem.h"
+
+#include "slidemodel.h"
 #include "treeitem.h"
 #include "vymmodel.h"
 
-#include "slideitem.h"
-
-SlideItem::SlideItem(const QVector<QVariant> &data, SlideItem *parent)
+SlideItem::SlideItem(const QVector<QVariant> &data, SlideItem *parent, SlideModel *sm )
 {
     parentItem = parent;
     itemData = data;
     treeItemID=-1;
     zoomFactor=-1;
+
+    if (sm)
+	model=sm;
+    else
+	model=parent->getModel();
+
     if (data.isEmpty()) itemData.append(QVariant("empty"));
 }
 
 SlideItem::~SlideItem()
 {
     qDeleteAll(childItems);
+}
+
+SlideModel* SlideItem::getModel()
+{
+    return model;
 }
 
 SlideItem *SlideItem::child(int number)
@@ -180,5 +192,15 @@ void SlideItem::setRotationAngle (const qreal &zf)
 qreal SlideItem::getRotationAngle()
 {
     return rotationAngle;
+}
+
+QString SlideItem::saveToDir()
+{
+    return singleElement ("slide",
+	attribut ("name",data(0).toString() ) +
+	attribut ("zoom",QString().setNum (zoomFactor) ) +
+	attribut ("rotation",QString().setNum (rotationAngle ) ) +
+	attribut ("mapitem",model->getVymModel()->getSelectString (treeItemID ) )
+	);
 }
 

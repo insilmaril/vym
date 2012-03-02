@@ -22,6 +22,17 @@ extern Settings settings;
 extern TaskModel *taskModel;
 extern QString vymVersion;
 
+parseVYMHandler::parseVYMHandler()
+{
+    // Default is to load everything
+    contentFilter = 0xffff; //FIXME-0 use filters for all content types below
+}
+
+void parseVYMHandler::setContentFilter (const int &c)
+{
+    contentFilter=c;
+}
+
 bool parseVYMHandler::startDocument()
 {
     errorProt = "";
@@ -44,6 +55,7 @@ bool parseVYMHandler::startElement  ( const QString&, const QString&,
 	<<"  laststate="<<stateStack.last()
 	<<"   loadMode="<<loadMode
     	<<"       line="<<QXmlDefaultHandler::lineNumber();
+	<<"contentFilter="<<contentFilter;
     */	
     stateStack.append (state);	
     if ( state == StateInit && (eName == "vymmap")  ) 
@@ -58,73 +70,19 @@ bool parseVYMHandler::startElement  ( const QString&, const QString&,
 	    model->clear();
 	    lastBranch=NULL;
 
-	    if (!atts.value( "author").isEmpty() )
-		model->setAuthor(atts.value( "author" ) );
-	    if (!atts.value( "comment").isEmpty() )
-		model->setComment (atts.value( "comment" ) );
-	    if (!atts.value( "branchCount").isEmpty() )
-	    {
-		branchesTotal=atts.value("branchCount").toInt();
-		if (branchesTotal>10)
-		{
-		    useProgress=true;
-		    mainWindow->setProgressMaximum (branchesTotal);
-		}
-	    } 
-		
-	    if (!atts.value( "backgroundColor").isEmpty() )
-	    {
-		col.setNamedColor(atts.value("backgroundColor"));
-		model->getScene()->setBackgroundBrush(col);
-	    }	    
-	    if (!atts.value( "defaultFont").isEmpty() )
-	    {
-		QFont font;
-		font.fromString(atts.value("defaultFont"));
-		model->setMapDefaultFont (font);
-	    }	    
-	    if (!atts.value( "selectionColor").isEmpty() )
-	    {
-		col.setNamedColor(atts.value("selectionColor"));
-		model->setSelectionColor(col);
-	    }	    
-	    if (!atts.value( "linkColorHint").isEmpty() ) 
-	    {
-		if (atts.value("linkColorHint")=="HeadingColor")
-		    model->setMapLinkColorHint(LinkableMapObj::HeadingColor);
-		else
-		    model->setMapLinkColorHint(LinkableMapObj::DefaultColor);
-	    }
-	    if (!atts.value( "linkStyle").isEmpty() ) 
-		model->setMapLinkStyle(atts.value("linkStyle"));
-	    if (!atts.value( "linkColor").isEmpty() ) 
-	    {
-		col.setNamedColor(atts.value("linkColor"));
-		model->setMapDefLinkColor(col);
-	    }	
-	    if (!atts.value( "defXLinkColor").isEmpty() ) 
-	    {
-		col.setNamedColor(atts.value("defXLinkColor"));
-		model->setMapDefXLinkColor(col);
-	    }	
-	    if (!atts.value( "defXLinkWidth").isEmpty() ) 
-		model->setMapDefXLinkWidth(atts.value("defXLinkWidth").toInt ());
-	    if (!atts.value( "mapZoomFactor").isEmpty() ) 
-		model->setMapZoomFactor(atts.value("mapZoomFactor").toDouble());
-	    if (!atts.value( "mapRotationAngle").isEmpty() ) 
-		model->setMapRotationAngle(atts.value("mapRotationAngle").toDouble());
+	    readMapAttr (atts);
 	}   
 	// Check version
 	if (!atts.value( "version").isEmpty() ) 
 	{
 	    if (!checkVersion(atts.value("version")))
-		QMessageBox::warning( 0, "Warning: Version Problem" ,
-		   "<h3>Map is newer than VYM</h3>"
+		QMessageBox::warning( 0, QObject::tr("Warning: Version Problem") , 
+		   QObject::tr("<h3>Map is newer than VYM</h3>"
 		   "<p>The map you are just trying to load was "
-		   "saved using vym " +atts.value("version")+". "
-		   "The version of this vym is " + vymVersion + 
-		   ". If you run into problems after pressing "
-		   "the ok-button below, updating vym should help.");
+		   "saved using vym %1. "
+		   "The version of this vym is %2. " 
+		   "If you run into problems after pressing "
+		   "the ok-button below, updating vym should help.</p>").arg(atts.value("version")).arg(vymVersion));
 	    else       
 		model->setVersion(atts.value( "version" ));
 
@@ -138,13 +96,16 @@ bool parseVYMHandler::startElement  ( const QString&, const QString&,
 	state=StateMapSetting;
 	if (loadMode==NewMap)
 	    readSettingAttr (atts);
-    } else if ( eName == "slide" && state == StateMap ) 
+    } else if ( eName == "slide" && state == StateMap )
     {
 	state=StateMapSlide;
-	if (loadMode==NewMap)
+	if ( contentFilter|SlideContent) 
 	{   
 	    // Ignore slides during paste
 	    lastSlide=model->addSlide();
+	    if (insertPos>=0)
+	    model->relinkSlide (lastSlide, insertPos);
+	    
 	    readSlideAttr(atts);
 	}
     } else if ( eName == "mapcenter" && state == StateMap ) 
@@ -430,6 +391,67 @@ bool parseVYMHandler::characters   ( const QString& ch)
 QString parseVYMHandler::errorString() 
 {
     return "the document is not in the VYM file format";
+}
+
+bool parseVYMHandler::readMapAttr (const QXmlAttributes& a)	
+{
+    QColor col;
+    if (!a.value( "author").isEmpty() )  
+	model->setAuthor(a.value( "author" ) );
+    if (!a.value( "comment").isEmpty() )
+	model->setComment (a.value( "comment" ) );
+    if (!a.value( "branchCount").isEmpty() )
+    {
+	branchesTotal=a.value("branchCount").toInt();
+	if (branchesTotal>10)
+	{
+	    useProgress=true;
+	    mainWindow->setProgressMaximum (branchesTotal);
+	}
+    } 
+	
+    if (!a.value( "backgroundColor").isEmpty() )
+    {
+	col.setNamedColor(a.value("backgroundColor"));
+	model->getScene()->setBackgroundBrush(col);
+    }	    
+    if (!a.value( "defaultFont").isEmpty() )
+    {
+	QFont font;
+	font.fromString(a.value("defaultFont"));
+	model->setMapDefaultFont (font);
+    }	    
+    if (!a.value( "selectionColor").isEmpty() )
+    {
+	col.setNamedColor(a.value("selectionColor"));
+	model->setSelectionColor(col);
+    }	    
+    if (!a.value( "linkColorHint").isEmpty() ) 
+    {
+	if (a.value("linkColorHint")=="HeadingColor")
+	    model->setMapLinkColorHint(LinkableMapObj::HeadingColor);
+	else
+	    model->setMapLinkColorHint(LinkableMapObj::DefaultColor);
+    }
+    if (!a.value( "linkStyle").isEmpty() ) 
+	model->setMapLinkStyle(a.value("linkStyle"));
+    if (!a.value( "linkColor").isEmpty() ) 
+    {
+	col.setNamedColor(a.value("linkColor"));
+	model->setMapDefLinkColor(col);
+    }	
+    if (!a.value( "defXLinkColor").isEmpty() ) 
+    {
+	col.setNamedColor(a.value("defXLinkColor"));
+	model->setMapDefXLinkColor(col);
+    }	
+    if (!a.value( "defXLinkWidth").isEmpty() ) 
+	model->setMapDefXLinkWidth(a.value("defXLinkWidth").toInt ());
+    if (!a.value( "mapZoomFactor").isEmpty() ) 
+	model->setMapZoomFactor(a.value("mapZoomFactor").toDouble());
+    if (!a.value( "mapRotationAngle").isEmpty() ) 
+	model->setMapRotationAngle(a.value("mapRotationAngle").toDouble());
+    return true;
 }
 
 bool parseVYMHandler::readBranchAttr (const QXmlAttributes& a)	

@@ -13,8 +13,16 @@ class Task;
 
 /*! \brief Parsing VYM maps from XML documents */
 
+enum Content {TreeContent = 0x0001, SlideContent = 0x0002, XLinkContent = 0x0004};
+
 class parseVYMHandler  : public parseBaseHandler
 {
+public:
+    parseVYMHandler();
+    void setContentFilter (const int &);
+
+private:
+    int contentFilter;    
 public:
     bool startDocument();
     bool startElement ( const QString&, const QString&,
@@ -22,6 +30,7 @@ public:
     bool   endElement ( const QString&, const QString&, const QString& ); 
     bool characters   ( const QString&);
     QString errorString();
+    bool readMapAttr     (const QXmlAttributes&);
     bool readBranchAttr  (const QXmlAttributes&);
     bool readFrameAttr   (const QXmlAttributes&);
     bool readOOAttr      (const QXmlAttributes&);

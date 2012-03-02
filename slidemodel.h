@@ -22,6 +22,7 @@ public:
     ~SlideModel();
     void clear();
     
+    VymModel* getVymModel();
     QVariant data(const QModelIndex &index, int role) const;
     QVariant headerData(int section, Qt::Orientation orientation,
                         int role = Qt::DisplayRole) const;
@@ -50,11 +51,12 @@ public:
     bool removeRows(int position, int rows,
                     const QModelIndex &parent = QModelIndex());
 
-    SlideItem* addItem (SlideItem *dst=NULL, int n=-1);
-    void deleteItem (SlideItem *si);
-    bool relinkItem ( SlideItem *si, SlideItem *dst, int pos);
+    SlideItem* addSlide ( SlideItem *dst=NULL, int n=-1);
+    void deleteSlide (SlideItem *si);
+    bool relinkSlide (SlideItem *si, SlideItem *dst, int pos);
 
-    SlideItem* getItem(const QModelIndex &index) const;
+    SlideItem* getItem (const QModelIndex &index) const;
+    SlideItem* getSlide (int n); 
 
     QString saveToDir ();
 
