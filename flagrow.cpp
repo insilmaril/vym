@@ -100,7 +100,7 @@ void FlagRow::deactivateGroup (const QString &gname)
     for (int i=0;i<activeNames.size();++i)
     {
 	Flag *flag=masterRow->getFlag (activeNames.at(i) );
-	if (gname == flag->getGroup())
+	if (flag && gname == flag->getGroup())
 	    deactivate (activeNames.at(i));
     }
 }

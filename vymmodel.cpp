@@ -2127,7 +2127,6 @@ void VymModel::cycleTaskStatus(bool reverse)
 		QString ("Toggle task of %1").arg(getObjectName (selbi)) );
 	    task->cycleStatus(reverse);
 	    task->setDateModified();
-	    updateTaskFlag();
 	    
 	    // make sure task is still visible
 	    taskEditor->showSelection(); 
@@ -2154,7 +2153,6 @@ void VymModel::setTaskSleep(int n)
 		QString("setTaskSleep (%1)").arg(n) );
 	}
     }
-    updateTaskFlag();
 }
 
 int VymModel::taskCount()
@@ -5119,32 +5117,6 @@ void VymModel::updateNoteFlag()
     }
 }
 
-void VymModel::updateTaskFlag()// FIXME-1 have visual clue in icon, that task is sleeping/awake
-{
-    BranchItem *selbi=getSelectedBranch();
-    if (selbi)
-    {
-	Task* task=selbi->getTask();
-	if (task)
-	{
-	    switch (task->getStatus() ) 
-	    {
-		case Task::NotStarted: 
-		    //systemFlags.activate("system-task-new");  //FIXME-1   no code here???
-		    break;
-		case Task::WIP: 
-		    //systemFlags.activate("system-task-wip");
-		    break;
-		case Task::Finished: 
-		    //systemFlags.deactivate("system-task-finished");
-		    break;
-	    }
-	    emitDataHasChanged(selbi);	
-	    reposition();
-	}
-    }
-}
-
 void VymModel::reposition() //FIXME-4 VM should have no need to reposition, but the views...
 {
     //qDebug() << "VM::reposition blocked="<<blockReposition;
@@ -6262,7 +6234,6 @@ void VymModel::deleteSlide(SlideItem *si)
     if (si)
     {
 	QString s="<vymmap>" + si->saveToDir() + "</vymmap>";
-	qDebug()<<"VM::deleteSlide  slide="<<s;
 	int pos=si->childNumber();
 	saveState (
 	    PartOfMap,
@@ -6288,10 +6259,6 @@ void VymModel::relinkSlide(SlideItem *si, int pos)
 
 void VymModel::moveSlideUp()   //FIXME-2 missing saveState
 {
-    //FIXME-0 testing
-    loadMap ("/suse/uwedr/vym/code/x.xml",ImportReplace,false,VymMap,0xffff);
-    return;
-
     SlideItem *si=slideModel->getSelectedItem();
     if (si)
     {

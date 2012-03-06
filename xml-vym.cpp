@@ -25,7 +25,7 @@ extern QString vymVersion;
 parseVYMHandler::parseVYMHandler()
 {
     // Default is to load everything
-    contentFilter = 0xffff; //FIXME-0 use filters for all content types below
+    contentFilter = 0xffff; //FIXME-2 use filters for all content types below
 }
 
 void parseVYMHandler::setContentFilter (const int &c)

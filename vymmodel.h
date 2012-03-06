@@ -545,7 +545,6 @@ public:
     void unsetContextPos ();		//!< forget local position after context menu
 
     void updateNoteFlag();		//!< Signal origination in TextEditor
-    void updateTaskFlag();		//!< Update system flags for task status
     void reposition();			//!< Call reposition for all MCOs
     void setHideTmpMode (TreeItem::HideTmpMode mode);	
 

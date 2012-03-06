@@ -33,7 +33,7 @@ void Task::cycleStatus(bool reverse)
 {
     if (awake==Morning)
     {
-	awake=WideAwake;
+	setAwake (WideAwake);
 	return;
     }
     int i=status;
@@ -44,8 +44,7 @@ void Task::cycleStatus(bool reverse)
 
     setStatus ( (Task::Status) i );
 
-    if (model) model->emitDataHasChanged (this);
-    if (branch) branch->updateTaskFlag();
+    if (branch) branch->updateTaskFlag ();
 }
 
 void Task::setStatus(const QString &s)
@@ -62,6 +61,7 @@ void Task::setStatus(const QString &s)
 
 void Task::setStatus(Status s)
 {
+    if (s==status) return;
     status=s;
     if (branch) branch->updateTaskFlag();
 }
@@ -96,7 +96,10 @@ void Task::setAwake(const QString &s)
 
 void Task::setAwake(Task::Awake a)
 {
+    if (a==awake) return;
     awake=a;
+    recalcAwake();
+    if (branch) branch->updateTaskFlag();
 }
 
 Task::Awake Task::getAwake()
@@ -113,6 +116,12 @@ QString Task::getAwakeString()
 	case WideAwake: return "WideAwake";
     }
     return "Undefined";
+}
+
+void Task::recalcAwake()
+{
+    if ( getDaysSleep() <= 0 && awake==Task::Sleeping)
+	setAwake(Task::Morning);
 }
 
 void Task::setPriority (int p)
@@ -156,19 +165,16 @@ void Task::setDateModified(const QString &s)
 
 void Task::setDateSleep(int n)
 {
-    if (n>0)
-    {
-	date_sleep=QDate::currentDate().addDays (n);
-	if (n>0) awake=Sleeping;
-    }
-    else
-	date_sleep.setDate (-1,-1,-1);	// Create invalid date
+    setDateSleep ( QDate::currentDate().addDays (n).toString(Qt::ISODate) );
 }
 
 void Task::setDateSleep(const QString &s)
 {
     date_sleep=QDate().fromString (s,Qt::ISODate);
-    if (getDaysSleep()>0) awake=Sleeping;
+    if (getDaysSleep()>0) 
+	setAwake(Sleeping);
+    else
+	setAwake (Morning);
 }
 
 int Task::getDaysSleep()
@@ -176,7 +182,6 @@ int Task::getDaysSleep()
     int d=0;
     if (date_sleep.isValid() )
 	d=QDate::currentDate().daysTo (date_sleep);
-    //if (d<0) d=0;
     return d;
 }
 

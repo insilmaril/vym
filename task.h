@@ -27,6 +27,9 @@ public:
     void setAwake(Awake a);
     Awake getAwake();
     QString getAwakeString();
+private:
+    void recalcAwake();
+public:
     void setPriority(int  p);
     int getPriority();
     int getAgeCreation();

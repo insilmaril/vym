@@ -1507,16 +1507,28 @@ void Main::setupFlagActions()
     Flag *flag;
 
     // Tasks
-    flag=new Flag(flagsPath+"flag-task-new.png");
     // Origin: ./share/icons/oxygen/48x48/status/task-reject.png
+    flag=new Flag(flagsPath+"flag-task-new.png");
     flag->setGroup("system-tasks");
     setupFlag (flag,NULL,"system-task-new",tr("Note","SystemFlag"));
-    flag=new Flag(flagsPath+"flag-task-wip.png");
+    flag=new Flag(flagsPath+"flag-task-new-morning.png");
+    flag->setGroup("system-tasks");
+    setupFlag (flag,NULL,"system-task-new-morning",tr("Note","SystemFlag"));
+    flag=new Flag(flagsPath+"flag-task-new-sleeping.png");
+    flag->setGroup("system-tasks");
+    setupFlag (flag,NULL,"system-task-new-sleeping",tr("Note","SystemFlag"));
     // Origin: ./share/icons/oxygen/48x48/status/task-reject.png
+    flag=new Flag(flagsPath+"flag-task-wip.png");
     flag->setGroup("system-tasks");
     setupFlag (flag,NULL,"system-task-wip",tr("Note","SystemFlag"));
-    flag=new Flag(flagsPath+"flag-task-finished.png");
+    flag=new Flag(flagsPath+"flag-task-wip-morning.png");
+    flag->setGroup("system-tasks");
+    setupFlag (flag,NULL,"system-task-wip-morning",tr("Note","SystemFlag"));
+    flag=new Flag(flagsPath+"flag-task-wip-sleeping.png");
+    flag->setGroup("system-tasks");
+    setupFlag (flag,NULL,"system-task-wip-sleeping",tr("Note","SystemFlag"));
     // Origin: ./share/icons/oxygen/48x48/status/task-complete.png
+    flag=new Flag(flagsPath+"flag-task-finished.png");
     flag->setGroup("system-tasks");
     setupFlag (flag,NULL,"system-task-finished",tr("Note","SystemFlag"));
 

@@ -172,6 +172,14 @@ void TaskModel::emitDataHasChanged (Task* t)
 	    col++;  
 	}    
     }
+    /* FIXME-0 testing
+    BranchItem *bi=t->getBranch();
+    if (bi) 
+    {
+	VymModel *vm=bi->getModel();
+	if (vm) vm->emitDataHasChanged (bi);
+    }
+    */
 }
 
 Qt::ItemFlags TaskModel::flags(const QModelIndex &index) const
@@ -238,8 +246,6 @@ void TaskModel::recalcPriorities()
 	}
 
 	// Awake and sleeping
-	if (t->getDaysSleep() <= 0 && t->getAwake()==Task::Sleeping)
-		t->setAwake(Task::Morning);
 	switch (t->getAwake() )
 	{
 	    case Task::Morning: p-=1000; break;
