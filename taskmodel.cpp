@@ -172,14 +172,6 @@ void TaskModel::emitDataChanged (Task* t)
 	    col++;  
 	}    
     }
-    /* FIXME-0 testing
-    BranchItem *bi=t->getBranch();
-    if (bi) 
-    {
-	VymModel *vm=bi->getModel();
-	if (vm) vm->emitDataChanged (bi);
-    }
-    */
 }
 
 Qt::ItemFlags TaskModel::flags(const QModelIndex &index) const

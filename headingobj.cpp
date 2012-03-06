@@ -96,6 +96,7 @@ QGraphicsTextItem* HeadingObj::newLine(QString s)
     t->setZValue(dZ_TEXT);
     // TextItem
     t->setDefaultTextColor(color);
+    t->setRotation (angle);
     // SimpleTextItem
     //t->setBrush(color);
     return t;
@@ -138,6 +139,7 @@ void HeadingObj::setText (QString s)
 	t->setZValue(dZ_TEXT);
 	t->setHtml (s);
 	t->setDefaultTextColor(color);
+	t->setRotation (angle);
 	scene()->addItem (t);
 	textline.append (t);
     } else
@@ -224,7 +226,6 @@ void HeadingObj::setText (QString s)
     } // ASCII heading with multiple lines
     setVisibility (visible);
     move (absPos.x(),absPos.y());
-    setRotation (angle);    //FIXME-2 should not be necessary here?
     calcBBoxSize();
 }
 
