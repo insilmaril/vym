@@ -247,8 +247,6 @@ void QGraphicsItem::paint(QPainter*, const QStyleOptionGraphicsItem*, QWidget*)
 void BranchObj::positionBBox()
 {
     QPointF ap=getAbsPos();
-    //ap.setX(ap.x()+frame->getPadding());
-    //ap.setY(ap.y()+frame->getPadding());
     bbox.moveTopLeft (ap);
     positionContents();
 

@@ -3949,7 +3949,7 @@ void Main::editFindNext(QString s)
     }
 }
 
-void Main::editFindDuplicateURLs() //FIXME-2 feature: use FindResultWidget for display
+void Main::editFindDuplicateURLs() //FIXME-3 feature: use FindResultWidget for display
 {
     VymModel *m=currentModel();
     if (m) m->findDuplicateURLs();
@@ -4643,7 +4643,7 @@ void Main::updateActions()
 	    return;
 	} // TreeItem 
 	
-	// Check (at least for some) multiple selection //FIXME-2
+	// Check (at least for some) multiple selection //FIXME-3
 	QList <TreeItem*> selItems=m->getSelectedItems();
 	if (selItems.count()>0 )
 	{
