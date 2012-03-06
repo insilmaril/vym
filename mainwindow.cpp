@@ -1031,7 +1031,7 @@ void Main::setupEditActions()
     actionListBranches.append (a);
     actionTaskSleep3=a;
 
-    a = new QAction(QPixmap(), tr( "Sleep %1 days","Task sleep" ).arg(5), this);    //FIXME-2 replace with Dialog for n days
+    a = new QAction(QPixmap(), tr( "Sleep %1 days","Task sleep" ).arg(5), this); 
     a->setShortcutContext (Qt::WindowShortcut);
     a->setCheckable(false);
     a->setEnabled (false);
