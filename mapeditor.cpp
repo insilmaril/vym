@@ -30,6 +30,7 @@ extern QString iconPath;
 ///////////////////////////////////////////////////////////////////////
 MapEditor::MapEditor( VymModel *vm)	//FIXME-3 change ME from GraphicsScene to ItemView...
 {
+//FIXME-2 MapEditor Sometimes canvas size does not include item, before it's selected
     //qDebug() << "Constructor ME "<<this;
     mapScene= new QGraphicsScene(NULL);
     mapScene->setBackgroundBrush (QBrush(Qt::white, Qt::SolidPattern));

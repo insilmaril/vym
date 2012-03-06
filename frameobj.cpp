@@ -46,7 +46,7 @@ void FrameObj::clear()
 	    break;
     }
     type=NoFrame;
-    //padding=0;	//FIXME-2 strange. maybe required to get scrollbars right :-(
+    //padding=0;	//FIXME-3 strange. maybe required to get scrollbars right :-(
 }
 
 void FrameObj::move(double x, double y)
