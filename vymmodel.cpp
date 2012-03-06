@@ -2103,9 +2103,10 @@ void VymModel::toggleTask()
 	Task *task=selbi->getTask();
 	if (!task )
 	{
-	    taskModel->createTask (selbi);
-	    emitSelectionChanged();
-	} else
+	    task=taskModel->createTask (selbi);
+	    taskEditor->select(task); 
+	}
+	else
 	    taskModel->deleteTask (task);
 
 	emitDataChanged(selbi);
