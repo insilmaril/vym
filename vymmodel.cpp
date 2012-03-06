@@ -859,7 +859,7 @@ void VymModel::importDirInt(BranchItem *dst, QDir d)
 		    importDirInt (bi,d);
 		    d.cdUp();
 		}
-		emitDataHasChanged(bi);
+		emitDataChanged(bi);
 	    }	
 	}	
 
@@ -873,7 +873,7 @@ void VymModel::importDirInt(BranchItem *dst, QDir d)
 		bi->setHeadingColor (QColor("black"));
 		if (fi.fileName().right(4) == ".vym" )
 		    bi->setVymLink (fi.filePath());
-		emitDataHasChanged(bi);
+		emitDataChanged(bi);
 	    }
 	}   
 
@@ -1584,7 +1584,7 @@ void VymModel::setHeading(const QString &s, BranchItem *bi)
 	    "setHeading (\""+s+"\")", 
 	    QString("Set heading of %1 to \"%2\"").arg(getObjectName(bi)).arg(s) );
 	bi->setHeading(s );
-	emitDataHasChanged ( bi);
+	emitDataChanged ( bi);
 	emitUpdateQueries ();
 	reposition();
     }
@@ -1612,8 +1612,8 @@ void VymModel::setNote(const QString &s)
 	    QString("Set note of %1 ").arg(getObjectName(selti)) );
     }
     selti->setNote(s);
-    emitNoteHasChanged(selti);
-    emitDataHasChanged(selti);
+    emitNoteChanged(selti);
+    emitDataChanged(selti);
 }
 
 QString VymModel::getNote()
@@ -1829,7 +1829,7 @@ void VymModel::setURL(QString url)
 	);
 	if (url.contains("bugzilla.novell.com/"))
 	    getBugzillaData(false);
-	emitDataHasChanged (selti);
+	emitDataChanged (selti);
 	reposition();
     }
 }   
@@ -1920,7 +1920,7 @@ void VymModel::setFrameIncludeChildren (bool b)
 	    QString("Include children in %1").arg(getObjectName(bi))
 	);  
 	bi->setFrameIncludeChildren (b);
-	emitDataHasChanged (bi);
+	emitDataChanged (bi);
 	reposition();
     }
 }
@@ -2007,7 +2007,7 @@ void VymModel::setIncludeImagesVer(bool b)
 	    QString("Include images vertically in %1").arg(getObjectName(bi))
 	);  
 	bi->setIncludeImagesVer(b);
-	emitDataHasChanged ( bi);   
+	emitDataChanged ( bi);   
 	reposition();
     }	
 }
@@ -2028,7 +2028,7 @@ void VymModel::setIncludeImagesHor(bool b)
 	    QString("Include images horizontally in %1").arg(getObjectName(bi))
 	);  
 	bi->setIncludeImagesHor(b);
-	emitDataHasChanged ( bi);
+	emitDataChanged ( bi);
 	reposition();
     }	
 }
@@ -2071,7 +2071,7 @@ void VymModel::setHideExport(bool b, TreeItem *ti)
 	    QString ("setHideExport (%1)").arg(r),
 	    QString ("Set HideExport flag of %1 to %2").arg(getObjectName(ti)).arg (r)
 	);  
-	    emitDataHasChanged(ti);
+	    emitDataChanged(ti);
 	    emitSelectionChanged();
 	reposition(); 
     }
@@ -2102,11 +2102,13 @@ void VymModel::toggleTask()
 	    QString ("Toggle task of %1").arg(getObjectName (selbi)) );
 	Task *task=selbi->getTask();
 	if (!task )
+	{
 	    taskModel->createTask (selbi);
-	else
+	    emitSelectionChanged();
+	} else
 	    taskModel->deleteTask (task);
 
-	emitDataHasChanged(selbi);
+	emitDataChanged(selbi);
 	emitSelectionChanged();
 	reposition();
     }
@@ -2171,7 +2173,7 @@ void VymModel::addTimestamp()	//FIXME-3 new function, localize
 	    .arg(today.year(),4,10,c)
 	    .arg(today.month(),2,10,c)
 	    .arg(today.day(),2,10,c));
-	emitDataHasChanged ( selbi);	//FIXME-3 maybe emit signal from TreeItem? 
+	emitDataChanged ( selbi);	//FIXME-3 maybe emit signal from TreeItem? 
 	reposition();
 	select (selbi);
     }
@@ -2687,7 +2689,7 @@ BranchItem* VymModel::addNewBranchBefore()
 
 	    // Use color of child instead of parent
 	    newbi->setHeadingColor (selbi->getHeadingColor() );
-	    emitDataHasChanged (newbi);
+	    emitDataChanged (newbi);
 
 	    saveState (newbi, "deleteKeepChildren ()", newbi, "addBranchBefore ()", 
 		QString ("Add branch before %1").arg(getObjectName(selbi)));
@@ -2862,10 +2864,10 @@ void VymModel::deleteSelection()
 	    {
 		if (pi->isScrolled() && pi->branchCount()==0)
 		    pi->unScroll();
-		emitDataHasChanged(pi);
+		emitDataChanged(pi);
 		select (pi);
 	    } else
-		emitDataHasChanged(rootItem); 
+		emitDataChanged(rootItem); 
 	    ti=NULL;		
 	}
 
@@ -2884,7 +2886,7 @@ void VymModel::deleteSelection()
 		);
 		unselectAll();
 		deleteItem (ti);
-		emitDataHasChanged (pi);
+		emitDataChanged (pi);
 		select (pi);
 		reposition();
 	    } else
@@ -2935,7 +2937,7 @@ void VymModel::deleteKeepChildren(bool saveStateFlag)
 	}
 	deleteItem (selbi);
 	reposition();
-	emitDataHasChanged(pi);
+	emitDataChanged(pi);
 	select (sel);
 	BranchObj *bo=getSelectedBranchObj();
 	if (bo) 
@@ -3061,7 +3063,7 @@ bool VymModel::scrollBranch(BranchItem *bi)
 		QString ("%1 ()").arg(r),
 		QString ("%1 %2").arg(r).arg(getObjectName(bi))
 	    );
-	    emitDataHasChanged(bi);
+	    emitDataChanged(bi);
 	    emitSelectionChanged();
 	    reposition();
 	    mapEditor->getScene()->update(); //Needed for _quick_ update,  even in 1.13.x 
@@ -3090,7 +3092,7 @@ bool VymModel::unscrollBranch(BranchItem *bi)
 		QString ("%1 ()").arg(r),
 		QString ("%1 %2").arg(r).arg(getObjectName(bi))
 	    );
-	    emitDataHasChanged(bi);
+	    emitDataChanged(bi);
 	    emitSelectionChanged();
 	    mapEditor->getScene()->update(); //Needed for _quick_ update,  even in 1.13.x 
 	    return true;
@@ -3101,7 +3103,7 @@ bool VymModel::unscrollBranch(BranchItem *bi)
 
 void VymModel::toggleScroll()	//FIXME-2 doesn't seem to update frame with frame including children (setting a standard flag does!) (changes are done for a child of framed branch)
 // and seems to weork with 2 (!) system flage?!?
-//FIXME-3 check calls from BI->toggleScroll to model->emitDataHasChanged  - redundant? also for toggleStandardFlag
+//FIXME-3 check calls from BI->toggleScroll to model->emitDataChanged  - redundant? also for toggleStandardFlag
 {
     BranchItem *selbi=getSelectedBranch();
     if (selbi)
@@ -3132,7 +3134,7 @@ void VymModel::unscrollChildren()
 	    if (cur->isScrolled())
 	    {
 		cur->toggleScroll(); 
-		emitDataHasChanged (cur);
+		emitDataChanged (cur);
 	}
 	    cur=nextBranch (cur,prev,true,selbi);
 	}   
@@ -3297,7 +3299,7 @@ void VymModel::colorBranch (QColor c)
 	    QString("Set color of %1 to %2").arg(getObjectName(selbi)).arg(c.name())
 	);  
 	selbi->setHeadingColor(c); // color branch
-	emitDataHasChanged (selbi);
+	emitDataChanged (selbi);
 	taskEditor->showSelection();
     }
     mapEditor->getScene()->update();    
@@ -3323,7 +3325,7 @@ void VymModel::colorSubtree (QColor c, BranchItem *b)
 	while (cur) 
 	{
 	    cur->setHeadingColor(c); // color links, color children
-	    emitDataHasChanged (cur);
+	    emitDataChanged (cur);
 	    cur=nextBranch (cur,prev,true,bi);
 	}   
     }
@@ -3364,7 +3366,7 @@ void VymModel::note2URLs()
 	    bi=createBranch (selbi);
 	    bi->setHeading (re.cap(1));
 	    bi->setURL (re.cap(1));
-	    emitDataHasChanged (bi);
+	    emitDataChanged (bi);
 	    pos += re.matchedLength();
 	}
 	
@@ -3467,7 +3469,7 @@ void VymModel::setVymLink (const QString &s)
 	    QString("Set vymlink of %1 to %2").arg(getObjectName(bi)).arg(s)
 	);  
 	bi->setVymLink(s);
-	emitDataHasChanged (bi);
+	emitDataChanged (bi);
 	reposition();
     }
 }
@@ -3485,7 +3487,7 @@ void VymModel::deleteVymLink()
 	    QString("Unset vymlink of %1").arg(getObjectName(bi))
 	);  
 	bi->setVymLink ("");
-	emitDataHasChanged (bi);
+	emitDataChanged (bi);
 	reposition();
 	updateActions();
     }
@@ -3706,7 +3708,7 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	{
 	    selbi->deactivateAllStandardFlags();
 	    reposition();
-	    emitDataHasChanged(selbi);
+	    emitDataChanged(selbi);
 	    setChanged();
 	}
     /////////////////////////////////////////////////////////////////////
@@ -5113,7 +5115,7 @@ void VymModel::updateNoteFlag()
 	    selti->clearNote();
 	else
 	    selti->setNoteObj (noteEditor->getNote());
-	emitDataHasChanged(selti);	
+	emitDataChanged(selti);	
     }
 }
 
@@ -5917,19 +5919,19 @@ void VymModel::emitShowSelection()
     if (!blockReposition) emit (showSelection() );
 }
 
-void VymModel::emitNoteHasChanged (TreeItem *ti)
+void VymModel::emitNoteChanged (TreeItem *ti)
 {
     QModelIndex ix=index(ti);
-    emit (noteHasChanged (ix) );
+    emit (noteChanged (ix) );
 }
 
-void VymModel::emitDataHasChanged (TreeItem *ti)    
+void VymModel::emitDataChanged (TreeItem *ti)    
 {
     QModelIndex ix=index(ti);
     emit ( dataChanged (ix,ix) );
     if (!blockReposition && ti->isBranchLikeType() && ((BranchItem*)ti)->getTask()  )
     {
-	taskModel->emitDataHasChanged ( ((BranchItem*)ti)->getTask() );
+	taskModel->emitDataChanged ( ((BranchItem*)ti)->getTask() );
 	taskModel->recalcPriorities();
     }
 }

@@ -90,7 +90,7 @@ VymView::VymView(VymModel *m)
 	mainWindow,SLOT (updateQueries(VymModel*) ) );
 
     connect (
-	model, SIGNAL (noteHasChanged(QModelIndex) ),
+	model, SIGNAL (noteChanged(QModelIndex) ),
 	mainWindow, SLOT (updateNoteEditor (QModelIndex) ) );
 	
     connect (

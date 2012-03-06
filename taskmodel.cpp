@@ -158,7 +158,7 @@ bool TaskModel::setData(const QModelIndex &index, Task* t, int role)
     return false;
 }
 
-void TaskModel::emitDataHasChanged (Task* t)
+void TaskModel::emitDataChanged (Task* t)
 {
     QModelIndex ix=index (t);
     if (ix.isValid() )
@@ -177,7 +177,7 @@ void TaskModel::emitDataHasChanged (Task* t)
     if (bi) 
     {
 	VymModel *vm=bi->getModel();
-	if (vm) vm->emitDataHasChanged (bi);
+	if (vm) vm->emitDataChanged (bi);
     }
     */
 }
@@ -274,7 +274,7 @@ void TaskModel::recalcPriorities()
     foreach (Task *t,tasks)
     {   
 	t->setPriority (1-  minPrio + t->getPriority() );
-	emitDataHasChanged (t);
+	emitDataChanged (t);
     }
 }
 

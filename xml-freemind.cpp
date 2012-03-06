@@ -208,14 +208,14 @@ bool parseFreemindHandler::endElement  ( const QString &, const QString&, const 
 	case StateMap:
 	    // Freemind does not have the two "extra" mainbranches used here,
 	    // so we have to update mapcenter
-	    model->emitDataHasChanged (mapCenter);
+	    model->emitDataChanged (mapCenter);
 
 	    // Remove helper branches, if not needed
 	    if (mainBranchLeft->childCount()==0) model->deleteItem (mainBranchLeft);
 	    if (mainBranchRight->childCount()==0) model->deleteItem (mainBranchRight);
 	    break;
         case StateNode: 
-	    model->emitDataHasChanged (lastBranch);
+	    model->emitDataChanged (lastBranch);
 	    lastBranch=(BranchItem*)lastBranch->parent();
 	    lastBranch->setLastSelectedBranch (0);  
             break;

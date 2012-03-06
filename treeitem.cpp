@@ -431,7 +431,7 @@ void TreeItem::toggleTarget ()
 {
     systemFlags.toggle ("system-target");
     target= systemFlags.isActive("system-target");
-    model->emitDataHasChanged(this);	// FIXME-3 better call from VM?
+    model->emitDataChanged(this);	// FIXME-3 better call from VM?
 }
 
 bool TreeItem::isTarget ()
@@ -493,31 +493,31 @@ QString TreeItem::getNoteOpenDoc()
 void TreeItem::activateStandardFlag (const QString &name)
 {
     standardFlags.activate (name);
-    model->emitDataHasChanged(this);
+    model->emitDataChanged(this);
 }
 
 void TreeItem::deactivateStandardFlag (const QString &name)
 {
     standardFlags.deactivate (name);
-    model->emitDataHasChanged(this);
+    model->emitDataChanged(this);
 }
 
 void TreeItem::deactivateAllStandardFlags ()
 {
     standardFlags.deactivateAll ();
-    model->emitDataHasChanged(this);
+    model->emitDataChanged(this);
 }
 
 void TreeItem::toggleStandardFlag(const QString &name, FlagRow *master)
 {
     standardFlags.toggle (name,master);
-    model->emitDataHasChanged(this);	// FIXME-3 better call from VM?
+    model->emitDataChanged(this);	// FIXME-3 better call from VM?
 }
 
 void TreeItem::toggleSystemFlag(const QString &name, FlagRow *master)
 {
     systemFlags.toggle (name,master);
-    model->emitDataHasChanged(this);	// FIXME-3 better call from VM?
+    model->emitDataChanged(this);	// FIXME-3 better call from VM?
 }
 
 bool TreeItem::hasActiveStandardFlag (const QString &name)

@@ -25,7 +25,7 @@ public:
     Qt::ItemFlags flags(const QModelIndex &index) const;
 //    bool setData(const QModelIndex &index, const QVariant &value, int role=Qt::EditRole);
     bool setData(const QModelIndex &index, Task *t, int role=Qt::EditRole);
-    void emitDataHasChanged (Task *t);
+    void emitDataChanged (Task *t);
     bool insertRows(int position, int rows, const QModelIndex &index=QModelIndex(),Task *t=NULL);
     bool removeRows(int position, int rows, const QModelIndex &index=QModelIndex());
 

@@ -548,15 +548,15 @@ public:
     void reposition();			//!< Call reposition for all MCOs
     void setHideTmpMode (TreeItem::HideTmpMode mode);	
 
-    void emitNoteHasChanged  (TreeItem *ti);
-    void emitDataHasChanged  (TreeItem *ti);
+    void emitNoteChanged  (TreeItem *ti);
+    void emitDataChanged  (TreeItem *ti);
     void emitUpdateQueries   ();       //!< tell MainWindow to update find results...
     void emitUpdateLayout ();
 
 signals:
     void updateQueries(VymModel *m);
     void updateLayout();
-    void noteHasChanged (QModelIndex ix);
+    void noteChanged (QModelIndex ix);
     void newChildObject(QModelIndex ix);
 
 private:

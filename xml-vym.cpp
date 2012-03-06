@@ -303,7 +303,7 @@ bool parseVYMHandler::endElement  ( const QString&, const QString&, const QStrin
 	case StateMap:
 	    break;
         case StateMapCenter: 
-	    model->emitDataHasChanged (lastBranch);
+	    model->emitDataChanged (lastBranch);
 	    lastBranch=(BranchItem*)(lastBranch->parent());
             break;
         case StateBranch: 
@@ -311,7 +311,7 @@ bool parseVYMHandler::endElement  ( const QString&, const QString&, const QStrin
 	    // (happens if bookmarks are imported)
 	    if (lastBranch->isScrolled() && lastBranch->branchCount()==0) 
 		lastBranch->unScroll();
-	    model->emitDataHasChanged (lastBranch);
+	    model->emitDataChanged (lastBranch);
 
 	    lastBranch=(BranchItem*)(lastBranch->parent());
 	    lastBranch->setLastSelectedBranch (0);  

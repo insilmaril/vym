@@ -1602,7 +1602,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent* e)
 		    QString("Move %1 to relative position %2").arg(model->getObjectName(seli)).arg(pnow));
 
 		model->reposition();
-		model->emitDataHasChanged (seli);
+		model->emitDataChanged (seli);
 	    }	
 	}
 

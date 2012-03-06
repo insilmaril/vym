@@ -228,7 +228,7 @@ void BranchItem::updateTaskFlag()
 		default: break;
 	    }
 	systemFlags.activate (s);
-	model->emitDataHasChanged(this);
+	model->emitDataChanged(this);
     } 
 }
 
@@ -316,7 +316,7 @@ bool BranchItem::tmpUnscroll(BranchItem *start)
 	tmpUnscrolled=true;
 	systemFlags.activate("system-tmpUnscrolledRight");
 	toggleScroll();
-	model->emitDataHasChanged (this); 
+	model->emitDataChanged (this); 
 	result=true;
     }	
     return result;
@@ -336,7 +336,7 @@ bool BranchItem::resetTmpUnscroll()
 	tmpUnscrolled=false;
 	systemFlags.deactivate("system-tmpUnscrolledRight");
 	toggleScroll();
-	model->emitDataHasChanged (this);
+	model->emitDataChanged (this);
 	result=true;
     }	
     return result;
@@ -548,7 +548,7 @@ BranchObj* BranchItem::createMapObj(QGraphicsScene *scene)  // FIXME-3 maybe mov
 
     if (!getHeading().isEmpty() ) 
     {
-	newbo->updateData();	//FIXME-3 maybe better model->emitDataHasChanged()?
+	newbo->updateData();	//FIXME-3 maybe better model->emitDataChanged()?
 	newbo->setColor (headingColor);
     }	
 	
