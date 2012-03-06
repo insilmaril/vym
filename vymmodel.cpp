@@ -3214,13 +3214,19 @@ void VymModel::emitCollapseUnselected()
     emit (collapseUnselected() );
 }
 
-void VymModel::toggleTarget()	//FIXME-2 no savestate
+void VymModel::toggleTarget()	
 {
     BranchItem *selbi=getSelectedBranch();
     if (selbi)
     {
 	selbi->toggleTarget(); 
 	reposition();
+	saveState ( 
+	    selbi,
+	    "toggleTarget()",
+	    selbi,
+	    "toggleTarget",
+	    "Toggle target");
     }
 }
 
@@ -4672,6 +4678,19 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	    s=parser.parString(ok,0);
 	    if (ok) 
 		selbi->toggleStandardFlag(s);	
+	}
+    /////////////////////////////////////////////////////////////////////
+    } else if (com=="toggleTarget")
+    {
+	if (!selti )
+	{
+	    parser.setError (Aborted,"Nothing selected");
+	} else if (! selbi )
+	{		  
+	    parser.setError (Aborted,"Type of selection is not a branch");
+	} else if (parser.checkParCount(0))
+	{
+	    toggleTarget();	
 	}
     /////////////////////////////////////////////////////////////////////
     } else if (com=="toggleTask")
