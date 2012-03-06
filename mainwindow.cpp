@@ -319,7 +319,6 @@ Main::~Main()
     settings.setValue( "/mainwindow/writeBackupFile",actionSettingsWriteBackupFile->isChecked() );
     settings.setValue( "/mapeditor/editmode/autoSelectText",actionSettingsAutoSelectText->isChecked() );
     settings.setValue( "/mapeditor/editmode/autoEditNewBranch",actionSettingsAutoEditNewBranch->isChecked() );
-    settings.setValue( "/mapeditor/editmode/useDelKey",actionSettingsUseDelKey->isChecked() );
     settings.setValue( "/mapeditor/editmode/useFlagGroups",actionSettingsUseFlagGroups->isChecked() );
     settings.setValue( "/export/useHideExport",actionSettingsUseHideExport->isChecked() );
     settings.setValue( "/satellite/noteeditor/isDockWindow",actionSettingsNoteEditorIsDockWindow->isChecked());
@@ -1866,13 +1865,6 @@ void Main::setupSettingsActions()
     a->setChecked ( settings.value ("/mapeditor/editmode/autoSelectText",true).toBool() );
     settingsMenu->addAction (a);
     actionSettingsAutoSelectText=a;
-
-    a= new QAction( tr( "Delete key","Settings action" ), this);
-    a->setCheckable(true);
-    a->setChecked ( settings.value ("/mapeditor/editmode/useDelKey",true).toBool() );
-    settingsMenu->addAction (a);
-    connect( a, SIGNAL( triggered() ), this, SLOT( settingsToggleDelKey() ) );
-    actionSettingsUseDelKey=a;
 
     a= new QAction( tr( "Exclusive flags","Settings action" ), this);
     a->setCheckable(true);
@@ -3795,8 +3787,7 @@ void Main::editDeleteChildren()
 void Main::editDeleteSelection()
 {
     VymModel *m=currentModel();
-    if (m) // && actionSettingsUseDelKey->isChecked())  //FIXME-2 remove this setting
-	m->deleteSelection();
+    if (m) m->deleteSelection();
 }
 
 void Main::editLoadImage()
@@ -4253,17 +4244,6 @@ void Main::settingsToggleNoteEditorIsDockWindow()
 void Main::settingsToggleAnimation()
 {
     settings.setValue ("/animation/use",actionSettingsUseAnimation->isChecked() );
-}
-
-void Main::settingsToggleDelKey()
-{
-    if (actionSettingsUseDelKey->isChecked())
-    {
-	actionDelete->setShortcut (QKeySequence (Qt::Key_Delete));
-    } else
-    {
-	actionDelete->setShortcut (QKeySequence (""));
-    }
 }
 
 void Main::windowToggleNoteEditor()

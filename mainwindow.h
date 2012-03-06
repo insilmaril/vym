@@ -244,7 +244,6 @@ public slots:
     bool settingsPDF();
     bool settingsURL();
     void settingsMacroDir();
-    void settingsToggleDelKey();
     void settingsUndoLevels();
     void settingsAutosaveToggle();
     void settingsAutosaveTime();
@@ -468,7 +467,6 @@ private:
     QAction* actionSettingsAutoEditNewBranch;
     QAction* actionSettingsAutoSelectNewBranch;
     QAction* actionSettingsAutoSelectText;
-    QAction* actionSettingsUseDelKey;
     QAction* actionSettingsUseFlagGroups;
     QAction* actionSettingsUseHideExport;
     QAction* actionSettingsAutosaveToggle;
