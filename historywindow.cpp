@@ -9,7 +9,7 @@ extern Main *mainWindow;
 HistoryWindow::HistoryWindow (QWidget *parent):QDialog (parent)
 {
     ui.setupUi (this);
-    ui.historyTable->setRowCount (settings.value( "/mapeditor/stepsTotal",75).toInt());
+    ui.historyTable->setRowCount (settings.value( "/history/stepsTotal",75).toInt());
     ui.historyTable->setColumnCount (3);
 
     
@@ -82,7 +82,7 @@ void HistoryWindow::update(SimpleSettings &set)
 {
     int undosAvail=set.readNumValue("/history/undosAvail",0);
     int redosAvail=set.readNumValue("/history/redosAvail",0);
-    int stepsTotal=set.readNumValue("/history/stepsTotal",0);
+    int stepsTotal=set.readNumValue("/history/stepsTotal",1000);
     int curStep=set.readNumValue ("/history/curStep");
     int i;
     int s=curStep;

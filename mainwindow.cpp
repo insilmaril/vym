@@ -4202,16 +4202,16 @@ void Main::settingsMacroDir()
 	settings.setValue ("/macros/macroDir",dir.absolutePath());
 }
 
-void Main::settingsUndoLevels()	    // FIXME-2 default level? should be >=1000
+void Main::settingsUndoLevels()	    
 {
     bool ok;
     int i = QInputDialog::getInteger(
 	this, 
 	"QInputDialog::getInteger()",
-	tr("Number of undo/redo levels:"), settings.value("/mapeditor/stepsTotal").toInt(), 0, 1000, 1, &ok);
+	tr("Number of undo/redo levels:"), settings.value("/history/stepsTotal",1000).toInt(), 0, 100000, 1, &ok);
     if (ok)
     {
-	settings.setValue ("/mapeditor/stepsTotal",i);
+	settings.setValue ("/history/stepsTotal",i);
 	QMessageBox::information( this, tr( "VYM -Information:" ),
 	   tr("Settings have been changed. The next map opened will have \"%1\" undo/redo levels").arg(i)); 
    }	
