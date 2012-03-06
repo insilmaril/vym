@@ -207,12 +207,15 @@ QString Task::getName ()
 }
 QString Task::saveToDir()
 {
+    QString sleepAttr;
+    if (getDaysSleep()>0)
+	sleepAttr = attribut ("date_sleep",date_sleep.toString (Qt::ISODate) );
     return singleElement ("task",
 	attribut ("status",getStatusString() ) +
 	attribut ("awake",getAwakeString() ) +
 	attribut ("date_creation",date_creation.toString (Qt::ISODate) ) +
 	attribut ("date_modified",date_modified.toString (Qt::ISODate) ) +
-	attribut ("date_sleep",date_sleep.toString (Qt::ISODate) )
+	sleepAttr
      );
 }
 

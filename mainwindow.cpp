@@ -4764,7 +4764,6 @@ void Main::standardFlagChanged()
     }
 }
 
-
 void Main::testFunction1()
 {
     if (!currentMapEditor()) return;

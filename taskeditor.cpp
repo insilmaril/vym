@@ -63,7 +63,6 @@ TaskEditor::TaskEditor(QWidget *)
     filterMapModel = new QSortFilterProxyModel();
     filterMapModel->setSourceModel(taskModel);
     filterMapModel->setSortCaseSensitivity (Qt::CaseInsensitive);
-
     filterMapModel->setDynamicSortFilter (true);
 
     filterSleepingModel = new QSortFilterProxyModel();

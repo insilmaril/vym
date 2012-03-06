@@ -546,7 +546,7 @@ ErrorCode VymModel::loadMap (
 	    reposition();   // to generate bbox sizes
 	    emitSelectionChanged();
 
-	    // Recalc priorities and sort   //FIXME-2 not enough to force resorting on initial load :-(
+	    // Recalc priorities and sort   
 	    taskEditor->sort();
 	} else 
 	{
