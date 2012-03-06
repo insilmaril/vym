@@ -22,7 +22,7 @@ FrameObj::~FrameObj()
 void FrameObj::init()
 {
     type=NoFrame;
-    padding=5;
+    padding=0;
     borderWidth=1;
     penColor=QColor (Qt::black);
     brushColor=QColor (Qt::white);
@@ -46,7 +46,7 @@ void FrameObj::clear()
 	    break;
     }
     type=NoFrame;
-    //padding=0;	//FIXME-3 strange. maybe required to get scrollbars right :-(
+    padding=0;	// No frame requires also no padding
 }
 
 void FrameObj::move(double x, double y)
