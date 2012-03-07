@@ -1428,7 +1428,7 @@ void MapEditor::moveObject ()
 	dsti=NULL;
     
 
-    if (lmosel && seli->getType()==TreeItem::Image)	//FIXME-2 selbox not correctly positioned after releasing image
+    if (lmosel && seli->getType()==TreeItem::Image)
     {
 	FloatObj *fio=(FloatImageObj*)lmosel;
 	fio->move   (p.x() -movingObj_offset.x(), p.y()-movingObj_offset.y() );	
