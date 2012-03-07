@@ -111,7 +111,7 @@ QString Parser::errorMessage()
 	case Warning: l="Warning";
 	case Aborted: l="Aborted";
     }
-    return QString ("Error Level: %1\n    Command: %2\nDescription: %3")
+    return QString ("Error Level: '%1'  Command: '%2' Description: '%3'")
 	.arg(l).arg(com).arg(errDescription);
 }
 

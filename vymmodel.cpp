@@ -1079,6 +1079,8 @@ void VymModel::redo()
     bool noErr;
     QString errMsg;
     parseAtom (redoCommand,noErr,errMsg);
+    if (!noErr) //FIXME-3 need dialog box here
+	qWarning()<< "VM::redo aborted:\n"<<errMsg;
 
     blockSaveState=blockSaveStateOrg;
 
@@ -1160,6 +1162,8 @@ void VymModel::undo()	//FIXME-3 undo delete xlink to scrolled branch unscrolls b
     bool noErr;
     QString errMsg;
     parseAtom (undoCommand,noErr,errMsg);
+    if (!noErr) //FIXME-3 need dialog box here
+	qWarning()<< "VM::undo aborted:\n"<<errMsg;
 
     undosAvail--;
     curStep--; 
@@ -4808,9 +4812,6 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
     else    
     {
 	// TODO Error handling
-	qWarning("VymModel::parseAtom: Error!");
-
-	qWarning()<<parser.errorMessage();
 	noErr=false;
 	errorMsg=parser.errorMessage();
 	returnValue=errorMsg;
@@ -4829,7 +4830,7 @@ QVariant VymModel::runScript (const QString &script)
     {
 	r=parseAtom(parser.getAtom(),noErr,errMsg);
 	if (!noErr) //FIXME-3 need dialog box here
-	    qWarning()<< "VM::runScript aborted:\n"<<errMsg;
+	    qWarning()<< QString("VM::runScript aborted: "+errMsg);
     }	
     return r;
 }
