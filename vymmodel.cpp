@@ -1273,6 +1273,7 @@ void VymModel::saveState(
 	dataXML=saveToDir (histDir,mapName+"-",false, QPointF (),saveSel);
 	
     QString undoCommand="";
+    QString redoCommand="";
     if (savemode==UndoCommand)
     {
 	undoCommand=undoCom;
@@ -1281,6 +1282,8 @@ void VymModel::saveState(
     {
 	undoCommand=undoCom;
 	undoCommand.replace ("PATH",bakMapPath);
+	redoCommand=redoCom;
+	redoCommand.replace ("PATH",bakMapPath);
     }
 
     if (!dataXML.isEmpty())
@@ -1297,7 +1300,7 @@ void VymModel::saveState(
     undoSet.setValue ("/history/curStep",QString::number(curStep));
     undoSet.setValue (QString("/history/step-%1/undoCommand").arg(curStep),undoCommand);
     undoSet.setValue (QString("/history/step-%1/undoSelection").arg(curStep),undoSelection);
-    undoSet.setValue (QString("/history/step-%1/redoCommand").arg(curStep),redoCom);
+    undoSet.setValue (QString("/history/step-%1/redoCommand").arg(curStep),redoCommand);
     undoSet.setValue (QString("/history/step-%1/redoSelection").arg(curStep),redoSelection);
     undoSet.setValue (QString("/history/step-%1/comment").arg(curStep),comment);
     undoSet.setValue (QString("/history/version"),vymVersion);
@@ -1314,7 +1317,7 @@ void VymModel::saveState(
 	qDebug() << "    comment="<<comment;
 	qDebug() << "    undoCom="<<undoCommand;
 	qDebug() << "    undoSel="<<undoSelection;
-	qDebug() << "    redoCom="<<redoCom;
+	qDebug() << "    redoCom="<<redoCommand;
 	qDebug() << "    redoSel="<<redoSelection;
 	if (saveSel) qDebug() << "    saveSel="<<qPrintable (getSelectString(saveSel));
 	qDebug() << "    ---------------------------";
@@ -6231,7 +6234,7 @@ int VymModel::slideCount()
     return slideModel->count();
 }
 
-SlideItem* VymModel::addSlide()   //FIXME-2 missing saveState
+SlideItem* VymModel::addSlide()  
 {
     SlideItem *si=slideModel->getSelectedItem();  
     if (si)
@@ -6248,6 +6251,15 @@ SlideItem* VymModel::addSlide()   //FIXME-2 missing saveState
 	si->setRotationAngle (getMapEditor()->getAngleTarget() );
 	slideModel->setData ( slideModel->index(si), getHeading() );
     }
+    QString s="<vymmap>" + si->saveToDir() + "</vymmap>";
+    int pos=si->childNumber();
+    saveState (
+	PartOfMap,
+	getSelectString(), QString("deleteSlide (%1)").arg(pos),
+	getSelectString(), QString("addMapInsert (\"PATH\",%1)").arg(pos),
+	"Add slide",
+	NULL,
+	s );
     return si;
 }
 
