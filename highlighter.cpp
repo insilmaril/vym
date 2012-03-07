@@ -64,6 +64,8 @@ Highlighter::Highlighter(QTextDocument *parent)
 		    << "\\bloadNote\\b"
 		    << "\\bmoveBranchUp\\b"
 		    << "\\bmoveBranchDown\\b"
+		    << "\\bmoveSlideUp\\b"
+		    << "\\bmoveSlideDown\\b"
 		    << "\\bmove\\b"
 		    << "\\bmoveRel\\b"
 		    << "\\bnop\\b"

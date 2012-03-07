@@ -764,8 +764,8 @@ public:
     void deleteSlide (SlideItem *si);
     void deleteSlide (int n);
     void relinkSlide (SlideItem *si, int pos);
-    void moveSlideUp();
-    void moveSlideDown();
+    void moveSlideUp( int n=-1);
+    void moveSlideDown( int n=-1);
 public slots:
     void updateSlideSelection (QItemSelection ,QItemSelection);
 private:

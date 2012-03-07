@@ -4116,6 +4116,34 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	    moveDown();
 	}   
     /////////////////////////////////////////////////////////////////////
+    } else if (com=="moveSlideUp")
+    {
+	if (parser.checkParCount(1))
+	{
+	    n=parser.parInt (ok,0);
+	    if (ok) 
+	    {
+		if (n>=slideModel->count())
+		    parser.setError (Aborted,"Index out of range");
+		else    
+		    moveSlideUp(n);
+	    }
+	}   
+    /////////////////////////////////////////////////////////////////////
+    } else if (com=="moveSlideDown")
+    {
+	if (parser.checkParCount(1))
+	{
+	    n=parser.parInt (ok,0);
+	    if (ok) 
+	    {
+		if (n>=slideModel->count()-1)
+		    parser.setError (Aborted,"Index out of range");
+		else    
+		    moveSlideDown(n);
+	    }
+	}   
+    /////////////////////////////////////////////////////////////////////
     } else if (com=="move")
     {
 	if (!selti )
@@ -6308,34 +6336,45 @@ void VymModel::relinkSlide(SlideItem *si, int pos)
 	slideModel->relinkSlide (si, si->parent(), pos);
 }
 
-void VymModel::moveSlideUp()   //FIXME-2 missing saveState
+void VymModel::moveSlideUp(int n)  
 {
-    SlideItem *si=slideModel->getSelectedItem();
-    if (si)
+    SlideItem *si=NULL;
+    if (n<0) // default if called without parameters
     {
-	int n=si->childNumber();
-	if (n>0)
-	{
-	    blockSlideSelection=true;
-	    slideModel->relinkSlide (si, si->parent(), n-1);
-	    blockSlideSelection=false;
-	}
+	si=slideModel->getSelectedItem();
+	if (si) n=si->childNumber();
+    } else
+	si=slideModel->getSlide(n);
+    if (si && n>0 && n<slideModel->count())
+    {
+	blockSlideSelection=true;
+	slideModel->relinkSlide (si, si->parent(), n-1);
+	blockSlideSelection=false;
+	saveState (
+	    getSelectString(),QString("moveSlideDown (%1)").arg(n-1),
+	    getSelectString(),QString("moveSlideUp (%1)").arg(n),
+	    QString("Move slide %1 up").arg(n));
     }
 }
 
-void VymModel::moveSlideDown()   //FIXME-2 missing saveState
+void VymModel::moveSlideDown(int n)   
 {
-    SlideItem *si=slideModel->getSelectedItem();
-    if (si)
+    SlideItem *si=NULL;
+    if (n<0) // default if called without parameters
     {
-	int n=si->childNumber();
-	SlideItem *pi=si->parent();
-	if (n<pi->childCount() )
-	{
-	    blockSlideSelection=true;
-	    slideModel->relinkSlide (si, si->parent(), n+1);
-	    blockSlideSelection=false;
-	}
+	si=slideModel->getSelectedItem();
+	if (si) n=si->childNumber();
+    } else
+	si=slideModel->getSlide(n);
+    if (si && n>=0 && n < slideModel->count()-1)
+    {
+	blockSlideSelection=true;
+	slideModel->relinkSlide (si, si->parent(), n+1);
+	blockSlideSelection=false;
+	saveState (
+	    getSelectString(),QString("moveSlideUp (%1)").arg(n+1),
+	    getSelectString(),QString("moveSlideDown (%1)").arg(n),
+	    QString("Move slide %1 down").arg(n));
     }
 }
 
