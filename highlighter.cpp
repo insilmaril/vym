@@ -41,6 +41,7 @@ Highlighter::Highlighter(QTextDocument *parent)
                     << "\\baddMapCenter\\b"
                     << "\\baddMapInsert\\b"
 		    << "\\baddMapReplace\\b"
+		    << "\\baddSlide\\b"
                     << "\\bcolorBranch\\b"
 		    << "\\bcolorSubtree\\b"
 		    << "\\bcopy\\b"

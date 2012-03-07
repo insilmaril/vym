@@ -3669,6 +3669,23 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	} else
 	    parser.setError (Aborted,"Wrong number of parameters");
     /////////////////////////////////////////////////////////////////////
+    } else if (com==QString("addSlide"))
+    {
+	if (parser.parCount()==0)
+	{
+	    if (!selti)
+	    {
+		parser.setError (Aborted,"Nothing selected");
+	    } else if (! selbi )
+	    {		      
+		parser.setError (Aborted,"Type of selection is not a branch");
+	    } else 
+	    {	
+		addSlide();
+	    }
+	} else
+	    parser.setError (Aborted,"Wrong number of parameters");
+    /////////////////////////////////////////////////////////////////////
     } else if (com==QString("addXLink")) 
     {
 	if (parser.parCount()>1)
