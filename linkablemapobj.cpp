@@ -392,12 +392,16 @@ void LinkableMapObj::updateVisibility()
 		    segment.at(i)->show();
 		break;	
 	    case PolyLine:
-		if (!p) qDebug()<< "LMO::updateVis p==0 (PolyLine)"; //FIXME-3
-		if (p) p->show();
+		if (p) 
+		    p->show();
+		else 
+		    qDebug()<< "LMO::updateVis p==0 (PolyLine)"; //FIXME-3
 		break;
 	    case PolyParabel:	
-		if (!p) qDebug()<< "LMO::updateVis p==0 (PolyParabel) "<<treeItem->getHeading(); //FIXME-3
-		if (p) p->show();
+		if (p) 
+		    p->show();
+		else
+		    qDebug()<< "LMO::updateVis p==0 (PolyParabel) "<<treeItem->getHeading(); //FIXME-3
 		break;
 	    default:
 		break;

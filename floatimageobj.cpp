@@ -5,7 +5,7 @@
 #include "branchobj.h"
 
 /////////////////////////////////////////////////////////////////
-// FloatImageObj    //FIXME-2 link not hidden per default, later not visible again
+// FloatImageObj 
 /////////////////////////////////////////////////////////////////
 
 FloatImageObj::FloatImageObj (QGraphicsItem * parent,TreeItem *ti):FloatObj(parent,ti)

@@ -1917,7 +1917,11 @@ void MapEditor::updateSelection(QItemSelection ,QItemSelection desel)
 	if (mi->isBranchLikeType() 
 	    ||mi->getType()==TreeItem::Image 
 	    ||mi->getType()==TreeItem::XLink)
-	    if (!itemsSelected.contains(mi)) itemsSelected.append (mi);
+	    if (!itemsSelected.contains(mi)) 
+	    {
+		itemsSelected.append (mi);
+		mi->updateVisibility();
+	    }
     }
     foreach (QModelIndex ix,desel.indexes() )
     {
@@ -1925,7 +1929,11 @@ void MapEditor::updateSelection(QItemSelection ,QItemSelection desel)
 	if (mi->isBranchLikeType() 
 	    ||mi->getType()==TreeItem::Image 
 	    ||mi->getType()==TreeItem::XLink)
-	    if (!itemsDeselected.contains(mi)) itemsDeselected.append (mi);
+	    if (!itemsDeselected.contains(mi)) 
+	    {
+		itemsDeselected.append (mi);
+		mi->updateVisibility();
+	    }
     }
 
     // Trim list of selection polygons 
