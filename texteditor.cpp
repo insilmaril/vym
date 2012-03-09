@@ -316,10 +316,10 @@ void TextEditor::setupFormatActions()
     fontHintsToolBar->addAction (a);
     actionFormatUseFixedFont=a;
 
-    a = new QAction( QPixmap(), tr( "&Richtext" ), this ); // FIXME-2 Icon missing
+    // Original icon: ./share/icons/oxygen/22x22/actions/format-text-color.png
+    a = new QAction( QPixmap(iconPath+"formatrichtext.png"), tr( "&Richtext" ), this ); 
     a->setShortcut (Qt::ALT + Qt::Key_R);
     a->setCheckable (true);
-    //a->setChecked (settings.value("/noteeditor/fonts/useFixedByDefault",false).toBool() );
     connect( a, SIGNAL( activated() ), this, SLOT( toggleRichText() ) );
     formatMenu->addAction (a);
     fontHintsToolBar->addAction (a);
