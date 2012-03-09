@@ -3089,7 +3089,6 @@ bool VymModel::unscrollBranch(BranchItem *bi)
 	if (bi->depth()==0) return false;
 	if (bi->toggleScroll())
 	{
-	    reposition();
 	    QString u,r;
 	    u="scroll";
 	    r="unscroll";
@@ -3102,6 +3101,7 @@ bool VymModel::unscrollBranch(BranchItem *bi)
 	    );
 	    emitDataChanged(bi);
 	    emitSelectionChanged();
+	    reposition();
 	    mapEditor->getScene()->update(); //Needed for _quick_ update,  even in 1.13.x 
 	    return true;
 	}   
@@ -3109,9 +3109,7 @@ bool VymModel::unscrollBranch(BranchItem *bi)
     return false;
 }
 
-void VymModel::toggleScroll()	//FIXME-2 doesn't seem to update frame with frame including children (setting a standard flag does!) (changes are done for a child of framed branch)
-// and seems to weork with 2 (!) system flage?!?
-//FIXME-3 check calls from BI->toggleScroll to model->emitDataChanged  - redundant? also for toggleStandardFlag
+void VymModel::toggleScroll()	
 {
     BranchItem *selbi=getSelectedBranch();
     if (selbi)
@@ -3120,8 +3118,8 @@ void VymModel::toggleScroll()	//FIXME-2 doesn't seem to update frame with frame 
 	    unscrollBranch (selbi);
 	else
 	    scrollBranch (selbi);
+	// Note: saveState & reposition are called in above functions
     }
-    // saveState & reposition are called in above functions
 }
 
 void VymModel::unscrollChildren() 
@@ -3279,6 +3277,7 @@ void VymModel::toggleStandardFlag (const QString &name, FlagRow *master)
 	    QString("%1 (\"%2\")").arg(r).arg(name),
 	    QString("Toggling standard flag \"%1\" of %2").arg(name).arg(getObjectName(bi)));
 	    bi->toggleStandardFlag (name, master);
+	emitDataChanged (bi);
 	reposition();
     }
 }

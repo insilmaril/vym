@@ -511,13 +511,12 @@ void TreeItem::deactivateAllStandardFlags ()
 void TreeItem::toggleStandardFlag(const QString &name, FlagRow *master)
 {
     standardFlags.toggle (name,master);
-    model->emitDataChanged(this);	// FIXME-3 better call from VM?
 }
 
 void TreeItem::toggleSystemFlag(const QString &name, FlagRow *master)
 {
     systemFlags.toggle (name,master);
-    model->emitDataChanged(this);	// FIXME-3 better call from VM?
+    model->emitDataChanged(this);
 }
 
 bool TreeItem::hasActiveStandardFlag (const QString &name)
