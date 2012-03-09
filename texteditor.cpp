@@ -27,7 +27,6 @@ TextEditor::TextEditor()
 
     e = new QTextEdit( this);
     e->setFocus();
-//  e->setTextFormat(Qt::RichText);	// default
     e->setTabStopWidth (20);		// unit is pixel
     e->setTextColor (Qt::black);
     e->setAutoFillBackground (true);
@@ -55,38 +54,7 @@ TextEditor::TextEditor()
     setInactive();
 
     // Load Settings
-    /*
-    resize (settings.value ( "/satellite/noteeditor/geometry/size", QSize(450,600)).toSize());
-    move   (settings.value ( "/satellite/noteeditor/geometry/pos", QPoint (250,50)).toPoint());
-    
-    setShowWithMain (settings.value ( "/satellite/noteeditor/showWithMain",true).toBool());
-
-    varFont.fromString( settings.value
-	("/satellite/noteeditor/fonts/varFont",
-	"Nimbus Sans l,10,-1,5,48,0,0,0,0,0").toString() 
-    );
-    fixedFont.fromString (settings.value(
-	"/satellite/noteeditor/fonts/fixedFont",
-	"Courier,10-1,5,48,0,0,0,1,0").toString() 
-    );
-    QString s=settings.value ("/satellite/noteeditor/fonts/fonthintDefault","variable").toString();
-    if (s == "fixed")
-    {	
-	actionSettingsFonthintDefault->setChecked (true);
-	e->setCurrentFont (fixedFont);
-    } else  
-    {
-	actionSettingsFonthintDefault->setChecked (false);
-	e->setCurrentFont (varFont);
-    }	
-    */
     filenameHint="";
-
-    // Restore position of toolbars
-    //restoreState (settings.value("/satellite/noteeditor/state",0).toByteArray());
-
-    // Save settings in vymrc
-    //settings.setValue("/mainwindow/printerName",printer->printerName());
 }
 
 
@@ -97,25 +65,6 @@ TextEditor::~TextEditor()
 void TextEditor::reset()
 {
     e->clear();
-    actionFormatUseFixedFont->setChecked (false);
-    actionTextBold->setChecked (false);
-    e->setFontWeight(QFont::Normal);
-
-    actionTextUnderline->setChecked (false);
-    e->setFontUnderline (false);
-
-    actionTextItalic->setChecked (false);
-    e->setFontItalic (false);
-
-    QPixmap pix( 16, 16 );
-    pix.fill( Qt::black );
-    actionTextColor->setIcon( pix );
-    e->setTextColor (Qt::black);
-
-    actionAlignSubScript->setChecked (false);
-    actionAlignSuperScript->setChecked (false);
-    actionAlignLeft->setChecked (true);
-    e->setAlignment( Qt::AlignLeft );
 }
 
 bool TextEditor::isEmpty()
@@ -614,10 +563,16 @@ void TextEditor::editCopyAll()
     e->copy();
 }
 
-void TextEditor::textSaveAs()	//FIXME-3 Use WarningDialog
+void TextEditor::textSaveAs()	
 {
     QString caption=tr ("Export Note to single file");
-    QString fn = QFileDialog::getSaveFileName(this, caption, QString::null, "VYM Note (HTML) (*.html);;All files (*)",0,QFileDialog::DontConfirmOverwrite );
+    QString fn = QFileDialog::getSaveFileName(
+	this, 
+	caption, 
+	QString::null, 
+	"VYM Note (HTML) (*.html);;All files (*)",
+	0,
+	QFileDialog::DontConfirmOverwrite );
 
     if ( !fn.isEmpty() ) 
     {
@@ -747,6 +702,7 @@ void TextEditor::textEditUndo()
 
 void TextEditor::toggleFonthint()
 {
+    qDebug()<<"toggleFonthint";
     setUpdatesEnabled (false);
     e->selectAll ();
     if (!actionFormatUseFixedFont->isChecked() ) 
@@ -762,9 +718,16 @@ void TextEditor::toggleRichText()
 {
     //setUpdatesEnabled (false);
     if (!actionFormatRichText->isChecked() ) 
+    {
+	qDebug()<<"TE::setPlain";
 	e->setPlainText (e->toPlainText());
+    }
     else    
+    {
+	qDebug()<<"TE::setHTML";
+	qDebug()<<e->toHtml();
 	e->setHtml (e->toHtml());
+    }
     updateActions();	
 }
 

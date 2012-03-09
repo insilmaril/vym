@@ -3,47 +3,30 @@
 #include "noteobj.h"
 #include "settings.h"
 
-extern bool debug;
 extern Settings settings;
+extern QString vymName;
 
 
 ///////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////
 
 
-NoteEditor::NoteEditor()    //FIXME-2 Fixed font toggling does not work
+NoteEditor::NoteEditor()    
 {
 
-    //qDebug()<<"Constr. NoteEditor";
     menuBar()->show();
     // Load Settings
-    //restoreState (settings.value("/satellite/noteeditor/state",0).toByteArray());
+    restoreState (settings.value("/satellite/noteeditor/state",0).toByteArray());
     resize (settings.value ( "/satellite/noteeditor/geometry/size", QSize(450,600)).toSize());
     move   (settings.value ( "/satellite/noteeditor/geometry/pos", QPoint (250,50)).toPoint());
     
     setShowWithMain (settings.value ( "/satellite/noteeditor/showWithMain",true).toBool());
-    return;
 
-    /*
-    setCentralWidget( e );
-    statusBar()->message( tr("Ready","Statusbar message"), statusbarTime);
-    setCaption(vymName +" - " +tr ("Note Editor","Window caption"));
-
-    // Toolbars
-    setupFileActions();
-    setupEditActions();
-    setupFormatActions();
-    setupSettingsActions();
-    
-    // Various states
-    blockChangedSignal=false;
-    setInactive();
-    */
-
+    setWindowTitle (vymName +" - " +tr ("Note Editor","Window caption"));
 
     varFont.fromString( settings.value
 	("/satellite/noteeditor/fonts/varFont",
-	"Nimbus Sans l,10,-1,5,48,0,0,0,0,0").toString() 
+	"DejaVu Sans Mono [unknown],14,-1,0,50,0,0,0,0,0").toString() 
     );
     fixedFont.fromString (settings.value(
 	"/satellite/noteeditor/fonts/fixedFont",
@@ -65,12 +48,10 @@ NoteEditor::NoteEditor()    //FIXME-2 Fixed font toggling does not work
 
 NoteEditor::~NoteEditor()
 {
-    //qDebug ()<<"Destr. NoteEditor";
-    
     // Save Settings
     settings.setValue( "/satellite/noteeditor/geometry/size", size() );
     settings.setValue( "/satellite/noteeditor/geometry/pos", pos() );
-    //settings.setValue ("/satellite/noteeditor/state",saveState(0));
+    settings.setValue ("/satellite/noteeditor/state",saveState(0));
     
     settings.setValue( "/satellite/noteeditor/showWithMain",showwithmain);
 
