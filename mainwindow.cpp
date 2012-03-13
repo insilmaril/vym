@@ -4713,12 +4713,11 @@ void Main::runScript (const QString &script)
 
 void Main::runScriptEverywhere (const QString &script)
 {
-    MapEditor *me;
-    for (int i=0;i<=tabWidget->count() -1;i++)
+    foreach (VymView *vv,vymViews)
     {
-	me=(MapEditor*)tabWidget->widget(i);
-	if (me) me->getModel()->runScript (script);
-    }	
+	VymModel *m=vv->getModel();
+	if (m) m->runScript (script);
+    }
 }
 
 void Main::windowNextEditor()
