@@ -2367,7 +2367,7 @@ void Main::fileNewCopy()
 	fileNew();
 	VymModel *dstModel=vymViews.last()->getModel();
 	if (dstModel->select("mc:0"))
-	    dstModel->loadMap (clipboardDir+"/"+clipboardFile,ImportReplace,false);
+	    dstModel->loadMap (clipboardDir+"/"+clipboardFile,ImportReplace);
 	else
 	    qWarning ()<<"Main::fileNewCopy couldn't select mapcenter";
     }
@@ -2485,7 +2485,8 @@ ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode, const FileType &ftyp
 	    // Finally load map into mapEditor
 	    progressDialog.setLabelText (tr("Loading: %1","Progress dialog while loading maps").arg(fn));
 	    vm->setFilePath (fn);
-	    err=vm->loadMap(fn,lmode,true,ftype);
+	    vm->saveStateBeforeLoad (lmode,fn);
+	    err=vm->loadMap(fn,lmode,ftype);
 
 	    // Restore old (maybe empty) filepath, if this is an import
 	    if (lmode!=NewMap)

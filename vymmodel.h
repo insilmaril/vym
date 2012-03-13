@@ -121,9 +121,8 @@ public:
     ErrorCode loadMap  (
 	QString,			//!< Path
 	const LoadMode &lmode=NewMap,	//!< New map, replace or add to selection
-	bool saveStateFlag=true,	//!< If called internally for history, don't save
 	const FileType &ftype=VymMap,	//!< VymMap or FreeMind
-	const int &contentFilter=0xffff,//!< For undo types of content can be filterd
+	const int &contentFilter=0x0000,//!< For undo types of content can be filterd
 	int pos=-1			//!< Optionally tell position where to add data
     );	
 
@@ -252,7 +251,10 @@ public:
 	const QString &redoCommand, 
 	const QString &comment); 
 	
-
+    /*! Save state before loading a map */
+    void saveStateBeforeLoad (
+	LoadMode lmode,
+	const QString &fname);
 
 ////////////////////////////////////////////
 // unsorted so far

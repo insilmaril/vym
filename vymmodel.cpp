@@ -369,7 +369,6 @@ QString VymModel::getDestPath()
 ErrorCode VymModel::loadMap (	
     QString fname, 
     const LoadMode &lmode, 
-    bool saveStateFlag, 
     const FileType &ftype,
     const int &contentFilter,
     int pos)
@@ -382,9 +381,6 @@ ErrorCode VymModel::loadMap (
 	zoomFactor=mapEditor->getZoomFactorTarget();	
 	rotationAngle=mapEditor->getAngleTarget();
     }
-
-    // For ImportReplace let's insert a new branch and replace that
-    BranchItem *selbi=getSelectedBranch();
 
     parseBaseHandler *handler;
     fileType=ftype;
@@ -410,27 +406,7 @@ ErrorCode VymModel::loadMap (
 	fileChangedTime=QFileInfo (destPath).lastModified();
 
 	selModel->clearSelection();
-    } else
-    {
-	if (selbi) 
-	{
-	    if (lmode==ImportAdd)
-		if (saveStateFlag) saveStateChangingPart(
-		    selbi,
-		    selbi,
-		    QString("addMapInsert (%1)").arg(fname),
-		    QString("Add map %1 to %2").arg(fname).arg(getObjectName(selbi)));
-	    if (lmode==ImportReplace)
-	    {
-		BranchItem *pi=(BranchItem*)(selbi->parent());
-		if (saveStateFlag) saveStateChangingPart(
-		    pi,
-		    pi,
-		    QString("addMapReplace(%1)").arg(fname),
-		    QString("Add map %1 to %2").arg(fname).arg(getObjectName(selbi)));
-	    }
-	}
-    }	
+    } 
 
     // Create temporary directory for packing
     bool ok;
@@ -1364,21 +1340,12 @@ void VymModel::saveStateRemovingPart(TreeItem* redoSel, const QString &comment)
     }
     QString undoSelection;
     QString redoSelection=getSelectString(redoSel);
-    if (redoSel->getType()==TreeItem::Branch) 
+    if (redoSel->isBranchLikeType() )
     {
 	undoSelection=getSelectString (redoSel->parent());
 	// save the selected branch of the map, Undo will insert part of map 
 	saveState (PartOfMap,
-	    undoSelection, QString("addMapInsert (\"PATH\",%1)").arg(redoSel->num()),
-	    redoSelection, "delete ()", 
-	    comment, 
-	    redoSel);
-    }
-    if (redoSel->getType()==TreeItem::MapCenter) 
-    {
-	// save the selected branch of the map, Undo will insert part of map 
-	saveState (PartOfMap,
-	    undoSelection, QString("addMapInsert (\"PATH\")"),
+	    undoSelection, QString("addMapInsert (\"PATH\",%1,%2)").arg(redoSel->num()).arg(SlideContent),
 	    redoSelection, "delete ()", 
 	    comment, 
 	    redoSel);
@@ -1439,6 +1406,29 @@ void VymModel::saveStateMinimal(TreeItem *undoSel, const QString &uc, TreeItem *
 	redoSelection, rc, 
 	comment, 
 	NULL);
+}
+
+void VymModel::saveStateBeforeLoad (LoadMode lmode, const QString &fname)
+{ 
+    BranchItem *selbi=getSelectedBranch();
+    if (selbi) 
+    {
+	if (lmode==ImportAdd)
+	    saveStateChangingPart(
+		selbi,
+		selbi,
+		QString("addMapInsert (%1)").arg(fname),
+		QString("Add map %1 to %2").arg(fname).arg(getObjectName(selbi)));
+	if (lmode==ImportReplace)
+	{
+	    BranchItem *pi=(BranchItem*)(selbi->parent());
+	    saveStateChangingPart(
+		pi,
+		pi,
+		QString("addMapReplace(%1)").arg(fname),
+		QString("Add map %1 to %2").arg(fname).arg(getObjectName(selbi)));
+	}
+    }
 }
 
 
@@ -2223,10 +2213,10 @@ void VymModel::pasteNoSave(const int &n)
 	// Use the "historical" buffer
 	QString bakMapName(QString("history-%1").arg(n));
 	QString bakMapDir(tmpMapDir +"/"+bakMapName);
-	loadMap (bakMapDir+"/"+clipboardFile,ImportAdd, false);
+	loadMap (bakMapDir+"/"+clipboardFile,ImportAdd, VymMap,SlideContent);
     } else
 	// Use the global buffer
-	loadMap (clipboardDir+"/"+clipboardFile,ImportAdd, false);
+	loadMap (clipboardDir+"/"+clipboardFile,ImportAdd, VymMap,SlideContent);
     zipped=zippedOrg;
 }
 
@@ -3644,31 +3634,51 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	    //s=parser.parString (ok,0);    // selection
 	    t=parser.parString (ok,0);	// path to map
 	    if (QDir::isRelativePath(t)) t=(tmpMapDir + "/"+t);
-	    loadMap (t,ImportReplace,false,VymMap);	
+	    loadMap (t,ImportReplace,VymMap);	
 	}
     /////////////////////////////////////////////////////////////////////
     } else if (com==QString("addMapInsert"))
     {
-	if (parser.parCount()==2)
+	int pc=parser.parCount();
+	if (pc>0 || pc<4)
 	{
-	    if (!selti)
-	    {
-		parser.setError (Aborted,"Nothing selected");
-	    } else if (! selbi )
-	    {		      
-		parser.setError (Aborted,"Type of selection is not a branch");
-	    } else 
-	    {	
-		t=parser.parString (ok,0);  // path to map
-		n=parser.parInt(ok,1);	    // position
+	    int pos=-1;
+	    int contentFilter=0x0000;
+
+	    // Get filename
+	    t=parser.parString (ok,0);  // path to map
+	    if (!ok)
+		parser.setError (Aborted,"Couldn't read filenname");
+	    else
 		if (QDir::isRelativePath(t)) t=(tmpMapDir + "/"+t);
-		loadMap (t,ImportAdd,false,VymMap,0xffff,n);
+
+	    // Get position
+	    if (pc>1)
+	    {
+		if (!selti)
+		{
+		    parser.setError (Aborted,"Nothing selected");
+		} else if (! selbi )
+		{		      
+		    parser.setError (Aborted,"Type of selection is not a branch");
+		} else 
+		{	
+		    pos=parser.parInt(ok,1);	    // position
+		    if (!ok)
+			parser.setError (Aborted,"Couldn't read position");
+		}
 	    }
-	} else if (parser.parCount()==1)
-	{
-	    t=parser.parString (ok,0);	// path to map
-	    if (QDir::isRelativePath(t)) t=(tmpMapDir + "/"+t);
-	    loadMap (t,ImportAdd,false);
+
+	    // Get contentFilter (to filter e.g. slides)
+	    if (pc>2)
+	    {
+		contentFilter=parser.parInt (ok,2);
+		if (!ok)
+		    parser.setError (Aborted,"Couldn't read content Filter");
+	    }
+	    
+	    if (parser.errorLevel() == NoError)
+		loadMap (t,ImportAdd,VymMap,contentFilter,pos);
 	} else
 	    parser.setError (Aborted,"Wrong number of parameters");
     /////////////////////////////////////////////////////////////////////

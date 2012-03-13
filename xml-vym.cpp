@@ -25,7 +25,7 @@ extern QString vymVersion;
 parseVYMHandler::parseVYMHandler()
 {
     // Default is to load everything
-    contentFilter = 0xffff; //FIXME-2 use filters for all content types below
+    contentFilter = 0x0000; //FIXME-4 use filters for all content types below
 }
 
 void parseVYMHandler::setContentFilter (const int &c)
@@ -54,7 +54,7 @@ bool parseVYMHandler::startElement  ( const QString&, const QString&,
 	<<">  state="<<state 
 	<<"  laststate="<<stateStack.last()
 	<<"   loadMode="<<loadMode
-    	<<"       line="<<QXmlDefaultHandler::lineNumber();
+    	//<<"       line="<<QXmlDefaultHandler::lineNumber();
 	<<"contentFilter="<<contentFilter;
     */	
     stateStack.append (state);	
@@ -99,7 +99,7 @@ bool parseVYMHandler::startElement  ( const QString&, const QString&,
     } else if ( eName == "slide" && state == StateMap )
     {
 	state=StateMapSlide;
-	if ( contentFilter|SlideContent) 
+	if (!  contentFilter && SlideContent)  
 	{   
 	    // Ignore slides during paste
 	    lastSlide=model->addSlide();
