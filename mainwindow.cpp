@@ -1,11 +1,12 @@
 #include "mainwindow.h"
 
-#include <QtGui>
+#include <QDBusConnection>
 
 #include <iostream>
 #include <typeinfo>
 
 #include "aboutdialog.h"
+#include "adaptorvym.h"
 #include "branchpropwindow.h"
 #include "branchitem.h"
 #include "exportoofiledialog.h"
@@ -49,6 +50,7 @@ typedef struct _PROCESS_INFORMATION
 extern NoteEditor    *noteEditor;
 extern HeadingEditor *headingEditor;
 extern Main *mainWindow;
+extern QDBusConnection dbusConnection;
 extern FindResultWidget *findResultWidget;  
 extern TaskEditor *taskEditor;
 extern QString tmpVymDir;
@@ -63,6 +65,7 @@ extern QString vymVersion;
 extern QString vymBuildDate;
 extern bool debug;
 extern bool bugzillaClientAvailable;
+
 
 QMenu* branchAddContextMenu;
 QMenu* branchContextMenu;
@@ -295,6 +298,11 @@ Main::Main(QWidget* parent, Qt::WFlags f) : QMainWindow(parent,f)
     printer=new QPrinter (QPrinter::HighResolution );	
 
     updateGeometry();
+
+    // Announce myself on DBUS
+    new AdaptorVym (this);    // Created and not deleted as documented in Qt
+    if (!dbusConnection.registerObject ("/vym",this))
+	qWarning ("MainWindow: Couldn't register DBUS object!");
 }
 
 Main::~Main()
@@ -2307,6 +2315,11 @@ void Main::gotoModel (VymModel *m)
 	    tabWidget->setCurrentIndex (i);
 	    return;
 	}
+}
+
+int Main::modelCount()
+{
+    return vymViews.count();
 }
 
 void Main::editorChanged(QWidget *)

@@ -40,9 +40,9 @@ QDBusVariant AdaptorModel::query(const QString &)
 {
     QString s;
     if (model)
-    s=model->getHeading();
+	s=model->getHeading();
     else
-    s="oops, no vymModel?";
+	s="oops, no vymModel?";
 
     return QDBusVariant (s);
 }
@@ -56,9 +56,9 @@ QDBusVariant AdaptorModel::getHeading()
 {
     QString s;
     if (model)
-    s=model->getHeading();
+	s=model->getHeading();
     else
-    s="oops, no vymModel?";
+	s="oops, no vymModel?";
 
     return QDBusVariant (s);
 }
@@ -69,16 +69,11 @@ void AdaptorModel::setHeading (const QString &s)
     model->setHeading(s);
 }
 
-QDBusVariant AdaptorModel::getInstanceName()
-{
-    return QDBusVariant (vymInstanceName);
-}
-
-QDBusVariant AdaptorModel::execute (const QString &s)
+QDBusVariant AdaptorModel::runScript (const QString &s)
 {
     if (model)
-    return QDBusVariant (model->runScript (s));
+	return QDBusVariant (model->runScript (s));
     else
-    return QDBusVariant ("No model.");
+	return QDBusVariant ("No model.");
 }
 

@@ -3,9 +3,6 @@
 
 #include <QtNetwork>
 
-#include <QtDBus/QDBusAbstractAdaptor>
-#include <QtDBus/QDBusVariant>
-
 #include <QPointF>
 #include <QTextCursor>
 
@@ -659,13 +656,6 @@ private slots:
 
 public:
     void download (const QUrl &url, BranchItem *bi=NULL);
-
-////////////////////////////////////////////
-// DBUS related 
-////////////////////////////////////////////
-
-private:
-AdaptorModel *adaptorModel; //FIXME-3
 
 public slots:
     void testslot();

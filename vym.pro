@@ -27,6 +27,7 @@ ICON =icons/vym.icns
 HEADERS	+= \
     aboutdialog.h \
     adaptormodel.h \
+    adaptorvym.h \
     animpoint.h \
     attribute.h \
     attributeitem.h \
@@ -109,6 +110,7 @@ HEADERS	+= \
 SOURCES	+= \
     aboutdialog.cpp \
     adaptormodel.cpp \
+    adaptorvym.cpp \
     animpoint.cpp \
     attribute.cpp \
     attributeitem.cpp \

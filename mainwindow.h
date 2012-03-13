@@ -79,6 +79,7 @@ public:
     uint currentModelID() const;
     VymModel* getModel(uint) const;
     void gotoModel (VymModel *m);
+    int modelCount();
     
 private slots:
     void editorChanged(QWidget*);
