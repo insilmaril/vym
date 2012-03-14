@@ -1028,6 +1028,16 @@ void Main::setupEditActions()
     actionListBranches.append (a);
     actionTaskSleep1=a;
 
+    a = new QAction(QPixmap(), tr( "Sleep %1 days","Task sleep" ).arg(2), this);
+    a->setShortcutContext (Qt::WindowShortcut);
+    a->setCheckable(false);
+    a->setEnabled (false);
+    a->setData (2);
+    switchboard.addConnection(this, a,tr("Edit","Shortcut group"));
+    connect( a, SIGNAL( triggered() ), this, SLOT( editTaskSleepN() ) );
+    actionListBranches.append (a);
+    actionTaskSleep2=a;
+
     a = new QAction(QPixmap(), tr( "Sleep %1 days","Task sleep" ).arg(3), this);
     a->setShortcutContext (Qt::WindowShortcut);
     a->setCheckable(false);
@@ -2005,6 +2015,7 @@ void Main::setupContextMenus()
 	taskContextMenu->addAction (actionTaskSleep0);
 	taskContextMenu->addAction (actionTaskSleepN);
 	taskContextMenu->addAction (actionTaskSleep1);
+	taskContextMenu->addAction (actionTaskSleep2);
 	taskContextMenu->addAction (actionTaskSleep3);
 	taskContextMenu->addAction (actionTaskSleep5);
 	taskContextMenu->addAction (actionTaskSleep7);
@@ -4367,8 +4378,8 @@ void Main::updateNoteEditor(QModelIndex index )
 {
     TreeItem *ti=((VymModel*) QObject::sender())->getItem(index);
     /*
-    cout << "Main::updateNoteEditor model="<<sender();
-    cout << "  item="<<ti->getHeadingStd()<<" ("<<ti<<")"<<endl;
+    qDebug()<< "Main::updateNoteEditor model="<<sender() 
+            << "  item="<<ti->getHeadingStd()<<" ("<<ti<<")";
     */
     noteEditor->setNote (ti->getNoteObj() );
 }
