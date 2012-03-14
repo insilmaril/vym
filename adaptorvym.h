@@ -17,6 +17,7 @@ public:
 public slots: // METHODS
     QDBusVariant modelCount ();
     QDBusVariant getInstanceName();
+    QDBusVariant getVersion();
 
 Q_SIGNALS: // SIGNALS
     void crashed();

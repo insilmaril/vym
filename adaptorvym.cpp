@@ -6,6 +6,7 @@
 #include "mainwindow.h"
 
 extern QString vymInstanceName;
+extern QString vymVersion;
 extern Main *mainWindow;
 
 AdaptorVym::AdaptorVym(QObject *obj)
@@ -21,6 +22,10 @@ QDBusVariant AdaptorVym::modelCount()
 
 QDBusVariant AdaptorVym::getInstanceName()
 {
-
     return QDBusVariant (vymInstanceName);
+}
+
+QDBusVariant AdaptorVym::getVersion()
+{
+    return QDBusVariant (vymVersion);
 }

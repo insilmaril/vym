@@ -3,6 +3,7 @@
 #include <QtCore/QString>
 #include <QtCore/QVariant>
 
+#include "branchitem.h"
 #include "mainwindow.h"
 #include "vymmodel.h"
 
@@ -14,11 +15,6 @@ AdaptorModel::AdaptorModel(QObject *obj)
 {
     model=static_cast <VymModel*> (obj);
     setAutoRelaySignals (true);
-}
-
-AdaptorModel::~AdaptorModel()
-{
-    // destructor
 }
 
 void AdaptorModel::setModel(VymModel *vm)
@@ -34,17 +30,6 @@ QString AdaptorModel::caption()
 void AdaptorModel::setCaption (const QString &newCaption)
 {
     m_caption=newCaption;
-}
-
-QDBusVariant AdaptorModel::query(const QString &)
-{
-    QString s;
-    if (model)
-	s=model->getHeading();
-    else
-	s="oops, no vymModel?";
-
-    return QDBusVariant (s);
 }
 
 QDBusVariant AdaptorModel::getCurrentModelID()
@@ -69,11 +54,17 @@ void AdaptorModel::setHeading (const QString &s)
     model->setHeading(s);
 }
 
+QDBusVariant AdaptorModel::branchCount()
+{
+    BranchItem *selbi=model->getSelectedBranch();
+    if (selbi) 
+	return QDBusVariant (selbi->branchCount() );
+    else	
+	return QDBusVariant (-1 );
+}
+
 QDBusVariant AdaptorModel::runScript (const QString &s)
 {
-    if (model)
-	return QDBusVariant (model->runScript (s));
-    else
-	return QDBusVariant ("No model.");
+    return QDBusVariant (model->runScript (s));
 }
 

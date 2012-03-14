@@ -5713,22 +5713,6 @@ void VymModel::download (const QUrl &url, BranchItem *bi)
     new DownloadAgent (url,bi);
 }
 
-/* FIXME-4 Playing with DBUS...
-QDBusVariant VymModel::query (const QString &query)
-{
-    TreeItem *selti=getSelectedItem();
-    if (selti)
-	return QDBusVariant (selti->getHeading());
-    else
-	return QDBusVariant ("Nothing selected.");
-}
-*/
-
-void VymModel::testslot()   //FIXME-4 Playing with DBUS
-{
-    qDebug() << "VM::testslot called\n";
-}
-
 void VymModel::selectMapSelectionColor()
 {
     QColor col = QColorDialog::getColor( defLinkColor, NULL);

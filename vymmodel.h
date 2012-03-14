@@ -657,9 +657,6 @@ private slots:
 public:
     void download (const QUrl &url, BranchItem *bi=NULL);
 
-public slots:
-    void testslot();
-
 ////////////////////////////////////////////
 // Selection related 
 ////////////////////////////////////////////

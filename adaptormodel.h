@@ -17,7 +17,6 @@ private:
 
 public:
     AdaptorModel(QObject *obj);
-    virtual ~AdaptorModel();
     void setModel (VymModel *vm);
 
 public: // PROPERTIES
@@ -26,10 +25,10 @@ public: // PROPERTIES
     void setCaption(const QString &newCaption);
 
 public slots: // METHODS
-    QDBusVariant query(const QString &);
     QDBusVariant getCurrentModelID();
     QDBusVariant getHeading();
     void setHeading (const QString &s);
+    QDBusVariant branchCount();
     QDBusVariant runScript (const QString &s);
 
 Q_SIGNALS: // SIGNALS
