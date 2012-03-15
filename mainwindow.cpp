@@ -2335,21 +2335,13 @@ int Main::modelCount()
 
 void Main::editorChanged(QWidget *)
 {
-    // Unselect all possibly selected objects
-    // (Important to update note editor)
-    VymModel *m;
-    for (int i=0;i<=tabWidget->count() -1;i++)
-    {
-	m= vymViews.at(i)->getModel();
-	if (m) m->unselectAll();
-    }
-    m=currentModel();
-    if (m) 
+    VymModel *vm=currentModel();
+    if (vm) 
     {	
-	m->reselect();
-	updateQueries (m);
+	updateNoteEditor (vm->getSelectedIndex() );
+	updateQueries (vm);
 
-	taskEditor->setMapName (m->getMapName() );
+	taskEditor->setMapName (vm->getMapName() );
     }	
 
     // Update actions to in menus and toolbars according to editor
@@ -4374,14 +4366,17 @@ void Main::updateNoteFlag()
     if (m) m->updateNoteFlag();
 }
 
-void Main::updateNoteEditor(QModelIndex index )
+void Main::updateNoteEditor(QModelIndex index ) //FIXME-2 maye change to TreeItem as parameter?
 {
-    TreeItem *ti=((VymModel*) QObject::sender())->getItem(index);
-    /*
-    qDebug()<< "Main::updateNoteEditor model="<<sender() 
-            << "  item="<<ti->getHeadingStd()<<" ("<<ti<<")";
-    */
-    noteEditor->setNote (ti->getNoteObj() );
+    if (index.isValid() )
+    {
+	TreeItem *ti=((VymModel*) QObject::sender())->getItem(index);
+	/*
+	qDebug()<< "Main::updateNoteEditor model="<<sender() 
+		<< "  item="<<ti->getHeadingStd()<<" ("<<ti<<")";
+	*/
+	if (ti) noteEditor->setNote (ti->getNoteObj() );
+    }
 }
 
 void Main::selectInNoteEditor(QString s,int i)
