@@ -382,16 +382,18 @@ qreal MapEditor::getAngle()
     return angle;
 }
 
-void MapEditor::setViewCenterTarget (const QPointF &p, const qreal &zft, const qreal &at)
+void MapEditor::setViewCenterTarget (
+    const QPointF &p, 
+    const qreal &zft, 
+    const qreal &at,
+    const int duration,
+    const QEasingCurve &easingCurve)
 {
     viewCenterTarget=p;
     zoomFactorTarget=zft;
     angleTarget=at;
 
     viewCenter=mapToScene(viewport()->geometry()).boundingRect().center();
-
-    QEasingCurve ecurve=QEasingCurve::OutQuint;
-    int duration=2000;
 
     if (viewCenterAnimation.state()==QAbstractAnimation::Running)
 	viewCenterAnimation.stop();
@@ -406,7 +408,7 @@ void MapEditor::setViewCenterTarget (const QPointF &p, const qreal &zft, const q
 	viewCenterAnimation.setPropertyName ("viewCenter");
 	viewCenterAnimation.setDuration(
 	    settings.value("/animation/duration/scrollbar",duration).toInt() );
-	viewCenterAnimation.setEasingCurve (ecurve);
+	viewCenterAnimation.setEasingCurve (easingCurve );
 	viewCenterAnimation.setStartValue( viewCenter );
 	viewCenterAnimation.setEndValue(viewCenterTarget);
 	viewCenterAnimation.start();
@@ -414,7 +416,7 @@ void MapEditor::setViewCenterTarget (const QPointF &p, const qreal &zft, const q
 	rotationAnimation.setTargetObject (this);
 	rotationAnimation.setPropertyName ("angle");
 	rotationAnimation.setDuration(settings.value("/animation/duration/rotation",duration).toInt() );
-	rotationAnimation.setEasingCurve ( ecurve);
+	rotationAnimation.setEasingCurve ( easingCurve );
 	rotationAnimation.setStartValue(angle);
 	rotationAnimation.setEndValue(angleTarget);
 	rotationAnimation.start();
@@ -422,7 +424,7 @@ void MapEditor::setViewCenterTarget (const QPointF &p, const qreal &zft, const q
 	zoomAnimation.setTargetObject (this);
 	zoomAnimation.setPropertyName ("zoomFactor");
 	zoomAnimation.setDuration(settings.value("/animation/duration/zoom",duration).toInt() );
-	zoomAnimation.setEasingCurve ( ecurve);
+	zoomAnimation.setEasingCurve ( easingCurve );
 	zoomAnimation.setStartValue(zoomFactor);
 	zoomAnimation.setEndValue(zoomFactorTarget);
 	zoomAnimation.start();

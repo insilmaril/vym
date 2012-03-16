@@ -6378,8 +6378,8 @@ void VymModel::updateSlideSelection (QItemSelection newsel,QItemSelection)
     QModelIndex ix;
     foreach (ix,newsel.indexes() )
     {
-	SlideItem *fri= static_cast<SlideItem*>(ix.internalPointer());
-	int id=fri->getTreeItemID();
+	SlideItem *si= static_cast<SlideItem*>(ix.internalPointer());
+	int id=si->getTreeItemID();
 	if (id>0)
 	{
 	    TreeItem *ti=findID(id);
@@ -6389,12 +6389,14 @@ void VymModel::updateSlideSelection (QItemSelection newsel,QItemSelection)
 		if (mapEditor)
 		{
 		    LinkableMapObj *lmo=((MapItem*)ti)->getLMO();
-		    qreal zf=fri->getZoomFactor();
+		    qreal zf=si->getZoomFactor();
 		    if (zf>0 && lmo)
 			mapEditor->setViewCenterTarget (
 			    lmo->getBBox().center(),
 			    zf,
-			    fri->getRotationAngle() );
+			    si->getRotationAngle(),
+			    si->getDuration(),
+			    si->getEasingCurve() );
 		}
 	    }	
 	}

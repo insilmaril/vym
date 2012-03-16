@@ -1,6 +1,7 @@
 #ifndef SLIDEITEM_H
 #define SLIDEITEM_H
 
+#include <QEasingCurve>
 #include <QList>
 #include <QVariant>
 #include <QVector>
@@ -38,6 +39,10 @@ public:
     qreal getZoomFactor ();
     void setRotationAngle(const qreal &);
     qreal getRotationAngle ();
+    void setDuration (const int &);
+    int getDuration();
+    void setEasingCurve (const QEasingCurve &);
+    QEasingCurve getEasingCurve();
     QString saveToDir();
 
 private:
@@ -49,6 +54,8 @@ private:
     int treeItemID;
     qreal zoomFactor;
     qreal rotationAngle;
+    int duration;
+    QEasingCurve easingCurve;
 };
 
 #endif

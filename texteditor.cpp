@@ -790,7 +790,7 @@ void TextEditor::textColor()
     actionTextColor->setIcon( pix );
 }
 
-void TextEditor::textAlign( QAction *a )
+void TextEditor::textAlign( QAction *a )  //FIXME-2 center only centers first line
 {
     QTextCursor c=e->textCursor();
     c.setPosition (3,QTextCursor::MoveAnchor);

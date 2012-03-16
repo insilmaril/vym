@@ -87,7 +87,12 @@ protected:
     QPointF viewCenterTarget;
 
 public:
-    void setViewCenterTarget (const QPointF &p, const qreal &zft, const qreal &at);
+    void setViewCenterTarget (
+	const QPointF &p, 
+	const qreal &zft, 
+	const qreal &at,
+	const int duration=2000,
+	const QEasingCurve &easingCurve=QEasingCurve::OutQuint);
     void setViewCenterTarget ();    //! Convenience function, center on selected item
     QPointF getViewCenterTarget();
     void setViewCenter (const QPointF &p);

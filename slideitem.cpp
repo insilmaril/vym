@@ -12,6 +12,8 @@ SlideItem::SlideItem(const QVector<QVariant> &data, SlideItem *parent, SlideMode
     itemData = data;
     treeItemID=-1;
     zoomFactor=-1;
+    duration=2000;
+    easingCurve.setType (QEasingCurve::OutQuint);
 
     if (sm)
 	model=sm;
@@ -194,12 +196,34 @@ qreal SlideItem::getRotationAngle()
     return rotationAngle;
 }
 
+void SlideItem::setDuration (const int  &d)
+{
+    duration=d;
+}
+
+int SlideItem::getDuration()
+{
+    return duration;
+}
+
+void SlideItem::setEasingCurve (const QEasingCurve &c)
+{
+    easingCurve=c;
+}
+
+QEasingCurve SlideItem::getEasingCurve()
+{
+    return easingCurve;
+}
+
 QString SlideItem::saveToDir()
 {
     return singleElement ("slide",
 	attribut ("name",data(0).toString() ) +
-	attribut ("zoom",QString().setNum (zoomFactor) ) +
-	attribut ("rotation",QString().setNum (rotationAngle ) ) +
+	attribut ("zoom",QString().setNum ( zoomFactor) ) +
+	attribut ("rotation",QString().setNum ( rotationAngle ) ) +
+	attribut ("duration",QString().setNum ( duration ) ) +
+	attribut ("curve",QString().setNum ( easingCurve.type() ) ) +
 	attribut ("mapitem",model->getVymModel()->getSelectString (treeItemID ) )
 	);
 }

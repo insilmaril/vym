@@ -122,7 +122,7 @@ qreal HeadingObj::getRotation()
     return angle;
 }
 
-void HeadingObj::setText (QString s)
+void HeadingObj::setText (QString s)  
 {
     heading=s;
 

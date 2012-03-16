@@ -799,6 +799,24 @@ bool parseVYMHandler::readSlideAttr (const QXmlAttributes& a)
 	    if (!ok) return false;
 	    lastSlide->setRotationAngle (z);
 	}
+	if (!a.value( "duration").isEmpty() ) 
+	{
+	    bool ok;
+	    int d=a.value ("duration").toInt(&ok);
+	    if (!ok) return false;
+	    lastSlide->setDuration (d);
+	}
+	if (!a.value( "curve").isEmpty() ) 
+	{
+	    bool ok;
+	    int i=a.value ("curve").toInt(&ok);
+	    if (!ok ) return false;
+	    if (i<0 || i>QEasingCurve::OutInBounce) return false;
+
+	    QEasingCurve c;
+	    c.setType ( (QEasingCurve::Type) i);
+	    lastSlide->setEasingCurve (c);
+	}
 	if (!a.value( "mapitem").isEmpty() ) 
 	{
 	    TreeItem *ti=model->findBySelectString ( a.value( "mapitem") );
