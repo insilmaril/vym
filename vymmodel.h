@@ -479,7 +479,7 @@ public:
     QVariant parseAtom (const QString &atom, bool &noError, QString &errorMsg);	
 
     /* \brief Runs the script */
-    QVariant runScript (const QString &script);
+    QVariant execute (const QString &script);
 
 private:
     Parser parser;

@@ -320,7 +320,7 @@ int main(int argc, char* argv[])
 	    script= in.readAll();
 	    f.close();
 	    m.setScript (script);
-	    m.runScriptEverywhere (script);
+	    m.executeEverywhere (script);
 	}
     }	    
     

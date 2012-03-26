@@ -63,8 +63,8 @@ QDBusVariant AdaptorModel::branchCount()
 	return QDBusVariant (-1 );
 }
 
-QDBusVariant AdaptorModel::runScript (const QString &s)
+QDBusVariant AdaptorModel::execute (const QString &s)
 {
-    return QDBusVariant (model->runScript (s));
+    return QDBusVariant (model->execute (s));
 }
 

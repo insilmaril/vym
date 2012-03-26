@@ -16,8 +16,10 @@ public:
 
 public slots: // METHODS
     QDBusVariant modelCount ();
+    void gotoModel (const int &n);
     QDBusVariant getInstanceName();
     QDBusVariant getVersion();
+    QDBusVariant execute ( const QString &s);
 
 Q_SIGNALS: // SIGNALS
     void crashed();

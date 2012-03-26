@@ -20,6 +20,11 @@ QDBusVariant AdaptorVym::modelCount()
     return QDBusVariant (mainWindow->modelCount() );
 }
 
+void AdaptorVym::gotoModel(const int &n)
+{
+    mainWindow->gotoWindow (n);
+}
+
 QDBusVariant AdaptorVym::getInstanceName()
 {
     return QDBusVariant (vymInstanceName);
@@ -28,4 +33,9 @@ QDBusVariant AdaptorVym::getInstanceName()
 QDBusVariant AdaptorVym::getVersion()
 {
     return QDBusVariant (vymVersion);
+}
+
+QDBusVariant AdaptorVym::execute(const QString &s)
+{
+    return QDBusVariant (mainWindow->execute (s) );
 }

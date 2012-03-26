@@ -29,7 +29,7 @@ public slots: // METHODS
     QDBusVariant getHeading();
     void setHeading (const QString &s);
     QDBusVariant branchCount();
-    QDBusVariant runScript (const QString &s);
+    QDBusVariant execute (const QString &s);
 
 Q_SIGNALS: // SIGNALS
     void crashed();

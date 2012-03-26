@@ -205,7 +205,7 @@ Main::Main(QWidget* parent, Qt::WFlags f) : QMainWindow(parent,f)
     scriptEditor->move (50,50);
 
     connect( scriptEditor, SIGNAL( runScript ( QString ) ), 
-	this, SLOT( runScript( QString ) ) );
+	this, SLOT( execute( QString ) ) );
 
     // Initialize some settings, which are platform dependant
     QString p,s;
@@ -4724,19 +4724,26 @@ void Main::setScript (const QString &script)
     scriptEditor->setScript (script);
 }
 
-void Main::runScript (const QString &script)
+QVariant Main::execute (const QString &script)
 {
     VymModel *m=currentModel();
-    if (m) m->runScript (script);
+    if (m) return m->execute (script);
+    return QVariant();
 }
 
-void Main::runScriptEverywhere (const QString &script)
+void Main::executeEverywhere (const QString &script)
 {
     foreach (VymView *vv,vymViews)
     {
 	VymModel *m=vv->getModel();
-	if (m) m->runScript (script);
+	if (m) m->execute (script);
     }
+}
+
+void Main::gotoWindow (const int &n)
+{
+    if (n < tabWidget->count() && n>=0 )
+	tabWidget->setCurrentIndex (n);
 }
 
 void Main::windowNextEditor()
@@ -4918,7 +4925,7 @@ void Main::callMacro ()
 	if (! macro.isEmpty())
 	{
 	    VymModel *m=currentModel();
-	    if (m) m->runScript(macro);
+	    if (m) m->execute(macro);
 	}   
     }	
 }

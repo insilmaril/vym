@@ -282,7 +282,7 @@ QString Parser::getScript()
     return script;
 }   
 
-void Parser::runScript()
+void Parser::execute()
 {
     current=0;
 }   
@@ -290,7 +290,7 @@ void Parser::runScript()
 bool Parser::next()
 {
     int start=current;
-    if (current<0) runScript();
+    if (current<0) execute();
     if (current+1>=script.length()) return false;
 
     bool inBracket=false;

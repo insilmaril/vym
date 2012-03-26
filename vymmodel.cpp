@@ -3994,6 +3994,14 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	} else if (parser.checkParCount(0))
 	    returnValue=selti->getHeading();
     /////////////////////////////////////////////////////////////////////
+    } else if (com=="getSelectString")
+    { 
+	if (!selti)
+	{
+	    parser.setError (Aborted,"Nothing selected");
+	} else if (parser.checkParCount(0))
+	    returnValue=getSelectString();
+    /////////////////////////////////////////////////////////////////////
     } else if (com=="importDir")
     {
 	if (!selti)
@@ -4828,10 +4836,10 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
     return returnValue;
 }
 
-QVariant VymModel::runScript (const QString &script)
+QVariant VymModel::execute (const QString &script)
 {
     parser.setScript (script);
-    parser.runScript();
+    parser.execute ();
     QVariant r;
     bool noErr=true;
     QString errMsg;
@@ -5137,7 +5145,7 @@ void VymModel::exportLast()
     QString desc;
     QString s;
     if (exportLastAvailable(desc,command,path) )
-	runScript (QString ("%1 (\"%2\")").arg(command).arg(path) );
+	execute (QString ("%1 (\"%2\")").arg(command).arg(path) );
 }
 
 

@@ -277,8 +277,9 @@ public slots:
     bool autoEditNewBranch();
     bool autoSelectNewBranch();
     void setScript(const QString &);
-    void runScript(const QString &);
-    void runScriptEverywhere (const QString &);
+    QVariant execute(const QString &);
+    void executeEverywhere (const QString &);
+    void gotoWindow (const int &n);
 
 private slots:
     void windowNextEditor();

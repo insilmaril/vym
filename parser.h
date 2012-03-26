@@ -32,7 +32,7 @@ public:
 
     void setScript (const QString &);
     QString getScript();
-    void runScript();
+    void execute();
     bool next();
 
 
