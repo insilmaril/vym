@@ -190,7 +190,7 @@ void ExportAO::doExport()
 		if (col==QColor (255,0,0))
 		    colString="[R] ";
 		else if (col==QColor (217,81,0))
-		    colString="[O ]";
+		    colString="[O] ";
 		else if (col==QColor (0,85,0))
 		    colString="[G] ";
 		else	
@@ -220,14 +220,34 @@ void ExportAO::doExport()
 			break;
 		    default:	// depth 4 are the items we need to know
 			if (cur->depth()>4) ts<<curIndent;
-			if (cur->hasActiveStandardFlag ("hook-green"))
-			    ts <<colString+cur->getHeadingPlain()<< " [DONE] ";
-			else	if (cur->hasActiveStandardFlag ("wip"))
-			    ts <<colString+cur->getHeadingPlain()<< " [WIP] ";
-			else	if (cur->hasActiveStandardFlag ("cross-red"))
-			    ts <<colString+cur->getHeadingPlain()<< " [NOT STARTED] ";
-			else	
-			    ts <<"  - "+cur->getHeadingPlain();
+
+			Task *task=cur->getTask();
+			if (task)
+			{
+			    // Task status overrides other flags
+			    switch ( task->getStatus() )
+			    {
+				case Task::NotStarted:
+				    ts <<colString+cur->getHeadingPlain()<< " [NOT STARTED] ";
+				    break;
+				case Task::WIP:   
+				    ts <<colString+cur->getHeadingPlain()<< " [WIP] ";
+				    break;
+				case Task::Finished:
+				    ts <<colString+cur->getHeadingPlain()<< " [DONE] ";
+				    break;
+			    }
+			} else
+			{
+			    if (cur->hasActiveStandardFlag ("hook-green") )
+				ts <<colString+cur->getHeadingPlain()<< " [DONE] ";
+			    else	if (cur->hasActiveStandardFlag ("wip"))
+				ts <<colString+cur->getHeadingPlain()<< " [WIP] ";
+			    else	if (cur->hasActiveStandardFlag ("cross-red"))
+				ts <<colString+cur->getHeadingPlain()<< " [NOT STARTED] ";
+			    else	
+				ts <<"  - "+cur->getHeadingPlain();
+			}
 			ts << "\n";
 			break;
 		}
