@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <typeinfo>
+#include <unistd.h>
 
 #include "aboutdialog.h"
 #include "adaptorvym.h"
