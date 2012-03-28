@@ -1,0 +1,108 @@
+#!/bin/bash
+
+VERSION=2.0.6
+BRANCH="maintained-release"
+REMOTE="sf"
+
+#VERSION=1.12.9
+#RTAG="-r release-1-12-maintained"
+
+
+# Init
+OLDDIR=$(pwd)
+REPO=$OLDDIR/vym
+TMPDIR=$OLDDIR/tmp
+
+echo "Getting sources for: vym"  
+echo "             Branch: $BRANCH"
+echo "  Working directory: $OLDDIR"
+echo 
+
+
+if [ -d $TMPDIR ]; then
+    read -n 1 -p "$TMPDIR exists: Remove it first? [y]" INPUT
+    if [ ! "$INPUT" = "n" ]; then
+	rm -rf $TMPDIR
+    fi	
+fi
+echo
+mkdir $TMPDIR
+
+read -n 1 -p "Pull from git repository ? [y]" INPUT
+DO_CHECKOUT=1
+if [ "$INPUT" = "n" ]; then
+    DO_CHECKOUT=0
+fi	
+echo
+
+read -n 1 -p "Create Documentation? [y]" INPUT
+DO_DOCS=1
+if [ "$INPUT" = "n" ]; then
+    DO_DOCS=0
+fi	
+echo
+
+read -n 1 -p "Create Tarball? [y]" INPUT
+DO_TARBALL=1
+if [ "$INPUT" = "n" ]; then
+    DO_TARBALL=0
+fi	
+echo
+
+echo -n "Remove unpacked sources after creating tarball? [y]"
+#echo "(do this before  \"osc addremove\")"
+read -n 1 INPUT
+DO_REMOVE=1
+if [ "$INPUT" = "n" ]; then
+    DO_REMOVE=0
+fi	
+echo
+
+# get data from repository
+if [ $DO_CHECKOUT = 1 ]; then
+    #cvs -d:ext:insilmaril@vym.cvs.sourceforge.net:/cvsroot/vym co -r $RTAG code
+    #cvs -d:pserver:anonymous@vym.cvs.sourceforge.net:/cvsroot/vym co -P $RTAG code
+    cd $OLDDIR
+    echo Removing $REPO...
+    rm -rf $REPO
+    git clone -b $BRANCH git://vym.git.sourceforge.net/gitroot/vym/vym
+fi	
+
+VERSION=$(grep __VYM_VERSION $REPO/version.h |  sed -e 's/^.*\"\(.*\)\"$/\1/g')
+TARBALLSRC=vym-$VERSION
+echo
+echo "Setting version from sources: $VERSION"
+echo
+
+# create documentation
+if [ $DO_DOCS = 1 ] ; then
+    cp -ra $REPO/tex $TMPDIR
+    cd $TMPDIR/tex
+    for i in {1..3} ; do
+	pdflatex vym.tex
+	pdflatex vym_es.tex
+	#pdflatex vym_fr.tex
+	sleep 1
+    done	
+    cd $OLDDIR
+fi
+
+cd $OLDDIR
+
+# create tarball
+if [ $DO_TARBALL = 1 ]; then
+    if [ -d $TARBALLSRC ] ;  then
+	rm -rf $TARBALLSRC
+    fi
+    cp -ra $REPO $TARBALLSRC
+
+    # Copy doc
+    mkdir -p $TARBALLSRC/doc
+    mv $TMPDIR/tex/*.pdf $TARBALLSRC/doc
+
+    rm -rf $TARBALLSRC/.git
+    tar cvjf vym-$VERSION.tar.bz2 $TARBALLSRC
+    if [ $DO_REMOVE = 1 ]; then
+	rm -rf $TARBALLSRC
+    fi
+fi
