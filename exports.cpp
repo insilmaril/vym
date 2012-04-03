@@ -597,9 +597,17 @@ QString ExportHTML::getBranchText(BranchItem *current)
 	{
 	    QString n;
 	    if (current->getNoteObj().isRichText())
+	    {
 		n=current->getNote();
+		QRegExp re("<p.*>");
+		re.setMinimal (true);
+		n.replace(re,"<p class=\"vym-note-paragraph\"");
+	    }
 	    else
+	    {
 		n=current->getNoteASCII().replace ("<","&lt;").replace (">","&gt;");
+		n.replace("\n","<br/>");
+	    }
 	    s+="\n<table class=\"vym-note\"><tr><td>\n"+n+"\n</td></tr></table>\n";
 	}   
 

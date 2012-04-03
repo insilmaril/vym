@@ -112,6 +112,9 @@ a:hover {
     padding: 1em 1em;
 }
 
+.vym-note-paragraph { 
+    padding-top: 5px;
+}
 .standardflag { 
     margin-left: 5px; 
 }
