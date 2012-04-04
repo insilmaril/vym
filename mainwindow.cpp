@@ -1937,6 +1937,13 @@ void Main::setupTestActions()
     switchboard.addConnection(testMenu, a, tr("Test shortcuts","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( testFunction2() ) );
 
+    a = new QAction( "Toggle hide export mode" , this);
+    a->setCheckable (true);
+    a->setChecked (false);
+    switchboard.addConnection(testMenu, a, tr("Test shortcuts","Shortcut group"));
+    connect( a, SIGNAL( triggered() ), this, SLOT( toggleHideExport() ) );
+    actionToggleHideMode=a;
+
     a = new QAction( "Command" , this);		//FIXME-3+ Make this available in release?
     switchboard.addConnection(testMenu, a, tr("Test shortcuts","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( testCommand() ) );
@@ -4781,6 +4788,16 @@ void Main::testFunction2()
 {
     if (!currentMapEditor()) return;
     currentMapEditor()->testFunction2();
+}
+
+void Main::toggleHideExport()
+{
+    VymModel *m=currentModel();
+    if (!m) return;
+    if (actionToggleHideMode->isChecked() )
+	m->setHideTmpMode (TreeItem::HideExport);
+    else
+	m->setHideTmpMode (TreeItem::HideNone);
 }
 
 void Main::testCommand()

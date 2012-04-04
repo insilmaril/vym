@@ -368,6 +368,7 @@ void LinkableMapObj::updateVisibility()
 {
     bool visnow=visible;
 
+    // Hide links of unselected objects (if wanted)
     if (((MapItem*)treeItem)->getHideLinkUnselected()
 	&& !treeItem->getModel()->isSelected(treeItem) )
 	visnow=false;

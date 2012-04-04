@@ -180,7 +180,7 @@ QString BranchItem::saveToDir (const QString &tmpdir,const QString &prefix, cons
     return s;
 }
 
-void BranchItem::updateVisibility() 
+void BranchItem::updateVisibility()
 {
     // Needed to hide relinked branch, if parent is scrolled
     if (lmo)

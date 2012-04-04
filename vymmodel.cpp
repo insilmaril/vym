@@ -5111,7 +5111,9 @@ void VymModel::exportHTML (const QString &dir, bool useDialog)
 {
     ExportHTML ex (this);
     ex.setDirectory (dir);
+    setExportMode(true);
     ex.doExport(useDialog);
+    setExportMode(false);
 }
 
 void VymModel::exportOOPresentation(const QString &fn, const QString &cf) //FIXME-3 No exportLast and command yet
@@ -5767,16 +5769,18 @@ QColor VymModel::getSelectionColor()
     return mapEditor->getSelectionColor();
 }
 
-void VymModel::setHideTmpMode (TreeItem::HideTmpMode mode)
+void VymModel::setHideTmpMode (TreeItem::HideTmpMode mode)  
 {
     hidemode=mode;
     for (int i=0;i<rootItem->branchCount();i++)
-	rootItem->getBranchNum(i)->setHideTmp (mode);	
+	rootItem->getBranchNum(i)->setHideTmp (mode);
     reposition();
     if (mode==TreeItem::HideExport)
 	unselectAll();
     else
 	reselect();
+
+    qApp->processEvents();
 }
 
 //////////////////////////////////////////////
@@ -5895,7 +5899,7 @@ void VymModel::unselectAll ()
 
 void VymModel::unselect(QItemSelection desel)  
 {
-    if (desel.isEmpty())
+    if (!desel.isEmpty())
     {
 	lastSelectString=getSelectString();
 	selModel->clearSelection(); 
@@ -5904,7 +5908,8 @@ void VymModel::unselect(QItemSelection desel)
 
 bool VymModel::reselect()
 {
-    return select (lastSelectString);
+    bool b=select (lastSelectString);
+    return b;
 }   
 
 bool VymModel::canSelectPrevious()

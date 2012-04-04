@@ -560,12 +560,8 @@ void MapEditor::print()
     }
 }
 
-QRectF MapEditor::getTotalBBox()    
+QRectF MapEditor::getTotalBBox()    //FIXME-2 frames missing, esp. c loud
 {
-    QPen pen;
-    pen.setWidth (1);
-    pen.setCapStyle ( Qt::RoundCap );
-
     QRectF rt;
     BranchObj *bo;
     BranchItem *cur=NULL;
@@ -1907,7 +1903,7 @@ void MapEditor::setState (EditorState s)
     }
 }
 
-void MapEditor::updateSelection(QItemSelection ,QItemSelection desel)	
+void MapEditor::updateSelection(QItemSelection nsel,QItemSelection dsel)	
 {
     QList <MapItem*> itemsSelected;
     QList <MapItem*> itemsDeselected;
@@ -1925,7 +1921,7 @@ void MapEditor::updateSelection(QItemSelection ,QItemSelection desel)
 		mi->updateVisibility();
 	    }
     }
-    foreach (QModelIndex ix,desel.indexes() )
+    foreach (QModelIndex ix,dsel.indexes() )
     {
 	MapItem *mi= static_cast<MapItem*>(ix.internalPointer());
 	if (mi->isBranchLikeType() 

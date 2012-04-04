@@ -291,6 +291,7 @@ private slots:
 
     void testFunction1();
     void testFunction2();
+    void toggleHideExport();
     void testCommand();
 
     void helpDoc();
@@ -446,8 +447,9 @@ private:
     QAction *actionModModeXLink;
     QAction *actionModModeCopy;
 
-    QActionGroup *actionGroupFormatFrameTypes;
+    QAction *actionToggleHideMode;
 
+    QActionGroup *actionGroupFormatFrameTypes;
 
     QActionGroup *actionGroupFormatLinkStyles;
     QAction *actionFormatLinkStyleLine;

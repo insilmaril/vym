@@ -154,11 +154,12 @@ void BranchObj::unsetParObjTmp()
     }	    
 }
 
-void BranchObj::setVisibility(bool v, int toDepth)
+void BranchObj::setVisibility(bool v, int toDepth) 
 {
     BranchItem *bi=(BranchItem*)treeItem;
     if (bi->depth() <= toDepth)
     {
+//qDebug()<<"   * BO::setVis v="<<v<<bi->getHeading();
 	frame->setVisibility(v);
 	heading->setVisibility(v);
 	systemFlags->setVisibility(v);
@@ -173,12 +174,11 @@ void BranchObj::setVisibility(bool v, int toDepth)
 	// Only change children, if I am not scrolled
 	if (! bi->isScrolled() && (bi->depth() < toDepth))
 	{
-	    // Now go recursivly through all children //FIXME-3 are there multiple calls for lower level items???
+	    // Now go recursivly through all children 
 	    for (i=0; i<treeItem->branchCount(); ++i)
 		treeItem->getBranchObjNum(i)->setVisibility (v,toDepth);    
 	}
     } // depth <= toDepth   
-    requestReposition();
 }   
 
 void BranchObj::setVisibility(bool v)
