@@ -244,7 +244,7 @@ void QGraphicsItem::paint(QPainter*, const QStyleOptionGraphicsItem*, QWidget*)
 {
 }
 
-void BranchObj::positionBBox()
+void BranchObj::positionBBox() // FIXME-1 consider dimensions of frame (thickness, geometry, padding...
 {
     QPointF ap=getAbsPos();
     bbox.moveTopLeft (ap);

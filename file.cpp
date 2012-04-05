@@ -168,46 +168,6 @@ void removeDir(QDir d)
 void copyDir (QDir src, QDir dst)   //FIXME-3 don't use system call
 {
     system (QString ("cp -r "+src.path()+"/* "+dst.path()).toUtf8() );
-
-    /*
-    ErrorCode err=success;
-
-    Process *cpProc=new Process ();
-    QStringList args;
-    cpProc->setWorkingDirectory (src.path());
-    args <<"-r";
-    args <<src.path();
-    args <<dst.path();
-
-    cpProc->start ("cp",args);
-    if (!cpProc->waitForStarted() )
-    {	
-	// zip could not be started
-	QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
-		       QObject::tr("Couldn't start zip to compress data."));
-	err=aborted;
-    } else
-    {
-	// zip could be started
-	cpProc->waitForFinished();
-	if (cpProc->exitStatus()!=QProcess::NormalExit )
-	{
-	    QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
-			   QObject::tr("cp didn't exit normally")+
-			   "\n" + cpProc->getErrout());
-	    err=aborted;
-	} else
-	{
-	    if (cpProc->exitCode()>0)
-	    {
-		QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
-			   QString("cp exit code:  %1").arg(cpProc->exitCode() )+
-			   "\n" + cpProc->getErrout() );
-		err=aborted;
-	    }
-	}
-    }	// cp could be started
-    */
 }
 
 void makeSubDirs (const QString &s)
@@ -218,10 +178,30 @@ void makeSubDirs (const QString &s)
     d.mkdir ("flags");	
 }
 
-ErrorCode zipDir (const QDir &zipDir, const QString &zipName)
+ErrorCode zipDir (const QDir &zipDir, const QString &zipName)	
 {
-    ErrorCode err=success;
+    ErrorCode err = success;
     
+    QString newName;
+    // Move existing file away
+    QFile file(zipName);
+    if (file.exists() )
+    { 
+	newName = zipName + ".tmp";
+	int n=0;
+	while (!file.rename (newName) && n<5)
+	{
+	    newName = newName + QString().setNum(n);
+	    n++;
+	}
+	if (n>=5)
+	{
+	    QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
+			   QObject::tr("Couldn't move existing file out of the way before saving."));
+	    return aborted;
+	}
+    }
+
     // zip the temporary directory
     QStringList args;
     Process *zipProc=new Process ();
@@ -257,7 +237,20 @@ ErrorCode zipDir (const QDir &zipDir, const QString &zipName)
 		err=aborted;
 	    }
 	}
-    }	// zip could be started
+    }	
+
+    // Try to restore previous file, if zipping failed
+    if (err == aborted && !newName.isEmpty() && !file.rename (zipName) )
+	QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
+	   QObject::tr("Couldn't rename %1 back to %2").arg(newName).arg(zipName) );
+    else
+    {
+	// Remove temporary file
+	if (!newName.isEmpty()  && !file.remove() )
+	    QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
+	       QObject::tr("Saved %1, but couldn't remove %2").arg(zipName).arg(newName));
+    }
+
     return err;	
 }
 

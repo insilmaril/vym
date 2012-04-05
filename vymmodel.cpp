@@ -205,7 +205,6 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix, bool w
     // writeflags   Only write flags for "real" save of map, not undo
     // offset	    offset of bbox of whole map in scene. 
     //		    Needed for XML export
-    
 
     XMLObj xml;
 
