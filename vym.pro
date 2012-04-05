@@ -2,7 +2,7 @@ TARGET	    = vym
 TEMPLATE    = app
 LANGUAGE    = C++
 
-CONFIG	+= qt warn_on debug x86 ppc qdbus 
+CONFIG	+= qt warn_on x86 ppc qdbus 
 
 QT += network xml svg
 
