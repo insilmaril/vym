@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION=2.0.6
+VERSION=2.0.11
 BRANCH="maintained-release"
 REMOTE="sf"
 
