@@ -378,7 +378,7 @@ void Main::setProgressMaximum (int max)	{
     progressCounter++;	// Another map is loaded
 
     progressMax=max*1000;
-    //cout << "Main  max="<<max<<"  v="<<progressDialog.value()<<endl;
+    //qDebug() << "Main  max="<<max<<"  v="<<progressDialog.value();
     if (!options.isOn("batch"))
 	progressDialog.show();
     else	
@@ -389,11 +389,11 @@ void Main::addProgressValue (float v)
 
 {
 /*
-    cout << "addVal v="<<v
+    qDebug() << "addVal v="<<v
 	 <<"  cur="<<progressDialog.value()
 	 <<"  pCounter="<<progressCounter
 	 <<"  pCounterTotal="<<progressCounterTotal
-	 <<endl;
+	 ;
 	 */
     if (!options.isOn("batch"))
 	progressDialog.show();
@@ -3164,7 +3164,7 @@ void Main::openTabs(QStringList urls)
 	{
 	    // Start a new browser, if there is not one running already or
 	    // if a previously started konqueror is gone.
-	    if (debug) cout <<"Main::openTabs no konqueror-"<<*browserPID<<" found\n";
+	    if (debug) qDebug() <<"Main::openTabs no konqueror-"<<*browserPID<<" found";
 	    QString u=urls.takeFirst();
 	    args<<u;
 	    QString workDir=QDir::currentPath();
@@ -3177,7 +3177,7 @@ void Main::openTabs(QStringList urls)
 		    tr("Please use Settings->")+tr("Set application to open an URL"));
 		return;
 	    }
-	    if (debug) cout << "Main::openTabs  Started konqueror-"<<*browserPID<<endl;
+	    if (debug) qDebug() << "Main::openTabs  Started konqueror-"<<*browserPID;
 #if defined(Q_OS_WIN32)
             // There's no sleep in VCEE, replace it with Qt's QThread::wait().
             this->thread()->wait(3000);
@@ -3199,7 +3199,7 @@ void Main::openTabs(QStringList urls)
 		    "newTab" <<
 		    urls.at(i)<<
 		    "false";
-		if (debug) cout << "MainWindow::openURLs  args="<<args.join(" ").toStdString()<<endl;
+		if (debug) qDebug() << "MainWindow::openURLs  args="<<args.join(" ");
 		if (!QProcess::startDetached ("qdbus",args))
 		    success=false;
 	    }
@@ -3398,7 +3398,7 @@ void Main::editHeadingFinished(VymModel *m)
 void Main::openVymLinks(const QStringList &vl)
 {
     QStringList vlmin;
-    int index;
+    int index=-1;
     for (int j=0; j<vl.size(); ++j)
     {
 	// compare path with already loaded maps

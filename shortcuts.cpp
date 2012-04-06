@@ -31,7 +31,7 @@ void Switchboard::addConnection (QWidget *w, QAction *a, const QString &group)
     if (w) w->addAction (a);
 }
 
-void Switchboard::print ()
+void Switchboard::print ()  //FIXME-3 open messagebox, maybe showtextdialog
 {
     QString g;
     foreach (g,actions.uniqueKeys())
@@ -50,7 +50,7 @@ void Switchboard::print ()
     }
 }
 
-void Switchboard::printLaTeX ()
+void Switchboard::printLaTeX ()	//FIXME-2 open messagebox, maybe showtextdialog
 {
     QString g;
     foreach (g,actions.uniqueKeys())

@@ -1,9 +1,8 @@
 #include "xsltproc.h"
 
 #include <iostream>
-using namespace std;
-
-#include <qmessagebox.h>
+#include <QDebug>
+#include <QMessageBox>
 
 #include "process.h"
 
@@ -70,7 +69,7 @@ void XSLTProc::process()
     args << xslFile;
     args << inputFile;
     QString com=xsltprocessor+" "+args.join(" "); 
-    if (debug) cout <<"xsltproc executing:\n"<<qPrintable(com)<<endl;
+    if (debug) qDebug() <<"xsltproc executing:\n"<<qPrintable(com);
     dia.append ("vym is executing: \n" + com );	
     xsltProc->start(xsltprocessor,args);
     if (!xsltProc->waitForStarted() )

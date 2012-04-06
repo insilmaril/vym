@@ -26,7 +26,7 @@ QWidget *AttributeDelegate::createEditor(QWidget *parent,
     }
     if (col==1 && row==index.model()->rowCount() -1 )
     {
-	cout << "Edit value now..."<<endl;
+	qDebug()<< "Edit value now...";
 	//We are editing a new attribute, starting with attribute name
 	QComboBox *editor = new QComboBox(parent);
 	editor->insertItems (0,attributeTable->getKeys());
@@ -39,7 +39,7 @@ QWidget *AttributeDelegate::createEditor(QWidget *parent,
 
     QVariant var=index.model()->data(index.model()->index(row,2,QModelIndex()));
     QString typeName=var.toString();
-    cout << "AttrDel::createEditor type="<<qPrintable (typeName)<<endl;
+    qDebug()<< "AttrDel::createEditor type="<<qPrintable (typeName);
 
     if (typeName=="IntList")
     {

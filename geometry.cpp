@@ -193,7 +193,7 @@ void projectPolygon(Vector axis, ConvexPolygon polygon, qreal &min, qreal &max)
 {
     // To project a point on an axis use the dot product
 
-    //cout << "Projecting on "<< axis<<endl;
+    //qDebug() << "Projecting on "<< axis;
     qreal d = axis.dotProduct(polygon.at(0));
     min = d;
     max = d;
@@ -204,7 +204,7 @@ void projectPolygon(Vector axis, ConvexPolygon polygon, qreal &min, qreal &max)
             min = d;
         else 
             if (d> max) max = d;
-    //	cout << "p="<<polygon.at(i)<<"  d="<<d<<"  (min, max)=("<<min<<","<<max<<")\n";	
+    //	qDebug() << "p="<<polygon.at(i)<<"  d="<<d<<"  (min, max)=("<<min<<","<<max<<")";	
     }
 }
 
@@ -239,13 +239,13 @@ PolygonCollisionResult polygonCollision(ConvexPolygon polygonA,
     QPointF edge;
 
 /*
-    cout << "\nA: ";
+    qDebug() << "A: ";
     for (int k=0; k<edgeCountA;k++)
-	cout <<polygonA.at(k);
-    cout << "\nB: ";
+	qDebug() <<polygonA.at(k);
+    qDebug() << "B: ";
     for (int k=0; k<edgeCountB;k++)
-	cout <<polygonB.at(k);
-    cout <<endl;    
+	qDebug() <<polygonB.at(k);
+    qDebug() ;    
 */	
 	
     // Loop through all the edges of both polygons
@@ -312,16 +312,16 @@ PolygonCollisionResult polygonCollision(ConvexPolygon polygonA,
         // d = intervalDistance(minA, maxA, minB, maxB);
         //if (d > 0) result.willIntersect = false;
 	/*
-	cout <<"   ";
-	cout << "edge="<<edge<<"  ";
-	cout <<"axis="<<axis<<"  ";
-	cout <<"dA=("<<minA<<","<<maxA<<")  dB=("<<minB<<","<<maxB<<")";
-	cout <<"  d="<<d<<"   ";
-	//cout <<"minD="<<minIntervalDistance<<"  ";
-	cout <<"int="<<result.intersect<<"  ";
-	//cout <<"wint="<<result.willIntersect<<"  ";
-	//cout <<"velProj="<<velocityProjection<<"  ";
-	cout <<endl;
+	qDebug() <<"   ";
+	qDebug() << "edge="<<edge<<"  ";
+	qDebug() <<"axis="<<axis<<"  ";
+	qDebug() <<"dA=("<<minA<<","<<maxA<<")  dB=("<<minB<<","<<maxB<<")";
+	qDebug() <<"  d="<<d<<"   ";
+	//qDebug() <<"minD="<<minIntervalDistance<<"  ";
+	qDebug() <<"int="<<result.intersect<<"  ";
+	//qDebug() <<"wint="<<result.willIntersect<<"  ";
+	//qDebug() <<"velProj="<<velocityProjection<<"  ";
+	qDebug() ;
 	*/
     
         if (result.intersect )// || result.willIntersect) 
@@ -334,7 +334,7 @@ PolygonCollisionResult polygonCollision(ConvexPolygon polygonA,
 	    if (d < minIntervalDistance) {
 		minIntervalDistance = d;
 		//translationAxis = axis;
-		//cout << "tAxix="<<translationAxis<<endl;
+		//qDebug() << "tAxix="<<translationAxis;
 
 		//QPointF t = polygonA.Center - polygonB.Center;
 		//QPointF t = polygonA.at(0) - polygonB.at(0);

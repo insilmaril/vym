@@ -17,7 +17,7 @@ extern FlagRow* systemFlagsMaster;
 
 TreeItem::TreeItem()
 {
-    //cout << "Constr. TI  this="<<this<<endl;
+    //qDebug() << "Constr. TI  this="<<this;
     init();
     itemData.clear();
     rootItem=this;
@@ -26,7 +26,7 @@ TreeItem::TreeItem()
 
 TreeItem::TreeItem(const QList<QVariant> &data, TreeItem *parent)
 {
-    //cout << "Constructor TreeItem this="<<this<<"  parent="<<parent<<endl;
+    //qDebug() << "Constructor TreeItem this="<<this<<"  parent="<<parent;
     init();
     parentItem = parent;
     itemData = data;
@@ -231,7 +231,7 @@ int TreeItem::row() const
     if (parentItem)
         return parentItem->childItems.indexOf(const_cast<TreeItem*>(this));
 
-    cout << "TI::row() pI=NULL this="<<this<<"  ***************\n";
+    qDebug() << "TI::row() pI=NULL this="<<this<<"  ***************";
     return 0;
 }
 
@@ -251,7 +251,7 @@ int TreeItem::depth()
 
 TreeItem *TreeItem::parent()
 {
-    //cout << "TI::parent of "<<getHeadingStd()<<"  is "<<parentItem<<endl;
+    //qDebug() << "TI::parent of "<<getHeadingStd()<<"  is "<<parentItem;
     return parentItem;
 }
 

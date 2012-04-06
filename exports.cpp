@@ -319,7 +319,7 @@ void ExportASCII::doExport()
 
 	    if (!cur->hasHiddenExportParent() )
 	    {
-		//std::cout << "ExportASCII::  "<<curIndent.toStdString()<<cur->getHeadingPlain().toStdString()<<std::endl;
+		//qDebug() << "ExportASCII::  "<<curIndent.toStdString()<<cur->getHeadingPlain().toStdString();
 
 		dashIndent="";
 		switch (cur->depth())

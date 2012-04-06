@@ -7,7 +7,7 @@
 /////////////////////////////////////////////////////////////////
 Flag::Flag()
 {
-    //cout << "Const Flag ()\n";
+    //qDebug() << "Const Flag ()";
     init ();
 }
 
@@ -19,13 +19,13 @@ Flag::Flag(const QString &fname)
 
 Flag::Flag (Flag* io)
 {
-    //cout << "Const Flag (Flag)\n";
+    //qDebug() << "Const Flag (Flag);
     copy (io);
 }
 
 Flag::~Flag()
 {
-   //cout << "Destr Flag  this="<<this <<"  " << qPrintable(name) << "\n";
+   //qDebug() << "Destr Flag  this="<<this <<"  " << qPrintable(name);
 }
 
 

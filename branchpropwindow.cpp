@@ -299,7 +299,7 @@ void BranchPropertyWindow::addAttributeClicked()
 
 void BranchPropertyWindow::deleteAttributeClicked()
 {
-    //FIXME-3 cout << "BPW::delete\n";
+    //FIXME-3 qDebug() << "BPW::delete";
 }
 */
 

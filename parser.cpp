@@ -48,8 +48,8 @@ void Parser::parseAtom (QString s)
     paramList.clear();
     re.setPattern ("\\((.*)\\)");
     pos=re.indexIn (s);
-    //cout << "  s="<<qPrintable(s)<<endl;
-    //cout << "com="<<qPrintable(com)<<"  pos="<<pos<<endl<<endl;
+    //qDebug() << "  s="<<qPrintable(s);
+    //qDebug() << "com="<<qPrintable(com)<<"  pos="<<pos;
     if (pos>=0)
     {
 	QString s=re.cap(1);
@@ -296,7 +296,7 @@ bool Parser::next()
     bool inBracket=false;
     while (true)
     {
-	//cout <<"current="<<current<< "   start="<<start<<"  length="<<script.length()<<endl;
+	//qDebug() <<"current="<<current<< "   start="<<start<<"  length="<<script.length();
 
 	// Check if we are inside a string
 	if (script.at(current)=='"')
