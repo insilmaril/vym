@@ -4,7 +4,9 @@
 
 #include <iostream>
 #include <typeinfo>
+#ifndef Q_OS_WIN
 #include <unistd.h>
+#endif
 
 #include "aboutdialog.h"
 #include "adaptorvym.h"

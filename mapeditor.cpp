@@ -466,8 +466,8 @@ QPointF MapEditor::getViewCenter()
 void MapEditor::updateMatrix()
 {
     double a    = M_PI/180 * angle;
-    double sina = sin(a);
-    double cosa = cos(a);
+    double sina = sin((double)a);
+    double cosa = cos((double)a);
 
     QMatrix zm(zoomFactor, 0, 0, zoomFactor, 0, 0);
     //QMatrix translationMatrix(1, 0, 0, 1, 50.0, 50.0);
@@ -693,7 +693,7 @@ void MapEditor::autoLayout()
 			// Add random direction, if only two polygons with identical y or x
 			if (v.x()==0 || v.y()==0) 
 			{
-			    Vector w (cos (rand()%1000),sin(rand()%1000));
+			    Vector w (cos (double((int)rand()%1000)),sin(double((int)rand()%1000)));
 			    w.normalize();
 			    v=v+w;
 			}
@@ -1157,7 +1157,7 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
     */	
 
     // Ignore right clicks or wile editing heading
-    if (e->button() == Qt::RightButton or model->isSelectionBlocked() )
+    if (e->button() == Qt::RightButton || model->isSelectionBlocked() )
     {
 	e->ignore();
 	QGraphicsView::mousePressEvent(e);

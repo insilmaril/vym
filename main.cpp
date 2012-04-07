@@ -20,10 +20,12 @@ using namespace std;
 #if defined(Q_OS_WIN32)
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#define getpid GetCurrentProcessId
+#else
+#include <unistd.h>
 #endif
 
 #include <sys/types.h>		// To retrieve PID for use in DBUS
-#include <unistd.h>
 
 QString vymName;
 QString vymVersion;
@@ -215,7 +217,7 @@ int main(int argc, char* argv[])
             }
 
             if (basePath.isEmpty())
-                basePath = vymBaseDir.currentDirPath();
+                basePath = vymBaseDir.currentPath();
 
             vymInstallDir.setPath(basePath);
             vymBaseDir.setPath(basePath + "/share/vym");

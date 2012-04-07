@@ -2,11 +2,18 @@
 #include <string.h>
 #include <errno.h>
 #include <io.h>
+#ifndef _WIN32
 #include <sys/time.h>
 
 extern "C" {
 pid_t getpid (void);
 }
+#else
+#include <windows.h>
+#define getpid GetCurrentProcessId
+#include <time.h>
+#include <direct.h>
+#endif
 
 char *
 mkdtemp(char *tmpl)
