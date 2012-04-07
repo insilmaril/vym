@@ -160,7 +160,12 @@ Settings::Settings()
     clear();	     
 }
 
-Settings::Settings(const QString & organization, const QString & application ):QSettings (organization,application)
+Settings::Settings(const QString & organization, const QString & application )
+#ifdef Q_OS_WIN32
+    :QSettings 
+#else
+    :QSettings (organization,application)
+#endif
 {
     clear();	     
 }
