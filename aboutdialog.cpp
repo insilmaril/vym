@@ -82,6 +82,7 @@ AboutDialog::AboutDialog( QWidget *parent)
     "</li>"
     "  <ul>"
     "    <li>Scott Dillman and Patrick Spendrin: Recent windows patches</li>"
+    "    <li>Jon Ciesla: Sourceforge file releases</li>"
     "    <li>Andrew Ng, Juha Ruotsalainen and Thomas Kriener: Older windows patches</li>"
     "    <li>Xavier Oswald, Christoph Thielecke and Steffen Joeris: Debian packaging</li>"
     "  </ul>"
