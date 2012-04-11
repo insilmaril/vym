@@ -162,9 +162,9 @@ Settings::Settings()
 
 Settings::Settings(const QString & organization, const QString & application )
 #ifdef Q_OS_WIN32
-    :QSettings 
+    :QSettings (application, QSettings::IniFormat)
 #else
-    :QSettings (organization,application)
+    :QSettings (organization, application)
 #endif
 {
     clear();	     
