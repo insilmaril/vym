@@ -30,6 +30,7 @@ public slots: // METHODS
     void setHeading (const QString &s);
     QDBusVariant branchCount();
     QDBusVariant execute (const QString &s);
+    QDBusVariant listCommands();
 
 Q_SIGNALS: // SIGNALS
     void crashed();

@@ -1,9 +1,61 @@
 #include "parser.h"
 
+#include <QDebug>
 #include <QRegExp>
 #include <iostream>
 
-using namespace std;
+Command::Command (const QString &n, SelectionType st)
+{
+    name=n;
+    selectionType=st;
+}
+
+QString Command::getName()
+{
+    return name;
+}
+
+void Command::addPar (ParameterType t, bool opt, const QString &c)  
+{
+    parTypes.append (t);
+    parOpts.append (opt);
+    parComments.append (c);
+}
+
+int Command::parCount()
+{
+    return parTypes.count();
+}
+
+Command::ParameterType Command::getParType (int n)
+{
+    if (n>=0 and n<parTypes.count() )
+    {
+	return parTypes.at(n);
+    }
+    qDebug()<<"Command::getParType n out of range";
+    return Undefined;
+}
+
+bool Command::isParOptional (int n)
+{
+    if (n>=0 and n<parTypes.count() )
+    {
+	return parOpts.at(n);
+    }
+    qDebug()<<"Command::isParOpt n out of range";
+    return false;
+}
+
+QString  Command::getParComment(int n)
+{
+    if (n>=0 and n<parTypes.count() )
+    {
+	return parComments.at(n);
+    }
+    qDebug()<<"Command::getParComment n out of range";
+    return QString();
+}
 
 Parser::Parser()
 {
@@ -48,8 +100,8 @@ void Parser::parseAtom (QString s)
     paramList.clear();
     re.setPattern ("\\((.*)\\)");
     pos=re.indexIn (s);
-    //qDebug() << "  s="<<qPrintable(s);
-    //qDebug() << "com="<<qPrintable(com)<<"  pos="<<pos;
+    //qDebug() << "  s="<<s;
+    //qDebug() << "com="<<com<<"  pos="<<pos;
     if (pos>=0)
     {
 	QString s=re.cap(1);
@@ -129,6 +181,67 @@ void Parser::setError(ErrorLevel level, const QString &description)
 {
     errDescription=description;
     errLevel=level;
+}
+
+bool Parser::checkParameters()
+{
+    foreach (Command *c, commands)
+    {
+	if (c->getName() == com)
+	{
+	    qDebug()<<"  Found: "<<com;
+
+	    // Check for number of parameters
+	    int optPars=0;
+	    for (int i=0; i < c->parCount(); i++ )
+		if (c->isParOptional(i) ) optPars++;
+	    if (paramList.count() < (c->parCount() - optPars) ||
+	        paramList.count() > c->parCount() )
+	    {
+		QString expected;
+		if (optPars>0)
+		    expected=QString("%1..%2").arg(c->parCount()-optPars).arg(c->parCount() );
+		else 
+		    expected=QString().setNum(c->parCount());
+		errDescription=QString("Wrong number of parameters: Expected %1, but found %2").arg(expected).arg(paramList.count());
+		errLevel=Aborted;
+		return false;
+	    }
+
+	    // Check for types of parameters	//FIXME-2 check related functions...
+	    bool ok;
+	    for (int i=0; i < paramList.count(); i++ )
+	    {	
+		switch (c->getParType(i) )
+		{
+		    case Command::String:
+			parString (ok,i);
+			break;
+		    case Command::Int:	
+			parInt (ok,i);
+			break;
+		    case Command::Double:	
+			parDouble (ok,i);
+			break;
+		    case Command::Color:	
+			parColor (ok,i);
+			break;
+		    case Command::Bool:	
+			parBool (ok,i);
+		    default: ok=false;	
+		}
+		if (!ok)
+		{
+		    errLevel=Aborted;
+		    errDescription=QString("Parameter %1 has wrong type").arg(i);
+		    return false;
+		}
+	    }
+	    return true;
+	}    
+    } 
+    setError (Aborted,"Unknown command");
+    return false;
 }
 
 void Parser::resetError ()
@@ -225,10 +338,14 @@ QString Parser::parString (bool &ok,const int &index)
     QRegExp re("\"(.*)\"");
     int pos=re.indexIn (paramList[index]);
     if (pos>=0)
+    {
 	r=re.cap (1);
-    else    
+	ok=true;
+    } else    
+    {
 	r="";
-    ok=true;
+	ok=false;
+    }
     return r;
 }
 
@@ -343,4 +460,17 @@ bool Parser::next()
 	current++;
     }
 }   
+
+QStringList Parser::getCommands() 
+{
+    QStringList list;
+    foreach (Command *c, commands)
+	list.append (c->getName() );
+    return list;	
+}
+
+void Parser::addCommand (Command *c)
+{
+    commands.append (c);
+}
 

@@ -481,7 +481,6 @@ public:
     /* \brief Runs the script */
     QVariant execute (const QString &script);
 
-private:
     Parser parser;
 
 ////////////////////////////////////////////

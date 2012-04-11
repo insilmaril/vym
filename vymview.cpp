@@ -242,14 +242,14 @@ void VymView::collapseUnselected()
 
     // collapse all to level
     model->nextBranch(cur,prev);
-    bool b=false;
+    //bool b=false;
     while (cur) 
     {
 	pix=model->index (cur);
 	if (treeEditor->isExpanded(pix) &&  level <= cur->depth())
 	{
 	    treeEditor->setExpanded(pix,false);
-	    b=true;
+	    //b=true;
 	}
 	model->nextBranch(cur,prev);	
     }
