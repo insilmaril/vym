@@ -81,7 +81,7 @@ if [ $DO_DOCS = 1 ] ; then
     for i in {1..3} ; do
 	pdflatex vym.tex
 	pdflatex vym_es.tex
-	#pdflatex vym_fr.tex
+	pdflatex vym_fr.tex
 	sleep 1
     done	
     cd $OLDDIR

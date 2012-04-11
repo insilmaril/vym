@@ -6,6 +6,27 @@
 
 enum ErrorLevel {NoError,Warning,Aborted};
 
+class Command
+{
+public:
+    enum SelectionType {Any, TreeItem, Branch, BranchLike, Image, BranchOrImage, XLinkItem}; 
+    enum ParameterType {Undefined,String, Int, Double, Color, Bool};
+    Command (const QString &n, SelectionType st);
+    QString getName();
+    void addPar (ParameterType t, bool opt, const QString &c=QString() );
+    int parCount();
+    ParameterType getParType (int n);
+    bool isParOptional (int n);
+    QString getParComment(int n);
+
+private:
+	QString name;
+	SelectionType selectionType;
+	QList <ParameterType> parTypes;
+	QList <bool> parOpts;
+	QStringList parComments;
+};
+
 class Parser
 {
 public:
@@ -20,6 +41,7 @@ public:
     ErrorLevel errorLevel();
     void setError (ErrorLevel level,const QString &description);
     void resetError();
+    bool checkParameters();
     bool checkParCount (QList <int> plist);
     bool checkParCount (const int &index);
     bool checkParIsInt (const int &index);
@@ -35,6 +57,8 @@ public:
     void execute();
     bool next();
 
+    QStringList getCommands(); 
+    void addCommand (Command*);
 
 private:
     void initParser();
@@ -50,6 +74,8 @@ private:
     QString errMessage;
     QString errDescription;
     ErrorLevel errLevel;
+
+    QList <Command*> commands;
 };
 
 #endif

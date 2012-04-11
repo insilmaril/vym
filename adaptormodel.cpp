@@ -48,10 +48,9 @@ QDBusVariant AdaptorModel::getHeading()
     return QDBusVariant (s);
 }
 
-
 void AdaptorModel::setHeading (const QString &s)
 {
-    model->setHeading(s);
+    if (model) model->setHeading(s);
 }
 
 QDBusVariant AdaptorModel::branchCount()
@@ -66,5 +65,10 @@ QDBusVariant AdaptorModel::branchCount()
 QDBusVariant AdaptorModel::execute (const QString &s)
 {
     return QDBusVariant (model->execute (s));
+}
+
+QDBusVariant AdaptorModel::listCommands ()
+{
+    return QDBusVariant (model->parser.getCommands().join(",") );
 }
 

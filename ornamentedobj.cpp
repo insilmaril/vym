@@ -184,6 +184,7 @@ bool OrnamentedObj::getFrameIncludeChildren()
 
 void OrnamentedObj::positionContents()	//FIXME-3 called multiple times for each object after moving an image with mouse
 {
+    //positionContents FIXME-2 need to consider frame in calcBBox and positionContents
     double x=absPos.x();
     double y=absPos.y();
     double dp=frame->getPadding();
