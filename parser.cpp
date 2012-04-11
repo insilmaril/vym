@@ -189,8 +189,6 @@ bool Parser::checkParameters()
     {
 	if (c->getName() == com)
 	{
-	    qDebug()<<"  Found: "<<com;
-
 	    // Check for number of parameters
 	    int optPars=0;
 	    for (int i=0; i < c->parCount(); i++ )
@@ -208,7 +206,6 @@ bool Parser::checkParameters()
 		return false;
 	    }
 
-	    // Check for types of parameters	//FIXME-2 check related functions...
 	    bool ok;
 	    for (int i=0; i < paramList.count(); i++ )
 	    {	
