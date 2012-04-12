@@ -88,7 +88,7 @@ AboutDialog::AboutDialog( QWidget *parent)
     "  </ul>"
     "<li> General"
     "  <ul>"
-    "    <li>CMake setup by Costantino Giuliodori</li>"
+    "    <li>CMake setup by Costantino Giuliodori and Patrick Spendrin</li>"
     "    <li>All the guys at Trolltech (now Nokia) for their Qt toolkit</li>"
     "    <li>All the guys at SUSE Linux for openSUSE Linux and support,"
     "        e.g. to get Linux running on PowerPC and also Macbooks</li>"

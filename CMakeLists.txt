@@ -1,9 +1,25 @@
 project( vym )
 cmake_minimum_required( VERSION 2.6 )
-set ( CMAKE_BUILD_TYPE Debug )
-add_definitions ( -Wall )
+
+if( NOT CMAKE_BUILD_TYPE )
+	set( CMAKE_BUILD_TYPE Debug )
+endif( NOT CMAKE_BUILD_TYPE )
+
+if( CMAKE_COMPILER_IS_GNUCXX )
+	add_definitions ( -Wall )
+endif( CMAKE_COMPILER_IS_GNUCXX )
+
 find_package ( Qt4 REQUIRED )
 include ( ${QT_USE_FILE} )
+add_definitions( ${QT_DEFINITIONS} )
+
+if( WIN32 )
+	add_definitions( -DUNICODE -D_USE_MATH_DEFINES )
+	if( MSVC )
+		set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zc:wchar_t-" )
+	endif( MSVC )
+endif( WIN32 )
+
 include_directories (
 	${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}
 	${QT_QTCORE_INCLUDE_DIR} ${QT_QTDBUS_INCLUDE_DIR} ${QT_QTGUI_INCLUDE_DIR} ${QT_QTNETWORK_INCLUDE_DIR} ${QT_QTXML_INCLUDE_DIR} ${QT_QTSVG_INCLUDE_DIR}
@@ -245,5 +261,14 @@ set ( vym_MOCS
 	)
 QT4_WRAP_CPP(MOCS ${vym_MOCS})
 
-add_executable ( vym ${vym_SRCS} ${UIS} ${RSCS} ${TRS} ${MOCS} )
-target_link_libraries ( vym  ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTDBUS_LIBRARY} ${QT_QTNETWORK_LIBRARY} ${QT_QTXML_LIBRARY} ${QT_QTSVG_LIBRARY} )
+if( WIN32 )
+	set( vym_SRCS ${vym_SRCS} mkdtemp.cpp vym.rc )
+endif( WIN32 )
+
+add_executable ( vym WIN32 ${vym_SRCS} ${UIS} ${RSCS} ${TRS} ${MOCS} )
+target_link_libraries ( vym  ${QT_QTMAIN_LIBRARY} ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTDBUS_LIBRARY} ${QT_QTNETWORK_LIBRARY} ${QT_QTXML_LIBRARY} ${QT_QTSVG_LIBRARY} )
+install( TARGETS vym RUNTIME DESTINATION bin )
+
+set( _installfolders demos exports flags icons macros scripts styles )
+install( DIRECTORY ${_installfolders} DESTINATION share/vym )
+install( FILES ${TRS} DESTINATION share/vym/lang )
