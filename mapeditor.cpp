@@ -118,6 +118,7 @@ MapEditor::MapEditor( VymModel *vm)	//FIXME-3 change ME from GraphicsScene to It
     connect( a, SIGNAL( triggered() ), this, SLOT( editHeading() ) );
     a = new QAction( tr( "Edit heading","MapEditor" ), this);
     a->setShortcut ( Qt::Key_Enter);			//Edit heading
+    a->setShortcutContext (Qt::WidgetShortcut);
     addAction (a);
     connect( a, SIGNAL( triggered() ), this, SLOT( editHeading() ) );
 

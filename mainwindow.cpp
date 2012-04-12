@@ -3386,6 +3386,12 @@ void Main::editFATE2URL()
     if (m) m->editFATE2URL();
 }
 
+void Main::editHeading()
+{
+    MapEditor *me=currentMapEditor();
+    if (me) me->editHeading();
+}
+
 void Main::editHeadingFinished(VymModel *m)
 {
     if (m)

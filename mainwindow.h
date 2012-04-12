@@ -156,8 +156,8 @@ private slots:
     void editVymLink();
     void editOpenMultipleVymLinks();
 public slots:
+    void editHeading();
     void editHeadingFinished(VymModel *m);
-//    void editHeading();
     void editOpenVymLink();
 private slots:
     void editDeleteVymLink();

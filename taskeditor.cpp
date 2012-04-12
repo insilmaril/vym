@@ -27,7 +27,7 @@ TaskEditor::TaskEditor(QWidget *)
 
     QVBoxLayout* mainLayout = new QVBoxLayout;
 
-    QToolBar *tb=new QToolBar ("test");
+    QToolBar *tb=new QToolBar ("TaskEditor filters");
     tb->setToolButtonStyle (Qt::ToolButtonTextBesideIcon);
     mainLayout->addWidget (tb);
 
@@ -35,8 +35,6 @@ TaskEditor::TaskEditor(QWidget *)
 
     QIcon icon=QIcon (iconPath + "view-filter.png");
     QAction *a = new QAction(icon,  tr( "Current map","TaskEditor" ),this );
-    //a->setShortcut ( Qt::CTRL + Qt::Key_H  );	// Toggle history window
-    //switchboard.addConnection(a,tr("View shortcuts","Shortcut group"));
     a->setCheckable(true);
     a->setChecked  (settings.value("/taskeditor/filterMap", false).toBool());
     tb->addAction (a);
@@ -44,13 +42,23 @@ TaskEditor::TaskEditor(QWidget *)
     actionToggleFilterMap=a;
 
     a = new QAction(icon,  tr( "Awake only","TaskEditor" ),this );
-    //a->setShortcut ( Qt::CTRL + Qt::Key_H  );	// Toggle history window
-    //switchboard.addConnection(a,tr("View shortcuts","Shortcut group"));
     a->setCheckable(true);
     a->setChecked  (settings.value("/taskeditor/filterSleeping", false).toBool());
     //tb->addAction (a);
     connect( a, SIGNAL( triggered() ), this, SLOT(toggleFilterSleeping() ) );
     actionToggleFilterSleeping=a;
+
+    // Forward Enter and Return to MapEditor
+    a = new QAction(icon, tr( "Edit heading","TaskEditor" ), this);
+    a->setShortcut ( Qt::Key_Return);		
+    a->setShortcutContext (Qt::WindowShortcut);
+    addAction (a);
+    connect( a, SIGNAL( triggered() ), mainWindow, SLOT( editHeading() ) );
+    a = new QAction( tr( "Edit heading","TaskEditor" ), this);
+    a->setShortcut ( Qt::Key_Enter);			
+    a->setShortcutContext (Qt::WindowShortcut);
+    addAction (a);
+    connect( a, SIGNAL( triggered() ), mainWindow, SLOT( editHeading() ) );
 
     mainLayout->addWidget (view);
     setLayout (mainLayout);
