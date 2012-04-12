@@ -42,7 +42,6 @@ public:
     void setError (ErrorLevel level,const QString &description);
     void resetError();
     bool checkParameters();
-    bool checkParCount (QList <int> plist);
     bool checkParCount (const int &index);
     bool checkParIsInt (const int &index);
     bool checkParIsDouble (const int &index);

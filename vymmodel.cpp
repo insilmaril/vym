@@ -2885,7 +2885,7 @@ BranchItem* VymModel::addNewBranchInt(BranchItem *dst,int num)
     QList<QVariant> cData;
     cData << "" << "undef";
 
-    BranchItem *parbi;	// FIXME-3 parbi uninitialized for n>=0
+    BranchItem *parbi;	// FIXME-2 parbi uninitialized for n>=0
     QModelIndex parix;
     int n;
     BranchItem *newbi=new BranchItem (cData);	
@@ -3872,30 +3872,14 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	/////////////////////////////////////////////////////////////////////
 	if (com=="addBranch")  
 	{
-	    if (!selti)
-	    {
-		parser.setError (Aborted,"Nothing selected");
-	    } else if (! selbi )
-	    {		  
-		parser.setError (Aborted,"Type of selection is not a branch");
-	    } else 
-	    {   
-		QList <int> pl;
-		pl << 0 <<1;
-		if (parser.checkParCount(pl))
-		{
-		    if (parser.parCount()==0)
-			addNewBranch (0);
-		    else
-		    {
-			n=parser.parInt (ok,0);
-			if (ok ) addNewBranch (n);
-		    }
-		}
-	    }
+	    if (parser.parCount()==0)
+		addNewBranch (0);
+	    else
+		addNewBranch ( parser.parInt (ok,0) );
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="addBranchBefore")
 	{
+	    // FIXME-0 continue here:
 	    if (!selti)
 	    {
 		parser.setError (Aborted,"Nothing selected");

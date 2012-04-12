@@ -29,7 +29,7 @@ int Command::parCount()
 
 Command::ParameterType Command::getParType (int n)
 {
-    if (n>=0 and n<parTypes.count() )
+    if (n>=0 && n<parTypes.count() )
     {
 	return parTypes.at(n);
     }
@@ -39,7 +39,7 @@ Command::ParameterType Command::getParType (int n)
 
 bool Command::isParOptional (int n)
 {
-    if (n>=0 and n<parTypes.count() )
+    if (n>=0 && n<parTypes.count() )
     {
 	return parOpts.at(n);
     }
@@ -49,7 +49,7 @@ bool Command::isParOptional (int n)
 
 QString  Command::getParComment(int n)
 {
-    if (n>=0 and n<parTypes.count() )
+    if (n>=0 && n<parTypes.count() )
     {
 	return parComments.at(n);
     }
@@ -246,24 +246,6 @@ void Parser::resetError ()
     errMessage="";
     errDescription="";
     errLevel=NoError;
-}
-
-bool Parser::checkParCount (QList <int> plist)
-{
-    QStringList expList;
-    QString expected;
-    for (int i=0; i<plist.count();i++)
-    {
-	if (checkParCount (plist[i])) 
-	{
-	    resetError();
-	    return true;
-	}
-	expList.append(QString().setNum(plist[i]));
-    }	
-    expected=expList.join(",");	
-    errDescription=QString("Wrong number of parameters: Expected %1, but found %2").arg(expected).arg(paramList.count());
-    return false;
 }
 
 bool Parser::checkParCount (const int &expected)
