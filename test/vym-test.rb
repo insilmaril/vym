@@ -18,10 +18,29 @@ class Vym
       s=m.listCommands
       @model_commands=s[0].split ","
       @model_commands.each do |c|
-        #puts "c: #{c}"
-	self.class.send(:define_method, c) do
-	  puts "New method #{c} called."
-	  m.execute("#{c}  ()")
+	self.class.send(:define_method, c) do |*pars|
+	  if pars.length == 0
+	    puts "Calling new method \"#{c}\":"
+	    ret=m.execute("#{c} ()")
+	  else  
+	    # Build string with parameters
+	    p="";
+	    a=[]
+	    pars.each do |p|
+	      if p.kind_of? String
+	        a<<"\"#{p}\""
+	      else
+	        a<<p
+	      end
+	    end  
+	    puts "Calling new method \"#{c} (#{a.join(',')})\":"
+            ret = m.execute("#{c} (#{a.join(',')})")
+	  end  
+
+	  err = m.errorLevel
+	  puts "   returned: #{ret}"
+	  puts "      Error: #{err}"
+	  ret
 	end
       end
     end
@@ -97,6 +116,6 @@ vym=Vym.new(vym_mgr.find('test') )
 vym.show_methods
 puts "Modelcount: #{vym.modelCount}"
 
-vym.addBranch
-vym.addBranchBefore
-
+vym.moveRel(50,50)
+#vym.setHeading("foO","bar")
+#puts "Returned: ",vym.getHeading

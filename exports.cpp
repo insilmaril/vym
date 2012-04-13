@@ -877,7 +877,7 @@ void ExportOrgMode::doExport()
 }
 
 ////////////////////////////////////////////////////////////////////////
-void ExportLaTeX::doExport() 
+void ExportLaTeX::doExport()	//FIXME-2 remember last directory
 {
     // Exports a map to a LaTex file.  
     // This file needs to be included 

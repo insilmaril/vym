@@ -11,7 +11,7 @@ extern Settings settings;
 extern QString vymVersion;
 extern QString flagsPath;
 
-bool parseFreemindHandler::startDocument()
+bool parseFreemindHandler::startDocument()  //FIXME-2 import not complete yet
 {
     errorProt = "";
     state = StateInit;

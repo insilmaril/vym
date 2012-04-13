@@ -67,6 +67,16 @@ QDBusVariant AdaptorModel::execute (const QString &s)
     return QDBusVariant (model->execute (s));
 }
 
+QDBusVariant AdaptorModel::errorLevel()
+{
+    return QDBusVariant (model->parser.errorLevel() );
+}
+
+QDBusVariant AdaptorModel::errorDescription()
+{
+    return QDBusVariant (model->parser.errorDescription() );
+}
+
 QDBusVariant AdaptorModel::listCommands ()
 {
     return QDBusVariant (model->parser.getCommands().join(",") );

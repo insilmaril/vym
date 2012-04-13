@@ -80,7 +80,6 @@ void Parser::initAtom()
     atom="";
     com="";
     paramList.clear();
-    resetError();
 }
 
 void Parser::parseAtom (QString s)
@@ -219,11 +218,18 @@ bool Parser::checkParameters(TreeItem *selti)
 		{
 		    if (st==TreeItem::Image )
 			ok=true;
-		}
+		} else if ( ct==Command::Any)	    
+		{
+		    ok=true;
+		} else if ( ct==Command::XLinkItem)	    
+		{
+		    if (st==TreeItem::XLink)
+			ok=true;
+		} else
+		    qWarning()<<"Parser::checkParameters  Unknown selection type";
 		if (!ok)
 		{
-		    errLevel=Aborted;
-		    errDescription=QString("Selection does not match command");
+		    setError (Aborted, "Selection does not match command");
 		    return false;
 	    	}
 	    }
@@ -240,8 +246,9 @@ bool Parser::checkParameters(TreeItem *selti)
 		    expected=QString("%1..%2").arg(c->parCount()-optPars).arg(c->parCount() );
 		else 
 		    expected=QString().setNum(c->parCount());
-		errDescription=QString("Wrong number of parameters: Expected %1, but found %2").arg(expected).arg(paramList.count());
-		errLevel=Aborted;
+		setError (
+		    Aborted,
+		    QString("Wrong number of parameters: Expected %1, but found %2").arg(expected).arg(paramList.count()));
 		return false;
 	    }
 
@@ -269,11 +276,13 @@ bool Parser::checkParameters(TreeItem *selti)
 		}
 		if (!ok)
 		{
-		    errLevel=Aborted;
-		    errDescription=QString("Parameter %1 has wrong type").arg(i);
+		    setError (
+			Aborted, 
+			QString("Parameter %1 has wrong type").arg(i));
 		    return false;
 		}
 	    }
+	    resetError();
 	    return true;
 	}    
     } 
@@ -292,8 +301,9 @@ bool Parser::checkParCount (const int &expected)
 {
     if (paramList.count()!=expected)
     {
-	errLevel=Aborted;
-	errDescription=QString("Wrong number of parameters: Expected %1, but found %2").arg(expected).arg(paramList.count());
+	setError (
+	    Aborted,
+	    QString("Wrong number of parameters: Expected %1, but found %2").arg(expected).arg(paramList.count()));
 	return false;
     } 
     return true;    
@@ -304,16 +314,18 @@ bool Parser::checkParIsInt(const int &index)
     bool ok;
     if (index > paramList.count())
     {
-	errLevel=Aborted;
-	errDescription=QString("Parameter index %1 is outside of parameter list").arg(index);
+	setError (
+	    Aborted,
+	    QString("Parameter index %1 is outside of parameter list").arg(index));
 	return false;
     } else
     {
 	paramList[index].toInt (&ok, 10);
 	if (!ok)
 	{
-	    errLevel=Aborted;
-	    errDescription=QString("Parameter %1 is not an integer").arg(index);
+	    setError (
+		Aborted,
+		QString("Parameter %1 is not an integer").arg(index));
 	    return false;
 	} 
     }	
@@ -325,16 +337,18 @@ bool Parser::checkParIsDouble(const int &index)
     bool ok;
     if (index > paramList.count())
     {
-	errLevel=Aborted;
-	errDescription=QString("Parameter index %1 is outside of parameter list").arg(index);
+	setError (
+	    Aborted,
+	    QString("Parameter index %1 is outside of parameter list").arg(index));
 	return false;
     } else
     {
 	paramList[index].toDouble (&ok);
 	if (!ok)
 	{
-	    errLevel=Aborted;
-	    errDescription=QString("Parameter %1 is not double").arg(index);
+	    setError (
+		Aborted,
+		QString("Parameter %1 is not double").arg(index));
 	    return false;
 	} 
     }	
@@ -423,7 +437,7 @@ void Parser::execute()
     current=0;
 }   
 
-bool Parser::next()
+bool Parser::next() //FIXME-2 parser does not detect missing closing " or '("foo" ()'
 {
     int start=current;
     if (current<0) execute();
