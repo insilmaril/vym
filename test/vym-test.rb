@@ -2,6 +2,8 @@
 
 require 'dbus'
 
+$deb = true
+
 class Vym
   def initialize (name)
     @dbus = DBus::SessionBus.instance
@@ -20,7 +22,7 @@ class Vym
       @model_commands.each do |c|
 	self.class.send(:define_method, c) do |*pars|
 	  if pars.length == 0
-	    puts "Calling new method \"#{c}\":"
+	    puts " * Calling \"#{c}\":" if $deb
 	    ret=m.execute("#{c} ()")
 	  else  
 	    # Build string with parameters
@@ -33,14 +35,16 @@ class Vym
 	        a<<p
 	      end
 	    end  
-	    puts "Calling new method \"#{c} (#{a.join(',')})\":"
+	    puts " * Calling \"#{c} (#{a.join(',')})\":" if $deb
             ret = m.execute("#{c} (#{a.join(',')})")
 	  end  
 
-	  err = m.errorLevel
-	  puts "   returned: #{ret}"
-	  puts "      Error: #{err}"
-	  ret
+	  err = m.errorLevel[0]
+	  if $deb
+	    puts "     Returned: #{ret[0]}" if ret[0]!=""
+	    puts "        Error: #{err}" if err>0
+	  end  
+	  ret[0]
 	end
       end
     end
@@ -109,13 +113,42 @@ class VymManager
   end
 end
 
+def expect (comment, v_exp, v_real)
+  if v_exp == v_real
+    puts "    Ok: #{comment}"
+  else  
+    puts "Failed: #{comment}. Expected #{v_exp}, but got #{v_real}"
+  end  
+end
+
 vym_mgr=VymManager.new
-vym_mgr.show_running
+#vym_mgr.show_running
 
 vym=Vym.new(vym_mgr.find('test') )
-vym.show_methods
-puts "Modelcount: #{vym.modelCount}"
+#vym.show_methods
+#puts "Modelcount: #{vym.modelCount}"
 
-vym.moveRel(50,50)
+#vym.moveRel(50,50)
 #vym.setHeading("foO","bar")
 #puts "Returned: ",vym.getHeading
+
+branch_a="mc:0,bo:0"
+branch_b=branch_a+",bo:0"
+puts "Select first branch of first mainbranch #{branch_b}"
+vym.select branch_b
+n=vym.branchCount
+
+puts "Adding branches:"
+vym.addBranch()
+expect( "Branch count increased for adding a child", n+1, vym.branchCount )
+
+vym.select branch_a
+n=vym.branchCount
+vym.select branch_b
+vym.addBranch(-1)
+vym.addBranch(1)
+vym.select branch_a
+expect( "Branch count increased for adding above and below", n+2, vym.branchCount )
+
+
+

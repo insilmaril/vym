@@ -28,7 +28,7 @@
 
 #include "highlighter.h"
 
-Highlighter::Highlighter(QTextDocument *parent)
+Highlighter::Highlighter(QTextDocument *parent)	//FIXME-2 get keywords from command list 
     : QSyntaxHighlighter(parent)
 {
     HighlightingRule rule;

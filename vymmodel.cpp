@@ -168,7 +168,7 @@ void VymModel::init ()
     if (!dbusConnection.registerObject (QString("/vymmodel_%1").arg(modelID),this))
 	qWarning ("VymModel: Couldn't register DBUS object!");
 
-    // Scripting //FIXME-2 Experimental
+    // API for scripting 
     Command *c = new Command ("addBranch",Command::Branch);
     c->addPar (Command::Int, true, "Index of new branch");
     parser.addCommand (c);
@@ -199,6 +199,9 @@ void VymModel::init ()
     c->addPar (Command::String,false, "End of XLink");
     c->addPar (Command::Int,true, "Width of XLink");
     c->addPar (Command::Color,true, "Color of XLink");
+    parser.addCommand (c);
+
+    c=new Command ("branchCount",Command::BranchLike);
     parser.addCommand (c);
 
     c=new Command ("clearFlags",Command::BranchLike);
@@ -3997,6 +4000,10 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 		    parser.setError (Aborted,"Couldn't select begin or end of xLink");
 	    } else
 		parser.setError (Aborted,"Need at least 2 parameters for begin and end");
+	/////////////////////////////////////////////////////////////////////
+	} else if (com=="branchCount")
+	{ 
+	    returnValue=selti->branchCount();
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="clearFlags")   
 	{
