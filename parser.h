@@ -16,6 +16,7 @@ public:
     void addPar (ParameterType t, bool opt, const QString &c=QString() );
     int parCount();
     ParameterType getParType (int n);
+    SelectionType getSelectionType ();
     bool isParOptional (int n);
     QString getParComment(int n);
 
@@ -26,6 +27,8 @@ private:
 	QList <bool> parOpts;
 	QStringList parComments;
 };
+
+class TreeItem;
 
 class Parser
 {
@@ -41,7 +44,7 @@ public:
     ErrorLevel errorLevel();
     void setError (ErrorLevel level,const QString &description);
     void resetError();
-    bool checkParameters();
+    bool checkParameters(TreeItem *selti);
     bool checkParCount (const int &index);
     bool checkParIsInt (const int &index);
     bool checkParIsDouble (const int &index);

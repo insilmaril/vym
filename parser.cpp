@@ -4,6 +4,8 @@
 #include <QRegExp>
 #include <iostream>
 
+#include "treeitem.h"
+
 Command::Command (const QString &n, SelectionType st)
 {
     name=n;
@@ -37,6 +39,11 @@ Command::ParameterType Command::getParType (int n)
     return Undefined;
 }
 
+Command::SelectionType Command::getSelectionType ()
+{
+    return selectionType;
+}
+
 bool Command::isParOptional (int n)
 {
     if (n>=0 && n<parTypes.count() )
@@ -47,7 +54,7 @@ bool Command::isParOptional (int n)
     return false;
 }
 
-QString  Command::getParComment(int n)
+QString Command::getParComment(int n)
 {
     if (n>=0 && n<parTypes.count() )
     {
@@ -183,12 +190,44 @@ void Parser::setError(ErrorLevel level, const QString &description)
     errLevel=level;
 }
 
-bool Parser::checkParameters()
+bool Parser::checkParameters(TreeItem *selti)
 {
     foreach (Command *c, commands)
     {
 	if (c->getName() == com)
 	{
+	    // Check type of selection
+	    if (selti)
+	    {
+		bool ok;
+		ok=false;
+		TreeItem::Type st=selti->getType();
+		Command::SelectionType ct=c->getSelectionType();
+		if (ct==Command::TreeItem || ct==Command::BranchOrImage)
+		{
+		    if (st==TreeItem::MapCenter ||
+			st==TreeItem::Branch ||
+			st==TreeItem::Image ) 
+			ok=true;
+		} else if ( ct==Command::Branch || ct==Command::BranchLike)
+		{
+
+		    if (st == TreeItem::MapCenter ||
+			st == TreeItem::Branch )
+			ok=true;
+		} else if ( ct==Command::Image )	    
+		{
+		    if (st==TreeItem::Image )
+			ok=true;
+		}
+		if (!ok)
+		{
+		    errLevel=Aborted;
+		    errDescription=QString("Selection does not match command");
+		    return false;
+	    	}
+	    }
+
 	    // Check for number of parameters
 	    int optPars=0;
 	    for (int i=0; i < c->parCount(); i++ )
@@ -206,6 +245,7 @@ bool Parser::checkParameters()
 		return false;
 	    }
 
+	    // Check types of parameters
 	    bool ok;
 	    for (int i=0; i < paramList.count(); i++ )
 	    {	

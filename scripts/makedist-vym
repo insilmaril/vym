@@ -1,12 +1,19 @@
 #!/bin/bash
 
-VERSION=2.0.12
-BRANCH="maintained-release"
-REMOTE="sf"
+CONFIG=makedist.config
 
-#VERSION=1.12.9
-#RTAG="-r release-1-12-maintained"
-
+if [ ! -f $CONFIG ]; then
+    echo Configuration missing: $CONFIG
+    echo Please set the following variables in $CONFIG
+    echo in you current directory:
+    echo
+    echo 'VERSION=x.y.z   #use desired version'
+    echo 'BRANCH="master" #or e.g. "maintained-release"'
+    echo 'REMOTE="sf"     #depending on your git configuration'
+    exit
+else    
+    . $CONFIG
+fi    
 
 # Init
 OLDDIR=$(pwd)

@@ -3866,46 +3866,23 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
     parser.parseAtom (atom);
 
     // Check set of parameters
-    if (parser.checkParameters() )
+    if (parser.checkParameters(selti) )
     {
 	QString com=parser.getCommand();
-	/////////////////////////////////////////////////////////////////////
 	if (com=="addBranch")  
 	{
 	    if (parser.parCount()==0)
 		addNewBranch (0);
 	    else
 		addNewBranch ( parser.parInt (ok,0) );
-	/////////////////////////////////////////////////////////////////////
 	} else if (com=="addBranchBefore")
 	{
-	    // FIXME-0 continue here:
-	    if (!selti)
-	    {
-		parser.setError (Aborted,"Nothing selected");
-	    } else if (! selbi )
-	    {		  
-		parser.setError (Aborted,"Type of selection is not a branch");
-	    } else 
-	    {   
-		if (parser.parCount()==0)
-		{
-		    addNewBranchBefore ();
-		}	
-	    }
-	/////////////////////////////////////////////////////////////////////
+	    addNewBranchBefore ();
 	} else if (com==QString("addMapCenter"))
 	{
-	    if (parser.checkParCount(2))
-	    {
-		x=parser.parDouble (ok,0);
-		if (ok)
-		{
-		    y=parser.parDouble (ok,1);
-		    if (ok) addMapCenter (QPointF(x,y));
-		}
-	    }   
-	/////////////////////////////////////////////////////////////////////
+	    x=parser.parDouble (ok,0);
+	    y=parser.parDouble (ok,1);
+	// FIXME-0 continue refactoring here: ///////////////////////////////////////////////////////
 	} else if (com==QString("addMapInsert"))
 	{
 	    int pc=parser.parCount();
