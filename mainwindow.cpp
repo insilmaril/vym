@@ -2704,11 +2704,6 @@ void Main::fileSaveAs(const SaveMode& savemode)
 	fd.setAcceptMode (QFileDialog::AcceptSave);
 	fd.setConfirmOverwrite (false);
 
-	QString fn=QFileDialog::getSaveFileName (
-	    NULL,
-	    "TEst",
-	    "/suse/uwedr",
-	    filters);
 	if ( fd.exec() == QDialog::Accepted && !fd.selectedFiles().isEmpty())
 	{
 	    QString fn=fd.selectedFiles().first();

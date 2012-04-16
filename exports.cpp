@@ -86,9 +86,9 @@ bool ExportBase::execDialog(const QString &overwriteWarning)
 {
     QString fn=QFileDialog::getOpenFileName( 
 	NULL,
-	caption,
+	"Export xxx", 
 	outDir.path(), 
-	filter);
+	"LaTeX files (*.tex)");
 
     if (!fn.isEmpty() )
     {
