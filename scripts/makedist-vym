@@ -22,6 +22,7 @@ TMPDIR=$OLDDIR/tmp
 
 echo "Getting sources for: vym"  
 echo "             Branch: $BRANCH"
+echo "             Branch: $VERSION"
 echo "  Working directory: $OLDDIR"
 echo 
 

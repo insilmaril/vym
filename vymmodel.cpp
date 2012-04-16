@@ -2118,7 +2118,7 @@ void VymModel::setURL(QString url)
 {
     TreeItem *selti=getSelectedItem();
     if (selti->getURL()==url) return;
-    if (!url.startsWith("http") ) url="http://"+url;
+    if (!url.isEmpty() && (!url.startsWith("http://") && !url.startsWith("file://") ) ) url="http://"+url;
     if (selti)
     {
 	QString oldurl=selti->getURL();

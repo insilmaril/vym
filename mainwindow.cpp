@@ -3290,7 +3290,13 @@ void Main::editURL()
 	if (selti) dia.setTextValue (selti->getURL());
 	dia.resize(width()*0.8,0);
 
-	if ( dia.exec() ) m->setURL(dia.textValue() );
+	if ( dia.exec() ) 
+	{
+	    QString url=dia.textValue();
+	    if (!url.startsWith("http://") && !url.startsWith("file://") ) 
+		url="http://" + url;
+	    m->setURL (url);
+	}
     }
 }
 
@@ -3302,26 +3308,26 @@ void Main::editLocalURL()
 	TreeItem *selti=m->getSelectedItem();
 	if (selti)
 	{	    
-	    QStringList filters;
-	    filters <<"All files (*)";
-	    filters << tr("HTML","Filedialog") + " (*.html,*.htm)";
-	    filters << tr("Text","Filedialog") + " (*.txt)";
-	    filters << tr("Spreadsheet","Filedialog") + " (*.odp,*.sxc)";
-	    filters << tr("Textdocument","Filedialog") +" (*.odw,*.sxw)";
-	    filters << tr("Images","Filedialog") + " (*.png *.bmp *.xbm *.jpg *.png *.xpm *.gif *.pnm)";
-	    QFileDialog fd( NULL,vymName+" - " +tr("Set URL to a local file")); 
-	    fd.setFilters (filters);
-	    fd.setWindowTitle(vymName+" - " +tr("Set URL to a local file"));
-	    fd.setDirectory (lastMapDir);
-	    fd.setAcceptMode (QFileDialog::AcceptOpen);
-	    if (! selti->getVymLink().isEmpty() )
-		fd.selectFile( selti->getURL() );
-	    fd.show();
+	    QString filter;
+	    filter+="All files (*);;";
+	    filter+=tr("HTML","Filedialog") + " (*.html,*.htm);;";
+	    filter+=tr("Text","Filedialog") + " (*.txt);;";
+	    filter+=tr("Spreadsheet","Filedialog") + " (*.odp,*.sxc);;";
+	    filter+=tr("Textdocument","Filedialog") +" (*.odw,*.sxw);;";
+	    filter+=tr("Images","Filedialog") + " (*.png *.bmp *.xbm *.jpg *.png *.xpm *.gif *.pnm)";
 
-	    if ( fd.exec() == QDialog::Accepted &&!fd.selectedFiles().isEmpty() )
+	    QString fn=QFileDialog::getOpenFileName( 
+		this,
+		vymName+" - " +tr("Set URL to a local file"), 
+		lastMapDir.path(), 
+		filter);
+
+	    if (!fn.isEmpty() )
 	    {
-		lastMapDir=QDir (fd.directory().path());
-		m->setURL (fd.selectedFiles().first() );
+		lastMapDir.setPath(fn.left(fn.lastIndexOf ("/")) );
+		if (!fn.startsWith("file://") ) 
+		    fn="file://" + fn;
+		m->setURL (fn);
 	    }
 	}
     }
