@@ -252,6 +252,10 @@ void VymModel::init ()
     c->addPar (Command::String,true,"Image format");
     parser.addCommand (c);
 
+    c=new Command ("exportLaTeX",Command::Any);
+    c->addPar (Command::String,false,"Filename for export");
+    parser.addCommand (c);
+
     c=new Command ("exportPDF",Command::Any);
     c->addPar (Command::String,false,"Filename for export");
     parser.addCommand (c);
@@ -3585,7 +3589,6 @@ void VymModel::addFloatImage (const QImage &img)
 	saveState (PartOfMap, s, "nop ()", s, "copy ()","Copy dropped image to clipboard",ii  );
 	saveState (ii,"delete ()", selbi,QString("paste(%1)").arg(curStep),"Pasting dropped image");
 	reposition();
-	// FIXME-3 VM needed? scene()->update();
     }
 }
 
@@ -4214,6 +4217,20 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 		    format=parser.parString(ok,1);
 		}
 		exportImage (fname,false,format);
+	    }
+	} else if (com=="exportLaTeX")
+	{
+	    QString fname="";
+	    ok=true;
+	    if (parser.parCount()>=1)
+		// Hey, we even have a filename
+		fname=parser.parString(ok,0); 
+	    if (!ok)
+	    {
+		parser.setError (Aborted,"Could not read filename");
+	    } else
+	    {
+		    exportLaTeX (fname,false);
 	    }
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="exportPDF")
@@ -5341,6 +5358,28 @@ void VymModel::exportLast()
 	execute (QString ("%1 (\"%2\")").arg(command).arg(path) );
 }
 
+void VymModel::exportLaTeX (const QString &fname,bool askName)
+{
+    ExportLaTeX ex;
+    ex.setModel (this);
+    if (fname=="") 
+	ex.setFile (mapName+".tex");	
+    else
+	ex.setFile (fname);
+
+    if (askName)
+    {
+	ex.addFilter ("Tex (*.tex)");
+	ex.setWindowTitle(vymName+ " -" +tr("Export as LaTeX")+" "+tr("(still experimental)"));
+	ex.execDialog("LaTeX") ; 
+    } 
+    if (!ex.canceled())
+    {
+	setExportMode(true);
+	ex.doExport();
+	setExportMode(false);
+    }
+}
 
 
 //////////////////////////////////////////////

@@ -55,6 +55,7 @@ Highlighter::Highlighter(QTextDocument *parent)	//FIXME-2 get keywords from comm
 		    << "\\bexportASCII\\b"
 		    << "\\bexportHTML\\b"
 		    << "\\bexportImage\\b"
+		    << "\\bexportLaTeX\\b"
 		    << "\\bexportPDF\\b"
 		    << "\\bexportSVG\\b"
 		    << "\\bexportXML\\b"

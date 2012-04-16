@@ -2935,23 +2935,10 @@ void Main::fileExportCSV()  //FIXME-3 not scriptable yet
     }
 }
 
-void Main::fileExportLaTeX()	//FIXME-3 not scriptable yet
+void Main::fileExportLaTeX()
 {
     VymModel *m=currentModel();
-    if (m)
-    {
-	ExportLaTeX ex;
-	ex.setModel (m);
-	ex.addFilter ("Tex (*.tex)");
-	ex.setDirectory(lastImageDir);
-	ex.setWindowTitle(vymName+ " -" +tr("Export as LaTeX")+" "+tr("(still experimental)"));
-	if (ex.execDialog() ) 
-	{
-	    m->setExportMode(true);
-	    ex.doExport();
-	    m->setExportMode(false);
-	}
-    }
+    if (m) m->exportLaTeX();
 }
 
 void Main::fileExportOrgMode()	//FIXME-3 not scriptable yet

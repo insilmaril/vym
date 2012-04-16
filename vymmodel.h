@@ -523,6 +523,8 @@ public:
     /*! Export in recently used format (saved in map)*/
     void exportLast();
 
+    /*! Export as LaTeX */
+    void exportLaTeX (const QString& dir="", bool useDialog=true);    
 
 ////////////////////////////////////////////
 // View related

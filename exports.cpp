@@ -84,18 +84,14 @@ void ExportBase::addFilter(const QString &s)
 
 bool ExportBase::execDialog(const QString &overwriteWarning)
 {
-    QFileDialog fd;
-    fd.setFilter (filter);
-    fd.setWindowTitle (caption);
-    fd.setDirectory (outDir);
-    fd.setFileMode( QFileDialog::AnyFile );
-    fd.setAcceptMode (QFileDialog::AcceptSave);
-    fd.setConfirmOverwrite (false);
+    QString fn=QFileDialog::getOpenFileName( 
+	NULL,
+	"Export xxx", 
+	outDir.path(), 
+	"LaTeX files (*.tex)");
 
-    if ( fd.exec() == QDialog::Accepted )
+    if (!fn.isEmpty() )
     {
-	if (fd.selectedFiles().isEmpty()) return false;
-	QString fn=fd.selectedFiles().first();
 	if (QFile (fn).exists() ) 
 	{
 	    WarningDialog dia;
@@ -109,7 +105,7 @@ bool ExportBase::execDialog(const QString &overwriteWarning)
 		return false;
 	    }
 	}
-	outDir=fd.directory();
+	outDir.setPath(fn.left(fn.lastIndexOf ("/")) );
 	outputFile=fn;
 	if (model) model->setChanged();
 	return true;
@@ -931,7 +927,13 @@ void ExportLaTeX::doExport()	//FIXME-2 remember last directory
     }
     cur=model->nextBranch(cur,prev);
    }
-  file.close();
+    
+    file.close();
+    QString cmd="exportLaTeX";
+    settings.setLocalValue ( model->getFilePath(), "/export/last/exportPath",outputFile);
+    settings.setLocalValue ( model->getFilePath(), "/export/last/command",cmd);
+    settings.setLocalValue ( model->getFilePath(), "/export/last/description","LaTeX");
+    mainWindow->statusMessage(cmd + ": " + outputFile);
 }
 
 ////////////////////////////////////////////////////////////////////////
