@@ -2888,7 +2888,7 @@ BranchItem* VymModel::addNewBranchInt(BranchItem *dst,int num)
     QList<QVariant> cData;
     cData << "" << "undef";
 
-    BranchItem *parbi;	// FIXME-2 parbi uninitialized for n>=0
+    BranchItem *parbi=dst;
     QModelIndex parix;
     int n;
     BranchItem *newbi=new BranchItem (cData);	
@@ -2898,7 +2898,6 @@ BranchItem* VymModel::addNewBranchInt(BranchItem *dst,int num)
 
     if (num==-2)
     {
-	parbi=dst;
 	parix=index(parbi);
 	n=parbi->getRowNumAppend (newbi);
 	beginInsertRows (parix,n,n);	
