@@ -84,11 +84,12 @@ void ExportBase::addFilter(const QString &s)
 
 bool ExportBase::execDialog(const QString &overwriteWarning)
 {
-    QString fn=QFileDialog::getOpenFileName( 
+    QString fn=QFileDialog::getSaveFileName( 
 	NULL,
-	"Export xxx", 
+	caption,
 	outDir.path(), 
-	"LaTeX files (*.tex)");
+	filter);//,
+	//QFileDialog::DontConfirmOverwrite);
 
     if (!fn.isEmpty() )
     {

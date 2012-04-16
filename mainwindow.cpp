@@ -2691,22 +2691,22 @@ void Main::fileSaveAs(const SaveMode& savemode)
 {
     if (currentMapEditor())
     {
-	QStringList filters;
+	QString filter;
 	if (savemode==CompleteMap)
-	    filters<<"VYM map (*.vym)";
+	    filter="VYM map (*.vym)";
 	else    
-	    filters<<"VYM part of map (*vyp)";
-	filters<<"All (* *.*)";
-	QFileDialog fd;
-	fd.setDirectory (lastMapDir);
-	fd.setFileMode (QFileDialog::AnyFile);
-	fd.setFilters (filters);
-	fd.setAcceptMode (QFileDialog::AcceptSave);
-	fd.setConfirmOverwrite (false);
+	    filter="VYM part of map (*vyp)";
+	filter+=";;All (* *.*)";
 
-	if ( fd.exec() == QDialog::Accepted && !fd.selectedFiles().isEmpty())
+	QString fn=QFileDialog::getSaveFileName (
+	    this,
+	    tr("Save map as"),
+	    lastMapDir.path(),
+	    filter,
+	    NULL,
+	    QFileDialog::DontConfirmOverwrite);
+	if (!fn.isEmpty() )    
 	{
-	    QString fn=fd.selectedFiles().first();
 	    // Check for existing file
 	    if (QFile (fn).exists())
 	    {
@@ -2728,6 +2728,7 @@ void Main::fileSaveAs(const SaveMode& savemode)
 			return;
 			break;
 		}
+		lastMapDir.setPath(fn.left(fn.lastIndexOf ("/")) );
 	    } else
 	    {
 		// New file, add extension to filename, if missing
