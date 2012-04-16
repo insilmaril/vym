@@ -44,7 +44,6 @@ bool checkVersion (const QString &v, const QString &vstatic)
 	return false;
     }	
     
-    qDebug()<<"v="<<v<<"  vstatic="<<vstatic;
     if (vs1 > v1)
 	return true;
     if (vs1 < v1)

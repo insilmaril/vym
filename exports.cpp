@@ -88,8 +88,9 @@ bool ExportBase::execDialog(const QString &overwriteWarning)
 	NULL,
 	caption,
 	outDir.path(), 
-	filter);//,
-	//QFileDialog::DontConfirmOverwrite);
+	filter,
+	NULL,
+	QFileDialog::DontConfirmOverwrite);
 
     if (!fn.isEmpty() )
     {

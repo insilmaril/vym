@@ -570,7 +570,7 @@ private:
     QFont defaultFont;
 
 public:
-    void setMapLinkStyle (const QString &); // Set style of link
+    bool setMapLinkStyle (const QString &); // Set style of link
     LinkableMapObj::Style getMapLinkStyle ();	// requested in LMO
     void setMapDefLinkColor(QColor);	    // default color of links
     void setMapLinkColorHintInt();	    // color of links

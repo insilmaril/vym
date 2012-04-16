@@ -326,8 +326,8 @@ void VymModel::init ()
     c=new Command ("relinkTo",Command::TreeItem);   // FIXME different number of parameters for Image or Branch
     c->addPar (Command::String,false,"Selection string of parent");
     c->addPar (Command::Int,false,"Index position");
-    c->addPar (Command::Double,false,"Position x");
-    c->addPar (Command::Double,false,"Position y");
+    c->addPar (Command::Double,true,"Position x");
+    c->addPar (Command::Double,true,"Position y");
     parser.addCommand (c);
 
     c=new Command ("saveImage",Command::Image); 
@@ -4136,7 +4136,6 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	    n=parser.parInt (ok,0);
 	    pasteNoSave(n);
 	/////////////////////////////////////////////////////////////////////
-	// FIXME-0 continue refactoring here: ///////////////////////////////////////////////////////
 	} else if (com=="relinkTo")
 	{
 	    if (!selti)
@@ -4148,7 +4147,7 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 		{
 		    // 0	selectstring of parent
 		    // 1	num in parent (for branches)
-		    // 2,3	x,y of mainbranch or mapcenter
+		    // 2,3	x,y of mainbranch or mapcenter (for images)
 		    s=parser.parString(ok,0);
 		    TreeItem *dst=findBySelectString (s);
 		    if (dst)
@@ -4204,87 +4203,38 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	} else if (com=="saveImage")
 	{
 	    ImageItem *ii=getSelectedImage();
-	    if (!ii )
-	    {
-		parser.setError (Aborted,"No image selected");
-	    } else if (parser.checkParCount(2))
-	    {
-		s=parser.parString(ok,0);
-		if (ok)
-		{
-		    t=parser.parString(ok,1);
-		    if (ok) saveFloatImageInt (ii,t,s);
-		}
-	    }   
+	    s=parser.parString(ok,0);
+	    t=parser.parString(ok,1);
+	    saveFloatImageInt (ii,t,s);
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="saveNote")
 	{
-	    if (!selti)
-	    {
-		parser.setError (Aborted,"Nothing selected");
-	    } else if (! selbi )
-	    {		  
-		parser.setError (Aborted,"Type of selection is not a branch");
-	    } else if (parser.checkParCount(1))
-	    {
-		s=parser.parString(ok,0);
-		if (ok) saveNote (s);
-	    }   
+	    s=parser.parString(ok,0);
+	    saveNote (s);
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="scroll")
 	{
-	    if (!selti)
-	    {
-		parser.setError (Aborted,"Nothing selected");
-	    } else if (! selbi )
-	    {		  
-		parser.setError (Aborted,"Type of selection is not a branch");
-	    } else if (parser.checkParCount(0))
-	    {   
-		if (!scrollBranch (selbi))	
-		    parser.setError (Aborted,"Could not scroll branch");
-	    }   
+	    if (!scrollBranch (selbi))	
+		parser.setError (Aborted,"Could not scroll branch");
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="select")
 	{
-	    if (parser.checkParCount(1))
-	    {
-		s=parser.parString(ok,0);
-		if (ok) select (s);
-	    }   
+	    s=parser.parString(ok,0);
+	    select (s);
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="selectLastBranch")
 	{
-	    if (!selti )
-	    {
-		parser.setError (Aborted,"Nothing selected");
-	    } else if (! selbi )
-	    {		  
-		parser.setError (Aborted,"Type of selection is not a branch");
-	    } else if (parser.checkParCount(0))
-	    {   
-		BranchItem *bi=selbi->getLastBranch();
-		if (!bi)
-		    parser.setError (Aborted,"Could not select last branch");
-		select (bi);
-	    }   
+	    BranchItem *bi=selbi->getLastBranch();
+	    if (!bi)
+		parser.setError (Aborted,"Could not select last branch");
+	    select (bi);
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="selectLastImage")
 	{
-	    if (!selti )
-	    {
-		parser.setError (Aborted,"Nothing selected");
-	    } else if (! selbi )
-	    {		  
-		parser.setError (Aborted,"Type of selection is not a branch");
-	    } else if (parser.checkParCount(0))
-	    {   
-		ImageItem *ii=selbi->getLastImage();
-		if (!ii)
-		    parser.setError (Aborted,"Could not select last image");
-		select (ii);
-		    
-	    }   
+	    ImageItem *ii=selbi->getLastImage();
+	    if (!ii)
+		parser.setError (Aborted,"Could not select last image");
+	    select (ii);
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="selectLatestAdded")
 	{
@@ -4299,410 +4249,159 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="setFlag")
 	{
-	    if (!selti )
-	    {
-		parser.setError (Aborted,"Nothing selected");
-	    } else if (! selbi )
-	    {		  
-		parser.setError (Aborted,"Type of selection is not a branch");
-	    } else if (parser.checkParCount(1))
-	    {
-		s=parser.parString(ok,0);
-		if (ok) 
-		    selbi->activateStandardFlag(s);
-	    }
+	    s=parser.parString(ok,0);
+	    selbi->activateStandardFlag(s);
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="setTaskSleep")
 	{
-	    if (!selti )
-	    {
-		parser.setError (Aborted,"Nothing selected");
-	    } else if (! selbi )
-	    {		  
-		parser.setError (Aborted,"Type of selection is not a branch");
-	    } else if (parser.checkParCount(1))
-	    {
-		n=parser.parInt(ok,0);
-		if (ok) 
-		    setTaskSleep (n);
-	    }
+	    n=parser.parInt(ok,0);
+	    setTaskSleep (n);
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="setFrameIncludeChildren")
 	{
-	    if (!selti )
-	    {
-		parser.setError (Aborted,"Nothing selected");
-	    } else if (! selbi )
-	    {		  
-		parser.setError (Aborted,"Type of selection is not a branch");
-	    } else if (parser.checkParCount(1))
-	    {   
-		b=parser.parBool(ok,0);
-		if (ok) setFrameIncludeChildren(b);
-	    }
+	    b=parser.parBool(ok,0);
+	    setFrameIncludeChildren(b);
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="setFrameType")
 	{
-	    if ( selectionType()!=TreeItem::Branch && selectionType()!= TreeItem::MapCenter && selectionType()!=TreeItem::Image)
-	    {
-		parser.setError (Aborted,"Type of selection does not allow setting frame type");
-	    }
-	    else if (parser.checkParCount(1))
-	    {
-		s=parser.parString(ok,0);
-		if (ok) setFrameType (s);
-	    }   
+	    s=parser.parString(ok,0);
+	    setFrameType (s);
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="setFramePenColor")
 	{
-	    if ( selectionType()!=TreeItem::Branch && selectionType()!= TreeItem::MapCenter && selectionType()!=TreeItem::Image)
-	    {
-		parser.setError (Aborted,"Type of selection does not allow setting of pen color");
-	    }
-	    else if (parser.checkParCount(1))
-	    {
-		QColor c=parser.parColor(ok,0);
-		if (ok) setFramePenColor (c);
-	    }   
+	    QColor c=parser.parColor(ok,0);
+	    setFramePenColor (c);
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="setFrameBrushColor")
 	{
-	    if ( selectionType()!=TreeItem::Branch && selectionType()!= TreeItem::MapCenter && selectionType()!=TreeItem::Image)
-	    {
-		parser.setError (Aborted,"Type of selection does not allow setting brush color");
-	    }
-	    else if (parser.checkParCount(1))
-	    {
-		QColor c=parser.parColor(ok,0);
-		if (ok) setFrameBrushColor (c);
-	    }   
+	    QColor c=parser.parColor(ok,0);
+	    setFrameBrushColor (c);
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="setFramePadding")
 	{
-	    if ( selectionType()!=TreeItem::Branch && selectionType()!= TreeItem::MapCenter && selectionType()!=TreeItem::Image)
-	    {
-		parser.setError (Aborted,"Type of selection does not allow setting frame padding");
-	    }
-	    else if (parser.checkParCount(1))
-	    {
-		n=parser.parInt(ok,0);
-		if (ok) setFramePadding(n);
-	    }   
+	    n=parser.parInt(ok,0);
+	    setFramePadding(n);
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="setFrameBorderWidth")
 	{
-	    if ( selectionType()!=TreeItem::Branch && selectionType()!= TreeItem::MapCenter && selectionType()!=TreeItem::Image)
-	    {
-		parser.setError (Aborted,"Type of selection does not allow setting frame border width");
-	    }
-	    else if (parser.checkParCount(1))
-	    {
-		n=parser.parInt(ok,0);
-		if (ok) setFrameBorderWidth (n);
-	    }   
+	    n=parser.parInt(ok,0);
+	    setFrameBorderWidth (n);
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="setHeading")
 	{
-	    if (!selti )
-	    {
-		parser.setError (Aborted,"Nothing selected");
-	    } else if (! selbi )
-	    {		  
-		parser.setError (Aborted,"Type of selection is not a branch");
-	    } else if (parser.checkParCount(1))
-	    {
-		s=parser.parString (ok,0);
-		if (ok) 
-		    setHeading (s);
-	    }   
+	    s=parser.parString (ok,0);
+	    setHeading (s);
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="setHideExport")
 	{
-	    if (!selti )
-	    {
-		parser.setError (Aborted,"Nothing selected");
-	    } else if (selectionType()!=TreeItem::Branch && selectionType() != TreeItem::MapCenter &&selectionType()!=TreeItem::Image)
-	    {		  
-		parser.setError (Aborted,"Type of selection is not a branch or floatimage");
-	    } else if (parser.checkParCount(1))
-	    {
-		b=parser.parBool(ok,0);
-		if (ok) setHideExport (b);
-	    }
+	    b=parser.parBool(ok,0);
+	    setHideExport (b);
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="setIncludeImagesHorizontally")
 	{ 
-	    if (!selti )
-	    {
-		parser.setError (Aborted,"Nothing selected");
-	    } else if (! selbi)
-	    {		  
-		parser.setError (Aborted,"Type of selection is not a branch");
-	    } else if (parser.checkParCount(1))
-	    {
-		b=parser.parBool(ok,0);
-		if (ok) setIncludeImagesHor(b);
-	    }
+	    b=parser.parBool(ok,0);
+	    setIncludeImagesHor(b);
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="setIncludeImagesVertically")
 	{
-	    if (!selti )
-	    {
-		parser.setError (Aborted,"Nothing selected");
-	    } else if (! selbi)
-	    {		  
-		parser.setError (Aborted,"Type of selection is not a branch");
-	    } else if (parser.checkParCount(1))
-	    {
-		b=parser.parBool(ok,0);
-		if (ok) setIncludeImagesVer(b);
-	    }
+	    b=parser.parBool(ok,0);
+	    if (ok) setIncludeImagesVer(b);
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="setHideLinkUnselected")
 	{
-	    if (!selti )
-	    {
-		parser.setError (Aborted,"Nothing selected");
-	    } else if ( selectionType()!=TreeItem::Branch && selectionType()!= TreeItem::MapCenter && selectionType()!=TreeItem::Image)
-	    {		  
-		parser.setError (Aborted,"Type of selection does not allow hiding the link");
-	    } else if (parser.checkParCount(1))
-	    {
-		b=parser.parBool(ok,0);
-		if (ok) setHideLinkUnselected(b);
-	    }
+	    b=parser.parBool(ok,0);
+	    setHideLinkUnselected(b);
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="setMapAuthor")
 	{
-	    if (parser.checkParCount(1))
-	    {
-		s=parser.parString(ok,0);
-		if (ok) setAuthor (s);
-	    }   
+	    s=parser.parString(ok,0);
+	    setAuthor (s);
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="setMapComment")
 	{
-	    if (parser.checkParCount(1))
-	    {
-		s=parser.parString(ok,0);
-		if (ok) setComment(s);
-	    }   
+	    s=parser.parString(ok,0);
+	    if (ok) setComment(s);
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="setMapBackgroundColor")
 	{
-	    if (!selti )
-	    {
-		parser.setError (Aborted,"Nothing selected");
-	    } else if (! selbi )
-	    {		  
-		parser.setError (Aborted,"Type of selection is not a branch");
-	    } else if (parser.checkParCount(1))
-	    {
-		QColor c=parser.parColor (ok,0);
-		if (ok) setMapBackgroundColor (c);
-	    }   
+	    QColor c=parser.parColor (ok,0);
+	    setMapBackgroundColor (c);
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="setMapDefLinkColor")
 	{
-	    if (!selti )
-	    {
-		parser.setError (Aborted,"Nothing selected");
-	    } else if (! selbi )
-	    {		  
-		parser.setError (Aborted,"Type of selection is not a branch");
-	    } else if (parser.checkParCount(1))
-	    {
-		QColor c=parser.parColor (ok,0);
-		if (ok) setMapDefLinkColor (c);
-	    }   
+	    QColor c=parser.parColor (ok,0);
+	    setMapDefLinkColor (c);
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="setMapLinkStyle")
 	{
-	    if (parser.checkParCount(1))
-	    {
-		s=parser.parString (ok,0);
-		if (ok) setMapLinkStyle(s);
-	    }   
+	    s=parser.parString (ok,0);
+	    if (!setMapLinkStyle(s) )
+		parser.setError (Aborted,"Unknown link style");
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="setNote")
 	{
-	    if (!selti )
-	    {
-		parser.setError (Aborted,"Nothing selected");
-	    } else if (! selbi )
-	    {		  
-		parser.setError (Aborted,"Type of selection is not a branch");
-	    } else if (parser.checkParCount(1))
-	    {
-		s=parser.parString (ok,0);
-		if (ok) setNote (s);
-	    }   
+	    s=parser.parString (ok,0);
+	    setNote (s);
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="setScale")
 	{
-	    if (!selti )
-	    {
-		parser.setError (Aborted,"Nothing selected");
-	    } else if (! selti->getType()==TreeItem::Image )
-	    {		  
-		parser.setError (Aborted,"Type of selection is not an image");
-	    } else if (parser.checkParCount(2))
-	    {
-		x=parser.parDouble (ok,0);
-		bool ok2;
-		y=parser.parDouble (ok2,1);
-		if (ok && ok2) setScale (x,y);
-	    } 
+	    x=parser.parDouble (ok,0);
+	    y=parser.parDouble (ok,1);
+	    setScale (x,y);
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="setSelectionColor")
 	{
-	    if (parser.checkParCount(1))
-	    {
-		QColor c=parser.parColor (ok,0);
-		if (ok) setSelectionColorInt (c);
-
-	    }   
+	    QColor c=parser.parColor (ok,0);
+	    setSelectionColorInt (c);
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="setURL")
 	{
-	    if (!selti )
-	    {
-		parser.setError (Aborted,"Nothing selected");
-	    } else if (! selbi )
-	    {		  
-		parser.setError (Aborted,"Type of selection is not a branch");
-	    } else if (parser.checkParCount(1))
-	    {
-		s=parser.parString (ok,0);
-		if (ok) setURL(s);
-	    }   
+	    s=parser.parString (ok,0);
+	    setURL(s);
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="setVymLink")
 	{
-	    if (!selti )
-	    {
-		parser.setError (Aborted,"Nothing selected");
-	    } else if (! selbi )
-	    {		  
-		parser.setError (Aborted,"Type of selection is not a branch");
-	    } else if (parser.checkParCount(1))
-	    {
-		s=parser.parString (ok,0);
-		if (ok) setVymLink(s);
-	    }   
+	    s=parser.parString (ok,0);
+	    setVymLink(s);
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="sortChildren")
 	{
-	    if (!selti )
-	    {
-		parser.setError (Aborted,"Nothing selected");
-	    } else if (! selbi )
-	    {		  
-		parser.setError (Aborted,"Type of selection is not a branch");
-	    } else if (parser.checkParCount(0))
-	    {
-		sortChildren();
-	    } else if (parser.checkParCount(1))
-	    {
+	    b=false;
+	    if (parser.parCount()==1)
 		b=parser.parBool(ok,0);
-		if (ok) sortChildren(b);
-	    }
+	    sortChildren(b);
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="toggleFlag")
 	{
-	    if (!selti )
-	    {
-		parser.setError (Aborted,"Nothing selected");
-	    } else if (! selbi )
-	    {		  
-		parser.setError (Aborted,"Type of selection is not a branch");
-	    } else if (parser.checkParCount(1))
-	    {
-		s=parser.parString(ok,0);
-		if (ok) 
-		    selbi->toggleStandardFlag(s);	
-	    }
+	    s=parser.parString(ok,0);
+	    selbi->toggleStandardFlag(s);	
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="toggleFrameIncludeChildren")
 	{
-	    if (!selti )
-	    {
-		parser.setError (Aborted,"Nothing selected");
-	    } else if (! selbi )
-	    {		  
-		parser.setError (Aborted,"Type of selection is not a branch");
-	    } else if (parser.checkParCount(0))
-	    {   
-		toggleFrameIncludeChildren();
-	    }
+	    toggleFrameIncludeChildren();
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="toggleTarget")
 	{
-	    if (!selti )
-	    {
-		parser.setError (Aborted,"Nothing selected");
-	    } else if (! selbi )
-	    {		  
-		parser.setError (Aborted,"Type of selection is not a branch");
-	    } else if (parser.checkParCount(0))
-	    {
-		toggleTarget();	
-	    }
+	    toggleTarget();	
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="toggleTask")
 	{
-	    if (!selti )
-	    {
-		parser.setError (Aborted,"Nothing selected");
-	    } else if (! selbi )
-	    {		  
-		parser.setError (Aborted,"Type of selection is not a branch");
-	    } else if (parser.checkParCount(0))
-	    {
-		toggleTask();	
-	    }
+	    toggleTask();	
 	/////////////////////////////////////////////////////////////////////
 	} else  if (com=="unscroll")
 	{
-	    if (!selti)
-	    {
-		parser.setError (Aborted,"Nothing selected");
-	    } else if (! selbi )
-	    {		  
-		parser.setError (Aborted,"Type of selection is not a branch");
-	    } else if (parser.checkParCount(0))
-	    {   
-		if (!unscrollBranch (selbi))    
-		    parser.setError (Aborted,"Could not unscroll branch");
-	    }   
+	    if (!unscrollBranch (selbi))    
+		parser.setError (Aborted,"Could not unscroll branch");
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="unscrollChildren")
 	{
-	    if (!selti)
-	    {
-		parser.setError (Aborted,"Nothing selected");
-	    } else if (! selbi )
-	    {		  
-		parser.setError (Aborted,"Type of selection is not a branch");
-	    } else if (parser.checkParCount(0))
-	    {   
-		unscrollChildren ();
-	    }   
+	    unscrollChildren ();
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="unsetFlag")
 	{
-	    if (!selti)
-	    {
-		parser.setError (Aborted,"Nothing selected");
-	    } else if (! selbi )
-	    {		  
-		parser.setError (Aborted,"Type of selection is not a branch");
-	    } else if (parser.checkParCount(1))
-	    {
-		s=parser.parString(ok,0);
-		if (ok) 
-		    selbi->deactivateStandardFlag(s);
-	    }
+	    s=parser.parString(ok,0);
+	    selbi->deactivateStandardFlag(s);
+	/////////////////////////////////////////////////////////////////////
 	} else 
 	    parser.setError (Aborted,"Unknown command");
     } // End of iterating over commands
@@ -5049,7 +4748,7 @@ void VymModel::exportLaTeX (const QString &fname,bool askName)
 
     if (askName)
     {
-	ex.addFilter ("Tex (*.tex)");
+	ex.addFilter ("LaTeX files (*.tex)");
 	ex.setWindowTitle(vymName+ " -" +tr("Export as LaTeX")+" "+tr("(still experimental)"));
 	ex.execDialog("LaTeX") ; 
     } 
@@ -5135,7 +4834,7 @@ void VymModel::reposition() //FIXME-4 VM should have no need to reposition, but 
 }
 
 
-void VymModel::setMapLinkStyle (const QString & s)
+bool VymModel::setMapLinkStyle (const QString & s)
 {
     QString snow;
     switch (linkstyle)
@@ -5153,7 +4852,7 @@ void VymModel::setMapLinkStyle (const QString & s)
 	    snow="StylePolyParabel";
 	    break;
 	default:    
-	    snow="UndefinedStyle";
+	    return false;
 	    break;
     }
 
@@ -5185,6 +4884,7 @@ void VymModel::setMapLinkStyle (const QString & s)
 	cur=nextBranch(cur,prev);
     }
     reposition();
+    return true;
 }
 
 LinkableMapObj::Style VymModel::getMapLinkStyle ()

@@ -272,6 +272,7 @@ bool Parser::checkParameters(TreeItem *selti)
 			break;
 		    case Command::Bool:	
 			parBool (ok,i);
+			break;
 		    default: ok=false;	
 		}
 		if (!ok)
