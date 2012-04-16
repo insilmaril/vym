@@ -76,7 +76,7 @@ if [ $DO_CHECKOUT = 1 ]; then
     git clone -b $BRANCH git://vym.git.sourceforge.net/gitroot/vym/vym
 fi	
 
-VERSION=$(grep __VYM_VERSION $REPO/version.h |  sed -e 's/^.*\"\(.*\)\"$/\1/g')
+#VERSION=$(grep __VYM_VERSION $REPO/version.h |  sed -e 's/^.*\"\(.*\)\"$/\1/g')
 TARBALLSRC=vym-$VERSION
 echo
 echo "Setting version from sources: $VERSION"
