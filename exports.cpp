@@ -882,17 +882,31 @@ void ExportLaTeX::doExport()	//FIXME-2 remember last directory
     // that makes a full LaTex document.
   QFile file (outputFile);
   if ( !file.open( QIODevice::WriteOnly ) ) {
-    QMessageBox::critical (0,QObject::tr("Critical Export Error"),QObject::tr("Could not write %1").arg(outputFile));
-    mainWindow->statusMessage(QString(QObject::tr("Export failed.")));
+    QMessageBox::critical (
+	0,
+	QObject::tr("Critical Export Error"),
+	QObject::tr("Could not write %1").arg(outputFile));
+	mainWindow->statusMessage(QString(QObject::tr("Export failed.")));
     return;
   }
   QTextStream ts( &file );  // use LANG decoding here...
   //FIXME-3 ts.setEncoding (QTextStream::UnicodeUTF8); // Force UTF8
   
+  // Read default section names
+  QStringList sectionNames;
+  sectionNames << ""
+      << "chapter"
+      << "section"
+      << "subsection"
+      << "subsubsection"
+      << "paragraph";
+
+  for (int i=0; i<6; i++)
+    sectionNames.replace(i,settings.value(
+	QString("/export/latex/sectionName-%1").arg(i),sectionNames.at(i)).toString() );
+
   // Main loop over all branches
   QString s;
-  // QString curIndent("");
-  // int i;
   BranchItem *cur=NULL;
   BranchItem *prev=NULL;
   model->nextBranch(cur,prev);
@@ -900,29 +914,23 @@ void ExportLaTeX::doExport()	//FIXME-2 remember last directory
   {
     if (!cur->hasHiddenExportParent() )
     {
-	switch (cur->depth() ) 
-	{
-	    case 0: break;
-	    case 1: 
-	      ts << ("\\chapter{" + cur->getHeadingPlain()+ "}\n");
-	      break;
-	    case 2: 
-	      ts << ("\\section{" + cur->getHeadingPlain()+ "}\n");
-	      break;
-	    case 3: 
-	      ts << ("\\subsection{" + cur->getHeadingPlain()+ "}\n");
-	      break;
-	    case 4: 
-	      ts << ("\\subsubsection{" + cur->getHeadingPlain()+ "}\n");
-	      break;
-	    default:
-	      ts << ("\\paragraph*{" + cur->getHeadingPlain()+ "}\n");
-	    
-	}
+	int d=cur->depth();
+	s=cur->getHeadingPlain();
+	if ( sectionNames.at(d).isEmpty() || d>=sectionNames.count() )
+	    ts << s << endl;
+	else    
+	    ts << endl
+	       << "\\" 
+	       << sectionNames.at(d) 
+	       << "{"
+	       << s
+	       << "}"
+	       << endl;
+
 	// If necessary, write note
 	if (!cur->getNoteObj().isEmpty()) {
 	  ts << (cur->getNoteASCII());
-	  ts << ("\n");
+	  ts << endl;
 	}
     }
     cur=model->nextBranch(cur,prev);
