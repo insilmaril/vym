@@ -88,7 +88,7 @@ class VymManager
   end
 
   def running
-    @dbus.proxy.ListNames[0].find_all{|item| item =~/org\.insilmaril\.vym/ }
+    list=@dbus.proxy.ListNames[0].find_all{|item| item =~/org\.insilmaril\.vym/ }
   end
 
   def show_running
@@ -97,6 +97,8 @@ class VymManager
 
   def find (name)
     list=running
+    raise "Could not find running vym instance" if list.length==0
+
     for i in (0...list.length)
       vym_service=@dbus.service(list.at(i))
       vym_service.introspect
@@ -110,6 +112,7 @@ class VymManager
 	return list.at(i)
       end  
     end
+    raise "Could not find instance named \"test\""
   end
 end
 
