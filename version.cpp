@@ -11,47 +11,51 @@ bool checkVersion (const QString &v)
 }
 
 
-bool checkVersion (const QString &v, const QString &d)
+bool checkVersion (const QString &v, const QString &vstatic)
 {
-    bool ok;
-    int v1;
-    int v2;
-    int v3;
-    int d1;
-    int d2;
-    int d3;
+    bool ok=false;
+    int v1=0;
+    int v2=0;
+    int v3=0;
+    int vs1=0;
+    int vs2=0;
+    int vs3=0;
 
     QRegExp rx("(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})");
     int pos=rx.indexIn (v);
     if (pos>-1)
     {
 	v1=rx.cap(1).toInt(&ok);
-	v2=rx.cap(2).toInt(&ok);
-	v3=rx.cap(3).toInt(&ok);
-    } else
-	qWarning ()<<QString ("Warning: Checking version failed for v=%1").arg(v);
+	if (ok) v2=rx.cap(2).toInt(&ok);
+	if (ok) v3=rx.cap(3).toInt(&ok);
+    } 
 
-    pos=rx.indexIn (d);
-    if (pos>-1)
+    pos=rx.indexIn (vstatic);
+    if (ok && pos>-1)
     {
-	d1=rx.cap(1).toInt(&ok);
-	d2=rx.cap(2).toInt(&ok);
-	d3=rx.cap(3).toInt(&ok);
-    } else
-	qWarning ()<<QString ("Warning: Checking version failed for d=%1").arg(d);
+	vs1=rx.cap(1).toInt(&ok);
+	if (ok) vs2=rx.cap(2).toInt(&ok);
+	if (ok) vs3=rx.cap(3).toInt(&ok);
+    } 
 
+    if (!ok) 
+    {
+	qWarning ()<<QString ("Warning: Checking version failed: v=%1").arg(v);
+	return false;
+    }	
     
-    if (d1 > v1)
+    qDebug()<<"v="<<v<<"  vstatic="<<vstatic;
+    if (vs1 > v1)
 	return true;
-    if (d1 < v1)
+    if (vs1 < v1)
 	return false;
-    if (d2 > v2)
+    if (vs2 > v2)
 	return true;
-    if (d2 < v2)
+    if (vs2 < v2)
 	return false;
-    if (d3 > v3)
+    if (vs3 > v3)
 	return true;
-    if (d3 < v3)
+    if (vs3 < v3)
 	return false;
     return true;    
 
