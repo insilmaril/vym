@@ -873,6 +873,38 @@ void ExportOrgMode::doExport()
 }
 
 ////////////////////////////////////////////////////////////////////////
+ExportLaTeX::ExportLaTeX()
+{
+    // Note: key in hash on left side is the regular expression, which 
+    // will be replaced by string on right side
+    // E.g. a literal $ will be replaced by \$
+    esc["\\$"]="\\$";
+    esc["\\^"]="\\^";
+    esc["%"]="\\%";
+    esc["&"]="\\&";
+    esc["~"]="\\~";
+    esc["_"]="\\_";
+    esc["\\\\"]="\\";
+    esc["\\{"]="\\{";
+    esc["\\}"]="\\}";
+}
+
+QString ExportLaTeX::escapeLaTeX(const QString &s)
+{
+    QString r=s;
+
+    QRegExp rx;
+    rx.setMinimal(true);
+
+    foreach (QString p,esc.keys() )
+    {
+	qDebug()<<"Replacing "<<p<<" with "<<esc[p];
+	rx.setPattern (p);
+	r.replace (rx, esc[p] );
+    }	
+    return r;
+}
+
 void ExportLaTeX::doExport()	//FIXME-2 remember last directory
 {
     // Exports a map to a LaTex file.  
@@ -915,7 +947,7 @@ void ExportLaTeX::doExport()	//FIXME-2 remember last directory
     if (!cur->hasHiddenExportParent() )
     {
 	int d=cur->depth();
-	s=cur->getHeadingPlain();
+	s=escapeLaTeX (cur->getHeadingPlain() );
 	if ( sectionNames.at(d).isEmpty() || d>=sectionNames.count() )
 	    ts << s << endl;
 	else    
