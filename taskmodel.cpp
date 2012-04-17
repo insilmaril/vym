@@ -247,10 +247,10 @@ void TaskModel::recalcPriorities()
 
 	// Color (importance)
 	QColor c=bi->getHeadingColor();
-	if (c==QColor ("#00aa7f") ) p-=10;
-	if (c==QColor ("#005500") ) p-=20;
-	if (c==QColor ("#d95100") ) p-=30;
-	if (c==QColor ("#ff0000") ) p-=40;
+	if (c==QColor ("#00aa7f") ) p-=20;
+	if (c==QColor ("#005500") ) p-=40;
+	if (c==QColor ("#d95100") ) p-=60;
+	if (c==QColor ("#ff0000") ) p-=80;
 
 	// Flags
 	if (bi->hasActiveStandardFlag ("stopsign") ) p-=100;
