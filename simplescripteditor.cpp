@@ -8,6 +8,7 @@
 
 extern QString vymName;
 extern QList <Command*> modelCommands;
+extern QDir lastMapDir;
 
 SimpleScriptEditor::SimpleScriptEditor (QWidget *parent):QDialog(parent)
 {
@@ -101,30 +102,29 @@ void SimpleScriptEditor::saveAsClicked()
 
 void SimpleScriptEditor::openClicked()
 {
-    QFileDialog *fd=new QFileDialog( this);
-    QStringList types;
-    types<< "VYM scripts (*.vys)" <<
-	    "All         (*)" ;
-    fd->setFilters (types);
-    fd->setDirectory (QDir().current());
-    fd->setWindowTitle (vymName + " - " + tr("Load script"));
-    fd->show();
-    if ( fd->exec() == QDialog::Accepted &&!fd->selectedFiles().isEmpty() )
-    
-	filename = fd->selectedFiles().first();
+    QString filter("VYM scripts (*.vys);;All (*)");
+    QString fn=QFileDialog::getOpenFileName( 
+	this,
+	vymName+" - " + tr("Load script"), 
+	lastMapDir.path(), 
+	filter);
 
-    QFile f( filename );
-    if ( !f.open( QIODevice::ReadOnly ) )
+    if (!fn.isEmpty() )
     {
-	QMessageBox::warning(0, 
-	    tr("Error"),
-	    tr("Couldn't open %1.\n").arg(filename));
-	return;
-    }   
+	QFile f( fn);
+	if ( !f.open( QIODevice::ReadOnly ) )
+	{
+	    QMessageBox::warning(0, 
+		tr("Error"),
+		tr("Couldn't open %1.\n").arg(filename));
+	    return;
+	}   
 
-    QTextStream ts( &f );
-    ui.editor->setText( ts.readAll() );
-    f.close();
+	QTextStream ts( &f );
+	ui.editor->setText( ts.readAll() );
+	f.close();
+	lastMapDir.setPath(fn.left(fn.lastIndexOf ("/")) );
+    }
 }
 
 void SimpleScriptEditor::runClicked()
