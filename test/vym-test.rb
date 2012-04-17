@@ -2,7 +2,7 @@
 
 require 'dbus'
 
-$deb = true
+$deb = false
 
 class Vym
   def initialize (name)
@@ -152,6 +152,4 @@ vym.addBranch(-1)
 vym.addBranch(1)
 vym.select branch_a
 expect( "Branch count increased for adding above and below", n+2, vym.branchCount )
-
-
 

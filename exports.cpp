@@ -907,7 +907,7 @@ QString ExportLaTeX::escapeLaTeX(const QString &s)
     return r;
 }
 
-void ExportLaTeX::doExport()	//FIXME-2 remember last directory
+void ExportLaTeX::doExport()	
 {
     // Exports a map to a LaTex file.  
     // This file needs to be included 

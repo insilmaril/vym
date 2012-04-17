@@ -64,6 +64,7 @@ QString iconPath;		// Pointing to icons used for toolbars
 QString flagsPath;		// Pointing to flags
 bool clipboardEmpty;		
 bool debug;			// global debugging flag
+bool testmode;			// Used to disable saving of autosave setting
 FlagRow *systemFlagsMaster; 
 FlagRow *standardFlagsMaster;	
 
@@ -145,6 +146,7 @@ int main(int argc, char* argv[])
     options.add ("restore", Option::Switch, "R", "restore");
     options.add ("shortcuts", Option::Switch, "s", "shortcuts");
     options.add ("shortcutsLaTeX", Option::Switch, "sl", "shortcutsLaTeX");
+    options.add ("testmode", Option::Switch, "t", "testmode");
     options.add ("version", Option::Switch, "v","version");
     options.setHelpText (
 	"VYM - View Your Mind\n"
@@ -165,6 +167,7 @@ int main(int argc, char* argv[])
 	"-R           restore     Restore last session\n"
 	"-s           shortcuts   Show Keyboard shortcuts on start\n"
 	"-sl          LaTeX       Show Keyboard shortcuts in LaTeX format on start\n"
+	"-t           testmode    Test mode, e.g. no autosave and changing of its setting\n"
 	"-v           version     Show vym version\n"
     );
 
@@ -177,6 +180,7 @@ int main(int argc, char* argv[])
     }
 
     debug=options.isOn ("debug");
+    testmode=options.isOn ("testmode");
 
     if (options.isOn ("version"))
     {

@@ -30,6 +30,7 @@
 #include "xml-vym.h"
 
 extern bool debug;
+extern bool testmode;
 extern Main *mainWindow;
 extern QDBusConnection dbusConnection;
 
@@ -1220,7 +1221,10 @@ void VymModel::autosave()
     if (filePath.isEmpty()) return;
 
 
-    if (mapUnsaved &&mapChanged && settings.value ("/mainwindow/autosave/use",true).toBool() )
+    if (mapUnsaved 
+	&& mapChanged 
+	&& mainWindow->useAutosave() 
+	&& !testmode)
     {
 	if (QFileInfo(filePath).lastModified()<=fileChangedTime) 
 	    mainWindow->fileSave (this);
@@ -3898,7 +3902,7 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	    int contentFilter=0x0000;
 
 	    int pc=parser.parCount();
-	    int pos;
+	    int pos;	//FIXME-0 not initialized
 	    // Get position
 	    if (pc>1)
 	    {

@@ -246,7 +246,12 @@ public slots:
     bool settingsURL();
     void settingsMacroDir();
     void settingsUndoLevels();
-    void settingsAutosaveToggle();
+
+public:
+    bool useAutosave();
+    void setAutosave( bool b);
+
+public slots:
     void settingsAutosaveTime();
     void settingsAutoLayoutToggle();
     void settingsWriteBackupFileToggle();

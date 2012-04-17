@@ -67,6 +67,7 @@ extern QString vymName;
 extern QString vymVersion;
 extern QString vymBuildDate;
 extern bool debug;
+extern bool testmode;
 extern bool bugzillaClientAvailable;
 
 
@@ -323,7 +324,8 @@ Main::~Main()
     settings.setValue( "/version/version", vymVersion );
     settings.setValue( "/version/builddate", vymBuildDate );
 
-    settings.setValue( "/mainwindow/autosave/use",actionSettingsAutosaveToggle->isChecked() );
+    if (!testmode) 
+	settings.setValue( "/mainwindow/autosave/use",actionSettingsAutosaveToggle->isChecked() );
     settings.setValue ("/mainwindow/autosave/ms", settings.value("/mainwindow/autosave/ms",60000)); 
     settings.setValue ("/mainwindow/autoLayout/use",actionSettingsAutoLayoutToggle->isChecked() );
     settings.setValue( "/mapeditor/editmode/autoSelectNewBranch",actionSettingsAutoSelectNewBranch->isChecked() );
@@ -1851,7 +1853,6 @@ void Main::setupSettingsActions()
     a = new QAction( tr( "Autosave","Settings action"), this);
     a->setCheckable(true);
     a->setChecked ( settings.value ("/mainwindow/autosave/use",true).toBool());
-    connect( a, SIGNAL( triggered() ), this, SLOT( settingsAutosaveToggle() ) );
     settingsMenu->addAction (a);
     actionSettingsAutosaveToggle=a;
 
@@ -1859,6 +1860,14 @@ void Main::setupSettingsActions()
     connect( a, SIGNAL( triggered() ), this, SLOT( settingsAutosaveTime() ) );
     settingsMenu->addAction (a);
     actionSettingsAutosaveTime=a;
+
+    // Disable certain actions during testing
+    if (testmode)
+    {
+	actionSettingsAutosaveToggle->setChecked (false);
+	actionSettingsAutosaveToggle->setEnabled (false);
+	actionSettingsAutosaveTime->setEnabled (false);
+    }
 
     a = new QAction( tr( "Write backup file on save","Settings action"), this);
     a->setCheckable(true);
@@ -4235,9 +4244,14 @@ void Main::settingsUndoLevels()
    }	
 }
 
-void Main::settingsAutosaveToggle()
+bool Main::useAutosave()
 {
-    settings.setValue ("/mainwindow/autosave/use",actionSettingsAutosaveToggle->isChecked() );
+    return actionSettingsAutosaveToggle->isChecked();
+}
+
+void Main::setAutosave(bool b)
+{
+    actionSettingsAutosaveToggle->setChecked(b);
 }
 
 void Main::settingsAutosaveTime()
