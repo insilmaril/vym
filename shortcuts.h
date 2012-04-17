@@ -23,7 +23,8 @@ public:
     Switchboard ();
     void addConnection(QAction *a,const QString &s);
     void addConnection(QWidget *w, QAction *a,const QString &s);
-    void print();
+    QString getASCII();
+    void printASCII();
     void printLaTeX();
 protected:  
     QMultiMap <QString,QAction*> actions;

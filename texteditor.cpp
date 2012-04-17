@@ -21,7 +21,7 @@ extern bool debug;
 ///////////////////////////////////////////////////////////////////////
 
 
-TextEditor::TextEditor()    
+TextEditor::TextEditor()    // FIXME-2 where are fonts set, e.g. fixedfont??
 {
     statusBar()->hide();    // Hide sizeGrip on default, which comes with statusBar
 
@@ -719,13 +719,13 @@ void TextEditor::toggleRichText()
     //setUpdatesEnabled (false);
     if (!actionFormatRichText->isChecked() ) 
     {
-	qDebug()<<"TE::setPlain";
+	//qDebug()<<"TE::setPlain";
 	e->setPlainText (e->toPlainText());
     }
     else    
     {
-	qDebug()<<"TE::setHTML";
-	qDebug()<<e->toHtml();
+	//qDebug()<<"TE::setHTML";
+	//qDebug()<<e->toHtml();
 	e->setHtml (e->toHtml());
     }
     updateActions();	

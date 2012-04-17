@@ -30,7 +30,7 @@ NoteEditor::NoteEditor()
     );
     fixedFont.fromString (settings.value(
 	"/satellite/noteeditor/fonts/fixedFont",
-	"Courier,10-1,5,48,0,0,0,1,0").toString() 
+	"Courier,10,-1,5,48,0,0,0,1,0").toString() 
     );
     QString s=settings.value ("/satellite/noteeditor/fonts/fonthintDefault","variable").toString();
     if (s == "fixed")

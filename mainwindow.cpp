@@ -278,7 +278,7 @@ Main::Main(QWidget* parent, Qt::WFlags f) : QMainWindow(parent,f)
     setupToolbars();
     setupFlagActions();
 
-    if (options.isOn("shortcuts")) switchboard.print();
+    if (options.isOn("shortcuts")) switchboard.printASCII();
     if (options.isOn("shortcutsLaTeX")) switchboard.printLaTeX();
 
     if (settings.value( "/mainwindow/showTestMenu",false).toBool()) setupTestActions();
@@ -1973,6 +1973,10 @@ void Main::setupHelpActions()
     a = new QAction(  tr( "Open VYM example maps ","Help action" ), this );
     switchboard.addConnection(helpMenu, a,tr("Help shortcuts","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( helpDemo() ) );
+
+    a = new QAction(  tr( "Show keyboard shortcuts","Help action" ), this );
+    switchboard.addConnection(helpMenu, a,tr("Help shortcuts","Shortcut group"));
+    connect( a, SIGNAL( triggered() ), this, SLOT( helpShortcuts() ) );
 
     a = new QAction( tr( "About VYM","Help action" ), this);
     connect( a, SIGNAL( triggered() ), this, SLOT( helpAbout() ) );
@@ -4919,6 +4923,12 @@ void Main::helpDemo()
     }
 }
 
+void Main::helpShortcuts()
+{
+    ShowTextDialog dia;
+    dia.setText( switchboard.getASCII() );
+    dia.exec();
+}
 
 void Main::helpAbout()
 {

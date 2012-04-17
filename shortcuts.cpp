@@ -31,12 +31,13 @@ void Switchboard::addConnection (QWidget *w, QAction *a, const QString &group)
     if (w) w->addAction (a);
 }
 
-void Switchboard::print ()  //FIXME-3 open messagebox, maybe showtextdialog
+QString Switchboard::getASCII()  
 {
+    QString s;
     QString g;
     foreach (g,actions.uniqueKeys())
     {
-	cout << qPrintable(g)<<endl;
+	s+= g +"\n";
 	QList <QAction*> values=actions.values(g);
 	for (int i=0;i<values.size();++i)
 	{
@@ -44,13 +45,18 @@ void Switchboard::print ()  //FIXME-3 open messagebox, maybe showtextdialog
 	    QString   sc=values.at(i)->shortcut().toString();
 	    desc=desc.remove('&');
 	    desc=desc.remove("...");
-	    printf (" %10s: %s\n",qPrintable(sc),qPrintable(desc));
+	    s+= QString(" %1: %2\n").arg(sc,12).arg(desc);
 	}
-	cout <<endl;
     }
+    return s;
 }
 
-void Switchboard::printLaTeX ()	//FIXME-2 open messagebox, maybe showtextdialog
+void Switchboard::printASCII ()	
+{
+    cout <<qPrintable(getASCII() );
+}
+
+void Switchboard::printLaTeX ()	
 {
     QString g;
     foreach (g,actions.uniqueKeys())
@@ -64,7 +70,7 @@ void Switchboard::printLaTeX ()	//FIXME-2 open messagebox, maybe showtextdialog
 		QString   sc=values.at(i)->shortcut().toString();
 		desc=desc.remove('&');
 		desc=desc.remove("...");
-		printf (" %10s & %s\\\\ \n",qPrintable(sc),qPrintable(desc));
+		cout << qPrintable( QString(" %1& %2").arg(sc,12).arg(desc) )<<endl;
 	    }
 	cout <<endl;
     }
