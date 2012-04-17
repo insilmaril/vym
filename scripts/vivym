@@ -1,0 +1,57 @@
+#!/bin/bash
+
+OLD=`pwd`
+
+SAVEIFS=$IFS
+IFS=$(echo -en "\n\b")
+
+for MAP in $*; do
+    # Convert rel to abs path
+    case $MAP in 
+	    /*)  ;;
+	    *) MAP=$PWD/$MAP  ;;
+    esac
+    #echo MAP1=$MAP
+    # Create directory
+    DIR=`mktemp -d /tmp/vivym.XXXXXX`
+    unzip $MAP -d $DIR
+    FILE=${MAP##*/}
+    BASE=${FILE%%.*}
+    EXT=${FILE#*.}
+    
+    #echo MAP=$MAP
+    #echo FILE=$FILE
+    #echo BASE=$BASE
+    #echo EXT=$EXT
+
+    # Count images
+    IMGCOUNT=$(ls $DIR/images |wc -l)
+    SLIDECOUNT=$(grep "<slide" $DIR/$BASE.xml | wc -l)
+    echo "Found $IMGCOUNT images." 
+    echo "Found $SLIDECOUNT slides. (Press enter)"
+    read
+
+    # Create backup for comparison after edit
+    BAK=$DIR/$BASE.xml.bak
+    cp $DIR/$BASE.xml $BAK
+
+    # Edit
+    $EDITOR $DIR  #/$BASE.xml
+
+    # Compare
+    if cmp $DIR/$BASE.xml $DIR/$BASE.xml.bak  &> /dev/null ; then 
+	echo "Map not changed." 
+    else  
+	# Missing: Zip again
+	#rm $BAK
+	cd $DIR
+	zip -r $MAP .
+
+    fi
+
+    #Clean up
+    cd $OLD
+    rm -rf $DIR
+done
+
+IFS=$SAVEIFS
