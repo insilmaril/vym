@@ -38,6 +38,7 @@ HEADERS	+= \
     branchobj.h \
     branchpropwindow.h\
     bugagent.h \
+    command.h \
     dockeditor.h \
     downloadagent.h \
     editxlinkdialog.h \
@@ -121,6 +122,7 @@ SOURCES	+= \
     branchobj.cpp \
     branchpropwindow.cpp \
     bugagent.cpp \
+    command.cpp \
     dockeditor.cpp \
     downloadagent.cpp \
     editxlinkdialog.cpp \

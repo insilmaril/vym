@@ -37,6 +37,7 @@ class Highlighter : public QSyntaxHighlighter
 
 public:
     Highlighter(QTextDocument *parent = 0);
+    void addKeywords (const QStringList &sl);
 
 protected:
     void highlightBlock(const QString &text);

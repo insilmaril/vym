@@ -53,6 +53,7 @@ protected:
     void closeEvent( QCloseEvent* );
 
 private:
+    void setupAPI();
     void setupFileActions();
     void setupEditActions();
     void setupSelectActions();

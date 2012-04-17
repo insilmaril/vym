@@ -12,6 +12,7 @@
 #include "adaptorvym.h"
 #include "branchpropwindow.h"
 #include "branchitem.h"
+#include "command.h"
 #include "exportoofiledialog.h"
 #include "exports.h"
 #include "file.h"
@@ -70,6 +71,7 @@ extern bool debug;
 extern bool testmode;
 extern bool bugzillaClientAvailable;
 
+extern QList <Command*> modelCommands;
 
 QMenu* branchAddContextMenu;
 QMenu* branchContextMenu;
@@ -84,7 +86,6 @@ QMenu* taskContextMenu;
 QMenu* fileLastMapsMenu;
 QMenu* fileImportMenu;
 QMenu* fileExportMenu;
-
 
 extern Settings settings;
 extern Options options;
@@ -203,6 +204,9 @@ Main::Main(QWidget* parent, Qt::WFlags f) : QMainWindow(parent,f)
 
     // Connect heading editor
     connect (headingEditor, SIGNAL (textHasChanged() ), this, SLOT (updateHeading()));
+
+    // Define commands in API (used globally)
+    setupAPI();
 
     // Initialize script editor
     scriptEditor = new SimpleScriptEditor();
@@ -427,6 +431,316 @@ void Main::closeEvent (QCloseEvent* event)
 	event->ignore();
     else	
 	event->accept();
+}
+
+// Define commands for models
+void Main::setupAPI()
+{
+    Command *c = new Command ("addBranch",Command::Branch);
+    c->addPar (Command::Int, true, "Index of new branch");
+    modelCommands.append(c);
+
+    c=new Command ("addBranchBefore",Command::Branch);
+    modelCommands.append(c);
+
+    c=new Command ("addMapCenter",Command::Any);
+    c->addPar (Command::Double,false, "Position x");
+    c->addPar (Command::Double,false, "Position y");
+    modelCommands.append(c);
+
+    c=new Command ("addMapInsert",Command::Any);
+    c->addPar (Command::String,false, "Filename of map to load");
+    c->addPar (Command::Int,true, "Index where map is inserted");
+    c->addPar (Command::Int,true, "Content filter");
+    modelCommands.append(c);
+
+    c=new Command ("addMapReplace",Command::Branch);
+    c->addPar (Command::String,false, "Filename of map to load");
+    modelCommands.append(c);
+
+    c=new Command ("addSlide",Command::Branch);
+    modelCommands.append(c);
+
+    c=new Command ("addXlink",Command::BranchLike);
+    c->addPar (Command::String,false, "Begin of XLink");
+    c->addPar (Command::String,false, "End of XLink");
+    c->addPar (Command::Int,true, "Width of XLink");
+    c->addPar (Command::Color,true, "Color of XLink");
+    modelCommands.append(c);
+
+    c=new Command ("branchCount",Command::BranchLike);
+    modelCommands.append(c);
+
+    c=new Command ("clearFlags",Command::BranchLike);
+    modelCommands.append(c);
+
+    c=new Command ("colorBranch",Command::Branch);
+    c->addPar (Command::Color,true, "New color");
+    modelCommands.append(c);
+
+    c=new Command ("colorSubtree",Command::Branch);
+    c->addPar (Command::Color,true, "New color");
+    modelCommands.append(c);
+
+    c=new Command ("copy",Command::BranchOrImage);
+    modelCommands.append(c);
+
+    c=new Command ("cut",Command::BranchOrImage);
+    modelCommands.append(c);
+
+    c=new Command ("cycleTask",Command::BranchOrImage);
+    c->addPar (Command::Bool,true, "True, if cycling in reverse order");
+    modelCommands.append(c);
+
+    c=new Command ("delete",Command::TreeItem);
+    modelCommands.append(c);
+
+    c=new Command ("deleteChildren",Command::Branch);
+    modelCommands.append(c);
+
+    c=new Command ("deleteSlide",Command::Any);
+    c->addPar (Command::Int,false,"Index of slide to delete");
+    modelCommands.append(c);
+
+    c=new Command ("exportAO",Command::Any);
+    c->addPar (Command::String,false,"Filename for export");
+    modelCommands.append(c);
+
+    c=new Command ("exportASCII",Command::Any);
+    c->addPar (Command::String,false,"Filename for export");
+    modelCommands.append(c);
+
+    c=new Command ("exportHTML",Command::Any);
+    c->addPar (Command::String,false,"Filename for export");
+    modelCommands.append(c);
+
+    c=new Command ("exportImage",Command::Any);
+    c->addPar (Command::String,false,"Filename for export");
+    c->addPar (Command::String,true,"Image format");
+    modelCommands.append(c);
+
+    c=new Command ("exportLaTeX",Command::Any);
+    c->addPar (Command::String,false,"Filename for export");
+    modelCommands.append(c);
+
+    c=new Command ("exportPDF",Command::Any);
+    c->addPar (Command::String,false,"Filename for export");
+    modelCommands.append(c);
+
+    c=new Command ("exportPDF",Command::Any);
+    c->addPar (Command::String,false,"Filename for export");
+    modelCommands.append(c);
+
+    c=new Command ("exportSVG",Command::Any);
+    c->addPar (Command::String,false,"Filename for export");
+    modelCommands.append(c);
+
+    c=new Command ("exportXML",Command::Any);
+    c->addPar (Command::String,false,"Filename for export");
+    modelCommands.append(c);
+
+    c=new Command ("getHeading",Command::TreeItem);
+    modelCommands.append(c);
+
+    c=new Command ("getSelectString",Command::TreeItem);
+    modelCommands.append(c);
+
+    c=new Command ("importDir",Command::Branch);
+    c->addPar (Command::String,false,"Directory name to import");
+    modelCommands.append(c);
+
+    c=new Command ("loadImage",Command::Branch); 
+    c->addPar (Command::String,false,"Filename of image");
+    modelCommands.append(c);
+
+    c=new Command ("loadNote",Command::Branch); 
+    c->addPar (Command::String,false,"Filename of note");
+    modelCommands.append(c);
+
+
+    c=new Command ("moveDown",Command::Branch); 
+    modelCommands.append(c);
+
+    c=new Command ("moveUp",Command::Branch); 
+    modelCommands.append(c);
+
+    c=new Command ("moveSlideDown",Command::Any); 
+    modelCommands.append(c);
+
+    c=new Command ("moveSlideUp",Command::Any); 
+    modelCommands.append(c);
+
+    c=new Command ("move",Command::BranchOrImage); 
+    c->addPar (Command::Double,false,"Position x");
+    c->addPar (Command::Double,false,"Position y");
+    modelCommands.append(c);
+
+    c=new Command ("moveRel",Command::BranchOrImage); 
+    c->addPar (Command::Double,false,"Position x");
+    c->addPar (Command::Double,false,"Position y");
+    modelCommands.append(c);
+
+    c=new Command ("nop",Command::Any); 
+
+    c=new Command ("note2URLs",Command::Branch); 
+    modelCommands.append(c);
+
+    c=new Command ("paste",Command::Branch); 
+    c->addPar (Command::Int,false,"Index of destination");
+    c->addPar (Command::Double,false,"Position y");
+    modelCommands.append(c);
+
+    c=new Command ("relinkTo",Command::TreeItem);   // FIXME different number of parameters for Image or Branch
+    c->addPar (Command::String,false,"Selection string of parent");
+    c->addPar (Command::Int,false,"Index position");
+    c->addPar (Command::Double,true,"Position x");
+    c->addPar (Command::Double,true,"Position y");
+    modelCommands.append(c);
+
+    c=new Command ("saveImage",Command::Image); 
+    c->addPar (Command::String,false,"Filename of image to save");
+    c->addPar (Command::String,false,"Format of image to save");
+    modelCommands.append(c);
+
+    c=new Command ("saveNote",Command::Branch); 
+    c->addPar (Command::String,false,"Filename of note to save");
+    modelCommands.append(c);
+
+    c=new Command ("scroll",Command::Branch); 
+    modelCommands.append(c);
+
+    c=new Command ("select",Command::Branch); 
+    c->addPar (Command::String,false,"Selection string");
+    modelCommands.append(c);
+
+    c=new Command ("selectLastBranch",Command::Branch); 
+    modelCommands.append(c);
+
+    c=new Command ("selectLastImage",Command::Branch); 
+    modelCommands.append(c);
+
+    c=new Command ("selectLatestAdded",Command::Any); 
+    modelCommands.append(c);
+
+    c=new Command ("setFlag",Command::TreeItem); 
+    c->addPar (Command::String,false,"Name of flag");
+    modelCommands.append(c);
+
+    c=new Command ("setTaskSleep",Command::Branch); 
+    c->addPar (Command::Int,false,"Days to sleep");
+    modelCommands.append(c);
+
+    c=new Command ("setFrameIncludeChildren",Command::BranchOrImage); 
+    c->addPar (Command::Bool,false,"Include or don't include children in frame");
+    modelCommands.append(c);
+
+    c=new Command ("setFrameType",Command::BranchOrImage); 
+    c->addPar (Command::String,false,"Type of frame");
+    modelCommands.append(c);
+
+    c=new Command ("setFramePenColor",Command::BranchOrImage); 
+    c->addPar (Command::Color,false,"Color of frame border line");
+    modelCommands.append(c);
+
+    c=new Command ("setFrameBrushColor",Command::BranchOrImage); 
+    c->addPar (Command::Color,false,"Color of frame background");
+    modelCommands.append(c);
+
+    c=new Command ("setFramePadding",Command::BranchOrImage); 
+    c->addPar (Command::Int,false,"Padding around frame");
+    modelCommands.append(c);
+
+    c=new Command ("setFrameBorderWidth",Command::BranchOrImage); 
+    c->addPar (Command::Int,false,"Width of frame borderline");
+    modelCommands.append(c);
+
+    c=new Command ("setHeading",Command::TreeItem); 
+    c->addPar (Command::String,false,"New heading");
+    modelCommands.append(c);
+
+    c=new Command ("setHideExport",Command::BranchOrImage); 
+    c->addPar (Command::Bool,false,"Set if item should be visible in export");
+    modelCommands.append(c);
+
+    c=new Command ("setIncludeImagesHorizontally",Command::Branch); 
+    c->addPar (Command::Bool,false,"Set if images should be included horizontally in parent branch");
+    modelCommands.append(c);
+
+    c=new Command ("setIncludeImagesVertically",Command::Branch); 
+    c->addPar (Command::Bool,false,"Set if images should be included vertically in parent branch");
+    modelCommands.append(c);
+
+    c=new Command ("setHideLinksUnselected",Command::BranchOrImage); 
+    c->addPar (Command::Bool,false,"Set if links of items should be visible for unselected items");
+    modelCommands.append(c);
+
+    c=new Command ("setMapAuthor",Command::Any); 
+    c->addPar (Command::String,false,"");
+    modelCommands.append(c);
+
+    c=new Command ("setMapComment",Command::Any); 
+    c->addPar (Command::String,false,"");
+    modelCommands.append(c);
+
+    c=new Command ("setMapBackgroundColor",Command::Any); 
+    c->addPar (Command::Color,false,"Color of map background");
+    modelCommands.append(c);
+
+    c=new Command ("setMapDefLinkColor",Command::Any); 
+    c->addPar (Command::Color,false,"Default color of links");
+    modelCommands.append(c);
+
+    c=new Command ("setMapLinkStyle",Command::Any); 
+    c->addPar (Command::String,false,"Link style in map");
+    modelCommands.append(c);
+
+    c=new Command ("setNote",Command::Branch); 
+    c->addPar (Command::String,false,"Note of branch");
+    modelCommands.append(c);
+
+    c=new Command ("setScale",Command::Image); 
+    c->addPar (Command::Double,false,"Scale image x");
+    c->addPar (Command::Double,false,"Scale image y");
+    modelCommands.append(c);
+
+    c=new Command ("setSelectionColor",Command::Any); 
+    c->addPar (Command::Color,false,"Color of selection box");
+    modelCommands.append(c);
+
+    c=new Command ("setURL",Command::Branch); 
+    c->addPar (Command::String,false,"URL of branch");
+    modelCommands.append(c);
+
+    c=new Command ("setVymLink",Command::Branch); 
+    c->addPar (Command::String,false,"Vymlink of branch");
+    modelCommands.append(c);
+
+    c=new Command ("sortChildren",Command::Branch); 
+    c->addPar (Command::Bool,true,"Sort children of branch in revers order if set");
+    modelCommands.append(c);
+
+    c=new Command ("toggleFlag",Command::Branch); 
+    c->addPar (Command::String,false,"Name of flag to toggle");
+    modelCommands.append(c);
+
+    c=new Command ("toggleFrameIncludeChildren",Command::Branch); 
+    modelCommands.append(c);
+
+    c=new Command ("toggleTarget",Command::Branch); 
+    modelCommands.append(c);
+
+    c=new Command ("toggleTask",Command::Branch); 
+    modelCommands.append(c);
+
+    c=new Command ("unscroll",Command::Branch); 
+    modelCommands.append(c);
+
+    c=new Command ("unscrollChildren",Command::Branch); 
+    modelCommands.append(c);
+
+    c=new Command ("unsetFlag",Command::Branch); 
+    c->addPar (Command::String,false,"Name of flag to unset");
+    modelCommands.append(c);
 }
 
 // File Actions

@@ -1,12 +1,13 @@
 #include "simplescripteditor.h"
 
-
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QTextStream>
 
+#include "command.h"
 
 extern QString vymName;
+extern QList <Command*> modelCommands;
 
 SimpleScriptEditor::SimpleScriptEditor (QWidget *parent):QDialog(parent)
 {
@@ -26,6 +27,10 @@ SimpleScriptEditor::SimpleScriptEditor (QWidget *parent):QDialog(parent)
     ui.editor->setFont(font);
 
     highlighter = new Highlighter(ui.editor->document());
+    QStringList list;
+    foreach (Command *c, modelCommands)
+	list.append (c->getName() );
+    highlighter->addKeywords (list);
 }
 
 void SimpleScriptEditor::saveScript()

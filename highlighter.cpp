@@ -35,91 +35,6 @@ Highlighter::Highlighter(QTextDocument *parent)	//FIXME-2 get keywords from comm
 
     keywordFormat.setForeground(Qt::darkBlue);
     keywordFormat.setFontWeight(QFont::Bold);
-    QStringList keywordPatterns;
-    keywordPatterns << "\\baddBranch\\b"
-		    << "\\baddBranchBefore\\b"
-                    << "\\baddMapCenter\\b"
-                    << "\\baddMapInsert\\b"
-		    << "\\baddMapReplace\\b"
-		    << "\\baddSlide\\b"
-                    << "\\bcolorBranch\\b"
-		    << "\\bcolorSubtree\\b"
-		    << "\\bcopy\\b"
-                    << "\\bcut\\b"
-                    << "\\bcycleTaskStatus\\b"
-		    << "\\bdelete\\b"
-		    << "\\bdeleteKeepChilds\\b"
-		    << "\\bdeleteChilds\\b"
-		    << "\\bdeleteSlide\\b"
-		    << "\\bexportAO\\b"
-		    << "\\bexportASCII\\b"
-		    << "\\bexportHTML\\b"
-		    << "\\bexportImage\\b"
-		    << "\\bexportLaTeX\\b"
-		    << "\\bexportPDF\\b"
-		    << "\\bexportSVG\\b"
-		    << "\\bexportXML\\b"
-		    << "\\bgetHeading\\b"
-		    << "\\bgetSelectString\\b"
-		    << "\\bimportDir\\b"
-		    << "\\blinkTo\\b"
-		    << "\\bloadImage\\b"
-		    << "\\bloadNote\\b"
-		    << "\\bmoveBranchUp\\b"
-		    << "\\bmoveBranchDown\\b"
-		    << "\\bmoveSlideUp\\b"
-		    << "\\bmoveSlideDown\\b"
-		    << "\\bmove\\b"
-		    << "\\bmoveRel\\b"
-		    << "\\bnop\\b"
-		    << "\\bnote2URLs\\b"
-		    << "\\bpaste\\b"
-		    << "\\bqa\\b"
-		    << "\\brelinkTo\\b"
-		    << "\\bsaveImage\\b"
-		    << "\\bsaveNote\\b"
-		    << "\\bscroll\\b"
-		    << "\\bselect\\b"
-		    << "\\bselectLastBranch\\b"
-		    << "\\bselectLastImage\\b"
-		    << "\\bselectLatestAdded\\b"
-		    << "\\bsetFrameType\\b"
-		    << "\\bsetFramePenColor\\b"
-		    << "\\bsetFrameBrushColor\\b"
-		    << "\\bsetFramePadding\\b"
-		    << "\\bsetFrameBorderWidth\\b"
-		    << "\\bsetTaskSleep\\b"
-		    << "\\btoggleFrameIncludeChildren\\b"
-		    << "\\bsetFrameIncludeChildren\\b"
-		    << "\\bsetHideLinkUnselected\\b"
-		    << "\\bsetMapAuthor\\b"
-		    << "\\bsetMapComment\\b"
-		    << "\\bsetMapBackgroundColor\\b"
-		    << "\\bsetMapDefLinkColor\\b"
-		    << "\\bsetMapDefLinkStyle\\b"
-		    << "\\bsetNote\\b"
-		    << "\\bsetHeading\\b"
-		    << "\\bsetHideExport\\b"
-		    << "\\bsetIncludeImagesHorizontally\\b"
-		    << "\\bsetIncludeImagesVertically\\b"
-		    << "\\bsetURL\\b"
-		    << "\\bsetVymLink\\b"
-		    << "\\bsetFlag\\b"
-		    << "\\bsetScale\\b"
-		    << "\\bsetSelectionColor\\b"
-		    << "\\bsortChildren\\b"
-		    << "\\btoggleFlag\\b"
-		    << "\\btoggleTarget\\b"
-		    << "\\btoggleTask\\b"
-		    << "\\bunscroll\\b"
-		    << "\\bunscrollChilds\\b"
-		    << "\\bunsetFlag\\b"
-		    ;
-    foreach (QString pattern, keywordPatterns) {
-        rule.pattern = QRegExp(pattern);
-        rule.format = keywordFormat;
-        highlightingRules.append(rule);
-    }
 
     // QT keywords
     /*
@@ -166,6 +81,16 @@ Highlighter::Highlighter(QTextDocument *parent)	//FIXME-2 get keywords from comm
     highlightingRules.append(rule);
     */
 
+}
+
+void Highlighter::addKeywords (const QStringList &list)
+{
+    HighlightingRule rule;
+    foreach (QString pattern, list) {
+        rule.pattern = QRegExp(pattern);
+        rule.format = keywordFormat;
+        highlightingRules.append(rule);
+    }
 }
 
 void Highlighter::highlightBlock(const QString &text)

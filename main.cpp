@@ -4,6 +4,7 @@
 #include <iostream>
 using namespace std;
 
+#include "command.h"
 #include "findwidget.h"
 #include "findresultwidget.h"
 #include "flagrow.h"
@@ -87,7 +88,7 @@ Settings settings ("InSilmaril",getINIPath()); // Organization, INI path
 Settings settings ("InSilmaril","vym"); // Organization, Application name
 #endif
 
-
+QList <Command*> modelCommands;
 
 Options options;
 ImageIO imageIO;
