@@ -549,6 +549,10 @@ void Main::setupAPI()
     c=new Command ("getSelectString",Command::TreeItem);
     modelCommands.append(c);
 
+    c=new Command ("hasActiveFlag",Command::TreeItem);
+    c->addPar (Command::String,false,"Name of flag");
+    modelCommands.append(c);
+
     c=new Command ("importDir",Command::Branch);
     c->addPar (Command::String,false,"Directory name to import");
     modelCommands.append(c);

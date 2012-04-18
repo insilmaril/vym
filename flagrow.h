@@ -27,10 +27,10 @@ public:
 	
 	To activate a flag it will be copied from masterRow to current row.
     */	
-    void toggle (const QString&, FlagRow *masterRow=NULL);
-    void activate(const QString&);
-    void deactivate(const QString&);
-    void deactivateGroup(const QString&);
+    bool toggle (const QString&, FlagRow *masterRow=NULL);
+    bool activate(const QString&);
+    bool deactivate(const QString&);
+    bool deactivateGroup(const QString&);
     void deactivateAll();
     void setEnabled (bool);
     void resetUsedCounter();
@@ -46,7 +46,6 @@ private:
     QList <Flag*> flags; 
     QStringList activeNames;	//! Lists all names of currently active flags
     QString rowName;		//! Name of this collection of flags
-//  bool showFlags;		// FloatObjects want to hide their flags
 };
 #endif
 

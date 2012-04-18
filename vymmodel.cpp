@@ -3763,6 +3763,11 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	{ 
 	    returnValue=getSelectString();
 	/////////////////////////////////////////////////////////////////////
+	} else if (com=="hasActiveFlag")
+	{ 
+	    s=parser.parString(ok,0);
+	    returnValue=selti->hasActiveStandardFlag(s);
+	/////////////////////////////////////////////////////////////////////
 	} else if (com=="importDir")
 	{
 	    s=parser.parString(ok,0);

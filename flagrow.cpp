@@ -54,17 +54,19 @@ bool FlagRow::isActive (const QString &name)
     return false;   
 }
 
-void FlagRow::toggle (const QString &name, FlagRow *masterRow)
+bool FlagRow::toggle (const QString &name, FlagRow *masterRow)
 {
     if (isActive(name) )
-	deactivate (name);
+	return deactivate (name);
     else
     {
-	activate (name);    
-	if (!masterRow) return;
+	if (!activate (name) ) return false;    
+
+	// Deactivate group
+	if (!masterRow) return false;
 
 	Flag *flag=masterRow->getFlag (name);
-	if (!flag) return;
+	if (!flag) return false;
 	QString mygroup=flag->getGroup();
 
 	for (int i=0;i<activeNames.size();++i)
@@ -73,36 +75,64 @@ void FlagRow::toggle (const QString &name, FlagRow *masterRow)
 	    if (name!=activeNames.at(i) && !mygroup.isEmpty() && mygroup==flag->getGroup())
 		deactivate (activeNames.at(i));
 	}
+	return true;
     }
 }
 
-void FlagRow::activate (const QString &name)
+bool FlagRow::activate (const QString &name)
 {
-    if (!isActive (name))
-	activeNames.append (name);
+    if (isActive (name)) 
+    {
+	if (debug) qWarning ()<<QString("FlagRow::activate - %1 is already active").arg(name);
+	return false;
+    }
+
+    if (!masterRow)
+    {
+	qWarning()<<"FlagRow::activate - no masterRow to activate "<<name;
+	return false;
+    }
+
+    // Check, if flag exists after all...
+    Flag *flag=masterRow->getFlag (name);
+    if (!flag)
+    {
+	qWarning()<<"FlagRow::activate - flag "<<name<<" does not exist here!";
+	return false;
+    }
+
+    activeNames.append (name);
+    return true;
 }
 
 
-void FlagRow::deactivate (const QString &name)	//FIXME-4 complaints if CTRL-E is pressed with focus on NoteEditor ?!
+bool FlagRow::deactivate (const QString &name)
 {
     int n=activeNames.indexOf (name);
     if (n>=0)
+    {
 	activeNames.removeAt(n);
+	return true;
+    }
     else
+    {
 	if (debug) qWarning ()<<QString("FlagRow::deactivate - %1 is not active").arg(name);
+	return false;
+    }
 }
 
-void FlagRow::deactivateGroup (const QString &gname) 
+bool FlagRow::deactivateGroup (const QString &gname) 
 {
-    if (!masterRow) return;
-    if (gname.isEmpty()) return;
+    if (!masterRow) return false;
+    if (gname.isEmpty()) return false;
 
-    for (int i=0;i<activeNames.size();++i)
+    foreach (QString s, activeNames )
     {
-	Flag *flag=masterRow->getFlag (activeNames.at(i) );
+	Flag *flag=masterRow->getFlag (s);
 	if (flag && gname == flag->getGroup())
-	    deactivate (activeNames.at(i));
+	    deactivate (s);
     }
+    return true;
 }
 
 void FlagRow::deactivateAll ()
