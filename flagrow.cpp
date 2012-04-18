@@ -114,11 +114,9 @@ bool FlagRow::deactivate (const QString &name)
 	activeNames.removeAt(n);
 	return true;
     }
-    else
-    {
-	if (debug) qWarning ()<<QString("FlagRow::deactivate - %1 is not active").arg(name);
-	return false;
-    }
+    if (debug) 
+	qWarning ()<<QString("FlagRow::deactivate - %1 is not active").arg(name);
+    return false;
 }
 
 bool FlagRow::deactivateGroup (const QString &gname) 

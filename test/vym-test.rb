@@ -207,6 +207,69 @@ expect "setHeading","Changed!",vym.getHeading
 vym.undo
 expect "Undo: setHeading","branch a",vym.getHeading
 
+#######################
+heading "Flags"
+init_map
+vym.select main_a
+
+def set_flags (v,a)
+  a.each do |f|
+  v.setFlag f
+  expect "Flag set: #{f}", v.hasActiveFlag(f), true
+  end
+end
+
+def unset_flags (v,a)
+  a.each do |f|
+  v.unsetFlag f
+  expect "Flag unset: #{f}", v.hasActiveFlag(f), false
+  end
+end
+
+# Group standard-mark
+set_flags vym,[ "exclamationmark","questionmark"]
+
+# Group standard-status
+set_flags vym, [ "hook-green", 
+  "wip", 
+  "cross-red", 
+  "stopsign" ]
+
+# Group standard-smiley
+smileys = [ "smiley-good",
+    "smiley-sad",
+    "smiley-omb" ]
+set_flags vym, smileys
+
+# Group standard-arrow
+set_flags vym, [ "arrow-up", 
+  "arrow-down", 
+  "2arrow-up", 
+  "2arrow-down" ]
+
+# Group standard-thumb
+set_flags vym, [ "thumb-up", "thumb-down" ]
+
+# Without group
+set_flags vym, [ "clock",
+  "phone",
+  "lamp",
+  "rose",
+  "heart",
+  "present",
+  "flash",
+  "info",
+  "lifebelt" ]
+
+unset_flags vym, smileys
+
+vym.clearFlags
+expect "clearFlags cleared exclamationmark", 
+  vym.hasActiveFlag( "exclamationmark" ), 
+  false
+expect "clearFlags cleared smiley-good", 
+  vym.hasActiveFlag( "smiley-good" ), 
+  false
 
 #######################
 heading "Deleting parts"
@@ -249,60 +312,6 @@ vym.select branch_a
 expect "Undo: deleteKeepChildren: branchcount of branch", m,vym.branchCount
 
 
-#######################
-heading "Flags"
-init_map
-vym.select main_a
-
-def test_flags (v,a)
-  a.each do |f|
-  v.setFlag f
-  expect "Flag set: #{f}", v.hasActiveFlag(f), true
-  end
-end
-
-
-# Group standard-mark
-test_flags vym,[ "exclamationmark","questionmark"]
-
-# Group standard-status
-test_flags vym, [ "hook-green", 
-  "wip", 
-  "cross-red", 
-  "stopsign" ]
-
-# Group standard-smiley
-test_flags vym, [ "smiley-good",
-    "smiley-sad",
-    "smiley-omb" ]
-
-# Group standard-arrow
-test_flags vym, [ "arrow-up", 
-  "arrow-down", 
-  "2arrow-up", 
-  "2arrow-down" ]
-
-# Group standard-thumb
-test_flags vym, [ "thumb-up", "thumb-down" ]
-
-# Without group
-test_flags vym, [ "clock",
-  "phone",
-  "lamp",
-  "rose",
-  "heart",
-  "present",
-  "flash",
-  "info",
-  "lifebelt" ]
-
-vym.clearFlags
-expect "clearFlags cleared exclamationmark", 
-  vym.hasActiveFlag( "exclamationmark" ), 
-  false
-expect "clearFlags cleared lifebelt", 
-  vym.hasActiveFlag( "lifebelt" ), 
-  false
 
 #######################
 summary
