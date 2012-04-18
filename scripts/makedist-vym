@@ -106,7 +106,7 @@ if [ $DO_TARBALL = 1 ]; then
 
     # Copy doc
     mkdir -p $TARBALLSRC/doc
-    mv $TMPDIR/tex/*.pdf $TARBALLSRC/doc
+    cp $TMPDIR/tex/*.pdf $TARBALLSRC/doc
 
     rm -rf $TARBALLSRC/.git
     tar cvjf vym-$VERSION.tar.bz2 $TARBALLSRC
