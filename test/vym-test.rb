@@ -11,7 +11,7 @@ def waitkey
   STDIN.gets
 end
 
-def expect (comment, v_exp, v_real)
+def expect (comment, v_real, v_exp)
   if v_exp == v_real
     puts "    Ok: #{comment}"
     $tests_passed += 1
@@ -247,6 +247,62 @@ vym.select main_a
 expect "Undo: deleteKeepChildren: branchcount of parent", n,vym.branchCount
 vym.select branch_a
 expect "Undo: deleteKeepChildren: branchcount of branch", m,vym.branchCount
+
+
+#######################
+heading "Flags"
+init_map
+vym.select main_a
+
+def test_flags (v,a)
+  a.each do |f|
+  v.setFlag f
+  expect "Flag set: #{f}", v.hasActiveFlag(f), true
+  end
+end
+
+
+# Group standard-mark
+test_flags vym,[ "exclamationmark","questionmark"]
+
+# Group standard-status
+test_flags vym, [ "hook-green", 
+  "wip", 
+  "cross-red", 
+  "stopsign" ]
+
+# Group standard-smiley
+test_flags vym, [ "smiley-good",
+    "smiley-sad",
+    "smiley-omb" ]
+
+# Group standard-arrow
+test_flags vym, [ "arrow-up", 
+  "arrow-down", 
+  "2arrow-up", 
+  "2arrow-down" ]
+
+# Group standard-thumb
+test_flags vym, [ "thumb-up", "thumb-down" ]
+
+# Without group
+test_flags vym, [ "clock",
+  "phone",
+  "lamp",
+  "rose",
+  "heart",
+  "present",
+  "flash",
+  "info",
+  "lifebelt" ]
+
+vym.clearFlags
+expect "clearFlags cleared exclamationmark", 
+  vym.hasActiveFlag( "exclamationmark" ), 
+  false
+expect "clearFlags cleared lifebelt", 
+  vym.hasActiveFlag( "lifebelt" ), 
+  false
 
 #######################
 summary
