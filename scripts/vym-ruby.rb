@@ -1,6 +1,6 @@
 require 'dbus'
 
-$deb = true
+$deb = false
 
 class Vym
   def hello
@@ -116,13 +116,5 @@ class VymManager
     end
     raise "Could not find instance named \"test\""
   end
-end
-
-def expect (comment, v_exp, v_real)
-  if v_exp == v_real
-    puts "    Ok: #{comment}"
-  else  
-    puts "Failed: #{comment}. Expected #{v_exp}, but got #{v_real}"
-  end  
 end
 

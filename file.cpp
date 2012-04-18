@@ -13,6 +13,8 @@
 #include <windows.h>
 #endif
 
+using namespace File;
+
 QString maskPath(QString p)
 {
     // Change " " to "\ " to enable blanks in filenames
@@ -180,7 +182,7 @@ void makeSubDirs (const QString &s)
 
 ErrorCode zipDir (const QDir &zipDir, const QString &zipName)	
 {
-    ErrorCode err = success;
+    ErrorCode err = Success;
     
     QString newName;
     // Move existing file away
@@ -198,7 +200,7 @@ ErrorCode zipDir (const QDir &zipDir, const QString &zipName)
 	{
 	    QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
 			   QObject::tr("Couldn't move existing file out of the way before saving."));
-	    return aborted;
+	    return Aborted;
 	}
     }
 
@@ -216,7 +218,7 @@ ErrorCode zipDir (const QDir &zipDir, const QString &zipName)
 	// zip could not be started
 	QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
 		       QObject::tr("Couldn't start zip to compress data."));
-	err=aborted;
+	err=Aborted;
     } else
     {
 	// zip could be started
@@ -226,7 +228,7 @@ ErrorCode zipDir (const QDir &zipDir, const QString &zipName)
 	    QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
 			   QObject::tr("zip didn't exit normally")+
 			   "\n" + zipProc->getErrout());
-	    err=aborted;
+	    err=Aborted;
 	} else
 	{
 	    if (zipProc->exitCode()>0)
@@ -234,13 +236,13 @@ ErrorCode zipDir (const QDir &zipDir, const QString &zipName)
 		QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
 			   QString("zip exit code:  %1").arg(zipProc->exitCode() )+
 			   "\n" + zipProc->getErrout() );
-		err=aborted;
+		err=Aborted;
 	    }
 	}
     }	
 
     // Try to restore previous file, if zipping failed
-    if (err == aborted && !newName.isEmpty() && !file.rename (zipName) )
+    if (err == Aborted && !newName.isEmpty() && !file.rename (zipName) )
 	QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
 	   QObject::tr("Couldn't rename %1 back to %2").arg(newName).arg(zipName) );
     else
@@ -254,9 +256,9 @@ ErrorCode zipDir (const QDir &zipDir, const QString &zipName)
     return err;	
 }
 
-ErrorCode unzipDir (const QDir &zipDir, const QString &zipName)
+File::ErrorCode unzipDir (const QDir &zipDir, const QString &zipName)
 {
-    ErrorCode err=success;
+    ErrorCode err=Success;
 
     // Try to unzip file
 #if !defined(Q_OS_WIN32)
@@ -273,7 +275,7 @@ ErrorCode unzipDir (const QDir &zipDir, const QString &zipName)
     {
 	QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
 		       QObject::tr("Couldn't start unzip to decompress data."));
-	err=aborted;
+	err=Aborted;
 	
     } else
     {
@@ -283,20 +285,20 @@ ErrorCode unzipDir (const QDir &zipDir, const QString &zipName)
 	    QMessageBox::critical( 0,QObject::tr( "Critical Error" ),
 			   QObject::tr("unzip didn't exit normally") +
 			   zipProc->getErrout() );
-	    err=aborted;
+	    err=Aborted;
 	} else
 	{
 	    if (zipProc->exitCode()>0)
 	    {
 		if (zipProc->exitCode()==9)
 		    // no zipped file, but maybe .xml or old version? Try again.
-		    err=nozip;
+		    err=NoZip;
 		else	
 		{
 		    QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
 				   QString("unzip exit code:  %1").arg(zipProc->exitCode() ) +
 				   zipProc->getErrout() );
-		    err=aborted;
+		    err=Aborted;
 		}
 	    } 
 	}
@@ -332,7 +334,7 @@ ErrorCode unzipDir (const QDir &zipDir, const QString &zipName)
         &siStartInfo, // STARTUPINFO pointer
         &piProcInfo) ) // receives PROCESS_INFORMATION
     {
-        err = aborted;
+        err = Aborted;
     }
     else
     {

@@ -316,30 +316,31 @@ Main::Main(QWidget* parent, Qt::WFlags f) : QMainWindow(parent,f)
 Main::~Main()
 {
     // Save Settings
-    #if defined(Q_OS_WIN32)
-    settings.setValue ("/mainwindow/geometry/maximized", isMaximized());
-    #endif
-    settings.setValue ("/mainwindow/geometry/size", size());
-    settings.setValue ("/mainwindow/geometry/pos", pos());
-    settings.setValue ("/mainwindow/state",saveState(0));
-
-    settings.setValue ("/mainwindow/view/AntiAlias",actionViewToggleAntiAlias->isChecked());
-    settings.setValue ("/mainwindow/view/SmoothPixmapTransform",actionViewToggleSmoothPixmapTransform->isChecked());
-    settings.setValue( "/version/version", vymVersion );
-    settings.setValue( "/version/builddate", vymBuildDate );
 
     if (!testmode) 
-	settings.setValue( "/mainwindow/autosave/use",actionSettingsAutosaveToggle->isChecked() );
-    settings.setValue ("/mainwindow/autosave/ms", settings.value("/mainwindow/autosave/ms",60000)); 
-    settings.setValue ("/mainwindow/autoLayout/use",actionSettingsAutoLayoutToggle->isChecked() );
-    settings.setValue( "/mapeditor/editmode/autoSelectNewBranch",actionSettingsAutoSelectNewBranch->isChecked() );
-    settings.setValue( "/mainwindow/writeBackupFile",actionSettingsWriteBackupFile->isChecked() );
-    settings.setValue( "/mapeditor/editmode/autoSelectText",actionSettingsAutoSelectText->isChecked() );
-    settings.setValue( "/mapeditor/editmode/autoEditNewBranch",actionSettingsAutoEditNewBranch->isChecked() );
-    settings.setValue( "/mapeditor/editmode/useFlagGroups",actionSettingsUseFlagGroups->isChecked() );
-    settings.setValue( "/export/useHideExport",actionSettingsUseHideExport->isChecked() );
-    settings.setValue( "/satellite/noteeditor/isDockWindow",actionSettingsNoteEditorIsDockWindow->isChecked());
+    {
+	#if defined(Q_OS_WIN32)
+	settings.setValue ("/mainwindow/geometry/maximized", isMaximized());
+	#endif
+	settings.setValue ("/mainwindow/geometry/size", size());
+	settings.setValue ("/mainwindow/geometry/pos", pos());
+	settings.setValue ("/mainwindow/state",saveState(0));
 
+	settings.setValue ("/mainwindow/view/AntiAlias",actionViewToggleAntiAlias->isChecked());
+	settings.setValue ("/mainwindow/view/SmoothPixmapTransform",actionViewToggleSmoothPixmapTransform->isChecked());
+	settings.setValue( "/version/version", vymVersion );
+	settings.setValue( "/version/builddate", vymBuildDate );
+	settings.setValue( "/mainwindow/autosave/use",actionSettingsAutosaveToggle->isChecked() );
+	settings.setValue ("/mainwindow/autosave/ms", settings.value("/mainwindow/autosave/ms",60000)); 
+	settings.setValue ("/mainwindow/autoLayout/use",actionSettingsAutoLayoutToggle->isChecked() );
+	settings.setValue( "/mapeditor/editmode/autoSelectNewBranch",actionSettingsAutoSelectNewBranch->isChecked() );
+	settings.setValue( "/mainwindow/writeBackupFile",actionSettingsWriteBackupFile->isChecked() );
+	settings.setValue( "/mapeditor/editmode/autoSelectText",actionSettingsAutoSelectText->isChecked() );
+	settings.setValue( "/mapeditor/editmode/autoEditNewBranch",actionSettingsAutoEditNewBranch->isChecked() );
+	settings.setValue( "/mapeditor/editmode/useFlagGroups",actionSettingsUseFlagGroups->isChecked() );
+	settings.setValue( "/export/useHideExport",actionSettingsUseHideExport->isChecked() );
+	settings.setValue( "/satellite/noteeditor/isDockWindow",actionSettingsNoteEditorIsDockWindow->isChecked());
+    }
     //FIXME-4 save scriptEditor settings
 
     // call the destructors
@@ -498,6 +499,9 @@ void Main::setupAPI()
     c=new Command ("deleteChildren",Command::Branch);
     modelCommands.append(c);
 
+    c=new Command ("deleteKeepChildren",Command::Branch);
+    modelCommands.append(c);
+
     c=new Command ("deleteSlide",Command::Any);
     c->addPar (Command::Int,false,"Index of slide to delete");
     modelCommands.append(c);
@@ -588,6 +592,9 @@ void Main::setupAPI()
     c=new Command ("paste",Command::Branch); 
     c->addPar (Command::Int,false,"Index of destination");
     c->addPar (Command::Double,false,"Position y");
+    modelCommands.append(c);
+
+    c=new Command ("redo",Command::Any); 
     modelCommands.append(c);
 
     c=new Command ("relinkTo",Command::TreeItem);   // FIXME different number of parameters for Image or Branch
@@ -730,6 +737,9 @@ void Main::setupAPI()
     modelCommands.append(c);
 
     c=new Command ("toggleTask",Command::Branch); 
+    modelCommands.append(c);
+
+    c=new Command ("undo",Command::Any); 
     modelCommands.append(c);
 
     c=new Command ("unscroll",Command::Branch); 
@@ -2726,9 +2736,9 @@ void Main::fileNewCopy()
     }
 }
 
-ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode, const FileType &ftype) 
+File::ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode, const FileType &ftype) 
 {
-    ErrorCode err=success;
+    File::ErrorCode err=File::Success;
 
     // fn is usually the archive, mapfile the file after uncompressing
     QString mapfile;
@@ -2766,7 +2776,7 @@ ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode, const FileType &ftyp
 			break;
 		    case QMessageBox::Cancel:
 			// do nothing
-			return aborted;
+			return File::Aborted;
 			break;
 		}
 	    }
@@ -2815,7 +2825,7 @@ ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode, const FileType &ftyp
 		    tabWidget->setTabText (tabIndex,
 			currentMapEditor()->getModel()->getFileName() );
 		    statusBar()->showMessage( "Created " + fn , statusbarTime );
-		    return success;
+		    return File::Success;
 			
 		case QMessageBox::Cancel:
 		    // don't create new map
@@ -2824,13 +2834,13 @@ ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode, const FileType &ftyp
 		    tabWidget->setCurrentIndex (tabWidget->count()-1);
 		    fileCloseMap();
 		    tabWidget->setCurrentIndex (cur);
-		    return aborted;
+		    return File::Aborted;
 	    }
 	}   
 
 	//tabWidget->setCurrentIndex (tabIndex);
 
-	if (err!=aborted)
+	if (err!=File::Aborted)
 	{
 	    // Save existing filename in case  we import
 	    QString fn_org=vm->getFilePath();
@@ -2847,7 +2857,7 @@ ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode, const FileType &ftyp
 	}   
 
 	// Finally check for errors and go home
-	if (err==aborted) 
+	if (err==File::Aborted) 
 	{
 	    if (lmode==NewMap) fileCloseMap();
 	    statusBar()->showMessage( "Could not load " + fn, statusbarTime );
@@ -2991,7 +3001,7 @@ void Main::fileSave(VymModel *m, const SaveMode &savemode)
 	fileSaveAs(savemode);
     }
 
-    if (m->save (savemode)==success)
+    if (m->save (savemode)==File::Success)
     {
 	statusBar()->showMessage( 
 	    tr("Saved  %1").arg(m->getFilePath()), 
@@ -3096,7 +3106,7 @@ void Main::fileImportKDE3Bookmarks()
 {
     ImportKDE3Bookmarks im;
     im.transform();
-    if (aborted!=fileLoad (im.getTransformedFile(),NewMap,VymMap) && currentMapEditor() )
+    if (File::Aborted!=fileLoad (im.getTransformedFile(),NewMap,VymMap) && currentMapEditor() )
 	currentMapEditor()->getModel()->setFilePath ("");
 }
 
@@ -3104,7 +3114,7 @@ void Main::fileImportKDE4Bookmarks()
 {
     ImportKDE4Bookmarks im;
     im.transform();
-    if (aborted!=fileLoad (im.getTransformedFile(),NewMap,VymMap) && currentMapEditor() )
+    if (File::Aborted!=fileLoad (im.getTransformedFile(),NewMap,VymMap) && currentMapEditor() )
 	currentMapEditor()->getModel()->setFilePath ("");
 }
 
@@ -3128,7 +3138,7 @@ void Main::fileImportFirefoxBookmarks()
 	{
 	    im.setFile (*it);
 	    if (im.transform() && 
-		aborted!=fileLoad (im.getTransformedFile(),NewMap,FreemindMap) && 
+		File::Aborted!=fileLoad (im.getTransformedFile(),NewMap,FreemindMap) && 
 		currentMapEditor() )
 		currentMapEditor()->getModel()->setFilePath ("");
 	    ++it;
@@ -3188,7 +3198,7 @@ void Main::fileImportMM()
 	{
 	    im.setFile (*it);
 	    if (im.transform() && 
-		success==fileLoad (im.getTransformedFile(),NewMap,VymMap) && 
+		File::Success==fileLoad (im.getTransformedFile(),NewMap,VymMap) && 
 		currentMapEditor() )
 		currentMapEditor()->getModel()->setFilePath ("");
 	    ++it;
@@ -4071,21 +4081,24 @@ void Main::editNewBranchBefore()
 void Main::editNewBranchAbove()	
 {
     VymModel *m=currentModel();
-    if ( m)
+    if (m)
     {
-	BranchItem *bi=m->addNewBranch (-1);
-
-
-	if (bi) 
-	    m->select (bi);
-	else
-	    return;
-
-	if (actionSettingsAutoEditNewBranch->isChecked())
+	BranchItem *selbi=m->getSelectedBranch();
+	if (selbi)
 	{
-	    if (!actionSettingsAutoSelectNewBranch->isChecked())
-		prevSelection=m->getSelectString (bi);	
-	    currentMapEditor()->editHeading();
+	    BranchItem *bi=m->addNewBranch(selbi,-3);
+
+	    if (bi) 
+		m->select (bi);
+	    else
+		return;
+
+	    if (actionSettingsAutoEditNewBranch->isChecked())
+	    {
+		if (!actionSettingsAutoSelectNewBranch->isChecked())
+		    prevSelection=m->getSelectString (bi);	
+		currentMapEditor()->editHeading();
+	    }
 	}
     }	
 }
@@ -4095,18 +4108,22 @@ void Main::editNewBranchBelow()
     VymModel *m=currentModel();
     if (m)
     {
-	BranchItem *bi=m->addNewBranch (1);
-
-	if (bi) 
-	    m->select (bi);
-	else
-	    return;
-
-	if (actionSettingsAutoEditNewBranch->isChecked())
+	BranchItem *selbi=m->getSelectedBranch();
+	if (selbi)
 	{
-	    if (!actionSettingsAutoSelectNewBranch->isChecked())
-		prevSelection=m->getSelectString(bi);
-	    currentMapEditor()->editHeading();
+	    BranchItem *bi=m->addNewBranch(selbi,-1);
+
+	    if (bi) 
+		m->select (bi);
+	    else
+		return;
+
+	    if (actionSettingsAutoEditNewBranch->isChecked())
+	    {
+		if (!actionSettingsAutoSelectNewBranch->isChecked())
+		    prevSelection=m->getSelectString(bi);
+		currentMapEditor()->editHeading();
+	    }
 	}
     }	
 }

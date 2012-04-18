@@ -97,7 +97,7 @@ bool ImportFirefoxBookmarks::transform()
 bool ImportMM::transform()
 {
     // try to unzip 
-    if (success==unzipDir (tmpDir, inputFile))
+    if (File::Success==unzipDir (tmpDir, inputFile))
     {
 	
 	// Set short name, too. Search from behind:

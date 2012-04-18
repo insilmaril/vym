@@ -367,14 +367,14 @@ QString VymModel::getDestPath()
     return destPath;
 }
 
-ErrorCode VymModel::loadMap (	
+File::ErrorCode VymModel::loadMap (	
     QString fname, 
     const LoadMode &lmode, 
     const FileType &ftype,
     const int &contentFilter,
     int pos)
 {
-    ErrorCode err=success;
+    File::ErrorCode err=File::Success;
 
     // Get updated zoomFactor, before applying one read from file in the end
     if (mapEditor) 
@@ -395,7 +395,7 @@ ErrorCode VymModel::loadMap (
 	default: 
 	    QMessageBox::critical( 0, tr( "Critical Parse Error" ),
 		   "Unknown FileType in VymModel::load()");
-	return aborted;	
+	return File::Aborted;	
     }
 
     bool zipped_org=zipped;
@@ -416,13 +416,13 @@ ErrorCode VymModel::loadMap (
     {
 	QMessageBox::critical( 0, tr( "Critical Load Error" ),
 	   tr("Couldn't create temporary directory before load\n"));
-	return aborted; 
+	return File::Aborted; 
     }
 
     // Try to unzip file
     err=unzipDir (tmpZipDir,fname);
     QString xmlfile;
-    if (err==nozip)
+    if (err==File::NoZip)
     {
 	xmlfile=fname;
 	zipped=false;
@@ -461,7 +461,7 @@ ErrorCode VymModel::loadMap (
 	    {
 		QMessageBox::critical( 0, tr( "Critical Load Error" ),
 			   tr("Couldn't find a map (*.xml) in .vym archive.\n"));
-		err=aborted;		       
+		err=File::Aborted;		       
 	    }	
 	} //file doesn't exist	
 	else
@@ -476,7 +476,7 @@ ErrorCode VymModel::loadMap (
     {
 	QMessageBox::critical( 0, tr( "Critical Parse Error" ),
 		   tr(QString("Couldn't open map %1").arg(file.fileName()).toUtf8()));
-	err=aborted;	
+	err=File::Aborted;	
     } else
     {
 	bool blockSaveStateOrg=blockSaveState;
@@ -555,13 +555,13 @@ ErrorCode VymModel::loadMap (
     return err;
 }
 
-ErrorCode VymModel::save (const SaveMode &savemode)
+File::ErrorCode VymModel::save (const SaveMode &savemode)
 {
     QString tmpZipDir;
     QString mapFileName;
     QString safeFilePath;
 
-    ErrorCode err=success;
+    File::ErrorCode err=File::Success;
 
     if (zipped)
 	// save as .xml
@@ -597,7 +597,7 @@ ErrorCode VymModel::save (const SaveMode &savemode)
 		break;
 	    case QMessageBox::Cancel:
 		// do nothing
-		return aborted;
+		return File::Aborted;
 		break;
 	}
     }
@@ -633,7 +633,7 @@ ErrorCode VymModel::save (const SaveMode &savemode)
 	{
 	    QMessageBox::critical( 0, tr( "Critical Load Error" ),
 	       tr("Couldn't create temporary directory before save\n"));
-	    return aborted; 
+	    return File::Aborted; 
 	}
 
 	safeFilePath=filePath;
@@ -664,14 +664,14 @@ ErrorCode VymModel::save (const SaveMode &savemode)
 
     if (!saveStringToDisk(fileDir+mapFileName,saveFile))
     {
-	err=aborted;
+	err=File::Aborted;
 	qWarning ("ME::saveStringToDisk failed!");
     }
 
     if (zipped)
     {
 	// zip
-	if (err==success) err=zipDir (tmpZipDir,destPath);
+	if (err==File::Success) err=zipDir (tmpZipDir,destPath);
 
 	// Delete tmpDir
 	removeDir (QDir(tmpZipDir));
@@ -1421,7 +1421,7 @@ void VymModel::saveStateBeforeLoad (LoadMode lmode, const QString &fname)
 	    saveStateChangingPart(
 		selbi,
 		selbi,
-		QString("addMapInsert (%1)").arg(fname),
+		QString("addMapInsert (\"%1\")").arg(fname),
 		QString("Add map %1 to %2").arg(fname).arg(getObjectName(selbi)));
 	if (lmode==ImportReplace)
 	{
@@ -2578,7 +2578,7 @@ BranchItem* VymModel::addMapCenter(QPointF absPos)
     return newbi;
 }
 
-BranchItem* VymModel::addNewBranchInt(BranchItem *dst,int num)
+BranchItem* VymModel::addNewBranchInt(BranchItem *dst,int pos)
 {
     // Depending on pos:
     // -3	insert in children of parent  above selection 
@@ -2591,29 +2591,30 @@ BranchItem* VymModel::addNewBranchInt(BranchItem *dst,int num)
     cData << "" << "undef";
 
     BranchItem *parbi=dst;
-    QModelIndex parix;
     int n;
     BranchItem *newbi=new BranchItem (cData);	
-    //newbi->setHeading (QApplication::translate("Heading of new branch in map", "new"));
 
     emit (layoutAboutToBeChanged() );
 
-    if (num==-2)
+    if (pos==-2)
     {
-	parix=index(parbi);
 	n=parbi->getRowNumAppend (newbi);
-	beginInsertRows (parix,n,n);	
+	beginInsertRows (index(parbi), n, n);	
 	parbi->appendChild (newbi); 
 	endInsertRows ();
-    }else if (num==-1 || num==-3)
+    }else if (pos==-1 || pos==-3)
     {
 	// insert below selection
 	parbi=(BranchItem*)dst->parent();
-	parix=index(parbi);  
-	
-	n=dst->childNumber() + (3+num)/2;   //-1 |-> 1;-3 |-> 0
-	beginInsertRows (parix,n,n);	
+	n=dst->childNumber() + (3+pos)/2;   //-1 |-> 1;-3 |-> 0
+	beginInsertRows (index(parbi), n, n);	
 	parbi->insertBranch(n,newbi);	
+	endInsertRows ();
+    } else  
+    {	// pos >= 0
+	n=parbi->getRowNumAppend (newbi) - (parbi->branchCount()-pos);
+	beginInsertRows (index(parbi), n, n);	
+	parbi->insertBranch(pos,newbi);	
 	endInsertRows ();
     }
     emit (layoutChanged() );
@@ -2628,19 +2629,15 @@ BranchItem* VymModel::addNewBranchInt(BranchItem *dst,int num)
     return newbi;
 }   
 
-BranchItem* VymModel::addNewBranch(int pos,BranchItem *bi)
+BranchItem* VymModel::addNewBranch(BranchItem *bi, int pos)
 {
-    // Different meaning than num in addNewBranchInt!
-    // -1   add above
-    //  0   add as child
-    // +1   add below
     BranchItem *newbi=NULL;
     if (!bi) bi=getSelectedBranch();
 
     if (bi)
     {
 	QString redosel=getSelectString(bi);
-	newbi=addNewBranchInt (bi,pos-2);
+	newbi=addNewBranchInt (bi,pos);
 	QString undosel=getSelectString(newbi);
 
 	if (newbi)
@@ -2675,9 +2672,6 @@ BranchItem* VymModel::addNewBranchBefore()
     if (selbi && selbi->getType()==TreeItem::Branch)
 	 // We accept no MapCenter here, so we _have_ a parent
     {
-	//QPointF p=bo->getRelPos();
-
-
 	// add below selection
 	newbi=addNewBranchInt (selbi,-1);
 
@@ -2694,9 +2688,6 @@ BranchItem* VymModel::addNewBranchBefore()
 
 	    saveState (newbi, "deleteKeepChildren ()", newbi, "addBranchBefore ()", 
 		QString ("Add branch before %1").arg(getObjectName(selbi)));
-
-	    // FIXME-3 needed? reposition();
-	    // emitSelectionChanged(); FIXME-3 
 	}
     }	
     return newbi;
@@ -3576,9 +3567,9 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	if (com=="addBranch")  
 	{
 	    if (parser.parCount()==0)
-		addNewBranch (0);
+		addNewBranch ();
 	    else
-		addNewBranch ( parser.parInt (ok,0) );
+		addNewBranch ( selbi,parser.parInt (ok,0) );
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="addBranchBefore")
 	{
@@ -3592,11 +3583,10 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	} else if (com==QString("addMapInsert"))
 	{
 	    t=parser.parString (ok,0);  // path to map
-	    if (QDir::isRelativePath(t)) t=(tmpMapDir + "/"+t);
 	    int contentFilter=0x0000;
 
 	    int pc=parser.parCount();
-	    int pos;	//FIXME-0 not initialized
+	    int pos=-1;	
 	    // Get position
 	    if (pc>1)
 	    {
@@ -3623,13 +3613,22 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	    }
 	    
 	    if (parser.errorLevel() == NoError)
-		loadMap (t,ImportAdd,VymMap,contentFilter,pos);
+	    {
+		if (QDir::isRelativePath(t)) 
+		    t=(QDir::currentPath() + "/"+t);
+		saveStateBeforeLoad (ImportAdd, t);
+		if (File::Aborted==loadMap (t,ImportAdd,VymMap,contentFilter,pos) )
+		    parser.setError (Aborted,QString("Couldn't load %1").arg(t) );
+	    }	
 	/////////////////////////////////////////////////////////////////////
 	} else if (com==QString("addMapReplace"))
 	{
 	    t=parser.parString (ok,0);	// path to map
-	    if (QDir::isRelativePath(t)) t=(tmpMapDir + "/"+t);
-	    loadMap (t,ImportReplace,VymMap);	
+	    if (QDir::isRelativePath(t)) 
+		t=(QDir::currentPath() + "/"+t);
+	    saveStateBeforeLoad (ImportReplace, t);
+	    if (File::Aborted==loadMap (t,ImportReplace,VymMap) )
+		parser.setError (Aborted,QString("Couldn't load %1").arg(t) );
 	/////////////////////////////////////////////////////////////////////
 	} else if (com==QString("addSlide"))
 	{
@@ -3833,6 +3832,10 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	{
 	    n=parser.parInt (ok,0);
 	    pasteNoSave(n);
+	/////////////////////////////////////////////////////////////////////
+	} else if (com=="redo")
+	{
+	    redo();
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="relinkTo")
 	{
@@ -4085,6 +4088,10 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	} else if (com=="toggleTask")
 	{
 	    toggleTask();	
+	/////////////////////////////////////////////////////////////////////
+	} else if (com=="undo")
+	{
+	    undo();
 	/////////////////////////////////////////////////////////////////////
 	} else  if (com=="unscroll")
 	{

@@ -115,7 +115,7 @@ public:
 	The data is read from file. Depending on LoadMode the current
 	selection gets replaced by data or the data is appended.
     */	
-    ErrorCode loadMap  (
+    File::ErrorCode loadMap  (
 	QString,			//!< Path
 	const LoadMode &lmode=NewMap,	//!< New map, replace or add to selection
 	const FileType &ftype=VymMap,	//!< VymMap or FreeMind
@@ -125,7 +125,7 @@ public:
 
 public:
     /*! \brief Save the map to file */
-    ErrorCode save(const SaveMode &);	
+    File::ErrorCode save(const SaveMode &);	
 
 private:
     ImageItem* loadFloatImageInt (BranchItem *dst,QString);
@@ -386,16 +386,17 @@ private:
     */	
 
 private:    
-    BranchItem* addNewBranchInt(BranchItem *dst, int pos);  // pos allows to add above/below selection
+    BranchItem* addNewBranchInt(BranchItem *dst, int pos);  // pos allows to add above/below selection, or as child  at pos
 public:	
     /*! \Add new branch
 	
-	Depending on num the new branch is created
-	-1 above selection
-	 0 as child of selection
-	 1 below selection
+    // Depending on pos:
+    // -3	insert in children of parent  above selection 
+    // -2	add branch to selection 
+    // -1	insert in children of parent below selection 
+    // 0..n	insert in children of parent at pos
     */
-    BranchItem* addNewBranch(int pos=0,BranchItem *bi=NULL);	
+    BranchItem* addNewBranch(BranchItem *bi=NULL, int pos=-2);	
     BranchItem* addNewBranchBefore();	    //!< Insert branch between selection and its parent
     /*! \brief Relink a branch to a new destination dst 
 	Relinks branch to dst at branch position pos. There is no saveState

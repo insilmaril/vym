@@ -174,7 +174,7 @@ void BugAgent::processBugzillaData()
 		foreach (QString b,bugs)
 		{
 		    //qDebug ()<<" -> "<<b<<" "<<bug_desc[b];
-		    newbi=model->addNewBranch(0,missionBI);    
+		    newbi=model->addNewBranch(missionBI);    
 		    newbi->setURL ("https://bugzilla.novell.com/show_bug.cgi?id="+b);
 		    if (!newbi)
 			qWarning()<<"BugAgent: Couldn't create new branch?!";

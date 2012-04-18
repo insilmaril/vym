@@ -3,11 +3,14 @@
 
 #include <QDir>
 
+namespace File
+{
+    enum ErrorCode {Success,Aborted,NoZip};
+}
+
 enum LoadMode {NewMap,ImportAdd,ImportReplace};
 enum SaveMode {PartOfMap,CompleteMap,UndoCommand};
 enum FileType {VymMap, FreemindMap,UnknownMap};
-enum ErrorCode {success,aborted,nozip};
-
 
 /////////////////////////////////////////////////////////////////////////////
 QString maskPath (QString );
@@ -22,8 +25,8 @@ QString makeUniqueDir (bool &ok, QString);
 void removeDir(QDir);
 void copyDir (QDir src,QDir dst);
 void makeSubDirs (const QString &);
-ErrorCode zipDir (const QDir &,const QString&);
-ErrorCode unzipDir (const QDir &,const QString&);
+File::ErrorCode zipDir (const QDir &,const QString&);
+File::ErrorCode unzipDir (const QDir &,const QString&);
 bool loadStringFromDisk (const QString &fn, QString &s);
 bool saveStringToDisk (const QString &fn, const QString &s);
 

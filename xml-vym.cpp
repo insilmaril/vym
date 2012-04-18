@@ -126,22 +126,15 @@ bool parseVYMHandler::startElement  ( const QString&, const QString&,
 		if (loadMode==ImportAdd)
 		{
 		    // Import Add
-		    lastBranch=model->createBranch(lastBranch);
+		    if (insertPos<0) 
+			lastBranch=model->createBranch(lastBranch);
+		    else
+			lastBranch=model->addNewBranch(lastBranch, insertPos);
 		} else  
 		{
 		    // Import Replace 
-		    if (insertPos<0) 
-		    {
-			insertPos=lastBranch->num();
-			model->clearItem (lastBranch);
-		    } else
-		    {
-			TreeItem *pi=lastBranch->parent();
-			if (pi && pi->isBranchLikeType())
-			    lastBranch=model->addNewBranch(insertPos,lastBranch);
-			else
-			    qDebug()<<"xml-vym:  pi is no branch?!";
-		    }
+		    insertPos=lastBranch->num();
+		    model->clearItem (lastBranch);
 		}
 	    } else
 		// add mapCenter without parent
