@@ -251,31 +251,30 @@ void BranchItem::unScroll()
 
 bool BranchItem::toggleScroll()	
 {
-    BranchObj *bo=NULL;
+    // MapCenters are not scrollable
+    if (depth()==0) return false;
+
+    BranchObj *bo;
     if (scrolled)
     {
 	scrolled=false;
 	systemFlags.deactivate("system-scrolledright");
 	if (branchCounter>0)
-	{
 	    for (int i=0;i<branchCounter;++i)
 	    {
 		bo=(BranchObj*)(getBranchNum(i)->getLMO());
 		if (bo) bo->setVisibility(true);
 	    }
-	}
     } else
     {
 	scrolled=true;
 	systemFlags.activate("system-scrolledright");
 	if (branchCounter>0)
-	{
 	    for (int i=0;i<branchCounter;++i)
 	    {
 		bo=(BranchObj*)(getBranchNum(i)->getLMO());
 		if (bo) bo->setVisibility(false);
 	    }
-	}
     }
     return true;
 }

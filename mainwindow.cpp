@@ -553,6 +553,9 @@ void Main::setupAPI()
     c->addPar (Command::String,false,"Directory name to import");
     modelCommands.append(c);
 
+    c=new Command ("isScrolled",Command::Branch); 
+    modelCommands.append(c);
+
     c=new Command ("loadImage",Command::Branch); 
     c->addPar (Command::String,false,"Filename of image");
     modelCommands.append(c);
@@ -731,6 +734,9 @@ void Main::setupAPI()
     modelCommands.append(c);
 
     c=new Command ("toggleFrameIncludeChildren",Command::Branch); 
+    modelCommands.append(c);
+
+    c=new Command ("toggleScroll",Command::Branch); 
     modelCommands.append(c);
 
     c=new Command ("toggleTarget",Command::Branch); 

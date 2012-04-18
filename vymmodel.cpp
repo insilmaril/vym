@@ -1119,7 +1119,7 @@ void VymModel::undo()	//FIXME-3 undo delete xlink to scrolled branch unscrolls b
     // select  object before undo
     if (!select (undoSelection))
     {
-	qWarning ("VymModel::undo()  Could not select object for undo");
+	qWarning()<<"VymModel::undo()  Could not select object for undo of "<<comment;
 	return;
     }
 
@@ -1256,17 +1256,11 @@ void VymModel::saveState(
     if (saveSel)
 	dataXML=saveToDir (histDir,mapName+"-",false, QPointF (),saveSel);
 	
-    QString undoCommand="";
-    QString redoCommand="";
-    if (savemode==UndoCommand)
+    QString undoCommand=undoCom;
+    QString redoCommand=redoCom;
+    if (savemode==PartOfMap )
     {
-	undoCommand=undoCom;
-    }	
-    else if (savemode==PartOfMap )
-    {
-	undoCommand=undoCom;
 	undoCommand.replace ("PATH",bakMapPath);
-	redoCommand=redoCom;
 	redoCommand.replace ("PATH",bakMapPath);
     }
 
@@ -2267,11 +2261,11 @@ void VymModel::moveUp()
     BranchItem *selbi=getSelectedBranch();
     if (selbi)
     {
-	QString oldsel=getSelectString();
+	QString oldsel=getSelectString(selbi);
 	if (moveUp (selbi))
 	{
 	    saveState (
-		getSelectString(),"moveDown ()",
+		getSelectString(selbi),"moveDown ()",
 		oldsel,"moveUp ()",
 		QString("Move up %1").arg(getObjectName(selbi)));
 	    select (selbi);		
@@ -2295,11 +2289,11 @@ void VymModel::moveDown()
     BranchItem *selbi=getSelectedBranch();
     if (selbi)
     {
-	QString oldsel=getSelectString();
+	QString oldsel=getSelectString(selbi);
 	if ( moveDown(selbi))
 	{
 	    saveState (
-		getSelectString(),"moveUp ()",
+		getSelectString(selbi),"moveUp ()",
 		oldsel,"moveDown ()",
 		QString("Move down %1").arg(getObjectName(selbi)));
 	    select (selbi);
@@ -3070,7 +3064,6 @@ bool VymModel::unscrollBranch(BranchItem *bi)
     if (bi)
     {
 	if (!bi->isScrolled()) return false;
-	if (bi->depth()==0) return false;
 	if (bi->toggleScroll())
 	{
 	    QString u,r;
@@ -3775,6 +3768,10 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	    s=parser.parString(ok,0);
 	    importDirInt(s);
 	/////////////////////////////////////////////////////////////////////
+	} else if (com=="isScrolled")
+	{
+	    returnValue=selbi->isScrolled();
+	/////////////////////////////////////////////////////////////////////
 	} else if (com=="loadImage")
 	{
 	    s=parser.parString(ok,0);
@@ -4080,6 +4077,10 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	} else if (com=="toggleFrameIncludeChildren")
 	{
 	    toggleFrameIncludeChildren();
+	/////////////////////////////////////////////////////////////////////
+	} else if (com=="toggleScroll")
+	{
+	    toggleScroll();	
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="toggleTarget")
 	{
@@ -5157,7 +5158,7 @@ bool VymModel::isSelectionBlocked()
 
 bool VymModel::select (const QString &s)
 {
-    if (s.isEmpty()) return true;
+    if (s.isEmpty()) return false;
     TreeItem *ti=findBySelectString(s);
     if (ti) return select (index(ti));
     return false;

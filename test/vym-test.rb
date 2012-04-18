@@ -22,6 +22,14 @@ def expect (comment, v_exp, v_real)
     $tests_total += 1
 end
 
+def heading (s)
+  puts "\n#{s}\n#{'-' * s.length}\n"
+end
+
+def init_map
+  # FIXME Missing: check or init default map 
+end
+
 def summary
   puts "\nTests done  : #{$tests_total}"
   puts "Tests passed: #{$tests_passed}"
@@ -34,13 +42,17 @@ vym_mgr=VymManager.new
 vym=Vym.new(vym_mgr.find('test') )
 
 #######################
+center_0="mc:0"
 main_a="mc:0,bo:0"
-branch_a=main_a+",bo:0"
-branch_b=main_a+",bo:1"
+  branch_a=main_a+",bo:0"
+  branch_b=main_a+",bo:1"
+  branch_c=main_a+",bo:2"
+main_b="mc:0,bo:1"
 
 
 #######################
-puts "\nBasic checks:"
+heading "Basic checks:"
+init_map
 vym.select main_a
 expect "select", main_a, vym.getSelectString
 expect "getHeading", "Main A", vym.getHeading
@@ -48,7 +60,8 @@ expect "branchCount", 3, vym.branchCount
 
 
 #######################
-puts "\nAdding branches:"
+heading "Adding branches:"
+init_map
 vym.select branch_a
 n=vym.branchCount
 vym.addBranch()
@@ -57,6 +70,7 @@ expect( "addBranch", n+1, vym.branchCount )
 vym.undo
 expect( "Undo: addBranch", n, vym.branchCount )
 
+init_map
 vym.select main_a
 n=vym.branchCount
 vym.select branch_a
@@ -69,6 +83,7 @@ vym.undo
 vym.undo
 expect( "Undo: addBranchAbove/Below", n, vym.branchCount )
 
+init_map
 vym.select branch_a
 vym.addBranchBefore
 vym.select main_a
@@ -80,7 +95,8 @@ vym.select main_a
 expect( "Undo: addBranchAbove/Below", n, vym.branchCount )
 
 #######################
-puts "\nAdding maps"
+heading "Adding maps"
+init_map
 vym.select branch_a
 vym.addMapReplace "test/default.vym"
 vym.select main_a
@@ -92,28 +108,102 @@ vym.undo
 vym.select main_a
 expect( "Undo: check branch count in #{main_a}", 3, vym.branchCount )
 vym.select branch_a
-expect( "Undo: check if #{branch_a} is back", 0, vym.branchCount )
+expect( "Undo: check if #{branch_a} is back", 3, vym.branchCount )
 
+init_map
 vym.select main_a
 vym.addMapInsert "test/default.vym",1
 vym.select main_a
 expect( "addMapInsert: branch count", n+1, vym.branchCount )
 vym.select main_a + ",bo:1"
-expect( "addMapInsert: new heading", vym.getHeading, "MapCenter")
+expect( "addMapInsert: new heading", vym.getHeading, "MapCenter 0")
 
 vym.undo
 vym.select main_a
 expect( "Undo: check branch count in #{main_a}", 3, vym.branchCount )
 vym.select branch_b
-expect( "Undo: check heading of  #{branch_b}", "sub b", vym.getHeading)
+expect( "Undo: check heading of  #{branch_b}", "branch b", vym.getHeading)
+
+#######################
+heading "Scrolling and unscrolling"
+init_map
+vym.select main_a
+vym.toggleScroll
+expect "toggleScroll", vym.isScrolled, true
+vym.undo
+expect "undo toggleScroll", vym.isScrolled, false
+vym.scroll
+expect "scroll", vym.isScrolled, true
+vym.unscroll
+expect "unscroll", vym.isScrolled, false
+
+init_map
+vym.scroll
+vym.select branch_a
+vym.scroll
+vym.select main_a
+vym.unscrollChildren
+vym.select branch_a
+expect "unscrollChildren", vym.isScrolled, false
+vym.undo
+expect "undo unscrollChildren", vym.isScrolled, true
+vym.unscroll
+vym.select branch_a
+vym.unscroll
+
+
+#######################
+heading "Moving parts"
+init_map
+vym.select branch_a
+vym.moveDown
+vym.select branch_a
+expect "Moving down", vym.getHeading, "branch b"
+vym.undo
+vym.select branch_a
+expect "Undo Moving down", vym.getHeading, "branch a"
+
+init_map
+vym.select branch_b
+vym.moveUp
+vym.select branch_a
+expect "Moving up", vym.getHeading, "branch b"
+vym.undo
+vym.select branch_b
+expect "Undo Moving up", vym.getHeading, "branch b"
+
+init_map
+vym.select main_b
+n=vym.branchCount
+vym.select branch_a
+vym.relinkTo main_b,0,0,0
+vym.select main_b
+expect "RelinkTo #{main_b}: branchCount increased there", n+1, vym.branchCount
+vym.undo
+vym.select branch_b
+expect "Undo: RelinkTo #{main_b}: branchCount decreased there", n, vym.branchCount
+
+init_map
+vym.select branch_a
+n=vym.branchCount
+vym.select main_b
+vym.relinkTo branch_a, 1, 0, 0
+vym.select branch_a
+expect "RelinkTo #{branch_a}, pos 1: branchCount increased there", n+1, vym.branchCount
+vym.select "#{branch_a},bo:1"
+expect "RelinkTo #{branch_a}, pos 1: Mainbranch really moved", "Main B", vym.getHeading
+vym.undo
+vym.select center_0
+expect "Undo RelinkTo pos 1: branchCount of center", 2, vym.branchCount
+# FIXME still has wrong position, check position
 
 summary
 exit
 
-
+# Untested commands:
+#
 #addSlide
 #addXlink
-#branchCount
 #clearFlags
 #colorBranch
 #colorSubtree
@@ -133,26 +223,19 @@ exit
 #exportPDF
 #exportSVG
 #exportXML
-#getHeading
-#getSelectString
 #importDir
 #loadImage
 #loadNote
-#moveDown
-#moveUp
 #moveSlideDown
 #moveSlideUp
 #move
 #moveRel
-#nop
 #note2URLs
 #paste
 #redo
 #relinkTo
 #saveImage
 #saveNote
-#scroll
-#select
 #selectLastBranch
 #selectLastImage
 #selectLatestAdded
@@ -184,8 +267,4 @@ exit
 #toggleFrameIncludeChildren
 #toggleTarget
 #toggleTask
-#undo
-#unscroll
-#unscrollChildren
 #unsetFlag
-#
