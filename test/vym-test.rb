@@ -92,7 +92,7 @@ vym.select branch_a
 expect( "addBranchBefore: check heading", "", vym.getHeading)
 vym.undo
 vym.select main_a
-expect( "Undo: addBranchAbove/Below", n, vym.branchCount )
+expect( "Undo: addBranchBefore", n, vym.branchCount )
 
 #######################
 heading "Adding maps"
