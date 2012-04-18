@@ -18,6 +18,7 @@ def expect (comment, v_exp, v_real)
   else  
     puts "Failed: #{comment}. Expected #{v_exp}, but got #{v_real}"
     $tests_failed += 1
+    waitkey
   end  
     $tests_total += 1
 end
@@ -197,8 +198,58 @@ vym.select center_0
 expect "Undo RelinkTo pos 1: branchCount of center", 2, vym.branchCount
 # FIXME still has wrong position, check position
 
+#######################
+heading "Modifying branches"
+init_map
+vym.select branch_a
+vym.setHeading "Changed!"
+expect "setHeading","Changed!",vym.getHeading
+vym.undo
+expect "Undo: setHeading","branch a",vym.getHeading
+
+
+#######################
+heading "Deleting parts"
+init_map
+vym.select main_a
+n=vym.branchCount
+vym.select branch_a
+m=vym.branchCount
+vym.delete
+vym.select main_a
+expect "Delete branch: branchcount", n-1, vym.branchCount
+vym.undo
+vym.select main_a
+expect "Undo Delete branch: branchcount parent", n, vym.branchCount
+vym.select branch_a
+expect "Undo Delete branch: branchcount restored branch", m, vym.branchCount
+
+init_map
+vym.select branch_a
+n=vym.branchCount
+vym.deleteChildren
+vym.select branch_a
+expect "deleteChildren: branchcount", 0, vym.branchCount
+vym.undo
+vym.select branch_a
+expect "Undo: deleteChildren: branchcount", n, vym.branchCount
+
+init_map
+vym.select main_a
+n=vym.branchCount
+vym.select branch_a
+m=vym.branchCount
+vym.deleteKeepChildren
+vym.select main_a
+expect "deleteKeepChildren: branchcount", n+m-1,vym.branchCount
+vym.undo
+vym.select main_a
+expect "Undo: deleteKeepChildren: branchcount of parent", n,vym.branchCount
+vym.select branch_a
+expect "Undo: deleteKeepChildren: branchcount of branch", m,vym.branchCount
+
+#######################
 summary
-exit
 
 # Untested commands:
 #
@@ -210,9 +261,7 @@ exit
 #copy
 #cut
 #cycleTask
-#delete
-#deleteChildren
-#deleteKeepChildren
+#delete (image)
 #deleteSlide
 #exportAO
 #exportASCII
@@ -233,7 +282,7 @@ exit
 #note2URLs
 #paste
 #redo
-#relinkTo
+#relinkTo (for images)
 #saveImage
 #saveNote
 #selectLastBranch
@@ -247,7 +296,6 @@ exit
 #setFrameBrushColor
 #setFramePadding
 #setFrameBorderWidth
-#setHeading
 #setHideExport
 #setIncludeImagesHorizontally
 #setIncludeImagesVertically
