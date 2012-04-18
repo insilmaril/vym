@@ -755,7 +755,7 @@ void ExportHTML::doExport(bool useDialog)
 	return;
     }
     QTextStream ts( &file );	// use LANG decoding here...
-    //FIXME-3 ts.setEncoding (QTextStream::UnicodeUTF8); // Force UTF8
+    //FIXME-4 ts.setEncoding (QTextStream::UnicodeUTF8); // Force UTF8
 
     // Include image (be careful: this resets Export mode, so call before exporting branches)
     if (dia.useImage)
@@ -847,7 +847,7 @@ void ExportOrgMode::doExport()
 	return;
     }
     QTextStream ts( &file );  // use LANG decoding here...
-    //FIXME-3 ts.setEncoding (QTextStream::UnicodeUTF8); // Force UTF8
+    //FIXME-4 ts.setEncoding (QTextStream::UnicodeUTF8); // Force UTF8
 
     // Main loop over all branches
     QString s;
@@ -924,7 +924,7 @@ void ExportLaTeX::doExport()
     return;
   }
   QTextStream ts( &file );  // use LANG decoding here...
-  //FIXME-3 ts.setEncoding (QTextStream::UnicodeUTF8); // Force UTF8
+  //FIXME-4 ts.setEncoding (QTextStream::UnicodeUTF8); // Force UTF8
   
   // Read default section names
   QStringList sectionNames;

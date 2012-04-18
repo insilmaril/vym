@@ -10,7 +10,7 @@ extern Settings settings;
 extern QString vymName;
 
 
-BranchPropertyWindow::BranchPropertyWindow (QWidget *parent): QDialog (parent)	// FIXME-3 not updating when data is set elsewhere (connect to dataCHanged)
+BranchPropertyWindow::BranchPropertyWindow (QWidget *parent): QDialog (parent)	// FIXME-4 not updating when data is set elsewhere (connect to dataCHanged)
 
 {
     ui.setupUi (this);
@@ -34,7 +34,7 @@ BranchPropertyWindow::BranchPropertyWindow (QWidget *parent): QDialog (parent)	/
 	ui.tabWidget->widget (3)->hide();
 
 	
-    /* Create Model and View to hold attributes	    // FIXME-3
+    /* Create Model and View to hold attributes	    
     attributeModel = new QStandardItemModel (1,3,this);
     attributeModel->setHeaderData(0, Qt::Horizontal, tr("Name","Branchprop window: Attribute name"));
     attributeModel->setHeaderData(1, Qt::Horizontal, tr("Value","Branchprop window: Attribute value"));
@@ -69,7 +69,7 @@ void BranchPropertyWindow::setItem (TreeItem *ti)
 	branchItem=(BranchItem*)ti;
 
 	branchObj=(BranchObj*)(branchItem->getLMO());
-	if (branchObj)	    // FIXME-3 replace by branchItem later, when Frame is ported...
+	if (branchObj)	    // FIXME-4 replace by branchItem later, when Frame is ported...
 	{
 	    ui.tabWidget->setEnabled (true);
 	    for (int i=0; i<3;++i)
@@ -147,7 +147,7 @@ void BranchPropertyWindow::setItem (TreeItem *ti)
 	    // Attributes
 	    attributeModel->removeRows(0, attributeModel->rowCount(), QModelIndex());
 
-	    // FIXME-3 some samples for attribute testing
+	    // FIXME-5 some samples for attribute testing
 	    QStringList attrTypes=mapEditor->attributeTable()->getTypes();
 	    for (int i=0; i<attrTypes.count()-1;i++)
 	    {
@@ -299,7 +299,7 @@ void BranchPropertyWindow::addAttributeClicked()
 
 void BranchPropertyWindow::deleteAttributeClicked()
 {
-    //FIXME-3 qDebug() << "BPW::delete";
+    //qDebug() << "BPW::delete";
 }
 */
 

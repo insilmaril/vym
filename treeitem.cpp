@@ -71,8 +71,6 @@ void TreeItem::init()
     target=false;
 
     note.setNote(""); 
-    // note.setFontHint (textEditor->getFontHintDefault() );	//FIXME-3
-    // isNoteInEditor=false;
 
     hidden=false;
     hideExport=false;
@@ -144,7 +142,7 @@ void TreeItem::appendChild(TreeItem *item)
 	childItems.append(item);
 	branchCounter++;
 
-	// Set correct type	//FIXME-3 DUP in constr branchitem
+	// Set correct type	//FIXME-5 DUP in constr branchitem
 	if (this==rootItem)
 	    item->setType(MapCenter);
 	else
@@ -288,7 +286,7 @@ void TreeItem::setType(const Type t)
 
 TreeItem::Type TreeItem::getType()
 {
-    if (type==Branch && depth()==0) return MapCenter;	//FIXME-3 should not be necesssary
+    if (type==Branch && depth()==0) return MapCenter;	//FIXME-5 should not be necesssary
     return type;
 }
 
@@ -335,7 +333,7 @@ std::string TreeItem::getHeadingStd () const
 }
 
 #include "noteobj.h"
-QString TreeItem::getHeadingPlain() const   //FIXME-3 create own TextObj instead of recreating from ASCII note every time
+QString TreeItem::getHeadingPlain() const   //FIXME-4 create own TextObj instead of recreating from ASCII note every time
 {
     NoteObj no(itemData[0].toString());
     QString t=no.getNoteASCII();
@@ -431,7 +429,7 @@ void TreeItem::toggleTarget ()
 {
     systemFlags.toggle ("system-target");
     target= systemFlags.isActive("system-target");
-    model->emitDataChanged(this);	// FIXME-3 better call from VM?
+    model->emitDataChanged(this);	// FIXME-4 better call from VM?
 }
 
 bool TreeItem::isTarget ()
@@ -707,14 +705,14 @@ XLinkObj* TreeItem::getXLinkObjNum (const int &n)
 }
 
 
-void TreeItem::setHideTmp (HideTmpMode mode)  //FIXME-3	update visibility in derived objects
+void TreeItem::setHideTmp (HideTmpMode mode) 
 {
     if (type==Image || type==Branch || type==MapCenter)
 //	((ImageItem*)this)->updateVisibility();
     {
 	//LinkableMapObj* lmo=((MapItem*)this)->getLMO();
 
-	if (mode==HideExport && (hideExport || hasHiddenExportParent() ) ) // FIXME-3  try to avoid calling hasScrolledParent repeatedly
+	if (mode==HideExport && (hideExport || hasHiddenExportParent() ) ) // FIXME-4  try to avoid calling hasScrolledParent repeatedly
 
 	    // Hide stuff according to hideExport flag and parents
 	    hidden=true;

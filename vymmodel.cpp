@@ -735,11 +735,11 @@ void VymModel::loadFloatImage ()
 		    if (fio)
 			fio->move2RelPos (0,0);
 
-		    // On default include image // FIXME-3 check, if we change default settings...
+		    // On default include image // FIXME-4 check, if we change default settings...
 		    setIncludeImagesHor (true);
 		    setIncludeImagesVer (true);
 		} else
-		    // FIXME-4 loadFIO error handling
+		    // FIXME-2 loadFIO error handling
 		    qWarning ()<<"Failed to load "+s;
 	    }
 
@@ -937,7 +937,7 @@ void VymModel::fileChanged()
 	QDateTime tmod=QFileInfo (filePath).lastModified();
 	if (tmod>fileChangedTime)
 	{
-	    // FIXME-3 VM switch to current mapeditor and finish lineedits...
+	    // FIXME-4 VM switch to current mapeditor and finish lineedits...
 	    QMessageBox mb( vymName,
 		tr("The file of the map  on disk has changed:\n\n"  
 		   "   %1\n\nDo you want to reload that map with the new file?").arg(filePath),
@@ -1059,7 +1059,7 @@ void VymModel::redo()
     bool noErr;
     QString errMsg;
     parseAtom (redoCommand,noErr,errMsg);
-    if (!noErr) //FIXME-3 need dialog box here
+    if (!noErr) //FIXME-2 need dialog box here
 	qWarning()<< "VM::redo aborted:\n"<<errMsg;
 
     blockSaveState=blockSaveStateOrg;
@@ -1090,7 +1090,7 @@ bool VymModel::isRedoAvailable()
     return false;
 }
 
-void VymModel::undo()	//FIXME-3 undo delete xlink to scrolled branch unscrolls branch
+void VymModel::undo()	//FIXME-2 undo delete xlink to scrolled branch unscrolls branch
 {
     // Can we undo at all?
     if (undosAvail<1) return;
@@ -1142,7 +1142,7 @@ void VymModel::undo()	//FIXME-3 undo delete xlink to scrolled branch unscrolls b
     bool noErr;
     QString errMsg;
     parseAtom (undoCommand,noErr,errMsg);
-    if (!noErr) //FIXME-3 need dialog box here
+    if (!noErr) //FIXME-2 need dialog box here
 	qWarning()<< "VM::undo aborted:\n"<<errMsg;
 
     undosAvail--;
@@ -1693,7 +1693,7 @@ bool  VymModel::findAll (FindResultModel *rmodel, QString s, Qt::CaseSensitivity
 {
     rmodel->clear();
     rmodel->setSearchString (s);
-    rmodel->setSearchFlags (0);	//FIXME-3 translate cs to QTextDocument::FindFlag
+    rmodel->setSearchFlags (0);	//FIXME-4 translate cs to QTextDocument::FindFlag
     bool hit=false;
 
     BranchItem *cur=NULL;
@@ -1854,7 +1854,7 @@ QStringList VymModel::getURLs(bool ignoreScrolled)
 }
 
 
-void VymModel::setFrameType(const FrameObj::FrameType &t)   //FIXME-3 not saved if there is no LMO
+void VymModel::setFrameType(const FrameObj::FrameType &t)   //FIXME-5 not saved if there is no LMO
 {
     BranchItem *bi=getSelectedBranch();
     if (bi)
@@ -1872,7 +1872,7 @@ void VymModel::setFrameType(const FrameObj::FrameType &t)   //FIXME-3 not saved 
     }
 }
 
-void VymModel::setFrameType(const QString &s)	//FIXME-3 not saved if there is no LMO
+void VymModel::setFrameType(const QString &s)	//FIXME-5 not saved if there is no LMO
 {
     BranchItem *bi=getSelectedBranch();
     if (bi)
@@ -2158,7 +2158,7 @@ int VymModel::taskCount()
     return taskModel->count (this);
 }
 
-void VymModel::addTimestamp()	//FIXME-3 new function, localize
+void VymModel::addTimestamp()	//FIXME-4 new function, localize
 {
     BranchItem *selbi=addNewBranch();
     if (selbi)
@@ -2169,7 +2169,7 @@ void VymModel::addTimestamp()	//FIXME-3 new function, localize
 	    .arg(today.year(),4,10,c)
 	    .arg(today.month(),2,10,c)
 	    .arg(today.day(),2,10,c));
-	emitDataChanged ( selbi);	//FIXME-3 maybe emit signal from TreeItem? 
+	emitDataChanged ( selbi);	
 	reposition();
 	select (selbi);
     }
@@ -2469,7 +2469,7 @@ bool VymModel::createLink(Link *link, bool createMO)
     return true;
 }
 
-AttributeItem* VymModel::addAttribute()	    // FIXME-3 savestate missing
+AttributeItem* VymModel::addAttribute()	    // FIXME-5 savestate missing
 
 {
     BranchItem* selbi=getSelectedBranch();
@@ -2817,7 +2817,7 @@ bool VymModel::relinkImage (ImageItem *image, BranchItem *dst)
 void VymModel::cleanupItems()
 {
 
-    // Search for double entries (should not be necessary now) //FIXME-3
+    // Search for double entries (should not be necessary now) //FIXME-5
     // --> not implemented yet
 
     while (!deleteLaterIDs.isEmpty())
@@ -4350,7 +4350,6 @@ void VymModel::exportXML(QString dir, bool askForName)
 
     // Write it finally, and write in UTF8, no matter what 
     QTextStream ts( &file );
-    //ts.setEncoding (QTextStream::UnicodeUTF8);//FIXME-3 check...
     ts << saveFile;
     file.close();
 
@@ -4414,7 +4413,7 @@ void VymModel::exportHTML (const QString &dir, bool useDialog)
     setExportMode(false);
 }
 
-void VymModel::exportOOPresentation(const QString &fn, const QString &cf) //FIXME-3 No exportLast and command yet
+void VymModel::exportOOPresentation(const QString &fn, const QString &cf) //FIXME-2 No exportLast and command yet
 {
     ExportOO ex;
     ex.setFile (fn);
@@ -4591,7 +4590,7 @@ bool VymModel::setMapLinkStyle (const QString & s)
     while (cur) 
     {
 	bo=(BranchObj*)(cur->getLMO() );
-	bo->setLinkStyle(bo->getDefLinkStyle(cur->parent() ));	//FIXME-3 better emit dataCHanged and leave the changes to View
+	bo->setLinkStyle(bo->getDefLinkStyle(cur->parent() ));	//FIXME-4 better emit dataCHanged and leave the changes to View
 	cur=nextBranch(cur,prev);
     }
     reposition();
@@ -4670,7 +4669,7 @@ void VymModel::toggleMapLinkColorHint()
     }
 }
 
-void VymModel::selectMapBackgroundImage ()  // FIXME-3 for using background image: view.setCacheMode(QGraphicsView::CacheBackground);  Also this belongs into ME
+void VymModel::selectMapBackgroundImage ()  // FIXME-5 for using background image: view.setCacheMode(QGraphicsView::CacheBackground);  Also this belongs into ME
 {
     QStringList filters;
     filters<< tr("Images") + " (*.png *.bmp *.xbm *.jpg *.png *.xpm *.gif *.pnm)";
@@ -4688,7 +4687,7 @@ void VymModel::selectMapBackgroundImage ()  // FIXME-3 for using background imag
     }
 }   
 
-void VymModel::setMapBackgroundImage (const QString &fn)    //FIXME-4 missing savestate, move to ME
+void VymModel::setMapBackgroundImage (const QString &fn)    //FIXME-5 missing savestate, move to ME
 {
     /*
     QColor oldcol=mapEditor->getScene()->backgroundBrush().color();
@@ -4704,7 +4703,7 @@ void VymModel::setMapBackgroundImage (const QString &fn)    //FIXME-4 missing sa
     mapEditor->getScene()->setBackgroundBrush(brush);
 }
 
-void VymModel::selectMapBackgroundColor()   // FIXME-3 move to ME
+void VymModel::selectMapBackgroundColor()   // FIXME-4 move to ME
 {
     QColor col = QColorDialog::getColor( mapEditor->getScene()->backgroundBrush().color(), NULL);
     if ( !col.isValid() ) return;
@@ -4712,7 +4711,7 @@ void VymModel::selectMapBackgroundColor()   // FIXME-3 move to ME
 }
 
 
-void VymModel::setMapBackgroundColor(QColor col)    // FIXME-3 move to ME
+void VymModel::setMapBackgroundColor(QColor col)    // FIXME-4 move to ME
 {
     QColor oldcol=mapEditor->getScene()->backgroundBrush().color();
     saveState(
@@ -4722,7 +4721,7 @@ void VymModel::setMapBackgroundColor(QColor col)    // FIXME-3 move to ME
     mapEditor->getScene()->setBackgroundBrush(col);
 }
 
-QColor VymModel::getMapBackgroundColor()    // FIXME-3 move to ME
+QColor VymModel::getMapBackgroundColor()    // FIXME-4 move to ME
 {
     return mapEditor->getScene()->backgroundBrush().color();
 }
@@ -4737,32 +4736,32 @@ void VymModel::setMapDefaultFont (const QFont &f)
     defaultFont=f;
 }
 
-LinkableMapObj::ColorHint VymModel::getMapLinkColorHint()   // FIXME-3 move to ME
+LinkableMapObj::ColorHint VymModel::getMapLinkColorHint()   // FIXME-4 move to ME
 {
     return linkcolorhint;
 }
 
-QColor VymModel::getMapDefLinkColor()	// FIXME-3 move to ME
+QColor VymModel::getMapDefLinkColor()	// FIXME-4 move to ME
 {
     return defLinkColor;
 }
 
-void VymModel::setMapDefXLinkColor(QColor col)	// FIXME-3 move to ME
+void VymModel::setMapDefXLinkColor(QColor col)	// FIXME-4 move to ME
 {
     defXLinkColor=col;
 }
 
-QColor VymModel::getMapDefXLinkColor()	// FIXME-3 move to ME
+QColor VymModel::getMapDefXLinkColor()	// FIXME-4 move to ME
 {
     return defXLinkColor;
 }
 
-void VymModel::setMapDefXLinkWidth (int w)  // FIXME-3 move to ME
+void VymModel::setMapDefXLinkWidth (int w)  // FIXME-4 move to ME
 {
     defXLinkWidth=w;
 }
 
-int VymModel::getMapDefXLinkWidth() // FIXME-3 move to ME
+int VymModel::getMapDefXLinkWidth() // FIXME-4 move to ME
 {
     return defXLinkWidth;
 }
@@ -5184,7 +5183,7 @@ bool VymModel::selectToggle (TreeItem *ti)
     if (ti) 
     { 
 	selModel->select ( index(ti), QItemSelectionModel::Toggle);
-	//appendSelection();	// FIXME-3 selection history not implemented yet for multiselections 
+	//appendSelection();	// FIXME-4 selection history not implemented yet for multiselections 
 	return true;
     }
     return false;
@@ -5295,7 +5294,7 @@ void VymModel::resetSelectionHistory()
     appendSelection();
 }
 
-void VymModel::appendSelection()    // FIXME-3 history unable to cope with multiple selections
+void VymModel::appendSelection()    // FIXME-4 history unable to cope with multiple selections
 {
     uint id=0;
     TreeItem *ti=getSelectedItem();
@@ -5719,7 +5718,7 @@ void VymModel::updateSlideSelection (QItemSelection newsel,QItemSelection)
 	    TreeItem *ti=findID(id);
 	    if (ti)
 	    {
-		//select (ti); FIXME-3 select or not select in MapEditor? Maybe optionally fade out selection?
+		//select (ti); FIXME-4 select or not select in MapEditor? Maybe optionally fade out selection?
 		if (mapEditor)
 		{
 		    LinkableMapObj *lmo=((MapItem*)ti)->getLMO();

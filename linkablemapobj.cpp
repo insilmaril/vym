@@ -103,11 +103,11 @@ void LinkableMapObj::setParObj(LinkableMapObj* o)
     setParentItem (parObj);
 }
 
-void LinkableMapObj::setParObjTmp(LinkableMapObj*,QPointF,int)	// FIXME-3 make pure virtual
+void LinkableMapObj::setParObjTmp(LinkableMapObj*,QPointF,int)	
 {
 }
 
-void LinkableMapObj::unsetParObjTmp()	// FIXME-3 make pure virtual
+void LinkableMapObj::unsetParObjTmp()
 {
 }
 
@@ -211,7 +211,7 @@ LinkableMapObj::Style LinkableMapObj::getDefLinkStyle (TreeItem *parent)
 
 void LinkableMapObj::setLinkStyle(Style newstyle)
 {
-    //qDebug()<<"LMO::setLinkStyle s="<<newstyle;	//FIXME-3 called very often?!?!
+    //qDebug()<<"LMO::setLinkStyle s="<<newstyle;	//FIXME-4 called very often?!?!
     //qDebug()<<"LMO::setLinkStyle s="<<newstyle<<" for "<<this<<" "<<treeItem->getHeading()<<"  parObj="<<parObj;
     delLink();
 	
@@ -396,13 +396,13 @@ void LinkableMapObj::updateVisibility()
 		if (p) 
 		    p->show();
 		else 
-		    qDebug()<< "LMO::updateVis p==0 (PolyLine)"; //FIXME-3
+		    qDebug()<< "LMO::updateVis p==0 (PolyLine)"; //FIXME-4
 		break;
 	    case PolyParabel:	
 		if (p) 
 		    p->show();
 		else
-		    qDebug()<< "LMO::updateVis p==0 (PolyParabel) "<<treeItem->getHeading(); //FIXME-3
+		    qDebug()<< "LMO::updateVis p==0 (PolyParabel) "<<treeItem->getHeading(); //FIXME-4
 		break;
 	    default:
 		break;
@@ -450,7 +450,7 @@ void LinkableMapObj::updateLinkGeometry()
 
     //qDebug()<<"LMO::updateLinkGeometry: "<<treeItem->getHeading()<<"  "<<style<<"  parObj="<<parObj;
     if (!parObj)        {
-	// If I am a mapcenter, set childPos to middle of MapCenterObj // FIXME-3 isn't that also done already in BO::setDockPos ?
+	// If I am a mapcenter, set childPos to middle of MapCenterObj // FIXME-4 isn't that also done already in BO::setDockPos ?
 
 	QRectF br=clickPoly.boundingRect();
 	childPos.setX( br.topLeft().x() + br.width()/2 );
@@ -496,7 +496,7 @@ void LinkableMapObj::updateLinkGeometry()
     double vy=p2y - p1y;
 
     int z;
-    // Hack to z-move links to MapCenter (d==1) below MCOs frame (d==0) //FIXME-3 no longer used?
+    // Hack to z-move links to MapCenter (d==1) below MCOs frame (d==0) //FIXME-4 no longer used?
     if (treeItem->depth()<2)
 	//z=(treeItem->depth() -2)*dZ_DEPTH + dZ_LINK; 
 	z=- dZ_LINK;
@@ -582,7 +582,7 @@ void LinkableMapObj::reposition()
 {
 }
 
-void LinkableMapObj::requestReposition()    //FIXME-3 still needed? doesn't seem so...
+void LinkableMapObj::requestReposition()    //FIXME-4 still needed? doesn't seem so...
 {
     if (!repositionRequest)
     {

@@ -191,7 +191,7 @@ FindResultItem* FindResultModel::getItem(const QModelIndex &index) const
 
 FindResultItem *FindResultModel::findTreeItem(TreeItem *)
 {
-    return NULL;    // FIXME-3 not used so far
+    return NULL;    // FIXME-5 not used so far
 }
 
 FindResultItem*  FindResultModel::addItem (TreeItem *ti)

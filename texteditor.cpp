@@ -340,7 +340,7 @@ void TextEditor::setupFormatActions()
     QList<int> sizes=fontDB.standardSizes();
     QList<int>::iterator it = sizes.begin();
     int i=0;
-    while (it != sizes.end()) //FIXME-3 check and make better...
+    while (it != sizes.end()) 
     {
 	i++;
 	++it; // increment i before using it
@@ -616,7 +616,7 @@ void TextEditor::textSave()
 	return;
     }
 
-    QString text = e->toHtml(); //FIXME-3 or plaintext? check...
+    QString text = e->toHtml(); //FIXME-4 or plaintext? check...
     QFile f( filename );
     if ( !f.open( QIODevice::WriteOnly ) ) 
     {

@@ -51,7 +51,7 @@ void Process::runScript(QString spath, QString fpath)
     //	    if (exitStatus()>0) showOutput=true;
 	    
     }	
-    /* FIXME-3	output for Process::runScript
+    /* FIXME-5	output for Process::runScript
     qDebug()<<readAllStandardOutput();
     qDebug()<<getStdout();
     qDebug()<<getErrout();

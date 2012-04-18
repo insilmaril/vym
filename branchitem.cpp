@@ -52,7 +52,7 @@ void BranchItem::clear()
     if (task) taskModel->deleteTask (task);
 }
 
-void BranchItem::copy (BranchItem *other)  // FIXME-3 lacks most of data...
+void BranchItem::copy (BranchItem *other)  // FIXME-5 lacks most of data...
 {
     scrolled=other->scrolled;
     tmpUnscrolled=other->tmpUnscrolled;
@@ -517,7 +517,7 @@ BranchObj* BranchItem::getBranchObj()
     return (BranchObj*)lmo;
 }
 
-BranchObj* BranchItem::createMapObj(QGraphicsScene *scene)  // FIXME-3 maybe move this into MapEditor to get rid of scene in VymModel?
+BranchObj* BranchItem::createMapObj(QGraphicsScene *scene)  // FIXME-5 maybe move this into MapEditor to get rid of scene in VymModel?
 {
     BranchObj *newbo;
 
@@ -547,7 +547,7 @@ BranchObj* BranchItem::createMapObj(QGraphicsScene *scene)  // FIXME-3 maybe mov
 
     if (!getHeading().isEmpty() ) 
     {
-	newbo->updateData();	//FIXME-3 maybe better model->emitDataChanged()?
+	newbo->updateData();	//FIXME-5 maybe better model->emitDataChanged()?
 	newbo->setColor (headingColor);
     }	
 	

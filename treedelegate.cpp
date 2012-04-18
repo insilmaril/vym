@@ -12,7 +12,7 @@ TreeDelegate::TreeDelegate(QObject *)
 
 #include <QTextDocument>
 #include "noteobj.h"
-QString TreeDelegate::displayText (const QVariant & value, const QLocale & ) const  // FIXME-3 Ugly, but works...
+QString TreeDelegate::displayText (const QVariant & value, const QLocale & ) const  // FIXME-4 Ugly, but works...
 {
     QString s=value.toString();
     if (Qt::mightBeRichText (s))

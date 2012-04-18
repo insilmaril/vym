@@ -344,7 +344,7 @@ Main::~Main()
     //FIXME-4 save scriptEditor settings
 
     // call the destructors
-    delete noteEditor;	    // FIXME-3 shouldn't this be done in main?
+    delete noteEditor;	    // FIXME-4 shouldn't this be done in main?
     delete historyWindow;
     delete branchPropertyWindow;
 
@@ -372,8 +372,7 @@ void Main::statusMessage(const QString &s)
 {
     // Surpress messages while progressdialog during 
     // load is active
-    //if (progressMax==0)   //FIXME-3 needed?
-	statusBar()->showMessage( s,statusbarTime);
+    statusBar()->showMessage( s,statusbarTime);
 }
 
 void Main::setProgressMaximum (int max)	{
@@ -2439,7 +2438,7 @@ void Main::setupContextMenus()
     // Context menu for canvas
     canvasContextMenu =new QMenu (this);
     canvasContextMenu->addAction (actionAddMapCenter);
-    canvasContextMenu->addAction (actionMapInfo);   //FIXME-3 move to File menu?
+    canvasContextMenu->addAction (actionMapInfo);   //FIXME-4 move to File menu?
     canvasContextMenu->insertSeparator(actionMapInfo);   
 
     canvasContextMenu->addAction(actionFormatFont);
@@ -3007,7 +3006,6 @@ void Main::fileSave(VymModel *m, const SaveMode &savemode)
 	// call fileSaveAs() now, this will call fileSave() 
 	// again.
 	// First switch to editor
-	//FIXME-3 needed???  tabWidget->setCurrentWidget (m->getMapEditor());
 	fileSaveAs(savemode);
     }
 
@@ -3403,7 +3401,6 @@ bool Main::fileCloseMap()
 	    mb.setButtonText( QMessageBox::No, tr("Discard changes"));
 	    mb.setModal (true);
 	    mb.show();
-	    //FIXME-3 not needed? mb.setActiveWindow();
 	    switch( mb.exec() ) 
 	    {
 		case QMessageBox::Yes:
@@ -4306,17 +4303,7 @@ void Main::editOpenFindResultWidget()
 	findResultWidget->parentWidget()->hide();
 }
 
-/* FIXME-3 not needed
-void Main::editHideFindWidget()
-{
-    // findWidget hides itself, but we want
-    // to have focus back at mapEditor usually
-    MapEditor *me=currentMapEditor();
-    if (me) me->setFocus();
-}
-*/
-
-#include "findwidget.h" // FIXME-3 Integrated FRW and FW
+#include "findwidget.h" // FIXME-4 Integrated FRW and FW
 void Main::editFindNext(QString s)  
 {
     Qt::CaseSensitivity cs=Qt::CaseInsensitive;
@@ -4330,21 +4317,23 @@ void Main::editFindNext(QString s)
     }
 }
 
-void Main::editFindDuplicateURLs() //FIXME-3 feature: use FindResultWidget for display
+void Main::editFindDuplicateURLs() //FIXME-4 feature: use FindResultWidget for display
 {
     VymModel *m=currentModel();
     if (m) m->findDuplicateURLs();
 }
 
-void Main::updateQueries (VymModel* m) //FIXME-3 disabled for now to avoid selection in FRW
+void Main::updateQueries (VymModel* m) //FIXME-4 disabled for now to avoid selection in FRW
 {
- //   qDebug() << "MW::updateQueries m="<<m<<"   cM="<<currentModel();
     return;
+/*
+    qDebug() << "MW::updateQueries m="<<m<<"   cM="<<currentModel();
     if (m && currentModel()==m)
     {
 	QString s=findResultWidget->getFindText();
 	if (!s.isEmpty() ) editFindNext (s);
     }	
+*/
 }
 
 void Main::formatPickColor()
@@ -4477,7 +4466,7 @@ void Main::formatToggleLinkColorHint()
     if (m) m->toggleMapLinkColorHint();
 }
 
-void Main::formatHideLinkUnselected()	//FIXME-3 get rid of this with imagepropertydialog
+void Main::formatHideLinkUnselected()	//FIXME-4 get rid of this with imagepropertydialog
 {
     VymModel *m=currentModel();
     if (m)
@@ -4757,7 +4746,7 @@ void Main::selectInNoteEditor(QString s,int i)
 
 void Main::changeSelection (VymModel *model, const QItemSelection &newsel, const QItemSelection &)
 {
-    branchPropertyWindow->setModel (model ); //FIXME-3 this used to be called from BranchObj::select(). Maybe use signal now...
+    branchPropertyWindow->setModel (model ); 
 
     if (model && model==currentModel() )
     {
@@ -4768,7 +4757,7 @@ void Main::changeSelection (VymModel *model, const QItemSelection &newsel, const
 	    if (!ti->hasEmptyNote() )
 		noteEditor->setNote(ti->getNoteObj() );
 	    else
-		noteEditor->setNote(NoteObj() );    //FIXME-4 maybe add a clear() to TE
+		noteEditor->setNote(NoteObj() );    //FIXME-5 maybe add a clear() to TE
 	    // Show URL and link in statusbar	
 	    QString status;
 	    QString s=ti->getURL();
@@ -4925,7 +4914,7 @@ void Main::updateActions()
 		standardFlagsMaster->setEnabled (true);
 
 		// Take care of xlinks  
-		// FIXME-3 similar code in mapeditor mousePressEvent
+		// FIXME-4 similar code in mapeditor mousePressEvent
 		int b=selbi->xlinkCount();
 		branchXLinksContextMenuEdit->setEnabled(b);
 		branchXLinksContextMenuFollow->setEnabled(b);
@@ -5032,7 +5021,7 @@ void Main::updateActions()
 	    return;
 	} // TreeItem 
 	
-	// Check (at least for some) multiple selection //FIXME-3
+	// Check (at least for some) multiple selection //FIXME-4
 	QList <TreeItem*> selItems=m->getSelectedItems();
 	if (selItems.count()>0 )
 	{

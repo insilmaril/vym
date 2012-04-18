@@ -140,7 +140,7 @@ void FlagRowObj::activate (Flag *flag)
 	fo->load (flag->getPixmap() );
 	fo->setName (flag->getName() );
 	fo->activate();
-	if (showFlags)	// FIXME-3 necessary? only called from FIO::init
+	if (showFlags)	// necessary? only called from FIO::init
 	    fo->setVisibility (visible);
 	else
 	    fo->setVisibility (false);

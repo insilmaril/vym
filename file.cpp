@@ -167,7 +167,7 @@ void removeDir(QDir d)
 	qWarning ()<<"removeDir("+d.path()+") failed!";
 }	
 
-void copyDir (QDir src, QDir dst)   //FIXME-3 don't use system call
+void copyDir (QDir src, QDir dst)   //FIXME-5 don't use system call
 {
     system (QString ("cp -r "+src.path()+"/* "+dst.path()).toUtf8() );
 }

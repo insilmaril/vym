@@ -311,7 +311,6 @@ summary
 #
 #addSlide
 #addXlink
-#clearFlags
 #colorBranch
 #colorSubtree
 #copy
@@ -344,7 +343,6 @@ summary
 #selectLastBranch
 #selectLastImage
 #selectLatestAdded
-#setFlag
 #setTaskSleep
 #setFrameIncludeChildren
 #setFrameType
