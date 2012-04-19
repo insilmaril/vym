@@ -542,10 +542,22 @@ void Main::setupAPI()
     c->addPar (Command::String,false,"Filename for export");
     modelCommands.append(c);
 
+    c=new Command ("getDestPath",Command::Any);
+    modelCommands.append(c);
+
+    c=new Command ("getFileDir",Command::Any);
+    modelCommands.append(c);
+
     c=new Command ("getHeading",Command::TreeItem);
     modelCommands.append(c);
 
     c=new Command ("getSelectString",Command::TreeItem);
+    modelCommands.append(c);
+
+    c=new Command ("getURL",Command::TreeItem); 
+    modelCommands.append(c);
+
+    c=new Command ("getVymLink",Command::Branch); 
     modelCommands.append(c);
 
     c=new Command ("hasActiveFlag",Command::TreeItem);
@@ -719,8 +731,8 @@ void Main::setupAPI()
     c->addPar (Command::Color,false,"Color of selection box");
     modelCommands.append(c);
 
-    c=new Command ("setURL",Command::Branch); 
-    c->addPar (Command::String,false,"URL of branch");
+    c=new Command ("setURL",Command::TreeItem); 
+    c->addPar (Command::String,false,"URL of TreeItem");
     modelCommands.append(c);
 
     c=new Command ("setVymLink",Command::Branch); 
@@ -3633,13 +3645,7 @@ void Main::editURL()
 	if (selti) dia.setTextValue (selti->getURL());
 	dia.resize(width()*0.8,0);
 
-	if ( dia.exec() ) 
-	{
-	    QString url=dia.textValue();
-	    if (!url.startsWith("http://") && !url.startsWith("file://") ) 
-		url="http://" + url;
-	    m->setURL (url);
-	}
+	if ( dia.exec() ) m->setURL (dia.textValue() );
     }
 }
 

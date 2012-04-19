@@ -50,7 +50,6 @@ main_a="mc:0,bo:0"
   branch_c=main_a+",bo:2"
 main_b="mc:0,bo:1"
 
-
 #######################
 heading "Basic checks:"
 init_map
@@ -61,6 +60,9 @@ expect "branchCount", 3, vym.branchCount
 
 vym.selectLastBranch
 expect "selectLastBranch", "branch c", vym.getHeading
+
+expect "getDestPath: Got #{vym.getDestPath}", vym.getDestPath, ENV["PWD"] + "/test/default.vym" 
+expect "getFileDir:  Got #{vym.getFileDir}", vym.getFileDir, ENV["PWD"] + "/test/" 
 
 #######################
 heading "Adding branches:"
@@ -354,8 +356,50 @@ expect "Normal paste of branch, check heading of #{s}", vym.getHeading, "Main A"
 vym.cut 
 
 #######################
+heading "References"
+init_map
+vym.select main_a
+vym.setURL "www.insilmaril.de"
+expect "setURL: add http", vym.getURL, "http://www.insilmaril.de"
+vym.undo
+expect "undo setURL", vym.getURL, ""
+vym.redo
+expect "redo setURL", vym.getURL, "http://www.insilmaril.de"
+vym.setURL ""
+expect "setURL: unset URL with empty string", vym.getURL, ""
+
+vl="default.vym"
+vym.setVymLink vl
+s=vym.getVymLink
+expect "setVymLink returns absolute path", vym.getVymLink, vym.getFileDir + vl
+vym.undo
+expect "undo: setVymLink", vym.getVymLink, ""
+vym.redo
+expect "redo: setVymLink", vym.getVymLink, s
+
+#######################
 heading "History"
 init_map
+vym.select main_a
+vym.setHeading "A"
+vym.setHeading "B"
+vym.setHeading "C"
+vym.undo
+vym.undo
+vym.undo
+expect "Undo 3 times", vym.getHeading, "Main A"
+vym.redo
+expect "Redo once", vym.getHeading, "A"
+vym.copy
+vym.redo
+expect "Redo once more", vym.getHeading, "B"
+vym.redo
+expect "Redo yet again", vym.getHeading, "C"
+vym.paste
+vym.selectLastBranch
+expect "Paste from the past", vym.getHeading, "A"
+vym.delete
+
 
 #######################
 summary
@@ -391,6 +435,8 @@ redo
   so far:
     paste
     setHeading
+    setURL
+    setVymLink
 relinkTo (for images)
 saveImage
 saveNote
@@ -415,8 +461,6 @@ setMapLinkStyle
 setNote
 setScale
 setSelectionColor
-setURL
-setVymLink
 sortChildren
 toggleFrameIncludeChildren
 toggleTarget

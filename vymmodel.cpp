@@ -347,6 +347,11 @@ void VymModel::setFilePath(QString fpath)
     setFilePath (fpath,fpath);
 }
 
+QString VymModel::getFileDir()
+{
+    return fileDir;
+}
+
 QString VymModel::getFilePath()
 {
     return filePath;
@@ -3414,7 +3419,7 @@ void VymModel::editFATE2URL()
     }
 }   
 
-void VymModel::setVymLink (const QString &s)
+void VymModel::setVymLink (const QString &s)	//FIXME-4 fail, if s does not exist
 {
     BranchItem *bi=getSelectedBranch();
     if (bi)
@@ -3724,6 +3729,14 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	    QString fname=parser.parString(ok,1); 
 	    exportXML (fname,false);
 	/////////////////////////////////////////////////////////////////////
+	} else if (com=="getDestPath")
+	{ 
+	    returnValue=getDestPath();
+	/////////////////////////////////////////////////////////////////////
+	} else if (com=="getFileDir")
+	{ 
+	    returnValue=getFileDir();
+	/////////////////////////////////////////////////////////////////////
 	} else if (com=="getHeading")
 	{ 
 	    returnValue=selti->getHeading();
@@ -3731,6 +3744,14 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	} else if (com=="getSelectString")
 	{ 
 	    returnValue=getSelectString();
+	/////////////////////////////////////////////////////////////////////
+	} else if (com=="getURL")
+	{ 
+	    returnValue=selti->getURL();
+	/////////////////////////////////////////////////////////////////////
+	} else if (com=="getVymLink")
+	{ 
+	    returnValue=selti->getVymLink();
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="hasActiveFlag")
 	{ 

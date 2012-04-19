@@ -68,10 +68,19 @@ private:
     static  int mapNum;		// unique number for model used in save/undo
     FileType fileType;		// type of file, e.g. vym, freemind...
     QString fileName;		// short name of file (for tab)
+				// example.vym
+
     QString filePath;		// path to file which will be saved
+				// /home/tux/example.vym
+
     QString fileDir;		// dir where file is saved
+				// /home/tux/
+
     QString destPath;		// path to .vym file (needed for vymlinks)
+				// /home/tux/example.vym
+
     QString mapName;		// fileName without ".vym"
+				// example
 
     QString tmpMapDir;		// tmp directory with undo history
 
@@ -106,6 +115,7 @@ public:
     void setFilePath (QString filepath,QString destname);   
     void setFilePath (QString);	//!< Overloaded for convenience
     QString getFilePath (); //!< Full path e.g. "/home/tux/map.xml"
+    QString getFileDir ();  //!< e.g. "/home/tux"
     QString getFileName (); //!< e.g. "map.xml"
     QString getMapName ();  //!< e.g. "map"
     QString getDestPath (); //!< e.g. "/home/tux/map.vym"
