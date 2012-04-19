@@ -59,14 +59,19 @@ expect "select", main_a, vym.getSelectString
 expect "getHeading", "Main A", vym.getHeading
 expect "branchCount", 3, vym.branchCount
 
+vym.selectLastBranch
+expect "selectLastBranch", "branch c", vym.getHeading
 
 #######################
 heading "Adding branches:"
 init_map
-vym.select branch_a
+vym.select main_a
 n=vym.branchCount
 vym.addBranch()
 expect( "addBranch", n+1, vym.branchCount )
+
+vym.selectLatestAdded
+expect "selectLatestAdded", vym.getSelectString, main_a+",bo:3"
 
 vym.undo
 expect( "Undo: addBranch", n, vym.branchCount )
@@ -206,6 +211,9 @@ vym.setHeading "Changed!"
 expect "setHeading","Changed!",vym.getHeading
 vym.undo
 expect "Undo: setHeading","branch a",vym.getHeading
+vym.redo
+expect "redo: setHeading", vym.getHeading, "Changed!" 
+vym.undo
 
 #######################
 heading "Flags"
@@ -271,6 +279,11 @@ expect "clearFlags cleared smiley-good",
   vym.hasActiveFlag( "smiley-good" ), 
   false
 
+vym.toggleFlag "lifebelt"
+expect "toggleFlag: flag activated", vym.hasActiveFlag("lifebelt"),true
+vym.toggleFlag "lifebelt"
+expect "toggleFlag: flag deactivated", vym.hasActiveFlag("lifebelt"),false
+
 #######################
 heading "Deleting parts"
 init_map
@@ -311,71 +324,101 @@ expect "Undo: deleteKeepChildren: branchcount of parent", n,vym.branchCount
 vym.select branch_a
 expect "Undo: deleteKeepChildren: branchcount of branch", m,vym.branchCount
 
+#######################
+heading "Copy, cut & Paste"
+init_map
+vym.select main_a
+n=vym.branchCount
 
+vym.copy
+vym.paste
+vym.selectLastBranch
+s=vym.getSelectString
+expect "Normal paste of branch, check heading of #{s}", vym.getHeading, "Main A"
+
+vym.undo
+vym.select main_a
+expect "Undo paste: branchCount of #{main_a}", vym.branchCount, n
+
+vym.redo
+vym.select s
+expect "redo paste: check heading", vym.getHeading, "Main A"
+
+vym.cut
+vym.select main_a
+expect "cut: branchCount of #{main_a}", vym.branchCount, n
+vym.paste
+vym.selectLastBranch
+s=vym.getSelectString
+expect "Normal paste of branch, check heading of #{s}", vym.getHeading, "Main A"
+vym.cut 
+
+#######################
+heading "History"
+init_map
 
 #######################
 summary
 
+=begin
 # Untested commands:
 #
-#addSlide
-#addXlink
-#colorBranch
-#colorSubtree
-#copy
-#cut
-#cycleTask
-#delete (image)
-#deleteSlide
-#exportAO
-#exportASCII
-#exportHTML
-#exportImage
-#exportLaTeX
-#exportPDF
-#exportPDF
-#exportSVG
-#exportXML
-#importDir
-#loadImage
-#loadNote
-#moveSlideDown
-#moveSlideUp
-#move
-#moveRel
-#note2URLs
-#paste
-#redo
-#relinkTo (for images)
-#saveImage
-#saveNote
-#selectLastBranch
-#selectLastImage
-#selectLatestAdded
-#setTaskSleep
-#setFrameIncludeChildren
-#setFrameType
-#setFramePenColor
-#setFrameBrushColor
-#setFramePadding
-#setFrameBorderWidth
-#setHideExport
-#setIncludeImagesHorizontally
-#setIncludeImagesVertically
-#setHideLinksUnselected
-#setMapAuthor
-#setMapComment
-#setMapBackgroundColor
-#setMapDefLinkColor
-#setMapLinkStyle
-#setNote
-#setScale
-#setSelectionColor
-#setURL
-#setVymLink
-#sortChildren
-#toggleFlag
-#toggleFrameIncludeChildren
-#toggleTarget
-#toggleTask
-#unsetFlag
+addSlide
+addXlink
+colorBranch
+colorSubtree
+cycleTask
+delete (image)
+deleteSlide
+exportAO
+exportASCII
+exportHTML
+exportImage
+exportLaTeX
+exportPDF
+exportPDF
+exportSVG
+exportXML
+importDir
+loadImage
+loadNote
+moveSlideDown
+moveSlideUp
+move
+moveRel
+note2URLs
+redo  
+  so far:
+    paste
+    setHeading
+relinkTo (for images)
+saveImage
+saveNote
+selectLastImage
+selectLatestAdd
+setTaskSleep
+setFrameIncludeChildren
+setFrameType
+setFramePenColor
+setFrameBrushColor
+setFramePadding
+setFrameBorderWidth
+setHideExport
+setIncludeImagesHorizontally
+setIncludeImagesVertically
+setHideLinksUnselected
+setMapAuthor
+setMapComment
+setMapBackgroundColor
+setMapDefLinkColor
+setMapLinkStyle
+setNote
+setScale
+setSelectionColor
+setURL
+setVymLink
+sortChildren
+toggleFrameIncludeChildren
+toggleTarget
+toggleTask
+=end
