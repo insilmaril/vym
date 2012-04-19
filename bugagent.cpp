@@ -46,7 +46,7 @@ BugAgent::BugAgent (BranchItem *bi,const QString &u)
 
     } else if (u.contains("buglist.cgi"))
     {
-	missionType=Query; //FIXME-2 query not supported yet by new bugger
+	missionType=Query; //FIXME-3 query not supported yet by new bugger
 	args<<"--query";
 	args<<url;
     } else

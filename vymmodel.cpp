@@ -656,7 +656,7 @@ File::ErrorCode VymModel::save (const SaveMode &savemode)
     {
 	// Save part of map
 	if (selectionType()==TreeItem::Image)
-	    saveFloatImage();
+	    saveImage();
 	else	
 	    saveFile=saveToDir (fileDir,mapName+"-",true,QPointF(),getSelectedBranch());    
 	// TODO take care of multiselections
@@ -685,50 +685,38 @@ File::ErrorCode VymModel::save (const SaveMode &savemode)
     return err;
 }
 
-ImageItem* VymModel::loadFloatImageInt (BranchItem *dst,QString fn)
+void VymModel::loadImage (BranchItem *dst,const QString &fn)
 {
-    ImageItem *ii=createImage(dst);
-    if (ii)
+    if (!dst) dst=getSelectedBranch();
+    if (dst)
     {
-	ii->load (fn);
-	reposition();
-	return ii;
-    }
-    return NULL;
-}   
+	QString filter=QString (tr("Images") + " (*.png *.bmp *.xbm *.jpg *.png *.xpm *.gif *.pnm *.svg);;"+tr("All","Filedialog") +" (*.*)");
+	QStringList fns;
+	if (fn.isEmpty() )
+	    fns=QFileDialog::getOpenFileNames( 
+		NULL,
+		vymName+" - " + tr("Load image"), 
+		lastImageDir.path(), 
+		filter);
+	else
+	    fns.append (fn);
 
-void VymModel::loadFloatImage ()
-{
-    BranchItem *selbi=getSelectedBranch();
-    if (selbi)
-    {
-	QStringList filters;
-	filters<< QString (tr("Images") + " (*.png *.bmp *.xbm *.jpg *.png *.xpm *.gif *.pnm *.svg)");
-	QFileDialog fd;
-	fd.setFileMode (QFileDialog::ExistingFiles);
-	fd.setWindowTitle(vymName+" - " +tr("Load image"));
-	fd.setDirectory (lastImageDir);
-	fd.setFilters (filters);
-	fd.setAcceptMode (QFileDialog::AcceptOpen);
-
-	if ( fd.exec() == QDialog::Accepted )
+	if (!fns.isEmpty() )
 	{
-	    lastImageDir=fd.directory();
+	    lastImageDir.setPath(fns.first().left(fns.first().lastIndexOf ("/")) );
 	    QString s;
-	    ImageItem *ii;
-	    for (int j=0; j<fd.selectedFiles().count(); j++)
+	    for (int j=0; j<fns.count(); j++)
 	    {
-		s=fd.selectedFiles().at(j);
-		ii=loadFloatImageInt (selbi,s);
-
-		if (ii)
+		s=fns.at(j);
+		ImageItem *ii=createImage(dst);
+		if (ii && ii->load (s) )
 		{
 		    saveState(
 			(TreeItem*)ii,
 			"delete ()",
-			selbi, 
+			dst, 
 			QString ("loadImage (\"%1\")").arg(s ),
-			QString("Add image %1 to %2").arg(s).arg(getObjectName(selbi))
+			QString("Add image %1 to %2").arg(s).arg(getObjectName(dst))
 		    );
 		    // Find nice position
 		    FloatImageObj *fio=(FloatImageObj*)(ii->getMO() );
@@ -738,6 +726,8 @@ void VymModel::loadFloatImage ()
 		    // On default include image // FIXME-4 check, if we change default settings...
 		    setIncludeImagesHor (true);
 		    setIncludeImagesVer (true);
+
+		    reposition();
 		} else
 		    // FIXME-2 loadFIO error handling
 		    qWarning ()<<"Failed to load "+s;
@@ -747,31 +737,24 @@ void VymModel::loadFloatImage ()
     }
 }
 
-bool VymModel::saveFloatImageInt  (ImageItem *ii, const QString &format, const QString &fn)
+void VymModel::saveImage (ImageItem *ii, QString format, QString fn)                                                    
 {
-    return ii->save (fn,format);
-}
-
-void VymModel::saveFloatImage ()
-{
-    ImageItem *ii=getSelectedImage();
+    if (!ii) ii=getSelectedImage();
     if (ii)
     {
-	QFileDialog fd;
-	QStringList filters;
-	filters<< QString (tr("Images") + " (*.png *.bmp *.xbm *.jpg *.png *.xpm *.gif *.pnm)");
-	fd.setFilters (filters);
-	fd.setWindowTitle(vymName+" - " +tr("Save image"));
-	fd.setFileMode( QFileDialog::AnyFile );
-	fd.setDirectory (lastImageDir);
-	fd.setAcceptMode (QFileDialog::AcceptSave);
-	fd.setConfirmOverwrite (false);
-//	fd.setSelection (fio->getOriginalFilename());
+	QString filter=QString (tr("Images") + " (*.png *.bmp *.xbm *.jpg *.png *.xpm *.gif *.pnm *.svg);;"+tr("All","Filedialog") +" (*.*)");
+	if (fn.isEmpty() )
+	    fn=QFileDialog::getSaveFileName( 
+		NULL,
+		vymName+" - " + tr("Save image"), 
+		lastImageDir.path(), 
+		filter,
+		NULL,
+		QFileDialog::DontConfirmOverwrite);
 
-	QString fn;
-	if ( fd.exec() == QDialog::Accepted && fd.selectedFiles().count()==1)
+	if (!fn.isEmpty() )
 	{
-	    fn=fd.selectedFiles().at(0);
+	    lastImageDir.setPath(fn.left(fn.lastIndexOf ("/")) );
 	    if (QFile (fn).exists() )
 	    {
 		QMessageBox mb( vymName,
@@ -795,10 +778,10 @@ void VymModel::saveFloatImage ()
 			break;
 		}
 	    }
-	    QString format=imageIO.guessType(fn);
+	    if (format.isEmpty() ) format=imageIO.guessType(fn);
 	    if (format.isEmpty())
 		QMessageBox::critical (0,tr("Critical Error"),tr("Unsupported format in %1").arg(fn));
-	    else if (!saveFloatImageInt (ii,format,fn ))
+	    else if (!ii->save (fn, format) )
 		QMessageBox::critical (0,tr("Critical Error"),tr("Couldn't save %1").arg(fn));
 	} 
     }
@@ -3766,7 +3749,7 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	} else if (com=="loadImage")
 	{
 	    s=parser.parString(ok,0);
-	    loadFloatImageInt (selbi,s);
+	    loadImage (selbi,s);
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="loadNote")
 	{
@@ -3893,7 +3876,7 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	    ImageItem *ii=getSelectedImage();
 	    s=parser.parString(ok,0);
 	    t=parser.parString(ok,1);
-	    saveFloatImageInt (ii,t,s);
+	    saveImage (ii,t,s);
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="saveNote")
 	{

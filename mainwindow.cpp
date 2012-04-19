@@ -4170,13 +4170,13 @@ void Main::editDeleteSelection()
 void Main::editLoadImage()
 {
     VymModel *m=currentModel();
-    if (m) m->loadFloatImage();
+    if (m) m->loadImage();
 }
 
 void Main::editSaveImage()
 {
     VymModel *m=currentModel();
-    if (m) m->saveFloatImage();
+    if (m) m->saveImage();
 }
 
 void Main::editEditXLink(QAction *a)

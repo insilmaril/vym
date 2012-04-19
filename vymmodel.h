@@ -127,12 +127,9 @@ public:
     /*! \brief Save the map to file */
     File::ErrorCode save(const SaveMode &);	
 
-private:
-    ImageItem* loadFloatImageInt (BranchItem *dst,QString);
-    bool saveFloatImageInt (ImageItem*, const QString &, const QString &);
 public:	
-    void loadFloatImage ();
-    void saveFloatImage ();
+    void loadImage (BranchItem *dst=NULL, const QString &fn="");
+    void saveImage (ImageItem *ii=NULL, QString format="", QString fn="");
 
 private:    
     void importDirInt(BranchItem *,QDir);
