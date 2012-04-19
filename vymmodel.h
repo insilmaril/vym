@@ -342,8 +342,6 @@ public:
     void addTimestamp();	
 
     void copy();			//!< Copy to clipboard
-private:    
-    void pasteNoSave(const int &n);	//!< paste clipboard to branch
 public:	
     void paste();	    //!< Paste clipboard to branch and backup
     void cut();		    //!< Cut to clipboard (and copy)

@@ -2184,38 +2184,22 @@ void VymModel::copy()
 	selti->getType() == TreeItem::MapCenter  ||
 	selti->getType() == TreeItem::Image ))
     {
+	// Copy to global clipboard
+	QString saveFile=saveToDir (clipboardDir, clipboardFile, true, QPointF(), selti);
+	if (!saveStringToDisk(clipboardDir + "/" + clipboardFile,saveFile))
+	    qWarning ("ME::saveStringToDisk failed!");
+
+	clipboardEmpty=false;
+
 	if (redosAvail == 0)
 	{
-	    // Copy to history
+	    // Copy also to history
 	    QString s=getSelectString(selti);
 	    saveState (PartOfMap, s, "nop ()", s, "copy ()","Copy selection to clipboard",selti  );
 	    curClipboard=curStep;
 	}
-
-	// Copy also to global clipboard, because we are at last step in history
-	QString bakMapName(QString("history-%1").arg(curStep));
-	QString bakMapDir(tmpMapDir +"/"+bakMapName);
-	copyDir (bakMapDir,clipboardDir );
-
-	clipboardEmpty=false;
 	updateActions();
     }	    
-}
-
-
-void VymModel::pasteNoSave(const int &n)
-{
-    bool zippedOrg=zipped;
-    if (redosAvail > 0 || n!=0)
-    {
-	// Use the "historical" buffer
-	QString bakMapName(QString("history-%1").arg(n));
-	QString bakMapDir(tmpMapDir +"/"+bakMapName);
-	loadMap (bakMapDir+"/"+clipboardFile,ImportAdd, VymMap,SlideContent);
-    } else
-	// Use the global buffer
-	loadMap (clipboardDir+"/"+clipboardFile,ImportAdd, VymMap,SlideContent);
-    zipped=zippedOrg;
 }
 
 void VymModel::paste()	
@@ -2226,10 +2210,12 @@ void VymModel::paste()
 	saveStateChangingPart(
 	    selbi,
 	    selbi,
-	    QString ("paste (%1)").arg(curClipboard),
-	    QString("Paste to %1").arg( getObjectName(selbi))
+	    QString ("paste ()"),
+	    QString("Paste")
 	);
-	pasteNoSave(0);
+	bool zippedOrg=zipped;
+	loadMap (clipboardDir+"/"+clipboardFile,ImportAdd, VymMap,SlideContent);
+	zipped=zippedOrg;
 	reposition();
     }
 }
@@ -3832,8 +3818,7 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="paste")
 	{
-	    n=parser.parInt (ok,0);
-	    pasteNoSave(n);
+	    paste();
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="redo")
 	{

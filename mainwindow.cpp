@@ -591,13 +591,12 @@ void Main::setupAPI()
     modelCommands.append(c);
 
     c=new Command ("nop",Command::Any); 
+    modelCommands.append(c);
 
     c=new Command ("note2URLs",Command::Branch); 
     modelCommands.append(c);
 
     c=new Command ("paste",Command::Branch); 
-    c->addPar (Command::Int,false,"Index of destination");
-    c->addPar (Command::Double,false,"Position y");
     modelCommands.append(c);
 
     c=new Command ("redo",Command::Any); 
@@ -4323,7 +4322,7 @@ void Main::editFindDuplicateURLs() //FIXME-4 feature: use FindResultWidget for d
     if (m) m->findDuplicateURLs();
 }
 
-void Main::updateQueries (VymModel* m) //FIXME-4 disabled for now to avoid selection in FRW
+void Main::updateQueries (VymModel* ) //FIXME-4 disabled for now to avoid selection in FRW
 {
     return;
 /*
