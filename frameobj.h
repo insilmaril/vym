@@ -11,7 +11,7 @@ class FrameObj:public MapObj {
 public:
 
     /*! \brief Supported frame types */
-    enum FrameType {NoFrame,Rectangle,Ellipse,Cloud};
+    enum FrameType {NoFrame,Rectangle,RoundedRectangle,Ellipse,Cloud};
 
     FrameObj(QGraphicsItem *parent);
     ~FrameObj();

@@ -62,6 +62,11 @@
             </item>
             <item>
              <property name="text">
+              <string>Rounded Rectangle</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
               <string>Ellipse</string>
              </property>
             </item>

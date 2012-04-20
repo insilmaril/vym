@@ -112,11 +112,14 @@ void BranchPropertyWindow::setItem (TreeItem *ti)
 		    case FrameObj::Rectangle: 
 			ui.frameTypeCombo->setCurrentIndex (1);
 			break;
-		    case FrameObj::Ellipse: 
+		    case FrameObj::RoundedRectangle: 
 			ui.frameTypeCombo->setCurrentIndex (2);
 			break;
-		    case FrameObj::Cloud: 
+		    case FrameObj::Ellipse: 
 			ui.frameTypeCombo->setCurrentIndex (3);
+			break;
+		    case FrameObj::Cloud: 
+			ui.frameTypeCombo->setCurrentIndex (4);
 			break;
 		    default: 
 			break;
@@ -201,9 +204,12 @@ void BranchPropertyWindow::frameTypeChanged (int i)
 		model->setFrameType (FrameObj::Rectangle); 
 		break;
 	    case 2: 
-		model->setFrameType (FrameObj::Ellipse); 
+		model->setFrameType (FrameObj::RoundedRectangle); 
 		break;
 	    case 3: 
+		model->setFrameType (FrameObj::Ellipse); 
+		break;
+	    case 4: 
 		model->setFrameType (FrameObj::Cloud); 
 		break;
 	}
