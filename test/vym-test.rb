@@ -51,6 +51,8 @@ main_a="mc:0,bo:0"
   branch_c=main_a+",bo:2"
 main_b="mc:0,bo:1"
 
+n_centers=2
+
 #######################
 heading "Basic checks:"
 init_map
@@ -71,13 +73,13 @@ init_map
 vym.select main_a
 n=vym.branchCount
 vym.addBranch()
-expect( "addBranch", n+1, vym.branchCount )
+expect( "addBranch", vym.branchCount, n+1 )
 
 vym.selectLatestAdded
 expect "selectLatestAdded", vym.getSelectString, main_a+",bo:3"
 
 vym.undo
-expect( "Undo: addBranch", n, vym.branchCount )
+expect( "Undo: addBranch", vym.branchCount, n )
 
 init_map
 vym.select main_a
@@ -86,52 +88,55 @@ vym.select branch_a
 vym.addBranch(-3)
 vym.addBranch(-1)
 vym.select main_a
-expect( "addBranchAbove/Below", n+2, vym.branchCount )
+expect "addBranchAbove/Below", vym.branchCount, n+2
 
 vym.undo
 vym.undo
-expect( "Undo: addBranchAbove/Below", n, vym.branchCount )
+expect "Undo: addBranchAbove/Below", vym.branchCount, n
 
 init_map
 vym.select branch_a
 vym.addBranchBefore
 vym.select main_a
-expect( "addBranchBefore: check branchcount", n, vym.branchCount)
+expect "addBranchBefore: check branchcount", n, vym.branchCount
 vym.select branch_a
-expect( "addBranchBefore: check heading", "", vym.getHeading)
+expect "addBranchBefore: check heading", "", vym.getHeading
 vym.undo
 vym.select main_a
-expect( "Undo: addBranchBefore", n, vym.branchCount )
+expect "Undo: addBranchBefore", n, vym.branchCount 
 
 #######################
 heading "Adding maps"
 init_map
 vym.select branch_a
+n=vym.branchCount
 vym.addMapReplace "test/default.vym"
 vym.select main_a
-expect( "addMapReplace: check branch count in #{main_a}", 3, vym.branchCount )
+expect "addMapReplace: check branch count in #{main_a}", 
+  vym.branchCount, 
+  n + n_centers -1
 vym.select branch_a
-expect( "addMapReplace: check if #{branch_a} is new", 2, vym.branchCount )
+expect "addMapReplace: check if #{branch_a} is new", vym.branchCount, 2
 
 vym.undo
 vym.select main_a
-expect( "Undo: check branch count in #{main_a}", 3, vym.branchCount )
+expect "Undo: check branch count in #{main_a}", vym.branchCount, 3
 vym.select branch_a
-expect( "Undo: check if #{branch_a} is back", 3, vym.branchCount )
+expect "Undo: check if #{branch_a} is back", vym.branchCount, 3 
 
 init_map
 vym.select main_a
 vym.addMapInsert "test/default.vym",1
 vym.select main_a
-expect( "addMapInsert: branch count", n+1, vym.branchCount )
+expect "addMapInsert: branch count",  vym.branchCount, n+2 
 vym.select main_a + ",bo:1"
-expect( "addMapInsert: new heading", vym.getHeading, "MapCenter 0")
+expect "addMapInsert: new heading", vym.getHeading, "MapCenter 0"
 
 vym.undo
 vym.select main_a
-expect( "Undo: check branch count in #{main_a}", 3, vym.branchCount )
+expect "Undo: check branch count in #{main_a}", vym.branchCount, 3 
 vym.select branch_b
-expect( "Undo: check heading of  #{branch_b}", "branch b", vym.getHeading)
+expect "Undo: check heading of  #{branch_b}",  vym.getHeading, "branch b"
 
 #######################
 heading "Scrolling and unscrolling"

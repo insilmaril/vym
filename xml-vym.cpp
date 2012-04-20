@@ -129,15 +129,26 @@ bool parseVYMHandler::startElement  ( const QString&, const QString&,
 		    if (insertPos<0) 
 			lastBranch=model->createBranch(lastBranch);
 		    else
+		    {
 			lastBranch=model->addNewBranch(lastBranch, insertPos);
+			insertPos++;
+		    }
 		} else  
 		{
 		    // Import Replace 
-		    insertPos=lastBranch->num();
-		    model->clearItem (lastBranch);
+		    if (insertPos<0)
+		    {
+			insertPos=lastBranch->num() +1;
+			model->clearItem (lastBranch);
+		    } else
+		    {
+			BranchItem *pi=bi->parentBranch();
+			lastBranch=model->addNewBranch(pi, insertPos);
+			insertPos++;
+		    }
 		}
 	    } else
-		// add mapCenter without parent
+		// if nothing selected, add mapCenter without parent
 		lastBranch=model->createMapCenter(); 
 	}	
 	readBranchAttr (atts);

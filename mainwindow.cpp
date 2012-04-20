@@ -2909,46 +2909,38 @@ File::ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode, const FileType
 
 void Main::fileLoad(const LoadMode &lmode)
 {
-    QStringList filters;
-    filters <<"VYM map or Freemind map (*.vym *.vyp *.mm)"
-	<<"VYM map (*.vym *.vyp)"
-	<<"VYM Backups (*.vym~)"
-	<<"Freemind map (*.mm)"
-	<<"XML (*.xml)"
-	<<"All (* *.*)";
-    QFileDialog fd;
-    fd.setDirectory (lastMapDir);
-    fd.setFileMode (QFileDialog::ExistingFiles);
-    fd.setFilters (filters);
-    fd.setAcceptMode (QFileDialog::AcceptOpen);
-
+    QString caption;
     switch (lmode)
     {
 	case NewMap:
-	    fd.setWindowTitle(vymName+ " - " +tr("Load vym map"));
+	    caption=vymName+ " - " +tr("Load vym map");
 	    break;
 	case ImportAdd:
-	    fd.setWindowTitle(vymName+ " - " +tr("Import: Add vym map to selection"));
+	    caption=vymName+ " - " +tr("Import: Add vym map to selection");
 	    break;
 	case ImportReplace:
-	    fd.setWindowTitle(vymName+ " - " +tr("Import: Replace selection with vym map"));
+	    caption=vymName+ " - " +tr("Import: Replace selection with vym map");
 	    break;
     }
 
-    QString fn;
-    if ( fd.exec() == QDialog::Accepted )
+    QString filter;
+    filter+="VYM map " + tr("or","File Dialog") +" Freemind map" + " (*.vym *.vyp *.mm);;";
+    filter+="VYM map (*.vym *.vyp);;";
+    filter+="VYM Backups (*.vym~);;";
+    filter+="Freemind map (*.mm);;";
+    filter+="XML (*.xml);;";
+    filter+="All (* *.*)";
+    QStringList fns=QFileDialog::getOpenFileNames( 
+	    this,
+	    caption,
+	    lastMapDir.path(), 
+	    filter);
+
+    if (!fns.isEmpty() )
     {
-	lastMapDir=fd.directory().path();
-	QStringList flist = fd.selectedFiles();
-	QStringList::Iterator it = flist.begin();
-	
-	progressCounterTotal=flist.count();
-	while( it != flist.end() ) 
-	{
-	    FileType type=getMapType (*it);
-	    fileLoad(*it, lmode,type);		   
-	    ++it;
-	}
+	lastMapDir.setPath(fns.first().left(fns.first().lastIndexOf ("/")) );
+	foreach (QString fn, fns)
+	    fileLoad(fn, lmode, getMapType (fn) );		   
     }
     removeProgressCounter();
 
