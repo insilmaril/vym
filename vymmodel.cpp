@@ -3737,6 +3737,14 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	{ 
 	    returnValue=getFileDir();
 	/////////////////////////////////////////////////////////////////////
+	} else if (com=="getFrameType")
+	{ 
+	    BranchObj *bo=(BranchObj*)(selbi->getLMO());
+	    if (!bo)
+		parser.setError (Aborted,"No BranchObj");
+	    else
+		returnValue=bo->getFrame()->getFrameTypeName();
+	/////////////////////////////////////////////////////////////////////
 	} else if (com=="getHeading")
 	{ 
 	    returnValue=selti->getHeading();

@@ -361,8 +361,10 @@ void FrameObj::setVisibility (bool v)
 
 QString FrameObj::saveToDir ()
 {
-    if (type==NoFrame) return QString();
     QString frameTypeAttr=attribut ("frameType",getFrameTypeName());
+    if (type==NoFrame) 
+	return singleElement ("frame", frameTypeAttr);
+
     QString penColAttr=attribut ("penColor",penColor.name() );
     QString brushColAttr=attribut ("brushColor",brushColor.name() );
     QString paddingAttr=attribut ("padding",QString::number (padding) );

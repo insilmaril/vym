@@ -120,11 +120,17 @@ QString BranchItem::saveToDir (const QString &tmpdir,const QString &prefix, cons
     else    
 	elementName="branch";
 
+    // Save rotation
+    QString rotAttr;
+    if (lmo && ((OrnamentedObj*)lmo)->getRotation() !=0 )
+	rotAttr=attribut ("rotation",QString().setNum (((OrnamentedObj*)lmo)->getRotation() ) );
+
     s=beginElement (elementName
-	+getMapAttr()
-	+getGeneralAttr()
-	+scrolledAttr 
-	+getIncludeImageAttr() 
+	+ getMapAttr()
+	+ getGeneralAttr()
+	+ scrolledAttr 
+	+ getIncludeImageAttr() 
+	+ rotAttr
 	);
     incIndent();
 
@@ -132,13 +138,11 @@ QString BranchItem::saveToDir (const QString &tmpdir,const QString &prefix, cons
     s+=valueElement("heading", getHeading(),
 	attribut ("textColor",QColor( bo->getColor()).name()));
 
-    // Save frame  //FIXME-4 not saved if there is no LMO
-    if (lmo && ((OrnamentedObj*)lmo)->getFrame()->getFrameType()!=FrameObj::NoFrame) 
-	s+=((OrnamentedObj*)lmo)->getFrame()->saveToDir ();
-
-    // Save rotation
-    if (lmo && ((OrnamentedObj*)lmo)->getRotation() !=0 )
-	s+=attribut ("rotation",QString().setNum (((OrnamentedObj*)lmo)->getRotation() ) );
+    // Save frame  //FIXME-5 not saved if there is no LMO
+    if (lmo) 
+	// Avoid saving NoFrame for objects other than MapCenter
+	if (depth() == 0  || ((OrnamentedObj*)lmo)->getFrame()->getFrameType()!=FrameObj::NoFrame) 
+	    s+=((OrnamentedObj*)lmo)->getFrame()->saveToDir ();
 
     // save names of flags set
     s+=standardFlags.saveToDir(tmpdir,prefix,0);

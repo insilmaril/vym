@@ -44,6 +44,7 @@ vym=Vym.new(vym_mgr.find('test') )
 
 #######################
 center_0="mc:0"
+center_1="mc:1"
 main_a="mc:0,bo:0"
   branch_a=main_a+",bo:0"
   branch_b=main_a+",bo:1"
@@ -204,6 +205,8 @@ vym.undo
 vym.select center_0
 expect "Undo RelinkTo pos 1: branchCount of center", 2, vym.branchCount
 # FIXME still has wrong position, check position
+vym.select main_b
+vym.moveRel 100,100
 
 #######################
 heading "Modifying branches"
@@ -376,6 +379,7 @@ vym.undo
 expect "undo: setVymLink", vym.getVymLink, ""
 vym.redo
 expect "redo: setVymLink", vym.getVymLink, s
+vym.undo
 
 #######################
 heading "History"
@@ -395,11 +399,18 @@ vym.redo
 expect "Redo once more", vym.getHeading, "B"
 vym.redo
 expect "Redo yet again", vym.getHeading, "C"
+vym.setHeading "Main A"
 vym.paste
 vym.selectLastBranch
 expect "Paste from the past", vym.getHeading, "A"
 vym.delete
 
+
+#######################
+heading "Bugfixes:"
+init_map
+vym.select main_b
+expect "MapCenter of #{center_1} has no frame", vym.getFrameType, "NoFrame"
 
 #######################
 summary

@@ -548,6 +548,9 @@ void Main::setupAPI()
     c=new Command ("getFileDir",Command::Any);
     modelCommands.append(c);
 
+    c=new Command ("getFrameType",Command::Branch);
+    modelCommands.append(c);
+
     c=new Command ("getHeading",Command::TreeItem);
     modelCommands.append(c);
 
