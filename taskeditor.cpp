@@ -51,12 +51,12 @@ TaskEditor::TaskEditor(QWidget *)
     // Forward Enter and Return to MapEditor
     a = new QAction(icon, tr( "Edit heading","TaskEditor" ), this);
     a->setShortcut ( Qt::Key_Return);		
-    a->setShortcutContext (Qt::WindowShortcut);
+    a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
     addAction (a);
     connect( a, SIGNAL( triggered() ), mainWindow, SLOT( editHeading() ) );
     a = new QAction( tr( "Edit heading","TaskEditor" ), this);
     a->setShortcut ( Qt::Key_Enter);			
-    a->setShortcutContext (Qt::WindowShortcut);
+    a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
     addAction (a);
     connect( a, SIGNAL( triggered() ), mainWindow, SLOT( editHeading() ) );
 
