@@ -50,6 +50,7 @@ public:
     virtual QRectF getBBox();			//! returns bounding box
     virtual ConvexPolygon getBoundingPolygon();	//! return bounding convex polygon
     virtual QPolygonF getClickPoly();		//! returns polygon to click
+    virtual QPainterPath getClickPath();	//! returns path to click
     virtual bool isInClickBox (const QPointF &p);   //! Checks if p is in clickBox
     virtual QSizeF getSize();			//! returns size of bounding box
 

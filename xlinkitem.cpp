@@ -63,6 +63,21 @@ MapObj* XLinkItem::getMO()
     return NULL;	
 }
 
+void XLinkItem::setSelection()
+{
+    if (link)
+    {
+	XLinkObj* xlo=(XLinkObj*)getMO();
+	if (xlo) 
+	{
+	    if (parentItem==link->getBeginBranch() )
+		xlo->setSelection(XLinkObj::C1);
+	    else if (parentItem==link->getEndBranch() )
+		xlo->setSelection(XLinkObj::C2);
+	}
+    }
+}
+
 BranchItem* XLinkItem::getPartnerBranch()
 {
     if (link && link->getBeginBranch() && link->getEndBranch())

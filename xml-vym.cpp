@@ -249,6 +249,7 @@ bool parseVYMHandler::startElement  ( const QString&, const QString&,
 	if (!readFrameAttr(atts)) return false;
     } else if ( eName == "xlink" && state == StateBranch ) 
     {
+	// Obsolete after 1.13.2
 	state=StateBranchXLink;
 	if (!readXLinkAttr (atts)) return false;
     } else if ( eName == "xlink" && state == StateMap) 
@@ -444,13 +445,17 @@ bool parseVYMHandler::readMapAttr (const QXmlAttributes& a)
 	col.setNamedColor(a.value("linkColor"));
 	model->setMapDefLinkColor(col);
     }	
+
+    QPen pen (model->getMapDefXLinkPen() );
     if (!a.value( "defXLinkColor").isEmpty() ) 
     {
 	col.setNamedColor(a.value("defXLinkColor"));
-	model->setMapDefXLinkColor(col);
+	pen.setColor(col);
     }	
     if (!a.value( "defXLinkWidth").isEmpty() ) 
-	model->setMapDefXLinkWidth(a.value("defXLinkWidth").toInt ());
+	pen.setWidth(a.value("defXLinkWidth").toInt ());
+    model->setMapDefXLinkPen (pen);
+
     if (!a.value( "mapZoomFactor").isEmpty() ) 
 	model->setMapZoomFactor(a.value("mapZoomFactor").toDouble());
     if (!a.value( "mapRotationAngle").isEmpty() ) 
@@ -689,8 +694,42 @@ bool parseVYMHandler::readImageAttr (const QXmlAttributes& a)
 
 bool parseVYMHandler::readXLinkAttr (const QXmlAttributes& a) 
 {
-    // Format of links was changed several times:
-    //
+    // Obsolete, see also readLinkAttr
+
+    if (!a.value( "beginID").isEmpty() ) 
+    { 
+	if (!a.value( "endID").isEmpty() ) 
+	{
+	    TreeItem *beginBI=model->findBySelectString (a.value( "beginID"));
+	    TreeItem   *endBI=model->findBySelectString (a.value( "endID"));
+	    if (beginBI && endBI && beginBI->isBranchLikeType() && endBI->isBranchLikeType() )
+	    {
+		Link *li=new Link (model);
+		li->setBeginBranch ( (BranchItem*)beginBI );
+		li->setEndBranch ( (BranchItem*)endBI);
+		QPen pen=li->getPen();
+
+		if (!a.value( "color").isEmpty() ) 
+		{
+		    QColor col;
+		    col.setNamedColor(a.value("color"));
+		    pen.setColor (col);
+		}
+
+		if (!a.value( "width").isEmpty() ) 
+		{
+		    bool okx;
+		    pen.setWidth(a.value ("width").toInt (&okx, 10));
+		}
+		model->createLink (li,true);	// create MO by default
+	    }
+	}           
+    }	
+    return true;    
+}
+
+bool parseVYMHandler::readLinkNewAttr (const QXmlAttributes& a)	
+{
     // object ID is used starting in version 1.8.76
     // (before there was beginBranch and endBranch)
     //
@@ -710,58 +749,42 @@ bool parseVYMHandler::readXLinkAttr (const QXmlAttributes& a)
 		li->setBeginBranch ( (BranchItem*)beginBI );
 		li->setEndBranch ( (BranchItem*)endBI);
 
+		bool okx;
+		QPen pen=li->getPen();
+		if (!a.value( "type").isEmpty() ) 
+		{
+		    li->setLinkType (a.value( "type") );
+		}
 		if (!a.value( "color").isEmpty() ) 
 		{
 		    QColor col;
 		    col.setNamedColor(a.value("color"));
-		    li->setColor (col);
+		    pen.setColor (col);
 		}
 
 		if (!a.value( "width").isEmpty() ) 
 		{
-		    bool okx;
-		    li->setWidth(a.value ("width").toInt (&okx, 10));
+		    pen.setWidth(a.value ("width").toInt (&okx, 10));
 		}
-		model->createLink (li,true);	// create MO by default
-	    }
-	}           
-    }	
-    return true;    
-}
-
-bool parseVYMHandler::readLinkNewAttr (const QXmlAttributes& a)	
-{
-    // object ID is used starting in version 1.8.76
-    // (before there was beginBranch and endBranch)
-
-    // Beginning in 1.13.2 xLinks are no longer parts of branches, but
-    // a separate list after all the mapCenters within <vymmap> ... </vymmap>
-
-    if (!a.value( "beginID").isEmpty() ) 
-    { 
-	if (!a.value( "endID").isEmpty() ) 
-	{
-	    TreeItem *beginBI=model->findBySelectString (a.value( "beginID"));
-	    TreeItem   *endBI=model->findBySelectString (a.value( "endID"));
-	    if (beginBI && endBI && beginBI->isBranchLikeType() && endBI->isBranchLikeType() )
-	    {
-		Link *li=new Link (model);
-		li->setBeginBranch ( (BranchItem*)beginBI );
-		li->setEndBranch ( (BranchItem*)endBI);
-
-		if (!a.value( "color").isEmpty() ) 
+		if (!a.value( "penstyle").isEmpty() ) 
 		{
-		    QColor col;
-		    col.setNamedColor(a.value("color"));
-		    li->setColor (col);
+		    pen.setStyle( penStyle (a.value ("penstyle"), okx));
 		}
+		li->setPen (pen);
 
-		if (!a.value( "width").isEmpty() ) 
-		{
-		    bool okx;
-		    li->setWidth(a.value ("width").toInt (&okx, 10));
-		}
 		model->createLink (li,true);	// create MO by default
+
+		XLinkObj *xlo=(XLinkObj*)(li->getMO() );
+		if (xlo && !a.value( "c1").isEmpty() )
+		{
+		    QPointF p=point(a.value("c1"),okx );
+		    if (okx) xlo->setC1 (p);
+		}
+		if (xlo && !a.value( "c2").isEmpty() )
+		{
+		    QPointF p=point(a.value("c2"),okx );
+		    if (okx) xlo->setC2 (p);
+		}
 	    }
 	}           
     }	

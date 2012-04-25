@@ -17,7 +17,7 @@ MapItem::MapItem(const QList<QVariant> &data, TreeItem *parent):TreeItem (data,p
 
 void MapItem::init()
 {
-    lmo=NULL;
+    mo=NULL;
     posMode=Unused;
     hideLinkUnselected=false;
 }
@@ -30,9 +30,10 @@ void MapItem::appendChild (TreeItem *item)
     // and remove this here...
 
     // If lmo exists, also set parObj there
-    if (lmo && (item->isBranchLikeType() || item->getType()==TreeItem::Image) )
+    LinkableMapObj *lmo=getLMO();
+    if (lmo)
     {
-	LinkableMapObj *itemLMO=((MapItem*)item)->lmo;
+	LinkableMapObj *itemLMO=((MapItem*)item)->getLMO();
 	if (itemLMO)
 	    itemLMO->setParObj (lmo);
     }
@@ -42,6 +43,7 @@ void MapItem::setRelPos (const QPointF &p)
 {
     posMode=Relative;
     pos=p;
+    LinkableMapObj *lmo=getLMO();
     if (lmo)
     {
 	((OrnamentedObj*)lmo)->setUseRelPos (true);
@@ -53,7 +55,7 @@ void MapItem::setAbsPos (const QPointF &p)
 {
     posMode=Absolute;
     pos=p;
-    if (lmo) lmo->move (p);
+    if (mo) mo->move (p);
 }
 
 void MapItem::setPositionMode (PositionMode mode)
@@ -69,6 +71,7 @@ MapItem::PositionMode MapItem::getPositionMode ()
 void MapItem::setHideLinkUnselected (bool b)
 {
     hideLinkUnselected=b;
+    LinkableMapObj *lmo=getLMO();
     if (lmo) 
     {
 	//lmo->setHideLinkUnselected();
@@ -95,6 +98,7 @@ QString MapItem::getMapAttr ()
 	else
 	    posMode=Unused;
     }
+    LinkableMapObj *lmo=getLMO();
     switch (posMode)
     {
 	case Relative:	
@@ -103,7 +107,7 @@ QString MapItem::getMapAttr ()
 	       attribut("relPosY",QString().setNum(pos.y())); 
 	    break;
 	case Absolute:	
-	    if (lmo) pos=lmo->getAbsPos();
+	    if (mo) pos=mo->getAbsPos();
 	    s=attribut("absPosX",QString().setNum(pos.x())) +
 	      attribut("absPosY",QString().setNum(pos.y())); 
 	    break;
@@ -115,8 +119,9 @@ QString MapItem::getMapAttr ()
 	s+=attribut ("hideLink","false");
 
     // Rotation angle
-    if (lmo)
-	angle=lmo->getRotation();
+    MapObj *mo=getMO();
+    if (mo);
+	angle=mo->getRotation();
     if (angle!=0)	
 	s+=attribut("rotation",QString().setNum(angle) );
 	
@@ -136,6 +141,7 @@ QRectF MapItem::getBBoxURLFlag ()
 
 QRectF MapItem::getBBoxFlag (const QString &fname)
 {
+    LinkableMapObj *lmo=getLMO();
     if (lmo)
 	return ((OrnamentedObj*)lmo)->getBBoxFlag (fname);
     else    
@@ -145,26 +151,26 @@ QRectF MapItem::getBBoxFlag (const QString &fname)
 void MapItem::setRotation(const qreal &a)
 {
     angle=a;
-    if (lmo) ((OrnamentedObj*)lmo)->setRotation (a);
+    MapObj *mo=getMO();
+    if (mo) mo->setRotation (a);
 }
 
 MapObj* MapItem::getMO()
 {
-    return (MapObj*)lmo;
+    return mo;
 }
 
 LinkableMapObj* MapItem::getLMO()
 {
-    return lmo;
-}
-
-void MapItem::setLMO(LinkableMapObj *l)
-{
-    lmo=l;
+    if (isBranchLikeType() || type==Image)
+	return (LinkableMapObj*)mo;
+    else
+	return NULL;
 }
 
 void MapItem::initLMO()
 {
+    LinkableMapObj *lmo=getLMO();
     if (!lmo) return;
     switch (posMode)
     {

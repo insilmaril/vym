@@ -39,10 +39,10 @@ BranchItem::BranchItem(const QList<QVariant> &data, TreeItem *parent):MapItem (d
 BranchItem::~BranchItem()
 {
     //qDebug()<< "Destr. BranchItem  this="<<this<<"  "<<getHeading();
-    if (lmo) 
+    if (mo) 
     {
-	delete lmo;
-	lmo=NULL;
+	delete mo;
+	mo=NULL;
     }
     clear();
 }
@@ -88,7 +88,7 @@ QString BranchItem::saveToDir (const QString &tmpdir,const QString &prefix, cons
     if (hidden) return QString();
 
     QString s,a;
-    BranchObj *bo=(BranchObj*)lmo;
+    BranchObj *bo=(BranchObj*)mo;
 
     // Update of note is usually done while unselecting a branch
     
@@ -101,15 +101,15 @@ QString BranchItem::saveToDir (const QString &tmpdir,const QString &prefix, cons
     // save area, if not scrolled   // FIXME-5 not needed if HTML is rewritten...
 				    // also we should check if _any_ of parents is scrolled
     QString areaAttr;
-    if (lmo && parentItem->isBranchLikeType() && !((BranchItem*)parentItem)->isScrolled() )
+    if (mo && parentItem->isBranchLikeType() && !((BranchItem*)parentItem)->isScrolled() )
     {
-	qreal x=lmo->getAbsPos().x();
-	qreal y=lmo->getAbsPos().y();
+	qreal x=mo->getAbsPos().x();
+	qreal y=mo->getAbsPos().y();
 	areaAttr=
 	    attribut("x1",QString().setNum(x-offset.x())) +
 	    attribut("y1",QString().setNum(y-offset.y())) +
-	    attribut("x2",QString().setNum(x+lmo->width()-offset.x())) +
-	    attribut("y2",QString().setNum(y+lmo->height()-offset.y()));
+	    attribut("x2",QString().setNum(x+mo->width()-offset.x())) +
+	    attribut("y2",QString().setNum(y+mo->height()-offset.y()));
 
     } else
 	areaAttr="";
@@ -122,8 +122,8 @@ QString BranchItem::saveToDir (const QString &tmpdir,const QString &prefix, cons
 
     // Save rotation
     QString rotAttr;
-    if (lmo && ((OrnamentedObj*)lmo)->getRotation() !=0 )
-	rotAttr=attribut ("rotation",QString().setNum (((OrnamentedObj*)lmo)->getRotation() ) );
+    if (mo && mo->getRotation() !=0 )
+	rotAttr=attribut ("rotation",QString().setNum (mo->getRotation() ) );
 
     s=beginElement (elementName
 	+ getMapAttr()
@@ -138,11 +138,11 @@ QString BranchItem::saveToDir (const QString &tmpdir,const QString &prefix, cons
     s+=valueElement("heading", getHeading(),
 	attribut ("textColor",QColor( bo->getColor()).name()));
 
-    // Save frame  //FIXME-5 not saved if there is no LMO
-    if (lmo) 
+    // Save frame  //FIXME-5 not saved if there is no MO
+    if (mo) 
 	// Avoid saving NoFrame for objects other than MapCenter
-	if (depth() == 0  || ((OrnamentedObj*)lmo)->getFrame()->getFrameType()!=FrameObj::NoFrame) 
-	    s+=((OrnamentedObj*)lmo)->getFrame()->saveToDir ();
+	if (depth() == 0  || ((OrnamentedObj*)mo)->getFrame()->getFrameType()!=FrameObj::NoFrame) 
+	    s+=((OrnamentedObj*)mo)->getFrame()->saveToDir ();
 
     // save names of flags set
     s+=standardFlags.saveToDir(tmpdir,prefix,0);
@@ -187,19 +187,19 @@ QString BranchItem::saveToDir (const QString &tmpdir,const QString &prefix, cons
 void BranchItem::updateVisibility()
 {
     // Needed to hide relinked branch, if parent is scrolled
-    if (lmo)
+    if (mo)
     {
 	if (hasScrolledParent(this) || hidden)
-	    lmo->setVisibility (false);
+	    mo->setVisibility (false);
 	else	
-	    lmo->setVisibility (true);
+	    mo->setVisibility (true);
     }
 }
 
 void BranchItem::setHeadingColor (QColor color)
 {
     TreeItem::setHeadingColor (color);
-    if (lmo) ((BranchObj*)lmo)->setColor (color);
+    if (mo) ((BranchObj*)mo)->setColor (color);
 }
 
 void BranchItem::updateTaskFlag()
@@ -266,7 +266,7 @@ bool BranchItem::toggleScroll()
 	if (branchCounter>0)
 	    for (int i=0;i<branchCounter;++i)
 	    {
-		bo=(BranchObj*)(getBranchNum(i)->getLMO());
+		bo=(BranchObj*)(getBranchNum(i)->getMO());
 		if (bo) bo->setVisibility(true);
 	    }
     } else
@@ -276,7 +276,7 @@ bool BranchItem::toggleScroll()
 	if (branchCounter>0)
 	    for (int i=0;i<branchCounter;++i)
 	    {
-		bo=(BranchObj*)(getBranchNum(i)->getLMO());
+		bo=(BranchObj*)(getBranchNum(i)->getMO());
 		if (bo) bo->setVisibility(false);
 	    }
     }
@@ -429,7 +429,7 @@ void BranchItem::setLastSelectedBranch()
 	    // Hack to save an additional lastSelected for mapcenters in MapEditor
 	    // depending on orientation
 	    // this allows to go both left and right from there
-	    if (lmo && lmo->getOrientation()==LinkableMapObj::LeftOfCenter)
+	    if (mo && ((BranchObj*)mo)->getOrientation()==LinkableMapObj::LeftOfCenter)
 	    {
 		((BranchItem*)parentItem)->lastSelectedBranchNumAlt=parentItem->num(this);
 		return;
@@ -479,7 +479,7 @@ TreeItem* BranchItem::findMapItem (QPointF p, TreeItem* excludeTI)
     for (int i=0; i<imageCount(); ++i )
     {
 	ii=getImageNum (i);
-	LinkableMapObj *mo=ii->getLMO();
+	MapObj *mo=ii->getMO();
 	if (mo && mo->isInClickBox(p) && 
 	    (ii != excludeTI) && 
 	    this!= excludeTI &&
@@ -492,7 +492,7 @@ TreeItem* BranchItem::findMapItem (QPointF p, TreeItem* excludeTI)
     for (int i=0; i<attributeCount(); ++i )
     {
 	ai=getAttributeNum (i);
-	LinkableMapObj *mo=ai->getLMO();
+	MapObj *mo=ai->getMO();
 	if (mo && mo->isInClickBox(p) && 
 	    (ai != excludeTI) && 
 	    this!= excludeTI &&
@@ -505,20 +505,22 @@ TreeItem* BranchItem::findMapItem (QPointF p, TreeItem* excludeTI)
 void BranchItem::updateStyles(const bool &keepFrame)
 {
     // FIXME-5 compare also MapItem::initLMO...
+    // FIXME-1 needed at all? see initLMO above and MI::appendChild...
 
-    if (lmo)
+    if (mo)
     { 
+	BranchObj *bo=getBranchObj();
 	if ( parentItem != rootItem)
-	    lmo->setParObj ( ((MapItem*)parentItem)->getLMO() );
+	    bo->setParObj ( (LinkableMapObj*) ( ((MapItem*)parentItem)->getMO() ) );
 	else
-	    lmo->setParObj (NULL);
-	((BranchObj*)lmo)->setDefAttr(BranchObj::MovedBranch,keepFrame);
+	    bo->setParObj (NULL);
+	bo->setDefAttr(BranchObj::MovedBranch,keepFrame);
     }
 }
 
 BranchObj* BranchItem::getBranchObj()	
 {
-    return (BranchObj*)lmo;
+    return (BranchObj*)mo;
 }
 
 BranchObj* BranchItem::createMapObj(QGraphicsScene *scene)  // FIXME-5 maybe move this into MapEditor to get rid of scene in VymModel?
@@ -528,12 +530,12 @@ BranchObj* BranchItem::createMapObj(QGraphicsScene *scene)  // FIXME-5 maybe mov
     if (parentItem==rootItem)
     {
 	newbo=new BranchObj(NULL,this);
-	lmo=newbo;
+	mo=newbo;
 	scene->addItem (newbo);
     } else
     {
-	newbo=new BranchObj( ((MapItem*)parentItem)->getLMO(),this);
-	lmo=newbo;
+	newbo=new BranchObj( ((MapItem*)parentItem)->getMO(),this);
+	mo=newbo;
 	// Set visibility depending on parents
 	if (parentItem!=rootItem && 
 	    ( ((BranchItem*)parentItem)->scrolled || !((MapItem*)parentItem)->getLMO()->isVisibleObj() ) )

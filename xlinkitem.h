@@ -24,6 +24,7 @@ public:
     Link* getLink ();
     void updateXLink();
     MapObj* getMO();
+    void setSelection();
     BranchItem* getPartnerBranch ();
 
 

@@ -168,6 +168,7 @@ private:
     enum EditorState {
 	Neutral,
 	EditingHeading,
+	EditingLink,
 	MovingObject,
 	MovingView,
 	PickingColor,
@@ -176,12 +177,9 @@ private:
     };
     EditorState state; 
     void setState (EditorState);
-/*
-    bool drawingLink;		// true while creating a link
-    bool copyingObj;		// true while modModeCopy
-*/
     bool objectMoved;		// true if object was not clicked, but moved with mouse
 
+    // Temporary used for linkx
     Link* tmpLink;
 
     MapObj* movingObj;		    // moving a MapObj
@@ -205,7 +203,7 @@ signals:
     void selectionChanged(const QItemSelection &, const QItemSelection &);
 
 private:    
-    QList <QGraphicsPolygonItem*> selPolyList;
+    QList <QGraphicsPathItem*> selPathList;
     QColor selectionColor;
 
 public slots:

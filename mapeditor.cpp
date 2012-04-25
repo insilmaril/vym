@@ -776,7 +776,8 @@ TreeItem* MapEditor::findMapItem (QPointF p,TreeItem *exclude)
 	if (link)
 	{
 	    XLinkObj *xlo=link->getXLinkObj();
-	    if (xlo && xlo->isInClickBox (p)) return link->getBeginLinkItem();
+	    if (xlo && xlo->isInClickBox (p)) 
+		    return link->getBeginLinkItem();
 	}
     }
 
@@ -1176,12 +1177,14 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
     QPointF p = mapToScene(e->pos());
     TreeItem *ti=findMapItem (p, NULL);
     LinkableMapObj* lmo=NULL;
-    BranchItem* selbi=model->getSelectedBranch();
+    BranchItem* selbi=model->getSelectedBranch();   //FIXME-1 not selected YET!
     if (ti) lmo=((MapItem*)ti)->getLMO();
     
     /*
     qDebug() << "ME::mouse pressed\n";
     qDebug() << "  lmo="<<lmo;
+    qDebug() << "   ti="<<ti;
+    qDebug() << "selbi="<<selbi;
     if (ti) qDebug() << "   ti="<<ti->getHeading();
     */
     
@@ -1224,17 +1227,14 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
 		if ((lmo->getOrientation()!=LinkableMapObj::RightOfCenter && p.x() < lmo->getBBox().left()+20)  ||
 		    (lmo->getOrientation()!=LinkableMapObj::LeftOfCenter && p.x() > lmo->getBBox().right()-20) ) 
 		{
-		    //FIXME-3 similar code in mainwindow::updateActions
+		    //FIXME-4 similar code in mainwindow::updateActions
 		    QMenu menu;
 		    QList <QAction*> alist;
 		    QList <BranchItem*> blist;
 		    for (int i=0;i<ti->xlinkCount();i++)
 		    {
-			//qDebug()<<"ME::  ti="<<ti;
 			XLinkItem *xli=ti->getXLinkItemNum(i);
-			//qDebug()<<"     xli="<<xli;
 			BranchItem *bit=xli->getPartnerBranch();
-			//qDebug()<<"      bi="<<bit;
 			if (bit) 
 			{
 			    alist.append (new QAction(ti->getXLinkItemNum(i)->getPartnerBranch()->getHeading(),&menu));
@@ -1264,8 +1264,6 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
 	setState (DrawingLink);
 	tmpLink=new Link (model);
 	tmpLink->setBeginBranch (selbi);
-	tmpLink->setColor(model->getMapDefXLinkColor());
-	tmpLink->setWidth(model->getMapDefXLinkWidth());
 	tmpLink->createMapObj();
 	tmpLink->setEndPoint ( mapToScene (e->pos() ) );
 	tmpLink->updateLink();
@@ -1287,6 +1285,9 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
 	    model->selectToggle (ti);
 	else
 	    model->select (ti);
+	
+	if (ti->getType()==TreeItem::XLink)
+	    setState (EditingLink);
 
 	// New selection:
 	selbi=model->getSelectedBranch();
@@ -1313,7 +1314,6 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
 		if (selbi)
 		{
 		    setState (CopyingObject);
-		    //model->select(model->createBranch (bi));
 		    model->copy();
 		    model->paste();
 		    model->select (selbi->getLastBranch());
@@ -1332,7 +1332,23 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
     } else 
     {	// No lmo found...
 	if (ti)
-	    model->select(ti);
+	{
+	    model->select(ti);	//FIXME-1 selection should be done right at the beginning, not spread all over
+	    if (ti->getType()==TreeItem::XLink)
+	    {
+		XLinkObj* xlo=(XLinkObj*) ((MapItem*)ti)->getMO() ;
+		if (xlo)
+		{
+		    setState (EditingLink);
+		    xlo->setSelection (XLinkObj::C1);
+		    movingObj_offset.setX( p.x() - xlo->x() );	
+		    movingObj_offset.setY( p.y() - xlo->y() );	
+		    movingObj_orgPos.setX (xlo->x() );
+		    movingObj_orgPos.setY (xlo->y() );
+		    qDebug()<<"ME:: select xlo p="<<p;
+		}
+	    }
+	}
 	else    
 	{ // No MapObj found, we are on the scene itself
 	    // Left Button	    move Pos of sceneView
@@ -1355,11 +1371,21 @@ void MapEditor::mouseMoveEvent(QMouseEvent* e)
 {
     TreeItem *seli=model->getSelectedItem();
     LinkableMapObj* lmosel=NULL;    
-    if (seli && (seli->isBranchLikeType() ||seli->getType()==TreeItem::Image))
+    if (seli)
 	lmosel=((MapItem*)seli)->getLMO();
 
+    MapObj* mosel=NULL;    
+    if (seli )
+	mosel=((MapItem*)seli)->getMO();
+
+/* FIXME-1
+    qDebug()<<"ME::mouseMoveEvent";
+    qDebug()<<"  lmosel="<<lmosel;
+    qDebug()<<"   mosel="<<mosel;
+*/
+
     // Move the selected MapObj
-    if ( lmosel && (state==MovingObject || state==CopyingObject)) 
+    if ( mosel && (state==MovingObject || state==CopyingObject || state==EditingLink)) 
     {	
 	int margin=50;
 
@@ -1407,8 +1433,18 @@ void MapEditor::moveObject ()
     QPointF p = mapToScene(pointerPos);
     TreeItem *seli=model->getSelectedItem();
     LinkableMapObj* lmosel=NULL;    
-    if (seli && (seli->isBranchLikeType() ||seli->getType()==TreeItem::Image))
+    if (seli)
 	lmosel=((MapItem*)seli)->getLMO();
+
+    MapObj* mosel=NULL;    
+    if (seli)
+	mosel=((MapItem*)seli)->getMO();
+
+/* FIXME-1 testing   
+    qDebug()<<"ME::moveObj";
+    qDebug()<<"  lmosel="<<lmosel;
+    qDebug()<<"   mosel="<<mosel;
+*/
 
     objectMoved=true;
     // reset cursor if we are moving and don't copy
@@ -1456,7 +1492,8 @@ void MapEditor::moveObject ()
 	    model->reposition();
 	}
     } else	
-    {   // selection != a FloatObj
+    if (seli->isBranchLikeType() )
+    {   // selection != a FloatObj  // FIXME-1 cont here: if BranchLike, after that check for MapObj of XLink and move the controlPoint
 	if (seli->depth()==0)	
 	{
 	    // Move mapcenter
@@ -1516,7 +1553,12 @@ void MapEditor::moveObject ()
 	QItemSelection sel=model->getSelectionModel()->selection();
 	updateSelection(sel,sel);	// position has changed
 
-    } // no FloatImageObj
+    } else if (seli->getType()==TreeItem::XLink)
+    {
+	mosel->move   (p-movingObj_offset);	
+    } else
+	qWarning("ME::moveObject  Huh? I'm confused.");
+
 
     scene()->update();
 
@@ -1568,8 +1610,8 @@ void MapEditor::mouseReleaseEvent(QMouseEvent* e)
 		seli,QString("addXLink (\"%1\",\"%2\",%3,\"%4\")")
 		    .arg(model->getSelectString(tmpLink->getBeginBranch()))
 		    .arg(model->getSelectString(tmpLink->getEndBranch()))
-		    .arg(tmpLink->getWidth())
-		    .arg(tmpLink->getColor().name()),
+		    .arg(tmpLink->getPen().width())
+		    .arg(tmpLink->getPen().color().name()),
 		QString("Adding Link from %1 to %2").arg(model->getObjectName(seli)).arg(model->getObjectName (dsti))
 	    );	
 	} else
@@ -1893,6 +1935,7 @@ void MapEditor::setState (EditorState s)
 	{
 	    case Neutral: s="Neutral";break;
 	    case EditingHeading: s="EditingHeading";break;
+	    case EditingLink: s="EditingLink";break;
 	    case MovingObject: s="MovingObject";break;
 	    case MovingView: s="MovingView";break;
 	    case PickingColor: s="PickingColor";break;
@@ -1935,33 +1978,33 @@ void MapEditor::updateSelection(QItemSelection nsel,QItemSelection dsel)
 	    }
     }
 
-    // Trim list of selection polygons 
-    while (itemsSelected.count() < selPolyList.count() )
-	delete selPolyList.takeFirst();
+    // Trim list of selection paths 
+    while (itemsSelected.count() < selPathList.count() )
+	delete selPathList.takeFirst();
 
     // Reduce polygons
-    while (itemsSelected.count() < selPolyList.count() )
-	delete selPolyList.takeFirst();
+    while (itemsSelected.count() < selPathList.count() )
+	delete selPathList.takeFirst();
 
     // Add additonal polygons
-    QGraphicsPolygonItem *sp;
-    while (itemsSelected.count() > selPolyList.count() )
+    QGraphicsPathItem *sp;
+    while (itemsSelected.count() > selPathList.count() )
     {
-	sp = mapScene->addPolygon(
-	    QPolygon(), 
+	sp = mapScene->addPath(
+	    QPainterPath(), 
 	    QPen(selectionColor),
 	    selectionColor);
 	sp->show();
-	selPolyList.append (sp);
+	selPathList.append (sp);
     }
 
-    // Reposition polygons
+
+    // Reposition polygons  //FIXME-1 switch to path instead of polygon
     for (int i=0; i<itemsSelected.count();++i)
     {
 	MapObj *mo=itemsSelected.at(i)->getMO();
-	QPolygonF poly=mo->getClickPoly();    
-	sp=selPolyList.at(i);
-	sp->setPolygon (poly);
+	sp=selPathList.at(i);
+	sp->setPath (mo->getClickPath() );
 	sp->setPen (selectionColor);	
 	sp->setBrush (selectionColor);	
 	sp->setParentItem (mo); 

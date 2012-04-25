@@ -2,6 +2,7 @@
 #define LINK_H
 
 #include <QColor>
+#include <QPen>
 
 #include "xmlobj.h"
 
@@ -21,6 +22,7 @@ class Link:public XMLObj
 {
 public:
     enum XLinkState {undefinedXLink,initXLink,activeXLink,deleteXLink};	
+    enum LinkType {Linear, Bezier};
 
     Link (VymModel *m);
     virtual ~Link();
@@ -35,10 +37,9 @@ public:
     void setEndLinkItem (XLinkItem*);
     XLinkItem* getEndLinkItem ();
     XLinkItem* getOtherEnd (XLinkItem*);
-    void setColor(QColor);
-    QColor getColor();
-    void setWidth (int);
-    int getWidth ();
+    void setPen (const QPen &p);
+    QPen getPen();
+    void setLinkType (const QString &s);
     bool activate ();		
     void deactivate ();		
     XLinkState getState();
@@ -51,8 +52,8 @@ public:
 
 private:
     XLinkState xLinkState;  // init during drawing or active
-    QColor color;
-    int width;
+    LinkType type;
+    QPen pen;
 
     XLinkObj *xlo;
     VymModel *model;

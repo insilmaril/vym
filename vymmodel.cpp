@@ -147,8 +147,8 @@ void VymModel::init ()
     defLinkColor=QColor (0,0,255);
     linkcolorhint=LinkableMapObj::DefaultColor;
     linkstyle=LinkableMapObj::PolyParabel;
-    defXLinkWidth=1;
-    defXLinkColor=QColor (50,50,255);
+    defXLinkPen.setWidth (1);
+    defXLinkPen.setColor ( QColor (50,50,255) );
     zoomFactor=1;
     rotationAngle=0;
 
@@ -244,8 +244,9 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix, bool w
 		  xml.attribut("selectionColor", mapEditor->getSelectionColor().name() ) +
 		  xml.attribut("linkStyle", ls ) +
 		  xml.attribut("linkColor", defLinkColor.name() ) +
-		  xml.attribut("defXLinkColor", defXLinkColor.name() ) +
-		  xml.attribut("defXLinkWidth", QString().setNum(defXLinkWidth,10) ) +
+		  xml.attribut("defXLinkColor", defXLinkPen.color().name() ) +
+		  xml.attribut("defXLinkWidth", QString().setNum(defXLinkPen.width(),10) ) +
+		  xml.attribut("defXLinkPenStyle", penStyleToString (defXLinkPen.style() )) +
 		  xml.attribut("mapZoomFactor", QString().setNum(mapEditor->getZoomFactorTarget()) ) +
 		  xml.attribut("mapRotationAngle", QString().setNum(mapEditor->getAngleTarget()) ) +
 		  colhint; 
@@ -3501,10 +3502,7 @@ void VymModel::editXLink()
 	if (dia.exec() == QDialog::Accepted)
 	{
 	    if (dia.useSettingsGlobal() )
-	    {
-		setMapDefXLinkColor (l->getColor() );
-		setMapDefXLinkWidth (l->getWidth() );
-	    }
+		setMapDefXLinkPen  (l->getPen() );
 	}
     }   
 }
@@ -3616,17 +3614,18 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 		    li->setEndBranch ( (BranchItem*)end);
 
 		    createLink (li,true);   // create MO by default
-
+		    QPen pen=li->getPen();
 		    if (parser.parCount()>2)
 		    {
 			int w=parser.parInt (ok,2); 
-			if (ok) li->setWidth(w);
+			if (ok) pen.setWidth(w);
 		    }
 		    if (parser.parCount()>3)
 		    {
 			QColor col=parser.parColor (ok,2);
-			if (ok) li->setColor (col);
+			if (ok) pen.setColor (col);
 		    }
+		    li->setPen(pen);	//FIXME-1 what about style??
 		}
 		else
 		    parser.setError (Aborted,"begin or end of xLink are not branch or mapcenter");
@@ -4743,24 +4742,14 @@ QColor VymModel::getMapDefLinkColor()	// FIXME-4 move to ME
     return defLinkColor;
 }
 
-void VymModel::setMapDefXLinkColor(QColor col)	// FIXME-4 move to ME
+void VymModel::setMapDefXLinkPen (const QPen &p)  // FIXME-4 move to ME
 {
-    defXLinkColor=col;
+    defXLinkPen=p;
 }
 
-QColor VymModel::getMapDefXLinkColor()	// FIXME-4 move to ME
+QPen VymModel::getMapDefXLinkPen()	// FIXME-4 move to ME
 {
-    return defXLinkColor;
-}
-
-void VymModel::setMapDefXLinkWidth (int w)  // FIXME-4 move to ME
-{
-    defXLinkWidth=w;
-}
-
-int VymModel::getMapDefXLinkWidth() // FIXME-4 move to ME
-{
-    return defXLinkWidth;
+    return defXLinkPen;
 }
 
 void VymModel::move(const double &x, const double &y)
@@ -5109,31 +5098,44 @@ void VymModel::updateSelection(QItemSelection newsel,QItemSelection dsel)
     QModelIndex ix;
     MapItem *mi;
     bool do_reposition=false;
-    if (!dsel.isEmpty() )
+    foreach (ix, dsel.indexes() )
     {
-	foreach (ix, dsel.indexes() )
+	mi = static_cast<MapItem*>(ix.internalPointer());
+	if (mi->isBranchLikeType() )
+	    do_reposition=do_reposition || ((BranchItem*)mi)->resetTmpUnscroll();
+	if (mi->getType()==TreeItem::XLink)
 	{
-	    mi = static_cast<MapItem*>(ix.internalPointer());
-	    if (mi->isBranchLikeType() )
-		do_reposition=do_reposition || ((BranchItem*)mi)->resetTmpUnscroll();
-	}    
-    }
-    if (!newsel.isEmpty() )
-    {
-	foreach (ix, newsel.indexes() )
-	{
-	    mi = static_cast<MapItem*>(ix.internalPointer());
-	    if (mi->isBranchLikeType() )
+	    XLinkObj *xlo=(XLinkObj*)(mi->getMO() );
+	    if (xlo) 
 	    {
-		BranchItem *bi=(BranchItem*)mi;
-		if (bi->hasScrolledParent() )
-		{
-		    bi->tmpUnscroll();
-		    do_reposition=true;
-		}
+		qDebug()<<"VM::updateSel unselect xlo mi="<<mi<<"  xlo="<<xlo;
+		xlo->setSelection (XLinkObj::Unselected);
 	    }
-	}    
-    }	
+	}
+    }    
+
+    foreach (ix, newsel.indexes() )
+    {
+	mi = static_cast<MapItem*>(ix.internalPointer());
+	if (mi->isBranchLikeType() )
+	{
+	    BranchItem *bi=(BranchItem*)mi;
+	    if (bi->hasScrolledParent() )
+	    {
+		bi->tmpUnscroll();
+		do_reposition=true;
+	    }
+	}
+	if (mi->getType()==TreeItem::XLink)
+	{
+	    ((XLinkItem*)mi)->setSelection();
+	    XLinkObj *xlo=(XLinkObj*)(mi->getMO() );
+	    if (xlo) 
+	    {
+		qDebug()<<"VM::updateSel select mi="<<mi<<"  xlo="<<xlo;
+	    }
+	}
+    }    
     if ( do_reposition ) reposition();
 }
 

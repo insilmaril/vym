@@ -569,8 +569,7 @@ private:
     MapEditor *mapEditor;
 
     QColor defLinkColor;	// default color for links
-    QColor defXLinkColor;	// default color for xlinks
-    int defXLinkWidth;		// default width for xlinks
+    QPen defXLinkPen;		// default pen for xlinks
     LinkableMapObj::ColorHint linkcolorhint;// use heading color or own color
     LinkableMapObj::Style linkstyle;	    // default style for links
     QFont defaultFont;
@@ -593,10 +592,8 @@ public:
 
     LinkableMapObj::ColorHint getMapLinkColorHint();
     QColor getMapDefLinkColor();
-    void setMapDefXLinkColor(QColor);
-    QColor getMapDefXLinkColor();
-    void setMapDefXLinkWidth (int);
-    int getMapDefXLinkWidth();
+    void setMapDefXLinkPen (const QPen &p);
+    QPen getMapDefXLinkPen();
 
     /*!  Move absolutly to (x,y).  */	
     void move    (const double &x, const double &y);

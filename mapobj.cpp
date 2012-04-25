@@ -49,12 +49,12 @@ TreeItem* MapObj::getTreeItem () const
 
 qreal MapObj::x() 
 {
-    return absPos.x();
+    return getAbsPos().x();
 }
 
 qreal MapObj::y() 
 {
-    return absPos.y();
+    return getAbsPos().y();
 }
 
 qreal MapObj::width() 
@@ -123,6 +123,18 @@ ConvexPolygon MapObj::getBoundingPolygon()
 QPolygonF MapObj::getClickPoly()
 {
     return clickPoly;
+}
+
+QPainterPath MapObj::getClickPath()
+{
+    QPainterPath p;
+    QRectF br=clickPoly.boundingRect();
+    p.moveTo (br.topLeft() );
+    p.lineTo (br.topRight() );
+    p.lineTo (br.bottomRight() );
+    p.lineTo (br.bottomLeft() );
+    p.lineTo (br.topLeft() );
+    return p;
 }
 
 bool MapObj::isInClickBox (const QPointF &p)

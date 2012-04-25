@@ -3,6 +3,7 @@
 #include "xlink.h"
 
 #include "branchitem.h"
+#include "misc.h"
 #include "vymmodel.h"
 #include "xlinkitem.h"
 #include "xlinkobj.h"
@@ -34,8 +35,8 @@ void Link::init ()
     endLinkItem=NULL;
     xLinkState=Link::undefinedXLink;
 
-    color=model->getMapDefXLinkColor();
-    width=model->getMapDefXLinkWidth();
+    type=Linear;
+    pen=model->getMapDefXLinkPen();
 }
 
 void Link::setBeginBranch (BranchItem *bi)
@@ -106,26 +107,24 @@ XLinkItem* Link::getOtherEnd (XLinkItem *xli)
     return NULL;
 }
 
-void Link::setWidth (int w)
+void Link::setPen (const QPen &p)
 {
-    width=w;
-    if (xlo) xlo->updateXLink();
+    pen=p;
 }
 
-int Link::getWidth()
+QPen Link::getPen ()
 {
-    return width;
+    return pen;
 }
 
-void Link::setColor(QColor c)
+void Link::setLinkType (const QString &s)
 {
-    color=c;
-    if (xlo) xlo->updateXLink();
-}
-
-QColor Link::getColor()
-{
-    return color;
+    if (s=="Linear")
+	type=Linear;
+    else if (s=="Bezier")	
+	type=Bezier;
+    else
+	qWarning()<<"Link::setLinkType  Unknown type: "<<s;
 }
 
 bool Link::activate ()	
@@ -185,18 +184,35 @@ QString Link::saveToDir ()
 	    qWarning ("Link::saveToDir  ignored, because beginBranch==endBranch, ");
 	else
 	{
-	    QString colAttr=attribut ("color",color.name());
-	    QString widAttr=attribut ("width",QString().setNum(width,10));
-	    QString typeAttr=attribut("type","line");
+	    QString colAttr=attribut ("color",pen.color().name());
+	    QString widAttr=attribut ("width",QString().setNum(pen.width(),10));
+	    QString styAttr=attribut ("penstyle",penStyleToString (pen.style()));
+	    QString ctrlAttr;
+	    QString typeAttr;
+	    switch (type)
+	    {
+		case Linear: 
+		    typeAttr=attribut("type","Linear"); 
+		    break;
+		case Bezier: 
+		    typeAttr=attribut("type","Bezier"); 
+		    if (xlo)
+		    {
+			ctrlAttr +=attribut ("c1",pointToString (xlo->getC1() ) );
+			ctrlAttr +=attribut ("c2",pointToString (xlo->getC2() ) );
+		    }
+		    break;
+	    }
 	    QString begSelAttr=attribut ("beginID",model->getSelectString(beginBranch));
 	    QString endSelAttr=attribut ("endID",  model->getSelectString(endBranch));
 	    s=singleElement ("xlink", 
 		colAttr 
 		+widAttr 
+		+styAttr 
 		+typeAttr 
+		+ctrlAttr
 		+begSelAttr 
 		+endSelAttr);
-
 	}
     }
     return s;

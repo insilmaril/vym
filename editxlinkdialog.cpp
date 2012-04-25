@@ -21,23 +21,27 @@ EditXLinkDialog::EditXLinkDialog (QWidget *parent):QDialog (parent)
 
 void EditXLinkDialog::widthChanged( int  w)
 {
-    link->setWidth(w);
+    QPen pen=link->getPen();
+    pen.setWidth (w);
+    link->setPen (pen);
 }
 
 void EditXLinkDialog::setLink( Link * l)
 {
     link=l;
-    colorChanged (link->getColor() );
-    ui.widthBox->setValue(link->getWidth());
+    colorChanged (link->getPen().color() );
+    ui.widthBox->setValue(link->getPen().width());
 }
 
 void EditXLinkDialog::colorButtonPressed()
 {
     if (link)
     {	
-	QColor col = QColorDialog::getColor(link->getColor(), this );
+	QPen pen=link->getPen();
+	QColor col = QColorDialog::getColor(pen.color(), this );
 	if ( !col.isValid() ) return;
-	link->setColor( col );
+	pen.setColor (col);
+	link->setPen (pen);
 	colorChanged (col);
     }
 }

@@ -62,16 +62,13 @@ public:
 
 
 protected:
-    LinkableMapObj *lmo;
+    MapObj *mo;
     qreal angle;
 
 public:
     /*! Returns pointer to related LinkableMapObj in QGraphicsView */
     virtual         MapObj* getMO();
     virtual LinkableMapObj* getLMO();
-
-    /*! Set pointer to related LinkableMapObj in QGraphicsView */
-    virtual void setLMO (LinkableMapObj*);
 
     /*! Initialize LinkableMapObj with data in MapItem */
     virtual void initLMO();

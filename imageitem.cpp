@@ -28,7 +28,7 @@ ImageItem::ImageItem (const QList<QVariant> &data, TreeItem *parent):MapItem (da
 ImageItem::~ImageItem()
 {
     //qDebug()<<"Destr ImageItem";
-    if (lmo) delete lmo;
+    if (mo) delete mo;
 }
 
 void ImageItem::init()
@@ -55,17 +55,17 @@ ImageItem::ImageType ImageItem::getImageType()
 void ImageItem::load(const QImage &img)
 {
     originalImage=img;
-    if (lmo) ((FloatImageObj*)lmo)->load (originalImage);
+    if (mo) ((FloatImageObj*)mo)->load (originalImage);
 }
 
 bool ImageItem::load(const QString &fname)
 {
     bool ok=originalImage.load (fname);    //FIXME-4 Error handling missing
-    if (lmo && ok)
+    if (mo && ok)
     {
 	setOriginalFilename (fname);
 	setHeading (originalFilename);
-	((FloatImageObj*)lmo)->load (originalImage);
+	((FloatImageObj*)mo)->load (originalImage);
     }	else
 	qDebug() <<"ImageItem::load failed for "<<fname;
     return ok;	
@@ -73,9 +73,9 @@ bool ImageItem::load(const QString &fname)
 
 FloatImageObj* ImageItem::createMapObj()
 {
-    FloatImageObj *fio=new FloatImageObj ( ((MapItem*)parentItem)->getLMO(),this);
-    lmo=fio;
-    if (((BranchItem*)parentItem)->isScrolled() || !((MapItem*)parentItem)->getLMO()->isVisibleObj() )
+    FloatImageObj *fio=new FloatImageObj ( ((MapItem*)parentItem)->getMO(),this);
+    mo=fio;
+    if (((BranchItem*)parentItem)->isScrolled() || !((MapItem*)parentItem)->getMO()->isVisibleObj() )
 	    fio->setVisibility (false);
     initLMO();	// set rel/abs position in mapitem
     fio->setZValue(zValue);
@@ -89,7 +89,7 @@ void ImageItem::setScale (qreal sx, qreal sy)
     scaleY=sy;
     int w=originalImage.width()*scaleX;
     int h=originalImage.height()*scaleY;
-    if (lmo) ((FloatImageObj*)lmo)->load (originalImage.scaled (w,h));
+    if (mo) ((FloatImageObj*)mo)->load (originalImage.scaled (w,h));
 }
 
 qreal ImageItem::getScaleX ()
@@ -105,7 +105,7 @@ qreal ImageItem::getScaleY ()
 void ImageItem::setZValue(int z)
 {
     zValue=z;
-    if (lmo) ((FloatImageObj*)lmo)->setZValue(z);
+    if (mo) ((FloatImageObj*)mo)->setZValue(z);
 }
 
 void ImageItem::setOriginalFilename(const QString & fn)

@@ -1,7 +1,7 @@
 #ifndef MISC_H
 #define MISC_H
 
-#include <QtGlobal>
+#include <Qt>
 #include <iostream>
 using namespace std;
 
@@ -26,5 +26,9 @@ qreal min (qreal,qreal);
 qreal max (qreal,qreal);
 qreal roof (qreal x);    
 
+Qt::PenStyle penStyle (const QString &, bool &ok);
+QString penStyleToString (Qt::PenStyle);
+QPointF point (const QString &s, bool &ok);
+QString pointToString (const QPointF &p);
 
 #endif
