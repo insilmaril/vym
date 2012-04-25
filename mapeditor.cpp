@@ -562,7 +562,7 @@ void MapEditor::print()
 }
 
 QRectF MapEditor::getTotalBBox()    //FIXME-2 frames missing, esp. c loud
-{
+{				    //FIXME-1 xlinks also missing in getTotalBBox
     QRectF rt;
     BranchObj *bo;
     BranchItem *cur=NULL;
@@ -590,6 +590,8 @@ QRectF MapEditor::getTotalBBox()    //FIXME-2 frames missing, esp. c loud
 		fio=cur->getImageObjNum (i);
 		if (fio) rt=addBBox (fio->getBBox(),rt);
 	    }
+
+	    // XLinks	 //FIXME missing
 	}
 	model->nextBranch(cur,prev);
     }
@@ -1330,7 +1332,7 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
 	    if (e->button() == Qt::MidButton )
 		model->toggleScroll();
     } else 
-    {	// No lmo found...
+    {	// No lmo found, check XLinks
 	if (ti)
 	{
 	    model->select(ti);	//FIXME-1 selection should be done right at the beginning, not spread all over
@@ -1340,12 +1342,16 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
 		if (xlo)
 		{
 		    setState (EditingLink);
-		    xlo->setSelection (XLinkObj::C1);
-		    movingObj_offset.setX( p.x() - xlo->x() );	
-		    movingObj_offset.setY( p.y() - xlo->y() );	
-		    movingObj_orgPos.setX (xlo->x() );
-		    movingObj_orgPos.setY (xlo->y() );
-		    qDebug()<<"ME:: select xlo p="<<p;
+		    int i=xlo->ctrlPointInClickBox(p);
+		    if (i>-1)
+		    {
+			xlo->setSelection (i);
+			movingObj_offset.setX( p.x() - xlo->x() );	
+			movingObj_offset.setY( p.y() - xlo->y() );	
+			movingObj_orgPos.setX (xlo->x() );
+			movingObj_orgPos.setY (xlo->y() );
+		    }
+		    qDebug()<<"ME:: select xlo i="<<i<<"  p="<<p;
 		}
 	    }
 	}

@@ -775,15 +775,15 @@ bool parseVYMHandler::readLinkNewAttr (const QXmlAttributes& a)
 		model->createLink (li,true);	// create MO by default
 
 		XLinkObj *xlo=(XLinkObj*)(li->getMO() );
+		if (xlo && !a.value( "c0").isEmpty() )
+		{
+		    QPointF p=point(a.value("c0"),okx );
+		    if (okx) xlo->setC0 (p);
+		}
 		if (xlo && !a.value( "c1").isEmpty() )
 		{
 		    QPointF p=point(a.value("c1"),okx );
 		    if (okx) xlo->setC1 (p);
-		}
-		if (xlo && !a.value( "c2").isEmpty() )
-		{
-		    QPointF p=point(a.value("c2"),okx );
-		    if (okx) xlo->setC2 (p);
 		}
 	    }
 	}           

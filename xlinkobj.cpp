@@ -29,10 +29,10 @@ XLinkObj::~XLinkObj ()
     //qDebug() << "Destr XLinkObj";
     delete (poly);
     delete (path);
+    delete (ctrl_p0);
     delete (ctrl_p1);
-    delete (ctrl_p2);
+    delete (ctrl_l0);
     delete (ctrl_l1);
-    delete (ctrl_l2);
 }
 
 
@@ -50,22 +50,22 @@ void XLinkObj::init ()
 
     // Control points for bezier path
     qreal d=100;
+    c0=QPointF (d,0);
     c1=QPointF (d,0);
-    c2=QPointF (d,0);
-    ctrl_p1=scene()->addEllipse (
-	c1.x(), c1.y(),
+    ctrl_p0=scene()->addEllipse (
+	c0.x(), c0.y(),
 	clickBorder*2, clickBorder*2,
 	pen, pen.color() );
-    ctrl_p2=scene()->addEllipse (
-	c2.x(), c2.y(),
+    ctrl_p1=scene()->addEllipse (
+	c1.x(), c1.y(),
 	clickBorder*2, clickBorder*2,
 	pen, pen.color() );
 
     QPen pen2(pen);
     pen2.setWidth (1);
     pen2.setStyle (Qt::DashLine);
+    ctrl_l0=scene()->addLine(0,0,0,0, pen2);
     ctrl_l1=scene()->addLine(0,0,0,0, pen2);
-    ctrl_l2=scene()->addLine(0,0,0,0, pen2);
 
     curSelection=Unselected;
 
@@ -76,11 +76,11 @@ QPointF XLinkObj::getAbsPos()
 {
     switch (curSelection)
     {
+	case C0:
+	    return c0;
+	    break;
 	case C1:
 	    return c1;
-	    break;
-	case C2:
-	    return c2;
 	    break;
 	default:
 	    return QPointF();
@@ -92,11 +92,11 @@ void XLinkObj::move (QPointF p)
 {
     switch (curSelection)
     {
+	case C0:
+	    c0=p;
+	    break;
 	case C1:
 	    c1=p;
-	    break;
-	case C2:
-	    c2=p;
 	    break;
 	default:
 	    break;
@@ -113,6 +113,16 @@ void XLinkObj::setSelection (CurrentSelection s)
 {
     curSelection=s;
     setVisibility();
+}
+
+void XLinkObj::setSelection (int cp)
+{
+    if (cp==0) 
+	setSelection (C0);
+    else if (cp==1)
+	setSelection (C1);
+    else
+	qWarning()<<"XLO::setSelection cp="<<cp;
 }
 
 void XLinkObj::updateXLink()
@@ -181,29 +191,29 @@ void XLinkObj::updateXLink()
 
     // Update control points for bezier
     QPainterPath p(beginPos);
-    p.cubicTo ( beginPos + c1, endPos + c2, endPos);
+    p.cubicTo ( beginPos + c0, endPos + c1, endPos);
 
     clickPath=p;
     path->setPath (p);	
 
     // Go back to create closed curve, 
-    // needed for intersection check:	//FIXME-1 but problem with dotted paths
-    clickPath.cubicTo ( endPos + c2, beginPos + c1, beginPos);  
+    // needed for intersection check:	
+    clickPath.cubicTo ( endPos + c1, beginPos + c0, beginPos);  
 
     
-    ctrl_p1->setRect (
-	beginPos.x() + c1.x() - pointRadius/2, beginPos.y() + c1.y() - pointRadius/2,
+    ctrl_p0->setRect (
+	beginPos.x() + c0.x() - pointRadius/2, beginPos.y() + c0.y() - pointRadius/2,
 	pointRadius, pointRadius );
-    ctrl_p2->setRect (
-	endPos.x() + c2.x() - pointRadius/2, endPos.y() + c2.y() - pointRadius/2,
+    ctrl_p1->setRect (
+	endPos.x() + c1.x() - pointRadius/2, endPos.y() + c1.y() - pointRadius/2,
 	pointRadius, pointRadius );
 
-    ctrl_l1->setLine ( 
+    ctrl_l0->setLine ( 
 	beginPos.x(), beginPos.y(),
-	c1.x() + beginPos.x(), c1.y() + beginPos.y() );
-    ctrl_l2->setLine ( 
+	c0.x() + beginPos.x(), c0.y() + beginPos.y() );
+    ctrl_l1->setLine ( 
 	endPos.x(), endPos.y(),
-	c2.x() + endPos.x(), c2.y() + endPos.y() );
+	c1.x() + endPos.x(), c1.y() + endPos.y() );
 	
     QPen pen=link->getPen();
     path->setPen (pen);
@@ -252,16 +262,16 @@ void XLinkObj::setVisibility (bool b)
 
     if (showControls)
     {
+	ctrl_p0->show();
 	ctrl_p1->show();
-	ctrl_p2->show();
+	ctrl_l0->show();
 	ctrl_l1->show();
-	ctrl_l2->show();
     } else
     {
+	ctrl_p0->hide();
 	ctrl_p1->hide();
-	ctrl_p2->hide();
+	ctrl_l0->hide();
 	ctrl_l1->hide();
-	ctrl_l2->hide();
     }
 }
 
@@ -299,6 +309,16 @@ void XLinkObj::setVisibility ()
     }
 }
 
+void XLinkObj::setC0(const QPointF &p)
+{
+    c0=p;
+}
+
+QPointF XLinkObj::getC0()
+{
+    return c0;
+}
+
 void XLinkObj::setC1(const QPointF &p)
 {
     c1=p;
@@ -309,34 +329,59 @@ QPointF XLinkObj::getC1()
     return c1;
 }
 
-void XLinkObj::setC2(const QPointF &p)
+int XLinkObj::ctrlPointInClickBox (const QPointF &p)	
 {
-    c2=p;
-}
+    CurrentSelection oldSel=curSelection;
+    int ret=-1;
 
-QPointF XLinkObj::getC2()
-{
-    return c2;
+    QRectF r(p.x() - clickBorder, p.y() - clickBorder,
+	             clickBorder *2, clickBorder*2) ;
+
+    if (curSelection==C0 || curSelection==C1)
+    {
+	// If Cx selected, check both ctrl points 
+	curSelection=C0;
+	if (getClickPath().intersects (r) ) ret=0;
+	curSelection=C1;
+	if (getClickPath().intersects (r) ) ret=1;
+    } 
+    curSelection=oldSel;
+    return ret;
 }
 
 bool XLinkObj::isInClickBox (const QPointF &p)	//FIXME-1   what about ctrl points
 {
-    return getClickPath().intersects (
-		QRectF (p.x() - clickBorder, p.y() - clickBorder,
-			clickBorder *2, clickBorder*2) );
+    CurrentSelection oldSel=curSelection;
+    bool b=false;
+
+    QRectF r(p.x() - clickBorder, p.y() - clickBorder,
+	             clickBorder *2, clickBorder*2) ;
+
+    if (curSelection==C0 || curSelection==C1)
+    {
+	// If Cx selected, check both ctrl points 
+	if (ctrlPointInClickBox(p) >-1) b=true;
+    } else
+    {
+	// If not selected, check only path
+	curSelection=Path;
+	if (getClickPath().intersects (r) ) b=true;
+    }
+    curSelection=oldSel;
+    return b;
 }
 
-QPainterPath XLinkObj::getClickPath()	//FIXME-1   what about ctrl points
+QPainterPath XLinkObj::getClickPath()
 {
     QPainterPath p;
     switch (curSelection)
     {
-	case C1:
-	    p.addEllipse (beginPos + c1,20,20);
+	case C0:
+	    p.addEllipse (beginPos + c0,15,15);
 	    return p;
 	    break;
-	case C2:
-	    p.addEllipse (endPos + c2,20,20);
+	case C1:
+	    p.addEllipse (endPos + c1,15,15);
 	    return p;
 	    break;
 	default:

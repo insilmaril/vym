@@ -198,8 +198,8 @@ QString Link::saveToDir ()
 		    typeAttr=attribut("type","Bezier"); 
 		    if (xlo)
 		    {
+			ctrlAttr +=attribut ("c0",pointToString (xlo->getC0() ) );
 			ctrlAttr +=attribut ("c1",pointToString (xlo->getC1() ) );
-			ctrlAttr +=attribut ("c2",pointToString (xlo->getC2() ) );
 		    }
 		    break;
 	    }

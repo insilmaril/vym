@@ -13,24 +13,26 @@ class BranchItem;
 /////////////////////////////////////////////////////////////////////////////
 class XLinkObj:public MapObj {
 public:
-    enum CurrentSelection {Unselected, Path, C1, C2};
+    enum CurrentSelection {Unselected, Path, C0, C1};
     XLinkObj (QGraphicsItem*, Link* l );
     virtual ~XLinkObj ();
     virtual void init ();
     virtual QPointF getAbsPos();
     virtual void move (QPointF p);
     virtual void setEnd (QPointF);
+    void setSelection (int cp);
     void setSelection (CurrentSelection s);
     void updateXLink();
     void positionBBox();
     void calcBBoxSize();
     void setVisibility (bool);
     void setVisibility ();
+    void setC0 (const QPointF &p);
+    QPointF getC0();
     void setC1 (const QPointF &p);
     QPointF getC1();
-    void setC2 (const QPointF &p);
-    QPointF getC2();
     bool isInClickBox (const QPointF &p);
+    int ctrlPointInClickBox (const QPointF &p);
     QPainterPath getClickPath();
 
 private:
@@ -43,11 +45,11 @@ private:
     
     QPointF beginPos;
     QPointF   endPos;
-    QPointF c1,c2;		    // Controlpoints for bezier curve
+    QPointF c0,c1;		    // Controlpoints for bezier curve
+    QGraphicsEllipseItem *ctrl_p0;
     QGraphicsEllipseItem *ctrl_p1;
-    QGraphicsEllipseItem *ctrl_p2;
+    QGraphicsLineItem *ctrl_l0;
     QGraphicsLineItem *ctrl_l1;
-    QGraphicsLineItem *ctrl_l2;
 
     CurrentSelection curSelection;
 

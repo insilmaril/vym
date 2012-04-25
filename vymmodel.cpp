@@ -149,6 +149,7 @@ void VymModel::init ()
     linkstyle=LinkableMapObj::PolyParabel;
     defXLinkPen.setWidth (1);
     defXLinkPen.setColor ( QColor (50,50,255) );
+    defXLinkPen.setStyle ( Qt::DashLine );
     zoomFactor=1;
     rotationAngle=0;
 

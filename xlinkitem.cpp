@@ -71,9 +71,9 @@ void XLinkItem::setSelection()
 	if (xlo) 
 	{
 	    if (parentItem==link->getBeginBranch() )
-		xlo->setSelection(XLinkObj::C1);
+		xlo->setSelection(XLinkObj::C0);
 	    else if (parentItem==link->getEndBranch() )
-		xlo->setSelection(XLinkObj::C2);
+		xlo->setSelection(XLinkObj::C1);
 	}
     }
 }
