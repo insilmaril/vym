@@ -66,7 +66,7 @@ void SimpleScriptEditor::saveAsClicked()
 	this, 
 	QString (vymName + " - " +tr("Save script")),
 	QString (),
-	"VYM script (HTML) (*.vys);;All files (*)",
+	"VYM script (*.vys);;All files (*)",
 	0,
 	QFileDialog::DontConfirmOverwrite);
 	

@@ -4064,6 +4064,11 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	    s=parser.parString (ok,0);
 	    setVymLink(s);
 	/////////////////////////////////////////////////////////////////////
+	} else if (com=="sleep")
+	{
+	    n=parser.parInt (ok,0);
+	    sleep (n);
+	/////////////////////////////////////////////////////////////////////
 	} else if (com=="sortChildren")
 	{
 	    b=false;

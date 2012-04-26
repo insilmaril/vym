@@ -742,6 +742,10 @@ void Main::setupAPI()
     c->addPar (Command::String,false,"Vymlink of branch");
     modelCommands.append(c);
 
+    c=new Command ("sleep",Command::Any); 
+    c->addPar (Command::Int,false,"Sleep (seconds)");
+    modelCommands.append(c);
+
     c=new Command ("sortChildren",Command::Branch); 
     c->addPar (Command::Bool,true,"Sort children of branch in revers order if set");
     modelCommands.append(c);
