@@ -2397,7 +2397,7 @@ bool VymModel::createLink(Link *link, bool createMO)
 	if ( (l->getBeginBranch()==begin && l->getEndBranch()==end ) ||
 	     (l->getBeginBranch()==end   && l->getEndBranch()==begin) )
 	{
-	    if (debug) qDebug()<<"VymModel::createLink link exists already, aborting";
+	    qWarning()<<"VymModel::createLink link exists already, aborting";
 	    return false;
 	}
     }
@@ -5108,10 +5108,7 @@ void VymModel::updateSelection(QItemSelection newsel,QItemSelection dsel)
 	{
 	    XLinkObj *xlo=(XLinkObj*)(mi->getMO() );
 	    if (xlo) 
-	    {
-		qDebug()<<"VM::updateSel unselect xlo mi="<<mi<<"  xlo="<<xlo;
 		xlo->setSelection (XLinkObj::Unselected);
-	    }
 	}
     }    
 
@@ -5130,11 +5127,6 @@ void VymModel::updateSelection(QItemSelection newsel,QItemSelection dsel)
 	if (mi->getType()==TreeItem::XLink)
 	{
 	    ((XLinkItem*)mi)->setSelection();
-	    XLinkObj *xlo=(XLinkObj*)(mi->getMO() );
-	    if (xlo) 
-	    {
-		qDebug()<<"VM::updateSel select mi="<<mi<<"  xlo="<<xlo;
-	    }
 	}
     }    
     if ( do_reposition ) reposition();

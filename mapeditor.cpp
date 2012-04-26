@@ -1069,7 +1069,7 @@ void MapEditor::contextMenuEvent ( QContextMenuEvent * e )
     // mouseEvent, we don't need to close here.
 
     QPointF p = mapToScene(e->pos());
-    TreeItem *ti=findMapItem (p, NULL);
+    TreeItem *ti=findMapItem (p, NULL);	//FIXME-1 does not find already selected XLink => cannot open dialog
     
     if (ti) 
     {	// MapObj was found
@@ -1179,14 +1179,23 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
     QPointF p = mapToScene(e->pos());
     TreeItem *ti=findMapItem (p, NULL);
     LinkableMapObj* lmo=NULL;
-    BranchItem* selbi=model->getSelectedBranch();   //FIXME-1 not selected YET!
     if (ti) lmo=((MapItem*)ti)->getLMO();
     
+    // Select the clicked object
+    if (e->modifiers() & Qt::ControlModifier)
+	model->selectToggle (ti);
+    else
+	model->select (ti);
+    
+    // New selection:
+    BranchItem* selbi=model->getSelectedBranch();   
+
     /*
     qDebug() << "ME::mouse pressed\n";
     qDebug() << "  lmo="<<lmo;
     qDebug() << "   ti="<<ti;
     qDebug() << "selbi="<<selbi;
+    if (selbi) qDebug() << "selbi="<<selbi->getHeading();
     if (ti) qDebug() << "   ti="<<ti->getHeading();
     */
     
@@ -1280,20 +1289,9 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
 	return;
     }	
 
+    // Start moving around
     if (lmo) 
     {	
-	// Select the clicked object
-	if (e->modifiers() & Qt::ControlModifier)
-	    model->selectToggle (ti);
-	else
-	    model->select (ti);
-	
-	if (ti->getType()==TreeItem::XLink)
-	    setState (EditingLink);
-
-	// New selection:
-	selbi=model->getSelectedBranch();
-
 	// Left Button	    Move Branches
 	if (e->button() == Qt::LeftButton )
 	{
@@ -1335,7 +1333,6 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
     {	// No lmo found, check XLinks
 	if (ti)
 	{
-	    model->select(ti);	//FIXME-1 selection should be done right at the beginning, not spread all over
 	    if (ti->getType()==TreeItem::XLink)
 	    {
 		XLinkObj* xlo=(XLinkObj*) ((MapItem*)ti)->getMO() ;
@@ -1351,7 +1348,6 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
 			movingObj_orgPos.setX (xlo->x() );
 			movingObj_orgPos.setY (xlo->y() );
 		    }
-		    qDebug()<<"ME:: select xlo i="<<i<<"  p="<<p;
 		}
 	    }
 	}
@@ -1376,19 +1372,10 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
 void MapEditor::mouseMoveEvent(QMouseEvent* e)  
 {
     TreeItem *seli=model->getSelectedItem();
-    LinkableMapObj* lmosel=NULL;    
-    if (seli)
-	lmosel=((MapItem*)seli)->getLMO();
 
     MapObj* mosel=NULL;    
     if (seli )
 	mosel=((MapItem*)seli)->getMO();
-
-/* FIXME-1
-    qDebug()<<"ME::mouseMoveEvent";
-    qDebug()<<"  lmosel="<<lmosel;
-    qDebug()<<"   mosel="<<mosel;
-*/
 
     // Move the selected MapObj
     if ( mosel && (state==MovingObject || state==CopyingObject || state==EditingLink)) 
@@ -1442,16 +1429,6 @@ void MapEditor::moveObject ()
     if (seli)
 	lmosel=((MapItem*)seli)->getLMO();
 
-    MapObj* mosel=NULL;    
-    if (seli)
-	mosel=((MapItem*)seli)->getMO();
-
-/* FIXME-1 testing   
-    qDebug()<<"ME::moveObj";
-    qDebug()<<"  lmosel="<<lmosel;
-    qDebug()<<"   mosel="<<mosel;
-*/
-
     objectMoved=true;
     // reset cursor if we are moving and don't copy
     if (mainWindow->getModMode()!=Main::ModModeCopy)
@@ -1468,103 +1445,105 @@ void MapEditor::moveObject ()
     } else
 	dsti=NULL;
     
-
-    if (lmosel && seli->getType()==TreeItem::Image)
+    if (lmosel)
     {
-	FloatObj *fio=(FloatImageObj*)lmosel;
-	fio->move   (p.x() -movingObj_offset.x(), p.y()-movingObj_offset.y() );	
-	fio->setRelPos();
-	fio->updateLinkGeometry(); //no need for reposition, if we update link here
-	model->emitSelectionChanged();  // position has changed
-
-	// Relink float to new mapcenter or branch, if shift is pressed 
-	// Only relink, if selection really has a new parent
-	if ( pointerMod==Qt::ShiftModifier && dsti &&  dsti != seli->parent()  )
+	if (seli->getType()==TreeItem::Image)
 	{
-	    // Also save the move which was done so far
-	    QString pold=qpointFToString(movingObj_orgRelPos);
-	    QString pnow=qpointFToString(fio->getRelPos());
-	    model->saveState(
-		seli,
-		"moveRel "+pold,
-		seli,
-		"moveRel "+pnow,
-		QString("Move %1 to relative position %2").arg(model->getObjectName(lmosel)).arg(pnow));
-	    model->reposition();
+	    FloatObj *fio=(FloatImageObj*)lmosel;
+	    fio->move   (p.x() -movingObj_offset.x(), p.y()-movingObj_offset.y() );	
+	    fio->setRelPos();
+	    fio->updateLinkGeometry(); //no need for reposition, if we update link here
+	    model->emitSelectionChanged();  // position has changed
 
-	    model->relinkImage ((ImageItem*) seli,dsti);
-	    model->select (seli);
-
-	    model->reposition();
-	}
-    } else	
-    if (seli->isBranchLikeType() )
-    {   // selection != a FloatObj  // FIXME-1 cont here: if BranchLike, after that check for MapObj of XLink and move the controlPoint
-	if (seli->depth()==0)	
-	{
-	    // Move mapcenter
-	    lmosel->move   (p-movingObj_offset);	
-	    if (pointerMod==Qt::ShiftModifier) 
+	    // Relink float to new mapcenter or branch, if shift is pressed 
+	    // Only relink, if selection really has a new parent
+	    if ( pointerMod==Qt::ShiftModifier && dsti &&  dsti != seli->parent()  )
 	    {
-		// Move only mapcenter, leave its children where they are
-		QPointF v;
-		v=lmosel->getAbsPos();
-		for (int i=0; i<seli->branchCount(); ++i)
+		// Also save the move which was done so far
+		QString pold=qpointFToString(movingObj_orgRelPos);
+		QString pnow=qpointFToString(fio->getRelPos());
+		model->saveState(
+		    seli,
+		    "moveRel "+pold,
+		    seli,
+		    "moveRel "+pnow,
+		    QString("Move %1 to relative position %2").arg(model->getObjectName(lmosel)).arg(pnow));
+		model->reposition();
+
+		model->relinkImage ((ImageItem*) seli,dsti);
+		model->select (seli);
+
+		model->reposition();
+	    }
+	} else	if (seli->isBranchLikeType() )
+	{   // selection != a FloatObj  
+	    if (seli->depth()==0)	
+	    {
+		// Move mapcenter
+		lmosel->move   (p-movingObj_offset);	
+		if (pointerMod==Qt::ShiftModifier) 
 		{
-		    seli->getBranchObjNum(i)->setRelPos();
-		    seli->getBranchObjNum(i)->setOrientation();
-		}
-	    } 
-	    lmosel->move   (p-movingObj_offset);	
-	} else
-	{	
-	    if (seli->depth()==1)
-	    {
-		// Move mainbranch
-		if (!lmosel->hasParObjTmp())
-		    lmosel->move(p-movingObj_offset);	
-		lmosel->setRelPos();
+		    // Move only mapcenter, leave its children where they are
+		    QPointF v;
+		    v=lmosel->getAbsPos();
+		    for (int i=0; i<seli->branchCount(); ++i)
+		    {
+			seli->getBranchObjNum(i)->setRelPos();
+			seli->getBranchObjNum(i)->setOrientation();
+		    }
+		} 
+		lmosel->move   (p-movingObj_offset);	
 	    } else
+	    {	
+		if (seli->depth()==1)
+		{
+		    // Move mainbranch
+		    if (!lmosel->hasParObjTmp())
+			lmosel->move(p-movingObj_offset);	
+		    lmosel->setRelPos();
+		} else
+		{
+		    // Move ordinary branch
+		    if (lmosel->getOrientation() == LinkableMapObj::LeftOfCenter)
+			// Add width of bbox here, otherwise alignRelTo will cause jumping around
+			lmosel->move(
+			    p.x()  - movingObj_offset.x(), 
+			    p.y()  - movingObj_offset.y() + lmosel->getTopPad() );	    
+		    else    
+			lmosel->move(p.x() - movingObj_offset.x(), p.y() - movingObj_offset.y() - lmosel->getTopPad());
+		    lmosel->setRelPos();    
+		} 
+
+	    } // depth>0
+
+	    // Maybe we can relink temporary?
+	    if (dsti)
 	    {
-		// Move ordinary branch
-		if (lmosel->getOrientation() == LinkableMapObj::LeftOfCenter)
-		    // Add width of bbox here, otherwise alignRelTo will cause jumping around
-		    lmosel->move(
-			p.x()  - movingObj_offset.x(), 
-			p.y()  - movingObj_offset.y() + lmosel->getTopPad() );	    
-		else    
-		    lmosel->move(p.x() - movingObj_offset.x(), p.y() - movingObj_offset.y() - lmosel->getTopPad());
-		lmosel->setRelPos();    
-	    } 
+		if (pointerMod==Qt::ControlModifier)
+		{
+		    // Special case: CTRL to link below dst
+		    lmosel->setParObjTmp (dst,p,+1);
+		} else if (pointerMod==Qt::ShiftModifier)
+		    lmosel->setParObjTmp (dst,p,-1);
+		else
+		    lmosel->setParObjTmp (dst,p,0);
+	    } else  
+		lmosel->unsetParObjTmp();
 
-	} // depth>0
+	    // reposition subbranch
+	    lmosel->reposition();
 
-	// Maybe we can relink temporary?
-	if (dsti)
-	{
-	    if (pointerMod==Qt::ControlModifier)
-	    {
-		// Special case: CTRL to link below dst
-		lmosel->setParObjTmp (dst,p,+1);
-	    } else if (pointerMod==Qt::ShiftModifier)
-		lmosel->setParObjTmp (dst,p,-1);
-	    else
-		lmosel->setParObjTmp (dst,p,0);
-	} else  
-	    lmosel->unsetParObjTmp();
+	    QItemSelection sel=model->getSelectionModel()->selection();
+	    updateSelection(sel,sel);	// position has changed
 
-	// reposition subbranch
-	lmosel->reposition();
-
-	QItemSelection sel=model->getSelectionModel()->selection();
-	updateSelection(sel,sel);	// position has changed
-
-    } else if (seli->getType()==TreeItem::XLink)
+	} 
+    } // End of lmosel!=NULL
+    else if (seli && seli->getType()==TreeItem::XLink)
     {
-	mosel->move   (p-movingObj_offset);	
+	MapObj* mosel=((MapItem*)seli)->getMO();
+	if (mosel) mosel->move   (p-movingObj_offset);	
     } else
 	qWarning("ME::moveObject  Huh? I'm confused.");
-
 
     scene()->update();
 
@@ -1605,27 +1584,27 @@ void MapEditor::mouseReleaseEvent(QMouseEvent* e)
     // Have we been drawing a link?
     if (state==DrawingLink)	
     {
+	setState (Neutral);
 	// Check if we are over another branch
 	if (dsti)
 	{   
 	    tmpLink->setEndBranch ( ((BranchItem*)dsti) );
 	    tmpLink->updateLink();
-	    model->createLink (tmpLink);
-	    model->saveState(	
-		tmpLink->getBeginLinkItem(),"delete ()",
-		seli,QString("addXLink (\"%1\",\"%2\",%3,\"%4\")")
-		    .arg(model->getSelectString(tmpLink->getBeginBranch()))
-		    .arg(model->getSelectString(tmpLink->getEndBranch()))
-		    .arg(tmpLink->getPen().width())
-		    .arg(tmpLink->getPen().color().name()),
-		QString("Adding Link from %1 to %2").arg(model->getObjectName(seli)).arg(model->getObjectName (dsti))
-	    );	
-	} else
-	{
-	    delete (tmpLink);
-	    tmpLink=NULL;
-	}
-	setState (Neutral);
+	    if (model->createLink (tmpLink) )
+	    {
+		model->saveState(	
+		    tmpLink->getBeginLinkItem(),"delete ()",
+		    seli,QString("addXLink (\"%1\",\"%2\",%3,\"%4\")")
+			.arg(model->getSelectString(tmpLink->getBeginBranch()))
+			.arg(model->getSelectString(tmpLink->getEndBranch()))
+			.arg(tmpLink->getPen().width())
+			.arg(tmpLink->getPen().color().name()),
+		    QString("Adding Link from %1 to %2").arg(model->getObjectName(seli)).arg(model->getObjectName (dsti)));	
+		return;
+	    }
+	} 
+	delete (tmpLink);
+	tmpLink=NULL;
 	return;
     }
     
@@ -2005,7 +1984,7 @@ void MapEditor::updateSelection(QItemSelection nsel,QItemSelection dsel)
     }
 
 
-    // Reposition polygons  //FIXME-1 switch to path instead of polygon
+    // Reposition polygons 
     for (int i=0; i<itemsSelected.count();++i)
     {
 	MapObj *mo=itemsSelected.at(i)->getMO();
