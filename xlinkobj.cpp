@@ -48,7 +48,7 @@ void XLinkObj::init ()
     path=scene()->addPath (QPainterPath(), pen, Qt::NoBrush);	
     path->setZValue (dZ_XLINK);
 
-    // Control points for bezier path	// FIXME-1 Check orientation of branches: switch to left/right side
+    // Control points for bezier path	
     qreal d=100;
     c0=QPointF (d,0);
     c1=QPointF (d,0);
@@ -61,6 +61,7 @@ void XLinkObj::init ()
 	clickBorder*2, clickBorder*2,
 	pen, pen.color() );
 
+    beginOrient=endOrient=LinkableMapObj::UndefinedOrientation;
     QPen pen2(pen);
     pen2.setWidth (1);
     pen2.setStyle (Qt::DashLine);
@@ -90,6 +91,8 @@ QPointF XLinkObj::getAbsPos()
 
 void XLinkObj::move (QPointF p)
 {
+    BranchObj *beginBO;
+    BranchObj *endBO;
     switch (curSelection)
     {
 	case C0:
@@ -129,6 +132,29 @@ void XLinkObj::updateXLink()
 {
     QPointF a,b;
     QPolygonF pa;
+
+    BranchObj *beginBO=NULL;
+    BranchObj   *endBO=NULL;
+    BranchItem *bi=link->getBeginBranch();
+    if ( bi) beginBO=(BranchObj*)(bi->getLMO());
+    bi=link->getEndBranch();
+    if (bi) endBO=(BranchObj*)(bi->getLMO());
+
+    if (beginBO) 
+    {
+	if (beginOrient != LinkableMapObj::UndefinedOrientation  &&
+	    beginOrient != beginBO->getOrientation() )
+	    c0.setX( -c0.x() );
+	beginOrient = beginBO->getOrientation();
+    }
+    if (endBO)  
+    {
+	if (endOrient != LinkableMapObj::UndefinedOrientation  &&
+	    endOrient != endBO->getOrientation() )
+	    c1.setX( -c1.x() );
+	endOrient = endBO->getOrientation();
+    }
+
     if (visBranch)   
     {
 	// Only one of the linked branches is visible
@@ -158,36 +184,13 @@ void XLinkObj::updateXLink()
     } else
     {
 	// Both linked branches are visible
-	BranchItem *bi=link->getBeginBranch();
-	if ( bi)
-	{
-	    // If a link is just drawn in the editor,
-	    // we have already a beginBranch
-	    BranchObj *bo=(BranchObj*)(bi->getLMO());
-	    if (bo) 
-		a=bo->getChildPos();
-	    else 
-		return;	
-	}   
-	else
-	    // This shouldn't be reached normally...
-	    a=beginPos;
 
-	bi=link->getEndBranch();
-	if (bi)
-	{
-	    BranchObj *bo=(BranchObj*)(bi->getLMO());
-	    if (bo) 
-		b=bo->getChildPos();
-	    else 
-		return;	
-	}
-	else
-	    b=endPos;
+	// If a link is just drawn in the editor,
+	// we have already a beginBranch
+	if (beginBO) beginPos=beginBO->getChildPos();
+
+	if (endBO) endPos=endBO->getChildPos();
     }
-
-    beginPos=a;
-    endPos=b;
 
     // Update control points for bezier
     QPainterPath p(beginPos);
@@ -371,7 +374,7 @@ bool XLinkObj::isInClickBox (const QPointF &p)
     return b;
 }
 
-QPainterPath XLinkObj::getClickPath()
+QPainterPath XLinkObj::getClickPath()  // also needs mirroring if oriented left. Create method to generate the coordinates
 {
     QPainterPath p;
     switch (curSelection)

@@ -2,6 +2,7 @@
 #define XLINKOBJ_H
 
 #include <QPen>
+#include "linkablemapobj.h"
 #include "mapobj.h"
 #include "xlink.h"
 
@@ -45,7 +46,9 @@ private:
     
     QPointF beginPos;
     QPointF   endPos;
-    QPointF c0,c1;		    // Controlpoints for bezier curve
+    QPointF c0,c1;		    // Controlpoints for Bezier path
+    LinkableMapObj::Orientation beginOrient;
+    LinkableMapObj::Orientation   endOrient;
     QGraphicsEllipseItem *ctrl_p0;
     QGraphicsEllipseItem *ctrl_p1;
     QGraphicsLineItem *ctrl_l0;

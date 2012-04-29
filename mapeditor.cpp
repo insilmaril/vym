@@ -1222,7 +1222,7 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
 		mainWindow->editOpenVymLink();
 		// tabWidget may change, better return now
 		// before segfaulting...
-	    } else if (foname=="system-note")
+	    } else if (foname=="system-note")	//FIXME-2 does not work always???
 		mainWindow->windowToggleNoteEditor();
 	    else if (foname=="hideInExport")	    
 		model->toggleHideExport();
@@ -1541,7 +1541,7 @@ void MapEditor::moveObject ()
     else if (seli && seli->getType()==TreeItem::XLink)
     {
 	MapObj* mosel=((MapItem*)seli)->getMO();
-	if (mosel) mosel->move   (p-movingObj_offset);	
+	if (mosel) mosel->move   (p-movingObj_offset);	// FIXME-2 Missing savestate 
     } else
 	qWarning("ME::moveObject  Huh? I'm confused.");
 

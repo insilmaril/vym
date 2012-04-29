@@ -1556,7 +1556,10 @@ QString VymModel::getSortFilter ()
     return sortFilter;
 }
 
-void VymModel::setHeading(const QString &s, BranchItem *bi) 
+void VymModel::setHeading(const QString &s, BranchItem *bi) //FIXME-2 segfault: undo several times with open hist window, editHeading
+                                                            //Warning: MapEditor::setState  switching directly from  4  to  3 Segmentation fault
+							    // Hm, not reproducible so far.
+
 {
     if (!bi) bi=getSelectedBranch();
     if (bi)
@@ -3626,7 +3629,7 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 			QColor col=parser.parColor (ok,2);
 			if (ok) pen.setColor (col);
 		    }
-		    li->setPen(pen);	//FIXME-1 what about style??
+		    li->setPen(pen);	//FIXME-1 penstyle missing in addXLink command
 		}
 		else
 		    parser.setError (Aborted,"begin or end of xLink are not branch or mapcenter");
