@@ -531,7 +531,7 @@ File::ErrorCode VymModel::loadMap (
 	    emitSelectionChanged();
 
 	    // Recalc priorities and sort   
-	    taskEditor->sort();
+	    taskModel->recalcPriorities();
 	} else 
 	{
 	    QMessageBox::critical( 0, tr( "Critical Parse Error" ),

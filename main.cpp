@@ -319,6 +319,9 @@ int main(int argc, char* argv[])
 
     m.loadCmdLine();
 
+    // For whatever reason tableView is not sorted initially
+    taskEditor->sort();
+
     // Restore last session
     if (options.isOn ("restore"))
 	m.fileRestoreSession();

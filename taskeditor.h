@@ -18,7 +18,6 @@ class TaskEditor: public QWidget
 public:
     TaskEditor (QWidget *parent=NULL);
     ~TaskEditor ();
-    void sort();
     void setMapName (const QString &);
     bool isUsedFilterMap ();
     void setFilterMap  ();
@@ -27,6 +26,9 @@ public:
     bool select (Task *task);
     void showSelection();
     void contextMenuEvent ( QContextMenuEvent * e );
+
+public slots:
+    void sort();
 
 private slots:
     void selectionChanged (const QItemSelection & selected, const QItemSelection & );

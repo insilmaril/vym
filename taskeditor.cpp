@@ -44,7 +44,7 @@ TaskEditor::TaskEditor(QWidget *)
     a = new QAction(icon,  tr( "Awake only","TaskEditor" ),this );
     a->setCheckable(true);
     a->setChecked  (settings.value("/taskeditor/filterSleeping", false).toBool());
-    //tb->addAction (a);
+    tb->addAction (a);
     connect( a, SIGNAL( triggered() ), this, SLOT(toggleFilterSleeping() ) );
     actionToggleFilterSleeping=a;
 
@@ -68,35 +68,31 @@ TaskEditor::TaskEditor(QWidget *)
     view->verticalHeader()->hide();
     view->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
-    filterMapModel = new QSortFilterProxyModel();
+    filterMapModel = new QSortFilterProxyModel(this);
     filterMapModel->setSourceModel(taskModel);
-    filterMapModel->setSortCaseSensitivity (Qt::CaseInsensitive);
-    filterMapModel->setDynamicSortFilter (true);
 
     filterSleepingModel = new QSortFilterProxyModel();
-    //filterSleepingModel->setSourceModel(filterMapModel);
 
     view->setModel (filterMapModel);
-    view->horizontalHeader()->setSortIndicator (0,Qt::AscendingOrder);
     view->setSortingEnabled(true);
+    view->horizontalHeader()->setSortIndicator (0,Qt::AscendingOrder);
+
+    filterMapModel->sort( 0, Qt::AscendingOrder );
 
     blockExternalSelect=false;
 
     connect (
 	view->selectionModel(),SIGNAL (selectionChanged (QItemSelection,QItemSelection)),
 	this, SLOT (selectionChanged (QItemSelection,QItemSelection)));
+    
+    // layout changes trigger resorting
+    connect( taskModel, SIGNAL( layoutChanged() ), this, SLOT(sort() ) );
 }
 
 TaskEditor::~TaskEditor()
 {
     settings.setValue ("/taskeditor/filterMap",actionToggleFilterMap->isChecked());
     settings.setValue ("/taskeditor/filterSleeping",actionToggleFilterSleeping->isChecked());
-}
-
-void TaskEditor::sort()
-{
-    taskModel->recalcPriorities();
-    filterMapModel->sort( filterMapModel->sortColumn(), filterMapModel->sortOrder() );
 }
 
 void TaskEditor::setMapName (const QString &n)
@@ -166,6 +162,11 @@ void TaskEditor::contextMenuEvent ( QContextMenuEvent * e )
     taskContextMenu->popup (e->globalPos() );
 }
 
+void TaskEditor::sort()
+{
+    view->sortByColumn( 0, Qt::AscendingOrder );
+}
+
 void TaskEditor::selectionChanged ( const QItemSelection & selected, const QItemSelection & )
 {
     QModelIndex ix;
@@ -201,6 +202,4 @@ void TaskEditor::toggleFilterMap ()
 void TaskEditor::toggleFilterSleeping ()
 {
     qDebug()<<"TE::toggleFilterSleeping"; 
-    //setFilterMapName (!actionToggleMapFilter->isChecked() );
 }
-

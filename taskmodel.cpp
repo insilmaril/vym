@@ -223,6 +223,7 @@ void TaskModel::deleteTask (Task* t)
 
 void TaskModel::recalcPriorities() 
 {
+    emit (layoutAboutToBeChanged() );
     int minPrio=1000000;
     foreach (Task *t,tasks)
     {   
@@ -268,5 +269,7 @@ void TaskModel::recalcPriorities()
 	t->setPriority (1-  minPrio + t->getPriority() );
 	emitDataChanged (t);
     }
+
+    emit (layoutChanged() );
 }
 
