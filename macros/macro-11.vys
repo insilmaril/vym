@@ -1,2 +1,2 @@
-# Macro F11
-setFrameType ("Rectangle");
+# Macro F12
+setFrameType ("Ellipse");

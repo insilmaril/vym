@@ -1,2 +1,4 @@
 # Macro F12
-setFrameType ("Ellipse");
+setFrameType ("RoundedRectangle");
+setFramePadding (10);
+setFrameIncludeChildren (true);
