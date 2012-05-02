@@ -128,7 +128,7 @@ void XLinkObj::setSelection (int cp)
 	qWarning()<<"XLO::setSelection cp="<<cp;
 }
 
-void XLinkObj::updateXLink()
+void XLinkObj::updateXLink()	//FIXME-1 set color of ctrl points too
 {
     QPointF a,b;
     QPolygonF pa;

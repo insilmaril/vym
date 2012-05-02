@@ -590,11 +590,15 @@ QRectF MapEditor::getTotalBBox()    //FIXME-2 frames missing, esp. c loud
 		fio=cur->getImageObjNum (i);
 		if (fio) rt=addBBox (fio->getBBox(),rt);
 	    }
-
-	    // XLinks	 //FIXME missing
 	}
 	model->nextBranch(cur,prev);
     }
+
+    // XLinks	 //FIXME missing
+
+    // Update scene according to new bbox
+    if (!sceneRect().contains (rt) )
+	setSceneRect(sceneRect().united (rt));
     return rt;	
 }
 
@@ -1069,7 +1073,7 @@ void MapEditor::contextMenuEvent ( QContextMenuEvent * e )
     // mouseEvent, we don't need to close here.
 
     QPointF p = mapToScene(e->pos());
-    TreeItem *ti=findMapItem (p, NULL);	//FIXME-1 does not find already selected XLink => cannot open dialog
+    TreeItem *ti=findMapItem (p, NULL);	
     
     if (ti) 
     {	// MapObj was found
@@ -1146,7 +1150,7 @@ void MapEditor::keyReleaseEvent(QKeyEvent* e)
 	setCursor (Qt::ArrowCursor);
 }
 
-void MapEditor::mousePressEvent(QMouseEvent* e)
+void MapEditor::mousePressEvent(QMouseEvent* e)	//FIXME-1 xlinks playing badly with scrolled branches //FIXME-1 Controlpoints often hidden "below" branches
 {
     // Debugging: Show position
     /*

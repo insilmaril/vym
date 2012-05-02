@@ -4545,6 +4545,7 @@ void VymModel::reposition() //FIXME-4 VM should have no need to reposition, but 
 	else
 	    qDebug()<<"VM::reposition bo=0";
     }	
+    mapEditor->getTotalBBox();	
     emitSelectionChanged();
 }
 
