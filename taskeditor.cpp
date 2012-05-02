@@ -41,12 +41,12 @@ TaskEditor::TaskEditor(QWidget *)
     connect( a, SIGNAL( triggered() ), this, SLOT(toggleFilterMap() ) );
     actionToggleFilterMap=a;
 
-    a = new QAction(icon,  tr( "Awake only","TaskEditor" ),this );
+    a = new QAction(icon,  tr( "Active tasks","TaskEditor" ),this );
     a->setCheckable(true);
-    a->setChecked  (settings.value("/taskeditor/filterSleeping", false).toBool());
+    a->setChecked  (settings.value("/taskeditor/filterActive", false).toBool());
     tb->addAction (a);
-    connect( a, SIGNAL( triggered() ), this, SLOT(toggleFilterSleeping() ) );
-    actionToggleFilterSleeping=a;
+    connect( a, SIGNAL( triggered() ), this, SLOT(toggleFilterActive() ) );
+    actionToggleFilterActive=a;
 
     // Forward Enter and Return to MapEditor
     a = new QAction(icon, tr( "Edit heading","TaskEditor" ), this);
@@ -71,9 +71,11 @@ TaskEditor::TaskEditor(QWidget *)
     filterMapModel = new QSortFilterProxyModel(this);
     filterMapModel->setSourceModel(taskModel);
 
-    filterSleepingModel = new QSortFilterProxyModel();
+    filterActiveModel = new ActiveTasksFilterModel;
+    filterActiveModel->setSourceModel(filterMapModel);
 
-    view->setModel (filterMapModel);
+    view->setModel (filterActiveModel);
+//    view->setModel (filterMapModel);
     view->setSortingEnabled(true);
     view->horizontalHeader()->setSortIndicator (0,Qt::AscendingOrder);
 
@@ -87,12 +89,16 @@ TaskEditor::TaskEditor(QWidget *)
     
     // layout changes trigger resorting
     connect( taskModel, SIGNAL( layoutChanged() ), this, SLOT(sort() ) );
+
+    // Initialize view filters according to previous settings
+    setFilterMap();
+    setFilterActive();
 }
 
 TaskEditor::~TaskEditor()
 {
     settings.setValue ("/taskeditor/filterMap",actionToggleFilterMap->isChecked());
-    settings.setValue ("/taskeditor/filterSleeping",actionToggleFilterSleeping->isChecked());
+    settings.setValue ("/taskeditor/filterActive",actionToggleFilterActive->isChecked());
 }
 
 void TaskEditor::setMapName (const QString &n)
@@ -114,23 +120,17 @@ void TaskEditor::setFilterMap ()
 	filterMapModel->setFilterKeyColumn(5);
     } else
 	filterMapModel->setFilterRegExp(QRegExp());
+    sort();	
 }
 
-bool TaskEditor::isUsedFilterSleeping()
+bool TaskEditor::isUsedFilterActive()
 {
-    return actionToggleFilterSleeping->isChecked();
+    return actionToggleFilterActive->isChecked();
 }
 
-void TaskEditor::setFilterSleeping (bool ) // FIXME-3 not implemented yet
+void TaskEditor::setFilterActive () 
 {
-/* 
-    if (b)
-    {
-	filterMapModel->setFilterRegExp(QRegExp(mapName, Qt::CaseInsensitive));
-	filterMapModel->setFilterKeyColumn(5);
-    } else
-	filterMapModel->setFilterRegExp(QRegExp());
-*/
+    filterActiveModel->setFilter (actionToggleFilterActive->isChecked() );   
 }
 
 void TaskEditor::showSelection()
@@ -146,15 +146,46 @@ bool TaskEditor::select (Task *task)
     if (task)
     {
 	blockExternalSelect=true;
-	QItemSelection sel (
-	    filterMapModel->mapFromSource(taskModel->index (task) ), 
-	    filterMapModel->mapFromSource(taskModel->indexRowEnd (task) ) ); 
+	QModelIndex i0b=filterMapModel->mapFromSource(taskModel->index (task) ); 
+	QModelIndex i0e=filterMapModel->mapFromSource(taskModel->indexRowEnd (task) ); 
+
+	QModelIndex i1b=filterActiveModel->mapFromSource(i0b ); 
+	QModelIndex i1e=filterActiveModel->mapFromSource(i0e ); 
+
+	//QItemSelection sel (i0b, i0e);
+	QItemSelection sel (i1b, i1e);
 
 	view->selectionModel()->select (sel, QItemSelectionModel::ClearAndSelect  );
 	blockExternalSelect=false;
 	return true;
     }
     return false;
+}
+
+void TaskEditor::selectionChanged ( const QItemSelection & selected, const QItemSelection & )
+{// FIXME-3 what, if multiple selection in MapEditor?
+    // Avoid segfault on quit, when selected is empty
+    if (selected.indexes().isEmpty() ) return;
+
+    QItemSelection sel0=filterActiveModel->mapSelectionToSource (selected);
+    QItemSelection sel1=filterMapModel->mapSelectionToSource (sel0);
+    QModelIndex ix=sel1.indexes().first();
+    Task *t=taskModel->getTask (ix);
+    if (t) 
+    {
+	BranchItem *bi=t->getBranch();
+	if (bi) 
+	{
+	    VymModel *m=bi->getModel();
+	    if (!blockExternalSelect) m->select (bi);
+	    if (m!=mainWindow->currentModel() )
+		mainWindow->gotoModel (m);
+	    view->setStyleSheet( 
+	    QString ("selection-color: %1;" 
+		     "selection-background-color: %2;").arg(bi->getHeadingColor().name() ).arg(m->getSelectionColor().name() ) );
+	    view->scrollTo (selected.indexes().first() );   
+	}
+    }
 }
 
 void TaskEditor::contextMenuEvent ( QContextMenuEvent * e )
@@ -167,39 +198,13 @@ void TaskEditor::sort()
     view->sortByColumn( 0, Qt::AscendingOrder );
 }
 
-void TaskEditor::selectionChanged ( const QItemSelection & selected, const QItemSelection & )
-{
-    QModelIndex ix;
-    QModelIndex ix_org;
-    foreach (ix,selected.indexes() )	// FIXME-3 what, if multiple selection in MapEditor?
-    {
-	// Also select in other editors
-	ix_org= filterMapModel->mapToSource(ix);
-	Task *t=taskModel->getTask (ix_org);
-	if (t) 
-	{
-	    BranchItem *bi=t->getBranch();
-	    if (bi) 
-	    {
-		VymModel *m=bi->getModel();
-		if (!blockExternalSelect) m->select (bi);
-		if (m!=mainWindow->currentModel() )
-		    mainWindow->gotoModel (m);
-		view->setStyleSheet( 
-		QString ("selection-color: %1;" 
-			 "selection-background-color: %2;").arg(bi->getHeadingColor().name() ).arg(m->getSelectionColor().name() ) );
-		view->scrollTo (ix, QAbstractItemView::EnsureVisible);
-	    }
-	}
-    }
-}
-
 void TaskEditor::toggleFilterMap ()
 {
     setFilterMap ();
 }
 
-void TaskEditor::toggleFilterSleeping ()
+void TaskEditor::toggleFilterActive ()
 {
-    qDebug()<<"TE::toggleFilterSleeping"; 
+    setFilterActive();
+    filterActiveModel->invalidate();
 }

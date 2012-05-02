@@ -2120,7 +2120,7 @@ void VymModel::cycleTaskStatus(bool reverse)
 	    task->setDateModified();
 	    
 	    // make sure task is still visible
-	    taskEditor->showSelection(); 
+	    taskEditor->select (task);
 	}
     }
 }

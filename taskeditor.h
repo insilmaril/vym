@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QTableView>
 
+#include "activetasksfiltermodel.h"
 
 class BranchItem;
 class QTableView;
@@ -21,8 +22,8 @@ public:
     void setMapName (const QString &);
     bool isUsedFilterMap ();
     void setFilterMap  ();
-    bool isUsedFilterSleeping ();
-    void setFilterSleeping (bool);
+    bool isUsedFilterActive ();
+    void setFilterActive ();
     bool select (Task *task);
     void showSelection();
     void contextMenuEvent ( QContextMenuEvent * e );
@@ -33,15 +34,15 @@ public slots:
 private slots:
     void selectionChanged (const QItemSelection & selected, const QItemSelection & );
     void toggleFilterMap ();
-    void toggleFilterSleeping ();
+    void toggleFilterActive ();
 
 private:
     QTableView *view;
-    QSortFilterProxyModel *filterMapModel;
-    QSortFilterProxyModel *filterSleepingModel;
+    QSortFilterProxyModel  *filterMapModel;
+    ActiveTasksFilterModel *filterActiveModel;
     QString mapName;
     QAction *actionToggleFilterMap;
-    QAction *actionToggleFilterSleeping;
+    QAction *actionToggleFilterActive;
     bool blockExternalSelect;
 };
 
