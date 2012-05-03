@@ -49,6 +49,7 @@ void XLinkObj::init ()
     path->setZValue (dZ_XLINK);
 
     // Control points for bezier path	
+    pen.setStyle (Qt::SolidLine);
     qreal d=100;
     c0=QPointF (d,0);
     c1=QPointF (d,0);
@@ -62,11 +63,10 @@ void XLinkObj::init ()
 	pen, pen.color() );
 
     beginOrient=endOrient=LinkableMapObj::UndefinedOrientation;
-    QPen pen2(pen);
-    pen2.setWidth (1);
-    pen2.setStyle (Qt::DashLine);
-    ctrl_l0=scene()->addLine(0,0,0,0, pen2);
-    ctrl_l1=scene()->addLine(0,0,0,0, pen2);
+    pen.setWidth (1);
+    pen.setStyle (Qt::DashLine);
+    ctrl_l0=scene()->addLine(0,0,0,0, pen);
+    ctrl_l1=scene()->addLine(0,0,0,0, pen);
 
     curSelection=Unselected;
 
@@ -128,7 +128,7 @@ void XLinkObj::setSelection (int cp)
 	qWarning()<<"XLO::setSelection cp="<<cp;
 }
 
-void XLinkObj::updateXLink()	//FIXME-1 set color of ctrl points too
+void XLinkObj::updateXLink()	
 {
     QPointF a,b;
     QPolygonF pa;
@@ -203,24 +203,33 @@ void XLinkObj::updateXLink()	//FIXME-1 set color of ctrl points too
     // needed for intersection check:	
     clickPath.cubicTo ( endPos + c1, beginPos + c0, beginPos);  
 
-    
-    ctrl_p0->setRect (
-	beginPos.x() + c0.x() - pointRadius/2, beginPos.y() + c0.y() - pointRadius/2,
-	pointRadius, pointRadius );
-    ctrl_p1->setRect (
-	endPos.x() + c1.x() - pointRadius/2, endPos.y() + c1.y() - pointRadius/2,
-	pointRadius, pointRadius );
-
-    ctrl_l0->setLine ( 
-	beginPos.x(), beginPos.y(),
-	c0.x() + beginPos.x(), c0.y() + beginPos.y() );
-    ctrl_l1->setLine ( 
-	endPos.x(), endPos.y(),
-	c1.x() + endPos.x(), c1.y() + endPos.y() );
-	
     QPen pen=link->getPen();
     path->setPen (pen);
     poly->setBrush (pen.color() );
+    
+    pen.setStyle (Qt::SolidLine);
+    ctrl_p0->setRect (
+	beginPos.x() + c0.x() - pointRadius/2, beginPos.y() + c0.y() - pointRadius/2,
+	pointRadius, pointRadius );
+    ctrl_p0->setPen (pen);
+    ctrl_p0->setBrush (pen.color() );
+
+    ctrl_p1->setRect (
+	endPos.x() + c1.x() - pointRadius/2, endPos.y() + c1.y() - pointRadius/2,
+	pointRadius, pointRadius );
+    ctrl_p1->setPen (pen);
+    ctrl_p1->setBrush (pen.color() );
+
+    pen.setStyle (Qt::DashLine);
+    ctrl_l0->setLine ( 
+	beginPos.x(), beginPos.y(),
+	c0.x() + beginPos.x(), c0.y() + beginPos.y() );
+    ctrl_l0->setPen (pen);
+    ctrl_l1->setLine ( 
+	endPos.x(), endPos.y(),
+	c1.x() + endPos.x(), c1.y() + endPos.y() );
+    ctrl_l1->setPen (pen);
+	
     BranchItem *bi_begin=link->getBeginBranch();
     BranchItem *bi_end  =link->getEndBranch();
     if (bi_begin && bi_end && link->getState()==Link::activeXLink)
