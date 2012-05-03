@@ -1477,7 +1477,7 @@ void MapEditor::moveObject ()
 		model->relinkImage ((ImageItem*) seli,dsti);
 		model->select (seli);
 
-		model->reposition();
+		model->reposition();	//FIXME-1 needed again? see 3 lines above...
 	    }
 	} else	if (seli->isBranchLikeType() )
 	{   // selection != a FloatObj  
@@ -1544,8 +1544,13 @@ void MapEditor::moveObject ()
     } // End of lmosel!=NULL
     else if (seli && seli->getType()==TreeItem::XLink)
     {
+	// Move XLink control point
 	MapObj* mosel=((MapItem*)seli)->getMO();
-	if (mosel) mosel->move   (p-movingObj_offset);	// FIXME-2 Missing savestate 
+	if (mosel) 
+	{
+	    mosel->move   (p-movingObj_offset);	// FIXME-2 Missing savestate 
+	    model->emitSelectionChanged();
+	}
     } else
 	qWarning("ME::moveObject  Huh? I'm confused.");
 
