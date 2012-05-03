@@ -1476,8 +1476,6 @@ void MapEditor::moveObject ()
 
 		model->relinkImage ((ImageItem*) seli,dsti);
 		model->select (seli);
-
-		model->reposition();	//FIXME-1 needed again? see 3 lines above...
 	    }
 	} else	if (seli->isBranchLikeType() )
 	{   // selection != a FloatObj  
