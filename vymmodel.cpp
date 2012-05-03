@@ -247,7 +247,7 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix, bool w
 		  xml.attribut("linkColor", defLinkColor.name() ) +
 		  xml.attribut("defXLinkColor", defXLinkPen.color().name() ) +
 		  xml.attribut("defXLinkWidth", QString().setNum(defXLinkPen.width(),10) ) +
-		  xml.attribut("defXLinkPenStyle", penStyleToString (defXLinkPen.style() )) +	//FIXME-1 not saved!
+		  xml.attribut("defXLinkPenStyle", penStyleToString (defXLinkPen.style() )) +
 		  xml.attribut("mapZoomFactor", QString().setNum(mapEditor->getZoomFactorTarget()) ) +
 		  xml.attribut("mapRotationAngle", QString().setNum(mapEditor->getAngleTarget()) ) +
 		  colhint; 

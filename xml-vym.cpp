@@ -454,6 +454,13 @@ bool parseVYMHandler::readMapAttr (const QXmlAttributes& a)
     }	
     if (!a.value( "defXLinkWidth").isEmpty() ) 
 	pen.setWidth(a.value("defXLinkWidth").toInt ());
+    if (!a.value( "defXLinkPenStyle").isEmpty() ) 
+    {	
+	bool ok;
+	Qt::PenStyle ps=penStyle (a.value("defXLinkPenStyle"),ok );
+	if (!ok) return false;
+	pen.setStyle (ps);
+    }
     model->setMapDefXLinkPen (pen);
 
     if (!a.value( "mapZoomFactor").isEmpty() ) 

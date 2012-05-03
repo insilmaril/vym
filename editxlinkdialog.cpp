@@ -36,11 +36,21 @@ void EditXLinkDialog::widthChanged( int  w)
     link->updateLink();
 }
 
-void EditXLinkDialog::setLink( Link * l)//FIXME-1 does not set initial linestyle, copied from link
+void EditXLinkDialog::setLink( Link * l)
 {
     link=l;
-    colorChanged (link->getPen().color() );
-    ui.widthBox->setValue(link->getPen().width());
+    QPen pen=link->getPen();
+    colorChanged (pen.color() );
+    ui.widthBox->setValue(pen.width() );
+    switch (pen.style() )
+    {
+//	case Qt::SolidLine: ui.lineStyleCombo->setCurrentIndex (0); break;
+	case Qt::DashLine: ui.lineStyleCombo->setCurrentIndex (1); break;
+	case Qt::DotLine: ui.lineStyleCombo->setCurrentIndex (2); break;
+	case Qt::DashDotLine: ui.lineStyleCombo->setCurrentIndex (3); break;
+	case Qt::DashDotDotLine: ui.lineStyleCombo->setCurrentIndex (4); break;
+	default: ui.lineStyleCombo->setCurrentIndex (0);
+    }
 }
 
 void EditXLinkDialog::colorButtonPressed()
