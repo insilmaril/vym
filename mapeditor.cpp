@@ -761,19 +761,6 @@ void MapEditor::autoLayout()
 
 TreeItem* MapEditor::findMapItem (QPointF p,TreeItem *exclude)
 {
-    // Search branches (and their childs, e.g. images
-    // Start with mapcenter, no images allowed at rootItem
-    int i=0;
-    BranchItem *bi=model->getRootItem()->getFirstBranch();
-    TreeItem *found=NULL;
-    while (bi)
-    {
-	found=bi->findMapItem (p, exclude);
-	if (found) return found;
-	i++;
-	bi=model->getRootItem()->getBranchNum(i);
-    }
-    
     // Search XLinks
     Link *link;
     for (int i=0; i<model->xlinkCount(); i++ )
@@ -787,6 +774,19 @@ TreeItem* MapEditor::findMapItem (QPointF p,TreeItem *exclude)
 	}
     }
 
+    // Search branches (and their childs, e.g. images
+    // Start with mapcenter, no images allowed at rootItem
+    int i=0;
+    BranchItem *bi=model->getRootItem()->getFirstBranch();
+    TreeItem *found=NULL;
+    while (bi)
+    {
+	found=bi->findMapItem (p, exclude);
+	if (found) return found;
+	i++;
+	bi=model->getRootItem()->getBranchNum(i);
+    }
+    
     return NULL;
 }
 
@@ -1150,7 +1150,7 @@ void MapEditor::keyReleaseEvent(QKeyEvent* e)
 	setCursor (Qt::ArrowCursor);
 }
 
-void MapEditor::mousePressEvent(QMouseEvent* e)	//FIXME-1 xlinks playing badly with scrolled branches //FIXME-1 Controlpoints often hidden "below" branches
+void MapEditor::mousePressEvent(QMouseEvent* e)	//FIXME-1 xlinks playing badly with scrolled branches 
 {
     // Debugging: Show position
     /*
