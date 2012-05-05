@@ -367,6 +367,9 @@ public:
 
 public:	
     bool createLink(Link *l, bool createMO=false);	    //!< Create XLink 
+    QColor getXLinkColor();
+    int getXLinkWidth();
+    Qt::PenStyle getXLinkPenStyle();
 
     AttributeItem* addAttribute();
     AttributeItem* addAttribute(BranchItem *dst, AttributeItem* );

@@ -504,9 +504,7 @@ TreeItem* BranchItem::findMapItem (QPointF p, TreeItem* excludeTI)
 
 void BranchItem::updateStyles(const bool &keepFrame)
 {
-    // FIXME-5 compare also MapItem::initLMO...
-    // FIXME-1 needed at all? see initLMO above and MI::appendChild...
-
+    // Update styles when relinking branches
     if (mo)
     { 
 	BranchObj *bo=getBranchObj();

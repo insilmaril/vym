@@ -461,11 +461,12 @@ void Main::setupAPI()
     c=new Command ("addSlide",Command::Branch);
     modelCommands.append(c);
 
-    c=new Command ("addXlink",Command::BranchLike);
-    c->addPar (Command::String,false, "Begin of XLink");
-    c->addPar (Command::String,false, "End of XLink");
-    c->addPar (Command::Int,true, "Width of XLink");
-    c->addPar (Command::Color,true, "Color of XLink");
+    c=new Command ("addXLink",Command::BranchLike);
+    c->addPar (Command::String, false, "Begin of XLink");
+    c->addPar (Command::String, false, "End of XLink");
+    c->addPar (Command::Int,    true, "Width of XLink");
+    c->addPar (Command::Color,  true, "Color of XLink");
+    c->addPar (Command::String, true, "Penstyle of XLink");
     modelCommands.append(c);
 
     c=new Command ("branchCount",Command::BranchLike);
@@ -563,6 +564,15 @@ void Main::setupAPI()
     c=new Command ("getVymLink",Command::Branch); 
     modelCommands.append(c);
 
+    c=new Command ("getXLinkColor",Command::XLinkItem);
+    modelCommands.append(c);
+
+    c=new Command ("getXLinkWidth",Command::XLinkItem);
+    modelCommands.append(c);
+
+    c=new Command ("getXLinkPenStyle",Command::XLinkItem);
+    modelCommands.append(c);
+
     c=new Command ("hasActiveFlag",Command::TreeItem);
     c->addPar (Command::String,false,"Name of flag");
     modelCommands.append(c);
@@ -636,7 +646,7 @@ void Main::setupAPI()
     c=new Command ("scroll",Command::Branch); 
     modelCommands.append(c);
 
-    c=new Command ("select",Command::Branch); 
+    c=new Command ("select",Command::Any); 
     c->addPar (Command::String,false,"Selection string");
     modelCommands.append(c);
 

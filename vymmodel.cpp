@@ -976,7 +976,6 @@ void VymModel::setChanged()
     mapChanged=true;
     mapDefault=false;
     mapUnsaved=true;
-    latestAddedItem=NULL;
     findReset();
 }
 
@@ -2371,6 +2370,7 @@ ImageItem* VymModel::createImage(BranchItem *dst)
 	// save scroll state. If scrolled, automatically select
 	// new branch in order to tmp unscroll parent...
 	newii->createMapObj();
+	latestAddedItem=newii;
 	reposition();
 	return newii;
     } 
@@ -2440,12 +2440,41 @@ bool VymModel::createLink(Link *link, bool createMO)
     xlinks.append (link);
     link->activate();
 
+    latestAddedItem=newli;
+
     if (createMO) 
     {
 	link->createMapObj();
 	reposition();
     }
     return true;
+}
+
+QColor VymModel::getXLinkColor()
+{
+    Link *l=getSelectedXLink();
+    if (l)
+	return l->getPen().color();
+    else
+	return QColor();
+}
+
+int VymModel::getXLinkWidth()
+{
+    Link *l=getSelectedXLink();
+    if (l)
+	return l->getPen().width();
+    else
+	return -1;
+}
+
+Qt::PenStyle VymModel::getXLinkPenStyle()
+{
+    Link *l=getSelectedXLink();
+    if (l)
+	return l->getPen().style();
+    else
+	return Qt::NoPen;
 }
 
 AttributeItem* VymModel::addAttribute()	    // FIXME-5 savestate missing
@@ -3626,10 +3655,22 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 		    }
 		    if (parser.parCount()>3)
 		    {
-			QColor col=parser.parColor (ok,2);
+			QColor col=parser.parColor (ok,3);
 			if (ok) pen.setColor (col);
 		    }
-		    li->setPen(pen);	//FIXME-1 penstyle missing in addXLink command
+		    if (parser.parCount()>4)
+		    {
+			QString st0=parser.parString (ok,4);
+			if (ok)
+			{
+			    Qt::PenStyle st1=penStyle (st0,ok);
+			    if (ok) 
+				pen.setStyle (st1);
+			    else	
+				parser.setError (Aborted, "Couldn't read penstyle");
+			}
+		    }
+		    if (ok) li->setPen(pen);	
 		}
 		else
 		    parser.setError (Aborted,"begin or end of xLink are not branch or mapcenter");
@@ -3763,6 +3804,18 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	} else if (com=="getVymLink")
 	{ 
 	    returnValue=selti->getVymLink();
+	/////////////////////////////////////////////////////////////////////
+	} else if (com=="getXLinkColor")
+	{ 
+	    returnValue=getXLinkColor().name();
+	/////////////////////////////////////////////////////////////////////
+	} else if (com=="getXLinkWidth")
+	{ 
+	    returnValue=getXLinkWidth();
+	/////////////////////////////////////////////////////////////////////
+	} else if (com=="getXLinkPenStyle")
+	{ 
+	    returnValue=penStyleToString( getXLinkPenStyle() );
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="hasActiveFlag")
 	{ 

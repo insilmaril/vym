@@ -410,6 +410,15 @@ vym.selectLastBranch
 expect "Paste from the past", vym.getHeading, "A"
 vym.delete
 
+#######################
+heading "XLinks:"
+init_map
+vym.addXLink("mc:0,bo:0","mc:0,bo:1",2,"#ff0000","Qt::DashDotLine")
+vym.selectLatestAdded
+expect "Color of XLink", vym.getXLinkColor, "#ff0000"
+expect "Width of XLink", vym.getXLinkWidth, 2
+expect "Style of XLink", vym.getXLinkPenStyle, "Qt::DashDotLine"
+vym.delete
 
 #######################
 heading "Bugfixes:"

@@ -151,6 +151,13 @@ bool Parser::checkParameters(TreeItem *selti)
 		{
 		    if (st==TreeItem::MapCenter ||
 			st==TreeItem::Branch ||
+			st==TreeItem::XLink ||
+			st==TreeItem::Image ) 
+			ok=true;
+		} else if ( ct==Command::BranchOrImage )
+		{
+		    if (st==TreeItem::MapCenter ||
+			st==TreeItem::Branch ||
 			st==TreeItem::Image ) 
 			ok=true;
 		} else if ( ct==Command::Branch || ct==Command::BranchLike)

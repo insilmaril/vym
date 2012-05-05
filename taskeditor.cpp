@@ -206,5 +206,5 @@ void TaskEditor::toggleFilterMap ()
 void TaskEditor::toggleFilterActive ()
 {
     setFilterActive();
-    filterActiveModel->invalidate();
+    filterActiveModel->invalidate();	//FIXME-1 needs also to be called for new tasks, otherwise sleeping ones are still visible!
 }
