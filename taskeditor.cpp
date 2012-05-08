@@ -195,7 +195,10 @@ void TaskEditor::contextMenuEvent ( QContextMenuEvent * e )
 
 void TaskEditor::sort()
 {
-    view->sortByColumn( 0, Qt::AscendingOrder );
+    QHeaderView *hv=view->horizontalHeader();
+    view->sortByColumn( hv->sortIndicatorSection(), hv->sortIndicatorOrder() );
+    filterActiveModel->invalidate();	
+
 }
 
 void TaskEditor::toggleFilterMap ()
@@ -206,5 +209,4 @@ void TaskEditor::toggleFilterMap ()
 void TaskEditor::toggleFilterActive ()
 {
     setFilterActive();
-    filterActiveModel->invalidate();	//FIXME-1 needs also to be called for new tasks, otherwise sleeping ones are still visible!
 }
