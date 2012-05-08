@@ -42,14 +42,15 @@ void XLinkObj::init ()
 
     QPen pen=link->getPen();
 
-    poly=scene()->addPolygon (QPolygonF(), pen, pen.color());	
-    poly->setZValue (dZ_XLINK);
 
     path=scene()->addPath (QPainterPath(), pen, Qt::NoBrush);	
     path->setZValue (dZ_XLINK);
 
-    // Control points for bezier path	
     pen.setStyle (Qt::SolidLine);
+    poly=scene()->addPolygon (QPolygonF(), pen, pen.color());	
+    poly->setZValue (dZ_XLINK);
+
+    // Control points for bezier path	
     qreal d=100;
     c0=QPointF (d,0);
     c1=QPointF (d,0);

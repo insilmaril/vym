@@ -1150,7 +1150,7 @@ void MapEditor::keyReleaseEvent(QKeyEvent* e)
 	setCursor (Qt::ArrowCursor);
 }
 
-void MapEditor::mousePressEvent(QMouseEvent* e)	//FIXME-1 xlinks playing badly with scrolled branches 
+void MapEditor::mousePressEvent(QMouseEvent* e)	
 {
     // Debugging: Show position
     /*

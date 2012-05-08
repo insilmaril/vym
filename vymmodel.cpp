@@ -5160,6 +5160,7 @@ void VymModel::updateSelection(QItemSelection newsel,QItemSelection dsel)
 {
     QModelIndex ix;
     MapItem *mi;
+    BranchItem *bi;
     bool do_reposition=false;
     foreach (ix, dsel.indexes() )
     {
@@ -5168,9 +5169,13 @@ void VymModel::updateSelection(QItemSelection newsel,QItemSelection dsel)
 	    do_reposition=do_reposition || ((BranchItem*)mi)->resetTmpUnscroll();
 	if (mi->getType()==TreeItem::XLink)
 	{
-	    XLinkObj *xlo=(XLinkObj*)(mi->getMO() );
+	    Link *li=((XLinkItem*)mi)->getLink();
+	    XLinkObj *xlo=li->getXLinkObj();
 	    if (xlo) 
 		xlo->setSelection (XLinkObj::Unselected);
+
+	    do_reposition=do_reposition || li->getBeginBranch()->resetTmpUnscroll();
+	    do_reposition=do_reposition || li->getEndBranch()->resetTmpUnscroll();
 	}
     }    
 
@@ -5179,7 +5184,7 @@ void VymModel::updateSelection(QItemSelection newsel,QItemSelection dsel)
 	mi = static_cast<MapItem*>(ix.internalPointer());
 	if (mi->isBranchLikeType() )
 	{
-	    BranchItem *bi=(BranchItem*)mi;
+	    bi=(BranchItem*)mi;
 	    if (bi->hasScrolledParent() )
 	    {
 		bi->tmpUnscroll();
@@ -5189,6 +5194,21 @@ void VymModel::updateSelection(QItemSelection newsel,QItemSelection dsel)
 	if (mi->getType()==TreeItem::XLink)
 	{
 	    ((XLinkItem*)mi)->setSelection();
+
+	    // begin/end branches need to be tmp unscrolled
+	    Link *li=((XLinkItem*)mi)->getLink();
+	    bi=li->getBeginBranch();
+	    if (bi->hasScrolledParent() )
+	    {
+		bi->tmpUnscroll();
+		do_reposition=true;
+	    }
+	    bi=li->getEndBranch();
+	    if (bi->hasScrolledParent() )
+	    {
+		bi->tmpUnscroll();
+		do_reposition=true;
+	    }
 	}
     }    
     if ( do_reposition ) reposition();
