@@ -131,6 +131,7 @@ bool TaskEditor::isUsedFilterActive()
 void TaskEditor::setFilterActive () 
 {
     filterActiveModel->setFilter (actionToggleFilterActive->isChecked() );   
+    sort();	
 }
 
 void TaskEditor::showSelection()
