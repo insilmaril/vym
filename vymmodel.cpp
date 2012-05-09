@@ -1079,7 +1079,7 @@ bool VymModel::isRedoAvailable()
     return false;
 }
 
-void VymModel::undo()	//FIXME-2 undo delete xlink to scrolled branch unscrolls branch
+void VymModel::undo()	//FIXME-1 undo delete xlink to scrolled branch unscrolls branch
 {
     // Can we undo at all?
     if (undosAvail<1) return;
@@ -1105,7 +1105,7 @@ void VymModel::undo()	//FIXME-2 undo delete xlink to scrolled branch unscrolls b
     // Find out current undo directory
     QString bakMapDir(QString(tmpMapDir+"/undo-%1").arg(curStep));
 
-    // select  object before undo
+    // select  object before undo   //FIXME-1 Unnecessary warning when undoing delete XLink
     if (!select (undoSelection))
     {
 	qWarning()<<"VymModel::undo()  Could not select object for undo of "<<comment;
@@ -1131,7 +1131,7 @@ void VymModel::undo()	//FIXME-2 undo delete xlink to scrolled branch unscrolls b
     bool noErr;
     QString errMsg;
     parseAtom (undoCommand,noErr,errMsg);
-    if (!noErr) //FIXME-2 need dialog box here
+    if (!noErr) //FIXME-3 need dialog box here
 	qWarning()<< "VM::undo aborted:\n"<<errMsg;
 
     undosAvail--;
@@ -4202,7 +4202,7 @@ QVariant VymModel::execute (const QString &script)
     while (parser.next() && noErr) 
     {
 	r=parseAtom(parser.getAtom(),noErr,errMsg);
-	if (!noErr) //FIXME-2 need dialog box here or in Script Editor?
+	if (!noErr) //FIXME-1 need dialog box here or in Script Editor?
 	    qWarning()<< QString("VM::runScript aborted: "+errMsg);
     }	
     return r;

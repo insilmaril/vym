@@ -159,7 +159,7 @@ void XLinkObj::updateXLink()
     if (visBranch)   
     {
 	// Only one of the linked branches is visible
-	// Draw arrowhead   //FIXME-2 missing shaft of arrow
+	// Draw arrowhead   //FIXME-1 missing shaft of arrow
 	BranchObj *bo=(BranchObj*)(visBranch->getLMO());
 	if (!bo) return;
 
@@ -362,7 +362,7 @@ int XLinkObj::ctrlPointInClickBox (const QPointF &p)
     return ret;
 }
 
-bool XLinkObj::isInClickBox (const QPointF &p)
+bool XLinkObj::isInClickBox (const QPointF &p)	//FIXME-1 for "hidden" xlink only consider arrow
 {
     CurrentSelection oldSel=curSelection;
     bool b=false;
