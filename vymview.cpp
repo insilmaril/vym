@@ -126,7 +126,7 @@ VymView::~VymView() {}
 
 void VymView::readSettings()
 {
-    if (settings.localValue(model->getFilePath(),"/slideeditor/visible","true").toBool() )
+    if (settings.localValue(model->getFilePath(),"/slideeditor/visible","false").toBool() )
 	slideEditorDE->show();
     else
 	slideEditorDE->hide();
