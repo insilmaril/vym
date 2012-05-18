@@ -2742,6 +2742,7 @@ void Main::fileNew()
 
     VymView *vv=new VymView (vm);
     vymViews.append (vv);
+
     tabWidget->addTab (vv,tr("unnamed","MainWindow: name for new and empty file"));
     tabWidget->setCurrentIndex (vymViews.count() );
     vv->initFocus();
@@ -2835,6 +2836,7 @@ File::ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode, const FileType
 	    vm=new VymModel;
 	    VymView *vv=new VymView (vm);
 	    vymViews.append (vv);
+
 	    tabWidget->addTab (vv,fn);
 	    tabIndex=tabWidget->count()-1;
 	    //tabWidget->setCurrentIndex (tabIndex);

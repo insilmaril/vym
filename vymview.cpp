@@ -9,11 +9,12 @@
 #include "treeeditor.h"
 
 extern Main *mainWindow;
-
+extern Settings settings;
 
 VymView::VymView(VymModel *m)
 {
     model=m;
+    model->setView (this);
 
     // Create TreeView
     treeEditor=new TreeEditor (model);
@@ -122,6 +123,18 @@ VymView::VymView(VymModel *m)
 }
 
 VymView::~VymView() {}
+
+void VymView::readSettings()
+{
+    if (settings.localValue(model->getFilePath(),"/slideeditor/visible","true").toBool() )
+	slideEditorDE->show();
+    else
+	slideEditorDE->hide();
+    if (settings.localValue(model->getFilePath(),"/treeeditor/visible","true").toBool() )
+	treeEditorDE->show();
+    else
+	treeEditorDE->hide();
+}
 
 VymModel* VymView::getModel()
 {
@@ -299,17 +312,28 @@ void VymView::showSelection()
 void VymView::toggleTreeEditor()
 {
     if (treeEditorDE->isVisible() )
+    {
 	treeEditorDE->hide();
-    else
+	settings.setLocalValue(model->getFilePath(),"/treeeditor/visible","false");
+    } else
+    {
 	treeEditorDE->show();
+	settings.setLocalValue(model->getFilePath(),"/treeeditor/visible","true");
+    }	
+    model->setChanged();
 }
 
 void VymView::toggleSlideEditor()
 {
     if (slideEditorDE->isVisible() )
+    {
 	slideEditorDE->hide();
-    else
+	settings.setLocalValue(model->getFilePath(),"/slideeditor/visible","false");
+    } else
+    {
 	slideEditorDE->show();
+	settings.setLocalValue(model->getFilePath(),"/slideeditor/visible","true");
+    }
 }
 
 

@@ -558,6 +558,8 @@ File::ErrorCode VymModel::loadMap (
 	mapEditor->setAngleTarget (rotationAngle);
     }
 
+    if (vymView) vymView->readSettings();
+
     qApp->processEvents();  // Update view (scene()->update() is not enough)
     return err;
 }
@@ -4664,6 +4666,11 @@ LinkableMapObj::Style VymModel::getMapLinkStyle ()
 uint VymModel::getModelID()
 {
     return modelID;
+}
+
+void VymModel::setView (VymView *vv)
+{
+    vymView=vv;
 }
 
 void VymModel::setMapDefLinkColor(QColor col)

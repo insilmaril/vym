@@ -18,6 +18,7 @@ class VymView:public QMainWindow
 public:
     VymView(VymModel *model);
     ~VymView();
+    void readSettings();
     VymModel* getModel();
     MapEditor* getMapEditor();
     bool treeEditorIsVisible();

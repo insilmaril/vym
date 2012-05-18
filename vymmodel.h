@@ -23,6 +23,7 @@ class SlideItem;
 class SlideModel;
 class Task;
 class XLinkItem;
+class VymView;
 
 class QGraphicsScene;
 
@@ -54,6 +55,11 @@ public:
     MapEditor* getMapEditor();		
     uint getModelID();			//! Return unique ID of model
 
+    void setView (VymView*);	    //! Set vymView for resizing editors after load
+private:
+    VymView *vymView;
+
+public:
     bool isRepositionBlocked();	    //!< While load or undo there is no need to update graphicsview
 
     void updateActions();	    //!< Update buttons in mainwindow
