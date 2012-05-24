@@ -26,7 +26,7 @@ ICON =icons/vym.icns
 
 HEADERS	+= \
     aboutdialog.h \
-    activetasksfiltermodel.h \
+    taskfiltermodel.h \
     adaptormodel.h \
     adaptorvym.h \
     animpoint.h \
@@ -111,7 +111,7 @@ HEADERS	+= \
 
 SOURCES	+= \
     aboutdialog.cpp \
-    activetasksfiltermodel.cpp \
+    taskfiltermodel.cpp \
     adaptormodel.cpp \
     adaptorvym.cpp \
     animpoint.cpp \

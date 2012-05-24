@@ -9,6 +9,7 @@
 class BranchItem;
 class QString;
 class TaskModel;
+class VymModel;
 
 class Task:public XMLObj {
 public:
@@ -43,6 +44,7 @@ public:
     QString getName();
     void setBranch (BranchItem *bi);
     BranchItem* getBranch();
+    QString getMapName();
     QString saveToDir();
 
 private:
@@ -51,6 +53,7 @@ private:
     Awake awake;
     int prio;
     BranchItem *branch;
+    QString mapName;
     QDateTime date_creation;
     QDateTime date_modified;
     QDate     date_sleep;

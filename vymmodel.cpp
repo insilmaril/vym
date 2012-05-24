@@ -1557,7 +1557,7 @@ QString VymModel::getSortFilter ()
     return sortFilter;
 }
 
-void VymModel::setHeading(const QString &s, BranchItem *bi) //FIXME-2 segfault: undo several times with open hist window, editHeading
+void VymModel::setHeading(const QString &s, BranchItem *bi) //FIXME-1 segfault: undo several times with open hist window, editHeading
                                                             //Warning: MapEditor::setState  switching directly from  4  to  3 Segmentation fault
 							    // Hm, not reproducible so far.
 

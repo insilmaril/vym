@@ -4,6 +4,7 @@
 
 #include "branchitem.h"
 #include "taskmodel.h"
+#include "vymmodel.h"
 
 
 Task::Task(TaskModel *tm)
@@ -188,6 +189,7 @@ int Task::getDaysSleep()
 void Task::setBranch (BranchItem *bi)
 {
     branch=bi;
+    mapName=bi->getModel()->getMapName();
 }
 
 BranchItem* Task::getBranch ()
@@ -205,6 +207,12 @@ QString Task::getName ()
 	return "UNDEFINED";
     }
 }
+
+QString Task::getMapName ()
+{
+    return mapName;
+}
+
 QString Task::saveToDir()
 {
     QString sleepAttr;

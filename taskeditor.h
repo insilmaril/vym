@@ -4,7 +4,7 @@
 #include <QWidget>
 #include <QTableView>
 
-#include "activetasksfiltermodel.h"
+#include "taskfiltermodel.h"
 
 class BranchItem;
 class QTableView;
@@ -38,9 +38,8 @@ private slots:
 
 private:
     QTableView *view;
-    QSortFilterProxyModel  *filterMapModel;
-    ActiveTasksFilterModel *filterActiveModel;
-    QString mapName;
+    TaskFilterModel *filterActiveModel;
+    QString currentMapName;
     QAction *actionToggleFilterMap;
     QAction *actionToggleFilterActive;
     bool blockExternalSelect;

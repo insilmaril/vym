@@ -68,18 +68,12 @@ TaskEditor::TaskEditor(QWidget *)
     view->verticalHeader()->hide();
     view->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
-    filterMapModel = new QSortFilterProxyModel(this);
-    filterMapModel->setSourceModel(taskModel);
-
-    filterActiveModel = new ActiveTasksFilterModel;
-    filterActiveModel->setSourceModel(filterMapModel);
+    filterActiveModel = new TaskFilterModel;
+    filterActiveModel->setSourceModel(taskModel);
 
     view->setModel (filterActiveModel);
-//    view->setModel (filterMapModel);
     view->setSortingEnabled(true);
     view->horizontalHeader()->setSortIndicator (0,Qt::AscendingOrder);
-
-    filterMapModel->sort( 0, Qt::AscendingOrder );
 
     blockExternalSelect=false;
 
@@ -103,8 +97,8 @@ TaskEditor::~TaskEditor()
 
 void TaskEditor::setMapName (const QString &n)
 {
-    mapName=n;
-    setFilterMap ();
+    currentMapName=n;
+    setFilterMap();
 }
 
 bool TaskEditor::isUsedFilterMap()
@@ -114,13 +108,11 @@ bool TaskEditor::isUsedFilterMap()
 
 void TaskEditor::setFilterMap () 
 {
-    if (actionToggleFilterMap->isChecked() )
-    {
-	filterMapModel->setFilterRegExp(QRegExp("^" + mapName + "$", Qt::CaseInsensitive));
-	filterMapModel->setFilterKeyColumn(5);
-    } else
-	filterMapModel->setFilterRegExp(QRegExp());
-    sort();	
+    if (isUsedFilterMap() )
+	filterActiveModel->setMapFilter(currentMapName);
+    else
+	filterActiveModel->setMapFilter(QString() );
+    sort();
 }
 
 bool TaskEditor::isUsedFilterActive()
@@ -147,13 +139,12 @@ bool TaskEditor::select (Task *task)
     if (task)
     {
 	blockExternalSelect=true;
-	QModelIndex i0b=filterMapModel->mapFromSource(taskModel->index (task) ); 
-	QModelIndex i0e=filterMapModel->mapFromSource(taskModel->indexRowEnd (task) ); 
+	QModelIndex i0b=taskModel->index (task); 
+	QModelIndex i0e=taskModel->indexRowEnd (task); 
 
 	QModelIndex i1b=filterActiveModel->mapFromSource(i0b ); 
 	QModelIndex i1e=filterActiveModel->mapFromSource(i0e ); 
 
-	//QItemSelection sel (i0b, i0e);
 	QItemSelection sel (i1b, i1e);
 
 	view->selectionModel()->select (sel, QItemSelectionModel::ClearAndSelect  );
@@ -169,8 +160,7 @@ void TaskEditor::selectionChanged ( const QItemSelection & selected, const QItem
     if (selected.indexes().isEmpty() ) return;
 
     QItemSelection sel0=filterActiveModel->mapSelectionToSource (selected);
-    QItemSelection sel1=filterMapModel->mapSelectionToSource (sel0);
-    QModelIndex ix=sel1.indexes().first();
+    QModelIndex ix=sel0.indexes().first();
     Task *t=taskModel->getTask (ix);
     if (t) 
     {
