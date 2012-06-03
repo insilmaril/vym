@@ -37,6 +37,8 @@ public:
     QPainterPath getClickPath();
 
 private:
+    enum StateVis {Hidden,Part,Full,FullShowControls};
+    StateVis stateVis;
     static int arrowSize;
     static int clickBorder;
     static int pointRadius;

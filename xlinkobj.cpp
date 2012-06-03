@@ -39,6 +39,7 @@ XLinkObj::~XLinkObj ()
 void XLinkObj::init () 
 {
     visBranch=NULL;
+    stateVis=Hidden;
 
     QPen pen=link->getPen();
 
@@ -92,8 +93,6 @@ QPointF XLinkObj::getAbsPos()
 
 void XLinkObj::move (QPointF p)
 {
-    BranchObj *beginBO;
-    BranchObj *endBO;
     switch (curSelection)
     {
 	case C0:
@@ -253,13 +252,10 @@ void XLinkObj::calcBBoxSize()
 void XLinkObj::setVisibility (bool b)
 {
     MapObj::setVisibility (b);
-    bool showControls=false;
     if (b)
     {
 	path->show();
-	if (curSelection != Unselected)
-	    showControls=true;
-	if (visBranch) 
+	if (stateVis==Part) 
 	{
 	    path->hide();
 	    poly->show();
@@ -273,7 +269,7 @@ void XLinkObj::setVisibility (bool b)
 	path->hide();
     }	
 
-    if (showControls)
+    if (stateVis==FullShowControls)
     {
 	ctrl_p0->show();
 	ctrl_p1->show();
@@ -302,12 +298,17 @@ void XLinkObj::setVisibility ()
 	if(beginBO->isVisibleObj() && endBO->isVisibleObj())
 	{   // Both ends are visible
 	    visBranch=NULL;
+	    if (curSelection != Unselected)
+		stateVis=FullShowControls;
+	    else	
+		stateVis=Full;
 	    setVisibility (true);
 	} else
 	{
 	    if(!beginBO->isVisibleObj() && !endBO->isVisibleObj())
 	    {	//None of the ends is visible
 		visBranch=NULL;
+		stateVis=Hidden;
 		setVisibility (false);
 	    } else
 	    {	// Just one end is visible, draw a symbol that shows
@@ -316,6 +317,7 @@ void XLinkObj::setVisibility ()
 		    visBranch=beginBI;
 		else
 		    visBranch=endBI;
+		stateVis=Part;
 		setVisibility (true);
 	    }
 	}
@@ -362,23 +364,33 @@ int XLinkObj::ctrlPointInClickBox (const QPointF &p)
     return ret;
 }
 
-bool XLinkObj::isInClickBox (const QPointF &p)	//FIXME-1 for "hidden" xlink only consider arrow
+bool XLinkObj::isInClickBox (const QPointF &p)
 {
+    // Return, if not visible at all...
+    if (stateVis==Hidden) return false;
+
     CurrentSelection oldSel=curSelection;
     bool b=false;
 
     QRectF r(p.x() - clickBorder, p.y() - clickBorder,
 	             clickBorder *2, clickBorder*2) ;
 
-    if (curSelection==C0 || curSelection==C1)
+    switch (stateVis)
     {
-	// If Cx selected, check both ctrl points 
-	if (ctrlPointInClickBox(p) >-1) b=true;
-    } 
-    {
-	// If not selected, check only path
-	curSelection=Path;
-	if (getClickPath().intersects (r) ) b=true;
+	case FullShowControls:
+	    // If Cx selected, check both ctrl points 
+	    if (ctrlPointInClickBox(p) >-1) b=true;
+	    break;
+	case Part:    
+	    // not selected, only partially visible
+	    if (poly->boundingRect().contains(p) ) 
+		b=true;
+	    break;
+	default:
+	    // not selected, but path is fully visible
+	    curSelection=Path;
+	    if (getClickPath().intersects (r) ) b=true;
+	    break;
     }
     curSelection=oldSel;
     return b;
