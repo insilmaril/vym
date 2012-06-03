@@ -16,6 +16,7 @@
 #include "mainwindow.h"
 #include "misc.h"
 #include "noteeditor.h"
+#include "options.h"
 #include "parser.h"
 #include "process.h"
 #include "slideitem.h"
@@ -40,6 +41,8 @@ extern QString tmpVymDir;
 extern NoteEditor *noteEditor;
 extern TaskEditor *taskEditor;
 extern FlagRow *standardFlagsMaster;
+
+extern Options options;
 
 extern QString clipboardDir;
 extern QString clipboardFile;
@@ -4208,8 +4211,12 @@ QVariant VymModel::execute (const QString &script)
     while (parser.next() && noErr) 
     {
 	r=parseAtom(parser.getAtom(),noErr,errMsg);
-	if (!noErr) //FIXME-1 need dialog box here or in Script Editor?
+	if (!noErr)
+	{
+	    if (!options.isOn("batch") )
+		QMessageBox::warning(0,tr("Warning"),tr("Script aborted:\n%1").arg(errMsg));
 	    qWarning()<< QString("VM::runScript aborted: "+errMsg);
+	}
     }	
     return r;
 }
