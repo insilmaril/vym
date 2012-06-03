@@ -1053,8 +1053,12 @@ void VymModel::redo()
     bool noErr;
     QString errMsg;
     parseAtom (redoCommand,noErr,errMsg);
-    if (!noErr) //FIXME-2 need dialog box here
+    if (!noErr) 
+    {
+	if (!options.isOn("batch") )
+	    QMessageBox::warning(0,tr("Warning"),tr("Redo failed:\n%1").arg(errMsg));
 	qWarning()<< "VM::redo aborted:\n"<<errMsg;
+    }
 
     blockSaveState=blockSaveStateOrg;
 
@@ -1084,7 +1088,7 @@ bool VymModel::isRedoAvailable()
     return false;
 }
 
-void VymModel::undo()	//FIXME-1 undo delete xlink to scrolled branch unscrolls branch
+void VymModel::undo()	
 {
     // Can we undo at all?
     if (undosAvail<1) return;
@@ -1110,7 +1114,7 @@ void VymModel::undo()	//FIXME-1 undo delete xlink to scrolled branch unscrolls b
     // Find out current undo directory
     QString bakMapDir(QString(tmpMapDir+"/undo-%1").arg(curStep));
 
-    // select  object before undo   //FIXME-1 Unnecessary warning when undoing delete XLink
+    // select  object before undo  
     if (!select (undoSelection))
     {
 	qWarning()<<"VymModel::undo()  Could not select object for undo of "<<comment;
@@ -1136,8 +1140,13 @@ void VymModel::undo()	//FIXME-1 undo delete xlink to scrolled branch unscrolls b
     bool noErr;
     QString errMsg;
     parseAtom (undoCommand,noErr,errMsg);
-    if (!noErr) //FIXME-3 need dialog box here
-	qWarning()<< "VM::undo aborted:\n"<<errMsg;
+    if (!noErr)
+    {
+	if (!options.isOn("batch") )
+	    QMessageBox::warning(0,tr("Warning"),tr("Undo failed:\n%1").arg(errMsg));
+	qWarning()<< "VM::undo failed:\n"<<errMsg;
+    }
+
 
     undosAvail--;
     curStep--; 
