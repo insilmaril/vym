@@ -527,6 +527,11 @@ void Main::setupAPI()
     c->addPar (Command::String,false,"Filename for export");
     modelCommands.append(c);
 
+    c=new Command ("exportImpress",Command::Any);
+    c->addPar (Command::String,false,"Filename for export");
+    c->addPar (Command::String,false,"Configuration file for export");
+    modelCommands.append(c);
+
     c=new Command ("exportPDF",Command::Any);
     c->addPar (Command::String,false,"Filename for export");
     modelCommands.append(c);
@@ -885,7 +890,7 @@ void Main::setupFileActions()
 
     a = new QAction( "Open Office...", this);
     switchboard.addConnection(fileExportMenu, a,tr("File","Shortcut group"));
-    connect( a, SIGNAL( triggered() ), this, SLOT( fileExportOOPresentation() ) );
+    connect( a, SIGNAL( triggered() ), this, SLOT( fileExportImpress() ) );
 
     a = new QAction(  "Webpage (HTML)...",this );
     switchboard.addConnection(fileExportMenu, a,tr("File","Shortcut group"));
@@ -3370,7 +3375,7 @@ void Main::fileExportTaskjuggler()  //FIXME-3 not scriptable yet
     }	
 }
 
-void Main::fileExportOOPresentation()	//FIXME-3 not scriptable yet
+void Main::fileExportImpress()	
 {
     ExportOOFileDialog fd;
     // TODO add preview in dialog
@@ -3389,7 +3394,7 @@ void Main::fileExportOOPresentation()	//FIXME-3 not scriptable yet
 
 		//lastImageDir=fn.left(fn.findRev ("/"));
 		VymModel *m=currentModel();
-		if (m) m->exportOOPresentation(fn,fd.selectedConfig());	
+		if (m) m->exportImpress (fn,fd.selectedConfig());	
 	    }
 	}
     } else
@@ -4740,7 +4745,7 @@ void Main::updateNoteFlag()
     if (m) m->updateNoteFlag();
 }
 
-void Main::updateNoteEditor(QModelIndex index ) //FIXME-2 maye change to TreeItem as parameter?
+void Main::updateNoteEditor(QModelIndex index ) //FIXME-4 maybe change to TreeItem as parameter?
 {
     if (index.isValid() )
     {
@@ -4891,8 +4896,8 @@ void Main::updateActions()
 
 
 	// Export last
-	QString s, t, u;
-	if (m && m->exportLastAvailable(s,t,u) )
+	QString s, t, u, v;
+	if (m && m->exportLastAvailable(s,t,u, v) )
 	    actionFileExportLast->setEnabled (true);
 	else
 	{

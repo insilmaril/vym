@@ -1110,6 +1110,13 @@ void ExportOO::exportPresentation()
 
     // zip tmpdir to destination
     zipDir (tmpDir,outputFile);	
+
+    QString cmd="exportImpres";
+    settings.setLocalValue (model->getFilePath(),"/export/last/exportPath",outputFile);
+    settings.setLocalValue ( model->getFilePath(), "/export/last/command","exportImpress");
+    settings.setLocalValue ( model->getFilePath(), "/export/last/configFile",configFile);
+    settings.setLocalValue ( model->getFilePath(), "/export/last/description","OpenOffice.org Impress");
+    mainWindow->statusMessage(cmd + ": " + outputFile);
 }
 
 bool ExportOO::setConfigFile (const QString &cf)

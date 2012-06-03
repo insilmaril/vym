@@ -23,7 +23,7 @@ public:
     virtual void setRotation (qreal const &a);
     virtual qreal getRotation();
 private:
-    qreal angle;    // FIXME-2 maybe to mapobj...
+    qreal angle;    
 
 public:    
     virtual void setText(QString);

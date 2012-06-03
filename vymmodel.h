@@ -530,10 +530,14 @@ public:
     void exportHTML(const QString& dir="", bool useDialog=true);    
 
     /*! Export as OpenOfficeOrg presentation */
-    void exportOOPresentation(const QString &,const QString &);	
+    void exportImpress (const QString &,const QString &);	
 
     /*! Returns if Export in recently used format is possible*/
-    bool exportLastAvailable(QString &description, QString &command, QString &path);
+    bool exportLastAvailable(
+	QString &description, 
+	QString &command, 
+	QString &configFile,
+	QString &path);
 
     /*! Export in recently used format (saved in map)*/
     void exportLast();

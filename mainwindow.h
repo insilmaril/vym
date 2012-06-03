@@ -120,7 +120,7 @@ private slots:
     void fileExportKDE3Bookmarks();
     void fileExportKDE4Bookmarks();
     void fileExportTaskjuggler();
-    void fileExportOOPresentation();
+    void fileExportImpress();
     void fileExportLast();
     bool fileCloseMap();
     void filePrint();

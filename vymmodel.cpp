@@ -1557,10 +1557,7 @@ QString VymModel::getSortFilter ()
     return sortFilter;
 }
 
-void VymModel::setHeading(const QString &s, BranchItem *bi) //FIXME-1 segfault: undo several times with open hist window, editHeading
-                                                            //Warning: MapEditor::setState  switching directly from  4  to  3 Segmentation fault
-							    // Hm, not reproducible so far.
-
+void VymModel::setHeading(const QString &s, BranchItem *bi)
 {
     if (!bi) bi=getSelectedBranch();
     if (bi)
@@ -3756,6 +3753,12 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 		format=parser.parString(ok,1);
 	    exportImage (fname,false,format);
 	/////////////////////////////////////////////////////////////////////
+	} else if (com=="exportImpress")
+	{
+	    QString fn=parser.parString(ok,0); 
+	    QString cf=parser.parString(ok,1); 
+	    exportImpress (fn,cf);
+	/////////////////////////////////////////////////////////////////////
 	} else if (com=="exportLaTeX")
 	{
 	    QString fname=parser.parString(ok,0); 
@@ -4474,7 +4477,7 @@ void VymModel::exportHTML (const QString &dir, bool useDialog)
     setExportMode(false);
 }
 
-void VymModel::exportOOPresentation(const QString &fn, const QString &cf) //FIXME-2 No exportLast and command yet
+void VymModel::exportImpress(const QString &fn, const QString &cf) 
 {
     ExportOO ex;
     ex.setFile (fn);
@@ -4487,11 +4490,12 @@ void VymModel::exportOOPresentation(const QString &fn, const QString &cf) //FIXM
     }
 }
 
-bool VymModel::exportLastAvailable(QString &description, QString &command, QString &path)
+bool VymModel::exportLastAvailable(QString &description, QString &command, QString &path, QString &configFile)
 {
     command=settings.localValue(filePath,"/export/last/command","").toString();
     description=settings.localValue(filePath,"/export/last/description","").toString();
     path=settings.localValue(filePath,"/export/last/exportPath","").toString();
+    configFile=settings.localValue(filePath,"/export/last/configFile","").toString();
     if (!command.isEmpty() && command.startsWith("export") && !path.isEmpty())
 	return true;
     else
@@ -4500,12 +4504,14 @@ bool VymModel::exportLastAvailable(QString &description, QString &command, QStri
 
 void VymModel::exportLast()
 {
-    QString path;
-    QString command;
-    QString desc;
-    QString s;
-    if (exportLastAvailable(desc,command,path) )
-	execute (QString ("%1 (\"%2\")").arg(command).arg(path) );
+    QString desc, command, path, configFile;
+    if (exportLastAvailable(desc, command, path, configFile) )
+    {
+	if (configFile.isEmpty() )
+	    execute (QString ("%1 (\"%2\")").arg(command).arg(path) );
+	else    
+	    execute (QString ("%1 (\"%2\",\"%3\")").arg(command).arg(path).arg(configFile) );
+    }	    
 }
 
 void VymModel::exportLaTeX (const QString &fname,bool askName)

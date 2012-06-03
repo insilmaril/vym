@@ -390,7 +390,7 @@ void Parser::execute()
     current=0;
 }   
 
-bool Parser::next() //FIXME-2 parser does not detect missing closing " or '("foo" ()'
+bool Parser::next() //FIXME-3 parser does not detect missing closing " or '("foo" ()'
 {
     int start=current;
     if (current<0) execute();
