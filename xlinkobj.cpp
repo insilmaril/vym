@@ -11,7 +11,7 @@
 // XLinkObj
 /////////////////////////////////////////////////////////////////
 
-int XLinkObj::arrowSize=10;		    // make instances
+int XLinkObj::arrowSize=6;		    // make instances
 int XLinkObj::clickBorder=8;
 int XLinkObj::pointRadius=10;
 
@@ -165,20 +165,27 @@ void XLinkObj::updateXLink()
 	a=b=bo->getChildPos();
 	if (bo->getOrientation()==LinkableMapObj::RightOfCenter)
 	{
-	    b.setX (b.x()+25);
-	    
+	    b.setX (b.x() + 2*arrowSize);
 	    pa.clear();
-	    pa<< QPointF(b.x(),b.y())<<
-		QPointF(b.x() - arrowSize,b.y() - arrowSize)<<
-		QPointF(b.x() - arrowSize,b.y() + arrowSize);
+	    pa << a <<
+	          b <<
+		  QPointF (b.x(), b.y() - arrowSize) <<
+                  QPointF (b.x() + arrowSize, b.y()) <<
+		  QPointF (b.x(), b.y() + arrowSize) <<
+		  b <<
+		  a;
 	    poly->setPolygon(pa);
 	} else
 	{
-	    b.setX (b.x()-25);
+	    b.setX (b.x() - 2*arrowSize);
 	    pa.clear();
-	    pa<< QPointF(b.x(),b.y())<<
-		QPointF(b.x() + arrowSize,b.y() - arrowSize)<<
-		QPointF(b.x() + arrowSize,b.y() + arrowSize);
+	    pa << a <<
+	          b <<
+		  QPointF (b.x(), b.y() - arrowSize) <<
+                  QPointF (b.x() - arrowSize, b.y()) <<
+		  QPointF (b.x(), b.y() + arrowSize) <<
+		  b <<
+		  a;
 	    poly->setPolygon (pa);
 	}   
     } else
