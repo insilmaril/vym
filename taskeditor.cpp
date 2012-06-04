@@ -87,12 +87,23 @@ TaskEditor::TaskEditor(QWidget *)
     // Initialize view filters according to previous settings
     setFilterMap();
     setFilterActive();
+
+    // Initialize column widths
+    QString s;
+    for (int i=0; i<7; i++)
+    {
+	s=QString("/taskeditor/columnWidth/%1").arg(i);
+	if (settings.contains (s) )
+	    view->setColumnWidth (i, settings.value(s, 100).toInt() );
+    }
 }
 
 TaskEditor::~TaskEditor()
 {
     settings.setValue ("/taskeditor/filterMap",actionToggleFilterMap->isChecked());
     settings.setValue ("/taskeditor/filterActive",actionToggleFilterActive->isChecked());
+    for (int i=0; i<7; i++)
+	settings.setValue (QString("/taskeditor/columnWidth/%1").arg(i),view->columnWidth(i) );
 }
 
 void TaskEditor::setMapName (const QString &n)
