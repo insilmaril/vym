@@ -39,7 +39,6 @@ TextEditor::TextEditor()    // FIXME-2 where are fonts set, e.g. fixedfont??
     connect(e, SIGNAL(currentCharFormatChanged(const QTextCharFormat &)),
             this, SLOT(formatChanged(const QTextCharFormat &)));
 
-
     // Don't show menubar per default
     menuBar()->hide();
 
@@ -55,11 +54,38 @@ TextEditor::TextEditor()    // FIXME-2 where are fonts set, e.g. fixedfont??
 
     // Load Settings
     filenameHint="";
+    fixedFont.fromString (settings.value(
+	"/satellite/texteditor/fonts/fixedFont",
+	"Courier,10,-1,5,48,0,0,0,1,0").toString() 
+    );
+    varFont.fromString( settings.value
+	("/satellite/texteditor/fonts/varFont",
+	"DejaVu Sans Mono [unknown],14,-1,0,50,0,0,0,0,0").toString() 
+    );
+    QString s=settings.value ("/satellite/texteditor/fonts/fonthintDefault","variable").toString();
+    if (s == "fixed")
+    {	
+	actionSettingsFonthintDefault->setChecked (true);
+	e->setCurrentFont (fixedFont);
+    } else  
+    {
+	actionSettingsFonthintDefault->setChecked (false);
+	e->setCurrentFont (varFont);
+    }	
+
 }
 
 
 TextEditor::~TextEditor()
 {
+    QString s;
+    if (actionSettingsFonthintDefault->isChecked() )
+	s="fixed";
+    else    
+	s="variable";
+    settings.setValue( "/satellite/texteditor/fonts/fonthintDefault",s );
+    settings.setValue("/satellite/texteditor/fonts/varFont", varFont.toString() );
+    settings.setValue("/satellite/texteditor/fonts/fixedFont", fixedFont.toString() );
 }
 
 void TextEditor::reset()
@@ -702,7 +728,6 @@ void TextEditor::textEditUndo()
 
 void TextEditor::toggleFonthint()
 {
-    qDebug()<<"toggleFonthint";
     setUpdatesEnabled (false);
     e->selectAll ();
     if (!actionFormatUseFixedFont->isChecked() ) 
