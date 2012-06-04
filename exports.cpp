@@ -599,7 +599,7 @@ QString ExportHTML::getBranchText(BranchItem *current)
 		n=current->getNote();
 		QRegExp re("<p.*>");
 		re.setMinimal (true);
-		n.replace(re,"<p class=\"vym-note-paragraph\"");
+		n.replace(re,"<p class=\"vym-note-paragraph\">");
 	    }
 	    else
 	    {
