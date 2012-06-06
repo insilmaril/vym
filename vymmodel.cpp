@@ -1,5 +1,6 @@
 #include <QApplication>
 #include <QSvgGenerator>
+#include <unistd.h>
 
 #include "vymmodel.h"
 
