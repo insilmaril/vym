@@ -150,7 +150,7 @@ QString NoteObj::getNoteOpenDoc()
     return r;
 }
 
-bool NoteObj::isRichText()
+bool NoteObj::isRichText() const
 {
     return Qt::mightBeRichText(note);
 }

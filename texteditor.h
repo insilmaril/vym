@@ -13,10 +13,12 @@ public:
     TextEditor();
     ~TextEditor();
 
+    void init(const QString &ename);
     void reset();
     bool isEmpty();
     void setShowWithMain (bool);
     bool showWithMain ();
+    void setFont (const QFont &);
     void setFontHint(const QString&);
     QString getFontHint();
     QString getFontHintDefault();
@@ -79,6 +81,7 @@ private slots:
     void setState (EditorState);
 
 protected:
+    QString editorName;	    // "note" or "heading" editor, used for settings
     QTextEdit *e;
     QPoint lastPos;	    // save last position of window
     QString filename;

@@ -24,7 +24,7 @@ public:
     QString getNoteASCII();
     QString getNoteASCII(QString igdent, const int &width=0);
     QString getNoteOpenDoc();
-    bool isRichText();
+    bool isRichText() const;
     void setFontHint (const QString&);
     QString getFontHint () const;
     void setFilenameHint (const QString&);

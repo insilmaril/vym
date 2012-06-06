@@ -21,7 +21,7 @@ extern bool debug;
 ///////////////////////////////////////////////////////////////////////
 
 
-TextEditor::TextEditor()    // FIXME-2 where are fonts set, e.g. fixedfont??
+TextEditor::TextEditor()  
 {
     statusBar()->hide();    // Hide sizeGrip on default, which comes with statusBar
 
@@ -52,17 +52,47 @@ TextEditor::TextEditor()    // FIXME-2 where are fonts set, e.g. fixedfont??
     blockChangedSignal=false;
     setInactive();
 
-    // Load Settings
+}
+
+
+TextEditor::~TextEditor()
+{
+    // Save Settings
+    QString n=QString("/satellite/%1/").arg(editorName);
+    restoreState (settings.value(n+"/state",0).toByteArray());
+    settings.setValue(n+"geometry/size", size() );
+    settings.setValue(n+"geometry/pos", pos() );
+    settings.setValue(n+"state",saveState(0));
+    settings.setValue(n+"showWithMain",showwithmain);
+
+    QString s;
+    if (actionSettingsFonthintDefault->isChecked() )
+	s="fixed";
+    else    
+	s="variable";
+    settings.setValue(n+"fonts/fonthintDefault",s );
+    settings.setValue(n+"fonts/varFont", varFont.toString() );
+    settings.setValue(n+"fonts/fixedFont", fixedFont.toString() );
+}
+
+void TextEditor::init (const QString &ename)
+{   
+    editorName=ename;
+    QString n=QString("/satellite/%1/").arg(editorName);
+    restoreState (settings.value(n+"state",0).toByteArray());
+    resize (settings.value (n+"geometry/size", QSize(450,600)).toSize());
+    move   (settings.value (n+"geometry/pos", QPoint (250,50)).toPoint());
+    
+    setShowWithMain (settings.value (n+"showWithMain",true).toBool());
+
     filenameHint="";
     fixedFont.fromString (settings.value(
-	"/satellite/texteditor/fonts/fixedFont",
-	"Courier,10,-1,5,48,0,0,0,1,0").toString() 
+	n+"fonts/fixedFont", "Courier,12,-1,5,48,0,0,0,1,0").toString() 
     );
-    varFont.fromString( settings.value
-	("/satellite/texteditor/fonts/varFont",
-	"DejaVu Sans Mono [unknown],14,-1,0,50,0,0,0,0,0").toString() 
+    varFont.fromString( settings.value(
+	n+"fonts/varFont", "DejaVu Sans Mono,12,-1,0,50,0,0,0,0,0").toString() 
     );
-    QString s=settings.value ("/satellite/texteditor/fonts/fonthintDefault","variable").toString();
+    QString s=settings.value (n+"fonts/fonthintDefault","variable").toString();
     if (s == "fixed")
     {	
 	actionSettingsFonthintDefault->setChecked (true);
@@ -72,20 +102,6 @@ TextEditor::TextEditor()    // FIXME-2 where are fonts set, e.g. fixedfont??
 	actionSettingsFonthintDefault->setChecked (false);
 	e->setCurrentFont (varFont);
     }	
-
-}
-
-
-TextEditor::~TextEditor()
-{
-    QString s;
-    if (actionSettingsFonthintDefault->isChecked() )
-	s="fixed";
-    else    
-	s="variable";
-    settings.setValue( "/satellite/texteditor/fonts/fonthintDefault",s );
-    settings.setValue("/satellite/texteditor/fonts/varFont", varFont.toString() );
-    settings.setValue("/satellite/texteditor/fonts/fixedFont", fixedFont.toString() );
 }
 
 void TextEditor::reset()
@@ -111,15 +127,33 @@ bool TextEditor::showWithMain()
     return showwithmain;
 }
 
+void TextEditor::setFont (const QFont &font)
+{
+    QTextCursor tc=e->textCursor();
+    QTextCharFormat format=tc.charFormat();
+
+    tc.select(QTextCursor::Document);
+    format.setFont (font);
+    tc.setCharFormat (format);
+    tc.clearSelection();
+    fontChanged(fixedFont);
+}
 
 void TextEditor::setFontHint (const QString &fh)
 {
     if (fh=="fixed")
+    {
 	actionFormatUseFixedFont->setChecked (true);
+	e->setCurrentFont (fixedFont);
+	setFont (fixedFont);
+    }	
     else
+    {
 	actionFormatUseFixedFont->setChecked (false);
+	e->setCurrentFont (varFont);
+	setFont (varFont);
+    }	
 }
-
 
 QString TextEditor::getFontHint()
 {
@@ -533,7 +567,7 @@ void TextEditor::textLoad()
 void TextEditor::closeEvent( QCloseEvent* ce )
 {
     ce->accept();   // TextEditor can be reopened with show()
-    showwithmain=false;
+    showwithmain=false;	//FIXME-3 needed?
     hide();
     emit (windowClosed() );
     return;
@@ -728,30 +762,29 @@ void TextEditor::textEditUndo()
 
 void TextEditor::toggleFonthint()
 {
-    setUpdatesEnabled (false);
-    e->selectAll ();
     if (!actionFormatUseFixedFont->isChecked() ) 
+    {
 	e->setCurrentFont (varFont);
+	setFont (varFont);
+    }	
     else    
+    {
 	e->setCurrentFont (fixedFont);
-    e->selectAll ();
-    setUpdatesEnabled (true);
-    repaint();
+	setFont (fixedFont);
+    }	
 }
 
 void TextEditor::toggleRichText()
 {
-    //setUpdatesEnabled (false);
     if (!actionFormatRichText->isChecked() ) 
     {
-	//qDebug()<<"TE::setPlain";
 	e->setPlainText (e->toPlainText());
+	actionFormatUseFixedFont->setEnabled(true);
     }
     else    
     {
-	//qDebug()<<"TE::setHTML";
-	//qDebug()<<e->toHtml();
 	e->setHtml (e->toHtml());
+	actionFormatUseFixedFont->setEnabled(false);
     }
     updateActions();	
 }
@@ -759,21 +792,15 @@ void TextEditor::toggleRichText()
 void TextEditor::setFixedFont()
 {
     bool ok;
-    QFont font =QFontDialog::getFont(
-                    &ok, fixedFont, this );
-    if ( ok ) 
-        // font is set to the font the user selected
-	fixedFont=font;
+    QFont font =QFontDialog::getFont( &ok, fixedFont, this );
+    if ( ok ) fixedFont=font;
 }
 
 void TextEditor::setVarFont()
 {
     bool ok;
-    QFont font =QFontDialog::getFont(
-                    &ok, varFont, this );
-    if ( ok ) 
-        // font is set to the font the user selected
-	varFont=font;
+    QFont font =QFontDialog::getFont( &ok, varFont, this );
+    if ( ok ) varFont=font;
 }
 
 void TextEditor::textBold()
@@ -866,6 +893,7 @@ void TextEditor::colorChanged( const QColor &c )
 
 void TextEditor::formatChanged( const QTextCharFormat &f )
 {
+    if (!actionFormatRichText->isChecked() ) return;
     fontChanged(f.font());
     colorChanged(f.foreground().color());
     alignmentChanged(e->alignment());
@@ -951,10 +979,9 @@ void TextEditor::updateActions()
 	actionAlignCenter->setEnabled(true);
 	actionAlignRight->setEnabled(true);
 	actionAlignJustify->setEnabled(true);
+	actionFormatUseFixedFont->setEnabled(false);
     }
 }
-
-
 
 void TextEditor::setState (EditorState s)
 {
