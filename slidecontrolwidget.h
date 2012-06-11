@@ -20,11 +20,13 @@ public slots:
     void upPressed();
     void downPressed();
     void deletePressed();
+    void editPressed();
 
 signals:
     void hideFindWidget();
     void takeSnapshot();
     void deleteButtonPressed();
+    void editButtonPressed();
     void previousButtonPressed();
     void nextButtonPressed();
     void upButtonPressed();
@@ -33,6 +35,7 @@ signals:
 protected:
     QPushButton *previousButton;
     QPushButton *snapshotButton;
+    QPushButton *editButton;
     QPushButton *deleteButton;
     QPushButton *nextButton;
     QPushButton *upButton;

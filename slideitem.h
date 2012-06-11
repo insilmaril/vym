@@ -35,6 +35,10 @@ public:
     QString getName ();
     void setTreeItem (TreeItem *ti);
     int getTreeItemID();
+    void setInScript (const QString &);
+    QString getInScript ();
+    void setOutScript (const QString &);
+    QString getOutScript ();
     void setZoomFactor(const qreal &);
     qreal getZoomFactor ();
     void setRotationAngle(const qreal &);
@@ -50,6 +54,9 @@ private:
     QList<SlideItem*> childItems;
     QVector<QVariant> itemData;
     SlideItem *parentItem;
+
+    QString inScript;
+    QString outScript;
 
     int treeItemID;
     qreal zoomFactor;

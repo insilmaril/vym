@@ -4113,6 +4113,16 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	    if (!setMapLinkStyle(s) )
 		parser.setError (Aborted,"Unknown link style");
 	/////////////////////////////////////////////////////////////////////
+	} else if (com=="setMapRotation")
+	{
+	    x=parser.parDouble (ok,0);
+	    setMapRotationAngle(x);
+	/////////////////////////////////////////////////////////////////////
+	} else if (com=="setMapZoom")
+	{
+	    x=parser.parDouble (ok,0);
+	    setMapZoomFactor(x);
+	/////////////////////////////////////////////////////////////////////
 	} else if (com=="setNote")
 	{
 	    s=parser.parString (ok,0);
@@ -5727,6 +5737,9 @@ SlideItem* VymModel::addSlide()
 	si->setZoomFactor   (getMapEditor()->getZoomFactorTarget() );
 	si->setRotationAngle (getMapEditor()->getAngleTarget() );
 	slideModel->setData ( slideModel->index(si), getHeading() );
+
+	// FIXME-2 switch to script based slide initialization (inscript)
+
     }
     QString s="<vymmap>" + si->saveToDir() + "</vymmap>";
     int pos=si->childNumber();

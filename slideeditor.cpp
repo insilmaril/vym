@@ -29,6 +29,9 @@ SlideEditor::SlideEditor(VymModel *m)
 	slideControl, SIGNAL (takeSnapshot() ), 
 	this, SLOT (addSlide() ) );
     connect (
+	slideControl, SIGNAL (editButtonPressed() ), 
+	this, SLOT (editSlide() ) );
+    connect (
 	slideControl, SIGNAL (deleteButtonPressed() ), 
 	this, SLOT (deleteSlide() ) );
     connect (
@@ -79,6 +82,12 @@ void SlideEditor::nextSlide()
 void SlideEditor::addSlide()
 {
     vymModel->addSlide();
+}
+
+void SlideEditor::editSlide() //FIXME-2
+{
+    SlideItem *si=slideModel->getSelectedItem();
+    qDebug()<<"SE::editSlide\n"<<si->getInScript();
 }
 
 void SlideEditor::deleteSlide() 

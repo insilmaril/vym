@@ -46,7 +46,7 @@ void NoteObj::setNote (const QString &s)
 
 void NoteObj::setNoteMasked (const QString &s) 
 {
-    note=dequotemeta(s);
+    note=unquotemeta(s);
 }
 
 QString NoteObj::getNote() const

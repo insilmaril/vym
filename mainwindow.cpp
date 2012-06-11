@@ -736,6 +736,14 @@ void Main::setupAPI()
     c->addPar (Command::String,false,"Link style in map");
     modelCommands.append(c);
 
+    c=new Command ("setMapRotation",Command::Any); 
+    c->addPar (Command::Double,false,"Rotation of map");
+    modelCommands.append(c);
+
+    c=new Command ("setMapZoom",Command::Any); 
+    c->addPar (Command::Double,false,"Zoomfactor of map");
+    modelCommands.append(c);
+
     c=new Command ("setNote",Command::Branch); 
     c->addPar (Command::String,false,"Note of branch");
     modelCommands.append(c);
@@ -2655,11 +2663,13 @@ void Main::setupToolbars()
 
 void Main::hideEvent (QHideEvent * )
 {
+    qDebug()<<"Main::hideEvent";
     if (!noteEditor->isMinimized() ) noteEditor->hide();
 }
 
 void Main::showEvent (QShowEvent * )
 {
+    qDebug()<<"Main::showEvent";
     if (actionViewToggleNoteEditor->isChecked()) noteEditor->showNormal();
 }
 

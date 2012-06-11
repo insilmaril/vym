@@ -20,6 +20,7 @@ public slots:
     void previousSlide();
     void nextSlide();
     void addSlide();
+    void editSlide();
     void deleteSlide();
     void moveSlideUp();
     void moveSlideDown();

@@ -815,6 +815,7 @@ bool parseVYMHandler::readSettingAttr (const QXmlAttributes& a)
 
 bool parseVYMHandler::readSlideAttr (const QXmlAttributes& a)
 {
+    QStringList scriptlines;	//FIXME-2 needed for switching to inScript
     if (!lastSlide) return false;
     {
 	if (!a.value( "name").isEmpty() ) 
@@ -825,6 +826,7 @@ bool parseVYMHandler::readSlideAttr (const QXmlAttributes& a)
 	    qreal z=a.value ("zoom").toDouble(&ok);
 	    if (!ok) return false;
 	    lastSlide->setZoomFactor (z);
+	    scriptlines.append( QString("setMapZoom(%1)").arg(z) );
 	}
 	if (!a.value( "rotation").isEmpty() ) 
 	{
@@ -832,6 +834,7 @@ bool parseVYMHandler::readSlideAttr (const QXmlAttributes& a)
 	    qreal z=a.value ("rotation").toDouble(&ok);
 	    if (!ok) return false;
 	    lastSlide->setRotationAngle (z);
+	    scriptlines.append( QString("setMapRotation(%1)").arg(z) );
 	}
 	if (!a.value( "duration").isEmpty() ) 
 	{
@@ -839,6 +842,7 @@ bool parseVYMHandler::readSlideAttr (const QXmlAttributes& a)
 	    int d=a.value ("duration").toInt(&ok);
 	    if (!ok) return false;
 	    lastSlide->setDuration (d);
+	    //FIXME-2 missing slide duration
 	}
 	if (!a.value( "curve").isEmpty() ) 
 	{
@@ -850,12 +854,24 @@ bool parseVYMHandler::readSlideAttr (const QXmlAttributes& a)
 	    QEasingCurve c;
 	    c.setType ( (QEasingCurve::Type) i);
 	    lastSlide->setEasingCurve (c);
+	    //FIXME-2 missing slide curve
 	}
 	if (!a.value( "mapitem").isEmpty() ) 
 	{
 	    TreeItem *ti=model->findBySelectString ( a.value( "mapitem") );
 	    if (!ti) return false;
 	    lastSlide->setTreeItem (ti);
+	    scriptlines.prepend( QString("select(\"%1\")").arg(a.value("mapitem")) );
+	}
+	if (!a.value( "inScript").isEmpty() ) 
+	{
+	    lastSlide->setInScript( unquotemeta( a.value( "inScript") ) );
+	} else
+	    lastSlide->setInScript( unquotemeta( scriptlines.join(";\n") ) );
+
+	if (!a.value( "outScript").isEmpty() ) 
+	{
+	    lastSlide->setOutScript( unquotemeta( a.value( "outScript") ) );
 	}
     }
     return true;

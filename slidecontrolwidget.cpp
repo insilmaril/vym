@@ -36,8 +36,14 @@ SlideControlWidget::SlideControlWidget(QWidget *)
     connect ( downButton, SIGNAL( clicked() ), this, SLOT( downPressed() ) );
 
     snapshotButton = new QPushButton;
-    snapshotButton->setIcon (QPixmap ( iconPath + "sliderecord.png" ));
+    //snapshotButton->setIcon (QPixmap ( iconPath + "sliderecord.png" ));
+    // Original: /usr/share/icons/oxygen/32x32/devices/camera-photo.png
+    snapshotButton->setIcon (QPixmap ( iconPath + "slide-camera.png" ));
     connect ( snapshotButton, SIGNAL( clicked() ), this, SLOT( snapshotPressed() ) );
+
+    editButton = new QPushButton;
+    editButton->setIcon (QPixmap ( iconPath + "filenew.png" ));   //FIXME-2
+    connect ( editButton, SIGNAL( clicked() ), this, SLOT( editPressed() ) );
 
     deleteButton = new QPushButton;
     deleteButton->setIcon (QPixmap ( iconPath + "edittrash.png" ));
@@ -46,6 +52,7 @@ SlideControlWidget::SlideControlWidget(QWidget *)
     row2Layout->addWidget(previousButton);
     row2Layout->addWidget(nextButton);
     row2Layout->addWidget(snapshotButton);
+    row2Layout->addWidget(editButton);
     row2Layout->addWidget(deleteButton);
     row2Layout->addWidget(upButton);
     row2Layout->addWidget(downButton);
@@ -58,6 +65,11 @@ SlideControlWidget::SlideControlWidget(QWidget *)
 void SlideControlWidget::snapshotPressed()
 {
     emit (takeSnapshot() );
+}
+
+void SlideControlWidget::editPressed()
+{
+    emit (editButtonPressed() );
 }
 
 void SlideControlWidget::deletePressed()

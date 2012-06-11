@@ -19,7 +19,7 @@ QString quotemeta(const QString &s)
     return r;
 }
 
-QString dequotemeta(const QString &s)
+QString unquotemeta(const QString &s)
 {
     QString r=s;
     QRegExp  rx("&amp;)");

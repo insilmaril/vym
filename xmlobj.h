@@ -4,7 +4,7 @@
 class QString;
 
 QString quotemeta(const QString&);  
-QString dequotemeta(const QString&);	
+QString unquotemeta(const QString&);	
 QString quoteUmlaut(const QString&);	
 
 /////////////////////////////////////////////////////////////////////////////

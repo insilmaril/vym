@@ -176,6 +176,26 @@ int SlideItem::getTreeItemID()
     return treeItemID;
 }
 
+void SlideItem::setInScript (const QString &s)
+{
+    inScript=s;
+}
+
+QString SlideItem::getInScript()
+{
+    return inScript;
+}
+
+void SlideItem::setOutScript (const QString &s)
+{
+    outScript=s;
+}
+
+QString SlideItem::getOutScript()
+{
+    return outScript;
+}
+
 void SlideItem::setZoomFactor (const qreal &zf)
 {
     zoomFactor=zf;
@@ -218,13 +238,23 @@ QEasingCurve SlideItem::getEasingCurve()
 
 QString SlideItem::saveToDir()
 {
+    QString att_ins, att_outs;
+    if (inScript.isEmpty()) 
+    {
+	att_ins=attribut ("inScript",QString("select(\"%1\")").arg(model->getVymModel()->getSelectString (treeItemID ) ) );
+    } else
+	att_ins=attribut ("inScript",inScript );
+    if (!outScript.isEmpty()) att_outs=attribut ("outScript",outScript );
+
     return singleElement ("slide",
 	attribut ("name",data(0).toString() ) +
 	attribut ("zoom",QString().setNum ( zoomFactor) ) +
 	attribut ("rotation",QString().setNum ( rotationAngle ) ) +
 	attribut ("duration",QString().setNum ( duration ) ) +
 	attribut ("curve",QString().setNum ( easingCurve.type() ) ) +
-	attribut ("mapitem",model->getVymModel()->getSelectString (treeItemID ) )
+	attribut ("mapitem",model->getVymModel()->getSelectString (treeItemID ) ) +
+	att_ins +
+	att_outs
 	);
 }
 
