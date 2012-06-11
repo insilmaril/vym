@@ -14,6 +14,7 @@ using namespace std;
 #include "noteeditor.h"
 #include "options.h"
 #include "settings.h"
+#include "scripteditor.h"
 #include "taskeditor.h"
 #include "taskmodel.h"
 #include "version.h"
@@ -37,9 +38,9 @@ QString vymInstanceName;
 
 bool bugzillaClientAvailable;	// openSUSE specific currently
 
-TaskEditor *taskEditor;
-TaskModel* taskModel;
-
+TaskModel     *taskModel;
+TaskEditor    *taskEditor;
+ScriptEditor  *scriptEditor;
 HeadingEditor *headingEditor;	    
 NoteEditor    *noteEditor;	// used in Constr. of LinkableMapObj
 				// initialized in mainwindow
@@ -291,7 +292,6 @@ int main(int argc, char* argv[])
     // Initialize editors
     noteEditor = new NoteEditor();
     noteEditor->setWindowIcon (QPixmap (iconPath+"vym-editor.png"));
-
     headingEditor = new HeadingEditor();
 
     // Check if there is a BugzillaClient  

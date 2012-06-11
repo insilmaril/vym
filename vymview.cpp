@@ -335,5 +335,3 @@ void VymView::toggleSlideEditor()
 	settings.setLocalValue(model->getFilePath(),"/slideeditor/visible","true");
     }
 }
-
-

@@ -12,7 +12,6 @@
 #include "historywindow.h"
 #include "mapeditor.h"
 #include "shortcuts.h"
-#include "simplescripteditor.h"
 #include "texteditor.h"
 #include "vymview.h"
 
@@ -263,6 +262,7 @@ public slots:
     void windowToggleTreeEditor();
     void windowToggleTaskEditor();
     void windowToggleSlideEditor();
+    void windowToggleScriptEditor();
     void windowToggleHistory();
     void windowToggleProperty();
     void updateHistory(SimpleSettings &);
@@ -321,9 +321,9 @@ private:
 
     QDockWidget *headingEditorDW;
     QDockWidget *noteEditorDW;
+    QDockWidget *scriptEditorDW;
 
     BranchPropertyWindow *branchPropertyWindow;
-    SimpleScriptEditor *scriptEditor;
 
     QList <QAction*> actionListMap;
     QList <QAction*> actionListBranches;
@@ -470,6 +470,7 @@ private:
     QAction *actionViewToggleTreeEditor;
     QAction *actionViewToggleTaskEditor;
     QAction *actionViewToggleSlideEditor;
+    QAction *actionViewToggleScriptEditor;
     QAction *actionViewToggleHistoryWindow;
     QAction *actionViewTogglePropertyWindow;
     QAction *actionViewToggleAntiAlias;

@@ -5823,6 +5823,8 @@ void VymModel::moveSlideDown(int n)
     }
 }
 
+#include "scripteditor.h"
+extern ScriptEditor *scriptEditor;
 void VymModel::updateSlideSelection (QItemSelection newsel,QItemSelection)
 {
     if (blockSlideSelection) return;
@@ -5830,6 +5832,10 @@ void VymModel::updateSlideSelection (QItemSelection newsel,QItemSelection)
     foreach (ix,newsel.indexes() )
     {
 	SlideItem *si= static_cast<SlideItem*>(ix.internalPointer());
+
+	// FIXME-2 testing showing inScript in ScriptEditor
+	scriptEditor->setScript(si->getInScript() );
+
 	int id=si->getTreeItemID();
 	if (id>0)
 	{
