@@ -1,4 +1,4 @@
-#include "simplescripteditor.h"
+#include "scripteditor.h"
 
 #include <QFileDialog>
 #include <QMessageBox>
@@ -10,13 +10,13 @@ extern QString vymName;
 extern QList <Command*> modelCommands;
 extern QDir lastMapDir;
 
-SimpleScriptEditor::SimpleScriptEditor (QWidget *parent):QDialog(parent)
+ScriptEditor::ScriptEditor (QWidget *parent):QWidget(parent)
 {
     ui.setupUi (this);
 
-    connect ( ui.openButton, SIGNAL (clicked() ), this, SLOT (openClicked() ));
+    //connect ( ui.openButton, SIGNAL (clicked() ), this, SLOT (openClicked() ));
     connect ( ui.saveButton, SIGNAL (clicked() ), this, SLOT (saveClicked() ));
-    connect ( ui.saveAsButton, SIGNAL (clicked() ), this, SLOT (saveAsClicked() ));
+    //connect ( ui.saveAsButton, SIGNAL (clicked() ), this, SLOT (saveAsClicked() ));
     connect ( ui.runButton,  SIGNAL (clicked() ), this, SLOT (runClicked() ));
 
 
@@ -34,7 +34,7 @@ SimpleScriptEditor::SimpleScriptEditor (QWidget *parent):QDialog(parent)
     highlighter->addKeywords (list);
 }
 
-void SimpleScriptEditor::saveScript()
+void ScriptEditor::saveScript()
 {
     QFile f( filename );
     if ( !f.open( QIODevice::WriteOnly ) ) 
@@ -47,12 +47,12 @@ void SimpleScriptEditor::saveScript()
     f.close();
 }
 
-void SimpleScriptEditor::setScript(const QString &s)
+void ScriptEditor::setScript(const QString &s)
 {
     ui.editor->setText(s);
 }
 
-void SimpleScriptEditor::saveClicked()
+void ScriptEditor::saveClicked()
 {
     if (filename.isEmpty() )
 	saveAsClicked();
@@ -60,7 +60,7 @@ void SimpleScriptEditor::saveClicked()
 	saveScript();
 }
 
-void SimpleScriptEditor::saveAsClicked()
+void ScriptEditor::saveAsClicked()
 {
     QString fn = QFileDialog::getSaveFileName( 
 	this, 
@@ -100,7 +100,7 @@ void SimpleScriptEditor::saveAsClicked()
     }
 }
 
-void SimpleScriptEditor::openClicked()
+void ScriptEditor::openClicked()
 {
     QString filter("VYM scripts (*.vys);;All (*)");
     QString fn=QFileDialog::getOpenFileName( 
@@ -127,7 +127,7 @@ void SimpleScriptEditor::openClicked()
     }
 }
 
-void SimpleScriptEditor::runClicked()
+void ScriptEditor::runClicked()
 {
     emit runScript (ui.editor->toPlainText() );
 }

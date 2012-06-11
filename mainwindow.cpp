@@ -25,6 +25,7 @@
 #include "misc.h"
 #include "options.h"
 #include "process.h"
+#include "scripteditor.h"
 #include "settings.h"
 #include "shortcuts.h"
 #include "noteeditor.h"
@@ -53,6 +54,7 @@ typedef struct _PROCESS_INFORMATION
 
 extern NoteEditor    *noteEditor;
 extern HeadingEditor *headingEditor;
+extern ScriptEditor  *scriptEditor;
 extern Main *mainWindow;
 extern QDBusConnection dbusConnection;
 extern FindResultWidget *findResultWidget;  
@@ -148,6 +150,9 @@ Main::Main(QWidget* parent, Qt::WFlags f) : QMainWindow(parent,f)
     browserPID=new qint64;
     *browserPID=0;
 
+    // Define commands in API (used globally)
+    setupAPI();
+
     // Dock widgets ///////////////////////////////////////////////
     QDockWidget *dw;
     if (settings.value("/satellite/noteeditor/isDockWindow",true).toBool())
@@ -167,6 +172,13 @@ Main::Main(QWidget* parent, Qt::WFlags f) : QMainWindow(parent,f)
     dw->hide();
     headingEditorDW=dw;
     addDockWidget (Qt::BottomDockWidgetArea,dw);
+
+    dw = new QDockWidget (tr("Script Editor"),this);
+    dw->setWidget (scriptEditor);
+    dw->setObjectName ("ScriptEditor");
+    dw->hide();
+    scriptEditorDW=dw;
+    addDockWidget (Qt::LeftDockWidgetArea,dw);
 
     findResultWidget=new FindResultWidget ();
     dw= new QDockWidget (tr ("Search results list","FindResultWidget"),this);
@@ -188,6 +200,13 @@ Main::Main(QWidget* parent, Qt::WFlags f) : QMainWindow(parent,f)
     dw->hide();	
     addDockWidget (Qt::TopDockWidgetArea,dw);
 
+    scriptEditor = new ScriptEditor(this);
+    dw= new QDockWidget (tr ("Script Editor","ScriptEditor"),this);
+    dw->setWidget (scriptEditor);
+    dw->setObjectName ("ScriptEditor");
+    dw->hide();	
+    addDockWidget (Qt::LeftDockWidgetArea,dw);
+
     // Satellite windows //////////////////////////////////////////
     // history window
     historyWindow=new HistoryWindow();
@@ -204,13 +223,6 @@ Main::Main(QWidget* parent, Qt::WFlags f) : QMainWindow(parent,f)
 
     // Connect heading editor
     connect (headingEditor, SIGNAL (textHasChanged() ), this, SLOT (updateHeading()));
-
-    // Define commands in API (used globally)
-    setupAPI();
-
-    // Initialize script editor
-    scriptEditor = new SimpleScriptEditor();
-    scriptEditor->move (50,50);
 
     connect( scriptEditor, SIGNAL( runScript ( QString ) ), 
 	this, SLOT( execute( QString ) ) );
@@ -1797,7 +1809,7 @@ void Main::setupViewActions()
     actionViewToggleHeadingEditor=a;
 
     // Original icon is "category" from KDE
-    a = new QAction(QPixmap(iconPath+"treeeditor.png"), tr( "Toggle Tree editor","View action" ),this);
+    a = new QAction(QPixmap(iconPath+"treeeditor.png"), tr( "Tree editor","View action" ),this);
     a->setShortcut ( Qt::CTRL + Qt::Key_T );	// Toggle Tree Editor 
     switchboard.addConnection(a,tr("View shortcuts","Shortcut group"));
     a->setCheckable(true);
@@ -1805,7 +1817,7 @@ void Main::setupViewActions()
     connect( a, SIGNAL( triggered() ), this, SLOT(windowToggleTreeEditor() ) );
     actionViewToggleTreeEditor=a;
 
-    a = new QAction(QPixmap(iconPath+"taskeditor.png"), tr( "Toggle Task editor","View action" ),this);
+    a = new QAction(QPixmap(iconPath+"taskeditor.png"), tr( "Task editor","View action" ),this);
     a->setShortcut ( Qt::Key_Q );	// Toggle Tree Editor 
     switchboard.addConnection(a,tr("View shortcuts","Shortcut group"));
     a->setCheckable(true);
@@ -1813,13 +1825,21 @@ void Main::setupViewActions()
     connect( a, SIGNAL( triggered() ), this, SLOT(windowToggleTaskEditor() ) );
     actionViewToggleTaskEditor=a;
 
-    a = new QAction(QPixmap(iconPath+"slideeditor.png"), tr( "Toggle Slide editor","View action" ),this);
+    a = new QAction(QPixmap(iconPath+"slideeditor.png"), tr( "Slide editor","View action" ),this);
     a->setShortcut ( Qt::SHIFT + Qt::Key_S );	// Toggle Slide Editor 
     switchboard.addConnection(a,tr("View shortcuts","Shortcut group"));
     a->setCheckable(true);
     viewMenu->addAction (a);
     connect( a, SIGNAL( triggered() ), this, SLOT(windowToggleSlideEditor() ) );
     actionViewToggleSlideEditor=a;
+
+    a = new QAction(QPixmap(), tr("Script editor","View action"), this);
+    a->setCheckable(true);
+    if (settings.value( "/mainwindow/showTestMenu",false).toBool() ) 
+	viewMenu->addAction (a);//FIXME-2 Make this available in release?
+    switchboard.addConnection(a, tr("View shortcuts","Shortcut group"));
+    connect( a, SIGNAL( triggered() ), this, SLOT( windowToggleScriptEditor() ) );
+    actionViewToggleScriptEditor=a;
 
     a = new QAction(QPixmap(iconPath+"history.png"),  tr( "History Window","View action" ),this );
     a->setShortcut ( Qt::CTRL + Qt::Key_H  );	// Toggle history window
@@ -2328,10 +2348,6 @@ void Main::setupTestActions()
     switchboard.addConnection(testMenu, a, tr("Test shortcuts","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( toggleHideExport() ) );
     actionToggleHideMode=a;
-
-    a = new QAction( "Command" , this);		//FIXME-3+ Make this available in release?
-    switchboard.addConnection(testMenu, a, tr("Test shortcuts","Shortcut group"));
-    connect( a, SIGNAL( triggered() ), this, SLOT( testCommand() ) );
 }
 
 // Help Actions
@@ -4685,13 +4701,26 @@ void Main::windowToggleSlideEditor()
 	vymViews.at(tabWidget->currentIndex())->toggleSlideEditor();
 }
 
+void Main::windowToggleScriptEditor()
+{
+    qDebug()<<"Main::toggle script editor se="<<scriptEditor;//FIXME-2 testing
+    if (scriptEditor->parentWidget()->isVisible() )
+    {
+	scriptEditor->parentWidget()->hide();
+	actionViewToggleScriptEditor->setChecked (false);
+    } else
+    {
+	scriptEditor->parentWidget()->show();
+	actionViewToggleScriptEditor->setChecked (true);
+    }
+}
+
 void Main::windowToggleHistory()
 {
     if (historyWindow->isVisible())
 	historyWindow->hide();
     else    
 	historyWindow->show();
-
 }
 
 void Main::windowToggleProperty()

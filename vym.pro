@@ -80,10 +80,10 @@ HEADERS	+= \
     ornamentedobj.h \
     parser.h \
     process.h \
+    scripteditor.h\
     settings.h \
     shortcuts.h\
     showtextdialog.h\
-    simplescripteditor.h\
     slidecontrolwidget.h\
     slideeditor.h\
     slideitem.h\
@@ -166,10 +166,10 @@ SOURCES	+= \
     ornamentedobj.cpp \
     parser.cpp \
     process.cpp \
+    scripteditor.cpp\
     settings.cpp \
     shortcuts.cpp\
     showtextdialog.cpp \
-    simplescripteditor.cpp \
     slidecontrolwidget.cpp \
     slideeditor.cpp \
     slideitem.cpp \
@@ -202,7 +202,7 @@ FORMS = \
     extrainfodialog.ui \
     editxlinkdialog.ui \
     historywindow.ui \
-    simplescripteditor.ui \
+    scripteditor.ui \
     showtextdialog.ui \
     warningdialog.ui
 
