@@ -1837,11 +1837,10 @@ void Main::setupViewActions()
     connect( a, SIGNAL( triggered() ), this, SLOT(windowToggleSlideEditor() ) );
     actionViewToggleSlideEditor=a;
 
-    a = new QAction(QPixmap(), tr("Script editor","View action"), this);
-    a->setShortcut ( Qt::ALT + Qt::Key_S );	// Toggle Slide Editor 
+    a = new QAction(QPixmap(iconPath+"scripteditor.png"), tr("Script editor","View action"), this);
+    a->setShortcut ( Qt::ALT + Qt::Key_S );	// Toggle Script Editor 
     a->setCheckable(true);
-    if (settings.value( "/mainwindow/showTestMenu",false).toBool() ) 
-	viewMenu->addAction (a);//FIXME-1 Make this available in release?
+    viewMenu->addAction (a);
     switchboard.addConnection(a, tr("View shortcuts","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( windowToggleScriptEditor() ) );
     actionViewToggleScriptEditor=a;
@@ -2641,6 +2640,7 @@ void Main::setupToolbars()
     editorsToolbar->addAction (actionViewToggleTreeEditor);
     editorsToolbar->addAction (actionViewToggleTaskEditor);
     editorsToolbar->addAction (actionViewToggleSlideEditor);
+    editorsToolbar->addAction (actionViewToggleScriptEditor);
     editorsToolbar->addAction (actionViewToggleHistoryWindow);
 
 
@@ -4822,6 +4822,7 @@ void Main::updateActions()
     actionViewToggleNoteEditor->setChecked (noteEditor->isVisible());
     actionViewToggleHistoryWindow->setChecked (historyWindow->isVisible());
     actionViewTogglePropertyWindow->setChecked (branchPropertyWindow->isVisible());
+    actionViewToggleScriptEditor->setChecked (scriptEditor->isVisible());
     int cv=currentView();
     if ( cv>=0 )
     {
