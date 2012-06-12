@@ -470,6 +470,7 @@ summary
 #
 addSlide
 addXlink
+centerOnID
 colorBranch
 colorSubtree
 cycleTask
@@ -488,44 +489,46 @@ exportXML
 importDir
 loadImage
 loadNote
-moveSlideDown
-moveSlideUp
 move
 moveRel
+moveSlideDown
+moveSlideUp
 note2URLs
-redo  
-  so far:
     paste
-    setHeading
-    setURL
-    setVymLink
+redo  
 relinkTo (for images)
 saveImage
 saveNote
 selectID
 selectLastImage
 selectLatestAdd
-setTaskSleep
-setFrameIncludeChildren
-setFrameType
-setFramePenColor
-setFrameBrushColor
-setFramePadding
 setFrameBorderWidth
+setFrameBrushColor
+setFrameIncludeChildren
+setFramePadding
+setFramePenColor
+setFrameType
+    setHeading
 setHideExport
+setHideLinksUnselected
 setIncludeImagesHorizontally
 setIncludeImagesVertically
-setHideLinksUnselected
+setMapAnimCurve
+setMapAnimDuration
 setMapAuthor
-setMapComment
 setMapBackgroundColor
+setMapComment
 setMapDefLinkColor
 setMapLinkStyle
-setMapZoom
 setMapRotation
+setMapZoom
 setNote
 setScale
 setSelectionColor
+setTaskSleep
+    setURL
+    setVymLink
+  so far:
 sortChildren
 toggleFrameIncludeChildren
 toggleTarget

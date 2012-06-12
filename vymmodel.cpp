@@ -154,12 +154,16 @@ void VymModel::init ()
     defXLinkPen.setWidth (1);
     defXLinkPen.setColor ( QColor (50,50,255) );
     defXLinkPen.setStyle ( Qt::DashLine );
-    zoomFactor=1;
-    rotationAngle=0;
 
     hasContextPos=false;
 
     hidemode=TreeItem::HideNone;
+
+    // Animation in MapEditor
+    zoomFactor=1;
+    rotationAngle=0;
+    animDuration=2000;
+    animCurve=QEasingCurve::OutQuint;
 
     // Initialize presentation slides
     slideModel=new SlideModel (this);
@@ -3722,6 +3726,23 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	{ 
 	    returnValue=selti->branchCount();
 	/////////////////////////////////////////////////////////////////////
+	} else if (com=="centerOnID")
+	{
+	    s=parser.parString(ok,0);
+	    TreeItem *ti=findUuid(QUuid(s));
+	    if (ti)
+	    {
+		LinkableMapObj *lmo=((MapItem*)ti)->getLMO();
+		if (zoomFactor>0 && lmo)
+		    mapEditor->setViewCenterTarget (
+			lmo->getBBox().center(),
+			zoomFactor,
+			rotationAngle,
+			animDuration,
+			animCurve);
+	    } else
+		parser.setError(Aborted,QString("Could not find ID: \"%1\"").arg(s));
+	/////////////////////////////////////////////////////////////////////
 	} else if (com=="clearFlags")   
 	{
 	    selbi->deactivateAllStandardFlags();
@@ -4022,12 +4043,14 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	} else if (com=="select")
 	{
 	    s=parser.parString(ok,0);
-	    select (s);
+	    if (!select (s))
+		parser.setError(Aborted,QString("Could not select \"%1\"").arg(s));
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="selectID")
 	{
 	    s=parser.parString(ok,0);
-	    selectID (s);
+	    if (!selectID (s))
+		parser.setError(Aborted,QString("Could not select ID: \"%1\"").arg(s));
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="selectLastBranch")
 	{
@@ -4119,6 +4142,23 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	    b=parser.parBool(ok,0);
 	    setHideLinkUnselected(b);
 	/////////////////////////////////////////////////////////////////////
+	} else if (com=="setMapAnimCurve")
+	{
+	    n=parser.parInt(ok,0);
+	    if (n<0 || n>QEasingCurve::OutInBounce)
+		parser.setError (Aborted,"Unknown link style");
+	    else
+	    {
+		QEasingCurve c;
+		c.setType ( (QEasingCurve::Type) n);
+		setMapAnimCurve(c);
+	    }
+	/////////////////////////////////////////////////////////////////////
+	} else if (com=="setMapAnimDuration")
+	{
+	    n=parser.parInt(ok,0);
+	    setMapAnimDuration(n);
+	/////////////////////////////////////////////////////////////////////
 	} else if (com=="setMapAuthor")
 	{
 	    s=parser.parString(ok,0);
@@ -4149,11 +4189,13 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	{
 	    x=parser.parDouble (ok,0);
 	    setMapRotationAngle(x);
+	    mapEditor->setAngleTarget(x);
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="setMapZoom")
 	{
 	    x=parser.parDouble (ok,0);
 	    setMapZoomFactor(x);
+	    mapEditor->setZoomFactorTarget(x);
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="setNote")
 	{
@@ -4619,6 +4661,16 @@ void VymModel::setMapZoomFactor (const double &d)
 void VymModel::setMapRotationAngle(const double &d)
 {
     rotationAngle=d;
+}
+
+void VymModel::setMapAnimDuration(const int &d)
+{
+    animDuration=d;
+}
+
+void VymModel::setMapAnimCurve(const QEasingCurve &c)
+{
+    animCurve=c;
 }
 
 void VymModel::setContextPos(QPointF p)
@@ -5773,12 +5825,21 @@ SlideItem* VymModel::addSlide()
 
     if (si && seli)
     {
+	QString inScript;
+	inScript+=QString("setMapZoom(%1);\n").arg(getMapEditor()->getZoomFactorTarget() );
+	inScript+=QString("setMapRotation(%1);\n").arg(getMapEditor()->getAngleTarget() );
+	inScript+=QString("centerOnID(\"%1\");\n").arg(seli->getUuid().toString());
+	si->setInScript(inScript);
+	slideModel->setData ( slideModel->index(si), seli->getHeading() );
+	
+	// FIXME-1 switch to script based slide initialization (inscript)
+	/*
 	si->setTreeItem (seli);
 	si->setZoomFactor   (getMapEditor()->getZoomFactorTarget() );
 	si->setRotationAngle (getMapEditor()->getAngleTarget() );
 	slideModel->setData ( slideModel->index(si), getHeading() );
+	*/
 
-	// FIXME-1 switch to script based slide initialization (inscript)
 
     }
     QString s="<vymmap>" + si->saveToDir() + "</vymmap>";

@@ -555,9 +555,14 @@ public:
 
     void setMapZoomFactor (const double &); 
     void setMapRotationAngle (const double&);
+    void setMapAnimDuration(const int &d);
+    void setMapAnimCurve(const QEasingCurve &c);
 private: 
     double zoomFactor;
     double rotationAngle;
+    int animDuration;
+    QEasingCurve animCurve;
+
     bool hasContextPos;			//!< True, if we have a context pos
     QPointF contextPos;			//!< local position during context menu
 public:

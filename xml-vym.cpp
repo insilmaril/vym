@@ -817,7 +817,8 @@ bool parseVYMHandler::readSettingAttr (const QXmlAttributes& a)
 
 bool parseVYMHandler::readSlideAttr (const QXmlAttributes& a)
 {
-    QStringList scriptlines;	//FIXME-1 needed for switching to inScript
+    QStringList scriptlines;	// FIXME-3 needed for switching to inScript
+                                // Most attributes are obsolete with inScript
     if (!lastSlide) return false;
     {
 	if (!a.value( "name").isEmpty() ) 
@@ -827,7 +828,6 @@ bool parseVYMHandler::readSlideAttr (const QXmlAttributes& a)
 	    bool ok;
 	    qreal z=a.value ("zoom").toDouble(&ok);
 	    if (!ok) return false;
-	    lastSlide->setZoomFactor (z);
 	    scriptlines.append( QString("setMapZoom(%1)").arg(z) );
 	}
 	if (!a.value( "rotation").isEmpty() ) 
@@ -835,7 +835,6 @@ bool parseVYMHandler::readSlideAttr (const QXmlAttributes& a)
 	    bool ok;
 	    qreal z=a.value ("rotation").toDouble(&ok);
 	    if (!ok) return false;
-	    lastSlide->setRotationAngle (z);
 	    scriptlines.append( QString("setMapRotation(%1)").arg(z) );
 	}
 	if (!a.value( "duration").isEmpty() ) 
@@ -843,8 +842,7 @@ bool parseVYMHandler::readSlideAttr (const QXmlAttributes& a)
 	    bool ok;
 	    int d=a.value ("duration").toInt(&ok);
 	    if (!ok) return false;
-	    lastSlide->setDuration (d);
-	    //FIXME-1 missing slide duration
+	    scriptlines.append( QString("setMapAnimDuration(%1)").arg(d) );
 	}
 	if (!a.value( "curve").isEmpty() ) 
 	{
@@ -852,18 +850,13 @@ bool parseVYMHandler::readSlideAttr (const QXmlAttributes& a)
 	    int i=a.value ("curve").toInt(&ok);
 	    if (!ok ) return false;
 	    if (i<0 || i>QEasingCurve::OutInBounce) return false;
-
-	    QEasingCurve c;
-	    c.setType ( (QEasingCurve::Type) i);
-	    lastSlide->setEasingCurve (c);
-	    //FIXME-1 missing slide curve
+	    scriptlines.append( QString("setMapAnimCurve(%1)").arg(i) );
 	}
 	if (!a.value( "mapitem").isEmpty() ) 
 	{
 	    TreeItem *ti=model->findBySelectString ( a.value( "mapitem") );
 	    if (!ti) return false;
-	    lastSlide->setTreeItem (ti);
-	    scriptlines.prepend( QString("select(\"%1\")").arg(a.value("mapitem")) );
+	    scriptlines.append( QString("centerOnID(\"%1\")").arg(ti->getUuid().toString() ) );
 	}
 	if (!a.value( "inScript").isEmpty() ) 
 	{

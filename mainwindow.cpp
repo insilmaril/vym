@@ -479,6 +479,10 @@ void Main::setupAPI()
     c=new Command ("branchCount",Command::BranchLike);
     modelCommands.append(c);
 
+    c=new Command ("centerOnID",Command::Any);
+    c->addPar (Command::String,false, "UUID of object to center on");
+    modelCommands.append(c);
+
     c=new Command ("clearFlags",Command::BranchLike);
     modelCommands.append(c);
 
@@ -727,8 +731,16 @@ void Main::setupAPI()
     c->addPar (Command::Bool,false,"Set if links of items should be visible for unselected items");
     modelCommands.append(c);
 
+    c=new Command ("setMapAnimCurve",Command::Any); 
+    c->addPar (Command::Int,false,"EasingCurve used in animation in MapEditor");
+    modelCommands.append(c);
+
     c=new Command ("setMapAuthor",Command::Any); 
     c->addPar (Command::String,false,"");
+    modelCommands.append(c);
+
+    c=new Command ("setMapAnimDuration",Command::Any); 
+    c->addPar (Command::Int,false,"Duration of animation in MapEditor in milliseconds");
     modelCommands.append(c);
 
     c=new Command ("setMapComment",Command::Any); 
@@ -1559,7 +1571,7 @@ void Main::setupEditActions()
 // Select Actions
 void Main::setupSelectActions()
 {
-    QMenu *selectMenu = menuBar()->addMenu( tr("&Select","Select menu") );
+    QMenu *selectMenu = menuBar()->addMenu( tr("Select","Select menu") );
     QAction *a;
     a = new QAction( QPixmap(flagsPath + "flag-target"), tr( "Toggle target...","Edit menu"), this);
     a->setShortcut (Qt::SHIFT + Qt::Key_T );			//Goto target
@@ -1826,6 +1838,7 @@ void Main::setupViewActions()
     actionViewToggleSlideEditor=a;
 
     a = new QAction(QPixmap(), tr("Script editor","View action"), this);
+    a->setShortcut ( Qt::ALT + Qt::Key_S );	// Toggle Slide Editor 
     a->setCheckable(true);
     if (settings.value( "/mainwindow/showTestMenu",false).toBool() ) 
 	viewMenu->addAction (a);//FIXME-1 Make this available in release?
@@ -2214,7 +2227,7 @@ void Main::setupNetworkActions()
 // Settings Actions
 void Main::setupSettingsActions()
 {
-    QMenu *settingsMenu = menuBar()->addMenu( tr( "&Settings" ));
+    QMenu *settingsMenu = menuBar()->addMenu( tr( "Settings" ));
 
     QAction *a;
 
@@ -4669,7 +4682,6 @@ void Main::windowToggleSlideEditor()
 
 void Main::windowToggleScriptEditor()
 {
-    qDebug()<<"Main::toggle script editor se="<<scriptEditor;//FIXME-1 testing
     if (scriptEditor->parentWidget()->isVisible() )
     {
 	scriptEditor->parentWidget()->hide();
@@ -5096,9 +5108,7 @@ void Main::setScriptFile (const QString &fn)
 
 QVariant Main::execute (const QString &script)
 {
-    qDebug()<<"Main::execute:\n"<<script;   //FIXME-1 testing
     VymModel *m=currentModel();
-    qDebug()<<"  r="<<m->execute(script);
     if (m) return m->execute (script);
     return QVariant();
 }

@@ -84,7 +84,7 @@ void SlideEditor::addSlide()
     vymModel->addSlide();
 }
 
-void SlideEditor::editSlide() //FIXME-1
+void SlideEditor::editSlide() //FIXME-1	 testing
 {
     SlideItem *si=slideModel->getSelectedItem();
     qDebug()<<"SE::editSlide\n"<<si->getInScript();
