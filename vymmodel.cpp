@@ -5832,9 +5832,13 @@ void VymModel::updateSlideSelection (QItemSelection newsel,QItemSelection)
     foreach (ix,newsel.indexes() )
     {
 	SlideItem *si= static_cast<SlideItem*>(ix.internalPointer());
+	QString inScript=si->getInScript();
+
+	// Execute inScript 
+	execute (inScript);
 
 	// FIXME-1 testing showing inScript in ScriptEditor
-	scriptEditor->setSlideScript(modelID, si->getID(), si->getInScript() );
+	scriptEditor->setSlideScript(modelID, si->getID(), inScript );
 
 	int id=si->getTreeItemID();
 	if (id>0)
