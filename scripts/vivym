@@ -28,15 +28,15 @@ for MAP in $*; do
     IMGCOUNT=$(ls $DIR/images |wc -l)
     SLIDECOUNT=$(grep "<slide" $DIR/$BASE.xml | wc -l)
     echo "Found $IMGCOUNT images." 
-    echo "Found $SLIDECOUNT slides. (Press enter)"
-    read
+    echo "Found $SLIDECOUNT slides."
+    #read
 
     # Create backup for comparison after edit
     BAK=$DIR/$BASE.xml.bak
     cp $DIR/$BASE.xml $BAK
 
     # Edit
-    $EDITOR $DIR  #/$BASE.xml
+    $EDITOR $DIR/$BASE.xml
 
     # Compare
     if cmp $DIR/$BASE.xml $DIR/$BASE.xml.bak  &> /dev/null ; then 
