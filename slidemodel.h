@@ -57,7 +57,7 @@ public:
 
     SlideItem* getItem (const QModelIndex &index) const;
     SlideItem* getSlide (int n); 
-
+    SlideItem* findSlideID (uint n);
     QString saveToDir ();
 
     void setSearchString( const QString &s);

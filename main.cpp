@@ -333,22 +333,7 @@ int main(int argc, char* argv[])
 	QString fn=options.getArg ("run");
 	if ( !fn.isEmpty() )
 	{
-	    QFile f( fn );
-	    if ( !f.open( QFile::ReadOnly|QFile::Text ) )
-	    {
-		QString error (QObject::tr("Error"));
-		QString msg (QObject::tr("Couldn't open \"%1\"\n%2.").arg(fn).arg(f.errorString()));
-		if (options.isOn("batch"))
-		    qWarning ()<<error+": "+msg;
-		else    
-		    QMessageBox::warning(0, error,msg);
-		return 0;
-	    }	
-
-	    QTextStream in( &f );
-	    script= in.readAll();
-	    f.close();
-	    m.setScript (script);
+	    m.setScriptFile (fn);
 	    m.executeEverywhere (script);
 	}
     }	    

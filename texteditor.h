@@ -16,8 +16,6 @@ public:
     void init(const QString &ename);
     void reset();
     bool isEmpty();
-    void setShowWithMain (bool);
-    bool showWithMain ();
     void setFont (const QFont &);
     void setFontHint(const QString&);
     QString getFontHint();
@@ -91,7 +89,6 @@ protected:
     QBrush filledPaper;	    // depending on the state
     QBrush inactivePaper;   // depending on the state
     EditorState state;
-    bool showwithmain;	    // same visibility as mainwindow?
     bool blockChangedSignal;
 
     QFont varFont;

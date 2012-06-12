@@ -6,10 +6,14 @@
 #include "treeitem.h"
 #include "vymmodel.h"
 
+uint SlideItem::idLastSlide=0;    // make instance
+
 SlideItem::SlideItem(const QVector<QVariant> &data, SlideItem *parent, SlideModel *sm )
 {
     parentItem = parent;
     itemData = data;
+    idLastSlide++;
+    slideID=idLastSlide;
     treeItemID=-1;
     zoomFactor=-1;
     duration=2000;
@@ -31,6 +35,11 @@ SlideItem::~SlideItem()
 SlideModel* SlideItem::getModel()
 {
     return model;
+}
+
+uint SlideItem::getID()
+{
+    return slideID;
 }
 
 SlideItem *SlideItem::child(int number)

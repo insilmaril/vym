@@ -1,24 +1,31 @@
 #include "scripteditor.h"
 
+#include <QDebug> //FIXME-3 testing
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QTextStream>
 
 #include "command.h"
+#include "mainwindow.h"
+#include "slideitem.h"
+#include "slidemodel.h"
+#include "vymmodel.h"
 
 extern QString vymName;
 extern QList <Command*> modelCommands;
 extern QDir lastMapDir;
+extern Main *mainWindow;
 
 ScriptEditor::ScriptEditor (QWidget *parent):QWidget(parent)
 {
     ui.setupUi (this);
 
     //connect ( ui.openButton, SIGNAL (clicked() ), this, SLOT (openClicked() ));
-    connect ( ui.saveButton, SIGNAL (clicked() ), this, SLOT (saveClicked() ));
+    connect ( ui.saveSlideButton, SIGNAL (clicked() ), this, SLOT (saveSlide() ));
     //connect ( ui.saveAsButton, SIGNAL (clicked() ), this, SLOT (saveAsClicked() ));
     connect ( ui.runButton,  SIGNAL (clicked() ), this, SLOT (runClicked() ));
 
+    vymModelID=-1;
 
     // Initialize Editor
     QFont font;
@@ -34,21 +41,59 @@ ScriptEditor::ScriptEditor (QWidget *parent):QWidget(parent)
     highlighter->addKeywords (list);
 }
 
-void ScriptEditor::saveScript()
+void ScriptEditor::setScriptFile(const QString &fn) //FIXME-1 not implemented yet
+{
+/*
+    QFile f( fn );
+    if ( !f.open( QFile::ReadOnly|QFile::Text ) )
+    {
+	QString error (QObject::tr("Error"));
+	QString msg (QObject::tr("Couldn't open \"%1\"\n%2.").arg(fn).arg(f.errorString()));
+	if (options.isOn("batch"))
+	    qWarning ()<<error+": "+msg;
+	else    
+	    QMessageBox::warning(0, error,msg);
+	return 0;
+    }	
+
+    QTextStream in( &f );
+    script= in.readAll();
+    f.close();
+    */
+}
+
+void ScriptEditor::saveFile()
 {
     QFile f( filename );
-    if ( !f.open( QIODevice::WriteOnly ) ) 
-    {
-	return;
-    }
+    if ( !f.open( QIODevice::WriteOnly ) ) return;
 
     QTextStream t( &f );
     t << ui.editor->toPlainText();
     f.close();
 }
 
-void ScriptEditor::setScript(const QString &s)
+void ScriptEditor::saveSlide()
 {
+    VymModel *vm=mainWindow->getModel(vymModelID);
+    if (!vm)
+    {
+	QMessageBox::warning(0,tr("Warning"),tr("Couldn't save script into slide!"));
+	return;
+    }
+    SlideItem *si=vm->getSlideModel()->findSlideID(slideID);
+    if (!si)
+    {
+	QMessageBox::warning(0,tr("Warning"),tr("Couldn't find slide to save script!"));
+	return;
+    }
+    si->setInScript(ui.editor->toPlainText());
+}
+
+void ScriptEditor::setSlideScript(uint model_id, uint slide_id,const QString &s)
+{
+    vymModelID=model_id;
+    slideID=slide_id;
+    mode=Slide;
     ui.editor->setText(s);
 }
 
@@ -57,7 +102,7 @@ void ScriptEditor::saveClicked()
     if (filename.isEmpty() )
 	saveAsClicked();
     else
-	saveScript();
+	saveFile();
 }
 
 void ScriptEditor::saveAsClicked()
@@ -88,7 +133,7 @@ void ScriptEditor::saveAsClicked()
 		case QMessageBox::Yes:
 		    // save 
 		    filename = fn;
-		    saveScript();
+		    saveFile();
 		    return;
 		case QMessageBox::Cancel:
 		    // do nothing
@@ -96,7 +141,7 @@ void ScriptEditor::saveAsClicked()
 	    }
 	} 
 	filename=fn;
-	saveScript();
+	saveFile();
     }
 }
 

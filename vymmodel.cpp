@@ -5738,7 +5738,7 @@ SlideItem* VymModel::addSlide()
 	si->setRotationAngle (getMapEditor()->getAngleTarget() );
 	slideModel->setData ( slideModel->index(si), getHeading() );
 
-	// FIXME-2 switch to script based slide initialization (inscript)
+	// FIXME-1 switch to script based slide initialization (inscript)
 
     }
     QString s="<vymmap>" + si->saveToDir() + "</vymmap>";
@@ -5823,7 +5823,7 @@ void VymModel::moveSlideDown(int n)
     }
 }
 
-#include "scripteditor.h"
+#include "scripteditor.h" //FIXME-1 testing
 extern ScriptEditor *scriptEditor;
 void VymModel::updateSlideSelection (QItemSelection newsel,QItemSelection)
 {
@@ -5833,8 +5833,8 @@ void VymModel::updateSlideSelection (QItemSelection newsel,QItemSelection)
     {
 	SlideItem *si= static_cast<SlideItem*>(ix.internalPointer());
 
-	// FIXME-2 testing showing inScript in ScriptEditor
-	scriptEditor->setScript(si->getInScript() );
+	// FIXME-1 testing showing inScript in ScriptEditor
+	scriptEditor->setSlideScript(modelID, si->getID(), si->getInScript() );
 
 	int id=si->getTreeItemID();
 	if (id>0)

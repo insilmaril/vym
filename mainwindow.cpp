@@ -155,16 +155,12 @@ Main::Main(QWidget* parent, Qt::WFlags f) : QMainWindow(parent,f)
 
     // Dock widgets ///////////////////////////////////////////////
     QDockWidget *dw;
-    if (settings.value("/satellite/noteeditor/isDockWindow",true).toBool())
-    {
-	dw = new QDockWidget (tr("Note Editor"),this);
-	dw->setWidget (noteEditor);
-	dw->setObjectName ("NoteEditor");
-	dw->hide();
-	noteEditorDW=dw;
-	addDockWidget (Qt::LeftDockWidgetArea,dw);
-    } else
-	noteEditorDW=NULL;
+    dw = new QDockWidget (tr("Note Editor"),this);
+    dw->setWidget (noteEditor);
+    dw->setObjectName ("NoteEditor");
+    dw->hide();
+    noteEditorDW=dw;
+    addDockWidget (Qt::LeftDockWidgetArea,dw);
 
     dw = new QDockWidget (tr("Heading Editor"),this);
     dw->setWidget (headingEditor);
@@ -351,7 +347,6 @@ Main::~Main()
 	settings.setValue( "/mapeditor/editmode/autoEditNewBranch",actionSettingsAutoEditNewBranch->isChecked() );
 	settings.setValue( "/mapeditor/editmode/useFlagGroups",actionSettingsUseFlagGroups->isChecked() );
 	settings.setValue( "/export/useHideExport",actionSettingsUseHideExport->isChecked() );
-	settings.setValue( "/satellite/noteeditor/isDockWindow",actionSettingsNoteEditorIsDockWindow->isChecked());
     }
     //FIXME-4 save scriptEditor settings
 
@@ -1785,20 +1780,13 @@ void Main::setupViewActions()
 
     viewMenu->addSeparator();	
 
-    if (noteEditorDW)
-	a=noteEditorDW->toggleViewAction();
-    else    
-	a = new QAction(QPixmap(), tr( "Show Note Editor","View action" ),this);
+    a=noteEditorDW->toggleViewAction();
     a->setShortcut ( Qt::Key_N );   // Toggle Note Editor
     switchboard.addConnection(a,tr("View shortcuts","Shortcut group"));
     a->setCheckable(true);
     a->setIcon (QPixmap(flagsPath+"flag-note.png"));
     viewMenu->addAction (a);
     actionViewToggleNoteEditor=a;
-
-    if (!noteEditorDW)
-	connect( a, SIGNAL( triggered() ), this, SLOT(windowToggleNoteEditor() ) );
-
 
     a=headingEditorDW->toggleViewAction();
     a->setShortcut ( Qt::Key_E );   // Toggle Heading Editor
@@ -1836,7 +1824,7 @@ void Main::setupViewActions()
     a = new QAction(QPixmap(), tr("Script editor","View action"), this);
     a->setCheckable(true);
     if (settings.value( "/mainwindow/showTestMenu",false).toBool() ) 
-	viewMenu->addAction (a);//FIXME-2 Make this available in release?
+	viewMenu->addAction (a);//FIXME-1 Make this available in release?
     switchboard.addConnection(a, tr("View shortcuts","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( windowToggleScriptEditor() ) );
     actionViewToggleScriptEditor=a;
@@ -2302,13 +2290,6 @@ void Main::setupSettingsActions()
     settingsMenu->addAction (a);
     actionSettingsUseHideExport=a;
 
-    a= new QAction( tr( "Note editor is dockable","Settings action" ), this);
-    a->setCheckable(true);
-    a->setChecked ( settings.value ("/satellite/noteeditor/isDockWindow",true).toBool() );
-    connect( a, SIGNAL( triggered() ), this, SLOT( settingsToggleNoteEditorIsDockWindow() ) );
-    actionSettingsNoteEditorIsDockWindow=a;
-    settingsMenu->addAction (a);
-
     settingsMenu->addSeparator();
 
     a = new QAction( tr( "Animation","Settings action"), this);
@@ -2675,18 +2656,6 @@ void Main::setupToolbars()
     referencesToolbar->hide();
     editorsToolbar->hide();
 
-}
-
-void Main::hideEvent (QHideEvent * )
-{
-    qDebug()<<"Main::hideEvent";
-    if (!noteEditor->isMinimized() ) noteEditor->hide();
-}
-
-void Main::showEvent (QShowEvent * )
-{
-    qDebug()<<"Main::showEvent";
-    if (actionViewToggleNoteEditor->isChecked()) noteEditor->showNormal();
 }
 
 int Main::currentView() const
@@ -4656,13 +4625,6 @@ void Main::settingsWriteBackupFileToggle()
     settings.setValue ("/mainwindow/writeBackupFile",actionSettingsWriteBackupFile->isChecked() );
 }
 
-void Main::settingsToggleNoteEditorIsDockWindow()
-{
-    QMessageBox::information(0, 
-	tr("Information"),
-	tr("Changed settings will be applied after restarting vym"));
-}
-
 void Main::settingsToggleAnimation()
 {
     settings.setValue ("/animation/use",actionSettingsUseAnimation->isChecked() );
@@ -4670,10 +4632,10 @@ void Main::settingsToggleAnimation()
 
 void Main::windowToggleNoteEditor()
 {
-    if (noteEditor->isVisible() )
-	windowHideNoteEditor();
+    if (noteEditorDW->isVisible() )
+	noteEditorDW->hide();
     else
-	windowShowNoteEditor();
+	noteEditorDW->show();
 }
 
 void Main::windowToggleTreeEditor()
@@ -4703,7 +4665,7 @@ void Main::windowToggleSlideEditor()
 
 void Main::windowToggleScriptEditor()
 {
-    qDebug()<<"Main::toggle script editor se="<<scriptEditor;//FIXME-2 testing
+    qDebug()<<"Main::toggle script editor se="<<scriptEditor;//FIXME-1 testing
     if (scriptEditor->parentWidget()->isVisible() )
     {
 	scriptEditor->parentWidget()->hide();
@@ -5123,28 +5085,16 @@ bool Main::autoSelectNewBranch()
     return actionSettingsAutoSelectNewBranch->isChecked();
 }
 
-void Main::windowShowNoteEditor()
+void Main::setScriptFile (const QString &fn)
 {
-    noteEditor->setShowWithMain(true);
-    noteEditor->show();
-    actionViewToggleNoteEditor->setChecked (true);
-}
-
-void Main::windowHideNoteEditor()
-{
-    noteEditor->setShowWithMain(false);
-    noteEditor->hide();
-    actionViewToggleNoteEditor->setChecked (false);
-}
-
-void Main::setScript (const QString &script)
-{
-    scriptEditor->setScript (script);
+    scriptEditor->setScriptFile (fn);
 }
 
 QVariant Main::execute (const QString &script)
 {
+    qDebug()<<"Main::execute:\n"<<script;   //FIXME-1 testing
     VymModel *m=currentModel();
+    qDebug()<<"  r="<<m->execute(script);
     if (m) return m->execute (script);
     return QVariant();
 }

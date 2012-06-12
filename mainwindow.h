@@ -70,8 +70,6 @@ private:
     void setupRecentMapsMenu();
     void setupMacros();
     void setupToolbars();
-    void hideEvent (QHideEvent * );
-    void showEvent (QShowEvent * );
     int currentView() const;
 public:	
     MapEditor* currentMapEditor() const;
@@ -255,7 +253,6 @@ public slots:
     void settingsAutosaveTime();
     void settingsAutoLayoutToggle();
     void settingsWriteBackupFileToggle();
-    void settingsToggleNoteEditorIsDockWindow();
     void settingsToggleAnimation();
 
     void windowToggleNoteEditor();
@@ -282,7 +279,7 @@ public slots:
     ModMode getModMode();
     bool autoEditNewBranch();
     bool autoSelectNewBranch();
-    void setScript(const QString &);
+    void setScriptFile(const QString &fn);
     QVariant execute(const QString &);
     void executeEverywhere (const QString &);
     void gotoWindow (const int &n);
@@ -290,8 +287,6 @@ public slots:
 private slots:
     void windowNextEditor();
     void windowPreviousEditor();
-    void windowShowNoteEditor();
-    void windowHideNoteEditor();
 
     void standardFlagChanged();
 
@@ -487,7 +482,6 @@ private:
     QAction* actionSettingsAutoLayoutToggle;
     QAction* actionSettingsWriteBackupFile;
     QAction* actionSettingsUseAnimation;
-    QAction* actionSettingsNoteEditorIsDockWindow;
 };
 
 

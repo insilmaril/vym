@@ -815,7 +815,7 @@ bool parseVYMHandler::readSettingAttr (const QXmlAttributes& a)
 
 bool parseVYMHandler::readSlideAttr (const QXmlAttributes& a)
 {
-    QStringList scriptlines;	//FIXME-2 needed for switching to inScript
+    QStringList scriptlines;	//FIXME-1 needed for switching to inScript
     if (!lastSlide) return false;
     {
 	if (!a.value( "name").isEmpty() ) 
@@ -842,7 +842,7 @@ bool parseVYMHandler::readSlideAttr (const QXmlAttributes& a)
 	    int d=a.value ("duration").toInt(&ok);
 	    if (!ok) return false;
 	    lastSlide->setDuration (d);
-	    //FIXME-2 missing slide duration
+	    //FIXME-1 missing slide duration
 	}
 	if (!a.value( "curve").isEmpty() ) 
 	{
@@ -854,7 +854,7 @@ bool parseVYMHandler::readSlideAttr (const QXmlAttributes& a)
 	    QEasingCurve c;
 	    c.setType ( (QEasingCurve::Type) i);
 	    lastSlide->setEasingCurve (c);
-	    //FIXME-2 missing slide curve
+	    //FIXME-1 missing slide curve
 	}
 	if (!a.value( "mapitem").isEmpty() ) 
 	{

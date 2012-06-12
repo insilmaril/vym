@@ -772,6 +772,7 @@ public:
     void relinkSlide (SlideItem *si, int pos);
     void moveSlideUp( int n=-1);
     void moveSlideDown( int n=-1);
+    SlideItem *findSlideID (uint id);
 public slots:
     void updateSlideSelection (QItemSelection ,QItemSelection);
 private:

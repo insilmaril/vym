@@ -63,7 +63,6 @@ TextEditor::~TextEditor()
     settings.setValue(n+"geometry/size", size() );
     settings.setValue(n+"geometry/pos", pos() );
     settings.setValue(n+"state",saveState(0));
-    settings.setValue(n+"showWithMain",showwithmain);
 
     QString s;
     if (actionSettingsFonthintDefault->isChecked() )
@@ -79,12 +78,12 @@ void TextEditor::init (const QString &ename)
 {   
     editorName=ename;
     QString n=QString("/satellite/%1/").arg(editorName);
+    /*
     restoreState (settings.value(n+"state",0).toByteArray());
     resize (settings.value (n+"geometry/size", QSize(450,600)).toSize());
     move   (settings.value (n+"geometry/pos", QPoint (250,50)).toPoint());
     
-    setShowWithMain (settings.value (n+"showWithMain",true).toBool());
-
+*/
     filenameHint="";
     fixedFont.fromString (settings.value(
 	n+"fonts/fixedFont", "Courier,12,-1,5,48,0,0,0,1,0").toString() 
@@ -115,16 +114,6 @@ bool TextEditor::isEmpty()
 	return false;
     else
 	return true;
-}
-
-void TextEditor::setShowWithMain(bool v)
-{
-    showwithmain=v;
-}
-
-bool TextEditor::showWithMain()
-{
-    return showwithmain;
 }
 
 void TextEditor::setFont (const QFont &font)
@@ -567,7 +556,6 @@ void TextEditor::textLoad()
 void TextEditor::closeEvent( QCloseEvent* ce )
 {
     ce->accept();   // TextEditor can be reopened with show()
-    showwithmain=false;	//FIXME-3 needed?
     hide();
     emit (windowClosed() );
     return;

@@ -274,6 +274,13 @@ SlideItem* SlideModel::getSlide (int n)
     return getItem (index (n, 0, QModelIndex() ));
 }
 
+SlideItem* SlideModel::findSlideID (uint n)
+{
+    for (int i=0; i<rootItem->childCount(); i++)
+	if (rootItem->child(i)->getID()==n)
+	    return rootItem->child(i);
+}
+
 QString SlideModel::saveToDir()
 {
     QString s;

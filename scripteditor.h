@@ -5,16 +5,27 @@
 
 #include "highlighter.h"
 
+class VymModel;
+
 class ScriptEditor:public QWidget
 {
     Q_OBJECT
 
 public:
+    enum Mode {Slide,File};
+private:
+    Mode mode;
+    uint vymModelID;
+    uint slideID;
+
+public:
     ScriptEditor (QWidget* parent = 0);
-    void saveScript ();
-    void setScript(const QString &);
+    void setScriptFile (const QString &fn);
+    void saveFile();
+    void setSlideScript(uint vymModelID, uint slideID, const QString &);
 
 public slots:
+    void saveSlide();
     void saveClicked();
     void saveAsClicked();
     void openClicked();

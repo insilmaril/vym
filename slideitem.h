@@ -17,6 +17,7 @@ public:
     SlideItem(const QVector<QVariant> &data, SlideItem *parent = 0, SlideModel *sm = 0 );
     ~SlideItem();
     SlideModel* getModel(); 
+    uint getID();
     SlideItem *child(int number);
     int childCount() const;
     int columnCount() const;
@@ -54,6 +55,9 @@ private:
     QList<SlideItem*> childItems;
     QVector<QVariant> itemData;
     SlideItem *parentItem;
+
+    static uint idLastSlide;	//! Last used unique ID for slide
+    uint slideID;
 
     QString inScript;
     QString outScript;
