@@ -2,6 +2,7 @@
 #define TREEITEM_H
 
 #include <QColor>
+#include <QUuid>
 #include <QList>
 #include <QVariant>
 
@@ -149,9 +150,12 @@ public:
 
 protected:
     uint id;
+    QUuid uuid;
 
 public:
     virtual uint getID ();
+    virtual void setUuid (const QString &id);
+    virtual QUuid getUuid();
 
     // Navigation and selection
     virtual TreeItem* getChildNum(const int &n);

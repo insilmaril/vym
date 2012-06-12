@@ -1497,6 +1497,33 @@ TreeItem* VymModel::findID (const uint &id)
     return NULL;
 }
 
+TreeItem* VymModel::findUuid (const QUuid &id)  
+{
+    BranchItem *cur=NULL;
+    BranchItem *prev=NULL;
+    nextBranch(cur,prev);
+    while (cur) 
+    {
+	if (id==cur->getUuid() ) return cur;
+	int j=0;
+	while (j<cur->xlinkCount() )
+	{
+	    XLinkItem *xli=cur->getXLinkItemNum (j);
+	    if (id==xli->getUuid() ) return xli;
+	    j++;
+	}
+	j=0;
+	while (j<cur->imageCount() )
+	{
+	    ImageItem *ii=cur->getImageNum (j);
+	    if (id==ii->getUuid() ) return ii;
+	    j++;
+	}
+	nextBranch(cur,prev);
+    }
+    return NULL;
+}
+
 //////////////////////////////////////////////
 // Interface 
 //////////////////////////////////////////////
@@ -3997,6 +4024,11 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	    s=parser.parString(ok,0);
 	    select (s);
 	/////////////////////////////////////////////////////////////////////
+	} else if (com=="selectID")
+	{
+	    s=parser.parString(ok,0);
+	    selectID (s);
+	/////////////////////////////////////////////////////////////////////
 	} else if (com=="selectLastBranch")
 	{
 	    BranchItem *bi=selbi->getLastBranch();
@@ -5283,6 +5315,14 @@ bool VymModel::select (const QString &s)
     return false;
 }
 
+bool VymModel::selectID (const QString &s)
+{
+    if (s.isEmpty()) return false;
+    TreeItem *ti=findUuid(QUuid(s));
+    if (ti) return select (index(ti));
+    return false;
+}
+
 bool VymModel::select (LinkableMapObj *lmo)
 {
     QItemSelection oldsel=selModel->selection();
@@ -5834,12 +5874,13 @@ void VymModel::updateSlideSelection (QItemSelection newsel,QItemSelection)
 	SlideItem *si= static_cast<SlideItem*>(ix.internalPointer());
 	QString inScript=si->getInScript();
 
-	// Execute inScript 
-	execute (inScript);
-
 	// FIXME-1 testing showing inScript in ScriptEditor
 	scriptEditor->setSlideScript(modelID, si->getID(), inScript );
 
+	// Execute inScript 
+	execute (inScript);
+
+/*
 	int id=si->getTreeItemID();
 	if (id>0)
 	{
@@ -5861,6 +5902,7 @@ void VymModel::updateSlideSelection (QItemSelection newsel,QItemSelection)
 		}
 	    }	
 	}
+*/    
     }
 }
 

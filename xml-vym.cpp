@@ -498,6 +498,8 @@ bool parseVYMHandler::readBranchAttr (const QXmlAttributes& a)
 	else	
 	    lastBranch->setIncludeImagesHor(false);
     }	
+    if (!a.value( "uuid").isEmpty() ) 
+	lastBranch->setUuid (a.value( "uuid") );
     return true;    
 }
 

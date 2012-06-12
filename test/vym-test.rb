@@ -502,6 +502,7 @@ redo
 relinkTo (for images)
 saveImage
 saveNote
+selectID
 selectLastImage
 selectLatestAdd
 setTaskSleep
@@ -520,6 +521,8 @@ setMapComment
 setMapBackgroundColor
 setMapDefLinkColor
 setMapLinkStyle
+setMapZoom
+setMapRotation
 setNote
 setScale
 setSelectionColor

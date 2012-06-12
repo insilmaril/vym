@@ -662,6 +662,10 @@ void Main::setupAPI()
     c->addPar (Command::String,false,"Selection string");
     modelCommands.append(c);
 
+    c=new Command ("selectID",Command::Any); 
+    c->addPar (Command::String,false,"Unique ID");
+    modelCommands.append(c);
+
     c=new Command ("selectLastBranch",Command::Branch); 
     modelCommands.append(c);
 

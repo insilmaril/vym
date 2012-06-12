@@ -273,7 +273,8 @@ public:
     QGraphicsScene *getScene();
 
     TreeItem* findBySelectString (QString s);	    
-    TreeItem* findID (const uint &i);	    // find MapObj by unique ID
+    TreeItem* findID   (const uint &i);	    // find MapObj by unique ID
+    TreeItem* findUuid (const QUuid &i);    // find MapObj by unique ID
 
 
 ////////////////////////////////////////////
@@ -694,6 +695,7 @@ public:
     bool isSelectionBlocked();
 
     bool select (const QString &);	    //! Select by string
+    bool selectID (const QString &);	    //! select by unique ID (QUuid)
     bool select (LinkableMapObj *lmo);	    //! Select by pointer to LMO
     bool selectToggle (TreeItem *ti);	    //! Toggle select state
     bool select (TreeItem *ti );	    //! Select by pointer to TreeItem

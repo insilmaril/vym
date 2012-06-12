@@ -55,6 +55,7 @@ void TreeItem::init()
     // Assign ID  
     itemLastID++;
     id=itemLastID;
+    uuid=QUuid::createUuid();
 
     branchOffset=0;
     branchCounter=0;
@@ -579,6 +580,16 @@ bool TreeItem::canMoveUp()
 uint TreeItem::getID()
 {
     return id;
+}
+
+void TreeItem::setUuid(const QString &id)
+{
+    uuid=QUuid(id);
+}
+
+QUuid TreeItem::getUuid()
+{
+    return uuid;
 }
 
 TreeItem* TreeItem::getChildNum(const int &n)
