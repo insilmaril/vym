@@ -31,7 +31,7 @@ VymView::VymView(VymModel *m)
     treeEditor->setItemDelegate (delegate);
 
     DockEditor *de;
-    de = new DockEditor (tr("TreeEditor","Title of dockable editor widget"), this, model);
+    de = new DockEditor (tr("Tree Editor","Title of dockable editor widget"), this, model);
     de->setWidget (treeEditor);
     de->setAllowedAreas (Qt::AllDockWidgetAreas);
     addDockWidget(Qt::LeftDockWidgetArea, de);
@@ -49,7 +49,7 @@ VymView::VymView(VymModel *m)
     // Create SlideEditor
     slideEditor=new SlideEditor (model);
 
-    de = new DockEditor (tr("SlideEditor","Title of dockable editor widget"), this, model);
+    de = new DockEditor (tr("Slide Editor","Title of dockable editor widget"), this, model);
     de->setWidget (slideEditor);
     de->setAllowedAreas (Qt::AllDockWidgetAreas);
     addDockWidget(Qt::RightDockWidgetArea, de);

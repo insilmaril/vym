@@ -130,6 +130,10 @@
         <source>Cloud</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Rounded Rectangle</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>EditXLinkDialog</name>
@@ -143,7 +147,7 @@
     </message>
     <message>
         <source>Set color of heading</source>
-        <translation>設定標頭的顏色</translation>
+        <translation type="obsolete">設定標頭的顏色</translation>
     </message>
     <message>
         <source>XLink color:</source>
@@ -162,7 +166,12 @@
         <translation>確定</translation>
     </message>
     <message>
-        <source>Quit and delete XLink</source>
+        <source>Use color of heading</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Line style:</source>
+        <extracomment>Linestyle in Edit XLink dialog</extracomment>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -433,6 +442,14 @@ want to allow this in your system!</source>
     <message>
         <source>New map</source>
         <translation type="unfinished">新圖譜</translation>
+    </message>
+</context>
+<context>
+    <name>HeadingEditor</name>
+    <message>
+        <source>Heading Editor</source>
+        <comment>Window caption</comment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -828,7 +845,7 @@ Hint: You can pick a color from another branch and color using CTRL+Left Button<
     </message>
     <message>
         <source>&amp;Settings</source>
-        <translation>設定值(&amp;S)</translation>
+        <translation type="obsolete">設定值(&amp;S)</translation>
     </message>
     <message>
         <source>Set application to open pdf files</source>
@@ -1388,7 +1405,7 @@ exists already. Do you want to</source>
     </message>
     <message>
         <source>Export as LaTeX</source>
-        <translation>匯出為 LaTeX</translation>
+        <translation type="obsolete">匯出為 LaTeX</translation>
     </message>
     <message>
         <source>&amp;Print</source>
@@ -2014,12 +2031,7 @@ exists already. Do you want to</source>
     <message>
         <source>Show Note Editor</source>
         <comment>View action</comment>
-        <translation type="unfinished">顯示註記編輯器</translation>
-    </message>
-    <message>
-        <source>Toggle Tree editor</source>
-        <comment>View action</comment>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">顯示註記編輯器</translation>
     </message>
     <message>
         <source>History Window</source>
@@ -2064,7 +2076,7 @@ exists already. Do you want to</source>
     <message>
         <source>Use modifier to copy</source>
         <comment>Mode modifier</comment>
-        <translation type="unfinished">使用修飾鍵去複製</translation>
+        <translation type="obsolete">使用修飾鍵去複製</translation>
     </message>
     <message>
         <source>Use modifier to draw xLinks</source>
@@ -2299,7 +2311,7 @@ exists already. Do you want to</source>
     <message>
         <source>Delete key</source>
         <comment>Settings action</comment>
-        <translation type="unfinished">刪除鍵</translation>
+        <translation type="obsolete">刪除鍵</translation>
     </message>
     <message>
         <source>Exclusive flags</source>
@@ -2310,11 +2322,6 @@ exists already. Do you want to</source>
         <source>Use hide flags</source>
         <comment>Settings action</comment>
         <translation type="unfinished">使用隱藏旗標</translation>
-    </message>
-    <message>
-        <source>Note editor is dockable</source>
-        <comment>Settings action</comment>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Animation</source>
@@ -2458,14 +2465,6 @@ to confusion when finishing working with vym.Do you want to</source>
     </message>
     <message>
         <source>Set directory for vym macros</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Information</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Changed settings will be applied after restarting vym</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2645,11 +2644,6 @@ to confusion when finishing working with vym.Do you want to</source>
         <translation type="unfinished">連結到另外的圖譜</translation>
     </message>
     <message>
-        <source>&amp;Select</source>
-        <comment>Select menu</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Select previous</source>
         <comment>Edit menu</comment>
         <translation type="unfinished"></translation>
@@ -2662,6 +2656,127 @@ to confusion when finishing working with vym.Do you want to</source>
     <message>
         <source>Selection toolbar</source>
         <comment>Toolbar name</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Script Editor</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Task list</source>
+        <comment>TaskEditor</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Script Editor</source>
+        <comment>ScriptEditor</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Toggle task</source>
+        <comment>Edit menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cycle task status</source>
+        <comment>Edit menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Reset sleep</source>
+        <comment>Task sleep</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sleep %1 days</source>
+        <comment>Task sleep</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sleep %1 day</source>
+        <comment>Task sleep</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sleep %1 weeks</source>
+        <comment>Task sleep</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select</source>
+        <comment>Select menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unselect all</source>
+        <comment>Edit menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Rotate counterclockwise</source>
+        <comment>View action</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Rotate rclockwise</source>
+        <comment>View action</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tree editor</source>
+        <comment>View action</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Task editor</source>
+        <comment>View action</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Slide editor</source>
+        <comment>View action</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Script editor</source>
+        <comment>View action</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show keyboard shortcuts</source>
+        <comment>Help action</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tasks</source>
+        <comment>Context menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>or</source>
+        <comment>File Dialog</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save map as</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export as org-mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Task</source>
+        <comment>Task dialog</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Task sleep (days):</source>
+        <comment>Task dialog</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2780,6 +2895,14 @@ to notifiy Browsers of changed bookmarks.</source>
         <source>Print vym map</source>
         <comment>MapEditor</comment>
         <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>NoteEditor</name>
+    <message>
+        <source>Note Editor</source>
+        <comment>Window caption</comment>
+        <translation type="unfinished">註記編輯器</translation>
     </message>
 </context>
 <context>
@@ -3001,50 +3124,31 @@ and install the perl module for Bugzilla access using YaST</source>
         <source>Couldn&apos;t read settings from &quot;%1&quot;</source>
         <translation type="unfinished"></translation>
     </message>
-</context>
-<context>
-    <name>ShowTextDialog</name>
     <message>
-        <source>VYM - Info</source>
-        <translation type="obsolete">VYM - 資訊</translation>
+        <source>Couldn&apos;t move existing file out of the way before saving.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Close</source>
-        <translation>關閉</translation>
+        <source>Couldn&apos;t rename %1 back to %2</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>History of %1</source>
-        <translation type="obsolete">%1 的歷史記錄</translation>
+        <source>Saved %1, but couldn&apos;t remove %2</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Dialog</source>
+        <source>Warning: Version Problem</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;h3&gt;Map is newer than VYM&lt;/h3&gt;&lt;p&gt;The map you are just trying to load was saved using vym %1. The version of this vym is %2. If you run into problems after pressing the ok-button below, updating vym should help.&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
-    <name>SimpleScriptEditor</name>
+    <name>ScriptEditor</name>
     <message>
-        <source>Simple Script Editor</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Save as</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Save</source>
-        <translation type="unfinished">儲存</translation>
-    </message>
-    <message>
-        <source>Qt::CTRL + Qt::Key_S</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Open</source>
-        <translation type="unfinished">開啟</translation>
-    </message>
-    <message>
-        <source>Qt::CTRL +Qt::Key_O</source>
+        <source>Form</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3052,12 +3156,20 @@ and install the perl module for Bugzilla access using YaST</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Qt::CTRL + Qt::Key_R</source>
+        <source>Save slide</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Close</source>
-        <translation type="unfinished">關閉</translation>
+        <source>Warning</source>
+        <translation type="unfinished">警告</translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t save script into slide!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t find slide to save script!</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Save script</source>
@@ -3091,6 +3203,113 @@ Do you want to overwrite it?</source>
     <message>
         <source>Couldn&apos;t open %1.
 </source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ShowTextDialog</name>
+    <message>
+        <source>VYM - Info</source>
+        <translation type="obsolete">VYM - 資訊</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>關閉</translation>
+    </message>
+    <message>
+        <source>History of %1</source>
+        <translation type="obsolete">%1 的歷史記錄</translation>
+    </message>
+    <message>
+        <source>Dialog</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>SimpleScriptEditor</name>
+    <message>
+        <source>Save</source>
+        <translation type="obsolete">儲存</translation>
+    </message>
+    <message>
+        <source>Open</source>
+        <translation type="obsolete">開啟</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation type="obsolete">關閉</translation>
+    </message>
+    <message>
+        <source>The file %1
+exists already.
+Do you want to overwrite it?</source>
+        <comment>dialog &apos;save as&apos;</comment>
+        <translation type="obsolete">檔案 %1 已經存在。
+您要覆寫它嗎？ {1
+?}</translation>
+    </message>
+    <message>
+        <source>Overwrite</source>
+        <translation type="obsolete">覆寫</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="obsolete">取消</translation>
+    </message>
+</context>
+<context>
+    <name>TaskEditor</name>
+    <message>
+        <source>Current map</source>
+        <comment>TaskEditor</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Active tasks</source>
+        <comment>TaskEditor</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit heading</source>
+        <comment>TaskEditor</comment>
+        <translation type="unfinished">編輯標頭</translation>
+    </message>
+</context>
+<context>
+    <name>TaskModel</name>
+    <message>
+        <source>Prio</source>
+        <comment>TaskEditor</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Status</source>
+        <comment>TaskEditor</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Age total</source>
+        <comment>TaskEditor</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Age mod.</source>
+        <comment>TaskEditor</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sleep</source>
+        <comment>TaskEditor</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Map</source>
+        <comment>TaskEditor</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Task</source>
+        <comment>TaskEditor</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3417,10 +3636,6 @@ Do you want to overwrite it?</source>
         <translation type="obsolete">刪除全部</translation>
     </message>
     <message>
-        <source>Format Actions</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Toggle font hint for the whole text</source>
         <comment>Status tip for note menu</comment>
         <translation type="obsolete">切換整篇文字的字型修飾</translation>
@@ -3462,6 +3677,21 @@ Do you want to overwrite it?</source>
         <source>Print</source>
         <comment>TextEditor</comment>
         <translation type="unfinished">列印</translation>
+    </message>
+    <message>
+        <source>Font hints</source>
+        <comment>toolbar in texteditor</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fonts</source>
+        <comment>toolbar in texteditor</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Format</source>
+        <comment>toolbar in texteditor</comment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3561,7 +3791,9 @@ could not be renamed before saving</source>
     <message>
         <source>The file %1 exists already.
 Do you want to overwrite it?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">檔案 %1 已經存在。
+您要覆寫它嗎？ {1
+?} {1 ?}</translation>
     </message>
     <message>
         <source>Overwrite</source>
@@ -3660,6 +3892,51 @@ Do you want to reload that map with the new file?</source>
     </message>
     <message>
         <source>Couldn&apos;t save QImage %1 in format %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>All</source>
+        <comment>Filedialog</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Warning</source>
+        <translation type="unfinished">警告</translation>
+    </message>
+    <message>
+        <source>Redo failed:
+%1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Undo failed:
+%1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Script aborted:
+%1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export as LaTeX</source>
+        <translation type="unfinished">匯出為 LaTeX</translation>
+    </message>
+    <message>
+        <source>(still experimental)</source>
+        <translation type="unfinished">(仍然是實驗性質)</translation>
+    </message>
+</context>
+<context>
+    <name>VymView</name>
+    <message>
+        <source>Tree Editor</source>
+        <comment>Title of dockable editor widget</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Slide Editor</source>
+        <comment>Title of dockable editor widget</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>
