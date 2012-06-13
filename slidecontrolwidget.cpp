@@ -42,7 +42,7 @@ SlideControlWidget::SlideControlWidget(QWidget *)
     connect ( snapshotButton, SIGNAL( clicked() ), this, SLOT( snapshotPressed() ) );
 
     editButton = new QPushButton;
-    editButton->setIcon (QPixmap ( iconPath + "filenew.png" ));   //FIXME-1
+    editButton->setIcon (QPixmap ( iconPath + "scripteditor.png" ));   
     connect ( editButton, SIGNAL( clicked() ), this, SLOT( editPressed() ) );
 
     deleteButton = new QPushButton;

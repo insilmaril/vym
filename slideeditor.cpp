@@ -84,10 +84,9 @@ void SlideEditor::addSlide()
     vymModel->addSlide();
 }
 
-void SlideEditor::editSlide() //FIXME-1	 testing
+void SlideEditor::editSlide() //FIXME-1	 testing, open script editor
 {
     SlideItem *si=slideModel->getSelectedItem();
-    qDebug()<<"SE::editSlide\n"<<si->getInScript();
 }
 
 void SlideEditor::deleteSlide() 
@@ -108,6 +107,6 @@ void SlideEditor::moveSlideDown()
 
 void SlideEditor::updateSelection(QItemSelection, QItemSelection)
 {
-    // FIXME-1 updateActions missing, e.g. state for moveUp/down
+    // FIXME-2 updateActions missing, e.g. state for moveUp/down
 }
 

@@ -84,7 +84,7 @@ void BranchItem::insertBranch (int pos, BranchItem *branch)
 
 QString BranchItem::saveToDir (const QString &tmpdir,const QString &prefix, const QPointF& offset, QList <Link*> &tmpLinks ) //FIXME-3 Check if everything is saved...
 {
-    // Save uuid //FIXME-1 testing
+    // Save uuid 
     QString idAttr=attribut("uuid",uuid.toString());
 
     // Cloudy stuff can be hidden during exports

@@ -20,6 +20,7 @@
 #include "options.h"
 #include "parser.h"
 #include "process.h"
+#include "scripteditor.h" 
 #include "slideitem.h"
 #include "slidemodel.h"
 #include "taskeditor.h"
@@ -41,6 +42,7 @@ extern QString tmpVymDir;
 
 extern NoteEditor *noteEditor;
 extern TaskEditor *taskEditor;
+extern ScriptEditor *scriptEditor;
 extern FlagRow *standardFlagsMaster;
 
 extern Options options;
@@ -5831,16 +5833,6 @@ SlideItem* VymModel::addSlide()
 	inScript+=QString("centerOnID(\"%1\");\n").arg(seli->getUuid().toString());
 	si->setInScript(inScript);
 	slideModel->setData ( slideModel->index(si), seli->getHeading() );
-	
-	// FIXME-1 switch to script based slide initialization (inscript)
-	/*
-	si->setTreeItem (seli);
-	si->setZoomFactor   (getMapEditor()->getZoomFactorTarget() );
-	si->setRotationAngle (getMapEditor()->getAngleTarget() );
-	slideModel->setData ( slideModel->index(si), getHeading() );
-	*/
-
-
     }
     QString s="<vymmap>" + si->saveToDir() + "</vymmap>";
     int pos=si->childNumber();
@@ -5924,8 +5916,6 @@ void VymModel::moveSlideDown(int n)
     }
 }
 
-#include "scripteditor.h" //FIXME-1 testing
-extern ScriptEditor *scriptEditor;
 void VymModel::updateSlideSelection (QItemSelection newsel,QItemSelection)
 {
     if (blockSlideSelection) return;
@@ -5935,35 +5925,11 @@ void VymModel::updateSlideSelection (QItemSelection newsel,QItemSelection)
 	SlideItem *si= static_cast<SlideItem*>(ix.internalPointer());
 	QString inScript=si->getInScript();
 
-	// FIXME-1 testing showing inScript in ScriptEditor
+	// show inScript in ScriptEditor
 	scriptEditor->setSlideScript(modelID, si->getID(), inScript );
 
 	// Execute inScript 
 	execute (inScript);
-
-/*
-	int id=si->getTreeItemID();
-	if (id>0)
-	{
-	    TreeItem *ti=findID(id);
-	    if (ti)
-	    {
-		//select (ti); FIXME-4 select or not select in MapEditor? Maybe optionally fade out selection?
-		if (mapEditor)
-		{
-		    LinkableMapObj *lmo=((MapItem*)ti)->getLMO();
-		    qreal zf=si->getZoomFactor();
-		    if (zf>0 && lmo)
-			mapEditor->setViewCenterTarget (
-			    lmo->getBBox().center(),
-			    zf,
-			    si->getRotationAngle(),
-			    si->getDuration(),
-			    si->getEasingCurve() );
-		}
-	    }	
-	}
-*/    
     }
 }
 

@@ -7,6 +7,7 @@
 
 #include "command.h"
 #include "mainwindow.h"
+#include "options.h"
 #include "slideitem.h"
 #include "slidemodel.h"
 #include "vymmodel.h"
@@ -15,6 +16,7 @@ extern QString vymName;
 extern QList <Command*> modelCommands;
 extern QDir lastMapDir;
 extern Main *mainWindow;
+extern Options options;
 
 ScriptEditor::ScriptEditor (QWidget *parent):QWidget(parent)
 {
@@ -41,9 +43,8 @@ ScriptEditor::ScriptEditor (QWidget *parent):QWidget(parent)
     highlighter->addKeywords (list);
 }
 
-void ScriptEditor::setScriptFile(const QString &fn) //FIXME-1 not implemented yet
+void ScriptEditor::setScriptFile(const QString &fn) 
 {
-/*
     QFile f( fn );
     if ( !f.open( QFile::ReadOnly|QFile::Text ) )
     {
@@ -53,13 +54,12 @@ void ScriptEditor::setScriptFile(const QString &fn) //FIXME-1 not implemented ye
 	    qWarning ()<<error+": "+msg;
 	else    
 	    QMessageBox::warning(0, error,msg);
-	return 0;
+	return;
     }	
 
     QTextStream in( &f );
-    script= in.readAll();
+    ui.editor->setText (in.readAll());
     f.close();
-    */
 }
 
 void ScriptEditor::saveFile()
