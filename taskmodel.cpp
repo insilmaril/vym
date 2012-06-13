@@ -217,7 +217,7 @@ Task* TaskModel::createTask (BranchItem *bi)
 void TaskModel::deleteTask (Task* t)
 {
     int pos=tasks.indexOf(t);
-    if (t>=0)
+    if (pos>=0)
 	removeRows(pos, 1,QModelIndex() );
 }
 
