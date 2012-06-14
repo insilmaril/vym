@@ -1185,7 +1185,20 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
     LinkableMapObj* lmo=NULL;
     if (ti) lmo=((MapItem*)ti)->getLMO();
     
-    // Select the clicked object
+    // Now check PickColor modifier (before selecting object!) 
+    if (ti && (e->modifiers() & Qt::ShiftModifier) &&
+	mainWindow->getModMode()==Main::ModModeColor)
+    {
+	setState (PickingColor);
+	mainWindow->setCurrentColor (ti->getHeadingColor() );
+	if ((e->modifiers() & Qt::ShiftModifier) && (e->modifiers() & Qt::ControlModifier) )
+	    model->colorBranch(ti->getHeadingColor());
+	else    
+	    model->colorSubtree(ti->getHeadingColor());
+	return;
+    }	
+
+    // Select the clicked object 
     if (e->modifiers() & Qt::ControlModifier)
 	model->selectToggle (ti);
     else
@@ -1284,14 +1297,6 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
 	tmpLink->updateLink();
 	return;
     }
-    // Now check PickColor modifier
-    if (ti && (e->modifiers() & Qt::ShiftModifier) &&
-	mainWindow->getModMode()==Main::ModModeColor)
-    {
-	setState (PickingColor);
-	mainWindow->setCurrentColor (ti->getHeadingColor() );
-	return;
-    }	
 
     // Start moving around
     if (lmo) 
