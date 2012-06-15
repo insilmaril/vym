@@ -1,6 +1,7 @@
 #include <QVBoxLayout>
 #include <QTreeView>
 
+#include "mainwindow.h"
 #include "slidecontrolwidget.h"
 #include "slidemodel.h"
 #include "slideitem.h"
@@ -9,6 +10,7 @@
 #include "slideeditor.h"
 
 extern QString iconPath;
+extern Main *mainWindow;
 
 SlideEditor::SlideEditor(VymModel *m)
 {
@@ -30,7 +32,10 @@ SlideEditor::SlideEditor(VymModel *m)
 	this, SLOT (addSlide() ) );
     connect (
 	slideControl, SIGNAL (editButtonPressed() ), 
-	this, SLOT (editSlide() ) );
+	mainWindow, SLOT (windowToggleScriptEditor() ) );
+    connect (
+	slideControl, SIGNAL (deleteButtonPressed() ), 
+	this, SLOT (deleteSlide() ) );
     connect (
 	slideControl, SIGNAL (deleteButtonPressed() ), 
 	this, SLOT (deleteSlide() ) );
