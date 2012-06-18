@@ -1049,6 +1049,7 @@ void MapEditor::editHeadingFinished()
     model->setHeading (s);
     model->setSelectionBlocked(false);
     delete (lineEdit);
+    lineEdit=NULL;
 
     animateScrollBars();
 
@@ -2006,7 +2007,11 @@ void MapEditor::updateSelection(QItemSelection nsel,QItemSelection dsel)
 	sp->setBrush (selectionColor);	
 	sp->setParentItem (mo); 
 	sp->setZValue (dZ_SELBOX);
+
+	// Reposition also LineEdit for heading during animation
+	if (lineEdit) lineEdit->move (mo->getAbsPos().toPoint() );
     }
+
     scene()->update();  
 }
 

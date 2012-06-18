@@ -5015,8 +5015,7 @@ void VymModel::animate()
 	bo->reposition();
 	i++;
     } 
-    QItemSelection sel=selModel->selection();
-    emit (selectionChanged(sel,sel));	
+    emitSelectionChanged();
 
     if (!animObjList.isEmpty()) animationTimer->start(animationInterval);
 }
