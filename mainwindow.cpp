@@ -155,21 +155,21 @@ Main::Main(QWidget* parent, Qt::WFlags f) : QMainWindow(parent,f)
 
     // Dock widgets ///////////////////////////////////////////////
     QDockWidget *dw;
-    dw = new QDockWidget (tr("Note Editor"),this);
+    dw = new QDockWidget (tr("Note Editor"));
     dw->setWidget (noteEditor);
     dw->setObjectName ("NoteEditor");
     dw->hide();
     noteEditorDW=dw;
     addDockWidget (Qt::LeftDockWidgetArea,dw);
 
-    dw = new QDockWidget (tr("Heading Editor"),this);
+    dw = new QDockWidget (tr("Heading Editor"));
     dw->setWidget (headingEditor);
     dw->setObjectName ("HeadingEditor");
     dw->hide();
     headingEditorDW=dw;
     addDockWidget (Qt::BottomDockWidgetArea,dw);
 
-    dw = new QDockWidget (tr("Script Editor"),this);
+    dw = new QDockWidget (tr("Script Editor"));
     dw->setWidget (scriptEditor);
     dw->setObjectName ("ScriptEditor");
     dw->hide();
@@ -177,7 +177,7 @@ Main::Main(QWidget* parent, Qt::WFlags f) : QMainWindow(parent,f)
     addDockWidget (Qt::LeftDockWidgetArea,dw);
 
     findResultWidget=new FindResultWidget ();
-    dw= new QDockWidget (tr ("Search results list","FindResultWidget"),this);
+    dw= new QDockWidget (tr ("Search results list","FindResultWidget"));
     dw->setWidget (findResultWidget);
     dw->setObjectName ("FindResultWidget");
     dw->hide();	
@@ -190,14 +190,14 @@ Main::Main(QWidget* parent, Qt::WFlags f) : QMainWindow(parent,f)
 	this, SLOT (editFindNext(QString) ) );
 
     taskEditor = new TaskEditor ();
-    dw= new QDockWidget (tr ("Task list","TaskEditor"),this);
+    dw= new QDockWidget (tr ("Task list","TaskEditor"));
     dw->setWidget (taskEditor);
     dw->setObjectName ("TaskEditor");
     dw->hide();	
     addDockWidget (Qt::TopDockWidgetArea,dw);
 
     scriptEditor = new ScriptEditor(this);
-    dw= new QDockWidget (tr ("Script Editor","ScriptEditor"),this);
+    dw= new QDockWidget (tr ("Script Editor","ScriptEditor"));
     dw->setWidget (scriptEditor);
     dw->setObjectName ("ScriptEditor");
     dw->hide();	
@@ -1008,6 +1008,8 @@ void Main::setupEditActions()
     editMenu->addSeparator();
     a = new QAction(QPixmap( iconPath+"editcopy.png"), tr( "&Copy","Edit menu" ), this);
     a->setShortcut (Qt::CTRL + Qt::Key_C );	    //Copy
+    //a->setShortcutContext (Qt::WidgetShortcut);    
+    //a->setShortcutContext (Qt::WidgetWithChildrenShortcut);    
     a->setEnabled (false);
     switchboard.addConnection(editMenu, a,tr("Edit","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( editCopy() ) );

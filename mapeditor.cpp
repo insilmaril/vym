@@ -930,7 +930,7 @@ BranchItem* MapEditor::getBranchBelow (BranchItem *selbi)
     return NULL;
 }
 
-BranchItem* MapEditor::getLeftBranch (BranchItem *bi)
+BranchItem* MapEditor::getLeftBranch (BranchItem *bi)  //FIXME-1 not working...
 {
     if (bi)
     {

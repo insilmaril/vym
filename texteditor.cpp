@@ -51,7 +51,6 @@ TextEditor::TextEditor()
     // Various states
     blockChangedSignal=false;
     setInactive();
-
 }
 
 
@@ -328,6 +327,7 @@ void TextEditor::setupEditActions()
     editMenu->addSeparator();
     a = new QAction(QPixmap(iconPath+"editcopy.png" ), tr( "&Copy" ),this);
     a->setShortcut( Qt::CTRL + Qt::Key_C );
+    a->setShortcutContext (Qt::WidgetShortcut);    
     connect( a, SIGNAL( activated() ), e, SLOT( copy() ) );
     editMenu->addAction (a);
     editToolBar->addAction (a);
