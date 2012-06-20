@@ -935,8 +935,23 @@ BranchItem* MapEditor::getLeftBranch (BranchItem *bi)  //FIXME-1 not working...
     if (bi)
     {
 	if (bi->depth()==0)
+	{ 
 	    // Special case: use alternative selection index
-	    return bi->getLastSelectedBranchAlt();  
+	    BranchItem *newbi=bi->getLastSelectedBranchAlt();  
+	    if (!newbi)
+	    {
+		BranchObj *bo;
+		// Try to find a mainbranch left of center
+		for (int i=0; i<bi->branchCount(); i++)
+		{
+		    newbi=bi->getBranchNum(i);
+		    bo=newbi->getBranchObj();
+		    if (bo && bo->getOrientation()==LinkableMapObj::LeftOfCenter)
+			break;
+		}
+	    }
+	    return newbi;
+	}
 	if (bi->getBranchObj()->getOrientation()==LinkableMapObj::RightOfCenter)    
 	    // right of center
 	    return (BranchItem*)(bi->parent());
@@ -952,7 +967,24 @@ BranchItem* MapEditor::getRightBranch(BranchItem *bi)
 {
     if (bi)
     {
-	if (bi->depth()==0) return bi->getLastSelectedBranch();	
+	if (bi->depth()==0)
+	{
+	    // Special case: use alternative selection index
+	    BranchItem *newbi=bi->getLastSelectedBranch();  
+	    if (!newbi)
+	    {
+		BranchObj *bo;
+		// Try to find a mainbranch right of center
+		for (int i=0; i<bi->branchCount(); i++)
+		{
+		    newbi=bi->getBranchNum(i);
+		    bo=newbi->getBranchObj();
+		    if (bo && bo->getOrientation()==LinkableMapObj::RightOfCenter)
+			qDebug()<<"BI found right: "<<newbi->getHeading();
+		}
+	    }
+	    return newbi;
+	}
 	if (bi->getBranchObj()->getOrientation()==LinkableMapObj::LeftOfCenter)	
 	    // left of center
 	    return (BranchItem*)(bi->parent());
