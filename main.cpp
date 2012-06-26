@@ -139,6 +139,7 @@ int main(int argc, char* argv[])
 
     // Reading and initializing options commandline options
     options.add ("batch", Option::Switch, "b", "batch");
+    options.add ("commands", Option::Switch, "c", "commands");
     options.add ("debug", Option::Switch, "d", "debug");
     options.add ("help", Option::Switch, "h", "help");
     options.add ("local", Option::Switch, "l", "local");
@@ -160,6 +161,7 @@ int main(int argc, char* argv[])
 	"Usage: vym [OPTION]... [FILE]... \n"
 	"Open FILEs with vym\n\n"
 	"-b           batch       batch mode: hide windows\n"
+	"-c           commands	  List all available commands\n"
 	"-d           debug       Show debugging output\n"
 	"-h           help        Show this help text\n"
 	"-l           local       Run with ressources in current directory\n"

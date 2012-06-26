@@ -57,6 +57,7 @@ public:
     virtual int row() const;
     virtual int depth() ;
     virtual TreeItem *parent();
+    virtual bool isChildOf (TreeItem *ti);
 
     /*! Return number of item in parent by type, 
 	e.g. first branch has number 0           */
@@ -199,8 +200,8 @@ protected:
     QList<QVariant> itemData;
     TreeItem *parentItem;
 
-    /*!  Set rootItem (does not change, needed for quick check 
-	 if some branch is mapCenter */
+    /*!  Set rootItem (does not change, needed for some quick checks 
+	 e.g. if some branch is mapCenter and isChildOf  */
     TreeItem *rootItem;
  
     int branchOffset;

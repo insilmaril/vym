@@ -254,6 +254,13 @@ TreeItem *TreeItem::parent()
     return parentItem;
 }
 
+bool TreeItem::isChildOf (TreeItem *ti)
+{
+    if (parentItem==ti) return true;
+    if (parentItem==rootItem) return false;
+    return parentItem->isChildOf (ti);
+}
+
 int TreeItem::childNum()
 {
     return parentItem->childItems.indexOf (this);

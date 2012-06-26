@@ -4299,12 +4299,13 @@ void Main::editMoveToTarget()
 		QPointF orgPos;
 		if (lmo) orgPos=lmo->getAbsPos();
 
-		m->relinkBranch ( selbi, (BranchItem*)ti,-1,true,orgPos);
-
-		if (below) 
-		    m->select (below);
-		else    
-		    if (pi) m->select (pi);
+		if (m->relinkBranch ( selbi, (BranchItem*)ti,-1,true,orgPos) )
+		{
+		    if (below) 
+			m->select (below);
+		    else    
+			if (pi) m->select (pi);
+		}    
 	    }	    
 	}
     }

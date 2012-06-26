@@ -2750,6 +2750,9 @@ bool VymModel::relinkBranch (
 {
     if (branch && dst)
     {
+	// Check if we relink to ourselves
+	if (dst->isChildOf (branch) ) return false;
+	 
 	if (updateSelection) unselectAll();
  
 	// Do we need to update frame type?
@@ -3983,30 +3986,36 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 			    n=parser.parInt (ok,1);
 			    if (ok)
 			    {
-				relinkBranch (selbi,(BranchItem*)dst,n,true);
-				emitSelectionChanged();
+				if (relinkBranch (selbi,(BranchItem*)dst,n,true))
+				    emitSelectionChanged();
+				else
+				    parser.setError(Aborted,"Relinking failed");
 			    }   
 			} else if (dst->getType()==TreeItem::MapCenter) 
 			{
-			    relinkBranch (selbi,(BranchItem*)dst,-1,true);
-			    // Get coordinates of mainbranch
-			    x=parser.parDouble(ok,2);
-			    if (ok)
+			    if (relinkBranch (selbi,(BranchItem*)dst,-1,true))
 			    {
-				y=parser.parDouble(ok,3);
-				if (ok) 
+				// Get coordinates of mainbranch
+				x=parser.parDouble(ok,2);
+				if (ok)
 				{
-				    if (selbi->getLMO()) 
+				    y=parser.parDouble(ok,3);
+				    if (ok) 
 				    {
-					((BranchObj*)selbi->getLMO())->move (x,y);
-					((BranchObj*)selbi->getLMO())->setRelPos();
+					if (selbi->getLMO()) 
+					{
+					    ((BranchObj*)selbi->getLMO())->move (x,y);
+					    ((BranchObj*)selbi->getLMO())->setRelPos();
+					}
 				    }
 				}
-			    }
-			    reposition();
-			    emitSelectionChanged();
+				reposition();
+				emitSelectionChanged();
+			    } else
+				parser.setError(Aborted,"Relinking failed");
 			}	
-		    }   
+		    } else
+			parser.setError (Aborted,"Couldn't find destination branch");
 		}	
 	    } else if ( selti->getType() == TreeItem::Image) 
 	    {
@@ -4018,7 +4027,9 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 		    if (dst)
 		    {   
 			if (dst->isBranchLikeType())
-			    relinkImage ( ((ImageItem*)selti),(BranchItem*)dst);
+			    if (!relinkImage ( ((ImageItem*)selti),(BranchItem*)dst))
+				parser.setError(Aborted,"Relinking failed");
+
 		    } else	
 			parser.setError (Aborted,"Destination is not a branch");
 		}	    
