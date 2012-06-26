@@ -20,7 +20,18 @@ def expect (comment, v_real, v_exp)
     $tests_failed += 1
     waitkey
   end  
-    $tests_total += 1
+  $tests_total += 1
+end    
+
+def expect_error (comment, error)
+  if error.length ==  0
+    puts "Failed: #{comment}. Command did not return error."
+    $tests_failed += 1
+  else  
+    puts "    Ok: #{comment}"
+    $tests_passed += 1
+  end
+  $tests_total += 1
 end
 
 def heading (s)
@@ -203,6 +214,12 @@ def test_moving_parts (vym)
   vym.select @@branch_b
   expect "Undo: RelinkTo #{@@main_b}: branchCount decreased there", n, vym.branchCount
   
+  init_map
+  vym.select @@main_a
+  err = vym.relinkTo @@branch_a,0,0,0
+  expect_error "RelinkTo myself fails.", err
+
+  vym
   init_map
   vym.select @@branch_a
   n=vym.branchCount

@@ -4320,7 +4320,7 @@ QVariant VymModel::execute (const QString &script)
 	r=parseAtom(parser.getAtom(),noErr,errMsg);
 	if (!noErr)
 	{
-	    if (!options.isOn("batch") )
+	    if (!options.isOn("batch") && !testmode )
 		QMessageBox::warning(0,tr("Warning"),tr("Script aborted:\n%1").arg(errMsg));
 	    qWarning()<< QString("VM::runScript aborted: "+errMsg);
 	}
