@@ -138,7 +138,7 @@
     <message>
         <location filename="../branchpropwindow.ui" line="65"/>
         <source>Rounded Rectangle</source>
-        <translation type="unfinished"></translation>
+        <translation>Zakulacený obdélník</translation>
     </message>
     <message>
         <location filename="../branchpropwindow.ui" line="70"/>
@@ -241,13 +241,13 @@
     <message>
         <location filename="../editxlinkdialog.ui" line="72"/>
         <source>Use color of heading</source>
-        <translation type="unfinished"></translation>
+        <translation>Použít barvu záhlaví</translation>
     </message>
     <message>
         <location filename="../editxlinkdialog.ui" line="170"/>
         <source>Line style:</source>
         <extracomment>Linestyle in Edit XLink dialog</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Styl čáry:</translation>
     </message>
     <message>
         <source>Set color of heading</source>
@@ -726,7 +726,7 @@ dovolit!</translation>
         <location filename="../historywindow.cpp" line="24"/>
         <source>Undo action</source>
         <comment>Table with actions</comment>
-        <translation>Zpět krok</translation>
+        <translation>Krok zpět</translation>
     </message>
     <message>
         <location filename="../historywindow.cpp" line="126"/>
@@ -2086,25 +2086,25 @@ ale ještě nebyla uložena. Chcete </translation>
         <location filename="../mainwindow.cpp" line="1816"/>
         <source>Tree editor</source>
         <comment>View action</comment>
-        <translation type="unfinished"></translation>
+        <translation>Editor stromu</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1824"/>
         <source>Task editor</source>
         <comment>View action</comment>
-        <translation type="unfinished"></translation>
+        <translation>Editor úkolů</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1832"/>
         <source>Slide editor</source>
         <comment>View action</comment>
-        <translation type="unfinished"></translation>
+        <translation>Editor snímků</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1840"/>
         <source>Script editor</source>
         <comment>View action</comment>
-        <translation type="unfinished"></translation>
+        <translation>Editor skriptů</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2567"/>
@@ -2246,13 +2246,13 @@ ale ještě nebyla uložena. Chcete </translation>
     <message>
         <location filename="../mainwindow.cpp" line="172"/>
         <source>Script Editor</source>
-        <translation type="unfinished"></translation>
+        <translation>Editor skriptů</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="200"/>
         <source>Script Editor</source>
         <comment>ScriptEditor</comment>
-        <translation type="unfinished"></translation>
+        <translation>Editor skriptů</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="853"/>
@@ -2264,7 +2264,7 @@ ale ještě nebyla uložena. Chcete </translation>
         <location filename="../mainwindow.cpp" line="990"/>
         <source>E&amp;dit</source>
         <comment>Edit menu</comment>
-        <translation>&amp;Upravit</translation>
+        <translation>Ú&amp;pravy</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1044"/>
@@ -2530,7 +2530,7 @@ ale ještě nebyla uložena. Chcete </translation>
         <location filename="../mainwindow.cpp" line="1574"/>
         <source>Select</source>
         <comment>Select menu</comment>
-        <translation type="unfinished"></translation>
+        <translation>Výběr</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1612"/>
@@ -2657,13 +2657,13 @@ ale ještě nebyla uložena. Chcete </translation>
     <message>
         <location filename="../mainwindow.cpp" line="2229"/>
         <source>Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastavení</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2364"/>
         <source>Show keyboard shortcuts</source>
         <comment>Help action</comment>
-        <translation type="unfinished"></translation>
+        <translation>Ukázat klávesové zkratky</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2421"/>
@@ -2698,15 +2698,18 @@ ale ještě nebyla uložena. Chcete </translation>
     <message>
         <location filename="../mainwindow.cpp" line="2816"/>
         <source>The map %1
-is already opened.Opening the same map in multiple editors may lead 
+is already opened.Opening the same map in multiple editors may lead
 to confusion when finishing working with vym.Do you want to</source>
-        <translation type="unfinished"></translation>
+        <translation>Mapa %1
+je již otevřena. Otevření téže mapy ve více editorech může
+při ukončení práce s programem vym vést ke zmatení.
+Chcete </translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2960"/>
         <source>or</source>
         <comment>File Dialog</comment>
-        <translation type="unfinished"></translation>
+        <translation>nebo</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="3087"/>
@@ -5136,38 +5139,38 @@ nainstalovat perlovský modul pro přístup k Bugzille</translation>
     <message>
         <location filename="../scripteditor.ui" line="14"/>
         <source>Form</source>
-        <translation type="unfinished">Formulář</translation>
+        <translation>Formulář</translation>
     </message>
     <message>
         <location filename="../scripteditor.ui" line="23"/>
         <source>Run</source>
-        <translation type="unfinished">Spustit</translation>
+        <translation>Spustit</translation>
     </message>
     <message>
         <location filename="../scripteditor.ui" line="33"/>
         <source>Save slide</source>
-        <translation type="unfinished"></translation>
+        <translation>Uložit snímek</translation>
     </message>
     <message>
         <location filename="../scripteditor.cpp" line="80"/>
         <location filename="../scripteditor.cpp" line="86"/>
         <source>Warning</source>
-        <translation type="unfinished"></translation>
+        <translation>Varování</translation>
     </message>
     <message>
         <location filename="../scripteditor.cpp" line="80"/>
         <source>Couldn&apos;t save script into slide!</source>
-        <translation type="unfinished"></translation>
+        <translation>Nepodařilo se uložit skript do snímku!</translation>
     </message>
     <message>
         <location filename="../scripteditor.cpp" line="86"/>
         <source>Couldn&apos;t find slide to save script!</source>
-        <translation type="unfinished"></translation>
+        <translation>Nepodařilo se najít snímek pro uložení skriptu!</translation>
     </message>
     <message>
         <location filename="../scripteditor.cpp" line="112"/>
         <source>Save script</source>
-        <translation type="unfinished">Uložit skript</translation>
+        <translation>Uložit skript</translation>
     </message>
     <message>
         <location filename="../scripteditor.cpp" line="124"/>
@@ -5175,35 +5178,34 @@ nainstalovat perlovský modul pro přístup k Bugzille</translation>
 exists already.
 Do you want to overwrite it?</source>
         <comment>dialog &apos;save as&apos;</comment>
-        <translation type="unfinished">Soubor %1 již existuje.
+        <translation>Soubor %1 již existuje.
 Chcete jej přepsat?</translation>
     </message>
     <message>
         <location filename="../scripteditor.cpp" line="129"/>
         <source>Overwrite</source>
-        <translation type="unfinished">Přepsat</translation>
+        <translation>Přepsat</translation>
     </message>
     <message>
         <location filename="../scripteditor.cpp" line="130"/>
         <source>Cancel</source>
-        <translation type="unfinished">Zrušit</translation>
+        <translation>Zrušit</translation>
     </message>
     <message>
         <location filename="../scripteditor.cpp" line="153"/>
         <source>Load script</source>
-        <translation type="unfinished">Nahrát skript</translation>
+        <translation>Nahrát skript</translation>
     </message>
     <message>
         <location filename="../scripteditor.cpp" line="163"/>
         <source>Error</source>
-        <translation type="unfinished">Chyba</translation>
+        <translation>Chyba</translation>
     </message>
     <message>
         <location filename="../scripteditor.cpp" line="164"/>
         <source>Couldn&apos;t open %1.
 </source>
-        <translation type="unfinished">Nepodařilo se otevřít %1.
-</translation>
+        <translation>Nepodařilo se otevřít %1.</translation>
     </message>
 </context>
 <context>
@@ -5312,7 +5314,7 @@ Chcete jej přepsat?</translation>
         <location filename="../taskeditor.cpp" line="44"/>
         <source>Active tasks</source>
         <comment>TaskEditor</comment>
-        <translation type="unfinished"></translation>
+        <translation>Činné úkoly</translation>
     </message>
     <message>
         <source>Awake only</source>
@@ -5917,11 +5919,18 @@ Chcete mapu
         <location filename="../vymmodel.cpp" line="596"/>
         <source>The map %1
 did not use the compressed vym file format.
-Writing it uncompressed will also write images 
+Writing it uncompressed will also write images
 and flags and thus may overwrite files in the given directory
 
 Do you want to write the map</source>
-        <translation type="unfinished"></translation>
+        <translation>Mapa %1
+byla uložena, aniž by byla zkomprimována (zhuštěna do menšího souboru),
+takže není v obvyklém formátu používaném programem vym.
+Bude-li uložena nezkomprimovaná, budou uloženy i obrázky a příznaky,
+čímž mohou být přepsány soubory v daném adresáři.
+
+Chcete mapu
+</translation>
     </message>
     <message>
         <location filename="../vymmodel.cpp" line="604"/>
@@ -5978,7 +5987,7 @@ se nepodařilo přejmenovat před uložením</translation>
         <location filename="../vymmodel.cpp" line="764"/>
         <source>All</source>
         <comment>Filedialog</comment>
-        <translation type="unfinished"></translation>
+        <translation>Vše</translation>
     </message>
     <message>
         <location filename="../vymmodel.cpp" line="717"/>
@@ -6065,13 +6074,14 @@ Chcete mapu nahrát znovu s novým souborem?</translation>
         <location filename="../vymmodel.cpp" line="1153"/>
         <location filename="../vymmodel.cpp" line="4313"/>
         <source>Warning</source>
-        <translation type="unfinished"></translation>
+        <translation>Varování</translation>
     </message>
     <message>
         <location filename="../vymmodel.cpp" line="1066"/>
         <source>Redo failed:
 %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Návrat o krok vpřed (Znovu) se nezdařil:
+%1</translation>
     </message>
     <message>
         <location filename="../vymmodel.cpp" line="1103"/>
@@ -6082,7 +6092,8 @@ Chcete mapu nahrát znovu s novým souborem?</translation>
         <location filename="../vymmodel.cpp" line="1153"/>
         <source>Undo failed:
 %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Návrat o krok zpět se nezdařil:
+%1</translation>
     </message>
     <message>
         <location filename="../vymmodel.cpp" line="1773"/>
@@ -6094,7 +6105,8 @@ Chcete mapu nahrát znovu s novým souborem?</translation>
         <location filename="../vymmodel.cpp" line="4313"/>
         <source>Script aborted:
 %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Skript zrušen:
+%1</translation>
     </message>
     <message>
         <source>Enter URL:</source>
@@ -6201,13 +6213,13 @@ Chcete mapu nahrát znovu s novým souborem?</translation>
         <location filename="../vymview.cpp" line="34"/>
         <source>Tree Editor</source>
         <comment>Title of dockable editor widget</comment>
-        <translation type="unfinished"></translation>
+        <translation>Editor stromu</translation>
     </message>
     <message>
         <location filename="../vymview.cpp" line="52"/>
         <source>Slide Editor</source>
         <comment>Title of dockable editor widget</comment>
-        <translation type="unfinished"></translation>
+        <translation>Editor snímků</translation>
     </message>
 </context>
 <context>
