@@ -175,16 +175,15 @@ int main(int argc, char* argv[])
 	"-v           version     Show vym version\n"
     );
 
-    taskModel = new TaskModel();
-
     if (options.parse())
     {
 	cout << endl << qPrintable( options.getHelpText())<<endl;
 	return 1;
     }
 
-    debug=options.isOn ("debug");
-    testmode=options.isOn ("testmode");
+    if (options.isOn ("commands"))
+    {
+    }
 
     if (options.isOn ("version"))
     {
@@ -196,6 +195,11 @@ int main(int argc, char* argv[])
 	return 0;   
     }	    
     
+    taskModel = new TaskModel();
+
+    debug=options.isOn ("debug");
+    testmode=options.isOn ("testmode");
+
     // Register for DBUS
     if (debug) cout << "PID="<<getpid()<<endl;
     QString pidString=QString ("%1").arg(getpid());
@@ -310,6 +314,15 @@ int main(int argc, char* argv[])
 
     m.setWindowIcon (QPixmap (iconPath+"vym.png"));
     m.fileNew();
+
+    if (options.isOn ("commands"))
+    {
+	cout << "Available commands:\n";
+	cout << "==================:\n";
+	foreach (Command* c, modelCommands)
+	    cout << c->getName().toStdString() << endl;
+    }
+
     if (options.isOn ("batch"))
 	m.hide();
     else	
