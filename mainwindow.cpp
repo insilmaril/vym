@@ -3459,6 +3459,7 @@ bool Main::fileCloseMap()
 	vymViews.removeAt (tabWidget->currentIndex() );
 	tabWidget->removeTab (tabWidget->currentIndex() );
 
+	delete (m->getMapEditor()); 
 	delete (m); 
 
 	updateActions();

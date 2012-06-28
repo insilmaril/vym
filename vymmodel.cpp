@@ -81,7 +81,9 @@ VymModel::VymModel()
 
 VymModel::~VymModel() 
 {
-    //qDebug() << "Destr VymModel begin this="<<this;
+    //qDebug() << "Destr VymModel begin this="<<this<<"  "<<mapName;
+    mapEditor=NULL;
+    blockReposition=true;
     autosaveTimer->stop();
     fileChangedTimer->stop();
     stopAllAnimation();
