@@ -256,6 +256,7 @@ TreeItem *TreeItem::parent()
 
 bool TreeItem::isChildOf (TreeItem *ti)
 {
+    if (this==rootItem) return false;
     if (parentItem==ti) return true;
     if (parentItem==rootItem) return false;
     return parentItem->isChildOf (ti);
