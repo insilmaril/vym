@@ -89,7 +89,7 @@ void SlideEditor::addSlide()
     vymModel->addSlide();
 }
 
-void SlideEditor::editSlide() //FIXME-1	 testing, open script editor
+void SlideEditor::editSlide() 
 {
     SlideItem *si=slideModel->getSelectedItem();
 }
