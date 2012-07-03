@@ -523,7 +523,7 @@ just colours the heading of the selection, the last one also colours all
 the children of the selected branch.
 
 %tipp
-A very useful function is the \em{pick color modifier} of the mouse:
+A very useful function is the {\em pick color modifier} of the mouse:
 Select the branch which should get the new colour, then press
 \key{Shift} and simultanously click with left-mouse on another branch to
 copy its colour to the currently selected subtree. If you only want to
@@ -989,6 +989,19 @@ file may then be included in a \LaTeX document using command:
 \begin{verbatim}
     \include{inputfile.tex}
 \end{verbatim}
+New in version 2.2.0: You can configure the names of the sections in the
+vym config file, depending on your platform e.g. in 
+\begin{verbatim}
+    $HOME/.config/InSilmaril/vym.conf
+\end{verbatim}
+Just add e.g. these entries>
+\begin{verbatim}
+    /export/latex/sectionName-0=chapter
+    /export/latex/sectionName-1=section
+    /export/latex/sectionName-2=subsection
+    /export/latex/sectionName-3=subsubsection
+    /export/latex/sectionName-4=paragraph
+\end{verbatim}
 
 
 \subsubsection*{XML} \label{xmlexport}
@@ -1156,10 +1169,11 @@ options, which can be set from the modifier toolbar:
 \end{center}
 The default mode is to copy the colour from the clicked branch to the
 already selected branch. The figure above shows the toolbar with the
-default modifier selected. The second modifier let's you easily copy a
-whole branch with a single click. The third modifier lets you create
-links between branches called {\em xLinks}.  They will be explained in
-the next section \ref{xlinks}.
+default modifier selected. If press both \key{Shift}~$+$~\key{Ctrl} only
+the selected branch will change color, instead of the whole subtree.
+
+The second modifier lets you create links between branches called {\em
+xLinks}.  They will be explained in the next section \ref{xlinks}.
 
 \subsection{Hide links of unselected objects} \label{hidelink}
 Sometimes it would be useful to position a branch freely, just like a
@@ -1394,6 +1408,7 @@ Usage: vym [OPTION]... [FILE]...
 Open FILEs with vym
 
 -b           batch       batch mode: hide windows
+-c           commands     List all available commands
 -d           debug       Show debugging output
 -h           help        Show this help text
 -l           local       Run with ressources in current directory
@@ -1402,26 +1417,41 @@ Open FILEs with vym
 -r  FILE     run         Run script
 -R           restore     Restore last session
 -s           shortcuts   Show Keyboard shortcuts on start
--sl          LaTeX       Show Keyboard shortcuts in LaTeX format on start
+-sl          LaTeX       Show Keyboard shortcuts in LaTeX format on
+start
+-t           testmode    Test mode, e.g. no autosave and changing of its
+setting
 -v           version     Show vym version
-
 
 \end{verbatim}
 You can also give several filenames at the commandline to let \vym open
 several maps at once.
  
 
-\section{Scripts} \label{scripts}   %FIXME-2
+\section{Scripts} \label{scripts}   
+Scripts within \vym are so far just a set of instructions, telling \vym
+what to do. Scripts are internally used for
+\begin{itemize}
+    \item Undo and Redo
+    \item Macros on function keys
+    \item Slideshow
+\end{itemize}
+So far the scripts have no loop constructs, conditionals, variables,
+etc. The good news: You can use external ruby scripts to get all that,
+see the examples below.
 
-TODO: This section of the \vym manual is not complete yet, sorry.
 
 \subsection{Example scripts}
-\subsubsection{Export a set of maps}
+\subsubsection{Macro to create a rounded rectangle frame}
 \begin{code}
-\# Simple vym script to export images of various maps simultanously
-exportImage ();
+\# Macro F12
+setFrameType ("RoundedRectangle");
+setFramePadding (10);
+setFrameIncludeChildren (true);
 \end{code}
-The script above can be used to export all maps in a directory
+
+\subsubsection{Batch script to export all maps as images}
+This script can be used to export all maps in a directory
 automatically. If the script is named {\tt export-image.vys}, call \vym
 with
 \begin{code}
@@ -1447,10 +1477,10 @@ Please refer to the FAQ available on the \vym website:
 \end{center}
 
 \subsubsection*{Mailinglists}
-There are two mailinglists: {\tt vym-forum} is the \vym users forum to
+There are several mailinglists: {\tt vym-forum} is the \vym users forum to
 discuss various questions, while {\tt vym-devel} is intended for people
-interested in contributing to \vym. You can view the archives and
-subscribe at
+interested in contributing to \vym. The third list is {\tt vym-trans} to
+coordinate translations. You can view the archives and subscribe at
 \begin{center}
 \href{https://sourceforge.net/mail/?group_id=127802}{https://sourceforge.net/mail/?group\_id=127802}
 \end{center}
