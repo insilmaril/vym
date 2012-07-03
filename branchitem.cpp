@@ -473,11 +473,6 @@ TreeItem* BranchItem::findMapItem (QPointF p, TreeItem* excludeTI)
 	if (ti != NULL) return ti;
     }
     
-
-    // Search myself
-    if (getBranchObj()->isInClickBox (p) && (this != excludeTI) && getBranchObj()->isVisibleObj() ) 
-	return this;
-
     // Search images
     ImageItem *ii;
     for (int i=0; i<imageCount(); ++i )
@@ -490,6 +485,11 @@ TreeItem* BranchItem::findMapItem (QPointF p, TreeItem* excludeTI)
 	    mo->isVisibleObj() 
 	) return ii;
     }
+
+    // Search myself
+    if (getBranchObj()->isInClickBox (p) && (this != excludeTI) && getBranchObj()->isVisibleObj() ) 
+	return this;
+
 
     // Search attributes
     AttributeItem *ai;
