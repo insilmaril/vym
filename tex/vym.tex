@@ -1441,8 +1441,7 @@ etc. The good news: You can use external ruby scripts to get all that,
 see the examples below.
 
 
-\subsection{Example scripts}
-\subsubsection{Macro to create a rounded rectangle frame}
+\subsection{Macro to create a rounded rectangle frame}
 \begin{code}
 \# Macro F12
 setFrameType ("RoundedRectangle");
@@ -1450,13 +1449,44 @@ setFramePadding (10);
 setFrameIncludeChildren (true);
 \end{code}
 
-\subsubsection{Batch script to export all maps as images}
+\subsection{Batch script to export all maps as images}
 This script can be used to export all maps in a directory
 automatically. If the script is named {\tt export-image.vys}, call \vym
 with
 \begin{code}
 \$ vym --quit --run export-image.vys *.vym
 \end{code}
+
+\subsection{Full scripting using ruby and DBUS}
+Nearly every action in \vym can be controlled via DBUS (on Linux
+machines). You can have several \vym instances running at the same time,
+e.g. for production and development. Before controlling one, you need to
+give it a name, here \lq test\rq\ is used:
+\begin{verbatim}
+vym -n test
+\end{verbatim}
+You can now access \vym via DBUS, if you have Qt installed, try {\tt
+qdbusviewer}. In the {\tt scripts} directory, which is part of \vym,
+you'll find the script {\tt vym-ruby.rb}. This rubyscript provides two
+classes to manage and control \vym instances. A short script to set the
+heading of a branch might be:
+\begin{verbatim}
+#!/usr/bin/env ruby
+
+require "#{ENV['PWD']}/scripts/vym-ruby"
+
+vym_mgr=VymManager.new
+vym=Vym.new(vym_mgr.find('test') )
+
+vym.select "mc:0"
+vym.setHeading "This is a new heading!"
+\end{verbatim}
+
+An full example how this is
+used is in the automated \vym testing:
+\begin{verbatim}
+test/vym-test.rb
+\end{verbatim}
 
 
 \section{Contributing to \vym}
