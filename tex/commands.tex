@@ -1,0 +1,817 @@
+\item addBranch\\
+\begin{tabular}{rl}
+  Selection: & Branch\\
+   Parameter: &  0:\\
+        Comment: & Index of new branch\\
+           Type: & Int\\
+       Optional: &  yes\\
+\end{tabular}
+
+\item addBranchBefore\\
+\begin{tabular}{rl}
+  Selection: & Branch\\
+\end{tabular}
+
+\item addMapCenter\\
+\begin{tabular}{rl}
+  Selection: & Any\\
+   Parameter: &  0:\\
+        Comment: & Position x\\
+           Type: & Double\\
+       Optional: &  No\\
+   Parameter: &  1:\\
+        Comment: & Position y\\
+           Type: & Double\\
+       Optional: &  No\\
+\end{tabular}
+
+\item addMapInsert\\
+\begin{tabular}{rl}
+  Selection: & Any\\
+   Parameter: &  0:\\
+        Comment: & Filename of map to load\\
+           Type: & String\\
+       Optional: &  No\\
+   Parameter: &  1:\\
+        Comment: & Index where map is inserted\\
+           Type: & Int\\
+       Optional: &  yes\\
+   Parameter: &  2:\\
+        Comment: & Content filter\\
+           Type: & Int\\
+       Optional: &  yes\\
+\end{tabular}
+
+\item addMapReplace\\
+\begin{tabular}{rl}
+  Selection: & Branch\\
+   Parameter: &  0:\\
+        Comment: & Filename of map to load\\
+           Type: & String\\
+       Optional: &  No\\
+\end{tabular}
+
+\item addSlide\\
+\begin{tabular}{rl}
+  Selection: & Branch\\
+\end{tabular}
+
+\item addXLink\\
+\begin{tabular}{rl}
+  Selection: & BranchLike\\
+   Parameter: &  0:\\
+        Comment: & Begin of XLink\\
+           Type: & String\\
+       Optional: &  No\\
+   Parameter: &  1:\\
+        Comment: & End of XLink\\
+           Type: & String\\
+       Optional: &  No\\
+   Parameter: &  2:\\
+        Comment: & Width of XLink\\
+           Type: & Int\\
+       Optional: &  yes\\
+   Parameter: &  3:\\
+        Comment: & Color of XLink\\
+           Type: & Color\\
+       Optional: &  yes\\
+   Parameter: &  4:\\
+        Comment: & Penstyle of XLink\\
+           Type: & String\\
+       Optional: &  yes\\
+\end{tabular}
+
+\item branchCount\\
+\begin{tabular}{rl}
+  Selection: & BranchLike\\
+\end{tabular}
+
+\item centerOnID\\
+\begin{tabular}{rl}
+  Selection: & Any\\
+   Parameter: &  0:\\
+        Comment: & UUID of object to center on\\
+           Type: & String\\
+       Optional: &  No\\
+\end{tabular}
+
+\item clearFlags\\
+\begin{tabular}{rl}
+  Selection: & BranchLike\\
+\end{tabular}
+
+\item colorBranch\\
+\begin{tabular}{rl}
+  Selection: & Branch\\
+   Parameter: &  0:\\
+        Comment: & New color\\
+           Type: & Color\\
+       Optional: &  yes\\
+\end{tabular}
+
+\item colorSubtree\\
+\begin{tabular}{rl}
+  Selection: & Branch\\
+   Parameter: &  0:\\
+        Comment: & New color\\
+           Type: & Color\\
+       Optional: &  yes\\
+\end{tabular}
+
+\item copy\\
+\begin{tabular}{rl}
+  Selection: & BranchOrImage\\
+\end{tabular}
+
+\item cut\\
+\begin{tabular}{rl}
+  Selection: & BranchOrImage\\
+\end{tabular}
+
+\item cycleTask\\
+\begin{tabular}{rl}
+  Selection: & BranchOrImage\\
+   Parameter: &  0:\\
+        Comment: & True, if cycling in reverse order\\
+           Type: & Bool\\
+       Optional: &  yes\\
+\end{tabular}
+
+\item delete\\
+\begin{tabular}{rl}
+  Selection: & TreeItem\\
+\end{tabular}
+
+\item deleteChildren\\
+\begin{tabular}{rl}
+  Selection: & Branch\\
+\end{tabular}
+
+\item deleteKeepChildren\\
+\begin{tabular}{rl}
+  Selection: & Branch\\
+\end{tabular}
+
+\item deleteSlide\\
+\begin{tabular}{rl}
+  Selection: & Any\\
+   Parameter: &  0:\\
+        Comment: & Index of slide to delete\\
+           Type: & Int\\
+       Optional: &  No\\
+\end{tabular}
+
+\item exportAO\\
+\begin{tabular}{rl}
+  Selection: & Any\\
+   Parameter: &  0:\\
+        Comment: & Filename for export\\
+           Type: & String\\
+       Optional: &  No\\
+\end{tabular}
+
+\item exportASCII\\
+\begin{tabular}{rl}
+  Selection: & Any\\
+   Parameter: &  0:\\
+        Comment: & Filename for export\\
+           Type: & String\\
+       Optional: &  No\\
+\end{tabular}
+
+\item exportHTML\\
+\begin{tabular}{rl}
+  Selection: & Any\\
+   Parameter: &  0:\\
+        Comment: & Filename for export\\
+           Type: & String\\
+       Optional: &  No\\
+\end{tabular}
+
+\item exportImage\\
+\begin{tabular}{rl}
+  Selection: & Any\\
+   Parameter: &  0:\\
+        Comment: & Filename for export\\
+           Type: & String\\
+       Optional: &  No\\
+   Parameter: &  1:\\
+        Comment: & Image format\\
+           Type: & String\\
+       Optional: &  yes\\
+\end{tabular}
+
+\item exportLaTeX\\
+\begin{tabular}{rl}
+  Selection: & Any\\
+   Parameter: &  0:\\
+        Comment: & Filename for export\\
+           Type: & String\\
+       Optional: &  No\\
+\end{tabular}
+
+\item exportImpress\\
+\begin{tabular}{rl}
+  Selection: & Any\\
+   Parameter: &  0:\\
+        Comment: & Filename for export\\
+           Type: & String\\
+       Optional: &  No\\
+   Parameter: &  1:\\
+        Comment: & Configuration file for export\\
+           Type: & String\\
+       Optional: &  No\\
+\end{tabular}
+
+\item exportPDF\\
+\begin{tabular}{rl}
+  Selection: & Any\\
+   Parameter: &  0:\\
+        Comment: & Filename for export\\
+           Type: & String\\
+       Optional: &  No\\
+\end{tabular}
+
+\item exportPDF\\
+\begin{tabular}{rl}
+  Selection: & Any\\
+   Parameter: &  0:\\
+        Comment: & Filename for export\\
+           Type: & String\\
+       Optional: &  No\\
+\end{tabular}
+
+\item exportSVG\\
+\begin{tabular}{rl}
+  Selection: & Any\\
+   Parameter: &  0:\\
+        Comment: & Filename for export\\
+           Type: & String\\
+       Optional: &  No\\
+\end{tabular}
+
+\item exportXML\\
+\begin{tabular}{rl}
+  Selection: & Any\\
+   Parameter: &  0:\\
+        Comment: & Filename for export\\
+           Type: & String\\
+       Optional: &  No\\
+\end{tabular}
+
+\item getDestPath\\
+\begin{tabular}{rl}
+  Selection: & Any\\
+\end{tabular}
+
+\item getFileDir\\
+\begin{tabular}{rl}
+  Selection: & Any\\
+\end{tabular}
+
+\item getFrameType\\
+\begin{tabular}{rl}
+  Selection: & Branch\\
+\end{tabular}
+
+\item getHeading\\
+\begin{tabular}{rl}
+  Selection: & TreeItem\\
+\end{tabular}
+
+\item getSelectString\\
+\begin{tabular}{rl}
+  Selection: & TreeItem\\
+\end{tabular}
+
+\item getURL\\
+\begin{tabular}{rl}
+  Selection: & TreeItem\\
+\end{tabular}
+
+\item getVymLink\\
+\begin{tabular}{rl}
+  Selection: & Branch\\
+\end{tabular}
+
+\item getXLinkColor\\
+\begin{tabular}{rl}
+  Selection: & XLinkItem\\
+\end{tabular}
+
+\item getXLinkWidth\\
+\begin{tabular}{rl}
+  Selection: & XLinkItem\\
+\end{tabular}
+
+\item getXLinkPenStyle\\
+\begin{tabular}{rl}
+  Selection: & XLinkItem\\
+\end{tabular}
+
+\item hasActiveFlag\\
+\begin{tabular}{rl}
+  Selection: & TreeItem\\
+   Parameter: &  0:\\
+        Comment: & Name of flag\\
+           Type: & String\\
+       Optional: &  No\\
+\end{tabular}
+
+\item importDir\\
+\begin{tabular}{rl}
+  Selection: & Branch\\
+   Parameter: &  0:\\
+        Comment: & Directory name to import\\
+           Type: & String\\
+       Optional: &  No\\
+\end{tabular}
+
+\item isScrolled\\
+\begin{tabular}{rl}
+  Selection: & Branch\\
+\end{tabular}
+
+\item loadImage\\
+\begin{tabular}{rl}
+  Selection: & Branch\\
+   Parameter: &  0:\\
+        Comment: & Filename of image\\
+           Type: & String\\
+       Optional: &  No\\
+\end{tabular}
+
+\item loadNote\\
+\begin{tabular}{rl}
+  Selection: & Branch\\
+   Parameter: &  0:\\
+        Comment: & Filename of note\\
+           Type: & String\\
+       Optional: &  No\\
+\end{tabular}
+
+\item moveDown\\
+\begin{tabular}{rl}
+  Selection: & Branch\\
+\end{tabular}
+
+\item moveUp\\
+\begin{tabular}{rl}
+  Selection: & Branch\\
+\end{tabular}
+
+\item moveSlideDown\\
+\begin{tabular}{rl}
+  Selection: & Any\\
+\end{tabular}
+
+\item moveSlideUp\\
+\begin{tabular}{rl}
+  Selection: & Any\\
+\end{tabular}
+
+\item move\\
+\begin{tabular}{rl}
+  Selection: & BranchOrImage\\
+   Parameter: &  0:\\
+        Comment: & Position x\\
+           Type: & Double\\
+       Optional: &  No\\
+   Parameter: &  1:\\
+        Comment: & Position y\\
+           Type: & Double\\
+       Optional: &  No\\
+\end{tabular}
+
+\item moveRel\\
+\begin{tabular}{rl}
+  Selection: & BranchOrImage\\
+   Parameter: &  0:\\
+        Comment: & Position x\\
+           Type: & Double\\
+       Optional: &  No\\
+   Parameter: &  1:\\
+        Comment: & Position y\\
+           Type: & Double\\
+       Optional: &  No\\
+\end{tabular}
+
+\item nop\\
+\begin{tabular}{rl}
+  Selection: & Any\\
+\end{tabular}
+
+\item note2URLs\\
+\begin{tabular}{rl}
+  Selection: & Branch\\
+\end{tabular}
+
+\item paste\\
+\begin{tabular}{rl}
+  Selection: & Branch\\
+\end{tabular}
+
+\item redo\\
+\begin{tabular}{rl}
+  Selection: & Any\\
+\end{tabular}
+
+\item relinkTo\\
+\begin{tabular}{rl}
+  Selection: & TreeItem\\
+   Parameter: &  0:\\
+        Comment: & Selection string of parent\\
+           Type: & String\\
+       Optional: &  No\\
+   Parameter: &  1:\\
+        Comment: & Index position\\
+           Type: & Int\\
+       Optional: &  No\\
+   Parameter: &  2:\\
+        Comment: & Position x\\
+           Type: & Double\\
+       Optional: &  yes\\
+   Parameter: &  3:\\
+        Comment: & Position y\\
+           Type: & Double\\
+       Optional: &  yes\\
+\end{tabular}
+
+\item saveImage\\
+\begin{tabular}{rl}
+  Selection: & Image\\
+   Parameter: &  0:\\
+        Comment: & Filename of image to save\\
+           Type: & String\\
+       Optional: &  No\\
+   Parameter: &  1:\\
+        Comment: & Format of image to save\\
+           Type: & String\\
+       Optional: &  No\\
+\end{tabular}
+
+\item saveNote\\
+\begin{tabular}{rl}
+  Selection: & Branch\\
+   Parameter: &  0:\\
+        Comment: & Filename of note to save\\
+           Type: & String\\
+       Optional: &  No\\
+\end{tabular}
+
+\item scroll\\
+\begin{tabular}{rl}
+  Selection: & Branch\\
+\end{tabular}
+
+\item select\\
+\begin{tabular}{rl}
+  Selection: & Any\\
+   Parameter: &  0:\\
+        Comment: & Selection string\\
+           Type: & String\\
+       Optional: &  No\\
+\end{tabular}
+
+\item selectID\\
+\begin{tabular}{rl}
+  Selection: & Any\\
+   Parameter: &  0:\\
+        Comment: & Unique ID\\
+           Type: & String\\
+       Optional: &  No\\
+\end{tabular}
+
+\item selectLastBranch\\
+\begin{tabular}{rl}
+  Selection: & Branch\\
+\end{tabular}
+
+\item selectLastImage\\
+\begin{tabular}{rl}
+  Selection: & Branch\\
+\end{tabular}
+
+\item selectLatestAdded\\
+\begin{tabular}{rl}
+  Selection: & Any\\
+\end{tabular}
+
+\item setFlag\\
+\begin{tabular}{rl}
+  Selection: & TreeItem\\
+   Parameter: &  0:\\
+        Comment: & Name of flag\\
+           Type: & String\\
+       Optional: &  No\\
+\end{tabular}
+
+\item setTaskSleep\\
+\begin{tabular}{rl}
+  Selection: & Branch\\
+   Parameter: &  0:\\
+        Comment: & Days to sleep\\
+           Type: & Int\\
+       Optional: &  No\\
+\end{tabular}
+
+\item setFrameIncludeChildren\\
+\begin{tabular}{rl}
+  Selection: & BranchOrImage\\
+   Parameter: &  0:\\
+        Comment: & Include or don't include children in frame\\
+           Type: & Bool\\
+       Optional: &  No\\
+\end{tabular}
+
+\item setFrameType\\
+\begin{tabular}{rl}
+  Selection: & BranchOrImage\\
+   Parameter: &  0:\\
+        Comment: & Type of frame\\
+           Type: & String\\
+       Optional: &  No\\
+\end{tabular}
+
+\item setFramePenColor\\
+\begin{tabular}{rl}
+  Selection: & BranchOrImage\\
+   Parameter: &  0:\\
+        Comment: & Color of frame border line\\
+           Type: & Color\\
+       Optional: &  No\\
+\end{tabular}
+
+\item setFrameBrushColor\\
+\begin{tabular}{rl}
+  Selection: & BranchOrImage\\
+   Parameter: &  0:\\
+        Comment: & Color of frame background\\
+           Type: & Color\\
+       Optional: &  No\\
+\end{tabular}
+
+\item setFramePadding\\
+\begin{tabular}{rl}
+  Selection: & BranchOrImage\\
+   Parameter: &  0:\\
+        Comment: & Padding around frame\\
+           Type: & Int\\
+       Optional: &  No\\
+\end{tabular}
+
+\item setFrameBorderWidth\\
+\begin{tabular}{rl}
+  Selection: & BranchOrImage\\
+   Parameter: &  0:\\
+        Comment: & Width of frame borderline\\
+           Type: & Int\\
+       Optional: &  No\\
+\end{tabular}
+
+\item setHeading\\
+\begin{tabular}{rl}
+  Selection: & TreeItem\\
+   Parameter: &  0:\\
+        Comment: & New heading\\
+           Type: & String\\
+       Optional: &  No\\
+\end{tabular}
+
+\item setHideExport\\
+\begin{tabular}{rl}
+  Selection: & BranchOrImage\\
+   Parameter: &  0:\\
+        Comment: & Set if item should be visible in export\\
+           Type: & Bool\\
+       Optional: &  No\\
+\end{tabular}
+
+\item setIncludeImagesHorizontally\\
+\begin{tabular}{rl}
+  Selection: & Branch\\
+   Parameter: &  0:\\
+        Comment: & Set if images should be included horizontally in parent branch\\
+           Type: & Bool\\
+       Optional: &  No\\
+\end{tabular}
+
+\item setIncludeImagesVertically\\
+\begin{tabular}{rl}
+  Selection: & Branch\\
+   Parameter: &  0:\\
+        Comment: & Set if images should be included vertically in parent branch\\
+           Type: & Bool\\
+       Optional: &  No\\
+\end{tabular}
+
+\item setHideLinksUnselected\\
+\begin{tabular}{rl}
+  Selection: & BranchOrImage\\
+   Parameter: &  0:\\
+        Comment: & Set if links of items should be visible for unselected items\\
+           Type: & Bool\\
+       Optional: &  No\\
+\end{tabular}
+
+\item setMapAnimCurve\\
+\begin{tabular}{rl}
+  Selection: & Any\\
+   Parameter: &  0:\\
+        Comment: & EasingCurve used in animation in MapEditor\\
+           Type: & Int\\
+       Optional: &  No\\
+\end{tabular}
+
+\item setMapAuthor\\
+\begin{tabular}{rl}
+  Selection: & Any\\
+   Parameter: &  0:\\
+        Comment: & \\
+           Type: & String\\
+       Optional: &  No\\
+\end{tabular}
+
+\item setMapAnimDuration\\
+\begin{tabular}{rl}
+  Selection: & Any\\
+   Parameter: &  0:\\
+        Comment: & Duration of animation in MapEditor in milliseconds\\
+           Type: & Int\\
+       Optional: &  No\\
+\end{tabular}
+
+\item setMapComment\\
+\begin{tabular}{rl}
+  Selection: & Any\\
+   Parameter: &  0:\\
+        Comment: & \\
+           Type: & String\\
+       Optional: &  No\\
+\end{tabular}
+
+\item setMapBackgroundColor\\
+\begin{tabular}{rl}
+  Selection: & Any\\
+   Parameter: &  0:\\
+        Comment: & Color of map background\\
+           Type: & Color\\
+       Optional: &  No\\
+\end{tabular}
+
+\item setMapDefLinkColor\\
+\begin{tabular}{rl}
+  Selection: & Any\\
+   Parameter: &  0:\\
+        Comment: & Default color of links\\
+           Type: & Color\\
+       Optional: &  No\\
+\end{tabular}
+
+\item setMapLinkStyle\\
+\begin{tabular}{rl}
+  Selection: & Any\\
+   Parameter: &  0:\\
+        Comment: & Link style in map\\
+           Type: & String\\
+       Optional: &  No\\
+\end{tabular}
+
+\item setMapRotation\\
+\begin{tabular}{rl}
+  Selection: & Any\\
+   Parameter: &  0:\\
+        Comment: & Rotation of map\\
+           Type: & Double\\
+       Optional: &  No\\
+\end{tabular}
+
+\item setMapZoom\\
+\begin{tabular}{rl}
+  Selection: & Any\\
+   Parameter: &  0:\\
+        Comment: & Zoomfactor of map\\
+           Type: & Double\\
+       Optional: &  No\\
+\end{tabular}
+
+\item setNote\\
+\begin{tabular}{rl}
+  Selection: & Branch\\
+   Parameter: &  0:\\
+        Comment: & Note of branch\\
+           Type: & String\\
+       Optional: &  No\\
+\end{tabular}
+
+\item setScale\\
+\begin{tabular}{rl}
+  Selection: & Image\\
+   Parameter: &  0:\\
+        Comment: & Scale image x\\
+           Type: & Double\\
+       Optional: &  No\\
+   Parameter: &  1:\\
+        Comment: & Scale image y\\
+           Type: & Double\\
+       Optional: &  No\\
+\end{tabular}
+
+\item setSelectionColor\\
+\begin{tabular}{rl}
+  Selection: & Any\\
+   Parameter: &  0:\\
+        Comment: & Color of selection box\\
+           Type: & Color\\
+       Optional: &  No\\
+\end{tabular}
+
+\item setURL\\
+\begin{tabular}{rl}
+  Selection: & TreeItem\\
+   Parameter: &  0:\\
+        Comment: & URL of TreeItem\\
+           Type: & String\\
+       Optional: &  No\\
+\end{tabular}
+
+\item setVymLink\\
+\begin{tabular}{rl}
+  Selection: & Branch\\
+   Parameter: &  0:\\
+        Comment: & Vymlink of branch\\
+           Type: & String\\
+       Optional: &  No\\
+\end{tabular}
+
+\item sleep\\
+\begin{tabular}{rl}
+  Selection: & Any\\
+   Parameter: &  0:\\
+        Comment: & Sleep (seconds)\\
+           Type: & Int\\
+       Optional: &  No\\
+\end{tabular}
+
+\item sortChildren\\
+\begin{tabular}{rl}
+  Selection: & Branch\\
+   Parameter: &  0:\\
+        Comment: & Sort children of branch in revers order if set\\
+           Type: & Bool\\
+       Optional: &  yes\\
+\end{tabular}
+
+\item toggleFlag\\
+\begin{tabular}{rl}
+  Selection: & Branch\\
+   Parameter: &  0:\\
+        Comment: & Name of flag to toggle\\
+           Type: & String\\
+       Optional: &  No\\
+\end{tabular}
+
+\item toggleFrameIncludeChildren\\
+\begin{tabular}{rl}
+  Selection: & Branch\\
+\end{tabular}
+
+\item toggleScroll\\
+\begin{tabular}{rl}
+  Selection: & Branch\\
+\end{tabular}
+
+\item toggleTarget\\
+\begin{tabular}{rl}
+  Selection: & Branch\\
+\end{tabular}
+
+\item toggleTask\\
+\begin{tabular}{rl}
+  Selection: & Branch\\
+\end{tabular}
+
+\item undo\\
+\begin{tabular}{rl}
+  Selection: & Any\\
+\end{tabular}
+
+\item unscroll\\
+\begin{tabular}{rl}
+  Selection: & Branch\\
+\end{tabular}
+
+\item unscrollChildren\\
+\begin{tabular}{rl}
+  Selection: & Branch\\
+\end{tabular}
+
+\item unsetFlag\\
+\begin{tabular}{rl}
+  Selection: & Branch\\
+   Parameter: &  0:\\
+        Comment: & Name of flag to unset\\
+           Type: & String\\
+       Optional: &  No\\
+\end{tabular}
+

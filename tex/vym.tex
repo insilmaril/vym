@@ -57,7 +57,7 @@
 \title{
     \includegraphics[width=8cm]{images/vym-logo-new.png}
     \\
-VYM \\ -- \\View Your Mind\\ {\small Version 2.2.2}}
+VYM \\ -- \\View Your Mind\\ {\small Version 2.2.3}}
 \author{\textcopyright Uwe Drechsel  }
 
 
@@ -241,8 +241,9 @@ called {\em satellites}\footnote{
     \href{http://www.gimp.org}{http://www.gimp.org}.
 }. 
 The next image below shows the {\em mainwindow}
-together with the often used {\em noteeditor} and the {\em history
-window}: 
+together with the {\em history window}. The mainwindow itself currently
+has three parts: {\em treeeditor}, {\em mapeditor} and at the bottom
+the {\em noteeditor}
 \maximage{images/windows.png}
 Most of the time you will work in the {\em mapeditor} by just adding new
 branches, moving around and reordering them. The various ways to do this
@@ -254,11 +255,30 @@ explained in \ref{noteeditor}
 Here is a list of the available satellite windows, the {\em dockable}
 feature is explained in next section \ref{dockable}:
 \begin{itemize}
-    \item Noteeditor (dockable, see section \ref {noteeditor})
-    \item Heading editor (dockable)
-    \item Find widge to search for text (dockable)
-    \item Historywindow (see section \ref{historywindow})
-    \item Branch Property Window (see section \ref{propwindow})
+    \item 
+    Branch Property Window (see section \ref{propwindow})
+    \item 
+    \includegraphics[width=0.5cm]{../icons/find.png}
+    Find window to search for text (dockable)
+    \item 
+    \includegraphics[width=0.5cm]{../icons/headingeditor.png}
+    Heading editor (dockable, features are the same as in the
+    noteeditor, see section \ref {noteeditor})
+    \item 
+    \includegraphics[width=0.5cm]{../icons/history.png}
+    Historywindow (see section \ref{historywindow})
+    \item 
+    \includegraphics[width=0.5cm]{../flags/flag-note.png}
+    Noteeditor (dockable, see section \ref {noteeditor})
+    \item 
+    \includegraphics[width=0.5cm]{../icons/scripteditor.png}
+    Scripteditor (dockable, see section \ref {scripteditor})
+    \item 
+    \includegraphics[width=0.5cm]{../icons/slideeditor.png}
+    Slideeditor (dockable, see section \ref {slideeditor})
+    \item 
+    \includegraphics[width=0.5cm]{../icons/taskeditor.png}
+    Taskeditor (dockable, see section \ref {taskeditor})
 \end{itemize}
 
 \subsection{Dockable windows} \label{dockable}
@@ -266,7 +286,8 @@ Beginning with \vym 1.13.0 some of the windows may be docked and become
 a part of an existing window. Or the other way round: Parts of a window
 may be "undocked" and become their own independent windows or can be
 placed in a different position within the mainwindow. Example: Toolbar
-above the map with flags
+above the map with flags can be placed below or besides of the map, or
+even float independantly.
 
 \subsection{Toolbars}
 The toolbars in the mainwindows give quick access to many functions and
@@ -400,18 +421,18 @@ using the scrollwheel. With \key{CTRL} and middle-mouse you reset the
 zoom.
 
 \subsubsection*{Find Function} \label{findwindow}
-With huge maps there is the need to have a
-find function. Choose Edit \ra Find or just press \key{CTRL+F} to open
-the Find Widget:
+Choose Edit \ra Find or just press \key{CTRL+F} to open
+the Findwidget. The image below shows the findwidget above the
+noteeditor and the mapeditor:
 \begin{center}
     \maximage{images/find-window.png}
 \end{center}    
 The text you enter here will be searched in all the
 branch headings and also in the associated notes. Just click on one of
 the results shown to select the found heading or an occurance in a note.
-
-The little editor where you have entered your search text will be
-colored green or red, depending on success of your search.
+In above example we searched for \lq opensuse\rq, which had a number of
+occurences in this map, e.g. in the note of \lq HowTo check into in
+editors on Factory\rq\ branch.
 
 Press \key{CTRL+F} again to hide the widget once it's no longer needed.
 Or you could also undock it (see \ref{dockable}).
@@ -742,6 +763,8 @@ selecting "Add mapcenter".
 Once you are done adding new items, you can start to sort them and
 arrange them by moving and relinking them to create a new map.
 
+\hint{If you have enabled \lq Automatic Layout\rq\ in the Settings menu,
+the new parts will move around to avoid overlapping}
 
 %TODO
 %\subsubsection{Menus}
@@ -757,7 +780,7 @@ arrange them by moving and relinking them to create a new map.
 \section{Noteeditor} \label {noteeditor}
 If you want to attach more text to a branch e.g. a complete email, a
 cooking recipe, or the whole source code of a software project, you can
-use the noteeditor. 
+use the noteeditor. (The {\em Headingeditor} has the same features.)
     \maximage{images/noteeditor.png}
 This editor displays text associated with a branch selected in the
 mapeditor. The noteeditor shows different background colours depending
@@ -789,38 +812,34 @@ functions. You can delete the complete note by clicking the trashcan.
 Only the note itself is printed by clicking the printer icon.
 
 \subsection{RichText: Colours, paragraphs and formatted text}
-\vym supports formatted text (QT Rich Text) in the noteeditor since
-version 1.4.7.  Colours and text attributes (e.g. italic, bold) can be
-set with the buttons above the text.  
-%The text itself is divided into
-%paragraphs. For each paragraph the format can be set (e.g. centered,
-%right). A paragraph is ended when a \key{Return} is entered. If you
-%just want to begin a new line, press \key{CTRL-Return}.
+Notes and also the headings of branches can either use a default font or
+all text attributes availabe in RichText, like bold, italic, colors,
+etc. To enable the latter, click the RichText button:
+\begin{center}
+    \includegraphics[width=0.5cm]{../icons/formatrichtext.png}
+\end{center}
 
 \subsection{Fonts and how to switch them quickly}
-The noteeditor is designed to be used for simple notes, not really as a
-full featured word processor. Because of many requests \vym supports
-formatted text in the noteeditor\footnote{
-    \vym uses the QRichtText format, which is basically a subset of the
-    formatting provided in HTML.}
-Two default fonts are supported which can be set in the Settings menu
-(see \ref{settings}).
-One is a fixed width font, the other has variable width. The fixed font
-is usually used for emails, source code etc.\ while the variable font is
-used for simple notes, where one doesn't need fixed character widths.
-Both fonts can easily switched using the following symbol from the
-toolbar:
+If you just want to do quick notes and don't need fully formatted
+RichText as mentioned above, you still can select either a fixed font
+width font or a variable width font by clicking
 \begin{center}
-    \includegraphics[width=0.5cm]{images/formatfixedfont.png}
+    \includegraphics[width=0.5cm]{../icons/formatfixedfont.png}
 \end{center}
+
+
+The fixed font is usually used for emails, source code etc.\ while the
+variable font is used for simple notes, where one doesn't need fixed
+character widths.  
+
 In the Settings menu both fonts can be set. The default font can also be
 toggled between the fixed and variable font by selecting or deselecting
 the "fixed font is default" menu item.
 
-Additionally to the default fonts any font installed on your system can
+\hint{Additionally to the default fonts any font installed on your system can
 be used. Please note, that the chosen font also will be used for HTML
-exports, so if youy VYM mind map could ever be exported to a web or
-intranet page you should only use fonts which are available generally.
+exports, so if your VYM mind map should  be exported to a web page
+you should only use fonts which are available generally.}
 
 \subsection{Find text}
 The noteeditor itself has no Find function, use Find in the mapeditor,
@@ -831,7 +850,148 @@ which will also display occurences of text in notes (see
 Often you will paste text into the editor from another application e.g.
 an email.
 
-\section{Hello world}
+\section{Task editor} \label{taskeditor}
+Tasks are used to easily create and maintain a \lq Todo-list\rq. 
+The taskeditor is visible on the left side in the image below. 
+\begin{center}
+    \includegraphics[width=13cm]{images/taskeditor.png}
+\end{center}
+
+\subsection{Creating tasks}
+To create a task press \key{Shift + W}. The branch will get an
+additional flag and its name will be visible in the taskeditor.
+
+A task can have three different states:
+\begin{itemize}
+    \item Not started \includegraphics[width=0.5cm]{../flags/flag-task-new.png}
+    \item Work in progress
+    \includegraphics[width=0.5cm]{../flags/flag-task-wip.png}
+    \item Finished
+    \includegraphics[width=0.5cm]{../flags/flag-task-finished.png}
+\end{itemize}
+You can cycle these states by pressing \key{W}. 
+
+\subsection{Sleeping tasks for later reminders}
+A task may be set to \lq sleep\rq, which can be used to get a reminder
+after a certain amount of time. The flag will change to one of these:
+\begin{itemize}
+    \item Not started - sleeping
+    \includegraphics[width=0.5cm]{../flags/flag-task-new-sleeping.png}
+    \item Work in progress - sleeping
+    \includegraphics[width=0.5cm]{../flags/flag-task-wip-sleeping.png}
+\end{itemize}
+You can set the amount of days a task should sleep by right clicking on the task flag in the
+mapeditor or the task in the taskeditor. \lq Reset sleep\rq will wake up
+a currently sleeping task. These tasks will get a  new flag and status
+in the taskeditor:
+\begin{itemize}
+    \item Not started -
+    morning\includegraphics[width=0.5cm]{../flags/flag-task-new-morning.png}
+    \item Work in progress - morning
+    \includegraphics[width=0.5cm]{../flags/flag-task-wip-morning.png}
+\end{itemize}
+Additionally these poor tasks, which have just been woken up, will get a
+way higher priority, so that they pop up on top of your list in the
+taskeditor, see next section.
+
+\subsection{Priority of tasks}
+The tasks visible in the taskeditor are ordered by their {\em
+priorities}, listed on the left side of the editor. The lower(!) the
+priority, the more important is a task.
+
+There are several principles that influence the priority of a task:
+\begin{itemize}
+    \item
+    Old tasks tend to bubble up: If you have a task named \lq water the
+    flowers\rq\ and you have postponed it since 187 days, better delete
+    the task. And create a new task to dump the remains of the flowers.
+
+    \item
+    Colors in the map: If you use the Function keys to assigne the
+    colors red, amber, green, etc. the tasks will get a different
+    priority accordingly
+
+    \item
+    The stopsign flag
+    \includegraphics[width=0.5cm]{../flags/flag-stopsign.png} 
+    will increase the priority. Use it for your shipstoppers\ldots
+
+    \item
+    Sleeping tasks and finished tasks will tend to fall to the bottom of
+    your task list.
+
+    \item
+    The freshly woken up \lq morning tasks\rq\ will tend to pop up right
+    at the top, so that they cannot be missed. Remove the \lq
+    morning\rq\
+    state by pressing \key{W} once.
+\end{itemize}
+
+The priorities are calculated based on the next visible columns:
+\begin{itemize}
+    \item Status: Shows the state and if the task is currently sleeping
+    \item Age total: Days, since the task has been created
+    \item Age modified: Days, since the task has been changed
+    \item Sleep: Days, which will pass until task will wake up 
+\end{itemize}
+Note that the priorities cannot be set manually, but e.g. you can reset
+the \lq Age modified\rq\ by pressing \key{W} three times to cycle
+through the states. Also the priorites are maintained for all currently
+opened maps, so if the top priority in your current map is a sleeping
+2034, then there is another open map, which certainly has a priority~1
+task.
+
+\subsection{Keeping the overview}
+The taskeditor has filters:
+\begin{itemize}
+    \item Current map: Show only tasks from  current active map
+    \item Active tasks: Show only the tasks, which are neither finished
+    nor sleeping
+\end{itemize}
+
+
+\section{Slideeditor - presentations}\label{slideeditor}
+\vym can be used to do animated presentations using the slideeditor as
+seen on the right side of the image below:
+\begin{center}
+    \includegraphics[width=13cm]{images/slideeditor.png}
+\end{center}
+The slideeditor can be opened by pressing \key{S} or from the {\em View}
+menu. The (currently) available action are:
+\begin{itemize}
+    \item
+    \includegraphics[width=0.5cm]{../icons/slideprevious.png}
+    Select previous slide
+
+    \item
+    \includegraphics[width=0.5cm]{../icons/slideprevious.png}
+    Select next slide
+
+    \item
+    \includegraphics[width=0.5cm]{../icons/slide-camera.png}
+    Create a new slide by snapshotting the current selection, zoomfactor
+    and rotation of the map.
+
+    \item
+    \includegraphics[width=0.5cm]{../icons/scripteditor.png}
+    Open the scripteditor to manually edit the current slide \\
+    (More on scripting in appendix \ref{scripts}).
+    
+    \item
+    \includegraphics[width=0.5cm]{../icons/edittrash.png}
+    Delete the current slide
+    
+    \item
+    \includegraphics[width=0.5cm]{../icons/up.png}
+    Move current slide up in slidedeck
+    
+    \item
+    \includegraphics[width=0.5cm]{../icons/down.png}
+    Move current slide down in slidedeck
+\end{itemize}
+
+
+\section{Hello world - vym and other applications}
 This section is about how \vym can interact with other applications.
 Many applications can now read and write their data using XML, the
 eXtensible Markup Language. \vym also uses XML to save its maps, see
@@ -1192,25 +1352,32 @@ where you want to have crossreferences which can not be displayed on the
 same visible area of the {\em mapeditor} window. The following example
 map still fits on one screen, but shows how data can be crosslinked. In
 the graphics there is a link from a task (prepare a presentation) to
-general information: \maximage{images/xlink.png}
-Note that a xLink which points to a branch that is not visible (because
+general information: 
+\maximage{images/xlink-control.png}
+Note that a xLink which points to a branch, that is not visible (because
 it is scrolled), is just shown as a little horizontal arrow. In the
-screenshot above have a look at the \lq Tuesday\rq\ branch.
+image above have a look at the \lq Screenshot\rq\ branch.
 
 \subsubsection*{Create a xLink}
 Choose the link mode from the modifier toolbar (by clicking the toolbar
 icon or pressing \key{L}). Select the branch, where the xLink should
-start. Press the modifier key \key{Ctrl} and then click on the selected
-branch where the link should start and drag the mouse pointer to the
-branch where the link is to end. (The link is drawn to follow the mouse
-pointer). When you release the mouse over a branch the xLink becomes
-permanent.
+start. Press the modifier key \key{Shift} 
+drag the mouse pointer to the branch where the link should end. (The
+link is drawn to follow the mouse pointer). When you release the mouse
+over a branch the xLink becomes permanent.
 
 \subsubsection*{Modify or delete a xLink}
-%FIXME-3 Delete xLink in TreeEditor?
 First select the link, either in the tree editor or by clicking the xLink
 itself in the mapeditor.  A dialogue opens, where you can set colour,
 width and also delete the xLink.
+
+You can also move the control points of the link to change the curve and
+change the appearance of the xlink by right clicking on one of
+the control points:
+\begin{center}
+\includegraphics[width=6cm]{images/xlink-property.png}
+\end{center}
+
 
 \subsubsection*{Follow a xLink}
 In a complex \vym map it sometimes comes in handy to be able to jump to
@@ -1236,34 +1403,30 @@ between {\em Add Map (Insert)} and {\em Add Map (Replace)}: The imported
 data will be added after the selected branch.
 
 \subsection{Connecting \vym with Bugzilla}  \label{bugzilla}
-\vym can get data from Novell Bugzilla, if you install an
-additional package (by running as {\tt root} user):
-
+\vym can get data from SUSE Bugzilla, if you install an
+additional package. Make sure you have the ruby programming language and
+rubygems installed and get bicho\footnote{
+    \href{http://rubygems.org/gems/bicho}{http://rubygems.org/gems/bicho} }:
 \begin{verbatim}
-zypper ar
-http://download.opensuse.org/repositories/openSUSE:/Tools/openSUSE_XX.Y/ \
-   openSUSE:Tools_XX.Y
-zypper in perl-SUSE-BugzillaClient
+  gem install bicho
 \end{verbatim}
-and replace XX.Y with your version of openSUSE, e.g. 11.4.
-Alternatively you can also add the repository
-and install the perl module for Bugzilla access using YaST.
 
-Once you have the {\tt perl-SUSE-BugillaClient} installed, you can just
+Once you have the {\tt bicho} installed, you can just
 enter a bug\ ID into a heading and press \key{B}: \vym will create the
 URL from the ID and try to get the heading directly from Bugzilla.
 
-Also drag and drop of a URL from your webbrowser to \vym will get the
-data.
-
-You can can also update a subtree of Bugzilla URLs by pressing
-\key{Ctrl+B} or save Bugzilla queries in a URL.
+Also drag and drop of a URL from your webbrowser into \vym will trigger
+retrieving the data.  You can can also update a subtree of Bugzilla URLs
+by pressing \key{Ctrl+B}.
 
 
 \section{\vym on Mac OS X}
 %FIXME-3 Currently not yet supported on Mac OS X in 1.13.x
 \subsection{Overview}
-Sorry, currently (\vym 1.13.x) there is no Mac port available.
+Sorry, currently (\vym 2.2.2) there is no Mac port available. Please
+contact the author\footnote{
+    Email Uwe Drechsel: \href{mailto:vym@insilmaril.de}{vym@insilmaril.de}} if
+you are interested in a Mac version.
 
 %Basically there are two ways to run \vym on Macs:
 %\subsubsection*{Qt Mac Edition:}
@@ -1424,6 +1587,7 @@ several maps at once.
  
 
 \section{Scripts} \label{scripts}   
+\subsection{Overview}
 Scripts within \vym are so far just a set of instructions, telling \vym
 what to do. Scripts are internally used for
 \begin{itemize}
@@ -1433,9 +1597,17 @@ what to do. Scripts are internally used for
 \end{itemize}
 So far the scripts have no loop constructs, conditionals, variables,
 etc. The good news: You can use external ruby scripts to get all that,
-see the examples below.
+see the examples in \ref{examplescripts}.
 
-\subsection{Macro to create a rounded rectangle frame}
+The scripts within \vym are edited using the {\em script editor}:
+\begin{center} \label{scripteditor}
+    \includegraphics[width=13cm]{images/scripteditor.png}
+\end{center}
+Open the scripteditor by pressing \key{Alt + S} or from the {\em
+View}-menu.
+
+\subsection{Example scripts}  \label{examplescripts}
+\subsubsection{Macro to create a rounded rectangle frame}
 \begin{code}
 \# Macro F12
 setFrameType ("RoundedRectangle");
@@ -1443,7 +1615,7 @@ setFramePadding (10);
 setFrameIncludeChildren (true);
 \end{code}
 
-\subsection{Batch script to export all maps as images}
+\subsubsection{Batch script to export all maps as images}
 This script can be used to export all maps in a directory
 automatically. If the script is named {\tt export-image.vys}, call \vym
 with
@@ -1451,7 +1623,7 @@ with
 \$ vym --quit --run export-image.vys *.vym
 \end{code}
 
-\subsection{Full scripting using ruby and DBUS}
+\subsubsection{Full scripting using ruby and DBUS}
 Nearly every action in \vym can be controlled via DBUS (on Linux
 machines). You can have several \vym instances running at the same time,
 e.g. for production and development. Before controlling one, you need to
@@ -1481,6 +1653,18 @@ used is in the automated \vym testing:
 \begin{verbatim}
 test/vym-test.rb
 \end{verbatim}
+
+\subsection{Available commands}
+Start vym with the \lq command\rq\ option to get a listing of available
+commands:
+\begin{verbatim}
+  vym --commands --quit
+\end{verbatim}
+The currently available commands are:
+\begin{itemize}
+    \input{commands.tex}
+\end{itemize}
+
 
 
 \section{Contributing to \vym}
