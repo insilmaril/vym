@@ -1123,14 +1123,6 @@ void VymModel::undo()
     // Find out current undo directory
     QString bakMapDir(QString(tmpMapDir+"/undo-%1").arg(curStep));
 
-    // select  object before undo  
-    if (!select (undoSelection))
-    {
-	qWarning()<<"VymModel::undo()  Could not select object for undo of "<<comment;
-	return;
-    }
-
-
     if (debug)
     {
 	qDebug() << "VymModel::undo() begin\n";
@@ -1352,8 +1344,9 @@ void VymModel::saveStateRemovingPart(TreeItem* redoSel, const QString &comment)
     QString redoSelection=getSelectString(redoSel);
     if (redoSel->isBranchLikeType() )
     {
-	undoSelection=getSelectString (redoSel->parent());
 	// save the selected branch of the map, Undo will insert part of map 
+	if (redoSel->depth()>0)
+	    undoSelection=getSelectString (redoSel->parent());
 	saveState (PartOfMap,
 	    undoSelection, QString("addMapInsert (\"PATH\",%1,%2)").arg(redoSel->num()).arg(SlideContent),
 	    redoSelection, "delete ()", 
@@ -3639,18 +3632,9 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	    // Get position
 	    if (pc>1)
 	    {
-		if (!selti)
-		{
-		    parser.setError (Aborted,"Nothing selected");
-		} else if (! selbi )
-		{		      
-		    parser.setError (Aborted,"Type of selection is not a branch");
-		} else 
-		{	
-		    pos=parser.parInt(ok,1);	    // position
-		    if (!ok)
-			parser.setError (Aborted,"Couldn't read position");
-		}
+		pos=parser.parInt(ok,1);	    // position
+		if (!ok)
+		    parser.setError (Aborted,"Couldn't read position");
 	    }
 
 	    // Get contentFilter (to filter e.g. slides)
@@ -5787,7 +5771,7 @@ QString VymModel::getSelectString (LinkableMapObj *lmo)	// only for convenience.
 QString VymModel::getSelectString (TreeItem *ti) 
 {
     QString s;
-    if (!ti) return s;
+    if (!ti || ti->depth()<0) return s;    //FIXME-0 check!  undosel =bo:-1 ....
     switch (ti->getType())
     {
 	case TreeItem::MapCenter: s="mc:"; break;
@@ -5803,7 +5787,6 @@ QString VymModel::getSelectString (TreeItem *ti)
     if (ti->depth() >0)
 	// call myself recursively
 	s= getSelectString(ti->parent()) +","+s;
-	    
     return s;
 }
 
