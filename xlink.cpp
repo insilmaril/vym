@@ -35,7 +35,7 @@ void Link::init ()
     endLinkItem=NULL;
     xLinkState=Link::undefinedXLink;
 
-    type=Linear;
+    type=Bezier;
     pen=model->getMapDefXLinkPen();
 }
 
