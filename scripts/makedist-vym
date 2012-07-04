@@ -85,6 +85,8 @@ echo
 # create documentation
 if [ $DO_DOCS = 1 ] ; then
     cp -ra $REPO/tex $TMPDIR
+    cp -ra $REPO/icons $TMPDIR
+    cp -ra $REPO/flags $TMPDIR
     cd $TMPDIR/tex
     for i in {1..3} ; do
 	pdflatex vym.tex
