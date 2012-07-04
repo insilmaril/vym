@@ -11,10 +11,14 @@ public:
     enum ParameterType {Undefined,String, Int, Double, Color, Bool};
     Command (const QString &n, SelectionType st);
     QString getName();
+    QString getDescription();
+    QString getDescriptionLaTeX();
     void addPar (ParameterType t, bool opt, const QString &c=QString() );
     int parCount();
     ParameterType getParType (int n);
+    QString getParTypeName (int n);
     SelectionType getSelectionType ();
+    QString getSelectionTypeName ();
     bool isParOptional (int n);
     QString getParComment(int n);
 

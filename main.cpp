@@ -140,6 +140,7 @@ int main(int argc, char* argv[])
     // Reading and initializing options commandline options
     options.add ("batch", Option::Switch, "b", "batch");
     options.add ("commands", Option::Switch, "c", "commands");
+    options.add ("commandslatex", Option::Switch, "cl", "commandslatex");
     options.add ("debug", Option::Switch, "d", "debug");
     options.add ("help", Option::Switch, "h", "help");
     options.add ("local", Option::Switch, "l", "local");
@@ -179,10 +180,6 @@ int main(int argc, char* argv[])
     {
 	cout << endl << qPrintable( options.getHelpText())<<endl;
 	return 1;
-    }
-
-    if (options.isOn ("commands"))
-    {
     }
 
     if (options.isOn ("version"))
@@ -320,7 +317,13 @@ int main(int argc, char* argv[])
 	cout << "Available commands:\n";
 	cout << "==================:\n";
 	foreach (Command* c, modelCommands)
-	    cout << c->getName().toStdString() << endl;
+	    cout << c->getDescription().toStdString() << endl;
+    }
+
+    if (options.isOn ("commandslatex"))
+    {
+	foreach (Command* c, modelCommands)
+	    cout << c->getDescriptionLaTeX().toStdString() << endl;
     }
 
     if (options.isOn ("batch"))
