@@ -5209,7 +5209,6 @@ void Main::helpDoc()
     #endif
 
     searchList << "doc";    // relative path for easy testing in tarball
-    searchList << "doc/tex";	// Easy testing working on vym.tex
     searchList << "/usr/share/doc/vym";	// Debian
     searchList << "/usr/share/doc/packages";// Knoppix
 
