@@ -1994,36 +1994,36 @@ void Main::setupFlagActions()
 
     flag=new Flag(flagsPath+"flag-exclamationmark.png");
     flag->setGroup("standard-mark");
-    setupFlag (flag,standardFlagsToolbar,"exclamationmark",tr("Take care!","Standardflag"));
+    setupFlag (flag,standardFlagsToolbar,"exclamationmark",tr("Take care!","Standardflag"),Qt::Key_Exclam);
 
     flag=new Flag(flagsPath+"flag-questionmark.png");
     flag->setGroup("standard-mark");
-    setupFlag (flag,standardFlagsToolbar,"questionmark",tr("Really?","Standardflag"));
+    setupFlag (flag,standardFlagsToolbar,"questionmark",tr("Really?","Standardflag"),Qt::Key_Question);
 
     flag=new Flag(flagsPath+"flag-hook-green.png");
     flag->setGroup("standard-status");
-    setupFlag (flag,standardFlagsToolbar,"hook-green",tr("Status - ok,done","Standardflag"));
+    setupFlag (flag,standardFlagsToolbar,"hook-green",tr("Status - ok,done","Standardflag"),Qt::Key_1);
 
     flag=new Flag(flagsPath+"flag-wip.png");
     flag->setGroup("standard-status");
-    setupFlag (flag,standardFlagsToolbar,"wip",tr("Status - work in progress","Standardflag"));
+    setupFlag (flag,standardFlagsToolbar,"wip",tr("Status - work in progress","Standardflag"),Qt::Key_2);
 
     flag=new Flag(flagsPath+"flag-cross-red.png");
     flag->setGroup("standard-status");
-    setupFlag (flag,standardFlagsToolbar,"cross-red",tr("Status - missing, not started","Standardflag"));
+    setupFlag (flag,standardFlagsToolbar,"cross-red",tr("Status - missing, not started","Standardflag"),Qt::Key_3);
 
     flag=new Flag(flagsPath+"flag-stopsign.png");
     flag->setGroup("standard-status");
-    setupFlag (flag,standardFlagsToolbar,"stopsign",tr("This won't work!","Standardflag"));
+    setupFlag (flag,standardFlagsToolbar,"stopsign",tr("This won't work!","Standardflag"),Qt::Key_AsciiCircum);
     flag->unsetGroup();
 
     flag=new Flag(flagsPath+"flag-smiley-good.png");
     flag->setGroup("standard-smiley");
-    setupFlag (flag,standardFlagsToolbar,"smiley-good",tr("Good","Standardflag"));
+    setupFlag (flag,standardFlagsToolbar,"smiley-good",tr("Good","Standardflag"),Qt::Key_ParenRight);
 
     flag=new Flag(flagsPath+"flag-smiley-sad.png");
     flag->setGroup("standard-smiley");
-    setupFlag (flag,standardFlagsToolbar,"smiley-sad",tr("Bad","Standardflag"));
+    setupFlag (flag,standardFlagsToolbar,"smiley-sad",tr("Bad","Standardflag"),Qt::Key_ParenLeft);
 
     flag=new Flag(flagsPath+"flag-smiley-omg.png");
     flag->setGroup("standard-smiley");
@@ -2038,32 +2038,32 @@ void Main::setupFlagActions()
     setupFlag (flag,standardFlagsToolbar,"phone",tr("Call...","Standardflag"));
 
     flag=new Flag(flagsPath+"flag-lamp.png");
-    setupFlag (flag,standardFlagsToolbar,"lamp",tr("Idea!","Standardflag"));
+    setupFlag (flag,standardFlagsToolbar,"lamp",tr("Idea!","Standardflag"),Qt::Key_Asterisk);
 
     flag=new Flag(flagsPath+"flag-arrow-up.png");
     flag->setGroup("standard-arrow");
-    setupFlag (flag,standardFlagsToolbar,"arrow-up",tr("Important","Standardflag"));
+    setupFlag (flag,standardFlagsToolbar,"arrow-up",tr("Important","Standardflag"),Qt::SHIFT + Qt::Key_Up);
 
     flag=new Flag(flagsPath+"flag-arrow-down.png");
     flag->setGroup("standard-arrow");
-    setupFlag (flag,standardFlagsToolbar,"arrow-down",tr("Unimportant","Standardflag"));
+    setupFlag (flag,standardFlagsToolbar,"arrow-down",tr("Unimportant","Standardflag"),Qt::SHIFT + Qt::Key_Down);
 
     flag=new Flag(flagsPath+"flag-arrow-2up.png");
     flag->setGroup("standard-arrow");
-    setupFlag (flag,standardFlagsToolbar,"2arrow-up",tr("Very important!","Standardflag"));
+    setupFlag (flag,standardFlagsToolbar,"2arrow-up",tr("Very important!","Standardflag"),Qt::SHIFT + +Qt::CTRL + Qt::Key_Up);
 
     flag=new Flag(flagsPath+"flag-arrow-2down.png");
     flag->setGroup("standard-arrow");
-    setupFlag (flag,standardFlagsToolbar,"2arrow-down",tr("Very unimportant!","Standardflag"));
+    setupFlag (flag,standardFlagsToolbar,"2arrow-down",tr("Very unimportant!","Standardflag"),Qt::SHIFT + Qt::CTRL + Qt::Key_Down);
     flag->unsetGroup();
 
     flag=new Flag(flagsPath+"flag-thumb-up.png");
     flag->setGroup("standard-thumb");
-    setupFlag (flag,standardFlagsToolbar,"thumb-up",tr("I like this","Standardflag"));
+    setupFlag (flag,standardFlagsToolbar,"thumb-up",tr("I like this","Standardflag"),Qt::Key_BracketRight);
 
     flag=new Flag(flagsPath+"flag-thumb-down.png");
     flag->setGroup("standard-thumb");
-    setupFlag (flag,standardFlagsToolbar,"thumb-down",tr("I do not like this","Standardflag"));
+    setupFlag (flag,standardFlagsToolbar,"thumb-down",tr("I do not like this","Standardflag"),Qt::Key_BracketLeft);
     flag->unsetGroup();
 
     flag=new Flag(flagsPath+"flag-rose.png");
@@ -2181,7 +2181,7 @@ void Main::setupFlagActions()
     setupFlag (flag,standardFlagsToolbar,"freemind-licq",tr("Sweet","Freemind-Flag"));
 }
 
-void Main::setupFlag (Flag *flag, QToolBar *tb, const QString &name, const QString &tooltip)
+void Main::setupFlag (Flag *flag, QToolBar *tb, const QString &name, const QString &tooltip, const QKeySequence &shortcut)
 {
     flag->setName(name);
     flag->setToolTip (tooltip);
@@ -2190,14 +2190,15 @@ void Main::setupFlag (Flag *flag, QToolBar *tb, const QString &name, const QStri
     {
 	a=new QAction (flag->getPixmap(),name,this);
 	// StandardFlag
-	tb->addAction (a);
 	flag->setAction (a);
 	a->setVisible (flag->isVisible());
 	a->setCheckable(true);
 	a->setObjectName(name);
 	a->setToolTip(tooltip);
+	a->setShortcut (shortcut);
 	connect (a, SIGNAL( triggered() ), this, SLOT( standardFlagChanged() ) );
 	standardFlagsMaster->addFlag (flag);	
+	switchboard.addConnection (tb, a, tr("Flags toolbar"));
     } else
     {
 	// SystemFlag
@@ -4035,6 +4036,7 @@ void Main::editUnscrollChildren()
 
 void Main::editGrowSelectionSize()
 {
+    qDebug()<<"Main grow";
     VymModel *m=currentModel();
     if (m) m->growSelectionSize();
 }

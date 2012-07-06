@@ -60,7 +60,13 @@ private:
     void setupViewActions();
     void setupModeActions();
     void setupWindowActions();
-    void setupFlag(Flag *flag, QToolBar *tb, const QString &name, const QString &tooltip);
+    void setupFlag(
+	Flag *flag, 
+	QToolBar *tb, 
+	const QString &name, 
+	const QString &tooltip,
+	const QKeySequence &ks=0
+	);
     void setupFlagActions();
     void setupNetworkActions();
     void setupSettingsActions();
