@@ -424,6 +424,10 @@ private:
     QAction *actionSaveBranch;
     QAction *actionLoadImage;
 
+    QAction *actionGrowSelectionSize;
+    QAction *actionShrinkSelectionSize;
+    QAction *actionResetSelectionSize;
+
     QAction *actionToggleTarget;
     QAction *actionGoToTarget;
     QAction *actionMoveToTarget;
