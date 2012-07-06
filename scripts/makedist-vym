@@ -17,7 +17,7 @@ fi
 
 # Init
 OLDDIR=$(pwd)
-REPO=$OLDDIR/vym
+SRCDIR=$OLDDIR/vym
 TMPDIR=$OLDDIR/tmp
 
 echo "Getting sources for: vym"  
@@ -71,12 +71,12 @@ if [ $DO_CHECKOUT = 1 ]; then
     #cvs -d:ext:insilmaril@vym.cvs.sourceforge.net:/cvsroot/vym co -r $RTAG code
     #cvs -d:pserver:anonymous@vym.cvs.sourceforge.net:/cvsroot/vym co -P $RTAG code
     cd $OLDDIR
-    echo Removing $REPO...
-    rm -rf $REPO
+    echo Removing $SRCDIR...
+    rm -rf $SRCDIR
     git clone -b $BRANCH git://vym.git.sourceforge.net/gitroot/vym/vym
 fi	
 
-#VERSION=$(grep __VYM_VERSION $REPO/version.h |  sed -e 's/^.*\"\(.*\)\"$/\1/g')
+#VERSION=$(grep __VYM_VERSION $SRCDIR/version.h |  sed -e 's/^.*\"\(.*\)\"$/\1/g')
 TARBALLSRC=vym-$VERSION
 echo
 echo "Setting version from sources: $VERSION"
@@ -84,9 +84,9 @@ echo
 
 # create documentation
 if [ $DO_DOCS = 1 ] ; then
-    cp -ra $REPO/tex $TMPDIR
-    cp -ra $REPO/icons $TMPDIR
-    cp -ra $REPO/flags $TMPDIR
+    cp -ra $SRCDIR/tex $TMPDIR
+    cp -ra $SRCDIR/icons $TMPDIR
+    cp -ra $SRCDIR/flags $TMPDIR
     cd $TMPDIR/tex
     for i in {1..3} ; do
 	pdflatex vym.tex
@@ -104,7 +104,7 @@ if [ $DO_TARBALL = 1 ]; then
     if [ -d $TARBALLSRC ] ;  then
 	rm -rf $TARBALLSRC
     fi
-    cp -ra $REPO $TARBALLSRC
+    cp -ra $SRCDIR $TARBALLSRC
 
     # Copy doc
     mkdir -p $TARBALLSRC/doc
