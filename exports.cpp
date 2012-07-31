@@ -138,12 +138,24 @@ QString ExportBase::getSectionString(TreeItem *start)
 	return r + " ";
 }
 
+QString ExportBase::indent (const int &n, bool useBullet)
+{
+    QString s;
+    for (int i=0; i<n; i++) s += indentPerDepth;
+    if (useBullet && s.length()>=2 && bulletPoints.count()>n) 
+        s.replace(s.length()-2, 1, bulletPoints.at(n) );
+    return s;
+}
+
 ////////////////////////////////////////////////////////////////////////
 ExportAO::ExportAO()
 {
     filter="TXT (*.txt)";
     caption=vymName+ " -" +QObject::tr("Export as ASCII")+" "+QObject::tr("(still experimental)");
-    indentPerDepth=" ";
+    indentPerDepth="   ";
+    bulletPoints.clear();
+    for (int i=0; i<10; i++) 
+        bulletPoints << "-";
 }
 
 void ExportAO::doExport()   
@@ -170,17 +182,19 @@ void ExportAO::doExport()
     BranchItem *cur=NULL;
     BranchItem *prev=NULL;
 
-    QString colString;
-    QColor col;
-
     cur=model->nextBranch (cur,prev);
     while (cur) 
     {
+        QString line;
+        QString colString="";
+        QString noColString;
+        QString statusString ="";
+        QColor col;
+
 	if (cur->getType()==TreeItem::Branch || cur->getType()==TreeItem::MapCenter)
 	{
 	    // Make indentstring
-	    curIndent="";
-	    for (i=0;i<cur->depth()-1;i++) curIndent+= indentPerDepth;
+	    curIndent=indent(cur->depth()-4,true);
 
 	    if (!cur->hasHiddenExportParent() )
 	    {
@@ -191,34 +205,29 @@ void ExportAO::doExport()
 		    colString="[O] ";
 		else if (col==QColor (0,85,0))
 		    colString="[G] ";
-		else	
-		    colString="  - ";
+                else if (cur->depth()==4)
+		    colString="[*] ";
+                else
+		    colString="    ";
+
+                noColString=QString(" ").repeated(colString.length() );
 
 		dashIndent="";	
 		switch (cur->depth())
 		{
-		    case 0:
-			//ts << underline (cur->getHeadingPlain(),QString("="));
-			//ts << "\n";
-			break;
-		    case 1:
-			//ts << "\n";
-			//ts << (underline ( cur->getHeadingPlain(), QString("-") ) );
-			//ts << "\n";
-			break;
-		    case 2: // Main heading
+		    case 0: break;  // Mapcenter (Ignored)
+		    case 1: break;  // Mainbranch "Archive" (Ignored)
+                    case 2: // Title: "Current week number..."
 			ts << "\n";
 			ts << underline ( cur->getHeadingPlain(), QString("=") );
 			ts << "\n";
 			break;
-		    case 3: // Achievement, Bonus, Objective ...
+                    case 3: // Headings: "Achievement", "Bonus", "Objective", ...
 			ts << "\n";
 			ts << underline ( cur->getHeadingPlain(), "-");
 			ts << "\n";
 			break;
-		    default:	// depth 4 are the items we need to know
-			if (cur->depth()>4) ts<<curIndent;
-
+		    default:	// depth 4 and higher are the items we need to know
 			Task *task=cur->getTask();
 			if (task)
 			{
@@ -226,40 +235,49 @@ void ExportAO::doExport()
 			    switch ( task->getStatus() )
 			    {
 				case Task::NotStarted:
-				    ts <<colString+cur->getHeadingPlain()<< " [NOT STARTED] ";
+				    statusString="[NOT STARTED]";
 				    break;
 				case Task::WIP:   
-				    ts <<colString+cur->getHeadingPlain()<< " [WIP] ";
+                                    statusString="[WIP]";
 				    break;
 				case Task::Finished:
-				    ts <<colString+cur->getHeadingPlain()<< " [DONE] ";
+				    statusString="[DONE]";
 				    break;
 			    }
 			} else
 			{
 			    if (cur->hasActiveStandardFlag ("hook-green") )
-				ts <<colString+cur->getHeadingPlain()<< " [DONE] ";
-			    else	if (cur->hasActiveStandardFlag ("wip"))
-				ts <<colString+cur->getHeadingPlain()<< " [WIP] ";
-			    else	if (cur->hasActiveStandardFlag ("cross-red"))
-				ts <<colString+cur->getHeadingPlain()<< " [NOT STARTED] ";
-			    else	
-				ts <<"  - "+cur->getHeadingPlain();
+                                statusString="[DONE]";
+			    else if (cur->hasActiveStandardFlag ("wip"))
+                                statusString="[WIP]";
+			    else if (cur->hasActiveStandardFlag ("cross-red"))
+                                statusString="[NOT STARTED]";
 			}
-			ts << "\n";
+
+                        line += colString;
+                        line += curIndent;
+                        if (cur->depth() >3)
+                            line += cur->getHeadingPlain();
+
+                        // Pad line width before status
+                        i = 80 - line.length() - statusString.length() -1;
+                        for (int j=0; j<i; j++) line += " ";
+                        line += " "  + statusString + "\n";
+
+                        ts << line;
+                        
+                        // If necessary, write URL
+                        if (!cur->getURL().isEmpty())
+                             ts << noColString << indent(cur->depth()-4, false) + cur->getURL() + "\n";
+
+                        // If necessary, write note
+                        if (!cur->getNoteObj().isEmpty())
+                        {
+                            curIndent = noColString + indent(cur->depth()-4,false) + "| ";
+                            s=cur->getNoteASCII( curIndent, 80);
+                            ts << s + "\n";
+                        }
 			break;
-		}
-
-		// If necessary, write URL
-		if (!cur->getURL().isEmpty())
-		    ts << (curIndent + dashIndent + cur->getURL()) +"\n";
-
-		// If necessary, write note
-		if (!cur->getNoteObj().isEmpty())
-		{
-		    curIndent +="  | ";
-		    s=cur->getNoteASCII( curIndent, 80);
-		    ts << s;
 		}
 	    }
 	}

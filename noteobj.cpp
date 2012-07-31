@@ -61,12 +61,22 @@ QString NoteObj::getNoteASCII()
 
 QString NoteObj::getNoteASCII(QString indent, const int &)  //FIXME-3 use width
 {
-    if (note.isEmpty() || !isRichText() ) return note;
+    if (note.isEmpty()) return note;
+
     QString r=note;
+    QRegExp rx;
+    rx.setMinimal(true);
+
+    if (!isRichText()) 
+    {
+        rx.setPattern("^");
+        r=r.replace (rx,indent);
+        rx.setPattern("\n");
+        return r.replace (rx,"\n"+indent);
+    }
 
     // Remove all <style...> ...</style>
-    QRegExp rx ("<style.*>.*</style>");
-    rx.setMinimal(true);
+    rx.setPattern("<style.*>.*</style>");
     r.replace (rx,"");
 
     // convert all "<br*>" to "\n"

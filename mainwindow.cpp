@@ -927,7 +927,7 @@ void Main::setupFileActions()
     switchboard.addConnection(fileExportMenu, a,tr("File","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( fileExportHTML() ) );
 
-    a = new QAction( "Text (A&O report)... (experimental)", this);
+    a = new QAction( "Text (A&O report)...", this);
     switchboard.addConnection(fileExportMenu, a,tr("File","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( fileExportAO() ) );
 

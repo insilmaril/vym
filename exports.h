@@ -33,10 +33,13 @@ protected:
     VymModel *model;
     virtual QString getSectionString (TreeItem*);
 
+    QString indent (const int &n, bool useBullet);
     QDir tmpDir;
     QDir outDir;
     QString outputFile;
     QString indentPerDepth;
+    int indentPerDepth2;
+    QStringList bulletPoints;
     QString caption;
     QString filter;
     bool cancelFlag;
