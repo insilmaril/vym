@@ -637,24 +637,26 @@ QString ExportHTML::buildList (BranchItem *current)
     QString r;
 
     uint i=0;
+    uint visChilds=0;
+
     BranchItem *bi=current->getFirstBranch();
 
     // Only add itemized list, if we have more than one subitem.
     // For only one subitem, just add a separator to keep page more compact
     bool noSingularsHere=false;
-    if (current->branchCount()<2 && noSingulars) noSingularsHere=true;
+    if (current->branchCount()<2 && noSingulars) 
+        noSingularsHere=true;
 
     if (bi)
     {
-	if (!noSingularsHere)
-	    r+="<ul>\n";
-	else
+	if (noSingularsHere)
 	    r+=singularDelimiter;
 
 	while (bi)
 	{
 	    if (!bi->hasHiddenExportParent() )	
 	    {
+                if (!bi->isHidden()) visChilds++;
 		if (!noSingularsHere) r+="<li>";
 		r+=getBranchText (bi);
 		if (!bi->getURL().isEmpty() && frameURLs && noSingularsHere)
@@ -668,9 +670,10 @@ QString ExportHTML::buildList (BranchItem *current)
 	    i++;
 	    bi=current->getBranchNum(i);
 	}
-
-	if (!noSingularsHere) r+="</ul>\n";
     }
+
+    if (!noSingularsHere && visChilds>0)
+        r = "<ul>\n" + r + "\n</ul>\n";
     return r;
 }
 
