@@ -5,7 +5,7 @@
 #include <QtDBus>
 
 
-#include "branchpropwindow.h"
+#include "branchpropeditor.h"
 #include "extrainfodialog.h"
 #include "flag.h"
 #include "file.h"
@@ -324,7 +324,7 @@ private:
     QDockWidget *noteEditorDW;
     QDockWidget *scriptEditorDW;
 
-    BranchPropertyWindow *branchPropertyWindow;
+    BranchPropertyEditor *branchPropertyEditor;
 
     QList <QAction*> actionListMap;
     QList <QAction*> actionListBranches;
@@ -477,7 +477,7 @@ private:
     QAction *actionViewToggleSlideEditor;
     QAction *actionViewToggleScriptEditor;
     QAction *actionViewToggleHistoryWindow;
-    QAction *actionViewTogglePropertyWindow;
+    QAction *actionViewTogglePropertyEditor;
     QAction *actionViewToggleAntiAlias;
     QAction *actionViewToggleSmoothPixmapTransform;
     QAction* actionViewCenter;

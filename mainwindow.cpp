@@ -10,7 +10,7 @@
 
 #include "aboutdialog.h"
 #include "adaptorvym.h"
-#include "branchpropwindow.h"
+#include "branchpropeditor.h"
 #include "branchitem.h"
 #include "command.h"
 #include "exportoofiledialog.h"
@@ -153,7 +153,8 @@ Main::Main(QWidget* parent, Qt::WFlags f) : QMainWindow(parent,f)
     // Define commands in API (used globally)
     setupAPI();
 
-    // Dock widgets ///////////////////////////////////////////////
+    // Dock widgets /////////////////////////////////////////////// /
+    // FIXME-4 Missing call to updateAction, when widget is closed
     QDockWidget *dw;
     dw = new QDockWidget (tr("Note Editor"));
     dw->setWidget (noteEditor);
@@ -203,15 +204,17 @@ Main::Main(QWidget* parent, Qt::WFlags f) : QMainWindow(parent,f)
     dw->hide();	
     addDockWidget (Qt::LeftDockWidgetArea,dw);
 
+    branchPropertyEditor = new BranchPropertyEditor();
+    dw = new QDockWidget (tr("Property Editor","PropertyEditor"));
+    dw->setWidget (branchPropertyEditor);
+    dw->setObjectName ("PropertyEditor");
+    dw->hide();
+    addDockWidget (Qt::LeftDockWidgetArea,dw);
+
     // Satellite windows //////////////////////////////////////////
     // history window
     historyWindow=new HistoryWindow();
     connect (historyWindow, SIGNAL (windowClosed() ), this, SLOT (updateActions()));
-
-    // properties window
-    branchPropertyWindow = new BranchPropertyWindow();
-    branchPropertyWindow->hide();
-    connect (branchPropertyWindow, SIGNAL (windowClosed() ), this, SLOT (updateActions()));
 
     // Connect NoteEditor, so that we can update flags if text changes
     connect (noteEditor, SIGNAL (textHasChanged() ), this, SLOT (updateNoteFlag()));
@@ -353,7 +356,7 @@ Main::~Main()
     // call the destructors
     delete noteEditor;	    // FIXME-4 shouldn't this be done in main?
     delete historyWindow;
-    delete branchPropertyWindow;
+    delete branchPropertyEditor;
 
     // Remove temporary directory
     removeDir (QDir(tmpVymDir));
@@ -1568,7 +1571,7 @@ void Main::setupEditActions()
     switchboard.addConnection(a,tr("View shortcuts","Shortcut group"));
     addAction (a);
     connect( a, SIGNAL( triggered() ), this, SLOT( windowToggleProperty() ) );
-    actionViewTogglePropertyWindow=a;
+    actionViewTogglePropertyEditor=a;
 }
 
 // Select Actions
@@ -1856,7 +1859,7 @@ void Main::setupViewActions()
     connect( a, SIGNAL( triggered() ), this, SLOT(windowToggleHistory() ) );
     actionViewToggleHistoryWindow=a;
 
-    viewMenu->addAction (actionViewTogglePropertyWindow);
+    viewMenu->addAction (actionViewTogglePropertyEditor);
 
     viewMenu->addSeparator();	
 
@@ -2386,7 +2389,7 @@ void Main::setupContextMenus()
 
     // Context Menu for branch or mapcenter
     branchContextMenu =new QMenu (this);
-    branchContextMenu->addAction (actionViewTogglePropertyWindow);
+    branchContextMenu->addAction (actionViewTogglePropertyEditor);
     branchContextMenu->addSeparator();	
 
 	// Submenu "Add"
@@ -4709,11 +4712,11 @@ void Main::windowToggleHistory()
 
 void Main::windowToggleProperty()
 {
-    if (branchPropertyWindow->isVisible())
-	branchPropertyWindow->hide();
+    if (branchPropertyEditor->parentWidget()->isVisible())
+	branchPropertyEditor->parentWidget()->hide();
     else    
-	branchPropertyWindow->show();
-    branchPropertyWindow->setModel (currentModel() );
+	branchPropertyEditor->parentWidget()->show();
+    branchPropertyEditor->setModel (currentModel() );
 }
 
 void Main::windowToggleAntiAlias()
@@ -4790,7 +4793,7 @@ void Main::selectInNoteEditor(QString s,int i)
 
 void Main::changeSelection (VymModel *model, const QItemSelection &newsel, const QItemSelection &)
 {
-    branchPropertyWindow->setModel (model ); 
+    branchPropertyEditor->setModel (model ); 
 
     if (model && model==currentModel() )
     {
@@ -4826,8 +4829,9 @@ void Main::updateActions()
 {
     // updateActions is also called when satellites are closed	
     actionViewToggleNoteEditor->setChecked (noteEditor->isVisible());
+    actionViewToggleTaskEditor->setChecked (taskEditor->isVisible());
     actionViewToggleHistoryWindow->setChecked (historyWindow->isVisible());
-    actionViewTogglePropertyWindow->setChecked (branchPropertyWindow->isVisible());
+    actionViewTogglePropertyEditor->setChecked (branchPropertyEditor->isVisible());
     actionViewToggleScriptEditor->setChecked (scriptEditor->isVisible());
     int cv=currentView();
     if ( cv>=0 )

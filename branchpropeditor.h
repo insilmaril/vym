@@ -1,7 +1,7 @@
-#ifndef BRANCHPROPERTYWINDOW_H
-#define BRANCHPROPERTYWINDOW_H
+#ifndef BRANCHPROPERTYEDITOR_H
+#define BRANCHPROPERTYEDITOR_H
 
-#include "ui_branchpropwindow.h"
+#include "ui_branchpropeditor.h"
 
 #include <QDialog>
 #include <QCloseEvent>
@@ -14,12 +14,12 @@
 
 class QAbstractItemModel;
 
-class BranchPropertyWindow:public QDialog
+class BranchPropertyEditor:public QDialog
 {
     Q_OBJECT
 public:
-    BranchPropertyWindow (QWidget *parent=0);
-    ~BranchPropertyWindow ();
+    BranchPropertyEditor (QWidget *parent=0);
+    ~BranchPropertyEditor ();
     void setItem (TreeItem *);
     void setModel (VymModel *);
 
@@ -46,7 +46,7 @@ private:
     void connectSignals();
     void disconnectSignals();
     
-    Ui::BranchPropertyWindow ui;
+    Ui::BranchPropertyEditor ui;
 
     BranchObj *branchObj;
     BranchItem *branchItem;

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>BranchPropertyWindow</class>
- <widget class="QWidget" name="BranchPropertyWindow">
+ <class>BranchPropertyEditor</class>
+ <widget class="QWidget" name="BranchPropertyEditor">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -393,7 +393,7 @@
   <connection>
    <sender>closeButton</sender>
    <signal>clicked()</signal>
-   <receiver>BranchPropertyWindow</receiver>
+   <receiver>BranchPropertyEditor</receiver>
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel">

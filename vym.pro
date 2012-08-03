@@ -37,7 +37,7 @@ HEADERS	+= \
 #   attributewidget.h \
     branchitem.h \
     branchobj.h \
-    branchpropwindow.h\
+    branchpropeditor.h\
     bugagent.h \
     command.h \
     dockeditor.h \
@@ -122,7 +122,7 @@ SOURCES	+= \
 #   attributewidget.cpp \
     branchitem.cpp \
     branchobj.cpp \
-    branchpropwindow.cpp \
+    branchpropeditor.cpp \
     bugagent.cpp \
     command.cpp \
     dockeditor.cpp \
@@ -197,7 +197,7 @@ SOURCES	+= \
 
 FORMS = \
     attributewidget.ui \
-    branchpropwindow.ui \
+    branchpropeditor.ui \
     exporthtmldialog.ui \
     extrainfodialog.ui \
     editxlinkdialog.ui \

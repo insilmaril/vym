@@ -1,4 +1,4 @@
-#include "branchpropwindow.h"
+#include "branchpropeditor.h"
 
 #include <QColorDialog>
 
@@ -10,7 +10,7 @@ extern Settings settings;
 extern QString vymName;
 
 
-BranchPropertyWindow::BranchPropertyWindow (QWidget *parent): QDialog (parent)	// FIXME-4 not updating when data is set elsewhere (connect to dataCHanged)
+BranchPropertyEditor::BranchPropertyEditor (QWidget *parent): QDialog (parent)	// FIXME-4 not updating when data is set elsewhere (connect to dataCHanged)
 
 {
     ui.setupUi (this);
@@ -52,14 +52,14 @@ BranchPropertyWindow::BranchPropertyWindow (QWidget *parent): QDialog (parent)	/
 	hide();
 }
 
-BranchPropertyWindow::~BranchPropertyWindow ()
+BranchPropertyEditor::~BranchPropertyEditor ()
 {
     settings.setValue( "/satellite/propertywindow/geometry/size", size() );
     settings.setValue( "/satellite/propertywindow/geometry/pos", pos() );
     settings.setValue( "/satellite/propertywindow/showWithMain",isVisible() );
 }
 
-void BranchPropertyWindow::setItem (TreeItem *ti)   
+void BranchPropertyEditor::setItem (TreeItem *ti)   
 {
     disconnectSignals();
     if (!ti)
@@ -183,7 +183,7 @@ void BranchPropertyWindow::setItem (TreeItem *ti)
     }
 }
 
-void BranchPropertyWindow::setModel (VymModel *m)
+void BranchPropertyEditor::setModel (VymModel *m)
 {
     model=m;
     if (model) 
@@ -193,7 +193,7 @@ void BranchPropertyWindow::setModel (VymModel *m)
 	
 }
 
-void BranchPropertyWindow::frameTypeChanged (int i)
+void BranchPropertyEditor::frameTypeChanged (int i)
 {
     if (model)
     {
@@ -217,7 +217,7 @@ void BranchPropertyWindow::frameTypeChanged (int i)
     }	
 }
 
-void BranchPropertyWindow::framePenColorClicked()
+void BranchPropertyEditor::framePenColorClicked()
 {
     if (model) 
     {	
@@ -230,7 +230,7 @@ void BranchPropertyWindow::framePenColorClicked()
     }
 }
 
-void BranchPropertyWindow::frameBrushColorClicked()
+void BranchPropertyEditor::frameBrushColorClicked()
 {
     if (model) 
     {
@@ -243,38 +243,38 @@ void BranchPropertyWindow::frameBrushColorClicked()
     }	
 }
 
-void BranchPropertyWindow::framePaddingChanged(int i)
+void BranchPropertyEditor::framePaddingChanged(int i)
 {
     if (model) model->setFramePadding (i);
 }
 
-void BranchPropertyWindow::frameBorderWidthChanged(int i)
+void BranchPropertyEditor::frameBorderWidthChanged(int i)
 {
     if (model) model->setFrameBorderWidth(i);
 }
 
-void BranchPropertyWindow::frameIncludeChildrenChanged(int i)
+void BranchPropertyEditor::frameIncludeChildrenChanged(int i)
 {
     if (model) model->setFrameIncludeChildren(i);
 }
 
-void BranchPropertyWindow::linkHideUnselectedChanged (int i)
+void BranchPropertyEditor::linkHideUnselectedChanged (int i)
 {
     if (!branchItem) return;
     model->setHideLinkUnselected(i);
 }
 
-void BranchPropertyWindow::incImgVerChanged (int  i)
+void BranchPropertyEditor::incImgVerChanged (int  i)
 {
     if (model) model->setIncludeImagesVer (i);
 }
 
-void BranchPropertyWindow::incImgHorChanged (int  i)
+void BranchPropertyEditor::incImgHorChanged (int  i)
 {
     if (model) model->setIncludeImagesHor (i);
 }
 
-void BranchPropertyWindow::closeEvent( QCloseEvent* ce )
+void BranchPropertyEditor::closeEvent( QCloseEvent* ce )
 {
     ce->accept();   // can be reopened with show()
     hide();
@@ -283,7 +283,7 @@ void BranchPropertyWindow::closeEvent( QCloseEvent* ce )
 }
 
 /*
-void BranchPropertyWindow::addAttributeClicked()
+void BranchPropertyEditor::addAttributeClicked()
 {
     // Add empty line for adding attributes
     attributeModel->insertRow (attributeModel->rowCount (),QModelIndex ());
@@ -303,13 +303,13 @@ void BranchPropertyWindow::addAttributeClicked()
 
 }
 
-void BranchPropertyWindow::deleteAttributeClicked()
+void BranchPropertyEditor::deleteAttributeClicked()
 {
     //qDebug() << "BPW::delete";
 }
 */
 
-void BranchPropertyWindow::connectSignals()
+void BranchPropertyEditor::connectSignals()
 {
     // Frame
     connect ( 
@@ -356,7 +356,7 @@ void BranchPropertyWindow::connectSignals()
 }
 
 
-void BranchPropertyWindow::disconnectSignals()
+void BranchPropertyEditor::disconnectSignals()
 {
     // Frame 
     disconnect ( ui.frameTypeCombo, 0,0,0);
