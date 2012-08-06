@@ -5771,7 +5771,7 @@ QString VymModel::getSelectString (LinkableMapObj *lmo)	// only for convenience.
 QString VymModel::getSelectString (TreeItem *ti) 
 {
     QString s;
-    if (!ti || ti->depth()<0) return s;    //FIXME-0 check!  undosel =bo:-1 ....
+    if (!ti || ti->depth()<0) return s;    
     switch (ti->getType())
     {
 	case TreeItem::MapCenter: s="mc:"; break;
