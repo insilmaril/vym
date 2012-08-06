@@ -196,6 +196,7 @@ Main::Main(QWidget* parent, Qt::WFlags f) : QMainWindow(parent,f)
     dw->setObjectName ("TaskEditor");
     dw->hide();	
     addDockWidget (Qt::TopDockWidgetArea,dw);
+    connect (dw, SIGNAL (visibilityChanged(bool ) ), this, SLOT (updateActions()));
 
     scriptEditor = new ScriptEditor(this);
     dw= new QDockWidget (tr ("Script Editor","ScriptEditor"));
@@ -211,10 +212,13 @@ Main::Main(QWidget* parent, Qt::WFlags f) : QMainWindow(parent,f)
     dw->hide();
     addDockWidget (Qt::LeftDockWidgetArea,dw);
 
-    // Satellite windows //////////////////////////////////////////
-    // history window
     historyWindow=new HistoryWindow();
-    connect (historyWindow, SIGNAL (windowClosed() ), this, SLOT (updateActions()));
+    dw = new QDockWidget (tr("History window","HistoryWidget"));
+    dw->setWidget (historyWindow);
+    dw->setObjectName ("HistoryWidget");
+    dw->hide();
+    addDockWidget (Qt::RightDockWidgetArea,dw);
+    connect (dw, SIGNAL (visibilityChanged(bool ) ), this, SLOT (updateActions()));
 
     // Connect NoteEditor, so that we can update flags if text changes
     connect (noteEditor, SIGNAL (textHasChanged() ), this, SLOT (updateNoteFlag()));
@@ -4705,9 +4709,9 @@ void Main::windowToggleScriptEditor()
 void Main::windowToggleHistory()
 {
     if (historyWindow->isVisible())
-	historyWindow->hide();
+	historyWindow->parentWidget()->hide();
     else    
-	historyWindow->show();
+	historyWindow->parentWidget()->show();
 }
 
 void Main::windowToggleProperty()
@@ -4828,11 +4832,11 @@ void Main::changeSelection (VymModel *model, const QItemSelection &newsel, const
 void Main::updateActions()
 {
     // updateActions is also called when satellites are closed	
-    actionViewToggleNoteEditor->setChecked (noteEditor->isVisible());
-    actionViewToggleTaskEditor->setChecked (taskEditor->isVisible());
-    actionViewToggleHistoryWindow->setChecked (historyWindow->isVisible());
-    actionViewTogglePropertyEditor->setChecked (branchPropertyEditor->isVisible());
-    actionViewToggleScriptEditor->setChecked (scriptEditor->isVisible());
+    actionViewToggleNoteEditor->setChecked (noteEditor->parentWidget()->isVisible());
+    actionViewToggleTaskEditor->setChecked (taskEditor->parentWidget()->isVisible());
+    actionViewToggleHistoryWindow->setChecked (historyWindow->parentWidget()->isVisible());
+    actionViewTogglePropertyEditor->setChecked (branchPropertyEditor->parentWidget()->isVisible());
+    actionViewToggleScriptEditor->setChecked (scriptEditor->parentWidget()->isVisible());
     int cv=currentView();
     if ( cv>=0 )
     {
