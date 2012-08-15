@@ -2000,13 +2000,10 @@ void Main::setupFlagActions()
     // after all others:
     toolbarsMenu->addAction (standardFlagsToolbar->toggleViewAction() );
 
-    flag=new Flag(flagsPath+"flag-exclamationmark.png");
-    flag->setGroup("standard-mark");
-    setupFlag (flag,standardFlagsToolbar,"exclamationmark",tr("Take care!","Standardflag"),Qt::Key_Exclam);
-
-    flag=new Flag(flagsPath+"flag-questionmark.png");
-    flag->setGroup("standard-mark");
-    setupFlag (flag,standardFlagsToolbar,"questionmark",tr("Really?","Standardflag"),Qt::Key_Question);
+    flag=new Flag(flagsPath+"flag-stopsign.png");
+    flag->setGroup("standard-status");
+    setupFlag (flag,standardFlagsToolbar,"stopsign",tr("This won't work!","Standardflag"),Qt::Key_AsciiCircum);
+    flag->unsetGroup();
 
     flag=new Flag(flagsPath+"flag-hook-green.png");
     flag->setGroup("standard-status");
@@ -2020,10 +2017,13 @@ void Main::setupFlagActions()
     flag->setGroup("standard-status");
     setupFlag (flag,standardFlagsToolbar,"cross-red",tr("Status - missing, not started","Standardflag"),Qt::Key_3);
 
-    flag=new Flag(flagsPath+"flag-stopsign.png");
-    flag->setGroup("standard-status");
-    setupFlag (flag,standardFlagsToolbar,"stopsign",tr("This won't work!","Standardflag"),Qt::Key_AsciiCircum);
-    flag->unsetGroup();
+    flag=new Flag(flagsPath+"flag-exclamationmark.png");
+    flag->setGroup("standard-mark");
+    setupFlag (flag,standardFlagsToolbar,"exclamationmark",tr("Take care!","Standardflag"),Qt::Key_Exclam);
+
+    flag=new Flag(flagsPath+"flag-questionmark.png");
+    flag->setGroup("standard-mark");
+    setupFlag (flag,standardFlagsToolbar,"questionmark",tr("Really?","Standardflag"),Qt::Key_Question);
 
     flag=new Flag(flagsPath+"flag-smiley-good.png");
     flag->setGroup("standard-smiley");
