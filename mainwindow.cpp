@@ -2002,20 +2002,20 @@ void Main::setupFlagActions()
 
     flag=new Flag(flagsPath+"flag-stopsign.png");
     flag->setGroup("standard-status");
-    setupFlag (flag,standardFlagsToolbar,"stopsign",tr("This won't work!","Standardflag"),Qt::Key_AsciiCircum);
+    setupFlag (flag,standardFlagsToolbar,"stopsign",tr("This won't work!","Standardflag"),Qt::Key_1);
     flag->unsetGroup();
 
     flag=new Flag(flagsPath+"flag-hook-green.png");
     flag->setGroup("standard-status");
-    setupFlag (flag,standardFlagsToolbar,"hook-green",tr("Status - ok,done","Standardflag"),Qt::Key_1);
+    setupFlag (flag,standardFlagsToolbar,"hook-green",tr("Status - ok,done","Standardflag"),Qt::Key_2);
 
     flag=new Flag(flagsPath+"flag-wip.png");
     flag->setGroup("standard-status");
-    setupFlag (flag,standardFlagsToolbar,"wip",tr("Status - work in progress","Standardflag"),Qt::Key_2);
+    setupFlag (flag,standardFlagsToolbar,"wip",tr("Status - work in progress","Standardflag"),Qt::Key_3);
 
     flag=new Flag(flagsPath+"flag-cross-red.png");
     flag->setGroup("standard-status");
-    setupFlag (flag,standardFlagsToolbar,"cross-red",tr("Status - missing, not started","Standardflag"),Qt::Key_3);
+    setupFlag (flag,standardFlagsToolbar,"cross-red",tr("Status - missing, not started","Standardflag"),Qt::Key_4);
 
     flag=new Flag(flagsPath+"flag-exclamationmark.png");
     flag->setGroup("standard-mark");
