@@ -55,6 +55,12 @@ QString convertToRel (const QString &src, const QString &dst)
     return d;
 }
 
+QString basename(const QString &path)
+{
+    return path.section ('/', -1);
+
+}
+
 extern QString vymName;
 bool reallyWriteDirectory(const QString &dir)
 {
@@ -167,7 +173,7 @@ void removeDir(QDir d)
 	qWarning ()<<"removeDir("+d.path()+") failed!";
 }	
 
-void copyDir (QDir src, QDir dst)   //FIXME-5 don't use system call
+void copyDir (QDir src, QDir dst)   //FIXME-2 don't use system call (would fail on windows)
 {
     system (QString ("cp -r "+src.path()+"/* "+dst.path()).toUtf8() );
 }

@@ -348,8 +348,7 @@ void VymModel::setFilePath(QString fpath, QString destname)
 	fileDir=filePath.left (1+filePath.lastIndexOf ("/"));
 
 	// Set short name, too. Search from behind:
-	int i=fileName.lastIndexOf("/");
-	if (i>=0) fileName=fileName.remove (0,i+1);
+        fileName=basename(fileName);
 
 	// Forget the .vym (or .xml) for name of map
 	mapName=fileName.left(fileName.lastIndexOf(".",-1,Qt::CaseSensitive) );
