@@ -36,15 +36,15 @@ public:
     Settings (const QString & , const QString &);
     ~Settings ();
     void clear();
-    void clearLocal (const QString &);
-    QVariant localValue ( const QString &, const QString &, const QString &);
-    void setLocalValue (const QString &, const QString &, const QString &);
+    void clearLocal (const QString &filepath, const QString &key);  //! Clear keys starting with key in filepath 
+    QVariant localValue ( const QString &, const QString &, QVariant); 
+    void setLocalValue (const QString &, const QString &, QVariant);
     QString getDataXML (const QString &);
 
 protected:
     QStringList pathlist;
     QStringList keylist;
-    QStringList valuelist;
+    QList <QVariant> valuelist;
 };
 
 #endif

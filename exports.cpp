@@ -98,8 +98,8 @@ bool ExportBase::execDialog(const QString &overwriteWarning)
 	{
 	    WarningDialog dia;
 	    dia.showCancelButton (true);
-	    dia.setText(QObject::tr("Exporting to %1 will overwrite the existing file:\n%2").arg(overwriteWarning).arg(fn));
 	    dia.setCaption(QObject::tr("Warning: Overwriting file"));
+	    dia.setText(QObject::tr("Exporting to %1 will overwrite the existing file:\n%2").arg(overwriteWarning).arg(fn));
 	    dia.setShowAgainName("/exports/overwrite/"+overwriteWarning);
 	    if (!dia.exec()==QDialog::Accepted)
 	    {
@@ -555,9 +555,6 @@ void ExportHTML::init()
     singularDelimiter=": ";
     noSingulars=false;	// Deactivated for the time being...
     frameURLs=true;
-    cssFileName="vym.css";
-    cssOriginalPath="";	// Is set in VymModel, based on default setting in ExportHTMLDialog
-
 }
 
 QString ExportHTML::getBranchText(BranchItem *current)
@@ -679,11 +676,6 @@ QString ExportHTML::buildList (BranchItem *current)
     return r;
 }
 
-void ExportHTML::setCSSPath(const QString &p)
-{
-    cssOriginalPath=p;
-}
-
 void ExportHTML::doExport(bool useDialog) 
 {
     // Execute dialog
@@ -718,25 +710,32 @@ void ExportHTML::doExport(bool useDialog)
     }
 
     setFile (d.path()+"/"+model->getMapName()+".html");
-    setCSSPath( dia.getCSSPath() ); 
 
     // Copy CSS file
-    QString css;
-
-    QString css_src (cssOriginalPath);
-    QString css_dst (d.path()+"/"+cssFileName);
-    if (!loadStringFromDisk (css_src,css))
-	QMessageBox::warning( 0, 
-	    QObject::tr( "Warning","ExportHTML" ),
-	    QObject::tr("Trying to load stylesheet:")+"\n\n"+
-	    QObject::tr("Could not open %1","ExportHTML").arg(cssOriginalPath));
-    else
+    cssSrc=dia.getCssSrc();
+    cssDst=outDir.path() + "/" + basename(dia.getCssDst());
+    if (!cssSrc.isEmpty() )
     {
-	if (!saveStringToDisk (css_dst,css))
-	    QMessageBox::warning( 0, 
-		QObject::tr( "Warning" ), 
-		QObject::tr("Trying to save stylesheet:")+"\n\n"+
-		QObject::tr("Could not open %1").arg(css_dst));
+        QFile src(cssSrc);
+        QFile dst(cssDst);
+        if (dst.exists() )
+        {
+	    WarningDialog dia;
+	    dia.showCancelButton (true);
+	    dia.setCaption(QObject::tr("Warning: Overwriting file"));
+	    dia.setText(QObject::tr("Exporting to %1 will overwrite the existing file:\n%2").arg("HTML").arg(cssDst));
+	    dia.setShowAgainName("/exports/overwrite/html_css");
+	    if (!dia.exec()==QDialog::Accepted) return;
+            dst.remove();
+        }
+
+        if (!src.copy(cssDst))
+        {
+            QMessageBox::critical (0,
+                QObject::tr( "Error","ExportHTML" ),
+                QObject::tr("Could not copy\n%1 to\n%2","ExportHTML").arg(cssSrc).arg(cssDst));
+            return;
+        }
     }
 
     // Provide a smaller URL-icon to improve Layout 
@@ -780,24 +779,26 @@ void ExportHTML::doExport(bool useDialog)
     QTextStream ts( &file );	// use LANG decoding here...
     //FIXME-4 ts.setEncoding (QTextStream::UnicodeUTF8); // Force UTF8
 
-    // Include image (be careful: this resets Export mode, so call before exporting branches)
-    if (dia.useImage)
-    {
-	ts<<"<center><img src=\""<<model->getMapName()<<".png\" usemap='#imagemap'></center>\n";
-	offset=model->exportImage (d.path()+"/"+model->getMapName()+".png",false,"PNG");
-    }
-
     // Hide stuff during export
     model->setExportMode (true);
 
     // Write header
     ts<<"<html>";
-    ts<<"<meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\"> ";
-    ts<<"<meta name=\"generator=\" content=\" vym - view your mind - " + vymHome + "\">"; 
-    ts<<"<meta name=\"author\" content=\"" + model->getAuthor() + "\"> ";
-    ts<<"<meta name=\"description\" content=\"" + model->getComment() + "\"> ";
-    ts<<"<title>"+model->getMapName()<<"</title><body>";
-    ts<<" <link rel='stylesheet' id='css.stylesheet' href='"<<cssFileName<<"' />\n";
+    ts<<"\n<meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\"> ";
+    ts<<"\n<meta name=\"generator=\" content=\" vym - view your mind - " + vymHome + "\">"; 
+    ts<<"\n<meta name=\"author\" content=\"" + model->getAuthor() + "\"> ";
+    ts<<"\n<meta name=\"description\" content=\"" + model->getComment() + "\"> ";
+    ts<<"\n<link rel='stylesheet' id='css.stylesheet' href='"<<basename(cssDst)<<"' />\n";
+    ts<<"\n<head><title>"+model->getMapName()<<"</title></head>";
+    ts<<"\n<body>\n";
+
+    // Include image 
+    // (be careful: this resets Export mode, so call before exporting branches)
+    if (dia.useImage)
+    {
+	ts<<"<center><img src=\""<<model->getMapName()<<".png\" usemap='#imagemap'></center>\n";
+	offset=model->exportImage (d.path()+"/"+model->getMapName()+".png",false,"PNG");
+    }
 
     // Main loop over all mapcenters
     QString s;

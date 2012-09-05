@@ -29,9 +29,13 @@ public slots:
     virtual void saveSettingsInMapButtonPressed( bool b );
     virtual void warningsButtonPressed( bool b );
     virtual void outputButtonPressed( bool b );
-    virtual void cssChanged();
-    virtual QString getCSSPath();
-    virtual void browseCSSPressed();
+    virtual void cssSrcChanged();
+    virtual void cssDstChanged();
+    virtual QString getCssSrc();
+    virtual QString getCssDst();
+    virtual void copyCssPressed();
+    virtual void browseCssSrcPressed();
+    virtual void browseCssDstPressed();
     virtual void postscriptChanged();
     virtual void browsePostExportButtonPressed();
     virtual void saveSettings ();
@@ -45,7 +49,9 @@ public:
 
 protected:
     bool showWarnings;
-    QString css;
+    bool copy_css;
+    QString css_src;
+    QString css_dst;
     bool showOutput;
     QString dir;
     QString filepath;

@@ -181,95 +181,73 @@ void Settings::clear()
     valuelist.clear();
 }
 
-void Settings::clearLocal(const QString &s)
+void Settings::clearLocal(const QString &fpath, const QString &key)
 {
-    QStringList::Iterator itp=pathlist.begin();
-    QStringList::Iterator itk=keylist.begin();
-    QStringList::Iterator itv=valuelist.begin();
-
-    while (itp !=pathlist.end() )
+    int i=0;
+    while (i<pathlist.count() )
     {
-	if ((*itk).startsWith (s))
+	if (fpath == pathlist.at(i) && keylist.at(i).startsWith (key))
 	{
-	    itp=pathlist.erase (itp);
-	    itk=keylist.erase (itk);
-	    itv=valuelist.erase (itv);
+            pathlist.removeAt(i);
+            keylist.removeAt(i);
+            valuelist.removeAt(i);
 	}   else
-	{
-	    itp++;
-	    itk++;
-	    itv++;
-	}
+            i++;
     }
 }
 
-QVariant Settings::localValue ( const QString &fpath, const QString & key, const QString & def = QString::null ) 
+QVariant Settings::localValue ( const QString &fpath, const QString & key, QVariant def) 
 {
-    QStringList::Iterator itp=pathlist.begin();
-    QStringList::Iterator itk=keylist.begin();
-    QStringList::Iterator itv=valuelist.begin();
-
     // First search for value in settings saved in map
-    while (itp !=pathlist.end() )
+    int i=0;
+    while (i<pathlist.count() )
     {
-	if (*itp == fpath && *itk == key)
-	    return *itv;
-	itp++;
-	itk++;
-	itv++;
+        if (pathlist.at(i) == fpath && keylist.at(i) == key)
+	    return valuelist.at(i);
+        i++;
     }
 
     // Fall back to global vym settings
     return value (key,def);
 }   
 
-void Settings::setLocalValue (const QString &fpath, const QString &key, const QString &value)
+void Settings::setLocalValue (const QString &fpath, const QString &key, QVariant value)
 {
-    QStringList::Iterator itp=pathlist.begin();
-    QStringList::Iterator itk=keylist.begin();
-    QStringList::Iterator itv=valuelist.begin();
-
-    if (!fpath.isEmpty() && !key.isEmpty() && !value.isEmpty() )
+    if (!fpath.isEmpty() && !key.isEmpty() && !value.isNull() )
     {
 	// Search for existing Value first
-	while (itp !=pathlist.end() )
+        int i=0;
+	while (i<pathlist.count())
 	{
-	    if (*itp == fpath && *itk == key)
+            if (pathlist.at(i) == fpath && keylist.at(i) == key)
 	    {
-		*itv=value;
+                valuelist[i]=value;
 		return;
 	    }
-	    itp++;
-	    itk++;
-	    itv++;
+            i++;
 	}
 	
 	// If no Value exists, append a new one
 	pathlist.append (fpath);
 	keylist.append (key);
-	valuelist.append (value);
+	valuelist.append (value);   
     }
 }
 
 QString Settings::getDataXML (const QString &fpath)
 {
     QString s;
-    QStringList::Iterator itp=pathlist.begin();
-    QStringList::Iterator itk=keylist.begin();
-    QStringList::Iterator itv=valuelist.begin();
-
-    while (itp !=pathlist.end() )
+    int i=0;
+    while (i<pathlist.count())
     {
-	if (*itp == fpath )
-	    if (!(*itv).isEmpty())
+	if (pathlist.at(i)==fpath)
+	    if (!valuelist.at(i).isNull())
 		s+=singleElement (
 		    "setting",
-		    attribut ("key",*itk) 
-		    +attribut ("value",*itv)
+		    attribut ("key",keylist.at(i)) 
+		    +attribut ("value",valuelist.at(i).toString())
 		);
-	itp++;
-	itk++;
-	itv++;
+        i++;
     }
     return s;
 }

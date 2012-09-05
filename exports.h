@@ -104,14 +104,13 @@ public:
     ExportHTML();
     ExportHTML(VymModel *m);
     virtual void init();
-    virtual void setCSSPath(const QString &path);
     virtual void doExport(bool useDialog=true);
 private:
     QString getBranchText(BranchItem *);
     QString buildList (BranchItem *);
     QString imageMap;
-    QString cssFileName;
-    QString cssOriginalPath;
+    QString cssSrc;
+    QString cssDst;
 
     bool frameURLs;
     bool noSingulars;
