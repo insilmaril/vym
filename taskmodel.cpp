@@ -6,6 +6,8 @@
 #include "task.h"
 #include "vymmodel.h"
 
+extern QString flagsPath;
+
 TaskModel::TaskModel(QObject *parent)
     : QAbstractTableModel(parent)
 {
@@ -58,10 +60,10 @@ QVariant TaskModel::data(const QModelIndex &index, int role) const
         return QVariant();
 
     BranchItem *bi=tasks.at(index.row())->getBranch();
+    Task *t=tasks.at(index.row() );
 
     if (role == Qt::DisplayRole) 
     {
-	Task *t=tasks.at(index.row() );
         if (index.column() == 0)
             return t->getPriority();
         else if (index.column() == 1)
@@ -79,6 +81,9 @@ QVariant TaskModel::data(const QModelIndex &index, int role) const
 	}
         else if (index.column() == 6)
             return tasks.at(index.row())->getName();
+    } else if (role == Qt::DecorationRole && index.column() == 1)
+    {
+        return QIcon( flagsPath + "flag-" + t->getIconString() + ".png");
     }
     else // role != Qt::DisplayRole
     {

@@ -83,6 +83,35 @@ QString Task::getStatusString()
     return "Undefined";
 }
 
+QString Task::getIconString()
+{
+    QString s;
+    switch (status) 
+    {
+        case NotStarted: 
+            s="task-new";
+            break;
+        case WIP: 
+            s="task-wip";
+            break;
+        case Finished: 
+            s="task-finished";
+        break;
+    }
+    if (status != Finished)
+        switch (awake) 
+        {
+            case Sleeping: 
+                s+="-sleeping";
+                break;
+            case Morning: 
+                s+="-morning";
+                break;
+            default: break;
+        }
+    return s;
+}
+
 void Task::setAwake(const QString &s)
 {
     if (s=="Sleeping")

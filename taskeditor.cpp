@@ -212,3 +212,4 @@ void TaskEditor::toggleFilterActive ()
 {
     setFilterActive();
 }
+
