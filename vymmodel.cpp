@@ -3810,6 +3810,10 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	    QString cf=parser.parString(ok,1); 
 	    exportImpress (fn,cf);
 	/////////////////////////////////////////////////////////////////////
+	} else if (com=="exportLast")
+	{
+	    exportLast ();
+	/////////////////////////////////////////////////////////////////////
 	} else if (com=="exportLaTeX")
 	{
 	    QString fname=parser.parString(ok,0); 

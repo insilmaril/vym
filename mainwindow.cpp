@@ -541,6 +541,9 @@ void Main::setupAPI()
     c->addPar (Command::String,true,"Image format");
     modelCommands.append(c);
 
+    c=new Command ("exportLast",Command::Any);
+    modelCommands.append(c);
+
     c=new Command ("exportLaTeX",Command::Any);
     c->addPar (Command::String,false,"Filename for export");
     modelCommands.append(c);
