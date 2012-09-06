@@ -211,30 +211,7 @@ void BranchItem::updateTaskFlag()
     systemFlags.deactivateGroup ("system-tasks");
     if (task)
     {
-	QString s;
-	switch (task->getStatus() ) 
-	{
-	    case Task::NotStarted: 
-		s="system-task-new";
-		break;
-	    case Task::WIP: 
-		s="system-task-wip";
-		break;
-	    case Task::Finished: 
-		s="system-task-finished";
-	    break;
-	}
-	if (task->getStatus() != Task::Finished)
-	    switch (task->getAwake() ) 
-	    {
-		case Task::Sleeping: 
-		    s+="-sleeping";
-		    break;
-		case Task::Morning: 
-		    s+="-morning";
-		    break;
-		default: break;
-	    }
+	QString s="system-" + task->getIconString();
 	systemFlags.activate (s);
 	model->emitDataChanged(this);
     } 
