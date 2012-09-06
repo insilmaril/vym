@@ -561,72 +561,89 @@ QString ExportHTML::getBranchText(BranchItem *current)
 {
     if (current)
     {
-	bool vis=false;
-	QRectF hr;
-	LinkableMapObj *lmo=current->getLMO();
-	if (lmo)
-	{
-	    hr=((BranchObj*)lmo)->getBBoxHeading();
-	    vis=lmo->isVisibleObj();
-	}
-	QString col;
-	QString id=model->getSelectString(current);
-	if (dia.useTextColor)
-	    col=QString("style='color:%1'").arg(current->getHeadingColor().name());
-	QString s=QString("<span class='vym-branch%1' %2 id='%3'>")
-	    .arg(current->depth())
-	    .arg(col)
-	    .arg(id);
-	QString url=current->getURL();	
-	QString heading=quotemeta(current->getHeadingPlain());	
-	if (!url.isEmpty())
-	{
-	    s+=QString ("<a href=\"%1\">").arg(url);
-	    s+=QString ("<img src=\"flags/flag-url-16x16.png\">%1</a>").arg(heading);
-	    s+="</a>";
-	    
-	    QRectF fbox=current->getBBoxURLFlag ();
-	    if (vis)	
-		imageMap+=QString("  <area shape='rect' coords='%1,%2,%3,%4' href='%5'>\n")
-		    .arg(fbox.left()-offset.x())
-		    .arg(fbox.top()-offset.y())
-		    .arg(fbox.right()-offset.x())
-		    .arg(fbox.bottom()-offset.y())
-		    .arg(url);
-	} else	
-	    s+=quotemeta(current->getHeadingPlain());	
-	s+="</span>";
+        bool vis=false;
+        QRectF hr;
+        LinkableMapObj *lmo=current->getLMO();
+        if (lmo)
+        {
+            hr=((BranchObj*)lmo)->getBBoxHeading();
+            vis=lmo->isVisibleObj();
+        }
+        QString col;
+        QString id=model->getSelectString(current);
+        if (dia.useTextColor)
+            col=QString("style='color:%1'").arg(current->getHeadingColor().name());
+        QString s=QString("<span class='vym-branch%1' %2 id='%3'>")
+            .arg(current->depth())
+            .arg(col)
+            .arg(id);
+        QString url=current->getURL();	
+        QString heading=quotemeta(current->getHeadingPlain());	
+        if (!url.isEmpty())
+        {
+            s+=QString ("<a href=\"%1\">").arg(url);
+            s+=QString ("<img src=\"flags/flag-url-16x16.png\">%1</a>").arg(heading);
+            s+="</a>";
 
-	if (vis && dia.useImage)
-	    imageMap+=QString("  <area shape='rect' coords='%1,%2,%3,%4' href='#%5'>\n")
-		.arg(hr.left()-offset.x())
-		.arg(hr.top()-offset.y())
-		.arg(hr.right()-offset.x())
-		.arg(hr.bottom()-offset.y())
-		.arg(id);
+            QRectF fbox=current->getBBoxURLFlag ();
+            if (vis)	
+                imageMap+=QString("  <area shape='rect' coords='%1,%2,%3,%4' href='%5'>\n")
+                .arg(fbox.left()-offset.x())
+                .arg(fbox.top()-offset.y())
+                .arg(fbox.right()-offset.x())
+                .arg(fbox.bottom()-offset.y())
+                .arg(url);
+        } else	
+            s+=quotemeta(current->getHeadingPlain());	
+        s+="</span>";
 
-	// Include note
-	if (!current->getNoteObj().isEmpty())
-	{
-	    QString n;
-	    if (current->getNoteObj().isRichText())
-	    {
-		n=current->getNote();
-		QRegExp re("<p.*>");
-		re.setMinimal (true);
-		n.replace(re,"<p class=\"vym-note-paragraph\">");
-	    }
-	    else
-	    {
-		n=current->getNoteASCII().replace ("<","&lt;").replace (">","&gt;");
-		n.replace("\n","<br/>");
+        if (vis && dia.useImage)
+            imageMap+=QString("  <area shape='rect' coords='%1,%2,%3,%4' href='#%5'>\n")
+                .arg(hr.left()-offset.x())
+                .arg(hr.top()-offset.y())
+                .arg(hr.right()-offset.x())
+                .arg(hr.bottom()-offset.y())
+                .arg(id);
+
+        // Include note
+        if (!current->getNoteObj().isEmpty())
+        {
+            QString n;
+            if (current->getNoteObj().isRichText())
+            {
+                n=current->getNote();
+                QRegExp re("<p.*>");
+                re.setMinimal (true);
+                n.replace(re,"<p class=\"vym-note-paragraph\">");
+
+                re.setPattern("</?html>");
+                n.replace(re,"");
+
+                re.setPattern("</?head.*>");
+                n.replace(re,"");
+
+                re.setPattern("</?body.*>");
+                n.replace(re,"");
+
+                re.setPattern("</?meta.*>");
+                n.replace(re,"");
+
+                re.setPattern("<style.*>.*</style>");
+                n.replace(re,"");
+
+                //re.setPattern("<!DOCTYPE.*>");
+                //n.replace(re,"");
+            }
+            else
+            {
+                n=current->getNoteASCII().replace ("<","&lt;").replace (">","&gt;");
+                n.replace("\n","<br/>");
                 if (current->getNoteObj().getFontHint()=="fixed")
-                    n="<pre>"+n+"</pre>";
-	    }
-	    s+="\n<table class=\"vym-note\"><tr><td>\n"+n+"\n</td></tr></table>\n";
-	}   
-
-	return s;
+                n="<pre>"+n+"</pre>";
+            }
+            s+="\n<table class=\"vym-note\"><tr><td>\n"+n+"\n</td></tr></table>\n";
+        }   
+        return s;
     } 
     return QString();
 }
