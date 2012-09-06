@@ -109,11 +109,15 @@ a:hover {
     font-size: small;
     font-weight: normal;
     overflow: auto;
-    padding: 1em 1em;
+    padding: 0em 1em;
 }
 
 .vym-note-paragraph { 
-    padding-top: 5px;
+    margin-top: 0px;
+    margin-bottom: 1em;
+}
+.vym-fixed-note-paragraph { 
+    margin: 0;
 }
 .standardflag { 
     margin-left: 5px; 

@@ -614,7 +614,10 @@ QString ExportHTML::getBranchText(BranchItem *current)
                 n=current->getNote();
                 QRegExp re("<p.*>");
                 re.setMinimal (true);
-                n.replace(re,"<p class=\"vym-note-paragraph\">");
+                if (current->getNoteObj().getFontHint() == "fixed")
+                    n.replace(re,"<p class=\"vym-fixed-note-paragraph\">");
+                else
+                    n.replace(re,"<p class=\"vym-note-paragraph\">");
 
                 re.setPattern("</?html>");
                 n.replace(re,"");
