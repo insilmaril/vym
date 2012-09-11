@@ -30,6 +30,7 @@ public slots:
     void saveAsClicked();
     void openClicked();
     void runClicked();
+    void loadMacroClicked();
 
 signals:
     void runScript (QString);

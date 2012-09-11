@@ -68,6 +68,7 @@ HEADERS	+= \
     imageobj.h \
     imports.h \
     linkablemapobj.h \
+    macros.h \
     mainwindow.h \
     mapeditor.h \
     mapitem.h \
@@ -153,6 +154,7 @@ SOURCES	+= \
     imageobj.cpp \
     imports.cpp \
     linkablemapobj.cpp \
+    macros.cpp \
     main.cpp \
     mainwindow.cpp \
     mapeditor.cpp \

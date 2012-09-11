@@ -6,6 +6,7 @@
 #include <QTextStream>
 
 #include "command.h"
+#include "macros.h"
 #include "mainwindow.h"
 #include "options.h"
 #include "slideitem.h"
@@ -15,6 +16,7 @@
 extern QString vymName;
 extern QList <Command*> modelCommands;
 extern QDir lastMapDir;
+extern Macros macros;
 extern Main *mainWindow;
 extern Options options;
 
@@ -26,6 +28,7 @@ ScriptEditor::ScriptEditor (QWidget *parent):QWidget(parent)
     connect ( ui.saveSlideButton, SIGNAL (clicked() ), this, SLOT (saveSlide() ));
     //connect ( ui.saveAsButton, SIGNAL (clicked() ), this, SLOT (saveAsClicked() ));
     connect ( ui.runButton,  SIGNAL (clicked() ), this, SLOT (runClicked() ));
+    connect ( ui.macroLoadButton, SIGNAL (pressed()), this, SLOT (loadMacroClicked() ) );
 
     vymModelID=-1;
 
@@ -36,6 +39,13 @@ ScriptEditor::ScriptEditor (QWidget *parent):QWidget(parent)
     font.setPointSize(12);
     ui.editor->setFont(font);
 
+    ui.modeTabWidget->setTabText(0,tr("Slide","Mode in scriptEditor"));
+    ui.modeTabWidget->setTabText(1,tr("Macro","Mode in scriptEditor"));
+
+    ui.keyCombo->insertItem(0, QString("---") );
+    for (int i=1; i<13; i++)
+        ui.keyCombo->insertItem(i, QString("F %1").arg(i) );
+    
     highlighter = new Highlighter(ui.editor->document());
     QStringList list;
     foreach (Command *c, modelCommands)
@@ -77,13 +87,13 @@ void ScriptEditor::saveSlide()
     VymModel *vm=mainWindow->getModel(vymModelID);
     if (!vm)
     {
-	QMessageBox::warning(0,tr("Warning"),tr("Couldn't save script into slide!"));
+	QMessageBox::warning(0,tr("Warning"),tr("Couldn't get model to save script into slide!"));
 	return;
     }
     SlideItem *si=vm->getSlideModel()->findSlideID(slideID);
     if (!si)
     {
-	QMessageBox::warning(0,tr("Warning"),tr("Couldn't find slide to save script!"));
+	QMessageBox::warning(0,tr("Warning"),tr("Couldn't find slide to save script into slide!"));
 	return;
     }
     si->setInScript(ui.editor->toPlainText());
@@ -175,4 +185,11 @@ void ScriptEditor::openClicked()
 void ScriptEditor::runClicked()
 {
     emit runScript (ui.editor->toPlainText() );
+}
+
+void ScriptEditor::loadMacroClicked()
+{
+    QString m=macros.getMacro (ui.keyCombo->currentIndex()-1);
+    if (!m.isEmpty())
+    ui.editor->setText (m);
 }

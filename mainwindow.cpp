@@ -21,6 +21,7 @@
 #include "headingeditor.h"
 #include "historywindow.h"
 #include "imports.h"
+#include "macros.h"
 #include "mapeditor.h"
 #include "misc.h"
 #include "options.h"
@@ -59,6 +60,7 @@ extern Main *mainWindow;
 extern QDBusConnection dbusConnection;
 extern FindResultWidget *findResultWidget;  
 extern TaskEditor *taskEditor;
+extern Macros macros;
 extern QString tmpVymDir;
 extern QString clipboardDir;
 extern QString clipboardFile;
@@ -5324,26 +5326,11 @@ void Main::callMacro ()
     if (action)
     {
         i=action->data().toInt();
-	QString mDir (settings.value ("macros/macroDir",vymBaseDir.path()+"/macros").toString() );
-
-	QString fn=mDir + QString("/macro-%1.vys").arg(i+1);
-	QFile f (fn);
-	if ( !f.open( QIODevice::ReadOnly ) )
-	{
-	    QMessageBox::warning(0, 
-		tr("Warning"),
-		tr("Couldn't find a macro at  %1.\n").arg(fn)+
-		tr("Please use Settings->")+tr("Set directory for vym macros"));
-	    return;
-	}   
-
-	QTextStream ts( &f );
-	QString macro= ts.readAll();
-
-	if (! macro.isEmpty())
+        QString s=macros.getMacro (i);
+        if (!s.isEmpty())
 	{
 	    VymModel *m=currentModel();
-	    if (m) m->execute(macro);
+	    if (m) m->execute(s);
 	}   
     }	
 }

@@ -10,6 +10,7 @@ using namespace std;
 #include "flagrow.h"
 #include "flagrowobj.h"
 #include "headingeditor.h"
+#include "macros.h"
 #include "mainwindow.h"
 #include "noteeditor.h"
 #include "options.h"
@@ -47,6 +48,8 @@ NoteEditor    *noteEditor;	// used in Constr. of LinkableMapObj
 Main *mainWindow;		// used in BranchObj::select()				    
 FindWidget *findWidget;
 FindResultWidget *findResultWidget;
+
+Macros macros;
 
 QDBusConnection dbusConnection= QDBusConnection::sessionBus();
 
