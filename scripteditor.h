@@ -31,6 +31,7 @@ public slots:
     void openClicked();
     void runClicked();
     void loadMacroClicked();
+    void saveMacroClicked();
 
 signals:
     void runScript (QString);

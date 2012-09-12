@@ -8,11 +8,20 @@
 extern Settings settings;
 extern QDir vymBaseDir;
 
+QString Macros::getPath ()
+{
+    return settings.value ("macros/macroDir",vymBaseDir.path()+"/macros").toString();
+}
+
+QString Macros::getPath (const int &i)
+{
+    return getPath() + QString("/macro-%1.vys").arg(i);
+}
+
 QString Macros::getMacro (const int &i)    
 {
-    QString mDir (settings.value ("macros/macroDir",vymBaseDir.path()+"/macros").toString() );
 
-    QString fn=mDir + QString("/macro-%1.vys").arg(i+1);
+    QString fn=getPath(i+1);
     QFile f (fn);
     if ( !f.open( QIODevice::ReadOnly ) )
     {

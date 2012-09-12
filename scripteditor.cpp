@@ -28,7 +28,9 @@ ScriptEditor::ScriptEditor (QWidget *parent):QWidget(parent)
     connect ( ui.saveSlideButton, SIGNAL (clicked() ), this, SLOT (saveSlide() ));
     //connect ( ui.saveAsButton, SIGNAL (clicked() ), this, SLOT (saveAsClicked() ));
     connect ( ui.runButton,  SIGNAL (clicked() ), this, SLOT (runClicked() ));
+    connect ( ui.macroRunButton,  SIGNAL (clicked() ), this, SLOT (runClicked() ));
     connect ( ui.macroLoadButton, SIGNAL (pressed()), this, SLOT (loadMacroClicked() ) );
+    connect ( ui.macroSaveButton, SIGNAL (pressed()), this, SLOT (saveMacroClicked() ) );
 
     vymModelID=-1;
 
@@ -75,7 +77,11 @@ void ScriptEditor::setScriptFile(const QString &fn)
 void ScriptEditor::saveFile()
 {
     QFile f( filename );
-    if ( !f.open( QIODevice::WriteOnly ) ) return;
+    if ( !f.open( QIODevice::WriteOnly ) ) 
+    {
+        QMessageBox::warning(0, QObject::tr("Error"),QObject::tr("Couldn't save \"%1\"").arg(filename));
+        return;
+    }
 
     QTextStream t( &f );
     t << ui.editor->toPlainText();
@@ -192,4 +198,9 @@ void ScriptEditor::loadMacroClicked()
     QString m=macros.getMacro (ui.keyCombo->currentIndex()-1);
     if (!m.isEmpty())
     ui.editor->setText (m);
+}
+void ScriptEditor::saveMacroClicked()
+{
+    filename=macros.getPath(ui.keyCombo->currentIndex());
+    saveFile();
 }
