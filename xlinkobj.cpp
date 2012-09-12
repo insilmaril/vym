@@ -91,6 +91,16 @@ QPointF XLinkObj::getAbsPos()
     }
 }
 
+QPointF XLinkObj::getBeginPos()
+{
+    return beginPos;
+}
+
+QPointF XLinkObj::getEndPos()
+{
+    return endPos;
+}
+
 void XLinkObj::move (QPointF p)
 {
     switch (curSelection)
@@ -246,6 +256,8 @@ void XLinkObj::updateXLink()
 	path->setZValue (dZ_XLINK); 
     else	
 	path->setZValue (dZ_XLINK);
+
+    setVisibility();
 }
 
 void XLinkObj::positionBBox()

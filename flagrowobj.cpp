@@ -118,13 +118,10 @@ QString FlagRowObj::getFlagName (const QPointF &p)
     for (int i=0; i<flag.size(); ++i)
 	if (isInBox (p,flag.at(i)->getClickPoly().boundingRect() )) return flag.at(i)->getName();
     return "";	
-
-    
 }
 
 bool FlagRowObj::isActive (const QString &foname)
 {
-
     FlagObj *fo=findFlag (foname);
     if (fo) 
 	return true;

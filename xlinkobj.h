@@ -19,6 +19,8 @@ public:
     virtual ~XLinkObj ();
     virtual void init ();
     virtual QPointF getAbsPos();
+    QPointF getBeginPos();
+    QPointF getEndPos();
     virtual void move (QPointF p);
     virtual void setEnd (QPointF);
     void setSelection (int cp);

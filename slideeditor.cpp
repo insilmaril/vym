@@ -89,9 +89,8 @@ void SlideEditor::addSlide()
     vymModel->addSlide();
 }
 
-void SlideEditor::editSlide() 
+void SlideEditor::editSlide() // FIXME-3 not used yet
 {
-    SlideItem *si=slideModel->getSelectedItem();
 }
 
 void SlideEditor::deleteSlide() 

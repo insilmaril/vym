@@ -60,7 +60,7 @@ bool isInBox(const QPointF &p, const QRectF &box)
     return false;   
 }
 
-qreal distance (const QPointF &p, const QPointF &q)
+qreal Geometry::distance (const QPointF &p, const QPointF &q)
 {
     return sqrt (p.x()*q.x() + p.y()*q.y());
 }

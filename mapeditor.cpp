@@ -770,7 +770,15 @@ TreeItem* MapEditor::findMapItem (QPointF p,TreeItem *exclude)
 	{
 	    XLinkObj *xlo=link->getXLinkObj();
 	    if (xlo && xlo->isInClickBox (p)) 
-		    return link->getBeginLinkItem();
+            {
+                // Found XLink, now return the nearest XLinkItem of p
+                qreal d0=Geometry::distance(p, xlo->getBeginPos());
+                qreal d1=Geometry::distance(p, xlo->getEndPos());
+                if (d0>d1)
+                    return link->getBeginLinkItem();
+                else
+                    return link->getEndLinkItem();
+            }
 	}
     }
 
@@ -1285,8 +1293,8 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
 	    // if clicked near to begin of xlink
 	    if (ti->xlinkCount()>0 && ti->getType() != TreeItem::MapCenter && lmo->getBBox().width()>30)
 	    {
-		if ((lmo->getOrientation()!=LinkableMapObj::RightOfCenter && p.x() < lmo->getBBox().left()+20)  ||
-		    (lmo->getOrientation()!=LinkableMapObj::LeftOfCenter && p.x() > lmo->getBBox().right()-20) ) 
+		if ((lmo->getOrientation()!=LinkableMapObj::RightOfCenter && p.x() < lmo->getBBox().left()+10)  ||
+		    (lmo->getOrientation()!=LinkableMapObj::LeftOfCenter && p.x() > lmo->getBBox().right()-10) ) 
 		{
 		    //FIXME-4 similar code in mainwindow::updateActions
 		    QMenu menu;
@@ -1382,14 +1390,12 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
 		{
 		    setState (EditingLink);
 		    int i=xlo->ctrlPointInClickBox(p);
-		    if (i>-1)
-		    {
-			xlo->setSelection (i);
-			movingObj_offset.setX( p.x() - xlo->x() );	
-			movingObj_offset.setY( p.y() - xlo->y() );	
-			movingObj_orgPos.setX (xlo->x() );
-			movingObj_orgPos.setY (xlo->y() );
-		    }
+		    if (i>=0) xlo->setSelection (i);
+                    movingObj_offset.setX( p.x() - xlo->x() );	
+                    movingObj_offset.setY( p.y() - xlo->y() );	
+                    movingObj_orgPos.setX (xlo->x() );
+                    movingObj_orgPos.setY (xlo->y() );
+
 		}
 	    }
 	}
@@ -1972,8 +1978,7 @@ void MapEditor::setState (EditorState s)
 	    case CopyingObject: s="CopyingObject";break;
 	    case DrawingLink: s="DrawingLink";break;
 	}
-	
-    qDebug()<<"MapEditor: State "<<s<< " of "<<model->getMapName();
+        qDebug()<<"MapEditor: State "<<s<< " of "<<model->getMapName();
     }
 }
 

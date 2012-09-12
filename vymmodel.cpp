@@ -2486,7 +2486,8 @@ bool VymModel::createLink(Link *link, bool createMO)
     {
 	link->createMapObj();
 	reposition();
-    }
+    } else
+        link->updateLink();
     return true;
 }
 
