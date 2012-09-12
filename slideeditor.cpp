@@ -89,7 +89,7 @@ void SlideEditor::addSlide()
     vymModel->addSlide();
 }
 
-void SlideEditor::editSlide() // FIXME-3 not used yet
+void SlideEditor::editSlide() // FIXME-4 not used yet
 {
 }
 
