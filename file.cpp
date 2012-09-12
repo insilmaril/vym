@@ -173,9 +173,36 @@ void removeDir(QDir d)
 	qWarning ()<<"removeDir("+d.path()+") failed!";
 }	
 
-void copyDir (QDir src, QDir dst)   //FIXME-2 don't use system call (would fail on windows)
+bool copyDir (QDir src, QDir dst, const bool &override)   
 {
-    system (QString ("cp -r "+src.path()+"/* "+dst.path()).toUtf8() );
+    QStringList dirs  = src.entryList(QDir::AllDirs | QDir::Hidden | QDir::NoDotAndDotDot);
+    QStringList files = src.entryList(QDir::Files );
+
+    // Traverse directories
+    QList<QString>::iterator d,f;
+    for (d = dirs.begin(); d != dirs.end(); ++d) 
+    {
+        if (!QFileInfo(src.path() + "/" + (*d)).isDir()) continue;
+
+        QDir cdir(dst.path() + "/" + (*d));
+        cdir.mkpath(cdir.path());
+
+        if (!copyDir (QDir(src.path() + "/" + (*d)), QDir(dst.path() + "/" + (*d)), override)) 
+            return false;
+    }
+
+    // Traverse files
+    for (f = files.begin(); f != files.end(); ++f) 
+    {
+        QFile cfile(src.path() + "/" + (*f));
+        QFile destFile(dst.path()+ "/" + src.relativeFilePath(cfile.fileName()));
+        if (destFile.exists() && override) 
+            destFile.remove();
+
+        if (!cfile.copy(dst.path() + "/" + src.relativeFilePath(cfile.fileName()))) 
+            return false;
+    }
+    return true;
 }
 
 void makeSubDirs (const QString &s)

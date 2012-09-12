@@ -24,7 +24,7 @@ QString makeTmpDir (bool &ok, QString prefix);
 bool isInTmpDir (QString fn);
 QString makeUniqueDir (bool &ok, QString);
 void removeDir(QDir);
-void copyDir (QDir src,QDir dst);
+bool copyDir (QDir src,QDir dst, const bool &override=false);
 void makeSubDirs (const QString &);
 File::ErrorCode zipDir (const QDir &,const QString&);
 File::ErrorCode unzipDir (const QDir &,const QString&);
