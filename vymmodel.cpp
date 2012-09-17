@@ -4241,7 +4241,7 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	} else if (com=="toggleFlag")
 	{
 	    s=parser.parString(ok,0);
-	    selbi->toggleStandardFlag(s);	
+            toggleStandardFlag (s);
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="toggleFrameIncludeChildren")
 	{
