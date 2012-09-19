@@ -11,20 +11,18 @@ subject = "";
 
 part="Header"
 
-#FIXME no decoding yet, e.g. from iso 8859-x
-
-$stdin.each do |l| 
-  if part=="Header"
-    if l =~/^\s$/ 
+$stdin.each do |line| 
+  if part == "Header"
+    if line =~/^\s$/ 
       part="Body"
     else
-      allowed_headers.each {|h|  header << l if l =~/^#{h}:/ }
-      subject = $1 if l =~ /^Subject:\s*(.*)$/
+      allowed_headers.each {|h|  header << line if line =~/^#{h}:/ }
+      subject = $1 if line =~ /^Subject:\s*(.*)$/
     end  
   else  
-    body << l
+    body << line
   end  
-  #puts "#{part}: #{l}"
+  #puts "#{part}: #{line}"
 end  
 
 note  = header.join
@@ -34,11 +32,10 @@ out=Tempfile.new("tempfile")
 out << note
 out.close
 
-vym_mgr=VymManager.new
-vym=Vym.new(vym_mgr.find('production') )
+vym_mgr = VymManager.new
+vym = Vym.new(vym_mgr.find('production') )
 
 vym.addBranch 
 vym.selectLastBranch 
 vym.setHeading "#{subject}"
 vym.loadNote "#{out.path}"
-
