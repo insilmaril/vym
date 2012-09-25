@@ -187,7 +187,7 @@ void OrnamentedObj::positionContents()	//FIXME-3 called multiple times for each 
     //positionContents FIXME-2 need to consider frame in calcBBox and positionContents
     double x=absPos.x();
     double y=absPos.y();
-    double dp=frame->getPadding();
+    double dp=frame->getPadding() + frame->getBorderWidth();
     double dp2=dp/2;
     double ox=leftPad + dp;
     double oy=topPad + dp;

@@ -327,9 +327,9 @@ void BranchObj::calcBBoxSize()
 	w+=leftPad+rightPad;
     }
 
-    // Frame thickness
-    w+=frame->getPadding()*2;
-    h+=frame->getPadding()*2;
+    // Frame thickness  
+    w+=(frame->getBorderWidth() + frame->getPadding() ) * 2;
+    h+=(frame->getBorderWidth() + frame->getPadding() ) * 2;
     
     // Finally set size
     bbox.setSize (QSizeF (w,h));
