@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-require '/suse/uwedr/vym/code/scripts/vym-ruby'
+load File.expand_path("../vym-ruby.rb", __FILE__)
 require 'tempfile'
 
 allowed_headers = %w(Subject Date From To)
