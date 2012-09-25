@@ -209,6 +209,7 @@ Task* TaskModel::createTask (BranchItem *bi)
 	}
 	Task* task=new Task(this);
 	task->setBranch (bi);
+        task->setAwake(Task::Morning);
         insertRows(tasks.count(), 1, QModelIndex(),task);
 
 	bi->setTask (task);
