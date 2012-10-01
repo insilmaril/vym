@@ -1,6 +1,14 @@
 project( vym )
 cmake_minimum_required( VERSION 2.6 )
 
+#SET(CMAKE_INCLUDE_DIRECTORIES_PROJECT_BEFORE true)
+#set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/")
+
+SET(VERSION_SERIES 3)
+SET(VERSION_MAJOR 2)
+SET(VERSION_MINOR 2)
+
+
 if( NOT CMAKE_BUILD_TYPE )
 	set( CMAKE_BUILD_TYPE Debug )
 endif( NOT CMAKE_BUILD_TYPE )
@@ -20,23 +28,32 @@ if( WIN32 )
 	endif( MSVC )
 endif( WIN32 )
 
+#enable_testing()
+
+#include(CppcheckTargets)
+#if(TESTS)
+#  add_cppcheck(vym UNUSED_FUNCTIONS STYLE POSSIBLE_ERROR)
+#endif()
+
+
 include_directories (
 	${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}
 	${QT_QTCORE_INCLUDE_DIR} ${QT_QTDBUS_INCLUDE_DIR} ${QT_QTGUI_INCLUDE_DIR} ${QT_QTNETWORK_INCLUDE_DIR} ${QT_QTXML_INCLUDE_DIR} ${QT_QTSVG_INCLUDE_DIR}
 	)
 set ( vym_HDRS
       aboutdialog.h
+      taskfiltermodel.h
       adaptormodel.h
       adaptorvym.h
       animpoint.h
       attribute.h
       attributeitem.h
-      #   attributedelegate.h
-      #   attributedialog.h
-      #   attributewidget.h
+  #   attributedelegate.h
+  #   attributedialog.h
+  #   attributewidget.h
       branchitem.h
       branchobj.h
-      branchpropwindow.h
+      branchpropeditor.h
       bugagent.h
       command.h
       dockeditor.h
@@ -67,6 +84,7 @@ set ( vym_HDRS
       imageobj.h
       imports.h
       linkablemapobj.h
+      macros.h
       mainwindow.h
       mapeditor.h
       mapitem.h
@@ -79,10 +97,10 @@ set ( vym_HDRS
       ornamentedobj.h
       parser.h
       process.h
+      scripteditor.h
       settings.h
       shortcuts.h
       showtextdialog.h
-      simplescripteditor.h
       slidecontrolwidget.h
       slideeditor.h
       slideitem.h
@@ -111,17 +129,18 @@ set ( vym_HDRS
 
 set ( vym_SRCS
       aboutdialog.cpp
+      taskfiltermodel.cpp
       adaptormodel.cpp
       adaptorvym.cpp
       animpoint.cpp
       attribute.cpp
       attributeitem.cpp
-      #   attributedelegate.cpp
-      #   attributedialog.cpp
-      #   attributewidget.cpp
+  #   attributedelegate.cpp
+  #   attributedialog.cpp
+  #   attributewidget.cpp
       branchitem.cpp
       branchobj.cpp
-      branchpropwindow.cpp
+      branchpropeditor.cpp
       bugagent.cpp
       command.cpp
       dockeditor.cpp
@@ -152,6 +171,7 @@ set ( vym_SRCS
       imageobj.cpp
       imports.cpp
       linkablemapobj.cpp
+      macros.cpp
       main.cpp
       mainwindow.cpp
       mapeditor.cpp
@@ -165,10 +185,10 @@ set ( vym_SRCS
       ornamentedobj.cpp
       parser.cpp
       process.cpp
+      scripteditor.cpp
       settings.cpp
       shortcuts.cpp
       showtextdialog.cpp
-      simplescripteditor.cpp
       slidecontrolwidget.cpp
       slideeditor.cpp
       slideitem.cpp
@@ -197,12 +217,12 @@ set ( vym_SRCS
 
 set ( vym_UIS
       attributewidget.ui
-      branchpropwindow.ui
+      branchpropeditor.ui
       exporthtmldialog.ui
       extrainfodialog.ui
       editxlinkdialog.ui
       historywindow.ui
-      simplescripteditor.ui
+      scripteditor.ui
       showtextdialog.ui
       warningdialog.ui
 	)
@@ -227,7 +247,7 @@ set ( vym_MOCS
       aboutdialog.h
       adaptormodel.h
       adaptorvym.h
-      branchpropwindow.h
+      branchpropeditor.h
       bugagent.h
       dockeditor.h
       downloadagent.h
@@ -247,7 +267,8 @@ set ( vym_MOCS
       noteeditor.h
       process.h
       showtextdialog.h
-      simplescripteditor.h
+      #simplescripteditor.h
+      scripteditor.h
       slidecontrolwidget.h
       slideeditor.h
       slidemodel.h
