@@ -2006,7 +2006,6 @@ void Main::setupFlagActions()
     toolbarsMenu->addAction (standardFlagsToolbar->toggleViewAction() );
 
     flag=new Flag(flagsPath+"flag-stopsign.png");
-    flag->setGroup("standard-status");
     setupFlag (flag,standardFlagsToolbar,"stopsign",tr("This won't work!","Standardflag"),Qt::Key_1);
     flag->unsetGroup();
 
