@@ -3,6 +3,7 @@
 #include <QDebug>
 
 #include "branchitem.h"
+#include "branchobj.h"
 #include "task.h"
 #include "vymmodel.h"
 
@@ -75,10 +76,7 @@ QVariant TaskModel::data(const QModelIndex &index, int role) const
         else if (index.column() == 4)
 	    return t->getDaysSleep();
         else if (index.column() == 5)
-	{
-	    if (bi) return bi->getModel()->getMapName();
-            return "?";	// Should never happen
-	}
+	    return bi->getModel()->getMapName();
         else if (index.column() == 6)
             return tasks.at(index.row())->getName();
     } else if (role == Qt::DecorationRole && index.column() == 1)
@@ -90,7 +88,21 @@ QVariant TaskModel::data(const QModelIndex &index, int role) const
 	if (role == Qt::ForegroundRole && bi ) 
 	    return bi->getHeadingColor();
 	if (role == Qt::BackgroundRole && bi ) 
-	    return bi->getModel()->getMapBackgroundColor();
+        {
+            BranchItem *frameBI=bi->getFramedParentBranch(bi);
+            if (frameBI && index.column() != 5)
+            {
+                BranchObj *bo=frameBI->getBranchObj();
+                if (bo) 
+                    // Return frame background
+                    return bo->getFrameBrushColor();
+            }
+            else
+            {
+                // Return map background
+                return bi->getModel()->getMapBackgroundColor();
+            }
+        }
     }	
 
     return QVariant();

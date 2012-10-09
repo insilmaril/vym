@@ -385,6 +385,21 @@ QString BranchItem::getIncludeImageAttr()
     return a;	
 }
 
+BranchItem* BranchItem::getFramedParentBranch(BranchItem *start)
+{
+    BranchObj *bo=getBranchObj();
+    if (bo && bo->getFrameType() != FrameObj::NoFrame)
+    {
+	if (bo->getFrame()->getFrameIncludeChildren() ) return this;
+        if (this == start) return this;
+    } 
+    BranchItem* bi=(BranchItem*)parentItem;
+    if (bi && bi!=rootItem ) 
+	return bi->getFramedParentBranch(start);
+    else
+	return NULL;
+}
+
 void BranchItem::setFrameIncludeChildren(bool b)
 {
     includeChildren=b;	// FIXME-4 ugly: same information stored in FrameObj
