@@ -4709,6 +4709,7 @@ void VymModel::updateNoteFlag()
 
 void VymModel::reposition() //FIXME-4 VM should have no need to reposition, but the views...
 {
+    qDebug()<<"*** VM::reposition a) foreach <mainbranch> do reposition(); end;";
     //qDebug() << "VM::reposition blocked="<<blockReposition;
     if (blockReposition) return;
 
@@ -4721,8 +4722,10 @@ void VymModel::reposition() //FIXME-4 VM should have no need to reposition, but 
 	else
 	    qDebug()<<"VM::reposition bo=0";
     }	
+    qDebug()<<"*** VM::reposition b)  mE->getTotalBBox(); emitSelectionChanged()";
     mapEditor->getTotalBBox();	
     emitSelectionChanged();
+    qDebug()<<"*** VM::reposition c) return;";
 }
 
 

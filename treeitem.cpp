@@ -351,6 +351,13 @@ QString TreeItem::getHeadingPlain() const   //FIXME-4 create own TextObj instead
     return t.trimmed();
 }
 
+QString TreeItem::getHeadingDepth () // Indent by depth for debugging
+{
+    QString ds;
+    for (int i=0; i<depth(); i++) ds += "  ";
+    return ds + itemData[0].toString();
+}
+
 void TreeItem::setHeadingColor (QColor color)
 {
     headingColor=color;

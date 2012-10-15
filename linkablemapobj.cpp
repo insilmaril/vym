@@ -578,12 +578,13 @@ LinkableMapObj::Orientation LinkableMapObj::getOrientation()
     return orientation;
 }
 
-void LinkableMapObj::reposition()
+void LinkableMapObj::reposition()   //FIXME-3 needed?
 {
 }
 
-void LinkableMapObj::requestReposition()    //FIXME-4 still needed? doesn't seem so...
+void LinkableMapObj::requestReposition()   
 {
+    qDebug()<<"  LMO::requestReposition "<<treeItem->getHeadingDepth();
     if (!repositionRequest)
     {
 	// Pass on the request to parental objects, if this hasn't

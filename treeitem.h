@@ -85,6 +85,7 @@ public:
     virtual QString getHeading() const;
     virtual std::string getHeadingStd() const;	//! convenience function used for debugging
     virtual QString getHeadingPlain() const;	//! Some views or methods can't cope with RichText
+    virtual QString getHeadingDepth();
     virtual void setHeadingColor(QColor color);	//! Set color of heading. In BranchItem overloaded to update QGraphicsView
     virtual QColor getHeadingColor();		//! Returns color of heading
     virtual void setBackgroundColor(QColor color);//! Set color of frame brush, if LMO exists for item

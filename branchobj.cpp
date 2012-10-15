@@ -204,6 +204,7 @@ void BranchObj::setLinkColor ()
 
 void BranchObj::updateContentSize()
 {
+    qDebug()<<"BO::updateContentSize";
     calcBBoxSize();
     positionBBox();
     requestReposition();
@@ -211,6 +212,7 @@ void BranchObj::updateContentSize()
 
 void BranchObj::positionContents()
 {
+    qDebug()<<"  BO::positionContents (loop over images)";
     for (int i=0; i<treeItem->imageCount(); ++i)
 	treeItem->getImageObjNum(i)->reposition();
     OrnamentedObj::positionContents();
@@ -246,6 +248,7 @@ void QGraphicsItem::paint(QPainter*, const QStyleOptionGraphicsItem*, QWidget*)
 
 void BranchObj::positionBBox() // FIXME-2 consider dimensions of frame (thickness, geometry, padding...
 {
+    qDebug()<<"  BO::positionBBox ("<<treeItem->getHeading()<<")";
     QPointF ap=getAbsPos();
     bbox.moveTopLeft (ap);
     positionContents();
@@ -261,6 +264,7 @@ void BranchObj::positionBBox() // FIXME-2 consider dimensions of frame (thicknes
 
 void BranchObj::calcBBoxSize()
 {
+    qDebug()<<"  BO::calcBBoxSize ("<<treeItem->getHeading()<<")";
     QSizeF heading_r=heading->getSize();
     qreal heading_w=(qreal) heading_r.width() ;
     qreal heading_h=(qreal) heading_r.height() ;
@@ -384,6 +388,7 @@ void BranchObj::updateData()
 	qWarning ("BranchObj::udpateHeading treeItem==NULL");
 	return;
     }
+    qDebug()<<"BO::updateData  "<<treeItem->getHeadingDepth();
     QString s=treeItem->getHeading();
     if (s!=heading->text())
     {
@@ -597,11 +602,11 @@ if (debug)
 void BranchObj::reposition()
 {   
 /* TODO testing only
-    if (!treeItem->getHeading().isEmpty())
-	qDebug()<< "BO::reposition  "<<treeItem->depth()<<" "<<treeItem->getHeading();
-    else    
-	qDebug()<< "BO::reposition  ???";
 */	
+    if (!treeItem->getHeading().isEmpty())
+	qDebug()<< "BO::reposition  a) "<<treeItem->depth()<<" "<<treeItem->getHeading();
+    else    
+	qDebug()<< "BO::reposition  a) ???";
 
     if (treeItem->depth()==0)
     {
@@ -609,13 +614,17 @@ void BranchObj::reposition()
 	// changes its height,
 	// all upper LMOs have to change, too.
 	calcBBoxSizeWithChildren();
+        qDebug()<< "BO::reposition  b) ";
 	updateLinkGeometry();	// This update is needed if the scene is resized 
 			// due to excessive moving of a FIO
 
 	alignRelativeTo ( QPointF (absPos.x(),
 	    absPos.y()-(bboxTotal.height()-bbox.height())/2) );	
+        qDebug()<< "BO::reposition  c) ";
 	    //absPos.y() ) );
+        qDebug()<< "BO::reposition  d) ";
 	positionBBox();	// Reposition bbox and contents
+        qDebug()<< "BO::reposition  e) ";
     } else
     {
 	// This is only important for moving branches:
@@ -623,6 +632,7 @@ void BranchObj::reposition()
 	alignRelativeTo ( QPointF (absPos.x(),
 			    absPos.y()-(bboxTotal.height()-bbox.height())/2) );	
     }
+    qDebug()<< "BO::reposition  f) ";
 }
 
 void BranchObj::unsetAllRepositionRequests()
@@ -657,6 +667,8 @@ ConvexPolygon BranchObj::getBoundingPolygon()
 
 void BranchObj::calcBBoxSizeWithChildren()  
 {   
+    // FIXME-1 Below is wrong. Called multiple times!
+    
     // This is initially called only from reposition and
     // and only for mapcenter. So it won't be
     // called more than once for a single user 
@@ -664,6 +676,7 @@ void BranchObj::calcBBoxSizeWithChildren()
 
     // if branch is scrolled, ignore children, but still consider floatimages
     BranchItem *bi=(BranchItem*)treeItem;
+    qDebug()<<"BO::calcBBSizeWithChildren  "<<bi->getHeadingDepth();
     if ( bi->isScrolled() ) 
     {
 	bboxTotal.setWidth (bbox.width());
@@ -704,7 +717,6 @@ void BranchObj::calcBBoxSizeWithChildren()
     
     // bbox already contains frame->padding()*2	    
     bboxTotal.setHeight(max (r.height() + frame->getPadding()*2,  bbox.height()) );
-
 }
 
 void BranchObj::setAnimation(const AnimPoint &ap)
