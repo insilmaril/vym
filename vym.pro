@@ -2,11 +2,30 @@ TARGET	    = vym
 TEMPLATE    = app
 LANGUAGE    = C++
 
-CONFIG	+= qt warn_on x86 ppc qdbus 
+CONFIG	+= qt warn_on x86_64 
 
 QT += network xml svg
 
 #nclude(test/modeltest/modeltest.pri)
+
+RESOURCES = vym.qrc
+
+unix:!macx {
+    CONFIG += qdbus 
+    HEADERS += adaptormodel.h adaptorvym.h 
+    SOURCES += adaptormodel.cpp adaptorvym.cpp 
+}
+
+win32 {
+    HEADERS += mkdtemp.h
+    SOURCES += mkdtemp.cpp
+    RC_FILE = vym.rc
+    # Manifest embedding was suggested by Qt docs somewhere...
+    win32: CONFIG += embed_manifest_exe
+
+    # Without this, M_PI, and M_PI_2 won`t be defined.
+    win32:DEFINES *= _USE_MATH_DEFINES
+}
 
 TRANSLATIONS += lang/vym_de_DE.ts
 TRANSLATIONS += lang/vym_en.ts
@@ -27,8 +46,6 @@ ICON =icons/vym.icns
 HEADERS	+= \
     aboutdialog.h \
     taskfiltermodel.h \
-    adaptormodel.h \
-    adaptorvym.h \
     animpoint.h \
     attribute.h \
     attributeitem.h \
@@ -113,8 +130,6 @@ HEADERS	+= \
 SOURCES	+= \
     aboutdialog.cpp \
     taskfiltermodel.cpp \
-    adaptormodel.cpp \
-    adaptorvym.cpp \
     animpoint.cpp \
     attribute.cpp \
     attributeitem.cpp \
@@ -207,17 +222,6 @@ FORMS = \
     scripteditor.ui \
     showtextdialog.ui \
     warningdialog.ui
-
-win32 {
-    HEADERS += mkdtemp.h
-    SOURCES += mkdtemp.cpp
-    RC_FILE = vym.rc
-    # Manifest embedding was suggested by Qt docs somewhere...
-    win32: CONFIG += embed_manifest_exe
-
-    # Without this, M_PI, and M_PI_2 won`t be defined.
-    win32:DEFINES *= _USE_MATH_DEFINES
-}
 
 isEmpty( PREFIX ) {
     PREFIX = /usr/local

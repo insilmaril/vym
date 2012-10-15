@@ -1,15 +1,17 @@
 #include "mainwindow.h"
 
-#include <QDBusConnection>
-
 #include <iostream>
 #include <typeinfo>
+
 #ifndef Q_OS_WIN
 #include <unistd.h>
 #endif
 
-#include "aboutdialog.h"
+#ifdef Q_OS_LINUX
 #include "adaptorvym.h"
+#endif
+
+#include "aboutdialog.h"
 #include "branchpropeditor.h"
 #include "branchitem.h"
 #include "command.h"
@@ -53,11 +55,15 @@ typedef struct _PROCESS_INFORMATION
 } PROCESS_INFORMATION, *LPPROCESS_INFORMATION;
 #endif
 
+#if defined(Q_OS_LINUX)
+#include <QDBusConnection>
+extern QDBusConnection dbusConnection;
+#endif
+
 extern NoteEditor    *noteEditor;
 extern HeadingEditor *headingEditor;
 extern ScriptEditor  *scriptEditor;
 extern Main *mainWindow;
-extern QDBusConnection dbusConnection;
 extern FindResultWidget *findResultWidget;  
 extern TaskEditor *taskEditor;
 extern Macros macros;
@@ -324,10 +330,12 @@ Main::Main(QWidget* parent, Qt::WFlags f) : QMainWindow(parent,f)
 
     updateGeometry();
 
+#if defined(Q_OS_LINUX)
     // Announce myself on DBUS
     new AdaptorVym (this);    // Created and not deleted as documented in Qt
     if (!dbusConnection.registerObject ("/vym",this))
 	qWarning ("MainWindow: Couldn't register DBUS object!");
+#endif    
 }
 
 Main::~Main()
@@ -3546,6 +3554,8 @@ void Main::openTabs(QStringList urls)
 	bool success=true;
 	QStringList args;
 	QString browser=settings.value("/mainwindow/readerURL" ).toString();
+
+#if defined(Q_OS_LINUX)
 	//qDebug ()<<"Services: "<<QDBusConnection::sessionBus().interface()->registeredServiceNames().value();
 	if (*browserPID==0 ||
 	    (browser.contains("konqueror") &&
@@ -3598,7 +3608,9 @@ void Main::openTabs(QStringList urls)
 		    tr("Warning"),
 		    tr("Couldn't start %1 to open a new tab in %2.").arg("dcop").arg("konqueror"));
 	    return;	
-	} else if (browser.contains ("firefox") || browser.contains ("mozilla") )
+	}
+#endif
+        if (browser.contains ("firefox") || browser.contains ("mozilla") )
 	{
 	    for (int i=0; i<urls.size(); i++)
 	    {

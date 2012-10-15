@@ -1,5 +1,4 @@
 #include <QApplication>
-#include <QtDBus/QDBusConnection>
 
 #include <iostream>
 using namespace std;
@@ -20,6 +19,8 @@ using namespace std;
 #include "taskmodel.h"
 #include "version.h"
 
+#include <sys/types.h>		// To retrieve PID for use in DBUS
+
 #if defined(Q_OS_WIN32)
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
@@ -28,7 +29,11 @@ using namespace std;
 #include <unistd.h>
 #endif
 
-#include <sys/types.h>		// To retrieve PID for use in DBUS
+// DBUS only available on Linux
+#if defined(Q_OS_LINUX)
+#include <QtDBus/QDBusConnection>
+QDBusConnection dbusConnection= QDBusConnection::sessionBus();
+#endif
 
 QString vymName;
 QString vymVersion;
@@ -51,7 +56,6 @@ FindResultWidget *findResultWidget;
 
 Macros macros;
 
-QDBusConnection dbusConnection= QDBusConnection::sessionBus();
 
 uint itemLastID=0;		// Unique ID for all items in all models
 
@@ -200,15 +204,18 @@ int main(int argc, char* argv[])
     debug=options.isOn ("debug");
     testmode=options.isOn ("testmode");
 
+    QString pidString=QString ("%1").arg(getpid());
+
+#if defined(Q_OS_LINUX)
     // Register for DBUS
     if (debug) cout << "PID="<<getpid()<<endl;
-    QString pidString=QString ("%1").arg(getpid());
     if (!dbusConnection.registerService ("org.insilmaril.vym-"+pidString))
     {
        fprintf(stderr, "%s\n",
 	    qPrintable(QDBusConnection::sessionBus().lastError().message()));        
         exit(1);
     }	
+#endif
 
     if (options.isOn ("name"))
 	vymInstanceName=options.getArg ("name");

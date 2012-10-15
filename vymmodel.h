@@ -6,7 +6,10 @@
 #include <QPointF>
 #include <QTextCursor>
 
+#if defined(Q_OS_LINUX)
 #include "adaptormodel.h"
+#endif
+
 #include "file.h"
 #include "imageitem.h"
 #include "mapeditor.h"

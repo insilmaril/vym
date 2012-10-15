@@ -2,8 +2,6 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QtDBus>
-
 
 #include "branchpropeditor.h"
 #include "extrainfodialog.h"
