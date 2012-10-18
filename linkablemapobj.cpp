@@ -141,8 +141,8 @@ void LinkableMapObj::setRelPos(const QPointF &p)
 	relPos=p;
 	useRelPos=true;
 	setOrientation();
-	parObj->calcBBoxSize();
-	requestReposition();
+//	parObj->calcBBoxSize(); //FIXME-2 needed  for floatimages 
+//	requestReposition();
     }	else
 	qWarning()<<"LMO::setRelPos (p)  parObj==0   this="<<this;
 }
@@ -361,7 +361,7 @@ void LinkableMapObj::setOrientation()
 	    else
 		orientation=RightOfCenter;
     }
-    if (orientOld!=orientation) requestReposition();
+    if (orientOld!=orientation) requestReposition();    //FIXME-2 needed?
 }
 
 void LinkableMapObj::updateVisibility()

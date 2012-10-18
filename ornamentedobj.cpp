@@ -246,12 +246,11 @@ void OrnamentedObj::positionContents()	//FIXME-2 called multiple times for each 
 
 void OrnamentedObj::move (double x, double y)
 {
-    // FIXME-0 unnecessary calls to positionContents, requestRepos, ...
+    // FIXME-0 unnecessary calls to positionContents, ...
     qDebug()<<"     OO::move and posContents; updateLinkGeo; requestRepos";
     MapObj::move (x,y);
     positionContents();
     updateLinkGeometry();
-    //requestReposition();
 }
 
 void OrnamentedObj::move (QPointF p)
@@ -261,7 +260,6 @@ void OrnamentedObj::move (QPointF p)
 
 void OrnamentedObj::moveBy (double x, double y)
 {
-
     MapObj::moveBy (x,y);
     frame->moveBy (x,y);
     systemFlags->moveBy (x,y);
@@ -278,12 +276,15 @@ void OrnamentedObj::moveBy (QPointF p)
 
 void OrnamentedObj::move2RelPos(double x, double y)
 {
+    qDebug()<<"OO::move2RelPos  a)";
     setRelPos (QPointF(x,y));
+    qDebug()<<"OO::move2RelPos  b)";
     if (parObj)
     {
 	QPointF p=parObj->getChildPos();
 	move (p.x()+x, p.y() +y);
     }
+    qDebug()<<"OO::move2RelPos  c)";
 }
 
 void OrnamentedObj::move2RelPos(QPointF p)

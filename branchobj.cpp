@@ -493,6 +493,7 @@ void BranchObj::alignRelativeTo (QPointF ref,bool alignSelf)
 // TODO testing
 /*
 if (debug)
+*/
 {
     QString o;
     switch (orientation)
@@ -509,12 +510,12 @@ if (debug)
     QPointF pp; 
     if (parObj) pp=parObj->getChildPos();
     qDebug() << "BO::alignRelTo for "<<h;
-    qDebug() << "    d="<<depth;
-    qDebug() <<"  parO="<<parObj;
-    qDebug() <<"   ref="<<ref;
+//    qDebug() << "    d="<<depth;
+//    qDebug() <<"  parO="<<parObj;
+//    qDebug() <<"   ref="<<ref;
     //qDebug() <<   "  bbox.tL="<<bboxTotal.topLeft();
-    qDebug() <<"absPos="<<absPos
-	<< "  relPos="<<relPos
+//    qDebug() <<"absPos="<<absPos
+//	<< "  relPos="<<relPos
 //	<< "  parPos="<<pp
 //	<< "  bbox="<<bbox
 //	<< "  orient="<<o<<" "<<orientation;
@@ -525,11 +526,11 @@ if (debug)
 //	<< "  th="<<th
     ;
 }
-*/
 
     setOrientation();
     //updateLinkGeometry();
 
+qDebug()<<"ok0";
     if (depth==1)
 	move2RelPos (getRelPos() );
     else if (depth>1)
@@ -556,6 +557,7 @@ if (debug)
 	    }
 	}
     }	    
+qDebug()<<"ok1";
 
     if ( ((BranchItem*)treeItem)->isScrolled() ) return;
 
