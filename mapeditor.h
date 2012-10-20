@@ -104,6 +104,7 @@ public:
 public:
     void print();		    //!< Print the map
     QRectF getTotalBBox();	    //!< Bounding box of all items in map
+    QRectF getTotalBBoxOld();	    //!< Bounding box of all items in map
     QImage getImage (QPointF &offset);	//!< Get a pixmap of the map
     void setAntiAlias (bool);	    //!< Set or unset antialiasing
     void setSmoothPixmap(bool);	    //!< Set or unset smoothing of pixmaps

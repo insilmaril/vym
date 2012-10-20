@@ -577,6 +577,49 @@ QRectF MapEditor::getTotalBBox()    //FIXME-2 frames missing, esp. cloud
 	    bo=(BranchObj*)(cur->getLMO());
 	    if (bo && bo->isVisibleObj())
 	    {
+                qDebug()<<"ME::getTotalBBox bo="<<cur->getHeading();
+		bo->calcBBoxSizeWithChildren();
+		QRectF r1=bo->getBBox();
+
+		if (rt.isNull()) rt=r1;
+		rt=addBBox (r1, rt);
+	    }
+
+	    // Images
+	    FloatImageObj *fio;
+	    for (int i=0; i<cur->imageCount(); i++)
+	    {
+		fio=cur->getImageObjNum (i);
+		if (fio) rt=addBBox (fio->getBBox(),rt);
+	    }
+	}
+	model->nextBranch(cur,prev,true);
+    }
+
+    // get bboxes of XLinks	 //FIXME-2 missing
+
+    // Update scene according to new bbox
+    if (!sceneRect().contains (rt) )
+	setSceneRect(sceneRect().united (rt));
+    return rt;	
+}
+
+QRectF MapEditor::getTotalBBoxOld()    //FIXME-2 frames missing, esp. cloud
+{				    //FIXME-2 xlinks also missing in getTotalBBox
+    qDebug()<<"ME::getTotalBBoxOld";
+    QRectF rt;
+    BranchObj *bo;
+    BranchItem *cur=NULL;
+    BranchItem *prev=NULL;
+    model->nextBranch(cur,prev);
+    while (cur) 
+    {
+	if (!cur->hasHiddenExportParent())
+	{
+	    // Branches
+	    bo=(BranchObj*)(cur->getLMO());
+	    if (bo && bo->isVisibleObj())
+	    {
 		bo->calcBBoxSizeWithChildren();
 		QRectF r1=bo->getBBox();
 
@@ -595,14 +638,13 @@ QRectF MapEditor::getTotalBBox()    //FIXME-2 frames missing, esp. cloud
 	model->nextBranch(cur,prev);
     }
 
-    // XLinks	 //FIXME missing
+    // get bboxes of XLinks	 //FIXME-2 missing
 
     // Update scene according to new bbox
     if (!sceneRect().contains (rt) )
 	setSceneRect(sceneRect().united (rt));
     return rt;	
 }
-
 
 QImage MapEditor::getImage( QPointF &offset) 
 {
@@ -806,11 +848,16 @@ AttributeTable* MapEditor::attributeTable()
 
 void MapEditor::testFunction1()
 {
-    BranchItem *sebi=model->getSelectedBranch();
-    if (sebi)
+    qDebug()<<"------------ME::test--------------------";
+    BranchItem *cur=NULL;
+    BranchItem *prev=NULL;
+    bool d=false;
+    model->nextBranchNew(cur,prev,d);
+    qDebug()<<"------------ME::test cur="<<cur->getHeading();
+    while (cur) 
     {
-	OrnamentedObj *oo=(OrnamentedObj*)(sebi->getLMO());
-	oo->setRotation (oo->getRotation()+10);
+	model->nextBranchNew(cur,prev,d);
+        if (cur) qDebug()<<"------------ME::test cur="<<cur->getHeading();
     }
 }
     
