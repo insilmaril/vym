@@ -276,15 +276,12 @@ void OrnamentedObj::moveBy (QPointF p)
 
 void OrnamentedObj::move2RelPos(double x, double y)
 {
-    qDebug()<<"OO::move2RelPos  a)";
     setRelPos (QPointF(x,y));
-    qDebug()<<"OO::move2RelPos  b)";
     if (parObj)
     {
 	QPointF p=parObj->getChildPos();
 	move (p.x()+x, p.y() +y);
     }
-    qDebug()<<"OO::move2RelPos  c)";
 }
 
 void OrnamentedObj::move2RelPos(QPointF p)

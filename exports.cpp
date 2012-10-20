@@ -182,7 +182,7 @@ void ExportAO::doExport()
     BranchItem *cur=NULL;
     BranchItem *prev=NULL;
 
-    cur=model->nextBranch (cur,prev);
+    model->nextBranch (cur,prev);
     while (cur) 
     {
         QString line;
@@ -281,7 +281,7 @@ void ExportAO::doExport()
 		}
 	    }
 	}
-	cur=model->nextBranch(cur,prev);
+	model->nextBranch(cur,prev);
     }
     file.close();
     QString cmd="exportAO";
@@ -324,7 +324,7 @@ void ExportASCII::doExport()
     BranchItem *cur=NULL;
     BranchItem *prev=NULL;
 
-    cur=model->nextBranch (cur,prev);
+    model->nextBranch (cur,prev);
     while (cur) 
     {
 	if (cur->getType()==TreeItem::Branch || cur->getType()==TreeItem::MapCenter)
@@ -380,7 +380,7 @@ void ExportASCII::doExport()
 		}
 	    }
 	}
-	cur=model->nextBranch(cur,prev);
+	model->nextBranch(cur,prev);
     }
     file.close();
     QString cmd="exportASCII";
@@ -418,7 +418,7 @@ void ExportCSV::doExport()
     int i;
     BranchItem *cur=NULL;
     BranchItem *prev=NULL;
-    cur=model->nextBranch (cur,prev);
+    model->nextBranch (cur,prev);
     while (cur) 
     {
 	if (!cur->hasHiddenExportParent() )
@@ -439,7 +439,7 @@ void ExportCSV::doExport()
 	    ts << curIndent << "\"" << cur->getHeadingPlain()<<"\""<<endl;
 	}
 	
-	cur=model->nextBranch(cur,prev);
+	model->nextBranch(cur,prev);
 	curIndent="";
     }
     file.close();
@@ -913,7 +913,7 @@ void ExportOrgMode::doExport()
 		ts << ("\n");
 	    }
 	}
-	cur=model->nextBranch(cur,prev);
+	model->nextBranch(cur,prev);
     }
     file.close();
 }
@@ -1011,7 +1011,7 @@ void ExportLaTeX::doExport()
 	  ts << endl;
 	}
     }
-    cur=model->nextBranch(cur,prev);
+    model->nextBranch(cur,prev);
    }
     
     file.close();

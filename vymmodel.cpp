@@ -1474,7 +1474,7 @@ TreeItem* VymModel::findID (const uint &id)
 {
     BranchItem *cur=NULL;
     BranchItem *prev=NULL;
-    nextBranch(cur,prev);
+    nextBranchOld(cur,prev);
     while (cur) 
     {
 	if (id==cur->getID() ) return cur;
@@ -1492,7 +1492,7 @@ TreeItem* VymModel::findID (const uint &id)
 	    if (id==ii->getID() ) return ii;
 	    j++;
 	}
-	nextBranch(cur,prev);
+	nextBranchOld(cur,prev);
     }
     return NULL;
 }
@@ -1501,7 +1501,7 @@ TreeItem* VymModel::findUuid (const QUuid &id)
 {
     BranchItem *cur=NULL;
     BranchItem *prev=NULL;
-    nextBranch(cur,prev);
+    nextBranchOld(cur,prev);
     while (cur) 
     {
 	if (id==cur->getUuid() ) return cur;
@@ -1519,7 +1519,7 @@ TreeItem* VymModel::findUuid (const QUuid &id)
 	    if (id==ii->getUuid() ) return ii;
 	    j++;
 	}
-	nextBranch(cur,prev);
+	nextBranchOld(cur,prev);
     }
     return NULL;
 }
@@ -1577,11 +1577,11 @@ int VymModel::branchCount()
     int c=0;
     BranchItem *cur=NULL;
     BranchItem *prev=NULL;
-    nextBranch(cur,prev);
+    nextBranchOld(cur,prev);
     while (cur) 
     {
 	c++;
-	nextBranch(cur,prev);
+	nextBranchOld(cur,prev);
     }
     return c;
 }
@@ -1691,13 +1691,13 @@ void VymModel::findDuplicateURLs()  // FIXME-3 needs GUI
     QMap <QString,BranchItem*> map;
     BranchItem *cur=NULL;
     BranchItem *prev=NULL;
-    nextBranch(cur,prev);
+    nextBranchOld(cur,prev);
     while (cur) 
     {
 	u=cur->getURL();
 	if (!u.isEmpty() )
 	    map.insertMulti (u,cur);
-	nextBranch(cur,prev);
+	nextBranchOld(cur,prev);
     }
 
     // Extract duplicate URLs
@@ -1729,7 +1729,7 @@ bool  VymModel::findAll (FindResultModel *rmodel, QString s, Qt::CaseSensitivity
 
     BranchItem *cur=NULL;
     BranchItem *prev=NULL;
-    nextBranch(cur,prev);
+    nextBranchOld(cur,prev);
 
     FindResultItem *lastParent=NULL;
     while (cur) 
@@ -1769,7 +1769,7 @@ bool  VymModel::findAll (FindResultModel *rmodel, QString s, Qt::CaseSensitivity
 		i++;
 	    }
 	} 
-	nextBranch(cur,prev);
+	nextBranchOld(cur,prev);
     }
     return hit;
 }
@@ -1792,7 +1792,7 @@ BranchItem* VymModel::findText (QString s,Qt::CaseSensitivity cs)
 	    EOFind=false;
 	findCurrent=NULL;   
 	findPrevious=NULL;  
-	nextBranch (findCurrent,findPrevious);
+	nextBranchOld (findCurrent,findPrevious);
     }	
     bool searching=true;
     bool foundNote=false;
@@ -1819,7 +1819,7 @@ BranchItem* VymModel::findText (QString s,Qt::CaseSensitivity cs)
 	}   
 	if (!foundNote)
 	{
-	    if (!nextBranch(findCurrent,findPrevious) )
+	    if (!nextBranchOld(findCurrent,findPrevious) )
 		EOFind=true;
 	}
     }	
@@ -1880,7 +1880,7 @@ QStringList VymModel::getURLs(bool ignoreScrolled)
     {
 	if (!cur->getURL().isEmpty()  && !(ignoreScrolled && cur->hasScrolledParent() )) 
 	    urls.append( cur->getURL());
-	cur=nextBranch (cur,prev,true,selbi);
+	cur=nextBranchOld (cur,prev,true,selbi);
     }	
     return urls;
 }
@@ -3154,8 +3154,6 @@ void VymModel::toggleScroll()
 void VymModel::unscrollChildren() 
 {
     BranchItem *selbi=getSelectedBranch();
-    BranchItem *prev=NULL;
-    BranchItem *cur=selbi;
     if (selbi)
     {
 	saveStateChangingPart(
@@ -3164,14 +3162,17 @@ void VymModel::unscrollChildren()
 	    QString ("unscrollChildren ()"),
 	    QString ("unscroll all children of %1").arg(getObjectName(selbi))
 	);  
+        BranchItem *prev=NULL;
+        BranchItem *cur=NULL;
+        nextBranch (cur,prev,true,selbi);
 	while (cur) 
 	{
 	    if (cur->isScrolled())
 	    {
 		cur->toggleScroll(); 
 		emitDataChanged (cur);
-	}
-	    cur=nextBranch (cur,prev,true,selbi);
+            }
+	    nextBranch (cur,prev,true,selbi);
 	}   
 	updateActions();
 	reposition();
@@ -3272,13 +3273,13 @@ ItemList VymModel::getTargets()
 
     BranchItem *cur=NULL;
     BranchItem *prev=NULL;
-    nextBranch(cur,prev);
+    nextBranchOld(cur,prev);
 
     while (cur) 
     {
 	if (cur->hasActiveSystemFlag("system-target"))
 	    targets[cur->getID()]=cur->getHeading();
-	nextBranch(cur,prev);
+	nextBranchOld(cur,prev);
     }
     return targets; 
 }
@@ -3367,7 +3368,7 @@ void VymModel::colorSubtree (QColor c, BranchItem *b)
 	{
 	    cur->setHeadingColor(c); // color links, color children
 	    emitDataChanged (cur);
-	    cur=nextBranch (cur,prev,true,bi);
+	    cur=nextBranchOld (cur,prev,true,bi);
 	}   
     }
     taskEditor->showSelection();
@@ -3472,7 +3473,7 @@ void VymModel::getBugzillaData(bool subtree)
 		}
 	    }
 	    if (subtree) 
-		cur=nextBranch (cur,prev,true,selbi);
+		cur=nextBranchOld (cur,prev,true,selbi);
 	    else
 		cur=NULL;
 	}   
@@ -3553,7 +3554,7 @@ QStringList VymModel::getVymLinks()
     while (cur) 
     {
 	if (!cur->getVymLink().isEmpty()) links.append( cur->getVymLink());
-	cur=nextBranch (cur,prev,true,selbi);
+	cur=nextBranchOld (cur,prev,true,selbi);
     }	
     return links;
 }
@@ -4771,12 +4772,12 @@ bool VymModel::setMapLinkStyle (const QString & s)
     BranchItem *cur=NULL;
     BranchItem *prev=NULL;
     BranchObj *bo;
-    nextBranch (cur,prev);
+    nextBranchOld (cur,prev);
     while (cur) 
     {
 	bo=(BranchObj*)(cur->getLMO() );
 	bo->setLinkStyle(bo->getDefLinkStyle(cur->parent() ));	//FIXME-4 better emit dataCHanged and leave the changes to View
-	cur=nextBranch(cur,prev);
+	cur=nextBranchOld(cur,prev);
     }
     reposition();
     return true;
@@ -4810,12 +4811,12 @@ void VymModel::setMapDefLinkColor(QColor col)
     BranchItem *cur=NULL;
     BranchItem *prev=NULL;
     BranchObj *bo;
-    cur=nextBranch(cur,prev);
+    cur=nextBranchOld(cur,prev);
     while (cur) 
     {
 	bo=(BranchObj*)(cur->getLMO() );
 	bo->setLinkColor();
-	nextBranch(cur,prev);
+	nextBranchOld(cur,prev);
     }
     updateActions();
 }
@@ -4826,12 +4827,12 @@ void VymModel::setMapLinkColorHintInt()
     BranchItem *cur=NULL;
     BranchItem *prev=NULL;
     BranchObj *bo;
-    cur=nextBranch(cur,prev);
+    cur=nextBranchOld(cur,prev);
     while (cur) 
     {
 	bo=(BranchObj*)(cur->getLMO() );
 	bo->setLinkColor();
-	cur=nextBranch(cur,prev);
+	cur=nextBranchOld(cur,prev);
     }
 }
 
@@ -4850,12 +4851,12 @@ void VymModel::toggleMapLinkColorHint()
     BranchItem *cur=NULL;
     BranchItem *prev=NULL;
     BranchObj *bo;
-    cur=nextBranch(cur,prev);
+    cur=nextBranchOld(cur,prev);
     while (cur) 
     {
 	bo=(BranchObj*)(cur->getLMO() );
 	bo->setLinkColor();
-	nextBranch(cur,prev);
+	nextBranchOld(cur,prev);
     }
 }
 

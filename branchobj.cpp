@@ -493,7 +493,6 @@ void BranchObj::alignRelativeTo (QPointF ref,bool alignSelf)
 // TODO testing
 /*
 if (debug)
-*/
 {
     QString o;
     switch (orientation)
@@ -526,11 +525,11 @@ if (debug)
 //	<< "  th="<<th
     ;
 }
+*/
 
     setOrientation();
     //updateLinkGeometry();
 
-qDebug()<<"ok0";
     if (depth==1)
 	move2RelPos (getRelPos() );
     else if (depth>1)
@@ -557,7 +556,6 @@ qDebug()<<"ok0";
 	    }
 	}
     }	    
-qDebug()<<"ok1";
 
     if ( ((BranchItem*)treeItem)->isScrolled() ) return;
 
@@ -604,29 +602,25 @@ qDebug()<<"ok1";
 void BranchObj::reposition()
 {   
 /* TODO testing only
-*/	
     if (!treeItem->getHeading().isEmpty())
 	qDebug()<< "BO::reposition  a) "<<treeItem->depth()<<" "<<treeItem->getHeading();
     else    
 	qDebug()<< "BO::reposition  a) ???";
 
+*/	
     if (treeItem->depth()==0)
     {
 	// only calculate the sizes once. If the deepest LMO 
 	// changes its height,
 	// all upper LMOs have to change, too.
 	calcBBoxSizeWithChildren();
-        qDebug()<< "BO::reposition  b) ";
 	updateLinkGeometry();	// This update is needed if the scene is resized 
 			// due to excessive moving of a FIO
 
 	alignRelativeTo ( QPointF (absPos.x(),
 	    absPos.y()-(bboxTotal.height()-bbox.height())/2) );	
-        qDebug()<< "BO::reposition  c) ";
 	    //absPos.y() ) );
-        qDebug()<< "BO::reposition  d) ";
 	positionBBox();	// Reposition bbox and contents
-        qDebug()<< "BO::reposition  e) ";
     } else
     {
 	// This is only important for moving branches:
@@ -634,7 +628,6 @@ void BranchObj::reposition()
 	alignRelativeTo ( QPointF (absPos.x(),
 			    absPos.y()-(bboxTotal.height()-bbox.height())/2) );	
     }
-    qDebug()<< "BO::reposition  f) ";
 }
 
 void BranchObj::unsetAllRepositionRequests()
@@ -678,7 +671,7 @@ void BranchObj::calcBBoxSizeWithChildren()
 
     // if branch is scrolled, ignore children, but still consider floatimages
     BranchItem *bi=(BranchItem*)treeItem;
-    qDebug()<<"BO::calcBBSizeWithChildren  "<<bi->getHeadingDepth();
+//    qDebug()<<"BO::calcBBSizeWithChildren  "<<bi->getHeadingDepth(); //FIXME-1
     if ( bi->isScrolled() ) 
     {
 	bboxTotal.setWidth (bbox.width());

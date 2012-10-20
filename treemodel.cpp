@@ -121,7 +121,7 @@ int TreeModel::columnCount(const QModelIndex &parent) const
     return c;
 }
 
-void TreeModel::nextBranchNew (BranchItem* &current, BranchItem* &previous, bool deepLevelsFirst, BranchItem *start)    
+void TreeModel::nextBranch (BranchItem* &current, BranchItem* &previous, bool deepLevelsFirst, BranchItem *start)    
 {
     if (deepLevelsFirst)
     {
@@ -129,33 +129,31 @@ void TreeModel::nextBranchNew (BranchItem* &current, BranchItem* &previous, bool
         // Start at root, if current==NULL
         if (!current) 
         {
-            current=(BranchItem*)rootItem;
-            current = current->getFirstBranch();
-            if (!current) return;
+            if (start)
+            {
+                current=start;
+                previous=current->parentBranch();
+            } else
+            {
+                previous=(BranchItem*)rootItem;
+                current = previous->getFirstBranch();
+                if (!current) return;
+            }
         }
-
-        // Are we just beginning to walk the map?
-        if (!previous)
-        {
-            previous=(BranchItem*)rootItem;
-            if (!start) start=current;          //FIXME-2 check this again...
-        }
-
-        qDebug()<<"## next (a):   cur="<<current->getHeading()<<") prev="<<previous->getHeading();
         
         // Walk the tree by always turning "left" 
         // and returning an element when going up
-        
-        // FIXME hardstop
-        //if (current->depth() <0 ) return NULL;
-
         if (current == previous)
         {
             // Had leaf before, go up again.
-            qDebug()<<"  Had leaf before, turn left";
-            current = (BranchItem*)(current->parent());
+            if (start && start == current)
+            {
+                current=NULL;
+                return;
+            }
+            current = current->parentBranch();
             if (!current) return;
-            return nextBranchNew(current, previous, deepLevelsFirst);
+            return nextBranch(current, previous, deepLevelsFirst, start);
         }
 
 	if (current->depth() > previous->depth() )
@@ -164,13 +162,11 @@ void TreeModel::nextBranchNew (BranchItem* &current, BranchItem* &previous, bool
 	    if (current->branchCount() >0 )
 	    {
                 // Turn "left" and go deeper
-                qDebug()<<"  going deeper";
 		previous=current;
 		current=current->getFirstBranch();
-                return nextBranchNew (current, previous, deepLevelsFirst);
+                return nextBranch (current, previous, deepLevelsFirst);
 	    } else	
             {
-                qDebug()<<"  cannot go deeper, return current="<<current->getHeading();
                 // turn around and go up again
                 previous=current;
                 return;
@@ -183,41 +179,16 @@ void TreeModel::nextBranchNew (BranchItem* &current, BranchItem* &previous, bool
             if (sibling)
             {   
                 // Found sibling of previous, go there
-                qDebug()<<"  going left to sibling";
                 previous=current;
                 current=sibling;
-                return nextBranchNew (current, previous, deepLevelsFirst);
+                return nextBranch (current, previous, deepLevelsFirst, start);
             } else
             {
                 // and go further up
-                if (current == rootItem)
-                {
-                    qDebug()<<"  going up left , returning NULL";
-                    current = NULL;
-                } else
-                {
-                    qDebug()<<"  going up left , returning "<<current->getHeading();
-                }
+                if (current == rootItem) current = NULL;
                 previous = current;
                 return;
             }
-
-            /*   FIXME-2
-            // If we only needed to go through subtree, we are done now
-            if (start==current) return NULL;
-
-            // Go up and try to find siblings of current
-            previous=current;
-            current=(BranchItem*)current->parent();
-
-            // Check if we still can go somewhere
-            if (!current) return current;
-            
-            while (current && current->depth() < previous->depth() )
-                current=nextBranch (current,previous,true,start);
-                
-            return current;
-            */
         }
     } else
     {
@@ -225,21 +196,19 @@ void TreeModel::nextBranchNew (BranchItem* &current, BranchItem* &previous, bool
         // Start at root, if current==NULL
         if (!current) 
         {
-            current=(BranchItem*)rootItem;
-            current = current->getFirstBranch();
-            if (!current) return;
+            if (start) 
+            {
+                current=start;    
+                previous=(BranchItem*)(start->parent() );
+                return;
+            } else
+            {
+                previous=(BranchItem*)rootItem;
+                current = previous->getFirstBranch();
+                if (!current) return;
+            }
         }
 
-        // Are we just beginning to walk the map?
-        if (!previous)
-        {
-            previous=(BranchItem*)rootItem;
-            if (!start) start=current;          //FIXME-2 check this again...
-
-            return;
-        }
-
-        qDebug()<<"## next (b):   cur="<<current->getHeading()<<"  prev="<<previous->getHeading();
 
 	if (current->depth() > previous->depth() )
 	{   
@@ -249,67 +218,49 @@ void TreeModel::nextBranchNew (BranchItem* &current, BranchItem* &previous, bool
                 // Turn "left" and go deeper
 		previous=current;
 		current=current->getFirstBranch();
-                qDebug()<<"  going deeper, returning "<<current->getHeading();
                 return;
 	    } else	
             {
-                qDebug()<<"  cannot go deeper, return current="<<current->getHeading();
                 // turn around and go up again
                 previous=current;
-                nextBranch(current, previous, deepLevelsFirst);
+                nextBranch (current, previous, deepLevelsFirst, start);
                 return;
             }
         } else
         {
-            qDebug()<<"Going up";
+            if (start && previous == start)
+            {
+                current=NULL;
+                return;
+            }
+
             BranchItem *sibling=current->getBranchNum (previous->num()+1);
             if (sibling)
             {   
                 // Found sibling of previous, go there
-                qDebug()<<"  going left to sibling";
                 previous=current;
                 current=sibling;
                 return; 
             } else
             {
                 // no sibling, go further up left
-                qDebug()<<"  No sibling, going further up";
                 previous=current;
-                current = (BranchItem*)(current->parent());
+                current = current->parentBranch();
                 if (!current)
                 {
-                    qDebug()<<"  returning NULL";
                     current = NULL;
                     return;
                 } else
                 {
-                    qDebug()<<"  going up lefti (recursion!)";
-                    nextBranchNew (current, previous, deepLevelsFirst);
+                    nextBranch (current, previous, deepLevelsFirst, start);
                 }
             }
             return;
         }
-
-        /*
-	// Try to find sibling with same depth
-	BranchItem *sibling=current->parent()->getBranchNum (current->num()+1);
-	if (sibling)
-	{   
-	    // Found sibling of previous, go there
-	    previous=current;
-	    current=sibling;
-	    return current;
-	}  else
-	{   
-	    // Try to find next branch with same depth or greater
-	    current=NULL;
-	    return current;
-	}
-        */
     }
 }
 
-BranchItem* TreeModel::nextBranch (BranchItem* &current, BranchItem* &previous, bool deepLevelsFirst, BranchItem *start)    
+BranchItem* TreeModel::nextBranchOld (BranchItem* &current, BranchItem* &previous, bool deepLevelsFirst, BranchItem *start)    
 {
     // Walk through map beginning at current with previous==0
     // Start at root, if current==NULL
@@ -360,13 +311,13 @@ BranchItem* TreeModel::nextBranch (BranchItem* &current, BranchItem* &previous, 
 
 	// Go up and try to find siblings of current
 	previous=current;
-	current=(BranchItem*)current->parent();
+	current=current->parentBranch();
 
 	// Check if we still can go somewhere
 	if (!current) return current;
 	
 	while (current && current->depth() < previous->depth() )
-	    current=nextBranch (current,previous,true,start);
+	    current=nextBranchOld (current,previous,true,start);
 	    
 	return current;
 
@@ -383,8 +334,6 @@ BranchItem* TreeModel::nextBranch (BranchItem* &current, BranchItem* &previous, 
 	}  else
 	{   
 	    // Try to find next branch with same depth or greater
-	    
-
 	    current=NULL;
 	    return current;
 	}

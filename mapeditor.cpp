@@ -563,12 +563,12 @@ void MapEditor::print()
 
 QRectF MapEditor::getTotalBBox()    //FIXME-2 frames missing, esp. cloud
 {				    //FIXME-2 xlinks also missing in getTotalBBox
-    qDebug()<<"ME::getTotalBBox";
+  //  qDebug()<<"ME::getTotalBBox";
     QRectF rt;
     BranchObj *bo;
     BranchItem *cur=NULL;
     BranchItem *prev=NULL;
-    model->nextBranch(cur,prev);
+    model->nextBranchOld(cur,prev);
     while (cur) 
     {
 	if (!cur->hasHiddenExportParent())
@@ -577,7 +577,7 @@ QRectF MapEditor::getTotalBBox()    //FIXME-2 frames missing, esp. cloud
 	    bo=(BranchObj*)(cur->getLMO());
 	    if (bo && bo->isVisibleObj())
 	    {
-                qDebug()<<"ME::getTotalBBox bo="<<cur->getHeading();
+//                qDebug()<<"ME::getTotalBBox bo="<<cur->getHeading();
 		bo->calcBBoxSizeWithChildren();
 		QRectF r1=bo->getBBox();
 
@@ -593,7 +593,7 @@ QRectF MapEditor::getTotalBBox()    //FIXME-2 frames missing, esp. cloud
 		if (fio) rt=addBBox (fio->getBBox(),rt);
 	    }
 	}
-	model->nextBranch(cur,prev,true);
+	model->nextBranchOld(cur,prev,true);
     }
 
     // get bboxes of XLinks	 //FIXME-2 missing
@@ -611,7 +611,7 @@ QRectF MapEditor::getTotalBBoxOld()    //FIXME-2 frames missing, esp. cloud
     BranchObj *bo;
     BranchItem *cur=NULL;
     BranchItem *prev=NULL;
-    model->nextBranch(cur,prev);
+    model->nextBranchOld(cur,prev);
     while (cur) 
     {
 	if (!cur->hasHiddenExportParent())
@@ -635,7 +635,7 @@ QRectF MapEditor::getTotalBBoxOld()    //FIXME-2 frames missing, esp. cloud
 		if (fio) rt=addBBox (fio->getBBox(),rt);
 	    }
 	}
-	model->nextBranch(cur,prev);
+	model->nextBranchOld(cur,prev);
     }
 
     // get bboxes of XLinks	 //FIXME-2 missing
@@ -852,11 +852,11 @@ void MapEditor::testFunction1()
     BranchItem *cur=NULL;
     BranchItem *prev=NULL;
     bool d=false;
-    model->nextBranchNew(cur,prev,d);
+    model->nextBranch(cur,prev,d);
     qDebug()<<"------------ME::test cur="<<cur->getHeading();
     while (cur) 
     {
-	model->nextBranchNew(cur,prev,d);
+	model->nextBranch(cur,prev,d);
         if (cur) qDebug()<<"------------ME::test cur="<<cur->getHeading();
     }
 }
