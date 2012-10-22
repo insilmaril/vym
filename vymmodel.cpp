@@ -3369,7 +3369,7 @@ void VymModel::colorSubtree (QColor c, BranchItem *b)
 	    QString ("Set color of %1 and children to %2").arg(getObjectName(bi)).arg(c.name())
 	);  
 	BranchItem *prev=NULL;
-	BranchItem *cur=bi;
+	BranchItem *cur=NULL;
         nextBranch (cur,prev,true,bi);
 	while (cur) 
 	{
@@ -3466,7 +3466,7 @@ void VymModel::getBugzillaData(bool subtree)
     {	    
 	QString url;
 	BranchItem *prev=NULL;
-	BranchItem *cur=selbi;
+	BranchItem *cur=NULL;
         nextBranch (cur,prev,true,selbi);
 	while (cur) 
 	{
@@ -3557,8 +3557,9 @@ QStringList VymModel::getVymLinks()
 {
     QStringList links;
     BranchItem *selbi=getSelectedBranch();
-    BranchItem *cur=selbi;
+    BranchItem *cur=NULL;
     BranchItem *prev=NULL;
+    nextBranch (cur,prev,true,selbi);
     while (cur) 
     {
 	if (!cur->getVymLink().isEmpty()) links.append( cur->getVymLink());
