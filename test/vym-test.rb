@@ -401,11 +401,11 @@ def test_references (vym)
   init_map
   vym.select @@main_a
   vym.setURL "www.insilmaril.de"
-  expect "setURL: add http", vym.getURL, "http://www.insilmaril.de"
+  expect "setURL:", vym.getURL, "www.insilmaril.de"
   vym.undo
   expect "undo setURL", vym.getURL, ""
   vym.redo
-  expect "redo setURL", vym.getURL, "http://www.insilmaril.de"
+  expect "redo setURL", vym.getURL, "www.insilmaril.de"
   vym.setURL ""
   expect "setURL: unset URL with empty string", vym.getURL, ""
   
