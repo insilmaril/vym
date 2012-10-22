@@ -1567,7 +1567,7 @@ void Main::setupEditActions()
 
     a = new QAction( tr( "Add Image...","Edit menu" ), this);
     a->setShortcutContext (Qt::WindowShortcut);
-    a->setShortcut (Qt::Key_I );    
+    a->setShortcut (Qt::Key_I + Qt::SHIFT);    
     switchboard.addConnection(a,tr("Edit","Shortcut group"));
     addAction (a);
     connect( a, SIGNAL( triggered() ), this, SLOT( editLoadImage() ) );
@@ -2092,7 +2092,7 @@ void Main::setupFlagActions()
 
     // Original: xsldbg_output.png
     flag=new Flag(flagsPath+"flag-info.png");
-    setupFlag (flag,standardFlagsToolbar,"info",tr("Info","Standardflag"));
+    setupFlag (flag,standardFlagsToolbar,"info",tr("Info","Standardflag"),Qt::Key_I);
 
     // Original khelpcenter.png
     flag=new Flag(flagsPath+"flag-lifebelt.png");
