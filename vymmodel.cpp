@@ -1057,7 +1057,6 @@ void VymModel::redo()
     if (!redoSelection.isEmpty())
 	select (redoSelection);
 
-
     bool noErr;
     QString errMsg;
     parseAtom (redoCommand,noErr,errMsg);
@@ -1085,8 +1084,6 @@ void VymModel::redo()
     qDebug() << "       curStep="<<curStep;
     qDebug() << "    ---------------------------";
     */
-
-
 }
 
 bool VymModel::isRedoAvailable()
@@ -1121,6 +1118,13 @@ void VymModel::undo()
 
     // Find out current undo directory
     QString bakMapDir(QString(tmpMapDir+"/undo-%1").arg(curStep));
+
+    // select  object before undo
+    if (!select (undoSelection))
+    {
+	qWarning ("VymModel::undo()  Could not select object for undo");
+	return;
+    }
 
     if (debug)
     {
@@ -1467,6 +1471,7 @@ TreeItem* VymModel::findBySelectString(QString s)
 	    ti=ti->getXLinkItemNum (n);
 	if(!ti) return NULL;	    
     }
+    qDebug()<<"VM::findByString "<<s<<"  "<<ti->getHeading();
     return  ti;
 }
 
