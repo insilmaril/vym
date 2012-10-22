@@ -568,7 +568,7 @@ QRectF MapEditor::getTotalBBox()    //FIXME-2 frames missing, esp. cloud
     BranchObj *bo;
     BranchItem *cur=NULL;
     BranchItem *prev=NULL;
-    model->nextBranchOld(cur,prev);
+    model->nextBranch(cur,prev);
     while (cur) 
     {
 	if (!cur->hasHiddenExportParent())
@@ -593,7 +593,7 @@ QRectF MapEditor::getTotalBBox()    //FIXME-2 frames missing, esp. cloud
 		if (fio) rt=addBBox (fio->getBBox(),rt);
 	    }
 	}
-	model->nextBranchOld(cur,prev,true);
+	model->nextBranch(cur,prev);
     }
 
     // get bboxes of XLinks	 //FIXME-2 missing
@@ -611,7 +611,7 @@ QRectF MapEditor::getTotalBBoxOld()    //FIXME-2 frames missing, esp. cloud
     BranchObj *bo;
     BranchItem *cur=NULL;
     BranchItem *prev=NULL;
-    model->nextBranchOld(cur,prev);
+    model->nextBranch(cur,prev);
     while (cur) 
     {
 	if (!cur->hasHiddenExportParent())
@@ -635,7 +635,7 @@ QRectF MapEditor::getTotalBBoxOld()    //FIXME-2 frames missing, esp. cloud
 		if (fio) rt=addBBox (fio->getBBox(),rt);
 	    }
 	}
-	model->nextBranchOld(cur,prev);
+	model->nextBranch(cur,prev);
     }
 
     // get bboxes of XLinks	 //FIXME-2 missing
