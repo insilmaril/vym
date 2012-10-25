@@ -12,6 +12,7 @@ def waitkey
 end
 
 def expect (comment, v_real, v_exp)
+  p "#####################################################################"
   if v_exp == v_real
     puts "    Ok: #{comment}"
     $tests_passed += 1
@@ -40,6 +41,15 @@ end
 
 def init_map
   # FIXME Missing: check or init default map 
+  # Map Structure:
+  # MapCenter 0
+  #   Main A
+  #     branch a
+  #       branch a1
+  #       branch a2
+  #       branch a3
+  #   Main B
+  # MapCenter 1
 end
 
 def summary
@@ -51,7 +61,13 @@ end
 vym_mgr=VymManager.new
 #vym_mgr.show_running
 
-vym=Vym.new(vym_mgr.find('test') )
+vym_test=vym_mgr.find('test') 
+if !vym_test
+  puts "Couldn't find running test instance, please start one:"
+  puts "vym -l -n test -t test/default.vym"
+  exit
+end
+
 
 #######################
 @@center_0="mc:0"
@@ -210,6 +226,7 @@ def test_moving_parts (vym)
   vym.relinkTo @@main_b,0,0,0
   vym.select @@main_b
   expect "RelinkTo #{@@main_b}: branchCount increased there", n+1, vym.branchCount
+
   vym.undo
   vym.select @@branch_b
   expect "Undo: RelinkTo #{@@main_b}: branchCount decreased there", n, vym.branchCount
