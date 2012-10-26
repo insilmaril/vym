@@ -1427,6 +1427,7 @@ void Main::setupEditActions()
 
     a = new QAction(QPixmap(), tr( "Sleep %1 days","Task sleep" ).arg("n")+"...", this);
     a->setShortcutContext (Qt::WindowShortcut);
+    a->setShortcut (Qt::Key_Q + Qt::SHIFT);
     a->setCheckable(false);
     a->setEnabled (false);
     a->setData (-1);
@@ -3918,11 +3919,37 @@ void Main::editTaskSleepN()
 	{
 	    bool ok=true;
 	    if (n<0)
-		n=QInputDialog::getInt (
+            {
+                n=task->getDaysSleep();
+                if (n<=0) n=0;
+		QString s=QInputDialog::getText (
 		    this, 
 		    vymName + " " + tr("Task","Task dialog"), 
 		    tr("Task sleep (days):","Task dialog"), 
-		    n, 0, 2147483647, 1, &ok);
+                    QLineEdit::Normal,
+		    QString("%1").arg(n), &ok);
+                if (ok)
+                {
+                    int i=s.toInt(&ok);
+                    if (ok)
+                        n=i;
+                    else
+                    {
+                        // Is s a date?
+                        QDate d=QDate::fromString(s,Qt::ISODate);
+                        d=QDate::fromString(s,Qt::ISODate);
+                        if (d.isValid())
+                            ok=true;
+                        else
+                        {
+                            d=QDate::fromString(s,Qt::DefaultLocaleShortDate);
+                            if (d.isValid()) 
+                                ok=true;
+                        }
+                        if (ok) n=QDate::currentDate().daysTo(d);
+                    }
+                }
+            }
 	    if (ok) m->setTaskSleep(n);   
 	}
     }
