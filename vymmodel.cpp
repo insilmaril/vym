@@ -67,8 +67,6 @@ extern bool bugzillaClientAvailable;
 
 extern Settings settings;
 
-extern QList <Command*> modelCommands;
-
 uint VymModel::idLast=0;    // make instance
 
 VymModel::VymModel()
@@ -418,7 +416,6 @@ File::ErrorCode VymModel::loadMap (
 
     bool zipped_org=zipped;
 
-
     if (lmode==NewMap)
     {
 	// Reset timestamp to check for later updates of file
@@ -464,8 +461,8 @@ File::ErrorCode VymModel::loadMap (
 	    if (flist.count()==1) 
 	    {
 		// Only one entry, take this one
-		xmlfile=tmpZipDir + "/"+flist.first();
-	    } else
+                xmlfile=tmpZipDir + "/"+flist.first();
+            } else
 	    {
 		for ( QStringList::Iterator it = flist.begin(); it != flist.end(); ++it ) 
 		    *it=tmpZipDir + "/" + *it;
