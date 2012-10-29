@@ -31,6 +31,8 @@ private:
 	StateAttributeValue,
 	StateMap, 
 	StateNode, 
+	StateProperties, 
+	StateMapStyles, 
 	StateCloud,
 	StateEdge, 
 	StateIcon, 
@@ -39,7 +41,8 @@ private:
 	StateHook,
 	StateText,
 	StateRichContent,
-	StateHtml
+	StateHtml,
+        StateUnknown
      };
     enum HtmlPurpose {Node,Note,Unknown};
     HtmlPurpose htmlPurpose;
