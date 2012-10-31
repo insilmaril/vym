@@ -2167,25 +2167,50 @@ void VymModel::cycleTaskStatus(bool reverse)
     }
 }
 
-void VymModel::setTaskSleep(int n) 
+bool VymModel::setTaskSleep(const QString &s) 
 {
     BranchItem *selbi=getSelectedBranch();
-    if (selbi ) 
+    if (selbi && !s.isEmpty() ) 
     {
 	Task *task=selbi->getTask();
 	if (task ) 
 	{
-	    int oldsleep=task->getDaysSleep();
-	    task->setDateSleep (n);
-	    task->setDateModified();
-	    saveState (
-		selbi,
-		QString("setTaskSleep (%1)").arg(oldsleep),
-		selbi,
-		QString("setTaskSleep (%1)").arg(n),
-		QString("setTaskSleep (%1)").arg(n) );
+            bool ok;
+            int n=s.toInt(&ok);
+            if (!ok)
+            {
+                // Is s a date?
+                QDate d=QDate::fromString(s,Qt::ISODate);
+                d=QDate::fromString(s,Qt::ISODate);
+                if (d.isValid())
+                    // ISO date YYYY-MM-DD
+                    ok=true;
+                else
+                {
+                    d=QDate::fromString(s,Qt::DefaultLocaleShortDate);
+                    if (d.isValid()) 
+                        // Locale date, e.g. 24 Dec 2012
+                        ok=true;
+                }
+                if (ok) n=QDate::currentDate().daysTo(d);
+            }
+
+            if (ok)
+            {
+                int oldsleep=task->getDaysSleep();
+                task->setDateSleep (n);
+                task->setDateModified();
+                saveState (
+                    selbi,
+                    QString("setTaskSleep (%1)").arg(oldsleep),
+                    selbi,
+                    QString("setTaskSleep (%1)").arg(n),
+                    QString("setTaskSleep (%1)").arg(n) );
+                return true;
+            }
 	}
     }
+    return false;
 }
 
 int VymModel::taskCount()
@@ -4094,8 +4119,8 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="setTaskSleep")
 	{
-	    n=parser.parInt(ok,0);
-	    setTaskSleep (n);
+	    s=parser.parString(ok,0);
+	    returnValue=setTaskSleep (s);
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="setFrameIncludeChildren")
 	{

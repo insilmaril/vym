@@ -3918,39 +3918,24 @@ void Main::editTaskSleepN()
 	if (task)
 	{
 	    bool ok=true;
+            QString s;
 	    if (n<0)
             {
                 n=task->getDaysSleep();
                 if (n<=0) n=0;
-		QString s=QInputDialog::getText (
+		s=QInputDialog::getText (
 		    this, 
 		    vymName + " " + tr("Task","Task dialog"), 
 		    tr("Task sleep (days):","Task dialog"), 
                     QLineEdit::Normal,
 		    QString("%1").arg(n), &ok);
-                if (ok)
-                {
-                    int i=s.toInt(&ok);
-                    if (ok)
-                        n=i;
-                    else
-                    {
-                        // Is s a date?
-                        QDate d=QDate::fromString(s,Qt::ISODate);
-                        d=QDate::fromString(s,Qt::ISODate);
-                        if (d.isValid())
-                            ok=true;
-                        else
-                        {
-                            d=QDate::fromString(s,Qt::DefaultLocaleShortDate);
-                            if (d.isValid()) 
-                                ok=true;
-                        }
-                        if (ok) n=QDate::currentDate().daysTo(d);
-                    }
-                }
-            }
-	    if (ok) m->setTaskSleep(n);   
+            } else
+                s=QString("%1").arg(n);
+
+            if (ok && !m->setTaskSleep(s) )
+            QMessageBox::warning(0, 
+                tr("Warning"),
+                tr("Couldn't set sleep to %1.\n").arg(s));
 	}
     }
 }

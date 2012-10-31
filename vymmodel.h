@@ -348,8 +348,8 @@ public:
     /*! Cycle through task states */
     void cycleTaskStatus(bool reverse=false);	    
 
-    /*! Set task to sleep for n days */
-    void setTaskSleep(int n);
+    /*! Set task to sleep for number of days or until a given date*/
+    bool setTaskSleep(const QString &s);
     /*! count tasks in this model */
     int taskCount();
 
