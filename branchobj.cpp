@@ -663,6 +663,7 @@ ConvexPolygon BranchObj::getBoundingPolygon()
 void BranchObj::calcBBoxSizeWithChildren()  
 {   
     // FIXME-1 Below is wrong. Called multiple times!
+    // FIXME-2 Hm, should not be necessary at all???
     
     // This is initially called only from reposition and
     // and only for mapcenter. So it won't be
@@ -671,7 +672,7 @@ void BranchObj::calcBBoxSizeWithChildren()
 
     // if branch is scrolled, ignore children, but still consider floatimages
     BranchItem *bi=(BranchItem*)treeItem;
-//    qDebug()<<"BO::calcBBSizeWithChildren  "<<bi->getHeadingDepth(); //FIXME-1
+    qDebug()<<"BO::calcBBSizeWithChildren  "<<bi->getHeadingDepth(); //FIXME-1
     if ( bi->isScrolled() ) 
     {
 	bboxTotal.setWidth (bbox.width());
@@ -686,6 +687,8 @@ void BranchObj::calcBBoxSizeWithChildren()
 	return;
     }
     
+    /* FIXME-2 not really needed?
+    */
     QRectF r(0,0,0,0);
     QRectF br;
     // Now calculate recursivly
@@ -703,6 +706,7 @@ void BranchObj::calcBBoxSizeWithChildren()
 	    r.setHeight(br.height() + r.height() );
 	}
     }
+
     // Add myself and also
     // add width of link to sum if necessary
     if (bi->branchCount()<1)

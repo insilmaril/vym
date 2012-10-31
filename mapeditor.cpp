@@ -563,12 +563,12 @@ void MapEditor::print()
 
 QRectF MapEditor::getTotalBBox()    //FIXME-2 frames missing, esp. cloud
 {				    //FIXME-2 xlinks also missing in getTotalBBox
-  //  qDebug()<<"ME::getTotalBBox";
+    qDebug()<<"ME::getTotalBBox";
     QRectF rt;
     BranchObj *bo;
     BranchItem *cur=NULL;
     BranchItem *prev=NULL;
-    model->nextBranch(cur,prev);
+    model->nextBranch(cur,prev,true);
     while (cur) 
     {
 	if (!cur->hasHiddenExportParent())
@@ -577,7 +577,7 @@ QRectF MapEditor::getTotalBBox()    //FIXME-2 frames missing, esp. cloud
 	    bo=(BranchObj*)(cur->getLMO());
 	    if (bo && bo->isVisibleObj())
 	    {
-//                qDebug()<<"ME::getTotalBBox bo="<<cur->getHeading();
+                qDebug()<<"ME::getTotalBBox bo="<<cur->getHeading();
 		bo->calcBBoxSizeWithChildren();
 		QRectF r1=bo->getBBox();
 
@@ -593,49 +593,7 @@ QRectF MapEditor::getTotalBBox()    //FIXME-2 frames missing, esp. cloud
 		if (fio) rt=addBBox (fio->getBBox(),rt);
 	    }
 	}
-	model->nextBranch(cur,prev);
-    }
-
-    // get bboxes of XLinks	 //FIXME-2 missing
-
-    // Update scene according to new bbox
-    if (!sceneRect().contains (rt) )
-	setSceneRect(sceneRect().united (rt));
-    return rt;	
-}
-
-QRectF MapEditor::getTotalBBoxOld()    //FIXME-2 frames missing, esp. cloud
-{				    //FIXME-2 xlinks also missing in getTotalBBox
-    qDebug()<<"ME::getTotalBBoxOld";
-    QRectF rt;
-    BranchObj *bo;
-    BranchItem *cur=NULL;
-    BranchItem *prev=NULL;
-    model->nextBranch(cur,prev);
-    while (cur) 
-    {
-	if (!cur->hasHiddenExportParent())
-	{
-	    // Branches
-	    bo=(BranchObj*)(cur->getLMO());
-	    if (bo && bo->isVisibleObj())
-	    {
-		bo->calcBBoxSizeWithChildren();
-		QRectF r1=bo->getBBox();
-
-		if (rt.isNull()) rt=r1;
-		rt=addBBox (r1, rt);
-	    }
-
-	    // Images
-	    FloatImageObj *fio;
-	    for (int i=0; i<cur->imageCount(); i++)
-	    {
-		fio=cur->getImageObjNum (i);
-		if (fio) rt=addBBox (fio->getBBox(),rt);
-	    }
-	}
-	model->nextBranch(cur,prev);
+	model->nextBranch(cur,prev,true);
     }
 
     // get bboxes of XLinks	 //FIXME-2 missing
@@ -848,17 +806,7 @@ AttributeTable* MapEditor::attributeTable()
 
 void MapEditor::testFunction1()
 {
-    qDebug()<<"------------ME::test--------------------";
-    BranchItem *cur=NULL;
-    BranchItem *prev=NULL;
-    bool d=false;
-    model->nextBranch(cur,prev,d);
-    qDebug()<<"------------ME::test cur="<<cur->getHeading();
-    while (cur) 
-    {
-	model->nextBranch(cur,prev,d);
-        if (cur) qDebug()<<"------------ME::test cur="<<cur->getHeading();
-    }
+  model->loadMap("/suse/uwedr/vym/code/test/default.vym");
 }
     
 void MapEditor::testFunction2()
