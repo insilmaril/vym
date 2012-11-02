@@ -3689,15 +3689,17 @@ void Main::editURL()
     VymModel *m=currentModel();
     if (m) 
     {
-	QInputDialog dia (this);
-	dia.setLabelText (tr("Enter URL:"));
-	dia.setWindowTitle (vymName);
-	dia.setInputMode (QInputDialog::TextInput);
+	QInputDialog *dia=new QInputDialog (this);
+	dia->setLabelText (tr("Enter URL:"));
+	dia->setWindowTitle (vymName);
+	dia->setInputMode (QInputDialog::TextInput);
 	TreeItem *selti=m->getSelectedItem();
-	if (selti) dia.setTextValue (selti->getURL());
-	dia.resize(width()*0.8,0);
+	if (selti) dia->setTextValue (selti->getURL());
+	dia->resize(width()*0.6,80);
+        centerDialog(dia);
 
-	if ( dia.exec() ) m->setURL (dia.textValue() );
+	if ( dia->exec() ) m->setURL (dia->textValue() );
+        delete dia;
     }
 }
 
@@ -3934,7 +3936,7 @@ void Main::editTaskSleepN()
                 LineEditDialog *dia=new LineEditDialog(this);
                 dia->setLabel(tr("Enter sleep time (number of days or date YYYY-MM-DD","task sleep time dialog"));
                 dia->setText(QString("%1").arg(n));
-                dia->move(QCursor::pos() - 0.5 * QPoint(dia->rect().width(),dia->rect().height() ) );
+                centerDialog (dia);
                 if (dia->exec() == QDialog::Accepted)
                 {
                     ok=true;
@@ -3947,7 +3949,7 @@ void Main::editTaskSleepN()
             if (ok && !m->setTaskSleep(s) )
             QMessageBox::warning(0, 
                 tr("Warning"),
-                tr("Couldn't set sleep to %1.\n").arg(s));
+                tr("Couldn't set sleep time to %1.\n").arg(s));
 	}
     }
 }

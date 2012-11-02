@@ -10,12 +10,12 @@ class QPoint;
 class QPointF;
 class QRectF;
 class Vector;
+class QDialog;
 
 /////////////////////////////////////////////////////////////////////////////
 QString qpointToString (const QPoint &p);
 QString qpointFToString (const QPointF &p);
 QString VectorToString (const Vector &p);
-
 
 extern ostream &operator<< (ostream &stream, QPoint const &p);
 extern ostream &operator<< (ostream &stream, QPointF const &p);
@@ -31,4 +31,5 @@ QString penStyleToString (Qt::PenStyle);
 QPointF point (const QString &s, bool &ok);
 QString pointToString (const QPointF &p);
 
+void centerDialog(QDialog *dia);
 #endif

@@ -3891,6 +3891,15 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	{ 
 	    returnValue=getSelectString();
 	/////////////////////////////////////////////////////////////////////
+	} else if (com=="getTaskSleepDays")
+	{ 
+      Task *task=selbi->getTask();
+      if (task)
+        returnValue=task->getDaysSleep();
+      else
+        parser.setError (Aborted,"Branch has no task set");
+      qDebug()<<"**********************"<<returnValue;
+	/////////////////////////////////////////////////////////////////////
 	} else if (com=="getURL")
 	{ 
 	    returnValue=selti->getURL();
@@ -3915,6 +3924,13 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	{ 
 	    s=parser.parString(ok,0);
 	    returnValue=selti->hasActiveStandardFlag(s);
+	/////////////////////////////////////////////////////////////////////
+	} else if (com=="hasTask")
+	{ 
+      if (selbi && selbi->getTask() )
+        returnValue=true;
+      else
+        returnValue=false;
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="importDir")
 	{
