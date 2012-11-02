@@ -21,6 +21,7 @@
 #include "headingeditor.h"
 #include "historywindow.h"
 #include "imports.h"
+#include "lineeditdialog.h"
 #include "macros.h"
 #include "mapeditor.h"
 #include "misc.h"
@@ -586,6 +587,9 @@ void Main::setupAPI()
     c=new Command ("getSelectString",Command::TreeItem);
     modelCommands.append(c);
 
+    c=new Command ("getTaskSleepDays",Command::Branch);
+    modelCommands.append(c);
+
     c=new Command ("getURL",Command::TreeItem); 
     modelCommands.append(c);
 
@@ -603,6 +607,9 @@ void Main::setupAPI()
 
     c=new Command ("hasActiveFlag",Command::TreeItem);
     c->addPar (Command::String,false,"Name of flag");
+    modelCommands.append(c);
+
+    c=new Command ("hasTask",Command::Branch); 
     modelCommands.append(c);
 
     c=new Command ("importDir",Command::Branch);
@@ -3923,12 +3930,17 @@ void Main::editTaskSleepN()
             {
                 n=task->getDaysSleep();
                 if (n<=0) n=0;
-		s=QInputDialog::getText (
-		    this, 
-		    vymName + " " + tr("Task","Task dialog"), 
-		    tr("Task sleep (days):","Task dialog"), 
-                    QLineEdit::Normal,
-		    QString("%1").arg(n), &ok);
+
+                LineEditDialog *dia=new LineEditDialog(this);
+                dia->setLabel(tr("Enter sleep time (number of days or date YYYY-MM-DD","task sleep time dialog"));
+                dia->setText(QString("%1").arg(n));
+                dia->move(QCursor::pos() - 0.5 * QPoint(dia->rect().width(),dia->rect().height() ) );
+                if (dia->exec() == QDialog::Accepted)
+                {
+                    ok=true;
+                    s=dia->getText();
+                }
+                delete dia;
             } else
                 s=QString("%1").arg(n);
 

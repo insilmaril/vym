@@ -67,6 +67,7 @@ HEADERS	+= \
     imageitem.h \
     imageobj.h \
     imports.h \
+    lineeditdialog.h \
     linkablemapobj.h \
     macros.h \
     mainwindow.h \
@@ -153,6 +154,7 @@ SOURCES	+= \
     imageitem.cpp \
     imageobj.cpp \
     imports.cpp \
+    lineeditdialog.cpp \
     linkablemapobj.cpp \
     macros.cpp \
     main.cpp \
@@ -204,6 +206,7 @@ FORMS = \
     extrainfodialog.ui \
     editxlinkdialog.ui \
     historywindow.ui \
+    lineeditdialog.ui \
     scripteditor.ui \
     showtextdialog.ui \
     warningdialog.ui
