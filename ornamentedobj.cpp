@@ -247,7 +247,8 @@ void OrnamentedObj::positionContents()	//FIXME-2 called multiple times for each 
 void OrnamentedObj::move (double x, double y)
 {
     // FIXME-0 unnecessary calls to positionContents, ...
-    qDebug()<<"     OO::move and posContents; updateLinkGeo; requestRepos";
+    //FIXME-8 
+    if (debug) qDebug()<<"     OO::move and posContents; updateLinkGeo; requestRepos";
     MapObj::move (x,y);
     positionContents();
     updateLinkGeometry();

@@ -204,7 +204,7 @@ void BranchObj::setLinkColor ()
 
 void BranchObj::updateContentSize()
 {
-    qDebug()<<"BO::updateContentSize";
+    if (debug) qDebug()<<"BO::updateContentSize"; // FIXME-8
     calcBBoxSize();
     positionBBox();
     requestReposition();
@@ -212,7 +212,7 @@ void BranchObj::updateContentSize()
 
 void BranchObj::positionContents()
 {
-    qDebug()<<"  BO::positionContents (loop over images)";
+    if (debug) qDebug()<<"  BO::positionContents (loop over images)";   //FIXME-8
     for (int i=0; i<treeItem->imageCount(); ++i)
 	treeItem->getImageObjNum(i)->reposition();
     OrnamentedObj::positionContents();
@@ -248,7 +248,8 @@ void QGraphicsItem::paint(QPainter*, const QStyleOptionGraphicsItem*, QWidget*)
 
 void BranchObj::positionBBox() // FIXME-2 consider dimensions of frame (thickness, geometry, padding...
 {
-    qDebug()<<"  BO::positionBBox ("<<treeItem->getHeading()<<")";
+    //FIXME-8 
+    if (debug) qDebug()<<"  BO::positionBBox ("<<treeItem->getHeading()<<")";
     QPointF ap=getAbsPos();
     bbox.moveTopLeft (ap);
     positionContents();
@@ -264,7 +265,8 @@ void BranchObj::positionBBox() // FIXME-2 consider dimensions of frame (thicknes
 
 void BranchObj::calcBBoxSize()
 {
-    qDebug()<<"  BO::calcBBoxSize ("<<treeItem->getHeading()<<")";
+    //FIXME-8 
+    if (debug) qDebug()<<"  BO::calcBBoxSize ("<<treeItem->getHeading()<<")";
     QSizeF heading_r=heading->getSize();
     qreal heading_w=(qreal) heading_r.width() ;
     qreal heading_h=(qreal) heading_r.height() ;
@@ -388,7 +390,7 @@ void BranchObj::updateData()
 	qWarning ("BranchObj::udpateHeading treeItem==NULL");
 	return;
     }
-    qDebug()<<"BO::updateData  "<<treeItem->getHeadingDepth();
+    if (debug) qDebug()<<"BO::updateData  "<<treeItem->getHeadingDepth(); //FIXME-8
     QString s=treeItem->getHeading();
     if (s!=heading->text())
     {
@@ -602,12 +604,15 @@ if (debug)
 void BranchObj::reposition()
 {   
 /* TODO testing only
+*/	
+    if (debug)  //FIXME-8
+    {
     if (!treeItem->getHeading().isEmpty())
 	qDebug()<< "BO::reposition  a) "<<treeItem->depth()<<" "<<treeItem->getHeading();
     else    
 	qDebug()<< "BO::reposition  a) ???";
+    }
 
-*/	
     if (treeItem->depth()==0)
     {
 	// only calculate the sizes once. If the deepest LMO 
@@ -672,7 +677,7 @@ void BranchObj::calcBBoxSizeWithChildren()
 
     // if branch is scrolled, ignore children, but still consider floatimages
     BranchItem *bi=(BranchItem*)treeItem;
-    qDebug()<<"BO::calcBBSizeWithChildren  "<<bi->getHeadingDepth(); //FIXME-1
+    if (debug) qDebug()<<"BO::calcBBSizeWithChildren  "<<bi->getHeadingDepth(); //FIXME-8
     if ( bi->isScrolled() ) 
     {
 	bboxTotal.setWidth (bbox.width());

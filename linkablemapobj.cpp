@@ -5,6 +5,8 @@
 #include "branchobj.h"
 #include "vymmodel.h"
 
+extern bool debug;
+
 /////////////////////////////////////////////////////////////////
 // LinkableMapObj
 /////////////////////////////////////////////////////////////////
@@ -584,7 +586,7 @@ void LinkableMapObj::reposition()   //FIXME-3 needed?
 
 void LinkableMapObj::requestReposition()   
 {
-    qDebug()<<"  LMO::requestReposition "<<treeItem->getHeadingDepth();
+    if (debug) qDebug()<<"  LMO::requestReposition "<<treeItem->getHeadingDepth(); //FIXME-8
     if (!repositionRequest)
     {
 	// Pass on the request to parental objects, if this hasn't

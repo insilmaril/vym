@@ -563,7 +563,7 @@ void MapEditor::print()
 
 QRectF MapEditor::getTotalBBox()    //FIXME-2 frames missing, esp. cloud
 {				    //FIXME-2 xlinks also missing in getTotalBBox
-    qDebug()<<"ME::getTotalBBox";
+    //FIXME-1 qDebug()<<"ME::getTotalBBox";
     QRectF rt;
     BranchObj *bo;
     BranchItem *cur=NULL;
@@ -577,7 +577,8 @@ QRectF MapEditor::getTotalBBox()    //FIXME-2 frames missing, esp. cloud
 	    bo=(BranchObj*)(cur->getLMO());
 	    if (bo && bo->isVisibleObj())
 	    {
-                qDebug()<<"ME::getTotalBBox bo="<<cur->getHeading();
+                //FIXME-8 
+                if (debug) qDebug()<<"ME::getTotalBBox bo="<<cur->getHeading();
 		bo->calcBBoxSizeWithChildren();
 		QRectF r1=bo->getBBox();
 
