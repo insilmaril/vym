@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
 require "#{ENV['PWD']}/scripts/vym-ruby"
+require 'date'
 
 $tests_passed = 0
 $tests_failed = 0
@@ -40,7 +41,7 @@ def heading (s)
 end
 
 def init_map
-  # FIXME Missing: check or init default map 
+  # FIXME-2 Missing: check or init default map 
   # Map Structure:
   # MapCenter 0
   #   Main A
@@ -61,8 +62,8 @@ end
 vym_mgr=VymManager.new
 #vym_mgr.show_running
 
-vym_test=vym_mgr.find('test') 
-if !vym_test
+vym=vym_mgr.find('test') 
+if !vym
   puts "Couldn't find running test instance, please start one:"
   puts "vym -l -n test -t test/default.vym"
   exit
@@ -92,7 +93,7 @@ def test_basics (vym)
   vym.selectLastBranch
   expect "selectLastBranch", "branch c", vym.getHeading
 
-  expect "getDestPath: Got #{vym.getDestPath}", vym.getDestPath, ENV["PWD"] + "/test/default.vym" 
+  expect "getDestPath: Got #{vym.getDestPath}", vym.getDestPath, ENV["PWD"] + "/test/testmap.vym" 
   expect "getFileDir:  Got #{vym.getFileDir}", vym.getFileDir, ENV["PWD"] + "/test/" 
 end
 
@@ -476,6 +477,24 @@ def test_xlinks (vym)
 end
 
 #######################
+def test_tasks (vym)
+  heading "Tasks:"
+  init_map
+  vym.select @@main_a
+  expect "Branch has no task before test", vym.hasTask, false
+  vym.toggleTask
+  expect "Toggle task", vym.hasTask, true
+  expect "Setting sleep days to 10", vym.setTaskSleep(10), true
+  expect "Task sleep when setting to integer", vym.getTaskSleepDays, 10
+
+  date_today = DateTime.now
+  date_later = date_today + 123
+  date_s = date_later.strftime("%Y-%m-%d") 
+  vym.setTaskSleep(date_s)
+  expect "Task sleep when setting to ISO date (#{date_s})", vym.getTaskSleepDays, 123
+end
+
+######################
 def test_bugfixes (vym)
   heading "Bugfixes:"
   init_map
@@ -485,18 +504,19 @@ end
 
 #######################
 test_basics(vym)
-test_adding_branches(vym)
-test_adding_maps(vym)
-test_scrolling(vym)
-test_moving_parts(vym)
-test_modify_branches(vym)
-test_flags(vym)
-test_delete_parts(vym)
-test_copy_paste(vym)
-test_references(vym)
-test_history(vym)
-test_xlinks(vym)
-test_bugfixes(vym)
+#test_adding_branches(vym)
+#test_adding_maps(vym)
+#test_scrolling(vym)
+#test_moving_parts(vym)
+#test_modify_branches(vym)
+#test_flags(vym)
+#test_delete_parts(vym)
+#test_copy_paste(vym)
+#test_references(vym)
+#test_history(vym)
+#test_xlinks(vym)
+test_tasks(vym)
+#test_bugfixes(vym)
 summary
 
 =begin

@@ -703,7 +703,7 @@ void Main::setupAPI()
     modelCommands.append(c);
 
     c=new Command ("setTaskSleep",Command::Branch); 
-    c->addPar (Command::Int,false,"Days to sleep");
+    c->addPar (Command::String,false,"Days to sleep");
     modelCommands.append(c);
 
     c=new Command ("setFrameIncludeChildren",Command::BranchOrImage); 

@@ -3898,7 +3898,6 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
         returnValue=task->getDaysSleep();
       else
         parser.setError (Aborted,"Branch has no task set");
-      qDebug()<<"**********************"<<returnValue;
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="getURL")
 	{ 
