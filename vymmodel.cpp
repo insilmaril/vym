@@ -35,7 +35,6 @@
 extern bool debug;
 extern bool testmode;
 extern Main *mainWindow;
-extern QDBusConnection dbusConnection;
 
 extern Settings settings;
 extern QString tmpVymDir;
@@ -179,7 +178,7 @@ void VymModel::init ()
 
      // Announce myself on DBUS
     new AdaptorModel(this);    // Created and not deleted as documented in Qt
-    if (!dbusConnection.registerObject (QString("/vymmodel_%1").arg(modelID),this))
+    if (!QDBusConnection::sessionBus().registerObject (QString("/vymmodel_%1").arg(modelID),this))
 	qWarning ("VymModel: Couldn't register DBUS object!");
 }
 

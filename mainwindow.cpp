@@ -58,7 +58,6 @@ extern NoteEditor    *noteEditor;
 extern HeadingEditor *headingEditor;
 extern ScriptEditor  *scriptEditor;
 extern Main *mainWindow;
-extern QDBusConnection dbusConnection;
 extern FindResultWidget *findResultWidget;  
 extern TaskEditor *taskEditor;
 extern Macros macros;
@@ -327,7 +326,7 @@ Main::Main(QWidget* parent, Qt::WFlags f) : QMainWindow(parent,f)
 
     // Announce myself on DBUS
     new AdaptorVym (this);    // Created and not deleted as documented in Qt
-    if (!dbusConnection.registerObject ("/vym",this))
+    if (!QDBusConnection::sessionBus().registerObject ("/vym",this))
 	qWarning ("MainWindow: Couldn't register DBUS object!");
 }
 
