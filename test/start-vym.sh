@@ -6,7 +6,7 @@ TESTMAP=$TESTDIR/testmap.vym
 
 cp $DEFAULTMAP $TESTMAP
 
-vym -l -n test $TESTMAP -geometry 768x576-0+0 &
+vym  -l -t -n test $TESTMAP -geometry 768x576-0+0 &
 PID=$!
 
 sleep 1

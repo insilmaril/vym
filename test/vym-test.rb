@@ -13,7 +13,6 @@ def waitkey
 end
 
 def expect (comment, v_real, v_exp)
-  p "#####################################################################"
   if v_exp == v_real
     puts "    Ok: #{comment}"
     $tests_passed += 1
@@ -250,7 +249,7 @@ def test_moving_parts (vym)
   vym.undo
   vym.select @@center_0
   expect "Undo RelinkTo pos 1: branchCount of center", 2, vym.branchCount
-  # FIXME still has wrong position, check position
+  # FIXME-2 still has wrong position, check position
   vym.select @@main_b
   vym.moveRel 100,100
 end
@@ -504,19 +503,19 @@ end
 
 #######################
 test_basics(vym)
-#test_adding_branches(vym)
-#test_adding_maps(vym)
-#test_scrolling(vym)
-#test_moving_parts(vym)
-#test_modify_branches(vym)
-#test_flags(vym)
-#test_delete_parts(vym)
-#test_copy_paste(vym)
-#test_references(vym)
-#test_history(vym)
-#test_xlinks(vym)
+test_adding_branches(vym)
+test_adding_maps(vym)
+test_scrolling(vym)
+test_moving_parts(vym)
+test_modify_branches(vym)
+test_flags(vym)
+test_delete_parts(vym)
+test_copy_paste(vym)
+test_references(vym)
+test_history(vym)
+test_xlinks(vym)
 test_tasks(vym)
-#test_bugfixes(vym)
+test_bugfixes(vym)
 summary
 
 =begin
