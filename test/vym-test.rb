@@ -2,6 +2,15 @@
 
 require "#{ENV['PWD']}/scripts/vym-ruby"
 require 'date'
+require 'optparse'
+options = {}
+OptionParser.new do |opts|
+  opts.banner = "Usage: vym-test.rb [options]"
+
+  opts.on('-d', '--directory  NAME', 'Directory name') { |s| options[:testdir] = s }
+end.parse!
+
+@@testdir = options[:testdir]
 
 $tests_passed = 0
 $tests_failed = 0
@@ -92,8 +101,8 @@ def test_basics (vym)
   vym.selectLastBranch
   expect "selectLastBranch", "branch c", vym.getHeading
 
-  expect "getDestPath: Got #{vym.getDestPath}", vym.getDestPath, ENV["PWD"] + "/test/testmap.vym" 
-  expect "getFileDir:  Got #{vym.getFileDir}", vym.getFileDir, ENV["PWD"] + "/test/" 
+  expect "getDestPath: Got #{vym.getDestPath}", vym.getDestPath, @@testdir + "/testmap.vym" 
+  expect "getFileDir:  Got #{vym.getFileDir}", vym.getFileDir, @@testdir + "/" 
 end
 
 #######################

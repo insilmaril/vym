@@ -1,8 +1,10 @@
 #!/bin/bash
 
-TESTDIR=test
-DEFAULTMAP=$TESTDIR/default.vym
-TESTMAP=$TESTDIR/testmap.vym
+SRCDIR=test
+VYMTESTDIR=$(mktemp -d /tmp/vym-test-XXXX)
+
+DEFAULTMAP=$SRCDIR/default.vym
+TESTMAP=$VYMTESTDIR/testmap.vym
 
 cp $DEFAULTMAP $TESTMAP
 
@@ -11,7 +13,7 @@ PID=$!
 
 sleep 1
 
-test/vym-test.rb
+$SRCDIR/vym-test.rb -d $VYMTESTDIR
 
 kill $PID
-rm $TESTMAP
+echo To clean up, do: rm -rf $VYMTESTDIR
