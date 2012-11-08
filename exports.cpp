@@ -642,7 +642,7 @@ QString ExportHTML::getBranchText(BranchItem *current)
                 if (current->getNoteObj().getFontHint()=="fixed")
                 n="<pre>"+n+"</pre>";
             }
-            s+="\n<table class=\"vym-note\"><tr><td>\n"+n+"\n</td></tr></table>\n";
+            s+="\n<table class=\"vym-note\"><tr><td class=\"vym-note-flag\">\n<td>\n"+n+"\n</td></tr></table>\n";
         }   
         return s;
     } 
@@ -698,20 +698,17 @@ QString ExportHTML::buildList (BranchItem *current)
 		r+=ind + itemBegin;
 		r+=getBranchText (bi);
 
-                //FIXME-0 
                 if (itemBegin.startsWith("<h") )
                     r+=itemEnd + buildList (bi);
                 else
                     r+=buildList (bi) + itemEnd;	
 	    }
-            qDebug()<<ind + "ok1 " + bi->getHeading();
 	    i++;
 	    bi=current->getBranchNum(i);
 	}
         r+=ind + sectionEnd;
     }
 
-    qDebug()<<ind + "r="<<r;
     return r;
 }
 
@@ -766,6 +763,7 @@ void ExportHTML::doExport(bool useDialog)
 	    dia.setShowAgainName("/exports/overwrite/html_css");
 	    if (!dia.exec()==QDialog::Accepted) return;
             dst.remove();
+            qDebug()<<"Removing "<<cssDst;
         }
 
         if (!src.copy(cssDst))
@@ -803,6 +801,16 @@ void ExportHTML::doExport(bool useDialog)
 	    QObject::tr( "Warning" ),
 	    QObject::tr("Trying to save small icon for URLs:")+"\n\n"+
 	    QObject::tr("Could not write %1").arg(flagsPathExport+"/"+urlName));
+
+        QFile noteflag (flagsPath+"flag-note.png");
+        QString noteflagdst (outDir.path() + "/flags/flag-note.png");
+        if (!QFile (noteflagdst).exists() )
+        {
+            if (!noteflag.copy(noteflagdst))
+                QMessageBox::warning( 0,
+                        QObject::tr( "Warning" ),
+                        QObject::tr("Trying to save flag for notes failed."));
+        }
     }	
     // Open file for writing
     QFile file (outputFile);

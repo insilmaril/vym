@@ -96,7 +96,7 @@ a:hover {
 }
 
 .vym-note { 
-    width:100%; 
+    width:80%; 
     border: solid 1px black; 
     border-radius: 0.6em 0.6em 0.6em 0.6em;
     border-color: #000000;
@@ -107,10 +107,20 @@ a:hover {
     padding: 0em 1em;
 }
 
+.vym-note-flag {
+    vertical-align:top;
+    width:30px;
+    height:30px;
+    background-image: url("flags/flag-note.png");
+    background-repeat: no-repeat;
+    background-position: left top;
+}
+
 .vym-note-paragraph { 
     margin-top: 0px;
     margin-bottom: 1em;
 }
+
 .vym-fixed-note-paragraph { 
     margin: 0;
 }
