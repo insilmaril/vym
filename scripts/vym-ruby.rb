@@ -3,10 +3,6 @@ require 'dbus'
 $deb = false
 
 class Vym
-  def hello
-    puts "hello world"
-  end
-
   def initialize (name)
     @dbus = DBus::SessionBus.instance
     @service = @dbus.service(name)
@@ -99,7 +95,10 @@ class VymManager
 
   def find (name)
     list=running
-    raise "Could not find running vym instance" if list.length==0
+    puts "Running vyms: #{list.length}"
+    if list.length==0
+      return false
+    end
 
     for i in (0...list.length)
       vym_service=@dbus.service(list.at(i))
@@ -111,10 +110,11 @@ class VymManager
 
       if vym_main_obj.getInstanceName[0]==name 
         puts "Found instance named '#{name}': #{list.at(i)}"
-	return list.at(i)
+        return Vym.new list.at(i)
       end  
     end
-    raise "Could not find instance named \"test\""
+    #raise "Could not find instance named \"test\""
+    return false
   end
 end
 

@@ -21,6 +21,7 @@
 #include "headingeditor.h"
 #include "historywindow.h"
 #include "imports.h"
+#include "lineeditdialog.h"
 #include "macros.h"
 #include "mapeditor.h"
 #include "misc.h"
@@ -57,7 +58,6 @@ extern NoteEditor    *noteEditor;
 extern HeadingEditor *headingEditor;
 extern ScriptEditor  *scriptEditor;
 extern Main *mainWindow;
-extern QDBusConnection dbusConnection;
 extern FindResultWidget *findResultWidget;  
 extern TaskEditor *taskEditor;
 extern Macros macros;
@@ -326,7 +326,7 @@ Main::Main(QWidget* parent, Qt::WFlags f) : QMainWindow(parent,f)
 
     // Announce myself on DBUS
     new AdaptorVym (this);    // Created and not deleted as documented in Qt
-    if (!dbusConnection.registerObject ("/vym",this))
+    if (!QDBusConnection::sessionBus().registerObject ("/vym",this))
 	qWarning ("MainWindow: Couldn't register DBUS object!");
 }
 
@@ -586,6 +586,9 @@ void Main::setupAPI()
     c=new Command ("getSelectString",Command::TreeItem);
     modelCommands.append(c);
 
+    c=new Command ("getTaskSleepDays",Command::Branch);
+    modelCommands.append(c);
+
     c=new Command ("getURL",Command::TreeItem); 
     modelCommands.append(c);
 
@@ -603,6 +606,9 @@ void Main::setupAPI()
 
     c=new Command ("hasActiveFlag",Command::TreeItem);
     c->addPar (Command::String,false,"Name of flag");
+    modelCommands.append(c);
+
+    c=new Command ("hasTask",Command::Branch); 
     modelCommands.append(c);
 
     c=new Command ("importDir",Command::Branch);
@@ -696,7 +702,7 @@ void Main::setupAPI()
     modelCommands.append(c);
 
     c=new Command ("setTaskSleep",Command::Branch); 
-    c->addPar (Command::Int,false,"Days to sleep");
+    c->addPar (Command::String,false,"Days to sleep");
     modelCommands.append(c);
 
     c=new Command ("setFrameIncludeChildren",Command::BranchOrImage); 
@@ -1427,6 +1433,7 @@ void Main::setupEditActions()
 
     a = new QAction(QPixmap(), tr( "Sleep %1 days","Task sleep" ).arg("n")+"...", this);
     a->setShortcutContext (Qt::WindowShortcut);
+    a->setShortcut (Qt::Key_Q + Qt::SHIFT);
     a->setCheckable(false);
     a->setEnabled (false);
     a->setData (-1);
@@ -1567,7 +1574,7 @@ void Main::setupEditActions()
 
     a = new QAction( tr( "Add Image...","Edit menu" ), this);
     a->setShortcutContext (Qt::WindowShortcut);
-    a->setShortcut (Qt::Key_I );    
+    a->setShortcut (Qt::Key_I + Qt::SHIFT);    
     switchboard.addConnection(a,tr("Edit","Shortcut group"));
     addAction (a);
     connect( a, SIGNAL( triggered() ), this, SLOT( editLoadImage() ) );
@@ -2006,7 +2013,6 @@ void Main::setupFlagActions()
     toolbarsMenu->addAction (standardFlagsToolbar->toggleViewAction() );
 
     flag=new Flag(flagsPath+"flag-stopsign.png");
-    flag->setGroup("standard-status");
     setupFlag (flag,standardFlagsToolbar,"stopsign",tr("This won't work!","Standardflag"),Qt::Key_1);
     flag->unsetGroup();
 
@@ -2093,7 +2099,7 @@ void Main::setupFlagActions()
 
     // Original: xsldbg_output.png
     flag=new Flag(flagsPath+"flag-info.png");
-    setupFlag (flag,standardFlagsToolbar,"info",tr("Info","Standardflag"));
+    setupFlag (flag,standardFlagsToolbar,"info",tr("Info","Standardflag"),Qt::Key_I);
 
     // Original khelpcenter.png
     flag=new Flag(flagsPath+"flag-lifebelt.png");
@@ -3682,15 +3688,17 @@ void Main::editURL()
     VymModel *m=currentModel();
     if (m) 
     {
-	QInputDialog dia (this);
-	dia.setLabelText (tr("Enter URL:"));
-	dia.setWindowTitle (vymName);
-	dia.setInputMode (QInputDialog::TextInput);
+	QInputDialog *dia=new QInputDialog (this);
+	dia->setLabelText (tr("Enter URL:"));
+	dia->setWindowTitle (vymName);
+	dia->setInputMode (QInputDialog::TextInput);
 	TreeItem *selti=m->getSelectedItem();
-	if (selti) dia.setTextValue (selti->getURL());
-	dia.resize(width()*0.8,0);
+	if (selti) dia->setTextValue (selti->getURL());
+	dia->resize(width()*0.6,80);
+        centerDialog(dia);
 
-	if ( dia.exec() ) m->setURL (dia.textValue() );
+	if ( dia->exec() ) m->setURL (dia->textValue() );
+        delete dia;
     }
 }
 
@@ -3918,13 +3926,29 @@ void Main::editTaskSleepN()
 	if (task)
 	{
 	    bool ok=true;
+            QString s;
 	    if (n<0)
-		n=QInputDialog::getInt (
-		    this, 
-		    vymName + " " + tr("Task","Task dialog"), 
-		    tr("Task sleep (days):","Task dialog"), 
-		    n, 0, 2147483647, 1, &ok);
-	    if (ok) m->setTaskSleep(n);   
+            {
+                n=task->getDaysSleep();
+                if (n<=0) n=0;
+
+                LineEditDialog *dia=new LineEditDialog(this);
+                dia->setLabel(tr("Enter sleep time (number of days or date YYYY-MM-DD","task sleep time dialog"));
+                dia->setText(QString("%1").arg(n));
+                centerDialog (dia);
+                if (dia->exec() == QDialog::Accepted)
+                {
+                    ok=true;
+                    s=dia->getText();
+                }
+                delete dia;
+            } else
+                s=QString("%1").arg(n);
+
+            if (ok && !m->setTaskSleep(s) )
+            QMessageBox::warning(0, 
+                tr("Warning"),
+                tr("Couldn't set sleep time to %1.\n").arg(s));
 	}
     }
 }

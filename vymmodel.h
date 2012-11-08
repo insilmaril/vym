@@ -312,7 +312,7 @@ private:
 
 public:
     void findDuplicateURLs();		    // find duplicate URLs, testing only so far
-    bool findAll (FindResultModel*, QString s, Qt::CaseSensitivity cs);	// Search all objects at once, also notes
+    bool findAll (FindResultModel*, QString s, Qt::CaseSensitivity cs=Qt::CaseInsensitive);	// Search all objects at once, also notes
     BranchItem* findText(QString s,Qt::CaseSensitivity cs); // Find object, also in note
     void findReset();			    // Reset Search
 private:    
@@ -348,8 +348,8 @@ public:
     /*! Cycle through task states */
     void cycleTaskStatus(bool reverse=false);	    
 
-    /*! Set task to sleep for n days */
-    void setTaskSleep(int n);
+    /*! Set task to sleep for number of days or until a given date*/
+    bool setTaskSleep(const QString &s);
     /*! count tasks in this model */
     int taskCount();
 

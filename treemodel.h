@@ -30,7 +30,7 @@ public:
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
     int columnCount(const QModelIndex &parent = QModelIndex()) const;
 
-    BranchItem* nextBranch (BranchItem* &current, BranchItem* &previous, bool deepLevelsFirst=true, BranchItem* start=NULL);
+    void nextBranch (BranchItem* &current, BranchItem* &previous, bool deepLevelsFirst=false, BranchItem* start=NULL);
 
     bool removeRows ( int row, int count, 
 		const QModelIndex & parent = QModelIndex() ); 

@@ -6,6 +6,7 @@
 #include <stdlib.h>
 
 #include <QDebug>
+#include <QDialog>
 #include <QString>
 
 QString qpointToString (const QPoint &p)
@@ -167,5 +168,10 @@ QPointF point (const QString &s, bool &ok)
 QString pointToString (const QPointF &p)
 {
     return QString("%1,%2").arg(p.x()).arg(p.y());
+}
+
+void centerDialog (QDialog *dia)
+{
+    dia->move(QCursor::pos() - 0.5 * QPoint(dia->rect().width(),dia->rect().height() ) );
 }
 

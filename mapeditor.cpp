@@ -563,11 +563,12 @@ void MapEditor::print()
 
 QRectF MapEditor::getTotalBBox()    //FIXME-2 frames missing, esp. cloud
 {				    //FIXME-2 xlinks also missing in getTotalBBox
+    //FIXME-1 qDebug()<<"ME::getTotalBBox";
     QRectF rt;
     BranchObj *bo;
     BranchItem *cur=NULL;
     BranchItem *prev=NULL;
-    model->nextBranch(cur,prev);
+    model->nextBranch(cur,prev,true);
     while (cur) 
     {
 	if (!cur->hasHiddenExportParent())
@@ -576,6 +577,8 @@ QRectF MapEditor::getTotalBBox()    //FIXME-2 frames missing, esp. cloud
 	    bo=(BranchObj*)(cur->getLMO());
 	    if (bo && bo->isVisibleObj())
 	    {
+                //FIXME-8 
+                if (debug) qDebug()<<"ME::getTotalBBox bo="<<cur->getHeading();
 		bo->calcBBoxSizeWithChildren();
 		QRectF r1=bo->getBBox();
 
@@ -591,17 +594,16 @@ QRectF MapEditor::getTotalBBox()    //FIXME-2 frames missing, esp. cloud
 		if (fio) rt=addBBox (fio->getBBox(),rt);
 	    }
 	}
-	model->nextBranch(cur,prev);
+	model->nextBranch(cur,prev,true);
     }
 
-    // XLinks	 //FIXME missing
+    // get bboxes of XLinks	 //FIXME-2 missing
 
     // Update scene according to new bbox
     if (!sceneRect().contains (rt) )
 	setSceneRect(sceneRect().united (rt));
     return rt;	
 }
-
 
 QImage MapEditor::getImage( QPointF &offset) 
 {
@@ -805,12 +807,7 @@ AttributeTable* MapEditor::attributeTable()
 
 void MapEditor::testFunction1()
 {
-    BranchItem *sebi=model->getSelectedBranch();
-    if (sebi)
-    {
-	OrnamentedObj *oo=(OrnamentedObj*)(sebi->getLMO());
-	oo->setRotation (oo->getRotation()+10);
-    }
+  model->loadMap("/suse/uwedr/vym/code/test/default.vym");
 }
     
 void MapEditor::testFunction2()

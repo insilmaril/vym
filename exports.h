@@ -113,8 +113,6 @@ private:
     QString cssDst;
 
     bool frameURLs;
-    bool noSingulars;
-    QString singularDelimiter;
 
     QPointF offset;
 

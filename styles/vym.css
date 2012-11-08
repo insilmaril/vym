@@ -66,36 +66,31 @@ a:hover {
 
 .vym-url {} 
 
-.vym-branch0 { 
-    color:#000000;  
-    font-size: x-large;
-    font-weight: bold;
+.vym-branch-0 { 
 }
-.vym-branch1{
-    font-size: normal;
-    font-weight: normal;
+.vym-branch-1{
 }
-.vym-branch2{
+.vym-branch-2{
     font-size: small;
     font-weight: normal;
 }
-.vym-branch3{
+.vym-branch-3{
     font-size: small;
     font-weight: normal;
 }
-.vym-branch4{
+.vym-branch-4{
     font-size: small;
     font-weight: normal;
 }
-.vym-branch5{
+.vym-branch-5{
     font-size: small;
     font-weight: normal;
 }
-.vym-branch6{
+.vym-branch-6{
     font-size: small;
     font-weight: normal;
 }
-.vym-branch7{
+.vym-branch-7{
     font-size: small;
     font-weight: normal;
 }
@@ -121,5 +116,15 @@ a:hover {
 }
 .standardflag { 
     margin-left: 5px; 
+}
+
+.vym-list-ul-0 {
+    list-style-type: none;
+    list-style-position: inside;
+}
+
+.vym-list-ul-1 {
+    list-style-type: none;
+    list-style-position: outside;
 }
 

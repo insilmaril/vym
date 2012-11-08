@@ -35,7 +35,6 @@
 extern bool debug;
 extern bool testmode;
 extern Main *mainWindow;
-extern QDBusConnection dbusConnection;
 
 extern Settings settings;
 extern QString tmpVymDir;
@@ -66,8 +65,6 @@ extern QDir lastExportDir;
 extern bool bugzillaClientAvailable;
 
 extern Settings settings;
-
-extern QList <Command*> modelCommands;
 
 uint VymModel::idLast=0;    // make instance
 
@@ -181,7 +178,7 @@ void VymModel::init ()
 
      // Announce myself on DBUS
     new AdaptorModel(this);    // Created and not deleted as documented in Qt
-    if (!dbusConnection.registerObject (QString("/vymmodel_%1").arg(modelID),this))
+    if (!QDBusConnection::sessionBus().registerObject (QString("/vymmodel_%1").arg(modelID),this))
 	qWarning ("VymModel: Couldn't register DBUS object!");
 }
 
@@ -418,7 +415,6 @@ File::ErrorCode VymModel::loadMap (
 
     bool zipped_org=zipped;
 
-
     if (lmode==NewMap)
     {
 	// Reset timestamp to check for later updates of file
@@ -464,8 +460,8 @@ File::ErrorCode VymModel::loadMap (
 	    if (flist.count()==1) 
 	    {
 		// Only one entry, take this one
-		xmlfile=tmpZipDir + "/"+flist.first();
-	    } else
+                xmlfile=tmpZipDir + "/"+flist.first();
+            } else
 	    {
 		for ( QStringList::Iterator it = flist.begin(); it != flist.end(); ++it ) 
 		    *it=tmpZipDir + "/" + *it;
@@ -1057,7 +1053,6 @@ void VymModel::redo()
     if (!redoSelection.isEmpty())
 	select (redoSelection);
 
-
     bool noErr;
     QString errMsg;
     parseAtom (redoCommand,noErr,errMsg);
@@ -1085,8 +1080,6 @@ void VymModel::redo()
     qDebug() << "       curStep="<<curStep;
     qDebug() << "    ---------------------------";
     */
-
-
 }
 
 bool VymModel::isRedoAvailable()
@@ -1121,6 +1114,13 @@ void VymModel::undo()
 
     // Find out current undo directory
     QString bakMapDir(QString(tmpMapDir+"/undo-%1").arg(curStep));
+
+    // select  object before undo
+    if (!select (undoSelection))
+    {
+	qWarning ("VymModel::undo()  Could not select object for undo");
+	return;
+    }
 
     if (debug)
     {
@@ -1819,8 +1819,8 @@ BranchItem* VymModel::findText (QString s,Qt::CaseSensitivity cs)
 	}   
 	if (!foundNote)
 	{
-	    if (!nextBranch(findCurrent,findPrevious) )
-		EOFind=true;
+	    nextBranch(findCurrent,findPrevious);
+	    if (!findCurrent) EOFind=true;
 	}
     }	
     if (!searching)
@@ -1876,11 +1876,12 @@ QStringList VymModel::getURLs(bool ignoreScrolled)
     BranchItem *selbi=getSelectedBranch();
     BranchItem *cur=selbi;
     BranchItem *prev=NULL;
+    nextBranch (cur,prev,true,selbi);
     while (cur) 
     {
 	if (!cur->getURL().isEmpty()  && !(ignoreScrolled && cur->hasScrolledParent() )) 
 	    urls.append( cur->getURL());
-	cur=nextBranch (cur,prev,true,selbi);
+	nextBranch(cur,prev,true,selbi);
     }	
     return urls;
 }
@@ -2164,25 +2165,50 @@ void VymModel::cycleTaskStatus(bool reverse)
     }
 }
 
-void VymModel::setTaskSleep(int n) 
+bool VymModel::setTaskSleep(const QString &s) 
 {
     BranchItem *selbi=getSelectedBranch();
-    if (selbi ) 
+    if (selbi && !s.isEmpty() ) 
     {
 	Task *task=selbi->getTask();
 	if (task ) 
 	{
-	    int oldsleep=task->getDaysSleep();
-	    task->setDateSleep (n);
-	    task->setDateModified();
-	    saveState (
-		selbi,
-		QString("setTaskSleep (%1)").arg(oldsleep),
-		selbi,
-		QString("setTaskSleep (%1)").arg(n),
-		QString("setTaskSleep (%1)").arg(n) );
+            bool ok;
+            int n=s.toInt(&ok);
+            if (!ok)
+            {
+                // Is s a date?
+                QDate d=QDate::fromString(s,Qt::ISODate);
+                d=QDate::fromString(s,Qt::ISODate);
+                if (d.isValid())
+                    // ISO date YYYY-MM-DD
+                    ok=true;
+                else
+                {
+                    d=QDate::fromString(s,Qt::DefaultLocaleShortDate);
+                    if (d.isValid()) 
+                        // Locale date, e.g. 24 Dec 2012
+                        ok=true;
+                }
+                if (ok) n=QDate::currentDate().daysTo(d);
+            }
+
+            if (ok)
+            {
+                int oldsleep=task->getDaysSleep();
+                task->setDateSleep (n);
+                task->setDateModified();
+                saveState (
+                    selbi,
+                    QString("setTaskSleep (%1)").arg(oldsleep),
+                    selbi,
+                    QString("setTaskSleep (%1)").arg(n),
+                    QString("setTaskSleep (%1)").arg(n) );
+                return true;
+            }
 	}
     }
+    return false;
 }
 
 int VymModel::taskCount()
@@ -3154,8 +3180,6 @@ void VymModel::toggleScroll()
 void VymModel::unscrollChildren() 
 {
     BranchItem *selbi=getSelectedBranch();
-    BranchItem *prev=NULL;
-    BranchItem *cur=selbi;
     if (selbi)
     {
 	saveStateChangingPart(
@@ -3164,14 +3188,17 @@ void VymModel::unscrollChildren()
 	    QString ("unscrollChildren ()"),
 	    QString ("unscroll all children of %1").arg(getObjectName(selbi))
 	);  
+        BranchItem *prev=NULL;
+        BranchItem *cur=NULL;
+        nextBranch (cur,prev,true,selbi);
 	while (cur) 
 	{
 	    if (cur->isScrolled())
 	    {
 		cur->toggleScroll(); 
 		emitDataChanged (cur);
-	}
-	    cur=nextBranch (cur,prev,true,selbi);
+            }
+	    nextBranch (cur,prev,true,selbi);
 	}   
 	updateActions();
 	reposition();
@@ -3362,12 +3389,13 @@ void VymModel::colorSubtree (QColor c, BranchItem *b)
 	    QString ("Set color of %1 and children to %2").arg(getObjectName(bi)).arg(c.name())
 	);  
 	BranchItem *prev=NULL;
-	BranchItem *cur=bi;
+	BranchItem *cur=NULL;
+        nextBranch (cur,prev,true,bi);
 	while (cur) 
 	{
 	    cur->setHeadingColor(c); // color links, color children
 	    emitDataChanged (cur);
-	    cur=nextBranch (cur,prev,true,bi);
+            nextBranch (cur,prev,true,bi);
 	}   
     }
     taskEditor->showSelection();
@@ -3458,7 +3486,8 @@ void VymModel::getBugzillaData(bool subtree)
     {	    
 	QString url;
 	BranchItem *prev=NULL;
-	BranchItem *cur=selbi;
+	BranchItem *cur=NULL;
+        nextBranch (cur,prev,true,selbi);
 	while (cur) 
 	{
 	    url=cur->getURL();
@@ -3472,7 +3501,7 @@ void VymModel::getBugzillaData(bool subtree)
 		}
 	    }
 	    if (subtree) 
-		cur=nextBranch (cur,prev,true,selbi);
+		nextBranch (cur,prev,true,selbi);
 	    else
 		cur=NULL;
 	}   
@@ -3548,12 +3577,13 @@ QStringList VymModel::getVymLinks()
 {
     QStringList links;
     BranchItem *selbi=getSelectedBranch();
-    BranchItem *cur=selbi;
+    BranchItem *cur=NULL;
     BranchItem *prev=NULL;
+    nextBranch (cur,prev,true,selbi);
     while (cur) 
     {
 	if (!cur->getVymLink().isEmpty()) links.append( cur->getVymLink());
-	cur=nextBranch (cur,prev,true,selbi);
+	nextBranch (cur,prev,true,selbi);
     }	
     return links;
 }
@@ -3859,6 +3889,14 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	{ 
 	    returnValue=getSelectString();
 	/////////////////////////////////////////////////////////////////////
+	} else if (com=="getTaskSleepDays")
+	{ 
+      Task *task=selbi->getTask();
+      if (task)
+        returnValue=task->getDaysSleep();
+      else
+        parser.setError (Aborted,"Branch has no task set");
+	/////////////////////////////////////////////////////////////////////
 	} else if (com=="getURL")
 	{ 
 	    returnValue=selti->getURL();
@@ -3883,6 +3921,13 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	{ 
 	    s=parser.parString(ok,0);
 	    returnValue=selti->hasActiveStandardFlag(s);
+	/////////////////////////////////////////////////////////////////////
+	} else if (com=="hasTask")
+	{ 
+      if (selbi && selbi->getTask() )
+        returnValue=true;
+      else
+        returnValue=false;
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="importDir")
 	{
@@ -4087,8 +4132,8 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="setTaskSleep")
 	{
-	    n=parser.parInt(ok,0);
-	    setTaskSleep (n);
+	    s=parser.parString(ok,0);
+	    returnValue=setTaskSleep (s);
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="setFrameIncludeChildren")
 	{
@@ -4312,7 +4357,7 @@ QVariant VymModel::execute (const QString &script)
 	{
 	    if (!options.isOn("batch") && !testmode )
 		QMessageBox::warning(0,tr("Warning"),tr("Script aborted:\n%1").arg(errMsg));
-	    qWarning()<< QString("VM::runScript aborted: "+errMsg);
+	    qWarning()<< QString("VM::execute aborted: "+errMsg + "\n" + script);
 	}
     }	
     return r;
@@ -4611,10 +4656,10 @@ void VymModel::exportLast()
     QString desc, command, path, configFile;
     if (exportLastAvailable(desc, command, path, configFile) )
     {
-	if (configFile.isEmpty() )
-	    execute (QString ("%1 (\"%2\")").arg(command).arg(path) );
-	else    
+	if (!configFile.isEmpty() && command=="exportImpress")
 	    execute (QString ("%1 (\"%2\",\"%3\")").arg(command).arg(path).arg(configFile) );
+	else    
+	    execute (QString ("%1 (\"%2\")").arg(command).arg(path) );
     }	    
 }
 
@@ -4709,6 +4754,7 @@ void VymModel::updateNoteFlag()
 
 void VymModel::reposition() //FIXME-4 VM should have no need to reposition, but the views...
 {
+    if (debug) qDebug()<<"*** VM::reposition a) foreach <mainbranch> do reposition(); end;"; //FIXME-8
     //qDebug() << "VM::reposition blocked="<<blockReposition;
     if (blockReposition) return;
 
@@ -4721,8 +4767,10 @@ void VymModel::reposition() //FIXME-4 VM should have no need to reposition, but 
 	else
 	    qDebug()<<"VM::reposition bo=0";
     }	
+    if (debug) qDebug()<<"*** VM::reposition b)  mE->getTotalBBox(); emitSelectionChanged()";
     mapEditor->getTotalBBox();	
     emitSelectionChanged();
+    if (debug) qDebug()<<"*** VM::reposition c) return;";
 }
 
 
@@ -4773,7 +4821,7 @@ bool VymModel::setMapLinkStyle (const QString & s)
     {
 	bo=(BranchObj*)(cur->getLMO() );
 	bo->setLinkStyle(bo->getDefLinkStyle(cur->parent() ));	//FIXME-4 better emit dataCHanged and leave the changes to View
-	cur=nextBranch(cur,prev);
+	nextBranch(cur,prev);
     }
     reposition();
     return true;
@@ -4807,7 +4855,7 @@ void VymModel::setMapDefLinkColor(QColor col)
     BranchItem *cur=NULL;
     BranchItem *prev=NULL;
     BranchObj *bo;
-    cur=nextBranch(cur,prev);
+    nextBranch(cur,prev);
     while (cur) 
     {
 	bo=(BranchObj*)(cur->getLMO() );
@@ -4823,12 +4871,12 @@ void VymModel::setMapLinkColorHintInt()
     BranchItem *cur=NULL;
     BranchItem *prev=NULL;
     BranchObj *bo;
-    cur=nextBranch(cur,prev);
+    nextBranch(cur,prev);
     while (cur) 
     {
 	bo=(BranchObj*)(cur->getLMO() );
 	bo->setLinkColor();
-	cur=nextBranch(cur,prev);
+	nextBranch(cur,prev);
     }
 }
 
@@ -4847,7 +4895,7 @@ void VymModel::toggleMapLinkColorHint()
     BranchItem *cur=NULL;
     BranchItem *prev=NULL;
     BranchObj *bo;
-    cur=nextBranch(cur,prev);
+    nextBranch(cur,prev);
     while (cur) 
     {
 	bo=(BranchObj*)(cur->getLMO() );

@@ -59,6 +59,7 @@ public:
     void setIncludeImagesHor(bool);
     bool getIncludeImagesHor();
     QString getIncludeImageAttr();
+    BranchItem* getFramedParentBranch(BranchItem *start);
     void setFrameIncludeChildren(bool);
     bool getFrameIncludeChildren();
 

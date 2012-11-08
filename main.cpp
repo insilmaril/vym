@@ -51,8 +51,6 @@ FindResultWidget *findResultWidget;
 
 Macros macros;
 
-QDBusConnection dbusConnection= QDBusConnection::sessionBus();
-
 uint itemLastID=0;		// Unique ID for all items in all models
 
 QString tmpVymDir;		// All temp files go there, created in mainwindow
@@ -203,7 +201,7 @@ int main(int argc, char* argv[])
     // Register for DBUS
     if (debug) cout << "PID="<<getpid()<<endl;
     QString pidString=QString ("%1").arg(getpid());
-    if (!dbusConnection.registerService ("org.insilmaril.vym-"+pidString))
+    if (!QDBusConnection::sessionBus().registerService ("org.insilmaril.vym-"+pidString))
     {
        fprintf(stderr, "%s\n",
 	    qPrintable(QDBusConnection::sessionBus().lastError().message()));        
