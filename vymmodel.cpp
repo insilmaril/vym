@@ -4656,10 +4656,10 @@ void VymModel::exportLast()
     QString desc, command, path, configFile;
     if (exportLastAvailable(desc, command, path, configFile) )
     {
-	if (configFile.isEmpty() )
-	    execute (QString ("%1 (\"%2\")").arg(command).arg(path) );
-	else    
+	if (!configFile.isEmpty() && command=="exportImpress")
 	    execute (QString ("%1 (\"%2\",\"%3\")").arg(command).arg(path).arg(configFile) );
+	else    
+	    execute (QString ("%1 (\"%2\")").arg(command).arg(path) );
     }	    
 }
 

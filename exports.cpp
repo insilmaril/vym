@@ -552,8 +552,6 @@ ExportHTML::ExportHTML(VymModel *m):ExportBase(m)
 
 void ExportHTML::init()
 {
-    singularDelimiter=": ";
-    noSingulars=false;	// Deactivated for the time being...
     frameURLs=true;
 }
 
@@ -573,7 +571,7 @@ QString ExportHTML::getBranchText(BranchItem *current)
         QString id=model->getSelectString(current);
         if (dia.useTextColor)
             col=QString("style='color:%1'").arg(current->getHeadingColor().name());
-        QString s=QString("<span class='vym-branch%1' %2 id='%3'>")
+        QString s=QString("<span class='vym-branch-%1' %2 id='%3'>")
             .arg(current->depth())
             .arg(col)
             .arg(id);
@@ -660,39 +658,60 @@ QString ExportHTML::buildList (BranchItem *current)
 
     BranchItem *bi=current->getFirstBranch();
 
-    // Only add itemized list, if we have more than one subitem.
-    // For only one subitem, just add a separator to keep page more compact
-    bool noSingularsHere=false;
-    if (current->branchCount()<2 && noSingulars) 
-        noSingularsHere=true;
+    QString ind="\n" + indent(current->depth() + 1, false);
 
-    if (bi)
+    QString sectionBegin;
+    QString sectionEnd;
+    QString itemBegin;
+    QString itemEnd;
+
+    switch (current->depth() + 1)
     {
-	if (noSingularsHere)
-	    r+=singularDelimiter;
-
+        case 0: 
+            sectionBegin="";
+            sectionEnd="";
+            itemBegin="<h1>";
+            itemEnd="</h1>";
+            break;
+        case 1: 
+            sectionBegin="";
+            sectionEnd="";
+            itemBegin="<h2>";
+            itemEnd="</h2>";
+            break;
+        default:
+            sectionBegin="<ul " + QString("class=\"vym-list-ul-%1\"").arg(current->depth() + 1)  +">";
+            sectionEnd="</ul>";
+            itemBegin="  <li>";
+            itemEnd="  </li>";
+            break;
+    }
+    
+    if (bi && !bi->hasHiddenExportParent() && !bi->isHidden() )	
+    {
+        r+=ind + sectionBegin; 
 	while (bi)
 	{
-	    if (!bi->hasHiddenExportParent() )	
+	    if (!bi->hasHiddenExportParent() && !bi->isHidden()) 
 	    {
-                if (!bi->isHidden()) visChilds++;
-		if (!noSingularsHere) r+="<li>";
+                visChilds++;
+		r+=ind + itemBegin;
 		r+=getBranchText (bi);
-		if (!bi->getURL().isEmpty() && frameURLs && noSingularsHere)
-		    // Add frame, if we have subitems to an URL
-		    r+="<table border=1><tr><td>"+buildList (bi)+"</td></tr></table>";	// recursivly add deeper branches
-		else
-		    r+=buildList (bi);	// recursivly add deeper branches
-		if (!noSingularsHere) r+="</li>";
-		r+="\n";
+
+                //FIXME-0 
+                if (itemBegin.startsWith("<h") )
+                    r+=itemEnd + buildList (bi);
+                else
+                    r+=buildList (bi) + itemEnd;	
 	    }
+            qDebug()<<ind + "ok1 " + bi->getHeading();
 	    i++;
 	    bi=current->getBranchNum(i);
 	}
+        r+=ind + sectionEnd;
     }
 
-    if (!noSingularsHere && visChilds>0)
-        r = "<ul>\n" + r + "\n</ul>\n";
+    qDebug()<<ind + "r="<<r;
     return r;
 }
 
@@ -821,18 +840,7 @@ void ExportHTML::doExport(bool useDialog)
     }
 
     // Main loop over all mapcenters
-    QString s;
-    TreeItem *rootItem=model->getRootItem();
-    BranchItem *bi;
-    for (int i=0; i<rootItem->branchCount(); i++)
-    {
-	bi=rootItem->getBranchNum(i);
-	if (!bi->hasHiddenExportParent())
-	{
-	    ts<<getBranchText (bi);
-	    ts<<buildList (bi);
-	}
-    }	
+    ts << buildList(model->getRootItem()) << "\n";
 
     // Imagemap
     ts<<"<map name='imagemap'>\n"+imageMap+"</map>\n";
