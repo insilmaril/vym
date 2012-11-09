@@ -417,7 +417,7 @@ FileType getMapType (const QString &fn)
     if (i>=0)
     {
 	QString postfix=fn.mid(i+1);
-	if (postfix=="vym" || postfix=="vyp") return VymMap;
+	if (postfix=="vym" || postfix=="vyp" || postfix=="xml") return VymMap;
 	if (postfix=="mm") return FreemindMap;	
     }
     return UnknownMap;
