@@ -3940,15 +3940,17 @@ void Main::editTaskSleepN()
                 {
                     ok=true;
                     s=dia->getText();
-                }
+                } else
+                    ok=false;
+
                 delete dia;
             } else
                 s=QString("%1").arg(n);
 
             if (ok && !m->setTaskSleep(s) )
-            QMessageBox::warning(0, 
-                tr("Warning"),
-                tr("Couldn't set sleep time to %1.\n").arg(s));
+                QMessageBox::warning(0, 
+                    tr("Warning"),
+                    tr("Couldn't set sleep time to %1.\n").arg(s));
 	}
     }
 }
