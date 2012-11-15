@@ -582,7 +582,7 @@ QRectF MapEditor::getTotalBBox()    //FIXME-8 frames and xlinks missing, esp. cl
                 if (debug) qDebug()<<"  ME::getTotalBBox bo="<<cur->getHeading();
 
                 //FIXME-8 below again calls itself recursively!!
-		bo->calcBBoxSizeWithChildren();
+		//bo->calcBBoxSizeWithChildren();
 
 		QRectF r1=bo->getBBox();
 
