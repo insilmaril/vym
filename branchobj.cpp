@@ -608,9 +608,9 @@ void BranchObj::reposition()
     if (debug)  //FIXME-8
     {
         if (!treeItem->getHeading().isEmpty())
-            qDebug()<< "  BO::reposition  a) "<<treeItem->depth()<<" "<<treeItem->getHeading();
+            qDebug()<< "  BO::reposition  a) d="<<treeItem->depth()<<" "<<treeItem->getHeading();
         else    
-            qDebug()<< "  BO::reposition  a) ???";
+            qDebug()<< "  BO::reposition  a) d="<<treeItem->depth()<<" ???";
     }
 
     if (treeItem->depth()==0)
@@ -674,8 +674,8 @@ ConvexPolygon BranchObj::getBoundingPolygon()
 
 void BranchObj::calcBBoxSizeWithChildren()  
 {   
-    // FIXME-1 Below is wrong. Called multiple times!
-    // FIXME-2 Hm, should not be necessary at all???
+    // FIXME-8 Below is wrong. Called multiple times!
+    // FIXME-8 Hm, should not be necessary at all???
     
     // This is initially called only from reposition and
     // and only for mapcenter. So it won't be
@@ -684,7 +684,7 @@ void BranchObj::calcBBoxSizeWithChildren()
 
     // if branch is scrolled, ignore children, but still consider floatimages
     BranchItem *bi=(BranchItem*)treeItem;
-    if (debug) qDebug()<<"BO::calcBBSizeWithChildren  "<<bi->getHeadingDepth(); //FIXME-8
+    if (debug) qDebug()<<"    BO::calcBBSizeWithChildren  "<<bi->getHeadingDepth(); //FIXME-8
     if ( bi->isScrolled() ) 
     {
 	bboxTotal.setWidth (bbox.width());
