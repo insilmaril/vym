@@ -561,8 +561,8 @@ void MapEditor::print()
     }
 }
 
-QRectF MapEditor::getTotalBBox()    //FIXME-2 frames missing, esp. cloud
-{				    //FIXME-2 xlinks also missing in getTotalBBox
+QRectF MapEditor::getTotalBBox()    //FIXME-8 frames and xlinks missing, esp. cloud
+{				    
     //FIXME-8 
     if (debug) qDebug()<<"ME::getTotalBBox begin";
     QRectF rt;
@@ -601,7 +601,7 @@ QRectF MapEditor::getTotalBBox()    //FIXME-2 frames missing, esp. cloud
 	model->nextBranch(cur,prev,true);
     }
 
-    // get bboxes of XLinks	 //FIXME-2 missing
+    // get bboxes of XLinks	 //FIXME-8 missing
 
     // Update scene according to new bbox
     if (!sceneRect().contains (rt) )

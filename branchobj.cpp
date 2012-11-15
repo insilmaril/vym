@@ -607,10 +607,10 @@ void BranchObj::reposition()
 */	
     if (debug)  //FIXME-8
     {
-    if (!treeItem->getHeading().isEmpty())
-	qDebug()<< "BO::reposition  a) "<<treeItem->depth()<<" "<<treeItem->getHeading();
-    else    
-	qDebug()<< "BO::reposition  a) ???";
+        if (!treeItem->getHeading().isEmpty())
+            qDebug()<< "  BO::reposition  a) "<<treeItem->depth()<<" "<<treeItem->getHeading();
+        else    
+            qDebug()<< "  BO::reposition  a) ???";
     }
 
     if (treeItem->depth()==0)
@@ -632,6 +632,13 @@ void BranchObj::reposition()
 	// For editing a branch it isn't called...
 	alignRelativeTo ( QPointF (absPos.x(),
 			    absPos.y()-(bboxTotal.height()-bbox.height())/2) );	
+    }
+    if (debug) //FIXME-8
+    {
+        if (!treeItem->getHeading().isEmpty())
+            qDebug()<< "  BO::reposition  b) "<<treeItem->depth()<<" "<<treeItem->getHeading();
+        else    
+            qDebug()<< "  BO::reposition  b) ???";
     }
 }
 
