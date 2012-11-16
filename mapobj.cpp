@@ -79,24 +79,25 @@ QString MapObj::getPos()
 
 void MapObj::move (double x, double y) 
 {
-    absPos.setX( x);
-    absPos.setY( y);
-    bbox.moveTo(QPointF(x,y));
-    clickPoly=QPolygonF (bbox); 
+    MapObj::move (QPointF(x,y));
 }
 
 void MapObj::move (QPointF p)
 {
     absPos=p;
     bbox.moveTo (p);
+    //setPos (p); //FIXME-8 new: Use rel positioninf of graphicsitems
     clickPoly=QPolygonF (bbox);
 }
 
 void MapObj::moveBy (double x, double y) 
 {
-    MapObj::move (x+absPos.x(),y+absPos.y() );
-    bbox.moveTo (bbox.x()+x,bbox.y()+y);
-    clickPoly.translate (x,y);
+    QPointF v(x,y);
+    MapObj::move (absPos + v );
+    // MapObj::move (pos() + v ); //FIXME-8
+    //bbox.moveTo (bbox.x()+x,bbox.y()+y);
+    bbox.moveTo (bbox.topLeft() + v);
+    clickPoly.translate (v);
 }
 
 QRectF MapObj::boundingRect () const 
