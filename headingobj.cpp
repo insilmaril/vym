@@ -4,6 +4,8 @@
 
 #include "headingobj.h"
 
+extern bool debug;
+
 /////////////////////////////////////////////////////////////////
 // HeadingObj
 /////////////////////////////////////////////////////////////////
@@ -225,7 +227,7 @@ void HeadingObj::setText (QString s)
 	}
     } // ASCII heading with multiple lines
     setVisibility (visible);
-    qDebug()<<"HO::setText ("<<heading<<")  absPos="<<absPos<<"  parentPos="<<parentItem()->pos();  //FIXME-8
+    if (debug) qDebug()<<"HO::setText ("<<heading<<")  absPos="<<absPos<<"  parentPos="<<parentItem()->pos();  //FIXME-8
     move (absPos.x(),absPos.y());
     calcBBoxSize();
 }
