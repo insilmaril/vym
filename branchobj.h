@@ -27,7 +27,6 @@ public:
     virtual void setVisibility(bool);	    // set vis. for w
     virtual void setLinkColor();	    // set the color of link
 
-    virtual void updateContentSize();
     virtual void positionContents();
     virtual void move (double x,double y);
     virtual void move (QPointF);

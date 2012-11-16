@@ -202,14 +202,6 @@ void BranchObj::setLinkColor ()
     }	    
 }
 
-void BranchObj::updateContentSize()
-{
-    if (debug) qDebug()<<"BO::updateContentSize"; // FIXME-8
-    calcBBoxSize();
-    positionBBox();
-    requestReposition();
-}
-
 void BranchObj::positionContents()
 {
     if (debug) qDebug()<<"  BO::positionContents (loop over images)";   //FIXME-8
@@ -439,7 +431,7 @@ void BranchObj::updateData()
 	    changed=true;
 	}   
     }
-    if (changed) updateContentSize(); 
+    if (changed) calcBBoxSize(); 
 }
 
 void BranchObj::setDefAttr (BranchModification mod, bool keepFrame)
@@ -618,7 +610,7 @@ void BranchObj::reposition()
 	// only calculate the sizes once. If the deepest LMO 
 	// changes its height,
 	// all upper LMOs have to change, too.
-	calcBBoxSizeWithChildren();
+	calcBBoxSizeWithChildren(); //FIXME-8 this one is still required :-(
 	updateLinkGeometry();	// This update is needed if the scene is resized 
 			// due to excessive moving of a FIO
 
