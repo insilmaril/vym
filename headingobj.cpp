@@ -88,10 +88,10 @@ void HeadingObj::calcBBoxSize()
     bbox.setSize (QSizeF(w,h));
 }
 
-QGraphicsTextItem* HeadingObj::newLine(QString s)
+QGraphicsTextItem* HeadingObj::newLine(QString s)   //FIXME-8 cleanup comments
 {
     //QGraphicsSimpleTextItem *t=new QGraphicsSimpleTextItem (s,0,scene);
-    QGraphicsTextItem *t=new QGraphicsTextItem (s,0,scene());
+    QGraphicsTextItem *t=new QGraphicsTextItem (s,parentItem(),scene());
     t->setFont (font);
     t->setZValue(dZ_TEXT);
     // TextItem
@@ -225,6 +225,7 @@ void HeadingObj::setText (QString s)
 	}
     } // ASCII heading with multiple lines
     setVisibility (visible);
+    qDebug()<<"HO::setText ("<<heading<<")  absPos="<<absPos<<"  parentPos="<<parentItem()->pos();  //FIXME-8
     move (absPos.x(),absPos.y());
     calcBBoxSize();
 }
