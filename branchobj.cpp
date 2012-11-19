@@ -486,6 +486,7 @@ void BranchObj::alignRelativeTo (QPointF ref,bool alignSelf)
     if (parObj)	depth=1 + parObj->getTreeItem()->depth();
 // TODO testing
 /*
+*/
 if (debug)
 {
     QString o;
@@ -519,7 +520,6 @@ if (debug)
 //	<< "  th="<<th
     ;
 }
-*/
 
     setOrientation();
     //updateLinkGeometry();
@@ -612,7 +612,7 @@ void BranchObj::reposition()
 	// all upper LMOs have to change, too.
 	calcBBoxSizeWithChildren(); //FIXME-8 this one is still required :-(
 	updateLinkGeometry();	// This update is needed if the scene is resized 
-			// due to excessive moving of a FIO
+                    		// due to excessive moving of a FIO     //FIXME-8 really needed?
 
 	alignRelativeTo ( QPointF (absPos.x(),
 	    absPos.y()-(bboxTotal.height()-bbox.height())/2) );	
@@ -691,7 +691,7 @@ void BranchObj::calcBBoxSizeWithChildren()
 	return;
     }
     
-    /* FIXME-2 not really needed?
+    /* FIXME-8 not really needed?
     */
     QRectF r(0,0,0,0);
     QRectF br;
