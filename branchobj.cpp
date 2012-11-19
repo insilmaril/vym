@@ -676,7 +676,6 @@ void BranchObj::calcBBoxSizeWithChildren()
 
     // if branch is scrolled, ignore children, but still consider floatimages
     BranchItem *bi=(BranchItem*)treeItem;
-    if (debug) qDebug()<<"    BO::calcBBSizeWithChildren  "<<bi->getHeadingDepth(); //FIXME-8
     if ( bi->isScrolled() ) 
     {
 	bboxTotal.setWidth (bbox.width());
@@ -695,7 +694,8 @@ void BranchObj::calcBBoxSizeWithChildren()
     */
     QRectF r(0,0,0,0);
     QRectF br;
-    // Now calculate recursivly
+
+    // Now calculate 
     // sum of heights 
     // maximum of widths 
     // minimum of y
@@ -710,6 +710,8 @@ void BranchObj::calcBBoxSizeWithChildren()
 	    r.setHeight(br.height() + r.height() );
 	}
     }
+
+    if (debug) qDebug()<<"    BO::calcBBSizeWithChildren  "<<bi->getHeadingDepth(); //FIXME-8
 
     // Add myself and also
     // add width of link to sum if necessary

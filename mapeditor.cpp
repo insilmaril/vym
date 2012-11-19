@@ -577,7 +577,7 @@ QRectF MapEditor::getTotalBBox()    //FIXME-8 frames and xlinks missing, esp. cl
 	    // Branches
 	    bo=(BranchObj*)(cur->getLMO());
 	    if (bo && bo->isVisibleObj())
-	    {
+            {
                 //FIXME-8 
                 if (debug) qDebug()<<"  ME::getTotalBBox bo="<<cur->getHeading();
 
