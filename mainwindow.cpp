@@ -281,8 +281,13 @@ Main::Main(QWidget* parent, Qt::WFlags f) : QMainWindow(parent,f)
 
     // Create tab widget which holds the maps
     tabWidget= new QTabWidget (centralWidget);
-    connect( tabWidget, SIGNAL( currentChanged( QWidget * ) ), 
-	this, SLOT( editorChanged( QWidget * ) ) );
+    connect(tabWidget, SIGNAL( currentChanged( QWidget * ) ), 
+            this, SLOT( editorChanged( QWidget * ) ) );
+
+    // Allow closing of tabs (introduced in Qt 4.5)
+    tabWidget->setTabsClosable( true ); 
+    connect(tabWidget, SIGNAL(tabCloseRequested(int)), 
+            this, SLOT( closeTab(int) ));
 
     layout->addWidget (tabWidget);
 
@@ -3445,6 +3450,22 @@ void Main::fileExportLast()
     if (m) m->exportLast();
 }
 
+bool Main::closeTab(int i)
+{
+    // Find model
+    VymModel *m=vymViews.at(i)->getModel();
+    if (!m) return true;
+
+    vymViews.removeAt (i);
+    tabWidget->removeTab (i);
+
+    delete (m->getMapEditor()); 
+    delete (m); 
+
+    updateActions();
+    return false;
+}
+
 bool Main::fileCloseMap()   
 {
     VymModel *m=currentModel();
@@ -3476,14 +3497,7 @@ bool Main::fileCloseMap()
 		    return true;
 	    }
 	} 
-	vymViews.removeAt (tabWidget->currentIndex() );
-	tabWidget->removeTab (tabWidget->currentIndex() );
-
-	delete (m->getMapEditor()); 
-	delete (m); 
-
-	updateActions();
-	return false;
+        return closeTab(tabWidget->currentIndex());
     }
     return true; // Better don't exit vym if there is no currentModel()...
 }

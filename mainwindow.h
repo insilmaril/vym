@@ -125,6 +125,7 @@ private slots:
     void fileExportTaskjuggler();
     void fileExportImpress();
     void fileExportLast();
+    bool closeTab(int i);
     bool fileCloseMap();
     void filePrint();
     bool fileExitVYM();
