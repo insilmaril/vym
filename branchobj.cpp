@@ -244,7 +244,7 @@ void BranchObj::positionBBox() // FIXME-2 consider dimensions of frame (thicknes
     if (debug) qDebug()<<"  BO::positionBBox ("<<treeItem->getHeading()<<")";
     QPointF ap=getAbsPos();
     bbox.moveTopLeft (ap);
-    positionContents();
+    positionContents();   //FIXME-8
 
     //Update links to other branches	
     XLinkObj *xlo;
@@ -592,7 +592,6 @@ if (debug)
     }
 }
 
-
 void BranchObj::reposition()
 {   
 /* TODO testing only
@@ -617,7 +616,7 @@ void BranchObj::reposition()
 	alignRelativeTo ( QPointF (absPos.x(),
 	    absPos.y()-(bboxTotal.height()-bbox.height())/2) );	
 	    //absPos.y() ) );
-	positionBBox();	// Reposition bbox and contents
+	positionBBox();	// Reposition bbox and contents //FIXME-8
     } else
     {
 	// This is only important for moving branches:
