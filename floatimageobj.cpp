@@ -4,6 +4,8 @@
 #include "floatimageobj.h"
 #include "branchobj.h"
 
+extern bool debug;
+
 /////////////////////////////////////////////////////////////////
 // FloatImageObj 
 /////////////////////////////////////////////////////////////////
@@ -82,6 +84,7 @@ void FloatImageObj::setVisibility(bool v)
 
 void FloatImageObj::move (double x, double y)
 {
+    if (debug) qDebug()<<"FIO::move "<<x<<","<<y<<"  and posBBox";
     FloatObj::move(x,y);
     icon->setPos (x+4,y+4);
     positionBBox();
@@ -89,11 +92,13 @@ void FloatImageObj::move (double x, double y)
 
 void FloatImageObj::move (QPointF p)
 {
+    if (debug) qDebug()<<"FIO::move "<<p<<" and calling OO::move";
     OrnamentedObj::move (p.x(),p.y());
 }
 
 void FloatImageObj::positionBBox()
 {
+    if (debug) qDebug()<<"FIO::positionBBox";
     clickPoly=QPolygonF(bbox);
     setZValue (dZ_FLOATIMG);
 }

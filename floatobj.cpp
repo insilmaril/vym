@@ -3,6 +3,8 @@
 #include "floatobj.h"
 #include "mapitem.h"
 
+extern bool debug;
+
 /////////////////////////////////////////////////////////////////
 // FloatObj
 /////////////////////////////////////////////////////////////////
@@ -48,6 +50,7 @@ void FloatObj::setDockPos()
 
 void FloatObj::reposition()
 {
+    if (debug) qDebug()<<"FO:reposition"; //FIXME-8
     move2RelPos (relPos);
     updateLinkGeometry();   
 }
