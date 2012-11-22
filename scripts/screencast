@@ -1,0 +1,8 @@
+#!/bin/bash
+
+VYMDIR=~/vym/code
+MAP=$VYMDIR/../maps/screencasts/tasks.vym
+
+$VYMDIR/vym -l -n test \
+  -geometry 768x576+0+0 \
+  $MAP
