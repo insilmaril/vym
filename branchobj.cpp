@@ -213,7 +213,7 @@ void BranchObj::positionContents()
 void BranchObj::move (double x, double y)
 {
     OrnamentedObj::move (x,y);
-    positionBBox();
+    //FIXME-8 positionBBox(); required only for images
 }
 
 void BranchObj::move (QPointF p)
@@ -524,7 +524,9 @@ if (debug)
     setOrientation();
     //updateLinkGeometry();
 
-    if (depth==1)
+    if (depth==0)
+        move (getAbsPos()); // Trigger update of frames etc.
+    else if(depth==1)
 	move2RelPos (getRelPos() );
     else if (depth>1)
     {
@@ -616,7 +618,7 @@ void BranchObj::reposition()
 	alignRelativeTo ( QPointF (absPos.x(),
 	    absPos.y()-(bboxTotal.height()-bbox.height())/2) );	
 	    //absPos.y() ) );
-	positionBBox();	// Reposition bbox and contents //FIXME-8
+	//positionBBox();	// Reposition bbox and contents //FIXME-8
     } else
     {
 	// This is only important for moving branches:

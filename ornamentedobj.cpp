@@ -249,7 +249,8 @@ void OrnamentedObj::move (double x, double y)
     // FIXME-8 unnecessary calls to positionContents, ...
     if (debug) qDebug()<<"     OO::move and posContents; updateLinkGeo; requestRepos";
     MapObj::move (x,y);
-    positionContents(); //FIXME-8
+    //positionContents(); //FIXME-8
+    positionBBox();
     updateLinkGeometry();
 }
 
