@@ -403,6 +403,8 @@ bool parseVYMHandler::readMapAttr (const QXmlAttributes& a)
     QColor col;
     if (!a.value( "author").isEmpty() )  
 	model->setAuthor(a.value( "author" ) );
+    if (!a.value( "title").isEmpty() )
+	model->setTitle (a.value( "title" ) );
     if (!a.value( "comment").isEmpty() )
 	model->setComment (a.value( "comment" ) );
     if (!a.value( "branchCount").isEmpty() )

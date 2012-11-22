@@ -15,10 +15,12 @@ public:
 
     virtual QString getComment();
     virtual QString getAuthor();
+    virtual QString getMapTitle();
     virtual void setStats( const QString & s );
 
 public slots:
     virtual void setMapName( const QString & s );
+    virtual void setMapTitle( const QString & s );
     virtual void setComment( const QString & s );
     virtual void setAuthor( const QString & s );
 

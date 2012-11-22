@@ -106,6 +106,18 @@ def test_basics (vym)
 end
 
 #######################
+def test_extrainfo (vym)
+  heading "Extra information:"
+  init_map
+  vym.setMapAuthor("Fra Erasmas")
+  expect "Set and get map author", "Fra Erasmas", vym.getMapAuthor
+  vym.setMapComment("xy z")
+  expect "Set and get map comment", "xy z", vym.getMapComment
+  vym.setMapTitle("vym rules!")
+  expect "Set and get map title", "vym rules!", vym.getMapTitle
+end
+
+#######################
 def test_adding_branches (vym)
   heading "Adding branches:"
   init_map
@@ -512,6 +524,7 @@ end
 
 #######################
 test_basics(vym)
+test_extrainfo(vym)
 test_adding_branches(vym)
 test_adding_maps(vym)
 test_scrolling(vym)
@@ -577,9 +590,7 @@ setIncludeImagesHorizontally
 setIncludeImagesVertically
 setMapAnimCurve
 setMapAnimDuration
-setMapAuthor
 setMapBackgroundColor
-setMapComment
 setMapDefLinkColor
 setMapLinkStyle
 setMapRotation

@@ -38,6 +38,7 @@ class VymModel :  public TreeModel {
 ////////////////////////////////////////////
 private:
     QString version;	//!< version string saved in vym file
+    QString title;
     QString author;
     QString comment;
     QDate date;
@@ -283,6 +284,8 @@ public:
 public:
     void setVersion(const  QString &);
     QString getVersion();
+    void setTitle  (const QString &);
+    QString getTitle ();
     void setAuthor  (const QString &);
     QString getAuthor ();
     void setComment (const QString &);

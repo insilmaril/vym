@@ -588,6 +588,15 @@ void Main::setupAPI()
     c=new Command ("getHeading",Command::TreeItem);
     modelCommands.append(c);
 
+    c=new Command ("getMapAuthor",Command::Any);
+    modelCommands.append(c);
+
+    c=new Command ("getMapComment",Command::Any);
+    modelCommands.append(c);
+
+    c=new Command ("getMapTitle",Command::Any);
+    modelCommands.append(c);
+
     c=new Command ("getSelectString",Command::TreeItem);
     modelCommands.append(c);
 
@@ -766,12 +775,16 @@ void Main::setupAPI()
     c->addPar (Command::Int,false,"Duration of animation in MapEditor in milliseconds");
     modelCommands.append(c);
 
+    c=new Command ("setMapBackgroundColor",Command::Any); 
+    c->addPar (Command::Color,false,"Color of map background");
+    modelCommands.append(c);
+
     c=new Command ("setMapComment",Command::Any); 
     c->addPar (Command::String,false,"");
     modelCommands.append(c);
 
-    c=new Command ("setMapBackgroundColor",Command::Any); 
-    c->addPar (Command::Color,false,"Color of map background");
+    c=new Command ("setMapTitle",Command::Any); 
+    c->addPar (Command::String,false,"");
     modelCommands.append(c);
 
     c=new Command ("setMapDefLinkColor",Command::Any); 
@@ -784,6 +797,10 @@ void Main::setupAPI()
 
     c=new Command ("setMapRotation",Command::Any); 
     c->addPar (Command::Double,false,"Rotation of map");
+    modelCommands.append(c);
+
+    c=new Command ("setMapTitle",Command::Any); 
+    c->addPar (Command::String,false,"");
     modelCommands.append(c);
 
     c=new Command ("setMapZoom",Command::Any); 
@@ -3982,6 +3999,7 @@ void Main::editMapInfo()
 
     ExtraInfoDialog dia;
     dia.setMapName (m->getFileName() );
+    dia.setMapTitle (m->getTitle() );
     dia.setAuthor (m->getAuthor() );
     dia.setComment(m->getComment() );
 
@@ -4018,6 +4036,7 @@ void Main::editMapInfo()
     {
 	m->setAuthor (dia.getAuthor() );
 	m->setComment (dia.getComment() );
+	m->setTitle (dia.getMapTitle() );
     }
 }
 

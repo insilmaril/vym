@@ -246,6 +246,7 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix, bool w
     QString mapAttr=xml.attribut("version",vymVersion);
     if (!saveSel)
 	mapAttr+= xml.attribut("author",author) +
+		  xml.attribut("title",title) +
 		  xml.attribut("comment",comment) +
 		  xml.attribut("date",getDate()) +
 		  xml.attribut("branchCount", QString().number(branchCount())) +
@@ -1535,6 +1536,21 @@ void VymModel::setVersion (const QString &s)
 QString VymModel::getVersion()
 {
     return version;
+}
+
+void VymModel::setTitle (const QString &s)
+{
+    saveState (
+	QString ("setMapTitle (\"%1\")").arg(title),
+	QString ("setMapTitle (\"%1\")").arg(s),
+	QString ("Set title of map to \"%1\"").arg(s)
+    );
+    title=s;
+}
+
+QString VymModel::getTitle()
+{
+    return title;
 }
 
 void VymModel::setAuthor (const QString &s)
@@ -3885,6 +3901,18 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	{ 
 	    returnValue=selti->getHeading();
 	/////////////////////////////////////////////////////////////////////
+	} else if (com=="getMapAuthor")
+	{ 
+	    returnValue=author;
+	/////////////////////////////////////////////////////////////////////
+	} else if (com=="getMapComment")
+	{ 
+	    returnValue=comment;
+	/////////////////////////////////////////////////////////////////////
+	} else if (com=="getMapTitle")
+	{ 
+	    returnValue=title;
+	/////////////////////////////////////////////////////////////////////
 	} else if (com=="getSelectString")
 	{ 
 	    returnValue=getSelectString();
@@ -4216,6 +4244,11 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	{
 	    s=parser.parString(ok,0);
 	    if (ok) setComment(s);
+	/////////////////////////////////////////////////////////////////////
+	} else if (com=="setMapTitle")
+	{
+	    s=parser.parString(ok,0);
+	    if (ok) setTitle(s);
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="setMapBackgroundColor")
 	{

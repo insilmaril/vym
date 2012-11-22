@@ -12,6 +12,16 @@ void ExtraInfoDialog::setMapName(const QString &s)
     ui.mapNameLE->setText (s);
 }
 
+void ExtraInfoDialog::setMapTitle(const QString &s)
+{
+    ui.mapTitleLE->setText (s);
+}
+
+QString ExtraInfoDialog::getMapTitle()
+{
+    return ui.mapTitleLE->text();
+}
+
 void ExtraInfoDialog::setComment (const QString &s)
 {
     ui.commentTE->setText (s);
