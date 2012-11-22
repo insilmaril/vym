@@ -241,7 +241,7 @@ void QGraphicsItem::paint(QPainter*, const QStyleOptionGraphicsItem*, QWidget*)
 void BranchObj::positionBBox() // FIXME-2 consider dimensions of frame (thickness, geometry, padding...
 {
     //FIXME-8 
-    if (debug) qDebug()<<"  BO::positionBBox ("<<treeItem->getHeading()<<")";
+    if (debug) qDebug()<<"        BO::positionBBox ("<<treeItem->getHeading()<<")";
     QPointF ap=getAbsPos();
     bbox.moveTopLeft (ap);
     positionContents();   //FIXME-8
@@ -504,7 +504,7 @@ if (debug)
     QPointF pp; 
     if (parObj) pp=parObj->getChildPos();
     qDebug() << "BO::alignRelTo for "<<h;
-//    qDebug() << "    d="<<depth;
+    qDebug() << "    d="<<depth;
 //    qDebug() <<"  parO="<<parObj;
 //    qDebug() <<"   ref="<<ref;
     //qDebug() <<   "  bbox.tL="<<bboxTotal.topLeft();
