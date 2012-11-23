@@ -205,9 +205,9 @@ void BranchObj::setLinkColor ()
 void BranchObj::positionContents()
 {
     if (debug) qDebug()<<"  BO::positionContents (loop over images)";   //FIXME-8
+    OrnamentedObj::positionContents();
     for (int i=0; i<treeItem->imageCount(); ++i)
 	treeItem->getImageObjNum(i)->reposition();
-    OrnamentedObj::positionContents();
 }
 
 void BranchObj::move (double x, double y)
@@ -504,7 +504,7 @@ if (debug)
     QPointF pp; 
     if (parObj) pp=parObj->getChildPos();
     qDebug() << "BO::alignRelTo for "<<h;
-    qDebug() << "    d="<<depth;
+//    qDebug() << "    d="<<depth;
 //    qDebug() <<"  parO="<<parObj;
 //    qDebug() <<"   ref="<<ref;
     //qDebug() <<   "  bbox.tL="<<bboxTotal.topLeft();
@@ -522,7 +522,6 @@ if (debug)
 }
 
     setOrientation();
-    //updateLinkGeometry();
 
     if (depth==0)
         move (getAbsPos()); // Trigger update of frames etc.
@@ -667,14 +666,6 @@ ConvexPolygon BranchObj::getBoundingPolygon()
 
 void BranchObj::calcBBoxSizeWithChildren()  
 {   
-    // FIXME-8 Below is wrong. Called multiple times!
-    // FIXME-8 Hm, should not be necessary at all???
-    
-    // This is initially called only from reposition and
-    // and only for mapcenter. So it won't be
-    // called more than once for a single user 
-    // action
-
     // if branch is scrolled, ignore children, but still consider floatimages
     BranchItem *bi=(BranchItem*)treeItem;
     if ( bi->isScrolled() ) 
@@ -711,8 +702,6 @@ void BranchObj::calcBBoxSizeWithChildren()
 	    r.setHeight(br.height() + r.height() );
 	}
     }
-
-    if (debug) qDebug()<<"    BO::calcBBSizeWithChildren  "<<bi->getHeadingDepth(); //FIXME-8
 
     // Add myself and also
     // add width of link to sum if necessary

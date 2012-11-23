@@ -534,6 +534,7 @@ File::ErrorCode VymModel::loadMap (
 		resetSelectionHistory();
 	    }
     
+            if (debug) qDebug()<<"*** VM::load calling reposition"; //FIXME-8
 	    reposition();   // to generate bbox sizes
 	    emitSelectionChanged();
 
@@ -4755,8 +4756,11 @@ void VymModel::updateNoteFlag()
 void VymModel::reposition() //FIXME-4 VM should have no need to reposition, but the views...
 {
     if (debug) qDebug()<<"*** VM::reposition a) foreach <mainbranch> do reposition(); end;"; //FIXME-8
-    if (debug) qDebug()<<"    VM::reposition blocked="<<blockReposition;
-    if (blockReposition) return;
+    if (blockReposition) 
+    {//FIXME-8
+        if (debug) qDebug()<<"    VM::reposition blocked, returning now.";
+        return;
+    }
 
     BranchObj *bo;
     for (int i=0;i<rootItem->branchCount(); i++)

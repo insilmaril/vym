@@ -182,7 +182,7 @@ bool OrnamentedObj::getFrameIncludeChildren()
     return frame->getFrameIncludeChildren ();
 }
 
-void OrnamentedObj::positionContents()	//FIXME-8 called multiple times for each object after moving an image with mouse
+void OrnamentedObj::positionContents()
 {
     //positionContents FIXME-8 need to consider frame in calcBBox and positionContents
     double x=absPos.x();
@@ -247,7 +247,7 @@ void OrnamentedObj::positionContents()	//FIXME-8 called multiple times for each 
 void OrnamentedObj::move (double x, double y)
 {
     // FIXME-8 unnecessary calls to positionContents, ...
-    if (debug) qDebug()<<"     OO::move and posContents; updateLinkGeo; requestRepos";
+    if (debug) qDebug()<<"     OO::move and posBBox; updateLinkGeo; requestRepos";
     MapObj::move (x,y);
     //positionContents(); //FIXME-8
     positionBBox();
