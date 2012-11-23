@@ -192,7 +192,7 @@ void OrnamentedObj::positionContents()
     double ox=leftPad + dp;
     double oy=topPad + dp;
     
-    //if (debug) qDebug()<< "OO: positionContents "<<treeItem->getHeading()<<"  this="<<this;// dp="<<dp<<" absPos=="<<absPos<<" bboxTotal="<<bboxTotal<<"  ox="<<ox<<" oy="<<oy;
+    if (debug) qDebug()<< "OO: positionContents "<<treeItem->getHeading()<<"  this="<<this;// dp="<<dp<<" absPos=="<<absPos<<" bboxTotal="<<bboxTotal<<"  ox="<<ox<<" oy="<<oy;
     // vertical align heading to bottom
     heading->setZValue (dZ_TEXT);
     heading->setTransformOriginPoint (
@@ -242,14 +242,13 @@ void OrnamentedObj::positionContents()
 	    bbox.y()+dp2,
 	    bbox.width()-dp,
 	    bbox.height()-dp));
+     //setDockPos();  //FIXME-8
 }
 
 void OrnamentedObj::move (double x, double y)
 {
-    // FIXME-8 unnecessary calls to positionContents, ...
-    if (debug) qDebug()<<"     OO::move and posBBox; updateLinkGeo; requestRepos";
+    if (debug) qDebug()<<"     OO::move and posBBox; updateLinkGeo"; // FIXME-8 
     MapObj::move (x,y);
-    //positionContents(); //FIXME-8
     positionBBox();
     updateLinkGeometry();
 }

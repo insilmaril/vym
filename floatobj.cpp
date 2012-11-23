@@ -50,7 +50,12 @@ void FloatObj::setDockPos()
 
 void FloatObj::reposition()
 {
-    if (debug) qDebug()<<"FO:reposition"; //FIXME-8
+    if (debug) 
+    {
+        qDebug()<<"FO:reposition relPos="<<relPos; //FIXME-8
+        if (parObj)
+            qDebug()<<"    parObj->childPos="<<parObj->getChildPos();
+    }
     move2RelPos (relPos);
     updateLinkGeometry();   
 }

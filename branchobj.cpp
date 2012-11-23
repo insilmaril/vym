@@ -206,6 +206,7 @@ void BranchObj::positionContents()
 {
     if (debug) qDebug()<<"  BO::positionContents (loop over images)";   //FIXME-8
     OrnamentedObj::positionContents();
+    setDockPos();   //FIXME-8
     for (int i=0; i<treeItem->imageCount(); ++i)
 	treeItem->getImageObjNum(i)->reposition();
 }
@@ -213,7 +214,7 @@ void BranchObj::positionContents()
 void BranchObj::move (double x, double y)
 {
     OrnamentedObj::move (x,y);
-    //FIXME-8 positionBBox(); required only for images
+    //FIXME-8 positionBBox(); //required only for images
 }
 
 void BranchObj::move (QPointF p)
@@ -336,6 +337,7 @@ void BranchObj::calcBBoxSize()
 
 void BranchObj::setDockPos()
 {
+    if (debug) qDebug()<<"### BO::setDockPos of "<<treeItem->getHeading(); //FIXME-8
     if (treeItem->getType()==TreeItem::MapCenter)
     {
 	// set childPos to middle of MapCenterObj
@@ -359,6 +361,7 @@ void BranchObj::setDockPos()
 		childPos=QPointF (ornamentsBBox.bottomLeft().x()-frame->getPadding(),  bottomlineY);
 		parPos=QPointF   (ornamentsBBox.bottomRight().x(), bottomlineY);
 	    }
+            if (debug) qDebug()<<"### BO::setDockPos (Loc) to "<<childPos; //FIXME-8
 	} else
 	{
 	    if ( ((BranchItem*)treeItem)->getFrameIncludeChildren() )
@@ -370,8 +373,10 @@ void BranchObj::setDockPos()
 		childPos=QPointF(ornamentsBBox.bottomRight().x()+ frame->getPadding(), bottomlineY);
 		parPos=QPointF ( ornamentsBBox.bottomLeft().x(),  bottomlineY);
 	    }
+            if (debug) qDebug()<<"### BO::setDockPos (Roc) to "<<childPos; //FIXME-8
 	}
     }
+    if (debug) qDebug()<<"### BO::setDockPos ornBBox: "<<ornamentsBBox<<"  bottomlineY"<<bottomlineY; //FIXME-8
 }
 
 void BranchObj::updateData()
