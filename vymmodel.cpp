@@ -1890,7 +1890,7 @@ QStringList VymModel::getURLs(bool ignoreScrolled)
 {
     QStringList urls;
     BranchItem *selbi=getSelectedBranch();
-    BranchItem *cur=selbi;
+    BranchItem *cur=NULL;
     BranchItem *prev=NULL;
     nextBranch (cur,prev,true,selbi);
     while (cur) 
