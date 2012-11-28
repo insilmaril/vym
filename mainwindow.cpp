@@ -3576,86 +3576,75 @@ void Main::editCut()
     if (m) m->cut();
 }
 
+bool Main::openURL(const QString &url)
+{
+    if (url.isEmpty()) return false;
+
+    QString browser=settings.value("/mainwindow/readerURL" ).toString();
+    QStringList args;
+    args<<url;
+    if (!QProcess::startDetached(browser,args,QDir::currentPath(),browserPID))
+    {
+        // try to set path to browser
+        QMessageBox::warning(0, 
+            tr("Warning"),
+            tr("Couldn't find a viewer to open %1.\n").arg(url)+
+            tr("Please use Settings->")+tr("Set application to open an URL"));
+        settingsURL() ; 
+        return false;
+    }   
+    return true;
+}
+
 void Main::openTabs(QStringList urls)
 {
-    if (!urls.isEmpty())
-    {	
-	bool success=true;
-	QStringList args;
-	QString browser=settings.value("/mainwindow/readerURL" ).toString();
-	//qDebug ()<<"Services: "<<QDBusConnection::sessionBus().interface()->registeredServiceNames().value();
-	if (*browserPID==0 ||
-	    (browser.contains("konqueror") &&
-	     !QDBusConnection::sessionBus().interface()->registeredServiceNames().value().contains (QString("org.kde.konqueror-%1").arg(*browserPID)))
-	   )	 
-	{
-	    // Start a new browser, if there is not one running already or
-	    // if a previously started konqueror is gone.
-	    if (debug) qDebug() <<"Main::openTabs no konqueror-"<<*browserPID<<" found";
-	    QString u=urls.takeFirst();
-	    args<<u;
-	    QString workDir=QDir::currentPath();
-	    if (!QProcess::startDetached(browser,args,workDir,browserPID))
-	    {
-		// try to set path to browser
-		QMessageBox::warning(0, 
-		    tr("Warning"),
-		    tr("Couldn't find a viewer to open %1.\n").arg(u)+
-		    tr("Please use Settings->")+tr("Set application to open an URL"));
-		return;
-	    }
-	    if (debug) qDebug() << "Main::openTabs  Started konqueror-"<<*browserPID;
+    if (urls.isEmpty()) return;
+    	
+    bool success=true;
+    QStringList args;
+    QString browser=settings.value("/mainwindow/readerURL" ).toString();
+    if ( browser.contains("konqueror") && 
+            (browserPID==0 || !QDBusConnection::sessionBus().interface()->registeredServiceNames().value().contains (QString("org.kde.konqueror-%1").arg(*browserPID)))
+       )	 
+    {
+        // Start a new browser, if there is not one running already or
+        // if a previously started konqueror is gone.
+        if (debug) qDebug() <<"Main::openTabs no konqueror with PID "<<*browserPID<<" found";
+        openURL(urls.takeFirst());
+        if (debug) qDebug() << "Main::openTabs Started konqueror, new PID is "<<*browserPID;
 #if defined(Q_OS_WIN32)
-            // There's no sleep in VCEE, replace it with Qt's QThread::wait().
-            this->thread()->wait(3000);
+        // There's no sleep in VCEE, replace it with Qt's QThread::wait().
+        this->thread()->wait(3000);
 #else
-	    sleep (3);	//needed to open first konqueror
+        sleep (3);	//needed to start first konqueror
 #endif
-	}
+    }
 
-	if (browser.contains("konqueror"))
-	{
-	    for (int i=0; i<urls.size(); i++)
-	    {
-		// Open new browser
-		// Try to open new tab in existing konqueror started previously by vym
-		args.clear();
+    if (browser.contains("konqueror"))
+    {
+        foreach (QString u, urls) 
+        {
+            // Open new browser
+            // Try to open new tab in existing konqueror started previously by vym
+            args.clear();
 
-		args<< QString("org.kde.konqueror-%1").arg(*browserPID)<<
-		    "/konqueror/MainWindow_1"<<
-		    "newTab" <<
-		    urls.at(i)<<
-		    "false";
-		if (debug) qDebug() << "MainWindow::openURLs  args="<<args.join(" ");
-		if (!QProcess::startDetached ("qdbus",args))
-		    success=false;
-	    }
-	    if (!success)
-		QMessageBox::warning(0, 
-		    tr("Warning"),
-		    tr("Couldn't start %1 to open a new tab in %2.").arg("dcop").arg("konqueror"));
-	    return;	
-	} else if (browser.contains ("firefox") || browser.contains ("mozilla") )
-	{
-	    for (int i=0; i<urls.size(); i++)
-	    {
-		// Try to open new tab in firefox
-		args<< "-remote"<< QString("openurl(%1,new-tab)").arg(urls.at(i));
-		if (!QProcess::startDetached (browser,args))
-		    success=false;
-	    }		
-	    if (!success)
-		QMessageBox::warning(0, 
-		    tr("Warning"),
-		    tr("Couldn't start %1 to open a new tab").arg(browser));
-	    return;	
-	}	    
-	QMessageBox::warning(0, 
-	    tr("Warning"),
-	    tr("Sorry, currently only Konqueror supports integrated tabbed browsing.","Mainwindow, open URL")+
-	    tr("Currently vym is using %1 to open external links.\n(Change in Settings menu)","Mainwindow, open URL")
-		.arg(settings.value("/mainwindow/readerURL" ).toString()));
-    }	
+            args<< QString("org.kde.konqueror-%1").arg(*browserPID)<<
+                "/konqueror/MainWindow_1"<<
+                "newTab" << 
+                u <<
+                "false";
+            if (!QProcess::startDetached ("qdbus",args))
+                success=false;
+        }
+        if (!success)
+            QMessageBox::warning(0, 
+                tr("Warning"),
+                tr("Couldn't start %1 to open a new tab in %2.").arg("qdbus").arg("konqueror"));
+        return;	
+    } 
+    // Other browser, e.g. xdg-open
+    // Just open all urls and leave it to the system to cope with it
+    foreach (QString u, urls) openURL(u);
 }
 
 void Main::editOpenURL()
@@ -3665,20 +3654,8 @@ void Main::editOpenURL()
     if (m)
     {	
 	QString url=m->getURL();
-	QStringList args;
 	if (url=="") return;
-	QString browser=settings.value("/mainwindow/readerURL" ).toString();
-	args<<url;
-	QString workDir=QDir::currentPath();
-	if (!QProcess::startDetached(browser,args))
-	{
-	    // try to set path to browser
-	    QMessageBox::warning(0, 
-		tr("Warning"),
-		tr("Couldn't find a viewer to open %1.\n").arg(url)+
-		tr("Please use Settings->")+tr("Set application to open an URL"));
-	    settingsURL() ; 
-	}   
+        openURL(url);
     }	
 }
 void Main::editOpenURLTab()

@@ -142,6 +142,7 @@ private slots:
 public slots:    
     void updateQueries (VymModel*);
 private:
+    bool openURL(const QString &url);
     void openTabs(QStringList);
 public slots:
     void editOpenURL();
