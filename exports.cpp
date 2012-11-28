@@ -698,7 +698,6 @@ QString ExportHTML::buildList (BranchItem *current)
 		r+=ind + itemBegin;
 		r+=getBranchText (bi);
 
-                //FIXME-0 
                 if (itemBegin.startsWith("<h") )
                     r+=itemEnd + buildList (bi);
                 else

@@ -204,9 +204,9 @@ void BranchObj::setLinkColor ()
 
 void BranchObj::positionContents()
 {
-    if (debug) qDebug()<<"  BO::positionContents (loop over images)";   //FIXME-8
+    //if (debug) qDebug()<<"  BO::positionContents (loop over images)";   //FIXME-8
     OrnamentedObj::positionContents();
-    setDockPos();   //FIXME-8
+    updateLinkGeometry();// required before positioning images
     for (int i=0; i<treeItem->imageCount(); ++i)
 	treeItem->getImageObjNum(i)->reposition();
 }
@@ -214,7 +214,6 @@ void BranchObj::positionContents()
 void BranchObj::move (double x, double y)
 {
     OrnamentedObj::move (x,y);
-    //FIXME-8 positionBBox(); //required only for images
 }
 
 void BranchObj::move (QPointF p)
@@ -241,8 +240,7 @@ void QGraphicsItem::paint(QPainter*, const QStyleOptionGraphicsItem*, QWidget*)
 
 void BranchObj::positionBBox() // FIXME-2 consider dimensions of frame (thickness, geometry, padding...
 {
-    //FIXME-8 
-    if (debug) qDebug()<<"        BO::positionBBox ("<<treeItem->getHeading()<<")";
+    if (debug) qDebug()<<"        BO::positionBBox ("<<treeItem->getHeading()<<")"; //FIXME-8 
     QPointF ap=getAbsPos();
     bbox.moveTopLeft (ap);
     positionContents();   //FIXME-8
@@ -258,8 +256,7 @@ void BranchObj::positionBBox() // FIXME-2 consider dimensions of frame (thicknes
 
 void BranchObj::calcBBoxSize()
 {
-    //FIXME-8 
-    if (debug) qDebug()<<"  BO::calcBBoxSize ("<<treeItem->getHeading()<<")";
+    if (debug) qDebug()<<"  BO::calcBBoxSize ("<<treeItem->getHeading()<<")"; //FIXME-8 
     QSizeF heading_r=heading->getSize();
     qreal heading_w=(qreal) heading_r.width() ;
     qreal heading_h=(qreal) heading_r.height() ;
@@ -687,8 +684,6 @@ void BranchObj::calcBBoxSizeWithChildren()
 	return;
     }
     
-    /* FIXME-8 not really needed?
-    */
     QRectF r(0,0,0,0);
     QRectF br;
 

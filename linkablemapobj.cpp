@@ -450,7 +450,7 @@ void LinkableMapObj::updateLinkGeometry()
     // updateLinkGeometry is called from move, but called from constructor we don't
     // have parents yet...
 
-    qDebug()<<"LMO::updateLinkGeometry: "<<treeItem->getHeading()<<"  "<<style<<"  parObj="<<parObj;
+    if (debug) qDebug()<<"LMO::updateLinkGeometry: "<<treeItem->getHeading()<<"  "<<style<<"  parObj="<<parObj; //FIXME-8
     if (!parObj)        {
 	// If I am a mapcenter, set childPos to middle of MapCenterObj // FIXME-8 isn't that also done already in BO::setDockPos ?
 

@@ -242,7 +242,6 @@ void OrnamentedObj::positionContents()
 	    bbox.y()+dp2,
 	    bbox.width()-dp,
 	    bbox.height()-dp));
-     //setDockPos();  //FIXME-8
 }
 
 void OrnamentedObj::move (double x, double y)
@@ -250,7 +249,6 @@ void OrnamentedObj::move (double x, double y)
     if (debug) qDebug()<<"     OO::move and posBBox; updateLinkGeo"; // FIXME-8 
     MapObj::move (x,y);
     positionBBox();
-    updateLinkGeometry();
 }
 
 void OrnamentedObj::move (QPointF p)
