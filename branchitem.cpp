@@ -275,6 +275,8 @@ bool BranchItem::hasScrolledParent(BranchItem *start)
     // find out, if we are scrolled at all.
     // But ignore myself, just look at parents.
 
+    if (!start) start=this;
+
     if (this !=start && scrolled) return true;
 
     BranchItem* bi=(BranchItem*)parentItem;
