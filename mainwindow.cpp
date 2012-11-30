@@ -947,6 +947,18 @@ void Main::setupFileActions()
     connect( a, SIGNAL( triggered() ), this, SLOT( fileExportLast() ) );
     actionFileExportLast=a;
 
+    a = new QAction(  "Webpage (HTML)...",this );
+    switchboard.addConnection(fileExportMenu, a,tr("File","Shortcut group"));
+    connect( a, SIGNAL( triggered() ), this, SLOT( fileExportHTML() ) );
+
+    a = new QAction( "Text (ASCII)...", this);
+    switchboard.addConnection(fileExportMenu, a,tr("File","Shortcut group"));
+    connect( a, SIGNAL( triggered() ), this, SLOT( fileExportASCII() ) );
+
+    a = new QAction( "Text (A&O report)...", this);
+    switchboard.addConnection(fileExportMenu, a,tr("File","Shortcut group"));
+    connect( a, SIGNAL( triggered() ), this, SLOT( fileExportAO() ) );
+
     a = new QAction( tr("Image%1","File export menu").arg("..."), this);
     switchboard.addConnection(fileExportMenu, a,tr("File","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( fileExportImage() ) );
@@ -963,21 +975,9 @@ void Main::setupFileActions()
     switchboard.addConnection(fileExportMenu, a,tr("File","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( fileExportImpress() ) );
 
-    a = new QAction(  "Webpage (HTML)...",this );
+    a = new QAction( "XML..." , this );
     switchboard.addConnection(fileExportMenu, a,tr("File","Shortcut group"));
-    connect( a, SIGNAL( triggered() ), this, SLOT( fileExportHTML() ) );
-
-    a = new QAction( "Text (A&O report)...", this);
-    switchboard.addConnection(fileExportMenu, a,tr("File","Shortcut group"));
-    connect( a, SIGNAL( triggered() ), this, SLOT( fileExportAO() ) );
-
-    a = new QAction( "Text (ASCII)...", this);
-    switchboard.addConnection(fileExportMenu, a,tr("File","Shortcut group"));
-    connect( a, SIGNAL( triggered() ), this, SLOT( fileExportASCII() ) );
-
-    a = new QAction( "Spreadsheet (CSV)... (experimental)", this);
-    switchboard.addConnection(fileExportMenu, a,tr("File","Shortcut group"));
-    connect( a, SIGNAL( triggered() ), this, SLOT( fileExportCSV() ) );
+    connect( a, SIGNAL( triggered() ), this, SLOT( fileExportXML() ) );
 
     a = new QAction( tr("KDE 3 Bookmarks","File menu"), this);
     switchboard.addConnection(fileExportMenu, a,tr("File","Shortcut group"));
@@ -986,6 +986,10 @@ void Main::setupFileActions()
     a = new QAction( tr("KDE 4 Bookmarks","File menu"), this);
     switchboard.addConnection(fileExportMenu, a,tr("File","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( fileExportKDE4Bookmarks() ) );
+
+    a = new QAction( "Spreadsheet (CSV)... (experimental)", this);
+    switchboard.addConnection(fileExportMenu, a,tr("File","Shortcut group"));
+    connect( a, SIGNAL( triggered() ), this, SLOT( fileExportCSV() ) );
 
     a = new QAction( "Taskjuggler... (experimental)", this );
     switchboard.addConnection(fileExportMenu, a,tr("File","Shortcut group"));
@@ -998,10 +1002,6 @@ void Main::setupFileActions()
     a = new QAction( "LaTeX... (experimental)", this);
     switchboard.addConnection(fileExportMenu, a,tr("File","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( fileExportLaTeX() ) );
-
-    a = new QAction( "XML..." , this );
-    switchboard.addConnection(fileExportMenu, a,tr("File","Shortcut group"));
-    connect( a, SIGNAL( triggered() ), this, SLOT( fileExportXML() ) );
 
     fileMenu->addSeparator();
 
