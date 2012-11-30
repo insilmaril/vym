@@ -76,13 +76,6 @@ class ExportXMLBase:public ExportBase
 };
 
 ///////////////////////////////////////////////////////////////////////
-class ExportKDE3Bookmarks:public ExportXMLBase
-{
-public:
-    virtual void doExport();
-};  
-
-///////////////////////////////////////////////////////////////////////
 class ExportKDE4Bookmarks:public ExportXMLBase
 {
 public:

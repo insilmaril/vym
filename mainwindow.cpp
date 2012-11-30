@@ -912,10 +912,6 @@ void Main::setupFileActions()
 
     fileImportMenu = fileMenu->addMenu (tr("Import","File menu"));
 
-    a = new QAction(tr("KDE 3 Bookmarks","Import filters"), this);
-    switchboard.addConnection(fileImportMenu, a,tr("File","Shortcut group"));
-    connect( a, SIGNAL( triggered() ), this, SLOT( fileImportKDE3Bookmarks() ) );
-
     a = new QAction(tr("KDE 4 Bookmarks","Import filters"), this);
     switchboard.addConnection(fileImportMenu, a,tr("File","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( fileImportKDE4Bookmarks() ) );
@@ -978,10 +974,6 @@ void Main::setupFileActions()
     a = new QAction( "XML..." , this );
     switchboard.addConnection(fileExportMenu, a,tr("File","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( fileExportXML() ) );
-
-    a = new QAction( tr("KDE 3 Bookmarks","File menu"), this);
-    switchboard.addConnection(fileExportMenu, a,tr("File","Shortcut group"));
-    connect( a, SIGNAL( triggered() ), this, SLOT( fileExportKDE3Bookmarks() ) );
 
     a = new QAction( tr("KDE 4 Bookmarks","File menu"), this);
     switchboard.addConnection(fileExportMenu, a,tr("File","Shortcut group"));
@@ -3193,14 +3185,6 @@ void Main::fileSaveAs()
     fileSaveAs (CompleteMap);
 }
 
-void Main::fileImportKDE3Bookmarks()
-{
-    ImportKDE3Bookmarks im;
-    im.transform();
-    if (File::Aborted!=fileLoad (im.getTransformedFile(),NewMap,VymMap) && currentMapEditor() )
-	currentMapEditor()->getModel()->setFilePath ("");
-}
-
 void Main::fileImportKDE4Bookmarks()
 {
     ImportKDE4Bookmarks im;
@@ -3387,17 +3371,6 @@ void Main::fileExportOrgMode()	//FIXME-3 not scriptable yet
 	    m->setExportMode(false);
 	}
     }
-}
-
-void Main::fileExportKDE3Bookmarks()	//FIXME-3 not scriptable yet
-{
-    ExportKDE3Bookmarks ex;
-    VymModel *m=currentModel();
-    if (m)
-    {
-	ex.setModel (m);
-	ex.doExport();
-    }	
 }
 
 void Main::fileExportKDE4Bookmarks()	//FIXME-3 not scriptable yet

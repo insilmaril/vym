@@ -28,12 +28,6 @@ protected:
 };
 
 ///////////////////////////////////////////////////////////////////////
-class ImportKDE3Bookmarks:public ImportBase
-{
-public:
-    bool transform();
-};  
-
 class ImportKDE4Bookmarks:public ImportBase
 {
 public:

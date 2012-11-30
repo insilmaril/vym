@@ -45,20 +45,6 @@ QString ImportBase::getTransformedFile()
 }
 
 /////////////////////////////////////////////////
-bool ImportKDE3Bookmarks::transform()
-{
-    transformedFile=tmpDir.path()+"/bookmarks.xml";
-
-    XSLTProc p;
-    p.setInputFile (tmpDir.home().path()+"/.kde/share/apps/konqueror/bookmarks.xml");
-    p.setOutputFile (transformedFile);
-    p.setXSLFile (vymBaseDir.path()+"/styles/kdebookmarks2vym.xsl");
-    p.process();
-
-    return true;
-}
-
-/////////////////////////////////////////////////
 bool ImportKDE4Bookmarks::transform() 
 {
     transformedFile=tmpDir.path()+"/bookmarks.xml";

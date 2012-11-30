@@ -446,36 +446,6 @@ void ExportCSV::doExport()
 }
 
 ////////////////////////////////////////////////////////////////////////
-void ExportKDE3Bookmarks::doExport() 
-{
-    WarningDialog dia;
-    dia.showCancelButton (true);
-    dia.setText(QObject::tr("Exporting the %1 bookmarks will overwrite\nyour existing bookmarks file.").arg("KDE"));
-    dia.setCaption(QObject::tr("Warning: Overwriting %1 bookmarks").arg("KDE 3"));
-    dia.setShowAgainName("/exports/overwrite/KDE3Bookmarks");
-    if (dia.exec()==QDialog::Accepted)
-    {
-	model->exportXML(tmpDir.path(),false);
-
-	XSLTProc p;
-	p.setInputFile (tmpDir.path()+"/"+model->getMapName()+".xml");
-	p.setOutputFile (tmpDir.home().path()+"/.kde/share/apps/konqueror/bookmarks.xml");
-	p.setXSLFile (vymBaseDir.path()+"/styles/vym2kdebookmarks.xsl");
-	p.process();
-
-	QString ub=vymBaseDir.path()+"/scripts/update-bookmarks";
-	QProcess *proc= new QProcess ;
-	proc->start( ub);
-	if (!proc->waitForStarted())
-	{
-	    QMessageBox::warning(0, 
-		QObject::tr("Warning"),
-		QObject::tr("Couldn't find script %1\nto notifiy Browsers of changed bookmarks.").arg(ub));
-	}   
-    }
-}
-
-////////////////////////////////////////////////////////////////////////
 void ExportKDE4Bookmarks::doExport() 
 {
     WarningDialog dia;
