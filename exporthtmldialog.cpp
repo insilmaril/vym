@@ -73,9 +73,9 @@ void ExportHTMLDialog::readSettings()
     ui.saveSettingsInMapButton->setChecked(saveSettingsInMap);
 
     //CSS settings
-    copy_css=settings.localValue 
+    css_copy=settings.localValue 
         (filepath,"/export/html/copy_css",true).toBool();   
-    ui.copyCssButton->setChecked (copy_css);
+    ui.copyCssButton->setChecked (css_copy);
 
     QString css_org=vymBaseDir.path() + "/styles/vym.css";
     css_src=settings.localValue 
@@ -199,7 +199,7 @@ void ExportHTMLDialog::cssDstChanged()
 
 QString ExportHTMLDialog::getCssSrc()
 {
-    if (copy_css)
+    if (css_copy)
         return css_src;
     else
         return QString();
@@ -212,7 +212,7 @@ QString ExportHTMLDialog::getCssDst()
 
 void ExportHTMLDialog::copyCssPressed()
 {
-    copy_css=ui.imageButton->isChecked();
+    css_copy=ui.imageButton->isChecked();
     settingsChanged=true;
 }
 
@@ -281,7 +281,6 @@ void ExportHTMLDialog::browsePostExportButtonPressed()
 
 void ExportHTMLDialog::saveSettings ()
 {
-
     // Save options to settings file 
     // (but don't save at destructor, which
     // is called for "cancel", too)
@@ -292,20 +291,17 @@ void ExportHTMLDialog::saveSettings ()
 	settings.setLocalValue (filepath,"/export/html/saveSettingsInMap","yes");
         settings.setLocalValue (filepath,"/export/html/exportDir",dir);
         settings.setLocalValue (filepath,"/export/html/postscript",postscript);
-        settings.setLocalValue (filepath,"/export/html/copy_css",copy_css);
-        settings.setLocalValue (filepath,"/export/html/css_src",css_src);
-        settings.setLocalValue (filepath,"/export/html/css_dst",css_dst);
         settings.setLocalValue (filepath,"/export/html/useImage",useImage);
         settings.setLocalValue (filepath,"/export/html/useTOC",useTOC);
         settings.setLocalValue (filepath,"/export/html/useNumbering",useNumbering);
         settings.setLocalValue (filepath,"/export/html/useTaskFlags",useTaskFlags);
         settings.setLocalValue (filepath,"/export/html/useUserFlags",useUserFlags);
         settings.setLocalValue (filepath,"/export/html/useTextColor",useTextColor);
-        settings.setValue ("/export/html/showWarnings",showWarnings);
-        settings.setValue ("/export/html/showOutput",showOutput);
-        settings.setLocalValue (filepath,"/export/html/copy_css",copy_css);	
+        settings.setLocalValue (filepath,"/export/html/css_copy",css_copy);	
         settings.setLocalValue (filepath,"/export/html/css_src",css_src);	
         settings.setLocalValue (filepath,"/export/html/css_dst",css_dst);	
+        settings.setValue ("/export/html/showWarnings",showWarnings);
+        settings.setValue ("/export/html/showOutput",showOutput);
     }
 }
 

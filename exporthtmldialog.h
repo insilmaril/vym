@@ -54,12 +54,11 @@ public:
     bool useUserFlags;
     bool useTextColor;
     QString postscript;
-
+    bool css_copy;
 protected:
-    bool showWarnings;
-    bool copy_css;
     QString css_src;
     QString css_dst;
+    bool showWarnings;
     bool showOutput;
     QString dir;
     QString filepath;

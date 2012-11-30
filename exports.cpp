@@ -795,20 +795,21 @@ void ExportHTML::doExport(bool useDialog)
     setFile (outDir.path()+"/"+model->getMapName()+".html");
 
     // Copy CSS file    //FIXME-2 Sometimes not updated
-    cssSrc=dia.getCssSrc();
-    cssDst=outDir.path() + "/" + basename(dia.getCssDst());
-    if (!cssSrc.isEmpty() )
+    if (dia.css_copy)
     {
+        cssSrc=dia.getCssSrc();
+        cssDst=outDir.path() + "/" + basename(dia.getCssDst());
+        if (cssSrc.isEmpty() )
+        {
+            QMessageBox::critical( 0,
+            QObject:: tr( "Critical" ),
+            QObject::tr("Could not find stylesheet %1").arg(cssSrc));
+            return;
+        }
         QFile src(cssSrc);
         QFile dst(cssDst);
         if (dst.exists() )
         {
-	    WarningDialog dia;
-	    dia.showCancelButton (true);
-	    dia.setCaption(QObject::tr("Warning: Overwriting file"));
-	    dia.setText(QObject::tr("Exporting to %1 will overwrite the existing file:\n%2").arg("HTML").arg(cssDst));
-	    dia.setShowAgainName("/exports/overwrite/html_css");
-	    if (!dia.exec()==QDialog::Accepted) return;
             qDebug()<<"Removing "<<cssDst; //FIXME-2
             dst.remove();
         }
@@ -816,8 +817,8 @@ void ExportHTML::doExport(bool useDialog)
         if (!src.copy(cssDst))
         {
             QMessageBox::critical (0,
-                QObject::tr( "Error","ExportHTML" ),
-                QObject::tr("Could not copy\n%1 to\n%2","ExportHTML").arg(cssSrc).arg(cssDst));
+                    QObject::tr( "Error","ExportHTML" ),
+                    QObject::tr("Could not copy\n%1 to\n%2","ExportHTML").arg(cssSrc).arg(cssDst));
             return;
         }
     }
@@ -829,26 +830,12 @@ void ExportHTML::doExport(bool useDialog)
         if (!outDir.mkdir  ("flags"))
         {
             QMessageBox::critical( 0,
-            QObject:: tr( "Warning" ),
+            QObject:: tr( "Critical" ),
             QObject::tr("Trying to create directory for flags:")+"\n\n"+
             QObject::tr("Could not create %1").arg(flagsDst.path()));
             return;
         }
     }   
-
-    QStringList flags;
-    flags<<"flag-url-16x16.png";
-    flags<<"flag-note-16x16.png";
-
-    // Add all user flags
-    QDir flagsdir(flagsPath);
-    flagsdir.setFilter(QDir::Files);
-    foreach (QString fname, flagsdir.entryList()) flags<<fname;
-    
-    // Copy all found flags 
-    foreach (QString src, flags)
-    {
-    }
 
     if (!copyDir(QDir(flagsPath),flagsDst,true))
     {
