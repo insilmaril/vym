@@ -589,7 +589,7 @@ QString ExportHTML::getBranchText(BranchItem *current)
         // URL
         if (!url.isEmpty())
         {
-            s+=QString ("<a href=\"%1\"><img src=\"flags/flag-url-16x16.png\"></a>").arg(url);
+            s+=QString ("<a href=\"%1\"><img src=\"flags/flag-url-16x16.png\">%2</a>").arg(url).arg(heading);
 
             QRectF fbox=current->getBBoxURLFlag ();
             if (vis)	
@@ -599,8 +599,8 @@ QString ExportHTML::getBranchText(BranchItem *current)
                 .arg(fbox.right()-offset.x())
                 .arg(fbox.bottom()-offset.y())
                 .arg(url);
-        } 
-        s+=quotemeta(current->getHeadingPlain());	
+        } else
+            s+=heading;
 
         // User flags
         if (dia.useUserFlags)
@@ -808,11 +808,7 @@ void ExportHTML::doExport(bool useDialog)
         }
         QFile src(cssSrc);
         QFile dst(cssDst);
-        if (dst.exists() )
-        {
-            qDebug()<<"Removing "<<cssDst; //FIXME-2
-            dst.remove();
-        }
+        if (dst.exists() ) dst.remove();
 
         if (!src.copy(cssDst))
         {
