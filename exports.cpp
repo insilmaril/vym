@@ -746,13 +746,13 @@ void ExportHTML::doExport(bool useDialog)
 
     // Check, if warnings should be used before overwriting
     // the output directory
-    if (outDir.exists() && outDir.count()>0)
+    if (dia.getDir().exists() && dia.getDir().count()>0)
     {
 	WarningDialog warn;
 	warn.showCancelButton (true);
 	warn.setText(QString(
 	    "The directory %1 is not empty.\n"
-	    "Do you risk to overwrite some of its contents?").arg(outDir.path() ));
+	    "Do you risk to overwrite some of its contents?").arg(dia.getDir().absolutePath() ));
 	warn.setCaption("Warning: Directory not empty");
 	warn.setShowAgainName("mainwindow/export-XML-overwrite-dir");
 
@@ -769,7 +769,7 @@ void ExportHTML::doExport(bool useDialog)
     if (dia.css_copy)
     {
         cssSrc=dia.getCssSrc();
-        cssDst=outDir.path() + "/" + basename(dia.getCssDst());
+        cssDst=dia.getDir().absolutePath() + "/" + basename(dia.getCssDst());
         if (cssSrc.isEmpty() )
         {
             QMessageBox::critical( 0,
@@ -848,7 +848,7 @@ void ExportHTML::doExport(bool useDialog)
     if (dia.useImage)
     {
 	ts<<"<center><img src=\""<<model->getMapName()<<".png\" usemap='#imagemap'></center>\n";
-	offset=model->exportImage (outDir.path()+"/"+model->getMapName()+".png",false,"PNG");
+	offset=model->exportImage (dia.getDir().absolutePath()+"/"+model->getMapName()+".png",false,"PNG");
     }
 
     // Include table of contents
@@ -875,11 +875,11 @@ void ExportHTML::doExport(bool useDialog)
     if (!dia.postscript.isEmpty()) 
     {
 	Process p;
-	p.runScript (dia.postscript,outDir.path()+"/"+model->getMapName()+".html");
+	p.runScript (dia.postscript,dia.getDir().absolutePath()+"/"+model->getMapName()+".html");
     }
 
     QString cmd="exportHTML";
-    settings.setLocalValue (model->getFilePath(),"/export/last/exportPath",outDir.path());
+    settings.setLocalValue (model->getFilePath(),"/export/last/exportPath",dia.getDir().absolutePath());
     settings.setLocalValue ( model->getFilePath(), "/export/last/command","exportHTML");
     settings.setLocalValue ( model->getFilePath(), "/export/last/description","HTML");
     mainWindow->statusMessage(cmd + ": " + outputFile);
