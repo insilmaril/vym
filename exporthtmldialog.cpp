@@ -29,6 +29,8 @@ ExportHTMLDialog::ExportHTMLDialog(QWidget* parent) : QDialog(parent)
     connect(ui.imageButton, SIGNAL(toggled(bool)), this, SLOT(imageButtonPressed(bool)));
     connect(ui.TOCButton, SIGNAL(toggled(bool)), this, SLOT(TOCButtonPressed(bool)));
     connect(ui.numberingButton, SIGNAL(toggled(bool)), this, SLOT(numberingButtonPressed(bool)));
+    connect(ui.taskFlagsButton, SIGNAL(toggled(bool)), this, SLOT(taskFlagsButtonPressed(bool)));
+    connect(ui.userFlagsButton, SIGNAL(toggled(bool)), this, SLOT(userFlagsButtonPressed(bool)));
     connect(ui.textColorButton, SIGNAL(toggled(bool)), this, SLOT(textcolorButtonPressed(bool)));
     connect(ui.lineEditDir, SIGNAL(textChanged(const QString&)), this, SLOT(dirChanged()));
     connect(ui.copyCssButton, SIGNAL(pressed()), this, SLOT(copyCssPressed()));
@@ -52,6 +54,12 @@ void ExportHTMLDialog::readSettings()
 	
     useNumbering=settings.localValue (filepath,"/export/html/useNumbering","true").toBool();
     ui.numberingButton->setChecked(useNumbering);
+	
+    useTaskFlags=settings.localValue (filepath,"/export/html/useTaskFlags","true").toBool();
+    ui.taskFlagsButton->setChecked(useTaskFlags);
+	
+    useUserFlags=settings.localValue (filepath,"/export/html/useUserFlags","true").toBool();
+    ui.userFlagsButton->setChecked(useUserFlags);
 	
     useTextColor=settings.localValue (filepath,"/export/html/useTextColor","no").toBool();
     ui.textColorButton->setChecked(useTextColor);
@@ -137,6 +145,18 @@ void ExportHTMLDialog::TOCButtonPressed(bool b)
 void ExportHTMLDialog::numberingButtonPressed(bool b)
 {
     useNumbering=b;
+    settingsChanged=true;
+}
+
+void ExportHTMLDialog::taskFlagsButtonPressed(bool b)
+{
+    useTaskFlags=b;
+    settingsChanged=true;
+}
+
+void ExportHTMLDialog::userFlagsButtonPressed(bool b)
+{
+    useUserFlags=b;
     settingsChanged=true;
 }
 
@@ -278,6 +298,8 @@ void ExportHTMLDialog::saveSettings ()
         settings.setLocalValue (filepath,"/export/html/useImage",useImage);
         settings.setLocalValue (filepath,"/export/html/useTOC",useTOC);
         settings.setLocalValue (filepath,"/export/html/useNumbering",useNumbering);
+        settings.setLocalValue (filepath,"/export/html/useTaskFlags",useTaskFlags);
+        settings.setLocalValue (filepath,"/export/html/useUserFlags",useUserFlags);
         settings.setLocalValue (filepath,"/export/html/useTextColor",useTextColor);
         settings.setValue ("/export/html/showWarnings",showWarnings);
         settings.setValue ("/export/html/showOutput",showOutput);

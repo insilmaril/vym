@@ -95,7 +95,7 @@
      <property name="minimumSize">
       <size>
        <width>0</width>
-       <height>140</height>
+       <height>197</height>
       </size>
      </property>
      <property name="maximumSize">
@@ -113,7 +113,7 @@
         <x>20</x>
         <y>20</y>
         <width>581</width>
-        <height>111</height>
+        <height>173</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">
@@ -126,14 +126,28 @@
           </sizepolicy>
          </property>
          <property name="text">
-          <string>Include image</string>
+          <string>Image of map</string>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QCheckBox" name="TOCButton">
          <property name="text">
-          <string>Include table of contents</string>
+          <string>Table of contents</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="taskFlagsButton">
+         <property name="text">
+          <string>Task flags</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="userFlagsButton">
+         <property name="text">
+          <string>General flags</string>
          </property>
         </widget>
        </item>

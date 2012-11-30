@@ -27,6 +27,8 @@ public slots:
     virtual void imageButtonPressed( bool b );
     virtual void TOCButtonPressed( bool b );
     virtual void numberingButtonPressed( bool b );
+    virtual void taskFlagsButtonPressed( bool b );
+    virtual void userFlagsButtonPressed( bool b );
     virtual void textcolorButtonPressed( bool b );
     virtual void saveSettingsInMapButtonPressed( bool b );
     virtual void warningsButtonPressed( bool b );
@@ -48,6 +50,8 @@ public:
     bool useImage;
     bool useTOC;
     bool useNumbering;
+    bool useTaskFlags;
+    bool useUserFlags;
     bool useTextColor;
     QString postscript;
 

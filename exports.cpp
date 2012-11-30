@@ -577,11 +577,19 @@ QString ExportHTML::getBranchText(BranchItem *current)
             .arg(id);
         QString url=current->getURL();	
         QString heading=quotemeta(current->getHeadingPlain());	
+
+        // Task flags
+        if (dia.useTaskFlags)
+        {
+            Task *task=current->getTask();
+            if (task)
+                s+=QString("<img src=\"flags/flag-%1.png\">").arg(task->getIconString());
+        }
+
+        // URL
         if (!url.isEmpty())
         {
-            s+=QString ("<a href=\"%1\">").arg(url);
-            s+=QString ("<img src=\"flags/flag-url-16x16.png\">%1</a>").arg(heading);
-            s+="</a>";
+            s+=QString ("<a href=\"%1\"><img src=\"flags/flag-url-16x16.png\"></a>").arg(url);
 
             QRectF fbox=current->getBBoxURLFlag ();
             if (vis)	
@@ -591,10 +599,19 @@ QString ExportHTML::getBranchText(BranchItem *current)
                 .arg(fbox.right()-offset.x())
                 .arg(fbox.bottom()-offset.y())
                 .arg(url);
-        } else	
-            s+=quotemeta(current->getHeadingPlain());	
+        } 
+        s+=quotemeta(current->getHeadingPlain());	
+
+        // User flags
+        if (dia.useUserFlags)
+        {
+            foreach (QString flag, current->activeStandardFlagNames())
+                s+=QString("<img src=\"flags/flag-%1.png\">").arg(flag);
+        }
+
         s+="</span>";
 
+        // Create imagemap
         if (vis && dia.useImage)
             imageMap+=QString("  <area shape='rect' coords='%1,%2,%3,%4' href='#%5'>\n")
                 .arg(hr.left()-offset.x())
@@ -756,17 +773,15 @@ void ExportHTML::doExport(bool useDialog)
 	model->setChanged();
     }
 
-    // Check if destination is not empty
-    QDir d=dia.getDir();
     // Check, if warnings should be used before overwriting
     // the output directory
-    if (d.exists() && d.count()>0)
+    if (outDir.exists() && outDir.count()>0)
     {
 	WarningDialog warn;
 	warn.showCancelButton (true);
 	warn.setText(QString(
 	    "The directory %1 is not empty.\n"
-	    "Do you risk to overwrite some of its contents?").arg(d.path() ));
+	    "Do you risk to overwrite some of its contents?").arg(outDir.path() ));
 	warn.setCaption("Warning: Directory not empty");
 	warn.setShowAgainName("mainwindow/export-XML-overwrite-dir");
 
@@ -777,9 +792,9 @@ void ExportHTML::doExport(bool useDialog)
 	}
     }
 
-    setFile (d.path()+"/"+model->getMapName()+".html");
+    setFile (outDir.path()+"/"+model->getMapName()+".html");
 
-    // Copy CSS file
+    // Copy CSS file    //FIXME-2 Sometimes not updated
     cssSrc=dia.getCssSrc();
     cssDst=outDir.path() + "/" + basename(dia.getCssDst());
     if (!cssSrc.isEmpty() )
@@ -794,8 +809,8 @@ void ExportHTML::doExport(bool useDialog)
 	    dia.setText(QObject::tr("Exporting to %1 will overwrite the existing file:\n%2").arg("HTML").arg(cssDst));
 	    dia.setShowAgainName("/exports/overwrite/html_css");
 	    if (!dia.exec()==QDialog::Accepted) return;
-            dst.remove();
             qDebug()<<"Removing "<<cssDst; //FIXME-2
+            dst.remove();
         }
 
         if (!src.copy(cssDst))
@@ -807,43 +822,43 @@ void ExportHTML::doExport(bool useDialog)
         }
     }
 
-    // Provide a smaller URL-icon to improve Layout 
-    QPixmap pm;
-    QString urlName="flag-url-16x16.png";
-    QString ipath=flagsPath+urlName;
-
-    if (!pm.load(ipath,"PNG") )
-	QMessageBox::warning( 0, 
-	QObject::tr( "Warning" ),
-	QObject::tr("Trying to load small icon for URLs:")+"\n\n"+
-	QObject::tr("Could not open %1").arg(ipath));
-    else
+    // Copy flags
+    QDir flagsDst=outDir.path()+"/flags";
+    if (!flagsDst.exists())
     {
-	QString flagsPathExport=d.path()+"/flags";
-	if (!d.exists(d.path()+"/flags"))
-	{
-	    if (!d.mkdir  ("flags"))
-		QMessageBox::warning( 0,
-		QObject:: tr( "Warning" ),
-		QObject::tr("Trying to create directory for flags:")+"\n\n"+
-		QObject::tr("Could not create %1").arg(flagsPathExport));
-	}   
-	if(!pm.save (flagsPathExport+"/"+urlName,"PNG"))
-	    QMessageBox::warning( 0,
-	    QObject::tr( "Warning" ),
-	    QObject::tr("Trying to save small icon for URLs:")+"\n\n"+
-	    QObject::tr("Could not write %1").arg(flagsPathExport+"/"+urlName));
-
-        QFile noteflag (flagsPath+"flag-note.png");
-        QString noteflagdst (outDir.path() + "/flags/flag-note.png");
-        if (!QFile (noteflagdst).exists() )
+        if (!outDir.mkdir  ("flags"))
         {
-            if (!noteflag.copy(noteflagdst))
-                QMessageBox::warning( 0,
-                        QObject::tr( "Warning" ),
-                        QObject::tr("Trying to save flag for notes failed."));
+            QMessageBox::critical( 0,
+            QObject:: tr( "Warning" ),
+            QObject::tr("Trying to create directory for flags:")+"\n\n"+
+            QObject::tr("Could not create %1").arg(flagsDst.path()));
+            return;
         }
-    }	
+    }   
+
+    QStringList flags;
+    flags<<"flag-url-16x16.png";
+    flags<<"flag-note-16x16.png";
+
+    // Add all user flags
+    QDir flagsdir(flagsPath);
+    flagsdir.setFilter(QDir::Files);
+    foreach (QString fname, flagsdir.entryList()) flags<<fname;
+    
+    // Copy all found flags 
+    foreach (QString src, flags)
+    {
+    }
+
+    if (!copyDir(QDir(flagsPath),flagsDst,true))
+    {
+        QMessageBox::critical( 0,
+                QObject:: tr( "Warning" ),
+                QObject::tr("Trying to create directory for flags:")+"\n\n"+
+                QObject::tr("Could not create %1").arg(flagsDst.path()));
+        return;
+    }
+
     // Open file for writing
     QFile file (outputFile);
     if ( !file.open( QIODevice::WriteOnly ) ) 
@@ -878,7 +893,7 @@ void ExportHTML::doExport(bool useDialog)
     if (dia.useImage)
     {
 	ts<<"<center><img src=\""<<model->getMapName()<<".png\" usemap='#imagemap'></center>\n";
-	offset=model->exportImage (d.path()+"/"+model->getMapName()+".png",false,"PNG");
+	offset=model->exportImage (outDir.path()+"/"+model->getMapName()+".png",false,"PNG");
     }
 
     // Include table of contents
@@ -905,11 +920,11 @@ void ExportHTML::doExport(bool useDialog)
     if (!dia.postscript.isEmpty()) 
     {
 	Process p;
-	p.runScript (dia.postscript,d.path()+"/"+model->getMapName()+".html");
+	p.runScript (dia.postscript,outDir.path()+"/"+model->getMapName()+".html");
     }
 
     QString cmd="exportHTML";
-    settings.setLocalValue (model->getFilePath(),"/export/last/exportPath",d.path());
+    settings.setLocalValue (model->getFilePath(),"/export/last/exportPath",outDir.path());
     settings.setLocalValue ( model->getFilePath(), "/export/last/command","exportHTML");
     settings.setLocalValue ( model->getFilePath(), "/export/last/description","HTML");
     mainWindow->statusMessage(cmd + ": " + outputFile);
