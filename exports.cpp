@@ -737,6 +737,7 @@ void ExportHTML::doExport(bool useDialog)
     dia.setFilePath (model->getFilePath());
     dia.setMapName (model->getMapName());
     dia.readSettings();
+
     if (useDialog)
     {
 	if (dia.exec()!=QDialog::Accepted) return;
@@ -762,7 +763,7 @@ void ExportHTML::doExport(bool useDialog)
 	}
     }
 
-    setFile (outDir.path()+"/"+model->getMapName()+".html");
+    setFile (dia.getDir().absolutePath() + "/" + model->getMapName() + ".html");
 
     // Copy CSS file    //FIXME-2 Sometimes not updated
     if (dia.css_copy)
@@ -790,10 +791,10 @@ void ExportHTML::doExport(bool useDialog)
     }
 
     // Copy flags
-    QDir flagsDst=outDir.path()+"/flags";
+    QDir flagsDst(dia.getDir().absolutePath() + "/flags");
     if (!flagsDst.exists())
     {
-        if (!outDir.mkdir  ("flags"))
+        if (!dia.getDir().mkdir("flags"))
         {
             QMessageBox::critical( 0,
             QObject:: tr( "Critical" ),
@@ -803,12 +804,13 @@ void ExportHTML::doExport(bool useDialog)
         }
     }   
 
-    if (!copyDir(QDir(flagsPath),flagsDst,true))
+    QDir flagsSrc(flagsPath);
+    if (!copyDir(flagsSrc,flagsDst,true))
     {
         QMessageBox::critical( 0,
-                QObject:: tr( "Warning" ),
+                QObject:: tr( "Critical" ),
                 QObject::tr("Trying to create directory for flags:")+"\n\n"+
-                QObject::tr("Could not create %1").arg(flagsDst.path()));
+                QObject::tr("Could not copy %1 to %2").arg(flagsSrc.path()).arg(flagsDst.path()));
         return;
     }
 

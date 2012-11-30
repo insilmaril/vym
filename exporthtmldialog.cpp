@@ -44,7 +44,7 @@ ExportHTMLDialog::ExportHTMLDialog(QWidget* parent) : QDialog(parent)
 void ExportHTMLDialog::readSettings()
 {
     dir=settings.localValue (filepath,"/export/html/exportDir",vymBaseDir.currentPath() ).toString();
-    ui.lineEditDir->setText(dir);
+    ui.lineEditDir->setText(dir.absolutePath());
     
     useImage=settings.localValue (filepath,"/export/html/useImage","true").toBool();
     ui.imageButton->setChecked(useImage);
@@ -103,8 +103,7 @@ void ExportHTMLDialog::readSettings()
 
 void ExportHTMLDialog::setDirectory (const QString &d)
 {
-    dir=d;
-    if (dir.right(1)!="/") dir+="/";
+    dir.setPath(d);
 }
 
 void ExportHTMLDialog::dirChanged()
@@ -289,7 +288,7 @@ void ExportHTMLDialog::saveSettings ()
     else    
     {
 	settings.setLocalValue (filepath,"/export/html/saveSettingsInMap","yes");
-        settings.setLocalValue (filepath,"/export/html/exportDir",dir);
+        settings.setLocalValue (filepath,"/export/html/exportDir",dir.absolutePath());
         settings.setLocalValue (filepath,"/export/html/postscript",postscript);
         settings.setLocalValue (filepath,"/export/html/useImage",useImage);
         settings.setLocalValue (filepath,"/export/html/useTOC",useTOC);
@@ -315,7 +314,7 @@ void ExportHTMLDialog::setMapName(const QString &s)
     mapname=s;
 }
 
-QString ExportHTMLDialog::getDir()
+QDir ExportHTMLDialog::getDir()
 {
     return dir;
 }
