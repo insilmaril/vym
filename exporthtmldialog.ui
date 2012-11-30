@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>661</width>
-    <height>581</height>
+    <width>771</width>
+    <height>433</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -95,7 +95,7 @@
      <property name="minimumSize">
       <size>
        <width>0</width>
-       <height>150</height>
+       <height>140</height>
       </size>
      </property>
      <property name="maximumSize">
@@ -113,7 +113,7 @@
         <x>20</x>
         <y>20</y>
         <width>581</width>
-        <height>106</height>
+        <height>111</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">
@@ -127,6 +127,20 @@
          </property>
          <property name="text">
           <string>Include image</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="TOCButton">
+         <property name="text">
+          <string>Include table of contents</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="numberingButton">
+         <property name="text">
+          <string>Number sections</string>
          </property>
         </widget>
        </item>
@@ -165,7 +179,7 @@
      <property name="minimumSize">
       <size>
        <width>0</width>
-       <height>70</height>
+       <height>100</height>
       </size>
      </property>
      <property name="title">

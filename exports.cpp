@@ -712,9 +712,41 @@ QString ExportHTML::buildList (BranchItem *current)
     return r;
 }
 
+QString ExportHTML::createTOC()
+{
+    QString toc;
+    QString number;
+    toc += "<table class=\"vym-toc\">\n";
+    toc += "<tr><td class=\"vym-toc-title\">\n"; 
+    toc += QObject::tr("Contents:","Used in HTML export");
+    toc += "\n";
+    toc += "</td></tr>\n"; 
+    toc += "<tr><td>\n"; 
+    BranchItem *cur=NULL;
+    BranchItem *prev=NULL;
+    model->nextBranch(cur,prev);
+    while (cur) 
+    {
+	if (!cur->hasHiddenExportParent() && !cur->hasScrolledParent() )
+	{
+            if (dia.useNumbering) number=getSectionString(cur);
+            toc +=QString("<div class=\"vym-toc-branch-%1\">").arg(cur->depth());
+	    toc +=QString("<a href=\"#%1\"> %2 %3</a></br>\n")
+                .arg(model->getSelectString(cur))
+                .arg(number)
+                .arg(cur->getHeadingPlain());
+            toc +="</div>";
+	}
+	model->nextBranch(cur,prev);
+    }
+    toc += "</td></tr>\n"; 
+    toc += "</table>\n"; 
+    return toc;
+}
+
 void ExportHTML::doExport(bool useDialog) 
 {
-    // Execute dialog
+    // Setup dialog and read settings
     dia.setFilePath (model->getFilePath());
     dia.setMapName (model->getMapName());
     dia.readSettings();
@@ -763,7 +795,7 @@ void ExportHTML::doExport(bool useDialog)
 	    dia.setShowAgainName("/exports/overwrite/html_css");
 	    if (!dia.exec()==QDialog::Accepted) return;
             dst.remove();
-            qDebug()<<"Removing "<<cssDst;
+            qDebug()<<"Removing "<<cssDst; //FIXME-2
         }
 
         if (!src.copy(cssDst))
@@ -848,6 +880,9 @@ void ExportHTML::doExport(bool useDialog)
 	ts<<"<center><img src=\""<<model->getMapName()<<".png\" usemap='#imagemap'></center>\n";
 	offset=model->exportImage (d.path()+"/"+model->getMapName()+".png",false,"PNG");
     }
+
+    // Include table of contents
+    if (dia.useTOC) ts << createTOC();
 
     // Main loop over all mapcenters
     ts << buildList(model->getRootItem()) << "\n";

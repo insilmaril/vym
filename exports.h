@@ -104,6 +104,7 @@ public:
     ExportHTML();
     ExportHTML(VymModel *m);
     virtual void init();
+    virtual QString createTOC();
     virtual void doExport(bool useDialog=true);
 private:
     QString getBranchText(BranchItem *);

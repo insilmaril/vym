@@ -32,6 +32,28 @@ a:hover {
     vertical-align:center;
     font-size: 2em;
 }
+.vym-toc{
+    background-color: #F9F9F9;
+    border: 1px solid #AAAAAA;
+    font-size: 95%;
+    padding: 5px
+}
+.vym-toc-title{
+    background-color: #F9F9F9;
+    font-size: 100%;
+}
+.vym-toc-branch-0{ text-indent: 0em; }
+.vym-toc-branch-1{ text-indent: 1em; }
+.vym-toc-branch-2{ text-indent: 2em; }
+.vym-toc-branch-3{ text-indent: 3em; }
+.vym-toc-branch-4{ text-indent: 4em; }
+.vym-toc-branch-5{ text-indent: 5em; }
+.vym-toc-branch-6{ text-indent: 6em; }
+.vym-toc-branch-7{ text-indent: 7em; }
+.vym-toc-branch-8{ text-indent: 8em; }
+.vym-toc-branch-9{ text-indent: 9em; }
+.vym-toc-number{ }
+.vym-toc-text{ }
 .vym-imagemap{
     width:96%; 
     padding:2%; 
@@ -95,6 +117,14 @@ a:hover {
     font-weight: normal;
 }
 
+.vym-branch-8{
+    font-size: small;
+    font-weight: normal;
+}
+.vym-branch-9{
+    font-size: small;
+    font-weight: normal;
+}
 .vym-note { 
     width:80%; 
     border: solid 1px black; 

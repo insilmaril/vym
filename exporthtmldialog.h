@@ -25,6 +25,8 @@ public slots:
     virtual void dirChanged();
     virtual void browseDirectoryPressed();
     virtual void imageButtonPressed( bool b );
+    virtual void TOCButtonPressed( bool b );
+    virtual void numberingButtonPressed( bool b );
     virtual void textcolorButtonPressed( bool b );
     virtual void saveSettingsInMapButtonPressed( bool b );
     virtual void warningsButtonPressed( bool b );
@@ -44,6 +46,8 @@ public slots:
 
 public:
     bool useImage;
+    bool useTOC;
+    bool useNumbering;
     bool useTextColor;
     QString postscript;
 
