@@ -2066,13 +2066,13 @@ void Main::setupFlagActions()
     flag->setGroup("standard-smiley");
     setupFlag (flag,standardFlagsToolbar,"smiley-sad",tr("Bad","Standardflag"),Qt::Key_ParenLeft);
 
-    flag=new Flag(flagsPath+"flag-smiley-omg.png");
+    flag=new Flag(flagsPath+"flag-smiley-omb.png");
     flag->setGroup("standard-smiley");
     setupFlag (flag,standardFlagsToolbar,"smiley-omb",tr("Oh no!","Standardflag"));
     // Original omg.png (in KDE emoticons)
     flag->unsetGroup();
 
-    flag=new Flag(flagsPath+"flag-kalarm.png");
+    flag=new Flag(flagsPath+"flag-clock.png");
     setupFlag (flag,standardFlagsToolbar,"clock",tr("Time critical","Standardflag"));
 
     flag=new Flag(flagsPath+"flag-phone.png");
@@ -2089,11 +2089,11 @@ void Main::setupFlagActions()
     flag->setGroup("standard-arrow");
     setupFlag (flag,standardFlagsToolbar,"arrow-down",tr("Unimportant","Standardflag"),Qt::SHIFT + Qt::Key_PageDown);
 
-    flag=new Flag(flagsPath+"flag-arrow-2up.png");
+    flag=new Flag(flagsPath+"flag-2arrow-up.png");
     flag->setGroup("standard-arrow");
     setupFlag (flag,standardFlagsToolbar,"2arrow-up",tr("Very important!","Standardflag"),Qt::SHIFT + +Qt::CTRL + Qt::Key_PageUp);
 
-    flag=new Flag(flagsPath+"flag-arrow-2down.png");
+    flag=new Flag(flagsPath+"flag-2arrow-down.png");
     flag->setGroup("standard-arrow");
     setupFlag (flag,standardFlagsToolbar,"2arrow-down",tr("Very unimportant!","Standardflag"),Qt::SHIFT + Qt::CTRL + Qt::Key_PageDown);
     flag->unsetGroup();
