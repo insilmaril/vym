@@ -522,7 +522,7 @@ public:
     QPointF exportSVG (QString fname="",bool askForName=true);
 
     /*! Export as XTML to directory */
-    void exportXML(QString dir="", bool askForName=true);
+    void exportXML(QString dir="", QString fname="", bool useDialog=true);    
 
     /*! Export as A&O report text to file */
     void exportAO (QString fname="",bool askForName=true);  

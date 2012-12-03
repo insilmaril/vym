@@ -3879,8 +3879,9 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="exportXML")
 	{
-	    QString fname=parser.parString(ok,1); 
-	    exportXML (fname,false);
+	    QString dpath=parser.parString(ok,0); 
+	    QString fpath=parser.parString(ok,1); 
+	    exportXML (dpath,fpath,false);
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="getDestPath")
 	{ 
@@ -4545,9 +4546,9 @@ QPointF VymModel::exportSVG (QString fname, bool askName)
     return offset;
 }
 
-void VymModel::exportXML(QString dir, bool askForName)
+void VymModel::exportXML (QString dpath, QString fpath, bool useDialog)
 {
-    if (askForName)
+    if (useDialog)
     {
     	QFileDialog fd;
 	fd.setWindowTitle (vymName+ " - " + tr("Export XML to directory"));
@@ -4560,38 +4561,47 @@ void VymModel::exportXML(QString dir, bool askForName)
 
 	QString fn;
 	if (fd.exec() != QDialog::Accepted || fd.selectedFiles().isEmpty() )
-	{
-	    qDebug()<<"exportXML returning1";
-	    return;
-	    }
-	dir=fd.selectedFiles().first();
+        {
+            qDebug()<<"exportXML returning 1"; //FIXME-2
+            return;
+        }
 
-	if (dir =="" && !reallyWriteDirectory(dir) )
+	if (dpath=="" && !reallyWriteDirectory(dpath) )
 	{
-	    qDebug()<<"exportXML returning2";
+	    qDebug()<<"exportXML returning 2"; //FIXME-2
 	    return;
 	}
 	setChanged();
+
+	dpath=fd.selectedFiles().first();
+        dpath=dpath.left(dpath.lastIndexOf("/"));
+	fpath=dpath + "/" + mapName + ".xml";
     }
+
+    QString mname=basename(fpath);
 
     // Hide stuff during export, if settings want this
     setExportMode (true);
 
     // Create subdirectories
-    makeSubDirs (dir);
+    makeSubDirs (dpath);
 
     // write image and calculate offset
-    QPointF offset=exportImage (dir+"/images/"+mapName+".png",false,"PNG");
+    QPointF offset=exportImage (dpath + "/images/" + mname + ".png",false,"PNG");
 
-    // write to directory   //FIXME-4 check totalBBox here...
-    QString saveFile=saveToDir (dir,mapName+"-",true,offset,NULL); 
+    // write to directory   //FIXME-3 check totalBBox here...
+    QString saveFile=saveToDir (dpath , mname + "-", true, offset, NULL); 
     QFile file;
 
-    file.setFileName ( dir + "/"+mapName+".xml");
+    file.setFileName (fpath);
     if ( !file.open( QIODevice::WriteOnly ) )
     {
 	// This should neverever happen
-	QMessageBox::critical (0,tr("Critical Export Error"),QString("VymModel::exportXML couldn't open %1").arg(file.fileName()));
+	QMessageBox::critical (
+                0,
+                tr("Critical Export Error"),
+                QString("VymModel::exportXML couldn't open %1").arg(file.fileName())
+        );
 	return;
     }	
 
@@ -4601,6 +4611,13 @@ void VymModel::exportXML(QString dir, bool askForName)
     file.close();
 
     setExportMode (false);
+
+    QString cmd=QString("exportXML(\"%1\",\"%2\")")
+        .arg(dpath)
+        .arg(fpath);
+    settings.setLocalValue ( filePath, "/export/last/exportPath",dpath);
+    settings.setLocalValue ( filePath, "/export/last/command",cmd);
+    settings.setLocalValue ( filePath, "/export/last/description","XML");
 }
 
 void VymModel::exportAO (QString fname,bool askName)

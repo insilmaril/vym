@@ -574,6 +574,7 @@ void Main::setupAPI()
     modelCommands.append(c);
 
     c=new Command ("exportXML",Command::Any);
+    c->addPar (Command::String,false,"Path used for export");
     c->addPar (Command::String,false,"Filename for export");
     modelCommands.append(c);
 

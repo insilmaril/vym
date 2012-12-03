@@ -118,6 +118,42 @@ def test_export (vym)
   expect "exportHTML: HTML flags exists", File.exists?("#{@@testdir}/flags/flag-stopsign.png"), true
   expect "exportHTML: HTML CSS exists", File.exists?("#{@@testdir}/vym.css"), true
 
+  #AO
+  filepath = "#{@@testdir}/export-ao.txt"
+  vym.exportAO(filepath)
+  expect "exportAO: AO file exists", File.exists?(filepath), true
+
+  #ASCII
+  filepath = "#{@@testdir}/export-ascii.txt"
+  vym.exportASCII(filepath)
+  expect "exportASCII: ASCII file exists", File.exists?(filepath), true
+
+  #Image
+  filepath = "#{@@testdir}/export-image.png"
+  vym.exportImage(filepath,"PNG")
+  expect "exportImage: PNG file exists", File.exists?(filepath), true
+
+  #PDF
+  filepath = "#{@@testdir}/export-pdf.pdf"
+  vym.exportImage(filepath,"PNG")
+  expect "exportPDF: PDF file exists", File.exists?(filepath), true
+
+  #SVG
+  filepath = "#{@@testdir}/export-svg.svg"
+  vym.exportSVG(filepath)
+  expect "exportSVG: SVG file exists", File.exists?(filepath), true
+
+  #XML
+  filepath = "#{@@testdir}/export-xml.xml"
+  vym.exportXML(@@testdir, filepath)
+  expect "exportXML: XML file exists", File.exists?(filepath), true
+
+  #OpenOffice Impress //FIXME-2
+  #KDE4 Bookmarks //FIXME-2
+  #Taskjuggler //FIXME-3
+  #CSV //FIXME-3
+  #Emacs Orgmode //FIXME-3
+  #LaTeX //FIXME-3
 end
 
 #######################
@@ -568,15 +604,6 @@ cycleTask
 delete (image)
 deleteSlide
 exportAO
-exportASCII
-exportHTML
-exportImage
-exportImpress
-exportLaTeX
-exportPDF
-exportPDF
-exportSVG
-exportXML
 importDir
 loadImage
 loadNote
