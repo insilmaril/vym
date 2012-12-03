@@ -572,17 +572,28 @@ QString ExportHTML::getBranchText(BranchItem *current)
         QString heading=quotemeta(current->getHeadingPlain());	
 
         // Task flags
+        QString taskFlags;
         if (dia.useTaskFlags)
         {
             Task *task=current->getTask();
             if (task)
-                s+=QString("<img src=\"flags/flag-%1.png\">").arg(task->getIconString());
+                taskFlags+=QString("<img src=\"flags/flag-%1.png\">").arg(task->getIconString());
+        }
+
+        // User flags
+        QString userFlags;
+        if (dia.useUserFlags)
+        {
+            foreach (QString flag, current->activeStandardFlagNames())
+                userFlags+=QString("<img src=\"flags/flag-%1.png\">").arg(flag);
         }
 
         // URL
         if (!url.isEmpty())
         {
-            s+=QString ("<a href=\"%1\"><img src=\"flags/flag-url-16x16.png\">%2</a>").arg(url).arg(heading);
+            s+=QString ("<a href=\"%1\"><img src=\"flags/flag-url-16x16.png\">%2</a>")
+                .arg(url)
+                .arg(taskFlags + heading + userFlags);
 
             QRectF fbox=current->getBBoxURLFlag ();
             if (vis)	
@@ -593,14 +604,7 @@ QString ExportHTML::getBranchText(BranchItem *current)
                 .arg(fbox.bottom()-offset.y())
                 .arg(url);
         } else
-            s+=heading;
-
-        // User flags
-        if (dia.useUserFlags)
-        {
-            foreach (QString flag, current->activeStandardFlagNames())
-                s+=QString("<img src=\"flags/flag-%1.png\">").arg(flag);
-        }
+            s+=taskFlags + heading + userFlags;
 
         s+="</span>";
 
