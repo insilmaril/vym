@@ -37,7 +37,7 @@ ExportBase::~ExportBase()
     removeDir (tmpDir);
 
     // Remember current directory
-    lastExportDir=outDir;
+    lastExportDir=QDir(dirPath);
 }
 
 void ExportBase::init()
@@ -49,22 +49,44 @@ void ExportBase::init()
 	QMessageBox::critical( 0, QObject::tr( "Error" ),
 		       QObject::tr("Couldn't access temporary directory\n"));
     cancelFlag=false;		       
-    outDir=lastExportDir;
+    dirPath=lastExportDir.absolutePath();
 }
 
-void ExportBase::setDirectory (const QDir &d)
+void ExportBase::setDirPath (const QString &s)
 {
-    outDir=d;
+    if (!s.isEmpty()) 
+        dirPath=s;
+    // Otherwise lastExportDir is used, which defaults to current dir
 }
 
-void ExportBase::setFile (const QString &p)
+QString ExportBase::getDirPath()
 {
-    outputFile=p;
+    return dirPath;
 }
 
-QString ExportBase::getFile ()
+void ExportBase::setFilePath (const QString &s)
 {
-    return outputFile;
+    if(!s.isEmpty())
+    {
+        filePath=s;
+        if (!filePath.contains("/"))
+            // Absolute path
+            filePath=lastExportDir.absolutePath() + "/" + filePath;
+    } 
+}
+
+QString ExportBase::getFilePath ()
+{
+    if (!filePath.isEmpty())
+        return filePath;
+    else
+        return dirPath + "/" + model->getMapName() + extension;
+}
+
+QString ExportBase::getMapName ()
+{
+    QString fn=basename(filePath);
+    return fn.left(fn.lastIndexOf("."));
 }
 
 void ExportBase::setModel(VymModel *m)
@@ -87,7 +109,7 @@ bool ExportBase::execDialog(const QString &overwriteWarning)
     QString fn=QFileDialog::getSaveFileName( 
 	NULL,
 	caption,
-	outDir.path(), 
+	dirPath, 
 	filter,
 	NULL,
 	QFileDialog::DontConfirmOverwrite);
@@ -107,8 +129,8 @@ bool ExportBase::execDialog(const QString &overwriteWarning)
 		return false;
 	    }
 	}
-	outDir.setPath(fn.left(fn.lastIndexOf ("/")) );
-	outputFile=fn;
+	dirPath=fn.left(fn.lastIndexOf ("/"));
+	filePath=fn;
 	if (model) model->setChanged();
 	return true;
     }
@@ -160,14 +182,14 @@ ExportAO::ExportAO()
 
 void ExportAO::doExport()   
 {
-    QFile file (outputFile);
+    QFile file (filePath);
     if ( !file.open( QIODevice::WriteOnly ) )
     {
-	qWarning()<<"ExportAO::doExport couldn't open "+outputFile;//FIXME-3 missing GUI warning
+	qWarning()<<"ExportAO::doExport couldn't open " + filePath;//FIXME-3 missing GUI warning
 	return;
     }
 
-    settings.setLocalValue (model->getFilePath(),"/export/last/exportDir",outputFile);
+    settings.setLocalValue (model->getFilePath(),"/export/last/exportDir",filePath);// FIXME-2 not needed, use only command
     settings.setLocalValue ( model->getFilePath(), "/export/last/command","exportAO");
     settings.setLocalValue ( model->getFilePath(), "/export/last/description","A&O report");
 
@@ -285,10 +307,10 @@ void ExportAO::doExport()
     }
     file.close();
     QString cmd="exportAO";
-    settings.setLocalValue ( model->getFilePath(), "/export/last/exportPath",outputFile);
+    settings.setLocalValue ( model->getFilePath(), "/export/last/exportPath",filePath);  // FIXME-2 not needed, use only command
     settings.setLocalValue ( model->getFilePath(), "/export/last/command",cmd);
     settings.setLocalValue ( model->getFilePath(), "/export/last/description","A&O report");
-    mainWindow->statusMessage(cmd + ": " + outputFile);
+    mainWindow->statusMessage(cmd + ": " + filePath);
 }
 
 QString ExportAO::underline (const QString &text, const QString &line)
@@ -308,10 +330,10 @@ ExportASCII::ExportASCII()
 
 void ExportASCII::doExport()	
 {
-    QFile file (outputFile);
+    QFile file (filePath);
     if ( !file.open( QIODevice::WriteOnly ) )
     {
-	qWarning ()<<"ExportASCII::doExport couldn't open "+outputFile;
+	qWarning ()<<"ExportASCII::doExport couldn't open "+filePath;
 	return;
     }
     QTextStream ts( &file );	// use LANG decoding here...
@@ -384,10 +406,10 @@ void ExportASCII::doExport()
     }
     file.close();
     QString cmd="exportASCII";
-    settings.setLocalValue ( model->getFilePath(), "/export/last/exportPath",outputFile);
+    settings.setLocalValue ( model->getFilePath(), "/export/last/exportPath",filePath);
     settings.setLocalValue ( model->getFilePath(), "/export/last/command",cmd);
     settings.setLocalValue ( model->getFilePath(), "/export/last/description","ASCII");
-    mainWindow->statusMessage(cmd + ": " + outputFile);
+    mainWindow->statusMessage(cmd + ": " + filePath);
 }
 
 QString ExportASCII::underline (const QString &text, const QString &line)
@@ -401,10 +423,10 @@ QString ExportASCII::underline (const QString &text, const QString &line)
 ////////////////////////////////////////////////////////////////////////
 void ExportCSV::doExport()
 {
-    QFile file (outputFile);
+    QFile file (filePath);
     if ( !file.open( QIODevice::WriteOnly ) )
     {
-	qWarning ()<<"ExportBase::exportXML  couldn't open "+outputFile;
+	qWarning ()<<"ExportBase::exportXML  couldn't open "+filePath;
 	return;
     }
     QTextStream ts( &file );	// use LANG decoding here...
@@ -522,6 +544,7 @@ ExportHTML::ExportHTML(VymModel *m):ExportBase(m)
 
 void ExportHTML::init()
 {
+    extension=".html";
     frameURLs=true;
 }
 
@@ -734,9 +757,16 @@ QString ExportHTML::createTOC()
 void ExportHTML::doExport(bool useDialog) 
 {
     // Setup dialog and read settings
-    dia.setFilePath (model->getFilePath());
     dia.setMapName (model->getMapName());
     dia.readSettings();
+
+    if (!dirPath.isEmpty()) 
+        dia.setDirectory(dirPath);
+
+    if (!filePath.isEmpty())
+        dia.setFilePath (filePath);
+    else
+        dia.setFilePath (model->getFilePath());
 
     if (useDialog)
     {
@@ -763,9 +793,10 @@ void ExportHTML::doExport(bool useDialog)
 	}
     }
 
-    setFile (dia.getDir().absolutePath() + "/" + model->getMapName() + ".html");
-
-    // Copy CSS file    //FIXME-2 Sometimes not updated
+    dirPath=dia.getDir().absolutePath(); 
+    filePath=getFilePath();
+    
+    // Copy CSS file 
     if (dia.css_copy)
     {
         cssSrc=dia.getCssSrc();
@@ -799,7 +830,7 @@ void ExportHTML::doExport(bool useDialog)
             QMessageBox::critical( 0,
             QObject:: tr( "Critical" ),
             QObject::tr("Trying to create directory for flags:")+"\n\n"+
-            QObject::tr("Could not create %1").arg(flagsDst.path()));
+            QObject::tr("Could not create %1").arg(flagsDst.absolutePath()));
             return;
         }
     }   
@@ -809,19 +840,18 @@ void ExportHTML::doExport(bool useDialog)
     {
         QMessageBox::critical( 0,
                 QObject:: tr( "Critical" ),
-                QObject::tr("Trying to create directory for flags:")+"\n\n"+
-                QObject::tr("Could not copy %1 to %2").arg(flagsSrc.path()).arg(flagsDst.path()));
+                QObject::tr("Could not copy %1 to %2").arg(flagsSrc.absolutePath()).arg(flagsDst.absolutePath()));
         return;
     }
 
     // Open file for writing
-    QFile file (outputFile);
+    QFile file (filePath);
     if ( !file.open( QIODevice::WriteOnly ) ) 
     {
 	QMessageBox::critical (0,
 	    QObject::tr("Critical Export Error"),
 	    QObject::tr("Trying to save HTML file:")+"\n\n"+
-	    QObject::tr("Could not write %1").arg(outputFile));
+	    QObject::tr("Could not write %1").arg(filePath));
 	mainWindow->statusMessage(QString(QObject::tr("Export failed.")));
 	return;
     }
@@ -847,8 +877,8 @@ void ExportHTML::doExport(bool useDialog)
     // (be careful: this resets Export mode, so call before exporting branches)
     if (dia.useImage)
     {
-	ts<<"<center><img src=\""<<model->getMapName()<<".png\" usemap='#imagemap'></center>\n";
-	offset=model->exportImage (dia.getDir().absolutePath()+"/"+model->getMapName()+".png",false,"PNG");
+	ts<<"<center><img src=\""<<getMapName()<<".png\" usemap='#imagemap'></center>\n";
+	offset=model->exportImage (dirPath+"/"+getMapName()+".png",false,"PNG");
     }
 
     // Include table of contents
@@ -864,7 +894,7 @@ void ExportHTML::doExport(bool useDialog)
     ts<<"<hr/>\n";
     ts<<"<table class=\"vym-footer\">   \n\
       <tr> \n\
-        <td class=\"vym-footerL\">"+model->getFileName()+"</td> \n\
+        <td class=\"vym-footerL\">"+filePath+"</td> \n\
         <td class=\"vym-footerC\">"+model->getDate()+"</td> \n\
         <td class=\"vym-footerR\"> <a href='" + vymHome + "'>vym "+vymVersion+"</a></td> \n\
       </tr> \n \
@@ -875,14 +905,17 @@ void ExportHTML::doExport(bool useDialog)
     if (!dia.postscript.isEmpty()) 
     {
 	Process p;
-	p.runScript (dia.postscript,dia.getDir().absolutePath()+"/"+model->getMapName()+".html");
+	p.runScript (dia.postscript,dirPath + "/" + filePath);
     }
 
     QString cmd="exportHTML";
-    settings.setLocalValue (model->getFilePath(),"/export/last/exportPath",dia.getDir().absolutePath());
-    settings.setLocalValue ( model->getFilePath(), "/export/last/command","exportHTML");
+    settings.setLocalValue ( model->getFilePath(), "/export/last/command",QString("exportHTML(\"%1\",\"%2\")")
+            .arg(dirPath)
+            .arg(filePath)
+            );
     settings.setLocalValue ( model->getFilePath(), "/export/last/description","HTML");
-    mainWindow->statusMessage(cmd + ": " + outputFile);
+    settings.setLocalValue ( model->getFilePath(), "/export/last/exportPath",filePath); 
+    mainWindow->statusMessage(cmd + ": " + filePath);
 
     dia.saveSettings();
     model->setExportMode (false);
@@ -895,7 +928,7 @@ void ExportTaskjuggler::doExport()
 
     XSLTProc p;
     p.setInputFile (tmpDir.path()+"/"+model->getMapName()+".xml");
-    p.setOutputFile (outputFile);
+    p.setOutputFile (filePath);
     p.setXSLFile (vymBaseDir.path()+"/styles/vym2taskjuggler.xsl");
     p.process();
 }
@@ -906,10 +939,10 @@ void ExportOrgMode::doExport()
     // Exports a map to an org-mode file.  
     // This file needs to be read 
     // by EMACS into an org mode buffer
-    QFile file (outputFile);
+    QFile file (filePath);
     if ( !file.open( QIODevice::WriteOnly ) ) 
     {
-	QMessageBox::critical (0,QObject::tr("Critical Export Error"),QObject::tr("Could not write %1").arg(outputFile));
+	QMessageBox::critical (0,QObject::tr("Critical Export Error"),QObject::tr("Could not write %1").arg(filePath));
 	mainWindow->statusMessage(QString(QObject::tr("Export failed.")));
 	return;
     }
@@ -967,7 +1000,7 @@ QString ExportLaTeX::escapeLaTeX(const QString &s)
 
     foreach (QString p,esc.keys() )
     {
-	qDebug()<<"Replacing "<<p<<" with "<<esc[p];
+	qDebug()<<"Replacing "<<p<<" with "<<esc[p];    // FIXME-2
 	rx.setPattern (p);
 	r.replace (rx, esc[p] );
     }	
@@ -981,12 +1014,12 @@ void ExportLaTeX::doExport()
     // or inported into a LaTex document
     // it will not add a preamble, or anything 
     // that makes a full LaTex document.
-  QFile file (outputFile);
+  QFile file (filePath);
   if ( !file.open( QIODevice::WriteOnly ) ) {
     QMessageBox::critical (
 	0,
 	QObject::tr("Critical Export Error"),
-	QObject::tr("Could not write %1").arg(outputFile));
+	QObject::tr("Could not write %1").arg(filePath));
 	mainWindow->statusMessage(QString(QObject::tr("Export failed.")));
     return;
   }
@@ -1039,10 +1072,10 @@ void ExportLaTeX::doExport()
     
     file.close();
     QString cmd="exportLaTeX";
-    settings.setLocalValue ( model->getFilePath(), "/export/last/exportPath",outputFile);
+    settings.setLocalValue ( model->getFilePath(), "/export/last/exportPath",filePath);
     settings.setLocalValue ( model->getFilePath(), "/export/last/command",cmd);
     settings.setLocalValue ( model->getFilePath(), "/export/last/description","LaTeX");
-    mainWindow->statusMessage(cmd + ": " + outputFile);
+    mainWindow->statusMessage(cmd + ": " + filePath);
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -1176,14 +1209,14 @@ void ExportOO::exportPresentation()
     f.close();
 
     // zip tmpdir to destination
-    zipDir (tmpDir,outputFile);	
+    zipDir (tmpDir,filePath);	
 
     QString cmd="exportImpres";
-    settings.setLocalValue (model->getFilePath(),"/export/last/exportPath",outputFile);
+    settings.setLocalValue (model->getFilePath(),"/export/last/exportPath",filePath);
     settings.setLocalValue ( model->getFilePath(), "/export/last/command","exportImpress");
     settings.setLocalValue ( model->getFilePath(), "/export/last/configFile",configFile);
     settings.setLocalValue ( model->getFilePath(), "/export/last/description","OpenOffice.org Impress");
-    mainWindow->statusMessage(cmd + ": " + outputFile);
+    mainWindow->statusMessage(cmd + ": " + filePath);
 }
 
 bool ExportOO::setConfigFile (const QString &cf)

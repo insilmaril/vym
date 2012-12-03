@@ -528,10 +528,10 @@ public:
     void exportAO (QString fname="",bool askForName=true);  
 
     /*! Export as ASCII text to file */
-    void exportASCII (QString fname="",bool askForName=true);  
+    void exportASCII (const QString &fname="",bool askForName=true);  
 
     /*! Export as HTML to directory */
-    void exportHTML(const QString& dir="", bool useDialog=true);    
+    void exportHTML(const QString &dir="", const QString &fname="", bool useDialog=true);    
 
     /*! Export as OpenOfficeOrg presentation */
     void exportImpress (const QString &,const QString &);	

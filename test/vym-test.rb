@@ -106,6 +106,21 @@ def test_basics (vym)
 end
 
 #######################
+def test_export (vym)
+  heading "Export:"
+  init_map
+
+  #HTML
+  mapname = "export-html"
+  vym.exportHTML(@@testdir,"#{@@testdir}/#{mapname}.html")
+  expect "exportHTML: HTML file exists", File.exists?("#{@@testdir}/#{mapname}.html"), true
+  expect "exportHTML: HTML image exists", File.exists?("#{@@testdir}/#{mapname}.png"), true
+  expect "exportHTML: HTML flags exists", File.exists?("#{@@testdir}/flags/flag-stopsign.png"), true
+  expect "exportHTML: HTML CSS exists", File.exists?("#{@@testdir}/vym.css"), true
+
+end
+
+#######################
 def test_extrainfo (vym)
   heading "Extra information:"
   init_map
@@ -524,6 +539,7 @@ end
 
 #######################
 test_basics(vym)
+test_export(vym)
 test_extrainfo(vym)
 test_adding_branches(vym)
 test_adding_maps(vym)

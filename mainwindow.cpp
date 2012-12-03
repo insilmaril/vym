@@ -540,6 +540,7 @@ void Main::setupAPI()
     modelCommands.append(c);
 
     c=new Command ("exportHTML",Command::Any);
+    c->addPar (Command::String,false,"Path used for export");
     c->addPar (Command::String,false,"Filename for export");
     modelCommands.append(c);
 
@@ -3337,7 +3338,7 @@ void Main::fileExportCSV()  //FIXME-3 not scriptable yet
 	ExportCSV ex;
 	ex.setModel (m);
 	ex.addFilter ("CSV (*.csv)");
-	ex.setDirectory(lastImageDir);
+	ex.setDirPath(lastImageDir.absolutePath());
 	ex.setWindowTitle(vymName+ " -" +tr("Export as CSV")+" "+tr("(still experimental)"));
 	if (ex.execDialog() ) 
 	{
@@ -3362,7 +3363,7 @@ void Main::fileExportOrgMode()	//FIXME-3 not scriptable yet
 	ExportOrgMode ex;
 	ex.setModel (m);
 	ex.addFilter ("org-mode (*.org)");
-	ex.setDirectory (lastImageDir);
+	ex.setDirPath (lastImageDir.absolutePath());
 	ex.setWindowTitle(vymName+ " -" +tr("Export as org-mode")+" "+tr("(still experimental)"));
 	if (ex.execDialog() ) 
 	{
@@ -3392,7 +3393,7 @@ void Main::fileExportTaskjuggler()  //FIXME-3 not scriptable yet
     {
 	ex.setModel (m);
 	ex.setWindowTitle ( vymName+" - "+tr("Export to")+" Taskjuggler"+tr("(still experimental)"));
-	ex.setDirectory (lastImageDir);
+	ex.setDirPath (lastImageDir.absolutePath());
 	ex.addFilter ("Taskjuggler (*.tjp)");
 
 	if (ex.execDialog() ) 

@@ -21,9 +21,11 @@ public:
     ExportBase(VymModel *m);
     virtual ~ExportBase();
     virtual void init();
-    virtual void setDirectory (const QDir&);
-    virtual void setFile (const QString &);
-    virtual QString getFile ();
+    virtual void setDirPath (const QString&);
+    virtual QString getDirPath();
+    virtual void setFilePath (const QString&);
+    virtual QString getFilePath ();
+    virtual QString getMapName ();
     virtual void setModel (VymModel *m);
     virtual void setWindowTitle (const QString &);
     virtual void addFilter (const QString &);
@@ -35,8 +37,9 @@ protected:
 
     QString indent (const int &n, bool useBullet);
     QDir tmpDir;
-    QDir outDir;
-    QString outputFile;
+    QString dirPath;    // Path to dir  e.g. /tmp/vym-export/
+    QString filePath;   // Path to file e.g. /tmp/vym-export/export.html
+    QString extension;  // Extension, e.g. .html
     QString indentPerDepth;
     int indentPerDepth2;
     QStringList bulletPoints;

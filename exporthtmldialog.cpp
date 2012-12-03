@@ -288,7 +288,6 @@ void ExportHTMLDialog::saveSettings ()
     else    
     {
 	settings.setLocalValue (filepath,"/export/html/saveSettingsInMap","yes");
-        settings.setLocalValue (filepath,"/export/html/exportDir",dir.absolutePath());
         settings.setLocalValue (filepath,"/export/html/postscript",postscript);
         settings.setLocalValue (filepath,"/export/html/useImage",useImage);
         settings.setLocalValue (filepath,"/export/html/useTOC",useTOC);

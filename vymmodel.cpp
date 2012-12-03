@@ -3840,8 +3840,9 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="exportHTML")
 	{
-	    QString fname=parser.parString(ok,0); 
-	    exportHTML (fname,false);
+	    QString path=parser.parString(ok,0); 
+	    QString fname=parser.parString(ok,1); 
+	    exportHTML (path,fname,false);
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="exportImage")
 	{
@@ -4607,9 +4608,9 @@ void VymModel::exportAO (QString fname,bool askName)
     ExportAO ex;
     ex.setModel (this);
     if (fname=="") 
-	ex.setFile (mapName+".txt");	
+	ex.setFilePath (mapName+".txt");	
     else
-	ex.setFile (fname);
+	ex.setFilePath (fname);
 
     if (askName)
     {
@@ -4626,14 +4627,14 @@ void VymModel::exportAO (QString fname,bool askName)
     }
 }
 
-void VymModel::exportASCII(QString fname,bool askName)
+void VymModel::exportASCII(const QString &fname,bool askName)
 {
     ExportASCII ex;
     ex.setModel (this);
     if (fname=="") 
-	ex.setFile (mapName+".txt");	
+	ex.setFilePath (mapName+".txt");	
     else
-	ex.setFile (fname);
+	ex.setFilePath (fname);
 
     if (askName)
     {
@@ -4650,10 +4651,11 @@ void VymModel::exportASCII(QString fname,bool askName)
     }
 }
 
-void VymModel::exportHTML (const QString &dir, bool useDialog)	
+void VymModel::exportHTML (const QString &dpath, const QString &fpath,bool useDialog)
 {
     ExportHTML ex (this);
-    ex.setDirectory (dir);
+    ex.setFilePath (fpath);
+    ex.setDirPath (dpath);
     setExportMode(true);
     ex.doExport(useDialog);
     setExportMode(false);
@@ -4662,7 +4664,7 @@ void VymModel::exportHTML (const QString &dir, bool useDialog)
 void VymModel::exportImpress(const QString &fn, const QString &cf) 
 {
     ExportOO ex;
-    ex.setFile (fn);
+    ex.setFilePath (fn);
     ex.setModel (this);
     if (ex.setConfigFile(cf)) 
     {
@@ -4678,7 +4680,7 @@ bool VymModel::exportLastAvailable(QString &description, QString &command, QStri
     description=settings.localValue(filePath,"/export/last/description","").toString();
     path=settings.localValue(filePath,"/export/last/exportPath","").toString();
     configFile=settings.localValue(filePath,"/export/last/configFile","").toString();
-    if (!command.isEmpty() && command.startsWith("export") && !path.isEmpty())
+    if (!command.isEmpty() && command.startsWith("export")) 
 	return true;
     else
 	return false;
@@ -4686,13 +4688,16 @@ bool VymModel::exportLastAvailable(QString &description, QString &command, QStri
 
 void VymModel::exportLast()
 {
-    QString desc, command, path, configFile;
+    QString desc, command, path, configFile;  //FIXME-2 better integrate configFIle into command
     if (exportLastAvailable(desc, command, path, configFile) )
     {
+        execute (command);
+        /*
 	if (!configFile.isEmpty() && command=="exportImpress")
 	    execute (QString ("%1 (\"%2\",\"%3\")").arg(command).arg(path).arg(configFile) );
 	else    
 	    execute (QString ("%1 (\"%2\")").arg(command).arg(path) );
+        */
     }	    
 }
 
@@ -4701,9 +4706,9 @@ void VymModel::exportLaTeX (const QString &fname,bool askName)
     ExportLaTeX ex;
     ex.setModel (this);
     if (fname=="") 
-	ex.setFile (mapName+".tex");	
+	ex.setFilePath (mapName+".tex");	
     else
-	ex.setFile (fname);
+	ex.setFilePath (fname);
 
     if (askName)
     {
