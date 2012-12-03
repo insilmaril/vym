@@ -55,7 +55,7 @@ AboutDialog::AboutDialog( QWidget *parent)
     "  <ul>"
     "    <li>Spanish: <a href=\"http://ieee.udistrital.edu.co/aclibre\">"
     "                 ACLibre (Academia y Conocimiento Libre)</a> and David Amian</li>"
-    "    <li>French: Philippe Caillaud and Claude </li>"
+    "    <li>French: Marc Sert, Philippe Caillaud and Claude </li>"
     "    <li>Italian: Giovanni Sora, Seyed Puria Nafisi Azizi </li>"
     "    <li>Interlingua: Giovanni Sora</li>"
     "    <li>Brasilian: Amadeu Júnior</li>"
