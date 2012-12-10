@@ -2205,6 +2205,41 @@ bool VymModel::setTaskSleep(const QString &s)
                     if (d.isValid()) 
                         // Locale date, e.g. 24 Dec 2012
                         ok=true;
+                    else
+                    {
+                        QRegExp re ("(\\d+).(\\d+).(\\d+)");
+                        re.setMinimal(false);
+                        int pos=re.indexIn(s);
+                        QStringList list=re.capturedTexts();
+                        if (pos>=0)
+                        {
+                            // German formate, e.g. 24.12.2012
+                            d=QDate(list.at(3).toInt(), list.at(2).toInt(), list.at(1).toInt());
+                            ok=true;
+                        } else
+                        {
+                            re.setPattern("(\\d+).(\\d+).");
+                            pos=re.indexIn(s);
+                            list=re.capturedTexts();
+                            if (pos>=0)
+                            {
+                                // Short German formate, e.g. 24.12.
+                                int month=list.at(2).toInt();
+                                int day=list.at(1).toInt();
+                                int year=QDate::currentDate().year();
+                                d=QDate(year, month, day);
+                                if (QDate::currentDate().daysTo(d) < 0)
+                                {
+                                    year++;
+                                    d=QDate(year, month, day);
+                                }
+                                ok=true;
+                            } else
+                            {
+                                re.setPattern("(\\d+).(\\d+).");
+                            }
+                        }
+                    }
                 }
                 if (ok) n=QDate::currentDate().daysTo(d);
             }

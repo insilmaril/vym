@@ -3916,7 +3916,7 @@ void Main::editTaskSleepN()
                 if (n<=0) n=0;
 
                 LineEditDialog *dia=new LineEditDialog(this);
-                dia->setLabel(tr("Enter sleep time (number of days or date YYYY-MM-DD","task sleep time dialog"));
+                dia->setLabel(tr("Enter sleep time (number of days or date YYYY-MM-DD or DD.MM[.YYYY]","task sleep time dialog"));
                 dia->setText(QString("%1").arg(n));
                 centerDialog (dia);
                 if (dia->exec() == QDialog::Accepted)
