@@ -101,6 +101,7 @@ HEADERS	+= \
     version.h \
     vymmodel.h \
     vymview.h \
+    winter.h \
     warningdialog.h \
     xlink.h \
     xlinkitem.h \
@@ -190,6 +191,7 @@ SOURCES	+= \
     vymmodel.cpp \
     vymview.cpp \
     warningdialog.cpp \
+    winter.cpp \
     xlink.cpp \
     xlinkitem.cpp \
     xlinkobj.cpp \

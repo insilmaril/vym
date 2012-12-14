@@ -805,9 +805,29 @@ AttributeTable* MapEditor::attributeTable()
     return attrTable;
 }
 
+#include "winter.h"
 void MapEditor::testFunction1()
 {
-  model->loadMap("/suse/uwedr/vym/code/test/default.vym");
+    Winter *winter=new Winter (mapScene);
+    //Winter *winter=new Winter;
+
+    /*
+    // Snowflakes should
+    // - stick to heading and flags
+    //
+    QGraphicsItem *snowflake=mapScene->addEllipse(0,0,20,20,QPen(Qt::white));
+    QTimeLine *timer = new QTimeLine(5000);
+    timer->setFrameRange(0, 100);
+    QGraphicsItemAnimation *animation = new QGraphicsItemAnimation;
+    animation->setItem(snowflake);
+    animation->setTimeLine(timer);
+
+    qreal x=qrand()%1000 - 500;
+    for (int i = 0; i < 300; ++i)
+        animation->setPosAt(i / 300.0, QPointF(x, i));
+    
+    timer->start();
+    */
 }
     
 void MapEditor::testFunction2()
