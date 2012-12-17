@@ -306,11 +306,10 @@ void ExportAO::doExport()
 	model->nextBranch(cur,prev);
     }
     file.close();
-    QString cmd="exportAO";
-    settings.setLocalValue ( model->getFilePath(), "/export/last/exportPath",filePath);  // FIXME-2 not needed, use only command
+    QString cmd=QString("exportAO(\"%1\")").arg(filePath);
     settings.setLocalValue ( model->getFilePath(), "/export/last/command",cmd);
     settings.setLocalValue ( model->getFilePath(), "/export/last/description","A&O report");
-    mainWindow->statusMessage(cmd + ": " + filePath);
+    mainWindow->statusMessage(cmd);
 }
 
 QString ExportAO::underline (const QString &text, const QString &line)
