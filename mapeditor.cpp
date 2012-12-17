@@ -163,6 +163,8 @@ MapEditor::MapEditor( VymModel *vm)	//FIXME-3 change ME from GraphicsScene to It
     //attrTable->addValue ("Key Prio","Prio 1");
     //attrTable->addValue ("Key Prio","Prio 2");
     }
+
+    winter=NULL;
 }
 
 MapEditor::~MapEditor()
@@ -796,7 +798,6 @@ TreeItem* MapEditor::findMapItem (QPointF p,TreeItem *exclude)
 	i++;
 	bi=model->getRootItem()->getBranchNum(i);
     }
-    
     return NULL;
 }
 
@@ -808,26 +809,24 @@ AttributeTable* MapEditor::attributeTable()
 #include "winter.h"
 void MapEditor::testFunction1()
 {
-    Winter *winter=new Winter (mapScene);
-    //Winter *winter=new Winter;
-
-    /*
-    // Snowflakes should
-    // - stick to heading and flags
-    //
-    QGraphicsItem *snowflake=mapScene->addEllipse(0,0,20,20,QPen(Qt::white));
-    QTimeLine *timer = new QTimeLine(5000);
-    timer->setFrameRange(0, 100);
-    QGraphicsItemAnimation *animation = new QGraphicsItemAnimation;
-    animation->setItem(snowflake);
-    animation->setTimeLine(timer);
-
-    qreal x=qrand()%1000 - 500;
-    for (int i = 0; i < 300; ++i)
-        animation->setPosAt(i / 300.0, QPointF(x, i));
-    
-    timer->start();
-    */
+    winter=new Winter (mapScene);
+    QList <QRectF> obstacles;
+    BranchObj *bo;
+    BranchItem *cur=NULL;
+    BranchItem *prev=NULL;
+    model->nextBranch(cur,prev);
+    while (cur) 
+    {
+	if (!cur->hasHiddenExportParent())
+	{
+	    // Branches
+	    bo=(BranchObj*)(cur->getLMO());
+	    if (bo && bo->isVisibleObj())
+                obstacles.append(bo->getBBox());
+        }
+        model->nextBranch(cur,prev);
+    }
+    winter->setObstacles(obstacles);
 }
     
 void MapEditor::testFunction2()
@@ -2088,6 +2087,27 @@ void MapEditor::updateData (const QModelIndex &sel)
     {
 	BranchObj *bo=(BranchObj*) ( ((MapItem*)ti)->getLMO());
 	bo->updateData();
+    }
+
+    if (winter)
+    {
+        QList <QRectF> obstacles;
+        BranchObj *bo;
+        BranchItem *cur=NULL;
+        BranchItem *prev=NULL;
+        model->nextBranch(cur,prev);
+        while (cur) 
+        {
+            if (!cur->hasHiddenExportParent())
+            {
+                // Branches
+                bo=(BranchObj*)(cur->getLMO());
+                if (bo && bo->isVisibleObj())
+                    obstacles.append(bo->getBBox());
+            }
+            model->nextBranch(cur,prev);
+        }
+        winter->setObstacles(obstacles);
     }
 }
 

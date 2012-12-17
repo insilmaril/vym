@@ -106,6 +106,11 @@ qreal roof (qreal x)
 	return 1-x;
 }
 
+int round_int (qreal x)
+{
+    return (x > 0.0) ? (x + 0.5) : (x - 0.5);
+}
+
 Qt::PenStyle penStyle (const QString &s, bool &ok)
 {
     ok=true;

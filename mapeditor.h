@@ -14,6 +14,7 @@
 
 
 class XLinkItem;
+class Winter;
 
 /*! \brief Main widget in vym to display and edit a map */
 
@@ -100,6 +101,10 @@ public:
     QPropertyAnimation viewCenterAnimation;
 
     void updateMatrix();	    //! Sets transformation matrix with current rotation and zoom values
+
+// xmas egg
+protected:
+    Winter *winter;
 
 public:
     void print();		    //!< Print the map
