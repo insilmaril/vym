@@ -1,11 +1,13 @@
 #ifndef WINTER_H
 #define WINTER_H
 
-#include <QGraphicsItem>
-#include <QGraphicsScene>
 #include <QObject>
+#include <QGraphicsItem>
 #include <QTimer>
 #include <QRectF>
+
+class QGraphicsView;
+class QGraphicsScene;
 
 class SnowFlake:public QGraphicsItem
 {
@@ -21,13 +23,15 @@ private:
     QList <QGraphicsLineItem*> lines;
     QPointF dv;
     QPointF dblow;
+    qreal da;
 };
 
 class Winter:public QObject {
     Q_OBJECT
 public:
-    Winter(QGraphicsScene *scene);
+    Winter(QGraphicsView *view);
     ~Winter();
+    void updateView();
     void setObstacles(QList <QRectF> obslist);
 
 public slots:
@@ -35,13 +39,17 @@ public slots:
     void makeSnow();
 
 private:
-    QGraphicsScene *mapScene;
+    QGraphicsView *view;
     QList <SnowFlake*> fallingSnow;
     QList <SnowFlake*> frozenSnow;
     int maxFlakes;
     QTimer *animTimer;
     QTimer *snowTimer;
     QList <QRectF> obstacles;
+
+    int maxFalling;
+    int maxUnfreeze;
+    //QGraphicsLineItem *test;
 
     QRectF viewRect;
 };

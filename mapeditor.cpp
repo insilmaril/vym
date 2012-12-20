@@ -809,7 +809,7 @@ AttributeTable* MapEditor::attributeTable()
 #include "winter.h"
 void MapEditor::testFunction1()
 {
-    winter=new Winter (mapScene);
+    winter=new Winter (this);
     QList <QRectF> obstacles;
     BranchObj *bo;
     BranchItem *cur=NULL;

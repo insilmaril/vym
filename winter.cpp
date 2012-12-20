@@ -3,6 +3,8 @@
 #include "misc.h"
 
 #include <QDebug>
+#include <QGraphicsScene>
+#include <QGraphicsView>
 #include <QPen>
 
 SnowFlake::SnowFlake(QGraphicsScene *scene)
@@ -34,6 +36,7 @@ SnowFlake::SnowFlake(QGraphicsScene *scene)
         l->setParentItem(this);
     }
     dv=QPointF(qrand()%10/10.0-0.5, qrand()%10/10.0 +1);
+    da=qrand()%20 / 10.0 - 1;
 }
 
 SnowFlake::~SnowFlake()
@@ -55,6 +58,7 @@ void SnowFlake::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
 void SnowFlake::animate()
 {
     moveBy(dv.x() + dblow.x(), dv.y() + dblow.y());
+    setRotation(rotation() + da);
     dblow = dblow *0.9;
 }
 
@@ -63,23 +67,26 @@ void SnowFlake::blow(const QPointF &v)
     dblow=v;
 }
 
-Winter::Winter(QGraphicsScene *scene)
+Winter::Winter(QGraphicsView *v)
 {
-    mapScene=scene;
+    view=v;
 
-    QRectF r=mapScene->sceneRect();
-    viewRect=QRectF (r.x()+50, r.y()+50, r.width()-100, r.height()-100);
-    qDebug()<<"       r="<<r;
-    qDebug()<<"viewRect="<<viewRect;
-    QGraphicsRectItem *ri=new QGraphicsRectItem (viewRect);
-    mapScene->addItem (ri);
+    updateView();
+    /*
+    test=view->scene()->addLine(
+            QLineF(viewRect.topLeft(), viewRect.bottomRight()), 
+            QPen(Qt::blue) );
+    */
+
+    maxFlakes=1500;
+    maxFalling=140;
+    maxUnfreeze=30;
+
+    makeSnow();
 
     animTimer = new QTimer;
     connect (animTimer, SIGNAL (timeout()), this, SLOT (animate() ));
     animTimer->start(50);
-
-    maxFlakes=2000;
-    makeSnow();
 
     snowTimer = new QTimer;
     connect (snowTimer, SIGNAL (timeout()), this, SLOT (makeSnow() ));
@@ -92,9 +99,18 @@ Winter::~Winter()
     delete snowTimer;
 }
 
+void Winter::updateView()
+{
+    QPointF p0=view->mapToScene( QPoint(0,0));
+    QPointF p1=view->mapToScene( view->rect().width(), view->rect().height() );
+    viewRect=QRectF(p0,p1);
+}
+
 void Winter::setObstacles(QList <QRectF> obslist)
 {
     obstacles=obslist;
+
+    QList <SnowFlake*> unfreeze;
 
     // Find frozen snowflakes, which are free again
     QPointF p;
@@ -115,18 +131,30 @@ void Winter::setObstacles(QList <QRectF> obslist)
         }
         if (!frozen)
         {
-            // Blow a bit up
-            frozenSnow.at(i)->blow( QPointF(qrand()%10/10.0-0.5, qrand()%10/10.0 -5));
-            fallingSnow.append(frozenSnow.at(i));
+            unfreeze.append(frozenSnow.at(i));
             frozenSnow.removeAt(i);
         } else
             i++;
+    }
+    
+    // Remove some flakes, if too many
+    while (fallingSnow.count() + unfreeze.count() > maxFalling + maxUnfreeze)
+        delete unfreeze.takeFirst();
+
+    while (!unfreeze.isEmpty())
+    {
+        // Blow a bit up
+        unfreeze.first()->blow( QPointF(qrand()%10/10.0-0.5, qrand()%10/10.0 -5));
+        fallingSnow.append(unfreeze.takeFirst());
     }
 }
 
 
 void Winter::animate()
 {
+    updateView();
+    //test->setLine(QLineF(viewRect.topLeft(), viewRect.bottomRight())); 
+
     QPointF p;
     int i=0;
     bool cont;
@@ -161,21 +189,25 @@ void Winter::animate()
 
 void Winter::makeSnow()
 {
+    //qDebug()<<"falling: "<<fallingSnow.count()<<"  frozen: "<<frozenSnow.count();
     if (fallingSnow.count() + frozenSnow.count() <maxFlakes)
     {
-        // Create more snowflakes
-        SnowFlake *snowflake;
-        for (int i=0; i<3; i++)
+        if (fallingSnow.count() < maxFalling)
         {
-            snowflake=new SnowFlake(mapScene);
-            snowflake->setPos( 0,0);
-            snowflake->setRotation(qrand()%60);
-            mapScene->addItem(snowflake);
-            snowflake->setPos( 
-                    rand()%round_int(viewRect.width()) + viewRect.x(),
-                    viewRect.y() -20
-            );
-            fallingSnow.append(snowflake);
+            // Create more snowflakes
+            SnowFlake *snowflake;
+            for (int i=0; i<10; i++)
+            {
+                snowflake=new SnowFlake(view->scene());
+                snowflake->setPos( 0,0);
+                snowflake->setRotation(qrand()%60);
+                view->scene()->addItem(snowflake);
+                snowflake->setPos( 
+                        rand()%round_int(viewRect.width()) + viewRect.x(),
+                        viewRect.y() -20
+                );
+                fallingSnow.append(snowflake);
+            }
         }
     } else
     {
