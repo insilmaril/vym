@@ -163,6 +163,8 @@ MapEditor::MapEditor( VymModel *vm)	//FIXME-3 change ME from GraphicsScene to It
     //attrTable->addValue ("Key Prio","Prio 1");
     //attrTable->addValue ("Key Prio","Prio 2");
     }
+
+    winter=NULL;
 }
 
 MapEditor::~MapEditor()
@@ -796,7 +798,6 @@ TreeItem* MapEditor::findMapItem (QPointF p,TreeItem *exclude)
 	i++;
 	bi=model->getRootItem()->getBranchNum(i);
     }
-    
     return NULL;
 }
 
@@ -807,7 +808,6 @@ AttributeTable* MapEditor::attributeTable()
 
 void MapEditor::testFunction1()
 {
-  model->loadMap("/suse/uwedr/vym/code/test/default.vym");
 }
     
 void MapEditor::testFunction2()
@@ -815,6 +815,36 @@ void MapEditor::testFunction2()
     autoLayout();
 }
 
+#include "winter.h"
+void MapEditor::toggleWinter()
+{
+    if (winter)
+    {
+        delete winter;
+        winter=NULL;
+    } else
+    {
+        winter=new Winter (this);
+        QList <QRectF> obstacles;
+        BranchObj *bo;
+        BranchItem *cur=NULL;
+        BranchItem *prev=NULL;
+        model->nextBranch(cur,prev);
+        while (cur) 
+        {
+            if (!cur->hasHiddenExportParent())
+            {
+                // Branches
+                bo=(BranchObj*)(cur->getLMO());
+                if (bo && bo->isVisibleObj())
+                    obstacles.append(bo->getBBox());
+            }
+            model->nextBranch(cur,prev);
+        }
+        winter->setObstacles(obstacles);
+    }
+}
+    
 BranchItem* MapEditor::getBranchDirectAbove (BranchItem *bi)
 {
     if (bi)
@@ -1579,6 +1609,8 @@ void MapEditor::moveObject ()
 	    QItemSelection sel=model->getSelectionModel()->selection();
 	    updateSelection(sel,sel);	// position has changed
 
+            // In winter mode shake snow from heading
+            if (winter) model->emitDataChanged(seli);
 	} 
     } // End of lmosel!=NULL
     else if (seli && seli->getType()==TreeItem::XLink)
@@ -2068,6 +2100,27 @@ void MapEditor::updateData (const QModelIndex &sel)
     {
 	BranchObj *bo=(BranchObj*) ( ((MapItem*)ti)->getLMO());
 	bo->updateData();
+    }
+
+    if (winter)
+    {
+        QList <QRectF> obstacles;
+        BranchObj *bo;
+        BranchItem *cur=NULL;
+        BranchItem *prev=NULL;
+        model->nextBranch(cur,prev);
+        while (cur) 
+        {
+            if (!cur->hasHiddenExportParent())
+            {
+                // Branches
+                bo=(BranchObj*)(cur->getLMO());
+                if (bo && bo->isVisibleObj())
+                    obstacles.append(bo->getBBox());
+            }
+            model->nextBranch(cur,prev);
+        }
+        winter->setObstacles(obstacles);
     }
 }
 

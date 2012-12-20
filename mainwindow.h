@@ -298,6 +298,7 @@ private slots:
 
     void testFunction1();
     void testFunction2();
+    void toggleWinter();
     void toggleHideExport();
     void testCommand();
 
@@ -460,6 +461,8 @@ private:
     QAction *actionModModeCopy;
 
     QAction *actionToggleHideMode;
+
+    QAction *actionToggleWinter;
 
     QActionGroup *actionGroupFormatFrameTypes;
 

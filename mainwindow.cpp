@@ -2383,6 +2383,12 @@ void Main::setupTestActions()
     switchboard.addConnection(testMenu, a, tr("Test shortcuts","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( toggleHideExport() ) );
     actionToggleHideMode=a;
+
+    a = new QAction( "Toggle winter mode" , this);
+    a->setShortcut (Qt::ALT + Qt::Key_Asterisk); 
+    switchboard.addConnection(testMenu, a, "Toggle Winter mode");
+    connect( a, SIGNAL( triggered() ), this, SLOT( toggleWinter() ) );
+    actionToggleWinter=a;
 }
 
 // Help Actions
@@ -5196,6 +5202,12 @@ void Main::testFunction2()
 {
     if (!currentMapEditor()) return;
     currentMapEditor()->testFunction2();
+}
+
+void Main::toggleWinter()
+{
+    if (!currentMapEditor()) return;
+    currentMapEditor()->toggleWinter();
 }
 
 void Main::toggleHideExport()
