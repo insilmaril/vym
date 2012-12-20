@@ -120,6 +120,7 @@ public:
     AttributeTable* attributeTable();	// FIXME-3 Not used, testing only
     void testFunction1();		//! just testing new stuff
     void testFunction2();		//! just testing new stuff
+    void toggleWinter();
 
     BranchItem* getBranchDirectAbove(BranchItem *bi);	//! get branch direct above bi (in TreeView) 
     BranchItem* getBranchAbove(BranchItem *bi);		//! get branch above bi (in TreeView) 

@@ -15,7 +15,6 @@ SnowFlake::SnowFlake(QGraphicsScene *scene)
     int s3=size/3;
     int s6=size/6;
 
-    QGraphicsLineItem *l;
     for (int a=0; a<6; a++)
     {
         lines.append(scene->addLine(0, -s6, 0, -size));
@@ -51,7 +50,7 @@ QRectF SnowFlake::boundingRect() const
     return QRectF (-size, -size, size*2, size*2);
 }
 
-void SnowFlake::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+void SnowFlake::paint(QPainter*, const QStyleOptionGraphicsItem*, QWidget*)
 {
 }
 
@@ -97,6 +96,10 @@ Winter::~Winter()
 {
     delete animTimer;
     delete snowTimer;
+    while (!fallingSnow.isEmpty())
+        delete fallingSnow.takeFirst();
+    while (!frozenSnow.isEmpty())
+        delete frozenSnow.takeFirst();
 }
 
 void Winter::updateView()

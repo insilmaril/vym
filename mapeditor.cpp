@@ -806,27 +806,8 @@ AttributeTable* MapEditor::attributeTable()
     return attrTable;
 }
 
-#include "winter.h"
 void MapEditor::testFunction1()
 {
-    winter=new Winter (this);
-    QList <QRectF> obstacles;
-    BranchObj *bo;
-    BranchItem *cur=NULL;
-    BranchItem *prev=NULL;
-    model->nextBranch(cur,prev);
-    while (cur) 
-    {
-	if (!cur->hasHiddenExportParent())
-	{
-	    // Branches
-	    bo=(BranchObj*)(cur->getLMO());
-	    if (bo && bo->isVisibleObj())
-                obstacles.append(bo->getBBox());
-        }
-        model->nextBranch(cur,prev);
-    }
-    winter->setObstacles(obstacles);
 }
     
 void MapEditor::testFunction2()
@@ -834,6 +815,36 @@ void MapEditor::testFunction2()
     autoLayout();
 }
 
+#include "winter.h"
+void MapEditor::toggleWinter()
+{
+    if (winter)
+    {
+        delete winter;
+        winter=NULL;
+    } else
+    {
+        winter=new Winter (this);
+        QList <QRectF> obstacles;
+        BranchObj *bo;
+        BranchItem *cur=NULL;
+        BranchItem *prev=NULL;
+        model->nextBranch(cur,prev);
+        while (cur) 
+        {
+            if (!cur->hasHiddenExportParent())
+            {
+                // Branches
+                bo=(BranchObj*)(cur->getLMO());
+                if (bo && bo->isVisibleObj())
+                    obstacles.append(bo->getBBox());
+            }
+            model->nextBranch(cur,prev);
+        }
+        winter->setObstacles(obstacles);
+    }
+}
+    
 BranchItem* MapEditor::getBranchDirectAbove (BranchItem *bi)
 {
     if (bi)
