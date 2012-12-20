@@ -7,15 +7,18 @@
 #include <QTimer>
 #include <QRectF>
 
-class SnowFlake:public QGraphicsEllipseItem
+class SnowFlake:public QGraphicsItem
 {
 public:
     SnowFlake(QGraphicsScene *scene);
     ~SnowFlake();
+    QRectF boundingRect() const;
+    void paint(QPainter*, const QStyleOptionGraphicsItem*, QWidget*);
     void animate();
     void blow(const QPointF &v);
 private:
     int size;
+    QList <QGraphicsLineItem*> lines;
     QPointF dv;
     QPointF dblow;
 };

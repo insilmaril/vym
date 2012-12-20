@@ -1598,6 +1598,8 @@ void MapEditor::moveObject ()
 	    QItemSelection sel=model->getSelectionModel()->selection();
 	    updateSelection(sel,sel);	// position has changed
 
+            // In winter mode shake snow from heading
+            if (winter) model->emitDataChanged(seli);
 	} 
     } // End of lmosel!=NULL
     else if (seli && seli->getType()==TreeItem::XLink)
