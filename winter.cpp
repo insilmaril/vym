@@ -79,7 +79,7 @@ Winter::Winter(QGraphicsView *v)
 
     maxFlakes=1500;
     maxFalling=140;
-    maxUnfreeze=30;
+    maxUnfreeze=50;
 
     makeSnow();
 
