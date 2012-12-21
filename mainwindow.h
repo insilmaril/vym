@@ -76,7 +76,7 @@ private:
     void setupRecentMapsMenu();
     void setupMacros();
     void setupToolbars();
-    int currentView() const;
+    VymView* currentView() const;
 public:	
     MapEditor* currentMapEditor() const;
     VymModel* currentModel() const;
@@ -293,6 +293,8 @@ public slots:
 private slots:
     void windowNextEditor();
     void windowPreviousEditor();
+    void nextSlide();
+    void previousSlide();
 
     void standardFlagChanged();
 

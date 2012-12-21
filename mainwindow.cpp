@@ -1925,6 +1925,20 @@ void Main::setupViewActions()
     switchboard.addConnection(a,tr("View shortcuts","Shortcut group"));
     viewMenu->addAction (a);
     connect( a, SIGNAL( triggered() ), this, SLOT(windowPreviousEditor() ) );
+
+    a = new QAction (tr( "Next slide","View action" ), this );
+    a->setStatusTip (a->text());
+    a->setShortcut (Qt::Key_Space);
+    switchboard.addConnection(a,tr("Next slide","Shortcut group"));
+    viewMenu->addAction (a);
+    connect( a, SIGNAL( triggered() ), this, SLOT(nextSlide() ) );
+
+    a = new QAction (tr( "Previous slide","View action" ), this );
+    a->setStatusTip (a->text());
+    a->setShortcut (Qt::Key_Backspace);
+    switchboard.addConnection(a,tr("Previous  slide","Shortcut group"));
+    viewMenu->addAction (a);
+    connect( a, SIGNAL( triggered() ), this, SLOT(previousSlide() ) );
 }
 
 // Mode Actions
@@ -2719,14 +2733,14 @@ void Main::setupToolbars()
 
 }
 
-int Main::currentView() const
+VymView* Main::currentView() const
 {
     if ( tabWidget->currentWidget() )
     {
 	int i=tabWidget->currentIndex();
-	if (i>=0 && i< vymViews.count() ) return i;
+	if (i>=0 && i< vymViews.count() ) return vymViews.at(i);
     }
-    return -1;
+    return NULL;
 }
 
 MapEditor* Main::currentMapEditor() const
@@ -2747,9 +2761,9 @@ uint  Main::currentModelID() const
 
 VymModel* Main::currentModel() const
 {
-    int cv=currentView();
-    if (cv>=0) 
-	return vymViews.at(cv)->getModel();
+    VymView *vv=currentView();
+    if (vv) 
+	return vv->getModel();
     else
 	return NULL;    
 }
@@ -4859,11 +4873,11 @@ void Main::updateActions()
     actionViewToggleHistoryWindow->setChecked (historyWindow->parentWidget()->isVisible());
     actionViewTogglePropertyEditor->setChecked (branchPropertyEditor->parentWidget()->isVisible());
     actionViewToggleScriptEditor->setChecked (scriptEditor->parentWidget()->isVisible());
-    int cv=currentView();
-    if ( cv>=0 )
+    VymView *vv=currentView();
+    if (vv)
     {
-	actionViewToggleTreeEditor->setChecked ( vymViews.at(cv)->treeEditorIsVisible() );
-	actionViewToggleSlideEditor->setChecked( vymViews.at(cv)->slideEditorIsVisible() );
+	actionViewToggleTreeEditor->setChecked ( vv->treeEditorIsVisible() );
+	actionViewToggleSlideEditor->setChecked( vv->slideEditorIsVisible() );
     } else	
     {
 	actionViewToggleTreeEditor->setChecked  ( false );
@@ -5178,6 +5192,18 @@ void Main::windowPreviousEditor()
 {
     if (tabWidget->currentIndex() >0)
 	tabWidget->setCurrentIndex (tabWidget->currentIndex() -1);
+}
+
+void Main::nextSlide()
+{
+    VymView *cv=currentView();
+    if (cv) cv->nextSlide();
+}
+
+void Main::previousSlide()
+{
+    VymView *cv=currentView();
+    if (cv) cv->previousSlide();
 }
 
 void Main::standardFlagChanged()
