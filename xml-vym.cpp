@@ -500,8 +500,6 @@ bool parseVYMHandler::readBranchAttr (const QXmlAttributes& a)
 	else	
 	    lastBranch->setIncludeImagesHor(false);
     }	
-    if (!a.value( "uuid").isEmpty() ) 
-	lastBranch->setUuid (a.value( "uuid") );
     return true;    
 }
 
@@ -605,6 +603,9 @@ bool parseVYMHandler::readOOAttr (const QXmlAttributes& a)
 	    else	
 		return false;   // Couldn't read rotation
 	}           
+
+        if (!a.value( "uuid").isEmpty() ) 
+            lastMI->setUuid (a.value( "uuid") );
     }
     return true;    
 }
