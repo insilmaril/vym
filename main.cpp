@@ -130,8 +130,6 @@ void msgHandler (QtMsgType type, const char *msg)
 
 int main(int argc, char* argv[])
 {
-    //Q_INIT_RESOURCE (application);
-
     QApplication app(argc,argv);
 
     vymName=__VYM_NAME;
