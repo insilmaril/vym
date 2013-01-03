@@ -5,6 +5,8 @@
 #include "branchobj.h"
 #include "vymmodel.h"
 
+extern bool debug;
+
 /////////////////////////////////////////////////////////////////
 // LinkableMapObj
 /////////////////////////////////////////////////////////////////
@@ -141,8 +143,8 @@ void LinkableMapObj::setRelPos(const QPointF &p)
 	relPos=p;
 	useRelPos=true;
 	setOrientation();
-	parObj->calcBBoxSize();
-	requestReposition();
+//	parObj->calcBBoxSize(); //FIXME-2 needed  for floatimages 
+//	requestReposition();
     }	else
 	qWarning()<<"LMO::setRelPos (p)  parObj==0   this="<<this;
 }
@@ -361,7 +363,7 @@ void LinkableMapObj::setOrientation()
 	    else
 		orientation=RightOfCenter;
     }
-    if (orientOld!=orientation) requestReposition();
+    if (orientOld!=orientation) requestReposition();    //FIXME-2 needed?
 }
 
 void LinkableMapObj::updateVisibility()
@@ -578,12 +580,13 @@ LinkableMapObj::Orientation LinkableMapObj::getOrientation()
     return orientation;
 }
 
-void LinkableMapObj::reposition()
+void LinkableMapObj::reposition()   //FIXME-3 needed?
 {
 }
 
-void LinkableMapObj::requestReposition()    //FIXME-4 still needed? doesn't seem so...
+void LinkableMapObj::requestReposition()   
 {
+    if (debug) qDebug()<<"  LMO::requestReposition "<<treeItem->getHeadingDepth(); //FIXME-8
     if (!repositionRequest)
     {
 	// Pass on the request to parental objects, if this hasn't

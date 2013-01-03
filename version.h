@@ -4,10 +4,11 @@
 #include <QString>
 
 #define __VYM_NAME "VYM"
-#define __VYM_VERSION "2.3.1"
+#define __VYM_VERSION "2.3.11"
 //#define __VYM_CODENAME "Codename: Production release"
-#define __VYM_CODENAME "Codename: development version, not for production!"
-#define __VYM_BUILD_DATE "2012-09-12"
+//#define __VYM_CODENAME "Codename: development version, not for production!"
+#define __VYM_CODENAME "Codename: christmas version, not for production!"
+#define __VYM_BUILD_DATE "2012-12-29"
 #define __VYM_HOME "http://www.insilmaril.de/vym"
 
 bool checkVersion(const QString &);

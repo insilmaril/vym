@@ -142,7 +142,7 @@ void TaskEditor::showSelection()
     QModelIndexList list=view->selectionModel()->selectedIndexes();
     if (list.count()>0)
 	// Usually whole row is selected, so just go for first cell
-	view->scrollTo( list.first(), QAbstractItemView::EnsureVisible);
+	view->scrollTo(taskModel->index(taskModel->getTask(list.first())), QAbstractItemView::EnsureVisible);
 }
 
 bool TaskEditor::select (Task *task)	

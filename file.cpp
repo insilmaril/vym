@@ -178,6 +178,9 @@ bool copyDir (QDir src, QDir dst, const bool &override)
     QStringList dirs  = src.entryList(QDir::AllDirs | QDir::Hidden | QDir::NoDotAndDotDot);
     QStringList files = src.entryList(QDir::Files );
 
+    // Check if dst is a subdir of src, which would cause endless recursion...
+    if (dst.absolutePath().contains(src.absolutePath())) return false;
+    
     // Traverse directories
     QList<QString>::iterator d,f;
     for (d = dirs.begin(); d != dirs.end(); ++d) 
@@ -417,7 +420,7 @@ FileType getMapType (const QString &fn)
     if (i>=0)
     {
 	QString postfix=fn.mid(i+1);
-	if (postfix=="vym" || postfix=="vyp") return VymMap;
+	if (postfix=="vym" || postfix=="vyp" || postfix=="xml") return VymMap;
 	if (postfix=="mm") return FreemindMap;	
     }
     return UnknownMap;

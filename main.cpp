@@ -32,7 +32,7 @@ using namespace std;
 // DBUS only available on Linux
 #if defined(Q_OS_LINUX)
 #include <QtDBus/QDBusConnection>
-QDBusConnection dbusConnection= QDBusConnection::sessionBus();
+QDBusConnection dbusConnection=QDBusConnection::sessionBus();
 #endif
 
 QString vymName;
@@ -55,7 +55,6 @@ FindWidget *findWidget;
 FindResultWidget *findResultWidget;
 
 Macros macros;
-
 
 uint itemLastID=0;		// Unique ID for all items in all models
 
@@ -205,10 +204,10 @@ int main(int argc, char* argv[])
     testmode=options.isOn ("testmode");
 
     QString pidString=QString ("%1").arg(getpid());
+    if (debug) qDebug()<< "PID="<<pidString;
 
 #if defined(Q_OS_LINUX)
     // Register for DBUS
-    if (debug) cout << "PID="<<getpid()<<endl;
     if (!dbusConnection.registerService ("org.insilmaril.vym-"+pidString))
     {
        fprintf(stderr, "%s\n",

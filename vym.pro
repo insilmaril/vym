@@ -84,6 +84,7 @@ HEADERS	+= \
     imageitem.h \
     imageobj.h \
     imports.h \
+    lineeditdialog.h \
     linkablemapobj.h \
     macros.h \
     mainwindow.h \
@@ -117,6 +118,7 @@ HEADERS	+= \
     version.h \
     vymmodel.h \
     vymview.h \
+    winter.h \
     warningdialog.h \
     xlink.h \
     xlinkitem.h \
@@ -168,6 +170,7 @@ SOURCES	+= \
     imageitem.cpp \
     imageobj.cpp \
     imports.cpp \
+    lineeditdialog.cpp \
     linkablemapobj.cpp \
     macros.cpp \
     main.cpp \
@@ -203,6 +206,7 @@ SOURCES	+= \
     vymmodel.cpp \
     vymview.cpp \
     warningdialog.cpp \
+    winter.cpp \
     xlink.cpp \
     xlinkitem.cpp \
     xlinkobj.cpp \
@@ -219,6 +223,7 @@ FORMS = \
     extrainfodialog.ui \
     editxlinkdialog.ui \
     historywindow.ui \
+    lineeditdialog.ui \
     scripteditor.ui \
     showtextdialog.ui \
     warningdialog.ui

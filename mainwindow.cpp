@@ -23,6 +23,7 @@
 #include "headingeditor.h"
 #include "historywindow.h"
 #include "imports.h"
+#include "lineeditdialog.h"
 #include "macros.h"
 #include "mapeditor.h"
 #include "misc.h"
@@ -287,8 +288,13 @@ Main::Main(QWidget* parent, Qt::WFlags f) : QMainWindow(parent,f)
 
     // Create tab widget which holds the maps
     tabWidget= new QTabWidget (centralWidget);
-    connect( tabWidget, SIGNAL( currentChanged( QWidget * ) ), 
-	this, SLOT( editorChanged( QWidget * ) ) );
+    connect(tabWidget, SIGNAL( currentChanged( QWidget * ) ), 
+            this, SLOT( editorChanged( QWidget * ) ) );
+
+    // Allow closing of tabs (introduced in Qt 4.5)
+    tabWidget->setTabsClosable( true ); 
+    connect(tabWidget, SIGNAL(tabCloseRequested(int)), 
+            this, SLOT( closeTab(int) ));
 
     layout->addWidget (tabWidget);
 
@@ -333,7 +339,7 @@ Main::Main(QWidget* parent, Qt::WFlags f) : QMainWindow(parent,f)
 #if defined(Q_OS_LINUX)
     // Announce myself on DBUS
     new AdaptorVym (this);    // Created and not deleted as documented in Qt
-    if (!dbusConnection.registerObject ("/vym",this))
+    if (!QDBusConnection::sessionBus().registerObject ("/vym",this))
 	qWarning ("MainWindow: Couldn't register DBUS object!");
 #endif    
 }
@@ -543,6 +549,7 @@ void Main::setupAPI()
     modelCommands.append(c);
 
     c=new Command ("exportHTML",Command::Any);
+    c->addPar (Command::String,false,"Path used for export");
     c->addPar (Command::String,false,"Filename for export");
     modelCommands.append(c);
 
@@ -576,6 +583,7 @@ void Main::setupAPI()
     modelCommands.append(c);
 
     c=new Command ("exportXML",Command::Any);
+    c->addPar (Command::String,false,"Path used for export");
     c->addPar (Command::String,false,"Filename for export");
     modelCommands.append(c);
 
@@ -591,7 +599,19 @@ void Main::setupAPI()
     c=new Command ("getHeading",Command::TreeItem);
     modelCommands.append(c);
 
+    c=new Command ("getMapAuthor",Command::Any);
+    modelCommands.append(c);
+
+    c=new Command ("getMapComment",Command::Any);
+    modelCommands.append(c);
+
+    c=new Command ("getMapTitle",Command::Any);
+    modelCommands.append(c);
+
     c=new Command ("getSelectString",Command::TreeItem);
+    modelCommands.append(c);
+
+    c=new Command ("getTaskSleepDays",Command::Branch);
     modelCommands.append(c);
 
     c=new Command ("getURL",Command::TreeItem); 
@@ -611,6 +631,9 @@ void Main::setupAPI()
 
     c=new Command ("hasActiveFlag",Command::TreeItem);
     c->addPar (Command::String,false,"Name of flag");
+    modelCommands.append(c);
+
+    c=new Command ("hasTask",Command::Branch); 
     modelCommands.append(c);
 
     c=new Command ("importDir",Command::Branch);
@@ -704,7 +727,7 @@ void Main::setupAPI()
     modelCommands.append(c);
 
     c=new Command ("setTaskSleep",Command::Branch); 
-    c->addPar (Command::Int,false,"Days to sleep");
+    c->addPar (Command::String,false,"Days to sleep");
     modelCommands.append(c);
 
     c=new Command ("setFrameIncludeChildren",Command::BranchOrImage); 
@@ -763,12 +786,16 @@ void Main::setupAPI()
     c->addPar (Command::Int,false,"Duration of animation in MapEditor in milliseconds");
     modelCommands.append(c);
 
+    c=new Command ("setMapBackgroundColor",Command::Any); 
+    c->addPar (Command::Color,false,"Color of map background");
+    modelCommands.append(c);
+
     c=new Command ("setMapComment",Command::Any); 
     c->addPar (Command::String,false,"");
     modelCommands.append(c);
 
-    c=new Command ("setMapBackgroundColor",Command::Any); 
-    c->addPar (Command::Color,false,"Color of map background");
+    c=new Command ("setMapTitle",Command::Any); 
+    c->addPar (Command::String,false,"");
     modelCommands.append(c);
 
     c=new Command ("setMapDefLinkColor",Command::Any); 
@@ -781,6 +808,10 @@ void Main::setupAPI()
 
     c=new Command ("setMapRotation",Command::Any); 
     c->addPar (Command::Double,false,"Rotation of map");
+    modelCommands.append(c);
+
+    c=new Command ("setMapTitle",Command::Any); 
+    c->addPar (Command::String,false,"");
     modelCommands.append(c);
 
     c=new Command ("setMapZoom",Command::Any); 
@@ -892,10 +923,6 @@ void Main::setupFileActions()
 
     fileImportMenu = fileMenu->addMenu (tr("Import","File menu"));
 
-    a = new QAction(tr("KDE 3 Bookmarks","Import filters"), this);
-    switchboard.addConnection(fileImportMenu, a,tr("File","Shortcut group"));
-    connect( a, SIGNAL( triggered() ), this, SLOT( fileImportKDE3Bookmarks() ) );
-
     a = new QAction(tr("KDE 4 Bookmarks","Import filters"), this);
     switchboard.addConnection(fileImportMenu, a,tr("File","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( fileImportKDE4Bookmarks() ) );
@@ -927,6 +954,18 @@ void Main::setupFileActions()
     connect( a, SIGNAL( triggered() ), this, SLOT( fileExportLast() ) );
     actionFileExportLast=a;
 
+    a = new QAction(  "Webpage (HTML)...",this );
+    switchboard.addConnection(fileExportMenu, a,tr("File","Shortcut group"));
+    connect( a, SIGNAL( triggered() ), this, SLOT( fileExportHTML() ) );
+
+    a = new QAction( "Text (ASCII)...", this);
+    switchboard.addConnection(fileExportMenu, a,tr("File","Shortcut group"));
+    connect( a, SIGNAL( triggered() ), this, SLOT( fileExportASCII() ) );
+
+    a = new QAction( "Text (A&O report)...", this);
+    switchboard.addConnection(fileExportMenu, a,tr("File","Shortcut group"));
+    connect( a, SIGNAL( triggered() ), this, SLOT( fileExportAO() ) );
+
     a = new QAction( tr("Image%1","File export menu").arg("..."), this);
     switchboard.addConnection(fileExportMenu, a,tr("File","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( fileExportImage() ) );
@@ -943,29 +982,17 @@ void Main::setupFileActions()
     switchboard.addConnection(fileExportMenu, a,tr("File","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( fileExportImpress() ) );
 
-    a = new QAction(  "Webpage (HTML)...",this );
+    a = new QAction( "XML..." , this );
     switchboard.addConnection(fileExportMenu, a,tr("File","Shortcut group"));
-    connect( a, SIGNAL( triggered() ), this, SLOT( fileExportHTML() ) );
-
-    a = new QAction( "Text (A&O report)...", this);
-    switchboard.addConnection(fileExportMenu, a,tr("File","Shortcut group"));
-    connect( a, SIGNAL( triggered() ), this, SLOT( fileExportAO() ) );
-
-    a = new QAction( "Text (ASCII)...", this);
-    switchboard.addConnection(fileExportMenu, a,tr("File","Shortcut group"));
-    connect( a, SIGNAL( triggered() ), this, SLOT( fileExportASCII() ) );
-
-    a = new QAction( "Spreadsheet (CSV)... (experimental)", this);
-    switchboard.addConnection(fileExportMenu, a,tr("File","Shortcut group"));
-    connect( a, SIGNAL( triggered() ), this, SLOT( fileExportCSV() ) );
-
-    a = new QAction( tr("KDE 3 Bookmarks","File menu"), this);
-    switchboard.addConnection(fileExportMenu, a,tr("File","Shortcut group"));
-    connect( a, SIGNAL( triggered() ), this, SLOT( fileExportKDE3Bookmarks() ) );
+    connect( a, SIGNAL( triggered() ), this, SLOT( fileExportXML() ) );
 
     a = new QAction( tr("KDE 4 Bookmarks","File menu"), this);
     switchboard.addConnection(fileExportMenu, a,tr("File","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( fileExportKDE4Bookmarks() ) );
+
+    a = new QAction( "Spreadsheet (CSV)... (experimental)", this);
+    switchboard.addConnection(fileExportMenu, a,tr("File","Shortcut group"));
+    connect( a, SIGNAL( triggered() ), this, SLOT( fileExportCSV() ) );
 
     a = new QAction( "Taskjuggler... (experimental)", this );
     switchboard.addConnection(fileExportMenu, a,tr("File","Shortcut group"));
@@ -978,10 +1005,6 @@ void Main::setupFileActions()
     a = new QAction( "LaTeX... (experimental)", this);
     switchboard.addConnection(fileExportMenu, a,tr("File","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( fileExportLaTeX() ) );
-
-    a = new QAction( "XML..." , this );
-    switchboard.addConnection(fileExportMenu, a,tr("File","Shortcut group"));
-    connect( a, SIGNAL( triggered() ), this, SLOT( fileExportXML() ) );
 
     fileMenu->addSeparator();
 
@@ -1435,6 +1458,7 @@ void Main::setupEditActions()
 
     a = new QAction(QPixmap(), tr( "Sleep %1 days","Task sleep" ).arg("n")+"...", this);
     a->setShortcutContext (Qt::WindowShortcut);
+    a->setShortcut (Qt::Key_Q + Qt::SHIFT);
     a->setCheckable(false);
     a->setEnabled (false);
     a->setData (-1);
@@ -1575,7 +1599,7 @@ void Main::setupEditActions()
 
     a = new QAction( tr( "Add Image...","Edit menu" ), this);
     a->setShortcutContext (Qt::WindowShortcut);
-    a->setShortcut (Qt::Key_I );    
+    a->setShortcut (Qt::Key_I + Qt::SHIFT);    
     switchboard.addConnection(a,tr("Edit","Shortcut group"));
     addAction (a);
     connect( a, SIGNAL( triggered() ), this, SLOT( editLoadImage() ) );
@@ -1910,6 +1934,20 @@ void Main::setupViewActions()
     switchboard.addConnection(a,tr("View shortcuts","Shortcut group"));
     viewMenu->addAction (a);
     connect( a, SIGNAL( triggered() ), this, SLOT(windowPreviousEditor() ) );
+
+    a = new QAction (tr( "Next slide","View action" ), this );
+    a->setStatusTip (a->text());
+    a->setShortcut (Qt::Key_Space);
+    switchboard.addConnection(a,tr("Next slide","Shortcut group"));
+    viewMenu->addAction (a);
+    connect( a, SIGNAL( triggered() ), this, SLOT(nextSlide() ) );
+
+    a = new QAction (tr( "Previous slide","View action" ), this );
+    a->setStatusTip (a->text());
+    a->setShortcut (Qt::Key_Backspace);
+    switchboard.addConnection(a,tr("Previous  slide","Shortcut group"));
+    viewMenu->addAction (a);
+    connect( a, SIGNAL( triggered() ), this, SLOT(previousSlide() ) );
 }
 
 // Mode Actions
@@ -2014,7 +2052,6 @@ void Main::setupFlagActions()
     toolbarsMenu->addAction (standardFlagsToolbar->toggleViewAction() );
 
     flag=new Flag(flagsPath+"flag-stopsign.png");
-    flag->setGroup("standard-status");
     setupFlag (flag,standardFlagsToolbar,"stopsign",tr("This won't work!","Standardflag"),Qt::Key_1);
     flag->unsetGroup();
 
@@ -2046,13 +2083,13 @@ void Main::setupFlagActions()
     flag->setGroup("standard-smiley");
     setupFlag (flag,standardFlagsToolbar,"smiley-sad",tr("Bad","Standardflag"),Qt::Key_ParenLeft);
 
-    flag=new Flag(flagsPath+"flag-smiley-omg.png");
+    flag=new Flag(flagsPath+"flag-smiley-omb.png");
     flag->setGroup("standard-smiley");
     setupFlag (flag,standardFlagsToolbar,"smiley-omb",tr("Oh no!","Standardflag"));
     // Original omg.png (in KDE emoticons)
     flag->unsetGroup();
 
-    flag=new Flag(flagsPath+"flag-kalarm.png");
+    flag=new Flag(flagsPath+"flag-clock.png");
     setupFlag (flag,standardFlagsToolbar,"clock",tr("Time critical","Standardflag"));
 
     flag=new Flag(flagsPath+"flag-phone.png");
@@ -2069,11 +2106,11 @@ void Main::setupFlagActions()
     flag->setGroup("standard-arrow");
     setupFlag (flag,standardFlagsToolbar,"arrow-down",tr("Unimportant","Standardflag"),Qt::SHIFT + Qt::Key_PageDown);
 
-    flag=new Flag(flagsPath+"flag-arrow-2up.png");
+    flag=new Flag(flagsPath+"flag-2arrow-up.png");
     flag->setGroup("standard-arrow");
     setupFlag (flag,standardFlagsToolbar,"2arrow-up",tr("Very important!","Standardflag"),Qt::SHIFT + +Qt::CTRL + Qt::Key_PageUp);
 
-    flag=new Flag(flagsPath+"flag-arrow-2down.png");
+    flag=new Flag(flagsPath+"flag-2arrow-down.png");
     flag->setGroup("standard-arrow");
     setupFlag (flag,standardFlagsToolbar,"2arrow-down",tr("Very unimportant!","Standardflag"),Qt::SHIFT + Qt::CTRL + Qt::Key_PageDown);
     flag->unsetGroup();
@@ -2101,7 +2138,7 @@ void Main::setupFlagActions()
 
     // Original: xsldbg_output.png
     flag=new Flag(flagsPath+"flag-info.png");
-    setupFlag (flag,standardFlagsToolbar,"info",tr("Info","Standardflag"));
+    setupFlag (flag,standardFlagsToolbar,"info",tr("Info","Standardflag"),Qt::Key_I);
 
     // Original khelpcenter.png
     flag=new Flag(flagsPath+"flag-lifebelt.png");
@@ -2369,6 +2406,12 @@ void Main::setupTestActions()
     switchboard.addConnection(testMenu, a, tr("Test shortcuts","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( toggleHideExport() ) );
     actionToggleHideMode=a;
+
+    a = new QAction( "Toggle winter mode" , this);
+    a->setShortcut (Qt::ALT + Qt::Key_Asterisk); 
+    switchboard.addConnection(testMenu, a, "Toggle Winter mode");
+    connect( a, SIGNAL( triggered() ), this, SLOT( toggleWinter() ) );
+    actionToggleWinter=a;
 }
 
 // Help Actions
@@ -2699,14 +2742,14 @@ void Main::setupToolbars()
 
 }
 
-int Main::currentView() const
+VymView* Main::currentView() const
 {
     if ( tabWidget->currentWidget() )
     {
 	int i=tabWidget->currentIndex();
-	if (i>=0 && i< vymViews.count() ) return i;
+	if (i>=0 && i< vymViews.count() ) return vymViews.at(i);
     }
-    return -1;
+    return NULL;
 }
 
 MapEditor* Main::currentMapEditor() const
@@ -2727,9 +2770,9 @@ uint  Main::currentModelID() const
 
 VymModel* Main::currentModel() const
 {
-    int cv=currentView();
-    if (cv>=0) 
-	return vymViews.at(cv)->getModel();
+    VymView *vv=currentView();
+    if (vv) 
+	return vv->getModel();
     else
 	return NULL;    
 }
@@ -3173,14 +3216,6 @@ void Main::fileSaveAs()
     fileSaveAs (CompleteMap);
 }
 
-void Main::fileImportKDE3Bookmarks()
-{
-    ImportKDE3Bookmarks im;
-    im.transform();
-    if (File::Aborted!=fileLoad (im.getTransformedFile(),NewMap,VymMap) && currentMapEditor() )
-	currentMapEditor()->getModel()->setFilePath ("");
-}
-
 void Main::fileImportKDE4Bookmarks()
 {
     ImportKDE4Bookmarks im;
@@ -3333,7 +3368,7 @@ void Main::fileExportCSV()  //FIXME-3 not scriptable yet
 	ExportCSV ex;
 	ex.setModel (m);
 	ex.addFilter ("CSV (*.csv)");
-	ex.setDirectory(lastImageDir);
+	ex.setDirPath(lastImageDir.absolutePath());
 	ex.setWindowTitle(vymName+ " -" +tr("Export as CSV")+" "+tr("(still experimental)"));
 	if (ex.execDialog() ) 
 	{
@@ -3358,7 +3393,7 @@ void Main::fileExportOrgMode()	//FIXME-3 not scriptable yet
 	ExportOrgMode ex;
 	ex.setModel (m);
 	ex.addFilter ("org-mode (*.org)");
-	ex.setDirectory (lastImageDir);
+	ex.setDirPath (lastImageDir.absolutePath());
 	ex.setWindowTitle(vymName+ " -" +tr("Export as org-mode")+" "+tr("(still experimental)"));
 	if (ex.execDialog() ) 
 	{
@@ -3367,17 +3402,6 @@ void Main::fileExportOrgMode()	//FIXME-3 not scriptable yet
 	    m->setExportMode(false);
 	}
     }
-}
-
-void Main::fileExportKDE3Bookmarks()	//FIXME-3 not scriptable yet
-{
-    ExportKDE3Bookmarks ex;
-    VymModel *m=currentModel();
-    if (m)
-    {
-	ex.setModel (m);
-	ex.doExport();
-    }	
 }
 
 void Main::fileExportKDE4Bookmarks()	//FIXME-3 not scriptable yet
@@ -3399,7 +3423,7 @@ void Main::fileExportTaskjuggler()  //FIXME-3 not scriptable yet
     {
 	ex.setModel (m);
 	ex.setWindowTitle ( vymName+" - "+tr("Export to")+" Taskjuggler"+tr("(still experimental)"));
-	ex.setDirectory (lastImageDir);
+	ex.setDirPath (lastImageDir.absolutePath());
 	ex.addFilter ("Taskjuggler (*.tjp)");
 
 	if (ex.execDialog() ) 
@@ -3447,6 +3471,22 @@ void Main::fileExportLast()
     if (m) m->exportLast();
 }
 
+bool Main::closeTab(int i)
+{
+    // Find model
+    VymModel *m=vymViews.at(i)->getModel();
+    if (!m) return true;
+
+    vymViews.removeAt (i);
+    tabWidget->removeTab (i);
+
+    delete (m->getMapEditor()); 
+    delete (m); 
+
+    updateActions();
+    return false;
+}
+
 bool Main::fileCloseMap()   
 {
     VymModel *m=currentModel();
@@ -3478,14 +3518,7 @@ bool Main::fileCloseMap()
 		    return true;
 	    }
 	} 
-	vymViews.removeAt (tabWidget->currentIndex() );
-	tabWidget->removeTab (tabWidget->currentIndex() );
-
-	delete (m->getMapEditor()); 
-	delete (m); 
-
-	updateActions();
-	return false;
+        return closeTab(tabWidget->currentIndex());
     }
     return true; // Better don't exit vym if there is no currentModel()...
 }
@@ -3547,8 +3580,29 @@ void Main::editCut()
     if (m) m->cut();
 }
 
+bool Main::openURL(const QString &url)
+{
+    if (url.isEmpty()) return false;
+
+    QString browser=settings.value("/mainwindow/readerURL" ).toString();
+    QStringList args;
+    args<<url;
+    if (!QProcess::startDetached(browser,args,QDir::currentPath(),browserPID))
+    {
+        // try to set path to browser
+        QMessageBox::warning(0, 
+            tr("Warning"),
+            tr("Couldn't find a viewer to open %1.\n").arg(url)+
+            tr("Please use Settings->")+tr("Set application to open an URL"));
+        settingsURL() ; 
+        return false;
+    }   
+    return true;
+}
+
 void Main::openTabs(QStringList urls)
 {
+<<<<<<< HEAD
     if (!urls.isEmpty())
     {	
 	bool success=true;
@@ -3578,14 +3632,31 @@ void Main::openTabs(QStringList urls)
 		return;
 	    }
 	    if (debug) qDebug() << "Main::openTabs  Started konqueror-"<<*browserPID;
+=======
+    if (urls.isEmpty()) return;
+    	
+    bool success=true;
+    QStringList args;
+    QString browser=settings.value("/mainwindow/readerURL" ).toString();
+    if ( browser.contains("konqueror") && 
+            (browserPID==0 || !QDBusConnection::sessionBus().interface()->registeredServiceNames().value().contains (QString("org.kde.konqueror-%1").arg(*browserPID)))
+       )	 
+    {
+        // Start a new browser, if there is not one running already or
+        // if a previously started konqueror is gone.
+        if (debug) qDebug() <<"Main::openTabs no konqueror with PID "<<*browserPID<<" found";
+        openURL(urls.takeFirst());
+        if (debug) qDebug() << "Main::openTabs Started konqueror, new PID is "<<*browserPID;
+>>>>>>> master
 #if defined(Q_OS_WIN32)
-            // There's no sleep in VCEE, replace it with Qt's QThread::wait().
-            this->thread()->wait(3000);
+        // There's no sleep in VCEE, replace it with Qt's QThread::wait().
+        this->thread()->wait(3000);
 #else
-	    sleep (3);	//needed to open first konqueror
+        sleep (3);	//needed to start first konqueror
 #endif
-	}
+    }
 
+<<<<<<< HEAD
 	if (browser.contains("konqueror"))
 	{
 	    for (int i=0; i<urls.size(); i++)
@@ -3631,6 +3702,33 @@ void Main::openTabs(QStringList urls)
 	    tr("Currently vym is using %1 to open external links.\n(Change in Settings menu)","Mainwindow, open URL")
 		.arg(settings.value("/mainwindow/readerURL" ).toString()));
     }	
+=======
+    if (browser.contains("konqueror"))
+    {
+        foreach (QString u, urls) 
+        {
+            // Open new browser
+            // Try to open new tab in existing konqueror started previously by vym
+            args.clear();
+
+            args<< QString("org.kde.konqueror-%1").arg(*browserPID)<<
+                "/konqueror/MainWindow_1"<<
+                "newTab" << 
+                u <<
+                "false";
+            if (!QProcess::startDetached ("qdbus",args))
+                success=false;
+        }
+        if (!success)
+            QMessageBox::warning(0, 
+                tr("Warning"),
+                tr("Couldn't start %1 to open a new tab in %2.").arg("qdbus").arg("konqueror"));
+        return;	
+    } 
+    // Other browser, e.g. xdg-open
+    // Just open all urls and leave it to the system to cope with it
+    foreach (QString u, urls) openURL(u);
+>>>>>>> master
 }
 
 void Main::editOpenURL()
@@ -3640,20 +3738,8 @@ void Main::editOpenURL()
     if (m)
     {	
 	QString url=m->getURL();
-	QStringList args;
 	if (url=="") return;
-	QString browser=settings.value("/mainwindow/readerURL" ).toString();
-	args<<url;
-	QString workDir=QDir::currentPath();
-	if (!QProcess::startDetached(browser,args))
-	{
-	    // try to set path to browser
-	    QMessageBox::warning(0, 
-		tr("Warning"),
-		tr("Couldn't find a viewer to open %1.\n").arg(url)+
-		tr("Please use Settings->")+tr("Set application to open an URL"));
-	    settingsURL() ; 
-	}   
+        openURL(url);
     }	
 }
 void Main::editOpenURLTab()
@@ -3694,15 +3780,17 @@ void Main::editURL()
     VymModel *m=currentModel();
     if (m) 
     {
-	QInputDialog dia (this);
-	dia.setLabelText (tr("Enter URL:"));
-	dia.setWindowTitle (vymName);
-	dia.setInputMode (QInputDialog::TextInput);
+	QInputDialog *dia=new QInputDialog (this);
+	dia->setLabelText (tr("Enter URL:"));
+	dia->setWindowTitle (vymName);
+	dia->setInputMode (QInputDialog::TextInput);
 	TreeItem *selti=m->getSelectedItem();
-	if (selti) dia.setTextValue (selti->getURL());
-	dia.resize(width()*0.8,0);
+	if (selti) dia->setTextValue (selti->getURL());
+	dia->resize(width()*0.6,80);
+        centerDialog(dia);
 
-	if ( dia.exec() ) m->setURL (dia.textValue() );
+	if ( dia->exec() ) m->setURL (dia->textValue() );
+        delete dia;
     }
 }
 
@@ -3930,13 +4018,31 @@ void Main::editTaskSleepN()
 	if (task)
 	{
 	    bool ok=true;
+            QString s;
 	    if (n<0)
-		n=QInputDialog::getInt (
-		    this, 
-		    vymName + " " + tr("Task","Task dialog"), 
-		    tr("Task sleep (days):","Task dialog"), 
-		    n, 0, 2147483647, 1, &ok);
-	    if (ok) m->setTaskSleep(n);   
+            {
+                n=task->getDaysSleep();
+                if (n<=0) n=0;
+
+                LineEditDialog *dia=new LineEditDialog(this);
+                dia->setLabel(tr("Enter sleep time (number of days or date YYYY-MM-DD or DD.MM[.YYYY]","task sleep time dialog"));
+                dia->setText(QString("%1").arg(n));
+                centerDialog (dia);
+                if (dia->exec() == QDialog::Accepted)
+                {
+                    ok=true;
+                    s=dia->getText();
+                } else
+                    ok=false;
+
+                delete dia;
+            } else
+                s=QString("%1").arg(n);
+
+            if (ok && !m->setTaskSleep(s) )
+                QMessageBox::warning(0, 
+                    tr("Warning"),
+                    tr("Couldn't set sleep time to %1.\n").arg(s));
 	}
     }
 }
@@ -3954,6 +4060,7 @@ void Main::editMapInfo()
 
     ExtraInfoDialog dia;
     dia.setMapName (m->getFileName() );
+    dia.setMapTitle (m->getTitle() );
     dia.setAuthor (m->getAuthor() );
     dia.setComment(m->getComment() );
 
@@ -3990,6 +4097,7 @@ void Main::editMapInfo()
     {
 	m->setAuthor (dia.getAuthor() );
 	m->setComment (dia.getComment() );
+	m->setTitle (dia.getMapTitle() );
     }
 }
 
@@ -4854,11 +4962,11 @@ void Main::updateActions()
     actionViewToggleHistoryWindow->setChecked (historyWindow->parentWidget()->isVisible());
     actionViewTogglePropertyEditor->setChecked (branchPropertyEditor->parentWidget()->isVisible());
     actionViewToggleScriptEditor->setChecked (scriptEditor->parentWidget()->isVisible());
-    int cv=currentView();
-    if ( cv>=0 )
+    VymView *vv=currentView();
+    if (vv)
     {
-	actionViewToggleTreeEditor->setChecked ( vymViews.at(cv)->treeEditorIsVisible() );
-	actionViewToggleSlideEditor->setChecked( vymViews.at(cv)->slideEditorIsVisible() );
+	actionViewToggleTreeEditor->setChecked ( vv->treeEditorIsVisible() );
+	actionViewToggleSlideEditor->setChecked( vv->slideEditorIsVisible() );
     } else	
     {
 	actionViewToggleTreeEditor->setChecked  ( false );
@@ -5175,6 +5283,18 @@ void Main::windowPreviousEditor()
 	tabWidget->setCurrentIndex (tabWidget->currentIndex() -1);
 }
 
+void Main::nextSlide()
+{
+    VymView *cv=currentView();
+    if (cv) cv->nextSlide();
+}
+
+void Main::previousSlide()
+{
+    VymView *cv=currentView();
+    if (cv) cv->previousSlide();
+}
+
 void Main::standardFlagChanged()
 {
     if (currentModel())
@@ -5197,6 +5317,12 @@ void Main::testFunction2()
 {
     if (!currentMapEditor()) return;
     currentMapEditor()->testFunction2();
+}
+
+void Main::toggleWinter()
+{
+    if (!currentMapEditor()) return;
+    currentMapEditor()->toggleWinter();
 }
 
 void Main::toggleHideExport()

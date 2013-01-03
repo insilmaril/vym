@@ -6,6 +6,7 @@
 #include <stdlib.h>
 
 #include <QDebug>
+#include <QDialog>
 #include <QString>
 
 QString qpointToString (const QPoint &p)
@@ -105,6 +106,11 @@ qreal roof (qreal x)
 	return 1-x;
 }
 
+int round_int (qreal x)
+{
+    return (x > 0.0) ? (x + 0.5) : (x - 0.5);
+}
+
 Qt::PenStyle penStyle (const QString &s, bool &ok)
 {
     ok=true;
@@ -167,5 +173,10 @@ QPointF point (const QString &s, bool &ok)
 QString pointToString (const QPointF &p)
 {
     return QString("%1,%2").arg(p.x()).arg(p.y());
+}
+
+void centerDialog (QDialog *dia)
+{
+    dia->move(QCursor::pos() - 0.5 * QPoint(dia->rect().width(),dia->rect().height() ) );
 }
 

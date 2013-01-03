@@ -68,12 +68,10 @@ echo
 
 # get data from repository
 if [ $DO_CHECKOUT = 1 ]; then
-    #cvs -d:ext:insilmaril@vym.cvs.sourceforge.net:/cvsroot/vym co -r $RTAG code
-    #cvs -d:pserver:anonymous@vym.cvs.sourceforge.net:/cvsroot/vym co -P $RTAG code
     cd $OLDDIR
     echo Removing $SRCDIR...
     rm -rf $SRCDIR
-    git clone -b $BRANCH git://vym.git.sourceforge.net/gitroot/vym/vym
+    git clone -b $BRANCH git://git.code.sf.net/p/vym/code vym
 fi	
 
 #VERSION=$(grep __VYM_VERSION $SRCDIR/version.h |  sed -e 's/^.*\"\(.*\)\"$/\1/g')

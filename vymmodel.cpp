@@ -36,7 +36,6 @@ extern bool debug;
 extern bool testmode;
 extern Main *mainWindow;
 
-
 #if defined(Q_OS_LINUX)
 extern QDBusConnection dbusConnection;
 #endif
@@ -70,8 +69,6 @@ extern QDir lastExportDir;
 extern bool bugzillaClientAvailable;
 
 extern Settings settings;
-
-extern QList <Command*> modelCommands;
 
 uint VymModel::idLast=0;    // make instance
 
@@ -186,7 +183,7 @@ void VymModel::init ()
 #if defined(Q_OS_LINUX)
      // Announce myself on DBUS
     new AdaptorModel(this);    // Created and not deleted as documented in Qt
-    if (!dbusConnection.registerObject (QString("/vymmodel_%1").arg(modelID),this))
+    if (!QDBusConnection::sessionBus().registerObject (QString("/vymmodel_%1").arg(modelID),this))
 	qWarning ("VymModel: Couldn't register DBUS object!");
 #endif
 }
@@ -255,6 +252,7 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix, bool w
     QString mapAttr=xml.attribut("version",vymVersion);
     if (!saveSel)
 	mapAttr+= xml.attribut("author",author) +
+		  xml.attribut("title",title) +
 		  xml.attribut("comment",comment) +
 		  xml.attribut("date",getDate()) +
 		  xml.attribut("branchCount", QString().number(branchCount())) +
@@ -424,7 +422,6 @@ File::ErrorCode VymModel::loadMap (
 
     bool zipped_org=zipped;
 
-
     if (lmode==NewMap)
     {
 	// Reset timestamp to check for later updates of file
@@ -470,8 +467,8 @@ File::ErrorCode VymModel::loadMap (
 	    if (flist.count()==1) 
 	    {
 		// Only one entry, take this one
-		xmlfile=tmpZipDir + "/"+flist.first();
-	    } else
+                xmlfile=tmpZipDir + "/"+flist.first();
+            } else
 	    {
 		for ( QStringList::Iterator it = flist.begin(); it != flist.end(); ++it ) 
 		    *it=tmpZipDir + "/" + *it;
@@ -1063,7 +1060,6 @@ void VymModel::redo()
     if (!redoSelection.isEmpty())
 	select (redoSelection);
 
-
     bool noErr;
     QString errMsg;
     parseAtom (redoCommand,noErr,errMsg);
@@ -1091,8 +1087,6 @@ void VymModel::redo()
     qDebug() << "       curStep="<<curStep;
     qDebug() << "    ---------------------------";
     */
-
-
 }
 
 bool VymModel::isRedoAvailable()
@@ -1127,6 +1121,13 @@ void VymModel::undo()
 
     // Find out current undo directory
     QString bakMapDir(QString(tmpMapDir+"/undo-%1").arg(curStep));
+
+    // select  object before undo
+    if (!select (undoSelection))
+    {
+	qWarning ("VymModel::undo()  Could not select object for undo");
+	return;
+    }
 
     if (debug)
     {
@@ -1543,6 +1544,21 @@ QString VymModel::getVersion()
     return version;
 }
 
+void VymModel::setTitle (const QString &s)
+{
+    saveState (
+	QString ("setMapTitle (\"%1\")").arg(title),
+	QString ("setMapTitle (\"%1\")").arg(s),
+	QString ("Set title of map to \"%1\"").arg(s)
+    );
+    title=s;
+}
+
+QString VymModel::getTitle()
+{
+    return title;
+}
+
 void VymModel::setAuthor (const QString &s)
 {
     saveState (
@@ -1825,8 +1841,8 @@ BranchItem* VymModel::findText (QString s,Qt::CaseSensitivity cs)
 	}   
 	if (!foundNote)
 	{
-	    if (!nextBranch(findCurrent,findPrevious) )
-		EOFind=true;
+	    nextBranch(findCurrent,findPrevious);
+	    if (!findCurrent) EOFind=true;
 	}
     }	
     if (!searching)
@@ -1880,13 +1896,14 @@ QStringList VymModel::getURLs(bool ignoreScrolled)
 {
     QStringList urls;
     BranchItem *selbi=getSelectedBranch();
-    BranchItem *cur=selbi;
+    BranchItem *cur=NULL;
     BranchItem *prev=NULL;
+    nextBranch (cur,prev,true,selbi);
     while (cur) 
     {
 	if (!cur->getURL().isEmpty()  && !(ignoreScrolled && cur->hasScrolledParent() )) 
 	    urls.append( cur->getURL());
-	cur=nextBranch (cur,prev,true,selbi);
+	nextBranch(cur,prev,true,selbi);
     }	
     return urls;
 }
@@ -2170,25 +2187,85 @@ void VymModel::cycleTaskStatus(bool reverse)
     }
 }
 
-void VymModel::setTaskSleep(int n) 
+bool VymModel::setTaskSleep(const QString &s) 
 {
     BranchItem *selbi=getSelectedBranch();
-    if (selbi ) 
+    if (selbi && !s.isEmpty() ) 
     {
 	Task *task=selbi->getTask();
 	if (task ) 
 	{
-	    int oldsleep=task->getDaysSleep();
-	    task->setDateSleep (n);
-	    task->setDateModified();
-	    saveState (
-		selbi,
-		QString("setTaskSleep (%1)").arg(oldsleep),
-		selbi,
-		QString("setTaskSleep (%1)").arg(n),
-		QString("setTaskSleep (%1)").arg(n) );
+            bool ok;
+            int n=s.toInt(&ok);
+            if (!ok)
+            {
+                // Is s a date?
+                QDate d=QDate::fromString(s,Qt::ISODate);
+                d=QDate::fromString(s,Qt::ISODate);
+                if (d.isValid())
+                    // ISO date YYYY-MM-DD
+                    ok=true;
+                else
+                {
+                    d=QDate::fromString(s,Qt::DefaultLocaleShortDate);
+                    if (d.isValid()) 
+                        // Locale date, e.g. 24 Dec 2012
+                        ok=true;
+                    else
+                    {
+                        QRegExp re ("(\\d+).(\\d+).(\\d+)");
+                        re.setMinimal(false);
+                        int pos=re.indexIn(s);
+                        QStringList list=re.capturedTexts();
+                        if (pos>=0)
+                        {
+                            // German formate, e.g. 24.12.2012
+                            d=QDate(list.at(3).toInt(), list.at(2).toInt(), list.at(1).toInt());
+                            ok=true;
+                        } else
+                        {
+                            re.setPattern("(\\d+).(\\d+).");
+                            pos=re.indexIn(s);
+                            list=re.capturedTexts();
+                            if (pos>=0)
+                            {
+                                // Short German formate, e.g. 24.12.
+                                int month=list.at(2).toInt();
+                                int day=list.at(1).toInt();
+                                int year=QDate::currentDate().year();
+                                d=QDate(year, month, day);
+                                if (QDate::currentDate().daysTo(d) < 0)
+                                {
+                                    year++;
+                                    d=QDate(year, month, day);
+                                }
+                                ok=true;
+                            } else
+                            {
+                                re.setPattern("(\\d+).(\\d+).");
+                            }
+                        }
+                    }
+                }
+                if (ok) n=QDate::currentDate().daysTo(d);
+            }
+
+            if (ok)
+            {
+                int oldsleep=task->getDaysSleep();
+                task->setDateSleep (n);
+                task->setDateModified();
+                saveState (
+                    selbi,
+                    QString("setTaskSleep (%1)").arg(oldsleep),
+                    selbi,
+                    QString("setTaskSleep (%1)").arg(n),
+                    QString("setTaskSleep (%1)").arg(n) );
+                return true;
+            }
 	}
     }
+    return false;
 }
 
 int VymModel::taskCount()
@@ -3160,8 +3237,6 @@ void VymModel::toggleScroll()
 void VymModel::unscrollChildren() 
 {
     BranchItem *selbi=getSelectedBranch();
-    BranchItem *prev=NULL;
-    BranchItem *cur=selbi;
     if (selbi)
     {
 	saveStateChangingPart(
@@ -3170,14 +3245,17 @@ void VymModel::unscrollChildren()
 	    QString ("unscrollChildren ()"),
 	    QString ("unscroll all children of %1").arg(getObjectName(selbi))
 	);  
+        BranchItem *prev=NULL;
+        BranchItem *cur=NULL;
+        nextBranch (cur,prev,true,selbi);
 	while (cur) 
 	{
 	    if (cur->isScrolled())
 	    {
 		cur->toggleScroll(); 
 		emitDataChanged (cur);
-	}
-	    cur=nextBranch (cur,prev,true,selbi);
+            }
+	    nextBranch (cur,prev,true,selbi);
 	}   
 	updateActions();
 	reposition();
@@ -3368,12 +3446,13 @@ void VymModel::colorSubtree (QColor c, BranchItem *b)
 	    QString ("Set color of %1 and children to %2").arg(getObjectName(bi)).arg(c.name())
 	);  
 	BranchItem *prev=NULL;
-	BranchItem *cur=bi;
+	BranchItem *cur=NULL;
+        nextBranch (cur,prev,true,bi);
 	while (cur) 
 	{
 	    cur->setHeadingColor(c); // color links, color children
 	    emitDataChanged (cur);
-	    cur=nextBranch (cur,prev,true,bi);
+            nextBranch (cur,prev,true,bi);
 	}   
     }
     taskEditor->showSelection();
@@ -3464,7 +3543,8 @@ void VymModel::getBugzillaData(bool subtree)
     {	    
 	QString url;
 	BranchItem *prev=NULL;
-	BranchItem *cur=selbi;
+	BranchItem *cur=NULL;
+        nextBranch (cur,prev,true,selbi);
 	while (cur) 
 	{
 	    url=cur->getURL();
@@ -3478,7 +3558,7 @@ void VymModel::getBugzillaData(bool subtree)
 		}
 	    }
 	    if (subtree) 
-		cur=nextBranch (cur,prev,true,selbi);
+		nextBranch (cur,prev,true,selbi);
 	    else
 		cur=NULL;
 	}   
@@ -3554,12 +3634,13 @@ QStringList VymModel::getVymLinks()
 {
     QStringList links;
     BranchItem *selbi=getSelectedBranch();
-    BranchItem *cur=selbi;
+    BranchItem *cur=NULL;
     BranchItem *prev=NULL;
+    nextBranch (cur,prev,true,selbi);
     while (cur) 
     {
 	if (!cur->getVymLink().isEmpty()) links.append( cur->getVymLink());
-	cur=nextBranch (cur,prev,true,selbi);
+	nextBranch (cur,prev,true,selbi);
     }	
     return links;
 }
@@ -3800,8 +3881,9 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="exportHTML")
 	{
-	    QString fname=parser.parString(ok,0); 
-	    exportHTML (fname,false);
+	    QString path=parser.parString(ok,0); 
+	    QString fname=parser.parString(ok,1); 
+	    exportHTML (path,fname,false);
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="exportImage")
 	{
@@ -3838,8 +3920,9 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="exportXML")
 	{
-	    QString fname=parser.parString(ok,1); 
-	    exportXML (fname,false);
+	    QString dpath=parser.parString(ok,0); 
+	    QString fpath=parser.parString(ok,1); 
+	    exportXML (dpath,fpath,false);
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="getDestPath")
 	{ 
@@ -3861,9 +3944,29 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	{ 
 	    returnValue=selti->getHeading();
 	/////////////////////////////////////////////////////////////////////
+	} else if (com=="getMapAuthor")
+	{ 
+	    returnValue=author;
+	/////////////////////////////////////////////////////////////////////
+	} else if (com=="getMapComment")
+	{ 
+	    returnValue=comment;
+	/////////////////////////////////////////////////////////////////////
+	} else if (com=="getMapTitle")
+	{ 
+	    returnValue=title;
+	/////////////////////////////////////////////////////////////////////
 	} else if (com=="getSelectString")
 	{ 
 	    returnValue=getSelectString();
+	/////////////////////////////////////////////////////////////////////
+	} else if (com=="getTaskSleepDays")
+	{ 
+      Task *task=selbi->getTask();
+      if (task)
+        returnValue=task->getDaysSleep();
+      else
+        parser.setError (Aborted,"Branch has no task set");
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="getURL")
 	{ 
@@ -3889,6 +3992,13 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	{ 
 	    s=parser.parString(ok,0);
 	    returnValue=selti->hasActiveStandardFlag(s);
+	/////////////////////////////////////////////////////////////////////
+	} else if (com=="hasTask")
+	{ 
+      if (selbi && selbi->getTask() )
+        returnValue=true;
+      else
+        returnValue=false;
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="importDir")
 	{
@@ -4093,8 +4203,8 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="setTaskSleep")
 	{
-	    n=parser.parInt(ok,0);
-	    setTaskSleep (n);
+	    s=parser.parString(ok,0);
+	    returnValue=setTaskSleep (s);
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="setFrameIncludeChildren")
 	{
@@ -4177,6 +4287,11 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	{
 	    s=parser.parString(ok,0);
 	    if (ok) setComment(s);
+	/////////////////////////////////////////////////////////////////////
+	} else if (com=="setMapTitle")
+	{
+	    s=parser.parString(ok,0);
+	    if (ok) setTitle(s);
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="setMapBackgroundColor")
 	{
@@ -4318,7 +4433,7 @@ QVariant VymModel::execute (const QString &script)
 	{
 	    if (!options.isOn("batch") && !testmode )
 		QMessageBox::warning(0,tr("Warning"),tr("Script aborted:\n%1").arg(errMsg));
-	    qWarning()<< QString("VM::runScript aborted: "+errMsg);
+	    qWarning()<< QString("VM::execute aborted: "+errMsg + "\n" + script);
 	}
     }	
     return r;
@@ -4472,9 +4587,9 @@ QPointF VymModel::exportSVG (QString fname, bool askName)
     return offset;
 }
 
-void VymModel::exportXML(QString dir, bool askForName)
+void VymModel::exportXML (QString dpath, QString fpath, bool useDialog)
 {
-    if (askForName)
+    if (useDialog)
     {
     	QFileDialog fd;
 	fd.setWindowTitle (vymName+ " - " + tr("Export XML to directory"));
@@ -4487,38 +4602,47 @@ void VymModel::exportXML(QString dir, bool askForName)
 
 	QString fn;
 	if (fd.exec() != QDialog::Accepted || fd.selectedFiles().isEmpty() )
-	{
-	    qDebug()<<"exportXML returning1";
-	    return;
-	    }
-	dir=fd.selectedFiles().first();
+        {
+            qDebug()<<"exportXML returning 1"; //FIXME-2
+            return;
+        }
 
-	if (dir =="" && !reallyWriteDirectory(dir) )
+	if (dpath=="" && !reallyWriteDirectory(dpath) )
 	{
-	    qDebug()<<"exportXML returning2";
+	    qDebug()<<"exportXML returning 2"; //FIXME-2
 	    return;
 	}
 	setChanged();
+
+	dpath=fd.selectedFiles().first();
+        dpath=dpath.left(dpath.lastIndexOf("/"));
+	fpath=dpath + "/" + mapName + ".xml";
     }
+
+    QString mname=basename(fpath);
 
     // Hide stuff during export, if settings want this
     setExportMode (true);
 
     // Create subdirectories
-    makeSubDirs (dir);
+    makeSubDirs (dpath);
 
     // write image and calculate offset
-    QPointF offset=exportImage (dir+"/images/"+mapName+".png",false,"PNG");
+    QPointF offset=exportImage (dpath + "/images/" + mname + ".png",false,"PNG");
 
-    // write to directory   //FIXME-4 check totalBBox here...
-    QString saveFile=saveToDir (dir,mapName+"-",true,offset,NULL); 
+    // write to directory   //FIXME-3 check totalBBox here...
+    QString saveFile=saveToDir (dpath , mname + "-", true, offset, NULL); 
     QFile file;
 
-    file.setFileName ( dir + "/"+mapName+".xml");
+    file.setFileName (fpath);
     if ( !file.open( QIODevice::WriteOnly ) )
     {
 	// This should neverever happen
-	QMessageBox::critical (0,tr("Critical Export Error"),QString("VymModel::exportXML couldn't open %1").arg(file.fileName()));
+	QMessageBox::critical (
+                0,
+                tr("Critical Export Error"),
+                QString("VymModel::exportXML couldn't open %1").arg(file.fileName())
+        );
 	return;
     }	
 
@@ -4528,6 +4652,13 @@ void VymModel::exportXML(QString dir, bool askForName)
     file.close();
 
     setExportMode (false);
+
+    QString cmd=QString("exportXML(\"%1\",\"%2\")")
+        .arg(dpath)
+        .arg(fpath);
+    settings.setLocalValue ( filePath, "/export/last/exportPath",dpath);
+    settings.setLocalValue ( filePath, "/export/last/command",cmd);
+    settings.setLocalValue ( filePath, "/export/last/description","XML");
 }
 
 void VymModel::exportAO (QString fname,bool askName)
@@ -4535,9 +4666,9 @@ void VymModel::exportAO (QString fname,bool askName)
     ExportAO ex;
     ex.setModel (this);
     if (fname=="") 
-	ex.setFile (mapName+".txt");	
+	ex.setFilePath (mapName+".txt");	
     else
-	ex.setFile (fname);
+	ex.setFilePath (fname);
 
     if (askName)
     {
@@ -4554,14 +4685,14 @@ void VymModel::exportAO (QString fname,bool askName)
     }
 }
 
-void VymModel::exportASCII(QString fname,bool askName)
+void VymModel::exportASCII(const QString &fname,bool askName)
 {
     ExportASCII ex;
     ex.setModel (this);
     if (fname=="") 
-	ex.setFile (mapName+".txt");	
+	ex.setFilePath (mapName+".txt");	
     else
-	ex.setFile (fname);
+	ex.setFilePath (fname);
 
     if (askName)
     {
@@ -4578,10 +4709,11 @@ void VymModel::exportASCII(QString fname,bool askName)
     }
 }
 
-void VymModel::exportHTML (const QString &dir, bool useDialog)	
+void VymModel::exportHTML (const QString &dpath, const QString &fpath,bool useDialog)
 {
     ExportHTML ex (this);
-    ex.setDirectory (dir);
+    ex.setFilePath (fpath);
+    ex.setDirPath (dpath);
     setExportMode(true);
     ex.doExport(useDialog);
     setExportMode(false);
@@ -4590,7 +4722,7 @@ void VymModel::exportHTML (const QString &dir, bool useDialog)
 void VymModel::exportImpress(const QString &fn, const QString &cf) 
 {
     ExportOO ex;
-    ex.setFile (fn);
+    ex.setFilePath (fn);
     ex.setModel (this);
     if (ex.setConfigFile(cf)) 
     {
@@ -4606,7 +4738,7 @@ bool VymModel::exportLastAvailable(QString &description, QString &command, QStri
     description=settings.localValue(filePath,"/export/last/description","").toString();
     path=settings.localValue(filePath,"/export/last/exportPath","").toString();
     configFile=settings.localValue(filePath,"/export/last/configFile","").toString();
-    if (!command.isEmpty() && command.startsWith("export") && !path.isEmpty())
+    if (!command.isEmpty() && command.startsWith("export")) 
 	return true;
     else
 	return false;
@@ -4614,13 +4746,16 @@ bool VymModel::exportLastAvailable(QString &description, QString &command, QStri
 
 void VymModel::exportLast()
 {
-    QString desc, command, path, configFile;
+    QString desc, command, path, configFile;  //FIXME-2 better integrate configFIle into command
     if (exportLastAvailable(desc, command, path, configFile) )
     {
-	if (configFile.isEmpty() )
-	    execute (QString ("%1 (\"%2\")").arg(command).arg(path) );
-	else    
+        execute (command);
+        /*
+	if (!configFile.isEmpty() && command=="exportImpress")
 	    execute (QString ("%1 (\"%2\",\"%3\")").arg(command).arg(path).arg(configFile) );
+	else    
+	    execute (QString ("%1 (\"%2\")").arg(command).arg(path) );
+        */
     }	    
 }
 
@@ -4629,9 +4764,9 @@ void VymModel::exportLaTeX (const QString &fname,bool askName)
     ExportLaTeX ex;
     ex.setModel (this);
     if (fname=="") 
-	ex.setFile (mapName+".tex");	
+	ex.setFilePath (mapName+".tex");	
     else
-	ex.setFile (fname);
+	ex.setFilePath (fname);
 
     if (askName)
     {
@@ -4715,6 +4850,7 @@ void VymModel::updateNoteFlag()
 
 void VymModel::reposition() //FIXME-4 VM should have no need to reposition, but the views...
 {
+    if (debug) qDebug()<<"*** VM::reposition a) foreach <mainbranch> do reposition(); end;"; //FIXME-8
     //qDebug() << "VM::reposition blocked="<<blockReposition;
     if (blockReposition) return;
 
@@ -4727,8 +4863,10 @@ void VymModel::reposition() //FIXME-4 VM should have no need to reposition, but 
 	else
 	    qDebug()<<"VM::reposition bo=0";
     }	
+    if (debug) qDebug()<<"*** VM::reposition b)  mE->getTotalBBox(); emitSelectionChanged()";
     mapEditor->getTotalBBox();	
     emitSelectionChanged();
+    if (debug) qDebug()<<"*** VM::reposition c) return;";
 }
 
 
@@ -4779,7 +4917,7 @@ bool VymModel::setMapLinkStyle (const QString & s)
     {
 	bo=(BranchObj*)(cur->getLMO() );
 	bo->setLinkStyle(bo->getDefLinkStyle(cur->parent() ));	//FIXME-4 better emit dataCHanged and leave the changes to View
-	cur=nextBranch(cur,prev);
+	nextBranch(cur,prev);
     }
     reposition();
     return true;
@@ -4813,7 +4951,7 @@ void VymModel::setMapDefLinkColor(QColor col)
     BranchItem *cur=NULL;
     BranchItem *prev=NULL;
     BranchObj *bo;
-    cur=nextBranch(cur,prev);
+    nextBranch(cur,prev);
     while (cur) 
     {
 	bo=(BranchObj*)(cur->getLMO() );
@@ -4829,12 +4967,12 @@ void VymModel::setMapLinkColorHintInt()
     BranchItem *cur=NULL;
     BranchItem *prev=NULL;
     BranchObj *bo;
-    cur=nextBranch(cur,prev);
+    nextBranch(cur,prev);
     while (cur) 
     {
 	bo=(BranchObj*)(cur->getLMO() );
 	bo->setLinkColor();
-	cur=nextBranch(cur,prev);
+	nextBranch(cur,prev);
     }
 }
 
@@ -4853,7 +4991,7 @@ void VymModel::toggleMapLinkColorHint()
     BranchItem *cur=NULL;
     BranchItem *prev=NULL;
     BranchObj *bo;
-    cur=nextBranch(cur,prev);
+    nextBranch(cur,prev);
     while (cur) 
     {
 	bo=(BranchObj*)(cur->getLMO() );

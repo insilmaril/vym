@@ -3,6 +3,8 @@
 
 #include "ui_exporthtmldialog.h"
 
+#include <QDir>
+
 /*! \brief Dialog to export a map as HTML document
 
 This is an overloaded QDialog with various settings needed to call
@@ -15,7 +17,7 @@ class ExportHTMLDialog:public QDialog
 public:
     ExportHTMLDialog(QWidget* parent = 0);
 
-    virtual QString getDir();
+    virtual QDir getDir();
     virtual bool warnings();
     virtual bool hasChanged();
 
@@ -25,6 +27,10 @@ public slots:
     virtual void dirChanged();
     virtual void browseDirectoryPressed();
     virtual void imageButtonPressed( bool b );
+    virtual void TOCButtonPressed( bool b );
+    virtual void numberingButtonPressed( bool b );
+    virtual void taskFlagsButtonPressed( bool b );
+    virtual void userFlagsButtonPressed( bool b );
     virtual void textcolorButtonPressed( bool b );
     virtual void saveSettingsInMapButtonPressed( bool b );
     virtual void warningsButtonPressed( bool b );
@@ -44,16 +50,19 @@ public slots:
 
 public:
     bool useImage;
+    bool useTOC;
+    bool useNumbering;
+    bool useTaskFlags;
+    bool useUserFlags;
     bool useTextColor;
     QString postscript;
-
+    bool css_copy;
 protected:
-    bool showWarnings;
-    bool copy_css;
     QString css_src;
     QString css_dst;
+    bool showWarnings;
     bool showOutput;
-    QString dir;
+    QDir dir;
     QString filepath;
     bool settingsChanged;
     QString mapname;

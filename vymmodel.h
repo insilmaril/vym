@@ -41,6 +41,7 @@ class VymModel :  public TreeModel {
 ////////////////////////////////////////////
 private:
     QString version;	//!< version string saved in vym file
+    QString title;
     QString author;
     QString comment;
     QDate date;
@@ -286,6 +287,8 @@ public:
 public:
     void setVersion(const  QString &);
     QString getVersion();
+    void setTitle  (const QString &);
+    QString getTitle ();
     void setAuthor  (const QString &);
     QString getAuthor ();
     void setComment (const QString &);
@@ -315,7 +318,7 @@ private:
 
 public:
     void findDuplicateURLs();		    // find duplicate URLs, testing only so far
-    bool findAll (FindResultModel*, QString s, Qt::CaseSensitivity cs);	// Search all objects at once, also notes
+    bool findAll (FindResultModel*, QString s, Qt::CaseSensitivity cs=Qt::CaseInsensitive);	// Search all objects at once, also notes
     BranchItem* findText(QString s,Qt::CaseSensitivity cs); // Find object, also in note
     void findReset();			    // Reset Search
 private:    
@@ -351,8 +354,8 @@ public:
     /*! Cycle through task states */
     void cycleTaskStatus(bool reverse=false);	    
 
-    /*! Set task to sleep for n days */
-    void setTaskSleep(int n);
+    /*! Set task to sleep for number of days or until a given date*/
+    bool setTaskSleep(const QString &s);
     /*! count tasks in this model */
     int taskCount();
 
@@ -522,16 +525,16 @@ public:
     QPointF exportSVG (QString fname="",bool askForName=true);
 
     /*! Export as XTML to directory */
-    void exportXML(QString dir="", bool askForName=true);
+    void exportXML(QString dir="", QString fname="", bool useDialog=true);    
 
     /*! Export as A&O report text to file */
     void exportAO (QString fname="",bool askForName=true);  
 
     /*! Export as ASCII text to file */
-    void exportASCII (QString fname="",bool askForName=true);  
+    void exportASCII (const QString &fname="",bool askForName=true);  
 
     /*! Export as HTML to directory */
-    void exportHTML(const QString& dir="", bool useDialog=true);    
+    void exportHTML(const QString &dir="", const QString &fname="", bool useDialog=true);    
 
     /*! Export as OpenOfficeOrg presentation */
     void exportImpress (const QString &,const QString &);	

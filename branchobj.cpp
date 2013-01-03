@@ -204,6 +204,7 @@ void BranchObj::setLinkColor ()
 
 void BranchObj::updateContentSize()
 {
+    if (debug) qDebug()<<"BO::updateContentSize"; // FIXME-8
     calcBBoxSize();
     positionBBox();
     requestReposition();
@@ -211,6 +212,7 @@ void BranchObj::updateContentSize()
 
 void BranchObj::positionContents()
 {
+    if (debug) qDebug()<<"  BO::positionContents (loop over images)";   //FIXME-8
     for (int i=0; i<treeItem->imageCount(); ++i)
 	treeItem->getImageObjNum(i)->reposition();
     OrnamentedObj::positionContents();
@@ -246,6 +248,8 @@ void QGraphicsItem::paint(QPainter*, const QStyleOptionGraphicsItem*, QWidget*)
 
 void BranchObj::positionBBox() // FIXME-2 consider dimensions of frame (thickness, geometry, padding...
 {
+    //FIXME-8 
+    if (debug) qDebug()<<"  BO::positionBBox ("<<treeItem->getHeading()<<")";
     QPointF ap=getAbsPos();
     bbox.moveTopLeft (ap);
     positionContents();
@@ -261,6 +265,8 @@ void BranchObj::positionBBox() // FIXME-2 consider dimensions of frame (thicknes
 
 void BranchObj::calcBBoxSize()
 {
+    //FIXME-8 
+    if (debug) qDebug()<<"  BO::calcBBoxSize ("<<treeItem->getHeading()<<")";
     QSizeF heading_r=heading->getSize();
     qreal heading_w=(qreal) heading_r.width() ;
     qreal heading_h=(qreal) heading_r.height() ;
@@ -384,6 +390,7 @@ void BranchObj::updateData()
 	qWarning ("BranchObj::udpateHeading treeItem==NULL");
 	return;
     }
+    if (debug) qDebug()<<"BO::updateData  "<<treeItem->getHeadingDepth(); //FIXME-8
     QString s=treeItem->getHeading();
     if (s!=heading->text())
     {
@@ -504,12 +511,12 @@ if (debug)
     QPointF pp; 
     if (parObj) pp=parObj->getChildPos();
     qDebug() << "BO::alignRelTo for "<<h;
-    qDebug() << "    d="<<depth;
-    qDebug() <<"  parO="<<parObj;
-    qDebug() <<"   ref="<<ref;
+//    qDebug() << "    d="<<depth;
+//    qDebug() <<"  parO="<<parObj;
+//    qDebug() <<"   ref="<<ref;
     //qDebug() <<   "  bbox.tL="<<bboxTotal.topLeft();
-    qDebug() <<"absPos="<<absPos
-	<< "  relPos="<<relPos
+//    qDebug() <<"absPos="<<absPos
+//	<< "  relPos="<<relPos
 //	<< "  parPos="<<pp
 //	<< "  bbox="<<bbox
 //	<< "  orient="<<o<<" "<<orientation;
@@ -597,11 +604,14 @@ if (debug)
 void BranchObj::reposition()
 {   
 /* TODO testing only
-    if (!treeItem->getHeading().isEmpty())
-	qDebug()<< "BO::reposition  "<<treeItem->depth()<<" "<<treeItem->getHeading();
-    else    
-	qDebug()<< "BO::reposition  ???";
 */	
+    if (debug)  //FIXME-8
+    {
+    if (!treeItem->getHeading().isEmpty())
+	qDebug()<< "BO::reposition  a) "<<treeItem->depth()<<" "<<treeItem->getHeading();
+    else    
+	qDebug()<< "BO::reposition  a) ???";
+    }
 
     if (treeItem->depth()==0)
     {
@@ -657,6 +667,9 @@ ConvexPolygon BranchObj::getBoundingPolygon()
 
 void BranchObj::calcBBoxSizeWithChildren()  
 {   
+    // FIXME-1 Below is wrong. Called multiple times!
+    // FIXME-2 Hm, should not be necessary at all???
+    
     // This is initially called only from reposition and
     // and only for mapcenter. So it won't be
     // called more than once for a single user 
@@ -664,6 +677,7 @@ void BranchObj::calcBBoxSizeWithChildren()
 
     // if branch is scrolled, ignore children, but still consider floatimages
     BranchItem *bi=(BranchItem*)treeItem;
+    if (debug) qDebug()<<"BO::calcBBSizeWithChildren  "<<bi->getHeadingDepth(); //FIXME-8
     if ( bi->isScrolled() ) 
     {
 	bboxTotal.setWidth (bbox.width());
@@ -678,6 +692,8 @@ void BranchObj::calcBBoxSizeWithChildren()
 	return;
     }
     
+    /* FIXME-2 not really needed?
+    */
     QRectF r(0,0,0,0);
     QRectF br;
     // Now calculate recursivly
@@ -695,6 +711,7 @@ void BranchObj::calcBBoxSizeWithChildren()
 	    r.setHeight(br.height() + r.height() );
 	}
     }
+
     // Add myself and also
     // add width of link to sum if necessary
     if (bi->branchCount()<1)
@@ -704,7 +721,6 @@ void BranchObj::calcBBoxSizeWithChildren()
     
     // bbox already contains frame->padding()*2	    
     bboxTotal.setHeight(max (r.height() + frame->getPadding()*2,  bbox.height()) );
-
 }
 
 void BranchObj::setAnimation(const AnimPoint &ap)

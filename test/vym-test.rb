@@ -1,6 +1,16 @@
 #!/usr/bin/env ruby
 
 require "#{ENV['PWD']}/scripts/vym-ruby"
+require 'date'
+require 'optparse'
+options = {}
+OptionParser.new do |opts|
+  opts.banner = "Usage: vym-test.rb [options]"
+
+  opts.on('-d', '--directory  NAME', 'Directory name') { |s| options[:testdir] = s }
+end.parse!
+
+@@testdir = options[:testdir]
 
 $tests_passed = 0
 $tests_failed = 0
@@ -39,7 +49,16 @@ def heading (s)
 end
 
 def init_map
-  # FIXME Missing: check or init default map 
+  # FIXME-2 Missing: check or init default map 
+  # Map Structure:
+  # MapCenter 0
+  #   Main A
+  #     branch a
+  #       branch a1
+  #       branch a2
+  #       branch a3
+  #   Main B
+  # MapCenter 1
 end
 
 def summary
@@ -51,7 +70,13 @@ end
 vym_mgr=VymManager.new
 #vym_mgr.show_running
 
-vym=Vym.new(vym_mgr.find('test') )
+vym=vym_mgr.find('test') 
+if !vym
+  puts "Couldn't find running test instance, please start one:"
+  puts "vym -l -n test -t test/default.vym"
+  exit
+end
+
 
 #######################
 @@center_0="mc:0"
@@ -76,8 +101,71 @@ def test_basics (vym)
   vym.selectLastBranch
   expect "selectLastBranch", "branch c", vym.getHeading
 
-  expect "getDestPath: Got #{vym.getDestPath}", vym.getDestPath, ENV["PWD"] + "/test/default.vym" 
-  expect "getFileDir:  Got #{vym.getFileDir}", vym.getFileDir, ENV["PWD"] + "/test/" 
+  expect "getDestPath: Got #{vym.getDestPath}", vym.getDestPath, @@testdir + "/testmap.vym" 
+  expect "getFileDir:  Got #{vym.getFileDir}", vym.getFileDir, @@testdir + "/" 
+end
+
+#######################
+def test_export (vym)
+  heading "Export:"
+  init_map
+
+  #HTML
+  mapname = "export-html"
+  vym.exportHTML(@@testdir,"#{@@testdir}/#{mapname}.html")
+  expect "exportHTML: HTML file exists", File.exists?("#{@@testdir}/#{mapname}.html"), true
+  expect "exportHTML: HTML image exists", File.exists?("#{@@testdir}/#{mapname}.png"), true
+  expect "exportHTML: HTML flags exists", File.exists?("#{@@testdir}/flags/flag-stopsign.png"), true
+  expect "exportHTML: HTML CSS exists", File.exists?("#{@@testdir}/vym.css"), true
+
+  #AO
+  filepath = "#{@@testdir}/export-ao.txt"
+  vym.exportAO(filepath)
+  expect "exportAO: AO file exists", File.exists?(filepath), true
+
+  #ASCII
+  filepath = "#{@@testdir}/export-ascii.txt"
+  vym.exportASCII(filepath)
+  expect "exportASCII: ASCII file exists", File.exists?(filepath), true
+
+  #Image
+  filepath = "#{@@testdir}/export-image.png"
+  vym.exportImage(filepath,"PNG")
+  expect "exportImage: PNG file exists", File.exists?(filepath), true
+
+  #PDF
+  filepath = "#{@@testdir}/export-pdf.pdf"
+  vym.exportImage(filepath,"PNG")
+  expect "exportPDF: PDF file exists", File.exists?(filepath), true
+
+  #SVG
+  filepath = "#{@@testdir}/export-svg.svg"
+  vym.exportSVG(filepath)
+  expect "exportSVG: SVG file exists", File.exists?(filepath), true
+
+  #XML
+  filepath = "#{@@testdir}/export-xml.xml"
+  vym.exportXML(@@testdir, filepath)
+  expect "exportXML: XML file exists", File.exists?(filepath), true
+
+  #OpenOffice Impress //FIXME-2
+  #KDE4 Bookmarks //FIXME-2
+  #Taskjuggler //FIXME-3
+  #CSV //FIXME-3
+  #Emacs Orgmode //FIXME-3
+  #LaTeX //FIXME-3
+end
+
+#######################
+def test_extrainfo (vym)
+  heading "Extra information:"
+  init_map
+  vym.setMapAuthor("Fra Erasmas")
+  expect "Set and get map author", "Fra Erasmas", vym.getMapAuthor
+  vym.setMapComment("xy z")
+  expect "Set and get map comment", "xy z", vym.getMapComment
+  vym.setMapTitle("vym rules!")
+  expect "Set and get map title", "vym rules!", vym.getMapTitle
 end
 
 #######################
@@ -210,6 +298,7 @@ def test_moving_parts (vym)
   vym.relinkTo @@main_b,0,0,0
   vym.select @@main_b
   expect "RelinkTo #{@@main_b}: branchCount increased there", n+1, vym.branchCount
+
   vym.undo
   vym.select @@branch_b
   expect "Undo: RelinkTo #{@@main_b}: branchCount decreased there", n, vym.branchCount
@@ -232,7 +321,7 @@ def test_moving_parts (vym)
   vym.undo
   vym.select @@center_0
   expect "Undo RelinkTo pos 1: branchCount of center", 2, vym.branchCount
-  # FIXME still has wrong position, check position
+  # FIXME-2 still has wrong position, check position
   vym.select @@main_b
   vym.moveRel 100,100
 end
@@ -401,11 +490,11 @@ def test_references (vym)
   init_map
   vym.select @@main_a
   vym.setURL "www.insilmaril.de"
-  expect "setURL: add http", vym.getURL, "http://www.insilmaril.de"
+  expect "setURL:", vym.getURL, "www.insilmaril.de"
   vym.undo
   expect "undo setURL", vym.getURL, ""
   vym.redo
-  expect "redo setURL", vym.getURL, "http://www.insilmaril.de"
+  expect "redo setURL", vym.getURL, "www.insilmaril.de"
   vym.setURL ""
   expect "setURL: unset URL with empty string", vym.getURL, ""
   
@@ -459,6 +548,24 @@ def test_xlinks (vym)
 end
 
 #######################
+def test_tasks (vym)
+  heading "Tasks:"
+  init_map
+  vym.select @@main_a
+  expect "Branch has no task before test", vym.hasTask, false
+  vym.toggleTask
+  expect "Toggle task", vym.hasTask, true
+  expect "Setting sleep days to 10", vym.setTaskSleep(10), true
+  expect "Task sleep when setting to integer", vym.getTaskSleepDays, 10
+
+  date_today = DateTime.now
+  date_later = date_today + 123
+  date_s = date_later.strftime("%Y-%m-%d") 
+  vym.setTaskSleep(date_s)
+  expect "Task sleep when setting to ISO date (#{date_s})", vym.getTaskSleepDays, 123
+end
+
+######################
 def test_bugfixes (vym)
   heading "Bugfixes:"
   init_map
@@ -468,6 +575,8 @@ end
 
 #######################
 test_basics(vym)
+test_export(vym)
+test_extrainfo(vym)
 test_adding_branches(vym)
 test_adding_maps(vym)
 test_scrolling(vym)
@@ -479,6 +588,7 @@ test_copy_paste(vym)
 test_references(vym)
 test_history(vym)
 test_xlinks(vym)
+test_tasks(vym)
 test_bugfixes(vym)
 summary
 
@@ -494,15 +604,6 @@ cycleTask
 delete (image)
 deleteSlide
 exportAO
-exportASCII
-exportHTML
-exportImage
-exportImpress
-exportLaTeX
-exportPDF
-exportPDF
-exportSVG
-exportXML
 importDir
 loadImage
 loadNote
@@ -532,9 +633,7 @@ setIncludeImagesHorizontally
 setIncludeImagesVertically
 setMapAnimCurve
 setMapAnimDuration
-setMapAuthor
 setMapBackgroundColor
-setMapComment
 setMapDefLinkColor
 setMapLinkStyle
 setMapRotation

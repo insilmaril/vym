@@ -33,7 +33,7 @@ out << note
 out.close
 
 vym_mgr = VymManager.new
-vym = Vym.new(vym_mgr.find('production') )
+vym = vym_mgr.find('production') 
 
 vym.addBranch 
 vym.selectLastBranch 

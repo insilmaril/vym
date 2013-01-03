@@ -163,6 +163,8 @@ MapEditor::MapEditor( VymModel *vm)	//FIXME-3 change ME from GraphicsScene to It
     //attrTable->addValue ("Key Prio","Prio 1");
     //attrTable->addValue ("Key Prio","Prio 2");
     }
+
+    winter=NULL;
 }
 
 MapEditor::~MapEditor()
@@ -563,11 +565,12 @@ void MapEditor::print()
 
 QRectF MapEditor::getTotalBBox()    //FIXME-2 frames missing, esp. cloud
 {				    //FIXME-2 xlinks also missing in getTotalBBox
+    //FIXME-1 qDebug()<<"ME::getTotalBBox";
     QRectF rt;
     BranchObj *bo;
     BranchItem *cur=NULL;
     BranchItem *prev=NULL;
-    model->nextBranch(cur,prev);
+    model->nextBranch(cur,prev,true);
     while (cur) 
     {
 	if (!cur->hasHiddenExportParent())
@@ -576,6 +579,8 @@ QRectF MapEditor::getTotalBBox()    //FIXME-2 frames missing, esp. cloud
 	    bo=(BranchObj*)(cur->getLMO());
 	    if (bo && bo->isVisibleObj())
 	    {
+                //FIXME-8 
+                if (debug) qDebug()<<"ME::getTotalBBox bo="<<cur->getHeading();
 		bo->calcBBoxSizeWithChildren();
 		QRectF r1=bo->getBBox();
 
@@ -591,17 +596,16 @@ QRectF MapEditor::getTotalBBox()    //FIXME-2 frames missing, esp. cloud
 		if (fio) rt=addBBox (fio->getBBox(),rt);
 	    }
 	}
-	model->nextBranch(cur,prev);
+	model->nextBranch(cur,prev,true);
     }
 
-    // XLinks	 //FIXME missing
+    // get bboxes of XLinks	 //FIXME-2 missing
 
     // Update scene according to new bbox
     if (!sceneRect().contains (rt) )
 	setSceneRect(sceneRect().united (rt));
     return rt;	
 }
-
 
 QImage MapEditor::getImage( QPointF &offset) 
 {
@@ -794,7 +798,6 @@ TreeItem* MapEditor::findMapItem (QPointF p,TreeItem *exclude)
 	i++;
 	bi=model->getRootItem()->getBranchNum(i);
     }
-    
     return NULL;
 }
 
@@ -805,12 +808,6 @@ AttributeTable* MapEditor::attributeTable()
 
 void MapEditor::testFunction1()
 {
-    BranchItem *sebi=model->getSelectedBranch();
-    if (sebi)
-    {
-	OrnamentedObj *oo=(OrnamentedObj*)(sebi->getLMO());
-	oo->setRotation (oo->getRotation()+10);
-    }
 }
     
 void MapEditor::testFunction2()
@@ -818,6 +815,36 @@ void MapEditor::testFunction2()
     autoLayout();
 }
 
+#include "winter.h"
+void MapEditor::toggleWinter()
+{
+    if (winter)
+    {
+        delete winter;
+        winter=NULL;
+    } else
+    {
+        winter=new Winter (this);
+        QList <QRectF> obstacles;
+        BranchObj *bo;
+        BranchItem *cur=NULL;
+        BranchItem *prev=NULL;
+        model->nextBranch(cur,prev);
+        while (cur) 
+        {
+            if (!cur->hasHiddenExportParent())
+            {
+                // Branches
+                bo=(BranchObj*)(cur->getLMO());
+                if (bo && bo->isVisibleObj())
+                    obstacles.append(bo->getBBox());
+            }
+            model->nextBranch(cur,prev);
+        }
+        winter->setObstacles(obstacles);
+    }
+}
+    
 BranchItem* MapEditor::getBranchDirectAbove (BranchItem *bi)
 {
     if (bi)
@@ -1582,6 +1609,8 @@ void MapEditor::moveObject ()
 	    QItemSelection sel=model->getSelectionModel()->selection();
 	    updateSelection(sel,sel);	// position has changed
 
+            // In winter mode shake snow from heading
+            if (winter) model->emitDataChanged(seli);
 	} 
     } // End of lmosel!=NULL
     else if (seli && seli->getType()==TreeItem::XLink)
@@ -2071,6 +2100,27 @@ void MapEditor::updateData (const QModelIndex &sel)
     {
 	BranchObj *bo=(BranchObj*) ( ((MapItem*)ti)->getLMO());
 	bo->updateData();
+    }
+
+    if (winter)
+    {
+        QList <QRectF> obstacles;
+        BranchObj *bo;
+        BranchItem *cur=NULL;
+        BranchItem *prev=NULL;
+        model->nextBranch(cur,prev);
+        while (cur) 
+        {
+            if (!cur->hasHiddenExportParent())
+            {
+                // Branches
+                bo=(BranchObj*)(cur->getLMO());
+                if (bo && bo->isVisibleObj())
+                    obstacles.append(bo->getBBox());
+            }
+            model->nextBranch(cur,prev);
+        }
+        winter->setObstacles(obstacles);
     }
 }
 

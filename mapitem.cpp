@@ -120,7 +120,7 @@ QString MapItem::getMapAttr ()
 
     // Rotation angle
     MapObj *mo=getMO();
-    if (mo);
+    if (mo)
 	angle=mo->getRotation();
     if (angle!=0)	
 	s+=attribut("rotation",QString().setNum(angle) );

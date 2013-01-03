@@ -403,6 +403,8 @@ bool parseVYMHandler::readMapAttr (const QXmlAttributes& a)
     QColor col;
     if (!a.value( "author").isEmpty() )  
 	model->setAuthor(a.value( "author" ) );
+    if (!a.value( "title").isEmpty() )
+	model->setTitle (a.value( "title" ) );
     if (!a.value( "comment").isEmpty() )
 	model->setComment (a.value( "comment" ) );
     if (!a.value( "branchCount").isEmpty() )
@@ -498,8 +500,6 @@ bool parseVYMHandler::readBranchAttr (const QXmlAttributes& a)
 	else	
 	    lastBranch->setIncludeImagesHor(false);
     }	
-    if (!a.value( "uuid").isEmpty() ) 
-	lastBranch->setUuid (a.value( "uuid") );
     return true;    
 }
 
@@ -603,6 +603,9 @@ bool parseVYMHandler::readOOAttr (const QXmlAttributes& a)
 	    else	
 		return false;   // Couldn't read rotation
 	}           
+
+        if (!a.value( "uuid").isEmpty() ) 
+            lastMI->setUuid (a.value( "uuid") );
     }
     return true;    
 }

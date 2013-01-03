@@ -84,11 +84,11 @@ void BranchItem::insertBranch (int pos, BranchItem *branch)
 
 QString BranchItem::saveToDir (const QString &tmpdir,const QString &prefix, const QPointF& offset, QList <Link*> &tmpLinks ) //FIXME-3 Check if everything is saved...
 {
-    // Save uuid 
-    QString idAttr=attribut("uuid",uuid.toString());
-
     // Cloudy stuff can be hidden during exports
     if (hidden) return QString();
+
+    // Save uuid 
+    QString idAttr=attribut("uuid",uuid.toString());
 
     QString s,a;
     BranchObj *bo=(BranchObj*)mo;
@@ -275,6 +275,8 @@ bool BranchItem::hasScrolledParent(BranchItem *start)
     // find out, if we are scrolled at all.
     // But ignore myself, just look at parents.
 
+    if (!start) start=this;
+
     if (this !=start && scrolled) return true;
 
     BranchItem* bi=(BranchItem*)parentItem;
@@ -383,6 +385,21 @@ QString BranchItem::getIncludeImageAttr()
     if (includeImagesHor)
 	a+=attribut ("incImgH","true");
     return a;	
+}
+
+BranchItem* BranchItem::getFramedParentBranch(BranchItem *start)
+{
+    BranchObj *bo=getBranchObj();
+    if (bo && bo->getFrameType() != FrameObj::NoFrame)
+    {
+	if (bo->getFrame()->getFrameIncludeChildren() ) return this;
+        if (this == start) return this;
+    } 
+    BranchItem* bi=(BranchItem*)parentItem;
+    if (bi && bi!=rootItem ) 
+	return bi->getFramedParentBranch(start);
+    else
+	return NULL;
 }
 
 void BranchItem::setFrameIncludeChildren(bool b)

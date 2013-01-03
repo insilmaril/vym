@@ -212,6 +212,12 @@ bool Parser::checkParameters(TreeItem *selti)
 		{
 		    case Command::String:
 			parString (ok,i);
+                        if (!ok) 
+                        {
+                            // Convert to string implicitly
+                            paramList[i]='"' + paramList[i] + '"';
+                            ok=true;
+                        }
 			break;
 		    case Command::Int:	
 			parInt (ok,i);

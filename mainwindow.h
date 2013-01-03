@@ -74,7 +74,7 @@ private:
     void setupRecentMapsMenu();
     void setupMacros();
     void setupToolbars();
-    int currentView() const;
+    VymView* currentView() const;
 public:	
     MapEditor* currentMapEditor() const;
     VymModel* currentModel() const;
@@ -102,7 +102,6 @@ public slots:
 private slots:	
     void fileSaveAs(const SaveMode &);
     void fileSaveAs();
-    void fileImportKDE3Bookmarks();
     void fileImportKDE4Bookmarks();
     void fileImportFirefoxBookmarks();
     void fileImportFreemind();
@@ -118,11 +117,11 @@ private slots:
     void fileExportCSV();
     void fileExportOrgMode();
     void fileExportLaTeX();
-    void fileExportKDE3Bookmarks();
     void fileExportKDE4Bookmarks();
     void fileExportTaskjuggler();
     void fileExportImpress();
     void fileExportLast();
+    bool closeTab(int i);
     bool fileCloseMap();
     void filePrint();
     bool fileExitVYM();
@@ -139,6 +138,7 @@ private slots:
 public slots:    
     void updateQueries (VymModel*);
 private:
+    bool openURL(const QString &url);
     void openTabs(QStringList);
 public slots:
     void editOpenURL();
@@ -291,11 +291,14 @@ public slots:
 private slots:
     void windowNextEditor();
     void windowPreviousEditor();
+    void nextSlide();
+    void previousSlide();
 
     void standardFlagChanged();
 
     void testFunction1();
     void testFunction2();
+    void toggleWinter();
     void toggleHideExport();
     void testCommand();
 
@@ -458,6 +461,8 @@ private:
     QAction *actionModModeCopy;
 
     QAction *actionToggleHideMode;
+
+    QAction *actionToggleWinter;
 
     QActionGroup *actionGroupFormatFrameTypes;
 
