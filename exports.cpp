@@ -228,7 +228,7 @@ void ExportAO::doExport()
 		else if (col==QColor (0,85,0))
 		    colString="[G] ";
                 else if (cur->depth()==4)
-		    colString="[*] ";
+		    colString=" *  ";
                 else
 		    colString="    ";
 
