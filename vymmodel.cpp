@@ -1123,7 +1123,7 @@ void VymModel::undo()
     QString bakMapDir(QString(tmpMapDir+"/undo-%1").arg(curStep));
 
     // select  object before undo
-    if (!select (undoSelection))
+    if (!undoSelection.isEmpty() && !select (undoSelection))
     {
 	qWarning ("VymModel::undo()  Could not select object for undo");
 	return;
@@ -3803,6 +3803,10 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	} else if (com=="branchCount")
 	{ 
 	    returnValue=selti->branchCount();
+	/////////////////////////////////////////////////////////////////////
+	} else if (com=="centerCount")
+	{ 
+	    returnValue=rootItem->branchCount();
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="centerOnID")
 	{

@@ -499,7 +499,10 @@ void Main::setupAPI()
     c->addPar (Command::String, true, "Penstyle of XLink");
     modelCommands.append(c);
 
-    c=new Command ("branchCount",Command::BranchLike);
+    c=new Command ("branchCount",Command::Any);
+    modelCommands.append(c);
+
+    c=new Command ("centerCount",Command::BranchLike);
     modelCommands.append(c);
 
     c=new Command ("centerOnID",Command::Any);

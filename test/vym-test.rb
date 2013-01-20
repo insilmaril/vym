@@ -451,6 +451,15 @@ def test_delete_parts (vym)
   expect "Undo: deleteKeepChildren: branchcount of parent", n,vym.branchCount
   vym.select @@branch_a
   expect "Undo: deleteKeepChildren: branchcount of branch", m,vym.branchCount
+
+  init_map
+  n = vym.centerCount
+  puts "n=#{n}"
+  vym.select @@center_1
+  vym.delete
+  expect "Delete mapCenter: number of centers decreased", vym.centerCount, n-1
+  vym.undo
+  expect "Undo Delete mapCenter: number of centers increased", vym.centerCount, n
 end  
 
 #######################
