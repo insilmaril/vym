@@ -454,7 +454,6 @@ def test_delete_parts (vym)
 
   init_map
   n = vym.centerCount
-  puts "n=#{n}"
   vym.select @@center_1
   vym.delete
   expect "Delete mapCenter: number of centers decreased", vym.centerCount, n-1
