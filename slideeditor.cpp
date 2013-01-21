@@ -38,9 +38,6 @@ SlideEditor::SlideEditor(VymModel *m)
 	slideControl, SIGNAL (deleteButtonPressed() ), 
 	this, SLOT (deleteSlide() ) );
     connect (
-	slideControl, SIGNAL (deleteButtonPressed() ), 
-	this, SLOT (deleteSlide() ) );
-    connect (
 	slideControl, SIGNAL (previousButtonPressed() ), 
 	this, SLOT (previousSlide() ) );
     connect (
