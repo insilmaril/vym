@@ -287,6 +287,7 @@ void ExportHTMLDialog::saveSettings ()
 	settings.clearLocal(filepath,"/export/html");
     else    
     {
+	settings.setLocalValue (filepath,"/export/html/exportDir",dir.absolutePath());
 	settings.setLocalValue (filepath,"/export/html/saveSettingsInMap","yes");
         settings.setLocalValue (filepath,"/export/html/postscript",postscript);
         settings.setLocalValue (filepath,"/export/html/useImage",useImage);

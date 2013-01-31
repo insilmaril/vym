@@ -49,7 +49,8 @@ void ExportBase::init()
 	QMessageBox::critical( 0, QObject::tr( "Error" ),
 		       QObject::tr("Couldn't access temporary directory\n"));
     cancelFlag=false;		       
-    dirPath=lastExportDir.absolutePath();
+    defaultDirPath=lastExportDir.absolutePath();
+    dirPath=defaultDirPath;
 }
 
 void ExportBase::setDirPath (const QString &s)
@@ -761,15 +762,12 @@ void ExportHTML::doExport(bool useDialog)
 {
     // Setup dialog and read settings
     dia.setMapName (model->getMapName());
+    dia.setFilePath (model->getFilePath());
     dia.readSettings();
 
-    if (!dirPath.isEmpty()) 
-        dia.setDirectory(dirPath);
+    if (dirPath != defaultDirPath)
+        dia.setDirectory(dirPath); 
 
-    if (!filePath.isEmpty())
-        dia.setFilePath (filePath);
-    else
-        dia.setFilePath (model->getFilePath());
 
     if (useDialog)
     {
