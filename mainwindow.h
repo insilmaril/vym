@@ -154,13 +154,14 @@ private slots:
     void getBugzillaData();
     void getBugzillaDataSubtree();
     void editFATE2URL();
-    void openVymLinks(const QStringList &);
+    void openVymLinks(const QStringList &, bool background=false);
     void editVymLink();
     void editOpenMultipleVymLinks();
 public slots:
     void editHeading();
     void editHeadingFinished(VymModel *m);
-    void editOpenVymLink();
+    void editOpenVymLink(bool background=false);
+    void editOpenVymLinkBackground();
 private slots:
     void editDeleteVymLink();
     void editToggleHideExport();
@@ -390,6 +391,7 @@ private:
     QAction* actionGetBugzillaDataSubtree;
     QAction* actionFATE2URL;
     QAction *actionOpenVymLink;
+    QAction *actionOpenVymLinkBackground;
     QAction *actionOpenMultipleVymLinks;
     QAction *actionEditVymLink;
     QAction *actionDeleteVymLink;

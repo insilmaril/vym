@@ -1397,6 +1397,13 @@ void Main::setupEditActions()
     actionListBranches.append (a);
     actionOpenVymLink=a;
 
+    a = new QAction(QPixmap(flagsPath+"flag-vymlink.png"), tr( "Open linked map in background tab","Edit menu" ), this);
+    a->setEnabled (false);
+    switchboard.addConnection(a,tr("Edit","Shortcut group"));
+    connect( a, SIGNAL( triggered() ), this, SLOT( editOpenVymLinkBackground() ) );
+    actionListBranches.append (a);
+    actionOpenVymLinkBackground=a;
+
     a = new QAction(QPixmap(), tr( "Open all vym links in subtree","Edit menu" ), this);
     a->setEnabled (false);
     switchboard.addConnection(a,tr("Edit","Shortcut group"));
@@ -2521,6 +2528,7 @@ void Main::setupContextMenus()
 	    branchLinksContextMenu->addAction ( actionFATE2URL );
 	branchLinksContextMenu->addSeparator();	
 	branchLinksContextMenu->addAction ( actionOpenVymLink );
+	branchLinksContextMenu->addAction ( actionOpenVymLinkBackground );
 	branchLinksContextMenu->addAction ( actionOpenMultipleVymLinks );
 	branchLinksContextMenu->addAction ( actionEditVymLink );
 	branchLinksContextMenu->addAction ( actionDeleteVymLink );
@@ -2682,6 +2690,7 @@ void Main::setupToolbars()
     referencesToolbar->addAction (actionOpenURL);
     referencesToolbar->addAction (actionURLNew);
     referencesToolbar->addAction (actionOpenVymLink);
+    referencesToolbar->addAction (actionOpenVymLinkBackground);
     referencesToolbar->addAction (actionEditVymLink);
 
     // Format and colors
@@ -3823,7 +3832,7 @@ void Main::editHeadingFinished(VymModel *m)
     }
 }
 
-void Main::openVymLinks(const QStringList &vl)
+void Main::openVymLinks(const QStringList &vl, bool background)
 {
     QStringList vlmin;
     int index=-1;
@@ -3854,7 +3863,8 @@ void Main::openVymLinks(const QStringList &vl)
 	else
 	{
 	    fileLoad (vlmin.at(j), NewMap,VymMap);
-	    tabWidget->setCurrentIndex (tabWidget->count()-1);	
+            if (!background) 
+                tabWidget->setCurrentIndex (tabWidget->count()-1);	
 	}
     }	    
     // Go to tab containing the map
@@ -3863,15 +3873,20 @@ void Main::openVymLinks(const QStringList &vl)
     removeProgressCounter();
 }
 
-void Main::editOpenVymLink()
+void Main::editOpenVymLink(bool background)
 {
     VymModel *m=currentModel();
     if (m)
     {
 	QStringList vl;
 	vl.append(m->getVymLink()); 
-	openVymLinks (vl);
+	openVymLinks (vl, background);
     }
+}
+
+void Main::editOpenVymLinkBackground()
+{
+    editOpenVymLink (true);
 }
 
 void Main::editOpenMultipleVymLinks()
@@ -3881,7 +3896,7 @@ void Main::editOpenMultipleVymLinks()
     if (m)
     {
 	QStringList vl=m->getVymLinks();
-	openVymLinks (vl);
+	openVymLinks (vl, true);
     }
 }
 
@@ -5073,10 +5088,12 @@ void Main::updateActions()
 		if ( selti->getVymLink().isEmpty() )
 		{
 		    actionOpenVymLink->setEnabled (false);
+		    actionOpenVymLinkBackground->setEnabled (false);
 		    actionDeleteVymLink->setEnabled (false);
 		} else	
 		{
 		    actionOpenVymLink->setEnabled (true);
+		    actionOpenVymLinkBackground->setEnabled (true);
 		    actionDeleteVymLink->setEnabled (true);
 		}   
 
@@ -5118,6 +5135,7 @@ void Main::updateActions()
 
 		actionOpenURL->setEnabled (false);
 		actionOpenVymLink->setEnabled (false);
+		actionOpenVymLinkBackground->setEnabled (false);
 		actionDeleteVymLink->setEnabled (false);    
 		actionToggleHideExport->setEnabled (true);  
 		actionToggleHideExport->setChecked (selti->hideInExport() );	

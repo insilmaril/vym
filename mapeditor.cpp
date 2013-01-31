@@ -1231,7 +1231,6 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
 	int max=horizontalScrollBar()->maximum();
 	qDebug()<<"    horSB="<<min<<" -> "<<v<<" <- "<<max;
     */	
-
     // Ignore right clicks or wile editing heading
     if (e->button() == Qt::RightButton || model->isSelectionBlocked() )
     {
@@ -1250,10 +1249,28 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
 
     QPointF p = mapToScene(e->pos());
     TreeItem *ti=findMapItem (p, NULL);
+    BranchItem *selbi;
     LinkableMapObj* lmo=NULL;
-    if (ti) lmo=((MapItem*)ti)->getLMO();
+    if (ti) 
+    {
+        lmo=((MapItem*)ti)->getLMO();
+        if (ti->isBranchLikeType()) selbi=(BranchItem*)ti;
+    }
+
+    QString sysFlagName;
+    if (lmo) sysFlagName=((BranchObj*)lmo)->getSystemFlagName(p);
     
-    // Now check PickColor modifier (before selecting object!) 
+    /*
+    qDebug() << "ME::mouse pressed\n";
+    qDebug() << "  lmo="<<lmo;
+    qDebug() << "   ti="<<ti;
+    qDebug() << "selbi="<<selbi;
+    qDebug() << " flag="<<sysFlagName;
+    if (selbi) qDebug() << "selbi="<<selbi->getHeading();
+    if (ti) qDebug() << "   ti="<<ti->getHeading();
+    */
+    
+    // Check PickColor modifier (before selecting object!) 
     if (ti && (e->modifiers() & Qt::ShiftModifier) &&
 	mainWindow->getModMode()==Main::ModModeColor)
     {
@@ -1266,52 +1283,51 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
 	return;
     }	
 
+    // Check vymlink  modifier (before selecting object!) 
+    if (sysFlagName=="system-vymLink")
+    {
+        model->select(ti);
+        if (e->modifiers() & Qt::ControlModifier)
+            mainWindow->editOpenVymLink(true);
+        else
+            mainWindow->editOpenVymLink(false);
+        return;
+    }
+    
     // Select the clicked object 
     if (e->modifiers() & Qt::ControlModifier)
 	model->selectToggle (ti);
     else
 	model->select (ti);
-    
-    // New selection:
-    BranchItem* selbi=model->getSelectedBranch();   
 
-    /*
-    qDebug() << "ME::mouse pressed\n";
-    qDebug() << "  lmo="<<lmo;
-    qDebug() << "   ti="<<ti;
-    qDebug() << "selbi="<<selbi;
-    if (selbi) qDebug() << "selbi="<<selbi->getHeading();
-    if (ti) qDebug() << "   ti="<<ti->getHeading();
-    */
-    
     e->accept();
 
-    //Take care of  system flags _or_ modifier modes
-    //
+    //Take care of  remaining system flags _or_ modifier modes
     if (lmo && selbi )
     {
-	QString foname=((BranchObj*)lmo)->getSystemFlagName(p);
-	if (!foname.isEmpty())
+	if (!sysFlagName.isEmpty())
 	{
 	    // systemFlag clicked
-	    model->select (lmo);    
-	    if (foname.contains("system-url")) 
+	    if (sysFlagName.contains("system-url")) 
 	    {
 		if (e->modifiers() & Qt::ControlModifier)
 		    mainWindow->editOpenURLTab();
 		else	
 		    mainWindow->editOpenURL();
 	    }	
-	    else if (foname=="system-vymLink")
+	    else if (sysFlagName=="system-vymLink")
 	    {
-		mainWindow->editOpenVymLink();
+		if (e->modifiers() & Qt::ControlModifier)
+		    mainWindow->editOpenVymLink(true);
+                else
+		    mainWindow->editOpenVymLink(false);
 		// tabWidget may change, better return now
 		// before segfaulting...
-	    } else if (foname=="system-note")	//FIXME-2 does not work always???
+	    } else if (sysFlagName=="system-note")	//FIXME-2 does not work always???
 		mainWindow->windowToggleNoteEditor();
-	    else if (foname=="hideInExport")	    
+	    else if (sysFlagName=="hideInExport")	    
 		model->toggleHideExport();
-	    else if (foname.startsWith("system-task-") )
+	    else if (sysFlagName.startsWith("system-task-") )
 		model->cycleTaskStatus();
 	    return; 
 	} else
