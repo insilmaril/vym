@@ -761,7 +761,6 @@ void ExportHTML::doExport(bool useDialog)
 {
     // Setup dialog and read settings
     dia.setMapName (model->getMapName());
-    dia.readSettings();
 
     if (!dirPath.isEmpty()) 
         dia.setDirectory(dirPath);
@@ -770,6 +769,8 @@ void ExportHTML::doExport(bool useDialog)
         dia.setFilePath (filePath);
     else
         dia.setFilePath (model->getFilePath());
+
+    dia.readSettings();
 
     if (useDialog)
     {
