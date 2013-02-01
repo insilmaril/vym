@@ -1249,13 +1249,8 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
 
     QPointF p = mapToScene(e->pos());
     TreeItem *ti=findMapItem (p, NULL);
-    BranchItem *selbi;
     LinkableMapObj* lmo=NULL;
-    if (ti) 
-    {
-        lmo=((MapItem*)ti)->getLMO();
-        if (ti->isBranchLikeType()) selbi=(BranchItem*)ti;
-    }
+    if (ti) lmo=((MapItem*)ti)->getLMO();
 
     QString sysFlagName;
     if (lmo) sysFlagName=((BranchObj*)lmo)->getSystemFlagName(p);
@@ -1264,10 +1259,8 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
     qDebug() << "ME::mouse pressed\n";
     qDebug() << "  lmo="<<lmo;
     qDebug() << "   ti="<<ti;
-    qDebug() << "selbi="<<selbi;
-    qDebug() << " flag="<<sysFlagName;
-    if (selbi) qDebug() << "selbi="<<selbi->getHeading();
     if (ti) qDebug() << "   ti="<<ti->getHeading();
+    qDebug() << " flag="<<sysFlagName;
     */
     
     // Check PickColor modifier (before selecting object!) 
@@ -1284,7 +1277,7 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
     }	
 
     // Check vymlink  modifier (before selecting object!) 
-    if (sysFlagName=="system-vymLink")
+    if (ti && sysFlagName=="system-vymLink")
     {
         model->select(ti);
         if (e->modifiers() & Qt::ControlModifier)
@@ -1295,7 +1288,7 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
     }
     
     // Select the clicked object 
-    if (e->modifiers() & Qt::ControlModifier)
+    if (ti && e->modifiers() & Qt::ControlModifier)
 	model->selectToggle (ti);
     else
 	model->select (ti);
@@ -1303,7 +1296,7 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
     e->accept();
 
     //Take care of  remaining system flags _or_ modifier modes
-    if (lmo && selbi )
+    if (lmo )
     {
 	if (!sysFlagName.isEmpty())
 	{
@@ -1368,7 +1361,8 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
 	}
     }	
 
-    // XLink modifier needs no lmo
+    // XLink modifier, create new XLink 
+    BranchItem* selbi = model->getSelectedBranch();
     if (selbi &&
         mainWindow->getModMode()==Main::ModModeXLink &&
         (e->modifiers() & Qt::ShiftModifier))
