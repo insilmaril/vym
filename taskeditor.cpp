@@ -90,7 +90,7 @@ TaskEditor::TaskEditor(QWidget *)
 
     // Initialize column widths
     QString s;
-    for (int i=0; i<7; i++)
+    for (int i=0; i<6; i++)
     {
 	s=QString("/taskeditor/columnWidth/%1").arg(i);
 	if (settings.contains (s) )
