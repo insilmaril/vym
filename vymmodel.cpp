@@ -4716,8 +4716,8 @@ void VymModel::exportASCII(const QString &fname,bool askName)
 void VymModel::exportHTML (const QString &dpath, const QString &fpath,bool useDialog)
 {
     ExportHTML ex (this);
-    ex.setFilePath (fpath);
-    ex.setDirPath (dpath);
+    if (!dpath.isEmpty()) ex.setDirPath (dpath);
+    if (!fpath.isEmpty()) ex.setFilePath (fpath);
     setExportMode(true);
     ex.doExport(useDialog);
     setExportMode(false);

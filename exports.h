@@ -37,9 +37,10 @@ protected:
 
     QString indent (const int &n, bool useBullet);
     QDir tmpDir;
-    QString dirPath;    // Path to dir  e.g. /tmp/vym-export/
-    QString filePath;   // Path to file e.g. /tmp/vym-export/export.html
-    QString extension;  // Extension, e.g. .html
+    QString dirPath;        // Path to dir  e.g. /tmp/vym-export/
+    QString defaultDirPath; // Default path
+    QString filePath;       // Path to file e.g. /tmp/vym-export/export.html
+    QString extension;      // Extension, e.g. .html
     QString indentPerDepth;
     int indentPerDepth2;
     QStringList bulletPoints;
