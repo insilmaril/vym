@@ -768,9 +768,6 @@ void ExportHTML::doExport(bool useDialog)
     if (dirPath != defaultDirPath)
         dia.setDirectory(dirPath); 
 
-
-    dia.readSettings();
-
     if (useDialog)
     {
 	if (dia.exec()!=QDialog::Accepted) return;
