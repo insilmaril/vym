@@ -4892,8 +4892,14 @@ void Main::changeSelection (VymModel *model, const QItemSelection &newsel, const
 	    headingEditor->setText (ti->getHeading() );
 
 	    // Select in TaskEditor, if necessary 
+            Task *t=NULL;
 	    if (ti->isBranchLikeType() )
-		taskEditor->select ( ((BranchItem*)ti)->getTask() );
+		t=((BranchItem*)ti)->getTask();
+
+            if (t)
+		taskEditor->select (t);
+            else
+                taskEditor->clearSelection();
 	} else
 	    noteEditor->setInactive();
 

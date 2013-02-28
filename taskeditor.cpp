@@ -165,6 +165,11 @@ bool TaskEditor::select (Task *task)
     return false;
 }
 
+void TaskEditor::clearSelection()
+{
+    view->selectionModel()->clearSelection();
+}
+
 void TaskEditor::selectionChanged ( const QItemSelection & selected, const QItemSelection & )
 {// FIXME-3 what, if multiple selection in MapEditor?
     // Avoid segfault on quit, when selected is empty
