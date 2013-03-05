@@ -112,48 +112,100 @@ def test_export (vym)
 
   #HTML
   mapname = "export-html"
-  vym.exportHTML(@@testdir,"#{@@testdir}/#{mapname}.html")
-  expect "exportHTML: HTML file exists", File.exists?("#{@@testdir}/#{mapname}.html"), true
-  expect "exportHTML: HTML image exists", File.exists?("#{@@testdir}/#{mapname}.png"), true
-  expect "exportHTML: HTML flags exists", File.exists?("#{@@testdir}/flags/flag-stopsign.png"), true
-  expect "exportHTML: HTML CSS exists", File.exists?("#{@@testdir}/vym.css"), true
+  htmlpath = "#{@@testdir}/#{mapname}.html"
+  flagpath = "#{@@testdir}/flags/flag-stopsign.png"
+  pngpath = "#{@@testdir}/#{mapname}.png"
+  csspath = "#{@@testdir}/vym.css"
+  vym.exportHTML(@@testdir,htmlpath)
+  expect "exportHTML: HTML file exists", File.exists?(htmlpath), true
+  expect "exportHTML: HTML image exists", File.exists?(pngpath), true
+  expect "exportHTML: HTML flags exists", File.exists?(flagpath), true
+  expect "exportHTML: HTML CSS exists", File.exists?(csspath), true
+  File.delete(htmlpath)
+  File.delete(flagpath)
+  File.delete(pngpath)
+  File.delete(csspath)
+  vym.exportLast
+  expect "exportLast: HTML file exists", File.exists?(htmlpath), true
+  expect "exportLast: HTML image exists", File.exists?(pngpath), true
+  expect "exportLast: HTML flags exists", File.exists?(flagpath), true
+  expect "exportLast: HTML CSS exists", File.exists?(csspath), true
 
   #AO
   filepath = "#{@@testdir}/export-ao.txt"
   vym.exportAO(filepath)
-  expect "exportAO: AO file exists", File.exists?(filepath), true
+  expect "exportAO:    AO file exists", File.exists?(filepath), true
+  File.delete(filepath)
+  vym.exportLast
+  expect "exportLast:  AO file exists", File.exists?(filepath), true
 
   #ASCII
   filepath = "#{@@testdir}/export-ascii.txt"
   vym.exportASCII(filepath)
   expect "exportASCII: ASCII file exists", File.exists?(filepath), true
+  File.delete(filepath)
+  vym.exportLast
+  expect "exportLast:  ASCII file exists", File.exists?(filepath), true
+
+  #CSV
+  filepath = "#{@@testdir}/export-csv.txt"
+  vym.exportCSV(filepath)
+  expect "exportCSV:    CSV file exists", File.exists?(filepath), true
+  File.delete(filepath)
+  vym.exportLast
+  expect "exportLast:  CSV file exists", File.exists?(filepath), true
 
   #Image
   filepath = "#{@@testdir}/export-image.png"
   vym.exportImage(filepath,"PNG")
   expect "exportImage: PNG file exists", File.exists?(filepath), true
+  File.delete(filepath)
+  vym.exportLast
+  expect "exportLast:  PNG file exists", File.exists?(filepath), true
+
+  #LaTeX
+  filepath = "#{@@testdir}/export-LaTeX.tex"
+  vym.exportLaTeX(filepath)
+  expect "exportLaTeX:  LaTeX file exists", File.exists?(filepath), true
+  File.delete(filepath)
+  vym.exportLast
+  expect "exportLast:   LaTeX file exists", File.exists?(filepath), true
+
+  #OrgMode
+  filepath = "#{@@testdir}/export-orgmode.org"
+  vym.exportOrgMode(filepath)
+  expect "exportOrgMode:  OrgMode file exists", File.exists?(filepath), true
+  File.delete(filepath)
+  vym.exportLast
+  expect "exportLast:     OrgMode file exists", File.exists?(filepath), true
 
   #PDF
   filepath = "#{@@testdir}/export-pdf.pdf"
-  vym.exportImage(filepath,"PNG")
-  expect "exportPDF: PDF file exists", File.exists?(filepath), true
+  vym.exportPDF(filepath)
+  expect "exportPDF:  PDF file exists", File.exists?(filepath), true
+  File.delete(filepath)
+  vym.exportLast
+  expect "exportLast: PDF file exists", File.exists?(filepath), true
 
   #SVG
   filepath = "#{@@testdir}/export-svg.svg"
   vym.exportSVG(filepath)
-  expect "exportSVG: SVG file exists", File.exists?(filepath), true
+  expect "exportSVG:  SVG file exists", File.exists?(filepath), true
+  File.delete(filepath)
+  vym.exportLast
+  expect "exportLast: SVG file exists", File.exists?(filepath), true
 
   #XML
   filepath = "#{@@testdir}/export-xml.xml"
   vym.exportXML(@@testdir, filepath)
   expect "exportXML: XML file exists", File.exists?(filepath), true
+  File.delete(filepath)
+  vym.exportLast
+  expect "exportLast: XML file exists", File.exists?(filepath), true
 
   #OpenOffice Impress //FIXME-2
   #KDE4 Bookmarks //FIXME-2
   #Taskjuggler //FIXME-3
-  #CSV //FIXME-3
-  #Emacs Orgmode //FIXME-3
-  #LaTeX //FIXME-3
 end
 
 #######################

@@ -533,6 +533,9 @@ public:
     /*! Export as ASCII text to file */
     void exportASCII (const QString &fname="",bool askForName=true);  
 
+    /*! Export as CSV text to file */
+    void exportCSV (const QString &fname="",bool askForName=true);  
+
     /*! Export as HTML to directory */
     void exportHTML(const QString &dir="", const QString &fname="", bool useDialog=true);    
 
@@ -551,6 +554,9 @@ public:
 
     /*! Export as LaTeX */
     void exportLaTeX (const QString& dir="", bool useDialog=true);    
+
+    /*! Export as OrgMode input for emacs*/
+    void exportOrgMode (const QString& fname="", bool useDialog=true);    
 
 ////////////////////////////////////////////
 // View related

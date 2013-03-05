@@ -551,6 +551,10 @@ void Main::setupAPI()
     c->addPar (Command::String,false,"Filename for export");
     modelCommands.append(c);
 
+    c=new Command ("exportCSV",Command::Any);
+    c->addPar (Command::String,false,"Filename for export");
+    modelCommands.append(c);
+
     c=new Command ("exportHTML",Command::Any);
     c->addPar (Command::String,false,"Path used for export");
     c->addPar (Command::String,false,"Filename for export");
@@ -561,6 +565,9 @@ void Main::setupAPI()
     c->addPar (Command::String,true,"Image format");
     modelCommands.append(c);
 
+    c=new Command ("exportImpress",Command::Any);
+    c->addPar (Command::String,false,"Filename for export");
+    c->addPar (Command::String,false,"Configuration file for export");
     c=new Command ("exportLast",Command::Any);
     modelCommands.append(c);
 
@@ -568,9 +575,10 @@ void Main::setupAPI()
     c->addPar (Command::String,false,"Filename for export");
     modelCommands.append(c);
 
-    c=new Command ("exportImpress",Command::Any);
+    c=new Command ("exportOrgMode",Command::Any);
     c->addPar (Command::String,false,"Filename for export");
-    c->addPar (Command::String,false,"Configuration file for export");
+    modelCommands.append(c);
+
     modelCommands.append(c);
 
     c=new Command ("exportPDF",Command::Any);
@@ -3397,23 +3405,10 @@ void Main::fileExportLaTeX()
     if (m) m->exportLaTeX();
 }
 
-void Main::fileExportOrgMode()	//FIXME-3 not scriptable yet
+void Main::fileExportOrgMode()	
 {
     VymModel *m=currentModel();
-    if (m)
-    {
-	ExportOrgMode ex;
-	ex.setModel (m);
-	ex.addFilter ("org-mode (*.org)");
-	ex.setDirPath (lastImageDir.absolutePath());
-	ex.setWindowTitle(vymName+ " -" +tr("Export as org-mode")+" "+tr("(still experimental)"));
-	if (ex.execDialog() ) 
-	{
-	    m->setExportMode(true);
-	    ex.doExport();
-	    m->setExportMode(false);
-	}
-    }
+    if (m) m->exportOrgMode();
 }
 
 void Main::fileExportKDE4Bookmarks()	//FIXME-3 not scriptable yet
@@ -5265,8 +5260,10 @@ void Main::standardFlagChanged()
 
 void Main::testFunction1()
 {
-    if (!currentMapEditor()) return;
-    currentMapEditor()->testFunction1();
+    //if (!currentMapEditor()) return;
+    //currentMapEditor()->testFunction1();
+    if (!currentModel()) return;
+    currentModel()->exportImage();
 }
 
 void Main::testFunction2()

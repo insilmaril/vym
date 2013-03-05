@@ -58,7 +58,11 @@ QString convertToRel (const QString &src, const QString &dst)
 QString basename(const QString &path)
 {
     return path.section ('/', -1);
+}
 
+QString dirname(const QString &path)
+{
+    return path.section('/', 0, -2);
 }
 
 extern QString vymName;

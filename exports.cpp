@@ -43,6 +43,7 @@ ExportBase::~ExportBase()
 void ExportBase::init()
 {
     indentPerDepth="  ";
+    exportName="unnamed";
     bool ok;
     tmpDir.setPath (makeTmpDir(ok,"vym-export"));
     if (!tmpDir.exists() || !ok)
@@ -105,7 +106,7 @@ void ExportBase::addFilter(const QString &s)
     filter=s;
 }
 
-bool ExportBase::execDialog(const QString &overwriteWarning)
+bool ExportBase::execDialog()
 {
     QString fn=QFileDialog::getSaveFileName( 
 	NULL,
@@ -122,8 +123,8 @@ bool ExportBase::execDialog(const QString &overwriteWarning)
 	    WarningDialog dia;
 	    dia.showCancelButton (true);
 	    dia.setCaption(QObject::tr("Warning: Overwriting file"));
-	    dia.setText(QObject::tr("Exporting to %1 will overwrite the existing file:\n%2").arg(overwriteWarning).arg(fn));
-	    dia.setShowAgainName("/exports/overwrite/"+overwriteWarning);
+	    dia.setText(QObject::tr("Exporting to %1 will overwrite the existing file:\n%2").arg(exportName).arg(fn));
+	    dia.setShowAgainName("/exports/overwrite/" + exportName);
 	    if (!dia.exec()==QDialog::Accepted)
 	    {
 		cancelFlag=true;
@@ -141,6 +142,17 @@ bool ExportBase::execDialog(const QString &overwriteWarning)
 bool ExportBase::canceled()
 {
     return cancelFlag;
+}
+
+void ExportBase::completeExport(QString args)
+{
+    if (args.isEmpty()) args=QString("\"%1\"").arg(filePath);
+
+    QString cmd=QString("export%1(%2)").arg(exportName).arg(args);
+    settings.setLocalValue ( model->getFilePath(), "/export/last/exportPath",filePath);
+    settings.setLocalValue ( model->getFilePath(), "/export/last/command",cmd);
+    settings.setLocalValue ( model->getFilePath(), "/export/last/description","CSV");
+    mainWindow->statusMessage(QString("Exported as %1: %2").arg(exportName).arg(filePath));
 }
 
 QString ExportBase::getSectionString(TreeItem *start)
@@ -173,7 +185,8 @@ QString ExportBase::indent (const int &n, bool useBullet)
 ////////////////////////////////////////////////////////////////////////
 ExportAO::ExportAO()
 {
-    filter="TXT (*.txt)";
+    exportName="AO";
+    filter="TXT (*.txt);;All (* *.*)";
     caption=vymName+ " -" +QObject::tr("Export as ASCII")+" "+QObject::tr("(still experimental)");
     indentPerDepth="   ";
     bulletPoints.clear();
@@ -307,10 +320,7 @@ void ExportAO::doExport()
 	model->nextBranch(cur,prev);
     }
     file.close();
-    QString cmd=QString("exportAO(\"%1\")").arg(filePath);
-    settings.setLocalValue ( model->getFilePath(), "/export/last/command",cmd);
-    settings.setLocalValue ( model->getFilePath(), "/export/last/description","A&O report");
-    mainWindow->statusMessage(cmd);
+    completeExport();
 }
 
 QString ExportAO::underline (const QString &text, const QString &line)
@@ -324,7 +334,8 @@ QString ExportAO::underline (const QString &text, const QString &line)
 ////////////////////////////////////////////////////////////////////////
 ExportASCII::ExportASCII() 
 {
-    filter="TXT (*.txt)";
+    exportName="ASCII";
+    filter="TXT (*.txt);;All (* *.*)";
     caption=vymName+ " -" +QObject::tr("Export as ASCII");
 }
 
@@ -405,11 +416,7 @@ void ExportASCII::doExport()
 	model->nextBranch(cur,prev);
     }
     file.close();
-    QString cmd="exportASCII";
-    settings.setLocalValue ( model->getFilePath(), "/export/last/exportPath",filePath);
-    settings.setLocalValue ( model->getFilePath(), "/export/last/command",cmd);
-    settings.setLocalValue ( model->getFilePath(), "/export/last/description","ASCII");
-    mainWindow->statusMessage(cmd + ": " + filePath);
+    completeExport();
 }
 
 QString ExportASCII::underline (const QString &text, const QString &line)
@@ -421,6 +428,13 @@ QString ExportASCII::underline (const QString &text, const QString &line)
 
 
 ////////////////////////////////////////////////////////////////////////
+ExportCSV::ExportCSV() 
+{
+    exportName="CSV";
+    filter="CSV (*.csv);;All (* *.*)";
+    caption=vymName+ " -" +QObject::tr("Export as CSV");
+}
+
 void ExportCSV::doExport()
 {
     QFile file (filePath);
@@ -465,6 +479,7 @@ void ExportCSV::doExport()
 	curIndent="";
     }
     file.close();
+    completeExport();
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -544,6 +559,7 @@ ExportHTML::ExportHTML(VymModel *m):ExportBase(m)
 
 void ExportHTML::init()
 {
+    exportName="HTML";
     extension=".html";
     frameURLs=true;
 }
@@ -908,6 +924,7 @@ void ExportHTML::doExport(bool useDialog)
 	p.runScript (dia.postscript,dirPath + "/" + filePath);
     }
 
+    completeExport();
     QString cmd="exportHTML";
     settings.setLocalValue ( model->getFilePath(), "/export/last/command",QString("exportHTML(\"%1\",\"%2\")")
             .arg(dirPath)
@@ -934,6 +951,12 @@ void ExportTaskjuggler::doExport()
 }
 
 ////////////////////////////////////////////////////////////////////////
+ExportOrgMode::ExportOrgMode() 
+{
+    exportName="OrgMode";
+    filter="org-mode (*.org);;All (* *.*)";
+}
+
 void ExportOrgMode::doExport() 
 {
     // Exports a map to an org-mode file.  
@@ -972,11 +995,19 @@ void ExportOrgMode::doExport()
 	model->nextBranch(cur,prev);
     }
     file.close();
+
+    QString cmd=QString("exportOrgMode(\"%1\")").arg(filePath);
+    settings.setLocalValue ( model->getFilePath(), "/export/last/command",cmd);
+    settings.setLocalValue ( model->getFilePath(), "/export/last/description","Orgmode");
+    mainWindow->statusMessage(cmd);
 }
 
 ////////////////////////////////////////////////////////////////////////
 ExportLaTeX::ExportLaTeX()
 {
+    exportName="LaTeX";
+    filter="LaTeX files (*.tex);;All (* *.*)";
+
     // Note: key in hash on left side is the regular expression, which 
     // will be replaced by string on right side
     // E.g. a literal $ will be replaced by \$
@@ -1000,7 +1031,7 @@ QString ExportLaTeX::escapeLaTeX(const QString &s)
 
     foreach (QString p,esc.keys() )
     {
-	qDebug()<<"Replacing "<<p<<" with "<<esc[p];    // FIXME-2
+	//qDebug()<<"Replacing "<<p<<" with "<<esc[p];    // FIXME-3
 	rx.setPattern (p);
 	r.replace (rx, esc[p] );
     }	
@@ -1071,7 +1102,7 @@ void ExportLaTeX::doExport()
    }
     
     file.close();
-    QString cmd="exportLaTeX";
+    QString cmd=QString("exportLaTeX(\"%1\")").arg(filePath);
     settings.setLocalValue ( model->getFilePath(), "/export/last/exportPath",filePath);
     settings.setLocalValue ( model->getFilePath(), "/export/last/command",cmd);
     settings.setLocalValue ( model->getFilePath(), "/export/last/description","LaTeX");

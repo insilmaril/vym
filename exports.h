@@ -29,10 +29,13 @@ public:
     virtual void setModel (VymModel *m);
     virtual void setWindowTitle (const QString &);
     virtual void addFilter (const QString &);
-    virtual bool execDialog(const QString &overwriteWarning=QString());
+    virtual bool execDialog();
     virtual bool canceled();
+    void completeExport(QString args="");  //! set lastExport and send status message
+
 protected:  
     VymModel *model;
+    QString exportName;
     virtual QString getSectionString (TreeItem*);
 
     QString indent (const int &n, bool useBullet);
@@ -71,7 +74,8 @@ public:
 class ExportCSV:public ExportBase
 {
 public:
-    virtual void doExport();
+    ExportCSV();
+    void doExport();
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -118,20 +122,6 @@ private:
 };  
 
 ///////////////////////////////////////////////////////////////////////
-class ExportTaskjuggler:public ExportXMLBase
-{
-public:
-    virtual void doExport();
-};  
-
-///////////////////////////////////////////////////////////////////////
-class ExportOrgMode:public ExportBase
-{
-public:
-    virtual void doExport();
-};  
-
-///////////////////////////////////////////////////////////////////////
 class ExportLaTeX:public ExportBase
 {
 public:
@@ -140,6 +130,14 @@ public:
     virtual void doExport();
 private:
     QHash <QString,QString> esc;
+};  
+
+///////////////////////////////////////////////////////////////////////
+class ExportOrgMode:public ExportBase
+{
+public:
+    ExportOrgMode();
+    virtual void doExport();
 };  
 
 ///////////////////////////////////////////////////////////////////////
@@ -165,4 +163,12 @@ private:
     QString sectionTemplate;
     QString sectionTemplateFile;
 };
+
+///////////////////////////////////////////////////////////////////////
+class ExportTaskjuggler:public ExportXMLBase
+{
+public:
+    virtual void doExport();
+};  
+
 #endif

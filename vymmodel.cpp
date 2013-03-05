@@ -993,6 +993,7 @@ void VymModel::setChanged()
     mapDefault=false;
     mapUnsaved=true;
     findReset();
+    mainWindow->updateActions();
 }
 
 QString VymModel::getObjectName (LinkableMapObj *lmo)
@@ -3881,7 +3882,12 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	} else if (com=="exportASCII")
 	{
 	   QString fname=parser.parString(ok,0); 
-	    exportASCII (fname,false);
+	   exportASCII (fname,false);
+	/////////////////////////////////////////////////////////////////////
+	} else if (com=="exportCSV")
+	{
+	   QString fname=parser.parString(ok,0); 
+	   exportCSV (fname,false);
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="exportHTML")
 	{
@@ -3911,6 +3917,11 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	{
 	    QString fname=parser.parString(ok,0); 
 	    exportLaTeX (fname,false);
+	/////////////////////////////////////////////////////////////////////
+	} else if (com=="exportOrgMode")
+	{
+	    QString fname=parser.parString(ok,0); 
+	    exportOrgMode (fname,false);
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="exportPDF")
 	{
@@ -4457,33 +4468,28 @@ QPointF VymModel::exportImage(QString fname, bool askName, QString format)
 {
     if (fname=="")
     {
-	fname=getMapName()+".png";
+        if (!askName) 
+        {
+            qWarning("VymModel::exportImage called without filename (and askName==false)");
+            return QPointF();
+        }
+
+	fname=lastImageDir.absolutePath() + "/" + getMapName()+".png";
 	format="PNG";
     }	
 
     if (askName)
     {
-	QStringList fl;
-	QFileDialog fd;
-	fd.setWindowTitle (tr("Export map as image"));
-	fd.setDirectory (lastImageDir);
-	fd.setFileMode(QFileDialog::AnyFile);
-	fd.setFilters  (imageIO.getFilters() );
-	fd.setAcceptMode (QFileDialog::AcceptSave);
-	fd.setConfirmOverwrite (false);
-	if (fd.exec())
-	{
-	    fl=fd.selectedFiles();
-	    fname=fl.first();
-	    format=imageIO.guessType(fname);
-	    if (format.isEmpty())
-	    {
-		QMessageBox::critical (0,tr("Critical Error"),tr("Unsupported format in %1").arg(fname));
-		return QPointF();  
-	    }	
-	    setChanged();
-	} 
+        fname=QFileDialog::getSaveFileName ( 
+                mainWindow, 
+                tr("Export map as image"),
+                fname,
+                imageIO.getFilters().join(";;")
+                );
+        lastImageDir=dirname(fname);
     }
+
+    if (fname.isEmpty()) return QPointF();
 
     setExportMode (true);
     QPointF offset;
@@ -4492,11 +4498,12 @@ QPointF VymModel::exportImage(QString fname, bool askName, QString format)
 	QMessageBox::critical (0,tr("Critical Error"),tr("Couldn't save QImage %1 in format %2").arg(fname).arg(format));
     setExportMode (false);
 
-    QString cmd="exportImage";
+    QString cmd= QString("exportImage(\"%1\",\"PNG\")").arg(fname);
     settings.setLocalValue ( filePath, "/export/last/exportPath",fname);
     settings.setLocalValue ( filePath, "/export/last/command",cmd);
     settings.setLocalValue ( filePath, "/export/last/description","Image");
-    mainWindow->statusMessage(cmd + ": " + fname);
+    setChanged();
+    mainWindow->statusMessage(tr("Exported: ","Export confirmation") + fname);
 
     return offset;
 }
@@ -4505,28 +4512,27 @@ QPointF VymModel::exportPDF (QString fname, bool askName)
 {
     if (fname=="")
     {
-	fname=getMapName()+".pdf";
+        if (!askName) 
+        {
+            qWarning("VymModel::exportPDF called without filename (and askName==false)");
+            return QPointF();
+        }
+
+	fname=lastImageDir.absolutePath() + "/" + getMapName()+".pdf";
     }	
 
     if (askName)
     {
-	QStringList fl;
-	QFileDialog fd;
-	fd.setWindowTitle (tr("Export map as PDF"));
-	fd.setDirectory (lastImageDir);
-	fd.setFileMode(QFileDialog::AnyFile);
-	fd.setAcceptMode (QFileDialog::AcceptSave);
-	QStringList filters;
-	filters<<"PDF (*.pdf)"<<"All (* *.*)";
-	fd.setFilters  (filters);
-	fd.setConfirmOverwrite (false);
-	if (fd.exec())
-	{
-	    fl=fd.selectedFiles();
-	    fname=fl.first();
-	} 
-	setChanged();
+        fname=QFileDialog::getSaveFileName ( 
+                mainWindow, 
+                tr("Export map as PDF"),
+                fname,
+                "PDF (*.pdf);;All (* *.*)"
+                );
+        lastImageDir=dirname(fname);
     }
+
+    if (fname.isEmpty()) return QPointF();
 
     setExportMode (true);
     QPointF offset;
@@ -4542,36 +4548,42 @@ QPointF VymModel::exportPDF (QString fname, bool askName)
     delete pdfPainter;
 
     setExportMode (false);
+
+    QString cmd= QString("exportPDF(\"%1\")").arg(fname);
+    settings.setLocalValue ( filePath, "/export/last/exportPath",fname);
+    settings.setLocalValue ( filePath, "/export/last/command",cmd);
+    settings.setLocalValue ( filePath, "/export/last/description","PDF");
+    setChanged();
+    mainWindow->statusMessage(tr("Exported: ","Export confirmation") + fname);
+
     return offset;
 }
 
 QPointF VymModel::exportSVG (QString fname, bool askName) 
-// Printer already defined globally
 {
     if (fname=="")
     {
-	fname=getMapName()+".svg";
+        if (!askName) 
+        {
+            qWarning("VymModel::exportSVG called without filename (and askName==false)");
+            return QPointF();
+        }
+
+	fname=lastImageDir.absolutePath() + "/" + getMapName()+".png";
     }	
 
     if (askName)
     {
-	QStringList fl;
-	QFileDialog fd;
-	fd.setWindowTitle (tr("Export map as SVG"));
-	fd.setDirectory (lastImageDir);
-	fd.setFileMode(QFileDialog::AnyFile);
-	QStringList filters;
-	filters<<"SVG (*.svg)"<<"All (* *.*)";
-	fd.setFilters  (filters);
-	fd.setAcceptMode (QFileDialog::AcceptSave);
-	fd.setConfirmOverwrite (false);
-	if (fd.exec())
-	{
-	    fl=fd.selectedFiles();
-	    fname=fl.first();
-	} 
-	setChanged();
+        fname=QFileDialog::getSaveFileName ( 
+                mainWindow, 
+                tr("Export map as scalable vector graphic"),
+                fname,
+                "SVG (*.svg);;All (* *.*)"
+                );
+        lastImageDir=dirname(fname);
     }
+
+    if (fname.isEmpty()) return QPointF();
 
     setExportMode (true);
     QPointF offset;
@@ -4588,6 +4600,12 @@ QPointF VymModel::exportSVG (QString fname, bool askName)
 
     setExportMode (false);
 
+    QString cmd= QString("exportSVG(\"%1\")").arg(fname);
+    settings.setLocalValue ( filePath, "/export/last/exportPath",fname);
+    settings.setLocalValue ( filePath, "/export/last/command",cmd);
+    settings.setLocalValue ( filePath, "/export/last/description","SVG");
+    setChanged();
+    mainWindow->statusMessage(tr("Exported: ","Export confirmation") + fname);
     return offset;
 }
 
@@ -4676,10 +4694,8 @@ void VymModel::exportAO (QString fname,bool askName)
 
     if (askName)
     {
-	//ex.addFilter ("TXT (*.txt)");
-	//ex.setDir(lastExportDir);
-	//ex.setWindowTitle(vymName+ " -" +tr("Export as A&O report")+" "+tr("(still experimental)"));
-	ex.execDialog("A&O") ; 
+	ex.setDirPath (lastExportDir.absolutePath());
+	ex.execDialog();
     } 
     if (!ex.canceled())
     {
@@ -4689,7 +4705,7 @@ void VymModel::exportAO (QString fname,bool askName)
     }
 }
 
-void VymModel::exportASCII(const QString &fname,bool askName)
+void VymModel::exportASCII(const QString &fname, bool askName)
 {
     ExportASCII ex;
     ex.setModel (this);
@@ -4698,13 +4714,37 @@ void VymModel::exportASCII(const QString &fname,bool askName)
     else
 	ex.setFilePath (fname);
 
-    if (askName)
+    if (askName) 
     {
-	//ex.addFilter ("TXT (*.txt)");
-	//ex.setDir(lastExportDir);
-	//ex.setWindowTitle(vymName+ " -" +tr("Export as ASCII")+" "+tr("(still experimental)"));
-	ex.execDialog("ASCII") ; 
-    } 
+	ex.setDirPath (lastExportDir.absolutePath());
+        ex.execDialog() ; 
+    }
+
+    if (!ex.canceled())
+    {
+	setExportMode(true);
+	ex.doExport();
+	setExportMode(false);
+    }
+}
+
+void VymModel::exportCSV(const QString &fname, bool askName)
+{
+    ExportCSV ex;
+    ex.setModel (this);
+    if (fname=="") 
+	ex.setFilePath (mapName+".csv");	
+    else
+	ex.setFilePath (fname);
+
+    if (askName) 
+    {
+	ex.addFilter ("CSV (*.csb);;All (* *.*)");
+	ex.setDirPath (lastExportDir.absolutePath());
+	ex.setWindowTitle(vymName+ " -" +tr("Export as csv")+" "+tr("(still experimental)"));
+        ex.execDialog() ; 
+    }
+
     if (!ex.canceled())
     {
 	setExportMode(true);
@@ -4772,12 +4812,30 @@ void VymModel::exportLaTeX (const QString &fname,bool askName)
     else
 	ex.setFilePath (fname);
 
-    if (askName)
+    if (askName) ex.execDialog() ; 
+    if (!ex.canceled())
     {
-	ex.addFilter ("LaTeX files (*.tex)");
-	ex.setWindowTitle(vymName+ " -" +tr("Export as LaTeX")+" "+tr("(still experimental)"));
-	ex.execDialog("LaTeX") ; 
-    } 
+	setExportMode(true);
+	ex.doExport();
+	setExportMode(false);
+    }
+}
+
+void VymModel::exportOrgMode (const QString &fname, bool askName)
+{
+    ExportOrgMode ex;
+    ex.setModel (this);
+    if (fname=="") 
+	ex.setFilePath (mapName+".org");	
+    else
+	ex.setFilePath (fname);
+
+    if (askName) 
+    {
+	ex.setDirPath (lastExportDir.absolutePath());
+        ex.execDialog();
+    }
+
     if (!ex.canceled())
     {
 	setExportMode(true);
