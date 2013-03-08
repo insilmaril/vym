@@ -4,7 +4,7 @@
 #include "floatimageobj.h"
 #include "branchobj.h"
 
-extern bool debug;
+extern bool debug;  //FIXME-8
 
 /////////////////////////////////////////////////////////////////
 // FloatImageObj 
