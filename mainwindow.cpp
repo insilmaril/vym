@@ -619,6 +619,9 @@ void Main::setupAPI()
     c=new Command ("getMapTitle",Command::Any);
     modelCommands.append(c);
 
+    c=new Command ("getNote",Command::TreeItem);
+    modelCommands.append(c);
+
     c=new Command ("getSelectString",Command::TreeItem);
     modelCommands.append(c);
 

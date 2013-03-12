@@ -25,6 +25,9 @@ void Parser::initAtom()
     atom="";
     com="";
     paramList.clear();
+    errLevel=NoError;
+    errDescription="";
+    errMessage="";
 }
 
 void Parser::parseAtom (QString s)
@@ -49,40 +52,13 @@ void Parser::parseAtom (QString s)
 
     // Get parameters
     paramList.clear();
-    re.setPattern ("\\((.*)\\)");
-    pos=re.indexIn (s);
-    //qDebug() << "  s="<<s;
-    //qDebug() << "com="<<com<<"  pos="<<pos;
-    if (pos>=0)
-    {
-	QString s=re.cap(1);
-	QString a;
-	bool inquote=false;
-	pos=0;
-	if (!s.isEmpty())
-	{
-	    while (pos<s.length())
-	    {
-		if (s.at(pos)=='\"') 
-		{
-		    if (inquote)
-			inquote=false;
-		    else    
-			inquote=true;
-		}
+    QString t;
+    int leftParenthesis;
+    int rightParenthesis;
+    if (!nextParenthesisContents(s, leftParenthesis, rightParenthesis, t)) return;
 
-		if (s.at(pos)==',' && !inquote)
-		{
-		    a=s.left(pos);
-		    paramList.append(a);
-		    s=s.right(s.length()-pos-1);
-		    pos=0;
-		} else
-		    pos++;
-	    }
-	    paramList.append (s);
-	}   
-    }	
+
+    paramList=findParameters(t);
 }
 
 QString Parser::getAtom()
@@ -459,5 +435,93 @@ QStringList Parser::getCommands()
     foreach (Command *c, modelCommands)
 	list.append (c->getName() );
     return list;	
+}
+
+QStringList Parser::findParameters(const QString &s)
+{
+    int pos=0;
+    int left=0;
+    bool inquote=false;
+    QStringList ret;
+    while (pos < s.length())
+    {
+        if (s.at(pos)=='\"') 
+        {
+            if (inquote)
+                inquote=false;
+            else    
+                inquote=true;
+        }
+        if (s.at(pos)==',' && !inquote)
+        {
+            ret << s.mid(left, pos - left );
+            left = pos + 1;
+        }
+        pos++;
+    }
+    if (left > 0) 
+        ret << s.mid(left, pos - left );
+    else
+        if (!s.isEmpty()) ret << s;
+    return ret;
+}
+
+bool Parser::nextParenthesisContents(
+        const QString &s, 
+        int &leftParenthesis, 
+        int &rightParenthesis, 
+        QString &contents)
+{
+    int pos=0;
+    int leftP=-1;
+    int rightP=-1;
+    int openParenthesis=0;
+    bool inquote=false;
+    while (pos < s.length())
+    {
+        if (s.at(pos)=='\"') 
+        {
+            if (inquote)
+                inquote=false;
+            else    
+                inquote=true;
+        }
+        if (s.at(pos)=='(' && !inquote) 
+        {
+            openParenthesis++;
+            if (openParenthesis==1) leftP=pos;
+        }
+
+        if (s.at(pos)==')' && !inquote) 
+        {
+            openParenthesis--;
+            if (openParenthesis==0) rightP=pos;
+        }
+
+        if (openParenthesis<0) 
+        {
+            setError(Aborted, "Error, too many closing parenthesis!");
+            return false;
+        }
+
+        pos++;
+    }
+    if (leftP< 0) 
+    {
+        setError(Aborted, "Error: No left parenthesis found");
+        return false;
+    }
+
+    if (rightP< 0) 
+    {
+        setError(Aborted, "Error: No right parenthesis found");
+        return false;
+    }
+
+    contents=s.mid(leftP+1, rightP - leftP - 1);
+    pos = leftParenthesis;
+    leftParenthesis=leftP;
+    rightParenthesis=rightP;
+    return true;
 }
 

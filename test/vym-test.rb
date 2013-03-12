@@ -94,7 +94,7 @@ def test_basics (vym)
   heading "Basic checks:"
   init_map
   vym.select @@main_a
-  expect "select", @@main_a, vym.getSelectString
+  expect "select mainbranch A", vym.getSelectString, @@main_a
   expect "getHeading", "Main A", vym.getHeading
   expect "branchCount", 3, vym.branchCount
 
@@ -626,6 +626,25 @@ def test_tasks (vym)
 end
 
 ######################
+def test_notes (vym)
+  heading "Notes:"
+  init_map
+  vym.select @@main_b
+  vym.setNote("foobar")
+  expect "Set note", vym.getNote, "foobar"
+  vym.setNote("foo)bar")
+  expect "Set note including \")\"", vym.getNote, "foo)bar"
+  
+  note_org = IO.read('test/note.txt')
+  vym.loadNote("test/note.txt") 
+  expect "Load note from file", vym.getNote, note_org
+
+  filepath = "#{@@testdir}/save-note.txt"
+  vym.saveNote(filepath)
+  expect "Save note to file", IO.read(filepath), note_org
+end
+
+######################
 def test_bugfixes (vym)
   heading "Bugfixes:"
   init_map
@@ -649,6 +668,7 @@ test_references(vym)
 test_history(vym)
 test_xlinks(vym)
 test_tasks(vym)
+test_notes(vym)
 test_bugfixes(vym)
 summary
 
@@ -656,14 +676,12 @@ summary
 # Untested commands:
 #
 addSlide
-addXlink
 centerOnID
 colorBranch
 colorSubtree
 cycleTask
 delete (image)
 deleteSlide
-exportAO
 importDir
 loadImage
 loadNote

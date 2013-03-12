@@ -1655,9 +1655,9 @@ void VymModel::setNote(const QString &s)
     {
 	saveState(
 	    selti,
-	    "setNote (\""+selti->getNote()+"\")", 
+	    "setNote (\"" + selti->getNote() + "\")", 
 	    selti,
-	    "setNote (\""+s+"\")", 
+	    "setNote (\"" + s + "\")", 
 	    QString("Set note of %1 ").arg(getObjectName(selti)) );
     }
     selti->setNote(s);
@@ -3690,7 +3690,7 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
     parser.parseAtom (atom);
 
     // Check set of parameters
-    if (parser.checkParameters(selti) )
+    if (parser.errorLevel()==NoError && parser.checkParameters(selti) )
     {
 	QString com=parser.getCommand();
 	/////////////////////////////////////////////////////////////////////
@@ -3957,7 +3957,7 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="getHeading")
 	{ 
-	    returnValue=selti->getHeading();
+	    returnValue=getHeading();
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="getMapAuthor")
 	{ 
@@ -3970,6 +3970,10 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	} else if (com=="getMapTitle")
 	{ 
 	    returnValue=title;
+	/////////////////////////////////////////////////////////////////////
+	} else if (com=="getNote")
+	{ 
+	    returnValue=getNote();
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="getSelectString")
 	{ 
