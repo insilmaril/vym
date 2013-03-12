@@ -1,6 +1,11 @@
 #include <QApplication>
 #include <QSvgGenerator>
+
+#ifndef Q_OS_WIN
 #include <unistd.h>
+#else
+#define sleep Sleep
+#endif
 
 #include "vymmodel.h"
 
@@ -31,6 +36,10 @@
 #include "xml-freemind.h"
 #include "xmlobj.h"
 #include "xml-vym.h"
+
+#ifdef Q_OS_WIN
+#include <windows.h>
+#endif
 
 extern bool debug;
 extern bool testmode;

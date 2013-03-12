@@ -76,24 +76,7 @@ bool testmode;			// Used to disable saving of autosave setting
 FlagRow *systemFlagsMaster; 
 FlagRow *standardFlagsMaster;	
 
-#if defined(Q_OS_WIN32)
-#include <Shlwapi.h>
-#pragma comment(lib, "Shlwapi.lib")
-    // Get path to settings ini file
-    QString getINIPath()
-    {
-        char module_name_[256];
-        GetModuleFileNameA(0, module_name_, sizeof(module_name_));
-        PathRemoveFileSpecA( module_name_ );	
-        QFileInfo filePath_;
-        filePath_ = QString::fromLocal8Bit(module_name_);      
-        
-        return filePath_.filePath() + "/vym.ini"; 
-    }
-Settings settings ("InSilmaril",getINIPath()); // Organization, INI path
-#else
 Settings settings ("InSilmaril","vym"); // Organization, Application name
-#endif
 
 QList <Command*> modelCommands;
 
