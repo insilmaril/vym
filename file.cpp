@@ -301,7 +301,6 @@ File::ErrorCode unzipDir (const QDir &zipDir, const QString &zipName)
     ErrorCode err=Success;
 
     // Try to unzip file
-#if !defined(Q_OS_WIN32)
     QStringList args;
     Process *zipProc=new Process ();
     zipProc->setWorkingDirectory (zipDir.path());
@@ -343,45 +342,6 @@ File::ErrorCode unzipDir (const QDir &zipDir, const QString &zipName)
 	    } 
 	}
     }
-#else
-    // Do this process creation using Win32 API.
-    //! Create process.
-    PROCESS_INFORMATION piProcInfo;
-    STARTUPINFO siStartInfo;
-
-    // Initialize members of the PROCESS_INFORMATION structure.
-    ::ZeroMemory( &piProcInfo, sizeof(PROCESS_INFORMATION) );
-
-    // Set up members of the STARTUPINFO structure.
-    ::ZeroMemory( &siStartInfo, sizeof(STARTUPINFO) );
-    siStartInfo.cb = sizeof(STARTUPINFO);
-
-    // Create command line.
-    QString argv("unzip -o ");
-    argv.append(QDir::convertSeparators(zipName));
-    argv.append(" -d ");
-    argv.append(QDir::convertSeparators(zipDir.path()));
-
-    // Create the child process.
-    if( !::CreateProcess(NULL, 
-        (LPWSTR)argv.unicode(), // command line
-        NULL, // process security attributes
-        NULL, // primary thread security attributes
-        TRUE, // handles are inherited
-        0, // creation flags
-        NULL, // use parent's environment
-        NULL, // use parent's current directory
-        &siStartInfo, // STARTUPINFO pointer
-        &piProcInfo) ) // receives PROCESS_INFORMATION
-    {
-        err = Aborted;
-    }
-    else
-    {
-        // Wait for it to finish.
-        ::WaitForSingleObject( piProcInfo.hProcess, 10000 );
-    }
-#endif
     return err;	
 }
 
