@@ -19,7 +19,9 @@ using namespace std;
 #include "taskmodel.h"
 #include "version.h"
 
+#if defined(VYM_DBUS)
 #include <sys/types.h>		// To retrieve PID for use in DBUS
+#endif
 
 #if defined(Q_OS_WIN32)
 #define WIN32_LEAN_AND_MEAN
@@ -29,8 +31,7 @@ using namespace std;
 #include <unistd.h>
 #endif
 
-// DBUS only available on Linux
-#if defined(Q_OS_LINUX)
+#if defined(VYM_DBUS)
 #include <QtDBus/QDBusConnection>
 QDBusConnection dbusConnection=QDBusConnection::sessionBus();
 #endif
@@ -187,7 +188,7 @@ int main(int argc, char* argv[])
     QString pidString=QString ("%1").arg(getpid());
     if (debug) qDebug()<< "PID="<<pidString;
 
-#if defined(Q_OS_LINUX)
+#if defined(VYM_DBUS)
     // Register for DBUS
     if (!dbusConnection.registerService ("org.insilmaril.vym-"+pidString))
     {

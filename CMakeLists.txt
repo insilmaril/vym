@@ -9,6 +9,14 @@ if( CMAKE_COMPILER_IS_GNUCXX )
 	add_definitions ( -Wall )
 endif( CMAKE_COMPILER_IS_GNUCXX )
 
+if( UNIX AND NOT APPLE )
+    set( WITH_DBUS_DEFAULT ON )
+else( UNIX AND NOT APPLE )
+    set( WITH_DBUS_DEFAULT OFF )
+endif( UNIX AND NOT APPLE )
+
+option( WITH_DBUS "Build vym with dbus support" ${WITH_DBUS_DEFAULT} )
+
 find_package ( Qt4 REQUIRED )
 include ( ${QT_USE_FILE} )
 add_definitions( ${QT_DEFINITIONS} )
@@ -50,13 +58,16 @@ endif(CPPCHECK_FOUND)
 
 include_directories (
 	${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}
-	${QT_QTCORE_INCLUDE_DIR} ${QT_QTDBUS_INCLUDE_DIR} ${QT_QTGUI_INCLUDE_DIR} ${QT_QTNETWORK_INCLUDE_DIR} ${QT_QTXML_INCLUDE_DIR} ${QT_QTSVG_INCLUDE_DIR}
+	${QT_QTCORE_INCLUDE_DIR} ${QT_QTGUI_INCLUDE_DIR} ${QT_QTNETWORK_INCLUDE_DIR} ${QT_QTXML_INCLUDE_DIR} ${QT_QTSVG_INCLUDE_DIR}
 	)
+
+if( WITH_DBUS )
+    include_directories( ${QT_QTDBUS_INCLUDE_DIR} )
+endif( WITH_DBUS )
+
 set ( vym_HDRS
       aboutdialog.h
       taskfiltermodel.h
-      adaptormodel.h
-      adaptorvym.h
       animpoint.h
       attribute.h
       attributeitem.h
@@ -144,8 +155,6 @@ set ( vym_HDRS
 set ( vym_SRCS
       aboutdialog.cpp
       taskfiltermodel.cpp
-      adaptormodel.cpp
-      adaptorvym.cpp
       animpoint.cpp
       attribute.cpp
       attributeitem.cpp
@@ -262,8 +271,6 @@ QT4_ADD_TRANSLATION(TRS ${vym_TRS})
 
 set ( vym_MOCS
       aboutdialog.h
-      adaptormodel.h
-      adaptorvym.h
       branchpropeditor.h
       bugagent.h
       dockeditor.h
@@ -300,14 +307,26 @@ set ( vym_MOCS
       winter.h
       warningdialog.h
 	)
+if( WITH_DBUS )
+    add_definitions(-DVYM_DBUS)
+    list(APPEND vym_HDRS adaptormodel.h adaptorvym.h)
+    list(APPEND vym_SRCS adaptormodel.cpp adaptorvym.cpp)
+    list(APPEND vym_MOCS adaptormodel.h adaptorvym.h)
+endif( WITH_DBUS )
 QT4_WRAP_CPP(MOCS ${vym_MOCS})
+
+
 
 if( WIN32 )
 	set( vym_SRCS ${vym_SRCS} mkdtemp.cpp vym.rc )
 endif( WIN32 )
 
 add_executable ( vym WIN32 ${vym_SRCS} ${UIS} ${RSCS} ${TRS} ${MOCS} )
-target_link_libraries ( vym  ${QT_QTMAIN_LIBRARY} ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTDBUS_LIBRARY} ${QT_QTNETWORK_LIBRARY} ${QT_QTXML_LIBRARY} ${QT_QTSVG_LIBRARY} )
+target_link_libraries ( vym  ${QT_QTMAIN_LIBRARY} ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTNETWORK_LIBRARY} ${QT_QTXML_LIBRARY} ${QT_QTSVG_LIBRARY} )
+if( WITH_DBUS )
+    target_link_libraries( vym ${QT_QTDBUS_LIBRARY} )
+endif( WITH_DBUS )
+
 install( TARGETS vym RUNTIME DESTINATION bin )
 
 set( _installfolders demos exports flags icons macros scripts styles )
