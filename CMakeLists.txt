@@ -129,6 +129,7 @@ set ( vym_HDRS
       version.h
       vymmodel.h
       vymview.h
+      winter.h
       warningdialog.h
       xlink.h
       xlinkitem.h
@@ -218,6 +219,7 @@ set ( vym_SRCS
       version.cpp
       vymmodel.cpp
       vymview.cpp
+      winter.cpp
       warningdialog.cpp
       xlink.cpp
       xlinkitem.cpp
@@ -295,6 +297,7 @@ set ( vym_MOCS
       texteditor.h
       vymmodel.h
       vymview.h
+      winter.h
       warningdialog.h
 	)
 QT4_WRAP_CPP(MOCS ${vym_MOCS})
