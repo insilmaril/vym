@@ -54,6 +54,7 @@ include_directories (
 	)
 set ( vym_HDRS
       aboutdialog.h
+      taskfiltermodel.h
       adaptormodel.h
       adaptorvym.h
       animpoint.h
@@ -64,7 +65,7 @@ set ( vym_HDRS
       #   attributewidget.h
       branchitem.h
       branchobj.h
-      branchpropwindow.h
+      branchpropeditor.h
       bugagent.h
       command.h
       dockeditor.h
@@ -94,7 +95,9 @@ set ( vym_HDRS
       imageitem.h
       imageobj.h
       imports.h
+      lineeditdialog.h
       linkablemapobj.h
+      macros.h
       mainwindow.h
       mapeditor.h
       mapitem.h
@@ -107,10 +110,10 @@ set ( vym_HDRS
       ornamentedobj.h
       parser.h
       process.h
+      scripteditor.h
       settings.h
       shortcuts.h
       showtextdialog.h
-      simplescripteditor.h
       slidecontrolwidget.h
       slideeditor.h
       slideitem.h
@@ -139,6 +142,7 @@ set ( vym_HDRS
 
 set ( vym_SRCS
       aboutdialog.cpp
+      taskfiltermodel.cpp
       adaptormodel.cpp
       adaptorvym.cpp
       animpoint.cpp
@@ -149,7 +153,7 @@ set ( vym_SRCS
       #   attributewidget.cpp
       branchitem.cpp
       branchobj.cpp
-      branchpropwindow.cpp
+      branchpropeditor.cpp
       bugagent.cpp
       command.cpp
       dockeditor.cpp
@@ -179,7 +183,9 @@ set ( vym_SRCS
       imageitem.cpp
       imageobj.cpp
       imports.cpp
+      lineeditdialog.cpp
       linkablemapobj.cpp
+      macros.cpp
       main.cpp
       mainwindow.cpp
       mapeditor.cpp
@@ -193,10 +199,10 @@ set ( vym_SRCS
       ornamentedobj.cpp
       parser.cpp
       process.cpp
+      scripteditor.cpp
       settings.cpp
       shortcuts.cpp
       showtextdialog.cpp
-      simplescripteditor.cpp
       slidecontrolwidget.cpp
       slideeditor.cpp
       slideitem.cpp
@@ -225,12 +231,13 @@ set ( vym_SRCS
 
 set ( vym_UIS
       attributewidget.ui
-      branchpropwindow.ui
+      branchpropeditor.ui
       exporthtmldialog.ui
       extrainfodialog.ui
       editxlinkdialog.ui
       historywindow.ui
-      simplescripteditor.ui
+      lineeditdialog.ui
+      scripteditor.ui
       showtextdialog.ui
       warningdialog.ui
 	)
@@ -255,7 +262,7 @@ set ( vym_MOCS
       aboutdialog.h
       adaptormodel.h
       adaptorvym.h
-      branchpropwindow.h
+      branchpropeditor.h
       bugagent.h
       dockeditor.h
       downloadagent.h
@@ -269,13 +276,14 @@ set ( vym_MOCS
       headingeditor.h
       highlighter.h
       historywindow.h
+      lineeditdialog.h
       mainwindow.h
       mapeditor.h
       mysortfilterproxymodel.h
       noteeditor.h
       process.h
+      scripteditor.h
       showtextdialog.h
-      simplescripteditor.h
       slidecontrolwidget.h
       slideeditor.h
       slidemodel.h
