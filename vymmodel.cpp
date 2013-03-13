@@ -1,6 +1,10 @@
 #include <QApplication>
 #include <QSvgGenerator>
 
+#if defined(VYM_DBUS)
+#include <QtDBus/QDBusConnection>
+#endif
+
 #ifndef Q_OS_WIN
 #include <unistd.h>
 #else
@@ -45,7 +49,7 @@ extern bool debug;
 extern bool testmode;
 extern Main *mainWindow;
 
-#if defined(Q_OS_LINUX)
+#if defined(VYM_DBUS)
 extern QDBusConnection dbusConnection;
 #endif
 

@@ -33,6 +33,7 @@ using namespace std;
 
 #if defined(VYM_DBUS)
 #include <QtDBus/QDBusConnection>
+#include <QtDBus/QDBusError>
 QDBusConnection dbusConnection=QDBusConnection::sessionBus();
 #endif
 
