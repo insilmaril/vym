@@ -39,6 +39,7 @@ QDBusConnection dbusConnection=QDBusConnection::sessionBus();
 
 QString vymName;
 QString vymVersion;
+QString vymUID;
 QString vymHome;
 QString vymBuildDate;
 QString vymCodeName;
@@ -122,6 +123,7 @@ int main(int argc, char* argv[])
     vymBuildDate=__VYM_BUILD_DATE;
     vymCodeName=__VYM_CODENAME;
     vymHome=__VYM_HOME;
+    vymUID=settings.value("/system/uid", QUuid::createUuid().toString().mid(25,12) ).toString();
 
     // Install our own handler for messages
     qInstallMsgHandler(msgHandler);

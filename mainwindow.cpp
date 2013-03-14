@@ -77,6 +77,7 @@ extern FlagRow *standardFlagsMaster;
 extern FlagRow *systemFlagsMaster;
 extern QString vymName;
 extern QString vymVersion;
+extern QString vymUID;
 extern QString vymBuildDate;
 extern bool debug;
 extern bool testmode;
@@ -359,8 +360,6 @@ Main::~Main()
 
 	settings.setValue ("/mainwindow/view/AntiAlias",actionViewToggleAntiAlias->isChecked());
 	settings.setValue ("/mainwindow/view/SmoothPixmapTransform",actionViewToggleSmoothPixmapTransform->isChecked());
-	settings.setValue( "/version/version", vymVersion );
-	settings.setValue( "/version/builddate", vymBuildDate );
 	settings.setValue( "/mainwindow/autosave/use",actionSettingsAutosaveToggle->isChecked() );
 	settings.setValue ("/mainwindow/autosave/ms", settings.value("/mainwindow/autosave/ms",60000)); 
 	settings.setValue ("/mainwindow/autoLayout/use",actionSettingsAutoLayoutToggle->isChecked() );
@@ -370,6 +369,9 @@ Main::~Main()
 	settings.setValue( "/mapeditor/editmode/autoEditNewBranch",actionSettingsAutoEditNewBranch->isChecked() );
 	settings.setValue( "/mapeditor/editmode/useFlagGroups",actionSettingsUseFlagGroups->isChecked() );
 	settings.setValue( "/export/useHideExport",actionSettingsUseHideExport->isChecked() );
+	settings.setValue( "/system/version", vymVersion );
+	settings.setValue( "/system/builddate", vymBuildDate );
+	settings.setValue( "/system/uid", vymUID );
     }
     //FIXME-4 save scriptEditor settings
 
