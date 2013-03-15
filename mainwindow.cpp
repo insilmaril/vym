@@ -56,7 +56,7 @@ typedef struct _PROCESS_INFORMATION
 } PROCESS_INFORMATION, *LPPROCESS_INFORMATION;
 #endif
 
-#if defined(Q_OS_LINUX)
+#if defined(VYM_DBUS)
 #include <QDBusConnection>
 extern QDBusConnection dbusConnection;
 #endif
@@ -337,7 +337,7 @@ Main::Main(QWidget* parent, Qt::WFlags f) : QMainWindow(parent,f)
 
     updateGeometry();
 
-#if defined(Q_OS_LINUX)
+#if defined(VYM_DBUS)
     // Announce myself on DBUS
     new AdaptorVym (this);    // Created and not deleted as documented in Qt
     if (!QDBusConnection::sessionBus().registerObject ("/vym",this))
@@ -3616,10 +3616,9 @@ void Main::openTabs(QStringList urls)
 {
     if (urls.isEmpty()) return;
     	
-    bool success=true;
     QStringList args;
     QString browser=settings.value("/mainwindow/readerURL" ).toString();
-#if defined(Q_OS_LINUX)
+#if defined(VYM_DBUS)
     if ( browser.contains("konqueror") && 
             (browserPID==0 || !QDBusConnection::sessionBus().interface()->registeredServiceNames().value().contains (QString("org.kde.konqueror-%1").arg(*browserPID)))
        )	 
@@ -3645,12 +3644,13 @@ void Main::openTabs(QStringList urls)
                 u <<
                 "false";
             if (!QProcess::startDetached ("qdbus",args))
-                success=false;
+            {
+                QMessageBox::warning(0, 
+                    tr("Warning"),
+                    tr("Couldn't start %1 to open a new tab in %2.").arg("qdbus").arg("konqueror"));
+                return;
+            }
         }
-        if (!success)
-            QMessageBox::warning(0, 
-                tr("Warning"),
-                tr("Couldn't start %1 to open a new tab in %2.").arg("qdbus").arg("konqueror"));
         return;	
     } 
 #endif

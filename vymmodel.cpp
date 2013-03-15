@@ -193,7 +193,7 @@ void VymModel::init ()
     // Network
     netstate=Offline;
 
-#if defined(Q_OS_LINUX)
+#if defined(VYM_DBUS)
      // Announce myself on DBUS
     new AdaptorModel(this);    // Created and not deleted as documented in Qt
     if (!QDBusConnection::sessionBus().registerObject (QString("/vymmodel_%1").arg(modelID),this))

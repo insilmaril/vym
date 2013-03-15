@@ -10,9 +10,10 @@ QT += network xml svg
 
 RESOURCES = vym.qrc
 
-unix:!macx|!equals(WITH_DBUS,"") {
+unix:!macx:isEmpty(NO_DBUS) {
+    message("Compiling with DBUS")
     DEFINES += VYM_DBUS
-    CONFIG += qdbus 
+    CONFIG  += qdbus 
     HEADERS += adaptormodel.h adaptorvym.h 
     SOURCES += adaptormodel.cpp adaptorvym.cpp 
 }

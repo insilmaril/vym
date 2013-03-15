@@ -10,12 +10,12 @@ if( CMAKE_COMPILER_IS_GNUCXX )
 endif( CMAKE_COMPILER_IS_GNUCXX )
 
 if( UNIX AND NOT APPLE )
-    set( WITH_DBUS_DEFAULT ON )
+    set( NO_DBUS_DEFAULT OFF )
 else( UNIX AND NOT APPLE )
-    set( WITH_DBUS_DEFAULT OFF )
+    set( NO_DBUS_DEFAULT ON )
 endif( UNIX AND NOT APPLE )
 
-option( WITH_DBUS "Build vym with dbus support" ${WITH_DBUS_DEFAULT} )
+option( NO_DBUS "Build vym without dbus support" ${NO_DBUS_DEFAULT} )
 
 find_package ( Qt4 REQUIRED )
 include ( ${QT_USE_FILE} )
@@ -61,9 +61,9 @@ include_directories (
 	${QT_QTCORE_INCLUDE_DIR} ${QT_QTGUI_INCLUDE_DIR} ${QT_QTNETWORK_INCLUDE_DIR} ${QT_QTXML_INCLUDE_DIR} ${QT_QTSVG_INCLUDE_DIR}
 	)
 
-if( WITH_DBUS )
+if(NOT NO_DBUS )
     include_directories( ${QT_QTDBUS_INCLUDE_DIR} )
-endif( WITH_DBUS )
+endif(NOT NO_DBUS )
 
 set ( vym_HDRS
       aboutdialog.h
@@ -307,12 +307,12 @@ set ( vym_MOCS
       winter.h
       warningdialog.h
 	)
-if( WITH_DBUS )
+if( NOT NO_DBUS )
     add_definitions(-DVYM_DBUS)
     list(APPEND vym_HDRS adaptormodel.h adaptorvym.h)
     list(APPEND vym_SRCS adaptormodel.cpp adaptorvym.cpp)
     list(APPEND vym_MOCS adaptormodel.h adaptorvym.h)
-endif( WITH_DBUS )
+endif( NOT NO_DBUS )
 QT4_WRAP_CPP(MOCS ${vym_MOCS})
 
 
@@ -323,9 +323,9 @@ endif( WIN32 )
 
 add_executable ( vym WIN32 ${vym_SRCS} ${UIS} ${RSCS} ${TRS} ${MOCS} )
 target_link_libraries ( vym  ${QT_QTMAIN_LIBRARY} ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTNETWORK_LIBRARY} ${QT_QTXML_LIBRARY} ${QT_QTSVG_LIBRARY} )
-if( WITH_DBUS )
+if( NOT NO_DBUS )
     target_link_libraries( vym ${QT_QTDBUS_LIBRARY} )
-endif( WITH_DBUS )
+endif( NOT NO_DBUS )
 
 install( TARGETS vym RUNTIME DESTINATION bin )
 
