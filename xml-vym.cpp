@@ -176,7 +176,7 @@ bool parseVYMHandler::startElement  ( const QString&, const QString&,
 	state=StateNote;
 	if (!readNoteAttr (atts) ) return false;
     } else if ( eName == "htmlnote" && state == StateMapCenter) 
-    {
+    {   // only for backward compatibility. Use vymnote now
 	state=StateHtmlNote;
 	no.clear();
 	if (!atts.value( "fonthint").isEmpty() ) 
@@ -185,6 +185,7 @@ bool parseVYMHandler::startElement  ( const QString&, const QString&,
 		(state == StateMapCenter ||state==StateBranch)) 
     {
 	state=StateVymNote;
+        htmldata.clear();
 	no.clear();
 	if (!atts.value( "fonthint").isEmpty() ) 
 	    no.setFontHint(atts.value ("fonthint") );
@@ -238,7 +239,7 @@ bool parseVYMHandler::startElement  ( const QString&, const QString&,
 	lastBranch=model->createBranch(lastBranch);
 	readBranchAttr (atts);
     } else if ( eName == "htmlnote" && state == StateBranch) 
-    {
+    {   // only for backward compatibility. Use vymnote now
 	state=StateHtmlNote;
 	no.clear();
 	if (!atts.value( "fonthint").isEmpty() ) 
@@ -297,12 +298,8 @@ bool parseVYMHandler::startElement  ( const QString&, const QString&,
 
 bool parseVYMHandler::endElement  ( const QString&, const QString&, const QString &eName)
 {
-    /* Testing
-    qDebug()<< "endElement </" <<eName
-	<<">  state=" <<state 
-    //	<<"  stateStack="<<stateStack.last() 
-    //	<<"  selString="<<model->getSelectString().toStdString();
-    */
+    //qDebug()<< "endElement </" <<eName <<">  state=" <<state ;
+
     switch ( state ) 
     {
 	case StateMap:
@@ -321,8 +318,8 @@ bool parseVYMHandler::endElement  ( const QString&, const QString&, const QStrin
 	    lastBranch=(BranchItem*)(lastBranch->parent());
 	    lastBranch->setLastSelectedBranch (0);  
             break;
-	case StateHtmlNote: 
-	    no.setNote (htmldata);  // Richtext note, needed anyway for backward compatibility
+	case StateHtmlNote: // Richtext note, needed anyway for backward compatibility
+	    no.setNote (htmldata);  
 	    lastBranch->setNoteObj (no);
 	    break;  
 	case StateMapSlide: 
@@ -330,18 +327,16 @@ bool parseVYMHandler::endElement  ( const QString&, const QString&, const QStrin
 	    break;  
 	case StateVymNote:	    // Might be richtext or plaintext with 
 				    // version >= 1.13.8
-	    no.setNote (htmldata);
-	    if (!no.isRichText())
+            if (Qt::mightBeRichText(htmldata) )
+                no.setNote (htmldata);
+            else
 		no.setNoteMasked (htmldata);
 	    lastBranch->setNoteObj (no);
 	    break;  
         case StateHtml: 
 	    htmldata+="</"+eName+">";
 	    if (eName=="html")
-	    {
-		//state=StateHtmlNote;  
 		htmldata.replace ("<br></br>","<br />");
-	    }	
 	    break;
 	default: 
 	    break;
@@ -352,11 +347,11 @@ bool parseVYMHandler::endElement  ( const QString&, const QString&, const QStrin
 
 bool parseVYMHandler::characters   ( const QString& ch)
 {
-    //qDebug()<< "xml-vym: characters \""<<ch<<"\"  state="<<state;
+    //qDebug()<< "xml-vym: characters "<<ch<<"  state="<<state;
 
     QString ch_org=quotemeta (ch);
     QString ch_simplified=ch.simplified();
-    if ( ch_simplified.isEmpty() ) return true;
+    //if ( ch_simplified.isEmpty() ) return true;
 
     switch ( state ) 
     {
@@ -376,9 +371,9 @@ bool parseVYMHandler::characters   ( const QString& ch)
             break;
         case StateImage: break;
         case StateVymNote: 
-	    htmldata=ch;
+	    htmldata+=ch;
 	    break;
-        case StateHtmlNote: 
+        case StateHtmlNote: // Only for compatibility
 	    htmldata=ch;
 	    break;
         case StateHtml:
