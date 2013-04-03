@@ -1101,7 +1101,6 @@ void MapEditor::editHeading()
 	lineEdit->setFocus();
 	lineEdit->selectAll();	// Hack to enable cursor in lineEdit
 	lineEdit->deselect();	// probably a Qt bug...
-	lineEdit->grabKeyboard();   //FIXME-3 reactived for tests...
 	setState (EditingHeading);
     }
 }
