@@ -271,10 +271,8 @@ Main::Main(QWidget* parent, Qt::WFlags f) : QMainWindow(parent,f)
 	#else
 	    #if defined(Q_OS_MACX)
 		s=settings.value (p,"/usr/bin/open").toString();
-	    #elif defined(Q_OS_WIN32)
-		s=settings.value (p,"acrord32").toString();
 	    #else
-		s=settings.value (p,"acroread").toString();
+		s=settings.value (p,"explorer").toString();
 	    #endif
 	#endif
 	settings.setValue( p,s);
