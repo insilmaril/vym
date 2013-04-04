@@ -55,7 +55,7 @@
           <string>Save to selected slide</string>
          </property>
          <property name="shortcut">
-          <string/>
+          <string>Ctrl+S</string>
          </property>
         </widget>
        </item>
