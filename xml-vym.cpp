@@ -599,7 +599,7 @@ bool parseVYMHandler::readOOAttr (const QXmlAttributes& a)
 		return false;   // Couldn't read rotation
 	}           
 
-        if (!a.value( "uuid").isEmpty() ) 
+        if (!a.value( "uuid").isEmpty() && loadMode!=ImportAdd) //FIXME-2 Workaround for creating duplicate UUIDs while pasting
             lastMI->setUuid (a.value( "uuid") );
     }
     return true;    
