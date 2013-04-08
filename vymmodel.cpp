@@ -4560,7 +4560,16 @@ QPointF VymModel::exportPDF (QString fname, bool askName)
     QPrinter printer(QPrinter::HighResolution);
     printer.setOutputFormat(QPrinter::PdfFormat);
     printer.setOutputFileName(fname);
-    printer.setPageSize(QPrinter::A0);
+    printer.setPageSize(QPrinter::A3);
+
+    QRectF bbox=mapEditor->getTotalBBox();
+    if (bbox.width()>bbox.height())
+	// recommend landscape
+	printer.setOrientation (QPrinter::Landscape);
+    else    
+	// recommend portrait
+	printer.setOrientation (QPrinter::Portrait);
+
     QPainter *pdfPainter = new QPainter(&printer);
     getScene()->render(pdfPainter);
     pdfPainter->end();
