@@ -122,6 +122,12 @@ MapEditor::MapEditor( VymModel *vm)	//FIXME-3 change ME from GraphicsScene to It
     addAction (a);
     connect( a, SIGNAL( triggered() ), this, SLOT( editHeading() ) );
 
+    a = new QAction( tr( "Save","MapEditor" ), this);
+    a->setShortcut (Qt::CTRL + Qt::Key_S );	 
+    a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
+    addAction (a);
+    connect( a, SIGNAL( triggered() ), mainWindow, SLOT( fileSave() ) );
+    
     // Selections
     selectionColor =QColor (255,255,0);
     

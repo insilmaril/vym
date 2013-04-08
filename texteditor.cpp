@@ -261,9 +261,9 @@ void TextEditor::setupFileActions()
     actionFileLoad=a;
 
     fileMenu->addSeparator();
-    a = new QAction( QPixmap(iconPath+"filesave.png" ), tr( "&Export..." ),this);
+    a = new QAction( QPixmap(iconPath+"filesave.png" ), tr( "&Export..." ), this);
     a->setShortcut( Qt::CTRL + Qt::Key_S );
-    a->setShortcutContext (Qt::WidgetShortcut);
+    //a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
     connect( a, SIGNAL( activated() ), this, SLOT( textSave() ) );
     tb->addAction (a);
     fileMenu->addAction (a);

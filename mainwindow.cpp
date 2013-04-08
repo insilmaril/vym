@@ -923,7 +923,6 @@ void Main::setupFileActions()
     fileMenu->addSeparator();
 
     a = new QAction( QPixmap( iconPath+"filesave.png"), tr( "&Save...","File menu" ), this);
-    a->setShortcut (Qt::CTRL + Qt::Key_S );	 
     switchboard.addConnection(fileMenu, a,tr("File","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( fileSave() ) );
     actionListMap.append (a);

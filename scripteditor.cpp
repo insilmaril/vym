@@ -24,6 +24,7 @@ ScriptEditor::ScriptEditor (QWidget *parent):QWidget(parent)
 {
     ui.setupUi (this);
 
+
     //connect ( ui.openButton, SIGNAL (clicked() ), this, SLOT (openClicked() ));
     connect ( ui.saveSlideButton, SIGNAL (clicked() ), this, SLOT (saveSlide() ));
     //connect ( ui.saveAsButton, SIGNAL (clicked() ), this, SLOT (saveAsClicked() ));
@@ -31,6 +32,7 @@ ScriptEditor::ScriptEditor (QWidget *parent):QWidget(parent)
     connect ( ui.macroRunButton,  SIGNAL (clicked() ), this, SLOT (runClicked() ));
     connect ( ui.macroLoadButton, SIGNAL (pressed()), this, SLOT (loadMacroClicked() ) );
     connect ( ui.macroSaveButton, SIGNAL (pressed()), this, SLOT (saveMacroClicked() ) );
+
 
     vymModelID=-1;
 
@@ -53,6 +55,12 @@ ScriptEditor::ScriptEditor (QWidget *parent):QWidget(parent)
     foreach (Command *c, modelCommands)
 	list.append (c->getName() );
     highlighter->addKeywords (list);
+
+    QAction *a = new QAction( tr( "Save","ScriptEditor" ), ui.editor);
+    a->setShortcut (Qt::CTRL + Qt::Key_S );	 
+    a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
+    addAction (a);
+    connect( a, SIGNAL( triggered() ), this, SLOT( saveSlide() ) );
 }
 
 void ScriptEditor::setScriptFile(const QString &fn) 
