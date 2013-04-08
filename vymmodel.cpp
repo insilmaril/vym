@@ -3827,7 +3827,7 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	    s=parser.parString(ok,0);
 	    TreeItem *ti=findUuid(QUuid(s));
 	    if (ti)
-	    {
+            {
 		LinkableMapObj *lmo=((MapItem*)ti)->getLMO();
 		if (zoomFactor>0 && lmo)
 		    mapEditor->setViewCenterTarget (
@@ -3836,6 +3836,8 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 			rotationAngle,
 			animDuration,
 			animCurve);
+                else
+                    qWarning()<<"VymModel::centerOnID failed!";
 	    } else
 		parser.setError(Aborted,QString("Could not find ID: \"%1\"").arg(s));
 	/////////////////////////////////////////////////////////////////////
@@ -6050,9 +6052,16 @@ SlideItem* VymModel::addSlide()
     if (si && seli)
     {
 	QString inScript;
-	inScript+=QString("setMapZoom(%1);\n").arg(getMapEditor()->getZoomFactorTarget() );
-	inScript+=QString("setMapRotation(%1);\n").arg(getMapEditor()->getAngleTarget() );
-	inScript+=QString("centerOnID(\"%1\");\n").arg(seli->getUuid().toString());
+        if (!loadStringFromDisk(vymBaseDir.path() + "/macros/slideeditor-snapshot.vys", inScript) )
+        {
+            qWarning()<<"VymModel::addSlide couldn't load template for taking snapshot";
+            return NULL;
+        }
+
+        inScript.replace("CURRENT_ZOOM", QString().setNum(getMapEditor()->getZoomFactorTarget()) );
+        inScript.replace("CURRENT_ANGLE", QString().setNum(getMapEditor()->getAngleTarget()) );
+        inScript.replace("CURRENT_ID", "\"" + seli->getUuid().toString() + "\"");
+
 	si->setInScript(inScript);
 	slideModel->setData ( slideModel->index(si), seli->getHeading() );
     }

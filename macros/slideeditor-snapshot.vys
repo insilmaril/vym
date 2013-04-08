@@ -1,0 +1,5 @@
+# Template for taking snapshots in slideeditor
+
+setMapZoom(CURRENT_ZOOM);
+setMapRotation(CURRENT_ANGLE);
+centerOnID(CURRENT_ID);
