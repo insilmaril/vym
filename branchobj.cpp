@@ -318,10 +318,10 @@ void BranchObj::calcBBoxSize()
                     x=-rp.x() + fio->width()/2 - ornamentsBBox.width()/2;
                     leftPad=max(leftPad, x);
                 }
-                qDebug()<<"**   rp.x="<<rp.x()<<"   fio.w/2="<<fio->width()/2<<" obox.w/2="<<ornamentsBBox.width()/2;
+                //qDebug()<<"**   rp.x="<<rp.x()<<"   fio.w/2="<<fio->width()/2<<" obox.w/2="<<ornamentsBBox.width()/2; //FIXME-8
 	    }	    
 	}   
-        if (debug) qDebug()<<"**BO::calcBBoxSize leftPad="<<leftPad<<"rightPad="<<rightPad<<"topPad="<<topPad<<"botPad="<<botPad;
+        //if (debug) qDebug()<<"**BO::calcBBoxSize leftPad="<<leftPad<<"rightPad="<<rightPad<<"topPad="<<topPad<<"botPad="<<botPad; //FIXME-8
 	h+=topPad+botPad;
 	w+=leftPad+rightPad;
     }
@@ -341,7 +341,7 @@ void BranchObj::setDockPos()
     floatRefPos=ornamentsBBox.center();
 
     if (debug) qDebug()<<"### BO::setDockPos floatRefPos="<<floatRefPos; 
-    if (debug) qDebug()<<"### BO::setDockPos    rightPad="<<rightPad; 
+    //if (debug) qDebug()<<"### BO::setDockPos    rightPad="<<rightPad; 
     if (treeItem->getType()==TreeItem::MapCenter)
     {
 	// set childRefPos to middle of MapCenterObj
@@ -366,7 +366,7 @@ void BranchObj::setDockPos()
 		childRefPos=QPointF (ornamentsBBox.bottomLeft().x() - frame->getPadding(),  bottomlineY);
 		parPos=QPointF   (ornamentsBBox.bottomRight().x(), bottomlineY);
 	    }
-            if (debug) qDebug()<<"### BO::setDockPos childRefPos="<<childRefPos<<" left of center"; //FIXME-8
+            //if (debug) qDebug()<<"### BO::setDockPos childRefPos="<<childRefPos<<" left of center"; //FIXME-8
 	} else
 	{
             // Right of center
@@ -379,7 +379,7 @@ void BranchObj::setDockPos()
 		childRefPos=QPointF(ornamentsBBox.bottomRight().x() + frame->getPadding(), bottomlineY);
 		parPos=QPointF ( ornamentsBBox.bottomLeft().x(),  bottomlineY);
 	    }
-            if (debug) qDebug()<<"### BO::setDockPos childRefPos="<<childRefPos<<" right of center"; 
+            //if (debug) qDebug()<<"### BO::setDockPos childRefPos="<<childRefPos<<" right of center"; 
 	}
     }
     //if (debug) qDebug()<<"### BO::setDockPos ornBBox: "<<ornamentsBBox<<"  bottomlineY"<<bottomlineY; //FIXME-8
