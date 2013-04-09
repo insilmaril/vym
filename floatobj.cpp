@@ -45,7 +45,7 @@ void FloatObj::move (QPointF p)
 void FloatObj::setDockPos()
 {
     parPos=absPos;
-    childPos=absPos;
+    childRefPos=absPos; // FIXME-8  better floatRefPos? used at all?
 }
 
 void FloatObj::reposition()
@@ -54,7 +54,7 @@ void FloatObj::reposition()
     {
         qDebug()<<"FO:reposition relPos="<<relPos; //FIXME-8
         if (parObj)
-            qDebug()<<"    parObj->childPos="<<parObj->getChildPos();
+            qDebug()<<"    parObj->childRefPos="<<parObj->getChildRefPos();
     }
     move2RelPos (relPos);
     updateLinkGeometry();   

@@ -277,7 +277,7 @@ void OrnamentedObj::move2RelPos(double x, double y)
     setRelPos (QPointF(x,y));
     if (parObj)
     {
-	QPointF p=parObj->getChildPos();
+	QPointF p=parObj->getChildRefPos();
 	move (p.x()+x, p.y() +y);
     }
 }

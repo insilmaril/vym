@@ -86,14 +86,14 @@ public:
     virtual void setOrientation();
     virtual void updateVisibility();	    //! hides/unhides link depending on selection
 
-    /*! update parPos, childPos 
+    /*! update parPos, childRefPos 
 	depending on pos
 	redraw link with given style */
     virtual void updateLinkGeometry();	    
 
-    virtual void setDockPos()=0;		// sets childPos and parPos
-    QPointF getChildPos();		    // returns pos where children dock
-    QPointF getParPos();			// returns pos where parents dock
+    virtual void setDockPos()=0;	    // sets childRefPos and parPos
+    QPointF getChildRefPos();		    // returns pos where children dock
+    QPointF getParPos();                    // returns pos where parents dock
     Orientation getOrientation();	    // get orientation
 
     virtual void reposition();
@@ -107,7 +107,8 @@ public:
 protected:
     void parabel(QPolygonF &,double,double,double,double);  // Create Parabel connecting two points
 
-    QPointF childPos;
+    QPointF childRefPos;
+    QPointF floatRefPos;
     QPointF parPos;
     bool link2ParPos;		    // While moving around, sometimes link to parent
 
@@ -141,7 +142,7 @@ protected:
     qreal topPad, botPad,
 	leftPad, rightPad;          // padding within bbox
 
-    QPointF  relPos;		    // position relative to childPos of parent
+    QPointF  relPos;		    // position relative to childRefPos of parent
     bool useRelPos;
 
 };

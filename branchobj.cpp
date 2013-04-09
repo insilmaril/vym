@@ -46,7 +46,7 @@ BranchObj::~BranchObj ()
 
 void BranchObj::init () 
 {
-    if (parObj) absPos=parObj->getChildPos();
+    if (parObj) absPos=parObj->getChildRefPos();
 }
 
 void BranchObj::copy (BranchObj* other)
@@ -95,7 +95,7 @@ void BranchObj::setParObjTmp(LinkableMapObj* dst, QPointF m, int off)
     // Better just do it approximately
     if (dsti->depth()==0)   
     {	// new parent is a mapcenter
-	Vector v= ( m - bodst->getChildPos());
+	Vector v= ( m - bodst->getChildRefPos());
 	v.normalize();
 	v.scale (150);
 	move2RelPos (v.toQPointF());
@@ -129,12 +129,12 @@ void BranchObj::setParObjTmp(LinkableMapObj* dst, QPointF m, int off)
 		// Bottom of sel should be 5 pixels above
 		// the bottom of the branch _below_ the target:
 		// Don't try to find that branch, guess 12 pixels
-		y=bodst->getChildPos().y()  -height() + 12; 
+		y=bodst->getChildRefPos().y()  -height() + 12; 
 	}   
 	if (bodst->getOrientation()==LinkableMapObj::LeftOfCenter)
-	    move ( bodst->getChildPos().x() - linkwidth, y );
+	    move ( bodst->getChildRefPos().x() - linkwidth, y );
 	else	
-	    move (bodst->getChildPos().x() + linkwidth, y );
+	    move (bodst->getChildRefPos().x() + linkwidth, y );
     }	
 
     // updateLinkGeometry is called implicitly in move
@@ -339,11 +339,11 @@ void BranchObj::setDockPos()
     if (debug) qDebug()<<"### BO::setDockPos of "<<treeItem->getHeading(); //FIXME-8
     if (treeItem->getType()==TreeItem::MapCenter)
     {
-	// set childPos to middle of MapCenterObj
+	// set childRefPos to middle of MapCenterObj
 	QRectF r=clickPoly.boundingRect();
-	childPos.setX( r.topLeft().x() + r.width()/2 );
-	childPos.setY( r.topLeft().y() + r.height()/2 );
-	parPos=childPos;	
+	childRefPos.setX( r.topLeft().x() + r.width()/2 );
+	childRefPos.setY( r.topLeft().y() + r.height()/2 );
+	parPos=childRefPos;	
 	for (int i=0; i<treeItem->branchCount(); ++i)
 	    treeItem->getBranchObjNum(i)->updateLinkGeometry();
 
@@ -353,26 +353,26 @@ void BranchObj::setDockPos()
 	{
 	    if ( ((BranchItem*)treeItem)->getFrameIncludeChildren() )
 	    {
-		childPos=QPointF (ornamentsBBox.bottomLeft().x(),  bottomlineY);
+		childRefPos=QPointF (ornamentsBBox.bottomLeft().x(),  bottomlineY);
 		parPos=QPointF   (bboxTotal.bottomRight().x()-frame->getPadding()/2, bottomlineY);
 	    } else	
 	    {
-		childPos=QPointF (ornamentsBBox.bottomLeft().x()-frame->getPadding(),  bottomlineY);
+		childRefPos=QPointF (ornamentsBBox.bottomLeft().x()-frame->getPadding(),  bottomlineY);
 		parPos=QPointF   (ornamentsBBox.bottomRight().x(), bottomlineY);
 	    }
-            if (debug) qDebug()<<"### BO::setDockPos (LeftOfCenter) to "<<childPos; //FIXME-8
+            if (debug) qDebug()<<"### BO::setDockPos (LeftOfCenter) to "<<childRefPos; //FIXME-8
 	} else
 	{
 	    if ( ((BranchItem*)treeItem)->getFrameIncludeChildren() )
 	    {
-		childPos=QPointF(ornamentsBBox.bottomRight().x(), bottomlineY);
+		childRefPos=QPointF(ornamentsBBox.bottomRight().x(), bottomlineY);
 		parPos=QPointF ( bboxTotal.bottomLeft().x()+frame->getPadding()/2,  bottomlineY);
 	    } else	
 	    {
-		childPos=QPointF(ornamentsBBox.bottomRight().x()+ frame->getPadding(), bottomlineY);
+		childRefPos=QPointF(ornamentsBBox.bottomRight().x()+ frame->getPadding(), bottomlineY);
 		parPos=QPointF ( ornamentsBBox.bottomLeft().x(),  bottomlineY);
 	    }
-            if (debug) qDebug()<<"### BO::setDockPos (RightOfCenter) to "<<childPos; //FIXME-8
+            if (debug) qDebug()<<"### BO::setDockPos (RightOfCenter) to "<<childRefPos; //FIXME-8
 	}
     }
     //if (debug) qDebug()<<"### BO::setDockPos ornBBox: "<<ornamentsBBox<<"  bottomlineY"<<bottomlineY; //FIXME-8
@@ -506,7 +506,7 @@ if (debug)
     h+=QString (15,' ');
     h.truncate (15);
     QPointF pp; 
-    if (parObj) pp=parObj->getChildPos();
+    if (parObj) pp=parObj->getChildRefPos();
     qDebug() << "BO::alignRelTo for "<<h;
 //    qDebug() << "    d="<<depth;
 //    qDebug() <<"  parO="<<parObj;
@@ -561,9 +561,9 @@ if (debug)
     // Set reference point for alignment of children
     QPointF ref2;
     if (orientation==LinkableMapObj::LeftOfCenter)
-	ref2.setX(childPos.x() - linkwidth);
+	ref2.setX(childRefPos.x() - linkwidth);
     else    
-	ref2.setX(childPos.x() + linkwidth);
+	ref2.setX(childRefPos.x() + linkwidth);
 
     if (depth==1)
 	ref2.setY(absPos.y()-(bboxTotal.height()-bbox.height())/2 + frame->getPadding() );
