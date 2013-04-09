@@ -278,13 +278,13 @@ void OrnamentedObj::move2RelPos(double x, double y)
     if (parObj)
     {
 	QPointF p=parObj->getChildRefPos();
-	move (p.x()+x, p.y() +y);
+	move (p.x() + x, p.y() + y);
     }
 }
 
 void OrnamentedObj::move2RelPos(QPointF p)
 {
-    move2RelPos (p.x(),p.y());
+    move2RelPos (p.x(), p.y());
 }
 
 void OrnamentedObj::activateStandardFlag(Flag *flag)
