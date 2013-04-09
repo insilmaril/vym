@@ -1229,18 +1229,6 @@ void MapEditor::keyReleaseEvent(QKeyEvent* e)
 
 void MapEditor::mousePressEvent(QMouseEvent* e)	
 {
-    // Debugging: Show position
-    /*
-    */	
-    if (debug && 
-	e->button() == Qt::LeftButton && 
-	e->modifiers() & Qt::ControlModifier )
-	qDebug()<<"ME::mousePressEvent  Scene: "<<mapToScene (e->pos())<<"  widget: "<<e->pos();
-	int v=horizontalScrollBar()->value();
-	int min=horizontalScrollBar()->minimum();
-	int max=horizontalScrollBar()->maximum();
-	//qDebug()<<"    horSB="<<min<<" -> "<<v<<" <- "<<max;
-        
     // Ignore right clicks or wile editing heading
     if (e->button() == Qt::RightButton || model->isSelectionBlocked() )
     {
@@ -1466,6 +1454,13 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
 
 void MapEditor::mouseMoveEvent(QMouseEvent* e)  
 {
+    // Show mouse position for debugging in statusBar
+    if (debug && e->modifiers() & Qt::ControlModifier )
+	mainWindow->statusMessage(
+            QString("ME::mousePressEvent  Scene: %1  widget: %2").
+            arg(qpointFToString(mapToScene (e->pos()))).
+            arg(qpointFToString(e->pos())));
+
     TreeItem *seli=model->getSelectedItem();
 
     MapObj* mosel=NULL;    
