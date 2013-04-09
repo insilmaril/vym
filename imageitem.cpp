@@ -132,6 +132,9 @@ QString ImageItem::saveToDir (const QString &tmpdir,const QString &prefix)
 {
     if (hidden) return "";
 
+    // Save uuid 
+    QString idAttr=attribut("uuid",uuid.toString());
+
     QString zAttr=attribut ("zValue",QString().setNum(zValue));
     QString url;
 
@@ -155,6 +158,7 @@ QString ImageItem::saveToDir (const QString &tmpdir,const QString &prefix)
 	+attribut ("href",QString ("file:")+url)
 	+nameAttr
 	+scaleAttr
+        +idAttr
     );	
 }
 

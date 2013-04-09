@@ -729,6 +729,9 @@ context menu of a branch will open the map in another tab (see
 \ref{tabs} for working with multiple maps). To delete an existing link,
 just right click the branch and select "Delete \vym link".
 
+\hint{Open a linked map in background by pressing \key{Ctrl} while
+clicking on the icon in the map}
+
 In the context menu there is also an option to open all vymlinks found
 in the selected subtree of the map. That's useful to simultanously open
 a collection of related maps\footnote{
@@ -969,8 +972,10 @@ menu. The (currently) available action are:
 
     \item
     \includegraphics[width=0.5cm]{../icons/slide-camera.png}
-    Create a new slide by snapshotting the current selection, zoomfactor
-    and rotation of the map.
+    Create a new slide by snapshotting the current selection. The exact
+    set of actions performed when selecting the new snapshot defined in
+    a script called {\tt slideeditor-snapshot.vys}. The script is one of
+    the \vym macros, see \ref{macros}.
 
     \item
     \includegraphics[width=0.5cm]{../icons/scripteditor.png}
@@ -1765,8 +1770,8 @@ also use the "-l" (local) option on startup (see \ref{options}).
 \subsection{\vym file format} \label{fileformat}
 \vym maps usually have the suffix "{\tt .vym}" and represent a
 compressed archive of data. If you want to have a closer look into the
-data structure map called "mapname.vym", just uncompress the map
-manually using
+data structure map called "mapname.vym", just edit the XML data 
+by using the {\tt vivym} script or by uncompressing manually by calling
 \begin{code}
 \$ unzip mapname.vym
 \end{code}

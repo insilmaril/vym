@@ -25,7 +25,8 @@ public:
     bool isUsedFilterActive ();
     void setFilterActive ();
     bool select (Task *task);
-    void showSelection();
+    void clearSelection ();
+    void showSelection ();
     void contextMenuEvent ( QContextMenuEvent * e );
 
 public slots:

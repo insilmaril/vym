@@ -39,7 +39,7 @@ bool parseFreemindHandler::startElement  ( const QString&, const QString&,
     /* Testing
     qDebug() << "startElement <"<< qPrintable(eName)
 	<<">  state="<<state 
-	<<"  stateStack="<<stateStack.last()
+	<<"  stateLast="<<stateStack.last()
 	<<"   loadMode="<<loadMode
     //	<<"       line="<<qPrintable (QXmlDefaultHandler::lineNumber())
 	;
@@ -90,6 +90,10 @@ bool parseFreemindHandler::startElement  ( const QString&, const QString&,
 	lastBranch=model->createBranch(lastBranch);
 	state=StateNode;
 	readNodeAttr (atts);
+    } else if ( eName == "properties" )
+    {
+    } else if ( eName == "map_styles" )
+    {
     } else if ( eName == "font" && state == StateNode) //FIXME-3 not implemented
     {
 	state=StateFont;
@@ -191,7 +195,13 @@ bool parseFreemindHandler::startElement  ( const QString&, const QString&,
 	readHtmlAttr(atts);
 	htmldata+=">";
     } else 
-        return false;   // Error
+    {
+        // Usually we would return an error here
+        // In order to not break with every new element in FreeMind or FreePlane,
+        // better ignore the new element for now
+        state=StateUnknown;
+	qWarning()<<"parseFreemindHandler: Unknown element found and ignoring:: "<<eName;
+    }
     return true;
 }
 
@@ -317,8 +327,9 @@ bool parseFreemindHandler::readRichContentAttr (const QXmlAttributes& a)
     else
     {
 	htmlPurpose=Unknown;
-	qWarning()<<"parseFreemindHandler: Unknown purpose of richContent found";
-	return false;
+	qWarning()<<"parseFreemindHandler: Unknown purpose of richContent found: "<<a.value("TYPE");;
+        // FIXME-3 Usually we would stop here, ignore for now
+	//return false;
     }	
     return true;
 }

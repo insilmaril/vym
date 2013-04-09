@@ -137,7 +137,7 @@ void TreeModel::nextBranch (BranchItem* &current, BranchItem* &previous, bool de
             {
                 previous=(BranchItem*)rootItem;
                 current = previous->getFirstBranch();
-                if (!current) return;
+                return;
             }
         }
         
@@ -205,7 +205,7 @@ void TreeModel::nextBranch (BranchItem* &current, BranchItem* &previous, bool de
             {
                 previous=(BranchItem*)rootItem;
                 current = previous->getFirstBranch();
-                if (!current) return;
+                return;
             }
         }
 

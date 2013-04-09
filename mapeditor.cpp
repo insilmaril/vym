@@ -122,6 +122,12 @@ MapEditor::MapEditor( VymModel *vm)	//FIXME-3 change ME from GraphicsScene to It
     addAction (a);
     connect( a, SIGNAL( triggered() ), this, SLOT( editHeading() ) );
 
+    a = new QAction( tr( "Save","MapEditor" ), this);
+    a->setShortcut (Qt::CTRL + Qt::Key_S );	 
+    a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
+    addAction (a);
+    connect( a, SIGNAL( triggered() ), mainWindow, SLOT( fileSave() ) );
+    
     // Selections
     selectionColor =QColor (255,255,0);
     
@@ -163,6 +169,8 @@ MapEditor::MapEditor( VymModel *vm)	//FIXME-3 change ME from GraphicsScene to It
     //attrTable->addValue ("Key Prio","Prio 1");
     //attrTable->addValue ("Key Prio","Prio 2");
     }
+
+    winter=NULL;
 }
 
 MapEditor::~MapEditor()
@@ -800,7 +808,6 @@ TreeItem* MapEditor::findMapItem (QPointF p,TreeItem *exclude)
 	i++;
 	bi=model->getRootItem()->getBranchNum(i);
     }
-    
     return NULL;
 }
 
@@ -811,7 +818,6 @@ AttributeTable* MapEditor::attributeTable()
 
 void MapEditor::testFunction1()
 {
-  model->loadMap("/suse/uwedr/vym/code/test/default.vym");
 }
     
 void MapEditor::testFunction2()
@@ -819,6 +825,36 @@ void MapEditor::testFunction2()
     autoLayout();
 }
 
+#include "winter.h"
+void MapEditor::toggleWinter()
+{
+    if (winter)
+    {
+        delete winter;
+        winter=NULL;
+    } else
+    {
+        winter=new Winter (this);
+        QList <QRectF> obstacles;
+        BranchObj *bo;
+        BranchItem *cur=NULL;
+        BranchItem *prev=NULL;
+        model->nextBranch(cur,prev);
+        while (cur) 
+        {
+            if (!cur->hasHiddenExportParent())
+            {
+                // Branches
+                bo=(BranchObj*)(cur->getLMO());
+                if (bo && bo->isVisibleObj())
+                    obstacles.append(bo->getBBox());
+            }
+            model->nextBranch(cur,prev);
+        }
+        winter->setObstacles(obstacles);
+    }
+}
+    
 BranchItem* MapEditor::getBranchDirectAbove (BranchItem *bi)
 {
     if (bi)
@@ -1075,7 +1111,6 @@ void MapEditor::editHeading()
 	lineEdit->setFocus();
 	lineEdit->selectAll();	// Hack to enable cursor in lineEdit
 	lineEdit->deselect();	// probably a Qt bug...
-	lineEdit->grabKeyboard();   //FIXME-3 reactived for tests...
 	setState (EditingHeading);
     }
 }
@@ -1205,7 +1240,7 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
 	int min=horizontalScrollBar()->minimum();
 	int max=horizontalScrollBar()->maximum();
 	//qDebug()<<"    horSB="<<min<<" -> "<<v<<" <- "<<max;
-
+        
     // Ignore right clicks or wile editing heading
     if (e->button() == Qt::RightButton || model->isSelectionBlocked() )
     {
@@ -1226,8 +1261,19 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
     TreeItem *ti=findMapItem (p, NULL);
     LinkableMapObj* lmo=NULL;
     if (ti) lmo=((MapItem*)ti)->getLMO();
+
+    QString sysFlagName;
+    if (lmo) sysFlagName=((BranchObj*)lmo)->getSystemFlagName(p);
     
-    // Now check PickColor modifier (before selecting object!) 
+    /*
+    qDebug() << "ME::mouse pressed\n";
+    qDebug() << "  lmo="<<lmo;
+    qDebug() << "   ti="<<ti;
+    if (ti) qDebug() << "   ti="<<ti->getHeading();
+    qDebug() << " flag="<<sysFlagName;
+    */
+    
+    // Check PickColor modifier (before selecting object!) 
     if (ti && (e->modifiers() & Qt::ShiftModifier) &&
 	mainWindow->getModMode()==Main::ModModeColor)
     {
@@ -1240,52 +1286,51 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
 	return;
     }	
 
+    // Check vymlink  modifier (before selecting object!) 
+    if (ti && sysFlagName=="system-vymLink")
+    {
+        model->select(ti);
+        if (e->modifiers() & Qt::ControlModifier)
+            mainWindow->editOpenVymLink(true);
+        else
+            mainWindow->editOpenVymLink(false);
+        return;
+    }
+    
     // Select the clicked object 
-    if (e->modifiers() & Qt::ControlModifier)
+    if (ti && e->modifiers() & Qt::ControlModifier)
 	model->selectToggle (ti);
     else
 	model->select (ti);
-    
-    // New selection:
-    BranchItem* selbi=model->getSelectedBranch();   
 
-    /*
-    qDebug() << "ME::mouse pressed\n";
-    qDebug() << "  lmo="<<lmo;
-    qDebug() << "   ti="<<ti;
-    qDebug() << "selbi="<<selbi;
-    if (selbi) qDebug() << "selbi="<<selbi->getHeading();
-    if (ti) qDebug() << "   ti="<<ti->getHeading();
-    */
-    
     e->accept();
 
-    //Take care of  system flags _or_ modifier modes
-    //
-    if (lmo && selbi )
+    //Take care of  remaining system flags _or_ modifier modes
+    if (lmo )
     {
-	QString foname=((BranchObj*)lmo)->getSystemFlagName(p);
-	if (!foname.isEmpty())
+	if (!sysFlagName.isEmpty())
 	{
 	    // systemFlag clicked
-	    model->select (lmo);    
-	    if (foname.contains("system-url")) 
+	    if (sysFlagName.contains("system-url")) 
 	    {
 		if (e->modifiers() & Qt::ControlModifier)
 		    mainWindow->editOpenURLTab();
 		else	
 		    mainWindow->editOpenURL();
 	    }	
-	    else if (foname=="system-vymLink")
+	    else if (sysFlagName=="system-vymLink")
 	    {
-		mainWindow->editOpenVymLink();
+		if (e->modifiers() & Qt::ControlModifier)
+		    mainWindow->editOpenVymLink(true);
+                else
+		    mainWindow->editOpenVymLink(false);
 		// tabWidget may change, better return now
 		// before segfaulting...
-	    } else if (foname=="system-note")	//FIXME-2 does not work always???
+	    } else if (sysFlagName=="system-note")	//FIXME-2 does not work always???
 		mainWindow->windowToggleNoteEditor();
-	    else if (foname=="hideInExport")	    
+	    else if (sysFlagName=="hideInExport")	    
 		model->toggleHideExport();
-	    else if (foname.startsWith("system-task-") )
+	    else if (sysFlagName.startsWith("system-task-") )
 		model->cycleTaskStatus();
 	    return; 
 	} else
@@ -1326,7 +1371,8 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
 	}
     }	
 
-    // XLink modifier needs no lmo
+    // XLink modifier, create new XLink 
+    BranchItem* selbi = model->getSelectedBranch();
     if (selbi &&
         mainWindow->getModMode()==Main::ModModeXLink &&
         (e->modifiers() & Qt::ShiftModifier))
@@ -1583,6 +1629,8 @@ void MapEditor::moveObject ()
 	    QItemSelection sel=model->getSelectionModel()->selection();
 	    updateSelection(sel,sel);	// position has changed
 
+            // In winter mode shake snow from heading
+            if (winter) model->emitDataChanged(seli);
 	} 
     } // End of lmosel!=NULL
     else if (seli && seli->getType()==TreeItem::XLink)
@@ -2072,6 +2120,27 @@ void MapEditor::updateData (const QModelIndex &sel)
     {
 	BranchObj *bo=(BranchObj*) ( ((MapItem*)ti)->getLMO());
 	bo->updateData();
+    }
+
+    if (winter)
+    {
+        QList <QRectF> obstacles;
+        BranchObj *bo;
+        BranchItem *cur=NULL;
+        BranchItem *prev=NULL;
+        model->nextBranch(cur,prev);
+        while (cur) 
+        {
+            if (!cur->hasHiddenExportParent())
+            {
+                // Branches
+                bo=(BranchObj*)(cur->getLMO());
+                if (bo && bo->isVisibleObj())
+                    obstacles.append(bo->getBBox());
+            }
+            model->nextBranch(cur,prev);
+        }
+        winter->setObstacles(obstacles);
     }
 }
 

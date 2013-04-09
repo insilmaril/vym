@@ -2,40 +2,39 @@
 
 load File.expand_path("../vym-ruby.rb", __FILE__)
 require 'tempfile'
+require 'mail'
 
-allowed_headers = %w(Subject Date From To)
+mail_in = Tempfile.new("mail")
+begin
+  mail_in.write(ARGF.read)
+  mail_in.rewind
+  out = Tempfile.new("temp")
+  begin
+    mail = Mail.read(mail_in.path)
 
-header = %w()
-body = %w()
-subject = "";
+    out <<  "Subject: #{mail.subject}\n"
+    out <<  "From: #{mail.header[:From]}\n"
+    out <<  "To: #{mail.header[:To]}\n"
+    out <<  "Cc: #{mail.header[:Cc]}\n"
+    out <<  "Date: #{mail.date.to_s}\n"
+    out <<  "\n"
+    out <<  mail.decoded
 
-part="Header"
+    out.rewind
 
-$stdin.each do |line| 
-  if part == "Header"
-    if line =~/^\s$/ 
-      part="Body"
-    else
-      allowed_headers.each {|h|  header << line if line =~/^#{h}:/ }
-      subject = $1 if line =~ /^Subject:\s*(.*)$/
-    end  
-  else  
-    body << line
-  end  
-  #puts "#{part}: #{line}"
-end  
+    vym_mgr = VymManager.new
+    vym = vym_mgr.find('production') 
 
-note  = header.join
-note += body.join
+    vym.addBranch 
+    vym.selectLastBranch 
+    vym.setHeading(mail.subject)
+    vym.loadNote(out.path)
+  ensure
+    out.close
+    out.unlink
+  end
 
-out=Tempfile.new("tempfile")
-out << note
-out.close
-
-vym_mgr = VymManager.new
-vym = Vym.new(vym_mgr.find('production') )
-
-vym.addBranch 
-vym.selectLastBranch 
-vym.setHeading "#{subject}"
-vym.loadNote "#{out.path}"
+ensure
+  mail_in.close
+  mail_in.unlink
+end

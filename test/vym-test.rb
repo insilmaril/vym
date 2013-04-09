@@ -94,7 +94,7 @@ def test_basics (vym)
   heading "Basic checks:"
   init_map
   vym.select @@main_a
-  expect "select", @@main_a, vym.getSelectString
+  expect "select mainbranch A", vym.getSelectString, @@main_a
   expect "getHeading", "Main A", vym.getHeading
   expect "branchCount", 3, vym.branchCount
 
@@ -103,6 +103,121 @@ def test_basics (vym)
 
   expect "getDestPath: Got #{vym.getDestPath}", vym.getDestPath, @@testdir + "/testmap.vym" 
   expect "getFileDir:  Got #{vym.getFileDir}", vym.getFileDir, @@testdir + "/" 
+end
+
+#######################
+def test_export (vym)
+  heading "Export:"
+  init_map
+
+  #HTML
+  mapname = "export-html"
+  htmlpath = "#{@@testdir}/#{mapname}.html"
+  flagpath = "#{@@testdir}/flags/flag-stopsign.png"
+  pngpath = "#{@@testdir}/#{mapname}.png"
+  csspath = "#{@@testdir}/vym.css"
+  vym.exportHTML(@@testdir,htmlpath)
+  expect "exportHTML: HTML file exists", File.exists?(htmlpath), true
+  expect "exportHTML: HTML image exists", File.exists?(pngpath), true
+  expect "exportHTML: HTML flags exists", File.exists?(flagpath), true
+  expect "exportHTML: HTML CSS exists", File.exists?(csspath), true
+  File.delete(htmlpath)
+  File.delete(flagpath)
+  File.delete(pngpath)
+  File.delete(csspath)
+  vym.exportLast
+  expect "exportLast: HTML file exists", File.exists?(htmlpath), true
+  expect "exportLast: HTML image exists", File.exists?(pngpath), true
+  expect "exportLast: HTML flags exists", File.exists?(flagpath), true
+  expect "exportLast: HTML CSS exists", File.exists?(csspath), true
+
+  #AO
+  filepath = "#{@@testdir}/export-ao.txt"
+  vym.exportAO(filepath)
+  expect "exportAO:    AO file exists", File.exists?(filepath), true
+  File.delete(filepath)
+  vym.exportLast
+  expect "exportLast:  AO file exists", File.exists?(filepath), true
+
+  #ASCII
+  filepath = "#{@@testdir}/export-ascii.txt"
+  vym.exportASCII(filepath)
+  expect "exportASCII: ASCII file exists", File.exists?(filepath), true
+  File.delete(filepath)
+  vym.exportLast
+  expect "exportLast:  ASCII file exists", File.exists?(filepath), true
+
+  #CSV
+  filepath = "#{@@testdir}/export-csv.txt"
+  vym.exportCSV(filepath)
+  expect "exportCSV:    CSV file exists", File.exists?(filepath), true
+  File.delete(filepath)
+  vym.exportLast
+  expect "exportLast:  CSV file exists", File.exists?(filepath), true
+
+  #Image
+  filepath = "#{@@testdir}/export-image.png"
+  vym.exportImage(filepath,"PNG")
+  expect "exportImage: PNG file exists", File.exists?(filepath), true
+  File.delete(filepath)
+  vym.exportLast
+  expect "exportLast:  PNG file exists", File.exists?(filepath), true
+
+  #LaTeX
+  filepath = "#{@@testdir}/export-LaTeX.tex"
+  vym.exportLaTeX(filepath)
+  expect "exportLaTeX:  LaTeX file exists", File.exists?(filepath), true
+  File.delete(filepath)
+  vym.exportLast
+  expect "exportLast:   LaTeX file exists", File.exists?(filepath), true
+
+  #OrgMode
+  filepath = "#{@@testdir}/export-orgmode.org"
+  vym.exportOrgMode(filepath)
+  expect "exportOrgMode:  OrgMode file exists", File.exists?(filepath), true
+  File.delete(filepath)
+  vym.exportLast
+  expect "exportLast:     OrgMode file exists", File.exists?(filepath), true
+
+  #PDF
+  filepath = "#{@@testdir}/export-pdf.pdf"
+  vym.exportPDF(filepath)
+  expect "exportPDF:  PDF file exists", File.exists?(filepath), true
+  File.delete(filepath)
+  vym.exportLast
+  expect "exportLast: PDF file exists", File.exists?(filepath), true
+
+  #SVG
+  filepath = "#{@@testdir}/export-svg.svg"
+  vym.exportSVG(filepath)
+  expect "exportSVG:  SVG file exists", File.exists?(filepath), true
+  File.delete(filepath)
+  vym.exportLast
+  expect "exportLast: SVG file exists", File.exists?(filepath), true
+
+  #XML
+  filepath = "#{@@testdir}/export-xml.xml"
+  vym.exportXML(@@testdir, filepath)
+  expect "exportXML: XML file exists", File.exists?(filepath), true
+  File.delete(filepath)
+  vym.exportLast
+  expect "exportLast: XML file exists", File.exists?(filepath), true
+
+  #OpenOffice Impress //FIXME-2
+  #KDE4 Bookmarks //FIXME-2
+  #Taskjuggler //FIXME-3
+end
+
+#######################
+def test_extrainfo (vym)
+  heading "Extra information:"
+  init_map
+  vym.setMapAuthor("Fra Erasmas")
+  expect "Set and get map author", "Fra Erasmas", vym.getMapAuthor
+  vym.setMapComment("xy z")
+  expect "Set and get map comment", "xy z", vym.getMapComment
+  vym.setMapTitle("vym rules!")
+  expect "Set and get map title", "vym rules!", vym.getMapTitle
 end
 
 #######################
@@ -388,6 +503,14 @@ def test_delete_parts (vym)
   expect "Undo: deleteKeepChildren: branchcount of parent", n,vym.branchCount
   vym.select @@branch_a
   expect "Undo: deleteKeepChildren: branchcount of branch", m,vym.branchCount
+
+  init_map
+  n = vym.centerCount
+  vym.select @@center_1
+  vym.delete
+  expect "Delete mapCenter: number of centers decreased", vym.centerCount, n-1
+  vym.undo
+  expect "Undo Delete mapCenter: number of centers increased", vym.centerCount, n
 end  
 
 #######################
@@ -503,6 +626,25 @@ def test_tasks (vym)
 end
 
 ######################
+def test_notes (vym)
+  heading "Notes:"
+  init_map
+  vym.select @@main_b
+  vym.setNote("foobar")
+  expect "Set note", vym.getNote, "foobar"
+  vym.setNote("foo)bar")
+  expect "Set note including \")\"", vym.getNote, "foo)bar"
+  
+  note_org = IO.read('test/note.txt')
+  vym.loadNote("test/note.txt") 
+  expect "Load note from file", vym.getNote, note_org
+
+  filepath = "#{@@testdir}/save-note.txt"
+  vym.saveNote(filepath)
+  expect "Save note to file", IO.read(filepath), note_org
+end
+
+######################
 def test_bugfixes (vym)
   heading "Bugfixes:"
   init_map
@@ -512,6 +654,8 @@ end
 
 #######################
 test_basics(vym)
+test_export(vym)
+test_extrainfo(vym)
 test_adding_branches(vym)
 test_adding_maps(vym)
 test_scrolling(vym)
@@ -524,6 +668,7 @@ test_references(vym)
 test_history(vym)
 test_xlinks(vym)
 test_tasks(vym)
+test_notes(vym)
 test_bugfixes(vym)
 summary
 
@@ -531,23 +676,12 @@ summary
 # Untested commands:
 #
 addSlide
-addXlink
 centerOnID
 colorBranch
 colorSubtree
 cycleTask
 delete (image)
 deleteSlide
-exportAO
-exportASCII
-exportHTML
-exportImage
-exportImpress
-exportLaTeX
-exportPDF
-exportPDF
-exportSVG
-exportXML
 importDir
 loadImage
 loadNote
@@ -577,9 +711,7 @@ setIncludeImagesHorizontally
 setIncludeImagesVertically
 setMapAnimCurve
 setMapAnimDuration
-setMapAuthor
 setMapBackgroundColor
-setMapComment
 setMapDefLinkColor
 setMapLinkStyle
 setMapRotation

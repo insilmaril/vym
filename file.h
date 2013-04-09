@@ -16,6 +16,7 @@ enum FileType {VymMap, FreemindMap,UnknownMap};
 QString maskPath (QString );
 QString convertToRel (const QString &,const QString &);
 QString basename (const QString&);
+QString dirname  (const QString&);
 
 QString browseDirectory (QWidget *parent=NULL, const QString &caption="");
 bool reallyWriteDirectory(const QString &dir);

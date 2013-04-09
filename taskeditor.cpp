@@ -90,7 +90,7 @@ TaskEditor::TaskEditor(QWidget *)
 
     // Initialize column widths
     QString s;
-    for (int i=0; i<7; i++)
+    for (int i=0; i<6; i++)
     {
 	s=QString("/taskeditor/columnWidth/%1").arg(i);
 	if (settings.contains (s) )
@@ -142,7 +142,7 @@ void TaskEditor::showSelection()
     QModelIndexList list=view->selectionModel()->selectedIndexes();
     if (list.count()>0)
 	// Usually whole row is selected, so just go for first cell
-	view->scrollTo( list.first(), QAbstractItemView::EnsureVisible);
+	view->scrollTo(taskModel->index(taskModel->getTask(list.first())), QAbstractItemView::EnsureVisible);
 }
 
 bool TaskEditor::select (Task *task)	
@@ -163,6 +163,11 @@ bool TaskEditor::select (Task *task)
 	return true;
     }
     return false;
+}
+
+void TaskEditor::clearSelection()
+{
+    view->selectionModel()->clearSelection();
 }
 
 void TaskEditor::selectionChanged ( const QItemSelection & selected, const QItemSelection & )

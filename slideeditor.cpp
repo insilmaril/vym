@@ -11,6 +11,7 @@
 
 extern QString iconPath;
 extern Main *mainWindow;
+extern SlideEditor *slideEditor;
 
 SlideEditor::SlideEditor(VymModel *m)
 {
@@ -33,9 +34,6 @@ SlideEditor::SlideEditor(VymModel *m)
     connect (
 	slideControl, SIGNAL (editButtonPressed() ), 
 	mainWindow, SLOT (windowToggleScriptEditor() ) );
-    connect (
-	slideControl, SIGNAL (deleteButtonPressed() ), 
-	this, SLOT (deleteSlide() ) );
     connect (
 	slideControl, SIGNAL (deleteButtonPressed() ), 
 	this, SLOT (deleteSlide() ) );
@@ -71,17 +69,20 @@ SlideEditor::SlideEditor(VymModel *m)
 void SlideEditor::previousSlide()
 {
     QModelIndex ix=slideModel->getSelectedIndex();
-    ix=view->indexAbove (ix);
     if (ix.isValid())
-    view->selectionModel()->select (ix,QItemSelectionModel::ClearAndSelect );
+        ix=view->indexAbove (ix);
+
+    if (ix.isValid())
+        view->selectionModel()->select (ix,QItemSelectionModel::ClearAndSelect );
 }
 
 void SlideEditor::nextSlide()
 {
     QModelIndex ix=slideModel->getSelectedIndex();
-    ix=view->indexBelow (ix);
     if (ix.isValid())
-    view->selectionModel()->select (ix,QItemSelectionModel::ClearAndSelect );
+        ix=view->indexBelow (ix);
+    if (ix.isValid())
+        view->selectionModel()->select (ix,QItemSelectionModel::ClearAndSelect );
 }
 
 void SlideEditor::addSlide()

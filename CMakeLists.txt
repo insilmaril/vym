@@ -9,6 +9,14 @@ if( CMAKE_COMPILER_IS_GNUCXX )
 	add_definitions ( -Wall )
 endif( CMAKE_COMPILER_IS_GNUCXX )
 
+if( UNIX AND NOT APPLE )
+    set( NO_DBUS_DEFAULT OFF )
+else( UNIX AND NOT APPLE )
+    set( NO_DBUS_DEFAULT ON )
+endif( UNIX AND NOT APPLE )
+
+option( NO_DBUS "Build vym without dbus support" ${NO_DBUS_DEFAULT} )
+
 find_package ( Qt4 REQUIRED )
 include ( ${QT_USE_FILE} )
 add_definitions( ${QT_DEFINITIONS} )
@@ -20,14 +28,46 @@ if( WIN32 )
 	endif( MSVC )
 endif( WIN32 )
 
+find_package( cppcheck )
+if(CPPCHECK_FOUND)
+	set(_cppcheck_args)
+	list(APPEND _cppcheck_args ${CPPCHECK_INCLUDEPATH_ARG} ${CMAKE_SOURCE_DIR})
+# 	list(APPEND _cppcheck_args ${CPPCHECK_INCLUDEPATH_ARG} ${QT_QTCORE_INCLUDE_DIR})
+# 	list(APPEND _cppcheck_args ${CPPCHECK_INCLUDEPATH_ARG} ${QT_QTDBUS_INCLUDE_DIR})
+# 	list(APPEND _cppcheck_args ${CPPCHECK_INCLUDEPATH_ARG} ${QT_QTGUI_INCLUDE_DIR})
+# 	list(APPEND _cppcheck_args ${CPPCHECK_INCLUDEPATH_ARG} ${QT_QTNETWORK_INCLUDE_DIR})
+# 	list(APPEND _cppcheck_args ${CPPCHECK_INCLUDEPATH_ARG} ${QT_QTXML_INCLUDE_DIR})
+# 	list(APPEND _cppcheck_args ${CPPCHECK_INCLUDEPATH_ARG} ${QT_QTSVG_INCLUDE_DIR})
+
+	list(APPEND _cppcheck_args "enable" "all")
+	
+	add_custom_target(
+		cppcheck
+		COMMAND 
+		"${CPPCHECK_EXECUTABLE}"
+		${CPPCHECK_TEMPLATE_ARG}
+		${CPPCHECK_QUIET_ARG}
+		"--force"
+#		"--std=c++11"
+		${_cppcheck_args}
+		${CMAKE_SOURCE_DIR}
+	)
+
+	message(STATUS "cppcheck target added.")
+endif(CPPCHECK_FOUND)
+
 include_directories (
 	${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}
-	${QT_QTCORE_INCLUDE_DIR} ${QT_QTDBUS_INCLUDE_DIR} ${QT_QTGUI_INCLUDE_DIR} ${QT_QTNETWORK_INCLUDE_DIR} ${QT_QTXML_INCLUDE_DIR} ${QT_QTSVG_INCLUDE_DIR}
+	${QT_QTCORE_INCLUDE_DIR} ${QT_QTGUI_INCLUDE_DIR} ${QT_QTNETWORK_INCLUDE_DIR} ${QT_QTXML_INCLUDE_DIR} ${QT_QTSVG_INCLUDE_DIR}
 	)
+
+if(NOT NO_DBUS )
+    include_directories( ${QT_QTDBUS_INCLUDE_DIR} )
+endif(NOT NO_DBUS )
+
 set ( vym_HDRS
       aboutdialog.h
-      adaptormodel.h
-      adaptorvym.h
+      taskfiltermodel.h
       animpoint.h
       attribute.h
       attributeitem.h
@@ -36,7 +76,7 @@ set ( vym_HDRS
       #   attributewidget.h
       branchitem.h
       branchobj.h
-      branchpropwindow.h
+      branchpropeditor.h
       bugagent.h
       command.h
       dockeditor.h
@@ -66,7 +106,9 @@ set ( vym_HDRS
       imageitem.h
       imageobj.h
       imports.h
+      lineeditdialog.h
       linkablemapobj.h
+      macros.h
       mainwindow.h
       mapeditor.h
       mapitem.h
@@ -79,10 +121,10 @@ set ( vym_HDRS
       ornamentedobj.h
       parser.h
       process.h
+      scripteditor.h
       settings.h
       shortcuts.h
       showtextdialog.h
-      simplescripteditor.h
       slidecontrolwidget.h
       slideeditor.h
       slideitem.h
@@ -98,6 +140,7 @@ set ( vym_HDRS
       version.h
       vymmodel.h
       vymview.h
+      winter.h
       warningdialog.h
       xlink.h
       xlinkitem.h
@@ -111,8 +154,7 @@ set ( vym_HDRS
 
 set ( vym_SRCS
       aboutdialog.cpp
-      adaptormodel.cpp
-      adaptorvym.cpp
+      taskfiltermodel.cpp
       animpoint.cpp
       attribute.cpp
       attributeitem.cpp
@@ -121,7 +163,7 @@ set ( vym_SRCS
       #   attributewidget.cpp
       branchitem.cpp
       branchobj.cpp
-      branchpropwindow.cpp
+      branchpropeditor.cpp
       bugagent.cpp
       command.cpp
       dockeditor.cpp
@@ -151,7 +193,9 @@ set ( vym_SRCS
       imageitem.cpp
       imageobj.cpp
       imports.cpp
+      lineeditdialog.cpp
       linkablemapobj.cpp
+      macros.cpp
       main.cpp
       mainwindow.cpp
       mapeditor.cpp
@@ -165,10 +209,10 @@ set ( vym_SRCS
       ornamentedobj.cpp
       parser.cpp
       process.cpp
+      scripteditor.cpp
       settings.cpp
       shortcuts.cpp
       showtextdialog.cpp
-      simplescripteditor.cpp
       slidecontrolwidget.cpp
       slideeditor.cpp
       slideitem.cpp
@@ -184,6 +228,7 @@ set ( vym_SRCS
       version.cpp
       vymmodel.cpp
       vymview.cpp
+      winter.cpp
       warningdialog.cpp
       xlink.cpp
       xlinkitem.cpp
@@ -197,12 +242,13 @@ set ( vym_SRCS
 
 set ( vym_UIS
       attributewidget.ui
-      branchpropwindow.ui
+      branchpropeditor.ui
       exporthtmldialog.ui
       extrainfodialog.ui
       editxlinkdialog.ui
       historywindow.ui
-      simplescripteditor.ui
+      lineeditdialog.ui
+      scripteditor.ui
       showtextdialog.ui
       warningdialog.ui
 	)
@@ -225,9 +271,7 @@ QT4_ADD_TRANSLATION(TRS ${vym_TRS})
 
 set ( vym_MOCS
       aboutdialog.h
-      adaptormodel.h
-      adaptorvym.h
-      branchpropwindow.h
+      branchpropeditor.h
       bugagent.h
       dockeditor.h
       downloadagent.h
@@ -241,13 +285,14 @@ set ( vym_MOCS
       headingeditor.h
       highlighter.h
       historywindow.h
+      lineeditdialog.h
       mainwindow.h
       mapeditor.h
       mysortfilterproxymodel.h
       noteeditor.h
       process.h
+      scripteditor.h
       showtextdialog.h
-      simplescripteditor.h
       slidecontrolwidget.h
       slideeditor.h
       slidemodel.h
@@ -259,16 +304,29 @@ set ( vym_MOCS
       texteditor.h
       vymmodel.h
       vymview.h
+      winter.h
       warningdialog.h
 	)
+if( NOT NO_DBUS )
+    add_definitions(-DVYM_DBUS)
+    list(APPEND vym_HDRS adaptormodel.h adaptorvym.h)
+    list(APPEND vym_SRCS adaptormodel.cpp adaptorvym.cpp)
+    list(APPEND vym_MOCS adaptormodel.h adaptorvym.h)
+endif( NOT NO_DBUS )
 QT4_WRAP_CPP(MOCS ${vym_MOCS})
+
+
 
 if( WIN32 )
 	set( vym_SRCS ${vym_SRCS} mkdtemp.cpp vym.rc )
 endif( WIN32 )
 
 add_executable ( vym WIN32 ${vym_SRCS} ${UIS} ${RSCS} ${TRS} ${MOCS} )
-target_link_libraries ( vym  ${QT_QTMAIN_LIBRARY} ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTDBUS_LIBRARY} ${QT_QTNETWORK_LIBRARY} ${QT_QTXML_LIBRARY} ${QT_QTSVG_LIBRARY} )
+target_link_libraries ( vym  ${QT_QTMAIN_LIBRARY} ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTNETWORK_LIBRARY} ${QT_QTXML_LIBRARY} ${QT_QTSVG_LIBRARY} )
+if( NOT NO_DBUS )
+    target_link_libraries( vym ${QT_QTDBUS_LIBRARY} )
+endif( NOT NO_DBUS )
+
 install( TARGETS vym RUNTIME DESTINATION bin )
 
 set( _installfolders demos exports flags icons macros scripts styles )

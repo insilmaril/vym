@@ -36,6 +36,19 @@
     </widget>
    </item>
    <item>
+    <widget class="QLabel" name="label">
+     <property name="accessibleDescription">
+      <string extracomment="Label for map title"/>
+     </property>
+     <property name="text">
+      <string>Title:</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLineEdit" name="mapTitleLE"/>
+   </item>
+   <item>
     <widget class="QLabel" name="textLabel1">
      <property name="text">
       <string>Author:</string>

@@ -24,6 +24,8 @@ public:
     bool treeEditorIsVisible();
     bool slideEditorIsVisible();
     void initFocus();
+    void nextSlide();
+    void previousSlide();
 
 public slots:
     void changeSelection (const QItemSelection &newSel, const QItemSelection &delSel);

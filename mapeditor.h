@@ -14,6 +14,7 @@
 
 
 class XLinkItem;
+class Winter;
 
 /*! \brief Main widget in vym to display and edit a map */
 
@@ -101,6 +102,10 @@ public:
 
     void updateMatrix();	    //! Sets transformation matrix with current rotation and zoom values
 
+// xmas egg
+protected:
+    Winter *winter;
+
 public:
     void print();		    //!< Print the map
     QRectF getTotalBBox();	    //!< Bounding box of all items in map
@@ -109,12 +114,14 @@ public:
     void setSmoothPixmap(bool);	    //!< Set or unset smoothing of pixmaps
 public slots:	
     void autoLayout();		    //!< Auto layout of map by using collision detection
+    void testFunction1();		//! just testing new stuff
+    void testFunction2();		//! just testing new stuff
+
 public:
     TreeItem *findMapItem (QPointF p,TreeItem *exclude);    //! find item in map at position p. Ignore item exclude 
 
     AttributeTable* attributeTable();	// FIXME-3 Not used, testing only
-    void testFunction1();		//! just testing new stuff
-    void testFunction2();		//! just testing new stuff
+    void toggleWinter();
 
     BranchItem* getBranchDirectAbove(BranchItem *bi);	//! get branch direct above bi (in TreeView) 
     BranchItem* getBranchAbove(BranchItem *bi);		//! get branch above bi (in TreeView) 

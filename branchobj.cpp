@@ -234,10 +234,6 @@ void BranchObj::moveBy (QPointF p)
     moveBy (p.x(), p.y());
 }
 
-void QGraphicsItem::paint(QPainter*, const QStyleOptionGraphicsItem*, QWidget*)
-{
-}
-
 void BranchObj::positionBBox() // FIXME-2 consider dimensions of frame (thickness, geometry, padding...
 {
     if (debug) qDebug()<<"        BO::positionBBox ("<<treeItem->getHeading()<<")"; //FIXME-8 

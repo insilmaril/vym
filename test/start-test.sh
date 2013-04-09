@@ -15,5 +15,5 @@ sleep 1
 
 $SRCDIR/vym-test.rb -d $VYMTESTDIR
 
-kill $PID
+kill -s 15 $PID
 echo To clean up, do: rm -rf $VYMTESTDIR

@@ -40,6 +40,14 @@ public:
 
     QStringList getCommands(); 
 
+protected:
+    QStringList findParameters(const QString &s);
+    bool nextParenthesisContents(
+            const QString &s, 
+            int &leftParenthesis, 
+            int &rightParenthesis, 
+            QString &contents);
+
 private:
     void initParser();
     void initAtom();

@@ -399,6 +399,9 @@ bool XLinkObj::isInClickBox (const QPointF &p)
 	case FullShowControls:
 	    // If Cx selected, check both ctrl points 
 	    if (ctrlPointInClickBox(p) >-1) b=true;
+
+            // Enable selecting the path, when a ctrl point is already selected
+            if (!b && curSelection!=Unselected && clickPath.intersects (r)) b=true;
 	    break;
 	case Part:    
 	    // not selected, only partially visible

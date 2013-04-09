@@ -2,8 +2,6 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QtDBus>
-
 
 #include "branchpropeditor.h"
 #include "extrainfodialog.h"
@@ -76,7 +74,7 @@ private:
     void setupRecentMapsMenu();
     void setupMacros();
     void setupToolbars();
-    int currentView() const;
+    VymView* currentView() const;
 public:	
     MapEditor* currentMapEditor() const;
     VymModel* currentModel() const;
@@ -104,7 +102,6 @@ public slots:
 private slots:	
     void fileSaveAs(const SaveMode &);
     void fileSaveAs();
-    void fileImportKDE3Bookmarks();
     void fileImportKDE4Bookmarks();
     void fileImportFirefoxBookmarks();
     void fileImportFreemind();
@@ -120,11 +117,11 @@ private slots:
     void fileExportCSV();
     void fileExportOrgMode();
     void fileExportLaTeX();
-    void fileExportKDE3Bookmarks();
     void fileExportKDE4Bookmarks();
     void fileExportTaskjuggler();
     void fileExportImpress();
     void fileExportLast();
+    bool closeTab(int i);
     bool fileCloseMap();
     void filePrint();
     bool fileExitVYM();
@@ -141,6 +138,7 @@ private slots:
 public slots:    
     void updateQueries (VymModel*);
 private:
+    bool openURL(const QString &url);
     void openTabs(QStringList);
 public slots:
     void editOpenURL();
@@ -156,13 +154,14 @@ private slots:
     void getBugzillaData();
     void getBugzillaDataSubtree();
     void editFATE2URL();
-    void openVymLinks(const QStringList &);
+    void openVymLinks(const QStringList &, bool background=false);
     void editVymLink();
     void editOpenMultipleVymLinks();
 public slots:
     void editHeading();
     void editHeadingFinished(VymModel *m);
-    void editOpenVymLink();
+    void editOpenVymLink(bool background=false);
+    void editOpenVymLinkBackground();
 private slots:
     void editDeleteVymLink();
     void editToggleHideExport();
@@ -293,11 +292,14 @@ public slots:
 private slots:
     void windowNextEditor();
     void windowPreviousEditor();
+    void nextSlide();
+    void previousSlide();
 
     void standardFlagChanged();
 
     void testFunction1();
     void testFunction2();
+    void toggleWinter();
     void toggleHideExport();
     void testCommand();
 
@@ -389,6 +391,7 @@ private:
     QAction* actionGetBugzillaDataSubtree;
     QAction* actionFATE2URL;
     QAction *actionOpenVymLink;
+    QAction *actionOpenVymLinkBackground;
     QAction *actionOpenMultipleVymLinks;
     QAction *actionEditVymLink;
     QAction *actionDeleteVymLink;
@@ -460,6 +463,8 @@ private:
     QAction *actionModModeCopy;
 
     QAction *actionToggleHideMode;
+
+    QAction *actionToggleWinter;
 
     QActionGroup *actionGroupFormatFrameTypes;
 

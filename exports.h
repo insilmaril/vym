@@ -21,22 +21,29 @@ public:
     ExportBase(VymModel *m);
     virtual ~ExportBase();
     virtual void init();
-    virtual void setDirectory (const QDir&);
-    virtual void setFile (const QString &);
-    virtual QString getFile ();
+    virtual void setDirPath (const QString&);
+    virtual QString getDirPath();
+    virtual void setFilePath (const QString&);
+    virtual QString getFilePath ();
+    virtual QString getMapName ();
     virtual void setModel (VymModel *m);
     virtual void setWindowTitle (const QString &);
     virtual void addFilter (const QString &);
-    virtual bool execDialog(const QString &overwriteWarning=QString());
+    virtual bool execDialog();
     virtual bool canceled();
+    void completeExport(QString args="");  //! set lastExport and send status message
+
 protected:  
     VymModel *model;
+    QString exportName;
     virtual QString getSectionString (TreeItem*);
 
     QString indent (const int &n, bool useBullet);
     QDir tmpDir;
-    QDir outDir;
-    QString outputFile;
+    QString dirPath;        // Path to dir  e.g. /tmp/vym-export/
+    QString defaultDirPath; // Default path
+    QString filePath;       // Path to file e.g. /tmp/vym-export/export.html
+    QString extension;      // Extension, e.g. .html
     QString indentPerDepth;
     int indentPerDepth2;
     QStringList bulletPoints;
@@ -67,20 +74,14 @@ public:
 class ExportCSV:public ExportBase
 {
 public:
-    virtual void doExport();
+    ExportCSV();
+    void doExport();
 };
 
 ///////////////////////////////////////////////////////////////////////
 class ExportXMLBase:public ExportBase
 {
 };
-
-///////////////////////////////////////////////////////////////////////
-class ExportKDE3Bookmarks:public ExportXMLBase
-{
-public:
-    virtual void doExport();
-};  
 
 ///////////////////////////////////////////////////////////////////////
 class ExportKDE4Bookmarks:public ExportXMLBase
@@ -104,6 +105,7 @@ public:
     ExportHTML();
     ExportHTML(VymModel *m);
     virtual void init();
+    virtual QString createTOC();
     virtual void doExport(bool useDialog=true);
 private:
     QString getBranchText(BranchItem *);
@@ -120,20 +122,6 @@ private:
 };  
 
 ///////////////////////////////////////////////////////////////////////
-class ExportTaskjuggler:public ExportXMLBase
-{
-public:
-    virtual void doExport();
-};  
-
-///////////////////////////////////////////////////////////////////////
-class ExportOrgMode:public ExportBase
-{
-public:
-    virtual void doExport();
-};  
-
-///////////////////////////////////////////////////////////////////////
 class ExportLaTeX:public ExportBase
 {
 public:
@@ -142,6 +130,14 @@ public:
     virtual void doExport();
 private:
     QHash <QString,QString> esc;
+};  
+
+///////////////////////////////////////////////////////////////////////
+class ExportOrgMode:public ExportBase
+{
+public:
+    ExportOrgMode();
+    virtual void doExport();
 };  
 
 ///////////////////////////////////////////////////////////////////////
@@ -167,4 +163,12 @@ private:
     QString sectionTemplate;
     QString sectionTemplateFile;
 };
+
+///////////////////////////////////////////////////////////////////////
+class ExportTaskjuggler:public ExportXMLBase
+{
+public:
+    virtual void doExport();
+};  
+
 #endif

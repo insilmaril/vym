@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>661</width>
-    <height>581</height>
+    <width>634</width>
+    <height>510</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -95,7 +95,7 @@
      <property name="minimumSize">
       <size>
        <width>0</width>
-       <height>150</height>
+       <height>222</height>
       </size>
      </property>
      <property name="maximumSize">
@@ -113,7 +113,7 @@
         <x>20</x>
         <y>20</y>
         <width>581</width>
-        <height>106</height>
+        <height>173</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">
@@ -126,7 +126,35 @@
           </sizepolicy>
          </property>
          <property name="text">
-          <string>Include image</string>
+          <string>Image of map</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="TOCButton">
+         <property name="text">
+          <string>Table of contents</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="taskFlagsButton">
+         <property name="text">
+          <string>Task flags</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="userFlagsButton">
+         <property name="text">
+          <string>General flags</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="numberingButton">
+         <property name="text">
+          <string>Number sections</string>
          </property>
         </widget>
        </item>
@@ -165,7 +193,7 @@
      <property name="minimumSize">
       <size>
        <width>0</width>
-       <height>70</height>
+       <height>100</height>
       </size>
      </property>
      <property name="title">

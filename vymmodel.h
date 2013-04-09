@@ -6,7 +6,10 @@
 #include <QPointF>
 #include <QTextCursor>
 
+#if defined(Q_OS_LINUX)
 #include "adaptormodel.h"
+#endif
+
 #include "file.h"
 #include "imageitem.h"
 #include "mapeditor.h"
@@ -38,6 +41,7 @@ class VymModel :  public TreeModel {
 ////////////////////////////////////////////
 private:
     QString version;	//!< version string saved in vym file
+    QString title;
     QString author;
     QString comment;
     QDate date;
@@ -283,6 +287,8 @@ public:
 public:
     void setVersion(const  QString &);
     QString getVersion();
+    void setTitle  (const QString &);
+    QString getTitle ();
     void setAuthor  (const QString &);
     QString getAuthor ();
     void setComment (const QString &);
@@ -519,16 +525,19 @@ public:
     QPointF exportSVG (QString fname="",bool askForName=true);
 
     /*! Export as XTML to directory */
-    void exportXML(QString dir="", bool askForName=true);
+    void exportXML(QString dir="", QString fname="", bool useDialog=true);    
 
     /*! Export as A&O report text to file */
     void exportAO (QString fname="",bool askForName=true);  
 
     /*! Export as ASCII text to file */
-    void exportASCII (QString fname="",bool askForName=true);  
+    void exportASCII (const QString &fname="",bool askForName=true);  
+
+    /*! Export as CSV text to file */
+    void exportCSV (const QString &fname="",bool askForName=true);  
 
     /*! Export as HTML to directory */
-    void exportHTML(const QString& dir="", bool useDialog=true);    
+    void exportHTML(const QString &dir="", const QString &fname="", bool useDialog=true);    
 
     /*! Export as OpenOfficeOrg presentation */
     void exportImpress (const QString &,const QString &);	
@@ -545,6 +554,9 @@ public:
 
     /*! Export as LaTeX */
     void exportLaTeX (const QString& dir="", bool useDialog=true);    
+
+    /*! Export as OrgMode input for emacs*/
+    void exportOrgMode (const QString& fname="", bool useDialog=true);    
 
 ////////////////////////////////////////////
 // View related

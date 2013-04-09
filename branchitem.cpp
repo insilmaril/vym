@@ -84,11 +84,11 @@ void BranchItem::insertBranch (int pos, BranchItem *branch)
 
 QString BranchItem::saveToDir (const QString &tmpdir,const QString &prefix, const QPointF& offset, QList <Link*> &tmpLinks ) //FIXME-3 Check if everything is saved...
 {
-    // Save uuid 
-    QString idAttr=attribut("uuid",uuid.toString());
-
     // Cloudy stuff can be hidden during exports
     if (hidden) return QString();
+
+    // Save uuid 
+    QString idAttr=attribut("uuid",uuid.toString());
 
     QString s,a;
     BranchObj *bo=(BranchObj*)mo;
@@ -274,6 +274,8 @@ bool BranchItem::hasScrolledParent(BranchItem *start)
     // Calls parents recursivly to
     // find out, if we are scrolled at all.
     // But ignore myself, just look at parents.
+
+    if (!start) start=this;
 
     if (this !=start && scrolled) return true;
 

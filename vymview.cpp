@@ -161,6 +161,16 @@ void VymView::initFocus()
     mapEditor->setFocus();
 }
 
+void VymView::nextSlide()
+{
+    slideEditor->nextSlide();
+}
+
+void VymView::previousSlide()
+{
+    slideEditor->previousSlide();
+}
+
 void VymView::changeSelection (const QItemSelection &newsel, const QItemSelection &desel)  
 {
     // Update note editor and heading editor // FIXME-3 improve this, evtl. move from mainwindow to here

@@ -95,7 +95,7 @@ class VymManager
 
   def find (name)
     list=running
-    puts "Running vyms: #{list.length}"
+    #puts "Running vyms: #{list.length}"
     if list.length==0
       return false
     end
@@ -109,7 +109,7 @@ class VymManager
       vym_main_obj.default_iface = "org.insilmaril.vym.main.adaptor"
 
       if vym_main_obj.getInstanceName[0]==name 
-        puts "Found instance named '#{name}': #{list.at(i)}"
+        #puts "Found instance named '#{name}': #{list.at(i)}"
         return Vym.new list.at(i)
       end  
     end

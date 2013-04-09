@@ -1,5 +1,4 @@
 #include <QApplication>
-#include <QtDBus/QDBusConnection>
 
 #include <iostream>
 using namespace std;
@@ -20,6 +19,10 @@ using namespace std;
 #include "taskmodel.h"
 #include "version.h"
 
+#if defined(VYM_DBUS)
+#include <sys/types.h>		// To retrieve PID for use in DBUS
+#endif
+
 #if defined(Q_OS_WIN32)
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
@@ -28,10 +31,15 @@ using namespace std;
 #include <unistd.h>
 #endif
 
-#include <sys/types.h>		// To retrieve PID for use in DBUS
+#if defined(VYM_DBUS)
+#include <QtDBus/QDBusConnection>
+#include <QtDBus/QDBusError>
+QDBusConnection dbusConnection=QDBusConnection::sessionBus();
+#endif
 
 QString vymName;
 QString vymVersion;
+QString vymUID;
 QString vymHome;
 QString vymBuildDate;
 QString vymCodeName;
@@ -71,24 +79,7 @@ bool testmode;			// Used to disable saving of autosave setting
 FlagRow *systemFlagsMaster; 
 FlagRow *standardFlagsMaster;	
 
-#if defined(Q_OS_WIN32)
-#include <Shlwapi.h>
-#pragma comment(lib, "Shlwapi.lib")
-    // Get path to settings ini file
-    QString getINIPath()
-    {
-        char module_name_[256];
-        GetModuleFileNameA(0, module_name_, sizeof(module_name_));
-        PathRemoveFileSpecA( module_name_ );	
-        QFileInfo filePath_;
-        filePath_ = QString::fromLocal8Bit(module_name_);      
-        
-        return filePath_.filePath() + "/vym.ini"; 
-    }
-Settings settings ("InSilmaril",getINIPath()); // Organization, INI path
-#else
 Settings settings ("InSilmaril","vym"); // Organization, Application name
-#endif
 
 QList <Command*> modelCommands;
 
@@ -125,8 +116,6 @@ void msgHandler (QtMsgType type, const char *msg)
 
 int main(int argc, char* argv[])
 {
-    //Q_INIT_RESOURCE (application);
-
     QApplication app(argc,argv);
 
     vymName=__VYM_NAME;
@@ -134,6 +123,7 @@ int main(int argc, char* argv[])
     vymBuildDate=__VYM_BUILD_DATE;
     vymCodeName=__VYM_CODENAME;
     vymHome=__VYM_HOME;
+    vymUID=settings.value("/system/uid", QUuid::createUuid().toString().mid(25,12) ).toString();
 
     // Install our own handler for messages
     qInstallMsgHandler(msgHandler);
@@ -198,15 +188,18 @@ int main(int argc, char* argv[])
     debug=options.isOn ("debug");
     testmode=options.isOn ("testmode");
 
-    // Register for DBUS
-    if (debug) cout << "PID="<<getpid()<<endl;
     QString pidString=QString ("%1").arg(getpid());
-    if (!QDBusConnection::sessionBus().registerService ("org.insilmaril.vym-"+pidString))
+    if (debug) qDebug()<< "PID="<<pidString;
+
+#if defined(VYM_DBUS)
+    // Register for DBUS
+    if (!dbusConnection.registerService ("org.insilmaril.vym-"+pidString))
     {
        fprintf(stderr, "%s\n",
 	    qPrintable(QDBusConnection::sessionBus().lastError().message()));        
         exit(1);
     }	
+#endif
 
     if (options.isOn ("name"))
 	vymInstanceName=options.getArg ("name");
