@@ -84,9 +84,9 @@ void FloatImageObj::setVisibility(bool v)
 
 void FloatImageObj::move (double x, double y)
 {
-    if (debug) qDebug()<<"FIO::move "<<x<<","<<y<<"  and posBBox";
+    if (debug) qDebug()<<"FIO::move "<<x<<","<<y;
     FloatObj::move(x,y);
-    icon->setPos (x+4,y+4);
+    icon->setPos (x+4,y+4); // FIXME-8 why this offset??
     positionBBox();
 }
 

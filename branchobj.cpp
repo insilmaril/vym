@@ -243,7 +243,7 @@ void BranchObj::positionBBox() // FIXME-2 consider dimensions of frame (thicknes
     if (debug) qDebug()<<"        BO::positionBBox ("<<treeItem->getHeading()<<")"; //FIXME-8 
     QPointF ap=getAbsPos();
     bbox.moveTopLeft (ap);
-    positionContents();   //FIXME-8
+    positionContents();   // this positions FIOs  //FIXME-8
 
     //Update links to other branches	
     XLinkObj *xlo;
@@ -295,6 +295,7 @@ void BranchObj::calcBBoxSize()
 	{
 	    fio=treeItem->getImageObjNum(i);
 	    rp=fio->getRelPos();
+            if (debug) qDebug()<<"  BO::calcBBoxSize rp="<<rp<<"fio (h,w)=("<<fio->width()<<","<<fio->height()<<")";
 	    if (incV)
 	    {
 		if (rp.y() < 0) 
@@ -319,6 +320,7 @@ void BranchObj::calcBBoxSize()
 		}
 	    }	    
 	}   
+        if (debug) qDebug()<<"  BO::calcBBoxSize leftPad="<<leftPad<<"rightPad="<<rightPad<<"topPad="<<topPad<<"botPad="<<botPad;
 	h+=topPad+botPad;
 	w+=leftPad+rightPad;
     }
@@ -358,7 +360,7 @@ void BranchObj::setDockPos()
 		childPos=QPointF (ornamentsBBox.bottomLeft().x()-frame->getPadding(),  bottomlineY);
 		parPos=QPointF   (ornamentsBBox.bottomRight().x(), bottomlineY);
 	    }
-            if (debug) qDebug()<<"### BO::setDockPos (Loc) to "<<childPos; //FIXME-8
+            if (debug) qDebug()<<"### BO::setDockPos (LeftOfCenter) to "<<childPos; //FIXME-8
 	} else
 	{
 	    if ( ((BranchItem*)treeItem)->getFrameIncludeChildren() )
@@ -370,10 +372,10 @@ void BranchObj::setDockPos()
 		childPos=QPointF(ornamentsBBox.bottomRight().x()+ frame->getPadding(), bottomlineY);
 		parPos=QPointF ( ornamentsBBox.bottomLeft().x(),  bottomlineY);
 	    }
-            if (debug) qDebug()<<"### BO::setDockPos (Roc) to "<<childPos; //FIXME-8
+            if (debug) qDebug()<<"### BO::setDockPos (RightOfCenter) to "<<childPos; //FIXME-8
 	}
     }
-    if (debug) qDebug()<<"### BO::setDockPos ornBBox: "<<ornamentsBBox<<"  bottomlineY"<<bottomlineY; //FIXME-8
+    //if (debug) qDebug()<<"### BO::setDockPos ornBBox: "<<ornamentsBBox<<"  bottomlineY"<<bottomlineY; //FIXME-8
 }
 
 void BranchObj::updateData()

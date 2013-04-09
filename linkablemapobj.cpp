@@ -473,7 +473,7 @@ void LinkableMapObj::updateLinkGeometry()
 	    break;
 	case Bottom:
 	    //bottomlineY=bbox.bottom()-1;  // draw link to bottom of box
-	    bottomlineY=bbox.bottom()-botPad;
+	    bottomlineY=bbox.bottom() - botPad;
 	    break;
     }
     

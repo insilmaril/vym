@@ -1196,6 +1196,7 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
 {
     // Debugging: Show position
     /*
+    */	
     if (debug && 
 	e->button() == Qt::LeftButton && 
 	e->modifiers() & Qt::ControlModifier )
@@ -1203,8 +1204,7 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
 	int v=horizontalScrollBar()->value();
 	int min=horizontalScrollBar()->minimum();
 	int max=horizontalScrollBar()->maximum();
-	qDebug()<<"    horSB="<<min<<" -> "<<v<<" <- "<<max;
-    */	
+	//qDebug()<<"    horSB="<<min<<" -> "<<v<<" <- "<<max;
 
     // Ignore right clicks or wile editing heading
     if (e->button() == Qt::RightButton || model->isSelectionBlocked() )
@@ -1499,10 +1499,10 @@ void MapEditor::moveObject ()
 	if (seli->getType()==TreeItem::Image)
 	{
 	    FloatObj *fio=(FloatImageObj*)lmosel;
-	    fio->move   (p.x() -movingObj_offset.x(), p.y()-movingObj_offset.y() );	
+	    fio->move   (p.x() - movingObj_offset.x(), p.y() - movingObj_offset.y() );	
 	    fio->setRelPos();
 	    fio->updateLinkGeometry(); //no need for reposition, if we update link here
-	    model->emitSelectionChanged();  // position has changed
+            model->emitSelectionChanged();  // position has changed
 
 	    // Relink float to new mapcenter or branch, if shift is pressed 
 	    // Only relink, if selection really has a new parent
