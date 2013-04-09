@@ -571,7 +571,6 @@ void MapEditor::print()
 
 QRectF MapEditor::getTotalBBox()    //FIXME-8 frames and xlinks missing, esp. cloud
 {				    
-    //FIXME-8 
     if (debug) qDebug()<<"ME::getTotalBBox begin";
     QRectF rt;
     BranchObj *bo;
@@ -586,7 +585,6 @@ QRectF MapEditor::getTotalBBox()    //FIXME-8 frames and xlinks missing, esp. cl
 	    bo=(BranchObj*)(cur->getLMO());
 	    if (bo && bo->isVisibleObj())
             {
-                //FIXME-8 
                 if (debug) qDebug()<<"  ME::getTotalBBox bo="<<cur->getHeading();
 
                 //FIXME-8 below again calls itself recursively!!
@@ -1539,7 +1537,7 @@ void MapEditor::moveObject ()
     {
 	if (seli->getType()==TreeItem::Image)
 	{
-	    FloatObj *fio=(FloatImageObj*)lmosel;
+	    FloatImageObj *fio=(FloatImageObj*)lmosel;
 	    fio->move   (p.x() - movingObj_offset.x(), p.y() - movingObj_offset.y() );	
 	    fio->setRelPos();
 	    fio->updateLinkGeometry(); //no need for reposition, if we update link here
@@ -1712,14 +1710,14 @@ void MapEditor::mouseReleaseEvent(QMouseEvent* e)
 	    FloatImageObj *fio=(FloatImageObj*)( ((MapItem*)seli)->getLMO());
 	    if(fio)
 	    {
-		// Moved FloatObj. Maybe we need to reposition
+		// Moved Image, we need to reposition
 		QString pold=qpointFToString(movingObj_orgRelPos);
 		QString pnow=qpointFToString(fio->getRelPos());
 		model->saveState(
 		    seli,
-		    "moveRel "+pold,
+		    "moveRel " + pold,
 		    seli,
-		    "moveRel "+pnow,
+		    "moveRel " + pnow,
 		    QString("Move %1 to relative position %2").arg(model->getObjectName(seli)).arg(pnow));
 
 		model->reposition();

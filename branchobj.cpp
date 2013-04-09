@@ -304,7 +304,6 @@ void BranchObj::calcBBoxSize()
                     y=-rp.y() + fio->height()/2 - ornamentsBBox.height()/2;
                     topPad=max(topPad, y);
                 }
-                qDebug()<<"**   rp.y="<<rp.y()<<"   fio.h/2="<<fio->height()/2<<" obox.h/2="<<ornamentsBBox.height()/2;
 	    }	    
 	    if (incH)
 	    {
@@ -318,7 +317,6 @@ void BranchObj::calcBBoxSize()
                     x=-rp.x() + fio->width()/2 - ornamentsBBox.width()/2;
                     leftPad=max(leftPad, x);
                 }
-                //qDebug()<<"**   rp.x="<<rp.x()<<"   fio.w/2="<<fio->width()/2<<" obox.w/2="<<ornamentsBBox.width()/2; //FIXME-8
 	    }	    
 	}   
         //if (debug) qDebug()<<"**BO::calcBBoxSize leftPad="<<leftPad<<"rightPad="<<rightPad<<"topPad="<<topPad<<"botPad="<<botPad; //FIXME-8
