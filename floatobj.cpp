@@ -32,15 +32,49 @@ void FloatObj::copy (FloatObj* other)
     setVisibility (other->visible);
 }
 
-void FloatObj::move (double x, double y)
+void FloatObj::move (double x, double y)    // FIXME-8 Changed to use centers for now
 {
     MapObj::move(x,y);
 }
 
 void FloatObj::move (QPointF p)
 {
-    MapObj::move (p);
+    FloatObj::move(p.x(), p.y());
 }
+
+void FloatObj::moveCenter (double x, double y)
+{
+    absPos=QPointF(x,y);
+    bbox.moveTo(x - bbox.width()/2, y - bbox.height()/2 );
+    clickPoly=QPolygonF (bbox);
+    if (debug) qDebug()<<"FO::moveCenter "<<x<<","<<y<<"  bbox="<<bbox;
+}
+
+void FloatObj::moveCenter2RelPos(double x, double y)  // FIXME-8 
+{
+    setRelPos (QPointF(x,y));
+    if (parObj)
+    {
+	QPointF p=parObj->getFloatRefPos();
+	moveCenter (p.x() + x, p.y() + y);
+    }
+}
+
+void FloatObj::move2RelPos(double x, double y)  // FIXME-8 overloaded to use floatRefPos instead of childRefPos
+{
+    setRelPos (QPointF(x,y));
+    if (parObj)
+    {
+	QPointF p=parObj->getFloatRefPos();
+	move (p.x() + x, p.y() + y);
+    }
+}
+
+void FloatObj::move2RelPos(QPointF p)           // FIXME-8 overloaded to use floatRefPos instead of childRefPos
+{
+    move2RelPos (p.x(), p.y());
+}
+
 
 void FloatObj::setDockPos()
 {
@@ -54,9 +88,12 @@ void FloatObj::reposition()
     {
         qDebug()<<"FO:reposition relPos="<<relPos; //FIXME-8
         if (parObj)
+        {
             qDebug()<<"    parObj->childRefPos="<<parObj->getChildRefPos();
+            qDebug()<<"    parObj->floatRefPos="<<parObj->getFloatRefPos();
+        }
     }
-    move2RelPos (relPos);
+    moveCenter2RelPos (relPos.x(), relPos.y());
     updateLinkGeometry();   
 }
 

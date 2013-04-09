@@ -20,6 +20,7 @@ public:
     virtual void load (const QImage &);
     virtual void setParObj (QGraphicsItem*);
     virtual void setVisibility(bool);	    // set vis. for w
+    virtual void moveCenter (double x,double y);
     virtual void move (double x,double y);
     virtual void move (QPointF);
     virtual void positionBBox();

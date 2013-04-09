@@ -30,6 +30,7 @@ void LinkableMapObj::init ()
     tmpParent=false;
     parPos=QPointF(0,0);
     childRefPos=QPointF(0,0);
+    floatRefPos=QPointF(0,0);
     link2ParPos=false;
     l=NULL;
     p=NULL;
@@ -568,6 +569,11 @@ void LinkableMapObj::updateLinkGeometry()
 QPointF LinkableMapObj::getChildRefPos()
 {
     return childRefPos;
+}
+
+QPointF LinkableMapObj::getFloatRefPos()
+{
+    return floatRefPos;
 }
 
 QPointF LinkableMapObj::getParPos()

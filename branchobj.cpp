@@ -252,7 +252,7 @@ void BranchObj::positionBBox() // FIXME-2 consider dimensions of frame (thicknes
 
 void BranchObj::calcBBoxSize()
 {
-    if (debug) qDebug()<<"  BO::calcBBoxSize ("<<treeItem->getHeading()<<")"; //FIXME-8 
+    if (debug) qDebug()<<"**BO::calcBBoxSize ("<<treeItem->getHeading()<<")"; //FIXME-8 
     QSizeF heading_r=heading->getSize();
     qreal heading_w=(qreal) heading_r.width() ;
     qreal heading_h=(qreal) heading_r.height() ;
@@ -291,32 +291,37 @@ void BranchObj::calcBBoxSize()
 	{
 	    fio=treeItem->getImageObjNum(i);
 	    rp=fio->getRelPos();
-            if (debug) qDebug()<<"  BO::calcBBoxSize rp="<<rp<<"fio (h,w)=("<<fio->width()<<","<<fio->height()<<")";
+            if (debug) qDebug()<<"**BO::calcBBoxSize rp="<<rp<<"fio (h,w)=("<<fio->width()<<","<<fio->height()<<")";
 	    if (incV)
 	    {
-		if (rp.y() < 0) 
-		    topPad=max (topPad,-rp.y()-h);
-		if (rp.y()+fio->height() > 0)
-		    botPad=max (botPad,rp.y()+fio->height());
+                qreal y;
+                if (rp.y() > 0)
+                {
+                    y=rp.y() + fio->height()/2 - ornamentsBBox.height()/2;
+                    botPad=max(botPad, y);
+                } else
+                {
+                    y=-rp.y() + fio->height()/2 - ornamentsBBox.height()/2;
+                    topPad=max(topPad, y);
+                }
+                qDebug()<<"**   rp.y="<<rp.y()<<"   fio.h/2="<<fio->height()/2<<" obox.h/2="<<ornamentsBBox.height()/2;
 	    }	    
 	    if (incH)
 	    {
-		if (orientation==LinkableMapObj::RightOfCenter)
-		{
-		    if (-rp.x()-w > 0) 
-			leftPad=max (leftPad,-rp.x()-w);
-		    if (rp.x()+fio->width() > 0)
-			rightPad=max (rightPad,rp.x()+fio->width());
-		} else
-		{
-		    if (rp.x()< 0) 
-			leftPad=max (leftPad,-rp.x());
-		    if (rp.x()+fio->width() > w)
-			rightPad=max (rightPad,rp.x()+fio->width()-w);
-		}
+                qreal x;
+                if (rp.x() > 0)
+                {
+                    x=rp.x() + fio->width()/2 - ornamentsBBox.width()/2;
+                    rightPad=max(rightPad, x);
+                } else
+                {
+                    x=-rp.x() + fio->width()/2 - ornamentsBBox.width()/2;
+                    leftPad=max(leftPad, x);
+                }
+                qDebug()<<"**   rp.x="<<rp.x()<<"   fio.w/2="<<fio->width()/2<<" obox.w/2="<<ornamentsBBox.width()/2;
 	    }	    
 	}   
-        if (debug) qDebug()<<"  BO::calcBBoxSize leftPad="<<leftPad<<"rightPad="<<rightPad<<"topPad="<<topPad<<"botPad="<<botPad;
+        if (debug) qDebug()<<"**BO::calcBBoxSize leftPad="<<leftPad<<"rightPad="<<rightPad<<"topPad="<<topPad<<"botPad="<<botPad;
 	h+=topPad+botPad;
 	w+=leftPad+rightPad;
     }
@@ -333,6 +338,10 @@ void BranchObj::calcBBoxSize()
 void BranchObj::setDockPos()
 {
     if (debug) qDebug()<<"### BO::setDockPos of "<<treeItem->getHeading(); //FIXME-8
+    floatRefPos=ornamentsBBox.center();
+
+    if (debug) qDebug()<<"### BO::setDockPos floatRefPos="<<floatRefPos; 
+    if (debug) qDebug()<<"### BO::setDockPos    rightPad="<<rightPad; 
     if (treeItem->getType()==TreeItem::MapCenter)
     {
 	// set childRefPos to middle of MapCenterObj
@@ -347,28 +356,30 @@ void BranchObj::setDockPos()
     {
 	if (orientation==LinkableMapObj::LeftOfCenter )
 	{
+            // Left of center
 	    if ( ((BranchItem*)treeItem)->getFrameIncludeChildren() )
 	    {
-		childRefPos=QPointF (ornamentsBBox.bottomLeft().x(),  bottomlineY);
+		childRefPos=QPointF (ornamentsBBox.bottomLeft().x() - leftPad,  bottomlineY);
 		parPos=QPointF   (bboxTotal.bottomRight().x()-frame->getPadding()/2, bottomlineY);
 	    } else	
 	    {
-		childRefPos=QPointF (ornamentsBBox.bottomLeft().x()-frame->getPadding(),  bottomlineY);
+		childRefPos=QPointF (ornamentsBBox.bottomLeft().x() - frame->getPadding(),  bottomlineY);
 		parPos=QPointF   (ornamentsBBox.bottomRight().x(), bottomlineY);
 	    }
-            if (debug) qDebug()<<"### BO::setDockPos (LeftOfCenter) to "<<childRefPos; //FIXME-8
+            if (debug) qDebug()<<"### BO::setDockPos childRefPos="<<childRefPos<<" left of center"; //FIXME-8
 	} else
 	{
+            // Right of center
 	    if ( ((BranchItem*)treeItem)->getFrameIncludeChildren() )
 	    {
-		childRefPos=QPointF(ornamentsBBox.bottomRight().x(), bottomlineY);
+		childRefPos=QPointF(ornamentsBBox.bottomRight().x() + rightPad , bottomlineY);
 		parPos=QPointF ( bboxTotal.bottomLeft().x()+frame->getPadding()/2,  bottomlineY);
 	    } else	
 	    {
-		childRefPos=QPointF(ornamentsBBox.bottomRight().x()+ frame->getPadding(), bottomlineY);
+		childRefPos=QPointF(ornamentsBBox.bottomRight().x() + frame->getPadding(), bottomlineY);
 		parPos=QPointF ( ornamentsBBox.bottomLeft().x(),  bottomlineY);
 	    }
-            if (debug) qDebug()<<"### BO::setDockPos (RightOfCenter) to "<<childRefPos; //FIXME-8
+            if (debug) qDebug()<<"### BO::setDockPos childRefPos="<<childRefPos<<" right of center"; 
 	}
     }
     //if (debug) qDebug()<<"### BO::setDockPos ornBBox: "<<ornamentsBBox<<"  bottomlineY"<<bottomlineY; //FIXME-8

@@ -56,7 +56,9 @@ void FloatImageObj::load (const QImage &img)
 {
     icon->load(QPixmap::fromImage(img));
     if (!icon->parentItem() ) icon->setParentItem(this);  // Add to scene initially
-    bbox.setSize (QSizeF(icon->boundingRect().width()+8, icon->boundingRect().height()+8));
+    bbox.setSize ( QSizeF(
+            icon->boundingRect().width()  + 8, 
+            icon->boundingRect().height() + 8));
     clickPoly=bbox;
     positionBBox();
 }
@@ -82,18 +84,25 @@ void FloatImageObj::setVisibility(bool v)
 	icon->setVisibility(false);
 }
 
+void FloatImageObj::moveCenter (double x, double y)
+{
+    FloatObj::moveCenter(x, y);
+    icon->setPos(bbox.topLeft() );
+    if (debug) qDebug()<<"FIO::moveCenter "<<x<<","<<y<<"  bbox="<<bbox;
+}
+
 void FloatImageObj::move (double x, double y)
 {
     if (debug) qDebug()<<"FIO::move "<<x<<","<<y;
     FloatObj::move(x,y);
-    icon->setPos (x+4,y+4); // FIXME-8 why this offset??
+    icon->setPos (x+4,y+4); // FIXME-8 why this offset?? (see bbox in FIO::load)
     positionBBox();
 }
 
 void FloatImageObj::move (QPointF p)
 {
-    if (debug) qDebug()<<"FIO::move "<<p<<" and calling OO::move";
-    OrnamentedObj::move (p.x(),p.y());
+    if (debug) qDebug()<<"FIO::move "<<p<<" and calling FIO::move";
+    FloatImageObj::move (p.x(),p.y());
 }
 
 void FloatImageObj::positionBBox()

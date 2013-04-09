@@ -93,6 +93,7 @@ public:
 
     virtual void setDockPos()=0;	    // sets childRefPos and parPos
     QPointF getChildRefPos();		    // returns pos where children dock
+    QPointF getFloatRefPos();		    // returns pos where floats dock
     QPointF getParPos();                    // returns pos where parents dock
     Orientation getOrientation();	    // get orientation
 
