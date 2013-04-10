@@ -57,8 +57,8 @@ void FloatImageObj::load (const QImage &img)
     icon->load(QPixmap::fromImage(img));
     if (!icon->parentItem() ) icon->setParentItem(this);  // Add to scene initially
     bbox.setSize ( QSizeF(
-            icon->boundingRect().width()  + 8, 
-            icon->boundingRect().height() + 8));
+            icon->boundingRect().width(), 
+            icon->boundingRect().height()));
     clickPoly=bbox;
     positionBBox();
 }
@@ -95,7 +95,7 @@ void FloatImageObj::move (double x, double y)
 {
     if (debug) qDebug()<<"FIO::move "<<x<<","<<y;
     FloatObj::move(x,y);
-    icon->setPos (x+4,y+4); // FIXME-8 why this offset?? (see bbox in FIO::load)
+    icon->setPos (x,y); 
     positionBBox();
 }
 
