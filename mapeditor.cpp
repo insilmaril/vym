@@ -1533,7 +1533,7 @@ void MapEditor::moveObject ()
 	if (seli->getType()==TreeItem::Image)
 	{
 	    FloatImageObj *fio=(FloatImageObj*)lmosel;
-	    fio->move   (p.x() - movingObj_offset.x(), p.y() - movingObj_offset.y() );	
+	    fio->moveCenter   (p.x() - movingObj_offset.x(), p.y() - movingObj_offset.y() );	
 	    fio->setRelPos();
 	    fio->updateLinkGeometry(); //no need for reposition, if we update link here
             model->emitSelectionChanged();  // position has changed
