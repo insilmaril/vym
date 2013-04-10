@@ -75,6 +75,26 @@ void FloatObj::move2RelPos(QPointF p)           // FIXME-8 overloaded to use flo
     move2RelPos (p.x(), p.y());
 }
 
+void FloatObj::setRelPos()
+{
+    if (parObj)
+	setRelPos (absPos - parObj->getFloatRefPos() );
+    else
+	qWarning()<<"FO::setRelPos parObj==0   this="<<this;
+}
+
+void FloatObj::setRelPos(const QPointF &p)
+{
+    if (parObj)
+    {	    
+	relPos=p;
+	useRelPos=true;
+	setOrientation();   // FIXME-8 not needed with centered floats...
+//	parObj->calcBBoxSize(); //FIXME-2 needed  for floatimages 
+//	requestReposition();
+    }	else
+	qWarning()<<"LMO::setRelPos (p)  parObj==0   this="<<this;
+}
 
 void FloatObj::setDockPos()
 {

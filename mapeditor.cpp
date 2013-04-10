@@ -1133,12 +1133,6 @@ void MapEditor::editHeadingFinished()
     //Autolayout to avoid overlapping branches with longer headings
     if (settings.value("/mainwindow/autoLayout/use","true")=="true")
 	autoLayout();
-
-/*
-    //FIXME testing
-    setFocus();
-    qDebug()<<"ME::editHF hasFocus="<<hasFocus();
-*/  
 }
 
 
@@ -1387,6 +1381,7 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
 	    {
 		lmo->setRelPos();   
 		movingObj_orgRelPos=lmo->getRelPos();
+                qDebug()<<"ME::start moving  offset="<<movingObj_offset<<"orgPos="<<movingObj_orgPos<<" orgRelPos="<<movingObj_orgRelPos;
 	    }
 
 	    // If modMode==copy, then we want to "move" the _new_ object around
@@ -1710,6 +1705,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent* e)
 	    FloatImageObj *fio=(FloatImageObj*)( ((MapItem*)seli)->getLMO());
 	    if(fio)
 	    {
+                qDebug()<<"ME::done  moving  offset="<<movingObj_offset<<"orgPos="<<movingObj_orgPos<<" orgRelPos="<<movingObj_orgRelPos<<"  relPos="<<fio->getRelPos();
 		// Moved Image, we need to reposition
 		QString pold=qpointFToString(movingObj_orgRelPos);
 		QString pnow=qpointFToString(fio->getRelPos());
@@ -1720,8 +1716,8 @@ void MapEditor::mouseReleaseEvent(QMouseEvent* e)
 		    "moveRel " + pnow,
 		    QString("Move %1 to relative position %2").arg(model->getObjectName(seli)).arg(pnow));
 
+                model->emitDataChanged(seli->parent()); // Parent of image has changed
 		model->reposition();
-		model->emitDataChanged (seli);
 	    }	
 	}
 
@@ -2099,6 +2095,7 @@ void MapEditor::updateData (const QModelIndex &sel)
     TreeItem *ti= static_cast<TreeItem*>(sel.internalPointer());
 
 /* testing
+*/
     qDebug() << "ME::updateData";
     if (!ti) 
     {
@@ -2107,7 +2104,6 @@ void MapEditor::updateData (const QModelIndex &sel)
     }
     qDebug() << "  ti="<<ti;
     qDebug() << "  h="<<ti->getHeading();
-*/
     
     if (ti && ti->isBranchLikeType())
     {

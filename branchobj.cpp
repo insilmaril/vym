@@ -385,19 +385,14 @@ void BranchObj::setDockPos()
 
 void BranchObj::updateData()
 {
-    bool changed=false;
     if (!treeItem)
     {
 	qWarning ("BranchObj::udpateHeading treeItem==NULL");
 	return;
     }
-    if (debug) qDebug()<<"BO::updateData  "<<treeItem->getHeadingDepth(); //FIXME-8
     QString s=treeItem->getHeading();
-    if (s!=heading->text())
-    {
-	heading->setText (s);
-	changed=true;
-    }
+    if (s!=heading->text()) heading->setText (s);
+
     QStringList TIactiveFlags=treeItem->activeStandardFlagNames();
 
     // Add missing standard flags active in TreeItem
@@ -407,17 +402,13 @@ void BranchObj::updateData()
 	{
 	    Flag *f=standardFlagsMaster->getFlag(TIactiveFlags.at(i));
 	    if (f) standardFlags->activate (f);
-	    changed=true;
 	}
     }
     // Remove standard flags no longer active in TreeItem
     QStringList BOactiveFlags=standardFlags->activeFlagNames();
     for (int i=0;i<BOactiveFlags.size();++i)
 	if (!TIactiveFlags.contains (BOactiveFlags.at(i)))
-	{
 	    standardFlags->deactivate (BOactiveFlags.at(i));
-	    changed=true;
-	}   
 
     // Add missing system flags active in TreeItem
     TIactiveFlags=treeItem->activeSystemFlagNames();
@@ -427,7 +418,6 @@ void BranchObj::updateData()
 	{
 	    Flag *f=systemFlagsMaster->getFlag(TIactiveFlags.at(i));
 	    if (f) systemFlags->activate (f);
-	    changed=true;
 	}
     }
     // Remove system flags no longer active in TreeItem
@@ -435,12 +425,10 @@ void BranchObj::updateData()
     for (int i=0;i<BOactiveFlags.size();++i)
     {
 	if (!TIactiveFlags.contains (BOactiveFlags.at(i)))
-	{
 	    systemFlags->deactivate (BOactiveFlags.at(i));
-	    changed=true;
-	}   
     }
-    if (changed) calcBBoxSize(); 
+    if (debug) qDebug()<<"BO::updateData  "<<treeItem->getHeadingDepth();
+    calcBBoxSize(); 
 }
 
 void BranchObj::setDefAttr (BranchModification mod, bool keepFrame)
