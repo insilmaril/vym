@@ -501,9 +501,9 @@ if (debug)
     QPointF pp; 
     if (parObj) pp=parObj->getChildRefPos();
     qDebug() << "BO::alignRelTo for "<<h;
-//    qDebug() << "    d="<<depth;
+    qDebug() << "    d="<<depth;
 //    qDebug() <<"  parO="<<parObj;
-//    qDebug() <<"   ref="<<ref;
+    qDebug() <<"   ref="<<ref;
     //qDebug() <<   "  bbox.tL="<<bboxTotal.topLeft();
 //    qDebug() <<"absPos="<<absPos
 //	<< "  relPos="<<relPos
@@ -520,15 +520,13 @@ if (debug)
 
     setOrientation();
 
+    // Align myself
     if (depth==0)
         move (getAbsPos()); // Trigger update of frames etc.
     else if(depth==1)
 	move2RelPos (getRelPos() );
     else if (depth>1)
     {
-	// Align myself depending on orientation and parent, but
-	// only if I am not a mainbranch or mapcenter itself
-
 	if (anim.isAnimated())
 	    move2RelPos(anim);
 	else
@@ -540,7 +538,7 @@ if (debug)
 			move (ref.x() - bbox.width(), ref.y() + (th-bbox.height())/2 );
 		    break;
 		    case LinkableMapObj::RightOfCenter:	
-			move (ref.x() , ref.y() + (th-bbox.height())/2  );
+			move (ref.x() , ref.y() - th/2 - bbox.height()/2 );
 		    break;
 		    default:
 			qWarning ("LMO::alignRelativeTo: oops, no orientation given for BO...");
@@ -549,6 +547,7 @@ if (debug)
 	}
     }	    
 
+    // Without ancestors I am done
     if ( ((BranchItem*)treeItem)->isScrolled() ) return;
 
     // Set reference point for alignment of children
@@ -560,23 +559,11 @@ if (debug)
 
     if (depth==1)
 	ref2.setY(absPos.y()-(bboxTotal.height()-bbox.height())/2 + frame->getPadding() );
+	//ref2.setY(bbox.center().y());
     else    
 	ref2.setY (ref.y() + frame->getPadding());  
+        //ref2.setY (ref.y() );
 
-    // Align the attribute children depending on reference point 
-    // on top like in TreeEditor
-    for (int i=0; i<treeItem->attributeCount(); ++i)
-    {	
-	if (!treeItem->getAttributeNum(i)->isHidden())
-	{
-	    BranchObj *bo=(BranchObj*)(treeItem->getAttributeNum(i)->getBranchObj());
-	    if (!bo) break;
-	    bo->alignRelativeTo (ref2,true);
-
-	    // append next branch below current one
-	    ref2.setY(ref2.y() + bo->getTotalBBox().height() );
-	}
-    }
     // Align the branch children depending on reference point 
     for (int i=0; i<treeItem->branchCount(); ++i)
     {	
