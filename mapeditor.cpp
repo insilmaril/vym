@@ -1381,7 +1381,6 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
 	    {
 		lmo->setRelPos();   
 		movingObj_orgRelPos=lmo->getRelPos();
-                qDebug()<<"ME::start moving  offset="<<movingObj_offset<<"orgPos="<<movingObj_orgPos<<" orgRelPos="<<movingObj_orgRelPos;
 	    }
 
 	    // If modMode==copy, then we want to "move" the _new_ object around
@@ -1705,7 +1704,6 @@ void MapEditor::mouseReleaseEvent(QMouseEvent* e)
 	    FloatImageObj *fio=(FloatImageObj*)( ((MapItem*)seli)->getLMO());
 	    if(fio)
 	    {
-                qDebug()<<"ME::done  moving  offset="<<movingObj_offset<<"orgPos="<<movingObj_orgPos<<" orgRelPos="<<movingObj_orgRelPos<<"  relPos="<<fio->getRelPos();
 		// Moved Image, we need to reposition
 		QString pold=qpointFToString(movingObj_orgRelPos);
 		QString pnow=qpointFToString(fio->getRelPos());
