@@ -427,7 +427,7 @@ void BranchObj::updateData()
 	if (!TIactiveFlags.contains (BOactiveFlags.at(i)))
 	    systemFlags->deactivate (BOactiveFlags.at(i));
     }
-    if (debug) qDebug()<<"BO::updateData  "<<treeItem->getHeadingDepth();
+    if (debug) qDebug()<<"BO::updateData  "<<treeItem->getHeadingDepth(); // FIXME-8
     calcBBoxSize(); 
 }
 
