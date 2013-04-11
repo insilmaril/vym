@@ -489,41 +489,43 @@ void BranchObj::alignRelativeTo (QPointF ref,bool alignSelf)
     
 // TODO testing
 /*
-*/
-if (debug)
-{
-    QString o;
-    switch (orientation)
-    {	
-	case UndefinedOrientation: o="UndefOrientation";
-	case LeftOfCenter: o="LeftOfCenter";
-	case RightOfCenter: o="RightOfCenter";
+    if (debug)
+    {
+        QString o;
+        switch (orientation)
+        {	
+            case UndefinedOrientation: o="UndefOrientation";
+            case LeftOfCenter: o="LeftOfCenter";
+            case RightOfCenter: o="RightOfCenter";
+        }
+            
+        QString h=QString (depth+1,' ');
+        h+=treeItem->getHeading();
+        h+=QString (15,' ');
+        h.truncate (15);
+        QPointF pp; 
+        if (parObj) pp=parObj->getChildRefPos();
+        qDebug() << "BO::alignRelTo for "<<h;
+        qDebug() << "    d="<<depth;
+        qDebug() <<"   ref="<<ref;
+        qDebug() <<"    th="<<th;
+        qDebug() <<"    ch="<<ch;
+        if (ch < th) qDebug()<<"   ch<th !";
+    //    qDebug() <<"  parO="<<parObj;
+        //qDebug() <<   "  bbox.tL="<<bboxTotal.topLeft();
+    //    qDebug() <<"absPos="<<absPos
+    //	<< "  relPos="<<relPos
+    //	<< "  parPos="<<pp
+    //	<< "  bbox="<<bbox
+    //	<< "  orient="<<o<<" "<<orientation;
+    //	<< "  alignSelf="<<alignSelf
+    //	<< "  scrolled="<<((BranchItem*)treeItem)->isScrolled()
+    //	<< "  pad="<<topPad<<","<<botPad<<","<<leftPad<<","<<rightPad
+    //	<< "  hidden="<<hidden
+    //	<< "  th="<<th
+        ;
     }
-	
-    QString h=QString (depth+1,' ');
-    h+=treeItem->getHeading();
-    h+=QString (15,' ');
-    h.truncate (15);
-    QPointF pp; 
-    if (parObj) pp=parObj->getChildRefPos();
-    qDebug() << "BO::alignRelTo for "<<h;
-    qDebug() << "    d="<<depth;
-    qDebug() <<"   ref="<<ref;
-    qDebug() <<"    ch="<<ch;
-//    qDebug() <<"  parO="<<parObj;
-    //qDebug() <<   "  bbox.tL="<<bboxTotal.topLeft();
-//    qDebug() <<"absPos="<<absPos
-//	<< "  relPos="<<relPos
-//	<< "  parPos="<<pp
-//	<< "  bbox="<<bbox
-//	<< "  orient="<<o<<" "<<orientation;
-//	<< "  alignSelf="<<alignSelf
-//	<< "  scrolled="<<((BranchItem*)treeItem)->isScrolled()
-//	<< "  pad="<<topPad<<","<<botPad<<","<<leftPad<<","<<rightPad
-//	<< "  hidden="<<hidden
-//	<< "  th="<<th
-    ;
-}
+*/
 
     setOrientation();
 
@@ -566,10 +568,15 @@ if (debug)
 	ref2.setX(childRefPos.x() + linkwidth);
 
     if (depth==1)
-	ref2.setY(absPos.y()-(bboxTotal.height()-bbox.height())/2 + frame->getPadding() );
-	//ref2.setY(bbox.center().y() );
+	ref2.setY (absPos.y() + (bbox.height() - ch)/2);
     else    
-	ref2.setY (ref.y() + frame->getPadding());  
+    {
+        if (ch > th)
+            ref2.setY (ref.y() + frame->getPadding());  
+        else
+            // Parent is bigger than all of childs, center childs vertically
+            ref2.setY (ref.y() + (th - ch)/2 );
+    }
 
     // Align the branch children depending on reference point 
     for (int i=0; i<treeItem->branchCount(); ++i)
