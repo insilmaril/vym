@@ -291,7 +291,7 @@ void BranchObj::calcBBoxSize()
 	{
 	    fio=treeItem->getImageObjNum(i);
 	    rp=fio->getRelPos();
-            if (debug) qDebug()<<"**BO::calcBBoxSize rp="<<rp<<"fio (h,w)=("<<fio->width()<<","<<fio->height()<<")";
+            if (debug) qDebug()<<"**BO::calcBBoxSize rp="<<rp<<"fio (h,w)=("<<fio->width()<<","<<fio->height()<<")"; // FIXME-8
 	    if (incV)
 	    {
                 qreal y;
@@ -325,8 +325,8 @@ void BranchObj::calcBBoxSize()
     }
 
     // Frame thickness  
-    w+=(frame->getBorderWidth() + frame->getPadding() ) * 2;
-    h+=(frame->getBorderWidth() + frame->getPadding() ) * 2;
+    w += frame->getTotalPadding() * 2;
+    h += frame->getTotalPadding() * 2;
     
     // Finally set size
     bbox.setSize (QSizeF (w,h));

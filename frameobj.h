@@ -24,6 +24,8 @@ public:
     void setRect (const QRectF &);   // set dimensions		
     void setPadding(const int &);
     int getPadding();
+    qreal getTotalPadding();         // padding + borderwidth + xsize (e.g. cloud)
+    qreal getXPadding();
     void setBorderWidth (const int &);
     int getBorderWidth ();
     FrameType getFrameType ();
@@ -49,6 +51,7 @@ private:
     QGraphicsPathItem *pathFrame;
     int padding;	    // distance text - frame
     int borderWidth;
+    qreal xsize;            //! Extra size caused e.g. by cloud geometry
     QColor penColor;
     QColor brushColor;
     bool includeChildren;

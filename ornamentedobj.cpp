@@ -184,10 +184,9 @@ bool OrnamentedObj::getFrameIncludeChildren()
 
 void OrnamentedObj::positionContents()
 {
-    //positionContents FIXME-8 need to consider frame in calcBBox and positionContents
     double x=absPos.x();
     double y=absPos.y();
-    double dp=frame->getPadding() + frame->getBorderWidth();
+    double dp=frame->getTotalPadding();
     double dp2=dp/2;
     double ox=leftPad + dp;
     double oy=topPad  + dp;
@@ -226,6 +225,8 @@ void OrnamentedObj::positionContents()
 	    bboxTotal.height());
 
     // Update frame
+    dp=frame->getXPadding();
+    dp2=dp / 2;
     frame->setZValue (dZ_FRAME_LOW);
     if (treeItem && 
 	treeItem->isBranchLikeType() && 
@@ -238,10 +239,10 @@ void OrnamentedObj::positionContents()
 	    bboxTotal.height()-dp));
      else
 	frame->setRect( QRectF(
-	    bbox.x()+dp2,
-	    bbox.y()+dp2,
-	    bbox.width()-dp,
-	    bbox.height()-dp));
+	    bbox.x() + dp,
+	    bbox.y() + dp,
+	    bbox.width() - 2 * dp,
+	    bbox.height() - 2 * dp));
 }
 
 void OrnamentedObj::move (double x, double y)
