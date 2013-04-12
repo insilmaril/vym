@@ -46,6 +46,7 @@ public:
     virtual QColor getFrameBrushColor ();
     virtual void setFrameIncludeChildren (bool);
     virtual bool getFrameIncludeChildren ();
+    virtual QRectF getOrnamentsBBox();
 
     virtual void positionContents();
     virtual void move   (double,double);

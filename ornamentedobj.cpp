@@ -182,6 +182,11 @@ bool OrnamentedObj::getFrameIncludeChildren()
     return frame->getFrameIncludeChildren ();
 }
 
+QRectF OrnamentedObj::getOrnamentsBBox()
+{
+    return ornamentsBBox;
+}
+
 void OrnamentedObj::positionContents()
 {
     double x=absPos.x();

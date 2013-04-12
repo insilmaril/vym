@@ -1096,7 +1096,7 @@ void MapEditor::editHeading()
 	lineEdit->setCursor(Qt::IBeamCursor);
 	lineEdit->setCursorPosition(1);
 
-	QPointF tl=bo->getAbsPos();
+	QPointF tl=bo->getOrnamentsBBox().topLeft();
 	QPointF br=tl + QPointF (230,30);
 	QRectF r (tl, br);
 	lineEdit->setGeometry(r.toRect() );
