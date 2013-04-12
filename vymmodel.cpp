@@ -2198,6 +2198,8 @@ void VymModel::cycleTaskStatus(bool reverse)
 	    
 	    // make sure task is still visible
 	    taskEditor->select (task);
+            emitDataChanged(selbi);
+            reposition();
 	}
     }
 }
