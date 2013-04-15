@@ -571,7 +571,6 @@ void MapEditor::print()
 
 QRectF MapEditor::getTotalBBox()    //FIXME-8 frames and xlinks missing, esp. cloud
 {				    
-    if (debug) qDebug()<<"ME::getTotalBBox begin";
     QRectF rt;
     BranchObj *bo;
     BranchItem *cur=NULL;
@@ -585,11 +584,6 @@ QRectF MapEditor::getTotalBBox()    //FIXME-8 frames and xlinks missing, esp. cl
 	    bo=(BranchObj*)(cur->getLMO());
 	    if (bo && bo->isVisibleObj())
             {
-                if (debug) qDebug()<<"  ME::getTotalBBox bo="<<cur->getHeading();
-
-                //FIXME-8 below again calls itself recursively!!
-		//bo->calcBBoxSizeWithChildren();
-
 		QRectF r1=bo->getBBox();
 
 		if (rt.isNull()) rt=r1;
@@ -607,7 +601,7 @@ QRectF MapEditor::getTotalBBox()    //FIXME-8 frames and xlinks missing, esp. cl
 	model->nextBranch(cur,prev,true);
     }
 
-    // get bboxes of XLinks	 //FIXME-8 missing
+    // get bboxes of XLinks	 //FIXME-3 missing
 
     // Update scene according to new bbox
     if (!sceneRect().contains (rt) )

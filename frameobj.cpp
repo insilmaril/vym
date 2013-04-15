@@ -126,7 +126,7 @@ void FrameObj::setRect(const QRectF &r)
 	    break;
 	case Ellipse:
 	    ellipseFrame->setRect (QRectF(bbox.x(),bbox.y(),bbox.width(),bbox.height() ));
-            xsize=max(bbox.width(), bbox.height()) / 4;
+            xsize=20;//max(bbox.width(), bbox.height()) / 4;
 	    break;
 
 	case Cloud:
