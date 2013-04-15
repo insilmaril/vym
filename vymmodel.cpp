@@ -2278,6 +2278,8 @@ bool VymModel::setTaskSleep(const QString &s)
                     selbi,
                     QString("setTaskSleep (%1)").arg(n),
                     QString("setTaskSleep (%1)").arg(n) );
+                emitDataChanged (selbi);
+                reposition();
                 return true;
             }
 	}
