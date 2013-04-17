@@ -4940,6 +4940,7 @@ void VymModel::updateNoteFlag()
 	else
 	    selti->setNoteObj (noteEditor->getNote());
 	emitDataChanged(selti);	
+        reposition();
     }
 }
 
