@@ -310,7 +310,7 @@ Main::Main(QWidget* parent, Qt::WFlags f) : QMainWindow(parent,f)
     setupToolbars();
     setupFlagActions();
 
-    if (options.isOn("shortcuts")) switchboard.printASCII();
+    if (options.isOn("shortcuts")) switchboard.printASCII();    //FIXME-2 needs to go to main.cpp with global switchboard and exit after listing
     if (options.isOn("shortcutsLaTeX")) switchboard.printLaTeX();
 
     if (settings.value( "/mainwindow/showTestMenu",false).toBool()) setupTestActions();
