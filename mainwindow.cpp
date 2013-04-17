@@ -736,6 +736,9 @@ void Main::setupAPI()
     c=new Command ("selectLatestAdded",Command::Any); 
     modelCommands.append(c);
 
+    c=new Command ("selectParent",Command::Branch); 
+    modelCommands.append(c);
+
     c=new Command ("setFlag",Command::TreeItem); 
     c->addPar (Command::String,false,"Name of flag");
     modelCommands.append(c);

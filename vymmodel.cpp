@@ -4224,6 +4224,10 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 		parser.setError (Aborted,"Could not select last image");
 	    select (ii);
 	/////////////////////////////////////////////////////////////////////
+	} else if (com=="selectParent")
+	{
+	    selectParent ();
+	/////////////////////////////////////////////////////////////////////
 	} else if (com=="selectLatestAdded")
 	{
 	    if (!latestAddedItem)
