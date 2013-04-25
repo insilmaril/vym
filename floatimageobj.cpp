@@ -4,7 +4,6 @@
 #include "floatimageobj.h"
 #include "branchobj.h"
 
-extern bool debug;  //FIXME-8
 
 /////////////////////////////////////////////////////////////////
 // FloatImageObj 
@@ -88,12 +87,10 @@ void FloatImageObj::moveCenter (double x, double y)
 {
     FloatObj::moveCenter(x, y);
     icon->setPos(bbox.topLeft() );
-    if (debug) qDebug()<<"FIO::moveCenter "<<x<<","<<y<<"  bbox="<<bbox;
 }
 
 void FloatImageObj::move (double x, double y)
 {
-    if (debug) qDebug()<<"FIO::move "<<x<<","<<y;
     FloatObj::move(x,y);
     icon->setPos (x,y); 
     positionBBox();
@@ -101,13 +98,11 @@ void FloatImageObj::move (double x, double y)
 
 void FloatImageObj::move (QPointF p)
 {
-    if (debug) qDebug()<<"FIO::move "<<p<<" and calling FIO::move";
     FloatImageObj::move (p.x(),p.y());
 }
 
 void FloatImageObj::positionBBox()
 {
-    if (debug) qDebug()<<"FIO::positionBBox";
     clickPoly=QPolygonF(bbox);
     setZValue (dZ_FLOATIMG);
 }

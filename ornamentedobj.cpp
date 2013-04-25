@@ -252,7 +252,6 @@ void OrnamentedObj::positionContents()
 
 void OrnamentedObj::move (double x, double y)
 {
-    if (debug) qDebug()<<"     OO::move and posBBox; updateLinkGeo"; // FIXME-8 
     MapObj::move (x,y);
     positionBBox();
 }

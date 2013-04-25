@@ -239,7 +239,7 @@ void BranchObj::positionBBox() // FIXME-2 consider dimensions of frame (thicknes
     if (debug) qDebug()<<"        BO::positionBBox ("<<treeItem->getHeading()<<")"; //FIXME-8 
     QPointF ap=getAbsPos();
     bbox.moveTopLeft (ap);
-    positionContents();   // this positions FIOs  //FIXME-8
+    positionContents();   // this positions FIOs  
 
     //Update links to other branches	
     XLinkObj *xlo;

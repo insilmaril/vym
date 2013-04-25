@@ -32,7 +32,7 @@ void FloatObj::copy (FloatObj* other)
     setVisibility (other->visible);
 }
 
-void FloatObj::move (double x, double y)    // FIXME-8 Changed to use centers for now
+void FloatObj::move (double x, double y)   
 {
     MapObj::move(x,y);
 }
@@ -50,7 +50,7 @@ void FloatObj::moveCenter (double x, double y)
     if (debug) qDebug()<<"FO::moveCenter "<<x<<","<<y<<"  bbox="<<bbox;
 }
 
-void FloatObj::moveCenter2RelPos(double x, double y)  // FIXME-8 
+void FloatObj::moveCenter2RelPos(double x, double y)  
 {
     setRelPos (QPointF(x,y));
     if (parObj)
@@ -60,7 +60,7 @@ void FloatObj::moveCenter2RelPos(double x, double y)  // FIXME-8
     }
 }
 
-void FloatObj::move2RelPos(double x, double y)  // FIXME-8 overloaded to use floatRefPos instead of childRefPos
+void FloatObj::move2RelPos(double x, double y)  // overloaded to use floatRefPos instead of childRefPos
 {
     setRelPos (QPointF(x,y));
     if (parObj)
@@ -70,7 +70,7 @@ void FloatObj::move2RelPos(double x, double y)  // FIXME-8 overloaded to use flo
     }
 }
 
-void FloatObj::move2RelPos(QPointF p)           // FIXME-8 overloaded to use floatRefPos instead of childRefPos
+void FloatObj::move2RelPos(QPointF p)           // overloaded to use floatRefPos instead of childRefPos
 {
     move2RelPos (p.x(), p.y());
 }
@@ -90,7 +90,7 @@ void FloatObj::setRelPos(const QPointF &p)
 	relPos=p;
 	useRelPos=true;
 	setOrientation();   // FIXME-8 not needed with centered floats...
-//	parObj->calcBBoxSize(); //FIXME-2 needed  for floatimages 
+//	parObj->calcBBoxSize(); //FIXME-8 needed  for floatimages 
 //	requestReposition();
     }	else
 	qWarning()<<"LMO::setRelPos (p)  parObj==0   this="<<this;

@@ -86,7 +86,6 @@ void MapObj::move (QPointF p)
 {
     absPos=p;
     bbox.moveTo (p);
-    //setPos (p); //FIXME-8 new: Use rel positioninf of graphicsitems
     clickPoly=QPolygonF (bbox);
 }
 
@@ -94,8 +93,6 @@ void MapObj::moveBy (double x, double y)
 {
     QPointF v(x,y);
     MapObj::move (absPos + v );
-    // MapObj::move (pos() + v ); //FIXME-8
-    //bbox.moveTo (bbox.x()+x,bbox.y()+y);
     bbox.moveTo (bbox.topLeft() + v);
     clickPoly.translate (v);
 }
