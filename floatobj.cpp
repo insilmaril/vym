@@ -89,9 +89,6 @@ void FloatObj::setRelPos(const QPointF &p)
     {	    
 	relPos=p;
 	useRelPos=true;
-	setOrientation();   // FIXME-8 not needed with centered floats...
-//	parObj->calcBBoxSize(); //FIXME-8 needed  for floatimages 
-//	requestReposition();
     }	else
 	qWarning()<<"LMO::setRelPos (p)  parObj==0   this="<<this;
 }
@@ -99,14 +96,12 @@ void FloatObj::setRelPos(const QPointF &p)
 void FloatObj::setDockPos()
 {
     parPos=absPos;
-    childRefPos=absPos; // FIXME-8  better floatRefPos? used at all?
 }
 
 void FloatObj::reposition()
 {
     if (debug) 
     {
-        qDebug()<<"FO:reposition relPos="<<relPos; //FIXME-8
         if (parObj)
         {
             qDebug()<<"    parObj->childRefPos="<<parObj->getChildRefPos();

@@ -594,41 +594,30 @@ void BranchObj::alignRelativeTo (QPointF ref,bool alignSelf)
 void BranchObj::reposition()
 {   
 /* TODO testing only
-*/	
-    if (debug)  //FIXME-8
+    if (debug) 
     {
         if (!treeItem->getHeading().isEmpty())
             qDebug()<< "  BO::reposition  a) d="<<treeItem->depth()<<" "<<treeItem->getHeading();
         else    
             qDebug()<< "  BO::reposition  a) d="<<treeItem->depth()<<" ???";
     }
+*/	
 
     if (treeItem->depth()==0)
     {
 	// only calculate the sizes once. If the deepest LMO 
 	// changes its height,
 	// all upper LMOs have to change, too.
-	calcBBoxSizeWithChildren(); //FIXME-8 this one is still required :-(
-	updateLinkGeometry();	// This update is needed if the scene is resized 
-                    		// due to excessive moving of a FIO     //FIXME-8 really needed?
+	calcBBoxSizeWithChildren(); 
 
 	alignRelativeTo ( QPointF (absPos.x(),
 	    absPos.y()-(bboxTotal.height()-bbox.height())/2) );	
-	    //absPos.y() ) );
-	//positionBBox();	// Reposition bbox and contents //FIXME-8
     } else
     {
 	// This is only important for moving branches:
 	// For editing a branch it isn't called...
 	alignRelativeTo ( QPointF (absPos.x(),
 			    absPos.y()-(bboxTotal.height()-bbox.height())/2) );	
-    }
-    if (debug) //FIXME-8
-    {
-        if (!treeItem->getHeading().isEmpty())
-            qDebug()<< "  BO::reposition  b) "<<treeItem->depth()<<" "<<treeItem->getHeading();
-        else    
-            qDebug()<< "  BO::reposition  b) ???";
     }
 }
 
