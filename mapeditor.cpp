@@ -1300,7 +1300,7 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
 		    mainWindow->editOpenVymLink(false);
 		// tabWidget may change, better return now
 		// before segfaulting...
-	    } else if (sysFlagName=="system-note")	//FIXME-2 does not work always???
+	    } else if (sysFlagName=="system-note")	
 		mainWindow->windowToggleNoteEditor();
 	    else if (sysFlagName=="hideInExport")	    
 		model->toggleHideExport();
@@ -1620,7 +1620,7 @@ void MapEditor::moveObject ()
 	MapObj* mosel=((MapItem*)seli)->getMO();
 	if (mosel) 
 	{
-	    mosel->move   (p-movingObj_offset);	// FIXME-2 Missing savestate 
+	    mosel->move   (p-movingObj_offset);	// FIXME-3 Missing savestate 
 	    model->emitSelectionChanged();
 	}
     } else
