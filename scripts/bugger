@@ -1,13 +1,9 @@
 #!/usr/bin/env ruby
 
-
-require 'rubygems'
 require 'bicho'
 
+server = Bicho::Client.new('https://bugzilla.novell.com')
 ARGV.each do |id| 
-  puts "id=" + id
-
-  server = Bicho::Client.new('https://bugzilla.novell.com')
   server.get_bugs(id).each do |bug|  
     puts "#{id}:short_desc:\"#{bug.summary}\""
     puts "#{id}:priority:\"#{bug.priority}\""
