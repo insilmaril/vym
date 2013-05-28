@@ -7,7 +7,7 @@
 #include <unistd.h>
 #endif
 
-#ifdef Q_OS_LINUX
+#if defined(VYM_DBUS)
 #include "adaptorvym.h"
 #endif
 
@@ -245,35 +245,26 @@ Main::Main(QWidget* parent, Qt::WFlags f) : QMainWindow(parent,f)
 
 	// application to open URLs
 	p="/mainwindow/readerURL";
-	#if defined(Q_OS_LINUX)
-	    s=settings.value (p,"xdg-open").toString();
+	#if defined(Q_OS_WIN)
+	    // Assume that system has been set up so that
+	    // Explorer automagically opens up the URL
+	    // in the user's preferred browser.
+	    s=settings.value (p,"explorer").toString();
+	#elif defined(Q_OS_MACX)
+	    s=settings.value (p,"/usr/bin/open").toString();
 	#else
-	    #if defined(Q_OS_MACX)
-		s=settings.value (p,"/usr/bin/open").toString();
-
-	    #else
-		#if defined(Q_OS_WIN32)
-		    // Assume that system has been set up so that
-		    // Explorer automagically opens up the URL
-		    // in the user's preferred browser.
-		    s=settings.value (p,"explorer").toString();
-		#else
-		    s=settings.value (p,"mozilla").toString();
-		#endif
-	    #endif
+	    s=settings.value (p,"xdg-open").toString();
 	#endif
 	settings.setValue( p,s);
 
 	// application to open PDFs
 	p="/mainwindow/readerPDF";
-	#if defined(Q_OS_LINUX)
-	    s=settings.value (p,"xdg-open").toString();
+	#if defined(Q_OS_WIN)
+	    s=settings.value (p,"explorer").toString();
+	#elif defined(Q_OS_MACX)
+	    s=settings.value (p,"/usr/bin/open").toString();
 	#else
-	    #if defined(Q_OS_MACX)
-		s=settings.value (p,"/usr/bin/open").toString();
-	    #else
-		s=settings.value (p,"explorer").toString();
-	    #endif
+	    s=settings.value (p,"xdg-open").toString();
 	#endif
 	settings.setValue( p,s);
 
