@@ -2694,7 +2694,6 @@ void Main::setupToolbars()
     referencesToolbar->addAction (actionOpenURL);
     referencesToolbar->addAction (actionURLNew);
     referencesToolbar->addAction (actionOpenVymLink);
-    referencesToolbar->addAction (actionOpenVymLinkBackground);
     referencesToolbar->addAction (actionEditVymLink);
 
     // Format and colors
