@@ -7,7 +7,7 @@
 #include <unistd.h>
 #endif
 
-#ifdef Q_OS_LINUX
+#if defined(VYM_DBUS)
 #include "adaptorvym.h"
 #endif
 

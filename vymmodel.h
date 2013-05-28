@@ -6,7 +6,7 @@
 #include <QPointF>
 #include <QTextCursor>
 
-#if defined(Q_OS_LINUX)
+#if defined(VYM_DBUS)
 #include "adaptormodel.h"
 #endif
 
