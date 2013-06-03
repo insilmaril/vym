@@ -34,8 +34,12 @@ public:
     void deleteTask (Task* t);
     void recalcPriorities();
 
+    void setShowParentsLevel (uint i);
+    uint getShowParentsLevel ();
+
 private:
     QList <Task*> tasks;
+    uint showParentsLevel;
  };
 
 #endif
