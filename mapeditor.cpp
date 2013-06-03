@@ -1842,6 +1842,7 @@ void MapEditor::mouseDoubleClickEvent(QMouseEvent* e)
 	LinkableMapObj *lmo;
 	if (ti) 
 	{   
+            if (state==EditingHeading) editHeadingFinished();
 	    model->select (ti);
 	    BranchItem* selbi=model->getSelectedBranch();
 	    if (selbi)
