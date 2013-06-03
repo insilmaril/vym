@@ -256,6 +256,7 @@ public:
 
 public slots:
     void settingsAutosaveTime();
+    void settingsTaskShowParentsLevel();
     void settingsAutoLayoutToggle();
     void settingsWriteBackupFileToggle();
     void settingsToggleAnimation();
@@ -494,6 +495,7 @@ private:
     QAction* actionSettingsUseHideExport;
     QAction* actionSettingsAutosaveToggle;
     QAction* actionSettingsAutosaveTime;
+    QAction* actionSettingsTaskShowParentsLevel;
     QAction* actionSettingsAutoLayoutToggle;
     QAction* actionSettingsWriteBackupFile;
     QAction* actionSettingsUseAnimation;

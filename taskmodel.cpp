@@ -12,6 +12,7 @@ extern QString flagsPath;
 TaskModel::TaskModel(QObject *parent)
     : QAbstractTableModel(parent)
 {
+    showParentsLevel = 0;
 }
 
 QModelIndex TaskModel::index (Task* t)
@@ -78,7 +79,23 @@ QVariant TaskModel::data(const QModelIndex &index, int role) const
         else if (index.column() == 5)
 	    return bi->getModel()->getMapName();
         else if (index.column() == 6)
-            return tasks.at(index.row())->getName();
+        {
+            BranchItem *bi = tasks.at(index.row())->getBranch();
+            QString s;
+            if (bi)
+                s = bi->getHeading(); 
+            else
+                qDebug()<<"bi == NULL";
+
+            int l = showParentsLevel;
+            while ( l > 0 && bi->depth() >0 )
+            {
+                bi = bi->parentBranch();
+                if (bi) s = bi->getHeading() + " -> " + s;
+                l--;
+            }
+            return s;
+        }
     } else if (role == Qt::DecorationRole && index.column() == 1)
     {
         return QIcon( flagsPath + "flag-" + t->getIconString() + ".png");
@@ -289,5 +306,16 @@ void TaskModel::recalcPriorities()
     }
 
     emit (layoutChanged() );
+}
+
+void TaskModel::setShowParentsLevel(uint i)
+{
+    showParentsLevel = i;
+    recalcPriorities(); // Triggers update of view
+}
+
+uint TaskModel::getShowParentsLevel()
+{
+    return showParentsLevel;
 }
 

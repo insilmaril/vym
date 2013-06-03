@@ -96,12 +96,19 @@ TaskEditor::TaskEditor(QWidget *)
 	if (settings.contains (s) )
 	    view->setColumnWidth (i, settings.value(s, 100).toInt() );
     }
+
+    // Initialize display of parents of a task
+    bool ok;
+    int i=settings.value ("/taskeditor/showParentsLevel", 0).toInt(&ok);
+    if (ok) taskModel->setShowParentsLevel(i);
+
 }
 
 TaskEditor::~TaskEditor()
 {
     settings.setValue ("/taskeditor/filterMap",actionToggleFilterMap->isChecked());
     settings.setValue ("/taskeditor/filterActive",actionToggleFilterActive->isChecked());
+    settings.setValue ("/taskeditor/showParentsLevel",taskModel->getShowParentsLevel() );
     for (int i=0; i<7; i++)
 	settings.setValue (QString("/taskeditor/columnWidth/%1").arg(i),view->columnWidth(i) );
 }

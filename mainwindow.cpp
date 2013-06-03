@@ -35,6 +35,7 @@
 #include "noteeditor.h"
 #include "task.h"
 #include "taskeditor.h"
+#include "taskmodel.h"
 #include "treeeditor.h"
 #include "warningdialog.h"
 #include "xlinkitem.h"
@@ -67,6 +68,7 @@ extern ScriptEditor  *scriptEditor;
 extern Main *mainWindow;
 extern FindResultWidget *findResultWidget;  
 extern TaskEditor *taskEditor;
+extern TaskModel *taskModel;
 extern Macros macros;
 extern QString tmpVymDir;
 extern QString clipboardDir;
@@ -2383,6 +2385,11 @@ void Main::setupSettingsActions()
 
     settingsMenu->addSeparator();
 
+    a = new QAction( tr( "Task editor: Set number of parents","Settings action"), this);
+    connect( a, SIGNAL( triggered() ), this, SLOT( settingsTaskShowParentsLevel() ) );
+    settingsMenu->addAction (a);
+    actionSettingsTaskShowParentsLevel=a;
+
     a = new QAction( tr( "Animation","Settings action"), this);
     a->setCheckable(true);
     a->setChecked (settings.value("/animation/use",true).toBool() );
@@ -2396,7 +2403,6 @@ void Main::setupSettingsActions()
     connect( a, SIGNAL( triggered() ), this, SLOT( settingsAutoLayoutToggle() ) );
     settingsMenu->addAction (a);
     actionSettingsAutoLayoutToggle=a;
-
 }
 
 // Test Actions
@@ -4705,6 +4711,17 @@ void Main::settingsAutosaveTime()
 	tr("Number of seconds before autosave:"), settings.value("/mainwindow/autosave/ms").toInt() / 1000, 10, 60000, 1, &ok);
     if (ok)
 	settings.setValue ("/mainwindow/autosave/ms",i * 1000);
+}
+
+void Main::settingsTaskShowParentsLevel()	    
+{
+    bool ok;
+    int i = QInputDialog::getInteger(
+	this, 
+	"QInputDialog::getInteger()",
+	tr("Number of parents shown for a task:"), taskModel->getShowParentsLevel(), 0, 10, 0, &ok);
+    if (ok) taskModel->setShowParentsLevel(i);
+
 }
 
 void Main::settingsAutoLayoutToggle()
