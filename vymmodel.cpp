@@ -3043,7 +3043,7 @@ void VymModel::deleteKeepChildren(bool saveStateFlag)
     if (selbi)
     {
 	// Don't use this on mapcenter
-	if (selbi->depth()<2) return;
+	if (selbi->depth()<1) return;
 
 	pi=(BranchItem*)(selbi->parent());
 	// Check if we have children at all to keep
