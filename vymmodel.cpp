@@ -3305,7 +3305,7 @@ void VymModel::growSelectionSize()  //FIXME-3 Also for heading in BranchItem?
     ImageItem *selii=getSelectedImage();
     if (selii)
     {
-	qreal f=0.2;
+	qreal f=0.05;
 	qreal sx=selii->getScaleX();
 	qreal sy=selii->getScaleY();
 	setScale (sx+f,sy+f);
@@ -3317,7 +3317,7 @@ void VymModel::shrinkSelectionSize()
     ImageItem *selii=getSelectedImage();
     if (selii)
     {
-	qreal f=0.2;
+	qreal f=0.05;
 	qreal sx=selii->getScaleX();
 	qreal sy=selii->getScaleY();
 	setScale (sx-f,sy-f);
