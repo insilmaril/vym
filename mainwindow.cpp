@@ -882,6 +882,9 @@ void Main::setupAPI()
     c=new Command ("unscrollChildren",Command::Branch); 
     modelCommands.append(c);
 
+    c=new Command ("unselectAll",Command::Any); 
+    modelCommands.append(c);
+
     c=new Command ("unsetFlag",Command::Branch); 
     c->addPar (Command::String,false,"Name of flag to unset");
     modelCommands.append(c);

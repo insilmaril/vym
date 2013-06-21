@@ -4435,6 +4435,10 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	{
 	    unscrollChildren ();
 	/////////////////////////////////////////////////////////////////////
+	} else if (com=="unselectAll")
+	{
+	    unselectAll();
+	/////////////////////////////////////////////////////////////////////
 	} else if (com=="unsetFlag")
 	{
 	    s=parser.parString(ok,0);
