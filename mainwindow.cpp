@@ -1689,6 +1689,12 @@ void Main::setupSelectActions()
     actionListMap.append(a);
     actionFind=a;
 
+    a = new QAction( QPixmap(iconPath+"find.png"), tr( "Find...","Edit menu"), this);
+    a->setShortcut (Qt::Key_Slash );	
+    switchboard.addConnection(selectMenu, a,tr("Edit","Shortcut group"));
+    connect( a, SIGNAL( triggered() ), this, SLOT( editOpenFindResultWidget() ) );
+    actionListMap.append(a);
+
     a = new QAction( tr( "Find duplicate URLs","Edit menu"), this);
     a->setShortcut (Qt::SHIFT + Qt::Key_F);	
     switchboard.addConnection(a,tr("Edit","Shortcut group"));
