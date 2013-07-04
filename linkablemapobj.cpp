@@ -29,7 +29,8 @@ void LinkableMapObj::init ()
     parObjTmpBuf=NULL;
     tmpParent=false;
     parPos=QPointF(0,0);
-    childPos=QPointF(0,0);
+    childRefPos=QPointF(0,0);
+    floatRefPos=QPointF(0,0);
     link2ParPos=false;
     l=NULL;
     p=NULL;
@@ -131,7 +132,7 @@ bool LinkableMapObj::getUseRelPos ()
 void LinkableMapObj::setRelPos()
 {
     if (parObj)
-	setRelPos (absPos - parObj->getChildPos() );
+	setRelPos (absPos - parObj->getChildRefPos() );
     else
 	qWarning()<<"LMO::setRelPos parObj==0   this="<<this;
 }
@@ -143,8 +144,6 @@ void LinkableMapObj::setRelPos(const QPointF &p)
 	relPos=p;
 	useRelPos=true;
 	setOrientation();
-//	parObj->calcBBoxSize(); //FIXME-2 needed  for floatimages 
-//	requestReposition();
     }	else
 	qWarning()<<"LMO::setRelPos (p)  parObj==0   this="<<this;
 }
@@ -358,7 +357,7 @@ void LinkableMapObj::setOrientation()
 	    else
 		orientation=RightOfCenter;
 	}  else
-	    if (absPos.x() < QPointF(parObj->getChildPos() ).x() )
+	    if (absPos.x() < QPointF(parObj->getChildRefPos() ).x() )
 		orientation=LeftOfCenter; 
 	    else
 		orientation=RightOfCenter;
@@ -436,13 +435,13 @@ void LinkableMapObj::updateVisibility()
 void LinkableMapObj::updateLinkGeometry()
 {
     // needs:
-    //	childPos of parent
+    //	childRefPos of parent
     //	orient   of parent
     //	style
     // 
     // sets:
     //	orientation
-    //	childPos    (by calling setDockPos())
+    //	childRefPos    (by calling setDockPos())
     //	parPos	    (by calling setDockPos())
     //  bottomlineY
     //	drawing of the link itself
@@ -450,14 +449,14 @@ void LinkableMapObj::updateLinkGeometry()
     // updateLinkGeometry is called from move, but called from constructor we don't
     // have parents yet...
 
-    //qDebug()<<"LMO::updateLinkGeometry: "<<treeItem->getHeading()<<"  "<<style<<"  parObj="<<parObj;
+    if (debug) qDebug()<<"LMO::updateLinkGeometry: "<<treeItem->getHeading()<<"  "<<style<<"  parObj="<<parObj; //FIXME-8
     if (!parObj)        {
-	// If I am a mapcenter, set childPos to middle of MapCenterObj // FIXME-4 isn't that also done already in BO::setDockPos ?
+	// If I am a mapcenter, set childRefPos to middle of MapCenterObj // FIXME-8 isn't that also done already in BO::setDockPos ?
 
 	QRectF br=clickPoly.boundingRect();
-	childPos.setX( br.topLeft().x() + br.width()/2 );
-	childPos.setY( br.topLeft().y() + br.height()/2 );
-	parPos=childPos;	
+	childRefPos.setX( br.topLeft().x() + br.width()/2 );
+	childRefPos.setY( br.topLeft().y() + br.height()/2 );
+	parPos=childRefPos;	
 	// Redraw links to children
 	for (int i=0; i<treeItem->branchCount(); ++i)
 	    treeItem->getBranchObjNum(i)->updateLinkGeometry();
@@ -473,15 +472,15 @@ void LinkableMapObj::updateLinkGeometry()
 	    break;
 	case Bottom:
 	    //bottomlineY=bbox.bottom()-1;  // draw link to bottom of box
-	    bottomlineY=bbox.bottom()-botPad;
+	    bottomlineY=bbox.bottom() - botPad;
 	    break;
     }
     
     double p2x,p2y;				// Set P2 Before setting
     if (!link2ParPos)
     {
-	p2x=QPointF( parObj->getChildPos() ).x();   // P1, we have to look at
-	p2y=QPointF( parObj->getChildPos() ).y();   // orientation
+	p2x=QPointF( parObj->getChildRefPos() ).x();   // P1, we have to look at
+	p2y=QPointF( parObj->getChildRefPos() ).y();   // orientation
     } else  
     {
 	p2x=QPointF( parObj->getParPos() ).x();	
@@ -507,10 +506,10 @@ void LinkableMapObj::updateLinkGeometry()
 
     //qDebug()<<"LMO::updateGeo d="<<treeItem->depth()<<"  this="<<this<<"  "<<treeItem->getHeading();
 
-    // Draw the horizontal line below heading (from ChildPos to ParPos)	
+    // Draw the horizontal line below heading (from childRefPos to ParPos)	
 
-    if (bottomline) bottomline->setLine (QLine (qRound(childPos.x()),
-	qRound(childPos.y()),
+    if (bottomline) bottomline->setLine (QLine (qRound(childRefPos.x()),
+	qRound(childRefPos.y()),
 	qRound(p1x),
 	qRound(p1y) ));
     if (bottomline) bottomline->setZValue (z);
@@ -565,9 +564,14 @@ void LinkableMapObj::updateLinkGeometry()
     } 
 }
     
-QPointF LinkableMapObj::getChildPos()
+QPointF LinkableMapObj::getChildRefPos()
 {
-    return childPos;
+    return childRefPos;
+}
+
+QPointF LinkableMapObj::getFloatRefPos()
+{
+    return floatRefPos;
 }
 
 QPointF LinkableMapObj::getParPos()

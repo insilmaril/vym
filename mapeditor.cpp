@@ -569,9 +569,8 @@ void MapEditor::print()
     }
 }
 
-QRectF MapEditor::getTotalBBox()    //FIXME-2 frames missing, esp. cloud
-{				    //FIXME-2 xlinks also missing in getTotalBBox
-    //FIXME-1 qDebug()<<"ME::getTotalBBox";
+QRectF MapEditor::getTotalBBox()    //FIXME-8 frames and xlinks missing, esp. cloud
+{				    
     QRectF rt;
     BranchObj *bo;
     BranchItem *cur=NULL;
@@ -584,10 +583,7 @@ QRectF MapEditor::getTotalBBox()    //FIXME-2 frames missing, esp. cloud
 	    // Branches
 	    bo=(BranchObj*)(cur->getLMO());
 	    if (bo && bo->isVisibleObj())
-	    {
-                //FIXME-8 
-                if (debug) qDebug()<<"ME::getTotalBBox bo="<<cur->getHeading();
-		bo->calcBBoxSizeWithChildren();
+            {
 		QRectF r1=bo->getBBox();
 
 		if (rt.isNull()) rt=r1;
@@ -605,7 +601,7 @@ QRectF MapEditor::getTotalBBox()    //FIXME-2 frames missing, esp. cloud
 	model->nextBranch(cur,prev,true);
     }
 
-    // get bboxes of XLinks	 //FIXME-2 missing
+    // get bboxes of XLinks	 //FIXME-3 missing
 
     // Update scene according to new bbox
     if (!sceneRect().contains (rt) )
@@ -1094,7 +1090,7 @@ void MapEditor::editHeading()
 	lineEdit->setCursor(Qt::IBeamCursor);
 	lineEdit->setCursorPosition(1);
 
-	QPointF tl=bo->getAbsPos();
+	QPointF tl=bo->getOrnamentsBBox().topLeft();
 	QPointF br=tl + QPointF (230,30);
 	QRectF r (tl, br);
 	lineEdit->setGeometry(r.toRect() );
@@ -1131,12 +1127,6 @@ void MapEditor::editHeadingFinished()
     //Autolayout to avoid overlapping branches with longer headings
     if (settings.value("/mainwindow/autoLayout/use","true")=="true")
 	autoLayout();
-
-/*
-    //FIXME testing
-    setFocus();
-    qDebug()<<"ME::editHF hasFocus="<<hasFocus();
-*/  
 }
 
 
@@ -1225,17 +1215,6 @@ void MapEditor::keyReleaseEvent(QKeyEvent* e)
 
 void MapEditor::mousePressEvent(QMouseEvent* e)	
 {
-    // Debugging: Show position
-    /*
-    if (debug && 
-	e->button() == Qt::LeftButton && 
-	e->modifiers() & Qt::ControlModifier )
-	qDebug()<<"ME::mousePressEvent  Scene: "<<mapToScene (e->pos())<<"  widget: "<<e->pos();
-	int v=horizontalScrollBar()->value();
-	int min=horizontalScrollBar()->minimum();
-	int max=horizontalScrollBar()->maximum();
-	qDebug()<<"    horSB="<<min<<" -> "<<v<<" <- "<<max;
-    */	
     // Ignore right clicks or wile editing heading
     if (e->button() == Qt::RightButton || model->isSelectionBlocked() )
     {
@@ -1321,7 +1300,7 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
 		    mainWindow->editOpenVymLink(false);
 		// tabWidget may change, better return now
 		// before segfaulting...
-	    } else if (sysFlagName=="system-note")	//FIXME-2 does not work always???
+	    } else if (sysFlagName=="system-note")	
 		mainWindow->windowToggleNoteEditor();
 	    else if (sysFlagName=="hideInExport")	    
 		model->toggleHideExport();
@@ -1459,8 +1438,15 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
     }
 }
 
-void MapEditor::mouseMoveEvent(QMouseEvent* e)  
+void MapEditor::mouseMoveEvent(QMouseEvent* e)  // FIXME-2 Moving MCOs does not move images
 {
+    // Show mouse position for debugging in statusBar
+    if (debug && e->modifiers() & Qt::ControlModifier )
+	mainWindow->statusMessage(
+            QString("ME::mousePressEvent  Scene: %1  widget: %2").
+            arg(qpointFToString(mapToScene (e->pos()))).
+            arg(qpointFToString(e->pos())));
+
     TreeItem *seli=model->getSelectedItem();
 
     MapObj* mosel=NULL;    
@@ -1539,11 +1525,11 @@ void MapEditor::moveObject ()
     {
 	if (seli->getType()==TreeItem::Image)
 	{
-	    FloatObj *fio=(FloatImageObj*)lmosel;
-	    fio->move   (p.x() -movingObj_offset.x(), p.y()-movingObj_offset.y() );	
+	    FloatImageObj *fio=(FloatImageObj*)lmosel;
+	    fio->moveCenter   (p.x() - movingObj_offset.x(), p.y() - movingObj_offset.y() );	
 	    fio->setRelPos();
 	    fio->updateLinkGeometry(); //no need for reposition, if we update link here
-	    model->emitSelectionChanged();  // position has changed
+            model->emitSelectionChanged();  // position has changed
 
 	    // Relink float to new mapcenter or branch, if shift is pressed 
 	    // Only relink, if selection really has a new parent
@@ -1634,7 +1620,7 @@ void MapEditor::moveObject ()
 	MapObj* mosel=((MapItem*)seli)->getMO();
 	if (mosel) 
 	{
-	    mosel->move   (p-movingObj_offset);	// FIXME-2 Missing savestate 
+	    mosel->move   (p-movingObj_offset);	// FIXME-3 Missing savestate 
 	    model->emitSelectionChanged();
 	}
     } else
@@ -1712,18 +1698,18 @@ void MapEditor::mouseReleaseEvent(QMouseEvent* e)
 	    FloatImageObj *fio=(FloatImageObj*)( ((MapItem*)seli)->getLMO());
 	    if(fio)
 	    {
-		// Moved FloatObj. Maybe we need to reposition
+		// Moved Image, we need to reposition
 		QString pold=qpointFToString(movingObj_orgRelPos);
 		QString pnow=qpointFToString(fio->getRelPos());
 		model->saveState(
 		    seli,
-		    "moveRel "+pold,
+		    "moveRel " + pold,
 		    seli,
-		    "moveRel "+pnow,
+		    "moveRel " + pnow,
 		    QString("Move %1 to relative position %2").arg(model->getObjectName(seli)).arg(pnow));
 
+                model->emitDataChanged(seli->parent()); // Parent of image has changed
 		model->reposition();
-		model->emitDataChanged (seli);
 	    }	
 	}
 

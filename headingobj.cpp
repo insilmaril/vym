@@ -4,6 +4,8 @@
 
 #include "headingobj.h"
 
+extern bool debug;
+
 /////////////////////////////////////////////////////////////////
 // HeadingObj
 /////////////////////////////////////////////////////////////////
@@ -88,17 +90,13 @@ void HeadingObj::calcBBoxSize()
     bbox.setSize (QSizeF(w,h));
 }
 
-QGraphicsTextItem* HeadingObj::newLine(QString s)
+QGraphicsTextItem* HeadingObj::newLine(QString s)  
 {
-    //QGraphicsSimpleTextItem *t=new QGraphicsSimpleTextItem (s,0,scene);
-    QGraphicsTextItem *t=new QGraphicsTextItem (s,0,scene());
+    QGraphicsTextItem *t=new QGraphicsTextItem (s,parentItem(),scene());
     t->setFont (font);
     t->setZValue(dZ_TEXT);
-    // TextItem
     t->setDefaultTextColor(color);
     t->setRotation (angle);
-    // SimpleTextItem
-    //t->setBrush(color);
     return t;
 }
 

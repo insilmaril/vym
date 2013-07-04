@@ -182,17 +182,21 @@ bool OrnamentedObj::getFrameIncludeChildren()
     return frame->getFrameIncludeChildren ();
 }
 
-void OrnamentedObj::positionContents()	//FIXME-2 called multiple times for each object after moving an image with mouse
+QRectF OrnamentedObj::getOrnamentsBBox()
 {
-    //positionContents FIXME-2 need to consider frame in calcBBox and positionContents
+    return ornamentsBBox;
+}
+
+void OrnamentedObj::positionContents()
+{
     double x=absPos.x();
     double y=absPos.y();
-    double dp=frame->getPadding() + frame->getBorderWidth();
+    double dp=frame->getTotalPadding();
     double dp2=dp/2;
     double ox=leftPad + dp;
-    double oy=topPad + dp;
+    double oy=topPad  + dp;
     
-    //if (debug) qDebug()<< "OO: positionContents "<<treeItem->getHeading()<<"  this="<<this;// dp="<<dp<<" absPos=="<<absPos<<" bboxTotal="<<bboxTotal<<"  ox="<<ox<<" oy="<<oy;
+    if (debug) qDebug()<< "OO: positionContents "<<treeItem->getHeading()<<"  this="<<this;// dp="<<dp<<" absPos=="<<absPos<<" bboxTotal="<<bboxTotal<<"  ox="<<ox<<" oy="<<oy;
     // vertical align heading to bottom
     heading->setZValue (dZ_TEXT);
     heading->setTransformOriginPoint (
@@ -226,6 +230,8 @@ void OrnamentedObj::positionContents()	//FIXME-2 called multiple times for each 
 	    bboxTotal.height());
 
     // Update frame
+    dp=frame->getXPadding();
+    dp2=dp / 2;
     frame->setZValue (dZ_FRAME_LOW);
     if (treeItem && 
 	treeItem->isBranchLikeType() && 
@@ -238,20 +244,16 @@ void OrnamentedObj::positionContents()	//FIXME-2 called multiple times for each 
 	    bboxTotal.height()-dp));
      else
 	frame->setRect( QRectF(
-	    bbox.x()+dp2,
-	    bbox.y()+dp2,
-	    bbox.width()-dp,
-	    bbox.height()-dp));
+	    bbox.x() + dp,
+	    bbox.y() + dp,
+	    bbox.width() - 2 * dp,
+	    bbox.height() - 2 * dp));
 }
 
 void OrnamentedObj::move (double x, double y)
 {
-    // FIXME-0 unnecessary calls to positionContents, ...
-    //FIXME-8 
-    if (debug) qDebug()<<"     OO::move and posContents; updateLinkGeo; requestRepos";
     MapObj::move (x,y);
-    positionContents();
-    updateLinkGeometry();
+    positionBBox();
 }
 
 void OrnamentedObj::move (QPointF p)
@@ -280,14 +282,14 @@ void OrnamentedObj::move2RelPos(double x, double y)
     setRelPos (QPointF(x,y));
     if (parObj)
     {
-	QPointF p=parObj->getChildPos();
-	move (p.x()+x, p.y() +y);
+	QPointF p=parObj->getChildRefPos();
+	move (p.x() + x, p.y() + y);
     }
 }
 
 void OrnamentedObj::move2RelPos(QPointF p)
 {
-    move2RelPos (p.x(),p.y());
+    move2RelPos (p.x(), p.y());
 }
 
 void OrnamentedObj::activateStandardFlag(Flag *flag)

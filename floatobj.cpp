@@ -3,6 +3,8 @@
 #include "floatobj.h"
 #include "mapitem.h"
 
+extern bool debug;
+
 /////////////////////////////////////////////////////////////////
 // FloatObj
 /////////////////////////////////////////////////////////////////
@@ -30,25 +32,83 @@ void FloatObj::copy (FloatObj* other)
     setVisibility (other->visible);
 }
 
-void FloatObj::move (double x, double y)
+void FloatObj::move (double x, double y)   
 {
     MapObj::move(x,y);
 }
 
 void FloatObj::move (QPointF p)
 {
-    MapObj::move (p);
+    FloatObj::move(p.x(), p.y());
+}
+
+void FloatObj::moveCenter (double x, double y)
+{
+    absPos=QPointF(x,y);
+    bbox.moveTo(x - bbox.width()/2, y - bbox.height()/2 );
+    clickPoly=QPolygonF (bbox);
+    if (debug) qDebug()<<"FO::moveCenter "<<x<<","<<y<<"  bbox="<<bbox;
+}
+
+void FloatObj::moveCenter2RelPos(double x, double y)  
+{
+    setRelPos (QPointF(x,y));
+    if (parObj)
+    {
+	QPointF p=parObj->getFloatRefPos();
+	moveCenter (p.x() + x, p.y() + y);
+    }
+}
+
+void FloatObj::move2RelPos(double x, double y)  // overloaded to use floatRefPos instead of childRefPos
+{
+    setRelPos (QPointF(x,y));
+    if (parObj)
+    {
+	QPointF p=parObj->getFloatRefPos();
+	move (p.x() + x, p.y() + y);
+    }
+}
+
+void FloatObj::move2RelPos(QPointF p)           // overloaded to use floatRefPos instead of childRefPos
+{
+    move2RelPos (p.x(), p.y());
+}
+
+void FloatObj::setRelPos()
+{
+    if (parObj)
+	setRelPos (absPos - parObj->getFloatRefPos() );
+    else
+	qWarning()<<"FO::setRelPos parObj==0   this="<<this;
+}
+
+void FloatObj::setRelPos(const QPointF &p)
+{
+    if (parObj)
+    {	    
+	relPos=p;
+	useRelPos=true;
+    }	else
+	qWarning()<<"LMO::setRelPos (p)  parObj==0   this="<<this;
 }
 
 void FloatObj::setDockPos()
 {
     parPos=absPos;
-    childPos=absPos;
 }
 
 void FloatObj::reposition()
 {
-    move2RelPos (relPos);
+    if (debug) 
+    {
+        if (parObj)
+        {
+            qDebug()<<"    parObj->childRefPos="<<parObj->getChildRefPos();
+            qDebug()<<"    parObj->floatRefPos="<<parObj->getFloatRefPos();
+        }
+    }
+    moveCenter2RelPos (relPos.x(), relPos.y());
     updateLinkGeometry();   
 }
 

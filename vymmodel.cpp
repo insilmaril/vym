@@ -2197,6 +2197,8 @@ void VymModel::cycleTaskStatus(bool reverse)
 	    
 	    // make sure task is still visible
 	    taskEditor->select (task);
+            emitDataChanged(selbi);
+            reposition();
 	}
     }
 }
@@ -2275,6 +2277,8 @@ bool VymModel::setTaskSleep(const QString &s)
                     selbi,
                     QString("setTaskSleep (%1)").arg(n),
                     QString("setTaskSleep (%1)").arg(n) );
+                emitDataChanged (selbi);
+                reposition();
                 return true;
             }
 	}
@@ -3039,7 +3043,7 @@ void VymModel::deleteKeepChildren(bool saveStateFlag)
     if (selbi)
     {
 	// Don't use this on mapcenter
-	if (selbi->depth()<2) return;
+	if (selbi->depth()<1) return;
 
 	pi=(BranchItem*)(selbi->parent());
 	// Check if we have children at all to keep
@@ -3301,7 +3305,7 @@ void VymModel::growSelectionSize()  //FIXME-3 Also for heading in BranchItem?
     ImageItem *selii=getSelectedImage();
     if (selii)
     {
-	qreal f=0.2;
+	qreal f=0.05;
 	qreal sx=selii->getScaleX();
 	qreal sy=selii->getScaleY();
 	setScale (sx+f,sy+f);
@@ -3313,7 +3317,7 @@ void VymModel::shrinkSelectionSize()
     ImageItem *selii=getSelectedImage();
     if (selii)
     {
-	qreal f=0.2;
+	qreal f=0.05;
 	qreal sx=selii->getScaleX();
 	qreal sy=selii->getScaleY();
 	setScale (sx-f,sy-f);
@@ -4219,6 +4223,10 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 		parser.setError (Aborted,"Could not select last image");
 	    select (ii);
 	/////////////////////////////////////////////////////////////////////
+	} else if (com=="selectParent")
+	{
+	    selectParent ();
+	/////////////////////////////////////////////////////////////////////
 	} else if (com=="selectLatestAdded")
 	{
 	    if (!latestAddedItem)
@@ -4426,6 +4434,10 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	} else if (com=="unscrollChildren")
 	{
 	    unscrollChildren ();
+	/////////////////////////////////////////////////////////////////////
+	} else if (com=="unselectAll")
+	{
+	    unselectAll();
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="unsetFlag")
 	{
@@ -4935,13 +4947,12 @@ void VymModel::updateNoteFlag()
 	else
 	    selti->setNoteObj (noteEditor->getNote());
 	emitDataChanged(selti);	
+        reposition();
     }
 }
 
 void VymModel::reposition() //FIXME-4 VM should have no need to reposition, but the views...
 {
-    if (debug) qDebug()<<"*** VM::reposition a) foreach <mainbranch> do reposition(); end;"; //FIXME-8
-    //qDebug() << "VM::reposition blocked="<<blockReposition;
     if (blockReposition) return;
 
     BranchObj *bo;
@@ -4953,10 +4964,8 @@ void VymModel::reposition() //FIXME-4 VM should have no need to reposition, but 
 	else
 	    qDebug()<<"VM::reposition bo=0";
     }	
-    if (debug) qDebug()<<"*** VM::reposition b)  mE->getTotalBBox(); emitSelectionChanged()";
     mapEditor->getTotalBBox();	
     emitSelectionChanged();
-    if (debug) qDebug()<<"*** VM::reposition c) return;";
 }
 
 

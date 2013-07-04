@@ -172,7 +172,7 @@ void XLinkObj::updateXLink()
 	BranchObj *bo=(BranchObj*)(visBranch->getLMO());
 	if (!bo) return;
 
-	a=b=bo->getChildPos();
+	a=b=bo->getChildRefPos();
 	if (bo->getOrientation()==LinkableMapObj::RightOfCenter)
 	{
 	    b.setX (b.x() + 2*arrowSize);
@@ -204,9 +204,9 @@ void XLinkObj::updateXLink()
 
 	// If a link is just drawn in the editor,
 	// we have already a beginBranch
-	if (beginBO) beginPos=beginBO->getChildPos();
+	if (beginBO) beginPos=beginBO->getChildRefPos();
 
-	if (endBO) endPos=endBO->getChildPos();
+	if (endBO) endPos=endBO->getChildRefPos();
     }
 
     // Update control points for bezier

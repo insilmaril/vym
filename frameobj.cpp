@@ -22,7 +22,7 @@ FrameObj::~FrameObj()
 void FrameObj::init()
 {
     type=NoFrame;
-    padding=0;
+    clear();
     borderWidth=1;
     penColor=QColor (Qt::black);
     brushColor=QColor (Qt::white);
@@ -50,6 +50,7 @@ void FrameObj::clear()
     }
     type=NoFrame;
     padding=0;	// No frame requires also no padding
+    xsize=0;
 }
 
 void FrameObj::move(double x, double y)
@@ -125,6 +126,7 @@ void FrameObj::setRect(const QRectF &r)
 	    break;
 	case Ellipse:
 	    ellipseFrame->setRect (QRectF(bbox.x(),bbox.y(),bbox.width(),bbox.height() ));
+            xsize=20;//max(bbox.width(), bbox.height()) / 4;
 	    break;
 
 	case Cloud:
@@ -178,6 +180,7 @@ void FrameObj::setRect(const QRectF &r)
 		    tl.x()-  60*roof ((i-1)/n)          , tr.y() + (i-1)*d );
 	    }
 	    pathFrame->setPath(path);
+            xsize=50;
 	    break;
     }
 }
@@ -193,6 +196,16 @@ int FrameObj::getPadding()
 	return 0;
     else
 	return padding;
+}
+
+qreal FrameObj::getTotalPadding()
+{
+    return xsize  + padding + borderWidth; 
+}
+
+qreal FrameObj::getXPadding()
+{
+    return xsize; 
 }
 
 void FrameObj::setBorderWidth (const int &i)
@@ -249,43 +262,43 @@ void FrameObj::setFrameType(const FrameType &t)
 {
     if (t!=type)
     {
-    clear();
-    type=t;
-    switch (type)
-    {
-	case NoFrame:
-	    break;
-	case Rectangle:
-	    rectFrame = scene()->addRect(QRectF(0,0,0,0), QPen(penColor), brushColor);
-	    rectFrame->setZValue(dZ_FRAME_LOW);
-	    rectFrame->setParentItem (this);
-	    rectFrame->show();
-	    break;
-	case RoundedRectangle:
-	{
-	    QPainterPath path;
-	    pathFrame = scene()->addPath(path, QPen(penColor), brushColor);
-	    pathFrame->setZValue(dZ_FRAME_LOW);
-	    pathFrame->setParentItem (this);
-	    pathFrame->show();
-	}
-	    break;
-	case Ellipse:
-	    ellipseFrame = scene()->addEllipse(QRectF(0,0,0,0), QPen(penColor), brushColor);
-	    ellipseFrame->setZValue(dZ_FRAME_LOW);
-	    ellipseFrame->setParentItem (this);
-	    ellipseFrame->show();
-	    break;
-	case Cloud:
-	{
-	    QPainterPath path;
-	    pathFrame = scene()->addPath(path, QPen(penColor), brushColor);
-	    pathFrame->setZValue(dZ_FRAME_LOW);
-	    pathFrame->setParentItem (this);
-	    pathFrame->show();
-	    break;
-	}
-	}
+        clear();
+        type=t;
+        switch (type)
+        {
+            case NoFrame:
+                break;
+            case Rectangle:
+                rectFrame = scene()->addRect(QRectF(0,0,0,0), QPen(penColor), brushColor);
+                rectFrame->setZValue(dZ_FRAME_LOW);
+                rectFrame->setParentItem (this);
+                rectFrame->show();
+                break;
+            case RoundedRectangle:
+                {
+                    QPainterPath path;
+                    pathFrame = scene()->addPath(path, QPen(penColor), brushColor);
+                    pathFrame->setZValue(dZ_FRAME_LOW);
+                    pathFrame->setParentItem (this);
+                    pathFrame->show();
+                }
+                break;
+            case Ellipse:
+                ellipseFrame = scene()->addEllipse(QRectF(0,0,0,0), QPen(penColor), brushColor);
+                ellipseFrame->setZValue(dZ_FRAME_LOW);
+                ellipseFrame->setParentItem (this);
+                ellipseFrame->show();
+                break;
+            case Cloud:
+                {
+                    QPainterPath path;
+                    pathFrame = scene()->addPath(path, QPen(penColor), brushColor);
+                    pathFrame->setZValue(dZ_FRAME_LOW);
+                    pathFrame->setParentItem (this);
+                    pathFrame->show();
+                    break;
+                }
+        }
     }
     setVisibility (visible);
 }

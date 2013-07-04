@@ -15,6 +15,12 @@ public:
     virtual void copy (FloatObj*);
     virtual void move (double,double);
     virtual void move (QPointF);
+    virtual void moveCenter (double x,double y);
+    virtual void moveCenter2RelPos(double x, double y);
+    virtual void move2RelPos(double x, double y);
+    virtual void move2RelPos(QPointF p);
+    virtual void setRelPos();
+    virtual void setRelPos(const QPointF &p);
     virtual void setDockPos();
     virtual void reposition();
 					    

@@ -303,7 +303,7 @@ Main::Main(QWidget* parent, Qt::WFlags f) : QMainWindow(parent,f)
     setupToolbars();
     setupFlagActions();
 
-    if (options.isOn("shortcuts")) switchboard.printASCII();
+    if (options.isOn("shortcuts")) switchboard.printASCII();    //FIXME-2 needs to go to main.cpp with global switchboard and exit after listing
     if (options.isOn("shortcutsLaTeX")) switchboard.printLaTeX();
 
     if (settings.value( "/mainwindow/showTestMenu",false).toBool()) setupTestActions();
@@ -729,6 +729,9 @@ void Main::setupAPI()
     c=new Command ("selectLatestAdded",Command::Any); 
     modelCommands.append(c);
 
+    c=new Command ("selectParent",Command::Branch); 
+    modelCommands.append(c);
+
     c=new Command ("setFlag",Command::TreeItem); 
     c->addPar (Command::String,false,"Name of flag");
     modelCommands.append(c);
@@ -877,6 +880,9 @@ void Main::setupAPI()
     modelCommands.append(c);
 
     c=new Command ("unscrollChildren",Command::Branch); 
+    modelCommands.append(c);
+
+    c=new Command ("unselectAll",Command::Any); 
     modelCommands.append(c);
 
     c=new Command ("unsetFlag",Command::Branch); 
@@ -1682,6 +1688,12 @@ void Main::setupSelectActions()
     connect( a, SIGNAL( triggered() ), this, SLOT( editOpenFindResultWidget() ) );
     actionListMap.append(a);
     actionFind=a;
+
+    a = new QAction( QPixmap(iconPath+"find.png"), tr( "Find...","Edit menu"), this);
+    a->setShortcut (Qt::Key_Slash );	
+    switchboard.addConnection(selectMenu, a,tr("Edit","Shortcut group"));
+    connect( a, SIGNAL( triggered() ), this, SLOT( editOpenFindResultWidget() ) );
+    actionListMap.append(a);
 
     a = new QAction( tr( "Find duplicate URLs","Edit menu"), this);
     a->setShortcut (Qt::SHIFT + Qt::Key_F);	

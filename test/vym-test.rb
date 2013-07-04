@@ -3,6 +3,9 @@
 require "#{ENV['PWD']}/scripts/vym-ruby"
 require 'date'
 require 'optparse'
+
+instance_name = 'test'
+
 options = {}
 OptionParser.new do |opts|
   opts.banner = "Usage: vym-test.rb [options]"
@@ -70,10 +73,10 @@ end
 vym_mgr=VymManager.new
 #vym_mgr.show_running
 
-vym=vym_mgr.find('test') 
+vym=vym_mgr.find(instance_name)
 if !vym
-  puts "Couldn't find running test instance, please start one:"
-  puts "vym -l -n test -t test/default.vym"
+  puts "Couldn't find instance name \"#{instance_name}\", please start one:"
+  puts "vym -l -n \"#{instance-name}\" -t test/default.vym"
   exit
 end
 
@@ -100,6 +103,9 @@ def test_basics (vym)
 
   vym.selectLastBranch
   expect "selectLastBranch", "branch c", vym.getHeading
+
+  vym.selectParent
+  expect "selectParent", "Main A", vym.getHeading
 
   expect "getDestPath: Got #{vym.getDestPath}", vym.getDestPath, @@testdir + "/testmap.vym" 
   expect "getFileDir:  Got #{vym.getFileDir}", vym.getFileDir, @@testdir + "/" 

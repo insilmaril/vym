@@ -4,6 +4,7 @@
 #include "floatimageobj.h"
 #include "branchobj.h"
 
+
 /////////////////////////////////////////////////////////////////
 // FloatImageObj 
 /////////////////////////////////////////////////////////////////
@@ -54,7 +55,9 @@ void FloatImageObj::load (const QImage &img)
 {
     icon->load(QPixmap::fromImage(img));
     if (!icon->parentItem() ) icon->setParentItem(this);  // Add to scene initially
-    bbox.setSize (QSizeF(icon->boundingRect().width()+8, icon->boundingRect().height()+8));
+    bbox.setSize ( QSizeF(
+            icon->boundingRect().width(), 
+            icon->boundingRect().height()));
     clickPoly=bbox;
     positionBBox();
 }
@@ -80,16 +83,22 @@ void FloatImageObj::setVisibility(bool v)
 	icon->setVisibility(false);
 }
 
+void FloatImageObj::moveCenter (double x, double y)
+{
+    FloatObj::moveCenter(x, y);
+    icon->setPos(bbox.topLeft() );
+}
+
 void FloatImageObj::move (double x, double y)
 {
     FloatObj::move(x,y);
-    icon->setPos (x+4,y+4);
+    icon->setPos (x,y); 
     positionBBox();
 }
 
 void FloatImageObj::move (QPointF p)
 {
-    OrnamentedObj::move (p.x(),p.y());
+    FloatImageObj::move (p.x(),p.y());
 }
 
 void FloatImageObj::positionBBox()

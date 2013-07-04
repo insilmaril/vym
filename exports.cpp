@@ -203,7 +203,6 @@ void ExportAO::doExport()
 	return;
     }
 
-    settings.setLocalValue (model->getFilePath(),"/export/last/exportDir",filePath);// FIXME-2 not needed, use only command
     settings.setLocalValue ( model->getFilePath(), "/export/last/command","exportAO");
     settings.setLocalValue ( model->getFilePath(), "/export/last/description","A&O report");
 

@@ -312,12 +312,14 @@ int main(int argc, char* argv[])
 	cout << "==================:\n";
 	foreach (Command* c, modelCommands)
 	    cout << c->getDescription().toStdString() << endl;
+        return 0;
     }
 
     if (options.isOn ("commandslatex"))
     {
 	foreach (Command* c, modelCommands)
 	    cout << c->getDescriptionLaTeX().toStdString() << endl;
+        return 0;
     }
 
     if (options.isOn ("batch"))

@@ -13,24 +13,24 @@ class Vym
 
     # Use metaprogramming to create methods for commands in vym
     if modelCount > 0
-      m= model(1)
+      m = model(1)
       m.default_iface = "org.insilmaril.vym.model.adaptor"
       s=m.listCommands
-      @model_commands=s[0].split ","
+      @model_commands = s[0].split ","
       @model_commands.each do |c|
 	self.class.send(:define_method, c) do |*pars|
 	  if pars.length == 0
 	    puts " * Calling \"#{c}\":" if $deb
-	    ret=m.execute("#{c} ()")
+	    ret = m.execute("#{c} ()")
 	  else  
 	    # Build string with parameters
-	    p="";
-	    a=[]
+	    p = "";
+	    a = []
 	    pars.each do |p|
 	      if p.kind_of? String
-	        a<<"\"#{p}\""
+	        a << "\"#{p}\""
 	      else
-	        a<<p
+	        a << p
 	      end
 	    end  
 	    puts " * Calling \"#{c} (#{a.join(',')})\":" if $deb
@@ -39,8 +39,8 @@ class Vym
 
 	  err = m.errorLevel[0]
 	  if $deb
-	    puts "     Returned: #{ret[0]}" if ret[0]!=""
-	    puts "        Error: #{err}" if err>0
+	    puts "     Returned: #{ret[0]}" if ret[0] != ""
+	    puts "        Error: #{err}" if err > 0
 	  end  
 	  ret[0]
 	end
@@ -94,21 +94,21 @@ class VymManager
   end
 
   def find (name)
-    list=running
+    list = running
     #puts "Running vyms: #{list.length}"
-    if list.length==0
+    if list.length == 0
       return false
     end
 
     for i in (0...list.length)
-      vym_service=@dbus.service(list.at(i))
+      vym_service = @dbus.service(list.at(i))
       vym_service.introspect
       vym_main_obj = vym_service.object("vym");
       vym_main_obj.introspect
 
       vym_main_obj.default_iface = "org.insilmaril.vym.main.adaptor"
 
-      if vym_main_obj.getInstanceName[0]==name 
+      if vym_main_obj.getInstanceName[0] == name 
         #puts "Found instance named '#{name}': #{list.at(i)}"
         return Vym.new list.at(i)
       end  

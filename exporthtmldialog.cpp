@@ -43,7 +43,7 @@ ExportHTMLDialog::ExportHTMLDialog(QWidget* parent) : QDialog(parent)
 
 void ExportHTMLDialog::readSettings()
 {
-    dir=settings.localValue (filepath,"/export/html/exportDir",vymBaseDir.currentPath() ).toString();
+    dir=settings.localValue (filepath,"/export/html/exportDir",vymBaseDir.currentPath() ).toString(); //FIXME-3 exportDir only needed for dialog
     ui.lineEditDir->setText(dir.absolutePath());
     
     useImage=settings.localValue (filepath,"/export/html/useImage","true").toBool();
@@ -287,7 +287,7 @@ void ExportHTMLDialog::saveSettings ()
 	settings.clearLocal(filepath,"/export/html");
     else    
     {
-	settings.setLocalValue (filepath,"/export/html/exportDir",dir.absolutePath());
+	settings.setLocalValue (filepath,"/export/html/exportDir",dir.absolutePath()); //FIXME-3 exportDir only needed for dialog
 	settings.setLocalValue (filepath,"/export/html/saveSettingsInMap","yes");
         settings.setLocalValue (filepath,"/export/html/postscript",postscript);
         settings.setLocalValue (filepath,"/export/html/useImage",useImage);
