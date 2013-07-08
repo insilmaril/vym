@@ -724,10 +724,6 @@ bool BranchObj::animate()
 	    move (anim);
 	return true;
     }
-    /*FIXME-3 reposition in BO:animate nearly never reached? needed?	
-    if (((MapItem*)treeItem)->getPositionMode()==MapItem::Relative)
-	parObj->reposition();	// we might have been relinked meanwhile
-    */	
     return false;
 }
 
