@@ -28,7 +28,7 @@ void HeadingObj::init()
     color=QColor ("black");
     font=QFont();
     heading="";
-    angle=0;	// FIXME-3 maybe move to mapobj?
+    angle=0;	
 }
 
 void HeadingObj::copy(HeadingObj *other)

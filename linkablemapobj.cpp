@@ -584,7 +584,7 @@ LinkableMapObj::Orientation LinkableMapObj::getOrientation()
     return orientation;
 }
 
-void LinkableMapObj::reposition()   //FIXME-3 needed?
+void LinkableMapObj::reposition()  // virtual
 {
 }
 

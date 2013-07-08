@@ -28,7 +28,7 @@ extern QString iconPath;
 
 ///////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////
-MapEditor::MapEditor( VymModel *vm)	//FIXME-3 change ME from GraphicsScene to ItemView...
+MapEditor::MapEditor( VymModel *vm)	
 {
     //qDebug() << "Constructor ME "<<this;
     mapScene= new QGraphicsScene(NULL);
@@ -138,7 +138,7 @@ MapEditor::MapEditor( VymModel *vm)	//FIXME-3 change ME from GraphicsScene to It
 
     setState (Neutral);
 
-    // Attributes   //FIXME-3 testing only...
+    // Attributes   //FIXME-5 testing only...
     QString k;
     AttributeDef *ad;
     attrTable= new AttributeTable();
@@ -561,11 +561,6 @@ void MapEditor::print()
 
 	// Restore selection
 	model->reselect();
-
-	// Save settings in vymrc   //FIXME-3 do this in mainwindow.cpp
-	settings.setValue("/mainwindow/printerName",printer->printerName());
-	settings.setValue("/mainwindow/printerFormat",printer->outputFormat());
-	settings.setValue("/mainwindow/printerFileName",printer->outputFileName());
     }
 }
 
