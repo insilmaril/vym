@@ -765,7 +765,7 @@ void VymModel::loadImage (BranchItem *dst,const QString &fn)
 
 		    reposition();
 		} else
-		    // FIXME-2 loadFIO error handling
+		    // FIXME-4 loadFIO error handling
 		    qWarning ()<<"Failed to load "+s;
 	    }
 

@@ -83,7 +83,7 @@ QRectF OrnamentedObj::getBBoxHeading()
 void OrnamentedObj::setRotation (const qreal &a)
 {
     MapObj::setRotation (a);
-    heading->setRotation(a); // FIXME-2 duplicated code...
+    heading->setRotation(a); // FIXME-4 duplicated code...
 }
 
 FrameObj* OrnamentedObj::getFrame()

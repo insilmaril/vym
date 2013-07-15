@@ -75,7 +75,7 @@ void EditXLinkDialog::colorChanged (QColor c)
     ui.colorButton->setIcon( pix );
 }
 
-void EditXLinkDialog::setColorHeadingButtonPressed()	//FIXME-2 not implemented yet
+void EditXLinkDialog::setColorHeadingButtonPressed()	//FIXME-4 not implemented yet
 {
     if (link)
     {	
