@@ -335,8 +335,6 @@ void LinkableMapObj::setVisibility (bool v)
 
 void LinkableMapObj::setOrientation()
 {
-    Orientation orientOld=orientation;
-
     if (!parObj) 
     {
 	orientation=UndefinedOrientation;
@@ -362,7 +360,6 @@ void LinkableMapObj::setOrientation()
 	    else
 		orientation=RightOfCenter;
     }
-    //if (orientOld!=orientation) requestReposition();    //FIXME-2 needed?
 }
 
 void LinkableMapObj::updateVisibility()
