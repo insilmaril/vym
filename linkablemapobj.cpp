@@ -362,7 +362,7 @@ void LinkableMapObj::setOrientation()
 	    else
 		orientation=RightOfCenter;
     }
-    if (orientOld!=orientation) requestReposition();    //FIXME-2 needed?
+    //if (orientOld!=orientation) requestReposition();    //FIXME-2 needed?
 }
 
 void LinkableMapObj::updateVisibility()
