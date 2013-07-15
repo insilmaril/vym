@@ -339,7 +339,6 @@ void BranchObj::setDockPos()
     floatRefPos=ornamentsBBox.center();
 
     if (debug) qDebug()<<"### BO::setDockPos floatRefPos="<<floatRefPos; 
-    //if (debug) qDebug()<<"### BO::setDockPos    rightPad="<<rightPad; 
     if (treeItem->getType()==TreeItem::MapCenter)
     {
 	// set childRefPos to middle of MapCenterObj
@@ -364,7 +363,6 @@ void BranchObj::setDockPos()
 		childRefPos=QPointF (ornamentsBBox.bottomLeft().x() - frame->getPadding(),  bottomlineY);
 		parPos=QPointF   (ornamentsBBox.bottomRight().x(), bottomlineY);
 	    }
-            //if (debug) qDebug()<<"### BO::setDockPos childRefPos="<<childRefPos<<" left of center"; //FIXME-8
 	} else
 	{
             // Right of center
@@ -377,10 +375,8 @@ void BranchObj::setDockPos()
 		childRefPos=QPointF(ornamentsBBox.bottomRight().x() + frame->getPadding(), bottomlineY);
 		parPos=QPointF ( ornamentsBBox.bottomLeft().x(),  bottomlineY);
 	    }
-            //if (debug) qDebug()<<"### BO::setDockPos childRefPos="<<childRefPos<<" right of center"; 
 	}
     }
-    //if (debug) qDebug()<<"### BO::setDockPos ornBBox: "<<ornamentsBBox<<"  bottomlineY"<<bottomlineY; //FIXME-8
 }
 
 void BranchObj::updateData()
@@ -507,9 +503,9 @@ void BranchObj::alignRelativeTo (QPointF ref,bool alignSelf)
         if (parObj) pp=parObj->getChildRefPos();
         qDebug() << "BO::alignRelTo for "<<h;
         qDebug() << "    d="<<depth;
-        qDebug() <<"   ref="<<ref;
-        qDebug() <<"    th="<<th;
-        qDebug() <<"    ch="<<ch;
+    //    qDebug() <<"   ref="<<ref;
+    //    qDebug() <<"    th="<<th;
+    //    qDebug() <<"    ch="<<ch;
         if (ch < th) qDebug()<<"   ch<th !";
     //    qDebug() <<"  parO="<<parObj;
         //qDebug() <<   "  bbox.tL="<<bboxTotal.topLeft();
@@ -526,6 +522,7 @@ void BranchObj::alignRelativeTo (QPointF ref,bool alignSelf)
         ;
     }
 */
+
 
     setOrientation();
 
@@ -604,21 +601,13 @@ void BranchObj::reposition()
 */	
 
     if (treeItem->depth()==0)
-    {
 	// only calculate the sizes once. If the deepest LMO 
 	// changes its height,
 	// all upper LMOs have to change, too.
 	calcBBoxSizeWithChildren(); 
 
-	alignRelativeTo ( QPointF (absPos.x(),
-	    absPos.y()-(bboxTotal.height()-bbox.height())/2) );	
-    } else
-    {
-	// This is only important for moving branches:
-	// For editing a branch it isn't called...
-	alignRelativeTo ( QPointF (absPos.x(),
-			    absPos.y()-(bboxTotal.height()-bbox.height())/2) );	
-    }
+    alignRelativeTo ( QPointF (absPos.x(),
+        absPos.y()-(bboxTotal.height()-bbox.height())/2) );	
 }
 
 void BranchObj::unsetAllRepositionRequests()
