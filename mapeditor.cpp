@@ -1562,7 +1562,6 @@ void MapEditor::moveObject ()
 		    }
 		} 
 		lmosel->move   (p-movingObj_offset);	
-                lmosel->reposition();
 	    } else
 	    {	
 		if (seli->depth()==1)
