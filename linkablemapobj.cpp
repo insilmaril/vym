@@ -447,20 +447,11 @@ void LinkableMapObj::updateLinkGeometry()
     // have parents yet...
 
     if (debug) qDebug()<<"LMO::updateLinkGeometry: "<<treeItem->getHeading()<<"  "<<style<<"  parObj="<<parObj; //FIXME-8
-    if (!parObj)        {
-	// If I am a mapcenter, set childRefPos to middle of MapCenterObj // FIXME-8 isn't that also done already in BO::setDockPos ?
-
-	QRectF br=clickPoly.boundingRect();
-	childRefPos.setX( br.topLeft().x() + br.width()/2 );
-	childRefPos.setY( br.topLeft().y() + br.height()/2 );
-	parPos=childRefPos;	
-	// Redraw links to children
-	for (int i=0; i<treeItem->branchCount(); ++i)
-	    treeItem->getBranchObjNum(i)->updateLinkGeometry();
-	return;	
+    if (style==UndefinedStyle) 
+    {
+        setDockPos();
+        return;
     }
-
-    if (style==UndefinedStyle) return;	
 
     switch (linkpos)
     {
