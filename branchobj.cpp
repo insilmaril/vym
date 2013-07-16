@@ -204,7 +204,7 @@ void BranchObj::setLinkColor ()
 
 void BranchObj::positionContents()
 {
-    //if (debug) qDebug()<<"  BO::positionContents (loop over images)";   //FIXME-8
+    if (debug) qDebug()<<"  BO::positionContents (loop over images): "<<treeItem->getHeading()<<treeItem->imageCount();   //FIXME-8
     OrnamentedObj::positionContents();
     updateLinkGeometry();// required before positioning images
     for (int i=0; i<treeItem->imageCount(); ++i)
@@ -319,7 +319,6 @@ void BranchObj::calcBBoxSize()
                 }
 	    }	    
 	}   
-        //if (debug) qDebug()<<"**BO::calcBBoxSize leftPad="<<leftPad<<"rightPad="<<rightPad<<"topPad="<<topPad<<"botPad="<<botPad; //FIXME-8
 	h+=topPad+botPad;
 	w+=leftPad+rightPad;
     }
@@ -335,10 +334,8 @@ void BranchObj::calcBBoxSize()
 
 void BranchObj::setDockPos()
 {
-    if (debug) qDebug()<<"### BO::setDockPos of "<<treeItem->getHeading(); //FIXME-8
     floatRefPos=ornamentsBBox.center();
 
-    if (debug) qDebug()<<"### BO::setDockPos floatRefPos="<<floatRefPos; 
     if (treeItem->getType()==TreeItem::MapCenter)
     {
 	// set childRefPos to middle of MapCenterObj

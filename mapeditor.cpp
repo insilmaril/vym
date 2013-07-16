@@ -1561,7 +1561,6 @@ void MapEditor::moveObject ()
 			seli->getBranchObjNum(i)->setOrientation();
 		    }
 		} 
-		lmosel->move   (p-movingObj_offset);	
 	    } else
 	    {	
 		if (seli->depth()==1)
@@ -1572,7 +1571,7 @@ void MapEditor::moveObject ()
 		    lmosel->setRelPos();
 		} else
 		{
-		    // Move ordinary branch
+		    // d>1, move ordinary branch
 		    if (lmosel->getOrientation() == LinkableMapObj::LeftOfCenter)
 			// Add width of bbox here, otherwise alignRelTo will cause jumping around
 			lmosel->move(
@@ -1607,7 +1606,7 @@ void MapEditor::moveObject ()
 
             // In winter mode shake snow from heading
             if (winter) model->emitDataChanged(seli);
-	} 
+	} // Moving branchLikeType 
     } // End of lmosel!=NULL
     else if (seli && seli->getType()==TreeItem::XLink)
     {

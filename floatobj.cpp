@@ -100,14 +100,6 @@ void FloatObj::setDockPos()
 
 void FloatObj::reposition()
 {
-    if (debug) 
-    {
-        if (parObj)
-        {
-            qDebug()<<"    parObj->childRefPos="<<parObj->getChildRefPos();
-            qDebug()<<"    parObj->floatRefPos="<<parObj->getFloatRefPos();
-        }
-    }
     moveCenter2RelPos (relPos.x(), relPos.y());
     updateLinkGeometry();   
 }

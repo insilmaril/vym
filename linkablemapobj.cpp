@@ -578,7 +578,6 @@ void LinkableMapObj::reposition()  // virtual
 
 void LinkableMapObj::requestReposition()   
 {
-    if (debug) qDebug()<<"  LMO::requestReposition "<<treeItem->getHeadingDepth(); //FIXME-8
     if (!repositionRequest)
     {
 	// Pass on the request to parental objects, if this hasn't
