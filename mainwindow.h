@@ -341,7 +341,7 @@ private:
     enum { MaxRecentFiles = 9 };
     QAction *recentFileActions[MaxRecentFiles];
 
-    QAction *macroActions[12];
+    QAction *macroActions[13];
     QStringList macro;
 
     Switchboard switchboard;

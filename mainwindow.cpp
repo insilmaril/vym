@@ -2639,14 +2639,13 @@ void Main::setupRecentMapsMenu()
 
 void Main::setupMacros()
 {
-    for (int i = 0; i <= 11; i++) 
+    for (int i = 0; i <= 12; i++) 
     {
 	macroActions[i] = new QAction(this);
 	macroActions[i]->setData(i);
 	addAction (macroActions[i]);
 	//switchboard.addConnection(macroActions[i],tr("Macro shortcuts","Shortcut group"));
-	connect(macroActions[i], SIGNAL(triggered()),
-		this, SLOT(callMacro()));
+	connect(macroActions[i], SIGNAL(triggered()), this, SLOT(callMacro()));
     }		
     macroActions[0]->setShortcut ( Qt::Key_F1 );
     macroActions[1]->setShortcut ( Qt::Key_F2 );
@@ -2660,6 +2659,8 @@ void Main::setupMacros()
     macroActions[9]->setShortcut ( Qt::Key_F10 );
     macroActions[10]->setShortcut ( Qt::Key_F11 );
     macroActions[11]->setShortcut ( Qt::Key_F12 );
+
+    macroActions[12]->setShortcut ( Qt::Key_F1 + Qt::SHIFT);
 }
 
 void Main::setupToolbars()
@@ -5442,7 +5443,7 @@ void Main::callMacro ()
     if (action)
     {
         i=action->data().toInt();
-        QString s=macros.getMacro (i);
+        QString s=macros.getMacro (i+1);
         if (!s.isEmpty())
 	{
 	    VymModel *m=currentModel();

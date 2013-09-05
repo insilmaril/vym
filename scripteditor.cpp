@@ -24,7 +24,6 @@ ScriptEditor::ScriptEditor (QWidget *parent):QWidget(parent)
 {
     ui.setupUi (this);
 
-
     //connect ( ui.openButton, SIGNAL (clicked() ), this, SLOT (openClicked() ));
     connect ( ui.saveSlideButton, SIGNAL (clicked() ), this, SLOT (saveSlide() ));
     //connect ( ui.saveAsButton, SIGNAL (clicked() ), this, SLOT (saveAsClicked() ));
@@ -47,8 +46,15 @@ ScriptEditor::ScriptEditor (QWidget *parent):QWidget(parent)
     ui.modeTabWidget->setTabText(1,tr("Macro","Mode in scriptEditor"));
 
     ui.keyCombo->insertItem(0, QString("---") );
-    for (int i=1; i<13; i++)
-        ui.keyCombo->insertItem(i, QString("F %1").arg(i) );
+
+    // Init function key selection
+    for (int i=0; i<24; i++)
+    {
+        QString prefix="";
+        if (i>11) prefix="Shift +";
+        int n=i%12 + 1;
+        ui.keyCombo->insertItem(i, QString("%1 F%2").arg(prefix).arg(n) );
+    }
     
     highlighter = new Highlighter(ui.editor->document());
     QStringList list;
@@ -203,7 +209,7 @@ void ScriptEditor::runClicked()
 
 void ScriptEditor::loadMacroClicked()
 {
-    QString m=macros.getMacro (ui.keyCombo->currentIndex()-1);
+    QString m=macros.getMacro (ui.keyCombo->currentIndex()+1);
     if (!m.isEmpty())
     ui.editor->setText (m);
 }
