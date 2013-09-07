@@ -15,6 +15,7 @@
 #include "branchpropeditor.h"
 #include "branchitem.h"
 #include "command.h"
+#include "downloadagent.h"
 #include "exportoofiledialog.h"
 #include "exports.h"
 #include "file.h"
@@ -334,6 +335,14 @@ Main::Main(QWidget* parent, Qt::WFlags f) : QMainWindow(parent,f)
     if (!QDBusConnection::sessionBus().registerObject ("/vym",this))
 	qWarning ("MainWindow: Couldn't register DBUS object!");
 #endif    
+
+    // Testing only...
+    QUrl releaseNotesUrl("http://localhost/vym-release-notes.txt");
+    DownloadAgent *agent = new DownloadAgent(releaseNotesUrl);
+    //agent->setUrl( QUrl::fromEncoded(u.toLocal8Bit()));
+    agent->setUserAgent("vym x.y.z  FJLSFII)");
+    connect (agent, SIGNAL( downloadFinished()), this, SLOT(downloadFinished()));
+    QTimer::singleShot(0, agent, SLOT(execute()));
 }
 
 Main::~Main()
@@ -2814,6 +2823,8 @@ VymModel* Main::currentModel() const
 
 VymModel* Main::getModel(uint id) const	
 {
+    if (id <=0) return NULL;
+
     // Used in BugAgent
     for (int i=0; i<vymViews.count();i++)
 	if (vymViews.at(i)->getModel()->getModelID()==id)
@@ -4647,6 +4658,30 @@ void Main::networkConnect()
 {
     VymModel *m=currentModel();
     if (m) m->connectToServer();
+}
+
+void Main::downloadFinished()
+{
+    QString s;
+    DownloadAgent *agent = static_cast<DownloadAgent*>(sender());
+    agent->getResult() ? s="success" : s="Error  "; 
+
+    qDebug()<<"Main::downloadFinished ";
+    qDebug()<<"  result" <<  s;
+    qDebug()<<"     msg" << agent->getResultMessage();
+
+    QString script = agent->getFinishedScript();
+    VymModel *model=getModel (agent->getFinishedScriptModelID());
+    if (!script.isEmpty() && model)
+    {
+        qDebug()<<"   model" << agent->getFinishedScriptModelID();
+
+        script.replace("$TMPFILE",agent->getDestination());
+
+        qDebug()<<"  script\n" << script;
+        model->execute(script);
+    }
+
 }
 
 bool Main::settingsPDF()

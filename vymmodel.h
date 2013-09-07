@@ -690,7 +690,7 @@ private slots:
     void displayNetworkError (QAbstractSocket::SocketError);
 
 public:
-    void download (const QUrl &url, BranchItem *bi=NULL);
+    void downloadImage (const QUrl &url, BranchItem *bi=NULL);
 
 ////////////////////////////////////////////
 // Selection related 
