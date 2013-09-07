@@ -71,7 +71,7 @@ BugAgent::BugAgent (BranchItem *bi,const QString &u)
 	return;
     }	
 
-    // Visual hint that we are doing something
+    // Visual hint that we are doing something  // FIXME-4 show spinner instead?
     if (missionType==SingleBug)
 	model->setHeading ("Updating: "+bi->getHeadingPlain(),bi );//FIXME-4 translation needed?
 	
