@@ -1,5 +1,6 @@
 #include <iostream>
 #include <math.h>
+#include <cstdlib>
 
 #include "linkablemapobj.h"
 #include "branchobj.h"

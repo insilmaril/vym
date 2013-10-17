@@ -4,6 +4,8 @@
 #include <QPixmap>
 #include <QLabel>
 #include <QTextStream>
+#include <iostream>
+#include <cstdlib>
 
 #include "file.h"
 #include "process.h"

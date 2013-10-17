@@ -1,4 +1,5 @@
 #include "process.h"
+#include <cstdlib>
 
 #include <QMessageBox>
 #include <QDebug>

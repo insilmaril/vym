@@ -9,6 +9,7 @@
 #include "mainwindow.h"
 #include "warningdialog.h"
 #include "xsltproc.h"
+#include <cstdlib>
 
 
 extern Main *mainWindow;
