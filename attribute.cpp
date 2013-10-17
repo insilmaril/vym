@@ -17,7 +17,7 @@ void Attribute::setKey (const QString &k, const AttributeType &t)
 {
     if (!table)
     {
-	qWarning (QString("Attribute::setKey (%1)  No table defined!\n").arg(k).toUtf8());
+	qWarning ()<< QString("Attribute::setKey (%1)  No table defined!\n").arg(k).toUtf8();
 	return;	
     }
     
@@ -30,7 +30,7 @@ void Attribute::setKey (const QString &k, const AttributeType &t)
 	    return; 
 	}
     }	
-    qWarning (QString("Attribute::setKey (%1)  attribute already defined!\n").arg(k).toUtf8());
+    qWarning ()<< QString("Attribute::setKey (%1)  attribute already defined!\n").arg(k).toUtf8();
 }
 
 QString Attribute::getKey ()
@@ -238,7 +238,7 @@ AttributeDef* AttributeTable::addKey (const QString &k, const AttributeType &t)
     {
 	if (attdefs.at(i)->getKey()==k )
 	{
-	    qWarning (QString ("AttributeTable::addKey (%1) already in table\n").arg(k).toUtf8());
+	    qWarning () << QString ("AttributeTable::addKey (%1) already in table\n").arg(k).toUtf8();
 	    return NULL;
 	}
     }
@@ -261,14 +261,14 @@ void AttributeTable::removeKey (const QString &k)
 	    return ;
 	}
     }
-    qWarning (QString ("AttributeTable::removeKey (%1) key not in table\n").arg(k).toUtf8());
+    qWarning () << QString ("AttributeTable::removeKey (%1) key not in table\n").arg(k).toUtf8();
 }
 
 AttributeDef* AttributeTable::getDef(const QString &key)
 {
     for (int i=0; i<attdefs.count();++i)
 	if (attdefs.at(i)->getKey()==key ) return attdefs.at(i);
-    qWarning (QString ("AttributeTable::getDef (%1) key not in table\n").arg(key).toUtf8());
+    qWarning () << QString ("AttributeTable::getDef (%1) key not in table\n").arg(key).toUtf8();
     return NULL;    
 }
 
