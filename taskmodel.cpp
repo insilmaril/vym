@@ -293,7 +293,7 @@ void TaskModel::recalcPriorities()
 
 	// Age
 	p-=t->getAgeModified();
-	//p-=t->getAgeCreation();
+	p-=t->getAgeCreation() * 1.0 / 365 * 80; // After a year, this is as important as "red"
 
 	t->setPriority (p);
 	if (p<minPrio) minPrio=p;
