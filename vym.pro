@@ -49,6 +49,7 @@ HEADERS	+= \
     aboutdialog.h \
     taskfiltermodel.h \
     animpoint.h \
+    arrowobj.h \
     attribute.h \
     attributeitem.h \
 #   attributedelegate.h\
@@ -135,6 +136,7 @@ SOURCES	+= \
     aboutdialog.cpp \
     taskfiltermodel.cpp \
     animpoint.cpp \
+    arrowobj.cpp \
     attribute.cpp \
     attributeitem.cpp \
 #   attributedelegate.cpp \
