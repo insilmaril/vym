@@ -2,6 +2,8 @@
 #define XLINKOBJ_H
 
 #include <QPen>
+
+#include "arrowobj.h"
 #include "linkablemapobj.h"
 #include "mapobj.h"
 #include "xlink.h"
@@ -45,7 +47,9 @@ private:
     static int clickBorder;
     static int pointRadius;
     QPainterPath clickPath;
-    QGraphicsPolygonItem *poly;	    // Arrowhead, when one end is not visible
+    QGraphicsPolygonItem *poly;// Arrowhead, when one end is not visible
+    ArrowObj *pointerEnd;      // Arrowhead 
+    ArrowObj *pointerBegin;    // Arrowhead 
     QGraphicsPathItem *path;
     
     QPointF beginPos;

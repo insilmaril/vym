@@ -166,3 +166,5 @@ void MapObj::setVisibility(bool v)
     visible=v;
 }
 
+void MapObj::positionBBox() {}
+void MapObj::calcBBoxSize() {}

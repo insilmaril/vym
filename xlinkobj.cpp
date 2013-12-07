@@ -33,6 +33,8 @@ XLinkObj::~XLinkObj ()
     delete (ctrl_p1);
     delete (ctrl_l0);
     delete (ctrl_l1);
+    delete (pointerEnd);
+    delete (pointerBegin);
 }
 
 
@@ -50,6 +52,14 @@ void XLinkObj::init ()
     pen.setStyle (Qt::SolidLine);
     poly=scene()->addPolygon (QPolygonF(), pen, pen.color());	
     poly->setZValue (dZ_XLINK);
+
+    pointerEnd = new ArrowObj(this);
+    pointerEnd->setColor( pen.color() );
+    pointerEnd->setFixedLength(0);
+
+    pointerBegin = new ArrowObj(this);
+    pointerBegin->setColor( pen.color() );
+    pointerBegin->setFixedLength(0);
 
     // Control points for bezier path	
     qreal d=100;
@@ -173,6 +183,8 @@ void XLinkObj::updateXLink()
 	if (!bo) return;
 
 	a=b=bo->getChildRefPos();
+
+
 	if (bo->getOrientation()==LinkableMapObj::RightOfCenter)
 	{
 	    b.setX (b.x() + 2*arrowSize);
@@ -205,8 +217,19 @@ void XLinkObj::updateXLink()
 	// If a link is just drawn in the editor,
 	// we have already a beginBranch
 	if (beginBO) beginPos=beginBO->getChildRefPos();
-
 	if (endBO) endPos=endBO->getChildRefPos();
+
+        // FIXME-0 testing
+        if (beginBO && endBO)
+        {
+            pointerBegin->move(beginPos + c0 );
+            pointerBegin->setEndPoint(beginPos);
+            pointerBegin->setVisibility(true);
+
+            pointerEnd->move(endPos + c1 );
+            pointerEnd->setEndPoint(endPos);
+            pointerEnd->setVisibility(true);
+        }
     }
 
     // Update control points for bezier
@@ -322,6 +345,8 @@ void XLinkObj::setVisibility ()
 	    else	
 		stateVis=Full;
 	    setVisibility (true);
+            pointerEnd->setVisibility(true);
+            pointerBegin->setVisibility(true);
 	} else
 	{
 	    if(!beginBO->isVisibleObj() && !endBO->isVisibleObj())

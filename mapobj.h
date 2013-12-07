@@ -58,8 +58,8 @@ public:
     virtual qreal getRotation();
     virtual bool isVisibleObj();
     virtual void setVisibility(bool);
-    virtual void positionBBox()=0;       
-    virtual void calcBBoxSize()=0;
+    virtual void positionBBox();       
+    virtual void calcBBoxSize();
 
 protected:  
     QRectF bbox;		    // bounding box of MO itself
