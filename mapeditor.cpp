@@ -2022,7 +2022,7 @@ void MapEditor::updateSelection(QItemSelection nsel,QItemSelection dsel)
 	    if (!itemsSelected.contains(mi)) 
 	    {
 		itemsSelected.append (mi);
-		mi->updateVisibility();
+		//mi->updateVisibility();   //FIXME-0 not needed
 	    }
     }
     foreach (QModelIndex ix,dsel.indexes() )
@@ -2034,7 +2034,7 @@ void MapEditor::updateSelection(QItemSelection nsel,QItemSelection dsel)
 	    if (!itemsDeselected.contains(mi)) 
 	    {
 		itemsDeselected.append (mi);
-		mi->updateVisibility();
+		//mi->updateVisibility();   //FIXME-0 not needed
 	    }
     }
 

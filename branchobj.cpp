@@ -159,7 +159,6 @@ void BranchObj::setVisibility(bool v, int toDepth)
     BranchItem *bi=(BranchItem*)treeItem;
     if (bi->depth() <= toDepth)
     {
-//qDebug()<<"   * BO::setVis v="<<v<<bi->getHeading();
 	frame->setVisibility(v);
 	heading->setVisibility(v);
 	systemFlags->setVisibility(v);
@@ -178,7 +177,7 @@ void BranchObj::setVisibility(bool v, int toDepth)
 	    for (i=0; i<treeItem->branchCount(); ++i)
 		treeItem->getBranchObjNum(i)->setVisibility (v,toDepth);    
 	}
-    } // depth <= toDepth   
+    } 
 }   
 
 void BranchObj::setVisibility(bool v)
@@ -499,11 +498,11 @@ void BranchObj::alignRelativeTo (QPointF ref,bool alignSelf)
         QPointF pp; 
         if (parObj) pp=parObj->getChildRefPos();
         qDebug() << "BO::alignRelTo for "<<h;
-        qDebug() << "    d="<<depth;
+    //    qDebug() << "    d="<<depth;
     //    qDebug() <<"   ref="<<ref;
     //    qDebug() <<"    th="<<th;
     //    qDebug() <<"    ch="<<ch;
-        if (ch < th) qDebug()<<"   ch<th !";
+    //    if (ch < th) qDebug()<<"   ch<th !";
     //    qDebug() <<"  parO="<<parObj;
         //qDebug() <<   "  bbox.tL="<<bboxTotal.topLeft();
     //    qDebug() <<"absPos="<<absPos

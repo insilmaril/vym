@@ -3,7 +3,6 @@
 
 #include <QDebug>
 #include <QGraphicsScene>
-#include <QPen>
 
 /////////////////////////////////////////////////////////////////
 // ArrowObj
@@ -16,10 +15,10 @@ ArrowObj::ArrowObj (MapObj* parent):MapObj(parent)
 
 ArrowObj::~ArrowObj ()
 {
-    //delete (poly);
     // FIXME-0 delete all used graphicsitems...
+    delete arrowEnd;
+    delete line;
 }
-
 
 void ArrowObj::init () 
 {
@@ -38,19 +37,23 @@ void ArrowObj::init ()
     setOrnamentStyleEnd   (HeadFull);
 }
 
-void ArrowObj::setColor (QColor c)
+void ArrowObj::setPen (QPen p)
 {
-    color = c;
-    QPen pen;
-    pen.setStyle (Qt::SolidLine);
-    pen.setColor ( color );
-    line->setPen( pen );
-    arrowEnd->setPen( pen );
+    pen = p;
+    line->setPen( pen);
+
+    // end shall have same style as xlink
+    QPen pen_solid = pen;
+    pen_solid.setStyle (Qt::SolidLine);
+    arrowEnd->setPen( pen_solid );
+
+    setOrnamentStyleBegin( beginStyle );
+    setOrnamentStyleEnd( endStyle );
 }
 
-QColor ArrowObj::getColor()
+QPen ArrowObj::getPen()
 {
-    return color;
+    return pen;
 }
 
 void ArrowObj::setArrowSize(qreal r)
@@ -73,12 +76,25 @@ int ArrowObj::getFixedLength()
     return fixedLength;
 }
 
+void ArrowObj::show()
+{
+    setVisibility( true );
+}
+
+void ArrowObj::hide()
+{
+    setVisibility( false );
+}
+
 void ArrowObj::setVisibility (bool b)
 {
     MapObj::setVisibility (b);
     if (b)
     {
-        arrowEnd->show();
+        if (endStyle != None)
+            arrowEnd->show();
+        else
+            arrowEnd->hide();
         if (fixedLength == 0)
             line->hide();
         else
@@ -108,26 +124,39 @@ QPointF ArrowObj::getEndPoint ()
     return endPoint;
 }
 
-void ArrowObj::setOrnamentStyleBegin (OrnamentStyle os)
+void ArrowObj::setOrnamentStyleBegin (OrnamentStyle os) // FIXME-0 missing
 {
+    beginStyle = os;
 }
 
 ArrowObj::OrnamentStyle ArrowObj::getOrnamentStyleBegin()
 {
+    return beginStyle;
 }
 
 void ArrowObj::setOrnamentStyleEnd (OrnamentStyle os)
 {
     // FIXME-0 needs real implementation (and shared with method for begin)
+
+    endStyle = os;
     QPointF a,b,c;
-    b = a + QPointF( -arrowSize *2, -arrowSize);
-    c = a + QPointF( -arrowSize *2, +arrowSize);
     QPolygonF pa;
-    pa << a << b << c;
-    arrowEnd->setPolygon(pa);
+    switch (endStyle) 
+    {
+        case HeadFull:
+            b = a + QPointF( -arrowSize *2, -arrowSize);
+            c = a + QPointF( -arrowSize *2, +arrowSize);
+            pa << a << b << c;
+            arrowEnd->setPolygon( pa );
+            arrowEnd->setBrush( pen.color() ); 
+            break;
+        case Foot: break;
+        case None: break;
+    }
 }
 
 ArrowObj::OrnamentStyle ArrowObj::getOrnamentStyleEnd()
 {
+    return endStyle;
 }
 

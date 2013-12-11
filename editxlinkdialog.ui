@@ -34,6 +34,13 @@
      <property name="spacing">
       <number>6</number>
      </property>
+     <item row="3" column="0">
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>Arrow begin:</string>
+       </property>
+      </widget>
+     </item>
      <item row="0" column="1">
       <widget class="QSpinBox" name="widthBox">
        <property name="sizePolicy">
@@ -89,7 +96,7 @@
        </property>
       </widget>
      </item>
-     <item row="3" column="1" colspan="2">
+     <item row="5" column="1" colspan="2">
       <widget class="QCheckBox" name="useSettings">
        <property name="text">
         <string/>
@@ -138,7 +145,7 @@
        </property>
       </spacer>
      </item>
-     <item row="3" column="0">
+     <item row="5" column="0">
       <widget class="QLabel" name="textLabel1_2">
        <property name="text">
         <string>Use as default:</string>
@@ -148,7 +155,7 @@
        </property>
       </widget>
      </item>
-     <item row="3" column="3" colspan="2">
+     <item row="5" column="3" colspan="2">
       <spacer>
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -176,6 +183,27 @@
      </item>
      <item row="2" column="1" colspan="3">
       <widget class="QComboBox" name="lineStyleCombo"/>
+     </item>
+     <item row="4" column="0">
+      <widget class="QLabel" name="label_3">
+       <property name="text">
+        <string>Arrow end:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QCheckBox" name="checkBoxArrowBegin">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="1">
+      <widget class="QCheckBox" name="checkBox_2">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>

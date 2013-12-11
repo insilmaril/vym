@@ -41,10 +41,10 @@ XLinkObj::~XLinkObj ()
 void XLinkObj::init () 
 {
     visBranch=NULL;
+
     stateVis=Hidden;
 
     QPen pen=link->getPen();
-
 
     path=scene()->addPath (QPainterPath(), pen, Qt::NoBrush);	
     path->setZValue (dZ_XLINK);
@@ -53,13 +53,13 @@ void XLinkObj::init ()
     poly=scene()->addPolygon (QPolygonF(), pen, pen.color());	
     poly->setZValue (dZ_XLINK);
 
-    pointerEnd = new ArrowObj(this);
-    pointerEnd->setColor( pen.color() );
-    pointerEnd->setFixedLength(0);
-
     pointerBegin = new ArrowObj(this);
-    pointerBegin->setColor( pen.color() );
-    pointerBegin->setFixedLength(0);
+    pointerBegin->setPen( pen );
+    pointerBegin->setFixedLength( 0 );
+
+    pointerEnd = new ArrowObj(this);
+    pointerEnd->setPen( pen );
+    pointerEnd->setFixedLength( 0 );
 
     // Control points for bezier path	
     qreal d=100;
@@ -99,6 +99,26 @@ QPointF XLinkObj::getAbsPos()
 	    return QPointF();
 	    break;
     }
+}
+
+void XLinkObj::setBeginStyle(ArrowObj::OrnamentStyle os)
+{
+    pointerBegin->setOrnamentStyleBegin(os);
+}
+
+ArrowObj::OrnamentStyle XLinkObj::getBeginStyle()
+{
+    return pointerBegin->getOrnamentStyleBegin();
+}
+
+void XLinkObj::setEndStyle(ArrowObj::OrnamentStyle os)
+{
+    pointerEnd->setOrnamentStyleEnd(os);
+}
+
+ArrowObj::OrnamentStyle XLinkObj::getEndStyle()
+{
+    return pointerEnd->getOrnamentStyleEnd();
 }
 
 QPointF XLinkObj::getBeginPos()
@@ -219,16 +239,13 @@ void XLinkObj::updateXLink()
 	if (beginBO) beginPos=beginBO->getChildRefPos();
 	if (endBO) endPos=endBO->getChildRefPos();
 
-        // FIXME-0 testing
         if (beginBO && endBO)
         {
             pointerBegin->move(beginPos + c0 );
             pointerBegin->setEndPoint(beginPos);
-            pointerBegin->setVisibility(true);
 
             pointerEnd->move(endPos + c1 );
             pointerEnd->setEndPoint(endPos);
-            pointerEnd->setVisibility(true);
         }
     }
 
@@ -296,19 +313,35 @@ void XLinkObj::setVisibility (bool b)
     MapObj::setVisibility (b);
     if (b)
     {
-	path->show();
-	if (stateVis==Part) 
+	if (stateVis==OnlyBegin) 
 	{
 	    path->hide();
 	    poly->show();
+            pointerBegin->hide();
+            pointerEnd->hide();
 	}
-	else	
+	else if (stateVis==OnlyEnd)
+	{
+	    path->hide();
+	    poly->show();
+            pointerBegin->hide();
+            pointerEnd->hide();
+	}
+        else
+        {
+            // FIXME-0 pointers!
+            path->show();
 	    poly->hide();
+            pointerBegin->show();
+            pointerEnd->show();
+        }
     }	
     else
     {
 	poly->hide();
 	path->hide();
+        pointerBegin->hide();
+        pointerEnd->hide();
     }	
 
     if (stateVis==FullShowControls)
@@ -345,8 +378,6 @@ void XLinkObj::setVisibility ()
 	    else	
 		stateVis=Full;
 	    setVisibility (true);
-            pointerEnd->setVisibility(true);
-            pointerBegin->setVisibility(true);
 	} else
 	{
 	    if(!beginBO->isVisibleObj() && !endBO->isVisibleObj())
@@ -358,10 +389,15 @@ void XLinkObj::setVisibility ()
 	    {	// Just one end is visible, draw a symbol that shows
 		// that there is a link to a scrolled branch
 		if (beginBO->isVisibleObj())
+                {
+                    stateVis=OnlyBegin;
 		    visBranch=beginBI;
+                }
 		else
+                {
 		    visBranch=endBI;
-		stateVis=Part;
+                    stateVis=OnlyEnd;
+                }
 		setVisibility (true);
 	    }
 	}
@@ -428,7 +464,7 @@ bool XLinkObj::isInClickBox (const QPointF &p)
             // Enable selecting the path, when a ctrl point is already selected
             if (!b && curSelection!=Unselected && clickPath.intersects (r)) b=true;
 	    break;
-	case Part:    
+	case OnlyBegin || OnlyEnd:    
 	    // not selected, only partially visible
 	    if (poly->boundingRect().contains(p) ) 
 		b=true;

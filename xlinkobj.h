@@ -21,6 +21,10 @@ public:
     virtual ~XLinkObj ();
     virtual void init ();
     virtual QPointF getAbsPos();
+    void setBeginStyle(ArrowObj::OrnamentStyle os);
+    ArrowObj::OrnamentStyle getBeginStyle();
+    void setEndStyle(ArrowObj::OrnamentStyle os);
+    ArrowObj::OrnamentStyle getEndStyle();
     QPointF getBeginPos();
     QPointF getEndPos();
     virtual void move (QPointF p);
@@ -41,15 +45,15 @@ public:
     QPainterPath getClickPath();
 
 private:
-    enum StateVis {Hidden,Part,Full,FullShowControls};
+    enum StateVis {Hidden,OnlyBegin,OnlyEnd,Full,FullShowControls};
     StateVis stateVis;
     static int arrowSize;
     static int clickBorder;
     static int pointRadius;
     QPainterPath clickPath;
     QGraphicsPolygonItem *poly;// Arrowhead, when one end is not visible
-    ArrowObj *pointerEnd;      // Arrowhead 
     ArrowObj *pointerBegin;    // Arrowhead 
+    ArrowObj *pointerEnd;      // Arrowhead 
     QGraphicsPathItem *path;
     
     QPointF beginPos;
