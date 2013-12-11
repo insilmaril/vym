@@ -32,7 +32,7 @@ void ArrowObj::init ()
     line->setZValue (dZ_XLINK);
 
     arrowSize=4;
-    fixedLength = -1;
+    useFixedLength=false;
     setOrnamentStyleBegin (HeadFull);
     setOrnamentStyleEnd   (HeadFull);
 }
@@ -66,6 +66,16 @@ qreal ArrowObj::getArrowSize()
     return arrowSize;
 }
 
+void ArrowObj::setUseFixedLength( bool b)
+{
+    useFixedLength = b;
+}
+
+bool ArrowObj::getUseFixedLength()
+{
+    return useFixedLength;
+}
+
 void ArrowObj::setFixedLength(int i)
 {
     fixedLength = i;
@@ -95,7 +105,7 @@ void ArrowObj::setVisibility (bool b)
             arrowEnd->show();
         else
             arrowEnd->hide();
-        if (fixedLength == 0)
+        if (useFixedLength && fixedLength == 0)
             line->hide();
         else
             line->show();

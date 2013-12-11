@@ -22,6 +22,8 @@ public:
     qreal getArrowSize();
     void setFixedLength(int i);
     int  getFixedLength();
+    void setUseFixedLength(bool b);
+    bool getUseFixedLength();
     void show();
     void hide();
     void setVisibility (bool b);
@@ -36,6 +38,7 @@ private:
     QPen pen;
     qreal arrowSize;
     int fixedLength;
+    bool useFixedLength;
     QGraphicsPolygonItem *arrowEnd;	    
     QGraphicsPolygonItem *arrowBegin;	    
     QGraphicsLineItem *line;

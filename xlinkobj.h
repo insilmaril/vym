@@ -63,8 +63,6 @@ private:
     LinkableMapObj::Orientation   endOrient;
     QGraphicsEllipseItem *ctrl_p0;
     QGraphicsEllipseItem *ctrl_p1;
-    QGraphicsLineItem *ctrl_l0;
-    QGraphicsLineItem *ctrl_l1;
 
     CurrentSelection curSelection;
 

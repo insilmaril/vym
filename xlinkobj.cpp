@@ -31,8 +31,6 @@ XLinkObj::~XLinkObj ()
     delete (path);
     delete (ctrl_p0);
     delete (ctrl_p1);
-    delete (ctrl_l0);
-    delete (ctrl_l1);
     delete (pointerEnd);
     delete (pointerBegin);
 }
@@ -49,17 +47,19 @@ void XLinkObj::init ()
     path=scene()->addPath (QPainterPath(), pen, Qt::NoBrush);	
     path->setZValue (dZ_XLINK);
 
-    pen.setStyle (Qt::SolidLine);
-    poly=scene()->addPolygon (QPolygonF(), pen, pen.color());	
-    poly->setZValue (dZ_XLINK);
-
     pointerBegin = new ArrowObj(this);
     pointerBegin->setPen( pen );
+    pointerBegin->setUseFixedLength( true );
     pointerBegin->setFixedLength( 0 );
 
     pointerEnd = new ArrowObj(this);
     pointerEnd->setPen( pen );
+    pointerEnd->setUseFixedLength( true );
     pointerEnd->setFixedLength( 0 );
+
+    pen.setStyle (Qt::SolidLine);
+    poly=scene()->addPolygon (QPolygonF(), pen, pen.color());	
+    poly->setZValue (dZ_XLINK);
 
     // Control points for bezier path	
     qreal d=100;
@@ -77,8 +77,6 @@ void XLinkObj::init ()
     beginOrient=endOrient=LinkableMapObj::UndefinedOrientation;
     pen.setWidth (1);
     pen.setStyle (Qt::DashLine);
-    ctrl_l0=scene()->addLine(0,0,0,0, pen);
-    ctrl_l1=scene()->addLine(0,0,0,0, pen);
 
     curSelection=Unselected;
 
@@ -278,14 +276,6 @@ void XLinkObj::updateXLink()
     ctrl_p1->setBrush (pen.color() );
 
     pen.setStyle (Qt::DashLine);
-    ctrl_l0->setLine ( 
-	beginPos.x(), beginPos.y(),
-	c0.x() + beginPos.x(), c0.y() + beginPos.y() );
-    ctrl_l0->setPen (pen);
-    ctrl_l1->setLine ( 
-	endPos.x(), endPos.y(),
-	c1.x() + endPos.x(), c1.y() + endPos.y() );
-    ctrl_l1->setPen (pen);
 	
     BranchItem *bi_begin=link->getBeginBranch();
     BranchItem *bi_end  =link->getEndBranch();
@@ -310,6 +300,22 @@ void XLinkObj::calcBBoxSize()
 
 void XLinkObj::setVisibility (bool b)
 {
+    if (stateVis==FullShowControls)
+    {
+	ctrl_p0->show();
+	ctrl_p1->show();
+        pointerBegin->setUseFixedLength( false );
+        pointerEnd->setUseFixedLength( false );
+    } else
+    {
+	ctrl_p0->hide();
+	ctrl_p1->hide();
+        pointerBegin->setUseFixedLength( true );
+        pointerBegin->setFixedLength( 0 );
+        pointerEnd->setUseFixedLength( true );
+        pointerEnd->setFixedLength( 0 );
+    }
+
     MapObj::setVisibility (b);
     if (b)
     {
@@ -344,19 +350,6 @@ void XLinkObj::setVisibility (bool b)
         pointerEnd->hide();
     }	
 
-    if (stateVis==FullShowControls)
-    {
-	ctrl_p0->show();
-	ctrl_p1->show();
-	ctrl_l0->show();
-	ctrl_l1->show();
-    } else
-    {
-	ctrl_p0->hide();
-	ctrl_p1->hide();
-	ctrl_l0->hide();
-	ctrl_l1->hide();
-    }
 }
 
 void XLinkObj::setVisibility ()
