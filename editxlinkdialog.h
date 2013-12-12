@@ -25,7 +25,9 @@ private slots:
     void colorButtonPressed();
     void colorChanged(QColor c);
     void setColorHeadingButtonPressed ();
-    void lineStyleChanged (int);
+    void lineStyleChanged( int );
+    void beginStyleChanged( int );
+    void endStyleChanged( int );
 
 private:
     Ui::EditXLinkDialog ui;

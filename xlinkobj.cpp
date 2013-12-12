@@ -99,24 +99,34 @@ QPointF XLinkObj::getAbsPos()
     }
 }
 
-void XLinkObj::setBeginStyle(ArrowObj::OrnamentStyle os)
+void XLinkObj::setStyleBegin(const QString &s)
 {
-    pointerBegin->setOrnamentStyleBegin(os);
+    pointerBegin->setStyleEnd( s );
 }
 
-ArrowObj::OrnamentStyle XLinkObj::getBeginStyle()
+void XLinkObj::setStyleBegin(ArrowObj::OrnamentStyle os)
 {
-    return pointerBegin->getOrnamentStyleBegin();
+    pointerBegin->setStyleEnd( os );
 }
 
-void XLinkObj::setEndStyle(ArrowObj::OrnamentStyle os)
+ArrowObj::OrnamentStyle XLinkObj::getStyleBegin()
 {
-    pointerEnd->setOrnamentStyleEnd(os);
+    return pointerBegin->getStyleEnd();
 }
 
-ArrowObj::OrnamentStyle XLinkObj::getEndStyle()
+void XLinkObj::setStyleEnd(const QString &s)
 {
-    return pointerEnd->getOrnamentStyleEnd();
+    pointerEnd->setStyleEnd( s );
+}
+
+void XLinkObj::setStyleEnd(ArrowObj::OrnamentStyle os)
+{
+    pointerEnd->setStyleEnd( os );
+}
+
+ArrowObj::OrnamentStyle XLinkObj::getStyleEnd()
+{
+    return pointerEnd->getStyleEnd();
 }
 
 QPointF XLinkObj::getBeginPos()

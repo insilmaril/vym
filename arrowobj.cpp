@@ -25,6 +25,8 @@ void ArrowObj::init ()
     QPen pen;
 
     pen.setStyle (Qt::SolidLine);
+    arrowBegin=scene()->addPolygon (QPolygonF(), pen );	
+    arrowBegin->setZValue (dZ_XLINK);
     arrowEnd=scene()->addPolygon (QPolygonF(), pen );	
     arrowEnd->setZValue (dZ_XLINK);
 
@@ -33,8 +35,8 @@ void ArrowObj::init ()
 
     arrowSize=4;
     useFixedLength=false;
-    setOrnamentStyleBegin (HeadFull);
-    setOrnamentStyleEnd   (HeadFull);
+    setStyleBegin (HeadFull);
+    setStyleEnd   (HeadFull);
 }
 
 void ArrowObj::setPen (QPen p)
@@ -47,8 +49,8 @@ void ArrowObj::setPen (QPen p)
     pen_solid.setStyle (Qt::SolidLine);
     arrowEnd->setPen( pen_solid );
 
-    setOrnamentStyleBegin( beginStyle );
-    setOrnamentStyleEnd( endStyle );
+    setStyleBegin( beginStyle );
+    setStyleEnd( endStyle );
 }
 
 QPen ArrowObj::getPen()
@@ -134,17 +136,50 @@ QPointF ArrowObj::getEndPoint ()
     return endPoint;
 }
 
-void ArrowObj::setOrnamentStyleBegin (OrnamentStyle os) // FIXME-0 missing
+void ArrowObj::setStyleBegin (const QString &s) // FIXME-0 missing
 {
-    beginStyle = os;
+    if (s=="HeadFull")
+        setStyleBegin( ArrowObj::HeadFull );
+    else
+        setStyleBegin( ArrowObj::None );
 }
 
-ArrowObj::OrnamentStyle ArrowObj::getOrnamentStyleBegin()
+void ArrowObj::setStyleBegin (OrnamentStyle os) // FIXME-0 missing
+{
+    beginStyle = os;
+    // FIXME-0 needs real implementation (and shared with method for end)
+
+    beginStyle = os;
+    QPointF a,b,c;
+    QPolygonF pa;
+    switch (beginStyle) 
+    {
+        case HeadFull:
+            b = a + QPointF( -arrowSize *2, -arrowSize);
+            c = a + QPointF( -arrowSize *2, +arrowSize);
+            pa << a << b << c;
+            arrowBegin->setPolygon( pa );
+            arrowBegin->setBrush( pen.color() ); 
+            break;
+        case Foot: break;
+        case None: break;
+    }
+}
+
+ArrowObj::OrnamentStyle ArrowObj::getStyleBegin()
 {
     return beginStyle;
 }
 
-void ArrowObj::setOrnamentStyleEnd (OrnamentStyle os)
+void ArrowObj::setStyleEnd (const QString &s) // FIXME-0 missing
+{
+    if (s=="HeadFull")
+        setStyleEnd( ArrowObj::HeadFull );
+    else
+        setStyleEnd( ArrowObj::None );
+}
+
+void ArrowObj::setStyleEnd (OrnamentStyle os)
 {
     // FIXME-0 needs real implementation (and shared with method for begin)
 
@@ -165,7 +200,7 @@ void ArrowObj::setOrnamentStyleEnd (OrnamentStyle os)
     }
 }
 
-ArrowObj::OrnamentStyle ArrowObj::getOrnamentStyleEnd()
+ArrowObj::OrnamentStyle ArrowObj::getStyleEnd()
 {
     return endStyle;
 }

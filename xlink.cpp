@@ -127,6 +127,16 @@ void Link::setLinkType (const QString &s)
 	qWarning()<<"Link::setLinkType  Unknown type: "<<s;
 }
 
+void Link::setStyleBegin (const QString &s)
+{
+    if (xlo) xlo->setStyleBegin( s );
+}
+
+void Link::setStyleEnd (const QString &s)
+{
+    if (xlo) xlo->setStyleEnd( s );
+}
+
 bool Link::activate ()	
 {
     if (beginBranch && endBranch)

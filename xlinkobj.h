@@ -21,10 +21,12 @@ public:
     virtual ~XLinkObj ();
     virtual void init ();
     virtual QPointF getAbsPos();
-    void setBeginStyle(ArrowObj::OrnamentStyle os);
-    ArrowObj::OrnamentStyle getBeginStyle();
-    void setEndStyle(ArrowObj::OrnamentStyle os);
-    ArrowObj::OrnamentStyle getEndStyle();
+    void setStyleBegin(const QString &s);
+    void setStyleBegin(ArrowObj::OrnamentStyle os);
+    ArrowObj::OrnamentStyle getStyleBegin();
+    void setStyleEnd(const QString &s);
+    void setStyleEnd(ArrowObj::OrnamentStyle os);
+    ArrowObj::OrnamentStyle getStyleEnd();
     QPointF getBeginPos();
     QPointF getEndPos();
     virtual void move (QPointF p);

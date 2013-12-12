@@ -732,7 +732,7 @@ bool parseVYMHandler::readXLinkAttr (const QXmlAttributes& a)
 		    bool okx;
 		    pen.setWidth(a.value ("width").toInt (&okx, 10));
 		}
-		model->createLink (li,true);	// create MO by default
+		model->createLink (li);
 	    }
 	}           
     }	
@@ -772,7 +772,6 @@ bool parseVYMHandler::readLinkNewAttr (const QXmlAttributes& a)
 		    col.setNamedColor(a.value("color"));
 		    pen.setColor (col);
 		}
-
 		if (!a.value( "width").isEmpty() ) 
 		{
 		    pen.setWidth(a.value ("width").toInt (&okx, 10));
@@ -783,7 +782,12 @@ bool parseVYMHandler::readLinkNewAttr (const QXmlAttributes& a)
 		}
 		li->setPen (pen);
 
-		model->createLink (li,true);	// create MO by default
+		if (!a.value( "beginStyle").isEmpty() ) 
+                    li->setStyleBegin( a.value( "beginStyle" ) );
+		if (!a.value( "endStyle").isEmpty() ) 
+                    li->setStyleEnd( a.value( "endStyle" ) );
+
+		model->createLink (li);
 
 		XLinkObj *xlo=(XLinkObj*)(li->getMO() );
 		if (xlo && !a.value( "c0").isEmpty() )

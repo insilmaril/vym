@@ -2518,7 +2518,7 @@ ImageItem* VymModel::createImage(BranchItem *dst)
     return NULL;
 }
 
-bool VymModel::createLink(Link *link, bool createMO)
+bool VymModel::createLink(Link *link)
 {
     BranchItem *begin=link->getBeginBranch();
     BranchItem *end  =link->getEndBranch();
@@ -2583,7 +2583,7 @@ bool VymModel::createLink(Link *link, bool createMO)
 
     latestAddedItem=newli;
 
-    if (createMO) 
+    if (!link->getMO() ) 
     {
 	link->createMapObj();
 	reposition();
@@ -3786,7 +3786,7 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 		    li->setBeginBranch ( (BranchItem*)begin );
 		    li->setEndBranch ( (BranchItem*)end);
 
-		    createLink (li,true);   // create MO by default
+		    createLink (li);
 		    QPen pen=li->getPen();
 		    if (parser.parCount()>2)
 		    {

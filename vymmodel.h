@@ -379,7 +379,7 @@ public:
     ImageItem* createImage(BranchItem *dst);	//!< Create image
 
 public:	
-    bool createLink(Link *l, bool createMO=false);	    //!< Create XLink 
+    bool createLink(Link *l);	//!< Create XLink, will create MO automatically if needed 
     QColor getXLinkColor();
     int getXLinkWidth();
     Qt::PenStyle getXLinkPenStyle();

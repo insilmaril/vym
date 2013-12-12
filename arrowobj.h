@@ -29,10 +29,12 @@ public:
     void setVisibility (bool b);
     void setEndPoint (QPointF p);
     QPointF getEndPoint ();
-    void setOrnamentStyleBegin (OrnamentStyle os);
-    OrnamentStyle getOrnamentStyleBegin ();
-    void setOrnamentStyleEnd (OrnamentStyle os);
-    OrnamentStyle getOrnamentStyleEnd ();
+    void setStyleBegin (OrnamentStyle os);
+    void setStyleBegin (const QString &s);
+    OrnamentStyle getStyleBegin ();
+    void setStyleEnd (const QString &s);
+    void setStyleEnd (OrnamentStyle os);
+    OrnamentStyle getStyleEnd ();
 
 private:
     QPen pen;

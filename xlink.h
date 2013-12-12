@@ -40,6 +40,8 @@ public:
     void setPen (const QPen &p);
     QPen getPen();
     void setLinkType (const QString &s);
+    void setStyleBegin( const QString &s);
+    void setStyleEnd( const QString &s);
     bool activate ();		
     void deactivate ();		
     XLinkState getState();

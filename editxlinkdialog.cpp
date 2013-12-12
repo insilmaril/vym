@@ -5,6 +5,7 @@
 #include <QColorDialog>
 
 #include "branchitem.h"
+#include "xlinkobj.h"
 
 extern QString iconPath;
 
@@ -23,6 +24,8 @@ EditXLinkDialog::EditXLinkDialog (QWidget *parent):QDialog (parent)
     connect ( ui.widthBox, SIGNAL (valueChanged( int)), this, SLOT (widthChanged (int)));
     connect ( ui.colorButton, SIGNAL (clicked( )), this, SLOT (colorButtonPressed()));
     connect ( ui.lineStyleCombo, SIGNAL (currentIndexChanged( int )), this, SLOT (lineStyleChanged(int)));
+    connect ( ui.checkBoxArrowBegin, SIGNAL (stateChanged( int )), this, SLOT (beginStyleChanged( int )));
+    connect ( ui.checkBoxArrowEnd  , SIGNAL (stateChanged( int )), this, SLOT (  endStyleChanged( int )));
     //FIXME-4 connect ( ui.setColorHeadingButton, SIGNAL (clicked( )), this, SLOT (setColorHeadingButtonPressed()));
     ui.setColorHeadingButton->hide();
 }
@@ -44,13 +47,20 @@ void EditXLinkDialog::setLink( Link * l)
     ui.widthBox->setValue(pen.width() );
     switch (pen.style() )
     {
-//	case Qt::SolidLine: ui.lineStyleCombo->setCurrentIndex (0); break;
 	case Qt::DashLine: ui.lineStyleCombo->setCurrentIndex (1); break;
 	case Qt::DotLine: ui.lineStyleCombo->setCurrentIndex (2); break;
 	case Qt::DashDotLine: ui.lineStyleCombo->setCurrentIndex (3); break;
 	case Qt::DashDotDotLine: ui.lineStyleCombo->setCurrentIndex (4); break;
 	default: ui.lineStyleCombo->setCurrentIndex (0);
     }
+    if ( link->getXLinkObj()->getStyleEnd() )
+        ui.checkBoxArrowEnd->setChecked( true );
+    else
+        ui.checkBoxArrowEnd->setChecked( false );
+    if ( link->getXLinkObj()->getStyleBegin() )
+        ui.checkBoxArrowBegin->setChecked( true );
+    else
+        ui.checkBoxArrowBegin->setChecked( false );
 }
 
 void EditXLinkDialog::colorButtonPressed()
@@ -101,6 +111,30 @@ void EditXLinkDialog::lineStyleChanged (int i)
 	link->setPen (pen);
 	link->updateLink();
     }
+}
+
+void EditXLinkDialog::beginStyleChanged( int state )
+{
+    if (link)
+    {
+        if (state)
+            link->setStyleBegin( "HeadFull" );
+        else
+            link->setStyleBegin( "None" );
+    }
+    link->updateLink();
+}
+
+void EditXLinkDialog::endStyleChanged( int state )
+{
+    if (link)
+    {
+        if (state)
+            link->setStyleEnd( "HeadFull" );
+        else
+            link->setStyleEnd( "None" );
+    }
+    link->updateLink();
 }
 
 bool EditXLinkDialog::useSettingsGlobal ()
