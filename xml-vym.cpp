@@ -745,7 +745,7 @@ bool parseVYMHandler::readLinkNewAttr (const QXmlAttributes& a)
     // (before there was beginBranch and endBranch)
     //
     // Starting in 1.13.2 xlinks are no longer subitems of branches,
-    // but listed at the end of the data in a map. This make handling 
+    // but listed at the end of the data in a map. This makes handling 
     // of links much safer and easier
 
     if (!a.value( "beginID").isEmpty() ) 
@@ -759,6 +759,8 @@ bool parseVYMHandler::readLinkNewAttr (const QXmlAttributes& a)
 		Link *li=new Link (model);
 		li->setBeginBranch ( (BranchItem*)beginBI );
 		li->setEndBranch ( (BranchItem*)endBI);
+
+		model->createLink (li);
 
 		bool okx;
 		QPen pen=li->getPen();
@@ -782,12 +784,11 @@ bool parseVYMHandler::readLinkNewAttr (const QXmlAttributes& a)
 		}
 		li->setPen (pen);
 
-		if (!a.value( "beginStyle").isEmpty() ) 
-                    li->setStyleBegin( a.value( "beginStyle" ) );
-		if (!a.value( "endStyle").isEmpty() ) 
-                    li->setStyleEnd( a.value( "endStyle" ) );
+		if (!a.value( "styleBegin").isEmpty() ) 
+                    li->setStyleBegin( a.value( "styleBegin" ) );
+		if (!a.value( "styleEnd").isEmpty() ) 
+                    li->setStyleEnd( a.value( "styleEnd" ) );
 
-		model->createLink (li);
 
 		XLinkObj *xlo=(XLinkObj*)(li->getMO() );
 		if (xlo && !a.value( "c0").isEmpty() )

@@ -272,7 +272,12 @@ void XLinkObj::updateXLink()
     path->setPen (pen);
     poly->setBrush (pen.color() );
     
+    pointerBegin->setPen( pen );
+    pointerEnd->setPen( pen );
+
     pen.setStyle (Qt::SolidLine);
+
+
     ctrl_p0->setRect (
 	beginPos.x() + c0.x() - pointRadius/2, beginPos.y() + c0.y() - pointRadius/2,
 	pointRadius, pointRadius );
@@ -285,8 +290,6 @@ void XLinkObj::updateXLink()
     ctrl_p1->setPen (pen);
     ctrl_p1->setBrush (pen.color() );
 
-    pen.setStyle (Qt::DashLine);
-	
     BranchItem *bi_begin=link->getBeginBranch();
     BranchItem *bi_end  =link->getEndBranch();
     if (bi_begin && bi_end && link->getState()==Link::activeXLink)
@@ -500,4 +503,3 @@ QPainterPath XLinkObj::getClickPath()  // also needs mirroring if oriented left.
 	    break;
     }
 }
-

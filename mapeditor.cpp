@@ -1350,6 +1350,8 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
 	tmpLink=new Link (model);
 	tmpLink->setBeginBranch (selbi);
 	tmpLink->createMapObj();
+        tmpLink->setStyleBegin("None");
+        tmpLink->setStyleEnd("None");
 	tmpLink->setEndPoint ( mapToScene (e->pos() ) );
 	tmpLink->updateLink();
 	return;
@@ -1614,7 +1616,7 @@ void MapEditor::moveObject ()
 	MapObj* mosel=((MapItem*)seli)->getMO();
 	if (mosel) 
 	{
-	    mosel->move   (p-movingObj_offset);	// FIXME-3 Missing savestate 
+	    mosel->move( p-movingObj_offset );	// FIXME-3 Missing savestate 
 	    model->emitSelectionChanged();
 	}
     } else

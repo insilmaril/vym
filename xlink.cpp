@@ -109,7 +109,7 @@ XLinkItem* Link::getOtherEnd (XLinkItem *xli)
 
 void Link::setPen (const QPen &p)
 {
-    pen=p;
+    pen = p;
 }
 
 QPen Link::getPen ()
@@ -129,12 +129,20 @@ void Link::setLinkType (const QString &s)
 
 void Link::setStyleBegin (const QString &s)
 {
-    if (xlo) xlo->setStyleBegin( s );
+    if (xlo) 
+    {
+        xlo->setStyleBegin( s );
+        xlo->updateXLink();
+    }
 }
 
 void Link::setStyleEnd (const QString &s)
 {
-    if (xlo) xlo->setStyleEnd( s );
+    if (xlo) 
+    {
+        xlo->setStyleEnd( s );
+        xlo->updateXLink();
+    }
 }
 
 bool Link::activate ()	
@@ -215,6 +223,12 @@ QString Link::saveToDir ()
 	    }
 	    QString begSelAttr=attribut ("beginID",model->getSelectString(beginBranch));
 	    QString endSelAttr=attribut ("endID",  model->getSelectString(endBranch));
+            QString styleAttr;
+            if (xlo)
+            {
+                styleAttr = QString(" styleBegin=\"%1\"").arg( ArrowObj::styleToString( xlo->getStyleBegin() ));
+                styleAttr+= QString(" styleEnd=\"%1\""  ).arg( ArrowObj::styleToString( xlo->getStyleEnd() ));
+            }
 	    s=singleElement ("xlink", 
 		colAttr 
 		+widAttr 
@@ -222,7 +236,8 @@ QString Link::saveToDir ()
 		+typeAttr 
 		+ctrlAttr
 		+begSelAttr 
-		+endSelAttr);
+		+endSelAttr
+                +styleAttr);
 	}
     }
     return s;

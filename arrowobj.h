@@ -10,6 +10,7 @@
 */
 
 /////////////////////////////////////////////////////////////////////////////
+
 class ArrowObj:public MapObj {
 public:
     enum OrnamentStyle {None, HeadFull, Foot};
@@ -35,6 +36,7 @@ public:
     void setStyleEnd (const QString &s);
     void setStyleEnd (OrnamentStyle os);
     OrnamentStyle getStyleEnd ();
+    static QString styleToString(const OrnamentStyle &os);
 
 private:
     QPen pen;
@@ -46,8 +48,8 @@ private:
     QGraphicsLineItem *line;
     QPointF endPoint;
 
-    OrnamentStyle beginStyle;
-    OrnamentStyle endStyle;
+    OrnamentStyle styleBegin;
+    OrnamentStyle styleEnd;
 };
 
 #endif

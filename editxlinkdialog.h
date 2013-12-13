@@ -30,6 +30,8 @@ private slots:
     void endStyleChanged( int );
 
 private:
+    void emitChanged();
+
     Ui::EditXLinkDialog ui;
     bool delink;
     Link *link;

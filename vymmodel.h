@@ -601,6 +601,8 @@ private:
 
     QColor defLinkColor;	// default color for links
     QPen defXLinkPen;		// default pen for xlinks
+    QString defXLinkStyleBegin; // default style begin
+    QString defXLinkStyleEnd; ; // default style end
     LinkableMapObj::ColorHint linkcolorhint;// use heading color or own color
     LinkableMapObj::Style linkstyle;	    // default style for links
     QFont defaultFont;
@@ -625,6 +627,11 @@ public:
     QColor getMapDefLinkColor();
     void setMapDefXLinkPen (const QPen &p);
     QPen getMapDefXLinkPen();
+
+    void setMapDefXLinkStyleBegin( const QString &s);
+    QString getMapDefXLinkStyleBegin();
+    void setMapDefXLinkStyleEnd  ( const QString &s);
+    QString getMapDefXLinkStyleEnd();
 
     /*!  Move absolutly to (x,y).  */	
     void move    (const double &x, const double &y);

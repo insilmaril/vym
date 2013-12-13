@@ -3684,7 +3684,12 @@ void VymModel::editXLink()
 	if (dia.exec() == QDialog::Accepted)
 	{
 	    if (dia.useSettingsGlobal() )
-		setMapDefXLinkPen  (l->getPen() );
+            {
+		setMapDefXLinkPen( l->getPen() );
+                // FIXME-0 set defxlink begin style
+                // FIXME-0 set defxlink end   style
+                // and also read/write in map header
+            }
 	}
     }   
 }
@@ -5184,6 +5189,26 @@ void VymModel::setMapDefXLinkPen (const QPen &p)  // FIXME-4 move to ME
 QPen VymModel::getMapDefXLinkPen()	// FIXME-4 move to ME
 {
     return defXLinkPen;
+}
+
+void VymModel::setMapDefXLinkStyleBegin( const QString &s)
+{
+    defXLinkStyleBegin = s;
+}
+
+QString VymModel::getMapDefXLinkStyleBegin()
+{
+    return defXLinkStyleBegin;
+}
+
+void VymModel::setMapDefXLinkStyleEnd( const QString &s)
+{
+    defXLinkStyleEnd = s;
+}
+
+QString VymModel::getMapDefXLinkStyleEnd()
+{
+    return defXLinkStyleEnd;
 }
 
 void VymModel::move(const double &x, const double &y)
