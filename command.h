@@ -7,7 +7,7 @@
 class Command
 {
 public:
-    enum SelectionType {Any, TreeItem, Branch, BranchLike, Image, BranchOrImage, XLinkItem}; 
+    enum SelectionType {Any, TreeItem, Branch, BranchLike, Image, BranchOrImage, XLink}; 
     enum ParameterType {Undefined,String, Int, Double, Color, Bool};
     Command (const QString &n, SelectionType st);
     QString getName();

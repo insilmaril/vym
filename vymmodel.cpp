@@ -3694,6 +3694,26 @@ void VymModel::editXLink()
     }   
 }
 
+void VymModel::setXLinkStyleBegin(const QString &s)
+{
+    Link *l=getSelectedXLink();
+    if (l) 
+    {
+        l->setStyleBegin( s );
+        // FIXME-0 missing savestate
+    }   
+}
+
+void VymModel::setXLinkStyleEnd(const QString &s)
+{
+    Link *l=getSelectedXLink();
+    if (l) 
+    {
+        l->setStyleEnd( s );
+        // FIXME-0 missing savestate
+    }   
+}
+
 //////////////////////////////////////////////
 // Scripting
 //////////////////////////////////////////////
@@ -4393,6 +4413,16 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	{
 	    s=parser.parString (ok,0);
 	    setVymLink(s);
+	/////////////////////////////////////////////////////////////////////
+	} else if (com=="setXLinkStyleBegin")       
+	{
+	    s=parser.parString (ok,0);
+	    setXLinkStyleBegin(s);     
+	/////////////////////////////////////////////////////////////////////
+	} else if (com=="setXLinkStyleEnd")       
+	{
+	    s=parser.parString (ok,0);
+	    setXLinkStyleEnd(s);     
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="sleep")
 	{

@@ -149,7 +149,7 @@ bool Parser::checkParameters(TreeItem *selti)
 		} else if ( ct==Command::Any)	    
 		{
 		    ok=true;
-		} else if ( ct==Command::XLinkItem)	    
+		} else if ( ct==Command::XLink)	    
 		{
 		    if (st==TreeItem::XLink)
 			ok=true;

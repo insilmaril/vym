@@ -97,7 +97,7 @@ QString Command::getSelectionTypeName ()
 	case BranchLike: return "BranchLike";
 	case Image: return "Image";
 	case BranchOrImage: return "BranchOrImage";
-	case XLinkItem: return "XLinkItem";
+	case XLink: return "XLink";
 	default: return "Undefined";
     }
 }

@@ -631,13 +631,13 @@ void Main::setupAPI()
     c=new Command ("getVymLink",Command::Branch); 
     modelCommands.append(c);
 
-    c=new Command ("getXLinkColor",Command::XLinkItem);
+    c=new Command ("getXLinkColor",Command::XLink);
     modelCommands.append(c);
 
-    c=new Command ("getXLinkWidth",Command::XLinkItem);
+    c=new Command ("getXLinkWidth",Command::XLink);
     modelCommands.append(c);
 
-    c=new Command ("getXLinkPenStyle",Command::XLinkItem);
+    c=new Command ("getXLinkPenStyle",Command::XLink);
     modelCommands.append(c);
 
     c=new Command ("hasActiveFlag",Command::TreeItem);
@@ -853,6 +853,16 @@ void Main::setupAPI()
     c->addPar (Command::String,false,"Vymlink of branch");
     modelCommands.append(c);
 
+    c=new Command ("setXLinkStyleBegin", Command::XLink); 
+    c->addPar (Command::String,false,"Style of xlink begin");
+    modelCommands.append(c);
+
+    c=new Command ("setXLinkStyleEnd", Command::XLink); 
+    c->addPar (Command::String,false,"Style of xlink end");
+    modelCommands.append(c);
+
+    // FIXME-0 setXLinkPens|Style color width
+    //
     c=new Command ("sleep",Command::Any); 
     c->addPar (Command::Int,false,"Sleep (seconds)");
     modelCommands.append(c);
