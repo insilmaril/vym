@@ -348,7 +348,6 @@ void XLinkObj::setVisibility (bool b)
 	}
         else
         {
-            // FIXME-0 pointers!
             path->show();
 	    poly->hide();
             pointerBegin->show();

@@ -39,6 +39,7 @@ public:
     static QString styleToString(const OrnamentStyle &os);
 
 private:
+    QPolygonF getArrowHead();
     QPen pen;
     qreal arrowSize;
     int fixedLength;

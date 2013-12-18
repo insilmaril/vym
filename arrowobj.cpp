@@ -15,7 +15,6 @@ ArrowObj::ArrowObj (MapObj* parent):MapObj(parent)
 
 ArrowObj::~ArrowObj ()
 {
-    // FIXME-0 delete all used graphicsitems...
     delete arrowBegin;
     delete arrowEnd;
     delete line;
@@ -138,7 +137,7 @@ QPointF ArrowObj::getEndPoint ()
     return endPoint;
 }
 
-void ArrowObj::setStyleBegin (const QString &s) // FIXME-0 missing
+void ArrowObj::setStyleBegin (const QString &s) 
 {
     if (s=="HeadFull")
         setStyleBegin( ArrowObj::HeadFull );
@@ -146,20 +145,13 @@ void ArrowObj::setStyleBegin (const QString &s) // FIXME-0 missing
         setStyleBegin( ArrowObj::None );
 }
 
-void ArrowObj::setStyleBegin (OrnamentStyle os) // FIXME-0 missing
+void ArrowObj::setStyleBegin (OrnamentStyle os) 
 {
-    // FIXME-0 needs real implementation (and shared with method for end)
-
     styleBegin = os;
-    QPointF a,b,c;
-    QPolygonF pa;
     switch (styleBegin) 
     {
         case HeadFull:
-            b = a + QPointF( -arrowSize *2, -arrowSize);
-            c = a + QPointF( -arrowSize *2, +arrowSize);
-            pa << a << b << c;
-            arrowBegin->setPolygon( pa );
+            arrowEnd->setPolygon( getArrowHead() );
             arrowBegin->setBrush( pen.color() ); 
             break;
         case Foot: break;
@@ -174,7 +166,7 @@ ArrowObj::OrnamentStyle ArrowObj::getStyleBegin()
     return styleBegin;
 }
 
-void ArrowObj::setStyleEnd (const QString &s) // FIXME-0 missing
+void ArrowObj::setStyleEnd (const QString &s) 
 {
     if (s=="HeadFull")
         setStyleEnd( ArrowObj::HeadFull );
@@ -184,18 +176,11 @@ void ArrowObj::setStyleEnd (const QString &s) // FIXME-0 missing
 
 void ArrowObj::setStyleEnd (OrnamentStyle os)
 {
-    // FIXME-0 needs real implementation (and shared with method for begin)
-
     styleEnd = os;
-    QPointF a,b,c;
-    QPolygonF pa;
     switch (styleEnd) 
     {
         case HeadFull:
-            b = a + QPointF( -arrowSize *2, -arrowSize);
-            c = a + QPointF( -arrowSize *2, +arrowSize);
-            pa << a << b << c;
-            arrowEnd->setPolygon( pa );
+            arrowEnd->setPolygon( getArrowHead() );
             arrowEnd->setBrush( pen.color() ); 
             break;
         case Foot: break;
@@ -203,6 +188,16 @@ void ArrowObj::setStyleEnd (OrnamentStyle os)
             arrowEnd->setPolygon( QPolygonF() );
             break;
     }
+}
+
+QPolygonF ArrowObj::getArrowHead()
+{
+    QPointF a,b,c;
+    QPolygonF pa;
+    b = a + QPointF( -arrowSize *2, -arrowSize);
+    c = a + QPointF( -arrowSize *2, +arrowSize);
+    pa << a << b << c;
+    return pa;
 }
 
 ArrowObj::OrnamentStyle ArrowObj::getStyleEnd()
