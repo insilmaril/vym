@@ -640,6 +640,12 @@ void Main::setupAPI()
     c=new Command ("getXLinkPenStyle",Command::XLink);
     modelCommands.append(c);
 
+    c=new Command ("getXLinkStyleBegin",Command::XLink);
+    modelCommands.append(c);
+
+    c=new Command ("getXLinkStyleEnd",Command::XLink);
+    modelCommands.append(c);
+
     c=new Command ("hasActiveFlag",Command::TreeItem);
     c->addPar (Command::String,false,"Name of flag");
     modelCommands.append(c);

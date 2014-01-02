@@ -383,6 +383,8 @@ public:
     QColor getXLinkColor();
     int getXLinkWidth();
     Qt::PenStyle getXLinkPenStyle();
+    QString getXLinkStyleBegin();
+    QString getXLinkStyleEnd();
 
     AttributeItem* addAttribute();
     AttributeItem* addAttribute(BranchItem *dst, AttributeItem* );

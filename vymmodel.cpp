@@ -2619,6 +2619,24 @@ Qt::PenStyle VymModel::getXLinkPenStyle()
 	return Qt::NoPen;
 }
 
+QString VymModel::getXLinkStyleBegin()
+{
+    Link *l=getSelectedXLink();
+    if (l)
+	return l->getStyleBeginString();
+    else
+	return QString();
+}
+
+QString VymModel::getXLinkStyleEnd()
+{
+    Link *l=getSelectedXLink();
+    if (l)
+	return l->getStyleEndString();
+    else
+	return QString();
+}
+
 AttributeItem* VymModel::addAttribute()	    // FIXME-5 savestate missing
 
 {
@@ -4123,6 +4141,14 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	} else if (com=="getXLinkPenStyle")
 	{ 
 	    returnValue=penStyleToString( getXLinkPenStyle() );
+	/////////////////////////////////////////////////////////////////////
+	} else if (com=="getXLinkStyleBegin")
+	{ 
+	    returnValue = getXLinkStyleBegin();
+	/////////////////////////////////////////////////////////////////////
+	} else if (com=="getXLinkStyleEnd")
+	{ 
+	    returnValue = getXLinkStyleEnd();
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="hasActiveFlag")
 	{ 

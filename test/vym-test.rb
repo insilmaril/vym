@@ -607,9 +607,37 @@ def test_xlinks (vym)
   init_map
   vym.addXLink("mc:0,bo:0","mc:0,bo:1",2,"#ff0000","Qt::DashDotLine")
   vym.selectLatestAdded
-  expect "Color of XLink", vym.getXLinkColor, "#ff0000"
-  expect "Width of XLink", vym.getXLinkWidth, 2
-  expect "Style of XLink", vym.getXLinkPenStyle, "Qt::DashDotLine"
+  expect "Default color of XLink", vym.getXLinkColor, "#ff0000"
+  expect "Default width of XLink", vym.getXLinkWidth, 2
+  expect "Default style of XLink", vym.getXLinkPenStyle, "Qt::DashDotLine"
+  expect "Default style of XLink begin", vym.getXLinkStyleBegin, "HeadFull"
+  expect "Default style of XLink end",   vym.getXLinkStyleEnd, "HeadFull"
+
+  vym.setXLinkWidth(3)
+  expect "New width of XLink", vym.getXLinkWidth, 3
+  vym.undo
+  expect "Undo width of XLink", vym.getXLinkWidth, 2
+
+  vym.setXLinkColor("#00ff00")
+  expect "New color of XLink", vym.getXLinkColor, "#00ff00"
+  vym.undo
+  expect "Undo color of XLink", vym.getXLinkColor, "#ff0000"
+
+  vym.setXLinkLineStyle("Qt::SolidLine")
+  expect "New style of XLink", vym.getXLinkPenStyle, "Qt::SolidLine"
+  vym.undo
+  expect "Undo style of XLink", vym.getXLinkPenStyle, "Qt::DashDotLine"
+
+  vym.setXLinkStyleBegin("None")
+  expect "New style of XLink begin", vym.getXLinkStyleBegin, "None"
+  vym.undo
+  expect "Undo style of XLink begin", vym.getXLinkStyleBegin, "HeadFull"
+
+  vym.setXLinkStyleEnd("None")
+  expect "New style of XLink end", vym.getXLinkStyleEnd, "None"
+  vym.undo
+  expect "Undo style of XLink end", vym.getXLinkStyleEnd, "HeadFull"
+
   vym.delete
 end
 
