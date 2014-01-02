@@ -172,6 +172,8 @@ void VymModel::init ()
     defXLinkPen.setWidth (1);
     defXLinkPen.setColor ( QColor (50,50,255) );
     defXLinkPen.setStyle ( Qt::DashLine );
+    defXLinkStyleBegin = "HeadFull";
+    defXLinkStyleEnd   = "HeadFull";
 
     hasContextPos=false;
 
@@ -277,6 +279,8 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix, bool w
 		  xml.attribut("defXLinkColor", defXLinkPen.color().name() ) +
 		  xml.attribut("defXLinkWidth", QString().setNum(defXLinkPen.width(),10) ) +
 		  xml.attribut("defXLinkPenStyle", penStyleToString (defXLinkPen.style() )) +
+		  xml.attribut("defXLinkStyleBegin", defXLinkStyleBegin) +
+		  xml.attribut("defXLinkStyleEnd", defXLinkStyleEnd) +
 		  xml.attribut("mapZoomFactor", QString().setNum(mapEditor->getZoomFactorTarget()) ) +
 		  xml.attribut("mapRotationAngle", QString().setNum(mapEditor->getAngleTarget()) ) +
 		  colhint; 
@@ -2589,6 +2593,9 @@ bool VymModel::createLink(Link *link)
 	reposition();
     } else
         link->updateLink();
+
+    link->setStyleBegin( defXLinkStyleBegin );
+    link->setStyleEnd  ( defXLinkStyleEnd );
     return true;
 }
 
@@ -3704,9 +3711,8 @@ void VymModel::editXLink()
 	    if (dia.useSettingsGlobal() )
             {
 		setMapDefXLinkPen( l->getPen() );
-                // FIXME-0 set defxlink begin style
-                // FIXME-0 set defxlink end   style
-                // FIXME-0 and also read/write in map header
+                setMapDefXLinkStyleBegin( l->getStyleBeginString() );
+                setMapDefXLinkStyleEnd( l->getStyleEndString() );
             }
 	}
     }   

@@ -460,6 +460,11 @@ bool parseVYMHandler::readMapAttr (const QXmlAttributes& a)
     }
     model->setMapDefXLinkPen (pen);
 
+    if (!a.value( "defXLinkStyleBegin").isEmpty() ) 
+        model->setMapDefXLinkStyleBegin( a.value( "defXLinkStyleBegin" ) );
+    if (!a.value( "defXLinkStyleEnd").isEmpty() ) 
+        model->setMapDefXLinkStyleEnd( a.value( "defXLinkStyleEnd" ) );
+
     if (!a.value( "mapZoomFactor").isEmpty() ) 
 	model->setMapZoomFactor(a.value("mapZoomFactor").toDouble());
     if (!a.value( "mapRotationAngle").isEmpty() ) 
