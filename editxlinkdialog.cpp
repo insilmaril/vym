@@ -5,6 +5,7 @@
 #include <QColorDialog>
 
 #include "branchitem.h"
+#include "vymmodel.h"
 #include "xlinkobj.h"
 
 extern QString iconPath;
@@ -33,10 +34,7 @@ EditXLinkDialog::EditXLinkDialog (QWidget *parent):QDialog (parent)
 
 void EditXLinkDialog::widthChanged( int  w)
 {
-    QPen pen=link->getPen();
-    pen.setWidth (w);
-    link->setPen (pen);
-    link->updateLink();
+    link->getModel()->setXLinkWidth( w );
 }
 
 void EditXLinkDialog::setLink( Link * l)
@@ -70,10 +68,7 @@ void EditXLinkDialog::colorButtonPressed()
 	QPen pen=link->getPen();
 	QColor col = QColorDialog::getColor(pen.color(), this );
 	if ( !col.isValid() ) return;
-	pen.setColor (col);
-	link->setPen (pen);
-	colorChanged (col);
-	link->updateLink();
+        link->getModel()->setXLinkColor( col.name() );
     }
 }
 
@@ -96,20 +91,17 @@ void EditXLinkDialog::lineStyleChanged (int i)
 {
     if (link)
     {	
-	QPen pen=link->getPen();
-	Qt::PenStyle s;
+        QString style;
 	switch (i)
 	{
-	    case 0: s=Qt::SolidLine; break;
-	    case 1: s=Qt::DashLine; break;
-	    case 2: s=Qt::DotLine; break;
-	    case 3: s=Qt::DashDotLine; break;
-	    case 4: s=Qt::DashDotDotLine; break;
-	    default: s=Qt::NoPen;
+            case 0: style = "Qt::SolidLine"; break;
+	    case 1: style = "Qt::DashLine"; break;
+	    case 2: style = "Qt::DotLine"; break;
+	    case 3: style = "Qt::DashDotLine"; break;
+	    case 4: style = "Qt::DashDotDotLine"; break;
+	    default: style = "Qt::NoPen";
 	}
-	pen.setStyle (s);
-	link->setPen (pen);
-	link->updateLink();
+        link->getModel()->setXLinkLineStyle( style );
     }
 }
 
@@ -118,11 +110,10 @@ void EditXLinkDialog::beginStyleChanged( int state )
     if (link)
     {
         if (state)
-            link->setStyleBegin( "HeadFull" );
+            link->getModel()->setXLinkStyleBegin( "HeadFull" );
         else
-            link->setStyleBegin( "None" );
+            link->getModel()->setXLinkStyleBegin( "None" );
     }
-    link->updateLink();
 }
 
 void EditXLinkDialog::endStyleChanged( int state )
@@ -130,11 +121,10 @@ void EditXLinkDialog::endStyleChanged( int state )
     if (link)
     {
         if (state)
-            link->setStyleEnd( "HeadFull" );
+            link->getModel()->setXLinkStyleEnd( "HeadFull" );
         else
-            link->setStyleEnd( "None" );
+            link->getModel()->setXLinkStyleEnd( "None" );
     }
-    link->updateLink();
 }
 
 bool EditXLinkDialog::useSettingsGlobal ()

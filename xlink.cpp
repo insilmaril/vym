@@ -8,6 +8,8 @@
 #include "xlinkitem.h"
 #include "xlinkobj.h"
 
+class VymModel;
+
 /////////////////////////////////////////////////////////////////
 // Link
 /////////////////////////////////////////////////////////////////
@@ -37,6 +39,11 @@ void Link::init ()
 
     type=Bezier;
     pen=model->getMapDefXLinkPen();
+}
+
+VymModel* Link::getModel()
+{
+    return model;
 }
 
 void Link::setBeginBranch (BranchItem *bi)
@@ -110,6 +117,7 @@ XLinkItem* Link::getOtherEnd (XLinkItem *xli)
 void Link::setPen (const QPen &p)
 {
     pen = p;
+    if (xlo) xlo->updateXLink();
 }
 
 QPen Link::getPen ()
@@ -136,6 +144,14 @@ void Link::setStyleBegin (const QString &s)
     }
 }
 
+QString Link::getStyleBeginString()
+{
+    if (xlo)
+        return ArrowObj::styleToString( xlo->getStyleBegin() );
+    else 
+        return QString();
+}
+
 void Link::setStyleEnd (const QString &s)
 {
     if (xlo) 
@@ -143,6 +159,14 @@ void Link::setStyleEnd (const QString &s)
         xlo->setStyleEnd( s );
         xlo->updateXLink();
     }
+}
+
+QString Link::getStyleEndString()
+{
+    if (xlo)
+        return ArrowObj::styleToString( xlo->getStyleEnd() );
+    else 
+        return QString();
 }
 
 bool Link::activate ()	

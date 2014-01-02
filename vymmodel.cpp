@@ -3688,29 +3688,102 @@ void VymModel::editXLink()
 		setMapDefXLinkPen( l->getPen() );
                 // FIXME-0 set defxlink begin style
                 // FIXME-0 set defxlink end   style
-                // and also read/write in map header
+                // FIXME-0 and also read/write in map header
             }
 	}
     }   
 }
 
-void VymModel::setXLinkStyleBegin(const QString &s)
+void VymModel::setXLinkColor(const QString &new_col)
 {
-    Link *l=getSelectedXLink();
+    Link *l = getSelectedXLink();
     if (l) 
     {
-        l->setStyleBegin( s );
-        // FIXME-0 missing savestate
+        QPen pen = l->getPen();
+        QColor new_color = QColor( new_col );
+        QColor old_color = pen.color();
+        if (new_color == old_color) return;
+        pen.setColor( new_color);
+        l->setPen( pen );
+        saveState(
+                l->getBeginLinkItem(),
+                QString("setXLinkColor(\"%1\")").arg(old_color.name() ),
+                l->getBeginLinkItem(),
+                QString("setXLinkColor(\"%1\")").arg(new_color.name() ),
+                QString("set color of xlink to %1").arg(new_color.name() ) );
     }   
 }
 
-void VymModel::setXLinkStyleEnd(const QString &s)
+void VymModel::setXLinkLineStyle(const QString &new_style)
+{
+    Link *l = getSelectedXLink();
+    if (l) 
+    {
+        QPen pen = l->getPen();
+        QString old_style = penStyleToString( pen.style() );
+        if (new_style == old_style) return;
+        bool ok;
+        pen.setStyle( penStyle(new_style, ok) );
+        l->setPen( pen );
+        saveState(
+                l->getBeginLinkItem(),
+                QString("setXLinkLineStyle(\"%1\")").arg(old_style),
+                l->getBeginLinkItem(),
+                QString("setXLinkLineStyle(\"%1\")").arg(new_style),
+                QString("set style of xlink to %1").arg(new_style) );
+    }   
+}
+
+void VymModel::setXLinkStyleBegin(const QString &new_style)
 {
     Link *l=getSelectedXLink();
     if (l) 
     {
-        l->setStyleEnd( s );
-        // FIXME-0 missing savestate
+        QString old_style = l->getStyleBeginString();
+        if (new_style == old_style) return;
+        l->setStyleBegin( new_style );
+        saveState(
+                l->getBeginLinkItem(),
+                QString("setXLinkStyleBegin(\"%1\")").arg(old_style),
+                l->getBeginLinkItem(),
+                QString("setXLinkStyleBegin(\"%1\")").arg(new_style),
+                "set style of xlink begin");
+    }   
+}
+
+void VymModel::setXLinkStyleEnd(const QString &new_style)
+{
+    Link *l=getSelectedXLink();
+    if (l) 
+    {
+        QString old_style = l->getStyleEndString();
+        if (new_style == old_style) return;
+        l->setStyleEnd( new_style );
+        saveState(
+                l->getBeginLinkItem(),
+                QString("setXLinkStyleEnd(\"%1\")").arg(old_style),
+                l->getBeginLinkItem(),
+                QString("setXLinkStyleEnd(\"%1\")").arg(new_style),
+                "set style of xlink end");
+    }   
+}
+
+void VymModel::setXLinkWidth(int new_width)
+{
+    Link *l=getSelectedXLink();
+    if (l) 
+    {
+        QPen pen = l->getPen();
+        int old_width = pen.width();
+        if (new_width == old_width) return;
+        pen.setWidth( new_width);
+        l->setPen( pen );
+        saveState(
+                l->getBeginLinkItem(),
+                QString("setXLinkWidth(%1)").arg(old_width),
+                l->getBeginLinkItem(),
+                QString("setXLinkWidth(%1)").arg(new_width),
+                "set width of xlink");
     }   
 }
 
@@ -4414,6 +4487,16 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	    s=parser.parString (ok,0);
 	    setVymLink(s);
 	/////////////////////////////////////////////////////////////////////
+	} else if (com=="setXLinkColor")       
+	{
+	    s=parser.parString (ok,0);
+	    setXLinkColor(s);     
+	/////////////////////////////////////////////////////////////////////
+	} else if (com=="setXLinkLineStyle")       
+	{
+	    s=parser.parString (ok,0);
+	    setXLinkLineStyle(s);     
+	/////////////////////////////////////////////////////////////////////
 	} else if (com=="setXLinkStyleBegin")       
 	{
 	    s=parser.parString (ok,0);
@@ -4423,6 +4506,11 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	{
 	    s=parser.parString (ok,0);
 	    setXLinkStyleEnd(s);     
+	/////////////////////////////////////////////////////////////////////
+	} else if (com=="setXLinkWidth")       
+	{
+	    n=parser.parInt (ok,0);
+	    setXLinkWidth(n);
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="sleep")
 	{

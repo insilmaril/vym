@@ -488,8 +488,11 @@ public:
     QStringList getVymLinks();		    // return paths in subtree
     void followXLink (int);
     void editXLink ();
-    void setXLinkStyleBegin( const QString &);
-    void setXLinkStyleEnd( const QString &);
+    void setXLinkColor(const QString &);
+    void setXLinkLineStyle(const QString &);
+    void setXLinkStyleBegin(const QString &);
+    void setXLinkStyleEnd(const QString &);
+    void setXLinkWidth(int);
 
 ////////////////////////////////////////////
 // Scripting

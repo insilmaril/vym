@@ -27,6 +27,7 @@ public:
     Link (VymModel *m);
     virtual ~Link();
     virtual void init ();
+    VymModel* getModel();
     void setBeginBranch (BranchItem*);
     BranchItem* getBeginBranch();
     void setEndBranch   (BranchItem*);
@@ -41,7 +42,9 @@ public:
     QPen getPen();
     void setLinkType (const QString &s);
     void setStyleBegin( const QString &s);
+    QString  getStyleBeginString();
     void setStyleEnd( const QString &s);
+    QString  getStyleEndString();
     bool activate ();		
     void deactivate ();		
     XLinkState getState();
