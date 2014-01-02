@@ -13,7 +13,7 @@ OptionParser.new do |opts|
   opts.on('-d', '--directory  NAME', 'Directory name') { |s| options[:testdir] = s }
 end.parse!
 
-@@testdir = options[:testdir]
+@testdir = options[:testdir]
 
 $tests_passed = 0
 $tests_failed = 0
@@ -82,22 +82,22 @@ end
 
 
 #######################
-@@center_0="mc:0"
-@@center_1="mc:1"
-@@main_a="mc:0,bo:0"
-  @@branch_a=@@main_a+",bo:0"
-  @@branch_b=@@main_a+",bo:1"
-  @@branch_c=@@main_a+",bo:2"
-@@main_b="mc:0,bo:1"
+@center_0="mc:0"
+@center_1="mc:1"
+@main_a="mc:0,bo:0"
+  @branch_a=@main_a+",bo:0"
+  @branch_b=@main_a+",bo:1"
+  @branch_c=@main_a+",bo:2"
+@main_b="mc:0,bo:1"
 
-@@n_centers=2
+@n_centers=2
 
 #######################
 def test_basics (vym)
   heading "Basic checks:"
   init_map
-  vym.select @@main_a
-  expect "select mainbranch A", vym.getSelectString, @@main_a
+  vym.select @main_a
+  expect "select mainbranch A", vym.getSelectString, @main_a
   expect "getHeading", "Main A", vym.getHeading
   expect "branchCount", 3, vym.branchCount
 
@@ -107,8 +107,8 @@ def test_basics (vym)
   vym.selectParent
   expect "selectParent", "Main A", vym.getHeading
 
-  expect "getDestPath: Got #{vym.getDestPath}", vym.getDestPath, @@testdir + "/testmap.vym" 
-  expect "getFileDir:  Got #{vym.getFileDir}", vym.getFileDir, @@testdir + "/" 
+  expect "getDestPath: Got #{vym.getDestPath}", vym.getDestPath, @testdir + "/testmap.vym" 
+  expect "getFileDir:  Got #{vym.getFileDir}", vym.getFileDir, @testdir + "/" 
 end
 
 #######################
@@ -118,11 +118,11 @@ def test_export (vym)
 
   #HTML
   mapname = "export-html"
-  htmlpath = "#{@@testdir}/#{mapname}.html"
-  flagpath = "#{@@testdir}/flags/flag-stopsign.png"
-  pngpath = "#{@@testdir}/#{mapname}.png"
-  csspath = "#{@@testdir}/vym.css"
-  vym.exportHTML(@@testdir,htmlpath)
+  htmlpath = "#{@testdir}/#{mapname}.html"
+  flagpath = "#{@testdir}/flags/flag-stopsign.png"
+  pngpath = "#{@testdir}/#{mapname}.png"
+  csspath = "#{@testdir}/vym.css"
+  vym.exportHTML(@testdir,htmlpath)
   expect "exportHTML: HTML file exists", File.exists?(htmlpath), true
   expect "exportHTML: HTML image exists", File.exists?(pngpath), true
   expect "exportHTML: HTML flags exists", File.exists?(flagpath), true
@@ -138,7 +138,7 @@ def test_export (vym)
   expect "exportLast: HTML CSS exists", File.exists?(csspath), true
 
   #AO
-  filepath = "#{@@testdir}/export-ao.txt"
+  filepath = "#{@testdir}/export-ao.txt"
   vym.exportAO(filepath)
   expect "exportAO:    AO file exists", File.exists?(filepath), true
   File.delete(filepath)
@@ -146,7 +146,7 @@ def test_export (vym)
   expect "exportLast:  AO file exists", File.exists?(filepath), true
 
   #ASCII
-  filepath = "#{@@testdir}/export-ascii.txt"
+  filepath = "#{@testdir}/export-ascii.txt"
   vym.exportASCII(filepath)
   expect "exportASCII: ASCII file exists", File.exists?(filepath), true
   File.delete(filepath)
@@ -154,7 +154,7 @@ def test_export (vym)
   expect "exportLast:  ASCII file exists", File.exists?(filepath), true
 
   #CSV
-  filepath = "#{@@testdir}/export-csv.txt"
+  filepath = "#{@testdir}/export-csv.txt"
   vym.exportCSV(filepath)
   expect "exportCSV:    CSV file exists", File.exists?(filepath), true
   File.delete(filepath)
@@ -162,7 +162,7 @@ def test_export (vym)
   expect "exportLast:  CSV file exists", File.exists?(filepath), true
 
   #Image
-  filepath = "#{@@testdir}/export-image.png"
+  filepath = "#{@testdir}/export-image.png"
   vym.exportImage(filepath,"PNG")
   expect "exportImage: PNG file exists", File.exists?(filepath), true
   File.delete(filepath)
@@ -170,7 +170,7 @@ def test_export (vym)
   expect "exportLast:  PNG file exists", File.exists?(filepath), true
 
   #LaTeX
-  filepath = "#{@@testdir}/export-LaTeX.tex"
+  filepath = "#{@testdir}/export-LaTeX.tex"
   vym.exportLaTeX(filepath)
   expect "exportLaTeX:  LaTeX file exists", File.exists?(filepath), true
   File.delete(filepath)
@@ -178,7 +178,7 @@ def test_export (vym)
   expect "exportLast:   LaTeX file exists", File.exists?(filepath), true
 
   #OrgMode
-  filepath = "#{@@testdir}/export-orgmode.org"
+  filepath = "#{@testdir}/export-orgmode.org"
   vym.exportOrgMode(filepath)
   expect "exportOrgMode:  OrgMode file exists", File.exists?(filepath), true
   File.delete(filepath)
@@ -186,7 +186,7 @@ def test_export (vym)
   expect "exportLast:     OrgMode file exists", File.exists?(filepath), true
 
   #PDF
-  filepath = "#{@@testdir}/export-pdf.pdf"
+  filepath = "#{@testdir}/export-pdf.pdf"
   vym.exportPDF(filepath)
   expect "exportPDF:  PDF file exists", File.exists?(filepath), true
   File.delete(filepath)
@@ -194,7 +194,7 @@ def test_export (vym)
   expect "exportLast: PDF file exists", File.exists?(filepath), true
 
   #SVG
-  filepath = "#{@@testdir}/export-svg.svg"
+  filepath = "#{@testdir}/export-svg.svg"
   vym.exportSVG(filepath)
   expect "exportSVG:  SVG file exists", File.exists?(filepath), true
   File.delete(filepath)
@@ -202,8 +202,8 @@ def test_export (vym)
   expect "exportLast: SVG file exists", File.exists?(filepath), true
 
   #XML
-  filepath = "#{@@testdir}/export-xml.xml"
-  vym.exportXML(@@testdir, filepath)
+  filepath = "#{@testdir}/export-xml.xml"
+  vym.exportXML(@testdir, filepath)
   expect "exportXML: XML file exists", File.exists?(filepath), true
   File.delete(filepath)
   vym.exportLast
@@ -230,24 +230,24 @@ end
 def test_adding_branches (vym)
   heading "Adding branches:"
   init_map
-  vym.select @@main_a
+  vym.select @main_a
   n=vym.branchCount
   vym.addBranch()
   expect( "addBranch", vym.branchCount, n+1 )
 
   vym.selectLatestAdded
-  expect "selectLatestAdded", vym.getSelectString, @@main_a+",bo:3"
+  expect "selectLatestAdded", vym.getSelectString, @main_a+",bo:3"
 
   vym.undo
   expect( "Undo: addBranch", vym.branchCount, n )
 
   init_map
-  vym.select @@main_a
+  vym.select @main_a
   n=vym.branchCount
-  vym.select @@branch_a
+  vym.select @branch_a
   vym.addBranch(-3)
   vym.addBranch(-1)
-  vym.select @@main_a
+  vym.select @main_a
   expect "addBranchAbove/Below", vym.branchCount, n+2
 
   vym.undo
@@ -255,14 +255,14 @@ def test_adding_branches (vym)
   expect "Undo: addBranchAbove/Below", vym.branchCount, n
 
   init_map
-  vym.select @@branch_a
+  vym.select @branch_a
   vym.addBranchBefore
-  vym.select @@main_a
+  vym.select @main_a
   expect "addBranchBefore: check branchcount", n, vym.branchCount
-  vym.select @@branch_a
+  vym.select @branch_a
   expect "addBranchBefore: check heading", "", vym.getHeading
   vym.undo
-  vym.select @@main_a
+  vym.select @main_a
   expect "Undo: addBranchBefore", n, vym.branchCount 
 end
 
@@ -270,40 +270,40 @@ end
 def test_adding_maps (vym)
   heading "Adding maps"
   init_map
-  vym.select @@branch_a
+  vym.select @branch_a
   n=vym.branchCount
   vym.addMapReplace "test/default.vym"
-  vym.select @@main_a
-  expect "addMapReplace: check branch count in #{@@main_a}", vym.branchCount, n + @@n_centers -1
-  vym.select @@branch_a
-  expect "addMapReplace: check if #{@@branch_a} is new", vym.branchCount, 2
+  vym.select @main_a
+  expect "addMapReplace: check branch count in #{@main_a}", vym.branchCount, n + @n_centers -1
+  vym.select @branch_a
+  expect "addMapReplace: check if #{@branch_a} is new", vym.branchCount, 2
   
   vym.undo
-  vym.select @@main_a
-  expect "Undo: check branch count in #{@@main_a}", vym.branchCount, 3
-  vym.select @@branch_a
-  expect "Undo: check if #{@@branch_a} is back", vym.branchCount, 3 
+  vym.select @main_a
+  expect "Undo: check branch count in #{@main_a}", vym.branchCount, 3
+  vym.select @branch_a
+  expect "Undo: check if #{@branch_a} is back", vym.branchCount, 3 
   
   init_map
-  vym.select @@main_a
+  vym.select @main_a
   vym.addMapInsert "test/default.vym",1
-  vym.select @@main_a
+  vym.select @main_a
   expect "addMapInsert: branch count",  vym.branchCount, n+2 
-  vym.select @@main_a + ",bo:1"
+  vym.select @main_a + ",bo:1"
   expect "addMapInsert: new heading", vym.getHeading, "MapCenter 0"
   
   vym.undo
-  vym.select @@main_a
-  expect "Undo: check branch count in #{@@main_a}", vym.branchCount, 3 
-  vym.select @@branch_b
-  expect "Undo: check heading of  #{@@branch_b}",  vym.getHeading, "branch b"
+  vym.select @main_a
+  expect "Undo: check branch count in #{@main_a}", vym.branchCount, 3 
+  vym.select @branch_b
+  expect "Undo: check heading of  #{@branch_b}",  vym.getHeading, "branch b"
 end
 
 #######################
 def test_scrolling (vym)
   heading "Scrolling and unscrolling"
   init_map
-  vym.select @@main_a
+  vym.select @main_a
   vym.toggleScroll
   expect "toggleScroll", vym.isScrolled, true
   vym.undo
@@ -315,16 +315,16 @@ def test_scrolling (vym)
 
   init_map
   vym.scroll
-  vym.select @@branch_a
+  vym.select @branch_a
   vym.scroll
-  vym.select @@main_a
+  vym.select @main_a
   vym.unscrollChildren
-  vym.select @@branch_a
+  vym.select @branch_a
   expect "unscrollChildren", vym.isScrolled, false
   vym.undo
   expect "undo unscrollChildren", vym.isScrolled, true
   vym.unscroll
-  vym.select @@branch_a
+  vym.select @branch_a
   vym.unscroll
 end
 
@@ -332,55 +332,55 @@ end
 def test_moving_parts (vym)
   heading "Moving parts"
   init_map
-  vym.select @@branch_a
+  vym.select @branch_a
   vym.moveDown
-  vym.select @@branch_a
+  vym.select @branch_a
   expect "Moving down", vym.getHeading, "branch b"
   vym.undo
-  vym.select @@branch_a
+  vym.select @branch_a
   expect "Undo Moving down", vym.getHeading, "branch a"
   
   init_map
-  vym.select @@branch_b
+  vym.select @branch_b
   vym.moveUp
-  vym.select @@branch_a
+  vym.select @branch_a
   expect "Moving up", vym.getHeading, "branch b"
   vym.undo
-  vym.select @@branch_b
+  vym.select @branch_b
   expect "Undo Moving up", vym.getHeading, "branch b"
   
   init_map
-  vym.select @@main_b
+  vym.select @main_b
   n=vym.branchCount
-  vym.select @@branch_a
-  vym.relinkTo @@main_b,0,0,0
-  vym.select @@main_b
-  expect "RelinkTo #{@@main_b}: branchCount increased there", n+1, vym.branchCount
+  vym.select @branch_a
+  vym.relinkTo @main_b,0,0,0
+  vym.select @main_b
+  expect "RelinkTo #{@main_b}: branchCount increased there", n+1, vym.branchCount
 
   vym.undo
-  vym.select @@branch_b
-  expect "Undo: RelinkTo #{@@main_b}: branchCount decreased there", n, vym.branchCount
+  vym.select @branch_b
+  expect "Undo: RelinkTo #{@main_b}: branchCount decreased there", n, vym.branchCount
   
   init_map
-  vym.select @@main_a
-  err = vym.relinkTo @@branch_a,0,0,0
+  vym.select @main_a
+  err = vym.relinkTo @branch_a,0,0,0
   expect_error "RelinkTo myself fails.", err
 
   vym
   init_map
-  vym.select @@branch_a
+  vym.select @branch_a
   n=vym.branchCount
-  vym.select @@main_b
-  vym.relinkTo @@branch_a, 1, 0, 0
-  vym.select @@branch_a
-  expect "RelinkTo #{@@branch_a}, pos 1: branchCount increased there", n+1, vym.branchCount
-  vym.select "#{@@branch_a},bo:1"
-  expect "RelinkTo #{@@branch_a}, pos 1: Mainbranch really moved", "Main B", vym.getHeading
+  vym.select @main_b
+  vym.relinkTo @branch_a, 1, 0, 0
+  vym.select @branch_a
+  expect "RelinkTo #{@branch_a}, pos 1: branchCount increased there", n+1, vym.branchCount
+  vym.select "#{@branch_a},bo:1"
+  expect "RelinkTo #{@branch_a}, pos 1: Mainbranch really moved", "Main B", vym.getHeading
   vym.undo
-  vym.select @@center_0
+  vym.select @center_0
   expect "Undo RelinkTo pos 1: branchCount of center", 2, vym.branchCount
   # FIXME-2 still has wrong position, check position
-  vym.select @@main_b
+  vym.select @main_b
   vym.moveRel 100,100
 end
 
@@ -388,7 +388,7 @@ end
 def test_modify_branches (vym)
   heading "Modifying branches"
   init_map
-  vym.select @@branch_a
+  vym.select @branch_a
   vym.setHeading "Changed!"
   expect "setHeading","Changed!",vym.getHeading
   vym.undo
@@ -402,7 +402,7 @@ end
 def test_flags (vym)
   heading "Flags"
   init_map
-  vym.select @@main_a
+  vym.select @main_a
   
   def set_flags (v,a)
     a.each do |f|
@@ -473,46 +473,46 @@ end
 def test_delete_parts (vym)
   heading "Deleting parts"
   init_map
-  vym.select @@main_a
+  vym.select @main_a
   n=vym.branchCount
-  vym.select @@branch_a
+  vym.select @branch_a
   m=vym.branchCount
   vym.delete
-  vym.select @@main_a
+  vym.select @main_a
   expect "Delete branch: branchcount", n-1, vym.branchCount
   vym.undo
-  vym.select @@main_a
+  vym.select @main_a
   expect "Undo Delete branch: branchcount parent", n, vym.branchCount
-  vym.select @@branch_a
+  vym.select @branch_a
   expect "Undo Delete branch: branchcount restored branch", m, vym.branchCount
   
   init_map
-  vym.select @@branch_a
+  vym.select @branch_a
   n=vym.branchCount
   vym.deleteChildren
-  vym.select @@branch_a
+  vym.select @branch_a
   expect "deleteChildren: branchcount", 0, vym.branchCount
   vym.undo
-  vym.select @@branch_a
+  vym.select @branch_a
   expect "Undo: deleteChildren: branchcount", n, vym.branchCount
   
   init_map
-  vym.select @@main_a
+  vym.select @main_a
   n=vym.branchCount
-  vym.select @@branch_a
+  vym.select @branch_a
   m=vym.branchCount
   vym.deleteKeepChildren
-  vym.select @@main_a
+  vym.select @main_a
   expect "deleteKeepChildren: branchcount", n+m-1,vym.branchCount
   vym.undo
-  vym.select @@main_a
+  vym.select @main_a
   expect "Undo: deleteKeepChildren: branchcount of parent", n,vym.branchCount
-  vym.select @@branch_a
+  vym.select @branch_a
   expect "Undo: deleteKeepChildren: branchcount of branch", m,vym.branchCount
 
   init_map
   n = vym.centerCount
-  vym.select @@center_1
+  vym.select @center_1
   vym.delete
   expect "Delete mapCenter: number of centers decreased", vym.centerCount, n-1
   vym.undo
@@ -523,7 +523,7 @@ end
 def test_copy_paste (vym)
   heading "Copy, cut & Paste"
   init_map
-  vym.select @@main_a
+  vym.select @main_a
   n=vym.branchCount
   
   vym.copy
@@ -533,16 +533,16 @@ def test_copy_paste (vym)
   expect "Normal paste of branch, check heading of #{s}", vym.getHeading, "Main A"
   
   vym.undo
-  vym.select @@main_a
-  expect "Undo paste: branchCount of #{@@main_a}", vym.branchCount, n
+  vym.select @main_a
+  expect "Undo paste: branchCount of #{@main_a}", vym.branchCount, n
   
   vym.redo
   vym.select s
   expect "redo paste: check heading", vym.getHeading, "Main A"
   
   vym.cut
-  vym.select @@main_a
-  expect "cut: branchCount of #{@@main_a}", vym.branchCount, n
+  vym.select @main_a
+  expect "cut: branchCount of #{@main_a}", vym.branchCount, n
   vym.paste
   vym.selectLastBranch
   s=vym.getSelectString
@@ -554,7 +554,7 @@ end
 def test_references (vym)
   heading "References"
   init_map
-  vym.select @@main_a
+  vym.select @main_a
   vym.setURL "www.insilmaril.de"
   expect "setURL:", vym.getURL, "www.insilmaril.de"
   vym.undo
@@ -579,7 +579,7 @@ end
 def test_history (vym)
   heading "History"
   init_map
-  vym.select @@main_a
+  vym.select @main_a
   vym.setHeading "A"
   vym.setHeading "B"
   vym.setHeading "C"
@@ -617,7 +617,7 @@ end
 def test_tasks (vym)
   heading "Tasks:"
   init_map
-  vym.select @@main_a
+  vym.select @main_a
   expect "Branch has no task before test", vym.hasTask, false
   vym.toggleTask
   expect "Toggle task", vym.hasTask, true
@@ -635,7 +635,7 @@ end
 def test_notes (vym)
   heading "Notes:"
   init_map
-  vym.select @@main_b
+  vym.select @main_b
   vym.setNote("foobar")
   expect "Set note", vym.getNote, "foobar"
   vym.setNote("foo)bar")
@@ -645,7 +645,7 @@ def test_notes (vym)
   vym.loadNote("test/note.txt") 
   expect "Load note from file", vym.getNote, note_org
 
-  filepath = "#{@@testdir}/save-note.txt"
+  filepath = "#{@testdir}/save-note.txt"
   vym.saveNote(filepath)
   expect "Save note to file", IO.read(filepath), note_org
 end
@@ -654,8 +654,8 @@ end
 def test_bugfixes (vym)
   heading "Bugfixes:"
   init_map
-  vym.select @@main_b
-  expect "Mapcenter of #{@@center_1} has no frame", vym.getFrameType, "NoFrame"
+  vym.select @main_b
+  expect "Mapcenter of #{@center_1} has no frame", vym.getFrameType, "NoFrame"
 end
 
 #######################
