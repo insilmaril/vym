@@ -196,7 +196,6 @@ void OrnamentedObj::positionContents()
     double ox=leftPad + dp;
     double oy=topPad  + dp;
     
-    if (debug) qDebug()<< "OO: positionContents "<<treeItem->getHeading()<<"  this="<<this;// dp="<<dp<<" absPos=="<<absPos<<" bboxTotal="<<bboxTotal<<"  ox="<<ox<<" oy="<<oy;
     // vertical align heading to bottom
     heading->setZValue (dZ_TEXT);
     heading->setTransformOriginPoint (

@@ -447,7 +447,6 @@ void LinkableMapObj::updateLinkGeometry()
     // updateLinkGeometry is called from move, but called from constructor we don't
     // have parents yet...
 
-    if (debug) qDebug()<<"LMO::updateLinkGeometry: "<<treeItem->getHeading()<<"  "<<style<<"  parObj="<<parObj; //FIXME-8
     if (style==UndefinedStyle) 
     {
         setDockPos();

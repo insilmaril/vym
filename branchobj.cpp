@@ -203,7 +203,6 @@ void BranchObj::setLinkColor ()
 
 void BranchObj::positionContents()
 {
-    if (debug) qDebug()<<"  BO::positionContents (loop over images): "<<treeItem->getHeading()<<treeItem->imageCount();   //FIXME-8
     OrnamentedObj::positionContents();
     updateLinkGeometry();// required before positioning images
     for (int i=0; i<treeItem->imageCount(); ++i)
@@ -235,7 +234,6 @@ void BranchObj::moveBy (QPointF p)
 
 void BranchObj::positionBBox() // FIXME-2 consider dimensions of frame (thickness, geometry, padding...
 {
-    if (debug) qDebug()<<"        BO::positionBBox ("<<treeItem->getHeading()<<")"; //FIXME-8 
     QPointF ap=getAbsPos();
     bbox.moveTopLeft (ap);
     positionContents();   // this positions FIOs  
@@ -251,7 +249,6 @@ void BranchObj::positionBBox() // FIXME-2 consider dimensions of frame (thicknes
 
 void BranchObj::calcBBoxSize()
 {
-    if (debug) qDebug()<<"**BO::calcBBoxSize ("<<treeItem->getHeading()<<")"; //FIXME-8 
     QSizeF heading_r=heading->getSize();
     qreal heading_w=(qreal) heading_r.width() ;
     qreal heading_h=(qreal) heading_r.height() ;
@@ -290,7 +287,6 @@ void BranchObj::calcBBoxSize()
 	{
 	    fio=treeItem->getImageObjNum(i);
 	    rp=fio->getRelPos();
-            if (debug) qDebug()<<"**BO::calcBBoxSize rp="<<rp<<"fio (h,w)=("<<fio->width()<<","<<fio->height()<<")"; // FIXME-8
 	    if (incV)
 	    {
                 qreal y;
@@ -419,7 +415,6 @@ void BranchObj::updateData()
 	if (!TIactiveFlags.contains (BOactiveFlags.at(i)))
 	    systemFlags->deactivate (BOactiveFlags.at(i));
     }
-    if (debug) qDebug()<<"BO::updateData  "<<treeItem->getHeadingDepth(); // FIXME-8
     calcBBoxSize(); 
 }
 
