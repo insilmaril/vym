@@ -1,6 +1,11 @@
 #include "mapeditor.h"
 
+#include <QGraphicsProxyWidget>
+#include <QMenuBar>
 #include <QObject>
+#include <QPrinter>
+#include <QPrintDialog>
+#include <QScrollBar>
 
 #include "branchitem.h"
 #include "geometry.h"

@@ -4,7 +4,7 @@ LANGUAGE    = C++
 
 CONFIG	+= qt warn_on x86_64 
 
-QT += network xml svg
+QT += network xml svg printsupport
 
 #nclude(tmp/modeltest/modeltest.pri)
 
@@ -13,7 +13,7 @@ RESOURCES = vym.qrc
 unix:!macx:isEmpty(NO_DBUS) {
     message("Compiling with DBUS")
     DEFINES += VYM_DBUS
-    CONFIG  += qdbus 
+    QT      += dbus 
     HEADERS += adaptormodel.h adaptorvym.h 
     SOURCES += adaptormodel.cpp adaptorvym.cpp 
 }

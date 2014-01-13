@@ -11,6 +11,14 @@
 #include "adaptorvym.h"
 #endif
 
+#include <QColorDialog>
+#include <QDockWidget>
+#include <QFontDialog>
+#include <QInputDialog>
+#include <QMenuBar>
+#include <QPrinter>
+#include <QStatusBar>
+
 #include "aboutdialog.h"
 #include "branchpropeditor.h"
 #include "branchitem.h"
@@ -115,7 +123,7 @@ extern QString iconPath;
 extern QString flagsPath;
 
 
-Main::Main(QWidget* parent, Qt::WFlags f) : QMainWindow(parent,f)
+Main::Main(QWidget* parent, Qt::WindowFlags f) : QMainWindow(parent,f)
 {
     mainWindow=this;
 
@@ -3292,7 +3300,7 @@ void Main::fileImportFirefoxBookmarks()
     fd.setFileMode (QFileDialog::ExistingFiles);
     QStringList filters;
     filters<<"Firefox "+tr("Bookmarks")+" (*.html)";
-    fd.setFilters(filters);
+    fd.setNameFilters(filters);
     fd.setAcceptMode (QFileDialog::AcceptOpen);
     fd.setWindowTitle(tr("Import")+" "+"Firefox "+tr("Bookmarks"));
 
@@ -3320,7 +3328,7 @@ void Main::fileImportFreemind()
     QFileDialog fd;
     fd.setDirectory (lastMapDir);
     fd.setFileMode (QFileDialog::ExistingFiles);
-    fd.setFilters (filters);
+    fd.setNameFilters (filters);
     fd.setWindowTitle(vymName+ " - " +tr("Load Freemind map"));
     fd.setAcceptMode (QFileDialog::AcceptOpen);
 
@@ -3352,7 +3360,7 @@ void Main::fileImportMM()
     fd.setFileMode (QFileDialog::ExistingFiles);
     QStringList filters;
     filters<<"Mind Manager (*.mmap)";
-    fd.setFilters (filters);
+    fd.setNameFilters (filters);
     fd.setAcceptMode (QFileDialog::AcceptOpen);
     fd.setWindowTitle(tr("Import")+" "+"Mind Manager");
 
@@ -3948,7 +3956,7 @@ void Main::editVymLink()
 	    filters <<"VYM map (*.vym)";
 	    QFileDialog fd;
 	    fd.setWindowTitle (vymName+" - " +tr("Link to another map"));
-	    fd.setFilters (filters);
+	    fd.setNameFilters (filters);
 	    fd.setWindowTitle(vymName+" - " +tr("Link to another map"));
 	    fd.setDirectory (lastMapDir);
 	    fd.setAcceptMode (QFileDialog::AcceptOpen);
@@ -4720,9 +4728,9 @@ void Main::settingsMacroDir()
 void Main::settingsUndoLevels()	    
 {
     bool ok;
-    int i = QInputDialog::getInteger(
+    int i = QInputDialog::getInt(
 	this, 
-	"QInputDialog::getInteger()",
+	"QInputDialog::getInt()",
 	tr("Number of undo/redo levels:"), settings.value("/history/stepsTotal",1000).toInt(), 0, 100000, 1, &ok);
     if (ok)
     {
@@ -4745,9 +4753,9 @@ void Main::setAutosave(bool b)
 void Main::settingsAutosaveTime()
 {
     bool ok;
-    int i = QInputDialog::getInteger(
+    int i = QInputDialog::getInt(
 	this, 
-	"QInputDialog::getInteger()",
+	"QInputDialog::getInt()",
 	tr("Number of seconds before autosave:"), settings.value("/mainwindow/autosave/ms").toInt() / 1000, 10, 60000, 1, &ok);
     if (ok)
 	settings.setValue ("/mainwindow/autosave/ms",i * 1000);
@@ -4756,9 +4764,9 @@ void Main::settingsAutosaveTime()
 void Main::settingsTaskShowParentsLevel()	    
 {
     bool ok;
-    int i = QInputDialog::getInteger(
+    int i = QInputDialog::getInt(
 	this, 
-	"QInputDialog::getInteger()",
+	"QInputDialog::getInt()",
 	tr("Number of parents shown for a task:"), taskModel->getShowParentsLevel(), 0, 10, 0, &ok);
     if (ok) taskModel->setShowParentsLevel(i);
 
@@ -5423,7 +5431,7 @@ void Main::helpDemo()
     #endif
 
     fd.setFileMode (QFileDialog::ExistingFiles);
-    fd.setFilters (filters);
+    fd.setNameFilters (filters);
     fd.setWindowTitle (vymName+ " - " +tr("Load vym example map"));
     fd.setAcceptMode (QFileDialog::AcceptOpen);
 

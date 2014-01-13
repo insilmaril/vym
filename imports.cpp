@@ -5,6 +5,8 @@
 #include "mainwindow.h"
 #include "xsltproc.h"
 
+#include <QMessageBox>
+
 extern Main *mainWindow;
 extern QDir vymBaseDir;
 

@@ -1,9 +1,12 @@
 #include "taskeditor.h"
 
 #include <QAbstractTableModel>
+#include <QAction>
 #include <QDebug>
 #include <QHeaderView>
+#include <QMenu>
 #include <QSortFilterProxyModel>
+#include <QTextEdit>
 #include <QToolBar>
 #include <QVBoxLayout>
 

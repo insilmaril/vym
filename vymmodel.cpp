@@ -11,6 +11,11 @@
 #define sleep Sleep
 #endif
 
+#include <QColorDialog>
+#include <QFileDialog>
+#include <QMessageBox>
+#include <QPrinter>
+
 #include "vymmodel.h"
 
 #include "attributeitem.h"
@@ -906,7 +911,7 @@ void VymModel::importDir()
 	QFileDialog fd;
 	fd.setWindowTitle (vymName+ " - " +tr("Choose directory structure to import"));
 	fd.setFileMode (QFileDialog::DirectoryOnly);
-	fd.setFilters (filters);
+	fd.setNameFilters (filters);
 	fd.setWindowTitle(vymName+" - " +tr("Choose directory structure to import"));
 	fd.setAcceptMode (QFileDialog::AcceptOpen);
 
@@ -4680,7 +4685,7 @@ QPointF VymModel::exportImage(QString fname, bool askName, QString format)
     setExportMode (true);
     QPointF offset;
     QImage img (mapEditor->getImage(offset));
-    if (!img.save(fname, format.toAscii()))
+    if (!img.save(fname, format.toLocal8Bit()))
 	QMessageBox::critical (0,tr("Critical Error"),tr("Couldn't save QImage %1 in format %2").arg(fname).arg(format));
     setExportMode (false);
 
@@ -4813,7 +4818,7 @@ void VymModel::exportXML (QString dpath, QString fpath, bool useDialog)
 	fd.setFileMode (QFileDialog::DirectoryOnly);
 	QStringList filters;
 	filters <<"XML data (*.xml)";
-	fd.setFilters (filters);
+	fd.setNameFilters (filters);
 	fd.setConfirmOverwrite (false);
 	fd.setAcceptMode (QFileDialog::AcceptSave);
 

@@ -117,7 +117,7 @@ QString makeUniqueDir (bool &ok,QString s)
     // Create unique directory e.g. for s="/tmp/vym-XXXXXX"
 
     // Convert Separators
-    s=QDir::convertSeparators(s);
+    s=QDir::toNativeSeparators(s);
 
     // Convert QString to string 
     ok=true;

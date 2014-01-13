@@ -1,5 +1,7 @@
 #include "noteeditor.h"
 
+#include <QMenuBar>
+
 #include "noteobj.h"
 #include "settings.h"
 

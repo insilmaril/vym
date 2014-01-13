@@ -1,6 +1,10 @@
 #include "exports.h"
 
+#include <cstdlib>
+
 #include <QDebug>
+#include <QFileDialog>
+#include <QMessageBox>
 
 #include "branchitem.h"
 #include "file.h"
@@ -9,7 +13,7 @@
 #include "mainwindow.h"
 #include "warningdialog.h"
 #include "xsltproc.h"
-#include <cstdlib>
+
 
 
 extern Main *mainWindow;

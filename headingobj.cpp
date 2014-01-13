@@ -92,7 +92,7 @@ void HeadingObj::calcBBoxSize()
 
 QGraphicsTextItem* HeadingObj::newLine(QString s)  
 {
-    QGraphicsTextItem *t=new QGraphicsTextItem (s,parentItem(),scene());
+    QGraphicsTextItem *t=new QGraphicsTextItem (s,parentItem());
     t->setFont (font);
     t->setZValue(dZ_TEXT);
     t->setDefaultTextColor(color);

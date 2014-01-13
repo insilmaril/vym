@@ -1,5 +1,18 @@
 #include "texteditor.h"
 
+#include <QAction>
+#include <QColorDialog>
+#include <QComboBox>
+#include <QFileDialog>
+#include <QFontDialog>
+#include <QMenuBar>
+#include <QMessageBox>
+#include <QPrintDialog>
+#include <QPrinter>
+#include <QStatusBar>
+#include <QTextEdit>
+#include <QToolBar>
+
 #include <typeinfo>
 
 #include "noteobj.h"	//Still needed for ascii conversion
@@ -533,7 +546,7 @@ void TextEditor::textLoad()
 	    "VYM notes and HTML (*.html)" <<
 	    "ASCII texts (*.txt)" <<
 	    "All files (*)";
-	fd->setFilters (types);
+	fd->setNameFilters (types);
 	fd->setDirectory (QDir().current());
 	fd->show();
 	QString fn;

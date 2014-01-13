@@ -2,6 +2,10 @@
 #define TEXTEDITOR_H
 
 #include <QtGui>
+#include <QMainWindow>
+
+class QTextEdit;
+class QComboBox;
 
 #include "noteobj.h"
 

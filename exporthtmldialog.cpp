@@ -219,7 +219,7 @@ void ExportHTMLDialog::browseCssSrcPressed()
 {
     QFileDialog fd( this);
     fd.setModal (true);
-    fd.setFilter ("Cascading Stylesheet (*.css)");
+    fd.setNameFilter ("Cascading Stylesheet (*.css)");
     fd.setDirectory (QDir::current());
     fd.show();
 
@@ -238,7 +238,7 @@ void ExportHTMLDialog::browseCssDstPressed()
 {
     QFileDialog fd( this);
     fd.setModal (true);
-    fd.setFilter ("Cascading Stylesheet (*.css)");
+    fd.setNameFilter ("Cascading Stylesheet (*.css)");
     fd.setDirectory (QDir::current());
     fd.show();
 
@@ -263,7 +263,7 @@ void ExportHTMLDialog::browsePostExportButtonPressed()
 {
     QFileDialog fd( this);
     fd.setModal (true);
-    fd.setFilter ("Scripts (*.sh *.pl *.py *.php)");
+    fd.setNameFilter ("Scripts (*.sh *.pl *.py *.php)");
     fd.setDirectory (QDir::current());
     fd.show();
 

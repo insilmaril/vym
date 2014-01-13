@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QProgressDialog>
 
 #include "branchpropeditor.h"
 #include "extrainfodialog.h"
@@ -26,7 +27,7 @@ public:
 	ModModeXLink	//!< Create a XLink (XLinkObj) from selected object
 	};
 
-    Main(QWidget* parent=0, Qt::WFlags f=0);
+    Main(QWidget* parent=0, Qt::WindowFlags f=0);
     ~Main();
     void loadCmdLine();
 
