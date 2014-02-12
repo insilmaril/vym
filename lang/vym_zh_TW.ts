@@ -36,7 +36,7 @@
     </message>
 </context>
 <context>
-    <name>BranchPropertyWindow</name>
+    <name>BranchPropertyEditor</name>
     <message>
         <source>Branch Property Editor</source>
         <translation type="unfinished"></translation>
@@ -58,7 +58,15 @@
         <translation type="unfinished">矩形</translation>
     </message>
     <message>
+        <source>Rounded Rectangle</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Ellipse</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cloud</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -67,6 +75,10 @@
     </message>
     <message>
         <source>Borderline width</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Include children</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -114,25 +126,32 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Close</source>
-        <translation type="unfinished">關閉</translation>
-    </message>
-    <message>
         <source>Property Editor</source>
         <comment>Window caption</comment>
         <translation type="unfinished"></translation>
     </message>
+</context>
+<context>
+    <name>BranchPropertyWindow</name>
     <message>
-        <source>Include children</source>
-        <translation type="unfinished"></translation>
+        <source>No Frame</source>
+        <translation type="obsolete">無圖框</translation>
     </message>
     <message>
-        <source>Cloud</source>
-        <translation type="unfinished"></translation>
+        <source>Rectangle</source>
+        <translation type="obsolete">矩形</translation>
     </message>
     <message>
-        <source>Rounded Rectangle</source>
-        <translation type="unfinished"></translation>
+        <source>Include images horizontally</source>
+        <translation type="obsolete">水平地含入圖像</translation>
+    </message>
+    <message>
+        <source>Include images vertically</source>
+        <translation type="obsolete">垂直地含入圖像</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation type="obsolete">關閉</translation>
     </message>
 </context>
 <context>
@@ -163,7 +182,7 @@
     </message>
     <message>
         <source>Ok</source>
-        <translation>確定</translation>
+        <translation type="obsolete">確定</translation>
     </message>
     <message>
         <source>Use color of heading</source>
@@ -173,6 +192,18 @@
         <source>Line style:</source>
         <extracomment>Linestyle in Edit XLink dialog</extracomment>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Arrow begin:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Arrow end:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation type="unfinished">關閉</translation>
     </message>
 </context>
 <context>
@@ -195,7 +226,7 @@
     </message>
     <message>
         <source>Include image</source>
-        <translation type="unfinished">包含圖像</translation>
+        <translation type="obsolete">包含圖像</translation>
     </message>
     <message>
         <source>Colored headings in text</source>
@@ -215,7 +246,7 @@
     </message>
     <message>
         <source>CSS:</source>
-        <translation type="unfinished">CSS：</translation>
+        <translation type="obsolete">CSS：</translation>
     </message>
     <message>
         <source>Scripts</source>
@@ -249,6 +280,34 @@ want to allow this in your system!</source>
     <message>
         <source>VYM - Export HTML to directory</source>
         <translation type="unfinished">VYM - 匯出 HTML 到目錄</translation>
+    </message>
+    <message>
+        <source>Image of map</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Table of contents</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Task flags</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>General flags</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Number sections</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Copy CSS from </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use CSS from</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -409,6 +468,10 @@ want to allow this in your system!</source>
         <source>Close</source>
         <translation>關閉</translation>
     </message>
+    <message>
+        <source>Title:</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>FindWidget</name>
@@ -497,6 +560,25 @@ want to allow this in your system!</source>
         <source>Current state</source>
         <comment>Current bar in history hwindow</comment>
         <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>LineEditDialog</name>
+    <message>
+        <source>Dialog</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>TextLabel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">取消</translation>
+    </message>
+    <message>
+        <source>Ok</source>
+        <translation type="unfinished">確定</translation>
     </message>
 </context>
 <context>
@@ -1530,7 +1612,7 @@ exists already. Do you want to</source>
     </message>
     <message>
         <source>Couldn&apos;t start %1 to open a new tab</source>
-        <translation>無法啟動 %1 去開啟新的頁標</translation>
+        <translation type="obsolete">無法啟動 %1 去開啟新的頁標</translation>
     </message>
     <message>
         <source>Couldn&apos;t find configuration for export to Open Office
@@ -1648,11 +1730,6 @@ exists already. Do you want to</source>
         <source>Export in Open Document Format used e.g. in Open Office </source>
         <comment>status tip file menu</comment>
         <translation type="obsolete">匯出例如在 OpenOffice.org 使用的開放文件格式</translation>
-    </message>
-    <message>
-        <source>KDE 3 Bookmarks</source>
-        <comment>File menu</comment>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>KDE 4 Bookmarks</source>
@@ -2412,17 +2489,6 @@ to confusion when finishing working with vym.Do you want to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Sorry, currently only Konqueror supports integrated tabbed browsing.</source>
-        <comment>Mainwindow, open URL</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Currently vym is using %1 to open external links.
-(Change in Settings menu)</source>
-        <comment>Mainwindow, open URL</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>%1 items on map
 </source>
         <comment>Info about map</comment>
@@ -2456,15 +2522,6 @@ to confusion when finishing working with vym.Do you want to</source>
     </message>
     <message>
         <source>Load vym example map</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Couldn&apos;t find a macro at  %1.
-</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Set directory for vym macros</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2529,11 +2586,6 @@ to confusion when finishing working with vym.Do you want to</source>
     <message>
         <source>Follow XLink</source>
         <comment>Context menu name</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>KDE 3 Bookmarks</source>
-        <comment>Import filters</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2766,17 +2818,61 @@ to confusion when finishing working with vym.Do you want to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Export as org-mode</source>
+        <source>Property Editor</source>
+        <comment>PropertyEditor</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Task</source>
-        <comment>Task dialog</comment>
+        <source>History window</source>
+        <comment>HistoryWidget</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Task sleep (days):</source>
-        <comment>Task dialog</comment>
+        <source>Open linked map in background tab</source>
+        <comment>Edit menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Next slide</source>
+        <comment>View action</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Next slide</source>
+        <comment>Shortcut group</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Previous slide</source>
+        <comment>View action</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Previous  slide</source>
+        <comment>Shortcut group</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Flags toolbar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Task editor: Set number of parents</source>
+        <comment>Settings action</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enter sleep time (number of days or date YYYY-MM-DD or DD.MM[.YYYY]</source>
+        <comment>task sleep time dialog</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t set sleep time to %1.
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Number of parents shown for a task:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2895,6 +2991,11 @@ to notifiy Browsers of changed bookmarks.</source>
         <source>Print vym map</source>
         <comment>MapEditor</comment>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <comment>MapEditor</comment>
+        <translation type="unfinished">儲存</translation>
     </message>
 </context>
 <context>
@@ -3047,28 +3148,16 @@ to notifiy Browsers of changed bookmarks.</source>
     <message>
         <source>Warning</source>
         <comment>ExportHTML</comment>
-        <translation type="unfinished">警告</translation>
-    </message>
-    <message>
-        <source>Trying to load stylesheet:</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">警告</translation>
     </message>
     <message>
         <source>Could not open %1</source>
         <comment>ExportHTML</comment>
-        <translation type="unfinished">無法開啟 %1</translation>
-    </message>
-    <message>
-        <source>Trying to save stylesheet:</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">無法開啟 %1</translation>
     </message>
     <message>
         <source>Could not open %1</source>
-        <translation type="unfinished">無法開啟 %1</translation>
-    </message>
-    <message>
-        <source>Trying to load small icon for URLs:</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">無法開啟 %1</translation>
     </message>
     <message>
         <source>Trying to create directory for flags:</source>
@@ -3076,10 +3165,6 @@ to notifiy Browsers of changed bookmarks.</source>
     </message>
     <message>
         <source>Could not create %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Trying to save small icon for URLs:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3144,6 +3229,56 @@ and install the perl module for Bugzilla access using YaST</source>
         <source>&lt;h3&gt;Map is newer than VYM&lt;/h3&gt;&lt;p&gt;The map you are just trying to load was saved using vym %1. The version of this vym is %2. If you run into problems after pressing the ok-button below, updating vym should help.&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Export as CSV</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Contents:</source>
+        <comment>Used in HTML export</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Critical</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Could not find stylesheet %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error</source>
+        <comment>ExportHTML</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Could not copy
+%1 to
+%2</source>
+        <comment>ExportHTML</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Could not copy %1 to %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t find a macro at  %1.
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please use Settings-&gt;</source>
+        <translation type="unfinished">請使用 設定值-&gt;</translation>
+    </message>
+    <message>
+        <source>Set directory for vym macros</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t save &quot;%1&quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ScriptEditor</name>
@@ -3156,20 +3291,8 @@ and install the perl module for Bugzilla access using YaST</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Save slide</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Warning</source>
         <translation type="unfinished">警告</translation>
-    </message>
-    <message>
-        <source>Couldn&apos;t save script into slide!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Couldn&apos;t find slide to save script!</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Save script</source>
@@ -3203,6 +3326,53 @@ Do you want to overwrite it?</source>
     <message>
         <source>Couldn&apos;t open %1.
 </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tab 1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save to selected slide</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tab 2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Current key:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Load</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">儲存</translation>
+    </message>
+    <message>
+        <source>Slide</source>
+        <comment>Mode in scriptEditor</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Macro</source>
+        <comment>Mode in scriptEditor</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <comment>ScriptEditor</comment>
+        <translation type="unfinished">儲存</translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t get model to save script into slide!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t find slide to save script into slide!</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3875,10 +4045,6 @@ Do you want to reload that map with the new file?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Export map as SVG</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Critical Error</source>
         <translation type="unfinished">嚴重錯誤</translation>
     </message>
@@ -3920,11 +4086,24 @@ Do you want to reload that map with the new file?</source>
     </message>
     <message>
         <source>Export as LaTeX</source>
-        <translation type="unfinished">匯出為 LaTeX</translation>
+        <translation type="obsolete">匯出為 LaTeX</translation>
     </message>
     <message>
         <source>(still experimental)</source>
         <translation type="unfinished">(仍然是實驗性質)</translation>
+    </message>
+    <message>
+        <source>Exported: </source>
+        <comment>Export confirmation</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export map as scalable vector graphic</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export as csv</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
