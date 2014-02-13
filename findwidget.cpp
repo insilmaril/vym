@@ -34,7 +34,7 @@ FindWidget::FindWidget(QWidget *)
     findcombo->setSizePolicy(sizePolicy);
     connect ( findcombo, SIGNAL( highlighted(int) ), 
 	this, SLOT( nextPressed() ) );
-    connect ( findcombo, SIGNAL( textChanged(const QString &) ), 
+    connect ( findcombo, SIGNAL( editTextChanged(const QString &) ), 
 	this, SLOT( findTextChanged(const QString&) ) );
 
     nextbutton = new QPushButton;

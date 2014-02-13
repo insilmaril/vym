@@ -85,7 +85,7 @@ public:
     int modelCount();
     
 private slots:
-    void editorChanged(QWidget*);
+    void editorChanged();
 
     File::ErrorCode fileLoad(QString ,const LoadMode &, const FileType &ftype);
     void fileLoad(const LoadMode &);

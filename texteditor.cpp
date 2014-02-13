@@ -268,7 +268,7 @@ void TextEditor::setupFileActions()
     QAction *a;
     a = new QAction( QPixmap( iconPath+"fileopen.png"), tr( "&Import..." ),this);
     a->setShortcut( Qt::CTRL + Qt::Key_O );
-    connect( a, SIGNAL( activated() ), this, SLOT( textLoad() ) );
+    connect( a, SIGNAL( triggered() ), this, SLOT( textLoad() ) );
     tb->addAction (a);
     fileMenu->addAction (a);
     actionFileLoad=a;
@@ -277,32 +277,32 @@ void TextEditor::setupFileActions()
     a = new QAction( QPixmap(iconPath+"filesave.png" ), tr( "&Export..." ), this);
     a->setShortcut( Qt::CTRL + Qt::Key_S );
     //a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
-    connect( a, SIGNAL( activated() ), this, SLOT( textSave() ) );
+    connect( a, SIGNAL( triggered() ), this, SLOT( textSave() ) );
     tb->addAction (a);
     fileMenu->addAction (a);
     actionFileSave=a;
     
     a = new QAction(  QPixmap(), tr( "Export &As... (HTML)" ), this);
-    connect( a, SIGNAL( activated() ), this, SLOT( textSaveAs() ) );
+    connect( a, SIGNAL( triggered() ), this, SLOT( textSaveAs() ) );
     fileMenu->addAction (a);
     actionFileSaveAs=a;
 
     a = new QAction(QPixmap(), tr( "Export &As...(ASCII)" ), this);
     a->setShortcut(Qt::ALT + Qt::Key_X );
-    connect( a, SIGNAL( activated() ), this, SLOT( textExportAsASCII() ) );
+    connect( a, SIGNAL( triggered() ), this, SLOT( textExportAsASCII() ) );
     fileMenu->addAction (a);
     actionFileSaveAs=a;
 
     fileMenu->addSeparator();
     a = new QAction( QPixmap(iconPath+"fileprint.png" ), tr( "&Print..." ),this);
     a->setShortcut( Qt::CTRL + Qt::Key_P );
-    connect( a, SIGNAL( activated() ), this, SLOT( textPrint() ) );
+    connect( a, SIGNAL( triggered() ), this, SLOT( textPrint() ) );
     tb->addAction (a);
     fileMenu->addAction (a);
     actionFilePrint=a;
     
     a = new QAction( QPixmap( iconPath+"edittrash.png"), tr( "&Delete All" ), this);
-    connect( a, SIGNAL( activated() ), e, SLOT( clear() ) );
+    connect( a, SIGNAL( triggered() ), e, SLOT( clear() ) );
     fileMenu->addAction (a);
     tb->addAction (a);
     actionFileDeleteAll=a;
@@ -319,14 +319,14 @@ void TextEditor::setupEditActions()
     QAction *a;
     a = new QAction(QPixmap(iconPath+"undo.png"), tr( "&Undo" ), this );
     a->setShortcut(Qt::CTRL + Qt::Key_Z );
-    connect( a, SIGNAL( activated() ), e, SLOT( undo() ) );
+    connect( a, SIGNAL( triggered() ), e, SLOT( undo() ) );
     editMenu->addAction (a);
     editToolBar->addAction (a);
     actionEditUndo=a;
     
     a = new QAction(QPixmap(iconPath+"redo.png" ), tr( "&Redo" ),this); 
     a->setShortcut( Qt::CTRL + Qt::Key_Y );
-    connect( a, SIGNAL( activated() ), e, SLOT( redo() ) );
+    connect( a, SIGNAL( triggered() ), e, SLOT( redo() ) );
     editMenu->addAction (a);
     editToolBar->addAction (a);
     actionEditRedo=a;
@@ -334,28 +334,28 @@ void TextEditor::setupEditActions()
     editMenu->addSeparator();
     a = new QAction(QPixmap(), tr( "Select and copy &all" ),this); 
     a->setShortcut( Qt::CTRL + Qt::Key_A );
-    connect( a, SIGNAL( activated() ), this, SLOT( editCopyAll() ) );
+    connect( a, SIGNAL( triggered() ), this, SLOT( editCopyAll() ) );
     editMenu->addAction (a);
 
     editMenu->addSeparator();
     a = new QAction(QPixmap(iconPath+"editcopy.png" ), tr( "&Copy" ),this);
     a->setShortcut( Qt::CTRL + Qt::Key_C );
     a->setShortcutContext (Qt::WidgetShortcut);    
-    connect( a, SIGNAL( activated() ), e, SLOT( copy() ) );
+    connect( a, SIGNAL( triggered() ), e, SLOT( copy() ) );
     editMenu->addAction (a);
     editToolBar->addAction (a);
     actionEditCopy=a;
     
     a = new QAction(QPixmap(iconPath+"editcut.png" ), tr( "Cu&t" ),this);
     a->setShortcut( Qt::CTRL + Qt::Key_X );
-    connect( a, SIGNAL( activated() ), e, SLOT( cut() ) );
+    connect( a, SIGNAL( triggered() ), e, SLOT( cut() ) );
     editMenu->addAction (a);
     editToolBar->addAction (a);
     actionEditCut=a;
 
     a = new QAction(QPixmap(iconPath+"editpaste.png" ), tr( "&Paste" ),this);
     a->setShortcut( Qt::CTRL + Qt::Key_V );
-    connect( a, SIGNAL( activated() ), e, SLOT( paste() ) );
+    connect( a, SIGNAL( triggered() ), e, SLOT( paste() ) );
     editMenu->addAction (a);
     editToolBar->addAction (a);
     actionEditPaste=a;
@@ -373,7 +373,7 @@ void TextEditor::setupFormatActions()
     a->setShortcut(Qt::ALT + Qt::Key_I);
     a->setCheckable (true);
     a->setChecked (settings.value("/noteeditor/fonts/useFixedByDefault",false).toBool() );
-    connect( a, SIGNAL( activated() ), this, SLOT( toggleFonthint() ) );
+    connect( a, SIGNAL( triggered() ), this, SLOT( toggleFonthint() ) );
     formatMenu->addAction (a);
     fontHintsToolBar->addAction (a);
     actionFormatUseFixedFont=a;
@@ -382,7 +382,7 @@ void TextEditor::setupFormatActions()
     a = new QAction( QPixmap(iconPath+"formatrichtext.png"), tr( "&Richtext" ), this ); 
     a->setShortcut (Qt::ALT + Qt::Key_R);
     a->setCheckable (true);
-    connect( a, SIGNAL( activated() ), this, SLOT( toggleRichText() ) );
+    connect( a, SIGNAL( triggered() ), this, SLOT( toggleRichText() ) );
     formatMenu->addAction (a);
     fontHintsToolBar->addAction (a);
     actionFormatRichText=a;
@@ -421,12 +421,12 @@ void TextEditor::setupFormatActions()
     a = new QAction( pix, tr( "&Color..." ), this);
     formatMenu->addAction (a);
     formatToolBar->addAction (a);
-    connect( a, SIGNAL( activated() ), this, SLOT( textColor() ) );
+    connect( a, SIGNAL( triggered() ), this, SLOT( textColor() ) );
     actionTextColor=a;
 
     a = new QAction( QPixmap (iconPath+"text_bold.png"), tr( "&Bold" ), this);
     a->setShortcut(Qt::CTRL + Qt::Key_B );
-    connect( a, SIGNAL( activated() ), this, SLOT( textBold() ) );
+    connect( a, SIGNAL( triggered() ), this, SLOT( textBold() ) );
     formatToolBar->addAction (a);
     formatMenu->addAction (a);
     a->setCheckable( true );
@@ -434,7 +434,7 @@ void TextEditor::setupFormatActions()
     
     a = new QAction( QPixmap(iconPath+"text_italic.png"), tr( "&Italic" ),  this);
     a->setShortcut(Qt::CTRL + Qt::Key_I);
-    connect( a, SIGNAL( activated() ), this, SLOT( textItalic() ) );
+    connect( a, SIGNAL( triggered() ), this, SLOT( textItalic() ) );
     formatToolBar->addAction (a);
     formatMenu->addAction (a);
     a->setCheckable( true );
@@ -442,7 +442,7 @@ void TextEditor::setupFormatActions()
     
     a = new QAction( QPixmap (iconPath+"text_under.png"), tr( "&Underline" ), this);
     a->setShortcut(Qt::CTRL + Qt::Key_U );
-    connect( a, SIGNAL( activated() ), this, SLOT( textUnderline() ) );
+    connect( a, SIGNAL( triggered() ), this, SLOT( textUnderline() ) );
     formatToolBar->addAction (a);
     formatMenu->addAction (a);
     a->setCheckable( true );
@@ -457,7 +457,7 @@ void TextEditor::setupFormatActions()
     a->setCheckable( true );
     formatToolBar->addAction (a);
     formatMenu->addAction (a);
-    connect(a, SIGNAL(activated()), this, SLOT(textVAlign()));
+    connect(a, SIGNAL(triggered()), this, SLOT(textVAlign()));
     actionAlignSubScript=a;
 
     a = new QAction( QPixmap (iconPath+"text_super.png"), tr( "Su&perscript" ),grp2  );
@@ -465,10 +465,10 @@ void TextEditor::setupFormatActions()
     a->setCheckable( true );
     formatToolBar->addAction (a);
     formatMenu->addAction (a);
-    connect(a, SIGNAL(activated()), this, SLOT(textVAlign()));
+    connect(a, SIGNAL(triggered()), this, SLOT(textVAlign()));
     actionAlignSuperScript=a;
     QActionGroup *grp = new QActionGroup( this );
-    connect( grp, SIGNAL( selected( QAction* ) ), this, SLOT( textAlign( QAction* ) ) );
+    connect( grp, SIGNAL( triggered( QAction* ) ), this, SLOT( textAlign( QAction* ) ) );
 
     formatMenu->addSeparator();
 
@@ -504,12 +504,12 @@ void TextEditor::setupSettingsActions()
 
     QAction *a;
     a = new QAction(tr( "Set &fixed font" ), this);
-    connect( a, SIGNAL( activated() ), this, SLOT( setFixedFont() ) );
+    connect( a, SIGNAL( triggered() ), this, SLOT( setFixedFont() ) );
     settingsMenu->addAction (a);
     actionSettingsFixedFont=a;
 
     a = new QAction(tr( "Set &variable font" ), this);
-    connect( a, SIGNAL( activated() ), this, SLOT( setVarFont() ) );
+    connect( a, SIGNAL( triggered() ), this, SLOT( setVarFont() ) );
     settingsMenu->addAction (a);
     actionSettingsVarFont=a;
 

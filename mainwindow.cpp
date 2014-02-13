@@ -288,8 +288,8 @@ Main::Main(QWidget* parent, Qt::WindowFlags f) : QMainWindow(parent,f)
 
     // Create tab widget which holds the maps
     tabWidget= new QTabWidget (centralWidget);
-    connect(tabWidget, SIGNAL( currentChanged( QWidget * ) ), 
-            this, SLOT( editorChanged( QWidget * ) ) );
+    connect(tabWidget, SIGNAL( currentChanged( int  ) ), 
+            this, SLOT( editorChanged( ) ) );
 
     // Allow closing of tabs (introduced in Qt 4.5)
     tabWidget->setTabsClosable( true ); 
@@ -1240,7 +1240,7 @@ void Main::setupEditActions()
     actionDetach=a;
 
     a = new QAction( QPixmap(iconPath+"editsort.png" ), tr( "Sort children","Edit menu" ), this );
-    connect( a, SIGNAL( activated() ), this, SLOT( editSortChildren() ) );
+    connect( a, SIGNAL( triggered() ), this, SLOT( editSortChildren() ) );
     a->setEnabled (true);
     a->setShortcut ( Qt::Key_O );		  
     switchboard.addConnection(editMenu, a,tr("Edit","Shortcut group"));
@@ -1248,7 +1248,7 @@ void Main::setupEditActions()
     actionSortChildren=a;
 
     a = new QAction( QPixmap(iconPath+"editsortback.png" ), tr( "Sort children backwards","Edit menu" ), this );
-    connect( a, SIGNAL( activated() ), this, SLOT( editSortBackChildren() ) );
+    connect( a, SIGNAL( triggered() ), this, SLOT( editSortBackChildren() ) );
     a->setEnabled (true);
     a->setShortcut ( Qt::SHIFT + Qt::Key_O );		
     switchboard.addConnection(editMenu, a,tr("Edit","Shortcut group"));
@@ -2870,7 +2870,7 @@ int Main::modelCount()
     return vymViews.count();
 }
 
-void Main::editorChanged(QWidget *)
+void Main::editorChanged()
 {
     VymModel *vm=currentModel();
     if (vm) 
@@ -3067,7 +3067,7 @@ File::ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode, const FileType
 		}
 		actionFilePrint->setEnabled (true);
 	    }	
-	    editorChanged(this);
+	    editorChanged();
 	    vm->emitShowSelection();
 	    statusBar()->showMessage( "Loaded " + fn, statusbarTime );
 	}   
