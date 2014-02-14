@@ -86,9 +86,10 @@ QString Parser::errorMessage()
     QString l;
     switch (errLevel)
     {
-	case NoError: l="No Error";
-	case Warning: l="Warning";
-	case Aborted: l="Aborted";
+	case NoError: l="No Error"; break;
+	case Warning: l="Warning"; break;
+	case Aborted: l="Aborted"; break;
+        default: l="";
     }
     return QString ("Error Level: '%1'  Command: '%2' Description: '%3'")
 	.arg(l).arg(com).arg(errDescription);
