@@ -54,10 +54,6 @@ extern bool debug;
 extern bool testmode;
 extern Main *mainWindow;
 
-#if defined(VYM_DBUS)
-extern QDBusConnection dbusConnection;
-#endif
-
 extern Settings settings;
 extern QString tmpVymDir;
 

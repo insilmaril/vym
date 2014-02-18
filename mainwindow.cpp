@@ -68,7 +68,6 @@ typedef struct _PROCESS_INFORMATION
 
 #if defined(VYM_DBUS)
 #include <QDBusConnection>
-extern QDBusConnection dbusConnection;
 #endif
 
 extern NoteEditor    *noteEditor;

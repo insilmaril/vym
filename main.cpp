@@ -36,7 +36,6 @@ using namespace std;
 #if defined(VYM_DBUS)
 #include <QtDBus/QDBusConnection>
 #include <QtDBus/QDBusError>
-QDBusConnection dbusConnection=QDBusConnection::sessionBus();
 #endif
 
 QString vymName;
@@ -196,6 +195,7 @@ int main(int argc, char* argv[])
 
 #if defined(VYM_DBUS)
     // Register for DBUS
+    QDBusConnection dbusConnection=QDBusConnection::sessionBus();
     if (!dbusConnection.registerService ("org.insilmaril.vym-"+pidString))
     {
        fprintf(stderr, "%s\n",
