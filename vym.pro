@@ -101,7 +101,6 @@ HEADERS	+= \
     options.h \
     ornamentedobj.h \
     parser.h \
-    process.h \
     scripteditor.h\
     settings.h \
     shortcuts.h\
@@ -130,7 +129,8 @@ HEADERS	+= \
     xml-vym.h \
     xml-freemind.h \
     xmlobj.h\
-    xsltproc.h 
+    xsltproc.h \ 
+    vymprocess.h
 
 SOURCES	+= \
     aboutdialog.cpp \
@@ -189,7 +189,6 @@ SOURCES	+= \
     options.cpp \
     ornamentedobj.cpp \
     parser.cpp \
-    process.cpp \
     scripteditor.cpp\
     settings.cpp \
     shortcuts.cpp\
@@ -218,7 +217,8 @@ SOURCES	+= \
     xml-vym.cpp \
     xml-freemind.cpp \
     xmlobj.cpp \
-    xsltproc.cpp 
+    xsltproc.cpp \ 
+    vymprocess.cpp
 
 FORMS = \
     attributewidget.ui \

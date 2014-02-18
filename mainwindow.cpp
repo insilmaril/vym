@@ -36,7 +36,7 @@
 #include "mapeditor.h"
 #include "misc.h"
 #include "options.h"
-#include "process.h"
+#include "vymprocess.h"
 #include "scripteditor.h"
 #include "settings.h"
 #include "shortcuts.h"
@@ -52,7 +52,8 @@ QPrinter *printer;
 
 //#include <modeltest.h>    
 
-#if defined(Q_OS_WIN32)
+#if 0
+//#if defined(Q_OS_WIN32)
 // Define only this structure as opposed to
 // including full 'windows.h'. FindWindow
 // clashes with the one in Win32 API.
@@ -5402,7 +5403,7 @@ void Main::helpDoc()
     }	
 
     QStringList args;
-    Process *pdfProc = new Process();
+    VymProcess *pdfProc = new VymProcess();
     args << QDir::toNativeSeparators(docfile.fileName());
 
     if (!pdfProc->startDetached( settings.value("/mainwindow/readerPDF").toString(),args) )

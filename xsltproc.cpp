@@ -4,7 +4,7 @@
 #include <QDebug>
 #include <QMessageBox>
 
-#include "process.h"
+#include "vymprocess.h"
 
 
 extern bool debug;
@@ -51,7 +51,7 @@ void XSLTProc::process()
 {
     ShowTextDialog dia;
     QStringList args;
-    Process *xsltProc=new Process ();
+    VymProcess *xsltProc=new VymProcess ();
 
     QStringList::Iterator itk;
     QStringList::Iterator itv=stringParamVal.begin();

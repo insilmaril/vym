@@ -1,6 +1,7 @@
 #include "texteditor.h"
 
 #include <QAction>
+#include <QActionGroup>
 #include <QColorDialog>
 #include <QComboBox>
 #include <QFileDialog>
@@ -450,9 +451,9 @@ void TextEditor::setupFormatActions()
     actionTextUnderline=a;
     formatMenu->addSeparator();
 
-    QActionGroup *grp2 = new QActionGroup( this );
-    grp2->setExclusive(true);
-    a = new QAction( QPixmap (iconPath+"text_sub.png"), tr( "Subs&cript" ),grp2 );
+    QActionGroup * actGrp2 = new QActionGroup( this );
+    actGrp2->setExclusive(true);
+    a = new QAction( QPixmap (iconPath+"text_sub.png"), tr( "Subs&cript" ),actGrp2 );
     a->setShortcut( Qt::CTRL + Qt::SHIFT + Qt::Key_B );
     a->setCheckable( true );
     formatToolBar->addAction (a);
@@ -460,7 +461,7 @@ void TextEditor::setupFormatActions()
     connect(a, SIGNAL(triggered()), this, SLOT(textVAlign()));
     actionAlignSubScript=a;
 
-    a = new QAction( QPixmap (iconPath+"text_super.png"), tr( "Su&perscript" ),grp2  );
+    a = new QAction( QPixmap (iconPath+"text_super.png"), tr( "Su&perscript" ),actGrp2  );
     a->setShortcut( Qt::CTRL + Qt::SHIFT + Qt::Key_P );
     a->setCheckable( true );
     formatToolBar->addAction (a);

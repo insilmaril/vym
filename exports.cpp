@@ -13,7 +13,7 @@
 #include "mainwindow.h"
 #include "warningdialog.h"
 #include "xsltproc.h"
-
+#include "vymprocess.h"
 
 
 extern Main *mainWindow;
@@ -924,7 +924,7 @@ void ExportHTML::doExport(bool useDialog)
 
     if (!dia.postscript.isEmpty()) 
     {
-	Process p;
+        VymProcess p;
 	p.runScript (dia.postscript,dirPath + "/" + filePath);
     }
 

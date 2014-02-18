@@ -8,7 +8,7 @@
 #include <cstdlib>
 
 #include "file.h"
-#include "process.h"
+#include "vymprocess.h"
 
 #if defined(Q_OS_WIN32)
 #include "mkdtemp.h"
@@ -114,11 +114,15 @@ bool isInTmpDir(QString fn)
 
 QString makeUniqueDir (bool &ok,QString s)
 {
-    // Create unique directory e.g. for s="/tmp/vym-XXXXXX"
+    ok=true;
 
-    // Convert Separators
-    s=QDir::toNativeSeparators(s);
+    QString r;
 
+#if defined(Q_OS_WIN32)
+    r=mkdtemp (s);
+#else
+    // On Linux and friends use cstdlib
+    
     // Convert QString to string 
     ok=true;
     char *p;
@@ -129,9 +133,11 @@ QString makeUniqueDir (bool &ok,QString s)
 	p[i]=s.at(i).unicode();
     p[bytes]=0;	
 
-    QString r=mkdtemp (p);
-    if (r.isEmpty()) ok=false;
+    r=mkdtemp (p);
     free (p);
+#endif
+
+    if (r.isEmpty()) ok=false;
     return r;
 }
 
@@ -248,7 +254,7 @@ ErrorCode zipDir (const QDir &zipDir, const QString &zipName)
 
     // zip the temporary directory
     QStringList args;
-    Process *zipProc=new Process ();
+    VymProcess *zipProc=new VymProcess ();
     zipProc->setWorkingDirectory (zipDir.path());
     args <<"-r";
     args <<zipName;
@@ -304,7 +310,7 @@ File::ErrorCode unzipDir (const QDir &zipDir, const QString &zipName)
 
     // Try to unzip file
     QStringList args;
-    Process *zipProc=new Process ();
+    VymProcess *zipProc=new VymProcess ();
     zipProc->setWorkingDirectory (zipDir.path());
     args << "-o";   // overwrite existing files!
     args << zipName ;

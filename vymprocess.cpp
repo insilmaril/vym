@@ -1,4 +1,4 @@
-#include "process.h"
+#include "vymprocess.h"
 #include <cstdlib>
 
 #include <QMessageBox>
@@ -9,7 +9,7 @@ extern bool debug;
 /////////////////////////////////////////////////////////////////
 // Process
 /////////////////////////////////////////////////////////////////
-Process::Process()
+VymProcess::VymProcess()
 {
     connect( this, SIGNAL(readyReadStandardError()),
 	     this, SLOT(readProcErrout()) );
@@ -18,17 +18,17 @@ Process::Process()
     clear();	     
 }
 
-Process::~Process()
+VymProcess::~VymProcess()
 {
 }
 
-void Process::clear()
+void VymProcess::clear()
 {
     errOut="";
     stdOut="";
 }
 
-void Process::runScript(QString spath, QString fpath)
+void VymProcess::runScript(QString spath, QString fpath)
 {
     spath.replace ("%f",fpath);
     QStringList args=spath.split (' ');
@@ -62,22 +62,22 @@ void Process::runScript(QString spath, QString fpath)
     */
 }
 
-void Process::readProcErrout()
+void VymProcess::readProcErrout()
 {
     errOut+=readAllStandardError();
 }
 
-void Process::readProcStdout()
+void VymProcess::readProcStdout()
 {
     stdOut+=readAllStandardOutput();
 }
 
-QString Process::getErrout()
+QString VymProcess::getErrout()
 {
     return errOut;
 }
 
-QString Process::getStdout()
+QString VymProcess::getStdout()
 {
     return stdOut;
 }

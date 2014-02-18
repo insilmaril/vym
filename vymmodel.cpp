@@ -33,7 +33,7 @@
 #include "noteeditor.h"
 #include "options.h"
 #include "parser.h"
-#include "process.h"
+#include "vymprocess.h"
 #include "scripteditor.h" 
 #include "slideitem.h"
 #include "slidemodel.h"

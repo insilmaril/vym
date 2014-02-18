@@ -4,12 +4,12 @@
 #include <QProcess>
 #include <QString>
 
-class Process:public QProcess
+class VymProcess:public QProcess
 {
     Q_OBJECT
 public:
-    Process ();
-    ~Process ();
+    VymProcess ();
+    ~VymProcess ();
     void clear();
     void runScript( QString spath, QString fpath );
     QString getErrout();

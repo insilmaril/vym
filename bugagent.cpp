@@ -59,7 +59,7 @@ BugAgent::BugAgent (BranchItem *bi,const QString &u)
 
     bugScript=vymBaseDir.path()+"/scripts/bugger";
 
-    p=new Process;
+    p=new VymProcess;
 
     connect (p, SIGNAL (finished(int,QProcess::ExitStatus) ), 
 	this, SLOT (processFinished(int,QProcess::ExitStatus) ));
