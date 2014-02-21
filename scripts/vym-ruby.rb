@@ -97,7 +97,7 @@ class VymManager
     list = running
     #puts "Running vyms: #{list.length}"
     if list.length == 0
-      return false
+      return nil
     end
 
     for i in (0...list.length)
@@ -114,7 +114,7 @@ class VymManager
       end  
     end
     #raise "Could not find instance named \"test\""
-    return false
+    return nil
   end
 end
 
