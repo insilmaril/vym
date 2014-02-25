@@ -246,6 +246,7 @@ public slots:
 public slots:
     void networkStartServer();
     void networkConnect();
+    void downloadFinished();
     bool settingsPDF();
     bool settingsURL();
     void settingsMacroDir();

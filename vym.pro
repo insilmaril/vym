@@ -6,7 +6,7 @@ CONFIG	+= qt warn_on x86_64
 
 QT += network xml svg printsupport
 
-#nclude(tmp/modeltest/modeltest.pri)
+// #include(tmp/modeltest/modeltest.pri)
 
 RESOURCES = vym.qrc
 
