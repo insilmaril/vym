@@ -89,7 +89,6 @@ extern FlagRow *standardFlagsMaster;
 extern FlagRow *systemFlagsMaster;
 extern QString vymName;
 extern QString vymVersion;
-extern QString vymUID;
 extern QString vymBuildDate;
 extern bool debug;
 extern bool testmode;
@@ -345,13 +344,15 @@ Main::Main(QWidget* parent, Qt::WindowFlags f) : QMainWindow(parent,f)
 	qWarning ("MainWindow: Couldn't register DBUS object!");
 #endif    
 
-    // Testing only...
+    // FIXME-0 Testing only, download relnotes
+    /*
     QUrl releaseNotesUrl("http://localhost/vym-release-notes.txt");
     DownloadAgent *agent = new DownloadAgent(releaseNotesUrl);
     //agent->setUrl( QUrl::fromEncoded(u.toLocal8Bit()));
     agent->setUserAgent("vym x.y.z  FJLSFII)");
     connect (agent, SIGNAL( downloadFinished()), this, SLOT(downloadFinished()));
     QTimer::singleShot(0, agent, SLOT(execute()));
+    */
 }
 
 Main::~Main()
@@ -384,7 +385,6 @@ Main::~Main()
 	settings.setValue( "/export/useHideExport",actionSettingsUseHideExport->isChecked() );
 	settings.setValue( "/system/version", vymVersion );
 	settings.setValue( "/system/builddate", vymBuildDate );
-	settings.setValue( "/system/uid", vymUID );
     }
     //FIXME-4 save scriptEditor settings
 

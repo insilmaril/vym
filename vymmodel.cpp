@@ -5634,14 +5634,13 @@ void VymModel::downloadImage (const QUrl &url, BranchItem *bi)
 	return;
     }
 
-    DownloadAgent *agent = new DownloadAgent(url);
-    
     // FIXME-0 download to tmpfile
     // FIXME-0 delete after running script in mainWindow
     QString script;
     script += QString("selectID(\"%1\");").arg(bi->getUuid().toString());
     script += QString("loadImage(\"$TMPFILE\");");
 
+    DownloadAgent *agent = new DownloadAgent(url);
     agent->setFinishedAction (this, script);
     connect (agent, SIGNAL (downloadFinished()), mainWindow, SLOT (downloadFinished()));
     QTimer::singleShot(0, agent, SLOT(execute()));
