@@ -205,6 +205,7 @@ void Task::setDateSleep(const QString &s)
 	setAwake(Sleeping);
     else
 	setAwake (Morning);
+    if (status == Finished) setStatus(WIP); 
 }
 
 int Task::getDaysSleep()
