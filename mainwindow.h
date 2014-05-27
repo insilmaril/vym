@@ -10,7 +10,6 @@
 #include "file.h"
 #include "historywindow.h"
 #include "mapeditor.h"
-#include "shortcuts.h"
 #include "texteditor.h"
 #include "vymview.h"
 
@@ -345,8 +344,6 @@ private:
 
     QAction *macroActions[13];
     QStringList macro;
-
-    Switchboard switchboard;
 
     QMenu *toolbarsMenu;
     QToolBar *fileToolbar;

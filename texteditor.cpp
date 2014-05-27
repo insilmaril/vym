@@ -334,6 +334,7 @@ void TextEditor::setupEditActions()
 
     editMenu->addSeparator();
     a = new QAction(QPixmap(), tr( "Select and copy &all" ),this); 
+    a->setShortcutContext (Qt::WidgetShortcut);
     a->setShortcut( Qt::CTRL + Qt::Key_A );
     connect( a, SIGNAL( triggered() ), this, SLOT( editCopyAll() ) );
     editMenu->addAction (a);

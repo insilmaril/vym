@@ -93,6 +93,7 @@ extern QString vymBuildDate;
 extern bool debug;
 extern bool testmode;
 extern bool bugzillaClientAvailable;
+extern Switchboard switchboard;
 
 extern QList <Command*> modelCommands;
 
@@ -312,7 +313,6 @@ Main::Main(QWidget* parent, Qt::WindowFlags f) : QMainWindow(parent,f)
     setupToolbars();
     setupFlagActions();
 
-    if (options.isOn("shortcuts")) switchboard.printASCII();    //FIXME-3 needs to go to main.cpp with global switchboard and exit after listing
     if (options.isOn("shortcutsLaTeX")) switchboard.printLaTeX();
 
     if (settings.value( "/mainwindow/showTestMenu",false).toBool()) setupTestActions();
@@ -1214,7 +1214,7 @@ void Main::setupEditActions()
     connect( a, SIGNAL( triggered() ), this, SLOT( editNewBranchBelow() ) );
     a->setEnabled (false);
     actionListBranches.append(a);
-    actionAddBranchBelow=a;
+
     a = new QAction(tr( "Add branch below","Edit menu" ), this);
     a->setShortcut (Qt::CTRL +Qt::Key_A );	 
     a->setShortcutContext (Qt::WindowShortcut);
@@ -1222,6 +1222,7 @@ void Main::setupEditActions()
     addAction (a);
     connect( a, SIGNAL( triggered() ), this, SLOT( editNewBranchBelow() ) );
     actionListBranches.append(a);
+    actionAddBranchBelow=a; 
 
     a = new QAction(QPixmap(iconPath+"up.png" ), tr( "Move up","Edit menu" ), this);
     a->setShortcut (Qt::Key_PageUp );		

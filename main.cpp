@@ -17,6 +17,7 @@ using namespace std;
 #include "options.h"
 #include "settings.h"
 #include "scripteditor.h"
+#include "shortcuts.h"
 #include "taskeditor.h"
 #include "taskmodel.h"
 #include "version.h"
@@ -53,7 +54,7 @@ ScriptEditor  *scriptEditor;
 HeadingEditor *headingEditor;	    
 NoteEditor    *noteEditor;	// used in Constr. of LinkableMapObj
 				// initialized in mainwindow
-Main *mainWindow;		// used in BranchObj::select()				    
+Main *mainWindow;		// used in BranchObj::select()		
 FindWidget *findWidget;
 FindResultWidget *findResultWidget;
 
@@ -78,6 +79,8 @@ bool debug;			// global debugging flag
 bool testmode;			// Used to disable saving of autosave setting
 FlagRow *systemFlagsMaster; 
 FlagRow *standardFlagsMaster;	
+
+Switchboard switchboard;
 
 Settings settings ("InSilmaril","vym"); // Organization, Application name
 
@@ -331,6 +334,8 @@ int main(int argc, char* argv[])
 	qApp->processEvents();
 	m.show();
     }
+
+    if (options.isOn("shortcuts")) switchboard.printASCII();    //FIXME-3 global switchboard and exit after listing
 
     m.loadCmdLine();
 
