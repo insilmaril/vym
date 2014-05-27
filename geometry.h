@@ -17,6 +17,7 @@ public:
 	Vector ();
 	Vector (const QPointF &p);
 	Vector (qreal x, qreal y);
+	virtual ~Vector ();
 
 	friend inline bool operator==(const Vector &v1, const Vector &v2 )
 	{ return v1.x()==v2.x() && v1.y()==v2.y(); }
@@ -34,6 +35,7 @@ class ConvexPolygon:public QPolygonF
 public:
 	ConvexPolygon ();
 	ConvexPolygon (QPolygonF p);
+        virtual ~ConvexPolygon();
 	void calcCentroid() ;
 	QPointF centroid() const;
 	qreal weight() const;

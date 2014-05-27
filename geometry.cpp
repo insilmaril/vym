@@ -77,6 +77,10 @@ Vector::Vector (qreal x, qreal y):QPointF (x,y)
 {
 }
 
+Vector::~Vector ()
+{
+}
+
 //! Check if length is 0
 bool Vector::isNull()
 {
@@ -125,6 +129,10 @@ ConvexPolygon::ConvexPolygon ()
 }
 
 ConvexPolygon::ConvexPolygon (QPolygonF p):QPolygonF (p)
+{
+}
+
+ConvexPolygon::~ConvexPolygon ()
 {
 }
 
