@@ -71,32 +71,26 @@ TextEditor::TextEditor()
 TextEditor::~TextEditor()
 {
     // Save Settings
-    QString n=QString("/satellite/%1/").arg(editorName);
-    restoreState (settings.value(n+"/state",0).toByteArray());
-    settings.setValue(n+"geometry/size", size() );
-    settings.setValue(n+"geometry/pos", pos() );
-    settings.setValue(n+"state",saveState(0));
+    QString n = QString("/satellite/%1/").arg(editorName);
+    settings.setValue( n + "geometry/size", size() );
+    settings.setValue( n + "geometry/pos", pos() );
+    settings.setValue( n + "state",saveState(0));
 
     QString s;
     if (actionSettingsFonthintDefault->isChecked() )
 	s="fixed";
     else    
 	s="variable";
-    settings.setValue(n+"fonts/fonthintDefault",s );
-    settings.setValue(n+"fonts/varFont", varFont.toString() );
-    settings.setValue(n+"fonts/fixedFont", fixedFont.toString() );
+    settings.setValue(n + "fonts/fonthintDefault",s );
+    settings.setValue(n + "fonts/varFont", varFont.toString() );
+    settings.setValue(n + "fonts/fixedFont", fixedFont.toString() );
 }
 
 void TextEditor::init (const QString &ename)
 {   
     editorName=ename;
     QString n=QString("/satellite/%1/").arg(editorName);
-    /*
     restoreState (settings.value(n+"state",0).toByteArray());
-    resize (settings.value (n+"geometry/size", QSize(450,600)).toSize());
-    move   (settings.value (n+"geometry/pos", QPoint (250,50)).toPoint());
-    
-*/
     filenameHint="";
     fixedFont.fromString (settings.value(
 	n+"fonts/fixedFont", "Courier,12,-1,5,48,0,0,0,1,0").toString() 
