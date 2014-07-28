@@ -92,118 +92,118 @@
     <message>
         <location filename="../branchpropeditor.ui" line="20"/>
         <source>Branch Property Editor</source>
-        <translation type="unfinished">Editor vlastností větve</translation>
+        <translation>Editor vlastností větve</translation>
     </message>
     <message>
         <location filename="../branchpropeditor.ui" line="30"/>
         <source>Frame</source>
-        <translation type="unfinished">Rámeček</translation>
+        <translation>Rámeček</translation>
     </message>
     <message>
         <location filename="../branchpropeditor.ui" line="42"/>
         <source>Geometry</source>
-        <translation type="unfinished">Uspořádání</translation>
+        <translation>Uspořádání</translation>
     </message>
     <message>
         <location filename="../branchpropeditor.ui" line="55"/>
         <source>No Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Žádný rámeček</translation>
     </message>
     <message>
         <location filename="../branchpropeditor.ui" line="60"/>
         <source>Rectangle</source>
-        <translation type="unfinished"></translation>
+        <translation>Obdélník</translation>
     </message>
     <message>
         <location filename="../branchpropeditor.ui" line="65"/>
         <source>Rounded Rectangle</source>
-        <translation type="unfinished">Zakulacený obdélník</translation>
+        <translation>Zakulacený obdélník</translation>
     </message>
     <message>
         <location filename="../branchpropeditor.ui" line="70"/>
         <source>Ellipse</source>
-        <translation type="unfinished">Elipsa</translation>
+        <translation>Elipsa</translation>
     </message>
     <message>
         <location filename="../branchpropeditor.ui" line="75"/>
         <source>Cloud</source>
-        <translation type="unfinished">Mrak</translation>
+        <translation>Mrak</translation>
     </message>
     <message>
         <location filename="../branchpropeditor.ui" line="96"/>
         <source>Padding</source>
-        <translation type="unfinished">Odstup</translation>
+        <translation>Odstup</translation>
     </message>
     <message>
         <location filename="../branchpropeditor.ui" line="103"/>
         <source>Borderline width</source>
-        <translation type="unfinished">Šířka dělicí čáry</translation>
+        <translation>Šířka dělicí čáry</translation>
     </message>
     <message>
         <location filename="../branchpropeditor.ui" line="127"/>
         <source>Include children</source>
-        <translation type="unfinished">Zahrnout vedlejší větve</translation>
+        <translation>Zahrnout vedlejší větve</translation>
     </message>
     <message>
         <location filename="../branchpropeditor.ui" line="151"/>
         <source>Colors</source>
-        <translation type="unfinished">Barvy</translation>
+        <translation>Barvy</translation>
     </message>
     <message>
         <location filename="../branchpropeditor.ui" line="182"/>
         <source>Borderline color</source>
-        <translation type="unfinished">Barva dělicí čáry</translation>
+        <translation>Barva dělicí čáry</translation>
     </message>
     <message>
         <location filename="../branchpropeditor.ui" line="205"/>
         <source>Background color</source>
-        <translation type="unfinished">Barva pozadí</translation>
+        <translation>Barva pozadí</translation>
     </message>
     <message>
         <location filename="../branchpropeditor.ui" line="234"/>
         <source>Layout</source>
-        <translation type="unfinished">Rozvržení</translation>
+        <translation>Rozvržení</translation>
     </message>
     <message>
         <location filename="../branchpropeditor.ui" line="242"/>
         <source>Include images horizontally</source>
-        <translation type="unfinished"></translation>
+        <translation>Přihlédnout k levým a pravým okrajům obrázků</translation>
     </message>
     <message>
         <location filename="../branchpropeditor.ui" line="249"/>
         <source>Include images vertically</source>
-        <translation type="unfinished"></translation>
+        <translation>Přihlédnout k horním a dolním okrajům obrázků</translation>
     </message>
     <message>
         <location filename="../branchpropeditor.ui" line="272"/>
         <source>Link</source>
-        <translation type="unfinished">Spojení</translation>
+        <translation>Spojení</translation>
     </message>
     <message>
         <location filename="../branchpropeditor.ui" line="278"/>
         <source>Hide link if unselected</source>
-        <translation type="unfinished">Skrýt spojení, není-li vybráno</translation>
+        <translation>Skrýt spojení, není-li vybráno</translation>
     </message>
     <message>
         <location filename="../branchpropeditor.ui" line="299"/>
         <source>Attributes</source>
-        <translation type="unfinished">Vlastnosti</translation>
+        <translation>Vlastnosti</translation>
     </message>
     <message>
         <location filename="../branchpropeditor.ui" line="316"/>
         <source>+</source>
-        <translation type="unfinished">+</translation>
+        <translation>+</translation>
     </message>
     <message>
         <location filename="../branchpropeditor.ui" line="323"/>
         <source>-</source>
-        <translation type="unfinished">-</translation>
+        <translation>-</translation>
     </message>
     <message>
         <location filename="../branchpropeditor.cpp" line="18"/>
         <source>Property Editor</source>
         <comment>Window caption</comment>
-        <translation type="unfinished">Editor vlastností</translation>
+        <translation>Editor vlastností</translation>
     </message>
 </context>
 <context>
@@ -331,7 +331,7 @@
     <message>
         <location filename="../editxlinkdialog.ui" line="40"/>
         <source>Arrow begin:</source>
-        <translation type="unfinished"></translation>
+        <translation>Začátek šipky:</translation>
     </message>
     <message>
         <location filename="../editxlinkdialog.ui" line="63"/>
@@ -352,12 +352,12 @@
     <message>
         <location filename="../editxlinkdialog.ui" line="190"/>
         <source>Arrow end:</source>
-        <translation type="unfinished"></translation>
+        <translation>Konec šipky:</translation>
     </message>
     <message>
         <location filename="../editxlinkdialog.ui" line="253"/>
         <source>Close</source>
-        <translation type="unfinished">Zavřít</translation>
+        <translation>Zavřít</translation>
     </message>
     <message>
         <source>Set color of heading</source>
@@ -418,37 +418,37 @@
     <message>
         <location filename="../exporthtmldialog.ui" line="129"/>
         <source>Image of map</source>
-        <translation type="unfinished"></translation>
+        <translation>Obrázek mapy</translation>
     </message>
     <message>
         <location filename="../exporthtmldialog.ui" line="136"/>
         <source>Table of contents</source>
-        <translation type="unfinished"></translation>
+        <translation>Obsah</translation>
     </message>
     <message>
         <location filename="../exporthtmldialog.ui" line="143"/>
         <source>Task flags</source>
-        <translation type="unfinished"></translation>
+        <translation>Příznaky úkolů</translation>
     </message>
     <message>
         <location filename="../exporthtmldialog.ui" line="150"/>
         <source>General flags</source>
-        <translation type="unfinished"></translation>
+        <translation>Obecné příznaky</translation>
     </message>
     <message>
         <location filename="../exporthtmldialog.ui" line="157"/>
         <source>Number sections</source>
-        <translation type="unfinished"></translation>
+        <translation>Číslovat oddíly</translation>
     </message>
     <message>
         <location filename="../exporthtmldialog.ui" line="215"/>
         <source>Copy CSS from </source>
-        <translation type="unfinished"></translation>
+        <translation>Kopírovat CSS z </translation>
     </message>
     <message>
         <location filename="../exporthtmldialog.ui" line="235"/>
         <source>Use CSS from</source>
-        <translation type="unfinished"></translation>
+        <translation>Použít CSS z </translation>
     </message>
     <message>
         <source>Include image</source>
@@ -749,7 +749,7 @@ dovolit!</translation>
     <message>
         <location filename="../extrainfodialog.ui" line="44"/>
         <source>Title:</source>
-        <translation type="unfinished"></translation>
+        <translation>Název:</translation>
     </message>
     <message>
         <location filename="../extrainfodialog.ui" line="54"/>
@@ -888,24 +888,24 @@ dovolit!</translation>
     <message>
         <location filename="../lineeditdialog.ui" line="14"/>
         <source>Dialog</source>
-        <translation type="unfinished">Dialog</translation>
+        <translation>Dialog</translation>
     </message>
     <message>
         <location filename="../lineeditdialog.ui" line="20"/>
         <source>TextLabel</source>
-        <translation type="unfinished"></translation>
+        <translation>TextovýŠtítek</translation>
     </message>
     <message>
         <location filename="../lineeditdialog.ui" line="67"/>
         <location filename="../lineeditdialog.cpp" line="18"/>
         <source>Cancel</source>
-        <translation type="unfinished">Zrušit</translation>
+        <translation>Zrušit</translation>
     </message>
     <message>
         <location filename="../lineeditdialog.ui" line="77"/>
         <location filename="../lineeditdialog.cpp" line="10"/>
         <source>Ok</source>
-        <translation type="unfinished"></translation>
+        <translation>OK</translation>
     </message>
 </context>
 <context>
@@ -2028,7 +2028,7 @@ ale ještě nebyla uložena. Chcete </translation>
         <location filename="../mainwindow.cpp" line="2148"/>
         <source>Time critical</source>
         <comment>Standardflag</comment>
-        <translation>Dobově zásadní</translation>
+        <translation>Časově zásadní</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2154"/>
@@ -2217,13 +2217,13 @@ ale ještě nebyla uložena. Chcete </translation>
         <location filename="../mainwindow.cpp" line="4011"/>
         <source>Enter sleep time (number of days or date YYYY-MM-DD or DD.MM[.YYYY]</source>
         <comment>task sleep time dialog</comment>
-        <translation type="unfinished"></translation>
+        <translation>Zadat čas spánku (počet dní nebo datum RRRR-MM-DD nebo DD.MM[.RRRR]</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="4028"/>
         <source>Couldn&apos;t set sleep time to %1.
 </source>
-        <translation type="unfinished"></translation>
+        <translation>Nepodařilo se nastavit čas spánku na %1.</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="4684"/>
@@ -2434,13 +2434,13 @@ ale ještě nebyla uložena. Chcete </translation>
         <location filename="../mainwindow.cpp" line="221"/>
         <source>Property Editor</source>
         <comment>PropertyEditor</comment>
-        <translation type="unfinished">Editor vlastností</translation>
+        <translation>Editor vlastností</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="228"/>
         <source>History window</source>
         <comment>HistoryWidget</comment>
-        <translation type="unfinished"></translation>
+        <translation>Okno s historií</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="947"/>
@@ -2677,7 +2677,7 @@ ale ještě nebyla uložena. Chcete </translation>
         <location filename="../mainwindow.cpp" line="1439"/>
         <source>Open linked map in background tab</source>
         <comment>Edit menu</comment>
-        <translation type="unfinished"></translation>
+        <translation>Otevřít spojenou mapu v kartě na pozadí</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1478"/>
@@ -2851,7 +2851,7 @@ ale ještě nebyla uložena. Chcete </translation>
     <message>
         <location filename="../mainwindow.cpp" line="2314"/>
         <source>Flags toolbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Nástrojový pruh pro příznaky</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2345"/>
@@ -2862,7 +2862,7 @@ ale ještě nebyla uložena. Chcete </translation>
         <location filename="../mainwindow.cpp" line="2427"/>
         <source>Task editor: Set number of parents</source>
         <comment>Settings action</comment>
-        <translation type="unfinished"></translation>
+        <translation>Editor úkolů: Nastavit počet rodičů</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2490"/>
@@ -2905,7 +2905,10 @@ ale ještě nebyla uložena. Chcete </translation>
         <source>The map %1
 is already opened.Opening the same map in multiple editors may lead 
 to confusion when finishing working with vym.Do you want to</source>
-        <translation type="unfinished"></translation>
+        <translation>Mapa %1
+je již ve vym otevřena. Otevření téže mapy ve více editorech může
+při ukončení práce s programem vym vést ke zmatení.
+Chcete </translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="3088"/>
@@ -2921,7 +2924,7 @@ to confusion when finishing working with vym.Do you want to</source>
     <message>
         <location filename="../mainwindow.cpp" line="4762"/>
         <source>Number of parents shown for a task:</source>
-        <translation type="unfinished"></translation>
+        <translation>Počet rodičů ukázaný pro úkol:</translation>
     </message>
     <message>
         <source>Export as org-mode</source>
@@ -3944,25 +3947,25 @@ Riskieren Sie es dessen Inhalt zu überschreiben?</translation>
         <location filename="../mainwindow.cpp" line="1993"/>
         <source>Next slide</source>
         <comment>View action</comment>
-        <translation type="unfinished"></translation>
+        <translation>Další snímek</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1996"/>
         <source>Next slide</source>
         <comment>Shortcut group</comment>
-        <translation type="unfinished"></translation>
+        <translation>Další snímek</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2000"/>
         <source>Previous slide</source>
         <comment>View action</comment>
-        <translation type="unfinished"></translation>
+        <translation>Předchozí snímek</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2003"/>
         <source>Previous  slide</source>
         <comment>Shortcut group</comment>
-        <translation type="unfinished"></translation>
+        <translation>Předchozí snímek</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2049"/>
@@ -4979,7 +4982,7 @@ Chcete mapu nahrát znovu s novým souborem?</translation>
         <location filename="../mapeditor.cpp" line="125"/>
         <source>Save</source>
         <comment>MapEditor</comment>
-        <translation type="unfinished"></translation>
+        <translation>Uložit</translation>
     </message>
     <message>
         <location filename="../mapeditor.cpp" line="504"/>
@@ -5074,18 +5077,18 @@ Chcete mapu nahrát znovu s novým souborem?</translation>
     <message>
         <location filename="../exports.cpp" line="435"/>
         <source>Export as CSV</source>
-        <translation type="unfinished">Vyvést jako CSV</translation>
+        <translation>Vyvést jako CSV</translation>
     </message>
     <message>
         <location filename="../exports.cpp" line="751"/>
         <source>Contents:</source>
         <comment>Used in HTML export</comment>
-        <translation type="unfinished"></translation>
+        <translation>Obsah:</translation>
     </message>
     <message>
         <location filename="../exports.cpp" line="807"/>
         <source>Export aborted.</source>
-        <translation>Vyvedení zrušeno</translation>
+        <translation>Vyvedení zrušeno.</translation>
     </message>
     <message>
         <source>Warning</source>
@@ -5132,18 +5135,18 @@ Chcete mapu nahrát znovu s novým souborem?</translation>
         <location filename="../exports.cpp" line="847"/>
         <location filename="../exports.cpp" line="858"/>
         <source>Critical</source>
-        <translation type="unfinished"></translation>
+        <translation>Zásadní</translation>
     </message>
     <message>
         <location filename="../exports.cpp" line="824"/>
         <source>Could not find stylesheet %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Nepodařilo se najít stylový list %1</translation>
     </message>
     <message>
         <location filename="../exports.cpp" line="834"/>
         <source>Error</source>
         <comment>ExportHTML</comment>
-        <translation type="unfinished">Chyba</translation>
+        <translation>Chyba</translation>
     </message>
     <message>
         <location filename="../exports.cpp" line="835"/>
@@ -5151,12 +5154,14 @@ Chcete mapu nahrát znovu s novým souborem?</translation>
 %1 to
 %2</source>
         <comment>ExportHTML</comment>
-        <translation type="unfinished"></translation>
+        <translation>Nepodařilo se zkopírovat
+%1 do
+%2</translation>
     </message>
     <message>
         <location filename="../exports.cpp" line="859"/>
         <source>Could not copy %1 to %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Nepodařilo se zkopírovat %1 do %2</translation>
     </message>
     <message>
         <location filename="../exports.cpp" line="869"/>
@@ -5393,23 +5398,23 @@ nainstalovat perlovský modul pro přístup k Bugzille</translation>
         <location filename="../macros.cpp" line="44"/>
         <source>Couldn&apos;t find a macro at  %1.
 </source>
-        <translation type="unfinished">Nepodařilo se najít makro v %1.
+        <translation>Nepodařilo se najít makro v %1.
 </translation>
     </message>
     <message>
         <location filename="../macros.cpp" line="45"/>
         <source>Please use Settings-&gt;</source>
-        <translation type="unfinished">Použijte, prosím, nastavení -&gt;</translation>
+        <translation>Použijte, prosím, Nastavení -&gt;</translation>
     </message>
     <message>
         <location filename="../macros.cpp" line="45"/>
         <source>Set directory for vym macros</source>
-        <translation type="unfinished">Nastavit adresář pro makra programu vym</translation>
+        <translation>Nastavit adresář pro makra programu vym</translation>
     </message>
     <message>
         <location filename="../scripteditor.cpp" line="96"/>
         <source>Couldn&apos;t save &quot;%1&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation>Nepodařilo uložit &quot;%1&quot;</translation>
     </message>
 </context>
 <context>
@@ -5422,12 +5427,12 @@ nainstalovat perlovský modul pro přístup k Bugzille</translation>
     <message>
         <location filename="../scripteditor.ui" line="49"/>
         <source>Tab 1</source>
-        <translation type="unfinished"></translation>
+        <translation>Karta 1</translation>
     </message>
     <message>
         <location filename="../scripteditor.ui" line="55"/>
         <source>Save to selected slide</source>
-        <translation type="unfinished"></translation>
+        <translation>Uložit do vybraného snímku</translation>
     </message>
     <message>
         <location filename="../scripteditor.ui" line="91"/>
@@ -5438,22 +5443,22 @@ nainstalovat perlovský modul pro přístup k Bugzille</translation>
     <message>
         <location filename="../scripteditor.ui" line="105"/>
         <source>Tab 2</source>
-        <translation type="unfinished"></translation>
+        <translation>Karta 2</translation>
     </message>
     <message>
         <location filename="../scripteditor.ui" line="121"/>
         <source>Current key:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Nynější klíč:</translation>
     </message>
     <message>
         <location filename="../scripteditor.ui" line="131"/>
         <source>Load</source>
-        <translation type="unfinished"></translation>
+        <translation>Nahrát</translation>
     </message>
     <message>
         <location filename="../scripteditor.ui" line="138"/>
         <source>Save</source>
-        <translation type="unfinished"></translation>
+        <translation>Uložit</translation>
     </message>
     <message>
         <source>Save slide</source>
@@ -5477,29 +5482,29 @@ nainstalovat perlovský modul pro přístup k Bugzille</translation>
         <location filename="../scripteditor.cpp" line="45"/>
         <source>Slide</source>
         <comment>Mode in scriptEditor</comment>
-        <translation type="unfinished"></translation>
+        <translation>Snímek</translation>
     </message>
     <message>
         <location filename="../scripteditor.cpp" line="46"/>
         <source>Macro</source>
         <comment>Mode in scriptEditor</comment>
-        <translation type="unfinished"></translation>
+        <translation>Makro</translation>
     </message>
     <message>
         <location filename="../scripteditor.cpp" line="65"/>
         <source>Save</source>
         <comment>ScriptEditor</comment>
-        <translation type="unfinished"></translation>
+        <translation>Uložit</translation>
     </message>
     <message>
         <location filename="../scripteditor.cpp" line="110"/>
         <source>Couldn&apos;t get model to save script into slide!</source>
-        <translation type="unfinished"></translation>
+        <translation>Nepodařilo se získat model pro uložení skriptu do snímku!</translation>
     </message>
     <message>
         <location filename="../scripteditor.cpp" line="116"/>
         <source>Couldn&apos;t find slide to save script into slide!</source>
-        <translation type="unfinished"></translation>
+        <translation>Nepodařilo se najít snímek pro uložení skriptu do snímku!</translation>
     </message>
     <message>
         <location filename="../scripteditor.cpp" line="142"/>
@@ -6257,7 +6262,14 @@ Writing it uncompressed will also write images
 and flags and thus may overwrite files in the given directory
 
 Do you want to write the map</source>
-        <translation type="unfinished"></translation>
+        <translation>Mapa %1
+byla uložena, aniž by byla zkomprimována (zabalena do menšího souboru),
+takže není v obvyklém formátu používaném programem vym.
+Bude-li uložena nezkomprimovaná, budou uloženy i obrázky a příznaky,
+čímž mohou být přepsány soubory v daném adresáři.
+
+Chcete mapu
+</translation>
     </message>
     <message>
         <location filename="../vymmodel.cpp" line="625"/>
@@ -6436,7 +6448,7 @@ Chcete mapu nahrát znovu s novým souborem?</translation>
     <message>
         <location filename="../vymmodel.cpp" line="4774"/>
         <source>Export map as scalable vector graphic</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyvést mapu jako škálovatelnou vektorovou grafiku</translation>
     </message>
     <message>
         <source>Enter URL:</source>
@@ -6497,7 +6509,7 @@ Chcete mapu nahrát znovu s novým souborem?</translation>
         <location filename="../vymmodel.cpp" line="4803"/>
         <source>Exported: </source>
         <comment>Export confirmation</comment>
-        <translation type="unfinished"></translation>
+        <translation>Vyvedeno: </translation>
     </message>
     <message>
         <location filename="../vymmodel.cpp" line="4714"/>
@@ -6530,7 +6542,7 @@ Chcete mapu nahrát znovu s novým souborem?</translation>
     <message>
         <location filename="../vymmodel.cpp" line="4939"/>
         <source>Export as csv</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyvést jako CSV</translation>
     </message>
     <message>
         <location filename="../vymmodel.cpp" line="5263"/>
