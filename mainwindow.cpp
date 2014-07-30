@@ -121,7 +121,6 @@ extern QDir lastMapDir;
 #if defined(Q_OS_WIN32)
 extern QDir vymInstallDir;
 #endif
-extern QString iconPath;
 
 Main::Main(QWidget* parent, Qt::WindowFlags f) : QMainWindow(parent,f)
 {
@@ -942,19 +941,19 @@ void Main::setupFileActions()
     QMenu *fileMenu = menuBar()->addMenu ( tr ("&Map","Toolbar for file actions") );
 
     QAction *a;
-    a = new QAction(QPixmap( iconPath+"filenew.png"), tr( "&New map","File menu" ),this);
+    a = new QAction(QPixmap( ":/filenew.png"), tr( "&New map","File menu" ),this);
     a->setShortcut ( Qt::CTRL + Qt::Key_N );
     switchboard.addConnection(fileMenu, a,tr("File","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( fileNew() ) );
     actionFileNew=a;
 
-    a = new QAction(QPixmap( iconPath+"filenewcopy.png"), tr( "&Copy to new map","File menu" ),this);
+    a = new QAction(QPixmap( ":/filenewcopy.png"), tr( "&Copy to new map","File menu" ),this);
     a->setShortcut ( Qt::CTRL +Qt::SHIFT + Qt::Key_N );	 
     switchboard.addConnection(fileMenu, a,tr("File","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( fileNewCopy() ) );
     actionFileNewCopy=a;
 
-    a = new QAction( QPixmap( iconPath+"fileopen.png"), tr( "&Open..." ,"File menu"),this);
+    a = new QAction( QPixmap( ":/fileopen.png"), tr( "&Open..." ,"File menu"),this);
     a->setShortcut ( Qt::CTRL + Qt::Key_L );	 
     switchboard.addConnection(fileMenu, a,tr("File","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( fileLoad() ) );
@@ -967,13 +966,13 @@ void Main::setupFileActions()
     fileLastMapsMenu = fileMenu->addMenu (tr("Open Recent","File menu"));
     fileMenu->addSeparator();
 
-    a = new QAction( QPixmap( iconPath+"filesave.png"), tr( "&Save...","File menu" ), this);
+    a = new QAction( QPixmap( ":/filesave.png"), tr( "&Save...","File menu" ), this);
     switchboard.addConnection(fileMenu, a,tr("File","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( fileSave() ) );
     actionListMap.append (a);
     actionFileSave=a;
 
-    a = new QAction( QPixmap(iconPath+"filesaveas.png"), tr( "Save &As...","File menu" ), this);
+    a = new QAction( QPixmap(":/filesaveas.png"), tr( "Save &As...","File menu" ), this);
     switchboard.addConnection(fileMenu, a,tr("File","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( fileSaveAs() ) );
 
@@ -1006,7 +1005,7 @@ void Main::setupFileActions()
 
     fileExportMenu = fileMenu->addMenu (tr("Export","File menu"));
 
-    a = new QAction( QPixmap(iconPath+"file-document-export.png"),tr("Repeat last export (%1)").arg("-"), this);
+    a = new QAction( QPixmap(":/file-document-export.png"),tr("Repeat last export (%1)").arg("-"), this);
     a->setShortcut (Qt::ALT + Qt::Key_E);	    
     switchboard.addConnection(fileExportMenu, a,tr("File","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( fileExportLast() ) );
@@ -1066,19 +1065,19 @@ void Main::setupFileActions()
 
     fileMenu->addSeparator();
 
-    a = new QAction(QPixmap( iconPath+"fileprint.png"), tr( "&Print")+QString("..."), this);
+    a = new QAction(QPixmap( ":/fileprint.png"), tr( "&Print")+QString("..."), this);
     a->setShortcut (Qt::CTRL + Qt::Key_P );
     switchboard.addConnection(fileMenu, a,tr("File","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( filePrint() ) );
     actionListMap.append (a);
     actionFilePrint=a;
 
-    a = new QAction( QPixmap(iconPath+"fileclose.png"), tr( "&Close Map","File menu" ), this);
+    a = new QAction( QPixmap(":/fileclose.png"), tr( "&Close Map","File menu" ), this);
     a->setShortcut (Qt::CTRL + Qt::Key_W );	 
     switchboard.addConnection(fileMenu, a,tr("File","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( fileCloseMap() ) );
 
-    a = new QAction(QPixmap(iconPath+"exit.png"), tr( "E&xit","File menu")+" "+vymName, this);
+    a = new QAction(QPixmap(":/exit.png"), tr( "E&xit","File menu")+" "+vymName, this);
     a->setShortcut (Qt::CTRL + Qt::Key_Q );	  
     switchboard.addConnection(fileMenu, a,tr("File","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( fileExitVYM() ) );
@@ -1091,7 +1090,7 @@ void Main::setupEditActions()
     QMenu *editMenu = menuBar()->addMenu( tr("E&dit","Edit menu") );
 
     QAction *a;
-    a = new QAction( QPixmap( iconPath+"undo.png"), tr( "&Undo","Edit menu" ),this);
+    a = new QAction( QPixmap( ":/undo.png"), tr( "&Undo","Edit menu" ),this);
     connect( a, SIGNAL( triggered() ), this, SLOT( editUndo() ) );
     a->setShortcut ( Qt::CTRL + Qt::Key_Z );	  
     a->setEnabled (false);
@@ -1099,7 +1098,7 @@ void Main::setupEditActions()
     actionListMap.append (a);
     actionUndo=a;
 
-    a = new QAction( QPixmap( iconPath+"redo.png"), tr( "&Redo","Edit menu" ), this); 
+    a = new QAction( QPixmap( ":/redo.png"), tr( "&Redo","Edit menu" ), this); 
     a->setShortcut (Qt::CTRL + Qt::Key_Y );	  
     switchboard.addConnection(editMenu, a,tr("Edit","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( editRedo() ) );
@@ -1107,7 +1106,7 @@ void Main::setupEditActions()
     actionRedo=a;
 
     editMenu->addSeparator();
-    a = new QAction(QPixmap( iconPath+"editcopy.png"), tr( "&Copy","Edit menu" ), this);
+    a = new QAction(QPixmap( ":/editcopy.png"), tr( "&Copy","Edit menu" ), this);
     a->setShortcut (Qt::CTRL + Qt::Key_C );	 
     a->setEnabled (false);
     switchboard.addConnection(editMenu, a,tr("Edit","Shortcut group"));
@@ -1115,7 +1114,7 @@ void Main::setupEditActions()
     actionListMap.append(a);
     actionCopy=a;
 
-    a = new QAction(QPixmap( iconPath+"editcut.png" ), tr( "Cu&t","Edit menu" ), this);
+    a = new QAction(QPixmap( ":/editcut.png" ), tr( "Cu&t","Edit menu" ), this);
     a->setShortcut (Qt::CTRL + Qt::Key_X );	  
     a->setEnabled (false);
     switchboard.addConnection(editMenu, a,tr("Edit","Shortcut group"));
@@ -1123,7 +1122,7 @@ void Main::setupEditActions()
     actionListMap.append(a);
     actionCut=a;
 
-    a = new QAction(QPixmap( iconPath+"editpaste.png"), tr( "&Paste","Edit menu" ),this);
+    a = new QAction(QPixmap( ":/editpaste.png"), tr( "&Paste","Edit menu" ),this);
     connect( a, SIGNAL( triggered() ), this, SLOT( editPaste() ) );
     a->setShortcut ( Qt::CTRL + Qt::Key_V );	  
     a->setEnabled (false);
@@ -1155,7 +1154,7 @@ void Main::setupEditActions()
 
 
     // Shortcut to add mapcenter
-    a= new QAction(QPixmap(iconPath+"newmapcenter.png"),tr( "Add mapcenter","Canvas context menu" ), this);
+    a= new QAction(QPixmap(":/newmapcenter.png"),tr( "Add mapcenter","Canvas context menu" ), this);
     a->setShortcut ( Qt::Key_C);    
     a->setShortcutContext (Qt::WindowShortcut);
     switchboard.addConnection(editMenu, a,tr("Edit","Shortcut group"));
@@ -1165,7 +1164,7 @@ void Main::setupEditActions()
 
 
     // Shortcut to add branch
-    a = new QAction(QPixmap(iconPath+"newbranch.png"), tr( "Add branch as child","Edit menu" ), this);
+    a = new QAction(QPixmap(":/newbranch.png"), tr( "Add branch as child","Edit menu" ), this);
     a->setShortcut (Qt::Key_A);		
     a->setShortcutContext (Qt::WindowShortcut);
     switchboard.addConnection(editMenu, a,tr("Edit","Shortcut group"));
@@ -1222,7 +1221,7 @@ void Main::setupEditActions()
     actionListBranches.append(a);
     actionAddBranchBelow=a; 
 
-    a = new QAction(QPixmap(iconPath+"up.png" ), tr( "Move up","Edit menu" ), this);
+    a = new QAction(QPixmap(":/up.png" ), tr( "Move up","Edit menu" ), this);
     a->setShortcut (Qt::Key_PageUp );		
     a->setShortcutContext (Qt::WidgetShortcut);
     a->setEnabled (false);
@@ -1231,7 +1230,7 @@ void Main::setupEditActions()
     actionListBranches.append (a);
     actionMoveUp=a;
 
-    a = new QAction( QPixmap( iconPath+"down.png"), tr( "Move down","Edit menu" ),this);
+    a = new QAction( QPixmap( ":/down.png"), tr( "Move down","Edit menu" ),this);
     connect( a, SIGNAL( triggered() ), this, SLOT( editMoveDown() ) );
     a->setShortcut ( Qt::Key_PageDown );	  
     a->setShortcutContext (Qt::WidgetShortcut);
@@ -1248,7 +1247,7 @@ void Main::setupEditActions()
     actionListBranches.append (a);
     actionDetach=a;
 
-    a = new QAction( QPixmap(iconPath+"editsort.png" ), tr( "Sort children","Edit menu" ), this );
+    a = new QAction( QPixmap(":/editsort.png" ), tr( "Sort children","Edit menu" ), this );
     connect( a, SIGNAL( triggered() ), this, SLOT( editSortChildren() ) );
     a->setEnabled (true);
     a->setShortcut ( Qt::Key_O );		  
@@ -1256,7 +1255,7 @@ void Main::setupEditActions()
     actionListBranches.append (a);
     actionSortChildren=a;
 
-    a = new QAction( QPixmap(iconPath+"editsortback.png" ), tr( "Sort children backwards","Edit menu" ), this );
+    a = new QAction( QPixmap(":/editsortback.png" ), tr( "Sort children backwards","Edit menu" ), this );
     connect( a, SIGNAL( triggered() ), this, SLOT( editSortBackChildren() ) );
     a->setEnabled (true);
     a->setShortcut ( Qt::SHIFT + Qt::Key_O );		
@@ -1729,14 +1728,14 @@ void Main::setupSelectActions()
     actionListMap.append (a);
     actionSelectNothing=a;
 
-    a = new QAction( QPixmap(iconPath+"find.png"), tr( "Find...","Edit menu"), this);
+    a = new QAction( QPixmap(":/find.png"), tr( "Find...","Edit menu"), this);
     a->setShortcut (Qt::CTRL + Qt::Key_F );	
     switchboard.addConnection(selectMenu, a,tr("Edit","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( editOpenFindResultWidget() ) );
     actionListMap.append(a);
     actionFind=a;
 
-    a = new QAction( QPixmap(iconPath+"find.png"), tr( "Find...","Edit menu"), this);
+    a = new QAction( QPixmap(":/find.png"), tr( "Find...","Edit menu"), this);
     a->setShortcut (Qt::Key_Slash );	
     switchboard.addConnection(selectMenu, a,tr("Edit","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( editOpenFindResultWidget() ) );
@@ -1764,7 +1763,7 @@ void Main::setupFormatActions()
     connect( a, SIGNAL( triggered() ), this, SLOT( formatSelectColor() ) );
     actionFormatColor=a;
 
-    a= new QAction( QPixmap(iconPath+"formatcolorpicker.png"), tr( "Pic&k color","Edit menu" ), this);
+    a= new QAction( QPixmap(":/formatcolorpicker.png"), tr( "Pic&k color","Edit menu" ), this);
     a->setShortcut (Qt::CTRL + Qt::Key_K );
     switchboard.addConnection(formatMenu, a,tr("Format shortcuts","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( formatPickColor() ) );
@@ -1772,7 +1771,7 @@ void Main::setupFormatActions()
     actionListBranches.append(a);
     actionFormatPickColor=a;
 
-    a= new QAction(QPixmap(iconPath+"formatcolorbranch.png"), tr( "Color &branch","Edit menu" ), this);
+    a= new QAction(QPixmap(":/formatcolorbranch.png"), tr( "Color &branch","Edit menu" ), this);
     //a->setShortcut (Qt::CTRL + Qt::Key_B + Qt::SHIFT);
     switchboard.addConnection(formatMenu, a,tr("Format shortcuts","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( formatColorBranch() ) );
@@ -1780,7 +1779,7 @@ void Main::setupFormatActions()
     actionListBranches.append(a);
     actionFormatColorBranch=a;
 
-    a= new QAction(QPixmap(iconPath+"formatcolorsubtree.png"), tr( "Color sub&tree","Edit menu" ), this);
+    a= new QAction(QPixmap(":/formatcolorsubtree.png"), tr( "Color sub&tree","Edit menu" ), this);
     //a->setShortcut (Qt::CTRL + Qt::Key_B);	// Color subtree
     switchboard.addConnection(formatMenu, a,tr("Format shortcuts","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( formatColorSubtree() ) );
@@ -1865,7 +1864,7 @@ void Main::setupViewActions()
     viewMenu->addSeparator();	
 
     QAction *a;
-    a = new QAction( QPixmap(iconPath+"viewmag+.png"), tr( "Zoom in","View action" ), this);
+    a = new QAction( QPixmap(":/viewmag+.png"), tr( "Zoom in","View action" ), this);
     a->setShortcut(Qt::Key_Plus);
     switchboard.addConnection(a,tr("View shortcuts","Shortcut group"));
     viewMenu->addAction (a);
@@ -1873,7 +1872,7 @@ void Main::setupViewActions()
     actionListMap.append (a);
     actionZoomIn=a;
 
-    a = new QAction( QPixmap(iconPath+"viewmag-.png"), tr( "Zoom out","View action" ), this);
+    a = new QAction( QPixmap(":/viewmag-.png"), tr( "Zoom out","View action" ), this);
     a->setShortcut(Qt::Key_Minus);
     switchboard.addConnection(a,tr("View shortcuts","Shortcut group"));
     viewMenu->addAction (a);
@@ -1881,7 +1880,7 @@ void Main::setupViewActions()
     actionListMap.append (a);
     actionZoomOut=a;
 
-    a = new QAction( QPixmap(iconPath+"rotate-ccw.png"), tr( "Rotate counterclockwise","View action" ), this);
+    a = new QAction( QPixmap(":/rotate-ccw.png"), tr( "Rotate counterclockwise","View action" ), this);
     a->setShortcut( Qt::SHIFT + Qt::Key_R);
     switchboard.addConnection(a,tr("View shortcuts","Shortcut group"));
     viewMenu->addAction (a);
@@ -1889,7 +1888,7 @@ void Main::setupViewActions()
     actionListMap.append (a);
     actionRotateCounterClockwise=a;
 
-    a = new QAction( QPixmap(iconPath+"rotate-cw.png"), tr( "Rotate rclockwise","View action" ), this);
+    a = new QAction( QPixmap(":/rotate-cw.png"), tr( "Rotate rclockwise","View action" ), this);
     a->setShortcut(Qt::Key_R);
     switchboard.addConnection(a,tr("View shortcuts","Shortcut group"));
     viewMenu->addAction (a);
@@ -1897,7 +1896,7 @@ void Main::setupViewActions()
     actionListMap.append (a);
     actionRotateClockwise=a;
 
-    a = new QAction(QPixmap(iconPath+"viewmag-reset.png"), tr( "reset Zoom","View action" ), this);
+    a = new QAction(QPixmap(":/viewmag-reset.png"), tr( "reset Zoom","View action" ), this);
     a->setShortcut (Qt::Key_Comma);
     switchboard.addConnection(a,tr("View shortcuts","Shortcut group"));
     viewMenu->addAction (a);
@@ -1905,7 +1904,7 @@ void Main::setupViewActions()
     actionListMap.append (a);
     actionZoomReset=a;
 
-    a = new QAction( QPixmap(iconPath+"viewshowsel.png"), tr( "Center on selection","View action" ), this);
+    a = new QAction( QPixmap(":/viewshowsel.png"), tr( "Center on selection","View action" ), this);
     a->setShortcut(Qt::Key_Period);
     switchboard.addConnection(a,tr("View shortcuts","Shortcut group"));
     viewMenu->addAction (a);
@@ -1927,12 +1926,12 @@ void Main::setupViewActions()
     a->setShortcut ( Qt::Key_E );  
     switchboard.addConnection(a,tr("View shortcuts","Shortcut group"));
     a->setCheckable(true);
-    a->setIcon (QPixmap(iconPath+"headingeditor.png"));
+    a->setIcon (QPixmap(":/headingeditor.png"));
     viewMenu->addAction (a);
     actionViewToggleHeadingEditor=a;
 
     // Original icon is "category" from KDE
-    a = new QAction(QPixmap(iconPath+"treeeditor.png"), tr( "Tree editor","View action" ),this);
+    a = new QAction(QPixmap(":/treeeditor.png"), tr( "Tree editor","View action" ),this);
     a->setShortcut ( Qt::CTRL + Qt::Key_T );
     switchboard.addConnection(a,tr("View shortcuts","Shortcut group"));
     a->setCheckable(true);
@@ -1940,7 +1939,7 @@ void Main::setupViewActions()
     connect( a, SIGNAL( triggered() ), this, SLOT(windowToggleTreeEditor() ) );
     actionViewToggleTreeEditor=a;
 
-    a = new QAction(QPixmap(iconPath+"taskeditor.png"), tr( "Task editor","View action" ),this);
+    a = new QAction(QPixmap(":/taskeditor.png"), tr( "Task editor","View action" ),this);
     a->setShortcut ( Qt::Key_Q );
     switchboard.addConnection(a,tr("View shortcuts","Shortcut group"));
     a->setCheckable(true);
@@ -1948,7 +1947,7 @@ void Main::setupViewActions()
     connect( a, SIGNAL( triggered() ), this, SLOT(windowToggleTaskEditor() ) );
     actionViewToggleTaskEditor=a;
 
-    a = new QAction(QPixmap(iconPath+"slideeditor.png"), tr( "Slide editor","View action" ),this);
+    a = new QAction(QPixmap(":/slideeditor.png"), tr( "Slide editor","View action" ),this);
     a->setShortcut ( Qt::SHIFT + Qt::Key_S );
     switchboard.addConnection(a,tr("View shortcuts","Shortcut group"));
     a->setCheckable(true);
@@ -1956,7 +1955,7 @@ void Main::setupViewActions()
     connect( a, SIGNAL( triggered() ), this, SLOT(windowToggleSlideEditor() ) );
     actionViewToggleSlideEditor=a;
 
-    a = new QAction(QPixmap(iconPath+"scripteditor.png"), tr("Script editor","View action"), this);
+    a = new QAction(QPixmap(":/scripteditor.png"), tr("Script editor","View action"), this);
     a->setShortcut ( Qt::ALT + Qt::Key_S );
     a->setCheckable(true);
     viewMenu->addAction (a);
@@ -1964,7 +1963,7 @@ void Main::setupViewActions()
     connect( a, SIGNAL( triggered() ), this, SLOT( windowToggleScriptEditor() ) );
     actionViewToggleScriptEditor=a;
 
-    a = new QAction(QPixmap(iconPath+"history.png"),  tr( "History Window","View action" ),this );
+    a = new QAction(QPixmap(":/history.png"),  tr( "History Window","View action" ),this );
     a->setShortcut ( Qt::CTRL + Qt::Key_H  );
     switchboard.addConnection(a,tr("View shortcuts","Shortcut group"));
     a->setCheckable(true);
@@ -2031,7 +2030,7 @@ void Main::setupModeActions()
     QAction *a;
     actionGroupModModes=new QActionGroup ( this);
     actionGroupModModes->setExclusive (true);
-    a= new QAction( QPixmap(iconPath+"modecolor.png"), tr( "Use modifier to color branches","Mode modifier" ), actionGroupModModes);
+    a= new QAction( QPixmap(":/modecolor.png"), tr( "Use modifier to color branches","Mode modifier" ), actionGroupModModes);
     a->setShortcut (Qt::Key_J);
     switchboard.addConnection(this,a,tr("Modes","Shortcut group"));
     a->setCheckable(true);
@@ -2045,7 +2044,7 @@ void Main::setupModeActions()
     actionListMap.append (a);
     actionModModeCopy=a;
 
-    a= new QAction(QPixmap(iconPath+"modelink.png"), tr( "Use modifier to draw xLinks","Mode modifier" ), actionGroupModModes );
+    a= new QAction(QPixmap(":/modelink.png"), tr( "Use modifier to draw xLinks","Mode modifier" ), actionGroupModModes );
     a->setShortcut (Qt::Key_L);
     switchboard.addConnection(this,a,tr("Modes","Shortcut group"));
     a->setCheckable(true);

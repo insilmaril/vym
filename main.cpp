@@ -292,7 +292,7 @@ int main(int argc, char* argv[])
 
     // Initialize editors
     noteEditor = new NoteEditor();
-    noteEditor->setWindowIcon (QPixmap (iconPath+"vym-editor.png"));
+    noteEditor->setWindowIcon (QPixmap (":/vym-editor.png"));
     headingEditor = new HeadingEditor();
 
     // Check if there is a BugzillaClient  
@@ -307,7 +307,7 @@ int main(int argc, char* argv[])
     Main m;
 #endif
 
-    m.setWindowIcon (QPixmap (iconPath+"vym.png"));
+    m.setWindowIcon (QPixmap (":/vym.png"));
     m.fileNew();
 
     if (options.isOn ("commands"))

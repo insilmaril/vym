@@ -14,7 +14,6 @@
 #include "mainwindow.h"
 
 
-extern QString iconPath;
 extern Main *mainWindow;
 
 FindWidget::FindWidget(QWidget *)
@@ -38,7 +37,7 @@ FindWidget::FindWidget(QWidget *)
 	this, SLOT( findTextChanged(const QString&) ) );
 
     nextbutton = new QPushButton;
-    nextbutton->setIcon (QPixmap(iconPath+"find.png"));
+    nextbutton->setIcon (QPixmap(":/find.png"));
     //nextbutton->setText (tr("Find","Find widget"));
     connect ( nextbutton, SIGNAL( clicked() ), this, SLOT( nextPressed() ) );
 

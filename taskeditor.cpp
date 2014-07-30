@@ -21,8 +21,6 @@ extern Settings settings;
 extern QMenu* taskContextMenu;
 extern TaskModel* taskModel;
 
-extern QString iconPath;
-
 TaskEditor::TaskEditor(QWidget *)
 {
     // Creat Table view
@@ -36,7 +34,7 @@ TaskEditor::TaskEditor(QWidget *)
 
     // Original icon from KDE: /usr/share/icons/oxygen/16x16/actions/view-filter.png
 
-    QIcon icon=QIcon (iconPath + "view-filter.png");
+    QIcon icon=QIcon (":/view-filter.png");
     QAction *a = new QAction(icon,  tr( "Current map","TaskEditor" ),this );
     a->setCheckable(true);
     a->setChecked  (settings.value("/taskeditor/filterMap", false).toBool());

@@ -8,7 +8,7 @@
 
 
 extern Settings settings;
-extern QString iconPath;
+extern QString iconPath;    // FIXME-1 embed vym logo from memory?
 extern QString vymVersion;
 extern QString vymBuildDate;
 extern QString vymCodeName;

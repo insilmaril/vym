@@ -7,8 +7,6 @@
 #include "task.h"
 #include "vymmodel.h"
 
-extern QString flagsPath;
-
 TaskModel::TaskModel(QObject *parent)
     : QAbstractTableModel(parent)
 {
@@ -98,7 +96,7 @@ QVariant TaskModel::data(const QModelIndex &index, int role) const
         }
     } else if (role == Qt::DecorationRole && index.column() == 1)
     {
-        return QIcon( flagsPath + "flag-" + t->getIconString() + ".png");
+        return QIcon(":/flag-" + t->getIconString() + ".png");
     }
     else // role != Qt::DisplayRole
     {

@@ -9,7 +9,6 @@
 
 #include "slideeditor.h"
 
-extern QString iconPath;
 extern Main *mainWindow;
 extern SlideEditor *slideEditor;
 

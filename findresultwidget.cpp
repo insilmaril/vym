@@ -7,8 +7,6 @@
 #include "findresultmodel.h"
 #include "vymmodel.h"
 
-extern QString iconPath;
-
 FindResultWidget::FindResultWidget(QWidget *)
 {
     // Create results model

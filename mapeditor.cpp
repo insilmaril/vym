@@ -29,8 +29,6 @@ extern QMenu* floatimageContextMenu;
 extern QMenu* taskContextMenu;
 
 extern Settings settings;
-extern QString iconPath;
-
 
 ///////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////
@@ -50,10 +48,10 @@ MapEditor::MapEditor( VymModel *vm)
     setScene (mapScene);
 
     // Create bitmap cursors, platform dependant
-    HandOpenCursor=QCursor (QPixmap(iconPath+"cursorhandopen.png"),1,1);	
-    PickColorCursor=QCursor ( QPixmap(iconPath+"cursorcolorpicker.png"), 5,27 ); 
-    CopyCursor=QCursor ( QPixmap(iconPath+"cursorcopy.png"), 1,1 ); 
-    XLinkCursor=QCursor ( QPixmap(iconPath+"cursorxlink.png"), 1,7 ); 
+    HandOpenCursor=QCursor (QPixmap(":/cursorhandopen.png"),1,1);	
+    PickColorCursor=QCursor ( QPixmap(":/cursorcolorpicker.png"), 5,27 ); 
+    CopyCursor=QCursor ( QPixmap(":/cursorcopy.png"), 1,1 ); 
+    XLinkCursor=QCursor ( QPixmap(":/cursorxlink.png"), 1,7 ); 
 
     editingBO=NULL;
 
