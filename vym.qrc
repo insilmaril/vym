@@ -98,7 +98,6 @@
     <file alias="filesave.png">icons/filesave.png</file>
     <file alias="filesaveas.png">icons/filesaveas.png</file>
     <file alias="find.png">icons/find.png</file>
-    <file alias="flag-url-16x16.png">icons/flag-url-16x16.png</file>
     <file alias="formatcolorbranch.png">icons/formatcolorbranch.png</file>
     <file alias="formatcolorpicker.png">icons/formatcolorpicker.png</file>
     <file alias="formatcolorsubtree.png">icons/formatcolorsubtree.png</file>

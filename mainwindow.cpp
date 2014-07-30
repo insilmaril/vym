@@ -122,8 +122,6 @@ extern QDir lastMapDir;
 extern QDir vymInstallDir;
 #endif
 extern QString iconPath;
-extern QString flagsPath;
-
 
 Main::Main(QWidget* parent, Qt::WindowFlags f) : QMainWindow(parent,f)
 {
@@ -1266,7 +1264,7 @@ void Main::setupEditActions()
     actionListBranches.append (a);
     actionSortBackChildren=a;	
 
-    a = new QAction( QPixmap(flagsPath+"flag-scrolled-right.png"), tr( "Scroll branch","Edit menu" ), this);
+    a = new QAction( QPixmap(":/flag-scrolled-right.png"), tr( "Scroll branch","Edit menu" ), this);
     a->setShortcut ( Qt::Key_S );		  
     switchboard.addConnection(editMenu, a,tr("Edit","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( editToggleScroll() ) );
@@ -1343,7 +1341,7 @@ void Main::setupEditActions()
 
     editMenu->addSeparator();
 
-    a = new QAction( QPixmap(flagsPath+"flag-url.png"), tr( "Open URL","Edit menu" ), this);
+    a = new QAction( QPixmap(":/flag-url.png"), tr( "Open URL","Edit menu" ), this);
     a->setShortcut (Qt::SHIFT + Qt::Key_U );
     switchboard.addConnection(a,tr("Edit","Shortcut group"));
     addAction(a);
@@ -1383,7 +1381,7 @@ void Main::setupEditActions()
     actionListBranches.append(a);
     actionGetURLsFromNote=a;
 
-    a = new QAction(QPixmap(flagsPath+"flag-urlnew.png"), tr( "Edit URL...","Edit menu"), this);
+    a = new QAction(QPixmap(":/flag-urlnew.png"), tr( "Edit URL...","Edit menu"), this);
     a->setShortcut ( Qt::Key_U );
     a->setShortcutContext (Qt::WindowShortcut);
     switchboard.addConnection(a,tr("Edit","Shortcut group"));
@@ -1448,14 +1446,14 @@ void Main::setupEditActions()
     actionListBranches.append(a);
     actionFATE2URL=a;
 
-    a = new QAction(QPixmap(flagsPath+"flag-vymlink.png"), tr( "Open linked map","Edit menu" ), this);
+    a = new QAction(QPixmap(":/flag-vymlink.png"), tr( "Open linked map","Edit menu" ), this);
     a->setEnabled (false);
     switchboard.addConnection(a,tr("Edit","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( editOpenVymLink() ) );
     actionListBranches.append (a);
     actionOpenVymLink=a;
 
-    a = new QAction(QPixmap(flagsPath+"flag-vymlink.png"), tr( "Open linked map in background tab","Edit menu" ), this);
+    a = new QAction(QPixmap(":/flag-vymlink.png"), tr( "Open linked map in background tab","Edit menu" ), this);
     a->setEnabled (false);
     switchboard.addConnection(a,tr("Edit","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( editOpenVymLinkBackground() ) );
@@ -1470,7 +1468,7 @@ void Main::setupEditActions()
     actionOpenMultipleVymLinks=a;
 
 
-    a = new QAction(QPixmap(flagsPath+"flag-vymlinknew.png"), tr( "Edit vym link...","Edit menu" ), this);
+    a = new QAction(QPixmap(":/flag-vymlinknew.png"), tr( "Edit vym link...","Edit menu" ), this);
     a->setEnabled (false);
     switchboard.addConnection(a,tr("Edit","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( editVymLink() ) );
@@ -1484,7 +1482,7 @@ void Main::setupEditActions()
     actionListBranches.append(a);
     actionDeleteVymLink=a;
 
-    a = new QAction(QPixmap(flagsPath+"flag-hideexport.png"), tr( "Hide in exports","Edit menu" ), this);
+    a = new QAction(QPixmap(":/flag-hideexport.png"), tr( "Hide in exports","Edit menu" ), this);
     a->setShortcut (Qt::Key_H );
     a->setShortcutContext (Qt::WindowShortcut);
     a->setCheckable(true);
@@ -1494,7 +1492,7 @@ void Main::setupEditActions()
     actionListItems.append (a);
     actionToggleHideExport=a;
 
-    a = new QAction(QPixmap(flagsPath+"flag-task.png"), tr( "Toggle task","Edit menu" ), this);
+    a = new QAction(QPixmap(":/flag-task.png"), tr( "Toggle task","Edit menu" ), this);
     a->setShortcut (Qt::Key_W + Qt::SHIFT);
     a->setShortcutContext (Qt::WindowShortcut);
     a->setCheckable(true);
@@ -1688,7 +1686,7 @@ void Main::setupSelectActions()
 {
     QMenu *selectMenu = menuBar()->addMenu( tr("Select","Select menu") );
     QAction *a;
-    a = new QAction( QPixmap(flagsPath + "flag-target"), tr( "Toggle target...","Edit menu"), this);
+    a = new QAction( QPixmap(":/flag-target.png"), tr( "Toggle target...","Edit menu"), this);
     a->setShortcut (Qt::SHIFT + Qt::Key_T );		
     a->setCheckable(true);
     switchboard.addConnection(selectMenu, a,tr("Edit","Shortcut group"));
@@ -1696,14 +1694,14 @@ void Main::setupSelectActions()
     actionListBranches.append (a);
     actionToggleTarget=a;
 
-    a = new QAction( QPixmap(flagsPath + "flag-target"), tr( "Goto target...","Edit menu"), this);
+    a = new QAction( QPixmap(":/flag-target.png"), tr( "Goto target...","Edit menu"), this);
     a->setShortcut (Qt::Key_G );		
     switchboard.addConnection(selectMenu, a,tr("Edit","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( editGoToTarget() ) );
     actionListBranches.append (a);
     actionGoToTarget=a;
 
-    a = new QAction( QPixmap(flagsPath + "flag-target"), tr( "Move to target...","Edit menu"), this);
+    a = new QAction( QPixmap(":/flag-target.png"), tr( "Move to target...","Edit menu"), this);
     a->setShortcut (Qt::Key_M );		
     switchboard.addConnection(selectMenu, a,tr("Edit","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( editMoveToTarget() ) );
@@ -1921,7 +1919,7 @@ void Main::setupViewActions()
     a->setShortcut ( Qt::Key_N );  
     switchboard.addConnection(a,tr("View shortcuts","Shortcut group"));
     a->setCheckable(true);
-    a->setIcon (QPixmap(flagsPath+"flag-note.png"));
+    a->setIcon (QPixmap(":/flag-note.png"));
     viewMenu->addAction (a);
     actionViewToggleNoteEditor=a;
 
@@ -2063,55 +2061,55 @@ void Main::setupFlagActions()
 
     // Tasks
     // Origin: ./share/icons/oxygen/48x48/status/task-reject.png
-    flag=new Flag(flagsPath+"flag-task-new.png");
+    flag=new Flag(":/flag-task-new.png");
     flag->setGroup("system-tasks");
     setupFlag (flag,NULL,"system-task-new",tr("Note","SystemFlag"));
-    flag=new Flag(flagsPath+"flag-task-new-morning.png");
+    flag=new Flag(":/flag-task-new-morning.png");
     flag->setGroup("system-tasks");
     setupFlag (flag,NULL,"system-task-new-morning",tr("Note","SystemFlag"));
-    flag=new Flag(flagsPath+"flag-task-new-sleeping.png");
+    flag=new Flag(":/flag-task-new-sleeping.png");
     flag->setGroup("system-tasks");
     setupFlag (flag,NULL,"system-task-new-sleeping",tr("Note","SystemFlag"));
     // Origin: ./share/icons/oxygen/48x48/status/task-reject.png
-    flag=new Flag(flagsPath+"flag-task-wip.png");
+    flag=new Flag(":/flag-task-wip.png");
     flag->setGroup("system-tasks");
     setupFlag (flag,NULL,"system-task-wip",tr("Note","SystemFlag"));
-    flag=new Flag(flagsPath+"flag-task-wip-morning.png");
+    flag=new Flag(":/flag-task-wip-morning.png");
     flag->setGroup("system-tasks");
     setupFlag (flag,NULL,"system-task-wip-morning",tr("Note","SystemFlag"));
-    flag=new Flag(flagsPath+"flag-task-wip-sleeping.png");
+    flag=new Flag(":/flag-task-wip-sleeping.png");
     flag->setGroup("system-tasks");
     setupFlag (flag,NULL,"system-task-wip-sleeping",tr("Note","SystemFlag"));
     // Origin: ./share/icons/oxygen/48x48/status/task-complete.png
-    flag=new Flag(flagsPath+"flag-task-finished.png");
+    flag=new Flag(":/flag-task-finished.png");
     flag->setGroup("system-tasks");
     setupFlag (flag,NULL,"system-task-finished",tr("Note","SystemFlag"));
 
-    flag=new Flag(flagsPath+"flag-note.png");
+    flag=new Flag(":/flag-note.png");
     setupFlag (flag,NULL,"system-note",tr("Note","SystemFlag"));
 
-    flag=new Flag(flagsPath+"flag-url.png");
+    flag=new Flag(":/flag-url.png");
     setupFlag (flag,NULL,"system-url",tr("URL to Document ","SystemFlag"));
 
-    flag=new Flag(flagsPath+"flag-url-bugzilla-novell.png");
+    flag=new Flag(":/flag-url-bugzilla-novell.png");
     setupFlag (flag,NULL,"system-url-bugzilla-novell",tr("URL to Bugzilla ","SystemFlag"));
 
-    flag=new Flag(flagsPath+"flag-url-bugzilla-novell-closed.png");
+    flag=new Flag(":/flag-url-bugzilla-novell-closed.png");
     setupFlag (flag,NULL,"system-url-bugzilla-novell-closed",tr("URL to Bugzilla ","SystemFlag"));
 
-    flag=new Flag(flagsPath+"flag-target.png");
+    flag=new Flag(":/flag-target.png");
     setupFlag (flag,NULL,"system-target",tr("Map target","SystemFlag"));
 
-    flag=new Flag(flagsPath+"flag-vymlink.png");
+    flag=new Flag(":/flag-vymlink.png");
     setupFlag (flag,NULL,"system-vymLink",tr("Link to another vym map","SystemFlag"));
 
-    flag=new Flag(flagsPath+"flag-scrolled-right.png");
+    flag=new Flag(":/flag-scrolled-right.png");
     setupFlag (flag,NULL,"system-scrolledright",tr("subtree is scrolled","SystemFlag"));
 
-    flag=new Flag(flagsPath+"flag-tmpUnscrolled-right.png");
+    flag=new Flag(":/flag-tmpUnscrolled-right.png");
     setupFlag (flag,NULL,"system-tmpUnscrolledRight",tr("subtree is temporary scrolled","SystemFlag"));
 
-    flag=new Flag(flagsPath+"flag-hideexport.png");
+    flag=new Flag(":/flag-hideexport.png");
     setupFlag (flag,NULL,"system-hideInExport",tr("Hide object in exported maps","SystemFlag"));
 
     addToolBarBreak();
@@ -2125,190 +2123,190 @@ void Main::setupFlagActions()
     // after all others:
     toolbarsMenu->addAction (standardFlagsToolbar->toggleViewAction() );
 
-    flag=new Flag(flagsPath+"flag-stopsign.png");
+    flag=new Flag(":/flag-stopsign.png");
     setupFlag (flag,standardFlagsToolbar,"stopsign",tr("This won't work!","Standardflag"),Qt::Key_1);
     flag->unsetGroup();
 
-    flag=new Flag(flagsPath+"flag-hook-green.png");
+    flag=new Flag(":/flag-hook-green.png");
     flag->setGroup("standard-status");
     setupFlag (flag,standardFlagsToolbar,"hook-green",tr("Status - ok,done","Standardflag"),Qt::Key_2);
 
-    flag=new Flag(flagsPath+"flag-wip.png");
+    flag=new Flag(":/flag-wip.png");
     flag->setGroup("standard-status");
     setupFlag (flag,standardFlagsToolbar,"wip",tr("Status - work in progress","Standardflag"),Qt::Key_3);
 
-    flag=new Flag(flagsPath+"flag-cross-red.png");
+    flag=new Flag(":/flag-cross-red.png");
     flag->setGroup("standard-status");
     setupFlag (flag,standardFlagsToolbar,"cross-red",tr("Status - missing, not started","Standardflag"),Qt::Key_4);
 
-    flag=new Flag(flagsPath+"flag-exclamationmark.png");
+    flag=new Flag(":/flag-exclamationmark.png");
     flag->setGroup("standard-mark");
     setupFlag (flag,standardFlagsToolbar,"exclamationmark",tr("Take care!","Standardflag"),Qt::Key_Exclam);
 
-    flag=new Flag(flagsPath+"flag-questionmark.png");
+    flag=new Flag(":/flag-questionmark.png");
     flag->setGroup("standard-mark");
     setupFlag (flag,standardFlagsToolbar,"questionmark",tr("Really?","Standardflag"),Qt::Key_Question);
 
-    flag=new Flag(flagsPath+"flag-smiley-good.png");
+    flag=new Flag(":/flag-smiley-good.png");
     flag->setGroup("standard-smiley");
     setupFlag (flag,standardFlagsToolbar,"smiley-good",tr("Good","Standardflag"),Qt::Key_ParenRight);
 
-    flag=new Flag(flagsPath+"flag-smiley-sad.png");
+    flag=new Flag(":/flag-smiley-sad.png");
     flag->setGroup("standard-smiley");
     setupFlag (flag,standardFlagsToolbar,"smiley-sad",tr("Bad","Standardflag"),Qt::Key_ParenLeft);
 
-    flag=new Flag(flagsPath+"flag-smiley-omb.png");
+    flag=new Flag(":/flag-smiley-omb.png");
     flag->setGroup("standard-smiley");
     setupFlag (flag,standardFlagsToolbar,"smiley-omb",tr("Oh no!","Standardflag"));
     // Original omg.png (in KDE emoticons)
     flag->unsetGroup();
 
-    flag=new Flag(flagsPath+"flag-clock.png");
+    flag=new Flag(":/flag-clock.png");
     setupFlag (flag,standardFlagsToolbar,"clock",tr("Time critical","Standardflag"));
 
-    flag=new Flag(flagsPath+"flag-phone.png");
+    flag=new Flag(":/flag-phone.png");
     setupFlag (flag,standardFlagsToolbar,"phone",tr("Call...","Standardflag"));
 
-    flag=new Flag(flagsPath+"flag-lamp.png");
+    flag=new Flag(":/flag-lamp.png");
     setupFlag (flag,standardFlagsToolbar,"lamp",tr("Idea!","Standardflag"),Qt::Key_Asterisk);
 
-    flag=new Flag(flagsPath+"flag-arrow-up.png");
+    flag=new Flag(":/flag-arrow-up.png");
     flag->setGroup("standard-arrow");
     setupFlag (flag,standardFlagsToolbar,"arrow-up",tr("Important","Standardflag"),Qt::SHIFT + Qt::Key_PageUp);
 
-    flag=new Flag(flagsPath+"flag-arrow-down.png");
+    flag=new Flag(":/flag-arrow-down.png");
     flag->setGroup("standard-arrow");
     setupFlag (flag,standardFlagsToolbar,"arrow-down",tr("Unimportant","Standardflag"),Qt::SHIFT + Qt::Key_PageDown);
 
-    flag=new Flag(flagsPath+"flag-2arrow-up.png");
+    flag=new Flag(":/flag-2arrow-up.png");
     flag->setGroup("standard-arrow");
     setupFlag (flag,standardFlagsToolbar,"2arrow-up",tr("Very important!","Standardflag"),Qt::SHIFT + +Qt::CTRL + Qt::Key_PageUp);
 
-    flag=new Flag(flagsPath+"flag-2arrow-down.png");
+    flag=new Flag(":/flag-2arrow-down.png");
     flag->setGroup("standard-arrow");
     setupFlag (flag,standardFlagsToolbar,"2arrow-down",tr("Very unimportant!","Standardflag"),Qt::SHIFT + Qt::CTRL + Qt::Key_PageDown);
     flag->unsetGroup();
 
-    flag=new Flag(flagsPath+"flag-thumb-up.png");
+    flag=new Flag(":/flag-thumb-up.png");
     flag->setGroup("standard-thumb");
     setupFlag (flag,standardFlagsToolbar,"thumb-up",tr("I like this","Standardflag"),Qt::Key_BracketRight);
 
-    flag=new Flag(flagsPath+"flag-thumb-down.png");
+    flag=new Flag(":/flag-thumb-down.png");
     flag->setGroup("standard-thumb");
     setupFlag (flag,standardFlagsToolbar,"thumb-down",tr("I do not like this","Standardflag"),Qt::Key_BracketLeft);
     flag->unsetGroup();
 
-    flag=new Flag(flagsPath+"flag-rose.png");
+    flag=new Flag(":/flag-rose.png");
     setupFlag (flag,standardFlagsToolbar,"rose",tr("Rose","Standardflag"));
 
-    flag=new Flag(flagsPath+"flag-heart.png");
+    flag=new Flag(":/flag-heart.png");
     setupFlag (flag,standardFlagsToolbar,"heart",tr("I just love...","Standardflag"));
 
-    flag=new Flag(flagsPath+"flag-present.png");
+    flag=new Flag(":/flag-present.png");
     setupFlag (flag,standardFlagsToolbar,"present",tr("Surprise!","Standardflag"));
 
-    flag=new Flag(flagsPath+"flag-flash.png");
+    flag=new Flag(":/flag-flash.png");
     setupFlag (flag,standardFlagsToolbar,"flash",tr("Dangerous","Standardflag"));
 
     // Original: xsldbg_output.png
-    flag=new Flag(flagsPath+"flag-info.png");
+    flag=new Flag(":/flag-info.png");
     setupFlag (flag,standardFlagsToolbar,"info",tr("Info","Standardflag"),Qt::Key_I);
 
     // Original khelpcenter.png
-    flag=new Flag(flagsPath+"flag-lifebelt.png");
+    flag=new Flag(":/flag-lifebelt.png");
     setupFlag (flag,standardFlagsToolbar,"lifebelt",tr("This will help","Standardflag"));
 
     // Freemind flags
-    flag=new Flag(flagsPath+"freemind/warning.png");
+    flag=new Flag(":/freemind/warning.png");
     flag->setVisible(false);
     setupFlag (flag,standardFlagsToolbar,  "freemind-warning",tr("Important","Freemind-Flag"));
 
     for (int i=1; i<8; i++)
     {
-	flag=new Flag(flagsPath+QString("freemind/priority-%1.png").arg(i));
+	flag=new Flag(QString(":/freemind/priority-%1.png").arg(i));
 	flag->setVisible(false);
 	flag->setGroup ("Freemind-priority");
 	setupFlag (flag,standardFlagsToolbar, QString("freemind-priority-%1").arg(i),tr("Priority","Freemind-Flag"));
     }
 
-    flag=new Flag(flagsPath+"freemind/back.png");
+    flag=new Flag(":/freemind/back.png");
     flag->setVisible(false);
     setupFlag (flag,standardFlagsToolbar,"freemind-back",tr("Back","Freemind-Flag"));
 
-    flag=new Flag(flagsPath+"freemind/forward.png");
+    flag=new Flag(":/freemind/forward.png");
     flag->setVisible(false);
     setupFlag (flag,standardFlagsToolbar,"freemind-forward",tr("forward","Freemind-Flag"));
 
-    flag=new Flag(flagsPath+"freemind/attach.png");
+    flag=new Flag(":/freemind/attach.png");
     flag->setVisible(false);
     setupFlag (flag,standardFlagsToolbar,"freemind-attach",tr("Look here","Freemind-Flag"));
 
-    flag=new Flag(flagsPath+"freemind/clanbomber.png");
+    flag=new Flag(":/freemind/clanbomber.png");
     flag->setVisible(false);
     setupFlag (flag,standardFlagsToolbar,"freemind-clanbomber",tr("Dangerous","Freemind-Flag"));
 
-    flag=new Flag(flagsPath+"freemind/desktopnew.png");
+    flag=new Flag(":/freemind/desktopnew.png");
     flag->setVisible(false);
     setupFlag (flag,standardFlagsToolbar,"freemind-desktopnew",tr("Don't flagrget","Freemind-Flag"));
 
-    flag=new Flag(flagsPath+"freemind/flag.png");
+    flag=new Flag(":/freemind/flag.png");
     flag->setVisible(false);
     setupFlag (flag,standardFlagsToolbar,"freemind-flag",tr("Flag","Freemind-Flag"));
 
 
-    flag=new Flag(flagsPath+"freemind/gohome.png");
+    flag=new Flag(":/freemind/gohome.png");
     flag->setVisible(false);
     setupFlag (flag,standardFlagsToolbar,"freemind-gohome",tr("Home","Freemind-Flag"));
 
-    flag=new Flag(flagsPath+"freemind/kaddressbook.png");
+    flag=new Flag(":/freemind/kaddressbook.png");
     flag->setVisible(false);
     setupFlag (flag,standardFlagsToolbar,"freemind-kaddressbook",tr("Telephone","Freemind-Flag"));
 
-    flag=new Flag(flagsPath+"freemind/knotify.png");
+    flag=new Flag(":/freemind/knotify.png");
     flag->setVisible(false);
     setupFlag (flag,standardFlagsToolbar,"freemind-knotify",tr("Music","Freemind-Flag"));
 
-    flag=new Flag(flagsPath+"freemind/korn.png");
+    flag=new Flag(":/freemind/korn.png");
     flag->setVisible(false);
     setupFlag (flag,standardFlagsToolbar,"freemind-korn",tr("Mailbox","Freemind-Flag"));
 
-    flag=new Flag(flagsPath+"freemind/mail.png");
+    flag=new Flag(":/freemind/mail.png");
     flag->setVisible(false);
     setupFlag (flag,standardFlagsToolbar,"freemind-mail",tr("Maix","Freemind-Flag"));
 
-    flag=new Flag(flagsPath+"freemind/password.png");
+    flag=new Flag(":/freemind/password.png");
     flag->setVisible(false);
     setupFlag (flag,standardFlagsToolbar,"freemind-password",tr("Password","Freemind-Flag"));
 
-    flag=new Flag(flagsPath+"freemind/pencil.png");
+    flag=new Flag(":/freemind/pencil.png");
     flag->setVisible(false);
     setupFlag (flag,standardFlagsToolbar,"freemind-pencil",tr("To be improved","Freemind-Flag"));
 
-    flag=new Flag(flagsPath+"freemind/stop.png");
+    flag=new Flag(":/freemind/stop.png");
     flag->setVisible(false);
     setupFlag (flag,standardFlagsToolbar,"freemind-stop",tr("Stop","Freemind-Flag"));
 
-    flag=new Flag(flagsPath+"freemind/wizard.png");
+    flag=new Flag(":/freemind/wizard.png");
     flag->setVisible(false);
     setupFlag (flag,standardFlagsToolbar,"freemind-wizard",tr("Magic","Freemind-Flag"));
 
-    flag=new Flag(flagsPath+"freemind/xmag.png");
+    flag=new Flag(":/freemind/xmag.png");
     flag->setVisible(false);
     setupFlag (flag,standardFlagsToolbar,"freemind-xmag",tr("To be discussed","Freemind-Flag"));
 
-    flag=new Flag(flagsPath+"freemind/bell.png");
+    flag=new Flag(":/freemind/bell.png");
     flag->setVisible(false);
     setupFlag (flag,standardFlagsToolbar,"freemind-bell",tr("Reminder","Freemind-Flag"));
 
-    flag=new Flag(flagsPath+"freemind/bookmark.png");
+    flag=new Flag(":/freemind/bookmark.png");
     flag->setVisible(false);
     setupFlag (flag,standardFlagsToolbar,"freemind-bookmark",tr("Excellent","Freemind-Flag"));
 
-    flag= new Flag(flagsPath+"freemind/penguin.png");
+    flag= new Flag(":/freemind/penguin.png");
     flag->setVisible(false);
     setupFlag (flag,standardFlagsToolbar,"freemind-penguin",tr("Linux","Freemind-Flag"));
 
-    flag=new Flag (flagsPath+"freemind/licq.png");
+    flag=new Flag (":/freemind/licq.png");
     flag->setVisible(false);
     setupFlag (flag,standardFlagsToolbar,"freemind-licq",tr("Sweet","Freemind-Flag"));
 }
