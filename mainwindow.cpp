@@ -1707,14 +1707,14 @@ void Main::setupSelectActions()
     actionListBranches.append (a);
     actionMoveToTarget=a;
 
-    a = new QAction( QPixmap(iconPath + "selectprevious.png"), tr( "Select previous","Edit menu"), this);
+    a = new QAction( QPixmap(":/selectprevious.png"), tr( "Select previous","Edit menu"), this);
     a->setShortcut (Qt::CTRL+ Qt::Key_O );	
     switchboard.addConnection(selectMenu, a,tr("Edit","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( editSelectPrevious() ) );
     actionListMap.append (a);
     actionSelectPrevious=a;
 
-    a = new QAction( QPixmap(iconPath + "selectnext.png"), tr( "Select next","Edit menu"), this);
+    a = new QAction( QPixmap(":/selectnext.png"), tr( "Select next","Edit menu"), this);
     a->setShortcut (Qt::CTRL + Qt::Key_I );
     switchboard.addConnection(selectMenu, a,tr("Edit","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( editSelectNext() ) );
