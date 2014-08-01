@@ -4,7 +4,14 @@ LANGUAGE    = C++
 
 CONFIG	+= qt warn_on x86_64 
 
-QT += network xml svg printsupport
+QMAKE_MAC_SDK = macosx10.7
+
+QT += network 
+QT += xml 
+QT += svg 
+QT += printsupport
+
+QT += widgets
 
 // #include(tmp/modeltest/modeltest.pri)
 

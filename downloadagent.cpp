@@ -39,7 +39,7 @@ DownloadAgent::DownloadAgent(const QUrl &u, const QString &d)
 
     QString os;
 #if defined(Q_OS_MACX)
-    os = "Mac"
+    os = "Mac";
 #elif defined(Q_OS_WIN32)
     os = "Win32";
 #elif defined(Q_OS_LINUX)
