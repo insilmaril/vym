@@ -46,6 +46,7 @@
 #include "taskeditor.h"
 #include "taskmodel.h"
 #include "treeeditor.h"
+#include "version.h"
 #include "warningdialog.h"
 #include "xlinkitem.h"
 
@@ -341,15 +342,11 @@ Main::Main(QWidget* parent, Qt::WindowFlags f) : QMainWindow(parent,f)
 	qWarning ("MainWindow: Couldn't register DBUS object!");
 #endif    
 
-    // FIXME-0 Testing only, download relnotes
-    /*
-    QUrl releaseNotesUrl("http://localhost/vym-release-notes.txt");
-    DownloadAgent *agent = new DownloadAgent(releaseNotesUrl);
-    //agent->setUrl( QUrl::fromEncoded(u.toLocal8Bit()));
-    agent->setUserAgent("vym x.y.z  FJLSFII)");
-    connect (agent, SIGNAL( downloadFinished()), this, SLOT(downloadFinished()));
-    QTimer::singleShot(0, agent, SLOT(execute()));
-    */
+    if (settings.value("/releaseNotes/download", true).toBool())
+    {
+        if (! checkVersion(settings.value("/releaseNotes/shownVersion", "3.0.0").toString() ) )
+            showReleaseNotes();
+    }
 }
 
 Main::~Main()
@@ -367,9 +364,9 @@ Main::~Main()
 
 	settings.setValue ("/mainwindow/view/AntiAlias",actionViewToggleAntiAlias->isChecked());
 	settings.setValue ("/mainwindow/view/SmoothPixmapTransform",actionViewToggleSmoothPixmapTransform->isChecked());
-	settings.setValue( "/mainwindow/autosave/use",actionSettingsAutosaveToggle->isChecked() );
+	settings.setValue( "/mainwindow/autosave/use",actionSettingsToggleAutosave->isChecked() );
 	settings.setValue ("/mainwindow/autosave/ms", settings.value("/mainwindow/autosave/ms",60000)); 
-	settings.setValue ("/mainwindow/autoLayout/use",actionSettingsAutoLayoutToggle->isChecked() );
+	settings.setValue ("/mainwindow/autoLayout/use",actionSettingsToggleAutoLayout->isChecked() );
 	settings.setValue( "/mapeditor/editmode/autoSelectNewBranch",actionSettingsAutoSelectNewBranch->isChecked() );
 	settings.setValue( "/mainwindow/writeBackupFile",actionSettingsWriteBackupFile->isChecked() );
 
@@ -2384,7 +2381,7 @@ void Main::setupSettingsActions()
     a->setCheckable(true);
     a->setChecked ( settings.value ("/mainwindow/autosave/use",true).toBool());
     settingsMenu->addAction (a);
-    actionSettingsAutosaveToggle=a;
+    actionSettingsToggleAutosave=a;
 
     a = new QAction( tr( "Autosave time","Settings action")+"...", this);
     connect( a, SIGNAL( triggered() ), this, SLOT( settingsAutosaveTime() ) );
@@ -2394,15 +2391,15 @@ void Main::setupSettingsActions()
     // Disable certain actions during testing
     if (testmode)
     {
-	actionSettingsAutosaveToggle->setChecked (false);
-	actionSettingsAutosaveToggle->setEnabled (false);
+	actionSettingsToggleAutosave->setChecked (false);
+	actionSettingsToggleAutosave->setEnabled (false);
 	actionSettingsAutosaveTime->setEnabled (false);
     }
 
     a = new QAction( tr( "Write backup file on save","Settings action"), this);
     a->setCheckable(true);
     a->setChecked ( settings.value ("/mainwindow/writeBackupFile",false).toBool());
-    connect( a, SIGNAL( triggered() ), this, SLOT( settingsWriteBackupFileToggle() ) );
+    connect( a, SIGNAL( triggered() ), this, SLOT( settingsToggleWriteBackupFile() ) );
     settingsMenu->addAction (a);
     actionSettingsWriteBackupFile=a;
 
@@ -2455,9 +2452,16 @@ void Main::setupSettingsActions()
     a = new QAction( tr( "Automatic layout","Settings action"), this);
     a->setCheckable(true);
     a->setChecked ( settings.value ("/mainwindow/autoLayout/use",true).toBool());
-    connect( a, SIGNAL( triggered() ), this, SLOT( settingsAutoLayoutToggle() ) );
+    connect( a, SIGNAL( triggered() ), this, SLOT( settingsToggleAutoLayout() ) );
     settingsMenu->addAction (a);
-    actionSettingsAutoLayoutToggle=a;
+    actionSettingsToggleAutoLayout=a;
+
+    a = new QAction( tr( "Download new release notes","Settings action"), this);
+    a->setCheckable(true);
+    a->setChecked ( settings.value ("/releaseNotes/download",true).toBool());
+    connect( a, SIGNAL( triggered() ), this, SLOT( settingsToggleDownloadReleaseNotes() ) );
+    settingsMenu->addAction (a);
+    actionSettingsDownloadNewReleaseNotes=a;
 }
 
 // Test Actions
@@ -2502,6 +2506,10 @@ void Main::setupHelpActions()
     a = new QAction(  tr( "Open VYM example maps ","Help action" ), this );
     switchboard.addConnection(helpMenu, a,tr("Help shortcuts","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( helpDemo() ) );
+
+    a = new QAction(  tr( "Show release notes","Help action" ), this );
+    switchboard.addConnection(helpMenu, a,tr("Help shortcuts","Shortcut group"));
+    connect( a, SIGNAL( triggered() ), this, SLOT( showReleaseNotes() ) );
 
     a = new QAction(  tr( "Show keyboard shortcuts","Help action" ), this );
     switchboard.addConnection(helpMenu, a,tr("Help shortcuts","Shortcut group"));
@@ -4693,11 +4701,11 @@ void Main::networkConnect()
     if (m) m->connectToServer();
 }
 
-void Main::downloadFinished()
+void Main::downloadFinished()   // FIXME-0 only used for drop events in mapeditor and VM::downloadImage
 {
     QString s;
     DownloadAgent *agent = static_cast<DownloadAgent*>(sender());
-    agent->getResult() ? s="success" : s="Error  "; 
+    agent->isSuccess() ? s="Success" : s="Error  "; 
 
     qDebug()<<"Main::downloadFinished ";
     qDebug()<<"  result" <<  s;
@@ -4776,12 +4784,12 @@ void Main::settingsUndoLevels()
 
 bool Main::useAutosave()
 {
-    return actionSettingsAutosaveToggle->isChecked();
+    return actionSettingsToggleAutosave->isChecked();
 }
 
 void Main::setAutosave(bool b)
 {
-    actionSettingsAutosaveToggle->setChecked(b);
+    actionSettingsToggleAutosave->setChecked(b);
 }
 
 void Main::settingsAutosaveTime()
@@ -4806,17 +4814,22 @@ void Main::settingsTaskShowParentsLevel()
 
 }
 
-void Main::settingsAutoLayoutToggle()
+void Main::settingsToggleAutoLayout()
 {
-    settings.setValue ("/mainwindow/autoLayout/use",actionSettingsAutosaveToggle->isChecked() );
+    settings.setValue ("/mainwindow/autoLayout/use",actionSettingsToggleAutoLayout->isChecked() );
 }
 
-void Main::settingsWriteBackupFileToggle()
+void Main::settingsToggleWriteBackupFile()
 {
     settings.setValue ("/mainwindow/writeBackupFile",actionSettingsWriteBackupFile->isChecked() );
 }
 
 void Main::settingsToggleAnimation()
+{
+    settings.setValue ("/animation/use",actionSettingsUseAnimation->isChecked() );
+}
+
+void Main::settingsToggleDownloadReleaseNotes()
 {
     settings.setValue ("/animation/use",actionSettingsUseAnimation->isChecked() );
 }
@@ -5354,16 +5367,13 @@ void Main::standardFlagChanged()
 
 void Main::testFunction1()
 {
-    //if (!currentMapEditor()) return;
-    //currentMapEditor()->testFunction1();
-    if (!currentModel()) return;
-    currentModel()->exportImage();
+    checkReleaseNotes();
 }
 
 void Main::testFunction2()
 {
-    if (!currentMapEditor()) return;
-    currentMapEditor()->testFunction2();
+ // if (!currentMapEditor()) return;
+ //   currentMapEditor()->testFunction2();
 }
 
 void Main::toggleWinter()
@@ -5520,4 +5530,44 @@ void Main::callMacro ()
     }	
 }
 
+void Main::downloadReleaseNotesFinished()
+{
+    DownloadAgent *agent = static_cast<DownloadAgent*>(sender());
+    QString s;
+    
+    if (agent->isSuccess() )
+    {
+        QString relnotes;
+        if (agent->isSuccess() )
+        {
+            if (loadStringFromDisk(agent->getDestination(), relnotes) )
+            {
+                ShowTextDialog dia(this);
+                dia.setText(relnotes);
+                dia.exec();
+            } 
+        }
+    } else
+    {
+        if (debug)
+        {
+            qDebug()<<"Main::downloadReleaseNotesFinished ";
+            qDebug()<<"  result: failed";
+            qDebug()<<"     msg: " << agent->getResultMessage();
+        }
+    }
+}
+void Main::showReleaseNotes()
+{
+    QUrl releaseNotesUrl( QString("http://localhost/release-notes.php?vymversion=%1").arg(vymVersion) ); // FIXME-0 external server
+    DownloadAgent *agent = new DownloadAgent(releaseNotesUrl);
+    agent->setDestination(tmpVymDir + "/release-notes.html");
+    connect (agent, SIGNAL( downloadFinished()), this, SLOT(downloadReleaseNotesFinished()));
+    QTimer::singleShot(0, agent, SLOT(execute()));
+}
+
+void Main::checkReleaseNotes()
+{
+    showReleaseNotes();
+}
 

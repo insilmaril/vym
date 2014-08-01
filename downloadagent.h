@@ -28,16 +28,17 @@ class DownloadAgent: public QObject
 
 public:
     DownloadAgent(const QUrl &u, const QString &d=QString() );
+    void setDestination (const QString &s);
     QString getDestination();
     void setFinishedAction (VymModel *m, const QString &script);
     QString getFinishedScript();
     uint getFinishedScriptModelID();
     void setUserAgent(const QString &s);
-    bool  getResult();
+    bool  isSuccess();
     QString getResultMessage();
     void doDownload(const QUrl &url);
     QString makeFileName(const QUrl &url);
-    bool saveToDisk(const QString &filename, QIODevice *data);
+    bool saveToDisk(const QString &filename, const QString &data);
 
 public slots:
     void execute();
@@ -52,7 +53,7 @@ private:
     QUrl url;
     QString destination;
 
-    bool result;
+    bool success;
     QString resultMessage;
 
     QString finishedScript;

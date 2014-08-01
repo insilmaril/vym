@@ -258,9 +258,10 @@ public:
 public slots:
     void settingsAutosaveTime();
     void settingsTaskShowParentsLevel();
-    void settingsAutoLayoutToggle();
-    void settingsWriteBackupFileToggle();
+    void settingsToggleAutoLayout();
+    void settingsToggleWriteBackupFile();
     void settingsToggleAnimation();
+    void settingsToggleDownloadReleaseNotes();
 
     void windowToggleNoteEditor();
     void windowToggleTreeEditor();
@@ -312,6 +313,11 @@ private slots:
     void helpAboutQT();
 
     void callMacro ();
+    void downloadReleaseNotesFinished();
+    void showReleaseNotes();
+
+private:
+    void checkReleaseNotes();
 
 private:
     QTabWidget *tabWidget;
@@ -492,12 +498,13 @@ private:
     QAction* actionSettingsAutoSelectText;
     QAction* actionSettingsUseFlagGroups;
     QAction* actionSettingsUseHideExport;
-    QAction* actionSettingsAutosaveToggle;
+    QAction* actionSettingsToggleAutosave;
     QAction* actionSettingsAutosaveTime;
     QAction* actionSettingsTaskShowParentsLevel;
-    QAction* actionSettingsAutoLayoutToggle;
+    QAction* actionSettingsToggleAutoLayout;
     QAction* actionSettingsWriteBackupFile;
     QAction* actionSettingsUseAnimation;
+    QAction* actionSettingsDownloadNewReleaseNotes;
 };
 
 

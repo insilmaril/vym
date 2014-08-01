@@ -21,17 +21,38 @@ QT_USE_NAMESPACE
 
 #include "downloadagent.h"
 #include "mainwindow.h"
+#include "settings.h"
 #include "vymmodel.h"
 
 extern Main *mainWindow;
+extern QString vymVersion;
+extern Settings settings;
+extern bool debug;
 
 DownloadAgent::DownloadAgent(const QUrl &u, const QString &d)
 {
     finishedScriptModelID = 0;
     url = u;
-    destination = d;
+    setDestination(d);
     connect(&agent, SIGNAL(finished(QNetworkReply*)),
             SLOT(requestFinished(QNetworkReply*)));
+
+    QString os;
+#if defined(Q_OS_MACX)
+    os = "Mac"
+#elif defined(Q_OS_WIN32)
+    os = "Win32";
+#elif defined(Q_OS_LINUX)
+    os = "Linux";
+#else
+    os = "Unknown";
+#endif
+    userAgent = QString("vym (%1 %2)").arg(os).arg(vymVersion).toUtf8();
+}
+
+void DownloadAgent::setDestination(const QString &dest)
+{
+    destination = dest;
 }
 
 QString  DownloadAgent::getDestination()
@@ -39,9 +60,9 @@ QString  DownloadAgent::getDestination()
     return destination;
 }
 
-bool DownloadAgent::getResult()
+bool DownloadAgent::isSuccess()
 {
-    return result;
+    return success;
 }
 
 QString DownloadAgent::getResultMessage()
@@ -75,6 +96,18 @@ void DownloadAgent::doDownload(const QUrl &url)
     QNetworkRequest request(url);
     if (!userAgent.isEmpty()) request.setRawHeader("User-Agent", userAgent);
 
+    QByteArray cookievalue=settings.value("/cookies/id/id",QByteArray() ).toByteArray();
+    if (!cookievalue.size() == 0 )
+    {
+        QNetworkCookie cookie;
+        cookie.setPath("/");
+        //cookie.setDomain("localhost");
+        cookie.setName("id");
+        cookie.setValue(cookievalue);
+        cookie.setExpirationDate( settings.value("/cookies/id/expires", QVariant(QDateTime::currentDateTime().addSecs(60) )).toDateTime() ); //FIXME-0 expiration time
+        agent.cookieJar()->insertCookie(cookie);
+    }
+
     QNetworkReply *reply = agent.get(request);
     connect(reply, SIGNAL(sslErrors(QList<QSslError>)), SLOT(sslErrors(QList<QSslError>)));
 
@@ -90,7 +123,7 @@ QString DownloadAgent::makeFileName(const QUrl &url)
     return tmp + "-" + basename;
 }
 
-bool DownloadAgent::saveToDisk(const QString &filename, QIODevice *data)
+bool DownloadAgent::saveToDisk(const QString &filename, const QString &data)
 {
     QFile file(filename);
     if (!file.open(QIODevice::WriteOnly)) {
@@ -100,7 +133,7 @@ bool DownloadAgent::saveToDisk(const QString &filename, QIODevice *data)
         return false;
     }
 
-    file.write(data->readAll());
+    file.write(data.toLatin1() );
     file.close();
 
     return true;
@@ -124,15 +157,38 @@ void DownloadAgent::requestFinished(QNetworkReply *reply)
     QUrl url = reply->url();
     if (reply->error()) 
     {
-        result = false;
+        success = false;
         resultMessage = reply->errorString();
         emit ( downloadFinished());
     }
     else {
-        result = true;
+        success = true;
         if (destination.isEmpty()) destination = makeFileName(url);
         resultMessage = QString ("saved to %1").arg(destination);
-        if (saveToDisk(destination, reply))
+        
+        if (debug) qDebug()<<"\n* DownloadAgent::reqFinished: ";
+        QList <QNetworkCookie> cookies =  reply->manager()->cookieJar()->cookiesForUrl(url);
+        foreach (QNetworkCookie c, cookies)
+        {
+            if (debug)
+            {
+                qDebug() << "           url: " << url.toString();
+                qDebug() << "   cookie name: " << c.name();
+                qDebug() << "   cookie path: " << c.path();
+                qDebug() << "  cookie value: " << c.value();
+                qDebug() << " cookie domain: " << c.domain();
+                qDebug() << " cookie exdate: " << c.expirationDate().toLocalTime().toString();
+            }
+
+            if (c.name() == "id" ) 
+            {
+                settings.setValue( "/cookies/id/id", c.value());
+                settings.setValue( "/cookies/id/expires", c.expirationDate());
+            }
+        }
+
+        QString data = reply->readAll();
+        if (saveToDisk(destination, data))
             emit ( downloadFinished());
     }
 
