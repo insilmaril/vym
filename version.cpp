@@ -5,8 +5,7 @@
 
 bool checkVersion (const QString &v)
 {
-    // returns true, if vym is able to read file regarding 
-    // the version set with setVersion
+    // returns true, if Version v is lower than VYM_VERSION
     return checkVersion (v,__VYM_VERSION);
 }
 
@@ -44,18 +43,12 @@ bool checkVersion (const QString &v, const QString &vstatic)
 	return false;
     }	
     
-    if (vs1 > v1)
-	return true;
-    if (vs1 < v1)
-	return false;
-    if (vs2 > v2)
-	return true;
-    if (vs2 < v2)
-	return false;
-    if (vs3 > v3)
-	return true;
-    if (vs3 < v3)
-	return false;
+    if (vs1 > v1) return true;
+    if (vs1 < v1) return false;
+    if (vs2 > v2) return true;
+    if (vs2 < v2) return false;
+    if (vs3 > v3) return true;
+    if (vs3 < v3) return false;
     return true;    
 
 }
