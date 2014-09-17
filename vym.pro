@@ -13,7 +13,7 @@ QT += printsupport
 
 QT += widgets
 
-// #include(tmp/modeltest/modeltest.pri)
+#  include(tmp/modeltest/modeltest.pri)
 
 RESOURCES = vym.qrc
 
