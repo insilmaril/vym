@@ -5656,8 +5656,8 @@ void VymModel::setSelectionColorInt (QColor col)
 {
     if ( !col.isValid() ) return;
     saveState (
-	QString("setSelectionColor (%1)").arg(mapEditor->getSelectionColor().name()),
-	QString("setSelectionColor (%1)").arg(col.name()),
+	QString("setSelectionColor (\"%1\")").arg(mapEditor->getSelectionColor().name()),
+	QString("setSelectionColor (\"%1\")").arg(col.name()),
 	QString("Set color of selection box to %1").arg(col.name())
     );
 
@@ -5679,11 +5679,6 @@ void VymModel::emitSelectionChanged()
 void VymModel::setSelectionColor(QColor col)
 {
     if ( !col.isValid() ) return;
-    saveState (
-	QString("setSelectionColor (%1)").arg(mapEditor->getSelectionColor().name()),
-	QString("setSelectionColor (%1)").arg(col.name()),
-	QString("Set color of selection box to %1").arg(col.name())
-    );
     setSelectionColorInt (col);
 }
 
