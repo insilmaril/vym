@@ -672,7 +672,7 @@ File::ErrorCode VymModel::save (const SaveMode &savemode)
 	tmpZipDir=makeTmpDir (ok,"vym-zip");
 	if (!ok)
 	{
-	    QMessageBox::critical( 0, tr( "Critical Load Error" ),
+	    QMessageBox::critical( 0, tr( "Critical Save Error" ),
 	       tr("Couldn't create temporary directory before save\n"));
 	    return File::Aborted; 
 	}
