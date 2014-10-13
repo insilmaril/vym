@@ -5497,6 +5497,7 @@ void Main::helpDemo()
 void Main::helpShortcuts()
 {
     ShowTextDialog dia;
+    dia.useFixedFont (true);
     dia.setText( switchboard.getASCII() );
     dia.exec();
 }

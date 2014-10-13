@@ -50,6 +50,7 @@ void XSLTProc::addOutput (const QString &s)
 void XSLTProc::process()
 {
     ShowTextDialog dia;
+    dia.useFixedFont (true);
     QStringList args;
     VymProcess *xsltProc=new VymProcess ();
 
