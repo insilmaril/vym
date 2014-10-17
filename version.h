@@ -10,7 +10,8 @@
 #define __VYM_BUILD_DATE "2014-03-19"
 #define __VYM_HOME "http://www.insilmaril.de/vym"
 
-bool checkVersion(const QString &);
-bool checkVersion(const QString &, const QString &);
+bool versionLowerThanVym(const QString &);
+bool versionLowerOrEqualThanVym(const QString &);
+bool versionLowerOrEqual(const QString &, const QString &);
 
 #endif

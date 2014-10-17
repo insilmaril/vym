@@ -75,7 +75,7 @@ bool parseVYMHandler::startElement  ( const QString&, const QString&,
 	// Check version
 	if (!atts.value( "version").isEmpty() ) 
 	{
-	    if (!checkVersion(atts.value("version")))
+	    if (!versionLowerOrEqualThanVym( atts.value("version") ))
 		QMessageBox::warning( 0, QObject::tr("Warning: Version Problem") , 
 		   QObject::tr("<h3>Map is newer than VYM</h3>"
 		   "<p>The map you are just trying to load was "

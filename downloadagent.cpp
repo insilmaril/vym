@@ -26,6 +26,7 @@ QT_USE_NAMESPACE
 
 extern Main *mainWindow;
 extern QString vymVersion;
+extern QString vymPlatform;
 extern Settings settings;
 extern bool debug;
 
@@ -37,17 +38,9 @@ DownloadAgent::DownloadAgent(const QUrl &u, const QString &d)
     connect(&agent, SIGNAL(finished(QNetworkReply*)),
             SLOT(requestFinished(QNetworkReply*)));
 
-    QString os;
-#if defined(Q_OS_MACX)
-    os = "Mac";
-#elif defined(Q_OS_WIN32)
-    os = "Win32";
-#elif defined(Q_OS_LINUX)
-    os = "Linux";
-#else
-    os = "Unknown";
-#endif
-    userAgent = QString("vym (%1 %2)").arg(os).arg(vymVersion).toUtf8();
+    userAgent = QString("vym %1 ( %2)")
+        .arg(vymVersion)
+        .arg(vymPlatform).toUtf8();
 }
 
 void DownloadAgent::setDestination(const QString &dest)
@@ -96,15 +89,19 @@ void DownloadAgent::doDownload(const QUrl &url)
     QNetworkRequest request(url);
     if (!userAgent.isEmpty()) request.setRawHeader("User-Agent", userAgent);
 
-    QByteArray cookievalue=settings.value("/cookies/id/id",QByteArray() ).toByteArray();
+    QByteArray cookievalue=settings.value("/cookies/vymID/value",QByteArray() ).toByteArray();
     if (!cookievalue.size() == 0 )
     {
         QNetworkCookie cookie;
         cookie.setPath("/");
-        //cookie.setDomain("localhost");
-        cookie.setName("id");
+        cookie.setDomain("localhost");
+        cookie.setName("vymID");
         cookie.setValue(cookievalue);
-        cookie.setExpirationDate( settings.value("/cookies/id/expires", QVariant(QDateTime::currentDateTime().addSecs(60) )).toDateTime() ); //FIXME-0 expiration time
+        //cookie.setExpirationDate( settings.value("/cookies/id/expires", QVariant(QDateTime::currentDateTime().addSecs(60) )).toDateTime() ); //FIXME-0 expiration time
+        agent.cookieJar()->insertCookie(cookie);
+
+        cookie.setName("vymPlatform");
+        cookie.setValue( QVariant(vymPlatform).toByteArray() );
         agent.cookieJar()->insertCookie(cookie);
     }
 
@@ -180,10 +177,10 @@ void DownloadAgent::requestFinished(QNetworkReply *reply)
                 qDebug() << " cookie exdate: " << c.expirationDate().toLocalTime().toString();
             }
 
-            if (c.name() == "id" ) 
+            if (c.name() == "vymID" ) 
             {
-                settings.setValue( "/cookies/id/id", c.value());
-                settings.setValue( "/cookies/id/expires", c.expirationDate());
+                settings.setValue( "/cookies/vymID/value", c.value());
+                settings.setValue( "/cookies/vymID/expires", c.expirationDate());
             }
         }
 

@@ -3,15 +3,26 @@
 #include <QDebug>
 #include <QRegExp>
 
-bool checkVersion (const QString &v)
+bool versionLowerThanVym (const QString &v)
 {
-    // returns true, if Version v is lower than VYM_VERSION
-    return checkVersion (v,__VYM_VERSION);
+    // returns true, if Version v <  VYM_VERSION
+    if (v == __VYM_VERSION) 
+        return false
+    else
+        return  versionLowerOrEqualThanVym(v);
 }
 
 
-bool checkVersion (const QString &v, const QString &vstatic)
+bool versionLowerOrEqualThanVym (const QString &v)
 {
+    // returns true, if Version v <=  VYM_VERSION
+    return versionLowerOrEqual (v,__VYM_VERSION);
+}
+
+
+bool versionLowerOrEqual (const QString &v, const QString &vstatic)
+{
+    // returns true, if version v <= vstatic
     bool ok=false;
     int v1=0;
     int v2=0;

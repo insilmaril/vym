@@ -50,7 +50,7 @@ bool parseFreemindHandler::startElement  ( const QString&, const QString&,
 	if (!atts.value( "version").isEmpty() ) 
 	{
 	    QString v="0.9.0";
-	    if (!checkVersion(atts.value("version"),v))
+	    if (! versionLowerOrEqual( atts.value("version"),v ) )
 		QMessageBox::warning( 0, "Warning: Version Problem" ,
 		   "<h3>Freemind map is newer than version " +v +" </h3>"
 		   "<p>The map you are just trying to load was "

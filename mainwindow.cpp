@@ -90,6 +90,7 @@ extern FlagRow *standardFlagsMaster;
 extern FlagRow *systemFlagsMaster;
 extern QString vymName;
 extern QString vymVersion;
+extern QString vymPlatform;
 extern QString vymBuildDate;
 extern bool debug;
 extern bool testmode;
@@ -344,7 +345,7 @@ Main::Main(QWidget* parent, Qt::WindowFlags f) : QMainWindow(parent,f)
 
     if (settings.value("/releaseNotes/download", true).toBool())
     {
-        if (! checkVersion(settings.value("/releaseNotes/shownVersion", "3.0.0").toString() ) )
+        if ( versionLowerThanVym( settings.value("/releaseNotes/shownVersion", "0.0.1").toString() ) )
             showReleaseNotes();
     }
 }
@@ -2507,7 +2508,7 @@ void Main::setupHelpActions()
     switchboard.addConnection(helpMenu, a,tr("Help shortcuts","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( helpDemo() ) );
 
-    a = new QAction(  tr( "Show release notes","Help action" ), this );
+    a = new QAction(  tr( "Download and show release notes","Help action" ), this );
     switchboard.addConnection(helpMenu, a,tr("Help shortcuts","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( showReleaseNotes() ) );
 
@@ -5546,6 +5547,9 @@ void Main::downloadReleaseNotesFinished()
                 ShowTextDialog dia(this);
                 dia.setText(relnotes);
                 dia.exec();
+
+                // Don't load the release notes automatically again
+                settings.setValue("/releaseNotes/shownVersion", __VYM_VERSION);
             } 
         }
     } else
@@ -5560,7 +5564,11 @@ void Main::downloadReleaseNotesFinished()
 }
 void Main::showReleaseNotes()
 {
-    QUrl releaseNotesUrl( QString("http://localhost/release-notes.php?vymversion=%1").arg(vymVersion) ); // FIXME-0 external server
+    QUrl releaseNotesUrl( 
+        //QString("http://localhost/release-notes.php?vymVersion=%1") /
+        QString("http://www.insilmaril.de/vym/release-notes.php?vymVersion=%1")  
+        .arg(vymVersion)
+    );
     DownloadAgent *agent = new DownloadAgent(releaseNotesUrl);
     agent->setDestination(tmpVymDir + "/release-notes.html");
     connect (agent, SIGNAL( downloadFinished()), this, SLOT(downloadReleaseNotesFinished()));
