@@ -348,6 +348,14 @@ Main::Main(QWidget* parent, Qt::WindowFlags f) : QMainWindow(parent,f)
         if ( versionLowerThanVym( settings.value("/releaseNotes/shownVersion", "0.0.1").toString() ) )
             showReleaseNotes();
     }
+
+    if (settings.value("/updates/check", true).toBool())
+    {
+        QDate lastChecked = settings.value("/updates/lastChecked", QDate(1970,1,1) ).toDate();
+        if ( !lastChecked.isValid()) lastChecked = QDate(1970,1,1);
+        if ( lastChecked.daysTo( QDate::currentDate()) > settings.value("/updates/checkInterval",7).toInt() )
+            checkUpdates();
+    }
 }
 
 Main::~Main()
@@ -2462,7 +2470,6 @@ void Main::setupSettingsActions()
     a->setChecked ( settings.value ("/releaseNotes/download",true).toBool());
     connect( a, SIGNAL( triggered() ), this, SLOT( settingsToggleDownloadReleaseNotes() ) );
     settingsMenu->addAction (a);
-    actionSettingsDownloadNewReleaseNotes=a;
 }
 
 // Test Actions
@@ -2507,10 +2514,16 @@ void Main::setupHelpActions()
     a = new QAction(  tr( "Open VYM example maps ","Help action" ), this );
     switchboard.addConnection(helpMenu, a,tr("Help shortcuts","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( helpDemo() ) );
+    helpMenu->addSeparator();
 
     a = new QAction(  tr( "Download and show release notes","Help action" ), this );
     switchboard.addConnection(helpMenu, a,tr("Help shortcuts","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( showReleaseNotes() ) );
+
+    a = new QAction(  tr( "Check, if updates are available","Help action" ), this );
+    switchboard.addConnection(helpMenu, a,tr("Help shortcuts","Shortcut group"));
+    connect( a, SIGNAL( triggered() ), this, SLOT( checkUpdates() ) );
+    helpMenu->addSeparator();
 
     a = new QAction(  tr( "Show keyboard shortcuts","Help action" ), this );
     switchboard.addConnection(helpMenu, a,tr("Help shortcuts","Shortcut group"));
@@ -5539,13 +5552,13 @@ void Main::downloadReleaseNotesFinished()
     
     if (agent->isSuccess() )
     {
-        QString relnotes;
+        QString page;
         if (agent->isSuccess() )
         {
-            if (loadStringFromDisk(agent->getDestination(), relnotes) )
+            if (loadStringFromDisk(agent->getDestination(), page) )
             {
                 ShowTextDialog dia(this);
-                dia.setText(relnotes);
+                dia.setText(page);
                 dia.exec();
 
                 // Don't load the release notes automatically again
@@ -5562,9 +5575,10 @@ void Main::downloadReleaseNotesFinished()
         }
     }
 }
+
 void Main::showReleaseNotes()
 {
-    QUrl releaseNotesUrl( 
+    QUrl releaseNotesUrl(
         //QString("http://localhost/release-notes.php?vymVersion=%1") /
         QString("http://www.insilmaril.de/vym/release-notes.php?vymVersion=%1")  
         .arg(vymVersion)
@@ -5580,3 +5594,52 @@ void Main::checkReleaseNotes()
     showReleaseNotes();
 }
 
+void Main::downloadUpdatesFinished()
+{
+    DownloadAgent *agent = static_cast<DownloadAgent*>(sender());
+    QString s;
+
+    if (agent->isSuccess() )
+    {
+        QString page;
+        if (agent->isSuccess() )
+        {
+            if (loadStringFromDisk(agent->getDestination(), page) )
+            {
+                if ( page.contains("vymisuptodate"))
+                {
+                    statusMessage( tr("vym is up to date.","MainWindow"));
+                } else
+                {
+                    ShowTextDialog dia(this);
+                    dia.setText(page);
+                    dia.exec();
+                }
+
+                // Prepare to check again later
+                settings.setValue("/updates/lastChecked", QDate::currentDate().toString(Qt::ISODate));
+            }
+        }
+    } else
+    {
+        if (debug)
+        {
+            qDebug()<<"Main::downloadUpdatesFinished ";
+            qDebug()<<"  result: failed";
+            qDebug()<<"     msg: " << agent->getResultMessage();
+        }
+    }
+}
+
+void Main::checkUpdates()
+{
+    QUrl updatesUrl(
+        QString("http://www.insilmaril.de/vym/updates.php?vymVersion=%1")
+        .arg(vymVersion)
+    );
+    DownloadAgent *agent = new DownloadAgent(updatesUrl);
+    agent->setDestination(tmpVymDir + "/updates.html");
+    connect (agent, SIGNAL( downloadFinished()), this, SLOT(downloadUpdatesFinished()));
+    QTimer::singleShot(0, agent, SLOT(execute()));
+    statusMessage( tr("Checking for updates...","MainWindow"));
+}

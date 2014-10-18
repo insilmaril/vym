@@ -7,7 +7,7 @@ bool versionLowerThanVym (const QString &v)
 {
     // returns true, if Version v <  VYM_VERSION
     if (v == __VYM_VERSION) 
-        return false
+        return false;
     else
         return  versionLowerOrEqualThanVym(v);
 }

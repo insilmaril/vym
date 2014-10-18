@@ -1,4 +1,4 @@
-#ifndef MAINWINDOW_H 
+#ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
 #include <QMainWindow>
@@ -319,6 +319,10 @@ private slots:
 private:
     void checkReleaseNotes();
 
+private slots:
+    void downloadUpdatesFinished();
+    void checkUpdates();
+
 private:
     QTabWidget *tabWidget;
     qint64 *browserPID;
@@ -504,7 +508,6 @@ private:
     QAction* actionSettingsToggleAutoLayout;
     QAction* actionSettingsWriteBackupFile;
     QAction* actionSettingsUseAnimation;
-    QAction* actionSettingsDownloadNewReleaseNotes;
 };
 
 
