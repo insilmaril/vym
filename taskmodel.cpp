@@ -300,7 +300,7 @@ void TaskModel::recalcPriorities()
     foreach (Task *t,tasks)
     {   
 	t->setPriority (1-  minPrio + t->getPriority() );
-	emitDataChanged (t);
+	//emitDataChanged (t);
     }
 
     emit (layoutChanged() );
