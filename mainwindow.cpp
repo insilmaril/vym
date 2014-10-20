@@ -434,29 +434,26 @@ void Main::setProgressMaximum (int max)	{
     progressCounter++;	// Another map is loaded
 
     progressMax=max*1000;
-    //qDebug() << "Main  max="<<max<<"  v="<<progressDialog.value();
-    if (!options.isOn("batch"))
-	progressDialog.show();
-    else	
-	progressDialog.hide();
+    QApplication::processEvents();
 }
 
 void Main::addProgressValue (float v) 
 
 {
+    int progress_value= (v + progressCounter -1)*1000/progressCounterTotal;
 /*
     qDebug() << "addVal v="<<v
 	 <<"  cur="<<progressDialog.value()
 	 <<"  pCounter="<<progressCounter
 	 <<"  pCounterTotal="<<progressCounterTotal
+         <<"  newv="<< progress_value
 	 ;
 	 */
-    if (!options.isOn("batch"))
-	progressDialog.show();
-    else	
-	progressDialog.hide();
-    progressDialog.setValue ( (v + progressCounter -1)*1000/progressCounterTotal );
-    progressDialog.repaint();
+
+    // Make sure the progress dialog shows, even if value == 0
+    if (progress_value < 1) progress_value = 1; 
+    progressDialog.setValue ( progress_value );
+    if (progress_value == 1) QApplication::processEvents();
 }
 
 void Main::initProgressCounter(uint n)
