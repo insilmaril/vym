@@ -429,7 +429,7 @@ void Main::setProgressMaximum (int max)	{
 	// Init range only on first time, when progressCounter still 0
 	// Normalize range to 1000
 	progressDialog.setRange (0,1000);
-	progressDialog.setValue (0);
+	progressDialog.setValue (1);
     }
     progressCounter++;	// Another map is loaded
 
