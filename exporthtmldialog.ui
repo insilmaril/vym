@@ -199,7 +199,7 @@
           <property name="title">
             <string>Stylesheets</string>
           </property>
-          <widget class="QWidget" name="layoutWidget">
+          <widget class="QWidget" name="layoutWidget1^">
             <property name="geometry">
               <rect>
                 <x>20</x>
@@ -280,7 +280,7 @@
           <property name="title">
             <string>Scripts</string>
           </property>
-          <widget class="QWidget" name="layoutWidget">
+          <widget class="QWidget" name="layoutWidget2">
             <property name="geometry">
               <rect>
                 <x>10</x>
@@ -380,10 +380,6 @@
         </layout>
       </item>
     </layout>
-    <zorder>groupBox_2</zorder>
-    <zorder>groupBox</zorder>
-    <zorder/>
-    <zorder>groupBox_3</zorder>
   </widget>
   <layoutdefault spacing="6" margin="11"/>
   <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
