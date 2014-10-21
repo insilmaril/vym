@@ -8,8 +8,6 @@ extern Settings settings;
 
 ShowTextDialog::ShowTextDialog (QWidget *parent):QDialog (parent)
 {
-    ui.textBrowser=new QTextBrowser (this);
-
     ui.setupUi (this);
     ui.textBrowser->show();
 }

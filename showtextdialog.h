@@ -3,9 +3,8 @@
 
 #include "ui_showtextdialog.h"
 
-#include <QLayout>
-#include <QPushButton>
-#include <QTextBrowser>
+// #include <QLayout>
+// #include <QTextBrowser>
 
 class ShowTextDialog:public QDialog
 {
