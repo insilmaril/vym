@@ -17,6 +17,8 @@
 
 using namespace File;
 
+extern QString zipToolPath;
+
 QString maskPath(QString p)
 {
     // Change " " to "\ " to enable blanks in filenames
@@ -228,7 +230,7 @@ void makeSubDirs (const QString &s)
     d.mkdir ("flags");	
 }
 
-ErrorCode zipDir (const QDir &zipDir, const QString &zipName)	
+ErrorCode zipDir (const QDir &zipInputDir, const QString &zipName)
 {
     ErrorCode err = Success;
     
@@ -253,9 +255,31 @@ ErrorCode zipDir (const QDir &zipDir, const QString &zipName)
     }
 
     // zip the temporary directory
-    QStringList args;
     VymProcess *zipProc=new VymProcess ();
-    zipProc->setWorkingDirectory (zipDir.path());
+    zipProc->setWorkingDirectory (zipInputDir.path());
+
+#if defined(Q_OS_WIN32)
+    QTextStream qout(stdout);
+    QByteArray result;
+    zipProc->start("cmd");
+    if (!zipProc->waitForStarted())
+    {
+        QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
+            QObject::tr("Couldn't start tool to decompress data."));
+        err=Aborted;
+
+    }
+    zipProc->write(QString("%1 a %2 -r %3\\*\n").arg(zipToolPath).arg(zipName).arg(zipInputDir.path()).toUtf8());
+    zipProc->closeWriteChannel();   //done Writing
+
+    while(zipProc->state()!=QProcess::NotRunning){
+        zipProc->waitForReadyRead();
+        result = zipProc->readAll();
+        qout << result;
+    }
+    // qout << zipProc->getStdout();
+#else
+    QStringList args;
     args <<"-r";
     args <<zipName;
     args <<".";
@@ -300,22 +324,45 @@ ErrorCode zipDir (const QDir &zipDir, const QString &zipName)
 	    QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
 	       QObject::tr("Saved %1, but couldn't remove %2").arg(zipName).arg(newName));
     }
-
+#endif
     return err;	
 }
 
-File::ErrorCode unzipDir (const QDir &zipDir, const QString &zipName)
+File::ErrorCode unzipDir (const QDir &zipOutputDir, const QString &zipName)
 {
     ErrorCode err=Success;
 
     // Try to unzip file
-    QStringList args;
+
     VymProcess *zipProc=new VymProcess ();
-    zipProc->setWorkingDirectory (zipDir.path());
+    zipProc->setWorkingDirectory (zipOutputDir.path());
+
+#if defined(Q_OS_WIN32)
+    QTextStream qout(stdout);
+    QByteArray result;
+    zipProc->start("cmd");
+    if (!zipProc->waitForStarted())
+    {
+        QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
+            QObject::tr("Couldn't start tool to decompress data."));
+        err=Aborted;
+
+    }
+    zipProc->write(QString("%1 -o%2 x %3\n").arg(zipToolPath).arg(zipOutputDir.path()).arg(zipName).toUtf8());
+    zipProc->closeWriteChannel();   //done Writing
+
+    while(zipProc->state()!=QProcess::NotRunning){
+        zipProc->waitForReadyRead();
+        result = zipProc->readAll();
+        qout << result;
+    }
+    // qout << zipProc->getStdout();
+#else
+    QStringList args;
     args << "-o";   // overwrite existing files!
     args << zipName ;
     args << "-d";
-    args << zipDir.path();
+    args << zipOutputDir.path();
 
     zipProc->start ("unzip",args);
     if (!zipProc->waitForStarted() )
@@ -350,6 +397,7 @@ File::ErrorCode unzipDir (const QDir &zipDir, const QString &zipName)
 	    } 
 	}
     }
+#endif
     return err;	
 }
 

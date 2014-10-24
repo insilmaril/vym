@@ -486,22 +486,22 @@ File::ErrorCode VymModel::loadMap (
 	    {
 		// Only one entry, take this one
                 xmlfile=tmpZipDir + "/"+flist.first();
-            } else
-	    {
-		for ( QStringList::Iterator it = flist.begin(); it != flist.end(); ++it ) 
-		    *it=tmpZipDir + "/" + *it;
-		// FIXME-4 Multiple entries, load all (but only the first one into this ME)
-		//mainWindow->fileLoadFromTmp (flist);
-		//returnCode=1;	// Silently forget this attempt to load
-		qWarning ("MainWindow::load (fn)  multimap found...");
-	    }	
-		
-	    if (flist.isEmpty() )
-	    {
-		QMessageBox::critical( 0, tr( "Critical Load Error" ),
-			   tr("Couldn't find a map (*.xml) in .vym archive.\n"));
-		err=File::Aborted;		       
-	    }	
+        } else
+        {
+            for ( QStringList::Iterator it = flist.begin(); it != flist.end(); ++it )
+                *it=tmpZipDir + "/" + *it;
+            // FIXME-4 Multiple entries, load all (but only the first one into this ME)
+            //mainWindow->fileLoadFromTmp (flist);
+            //returnCode=1;	// Silently forget this attempt to load
+            qWarning ("MainWindow::load (fn)  multimap found...");
+        }
+
+        if (flist.isEmpty() )
+        {
+            QMessageBox::critical( 0, tr( "Critical Load Error" ),
+                                   tr("Couldn't find a map (*.xml) in .vym archive.\n"));
+            err=File::Aborted;
+        }
 	} //file doesn't exist	
 	else
 	    xmlfile=mfile.fileName();

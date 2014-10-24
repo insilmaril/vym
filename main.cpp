@@ -76,7 +76,7 @@ QDir vymInstallDir;
 QString iconPath;		// Pointing to icons used for toolbars
 QString flagsPath;		// Pointing to flags
 bool clipboardEmpty;		
-bool debug;			// global debugging flag
+bool debug;             // global debugging flag
 bool testmode;			// Used to disable saving of autosave setting
 FlagRow *systemFlagsMaster; 
 FlagRow *standardFlagsMaster;	
@@ -84,6 +84,7 @@ FlagRow *standardFlagsMaster;
 Switchboard switchboard;
 
 Settings settings ("InSilmaril","vym"); // Organization, Application name
+QString zipToolPath;    // Platform dependant zip tool
 
 QList <Command*> modelCommands;
 
@@ -264,6 +265,7 @@ int main(int argc, char* argv[])
     vymPlatform = "Mac";
 #elif defined(Q_OS_WIN32)
     vymPlatform = "Win32";
+    zipToolPath = "\"c:\\Program Files (x86)\\7-Zip\\7z\"";
 #elif defined(Q_OS_LINUX)
     QFile f("/etc/os-release");
     QString flavour="Unknown";

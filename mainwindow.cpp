@@ -5378,13 +5378,10 @@ void Main::standardFlagChanged()
 
 void Main::testFunction1()
 {
-    checkReleaseNotes();
 }
 
 void Main::testFunction2()
 {
- // if (!currentMapEditor()) return;
- //   currentMapEditor()->testFunction2();
 }
 
 void Main::toggleWinter()
