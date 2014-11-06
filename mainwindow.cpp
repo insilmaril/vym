@@ -3136,6 +3136,7 @@ void Main::fileLoad(const LoadMode &lmode)
 
     if (!fns.isEmpty() )
     {
+        initProgressCounter (fns.count() );
 	lastMapDir.setPath(fns.first().left(fns.first().lastIndexOf ("/")) );
 	foreach (QString fn, fns)
 	    fileLoad(fn, lmode, getMapType (fn) );		   
