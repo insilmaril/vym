@@ -10,6 +10,7 @@ ShowTextDialog::ShowTextDialog (QWidget *parent):QDialog (parent)
 {
     ui.setupUi (this);
     ui.textBrowser->show();
+    ui.textBrowser->setOpenExternalLinks( true );
 }
 
 void ShowTextDialog::append  (const QString &s)
@@ -31,7 +32,6 @@ void ShowTextDialog::useFixedFont (bool useFixedFont)
                     "/satellite/noteeditor/fonts/fixedFont",
                     "Courier,10,-1,5,48,0,0,0,1,0").toString() 
                 );
-        ui.textBrowser->setOpenExternalLinks( true );
     }
 }
 
