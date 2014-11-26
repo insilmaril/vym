@@ -182,8 +182,8 @@ QString ExportBase::indent (const int &n, bool useBullet)
 {
     QString s;
     for (int i=0; i<n; i++) s += indentPerDepth;
-    if (useBullet && s.length()>=2 && bulletPoints.count()>n) 
-        s.replace(s.length()-2, 1, bulletPoints.at(n) );
+    if (useBullet && s.length() >= 2 && bulletPoints.count() > n) 
+        s.replace( s.length() - 2, 1, bulletPoints.at(n) );
     return s;
 }
 
@@ -343,6 +343,105 @@ ExportASCII::ExportASCII()
     caption=vymName+ " -" +QObject::tr("Export as ASCII");
 }
 
+QString ExportASCII::noteToASCII( const NoteObj &noteobj, const QString &indent, const int &width)  //FIXME-3 use width
+{
+    QString note = noteobj.getNote();
+    if (note.isEmpty()) return note;
+
+    QRegExp rx;
+    rx.setMinimal(true);
+
+    if (!noteobj.isRichText()) 
+    {
+        if ( noteobj.getFontHint() != "fixed")
+        {
+            // Wordwrap
+
+            QString newnote;
+            QString curline;
+            uint n=0;
+            while ( n < note.length() )
+            {
+                curline = curline + note.at(n);
+                if ( note.at(n) == '\n' )
+                {
+                    newnote = newnote + curline ;
+                    curline = "";
+                }
+
+                if (curline.length() > width)
+                {
+                    // Try to find last previous whitespace in curline
+                    uint i = curline.length() - 1;
+                    while ( i> 0 )
+                    {
+                        if ( curline.at(i) == ' ' )
+                        {
+                            newnote = newnote + curline.left(i) + '\n';
+                            curline = curline.right( curline.length() - i - 1 );
+                            break;
+                        }
+                        i--;
+                        if ( i == 0 ) 
+                        {
+                            // Cannot break this line into smaller parts
+                            newnote = newnote + curline;
+                        }
+                    }
+                }
+                n++;
+            }
+            note = newnote + curline;
+        }
+        
+        // Indent lines
+        rx.setPattern("^");
+        note = note.replace (rx,indent);
+        rx.setPattern("\n");
+        note = note.replace (rx, "\n" + indent) + "\n";
+
+        return note;
+    }
+
+    // Remove all <style...> ...</style>
+    rx.setPattern("<style.*>.*</style>");
+    note.replace (rx,"");
+
+    // convert all "<br*>" to "\n"
+    rx.setPattern ("<br.*>");
+    note.replace (rx,"\n");
+
+    // convert all "</p>" to "\n"
+    rx.setPattern ("</p>");
+    note.replace (rx,"\n");
+    
+    // remove all remaining tags 
+    rx.setPattern ("<.*>");
+    note.replace (rx,"");
+
+    // If string starts with \n now, remove it.
+    // It would be wrong in an OOo export for example
+    while ( note.at(0) == '\n' ) note.remove (0,1);
+    
+    // convert "&", "<" and ">"
+    rx.setPattern ("&gt;");
+    note.replace (rx,">");
+    rx.setPattern ("&lt;");
+    note.replace (rx,"<");
+    rx.setPattern ("&amp;");
+    note.replace (rx,"&");
+    rx.setPattern ("&quot;");
+    note.replace (rx,"\"");
+
+    // Indent everything
+    rx.setPattern ("^\n");
+    note.replace (rx,indent);
+    note = indent + note;   // Don't forget first line
+
+    note = indent+"\n" + note + indent + "\n\n";
+    return note;
+}
+
 void ExportASCII::doExport()	
 {
     QFile file (filePath);
@@ -361,11 +460,16 @@ void ExportASCII::doExport()
     BranchItem *cur=NULL;
     BranchItem *prev=NULL;
 
+    int lastDepth=0;
+
     model->nextBranch (cur,prev);
     while (cur) 
     {
 	if (cur->getType()==TreeItem::Branch || cur->getType()==TreeItem::MapCenter)
 	{
+            // Insert newline after previous list
+            if ( cur->depth() < lastDepth ) ts << "\n";
+
 	    // Make indentstring
 	    curIndent="";
 	    for (i=1;i<cur->depth()-1;i++) curIndent+= indentPerDepth;
@@ -408,13 +512,19 @@ void ExportASCII::doExport()
 		if (!cur->getURL().isEmpty())
 		    ts << (curIndent + dashIndent + cur->getURL()) +"\n";
 
+		// If necessary, write vymlink
+		if (!cur->getVymLink().isEmpty())
+		    ts << (curIndent + dashIndent + cur->getVymLink()) +" (vym mindmap)\n";
+
 		// If necessary, write note
 		if (!cur->getNoteObj().isEmpty())
 		{
-		    curIndent +="  | ";
-		    s=cur->getNoteASCII( curIndent, 80);
-		    ts << s;
+                    // curIndent +="  | ";
+                    // Only indent for bullet points
+                    if (cur->depth() > 2) curIndent +="  ";
+		    ts << '\n' +  noteToASCII( cur->getNoteObj(), curIndent, 80) ;
 		}
+                lastDepth = cur->depth();
 	    }
 	}
 	model->nextBranch(cur,prev);
