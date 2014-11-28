@@ -386,6 +386,7 @@ QString ExportASCII::noteToASCII( const NoteObj &noteobj, const QString &indent,
                         {
                             // Cannot break this line into smaller parts
                             newnote = newnote + curline;
+                            curline = "";
                         }
                     }
                 }
