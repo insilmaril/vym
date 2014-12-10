@@ -303,7 +303,6 @@ void TextEditor::setupFileActions()
     fileMenu->addAction (a);
     tb->addAction (a);
     actionFileDeleteAll=a;
-
 }
 
 void TextEditor::setupEditActions()
@@ -311,7 +310,7 @@ void TextEditor::setupEditActions()
     QToolBar *editToolBar = addToolBar ( tr( "Edit Actions" ));
     editToolBar->setObjectName ("noteEditorEditActions");
     editToolBar->hide();
-    QMenu *editMenu = menuBar()->addMenu ( tr( "&Edit" ));
+    QMenu *editMenu = menuBar()->addMenu ( tr( "Edi&t" ));
 
     QAction *a;
     a = new QAction(QPixmap(":/undo.png"), tr( "&Undo" ), this );
