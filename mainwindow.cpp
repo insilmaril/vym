@@ -1009,7 +1009,6 @@ void Main::setupFileActions()
     fileExportMenu = fileMenu->addMenu (tr("Export","File menu"));
 
     a = new QAction( QPixmap(":/file-document-export.png"),tr("Repeat last export (%1)").arg("-"), this);
-    a->setShortcut (Qt::ALT + Qt::Key_E);	    
     switchboard.addConnection(fileExportMenu, a,tr("File","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( fileExportLast() ) );
     actionFileExportLast=a;
@@ -1110,7 +1109,6 @@ void Main::setupEditActions()
 
     editMenu->addSeparator();
     a = new QAction(QPixmap( ":/editcopy.png"), tr( "&Copy","Edit menu" ), this);
-    a->setShortcut (Qt::CTRL + Qt::Key_C );	 
     a->setEnabled (false);
     switchboard.addConnection(editMenu, a,tr("Edit","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( editCopy() ) );
@@ -1118,16 +1116,16 @@ void Main::setupEditActions()
     actionCopy=a;
 
     a = new QAction(QPixmap( ":/editcut.png" ), tr( "Cu&t","Edit menu" ), this);
-    a->setShortcut (Qt::CTRL + Qt::Key_X );	  
     a->setEnabled (false);
+    a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
     switchboard.addConnection(editMenu, a,tr("Edit","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( editCut() ) );
     actionListMap.append(a);
+    addAction (a);
     actionCut=a;
 
     a = new QAction(QPixmap( ":/editpaste.png"), tr( "&Paste","Edit menu" ),this);
     connect( a, SIGNAL( triggered() ), this, SLOT( editPaste() ) );
-    a->setShortcut ( Qt::CTRL + Qt::Key_V );	  
     a->setEnabled (false);
     switchboard.addConnection(editMenu, a,tr("Edit","Shortcut group"));
     actionListMap.append(a);

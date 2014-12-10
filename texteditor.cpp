@@ -270,10 +270,11 @@ void TextEditor::setupFileActions()
     fileMenu->addSeparator();
     a = new QAction( QPixmap(":/filesave.png" ), tr( "&Export..." ), this);
     a->setShortcut( Qt::CTRL + Qt::Key_S );
-    //a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
+    a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
     connect( a, SIGNAL( triggered() ), this, SLOT( textSave() ) );
     tb->addAction (a);
     fileMenu->addAction (a);
+    addAction (a);
     actionFileSave=a;
     
     a = new QAction(  QPixmap(), tr( "Export &As... (HTML)" ), this);
@@ -283,8 +284,10 @@ void TextEditor::setupFileActions()
 
     a = new QAction(QPixmap(), tr( "Export &As...(ASCII)" ), this);
     a->setShortcut(Qt::ALT + Qt::Key_X );
+    a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
     connect( a, SIGNAL( triggered() ), this, SLOT( textExportAsASCII() ) );
     fileMenu->addAction (a);
+    addAction (a);
     actionFileSaveAs=a;
 
     fileMenu->addSeparator();
@@ -335,7 +338,7 @@ void TextEditor::setupEditActions()
     editMenu->addSeparator();
     a = new QAction(QPixmap(":/editcopy.png" ), tr( "&Copy" ),this);
     a->setShortcut( Qt::CTRL + Qt::Key_C );
-    a->setShortcutContext (Qt::WidgetShortcut);    
+    a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
     connect( a, SIGNAL( triggered() ), e, SLOT( copy() ) );
     editMenu->addAction (a);
     editToolBar->addAction (a);
@@ -343,6 +346,7 @@ void TextEditor::setupEditActions()
     
     a = new QAction(QPixmap(":/editcut.png" ), tr( "Cu&t" ),this);
     a->setShortcut( Qt::CTRL + Qt::Key_X );
+    a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
     connect( a, SIGNAL( triggered() ), e, SLOT( cut() ) );
     editMenu->addAction (a);
     editToolBar->addAction (a);
@@ -350,6 +354,7 @@ void TextEditor::setupEditActions()
 
     a = new QAction(QPixmap(":/editpaste.png" ), tr( "&Paste" ),this);
     a->setShortcut( Qt::CTRL + Qt::Key_V );
+    a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
     connect( a, SIGNAL( triggered() ), e, SLOT( paste() ) );
     editMenu->addAction (a);
     editToolBar->addAction (a);

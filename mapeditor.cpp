@@ -132,6 +132,31 @@ MapEditor::MapEditor( VymModel *vm)
     addAction (a);
     connect( a, SIGNAL( triggered() ), mainWindow, SLOT( fileSave() ) );
     
+    a = new QAction(QPixmap( ":/editcut.png" ), tr( "Cu&t","Edit menu" ), this);
+    a->setShortcut (Qt::CTRL + Qt::Key_X );	  
+    a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
+    connect( a, SIGNAL( triggered() ), mainWindow, SLOT( editCut() ) );
+    addAction(a);
+    
+    a = new QAction(QPixmap( ":/editcopy.png" ), tr( "&Copy","Edit menu" ), this);
+    a->setShortcut (Qt::CTRL + Qt::Key_C );	  
+    a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
+    connect( a, SIGNAL( triggered() ), mainWindow, SLOT( editCopy() ) );
+    addAction(a);
+
+    a = new QAction(QPixmap( ":/editpaste.png" ), tr( "&Paste","Edit menu" ), this);
+    a->setShortcut (Qt::CTRL + Qt::Key_V );	  
+    a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
+    connect( a, SIGNAL( triggered() ), mainWindow, SLOT( editPaste() ) );
+    addAction(a);
+    
+    // Export
+    a = new QAction( QPixmap(":/file-document-export.png"),tr("Repeat last export (%1)").arg("-"), this);
+    a->setShortcut (Qt::ALT + Qt::Key_E);	    
+    a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
+    connect( a, SIGNAL( triggered() ), mainWindow, SLOT( fileExportLast() ) );
+    addAction(a);
+
     // Selections
     selectionColor =QColor (255,255,0);
     
