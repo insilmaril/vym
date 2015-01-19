@@ -5377,6 +5377,26 @@ void Main::standardFlagChanged()
 
 void Main::testFunction1()
 {
+    QDir zipOutputDir("c:\\Users\\uwdr9542\\x");
+    QString zipName="c:\\Users\\uwdr9542\\x\\lifeforms.vym";
+    QString zipToolPath = "c:/Program Files/7-Zip/7z.exe";
+    QStringList parameters;
+    parameters << "/c"; // End cmd shell after execution
+    parameters << zipToolPath;
+ //   parameters << QString("-o %1").arg(zipOutputDir.path());
+    parameters << "x";  // Extract from archive
+    parameters << zipName;
+    qDebug()<<"Parameters: "<< parameters;
+
+    QProcess process;
+    process.start("cmd.exe", parameters, QIODevice::ReadWrite | QIODevice::Text);
+    // QStringList() << "/c" << zipToolPath << "x" , // "-o" << zipOutputDir << "x" << .arg(zipToolPath).arg(zipOutputDir.path()).arg(zipName) ,
+
+    if(!process.waitForFinished(2000)) // beware the timeout default parameter
+        qDebug() << "executing program failed with exit code" << process.exitCode();
+    else
+        qDebug() << QString(process.readAllStandardOutput()).split('\n')<<
+                    QString(process.readAllStandardError()).split('\n');
 }
 
 void Main::testFunction2()

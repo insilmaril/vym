@@ -458,8 +458,13 @@ File::ErrorCode VymModel::loadMap (
 	return File::Aborted; 
     }
 
-    // Try to unzip file
-    err=unzipDir (tmpZipDir,fname);
+    if (fname.right(4) == ".xml")
+        err=File::NoZip;
+    else
+    {
+        // Try to unzip file
+        err=unzipDir (tmpZipDir,fname);//FIXME-0 probably err not set for windows...
+    }
     QString xmlfile;
     if (err==File::NoZip)
     {
@@ -1165,14 +1170,16 @@ void VymModel::undo()
 
     bool noErr;
     QString errMsg;
-    parseAtom (undoCommand,noErr,errMsg);
+    //parseAtom (undoCommand,noErr,errMsg);
+    errMsg=QVariant(execute(undoCommand)).toString();
+    /* FIXME-0 add noErr to parameters of execute above or ignore (error message already within parseAtom)
     if (!noErr)
     {
-	if (!options.isOn("batch") )
-	    QMessageBox::warning(0,tr("Warning"),tr("Undo failed:\n%1").arg(errMsg));
-	qWarning()<< "VM::undo failed:\n"<<errMsg;
+        if (!options.isOn("batch") )
+            QMessageBox::warning(0,tr("Warning"),tr("Undo failed:\n%1").arg(errMsg));
+        qWarning()<< "VM::undo failed:\n"<<errMsg;
     }
-
+    */
 
     undosAvail--;
     curStep--; 
@@ -3828,6 +3835,13 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 
     // Split string s into command and parameters
     parser.parseAtom (atom);
+
+    if (parser.getCommand().length() == 0)
+    {
+        errorMsg.clear();
+        noErr=true;
+        return returnValue;
+    }
 
     // Check set of parameters
     if (parser.errorLevel()==NoError && parser.checkParameters(selti) )
