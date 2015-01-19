@@ -736,50 +736,51 @@ void VymModel::loadImage (BranchItem *dst,const QString &fn)
     if (!dst) dst=getSelectedBranch();
     if (dst)
     {
-	QString filter=QString (tr("Images") + " (*.png *.bmp *.xbm *.jpg *.png *.xpm *.gif *.pnm *.svg);;"+tr("All","Filedialog") +" (*.*)");
-	QStringList fns;
-	if (fn.isEmpty() )
-	    fns=QFileDialog::getOpenFileNames( 
-		NULL,
-		vymName+" - " + tr("Load image"), 
-		lastImageDir.path(), 
-		filter);
-	else
-	    fns.append (fn);
+        QString filter=QString (tr("Images") + " (*.png *.bmp *.xbm *.jpg *.png *.xpm *.gif *.pnm *.svg);;"+tr("All","Filedialog") +" (*.*)");
+        QStringList fns;
+        if (fn.isEmpty() )
+            fns=QFileDialog::getOpenFileNames(
+                        NULL,
+                        vymName+" - " + tr("Load image"),
+                        lastImageDir.path(),
+                        filter);
+        else
+            fns.append (fn);
 
-	if (!fns.isEmpty() )
-	{
-	    lastImageDir.setPath(fns.first().left(fns.first().lastIndexOf ("/")) );
-	    QString s;
-	    for (int j=0; j<fns.count(); j++)
-	    {
-		s=fns.at(j);
-		ImageItem *ii=createImage(dst);
-		if (ii && ii->load (s) )
-		{
-		    saveState(
-			(TreeItem*)ii,
-			"delete ()",
-			dst, 
-			QString ("loadImage (\"%1\")").arg(s ),
-			QString("Add image %1 to %2").arg(s).arg(getObjectName(dst))
-		    );
-		    // Find nice position
-		    FloatImageObj *fio=(FloatImageObj*)(ii->getMO() );
-		    if (fio)
-			fio->move2RelPos (0,0);
+        if (!fns.isEmpty() )
+        {
+            lastImageDir.setPath(fns.first().left(fns.first().lastIndexOf ("/")) );
+            QString s;
+            for (int j=0; j<fns.count(); j++)
+            {
+                s=fns.at(j);
+                ImageItem *ii=createImage(dst);
+                if (ii && ii->load (s) )
+                {
+                    saveState(
+                                (TreeItem*)ii,
+                                "delete ()",
+                                dst,
+                                QString ("loadImage (\"%1\")").arg(s ),
+                                QString("Add image %1 to %2").arg(s).arg(getObjectName(dst))
+                                );
+                    // Find nice position
+                    FloatImageObj *fio=(FloatImageObj*)(ii->getMO() );
+                    if (fio)
+                        fio->move2RelPos (0,0);
 
-		    // On default include image // FIXME-4 check, if we change default settings...
-		    setIncludeImagesHor (true);
-		    setIncludeImagesVer (true);
+                    // On default include image // FIXME-4 check, if we change default settings...
+                    select(dst);
+                    setIncludeImagesHor (false);
+                    setIncludeImagesVer (true);
 
-		    reposition();
-		} else
-		    // FIXME-4 loadFIO error handling
-		    qWarning ()<<"Failed to load "+s;
-	    }
+                    reposition();
+                } else
+                    // FIXME-4 loadFIO error handling
+                    qWarning ()<<"Failed to load "+s;
+            }
 
-	}
+        }
     }
 }
 
@@ -788,48 +789,48 @@ void VymModel::saveImage (ImageItem *ii, QString format, QString fn)
     if (!ii) ii=getSelectedImage();
     if (ii)
     {
-	QString filter=QString (tr("Images") + " (*.png *.bmp *.xbm *.jpg *.png *.xpm *.gif *.pnm *.svg);;"+tr("All","Filedialog") +" (*.*)");
-	if (fn.isEmpty() )
-	    fn=QFileDialog::getSaveFileName( 
-		NULL,
-		vymName+" - " + tr("Save image"), 
-		lastImageDir.path(), 
-		filter,
-		NULL,
-		QFileDialog::DontConfirmOverwrite);
+        QString filter=QString (tr("Images") + " (*.png *.bmp *.xbm *.jpg *.png *.xpm *.gif *.pnm *.svg);;"+tr("All","Filedialog") +" (*.*)");
+        if (fn.isEmpty() )
+            fn=QFileDialog::getSaveFileName(
+                        NULL,
+                        vymName+" - " + tr("Save image"),
+                        lastImageDir.path(),
+                        filter,
+                        NULL,
+                        QFileDialog::DontConfirmOverwrite);
 
-	if (!fn.isEmpty() )
-	{
-	    lastImageDir.setPath(fn.left(fn.lastIndexOf ("/")) );
-	    if (QFile (fn).exists() )
-	    {
-		QMessageBox mb( vymName,
-		    tr("The file %1 exists already.\n"
-		    "Do you want to overwrite it?").arg(fn),
-		QMessageBox::Warning,
-		QMessageBox::Yes | QMessageBox::Default,
-		QMessageBox::Cancel | QMessageBox::Escape,
-		QMessageBox::NoButton );
+        if (!fn.isEmpty() )
+        {
+            lastImageDir.setPath(fn.left(fn.lastIndexOf ("/")) );
+            if (QFile (fn).exists() )
+            {
+                QMessageBox mb( vymName,
+                                tr("The file %1 exists already.\n"
+                                   "Do you want to overwrite it?").arg(fn),
+                                QMessageBox::Warning,
+                                QMessageBox::Yes | QMessageBox::Default,
+                                QMessageBox::Cancel | QMessageBox::Escape,
+                                QMessageBox::NoButton );
 
-		mb.setButtonText( QMessageBox::Yes, tr("Overwrite") );
-		mb.setButtonText( QMessageBox::No, tr("Cancel"));
-		switch( mb.exec() ) 
-		{
-		    case QMessageBox::Yes:
-			// save 
-			break;
-		    case QMessageBox::Cancel:
-			// do nothing
-			return;
-			break;
-		}
-	    }
-	    if (format.isEmpty() ) format=imageIO.guessType(fn);
-	    if (format.isEmpty())
-		QMessageBox::critical (0,tr("Critical Error"),tr("Unsupported format in %1").arg(fn));
-	    else if (!ii->save (fn, format) )
-		QMessageBox::critical (0,tr("Critical Error"),tr("Couldn't save %1").arg(fn));
-	} 
+                mb.setButtonText( QMessageBox::Yes, tr("Overwrite") );
+                mb.setButtonText( QMessageBox::No, tr("Cancel"));
+                switch( mb.exec() )
+                {
+                case QMessageBox::Yes:
+                    // save
+                    break;
+                case QMessageBox::Cancel:
+                    // do nothing
+                    return;
+                    break;
+                }
+            }
+            if (format.isEmpty() ) format=imageIO.guessType(fn);
+            if (format.isEmpty())
+                QMessageBox::critical (0,tr("Critical Error"),tr("Unsupported format in %1").arg(fn));
+            else if (!ii->save (fn, format) )
+                QMessageBox::critical (0,tr("Critical Error"),tr("Couldn't save %1").arg(fn));
+        }
     }
 }
 
@@ -2500,33 +2501,33 @@ ImageItem* VymModel::createImage(BranchItem *dst)
 {
     if (dst)
     {
-	QModelIndex parix;
-	int n;
+        QModelIndex parix;
+        int n;
 
-	QList<QVariant> cData;
-	cData << "new" << "undef";
+        QList<QVariant> cData;
+        cData << "new" << "undef";
 
-	ImageItem *newii=new ImageItem(cData) ;	
-	//newii->setHeading (QApplication::translate("Heading of new image in map", "new image"));
+        ImageItem *newii=new ImageItem(cData) ;
+        //newii->setHeading (QApplication::translate("Heading of new image in map", "new image"));
 
-	emit (layoutAboutToBeChanged() );
+        emit (layoutAboutToBeChanged() );
 
-	    parix=index(dst);
-	    if (!parix.isValid()) qDebug() << "VM::createII invalid index\n";
-	    n=dst->getRowNumAppend(newii);
-	    beginInsertRows (parix,n,n);
-	    dst->appendChild (newii);	
-	    endInsertRows ();
+        parix=index(dst);
+        if (!parix.isValid()) qDebug() << "VM::createII invalid index\n";
+        n=dst->getRowNumAppend(newii);
+        beginInsertRows (parix,n,n);
+        dst->appendChild (newii);
+        endInsertRows ();
 
-	emit (layoutChanged() );
+        emit (layoutChanged() );
 
-	// save scroll state. If scrolled, automatically select
-	// new branch in order to tmp unscroll parent...
-	newii->createMapObj();
-	latestAddedItem=newii;
-	reposition();
-	return newii;
-    } 
+        // save scroll state. If scrolled, automatically select
+        // new branch in order to tmp unscroll parent...
+        newii->createMapObj();
+        latestAddedItem=newii;
+        reposition();
+        return newii;
+    }
     return NULL;
 }
 

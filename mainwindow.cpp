@@ -1663,7 +1663,7 @@ void Main::setupEditActions()
     actionListBranches.append(a);
     actionDeleteChildren=a;
 
-    a = new QAction( tr( "Add Image...","Edit menu" ), this);
+    a = new QAction( tr( "Add   ...","Edit menu" ), this);
     a->setShortcutContext (Qt::WindowShortcut);
     a->setShortcut (Qt::Key_I + Qt::SHIFT);    
     switchboard.addConnection(a,tr("Edit","Shortcut group"));
