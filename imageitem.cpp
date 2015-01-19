@@ -80,6 +80,7 @@ FloatImageObj* ImageItem::createMapObj()
     initLMO();	// set rel/abs position in mapitem
     fio->setZValue(zValue);
     fio->setRelPos (pos);
+    fio->updateVisibility();
     return fio;
 }
 
