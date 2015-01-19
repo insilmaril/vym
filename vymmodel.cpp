@@ -4607,17 +4607,17 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
     // Any errors?
     if (parser.errorLevel()==NoError)
     {
-	reposition();
-	errorMsg.clear();
-	noErr=true;
-    }	
-    else    
+        reposition();
+        errorMsg.clear();
+        noErr=true;
+    }
+    else
     {
-	// TODO Error handling
-	noErr=false;
-	errorMsg=parser.errorMessage();
-	returnValue=errorMsg;
-    } 
+        // TODO Error handling
+        noErr=false;
+        errorMsg=parser.errorMessage();
+        returnValue=errorMsg;
+    }
     return returnValue;
 }
 
@@ -4630,14 +4630,14 @@ QVariant VymModel::execute (const QString &script)
     QString errMsg;
     while (parser.next() && noErr) 
     {
-	r=parseAtom(parser.getAtom(),noErr,errMsg);
-	if (!noErr)
-	{
-	    if (!options.isOn("batch") && !testmode )
-		QMessageBox::warning(0,tr("Warning"),tr("Script aborted:\n%1").arg(errMsg));
-	    qWarning()<< QString("VM::execute aborted: "+errMsg + "\n" + script);
-	}
-    }	
+        r=parseAtom(parser.getAtom(),noErr,errMsg);
+        if (!noErr)
+        {
+            if (!options.isOn("batch") && !testmode )
+                QMessageBox::warning(0,tr("Warning"),tr("Script aborted:\n%1").arg(errMsg));
+            qWarning()<< QString("VM::execute aborted: "+errMsg + "\n" + script);
+        }
+    }
     return r;
 }
 

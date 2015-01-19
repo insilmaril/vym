@@ -233,25 +233,25 @@ void makeSubDirs (const QString &s)
 ErrorCode zipDir (const QDir &zipInputDir, const QString &zipName)
 {
     ErrorCode err = Success;
-    
+
     QString newName;
     // Move existing file away
     QFile file(zipName);
     if (file.exists() )
-    { 
-	newName = zipName + ".tmp";
-	int n=0;
-	while (!file.rename (newName) && n<5)
-	{
-	    newName = newName + QString().setNum(n);
-	    n++;
-	}
-	if (n>=5)
-	{
-	    QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
-			   QObject::tr("Couldn't move existing file out of the way before saving."));
-	    return Aborted;
-	}
+    {
+        newName = zipName + ".tmp";
+        int n=0;
+        while (!file.rename (newName) && n<5)
+        {
+            newName = newName + QString().setNum(n);
+            n++;
+        }
+        if (n>=5)
+        {
+            QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
+                                   QObject::tr("Couldn't move existing file out of the way before saving."));
+            return Aborted;
+        }
     }
 
     // zip the temporary directory
@@ -286,33 +286,33 @@ ErrorCode zipDir (const QDir &zipInputDir, const QString &zipName)
 
     zipProc->start ("zip",args);
     if (!zipProc->waitForStarted() )
-    {	
-	// zip could not be started
-	QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
-		       QObject::tr("Couldn't start zip to compress data."));
-	err=Aborted;
+    {
+        // zip could not be started
+        QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
+                               QObject::tr("Couldn't start zip to compress data."));
+        err=Aborted;
     } else
     {
-	// zip could be started
-	zipProc->waitForFinished();
-	if (zipProc->exitStatus()!=QProcess::NormalExit )
-	{
-	    QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
-			   QObject::tr("zip didn't exit normally")+
-			   "\n" + zipProc->getErrout());
-	    err=Aborted;
-	} else
-	{
-	    if (zipProc->exitCode()>0)
-	    {
-		QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
-			   QString("zip exit code:  %1").arg(zipProc->exitCode() )+
-			   "\n" + zipProc->getErrout() );
-		err=Aborted;
-	    }
-	}
-    }	
-
+        // zip could be started
+        zipProc->waitForFinished();
+        if (zipProc->exitStatus()!=QProcess::NormalExit )
+        {
+            QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
+                                   QObject::tr("zip didn't exit normally")+
+                                   "\n" + zipProc->getErrout());
+            err=Aborted;
+        } else
+        {
+            if (zipProc->exitCode()>0)
+            {
+                QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
+                                       QString("zip exit code:  %1").arg(zipProc->exitCode() )+
+                                       "\n" + zipProc->getErrout() );
+                err=Aborted;
+            }
+        }
+    }
+#endif
     // Try to restore previous file, if zipping failed
     if (err == Aborted && !newName.isEmpty() && !file.rename (zipName) )
 	QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
@@ -324,7 +324,7 @@ ErrorCode zipDir (const QDir &zipInputDir, const QString &zipName)
 	    QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
 	       QObject::tr("Saved %1, but couldn't remove %2").arg(zipName).arg(newName));
     }
-#endif
+
     return err;	
 }
 
@@ -354,9 +354,7 @@ File::ErrorCode unzipDir (const QDir &zipOutputDir, const QString &zipName)
     while(zipProc->state()!=QProcess::NotRunning){
         zipProc->waitForReadyRead();
         result = zipProc->readAll();
-        qout << result;
     }
-    // qout << zipProc->getStdout();
 #else
     QStringList args;
     args << "-o";   // overwrite existing files!
