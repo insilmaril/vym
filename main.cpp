@@ -191,6 +191,7 @@ int main(int argc, char* argv[])
     taskModel = new TaskModel();
 
     debug=options.isOn ("debug");
+    debug=true;
     testmode=options.isOn ("testmode");
 
     QString pidString=QString ("%1").arg(getpid());
@@ -265,7 +266,7 @@ int main(int argc, char* argv[])
     vymPlatform = "Mac";
 #elif defined(Q_OS_WIN32)
     vymPlatform = "Win32";
-    zipToolPath = "\"c:\\Program Files (x86)\\7-Zip\\7z\"";
+    zipToolPath = "\"c:\\Program Files\\7-Zip\\7z\"";
 #elif defined(Q_OS_LINUX)
     QFile f("/etc/os-release");
     QString flavour="Unknown";
@@ -406,6 +407,7 @@ int main(int argc, char* argv[])
     QObject::connect( &app, SIGNAL(lastWindowClosed()), &app, SLOT(quit()) );
 
     app.exec();
+
     int s=warningCount + criticalCount + fatalCount;
     if (s>0) qDebug()<<"vym exiting with:\n"<<warningCount<<" warning messages\n"<<criticalCount<<" critical messages\n"<<fatalCount<<" fatal messages";
     return s;
