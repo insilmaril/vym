@@ -5437,15 +5437,15 @@ void Main::helpDoc()
     QStringList searchList;
     QDir docdir;
     #if defined(Q_OS_MACX)
-	searchList << "./vym.app/Contents/Resources/doc";
+        searchList << "./vym.app/Contents/Resources/doc";
     #elif defined(Q_OS_WIN32)
-        searchList << vymInstallDir.path() + "/share/doc/packages/vym";
+        searchList << vymInstallDir.path() + "doc/" + docname;
     #else
 	#if defined(VYM_DOCDIR)
 	    searchList << VYM_DOCDIR;
 	#endif
-	// default path in SUSE LINUX
-	searchList << "/usr/share/doc/packages/vym";
+        // default path in SUSE LINUX
+        searchList << "/usr/share/doc/packages/vym";
     #endif
 
     searchList << "doc";    // relative path for easy testing in tarball
@@ -5468,7 +5468,7 @@ void Main::helpDoc()
     {
 	QMessageBox::critical(0, 
 	    tr("Critcal error"),
-	    tr("Couldn't find the documentation %1 in:\n%2").arg(searchList.join("\n")));
+        tr("Couldn't find the documentation %1 in:\n%2").arg(docname).arg(searchList.join("\n")));
 	return;
     }	
 
@@ -5551,10 +5551,10 @@ void Main::callMacro ()
         i=action->data().toInt();
         QString s=macros.getMacro (i+1);
         if (!s.isEmpty())
-	{
-	    VymModel *m=currentModel();
-	    if (m) m->execute(s);
-	}   
+        {
+            VymModel *m=currentModel();
+            if (m) m->execute(s);
+        }
     }	
 }
 

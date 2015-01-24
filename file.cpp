@@ -28,6 +28,7 @@ QString maskPath(QString p)
 
 QString convertToRel (const QString &src, const QString &dst)
 {
+    qDebug()<<"convertToRel src="<<src<<" dst="<<dst;
     QString s=src;
     QString d=dst;
     int i;

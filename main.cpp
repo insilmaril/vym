@@ -54,7 +54,7 @@ TaskEditor    *taskEditor;
 ScriptEditor  *scriptEditor;
 HeadingEditor *headingEditor;	    
 NoteEditor    *noteEditor;	// used in Constr. of LinkableMapObj
-				// initialized in mainwindow
+// initialized in mainwindow
 Main *mainWindow;		// used in BranchObj::select()		
 FindWidget *findWidget;
 FindResultWidget *findResultWidget;
@@ -75,6 +75,8 @@ QDir vymInstallDir;
 #endif
 QString iconPath;		// Pointing to icons used for toolbars
 QString flagsPath;		// Pointing to flags
+QString macroPath;              // Pointing to macros
+
 bool clipboardEmpty;		
 bool debug;             // global debugging flag
 bool testmode;			// Used to disable saving of autosave setting
@@ -100,23 +102,23 @@ int fatalCount=0;
 void msgHandler (QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
     QByteArray localMsg = msg.toLocal8Bit();
-    switch (type) 
+    switch (type)
     {
-	case QtDebugMsg:
-	    fprintf(stderr, "%s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
-	    break;
-	case QtWarningMsg:
-	    fprintf(stderr, "Warning: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
-	    warningCount++;
-	    break;
-	case QtCriticalMsg:
-	    fprintf(stderr, "Critical: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
-	    criticalCount++;
-	    break;
-	case QtFatalMsg:
-	    fprintf(stderr, "Fatal: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
-	    fatalCount++;
-	    //abort();
+    case QtDebugMsg:
+        fprintf(stderr, "%s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
+        break;
+    case QtWarningMsg:
+        fprintf(stderr, "Warning: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
+        warningCount++;
+        break;
+    case QtCriticalMsg:
+        fprintf(stderr, "Critical: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
+        criticalCount++;
+        break;
+    case QtFatalMsg:
+        fprintf(stderr, "Fatal: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
+        fatalCount++;
+        //abort();
     }
 }
 
@@ -149,48 +151,49 @@ int main(int argc, char* argv[])
     options.add ("testmode", Option::Switch, "t", "testmode");
     options.add ("version", Option::Switch, "v","version");
     options.setHelpText (
-	"VYM - View Your Mind\n"
-	"--------------------\n\n"
-	"Information about vym can be found in vym.pdf,\n"
-	"which should be part of the vym package.\n"
-	"It is also available at the project homepage:\n\n"
-	"http://www.InSilmaril.de/vym\n\n"
-	"Usage: vym [OPTION]... [FILE]... \n"
-	"Open FILEs with vym\n\n"
-	"-b           batch       batch mode: hide windows\n"
-	"-c           commands	  List all available commands\n"
-	"-d           debug       Show debugging output\n"
-	"-h           help        Show this help text\n"
-	"-l           local       Run with ressources in current directory\n"
-	"-n  STRING   name        Set name of instance for DBus access\n"
-	"-q           quit        Quit immediatly after start for benchmarking\n"
-	"-r  FILE     run         Run script\n"
-	"-R           restore     Restore last session\n"
-	"-s           shortcuts   Show Keyboard shortcuts on start\n"
-	"-sl          LaTeX       Show Keyboard shortcuts in LaTeX format on start\n"
-	"-t           testmode    Test mode, e.g. no autosave and changing of its setting\n"
-	"-v           version     Show vym version\n"
-    );
+                "VYM - View Your Mind\n"
+                "--------------------\n\n"
+                "Information about vym can be found in vym.pdf,\n"
+                "which should be part of the vym package.\n"
+                "It is also available at the project homepage:\n\n"
+                "http://www.InSilmaril.de/vym\n\n"
+                "Usage: vym [OPTION]... [FILE]... \n"
+                "Open FILEs with vym\n\n"
+                "-b           batch       batch mode: hide windows\n"
+                "-c           commands	  List all available commands\n"
+                "-d           debug       Show debugging output\n"
+                "-h           help        Show this help text\n"
+                "-l           local       Run with ressources in current directory\n"
+                "-n  STRING   name        Set name of instance for DBus access\n"
+                "-q           quit        Quit immediatly after start for benchmarking\n"
+                "-r  FILE     run         Run script\n"
+                "-R           restore     Restore last session\n"
+                "-s           shortcuts   Show Keyboard shortcuts on start\n"
+                "-sl          LaTeX       Show Keyboard shortcuts in LaTeX format on start\n"
+                "-t           testmode    Test mode, e.g. no autosave and changing of its setting\n"
+                "-v           version     Show vym version\n"
+                );
 
     if (options.parse())
     {
-	cout << endl << qPrintable( options.getHelpText())<<endl;
-	return 1;
+        cout << endl << qPrintable( options.getHelpText())<<endl;
+        return 1;
     }
 
     if (options.isOn ("version"))
     {
-	cout << "VYM - View Your Mind (c) 2004-"<< QDate::currentDate().year()<<" Uwe Drechsel "  << endl
-	    <<"   Version: "<<__VYM_VERSION <<endl
-	    <<"Build date: "<<__VYM_BUILD_DATE << endl
-	    <<"  "<<__VYM_CODENAME<<endl;
-	    
-	return 0;   
-    }	    
+        cout << "VYM - View Your Mind (c) 2004-"<< QDate::currentDate().year()<<" Uwe Drechsel "  << endl
+             <<"   Version: "<<__VYM_VERSION <<endl
+            <<"Build date: "<<__VYM_BUILD_DATE << endl
+           <<"  "<<__VYM_CODENAME<<endl;
+
+        return 0;
+    }
     
     taskModel = new TaskModel();
 
     debug=options.isOn ("debug");
+    //debug=true;
     testmode=options.isOn ("testmode");
 
     QString pidString=QString ("%1").arg(getpid());
@@ -201,35 +204,40 @@ int main(int argc, char* argv[])
     QDBusConnection dbusConnection=QDBusConnection::sessionBus();
     if (!dbusConnection.registerService ("org.insilmaril.vym-"+pidString))
     {
-       fprintf(stderr, "%s\n",
-	    qPrintable(QDBusConnection::sessionBus().lastError().message()));        
+        fprintf(stderr, "%s\n",
+                qPrintable(QDBusConnection::sessionBus().lastError().message()));
         exit(1);
-    }	
+    }
 #endif
 
     if (options.isOn ("name"))
-	vymInstanceName=options.getArg ("name");
+        vymInstanceName=options.getArg ("name");
     else
-	vymInstanceName=pidString;
+        vymInstanceName=pidString;
     
+    bool debugBuild=false;
+#ifdef QT_DEBUG
+    qDebug()<<"QT_DEBUG is set";
+    debugBuild=true;
+#endif
 
     // Use /usr/share/vym or /usr/local/share/vym or . ?
     // First try options
-    if (options.isOn ("local"))
+    if (options.isOn ("local") || debugBuild)
     {
-	vymBaseDir.setPath (vymBaseDir.currentPath());
+        vymBaseDir.setPath (vymBaseDir.currentPath());
     } else
-    // then look for environment variable
-    if (getenv("VYMHOME")!=0)
-    {
-	vymBaseDir.setPath (getenv("VYMHOME"));
-    } else
-    // ok, let's find my way on my own
-    {
-	#if defined (Q_OS_MACX)
-	    vymBaseDir.setPath(vymBaseDir.currentPath() +"/vym.app/Contents/Resources");
+        // then look for environment variable
+        if (getenv("VYMHOME")!=0)
+        {
+            vymBaseDir.setPath (getenv("VYMHOME"));
+        } else
+            // ok, let's find my way on my own
+        {
+#if defined (Q_OS_MACX)
+            vymBaseDir.setPath(vymBaseDir.currentPath() +"/vym.app/Contents/Resources");
 
-        #elif defined (Q_OS_WIN32)
+#elif defined (Q_OS_WIN32)
             QString basePath;
 
             wchar_t wbuf[512];
@@ -237,29 +245,38 @@ int main(int argc, char* argv[])
             {
                 QString mfn(QString::fromWCharArray(wbuf));
                 mfn.replace('\\', '/');
-                if (mfn.endsWith("/bin/vym.exe", Qt::CaseInsensitive))
+                int i=mfn.lastIndexOf('/');
+                if (i<0)
                 {
-                    mfn.chop(12);
-                    basePath = mfn;
+                    QMessageBox::critical(0,
+                        "Error",
+                        "Couldn't setup vymBasePath");
+                    return 0;
                 }
+                if (mfn.right(mfn.length() -i -1) != "vym.exe")
+                {
+                    QMessageBox::critical(0,
+                        "Error",
+                        "vym executable not known as vym.exe");
+                    return 0;
+                }
+                basePath=mfn.left(i);
             }
-
             if (basePath.isEmpty())
                 basePath = vymBaseDir.currentPath();
 
             vymInstallDir.setPath(basePath);
-            vymBaseDir.setPath(basePath + "/share/vym");
-
-	#else
-	    vymBaseDir.setPath ("/usr/share/vym");
-	    if (!vymBaseDir.exists())
-	    {
-		vymBaseDir.setPath ("/usr/local/share/vym");
-		if (!vymBaseDir.exists())
-		    vymBaseDir.setPath(vymBaseDir.currentPath() );
-	    }	    
-	#endif
-    }
+            vymBaseDir.setPath(basePath);
+#else
+            vymBaseDir.setPath ("/usr/share/vym");
+            if (!vymBaseDir.exists())
+            {
+                vymBaseDir.setPath ("/usr/local/share/vym");
+                if (!vymBaseDir.exists())
+                    vymBaseDir.setPath(vymBaseDir.currentPath() );
+            }
+#endif
+        }
 
 #if defined(Q_OS_MACX)
     vymPlatform = "Mac";
@@ -271,15 +288,15 @@ int main(int argc, char* argv[])
     QString flavour="Unknown";
     if (f.exists())
     {
-         QString s;
-         bool ok = loadStringFromDisk( f.fileName(), s);
-         if (ok) 
-         {
-             QRegExp rx("PRETTY_NAME=.*\"(.*)\"");
-             rx.setMinimal(true);
-             int pos = rx.indexIn(s);
-             if (pos > -1) flavour = rx.cap(1);
-         }
+        QString s;
+        bool ok = loadStringFromDisk( f.fileName(), s);
+        if (ok)
+        {
+            QRegExp rx("PRETTY_NAME=.*\"(.*)\"");
+            rx.setMinimal(true);
+            int pos = rx.indexIn(s);
+            if (pos > -1) flavour = rx.cap(1);
+        }
     }
     vymPlatform = QString ("Linux (%1)").arg(flavour);
 #else
@@ -287,22 +304,23 @@ int main(int argc, char* argv[])
 #endif
     iconPath=vymBaseDir.path()+"/icons/";
     flagsPath=vymBaseDir.path()+"/flags/";
+    macroPath=vymBaseDir.path() + "/macros/";
 
     // Some directories
     QDir useDir;
     if (options.isOn ("local"))
-	useDir=QDir().current();
+        useDir=QDir().current();
     else
-	useDir=QDir().home();
+        useDir=QDir().home();
     lastImageDir=useDir;
     lastMapDir=useDir;
     lastExportDir=useDir;
 
     if (options.isOn ("help"))
     {
-	cout << qPrintable (options.getHelpText())<<endl;
-	return 0;   
-    }	
+        cout << qPrintable (options.getHelpText())<<endl;
+        return 0;
+    }
 
     // Initialize translations
     QTranslator translator (0);
@@ -321,12 +339,12 @@ int main(int argc, char* argv[])
     noteEditor->setWindowIcon (QPixmap (":/vym-editor.png"));
     headingEditor = new HeadingEditor();
 
-    // Check if there is a BugzillaClient  
+    // Check if there is a BugzillaClient
     QFileInfo fi(vymBaseDir.path()+"/scripts/BugzillaClient.pm");
     //bugzillaClientAvailable=fi.exists();
     bugzillaClientAvailable=true;   //FIXME-2 add real check again
 
-    // Initialize mainwindow 
+    // Initialize mainwindow
 #if defined(Q_OS_WIN32)
     Main m(0, Qt::Window | Qt::MSWindowsOwnDC);
 #else
@@ -338,27 +356,27 @@ int main(int argc, char* argv[])
 
     if (options.isOn ("commands"))
     {
-	cout << "Available commands:\n";
-	cout << "==================:\n";
-	foreach (Command* c, modelCommands)
-	    cout << c->getDescription().toStdString() << endl;
+        cout << "Available commands:\n";
+        cout << "==================:\n";
+        foreach (Command* c, modelCommands)
+            cout << c->getDescription().toStdString() << endl;
         return 0;
     }
 
     if (options.isOn ("commandslatex"))
     {
-	foreach (Command* c, modelCommands)
-	    cout << c->getDescriptionLaTeX().toStdString() << endl;
+        foreach (Command* c, modelCommands)
+            cout << c->getDescriptionLaTeX().toStdString() << endl;
         return 0;
     }
 
     if (options.isOn ("batch"))
-	m.hide();
-    else	
+        m.hide();
+    else
     {
-	// Paint Mainwindow first time
-	qApp->processEvents();
-	m.show();
+        // Paint Mainwindow first time
+        qApp->processEvents();
+        m.show();
     }
 
     if (options.isOn("shortcuts")) switchboard.printASCII();    //FIXME-3 global switchboard and exit after listing
@@ -370,34 +388,33 @@ int main(int argc, char* argv[])
 
     // Restore last session
     if (options.isOn ("restore"))
-	m.fileRestoreSession();
+        m.fileRestoreSession();
 
     // Run script
     if (options.isOn ("run"))
     {
-	QString script;
-	QString fn=options.getArg ("run");
-	if ( !fn.isEmpty() )
-	{
-	    QFile f( fn );
-	    if ( !f.open( QFile::ReadOnly|QFile::Text ) )
-	    {
-		QString error (QObject::tr("Error"));
-		QString msg (QObject::tr("Couldn't open \"%1\"\n%2.").arg(fn).arg(f.errorString()));
-		if (options.isOn("batch"))
-		    qWarning ()<<error+": "+msg;
-		else    
-		    QMessageBox::warning(0, error,msg);
-		return 0;
-	    }	
+        QString script;
+        QString fn=options.getArg ("run");
+        if ( !fn.isEmpty() )
+        {
+            QFile f( fn );
+            if ( !f.open( QFile::ReadOnly|QFile::Text ) )
+            {
+                QString error (QObject::tr("Error"));
+                QString msg (QObject::tr("Couldn't open \"%1\"\n%2.").arg(fn).arg(f.errorString()));
+                if (options.isOn("batch"))
+                    qWarning ()<<error+": "+msg;
+                else QMessageBox::warning(0, error,msg);
+                return 0;
+            }
 
-	    QTextStream in( &f );
-	    script=in.readAll();
-	    f.close();
-	    m.executeEverywhere (script);
-	    m.setScriptFile (fn);
-	}
-    }	    
+            QTextStream in( &f );
+            script=in.readAll();
+            f.close();
+            m.executeEverywhere (script);
+            m.setScriptFile (fn);
+        }
+    }
     
     // For benchmarking we may want to quit instead of entering event loop
     if (options.isOn ("quit")) return 0;

@@ -250,7 +250,7 @@ isEmpty( BINDIR ) {
     BINDIR = $${PREFIX}/bin
 }
 isEmpty( DATADIR ) {
-    DATADIR = $${PREFIX}/share
+    DATADIR = $${PREFIX}
 }
 isEmpty( DOCDIR ) {
     DOCDIR = $${DATADIR}/doc/packages/vym

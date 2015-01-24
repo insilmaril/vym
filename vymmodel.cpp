@@ -56,6 +56,7 @@ extern Main *mainWindow;
 
 extern Settings settings;
 extern QString tmpVymDir;
+extern QString macroPath;
 
 extern NoteEditor *noteEditor;
 extern TaskEditor *taskEditor;
@@ -6264,7 +6265,7 @@ SlideItem* VymModel::addSlide()
     if (si && seli)
     {
 	QString inScript;
-        if (!loadStringFromDisk(vymBaseDir.path() + "/macros/slideeditor-snapshot.vys", inScript) )
+        if (!loadStringFromDisk(macroPath + "slideeditor-snapshot.vys", inScript) )
         {
             qWarning()<<"VymModel::addSlide couldn't load template for taking snapshot";
             return NULL;
