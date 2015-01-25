@@ -15,6 +15,7 @@ enum FileType {VymMap, FreemindMap,UnknownMap};
 /////////////////////////////////////////////////////////////////////////////
 QString maskPath (QString );
 QString convertToRel (const QString &,const QString &);
+QString convertToAbs (const QString &,const QString &);
 QString basename (const QString&);
 QString dirname  (const QString&);
 

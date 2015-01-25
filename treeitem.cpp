@@ -416,11 +416,19 @@ void TreeItem::setVymLink (const QString &vl)
         // We need the relative (from loading)
         // or absolute path (from User event)
         // and build the absolute path.
-        // Note: If we have relative, use path of
-        // current map to build absolute path
+
         QDir d(vl);
-        d.makeAbsolute();
-        vymLink=d.path();
+        if (d.isAbsolute())
+            vymLink = vl;
+        else
+        {
+            // If we have relative, use path of
+            // current map to build absolute path
+            // based on path of current map and relative
+            // path to linked map
+            QString p=dirname(model->getDestPath());
+            vymLink = convertToAbs( p, vl);
+        }
         systemFlags.activate("system-vymLink");
     }
     else

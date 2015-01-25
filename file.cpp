@@ -11,8 +11,8 @@
 #include "vymprocess.h"
 
 #if defined(Q_OS_WIN32)
-#include "mkdtemp.h"
-#include <windows.h>
+    #include "mkdtemp.h"
+    #include <windows.h>
 #endif
 
 using namespace File;
@@ -28,6 +28,8 @@ QString maskPath(QString p)
 
 QString convertToRel (const QString &src, const QString &dst)
 {
+    // Creates a relative path pointing from src to dst
+
     qDebug()<<"convertToRel src="<<src<<" dst="<<dst;
     QString s=src;
     QString d=dst;
@@ -59,6 +61,14 @@ QString convertToRel (const QString &src, const QString &dst)
     }
     return d;
 }
+
+QString convertToAbs (const QString &src, const QString &dst)
+{
+    // Creates a relative path pointing from src to dst
+    QDir dd(src);
+    return dd.absoluteFilePath(dst);
+}
+
 
 QString basename(const QString &path)
 {
