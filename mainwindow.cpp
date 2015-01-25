@@ -963,8 +963,10 @@ void Main::setupFileActions()
     actionFileOpen=a;
 
     a = new QAction( tr( "&Restore last session" ,"File menu"),this);
+    a->setShortcut( Qt::ALT + Qt::Key_R );
     switchboard.addConnection(fileMenu, a,tr("File","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( fileRestoreSession() ) );
+    actionFileRestoreSession=a;
 
     fileLastMapsMenu = fileMenu->addMenu (tr("Open Recent","File menu"));
     fileMenu->addSeparator();
