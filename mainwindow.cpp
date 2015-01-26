@@ -962,6 +962,13 @@ void Main::setupFileActions()
     connect( a, SIGNAL( triggered() ), this, SLOT( fileLoad() ) );
     actionFileOpen=a;
 
+    a = new QAction(tr( "&Restore last session","Edit menu" ), this);
+    a->setEnabled (false);
+    switchboard.addConnection(fileMenu, a,tr("File","Shortcut group"));
+    connect( a, SIGNAL( triggered() ), this, SLOT( editCopy() ) );
+    actionListMap.append(a);
+    actionCopy=a;
+
     fileLastMapsMenu = fileMenu->addMenu (tr("Open Recent","File menu"));
     fileMenu->addSeparator();
 
