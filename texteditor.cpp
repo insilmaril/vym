@@ -381,6 +381,7 @@ void TextEditor::setupFormatActions()
     // Original icon: ./share/icons/oxygen/22x22/actions/format-text-color.png
     a = new QAction( QPixmap(":/formatrichtext.png"), tr( "&Richtext" ), this ); 
     a->setShortcut (Qt::ALT + Qt::Key_R);
+    a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
     a->setCheckable (true);
     connect( a, SIGNAL( triggered() ), this, SLOT( toggleRichText() ) );
     formatMenu->addAction (a);
