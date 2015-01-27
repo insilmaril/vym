@@ -33,19 +33,20 @@ void Parser::initAtom()
 void Parser::parseAtom (QString s)
 {
     initAtom();
-    atom=s;
     QRegExp re;
     int pos;
 
     // Strip WS at beginning
-    re.setPattern ("\\w");
-    re.setMinimal (true);
-    pos=re.indexIn (atom);
-    if (pos>=0)
-	s=s.right(s.length()-pos);
+    while (s.length() > 0 && (
+               s.at(0) == '\n' ||
+               s.at(0) == '\r' ||
+               s.at(0) == ' ') )
+        s = s.mid(1);
+    if (s.length() == 0)
+        return;
 
     // Get command
-    re.setPattern ("\\b(.*)(\\s|\\()");
+    re.setPattern ("^(\\w*)");
     pos=re.indexIn (s);
     if (pos>=0)
 	com=re.cap(1);
@@ -57,8 +58,8 @@ void Parser::parseAtom (QString s)
     int rightParenthesis;
     if (!nextParenthesisContents(s, leftParenthesis, rightParenthesis, t)) return;
 
-
-    paramList=findParameters(t);
+    paramList = findParameters(t);
+    atom = s;
 }
 
 QString Parser::getAtom()
@@ -382,51 +383,62 @@ bool Parser::next() //FIXME-3 parser does not detect missing closing " or '("foo
     bool inBracket=false;
     while (true)
     {
-	//qDebug() <<"current="<<current<< "   start="<<start<<"  length="<<script.length();
+        // Check if we are inside a string
+        if (script.at(current)=='"')
+        {
+            if (inBracket)
+                inBracket=false;
+            else
+                inBracket=true;
+        }
 
-	// Check if we are inside a string
-	if (script.at(current)=='"')
-	{
-	    if (inBracket)
-		inBracket=false;
-	    else    
-		inBracket=true;
-	}
+        // Check for EOL
+        if (script.at(current) == '\n')
+        {
+            if (current+1 < script.length())
+            {
+                current++;
+                if (script.at(current) == '\r')
+                    current++;
+            }
+        }
 
-	// Check if we are in a comment
-	if (!inBracket && script.at(current)=='#')
-	{
-	    while (script.at(current)!='\n')
-	    {
-		current++;
-		if (current+1>=script.length()) 
-		    return false;
-	    }
-	    start=current;
-	}
+        // Check if we are in a comment
+        if (!inBracket && script.at(current)=='#')
+        {
+            while (script.at(current)!='\n')
+            {
+                current++;
+                if (script.at(current) == '\r')
+                    current++;
+                if (current+1>=script.length())
+                    return false;
+            }
+            start=current;
+        }
 
-	// Check for end of atom
-	if (!inBracket && script.at(current)==';')
-	{
-	    atom=script.mid(start,current-start);
-	    current++;
-	    return true;
-	}
-	
-	// Check for end of script
-	if (current+1>=script.length() )
-	{
-	    if (inBracket)
-	    {
-		setError (Aborted,"Runaway string");
-		return false;
-	    } else
-	    {
-		atom=script.mid(start);
-		return true;
-	    }
-	}
-	current++;
+        // Check for end of atom
+        if (!inBracket && script.at(current)==';')
+        {
+            parseAtom(script.mid(start,current-start) );
+            current++;
+            return true;
+        }
+
+        // Check for end of script
+        if (current+1>=script.length() )
+        {
+            if (inBracket)
+            {
+                setError (Aborted,"Runaway string");
+                return false;
+            } else
+            {
+                atom=script.mid(start);
+                return true;
+            }
+        }
+        current++;
     }
 }   
 
@@ -487,13 +499,13 @@ bool Parser::nextParenthesisContents(
             else    
                 inquote=true;
         }
-        if (s.at(pos)=='(' && !inquote) 
+        if (s.at(pos)=='(' && !inquote)
         {
             openParenthesis++;
             if (openParenthesis==1) leftP=pos;
         }
 
-        if (s.at(pos)==')' && !inquote) 
+        if (s.at(pos)==')' && !inquote)
         {
             openParenthesis--;
             if (openParenthesis==0) rightP=pos;
@@ -507,7 +519,8 @@ bool Parser::nextParenthesisContents(
 
         pos++;
     }
-    if (leftP< 0) 
+
+    if (leftP< 0)
     {
         setError(Aborted, "Error: No left parenthesis found");
         return false;

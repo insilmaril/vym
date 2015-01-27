@@ -56,6 +56,7 @@ extern Main *mainWindow;
 
 extern Settings settings;
 extern QString tmpVymDir;
+extern QString macroPath;
 
 extern NoteEditor *noteEditor;
 extern TaskEditor *taskEditor;
@@ -93,10 +94,9 @@ VymModel::VymModel()
     rootItem->setModel (this);
 }
 
-
 VymModel::~VymModel() 
 {
-    //qDebug() << "Destr VymModel begin this="<<this<<"  "<<mapName;
+    //out << "Destr VymModel begin this="<<this<<"  "<<mapName<<flush;
     mapEditor=NULL;
     blockReposition=true;
     autosaveTimer->stop();
@@ -458,8 +458,13 @@ File::ErrorCode VymModel::loadMap (
 	return File::Aborted; 
     }
 
-    // Try to unzip file
-    err=unzipDir (tmpZipDir,fname);
+    if (fname.right(4) == ".xml")
+        err=File::NoZip;
+    else
+    {
+        // Try to unzip file
+        err=unzipDir (tmpZipDir,fname);//FIXME-0 probably err not set for windows...
+    }
     QString xmlfile;
     if (err==File::NoZip)
     {
@@ -731,50 +736,51 @@ void VymModel::loadImage (BranchItem *dst,const QString &fn)
     if (!dst) dst=getSelectedBranch();
     if (dst)
     {
-	QString filter=QString (tr("Images") + " (*.png *.bmp *.xbm *.jpg *.png *.xpm *.gif *.pnm *.svg);;"+tr("All","Filedialog") +" (*.*)");
-	QStringList fns;
-	if (fn.isEmpty() )
-	    fns=QFileDialog::getOpenFileNames( 
-		NULL,
-		vymName+" - " + tr("Load image"), 
-		lastImageDir.path(), 
-		filter);
-	else
-	    fns.append (fn);
+        QString filter=QString (tr("Images") + " (*.png *.bmp *.xbm *.jpg *.png *.xpm *.gif *.pnm *.svg);;"+tr("All","Filedialog") +" (*.*)");
+        QStringList fns;
+        if (fn.isEmpty() )
+            fns=QFileDialog::getOpenFileNames(
+                        NULL,
+                        vymName+" - " + tr("Load image"),
+                        lastImageDir.path(),
+                        filter);
+        else
+            fns.append (fn);
 
-	if (!fns.isEmpty() )
-	{
-	    lastImageDir.setPath(fns.first().left(fns.first().lastIndexOf ("/")) );
-	    QString s;
-	    for (int j=0; j<fns.count(); j++)
-	    {
-		s=fns.at(j);
-		ImageItem *ii=createImage(dst);
-		if (ii && ii->load (s) )
-		{
-		    saveState(
-			(TreeItem*)ii,
-			"delete ()",
-			dst, 
-			QString ("loadImage (\"%1\")").arg(s ),
-			QString("Add image %1 to %2").arg(s).arg(getObjectName(dst))
-		    );
-		    // Find nice position
-		    FloatImageObj *fio=(FloatImageObj*)(ii->getMO() );
-		    if (fio)
-			fio->move2RelPos (0,0);
+        if (!fns.isEmpty() )
+        {
+            lastImageDir.setPath(fns.first().left(fns.first().lastIndexOf ("/")) );
+            QString s;
+            for (int j=0; j<fns.count(); j++)
+            {
+                s=fns.at(j);
+                ImageItem *ii=createImage(dst);
+                if (ii && ii->load (s) )
+                {
+                    saveState(
+                                (TreeItem*)ii,
+                                "delete ()",
+                                dst,
+                                QString ("loadImage (\"%1\")").arg(s ),
+                                QString("Add image %1 to %2").arg(s).arg(getObjectName(dst))
+                                );
+                    // Find nice position
+                    FloatImageObj *fio=(FloatImageObj*)(ii->getMO() );
+                    if (fio)
+                        fio->move2RelPos (0,0);
 
-		    // On default include image // FIXME-4 check, if we change default settings...
-		    setIncludeImagesHor (true);
-		    setIncludeImagesVer (true);
+                    // On default include image // FIXME-4 check, if we change default settings...
+                    select(dst);
+                    setIncludeImagesHor (false);
+                    setIncludeImagesVer (true);
 
-		    reposition();
-		} else
-		    // FIXME-4 loadFIO error handling
-		    qWarning ()<<"Failed to load "+s;
-	    }
+                    reposition();
+                } else
+                    // FIXME-4 loadFIO error handling
+                    qWarning ()<<"Failed to load "+s;
+            }
 
-	}
+        }
     }
 }
 
@@ -783,48 +789,48 @@ void VymModel::saveImage (ImageItem *ii, QString format, QString fn)
     if (!ii) ii=getSelectedImage();
     if (ii)
     {
-	QString filter=QString (tr("Images") + " (*.png *.bmp *.xbm *.jpg *.png *.xpm *.gif *.pnm *.svg);;"+tr("All","Filedialog") +" (*.*)");
-	if (fn.isEmpty() )
-	    fn=QFileDialog::getSaveFileName( 
-		NULL,
-		vymName+" - " + tr("Save image"), 
-		lastImageDir.path(), 
-		filter,
-		NULL,
-		QFileDialog::DontConfirmOverwrite);
+        QString filter=QString (tr("Images") + " (*.png *.bmp *.xbm *.jpg *.png *.xpm *.gif *.pnm *.svg);;"+tr("All","Filedialog") +" (*.*)");
+        if (fn.isEmpty() )
+            fn=QFileDialog::getSaveFileName(
+                        NULL,
+                        vymName+" - " + tr("Save image"),
+                        lastImageDir.path(),
+                        filter,
+                        NULL,
+                        QFileDialog::DontConfirmOverwrite);
 
-	if (!fn.isEmpty() )
-	{
-	    lastImageDir.setPath(fn.left(fn.lastIndexOf ("/")) );
-	    if (QFile (fn).exists() )
-	    {
-		QMessageBox mb( vymName,
-		    tr("The file %1 exists already.\n"
-		    "Do you want to overwrite it?").arg(fn),
-		QMessageBox::Warning,
-		QMessageBox::Yes | QMessageBox::Default,
-		QMessageBox::Cancel | QMessageBox::Escape,
-		QMessageBox::NoButton );
+        if (!fn.isEmpty() )
+        {
+            lastImageDir.setPath(fn.left(fn.lastIndexOf ("/")) );
+            if (QFile (fn).exists() )
+            {
+                QMessageBox mb( vymName,
+                                tr("The file %1 exists already.\n"
+                                   "Do you want to overwrite it?").arg(fn),
+                                QMessageBox::Warning,
+                                QMessageBox::Yes | QMessageBox::Default,
+                                QMessageBox::Cancel | QMessageBox::Escape,
+                                QMessageBox::NoButton );
 
-		mb.setButtonText( QMessageBox::Yes, tr("Overwrite") );
-		mb.setButtonText( QMessageBox::No, tr("Cancel"));
-		switch( mb.exec() ) 
-		{
-		    case QMessageBox::Yes:
-			// save 
-			break;
-		    case QMessageBox::Cancel:
-			// do nothing
-			return;
-			break;
-		}
-	    }
-	    if (format.isEmpty() ) format=imageIO.guessType(fn);
-	    if (format.isEmpty())
-		QMessageBox::critical (0,tr("Critical Error"),tr("Unsupported format in %1").arg(fn));
-	    else if (!ii->save (fn, format) )
-		QMessageBox::critical (0,tr("Critical Error"),tr("Couldn't save %1").arg(fn));
-	} 
+                mb.setButtonText( QMessageBox::Yes, tr("Overwrite") );
+                mb.setButtonText( QMessageBox::No, tr("Cancel"));
+                switch( mb.exec() )
+                {
+                case QMessageBox::Yes:
+                    // save
+                    break;
+                case QMessageBox::Cancel:
+                    // do nothing
+                    return;
+                    break;
+                }
+            }
+            if (format.isEmpty() ) format=imageIO.guessType(fn);
+            if (format.isEmpty())
+                QMessageBox::critical (0,tr("Critical Error"),tr("Unsupported format in %1").arg(fn));
+            else if (!ii->save (fn, format) )
+                QMessageBox::critical (0,tr("Critical Error"),tr("Couldn't save %1").arg(fn));
+        }
     }
 }
 
@@ -1165,14 +1171,16 @@ void VymModel::undo()
 
     bool noErr;
     QString errMsg;
-    parseAtom (undoCommand,noErr,errMsg);
+    //parseAtom (undoCommand,noErr,errMsg);
+    errMsg=QVariant(execute(undoCommand)).toString();
+    /* FIXME-0 add noErr to parameters of execute above or ignore (error message already within parseAtom)
     if (!noErr)
     {
-	if (!options.isOn("batch") )
-	    QMessageBox::warning(0,tr("Warning"),tr("Undo failed:\n%1").arg(errMsg));
-	qWarning()<< "VM::undo failed:\n"<<errMsg;
+        if (!options.isOn("batch") )
+            QMessageBox::warning(0,tr("Warning"),tr("Undo failed:\n%1").arg(errMsg));
+        qWarning()<< "VM::undo failed:\n"<<errMsg;
     }
-
+    */
 
     undosAvail--;
     curStep--; 
@@ -2493,33 +2501,33 @@ ImageItem* VymModel::createImage(BranchItem *dst)
 {
     if (dst)
     {
-	QModelIndex parix;
-	int n;
+        QModelIndex parix;
+        int n;
 
-	QList<QVariant> cData;
-	cData << "new" << "undef";
+        QList<QVariant> cData;
+        cData << "new" << "undef";
 
-	ImageItem *newii=new ImageItem(cData) ;	
-	//newii->setHeading (QApplication::translate("Heading of new image in map", "new image"));
+        ImageItem *newii=new ImageItem(cData) ;
+        //newii->setHeading (QApplication::translate("Heading of new image in map", "new image"));
 
-	emit (layoutAboutToBeChanged() );
+        emit (layoutAboutToBeChanged() );
 
-	    parix=index(dst);
-	    if (!parix.isValid()) qDebug() << "VM::createII invalid index\n";
-	    n=dst->getRowNumAppend(newii);
-	    beginInsertRows (parix,n,n);
-	    dst->appendChild (newii);	
-	    endInsertRows ();
+        parix=index(dst);
+        if (!parix.isValid()) qDebug() << "VM::createII invalid index\n";
+        n=dst->getRowNumAppend(newii);
+        beginInsertRows (parix,n,n);
+        dst->appendChild (newii);
+        endInsertRows ();
 
-	emit (layoutChanged() );
+        emit (layoutChanged() );
 
-	// save scroll state. If scrolled, automatically select
-	// new branch in order to tmp unscroll parent...
-	newii->createMapObj();
-	latestAddedItem=newii;
-	reposition();
-	return newii;
-    } 
+        // save scroll state. If scrolled, automatically select
+        // new branch in order to tmp unscroll parent...
+        newii->createMapObj();
+        latestAddedItem=newii;
+        reposition();
+        return newii;
+    }
     return NULL;
 }
 
@@ -3829,6 +3837,13 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
     // Split string s into command and parameters
     parser.parseAtom (atom);
 
+    if (parser.getCommand().length() == 0)
+    {
+        errorMsg.clear();
+        noErr=true;
+        return returnValue;
+    }
+
     // Check set of parameters
     if (parser.errorLevel()==NoError && parser.checkParameters(selti) )
     {
@@ -4607,17 +4622,17 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
     // Any errors?
     if (parser.errorLevel()==NoError)
     {
-	reposition();
-	errorMsg.clear();
-	noErr=true;
-    }	
-    else    
+        reposition();
+        errorMsg.clear();
+        noErr=true;
+    }
+    else
     {
-	// TODO Error handling
-	noErr=false;
-	errorMsg=parser.errorMessage();
-	returnValue=errorMsg;
-    } 
+        // TODO Error handling
+        noErr=false;
+        errorMsg=parser.errorMessage();
+        returnValue=errorMsg;
+    }
     return returnValue;
 }
 
@@ -4630,14 +4645,14 @@ QVariant VymModel::execute (const QString &script)
     QString errMsg;
     while (parser.next() && noErr) 
     {
-	r=parseAtom(parser.getAtom(),noErr,errMsg);
-	if (!noErr)
-	{
-	    if (!options.isOn("batch") && !testmode )
-		QMessageBox::warning(0,tr("Warning"),tr("Script aborted:\n%1").arg(errMsg));
-	    qWarning()<< QString("VM::execute aborted: "+errMsg + "\n" + script);
-	}
-    }	
+        r=parseAtom(parser.getAtom(),noErr,errMsg);
+        if (!noErr)
+        {
+            if (!options.isOn("batch") && !testmode )
+                QMessageBox::warning(0,tr("Warning"),tr("Script aborted:\n%1").arg(errMsg));
+            qWarning()<< QString("VM::execute aborted: "+errMsg + "\n" + script);
+        }
+    }
     return r;
 }
 
@@ -6249,7 +6264,7 @@ SlideItem* VymModel::addSlide()
     if (si && seli)
     {
 	QString inScript;
-        if (!loadStringFromDisk(vymBaseDir.path() + "/macros/slideeditor-snapshot.vys", inScript) )
+        if (!loadStringFromDisk(macroPath + "slideeditor-snapshot.vys", inScript) )
         {
             qWarning()<<"VymModel::addSlide couldn't load template for taking snapshot";
             return NULL;

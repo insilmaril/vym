@@ -144,12 +144,19 @@ MapEditor::MapEditor( VymModel *vm)
     connect( a, SIGNAL( triggered() ), mainWindow, SLOT( editCopy() ) );
     addAction(a);
 
-    a = new QAction(QPixmap( ":/editpaste.png" ), tr( "&Paste","Edit menu" ), this);
-    a->setShortcut (Qt::CTRL + Qt::Key_V );	  
+    a = new QAction(tr( "&Restore last session","Edit menu" ), this);
+    a->setShortcut (Qt::ALT + Qt::Key_R );
+    a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
+    connect( a, SIGNAL( triggered() ), mainWindow, SLOT( fileRestoreSession() ) );
+    //actionFileRestoreSession=a;
+    addAction(a);
+    
+    a = new QAction( tr( "&Paste","Edit menu" ), this);
+    a->setShortcut (Qt::CTRL + Qt::Key_V );
     a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
     connect( a, SIGNAL( triggered() ), mainWindow, SLOT( editPaste() ) );
     addAction(a);
-    
+
     // Export
     a = new QAction( QPixmap(":/file-document-export.png"),tr("Repeat last export (%1)").arg("-"), this);
     a->setShortcut (Qt::ALT + Qt::Key_E);	    

@@ -5,7 +5,6 @@
 
 class Macros {
 public:
-    QString getBasePath ();
     QString getPath (const int &i);
     QString getMacro (const int &i);
 };

@@ -370,6 +370,7 @@ private:
     QAction* actionFileNew;
     QAction* actionFileNewCopy;
     QAction* actionFileOpen;
+    QAction* actionFileRestoreSession;
     QAction* actionFileSave;
     QAction* actionFilePrint;
     QAction* actionFileExportLast;

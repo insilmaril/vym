@@ -325,19 +325,19 @@ bool parseVYMHandler::endElement  ( const QString&, const QString&, const QStrin
 	case StateMapSlide: 
 	    lastSlide=NULL;
 	    break;  
-	case StateVymNote:	    // Might be richtext or plaintext with 
-				    // version >= 1.13.8
-            if (Qt::mightBeRichText(htmldata) )
-                no.setNote (htmldata);
-            else
-		no.setNoteMasked (htmldata);
-	    lastBranch->setNoteObj (no);
-	    break;  
-        case StateHtml: 
-	    htmldata+="</"+eName+">";
-	    if (eName=="html")
-		htmldata.replace ("<br></br>","<br />");
-	    break;
+    case StateVymNote:	    // Might be richtext or plaintext with
+        // version >= 1.13.8
+        if (Qt::mightBeRichText(htmldata) )
+            no.setNote (htmldata);
+        else
+            no.setNoteMasked (htmldata);
+        lastBranch->setNoteObj (no);
+        break;
+    case StateHtml:
+        htmldata+="</"+eName+">";
+        if (eName=="html")
+            htmldata.replace ("<br></br>","<br />");
+        break;
 	default: 
 	    break;
     }  

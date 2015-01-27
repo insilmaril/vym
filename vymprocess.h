@@ -1,5 +1,5 @@
-#ifndef PROCESS_H
-#define PROCESS_H
+#ifndef VYMPROCESS_H
+#define VYMPROCESS_H
 
 #include <QProcess>
 #include <QString>

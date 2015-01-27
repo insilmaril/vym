@@ -413,27 +413,29 @@ void TreeItem::setVymLink (const QString &vl)
 {
     if (!vl.isEmpty())
     {
-	// We need the relative (from loading) 
-	// or absolute path (from User event)
-	// and build the absolute path.
-	// Note: If we have relative, use path of
-	// current map to build absolute path
-	QDir d(vl);
-	if (!d.path().startsWith ("/"))
-	{
-	    QString p=model->getDestPath();
-	    int i=p.lastIndexOf("/",-1);
-	    d.setPath(p.left(i)+"/"+vl);
-	    d.makeAbsolute();
-	}
-	vymLink=d.path();
-	systemFlags.activate("system-vymLink");
-    }	
-    else    
+        // We need the relative (from loading)
+        // or absolute path (from User event)
+        // and build the absolute path.
+
+        QDir d(vl);
+        if (d.isAbsolute())
+            vymLink = vl;
+        else
+        {
+            // If we have relative, use path of
+            // current map to build absolute path
+            // based on path of current map and relative
+            // path to linked map
+            QString p=dirname(model->getDestPath());
+            vymLink = convertToAbs( p, vl);
+        }
+        systemFlags.activate("system-vymLink");
+    }
+    else
     {
-	vymLink.clear();
-	systemFlags.deactivate("system-vymLink");
-    }	
+        vymLink.clear();
+        systemFlags.deactivate("system-vymLink");
+    }
 }
 
 QString TreeItem::getVymLink ()

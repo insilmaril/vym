@@ -18,6 +18,7 @@
 #include <QMenuBar>
 #include <QPrinter>
 #include <QStatusBar>
+#include <QTextStream>
 
 #include "aboutdialog.h"
 #include "branchpropeditor.h"
@@ -94,8 +95,10 @@ extern QString vymPlatform;
 extern QString vymBuildDate;
 extern bool debug;
 extern bool testmode;
+extern QTextStream out;
 extern bool bugzillaClientAvailable;
 extern Switchboard switchboard;
+
 
 extern QList <Command*> modelCommands;
 
@@ -360,6 +363,8 @@ Main::Main(QWidget* parent, Qt::WindowFlags f) : QMainWindow(parent,f)
 
 Main::~Main()
 {
+    // qDebug()<<"Destr Mainwindow"<<flush;
+
     // Save Settings
 
     if (!testmode) 
@@ -962,9 +967,12 @@ void Main::setupFileActions()
     connect( a, SIGNAL( triggered() ), this, SLOT( fileLoad() ) );
     actionFileOpen=a;
 
-    a = new QAction( tr( "&Restore last session" ,"File menu"),this);
+    a = new QAction(tr( "&Restore last session","Edit menu" ), this);
+    a->setEnabled (false);
     switchboard.addConnection(fileMenu, a,tr("File","Shortcut group"));
-    connect( a, SIGNAL( triggered() ), this, SLOT( fileRestoreSession() ) );
+    connect( a, SIGNAL( triggered() ), this, SLOT( editCopy() ) );
+    actionListMap.append(a);
+    actionCopy=a;
 
     fileLastMapsMenu = fileMenu->addMenu (tr("Open Recent","File menu"));
     fileMenu->addSeparator();
@@ -1663,7 +1671,7 @@ void Main::setupEditActions()
     actionListBranches.append(a);
     actionDeleteChildren=a;
 
-    a = new QAction( tr( "Add Image...","Edit menu" ), this);
+    a = new QAction( tr( "Add   ...","Edit menu" ), this);
     a->setShortcutContext (Qt::WindowShortcut);
     a->setShortcut (Qt::Key_I + Qt::SHIFT);    
     switchboard.addConnection(a,tr("Edit","Shortcut group"));
@@ -3415,7 +3423,7 @@ void Main::fileImportDir()
     if (m) m->importDir();
 }
 
-void Main::fileExportXML()  
+void Main::fileExportXML()
 {
     VymModel *m=currentModel();
     if (m) m->exportXML();
@@ -3561,10 +3569,13 @@ bool Main::closeTab(int i)
     VymModel *m=vymViews.at(i)->getModel();
     if (!m) return true;
 
+    VymView *vv=vymViews.at(i);
     vymViews.removeAt (i);
     tabWidget->removeTab (i);
 
+    // Destroy stuff, order is important
     delete (m->getMapEditor()); 
+    delete(vv);
     delete (m); 
 
     updateActions();
@@ -3618,12 +3629,11 @@ bool Main::fileExitVYM()
     fileSaveSession();
 
     // Check if one or more editors have changed
-    int i=0;
     while (vymViews.count()>0)
     {
-	tabWidget->setCurrentIndex(i);
-	if (fileCloseMap()) return true;
-    } 
+        tabWidget->setCurrentIndex(0);
+        if (fileCloseMap()) return true;
+    }
     qApp->quit();
     return false;
 }
@@ -5377,6 +5387,26 @@ void Main::standardFlagChanged()
 
 void Main::testFunction1()
 {
+    QDir zipOutputDir("c:\\Users\\uwdr9542\\x");
+    QString zipName="c:\\Users\\uwdr9542\\x\\lifeforms.vym";
+    QString zipToolPath = "c:/Program Files/7-Zip/7z.exe";
+    QStringList parameters;
+    parameters << "/c"; // End cmd shell after execution
+    parameters << zipToolPath;
+ //   parameters << QString("-o %1").arg(zipOutputDir.path());
+    parameters << "x";  // Extract from archive
+    parameters << zipName;
+    qDebug()<<"Parameters: "<< parameters;
+
+    QProcess process;
+    process.start("cmd.exe", parameters, QIODevice::ReadWrite | QIODevice::Text);
+    // QStringList() << "/c" << zipToolPath << "x" , // "-o" << zipOutputDir << "x" << .arg(zipToolPath).arg(zipOutputDir.path()).arg(zipName) ,
+
+    if(!process.waitForFinished(2000)) // beware the timeout default parameter
+        qDebug() << "executing program failed with exit code" << process.exitCode();
+    else
+        qDebug() << QString(process.readAllStandardOutput()).split('\n')<<
+                    QString(process.readAllStandardError()).split('\n');
 }
 
 void Main::testFunction2()
@@ -5417,15 +5447,15 @@ void Main::helpDoc()
     QStringList searchList;
     QDir docdir;
     #if defined(Q_OS_MACX)
-	searchList << "./vym.app/Contents/Resources/doc";
+        searchList << "./vym.app/Contents/Resources/doc";
     #elif defined(Q_OS_WIN32)
-        searchList << vymInstallDir.path() + "/share/doc/packages/vym";
+        searchList << vymInstallDir.path() + "doc/" + docname;
     #else
 	#if defined(VYM_DOCDIR)
 	    searchList << VYM_DOCDIR;
 	#endif
-	// default path in SUSE LINUX
-	searchList << "/usr/share/doc/packages/vym";
+        // default path in SUSE LINUX
+        searchList << "/usr/share/doc/packages/vym";
     #endif
 
     searchList << "doc";    // relative path for easy testing in tarball
@@ -5448,7 +5478,7 @@ void Main::helpDoc()
     {
 	QMessageBox::critical(0, 
 	    tr("Critcal error"),
-	    tr("Couldn't find the documentation %1 in:\n%2").arg(searchList.join("\n")));
+        tr("Couldn't find the documentation %1 in:\n%2").arg(docname).arg(searchList.join("\n")));
 	return;
     }	
 
@@ -5531,10 +5561,10 @@ void Main::callMacro ()
         i=action->data().toInt();
         QString s=macros.getMacro (i+1);
         if (!s.isEmpty())
-	{
-	    VymModel *m=currentModel();
-	    if (m) m->execute(s);
-	}   
+        {
+            VymModel *m=currentModel();
+            if (m) m->execute(s);
+        }
     }	
 }
 
