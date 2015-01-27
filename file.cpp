@@ -19,13 +19,6 @@ using namespace File;
 
 extern QString zipToolPath;
 
-QString maskPath(QString p)
-{
-    // Change " " to "\ " to enable blanks in filenames
-    p=p.replace(QChar('&'),"\\&");
-    return p.replace(QChar(' '),"\\ ");
-}
-
 QString convertToRel (const QString &src, const QString &dst)
 {
     // Creates a relative path pointing from src to dst
@@ -241,7 +234,7 @@ void makeSubDirs (const QString &s)
     d.mkdir ("flags");	
 }
 
-ErrorCode zipDir (const QDir &zipInputDir, const QString &zipName)
+ErrorCode zipDir ( QDir zipInputDir, QString zipName)
 {
     ErrorCode err = Success;
 
@@ -270,7 +263,7 @@ ErrorCode zipDir (const QDir &zipInputDir, const QString &zipName)
     zipProc->setWorkingDirectory (zipInputDir.path());
 
 #if defined(Q_OS_WIN32)
-    QTextStream qout(stdout);
+    qDebug()<<"file: zipName"<<zipName;
     QByteArray result;
     zipProc->start("cmd");
     if (!zipProc->waitForStarted())
@@ -280,15 +273,15 @@ ErrorCode zipDir (const QDir &zipInputDir, const QString &zipName)
         err=Aborted;
 
     }
-    zipProc->write(QString("%1 a %2 -r %3\\*\n").arg(zipToolPath).arg(zipName).arg(zipInputDir.path()).toUtf8());
+    zipProc->write(QString("%1 a \"%2\" -r %3\\*\n").arg(zipToolPath).arg(zipName).arg(zipInputDir.path()).toUtf8());
     zipProc->closeWriteChannel();   //done Writing
 
     while(zipProc->state()!=QProcess::NotRunning){
         zipProc->waitForReadyRead();
         result = zipProc->readAll();
-        qout << result;
+        //vout << result << flush;
     }
-    // qout << zipProc->getStdout();
+    //vout << zipProc->getStdout()<<flush;
 #else
     QStringList args;
     args <<"-r";
@@ -339,7 +332,7 @@ ErrorCode zipDir (const QDir &zipInputDir, const QString &zipName)
     return err;	
 }
 
-File::ErrorCode unzipDir (const QDir &zipOutputDir, const QString &zipName)
+File::ErrorCode unzipDir ( QDir zipOutputDir, QString zipName)
 {
     ErrorCode err=Success;
 
@@ -349,7 +342,6 @@ File::ErrorCode unzipDir (const QDir &zipOutputDir, const QString &zipName)
     zipProc->setWorkingDirectory (zipOutputDir.path());
 
 #if defined(Q_OS_WIN32)
-    QTextStream qout(stdout);
     QByteArray result;
     zipProc->start("cmd");
     if (!zipProc->waitForStarted())
@@ -359,13 +351,15 @@ File::ErrorCode unzipDir (const QDir &zipOutputDir, const QString &zipName)
         err=Aborted;
 
     }
-    zipProc->write(QString("%1 -o%2 x %3\n").arg(zipToolPath).arg(zipOutputDir.path()).arg(zipName).toUtf8());
+    zipProc->write(QString("%1 -o%2 x \"%3\"\n").arg(zipToolPath).arg(zipOutputDir.path()).arg(zipName).toUtf8());
     zipProc->closeWriteChannel();   //done Writing
 
     while(zipProc->state()!=QProcess::NotRunning){
         zipProc->waitForReadyRead();
         result = zipProc->readAll();
+        //vout << result << flush;
     }
+    //vout << zipProc->getStdout()<<flush;
 #else
     QStringList args;
     args << "-o";   // overwrite existing files!

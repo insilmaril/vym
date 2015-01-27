@@ -13,7 +13,6 @@ enum SaveMode {PartOfMap,CompleteMap,UndoCommand};
 enum FileType {VymMap, FreemindMap,UnknownMap};
 
 /////////////////////////////////////////////////////////////////////////////
-QString maskPath (QString );
 QString convertToRel (const QString &,const QString &);
 QString convertToAbs (const QString &,const QString &);
 QString basename (const QString&);
@@ -28,8 +27,8 @@ QString makeUniqueDir (bool &ok, QString);
 void removeDir(QDir);
 bool copyDir (QDir src,QDir dst, const bool &override=false);
 void makeSubDirs (const QString &);
-File::ErrorCode zipDir (const QDir &,const QString&);
-File::ErrorCode unzipDir (const QDir &,const QString&);
+File::ErrorCode zipDir (QDir , QString);
+File::ErrorCode unzipDir (QDir , QString);
 bool loadStringFromDisk (const QString &fn, QString &s);
 bool saveStringToDisk (const QString &fn, const QString &s);
 
