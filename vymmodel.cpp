@@ -94,10 +94,9 @@ VymModel::VymModel()
     rootItem->setModel (this);
 }
 
-
 VymModel::~VymModel() 
 {
-    //qDebug() << "Destr VymModel begin this="<<this<<"  "<<mapName;
+    //out << "Destr VymModel begin this="<<this<<"  "<<mapName<<flush;
     mapEditor=NULL;
     blockReposition=true;
     autosaveTimer->stop();

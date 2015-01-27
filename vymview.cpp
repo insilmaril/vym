@@ -125,9 +125,9 @@ VymView::VymView(VymModel *m)
 VymView::~VymView() 
 {
     if (treeEditorIsVisible() )
-	settings.setLocalValue(model->getFilePath(),"/treeeditor/visible","true");
+        settings.setLocalValue(model->getFilePath(),"/treeeditor/visible","true");
     else
-	settings.setLocalValue(model->getFilePath(),"/treeeditor/visible","false");
+        settings.setLocalValue(model->getFilePath(),"/treeeditor/visible","false");
 }
 
 void VymView::readSettings()

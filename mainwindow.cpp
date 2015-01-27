@@ -18,6 +18,7 @@
 #include <QMenuBar>
 #include <QPrinter>
 #include <QStatusBar>
+#include <QTextStream>
 
 #include "aboutdialog.h"
 #include "branchpropeditor.h"
@@ -94,8 +95,10 @@ extern QString vymPlatform;
 extern QString vymBuildDate;
 extern bool debug;
 extern bool testmode;
+extern QTextStream out;
 extern bool bugzillaClientAvailable;
 extern Switchboard switchboard;
+
 
 extern QList <Command*> modelCommands;
 
@@ -360,6 +363,8 @@ Main::Main(QWidget* parent, Qt::WindowFlags f) : QMainWindow(parent,f)
 
 Main::~Main()
 {
+    // qDebug()<<"Destr Mainwindow"<<flush;
+
     // Save Settings
 
     if (!testmode) 
@@ -3564,10 +3569,13 @@ bool Main::closeTab(int i)
     VymModel *m=vymViews.at(i)->getModel();
     if (!m) return true;
 
+    VymView *vv=vymViews.at(i);
     vymViews.removeAt (i);
     tabWidget->removeTab (i);
 
+    // Destroy stuff, order is important
     delete (m->getMapEditor()); 
+    delete(vv);
     delete (m); 
 
     updateActions();
@@ -3621,12 +3629,11 @@ bool Main::fileExitVYM()
     fileSaveSession();
 
     // Check if one or more editors have changed
-    int i=0;
     while (vymViews.count()>0)
     {
-	tabWidget->setCurrentIndex(i);
-	if (fileCloseMap()) return true;
-    } 
+        tabWidget->setCurrentIndex(0);
+        if (fileCloseMap()) return true;
+    }
     qApp->quit();
     return false;
 }
