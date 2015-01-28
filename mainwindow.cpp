@@ -971,7 +971,7 @@ void Main::setupFileActions()
     a->setEnabled (false);
     switchboard.addConnection(fileMenu, a,tr("File","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( editCopy() ) );
-    actionListMap.append(a);
+    actionListMap.append(a);    //FIXME-2 check, if this really should go to this list
     actionCopy=a;
 
     fileLastMapsMenu = fileMenu->addMenu (tr("Open Recent","File menu"));
@@ -5498,18 +5498,17 @@ void Main::helpDoc()
     }
 }
 
-
 void Main::helpDemo()
 {
     QStringList filters;
     filters <<"VYM example map (*.vym)";
     QFileDialog fd;
-    #if defined(Q_OS_MACX)
-	fd.setDirectory (QDir("./vym.app/Contents/Resources/demos"));
-    #else
-	// default path in SUSE LINUX
-	fd.setDirectory (QDir(vymBaseDir.path()+"/demos"));
-    #endif
+#if defined(Q_OS_MACX)
+    fd.setDirectory (QDir("./vym.app/Contents/Resources/demos"));
+#else
+    // default path in SUSE LINUX
+    fd.setDirectory (QDir(vymBaseDir.path()+"/demos"));
+#endif
 
     fd.setFileMode (QFileDialog::ExistingFiles);
     fd.setNameFilters (filters);
@@ -5519,15 +5518,17 @@ void Main::helpDemo()
     QString fn;
     if ( fd.exec() == QDialog::Accepted )
     {
-	lastMapDir=fd.directory().path();
-	QStringList flist = fd.selectedFiles();
-	QStringList::Iterator it = flist.begin();
-	while( it != flist.end() ) 
-	{
-	    fn = *it;
-	    fileLoad(*it, NewMap,VymMap);		   
-	    ++it;
-	}
+        lastMapDir=fd.directory().path();
+        QStringList flist = fd.selectedFiles();
+        QStringList::Iterator it = flist.begin();
+        initProgressCounter( flist.count());
+        while( it != flist.end() )
+        {
+            fn = *it;
+            fileLoad(*it, NewMap,VymMap);
+            ++it;
+        }
+        removeProgressCounter();
     }
 }
 
