@@ -1101,15 +1101,13 @@ void Main::setupEditActions()
 
     QAction *a;
     a = new QAction( QPixmap( ":/undo.png"), tr( "&Undo","Edit menu" ),this);
-    connect( a, SIGNAL( triggered() ), this, SLOT( editUndo() ) );
-    a->setShortcut ( Qt::CTRL + Qt::Key_Z );	  
+    connect( a, SIGNAL( triggered() ), this, SLOT( editUndo() ) );  
     a->setEnabled (false);
     switchboard.addConnection(editMenu, a,tr("Edit","Shortcut group"));
     actionListMap.append (a);
     actionUndo=a;
 
     a = new QAction( QPixmap( ":/redo.png"), tr( "&Redo","Edit menu" ), this); 
-    a->setShortcut (Qt::CTRL + Qt::Key_Y );	  
     switchboard.addConnection(editMenu, a,tr("Edit","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( editRedo() ) );
     actionListMap.append (a);

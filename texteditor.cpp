@@ -316,6 +316,7 @@ void TextEditor::setupEditActions()
     QAction *a;
     a = new QAction(QPixmap(":/undo.png"), tr( "&Undo" ), this );
     a->setShortcut(Qt::CTRL + Qt::Key_Z );
+    a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
     connect( a, SIGNAL( triggered() ), e, SLOT( undo() ) );
     editMenu->addAction (a);
     editToolBar->addAction (a);
@@ -323,6 +324,7 @@ void TextEditor::setupEditActions()
     
     a = new QAction(QPixmap(":/redo.png" ), tr( "&Redo" ),this); 
     a->setShortcut( Qt::CTRL + Qt::Key_Y );
+    a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
     connect( a, SIGNAL( triggered() ), e, SLOT( redo() ) );
     editMenu->addAction (a);
     editToolBar->addAction (a);
