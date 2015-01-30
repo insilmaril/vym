@@ -129,9 +129,11 @@ extern QDir vymInstallDir;
 
 Main::Main(QWidget* parent, Qt::WindowFlags f) : QMainWindow(parent,f)
 {
-    mainWindow=this;
+    mainWindow = this;
 
     setWindowTitle ("VYM - View Your Mind");
+
+    shortcutScope = "Map editor and main window";
 
     // Load window settings
     #if defined(Q_OS_WIN32)
@@ -301,6 +303,10 @@ Main::Main(QWidget* parent, Qt::WindowFlags f) : QMainWindow(parent,f)
             this, SLOT( closeTab(int) ));
 
     layout->addWidget (tabWidget);
+
+    switchboard.addGroup("MainWindow",tr("Main window","Shortcut group"));
+    switchboard.addGroup("MapEditor",tr("Map Editors","Shortcut group"));
+    switchboard.addGroup("TextEditor",tr("Text Editors","Shortcut group"));
 
     setupFileActions();
     setupEditActions();
@@ -951,26 +957,30 @@ void Main::setupFileActions()
     QAction *a;
     a = new QAction(QPixmap( ":/filenew.png"), tr( "&New map","File menu" ),this);
     a->setShortcut ( Qt::CTRL + Qt::Key_N );
-    switchboard.addConnection(fileMenu, a,tr("File","Shortcut group"));
+    switchboard.addSwitch ("fileMapNew", shortcutScope, a);
     connect( a, SIGNAL( triggered() ), this, SLOT( fileNew() ) );
+    fileMenu->addAction(a);
     actionFileNew=a;
 
     a = new QAction(QPixmap( ":/filenewcopy.png"), tr( "&Copy to new map","File menu" ),this);
     a->setShortcut ( Qt::CTRL +Qt::SHIFT + Qt::Key_N );	 
-    switchboard.addConnection(fileMenu, a,tr("File","Shortcut group"));
+    switchboard.addSwitch ("fileMapNewCopy", shortcutScope, a);
     connect( a, SIGNAL( triggered() ), this, SLOT( fileNewCopy() ) );
+    fileMenu->addAction(a);
     actionFileNewCopy=a;
 
     a = new QAction( QPixmap( ":/fileopen.png"), tr( "&Open..." ,"File menu"),this);
     a->setShortcut ( Qt::CTRL + Qt::Key_L );	 
-    switchboard.addConnection(fileMenu, a,tr("File","Shortcut group"));
+    switchboard.addSwitch ("fileMapOpen", shortcutScope, a);
     connect( a, SIGNAL( triggered() ), this, SLOT( fileLoad() ) );
+    fileMenu->addAction(a);
     actionFileOpen=a;
 
     a = new QAction(tr( "&Restore last session","Edit menu" ), this);
-    a->setEnabled (false);
-    switchboard.addConnection(fileMenu, a,tr("File","Shortcut group"));
+    a->setShortcut (Qt::ALT + Qt::Key_R );
+    switchboard.addSwitch ("fileMapRestore", shortcutScope, a);
     connect( a, SIGNAL( triggered() ), this, SLOT( editCopy() ) );
+    fileMenu->addAction(a);
     actionListMap.append(a);    //FIXME-2 check, if this really should go to this list
     actionCopy=a;
 
@@ -978,8 +988,9 @@ void Main::setupFileActions()
     fileMenu->addSeparator();
 
     a = new QAction( QPixmap( ":/filesave.png"), tr( "&Save...","File menu" ), this);
-    switchboard.addConnection(fileMenu, a,tr("File","Shortcut group"));
+    switchboard.addSwitch ("fileMapSave", shortcutScope, a);
     connect( a, SIGNAL( triggered() ), this, SLOT( fileSave() ) );
+    fileMenu->addAction(a);
     actionListMap.append (a);
     actionFileSave=a;
 
@@ -1076,21 +1087,24 @@ void Main::setupFileActions()
     fileMenu->addSeparator();
 
     a = new QAction(QPixmap( ":/fileprint.png"), tr( "&Print")+QString("..."), this);
-    a->setShortcut (Qt::CTRL + Qt::Key_P );
-    switchboard.addConnection(fileMenu, a,tr("File","Shortcut group"));
+    a->setShortcut ( Qt::CTRL + Qt::Key_P);
+    switchboard.addSwitch ("fileMapPrint", shortcutScope, a);
     connect( a, SIGNAL( triggered() ), this, SLOT( filePrint() ) );
+    fileMenu->addAction(a);
     actionListMap.append (a);
     actionFilePrint=a;
 
     a = new QAction( QPixmap(":/fileclose.png"), tr( "&Close Map","File menu" ), this);
     a->setShortcut (Qt::CTRL + Qt::Key_W );	 
-    switchboard.addConnection(fileMenu, a,tr("File","Shortcut group"));
+    switchboard.addSwitch ("fileMapClose", shortcutScope, a);
     connect( a, SIGNAL( triggered() ), this, SLOT( fileCloseMap() ) );
+    fileMenu->addAction(a);
 
     a = new QAction(QPixmap(":/exit.png"), tr( "E&xit","File menu")+" "+vymName, this);
     a->setShortcut (Qt::CTRL + Qt::Key_Q );	  
-    switchboard.addConnection(fileMenu, a,tr("File","Shortcut group"));
+    switchboard.addSwitch ("fileExit", shortcutScope, a);
     connect( a, SIGNAL( triggered() ), this, SLOT( fileExitVYM() ) );
+    fileMenu->addAction(a);
 }
 
 
@@ -1101,39 +1115,51 @@ void Main::setupEditActions()
 
     QAction *a;
     a = new QAction( QPixmap( ":/undo.png"), tr( "&Undo","Edit menu" ),this);
-    connect( a, SIGNAL( triggered() ), this, SLOT( editUndo() ) );  
+    a->setShortcut (Qt::CTRL + Qt::Key_Z);
+    a->setShortcutContext (Qt::WidgetShortcut);
     a->setEnabled (false);
-    switchboard.addConnection(editMenu, a,tr("Edit","Shortcut group"));
+    switchboard.addSwitch ("mapUndo", shortcutScope, a);
+    connect( a, SIGNAL( triggered() ), this, SLOT( editUndo() ) );
+    editMenu->addAction(a);
     actionListMap.append (a);
     actionUndo=a;
 
     a = new QAction( QPixmap( ":/redo.png"), tr( "&Redo","Edit menu" ), this); 
-    switchboard.addConnection(editMenu, a,tr("Edit","Shortcut group"));
+    a->setShortcut (Qt::CTRL + Qt::Key_Y);
+    a->setShortcutContext (Qt::WidgetShortcut);
+    switchboard.addSwitch ("mapRedo", shortcutScope, a);
     connect( a, SIGNAL( triggered() ), this, SLOT( editRedo() ) );
+    editMenu->addAction(a);
     actionListMap.append (a);
     actionRedo=a;
 
     editMenu->addSeparator();
     a = new QAction(QPixmap( ":/editcopy.png"), tr( "&Copy","Edit menu" ), this);
+    a->setShortcut (Qt::CTRL + Qt::Key_C );
     a->setEnabled (false);
-    switchboard.addConnection(editMenu, a,tr("Edit","Shortcut group"));
+    switchboard.addSwitch ("mapCopy", shortcutScope, a);
     connect( a, SIGNAL( triggered() ), this, SLOT( editCopy() ) );
+    editMenu->addAction(a);
     actionListMap.append(a);
     actionCopy=a;
 
     a = new QAction(QPixmap( ":/editcut.png" ), tr( "Cu&t","Edit menu" ), this);
+    a->setShortcut (Qt::CTRL + Qt::Key_X );
     a->setEnabled (false);
     a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
-    switchboard.addConnection(editMenu, a,tr("Edit","Shortcut group"));
+    switchboard.addSwitch ("mapCut", shortcutScope, a);
     connect( a, SIGNAL( triggered() ), this, SLOT( editCut() ) );
+    editMenu->addAction(a);
     actionListMap.append(a);
     addAction (a);
     actionCut=a;
 
     a = new QAction(QPixmap( ":/editpaste.png"), tr( "&Paste","Edit menu" ),this);
     connect( a, SIGNAL( triggered() ), this, SLOT( editPaste() ) );
+    a->setShortcut (Qt::CTRL + Qt::Key_V );
     a->setEnabled (false);
-    switchboard.addConnection(editMenu, a,tr("Edit","Shortcut group"));
+    switchboard.addSwitch ("mapPaste", shortcutScope, a);
+    editMenu->addAction(a);
     actionListMap.append(a);
     actionPaste=a;
 
@@ -1141,7 +1167,7 @@ void Main::setupEditActions()
     a = new QAction( tr( "Delete Selection","Edit menu" ),this);
     a->setShortcut ( Qt::Key_Delete);		 
     a->setShortcutContext (Qt::WindowShortcut);
-    switchboard.addConnection(a,tr("Edit","Shortcut group"));
+    switchboard.addSwitch ("mapDelete", shortcutScope, a);
     addAction (a);
     connect( a, SIGNAL( triggered() ), this, SLOT( editDeleteSelection() ) );
     actionListItems.append (a);
@@ -1164,8 +1190,9 @@ void Main::setupEditActions()
     a= new QAction(QPixmap(":/newmapcenter.png"),tr( "Add mapcenter","Canvas context menu" ), this);
     a->setShortcut ( Qt::Key_C);    
     a->setShortcutContext (Qt::WindowShortcut);
-    switchboard.addConnection(editMenu, a,tr("Edit","Shortcut group"));
+    switchboard.addSwitch ("mapAddCenter", shortcutScope, a);
     connect( a, SIGNAL( triggered() ), this, SLOT( editAddMapCenter() ) );
+    editMenu->addAction(a);
     actionListMap.append (a);
     actionAddMapCenter = a;
 
@@ -2324,21 +2351,20 @@ void Main::setupFlag (Flag *flag, QToolBar *tb, const QString &name, const QStri
     QAction *a;
     if (tb)
     {
-	a=new QAction (flag->getPixmap(),name,this);
-	// StandardFlag
-	flag->setAction (a);
-	a->setVisible (flag->isVisible());
-	a->setCheckable(true);
-	a->setObjectName(name);
-	a->setToolTip(tooltip);
-	a->setShortcut (shortcut);
-	connect (a, SIGNAL( triggered() ), this, SLOT( standardFlagChanged() ) );
-	standardFlagsMaster->addFlag (flag);	
-	switchboard.addConnection (tb, a, tr("Flags toolbar"));
+        a=new QAction (flag->getPixmap(),name,this);
+        // StandardFlag
+        flag->setAction (a);
+        a->setVisible (flag->isVisible());
+        a->setCheckable(true);
+        a->setObjectName(name);
+        a->setToolTip(tooltip);
+        a->setShortcut (shortcut);
+        connect (a, SIGNAL( triggered() ), this, SLOT( standardFlagChanged() ) );
+        standardFlagsMaster->addFlag (flag);
     } else
     {
-	// SystemFlag
-	systemFlagsMaster->addFlag (flag);  
+        // SystemFlag
+        systemFlagsMaster->addFlag (flag);
     }
 }
 
@@ -5385,26 +5411,7 @@ void Main::standardFlagChanged()
 
 void Main::testFunction1()
 {
-    QDir zipOutputDir("c:\\Users\\uwdr9542\\x");
-    QString zipName="c:\\Users\\uwdr9542\\x\\lifeforms.vym";
-    QString zipToolPath = "c:/Program Files/7-Zip/7z.exe";
-    QStringList parameters;
-    parameters << "/c"; // End cmd shell after execution
-    parameters << zipToolPath;
- //   parameters << QString("-o %1").arg(zipOutputDir.path());
-    parameters << "x";  // Extract from archive
-    parameters << zipName;
-    qDebug()<<"Parameters: "<< parameters;
-
-    QProcess process;
-    process.start("cmd.exe", parameters, QIODevice::ReadWrite | QIODevice::Text);
-    // QStringList() << "/c" << zipToolPath << "x" , // "-o" << zipOutputDir << "x" << .arg(zipToolPath).arg(zipOutputDir.path()).arg(zipName) ,
-
-    if(!process.waitForFinished(2000)) // beware the timeout default parameter
-        qDebug() << "executing program failed with exit code" << process.exitCode();
-    else
-        qDebug() << QString(process.readAllStandardOutput()).split('\n')<<
-                    QString(process.readAllStandardError()).split('\n');
+    helpShortcuts();
 }
 
 void Main::testFunction2()
@@ -5422,9 +5429,9 @@ void Main::toggleHideExport()
     VymModel *m=currentModel();
     if (!m) return;
     if (actionToggleHideMode->isChecked() )
-	m->setHideTmpMode (TreeItem::HideExport);
+        m->setHideTmpMode (TreeItem::HideExport);
     else
-	m->setHideTmpMode (TreeItem::HideNone);
+        m->setHideTmpMode (TreeItem::HideNone);
 }
 
 void Main::testCommand()

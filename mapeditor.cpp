@@ -11,6 +11,7 @@
 #include "geometry.h"
 #include "mainwindow.h"
 #include "misc.h"
+#include "shortcuts.h"
 #include "warningdialog.h"
 #include "xlinkitem.h"
 
@@ -28,6 +29,7 @@ extern QMenu* canvasContextMenu;
 extern QMenu* floatimageContextMenu;
 extern QMenu* taskContextMenu;
 
+extern Switchboard switchboard;
 extern Settings settings;
 
 ///////////////////////////////////////////////////////////////////////
@@ -35,6 +37,8 @@ extern Settings settings;
 MapEditor::MapEditor( VymModel *vm)	
 {
     //qDebug() << "Constructor ME "<<this;
+
+    QString scope = tr("Map Editor","Shortcut scope");
     mapScene= new QGraphicsScene(NULL);
     mapScene->setBackgroundBrush (QBrush(Qt::white, Qt::SolidPattern));
 
@@ -156,13 +160,13 @@ MapEditor::MapEditor( VymModel *vm)
     connect( a, SIGNAL( triggered() ), mainWindow, SLOT( editRedo() ) );
     addAction(a);
 
+    /* not needed!
     a = new QAction(tr( "&Restore last session","Edit menu" ), this);
     a->setShortcut (Qt::ALT + Qt::Key_R );
-    a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
     connect( a, SIGNAL( triggered() ), mainWindow, SLOT( fileRestoreSession() ) );
     //actionFileRestoreSession=a;
     addAction(a);
-    
+ */
     a = new QAction( tr( "&Paste","Edit menu" ), this);
     a->setShortcut (Qt::CTRL + Qt::Key_V );
     a->setShortcutContext (Qt::WidgetWithChildrenShortcut);

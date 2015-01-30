@@ -14,7 +14,7 @@ enum EditorState {inactiveEditor,emptyEditor,filledEditor};
 class TextEditor :public QMainWindow
 {    Q_OBJECT
 public:
-    TextEditor();
+    TextEditor(QString scope);
     ~TextEditor();
 
     void init(const QString &ename);
@@ -83,7 +83,7 @@ private slots:
     void setState (EditorState);
 
 protected:
-    QString editorName;	    // "note" or "heading" editor, used for settings
+    QString editorScope;    // used for settings and shortcut scopes
     QTextEdit *e;
     QPoint lastPos;	    // save last position of window
     QString filename;
