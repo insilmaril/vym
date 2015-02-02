@@ -95,7 +95,7 @@ extern QString vymPlatform;
 extern QString vymBuildDate;
 extern bool debug;
 extern bool testmode;
-extern QTextStream out;
+extern QTextStream vout;
 extern bool bugzillaClientAvailable;
 extern Switchboard switchboard;
 
@@ -2361,6 +2361,8 @@ void Main::setupFlag (Flag *flag, QToolBar *tb, const QString &name, const QStri
         a->setShortcut (shortcut);
         connect (a, SIGNAL( triggered() ), this, SLOT( standardFlagChanged() ) );
         standardFlagsMaster->addFlag (flag);
+        switchboard.addConnection(tb, a, tr("Flags toolbar"));
+
     } else
     {
         // SystemFlag
