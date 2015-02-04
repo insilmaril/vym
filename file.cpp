@@ -23,7 +23,6 @@ QString convertToRel (const QString &src, const QString &dst)
 {
     // Creates a relative path pointing from src to dst
 
-    qDebug()<<"convertToRel src="<<src<<" dst="<<dst;
     QString s=src;
     QString d=dst;
     int i;
@@ -263,7 +262,6 @@ ErrorCode zipDir ( QDir zipInputDir, QString zipName)
     zipProc->setWorkingDirectory (zipInputDir.path());
 
 #if defined(Q_OS_WIN32)
-    qDebug()<<"file: zipName"<<zipName;
     QByteArray result;
     zipProc->start("cmd");
     if (!zipProc->waitForStarted())
