@@ -421,7 +421,8 @@ bool loadStringFromDisk (const QString &fname, QString &s)
 bool saveStringToDisk (const QString &fname, const QString &s)
 {
     QFile file(fname);
-    if (!file.open(QFile::WriteOnly | QFile::Text)) {
+    // Write as binary (default), QFile::Text would convert linebreaks
+    if (!file.open(QFile::WriteOnly  )) {
         qWarning()<<QString("saveStringToDisk: Cannot write file %1:\n%2.")
                     .arg(fname)
                     .arg(file.errorString());
