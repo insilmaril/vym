@@ -15,7 +15,7 @@ NoteEditor::NoteEditor(QString scope):TextEditor(scope)
     menuBar()->show();
 
     // Load Settings
-    init(editorScope);
+    init(shortcutScope);
 }
 
 NoteEditor::~NoteEditor() {}

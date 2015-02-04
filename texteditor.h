@@ -83,7 +83,7 @@ private slots:
     void setState (EditorState);
 
 protected:
-    QString editorScope;    // used for settings and shortcut scopes
+    QString shortcutScope;  // used for settings and shortcut scopes
     QTextEdit *e;
     QPoint lastPos;	    // save last position of window
     QString filename;

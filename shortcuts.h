@@ -24,8 +24,9 @@ public:
     void addConnection(QAction *a,const QString &s);
     void addConnection(QWidget *w, QAction *a,const QString &s);
     void addGroup( QString gIdentifier, QString gName);
-    void addSwitch( QString identifier, QString name, QString group, QKeySequence ks);
-    void addSwitch( QString identifier, QString group, QAction *a);
+    void addSwitch( QString identifier, QString name, QString scope, QKeySequence ks);
+    void addSwitch( QString identifier, QString scope, QAction *a);
+    void addSwitch( QString identifier, QString scope, QAction *a, QString tag);
     QString getASCII();
     void printASCII();
     void printLaTeX();

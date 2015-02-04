@@ -53,11 +53,18 @@ void Switchboard::addSwitch( QString identifier, QString name, QString group, QK
         switches.insert(group, ksw);
     }
 }
-void Switchboard::addSwitch( QString identifier, QString group, QAction *action)
+
+void Switchboard::addSwitch( QString identifier, QString scope, QAction *action)
 {
     // Overloaded for convenience
     // Get parameters from action
-    addSwitch( identifier, action->text(), group, action->shortcut());
+    addSwitch( identifier, action->text(), scope, action->shortcut());
+}
+void Switchboard::addSwitch( QString identifier, QString scope, QAction *action, QString tag)
+{
+    // Overloaded for convenience
+    // Get parameters from action
+    addSwitch( identifier, action->text(), scope, action->shortcut());
 }
 
 QString Switchboard::getASCII()  

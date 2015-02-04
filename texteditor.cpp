@@ -39,7 +39,7 @@ extern bool debug;
 
 TextEditor::TextEditor(QString scope)
 {
-    editorScope = scope;
+    shortcutScope = scope;
 
     statusBar()->hide();    // Hide sizeGrip on default, which comes with statusBar
 
@@ -75,7 +75,7 @@ TextEditor::TextEditor(QString scope)
 TextEditor::~TextEditor()
 {
     // Save Settings
-    QString n = QString("/satellite/%1/").arg(editorScope);
+    QString n = QString("/satellite/%1/").arg(shortcutScope);
     settings.setValue( n + "geometry/size", size() );
     settings.setValue( n + "geometry/pos", pos() );
     settings.setValue( n + "state",saveState(0));
@@ -92,7 +92,7 @@ TextEditor::~TextEditor()
 
 void TextEditor::init (const QString &ename) // FIXME-2 parameter still required?
 {   
-    QString n=QString("/satellite/%1/").arg(editorScope);
+    QString n=QString("/satellite/%1/").arg(shortcutScope);
     restoreState (settings.value(n+"state",0).toByteArray());
     filenameHint="";
     fixedFont.fromString (settings.value(
@@ -266,7 +266,8 @@ void TextEditor::setupFileActions()
     QAction *a;
     a = new QAction( QPixmap( ":/fileopen.png"), tr( "&Import..." ),this);
     a->setShortcut( Qt::CTRL + Qt::Key_O );
-    switchboard.addSwitch( "textLoad", editorScope, a);
+    a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
+    switchboard.addSwitch( "textLoad", shortcutScope, a);
     connect( a, SIGNAL( triggered() ), this, SLOT( textLoad() ) );
     tb->addAction (a);
     fileMenu->addAction (a);
@@ -276,7 +277,7 @@ void TextEditor::setupFileActions()
     a = new QAction( QPixmap(":/filesave.png" ), tr( "&Export..." ), this);
     a->setShortcut( Qt::CTRL + Qt::Key_S );
     a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
-    switchboard.addSwitch( "textSave", editorScope, a);
+    switchboard.addSwitch( "textSave", shortcutScope, a);
     connect( a, SIGNAL( triggered() ), this, SLOT( textSave() ) );
     tb->addAction (a);
     fileMenu->addAction (a);
@@ -291,7 +292,7 @@ void TextEditor::setupFileActions()
     a = new QAction( tr( "Export &As...(ASCII)" ), this);
     a->setShortcut(Qt::ALT + Qt::Key_X );
     a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
-    switchboard.addSwitch( "textExportAsASCII", editorScope, a);
+    switchboard.addSwitch( "textExportAsASCII", shortcutScope, a);
     connect( a, SIGNAL( triggered() ), this, SLOT( textExportAsASCII() ) );
     fileMenu->addAction (a);
     addAction (a);
@@ -300,7 +301,7 @@ void TextEditor::setupFileActions()
     fileMenu->addSeparator();
     a = new QAction( QPixmap(":/fileprint.png" ), tr( "&Print..." ),this);
     a->setShortcut (Qt::CTRL + Qt::Key_P);
-    switchboard.addSwitch( "textPrint", editorScope, a);
+    switchboard.addSwitch( "textPrint", shortcutScope, a);
     connect( a, SIGNAL( triggered() ), this, SLOT( textPrint() ) );
     tb->addAction (a);
     fileMenu->addAction (a);
@@ -325,7 +326,7 @@ void TextEditor::setupEditActions()
     a = new QAction(QPixmap(":/undo.png"), tr( "&Undo" ), this );
     a->setShortcut(Qt::CTRL + Qt::Key_Z );
     a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
-    switchboard.addSwitch( "textUndo", editorScope, a);
+    switchboard.addSwitch( "textUndo", shortcutScope, a);
     connect( a, SIGNAL( triggered() ), e, SLOT( undo() ) );
     editMenu->addAction (a);
     editToolBar->addAction (a);
@@ -334,7 +335,7 @@ void TextEditor::setupEditActions()
     a = new QAction(QPixmap(":/redo.png" ), tr( "&Redo" ),this); 
     a->setShortcut( Qt::CTRL + Qt::Key_Y );
     a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
-    switchboard.addSwitch( "textRedo", editorScope, a);
+    switchboard.addSwitch( "textRedo", shortcutScope, a);
     connect( a, SIGNAL( triggered() ), e, SLOT( redo() ) );
     editMenu->addAction (a);
     editToolBar->addAction (a);
@@ -344,7 +345,7 @@ void TextEditor::setupEditActions()
     a = new QAction(QPixmap(), tr( "Select and copy &all" ),this); 
     a->setShortcutContext (Qt::WidgetShortcut);
     a->setShortcut( Qt::CTRL + Qt::Key_A );
-    switchboard.addSwitch( "textCopyAll", editorScope, a);
+    switchboard.addSwitch( "textCopyAll", shortcutScope, a);
     connect( a, SIGNAL( triggered() ), this, SLOT( editCopyAll() ) );
     editMenu->addAction (a);
 
@@ -352,7 +353,7 @@ void TextEditor::setupEditActions()
     a = new QAction(QPixmap(":/editcopy.png" ), tr( "&Copy" ),this);
     a->setShortcut( Qt::CTRL + Qt::Key_C );
     a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
-    switchboard.addSwitch( "textCopy", editorScope, a);
+    switchboard.addSwitch( "textCopy", shortcutScope, a);
     connect( a, SIGNAL( triggered() ), e, SLOT( copy() ) );
     editMenu->addAction (a);
     editToolBar->addAction (a);
@@ -361,7 +362,7 @@ void TextEditor::setupEditActions()
     a = new QAction(QPixmap(":/editcut.png" ), tr( "Cu&t" ),this);
     a->setShortcut( Qt::CTRL + Qt::Key_X );
     a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
-    switchboard.addSwitch( "textCut", editorScope, a);
+    switchboard.addSwitch( "textCut", shortcutScope, a);
     connect( a, SIGNAL( triggered() ), e, SLOT( cut() ) );
     editMenu->addAction (a);
     editToolBar->addAction (a);
@@ -370,7 +371,7 @@ void TextEditor::setupEditActions()
     a = new QAction(QPixmap(":/editpaste.png" ), tr( "&Paste" ),this);
     a->setShortcut( Qt::CTRL + Qt::Key_V );
     a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
-    switchboard.addSwitch( "textPaste", editorScope, a);
+    switchboard.addSwitch( "textPaste", shortcutScope, a);
     connect( a, SIGNAL( triggered() ), e, SLOT( paste() ) );
     editMenu->addAction (a);
     editToolBar->addAction (a);
@@ -389,7 +390,7 @@ void TextEditor::setupFormatActions()
     a->setShortcut(Qt::ALT + Qt::Key_I);
     a->setCheckable (true);
     a->setChecked (settings.value("/noteeditor/fonts/useFixedByDefault",false).toBool() );
-    switchboard.addSwitch( "textToggleFonthint", editorScope, a);
+    switchboard.addSwitch( "textToggleFonthint", shortcutScope, a);
     connect( a, SIGNAL( triggered() ), this, SLOT( toggleFonthint() ) );
     formatMenu->addAction (a);
     fontHintsToolBar->addAction (a);
@@ -400,7 +401,7 @@ void TextEditor::setupFormatActions()
     a->setShortcut (Qt::ALT + Qt::Key_R);
     a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
     a->setCheckable (true);
-    switchboard.addSwitch( "textToggleRichText", editorScope, a);
+    switchboard.addSwitch( "textToggleRichText", shortcutScope, a);
     connect( a, SIGNAL( triggered() ), this, SLOT( toggleRichText() ) );
     formatMenu->addAction (a);
     fontHintsToolBar->addAction (a);
@@ -445,7 +446,8 @@ void TextEditor::setupFormatActions()
 
     a = new QAction( QPixmap (":/text_bold.png"), tr( "&Bold" ), this);
     a->setShortcut(Qt::CTRL + Qt::Key_B );
-    switchboard.addSwitch( "textToggleBold", editorScope, a);
+    a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
+    switchboard.addSwitch( "textToggleBold", shortcutScope, a);
     connect( a, SIGNAL( triggered() ), this, SLOT( textBold() ) );
     formatToolBar->addAction (a);
     formatMenu->addAction (a);
@@ -454,7 +456,8 @@ void TextEditor::setupFormatActions()
     
     a = new QAction( QPixmap(":/text_italic.png"), tr( "&Italic" ),  this);
     a->setShortcut(Qt::CTRL + Qt::Key_I);
-    switchboard.addSwitch( "textToggleItalic", editorScope, a);
+    a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
+    switchboard.addSwitch( "textToggleItalic", shortcutScope, a);
     connect( a, SIGNAL( triggered() ), this, SLOT( textItalic() ) );
     formatToolBar->addAction (a);
     formatMenu->addAction (a);
@@ -463,7 +466,8 @@ void TextEditor::setupFormatActions()
     
     a = new QAction( QPixmap (":/text_under.png"), tr( "&Underline" ), this);
     a->setShortcut(Qt::CTRL + Qt::Key_U );
-    switchboard.addSwitch( "textToggleUnderline", editorScope, a);
+    a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
+    switchboard.addSwitch( "textToggleUnderline", shortcutScope, a);
     connect( a, SIGNAL( triggered() ), this, SLOT( textUnderline() ) );
     formatToolBar->addAction (a);
     formatMenu->addAction (a);
@@ -476,19 +480,21 @@ void TextEditor::setupFormatActions()
     actGrp2->setExclusive(true);
     a = new QAction( QPixmap (":/text_sub.png"), tr( "Subs&cript" ),actGrp2 );
     a->setShortcut( Qt::CTRL + Qt::SHIFT + Qt::Key_B );
+    a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
     a->setCheckable( true );
     formatToolBar->addAction (a);
     formatMenu->addAction (a);
-    switchboard.addSwitch( "textToggleSub", editorScope, a);
+    switchboard.addSwitch( "textToggleSub", shortcutScope, a);
     connect(a, SIGNAL(triggered()), this, SLOT(textVAlign()));
     actionAlignSubScript=a;
 
     a = new QAction( QPixmap (":/text_super.png"), tr( "Su&perscript" ),actGrp2  );
     a->setShortcut( Qt::CTRL + Qt::SHIFT + Qt::Key_P );
+    a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
     a->setCheckable( true );
     formatToolBar->addAction (a);
     formatMenu->addAction (a);
-    switchboard.addSwitch( "textToggleSuper", editorScope, a);
+    switchboard.addSwitch( "textToggleSuper", shortcutScope, a);
     connect(a, SIGNAL(triggered()), this, SLOT(textVAlign()));
     actionAlignSuperScript=a;
     QActionGroup *grp = new QActionGroup( this );
