@@ -13,11 +13,13 @@ KeySwitch::KeySwitch (
         const QString &kIdentifier,
         const QString &kName,
         const QString &kGroup,
+        const QString &kTag,
         const QKeySequence &kseq)
 {
     identifier = kIdentifier;
     name = kName;
     group = kGroup;
+    tag = kTag;
     keySequence = kseq;
 }
 
@@ -28,43 +30,20 @@ Switchboard::Switchboard ()
 {
 }
 
-void Switchboard::addConnection (QAction *a, const QString &group)  //FIXME-4 obsolete
-{   
-    actions.insert(group,a);
-}
-
-void Switchboard::addConnection (QWidget *w, QAction *a, const QString &group)
-{   
-    actions.insert(group,a);
-    if (w) w->addAction (a);
-}
-
 void Switchboard::addGroup( QString gIdentifier, QString gName)
 {
     groups.insert(gIdentifier, gName); // FIXME-2 check if identifier already exists
 }
 
-void Switchboard::addSwitch( QString identifier, QString name, QString group, QKeySequence kseq)
-{
-    // FIXME-1 check, if identifier already exist...
-    if (!switches.uniqueKeys().contains(name))
-    {
-        KeySwitch ksw(identifier, name, group, kseq);
-        switches.insert(group, ksw);
-    }
-}
-
-void Switchboard::addSwitch( QString identifier, QString scope, QAction *action)
-{
-    // Overloaded for convenience
-    // Get parameters from action
-    addSwitch( identifier, action->text(), scope, action->shortcut());
-}
 void Switchboard::addSwitch( QString identifier, QString scope, QAction *action, QString tag)
 {
-    // Overloaded for convenience
-    // Get parameters from action
-    addSwitch( identifier, action->text(), scope, action->shortcut());
+    // FIXME-1 check, if identifier already exist...
+    if (!switches.uniqueKeys().contains(identifier))
+    {
+        KeySwitch ksw(identifier, action->text(), scope, tag, action->shortcut());
+        switches.insert(scope, ksw);
+    } else
+        qDebug() << "Switchboard::addSwitch warning: Existing idenifier " << identifier;
 }
 
 QString Switchboard::getASCII()  
@@ -86,6 +65,7 @@ QString Switchboard::getASCII()
         s += "\n";
     }
 
+    /*
     foreach (g, actions.uniqueKeys())
     {
         s += g +"\n";
@@ -99,6 +79,7 @@ QString Switchboard::getASCII()
             s+= QString(" %1: %2\n").arg(sc,12).arg(desc);
         }
     }
+    */
     return s;
 }
 
