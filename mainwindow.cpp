@@ -2419,9 +2419,9 @@ void Main::setupFlag (Flag *flag, QToolBar *tb, const QString &name, const QStri
         a->setObjectName(name);
         a->setToolTip(tooltip);
         a->setShortcut (shortcut);
+        tb->addAction(a);
         connect (a, SIGNAL( triggered() ), this, SLOT( standardFlagChanged() ) );
         standardFlagsMaster->addFlag (flag);
-        switchboard.addConnection(tb, a, tr("Flags toolbar"));
     } else
     {
         // SystemFlag
