@@ -471,8 +471,15 @@ void BranchObj::alignRelativeTo (QPointF ref,bool alignSelf)
     for (int i=0; i<treeItem->branchCount(); ++i)
         ch+=treeItem->getBranchObjNum(i)->getTotalBBox().height();
 
-    int depth=0;
-    if (parObj)	depth=1 + parObj->getTreeItem()->depth();
+    int depth = 0;
+    bool freePositioning = false;
+    if (parObj)
+    {
+        TreeItem *pi = parObj->getTreeItem();
+        depth = 1 + pi->depth();
+        if (pi->getHeading() == "xxx")
+            freePositioning = true;
+    }
     
 // TODO testing
 /*
@@ -524,24 +531,29 @@ void BranchObj::alignRelativeTo (QPointF ref,bool alignSelf)
         move2RelPos (getRelPos() );
     else if (depth>1)
     {
-        if (anim.isAnimated())
-            move2RelPos(anim);
+        if (freePositioning)
+            move2RelPos (getRelPos() );
         else
         {
-            if (alignSelf)
-                switch (orientation)
-                {
-                case LinkableMapObj::LeftOfCenter:
-                    move (ref.x() - bbox.width(), ref.y() + (th-bbox.height())/2 );
-                    break;
-                case LinkableMapObj::RightOfCenter:
-                    move (ref.x() , ref.y() + (th - bbox.height())/2 );
-                    //move (ref.x() , ref.y() );
-                    break;
-                default:
-                    qWarning ("LMO::alignRelativeTo: oops, no orientation given for BO...");
-                    break;
-                }
+            if (anim.isAnimated())
+                move2RelPos(anim);
+            else
+            {
+                if (alignSelf)
+                    switch (orientation)
+                    {
+                    case LinkableMapObj::LeftOfCenter:
+                        move (ref.x() - bbox.width(), ref.y() + (th-bbox.height())/2 );
+                        break;
+                    case LinkableMapObj::RightOfCenter:
+                        move (ref.x() , ref.y() + (th - bbox.height())/2 );
+                        //move (ref.x() , ref.y() );
+                        break;
+                    default:
+                        qWarning ("LMO::alignRelativeTo: oops, no orientation given for BO...");
+                        break;
+                    }
+            }
         }
     }
 

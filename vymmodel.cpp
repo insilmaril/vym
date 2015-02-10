@@ -2110,7 +2110,30 @@ void VymModel::setIncludeImagesHor(bool b)
     }	
 }
 
-void VymModel::setHideLinkUnselected (bool b) 
+void VymModel::setChildrenLayout(BranchItem::LayoutHint layoutHint)
+{
+    BranchItem *bi=getSelectedBranch();
+    if (bi)
+    {
+        /*
+        QString u= b ? "false" : "true";
+        QString r=!b ? "false" : "true";
+
+        saveState(      // FIXME-2 missing
+            bi,
+            QString("setIncludeImagesHorizontally (%1)").arg(u),
+            bi,
+            QString("setIncludeImagesHorizontally (%1)").arg(r),
+            QString("Include images horizontally in %1").arg(getObjectName(bi))
+        );
+        */
+        bi->setChildrenLayout(layoutHint);
+        emitDataChanged ( bi);
+        reposition();
+    }
+}
+
+void VymModel::setHideLinkUnselected (bool b)
 {
     TreeItem *ti=getSelectedItem();
     if (ti && (ti->getType()==TreeItem::Image ||ti->isBranchLikeType()))

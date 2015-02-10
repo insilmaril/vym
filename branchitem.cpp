@@ -29,6 +29,7 @@ BranchItem::BranchItem(const QList<QVariant> &data, TreeItem *parent):MapItem (d
     includeImagesVer=false;
     includeImagesHor=false;
     includeChildren=false;
+    childrenLayout = BranchItem::AutoPositioning;
      
     lastSelectedBranchNum=-1;
     lastSelectedBranchNumAlt=-1;
@@ -355,6 +356,16 @@ void BranchItem::sortChildren(bool inverse) //FIXME-4 optimize by not using move
 		}   
 	} 
     }while(madeChanges);
+}
+
+void BranchItem::setChildrenLayout(BranchItem::LayoutHint layoutHint)
+{
+    childrenLayout = layoutHint;
+}
+
+BranchItem::LayoutHint BranchItem::getChildrenLayout()
+{
+    return childrenLayout;
 }
 
 void BranchItem::setIncludeImagesVer(bool b)

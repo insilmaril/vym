@@ -32,6 +32,8 @@ extern QMenu* taskContextMenu;
 extern Switchboard switchboard;
 extern Settings settings;
 
+extern QTextStream vout;
+
 ///////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////
 MapEditor::MapEditor( VymModel *vm)	
@@ -1862,23 +1864,32 @@ void MapEditor::mouseReleaseEvent(QMouseEvent* e)
                     }
 		}
 
-		// Draw the original link, before selection was moved around
-		if (settings.value("/animation/use",true).toBool() 
-		    && seli->depth()>1
-//		    && distance (lmosel->getRelPos(),movingObj_orgRelPos)<3
-		) 
-		{
-		    lmosel->setRelPos();    // calc relPos first for starting point
-		    
-		    model->startAnimation(
-			(BranchObj*)lmosel,
-			lmosel->getRelPos(),
-			movingObj_orgRelPos
-		    );	
-		} else	
-		    model->reposition();
-	    }
-	}
+        if (selbi->parentBranch()->getChildrenLayout() == BranchItem::FreePositioning)
+        {
+            lmosel->setRelPos();
+            model->reposition();
+        }else
+        {
+
+
+            // Draw the original link, before selection was moved around
+            if (settings.value("/animation/use",true).toBool()
+                    && seli->depth()>1
+                    //		    && distance (lmosel->getRelPos(),movingObj_orgRelPos)<3
+                    )
+            {
+                lmosel->setRelPos();    // calc relPos first for starting point
+
+                model->startAnimation(
+                            (BranchObj*)lmosel,
+                            lmosel->getRelPos(),
+                            movingObj_orgRelPos
+                            );
+            } else
+                model->reposition();
+        }
+        }
+    }
 	// Finally resize scene, if needed
 	scene()->update();
 	movingObj=NULL;	    
