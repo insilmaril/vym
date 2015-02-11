@@ -472,13 +472,12 @@ void BranchObj::alignRelativeTo (QPointF ref,bool alignSelf)
         ch+=treeItem->getBranchObjNum(i)->getTotalBBox().height();
 
     int depth = 0;
-    bool freePositioning = false;
+    BranchItem::LayoutHint layoutHint = BranchItem::AutoPositioning;
     if (parObj)
     {
         TreeItem *pi = parObj->getTreeItem();
         depth = 1 + pi->depth();
-        if (pi->getHeading() == "xxx")
-            freePositioning = true;
+        layoutHint = ((BranchItem*)treeItem)->parentBranch()->getChildrenLayout();
     }
     
 // TODO testing
@@ -531,7 +530,7 @@ void BranchObj::alignRelativeTo (QPointF ref,bool alignSelf)
         move2RelPos (getRelPos() );
     else if (depth>1)
     {
-        if (freePositioning)
+        if (layoutHint == BranchItem::FreePositioning)
             move2RelPos (getRelPos() );
         else
         {
