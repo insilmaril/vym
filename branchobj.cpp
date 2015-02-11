@@ -480,6 +480,15 @@ void BranchObj::alignRelativeTo (QPointF ref,bool alignSelf)
         layoutHint = ((BranchItem*)treeItem)->parentBranch()->getChildrenLayout();
     }
     
+    // set useRelPos, depending on layout
+    if (depth > 1)
+    {
+        if (layoutHint == BranchItem::FreePositioning)
+            useRelPos = true;
+        else
+            useRelPos = false;
+    }
+
 // TODO testing
 /*
     if (debug)

@@ -356,10 +356,8 @@ void LinkableMapObj::setOrientation()
             else
                 orientation=RightOfCenter;
         }  else
-            if (absPos.x() < QPointF(parObj->getChildRefPos() ).x() )
-                orientation=LeftOfCenter;
-            else
-                orientation=RightOfCenter;
+            // use the orientation of the parent:
+            orientation=parObj->getOrientation();
     }
 }
 
