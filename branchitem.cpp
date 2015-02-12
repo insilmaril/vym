@@ -124,6 +124,11 @@ QString BranchItem::saveToDir (const QString &tmpdir,const QString &prefix, cons
     else    
 	elementName="branch";
 
+    // Free positioning of children
+    QString layoutAttr;
+    if (childrenLayout == BranchItem::FreePositioning)
+        layoutAttr += attribut ("childrenFreePos","true");
+
     // Save rotation
     QString rotAttr;
     if (mo && mo->getRotation() !=0 )
@@ -134,7 +139,8 @@ QString BranchItem::saveToDir (const QString &tmpdir,const QString &prefix, cons
 	+ getGeneralAttr()
 	+ scrolledAttr 
 	+ getIncludeImageAttr() 
-	+ rotAttr
+    + rotAttr
+    + layoutAttr
 	+ idAttr
 	);
     incIndent();
