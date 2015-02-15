@@ -23,7 +23,6 @@ QString convertToRel (const QString &src, const QString &dst)
 {
     // Creates a relative path pointing from src to dst
 
-    qDebug()<<"convertToRel src="<<src<<" dst="<<dst;
     QString s=src;
     QString d=dst;
     int i;
@@ -263,7 +262,6 @@ ErrorCode zipDir ( QDir zipInputDir, QString zipName)
     zipProc->setWorkingDirectory (zipInputDir.path());
 
 #if defined(Q_OS_WIN32)
-    qDebug()<<"file: zipName"<<zipName;
     QByteArray result;
     zipProc->start("cmd");
     if (!zipProc->waitForStarted())
@@ -423,7 +421,8 @@ bool loadStringFromDisk (const QString &fname, QString &s)
 bool saveStringToDisk (const QString &fname, const QString &s)
 {
     QFile file(fname);
-    if (!file.open(QFile::WriteOnly | QFile::Text)) {
+    // Write as binary (default), QFile::Text would convert linebreaks
+    if (!file.open(QFile::WriteOnly  )) {
         qWarning()<<QString("saveStringToDisk: Cannot write file %1:\n%2.")
                     .arg(fname)
                     .arg(file.errorString());

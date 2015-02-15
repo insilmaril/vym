@@ -324,6 +324,7 @@ private slots:
     void checkUpdates();
 
 private:
+    QString shortcutScope;          //! For listing shortcuts
     QTabWidget *tabWidget;
     qint64 *browserPID;
 

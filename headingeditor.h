@@ -6,7 +6,7 @@
 class HeadingEditor :  public TextEditor {
     Q_OBJECT
 public:
-    HeadingEditor();
+    HeadingEditor(QString scope);
     ~HeadingEditor();
 
 };

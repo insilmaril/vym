@@ -9,7 +9,7 @@ class NoteObj;
 class NoteEditor : public TextEditor {
     Q_OBJECT
 public:
-    NoteEditor();
+    NoteEditor(QString scope);
     ~NoteEditor();
 
     NoteObj getNoteObj();

@@ -11,6 +11,7 @@
 #include "geometry.h"
 #include "mainwindow.h"
 #include "misc.h"
+#include "shortcuts.h"
 #include "warningdialog.h"
 #include "xlinkitem.h"
 
@@ -28,6 +29,7 @@ extern QMenu* canvasContextMenu;
 extern QMenu* floatimageContextMenu;
 extern QMenu* taskContextMenu;
 
+extern Switchboard switchboard;
 extern Settings settings;
 
 ///////////////////////////////////////////////////////////////////////
@@ -35,6 +37,8 @@ extern Settings settings;
 MapEditor::MapEditor( VymModel *vm)	
 {
     //qDebug() << "Constructor ME "<<this;
+
+    QString shortcutScope = tr("Map Editor","Shortcut scope");
     mapScene= new QGraphicsScene(NULL);
     mapScene->setBackgroundBrush (QBrush(Qt::white, Qt::SolidPattern));
 
@@ -62,11 +66,24 @@ MapEditor::MapEditor( VymModel *vm)
 
     // Shortcuts and actions
     QAction *a;
+
+    a = new QAction( QPixmap(":/selectprevious.png"), tr( "Select previous","Edit menu"), this);
+    a->setShortcut (Qt::CTRL+ Qt::Key_O );
+    a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
+    connect( a, SIGNAL( triggered() ), mainWindow, SLOT( editSelectPrevious() ) );
+    addAction (a);
+
+    a = new QAction( QPixmap(":/selectnext.png"), tr( "Select next","Edit menu"), this);
+    a->setShortcut (Qt::CTRL + Qt::Key_I );
+    a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
+    connect( a, SIGNAL( triggered() ), mainWindow, SLOT( editSelectNext() ) );
+    addAction (a);
+
     a = new QAction("Select upper branch", this);
     a->setShortcut (Qt::Key_Up );
     a->setShortcutContext (Qt::WidgetShortcut);
-    addAction (a);
     connect( a, SIGNAL( triggered() ), this, SLOT( cursorUp() ) );
+    addAction (a);
 
     a = new QAction( "Select lower branch",this);
     a->setShortcut ( Qt::Key_Down );
@@ -76,7 +93,6 @@ MapEditor::MapEditor( VymModel *vm)
 
     a = new QAction( "Select left branch", this);
     a->setShortcut (Qt::Key_Left );
-//  a->setShortcutContext (Qt::WindowShortcut);
 //  a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
     addAction (a);
     connect( a, SIGNAL( triggered() ), this, SLOT( cursorLeft() ) );
@@ -144,13 +160,25 @@ MapEditor::MapEditor( VymModel *vm)
     connect( a, SIGNAL( triggered() ), mainWindow, SLOT( editCopy() ) );
     addAction(a);
 
+    a = new QAction( tr("&Undo","Edit menu"), this);
+    a->setShortcut (Qt::CTRL + Qt::Key_Z );
+    a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
+    connect( a, SIGNAL( triggered() ), mainWindow, SLOT( editUndo() ) );
+    addAction(a);
+
+    a = new QAction( tr("&Redo","Edit menu"), this);
+    a->setShortcut (Qt::CTRL + Qt::Key_Y );
+    a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
+    connect( a, SIGNAL( triggered() ), mainWindow, SLOT( editRedo() ) );
+    addAction(a);
+
+    /* not needed!
     a = new QAction(tr( "&Restore last session","Edit menu" ), this);
     a->setShortcut (Qt::ALT + Qt::Key_R );
-    a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
     connect( a, SIGNAL( triggered() ), mainWindow, SLOT( fileRestoreSession() ) );
     //actionFileRestoreSession=a;
     addAction(a);
-    
+ */
     a = new QAction( tr( "&Paste","Edit menu" ), this);
     a->setShortcut (Qt::CTRL + Qt::Key_V );
     a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
