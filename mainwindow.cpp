@@ -4940,7 +4940,7 @@ void Main::settingsToggleAnimation()
 
 void Main::settingsToggleDownloadReleaseNotes()
 {
-    settings.setValue ("/animation/use",actionSettingsUseAnimation->isChecked() );
+    settings.setValue ("/animation/use",actionSettingsUseAnimation->isChecked() ); // FIXME-0 RN, not animation!
 }
 
 void Main::windowToggleNoteEditor()

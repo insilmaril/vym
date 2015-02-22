@@ -88,17 +88,17 @@ bool MapItem::getHideLinkUnselected()
 QString MapItem::getMapAttr ()	
 {
     QString s;
+    LinkableMapObj *lmo=getLMO();
 
     if (parentItem==rootItem)
 	posMode=Absolute;
     else
     {
-	if (type==TreeItem::Image ||depth()==1)
-	    posMode=Relative;
+	if (type==TreeItem::Image ||depth()==1 || lmo->getUseRelPos() )
+	    posMode=Relative;   //FiXME-2 shouldn't this be replaced by relPos?
 	else
 	    posMode=Unused;
     }
-    LinkableMapObj *lmo=getLMO();
     switch (posMode)
     {
 	case Relative:	

@@ -484,7 +484,17 @@ void BranchObj::alignRelativeTo (QPointF ref,bool alignSelf)
     if (depth > 1)
     {
         if (layoutHint == BranchItem::FreePositioning)
-            useRelPos = true;
+        {
+            if (!useRelPos) 
+            {
+                useRelPos = true;
+                // if we used relPos before, set known positions
+                // "known" means any position != (0,0)
+                if (relPos == QPointF(0,0) )
+                    // use current position to get relPos()
+                    setRelPos();
+            }
+        }
         else
             useRelPos = false;
     }

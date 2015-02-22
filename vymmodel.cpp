@@ -2110,7 +2110,7 @@ void VymModel::setIncludeImagesHor(bool b)
     }	
 }
 
-void VymModel::setChildrenLayout(BranchItem::LayoutHint layoutHint)
+void VymModel::setChildrenLayout(BranchItem::LayoutHint layoutHint) // FIXME-0 no savestate yet
 {
     BranchItem *bi=getSelectedBranch();
     if (bi)
@@ -2119,7 +2119,7 @@ void VymModel::setChildrenLayout(BranchItem::LayoutHint layoutHint)
         QString u= b ? "false" : "true";
         QString r=!b ? "false" : "true";
 
-        saveState(      // FIXME-2 missing
+        saveState(      
             bi,
             QString("setIncludeImagesHorizontally (%1)").arg(u),
             bi,
