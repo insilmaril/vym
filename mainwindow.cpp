@@ -2626,8 +2626,6 @@ void Main::setupHelpActions()
     helpMenu->addAction (a);
 }
 
-///////////////FIXME-0 refactored up to here
-
 // Context Menus
 void Main::setupContextMenus()
 {
@@ -2800,7 +2798,6 @@ void Main::setupMacros()
 	macroActions[i] = new QAction(this);
 	macroActions[i]->setData(i);
 	addAction (macroActions[i]);
-	//switchboard.addConnection(macroActions[i],tr("Macro shortcuts","Shortcut group"));
 	connect(macroActions[i], SIGNAL(triggered()), this, SLOT(callMacro()));
     }		
     macroActions[0]->setShortcut ( Qt::Key_F1 );
