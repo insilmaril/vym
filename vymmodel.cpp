@@ -463,7 +463,7 @@ File::ErrorCode VymModel::loadMap (
     else
     {
         // Try to unzip file
-        err=unzipDir (tmpZipDir,fname);//FIXME-0 probably err not set for windows...
+        err=unzipDir (tmpZipDir,fname);
     }
     QString xmlfile;
     if (err==File::NoZip)
@@ -1172,8 +1172,8 @@ void VymModel::undo()
     bool noErr;
     QString errMsg;
     //parseAtom (undoCommand,noErr,errMsg);
-    errMsg=QVariant(execute(undoCommand)).toString();
-    /* FIXME-0 add noErr to parameters of execute above or ignore (error message already within parseAtom)
+    errMsg = QVariant(execute(undoCommand)).toString();
+    /* FIXME-2 add noErr to parameters of execute above or ignore (error message already within parseAtom)
     if (!noErr)
     {
         if (!options.isOn("batch") )
@@ -1184,11 +1184,11 @@ void VymModel::undo()
 
     undosAvail--;
     curStep--; 
-    if (curStep<1) curStep=stepsTotal;
+    if (curStep<1) curStep = stepsTotal;
 
     redosAvail++;
 
-    blockSaveState=blockSaveStateOrg;
+    blockSaveState = blockSaveStateOrg;
 /* testing only
     qDebug() << "VymModel::undo() end\n";
     qDebug() << "    undosAvail="<<undosAvail;
@@ -2110,7 +2110,7 @@ void VymModel::setIncludeImagesHor(bool b)
     }	
 }
 
-void VymModel::setChildrenLayout(BranchItem::LayoutHint layoutHint) // FIXME-0 no savestate yet
+void VymModel::setChildrenLayout(BranchItem::LayoutHint layoutHint) // FIXME-2 no savestate yet
 {
     BranchItem *bi=getSelectedBranch();
     if (bi)
@@ -5672,8 +5672,7 @@ void VymModel::downloadImage (const QUrl &url, BranchItem *bi)
 	return;
     }
 
-    // FIXME-0 download to tmpfile
-    // FIXME-0 delete after running script in mainWindow
+    // FIXME-2 download img to tmpfile and delete after running script in mainWindow
     QString script;
     script += QString("selectID(\"%1\");").arg(bi->getUuid().toString());
     script += QString("loadImage(\"$TMPFILE\");");

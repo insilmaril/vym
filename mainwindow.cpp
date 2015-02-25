@@ -4807,7 +4807,7 @@ void Main::networkConnect()
     if (m) m->connectToServer();
 }
 
-void Main::downloadFinished()   // FIXME-0 only used for drop events in mapeditor and VM::downloadImage
+void Main::downloadFinished()   // FIXME-1 only used for drop events in mapeditor and VM::downloadImage
 {
     QString s;
     DownloadAgent *agent = static_cast<DownloadAgent*>(sender());
@@ -4828,7 +4828,6 @@ void Main::downloadFinished()   // FIXME-0 only used for drop events in mapedito
         qDebug()<<"  script\n" << script;
         model->execute(script);
     }
-
 }
 
 bool Main::settingsPDF()

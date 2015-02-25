@@ -370,7 +370,8 @@ File::ErrorCode unzipDir ( QDir zipOutputDir, QString zipName)
     {
         QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
                                QObject::tr("Couldn't start unzip to decompress data."));
-        err=Aborted;
+        err=Aborted;    // FIXME-2 check what happens, if 7z fails
+                        // FIXME-2 error message/howTo install 7zip
 
     } else
     {
