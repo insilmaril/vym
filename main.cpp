@@ -192,6 +192,29 @@ int main(int argc, char* argv[])
         return 0;
     }
     
+    // Update some configurations, which were moved in 2.4.0
+    // This code should be removed later, e.g. in 2.6.0...
+    QStringList settingsChanged;
+    settingsChanged  << "readerURL"
+                     << "readerPDF"
+                     << "autosave/use"
+                     << "autosave/ms"
+                     << "writeBackupFile"
+                     << "printerName"
+                     << "printerFormat"
+                     << "printerFileName";
+    foreach (QString s, settingsChanged)
+    {
+        if (settings.contains("/mainwindow/" + s))
+        {
+            settings.setValue("/system/" + s, settings.value("/mainwindow/" + s));
+            settings.remove  ("/mainwindow/" + s);
+        }
+    }
+
+    if (settings.contains( "/mainwindow/readerURL") )
+        settings.setValue( "/system/readerURL", settings.value( "/mainwindow/readerURL"));
+
     taskModel = new TaskModel();
 
     debug=options.isOn ("debug");

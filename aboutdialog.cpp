@@ -235,7 +235,7 @@ AboutTextBrowser::AboutTextBrowser(QWidget *parent)
 void AboutTextBrowser::setSource(const QUrl &url )
 {
     QProcess *proc= new QProcess ();
-    proc->start( settings.value("/mainwindow/readerURL").toString(),QStringList ()<<url.toString());
+    proc->start( settings.value("/system/readerURL").toString(),QStringList ()<<url.toString());
     //if (!proc->waitForStarted() &&mainWindow->settingsURL() ) setSource(url);
     if (!proc->waitForStarted() )
 	QMessageBox::warning(0, 

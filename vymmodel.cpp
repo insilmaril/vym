@@ -1012,7 +1012,7 @@ bool VymModel::hasChanged()
 void VymModel::setChanged()
 {
     if (!mapChanged)
-	autosaveTimer->start(settings.value("/mainwindow/autosave/ms/",300000).toInt());
+	autosaveTimer->start(settings.value("/system/autosave/ms/",300000).toInt());
     mapChanged=true;
     mapDefault=false;
     mapUnsaved=true;

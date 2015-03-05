@@ -261,7 +261,7 @@ Main::Main(QWidget* parent, Qt::WindowFlags f) : QMainWindow(parent,f)
     QString p,s;
 
 	// application to open URLs
-	p="/mainwindow/readerURL";
+	p="/system/readerURL";
 	#if defined(Q_OS_WIN)
 	    // Assume that system has been set up so that
 	    // Explorer automagically opens up the URL
@@ -275,7 +275,7 @@ Main::Main(QWidget* parent, Qt::WindowFlags f) : QMainWindow(parent,f)
 	settings.setValue( p,s);
 
 	// application to open PDFs
-	p="/mainwindow/readerPDF";
+	p="/system/readerPDF";
 	#if defined(Q_OS_WIN)
 	    s=settings.value (p,"explorer").toString();
 	#elif defined(Q_OS_MACX)
@@ -385,15 +385,15 @@ Main::~Main()
 
 	settings.setValue ("/mainwindow/view/AntiAlias",actionViewToggleAntiAlias->isChecked());
 	settings.setValue ("/mainwindow/view/SmoothPixmapTransform",actionViewToggleSmoothPixmapTransform->isChecked());
-	settings.setValue( "/mainwindow/autosave/use",actionSettingsToggleAutosave->isChecked() );
-	settings.setValue ("/mainwindow/autosave/ms", settings.value("/mainwindow/autosave/ms",60000)); 
+	settings.setValue( "/system/autosave/use",actionSettingsToggleAutosave->isChecked() );
+	settings.setValue ("/system/autosave/ms", settings.value("/system/autosave/ms",60000)); 
 	settings.setValue ("/mainwindow/autoLayout/use",actionSettingsToggleAutoLayout->isChecked() );
 	settings.setValue( "/mapeditor/editmode/autoSelectNewBranch",actionSettingsAutoSelectNewBranch->isChecked() );
-	settings.setValue( "/mainwindow/writeBackupFile",actionSettingsWriteBackupFile->isChecked() );
+	settings.setValue( "/system/writeBackupFile",actionSettingsWriteBackupFile->isChecked() );
 
-	settings.setValue("/mainwindow/printerName",printer->printerName());
-	settings.setValue("/mainwindow/printerFormat",printer->outputFormat());
-	settings.setValue("/mainwindow/printerFileName",printer->outputFileName());
+	settings.setValue("/system/printerName",printer->printerName());
+	settings.setValue("/system/printerFormat",printer->outputFormat());
+	settings.setValue("/system/printerFileName",printer->outputFileName());
 	settings.setValue( "/mapeditor/editmode/autoSelectText",actionSettingsAutoSelectText->isChecked() );
 	settings.setValue( "/mapeditor/editmode/autoEditNewBranch",actionSettingsAutoEditNewBranch->isChecked() );
 	settings.setValue( "/mapeditor/editmode/useFlagGroups",actionSettingsUseFlagGroups->isChecked() );
@@ -2477,7 +2477,7 @@ void Main::setupSettingsActions()
 
     a = new QAction( tr( "Autosave","Settings action"), this);
     a->setCheckable(true);
-    a->setChecked ( settings.value ("/mainwindow/autosave/use",true).toBool());
+    a->setChecked ( settings.value ("/system/autosave/use",true).toBool());
     settingsMenu->addAction (a);
     actionSettingsToggleAutosave=a;
 
@@ -2496,7 +2496,7 @@ void Main::setupSettingsActions()
 
     a = new QAction( tr( "Write backup file on save","Settings action"), this);
     a->setCheckable(true);
-    a->setChecked ( settings.value ("/mainwindow/writeBackupFile",false).toBool());
+    a->setChecked ( settings.value ("/system/writeBackupFile",false).toBool());
     connect( a, SIGNAL( triggered() ), this, SLOT( settingsToggleWriteBackupFile() ) );
     settingsMenu->addAction (a);
     actionSettingsWriteBackupFile=a;
@@ -3767,7 +3767,7 @@ bool Main::openURL(const QString &url)
 {
     if (url.isEmpty()) return false;
 
-    QString browser=settings.value("/mainwindow/readerURL" ).toString();
+    QString browser=settings.value("/system/readerURL" ).toString();
     QStringList args;
     args<<url;
     if (!QProcess::startDetached(browser,args,QDir::currentPath(),browserPID))
@@ -3788,7 +3788,7 @@ void Main::openTabs(QStringList urls)
     if (urls.isEmpty()) return;
     	
     QStringList args;
-    QString browser=settings.value("/mainwindow/readerURL" ).toString();
+    QString browser=settings.value("/system/readerURL" ).toString();
 #if defined(VYM_DBUS)
     if ( browser.contains("konqueror") && 
             (browserPID==0 || !QDBusConnection::sessionBus().interface()->registeredServiceNames().value().contains (QString("org.kde.konqueror-%1").arg(*browserPID)))
@@ -4840,9 +4840,9 @@ bool Main::settingsPDF()
     QString text = QInputDialog::getText(
 	this,
 	"VYM", tr("Set application to open PDF files")+":", QLineEdit::Normal,
-	settings.value("/mainwindow/readerPDF").toString(), &ok);
+	settings.value("/system/readerPDF").toString(), &ok);
     if (ok)
-	settings.setValue ("/mainwindow/readerPDF",text);
+	settings.setValue ("/system/readerPDF",text);
     return ok;
 }
 
@@ -4854,10 +4854,10 @@ bool Main::settingsURL()
     QString text = QInputDialog::getText(
 	this,
 	"VYM", tr("Set application to open an URL")+":", QLineEdit::Normal,
-	settings.value("/mainwindow/readerURL").toString()
+	settings.value("/system/readerURL").toString()
 	, &ok);
     if (ok)
-	settings.setValue ("/mainwindow/readerURL",text);
+	settings.setValue ("/system/readerURL",text);
     return ok;
 }
 
@@ -4921,9 +4921,9 @@ void Main::settingsAutosaveTime()
     int i = QInputDialog::getInt(
 	this, 
 	"QInputDialog::getInt()",
-	tr("Number of seconds before autosave:"), settings.value("/mainwindow/autosave/ms").toInt() / 1000, 10, 60000, 1, &ok);
+	tr("Number of seconds before autosave:"), settings.value("/system/autosave/ms").toInt() / 1000, 10, 60000, 1, &ok);
     if (ok)
-	settings.setValue ("/mainwindow/autosave/ms",i * 1000);
+	settings.setValue ("/system/autosave/ms",i * 1000);
 }
 
 void Main::settingsTaskShowParentsLevel()	    
@@ -4944,7 +4944,7 @@ void Main::settingsToggleAutoLayout()
 
 void Main::settingsToggleWriteBackupFile()
 {
-    settings.setValue ("/mainwindow/writeBackupFile",actionSettingsWriteBackupFile->isChecked() );
+    settings.setValue ("/system/writeBackupFile",actionSettingsWriteBackupFile->isChecked() );
 }
 
 void Main::settingsToggleAnimation()
@@ -5604,7 +5604,7 @@ void Main::helpDoc()
     VymProcess *pdfProc = new VymProcess();
     args << QDir::toNativeSeparators(docfile.fileName());
 
-    if (!pdfProc->startDetached( settings.value("/mainwindow/readerPDF").toString(),args) )
+    if (!pdfProc->startDetached( settings.value("/system/readerPDF").toString(),args) )
     {
 	// error handling
 	QMessageBox::warning(0, 
