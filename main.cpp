@@ -284,7 +284,7 @@ int main(int argc, char* argv[])
     vymPlatform = "Mac";
 #elif defined(Q_OS_WIN32)
     vymPlatform = "Win32";
-    zipToolPath = "\"c:\\Program Files\\7-Zip\\7z\"";
+    zipToolPath = "c:\\Program Files\\7-Zip\\7z";
 #elif defined(Q_OS_LINUX)
     QFile f("/etc/os-release");
     QString flavour="Unknown";
@@ -351,6 +351,18 @@ int main(int argc, char* argv[])
     Main m(0, Qt::Window | Qt::MSWindowsOwnDC);
 #else
     Main m;
+#endif
+
+    // Check for zip tools (at least on windows...)
+#if defined(Q_OS_WIN32)
+    QFile zipTool(zipToolPath + ".exe");
+    if (!zipTool.exists() )
+        QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
+                               QObject::tr("Couldn't find tool to unzip data. "
+                                           "Please download and install 7z and set "
+                                           "path in Settings menu. ") +
+                                           "http://www.7-zip.org/" + " " + zipToolPath + ".exe");
+    qDebug()<<zipToolPath;
 #endif
 
     m.setWindowIcon (QPixmap (":/vym.png"));

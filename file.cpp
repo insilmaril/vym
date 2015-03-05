@@ -349,7 +349,7 @@ File::ErrorCode unzipDir ( QDir zipOutputDir, QString zipName)
         err=Aborted;
 
     }
-    zipProc->write(QString("%1 -o%2 x \"%3\"\n").arg(zipToolPath).arg(zipOutputDir.path()).arg(zipName).toUtf8());
+    zipProc->write(QString("\"%1\" -o%2 x \"%3\"\n").arg(zipToolPath).arg(zipOutputDir.path()).arg(zipName).toUtf8());
     zipProc->closeWriteChannel();   //done Writing
 
     while(zipProc->state()!=QProcess::NotRunning){
