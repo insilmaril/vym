@@ -126,6 +126,7 @@ extern QDir lastMapDir;
 #if defined(Q_OS_WIN32)
 extern QDir vymInstallDir;
 #endif
+extern QString zipToolPath;
 
 Main::Main(QWidget* parent, Qt::WindowFlags f) : QMainWindow(parent,f)
 {
@@ -2458,6 +2459,10 @@ void Main::setupSettingsActions()
 
     a = new QAction( tr( "Set application to open external links","Settings action"), this);
     connect( a, SIGNAL( triggered() ), this, SLOT( settingsURL() ) );
+    settingsMenu->addAction (a);
+
+    a = new QAction( tr( "Set application to zip/unzip files","Settings action"), this);
+    connect( a, SIGNAL( triggered() ), this, SLOT( settingsZipTool() ) );
     settingsMenu->addAction (a);
 
     a = new QAction( tr( "Set path for macros","Settings action")+"...", this);
@@ -4854,6 +4859,21 @@ bool Main::settingsURL()
     if (ok)
 	settings.setValue ("/mainwindow/readerURL",text);
     return ok;
+}
+
+bool Main::settingsZipTool()
+{
+    // Default zip tool is 7z on windows, zip/unzip elsewhere
+    bool ok;
+    QString text = QInputDialog::getText(
+                this,
+                "VYM", tr("Set application to zip/unzip files")+":", QLineEdit::Normal,
+                zipToolPath, &ok);
+    if (ok)
+    {
+        zipToolPath = text;
+        settings.setValue ("/system/zipToolPath", zipToolPath);
+    }
 }
 
 void Main::settingsMacroDir()

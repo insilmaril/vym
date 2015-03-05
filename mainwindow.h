@@ -248,6 +248,7 @@ public slots:
     void downloadFinished();
     bool settingsPDF();
     bool settingsURL();
+    bool settingsZipTool();
     void settingsMacroDir();
     void settingsUndoLevels();
 
