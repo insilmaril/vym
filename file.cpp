@@ -102,7 +102,7 @@ bool reallyWriteDirectory(const QString &dir)
     return true;
 }
 
-QString makeTmpDir (bool &ok, QString prefix)
+QString makeTmpDir (bool &ok, QString prefix)   //FIXME-3 use QTemporaryDir
 {
     bool b;
     QString path=makeUniqueDir (b,QDir::tempPath()+"/"+prefix+"-XXXXXX");

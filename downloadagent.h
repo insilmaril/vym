@@ -7,6 +7,7 @@
 #include <QNetworkReply>
 #include <QSslError>
 #include <QStringList>
+#include <QTemporaryFile>
 #include <QTimer>
 #include <QUrl>
 
@@ -28,8 +29,7 @@ class DownloadAgent: public QObject
 
 public:
     DownloadAgent(const QUrl &u, const QString &d=QString() );
-    void setDestination (const QString &s);
-    QString getDestination();
+    QString getDestination ();
     void setFinishedAction (VymModel *m, const QString &script);
     QString getFinishedScript();
     uint getFinishedScriptModelID();
@@ -37,7 +37,6 @@ public:
     bool  isSuccess();
     QString getResultMessage();
     void doDownload(const QUrl &url);
-    QString makeFileName(const QUrl &url);
     bool saveToDisk(const QString &filename, const QString &data);
 
 public slots:
@@ -49,9 +48,9 @@ signals:
     void downloadFinished();
 
 private:
+    QTemporaryFile tmpFile;
     QByteArray userAgent;
     QUrl url;
-    QString destination;
 
     bool success;
     QString resultMessage;

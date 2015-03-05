@@ -2432,9 +2432,7 @@ void Main::setupFlag (Flag *flag, QToolBar *tb, const QString &name, const QStri
 // Network Actions
 void Main::setupNetworkActions()
 {
-    if (!settings.value( "/mainwindow/showTestMenu",false).toBool() ) 
-	return;
-    QMenu *netMenu = menuBar()->addMenu(  "Network" );
+    if (!settings.value( "/mainwindow/showTestMenu",false).toBool() ) return;
 
     QAction *a;
 
@@ -5476,14 +5474,35 @@ void Main::testFunction1()
     VymModel *m = currentModel();
     if (m)
     {
-        TreeItem *ti = m->findUuid("{b387cbc4-5a98-4cf7-809a-c1b8e5d8412e}");
-        if (ti)
-        {
-            QString s = ti->getNote();
-            if (s.contains('1'))
-                statusMessage("Found it and ERROR! " );
-            else
-                statusMessage("Found it! " );
+        // FIXME-0 remove setting to download release notes.
+        //         add actions for manual relnotes and updatecheck
+        //         show messagebox, if actions triggered or on first run
+        QMessageBox msgBox;
+        QString infoText =
+                "Do you want to allow vym to download release notes and check for updates? "
+                "Cookies will be used!";
+        msgBox.setText("Download settings");
+        msgBox.setInformativeText( infoText );
+        msgBox.setStandardButtons(QMessageBox::No | QMessageBox::Yes );
+        msgBox.setDefaultButton(QMessageBox::Yes);
+        int ret = msgBox.exec();
+
+        switch (ret) {
+          case QMessageBox::Yes:
+              // enable release notes action
+              // enable check updates action
+              // enable release notes download
+              // enable update check
+              break;
+          case QMessageBox::No:
+              // disable release notes action
+              // disable check updates action
+              // disable release notes download
+              // disable update check
+              break;
+          default:
+              // should never be reached
+              break;
         }
     }
 }
@@ -5687,7 +5706,6 @@ void Main::showReleaseNotes()
         .arg(vymVersion)
     );
     DownloadAgent *agent = new DownloadAgent(releaseNotesUrl);
-    agent->setDestination(tmpVymDir + "/release-notes.html");
     connect (agent, SIGNAL( downloadFinished()), this, SLOT(downloadReleaseNotesFinished()));
     QTimer::singleShot(0, agent, SLOT(execute()));
 }
@@ -5702,29 +5720,31 @@ void Main::downloadUpdatesFinished()
     DownloadAgent *agent = static_cast<DownloadAgent*>(sender());
     QString s;
 
+    qDebug() << "downloadUpdatesFinished";
     if (agent->isSuccess() )
     {
         QString page;
-        if (agent->isSuccess() )
+        if (loadStringFromDisk(agent->getDestination(), page) )
         {
-            if (loadStringFromDisk(agent->getDestination(), page) )
+            if ( page.contains("vymisuptodate"))
             {
-                if ( page.contains("vymisuptodate"))
-                {
-                    statusMessage( tr("vym is up to date.","MainWindow"));
-                } else
-                {
-                    ShowTextDialog dia(this);
-                    dia.setText(page);
-                    dia.exec();
-                }
-
-                // Prepare to check again later
-                settings.setValue("/updates/lastChecked", QDate::currentDate().toString(Qt::ISODate));
+                statusMessage( tr("vym is up to date.","MainWindow"));
+                qDebug()<<"Main::downloadUpdatesFinished ";
+            } else
+            {
+                ShowTextDialog dia(this);
+                dia.setText(page);
+                dia.exec();
             }
-        }
+
+            // Prepare to check again later
+            settings.setValue("/updates/lastChecked", QDate::currentDate().toString(Qt::ISODate));
+        } else
+            statusMessage( "Couldn't load update page from " + agent->getDestination());
+
     } else
     {
+        statusMessage( "Check for updates failed.");
         if (debug)
         {
             qDebug()<<"Main::downloadUpdatesFinished ";
@@ -5736,13 +5756,13 @@ void Main::downloadUpdatesFinished()
 
 void Main::checkUpdates()
 {
+    qDebug()<<"Main::checkUpdates ";
     QUrl updatesUrl(
         QString("http://www.insilmaril.de/vym/updates.php?vymVersion=%1")
         .arg(vymVersion)
     );
     DownloadAgent *agent = new DownloadAgent(updatesUrl);
-    agent->setDestination(tmpVymDir + "/updates.html");
     connect (agent, SIGNAL( downloadFinished()), this, SLOT(downloadUpdatesFinished()));
-    QTimer::singleShot(0, agent, SLOT(execute()));
     statusMessage( tr("Checking for updates...","MainWindow"));
+    QTimer::singleShot(0, agent, SLOT(execute()));
 }

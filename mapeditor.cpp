@@ -788,8 +788,8 @@ void MapEditor::autoLayout()
 		if (!vectors[i].isNull() )
 		polys[i].translate (vectors[i]);
 	    }
-	    if (debug) qDebug()<< "Collisions total: "<<collisions;
-	    //collisions=0;
+        // if (debug) qDebug()<< "Collisions total: "<<collisions;
+        // collisions=0;
 	}   
 
 	// Finally move the real objects and update 
@@ -2066,22 +2066,23 @@ void MapEditor::setState (EditorState s)
     if (state!=Neutral && s!=Neutral)
 	qWarning ()<<"MapEditor::setState  switching directly from "<<state<<" to "<<s;
     state=s;
-    if (debug) 
+    /* if (debug)
     {
-	QString s;
-	switch (state)
-	{
-	    case Neutral: s="Neutral";break;
-	    case EditingHeading: s="EditingHeading";break;
-	    case EditingLink: s="EditingLink";break;
-	    case MovingObject: s="MovingObject";break;
-	    case MovingView: s="MovingView";break;
-	    case PickingColor: s="PickingColor";break;
-	    case CopyingObject: s="CopyingObject";break;
-	    case DrawingLink: s="DrawingLink";break;
-	}
+        QString s;
+        switch (state)
+        {
+        case Neutral: s="Neutral";break;
+        case EditingHeading: s="EditingHeading";break;
+        case EditingLink: s="EditingLink";break;
+        case MovingObject: s="MovingObject";break;
+        case MovingView: s="MovingView";break;
+        case PickingColor: s="PickingColor";break;
+        case CopyingObject: s="CopyingObject";break;
+        case DrawingLink: s="DrawingLink";break;
+        }
         qDebug()<<"MapEditor: State "<<s<< " of "<<model->getMapName();
     }
+    */
 }
 
 void MapEditor::updateSelection(QItemSelection nsel,QItemSelection dsel)	

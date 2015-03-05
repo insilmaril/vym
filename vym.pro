@@ -137,7 +137,7 @@ HEADERS	+= \
     xml-freemind.h \
     xmlobj.h\
     xsltproc.h \ 
-    vymprocess.h
+    vymprocess.h \
 
 SOURCES	+= \
     aboutdialog.cpp \
@@ -225,7 +225,7 @@ SOURCES	+= \
     xml-freemind.cpp \
     xmlobj.cpp \
     xsltproc.cpp \ 
-    vymprocess.cpp
+    vymprocess.cpp \
 
 FORMS = \
     attributewidget.ui \
@@ -237,7 +237,7 @@ FORMS = \
     lineeditdialog.ui \
     scripteditor.ui \
     showtextdialog.ui \
-    warningdialog.ui
+    warningdialog.ui \
 
 isEmpty( PREFIX ) {
     PREFIX = /usr/local
