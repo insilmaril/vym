@@ -353,18 +353,15 @@ Main::Main(QWidget* parent, Qt::WindowFlags f) : QMainWindow(parent,f)
 	qWarning ("MainWindow: Couldn't register DBUS object!");
 #endif    
 
-    if (settings.value("/releaseNotes/download", true).toBool())
+    if (settings.value("/downloads/releaseNotes/enabled", true).toBool())
     {
-        if ( versionLowerThanVym( settings.value("/releaseNotes/shownVersion", "0.0.1").toString() ) )
-            showReleaseNotes();
+        if ( versionLowerThanVym( settings.value("/downloads/releaseNotes/shownVersion", "0.0.1").toString() ) )
+            showReleaseNotes(); // FIXME-0
     }
 
-    if (settings.value("/updates/check", true).toBool())
+    if (settings.value("/downloads/updates/enabled", true).toBool())
     {
-        QDate lastChecked = settings.value("/updates/lastChecked", QDate(1970,1,1) ).toDate();
-        if ( !lastChecked.isValid()) lastChecked = QDate(1970,1,1);
-        if ( lastChecked.daysTo( QDate::currentDate()) > settings.value("/updates/checkInterval",7).toInt() )
-            checkUpdates();
+        checkUpdates(); // FIXME-0
     }
 }
 
@@ -2453,6 +2450,13 @@ void Main::setupSettingsActions()
 
     QAction *a;
 
+    a = new QAction( tr( "Check for release notes and updates","Settings action"), this);
+    a->setCheckable(true);
+    a->setChecked ( settings.value ("/downloads/enabled",true).toBool());
+    connect( a, SIGNAL( triggered() ), this, SLOT( settingsToggleDownloads() ) );
+    settingsMenu->addAction (a);
+    actionSettingsToggleDownloads = a;
+
     a = new QAction( tr( "Set application to open pdf files","Settings action"), this);
     connect( a, SIGNAL( triggered() ), this, SLOT( settingsPDF() ) );
     settingsMenu->addAction (a);
@@ -2553,12 +2557,6 @@ void Main::setupSettingsActions()
     connect( a, SIGNAL( triggered() ), this, SLOT( settingsToggleAutoLayout() ) );
     settingsMenu->addAction (a);
     actionSettingsToggleAutoLayout=a;
-
-    a = new QAction( tr( "Download new release notes","Settings action"), this);
-    a->setCheckable(true);
-    a->setChecked ( settings.value ("/releaseNotes/download",true).toBool());
-    connect( a, SIGNAL( triggered() ), this, SLOT( settingsToggleDownloadReleaseNotes() ) );
-    settingsMenu->addAction (a);
 }
 
 // Test Actions
@@ -4861,7 +4859,7 @@ bool Main::settingsURL()
     return ok;
 }
 
-bool Main::settingsZipTool()
+void Main::settingsZipTool()
 {
     // Default zip tool is 7z on windows, zip/unzip elsewhere
     bool ok;
@@ -4952,9 +4950,9 @@ void Main::settingsToggleAnimation()
     settings.setValue ("/animation/use",actionSettingsUseAnimation->isChecked() );
 }
 
-void Main::settingsToggleDownloadReleaseNotes()
+void Main::settingsToggleDownloads()
 {
-    settings.setValue ("/releaseNotes/download",actionSettingsUseAnimation->isChecked() );
+    downloadsEnabled(true);
 }
 
 void Main::windowToggleNoteEditor()
@@ -5494,6 +5492,14 @@ void Main::testFunction1()
     VymModel *m = currentModel();
     if (m)
     {
+    }
+}
+
+void Main::testFunction2()
+{
+    VymModel *m = currentModel();
+    if (m)
+    {
         // FIXME-0 remove setting to download release notes.
         //         add actions for manual relnotes and updatecheck
         //         show messagebox, if actions triggered or on first run
@@ -5525,10 +5531,6 @@ void Main::testFunction1()
               break;
         }
     }
-}
-
-void Main::testFunction2()
-{
 }
 
 void Main::toggleWinter()
@@ -5704,7 +5706,7 @@ void Main::downloadReleaseNotesFinished()
                 dia.exec();
 
                 // Don't load the release notes automatically again
-                settings.setValue("/releaseNotes/shownVersion", __VYM_VERSION);
+                settings.setValue("/downloads/releaseNotes/shownVersion", __VYM_VERSION);
             } 
         }
     } else
@@ -5735,30 +5737,102 @@ void Main::checkReleaseNotes()
     showReleaseNotes();
 }
 
-void Main::downloadUpdatesFinished()
+bool Main::downloadsEnabled (bool interactive)
+{
+    bool result;
+    if (!interactive && settings.value("/downloads/enabled", false).toBool())
+    {
+        result = true;
+    } else
+    {
+        QDate lastAsked = settings.value("/downloads/permissionLastAsked", QDate(1970,1,1) ).toDate();
+        if (interactive ||
+            !settings.contains("/downloads/permissionLastAsked") ||
+            lastAsked.daysTo( QDate::currentDate()) > 7
+           )
+        {
+            QString infotext;
+            infotext = tr("<html>"
+                          "<h3>Do you allow vym to check online for updates or release notes?</h3>"
+                          "If you allow, vym will "
+                          "<ul>"
+                            "<li>check once for release notes</li>"
+                            "<li>check regulary for updates and notify you in case you should update, e.g. if there are "
+                              "important bug fixes available</li>"
+                            "<li>receive a cookie with a random ID and send vym version and platform name and the ID  "
+                              "(e.g. \"Windows\" or \"Linux\") back to me, Uwe Drechsel."
+                              "<p>As vym developer I am motivated to see "
+                              "many people using vym. Of course I am curious to see, on which system vym is used. Maintaining each "
+                              "of the systems requires a lot of my (spare) time.</p> "
+                              "<p>No other data than above will be sent, especially no private data will be collected or sent."
+                              "(Check the source code, if you don't believe.)"
+                              "</p>"
+                            "</li>"
+                          "</ul>"
+                          "If you do not allow, "
+                          "<ul>"
+                            "<li>nothing will be downloaded and especially I will <b>not be motivated</b> "
+                            "to spend some more thousands of hours on developing a free software tool."
+                          "</ul>"
+                          "Please allow vym to check for updates :-)"
+                          );
+            QMessageBox mb( vymName, infotext,
+                QMessageBox::Information,
+                QMessageBox::Yes | QMessageBox::Default,
+                QMessageBox::Cancel | QMessageBox::Escape,
+                QMessageBox::NoButton);
+            mb.setButtonText( QMessageBox::Yes, tr("Allow") );
+            mb.setButtonText( QMessageBox::Cancel, tr("Do not allow"));
+            switch( mb.exec() )
+            {
+                case QMessageBox::Yes:
+                    result = true;
+                    QMessageBox::information(0, vymName,
+                        tr("Thank you for enabling downloads!"));
+                break;
+                default :
+                    result = false;
+                break;
+            }
+        } else
+            result = false;
+        actionSettingsToggleDownloads->setChecked( result );
+        settings.setValue("/downloads/enabled", result);
+        settings.setValue("/downloads/permissionLastAsked", QDate::currentDate().toString(Qt::ISODate));
+    }
+    return result;
+}
+
+void Main::downloadUpdatesFinished(bool interactive)
 {
     DownloadAgent *agent = static_cast<DownloadAgent*>(sender());
     QString s;
 
-    qDebug() << "downloadUpdatesFinished";
     if (agent->isSuccess() )
     {
         QString page;
         if (loadStringFromDisk(agent->getDestination(), page) )
         {
-            if ( page.contains("vymisuptodate"))
+            if (!page.contains("vymisuptodate"))
             {
-                statusMessage( tr("vym is up to date.","MainWindow"));
-                qDebug()<<"Main::downloadUpdatesFinished ";
+                // Notification: Please update!
+                QMessageBox::information(0,
+                    tr("Info"),
+                    tr("vym updates are available, please update e.g. from\n"
+                       "http://sourceforge.net/projects/vym")
+                );
             } else
             {
-                ShowTextDialog dia(this);
-                dia.setText(page);
-                dia.exec();
+                statusMessage( tr("vym is up to date.","MainWindow"));
+                if (interactive)
+                    // Notification: vym is up to date!
+                    QMessageBox::information(0,
+                        tr("Update check results"),
+                        tr("vym is up to date!"));
             }
 
             // Prepare to check again later
-            settings.setValue("/updates/lastChecked", QDate::currentDate().toString(Qt::ISODate));
+            settings.setValue("/downloads/updates/lastChecked", QDate::currentDate().toString(Qt::ISODate));
         } else
             statusMessage( "Couldn't load update page from " + agent->getDestination());
 
@@ -5773,16 +5847,52 @@ void Main::downloadUpdatesFinished()
         }
     }
 }
-
-void Main::checkUpdates()
+void Main::downloadUpdatesFinishedInt()
 {
-    qDebug()<<"Main::checkUpdates ";
+    downloadUpdatesFinished(true);
+}
+
+void Main::downloadUpdates(bool interactive)
+{
     QUrl updatesUrl(
         QString("http://www.insilmaril.de/vym/updates.php?vymVersion=%1")
         .arg(vymVersion)
     );
     DownloadAgent *agent = new DownloadAgent(updatesUrl);
-    connect (agent, SIGNAL( downloadFinished()), this, SLOT(downloadUpdatesFinished()));
+    if (interactive)
+        connect (agent, SIGNAL( downloadFinished()), this, SLOT(downloadUpdatesFinishedInt()));
+    else
+        connect (agent, SIGNAL( downloadFinished()), this, SLOT(downloadUpdatesFinished()));
     statusMessage( tr("Checking for updates...","MainWindow"));
     QTimer::singleShot(0, agent, SLOT(execute()));
+}
+
+void Main::checkUpdates()
+{
+    bool interactive;
+    if (qobject_cast<QAction *>(sender()) )
+        interactive = true;
+    else
+        interactive = false;
+
+    if (downloadsEnabled())
+    {
+        // Too much time passed since last update check?
+        QDate lastChecked = settings.value("/downloads/updates/lastChecked", QDate(1970,1,1) ).toDate();
+        if ( !lastChecked.isValid()) lastChecked = QDate(1970,1,1);
+        if ( lastChecked.daysTo( QDate::currentDate()) > settings.value("/downloads/updates/checkInterval",3).toInt() ||
+             interactive == true)
+        {
+            downloadUpdates( interactive );
+        }
+    } else
+    {
+        // No downloads enabled
+        if (interactive)
+        {
+            // Notification: vym could not check for updates
+            QMessageBox::warning(0,  tr("Warning"), tr("Please allow vym to check for updates!"));
+            if (downloadsEnabled(interactive)) checkUpdates();
+        }
+    }
 }

@@ -85,7 +85,7 @@ void DownloadAgent::doDownload(const QUrl &url)
     QNetworkRequest request(url);
     if (!userAgent.isEmpty()) request.setRawHeader("User-Agent", userAgent);
 
-    QByteArray cookievalue=settings.value("/cookies/vymID/value",QByteArray() ).toByteArray();
+    QByteArray cookievalue=settings.value("/downloads/cookies/vymID/value",QByteArray() ).toByteArray();
     if (!cookievalue.size() == 0 )
     {
         QNetworkCookie cookie;
@@ -93,7 +93,7 @@ void DownloadAgent::doDownload(const QUrl &url)
         cookie.setDomain("localhost");
         cookie.setName("vymID");
         cookie.setValue(cookievalue);
-        //cookie.setExpirationDate( settings.value("/cookies/id/expires", QVariant(QDateTime::currentDateTime().addSecs(60) )).toDateTime() ); // testing
+        //cookie.setExpirationDate( settings.value("/downloads/cookies/id/expires", QVariant(QDateTime::currentDateTime().addSecs(60) )).toDateTime() ); // testing
         cookie.setExpirationDate( QDateTime( QDate(2099,1,1) ) ); 
         agent.cookieJar()->insertCookie(cookie);
 
@@ -165,8 +165,8 @@ void DownloadAgent::requestFinished(QNetworkReply *reply)
 
             if (c.name() == "vymID" ) 
             {
-                settings.setValue( "/cookies/vymID/value", c.value());
-                // settings.setValue( "/cookies/vymID/expires", c.expirationDate());
+                settings.setValue( "/downloads/cookies/vymID/value", c.value());
+                // settings.setValue( "/downloads/cookies/vymID/expires", c.expirationDate());
             }
         }
 

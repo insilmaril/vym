@@ -248,7 +248,7 @@ public slots:
     void downloadFinished();
     bool settingsPDF();
     bool settingsURL();
-    bool settingsZipTool();
+    void settingsZipTool();
     void settingsMacroDir();
     void settingsUndoLevels();
 
@@ -262,7 +262,7 @@ public slots:
     void settingsToggleAutoLayout();
     void settingsToggleWriteBackupFile();
     void settingsToggleAnimation();
-    void settingsToggleDownloadReleaseNotes();
+    void settingsToggleDownloads();
 
     void windowToggleNoteEditor();
     void windowToggleTreeEditor();
@@ -321,7 +321,10 @@ private:
     void checkReleaseNotes();
 
 private slots:
-    void downloadUpdatesFinished();
+    bool downloadsEnabled(bool interactive=false);
+    void downloadUpdatesFinished(bool interactive=false);
+    void downloadUpdatesFinishedInt();
+    void downloadUpdates(bool interactive);
     void checkUpdates();
 
 private:
@@ -510,6 +513,7 @@ private:
     QAction* actionSettingsTaskShowParentsLevel;
     QAction* actionSettingsToggleAutoLayout;
     QAction* actionSettingsWriteBackupFile;
+    QAction* actionSettingsToggleDownloads;
     QAction* actionSettingsUseAnimation;
 };
 
