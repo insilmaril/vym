@@ -8,7 +8,7 @@
 
 
 extern Settings settings;
-extern QString iconPath;    // FIXME-1 embed vym logo from memory?
+extern QString iconPath;    // FIXME-3 embed vym logo as ressource?
 extern QString vymVersion;
 extern QString vymBuildDate;
 extern QString vymCodeName;
@@ -23,7 +23,7 @@ AboutDialog::AboutDialog( QWidget *parent)
     credits=new AboutTextBrowser (parent);
 
     credits->setHtml( QString(
-    "<center><img src=\""+iconPath+"vym-128x128.png\"></center>"
+    "<center><img src=\"" + iconPath + "vym-128x128.png\"></center>"
     "<h3><center>VYM - View Your Mind </h3>"
     "<p align=\"center\"> A tool to put the things you have got in your mind into a map.</p>"
     "<p align=\"center\"> (c) 2004-%1 by Uwe Drechsel (<a href=\"mailto:vym@InSilmaril.de\">vym@InSilmaril.de</a>)</p>"
@@ -235,7 +235,7 @@ AboutTextBrowser::AboutTextBrowser(QWidget *parent)
 void AboutTextBrowser::setSource(const QUrl &url )
 {
     QProcess *proc= new QProcess ();
-    proc->start( settings.value("/mainwindow/readerURL").toString(),QStringList ()<<url.toString());
+    proc->start( settings.value("/system/readerURL").toString(),QStringList ()<<url.toString());
     //if (!proc->waitForStarted() &&mainWindow->settingsURL() ) setSource(url);
     if (!proc->waitForStarted() )
 	QMessageBox::warning(0, 

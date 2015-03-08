@@ -3,6 +3,7 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QList>
+#include <QMessageBox>
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
 #include <QNetworkReply>
@@ -27,6 +28,7 @@ QT_USE_NAMESPACE
 extern Main *mainWindow;
 extern QString vymVersion;
 extern QString vymPlatform;
+extern QString tmpVymDir;
 extern Settings settings;
 extern bool debug;
 
@@ -34,7 +36,6 @@ DownloadAgent::DownloadAgent(const QUrl &u, const QString &d)
 {
     finishedScriptModelID = 0;
     url = u;
-    setDestination(d);
     connect(&agent, SIGNAL(finished(QNetworkReply*)),
             SLOT(requestFinished(QNetworkReply*)));
 
@@ -43,14 +44,9 @@ DownloadAgent::DownloadAgent(const QUrl &u, const QString &d)
         .arg(vymPlatform).toUtf8();
 }
 
-void DownloadAgent::setDestination(const QString &dest)
-{
-    destination = dest;
-}
-
 QString  DownloadAgent::getDestination()
 {
-    return destination;
+    return tmpFile.fileName();
 }
 
 bool DownloadAgent::isSuccess()
@@ -89,7 +85,7 @@ void DownloadAgent::doDownload(const QUrl &url)
     QNetworkRequest request(url);
     if (!userAgent.isEmpty()) request.setRawHeader("User-Agent", userAgent);
 
-    QByteArray cookievalue=settings.value("/cookies/vymID/value",QByteArray() ).toByteArray();
+    QByteArray cookievalue=settings.value("/downloads/cookies/vymID/value",QByteArray() ).toByteArray();
     if (!cookievalue.size() == 0 )
     {
         QNetworkCookie cookie;
@@ -97,7 +93,8 @@ void DownloadAgent::doDownload(const QUrl &url)
         cookie.setDomain("localhost");
         cookie.setName("vymID");
         cookie.setValue(cookievalue);
-        //cookie.setExpirationDate( settings.value("/cookies/id/expires", QVariant(QDateTime::currentDateTime().addSecs(60) )).toDateTime() ); //FIXME-0 expiration time
+        //cookie.setExpirationDate( settings.value("/downloads/cookies/id/expires", QVariant(QDateTime::currentDateTime().addSecs(60) )).toDateTime() ); // testing
+        cookie.setExpirationDate( QDateTime( QDate(2099,1,1) ) ); 
         agent.cookieJar()->insertCookie(cookie);
 
         cookie.setName("vymPlatform");
@@ -109,15 +106,6 @@ void DownloadAgent::doDownload(const QUrl &url)
     connect(reply, SIGNAL(sslErrors(QList<QSslError>)), SLOT(sslErrors(QList<QSslError>)));
 
     currentDownloads.append(reply);
-}
-
-QString DownloadAgent::makeFileName(const QUrl &url)
-{
-    QString path = url.path();
-    QString basename = QFileInfo(path).fileName();
-    QString tmp = "xyz";    // FIXME-0 create tmpfile
-
-    return tmp + "-" + basename;
 }
 
 bool DownloadAgent::saveToDisk(const QString &filename, const QString &data)
@@ -160,8 +148,6 @@ void DownloadAgent::requestFinished(QNetworkReply *reply)
     }
     else {
         success = true;
-        if (destination.isEmpty()) destination = makeFileName(url);
-        resultMessage = QString ("saved to %1").arg(destination);
         
         if (debug) qDebug()<<"\n* DownloadAgent::reqFinished: ";
         QList <QNetworkCookie> cookies =  reply->manager()->cookieJar()->cookiesForUrl(url);
@@ -179,14 +165,22 @@ void DownloadAgent::requestFinished(QNetworkReply *reply)
 
             if (c.name() == "vymID" ) 
             {
-                settings.setValue( "/cookies/vymID/value", c.value());
-                settings.setValue( "/cookies/vymID/expires", c.expirationDate());
+                settings.setValue( "/downloads/cookies/vymID/value", c.value());
+                // settings.setValue( "/downloads/cookies/vymID/expires", c.expirationDate());
             }
         }
 
         QString data = reply->readAll();
-        if (saveToDisk(destination, data))
-            emit ( downloadFinished());
+        if (!tmpFile.open() )
+            QMessageBox::warning( 0, tr("warning"), "Couldn't open tmpFile " + tmpFile.fileName());
+        else
+        {
+            if (!saveToDisk(tmpFile.fileName(), data))
+                QMessageBox::warning( 0, tr("warning"), "Couldn't write to " + tmpFile.fileName());
+            else
+                resultMessage = QString ("saved to %1").arg(tmpFile.fileName());
+        }
+        emit ( downloadFinished());
     }
 
     currentDownloads.removeAll(reply);

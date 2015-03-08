@@ -33,6 +33,7 @@ private slots:
     void linkHideUnselectedChanged (int);
     void incImgVerChanged (int);
     void incImgHorChanged (int);
+    void childrenFreePositioningChanged (int);
 //  void addAttributeClicked();
 //  void deleteAttributeClicked();
 

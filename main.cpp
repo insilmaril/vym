@@ -192,14 +192,37 @@ int main(int argc, char* argv[])
         return 0;
     }
     
+    // Update some configurations, which were moved in 2.4.0
+    // This code should be removed later, e.g. in 2.6.0...
+    QStringList settingsChanged;
+    settingsChanged  << "readerURL"
+                     << "readerPDF"
+                     << "autosave/use"
+                     << "autosave/ms"
+                     << "writeBackupFile"
+                     << "printerName"
+                     << "printerFormat"
+                     << "printerFileName";
+    foreach (QString s, settingsChanged)
+    {
+        if (settings.contains("/mainwindow/" + s))
+        {
+            settings.setValue("/system/" + s, settings.value("/mainwindow/" + s));
+            settings.remove  ("/mainwindow/" + s);
+        }
+    }
+
+    if (settings.contains( "/mainwindow/readerURL") )
+        settings.setValue( "/system/readerURL", settings.value( "/mainwindow/readerURL"));
+
     taskModel = new TaskModel();
 
     debug=options.isOn ("debug");
-    //debug=true;
+    debug=true;
     testmode=options.isOn ("testmode");
 
     QString pidString=QString ("%1").arg(getpid());
-    if (debug) qDebug()<< "PID="<<pidString;
+    if (debug) qDebug()<< "vym PID="<<pidString;
 
 #if defined(VYM_DBUS)
     // Register for DBUS
@@ -284,7 +307,7 @@ int main(int argc, char* argv[])
     vymPlatform = "Mac";
 #elif defined(Q_OS_WIN32)
     vymPlatform = "Win32";
-    zipToolPath = "\"c:\\Program Files\\7-Zip\\7z\"";
+    zipToolPath = settings.value("/system/zipToolPath", "c:\\Program Files\\7-Zip\\7z.exe").toString();
 #elif defined(Q_OS_LINUX)
     QFile f("/etc/os-release");
     QString flavour="Unknown";
@@ -351,6 +374,20 @@ int main(int argc, char* argv[])
     Main m(0, Qt::Window | Qt::MSWindowsOwnDC);
 #else
     Main m;
+#endif
+
+    // Check for zip tools (at least on windows...)
+#if defined(Q_OS_WIN32)
+QFile zipTool(zipToolPath);
+    if (!zipTool.exists() )
+    {
+        QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
+                               QObject::tr("Couldn't find tool to unzip data. "
+                                           "Please download and install 7z and set "
+                                           "path in Settings menu:\n ") +
+                                           "http://www.7-zip.org/");
+         m.settingsZipTool();
+    }
 #endif
 
     m.setWindowIcon (QPixmap (":/vym.png"));

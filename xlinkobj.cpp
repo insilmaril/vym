@@ -206,7 +206,7 @@ void XLinkObj::updateXLink()
     if (visBranch)   
     {
 	// Only one of the linked branches is visible
-	// Draw arrowhead   //FIXME-1 missing shaft of arrow
+	// Draw arrowhead   //FIXME-3 missing shaft of arrow
 	BranchObj *bo=(BranchObj*)(visBranch->getLMO());
 	if (!bo) return;
 

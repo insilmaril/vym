@@ -500,6 +500,8 @@ bool parseVYMHandler::readBranchAttr (const QXmlAttributes& a)
 	else	
 	    lastBranch->setIncludeImagesHor(false);
     }	
+    if (a.value("childrenFreePos")=="true")
+        lastBranch->setChildrenLayout(BranchItem::FreePositioning);
     return true;    
 }
 

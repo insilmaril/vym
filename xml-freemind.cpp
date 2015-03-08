@@ -10,7 +10,7 @@
 extern Settings settings;
 extern QString vymVersion;
 
-bool parseFreemindHandler::startDocument()  //FIXME-1 import not complete yet
+bool parseFreemindHandler::startDocument()  //FIXME-3 import not complete yet
 {
     errorProt = "";
     state = StateInit;

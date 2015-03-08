@@ -11,6 +11,7 @@
 #endif
 
 #include "file.h"
+#include "branchitem.h"
 #include "imageitem.h"
 #include "mapeditor.h"
 #include "parser.h"
@@ -340,6 +341,7 @@ public:
     void setFrameBorderWidth (const int &);
     void setIncludeImagesVer(bool);
     void setIncludeImagesHor(bool);
+    void setChildrenLayout(BranchItem::LayoutHint layoutHint);
     void setHideLinkUnselected (bool);
 
     /*! Should object be hidden in exports (clouded)? */
