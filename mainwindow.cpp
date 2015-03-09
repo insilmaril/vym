@@ -353,16 +353,6 @@ Main::Main(QWidget* parent, Qt::WindowFlags f) : QMainWindow(parent,f)
 	qWarning ("MainWindow: Couldn't register DBUS object!");
 #endif    
 
-    if (settings.value("/downloads/releaseNotes/enabled", true).toBool())
-    {
-        if ( versionLowerThanVym( settings.value("/downloads/releaseNotes/shownVersion", "0.0.1").toString() ) )
-            showReleaseNotes(); // FIXME-0
-    }
-
-    if (settings.value("/downloads/updates/enabled", true).toBool())
-    {
-        checkUpdates(); // FIXME-0
-    }
 }
 
 Main::~Main()
@@ -2607,7 +2597,8 @@ void Main::setupHelpActions()
     helpMenu->addSeparator();
 
     a = new QAction(  tr( "Download and show release notes","Help action" ), this );
-    connect( a, SIGNAL( triggered() ), this, SLOT( showReleaseNotes() ) );
+    helpMenu->addAction(a);
+    connect( a, SIGNAL( triggered() ), this, SLOT( checkReleaseNotes() ) );
 
     a = new QAction(  tr( "Check, if updates are available","Help action" ), this );
     helpMenu->addAction(a);
@@ -5689,7 +5680,7 @@ void Main::callMacro ()
     }	
 }
 
-void Main::downloadReleaseNotesFinished()
+void Main::downloadReleaseNotesFinished(bool interactive)
 {
     DownloadAgent *agent = static_cast<DownloadAgent*>(sender());
     QString s;
@@ -5720,21 +5711,46 @@ void Main::downloadReleaseNotesFinished()
     }
 }
 
-void Main::showReleaseNotes()
+void Main::downloadReleaseNotesFinishedInt()
 {
-    QUrl releaseNotesUrl(
-        //QString("http://localhost/release-notes.php?vymVersion=%1") /
-        QString("http://www.insilmaril.de/vym/release-notes.php?vymVersion=%1")  
-        .arg(vymVersion)
-    );
-    DownloadAgent *agent = new DownloadAgent(releaseNotesUrl);
-    connect (agent, SIGNAL( downloadFinished()), this, SLOT(downloadReleaseNotesFinished()));
-    QTimer::singleShot(0, agent, SLOT(execute()));
+    downloadReleaseNotesFinished(true);
 }
 
 void Main::checkReleaseNotes()
 {
-    showReleaseNotes();
+    bool interactive;
+    if (qobject_cast<QAction *>(sender()) )
+        interactive = true;
+    else
+        interactive = false;
+
+    if (downloadsEnabled())
+    {
+        if ( interactive ||
+             versionLowerThanVym( settings.value("/downloads/releaseNotes/shownVersion", "0.0.1").toString() ) )
+        {
+            QUrl releaseNotesUrl(
+                //QString("http://localhost/release-notes.php?vymVersion=%1") /
+                QString("http://www.insilmaril.de/vym/release-notes.php?vymVersion=%1")
+                .arg(vymVersion)
+            );
+            DownloadAgent *agent = new DownloadAgent(releaseNotesUrl);
+            if (interactive)
+                connect(agent, SIGNAL( downloadFinished()), this, SLOT(downloadReleaseNotesFinishedInt()));
+            else
+                connect (agent, SIGNAL( downloadFinished()), this, SLOT(downloadReleaseNotesFinished()));
+            QTimer::singleShot(0, agent, SLOT(execute()));
+        }
+    } else
+    {
+        // No downloads enabled
+        if (interactive)
+        {
+            // Notification: vym could not download release notes
+            QMessageBox::warning(0,  tr("Warning"), tr("Please allow vym to download release notes!"));
+            if (downloadsEnabled(interactive)) checkUpdates();
+        }
+    }
 }
 
 bool Main::downloadsEnabled (bool interactive)
