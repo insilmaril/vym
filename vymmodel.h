@@ -812,4 +812,18 @@ private:
     bool blockSlideSelection;
 
 };
+
+///////////////////////////////////////////////////////////////////////////////
+class VymModelScript : public QObject
+{
+    Q_OBJECT
+public:
+    VymModelScript (VymModel* m);
+
+public slots:
+    void changeHeading();
+private:
+    VymModel *model;
+};
+
 #endif

@@ -5478,11 +5478,17 @@ void Main::standardFlagChanged()
     }
 }
 
+#include <QScriptEngine>
 void Main::testFunction1()
 {
     VymModel *m = currentModel();
     if (m)
-    {
+        QScriptEngine engine;
+        QObject *someObject = new MyObject;
+        QScriptValue objectValue = engine.newQObject(someObject);
+        engine.globalObject().setProperty("myObject", objectValue);{
+        VymModelScript vms(m);
+        vms.changeHeading();
     }
 }
 

@@ -6399,3 +6399,13 @@ void VymModel::updateSlideSelection (QItemSelection newsel,QItemSelection)
 }
 
 
+///////////////////////////////////////////////////////////////////////////////
+VymModelScript::VymModelScript(VymModel *m)
+{
+    model = m;
+}
+
+void VymModelScript::changeHeading()
+{
+    model->setHeading("foobar");
+}

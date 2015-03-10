@@ -8,9 +8,9 @@ QMAKE_MAC_SDK = macosx10.7
 
 QT += network 
 QT += xml 
+QT += script 
 QT += svg 
 QT += printsupport
-
 QT += widgets
 
 #  include(tmp/modeltest/modeltest.pri)
