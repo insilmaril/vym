@@ -269,6 +269,7 @@ public slots:
     void windowToggleTaskEditor();
     void windowToggleSlideEditor();
     void windowToggleScriptEditor();
+    void windowToggleScriptOutput();
     void windowToggleHistory();
     void windowToggleProperty();
     void updateHistory(SimpleSettings &);
@@ -495,6 +496,7 @@ private:
     QAction *actionViewToggleTaskEditor;
     QAction *actionViewToggleSlideEditor;
     QAction *actionViewToggleScriptEditor;
+    QAction *actionViewToggleScriptOutput;
     QAction *actionViewToggleHistoryWindow;
     QAction *actionViewTogglePropertyEditor;
     QAction *actionViewToggleAntiAlias;

@@ -17,6 +17,7 @@ using namespace std;
 #include "options.h"
 #include "settings.h"
 #include "scripteditor.h"
+#include "scriptoutput.h"
 #include "shortcuts.h"
 #include "taskeditor.h"
 #include "taskmodel.h"
@@ -54,6 +55,7 @@ bool bugzillaClientAvailable;	// openSUSE specific currently
 TaskModel     *taskModel;
 TaskEditor    *taskEditor;
 ScriptEditor  *scriptEditor;
+ScriptOutput  *scriptOutput;
 HeadingEditor *headingEditor;	    
 NoteEditor    *noteEditor;	// used in Constr. of LinkableMapObj
 // initialized in mainwindow

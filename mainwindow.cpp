@@ -40,6 +40,7 @@
 #include "options.h"
 #include "vymprocess.h"
 #include "scripteditor.h"
+#include "scriptoutput.h"
 #include "settings.h"
 #include "shortcuts.h"
 #include "noteeditor.h"
@@ -77,6 +78,7 @@ typedef struct _PROCESS_INFORMATION
 extern NoteEditor    *noteEditor;
 extern HeadingEditor *headingEditor;
 extern ScriptEditor  *scriptEditor;
+extern ScriptOutput  *scriptOutput;
 extern Main *mainWindow;
 extern FindResultWidget *findResultWidget;  
 extern TaskEditor *taskEditor;
@@ -197,13 +199,6 @@ Main::Main(QWidget* parent, Qt::WindowFlags f) : QMainWindow(parent,f)
     headingEditorDW=dw;
     addDockWidget (Qt::BottomDockWidgetArea,dw);
 
-    dw = new QDockWidget (tr("Script Editor"));
-    dw->setWidget (scriptEditor);
-    dw->setObjectName ("ScriptEditor");
-    dw->hide();
-    scriptEditorDW=dw;
-    addDockWidget (Qt::LeftDockWidgetArea,dw);
-
     findResultWidget=new FindResultWidget ();
     dw= new QDockWidget (tr ("Search results list","FindResultWidget"));
     dw->setWidget (findResultWidget);
@@ -231,6 +226,13 @@ Main::Main(QWidget* parent, Qt::WindowFlags f) : QMainWindow(parent,f)
     dw->setObjectName ("ScriptEditor");
     dw->hide();	
     addDockWidget (Qt::LeftDockWidgetArea,dw);
+
+    scriptOutput = new ScriptOutput(this);
+    dw = new QDockWidget (tr("Script output window"));
+    dw->setWidget (scriptOutput);
+    dw->setObjectName ("ScriptOutput");
+    dw->hide();
+    addDockWidget (Qt::BottomDockWidgetArea,dw);
 
     branchPropertyEditor = new BranchPropertyEditor();
     dw = new QDockWidget (tr("Property Editor","PropertyEditor"));
@@ -2042,6 +2044,14 @@ void Main::setupViewActions()
     switchboard.addSwitch ("mapToggleScriptEditor", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( windowToggleScriptEditor() ) );
     actionViewToggleScriptEditor=a;
+
+    a = new QAction(QPixmap(), tr("Script output window","View action"), this);
+    a->setShortcut ( Qt::ALT + Qt::SHIFT + Qt::Key_S );
+    a->setCheckable(true);
+    viewMenu->addAction (a);
+    switchboard.addSwitch ("mapToggleScriptOutput", shortcutScope, a, tag);
+    connect( a, SIGNAL( triggered() ), this, SLOT( windowToggleScriptOutput() ) );
+    actionViewToggleScriptOutput=a;
 
     a = new QAction(QPixmap(":/history.png"),  tr( "History Window","View action" ),this );
     a->setShortcut ( Qt::CTRL + Qt::Key_H  );
@@ -4983,12 +4993,25 @@ void Main::windowToggleScriptEditor()
 {
     if (scriptEditor->parentWidget()->isVisible() )
     {
-	scriptEditor->parentWidget()->hide();
-	actionViewToggleScriptEditor->setChecked (false);
+        scriptEditor->parentWidget()->hide();
+        actionViewToggleScriptEditor->setChecked (false);
     } else
     {
-	scriptEditor->parentWidget()->show();
-	actionViewToggleScriptEditor->setChecked (true);
+        scriptEditor->parentWidget()->show();
+        actionViewToggleScriptEditor->setChecked (true);
+    }
+}
+
+void Main::windowToggleScriptOutput()
+{
+    if (scriptOutput->parentWidget()->isVisible() )
+    {
+        scriptOutput->parentWidget()->hide();
+        actionViewToggleScriptOutput->setChecked (false);
+    } else
+    {
+        scriptOutput->parentWidget()->show();
+        actionViewToggleScriptOutput->setChecked (true);
     }
 }
 
@@ -5423,7 +5446,7 @@ QVariant Main::execute (const QString &script)
 {
     VymModel *m=currentModel();
     if (m) return m->execute (script);
-    return QVariant();
+    return QVariant();  // FIXME-2 useless return value
 }
 
 void Main::executeEverywhere (const QString &script)
@@ -5479,16 +5502,40 @@ void Main::standardFlagChanged()
 }
 
 #include <QScriptEngine>
+#include <QScriptValue>
 void Main::testFunction1()
 {
     VymModel *m = currentModel();
     if (m)
+    {
+        scriptOutput->append("Calling helloscript.js:");
         QScriptEngine engine;
-        QObject *someObject = new MyObject;
-        QScriptValue objectValue = engine.newQObject(someObject);
-        engine.globalObject().setProperty("myObject", objectValue);{
-        VymModelScript vms(m);
-        vms.changeHeading();
+
+        QPushButton *button= new QPushButton;
+        QScriptValue scriptButton = engine.newQObject(button);
+        engine.globalObject().setProperty("button", scriptButton);
+
+        QString fileName("C:/Users/uwdr9542/vym/code/helloscript.js");
+        QFile scriptFile(fileName);
+        scriptFile.open(QIODevice::ReadOnly);
+        QTextStream stream(&scriptFile);
+        QString contents = stream.readAll();
+        scriptFile.close();
+
+        scriptOutput->append(contents);
+
+        QScriptValue modelVal = engine.newQObject(m);
+        engine.globalObject().setProperty("model", modelVal);
+
+        QScriptValue result = engine.evaluate(contents, fileName);
+
+        if (engine.hasUncaughtException()) {
+            int line = engine.uncaughtExceptionLineNumber();
+            scriptOutput->append( QString("uncaught exception at line %1: %2").arg(line).arg(result.toString()));
+        }
+
+        //VymModelScript vms(m);
+        //vms.changeHeading();
     }
 }
 
