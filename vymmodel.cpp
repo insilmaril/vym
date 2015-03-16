@@ -6405,7 +6405,16 @@ VymModelScript::VymModelScript(VymModel *m)
     model = m;
 }
 
-void VymModelScript::changeHeading()
+void VymModelScript::addBranch()
 {
     model->setHeading("foobar");
+}
+
+QString VymModelScript::getHeading()
+{
+    return model->getHeading();
+}
+void VymModelScript::setHeading(const QString &s)
+{
+    model->setHeading(s);
 }

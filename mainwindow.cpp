@@ -5502,19 +5502,17 @@ void Main::standardFlagChanged()
 }
 
 #include <QScriptEngine>
-#include <QScriptValue>
+QScriptValue myPrint( QScriptContext * context, QScriptEngine * eng )
+{
+    scriptOutput->append(context->argument(0).toString());
+    return QScriptValue();
+}
+
 void Main::testFunction1()
 {
     VymModel *m = currentModel();
     if (m)
     {
-        scriptOutput->append("Calling helloscript.js:");
-        QScriptEngine engine;
-
-        QPushButton *button= new QPushButton;
-        QScriptValue scriptButton = engine.newQObject(button);
-        engine.globalObject().setProperty("button", scriptButton);
-
         QString fileName("C:/Users/uwdr9542/vym/code/helloscript.js");
         QFile scriptFile(fileName);
         scriptFile.open(QIODevice::ReadOnly);
@@ -5522,10 +5520,20 @@ void Main::testFunction1()
         QString contents = stream.readAll();
         scriptFile.close();
 
-        scriptOutput->append(contents);
+        // Show script for debugging
+        // scriptOutput->append(contents);
 
-        QScriptValue modelVal = engine.newQObject(m);
-        engine.globalObject().setProperty("model", modelVal);
+        QScriptEngine engine;
+
+        engine.globalObject().setProperty( "print", engine.newFunction( myPrint ) );
+
+        // Create Wrapper object
+        VymModelScript vms(m);
+        QScriptValue msVal = engine.newQObject(&vms);
+        engine.globalObject().setProperty("ms", msVal);
+
+        //QScriptValue modelVal = engine.newQObject(m);
+        //engine.globalObject().setProperty("model", modelVal);
 
         QScriptValue result = engine.evaluate(contents, fileName);
 
@@ -5534,8 +5542,6 @@ void Main::testFunction1()
             scriptOutput->append( QString("uncaught exception at line %1: %2").arg(line).arg(result.toString()));
         }
 
-        //VymModelScript vms(m);
-        //vms.changeHeading();
     }
 }
 
@@ -5544,36 +5550,6 @@ void Main::testFunction2()
     VymModel *m = currentModel();
     if (m)
     {
-        // FIXME-0 remove setting to download release notes.
-        //         add actions for manual relnotes and updatecheck
-        //         show messagebox, if actions triggered or on first run
-        QMessageBox msgBox;
-        QString infoText =
-                "Do you want to allow vym to download release notes and check for updates? "
-                "Cookies will be used!";
-        msgBox.setText("Download settings");
-        msgBox.setInformativeText( infoText );
-        msgBox.setStandardButtons(QMessageBox::No | QMessageBox::Yes );
-        msgBox.setDefaultButton(QMessageBox::Yes);
-        int ret = msgBox.exec();
-
-        switch (ret) {
-          case QMessageBox::Yes:
-              // enable release notes action
-              // enable check updates action
-              // enable release notes download
-              // enable update check
-              break;
-          case QMessageBox::No:
-              // disable release notes action
-              // disable check updates action
-              // disable release notes download
-              // disable update check
-              break;
-          default:
-              // should never be reached
-              break;
-        }
     }
 }
 

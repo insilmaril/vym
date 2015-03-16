@@ -39,7 +39,7 @@
       </size>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="slideTab">
       <property name="accessibleDescription">
@@ -110,11 +110,18 @@
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout">
            <property name="spacing">
-            <number>-1</number>
+            <number>6</number>
            </property>
            <property name="sizeConstraint">
             <enum>QLayout::SetMinimumSize</enum>
            </property>
+           <item>
+            <widget class="QPushButton" name="macroRunButton">
+             <property name="text">
+              <string>Run</string>
+             </property>
+            </widget>
+           </item>
            <item>
             <widget class="QLabel" name="label">
              <property name="text">
@@ -136,13 +143,6 @@
             <widget class="QPushButton" name="macroSaveButton">
              <property name="text">
               <string>Save</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="macroRunButton">
-             <property name="text">
-              <string>Run</string>
              </property>
             </widget>
            </item>

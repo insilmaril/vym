@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 #include <QProgressDialog>
+#include <QScriptValue>
+#include <QScriptContext>
 
 #include "branchpropeditor.h"
 #include "extrainfodialog.h"
@@ -517,6 +519,7 @@ private:
     QAction* actionSettingsUseAnimation;
 };
 
+QScriptValue myPrint( QScriptContext * ctx, QScriptEngine * eng );
 
 #endif
 

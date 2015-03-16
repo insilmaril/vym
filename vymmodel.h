@@ -33,7 +33,7 @@ class QGraphicsScene;
 
 typedef QMap<uint,QString> ItemList ;
 
-class VymModel :  public TreeModel {	    
+class VymModel :  public TreeModel {
     Q_OBJECT
     Q_CLASSINFO("D-Bus Interface", "org.insilmaril.vym.VymModel-h")
 
@@ -463,13 +463,13 @@ public:
     void emitExpandOneLevel();
     void emitCollapseOneLevel();
     void emitCollapseUnselected();
-signals:    
+signals:
     void expandAll();
     void expandOneLevel();
     void collapseOneLevel();
     void collapseUnselected();
 
-public:	
+public:
     void toggleTarget();
     ItemList getTargets();
 
@@ -821,7 +821,9 @@ public:
     VymModelScript (VymModel* m);
 
 public slots:
-    void changeHeading();
+    void addBranch();
+    QString getHeading();
+    void setHeading(const QString &s);
 private:
     VymModel *model;
 };
