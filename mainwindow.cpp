@@ -5541,7 +5541,6 @@ void Main::testFunction1()
             int line = engine.uncaughtExceptionLineNumber();
             scriptOutput->append( QString("uncaught exception at line %1: %2").arg(line).arg(result.toString()));
         }
-
     }
 }
 

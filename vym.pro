@@ -226,7 +226,6 @@ SOURCES	+= \
     xml-vym.cpp \
     xml-freemind.cpp \
     xmlobj.cpp \
-    xsltproc.cpp \ 
     vymprocess.cpp
 
 FORMS = \
@@ -273,4 +272,3 @@ doc.files = doc/vym.pdf
 doc.path = $${DOCDIR}
 INSTALLS += doc
 DEFINES += VYM_DOCDIR=\\\"$${DOCDIR}\\\"
-

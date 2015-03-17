@@ -821,7 +821,7 @@ public:
     VymModelScript (VymModel* m);
 
 public slots:
-    void addBranch();
+    void addBranch(int pos=0);
     QString getHeading();
     void setHeading(const QString &s);
 private:

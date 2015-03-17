@@ -3873,13 +3873,13 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	QString com=parser.getCommand();
 	/////////////////////////////////////////////////////////////////////
 	if (com=="addBranch")  
-	{
-	    if (parser.parCount()==0)
-		addNewBranch ();
-	    else
-		addNewBranch ( selbi,parser.parInt (ok,0) );
-	/////////////////////////////////////////////////////////////////////
-	} else if (com=="addBranchBefore")
+    {
+        if (parser.parCount()==0)
+            addNewBranch ();
+        else
+            addNewBranch ( selbi,parser.parInt (ok,0) );
+    /////////////////////////////////////////////////////////////////////
+    } else if (com=="addBranchBefore")
 	{
 	    addNewBranchBefore ();
 	/////////////////////////////////////////////////////////////////////
@@ -6405,9 +6405,9 @@ VymModelScript::VymModelScript(VymModel *m)
     model = m;
 }
 
-void VymModelScript::addBranch()
+void VymModelScript::addBranch(int pos)
 {
-    model->setHeading("foobar");
+    model->setHeading(QString("new").arg(pos));
 }
 
 QString VymModelScript::getHeading()

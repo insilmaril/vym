@@ -27,8 +27,9 @@ ScriptEditor::ScriptEditor (QWidget *parent):QWidget(parent)
     //connect ( ui.openButton, SIGNAL (clicked() ), this, SLOT (openClicked() ));
     connect ( ui.saveSlideButton, SIGNAL (clicked() ), this, SLOT (saveSlide() ));
     //connect ( ui.saveAsButton, SIGNAL (clicked() ), this, SLOT (saveAsClicked() ));
-    connect ( ui.runButton,  SIGNAL (clicked() ), this, SLOT (runClicked() ));
-    connect ( ui.macroRunButton,  SIGNAL (clicked() ), this, SLOT (runClicked() ));
+    connect ( ui.runSlideButton,  SIGNAL (clicked() ), this, SLOT (runClicked() ));
+    connect ( ui.runMacroButton,  SIGNAL (clicked() ), this, SLOT (runClicked() ));
+    connect ( ui.runFileButton,   SIGNAL (clicked() ), this, SLOT (runClicked() ));
     connect ( ui.macroLoadButton, SIGNAL (pressed()), this, SLOT (loadMacroClicked() ) );
     connect ( ui.macroSaveButton, SIGNAL (pressed()), this, SLOT (saveMacroClicked() ) );
 
