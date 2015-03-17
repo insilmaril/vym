@@ -226,6 +226,7 @@ SOURCES	+= \
     xml-vym.cpp \
     xml-freemind.cpp \
     xmlobj.cpp \
+    xsltproc.cpp \
     vymprocess.cpp
 
 FORMS = \
@@ -238,7 +239,7 @@ FORMS = \
     lineeditdialog.ui \
     scripteditor.ui \
     showtextdialog.ui \
-    warningdialog.ui \
+    warningdialog.ui 
 
 isEmpty( PREFIX ) {
     PREFIX = /usr/local

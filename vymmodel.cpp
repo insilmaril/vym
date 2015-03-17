@@ -6407,7 +6407,9 @@ VymModelScript::VymModelScript(VymModel *m)
 
 void VymModelScript::addBranch(int pos)
 {
-    model->setHeading(QString("new").arg(pos));
+    BranchItem *selbi = model->getSelectedBranch();
+    if (selbi)
+        model->addNewBranch(selbi, pos);
 }
 
 QString VymModelScript::getHeading()
