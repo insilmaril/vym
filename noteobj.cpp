@@ -197,67 +197,66 @@ QString NoteObj::saveToDir ()
 {
     if (isRichText () )
     {
-	QString n=note;
+        QString n=note;
 
-	// Remove the doctype, which will confuse parsing
-	// with XmlReader in Qt >= 4.4
-	QRegExp rx("<!DOCTYPE.*>");
-	rx.setMinimal(true);
-	n.replace (rx,"");
+        // Remove the doctype, which will confuse parsing
+        // with XmlReader in Qt >= 4.4
+        QRegExp rx("<!DOCTYPE.*>");
+        rx.setMinimal(true);
+        n.replace (rx,"");
 
+        // QTextEdit may generate fontnames with unquoted &, like
+        // in "Lucida B&H". This is invalid in XML and thus would crash
+        // the XML parser
 
-	// QTextEdit may generate fontnames with unquoted &, like
-	// in "Lucida B&H". This is invalid in XML and thus would crash
-	// the XML parser
+        // More invalid XML is generated with bullet lists:
+        // There are 2 <style> tags in one <li>, so we merge them here
+        int pos=0;
+        bool inbracket=false;
+        int begin_bracket=0;
+        bool inquot=false;
 
-	// More invalid XML is generated with bullet lists:
-	// There are 2 <style> tags in one <li>, so we merge them here
-	int pos=0;
-	bool inbracket=false;
-	int begin_bracket=0;
-	bool inquot=false;
+        while (pos<n.length())
+        {
+            if (n.mid(pos,1)=="<")
+            {
+                inbracket=true;
+                begin_bracket=pos;
+            }
+            if (n.mid(pos,1)==">")
+            {
+                inbracket=false;
+                QString s=n.mid(begin_bracket,pos-begin_bracket+1);
+                int sl=s.length();
+                if (s.count("style=\"")>1)
+                {
+                    rx.setPattern ("style=\\s*\"(.*)\"\\s*style=\\s*\"(.*)\"");
+                    s.replace(rx,"style=\"\\1 \\2\"");
+                    n.replace (begin_bracket,sl,s);
+                    pos=pos-(sl-s.length());
+                }
+            }
+            if (n.mid(pos,1)=="\"" && inbracket)
+            {
+                if (!inquot)
+                    inquot=true;
+                else
+                    inquot=false;
+            }
+            if (n.mid(pos,1)=="&" && inquot)
+            {
+                // Now we are inside  <  "  "  >
+                n.replace(pos,1,"&amp;");
+                pos=pos+3;
+            }
+            pos++;
+        }
 
-	while (pos<n.length())
-	{
-	    if (n.mid(pos,1)=="<") 
-	    {
-		inbracket=true;
-		begin_bracket=pos;
-	    }
-	    if (n.mid(pos,1)==">") 
-	    {
-		inbracket=false;
-		QString s=n.mid(begin_bracket,pos-begin_bracket+1);
-		int sl=s.length();
-		if (s.count("style=\"")>1)
-		{
-		    rx.setPattern ("style=\\s*\"(.*)\"\\s*style=\\s*\"(.*)\"");
-		    s.replace(rx,"style=\"\\1 \\2\"");
-		    n.replace (begin_bracket,sl,s);
-		    pos=pos-(sl-s.length());
-		}   
-	    }	
-	    if (n.mid(pos,1)=="\"" && inbracket)
-	    {
-		if (!inquot)
-		    inquot=true;
-		else
-		    inquot=false;
-	    }
-	    if (n.mid(pos,1)=="&" && inquot)
-	    {
-		// Now we are inside  <  "  "  >
-		n.replace(pos,1,"&amp;");
-		pos=pos+3;
-	    }
-	    pos++;
-	}
-
-	return beginElement ("vymnote",attribut("fonthint",fonthint)) + 
-	    n+ 
-	    "\n" +
-	    endElement ("vymnote"); 
-    } 
+        return beginElement ("vymnote",attribut("fonthint",fonthint)) +
+                n+
+                "\n" +
+                endElement ("vymnote");
+    }
     return valueElement("vymnote", quotemeta(note), attribut("fonthint",fonthint));
 }
 

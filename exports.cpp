@@ -1146,7 +1146,6 @@ QString ExportLaTeX::escapeLaTeX(const QString &s)
 
     foreach (QString p,esc.keys() )
     {
-	//qDebug()<<"Replacing "<<p<<" with "<<esc[p];    // FIXME-3
 	rx.setPattern (p);
 	r.replace (rx, esc[p] );
     }	
