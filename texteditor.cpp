@@ -621,24 +621,39 @@ void TextEditor::editorChanged()
     if (!blockChangedSignal) emit (textHasChanged() );
 }
 
-
-void TextEditor::setText(const QString &t)
+void TextEditor::setRichText(const QString &t)
 {
     blockChangedSignal=true;
     e->setReadOnly(false);
     reset();
-    if (Qt::mightBeRichText (t))
-    {
-	e->setHtml(t);
-	actionFormatRichText->setChecked (true);
-    } else
-    {
-	actionFormatUseFixedFont->setChecked (true);
-	e->setPlainText(t);
-	actionFormatRichText->setChecked (false);
-    }	
+
+    e->setHtml(t);
+    actionFormatRichText->setChecked (true);
+
     updateActions();
     blockChangedSignal=false;
+}
+
+void TextEditor::setPlainText(const QString &t)
+{
+    blockChangedSignal=true;
+    e->setReadOnly(false);
+    reset();
+
+    actionFormatUseFixedFont->setChecked (true);
+    e->setPlainText(t);
+    actionFormatRichText->setChecked (false);
+
+    updateActions();
+    blockChangedSignal=false;
+}
+
+void TextEditor::setText(const QString &t)
+{
+    if (Qt::mightBeRichText (t))    // FIXME-0 check!
+        setRichText( t);
+    else
+        setPlainText( t );
 }
 
 void TextEditor::setInactive()
