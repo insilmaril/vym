@@ -5128,17 +5128,17 @@ void VymModel::updateNoteFlag()
     TreeItem *selti=getSelectedItem();
     if (selti)
     {
-	if (!mapChanged)
-	{
-	    setChanged();
-	    updateActions();
-	}
+        if (!mapChanged)
+        {
+            setChanged();
+            updateActions();
+        }
 
-	if (noteEditor->isEmpty()) 
-	    selti->clearNote();
-	else
-	    selti->setNoteObj (noteEditor->getNote());
-	emitDataChanged(selti);	
+        if (noteEditor->isEmpty())
+            selti->clearNote();
+        else
+            selti->setNoteObj (noteEditor->getNote());
+        emitDataChanged(selti);
         reposition();
     }
 }
