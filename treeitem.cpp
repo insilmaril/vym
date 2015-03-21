@@ -455,10 +455,15 @@ bool TreeItem::isTarget ()
     return target;
 }
 
+bool TreeItem::isNoteEmpty()
+{
+    return note.isEmpty();
+}
+
 void TreeItem::setNote(const QString &s)
 {
     NoteObj n;
-    n.setNote(s);
+    n.setText(s);   // FIXME-0 which RT or ASCII?
     setNoteObj (n);
 }
 

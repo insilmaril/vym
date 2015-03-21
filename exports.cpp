@@ -311,7 +311,7 @@ void ExportAO::doExport()
                              ts << noColString << indent(cur->depth()-4, false) + cur->getURL() + "\n";
 
                         // If necessary, write note
-                        if (!cur->getNoteObj().isEmpty())
+                        if (!cur->isNoteEmpty())
                         {
                             curIndent = noColString + indent(cur->depth()-4,false) + "| ";
                             s=cur->getNoteASCII( curIndent, 80);
@@ -518,7 +518,7 @@ void ExportASCII::doExport()
 		    ts << (curIndent + dashIndent + cur->getVymLink()) +" (vym mindmap)\n";
 
 		// If necessary, write note
-		if (!cur->getNoteObj().isEmpty())
+		if (!cur->isNoteEmpty())
 		{
                     // curIndent +="  | ";
                     // Only indent for bullet points
@@ -575,7 +575,7 @@ void ExportCSV::doExport()
 	if (!cur->hasHiddenExportParent() )
 	{
 	    // If necessary, write note
-	    if (!cur->getNoteObj().isEmpty())
+	    if (!cur->isNoteEmpty())
 	    {
 		s =cur->getNoteASCII();
 		s=s.replace ("\n","\n"+curIndent);
@@ -749,7 +749,7 @@ QString ExportHTML::getBranchText(BranchItem *current)
                 .arg(id);
 
         // Include note
-        if (!current->getNoteObj().isEmpty())
+        if (!current->isNoteEmpty())
         {
             QString n;
             if (current->getNoteObj().isRichText())
@@ -1101,7 +1101,7 @@ void ExportOrgMode::doExport()
 		ts << ("*");
 	    ts << (" " + cur->getHeadingPlain()+ "\n");
 	    // If necessary, write note
-	    if (!cur->getNoteObj().isEmpty()) 
+	    if (!cur->isNoteEmpty()) 
 	    {
 		ts << (cur->getNoteASCII());
 		ts << ("\n");
@@ -1207,7 +1207,7 @@ void ExportLaTeX::doExport()
 	       << endl;
 
 	// If necessary, write note
-	if (!cur->getNoteObj().isEmpty()) {
+    if (!cur->isNoteEmpty()) {
 	  ts << (cur->getNoteASCII());
 	  ts << endl;
 	}
@@ -1250,7 +1250,7 @@ QString ExportOO::buildList (TreeItem *current)
 		r+="<text:list-item><text:p >";
 		r+=quotemeta(bi->getHeadingPlain());
 		// If necessary, write note
-		if (!bi->getNoteObj().isEmpty())
+		if (!bi->isNoteEmpty())
 		    r+=bi->getNoteOpenDoc();
 		r+="</text:p>";
 		r+=buildList (bi);  // recursivly add deeper branches
