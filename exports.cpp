@@ -359,7 +359,7 @@ QString ExportASCII::noteToASCII( const NoteObj &noteobj, const QString &indent,
 
             QString newnote;
             QString curline;
-            uint n=0;
+            int n=0;
             while ( n < note.length() )
             {
                 curline = curline + note.at(n);
