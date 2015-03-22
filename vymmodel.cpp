@@ -5867,13 +5867,13 @@ bool VymModel::select (const QModelIndex &index)
 {
     if (index.isValid() )
     {
-	TreeItem *ti=getItem (index);
-	if (ti->isBranchLikeType() )
-	    ((BranchItem*)ti)->tmpUnscroll(); 
-	reposition();
-	selModel->select (index,QItemSelectionModel::ClearAndSelect  );
-	appendSelection();
-	return true;
+        TreeItem *ti=getItem (index);
+        if (ti->isBranchLikeType() )
+            ((BranchItem*)ti)->tmpUnscroll();
+        reposition();
+        selModel->select (index,QItemSelectionModel::ClearAndSelect  );
+        appendSelection();
+        return true;
     }
     return false;
 }
