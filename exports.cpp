@@ -343,9 +343,10 @@ ExportASCII::ExportASCII()
     caption=vymName+ " -" +QObject::tr("Export as ASCII");
 }
 
+// FIXME-0 noteToASCII: maybe replace with richTextToPlain???
 QString ExportASCII::noteToASCII( const NoteObj &noteobj, const QString &indent, const int &width)  //FIXME-3 use width
 {
-    QString note = noteobj.getNote();
+    QString note = noteobj.getText();
     if (note.isEmpty()) return note;
 
     QRegExp rx;
@@ -754,7 +755,7 @@ QString ExportHTML::getBranchText(BranchItem *current)
             QString n;
             if (current->getNoteObj().isRichText())
             {
-                n=current->getNote();
+                n=current->getNoteText();   // FIXME-0 check for export
                 QRegExp re("<p.*>");
                 re.setMinimal (true);
                 if (current->getNoteObj().getFontHint() == "fixed")

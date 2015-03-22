@@ -319,7 +319,7 @@ bool parseVYMHandler::endElement  ( const QString&, const QString&, const QStrin
 	    lastBranch->setLastSelectedBranch (0);  
             break;
 	case StateHtmlNote: // Richtext note, needed anyway for backward compatibility
-	    no.setNote (htmldata);  
+        no.setNoteRichText (htmldata);  // FIXME-0 check
 	    lastBranch->setNoteObj (no);
 	    break;  
 	case StateMapSlide: 
@@ -327,10 +327,11 @@ bool parseVYMHandler::endElement  ( const QString&, const QString&, const QStrin
 	    break;  
     case StateVymNote:	    // Might be richtext or plaintext with
         // version >= 1.13.8
+Qt::mightBeRichText(htmldata);   //FIXME-0
         if (Qt::mightBeRichText(htmldata) )
-            no.setNote (htmldata);
+            no.setNoteRichText (htmldata);
         else
-            no.setNoteMasked (htmldata);
+            no.setNotePlain (htmldata);
         lastBranch->setNoteObj (no);
         break;
     case StateHtml:
@@ -639,8 +640,8 @@ bool parseVYMHandler::readNoteAttr (const QXmlAttributes& a)
 	}
 	file.close();
 
-	lines ="<html><head><meta name=\"qrichtext\" content=\"1\" /></head><body>"+lines + "</p></body></html>";
-	no.setNote (lines);
+    lines ="<html><head><meta name=\"qrichtext\" content=\"1\" /></head><body>" + lines + "</p></body></html>";
+    no.setText (lines);   // this probably should set type, too...
     }	    
     if (!a.value( "fonthint").isEmpty() ) 
 	no.setFontHint(a.value ("fonthint") );

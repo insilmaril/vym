@@ -4,7 +4,7 @@
 
 #include "noteobj.h"
 #include "settings.h"
-
+ 
 extern Settings settings;
 extern QString vymName;
 
@@ -22,7 +22,11 @@ NoteEditor::~NoteEditor() {}
 
 NoteObj NoteEditor::getNoteObj()
 {
-    NoteObj note (getText() );
+    NoteObj note;
+    if (actionFormatRichText->isChecked() )
+        note.setNoteRichText( getText());
+    else
+        note.setNotePlain( getText());
     note.setFontHint (getFontHint() );
     note.setFilenameHint (getFilenameHint () );
     return note;
@@ -30,9 +34,14 @@ NoteObj NoteEditor::getNoteObj()
 
 void NoteEditor::setNote (const NoteObj &note)
 {
-    setText (note.getNote() );
-    if (!note.isRichText ())
-	setFontHint (note.getFontHint() );
+    qDebug()<<"NE::setNote  RT="<<note.isRichText()<<"  t="<<note.getText().left(20);
+    if (note.isRichText ())
+        setRichText(note.getText());
+    else
+    {
+        setPlainText(note.getText());
+        setFontHint (note.getFontHint() );
+    }
     setFilenameHint (note.getFilenameHint() );
 }
 

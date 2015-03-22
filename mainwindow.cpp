@@ -4184,11 +4184,11 @@ void Main::editMapInfo()
     m->nextBranch(cur,prev);
     while (cur) 
     {
-	if (!cur->getNote().isEmpty() ) n++;
-	f+= cur->imageCount();
-	b++;
-	xl+=cur->xlinkCount();
-	m->nextBranch(cur,prev);
+        if (!cur->getNoteText().isEmpty() ) n++;
+        f+= cur->imageCount();
+        b++;
+        xl+=cur->xlinkCount();
+        m->nextBranch(cur,prev);
     }
 
     stats+=QString ("%1 branches\n").arg (m->branchCount(),6);
@@ -5067,10 +5067,15 @@ void Main::updateNoteEditor(QModelIndex index ) //FIXME-4 maybe change to TreeIt
     {
 	TreeItem *ti=((VymModel*) QObject::sender())->getItem(index);
 	/*
-	qDebug()<< "Main::updateNoteEditor model="<<sender() 
-		<< "  item="<<ti->getHeadingStd()<<" ("<<ti<<")";
-	*/
-	if (ti) noteEditor->setNote (ti->getNoteObj() );
+    */
+    qDebug()<< "Main::updateNoteEditor model="<<sender()
+        << "  item="<<ti->getHeading()<<" ("<<ti<<")";
+    qDebug()<< "RT="<<ti->getNoteObj().isRichText();
+    if (ti)
+        {
+            noteEditor->setNote (ti->getNoteObj() );
+            //FIXME-0 set RichText mode?
+        }
     }
 }
 
@@ -5089,35 +5094,35 @@ void Main::changeSelection (VymModel *model, const QItemSelection &newsel, const
     {
 	TreeItem *ti;
 	if (!newsel.indexes().isEmpty() )
-	{
-	    ti=model->getItem(newsel.indexes().first());
-	    if (!ti->hasEmptyNote() )
-		noteEditor->setNote(ti->getNoteObj() );
-	    else
-		noteEditor->setNote(NoteObj() );    //FIXME-5 maybe add a clear() to TE
-	    // Show URL and link in statusbar	
-	    QString status;
-	    QString s=ti->getURL();
-	    if (!s.isEmpty() ) status+="URL: "+s+"  ";
-	    s=ti->getVymLink();
-	    if (!s.isEmpty() ) status+="Link: "+s;
-	    if (!status.isEmpty() ) statusMessage (status);
+    {
+        ti=model->getItem(newsel.indexes().first());
+        if (!ti->hasEmptyNote() )
+            noteEditor->setNote(ti->getNoteObj() );
+        else
+            noteEditor->setNote(NoteObj() );    //FIXME-2 maybe add a clear() to TE
+        // Show URL and link in statusbar
+        QString status;
+        QString s=ti->getURL();
+        if (!s.isEmpty() ) status+="URL: "+s+"  ";
+        s=ti->getVymLink();
+        if (!s.isEmpty() ) status+="Link: "+s;
+        if (!status.isEmpty() ) statusMessage (status);
 
-	    headingEditor->setText (ti->getHeading() );
+        headingEditor->setText (ti->getHeading() );
 
-	    // Select in TaskEditor, if necessary 
-            Task *t=NULL;
-	    if (ti->isBranchLikeType() )
-		t=((BranchItem*)ti)->getTask();
+        // Select in TaskEditor, if necessary
+        Task *t=NULL;
+        if (ti->isBranchLikeType() )
+            t=((BranchItem*)ti)->getTask();
 
-            if (t)
-		taskEditor->select (t);
-            else
-                taskEditor->clearSelection();
-	} else
-	    noteEditor->setInactive();
+        if (t)
+            taskEditor->select (t);
+        else
+            taskEditor->clearSelection();
+    } else
+        noteEditor->setInactive();
 
-	updateActions();
+    updateActions();
     }
 }
 

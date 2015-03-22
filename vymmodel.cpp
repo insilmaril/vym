@@ -1323,22 +1323,23 @@ void VymModel::saveState(
 
     if (debug)
     {
-	//qDebug() << "          into="<< histPath;
-	qDebug() << "    stepsTotal="<<stepsTotal<<
-	", undosAvail="<<undosAvail<<
-	", redosAvail="<<redosAvail<<
-	", curStep="<<curStep;
-	qDebug() << "    ---------------------------";
-	qDebug() << "    comment="<<comment;
-	qDebug() << "    undoCom="<<undoCommand;
-	qDebug() << "    undoSel="<<undoSelection;
-	qDebug() << "    redoCom="<<redoCommand;
-	qDebug() << "    redoSel="<<redoSelection;
-	if (saveSel) qDebug() << "    saveSel="<<qPrintable (getSelectString(saveSel));
-	qDebug() << "    ---------------------------";
+        //qDebug() << "          into="<< histPath;
+        qDebug() << "    stepsTotal="<<stepsTotal<<
+        ", undosAvail="<<undosAvail<<
+        ", redosAvail="<<redosAvail<<
+        ", curStep="<<curStep;
+        qDebug() << "    ---------------------------";
+        qDebug() << "    comment="<<comment;
+        qDebug() << "    undoCom="<<undoCommand;
+        qDebug() << "    undoSel="<<undoSelection;
+        qDebug() << "    redoCom="<<redoCommand;
+        qDebug() << "    redoSel="<<redoSelection;
+        if (saveSel) qDebug() << "    saveSel="<<qPrintable (getSelectString(saveSel));
+        qDebug() << "    ---------------------------";
     }
 
     mainWindow->updateHistory (undoSet);
+
     setChanged();
     updateActions();
 }
@@ -1651,17 +1652,16 @@ void VymModel::setHeading(const QString &s, BranchItem *bi)
     if (!bi) bi=getSelectedBranch();
     if (bi)
     {
-	if (bi->getHeading()==s) return;
-	saveState(
-	    bi,
-	    "setHeading (\""+bi->getHeading()+"\")", 
-	    bi,
-	    "setHeading (\""+s+"\")", 
-	    QString("Set heading of %1 to \"%2\"").arg(getObjectName(bi)).arg(s) );
-	bi->setHeading(s );
-	emitDataChanged ( bi);
-	emitUpdateQueries ();
-	reposition();
+        if (bi->getHeading()==s) return;
+        saveState(
+            bi,
+            "setHeading (\""+bi->getHeading()+"\")",
+            bi,
+            "setHeading (\""+s+"\")",
+            QString("Set heading of %1 to \"%2\"").arg(getObjectName(bi)).arg(s) ); bi->setHeading(s );
+        emitDataChanged ( bi);
+        emitUpdateQueries ();
+        reposition();
     }
 }
 
@@ -1681,7 +1681,7 @@ void VymModel::setNote(const QString &s)
     {
 	saveState(
 	    selti,
-	    "setNote (\"" + selti->getNote() + "\")", 
+        "setNote (\"" + selti->getNoteText() + "\")",
 	    selti,
 	    "setNote (\"" + s + "\")", 
 	    QString("Set note of %1 ").arg(getObjectName(selti)) );
@@ -1695,7 +1695,7 @@ QString VymModel::getNote()
 {
     TreeItem *selti=getSelectedItem();
     if (selti)
-	return selti->getNote();
+    return selti->getNoteText();
     else    
 	return QString();
 }
@@ -1719,7 +1719,7 @@ void VymModel::saveNote (const QString &fn)
     BranchItem *selbi=getSelectedBranch();
     if (selbi)
     {
-	QString n=selbi->getNote();
+    QString n=selbi->getNoteText();
 	if (n.isEmpty())
 	    qWarning ()<<"VymModel::saveNote  note is empty, won't save to "<<fn;
 	else
@@ -1850,7 +1850,7 @@ BranchItem* VymModel::findText (QString s,Qt::CaseSensitivity cs)
 	if (findCurrent)
 	{
 	    // Searching in Note
-	    if (findCurrent->getNote().contains(findString,cs))
+        if (findCurrent->getNoteText().contains(findString,cs))
 	    {
 		select (findCurrent);
 		if (noteEditor->findText(findString,flags)) 
@@ -3553,7 +3553,7 @@ void VymModel::note2URLs()
 	    QString ("Extract URLs from note of %1").arg(getObjectName(selbi))
 	);  
 
-	QString n=selbi->getNote();
+    QString n=selbi->getNoteText();
 	if (n.isEmpty()) return;
 	QRegExp re ("(http.*)(\\s|\"|')");
 	re.setMinimal (true);

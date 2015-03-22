@@ -4,6 +4,7 @@
 #include "attributeitem.h"
 #include "branchobj.h"
 #include "branchitem.h"
+#include "misc.h"
 #include "treeitem.h"
 #include "vymmodel.h"
 #include "xlinkitem.h"
@@ -71,7 +72,7 @@ void TreeItem::init()
 
     target=false;
 
-    note.setNote(""); 
+    note.setText("");
 
     hidden=false;
     hideExport=false;
@@ -338,17 +339,13 @@ QString TreeItem::getHeading () const
 
 std::string TreeItem::getHeadingStd () const
 {
-    return itemData[0].toString().toStdString();
+    return getHeading().toStdString();
 }
 
-#include "noteobj.h"
-QString TreeItem::getHeadingPlain() const   //FIXME-4 create own TextObj instead of recreating from ASCII note every time
+QString TreeItem::getHeadingPlain() const
 {
-    NoteObj no(itemData[0].toString());
-    QString t=no.getNoteASCII();
-
     // strip beginning and tailing WS
-    return t.trimmed();
+    return richTextToPlain(getHeading()).trimmed();
 }
 
 QString TreeItem::getHeadingDepth () // Indent by depth for debugging
@@ -481,9 +478,9 @@ void TreeItem::setNoteObj(const NoteObj &n){
 	systemFlags.deactivate ("system-note");
 }
 
-QString TreeItem::getNote()
+QString TreeItem::getNoteText()
 {
-    return note.getNote();
+    return note.getText();
 }
 
 bool TreeItem::hasEmptyNote()
@@ -491,7 +488,7 @@ bool TreeItem::hasEmptyNote()
     return note.isEmpty();
 }
 
-NoteObj TreeItem::getNoteObj()
+NoteObj TreeItem::getNoteObj()  // FIXME-0 really needed?
 {
     return note;
 }

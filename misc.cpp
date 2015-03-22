@@ -1,13 +1,53 @@
 #include "misc.h"
 
 #include "geometry.h"
+
 #include <math.h>
-//#include <qregexp.h>
 #include <stdlib.h>
 
 #include <QDebug>
 #include <QDialog>
 #include <QString>
+
+QString richTextToPlain (QString r)
+{
+    // Avoid failing assert with mingw
+    if (r.isEmpty()) return r;
+
+    QRegExp rx;
+
+    // Remove all <style...> ...</style>
+    rx.setPattern("<style.*>.*</style>");
+    r.replace (rx,"");
+
+    // convert all "<br*>" to "\n"
+    rx.setPattern ("<br.*>");
+    r.replace (rx,"\n");
+
+    // convert all "</p>" to "\n"
+    rx.setPattern ("</p>");
+    r.replace (rx,"\n");
+
+    // remove all remaining tags
+    rx.setPattern ("<.*>");
+    r.replace (rx,"");
+
+    // If string starts with \n now, remove it.
+    // It would be wrong in an OOo export for example
+    while (r.at(0)=='\n') r.remove (0,1);
+
+    // convert "&", "<" and ">"
+    rx.setPattern ("&gt;");
+    r.replace (rx,">");
+    rx.setPattern ("&lt;");
+    r.replace (rx,"<");
+    rx.setPattern ("&amp;");
+    r.replace (rx,"&");
+    rx.setPattern ("&quot;");
+    r.replace (rx,"\"");
+
+    return r;
+}
 
 QString qpointToString (const QPoint &p)
 { return "(" + QString("%1").arg(p.x()) +","+ QString ("%1").arg (p.y()) +")"; }

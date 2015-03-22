@@ -216,7 +216,7 @@ QString TextEditor::getText()
 NoteObj TextEditor::getNote()
 {
     NoteObj n;
-    n.setNote (getText() );
+    n.setText (getText() ); // FIXME-0 RT or ASCII?
     n.setFontHint ( getFontHint() );
     return n;
 }

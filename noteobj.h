@@ -14,16 +14,17 @@ class NoteObj:public XMLObj
 {
 public:
     NoteObj();
-    NoteObj(const QString&);
     void operator= (const NoteObj &);
     void copy (NoteObj);
     void clear();
-    void setNote (const QString&);
-    void setNoteMasked (const QString&);
-    QString getNote() const;
+    void setText (const QString&);
+    void setNoteRichText (const QString&);
+    void setNotePlain (const QString&);
+    QString getText() const;
     QString getNoteASCII();
     QString getNoteASCII(QString igdent, const int &width=0);
     QString getNoteOpenDoc();
+    void setRichText(bool b);
     bool isRichText() const;
     void setFontHint (const QString&);
     QString getFontHint () const;
@@ -36,5 +37,6 @@ private:
     QString note;
     QString fonthint;
     QString filenamehint;
+    bool richText;
 };
 #endif

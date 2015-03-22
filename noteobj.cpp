@@ -1,4 +1,5 @@
 #include "noteobj.h"
+#include "misc.h"
 
 #include <QRegExp>
 #include <QDebug>
@@ -11,13 +12,6 @@
 NoteObj::NoteObj()  //FIXME-3 transform this to general "Text" Baseclass for both plain and richtext
 {
     clear();
-}
-
-NoteObj::NoteObj(const QString &s)
-{
-    clear();
-    note=s;
-    setNote (s);
 }
 
 void NoteObj::operator= (const NoteObj &other)
@@ -34,22 +28,43 @@ void NoteObj::copy (NoteObj other)
 
 void NoteObj::clear()
 {
-    note="";
-    fonthint="undef";
-    filenamehint="";
+    note = "";
+    fonthint = "undef";
+    filenamehint = "";
+    richText = false;
 }
 
-void NoteObj::setNote (const QString &s) 
+void NoteObj::setRichText(bool b)
 {
-    note=s;
+    richText = b;
+    richText = true;
 }
 
-void NoteObj::setNoteMasked (const QString &s) 
+bool NoteObj::isRichText()const
 {
-    note=unquotemeta(s);
+    return richText;
 }
 
-QString NoteObj::getNote() const
+void NoteObj::setText (const QString &s)
+{
+    note = s;
+}
+
+void NoteObj::setNoteRichText (const QString &s)
+{
+    qDebug()<<"NO::setNoteRT: "<<s;
+    note = s;
+    richText = true;
+}
+
+void NoteObj::setNotePlain (const QString &s)
+{
+    qDebug()<<"NO::setNotePlain: "<<s;
+    note = unquotemeta(s);
+    richText = false;
+}
+
+QString NoteObj::getText() const
 {
     return note;
 }
@@ -75,35 +90,7 @@ QString NoteObj::getNoteASCII(QString indent, const int &)  //FIXME-3 use width
         return r.replace (rx,"\n"+indent);
     }
 
-    // Remove all <style...> ...</style>
-    rx.setPattern("<style.*>.*</style>");
-    r.replace (rx,"");
-
-    // convert all "<br*>" to "\n"
-    rx.setPattern ("<br.*>");
-    r.replace (rx,"\n");
-
-    // convert all "</p>" to "\n"
-    rx.setPattern ("</p>");
-    r.replace (rx,"\n");
-    
-    // remove all remaining tags 
-    rx.setPattern ("<.*>");
-    r.replace (rx,"");
-
-    // If string starts with \n now, remove it.
-    // It would be wrong in an OOo export for example
-    while (r.at(0)=='\n') r.remove (0,1);
-    
-    // convert "&", "<" and ">"
-    rx.setPattern ("&gt;");
-    r.replace (rx,">");
-    rx.setPattern ("&lt;");
-    r.replace (rx,"<");
-    rx.setPattern ("&amp;");
-    r.replace (rx,"&");
-    rx.setPattern ("&quot;");
-    r.replace (rx,"\"");
+    r = richTextToPlain( r );
 
     // Indent everything
     rx.setPattern ("^\n");
@@ -114,7 +101,7 @@ QString NoteObj::getNoteASCII(QString indent, const int &)  //FIXME-3 use width
     if (fonthint !="fixed")
     {
     }
-*/  
+*/
     r=indent+"\n"+r+indent+"\n\n";
     return r;
 }
@@ -160,12 +147,6 @@ QString NoteObj::getNoteOpenDoc()
     return r;
 }
 
-bool NoteObj::isRichText() const
-{
-    return Qt::mightBeRichText(note);
-}
-
-
 void NoteObj::setFontHint (const QString &s)
 {
     // only for backward compatibility (pre 1.5 )
@@ -195,7 +176,8 @@ bool NoteObj::isEmpty ()
 
 QString NoteObj::saveToDir ()
 {
-    if (isRichText () )
+    qDebug()<<"NO::saveToDir rt="<<isRichText(); //FIXME-0
+    if (richText )
     {
         QString n=note;
 
@@ -256,7 +238,7 @@ QString NoteObj::saveToDir ()
                 n+
                 "\n" +
                 endElement ("vymnote");
-    }
-    return valueElement("vymnote", quotemeta(note), attribut("fonthint",fonthint));
+    } else
+        return valueElement("vymnote", quotemeta(note), attribut("fonthint",fonthint));
 }
 
