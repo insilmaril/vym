@@ -24,6 +24,7 @@ void NoteObj::copy (NoteObj other)
     note=other.note;
     fonthint=other.fonthint;
     filenamehint=other.filenamehint;
+    richText = other.richText;
 }
 
 void NoteObj::clear()
