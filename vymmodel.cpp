@@ -5137,7 +5137,7 @@ void VymModel::updateNoteFlag()
         if (noteEditor->isEmpty())
             selti->clearNote();
         else
-            selti->setNoteObj (noteEditor->getNote());
+            selti->setNoteObj (noteEditor->getNoteObj());
         emitDataChanged(selti);
         reposition();
     }

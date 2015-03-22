@@ -213,14 +213,6 @@ QString TextEditor::getText()
 	    return e->toPlainText();
     }
 
-NoteObj TextEditor::getNote()
-{
-    NoteObj n;
-    n.setText (getText() ); // FIXME-0 RT or ASCII?
-    n.setFontHint ( getFontHint() );
-    return n;
-}
-
 bool TextEditor::findText(const QString &t, const QTextDocument::FindFlags &flags)
 {
     if (e->find (t,flags))
