@@ -46,7 +46,7 @@ public slots:
     void editorChanged();	    // received when text() changed
     void setRichText(const QString &t);
     void setPlainText(const QString &t);
-    void setText(const QString &);  // set Text (by MapEditor)
+//    void setText(const QString &);  // set Text (by MapEditor)
     void setInactive();		    // Nothing can be entered
     void editCopyAll();
 

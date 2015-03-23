@@ -25,6 +25,8 @@ private:
     int contentFilter;    
 public:
     bool startDocument();
+    bool startCDATA();
+    bool endCDATA();
     bool startElement ( const QString&, const QString&,
                         const QString& eName, const QXmlAttributes& atts ); 
     bool   endElement ( const QString&, const QString&, const QString& ); 
@@ -44,26 +46,26 @@ public:
 
 private:
     enum State 
-    { 
-	StateInit, 
-	StateMap, 
-	StateMapSelect, 
-	StateMapSetting,
-	StateMapSlide,
-	StateMapCenter, 
-	StateBranch, 
-	StateBranchXLink,	    // Obsolete
-	StateVymNote,
-	StateHtmlNote,		    // Obsolete >= 1.13.6
-	StateHtml, 
-	StateFrame,
-	StateStandardFlag,
-	StateNote,		    // Obsolete >= 1.4.6
-	StateImage,
-	StateHeading,
-	StateLink,
-	StateAttribute,
-	StateTask
+    {
+        StateInit,
+        StateMap,
+        StateMapSelect,
+        StateMapSetting,
+        StateMapSlide,
+        StateMapCenter,
+        StateBranch,
+        StateBranchXLink,	    // Obsolete
+        StateVymNote,
+        StateHtmlNote,		    // Obsolete >= 1.13.6
+        StateHtml,
+        StateFrame,
+        StateStandardFlag,
+        StateNote,		    // Obsolete >= 1.4.6
+        StateImage,
+        StateHeading,
+        StateLink,
+        StateAttribute,
+        StateTask
      };
 
      int branchesCounter;

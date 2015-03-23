@@ -79,13 +79,13 @@ QString XMLObj::singleElement(QString s, QString at)
 // returns <s>
 QString XMLObj::beginElement(QString s)
 {
-    return indent() + "<" + s + ">\n";
+    return indent() + "<" + s + ">";
 }
 
 // returns <s at>
 QString XMLObj::beginElement(QString s, QString at)
 {
-    return indent() + "<" + s + " " + at + ">\n";
+    return indent() + "<" + s + " " + at + ">";
 }
 
 // returns </s>

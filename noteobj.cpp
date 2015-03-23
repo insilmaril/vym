@@ -3,7 +3,6 @@
 
 #include <QRegExp>
 #include <QDebug>
-#include <QTextDocument>    // for mightBeRichText
 
 /////////////////////////////////////////////////////////////////
 // NoteObj
@@ -21,10 +20,10 @@ void NoteObj::operator= (const NoteObj &other)
 
 void NoteObj::copy (NoteObj other)
 {
-    note=other.note;
-    fonthint=other.fonthint;
-    filenamehint=other.filenamehint;
-    richText = other.richText;
+    note = other.note;
+    fonthint = other.fonthint;
+    filenamehint = other.filenamehint;
+    textmode = other.textmode;
 }
 
 void NoteObj::clear()
@@ -32,18 +31,23 @@ void NoteObj::clear()
     note = "";
     fonthint = "undef";
     filenamehint = "";
-    richText = false;
+    textmode = AutoText;
 }
 
 void NoteObj::setRichText(bool b)
 {
-    richText = b;
-    richText = true;
+    if (b)
+        textmode = RichText;
+    else
+        textmode = PlainText;
 }
 
 bool NoteObj::isRichText()const
 {
-    return richText;
+    if (textmode == RichText)
+        return true;
+    else
+        return false;
 }
 
 void NoteObj::setText (const QString &s)
@@ -53,16 +57,14 @@ void NoteObj::setText (const QString &s)
 
 void NoteObj::setNoteRichText (const QString &s)
 {
-    qDebug()<<"NO::setNoteRT: "<<s;
     note = s;
-    richText = true;
+    textmode = RichText;
 }
 
 void NoteObj::setNotePlain (const QString &s)
 {
-    qDebug()<<"NO::setNotePlain: "<<s;
     note = unquotemeta(s);
-    richText = false;
+    textmode = PlainText;
 }
 
 QString NoteObj::getText() const
@@ -177,11 +179,19 @@ bool NoteObj::isEmpty ()
 
 QString NoteObj::saveToDir ()
 {
-    qDebug()<<"NO::saveToDir rt="<<isRichText(); //FIXME-0
-    if (richText )
+    QString n = note;
+    QString fontHintAttr;
+    QString textModeAttr;
+    if (textmode == RichText)
+        textModeAttr = attribut("textMode","richText");
+    else
     {
-        QString n=note;
+        textModeAttr = attribut("textMode","plainText");
+        fontHintAttr  = attribut("fonthint",fonthint);
+    }
 
+    if (textmode == RichText) // FIXME-0 should no longer be necessary with use of CDATA
+    {
         // Remove the doctype, which will confuse parsing
         // with XmlReader in Qt >= 4.4
         QRegExp rx("<!DOCTYPE.*>");
@@ -234,12 +244,9 @@ QString NoteObj::saveToDir ()
             }
             pos++;
         }
-
-        return beginElement ("vymnote",attribut("fonthint",fonthint)) +
-                n+
-                "\n" +
-                endElement ("vymnote");
-    } else
-        return valueElement("vymnote", quotemeta(note), attribut("fonthint",fonthint));
+    }
+    return beginElement ("vymnote"  + textModeAttr + fontHintAttr)
+            + "<![CDATA[" + n + "]]>"       // FIXME-0 check for ]]> in n !
+            + endElement ("vymnote");
 }
 

@@ -585,7 +585,7 @@ void TextEditor::textLoad()
 	    return;
 
 	    QTextStream ts( &f );
-	    setText( ts.readAll() );
+        // FIXME-0   decide RT vs. plain !  setText( ts.readAll() );
 	    editorChanged();
 	}
     }
@@ -632,7 +632,7 @@ void TextEditor::setPlainText(const QString &t)
     e->setReadOnly(false);
     reset();
 
-    actionFormatUseFixedFont->setChecked (true);
+    actionFormatUseFixedFont->setChecked (true); // FIXME-0 wrong, respect fonthint!
     e->setPlainText(t);
     actionFormatRichText->setChecked (false);
 
@@ -640,18 +640,21 @@ void TextEditor::setPlainText(const QString &t)
     blockChangedSignal=false;
 }
 
-void TextEditor::setText(const QString &t)
+
+/* void TextEditor::setText(const QString &t)  FIXME-0
 {
+    qDebug()<<"TE::setText !!!!!!!!!!!!!!!!!!!!!!!!!";
     if (Qt::mightBeRichText (t))    // FIXME-0 check!
         setRichText( t);
     else
         setPlainText( t );
 }
+*/
 
 void TextEditor::setInactive()
 {
     state=inactiveEditor;
-    setText("");
+    e->setPlainText("");
     setState (inactiveEditor);
     e->setReadOnly (true);
 
@@ -737,7 +740,9 @@ void TextEditor::textSave()
 
 void TextEditor::textExportAsASCII()
 {
-    QString text = NoteObj (e->toPlainText()).getNoteASCII();
+    NoteObj no;
+    no.setNotePlain (e->toPlainText());
+    QString text = no.getNoteASCII();
     QString fn,s;
     if (!filenameHint.isEmpty())
     {
@@ -828,6 +833,7 @@ void TextEditor::toggleRichText()
 	actionFormatUseFixedFont->setEnabled(false);
     }
     updateActions();	
+    emit( textHasChanged() );
 }
 
 void TextEditor::setFixedFont()

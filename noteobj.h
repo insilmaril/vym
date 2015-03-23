@@ -13,6 +13,7 @@ class NoteObj;
 class NoteObj:public XMLObj
 {
 public:
+    enum TextMode {AutoText, PlainText, RichText};
     NoteObj();
     void operator= (const NoteObj &);
     void copy (NoteObj);
@@ -37,6 +38,6 @@ private:
     QString note;
     QString fonthint;
     QString filenamehint;
-    bool richText;
+    TextMode textmode;
 };
 #endif

@@ -470,8 +470,8 @@ void TreeItem::clearNote()
     systemFlags.deactivate ("system-note");
 }
 
-void TreeItem::setNoteObj(const NoteObj &n){
-    note=n;
+void TreeItem::setNoteObj(const NoteObj &no){
+    note = no;
     if (!note.isEmpty() && !systemFlags.isActive ("system-note"))
 	systemFlags.activate ("system-note");
     if (note.isEmpty() && systemFlags.isActive ("system-note"))

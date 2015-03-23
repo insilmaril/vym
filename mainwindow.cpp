@@ -3206,7 +3206,7 @@ void Main::fileLoad(const LoadMode &lmode)
     }
 
     QString filter;
-    filter+="VYM map " + tr("or","File Dialog") +" Freemind map" + " (*.vym *.vyp *.mm);;";
+    filter+="VYM map " + tr("or","File Dialog") +" Freemind map" + " (*.xml *.vym *.vyp *.mm);;";  //FIXME-0 xml temporary here
     filter+="VYM map (*.vym *.vyp);;";
     filter+="VYM Backups (*.vym~);;";
     filter+="Freemind map (*.mm);;";
@@ -5065,17 +5065,14 @@ void Main::updateNoteEditor(QModelIndex index ) //FIXME-4 maybe change to TreeIt
 {
     if (index.isValid() )
     {
-	TreeItem *ti=((VymModel*) QObject::sender())->getItem(index);
-	/*
-    */
+        TreeItem *ti=((VymModel*) QObject::sender())->getItem(index);
+        /*
     qDebug()<< "Main::updateNoteEditor model="<<sender()
         << "  item="<<ti->getHeading()<<" ("<<ti<<")";
     qDebug()<< "RT="<<ti->getNoteObj().isRichText();
-    if (ti)
-        {
+    */
+        if (ti)
             noteEditor->setNote (ti->getNoteObj() );
-            //FIXME-0 set RichText mode?
-        }
     }
 }
 
@@ -5108,7 +5105,7 @@ void Main::changeSelection (VymModel *model, const QItemSelection &newsel, const
         if (!s.isEmpty() ) status+="Link: "+s;
         if (!status.isEmpty() ) statusMessage (status);
 
-        headingEditor->setText (ti->getHeading() );
+        //  temporay removed!  headingEditor->setText (ti->getHeading() ); // FIXME-0 check type RT vs plain
 
         // Select in TaskEditor, if necessary
         Task *t=NULL;
@@ -5258,7 +5255,7 @@ void Main::updateActions()
 		actionHeading2URL->setEnabled (true);  
 
 		// Note
-		actionGetURLsFromNote->setEnabled (!selbi->getNote().isEmpty());
+        actionGetURLsFromNote->setEnabled (!selbi->getNoteText().isEmpty());
 
 		standardFlagsMaster->setEnabled (true);
 

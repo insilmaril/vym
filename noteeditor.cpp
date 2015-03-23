@@ -34,7 +34,6 @@ NoteObj NoteEditor::getNoteObj()
 
 void NoteEditor::setNote (const NoteObj &note)
 {
-    qDebug()<<"NE::setNote  RT="<<note.isRichText()<<"  t="<<note.getText().left(20);
     if (note.isRichText ())
         setRichText(note.getText());
     else
@@ -44,5 +43,3 @@ void NoteEditor::setNote (const NoteObj &note)
     }
     setFilenameHint (note.getFilenameHint() );
 }
-
-

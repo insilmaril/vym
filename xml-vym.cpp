@@ -45,6 +45,18 @@ bool parseVYMHandler::startDocument()
     return true;
 }
 
+bool parseVYMHandler::startCDATA()
+{
+    qDebug()<<"xml-VYM: Now reading CDATA";
+    return true;
+}
+
+bool parseVYMHandler::endCDATA()
+{
+    qDebug()<<"xml-VYM: Finished reading CDATA";
+    return true;
+}
+
 bool parseVYMHandler::startElement  ( const QString&, const QString&,
                     const QString& eName, const QXmlAttributes& atts ) 
 {
@@ -185,11 +197,18 @@ bool parseVYMHandler::startElement  ( const QString&, const QString&,
 		(state == StateMapCenter ||state==StateBranch)) 
     {
 	state=StateVymNote;
-        htmldata.clear();
+    htmldata.clear();
 	no.clear();
 	if (!atts.value( "fonthint").isEmpty() ) 
 	    no.setFontHint(atts.value ("fonthint") );
-    } else if ( eName == "floatimage" && 
+    if (!atts.value( "textMode").isEmpty() )
+    {
+        if (atts.value ("textMode") == "richText" )
+            no.setRichText(true);
+        else
+            no.setRichText(false);
+    }
+    } else if ( eName == "floatimage" &&
 		(state == StateMapCenter ||state==StateBranch)) 
     {
 	state=StateImage;
@@ -327,11 +346,7 @@ bool parseVYMHandler::endElement  ( const QString&, const QString&, const QStrin
 	    break;  
     case StateVymNote:	    // Might be richtext or plaintext with
         // version >= 1.13.8
-Qt::mightBeRichText(htmldata);   //FIXME-0
-        if (Qt::mightBeRichText(htmldata) )
-            no.setNoteRichText (htmldata);
-        else
-            no.setNotePlain (htmldata);
+        no.setText (htmldata);
         lastBranch->setNoteObj (no);
         break;
     case StateHtml:
@@ -348,7 +363,7 @@ Qt::mightBeRichText(htmldata);   //FIXME-0
 
 bool parseVYMHandler::characters   ( const QString& ch)
 {
-    //qDebug()<< "xml-vym: characters "<<ch<<"  state="<<state;
+//    qDebug()<< "xml-vym: characters "<<ch<<"  state="<<state;
 
     QString ch_org=quotemeta (ch);
     QString ch_simplified=ch.simplified();
@@ -372,13 +387,13 @@ bool parseVYMHandler::characters   ( const QString& ch)
             break;
         case StateImage: break;
         case StateVymNote: 
-	    htmldata+=ch;
+        htmldata+=ch;
 	    break;
         case StateHtmlNote: // Only for compatibility
 	    htmldata=ch;
 	    break;
         case StateHtml:
-	    htmldata+=ch_org;
+        htmldata+=ch_org;
 	    break;
         case StateHeading: 
             lastBranch->setHeading(ch);
