@@ -32,10 +32,8 @@ extern Switchboard switchboard;
 extern QPrinter *printer;
 extern bool debug;
 
-
 ///////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////
-
 
 TextEditor::TextEditor(QString scope)
 {
@@ -52,7 +50,6 @@ TextEditor::TextEditor(QString scope)
     setCentralWidget( e );
     statusBar()->showMessage( tr("Ready","Statusbar message"), statusbarTime);
     setWindowTitle (vymName +" - " +tr ("Text Editor","Text Editor Window caption"));
-
 
     connect(e, SIGNAL(currentCharFormatChanged(const QTextCharFormat &)),
             this, SLOT(formatChanged(const QTextCharFormat &)));
@@ -549,45 +546,45 @@ void TextEditor::textLoad()
 {
     if (state!=inactiveEditor)
     {
-	if (!isEmpty()) 
-	{
-	    QMessageBox mb( vymName + " - " +tr("Note Editor"),
-		"Loading will overwrite the existing note",
-		QMessageBox::Warning,
-		QMessageBox::Yes | QMessageBox::Default,
-		QMessageBox::Cancel,
-		0 );
-	    mb.setButtonText( QMessageBox::Yes, "Load note" );
-	    switch( mb.exec() ) {
-		case QMessageBox::Cancel:
-		    return;
-		    break;
-	    }
-	} 
-	// Load note
-	QFileDialog *fd=new QFileDialog( this);
-	QStringList types;
-	types<< "Text (*.txt *.html)"<<
-	    "VYM notes and HTML (*.html)" <<
-	    "ASCII texts (*.txt)" <<
-	    "All files (*)";
-	fd->setNameFilters (types);
-	fd->setDirectory (QDir().current());
-	fd->show();
-	QString fn;
-	if ( fd->exec() == QDialog::Accepted &&!fd->selectedFiles().isEmpty() )
-	    fn = fd->selectedFiles().first();
+        if (!isEmpty())
+        {
+            QMessageBox mb( vymName + " - " +tr("Note Editor"),
+                            "Loading will overwrite the existing note",
+                            QMessageBox::Warning,
+                            QMessageBox::Yes | QMessageBox::Default,
+                            QMessageBox::Cancel,
+                            0 );
+            mb.setButtonText( QMessageBox::Yes, "Load note" );
+            switch( mb.exec() ) {
+            case QMessageBox::Cancel:
+                return;
+                break;
+            }
+        }
+        // Load note
+        QFileDialog *fd=new QFileDialog( this);
+        QStringList types;
+        types<< "Text (*.txt *.html)"<<
+                "VYM notes and HTML (*.html)" <<
+                "ASCII texts (*.txt)" <<
+                "All files (*)";
+        fd->setNameFilters (types);
+        fd->setDirectory (QDir().current());
+        fd->show();
+        QString fn;
+        if ( fd->exec() == QDialog::Accepted &&!fd->selectedFiles().isEmpty() )
+            fn = fd->selectedFiles().first();
 
-	if ( !fn.isEmpty() )
-	{
-	    QFile f( fn );
-	    if ( !f.open( QIODevice::ReadOnly ) )
-	    return;
+        if ( !fn.isEmpty() )
+        {
+            QFile f( fn );
+            if ( !f.open( QIODevice::ReadOnly ) )
+                return;
 
-	    QTextStream ts( &f );
-        // FIXME-0   decide RT vs. plain !  setText( ts.readAll() );
-	    editorChanged();
-	}
+            QTextStream ts( &f );
+            // FIXME-0   decide RT vs. plain !  setText( ts.readAll() );
+            editorChanged();
+        }
     }
 }
 
