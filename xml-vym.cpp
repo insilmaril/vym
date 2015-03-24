@@ -338,7 +338,7 @@ bool parseVYMHandler::endElement  ( const QString&, const QString&, const QStrin
 	    lastBranch->setLastSelectedBranch (0);  
             break;
 	case StateHtmlNote: // Richtext note, needed anyway for backward compatibility
-        no.setNoteRichText (htmldata);  // FIXME-0 check
+            no.setNoteRichText (htmldata);  
 	    lastBranch->setNoteObj (no);
 	    break;  
 	case StateMapSlide: 
