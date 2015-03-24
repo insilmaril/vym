@@ -582,7 +582,7 @@ void TextEditor::textLoad()
                 return;
 
             QTextStream ts( &f );
-            // FIXME-0   decide RT vs. plain !  setText( ts.readAll() );
+            setTextAuto ( ts.readAll() );
             editorChanged();
         }
     }
@@ -638,15 +638,13 @@ void TextEditor::setPlainText(const QString &t)
 }
 
 
-/* void TextEditor::setText(const QString &t)  FIXME-0
+void TextEditor::setTextAuto(const QString &t)
 {
-    qDebug()<<"TE::setText !!!!!!!!!!!!!!!!!!!!!!!!!";
-    if (Qt::mightBeRichText (t))    // FIXME-0 check!
+    if (Qt::mightBeRichText (t))
         setRichText( t);
     else
         setPlainText( t );
 }
-*/
 
 void TextEditor::setInactive()
 {
