@@ -43,8 +43,8 @@ TreeItem::~TreeItem()
     TreeItem *ti;
     while (!childItems.isEmpty())
     {
-	ti=childItems.takeFirst();
-	delete ti;
+        ti = childItems.takeFirst();
+        delete ti;
     }
 }
 
@@ -55,30 +55,32 @@ void TreeItem::init()
 
     // Assign ID  
     itemLastID++;
-    id=itemLastID;
-    uuid=QUuid::createUuid();
+    id = itemLastID;
+    uuid = QUuid::createUuid();
 
-    branchOffset=0;
-    branchCounter=0;
+    branchOffset = 0;
+    branchCounter = 0;
 
-    imageOffset=0;
-    imageCounter=0;
+    imageOffset = 0;
+    imageCounter = 0;
 
-    attributeCounter=0;
-    attributeOffset=0;
+    attributeCounter = 0;
+    attributeOffset = 0;
 
-    xlinkCounter=0;
-    xlinkOffset=0;
+    xlinkCounter = 0;
+    xlinkOffset = 0;
 
-    target=false;
+    target = false;
 
+    heading = "";
+    headingRichText = false;
     note.setText("");
 
-    hidden=false;
-    hideExport=false;
+    hidden = false;
+    hideExport = false;
 
-    headingColor=Qt::black;
-    backgroundColor=Qt::transparent;
+    headingColor = Qt::black;
+    backgroundColor = Qt::transparent;
 
     standardFlags.setMasterRow (standardFlagsMaster);
     systemFlags.setMasterRow (systemFlagsMaster);
