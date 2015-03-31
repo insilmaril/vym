@@ -3,7 +3,7 @@
 
 #include "xml-base.h"
 
-#include "noteobj.h"
+#include "vymnote.h"
 
 class BranchItem;
 class ImageItem;
@@ -73,7 +73,7 @@ private:
 
     State state;	     
     QList <State> stateStack;
-    NoteObj no;
+    VymNote note;
 
     BranchItem* lastBranch;
     ImageItem* lastImage;

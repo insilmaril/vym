@@ -7,7 +7,7 @@
 class QTextEdit;
 class QComboBox;
 
-#include "noteobj.h"
+#include "vymtext.h"
 
 enum EditorState {inactiveEditor,emptyEditor,filledEditor};
 
@@ -29,6 +29,7 @@ public:
     void setFilenameHint (const QString&);
     QString getFilenameHint ();
     QString getText();
+    VymText getVymText();
 
     bool findText(const QString &, const QTextDocument::FindFlags &); 
     bool findText(const QString &, const QTextDocument::FindFlags &,int i); 

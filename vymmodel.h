@@ -305,7 +305,8 @@ signals:
     void sortFilterChanged (QString );	    //!< Notify editors of new filter
 
 public:
-    void setHeading(const QString &s, BranchItem *bi=NULL);	    //!< Set heading of item	
+    void setHeading(const VymText &vt, BranchItem *bi=NULL);	    //!< Set heading of item
+    void setHeadingText(const QString &s, BranchItem *bi=NULL);	//!< Set heading of item
     QString getHeading ();		    //!< Get heading of item
     void setNote(const QString &s);	    //!< Set note text
     QString getNote();			    //!< Get note text

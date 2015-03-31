@@ -87,6 +87,7 @@ HEADERS	+= \
     floatobj.h \
     frameobj.h \
     geometry.h \
+    heading.h \
     headingeditor.h \
     headingobj.h \
     highlighter.h \
@@ -104,7 +105,6 @@ HEADERS	+= \
     misc.h \
     mysortfilterproxymodel.h \
     noteeditor.h \
-    noteobj.h \
     options.h \
     ornamentedobj.h \
     parser.h \
@@ -126,6 +126,8 @@ HEADERS	+= \
     texteditor.h \
     version.h \
     vymmodel.h \
+    vymnote.h \
+    vymtext.h \
     vymview.h \
     winter.h \
     warningdialog.h \
@@ -174,6 +176,7 @@ SOURCES	+= \
     floatobj.cpp \
     frameobj.cpp \
     geometry.cpp \
+    heading.cpp \
     headingeditor.cpp \
     headingobj.cpp \
     highlighter.cpp \
@@ -192,7 +195,6 @@ SOURCES	+= \
     misc.cpp \
     mysortfilterproxymodel.cpp \
     noteeditor.cpp \
-    noteobj.cpp \
     options.cpp \
     ornamentedobj.cpp \
     parser.cpp \
@@ -214,6 +216,8 @@ SOURCES	+= \
     treemodel.cpp \
     version.cpp \
     vymmodel.cpp \
+    vymnote.cpp \
+    vymtext.cpp \
     vymview.cpp \
     warningdialog.cpp \
     winter.cpp \

@@ -16,7 +16,7 @@
 
 #include <typeinfo>
 
-#include "noteobj.h"	//Still needed for ascii conversion
+#include "vymnote.h"	//Still needed for ascii conversion FIXME-00
 #include "settings.h"
 #include "shortcuts.h"
 
@@ -201,13 +201,27 @@ QString TextEditor::getFilenameHint()
 
 QString TextEditor::getText()
 {
-    if (e->toPlainText().isEmpty())
-        return QString();
+    if (e->toPlainText().isEmpty()) return QString();
+
+    if (actionFormatRichText->isChecked())
+        return e->toHtml();
     else
-        if (actionFormatRichText->isChecked())
-            return e->toHtml();
-        else
-            return e->toPlainText();
+        return e->toPlainText();
+}
+
+VymText TextEditor::getVymText()
+{
+    VymText vt;
+
+    if (actionFormatRichText->isChecked())
+        vt.setRichText(e->toHtml());
+    else
+        vt.setPlainText(e->toPlainText());
+
+    if (actionFormatUseFixedFont->isChecked() )
+        vt.setFontHint(getFontHint());
+
+    return vt;
 }
 
 bool TextEditor::findText(const QString &t, const QTextDocument::FindFlags &flags)
@@ -735,9 +749,9 @@ void TextEditor::textSave()
 
 void TextEditor::textExportAsASCII()
 {
-    NoteObj no;
-    no.setNotePlain (e->toPlainText());
-    QString text = no.getNoteASCII();
+    VymNote no;         // FIXME-0 hm, shouldn't be necessary here...
+    no.setPlainText (e->toPlainText());
+    QString text = no.getTextASCII();
     QString fn,s;
     if (!filenameHint.isEmpty())
     {
@@ -827,8 +841,8 @@ void TextEditor::toggleRichText()
         e->setHtml (e->toHtml());
         actionFormatUseFixedFont->setEnabled(false);
     }
-    //updateActions();
-    //emit( textHasChanged() );
+    updateActions();
+    emit( textHasChanged() );
 }
 
 void TextEditor::setFixedFont()

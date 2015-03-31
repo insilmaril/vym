@@ -72,8 +72,7 @@ void TreeItem::init()
 
     target = false;
 
-    heading = "";
-    headingRichText = false;
+    heading.clear();
     note.setText("");
 
     hidden = false;
@@ -88,7 +87,7 @@ void TreeItem::init()
 
 void TreeItem::setModel (VymModel *m)
 {
-    model=m;
+    model = m;
 }
 
 VymModel* TreeItem::getModel ()
@@ -325,36 +324,49 @@ QString TreeItem::getTypeName()
 
 QVariant TreeItem::data(int column) const
 {
+    return QVariant( getHeadingPlain() ); //FIXME-0000000
     return itemData.value(column);
 }
 
-void TreeItem::setHeading (const QString s)
+void TreeItem::setHeading (const Heading &h)
 {
+    heading = h;
+}
+
+void TreeItem::setHeadingText (const QString &s)
+{
+    heading.setText (s); //FIXME-000000000
+    /*
+    if ( true )  //FIXME-00000  Qt::mightBeRichText (s))
+        heading = richTextToPlain(s).trimmed().replace ('\n',' ').replace ('\t',' ');
+    else
+        heading = s;
+        */
     itemData[0]=s;
     //qDebug()<<"TI::setHeading this="<<this<<"  "<<s;
 }
 
-QString TreeItem::getHeading () const
+Heading TreeItem::getHeading () const
 {
-    return itemData[0].toString();
+    return heading;
 }
 
 std::string TreeItem::getHeadingStd () const
 {
-    return getHeading().toStdString();
+    return getHeadingPlain().toStdString();
 }
 
 QString TreeItem::getHeadingPlain() const
 {
     // strip beginning and tailing WS
-    return richTextToPlain(getHeading()).trimmed();
+    return richTextToPlain(heading.getText()).trimmed(); // FIXME-0 maybe better use getTextASCII ??
 }
 
 QString TreeItem::getHeadingDepth () // Indent by depth for debugging
 {
     QString ds;
     for (int i=0; i<depth(); i++) ds += "  ";
-    return ds + itemData[0].toString();
+    return ds + itemData[0].toString();  //FIXME-0
 }
 
 void TreeItem::setHeadingColor (QColor color)
@@ -461,9 +473,9 @@ bool TreeItem::isNoteEmpty()
 
 void TreeItem::setNote(const QString &s)
 {
-    NoteObj n;
+    VymNote n;
     n.setText(s);   // FIXME-0 which RT or ASCII?
-    setNoteObj (n);
+    setNote (n);
 }
 
 void TreeItem::clearNote()
@@ -472,8 +484,8 @@ void TreeItem::clearNote()
     systemFlags.deactivate ("system-note");
 }
 
-void TreeItem::setNoteObj(const NoteObj &no){
-    note = no;
+void TreeItem::setNote(const VymNote &n){
+    note = n;
     if (!note.isEmpty() && !systemFlags.isActive ("system-note"))
 	systemFlags.activate ("system-note");
     if (note.isEmpty() && systemFlags.isActive ("system-note"))
@@ -490,24 +502,24 @@ bool TreeItem::hasEmptyNote()
     return note.isEmpty();
 }
 
-NoteObj TreeItem::getNoteObj()  // FIXME-0 really needed?
+VymNote TreeItem::getNote()  // FIXME-0 really needed?
 {
     return note;
 }
 
 QString TreeItem::getNoteASCII(const QString &indent, const int &width)
 {
-    return note.getNoteASCII(indent,width);
+    return note.getTextASCII(indent,width);
 }
 
 QString TreeItem::getNoteASCII()
 {
-    return note.getNoteASCII();
+    return note.getTextASCII();
 }
 
 QString TreeItem::getNoteOpenDoc()
 {
-    return note.getNoteOpenDoc();
+    return note.getTextOpenDoc();
 }
 
 void TreeItem::activateStandardFlag (const QString &name)

@@ -7,15 +7,17 @@
 #include "treeitem.h"
 #include "treemodel.h"
 
-TreeDelegate::TreeDelegate(QObject *)
+TreeDelegate::TreeDelegate(QObject *) // FIXME-000 shouldn't be necessary any longer...
 {
 }
 
 #include <QTextDocument>
-#include "noteobj.h"
+///  #include "vymnote.h"
 QString TreeDelegate::displayText (const QVariant & value, const QLocale & ) const  // FIXME-4 Ugly, but works...
 {
-    QString s=value.toString();
+    return value.toString();
+
+    QString s = value.toString();
     if (Qt::mightBeRichText (s)) s = richTextToPlain(s);
     return s.trimmed().replace ('\n',' ').replace ('\t',' ');
 }

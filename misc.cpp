@@ -34,7 +34,7 @@ QString richTextToPlain (QString r)
 
     // If string starts with \n now, remove it.
     // It would be wrong in an OOo export for example
-    while (r.at(0)=='\n') r.remove (0,1);
+    while (r.length() > 0 && r.at(0)=='\n') r.remove (0,1);  //FIXME-0000
 
     // convert "&", "<" and ">"
     rx.setPattern ("&gt;");

@@ -206,15 +206,15 @@ FindResultItem*  FindResultModel::addItem (TreeItem *ti)
 	int n=rowCount (parix);
 	beginInsertRows (parix,n,n);
 	if (rootItem->insertChildren (n,1,0) )
-	{
-	    QString h=ti->getHeading();
-	    if (Qt::mightBeRichText(h))
-		h=ti->getHeadingPlain();
-	    QModelIndex ix=index(n,0,QModelIndex());
-	    setData (ix,QVariant(h),Qt::EditRole);
-	    ni=getItem(ix);
-	    ni->setOriginal (ti);
-	}
+    {
+        QString h=ti->getHeadingPlain();
+        if (Qt::mightBeRichText(h)) // FIXME-00 still needed?
+            h=ti->getHeadingPlain();
+        QModelIndex ix=index(n,0,QModelIndex());
+        setData (ix,QVariant(h),Qt::EditRole);
+        ni=getItem(ix);
+        ni->setOriginal (ti);
+    }
 	endInsertRows ();
 
 	emit (layoutChanged() );

@@ -4311,7 +4311,7 @@ void Main::editAddMapCenter()
 	MapEditor *me=currentMapEditor();
 	if (me) 
 	{
-	    m->setHeading("");
+        //m->setHeading("");  // FIXME-0 still working without clearing heading?
 	    me->editHeading();
 	}    
     }
@@ -5051,7 +5051,11 @@ void Main::updateHistory(SimpleSettings &undoSet)
 void Main::updateHeading()
 {
     VymModel *m=currentModel();
-    if (m) m->setHeading (headingEditor->getText() );
+    if (m)
+    {
+        qDebug()<< "mW::updateHeading rT="; // FIXME-0
+        m->setHeading (VymText(headingEditor->getVymText()) );
+    }
 }
 
 void Main::updateNoteFlag() 
@@ -5069,10 +5073,10 @@ void Main::updateNoteEditor(QModelIndex index ) //FIXME-4 maybe change to TreeIt
         /*
     qDebug()<< "Main::updateNoteEditor model="<<sender()
         << "  item="<<ti->getHeading()<<" ("<<ti<<")";
-    qDebug()<< "RT="<<ti->getNoteObj().isRichText();
+    qDebug()<< "RT="<<ti->getNote().isRichText();
     */
         if (ti)
-            noteEditor->setNote (ti->getNoteObj() );
+            noteEditor->setNote (ti->getNote() );
     }
 }
 
@@ -5094,9 +5098,9 @@ void Main::changeSelection (VymModel *model, const QItemSelection &newsel, const
     {
         ti=model->getItem(newsel.indexes().first());
         if (!ti->hasEmptyNote() )
-            noteEditor->setNote(ti->getNoteObj() );
+            noteEditor->setNote(ti->getNote() );
         else
-            noteEditor->setNote(NoteObj() );    //FIXME-2 maybe add a clear() to TE
+            noteEditor->setNote(VymNote() );    //FIXME-2 maybe add a clear() to TE
         // Show URL and link in statusbar
         QString status;
         QString s=ti->getURL();
@@ -5105,7 +5109,7 @@ void Main::changeSelection (VymModel *model, const QItemSelection &newsel, const
         if (!s.isEmpty() ) status+="Link: "+s;
         if (!status.isEmpty() ) statusMessage (status);
 
-        //  temporay removed!  headingEditor->setText (ti->getHeading() ); // FIXME-0 check type RT vs plain
+        headingEditor->setTextAuto (ti->getHeadingPlain() ); // FIXME-0 check type RT vs plain
 
         // Select in TaskEditor, if necessary
         Task *t=NULL;
@@ -5275,7 +5279,7 @@ void Main::updateActions()
 			bi=selbi->getXLinkItemNum(i)->getPartnerBranch();
 			if (bi)
 			{
-			    s=bi->getHeading();
+                s=bi->getHeadingPlain();
 			    if (s.length()>xLinkMenuWidth)
 				s=s.left(xLinkMenuWidth)+"...";
 			    branchXLinksContextMenuEdit->addAction (s);

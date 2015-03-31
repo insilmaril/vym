@@ -856,7 +856,7 @@ void VymModel::importDirInt(BranchItem *dst, QDir d)
 	    if (fi.isDir() && fi.fileName() != "." && fi.fileName() != ".." )
 	    {
 		bi=addNewBranchInt(dst,-2);
-		bi->setHeading (fi.fileName() );   
+        bi->setHeadingText (fi.fileName() );
 		bi->setHeadingColor (QColor("blue"));
 		if ( !d.cd(fi.fileName()) ) 
 		    QMessageBox::critical (0,tr("Critical Import Error"),tr("Cannot find the directory %1").arg(fi.fileName()));
@@ -876,7 +876,7 @@ void VymModel::importDirInt(BranchItem *dst, QDir d)
 	    if (fi.isFile())
 	    {
 		bi=addNewBranchInt (dst,-2);
-		bi->setHeading (fi.fileName() );
+        bi->setHeadingText (fi.fileName() );
 		bi->setHeadingColor (QColor("black"));
 		if (fi.fileName().right(4) == ".vym" )
 		    bi->setVymLink (fi.filePath());
@@ -1647,29 +1647,37 @@ QString VymModel::getSortFilter ()
     return sortFilter;
 }
 
-void VymModel::setHeading(const QString &s, BranchItem *bi)
+void VymModel::setHeading(const VymText &vt, BranchItem *bi) // FIXME-0000
+{
+}
+
+void VymModel::setHeadingText(const QString &s, BranchItem *bi)
 {
     if (!bi) bi=getSelectedBranch();
     if (bi)
     {
-        if (bi->getHeading()==s) return;
+        if (bi->getHeading().getText() == s) return;    // FIXME-0 check...
+        /* FIXME-00000000
         saveState(
             bi,
             "setHeading (\""+bi->getHeading()+"\")",
             bi,
             "setHeading (\""+s+"\")",
             QString("Set heading of %1 to \"%2\"").arg(getObjectName(bi)).arg(s) ); bi->setHeading(s );
+            */
+        qDebug()<<"VM::setHeading s="<<s;
+        bi->setHeadingText(s );
         emitDataChanged ( bi);
         emitUpdateQueries ();
         reposition();
     }
 }
 
-QString VymModel::getHeading()
+QString VymModel::getHeading()  // FIXME-0
 {
     TreeItem *selti=getSelectedItem();
     if (selti)
-	return selti->getHeading();
+    return selti->getHeading().getText();
     else    
 	return QString();
 }
@@ -1759,9 +1767,9 @@ void VymModel::findDuplicateURLs()  // FIXME-3 needs GUI
 	    if (  i-1==firstdup )
 	    {
 		qDebug() << firstdup.key();
-		qDebug() << " - "<< firstdup.value() <<" - "<<firstdup.value()->getHeading();
+        qDebug() << " - "<< firstdup.value() <<" - "<<firstdup.value()->getHeading().getText();
 	    }	
-	    qDebug() << " - "<< i.value() <<" - "<<i.value()->getHeading();
+        qDebug() << " - "<< i.value() <<" - "<<i.value()->getHeading().getText();
 	} else
 	    firstdup=i;
 
@@ -1784,7 +1792,7 @@ bool  VymModel::findAll (FindResultModel *rmodel, QString s, Qt::CaseSensitivity
     while (cur) 
     {
 	lastParent=NULL;
-	if (cur->getHeading().contains (s,cs))
+    if (cur->getHeading().getTextASCII().contains (s,cs))   //FIXME-0 check, if still ok, also with RT
 	{
 	    lastParent=rmodel->addItem (cur);
 	    hit=true;
@@ -1860,7 +1868,7 @@ BranchItem* VymModel::findText (QString s,Qt::CaseSensitivity cs)
 		}   
 	    }
 	    // Searching in Heading
-	    if (searching && findCurrent->getHeading().contains (findString,cs) ) 
+        if (searching && findCurrent->getHeading().getTextASCII().contains (findString,cs) )   //FIXME-0 still ok, also with RT?
 	    {
 		select(findCurrent);
 		searching=false;
@@ -2332,10 +2340,12 @@ void VymModel::addTimestamp()	//FIXME-4 new function, localize
     {
 	QDate today=QDate::currentDate();
 	QChar c='0';
-	selbi->setHeading (QString ("%1-%2-%3")
-	    .arg(today.year(),4,10,c)
-	    .arg(today.month(),2,10,c)
-	    .arg(today.day(),2,10,c));
+    selbi->setHeadingText (
+        QString ("%1-%2-%3")
+            .arg(today.year(),4,10,c)
+            .arg(today.month(),2,10,c)
+            .arg(today.day(),2,10,c)
+    );
 	emitDataChanged ( selbi);	
 	reposition();
 	select (selbi);
@@ -2758,7 +2768,7 @@ BranchItem* VymModel::addMapCenter(QPointF absPos)
     QList<QVariant> cData;
     cData << "VM:addMapCenter" << "undef";
     BranchItem *newbi=new BranchItem (cData,rootItem);
-    newbi->setHeading (QApplication::translate("Heading of mapcenter in new map", "New map"));
+    newbi->setHeadingText (tr("Heading of mapcenter in new map", "New map"));
     int n=rootItem->getRowNumAppend (newbi);
 
     emit (layoutAboutToBeChanged() );
@@ -3434,7 +3444,7 @@ ItemList VymModel::getTargets()
     while (cur) 
     {
 	if (cur->hasActiveSystemFlag("system-target"))
-	    targets[cur->getID()]=cur->getHeading();
+        targets[cur->getID()] = (cur->getHeading()).getTextASCII();
 	nextBranch(cur,prev);
     }
     return targets; 
@@ -3563,7 +3573,7 @@ void VymModel::note2URLs()
 	while ((pos = re.indexIn(n, pos)) != -1) 
 	{
 	    bi=createBranch (selbi);
-	    bi->setHeading (re.cap(1));
+        bi->setHeadingText (re.cap(1));
 	    bi->setURL (re.cap(1));
 	    emitDataChanged (bi);
 	    pos += re.matchedLength();
@@ -3576,7 +3586,7 @@ void VymModel::editHeading2URL()
 {
     TreeItem *selti=getSelectedItem();
     if (selti)
-	setURL (selti->getHeading());
+    setURL (selti->getHeadingPlain());
 }   
 
 void VymModel::editBugzilla2URL()   
@@ -3584,7 +3594,7 @@ void VymModel::editBugzilla2URL()
     TreeItem *selti=getSelectedItem();
     if (selti)
     {	    
-	QString h=selti->getHeading();
+    QString h=selti->getHeadingPlain();
 	QRegExp rx("(\\d+)");
 	if (rx.indexIn(h) !=-1)
 	    setURL ("https://bugzilla.novell.com/show_bug.cgi?id="+rx.cap(1) );
@@ -3643,7 +3653,7 @@ void VymModel::editFATE2URL()
     TreeItem *selti=getSelectedItem();
     if (selti)
     {	    
-	QString url= "http://keeper.suse.de:8080/webfate/match/id?value=ID"+selti->getHeading();
+    QString url= "http://keeper.suse.de:8080/webfate/match/id?value=ID"+selti->getHeadingPlain();
 	saveState(
 	    selti,
 	    "setURL (\""+selti->getURL()+"\")",
@@ -4448,7 +4458,7 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	} else if (com=="setHeading")
 	{
 	    s=parser.parString (ok,0);
-	    setHeading (s);
+        setHeadingText (s);
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="setHideExport")
 	{
@@ -5137,7 +5147,7 @@ void VymModel::updateNoteFlag()
         if (noteEditor->isEmpty())
             selti->clearNote();
         else
-            selti->setNoteObj (noteEditor->getNoteObj());
+            selti->setNote(noteEditor->getNote());
         emitDataChanged(selti);
         reposition();
     }
@@ -6295,7 +6305,7 @@ SlideItem* VymModel::addSlide()
         inScript.replace("CURRENT_ID", "\"" + seli->getUuid().toString() + "\"");
 
 	si->setInScript(inScript);
-	slideModel->setData ( slideModel->index(si), seli->getHeading() );
+    slideModel->setData ( slideModel->index(si), seli->getHeadingPlain() );
     }
     QString s="<vymmap>" + si->saveToDir() + "</vymmap>";
     int pos=si->childNumber();

@@ -190,23 +190,23 @@ bool parseVYMHandler::startElement  ( const QString&, const QString&,
     } else if ( eName == "htmlnote" && state == StateMapCenter) 
     {   // only for backward compatibility. Use vymnote now
 	state=StateHtmlNote;
-	no.clear();
+	note.clear();
 	if (!atts.value( "fonthint").isEmpty() ) 
-	    no.setFontHint(atts.value ("fonthint") );
+	    note.setFontHint(atts.value ("fonthint") );
     } else if ( eName == "vymnote" && 
 		(state == StateMapCenter ||state==StateBranch)) 
     {
 	state=StateVymNote;
     htmldata.clear();
-	no.clear();
+	note.clear();
 	if (!atts.value( "fonthint").isEmpty() ) 
-	    no.setFontHint(atts.value ("fonthint") );
+	    note.setFontHint(atts.value ("fonthint") );
     if (!atts.value( "textMode").isEmpty() )
     {
         if (atts.value ("textMode") == "richText" )
-            no.setRichText(true);
+            note.setRichText(true);
         else
-            no.setRichText(false);
+            note.setRichText(false);
     }
     } else if ( eName == "floatimage" &&
 		(state == StateMapCenter ||state==StateBranch)) 
@@ -228,7 +228,7 @@ bool parseVYMHandler::startElement  ( const QString&, const QString&,
 	    // we really have no MCO at this time
 	    lastBranch=model->createMapCenter();
 	    model->select (lastBranch);
-	    model->setHeading("Import");
+        model->setHeadingText("Import");
 	    ti=lastBranch;
 	}   
 	if (ti && ti->isBranchLikeType() )
@@ -260,9 +260,9 @@ bool parseVYMHandler::startElement  ( const QString&, const QString&,
     } else if ( eName == "htmlnote" && state == StateBranch) 
     {   // only for backward compatibility. Use vymnote now
 	state=StateHtmlNote;
-	no.clear();
+	note.clear();
 	if (!atts.value( "fonthint").isEmpty() ) 
-	    no.setFontHint(atts.value ("fonthint") );
+	    note.setFontHint(atts.value ("fonthint") );
     } else if ( eName == "frame" && (state == StateBranch||state==StateMapCenter)) 
     {
 	state=StateFrame;
@@ -338,16 +338,16 @@ bool parseVYMHandler::endElement  ( const QString&, const QString&, const QStrin
 	    lastBranch->setLastSelectedBranch (0);  
             break;
 	case StateHtmlNote: // Richtext note, needed anyway for backward compatibility
-            no.setNoteRichText (htmldata);  
-	    lastBranch->setNoteObj (no);
+            note.setRichText (htmldata);
+	    lastBranch->setNote (note);
 	    break;  
 	case StateMapSlide: 
 	    lastSlide=NULL;
 	    break;  
     case StateVymNote:	    // Might be richtext or plaintext with
         // version >= 1.13.8
-        no.setText (htmldata);
-        lastBranch->setNoteObj (no);
+        note.setText (htmldata);
+        lastBranch->setNote (note);
         break;
     case StateHtml:
         htmldata+="</"+eName+">";
@@ -396,7 +396,7 @@ bool parseVYMHandler::characters   ( const QString& ch)
         htmldata+=ch_org;
 	    break;
         case StateHeading: 
-            lastBranch->setHeading(ch);
+            lastBranch->setHeadingText(ch); // FIXME-0  what about RT?
             break;
         default: 
 	    return false;
@@ -634,7 +634,7 @@ bool parseVYMHandler::readOOAttr (const QXmlAttributes& a)
 
 bool parseVYMHandler::readNoteAttr (const QXmlAttributes& a)
 {   // only for backward compatibility (<1.4.6). Use htmlnote now.
-    no.clear();
+    note.clear();
     QString fn;
     if (!a.value( "href").isEmpty() ) 
     {
@@ -656,11 +656,11 @@ bool parseVYMHandler::readNoteAttr (const QXmlAttributes& a)
 	file.close();
 
     lines ="<html><head><meta name=\"qrichtext\" content=\"1\" /></head><body>" + lines + "</p></body></html>";
-    no.setText (lines);   // this probably should set type, too...
+    note.setText (lines);   // this probably should set type, too...
     }	    
     if (!a.value( "fonthint").isEmpty() ) 
-	no.setFontHint(a.value ("fonthint") );
-    lastBranch->setNoteObj(no);
+	note.setFontHint(a.value ("fonthint") );
+    lastBranch->setNote(note);
     return true;
 }
 

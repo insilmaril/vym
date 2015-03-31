@@ -730,7 +730,7 @@ void MapEditor::autoLayout()
 		polys.append(p);
 		vectors.append (QPointF(0,0));
 		orgpos.append (p.at(0));
-		headings.append (bi->getHeading());
+        headings.append (bi->getHeadingPlain());
 	    }
 	    for (int j=0;j<bi->branchCount();++j)
 	    {
@@ -744,7 +744,7 @@ void MapEditor::autoLayout()
 		    polys.append(p);
 		    vectors.append (QPointF(0,0));
 		    orgpos.append (p.at(0));
-		    headings.append (bi2->getHeading());
+            headings.append (bi2->getHeadingPlain());
 		}   
 	    }
 	}
@@ -1078,7 +1078,7 @@ BranchItem* MapEditor::getRightBranch(BranchItem *bi)
 		    newbi=bi->getBranchNum(i);
 		    bo=newbi->getBranchObj();
 		    if (bo && bo->getOrientation()==LinkableMapObj::RightOfCenter)
-			qDebug()<<"BI found right: "<<newbi->getHeading();
+            qDebug()<<"BI found right: "<<newbi->getHeadingPlain();
 		}
 	    }
 	    return newbi;
@@ -1160,7 +1160,7 @@ void MapEditor::editHeading()
 	scene()->update();
 
 	animateScrollBars();
-	lineEdit->setText (bi->getHeading());
+    lineEdit->setText (bi->getHeadingPlain());      // FIXME-00 for RT headings better open HeadingEditor
 	lineEdit->setFocus();
 	lineEdit->selectAll();	// Hack to enable cursor in lineEdit
 	lineEdit->deselect();	// probably a Qt bug...
@@ -1175,7 +1175,7 @@ void MapEditor::editHeadingFinished()
     lineEdit->clearFocus();
     QString s=lineEdit->text();
     s.replace (QRegExp ("\\n")," ");	// Don't paste newline chars
-    model->setHeading (s);
+    model->setHeadingText (s);  // FIXME-0 open RT editor if needed?!?
     model->setSelectionBlocked(false);
     delete (lineEdit);
     lineEdit=NULL;
@@ -1387,7 +1387,7 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
 			BranchItem *bit=xli->getPartnerBranch();
 			if (bit) 
 			{
-			    alist.append (new QAction(ti->getXLinkItemNum(i)->getPartnerBranch()->getHeading(),&menu));
+                alist.append (new QAction(ti->getXLinkItemNum(i)->getPartnerBranch()->getHeadingPlain(),&menu));    // FIXME-0 what about RT heading??
 			    blist.append (bit);
 			}
 		    }	
@@ -2045,7 +2045,7 @@ void MapEditor::dropEvent(QDropEvent *event)
 			    if (u.startsWith("file:")) 
 				heading = QFileInfo( QDir::fromNativeSeparators(u) ).baseName();
 
-			    model->setHeading(heading);
+                model->setHeadingText(heading);
 			    if (u.endsWith(".vym", Qt::CaseInsensitive))
 			       model->setVymLink(u.replace ("file://","") );
 			    else

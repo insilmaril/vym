@@ -344,17 +344,17 @@ ExportASCII::ExportASCII()
 }
 
 // FIXME-0 noteToASCII: maybe replace with richTextToPlain???
-QString ExportASCII::noteToASCII( const NoteObj &noteobj, const QString &indent, const int &width)  //FIXME-3 use width
+QString ExportASCII::noteToASCII( const VymNote &vymnote, const QString &indent, const int &width)  //FIXME-3 use width
 {
-    QString note = noteobj.getText();
+    QString note = vymnote.getText();
     if (note.isEmpty()) return note;
 
     QRegExp rx;
     rx.setMinimal(true);
 
-    if (!noteobj.isRichText()) 
+    if (!vymnote.isRichText()) 
     {
-        if ( noteobj.getFontHint() != "fixed")
+        if ( vymnote.getFontHint() != "fixed")
         {
             // Wordwrap
 
@@ -524,7 +524,7 @@ void ExportASCII::doExport()
                     // curIndent +="  | ";
                     // Only indent for bullet points
                     if (cur->depth() > 2) curIndent +="  ";
-		    ts << '\n' +  noteToASCII( cur->getNoteObj(), curIndent, 80) ;
+		    ts << '\n' +  noteToASCII( cur->getNote(), curIndent, 80) ;
 		}
                 lastDepth = cur->depth();
 	    }
@@ -753,12 +753,12 @@ QString ExportHTML::getBranchText(BranchItem *current)
         if (!current->isNoteEmpty())
         {
             QString n;
-            if (current->getNoteObj().isRichText())
+            if (current->getNote().isRichText())
             {
                 n=current->getNoteText();   // FIXME-0 check for export
                 QRegExp re("<p.*>");
                 re.setMinimal (true);
-                if (current->getNoteObj().getFontHint() == "fixed")
+                if (current->getNote().getFontHint() == "fixed")
                     n.replace(re,"<p class=\"vym-fixed-note-paragraph\">");
                 else
                     n.replace(re,"<p class=\"vym-note-paragraph\">");
@@ -785,7 +785,7 @@ QString ExportHTML::getBranchText(BranchItem *current)
             {
                 n=current->getNoteASCII().replace ("<","&lt;").replace (">","&gt;");
                 n.replace("\n","<br/>");
-                if (current->getNoteObj().getFontHint()=="fixed")
+                if (current->getNote().getFontHint()=="fixed")
                 n="<pre>"+n+"</pre>";
             }
             s+="\n<table class=\"vym-note\"><tr><td class=\"vym-note-flag\">\n<td>\n"+n+"\n</td></tr></table>\n";

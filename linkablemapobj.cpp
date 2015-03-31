@@ -399,7 +399,7 @@ void LinkableMapObj::updateVisibility()
 		if (p) 
 		    p->show();
 		else
-		    qDebug()<< "LMO::updateVis p==0 (PolyParabel) "<<treeItem->getHeading(); //FIXME-4
+            qDebug()<< "LMO::updateVis p==0 (PolyParabel) "<<treeItem->getHeadingPlain(); //FIXME-4
 		break;
 	    default:
 		break;

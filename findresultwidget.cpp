@@ -57,7 +57,7 @@ void FindResultWidget::addItem (TreeItem *ti)
 
 	for (int column = 0; column < resultsModel->columnCount(index.parent()); ++column) {
 	    QModelIndex child = resultsModel->index(index.row()+1, column, index.parent());
-	    resultsModel->setData(child, QVariant(ti->getHeading()), Qt::EditRole);
+        resultsModel->setData(child, QVariant(ti->getHeadingPlain()), Qt::EditRole);
 	    resultsModel->getItem(child)->setOriginal (ti);
 	}
     }

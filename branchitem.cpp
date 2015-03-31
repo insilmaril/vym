@@ -146,7 +146,7 @@ QString BranchItem::saveToDir (const QString &tmpdir,const QString &prefix, cons
     incIndent();
 
     // save heading
-    s+=valueElement("heading", getHeading(),
+    s+=valueElement("heading", getHeadingPlain(), //FIXME-0000000000   save as CDATA object using saveToDIr
 	attribut ("textColor",QColor( bo->getColor()).name()));
 
     // Save frame  //FIXME-5 not saved if there is no MO
@@ -349,13 +349,13 @@ void BranchItem::sortChildren(bool inverse) //FIXME-4 optimize by not using move
 	    BranchItem* prevChild=getBranchNum(curChildIndex-1);
 	    if (inverse)
 	    {
-		if (prevChild->getHeading().compare(curChild->getHeading())<0)
+        if (prevChild->getHeadingPlain().compare(curChild->getHeadingPlain())<0)
 		{
 		    model->moveUp (curChild);
 		    madeChanges=true;
 		}   
 	    } else  
-		if (prevChild->getHeading().compare(curChild->getHeading())>0)
+        if (prevChild->getHeadingPlain().compare(curChild->getHeadingPlain())>0)
 		{
 		    model->moveUp (curChild);
 		    madeChanges=true;
