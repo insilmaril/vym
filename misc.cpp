@@ -15,6 +15,7 @@ QString richTextToPlain (QString r)
     if (r.isEmpty()) return r;
 
     QRegExp rx;
+    rx.setMinimal(true);
 
     // Remove all <style...> ...</style>
     rx.setPattern("<style.*>.*</style>");
