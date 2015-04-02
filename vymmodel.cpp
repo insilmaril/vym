@@ -1890,8 +1890,6 @@ void VymModel::setURL(QString url)
 {
     TreeItem *selti=getSelectedItem();
     if (selti->getURL()==url) return;
- //   if (!url.isEmpty() && (! (url.startsWith("http://") || url.startsWith("https://") ) && !url.startsWith("file://") ) )   //FIXME-3 needed?
- //	url="http://"+url;
     if (selti)
     {
 	QString oldurl=selti->getURL();
@@ -6407,7 +6405,7 @@ VymModelScript::VymModelScript(VymModel *m)
 
 void VymModelScript::addBranch(int pos)
 {
-    BranchItem *selbi = model->getSelectedBranch();
+    BranchItem *selbi = getSelectedBranch();
     if (selbi)
         model->addNewBranch(selbi, pos);
 }
