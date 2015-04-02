@@ -754,7 +754,7 @@ public:
 public:
     TreeItem::Type selectionType();
     LinkableMapObj* getSelectedLMO();
-    BranchObj* getSelectedBranchObj();	
+    BranchObj* getSelectedBranchObj();
     BranchItem* getSelectedBranch();
     QList <BranchItem*> getSelectedBranches();
     ImageItem* getSelectedImage();

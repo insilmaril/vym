@@ -314,13 +314,11 @@ private slots:
     void helpAboutQT();
 
     void callMacro ();
-    void downloadReleaseNotesFinished();
-    void showReleaseNotes();
+    void downloadReleaseNotesFinished(bool interactive=false);
+    void downloadReleaseNotesFinishedInt();
 
-private:
+public slots:
     void checkReleaseNotes();
-
-private slots:
     bool downloadsEnabled(bool interactive=false);
     void downloadUpdatesFinished(bool interactive=false);
     void downloadUpdatesFinishedInt();

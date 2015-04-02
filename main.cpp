@@ -378,7 +378,7 @@ int main(int argc, char* argv[])
 
     // Check for zip tools (at least on windows...)
 #if defined(Q_OS_WIN32)
-QFile zipTool(zipToolPath);
+    QFile zipTool(zipToolPath);
     if (!zipTool.exists() )
     {
         QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
@@ -417,6 +417,12 @@ QFile zipTool(zipToolPath);
         qApp->processEvents();
         m.show();
     }
+
+    // Show release notes, if not already done
+    m.checkReleaseNotes();
+
+    // Check for updates
+    m.checkUpdates();
 
     if (options.isOn("shortcuts")) switchboard.printASCII();    //FIXME-3 global switchboard and exit after listing
 

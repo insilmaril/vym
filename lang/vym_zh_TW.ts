@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0">
+<TS version="2.1">
 <context>
     <name>AboutDialog</name>
     <message>
@@ -130,6 +130,10 @@
         <comment>Window caption</comment>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Free positioning of children (experimental!)</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>BranchPropertyWindow</name>
@@ -152,6 +156,13 @@
     <message>
         <source>Close</source>
         <translation type="obsolete">關閉</translation>
+    </message>
+</context>
+<context>
+    <name>DownloadAgent</name>
+    <message>
+        <source>warning</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1637,11 +1648,6 @@ exists already. Do you want to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Map</source>
-        <comment>Toolbar for file actions</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>File actions toolbar</source>
         <comment>Toolbar for file actions</comment>
         <translation type="unfinished"></translation>
@@ -1655,11 +1661,6 @@ exists already. Do you want to</source>
         <source>New map</source>
         <comment>Status tip File menu</comment>
         <translation type="obsolete">新圖譜</translation>
-    </message>
-    <message>
-        <source>File</source>
-        <comment>Shortcut group</comment>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;Copy to new map</source>
@@ -1765,11 +1766,6 @@ exists already. Do you want to</source>
         <source>&amp;Undo</source>
         <comment>Edit menu</comment>
         <translation type="unfinished">復原(&amp;U)</translation>
-    </message>
-    <message>
-        <source>Edit</source>
-        <comment>Shortcut group</comment>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;Redo</source>
@@ -1931,26 +1927,6 @@ exists already. Do you want to</source>
         <translation type="unfinished">使用標頭做為 URL</translation>
     </message>
     <message>
-        <source>Create URL to Novell Bugzilla</source>
-        <comment>Edit menu</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Get data from Novell Bugzilla</source>
-        <comment>Edit menu</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Get data from Novell Bugzilla for subtree</source>
-        <comment>Edit menu</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Create URL to Novell FATE</source>
-        <comment>Edit menu</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Open linked map</source>
         <comment>Edit menu</comment>
         <translation type="unfinished"></translation>
@@ -2011,18 +1987,8 @@ exists already. Do you want to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Add Image...</source>
-        <comment>Edit menu</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Property window</source>
         <comment>Dialog to edit properties of selection</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>View shortcuts</source>
-        <comment>Shortcut group</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2144,11 +2110,6 @@ exists already. Do you want to</source>
         <source>Use modifier to color branches</source>
         <comment>Mode modifier</comment>
         <translation type="unfinished">於顏色分支使用修飾鍵</translation>
-    </message>
-    <message>
-        <source>Modes</source>
-        <comment>Shortcut group</comment>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Use modifier to copy</source>
@@ -2331,11 +2292,6 @@ exists already. Do you want to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Network shortcuts</source>
-        <comment>Shortcut group</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Set application to open pdf files</source>
         <comment>Settings action</comment>
         <translation type="unfinished">設定開啟 pdf 檔案的應用程式</translation>
@@ -2415,11 +2371,6 @@ exists already. Do you want to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Test shortcuts</source>
-        <comment>Shortcut group</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>&amp;Help</source>
         <comment>Help menubar entry</comment>
         <translation type="unfinished">求助(&amp;H)</translation>
@@ -2427,11 +2378,6 @@ exists already. Do you want to</source>
     <message>
         <source>Open VYM Documentation (pdf) </source>
         <comment>Help action</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Help shortcuts</source>
-        <comment>Shortcut group</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2619,18 +2565,8 @@ to confusion when finishing working with vym.Do you want to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Restore last session</source>
-        <comment>File menu</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>E&amp;dit</source>
         <comment>Edit menu</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Format shortcuts</source>
-        <comment>Shortcut group</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2838,22 +2774,8 @@ to confusion when finishing working with vym.Do you want to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Next slide</source>
-        <comment>Shortcut group</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Previous slide</source>
         <comment>View action</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Previous  slide</source>
-        <comment>Shortcut group</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Flags toolbar</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2873,6 +2795,206 @@ to confusion when finishing working with vym.Do you want to</source>
     </message>
     <message>
         <source>Number of parents shown for a task:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Main window</source>
+        <comment>Shortcut scope</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Main window</source>
+        <comment>Shortcut group</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Map Editors</source>
+        <comment>Shortcut group</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Text Editors</source>
+        <comment>Shortcut group</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Map</source>
+        <comment>Menu for file actions</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Restore last session</source>
+        <comment>Edit menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>References Context menu</source>
+        <comment>Shortcuts</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Bugzilla handling</source>
+        <comment>Shortcuts</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create URL to SUSE Bugzilla</source>
+        <comment>Edit menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Get data from SUSE Bugzilla</source>
+        <comment>Edit menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Get data from SUSE Bugzilla for subtree</source>
+        <comment>Edit menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>SUSE Fate tool handling</source>
+        <comment>Shortcuts</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create URL to SUSE FATE tool</source>
+        <comment>Edit menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>vymlinks - linking maps</source>
+        <comment>Shortcuts</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Exports</source>
+        <comment>Shortcuts</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tasks</source>
+        <comment>Shortcuts</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Removing parts of a map</source>
+        <comment>Shortcuts</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Various</source>
+        <comment>Shortcuts</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add   ...</source>
+        <comment>Edit menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Selections</source>
+        <comment>Shortcuts</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search functions</source>
+        <comment>Shortcuts</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Formatting</source>
+        <comment>Shortcuts</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Views</source>
+        <comment>Shortcuts</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Modifier modes</source>
+        <comment>Shortcuts</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Check for release notes and updates</source>
+        <comment>Settings action</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set application to zip/unzip files</source>
+        <comment>Settings action</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Download and show release notes</source>
+        <comment>Help action</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Check, if updates are available</source>
+        <comment>Help action</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>XLinks</source>
+        <comment>Menu for file actions</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set application to zip/unzip files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please allow vym to download release notes!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;h3&gt;Do you allow vym to check online for updates or release notes?&lt;/h3&gt;If you allow, vym will &lt;ul&gt;&lt;li&gt;check once for release notes&lt;/li&gt;&lt;li&gt;check regulary for updates and notify you in case you should update, e.g. if there are important bug fixes available&lt;/li&gt;&lt;li&gt;receive a cookie with a random ID and send vym version and platform name and the ID  (e.g. &quot;Windows&quot; or &quot;Linux&quot;) back to me, Uwe Drechsel.&lt;p&gt;As vym developer I am motivated to see many people using vym. Of course I am curious to see, on which system vym is used. Maintaining each of the systems requires a lot of my (spare) time.&lt;/p&gt; &lt;p&gt;No other data than above will be sent, especially no private data will be collected or sent.(Check the source code, if you don&apos;t believe.)&lt;/p&gt;&lt;/li&gt;&lt;/ul&gt;If you do not allow, &lt;ul&gt;&lt;li&gt;nothing will be downloaded and especially I will &lt;b&gt;not be motivated&lt;/b&gt; to spend some more thousands of hours on developing a free software tool.&lt;/ul&gt;Please allow vym to check for updates :-)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Allow</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Do not allow</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Thank you for enabling downloads!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Info</source>
+        <translation type="unfinished">資訊</translation>
+    </message>
+    <message>
+        <source>vym updates are available, please update e.g. from
+http://sourceforge.net/projects/vym</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>vym is up to date.</source>
+        <comment>MainWindow</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Update check results</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>vym is up to date!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Checking for updates...</source>
+        <comment>MainWindow</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please allow vym to check for updates!</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2997,6 +3119,50 @@ to notifiy Browsers of changed bookmarks.</source>
         <comment>MapEditor</comment>
         <translation type="unfinished">儲存</translation>
     </message>
+    <message>
+        <source>Map Editor</source>
+        <comment>Shortcut scope</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select previous</source>
+        <comment>Edit menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select next</source>
+        <comment>Edit menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cu&amp;t</source>
+        <comment>Edit menu</comment>
+        <translation type="unfinished">剪下(&amp;T)</translation>
+    </message>
+    <message>
+        <source>&amp;Copy</source>
+        <comment>Edit menu</comment>
+        <translation type="unfinished">複製(&amp;C)</translation>
+    </message>
+    <message>
+        <source>&amp;Undo</source>
+        <comment>Edit menu</comment>
+        <translation type="unfinished">復原(&amp;U)</translation>
+    </message>
+    <message>
+        <source>&amp;Redo</source>
+        <comment>Edit menu</comment>
+        <translation type="unfinished">重做(&amp;R)</translation>
+    </message>
+    <message>
+        <source>&amp;Paste</source>
+        <comment>Edit menu</comment>
+        <translation type="unfinished">貼上(&amp;P)</translation>
+    </message>
+    <message>
+        <source>Repeat last export (%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>NoteEditor</name>
@@ -3010,15 +3176,11 @@ to notifiy Browsers of changed bookmarks.</source>
     <name>Process</name>
     <message>
         <source>Critical Error</source>
-        <translation type="unfinished">嚴重錯誤</translation>
-    </message>
-    <message>
-        <source>Could not start %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">嚴重錯誤</translation>
     </message>
     <message>
         <source>%1 didn&apos;t exit normally</source>
-        <translation type="unfinished">%1 並未正常離開</translation>
+        <translation type="obsolete">%1 並未正常離開</translation>
     </message>
 </context>
 <context>
@@ -3277,6 +3439,25 @@ and install the perl module for Bugzilla access using YaST</source>
     </message>
     <message>
         <source>Couldn&apos;t save &quot;%1&quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t start tool to decompress data.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Note Editor</source>
+        <comment>Shortcut group</comment>
+        <translation type="unfinished">註記編輯器</translation>
+    </message>
+    <message>
+        <source>Heading Editor</source>
+        <comment>Shortcut group</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t find tool to unzip data. Please download and install 7z and set path in Settings menu:
+ </source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3863,6 +4044,11 @@ Do you want to overwrite it?</source>
         <comment>toolbar in texteditor</comment>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Texteditor</source>
+        <comment>Shortcuts</comment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>TreeEditor</name>
@@ -4075,11 +4261,6 @@ Do you want to reload that map with the new file?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Undo failed:
-%1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Script aborted:
 %1</source>
         <translation type="unfinished"></translation>
@@ -4104,6 +4285,25 @@ Do you want to reload that map with the new file?</source>
     <message>
         <source>Export as csv</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Critical Save Error</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>VymProcess</name>
+    <message>
+        <source>Critical Error</source>
+        <translation type="unfinished">嚴重錯誤</translation>
+    </message>
+    <message>
+        <source>Could not start %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 didn&apos;t exit normally</source>
+        <translation type="unfinished">%1 並未正常離開</translation>
     </message>
 </context>
 <context>
