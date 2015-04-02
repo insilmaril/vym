@@ -83,9 +83,9 @@ protected:
     QColor headingColor;
     QColor backgroundColor;
 public:	
-    virtual void setHeading (const Heading &h);
+    virtual void setHeading (const VymText &vt);
     virtual void setHeadingText (const QString &s);
-    virtual Heading getHeading() const;
+    virtual VymText getHeading() const;
     virtual std::string getHeadingStd() const;	//! convenience function used for debugging
     virtual QString getHeadingPlain() const;	//! Some views or methods can't cope with RichText
     virtual QString getHeadingDepth();

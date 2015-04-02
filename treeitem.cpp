@@ -16,6 +16,8 @@ extern uint itemLastID;
 extern FlagRow* standardFlagsMaster;
 extern FlagRow* systemFlagsMaster;
 
+extern QTextStream vout;
+
 TreeItem::TreeItem()
 {
     //qDebug() << "Constr. TI  this="<<this;
@@ -328,9 +330,12 @@ QVariant TreeItem::data(int column) const
     return itemData.value(column);
 }
 
-void TreeItem::setHeading (const Heading &h)
+void TreeItem::setHeading (const VymText &vt)
 {
-    heading = h;
+    heading = vt;
+    qDebug() << "TI::setHeading rt="<<heading.isRichText()<<" "<<heading.getTextASCII();
+    qDebug() << "                  "<<heading.getText();
+    itemData[0]= heading.getTextASCII();  // used in TreeEditor
 }
 
 void TreeItem::setHeadingText (const QString &s)
@@ -346,7 +351,7 @@ void TreeItem::setHeadingText (const QString &s)
     //qDebug()<<"TI::setHeading this="<<this<<"  "<<s;
 }
 
-Heading TreeItem::getHeading () const
+VymText TreeItem::getHeading () const
 {
     return heading;
 }

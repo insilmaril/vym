@@ -48,6 +48,7 @@ public slots:
     void setRichText(const QString &t);
     void setPlainText(const QString &t);
     void setTextAuto(const QString &);  // set Text and autodetect mode
+    void setVymText(const VymText &vt);
     void setInactive();		    // Nothing can be entered
     void editCopyAll();
 

@@ -5051,11 +5051,7 @@ void Main::updateHistory(SimpleSettings &undoSet)
 void Main::updateHeading()
 {
     VymModel *m=currentModel();
-    if (m)
-    {
-        qDebug()<< "mW::updateHeading rT="; // FIXME-0
-        m->setHeading (VymText(headingEditor->getVymText()) );
-    }
+    if (m) m->setHeading (headingEditor->getVymText() );
 }
 
 void Main::updateNoteFlag() 
@@ -5109,7 +5105,7 @@ void Main::changeSelection (VymModel *model, const QItemSelection &newsel, const
         if (!s.isEmpty() ) status+="Link: "+s;
         if (!status.isEmpty() ) statusMessage (status);
 
-        headingEditor->setTextAuto (ti->getHeadingPlain() ); // FIXME-0 check type RT vs plain
+        headingEditor->setVymText (ti->getHeading() );
 
         // Select in TaskEditor, if necessary
         Task *t=NULL;

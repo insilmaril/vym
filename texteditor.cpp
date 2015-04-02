@@ -660,6 +660,14 @@ void TextEditor::setTextAuto(const QString &t)
         setPlainText( t );
 }
 
+void TextEditor::setVymText( const VymText &vt)
+{
+    if (vt.isRichText())
+        setRichText(vt.getText());
+    else
+        setPlainText(vt.getText());
+}
+
 void TextEditor::setInactive()
 {
     state=inactiveEditor;

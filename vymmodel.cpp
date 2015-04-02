@@ -1649,6 +1649,16 @@ QString VymModel::getSortFilter ()
 
 void VymModel::setHeading(const VymText &vt, BranchItem *bi) // FIXME-0000
 {
+    if (!bi) bi=getSelectedBranch();
+    if (bi)
+    {
+        if (bi->getHeading() == vt) return;
+        bi->setHeading(vt);
+        // FIXME-0000000 savestate missing
+        emitDataChanged ( bi);
+        emitUpdateQueries ();
+        reposition();
+    }
 }
 
 void VymModel::setHeadingText(const QString &s, BranchItem *bi)
@@ -1657,15 +1667,13 @@ void VymModel::setHeadingText(const QString &s, BranchItem *bi)
     if (bi)
     {
         if (bi->getHeading().getText() == s) return;    // FIXME-0 check...
-        /* FIXME-00000000
-        saveState(
+        /* FIXME-00000000 saveState(
             bi,
             "setHeading (\""+bi->getHeading()+"\")",
             bi,
             "setHeading (\""+s+"\")",
             QString("Set heading of %1 to \"%2\"").arg(getObjectName(bi)).arg(s) ); bi->setHeading(s );
             */
-        qDebug()<<"VM::setHeading s="<<s;
         bi->setHeadingText(s );
         emitDataChanged ( bi);
         emitUpdateQueries ();
