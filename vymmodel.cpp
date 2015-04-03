@@ -1674,6 +1674,15 @@ QString VymModel::getHeading()
 	return QString();
 }
 
+bool VymModel::hasRichTextHeading()
+{
+    TreeItem *selti=getSelectedItem();
+    if (selti)
+    {
+    }
+    return false;
+}
+
 void VymModel::setNote(const QString &s)
 {
     TreeItem *selti=getSelectedItem();
@@ -1698,6 +1707,15 @@ QString VymModel::getNote()
 	return selti->getNote();
     else    
 	return QString();
+}
+
+bool VymModel::hasRichTextNote()
+{
+    TreeItem *selti=getSelectedItem();
+    if (selti)
+    {
+    }
+    return false;
 }
 
 void VymModel::loadNote (const QString &fn)
@@ -4197,6 +4215,10 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	{ 
 	    s=parser.parString(ok,0);
 	    returnValue=selti->hasActiveStandardFlag(s);
+	/////////////////////////////////////////////////////////////////////
+	} else if (com=="hasRichTextNote")
+	{
+	    returnValue=hasRichTextNote();
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="hasTask")
 	{ 

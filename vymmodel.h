@@ -307,8 +307,10 @@ signals:
 public:
     void setHeading(const QString &s, BranchItem *bi=NULL);	    //!< Set heading of item	
     QString getHeading ();		    //!< Get heading of item
+    bool hasRichTextHeading();               //!< Check type of vymText used
     void setNote(const QString &s);	    //!< Set note text
     QString getNote();			    //!< Get note text
+    bool hasRichTextNote();                 //!< Check type of vymText used
     void loadNote (const QString &fn);	    //!< Load note from file
     void saveNote (const QString &fn);	    //!< Save note to file
 
