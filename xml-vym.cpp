@@ -228,7 +228,7 @@ bool parseVYMHandler::startElement  ( const QString&, const QString&,
 	    // we really have no MCO at this time
 	    lastBranch=model->createMapCenter();
 	    model->select (lastBranch);
-        model->setHeadingText("Import");
+            model->setHeadingPlainText("Import");
 	    ti=lastBranch;
 	}   
 	if (ti && ti->isBranchLikeType() )
@@ -396,7 +396,7 @@ bool parseVYMHandler::characters   ( const QString& ch)
         htmldata+=ch_org;
 	    break;
         case StateHeading: 
-            lastBranch->setHeadingText(ch); // FIXME-0  what about RT?
+            lastBranch->setHeadingPlainText(ch); // FIXME-0  what about RT?
             break;
         default: 
 	    return false;

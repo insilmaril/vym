@@ -1136,35 +1136,42 @@ void MapEditor::editHeading()
 {
     if (state==EditingHeading)
     {
-	editHeadingFinished();
-	return;
+        editHeadingFinished();
+        return;
     }
+
     BranchObj *bo=model->getSelectedBranchObj();
     BranchItem *bi=model->getSelectedBranch();
-    if (bo) 
+    if (bo && bo)
     {
-	model->setSelectionBlocked(true);
+        VymText heading = bi->getHeading();
+        if (heading.isRichText())
+        {
+            mainWindow->windowShowHeadingEditor();
+            return;
+        }
+        model->setSelectionBlocked(true);
 
-	lineEdit=new QLineEdit;
-	QGraphicsProxyWidget *pw=mapScene->addWidget (lineEdit);
-	pw->setZValue (Z_LINEEDIT);
-	lineEdit->setCursor(Qt::IBeamCursor);
-	lineEdit->setCursorPosition(1);
+        lineEdit=new QLineEdit;
+        QGraphicsProxyWidget *pw=mapScene->addWidget (lineEdit);
+        pw->setZValue (Z_LINEEDIT);
+        lineEdit->setCursor(Qt::IBeamCursor);
+        lineEdit->setCursorPosition(1);
 
-	QPointF tl=bo->getOrnamentsBBox().topLeft();
-	QPointF br=tl + QPointF (230,30);
-	QRectF r (tl, br);
-	lineEdit->setGeometry(r.toRect() );
+        QPointF tl=bo->getOrnamentsBBox().topLeft();
+        QPointF br=tl + QPointF (230,30);
+        QRectF r (tl, br);
+        lineEdit->setGeometry(r.toRect() );
 
-	setScrollBarPosTarget ( r );
-	scene()->update();
+        setScrollBarPosTarget ( r );
+        scene()->update();
 
-	animateScrollBars();
-    lineEdit->setText (bi->getHeadingPlain());      // FIXME-00 for RT headings better open HeadingEditor
-	lineEdit->setFocus();
-	lineEdit->selectAll();	// Hack to enable cursor in lineEdit
-	lineEdit->deselect();	// probably a Qt bug...
-	setState (EditingHeading);
+        animateScrollBars();
+        lineEdit->setText (heading.getText() );
+        lineEdit->setFocus();
+        lineEdit->selectAll();	// Hack to enable cursor in lineEdit
+        lineEdit->deselect();	// probably a Qt bug...
+        setState (EditingHeading);
     }
 }
 
@@ -1175,7 +1182,7 @@ void MapEditor::editHeadingFinished()
     lineEdit->clearFocus();
     QString s=lineEdit->text();
     s.replace (QRegExp ("\\n")," ");	// Don't paste newline chars
-    model->setHeadingText (s);  // FIXME-0 open RT editor if needed?!?
+    model->setHeadingPlainText (s);
     model->setSelectionBlocked(false);
     delete (lineEdit);
     lineEdit=NULL;
@@ -2043,9 +2050,10 @@ void MapEditor::dropEvent(QDropEvent *event)
 			{
 			    model->select(bi);
 			    if (u.startsWith("file:")) 
+                            {
 				heading = QFileInfo( QDir::fromNativeSeparators(u) ).baseName();
-
-                model->setHeadingText(heading);
+                                model->setHeadingPlainText(heading);
+                            }
 			    if (u.endsWith(".vym", Qt::CaseInsensitive))
 			       model->setVymLink(u.replace ("file://","") );
 			    else

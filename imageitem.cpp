@@ -64,7 +64,7 @@ bool ImageItem::load(const QString &fname)
     if (mo && ok)
     {
 	setOriginalFilename (fname);
-    setHeadingText (originalFilename);
+    setHeadingPlainText (originalFilename);
 	((FloatImageObj*)mo)->load (originalImage);
     }	else
 	qDebug() <<"ImageItem::load failed for "<<fname;
@@ -116,7 +116,7 @@ void ImageItem::setOriginalFilename(const QString & fn)
     // Set short name. Search from behind:
     int i=originalFilename.lastIndexOf("/");
     if (i>=0) originalFilename=originalFilename.remove (0,i+1);
-    setHeadingText (originalFilename);
+    setHeadingPlainText (originalFilename);
 }
 
 QString ImageItem::getOriginalFilename()

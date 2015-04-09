@@ -68,9 +68,9 @@ bool parseFreemindHandler::startElement  ( const QString&, const QString&,
 	mainBranchRight = model->createBranch (lastBranch);
 
 	mainBranchLeft->setRelPos ( QPointF(-200,0));
-    mainBranchLeft->setHeadingText ("  ");
+    mainBranchLeft->setHeadingPlainText ("  ");
 	mainBranchRight->setRelPos ( QPointF(200,0));
-    mainBranchRight->setHeadingText ("  ");
+    mainBranchRight->setHeadingPlainText ("  ");
     } else if ( eName == "attribute_registry" &&  state == StateMap ) 
     {
         state = StateAttributeRegistry;
@@ -232,7 +232,7 @@ bool parseFreemindHandler::endElement  ( const QString &, const QString&, const 
 	    if (!htmldata.isEmpty()) 
 	    {
 		if (htmlPurpose==Node)
-            lastBranch->setHeadingText (htmldata);  // FIXME-0 probably wrong for RT heading
+            lastBranch->setHeadingPlainText (htmldata);  // FIXME-0 probably wrong for RT heading
 		else if (htmlPurpose==Note)
 		    lastBranch->setNote (htmldata);
 	    }	
@@ -304,7 +304,7 @@ bool parseFreemindHandler::readNodeAttr (const QXmlAttributes& a)
 
     if (!a.value( "TEXT").isEmpty() )
     {
-    lastBranch->setHeadingText (a.value ("TEXT"));
+    lastBranch->setHeadingPlainText (a.value ("TEXT"));  // FIXME-1 what about RT?
 	//model->setHeading (a.value ("TEXT"), lastBranch);
     }
 

@@ -338,17 +338,11 @@ void TreeItem::setHeading (const VymText &vt)
     itemData[0]= heading.getTextASCII();  // used in TreeEditor
 }
 
-void TreeItem::setHeadingText (const QString &s)
+void TreeItem::setHeadingPlainText (const QString &s)
 {
-    heading.setText (s); //FIXME-000000000
-    /*
-    if ( true )  //FIXME-00000  Qt::mightBeRichText (s))
-        heading = richTextToPlain(s).trimmed().replace ('\n',' ').replace ('\t',' ');
-    else
-        heading = s;
-        */
-    itemData[0]=s;
-    //qDebug()<<"TI::setHeading this="<<this<<"  "<<s;
+    VymText vt;
+    vt.setPlainText(s);
+    setHeading(vt);
 }
 
 VymText TreeItem::getHeading () const

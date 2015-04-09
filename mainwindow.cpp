@@ -3206,7 +3206,7 @@ void Main::fileLoad(const LoadMode &lmode)
     }
 
     QString filter;
-    filter+="VYM map " + tr("or","File Dialog") +" Freemind map" + " (*.xml *.vym *.vyp *.mm);;";  //FIXME-0 xml temporary here
+    filter+="VYM map " + tr("or","File Dialog") +" Freemind map" + " (*.xml *.vym *.vyp *.mm);;";  //FIXME-1 xml temporary here
     filter+="VYM map (*.vym *.vyp);;";
     filter+="VYM Backups (*.vym~);;";
     filter+="Freemind map (*.mm);;";
@@ -3985,10 +3985,10 @@ void Main::editHeadingFinished(VymModel *m)
 {
     if (m)
     {
-	if (!actionSettingsAutoSelectNewBranch->isChecked() && 
-	    !prevSelection.isEmpty()) 
-	    m->select(prevSelection);
-	prevSelection="";
+        if (!actionSettingsAutoSelectNewBranch->isChecked() &&
+                !prevSelection.isEmpty())
+            m->select(prevSelection);
+        prevSelection="";
     }
 }
 
@@ -4311,7 +4311,7 @@ void Main::editAddMapCenter()
 	MapEditor *me=currentMapEditor();
 	if (me) 
 	{
-        //m->setHeading("");  // FIXME-0 still working without clearing heading?
+        m->setHeadingPlainText("");
 	    me->editHeading();
 	}    
     }
@@ -5009,6 +5009,11 @@ void Main::windowToggleProperty()
     branchPropertyEditor->setModel (currentModel() );
 }
 
+void Main::windowShowHeadingEditor()
+{
+    headingEditorDW->show();
+}
+
 void Main::windowToggleAntiAlias()
 {
     bool b=actionViewToggleAntiAlias->isChecked();
@@ -5493,7 +5498,7 @@ void Main::testFunction2()
     VymModel *m = currentModel();
     if (m)
     {
-        // FIXME-0 remove setting to download release notes.
+        // FIXME-1 remove setting to download release notes.
         //         add actions for manual relnotes and updatecheck
         //         show messagebox, if actions triggered or on first run
         QMessageBox msgBox;

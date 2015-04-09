@@ -856,7 +856,7 @@ void VymModel::importDirInt(BranchItem *dst, QDir d)
 	    if (fi.isDir() && fi.fileName() != "." && fi.fileName() != ".." )
 	    {
 		bi=addNewBranchInt(dst,-2);
-        bi->setHeadingText (fi.fileName() );
+                bi->setHeadingPlainText (fi.fileName() );
 		bi->setHeadingColor (QColor("blue"));
 		if ( !d.cd(fi.fileName()) ) 
 		    QMessageBox::critical (0,tr("Critical Import Error"),tr("Cannot find the directory %1").arg(fi.fileName()));
@@ -876,7 +876,7 @@ void VymModel::importDirInt(BranchItem *dst, QDir d)
 	    if (fi.isFile())
 	    {
 		bi=addNewBranchInt (dst,-2);
-        bi->setHeadingText (fi.fileName() );
+                bi->setHeadingPlainText (fi.fileName() );
 		bi->setHeadingColor (QColor("black"));
 		if (fi.fileName().right(4) == ".vym" )
 		    bi->setVymLink (fi.filePath());
@@ -1661,7 +1661,7 @@ void VymModel::setHeading(const VymText &vt, BranchItem *bi) // FIXME-0000
     }
 }
 
-void VymModel::setHeadingText(const QString &s, BranchItem *bi)
+void VymModel::setHeadingPlainText(const QString &s, BranchItem *bi)
 {
     if (!bi) bi=getSelectedBranch();
     if (bi)
@@ -1674,7 +1674,7 @@ void VymModel::setHeadingText(const QString &s, BranchItem *bi)
             "setHeading (\""+s+"\")",
             QString("Set heading of %1 to \"%2\"").arg(getObjectName(bi)).arg(s) ); bi->setHeading(s );
             */
-        bi->setHeadingText(s );
+        bi->setHeadingPlainText(s );
         emitDataChanged ( bi);
         emitUpdateQueries ();
         reposition();
@@ -2348,7 +2348,7 @@ void VymModel::addTimestamp()	//FIXME-4 new function, localize
     {
 	QDate today=QDate::currentDate();
 	QChar c='0';
-    selbi->setHeadingText (
+        selbi->setHeadingPlainText (
         QString ("%1-%2-%3")
             .arg(today.year(),4,10,c)
             .arg(today.month(),2,10,c)
@@ -2755,15 +2755,16 @@ BranchItem* VymModel::addMapCenter (bool saveStateFlag)
     BranchItem *bi=addMapCenter (contextPos);
     updateActions();
     emitShowSelection();
-    if (saveStateFlag) saveState (
-	bi,
-	"delete()",
-	NULL,
-	QString ("addMapCenter (%1,%2)").arg (contextPos.x()).arg(contextPos.y()),
-	QString ("Adding MapCenter to (%1,%2)").arg (contextPos.x()).arg(contextPos.y())
-    );	
-    emitUpdateLayout();	
-    return bi;	
+    if (saveStateFlag)
+        saveState (
+            bi,
+            "delete()",
+            NULL,
+            QString ("addMapCenter (%1,%2)").arg (contextPos.x()).arg(contextPos.y()),
+            QString ("Adding MapCenter to (%1,%2)").arg (contextPos.x()).arg(contextPos.y())
+        );
+            emitUpdateLayout();
+    return bi;
 }
 
 BranchItem* VymModel::addMapCenter(QPointF absPos)  
@@ -2776,7 +2777,7 @@ BranchItem* VymModel::addMapCenter(QPointF absPos)
     QList<QVariant> cData;
     cData << "VM:addMapCenter" << "undef";
     BranchItem *newbi=new BranchItem (cData,rootItem);
-    newbi->setHeadingText (tr("Heading of mapcenter in new map", "New map"));
+    newbi->setHeadingPlainText (tr("New map", "New map"));
     int n=rootItem->getRowNumAppend (newbi);
 
     emit (layoutAboutToBeChanged() );
@@ -3581,7 +3582,7 @@ void VymModel::note2URLs()
 	while ((pos = re.indexIn(n, pos)) != -1) 
 	{
 	    bi=createBranch (selbi);
-        bi->setHeadingText (re.cap(1));
+            bi->setHeadingPlainText (re.cap(1));
 	    bi->setURL (re.cap(1));
 	    emitDataChanged (bi);
 	    pos += re.matchedLength();
@@ -4466,7 +4467,7 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	} else if (com=="setHeading")
 	{
 	    s=parser.parString (ok,0);
-        setHeadingText (s);
+            setHeadingPlainText (s); // FIXME-1  what about RT?
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="setHideExport")
 	{
@@ -6010,8 +6011,8 @@ void VymModel::emitDataChanged (TreeItem *ti)
     emit ( dataChanged (ix,ix) );
     if (!blockReposition && ti->isBranchLikeType() && ((BranchItem*)ti)->getTask()  )
     {
-	taskModel->emitDataChanged ( ((BranchItem*)ti)->getTask() );
-	taskModel->recalcPriorities();
+        taskModel->emitDataChanged ( ((BranchItem*)ti)->getTask() );
+        taskModel->recalcPriorities();
     }
 }
 
