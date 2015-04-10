@@ -325,7 +325,6 @@ QString TreeItem::getTypeName()
 
 QVariant TreeItem::data(int column) const
 {
-    return QVariant( getHeadingPlain() ); //FIXME-0000000
     return itemData.value(column);
 }
 
