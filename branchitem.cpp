@@ -146,7 +146,10 @@ QString BranchItem::saveToDir (const QString &tmpdir,const QString &prefix, cons
     incIndent();
 
     // save heading
-    s+=valueElement("heading", heading.saveToDir(), attribut ("textColor",QColor( bo->getColor()).name()));
+    s += heading.saveToDir();
+    //FIXME-0000000000000 save color in heading!
+    // for plaintext add method to set/get color
+    // and add it as attribut ("textColor",QColor( bo->getColor()).name()));
 
     // Save frame  //FIXME-5 not saved if there is no MO
     if (mo) 

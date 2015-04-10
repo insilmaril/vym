@@ -196,6 +196,7 @@ QString VymText::saveToDir ()
 {
     QString n = text;
 
+    /*
     if (textmode == RichText) // FIXME-0 should no longer be necessary with use of CDATA
     {
         // Remove the doctype, which will confuse parsing
@@ -251,6 +252,7 @@ QString VymText::saveToDir ()
             pos++;
         }
     }
-    return n;
+    */
+    return "<![CDATA[" + n + "]]>";
 }
 

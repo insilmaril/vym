@@ -97,19 +97,19 @@ QString XMLObj::endElement(QString s)
 // returns  at="val"
 QString XMLObj::attribut(QString at, QString val)
 {
-    return " " + at + "=\"" + quotemeta (val) + "\""; 
+    return " " + at + "=\"" + val + "\"";
 }
 
 // returns <s> val </s>
 QString XMLObj::valueElement(QString el, QString val)
 {
-    return indent() + "<" + el + ">" + quotemeta(val) + "</" +el + ">\n";
+    return indent() + "<" + el + ">" + val + "</" +el + ">\n";
 }
 
 // returns <s at> val </s>
 QString XMLObj::valueElement(QString el, QString val, QString at)
 {
-    return indent() + "<" + el + " " + at + ">" + quotemeta(val) + "</" +el + ">\n";
+    return indent() + "<" + el + " " + at + ">" + val + "</" +el + ">\n";
 }
 
 void XMLObj::incIndent()

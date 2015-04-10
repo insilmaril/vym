@@ -24,6 +24,7 @@ QString Heading::saveToDir ()
         textModeAttr = attribut("textMode","plainText");
         fontHintAttr  = attribut("fonthint",fonthint);
     }
+    qDebug()<<"Heading::saveToDir "<<VymText::saveToDir();  //FIXME-1 debug
     return beginElement ("heading"  + textModeAttr + fontHintAttr)
             + VymText::saveToDir()
             + endElement ("heading");
