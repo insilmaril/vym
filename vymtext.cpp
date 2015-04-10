@@ -16,7 +16,7 @@ VymText::VymText(const VymText &other)
 {
     clear();
     copy (other);
-    return; //FIXME-000000000000000000
+    return;
 }
 
 VymText::VymText(const QString &s)
@@ -29,9 +29,9 @@ bool VymText::operator== (const VymText &other)
 {
     if ( text == other.text &&
          fonthint == other.fonthint &&
-        textmode == other.textmode
-        // ignore for now: filenamehint = other.filenamehint;
-        )
+        textmode == other.textmode &&
+        filenamehint == other.filenamehint
+    )
         return true;
     else
         return false;
@@ -48,6 +48,7 @@ void VymText::copy (const VymText &other)
     fonthint = other.fonthint;
     filenamehint = other.filenamehint;
     textmode = other.textmode;
+    color = other.color;
 }
 
 void VymText::clear()
@@ -56,6 +57,7 @@ void VymText::clear()
     fonthint = "undef";
     filenamehint = "";
     textmode = AutoText;
+    color = Qt::black;
 }
 
 void VymText::setRichText(bool b)
@@ -192,65 +194,31 @@ bool VymText::isEmpty ()
     return text.isEmpty();
 }
 
+void VymText::setColor(QColor col)
+{
+    color = col;
+}
+
+QColor VymText::getColor()
+{
+    return color;
+}
+
+QString VymText::getAttributes()
+{
+    QString ret;
+    if (textmode == RichText)
+        ret += attribut("textMode","richText");
+    else
+    {
+        ret += attribut("textMode","plainText");
+        ret += " " + attribut("fonthint", fonthint);
+        ret += " " + attribut("textColor", color.name() );
+    }
+    return ret;
+}
+
 QString VymText::saveToDir ()
 {
-    QString n = text;
-
-    /* if (textmode == RichText) // FIXME-0 should no longer be necessary with use of CDATA
-    {
-        // Remove the doctype, which will confuse parsing
-        // with XmlReader in Qt >= 4.4
-        QRegExp rx("<!DOCTYPE.*>");
-        rx.setMinimal(true);
-        n.replace (rx,"");
-
-        // QTextEdit may generate fontnames with unquoted &, like
-        // in "Lucida B&H". This is invalid in XML and thus would crash
-        // the XML parser
-
-        // More invalid XML is generated with bullet lists:
-        // There are 2 <style> tags in one <li>, so we merge them here
-        int pos=0;
-        bool inbracket=false;
-        int begin_bracket=0;
-        bool inquot=false;
-
-        while (pos<n.length())
-        {
-            if (n.mid(pos,1)=="<")
-            {
-                inbracket=true;
-                begin_bracket=pos;
-            }
-            if (n.mid(pos,1)==">")
-            {
-                inbracket=false;
-                QString s=n.mid(begin_bracket,pos-begin_bracket+1);
-                int sl=s.length();
-                if (s.count("style=\"")>1)
-                {
-                    rx.setPattern ("style=\\s*\"(.*)\"\\s*style=\\s*\"(.*)\"");
-                    s.replace(rx,"style=\"\\1 \\2\"");
-                    n.replace (begin_bracket,sl,s);
-                    pos=pos-(sl-s.length());
-                }
-            }
-            if (n.mid(pos,1)=="\"" && inbracket)
-            {
-                if (!inquot)
-                    inquot=true;
-                else
-                    inquot=false;
-            }
-            if (n.mid(pos,1)=="&" && inquot)
-            {
-                // Now we are inside  <  "  "  >
-                n.replace(pos,1,"&amp;");
-                pos=pos+3;
-            }
-            pos++;
-        }
-    }
-    */
-    return "<![CDATA[" + n + "]]>";
+    return "<![CDATA[" + text + "]]>";
 }

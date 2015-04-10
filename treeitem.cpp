@@ -80,7 +80,6 @@ void TreeItem::init()
     hidden = false;
     hideExport = false;
 
-    headingColor = Qt::black;
     backgroundColor = Qt::transparent;
 
     standardFlags.setMasterRow (standardFlagsMaster);
@@ -377,12 +376,12 @@ QString TreeItem::getHeadingDepth () // Indent by depth for debugging
 
 void TreeItem::setHeadingColor (QColor color)
 {
-    headingColor=color;
+    heading.setColor(color);
 }
 
 QColor TreeItem::getHeadingColor ()
 {
-    return headingColor;
+    return heading.getColor();
 }
 
 void TreeItem::setBackgroundColor (QColor color)

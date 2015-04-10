@@ -80,7 +80,6 @@ public:
 
 protected:
     Heading heading;
-    QColor headingColor;
     QColor backgroundColor;
 public:	
     virtual void setHeading (const VymText &vt);

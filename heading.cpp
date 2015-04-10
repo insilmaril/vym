@@ -15,16 +15,6 @@ void Heading::operator =(const VymText &other)
 
 QString Heading::saveToDir ()
 {
-    QString fontHintAttr;
-    QString textModeAttr;
-    if (textmode == RichText)
-        textModeAttr = attribut("textMode","richText");
-    else
-    {
-        textModeAttr = attribut("textMode","plainText");
-        fontHintAttr  = attribut("fonthint",fonthint);
-    }
-    qDebug()<<"Heading::saveToDir "<<VymText::saveToDir();  //FIXME-1 debug
-    return valueElement ("heading", VymText::saveToDir(), textModeAttr + fontHintAttr);
+    return valueElement ("heading", VymText::saveToDir(), getAttributes() );
 }
 

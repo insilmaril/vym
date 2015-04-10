@@ -147,15 +147,14 @@ QString BranchItem::saveToDir (const QString &tmpdir,const QString &prefix, cons
 
     // save heading
     s += heading.saveToDir();
-    //FIXME-0000000000000 save color in heading!
-    // for plaintext add method to set/get color
-    // and add it as attribut ("textColor",QColor( bo->getColor()).name()));
 
     // Save frame  //FIXME-5 not saved if there is no MO
-    if (mo) 
-	// Avoid saving NoFrame for objects other than MapCenter
-	if (depth() == 0  || ((OrnamentedObj*)mo)->getFrame()->getFrameType()!=FrameObj::NoFrame) 
-	    s+=((OrnamentedObj*)mo)->getFrame()->saveToDir ();
+    if (mo)
+    {
+        // Avoid saving NoFrame for objects other than MapCenter
+        if (depth() == 0  || ((OrnamentedObj*)mo)->getFrame()->getFrameType()!=FrameObj::NoFrame)
+            s+=((OrnamentedObj*)mo)->getFrame()->saveToDir ();
+    }
 
     // save names of flags set
     s+=standardFlags.saveToDir(tmpdir,prefix,0);
@@ -569,7 +568,7 @@ BranchObj* BranchItem::createMapObj(QGraphicsScene *scene)  // FIXME-5 maybe mov
     if (!getHeading().isEmpty() ) 
     {
 	newbo->updateData();	//FIXME-5 maybe better model->emitDataChanged()?
-	newbo->setColor (headingColor);
+    newbo->setColor (heading.getColor());
     }	
 	
     return newbo;

@@ -1,6 +1,7 @@
 #ifndef VYMTEXT_H
 #define VYMTEXT_H
 
+#include <qcolor.h>
 #include <qstring.h>
 
 //  class VymText;
@@ -35,6 +36,9 @@ public:
     void setFilenameHint (const QString&);
     QString getFilenameHint () const;
     bool isEmpty();
+    void setColor(QColor color);
+    QColor getColor();
+    QString getAttributes();
     QString saveToDir();
 
 protected:
@@ -42,5 +46,6 @@ protected:
     QString fonthint;
     QString filenamehint;
     TextMode textmode;
+    QColor color;       // used for plaintext
 };
 #endif
