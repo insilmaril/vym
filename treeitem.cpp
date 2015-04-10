@@ -371,7 +371,7 @@ QString TreeItem::getHeadingDepth () // Indent by depth for debugging
 {
     QString ds;
     for (int i=0; i<depth(); i++) ds += "  ";
-    return ds + itemData[0].toString();  //FIXME-0
+    return ds + getHeadingPlain();
 }
 
 void TreeItem::setHeadingColor (QColor color)
@@ -489,7 +489,7 @@ void TreeItem::clearNote()
     systemFlags.deactivate ("system-note");
 }
 
-void TreeItem::setNote(const VymText &n)
+void TreeItem::setNote(const VymText &n) // FIXME-0 should not be necessary. see VM::loadNote and VM::saveNote
 {
     note = n;
     if (!note.isEmpty() && !systemFlags.isActive ("system-note"))
@@ -498,7 +498,7 @@ void TreeItem::setNote(const VymText &n)
 	systemFlags.deactivate ("system-note");
 }
 
-QString TreeItem::getNoteText()
+QString TreeItem::getNoteText()// FIXME-0 should not be necessary. see VM::loadNote and VM::saveNote
 {
     return note.getText();
 }
@@ -508,7 +508,7 @@ bool TreeItem::hasEmptyNote()
     return note.isEmpty();
 }
 
-VymNote TreeItem::getNote()  // FIXME-0 really needed?
+VymNote TreeItem::getNote()  // FIXME-0 should not be necessary. see VM::loadNote and VM::saveNote
 {
     return note;
 }

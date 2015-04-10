@@ -1647,14 +1647,20 @@ QString VymModel::getSortFilter ()
     return sortFilter;
 }
 
-void VymModel::setHeading(const VymText &vt, BranchItem *bi) // FIXME-0000
+void VymModel::setHeading(const VymText &vt, BranchItem *bi)
 {
     if (!bi) bi=getSelectedBranch();
     if (bi)
     {
         if (bi->getHeading() == vt) return;
         bi->setHeading(vt);
-        // FIXME-0000000 savestate missing
+        /* FIXME-00000000 saveState(
+            bi,
+            "setHeading (\""+bi->getHeading()+"\")",
+            bi,
+            "setHeading (\""+s+"\")",
+            QString("Set heading of %1 to \"%2\"").arg(getObjectName(bi)).arg(s) ); bi->setHeading(s );
+            */
         emitDataChanged ( bi);
         emitUpdateQueries ();
         reposition();
@@ -1666,18 +1672,10 @@ void VymModel::setHeadingPlainText(const QString &s, BranchItem *bi)
     if (!bi) bi=getSelectedBranch();
     if (bi)
     {
-        if (bi->getHeading().getText() == s) return;    // FIXME-0 check...
-        /* FIXME-00000000 saveState(
-            bi,
-            "setHeading (\""+bi->getHeading()+"\")",
-            bi,
-            "setHeading (\""+s+"\")",
-            QString("Set heading of %1 to \"%2\"").arg(getObjectName(bi)).arg(s) ); bi->setHeading(s );
-            */
-        bi->setHeadingPlainText(s );
-        emitDataChanged ( bi);
-        emitUpdateQueries ();
-        reposition();
+        VymText ph;
+        ph.setPlainText(s);
+        if (bi->getHeading() == ph) return;
+        setHeading (ph, bi);
     }
 }
 
@@ -1685,12 +1683,12 @@ QString VymModel::getHeading()  // FIXME-0
 {
     TreeItem *selti=getSelectedItem();
     if (selti)
-    return selti->getHeading().getText();
-    else    
-	return QString();
+        return selti->getHeading().getText();
+    else
+        return QString();
 }
 
-bool VymModel::hasRichTextHeading()
+bool VymModel::hasRichTextHeading() //FIXME-1 needed?
 {
     TreeItem *selti=getSelectedItem();
     if (selti)
@@ -1734,7 +1732,7 @@ bool VymModel::hasRichTextNote()
     return false;
 }
 
-void VymModel::loadNote (const QString &fn)
+void VymModel::loadNote (const QString &fn) // FIXME-0 check... better create vymText and set directly
 {
     BranchItem *selbi=getSelectedBranch();
     if (selbi)
@@ -1748,7 +1746,7 @@ void VymModel::loadNote (const QString &fn)
 	qWarning ("VymModel::loadNote no branch selected");
 }
 
-void VymModel::saveNote (const QString &fn)
+void VymModel::saveNote (const QString &fn) // FIXME-0 check... better get VymText and use saveToDir
 {
     BranchItem *selbi=getSelectedBranch();
     if (selbi)
@@ -1760,8 +1758,6 @@ void VymModel::saveNote (const QString &fn)
 	{
 	    if (!saveStringToDisk (fn,n))
 		qWarning ()<<"VymModel::saveNote Couldn't save "<<fn;
-	    else
-		selbi->setNote (n);
 	}   
     } else
 	qWarning ("VymModel::saveNote no branch selected");

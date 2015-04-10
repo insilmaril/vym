@@ -89,7 +89,8 @@ void VymText::setRichText (const QString &s)
 
 void VymText::setPlainText (const QString &s)
 {
-    text = unquotemeta(s);      // FIXME-0 really unquote? Or better ascii?
+    clear();
+    text = s;
     textmode = PlainText;
 }
 

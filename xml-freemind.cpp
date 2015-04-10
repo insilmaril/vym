@@ -232,7 +232,7 @@ bool parseFreemindHandler::endElement  ( const QString &, const QString&, const 
 	    if (!htmldata.isEmpty()) 
 	    {
 		if (htmlPurpose==Node)
-            lastBranch->setHeadingPlainText (htmldata);  // FIXME-0 probably wrong for RT heading
+            lastBranch->setHeadingPlainText (htmldata);  // FIXME-1 probably wrong for RT heading
 		else if (htmlPurpose==Note)
 		    lastBranch->setNote (htmldata);
 	    }	

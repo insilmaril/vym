@@ -245,8 +245,6 @@ ErrorCode zipDir ( QDir zipInputDir, QString zipName)
     if (file.exists() )
     {
         symLinkTarget = file.symLinkTarget();
-        if (symLinkTarget.isEmpty() )
-            qDebug() << "File::zip  symLinkTarget=" << symLinkTarget;  //// FIXME-0000000000000000
 
         newName = zipName + ".tmp";
         int n=0;
