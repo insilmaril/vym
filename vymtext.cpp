@@ -15,8 +15,8 @@ VymText::VymText()
 VymText::VymText(const VymText &other)
 {
     clear();
-//    return; //FIXME-000000000000000000
     copy (other);
+    return; //FIXME-000000000000000000
 }
 
 VymText::VymText(const QString &s)
@@ -87,7 +87,7 @@ void VymText::setRichText (const QString &s)
 
 void VymText::setPlainText (const QString &s)
 {
-    text = unquotemeta(s);
+    text = unquotemeta(s);      // FIXME-0 really unquote? Or better ascii?
     textmode = PlainText;
 }
 
@@ -196,8 +196,7 @@ QString VymText::saveToDir ()
 {
     QString n = text;
 
-    /*
-    if (textmode == RichText) // FIXME-0 should no longer be necessary with use of CDATA
+    /* if (textmode == RichText) // FIXME-0 should no longer be necessary with use of CDATA
     {
         // Remove the doctype, which will confuse parsing
         // with XmlReader in Qt >= 4.4
@@ -255,4 +254,3 @@ QString VymText::saveToDir ()
     */
     return "<![CDATA[" + n + "]]>";
 }
-

@@ -73,7 +73,7 @@ private:
 
     State state;	     
     QList <State> stateStack;
-    VymNote note;
+    VymText vymtext;
 
     BranchItem* lastBranch;
     ImageItem* lastImage;

@@ -333,8 +333,10 @@ QVariant TreeItem::data(int column) const
 void TreeItem::setHeading (const VymText &vt)
 {
     heading = vt;
-    qDebug() << "TI::setHeading rt="<<heading.isRichText()<<" "<<heading.getTextASCII();
-    qDebug() << "                  "<<heading.getText();
+    qDebug() << "TI::setHeading "<<this<<" rt="<<heading.isRichText()<<" "<<heading.getTextASCII();
+    qDebug() << "          getText ="<<heading.getText();
+    qDebug() << "     getTextASCII ="<<heading.getTextASCII();
+    qDebug() << "  getHeadingPlain ="<<getHeadingPlain();
     itemData[0]= heading.getTextASCII();  // used in TreeEditor
 }
 
@@ -483,7 +485,8 @@ void TreeItem::clearNote()
     systemFlags.deactivate ("system-note");
 }
 
-void TreeItem::setNote(const VymNote &n){
+void TreeItem::setNote(const VymText &n)
+{
     note = n;
     if (!note.isEmpty() && !systemFlags.isActive ("system-note"))
 	systemFlags.activate ("system-note");

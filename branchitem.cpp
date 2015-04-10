@@ -120,9 +120,9 @@ QString BranchItem::saveToDir (const QString &tmpdir,const QString &prefix, cons
     
     QString elementName;
     if (parentItem==rootItem)
-	elementName="mapcenter";
-    else    
-	elementName="branch";
+        elementName="mapcenter";
+    else
+        elementName="branch";
 
     // Free positioning of children
     QString layoutAttr;
@@ -193,7 +193,7 @@ QString BranchItem::saveToDir (const QString &tmpdir,const QString &prefix, cons
 	if (l && !tmpLinks.contains (l)) tmpLinks.append (l);
     }
     decIndent();
-    s+=endElement   (elementName);
+    s += endElement (elementName);
     return s;
 }
 

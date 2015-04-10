@@ -55,10 +55,7 @@ QString quoteUmlaut(const QString &s)
     return r;
 }
 
-
-
-
-int XMLObj::actindent=0;	// make instance of actindent
+int XMLObj::curindent=0;	// make instance of curindent
 
 XMLObj::XMLObj()
 {
@@ -73,7 +70,7 @@ XMLObj::~XMLObj()
 // returns <s at />
 QString XMLObj::singleElement(QString s, QString at)
 {
-    return indent() + "<" + s +" " + at +" " + "/>\n";
+    return indent() + "<" + s +" " + at +" " + "/>";
 }
 
 // returns <s>
@@ -91,7 +88,7 @@ QString XMLObj::beginElement(QString s, QString at)
 // returns </s>
 QString XMLObj::endElement(QString s)
 {
-    return indent() + "</" + s + ">\n";
+    return indent() + "</" + s + ">";
 }
 
 // returns  at="val"
@@ -103,33 +100,33 @@ QString XMLObj::attribut(QString at, QString val)
 // returns <s> val </s>
 QString XMLObj::valueElement(QString el, QString val)
 {
-    return indent() + "<" + el + ">" + val + "</" +el + ">\n";
+    return indent() + "<" + el + ">" + val + "</" +el + ">";
 }
 
 // returns <s at> val </s>
 QString XMLObj::valueElement(QString el, QString val, QString at)
 {
-    return indent() + "<" + el + " " + at + ">" + val + "</" +el + ">\n";
+    return indent() + "<" + el + " " + at + ">" + val + "</" +el + ">";
 }
 
 void XMLObj::incIndent()
 {
-    actindent++;
+    curindent++;
 }   
 
 void XMLObj::decIndent()
 {
-    actindent--;
-    if (actindent<0) actindent=0;
+    curindent--;
+    if (curindent<0) curindent=0;
 }   
 
 QString XMLObj::indent()
 {
-    QString s;
+    QString s = "\n";
     int i;
-    for (i=0; i<actindent*indentwidth; i++)
+    for (i=0; i < curindent*indentwidth; i++)
     {
-	s= s + " ";
+        s= s + " ";
     }
     return s;
 }   

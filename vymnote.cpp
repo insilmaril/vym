@@ -4,6 +4,11 @@
 // VymNote
 /////////////////////////////////////////////////////////////////
 
+void VymNote::operator= (const VymText &other)
+{
+    copy (other);
+}
+
 QString VymNote::saveToDir ()
 {
     QString fontHintAttr;

@@ -22,7 +22,7 @@ public:
     QString valueElement(QString,QString,QString);  // name, val, attr
     void incIndent();
     void decIndent();
-    static int actindent;
+    static int curindent;
 
 protected:  
     QString indent();
