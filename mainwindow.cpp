@@ -667,6 +667,9 @@ void Main::setupAPI()
     c->addPar (Command::String,false,"Name of flag");
     modelCommands.append(c);
 
+    c=new Command ("hasRichTextNote",Command::Branch); 
+    modelCommands.append(c);
+
     c=new Command ("hasTask",Command::Branch); 
     modelCommands.append(c);
 
@@ -684,7 +687,6 @@ void Main::setupAPI()
     c=new Command ("loadNote",Command::Branch); 
     c->addPar (Command::String,false,"Filename of note");
     modelCommands.append(c);
-
 
     c=new Command ("moveDown",Command::Branch); 
     modelCommands.append(c);

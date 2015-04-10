@@ -663,21 +663,45 @@ end
 def test_notes (vym)
   heading "Notes:"
   init_map
-  vym.select @main_b
-  vym.setNote("foobar")
-  expect "Set note", vym.getNote, "foobar"
-  vym.setNote("foo)bar")
-  expect "Set note including \")\"", vym.getNote, "foo)bar"
+  vym.select @main_a
+  note_plain = "plaintext"
+  vym.setNote(note_plain)
+  expect "Set note to \"#{note_plain}\". Still plaintext?", vym.hasRichTextNote, false
+  vym.select @center_0
+  vym.select @main_a
+  expect "After reselect, is note unchanged?", vym.getNote, note_plain
+  expect "After reselect, is note plaintext?", vym.hasRichTextNote, false
+
+  note_plain = "<b>plaintext, not bold!</b>"
+  vym.setNote(note_plain)
+  expect "Set note to plaintext containing html tags", vym.getNote, note_plain
+  sleep 3
+  vym.select @center_0
+  sleep 3
+  vym.select @main_a
+  sleep 3
+  expect "After reselect, is note unchanged?", vym.getNote, note_plain
+  expect "After reselect, is note plaintext?", vym.hasRichTextNote, false
+  sleep 3
   
-  note_org = IO.read('test/note.txt')
-  vym.loadNote("test/note.txt") 
-  expect "Load note from file", vym.getNote, note_org
+  # FIXME same checks like above for RichTexxt
+  
+  note_org = IO.read('test/note-plain.txt')
+  vym.loadNote("test/note-plain.txt") 
+  expect "Load plain text note from file", vym.getNote, note_org
 
   filepath = "#{@testdir}/save-note.txt"
   vym.saveNote(filepath)
   expect "Save note to file", IO.read(filepath), note_org
+  #
+  # FIXME same checks like above for RichTexxt
 end
 
+def test_headings (vym)
+  heading "Headings:"
+  # FIXME same checks like for notes above for headings
+end
+  
 ######################
 def test_bugfixes (vym)
   heading "Bugfixes:"
@@ -687,23 +711,24 @@ def test_bugfixes (vym)
 end
 
 #######################
-test_basics(vym)
-test_export(vym)
-test_extrainfo(vym)
-test_adding_branches(vym)
-test_adding_maps(vym)
-test_scrolling(vym)
-test_moving_parts(vym)
-test_modify_branches(vym)
-test_flags(vym)
-test_delete_parts(vym)
-test_copy_paste(vym)
-test_references(vym)
-test_history(vym)
-test_xlinks(vym)
-test_tasks(vym)
+#test_basics(vym)
+#test_export(vym)
+#test_extrainfo(vym)
+#test_adding_branches(vym)
+#test_adding_maps(vym)
+#test_scrolling(vym)
+#test_moving_parts(vym)
+#test_modify_branches(vym)
+#test_flags(vym)
+#test_delete_parts(vym)
+#test_copy_paste(vym)
+#test_references(vym)
+#test_history(vym)
+#test_xlinks(vym)
+#test_tasks(vym)
 test_notes(vym)
-test_bugfixes(vym)
+test_headings(vym)
+#test_bugfixes(vym)
 summary
 
 =begin
