@@ -172,7 +172,18 @@ bool parseVYMHandler::startElement  ( const QString&, const QString&,
     } else if ( eName == "heading" && (state == StateMapCenter||state==StateBranch)) 
     {
         state=StateHeading;
-        if (!atts.value( "textColor").isEmpty() ) 
+        htmldata.clear();
+        vymtext.clear();
+        if (!atts.value( "fonthint").isEmpty() )
+            vymtext.setFontHint(atts.value ("fonthint") );
+        if (!atts.value( "textMode").isEmpty() )
+        {
+            if (atts.value ("textMode") == "richText" )
+                vymtext.setRichText(true);
+            else
+                vymtext.setRichText(false);
+        }
+        if (!atts.value( "textColor").isEmpty() )
         {
             col.setNamedColor(atts.value("textColor"));
             lastBranch->setHeadingColor(col );
@@ -197,17 +208,17 @@ bool parseVYMHandler::startElement  ( const QString&, const QString&,
                 (state == StateMapCenter ||state==StateBranch)) 
     {
         state=StateVymNote;
-    htmldata.clear();
+        htmldata.clear();
         vymtext.clear();
         if (!atts.value( "fonthint").isEmpty() ) 
             vymtext.setFontHint(atts.value ("fonthint") );
-    if (!atts.value( "textMode").isEmpty() )
-    {
-        if (atts.value ("textMode") == "richText" )
-            vymtext.setRichText(true);
-        else
-            vymtext.setRichText(false);
-    }
+        if (!atts.value( "textMode").isEmpty() )
+        {
+            if (atts.value ("textMode") == "richText" )
+                vymtext.setRichText(true);
+            else
+                vymtext.setRichText(false);
+        }
     } else if ( eName == "floatimage" &&
                 (state == StateMapCenter ||state==StateBranch)) 
     {
@@ -337,6 +348,10 @@ bool parseVYMHandler::endElement  ( const QString&, const QString&, const QStrin
             lastBranch=(BranchItem*)(lastBranch->parent());
             lastBranch->setLastSelectedBranch (0);  
             break;
+        case StateHeading:
+            vymtext.setText (htmldata);
+            lastBranch->setHeading (vymtext);
+            break;
         case StateHtmlNote: // Richtext note, needed anyway for backward compatibility
             vymtext.setRichText (htmldata);
             lastBranch->setNote (vymtext);
@@ -344,17 +359,17 @@ bool parseVYMHandler::endElement  ( const QString&, const QString&, const QStrin
         case StateMapSlide: 
             lastSlide=NULL;
             break;  
-    case StateVymNote:            // Might be richtext or plaintext with
-        // version >= 1.13.8
-        vymtext.setText (htmldata);
-        lastBranch->setNote (vymtext);
-        break;
-    case StateHtml:
-        htmldata+="</"+eName+">";
-        if (eName=="html")
-            htmldata.replace ("<br></br>","<br />");
-        break;
-        default: 
+        case StateVymNote:            // Might be richtext or plaintext with
+            // version >= 1.13.8
+            vymtext.setText (htmldata);
+            lastBranch->setNote (vymtext);
+            break;
+        case StateHtml:
+            htmldata+="</"+eName+">";
+            if (eName=="html")
+                htmldata.replace ("<br></br>","<br />");
+            break;
+        default:
             break;
     }  
     state=stateStack.takeLast();    
@@ -387,16 +402,16 @@ bool parseVYMHandler::characters   ( const QString& ch)
             break;
         case StateImage: break;
         case StateVymNote: 
-        htmldata+=ch;
+            htmldata+=ch;
             break;
         case StateHtmlNote: // Only for compatibility
             htmldata=ch;
             break;
         case StateHtml:
-        htmldata+=ch_org;
+            htmldata+=ch_org;
             break;
         case StateHeading: 
-            lastBranch->setHeadingPlainText(ch); // FIXME-0  what about RT?
+            htmldata+=ch;
             break;
         default: 
             return false;

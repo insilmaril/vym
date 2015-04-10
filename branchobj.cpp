@@ -371,15 +371,15 @@ void BranchObj::setDockPos()
     }
 }
 
-void BranchObj::updateData()    //FIXME-000 cannot cope with RT heading yet
+void BranchObj::updateData()
 {
     if (!treeItem)
     {
         qWarning ("BranchObj::udpateHeading treeItem==NULL");
         return;
     }
-    QString s=treeItem->getHeadingPlain();
-    if (s!=heading->text()) heading->setText (s);
+    QString s = treeItem->getHeadingText();
+    if ( s!=heading->text()) heading->setText (s);
 
     QStringList TIactiveFlags=treeItem->activeStandardFlagNames();
 

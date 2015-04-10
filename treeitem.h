@@ -86,6 +86,7 @@ public:
     virtual void setHeading (const VymText &vt);
     virtual void setHeadingPlainText (const QString &s);
     virtual VymText getHeading() const;
+    virtual QString getHeadingText();
     virtual std::string getHeadingStd() const;	//! convenience function used for debugging
     virtual QString getHeadingPlain() const;	//! Some views or methods can't cope with RichText
     virtual QString getHeadingDepth();

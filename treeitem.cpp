@@ -352,6 +352,11 @@ VymText TreeItem::getHeading () const
     return heading;
 }
 
+QString TreeItem::getHeadingText ()
+{
+    return heading.getText();
+}
+
 std::string TreeItem::getHeadingStd () const
 {
     return getHeadingPlain().toStdString();
