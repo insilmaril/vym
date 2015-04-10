@@ -197,6 +197,8 @@ bool parseVYMHandler::startElement  ( const QString&, const QString&,
                 (state == StateMapCenter ||state==StateBranch))
     {        // only for backward compatibility (<1.4.6). Use htmlnote now.
         state=StateNote;
+        htmldata.clear();
+        vymtext.clear();
         if (!readNoteAttr (atts) ) return false;
     } else if ( eName == "htmlnote" && state == StateMapCenter) 
     {   // only for backward compatibility. Use vymnote now
@@ -359,6 +361,11 @@ bool parseVYMHandler::endElement  ( const QString&, const QString&, const QStrin
         case StateMapSlide: 
             lastSlide=NULL;
             break;  
+        case StateNote:
+            // version < 1.4.6
+            vymtext.setText (htmldata);
+            lastBranch->setNote (vymtext);
+            break;
         case StateVymNote:            // Might be richtext or plaintext with
             // version >= 1.13.8
             vymtext.setText (htmldata);
@@ -394,7 +401,7 @@ bool parseVYMHandler::characters   ( const QString& ch)
         case StateMapSetting:break;
         case StateMapCenter: break;
         case StateNote:            // only in vym <1.4.6
-            lastBranch->setNote(ch_simplified);
+            htmldata += ch_simplified;
             break;
         case StateBranch: break;
         case StateStandardFlag: 

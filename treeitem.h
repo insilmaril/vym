@@ -118,7 +118,6 @@ protected:
     VymNote note;
 public:	
     bool isNoteEmpty();
-    virtual void setNote(const QString &s);
     virtual void clearNote();
     virtual QString getNoteText();
     virtual bool hasEmptyNote();
