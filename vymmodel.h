@@ -131,6 +131,8 @@ public:
     QString getMapName ();  //!< e.g. "map"
     QString getDestPath (); //!< e.g. "/home/tux/map.vym"
 
+    bool setVymTextFromXML(const QString &s);
+
     /*! \brief Load map
 
 	The data is read from file. Depending on LoadMode the current

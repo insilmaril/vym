@@ -407,8 +407,50 @@ QString VymModel::getDestPath()
     return destPath;
 }
 
-File::ErrorCode VymModel::loadMap (	
-    QString fname, 
+bool VymModel::setVymTextFromXML (const QString &s)
+{
+    bool ok = false;
+    BranchItem *bi = getSelectedBranch();
+    if (bi)
+    {
+        parseBaseHandler *handler = new parseVYMHandler;
+
+        bool blockSaveStateOrg=blockSaveState;
+        blockReposition=true;
+        blockSaveState=true;
+        QXmlInputSource source;
+        source.setData( s );
+        QXmlSimpleReader reader;
+        reader.setContentHandler( handler );
+        reader.setErrorHandler( handler );
+
+        handler->setModel ( this );
+        handler->setLoadMode (ImportReplace, 0);
+
+        ok = reader.parse( source );
+        blockReposition=false;
+        blockSaveState=blockSaveStateOrg;
+        if ( ok )
+        {
+            emitDataChanged( bi);
+            reposition();   // to generate bbox sizes
+
+            // Recalc priorities and sort
+            taskModel->recalcPriorities();
+        } else
+        {
+            QMessageBox::critical( 0, tr( "Critical Parse Error" ),
+                                   tr( handler->errorProtocol().toUtf8() ) );
+            // returnCode=1;
+            // Still return "success": the map maybe at least
+            // partially read by the parser
+        }
+    }
+    return ok;
+}
+
+File::ErrorCode VymModel::loadMap (
+    QString fname,
     const LoadMode &lmode, 
     const FileType &ftype,
     const int &contentFilter,

@@ -92,7 +92,6 @@ QString BranchItem::saveToDir (const QString &tmpdir,const QString &prefix, cons
     QString idAttr=attribut("uuid",uuid.toString());
 
     QString s,a;
-    BranchObj *bo=(BranchObj*)mo;
 
     // Update of note is usually done while unselecting a branch
     

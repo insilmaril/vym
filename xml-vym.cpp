@@ -47,13 +47,13 @@ bool parseVYMHandler::startDocument()
 
 bool parseVYMHandler::startCDATA()
 {
-    qDebug()<<"xml-VYM: Now reading CDATA";
+    qDebug()<<"xml-VYM: Now reading CDATA"; //FIXME-1 testing?
     return true;
 }
 
 bool parseVYMHandler::endCDATA()
 {
-    qDebug()<<"xml-VYM: Finished reading CDATA";
+    qDebug()<<"xml-VYM: Finished reading CDATA";//FIXME-1 testing?
     return true;
 }
 
@@ -169,8 +169,14 @@ bool parseVYMHandler::startElement  ( const QString&, const QString&,
         (state == StateMapCenter || state==StateBranch)) 
     {
         state=StateStandardFlag;
-    } else if ( eName == "heading" && (state == StateMapCenter||state==StateBranch)) 
+    } else if ( eName == "heading" && (state == StateMapCenter||state==StateBranch || state == StateInit))
     {
+        if (state == StateInit)
+            // Only read some stuff like VymNote or Heading
+            // e.g. for undo/redo
+            lastBranch = model->getSelectedBranch();
+        if (!lastBranch) return false;
+
         state=StateHeading;
         htmldata.clear();
         vymtext.clear();

@@ -5492,6 +5492,8 @@ void Main::testFunction1()
     VymModel *m = currentModel();
     if (m)
     {
+        QString s("<heading textMode=\"richText\"><![CDATA[Foo<b>bar</b>]]></heading>");
+        qDebug()<<"Main::test "<<m->setVymTextFromXML(s);
     }
 }
 

@@ -32,7 +32,7 @@ VymNote NoteEditor::getNote()
     return note;
 }
 
-void NoteEditor::setNote (const VymNote &note)
+void NoteEditor::setNote (const VymNote &note)  //FIXME-0 maybe replace with setAutoText ...
 {
     if (note.isRichText ())
         setRichText(note.getText());

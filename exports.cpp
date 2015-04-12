@@ -346,7 +346,7 @@ ExportASCII::ExportASCII()
 // FIXME-0 noteToASCII: maybe replace with richTextToPlain???
 QString ExportASCII::noteToASCII( const VymNote &vymnote, const QString &indent, const int &width)  //FIXME-3 use width
 {
-    QString note = vymnote.getText();
+    QString note = vymnote.getTextASCII();
     if (note.isEmpty()) return note;
 
     QRegExp rx;

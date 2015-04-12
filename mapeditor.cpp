@@ -1167,7 +1167,7 @@ void MapEditor::editHeading()
         scene()->update();
 
         animateScrollBars();
-        lineEdit->setText (heading.getText() );
+        lineEdit->setText (heading.getTextASCII() );
         lineEdit->setFocus();
         lineEdit->selectAll();	// Hack to enable cursor in lineEdit
         lineEdit->deselect();	// probably a Qt bug...
