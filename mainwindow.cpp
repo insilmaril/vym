@@ -716,7 +716,12 @@ void Main::setupAPI()
     c=new Command ("note2URLs",Command::Branch); 
     modelCommands.append(c);
 
-    c=new Command ("paste",Command::Branch); 
+    //internally required for undo/redo of changing VymText:
+    c=new Command ("parseVymText",Command::Branch);
+    c->addPar (Command::String,false,"quoted XML of VymText");
+    modelCommands.append(c);
+
+    c=new Command ("paste",Command::Branch);
     modelCommands.append(c);
 
     c=new Command ("redo",Command::Any); 
@@ -5493,7 +5498,7 @@ void Main::testFunction1()
     if (m)
     {
         QString s("<heading textMode=\"richText\"><![CDATA[Foo<b>bar</b>]]></heading>");
-        qDebug()<<"Main::test "<<m->setVymTextFromXML(s);
+        qDebug()<<"Main::test "<<m->parseVymText(s);
     }
 }
 

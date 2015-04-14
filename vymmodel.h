@@ -131,7 +131,7 @@ public:
     QString getMapName ();  //!< e.g. "map"
     QString getDestPath (); //!< e.g. "/home/tux/map.vym"
 
-    bool setVymTextFromXML(const QString &s);
+    bool parseVymText(const QString &s);
 
     /*! \brief Load map
 

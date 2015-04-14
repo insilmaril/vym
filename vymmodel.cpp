@@ -407,7 +407,7 @@ QString VymModel::getDestPath()
     return destPath;
 }
 
-bool VymModel::setVymTextFromXML (const QString &s)
+bool VymModel::parseVymText (const QString &s)
 {
     bool ok = false;
     BranchItem *bi = getSelectedBranch();
@@ -1691,18 +1691,23 @@ QString VymModel::getSortFilter ()
 
 void VymModel::setHeading(const VymText &vt, BranchItem *bi)
 {
+    Heading h_old;
+    Heading h_new;
+    h_new = vt;
+    QString s = vt.getTextASCII();
     if (!bi) bi=getSelectedBranch();
     if (bi)
     {
-        if (bi->getHeading() == vt) return;
-        bi->setHeading(vt);
-        /* FIXME-00000000 saveState(
+        h_old = bi->getHeading();
+        if (h_old == h_new) return;
+        // FIXME-00000000000000
+        saveState(
             bi,
-            "setHeading (\""+bi->getHeading()+"\")",
+            "parseVymText (\"" + quotemeta( h_old.saveToDir()) + "\")",
             bi,
-            "setHeading (\""+s+"\")",
+            "parseVymText (\"" + quotemeta( h_new.saveToDir()) + "\")",
             QString("Set heading of %1 to \"%2\"").arg(getObjectName(bi)).arg(s) ); bi->setHeading(s );
-            */
+        bi->setHeading(vt);
         emitDataChanged ( bi);
         emitUpdateQueries ();
         reposition();
@@ -4345,7 +4350,12 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	} else if (com=="note2URLs")
 	{
 	    note2URLs();
-	/////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////
+    } else if (com=="parseVymText")
+    {
+        s = parser.parString(ok,0);
+        parseVymText( unquotemeta( s ));
+/////////////////////////////////////////////////////////////////////
 	} else if (com=="paste")
 	{
 	    paste();
