@@ -1700,7 +1700,6 @@ void VymModel::setHeading(const VymText &vt, BranchItem *bi)
     {
         h_old = bi->getHeading();
         if (h_old == h_new) return;
-        // FIXME-00000000000000
         saveState(
             bi,
             "parseVymText (\"" + quotemeta( h_old.saveToDir()) + "\")",

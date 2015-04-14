@@ -342,108 +342,6 @@ ExportASCII::ExportASCII()
     filter="TXT (*.txt);;All (* *.*)";
     caption=vymName+ " -" +QObject::tr("Export as ASCII");
 }
-
-// FIXME-0 noteToASCII: maybe replace with richTextToPlain???
-QString ExportASCII::noteToASCII( const VymNote &vymnote, const QString &indent, const int &width)  //FIXME-3 use width
-{
-    QString note = vymnote.getTextASCII();
-    if (note.isEmpty()) return note;
-
-    QRegExp rx;
-    rx.setMinimal(true);
-
-    if (!vymnote.isRichText()) 
-    {
-        if ( vymnote.getFontHint() != "fixed")
-        {
-            // Wordwrap
-
-            QString newnote;
-            QString curline;
-            int n=0;
-            while ( n < note.length() )
-            {
-                curline = curline + note.at(n);
-                if ( note.at(n) == '\n' )
-                {
-                    newnote = newnote + curline ;
-                    curline = "";
-                }
-
-                if (curline.length() > width)
-                {
-                    // Try to find last previous whitespace in curline
-                    uint i = curline.length() - 1;
-                    while ( i> 0 )
-                    {
-                        if ( curline.at(i) == ' ' )
-                        {
-                            newnote = newnote + curline.left(i) + '\n';
-                            curline = curline.right( curline.length() - i - 1 );
-                            break;
-                        }
-                        i--;
-                        if ( i == 0 ) 
-                        {
-                            // Cannot break this line into smaller parts
-                            newnote = newnote + curline;
-                            curline = "";
-                        }
-                    }
-                }
-                n++;
-            }
-            note = newnote + curline;
-        }
-        
-        // Indent lines
-        rx.setPattern("^");
-        note = note.replace (rx,indent);
-        rx.setPattern("\n");
-        note = note.replace (rx, "\n" + indent) + "\n";
-
-        return note;
-    }
-
-    // Remove all <style...> ...</style>
-    rx.setPattern("<style.*>.*</style>");
-    note.replace (rx,"");
-
-    // convert all "<br*>" to "\n"
-    rx.setPattern ("<br.*>");
-    note.replace (rx,"\n");
-
-    // convert all "</p>" to "\n"
-    rx.setPattern ("</p>");
-    note.replace (rx,"\n");
-    
-    // remove all remaining tags 
-    rx.setPattern ("<.*>");
-    note.replace (rx,"");
-
-    // If string starts with \n now, remove it.
-    // It would be wrong in an OOo export for example
-    while ( note.at(0) == '\n' ) note.remove (0,1);
-    
-    // convert "&", "<" and ">"
-    rx.setPattern ("&gt;");
-    note.replace (rx,">");
-    rx.setPattern ("&lt;");
-    note.replace (rx,"<");
-    rx.setPattern ("&amp;");
-    note.replace (rx,"&");
-    rx.setPattern ("&quot;");
-    note.replace (rx,"\"");
-
-    // Indent everything
-    rx.setPattern ("^\n");
-    note.replace (rx,indent);
-    note = indent + note;   // Don't forget first line
-
-    note = indent+"\n" + note + indent + "\n\n";
-    return note;
-}
-
 void ExportASCII::doExport()	
 {
     QFile file (filePath);
@@ -524,7 +422,7 @@ void ExportASCII::doExport()
                     // curIndent +="  | ";
                     // Only indent for bullet points
                     if (cur->depth() > 2) curIndent +="  ";
-		    ts << '\n' +  noteToASCII( cur->getNote(), curIndent, 80) ;
+                    ts << '\n' +  cur->getNoteASCII(curIndent, 80) ;
 		}
                 lastDepth = cur->depth();
 	    }
