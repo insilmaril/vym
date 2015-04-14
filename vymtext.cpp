@@ -5,7 +5,7 @@
 #include <QDebug>
 
 /////////////////////////////////////////////////////////////////
-// VymText  Base class for VymNotes and Headings
+// VymText  Base class for Vymnotes and Headings
 /////////////////////////////////////////////////////////////////
 
 VymText::VymText()
@@ -108,23 +108,110 @@ QString VymText::getTextASCII(QString indent, const int &) const //FIXME-3 use w
 {
     if (text.isEmpty()) return text;
 
-    QString r=text;
+    int width = 80;
+    QString s;
     QRegExp rx;
     rx.setMinimal(true);
 
-    r = richTextToPlain( r );
+    if (isRichText())
+        s = text;
+    else
+    {
+        if ( fonthint == "fixed")
+        {
+            s = text;
+        } else
+        {
+            // Wordwrap
+
+            QString newnote;
+            QString curline;
+            uint n=0;
+            while ( n < text.length() )
+            {
+                curline = curline + text.at(n);
+                if ( text.at(n) == '\n' )
+                {
+                    s = s + curline ;
+                    curline = "";
+                }
+
+                if (curline.length() > width)
+                {
+                    // Try to find last previous whitespace in curline
+                    uint i = curline.length() - 1;
+                    while ( i> 0 )
+                    {
+                        if ( curline.at(i) == ' ' )
+                        {
+                            s = s + curline.left(i) + '\n';
+                            curline = curline.right( curline.length() - i - 1 );
+                            break;
+                        }
+                        i--;
+                        if ( i == 0 )
+                        {
+                            // Cannot break this line into smaller parts
+                            s = s + curline;
+                            curline = "";
+                        }
+                    }
+                }
+                n++;
+            }
+            s = s + curline;
+        }
+
+        // Indent lines
+        rx.setPattern("^");
+        s = s.replace (rx,indent);
+        rx.setPattern("\n");
+        s = s.replace (rx, "\n" + indent) + "\n";
+
+        return s;
+    }
+
+    // Remove all <style...> ...</style>
+    rx.setPattern("<style.*>.*</style>");
+    s.replace (rx,"");
+
+    // convert all "<br*>" to "\n"
+    rx.setPattern ("<br.*>");
+    s.replace (rx,"\n");
+
+    // convert all "</p>" to "\n"
+    rx.setPattern ("</p>");
+    s.replace (rx,"\n");
+
+    // remove all remaining tags
+    rx.setPattern ("<.*>");
+    s.replace (rx,"");
+
+    // If string starts with \n now, remove it.
+    // It would be wrong in an OOo export for example
+    while ( s.at(0) == '\n' ) s.remove (0,1);
+
+    // convert "&", "<" and ">"
+    rx.setPattern ("&gt;");
+    s.replace (rx,">");
+    rx.setPattern ("&lt;");
+    s.replace (rx,"<");
+    rx.setPattern ("&amp;");
+    s.replace (rx,"&");
+    rx.setPattern ("&quot;");
+    s.replace (rx,"\"");
 
     // Indent everything
     rx.setPattern ("^\n");
-    r.replace (rx,indent);
-    r =indent + r;   // Don't forget first line
+    s.replace (rx,indent);
+    s = indent + s;   // Don't forget first line
 
 /* FIXME-3  wrap text at width
     if (fonthint !="fixed")
     {
     }
 */
-    return r;
+    return s;
 }
 
 QString VymText::getTextOpenDoc()

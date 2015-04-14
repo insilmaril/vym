@@ -9,7 +9,7 @@
 #include <QDialog>
 #include <QString>
 
-QString richTextToPlain (QString r)
+QString richTextToPlain (QString r, const QString &indent, const int &width)
 {
     // Avoid failing assert with mingw
     if (r.isEmpty()) return r;
@@ -47,6 +47,12 @@ QString richTextToPlain (QString r)
     rx.setPattern ("&quot;");
     r.replace (rx,"\"");
 
+    // Indent everything
+    rx.setPattern ("^\n");
+    r.replace (rx,indent);
+    r = indent + r;   // Don't forget first line
+
+    //r = indent+"\n" + r + indent + "\n\n";   //FIXME-1 was in noteToASCII...
     return r;
 }
 

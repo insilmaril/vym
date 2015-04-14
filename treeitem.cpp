@@ -359,7 +359,7 @@ std::string TreeItem::getHeadingStd () const
 QString TreeItem::getHeadingPlain() const
 {
     // strip beginning and tailing WS
-    return richTextToPlain(heading.getText()).trimmed(); // FIXME-0 maybe better use getTextASCII ??
+    return heading.getTextASCII().trimmed();
 }
 
 QString TreeItem::getHeadingDepth () // Indent by depth for debugging
