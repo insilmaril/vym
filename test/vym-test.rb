@@ -676,8 +676,6 @@ def test_notes (vym)
   expect "After reselect, is note unchanged?", vym.getNotePlainText, note_plain
   expect "After reselect, is note plaintext?", vym.hasRichTextNote, false
   
-  # FIXME same checks like above for RichTexxt
-  
   note_org = IO.read('test/note-plain.txt')
   vym.loadNote("test/note-plain.txt") 
   expect "Load plain text note from file. Still plaintext?", vym.hasRichTextNote, false
@@ -687,8 +685,18 @@ def test_notes (vym)
   vym.saveNote(filepath)
   expect "Save note to file. Check if it contains 'textMode=\"plainText\"'", IO.read(filepath).include?("textMode=\"plainText\""), true
   expect "Save note to file. Check if it contains 'not bold'", IO.read(filepath).include?("not bold"), true
-  #
+  
+  vym.setNotePlainText("")
+  expect "setNotePlainText(\"\") deletes note", vym.hasNote, false
+  
   # FIXME same checks like above for RichText
+  init_map
+  vym.select @main_a
+  rt_note = IO.read('test/note-richtext.xml')
+  puts rt_note
+  vym.parseVymText( rt_note)
+  expect "parseVymText of richText note produces richText note", vym.hasRichTextNote, true
+
 end
 
 def test_headings (vym)
@@ -705,21 +713,21 @@ def test_bugfixes (vym)
 end
 
 #######################
-test_basics(vym)
-test_export(vym)
-test_extrainfo(vym)
-test_adding_branches(vym)
-test_adding_maps(vym)
-test_scrolling(vym)
-test_moving_parts(vym)
-test_modify_branches(vym)
-test_flags(vym)
-test_delete_parts(vym)
-test_copy_paste(vym)
-test_references(vym)
-test_history(vym)
-test_xlinks(vym)
-test_tasks(vym)
+#test_basics(vym)
+#test_export(vym)
+#test_extrainfo(vym)
+#test_adding_branches(vym)
+#test_adding_maps(vym)
+#test_scrolling(vym)
+#test_moving_parts(vym)
+#test_modify_branches(vym)
+#test_flags(vym)
+#test_delete_parts(vym)
+#test_copy_paste(vym)
+#test_references(vym)
+#test_history(vym)
+#test_xlinks(vym)
+#test_tasks(vym)
 test_notes(vym)
 test_headings(vym)
 #test_bugfixes(vym)
