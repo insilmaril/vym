@@ -58,7 +58,7 @@ QString quoteUmlaut(const QString &s)
 QString getCDATA(const QString &s)
 {
     // Do we need to add CDATA after all?
-    if (s.contains("<") || s.contains(">") or s.contains("\"") )
+    if (s.contains("<") || s.contains(">") or s.contains("\"") or s.contains("&") )
         return "<![CDATA[" + s + "]]>"; // FIXME-1  take care of s containing "CDATA"
     else
         return s;
@@ -103,7 +103,7 @@ QString XMLObj::endElement(QString s)
 // returns  at="val"
 QString XMLObj::attribut(QString at, QString val)
 {
-    return " " + at + "=\"" + val + "\"";
+    return " " + at + "=\"" + quotemeta(val) + "\"";
 }
 
 // returns <s> val </s>
