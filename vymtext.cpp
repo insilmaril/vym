@@ -3,6 +3,7 @@
 
 #include <QRegExp>
 #include <QDebug>
+#include <QTextDocument>
 
 /////////////////////////////////////////////////////////////////
 // VymText  Base class for Vymnotes and Headings
@@ -92,6 +93,15 @@ void VymText::setPlainText (const QString &s)
     clear();
     text = s;
     textmode = PlainText;
+}
+
+void VymText::setAutoText (const QString &s)
+{
+    clear();
+    if (Qt::mightBeRichText (s))
+        setRichText (s);
+    else
+        setPlainText (s);
 }
 
 QString VymText::getText() const

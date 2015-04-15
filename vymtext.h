@@ -24,7 +24,8 @@ public:
     virtual void clear();
     void setText (const QString&);
     void setRichText (const QString&);
-   void setPlainText (const QString&);
+    void setPlainText (const QString&);
+    void setAutoText (const QString &);
     QString getText() const;
     QString getTextASCII() const;
     QString getTextASCII(QString igdent, const int &width=0) const;

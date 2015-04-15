@@ -84,7 +84,7 @@ protected:
 public:	
     virtual void setHeading (const VymText &vt);
     virtual void setHeadingPlainText (const QString &s);
-    virtual VymText getHeading() const;
+    virtual Heading getHeading() const;
     virtual QString getHeadingText();
     virtual std::string getHeadingStd() const;	//! convenience function used for debugging
     virtual QString getHeadingPlain() const;	//! Some views or methods can't cope with RichText
@@ -121,7 +121,8 @@ public:
     virtual void clearNote();
     virtual QString getNoteText();
     virtual bool hasEmptyNote();
-    virtual void setNote(const VymText &); //FIXME-3 setNote is called for every select or so???
+    virtual void setNote(const VymText &vt); //FIXME-3 setNote is called for every select or so???
+    virtual void setNote(const VymNote &vn);
 
     virtual VymNote getNote();
     virtual QString getNoteASCII(const QString &indent, const int &width); // returns note  (ASCII)

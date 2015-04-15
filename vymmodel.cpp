@@ -1705,7 +1705,7 @@ void VymModel::setHeading(const VymText &vt, BranchItem *bi)
             "parseVymText (\"" + quotemeta( h_old.saveToDir()) + "\")",
             bi,
             "parseVymText (\"" + quotemeta( h_new.saveToDir()) + "\")",
-            QString("Set heading of %1 to \"%2\"").arg(getObjectName(bi)).arg(s) ); bi->setHeading(s );
+            QString("Set heading of %1 to \"%2\"").arg(getObjectName(bi)).arg(s) );
         bi->setHeading(vt);
         emitDataChanged ( bi);
         emitUpdateQueries ();
@@ -1718,20 +1718,23 @@ void VymModel::setHeadingPlainText(const QString &s, BranchItem *bi)
     if (!bi) bi=getSelectedBranch();
     if (bi)
     {
-        VymText ph;
-        ph.setPlainText(s);
-        if (bi->getHeading() == ph) return;
-        setHeading (ph, bi);
+        VymText vt;
+        vt.setPlainText(s);
+        if (bi->getHeading() == vt) return;
+        setHeading (vt, bi);
     }
 }
 
-QString VymModel::getHeading()  // FIXME-0
+Heading VymModel::getHeading()
 {
     TreeItem *selti=getSelectedItem();
     if (selti)
-        return selti->getHeading().getText();
-    else
-        return QString();
+    {
+        Heading h = selti->getHeading();
+        return h;
+    }
+    qWarning() << "VymModel::getHeading Nothing selected.";
+    return Heading();
 }
 
 bool VymModel::hasRichTextHeading() //FIXME-1 needed?
@@ -1743,30 +1746,37 @@ bool VymModel::hasRichTextHeading() //FIXME-1 needed?
     return false;
 }
 
-void VymModel::setNote(const QString &s)
+void VymModel::setNote(const  VymNote &vn)
 {
     TreeItem *selti=getSelectedItem();
     if (selti) 
     {
-	saveState(
-	    selti,
-        "setNote (\"" + selti->getNoteText() + "\")",
-	    selti,
-	    "setNote (\"" + s + "\")", 
-	    QString("Set note of %1 ").arg(getObjectName(selti)) );
+        VymNote n_old;
+        VymNote n_new;
+        n_old = selti->getNote();
+        n_new = vn;
+        saveState(
+            selti,
+            "parseVymText (\"" + quotemeta( n_old.saveToDir()) + "\")",
+            selti,
+            "parseVymText (\"" + quotemeta( n_new.saveToDir()) + "\")",
+            QString("Set note of %1 to \"%2\"").arg(getObjectName(selti)).arg(n_new.getTextASCII().left(20) ) );
+        selti->setNote( n_new );
+        emitNoteChanged( selti );
+        emitDataChanged( selti );
     }
-    selti->setNote(s);
-    emitNoteChanged(selti);
-    emitDataChanged(selti);
 }
 
-QString VymModel::getNote()
+VymNote VymModel::getNote()
 {
     TreeItem *selti=getSelectedItem();
     if (selti)
-    return selti->getNoteText();
-    else    
-	return QString();
+    {
+        VymNote n = selti->getNote();
+        return n;
+    }
+    qWarning() << "VymModel::getNote Nothing selected.";
+    return VymNote();
 }
 
 bool VymModel::hasRichTextNote()
@@ -1778,21 +1788,25 @@ bool VymModel::hasRichTextNote()
     return false;
 }
 
-void VymModel::loadNote (const QString &fn) // FIXME-0 check... better create vymText and set directly
+void VymModel::loadNote (const QString &fn)
 {
     BranchItem *selbi=getSelectedBranch();
     if (selbi)
     {
-	QString n;
-	if (!loadStringFromDisk (fn,n))
-	    qWarning ()<<"VymModel::loadNote Couldn't load "<<fn;
-	else
-	    setNote (n);
+        QString n;
+        if (!loadStringFromDisk (fn,n))
+            qWarning ()<<"VymModel::loadNote Couldn't load "<<fn;
+        else
+        {
+            VymNote vn;
+            vn.setAutoText(n);
+            setNote (vn);
+        }
     } else
-	qWarning ("VymModel::loadNote no branch selected");
+        qWarning ("VymModel::loadNote no branch selected");
 }
 
-void VymModel::saveNote (const QString &fn) // FIXME-0 check... better get VymText and use saveToDir
+void VymModel::saveNote (const QString &fn)
 {
     BranchItem *selbi=getSelectedBranch();
     if (selbi)
@@ -4214,7 +4228,7 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="getHeading")
 	{ 
-	    returnValue=getHeading();
+        returnValue = getHeading().saveToDir();
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="getMapAuthor")
 	{ 
@@ -4230,7 +4244,7 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="getNote")
 	{ 
-	    returnValue=getNote();
+        returnValue= getNote().saveToDir();
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="getSelectString")
 	{ 
@@ -4621,7 +4635,9 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	} else if (com=="setNote")
 	{
 	    s=parser.parString (ok,0);
-	    setNote (s);
+        VymNote vn;
+        vn.setPlainText(s);
+        setNote (vn);
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="setScale")
 	{

@@ -366,7 +366,7 @@ bool parseVYMHandler::endElement  ( const QString&, const QString&, const QStrin
         case StateHtmlNote: // Richtext note, needed anyway for backward compatibility
             vymtext.setRichText (htmldata);
             lastBranch->setNote (vymtext);
-            break;  
+            break;
         case StateMapSlide: 
             lastSlide=NULL;
             break;  

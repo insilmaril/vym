@@ -341,7 +341,7 @@ void TreeItem::setHeadingPlainText (const QString &s)
     setHeading(vt);
 }
 
-VymText TreeItem::getHeading () const
+Heading TreeItem::getHeading() const
 {
     return heading;
 }
@@ -477,13 +477,22 @@ void TreeItem::clearNote()
     systemFlags.deactivate ("system-note");
 }
 
-void TreeItem::setNote(const VymText &n) // FIXME-0 should not be necessary. see VM::loadNote and VM::saveNote
+void TreeItem::setNote(const VymText &vt)
 {
-    note = n;
+    note = vt;
     if (!note.isEmpty() && !systemFlags.isActive ("system-note"))
 	systemFlags.activate ("system-note");
     if (note.isEmpty() && systemFlags.isActive ("system-note"))
 	systemFlags.deactivate ("system-note");
+}
+
+void TreeItem::setNote(const VymNote &vn)
+{
+    note = vn;
+    if (!note.isEmpty() && !systemFlags.isActive ("system-note"))
+    systemFlags.activate ("system-note");
+    if (note.isEmpty() && systemFlags.isActive ("system-note"))
+    systemFlags.deactivate ("system-note");
 }
 
 QString TreeItem::getNoteText()// FIXME-0 should not be necessary. see VM::loadNote and VM::saveNote
