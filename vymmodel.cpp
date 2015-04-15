@@ -1797,16 +1797,16 @@ void VymModel::saveNote (const QString &fn) // FIXME-0 check... better get VymTe
     BranchItem *selbi=getSelectedBranch();
     if (selbi)
     {
-    QString n=selbi->getNoteText();
-	if (n.isEmpty())
-	    qWarning ()<<"VymModel::saveNote  note is empty, won't save to "<<fn;
-	else
-	{
-	    if (!saveStringToDisk (fn,n))
-		qWarning ()<<"VymModel::saveNote Couldn't save "<<fn;
-	}   
+        QString n=selbi->getNoteText();
+        if ( selbi->getNote().isEmpty() )
+            qWarning ()<<"VymModel::saveNote  note is empty, won't save to "<<fn;
+        else
+        {
+            if (!saveStringToDisk (fn, selbi->getNote().saveToDir() ))
+                qWarning ()<<"VymModel::saveNote Couldn't save "<<fn;
+        }
     } else
-	qWarning ("VymModel::saveNote no branch selected");
+        qWarning ("VymModel::saveNote no branch selected");
 }
 
 void VymModel::findDuplicateURLs()  // FIXME-3 needs GUI
@@ -1860,7 +1860,7 @@ bool  VymModel::findAll (FindResultModel *rmodel, QString s, Qt::CaseSensitivity
     while (cur) 
     {
 	lastParent=NULL;
-    if (cur->getHeading().getTextASCII().contains (s,cs))   //FIXME-0 check, if still ok, also with RT
+    if (cur->getHeading().getTextASCII().contains (s,cs))
 	{
 	    lastParent=rmodel->addItem (cur);
 	    hit=true;
@@ -1936,7 +1936,7 @@ BranchItem* VymModel::findText (QString s,Qt::CaseSensitivity cs)
 		}   
 	    }
 	    // Searching in Heading
-        if (searching && findCurrent->getHeading().getTextASCII().contains (findString,cs) )   //FIXME-0 still ok, also with RT?
+        if (searching && findCurrent->getHeading().getTextASCII().contains (findString,cs) )
 	    {
 		select(findCurrent);
 		searching=false;
