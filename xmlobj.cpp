@@ -7,7 +7,7 @@
 // returns masked "<" ">" "&"
 QString quotemeta(const QString &s)
 {
-    QString r=s;
+    QString r = s;
     QRegExp  rx("&(?!amp;)");
     r.replace ( rx,"&amp;");
     rx.setPattern( ">");
@@ -21,7 +21,7 @@ QString quotemeta(const QString &s)
 
 QString unquotemeta(const QString &s)
 {
-    QString r=s;
+    QString r = s;
     QRegExp  rx("&amp;)");
     r.replace ( rx,"&");
     rx.setPattern( "&gt;");
@@ -29,6 +29,22 @@ QString unquotemeta(const QString &s)
     rx.setPattern( "&lt;");
     r.replace ( rx,"<");
     rx.setPattern( "&quot;");
+    r.replace ( rx,"\"");
+    return r;
+}
+
+QString quoteQuotes(const QString &s)
+{
+    QString r = s;
+    QRegExp  rx( "\"");
+    r.replace ( rx,"\\\"");
+    return r;
+}
+
+QString unquoteQuotes(const QString &s)
+{
+    QString r = s;
+    QRegExp  rx("\\\"");
     r.replace ( rx,"\"");
     return r;
 }

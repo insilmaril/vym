@@ -3,10 +3,12 @@
 
 class QString;
 
-QString quotemeta(const QString&);  
-QString unquotemeta(const QString&);	
-QString quoteUmlaut(const QString&);	
-QString getCDATA(const QString &s);
+QString quotemeta( const QString& );  
+QString unquotemeta( const QString& );	
+QString quoteQuotes( const QString & );
+QString unquoteQuotes( const QString & );
+QString quoteUmlaut( const QString& );	
+QString getCDATA( const QString &s );
 
 /////////////////////////////////////////////////////////////////////////////
 class XMLObj
