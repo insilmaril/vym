@@ -308,5 +308,5 @@ QString VymText::getAttributes()
 
 QString VymText::saveToDir ()
 {
-    return "<![CDATA[" + text + "]]>";
+    return getCDATA( text );
 }

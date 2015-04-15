@@ -107,7 +107,10 @@ bool parseVYMHandler::startElement  ( const QString&, const QString&,
     {
         state=StateMapSetting;
         if (loadMode==NewMap)
+        {
+            htmldata.clear();
             readSettingAttr (atts);
+        }
     } else if ( eName == "slide" && state == StateMap )
     {
         state=StateMapSlide;
@@ -372,6 +375,10 @@ bool parseVYMHandler::endElement  ( const QString&, const QString&, const QStrin
             vymtext.setText (htmldata);
             lastBranch->setNote (vymtext);
             break;
+        case StateMapSetting:
+            // version >= 2.5.0  previously value only as attribut
+            settings.setLocalValue(model->getDestPath(), lastSetting, htmldata);
+            break;
         case StateVymNote:            // Might be richtext or plaintext with
             // version >= 1.13.8
             vymtext.setText (htmldata);
@@ -404,7 +411,9 @@ bool parseVYMHandler::characters   ( const QString& ch)
         case StateMapSelect:
             model->select(ch_simplified);
             break;
-        case StateMapSetting:break;
+        case StateMapSetting:
+            htmldata += ch;
+            break;
         case StateMapCenter: break;
         case StateNote:            // only in vym <1.4.6
             htmldata += ch_simplified;
@@ -415,16 +424,16 @@ bool parseVYMHandler::characters   ( const QString& ch)
             break;
         case StateImage: break;
         case StateVymNote: 
-            htmldata+=ch;
+            htmldata += ch;
             break;
         case StateHtmlNote: // Only for compatibility
-            htmldata=ch;
+            htmldata = ch;
             break;
         case StateHtml:
-            htmldata+=ch_org;
+            htmldata += ch_org;
             break;
         case StateHeading: 
-            htmldata+=ch;
+            htmldata += ch;
             break;
         default: 
             return false;
@@ -862,7 +871,10 @@ bool parseVYMHandler::readSettingAttr (const QXmlAttributes& a)
 {
     if (!a.value( "key").isEmpty() ) 
     {
+        lastSetting = a.value( "key" );
         if (!a.value( "value").isEmpty() ) 
+            // Beginning with 2.5.0 value is stored as between tags,
+            // no  longer as attribute
             settings.setLocalValue(model->getDestPath(), a.value ("key"), a.value ("value"));
         else
             return false;

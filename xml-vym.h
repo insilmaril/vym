@@ -80,6 +80,7 @@ private:
     MapItem* lastMI;
     SlideItem *lastSlide;
     Task *lastTask;
+    QString lastSetting;
 
     bool useProgress;
 }; 

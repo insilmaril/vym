@@ -55,6 +55,15 @@ QString quoteUmlaut(const QString &s)
     return r;
 }
 
+QString getCDATA(const QString &s)
+{
+    // Do we need to add CDATA after all?
+    if (s.contains("<") || s.contains(">") or s.contains("\"") )
+        return "<![CDATA[" + s + "]]>"; // FIXME-1  take care of s containing "CDATA"
+    else
+        return s;
+}
+
 int XMLObj::curindent=0;	// make instance of curindent
 
 XMLObj::XMLObj()

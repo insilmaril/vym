@@ -6,6 +6,7 @@ class QString;
 QString quotemeta(const QString&);  
 QString unquotemeta(const QString&);	
 QString quoteUmlaut(const QString&);	
+QString getCDATA(const QString &s);
 
 /////////////////////////////////////////////////////////////////////////////
 class XMLObj
