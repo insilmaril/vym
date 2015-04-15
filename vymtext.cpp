@@ -129,7 +129,7 @@ QString VymText::getTextASCII(QString indent, const int &) const //FIXME-3 use w
     {
         if ( fonthint == "fixed")
         {
-            s = text;
+            s = text; // FIXME-0 check if text now really does not contain tags
         } else
         {
             // Wordwrap
@@ -178,7 +178,7 @@ QString VymText::getTextASCII(QString indent, const int &) const //FIXME-3 use w
         rx.setPattern("\n");
         s = s.replace (rx, "\n" + indent) + "\n";
 
-        return s;
+        return s.trimmed();
     }
 
     // Remove all <style...> ...</style>

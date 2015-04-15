@@ -4226,9 +4226,9 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	    else
 		returnValue=bo->getFrame()->getFrameTypeName();
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="getHeading")
+	} else if (com=="getHeadingPlainText")
 	{ 
-        returnValue = getHeading().saveToDir();
+            returnValue = getHeading().getTextASCII();
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="getMapAuthor")
 	{ 
@@ -4242,9 +4242,9 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	{ 
 	    returnValue=title;
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="getNote")
+	} else if (com=="getNotePlainText")
 	{ 
-        returnValue= getNote().saveToDir();
+        returnValue= getNote().getTextASCII();
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="getSelectString")
 	{ 
@@ -4252,11 +4252,11 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="getTaskSleepDays")
 	{ 
-      Task *task=selbi->getTask();
-      if (task)
-        returnValue=task->getDaysSleep();
-      else
-        parser.setError (Aborted,"Branch has no task set");
+            Task *task=selbi->getTask();
+            if (task)
+                returnValue=task->getDaysSleep();
+            else
+                parser.setError (Aborted,"Branch has no task set");
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="getURL")
 	{ 
@@ -4547,7 +4547,7 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	    n=parser.parInt(ok,0);
 	    setFrameBorderWidth (n);
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="setHeading")
+	} else if (com=="setHeadingPlainText")
 	{
 	    s=parser.parString (ok,0);
             setHeadingPlainText (s); // FIXME-1  what about RT?
@@ -4632,12 +4632,12 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	    setMapZoomFactor(x);
 	    mapEditor->setZoomFactorTarget(x);
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="setNote")
+	} else if (com=="setNotePlainText")
 	{
 	    s=parser.parString (ok,0);
-        VymNote vn;
-        vn.setPlainText(s);
-        setNote (vn);
+            VymNote vn;
+            vn.setPlainText(s);
+            setNote (vn);
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="setScale")
 	{

@@ -29,7 +29,7 @@ def expect (comment, v_real, v_exp)
     puts "    Ok: #{comment}"
     $tests_passed += 1
   else  
-    puts "Failed: #{comment}. Expected #{v_exp}, but got #{v_real}"
+    puts "Failed: #{comment}. Expected '#{v_exp}', but got '#{v_real}'"
     $tests_failed += 1
     waitkey
   end  
@@ -98,14 +98,14 @@ def test_basics (vym)
   init_map
   vym.select @main_a
   expect "select mainbranch A", vym.getSelectString, @main_a
-  expect "getHeading", "Main A", vym.getHeading
-  expect "branchCount", 3, vym.branchCount
+  expect "getHeadingPlainText", vym.getHeadingPlainText, "Main A"
+  expect "branchCount", vym.branchCount, 3
 
   vym.selectLastBranch
-  expect "selectLastBranch", "branch c", vym.getHeading
+  expect "selectLastBranch", vym.getHeadingPlainText, "branch c"
 
   vym.selectParent
-  expect "selectParent", "Main A", vym.getHeading
+  expect "selectParent", vym.getHeadingPlainText, "Main A"
 
   expect "getDestPath: Got #{vym.getDestPath}", vym.getDestPath, @testdir + "/testmap.vym" 
   expect "getFileDir:  Got #{vym.getFileDir}", vym.getFileDir, @testdir + "/" 
@@ -219,11 +219,11 @@ def test_extrainfo (vym)
   heading "Extra information:"
   init_map
   vym.setMapAuthor("Fra Erasmas")
-  expect "Set and get map author", "Fra Erasmas", vym.getMapAuthor
+  expect "Set and get map author", vym.getMapAuthor, "Fra Erasmas"
   vym.setMapComment("xy z")
-  expect "Set and get map comment", "xy z", vym.getMapComment
+  expect "Set and get map comment", vym.getMapComment, "xy z"
   vym.setMapTitle("vym rules!")
-  expect "Set and get map title", "vym rules!", vym.getMapTitle
+  expect "Set and get map title", vym.getMapTitle, "vym rules!"
 end
 
 #######################
@@ -258,12 +258,12 @@ def test_adding_branches (vym)
   vym.select @branch_a
   vym.addBranchBefore
   vym.select @main_a
-  expect "addBranchBefore: check branchcount", n, vym.branchCount
+  expect "addBranchBefore: check branchcount",  vym.branchCount, n
   vym.select @branch_a
-  expect "addBranchBefore: check heading", "", vym.getHeading
+  expect "addBranchBefore: check heading", vym.getHeadingPlainText, ""
   vym.undo
   vym.select @main_a
-  expect "Undo: addBranchBefore", n, vym.branchCount 
+  expect "Undo: addBranchBefore", vym.branchCount, n  
 end
 
 #######################
@@ -290,13 +290,13 @@ def test_adding_maps (vym)
   vym.select @main_a
   expect "addMapInsert: branch count",  vym.branchCount, n+2 
   vym.select @main_a + ",bo:1"
-  expect "addMapInsert: new heading", vym.getHeading, "MapCenter 0"
+  expect "addMapInsert: new heading", vym.getHeadingPlainText, "MapCenter 0"
   
   vym.undo
   vym.select @main_a
   expect "Undo: check branch count in #{@main_a}", vym.branchCount, 3 
   vym.select @branch_b
-  expect "Undo: check heading of  #{@branch_b}",  vym.getHeading, "branch b"
+  expect "Undo: check heading of  #{@branch_b}",  vym.getHeadingPlainText, "branch b"
 end
 
 #######################
@@ -335,19 +335,19 @@ def test_moving_parts (vym)
   vym.select @branch_a
   vym.moveDown
   vym.select @branch_a
-  expect "Moving down", vym.getHeading, "branch b"
+  expect "Moving down", vym.getHeadingPlainText, "branch b"
   vym.undo
   vym.select @branch_a
-  expect "Undo Moving down", vym.getHeading, "branch a"
+  expect "Undo Moving down", vym.getHeadingPlainText, "branch a"
   
   init_map
   vym.select @branch_b
   vym.moveUp
   vym.select @branch_a
-  expect "Moving up", vym.getHeading, "branch b"
+  expect "Moving up", vym.getHeadingPlainText, "branch b"
   vym.undo
   vym.select @branch_b
-  expect "Undo Moving up", vym.getHeading, "branch b"
+  expect "Undo Moving up", vym.getHeadingPlainText, "branch b"
   
   init_map
   vym.select @main_b
@@ -355,11 +355,11 @@ def test_moving_parts (vym)
   vym.select @branch_a
   vym.relinkTo @main_b,0,0,0
   vym.select @main_b
-  expect "RelinkTo #{@main_b}: branchCount increased there", n+1, vym.branchCount
+  expect "RelinkTo #{@main_b}: branchCount increased there",  vym.branchCount, n+1
 
   vym.undo
   vym.select @branch_b
-  expect "Undo: RelinkTo #{@main_b}: branchCount decreased there", n, vym.branchCount
+  expect "Undo: RelinkTo #{@main_b}: branchCount decreased there", vym.branchCount, n
   
   init_map
   vym.select @main_a
@@ -373,12 +373,12 @@ def test_moving_parts (vym)
   vym.select @main_b
   vym.relinkTo @branch_a, 1, 0, 0
   vym.select @branch_a
-  expect "RelinkTo #{@branch_a}, pos 1: branchCount increased there", n+1, vym.branchCount
+  expect "RelinkTo #{@branch_a}, pos 1: branchCount increased there",  vym.branchCount, n+1
   vym.select "#{@branch_a},bo:1"
-  expect "RelinkTo #{@branch_a}, pos 1: Mainbranch really moved", "Main B", vym.getHeading
+  expect "RelinkTo #{@branch_a}, pos 1: Mainbranch really moved", vym.getHeadingPlainText, "Main B"
   vym.undo
   vym.select @center_0
-  expect "Undo RelinkTo pos 1: branchCount of center", 2, vym.branchCount
+  expect "Undo RelinkTo pos 1: branchCount of center", vym.branchCount, 2
   # FIXME-2 still has wrong position, check position
   vym.select @main_b
   vym.moveRel 100,100
@@ -389,12 +389,12 @@ def test_modify_branches (vym)
   heading "Modifying branches"
   init_map
   vym.select @branch_a
-  vym.setHeading "Changed!"
-  expect "setHeading","Changed!",vym.getHeading
+  vym.setHeadingPlainText "Changed!"
+  expect "setHeadingPlainText", vym.getHeadingPlainText, "Changed!"
   vym.undo
-  expect "Undo: setHeading","branch a",vym.getHeading
+  expect "Undo: setHeadingPlainText", vym.getHeadingPlainText, "branch a"
   vym.redo
-  expect "redo: setHeading", vym.getHeading, "Changed!" 
+  expect "redo: setHeadingPlainText", vym.getHeadingPlainText, "Changed!" 
   vym.undo
 end  
   
@@ -456,12 +456,8 @@ def test_flags (vym)
   unset_flags vym, smileys
   
   vym.clearFlags
-  expect "clearFlags cleared exclamationmark", 
-    vym.hasActiveFlag( "exclamationmark" ), 
-    false
-  expect "clearFlags cleared smiley-good", 
-    vym.hasActiveFlag( "smiley-good" ), 
-    false
+  expect "clearFlags cleared exclamationmark", vym.hasActiveFlag( "exclamationmark" ), false
+  expect "clearFlags cleared smiley-good", vym.hasActiveFlag( "smiley-good" ), false
   
   vym.toggleFlag "lifebelt"
   expect "toggleFlag: flag activated", vym.hasActiveFlag("lifebelt"),true
@@ -479,22 +475,22 @@ def test_delete_parts (vym)
   m=vym.branchCount
   vym.delete
   vym.select @main_a
-  expect "Delete branch: branchcount", n-1, vym.branchCount
+  expect "Delete branch: branchcount",  vym.branchCount, n-1
   vym.undo
   vym.select @main_a
-  expect "Undo Delete branch: branchcount parent", n, vym.branchCount
+  expect "Undo Delete branch: branchcount parent", vym.branchCount, n
   vym.select @branch_a
-  expect "Undo Delete branch: branchcount restored branch", m, vym.branchCount
+  expect "Undo Delete branch: branchcount restored branch", vym.branchCount, m
   
   init_map
   vym.select @branch_a
   n=vym.branchCount
   vym.deleteChildren
   vym.select @branch_a
-  expect "deleteChildren: branchcount", 0, vym.branchCount
+  expect "deleteChildren: branchcount", vym.branchCount, 0
   vym.undo
   vym.select @branch_a
-  expect "Undo: deleteChildren: branchcount", n, vym.branchCount
+  expect "Undo: deleteChildren: branchcount", vym.branchCount, n
   
   init_map
   vym.select @main_a
@@ -503,12 +499,12 @@ def test_delete_parts (vym)
   m=vym.branchCount
   vym.deleteKeepChildren
   vym.select @main_a
-  expect "deleteKeepChildren: branchcount", n+m-1,vym.branchCount
+  expect "deleteKeepChildren: branchcount", vym.branchCount, n+m-1
   vym.undo
   vym.select @main_a
-  expect "Undo: deleteKeepChildren: branchcount of parent", n,vym.branchCount
+  expect "Undo: deleteKeepChildren: branchcount of parent", vym.branchCount, n
   vym.select @branch_a
-  expect "Undo: deleteKeepChildren: branchcount of branch", m,vym.branchCount
+  expect "Undo: deleteKeepChildren: branchcount of branch", vym.branchCount, m
 
   init_map
   n = vym.centerCount
@@ -530,7 +526,7 @@ def test_copy_paste (vym)
   vym.paste
   vym.selectLastBranch
   s=vym.getSelectString
-  expect "Normal paste of branch, check heading of #{s}", vym.getHeading, "Main A"
+  expect "Normal paste of branch, check heading of #{s}", vym.getHeadingPlainText, "Main A"
   
   vym.undo
   vym.select @main_a
@@ -538,7 +534,7 @@ def test_copy_paste (vym)
   
   vym.redo
   vym.select s
-  expect "redo paste: check heading", vym.getHeading, "Main A"
+  expect "redo paste: check heading", vym.getHeadingPlainText, "Main A"
   
   vym.cut
   vym.select @main_a
@@ -546,7 +542,7 @@ def test_copy_paste (vym)
   vym.paste
   vym.selectLastBranch
   s=vym.getSelectString
-  expect "Normal paste of branch, check heading of #{s}", vym.getHeading, "Main A"
+  expect "Normal paste of branch, check heading of #{s}", vym.getHeadingPlainText, "Main A"
   vym.cut 
 end 
 
@@ -580,24 +576,24 @@ def test_history (vym)
   heading "History"
   init_map
   vym.select @main_a
-  vym.setHeading "A"
-  vym.setHeading "B"
-  vym.setHeading "C"
+  vym.setHeadingPlainText "A"
+  vym.setHeadingPlainText "B"
+  vym.setHeadingPlainText "C"
   vym.undo
   vym.undo
   vym.undo
-  expect "Undo 3 times", vym.getHeading, "Main A"
+  expect "Undo 3 times", vym.getHeadingPlainText, "Main A"
   vym.redo
-  expect "Redo once", vym.getHeading, "A"
+  expect "Redo once", vym.getHeadingPlainText, "A"
   vym.copy
   vym.redo
-  expect "Redo once more", vym.getHeading, "B"
+  expect "Redo once more", vym.getHeadingPlainText, "B"
   vym.redo
-  expect "Redo yet again", vym.getHeading, "C"
-  vym.setHeading "Main A"
+  expect "Redo yet again", vym.getHeadingPlainText, "C"
+  vym.setHeadingPlainText "Main A"
   vym.paste
   vym.selectLastBranch
-  expect "Paste from the past", vym.getHeading, "A"
+  expect "Paste from the past", vym.getHeadingPlainText, "A"
   vym.delete
 end  
 
@@ -664,37 +660,35 @@ def test_notes (vym)
   heading "Notes:"
   init_map
   vym.select @main_a
-  note_plain = "plaintext"
-  vym.setNote(note_plain)
+  note_plain = "<vymnoteplaintext"
+  vym.setNotePlainText(note_plain)
   expect "Set note to \"#{note_plain}\". Still plaintext?", vym.hasRichTextNote, false
   vym.select @center_0
   vym.select @main_a
-  expect "After reselect, is note unchanged?", vym.getNote, note_plain
   expect "After reselect, is note plaintext?", vym.hasRichTextNote, false
 
   note_plain = "<b>plaintext, not bold!</b>"
-  vym.setNote(note_plain)
-  expect "Set note to plaintext containing html tags", vym.getNote, note_plain
-  sleep 3
+  vym.setNotePlainText(note_plain)
+  expect "Set note to plaintext containing html tags. Still plaintext", vym.hasRichTextNote, false
+  note_plain = vym.getNotePlainText
   vym.select @center_0
-  sleep 3
   vym.select @main_a
-  sleep 3
-  expect "After reselect, is note unchanged?", vym.getNote, note_plain
+  expect "After reselect, is note unchanged?", vym.getNotePlainText, note_plain
   expect "After reselect, is note plaintext?", vym.hasRichTextNote, false
-  sleep 3
   
   # FIXME same checks like above for RichTexxt
   
   note_org = IO.read('test/note-plain.txt')
   vym.loadNote("test/note-plain.txt") 
-  expect "Load plain text note from file", vym.getNote, note_org
+  expect "Load plain text note from file. Still plaintext?", vym.hasRichTextNote, false
+  expect "Note contains 'not bold'", vym.getNotePlainText.include?("not bold"), true
 
   filepath = "#{@testdir}/save-note.txt"
   vym.saveNote(filepath)
-  expect "Save note to file", IO.read(filepath), note_org
+  expect "Save note to file. Check if it contains 'textMode=\"plainText\"'", IO.read(filepath).include?("textMode=\"plainText\""), true
+  expect "Save note to file. Check if it contains 'not bold'", IO.read(filepath).include?("not bold"), true
   #
-  # FIXME same checks like above for RichTexxt
+  # FIXME same checks like above for RichText
 end
 
 def test_headings (vym)
@@ -711,21 +705,21 @@ def test_bugfixes (vym)
 end
 
 #######################
-#test_basics(vym)
-#test_export(vym)
-#test_extrainfo(vym)
-#test_adding_branches(vym)
-#test_adding_maps(vym)
-#test_scrolling(vym)
-#test_moving_parts(vym)
-#test_modify_branches(vym)
-#test_flags(vym)
-#test_delete_parts(vym)
-#test_copy_paste(vym)
-#test_references(vym)
-#test_history(vym)
-#test_xlinks(vym)
-#test_tasks(vym)
+test_basics(vym)
+test_export(vym)
+test_extrainfo(vym)
+test_adding_branches(vym)
+test_adding_maps(vym)
+test_scrolling(vym)
+test_moving_parts(vym)
+test_modify_branches(vym)
+test_flags(vym)
+test_delete_parts(vym)
+test_copy_paste(vym)
+test_references(vym)
+test_history(vym)
+test_xlinks(vym)
+test_tasks(vym)
 test_notes(vym)
 test_headings(vym)
 #test_bugfixes(vym)

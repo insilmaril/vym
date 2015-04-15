@@ -621,7 +621,7 @@ void Main::setupAPI()
     c=new Command ("getFrameType",Command::Branch);
     modelCommands.append(c);
 
-    c=new Command ("getHeading",Command::TreeItem);
+    c=new Command ("getHeadingPlainText",Command::TreeItem);
     modelCommands.append(c);
 
     c=new Command ("getMapAuthor",Command::Any);
@@ -633,7 +633,7 @@ void Main::setupAPI()
     c=new Command ("getMapTitle",Command::Any);
     modelCommands.append(c);
 
-    c=new Command ("getNote",Command::TreeItem);
+    c=new Command ("getNotePlainText",Command::TreeItem);
     modelCommands.append(c);
 
     c=new Command ("getSelectString",Command::TreeItem);
@@ -798,7 +798,7 @@ void Main::setupAPI()
     c->addPar (Command::Int,false,"Width of frame borderline");
     modelCommands.append(c);
 
-    c=new Command ("setHeading",Command::TreeItem); 
+    c=new Command ("setHeadingPlainText",Command::TreeItem); 
     c->addPar (Command::String,false,"New heading");
     modelCommands.append(c);
 
@@ -862,7 +862,7 @@ void Main::setupAPI()
     c->addPar (Command::Double,false,"Zoomfactor of map");
     modelCommands.append(c);
 
-    c=new Command ("setNote",Command::Branch); 
+    c=new Command ("setNotePlainText",Command::Branch); 
     c->addPar (Command::String,false,"Note of branch");
     modelCommands.append(c);
 
