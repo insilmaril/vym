@@ -469,7 +469,11 @@ int main(int argc, char* argv[])
 
     app.exec();
 
-    int s=warningCount + criticalCount + fatalCount;
-    if (s>0) qDebug()<<"vym exiting with:\n"<<warningCount<<" warning messages\n"<<criticalCount<<" critical messages\n"<<fatalCount<<" fatal messages";
+    int s = warningCount + criticalCount + fatalCount;
+    if ( s > 0 ) 
+        qDebug() << "vym exiting with:\n" << 
+        warningCount << " warning messages\n" << 
+        criticalCount<<" critical messages\n" <<
+        fatalCount<<" fatal messages";
     return s;
 }
