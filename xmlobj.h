@@ -25,11 +25,11 @@ public:
     QString valueElement(QString,QString,QString);  // name, val, attr
     void incIndent();
     void decIndent();
-    static int curindent;
+    static int curIndent;
 
 protected:  
     QString indent();
-    int indentwidth;
+    int indentWidth;
 };
 
 #endif

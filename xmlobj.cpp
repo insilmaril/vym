@@ -44,7 +44,7 @@ QString quoteQuotes(const QString &s)
 QString unquoteQuotes(const QString &s)
 {
     QString r = s;
-    QRegExp  rx("\\\"");
+    QRegExp  rx("\\\\\"");
     r.replace ( rx,"\"");
     return r;
 }
@@ -80,11 +80,11 @@ QString getCDATA(const QString &s)
         return s;
 }
 
-int XMLObj::curindent=0;	// make instance of curindent
+int XMLObj::curIndent=0;	// make instance of curIndent
 
 XMLObj::XMLObj()
 {
-    indentwidth=4;
+    indentWidth=4;
 }
 
 XMLObj::~XMLObj()
@@ -131,25 +131,25 @@ QString XMLObj::valueElement(QString el, QString val)
 // returns <s at> val </s>
 QString XMLObj::valueElement(QString el, QString val, QString at)
 {
-    return indent() + "<" + el + " " + at + ">" + val + "</" +el + ">";
+    return "<" + el + " " + at + ">" + val + "</" +el + ">";
 }
 
 void XMLObj::incIndent()
 {
-    curindent++;
+    curIndent++;
 }   
 
 void XMLObj::decIndent()
 {
-    curindent--;
-    if (curindent<0) curindent=0;
+    curIndent--;
+    if (curIndent<0) curIndent=0;
 }   
 
 QString XMLObj::indent()
 {
     QString s = "\n";
     int i;
-    for (i=0; i < curindent*indentwidth; i++)
+    for (i=0; i < curIndent * indentWidth; i++)
     {
         s= s + " ";
     }
