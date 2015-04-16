@@ -424,6 +424,7 @@ bool VymModel::parseVymText (const QString &s)
         reader.setContentHandler( handler );
         reader.setErrorHandler( handler );
 
+        handler->setInputString (s);
         handler->setModel ( this );
         handler->setLoadMode (ImportReplace, 0);
 
@@ -1213,16 +1214,15 @@ void VymModel::undo()
 
     bool noErr;
     QString errMsg;
-    //parseAtom (undoCommand,noErr,errMsg);
+    parseAtom (undoCommand,noErr,errMsg);
     errMsg = QVariant(execute(undoCommand)).toString();
-    /* FIXME-2 add noErr to parameters of execute above or ignore (error message already within parseAtom)
+    // FIXME-2 add noErr to parameters of execute above or ignore (error message already within parseAtom)
     if (!noErr)
     {
         if (!options.isOn("batch") )
             QMessageBox::warning(0,tr("Warning"),tr("Undo failed:\n%1").arg(errMsg));
         qWarning()<< "VM::undo failed:\n"<<errMsg;
     }
-    */
 
     undosAvail--;
     curStep--; 
@@ -1701,10 +1701,8 @@ void VymModel::setHeading(const VymText &vt, BranchItem *bi)
         h_old = bi->getHeading();
         if (h_old == h_new) return;
         saveState(
-            bi,
-            "parseVymText (\"" + quotemeta( h_old.saveToDir()) + "\")",
-            bi,
-            "parseVymText (\"" + quotemeta( h_new.saveToDir()) + "\")",
+            bi, "parseVymText (\"" + quoteQuotes( h_old.saveToDir()) + "\")",
+            bi, "parseVymText (\"" + quoteQuotes( h_new.saveToDir()) + "\")",
             QString("Set heading of %1 to \"%2\"").arg(getObjectName(bi)).arg(s) );
         bi->setHeading(vt);
         emitDataChanged ( bi);
@@ -1728,11 +1726,7 @@ void VymModel::setHeadingPlainText(const QString &s, BranchItem *bi)
 Heading VymModel::getHeading()
 {
     TreeItem *selti=getSelectedItem();
-    if (selti)
-    {
-        Heading h = selti->getHeading();
-        return h;
-    }
+    if (selti) return  selti->getHeading();
     qWarning() << "VymModel::getHeading Nothing selected.";
     return Heading();
 }
@@ -4291,16 +4285,20 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	    s=parser.parString(ok,0);
 	    returnValue=selti->hasActiveStandardFlag(s);
 	/////////////////////////////////////////////////////////////////////
+	} else if (com=="hasNote")
+	{
+	    returnValue = !getNote().isEmpty();
+	/////////////////////////////////////////////////////////////////////
 	} else if (com=="hasRichTextNote")
 	{
 	    returnValue=hasRichTextNote();
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="hasTask")
 	{ 
-      if (selbi && selbi->getTask() )
-        returnValue=true;
-      else
-        returnValue=false;
+            if (selbi && selbi->getTask() )
+                returnValue=true;
+            else
+                returnValue=false;
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="importDir")
 	{
@@ -4363,12 +4361,12 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	} else if (com=="note2URLs")
 	{
 	    note2URLs();
-    /////////////////////////////////////////////////////////////////////
-    } else if (com=="parseVymText")
-    {
-        s = parser.parString(ok,0);
-        parseVymText( unquotemeta( s ));
-/////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////
+        } else if (com=="parseVymText")
+        {
+            s = parser.parString(ok,0);
+            parseVymText( unquoteQuotes( s ));
+        /////////////////////////////////////////////////////////////////////
 	} else if (com=="paste")
 	{
 	    paste();

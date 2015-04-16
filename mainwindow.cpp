@@ -667,6 +667,9 @@ void Main::setupAPI()
     c->addPar (Command::String,false,"Name of flag");
     modelCommands.append(c);
 
+    c=new Command ("hasNote",Command::Branch); 
+    modelCommands.append(c);
+
     c=new Command ("hasRichTextNote",Command::Branch); 
     modelCommands.append(c);
 
