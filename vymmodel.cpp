@@ -409,6 +409,7 @@ QString VymModel::getDestPath()
 
 bool VymModel::parseVymText (const QString &s)
 {
+    qDebug()<<"VM::parseVymText s="<<s;
     bool ok = false;
     BranchItem *bi = getSelectedBranch();
     if (bi)
@@ -447,6 +448,7 @@ bool VymModel::parseVymText (const QString &s)
             // partially read by the parser
         }
     }
+    qDebug()<<"VM::parseVymText result ="<<ok;
     return ok;
 }
 
@@ -1212,17 +1214,24 @@ void VymModel::undo()
 	qDebug() << "    ---------------------------";
     }	
 
+    // select  object before undo
+    if (!undoSelection.isEmpty())
+	select (undoSelection);
+
     bool noErr;
     QString errMsg;
-    parseAtom (undoCommand,noErr,errMsg);
+    //parseAtom (undoCommand,noErr,errMsg);
     errMsg = QVariant(execute(undoCommand)).toString();
     // FIXME-2 add noErr to parameters of execute above or ignore (error message already within parseAtom)
+    // 
+    /*
     if (!noErr)
     {
         if (!options.isOn("batch") )
             QMessageBox::warning(0,tr("Warning"),tr("Undo failed:\n%1").arg(errMsg));
         qWarning()<< "VM::undo failed:\n"<<errMsg;
     }
+    */
 
     undosAvail--;
     curStep--; 
@@ -1701,8 +1710,8 @@ void VymModel::setHeading(const VymText &vt, BranchItem *bi)
         h_old = bi->getHeading();
         if (h_old == h_new) return;
         saveState(
-            bi, "parseVymText (\"" + quoteQuotes( h_old.saveToDir()) + "\")",
-            bi, "parseVymText (\"" + quoteQuotes( h_new.saveToDir()) + "\")",
+            bi, "parseVymText ('" +  h_old.saveToDir() + "')",
+            bi, "parseVymText ('" +  h_new.saveToDir() + "')",
             QString("Set heading of %1 to \"%2\"").arg(getObjectName(bi)).arg(s) );
         bi->setHeading(vt);
         emitDataChanged ( bi);
@@ -1751,9 +1760,9 @@ void VymModel::setNote(const  VymNote &vn)
         n_new = vn;
         saveState(
             selti,
-            "parseVymText (\"" + quotemeta( n_old.saveToDir()) + "\")",
+            "parseVymText ('" + n_old.saveToDir() + "')",
             selti,
-            "parseVymText (\"" + quotemeta( n_new.saveToDir()) + "\")",
+            "parseVymText ('" + n_new.saveToDir() + "')",
             QString("Set note of %1 to \"%2\"").arg(getObjectName(selti)).arg(n_new.getTextASCII().left(20) ) );
         selti->setNote( n_new );
         emitNoteChanged( selti );
@@ -3956,6 +3965,7 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
     if (parser.errorLevel()==NoError && parser.checkParameters(selti) )
     {
 	QString com=parser.getCommand();
+        qDebug()<<"VM::parseAtom  atom="<<atom<<"  sel="<<getSelectString()<<" com="<<com;
 	/////////////////////////////////////////////////////////////////////
 	if (com=="addBranch")  
 	{
@@ -4365,7 +4375,8 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
         } else if (com=="parseVymText")
         {
             s = parser.parString(ok,0);
-            parseVymText( unquoteQuotes( s ));
+            qDebug()<<"VM::parseVymText";
+            parseVymText( s );
         /////////////////////////////////////////////////////////////////////
 	} else if (com=="paste")
 	{

@@ -721,7 +721,7 @@ void Main::setupAPI()
 
     //internally required for undo/redo of changing VymText:
     c=new Command ("parseVymText",Command::Branch);
-    c->addPar (Command::String,false,"quoted XML of VymText");
+    c->addPar (Command::String,false,"parse XML of VymText, e.g for Heading or VymNote");
     modelCommands.append(c);
 
     c=new Command ("paste",Command::Branch);

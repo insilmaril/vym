@@ -692,9 +692,16 @@ def test_notes (vym)
   # FIXME same checks like above for RichText
   init_map
   vym.select @main_a
-  rt_note = IO.read('test/note-richtext.xml')
+  #rt_note = IO.read('test/note-richtext.xml')
+  rt_note = '<heading textMode="richText"><![CDATA[foo<b>bar</b>]]</heading>'
+
+  puts "*** Preparing to parseVymText:"
   puts rt_note
+  puts "*** Start parsing!"
   vym.parseVymText( rt_note)
+  puts "*** Finished parsing!"
+
+  expect "parseVymText of richText note produces note", vym.hasNote, true
   expect "parseVymText of richText note produces richText note", vym.hasRichTextNote, true
 
 end
