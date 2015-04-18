@@ -434,7 +434,8 @@ bool VymModel::parseVymText (const QString &s)
         blockSaveState=blockSaveStateOrg;
         if ( ok )
         {
-            emitDataChanged( bi);
+            emitNoteChanged( bi );
+            emitDataChanged( bi );
             reposition();   // to generate bbox sizes
 
             // Recalc priorities and sort
@@ -1787,6 +1788,7 @@ bool VymModel::hasRichTextNote()
     TreeItem *selti=getSelectedItem();
     if (selti)
     {
+        return selti->getNote().isRichText();
     }
     return false;
 }
@@ -4375,7 +4377,6 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
         } else if (com=="parseVymText")
         {
             s = parser.parString(ok,0);
-            qDebug()<<"VM::parseVymText";
             parseVymText( s );
         /////////////////////////////////////////////////////////////////////
 	} else if (com=="paste")
@@ -4772,6 +4773,7 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 
 QVariant VymModel::execute (const QString &script)
 {
+    qDebug()<<"VM::execute script="<<script;
     parser.setScript (script);
     parser.execute ();
     QVariant r;

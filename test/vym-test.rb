@@ -693,13 +693,11 @@ def test_notes (vym)
   init_map
   vym.select @main_a
   #rt_note = IO.read('test/note-richtext.xml')
-  rt_note = '<heading textMode="richText"><![CDATA[foo<b>bar</b>]]</heading>'
-
-  puts "*** Preparing to parseVymText:"
-  puts rt_note
-  puts "*** Start parsing!"
+  #rt_note = '<vymnote  textMode="richText"><![CDATA[<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd"> <html><head><meta name="qrichtext" content="1" /><style type="text/css"> p, li { white-space: pre-wrap; } </style></head><body style=" font-family:'Arial'; font-size:12pt; font-weight:400; font-style:normal;"> <p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-family:'DejaVu Sans Mono'; color:#000000;">Rich Text note with &lt;b&gt;bold text&lt;/b&gt;</span></p></body></html>]]></vymnote>'
+  rt_note = '<vymnote  textMode="richText"><![CDATA[<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd"> <html><head><meta name="qrichtext" content="1" /><style type="text/css"> p, li { white-space: pre-wrap; } </style></head><body style=" font-family:\'Arial\'; font-size:12pt; font-weight:400; font-style:normal;"> <p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-family:\'DejaVu Sans Mono\'; color:#000000;">Rich Text note with <b>not bold text</b></span></p></body></html>]]></vymnote>'
+  #puts "rt_note=#{rt_note}"
   vym.parseVymText( rt_note)
-  puts "*** Finished parsing!"
+  puts "\n*** Finished parsing!"
 
   expect "parseVymText of richText note produces note", vym.hasNote, true
   expect "parseVymText of richText note produces richText note", vym.hasRichTextNote, true
@@ -720,24 +718,24 @@ def test_bugfixes (vym)
 end
 
 #######################
-#test_basics(vym)
-#test_export(vym)
-#test_extrainfo(vym)
-#test_adding_branches(vym)
-#test_adding_maps(vym)
-#test_scrolling(vym)
-#test_moving_parts(vym)
-#test_modify_branches(vym)
-#test_flags(vym)
-#test_delete_parts(vym)
-#test_copy_paste(vym)
-#test_references(vym)
-#test_history(vym)
-#test_xlinks(vym)
-#test_tasks(vym)
+test_basics(vym)
+test_export(vym)
+test_extrainfo(vym)
+test_adding_branches(vym)
+test_adding_maps(vym)
+test_scrolling(vym)
+test_moving_parts(vym)
+test_modify_branches(vym)
+test_flags(vym)
+test_delete_parts(vym)
+test_copy_paste(vym)
+test_references(vym)
+test_history(vym)
+test_xlinks(vym)
+test_tasks(vym)
 test_notes(vym)
 test_headings(vym)
-#test_bugfixes(vym)
+test_bugfixes(vym)
 summary
 
 =begin

@@ -329,7 +329,7 @@ QString Parser::parString (bool &ok, const int &index)
         rx.setPattern("\"(.*)\"");
 
 
-    qDebug() << "parString of " << paramList[index] << " pos="<<pos<<" n="<<n<< "  pattern: " << rx.pattern();
+    qDebug() << "Parser:: parString  a) pos="<<pos<<" n="<<n<< "  pattern: " << rx.pattern() <<  " of " << paramList[index];
 
     QString r;
     pos=rx.indexIn (paramList[index]);
@@ -342,6 +342,7 @@ QString Parser::parString (bool &ok, const int &index)
 	r = "";
 	ok = false;
     }
+    qDebug() << "Parser:: parString  b) r="<<r;
     return r;
 }
 
@@ -363,16 +364,19 @@ bool Parser::parBool (bool &ok,const int &index)
 QColor Parser::parColor(bool &ok,const int &index)
 {
     // return the QColor at index
-    ok=false;
+    ok = false;
     QString r;
     QColor c;
+
+    // testscipts use single quotes, convert them first
+    paramList[index].replace ("'", "\"");
     QRegExp re("\"(.*)\"");
-    int pos=re.indexIn (paramList[index]);
-    if (pos>=0)
+    int pos = re.indexIn (paramList[index]);
+    if (pos >= 0)
     {
-	r=re.cap (1);
+	r = re.cap (1);
 	c.setNamedColor(r);
-	ok=c.isValid();
+	ok = c.isValid();
     }	
     return c;
 }
@@ -522,9 +526,11 @@ QStringList Parser::findParameters(const QString &s)
         // '' is within ""
         bnd = "\"";
 
-    qDebug() << "Parser::findParams a)  s=" << s << "bnd=" << bnd;
+    qDebug() << "Parser::findParams a)  bnd=" << bnd << "s=" << s;
+    pos = 0;
     while (pos < s.length())
     {
+        //FIXME-0 qDebug()<< QString("s[%1]=%2  inquote=%3").arg(pos).arg(s.at(pos)).arg(inquote);
         if (s.at(pos) == bnd ) 
         {
             if (inquote)
@@ -534,6 +540,7 @@ QStringList Parser::findParameters(const QString &s)
         }
         if (s.at(pos) == ',' && !inquote)
         {
+            qDebug()<<"findParameters:   , !!!";  //FIXME-0
             ret << s.mid(left, pos - left );
             left = pos + 1;
         }
@@ -543,7 +550,7 @@ QStringList Parser::findParameters(const QString &s)
         ret << s.mid(left, pos - left );
     else
         if (!s.isEmpty()) ret << s;
-    qDebug() << "Parser::findParams b)  ret=" << ret;
+    qDebug() << "Parser::findParams b)  count="<<ret.count()<<"  ret=" << ret;
     return ret;
 }
 
