@@ -62,13 +62,13 @@ bool parseVYMHandler::startElement  ( const QString&, const QString&,
 {
     QColor col;
     /* Testing
-    */        
     qDebug()<< "startElement: <"<< eName
             << ">     state="<<state 
             << "  laststate="<<stateStack.last()
             << "   loadMode="<<loadMode
             //<<"       line="<<QXmlDefaultHandler::lineNumber();
         <<"contentFilter="<<contentFilter;
+    */        
     stateStack.append (state);        
     if ( state == StateInit && (eName == "vymmap")  ) 
     {
@@ -181,7 +181,6 @@ bool parseVYMHandler::startElement  ( const QString&, const QString&,
         if (!lastBranch) return false;
 
         state=StateHeading;
-        qDebug()<<"xmlbvym <heading> lastBranch="<<lastBranch<<lastBranch->getHeadingPlain();
         htmldata.clear();
         vymtext.clear();
         if (!atts.value( "fonthint").isEmpty() )
@@ -223,7 +222,6 @@ bool parseVYMHandler::startElement  ( const QString&, const QString&,
             // e.g. for undo/redo
         {
             lastBranch = model->getSelectedBranch();
-            qDebug()<<"xml-vym: lastBranch init with: "<<lastBranch;
         }
         state=StateVymNote;
         htmldata.clear();
@@ -368,9 +366,6 @@ bool parseVYMHandler::endElement  ( const QString&, const QString&, const QStrin
             break;
         case StateHeading:
             vymtext.setText (htmldata);
-            qDebug()<<"xml-vym  h   selected="<<model->getSelectString();
-            qDebug()<<"xml-vym  h lastBranch="<<lastBranch->getHeadingPlain();
-            qDebug()<<"xml-vym  h lastBranch="<<lastBranch<<" vymtext="<<vymtext.getText();
             lastBranch->setHeading (vymtext);
             break;
         case StateHtmlNote: // Richtext note, needed anyway for backward compatibility
@@ -392,9 +387,7 @@ bool parseVYMHandler::endElement  ( const QString&, const QString&, const QStrin
         case StateVymNote:            // Might be richtext or plaintext with
             // version >= 1.13.8
             vymtext.setText (htmldata);
-            qDebug()<<"xml-vym  vn   selected="<<model->getSelectString();
-            qDebug()<<"xml-vym  vn lastBranch="<<lastBranch<<" vymtext="<<vymtext.getText();
-            lastBranch->setNote (vymtext);    // FIXME-0000000000000000000000000000000000
+            lastBranch->setNote (vymtext);  
             break;
         case StateHtml:
             htmldata+="</"+eName+">";

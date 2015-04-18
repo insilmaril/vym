@@ -692,10 +692,7 @@ def test_notes (vym)
   # FIXME same checks like above for RichText
   init_map
   vym.select @main_a
-  #rt_note = IO.read('test/note-richtext.xml')
-  #rt_note = '<vymnote  textMode="richText"><![CDATA[<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd"> <html><head><meta name="qrichtext" content="1" /><style type="text/css"> p, li { white-space: pre-wrap; } </style></head><body style=" font-family:'Arial'; font-size:12pt; font-weight:400; font-style:normal;"> <p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-family:'DejaVu Sans Mono'; color:#000000;">Rich Text note with &lt;b&gt;bold text&lt;/b&gt;</span></p></body></html>]]></vymnote>'
   rt_note = '<vymnote  textMode="richText"><![CDATA[<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd"> <html><head><meta name="qrichtext" content="1" /><style type="text/css"> p, li { white-space: pre-wrap; } </style></head><body style=" font-family:\'Arial\'; font-size:12pt; font-weight:400; font-style:normal;"> <p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-family:\'DejaVu Sans Mono\'; color:#000000;">Rich Text note with <b>not bold text</b></span></p></body></html>]]></vymnote>'
-  #puts "rt_note=#{rt_note}"
   vym.parseVymText( rt_note)
   puts "\n*** Finished parsing!"
 

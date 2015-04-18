@@ -409,7 +409,6 @@ QString VymModel::getDestPath()
 
 bool VymModel::parseVymText (const QString &s)
 {
-    qDebug()<<"VM::parseVymText s="<<s;
     bool ok = false;
     BranchItem *bi = getSelectedBranch();
     if (bi)
@@ -449,7 +448,6 @@ bool VymModel::parseVymText (const QString &s)
             // partially read by the parser
         }
     }
-    qDebug()<<"VM::parseVymText result ="<<ok;
     return ok;
 }
 
@@ -3967,7 +3965,6 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
     if (parser.errorLevel()==NoError && parser.checkParameters(selti) )
     {
 	QString com=parser.getCommand();
-        qDebug()<<"VM::parseAtom  atom="<<atom<<"  sel="<<getSelectString()<<" com="<<com;
 	/////////////////////////////////////////////////////////////////////
 	if (com=="addBranch")  
 	{
@@ -4773,7 +4770,6 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 
 QVariant VymModel::execute (const QString &script)
 {
-    qDebug()<<"VM::execute script="<<script;
     parser.setScript (script);
     parser.execute ();
     QVariant r;
