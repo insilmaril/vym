@@ -658,9 +658,11 @@ end
 ######################
 def test_notes (vym)
   heading "Notes:"
+
+  # Plaintext notes basic actions 
   init_map
   vym.select @main_a
-  note_plain = "<vymnoteplaintext"
+  note_plain = "vymnote plaintext"
   vym.setNotePlainText(note_plain)
   expect "Set note to \"#{note_plain}\". Still plaintext?", vym.hasRichTextNote, false
   vym.select @center_0
@@ -670,35 +672,93 @@ def test_notes (vym)
   note_plain = "<b>plaintext, not bold!</b>"
   vym.setNotePlainText(note_plain)
   expect "Set note to plaintext containing html tags. Still plaintext", vym.hasRichTextNote, false
-  note_plain = vym.getNotePlainText
+  note_new = vym.getNotePlainText
   vym.select @center_0
   vym.select @main_a
-  expect "After reselect, is note unchanged?", vym.getNotePlainText, note_plain
+  expect "After reselect, is note text unchanged?", vym.getNotePlainText, note_new
   expect "After reselect, is note plaintext?", vym.hasRichTextNote, false
-  
+
+  # Plaintext notes copy & paste
+  vym.copy
+  vym.paste
+  vym.selectLastBranch
+  s=vym.getSelectString
+  expect "After copy& paste: New note unchanged?", vym.getNotePlainText, note_plain
+  expect "After copy& paste: New note Still plaintext?", vym.hasRichTextNote, false
+  vym.delete
+
+  # Plaintext notes undo & redo
+  vym.select @main_a
+  vym.setNotePlainText('Foobar')
+  vym.undo
+  expect "Undo after setNotePlainText restores previous note", vym.getNotePlainText, note_plain
+  vym.redo
+  vym.select @main_a
+  expect "Redo restores previous note", vym.getNotePlainText, 'Foobar'
+
+  # Plaintext notes load & save
   note_org = IO.read('test/note-plain.txt')
   vym.loadNote("test/note-plain.txt") 
   expect "Load plain text note from file. Still plaintext?", vym.hasRichTextNote, false
   expect "Note contains 'not bold'", vym.getNotePlainText.include?("not bold"), true
-
   filepath = "#{@testdir}/save-note.txt"
   vym.saveNote(filepath)
   expect "Save note to file. Check if it contains 'textMode=\"plainText\"'", IO.read(filepath).include?("textMode=\"plainText\""), true
   expect "Save note to file. Check if it contains 'not bold'", IO.read(filepath).include?("not bold"), true
+  expect "Save note to file. Check if it contains '<b>' element", IO.read(filepath).include?("<b>"), true
+  expect "Save note to file. Check if it contains '<![CDATA['", IO.read(filepath).include?("<![CDATA["), true
   
+  # Delete note
   vym.setNotePlainText("")
   expect "setNotePlainText(\"\") deletes note", vym.hasNote, false
   
-  # FIXME same checks like above for RichText
+  # RichText basic actions
   init_map
   vym.select @main_a
   rt_note = '<vymnote  textMode="richText"><![CDATA[<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd"> <html><head><meta name="qrichtext" content="1" /><style type="text/css"> p, li { white-space: pre-wrap; } </style></head><body style=" font-family:\'Arial\'; font-size:12pt; font-weight:400; font-style:normal;"> <p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-family:\'DejaVu Sans Mono\'; color:#000000;">Rich Text note with <b>not bold text</b></span></p></body></html>]]></vymnote>'
-  vym.parseVymText( rt_note)
-  puts "\n*** Finished parsing!"
-
+  vym.parseVymText(rt_note)
   expect "parseVymText of richText note produces note", vym.hasNote, true
   expect "parseVymText of richText note produces richText note", vym.hasRichTextNote, true
+  vym.select @center_0
+  vym.select @main_a
+  expect "After reselect, is note RichText?", vym.hasRichTextNote, true
 
+
+  # RichText notes copy & paste
+  rt_note = vym.getNoteXML  
+  vym.copy
+  vym.paste
+  vym.selectLastBranch
+  s=vym.getSelectString
+  expect "After copy& paste: New note Still RichText?", vym.hasRichTextNote, true
+  expect "After copy& paste: New note unchanged?", vym.getNoteXML, rt_note
+  vym.delete
+
+  # RichText notes undo & redo
+  vym.select @main_a
+  vym.setNotePlainText('Foobar')
+  vym.undo
+  expect "Undo after setNotePlainText restores RichText note", vym.getNoteXML, rt_note
+  vym.redo
+  vym.select @main_a
+  expect "Redo restores previous plaintext note", vym.getNotePlainText, 'Foobar'
+
+  # RichText notes load & save
+  vym.loadNote("test/note.html") 
+  expect "Load HTML note from file. Is RichText?", vym.hasRichTextNote, true
+  expect "RichText note as plaintext does not contain '<b>'", vym.getNotePlainText.include?("<b>"), false
+  filepath = "#{@testdir}/save-note.txt"
+  vym.saveNote(filepath)
+  expect "Save note to file. Check if it contains 'textMode=\"richText\"'", IO.read(filepath).include?("textMode=\"richText\""), true
+  expect "Save note to file. Check if it contains 'bold'", IO.read(filepath).include?("bold"), true
+  expect "Save note to file. Check if it contains '<b>' element", IO.read(filepath).include?("<b>"), true
+  expect "Save note to file. Check if it contains '<![CDATA['", IO.read(filepath).include?("<![CDATA["), true
+  
+  # Delete note
+  vym.setNotePlainText("")
+  expect "setNotePlainText(\"\") deletes note", vym.hasNote, false
+
+  # Compatibility with version < 2.5.0  # FIXME missing
 end
 
 def test_headings (vym)
@@ -715,24 +775,24 @@ def test_bugfixes (vym)
 end
 
 #######################
-test_basics(vym)
-test_export(vym)
-test_extrainfo(vym)
-test_adding_branches(vym)
-test_adding_maps(vym)
-test_scrolling(vym)
-test_moving_parts(vym)
-test_modify_branches(vym)
-test_flags(vym)
-test_delete_parts(vym)
-test_copy_paste(vym)
-test_references(vym)
-test_history(vym)
-test_xlinks(vym)
-test_tasks(vym)
+#test_basics(vym)
+#test_export(vym)
+#test_extrainfo(vym)
+#test_adding_branches(vym)
+#test_adding_maps(vym)
+#test_scrolling(vym)
+#test_moving_parts(vym)
+#test_modify_branches(vym)
+#test_flags(vym)
+#test_delete_parts(vym)
+#test_copy_paste(vym)
+#test_references(vym)
+#test_history(vym)
+#test_xlinks(vym)
+#test_tasks(vym)
 test_notes(vym)
-test_headings(vym)
-test_bugfixes(vym)
+#test_headings(vym)
+#test_bugfixes(vym)
 summary
 
 =begin

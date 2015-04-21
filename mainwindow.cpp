@@ -624,6 +624,9 @@ void Main::setupAPI()
     c=new Command ("getHeadingPlainText",Command::TreeItem);
     modelCommands.append(c);
 
+    c=new Command ("getHeadingXML",Command::TreeItem);
+    modelCommands.append(c);
+
     c=new Command ("getMapAuthor",Command::Any);
     modelCommands.append(c);
 
@@ -634,6 +637,9 @@ void Main::setupAPI()
     modelCommands.append(c);
 
     c=new Command ("getNotePlainText",Command::TreeItem);
+    modelCommands.append(c);
+
+    c=new Command ("getNoteXML",Command::TreeItem);
     modelCommands.append(c);
 
     c=new Command ("getSelectString",Command::TreeItem);

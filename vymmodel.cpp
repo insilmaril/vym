@@ -4233,6 +4233,10 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	{ 
             returnValue = getHeading().getTextASCII();
 	/////////////////////////////////////////////////////////////////////
+	} else if (com=="getHeadingXML")
+	{ 
+            returnValue = getHeading().saveToDir();
+	/////////////////////////////////////////////////////////////////////
 	} else if (com=="getMapAuthor")
 	{ 
 	    returnValue=author;
@@ -4247,7 +4251,11 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="getNotePlainText")
 	{ 
-        returnValue= getNote().getTextASCII();
+            returnValue= getNote().getTextASCII();
+	/////////////////////////////////////////////////////////////////////
+	} else if (com=="getNoteXML")
+	{ 
+            returnValue= getNote().saveToDir();
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="getSelectString")
 	{ 
