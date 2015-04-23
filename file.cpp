@@ -277,7 +277,7 @@ ErrorCode zipDir ( QDir zipInputDir, QString zipName)
         err=Aborted;
 
     }
-    zipProc->write(QString("\"%1\" a \"%2\" -r %3\\*\n").arg(zipToolPath).arg(zipName).arg(zipInputDir.path()).toUtf8());
+    zipProc->write(QString("\"%1\" a \"%2\" -tzip -r %3\\*\n").arg(zipToolPath).arg(zipName).arg(zipInputDir.path()).toUtf8());
     zipProc->closeWriteChannel();   //done Writing
 
     while(zipProc->state()!=QProcess::NotRunning){
