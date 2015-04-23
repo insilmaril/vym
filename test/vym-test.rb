@@ -745,8 +745,7 @@ def test_notes (vym)
 
   # RichText notes load & save
   vym.loadNote("test/note.html") 
-  expect "Load HTML note from file. Is RichText?", vym.hasRichTextNote, true
-  expect "RichText note as plaintext does not contain '<b>'", vym.getNotePlainText.include?("<b>"), false
+  expect "Load HTML note from file and try to detect textMode. Is RichText?", vym.hasRichTextNote, true
   filepath = "#{@testdir}/save-note.txt"
   vym.saveNote(filepath)
   expect "Save note to file. Check if it contains 'textMode=\"richText\"'", IO.read(filepath).include?("textMode=\"richText\""), true
