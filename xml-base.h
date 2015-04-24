@@ -45,5 +45,6 @@ protected:
     QString inputFile;
     QString inputString;
     QString htmldata;
+    QString version;
 }; 
 #endif

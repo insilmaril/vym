@@ -87,16 +87,17 @@ bool parseVYMHandler::startElement  ( const QString&, const QString&,
         // Check version
         if (!atts.value( "version").isEmpty() ) 
         {
-            if (!versionLowerOrEqualThanVym( atts.value("version") ))
+            version = atts.value("version");
+            if (!versionLowerOrEqualThanVym( version ))
                 QMessageBox::warning( 0, QObject::tr("Warning: Version Problem") , 
                    QObject::tr("<h3>Map is newer than VYM</h3>"
                    "<p>The map you are just trying to load was "
                    "saved using vym %1. "
                    "The version of this vym is %2. " 
                    "If you run into problems after pressing "
-                   "the ok-button below, updating vym should help.</p>").arg(atts.value("version")).arg(vymVersion));
+                   "the ok-button below, updating vym should help.</p>").arg(version).arg(vymVersion));
             else       
-                model->setVersion(atts.value( "version" ));
+                model->setVersion(version);
 
         }
 
@@ -386,7 +387,11 @@ bool parseVYMHandler::endElement  ( const QString&, const QString&, const QStrin
             break;
         case StateVymNote:            // Might be richtext or plaintext with
             // version >= 1.13.8
-            vymtext.setText (htmldata);
+            if ( versionLowerOrEqual( version, "2.4.99")  && htmldata.contains("<html>") )
+                // versions before 2.5.0 didn't use CDATA to save richtext
+                vymtext.setAutoText(htmldata);
+            else
+                vymtext.setText (htmldata);
             lastBranch->setNote (vymtext);  
             break;
         case StateHtml:
