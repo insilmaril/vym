@@ -778,7 +778,7 @@ QString ExportHTML::createTOC()
             toc +=QString("<a href=\"#%1\"> %2 %3</a></br>\n")
                     .arg(model->getSelectString(cur))
                     .arg(number)
-                    .arg(cur->getHeadingPlain());
+                    .arg(quotemeta( cur->getHeadingPlain() ));
             toc +="</div>";
         }
         model->nextBranch(cur,prev);
