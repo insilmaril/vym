@@ -366,7 +366,11 @@ bool parseVYMHandler::endElement  ( const QString&, const QString&, const QStrin
             lastBranch->setLastSelectedBranch (0);  
             break;
         case StateHeading:
-            vymtext.setText (htmldata);
+            if ( versionLowerOrEqual( version, "2.4.99")  && htmldata.contains("<html>") )
+                // versions before 2.5.0 didn't use CDATA to save richtext
+                vymtext.setAutoText(htmldata);
+            else
+                vymtext.setText (htmldata);
             lastBranch->setHeading (vymtext);
             break;
         case StateHtmlNote: // Richtext note, needed anyway for backward compatibility
