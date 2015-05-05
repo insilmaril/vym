@@ -621,7 +621,10 @@ void Main::setupAPI()
     c=new Command ("getFrameType",Command::Branch);
     modelCommands.append(c);
 
-    c=new Command ("getHeading",Command::TreeItem);
+    c=new Command ("getHeadingPlainText",Command::TreeItem);
+    modelCommands.append(c);
+
+    c=new Command ("getHeadingXML",Command::TreeItem);
     modelCommands.append(c);
 
     c=new Command ("getMapAuthor",Command::Any);
@@ -633,7 +636,10 @@ void Main::setupAPI()
     c=new Command ("getMapTitle",Command::Any);
     modelCommands.append(c);
 
-    c=new Command ("getNote",Command::TreeItem);
+    c=new Command ("getNotePlainText",Command::TreeItem);
+    modelCommands.append(c);
+
+    c=new Command ("getNoteXML",Command::TreeItem);
     modelCommands.append(c);
 
     c=new Command ("getSelectString",Command::TreeItem);
@@ -665,6 +671,9 @@ void Main::setupAPI()
 
     c=new Command ("hasActiveFlag",Command::TreeItem);
     c->addPar (Command::String,false,"Name of flag");
+    modelCommands.append(c);
+
+    c=new Command ("hasNote",Command::Branch); 
     modelCommands.append(c);
 
     c=new Command ("hasRichTextNote",Command::Branch); 
@@ -716,7 +725,12 @@ void Main::setupAPI()
     c=new Command ("note2URLs",Command::Branch); 
     modelCommands.append(c);
 
-    c=new Command ("paste",Command::Branch); 
+    //internally required for undo/redo of changing VymText:
+    c=new Command ("parseVymText",Command::Branch);
+    c->addPar (Command::String,false,"parse XML of VymText, e.g for Heading or VymNote");
+    modelCommands.append(c);
+
+    c=new Command ("paste",Command::Branch);
     modelCommands.append(c);
 
     c=new Command ("redo",Command::Any); 
@@ -793,7 +807,7 @@ void Main::setupAPI()
     c->addPar (Command::Int,false,"Width of frame borderline");
     modelCommands.append(c);
 
-    c=new Command ("setHeading",Command::TreeItem); 
+    c=new Command ("setHeadingPlainText",Command::TreeItem); 
     c->addPar (Command::String,false,"New heading");
     modelCommands.append(c);
 
@@ -857,7 +871,7 @@ void Main::setupAPI()
     c->addPar (Command::Double,false,"Zoomfactor of map");
     modelCommands.append(c);
 
-    c=new Command ("setNote",Command::Branch); 
+    c=new Command ("setNotePlainText",Command::Branch); 
     c->addPar (Command::String,false,"Note of branch");
     modelCommands.append(c);
 
@@ -3208,7 +3222,7 @@ void Main::fileLoad(const LoadMode &lmode)
     }
 
     QString filter;
-    filter+="VYM map " + tr("or","File Dialog") +" Freemind map" + " (*.vym *.vyp *.mm);;";
+    filter+="VYM map " + tr("or","File Dialog") +" Freemind map" + " (*.xml *.vym *.vyp *.mm);;";  //FIXME-1 xml temporary here
     filter+="VYM map (*.vym *.vyp);;";
     filter+="VYM Backups (*.vym~);;";
     filter+="Freemind map (*.mm);;";
@@ -3987,10 +4001,10 @@ void Main::editHeadingFinished(VymModel *m)
 {
     if (m)
     {
-	if (!actionSettingsAutoSelectNewBranch->isChecked() && 
-	    !prevSelection.isEmpty()) 
-	    m->select(prevSelection);
-	prevSelection="";
+        if (!actionSettingsAutoSelectNewBranch->isChecked() &&
+                !prevSelection.isEmpty())
+            m->select(prevSelection);
+        prevSelection="";
     }
 }
 
@@ -4186,11 +4200,11 @@ void Main::editMapInfo()
     m->nextBranch(cur,prev);
     while (cur) 
     {
-	if (!cur->getNote().isEmpty() ) n++;
-	f+= cur->imageCount();
-	b++;
-	xl+=cur->xlinkCount();
-	m->nextBranch(cur,prev);
+        if (!cur->getNoteText().isEmpty() ) n++;
+        f+= cur->imageCount();
+        b++;
+        xl+=cur->xlinkCount();
+        m->nextBranch(cur,prev);
     }
 
     stats+=QString ("%1 branches\n").arg (m->branchCount(),6);
@@ -4313,7 +4327,7 @@ void Main::editAddMapCenter()
 	MapEditor *me=currentMapEditor();
 	if (me) 
 	{
-	    m->setHeading("");
+        m->setHeadingPlainText("");
 	    me->editHeading();
 	}    
     }
@@ -5011,6 +5025,11 @@ void Main::windowToggleProperty()
     branchPropertyEditor->setModel (currentModel() );
 }
 
+void Main::windowShowHeadingEditor()
+{
+    headingEditorDW->show();
+}
+
 void Main::windowToggleAntiAlias()
 {
     bool b=actionViewToggleAntiAlias->isChecked();
@@ -5053,7 +5072,7 @@ void Main::updateHistory(SimpleSettings &undoSet)
 void Main::updateHeading()
 {
     VymModel *m=currentModel();
-    if (m) m->setHeading (headingEditor->getText() );
+    if (m) m->setHeading (headingEditor->getVymText() );
 }
 
 void Main::updateNoteFlag() 
@@ -5067,12 +5086,14 @@ void Main::updateNoteEditor(QModelIndex index ) //FIXME-4 maybe change to TreeIt
 {
     if (index.isValid() )
     {
-	TreeItem *ti=((VymModel*) QObject::sender())->getItem(index);
-	/*
-	qDebug()<< "Main::updateNoteEditor model="<<sender() 
-		<< "  item="<<ti->getHeadingStd()<<" ("<<ti<<")";
-	*/
-	if (ti) noteEditor->setNote (ti->getNoteObj() );
+        TreeItem *ti=((VymModel*) QObject::sender())->getItem(index);
+        /*
+    qDebug()<< "Main::updateNoteEditor model="<<sender()
+        << "  item="<<ti->getHeading()<<" ("<<ti<<")";
+    qDebug()<< "RT="<<ti->getNote().isRichText();
+    */
+        if (ti)
+            noteEditor->setNote (ti->getNote() );
     }
 }
 
@@ -5091,35 +5112,35 @@ void Main::changeSelection (VymModel *model, const QItemSelection &newsel, const
     {
 	TreeItem *ti;
 	if (!newsel.indexes().isEmpty() )
-	{
-	    ti=model->getItem(newsel.indexes().first());
-	    if (!ti->hasEmptyNote() )
-		noteEditor->setNote(ti->getNoteObj() );
-	    else
-		noteEditor->setNote(NoteObj() );    //FIXME-5 maybe add a clear() to TE
-	    // Show URL and link in statusbar	
-	    QString status;
-	    QString s=ti->getURL();
-	    if (!s.isEmpty() ) status+="URL: "+s+"  ";
-	    s=ti->getVymLink();
-	    if (!s.isEmpty() ) status+="Link: "+s;
-	    if (!status.isEmpty() ) statusMessage (status);
+    {
+        ti=model->getItem(newsel.indexes().first());
+        if (!ti->hasEmptyNote() )
+            noteEditor->setNote(ti->getNote() );
+        else
+            noteEditor->setNote(VymNote() );    //FIXME-2 maybe add a clear() to TE
+        // Show URL and link in statusbar
+        QString status;
+        QString s=ti->getURL();
+        if (!s.isEmpty() ) status+="URL: "+s+"  ";
+        s=ti->getVymLink();
+        if (!s.isEmpty() ) status+="Link: "+s;
+        if (!status.isEmpty() ) statusMessage (status);
 
-	    headingEditor->setText (ti->getHeading() );
+        headingEditor->setVymText (ti->getHeading() );
 
-	    // Select in TaskEditor, if necessary 
-            Task *t=NULL;
-	    if (ti->isBranchLikeType() )
-		t=((BranchItem*)ti)->getTask();
+        // Select in TaskEditor, if necessary
+        Task *t=NULL;
+        if (ti->isBranchLikeType() )
+            t=((BranchItem*)ti)->getTask();
 
-            if (t)
-		taskEditor->select (t);
-            else
-                taskEditor->clearSelection();
-	} else
-	    noteEditor->setInactive();
+        if (t)
+            taskEditor->select (t);
+        else
+            taskEditor->clearSelection();
+    } else
+        noteEditor->setInactive();
 
-	updateActions();
+    updateActions();
     }
 }
 
@@ -5255,7 +5276,7 @@ void Main::updateActions()
 		actionHeading2URL->setEnabled (true);  
 
 		// Note
-		actionGetURLsFromNote->setEnabled (!selbi->getNote().isEmpty());
+        actionGetURLsFromNote->setEnabled (!selbi->getNoteText().isEmpty());
 
 		standardFlagsMaster->setEnabled (true);
 
@@ -5275,7 +5296,7 @@ void Main::updateActions()
 			bi=selbi->getXLinkItemNum(i)->getPartnerBranch();
 			if (bi)
 			{
-			    s=bi->getHeading();
+                s=bi->getHeadingPlain();
 			    if (s.length()>xLinkMenuWidth)
 				s=s.left(xLinkMenuWidth)+"...";
 			    branchXLinksContextMenuEdit->addAction (s);
@@ -5485,6 +5506,8 @@ void Main::testFunction1()
     VymModel *m = currentModel();
     if (m)
     {
+        QString s("<heading textMode=\"richText\"><![CDATA[Foo<b>bar</b>]]></heading>");
+        qDebug()<<"Main::test "<<m->parseVymText(s);
     }
 }
 
@@ -5493,7 +5516,7 @@ void Main::testFunction2()
     VymModel *m = currentModel();
     if (m)
     {
-        // FIXME-0 remove setting to download release notes.
+        // FIXME-1 remove setting to download release notes.
         //         add actions for manual relnotes and updatecheck
         //         show messagebox, if actions triggered or on first run
         QMessageBox msgBox;

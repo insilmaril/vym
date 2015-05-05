@@ -28,7 +28,7 @@ class DownloadAgent: public QObject
     QList<QNetworkReply *> currentDownloads;
 
 public:
-    DownloadAgent(const QUrl &u, const QString &d=QString() );
+    DownloadAgent(const QUrl &u);
     QString getDestination ();
     void setFinishedAction (VymModel *m, const QString &script);
     QString getFinishedScript();

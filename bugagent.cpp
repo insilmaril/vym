@@ -73,7 +73,7 @@ BugAgent::BugAgent (BranchItem *bi,const QString &u)
 
     // Visual hint that we are doing something  // FIXME-4 show spinner instead?
     if (missionType==SingleBug)
-	model->setHeading ("Updating: "+bi->getHeadingPlain(),bi );//FIXME-4 translation needed?
+        model->setHeading ("Updating: "+bi->getHeadingPlain(),bi );//FIXME-4 translation needed?
 	
 }
 
@@ -198,9 +198,9 @@ void BugAgent::setModelBugzillaData (VymModel *model, BranchItem *bi, const QStr
 	|| bug_status[bugID]=="VERIFIED"
 	|| bug_status[bugID]=="RESOLVED")
     {
-	model->setHeading ("("+ps+") - " + bugID + " - " + bug_desc[bugID],bi);
+    model->setHeadingPlainText ("("+ps+") - " + bugID + " - " + bug_desc[bugID],bi);
 	model->colorSubtree (Qt::blue,bi);
     }else   
-	model->setHeading (ps+ " - " + bugID + " - " + bug_desc[bugID],bi);
+    model->setHeadingPlainText (ps+ " - " + bugID + " - " + bug_desc[bugID],bi);
 }
 

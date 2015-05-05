@@ -4,7 +4,7 @@
 
 #include "texteditor.h"
 
-class NoteObj;
+class VymNote;
 
 class NoteEditor : public TextEditor {
     Q_OBJECT
@@ -12,8 +12,8 @@ public:
     NoteEditor(QString scope);
     ~NoteEditor();
 
-    NoteObj getNoteObj();
-    void setNote(const NoteObj &note);
+    VymNote getNote();
+    void setNote(const VymNote &note);
 };
 
 #endif

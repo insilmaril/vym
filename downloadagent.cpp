@@ -32,7 +32,7 @@ extern QString tmpVymDir;
 extern Settings settings;
 extern bool debug;
 
-DownloadAgent::DownloadAgent(const QUrl &u, const QString &d)
+DownloadAgent::DownloadAgent(const QUrl &u)
 {
     finishedScriptModelID = 0;
     url = u;

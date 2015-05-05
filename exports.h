@@ -66,7 +66,6 @@ class ExportASCII:public ExportBase
 {
 public:
     ExportASCII();
-    QString noteToASCII( const NoteObj &note, const QString &indent, const int &width);
     virtual void doExport();
     virtual QString underline (const QString &text, const QString &line);
 };

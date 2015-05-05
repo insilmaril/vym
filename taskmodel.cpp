@@ -81,7 +81,7 @@ QVariant TaskModel::data(const QModelIndex &index, int role) const
             BranchItem *bi = tasks.at(index.row())->getBranch();
             QString s;
             if (bi)
-                s = bi->getHeading(); 
+                s = bi->getHeadingPlain();
             else
                 qDebug()<<"bi == NULL";
 
@@ -89,7 +89,7 @@ QVariant TaskModel::data(const QModelIndex &index, int role) const
             while ( l > 0 && bi->depth() >0 )
             {
                 bi = bi->parentBranch();
-                if (bi) s = bi->getHeading() + " -> " + s;
+                if (bi) s = bi->getHeadingPlain() + " -> " + s;
                 l--;
             }
             return s;

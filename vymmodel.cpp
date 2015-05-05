@@ -407,8 +407,52 @@ QString VymModel::getDestPath()
     return destPath;
 }
 
-File::ErrorCode VymModel::loadMap (	
-    QString fname, 
+bool VymModel::parseVymText (const QString &s)
+{
+    bool ok = false;
+    BranchItem *bi = getSelectedBranch();
+    if (bi)
+    {
+        parseBaseHandler *handler = new parseVYMHandler;
+
+        bool blockSaveStateOrg=blockSaveState;
+        blockReposition=true;
+        blockSaveState=true;
+        QXmlInputSource source;
+        source.setData( s );
+        QXmlSimpleReader reader;
+        reader.setContentHandler( handler );
+        reader.setErrorHandler( handler );
+
+        handler->setInputString (s);
+        handler->setModel ( this );
+        handler->setLoadMode (ImportReplace, 0);
+
+        ok = reader.parse( source );
+        blockReposition=false;
+        blockSaveState=blockSaveStateOrg;
+        if ( ok )
+        {
+            emitNoteChanged( bi );
+            emitDataChanged( bi );
+            reposition();   // to generate bbox sizes
+
+            // Recalc priorities and sort
+            taskModel->recalcPriorities();
+        } else
+        {
+            QMessageBox::critical( 0, tr( "Critical Parse Error" ),
+                                   tr( handler->errorProtocol().toUtf8() ) );
+            // returnCode=1;
+            // Still return "success": the map maybe at least
+            // partially read by the parser
+        }
+    }
+    return ok;
+}
+
+File::ErrorCode VymModel::loadMap (
+    QString fname,
     const LoadMode &lmode, 
     const FileType &ftype,
     const int &contentFilter,
@@ -856,7 +900,7 @@ void VymModel::importDirInt(BranchItem *dst, QDir d)
 	    if (fi.isDir() && fi.fileName() != "." && fi.fileName() != ".." )
 	    {
 		bi=addNewBranchInt(dst,-2);
-		bi->setHeading (fi.fileName() );   
+                bi->setHeadingPlainText (fi.fileName() );
 		bi->setHeadingColor (QColor("blue"));
 		if ( !d.cd(fi.fileName()) ) 
 		    QMessageBox::critical (0,tr("Critical Import Error"),tr("Cannot find the directory %1").arg(fi.fileName()));
@@ -876,7 +920,7 @@ void VymModel::importDirInt(BranchItem *dst, QDir d)
 	    if (fi.isFile())
 	    {
 		bi=addNewBranchInt (dst,-2);
-		bi->setHeading (fi.fileName() );
+                bi->setHeadingPlainText (fi.fileName() );
 		bi->setHeadingColor (QColor("black"));
 		if (fi.fileName().right(4) == ".vym" )
 		    bi->setVymLink (fi.filePath());
@@ -1169,11 +1213,17 @@ void VymModel::undo()
 	qDebug() << "    ---------------------------";
     }	
 
+    // select  object before undo
+    if (!undoSelection.isEmpty())
+	select (undoSelection);
+
     bool noErr;
     QString errMsg;
     //parseAtom (undoCommand,noErr,errMsg);
     errMsg = QVariant(execute(undoCommand)).toString();
-    /* FIXME-2 add noErr to parameters of execute above or ignore (error message already within parseAtom)
+    // FIXME-2 add noErr to parameters of execute above or ignore (error message already within parseAtom)
+    // 
+    /*
     if (!noErr)
     {
         if (!options.isOn("batch") )
@@ -1323,22 +1373,23 @@ void VymModel::saveState(
 
     if (debug)
     {
-	//qDebug() << "          into="<< histPath;
-	qDebug() << "    stepsTotal="<<stepsTotal<<
-	", undosAvail="<<undosAvail<<
-	", redosAvail="<<redosAvail<<
-	", curStep="<<curStep;
-	qDebug() << "    ---------------------------";
-	qDebug() << "    comment="<<comment;
-	qDebug() << "    undoCom="<<undoCommand;
-	qDebug() << "    undoSel="<<undoSelection;
-	qDebug() << "    redoCom="<<redoCommand;
-	qDebug() << "    redoSel="<<redoSelection;
-	if (saveSel) qDebug() << "    saveSel="<<qPrintable (getSelectString(saveSel));
-	qDebug() << "    ---------------------------";
+        //qDebug() << "          into="<< histPath;
+        qDebug() << "    stepsTotal="<<stepsTotal<<
+        ", undosAvail="<<undosAvail<<
+        ", redosAvail="<<redosAvail<<
+        ", curStep="<<curStep;
+        qDebug() << "    ---------------------------";
+        qDebug() << "    comment="<<comment;
+        qDebug() << "    undoCom="<<undoCommand;
+        qDebug() << "    undoSel="<<undoSelection;
+        qDebug() << "    redoCom="<<redoCommand;
+        qDebug() << "    redoSel="<<redoSelection;
+        if (saveSel) qDebug() << "    saveSel="<<qPrintable (getSelectString(saveSel));
+        qDebug() << "    ---------------------------";
     }
 
     mainWindow->updateHistory (undoSet);
+
     setChanged();
     updateActions();
 }
@@ -1646,35 +1697,49 @@ QString VymModel::getSortFilter ()
     return sortFilter;
 }
 
-void VymModel::setHeading(const QString &s, BranchItem *bi)
+void VymModel::setHeading(const VymText &vt, BranchItem *bi)
+{
+    Heading h_old;
+    Heading h_new;
+    h_new = vt;
+    QString s = vt.getTextASCII();
+    if (!bi) bi=getSelectedBranch();
+    if (bi)
+    {
+        h_old = bi->getHeading();
+        if (h_old == h_new) return;
+        saveState(
+            bi, "parseVymText ('" +  h_old.saveToDir() + "')",
+            bi, "parseVymText ('" +  h_new.saveToDir() + "')",
+            QString("Set heading of %1 to \"%2\"").arg(getObjectName(bi)).arg(s) );
+        bi->setHeading(vt);
+        emitDataChanged ( bi);
+        emitUpdateQueries ();
+        reposition();
+    }
+}
+
+void VymModel::setHeadingPlainText(const QString &s, BranchItem *bi)
 {
     if (!bi) bi=getSelectedBranch();
     if (bi)
     {
-	if (bi->getHeading()==s) return;
-	saveState(
-	    bi,
-	    "setHeading (\""+bi->getHeading()+"\")", 
-	    bi,
-	    "setHeading (\""+s+"\")", 
-	    QString("Set heading of %1 to \"%2\"").arg(getObjectName(bi)).arg(s) );
-	bi->setHeading(s );
-	emitDataChanged ( bi);
-	emitUpdateQueries ();
-	reposition();
+        VymText vt;
+        vt.setPlainText(s);
+        if (bi->getHeading() == vt) return;
+        setHeading (vt, bi);
     }
 }
 
-QString VymModel::getHeading()
+Heading VymModel::getHeading()
 {
     TreeItem *selti=getSelectedItem();
-    if (selti)
-	return selti->getHeading();
-    else    
-	return QString();
+    if (selti) return  selti->getHeading();
+    qWarning() << "VymModel::getHeading Nothing selected.";
+    return Heading();
 }
 
-bool VymModel::hasRichTextHeading()
+bool VymModel::hasRichTextHeading() //FIXME-1 needed?
 {
     TreeItem *selti=getSelectedItem();
     if (selti)
@@ -1683,30 +1748,37 @@ bool VymModel::hasRichTextHeading()
     return false;
 }
 
-void VymModel::setNote(const QString &s)
+void VymModel::setNote(const  VymNote &vn)
 {
     TreeItem *selti=getSelectedItem();
     if (selti) 
     {
-	saveState(
-	    selti,
-	    "setNote (\"" + selti->getNote() + "\")", 
-	    selti,
-	    "setNote (\"" + s + "\")", 
-	    QString("Set note of %1 ").arg(getObjectName(selti)) );
+        VymNote n_old;
+        VymNote n_new;
+        n_old = selti->getNote();
+        n_new = vn;
+        saveState(
+            selti,
+            "parseVymText ('" + n_old.saveToDir() + "')",
+            selti,
+            "parseVymText ('" + n_new.saveToDir() + "')",
+            QString("Set note of %1 to \"%2\"").arg(getObjectName(selti)).arg(n_new.getTextASCII().left(20) ) );
+        selti->setNote( n_new );
+        emitNoteChanged( selti );
+        emitDataChanged( selti );
     }
-    selti->setNote(s);
-    emitNoteChanged(selti);
-    emitDataChanged(selti);
 }
 
-QString VymModel::getNote()
+VymNote VymModel::getNote()
 {
     TreeItem *selti=getSelectedItem();
     if (selti)
-	return selti->getNote();
-    else    
-	return QString();
+    {
+        VymNote n = selti->getNote();
+        return n;
+    }
+    qWarning() << "VymModel::getNote Nothing selected.";
+    return VymNote();
 }
 
 bool VymModel::hasRichTextNote()
@@ -1714,6 +1786,7 @@ bool VymModel::hasRichTextNote()
     TreeItem *selti=getSelectedItem();
     if (selti)
     {
+        return selti->getNote().isRichText();
     }
     return false;
 }
@@ -1723,13 +1796,17 @@ void VymModel::loadNote (const QString &fn)
     BranchItem *selbi=getSelectedBranch();
     if (selbi)
     {
-	QString n;
-	if (!loadStringFromDisk (fn,n))
-	    qWarning ()<<"VymModel::loadNote Couldn't load "<<fn;
-	else
-	    setNote (n);
+        QString n;
+        if (!loadStringFromDisk (fn,n))
+            qWarning ()<<"VymModel::loadNote Couldn't load "<<fn;
+        else
+        {
+            VymNote vn;
+            vn.setAutoText(n);
+            setNote (vn);
+        }
     } else
-	qWarning ("VymModel::loadNote no branch selected");
+        qWarning ("VymModel::loadNote no branch selected");
 }
 
 void VymModel::saveNote (const QString &fn)
@@ -1737,18 +1814,16 @@ void VymModel::saveNote (const QString &fn)
     BranchItem *selbi=getSelectedBranch();
     if (selbi)
     {
-	QString n=selbi->getNote();
-	if (n.isEmpty())
-	    qWarning ()<<"VymModel::saveNote  note is empty, won't save to "<<fn;
-	else
-	{
-	    if (!saveStringToDisk (fn,n))
-		qWarning ()<<"VymModel::saveNote Couldn't save "<<fn;
-	    else
-		selbi->setNote (n);
-	}   
+        QString n=selbi->getNoteText();
+        if ( selbi->getNote().isEmpty() )
+            qWarning ()<<"VymModel::saveNote  note is empty, won't save to "<<fn;
+        else
+        {
+            if (!saveStringToDisk (fn, selbi->getNote().saveToDir() ))
+                qWarning ()<<"VymModel::saveNote Couldn't save "<<fn;
+        }
     } else
-	qWarning ("VymModel::saveNote no branch selected");
+        qWarning ("VymModel::saveNote no branch selected");
 }
 
 void VymModel::findDuplicateURLs()  // FIXME-3 needs GUI
@@ -1777,9 +1852,9 @@ void VymModel::findDuplicateURLs()  // FIXME-3 needs GUI
 	    if (  i-1==firstdup )
 	    {
 		qDebug() << firstdup.key();
-		qDebug() << " - "<< firstdup.value() <<" - "<<firstdup.value()->getHeading();
+        qDebug() << " - "<< firstdup.value() <<" - "<<firstdup.value()->getHeading().getText();
 	    }	
-	    qDebug() << " - "<< i.value() <<" - "<<i.value()->getHeading();
+        qDebug() << " - "<< i.value() <<" - "<<i.value()->getHeading().getText();
 	} else
 	    firstdup=i;
 
@@ -1802,7 +1877,7 @@ bool  VymModel::findAll (FindResultModel *rmodel, QString s, Qt::CaseSensitivity
     while (cur) 
     {
 	lastParent=NULL;
-	if (cur->getHeading().contains (s,cs))
+    if (cur->getHeading().getTextASCII().contains (s,cs))
 	{
 	    lastParent=rmodel->addItem (cur);
 	    hit=true;
@@ -1868,7 +1943,7 @@ BranchItem* VymModel::findText (QString s,Qt::CaseSensitivity cs)
 	if (findCurrent)
 	{
 	    // Searching in Note
-	    if (findCurrent->getNote().contains(findString,cs))
+        if (findCurrent->getNoteText().contains(findString,cs))
 	    {
 		select (findCurrent);
 		if (noteEditor->findText(findString,flags)) 
@@ -1878,7 +1953,7 @@ BranchItem* VymModel::findText (QString s,Qt::CaseSensitivity cs)
 		}   
 	    }
 	    // Searching in Heading
-	    if (searching && findCurrent->getHeading().contains (findString,cs) ) 
+        if (searching && findCurrent->getHeading().getTextASCII().contains (findString,cs) )
 	    {
 		select(findCurrent);
 		searching=false;
@@ -2350,10 +2425,12 @@ void VymModel::addTimestamp()	//FIXME-4 new function, localize
     {
 	QDate today=QDate::currentDate();
 	QChar c='0';
-	selbi->setHeading (QString ("%1-%2-%3")
-	    .arg(today.year(),4,10,c)
-	    .arg(today.month(),2,10,c)
-	    .arg(today.day(),2,10,c));
+        selbi->setHeadingPlainText (
+        QString ("%1-%2-%3")
+            .arg(today.year(),4,10,c)
+            .arg(today.month(),2,10,c)
+            .arg(today.day(),2,10,c)
+    );
 	emitDataChanged ( selbi);	
 	reposition();
 	select (selbi);
@@ -2755,15 +2832,16 @@ BranchItem* VymModel::addMapCenter (bool saveStateFlag)
     BranchItem *bi=addMapCenter (contextPos);
     updateActions();
     emitShowSelection();
-    if (saveStateFlag) saveState (
-	bi,
-	"delete()",
-	NULL,
-	QString ("addMapCenter (%1,%2)").arg (contextPos.x()).arg(contextPos.y()),
-	QString ("Adding MapCenter to (%1,%2)").arg (contextPos.x()).arg(contextPos.y())
-    );	
-    emitUpdateLayout();	
-    return bi;	
+    if (saveStateFlag)
+        saveState (
+            bi,
+            "delete()",
+            NULL,
+            QString ("addMapCenter (%1,%2)").arg (contextPos.x()).arg(contextPos.y()),
+            QString ("Adding MapCenter to (%1,%2)").arg (contextPos.x()).arg(contextPos.y())
+        );
+            emitUpdateLayout();
+    return bi;
 }
 
 BranchItem* VymModel::addMapCenter(QPointF absPos)  
@@ -2776,7 +2854,7 @@ BranchItem* VymModel::addMapCenter(QPointF absPos)
     QList<QVariant> cData;
     cData << "VM:addMapCenter" << "undef";
     BranchItem *newbi=new BranchItem (cData,rootItem);
-    newbi->setHeading (QApplication::translate("Heading of mapcenter in new map", "New map"));
+    newbi->setHeadingPlainText (tr("New map", "New map"));
     int n=rootItem->getRowNumAppend (newbi);
 
     emit (layoutAboutToBeChanged() );
@@ -3452,7 +3530,7 @@ ItemList VymModel::getTargets()
     while (cur) 
     {
 	if (cur->hasActiveSystemFlag("system-target"))
-	    targets[cur->getID()]=cur->getHeading();
+        targets[cur->getID()] = (cur->getHeading()).getTextASCII();
 	nextBranch(cur,prev);
     }
     return targets; 
@@ -3571,7 +3649,7 @@ void VymModel::note2URLs()
 	    QString ("Extract URLs from note of %1").arg(getObjectName(selbi))
 	);  
 
-	QString n=selbi->getNote();
+    QString n=selbi->getNoteText();
 	if (n.isEmpty()) return;
 	QRegExp re ("(http.*)(\\s|\"|')");
 	re.setMinimal (true);
@@ -3581,7 +3659,7 @@ void VymModel::note2URLs()
 	while ((pos = re.indexIn(n, pos)) != -1) 
 	{
 	    bi=createBranch (selbi);
-	    bi->setHeading (re.cap(1));
+            bi->setHeadingPlainText (re.cap(1));
 	    bi->setURL (re.cap(1));
 	    emitDataChanged (bi);
 	    pos += re.matchedLength();
@@ -3594,7 +3672,7 @@ void VymModel::editHeading2URL()
 {
     TreeItem *selti=getSelectedItem();
     if (selti)
-	setURL (selti->getHeading());
+    setURL (selti->getHeadingPlain());
 }   
 
 void VymModel::editBugzilla2URL()   
@@ -3602,7 +3680,7 @@ void VymModel::editBugzilla2URL()
     TreeItem *selti=getSelectedItem();
     if (selti)
     {	    
-	QString h=selti->getHeading();
+    QString h=selti->getHeadingPlain();
 	QRegExp rx("(\\d+)");
 	if (rx.indexIn(h) !=-1)
 	    setURL ("https://bugzilla.novell.com/show_bug.cgi?id="+rx.cap(1) );
@@ -3661,7 +3739,7 @@ void VymModel::editFATE2URL()
     TreeItem *selti=getSelectedItem();
     if (selti)
     {	    
-	QString url= "http://keeper.suse.de:8080/webfate/match/id?value=ID"+selti->getHeading();
+    QString url= "http://keeper.suse.de:8080/webfate/match/id?value=ID"+selti->getHeadingPlain();
 	saveState(
 	    selti,
 	    "setURL (\""+selti->getURL()+"\")",
@@ -4151,9 +4229,13 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	    else
 		returnValue=bo->getFrame()->getFrameTypeName();
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="getHeading")
+	} else if (com=="getHeadingPlainText")
 	{ 
-	    returnValue=getHeading();
+            returnValue = getHeading().getTextASCII();
+	/////////////////////////////////////////////////////////////////////
+	} else if (com=="getHeadingXML")
+	{ 
+            returnValue = getHeading().saveToDir();
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="getMapAuthor")
 	{ 
@@ -4167,9 +4249,13 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	{ 
 	    returnValue=title;
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="getNote")
+	} else if (com=="getNotePlainText")
 	{ 
-	    returnValue=getNote();
+            returnValue= getNote().getTextASCII();
+	/////////////////////////////////////////////////////////////////////
+	} else if (com=="getNoteXML")
+	{ 
+            returnValue= getNote().saveToDir();
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="getSelectString")
 	{ 
@@ -4177,11 +4263,11 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="getTaskSleepDays")
 	{ 
-      Task *task=selbi->getTask();
-      if (task)
-        returnValue=task->getDaysSleep();
-      else
-        parser.setError (Aborted,"Branch has no task set");
+            Task *task=selbi->getTask();
+            if (task)
+                returnValue=task->getDaysSleep();
+            else
+                parser.setError (Aborted,"Branch has no task set");
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="getURL")
 	{ 
@@ -4216,16 +4302,20 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	    s=parser.parString(ok,0);
 	    returnValue=selti->hasActiveStandardFlag(s);
 	/////////////////////////////////////////////////////////////////////
+	} else if (com=="hasNote")
+	{
+	    returnValue = !getNote().isEmpty();
+	/////////////////////////////////////////////////////////////////////
 	} else if (com=="hasRichTextNote")
 	{
 	    returnValue=hasRichTextNote();
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="hasTask")
 	{ 
-      if (selbi && selbi->getTask() )
-        returnValue=true;
-      else
-        returnValue=false;
+            if (selbi && selbi->getTask() )
+                returnValue=true;
+            else
+                returnValue=false;
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="importDir")
 	{
@@ -4288,7 +4378,12 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	} else if (com=="note2URLs")
 	{
 	    note2URLs();
-	/////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////
+        } else if (com=="parseVymText")
+        {
+            s = parser.parString(ok,0);
+            parseVymText( s );
+        /////////////////////////////////////////////////////////////////////
 	} else if (com=="paste")
 	{
 	    paste();
@@ -4467,10 +4562,10 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	    n=parser.parInt(ok,0);
 	    setFrameBorderWidth (n);
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="setHeading")
+	} else if (com=="setHeadingPlainText")
 	{
 	    s=parser.parString (ok,0);
-	    setHeading (s);
+            setHeadingPlainText (s); // FIXME-1  what about RT?
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="setHideExport")
 	{
@@ -4552,10 +4647,12 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	    setMapZoomFactor(x);
 	    mapEditor->setZoomFactorTarget(x);
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="setNote")
+	} else if (com=="setNotePlainText")
 	{
 	    s=parser.parString (ok,0);
-	    setNote (s);
+            VymNote vn;
+            vn.setPlainText(s);
+            setNote (vn);
 	/////////////////////////////////////////////////////////////////////
 	} else if (com=="setScale")
 	{
@@ -5150,17 +5247,17 @@ void VymModel::updateNoteFlag()
     TreeItem *selti=getSelectedItem();
     if (selti)
     {
-	if (!mapChanged)
-	{
-	    setChanged();
-	    updateActions();
-	}
+        if (!mapChanged)
+        {
+            setChanged();
+            updateActions();
+        }
 
-	if (noteEditor->isEmpty()) 
-	    selti->clearNote();
-	else
-	    selti->setNoteObj (noteEditor->getNote());
-	emitDataChanged(selti);	
+        if (noteEditor->isEmpty())
+            selti->clearNote();
+        else
+            selti->setNote(noteEditor->getNote());
+        emitDataChanged(selti);
         reposition();
     }
 }
@@ -5889,13 +5986,13 @@ bool VymModel::select (const QModelIndex &index)
 {
     if (index.isValid() )
     {
-	TreeItem *ti=getItem (index);
-	if (ti->isBranchLikeType() )
-	    ((BranchItem*)ti)->tmpUnscroll(); 
-	reposition();
-	selModel->select (index,QItemSelectionModel::ClearAndSelect  );
-	appendSelection();
-	return true;
+        TreeItem *ti=getItem (index);
+        if (ti->isBranchLikeType() )
+            ((BranchItem*)ti)->tmpUnscroll();
+        reposition();
+        selModel->select (index,QItemSelectionModel::ClearAndSelect  );
+        appendSelection();
+        return true;
     }
     return false;
 }
@@ -6014,8 +6111,8 @@ void VymModel::emitDataChanged (TreeItem *ti)
     emit ( dataChanged (ix,ix) );
     if (!blockReposition && ti->isBranchLikeType() && ((BranchItem*)ti)->getTask()  )
     {
-	taskModel->emitDataChanged ( ((BranchItem*)ti)->getTask() );
-	taskModel->recalcPriorities();
+        taskModel->emitDataChanged ( ((BranchItem*)ti)->getTask() );
+        taskModel->recalcPriorities();
     }
 }
 
@@ -6317,7 +6414,7 @@ SlideItem* VymModel::addSlide()
         inScript.replace("CURRENT_ID", "\"" + seli->getUuid().toString() + "\"");
 
 	si->setInScript(inScript);
-	slideModel->setData ( slideModel->index(si), seli->getHeading() );
+    slideModel->setData ( slideModel->index(si), seli->getHeadingPlain() );
     }
     QString s="<vymmap>" + si->saveToDir() + "</vymmap>";
     int pos=si->childNumber();

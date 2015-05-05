@@ -2,9 +2,9 @@
 
 #include <QMenuBar>
 
-#include "noteobj.h"
+#include "vymnote.h"
 #include "settings.h"
-
+ 
 extern Settings settings;
 extern QString vymName;
 
@@ -20,20 +20,26 @@ NoteEditor::NoteEditor(QString scope):TextEditor(scope)
 
 NoteEditor::~NoteEditor() {}
 
-NoteObj NoteEditor::getNoteObj()
+VymNote NoteEditor::getNote()
 {
-    NoteObj note (getText() );
+    VymNote note;
+    if (actionFormatRichText->isChecked() )
+        note.setRichText( getText());
+    else
+        note.setPlainText( getText());
     note.setFontHint (getFontHint() );
     note.setFilenameHint (getFilenameHint () );
     return note;
 }
 
-void NoteEditor::setNote (const NoteObj &note)
+void NoteEditor::setNote (const VymNote &note)  //FIXME-0 maybe replace with setAutoText ...
 {
-    setText (note.getNote() );
-    if (!note.isRichText ())
-	setFontHint (note.getFontHint() );
+    if (note.isRichText ())
+        setRichText(note.getText());
+    else
+    {
+        setPlainText(note.getText());
+        setFontHint (note.getFontHint() );
+    }
     setFilenameHint (note.getFilenameHint() );
 }
-
-

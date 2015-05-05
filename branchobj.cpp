@@ -378,8 +378,8 @@ void BranchObj::updateData()
         qWarning ("BranchObj::udpateHeading treeItem==NULL");
         return;
     }
-    QString s=treeItem->getHeading();
-    if (s!=heading->text()) heading->setText (s);
+    QString s = treeItem->getHeadingText();
+    if ( s!=heading->text()) heading->setText (s);
 
     QStringList TIactiveFlags=treeItem->activeStandardFlagNames();
 

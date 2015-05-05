@@ -7,7 +7,7 @@
 class QTextEdit;
 class QComboBox;
 
-#include "noteobj.h"
+#include "vymtext.h"
 
 enum EditorState {inactiveEditor,emptyEditor,filledEditor};
 
@@ -29,7 +29,7 @@ public:
     void setFilenameHint (const QString&);
     QString getFilenameHint ();
     QString getText();
-    NoteObj getNote();
+    VymText getVymText();
 
     bool findText(const QString &, const QTextDocument::FindFlags &); 
     bool findText(const QString &, const QTextDocument::FindFlags &,int i); 
@@ -45,7 +45,10 @@ protected:
 
 public slots:
     void editorChanged();	    // received when text() changed
-    void setText(const QString &);  // set Text (by MapEditor)
+    void setRichText(const QString &t);
+    void setPlainText(const QString &t);
+    void setTextAuto(const QString &);  // set Text and autodetect mode
+    void setVymText(const VymText &vt);
     void setInactive();		    // Nothing can be entered
     void editCopyAll();
 
