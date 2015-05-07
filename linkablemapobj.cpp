@@ -338,26 +338,27 @@ void LinkableMapObj::setOrientation()
 {
     if (!parObj)
     {
-        orientation=UndefinedOrientation;
+        orientation = UndefinedOrientation;
         return;
     }
 
+    //
     // Set orientation, first look for orientation of parent
-    if (false) //(parObj->getOrientation() != UndefinedOrientation )
+    if (false) //(parObj->getOrientation() != UndefinedOrientation )    //FIXME-2 unused!
         // use the orientation of the parent:
-        orientation=parObj->getOrientation();
+        orientation = parObj->getOrientation();
     else
     {
         // calc orientation depending on position rel to parent
         if (useRelPos)
         {
             if (relPos.x() < 0)
-                orientation=LeftOfCenter;
+                orientation = LeftOfCenter;
             else
-                orientation=RightOfCenter;
+                orientation = RightOfCenter;
         }  else
             // use the orientation of the parent:
-            orientation=parObj->getOrientation();
+            orientation = parObj->getOrientation();
     }
 }
 
@@ -473,8 +474,8 @@ void LinkableMapObj::updateLinkGeometry()
         p2y=QPointF( parObj->getParPos() ).y();
     }
 
-    setDockPos(); // Call overloaded method
     setOrientation();
+    setDockPos(); // Call overloaded method
 
     double p1x=parPos.x();  // Link is drawn from P1 to P2
     double p1y=parPos.y();

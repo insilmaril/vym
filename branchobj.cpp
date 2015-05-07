@@ -111,30 +111,29 @@ void BranchObj::setParObjTmp(LinkableMapObj* dst, QPointF m, int off)
 
             // new parent is just a branch, link to it
             bodst->calcBBoxSizeWithChildren();
-            QRectF t=bodst->getTotalBBox();
+            QRectF t = bodst->getTotalBBox();
             if (dsti->getLastBranch())
-                y=t.y() + t.height() ;
+                // Move below children of destination
+                y = t.y() + t.height() ;
             else
-                y=t.y();
-
-            y=t.bottom();
-
+                // Move left or right to destination
+                y = t.y()  ;
         } else
         {
-            if (off<0)
+            if (off < 0)
                 // we want to link above dst
-                y=bodst->y() - height() + 12;
+                y = bodst->y() - height() + 12;
             else
                 // we want to link below dst
                 // Bottom of sel should be 5 pixels above
                 // the bottom of the branch _below_ the target:
                 // Don't try to find that branch, guess 12 pixels
-                y=bodst->getChildRefPos().y()  -height() + 12;
+                y = bodst->getChildRefPos().y()  -height() + 12;
         }
         if (bodst->getOrientation()==LinkableMapObj::LeftOfCenter)
-            move ( bodst->getChildRefPos().x() - linkwidth, y );
+            move ( bodst->getChildRefPos().x() - linkwidth - bboxTotal.width(), y );    
         else
-            move (bodst->getChildRefPos().x() + linkwidth, y );
+            move ( bodst->getChildRefPos().x() + linkwidth, y );
     }
 
     // updateLinkGeometry is called implicitly in move
@@ -331,7 +330,7 @@ void BranchObj::setDockPos()
 {
     floatRefPos=ornamentsBBox.center();
 
-    if (treeItem->getType()==TreeItem::MapCenter)
+    if (treeItem->getType() == TreeItem::MapCenter)
     {
         // set childRefPos to middle of MapCenterObj
         QRectF r=clickPoly.boundingRect();
@@ -340,10 +339,9 @@ void BranchObj::setDockPos()
         parPos=childRefPos;
         for (int i=0; i<treeItem->branchCount(); ++i)
             treeItem->getBranchObjNum(i)->updateLinkGeometry();
-
     } else
     {
-        if (orientation==LinkableMapObj::LeftOfCenter )
+        if (orientation == LinkableMapObj::LeftOfCenter )
         {
             // Left of center
             if ( ((BranchItem*)treeItem)->getFrameIncludeChildren() )
@@ -506,18 +504,18 @@ void BranchObj::alignRelativeTo (QPointF ref,bool alignSelf)
         QString o;
         switch (orientation)
         {	
-            case UndefinedOrientation: o="UndefOrientation";
-            case LeftOfCenter: o="LeftOfCenter";
-            case RightOfCenter: o="RightOfCenter";
+            case UndefinedOrientation: o = "UndefOrientation"; break;
+            case LeftOfCenter: o = "LeftOfCenter"; break;
+            case RightOfCenter: o = "RightOfCenter"; break;
         }
             
         QString h=QString (depth+1,' ');
-        h+=treeItem->getHeading();
-        h+=QString (15,' ');
-        h.truncate (15);
+        h += treeItem->getHeadingPlain();
+        h += QString (25,' ');
+        h.truncate (25);
         QPointF pp; 
-        if (parObj) pp=parObj->getChildRefPos();
-        qDebug() << "BO::alignRelTo for "<<h;
+        if (parObj) pp = parObj->getChildRefPos();
+        qDebug() << "BO::alignRelTo for "<<h
     //    qDebug() << "    d="<<depth;
     //    qDebug() <<"   ref="<<ref;
     //    qDebug() <<"    th="<<th;
@@ -525,11 +523,12 @@ void BranchObj::alignRelativeTo (QPointF ref,bool alignSelf)
     //    if (ch < th) qDebug()<<"   ch<th !";
     //    qDebug() <<"  parO="<<parObj;
         //qDebug() <<   "  bbox.tL="<<bboxTotal.topLeft();
+        << "  useRelPos=" << useRelPos 
     //    qDebug() <<"absPos="<<absPos
     //	<< "  relPos="<<relPos
     //	<< "  parPos="<<pp
     //	<< "  bbox="<<bbox
-    //	<< "  orient="<<o<<" "<<orientation;
+    	<< "  orient="<<o<<" "<<orientation;
     //	<< "  alignSelf="<<alignSelf
     //	<< "  scrolled="<<((BranchItem*)treeItem)->isScrolled()
     //	<< "  pad="<<topPad<<","<<botPad<<","<<leftPad<<","<<rightPad
@@ -565,7 +564,6 @@ void BranchObj::alignRelativeTo (QPointF ref,bool alignSelf)
                         break;
                     case LinkableMapObj::RightOfCenter:
                         move (ref.x() , ref.y() + (th - bbox.height())/2 );
-                        //move (ref.x() , ref.y() );
                         break;
                     default:
                         qWarning ("LMO::alignRelativeTo: oops, no orientation given for BO...");
