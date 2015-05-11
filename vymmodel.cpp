@@ -2915,14 +2915,13 @@ BranchItem* VymModel::addNewBranchInt(BranchItem *dst,int pos)
     }
     emit (layoutChanged() );
 
+    newbi->createMapObj(mapEditor->getScene());
+    
     // Set color of heading to that of parent
-    vout<<"**** VM::addNewBInt col="<<parbi->getHeadingColor().name();
+    vout<<"**** VM::addNewBInt parbi->color="<<parbi->getHeadingColor().name();
     newbi->setHeadingColor (parbi->getHeadingColor());
     vout.flush();
 
-    // save scroll state. If scrolled, automatically select
-    // new branch in order to tmp unscroll parent...
-    newbi->createMapObj(mapEditor->getScene());
     reposition();
     return newbi;
 }   
