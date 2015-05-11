@@ -16,7 +16,6 @@
 
 #include <typeinfo>
 
-#include "vymnote.h"	//Still needed for ascii conversion FIXME-00
 #include "settings.h"
 #include "shortcuts.h"
 
@@ -756,21 +755,18 @@ void TextEditor::textSave()
 
 void TextEditor::textExportAsASCII()
 {
-    VymNote no;         // FIXME-0 hm, shouldn't be necessary here...
-    no.setPlainText (e->toPlainText());
-    QString text = no.getTextASCII();
     QString fn,s;
     if (!filenameHint.isEmpty())
     {
         if (!filenameHint.contains (".txt"))
-            s=filenameHint+".txt";
+            s = filenameHint+".txt";
         else
-            s=filenameHint;
+            s = filenameHint;
     } else
-        s=QString::null;
-    QString caption=tr("Export Note to single file (ASCII)");
+        s = QString::null;
+    QString caption = tr("Export Note to single file (ASCII)");
     fn = QFileDialog::getSaveFileName(this, caption, s, "VYM Note (ASCII) (*.txt);;All files (*)" );
-    int ret=-1;
+    int ret = -1;
 
     if ( !fn.isEmpty() )
     {
@@ -797,7 +793,7 @@ void TextEditor::textExportAsASCII()
         else
         {
             QTextStream t( &file );
-            t << text;
+            t << getVymText().getTextASCII();
             file.close();
 
             statusBar()->showMessage( QString( "Note exported as %1" ).arg( fn ), statusbarTime );

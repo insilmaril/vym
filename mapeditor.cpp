@@ -1392,11 +1392,7 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
 		    {
 			XLinkItem *xli=ti->getXLinkItemNum(i);
 			BranchItem *bit=xli->getPartnerBranch();
-			if (bit) 
-			{
-                alist.append (new QAction(ti->getXLinkItemNum(i)->getPartnerBranch()->getHeadingPlain(),&menu));    // FIXME-0 what about RT heading??
-			    blist.append (bit);
-			}
+			if (bit) alist.append (new QAction(ti->getXLinkItemNum(i)->getPartnerBranch()->getHeadingPlain(),&menu));
 		    }	
 		    menu.addActions (alist);	
 		    QAction *ra=menu.exec (e->globalPos() );
