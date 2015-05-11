@@ -5501,13 +5501,19 @@ void Main::standardFlagChanged()
     }
 }
 
+extern QTextStream vout;
 void Main::testFunction1()
 {
     VymModel *m = currentModel();
     if (m)
     {
-        QString s("<heading textMode=\"richText\"><![CDATA[Foo<b>bar</b>]]></heading>");
-        qDebug()<<"Main::test "<<m->parseVymText(s);
+        BranchItem *bi=m->getSelectedBranch();
+        if (bi)
+        {
+            vout<<" ME::  ticol="<<bi->getHeadingColor().name();
+            vout<<" oocol="<<((BranchObj*)(bi->getLMO()))->getColor().name();
+            vout.flush();
+        }
     }
 }
 

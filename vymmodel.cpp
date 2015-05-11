@@ -2873,6 +2873,7 @@ BranchItem* VymModel::addMapCenter(QPointF absPos)
     return newbi;
 }
 
+extern QTextStream vout;  // FIXME-0 testing
 BranchItem* VymModel::addNewBranchInt(BranchItem *dst,int pos)
 {
     // Depending on pos:
@@ -2915,7 +2916,9 @@ BranchItem* VymModel::addNewBranchInt(BranchItem *dst,int pos)
     emit (layoutChanged() );
 
     // Set color of heading to that of parent
+    vout<<"**** VM::addNewBInt col="<<parbi->getHeadingColor().name();
     newbi->setHeadingColor (parbi->getHeadingColor());
+    vout.flush();
 
     // save scroll state. If scrolled, automatically select
     // new branch in order to tmp unscroll parent...
