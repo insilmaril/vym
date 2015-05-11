@@ -1,7 +1,7 @@
 #include "xmlobj.h"
 
 #include <QRegExp>
-#include <QString>
+#include <QStringList>
 
 
 // returns masked "<" ">" "&"
@@ -73,10 +73,17 @@ QString quoteUmlaut(const QString &s)
 
 QString getCDATA(const QString &s)
 {
-    // Do we need to add CDATA after all?
+    // Do we need to use CDATA after all?
     if (s.contains("<") || s.contains(">") or s.contains("\"") or s.contains("&") )
-        return "<![CDATA[" + s + "]]>"; // FIXME-1  take care of s containing "CDATA"
-    else
+    {
+        QStringList list = s.split("]]>");
+        int i = s.indexOf("]]>");
+        if ( i >= 0 )
+            // split up and calculate recursively
+            return getCDATA(s.left(i+2)) + getCDATA(s.right(s.length() - i - 2));
+        else
+            return "<![CDATA[" + s + "]]>";
+    } else
         return s;
 }
 
