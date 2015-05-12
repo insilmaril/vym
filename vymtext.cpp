@@ -90,7 +90,6 @@ void VymText::setRichText (const QString &s)
 
 void VymText::setPlainText (const QString &s)
 {
-    clear();
     text = s;
     textmode = PlainText;
 }

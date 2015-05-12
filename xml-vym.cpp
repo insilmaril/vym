@@ -195,8 +195,11 @@ bool parseVYMHandler::startElement  ( const QString&, const QString&,
         }
         if (!atts.value( "textColor").isEmpty() )
         {
+            // For compatibility with <= 2.4.0 set both branch and
+            // heading color
             col.setNamedColor(atts.value("textColor"));
             lastBranch->setHeadingColor(col );
+            vymtext.setColor(col);
         }        
     } else if ( eName == "task" && (state == StateMapCenter||state==StateBranch)) 
     {

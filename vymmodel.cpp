@@ -1724,7 +1724,7 @@ void VymModel::setHeadingPlainText(const QString &s, BranchItem *bi)
     if (!bi) bi=getSelectedBranch();
     if (bi)
     {
-        VymText vt;
+        VymText vt = bi->getHeading();
         vt.setPlainText(s);
         if (bi->getHeading() == vt) return;
         setHeading (vt, bi);
@@ -2873,7 +2873,6 @@ BranchItem* VymModel::addMapCenter(QPointF absPos)
     return newbi;
 }
 
-extern QTextStream vout;  // FIXME-0 testing
 BranchItem* VymModel::addNewBranchInt(BranchItem *dst,int pos)
 {
     // Depending on pos:
@@ -2918,9 +2917,7 @@ BranchItem* VymModel::addNewBranchInt(BranchItem *dst,int pos)
     newbi->createMapObj(mapEditor->getScene());
     
     // Set color of heading to that of parent
-    vout<<"**** VM::addNewBInt parbi->color="<<parbi->getHeadingColor().name();
     newbi->setHeadingColor (parbi->getHeadingColor());
-    vout.flush();
 
     reposition();
     return newbi;

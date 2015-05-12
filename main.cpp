@@ -218,7 +218,7 @@ int main(int argc, char* argv[])
     taskModel = new TaskModel();
 
     debug=options.isOn ("debug");
-    debug=true;
+    //debug=true;
     testmode=options.isOn ("testmode");
 
     QString pidString=QString ("%1").arg(getpid());
