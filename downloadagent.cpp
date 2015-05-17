@@ -90,7 +90,8 @@ void DownloadAgent::doDownload(const QUrl &url)
     {
         QNetworkCookie cookie;
         cookie.setPath("/");
-        cookie.setDomain("localhost");
+//        cookie.setDomain("localhost");
+        cookie.setDomain("www.insilmaril.de");
         cookie.setName("vymID");
         cookie.setValue(cookievalue);
         //cookie.setExpirationDate( settings.value("/downloads/cookies/id/expires", QVariant(QDateTime::currentDateTime().addSecs(60) )).toDateTime() ); // testing
