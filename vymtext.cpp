@@ -136,7 +136,7 @@ QString VymText::getTextASCII(QString indent, const int &) const //FIXME-3 use w
             QString newnote;
             QString curline;
             uint n=0;
-            while ( n < text.length() )
+            while ( (int)n < text.length() )
             {
                 curline = curline + text.at(n);
                 if ( text.at(n) == '\n' )

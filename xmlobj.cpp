@@ -74,7 +74,7 @@ QString quoteUmlaut(const QString &s)
 QString getCDATA(const QString &s)
 {
     // Do we need to use CDATA after all?
-    if (s.contains("<") || s.contains(">") or s.contains("\"") or s.contains("&") )
+    if (s.contains("<") || s.contains(">") || s.contains("\"") || s.contains("&") )
     {
         QStringList list = s.split("]]>");
         int i = s.indexOf("]]>");

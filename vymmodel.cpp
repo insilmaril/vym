@@ -3964,6 +3964,9 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
     if (parser.errorLevel()==NoError && parser.checkParameters(selti) )
     {
 	QString com=parser.getCommand();
+    // - MS VS2013 compiler has nested if limit - work around that with
+    //   do{}while(0); and breaks
+    do {
 	/////////////////////////////////////////////////////////////////////
 	if (com=="addBranch")  
 	{
@@ -3971,17 +3974,23 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 		addNewBranch ();
 	    else
 		addNewBranch ( selbi,parser.parInt (ok,0) );
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="addBranchBefore")
+    if (com=="addBranchBefore")
 	{
 	    addNewBranchBefore ();
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com==QString("addMapCenter"))
+    if (com==QString("addMapCenter"))
 	{
 	    x=parser.parDouble (ok,0);
 	    y=parser.parDouble (ok,1);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com==QString("addMapInsert"))
+    if (com==QString("addMapInsert"))
 	{
 	    t=parser.parString (ok,0);  // path to map
 	    int contentFilter=0x0000;
@@ -4012,8 +4021,10 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 		if (File::Aborted==loadMap (t,ImportAdd,VymMap,contentFilter,pos) )
 		    parser.setError (Aborted,QString("Couldn't load %1").arg(t) );
 	    }	
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com==QString("addMapReplace"))
+    if (com==QString("addMapReplace"))
 	{
 	    t=parser.parString (ok,0);	// path to map
 	    if (QDir::isRelativePath(t)) 
@@ -4021,12 +4032,16 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	    saveStateBeforeLoad (ImportReplace, t);
 	    if (File::Aborted==loadMap (t,ImportReplace,VymMap) )
 		parser.setError (Aborted,QString("Couldn't load %1").arg(t) );
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com==QString("addSlide"))
+    if (com==QString("addSlide"))
 	{
 	    addSlide();
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com==QString("addXLink")) 
+    if (com==QString("addXLink"))
 	{
 	    s=parser.parString (ok,0);	// begin
 	    t=parser.parString (ok,1);	// end
@@ -4071,16 +4086,22 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 		
 	    } else
 		parser.setError (Aborted,"Couldn't find begin or end of xLink");
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="branchCount")
+    if (com=="branchCount")
 	{ 
 	    returnValue=selti->branchCount();
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="centerCount")
+    if (com=="centerCount")
 	{ 
 	    returnValue=rootItem->branchCount();
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="centerOnID")
+    if (com=="centerOnID")
 	{
 	    s=parser.parString(ok,0);
 	    TreeItem *ti=findUuid(QUuid(s));
@@ -4098,300 +4119,421 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
                     qWarning()<<"VymModel::centerOnID failed!";
 	    } else
 		parser.setError(Aborted,QString("Could not find ID: \"%1\"").arg(s));
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="clearFlags")   
-	{
-	    selbi->deactivateAllStandardFlags();
-	    reposition();
-	    emitDataChanged(selbi);
-	    setChanged();
+    if (com=="clearFlags")
+    {
+        selbi->deactivateAllStandardFlags();
+        reposition();
+        emitDataChanged(selbi);
+        setChanged();
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="colorBranch")
+    if (com=="colorBranch")
 	{
 	    QColor c=parser.parColor (ok,0);
 	    colorBranch (c);
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="colorSubtree")
+    if (com=="colorSubtree")
 	{
 	    QColor c=parser.parColor (ok,0);
 	    colorSubtree (c);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="copy")
+    if (com=="copy")
 	{
 	    copy();
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="cut")
+    if (com=="cut")
 	{
 		cut();
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="cycleTask")
+    if (com=="cycleTask")
 	{
 	    ok=true;
 	    if (parser.parCount()==0) b=false;
 	    if (parser.parCount()==1) b=parser.parBool(ok,0);
 	    if (ok) cycleTaskStatus (b);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="delete")
+    if (com=="delete")
 	{
 	    deleteSelection();
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="deleteKeepChildren")
+    if (com=="deleteKeepChildren")
 	{
 	    deleteKeepChildren();
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="deleteChildren")
+    if (com=="deleteChildren")
 	{
 	    deleteChildren();
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="deleteSlide")   
+    if (com=="deleteSlide")
 	{
-	    if (ok) deleteSlide(n);
+        if (ok) deleteSlide(n); // n needs initialization:  FIXME
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="exportAO")
+    if (com=="exportAO")
 	{
 	    QString fname=parser.parString(ok,0); 
 	    exportAO (fname,false);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="exportASCII")
+    if (com=="exportASCII")
 	{
 	   QString fname=parser.parString(ok,0); 
 	   exportASCII (fname,false);
+       break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="exportCSV")
+    if (com=="exportCSV")
 	{
 	   QString fname=parser.parString(ok,0); 
 	   exportCSV (fname,false);
+       break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="exportHTML")
+    if (com=="exportHTML")
 	{
 	    QString path=parser.parString(ok,0); 
 	    QString fname=parser.parString(ok,1); 
 	    exportHTML (path,fname,false);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="exportImage")
+    if (com=="exportImage")
 	{
 	    QString fname=parser.parString(ok,0); 
 	    QString format="PNG";
 	    if (parser.parCount()>=2)
 		format=parser.parString(ok,1);
 	    exportImage (fname,false,format);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="exportImpress")
+    if (com=="exportImpress")
 	{
 	    QString fn=parser.parString(ok,0); 
 	    QString cf=parser.parString(ok,1); 
 	    exportImpress (fn,cf);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="exportLast")
+    if (com=="exportLast")
 	{
 	    exportLast ();
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="exportLaTeX")
+    if (com=="exportLaTeX")
 	{
 	    QString fname=parser.parString(ok,0); 
 	    exportLaTeX (fname,false);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="exportOrgMode")
+    if (com=="exportOrgMode")
 	{
 	    QString fname=parser.parString(ok,0); 
 	    exportOrgMode (fname,false);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="exportPDF")
+    if (com=="exportPDF")
 	{
 	    QString fname=parser.parString(ok,0); 
 	    exportPDF(fname,false);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="exportSVG")
+    if (com=="exportSVG")
 	{
 	    QString fname=parser.parString(ok,0); 
 	    exportSVG(fname,false);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="exportXML")
+    if (com=="exportXML")
 	{
 	    QString dpath=parser.parString(ok,0); 
 	    QString fpath=parser.parString(ok,1); 
 	    exportXML (dpath,fpath,false);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="getDestPath")
+    if (com=="getDestPath")
 	{ 
 	    returnValue=getDestPath();
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="getFileDir")
+    if (com=="getFileDir")
 	{ 
 	    returnValue=getFileDir();
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="getFrameType")
+    if (com=="getFrameType")
 	{ 
 	    BranchObj *bo=(BranchObj*)(selbi->getLMO());
 	    if (!bo)
 		parser.setError (Aborted,"No BranchObj");
 	    else
 		returnValue=bo->getFrame()->getFrameTypeName();
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="getHeadingPlainText")
+    if (com=="getHeadingPlainText")
 	{ 
             returnValue = getHeading().getTextASCII();
+            break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="getHeadingXML")
+    if (com=="getHeadingXML")
 	{ 
             returnValue = getHeading().saveToDir();
+            break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="getMapAuthor")
+    if (com=="getMapAuthor")
 	{ 
 	    returnValue=author;
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="getMapComment")
+    if (com=="getMapComment")
 	{ 
 	    returnValue=comment;
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="getMapTitle")
+    if (com=="getMapTitle")
 	{ 
 	    returnValue=title;
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="getNotePlainText")
+    if (com=="getNotePlainText")
 	{ 
             returnValue= getNote().getTextASCII();
+            break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="getNoteXML")
+    if (com=="getNoteXML")
 	{ 
             returnValue= getNote().saveToDir();
+            break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="getSelectString")
+    if (com=="getSelectString")
 	{ 
 	    returnValue=getSelectString();
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="getTaskSleepDays")
+    if (com=="getTaskSleepDays")
 	{ 
             Task *task=selbi->getTask();
             if (task)
                 returnValue=task->getDaysSleep();
             else
                 parser.setError (Aborted,"Branch has no task set");
+            break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="getURL")
+    if (com=="getURL")
 	{ 
 	    returnValue=selti->getURL();
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="getVymLink")
+    if (com=="getVymLink")
 	{ 
 	    returnValue=selti->getVymLink();
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="getXLinkColor")
+    if (com=="getXLinkColor")
 	{ 
 	    returnValue=getXLinkColor().name();
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="getXLinkWidth")
+    if (com=="getXLinkWidth")
 	{ 
 	    returnValue=getXLinkWidth();
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="getXLinkPenStyle")
+    if (com=="getXLinkPenStyle")
 	{ 
 	    returnValue=penStyleToString( getXLinkPenStyle() );
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="getXLinkStyleBegin")
+    if (com=="getXLinkStyleBegin")
 	{ 
 	    returnValue = getXLinkStyleBegin();
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="getXLinkStyleEnd")
+    if (com=="getXLinkStyleEnd")
 	{ 
 	    returnValue = getXLinkStyleEnd();
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="hasActiveFlag")
+    if (com=="hasActiveFlag")
 	{ 
 	    s=parser.parString(ok,0);
 	    returnValue=selti->hasActiveStandardFlag(s);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="hasNote")
+    if (com=="hasNote")
 	{
 	    returnValue = !getNote().isEmpty();
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="hasRichTextNote")
+    if (com=="hasRichTextNote")
 	{
 	    returnValue=hasRichTextNote();
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="hasTask")
+    if (com=="hasTask")
 	{ 
             if (selbi && selbi->getTask() )
                 returnValue=true;
             else
                 returnValue=false;
+            break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="importDir")
+    if (com=="importDir")
 	{
 	    s=parser.parString(ok,0);
 	    importDirInt(s);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="isScrolled")
+    if (com=="isScrolled")
 	{
 	    returnValue=selbi->isScrolled();
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="loadImage")
+    if (com=="loadImage")
 	{
 	    s=parser.parString(ok,0);
 	    loadImage (selbi,s);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="loadNote")
+    if (com=="loadNote")
 	{
 	    s=parser.parString(ok,0);
 	    loadNote (s);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="moveDown")
+    if (com=="moveDown")
 	{
 	    moveDown();
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="moveUp")
+    if (com=="moveUp")
 	{
 	    moveUp();
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="moveSlideUp")
+    if (com=="moveSlideUp")
 	{
 	    n=parser.parInt (ok,0);
 	    if (n>=slideModel->count())
 		parser.setError (Aborted,"Index out of range");
 	    else    
 		moveSlideUp(n);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="moveSlideDown")
+    if (com=="moveSlideDown")
 	{
 	    n=parser.parInt (ok,0);
 	    if (n>=slideModel->count()-1)
 		parser.setError (Aborted,"Index out of range");
 	    else    
 		moveSlideDown(n);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="move")
+    if (com=="move")
 	{
 	    x=parser.parDouble (ok,0);
 	    y=parser.parDouble (ok,1);
 	    move (x,y);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="moveRel")
+    if (com=="moveRel")
 	{
 	    x=parser.parDouble (ok,0);
 	    y=parser.parDouble (ok,1);
 	    moveRel (x,y);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="nop")
+    if (com=="nop")
 	{
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="note2URLs")
+    if (com=="note2URLs")
 	{
 	    note2URLs();
+        break;
+    }
         /////////////////////////////////////////////////////////////////////
-        } else if (com=="parseVymText")
+    if (com=="parseVymText")
         {
             s = parser.parString(ok,0);
             parseVymText( s );
+        break;
+    }
         /////////////////////////////////////////////////////////////////////
-	} else if (com=="paste")
+    if (com=="paste")
 	{
 	    paste();
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="redo")
+    if (com=="redo")
 	{
 	    redo();
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="relinkTo")
+    if (com=="relinkTo")
 	{
 	    if (!selti)
 	    {
@@ -4462,55 +4604,73 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 		}	    
 	    } else
 		parser.setError (Aborted,"Type of selection is not a floatimage or branch");
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="saveImage")
+    if (com=="saveImage")
 	{
 	    ImageItem *ii=getSelectedImage();
 	    s=parser.parString(ok,0);
 	    t=parser.parString(ok,1);
 	    saveImage (ii,t,s);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="saveNote")
+    if (com=="saveNote")
 	{
 	    s=parser.parString(ok,0);
 	    saveNote (s);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="scroll")
+    if (com=="scroll")
 	{
 	    if (!scrollBranch (selbi))	
 		parser.setError (Aborted,"Could not scroll branch");
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="select")
+    if (com=="select")
 	{
 	    s=parser.parString(ok,0);
 	    if (!select (s))
 		parser.setError(Aborted,QString("Could not select \"%1\"").arg(s));
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="selectID")
+    if (com=="selectID")
 	{
 	    s=parser.parString(ok,0);
 	    if (!selectID (s))
 		parser.setError(Aborted,QString("Could not select ID: \"%1\"").arg(s));
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="selectLastBranch")
+    if (com=="selectLastBranch")
 	{
 	    BranchItem *bi=selbi->getLastBranch();
 	    if (!bi)
 		parser.setError (Aborted,"Could not select last branch");
 	    select (bi);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="selectLastImage")
+    if (com=="selectLastImage")
 	{
 	    ImageItem *ii=selbi->getLastImage();
 	    if (!ii)
 		parser.setError (Aborted,"Could not select last image");
 	    select (ii);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="selectParent")
+    if (com=="selectParent")
 	{
 	    selectParent ();
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="selectLatestAdded")
+    if (com=="selectLatestAdded")
 	{
 	    if (!latestAddedItem)
 	    {
@@ -4520,73 +4680,101 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 		if (!select (latestAddedItem))
 		    parser.setError (Aborted,"Could not select latest added object ");
 	    }   
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="setFlag")
+    if (com=="setFlag")
 	{
 	    s=parser.parString(ok,0);
 	    selbi->activateStandardFlag(s);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="setTaskSleep")
+    if (com=="setTaskSleep")
 	{
 	    s=parser.parString(ok,0);
 	    returnValue=setTaskSleep (s);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="setFrameIncludeChildren")
+    if (com=="setFrameIncludeChildren")
 	{
 	    b=parser.parBool(ok,0);
 	    setFrameIncludeChildren(b);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="setFrameType")
+    if (com=="setFrameType")
 	{
 	    s=parser.parString(ok,0);
 	    setFrameType (s);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="setFramePenColor")
+    if (com=="setFramePenColor")
 	{
 	    QColor c=parser.parColor(ok,0);
 	    setFramePenColor (c);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="setFrameBrushColor")
+    if (com=="setFrameBrushColor")
 	{
 	    QColor c=parser.parColor(ok,0);
 	    setFrameBrushColor (c);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="setFramePadding")
+    if (com=="setFramePadding")
 	{
 	    n=parser.parInt(ok,0);
 	    setFramePadding(n);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="setFrameBorderWidth")
+    if (com=="setFrameBorderWidth")
 	{
 	    n=parser.parInt(ok,0);
 	    setFrameBorderWidth (n);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="setHeadingPlainText")
+    if (com=="setHeadingPlainText")
 	{
 	    s=parser.parString (ok,0);
             setHeadingPlainText (s); // FIXME-1  what about RT?
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="setHideExport")
+    if (com=="setHideExport")
 	{
 	    b=parser.parBool(ok,0);
 	    setHideExport (b);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="setIncludeImagesHorizontally")
+    if (com=="setIncludeImagesHorizontally")
 	{ 
 	    b=parser.parBool(ok,0);
 	    setIncludeImagesHor(b);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="setIncludeImagesVertically")
+    if (com=="setIncludeImagesVertically")
 	{
 	    b=parser.parBool(ok,0);
 	    if (ok) setIncludeImagesVer(b);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="setHideLinkUnselected")
+    if (com=="setHideLinkUnselected")
 	{
 	    b=parser.parBool(ok,0);
 	    setHideLinkUnselected(b);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="setMapAnimCurve")
+    if (com=="setMapAnimCurve")
 	{
 	    n=parser.parInt(ok,0);
 	    if (n<0 || n>QEasingCurve::OutInBounce)
@@ -4597,167 +4785,233 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 		c.setType ( (QEasingCurve::Type) n);
 		setMapAnimCurve(c);
 	    }
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="setMapAnimDuration")
+    if (com=="setMapAnimDuration")
 	{
 	    n=parser.parInt(ok,0);
 	    setMapAnimDuration(n);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="setMapAuthor")
+    if (com=="setMapAuthor")
 	{
 	    s=parser.parString(ok,0);
 	    setAuthor (s);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="setMapComment")
+    if (com=="setMapComment")
 	{
 	    s=parser.parString(ok,0);
 	    if (ok) setComment(s);
-	/////////////////////////////////////////////////////////////////////
-	} else if (com=="setMapTitle")
+        break;
+    }
+    if (com=="setMapTitle")
 	{
 	    s=parser.parString(ok,0);
 	    if (ok) setTitle(s);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="setMapBackgroundColor")
+    if (com=="setMapBackgroundColor")
 	{
 	    QColor c=parser.parColor (ok,0);
 	    setMapBackgroundColor (c);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="setMapDefLinkColor")
+    if (com=="setMapDefLinkColor")
 	{
 	    QColor c=parser.parColor (ok,0);
 	    setMapDefLinkColor (c);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="setMapLinkStyle")
+    if (com=="setMapLinkStyle")
 	{
 	    s=parser.parString (ok,0);
 	    if (!setMapLinkStyle(s) )
 		parser.setError (Aborted,"Unknown link style");
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="setMapRotation")
+    if (com=="setMapRotation")
 	{
 	    x=parser.parDouble (ok,0);
 	    setMapRotationAngle(x);
 	    mapEditor->setAngleTarget(x);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="setMapZoom")
+    if (com=="setMapZoom")
 	{
 	    x=parser.parDouble (ok,0);
 	    setMapZoomFactor(x);
 	    mapEditor->setZoomFactorTarget(x);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="setNotePlainText")
+    if (com=="setNotePlainText")
 	{
 	    s=parser.parString (ok,0);
             VymNote vn;
             vn.setPlainText(s);
             setNote (vn);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="setScale")
+    if (com=="setScale")
 	{
 	    x=parser.parDouble (ok,0);
 	    y=parser.parDouble (ok,1);
 	    setScale (x,y);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="setSelectionColor")
+    if (com=="setSelectionColor")
 	{
 	    QColor c=parser.parColor (ok,0);
 	    setSelectionColorInt (c);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="setURL")
+    if (com=="setURL")
 	{
 	    s=parser.parString (ok,0);
 	    setURL(s);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="setVymLink")
+    if (com=="setVymLink")
 	{
 	    s=parser.parString (ok,0);
 	    setVymLink(s);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="setXLinkColor")       
+    if (com=="setXLinkColor")
 	{
 	    s=parser.parString (ok,0);
 	    setXLinkColor(s);     
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="setXLinkLineStyle")       
+    if (com=="setXLinkLineStyle")
 	{
 	    s=parser.parString (ok,0);
 	    setXLinkLineStyle(s);     
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="setXLinkStyleBegin")       
+    if (com=="setXLinkStyleBegin")
 	{
 	    s=parser.parString (ok,0);
 	    setXLinkStyleBegin(s);     
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="setXLinkStyleEnd")       
+    if (com=="setXLinkStyleEnd")
 	{
 	    s=parser.parString (ok,0);
 	    setXLinkStyleEnd(s);     
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="setXLinkWidth")       
+    if (com=="setXLinkWidth")
 	{
 	    n=parser.parInt (ok,0);
 	    setXLinkWidth(n);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="sleep")
+    if (com=="sleep")
 	{
 	    n=parser.parInt (ok,0);
 	    sleep (n);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="sortChildren")
+    if (com=="sortChildren")
 	{
 	    b=false;
 	    if (parser.parCount()==1)
 		b=parser.parBool(ok,0);
 	    sortChildren(b);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="toggleFlag")
+    if (com=="toggleFlag")
 	{
 	    s=parser.parString(ok,0);
             toggleStandardFlag (s);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="toggleFrameIncludeChildren")
+    if (com=="toggleFrameIncludeChildren")
 	{
 	    toggleFrameIncludeChildren();
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="toggleScroll")
+    if (com=="toggleScroll")
 	{
 	    toggleScroll();	
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="toggleTarget")
+    if (com=="toggleTarget")
 	{
 	    toggleTarget();	
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="toggleTask")
+    if (com=="toggleTask")
 	{
 	    toggleTask();	
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="undo")
+    if (com=="undo")
 	{
 	    undo();
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else  if (com=="unscroll")
+    if (com=="unscroll")
 	{
 	    if (!unscrollBranch (selbi))    
 		parser.setError (Aborted,"Could not unscroll branch");
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="unscrollChildren")
+    if (com=="unscrollChildren")
 	{
 	    unscrollChildren ();
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="unselectAll")
+    if (com=="unselectAll")
 	{
 	    unselectAll();
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="unsetFlag")
+    if (com=="unsetFlag")
 	{
 	    s=parser.parString(ok,0);
 	    selbi->deactivateStandardFlag(s);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else 
+    //else must be an Unknown command
 	    parser.setError (Aborted,"Unknown command");
-    } // End of iterating over commands
+    break;
 
+    } while(0); // End of do{}while(0); MS VS2013 nested if bug workaround
+
+    } // end check set of parameters if
     // Any errors?
     if (parser.errorLevel()==NoError)
     {
