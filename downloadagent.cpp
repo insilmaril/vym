@@ -85,22 +85,29 @@ void DownloadAgent::doDownload(const QUrl &url)
     QNetworkRequest request(url);
     if (!userAgent.isEmpty()) request.setRawHeader("User-Agent", userAgent);
 
-    QByteArray cookievalue=settings.value("/downloads/cookies/vymID/value",QByteArray() ).toByteArray();
-    if (!cookievalue.size() == 0 )
+    QByteArray idCookieValue = settings.value("/downloads/cookies/vymID/value",QByteArray() ).toByteArray();
+    //idCookieValue = QVariant("2000000002601").toByteArray(); //TESTING!!!
+    //qDebug()<<"idCookie="<<idCookieValue;
+    if (!idCookieValue.size() == 0 )
     {
-        QNetworkCookie cookie;
-        cookie.setPath("/");
-//        cookie.setDomain("localhost");
-        cookie.setDomain("www.insilmaril.de");
-        cookie.setName("vymID");
-        cookie.setValue(cookievalue);
-        //cookie.setExpirationDate( settings.value("/downloads/cookies/id/expires", QVariant(QDateTime::currentDateTime().addSecs(60) )).toDateTime() ); // testing
-        cookie.setExpirationDate( QDateTime( QDate(2099,1,1) ) ); 
-        agent.cookieJar()->insertCookie(cookie);
+        QNetworkCookie idCookie;
+        idCookie.setPath("/");
+//        idCookie.setDomain("localhost");
+        idCookie.setDomain("www.insilmaril.de");
+        idCookie.setName("vymID");
+        idCookie.setValue(idCookieValue);
+        //idCookie.setExpirationDate( settings.value("/downloads/cookies/id/expires", QVariant(QDateTime::currentDateTime().addSecs(60) )).toDateTime() ); // testing
+        idCookie.setExpirationDate( QDateTime( QDate(2099,1,1) ) ); 
+        agent.cookieJar()->insertCookie(idCookie);
 
-        cookie.setName("vymPlatform");
-        cookie.setValue( QVariant(vymPlatform).toByteArray() );
-        agent.cookieJar()->insertCookie(cookie);
+        QNetworkCookie platformCookie;
+        platformCookie.setPath("/");
+//        platformCookie.setDomain("localhost");
+        platformCookie.setDomain("www.insilmaril.de");
+        platformCookie.setName("vymPlatform");
+        platformCookie.setValue( QVariant(vymPlatform).toByteArray() );
+        platformCookie.setExpirationDate( QDateTime( QDate(2099,1,1) ) ); 
+        agent.cookieJar()->insertCookie(platformCookie);
     }
 
     QNetworkReply *reply = agent.get(request);
