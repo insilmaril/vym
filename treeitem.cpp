@@ -337,7 +337,12 @@ void TreeItem::setHeading (const VymText &vt)
 void TreeItem::setHeadingPlainText (const QString &s)
 {
     VymText vt;
+
     vt.setPlainText(s);
+    
+    if (!heading.isRichText() )
+        // Keep current color
+        vt.setColor( heading.getColor() );
     setHeading(vt);
 }
 

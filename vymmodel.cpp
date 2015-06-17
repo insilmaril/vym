@@ -2429,8 +2429,7 @@ void VymModel::addTimestamp()	//FIXME-4 new function, localize
         QString ("%1-%2-%3")
             .arg(today.year(),4,10,c)
             .arg(today.month(),2,10,c)
-            .arg(today.day(),2,10,c)
-    );
+            .arg(today.day(),2,10,c));
 	emitDataChanged ( selbi);	
 	reposition();
 	select (selbi);
@@ -2885,19 +2884,19 @@ BranchItem* VymModel::addNewBranchInt(BranchItem *dst,int pos)
     QList<QVariant> cData;
     cData << "" << "undef";
 
-    BranchItem *parbi=dst;
+    BranchItem *parbi = dst;
     int n;
-    BranchItem *newbi=new BranchItem (cData);	
+    BranchItem *newbi = new BranchItem (cData);	
 
     emit (layoutAboutToBeChanged() );
 
-    if (pos==-2)
+    if (pos == -2)
     {
-	n=parbi->getRowNumAppend (newbi);
+	n = parbi->getRowNumAppend (newbi);
 	beginInsertRows (index(parbi), n, n);	
 	parbi->appendChild (newbi); 
 	endInsertRows ();
-    }else if (pos==-1 || pos==-3)
+    }else if (pos == -1 || pos == -3)
     {
 	// insert below selection
 	parbi=(BranchItem*)dst->parent();
