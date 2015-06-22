@@ -3186,15 +3186,9 @@ File::ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode, const FileType
 	{
 	    if (lmode==NewMap)
 	    {
-		vm->setFilePath (fn);
-		tabWidget->setTabText (tabIndex, vm->getFileName());
-		if (!isInTmpDir (fn))
-		{
-		    // Only append to lastMaps if not loaded from a tmpDir
-		    // e.g. imported bookmarks are in a tmpDir
-		    addRecentMap(vm->getFilePath() );
-		}
-		actionFilePrint->setEnabled (true);
+            vm->setFilePath (fn);
+            tabWidget->setTabText (tabIndex, vm->getFileName());
+            actionFilePrint->setEnabled (true);
 	    }	
 	    editorChanged();
 	    vm->emitShowSelection();
@@ -3319,8 +3313,6 @@ void Main::fileSave(VymModel *m, const SaveMode &savemode)
 	statusBar()->showMessage( 
 	    tr("Saved  %1").arg(m->getFilePath()), 
 	    statusbarTime );
-	addRecentMap (m->getFilePath() );
-	fileSaveSession();
     } else	
 	statusBar()->showMessage( 
 	    tr("Couldn't save ").arg(m->getFilePath()), 
