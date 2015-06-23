@@ -12,6 +12,7 @@ class ShowTextDialog:public QDialog
 public:
     ShowTextDialog (QWidget *parent=0);
     void append     (const QString &);
+    void setHtml    (const QString &);
     void setText    (const QString &);
     void useFixedFont (bool);
     

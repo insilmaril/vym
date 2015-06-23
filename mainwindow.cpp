@@ -5849,26 +5849,29 @@ void Main::downloadUpdatesFinished(bool interactive)
 
     if (agent->isSuccess() )
     {
+        ShowTextDialog dia;
+        dia.setWindowTitle( vymName + " - " + tr("Update information") );
         QString page;
         if (loadStringFromDisk(agent->getDestination(), page) )
         {
-            if (!page.contains("vymisuptodate"))
-            {
-                // Notification: Please update!
-                QMessageBox::information(0,
-                    tr("Info"),
-                    tr("vym updates are available, please update e.g. from\n"
-                       "http://sourceforge.net/projects/vym")
-                );
-            } else
+            if (page.contains("vymisuptodate"))
             {
                 statusMessage( tr("vym is up to date.","MainWindow"));
                 if (interactive)
                     // Notification: vym is up to date!
-                    QMessageBox::information(0,
-                        tr("Update check results"),
-                        tr("vym is up to date!"));
-            }
+                    dia.setHtml( page );
+                    dia.exec();
+            } else if (page.contains("vymneedsupdate"))
+            {
+                // Notification: updates available
+                dia.setHtml( page );
+                dia.exec();
+            } else 
+            {
+                // Notification: Unknown version found
+                dia.setHtml( page );
+                dia.exec();
+            } 
 
             // Prepare to check again later
             settings.setValue("/downloads/updates/lastChecked", QDate::currentDate().toString(Qt::ISODate));
