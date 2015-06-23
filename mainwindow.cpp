@@ -2872,9 +2872,9 @@ void Main::setupToolbars()
     // URLs and vymLinks
     referencesToolbar=addToolBar( tr ("URLs and vymLinks toolbar","Toolbar for URLs and vymlinks"));
     referencesToolbar->setObjectName ("URLs and vymlinks toolbar");
-    referencesToolbar->addAction (actionOpenURL);
+    //referencesToolbar->addAction (actionOpenURL); //FIXME-4 removed 2015-06-22
     referencesToolbar->addAction (actionURLNew);
-    referencesToolbar->addAction (actionOpenVymLink);
+    //referencesToolbar->addAction (actionOpenVymLink)//FIXME-4 removed 2015-06-22;
     referencesToolbar->addAction (actionEditVymLink);
 
     // Format and colors
