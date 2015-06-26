@@ -272,6 +272,7 @@ public slots:
     void windowToggleHistory();
     void windowToggleProperty();
     void windowShowHeadingEditor();
+    void windowToggleHeadingEditor();
     void updateHistory(SimpleSettings &);
     void windowToggleAntiAlias();
 public:

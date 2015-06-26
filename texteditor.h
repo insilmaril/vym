@@ -35,6 +35,7 @@ public:
     bool findText(const QString &, const QTextDocument::FindFlags &,int i); 
     void setTextCursor (const QTextCursor & cursor );
     QTextCursor getTextCursor();
+    void setFocus();
 
 protected:
     void setupFileActions();

@@ -259,6 +259,11 @@ QTextCursor TextEditor::getTextCursor()
     return e->textCursor();
 }
 
+void TextEditor::setFocus()
+{
+    e->setFocus();
+}
+
 void TextEditor::setupFileActions()
 {
     QToolBar *tb = addToolBar ( tr("Note Actions") );

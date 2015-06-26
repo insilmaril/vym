@@ -257,7 +257,6 @@ Main::Main(QWidget* parent, Qt::WindowFlags f) : QMainWindow(parent,f)
     connect (headingEditor, SIGNAL (focusReleased() ), this, SLOT (setFocusMapEditor()));
 
     connect( scriptEditor, SIGNAL( runScript ( QString ) ),  this, SLOT( execute( QString ) ) );
-    connect (scriptEditor, SIGNAL (focusReleased() ), this, SLOT (setFocusMapEditor()));
 
     // Initialize some settings, which are platform dependant
     QString p,s;
@@ -2012,20 +2011,23 @@ void Main::setupViewActions()
 
     viewMenu->addSeparator();	
 
-    a=noteEditorDW->toggleViewAction();
-    a->setShortcut ( Qt::Key_N );  
+    //a=noteEditorDW->toggleViewAction();
+    a = new QAction(QPixmap(":/flag-note.png"), tr( "Note editor","View action" ),this);
+    a->setShortcut ( Qt::Key_N );
     a->setCheckable(true);
-    a->setIcon (QPixmap(":/flag-note.png"));
     viewMenu->addAction (a);
     switchboard.addSwitch ("mapToggleNoteEditor", shortcutScope, a, tag);
+    connect( a, SIGNAL( triggered() ), this, SLOT(windowToggleNoteEditor() ) );
     actionViewToggleNoteEditor=a;
 
-    a=headingEditorDW->toggleViewAction();
-    a->setShortcut ( Qt::Key_E );  
+    //a=headingEditorDW->toggleViewAction();
+    a = new QAction(QPixmap(":/headingeditor.png"), tr( "Heading editor","View action" ),this);
+    a->setShortcut ( Qt::Key_E );
     a->setCheckable(true);
     a->setIcon (QPixmap(":/headingeditor.png"));
     viewMenu->addAction (a);
     switchboard.addSwitch ("mapToggleHeadingEditor", shortcutScope, a, tag);
+    connect( a, SIGNAL( triggered() ), this, SLOT(windowToggleHeadingEditor() ) );
     actionViewToggleHeadingEditor=a;
 
     // Original icon is "category" from KDE
@@ -4958,10 +4960,13 @@ void Main::settingsToggleDownloads()
 
 void Main::windowToggleNoteEditor()
 {
-    if (noteEditorDW->isVisible() )
-	noteEditorDW->hide();
+    if (noteEditor->parentWidget()->isVisible() )
+        noteEditor->parentWidget()->hide();
     else
-	noteEditorDW->show();
+    {
+        noteEditor->parentWidget()->show();
+        noteEditor->setFocus();
+    }
 }
 
 void Main::windowToggleTreeEditor()
@@ -5022,6 +5027,17 @@ void Main::windowToggleProperty()
 void Main::windowShowHeadingEditor()
 {
     headingEditorDW->show();
+}
+
+void Main::windowToggleHeadingEditor()
+{
+    if (headingEditor->parentWidget()->isVisible() )
+        headingEditor->parentWidget()->hide();
+    else
+    {
+        headingEditor->parentWidget()->show();
+        headingEditor->setFocus();
+    }
 }
 
 void Main::windowToggleAntiAlias()
