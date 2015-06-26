@@ -608,6 +608,14 @@ void TextEditor::closeEvent( QCloseEvent* ce )
     return;
 }
 
+void TextEditor::keyPressEvent(QKeyEvent* e)
+{
+    if (e->key() == Qt::Key_Escape)
+        emit( focusReleased());
+    else
+        QMainWindow::keyPressEvent(e);
+}
+
 void TextEditor::editorChanged()
 {
     if (isEmpty())

@@ -283,6 +283,7 @@ public slots:
     void updateNoteFlag();
     void updateNoteEditor (QModelIndex index);
     void selectInNoteEditor (QString s, int i);
+    void setFocusMapEditor();
     void changeSelection (VymModel *model,const QItemSelection &newSel, const QItemSelection &delSel);
 
     void updateActions();

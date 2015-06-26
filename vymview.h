@@ -36,6 +36,7 @@ public slots:
     void showSelection ();
     void toggleTreeEditor();
     void toggleSlideEditor();
+    void setFocusMapEditor();
 
 private:
     VymModel *model;

@@ -250,12 +250,14 @@ Main::Main(QWidget* parent, Qt::WindowFlags f) : QMainWindow(parent,f)
     // Connect NoteEditor, so that we can update flags if text changes
     connect (noteEditor, SIGNAL (textHasChanged() ), this, SLOT (updateNoteFlag()));
     connect (noteEditor, SIGNAL (windowClosed() ), this, SLOT (updateActions()));
+    connect (noteEditor, SIGNAL (focusReleased() ), this, SLOT (setFocusMapEditor()));
 
     // Connect heading editor
     connect (headingEditor, SIGNAL (textHasChanged() ), this, SLOT (updateHeading()));
+    connect (headingEditor, SIGNAL (focusReleased() ), this, SLOT (setFocusMapEditor()));
 
-    connect( scriptEditor, SIGNAL( runScript ( QString ) ), 
-	this, SLOT( execute( QString ) ) );
+    connect( scriptEditor, SIGNAL( runScript ( QString ) ),  this, SLOT( execute( QString ) ) );
+    connect (scriptEditor, SIGNAL (focusReleased() ), this, SLOT (setFocusMapEditor()));
 
     // Initialize some settings, which are platform dependant
     QString p,s;
@@ -5094,6 +5096,12 @@ void Main::selectInNoteEditor(QString s,int i)
     // TreeItem is already selected at this time, therefor
     // the note is already in the editor
     noteEditor->findText (s,0,i);
+}
+
+void Main::setFocusMapEditor()
+{
+    VymView *vv=currentView();
+    if (vv) vv->setFocusMapEditor();
 }
 
 void Main::changeSelection (VymModel *model, const QItemSelection &newsel, const QItemSelection &)

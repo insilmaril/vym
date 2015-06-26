@@ -42,6 +42,7 @@ protected:
     void setupFormatActions();
     void setupSettingsActions();
     void closeEvent( QCloseEvent* );
+    void keyPressEvent(QKeyEvent* );
 
 public slots:
     void editorChanged();	    // received when text() changed
@@ -55,6 +56,7 @@ public slots:
 signals:
     void textHasChanged();
     void windowClosed();
+    void focusReleased();
     void fontFamilyHasChanged();
     void fontSizeHasChanged();
     
