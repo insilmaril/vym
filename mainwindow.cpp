@@ -3656,11 +3656,12 @@ void Main::fileExportLast()
 bool Main::fileCloseMap(int i)
 {
     VymModel *m;
-    if ( i<0)
-        m = currentModel();
-    else
+    VymView *vv;
+    if ( i<0) i  = tabWidget->currentIndex();
 
-        m = vymViews.at(i)->getModel();
+    vv = vymViews.at(i);
+    m  = vv->getModel();
+
     if (m)
     {
         if (m->hasChanged())
@@ -3690,7 +3691,6 @@ bool Main::fileCloseMap(int i)
             }
         }
 
-        VymView *vv=vymViews.at(i);
         vymViews.removeAt (i);
         tabWidget->removeTab (i);
 
