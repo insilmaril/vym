@@ -302,7 +302,7 @@ Main::Main(QWidget* parent, Qt::WindowFlags f) : QMainWindow(parent,f)
     // Allow closing of tabs (introduced in Qt 4.5)
     tabWidget->setTabsClosable( true ); 
     connect(tabWidget, SIGNAL(tabCloseRequested(int)), 
-            this, SLOT( closeTab(int) ));
+            this, SLOT( fileCloseMap(int) ));
 
     layout->addWidget (tabWidget);
 
@@ -3653,57 +3653,54 @@ void Main::fileExportLast()
     if (m) m->exportLast();
 }
 
-bool Main::closeTab(int i)
+bool Main::fileCloseMap(int i)
 {
-    // Find model
-    VymModel *m=vymViews.at(i)->getModel();
-    if (!m) return true;
+    VymModel *m;
+    if ( i<0)
+        m = currentModel();
+    else
 
-    VymView *vv=vymViews.at(i);
-    vymViews.removeAt (i);
-    tabWidget->removeTab (i);
-
-    // Destroy stuff, order is important
-    delete (m->getMapEditor()); 
-    delete(vv);
-    delete (m); 
-
-    updateActions();
-    return false;
-}
-
-bool Main::fileCloseMap()   
-{
-    VymModel *m=currentModel();
+        m = vymViews.at(i)->getModel();
     if (m)
     {
-	if (m->hasChanged())
-	{
-	    QMessageBox mb( vymName,
-		tr("The map %1 has been modified but not saved yet. Do you want to").arg(m->getFileName()),
-		QMessageBox::Warning,
-		QMessageBox::Yes | QMessageBox::Default,
-		QMessageBox::No,
-		QMessageBox::Cancel | QMessageBox::Escape );
-	    mb.setButtonText( QMessageBox::Yes, tr("Save modified map before closing it") );
-	    mb.setButtonText( QMessageBox::No, tr("Discard changes"));
-	    mb.setModal (true);
-	    mb.show();
-	    switch( mb.exec() ) 
-	    {
-		case QMessageBox::Yes:
-		    // save and close
-		    fileSave(m, CompleteMap);
-		    break;
-		case QMessageBox::No:
-		// close  without saving
-		    break;
-		case QMessageBox::Cancel:
-		    // do nothing
-		    return true;
-	    }
-	} 
-        return closeTab(tabWidget->currentIndex());
+        if (m->hasChanged())
+        {
+            QMessageBox mb( vymName,
+                            tr("The map %1 has been modified but not saved yet. Do you want to").arg(m->getFileName()),
+                            QMessageBox::Warning,
+                            QMessageBox::Yes | QMessageBox::Default,
+                            QMessageBox::No,
+                            QMessageBox::Cancel | QMessageBox::Escape );
+            mb.setButtonText( QMessageBox::Yes, tr("Save modified map before closing it") );
+            mb.setButtonText( QMessageBox::No, tr("Discard changes"));
+            mb.setModal (true);
+            mb.show();
+            switch( mb.exec() )
+            {
+            case QMessageBox::Yes:
+                // save and close
+                fileSave(m, CompleteMap);
+                break;
+            case QMessageBox::No:
+                // close  without saving
+                break;
+            case QMessageBox::Cancel:
+                // do nothing
+                return true;
+            }
+        }
+
+        VymView *vv=vymViews.at(i);
+        vymViews.removeAt (i);
+        tabWidget->removeTab (i);
+
+        // Destroy stuff, order is important
+        delete (m->getMapEditor());
+        delete(vv);
+        delete (m);
+
+        updateActions();
+        return false;
     }
     return true; // Better don't exit vym if there is no currentModel()...
 }
