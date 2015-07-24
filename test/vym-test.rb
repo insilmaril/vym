@@ -147,7 +147,7 @@ def test_export (vym)
 
   #ASCII
   filepath = "#{@testdir}/export-ascii.txt"
-  vym.exportASCII(filepath)
+  vym.exportASCII(filepath,false)
   expect "exportASCII: ASCII file exists", File.exists?(filepath), true
   File.delete(filepath)
   vym.exportLast
