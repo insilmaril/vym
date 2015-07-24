@@ -542,7 +542,7 @@ public:
     void exportAO (QString fname="",bool askForName=true);  
 
     /*! Export as ASCII text to file */
-    void exportASCII (const QString &fname="",bool askForName=true);  
+    void exportASCII (bool listTasks = true, const QString &fname = "",bool askForName = true);
 
     /*! Export as CSV text to file */
     void exportCSV (const QString &fname="",bool askForName=true);  

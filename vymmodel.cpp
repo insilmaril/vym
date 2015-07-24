@@ -4197,8 +4197,9 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	/////////////////////////////////////////////////////////////////////
     if (com=="exportASCII")
 	{
-	   QString fname=parser.parString(ok,0); 
-	   exportASCII (fname,false);
+       bool listTasks = parser.parBool(ok, 0);
+       QString fname  = parser.parString(ok,1);
+       exportASCII (true, fname,false); // FIXME-0 add listTasks parameter to command
        break;
     }
 	/////////////////////////////////////////////////////////////////////
@@ -5092,7 +5093,7 @@ QPointF VymModel::exportImage(QString fname, bool askName, QString format)
 	QMessageBox::critical (0,tr("Critical Error"),tr("Couldn't save QImage %1 in format %2").arg(fname).arg(format));
     setExportMode (false);
 
-    QString cmd= QString("exportImage(\"%1\",\"PNG\")").arg(fname);
+    QString cmd= QString("exportImage(\"%1\",\"PNG\")").arg(fname); // FIXME-0 should be done in ExportBase::completeExport
     settings.setLocalValue ( filePath, "/export/last/exportPath",fname);
     settings.setLocalValue ( filePath, "/export/last/command",cmd);
     settings.setLocalValue ( filePath, "/export/last/description","Image");
@@ -5152,7 +5153,7 @@ QPointF VymModel::exportPDF (QString fname, bool askName)
 
     setExportMode (false);
 
-    QString cmd= QString("exportPDF(\"%1\")").arg(fname);
+    QString cmd= QString("exportPDF(\"%1\")").arg(fname);// FIXME-0 should be done in ExportBase::completeExport;
     settings.setLocalValue ( filePath, "/export/last/exportPath",fname);
     settings.setLocalValue ( filePath, "/export/last/command",cmd);
     settings.setLocalValue ( filePath, "/export/last/description","PDF");
@@ -5203,7 +5204,7 @@ QPointF VymModel::exportSVG (QString fname, bool askName)
 
     setExportMode (false);
 
-    QString cmd= QString("exportSVG(\"%1\")").arg(fname);
+    QString cmd= QString("exportSVG(\"%1\")").arg(fname);// FIXME-0 should be done in ExportBase::completeExport;
     settings.setLocalValue ( filePath, "/export/last/exportPath",fname);
     settings.setLocalValue ( filePath, "/export/last/command",cmd);
     settings.setLocalValue ( filePath, "/export/last/description","SVG");
@@ -5278,7 +5279,7 @@ void VymModel::exportXML (QString dpath, QString fpath, bool useDialog)
 
     setExportMode (false);
 
-    QString cmd=QString("exportXML(\"%1\",\"%2\")")
+    QString cmd=QString("exportXML(\"%1\",\"%2\")") // FIXME-0 should be done in ExportBase::completeExport)
         .arg(dpath)
         .arg(fpath);
     settings.setLocalValue ( filePath, "/export/last/exportPath",dpath);
@@ -5308,26 +5309,28 @@ void VymModel::exportAO (QString fname,bool askName)
     }
 }
 
-void VymModel::exportASCII(const QString &fname, bool askName)
+void VymModel::exportASCII(bool listTasks, const QString &fname, bool askName)
 {
     ExportASCII ex;
     ex.setModel (this);
-    if (fname=="") 
-	ex.setFilePath (mapName+".txt");	
-    else
-	ex.setFilePath (fname);
+    ex.setListTasks(listTasks);
 
-    if (askName) 
+    if (fname=="")
+        ex.setFilePath (mapName+".txt");
+    else
+        ex.setFilePath (fname);
+
+    if (askName)
     {
-	ex.setDirPath (lastExportDir.absolutePath());
-        ex.execDialog() ; 
+        ex.setDirPath (lastExportDir.absolutePath());
+        ex.execDialog() ;
     }
 
     if (!ex.canceled())
     {
-	setExportMode(true);
-	ex.doExport();
-	setExportMode(false);
+        setExportMode(true);
+        ex.doExport();
+        setExportMode(false);
     }
 }
 
@@ -5335,24 +5338,24 @@ void VymModel::exportCSV(const QString &fname, bool askName)
 {
     ExportCSV ex;
     ex.setModel (this);
-    if (fname=="") 
-	ex.setFilePath (mapName+".csv");	
+    if (fname=="")
+        ex.setFilePath (mapName+".csv");
     else
-	ex.setFilePath (fname);
+        ex.setFilePath (fname);
 
-    if (askName) 
+    if (askName)
     {
-	ex.addFilter ("CSV (*.csb);;All (* *.*)");
-	ex.setDirPath (lastExportDir.absolutePath());
-	ex.setWindowTitle(vymName+ " -" +tr("Export as csv")+" "+tr("(still experimental)"));
-        ex.execDialog() ; 
+        ex.addFilter ("CSV (*.csb);;All (* *.*)");
+        ex.setDirPath (lastExportDir.absolutePath());
+        ex.setWindowTitle(vymName+ " -" +tr("Export as csv")+" "+tr("(still experimental)"));
+        ex.execDialog() ;
     }
 
     if (!ex.canceled())
     {
-	setExportMode(true);
-	ex.doExport();
-	setExportMode(false);
+        setExportMode(true);
+        ex.doExport();
+        setExportMode(false);
     }
 }
 

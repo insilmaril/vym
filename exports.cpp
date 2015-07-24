@@ -111,6 +111,11 @@ void ExportBase::addFilter(const QString &s)
     filter=s;
 }
 
+void ExportBase::setListTasks(bool b)
+{
+    listTasks = b;
+}
+
 bool ExportBase::execDialog()
 {
     QString fn=QFileDialog::getSaveFileName(
@@ -362,6 +367,8 @@ void ExportASCII::doExport()
 
     int lastDepth=0;
 
+    QStringList tasks;
+
     model->nextBranch (cur,prev);
     while (cur)
     {
@@ -408,6 +415,12 @@ void ExportASCII::doExport()
                     break;
                 }
 
+                // If there is a task, save it for potential later display
+                if (listTasks && cur->getTask() )
+                {
+                    tasks.append( QString("[%1]: %2").arg(cur->getTask()->getStatusString()).arg(cur->getHeadingPlain() ) );
+                }
+
                 // If necessary, write URL
                 if (!cur->getURL().isEmpty())
                     ts << (curIndent + dashIndent + cur->getURL()) +"\n";
@@ -429,8 +442,21 @@ void ExportASCII::doExport()
         }
         model->nextBranch(cur,prev);
     }
+
+    if (listTasks)
+    {
+        ts << "\n\nTasks\n-----\n\n";
+
+
+        foreach (QString t, tasks)
+        {
+            ts << " - " << t << "\n";
+        }
+    }
     file.close();
-    completeExport();
+
+    QString listTasksString = listTasks ? "true" : "false";
+    completeExport( QString("%1, \"%2\"").arg(listTasksString).arg(filePath) );
 }
 
 QString ExportASCII::underline (const QString &text, const QString &line)

@@ -29,6 +29,7 @@ public:
     virtual void setModel (VymModel *m);
     virtual void setWindowTitle (const QString &);
     virtual void addFilter (const QString &);
+    virtual void setListTasks( bool b);
     virtual bool execDialog();
     virtual bool canceled();
     void completeExport(QString args="");  //! set lastExport and send status message
@@ -49,6 +50,7 @@ protected:
     QStringList bulletPoints;
     QString caption;
     QString filter;
+    bool listTasks;         // Append task list
     bool cancelFlag;
 };
 

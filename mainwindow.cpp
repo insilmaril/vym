@@ -563,6 +563,7 @@ void Main::setupAPI()
     modelCommands.append(c);
 
     c=new Command ("exportASCII",Command::Any);
+    c->addPar (Command::Bool,false,"Flag, if tasks should be appended");
     c->addPar (Command::String,false,"Filename for export");
     modelCommands.append(c);
 
