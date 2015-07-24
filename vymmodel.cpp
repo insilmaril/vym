@@ -5373,18 +5373,24 @@ void VymModel::exportImpress(const QString &fn, const QString &cf)
     ex.setModel (this);
     if (ex.setConfigFile(cf)) 
     {
+        QString lastCommand = settings.localValue(filePath,"/export/last/command","").toString();
+
 	setExportMode (true);
 	ex.exportPresentation();
 	setExportMode (false);
+
+        QString command = settings.localValue(filePath,"/export/last/command","").toString();
+        if (lastCommand != command) setChanged();
+        
     }
 }
 
 bool VymModel::exportLastAvailable(QString &description, QString &command, QString &path, QString &configFile)
 {
-    command=settings.localValue(filePath,"/export/last/command","").toString();
-    description=settings.localValue(filePath,"/export/last/description","").toString();
-    path=settings.localValue(filePath,"/export/last/exportPath","").toString();
-    configFile=settings.localValue(filePath,"/export/last/configFile","").toString();
+    command     = settings.localValue(filePath,"/export/last/command","").toString();
+    description = settings.localValue(filePath,"/export/last/description","").toString();
+    path        = settings.localValue(filePath,"/export/last/exportPath","").toString();
+    configFile  = settings.localValue(filePath,"/export/last/configFile","").toString();
     if (!command.isEmpty() && command.startsWith("export")) 
 	return true;
     else

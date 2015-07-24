@@ -583,6 +583,8 @@ void Main::setupAPI()
     c=new Command ("exportImpress",Command::Any);
     c->addPar (Command::String,false,"Filename for export");
     c->addPar (Command::String,false,"Configuration file for export");
+    modelCommands.append(c);
+
     c=new Command ("exportLast",Command::Any);
     modelCommands.append(c);
 
@@ -1062,7 +1064,7 @@ void Main::setupFileActions()
     connect( a, SIGNAL( triggered() ), this, SLOT( fileExportSVG() ) );
     fileExportMenu->addAction(a);
 
-    a = new QAction( "Open Office...", this);
+    a = new QAction( "LibreOffice...", this);
     connect( a, SIGNAL( triggered() ), this, SLOT( fileExportImpress() ) );
     fileExportMenu->addAction(a);
 
@@ -3621,7 +3623,7 @@ void Main::fileExportImpress()
 {
     ExportOOFileDialog fd;
     // TODO add preview in dialog
-    fd.setWindowTitle(vymName+" - "+tr("Export to")+" Open Office");
+    fd.setWindowTitle(vymName+" - "+tr("Export to")+" LibreOffice");
     fd.setDirectory (QDir().current());
     fd.setAcceptMode (QFileDialog::AcceptSave);
     fd.setFileMode (QFileDialog::AnyFile);
@@ -3643,7 +3645,7 @@ void Main::fileExportImpress()
     {
 	QMessageBox::warning(0, 
 	tr("Warning"),
-	tr("Couldn't find configuration for export to Open Office\n"));
+	tr("Couldn't find configuration for export to LibreOffice\n"));
     }
 }
 

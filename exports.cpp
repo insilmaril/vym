@@ -149,14 +149,15 @@ bool ExportBase::canceled()
     return cancelFlag;
 }
 
-void ExportBase::completeExport(QString args)
+void ExportBase::completeExport(QString args) // FIXME-1 get rid of other settings, only command is needed
 {
-    if (args.isEmpty()) args=QString("\"%1\"").arg(filePath);
+    // Add at least filepath as argument
+    if (args.isEmpty()) args = QString("\"%1\"").arg(filePath);
 
-    QString cmd=QString("export%1(%2)").arg(exportName).arg(args);
-    settings.setLocalValue ( model->getFilePath(), "/export/last/exportPath",filePath);
-    settings.setLocalValue ( model->getFilePath(), "/export/last/command",cmd);
-    settings.setLocalValue ( model->getFilePath(), "/export/last/description","CSV");
+    QString cmd = QString("export%1(%2)").arg(exportName).arg(args);
+    settings.setLocalValue ( model->getFilePath(), "/export/last/exportPath", filePath);
+    settings.setLocalValue ( model->getFilePath(), "/export/last/command", cmd);
+    settings.setLocalValue ( model->getFilePath(), "/export/last/description", "");
     mainWindow->statusMessage(QString("Exported as %1: %2").arg(exportName).arg(filePath));
 }
 
@@ -342,6 +343,7 @@ ExportASCII::ExportASCII()
     filter="TXT (*.txt);;All (* *.*)";
     caption=vymName+ " -" +QObject::tr("Export as ASCII");
 }
+
 void ExportASCII::doExport()
 {
     QFile file (filePath);
@@ -1125,6 +1127,9 @@ void ExportLaTeX::doExport()
 ////////////////////////////////////////////////////////////////////////
 ExportOO::ExportOO()
 {
+    exportName="Impress";
+    filter="LibreOffice Impress (*.odp);;All (* *.*)";
+    caption=vymName+ " -" +QObject::tr("Export as LibreOffice Impress presentation");
     useSections=false;
 }
 
@@ -1146,19 +1151,19 @@ QString ExportOO::buildList (TreeItem *current)
         {
             if (!bi->hasHiddenExportParent() )
             {
-                r+="<text:list-item><text:p >";
-                r+=quotemeta(bi->getHeadingPlain());
+                r += "<text:list-item><text:p >";
+                r += quotemeta(bi->getHeadingPlain());
                 // If necessary, write note
-                if (!bi->isNoteEmpty())
-                    r+=bi->getNoteOpenDoc();
-                r+="</text:p>";
-                r+=buildList (bi);  // recursivly add deeper branches
-                r+="</text:list-item>\n";
+                if (! bi->isNoteEmpty())
+                    r += bi->getNoteOpenDoc();
+                r += "</text:p>";
+                r += buildList (bi);  // recursivly add deeper branches
+                r += "</text:list-item>\n";
             }
             i++;
-            bi=current->getBranchNum(i);
+            bi = current->getBranchNum(i);
         }
-        r+="</text:list>\n";
+        r += "</text:list>\n";
     }
     return r;
 }
@@ -1255,12 +1260,7 @@ void ExportOO::exportPresentation()
     // zip tmpdir to destination
     zipDir (tmpDir,filePath);
 
-    QString cmd="exportImpres";
-    settings.setLocalValue (model->getFilePath(),"/export/last/exportPath",filePath);
-    settings.setLocalValue ( model->getFilePath(), "/export/last/command","exportImpress");
-    settings.setLocalValue ( model->getFilePath(), "/export/last/configFile",configFile);
-    settings.setLocalValue ( model->getFilePath(), "/export/last/description","OpenOffice.org Impress");
-    mainWindow->statusMessage(cmd + ": " + filePath);
+    completeExport(QString("\"%1\", \"%2\"").arg(filePath).arg(configFile) );
 }
 
 bool ExportOO::setConfigFile (const QString &cf)
@@ -1287,10 +1287,10 @@ bool ExportOO::setConfigFile (const QString &cf)
 
     }
 
-    contentTemplateFile=templateDir+"content-template.xml";
-    contentFile=tmpDir.path()+"/content.xml";
-    pageTemplateFile=templateDir+"page-template.xml";
-    sectionTemplateFile=templateDir+"section-template.xml";
+    contentTemplateFile = templateDir + "content-template.xml";
+    pageTemplateFile    = templateDir + "page-template.xml";
+    sectionTemplateFile = templateDir + "section-template.xml";
+    contentFile         = tmpDir.path() + "/content.xml";
 
     if (set.value("useSections").contains("yes"))
         useSections=true;
