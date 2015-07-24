@@ -231,20 +231,21 @@ QString VymText::getTextOpenDoc()
     // TODO create clean XML transformation which also
     // considers fonts, colors, ...
 
-    QString r=text;
+    QString r = text;
 
     // Remove header
     QRegExp re("<head>.*</head>");
     re.setMinimal(true);
     r.replace (re,"");
+    re.setPattern("<!DOCTYPE.*>");
+    r.replace (re,"");
 
     // convert all "<br*>"
     re.setPattern ("<br.*>");
-    re.setMinimal(true);
     r.replace (re,"<text:line-break/>");
 
-    // convert all "<p>" 
-    re.setPattern ("<p>");
+    // convert all "<p.*>" 
+    re.setPattern ("</?p.*>");
     r.replace (re,"<text:line-break/>");
     
     // Remove all other tags, e.g. paragraphs will be added in 
@@ -260,7 +261,7 @@ QString VymText::getTextOpenDoc()
     re.setPattern ("</?p.*>");
     r.replace (re,"");
 
-    r="<text:span text:style-name=\"vym-notestyle\">"+r+"</text:span>";
+    r = "<text:span text:style-name=\"vym-notestyle\">" + r + "</text:span>";
     return r;
 }
 
