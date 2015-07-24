@@ -563,8 +563,8 @@ void Main::setupAPI()
     modelCommands.append(c);
 
     c=new Command ("exportASCII",Command::Any);
-    c->addPar (Command::Bool,false,"Flag, if tasks should be appended");
     c->addPar (Command::String,false,"Filename for export");
+    c->addPar (Command::Bool,false,"Flag, if tasks should be appended");
     modelCommands.append(c);
 
     c=new Command ("exportCSV",Command::Any);
@@ -1047,6 +1047,10 @@ void Main::setupFileActions()
 
     a = new QAction( "Text (ASCII)...", this);
     connect( a, SIGNAL( triggered() ), this, SLOT( fileExportASCII() ) );
+    fileExportMenu->addAction(a);
+
+    a = new QAction( "Text with tasks (ASCII) (experimental)...", this);
+    connect( a, SIGNAL( triggered() ), this, SLOT( fileExportASCIITasks() ) );
     fileExportMenu->addAction(a);
 
     a = new QAction( "Text (A&O report)...", this);
@@ -3558,6 +3562,12 @@ void Main::fileExportASCII()
     if (m) m->exportASCII();
 }
 
+void Main::fileExportASCIITasks()
+{
+    VymModel *m=currentModel();
+    if (m) m->exportASCII(true);
+}
+
 void Main::fileExportCSV()  //FIXME-3 not scriptable yet
 {
     VymModel *m=currentModel();
@@ -3606,18 +3616,18 @@ void Main::fileExportTaskjuggler()  //FIXME-3 not scriptable yet
     VymModel *m=currentModel();
     if (m)
     {
-	ex.setModel (m);
-	ex.setWindowTitle ( vymName+" - "+tr("Export to")+" Taskjuggler"+tr("(still experimental)"));
-	ex.setDirPath (lastImageDir.absolutePath());
-	ex.addFilter ("Taskjuggler (*.tjp)");
+        ex.setModel (m);
+        ex.setWindowTitle ( vymName+" - "+tr("Export to")+" Taskjuggler"+tr("(still experimental)"));
+        ex.setDirPath (lastImageDir.absolutePath());
+        ex.addFilter ("Taskjuggler (*.tjp)");
 
-	if (ex.execDialog() ) 
-	{
-	    m->setExportMode(true);
-	    ex.doExport();
-	    m->setExportMode(false);
-	}
-    }	
+        if (ex.execDialog() )
+        {
+            m->setExportMode(true);
+            ex.doExport();
+            m->setExportMode(false);
+        }
+    }
 }
 
 void Main::fileExportImpress()	
@@ -3630,23 +3640,23 @@ void Main::fileExportImpress()
     fd.setFileMode (QFileDialog::AnyFile);
     if (fd.foundConfig())
     {
-	if ( fd.exec() == QDialog::Accepted )
-	{
-	    if (!fd.selectedFiles().isEmpty())
-	    {
-		QString fn=fd.selectedFiles().first();
-		if (!fn.contains (".odp")) fn +=".odp";
+        if ( fd.exec() == QDialog::Accepted )
+        {
+            if (!fd.selectedFiles().isEmpty())
+            {
+                QString fn=fd.selectedFiles().first();
+                if (!fn.contains (".odp")) fn +=".odp";
 
-		//lastImageDir=fn.left(fn.findRev ("/"));
-		VymModel *m=currentModel();
-		if (m) m->exportImpress (fn,fd.selectedConfig());	
-	    }
-	}
+                //lastImageDir=fn.left(fn.findRev ("/"));
+                VymModel *m=currentModel();
+                if (m) m->exportImpress (fn,fd.selectedConfig());
+            }
+        }
     } else
     {
-	QMessageBox::warning(0, 
-	tr("Warning"),
-	tr("Couldn't find configuration for export to LibreOffice\n"));
+        QMessageBox::warning(0,
+                             tr("Warning"),
+                             tr("Couldn't find configuration for export to LibreOffice\n"));
     }
 }
 

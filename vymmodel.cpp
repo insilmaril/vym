@@ -4184,7 +4184,7 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	/////////////////////////////////////////////////////////////////////
     if (com=="deleteSlide")
 	{
-        if (ok) deleteSlide(n); // n needs initialization:  FIXME
+        if (ok) deleteSlide(n); // n needs initialization:  FIXME-1
         break;
     }
 	/////////////////////////////////////////////////////////////////////
@@ -4197,9 +4197,9 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	/////////////////////////////////////////////////////////////////////
     if (com=="exportASCII")
 	{
-       bool listTasks = parser.parBool(ok, 0);
-       QString fname  = parser.parString(ok,1);
-       exportASCII (true, fname,false); // FIXME-0 add listTasks parameter to command
+       QString fname  = parser.parString(ok, 0);
+       bool listTasks = parser.parBool(ok, 1);
+       exportASCII (true, fname, false);
        break;
     }
 	/////////////////////////////////////////////////////////////////////
@@ -5328,9 +5328,14 @@ void VymModel::exportASCII(bool listTasks, const QString &fname, bool askName)
 
     if (!ex.canceled())
     {
+        QString lastCommand = settings.localValue(filePath,"/export/last/command","").toString();
+
         setExportMode(true);
         ex.doExport();
         setExportMode(false);
+
+        QString command = settings.localValue(filePath,"/export/last/command","").toString();
+        if (lastCommand != command) setChanged();
     }
 }
 
@@ -5378,13 +5383,12 @@ void VymModel::exportImpress(const QString &fn, const QString &cf)
     {
         QString lastCommand = settings.localValue(filePath,"/export/last/command","").toString();
 
-	setExportMode (true);
-	ex.exportPresentation();
-	setExportMode (false);
+        setExportMode (true);
+        ex.exportPresentation();
+        setExportMode (false);
 
         QString command = settings.localValue(filePath,"/export/last/command","").toString();
         if (lastCommand != command) setChanged();
-        
     }
 }
 

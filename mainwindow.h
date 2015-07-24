@@ -114,6 +114,7 @@ private slots:
     void fileExportSVG();
     void fileExportAO();
     void fileExportASCII();
+    void fileExportASCIITasks();
     void fileExportCSV();
     void fileExportOrgMode();
     void fileExportLaTeX();

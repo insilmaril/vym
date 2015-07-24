@@ -344,9 +344,9 @@ QString ExportAO::underline (const QString &text, const QString &line)
 ////////////////////////////////////////////////////////////////////////
 ExportASCII::ExportASCII() 
 {
-    exportName="ASCII";
-    filter="TXT (*.txt);;All (* *.*)";
-    caption=vymName+ " -" +QObject::tr("Export as ASCII");
+    exportName = "ASCII";
+    filter = "TXT (*.txt);;All (* *.*)";
+    caption = vymName + " -" + QObject::tr("Export as ASCII");
 }
 
 void ExportASCII::doExport()
@@ -458,7 +458,7 @@ void ExportASCII::doExport()
     file.close();
 
     QString listTasksString = listTasks ? "true" : "false";
-    completeExport( QString("%1, \"%2\"").arg(listTasksString).arg(filePath) );
+    completeExport( QString("\"%1\",%2").arg(filePath).arg(listTasksString) );
 }
 
 QString ExportASCII::underline (const QString &text, const QString &line)
