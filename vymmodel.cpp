@@ -1811,15 +1811,15 @@ void VymModel::loadNote (const QString &fn)
 
 void VymModel::saveNote (const QString &fn)
 {
-    BranchItem *selbi=getSelectedBranch();
+    BranchItem *selbi = getSelectedBranch();
     if (selbi)
     {
-        QString n=selbi->getNoteText();
-        if ( selbi->getNote().isEmpty() )
+        VymNote n = selbi->getNote();
+        if ( n.isEmpty() )
             qWarning ()<<"VymModel::saveNote  note is empty, won't save to "<<fn;
         else
         {
-            if (!saveStringToDisk (fn, selbi->getNote().saveToDir() ))
+            if (!saveStringToDisk (fn, n.saveToDir() ))
                 qWarning ()<<"VymModel::saveNote Couldn't save "<<fn;
         }
     } else
@@ -1943,7 +1943,7 @@ BranchItem* VymModel::findText (QString s,Qt::CaseSensitivity cs)
 	if (findCurrent)
 	{
 	    // Searching in Note
-        if (findCurrent->getNoteText().contains(findString,cs))
+        if (findCurrent->getNoteASCII().contains(findString,cs))
 	    {
 		select (findCurrent);
 		if (noteEditor->findText(findString,flags)) 
@@ -3647,7 +3647,7 @@ void VymModel::note2URLs()
 	    QString ("Extract URLs from note of %1").arg(getObjectName(selbi))
 	);  
 
-    QString n=selbi->getNoteText();
+    QString n = selbi->getNoteASCII();
 	if (n.isEmpty()) return;
 	QRegExp re ("(http.*)(\\s|\"|')");
 	re.setMinimal (true);

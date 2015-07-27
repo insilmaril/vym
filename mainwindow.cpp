@@ -4206,10 +4206,10 @@ void Main::editMapInfo()
     m->nextBranch(cur,prev);
     while (cur) 
     {
-        if (!cur->getNoteText().isEmpty() ) n++;
-        f+= cur->imageCount();
+        if (!cur->getNote().isEmpty() ) n++;
+        f += cur->imageCount();
         b++;
-        xl+=cur->xlinkCount();
+        xl += cur->xlinkCount();
         m->nextBranch(cur,prev);
     }
 
@@ -5302,7 +5302,7 @@ void Main::updateActions()
 		actionHeading2URL->setEnabled (true);  
 
 		// Note
-        actionGetURLsFromNote->setEnabled (!selbi->getNoteText().isEmpty());
+                actionGetURLsFromNote->setEnabled (!selbi->getNote().isEmpty());
 
 		standardFlagsMaster->setEnabled (true);
 

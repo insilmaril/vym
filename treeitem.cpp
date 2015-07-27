@@ -500,17 +500,12 @@ void TreeItem::setNote(const VymNote &vn)
     systemFlags.deactivate ("system-note");
 }
 
-QString TreeItem::getNoteText()// FIXME-0 should not be necessary. see VM::loadNote and VM::saveNote
-{
-    return note.getText();
-}
-
 bool TreeItem::hasEmptyNote()
 {
     return note.isEmpty();
 }
 
-VymNote TreeItem::getNote()  // FIXME-0 should not be necessary. see VM::loadNote and VM::saveNote
+VymNote TreeItem::getNote()  
 {
     return note;
 }

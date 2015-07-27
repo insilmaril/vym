@@ -678,10 +678,11 @@ QString ExportHTML::getBranchText(BranchItem *current)
         // Include note
         if (!current->isNoteEmpty())
         {
+            VymNote  note = current->getNote();
             QString n;
-            if (current->getNote().isRichText())
+            if (note.isRichText())
             {
-                n=current->getNoteText();
+                n = note.getText();
                 QRegExp re("<p.*>");
                 re.setMinimal (true);
                 if (current->getNote().getFontHint() == "fixed")
@@ -709,12 +710,12 @@ QString ExportHTML::getBranchText(BranchItem *current)
             }
             else
             {
-                n=current->getNoteASCII().replace ("<","&lt;").replace (">","&gt;");
+                n = current->getNoteASCII().replace ("<","&lt;").replace (">","&gt;");
                 n.replace("\n","<br/>");
                 if (current->getNote().getFontHint()=="fixed")
-                    n="<pre>"+n+"</pre>";
-            }
-            s+="\n<table class=\"vym-note\"><tr><td class=\"vym-note-flag\">\n<td>\n"+n+"\n</td></tr></table>\n";
+                    n = "<pre>" + n + "</pre>";
+            } 
+            s += "\n<table class=\"vym-note\"><tr><td class=\"vym-note-flag\">\n<td>\n" + n + "\n</td></tr></table>\n";
         }
         return s;
     }

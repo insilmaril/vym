@@ -119,7 +119,6 @@ protected:
 public:	
     bool isNoteEmpty();
     virtual void clearNote();
-    virtual QString getNoteText();
     virtual bool hasEmptyNote();
     virtual void setNote(const VymText &vt); //FIXME-3 setNote is called for every select or so???
     virtual void setNote(const VymNote &vn);
