@@ -5121,6 +5121,7 @@ void VymModel::exportPDF (QString fname, bool askName)
     ex.setModel( this );
     ex.setFilePath( fname );
     ex.setDescription( tr("Export as PDF", "Description used in last exports menu") );
+    ex.setLastCommand( settings.localValue(filePath,"/export/last/command","").toString() );
 
     if (askName)
     {
