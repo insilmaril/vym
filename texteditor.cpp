@@ -654,7 +654,7 @@ void TextEditor::setPlainText(const QString &t)
     e->setReadOnly(false);
     reset();
 
-    actionFormatUseFixedFont->setChecked (true); // FIXME-0 wrong, respect fonthint!
+    actionFormatUseFixedFont->setChecked (true); 
     e->setPlainText(t);
     actionFormatRichText->setChecked (false);
 
