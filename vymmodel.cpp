@@ -5103,34 +5103,34 @@ QPointF VymModel::exportImage(QString fname, bool askName, QString format)
     return offset;
 }
 
-QPointF VymModel::exportPDF (QString fname, bool askName)
+void VymModel::exportPDF (QString fname, bool askName)
 {
-    if (fname=="")
+    if (fname == "")
     {
         if (!askName) 
         {
             qWarning("VymModel::exportPDF called without filename (and askName==false)");
-            return QPointF();
+            return;
         }
 
-	fname=lastImageDir.absolutePath() + "/" + getMapName()+".pdf";
+	fname = lastExportDir.absolutePath() + "/" + getMapName()+".pdf";
     }	
+
+    ExportBase ex;
+    ex.setName( "PDF" );
+    ex.setModel( this );
+    ex.setFilePath( fname );
+    ex.setDescription( tr("Export as PDF", "Description used in last exports menu") );
 
     if (askName)
     {
-        fname=QFileDialog::getSaveFileName ( 
-                mainWindow, 
-                tr("Export map as PDF"),
-                fname,
-                "PDF (*.pdf);;All (* *.*)"
-                );
-        lastImageDir=dirname(fname);
+        ex.setWindowTitle ( tr("Export map as PDF") );
+        ex.addFilter( "PDF (*.pdf);;All (* *.*)" );
+        if (! ex.execDialog() ) return;
+        fname = ex.getFilePath();
     }
 
-    if (fname.isEmpty()) return QPointF();
-
     setExportMode (true);
-    QPointF offset;
 
     // To PDF
     QPrinter printer(QPrinter::HighResolution);
@@ -5153,14 +5153,7 @@ QPointF VymModel::exportPDF (QString fname, bool askName)
 
     setExportMode (false);
 
-    QString cmd= QString("exportPDF(\"%1\")").arg(fname);// FIXME-0 should be done in ExportBase::completeExport;
-    settings.setLocalValue ( filePath, "/export/last/exportPath",fname);
-    settings.setLocalValue ( filePath, "/export/last/command",cmd);
-    settings.setLocalValue ( filePath, "/export/last/description","PDF");
-    setChanged();
-    mainWindow->statusMessage(tr("Exported: ","Export confirmation") + fname);
-
-    return offset;
+    ex.completeExport();
 }
 
 QPointF VymModel::exportSVG (QString fname, bool askName) 
@@ -5314,6 +5307,7 @@ void VymModel::exportASCII(bool listTasks, const QString &fname, bool askName)
     ExportASCII ex;
     ex.setModel (this);
     ex.setListTasks(listTasks);
+    ex.setLastCommand( settings.localValue(filePath,"/export/last/command","").toString() );
 
     if (fname=="")
         ex.setFilePath (mapName+".txt");
@@ -5328,14 +5322,9 @@ void VymModel::exportASCII(bool listTasks, const QString &fname, bool askName)
 
     if (!ex.canceled())
     {
-        QString lastCommand = settings.localValue(filePath,"/export/last/command","").toString();
-
         setExportMode(true);
         ex.doExport();
         setExportMode(false);
-
-        QString command = settings.localValue(filePath,"/export/last/command","").toString();
-        if (lastCommand != command) setChanged();
     }
 }
 

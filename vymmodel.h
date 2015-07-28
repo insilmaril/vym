@@ -530,7 +530,7 @@ public:
     QPointF exportImage (QString fname="",bool askForName=true,QString format="PNG");
 
     /*! Save as PDF  . Returns offset to upper left corner of image */
-    QPointF exportPDF (QString fname="",bool askForName=true);
+    void exportPDF (QString fname="",bool askForName=true);
 
     /*! Save as SVG  . Returns offset to upper left corner of image */
     QPointF exportSVG (QString fname="",bool askForName=true);

@@ -42,21 +42,23 @@ ExportBase::~ExportBase()
     removeDir (tmpDir);
 
     // Remember current directory
-    lastExportDir=QDir(dirPath);
+    lastExportDir = QDir(dirPath);
 }
 
 void ExportBase::init()
 {
-    indentPerDepth="  ";
-    exportName="unnamed";
+    indentPerDepth = "  ";
+    exportName     = "unnamed";
+    description    = "";
+    lastCommand    = "";
     bool ok;
     tmpDir.setPath (makeTmpDir(ok,"vym-export"));
     if (!tmpDir.exists() || !ok)
         QMessageBox::critical( 0, QObject::tr( "Error" ),
                                QObject::tr("Couldn't access temporary directory\n"));
-    cancelFlag=false;
-    defaultDirPath=lastExportDir.absolutePath();
-    dirPath=defaultDirPath;
+    cancelFlag = false;
+    defaultDirPath = lastExportDir.absolutePath();
+    dirPath = defaultDirPath;
 }
 
 void ExportBase::setDirPath (const QString &s)
@@ -103,7 +105,27 @@ void ExportBase::setModel(VymModel *m)
 
 void ExportBase::setWindowTitle (const QString &s)
 {
-    caption=s;
+    caption = s;
+}
+
+void ExportBase::setName (const QString &s)
+{
+    exportName = s;
+}
+
+QString ExportBase::getName ()
+{
+    return exportName;
+}
+
+void ExportBase::setDescription (const QString &s)
+{
+    description = s;
+}
+
+QString ExportBase::getDescription ()
+{
+    return description;
 }
 
 void ExportBase::addFilter(const QString &s)
@@ -143,7 +165,6 @@ bool ExportBase::execDialog()
         }
         dirPath=fn.left(fn.lastIndexOf ("/"));
         filePath=fn;
-        if (model) model->setChanged();
         return true;
     }
     return false;
@@ -154,15 +175,27 @@ bool ExportBase::canceled()
     return cancelFlag;
 }
 
-void ExportBase::completeExport(QString args) // FIXME-1 get rid of other settings, only command is needed
+void ExportBase::setLastCommand( const QString &s)
 {
-    // Add at least filepath as argument
-    if (args.isEmpty()) args = QString("\"%1\"").arg(filePath);
+    lastCommand = s;
+}
 
-    QString cmd = QString("export%1(%2)").arg(exportName).arg(args);
-    settings.setLocalValue ( model->getFilePath(), "/export/last/exportPath", filePath);
-    settings.setLocalValue ( model->getFilePath(), "/export/last/command", cmd);
+void ExportBase::completeExport(QString args) // FIXME-1 get rid of exportPath, only command is needed
+{
+    QString command;
+    // Add at least filepath as argument
+    if (args.isEmpty()) 
+        command = QString("export%1(\"%2\")").arg(exportName).arg(filePath);
+    else
+        command = QString("export%1(%2)").arg(exportName).arg(args);
+
+    //settings.setLocalValue ( model->getFilePath(), "/export/last/exportPath", filePath);
+    settings.setLocalValue ( model->getFilePath(), "/export/last/command", command);
     settings.setLocalValue ( model->getFilePath(), "/export/last/description", "");
+
+    // Trigger saving of export command if it has changed
+    if (model && lastCommand != command) model->setChanged();
+
     mainWindow->statusMessage(QString("Exported as %1: %2").arg(exportName).arg(filePath));
 }
 
