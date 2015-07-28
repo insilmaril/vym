@@ -989,15 +989,7 @@ void ExportHTML::doExport(bool useDialog)
         p.runScript (dia.postscript,dirPath + "/" + filePath);
     }
 
-    completeExport();
-    QString cmd="exportHTML";
-    settings.setLocalValue ( model->getFilePath(), "/export/last/command",QString("exportHTML(\"%1\",\"%2\")")
-                             .arg(dirPath)
-                             .arg(filePath)
-                             );
-    settings.setLocalValue ( model->getFilePath(), "/export/last/description","HTML");
-    settings.setLocalValue ( model->getFilePath(), "/export/last/exportPath",filePath);
-    mainWindow->statusMessage(cmd + ": " + filePath);
+    completeExport( QString("\"%1\",\"%2\"").arg(dirPath).arg(filePath));
 
     dia.saveSettings();
     model->setExportMode (false);
@@ -1013,6 +1005,8 @@ void ExportTaskjuggler::doExport()
     p.setOutputFile (filePath);
     p.setXSLFile (vymBaseDir.path()+"/styles/vym2taskjuggler.xsl");
     p.process();
+
+    completeExport();
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -1061,10 +1055,7 @@ void ExportOrgMode::doExport()
     }
     file.close();
 
-    QString cmd=QString("exportOrgMode(\"%1\")").arg(filePath);
-    settings.setLocalValue ( model->getFilePath(), "/export/last/command",cmd);
-    settings.setLocalValue ( model->getFilePath(), "/export/last/description","Orgmode");
-    mainWindow->statusMessage(cmd);
+    completeExport();
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -1166,11 +1157,7 @@ void ExportLaTeX::doExport()
     }
     
     file.close();
-    QString cmd=QString("exportLaTeX(\"%1\")").arg(filePath);
-    settings.setLocalValue ( model->getFilePath(), "/export/last/exportPath",filePath);
-    settings.setLocalValue ( model->getFilePath(), "/export/last/command",cmd);
-    settings.setLocalValue ( model->getFilePath(), "/export/last/description","LaTeX");
-    mainWindow->statusMessage(cmd + ": " + filePath);
+    completeExport();
 }
 
 ////////////////////////////////////////////////////////////////////////

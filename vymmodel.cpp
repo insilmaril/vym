@@ -5287,6 +5287,8 @@ void VymModel::exportAO (QString fname,bool askName)
 {
     ExportAO ex;
     ex.setModel (this);
+    ex.setLastCommand( settings.localValue(filePath,"/export/last/command","").toString() );
+
     if (fname=="") 
 	ex.setFilePath (mapName+".txt");	
     else
@@ -5335,6 +5337,8 @@ void VymModel::exportCSV(const QString &fname, bool askName)
 {
     ExportCSV ex;
     ex.setModel (this);
+    ex.setLastCommand( settings.localValue(filePath,"/export/last/command","").toString() );
+
     if (fname=="")
         ex.setFilePath (mapName+".csv");
     else
@@ -5359,6 +5363,8 @@ void VymModel::exportCSV(const QString &fname, bool askName)
 void VymModel::exportHTML (const QString &dpath, const QString &fpath,bool useDialog)
 {
     ExportHTML ex (this);
+    ex.setLastCommand( settings.localValue(filePath,"/export/last/command","").toString() );
+
     if (!dpath.isEmpty()) ex.setDirPath (dpath);
     if (!fpath.isEmpty()) ex.setFilePath (fpath);
     setExportMode(true);
@@ -5371,6 +5377,8 @@ void VymModel::exportImpress(const QString &fn, const QString &cf)
     ExportOO ex;
     ex.setFilePath (fn);
     ex.setModel (this);
+    ex.setLastCommand( settings.localValue(filePath,"/export/last/command","").toString() );
+
     if (ex.setConfigFile(cf)) 
     {
         QString lastCommand = settings.localValue(filePath,"/export/last/command","").toString();
@@ -5415,6 +5423,8 @@ void VymModel::exportLaTeX (const QString &fname,bool askName)
 {
     ExportLaTeX ex;
     ex.setModel (this);
+    ex.setLastCommand( settings.localValue(filePath,"/export/last/command","").toString() );
+
     if (fname=="") 
 	ex.setFilePath (mapName+".tex");	
     else
@@ -5433,6 +5443,8 @@ void VymModel::exportOrgMode (const QString &fname, bool askName)
 {
     ExportOrgMode ex;
     ex.setModel (this);
+    ex.setLastCommand( settings.localValue(filePath,"/export/last/command","").toString() );
+
     if (fname=="") 
 	ex.setFilePath (mapName+".org");	
     else
