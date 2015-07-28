@@ -128,7 +128,7 @@ QString VymText::getTextASCII(QString indent, const int &) const //FIXME-3 use w
     {
         if ( fonthint == "fixed")
         {
-            s = text; // FIXME-0 check if text now really does not contain tags
+            s = text; 
         } else
         {
             // Wordwrap

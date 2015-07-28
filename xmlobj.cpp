@@ -126,7 +126,7 @@ QString XMLObj::endElement(QString s)
 // returns  at="val"
 QString XMLObj::attribut(QString at, QString val)
 {
-    return " " + at + "=\"" + quotemeta(val) + "\"";    // FIXME-0 still needed with CDATA? (probably yes, as CDATA is only between elements
+    return " " + at + "=\"" + quotemeta(val) + "\"";  
 }
 
 // returns <s> val </s>
