@@ -4199,7 +4199,7 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	{
        QString fname  = parser.parString(ok, 0);
        bool listTasks = parser.parBool(ok, 1);
-       exportASCII (true, fname, false);
+       exportASCII (listTasks, fname, false);
        break;
     }
 	/////////////////////////////////////////////////////////////////////
@@ -5061,44 +5061,43 @@ void VymModel::setExportMode (bool b)
 
 QPointF VymModel::exportImage(QString fname, bool askName, QString format)  
 {
+    QPointF offset; // set later, when getting image from MapEditor
+
     if (fname=="")
     {
         if (!askName) 
         {
             qWarning("VymModel::exportImage called without filename (and askName==false)");
-            return QPointF();
+            return offset;
         }
 
 	fname=lastImageDir.absolutePath() + "/" + getMapName()+".png";
 	format="PNG";
     }	
 
+    ExportBase ex;
+    ex.setName( "Image" );
+    ex.setModel( this );
+    ex.setFilePath( fname );
+    ex.setWindowTitle ( tr("Export map as image") );
+    ex.addFilter( "PNG (*.png);;All (* *.*)" ); //  imageIO.getFilters().join(";;")
+    ex.setLastCommand( settings.localValue(filePath,"/export/last/command","").toString() );
+
     if (askName)
     {
-        fname=QFileDialog::getSaveFileName ( 
-                mainWindow, 
-                tr("Export map as image"),
-                fname,
-                imageIO.getFilters().join(";;")
-                );
+        if (! ex.execDialog() ) return offset;
+        fname = ex.getFilePath();
         lastImageDir=dirname(fname);
     }
 
-    if (fname.isEmpty()) return QPointF();
-
     setExportMode (true);
-    QPointF offset;
+
     QImage img (mapEditor->getImage(offset));
     if (!img.save(fname, format.toLocal8Bit()))
 	QMessageBox::critical (0,tr("Critical Error"),tr("Couldn't save QImage %1 in format %2").arg(fname).arg(format));
     setExportMode (false);
 
-    QString cmd= QString("exportImage(\"%1\",\"PNG\")").arg(fname); // FIXME-0 should be done in ExportBase::completeExport
-    settings.setLocalValue ( filePath, "/export/last/exportPath",fname);
-    settings.setLocalValue ( filePath, "/export/last/command",cmd);
-    settings.setLocalValue ( filePath, "/export/last/description","Image");
-    setChanged();
-    mainWindow->statusMessage(tr("Exported: ","Export confirmation") + fname);
+    ex.completeExport();
 
     return offset;
 }
@@ -5120,13 +5119,12 @@ void VymModel::exportPDF (QString fname, bool askName)
     ex.setName( "PDF" );
     ex.setModel( this );
     ex.setFilePath( fname );
-    ex.setDescription( tr("Export as PDF", "Description used in last exports menu") );
+    ex.setWindowTitle ( tr("Export map as PDF") );
+    ex.addFilter( "PDF (*.pdf);;All (* *.*)" );
     ex.setLastCommand( settings.localValue(filePath,"/export/last/command","").toString() );
 
     if (askName)
     {
-        ex.setWindowTitle ( tr("Export map as PDF") );
-        ex.addFilter( "PDF (*.pdf);;All (* *.*)" );
         if (! ex.execDialog() ) return;
         fname = ex.getFilePath();
     }
@@ -5159,32 +5157,35 @@ void VymModel::exportPDF (QString fname, bool askName)
 
 QPointF VymModel::exportSVG (QString fname, bool askName) 
 {
+    QPointF offset; // FIXME-3 not needed?
+
     if (fname=="")
     {
         if (!askName) 
         {
             qWarning("VymModel::exportSVG called without filename (and askName==false)");
-            return QPointF();
+            return offset;
         }
 
 	fname=lastImageDir.absolutePath() + "/" + getMapName()+".png";
     }	
 
+    ExportBase ex;
+    ex.setName( "SVG" );
+    ex.setModel( this );
+    ex.setFilePath( fname );
+    ex.setWindowTitle ( tr("Export map as SVG") );
+    ex.addFilter( "SVG (*.svg);;All (* *.*)" );
+    ex.setLastCommand( settings.localValue(filePath,"/export/last/command","").toString() );
+
     if (askName)
     {
-        fname=QFileDialog::getSaveFileName ( 
-                mainWindow, 
-                tr("Export map as scalable vector graphic"),
-                fname,
-                "SVG (*.svg);;All (* *.*)"
-                );
-        lastImageDir=dirname(fname);
+        if (! ex.execDialog() ) return offset;
+        fname = ex.getFilePath();
+        lastImageDir = dirname(fname);
     }
 
-    if (fname.isEmpty()) return QPointF();
-
     setExportMode (true);
-    QPointF offset;
 
     QSvgGenerator generator;
     generator.setFileName(fname);
@@ -5197,49 +5198,49 @@ QPointF VymModel::exportSVG (QString fname, bool askName)
     delete svgPainter;
 
     setExportMode (false);
+    ex.completeExport();
 
-    QString cmd= QString("exportSVG(\"%1\")").arg(fname);// FIXME-0 should be done in ExportBase::completeExport;
-    settings.setLocalValue ( filePath, "/export/last/exportPath",fname);
-    settings.setLocalValue ( filePath, "/export/last/command",cmd);
-    settings.setLocalValue ( filePath, "/export/last/description","SVG");
-    setChanged();
-    mainWindow->statusMessage(tr("Exported: ","Export confirmation") + fname);
     return offset;
 }
 
 void VymModel::exportXML (QString dpath, QString fpath, bool useDialog)
 {
+    ExportBase ex;
+    ex.setName( "XML" );
+    ex.setModel( this );
+    ex.setWindowTitle ( tr("Export map as XML") );
+    ex.addFilter( "XML (*.xml);;All (* *.*)" );
+    ex.setLastCommand( settings.localValue(filePath,"/export/last/command","").toString() );
+
     if (useDialog)
     {
     	QFileDialog fd;
 	fd.setWindowTitle (vymName+ " - " + tr("Export XML to directory"));
 	fd.setFileMode (QFileDialog::DirectoryOnly);
 	QStringList filters;
-	filters <<"XML data (*.xml)";
+	filters << "XML data (*.xml)";
 	fd.setNameFilters (filters);
 	fd.setConfirmOverwrite (false);
 	fd.setAcceptMode (QFileDialog::AcceptSave);
 
 	QString fn;
-	if (fd.exec() != QDialog::Accepted || fd.selectedFiles().isEmpty() )
-        {
-            qDebug()<<"exportXML returning 1"; //FIXME-2
-            return;
-        }
+	if (fd.exec() != QDialog::Accepted || fd.selectedFiles().isEmpty() ) return;
 
-	if (dpath=="" && !reallyWriteDirectory(dpath) )
+	dpath = fd.selectedFiles().first();
+        //dpath = dpath.left(dpath.lastIndexOf("/"));
+	fpath = dpath + "/" + mapName + ".xml";
+
+	if (!reallyWriteDirectory(dpath) )
 	{
-	    qDebug()<<"exportXML returning 2"; //FIXME-2
+	    qDebug() << "exportXML: fd    = "<<fd.selectedFiles().first(); //FIXME-2
+	    qDebug() << "exportXML: dpath = "<<dpath; //FIXME-2
 	    return;
 	}
-	setChanged();
 
-	dpath=fd.selectedFiles().first();
-        dpath=dpath.left(dpath.lastIndexOf("/"));
-	fpath=dpath + "/" + mapName + ".xml";
     }
+    ex.setFilePath( fpath );
 
-    QString mname=basename(fpath);
+    QString mname = basename(fpath);
 
     // Hide stuff during export, if settings want this
     setExportMode (true);
@@ -5247,8 +5248,14 @@ void VymModel::exportXML (QString dpath, QString fpath, bool useDialog)
     // Create subdirectories
     makeSubDirs (dpath);
 
-    // write image and calculate offset
-    QPointF offset=exportImage (dpath + "/images/" + mname + ".png",false,"PNG");
+    // write image and calculate offset (Remember old mapSaved setting while exporting image)
+    bool mchanged = mapChanged;
+    bool munsaved = mapUnsaved;
+
+    QPointF offset = exportImage (dpath + "/images/" + mname + ".png",false,"PNG");
+
+    mapChanged = mchanged;
+    mapUnsaved = munsaved;
 
     // write to directory   //FIXME-3 check totalBBox here...
     QString saveFile=saveToDir (dpath , mname + "-", true, offset, NULL); 
@@ -5273,12 +5280,7 @@ void VymModel::exportXML (QString dpath, QString fpath, bool useDialog)
 
     setExportMode (false);
 
-    QString cmd=QString("exportXML(\"%1\",\"%2\")") // FIXME-0 should be done in ExportBase::completeExport)
-        .arg(dpath)
-        .arg(fpath);
-    settings.setLocalValue ( filePath, "/export/last/exportPath",dpath);
-    settings.setLocalValue ( filePath, "/export/last/command",cmd);
-    settings.setLocalValue ( filePath, "/export/last/description","XML");
+    ex.completeExport( QString("\"%1\",\"%2\"").arg(dpath).arg(fpath) );
 }
 
 void VymModel::exportAO (QString fname,bool askName)

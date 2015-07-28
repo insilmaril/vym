@@ -49,7 +49,6 @@ void ExportBase::init()
 {
     indentPerDepth = "  ";
     exportName     = "unnamed";
-    description    = "";
     lastCommand    = "";
     bool ok;
     tmpDir.setPath (makeTmpDir(ok,"vym-export"));
@@ -118,16 +117,6 @@ QString ExportBase::getName ()
     return exportName;
 }
 
-void ExportBase::setDescription (const QString &s)
-{
-    description = s;
-}
-
-QString ExportBase::getDescription ()
-{
-    return description;
-}
-
 void ExportBase::addFilter(const QString &s)
 {
     filter=s;
@@ -180,7 +169,7 @@ void ExportBase::setLastCommand( const QString &s)
     lastCommand = s;
 }
 
-void ExportBase::completeExport(QString args) // FIXME-1 get rid of exportPath, only command is needed
+void ExportBase::completeExport(QString args) 
 {
     QString command;
     // Add at least filepath as argument
@@ -189,12 +178,14 @@ void ExportBase::completeExport(QString args) // FIXME-1 get rid of exportPath, 
     else
         command = QString("export%1(%2)").arg(exportName).arg(args);
 
-    //settings.setLocalValue ( model->getFilePath(), "/export/last/exportPath", filePath);
+    settings.setLocalValue ( model->getFilePath(), "/export/last/exportPath", filePath);
     settings.setLocalValue ( model->getFilePath(), "/export/last/command", command);
-    settings.setLocalValue ( model->getFilePath(), "/export/last/description", "");
+    settings.setLocalValue ( model->getFilePath(), "/export/last/description", exportName);
 
     // Trigger saving of export command if it has changed
-    if (model && lastCommand != command) model->setChanged();
+    qDebug()<<" c="<<command;
+    qDebug()<<"lc="<<lastCommand;
+    if (model && (lastCommand != command) ) model->setChanged();
 
     mainWindow->statusMessage(QString("Exported as %1: %2").arg(exportName).arg(filePath));
 }

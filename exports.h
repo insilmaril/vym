@@ -30,8 +30,6 @@ public:
     virtual void setWindowTitle (const QString &);
     virtual void setName( const QString &);
     virtual QString getName();
-    virtual void setDescription( const QString &);
-    virtual QString getDescription();
     virtual void addFilter (const QString &);
     virtual void setListTasks( bool b);
     virtual bool execDialog();
@@ -42,7 +40,6 @@ public:
 protected:  
     VymModel *model;
     QString exportName;
-    QString description;
     QString lastCommand;
     virtual QString getSectionString (TreeItem*);
 
