@@ -183,8 +183,6 @@ void ExportBase::completeExport(QString args)
     settings.setLocalValue ( model->getFilePath(), "/export/last/description", exportName);
 
     // Trigger saving of export command if it has changed
-    qDebug()<<" c="<<command;
-    qDebug()<<"lc="<<lastCommand;
     if (model && (lastCommand != command) ) model->setChanged();
 
     mainWindow->statusMessage(QString("Exported as %1: %2").arg(exportName).arg(filePath));
