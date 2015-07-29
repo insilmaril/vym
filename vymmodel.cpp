@@ -1739,15 +1739,6 @@ Heading VymModel::getHeading()
     return Heading();
 }
 
-bool VymModel::hasRichTextHeading() //FIXME-1 needed?
-{
-    TreeItem *selti=getSelectedItem();
-    if (selti)
-    {
-    }
-    return false;
-}
-
 void VymModel::setNote(const  VymNote &vn)
 {
     TreeItem *selti=getSelectedItem();
@@ -4184,7 +4175,11 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	/////////////////////////////////////////////////////////////////////
     if (com=="deleteSlide")
 	{
-        if (ok) deleteSlide(n); // n needs initialization:  FIXME-1
+	    n = parser.parInt (ok,0);
+	    if (!ok || n < 0 || n >= slideModel->count() - 1)
+		parser.setError (Aborted,"Index out of range");
+	    else    
+                deleteSlide(n);
         break;
     }
 	/////////////////////////////////////////////////////////////////////
@@ -4469,8 +4464,8 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	/////////////////////////////////////////////////////////////////////
     if (com=="moveSlideUp")
 	{
-	    n=parser.parInt (ok,0);
-	    if (n>=slideModel->count())
+	    n = parser.parInt (ok, 0);
+	    if (!ok || n < 0 || n >= slideModel->count() - 1)
 		parser.setError (Aborted,"Index out of range");
 	    else    
 		moveSlideUp(n);
@@ -4479,8 +4474,8 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	/////////////////////////////////////////////////////////////////////
     if (com=="moveSlideDown")
 	{
-	    n=parser.parInt (ok,0);
-	    if (n>=slideModel->count()-1)
+	    n = parser.parInt (ok, 0);
+	    if (!ok || n < 0 || n >= slideModel->count() - 1)
 		parser.setError (Aborted,"Index out of range");
 	    else    
 		moveSlideDown(n);
