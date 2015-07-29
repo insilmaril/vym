@@ -4737,7 +4737,7 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
     if (com=="setHeadingPlainText")
 	{
 	    s=parser.parString (ok,0);
-            setHeadingPlainText (s); // FIXME-1  what about RT?
+            setHeadingPlainText (s); // FIXME-2  what about RT? Nothing implemented.
         break;
     }
 	/////////////////////////////////////////////////////////////////////
