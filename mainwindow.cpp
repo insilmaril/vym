@@ -4232,14 +4232,16 @@ void Main::editMapInfo()
 
 void Main::editMoveUp()
 {
-    VymModel *m=currentModel();
-    if (m) m->moveUp();
+    MapEditor *me = currentMapEditor();
+    VymModel  *m  = currentModel();
+    if (me && m && me->getState() != MapEditor::EditingHeading) m->moveUp();
 }
 
 void Main::editMoveDown()
 {
-    VymModel *m=currentModel();
-    if (m) m->moveDown();
+    MapEditor *me = currentMapEditor();
+    VymModel  *m  = currentModel();
+    if (me && m && me->getState() != MapEditor::EditingHeading) m->moveDown();
 }
 
 void Main::editDetach()
@@ -5517,12 +5519,14 @@ void Main::previousSlide()
 
 void Main::standardFlagChanged()
 {
-    if (currentModel())
+    MapEditor *me = currentMapEditor();
+    VymModel  *m  = currentModel();
+    if (me && m && me->getState() != MapEditor::EditingHeading) 
     {
         if ( actionSettingsUseFlagGroups->isChecked() )
-            currentModel()->toggleStandardFlag(sender()->objectName(),standardFlagsMaster);
+            m->toggleStandardFlag(sender()->objectName(),standardFlagsMaster);
         else
-            currentModel()->toggleStandardFlag(sender()->objectName());
+            m->toggleStandardFlag(sender()->objectName());
         updateActions();
     }
 }

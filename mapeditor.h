@@ -23,10 +23,22 @@ class MapEditor : public QGraphicsView {
     Q_OBJECT
 
 public:
+    enum EditorState {
+	Neutral,
+	EditingHeading,
+	EditingLink,
+	MovingObject,
+	MovingView,
+	PickingColor,
+	CopyingObject,
+	DrawingLink
+    };
+
     MapEditor(VymModel *vm);
     ~MapEditor();
     VymModel* getModel();
     QGraphicsScene * getScene();
+    MapEditor::EditorState getState();
 
 // Animation of scrollbars
 Q_PROPERTY(QPointF scrollBarPos READ getScrollBarPos WRITE setScrollBarPos)
@@ -172,17 +184,8 @@ private:
     QCursor PickColorCursor;	// cursor while picking color 
     QCursor CopyCursor;		// cursor while picking color 
     QCursor XLinkCursor;	// cursor while picking color 
-    enum EditorState {
-	Neutral,
-	EditingHeading,
-	EditingLink,
-	MovingObject,
-	MovingView,
-	PickingColor,
-	CopyingObject,
-	DrawingLink
-    };
     EditorState state; 
+
     void setState (EditorState);
     bool objectMoved;		// true if object was not clicked, but moved with mouse
 

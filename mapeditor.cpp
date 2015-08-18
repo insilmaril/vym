@@ -1098,6 +1098,8 @@ BranchItem* MapEditor::getRightBranch(BranchItem *bi)
 
 void MapEditor::cursorUp()
 {
+    if (state == MapEditor::EditingHeading) return;
+
     BranchItem *bi=model->getSelectedBranch();
     if (bi) model->select (getBranchAbove(bi));
 }
@@ -1105,6 +1107,8 @@ void MapEditor::cursorUp()
 void MapEditor::cursorDown()	
 
 {
+    if (state == MapEditor::EditingHeading) return;
+
     BranchItem *bi=model->getSelectedBranch();
     if (bi) model->select (getBranchBelow(bi));
 }
@@ -2090,6 +2094,11 @@ void MapEditor::setState (EditorState s)
         qDebug()<<"MapEditor: State "<<s<< " of "<<model->getMapName();
     }
     */
+}
+
+MapEditor::EditorState MapEditor::getState()
+{
+    return state;
 }
 
 void MapEditor::updateSelection(QItemSelection nsel,QItemSelection dsel)	
