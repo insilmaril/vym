@@ -42,6 +42,7 @@ TRANSLATIONS += lang/vym_es.ts
 TRANSLATIONS += lang/vym_fr.ts
 TRANSLATIONS += lang/vym_ia.ts
 TRANSLATIONS += lang/vym_it.ts
+TRANSLATIONS += lang/vym_ja.ts
 TRANSLATIONS += lang/vym_pt_BR.ts
 TRANSLATIONS += lang/vym_ru.ts
 TRANSLATIONS += lang/vym_sv.ts
