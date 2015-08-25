@@ -7,12 +7,14 @@ class TaskFilterModel:public QSortFilterProxyModel
 {
 public:
     void setFilter (bool b);
+    void setFilterNew (bool b);
     void setMapFilter (const QString &s);
 protected:    
     bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const;
 private:
     bool useFilter;
     QString mapFilter;
+    bool filterNew;
 };
 
 #endif
