@@ -3175,34 +3175,35 @@ File::ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode, const FileType
 	if (err!=File::Aborted)
 	{
 	    // Save existing filename in case  we import
-	    QString fn_org=vm->getFilePath();
+	    QString fn_org = vm->getFilePath();
 
 	    // Finally load map into mapEditor
 	    progressDialog.setLabelText (tr("Loading: %1","Progress dialog while loading maps").arg(fn));
 	    vm->setFilePath (fn);
 	    vm->saveStateBeforeLoad (lmode,fn);
-	    err=vm->loadMap(fn,lmode,ftype);
+	    err = vm->loadMap(fn,lmode,ftype);
 
 	    // Restore old (maybe empty) filepath, if this is an import
-	    if (lmode!=NewMap)
+	    if (lmode != NewMap)
 		vm->setFilePath (fn_org);
 	}   
 
 	// Finally check for errors and go home
-	if (err==File::Aborted) 
+	if (err == File::Aborted) 
 	{
-	    if (lmode==NewMap) fileCloseMap();
+	    if (lmode == NewMap) fileCloseMap();
 	    statusBar()->showMessage( "Could not load " + fn, statusbarTime );
 	} else 
 	{
-	    if (lmode==NewMap)
-	    {
-            vm->setFilePath (fn);
-            tabWidget->setTabText (tabIndex, vm->getFileName());
-            actionFilePrint->setEnabled (true);
-	    }	
+	    if (lmode == NewMap)
+            {
+                vm->setFilePath (fn);
+                tabWidget->setTabText (tabIndex, vm->getFileName());
+                actionFilePrint->setEnabled (true);
+            }	
 	    editorChanged();
 	    vm->emitShowSelection();
+            addRecentMap( fn );
 	    statusBar()->showMessage( "Loaded " + fn, statusbarTime );
 	}   
     }
