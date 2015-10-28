@@ -5896,9 +5896,11 @@ void Main::downloadUpdatesFinished(bool interactive)
             {
                 statusMessage( tr("vym is up to date.","MainWindow"));
                 if (interactive)
+                {
                     // Notification: vym is up to date!
                     dia.setHtml( page );
                     dia.exec();
+                }
             } else if (page.contains("vymneedsupdate"))
             {
                 // Notification: updates available
