@@ -1,6 +1,6 @@
 ###VYM - View Your Mind (c) 2004-2015 by Uwe Drechsel###
 
-## Version 2.4.8 - beta ##
+## Version 2.5.0 ##
 
 
 Documentation
