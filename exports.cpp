@@ -239,7 +239,8 @@ void ExportAO::doExport()
     settings.setLocalValue ( model->getFilePath(), "/export/last/command","exportAO");
     settings.setLocalValue ( model->getFilePath(), "/export/last/description","A&O report");
 
-    QTextStream ts( &file );    // use LANG decoding here...
+    QTextStream ts( &file );
+    ts.setCodec("UTF-8");
 
     // Main loop over all branches
     QString s;
@@ -379,7 +380,8 @@ void ExportASCII::doExport()
         qWarning ()<<"ExportASCII::doExport couldn't open "+filePath;
         return;
     }
-    QTextStream ts( &file );    // use LANG decoding here...
+    QTextStream ts( &file );
+    ts.setCodec("UTF-8");
 
     // Main loop over all branches
     QString s;
@@ -507,7 +509,8 @@ void ExportCSV::doExport()
         qWarning ()<<"ExportBase::exportXML  couldn't open "+filePath;
         return;
     }
-    QTextStream ts( &file );    // use LANG decoding here...
+    QTextStream ts( &file );
+    ts.setCodec("UTF-8");
 
     // Write header
     ts << "\"Note\""  <<endl;
@@ -936,8 +939,8 @@ void ExportHTML::doExport(bool useDialog)
         mainWindow->statusMessage(QString(QObject::tr("Export failed.")));
         return;
     }
-    QTextStream ts( &file );    // use LANG decoding here...
-    //FIXME-4 ts.setEncoding (QTextStream::UnicodeUTF8); // Force UTF8
+    QTextStream ts( &file );
+    ts.setCodec("UTF-8");
 
     // Hide stuff during export
     model->setExportMode (true);
@@ -1028,8 +1031,8 @@ void ExportOrgMode::doExport()
         mainWindow->statusMessage(QString(QObject::tr("Export failed.")));
         return;
     }
-    QTextStream ts( &file );  // use LANG decoding here...
-    //FIXME-4 ts.setEncoding (QTextStream::UnicodeUTF8); // Force UTF8
+    QTextStream ts( &file );
+    ts.setCodec("UTF-8");
 
     // Main loop over all branches
     QString s;
@@ -1109,8 +1112,8 @@ void ExportLaTeX::doExport()
         mainWindow->statusMessage(QString(QObject::tr("Export failed.")));
         return;
     }
-    QTextStream ts( &file );  // use LANG decoding here...
-    //FIXME-4 ts.setEncoding (QTextStream::UnicodeUTF8); // Force UTF8
+    QTextStream ts( &file );
+    ts.setCodec("UTF-8");
 
     // Read default section names
     QStringList sectionNames;
@@ -1290,6 +1293,7 @@ void ExportOO::exportPresentation()
     }
 
     QTextStream t( &f );
+    t.setCodec("UTF-8");
     t << content;
     f.close();
 
