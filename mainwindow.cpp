@@ -5513,7 +5513,8 @@ void Main::testFunction1()
     VymModel *m = currentModel();
     if (m)
     {
-        QString fileName("C:/Users/uwdr9542/vym/code/helloscript.js");
+        //QString fileName("C:/Users/uwdr9542/vym/code/helloscript.js");
+        QString fileName("helloscript.js");
         QFile scriptFile(fileName);
         scriptFile.open(QIODevice::ReadOnly);
         QTextStream stream(&scriptFile);

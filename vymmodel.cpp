@@ -6405,7 +6405,7 @@ VymModelScript::VymModelScript(VymModel *m)
 
 void VymModelScript::addBranch(int pos)
 {
-    BranchItem *selbi = getSelectedBranch();
+    BranchItem *selbi = model->getSelectedBranch();
     if (selbi)
         model->addNewBranch(selbi, pos);
 }
