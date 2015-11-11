@@ -730,7 +730,7 @@ void MapEditor::autoLayout()
 		polys.append(p);
 		vectors.append (QPointF(0,0));
 		orgpos.append (p.at(0));
-		headings.append (bi->getHeading());
+        headings.append (bi->getHeadingPlain());
 	    }
 	    for (int j=0;j<bi->branchCount();++j)
 	    {
@@ -744,7 +744,7 @@ void MapEditor::autoLayout()
 		    polys.append(p);
 		    vectors.append (QPointF(0,0));
 		    orgpos.append (p.at(0));
-		    headings.append (bi2->getHeading());
+            headings.append (bi2->getHeadingPlain());
 		}   
 	    }
 	}
@@ -1078,7 +1078,7 @@ BranchItem* MapEditor::getRightBranch(BranchItem *bi)
 		    newbi=bi->getBranchNum(i);
 		    bo=newbi->getBranchObj();
 		    if (bo && bo->getOrientation()==LinkableMapObj::RightOfCenter)
-			qDebug()<<"BI found right: "<<newbi->getHeading();
+            qDebug()<<"BI found right: "<<newbi->getHeadingPlain();
 		}
 	    }
 	    return newbi;
@@ -1098,6 +1098,8 @@ BranchItem* MapEditor::getRightBranch(BranchItem *bi)
 
 void MapEditor::cursorUp()
 {
+    if (state == MapEditor::EditingHeading) return;
+
     BranchItem *bi=model->getSelectedBranch();
     if (bi) model->select (getBranchAbove(bi));
 }
@@ -1105,6 +1107,8 @@ void MapEditor::cursorUp()
 void MapEditor::cursorDown()	
 
 {
+    if (state == MapEditor::EditingHeading) return;
+
     BranchItem *bi=model->getSelectedBranch();
     if (bi) model->select (getBranchBelow(bi));
 }
@@ -1136,35 +1140,42 @@ void MapEditor::editHeading()
 {
     if (state==EditingHeading)
     {
-	editHeadingFinished();
-	return;
+        editHeadingFinished();
+        return;
     }
+
     BranchObj *bo=model->getSelectedBranchObj();
     BranchItem *bi=model->getSelectedBranch();
-    if (bo) 
+    if (bo && bo)
     {
-	model->setSelectionBlocked(true);
+        VymText heading = bi->getHeading();
+        if (heading.isRichText())
+        {
+            mainWindow->windowShowHeadingEditor();
+            return;
+        }
+        model->setSelectionBlocked(true);
 
-	lineEdit=new QLineEdit;
-	QGraphicsProxyWidget *pw=mapScene->addWidget (lineEdit);
-	pw->setZValue (Z_LINEEDIT);
-	lineEdit->setCursor(Qt::IBeamCursor);
-	lineEdit->setCursorPosition(1);
+        lineEdit=new QLineEdit;
+        QGraphicsProxyWidget *pw=mapScene->addWidget (lineEdit);
+        pw->setZValue (Z_LINEEDIT);
+        lineEdit->setCursor(Qt::IBeamCursor);
+        lineEdit->setCursorPosition(1);
 
-	QPointF tl=bo->getOrnamentsBBox().topLeft();
-	QPointF br=tl + QPointF (230,30);
-	QRectF r (tl, br);
-	lineEdit->setGeometry(r.toRect() );
+        QPointF tl=bo->getOrnamentsBBox().topLeft();
+        QPointF br=tl + QPointF (230,30);
+        QRectF r (tl, br);
+        lineEdit->setGeometry(r.toRect() );
 
-	setScrollBarPosTarget ( r );
-	scene()->update();
+        setScrollBarPosTarget ( r );
+        scene()->update();
 
-	animateScrollBars();
-	lineEdit->setText (bi->getHeading());
-	lineEdit->setFocus();
-	lineEdit->selectAll();	// Hack to enable cursor in lineEdit
-	lineEdit->deselect();	// probably a Qt bug...
-	setState (EditingHeading);
+        animateScrollBars();
+        lineEdit->setText (heading.getTextASCII() );
+        lineEdit->setFocus();
+        lineEdit->selectAll();	// Hack to enable cursor in lineEdit
+        lineEdit->deselect();	// probably a Qt bug...
+        setState (EditingHeading);
     }
 }
 
@@ -1175,7 +1186,7 @@ void MapEditor::editHeadingFinished()
     lineEdit->clearFocus();
     QString s=lineEdit->text();
     s.replace (QRegExp ("\\n")," ");	// Don't paste newline chars
-    model->setHeading (s);
+    model->setHeadingPlainText (s);
     model->setSelectionBlocked(false);
     delete (lineEdit);
     lineEdit=NULL;
@@ -1385,11 +1396,7 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
 		    {
 			XLinkItem *xli=ti->getXLinkItemNum(i);
 			BranchItem *bit=xli->getPartnerBranch();
-			if (bit) 
-			{
-			    alist.append (new QAction(ti->getXLinkItemNum(i)->getPartnerBranch()->getHeading(),&menu));
-			    blist.append (bit);
-			}
+			if (bit) alist.append (new QAction(ti->getXLinkItemNum(i)->getPartnerBranch()->getHeadingPlain(),&menu));
 		    }	
 		    menu.addActions (alist);	
 		    QAction *ra=menu.exec (e->globalPos() );
@@ -1647,7 +1654,6 @@ void MapEditor::moveObject ()
 			    p.y()  - movingObj_offset.y() + lmosel->getTopPad() );	    
 		    else    
 			lmosel->move(p.x() - movingObj_offset.x(), p.y() - movingObj_offset.y() - lmosel->getTopPad());
-		    lmosel->setRelPos();    
 		} 
 
 	    } // depth>0
@@ -1981,83 +1987,88 @@ void MapEditor::dropEvent(QDropEvent *event)
     BranchItem *selbi=model->getSelectedBranch();
     if (selbi)
     {
-	if (debug)
-	{
-	    foreach (QString format,event->mimeData()->formats()) 
-		qDebug()<< "MapEditor: Dropped format: "<<qPrintable (format);
-	    foreach (QUrl url,event->mimeData()->urls())
-		qDebug()<< "  URL:"<<url.path();
-	    //foreach (QString plain,event->mimeData()->text())
-	    //	qDebug()<< "   PLAIN:"<<plain;
-	    QByteArray ba=event->mimeData()->data("STRING");
-	    
-	    QString s;
-	    s=ba;
-	    qDebug() << "  STRING:" <<s;
+        if (debug)
+        {
+            foreach (QString format,event->mimeData()->formats())
+                qDebug()<< "MapEditor: Dropped format: "<<qPrintable (format);
+            foreach (QUrl url,event->mimeData()->urls())
+                qDebug()<< "  URL:" <<url.path();
+            qDebug()    << " text: " << event->mimeData()->text();
+            //foreach (QString plain,event->mimeData()->text())
+            //	qDebug()<< "   PLAIN:"<<plain;
+            QByteArray ba = event->mimeData()->data("STRING");
 
-	    ba=event->mimeData()->data("TEXT");
-	    s=ba;
-	    qDebug() << "    TEXT:" <<s;
+            QString s;
+            s = ba;
+            qDebug() << "  STRING:" <<s;
 
-	    ba=event->mimeData()->data("COMPOUND_TEXT");
-	    s=ba;
-	    qDebug() << "   CTEXT:" <<s;
+            ba= event->mimeData()->data("TEXT");
+            s = ba;
+            qDebug() << "    TEXT:" <<s;
 
-	    ba=event->mimeData()->data("text/x-moz-url");
-	    s=ba;
-	    qDebug() << "   x-moz-url:" <<s;
-	    //foreach (char b,ba) if (b!=0) qDebug() << "b="<<b;
-	}
+            ba= event->mimeData()->data("COMPOUND_TEXT");
+            s = ba;
+            qDebug() << "   CTEXT:" <<s;
 
-	/*
-	if (event->mimeData()->hasImage()) //Usually not there anymore :-(
-	{
-	    if (debug) qDebug()<<"MapEditor::dropEvent hasImage!";
-	     QVariant imageData = event->mimeData()->imageData();
-	     model->addFloatImage (qvariant_cast<QImage>(imageData));
+            ba= event->mimeData()->data("text/x-moz-url");
+            s = ba;
+            qDebug() << "   x-moz-url:" <<s;
+            //foreach (char b,ba) if (b!=0) qDebug() << "b="<<b;
+        }
 
-	} else
-	*/
-	if (event->mimeData()->hasUrls())
-	{
-	    //model->selectLastBranch();
-	    QList <QUrl> uris=event->mimeData()->urls();
-	    QString heading;
-	    BranchItem *bi;
-	    for (int i=0; i<uris.count();i++)
-	    {
-		if (debug) qDebug()<<"ME::dropEvent  uri="<<uris.at(i).toString();
-		// Workaround to avoid adding empty branches
-		if (!uris.at(i).toString().isEmpty())
-		{
-		    QString u=uris.at(i).toString();
-		    heading=u;
-		    if (isImage (u))
-		    {
-			// Image, try to download or set image from local file
-			model->downloadImage (uris.at(i));
-		    } else
-		    {
-			bi=model->addNewBranch();
-			if (bi)
-			{
-			    model->select(bi);
-			    if (u.startsWith("file:")) 
-				heading = QFileInfo( QDir::fromNativeSeparators(u) ).baseName();
+        /*
+    if (event->mimeData()->hasImage()) //Usually not there anymore :-(
+    {
+        if (debug) qDebug()<<"MapEditor::dropEvent hasImage!";
+         QVariant imageData = event->mimeData()->imageData();
+         model->addFloatImage (qvariant_cast<QImage>(imageData));
 
-			    model->setHeading(heading);
-			    if (u.endsWith(".vym", Qt::CaseInsensitive))
-			       model->setVymLink(u.replace ("file://","") );
-			    else
-			       model->setURL(u);
+    } else
+    */
+        if (event->mimeData()->hasUrls())
+        {
+            //model->selectLastBranch();
+            QList <QUrl> uris=event->mimeData()->urls();
+            QString heading;
+            BranchItem *bi;
+            for (int i=0; i<uris.count();i++)
+            {
+                if (debug) qDebug()<<"ME::dropEvent  uri="<<uris.at(i).toString();
+                // Workaround to avoid adding empty branches
+                if (!uris.at(i).toString().isEmpty())
+                {
+                    QString u=uris.at(i).toString();
+                    heading=u;
+                    if (isImage (u))
+                    {
+                        // Image, try to download or set image from local file
+                        model->downloadImage (uris.at(i));
+                    } else
+                    {
+                        bi=model->addNewBranch();
+                        if (bi)
+                        {
+                            model->select(bi);
+                            if (u.startsWith("file:"))
+                            {
+                                heading = QFileInfo( QDir::fromNativeSeparators(u) ).baseName();
+                                model->setHeadingPlainText(heading);
+                            }
+                            if (u.endsWith(".vym", Qt::CaseInsensitive))
+                                model->setVymLink(u.replace ("file://","") );
+                            else
+                            {
+                                model->setURL(u);
+                                model->setHeadingPlainText(u);
+                            }
 
-			    model->select (bi->parent());	   
-			}
-		    }
-		}
-	    }
-	}
-    }	
+                            model->select (bi->parent());
+                        }
+                    }
+                }
+            }
+        }
+    }
     event->acceptProposedAction();
 }
 
@@ -2083,6 +2094,11 @@ void MapEditor::setState (EditorState s)
         qDebug()<<"MapEditor: State "<<s<< " of "<<model->getMapName();
     }
     */
+}
+
+MapEditor::EditorState MapEditor::getState()
+{
+    return state;
 }
 
 void MapEditor::updateSelection(QItemSelection nsel,QItemSelection dsel)	

@@ -99,6 +99,7 @@ void ScriptEditor::saveFile()
     }
 
     QTextStream t( &f );
+    t.setCodec("UTF-8");
     t << ui.editor->toPlainText();
     f.close();
 }
@@ -197,7 +198,8 @@ void ScriptEditor::openClicked()
 	}   
 
 	QTextStream ts( &f );
-	ui.editor->setText( ts.readAll() );
+    ts.setCodec("UTF-8");
+    ui.editor->setText( ts.readAll() );
 	f.close();
 	lastMapDir.setPath(fn.left(fn.lastIndexOf ("/")) );
     }

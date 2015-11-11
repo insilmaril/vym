@@ -237,11 +237,14 @@ ErrorCode zipDir ( QDir zipInputDir, QString zipName)
 {
     ErrorCode err = Success;
 
+    QString symLinkTarget;
+
     QString newName;
     // Move existing file away
     QFile file(zipName);
     if (file.exists() )
     {
+        symLinkTarget = file.symLinkTarget();
         newName = zipName + ".tmp";
         int n=0;
         while (!file.rename (newName) && n<5)
@@ -271,7 +274,7 @@ ErrorCode zipDir ( QDir zipInputDir, QString zipName)
         err=Aborted;
 
     }
-    zipProc->write(QString("\"%1\" a \"%2\" -r %3\\*\n").arg(zipToolPath).arg(zipName).arg(zipInputDir.path()).toUtf8());
+    zipProc->write(QString("\"%1\" a \"%2\" -tzip -r %3\\*\n").arg(zipToolPath).arg(zipName).arg(zipInputDir.path()).toUtf8());
     zipProc->closeWriteChannel();   //done Writing
 
     while(zipProc->state()!=QProcess::NotRunning){
@@ -321,6 +324,33 @@ ErrorCode zipDir ( QDir zipInputDir, QString zipName)
 	   QObject::tr("Couldn't rename %1 back to %2").arg(newName).arg(zipName) );
     else
     {
+        // Take care of symbolic link
+        if (!symLinkTarget.isEmpty() )
+        {
+            if (!QFile(symLinkTarget).remove() )
+            {
+                QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
+                   QObject::tr("Couldn't remove target of old symbolic link %1").arg(symLinkTarget));
+                err = Aborted;
+                return err;
+            }
+
+            if (!QFile(zipName).rename(symLinkTarget) )
+            {
+                QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
+                   QObject::tr("Couldn't rename output to target of old symbolic link %1").arg(symLinkTarget));
+                err = Aborted;
+                return err;
+            }
+            if (!QFile(symLinkTarget).link(zipName) )
+            {
+                QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
+                   QObject::tr("Couldn't link from %1 to target of old symbolic link %2").arg(zipName).arg(symLinkTarget));
+                err = Aborted;
+                return err;
+            }
+        }
+
 	// Remove temporary file
 	if (!newName.isEmpty()  && !file.remove() )
 	    QMessageBox::critical( 0, QObject::tr( "Critical Error" ),

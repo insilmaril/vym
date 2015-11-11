@@ -24,6 +24,7 @@ public:
     void setFilterMap  ();
     bool isUsedFilterActive ();
     void setFilterActive ();
+    void setFilterNew ();
     bool select (Task *task);
     void clearSelection ();
     void showSelection ();
@@ -36,6 +37,7 @@ private slots:
     void selectionChanged (const QItemSelection & selected, const QItemSelection & );
     void toggleFilterMap ();
     void toggleFilterActive ();
+    void toggleFilterNew ();
 
 private:
     QTableView *view;
@@ -43,6 +45,7 @@ private:
     QString currentMapName;
     QAction *actionToggleFilterMap;
     QAction *actionToggleFilterActive;
+    QAction *actionToggleFilterNew;
     bool blockExternalSelect;
 };
 

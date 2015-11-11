@@ -27,7 +27,8 @@ public:
     bool fatalError( const QXmlParseException&);
     void setModel (VymModel *);
     void setTmpDir (QString);
-    void setInputFile (QString);
+    void setInputFile ( const QString &);
+    void setInputString ( const QString &);
     void setLoadMode (const LoadMode &,int p=-1);
     bool readHtmlAttr    (const QXmlAttributes&);
 
@@ -42,6 +43,8 @@ protected:
     VymModel *model;
     QString tmpDir; 
     QString inputFile;
+    QString inputString;
     QString htmldata;
+    QString version;
 }; 
 #endif

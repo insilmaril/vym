@@ -28,14 +28,19 @@ public:
     virtual QString getMapName ();
     virtual void setModel (VymModel *m);
     virtual void setWindowTitle (const QString &);
+    virtual void setName( const QString &);
+    virtual QString getName();
     virtual void addFilter (const QString &);
+    virtual void setListTasks( bool b);
     virtual bool execDialog();
     virtual bool canceled();
+    void setLastCommand( const QString& );
     void completeExport(QString args="");  //! set lastExport and send status message
 
 protected:  
     VymModel *model;
     QString exportName;
+    QString lastCommand;
     virtual QString getSectionString (TreeItem*);
 
     QString indent (const int &n, bool useBullet);
@@ -49,6 +54,7 @@ protected:
     QStringList bulletPoints;
     QString caption;
     QString filter;
+    bool listTasks;         // Append task list
     bool cancelFlag;
 };
 
@@ -66,7 +72,6 @@ class ExportASCII:public ExportBase
 {
 public:
     ExportASCII();
-    QString noteToASCII( const NoteObj &note, const QString &indent, const int &width);
     virtual void doExport();
     virtual QString underline (const QString &text, const QString &line);
 };

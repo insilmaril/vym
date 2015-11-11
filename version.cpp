@@ -23,21 +23,21 @@ bool versionLowerOrEqualThanVym (const QString &v)
 bool versionLowerOrEqual (const QString &v, const QString &vstatic)
 {
     // returns true, if version v <= vstatic
-    bool ok=false;
-    int v1=0;
-    int v2=0;
-    int v3=0;
-    int vs1=0;
-    int vs2=0;
-    int vs3=0;
+    bool ok = false;
+    int v1  = 0;
+    int v2  = 0;
+    int v3  = 0;
+    int vs1 = 0;
+    int vs2 = 0;
+    int vs3 = 0;
 
     QRegExp rx("(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})");
-    int pos=rx.indexIn (v);
-    if (pos>-1)
+    int pos = rx.indexIn (v);
+    if (pos > -1)
     {
-	v1=rx.cap(1).toInt(&ok);
-	if (ok) v2=rx.cap(2).toInt(&ok);
-	if (ok) v3=rx.cap(3).toInt(&ok);
+	v1 = rx.cap(1).toInt(&ok);
+	if (ok) v2 = rx.cap(2).toInt(&ok);
+	if (ok) v3 =rx.cap(3).toInt(&ok);
     } 
 
     pos=rx.indexIn (vstatic);
@@ -50,7 +50,7 @@ bool versionLowerOrEqual (const QString &v, const QString &vstatic)
 
     if (!ok) 
     {
-	qWarning ()<<QString ("Warning: Checking version failed: v=%1").arg(v);
+	qWarning ()<<QString ("Warning: Checking version failed: v=%1  vstatic=%2").arg(v).arg(vstatic);
 	return false;
     }	
     

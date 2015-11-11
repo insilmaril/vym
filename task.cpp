@@ -230,11 +230,11 @@ BranchItem* Task::getBranch ()
 QString Task::getName ()
 {
     if (branch)
-	return branch->getHeading();
+        return branch->getHeadingPlain();
     else
     {
-	qWarning()<<"Task::getName  no branch!";
-	return "UNDEFINED";
+        qWarning()<<"Task::getName  no branch!";
+        return "UNDEFINED";
     }
 }
 

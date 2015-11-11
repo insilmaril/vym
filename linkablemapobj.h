@@ -2,7 +2,7 @@
 #define LINKABLEMAPOBJ_H
 
 #include "animpoint.h"
-#include "noteobj.h"
+#include "vymnote.h"
 #include "headingobj.h"
 #include "flagrowobj.h"
 

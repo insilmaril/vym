@@ -131,6 +131,8 @@ public:
     QString getMapName ();  //!< e.g. "map"
     QString getDestPath (); //!< e.g. "/home/tux/map.vym"
 
+    bool parseVymText(const QString &s);
+
     /*! \brief Load map
 
 	The data is read from file. Depending on LoadMode the current
@@ -305,12 +307,14 @@ signals:
     void sortFilterChanged (QString );	    //!< Notify editors of new filter
 
 public:
-    void setHeading(const QString &s, BranchItem *bi=NULL);	    //!< Set heading of item	
-    QString getHeading ();		    //!< Get heading of item
-    void setNote(const QString &s);	    //!< Set note text
-    QString getNote();			    //!< Get note text
-    void loadNote (const QString &fn);	    //!< Load note from file
-    void saveNote (const QString &fn);	    //!< Save note to file
+    void setHeading(const VymText &vt, BranchItem *bi=NULL);	    //!< Set heading of item
+    void setHeadingPlainText(const QString &s, BranchItem *bi=NULL);	//!< Set heading of item
+    Heading getHeading();		        //!< Get heading of item
+    void setNote(const VymNote &vn);    //!< Set note text
+    VymNote getNote();			        //!< Get note text
+    bool hasRichTextNote();             //!< Check type of vymText used
+    void loadNote (const QString &fn);	//!< Load note from file
+    void saveNote (const QString &fn);	//!< Save note to file
 
 private:
     BranchItem* findCurrent;		    // next object in find process
@@ -525,7 +529,7 @@ public:
     QPointF exportImage (QString fname="",bool askForName=true,QString format="PNG");
 
     /*! Save as PDF  . Returns offset to upper left corner of image */
-    QPointF exportPDF (QString fname="",bool askForName=true);
+    void exportPDF (QString fname="",bool askForName=true);
 
     /*! Save as SVG  . Returns offset to upper left corner of image */
     QPointF exportSVG (QString fname="",bool askForName=true);
@@ -537,7 +541,7 @@ public:
     void exportAO (QString fname="",bool askForName=true);  
 
     /*! Export as ASCII text to file */
-    void exportASCII (const QString &fname="",bool askForName=true);  
+    void exportASCII (bool listTasks = false, const QString &fname = "",bool askForName = true);
 
     /*! Export as CSV text to file */
     void exportCSV (const QString &fname="",bool askForName=true);  
@@ -754,7 +758,7 @@ public:
 public:
     TreeItem::Type selectionType();
     LinkableMapObj* getSelectedLMO();
-    BranchObj* getSelectedBranchObj();	
+    BranchObj* getSelectedBranchObj();
     BranchItem* getSelectedBranch();
     QList <BranchItem*> getSelectedBranches();
     ImageItem* getSelectedImage();

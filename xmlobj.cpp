@@ -1,13 +1,13 @@
 #include "xmlobj.h"
 
 #include <QRegExp>
-#include <QString>
+#include <QStringList>
 
 
 // returns masked "<" ">" "&"
 QString quotemeta(const QString &s)
 {
-    QString r=s;
+    QString r = s;
     QRegExp  rx("&(?!amp;)");
     r.replace ( rx,"&amp;");
     rx.setPattern( ">");
@@ -21,7 +21,7 @@ QString quotemeta(const QString &s)
 
 QString unquotemeta(const QString &s)
 {
-    QString r=s;
+    QString r = s;
     QRegExp  rx("&amp;)");
     r.replace ( rx,"&");
     rx.setPattern( "&gt;");
@@ -29,6 +29,22 @@ QString unquotemeta(const QString &s)
     rx.setPattern( "&lt;");
     r.replace ( rx,"<");
     rx.setPattern( "&quot;");
+    r.replace ( rx,"\"");
+    return r;
+}
+
+QString quoteQuotes(const QString &s)
+{
+    QString r = s;
+    QRegExp  rx( "\"");
+    r.replace ( rx,"\\\"");
+    return r;
+}
+
+QString unquoteQuotes(const QString &s)
+{
+    QString r = s;
+    QRegExp  rx("\\\\\"");
     r.replace ( rx,"\"");
     return r;
 }
@@ -55,14 +71,27 @@ QString quoteUmlaut(const QString &s)
     return r;
 }
 
+QString getCDATA(const QString &s)
+{
+    // Do we need to use CDATA after all?
+    if (s.contains("<") || s.contains(">") || s.contains("\"") || s.contains("&") )
+    {
+        QStringList list = s.split("]]>");
+        int i = s.indexOf("]]>");
+        if ( i >= 0 )
+            // split up and calculate recursively
+            return getCDATA(s.left(i+2)) + getCDATA(s.right(s.length() - i - 2));
+        else
+            return "<![CDATA[" + s + "]]>";
+    } else
+        return s;
+}
 
-
-
-int XMLObj::actindent=0;	// make instance of actindent
+int XMLObj::curIndent=0;	// make instance of curIndent
 
 XMLObj::XMLObj()
 {
-    indentwidth=4;
+    indentWidth=4;
 }
 
 XMLObj::~XMLObj()
@@ -73,63 +102,63 @@ XMLObj::~XMLObj()
 // returns <s at />
 QString XMLObj::singleElement(QString s, QString at)
 {
-    return indent() + "<" + s +" " + at +" " + "/>\n";
+    return indent() + "<" + s +" " + at +" " + "/>";
 }
 
 // returns <s>
 QString XMLObj::beginElement(QString s)
 {
-    return indent() + "<" + s + ">\n";
+    return indent() + "<" + s + ">";
 }
 
 // returns <s at>
 QString XMLObj::beginElement(QString s, QString at)
 {
-    return indent() + "<" + s + " " + at + ">\n";
+    return indent() + "<" + s + " " + at + ">";
 }
 
 // returns </s>
 QString XMLObj::endElement(QString s)
 {
-    return indent() + "</" + s + ">\n";
+    return indent() + "</" + s + ">";
 }
 
 // returns  at="val"
 QString XMLObj::attribut(QString at, QString val)
 {
-    return " " + at + "=\"" + quotemeta (val) + "\""; 
+    return " " + at + "=\"" + quotemeta(val) + "\"";  
 }
 
 // returns <s> val </s>
 QString XMLObj::valueElement(QString el, QString val)
 {
-    return indent() + "<" + el + ">" + quotemeta(val) + "</" +el + ">\n";
+    return indent() + "<" + el + ">" + val + "</" +el + ">";
 }
 
 // returns <s at> val </s>
 QString XMLObj::valueElement(QString el, QString val, QString at)
 {
-    return indent() + "<" + el + " " + at + ">" + quotemeta(val) + "</" +el + ">\n";
+    return "<" + el + " " + at + ">" + val + "</" +el + ">";
 }
 
 void XMLObj::incIndent()
 {
-    actindent++;
+    curIndent++;
 }   
 
 void XMLObj::decIndent()
 {
-    actindent--;
-    if (actindent<0) actindent=0;
+    curIndent--;
+    if (curIndent<0) curIndent=0;
 }   
 
 QString XMLObj::indent()
 {
-    QString s;
+    QString s = "\n";
     int i;
-    for (i=0; i<actindent*indentwidth; i++)
+    for (i=0; i < curIndent * indentWidth; i++)
     {
-	s= s + " ";
+        s= s + " ";
     }
     return s;
 }   

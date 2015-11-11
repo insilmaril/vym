@@ -23,6 +23,11 @@ void ShowTextDialog::setText (const QString &s)
     ui.textBrowser->setText (s);
 }
 
+void ShowTextDialog::setHtml (const QString &s)
+{
+    ui.textBrowser->setHtml (s);
+}
+
 void ShowTextDialog::useFixedFont (bool useFixedFont)
 {
     if (useFixedFont) 

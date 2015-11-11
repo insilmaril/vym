@@ -1,0 +1,3 @@
+Plaintext note.
+Second line.
+<b>3rd line. not bold.</b>

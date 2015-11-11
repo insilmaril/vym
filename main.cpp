@@ -139,6 +139,9 @@ int main(int argc, char* argv[])
     // Install our own handler for messages
     qInstallMessageHandler(msgHandler);
 
+    // Testing for now
+    vout.setCodec("UTF-8");
+
     // Reading and initializing options commandline options
     options.add ("batch", Option::Switch, "b", "batch");
     options.add ("commands", Option::Switch, "c", "commands");
@@ -220,7 +223,7 @@ int main(int argc, char* argv[])
     taskModel = new TaskModel();
 
     debug=options.isOn ("debug");
-    debug=true;
+    //debug=true;
     testmode=options.isOn ("testmode");
 
     QString pidString=QString ("%1").arg(getpid());
@@ -471,7 +474,11 @@ int main(int argc, char* argv[])
 
     app.exec();
 
-    int s=warningCount + criticalCount + fatalCount;
-    if (s>0) qDebug()<<"vym exiting with:\n"<<warningCount<<" warning messages\n"<<criticalCount<<" critical messages\n"<<fatalCount<<" fatal messages";
+    int s = warningCount + criticalCount + fatalCount;
+    if ( s > 0 ) 
+        qDebug() << "vym exiting with:\n" << 
+        warningCount << " warning messages\n" << 
+        criticalCount<<" critical messages\n" <<
+        fatalCount<<" fatal messages";
     return s;
 }

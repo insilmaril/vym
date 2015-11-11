@@ -3,9 +3,12 @@
 
 class QString;
 
-QString quotemeta(const QString&);  
-QString unquotemeta(const QString&);	
-QString quoteUmlaut(const QString&);	
+QString quotemeta( const QString& );  
+QString unquotemeta( const QString& );	
+QString quoteQuotes( const QString & );
+QString unquoteQuotes( const QString & );
+QString quoteUmlaut( const QString& );	
+QString getCDATA( const QString &s );
 
 /////////////////////////////////////////////////////////////////////////////
 class XMLObj
@@ -22,11 +25,11 @@ public:
     QString valueElement(QString,QString,QString);  // name, val, attr
     void incIndent();
     void decIndent();
-    static int actindent;
+    static int curIndent;
 
 protected:  
     QString indent();
-    int indentwidth;
+    int indentWidth;
 };
 
 #endif

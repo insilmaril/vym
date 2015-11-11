@@ -252,12 +252,13 @@ Main::Main(QWidget* parent, Qt::WindowFlags f) : QMainWindow(parent,f)
     // Connect NoteEditor, so that we can update flags if text changes
     connect (noteEditor, SIGNAL (textHasChanged() ), this, SLOT (updateNoteFlag()));
     connect (noteEditor, SIGNAL (windowClosed() ), this, SLOT (updateActions()));
+    connect (noteEditor, SIGNAL (focusReleased() ), this, SLOT (setFocusMapEditor()));
 
     // Connect heading editor
     connect (headingEditor, SIGNAL (textHasChanged() ), this, SLOT (updateHeading()));
+    connect (headingEditor, SIGNAL (focusReleased() ), this, SLOT (setFocusMapEditor()));
 
-    connect( scriptEditor, SIGNAL( runScript ( QString ) ), 
-	this, SLOT( execute( QString ) ) );
+    connect( scriptEditor, SIGNAL( runScript ( QString ) ),  this, SLOT( execute( QString ) ) );
 
     // Initialize some settings, which are platform dependant
     QString p,s;
@@ -303,7 +304,7 @@ Main::Main(QWidget* parent, Qt::WindowFlags f) : QMainWindow(parent,f)
     // Allow closing of tabs (introduced in Qt 4.5)
     tabWidget->setTabsClosable( true ); 
     connect(tabWidget, SIGNAL(tabCloseRequested(int)), 
-            this, SLOT( closeTab(int) ));
+            this, SLOT( fileCloseMap(int) ));
 
     layout->addWidget (tabWidget);
 
@@ -565,6 +566,7 @@ void Main::setupAPI()
 
     c=new Command ("exportASCII",Command::Any);
     c->addPar (Command::String,false,"Filename for export");
+    c->addPar (Command::Bool,false,"Flag, if tasks should be appended");
     modelCommands.append(c);
 
     c=new Command ("exportCSV",Command::Any);
@@ -584,6 +586,8 @@ void Main::setupAPI()
     c=new Command ("exportImpress",Command::Any);
     c->addPar (Command::String,false,"Filename for export");
     c->addPar (Command::String,false,"Configuration file for export");
+    modelCommands.append(c);
+
     c=new Command ("exportLast",Command::Any);
     modelCommands.append(c);
 
@@ -623,7 +627,10 @@ void Main::setupAPI()
     c=new Command ("getFrameType",Command::Branch);
     modelCommands.append(c);
 
-    c=new Command ("getHeading",Command::TreeItem);
+    c=new Command ("getHeadingPlainText",Command::TreeItem);
+    modelCommands.append(c);
+
+    c=new Command ("getHeadingXML",Command::TreeItem);
     modelCommands.append(c);
 
     c=new Command ("getMapAuthor",Command::Any);
@@ -635,7 +642,10 @@ void Main::setupAPI()
     c=new Command ("getMapTitle",Command::Any);
     modelCommands.append(c);
 
-    c=new Command ("getNote",Command::TreeItem);
+    c=new Command ("getNotePlainText",Command::TreeItem);
+    modelCommands.append(c);
+
+    c=new Command ("getNoteXML",Command::TreeItem);
     modelCommands.append(c);
 
     c=new Command ("getSelectString",Command::TreeItem);
@@ -669,6 +679,12 @@ void Main::setupAPI()
     c->addPar (Command::String,false,"Name of flag");
     modelCommands.append(c);
 
+    c=new Command ("hasNote",Command::Branch); 
+    modelCommands.append(c);
+
+    c=new Command ("hasRichTextNote",Command::Branch); 
+    modelCommands.append(c);
+
     c=new Command ("hasTask",Command::Branch); 
     modelCommands.append(c);
 
@@ -686,7 +702,6 @@ void Main::setupAPI()
     c=new Command ("loadNote",Command::Branch); 
     c->addPar (Command::String,false,"Filename of note");
     modelCommands.append(c);
-
 
     c=new Command ("moveDown",Command::Branch); 
     modelCommands.append(c);
@@ -716,7 +731,12 @@ void Main::setupAPI()
     c=new Command ("note2URLs",Command::Branch); 
     modelCommands.append(c);
 
-    c=new Command ("paste",Command::Branch); 
+    //internally required for undo/redo of changing VymText:
+    c=new Command ("parseVymText",Command::Branch);
+    c->addPar (Command::String,false,"parse XML of VymText, e.g for Heading or VymNote");
+    modelCommands.append(c);
+
+    c=new Command ("paste",Command::Branch);
     modelCommands.append(c);
 
     c=new Command ("redo",Command::Any); 
@@ -793,7 +813,7 @@ void Main::setupAPI()
     c->addPar (Command::Int,false,"Width of frame borderline");
     modelCommands.append(c);
 
-    c=new Command ("setHeading",Command::TreeItem); 
+    c=new Command ("setHeadingPlainText",Command::TreeItem); 
     c->addPar (Command::String,false,"New heading");
     modelCommands.append(c);
 
@@ -857,7 +877,7 @@ void Main::setupAPI()
     c->addPar (Command::Double,false,"Zoomfactor of map");
     modelCommands.append(c);
 
-    c=new Command ("setNote",Command::Branch); 
+    c=new Command ("setNotePlainText",Command::Branch); 
     c->addPar (Command::String,false,"Note of branch");
     modelCommands.append(c);
 
@@ -1031,6 +1051,10 @@ void Main::setupFileActions()
     connect( a, SIGNAL( triggered() ), this, SLOT( fileExportASCII() ) );
     fileExportMenu->addAction(a);
 
+    a = new QAction( "Text with tasks (ASCII) (experimental)...", this);
+    connect( a, SIGNAL( triggered() ), this, SLOT( fileExportASCIITasks() ) );
+    fileExportMenu->addAction(a);
+
     a = new QAction( "Text (A&O report)...", this);
     connect( a, SIGNAL( triggered() ), this, SLOT( fileExportAO() ) );
     fileExportMenu->addAction(a);
@@ -1047,7 +1071,7 @@ void Main::setupFileActions()
     connect( a, SIGNAL( triggered() ), this, SLOT( fileExportSVG() ) );
     fileExportMenu->addAction(a);
 
-    a = new QAction( "Open Office...", this);
+    a = new QAction( "LibreOffice...", this);
     connect( a, SIGNAL( triggered() ), this, SLOT( fileExportImpress() ) );
     fileExportMenu->addAction(a);
 
@@ -1996,20 +2020,23 @@ void Main::setupViewActions()
 
     viewMenu->addSeparator();	
 
-    a=noteEditorDW->toggleViewAction();
-    a->setShortcut ( Qt::Key_N );  
+    //a=noteEditorDW->toggleViewAction();
+    a = new QAction(QPixmap(":/flag-note.png"), tr( "Note editor","View action" ),this);
+    a->setShortcut ( Qt::Key_N );
     a->setCheckable(true);
-    a->setIcon (QPixmap(":/flag-note.png"));
     viewMenu->addAction (a);
     switchboard.addSwitch ("mapToggleNoteEditor", shortcutScope, a, tag);
+    connect( a, SIGNAL( triggered() ), this, SLOT(windowToggleNoteEditor() ) );
     actionViewToggleNoteEditor=a;
 
-    a=headingEditorDW->toggleViewAction();
-    a->setShortcut ( Qt::Key_E );  
+    //a=headingEditorDW->toggleViewAction();
+    a = new QAction(QPixmap(":/headingeditor.png"), tr( "Heading editor","View action" ),this);
+    a->setShortcut ( Qt::Key_E );
     a->setCheckable(true);
     a->setIcon (QPixmap(":/headingeditor.png"));
     viewMenu->addAction (a);
     switchboard.addSwitch ("mapToggleHeadingEditor", shortcutScope, a, tag);
+    connect( a, SIGNAL( triggered() ), this, SLOT(windowToggleHeadingEditor() ) );
     actionViewToggleHeadingEditor=a;
 
     // Original icon is "category" from KDE
@@ -2866,9 +2893,9 @@ void Main::setupToolbars()
     // URLs and vymLinks
     referencesToolbar=addToolBar( tr ("URLs and vymLinks toolbar","Toolbar for URLs and vymlinks"));
     referencesToolbar->setObjectName ("URLs and vymlinks toolbar");
-    referencesToolbar->addAction (actionOpenURL);
+    //referencesToolbar->addAction (actionOpenURL); //FIXME-4 removed 2015-06-22
     referencesToolbar->addAction (actionURLNew);
-    referencesToolbar->addAction (actionOpenVymLink);
+    //referencesToolbar->addAction (actionOpenVymLink)//FIXME-4 removed 2015-06-22;
     referencesToolbar->addAction (actionEditVymLink);
 
     // Format and colors
@@ -3158,40 +3185,35 @@ File::ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode, const FileType
 	if (err!=File::Aborted)
 	{
 	    // Save existing filename in case  we import
-	    QString fn_org=vm->getFilePath();
+	    QString fn_org = vm->getFilePath();
 
 	    // Finally load map into mapEditor
 	    progressDialog.setLabelText (tr("Loading: %1","Progress dialog while loading maps").arg(fn));
 	    vm->setFilePath (fn);
 	    vm->saveStateBeforeLoad (lmode,fn);
-	    err=vm->loadMap(fn,lmode,ftype);
+	    err = vm->loadMap(fn,lmode,ftype);
 
 	    // Restore old (maybe empty) filepath, if this is an import
-	    if (lmode!=NewMap)
+	    if (lmode != NewMap)
 		vm->setFilePath (fn_org);
 	}   
 
 	// Finally check for errors and go home
-	if (err==File::Aborted) 
+	if (err == File::Aborted) 
 	{
-	    if (lmode==NewMap) fileCloseMap();
+	    if (lmode == NewMap) fileCloseMap();
 	    statusBar()->showMessage( "Could not load " + fn, statusbarTime );
 	} else 
 	{
-	    if (lmode==NewMap)
-	    {
-		vm->setFilePath (fn);
-		tabWidget->setTabText (tabIndex, vm->getFileName());
-		if (!isInTmpDir (fn))
-		{
-		    // Only append to lastMaps if not loaded from a tmpDir
-		    // e.g. imported bookmarks are in a tmpDir
-		    addRecentMap(vm->getFilePath() );
-		}
-		actionFilePrint->setEnabled (true);
-	    }	
+	    if (lmode == NewMap)
+            {
+                vm->setFilePath (fn);
+                tabWidget->setTabText (tabIndex, vm->getFileName());
+                actionFilePrint->setEnabled (true);
+            }	
 	    editorChanged();
 	    vm->emitShowSelection();
+            addRecentMap( fn );
 	    statusBar()->showMessage( "Loaded " + fn, statusbarTime );
 	}   
     }
@@ -3216,7 +3238,7 @@ void Main::fileLoad(const LoadMode &lmode)
     }
 
     QString filter;
-    filter+="VYM map " + tr("or","File Dialog") +" Freemind map" + " (*.vym *.vyp *.mm);;";
+    filter+="VYM map " + tr("or","File Dialog") +" Freemind map" + " (*.xml *.vym *.vyp *.mm);;";  //FIXME-1 xml temporary here
     filter+="VYM map (*.vym *.vyp);;";
     filter+="VYM Backups (*.vym~);;";
     filter+="Freemind map (*.mm);;";
@@ -3313,8 +3335,6 @@ void Main::fileSave(VymModel *m, const SaveMode &savemode)
 	statusBar()->showMessage( 
 	    tr("Saved  %1").arg(m->getFilePath()), 
 	    statusbarTime );
-	addRecentMap (m->getFilePath() );
-	fileSaveSession();
     } else	
 	statusBar()->showMessage( 
 	    tr("Couldn't save ").arg(m->getFilePath()), 
@@ -3553,6 +3573,12 @@ void Main::fileExportASCII()
     if (m) m->exportASCII();
 }
 
+void Main::fileExportASCIITasks()
+{
+    VymModel *m=currentModel();
+    if (m) m->exportASCII(true);
+}
+
 void Main::fileExportCSV()  //FIXME-3 not scriptable yet
 {
     VymModel *m=currentModel();
@@ -3601,47 +3627,47 @@ void Main::fileExportTaskjuggler()  //FIXME-3 not scriptable yet
     VymModel *m=currentModel();
     if (m)
     {
-	ex.setModel (m);
-	ex.setWindowTitle ( vymName+" - "+tr("Export to")+" Taskjuggler"+tr("(still experimental)"));
-	ex.setDirPath (lastImageDir.absolutePath());
-	ex.addFilter ("Taskjuggler (*.tjp)");
+        ex.setModel (m);
+        ex.setWindowTitle ( vymName+" - "+tr("Export to")+" Taskjuggler"+tr("(still experimental)"));
+        ex.setDirPath (lastImageDir.absolutePath());
+        ex.addFilter ("Taskjuggler (*.tjp)");
 
-	if (ex.execDialog() ) 
-	{
-	    m->setExportMode(true);
-	    ex.doExport();
-	    m->setExportMode(false);
-	}
-    }	
+        if (ex.execDialog() )
+        {
+            m->setExportMode(true);
+            ex.doExport();
+            m->setExportMode(false);
+        }
+    }
 }
 
 void Main::fileExportImpress()	
 {
     ExportOOFileDialog fd;
     // TODO add preview in dialog
-    fd.setWindowTitle(vymName+" - "+tr("Export to")+" Open Office");
+    fd.setWindowTitle(vymName+" - "+tr("Export to")+" LibreOffice");
     fd.setDirectory (QDir().current());
     fd.setAcceptMode (QFileDialog::AcceptSave);
     fd.setFileMode (QFileDialog::AnyFile);
     if (fd.foundConfig())
     {
-	if ( fd.exec() == QDialog::Accepted )
-	{
-	    if (!fd.selectedFiles().isEmpty())
-	    {
-		QString fn=fd.selectedFiles().first();
-		if (!fn.contains (".odp")) fn +=".odp";
+        if ( fd.exec() == QDialog::Accepted )
+        {
+            if (!fd.selectedFiles().isEmpty())
+            {
+                QString fn=fd.selectedFiles().first();
+                if (!fn.contains (".odp")) fn +=".odp";
 
-		//lastImageDir=fn.left(fn.findRev ("/"));
-		VymModel *m=currentModel();
-		if (m) m->exportImpress (fn,fd.selectedConfig());	
-	    }
-	}
+                //lastImageDir=fn.left(fn.findRev ("/"));
+                VymModel *m=currentModel();
+                if (m) m->exportImpress (fn,fd.selectedConfig());
+            }
+        }
     } else
     {
-	QMessageBox::warning(0, 
-	tr("Warning"),
-	tr("Couldn't find configuration for export to Open Office\n"));
+        QMessageBox::warning(0,
+                             tr("Warning"),
+                             tr("Couldn't find configuration for export to LibreOffice\n"));
     }
 }
 
@@ -3651,57 +3677,54 @@ void Main::fileExportLast()
     if (m) m->exportLast();
 }
 
-bool Main::closeTab(int i)
+bool Main::fileCloseMap(int i)
 {
-    // Find model
-    VymModel *m=vymViews.at(i)->getModel();
-    if (!m) return true;
+    VymModel *m;
+    VymView *vv;
+    if ( i<0) i  = tabWidget->currentIndex();
 
-    VymView *vv=vymViews.at(i);
-    vymViews.removeAt (i);
-    tabWidget->removeTab (i);
+    vv = vymViews.at(i);
+    m  = vv->getModel();
 
-    // Destroy stuff, order is important
-    delete (m->getMapEditor()); 
-    delete(vv);
-    delete (m); 
-
-    updateActions();
-    return false;
-}
-
-bool Main::fileCloseMap()   
-{
-    VymModel *m=currentModel();
     if (m)
     {
-	if (m->hasChanged())
-	{
-	    QMessageBox mb( vymName,
-		tr("The map %1 has been modified but not saved yet. Do you want to").arg(m->getFileName()),
-		QMessageBox::Warning,
-		QMessageBox::Yes | QMessageBox::Default,
-		QMessageBox::No,
-		QMessageBox::Cancel | QMessageBox::Escape );
-	    mb.setButtonText( QMessageBox::Yes, tr("Save modified map before closing it") );
-	    mb.setButtonText( QMessageBox::No, tr("Discard changes"));
-	    mb.setModal (true);
-	    mb.show();
-	    switch( mb.exec() ) 
-	    {
-		case QMessageBox::Yes:
-		    // save and close
-		    fileSave(m, CompleteMap);
-		    break;
-		case QMessageBox::No:
-		// close  without saving
-		    break;
-		case QMessageBox::Cancel:
-		    // do nothing
-		    return true;
-	    }
-	} 
-        return closeTab(tabWidget->currentIndex());
+        if (m->hasChanged())
+        {
+            QMessageBox mb( vymName,
+                            tr("The map %1 has been modified but not saved yet. Do you want to").arg(m->getFileName()),
+                            QMessageBox::Warning,
+                            QMessageBox::Yes | QMessageBox::Default,
+                            QMessageBox::No,
+                            QMessageBox::Cancel | QMessageBox::Escape );
+            mb.setButtonText( QMessageBox::Yes, tr("Save modified map before closing it") );
+            mb.setButtonText( QMessageBox::No, tr("Discard changes"));
+            mb.setModal (true);
+            mb.show();
+            switch( mb.exec() )
+            {
+            case QMessageBox::Yes:
+                // save and close
+                fileSave(m, CompleteMap);
+                break;
+            case QMessageBox::No:
+                // close  without saving
+                break;
+            case QMessageBox::Cancel:
+                // do nothing
+                return true;
+            }
+        }
+
+        vymViews.removeAt (i);
+        tabWidget->removeTab (i);
+
+        // Destroy stuff, order is important
+        delete (m->getMapEditor());
+        delete(vv);
+        delete (m);
+
+        updateActions();
+        return false;
     }
     return true; // Better don't exit vym if there is no currentModel()...
 }
@@ -3995,10 +4018,10 @@ void Main::editHeadingFinished(VymModel *m)
 {
     if (m)
     {
-	if (!actionSettingsAutoSelectNewBranch->isChecked() && 
-	    !prevSelection.isEmpty()) 
-	    m->select(prevSelection);
-	prevSelection="";
+        if (!actionSettingsAutoSelectNewBranch->isChecked() &&
+                !prevSelection.isEmpty())
+            m->select(prevSelection);
+        prevSelection="";
     }
 }
 
@@ -4194,11 +4217,11 @@ void Main::editMapInfo()
     m->nextBranch(cur,prev);
     while (cur) 
     {
-	if (!cur->getNote().isEmpty() ) n++;
-	f+= cur->imageCount();
-	b++;
-	xl+=cur->xlinkCount();
-	m->nextBranch(cur,prev);
+        if (!cur->getNote().isEmpty() ) n++;
+        f += cur->imageCount();
+        b++;
+        xl += cur->xlinkCount();
+        m->nextBranch(cur,prev);
     }
 
     stats+=QString ("%1 branches\n").arg (m->branchCount(),6);
@@ -4220,14 +4243,16 @@ void Main::editMapInfo()
 
 void Main::editMoveUp()
 {
-    VymModel *m=currentModel();
-    if (m) m->moveUp();
+    MapEditor *me = currentMapEditor();
+    VymModel  *m  = currentModel();
+    if (me && m && me->getState() != MapEditor::EditingHeading) m->moveUp();
 }
 
 void Main::editMoveDown()
 {
-    VymModel *m=currentModel();
-    if (m) m->moveDown();
+    MapEditor *me = currentMapEditor();
+    VymModel  *m  = currentModel();
+    if (me && m && me->getState() != MapEditor::EditingHeading) m->moveDown();
 }
 
 void Main::editDetach()
@@ -4321,7 +4346,7 @@ void Main::editAddMapCenter()
 	MapEditor *me=currentMapEditor();
 	if (me) 
 	{
-	    m->setHeading("");
+        m->setHeadingPlainText("");
 	    me->editHeading();
 	}    
     }
@@ -4958,10 +4983,13 @@ void Main::settingsToggleDownloads()
 
 void Main::windowToggleNoteEditor()
 {
-    if (noteEditorDW->isVisible() )
-	noteEditorDW->hide();
+    if (noteEditor->parentWidget()->isVisible() )
+        noteEditor->parentWidget()->hide();
     else
-	noteEditorDW->show();
+    {
+        noteEditor->parentWidget()->show();
+        noteEditor->setFocus();
+    }
 }
 
 void Main::windowToggleTreeEditor()
@@ -5032,6 +5060,22 @@ void Main::windowToggleProperty()
     branchPropertyEditor->setModel (currentModel() );
 }
 
+void Main::windowShowHeadingEditor()
+{
+    headingEditorDW->show();
+}
+
+void Main::windowToggleHeadingEditor()
+{
+    if (headingEditor->parentWidget()->isVisible() )
+        headingEditor->parentWidget()->hide();
+    else
+    {
+        headingEditor->parentWidget()->show();
+        headingEditor->setFocus();
+    }
+}
+
 void Main::windowToggleAntiAlias()
 {
     bool b=actionViewToggleAntiAlias->isChecked();
@@ -5074,7 +5118,7 @@ void Main::updateHistory(SimpleSettings &undoSet)
 void Main::updateHeading()
 {
     VymModel *m=currentModel();
-    if (m) m->setHeading (headingEditor->getText() );
+    if (m) m->setHeading (headingEditor->getVymText() );
 }
 
 void Main::updateNoteFlag() 
@@ -5088,12 +5132,14 @@ void Main::updateNoteEditor(QModelIndex index ) //FIXME-4 maybe change to TreeIt
 {
     if (index.isValid() )
     {
-	TreeItem *ti=((VymModel*) QObject::sender())->getItem(index);
-	/*
-	qDebug()<< "Main::updateNoteEditor model="<<sender() 
-		<< "  item="<<ti->getHeadingStd()<<" ("<<ti<<")";
-	*/
-	if (ti) noteEditor->setNote (ti->getNoteObj() );
+        TreeItem *ti=((VymModel*) QObject::sender())->getItem(index);
+        /*
+    qDebug()<< "Main::updateNoteEditor model="<<sender()
+        << "  item="<<ti->getHeading()<<" ("<<ti<<")";
+    qDebug()<< "RT="<<ti->getNote().isRichText();
+    */
+        if (ti)
+            noteEditor->setNote (ti->getNote() );
     }
 }
 
@@ -5104,6 +5150,12 @@ void Main::selectInNoteEditor(QString s,int i)
     noteEditor->findText (s,0,i);
 }
 
+void Main::setFocusMapEditor()
+{
+    VymView *vv=currentView();
+    if (vv) vv->setFocusMapEditor();
+}
+
 void Main::changeSelection (VymModel *model, const QItemSelection &newsel, const QItemSelection &)
 {
     branchPropertyEditor->setModel (model ); 
@@ -5112,35 +5164,35 @@ void Main::changeSelection (VymModel *model, const QItemSelection &newsel, const
     {
 	TreeItem *ti;
 	if (!newsel.indexes().isEmpty() )
-	{
-	    ti=model->getItem(newsel.indexes().first());
-	    if (!ti->hasEmptyNote() )
-		noteEditor->setNote(ti->getNoteObj() );
-	    else
-		noteEditor->setNote(NoteObj() );    //FIXME-5 maybe add a clear() to TE
-	    // Show URL and link in statusbar	
-	    QString status;
-	    QString s=ti->getURL();
-	    if (!s.isEmpty() ) status+="URL: "+s+"  ";
-	    s=ti->getVymLink();
-	    if (!s.isEmpty() ) status+="Link: "+s;
-	    if (!status.isEmpty() ) statusMessage (status);
+    {
+        ti=model->getItem(newsel.indexes().first());
+        if (!ti->hasEmptyNote() )
+            noteEditor->setNote(ti->getNote() );
+        else
+            noteEditor->setNote(VymNote() );    //FIXME-2 maybe add a clear() to TE
+        // Show URL and link in statusbar
+        QString status;
+        QString s=ti->getURL();
+        if (!s.isEmpty() ) status+="URL: "+s+"  ";
+        s=ti->getVymLink();
+        if (!s.isEmpty() ) status+="Link: "+s;
+        if (!status.isEmpty() ) statusMessage (status);
 
-	    headingEditor->setText (ti->getHeading() );
+        headingEditor->setVymText (ti->getHeading() );
 
-	    // Select in TaskEditor, if necessary 
-            Task *t=NULL;
-	    if (ti->isBranchLikeType() )
-		t=((BranchItem*)ti)->getTask();
+        // Select in TaskEditor, if necessary
+        Task *t=NULL;
+        if (ti->isBranchLikeType() )
+            t=((BranchItem*)ti)->getTask();
 
-            if (t)
-		taskEditor->select (t);
-            else
-                taskEditor->clearSelection();
-	} else
-	    noteEditor->setInactive();
+        if (t)
+            taskEditor->select (t);
+        else
+            taskEditor->clearSelection();
+    } else
+        noteEditor->setInactive();
 
-	updateActions();
+    updateActions();
     }
 }
 
@@ -5276,7 +5328,7 @@ void Main::updateActions()
 		actionHeading2URL->setEnabled (true);  
 
 		// Note
-		actionGetURLsFromNote->setEnabled (!selbi->getNote().isEmpty());
+                actionGetURLsFromNote->setEnabled (!selbi->getNote().isEmpty());
 
 		standardFlagsMaster->setEnabled (true);
 
@@ -5296,7 +5348,7 @@ void Main::updateActions()
 			bi=selbi->getXLinkItemNum(i)->getPartnerBranch();
 			if (bi)
 			{
-			    s=bi->getHeading();
+                s=bi->getHeadingPlain();
 			    if (s.length()>xLinkMenuWidth)
 				s=s.left(xLinkMenuWidth)+"...";
 			    branchXLinksContextMenuEdit->addAction (s);
@@ -5491,12 +5543,14 @@ void Main::previousSlide()
 
 void Main::standardFlagChanged()
 {
-    if (currentModel())
+    MapEditor *me = currentMapEditor();
+    VymModel  *m  = currentModel();
+    if (me && m && me->getState() != MapEditor::EditingHeading) 
     {
         if ( actionSettingsUseFlagGroups->isChecked() )
-            currentModel()->toggleStandardFlag(sender()->objectName(),standardFlagsMaster);
+            m->toggleStandardFlag(sender()->objectName(),standardFlagsMaster);
         else
-            currentModel()->toggleStandardFlag(sender()->objectName());
+            m->toggleStandardFlag(sender()->objectName());
         updateActions();
     }
 }
@@ -5855,26 +5909,31 @@ void Main::downloadUpdatesFinished(bool interactive)
 
     if (agent->isSuccess() )
     {
+        ShowTextDialog dia;
+        dia.setWindowTitle( vymName + " - " + tr("Update information") );
         QString page;
         if (loadStringFromDisk(agent->getDestination(), page) )
         {
-            if (!page.contains("vymisuptodate"))
-            {
-                // Notification: Please update!
-                QMessageBox::information(0,
-                    tr("Info"),
-                    tr("vym updates are available, please update e.g. from\n"
-                       "http://sourceforge.net/projects/vym")
-                );
-            } else
+            if (page.contains("vymisuptodate"))
             {
                 statusMessage( tr("vym is up to date.","MainWindow"));
                 if (interactive)
+                {
                     // Notification: vym is up to date!
-                    QMessageBox::information(0,
-                        tr("Update check results"),
-                        tr("vym is up to date!"));
-            }
+                    dia.setHtml( page );
+                    dia.exec();
+                }
+            } else if (page.contains("vymneedsupdate"))
+            {
+                // Notification: updates available
+                dia.setHtml( page );
+                dia.exec();
+            } else 
+            {
+                // Notification: Unknown version found
+                dia.setHtml( page );
+                dia.exec();
+            } 
 
             // Prepare to check again later
             settings.setValue("/downloads/updates/lastChecked", QDate::currentDate().toString(Qt::ISODate));

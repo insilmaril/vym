@@ -40,14 +40,21 @@ TaskEditor::TaskEditor(QWidget *)
     a->setChecked  (settings.value("/taskeditor/filterMap", false).toBool());
     tb->addAction (a);
     connect( a, SIGNAL( triggered() ), this, SLOT(toggleFilterMap() ) );
-    actionToggleFilterMap=a;
+    actionToggleFilterMap = a;
 
     a = new QAction(icon,  tr( "Active tasks","TaskEditor" ),this );
     a->setCheckable(true);
     a->setChecked  (settings.value("/taskeditor/filterActive", false).toBool());
     tb->addAction (a);
     connect( a, SIGNAL( triggered() ), this, SLOT(toggleFilterActive() ) );
-    actionToggleFilterActive=a;
+    actionToggleFilterActive = a;
+
+    a = new QAction(icon,  tr( "New tasks","TaskEditor" ),this );
+    a->setCheckable(true);
+    a->setChecked  (settings.value("/taskeditor/filterNew", false).toBool());
+    tb->addAction (a);
+    connect( a, SIGNAL( triggered() ), this, SLOT(toggleFilterNew() ) );
+    actionToggleFilterNew = a;
 
     // Forward Enter and Return to MapEditor
     a = new QAction(icon, tr( "Edit heading","TaskEditor" ), this);
@@ -88,6 +95,7 @@ TaskEditor::TaskEditor(QWidget *)
     // Initialize view filters according to previous settings
     setFilterMap();
     setFilterActive();
+    setFilterNew();
 
     // Initialize column widths
     QString s;
@@ -109,6 +117,7 @@ TaskEditor::~TaskEditor()
 {
     settings.setValue ("/taskeditor/filterMap",actionToggleFilterMap->isChecked());
     settings.setValue ("/taskeditor/filterActive",actionToggleFilterActive->isChecked());
+    settings.setValue ("/taskeditor/filterNew",actionToggleFilterNew->isChecked());
     settings.setValue ("/taskeditor/showParentsLevel",taskModel->getShowParentsLevel() );
     for (int i=0; i<7; i++)
 	settings.setValue (QString("/taskeditor/columnWidth/%1").arg(i),view->columnWidth(i) );
@@ -128,9 +137,9 @@ bool TaskEditor::isUsedFilterMap()
 void TaskEditor::setFilterMap () 
 {
     if (isUsedFilterMap() )
-	filterActiveModel->setMapFilter(currentMapName);
+        filterActiveModel->setMapFilter(currentMapName);
     else
-	filterActiveModel->setMapFilter(QString() );
+        filterActiveModel->setMapFilter(QString() );
     sort();
 }
 
@@ -143,6 +152,12 @@ void TaskEditor::setFilterActive ()
 {
     filterActiveModel->setFilter (actionToggleFilterActive->isChecked() );   
     sort();	
+}
+
+void TaskEditor::setFilterNew ()
+{
+    filterActiveModel->setFilterNew (actionToggleFilterNew->isChecked() );
+    sort();
 }
 
 void TaskEditor::showSelection()
@@ -226,3 +241,7 @@ void TaskEditor::toggleFilterActive ()
     setFilterActive();
 }
 
+void TaskEditor::toggleFilterNew ()
+{
+    setFilterNew();
+}

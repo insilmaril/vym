@@ -116,6 +116,7 @@ private slots:
     void fileExportSVG();
     void fileExportAO();
     void fileExportASCII();
+    void fileExportASCIITasks();
     void fileExportCSV();
     void fileExportOrgMode();
     void fileExportLaTeX();
@@ -123,8 +124,7 @@ private slots:
     void fileExportTaskjuggler();
     void fileExportImpress();
     void fileExportLast();
-    bool closeTab(int i);
-    bool fileCloseMap();
+    bool fileCloseMap(int i = -1);  // Optionally pass number of tab
     void filePrint();
     bool fileExitVYM();
 
@@ -274,6 +274,8 @@ public slots:
     void windowToggleScriptOutput();
     void windowToggleHistory();
     void windowToggleProperty();
+    void windowShowHeadingEditor();
+    void windowToggleHeadingEditor();
     void updateHistory(SimpleSettings &);
     void windowToggleAntiAlias();
 public:
@@ -285,6 +287,7 @@ public slots:
     void updateNoteFlag();
     void updateNoteEditor (QModelIndex index);
     void selectInNoteEditor (QString s, int i);
+    void setFocusMapEditor();
     void changeSelection (VymModel *model,const QItemSelection &newSel, const QItemSelection &delSel);
 
     void updateActions();

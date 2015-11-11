@@ -92,7 +92,6 @@ QString BranchItem::saveToDir (const QString &tmpdir,const QString &prefix, cons
     QString idAttr=attribut("uuid",uuid.toString());
 
     QString s,a;
-    BranchObj *bo=(BranchObj*)mo;
 
     // Update of note is usually done while unselecting a branch
     
@@ -120,9 +119,9 @@ QString BranchItem::saveToDir (const QString &tmpdir,const QString &prefix, cons
     
     QString elementName;
     if (parentItem==rootItem)
-	elementName="mapcenter";
-    else    
-	elementName="branch";
+        elementName="mapcenter";
+    else
+        elementName="branch";
 
     // Free positioning of children
     QString layoutAttr;
@@ -146,14 +145,15 @@ QString BranchItem::saveToDir (const QString &tmpdir,const QString &prefix, cons
     incIndent();
 
     // save heading
-    s+=valueElement("heading", getHeading(),
-	attribut ("textColor",QColor( bo->getColor()).name()));
+    s += heading.saveToDir();
 
     // Save frame  //FIXME-5 not saved if there is no MO
-    if (mo) 
-	// Avoid saving NoFrame for objects other than MapCenter
-	if (depth() == 0  || ((OrnamentedObj*)mo)->getFrame()->getFrameType()!=FrameObj::NoFrame) 
-	    s+=((OrnamentedObj*)mo)->getFrame()->saveToDir ();
+    if (mo)
+    {
+        // Avoid saving NoFrame for objects other than MapCenter
+        if (depth() == 0  || ((OrnamentedObj*)mo)->getFrame()->getFrameType()!=FrameObj::NoFrame)
+            s+=((OrnamentedObj*)mo)->getFrame()->saveToDir ();
+    }
 
     // save names of flags set
     s+=standardFlags.saveToDir(tmpdir,prefix,0);
@@ -191,7 +191,7 @@ QString BranchItem::saveToDir (const QString &tmpdir,const QString &prefix, cons
 	if (l && !tmpLinks.contains (l)) tmpLinks.append (l);
     }
     decIndent();
-    s+=endElement   (elementName);
+    s += endElement (elementName);
     return s;
 }
 
@@ -349,13 +349,13 @@ void BranchItem::sortChildren(bool inverse) //FIXME-4 optimize by not using move
 	    BranchItem* prevChild=getBranchNum(curChildIndex-1);
 	    if (inverse)
 	    {
-		if (prevChild->getHeading().compare(curChild->getHeading())<0)
+        if (prevChild->getHeadingPlain().compare(curChild->getHeadingPlain())<0)
 		{
 		    model->moveUp (curChild);
 		    madeChanges=true;
 		}   
 	    } else  
-		if (prevChild->getHeading().compare(curChild->getHeading())>0)
+        if (prevChild->getHeadingPlain().compare(curChild->getHeadingPlain())>0)
 		{
 		    model->moveUp (curChild);
 		    madeChanges=true;
@@ -567,7 +567,7 @@ BranchObj* BranchItem::createMapObj(QGraphicsScene *scene)  // FIXME-5 maybe mov
     if (!getHeading().isEmpty() ) 
     {
 	newbo->updateData();	//FIXME-5 maybe better model->emitDataChanged()?
-	newbo->setColor (headingColor);
+    newbo->setColor (heading.getColor());
     }	
 	
     return newbo;

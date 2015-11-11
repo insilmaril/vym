@@ -26,8 +26,6 @@ public: // PROPERTIES
 
 public slots: // METHODS
     QDBusVariant getCurrentModelID();
-    QDBusVariant getHeading();
-    void setHeading (const QString &s);
     QDBusVariant branchCount();
     QDBusVariant execute (const QString &s);
     QDBusVariant errorLevel();

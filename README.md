@@ -1,4 +1,6 @@
-###VYM - View Your Mind (c) 2004-2013 by Uwe Drechsel###
+###VYM - View Your Mind (c) 2004-2015 by Uwe Drechsel###
+
+## Version 2.5.0 ##
 
 
 Documentation
@@ -25,10 +27,17 @@ Documentation
 Download
 --------
 
-The latest binaries for openSUSE and Ubuntu are found in the
+The official downloads for all platforms are available at the project
+site:
+
+	https://sourceforge.net/projects/vym/
+
+The latest binaries for Linux (currently mainly openSUSE) are found in the
 Open Build Service project of Uwe Drechsel (aka insilmaril):
 
     http://download.opensuse.org/repositories/home%3A//insilmaril/
+
+
 
 Installation
 ------------
@@ -43,7 +52,7 @@ Installation
 * Compiling
 
     Compiling vym from scratch is pretty easy, if you have the
-    development packages of the Qt toolkit installed. (Check also the
+    development packages of the Qt5 toolkit installed. (Check also the
     homepage above for details):
 
     qmake
@@ -63,7 +72,7 @@ Installation
 
     The appliance can be downloaded as installable iso image, or run in
     the testdrive - in your webbrowser! That's a bit slow, but gives you
-    an idea without having to install anything on your system.
+    an idea without having to install anything at all on your system.
 
 
 Questions and feedback

@@ -7,7 +7,8 @@
 #include <QVariant>
 
 #include "flagrow.h"
-#include "noteobj.h"
+#include "heading.h"
+#include "vymnote.h"
 #include "xmlobj.h"
 
 class AttributeItem;
@@ -78,11 +79,13 @@ public:
 
 
 protected:
-    QColor headingColor;
+    Heading heading;
     QColor backgroundColor;
 public:	
-    virtual void setHeading (const QString s);
-    virtual QString getHeading() const;
+    virtual void setHeading (const VymText &vt);
+    virtual void setHeadingPlainText (const QString &s);
+    virtual Heading getHeading() const;
+    virtual QString getHeadingText();
     virtual std::string getHeadingStd() const;	//! convenience function used for debugging
     virtual QString getHeadingPlain() const;	//! Some views or methods can't cope with RichText
     virtual QString getHeadingDepth();
@@ -112,15 +115,15 @@ public:
     bool isTarget();				//! Returns true if item is is a target
 
 protected:
-    NoteObj note;
+    VymNote note;
 public:	
-    virtual void setNote(const QString &s);
+    bool isNoteEmpty();
     virtual void clearNote();
-    virtual QString getNote();
     virtual bool hasEmptyNote();
-    virtual void setNoteObj(const NoteObj &); //FIXME-3 setNoteObj is called for every select or so???
+    virtual void setNote(const VymText &vt); //FIXME-3 setNote is called for every select or so???
+    virtual void setNote(const VymNote &vn);
 
-    virtual NoteObj getNoteObj();	    
+    virtual VymNote getNote();
     virtual QString getNoteASCII(const QString &indent, const int &width); // returns note  (ASCII)
     virtual QString getNoteASCII();	    // returns note (ASCII)
     virtual QString getNoteOpenDoc();	    // returns note (OpenDoc)

@@ -28,7 +28,7 @@ class Vym
 	    a = []
 	    pars.each do |p|
 	      if p.kind_of? String
-	        a << "\"#{p}\""
+	        a << "'#{p}'"
 	      else
 	        a << p
 	      end
