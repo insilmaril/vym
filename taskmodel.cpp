@@ -69,13 +69,19 @@ QVariant TaskModel::data(const QModelIndex &index, int role) const
         else if (index.column() == 1)
             return t->getStatusString() + " - " +t->getAwakeString();
         else if (index.column() == 2)
-	    return t->getAgeCreation();
+            return t->getAgeCreation();
         else if (index.column() == 3)
-	    return t->getAgeModified();
+            return t->getAgeModified();
         else if (index.column() == 4)
-	    return t->getDaysSleep();
+            return t->getDaysSleep();
         else if (index.column() == 5)
-	    return bi->getModel()->getMapName();
+        {
+            QString s = bi->getModel()->getMapName();
+            if (s.isEmpty() )
+                return tr("foobar");
+            else
+                return bi->getModel()->getMapName();
+        }
         else if (index.column() == 6)
         {
             BranchItem *bi = tasks.at(index.row())->getBranch();

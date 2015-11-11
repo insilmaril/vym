@@ -142,7 +142,7 @@ void VymModel::init ()
     zipped=true;
     filePath="";
     fileName=tr("unnamed");
-    mapName="";
+    mapName=fileName;
     blockReposition=false;
     blockSaveState=false;
 
@@ -438,7 +438,7 @@ bool VymModel::parseVymText (const QString &s)
             reposition();   // to generate bbox sizes
 
             // Recalc priorities and sort
-            taskModel->recalcPriorities();
+            taskModel->recalcPriorities();  //FIXME-2 why recalc prios when reading vymtext?
         } else
         {
             QMessageBox::critical( 0, tr( "Critical Parse Error" ),
