@@ -832,4 +832,15 @@ private:
     VymModel *model;
 };
 
+class VymScript : public QObject
+{
+    Q_OBJECT
+public:
+    VymScript ();
+
+public slots:
+    void toggleTreeEditor();
+};
+
+
 #endif

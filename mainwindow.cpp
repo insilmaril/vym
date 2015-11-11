@@ -5582,10 +5582,15 @@ void Main::testFunction1()
 
         engine.globalObject().setProperty( "print", engine.newFunction( myPrint ) );
 
-        // Create Wrapper object
-        VymModelScript vms(m);
-        QScriptValue msVal = engine.newQObject(&vms);
-        engine.globalObject().setProperty("ms", msVal);
+        // Create Wrapper object for VymModel
+        VymModelScript vymModelScript( m );
+        QScriptValue val1 = engine.newQObject( &vymModelScript );
+        engine.globalObject().setProperty("model", val1);
+
+        // Create Wrapper object for Vym mainwindow
+        VymScript vymScript;
+        QScriptValue val2 = engine.newQObject( &vymScript );
+        engine.globalObject().setProperty("vym", val2);
 
         //QScriptValue modelVal = engine.newQObject(m);
         //engine.globalObject().setProperty("model", modelVal);

@@ -6802,3 +6802,13 @@ void VymModelScript::setHeading(const QString &s)
 {
     model->setHeading(s);
 }
+
+VymScript::VymScript()
+{
+}
+
+void VymScript::toggleTreeEditor()
+{
+    mainWindow->windowToggleTreeEditor();
+}
+
