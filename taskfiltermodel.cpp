@@ -23,7 +23,6 @@ void TaskFilterModel::setFilterNew (bool b)
     filterNew = b;
 }
 
-#include <QDebug>,
 bool TaskFilterModel::filterAcceptsRow(int sourceRow, 
          const QModelIndex &sourceParent) const
 {
@@ -31,7 +30,6 @@ bool TaskFilterModel::filterAcceptsRow(int sourceRow,
 
     // Filter by mapname
     QString mapname = taskModel->getTask(ix)->getMapName();
-    qDebug()<< "mapname= "<<mapname<<"  mapFilter= "<<mapFilter;
     if (mapname.isEmpty()) mapname = "barfoo";
     if ( !mapFilter.isEmpty() && mapname != mapFilter )
         //FIXME-2 new (unnamed) map does not filter, but shows tasks from all maps
