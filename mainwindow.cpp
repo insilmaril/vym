@@ -5532,7 +5532,6 @@ void Main::standardFlagChanged()
     }
 }
 
-extern QTextStream vout;
 void Main::testFunction1()
 {
     VymModel *m = currentModel();

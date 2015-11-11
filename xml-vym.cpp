@@ -707,6 +707,7 @@ bool parseVYMHandler::readNoteAttr (const QXmlAttributes& a)
             return false;
         }   
         QTextStream stream( &file );
+        stream.setCodec("UTF-8");
         QString lines;
         while ( !stream.atEnd() ) {
             lines += stream.readLine()+"\n"; 

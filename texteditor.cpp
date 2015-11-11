@@ -757,6 +757,7 @@ void TextEditor::textSave()
     }
 
     QTextStream t( &f );
+    t.setCodec("UTF-8");
     t << text;
     f.close();
 

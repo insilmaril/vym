@@ -137,6 +137,9 @@ int main(int argc, char* argv[])
     // Install our own handler for messages
     qInstallMessageHandler(msgHandler);
 
+    // Testing for now
+    vout.setCodec("UTF-8");
+
     // Reading and initializing options commandline options
     options.add ("batch", Option::Switch, "b", "batch");
     options.add ("commands", Option::Switch, "c", "commands");

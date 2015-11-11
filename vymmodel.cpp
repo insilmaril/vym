@@ -5270,6 +5270,7 @@ void VymModel::exportXML (QString dpath, QString fpath, bool useDialog)
 
     // Write it finally, and write in UTF8, no matter what 
     QTextStream ts( &file );
+    ts.setCodec("UTF-8");
     ts << saveFile;
     file.close();
 
