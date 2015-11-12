@@ -124,6 +124,8 @@ bool TextEditor::isEmpty()
 
 void TextEditor::setFont (const QFont &font)
 {
+    blockChangedSignal = true;
+
     QTextCursor tc=e->textCursor();
     QTextCharFormat format=tc.charFormat();
 
@@ -132,6 +134,8 @@ void TextEditor::setFont (const QFont &font)
     tc.setCharFormat (format);
     tc.clearSelection();
     fontChanged(fixedFont);
+
+    blockChangedSignal = false;
 }
 
 void TextEditor::setFontHint (const QString &fh)
@@ -843,6 +847,7 @@ void TextEditor::toggleFonthint()
         e->setCurrentFont (fixedFont);
         setFont (fixedFont);
     }
+    emit( textHasChanged() );
 }
 
 void TextEditor::toggleRichText()
