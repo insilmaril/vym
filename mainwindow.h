@@ -522,7 +522,7 @@ private:
     QAction* actionSettingsUseAnimation;
 };
 
-QScriptValue myPrint( QScriptContext * ctx, QScriptEngine * eng );
+QScriptValue scriptPrint( QScriptContext * ctx, QScriptEngine * eng );
 
 #endif
 

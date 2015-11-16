@@ -5556,7 +5556,7 @@ void Main::standardFlagChanged()
 }
 
 #include <QScriptEngine>
-QScriptValue myPrint( QScriptContext * context, QScriptEngine * eng )
+QScriptValue scriptPrint( QScriptContext * context, QScriptEngine * eng )
 {
     scriptOutput->append(context->argument(0).toString());
     return QScriptValue();
@@ -5568,7 +5568,7 @@ void Main::testFunction1()
     if (m)
     {
         //QString fileName("C:/Users/uwdr9542/vym/code/helloscript.js");
-        QString fileName("helloscript.js");
+        QString fileName("examplescript.js");
         QFile scriptFile(fileName);
         scriptFile.open(QIODevice::ReadOnly);
         QTextStream stream(&scriptFile);
@@ -5580,7 +5580,7 @@ void Main::testFunction1()
 
         QScriptEngine engine;
 
-        engine.globalObject().setProperty( "print", engine.newFunction( myPrint ) );
+        engine.globalObject().setProperty( "print", engine.newFunction( scriptPrint ) );
 
         // Create Wrapper object for VymModel
         VymModelScript vymModelScript( m );

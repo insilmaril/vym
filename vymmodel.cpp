@@ -6794,13 +6794,14 @@ void VymModelScript::addBranch(int pos)
         model->addNewBranch(selbi, pos);
 }
 
-QString VymModelScript::getHeading()
-{
-    return model->getHeading().getTextASCII(); //FIXME-2 testing
-}
-void VymModelScript::setHeading(const QString &s)
+void VymModelScript::setHeadingPlainText(const QString &s)
 {
     model->setHeading(s);
+}
+
+QString VymModelScript::getHeadingPlainText()
+{
+    return model->getHeading().getTextASCII(); //FIXME-2 testing
 }
 
 VymScript::VymScript()
