@@ -92,6 +92,15 @@ TaskEditor::TaskEditor(QWidget *)
     // layout changes trigger resorting
     connect( taskModel, SIGNAL( layoutChanged() ), this, SLOT(sort() ) );
 
+    // Enable wordwrap when data changes
+    connect ( 
+        taskModel, SIGNAL( dataChanged( QModelIndex, QModelIndex)),
+        view, SLOT( resizeRowsToContents() ) );
+    connect ( 
+        view->horizontalHeader(), SIGNAL( sectionResized(int, int, int)),
+        view, SLOT( resizeRowsToContents() ) );
+
+
     // Initialize view filters according to previous settings
     setFilterMap();
     setFilterActive();
