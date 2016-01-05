@@ -1,6 +1,6 @@
 #include "scriptoutput.h"
 
-ScriptOutput::ScriptOutput(QWidget *parent)
+ScriptOutput::ScriptOutput()
 {
     editor = new QTextEdit(this);
 
