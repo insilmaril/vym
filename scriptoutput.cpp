@@ -1,10 +1,9 @@
 #include "scriptoutput.h"
 
-ScriptOutput::ScriptOutput()
+ScriptOutput::ScriptOutput(QWidget *parent):QWidget( parent )
 {
     editor = new QTextEdit(this);
-
-    QVBoxLayout *layout = new QVBoxLayout;
+    layout = new QVBoxLayout;
     layout->addWidget(editor);
     setLayout(layout);
 }
