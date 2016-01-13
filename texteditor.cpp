@@ -86,7 +86,7 @@ TextEditor::~TextEditor()
     settings.setValue(n + "fonts/fixedFont", fixedFont.toString() );
 }
 
-void TextEditor::init (const QString &ename) // FIXME-2 parameter still required?
+void TextEditor::init (const QString &shortcutScope) 
 {   
     QString n=QString("/satellite/%1/").arg(shortcutScope);
     restoreState (settings.value(n+"state",0).toByteArray());

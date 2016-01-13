@@ -220,14 +220,14 @@ Main::Main(QWidget* parent, Qt::WindowFlags f) : QMainWindow(parent,f)
     addDockWidget (Qt::TopDockWidgetArea,dw);
     connect (dw, SIGNAL (visibilityChanged(bool ) ), this, SLOT (updateActions()));
 
-    scriptEditor = new ScriptEditor(this);
+    scriptEditor = new ScriptEditor( this );
     dw= new QDockWidget (tr ("Script Editor","ScriptEditor"));
     dw->setWidget (scriptEditor);
     dw->setObjectName ("ScriptEditor");
     dw->hide();	
     addDockWidget (Qt::LeftDockWidgetArea,dw);
 
-    scriptOutput = new ScriptOutput(this);
+    scriptOutput = new ScriptOutput( this );
     dw = new QDockWidget (tr("Script output window"));
     dw->setWidget (scriptOutput);
     dw->setObjectName ("ScriptOutput");

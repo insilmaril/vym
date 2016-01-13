@@ -9,6 +9,7 @@
 #include "macros.h"
 #include "mainwindow.h"
 #include "options.h"
+#include "settings.h"
 #include "slideitem.h"
 #include "slidemodel.h"
 #include "vymmodel.h"
@@ -19,8 +20,9 @@ extern QDir lastMapDir;
 extern Macros macros;
 extern Main *mainWindow;
 extern Options options;
+extern Settings settings;
 
-ScriptEditor::ScriptEditor (QWidget *parent):QWidget(parent)
+ScriptEditor::ScriptEditor (QWidget *parent):QWidget( parent )
 {
     ui.setupUi (this);
 

@@ -168,6 +168,7 @@ Settings::Settings(const QString & organization, const QString & application )
 
 Settings::~Settings()
 {
+    qDebug()<<"Destr Settings";
 }
 
 void Settings::clear()

@@ -2,7 +2,6 @@
 #define SCRIPTEDITOR_H
 
 #include "ui_scripteditor.h"
-
 #include "highlighter.h"
 
 class VymModel;
@@ -19,7 +18,7 @@ private:
     uint slideID;
 
 public:
-    ScriptEditor (QWidget* parent = 0);
+    ScriptEditor (QWidget *parent = 0);
     void setScriptFile (const QString &fn);
     void saveFile();
     void setSlideScript(uint vymModelID, uint slideID, const QString &);
