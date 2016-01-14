@@ -363,9 +363,9 @@ int main(int argc, char* argv[])
     standardFlagsMaster->setName ("standardFlagsMaster");
 
     // Initialize editors
-    noteEditor = new NoteEditor(QObject::tr("Note Editor","Shortcut group"));
+    noteEditor = new NoteEditor("noteeditor");
     noteEditor->setWindowIcon (QPixmap (":/vym-editor.png"));
-    headingEditor = new HeadingEditor(QObject::tr("Heading Editor","Shortcut group"));
+    headingEditor = new HeadingEditor("headingeditor");
 
     // Check if there is a BugzillaClient
     QFileInfo fi(vymBaseDir.path()+"/scripts/BugzillaClient.pm");
