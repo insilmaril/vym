@@ -5777,7 +5777,7 @@ void Main::callMacro ()
     }	
 }
 
-void Main::downloadReleaseNotesFinished(bool interactive)
+void Main::downloadReleaseNotesFinished(bool )
 {
     DownloadAgent *agent = static_cast<DownloadAgent*>(sender());
     QString s;
