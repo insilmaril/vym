@@ -34,6 +34,8 @@ win32 {
 
     # Without this, M_PI, and M_PI_2 won`t be defined.
     win32:DEFINES *= _USE_MATH_DEFINES
+
+    QT_QPA_PLATFORM_PLUGIN_PATH=%QTDIR%\plugins\platforms\
 }
 
 TRANSLATIONS += lang/vym_de_DE.ts
