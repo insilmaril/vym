@@ -1363,8 +1363,9 @@ void Main::setupEditActions()
     actionCollapseOneLevel=a;
 
     a = new QAction( QPixmap(), tr( "Collapse unselected levels","Edit menu" ), this);
-    a->setShortcut ( Qt::Key_Less);	  
-    switchboard.addSwitch ("mapCollapseUnselectedLevels", shortcutScope, a, tag);
+    // Shortcut causes that pipe-symbol cannot be entered e.g. in NoteEditor
+    //a->setShortcut ( Qt::Key_Less);	  
+    //switchboard.addSwitch ("mapCollapseUnselectedLevels", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( editCollapseUnselected() ) );
     a->setEnabled (false);
     a->setCheckable(false);
