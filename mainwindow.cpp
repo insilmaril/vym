@@ -41,6 +41,7 @@
 #include "options.h"
 #include "vymprocess.h"
 #include "scripteditor.h"
+#include "scripting.h"
 #include "scriptoutput.h"
 #include "settings.h"
 #include "shortcuts.h"
@@ -5529,13 +5530,13 @@ QVariant Main::runScript (const QString &script)
         engine.globalObject().setProperty( "print", engine.newFunction( scriptPrint ) );
 
         // Create Wrapper object for VymModel
-        VymModelScript vymModelScript( m );
-        QScriptValue val1 = engine.newQObject( &vymModelScript );
+        VymModelWrapper vymModelWrapper( m );
+        QScriptValue val1 = engine.newQObject( &vymModelWrapper );
         engine.globalObject().setProperty("model", val1);
 
         // Create Wrapper object for Vym mainwindow
-        VymScript vymScript;
-        QScriptValue val2 = engine.newQObject( &vymScript );
+        VymWrapper vymWrapper;
+        QScriptValue val2 = engine.newQObject( &vymWrapper );
         engine.globalObject().setProperty("vym", val2);
 
         //QScriptValue modelVal = engine.newQObject(m);

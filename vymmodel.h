@@ -817,30 +817,4 @@ private:
 
 };
 
-///////////////////////////////////////////////////////////////////////////////
-class VymModelScript : public QObject
-{
-    Q_OBJECT
-public:
-    VymModelScript (VymModel* m);
-
-public slots:
-    void addBranch(int pos=-2);
-    void setHeadingPlainText(const QString &s);
-    QString getHeadingPlainText();
-private:
-    VymModel *model;
-};
-
-class VymScript : public QObject
-{
-    Q_OBJECT
-public:
-    VymScript ();
-
-public slots:
-    void toggleTreeEditor();
-};
-
-
 #endif

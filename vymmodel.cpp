@@ -6781,35 +6781,3 @@ void VymModel::updateSlideSelection (QItemSelection newsel,QItemSelection)
 }
 
 
-///////////////////////////////////////////////////////////////////////////////
-VymModelScript::VymModelScript(VymModel *m)
-{
-    model = m;
-}
-
-void VymModelScript::addBranch(int pos)
-{
-    BranchItem *selbi = model->getSelectedBranch();
-    if (selbi)
-        model->addNewBranch(selbi, pos);
-}
-
-void VymModelScript::setHeadingPlainText(const QString &s)
-{
-    model->setHeading(s);
-}
-
-QString VymModelScript::getHeadingPlainText()
-{
-    return model->getHeading().getTextASCII(); //FIXME-2 testing
-}
-
-VymScript::VymScript()
-{
-}
-
-void VymScript::toggleTreeEditor()
-{
-    mainWindow->windowToggleTreeEditor();
-}
-
