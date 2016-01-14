@@ -103,6 +103,9 @@ int warningCount=0;
 int criticalCount=0;
 int fatalCount=0;
 
+#include <QScriptEngine>
+QScriptValue scriptPrint( QScriptContext * ctx, QScriptEngine * eng );
+
 void msgHandler (QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
     QByteArray localMsg = msg.toLocal8Bit();
@@ -461,7 +464,7 @@ int main(int argc, char* argv[])
             QTextStream in( &f );
             script=in.readAll();
             f.close();
-            m.executeEverywhere (script);
+            m.executeLegacyEverywhere (script);
             m.setScriptFile (fn);
         }
     }

@@ -26,14 +26,15 @@ ScriptEditor::ScriptEditor (QWidget *parent):QWidget( parent )
 {
     ui.setupUi (this);
 
-    //connect ( ui.openButton, SIGNAL (clicked() ), this, SLOT (openClicked() ));
-    connect ( ui.saveSlideButton, SIGNAL (clicked() ), this, SLOT (saveSlide() ));
-    //connect ( ui.saveAsButton, SIGNAL (clicked() ), this, SLOT (saveAsClicked() ));
-    connect ( ui.runSlideButton,  SIGNAL (clicked() ), this, SLOT (runClicked() ));
-    connect ( ui.runMacroButton,  SIGNAL (clicked() ), this, SLOT (runClicked() ));
-    connect ( ui.runFileButton,   SIGNAL (clicked() ), this, SLOT (runClicked() ));
-    connect ( ui.macroLoadButton, SIGNAL (pressed()), this, SLOT (loadMacroClicked() ) );
-    connect ( ui.macroSaveButton, SIGNAL (pressed()), this, SLOT (saveMacroClicked() ) );
+    connect ( ui.slideSaveButton,  SIGNAL (clicked() ), this, SLOT (saveSlide() ));
+    connect ( ui.slideRunButton,   SIGNAL (clicked() ), this, SLOT (runSlide() ));
+    connect ( ui.macroRunButton,   SIGNAL (clicked() ), this, SLOT (runMacro() ));
+    connect ( ui.fileRunButton,   SIGNAL (clicked() ), this, SLOT (runFile() ));
+    connect ( ui.macroLoadButton,  SIGNAL (clicked() ), this, SLOT (loadMacro() ) );
+    connect ( ui.macroSaveButton,  SIGNAL (clicked() ), this, SLOT (saveMacro() ) );
+    connect ( ui.fileLoadButton,   SIGNAL (clicked() ), this, SLOT (loadFile() ) );
+    connect ( ui.fileSaveButton,   SIGNAL (clicked() ), this, SLOT (saveFile() ) );
+    connect ( ui.fileSaveAsButton, SIGNAL (clicked() ), this, SLOT (saveFileAs() ) );
 
 
     vymModelID=-1;
@@ -43,11 +44,15 @@ ScriptEditor::ScriptEditor (QWidget *parent):QWidget( parent )
     font.setFamily("Courier");
     font.setFixedPitch(true);
     font.setPointSize(12);
-    ui.editor->setFont(font);
+    ui.slideEditor->setFont(font);
+    ui.macroEditor->setFont(font);
+    ui.fileEditor->setFont(font);
 
     ui.modeTabWidget->setTabText(0,tr("Slide","Mode in scriptEditor"));
     ui.modeTabWidget->setTabText(1,tr("Macro","Mode in scriptEditor"));
+    ui.modeTabWidget->setTabText(2,tr("Script","Mode in scriptEditor"));
 
+    ui.fileNameLabel->setText( tr("No script selected","scriptname in scriptEditor"));
     ui.keyCombo->insertItem(0, QString("---") );
 
     // Init function key selection
@@ -59,17 +64,21 @@ ScriptEditor::ScriptEditor (QWidget *parent):QWidget( parent )
         ui.keyCombo->insertItem(i, QString("%1 F%2").arg(prefix).arg(n) );
     }
     
-    highlighter = new Highlighter(ui.editor->document());
+    highlighterMacro = new Highlighter(ui.macroEditor->document());
+    highlighterSlide = new Highlighter(ui.slideEditor->document());
+    highlighterFile = new Highlighter(ui.fileEditor->document());
     QStringList list;
     foreach (Command *c, modelCommands)
 	list.append (c->getName() );
-    highlighter->addKeywords (list);
+    highlighterMacro->addKeywords (list);
+    highlighterSlide->addKeywords (list);
+    highlighterFile->addKeywords (list);
 
-    QAction *a = new QAction( tr( "Save","ScriptEditor" ), ui.editor);
-    a->setShortcut (Qt::CTRL + Qt::Key_S );	 
-    a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
-    addAction (a);
-    connect( a, SIGNAL( triggered() ), this, SLOT( saveSlide() ) );
+    //QAction *a = new QAction( tr( "Save","ScriptEditor" ), ui.editor);
+    //a->setShortcut (Qt::CTRL + Qt::Key_S );	 
+    //a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
+    //addAction (a);
+    //connect( a, SIGNAL( triggered() ), this, SLOT( saveSlide() ) );
 }
 
 void ScriptEditor::setScriptFile(const QString &fn) 
@@ -87,40 +96,25 @@ void ScriptEditor::setScriptFile(const QString &fn)
     }	
 
     QTextStream in( &f );
-    ui.editor->setText (in.readAll());
-    f.close();
-}
-
-void ScriptEditor::saveFile()
-{
-    QFile f( filename );
-    if ( !f.open( QIODevice::WriteOnly ) ) 
-    {
-        QMessageBox::warning(0, QObject::tr("Error"),QObject::tr("Couldn't save \"%1\"").arg(filename));
-        return;
-    }
-
-    QTextStream t( &f );
-    t.setCodec("UTF-8");
-    t << ui.editor->toPlainText();
+    ui.fileEditor->setText (in.readAll());
     f.close();
 }
 
 void ScriptEditor::saveSlide()
 {
-    VymModel *vm=mainWindow->getModel(vymModelID);
+    VymModel *vm = mainWindow->getModel(vymModelID);
     if (!vm)
     {
 	QMessageBox::warning(0,tr("Warning"),tr("Couldn't get model to save script into slide!"));
 	return;
     }
-    SlideItem *si=vm->getSlideModel()->findSlideID(slideID);
+    SlideItem *si = vm->getSlideModel()->findSlideID(slideID);
     if (!si)
     {
 	QMessageBox::warning(0,tr("Warning"),tr("Couldn't find slide to save script into slide!"));
 	return;
     }
-    si->setInScript(ui.editor->toPlainText());
+    si->setInScript(ui.slideEditor->toPlainText());
 }
 
 void ScriptEditor::setSlideScript(uint model_id, uint slide_id,const QString &s)
@@ -128,26 +122,89 @@ void ScriptEditor::setSlideScript(uint model_id, uint slide_id,const QString &s)
     vymModelID=model_id;
     slideID=slide_id;
     mode=Slide;
-    ui.editor->setText(s);
+    ui.slideEditor->setText(s);
 }
 
-void ScriptEditor::saveClicked()
+void ScriptEditor::runMacro()
+{
+    emit runLegacyScript (ui.macroEditor->toPlainText() );
+}
+
+void ScriptEditor::runSlide()
+{
+    emit runLegacyScript (ui.slideEditor->toPlainText() );
+}
+
+void ScriptEditor::runFile()
+{
+    emit runScript (ui.fileEditor->toPlainText() );
+}
+
+void ScriptEditor::loadMacro()
+{
+    QString m = macros.getMacro (ui.keyCombo->currentIndex()+1);
+    if ( !m.isEmpty() ) ui.macroEditor->setText (m);
+}
+void ScriptEditor::saveMacro()
+{
+    filename = macros.getPath(ui.keyCombo->currentIndex());
+    saveFile();
+}
+void ScriptEditor::loadFile()
+{
+    QString filter("VYM scripts (*.vys);;All (*)");
+    QString fn=QFileDialog::getOpenFileName( 
+	this,
+	vymName+" - " + tr("Load script"), 
+	lastMapDir.path(), 
+	filter);
+
+    if (!fn.isEmpty() )
+    {
+	QFile f( fn);
+	if ( !f.open( QIODevice::ReadOnly ) )
+	{
+	    QMessageBox::warning(0, 
+		tr("Error"),
+		tr("Couldn't open %1.\n").arg(filename));
+	    return;
+	}   
+
+	QTextStream ts( &f );
+    ts.setCodec("UTF-8");
+    ui.fileEditor->setText( ts.readAll() );
+	f.close();
+	lastMapDir.setPath(fn.left(fn.lastIndexOf ("/")) );
+    }
+}
+
+void ScriptEditor::saveFile()
 {
     if (filename.isEmpty() )
-	saveAsClicked();
+	saveFileAs();
     else
-	saveFile();
+    {
+        QFile f( filename );
+        if ( !f.open( QIODevice::WriteOnly ) ) 
+        {
+            QMessageBox::warning(0, QObject::tr("Error"),QObject::tr("Couldn't save \"%1\"").arg(filename));
+            return;
+        }
+
+        QTextStream t( &f );
+        t.setCodec("UTF-8");
+        t << ui.fileEditor->toPlainText();
+        f.close();
+    }
 }
 
-void ScriptEditor::saveAsClicked()
+void ScriptEditor::saveFileAs()
 {
     QString fn = QFileDialog::getSaveFileName( 
 	this, 
-	QString (vymName + " - " +tr("Save script")),
-	QString (),
-	"VYM script (*.vys);;All files (*)",
-	0,
-	QFileDialog::DontConfirmOverwrite);
+	QString (vymName + " - " + tr("Save script")),
+	QString (), "VYM script (*.vys);;All files (*)", 0, 
+        QFileDialog::DontConfirmOverwrite);
 	
     if ( !fn.isEmpty() ) 
     {
@@ -174,52 +231,8 @@ void ScriptEditor::saveAsClicked()
 		    return;
 	    }
 	} 
-	filename=fn;
+	filename = fn;
 	saveFile();
     }
 }
 
-void ScriptEditor::openClicked()
-{
-    QString filter("VYM scripts (*.vys);;All (*)");
-    QString fn=QFileDialog::getOpenFileName( 
-	this,
-	vymName+" - " + tr("Load script"), 
-	lastMapDir.path(), 
-	filter);
-
-    if (!fn.isEmpty() )
-    {
-	QFile f( fn);
-	if ( !f.open( QIODevice::ReadOnly ) )
-	{
-	    QMessageBox::warning(0, 
-		tr("Error"),
-		tr("Couldn't open %1.\n").arg(filename));
-	    return;
-	}   
-
-	QTextStream ts( &f );
-    ts.setCodec("UTF-8");
-    ui.editor->setText( ts.readAll() );
-	f.close();
-	lastMapDir.setPath(fn.left(fn.lastIndexOf ("/")) );
-    }
-}
-
-void ScriptEditor::runClicked()
-{
-    emit runScript (ui.editor->toPlainText() );
-}
-
-void ScriptEditor::loadMacroClicked()
-{
-    QString m=macros.getMacro (ui.keyCombo->currentIndex()+1);
-    if (!m.isEmpty())
-    ui.editor->setText (m);
-}
-void ScriptEditor::saveMacroClicked()
-{
-    filename=macros.getPath(ui.keyCombo->currentIndex());
-    saveFile();
-}

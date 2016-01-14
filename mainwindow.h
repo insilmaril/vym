@@ -295,8 +295,9 @@ public slots:
     bool autoEditNewBranch();
     bool autoSelectNewBranch();
     void setScriptFile(const QString &fn);
-    QVariant execute(const QString &);
-    void executeEverywhere (const QString &);
+    QVariant executeLegacy(const QString &);
+    void executeLegacyEverywhere (const QString &);
+    QVariant runScript(const QString &);
     void gotoWindow (const int &n);
 
 private slots:
@@ -521,8 +522,6 @@ private:
     QAction* actionSettingsToggleDownloads;
     QAction* actionSettingsUseAnimation;
 };
-
-QScriptValue scriptPrint( QScriptContext * ctx, QScriptEngine * eng );
 
 #endif
 

@@ -37,5 +37,5 @@ QDBusVariant AdaptorVym::getVersion()
 
 QDBusVariant AdaptorVym::execute(const QString &s)
 {
-    return QDBusVariant (mainWindow->execute (s) );
+    return QDBusVariant (mainWindow->executeLegacy (s) );
 }

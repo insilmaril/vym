@@ -20,25 +20,29 @@ private:
 public:
     ScriptEditor (QWidget *parent = 0);
     void setScriptFile (const QString &fn);
-    void saveFile();
     void setSlideScript(uint vymModelID, uint slideID, const QString &);
 
 public slots:
+    void runMacro();
+    void runSlide();
+    void runFile();
     void saveSlide();
-    void saveClicked();
-    void saveAsClicked();
-    void openClicked();
-    void runClicked();
-    void loadMacroClicked();
-    void saveMacroClicked();
+    void loadMacro();
+    void saveMacro();
+    void loadFile();
+    void saveFile();
+    void saveFileAs();
 
 signals:
+    void runLegacyScript (QString);
     void runScript (QString);
     
 private:
     Ui::ScriptEditor ui;
     QString filename;
-    Highlighter *highlighter;
+    Highlighter *highlighterMacro;
+    Highlighter *highlighterSlide;
+    Highlighter *highlighterFile;
 };
 
 

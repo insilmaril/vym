@@ -17,6 +17,7 @@
 #include <QInputDialog>
 #include <QMenuBar>
 #include <QPrinter>
+#include <QScriptEngine>
 #include <QStatusBar>
 #include <QTextStream>
 
@@ -258,7 +259,8 @@ Main::Main(QWidget* parent, Qt::WindowFlags f) : QMainWindow(parent,f)
     connect (headingEditor, SIGNAL (textHasChanged() ), this, SLOT (updateHeading()));
     connect (headingEditor, SIGNAL (focusReleased() ), this, SLOT (setFocusMapEditor()));
 
-    connect( scriptEditor, SIGNAL( runScript ( QString ) ),  this, SLOT( execute( QString ) ) );
+    connect( scriptEditor, SIGNAL( runLegacyScript ( QString ) ),  this, SLOT( executeLegacy( QString ) ) );
+    connect( scriptEditor, SIGNAL( runScript ( QString ) ),  this, SLOT( runScript ( QString ) ) );
 
     // Initialize some settings, which are platform dependant
     QString p,s;
@@ -5495,20 +5497,58 @@ void Main::setScriptFile (const QString &fn)
     scriptEditor->setScriptFile (fn);
 }
 
-QVariant Main::execute (const QString &script)
+QVariant Main::executeLegacy (const QString &script)
 {
-    VymModel *m=currentModel();
+    VymModel *m = currentModel();
     if (m) return m->execute (script);
     return QVariant();  // FIXME-2 useless return value
 }
 
-void Main::executeEverywhere (const QString &script)
+void Main::executeLegacyEverywhere (const QString &script)
 {
     foreach (VymView *vv,vymViews)
     {
-	VymModel *m=vv->getModel();
+	VymModel *m = vv->getModel();
 	if (m) m->execute (script);
     }
+}
+
+QScriptValue scriptPrint( QScriptContext * context, QScriptEngine *)
+{
+    scriptOutput->append( context->argument(0).toString() );
+    return QScriptValue();
+}
+
+QVariant Main::runScript (const QString &script)
+{
+    VymModel *m = currentModel();
+    if (m) 
+    {
+        QScriptEngine engine;
+
+        engine.globalObject().setProperty( "print", engine.newFunction( scriptPrint ) );
+
+        // Create Wrapper object for VymModel
+        VymModelScript vymModelScript( m );
+        QScriptValue val1 = engine.newQObject( &vymModelScript );
+        engine.globalObject().setProperty("model", val1);
+
+        // Create Wrapper object for Vym mainwindow
+        VymScript vymScript;
+        QScriptValue val2 = engine.newQObject( &vymScript );
+        engine.globalObject().setProperty("vym", val2);
+
+        //QScriptValue modelVal = engine.newQObject(m);
+        //engine.globalObject().setProperty("model", modelVal);
+
+        QScriptValue result = engine.evaluate(script);
+
+        if (engine.hasUncaughtException()) {
+            int line = engine.uncaughtExceptionLineNumber();
+            scriptOutput->append( QString("uncaught exception at line %1: %2").arg(line).arg(result.toString()));
+        }
+    }
+    return QVariant();  // FIXME-2 useless return value
 }
 
 void Main::gotoWindow (const int &n)
@@ -5556,12 +5596,6 @@ void Main::standardFlagChanged()
     }
 }
 
-#include <QScriptEngine>
-QScriptValue scriptPrint( QScriptContext * context, QScriptEngine * eng )
-{
-    scriptOutput->append(context->argument(0).toString());
-    return QScriptValue();
-}
 
 void Main::testFunction1()
 {
@@ -5569,39 +5603,12 @@ void Main::testFunction1()
     if (m)
     {
         //QString fileName("C:/Users/uwdr9542/vym/code/helloscript.js");
-        QString fileName("examplescript.js");
-        QFile scriptFile(fileName);
-        scriptFile.open(QIODevice::ReadOnly);
-        QTextStream stream(&scriptFile);
-        QString contents = stream.readAll();
-        scriptFile.close();
-
-        // Show script for debugging
-        // scriptOutput->append(contents);
-
-        QScriptEngine engine;
-
-        engine.globalObject().setProperty( "print", engine.newFunction( scriptPrint ) );
-
-        // Create Wrapper object for VymModel
-        VymModelScript vymModelScript( m );
-        QScriptValue val1 = engine.newQObject( &vymModelScript );
-        engine.globalObject().setProperty("model", val1);
-
-        // Create Wrapper object for Vym mainwindow
-        VymScript vymScript;
-        QScriptValue val2 = engine.newQObject( &vymScript );
-        engine.globalObject().setProperty("vym", val2);
-
-        //QScriptValue modelVal = engine.newQObject(m);
-        //engine.globalObject().setProperty("model", modelVal);
-
-        QScriptValue result = engine.evaluate(contents, fileName);
-
-        if (engine.hasUncaughtException()) {
-            int line = engine.uncaughtExceptionLineNumber();
-            scriptOutput->append( QString("uncaught exception at line %1: %2").arg(line).arg(result.toString()));
-        }
+        QString fn = "examplescript.vys";
+        QString script;
+        if ( !loadStringFromDisk( fn, script) )
+            QMessageBox::warning(0, "Warning", QString("Couldn't open %1.\n").arg(fn) );
+        else
+            runScript (script);
     }
 }
 
@@ -5691,8 +5698,8 @@ void Main::helpDoc()
 	// error handling
 	QMessageBox::warning(0, 
 	    tr("Warning"),
-	    tr("Couldn't find a viewer to open %1.\n").arg(docfile.fileName())+
-	    tr("Please use Settings->")+tr("Set application to open PDF files"));
+	    tr("Couldn't find a viewer to open %1.\n").arg(docfile.fileName()) +
+	    tr("Please use Settings->") + tr("Set application to open PDF files"));
 	settingsPDF();	
 	return;
     }
