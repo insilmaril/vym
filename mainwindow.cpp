@@ -5525,37 +5525,46 @@ QVariant Main::runScript (const QString &script)
     VymModel *m = currentModel();
     if (m) 
     {
-        QScriptEngine engine;
 
-        engine.globalObject().setProperty( "print", engine.newFunction( scriptPrint ) );
+        scriptEngine.globalObject().setProperty( "print", scriptEngine.newFunction( scriptPrint ) );
 
         // Create Wrapper object for VymModel
         VymModelWrapper vymModelWrapper( m );
-        QScriptValue val1 = engine.newQObject( &vymModelWrapper );
-        engine.globalObject().setProperty("model", val1);
+        QScriptValue val1 = scriptEngine.newQObject( &vymModelWrapper );
+        scriptEngine.globalObject().setProperty("model", val1);
 
-        // Create Wrapper object for Vym mainwindow
+        // Create Wrapper object for mainwindow
         VymWrapper vymWrapper;
-        QScriptValue val2 = engine.newQObject( &vymWrapper );
-        engine.globalObject().setProperty("vym", val2);
+        QScriptValue val2 = scriptEngine.newQObject( &vymWrapper );
+        scriptEngine.globalObject().setProperty("vym", val2);
 
-        //QScriptValue modelVal = engine.newQObject(m);
-        //engine.globalObject().setProperty("model", modelVal);
+        //QScriptValue modelVal = scriptEngine.newQObject(m);
+        //scriptEngine.globalObject().setProperty("model", modelVal);
 
-        QScriptValue result = engine.evaluate(script);
+        QScriptValue result = scriptEngine.evaluate(script);
 
-        if (engine.hasUncaughtException()) {
-            int line = engine.uncaughtExceptionLineNumber();
+        if (scriptEngine.hasUncaughtException()) {
+            int line = scriptEngine.uncaughtExceptionLineNumber();
             scriptOutput->append( QString("uncaught exception at line %1: %2").arg(line).arg(result.toString()));
         }
     }
     return QVariant();  // FIXME-2 useless return value
 }
 
-void Main::gotoWindow (const int &n)
+QObject* Main::getCurrentModelWrapper()  // FIXME-0 testing
+{
+    VymModelWrapper*  vymModelWrapper = new VymModelWrapper( currentModel() );
+    return vymModelWrapper;
+}
+
+bool Main::gotoWindow (const int &n)
 {
     if (n < tabWidget->count() && n>=0 )
+    {
 	tabWidget->setCurrentIndex (n);
+        return true;
+    } 
+    return false;
 }
 
 void Main::windowNextEditor()

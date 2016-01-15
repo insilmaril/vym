@@ -152,7 +152,7 @@ void ScriptEditor::saveMacro()
 }
 void ScriptEditor::loadFile()
 {
-    QString filter("VYM scripts (*.vys);;All (*)");
+    QString filter("VYM scripts (*.vys *.js);;All (*)");
     QString fn=QFileDialog::getOpenFileName( 
 	this,
 	vymName+" - " + tr("Load script"), 

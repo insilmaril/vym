@@ -3,8 +3,9 @@
 
 #include <QMainWindow>
 #include <QProgressDialog>
-#include <QScriptValue>
 #include <QScriptContext>
+#include <QScriptEngine>
+#include <QScriptValue>
 
 #include "branchpropeditor.h"
 #include "extrainfodialog.h"
@@ -12,6 +13,7 @@
 #include "file.h"
 #include "historywindow.h"
 #include "mapeditor.h"
+#include "scripting.h"
 #include "texteditor.h"
 #include "vymview.h"
 
@@ -298,7 +300,8 @@ public slots:
     QVariant executeLegacy(const QString &);
     void executeLegacyEverywhere (const QString &);
     QVariant runScript(const QString &);
-    void gotoWindow (const int &n);
+    QObject* getCurrentModelWrapper();   // FIXME-0 testing
+    bool gotoWindow (const int &n);
 
 private slots:
     void windowNextEditor();
@@ -338,6 +341,8 @@ private:
     qint64 *browserPID;
 
     QStringList imageTypes;
+
+    QScriptEngine scriptEngine;      // FIXME-0 testing for now
 
     QList <VymView*> vymViews;	    //! Keeps track of models and views related to a tab 
     QString prevSelection;

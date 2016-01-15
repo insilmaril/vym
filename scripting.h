@@ -2,6 +2,7 @@
 #define SCRIPTING_H
 
 #include <QObject>
+#include <QScriptValue>
 
 class VymModel;
 
@@ -15,10 +16,12 @@ public slots:
     void addBranch(int pos=-2);
     void setHeadingPlainText(const QString &s);
     QString getHeadingPlainText();
+    QString getFileName();
 private:
     VymModel *model;
 };
 
+///////////////////////////////////////////////////////////////////////////
 class VymWrapper : public QObject
 {
     Q_OBJECT
@@ -27,6 +30,8 @@ public:
 
 public slots:
     void toggleTreeEditor();
+    QObject* getCurrentMap();
+    void selectMap (uint n);
 };
 
 
