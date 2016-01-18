@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QScriptValue>
+#include <QScriptable>
 
 class VymModel;
 
@@ -22,7 +23,7 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////
-class VymWrapper : public QObject
+class VymWrapper : public QObject, protected QScriptable
 {
     Q_OBJECT
 public:

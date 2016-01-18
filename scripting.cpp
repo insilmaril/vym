@@ -44,7 +44,6 @@ void VymWrapper::toggleTreeEditor()
 
 QObject* VymWrapper::getCurrentMap()
 {
-    // http://doc.qt.io/qt-5/qtscript-index.html#making-a-c-object-available-to-scripts-written-in-qt-script
     return mainWindow->getCurrentModelWrapper();
 }
 
@@ -52,8 +51,9 @@ void VymWrapper::selectMap(uint n)
 {
     if ( !mainWindow->gotoWindow( n ))
     {
-        // FIXME-0 throw error
-        // QScriptContext::throwError( QScriptContext::RangeError, QString("No map '%1' available-").arg(n) );
+        QScriptContext *cont = context();
+        if (cont)
+            cont->throwError( QScriptContext::RangeError, QString("Map '%1' not available.").arg(n) );
     }
 
 
