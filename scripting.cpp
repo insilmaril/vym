@@ -5,22 +5,30 @@
 
 extern Main *mainWindow;
 
-VymScriptable::VymScriptable()
+///////////////////////////////////////////////////////////////////////////
+void logError(QScriptContext *context, QScriptContext::Error error, const QString &text)
 {
-    ctxt = context();
-}
-
-void VymScriptable::throwError(QScriptContext::Error error, const QString &text)
-{
-    if (ctxt)
-        ctxt->throwError( error, text);
+    if (context)
+        context->throwError( error, text);
     else
         qDebug()<<"VymWrapper: "<<text;
 }
 
+///////////////////////////////////////////////////////////////////////////
 VymModelWrapper::VymModelWrapper(VymModel *m)
 {
     model = m;
+}
+
+BranchItem*  VymModelWrapper::getSelectedBranch()
+{
+    BranchItem *selbi = model->getSelectedBranch();
+    if (selbi)
+    {
+        if (! model->addNewBranch() )
+            logError( context(), QScriptContext::UnknownError, "Couldn't add branch to map");
+    } else
+        logError( context(),  QScriptContext::ReferenceError, "No branch selected" );
 }
 
 void VymModelWrapper::addBranch()
@@ -29,14 +37,24 @@ void VymModelWrapper::addBranch()
     if (selbi)
     {
         if (! model->addNewBranch() )
-            throwError( QScriptContext::UnknownError, "Couldn't add branch to map");
+            logError( context(), QScriptContext::UnknownError, "Couldn't add branch to map");
     } else
-        throwError( QScriptContext::ReferenceError, "No branch selected" );
+        logError( context(), QScriptContext::ReferenceError, "No branch selected" );
 }
 
-void VymModelWrapper::setHeadingPlainText(const QString &s)
+void VymModelWrapper::copy()
 {
-    model->setHeading(s);
+    model->copy();
+}
+
+void VymModelWrapper::cut()
+{
+    model->cut();
+}
+
+QString VymModelWrapper::getFileName()
+{
+    return model->getFileName();
 }
 
 QString VymModelWrapper::getHeadingPlainText()
@@ -44,9 +62,14 @@ QString VymModelWrapper::getHeadingPlainText()
     return model->getHeading().getTextASCII(); //FIXME-2 testing
 }
 
-QString VymModelWrapper::getFileName()
+void VymModelWrapper::paste()
 {
-    return model->getFileName();
+    model->paste();
+}
+
+void VymModelWrapper::setHeadingPlainText(const QString &s)
+{
+    model->setHeading(s);
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -67,6 +90,8 @@ QObject* VymWrapper::getCurrentMap()    // FIXME-1 No syntax highlighting
 void VymWrapper::selectMap(uint n)      // FIXME-1 No syntax highlighting
 {
     if ( !mainWindow->gotoWindow( n ))
-        throwError( QScriptContext::RangeError, QString("Map '%1' not available.").arg(n) );
+    {
+        logError( context(), QScriptContext::RangeError, QString("Map '%1' not available.").arg(n) );
+    }
 }
 
