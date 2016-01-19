@@ -200,10 +200,11 @@ void ScriptEditor::saveFile()
 
 void ScriptEditor::saveFileAs()
 {
+    QString filter("VYM scripts (*.vys *.js);;All (*)");
     QString fn = QFileDialog::getSaveFileName( 
 	this, 
 	QString (vymName + " - " + tr("Save script")),
-	QString (), "VYM script (*.vys);;All files (*)", 0, 
+	QString (), "VYM script (*js *.vys);;All files (*)", 0, 
         QFileDialog::DontConfirmOverwrite);
 	
     if ( !fn.isEmpty() ) 
