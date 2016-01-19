@@ -2,19 +2,29 @@
 #define SCRIPTING_H
 
 #include <QObject>
-#include <QScriptValue>
+#include <QScriptContext>
 #include <QScriptable>
+#include <QScriptValue>
 
 class VymModel;
 
-class VymModelWrapper : public QObject
+class VymScriptable : protected QScriptable
+{
+public:
+    VymScriptable();
+    void throwError(QScriptContext::Error error, const QString &text);
+private:
+    QScriptContext *ctxt;
+};
+
+class VymModelWrapper : public QObject, protected VymScriptable
 {
     Q_OBJECT
 public:
     VymModelWrapper (VymModel* m);
 
 public slots:
-    void addBranch(int pos=-2);
+    void addBranch();
     void setHeadingPlainText(const QString &s);
     QString getHeadingPlainText();
     QString getFileName();
@@ -23,7 +33,7 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////
-class VymWrapper : public QObject, protected QScriptable
+class VymWrapper : public QObject, protected VymScriptable
 {
     Q_OBJECT
 public:

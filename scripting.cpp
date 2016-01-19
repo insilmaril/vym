@@ -5,16 +5,33 @@
 
 extern Main *mainWindow;
 
+VymScriptable::VymScriptable()
+{
+    ctxt = context();
+}
+
+void VymScriptable::throwError(QScriptContext::Error error, const QString &text)
+{
+    if (ctxt)
+        ctxt->throwError( error, text);
+    else
+        qDebug()<<"VymWrapper: "<<text;
+}
+
 VymModelWrapper::VymModelWrapper(VymModel *m)
 {
     model = m;
 }
 
-void VymModelWrapper::addBranch(int pos)
+void VymModelWrapper::addBranch()
 {
     BranchItem *selbi = model->getSelectedBranch();
     if (selbi)
-        model->addNewBranch(selbi, pos);
+    {
+        if (! model->addNewBranch() )
+            throwError( QScriptContext::UnknownError, "Couldn't add branch to map");
+    } else
+        throwError( QScriptContext::ReferenceError, "No branch selected" );
 }
 
 void VymModelWrapper::setHeadingPlainText(const QString &s)
@@ -42,20 +59,14 @@ void VymWrapper::toggleTreeEditor()
     mainWindow->windowToggleTreeEditor();
 }
 
-QObject* VymWrapper::getCurrentMap()
+QObject* VymWrapper::getCurrentMap()    // FIXME-1 No syntax highlighting
 {
     return mainWindow->getCurrentModelWrapper();
 }
 
-void VymWrapper::selectMap(uint n)
+void VymWrapper::selectMap(uint n)      // FIXME-1 No syntax highlighting
 {
     if ( !mainWindow->gotoWindow( n ))
-    {
-        QScriptContext *cont = context();
-        if (cont)
-            cont->throwError( QScriptContext::RangeError, QString("Map '%1' not available.").arg(n) );
-    }
-
-
+        throwError( QScriptContext::RangeError, QString("Map '%1' not available.").arg(n) );
 }
 
