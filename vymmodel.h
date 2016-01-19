@@ -400,7 +400,6 @@ public:
 	Disclaimer: Still experimental, not fully supported yet.
     */	
     BranchItem* addMapCenter(bool saveStateFlag=true);
-private:    
     BranchItem* addMapCenter(QPointF absPos);
 
     /*! \brief Add new branch
@@ -753,6 +752,7 @@ public:
     bool selectLastBranch();
     bool selectLastSelectedBranch();
     bool selectLastImage();
+    bool selectLatestAdded();
     bool selectParent();
 
 public:

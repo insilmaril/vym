@@ -2953,11 +2953,11 @@ BranchItem* VymModel::addNewBranchBefore()
 {
     BranchItem *newbi=NULL;
     BranchItem *selbi=getSelectedBranch();
-    if (selbi && selbi->getType()==TreeItem::Branch)
+    if (selbi && selbi->getType() == TreeItem::Branch)
 	 // We accept no MapCenter here, so we _have_ a parent
     {
 	// add below selection
-	newbi=addNewBranchInt (selbi,-1);
+	newbi = addNewBranchInt (selbi,-1);
 
 	if (newbi)
 	{
@@ -3967,20 +3967,21 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="addBranchBefore")         // scriptstatus-missing
+    if (com=="addBranchBefore")         // scriptstatus-done
 	{
 	    addNewBranchBefore ();
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com==QString("addMapCenter"))   // scriptstatus-missing
+    if (com==QString("addMapCenter"))   // scriptstatus-done
 	{
 	    x=parser.parDouble (ok,0);
 	    y=parser.parDouble (ok,1);
+            // FIXME-1 implementation missing!
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com==QString("addMapInsert"))   // scriptstatus-missing
+    if (com==QString("addMapInsert"))   // scriptstatus-done
 	{
 	    t=parser.parString (ok,0);  // path to map
 	    int contentFilter=0x0000;
@@ -4014,7 +4015,7 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com==QString("addMapReplace"))  // scriptstatus-missing
+    if (com==QString("addMapReplace"))  // scriptstatus-done
 	{
 	    t=parser.parString (ok,0);	// path to map
 	    if (QDir::isRelativePath(t)) 
@@ -4025,7 +4026,7 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com==QString("addSlide"))       // scriptstatus-missing
+    if (com==QString("addSlide"))       // scriptstatus-done
 	{
 	    addSlide();
         break;
@@ -4121,13 +4122,13 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="colorBranch")// scriptstatus-missing
+    if (com=="colorBranch")// scriptstatus-done
 	{
 	    QColor c=parser.parColor (ok,0);
 	    colorBranch (c);
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="colorSubtree")// scriptstatus-missing
+    if (com=="colorSubtree")// scriptstatus-done
 	{
 	    QColor c=parser.parColor (ok,0);
 	    colorSubtree (c);
@@ -4325,7 +4326,7 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="getNotePlainText")// scriptstatus-missing
+    if (com=="getNotePlainText")// scriptstatus-done
 	{ 
             returnValue= getNote().getTextASCII();
             break;
@@ -4450,13 +4451,13 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="moveDown")// scriptstatus-missing
+    if (com=="moveDown")// scriptstatus-done
 	{
 	    moveDown();
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="moveUp")// scriptstatus-missing
+    if (com=="moveUp")// scriptstatus-done
 	{
 	    moveUp();
         break;
@@ -4498,7 +4499,7 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="nop")// scriptstatus-missing
+    if (com=="nop")// scriptstatus-done
 	{
         break;
     }
@@ -4522,7 +4523,7 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="redo")// scriptstatus-missing
+    if (com=="redo")// scriptstatus-done
 	{
 	    redo();
         break;
@@ -4618,14 +4619,14 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="scroll")// scriptstatus-missing
+    if (com=="scroll")// scriptstatus-done
 	{
 	    if (!scrollBranch (selbi))	
 		parser.setError (Aborted,"Could not scroll branch");
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="select")// scriptstatus-missing
+    if (com=="select")// scriptstatus-done
 	{
 	    s=parser.parString(ok,0);
 	    if (!select (s))
@@ -4633,7 +4634,7 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="selectID")// scriptstatus-missing
+    if (com=="selectID")// scriptstatus-done
 	{
 	    s=parser.parString(ok,0);
 	    if (!selectID (s))
@@ -4641,7 +4642,7 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="selectLastBranch")// scriptstatus-missing
+    if (com=="selectLastBranch")// scriptstatus-done
 	{
 	    BranchItem *bi=selbi->getLastBranch();
 	    if (!bi)
@@ -4650,7 +4651,7 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="selectLastImage")// scriptstatus-missing
+    if (com=="selectLastImage")// scriptstatus-done
 	{
 	    ImageItem *ii=selbi->getLastImage();
 	    if (!ii)
@@ -4659,26 +4660,20 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="selectParent")// scriptstatus-missing
+    if (com=="selectParent")// scriptstatus-done
 	{
 	    selectParent ();
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="selectLatestAdded")// scriptstatus-missing
+    if (com=="selectLatestAdded")// scriptstatus-done
 	{
-	    if (!latestAddedItem)
-	    {
-		parser.setError (Aborted,"No latest added object");
-	    } else
-	    {   
-		if (!select (latestAddedItem))
-		    parser.setError (Aborted,"Could not select latest added object ");
-	    }   
+            if (!selectLatestAdded ());
+                parser.setError (Aborted,"Could not select latest added object ");
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="setFlag")// scriptstatus-missing
+    if (com=="setFlag")// scriptstatus-done
 	{
 	    s=parser.parString(ok,0);
 	    selbi->activateStandardFlag(s);
@@ -4790,20 +4785,20 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="setMapAuthor")// scriptstatus-missing
+    if (com=="setMapAuthor")// scriptstatus-done
 	{
 	    s=parser.parString(ok,0);
 	    setAuthor (s);
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="setMapComment")// scriptstatus-missing
+    if (com=="setMapComment")// scriptstatus-done
 	{
 	    s=parser.parString(ok,0);
 	    if (ok) setComment(s);
         break;
     }
-    if (com=="setMapTitle")// scriptstatus-missing
+    if (com=="setMapTitle")// scriptstatus-done
 	{
 	    s=parser.parString(ok,0);
 	    if (ok) setTitle(s);
@@ -4832,7 +4827,7 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="setMapRotation")// scriptstatus-missing
+    if (com=="setMapRotation")// scriptstatus-done
 	{
 	    x=parser.parDouble (ok,0);
 	    setMapRotationAngle(x);
@@ -4840,7 +4835,7 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="setMapZoom")// scriptstatus-missing
+    if (com=="setMapZoom")// scriptstatus-done
 	{
 	    x=parser.parDouble (ok,0);
 	    setMapZoomFactor(x);
@@ -4848,7 +4843,7 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="setNotePlainText")// scriptstatus-missing
+    if (com=="setNotePlainText")// scriptstatus-done
 	{
 	    s=parser.parString (ok,0);
             VymNote vn;
@@ -4872,14 +4867,14 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="setURL")// scriptstatus-missing
+    if (com=="setURL")// scriptstatus-done
 	{
 	    s=parser.parString (ok,0);
 	    setURL(s);
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="setVymLink")// scriptstatus-missing
+    if (com=="setVymLink")// scriptstatus-done
 	{
 	    s=parser.parString (ok,0);
 	    setVymLink(s);
@@ -4921,14 +4916,14 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="sleep")// scriptstatus-missing
+    if (com=="sleep")// scriptstatus-done
 	{
 	    n=parser.parInt (ok,0);
 	    sleep (n);
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="sortChildren")// scriptstatus-missing
+    if (com=="sortChildren")// scriptstatus-done
 	{
 	    b=false;
 	    if (parser.parCount()==1)
@@ -4937,63 +4932,63 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="toggleFlag")// scriptstatus-missing
+    if (com=="toggleFlag")// scriptstatus-done
 	{
 	    s=parser.parString(ok,0);
             toggleStandardFlag (s);
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="toggleFrameIncludeChildren")// scriptstatus-missing
+    if (com=="toggleFrameIncludeChildren")// scriptstatus-done
 	{
 	    toggleFrameIncludeChildren();
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="toggleScroll")// scriptstatus-missing
+    if (com=="toggleScroll")// scriptstatus-done
 	{
 	    toggleScroll();	
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="toggleTarget")// scriptstatus-missing
+    if (com=="toggleTarget")// scriptstatus-done
 	{
 	    toggleTarget();	
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="toggleTask")// scriptstatus-missing
+    if (com=="toggleTask")// scriptstatus-done
 	{
 	    toggleTask();	
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="undo")// scriptstatus-missing
+    if (com=="undo")// scriptstatus-done
 	{
 	    undo();
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="unscroll")// scriptstatus-missing
+    if (com=="unscroll")// scriptstatus-done
 	{
 	    if (!unscrollBranch (selbi))    
 		parser.setError (Aborted,"Could not unscroll branch");
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="unscrollChildren")// scriptstatus-missing
+    if (com=="unscrollChildren")// scriptstatus-done
 	{
 	    unscrollChildren ();
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="unselectAll")// scriptstatus-missing
+    if (com=="unselectAll")// scriptstatus-done
 	{
 	    unselectAll();
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="unsetFlag")// scriptstatus-missing
+    if (com=="unsetFlag")// scriptstatus-done
 	{
 	    s=parser.parString(ok,0);
 	    selbi->deactivateStandardFlag(s);
@@ -5478,11 +5473,13 @@ void VymModel::unregisterEditor(QWidget *)
 void VymModel::setMapZoomFactor (const double &d)
 {
     zoomFactor=d;
+    mapEditor->setZoomFactorTarget(d);  // FIXME-1 really already here? called from xml-vym...
 }
 
 void VymModel::setMapRotationAngle(const double &d)
 {
     rotationAngle=d;
+    mapEditor->setAngleTarget(d);       // FIXME-1 really already here? called from xml-vym...
 }
 
 void VymModel::setMapAnimDuration(const int &d)
@@ -6447,6 +6444,11 @@ bool VymModel::selectLastImage()
 	}
     }	    
     return false;
+}
+
+bool VymModel::selectLatestAdded()
+{
+    return select (latestAddedItem);
 }
 
 bool VymModel::selectParent()
