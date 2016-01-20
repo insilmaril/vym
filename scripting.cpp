@@ -3,8 +3,10 @@
 #include "branchitem.h"
 #include "imageitem.h"
 #include "mainwindow.h"
+#include "misc.h"
 #include "vymmodel.h"
 #include "vymtext.h"
+#include "xlink.h"
 
 extern Main *mainWindow;
 
@@ -28,6 +30,24 @@ BranchItem*  VymModelWrapper::getSelectedBranch()
     BranchItem *selbi = model->getSelectedBranch();
     if (!selbi) logError( context(),  QScriptContext::ReferenceError, "No branch selected" );
     return selbi;
+}
+
+QVariant VymModelWrapper::getParameter( bool &ok, const QString &key, const QStringList &parameters )
+{
+    // loop through parameters and try to find the one named "key"
+    foreach ( QString par, parameters)
+    {
+        if ( par.startsWith( key ) )
+        {
+            qDebug()<<"getParam: "<<key<<"  has: "<< par;
+            ok = true;
+            return QVariant( par );
+        }
+    }
+
+    // Nothing found
+    ok = false;
+    return QVariant::Invalid;
 }
 
 void VymModelWrapper::addBranch()
@@ -89,9 +109,63 @@ void VymModelWrapper::addSlide()
     model->addSlide();
 }
 
-void VymModelWrapper::addXLink( const QString &begin, const QString &end, int width, QColor color, const QString &penstyle)
+void VymModelWrapper::addXLink( const QString &begin, const QString &end, int width, const QString &color, const QString &penstyle)
 {
-    // FIXME-0 missing
+    BranchItem *bbegin = (BranchItem*)(model->findBySelectString( begin ) );
+    BranchItem *bend = (BranchItem*)(model->findBySelectString( end ) );
+    if (bbegin && bend)
+    {
+        if (bbegin->isBranchLikeType() && bend->isBranchLikeType())
+        {
+            Link *li = new Link ( model );
+            li->setBeginBranch ( (BranchItem*)bbegin );
+            li->setEndBranch ( (BranchItem*)bend);
+
+            model->createLink (li);
+            QPen pen = li->getPen();
+            if (width > 0 ) pen.setWidth( width );
+            QColor col (color);
+            if (col.isValid()) pen.setColor ( col );
+
+            bool ok;
+            Qt::PenStyle st1 = penStyle ( penstyle, ok);
+            if (ok) 
+            {
+                pen.setStyle ( st1 );
+                li->setPen( pen );	
+            } else	
+                logError( context(), QScriptContext::UnknownError, QString("Couldn't set penstyle %1").arg(penstyle));
+        }
+        else
+            logError( context(), QScriptContext::UnknownError, "Begin or end of xLink are not branch or mapcenter");
+        
+    } else
+        logError( context(), QScriptContext::UnknownError, "Begin or end of xLink not found");
+}
+
+int VymModelWrapper::branchCount()
+{
+    BranchItem *selbi = getSelectedBranch();
+    if (selbi)
+        return selbi->branchCount();
+    else
+        return -1;
+}
+
+int VymModelWrapper::centerCount()
+{
+    return model->centerCount();
+}
+
+void VymModelWrapper::centerOnID( const QString &id)
+{
+    if ( !model->centerOnID( id ) ) 
+        logError( context(), QScriptContext::UnknownError, QString("Could not center on ID %1").arg(id) );
+}
+
+void VymModelWrapper::clearFlags()
+{
+    return model->clearFlags();
 }
 
 void VymModelWrapper::colorBranch( const QString &color)
@@ -120,6 +194,87 @@ void VymModelWrapper::copy()
 void VymModelWrapper::cut()
 {
     model->cut();
+}
+
+void VymModelWrapper::cycleTask()
+{
+    if ( !model->cycleTaskStatus() )
+        logError( context(), QScriptContext::SyntaxError, "Couldn't cycle task status");
+}
+
+bool VymModelWrapper::exportMap( const QString &format, const QStringList &parameters)
+{
+    QString filename;
+    bool hasFilename;
+
+    filename = getParameter( hasFilename, "filename", parameters).toString();
+
+    if (format == "AO") 
+    {
+        model->exportAO (filename, false);
+    } else if ( format == "ASCII" ) 
+    {
+        /*
+       bool listTasks = parser.parBool(ok, 1);              // FIXME-0
+       model->exportASCII (listTasks, filename, false);
+       */
+    } else if ( format == "CSV" )
+    {
+        model->exportCSV (filename, false);
+    } else if ( format == "HTML" )
+    {
+        /*
+	    QString path=parser.parString(ok,0); 
+	    QString fname=parser.parString(ok,1); 
+	    exportHTML (path,fname,false);
+        */
+    } else if ( format == "Image" )
+    {
+            /*
+	    QString format="PNG";
+	    if (parser.parCount()>=2)
+		format=parser.parString(ok,1);
+	    exportImage (fname,false,format);
+            */
+    } else if ( format == "Impress" )
+    {
+        /*
+	    QString cf=parser.parString(ok,1); 
+	    exportImpress (fn,cf);
+            */
+    } else if ( format == "Last" )
+    {
+        model->exportLast();
+    } else if ( format == "LaTeX" )
+    {
+        model->exportLaTeX (filename, false);
+    } else if ( format == "OrgMode" )
+    {
+        model->exportOrgMode ( filename,false);
+    } else if ( format == "PDF" )
+    {
+        model->exportPDF( filename, false);
+    } else if ( format == "SVG" )
+    {
+        model->exportPDF( filename, false);
+    } else if ( format == "XML" )
+    {
+    /*
+    if (com=="exportXML")// scriptstatus-missing
+	{
+	    QString dpath=parser.parString(ok,0); 
+	    QString fpath=parser.parString(ok,1); 
+	    exportXML (dpath,fpath,false);
+        break;
+    }
+    */
+    } else
+    {
+        logError( context(), QScriptContext::SyntaxError, QString("Unknown export format: %1").arg(format) );
+        return false;
+    }
+
+    return true;
 }
 
 QString VymModelWrapper::getFileName()
@@ -157,6 +312,27 @@ void VymModelWrapper::paste()
 void VymModelWrapper::redo()
 {
     model->redo();
+}
+
+void VymModelWrapper::remove()
+{
+    model->deleteSelection();
+}
+
+void VymModelWrapper::removeChildren()
+{
+    model->deleteChildren();
+}
+
+void VymModelWrapper::removeKeepChildren()
+{
+    model->deleteKeepChildren();
+}
+
+void VymModelWrapper::removeSlide(int n)
+{
+    if ( n < 0 || n >= model->slideCount() - 1)
+        logError( context(), QScriptContext::RangeError, QString("Slide '%1' not available.").arg(n) );
 }
 
 void VymModelWrapper::scroll()

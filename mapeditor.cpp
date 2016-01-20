@@ -1742,12 +1742,13 @@ void MapEditor::mouseReleaseEvent(QMouseEvent* e)
 	    if (model->createLink (tmpLink) )
 	    {
 		model->saveState(	
-		    tmpLink->getBeginLinkItem(),"delete ()",
-		    seli,QString("addXLink (\"%1\",\"%2\",%3,\"%4\")")
-			.arg(model->getSelectString(tmpLink->getBeginBranch()))
-			.arg(model->getSelectString(tmpLink->getEndBranch()))
-			.arg(tmpLink->getPen().width())
-			.arg(tmpLink->getPen().color().name()),
+		    tmpLink->getBeginLinkItem(),"remove ()",
+		    seli,QString("addXLink (\"%1\",\"%2\",%3,\"%4\",\"%5\")")
+			.arg( model->getSelectString(tmpLink->getBeginBranch()) )
+			.arg( model->getSelectString(tmpLink->getEndBranch()) )
+			.arg( tmpLink->getPen().width() )
+			.arg( tmpLink->getPen().color().name() )
+			.arg( penStyleToString( tmpLink->getPen().style() ) ),
 		    QString("Adding Link from %1 to %2").arg(model->getObjectName(seli)).arg(model->getObjectName (dsti)));	
 		return;
 	    }

@@ -283,7 +283,6 @@ public:
     TreeItem* findID   (const uint &i);	    // find MapObj by unique ID
     TreeItem* findUuid (const QUuid &i);    // find MapObj by unique ID
 
-
 ////////////////////////////////////////////
 // Interface 
 ////////////////////////////////////////////
@@ -298,6 +297,7 @@ public:
     QString getComment ();
     QString getDate();
     int branchCount();
+    int centerCount();
 
     void setSortFilter (const QString &);
     QString getSortFilter ();
@@ -358,7 +358,7 @@ public:
     void toggleTask();	    
 
     /*! Cycle through task states */
-    void cycleTaskStatus(bool reverse=false);	    
+    bool cycleTaskStatus(bool reverse=false);	    
 
     /*! Set task to sleep for number of days or until a given date*/
     bool setTaskSleep(const QString &s);
@@ -477,6 +477,7 @@ public:
     ItemList getTargets();
 
     void toggleStandardFlag (const QString &name, FlagRow *master=NULL);
+    void clearFlags();
     void addFloatImage(const QImage &img);
 
     void colorBranch(QColor);
@@ -578,6 +579,7 @@ public:
     void setMapRotationAngle (const double&);
     void setMapAnimDuration(const int &d);
     void setMapAnimCurve(const QEasingCurve &c);
+    bool centerOnID( const QString &id);
 private: 
     double zoomFactor;
     double rotationAngle;

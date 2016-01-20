@@ -18,7 +18,9 @@ class VymModelWrapper : public QObject, protected QScriptable
     Q_OBJECT
 public:
     VymModelWrapper (VymModel* m);
+private:
     BranchItem* getSelectedBranch();
+    QVariant getParameter( bool &ok, const QString &key, const QStringList &parameters);
 
 public slots:
     void addBranch();
@@ -29,11 +31,17 @@ public slots:
     void addMapInsert( const QString &filename);
     void addMapReplace( QString filename);
     void addSlide();
-    void addXLink( const QString &begin, const QString &end, int width, QColor color, const QString &penstyle);
+    void addXLink( const QString &begin, const QString &end, int width, const QString &color, const QString &penstyle);
+    int branchCount();
+    int centerCount();
+    void centerOnID( const QString &id);        // tested: ok
+    void clearFlags();
     void colorBranch( const QString &color);
     void colorSubtree( const QString &color);
     void copy();
     void cut();
+    void cycleTask();
+    bool exportMap( const QString &format, const QStringList &parameters);
     QString getFileName();
     QString getHeadingPlainText();
     QString getNotePlainText();
@@ -42,6 +50,10 @@ public slots:
     void nop();
     void paste();
     void redo();
+    void remove();
+    void removeChildren();
+    void removeKeepChildren();
+    void removeSlide(int n);
     void scroll();
     bool select( const QString &s );
     bool selectID( const QString &s );
@@ -54,9 +66,9 @@ public slots:
     void setHeadingPlainText( const QString &s );
     void setMapAuthor( const QString &s);
     void setMapComment( const QString &s);
-    void setMapRotation( float a);
+    void setMapRotation( float a);              // tested: ok
     void setMapTitle( const QString &s);
-    void setMapZoom ( float z);
+    void setMapZoom ( float z);                 // tested: o
     void setNotePlainText( const QString &s );
     void setURL( const QString &s);
     void setVymLink( const QString &s );

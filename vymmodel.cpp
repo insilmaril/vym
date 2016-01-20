@@ -19,13 +19,12 @@
 #include "vymmodel.h"
 
 #include "attributeitem.h"
-#include "treeitem.h"
 #include "branchitem.h"
 #include "bugagent.h"
 #include "downloadagent.h"
 #include "editxlinkdialog.h"
-#include "exports.h"
 #include "exporthtmldialog.h"
+#include "exports.h"
 #include "file.h"
 #include "findresultmodel.h"
 #include "mainwindow.h"
@@ -33,12 +32,13 @@
 #include "noteeditor.h"
 #include "options.h"
 #include "parser.h"
-#include "vymprocess.h"
 #include "scripteditor.h" 
 #include "slideitem.h"
 #include "slidemodel.h"
 #include "taskeditor.h"
 #include "taskmodel.h"
+#include "treeitem.h"
+#include "vymprocess.h"
 #include "warningdialog.h"
 #include "xlinkitem.h"
 #include "xlinkobj.h"
@@ -803,7 +803,7 @@ void VymModel::loadImage (BranchItem *dst,const QString &fn)
                 {
                     saveState(
                                 (TreeItem*)ii,
-                                "delete ()",
+                                "remove()",
                                 dst,
                                 QString ("loadImage (\"%1\")").arg(s ),
                                 QString("Add image %1 to %2").arg(s).arg(getObjectName(dst))
@@ -1433,7 +1433,7 @@ void VymModel::saveStateRemovingPart(TreeItem* redoSel, const QString &comment)
 	    undoSelection=getSelectString (redoSel->parent());
 	saveState (PartOfMap,
 	    undoSelection, QString("addMapInsert (\"PATH\",%1,%2)").arg(redoSel->num()).arg(SlideContent),
-	    redoSelection, "delete ()", 
+	    redoSelection, "remove ()", 
 	    comment, 
 	    redoSel);
     }
@@ -1684,6 +1684,11 @@ int VymModel::branchCount()
 	nextBranch(cur,prev);
     }
     return c;
+}
+
+int VymModel::centerCount() 
+{
+    return rootItem->branchCount();
 }
 
 void VymModel::setSortFilter (const QString &s)
@@ -2297,7 +2302,7 @@ void VymModel::toggleTask()
     }
 }
 
-void VymModel::cycleTaskStatus(bool reverse)
+bool VymModel::cycleTaskStatus(bool reverse)
 {
     BranchItem *selbi=getSelectedBranch();
     if (selbi) 
@@ -2317,8 +2322,10 @@ void VymModel::cycleTaskStatus(bool reverse)
 	    taskEditor->select (task);
             emitDataChanged(selbi);
             reposition();
+            return true;
 	}
     }
+    return false;
 }
 
 bool VymModel::setTaskSleep(const QString &s) 
@@ -2825,7 +2832,7 @@ BranchItem* VymModel::addMapCenter (bool saveStateFlag)
     if (saveStateFlag)
         saveState (
             bi,
-            "delete()",
+            "remove()",
             NULL,
             QString ("addMapCenter (%1,%2)").arg (contextPos.x()).arg(contextPos.y()),
             QString ("Adding MapCenter to (%1,%2)").arg (contextPos.x()).arg(contextPos.y())
@@ -2928,7 +2935,7 @@ BranchItem* VymModel::addNewBranch(BranchItem *bi, int pos)
 	{
 	    saveState(
 		undosel,	
-		"delete ()",
+		"remove ()",
 		redosel,
 		QString ("addBranch (%1)").arg(pos),
 		QString ("Add new branch to %1").arg(getObjectName(bi)));	
@@ -2970,7 +2977,7 @@ BranchItem* VymModel::addNewBranchBefore()
 	    newbi->setHeadingColor (selbi->getHeadingColor() );
 	    emitDataChanged (newbi);
 
-	    saveState (newbi, "deleteKeepChildren ()", newbi, "addBranchBefore ()", 
+	    saveState (newbi, "remove ()", newbi, "addBranchBefore ()", 
 		QString ("Add branch before %1").arg(getObjectName(selbi)));
 	}
     }	
@@ -3136,7 +3143,7 @@ void VymModel::deleteSelection()
 	{   // Delete branch
 	    BranchItem *selbi=(BranchItem*)ti;
 	    unselectAll();
-	    saveStateRemovingPart (selbi, QString ("Delete %1").arg(getObjectName(selbi)));
+	    saveStateRemovingPart (selbi, QString ("remove %1").arg(getObjectName(selbi)));
 
 	    BranchItem *pi=(BranchItem*)(deleteItem (selbi));
 	    if (pi)
@@ -3160,8 +3167,8 @@ void VymModel::deleteSelection()
 		saveStateChangingPart(
 		    pi, 
 		    ti,
-		    "delete ()",
-		    QString("Delete %1").arg(getObjectName(ti))
+		    "remove ()",
+		    QString("Remove %1").arg(getObjectName(ti))
 		);
 		unselectAll();
 		deleteItem (ti);
@@ -3198,7 +3205,7 @@ void VymModel::deleteKeepChildren(bool saveStateFlag)
 	if (saveStateFlag) saveStateChangingPart(
 	    pi,
 	    pi,
-	    "deleteKeepChildren ()",
+	    "removeKeepChildren ()",
 	    QString("Remove %1 and keep its children").arg(getObjectName(selbi))
 	);
 
@@ -3237,7 +3244,7 @@ void VymModel::deleteChildren()
 	saveStateChangingPart(
 	    selbi, 
 	    selbi,
-	    "deleteChildren ()",
+	    "removeChildren ()",
 	    QString( "Remove children of branch %1").arg(getObjectName(selbi))
 	);
 	emit (layoutAboutToBeChanged() );
@@ -3553,6 +3560,18 @@ void VymModel::toggleStandardFlag (const QString &name, FlagRow *master)
     }
 }
 
+void VymModel::clearFlags()
+{
+    BranchItem *selbi = getSelectedBranch();
+    if (selbi) 
+    {
+        selbi->deactivateAllStandardFlags();
+        reposition();
+        emitDataChanged(selbi);
+        setChanged();
+    }
+}
+
 void VymModel::addFloatImage (const QImage &img) 
 {
     BranchItem *selbi=getSelectedBranch();
@@ -3563,7 +3582,7 @@ void VymModel::addFloatImage (const QImage &img)
 	ii->setOriginalFilename("No original filename (image added by dropevent)"); 
 	QString s=getSelectString(selbi);
 	saveState (PartOfMap, s, "nop ()", s, "copy ()","Copy dropped image to clipboard",ii  );
-	saveState (ii,"delete ()", selbi,QString("paste(%1)").arg(curStep),"Pasting dropped image");
+	saveState (ii,"remove ()", selbi,QString("paste(%1)").arg(curStep),"Pasting dropped image");
 	reposition();
     }
 }
@@ -4032,7 +4051,7 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com==QString("addXLink"))       // scriptstatus-missing
+    if (com==QString("addXLink"))       // scriptstatus-done
 	{
 	    s=parser.parString (ok,0);	// begin
 	    t=parser.parString (ok,1);	// end
@@ -4080,19 +4099,19 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="branchCount")// scriptstatus-missing
+    if (com=="branchCount")// scriptstatus-done
 	{ 
 	    returnValue=selti->branchCount();
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="centerCount")// scriptstatus-missing
+    if (com=="centerCount")// scriptstatus-done
 	{ 
 	    returnValue=rootItem->branchCount();
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="centerOnID")// scriptstatus-missing
+    if (com=="centerOnID")// scriptstatus-done
 	{
 	    s=parser.parString(ok,0);
 	    TreeItem *ti=findUuid(QUuid(s));
@@ -4113,7 +4132,7 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="clearFlags")// scriptstatus-missing
+    if (com=="clearFlags")// scriptstatus-done
     {
         selbi->deactivateAllStandardFlags();
         reposition();
@@ -4147,7 +4166,7 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="cycleTask")// scriptstatus-missing
+    if (com=="cycleTask")// scriptstatus-done
 	{
 	    ok=true;
 	    if (parser.parCount()==0) b=false;
@@ -4156,25 +4175,25 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="delete")// scriptstatus-missing
+    if (com=="delete" || com=="remove")// scriptstatus-done
 	{
 	    deleteSelection();
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="deleteKeepChildren")// scriptstatus-missing
+    if (com=="deleteKeepChildren" || com=="removeKeepChildren")// scriptstatus-done
 	{
 	    deleteKeepChildren();
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="deleteChildren")// scriptstatus-missing
+    if (com=="deleteChildren" || com=="removeChildren" )// scriptstatus-done
 	{
 	    deleteChildren();
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="deleteSlide")// scriptstatus-missing
+    if (com=="deleteSlide" || com=="removeSlide")// scriptstatus-done
 	{
 	    n = parser.parInt (ok,0);
 	    if (!ok || n < 0 || n >= slideModel->count() - 1)
@@ -5492,6 +5511,26 @@ void VymModel::setMapAnimCurve(const QEasingCurve &c)
     animCurve=c;
 }
 
+bool VymModel::centerOnID( const QString &id)
+{
+    TreeItem *ti = findUuid( QUuid( id ) );
+    if (ti)
+    {
+        LinkableMapObj *lmo=((MapItem*)ti)->getLMO();
+        if (zoomFactor>0 && lmo)
+        {
+            mapEditor->setViewCenterTarget (
+                lmo->getBBox().center(),
+                zoomFactor,
+                rotationAngle,
+                animDuration,
+                animCurve);
+            return true;
+        } 
+    }
+    return false;
+}
+
 void VymModel::setContextPos(QPointF p)
 {
     contextPos=p;
@@ -6687,7 +6726,7 @@ SlideItem* VymModel::addSlide()
     int pos=si->childNumber();
     saveState (
 	PartOfMap,
-	getSelectString(), QString("deleteSlide (%1)").arg(pos),
+	getSelectString(), QString("removeSlide (%1)").arg(pos),
 	getSelectString(), QString("addMapInsert (\"PATH\",%1)").arg(pos),
 	"Add slide",
 	NULL,
@@ -6704,8 +6743,8 @@ void VymModel::deleteSlide(SlideItem *si)
 	saveState (
 	    PartOfMap,
 	    getSelectString(), QString("addMapInsert (\"PATH\",%1)").arg(pos),
-	    getSelectString(), QString("deleteSlide (%1)").arg(pos),
-	    "Delete slide",
+	    getSelectString(), QString("removeSlide (%1)").arg(pos),
+	    "Remove slide",
 	    NULL,
 	    s );
 	slideModel->deleteSlide (si);

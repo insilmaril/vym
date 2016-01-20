@@ -550,17 +550,17 @@ void Main::setupAPI()
     c->addPar (Command::Bool,true, "True, if cycling in reverse order");
     modelCommands.append(c);
 
-    c=new Command ("delete",Command::TreeItem);
+    c=new Command ("remove",Command::TreeItem);
     modelCommands.append(c);
 
-    c=new Command ("deleteChildren",Command::Branch);
+    c=new Command ("remove",Command::Branch);
     modelCommands.append(c);
 
-    c=new Command ("deleteKeepChildren",Command::Branch);
+    c=new Command ("remove",Command::Branch);
     modelCommands.append(c);
 
-    c=new Command ("deleteSlide",Command::Any);
-    c->addPar (Command::Int,false,"Index of slide to delete");
+    c=new Command ("remove",Command::Any);
+    c->addPar (Command::Int,false,"Index of slide to remove");
     modelCommands.append(c);
 
     c=new Command ("exportAO",Command::Any);
@@ -5605,17 +5605,7 @@ void Main::standardFlagChanged()
 
 void Main::testFunction1()
 {
-    VymModel *m = currentModel();
-    if (m)
-    {
-        //QString fileName("C:/Users/uwdr9542/vym/code/helloscript.js");
-        QString fn = "examplescript.vys";
-        QString script;
-        if ( !loadStringFromDisk( fn, script) )
-            QMessageBox::warning(0, "Warning", QString("Couldn't open %1.\n").arg(fn) );
-        else
-            runScript (script);
-    }
+    scriptEditor->runFile();
 }
 
 void Main::testFunction2()
