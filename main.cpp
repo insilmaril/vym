@@ -151,6 +151,7 @@ int main(int argc, char* argv[])
     options.add ("commandslatex", Option::Switch, "cl", "commandslatex");
     options.add ("debug", Option::Switch, "d", "debug");
     options.add ("help", Option::Switch, "h", "help");
+    options.add ("load", Option::String, "L", "load");
     options.add ("local", Option::Switch, "l", "local");
     options.add ("name", Option::String, "n", "name");
     options.add ("quit", Option::Switch, "q", "quit");
@@ -173,6 +174,7 @@ int main(int argc, char* argv[])
                 "-c           commands	  List all available commands\n"
                 "-d           debug       Show debugging output\n"
                 "-h           help        Show this help text\n"
+                "-L           load        Load script\n"
                 "-l           local       Run with ressources in current directory\n"
                 "-n  STRING   name        Set name of instance for DBus access\n"
                 "-q           quit        Quit immediatly after start for benchmarking\n"
@@ -443,30 +445,36 @@ int main(int argc, char* argv[])
     if (options.isOn ("restore"))
         m.fileRestoreSession();
 
+    // Load script
+    if (options.isOn ("load"))
+    {
+        QString fn = options.getArg ("load");
+        if (!scriptEditor->setScriptFile ( fn ) )
+        {
+            QString error (QObject::tr("Error"));
+            QString msg (QObject::tr("Couldn't open \"%1\"\n%2.").arg(fn).arg(f.errorString()));
+            if (options.isOn("batch"))
+                qWarning ()<<error+": "+msg;
+            else QMessageBox::warning(0, error,msg);
+            return 0;
+        }
+    }
+    
     // Run script
     if (options.isOn ("run"))
     {
         QString script;
-        QString fn=options.getArg ("run");
-        if ( !fn.isEmpty() )
+        QString fn = options.getArg ("run");
+        if (!scriptEditor->setScriptFile ( fn ) )
         {
-            QFile f( fn );
-            if ( !f.open( QFile::ReadOnly|QFile::Text ) )
-            {
-                QString error (QObject::tr("Error"));
-                QString msg (QObject::tr("Couldn't open \"%1\"\n%2.").arg(fn).arg(f.errorString()));
-                if (options.isOn("batch"))
-                    qWarning ()<<error+": "+msg;
-                else QMessageBox::warning(0, error,msg);
-                return 0;
-            }
-
-            QTextStream in( &f );
-            script=in.readAll();
-            f.close();
-            m.executeLegacyEverywhere (script);
-            m.setScriptFile (fn);
+            QString error (QObject::tr("Error"));
+            QString msg (QObject::tr("Couldn't open \"%1\"\n%2.").arg(fn).arg(f.errorString()));
+            if (options.isOn("batch"))
+                qWarning ()<<error+": "+msg;
+            else QMessageBox::warning(0, error,msg);
+            return 0;
         }
+        m.executeLegacyEverywhere (scriptEditor->getScriptFile() );
     }
     
     // For benchmarking we may want to quit instead of entering event loop

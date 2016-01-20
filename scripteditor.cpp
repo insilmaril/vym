@@ -81,23 +81,20 @@ ScriptEditor::ScriptEditor (QWidget *parent):QWidget( parent )
     //connect( a, SIGNAL( triggered() ), this, SLOT( saveSlide() ) );
 }
 
-void ScriptEditor::setScriptFile(const QString &fn) 
+bool ScriptEditor::setScriptFile(const QString &fn) 
 {
-    QFile f( fn );
-    if ( !f.open( QFile::ReadOnly|QFile::Text ) )
+    QString script;
+    if ( loadStringFromDisk( fn, script) )
     {
-	QString error (QObject::tr("Error"));
-	QString msg (QObject::tr("Couldn't open \"%1\"\n%2.").arg(fn).arg(f.errorString()));
-	if (options.isOn("batch"))
-	    qWarning ()<<error+": "+msg;
-	else    
-	    QMessageBox::warning(0, error,msg);
-	return;
-    }	
+        ui.fileEditor->setText ( script );
+        return true;
+    } else
+        return false;
+}
 
-    QTextStream in( &f );
-    ui.fileEditor->setText (in.readAll());
-    f.close();
+QString ScriptEditor::getScriptFile()
+{
+    return ui.fileEditor->toPlainText();
 }
 
 void ScriptEditor::saveSlide()

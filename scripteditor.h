@@ -19,7 +19,8 @@ private:
 
 public:
     ScriptEditor (QWidget *parent = 0);
-    void setScriptFile (const QString &fn);
+    bool setScriptFile (const QString &fn);
+    QString getScriptFile();
     void setSlideScript(uint vymModelID, uint slideID, const QString &);
 
 public slots:

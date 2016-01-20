@@ -296,7 +296,6 @@ public slots:
     ModMode getModMode();
     bool autoEditNewBranch();
     bool autoSelectNewBranch();
-    void setScriptFile(const QString &fn);
     QVariant executeLegacy(const QString &);
     void executeLegacyEverywhere (const QString &);
     QVariant runScript(const QString &);

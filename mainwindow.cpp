@@ -5493,11 +5493,6 @@ bool Main::autoSelectNewBranch()
     return actionSettingsAutoSelectNewBranch->isChecked();
 }
 
-void Main::setScriptFile (const QString &fn)
-{
-    scriptEditor->setScriptFile (fn);
-}
-
 QVariant Main::executeLegacy (const QString &script)
 {
     VymModel *m = currentModel();
