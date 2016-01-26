@@ -25,6 +25,10 @@ unix:!macx:isEmpty(NO_DBUS) {
     SOURCES += adaptormodel.cpp adaptorvym.cpp 
 }
 
+macx:isEmpty(NO_DBUS) {
+    QT_QPA_PLATFORM_PLUGIN_PATH=%QTDIR%\plugins\platforms\
+}
+
 win32 {
     HEADERS += mkdtemp.h
     SOURCES += mkdtemp.cpp
