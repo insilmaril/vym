@@ -1170,6 +1170,10 @@ void MapEditor::editHeading()
         setScrollBarPosTarget ( r );
         scene()->update();
 
+        // Set focus to MapEditor first
+        // To avoid problems with Cursor up/down
+        setFocus();
+
         animateScrollBars();
         lineEdit->setText (heading.getTextASCII() );
         lineEdit->setFocus();
