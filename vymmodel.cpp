@@ -1217,7 +1217,7 @@ void VymModel::undo()
     if (!undoSelection.isEmpty())
 	select (undoSelection);
 
-    bool noErr;
+    // bool noErr;
     QString errMsg;
     //parseAtom (undoCommand,noErr,errMsg);
     errMsg = QVariant(execute(undoCommand)).toString();
