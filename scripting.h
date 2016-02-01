@@ -42,9 +42,18 @@ public slots:
     void cut();
     void cycleTask();
     bool exportMap( const QString &format, const QStringList &parameters);
+    QString getDestPath();
+    QString getFileDir();
     QString getFileName();
+    QString getFrameType();
     QString getHeadingPlainText();
+    QString getHeadingXML();
+    QString getMapAuthor();
+    QString getMapComment();
+    QString getMapTitle();
     QString getNotePlainText();
+    QString getNoteXML();
+    QString getSelectString();
     void moveDown();
     void moveUp();
     void nop();

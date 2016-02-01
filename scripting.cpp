@@ -205,43 +205,71 @@ void VymModelWrapper::cycleTask()
 bool VymModelWrapper::exportMap( const QString &format, const QStringList &parameters)
 {
     QString filename;
-    bool hasFilename;
+    bool ok;
 
-    filename = getParameter( hasFilename, "filename", parameters).toString();
+    filename = getParameter( ok, "filename", parameters).toString();
+
+    if ( !ok && format != "Last" )
+    {
+        logError( context(), QScriptContext::SyntaxError, QString("Filename missing in export to %1").arg(format) );
+        return false;
+    }
 
     if (format == "AO") 
     {
         model->exportAO (filename, false);
     } else if ( format == "ASCII" ) 
     {
-        /*
-       bool listTasks = parser.parBool(ok, 1);              // FIXME-0
-       model->exportASCII (listTasks, filename, false);
-       */
+        bool listTasks = getParameter( ok, "listTasks", parameters).toBool();
+        model->exportASCII (listTasks, filename, false);
     } else if ( format == "CSV" )
     {
         model->exportCSV (filename, false);
     } else if ( format == "HTML" )
     {
-        /*
-	    QString path=parser.parString(ok,0); 
-	    QString fname=parser.parString(ok,1); 
-	    exportHTML (path,fname,false);
-        */
+        QString path = getParameter( ok, "path", parameters).toString();
+        if ( !ok )
+        {
+            logError( context(), QScriptContext::SyntaxError, QString("Path missing in export to %1").arg(format) );
+            return false;
+        }   
+        model->exportHTML (path, filename, false);
     } else if ( format == "Image" )
     {
-            /*
-	    QString format="PNG";
-	    if (parser.parCount()>=2)
-		format=parser.parString(ok,1);
-	    exportImage (fname,false,format);
-            */
+        QString format;
+        format = getParameter( ok, "format", parameters).toString();
+        if (!ok)
+            format = "PNG";
+        else
+        {
+            QStringList formats;
+            formats << "PNG"; 
+            formats << "GIF"; 
+            formats << "JPG"; 
+            formats << "JPEG", 
+            formats << "PNG", 
+            formats << "PBM", 
+            formats << "PGM", 
+            formats << "PPM", 
+            formats << "TIFF", 
+            formats << "XBM", 
+            formats << "XPM";
+            if ( formats.indexOf( format ) < 0 )
+            {
+                logError( context(), QScriptContext::SyntaxError, QString("%1 not one of the known export formats: ").arg(format).arg(formats.join(",") ) );
+                return false;
+            }
+        }
+        model->exportImage ( filename, false, format);
     } else if ( format == "Impress" )
     {
-        /*
-	    QString cf=parser.parString(ok,1); 
-	    exportImpress (fn,cf);
-            */
+        QString templ = getParameter( ok, "template", parameters).toString();
+        if ( !ok )
+        {
+            logError( context(), QScriptContext::SyntaxError, "Template missing in exportImpress");
+            return false;
+        }
+        model->exportImpress (filename, templ);
     } else if ( format == "Last" )
     {
         model->exportLast();
@@ -259,22 +287,29 @@ bool VymModelWrapper::exportMap( const QString &format, const QStringList &param
         model->exportPDF( filename, false);
     } else if ( format == "XML" )
     {
-    /*
-    if (com=="exportXML")// scriptstatus-missing
-	{
-	    QString dpath=parser.parString(ok,0); 
-	    QString fpath=parser.parString(ok,1); 
-	    exportXML (dpath,fpath,false);
-        break;
-    }
-    */
+        QString path = getParameter( ok, "path", parameters).toString();
+        if ( !ok )
+        {
+            logError( context(), QScriptContext::SyntaxError, QString("Path missing in export to %1").arg(format) );
+            return false;
+        }   
+        model->exportXML (path, filename, false);
     } else
     {
         logError( context(), QScriptContext::SyntaxError, QString("Unknown export format: %1").arg(format) );
         return false;
     }
-
     return true;
+}
+
+QString VymModelWrapper::getDestPath()
+{
+    return model->getDestPath();
+}
+
+QString VymModelWrapper::getFileDir()
+{
+    return model->getFileDir();
 }
 
 QString VymModelWrapper::getFileName()
@@ -282,14 +317,58 @@ QString VymModelWrapper::getFileName()
     return model->getFileName();
 }
 
+QString VymModelWrapper::getFrameType()
+{
+    BranchItem *selbi = getSelectedBranch();
+    if (selbi)
+    {
+        BranchObj *bo = (BranchObj*)(selbi->getLMO());
+        if (!bo)
+            logError( context(), QScriptContext::UnknownError, QString("No BranchObj available") );
+        else
+            return bo->getFrame()->getFrameTypeName();
+    } 
+    return QString();
+}
+
 QString VymModelWrapper::getHeadingPlainText()
 {
     return model->getHeading().getTextASCII();
 }
 
+QString VymModelWrapper::getHeadingXML()
+{
+    return model->getHeading().saveToDir();
+}
+
+QString VymModelWrapper::getMapAuthor()
+{
+    return model->getAuthor();
+}
+
+QString VymModelWrapper::getMapComment()
+{
+    return model->getComment();
+}
+
+QString VymModelWrapper::getMapTitle()
+{
+    return model->getTitle();
+}
+
 QString VymModelWrapper::getNotePlainText()
 {
     return model->getHeading().getTextASCII(); 
+}
+
+QString VymModelWrapper::getNoteXML()
+{
+    return model->getHeading().saveToDir(); 
+}
+
+QString VymModelWrapper::getSelectString()
+{
+    return model->getSelectString();
 }
 
 void VymModelWrapper::moveDown()

@@ -4203,14 +4203,14 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="exportAO")// scriptstatus-missing
+    if (com=="exportAO")// scriptstatus-done
 	{
 	    QString fname=parser.parString(ok,0); 
 	    exportAO (fname,false);
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="exportASCII")// scriptstatus-missing
+    if (com=="exportASCII")// scriptstatus-done
 	{
        QString fname  = parser.parString(ok, 0);
        bool listTasks = parser.parBool(ok, 1);
@@ -4218,14 +4218,14 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
        break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="exportCSV")// scriptstatus-missing
+    if (com=="exportCSV")// scriptstatus-done
 	{
 	   QString fname=parser.parString(ok,0); 
 	   exportCSV (fname,false);
        break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="exportHTML")// scriptstatus-missing
+    if (com=="exportHTML")// scriptstatus-done
 	{
 	    QString path=parser.parString(ok,0); 
 	    QString fname=parser.parString(ok,1); 
@@ -4233,7 +4233,7 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="exportImage")// scriptstatus-missing
+    if (com=="exportImage")// scriptstatus-done
 	{
 	    QString fname=parser.parString(ok,0); 
 	    QString format="PNG";
@@ -4243,7 +4243,7 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="exportImpress")// scriptstatus-missing
+    if (com=="exportImpress")// scriptstatus-done
 	{
 	    QString fn=parser.parString(ok,0); 
 	    QString cf=parser.parString(ok,1); 
@@ -4251,41 +4251,41 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="exportLast")// scriptstatus-missing
+    if (com=="exportLast")// scriptstatus-done
 	{
 	    exportLast ();
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="exportLaTeX")// scriptstatus-missing
+    if (com=="exportLaTeX")// scriptstatus-done
 	{
 	    QString fname=parser.parString(ok,0); 
 	    exportLaTeX (fname,false);
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="exportOrgMode")// scriptstatus-missing
+    if (com=="exportOrgMode")// scriptstatus-done
 	{
 	    QString fname=parser.parString(ok,0); 
 	    exportOrgMode (fname,false);
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="exportPDF")// scriptstatus-missing
+    if (com=="exportPDF")// scriptstatus-done
 	{
 	    QString fname=parser.parString(ok,0); 
 	    exportPDF(fname,false);
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="exportSVG")// scriptstatus-missing
+    if (com=="exportSVG")// scriptstatus-done
 	{
 	    QString fname=parser.parString(ok,0); 
 	    exportSVG(fname,false);
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="exportXML")// scriptstatus-missing
+    if (com=="exportXML")// scriptstatus-done
 	{
 	    QString dpath=parser.parString(ok,0); 
 	    QString fpath=parser.parString(ok,1); 
@@ -4293,19 +4293,19 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="getDestPath")// scriptstatus-missing
+    if (com=="getDestPath")// scriptstatus-done
 	{ 
 	    returnValue=getDestPath();
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="getFileDir")// scriptstatus-missing
+    if (com=="getFileDir")// scriptstatus-done
 	{ 
 	    returnValue=getFileDir();
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="getFrameType")// scriptstatus-missing
+    if (com=="getFrameType")// scriptstatus-done
 	{ 
 	    BranchObj *bo=(BranchObj*)(selbi->getLMO());
 	    if (!bo)
@@ -4321,25 +4321,25 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
             break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="getHeadingXML")// scriptstatus-missing
+    if (com=="getHeadingXML")// scriptstatus-done
 	{ 
             returnValue = getHeading().saveToDir();
             break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="getMapAuthor")// scriptstatus-missing
+    if (com=="getMapAuthor")// scriptstatus-done
 	{ 
 	    returnValue=author;
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="getMapComment")// scriptstatus-missing
+    if (com=="getMapComment")// scriptstatus-done
 	{ 
 	    returnValue=comment;
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="getMapTitle")// scriptstatus-missing
+    if (com=="getMapTitle")// scriptstatus-done
 	{ 
 	    returnValue=title;
         break;
@@ -4351,13 +4351,13 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
             break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="getNoteXML")// scriptstatus-missing
+    if (com=="getNoteXML")// scriptstatus-done
 	{ 
             returnValue= getNote().saveToDir();
             break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="getSelectString")// scriptstatus-missing
+    if (com=="getSelectString")// scriptstatus-done
 	{ 
 	    returnValue=getSelectString();
         break;
@@ -4686,8 +4686,8 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
     }
 	/////////////////////////////////////////////////////////////////////
     if (com=="selectLatestAdded")// scriptstatus-done
-	{
-            if (!selectLatestAdded ());
+    {
+            if (!selectLatestAdded ())
                 parser.setError (Aborted,"Could not select latest added object ");
         break;
     }
@@ -5096,7 +5096,7 @@ QPointF VymModel::exportImage(QString fname, bool askName, QString format)
     {
         if (! ex.execDialog() ) return offset;
         fname = ex.getFilePath();
-        lastImageDir=dirname(fname);
+        lastImageDir = dirname(fname);
     }
 
     setExportMode (true);
