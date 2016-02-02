@@ -156,8 +156,8 @@ public:
 
 private:    
     void importDirInt(BranchItem *,QDir);
-    void importDirInt(const QString&);
 public:	
+    void importDir(const QString&);
     void importDir();
 
 private slots:
@@ -808,8 +808,8 @@ public:
     void deleteSlide (SlideItem *si);
     void deleteSlide (int n);
     void relinkSlide (SlideItem *si, int pos);
-    void moveSlideUp( int n=-1);
-    void moveSlideDown( int n=-1);
+    bool moveSlideDown( int n=-1);
+    bool moveSlideUp( int n=-1);
     SlideItem *findSlideID (uint id);
 public slots:
     void updateSlideSelection (QItemSelection ,QItemSelection);

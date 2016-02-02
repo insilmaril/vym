@@ -371,6 +371,128 @@ QString VymModelWrapper::getSelectString()
     return model->getSelectString();
 }
 
+int VymModelWrapper::getTaskSleepDays()
+{
+    BranchItem *selbi = getSelectedBranch();
+    if (selbi)
+    {
+        Task *task = selbi->getTask();
+        if (task)
+            return task->getDaysSleep();
+        else
+            logError( context(), QScriptContext::UnknownError, "Branch has no task");
+    }
+    return -1;
+}
+
+QString VymModelWrapper::getURL()
+{
+    return model->getURL();
+}
+
+QString VymModelWrapper::getVymLink()
+{
+    return model->getVymLink();
+}
+
+QString VymModelWrapper::getXLinkColor()
+{
+    return model->getXLinkColor().name();
+}
+
+int VymModelWrapper::getXLinkWidth()
+{
+    return model->getXLinkWidth();
+}
+
+QString VymModelWrapper::getXLinkPenStyle()
+{
+    return penStyleToString( model->getXLinkPenStyle() );
+}
+
+QString VymModelWrapper::getXLinkStyleBegin()
+{
+    return model->getXLinkStyleBegin();
+}
+
+QString VymModelWrapper::getXLinkStyleEnd()
+{
+    return model->getXLinkStyleEnd();
+}
+
+bool VymModelWrapper::hasActiveFlag( const QString &flag)
+{
+    BranchItem *selbi = getSelectedBranch();
+    if (selbi)
+    {
+        return selbi->hasActiveStandardFlag( flag );
+    }
+    return false;
+}
+
+bool VymModelWrapper::hasNote()
+{
+    return !model->getNote().isEmpty();
+}
+
+bool VymModelWrapper::hasRichTextNote()
+{
+    return model->hasRichTextNote();
+}
+
+bool VymModelWrapper::hasTask()
+{
+    BranchItem *selbi = getSelectedBranch();
+    if (selbi)
+    {
+        Task *task = selbi->getTask();
+        if (task)
+            return true;
+        else
+            logError( context(), QScriptContext::UnknownError, "Branch has no task");
+    }
+    return false;
+}
+
+void VymModelWrapper::importDir( const QString &path)
+{
+    model->importDir( path );    // FIXME-1 error handling missing (in vymmodel and here)
+}
+
+bool VymModelWrapper::isScrolled()
+{
+    BranchItem *selbi = getSelectedBranch();
+    if (selbi)
+    {
+        return selbi->isScrolled();
+    }
+    return false;
+}
+
+void VymModelWrapper::loadImage( const QString &filename)
+{
+    BranchItem *selbi = getSelectedBranch();
+    if (selbi)
+    {
+        model->loadImage(selbi, filename );   // FIXME-1 error handling missing (in vymmodel and here)
+    }
+}
+
+void VymModelWrapper::loadNote(  const QString &filename)
+{
+    model->loadNote( filename );    // FIXME-1 error handling missing (in vymmodel and here)
+}
+
+void VymModelWrapper::move( qreal x, qreal y)
+{
+    model->move(x, y);;
+}
+
+void VymModelWrapper::moveRel( qreal x, qreal y)
+{
+    model->moveRel(x, y);;
+}
+
 void VymModelWrapper::moveDown()
 {
     model->moveDown();
@@ -381,7 +503,39 @@ void VymModelWrapper::moveUp()
     model->moveUp();
 }
 
+void VymModelWrapper::moveSlideDown( int n)
+{
+    if (! model->moveSlideDown( n ) )
+        logError( context(), QScriptContext::UnknownError, "Could not move slide down");
+}
+
+void VymModelWrapper::moveSlideDown()
+{
+    moveSlideDown( -1 );
+}
+
+void VymModelWrapper::moveSlideUp( int n)
+{
+    if (! model->moveSlideUp( n ) )
+        logError( context(), QScriptContext::UnknownError, "Could not move slide up");
+}
+
+void VymModelWrapper::moveSlideUp()
+{
+    moveSlideUp( -1 );
+}
+
 void VymModelWrapper::nop() {}
+
+void VymModelWrapper::note2URLs()
+{
+    model->note2URLs();
+}
+
+void VymModelWrapper::parseVymText(const QString &text)
+{
+    model->parseVymText( text );
+}
 
 void VymModelWrapper::paste()
 {

@@ -935,7 +935,7 @@ void VymModel::importDirInt(BranchItem *dst, QDir d)
     blockSaveState=oldSaveState;
 }
 
-void VymModel::importDirInt (const QString &s)	
+void VymModel::importDir (const QString &s)	
 {
     BranchItem *selbi=getSelectedBranch();
     if (selbi)
@@ -964,7 +964,7 @@ void VymModel::importDir()
 	QString fn;
 	if ( fd.exec() == QDialog::Accepted &&!fd.selectedFiles().isEmpty() )
 	{
-	    importDirInt (fd.selectedFiles().first() );
+	    importDir (fd.selectedFiles().first() );
 	    reposition();
 	}
     }	
@@ -4363,7 +4363,7 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="getTaskSleepDays")// scriptstatus-missing
+    if (com=="getTaskSleepDays")// scriptstatus-done
 	{ 
             Task *task=selbi->getTask();
             if (task)
@@ -4373,68 +4373,68 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
             break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="getURL")// scriptstatus-missing
+    if (com=="getURL")// scriptstatus-done
 	{ 
 	    returnValue=selti->getURL();
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="getVymLink")// scriptstatus-missing
+    if (com=="getVymLink")// scriptstatus-done
 	{ 
 	    returnValue=selti->getVymLink();
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="getXLinkColor")// scriptstatus-missing
+    if (com=="getXLinkColor")// scriptstatus-done
 	{ 
 	    returnValue=getXLinkColor().name();
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="getXLinkWidth")// scriptstatus-missing
+    if (com=="getXLinkWidth")// scriptstatus-done
 	{ 
 	    returnValue=getXLinkWidth();
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="getXLinkPenStyle")// scriptstatus-missing
+    if (com=="getXLinkPenStyle")// scriptstatus-done
 	{ 
 	    returnValue=penStyleToString( getXLinkPenStyle() );
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="getXLinkStyleBegin")// scriptstatus-missing
+    if (com=="getXLinkStyleBegin")// scriptstatus-done
 	{ 
 	    returnValue = getXLinkStyleBegin();
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="getXLinkStyleEnd")// scriptstatus-missing
+    if (com=="getXLinkStyleEnd")// scriptstatus-done
 	{ 
 	    returnValue = getXLinkStyleEnd();
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="hasActiveFlag")// scriptstatus-missing
+    if (com=="hasActiveFlag")// scriptstatus-done
 	{ 
 	    s=parser.parString(ok,0);
 	    returnValue=selti->hasActiveStandardFlag(s);
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="hasNote")// scriptstatus-missing
+    if (com=="hasNote")// scriptstatus-done
 	{
 	    returnValue = !getNote().isEmpty();
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="hasRichTextNote")// scriptstatus-missing
+    if (com=="hasRichTextNote")// scriptstatus-done
 	{
 	    returnValue=hasRichTextNote();
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="hasTask")// scriptstatus-missing
+    if (com=="hasTask")// scriptstatus-done
 	{ 
             if (selbi && selbi->getTask() )
                 returnValue=true;
@@ -4443,27 +4443,27 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
             break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="importDir")// scriptstatus-missing
+    if (com=="importDir")// scriptstatus-done
 	{
 	    s=parser.parString(ok,0);
-	    importDirInt(s);
+	    importDir(s);
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="isScrolled")// scriptstatus-missing
+    if (com=="isScrolled")// scriptstatus-done
 	{
 	    returnValue=selbi->isScrolled();
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="loadImage")// scriptstatus-missing
+    if (com=="loadImage")// scriptstatus-done
 	{
 	    s=parser.parString(ok,0);
 	    loadImage (selbi,s);
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="loadNote")// scriptstatus-missing
+    if (com=="loadNote")// scriptstatus-done
 	{
 	    s=parser.parString(ok,0);
 	    loadNote (s);
@@ -4482,7 +4482,7 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="moveSlideUp")// scriptstatus-missing
+    if (com=="moveSlideUp")// scriptstatus-done
 	{
 	    n = parser.parInt (ok, 0);
 	    if (!ok || n < 0 || n >= slideModel->count() - 1)
@@ -4492,7 +4492,7 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="moveSlideDown")// scriptstatus-missing
+    if (com=="moveSlideDown")// scriptstatus-done
 	{
 	    n = parser.parInt (ok, 0);
 	    if (!ok || n < 0 || n >= slideModel->count() - 1)
@@ -4502,7 +4502,7 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="move")// scriptstatus-missing
+    if (com=="move")// scriptstatus-done
 	{
 	    x=parser.parDouble (ok,0);
 	    y=parser.parDouble (ok,1);
@@ -4510,7 +4510,7 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="moveRel")// scriptstatus-missing
+    if (com=="moveRel")// scriptstatus-done
 	{
 	    x=parser.parDouble (ok,0);
 	    y=parser.parDouble (ok,1);
@@ -4523,13 +4523,13 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
         break;
     }
 	/////////////////////////////////////////////////////////////////////
-    if (com=="note2URLs")// scriptstatus-missing
+    if (com=="note2URLs")// scriptstatus-done
 	{
 	    note2URLs();
         break;
     }
         /////////////////////////////////////////////////////////////////////
-    if (com=="parseVymText")// scriptstatus-missing
+    if (com=="parseVymText")// scriptstatus-done
         {
             s = parser.parString(ok,0);
             parseVymText( s );
@@ -6762,46 +6762,56 @@ void VymModel::relinkSlide(SlideItem *si, int pos)
 	slideModel->relinkSlide (si, si->parent(), pos);
 }
 
-void VymModel::moveSlideUp(int n)  
+bool VymModel::moveSlideDown(int n)   
 {
-    SlideItem *si=NULL;
-    if (n<0) // default if called without parameters
+    SlideItem *si = NULL;
+    if ( n < 0) // default if called without parameters
     {
-	si=slideModel->getSelectedItem();
-	if (si) n=si->childNumber();
+	si = slideModel->getSelectedItem();
+	if (si) 
+            n = si->childNumber();
+        else
+            return false;
     } else
-	si=slideModel->getSlide(n);
-    if (si && n>0 && n<slideModel->count())
+	si = slideModel->getSlide(n);
+    if (si && n >= 0 && n < slideModel->count() - 1)
     {
-	blockSlideSelection=true;
-	slideModel->relinkSlide (si, si->parent(), n-1);
-	blockSlideSelection=false;
+	blockSlideSelection = true;
+	slideModel->relinkSlide (si, si->parent(), n + 1);
+	blockSlideSelection = false;
 	saveState (
-	    getSelectString(),QString("moveSlideDown (%1)").arg(n-1),
-	    getSelectString(),QString("moveSlideUp (%1)").arg(n),
-	    QString("Move slide %1 up").arg(n));
-    }
+	    getSelectString(), QString("moveSlideUp (%1)").arg(n + 1),
+	    getSelectString(), QString("moveSlideDown (%1)").arg( n ),
+	    QString("Move slide %1 down").arg( n ));
+        return true;
+    } else
+        return false;
 }
 
-void VymModel::moveSlideDown(int n)   
+bool VymModel::moveSlideUp(int n)  
 {
-    SlideItem *si=NULL;
-    if (n<0) // default if called without parameters
+    SlideItem *si = NULL;
+    if ( n < 0) // default if called without parameters
     {
-	si=slideModel->getSelectedItem();
-	if (si) n=si->childNumber();
+	si = slideModel->getSelectedItem();
+	if (si)
+            n = si->childNumber();
+        else
+            return false;
     } else
-	si=slideModel->getSlide(n);
-    if (si && n>=0 && n < slideModel->count()-1)
+	si = slideModel->getSlide(n);
+    if (si && n >0 && n < slideModel->count())
     {
-	blockSlideSelection=true;
-	slideModel->relinkSlide (si, si->parent(), n+1);
-	blockSlideSelection=false;
+	blockSlideSelection = true;
+	slideModel->relinkSlide (si, si->parent(), n - 1);
+	blockSlideSelection = false;
 	saveState (
-	    getSelectString(),QString("moveSlideUp (%1)").arg(n+1),
-	    getSelectString(),QString("moveSlideDown (%1)").arg(n),
-	    QString("Move slide %1 down").arg(n));
-    }
+	    getSelectString(), QString("moveSlideDown (%1)").arg( n - 1 ),
+	    getSelectString(), QString("moveSlideUp (%1)").arg( n ),
+	    QString("Move slide %1 up").arg( n ));
+        return true;
+    } else
+        return false;
 }
 
 void VymModel::updateSlideSelection (QItemSelection newsel,QItemSelection)
