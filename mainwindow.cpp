@@ -105,6 +105,7 @@ extern Switchboard switchboard;
 
 
 extern QList <Command*> modelCommands;
+extern QList <Command*> vymCommands;
 
 QMenu* branchAddContextMenu;
 QMenu* branchContextMenu;
@@ -960,6 +961,25 @@ void Main::setupAPI()
     c=new Command ("unsetFlag",Command::Branch); 
     c->addPar (Command::String,false,"Name of flag to unset");
     modelCommands.append(c);
+
+    //
+    // Below are the commands for vym itself:
+    //
+
+    c = new Command ("toggleTreeEditor", Command::Any); 
+    vymCommands.append(c);
+
+    c = new Command ("getCurrentMap", Command::Any); 
+    vymCommands.append(c);
+
+    c = new Command ("selectMap", Command::Any); 
+    c->addPar (Command::Int, false, "Index of map");
+    vymCommands.append(c);
+
+    c = new Command ("loadMap", Command::Any); 
+    c->addPar (Command::String, false, "Path to map");
+    vymCommands.append(c);
+
 }
 
 // File Actions

@@ -93,6 +93,7 @@ Settings settings ("InSilmaril","vym"); // Organization, Application name
 QString zipToolPath;    // Platform dependant zip tool
 
 QList <Command*> modelCommands;
+QList <Command*> vymCommands;
 
 Options options;
 ImageIO imageIO;
@@ -409,12 +410,17 @@ int main(int argc, char* argv[])
         cout << "==================:\n";
         foreach (Command* c, modelCommands)
             cout << c->getDescription().toStdString() << endl;
+
+        foreach (Command* c, vymCommands)
+            cout << c->getDescription().toStdString() << endl;
         return 0;
     }
 
     if (options.isOn ("commandslatex"))
     {
         foreach (Command* c, modelCommands)
+            cout << c->getDescriptionLaTeX().toStdString() << endl;
+        foreach (Command* c, vymCommands)
             cout << c->getDescriptionLaTeX().toStdString() << endl;
         return 0;
     }
@@ -474,7 +480,7 @@ int main(int argc, char* argv[])
             else QMessageBox::warning(0, error,msg);
             return 0;
         }
-        m.executeLegacyEverywhere (scriptEditor->getScriptFile() );
+        m.runScript (scriptEditor->getScriptFile() );
     }
     
     // For benchmarking we may want to quit instead of entering event loop

@@ -16,6 +16,7 @@
 
 extern QString vymName;
 extern QList <Command*> modelCommands;
+extern QList <Command*> vymCommands;
 extern QDir lastMapDir;
 extern Macros macros;
 extern Main *mainWindow;
@@ -69,6 +70,8 @@ ScriptEditor::ScriptEditor (QWidget *parent):QWidget( parent )
     highlighterFile = new Highlighter(ui.fileEditor->document());
     QStringList list;
     foreach (Command *c, modelCommands)
+	list.append (c->getName() );
+    foreach (Command *c, vymCommands)
 	list.append (c->getName() );
     highlighterMacro->addKeywords (list);
     highlighterSlide->addKeywords (list);

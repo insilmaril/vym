@@ -965,14 +965,17 @@ VymWrapper::VymWrapper()
 {
 }
 
-void VymWrapper::toggleTreeEditor()
-{
-    mainWindow->windowToggleTreeEditor();
-}
-
 QObject* VymWrapper::getCurrentMap()    // FIXME-1 No syntax highlighting
 {
     return mainWindow->getCurrentModelWrapper();
+}
+
+bool VymWrapper::loadMap( const QString &filename )
+{
+    if ( File::Success == mainWindow->fileLoad( filename, NewMap, VymMap ) )
+        return true;
+    else
+        return false;
 }
 
 void VymWrapper::selectMap(uint n)      // FIXME-1 No syntax highlighting
@@ -982,12 +985,8 @@ void VymWrapper::selectMap(uint n)      // FIXME-1 No syntax highlighting
         logError( context(), QScriptContext::RangeError, QString("Map '%1' not available.").arg(n) );
     }
 }
-
-bool VymWrapper::loadMap( const QString &filename )
+void VymWrapper::toggleTreeEditor()
 {
-    if ( File::Success == mainWindow->fileLoad( filename, NewMap, VymMap ) )
-        return true;
-    else
-        return false;
+    mainWindow->windowToggleTreeEditor();
 }
 
