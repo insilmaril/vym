@@ -83,10 +83,15 @@ public slots:
     void parseVymText(const QString &text);
     void paste();
     void redo();
+    bool relinkTo( const QString &parent, int num, qreal x, qreal y);
+    bool relinkTo( const QString &parent, int num);
+    bool relinkTo( const QString &parent);
     void remove();
     void removeChildren();
     void removeKeepChildren();
     void removeSlide(int n);
+    void saveImage( const QString &filename, const QString &format); 
+    void saveNote( const QString &filename); 
     void scroll();
     bool select( const QString &s );
     bool selectID( const QString &s );
@@ -97,14 +102,37 @@ public slots:
     bool selectLatestAdded();
     void setFlag( const QString &s);
     void setHeadingPlainText( const QString &s );
+    void setHideExport( bool b);
+    void setHideLinkUnselected( bool b);
+    void setIncludeImagesHorizontally( bool b);
+    void setIncludeImagesVertically( bool b);
+    void setMapAnimCurve( int n );
+    void setMapAnimDuration( int n );
     void setMapAuthor( const QString &s);
+    void setMapBackgroundColor( const QString &color);
     void setMapComment( const QString &s);
+    void setMapDefLinkColor( const QString &color);
+    void setMapLinkStyle( const QString &style);
     void setMapRotation( float a);              // tested: ok
     void setMapTitle( const QString &s);
-    void setMapZoom ( float z);                 // tested: o
+    void setMapZoom ( float z);                 // tested: ok
     void setNotePlainText( const QString &s );
+    void setFrameBorderWidth( int border);
+    void setFrameBrushColor( const QString &color);
+    void setFrameIncludeChildren( bool b );
+    void setFramePadding( int padding);
+    void setFramePenColor( const QString &color);
+    void setFrameType( const QString &type);
+    void setScale( qreal x, qreal y );
+    void setSelectionColor( const QString &color);
+    bool setTaskSleep( const QString &s);
     void setURL( const QString &s);
     void setVymLink( const QString &s );
+    void setXLinkColor( const QString &color);
+    void setXlinkLineStyle( const QString &style);
+    void setXlinkStyleBegin( const QString &style);
+    void setXlinkStyleEnd( const QString &style);
+    void setXlinkWidth( int w );
     void sleep( int n);
     void sortChildren( bool b);
     void sortChildren();
@@ -134,6 +162,7 @@ public slots:
     void toggleTreeEditor();
     QObject* getCurrentMap();
     void selectMap (uint n);
+    bool loadMap( const QString &filename);
 };
 
 

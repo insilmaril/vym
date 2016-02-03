@@ -90,8 +90,10 @@ public:
 private slots:
     void editorChanged();
 
+public slots:    
     File::ErrorCode fileLoad(QString ,const LoadMode &, const FileType &ftype);
     void fileLoad(const LoadMode &);
+private slots:
     void fileLoad();
     void fileSaveSession();
 public slots:    

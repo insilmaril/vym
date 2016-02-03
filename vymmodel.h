@@ -441,6 +441,7 @@ public:
     );   
     bool relinkImage  (ImageItem* image, BranchItem* dst);  
 
+    bool relinkTo ( const QString &dest, int num, QPointF pos);
 private:
     bool cleaningUpLinks;		//!< True while cleaning up to avoid recursion
 public:	

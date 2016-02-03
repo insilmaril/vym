@@ -125,7 +125,13 @@ void VymModelWrapper::addXLink( const QString &begin, const QString &end, int wi
             QPen pen = li->getPen();
             if (width > 0 ) pen.setWidth( width );
             QColor col (color);
-            if (col.isValid()) pen.setColor ( col );
+            if (col.isValid())
+                pen.setColor ( col );
+            else
+            {
+                logError( context(), QScriptContext::UnknownError, QString( "Could not set color to %1").arg(color) );
+                return;
+            }
 
             bool ok;
             Qt::PenStyle st1 = penStyle ( penstyle, ok);
@@ -172,7 +178,7 @@ void VymModelWrapper::colorBranch( const QString &color)
 {
     QColor col(color);
     if ( !col.isValid() )
-        logError( context(), QScriptContext::SyntaxError, QString( "Couldn't parse color %1").arg(color) );
+        logError( context(), QScriptContext::SyntaxError, QString( "Could not set color to %1").arg(color) );
     else
         model->colorBranch( col );
 }
@@ -181,7 +187,7 @@ void VymModelWrapper::colorSubtree( const QString &color)
 {
     QColor col(color);
     if ( !col.isValid() )
-        logError( context(), QScriptContext::SyntaxError, QString( "Couldn't parse color %1").arg(color) );
+        logError( context(), QScriptContext::SyntaxError, QString( "Could not set color to %1").arg(color) );
     else
         model->colorSubtree( col );
 }
@@ -547,6 +553,26 @@ void VymModelWrapper::redo()
     model->redo();
 }
 
+bool VymModelWrapper::relinkTo( const QString &parent, int num, qreal x, qreal y)
+{
+    if ( ! model->relinkTo( parent, num, QPointF( x, y ) ) )
+    {
+        logError( context(), QScriptContext::UnknownError, "Could not relink" );
+        return false;
+    } else
+        return true;
+}
+
+bool VymModelWrapper::relinkTo( const QString &parent, int num)
+{
+    return relinkTo( parent, num, 0, 0);
+}
+
+bool VymModelWrapper::relinkTo( const QString &parent)
+{
+    return relinkTo( parent, -1, 0, 0);
+}
+
 void VymModelWrapper::remove()
 {
     model->deleteSelection();
@@ -566,6 +592,16 @@ void VymModelWrapper::removeSlide(int n)
 {
     if ( n < 0 || n >= model->slideCount() - 1)
         logError( context(), QScriptContext::RangeError, QString("Slide '%1' not available.").arg(n) );
+}
+
+void VymModelWrapper::saveImage( const QString &filename, const QString &format)
+{
+    model->saveImage( NULL, format, filename);
+}
+
+void VymModelWrapper::saveNote( const QString &filename)
+{
+    model->saveNote( filename );
 }
 
 void VymModelWrapper::scroll()
@@ -657,9 +693,48 @@ void VymModelWrapper::setFlag(const QString &s)
     if (selbi) selbi->activateStandardFlag( s );
 }
 
-void VymModelWrapper::setHeadingPlainText(const QString &s)
+void VymModelWrapper::setHeadingPlainText( const QString &text)// FIXME-2  what about RT?
 {
-    model->setHeading( s );
+    model->setHeadingPlainText( text );
+}
+
+void VymModelWrapper::setHideExport( bool b)
+{
+    model->setHideExport( b );
+}
+
+void VymModelWrapper::setIncludeImagesHorizontally( bool b)
+{
+    model->setIncludeImagesHor( b );
+}
+
+void VymModelWrapper::setIncludeImagesVertically( bool b)
+{
+    model->setIncludeImagesVer( b );
+}
+
+void VymModelWrapper::setHideLinkUnselected( bool b)
+{
+    model->setHideLinkUnselected( b );
+}
+
+
+void VymModelWrapper::setMapAnimCurve( int n )
+{
+    if ( n < 0 || n > QEasingCurve::OutInBounce)
+        logError( context(), QScriptContext::RangeError, "Unknown animation curve type");
+    else
+    {
+        QEasingCurve c;
+        c.setType ( (QEasingCurve::Type) n);
+        model->setMapAnimCurve( c );
+    }
+
+}
+
+void VymModelWrapper::setMapAnimDuration( int n )
+{
+    model->setMapAnimDuration( n );
 }
 
 void VymModelWrapper::setMapAuthor(const QString &s)
@@ -667,9 +742,35 @@ void VymModelWrapper::setMapAuthor(const QString &s)
     model->setAuthor( s );
 }
 
+void VymModelWrapper::setMapBackgroundColor( const QString &color)
+{
+    QColor col (color);
+    if (col.isValid())
+    {
+        model->setMapBackgroundColor( col );
+    } else
+        logError( context(), QScriptContext::UnknownError, QString( "Could not set color to %1").arg(color) );
+}
+
 void VymModelWrapper::setMapComment(const QString &s)
 {
     model->setComment( s );
+}
+
+void VymModelWrapper::setMapDefLinkColor( const QString &color)
+{
+    QColor col (color);
+    if (col.isValid())
+    {
+        model->setMapDefLinkColor( col );
+    } else
+        logError( context(), QScriptContext::UnknownError, QString( "Could not set color to %1").arg(color) );
+}
+
+void VymModelWrapper::setMapLinkStyle(const QString &style)
+{
+    if (! model->setMapLinkStyle( style ) )
+        logError( context(), QScriptContext::UnknownError, QString( "Could not set linkstyle to %1").arg(style) );
 }
 
 void VymModelWrapper::setMapRotation( float a)
@@ -694,6 +795,55 @@ void VymModelWrapper::setNotePlainText(const QString &s)
     model->setNote (vn);
 }
 
+void VymModelWrapper::setFrameBorderWidth( int width )
+{
+    return model->setFrameBorderWidth( width );
+}
+
+void VymModelWrapper::setFrameBrushColor( const QString &color)
+{
+    return model->setFrameBrushColor( color );
+}
+
+void VymModelWrapper::setFrameIncludeChildren( bool b )
+{
+    model->setFrameIncludeChildren(b);
+}
+
+void VymModelWrapper::setFramePadding( int padding )
+{
+    return model->setFramePadding( padding );
+}
+
+void VymModelWrapper::setFramePenColor( const QString &color)
+{
+    return model->setFramePenColor( color );
+}
+
+void VymModelWrapper::setFrameType( const QString &type)
+{
+    model->setFrameType( type );
+}
+
+void VymModelWrapper::setScale( qreal x, qreal y)
+{
+    model->setScale( x, y);
+}
+
+void VymModelWrapper::setSelectionColor( const QString &color)
+{
+    QColor col(color);
+    if ( !col.isValid() )
+        logError( context(), QScriptContext::SyntaxError, QString( "Could not set color to %1").arg(color) );
+    else
+        model->setSelectionColor( col );
+}
+
+bool VymModelWrapper::setTaskSleep(const QString &s)
+{
+    return model->setTaskSleep( s );
+}
+    
 void VymModelWrapper::setURL(const QString &s)
 {
     BranchItem *selbi = getSelectedBranch();
@@ -704,6 +854,36 @@ void VymModelWrapper::setVymLink(const QString &s)
 {
     BranchItem *selbi = getSelectedBranch();
     if (selbi) selbi->setVymLink( s );
+}
+
+void VymModelWrapper::setXLinkColor( const QString &color)
+{
+    QColor col(color);
+    if ( !col.isValid() )
+        logError( context(), QScriptContext::SyntaxError, QString( "Could not set color to %1").arg(color) );
+    else
+        // model->setXlinkColor( col );
+        model->setXLinkColor( color);     // FIXME-2 try to use QColor here...
+}
+
+void VymModelWrapper::setXlinkLineStyle( const QString &style)
+{
+    model->setXLinkLineStyle( style );
+}
+
+void VymModelWrapper::setXlinkStyleBegin( const QString &style)
+{
+    model->setXLinkStyleBegin( style );
+}
+
+void VymModelWrapper::setXlinkStyleEnd( const QString &style)
+{
+    model->setXLinkStyleEnd( style );
+}
+
+void VymModelWrapper::setXlinkWidth( int w )
+{
+    model->setXLinkWidth( w );
 }
 
 void VymModelWrapper::sleep( int n)
@@ -801,5 +981,13 @@ void VymWrapper::selectMap(uint n)      // FIXME-1 No syntax highlighting
     {
         logError( context(), QScriptContext::RangeError, QString("Map '%1' not available.").arg(n) );
     }
+}
+
+bool VymWrapper::loadMap( const QString &filename )
+{
+    if ( File::Success == mainWindow->fileLoad( filename, NewMap, VymMap ) )
+        return true;
+    else
+        return false;
 }
 

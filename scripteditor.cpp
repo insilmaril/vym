@@ -168,8 +168,9 @@ void ScriptEditor::loadFile()
 	}   
 
 	QTextStream ts( &f );
-    ts.setCodec("UTF-8");
-    ui.fileEditor->setText( ts.readAll() );
+        ts.setCodec("UTF-8");
+        ui.fileEditor->setText( ts.readAll() );
+        ui.fileNameLabel->setText( filename );
 	f.close();
 	lastMapDir.setPath(fn.left(fn.lastIndexOf ("/")) );
     }
