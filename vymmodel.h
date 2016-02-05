@@ -507,10 +507,6 @@ public:
 // Scripting
 ////////////////////////////////////////////
 public:	
-
-    /* \brief Process one command and its parameters */
-    QVariant parseAtom (const QString &atom, bool &noError, QString &errorMsg);	
-
     /* \brief Runs the script */
     QVariant execute (const QString &script);
 

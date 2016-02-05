@@ -53,7 +53,7 @@ QDBusVariant AdaptorModel::execute (const QString &s)
 
 QDBusVariant AdaptorModel::errorLevel()
 {
-    return QDBusVariant (model->parser.errorLevel() );
+    return QDBusVariant (model->parser.errorLevel() );  // FIXME-0 really still needed?
 }
 
 QDBusVariant AdaptorModel::errorDescription()
@@ -63,6 +63,6 @@ QDBusVariant AdaptorModel::errorDescription()
 
 QDBusVariant AdaptorModel::listCommands ()
 {
-    return QDBusVariant (model->parser.getCommands().join(",") );
+    return QDBusVariant (model->parser.getCommands().join(",") );   // FIXME-0 really still needed?
 }
 
