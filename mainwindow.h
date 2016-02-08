@@ -298,8 +298,6 @@ public slots:
     ModMode getModMode();
     bool autoEditNewBranch();
     bool autoSelectNewBranch();
-    QVariant executeLegacy(const QString &);
-    void executeLegacyEverywhere (const QString &);
     QVariant runScript(const QString &);
     QObject* getCurrentModelWrapper();   // FIXME-0 testing
     bool gotoWindow (const int &n);

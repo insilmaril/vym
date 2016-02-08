@@ -4,11 +4,14 @@
 #include <QtCore/QVariant>
 
 #include "branchitem.h"
+#include "command.h"
 #include "mainwindow.h"
 #include "vymmodel.h"
 
 extern QString vymInstanceName;
 extern Main *mainWindow;
+
+extern QList <Command*> modelCommands;
 
 AdaptorModel::AdaptorModel(QObject *obj)
          : QDBusAbstractAdaptor(obj)
@@ -63,6 +66,11 @@ QDBusVariant AdaptorModel::errorDescription()
 
 QDBusVariant AdaptorModel::listCommands ()
 {
-    return QDBusVariant (model->parser.getCommands().join(",") );   // FIXME-0 really still needed?
+    QStringList list;
+
+    foreach(Command *command, modelCommands)
+        list << command->getName();
+
+    return QDBusVariant (list.join(",") );
 }
 

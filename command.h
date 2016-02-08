@@ -23,11 +23,11 @@ public:
     QString getParComment(int n);
 
 private:
-	QString name;
-	SelectionType selectionType;
-	QList <ParameterType> parTypes;
-	QList <bool> parOpts;
-	QStringList parComments;
+    QString name;
+    SelectionType selectionType;
+    QList <ParameterType> parTypes;
+    QList <bool> parOpts;
+    QStringList parComments;
 };
 
 #endif

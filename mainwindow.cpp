@@ -5515,22 +5515,6 @@ bool Main::autoSelectNewBranch()
     return actionSettingsAutoSelectNewBranch->isChecked();
 }
 
-QVariant Main::executeLegacy (const QString &script)
-{
-    VymModel *m = currentModel();
-    if (m) return m->execute (script);
-    return QVariant();  // FIXME-2 useless return value
-}
-
-void Main::executeLegacyEverywhere (const QString &script)
-{
-    foreach (VymView *vv,vymViews)
-    {
-	VymModel *m = vv->getModel();
-	if (m) m->execute (script);
-    }
-}
-
 QScriptValue scriptPrint( QScriptContext * context, QScriptEngine *)
 {
     scriptOutput->append( context->argument(0).toString() );
