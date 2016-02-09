@@ -282,11 +282,10 @@ public slots:
     void windowToggleHeadingEditor();
     void updateHistory(SimpleSettings &);
     void windowToggleAntiAlias();
-public:
     bool isAliased();
     bool hasSmoothPixmapTransform();
-public slots:
     void windowToggleSmoothPixmap();
+    void clearScriptOutput();
     void updateHeading();
     void updateNoteFlag();
     void updateNoteEditor (QModelIndex index);

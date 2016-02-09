@@ -70,10 +70,10 @@ def summary
   puts "Tests failed: #{$tests_failed}"
 end
 
-vym_mgr=VymManager.new
+vym_mgr = VymManager.new
 #vym_mgr.show_running
 
-vym=vym_mgr.find(instance_name)
+vym = vym_mgr.find(instance_name)
 if !vym
   puts "Couldn't find instance name \"#{instance_name}\", please start one:"
   puts "vym -l -n \"#{instance-name}\" -t test/default.vym"
@@ -91,6 +91,15 @@ end
 @main_b="mc:0,bo:1"
 
 @n_centers=2
+
+#######################
+def test_vym (vym)
+  heading "Mainwindow checks:"
+  vym.toggleTreeEditor
+  sleep 1
+  version = "2.5.2"
+  expect "Version is #{version}", vym.version, version
+end
 
 #######################
 def test_basics (vym)
@@ -774,24 +783,25 @@ def test_bugfixes (vym)
 end
 
 #######################
-test_basics(vym)
-test_export(vym)
-test_extrainfo(vym)
-test_adding_branches(vym)
-test_adding_maps(vym)
-test_scrolling(vym)
-test_moving_parts(vym)
-test_modify_branches(vym)
-test_flags(vym)
-test_delete_parts(vym)
-test_copy_paste(vym)
-test_references(vym)
-test_history(vym)
-test_xlinks(vym)
-test_tasks(vym)
-test_notes(vym)
-test_headings(vym)
-test_bugfixes(vym)
+test_vym(vym)
+#test_basics(vym)
+#test_export(vym)
+#test_extrainfo(vym)
+#test_adding_branches(vym)
+#test_adding_maps(vym)
+#test_scrolling(vym)
+#test_moving_parts(vym)
+#test_modify_branches(vym)
+#test_flags(vym)
+#test_delete_parts(vym)
+#test_copy_paste(vym)
+#test_references(vym)
+#test_history(vym)
+#test_xlinks(vym)
+#test_tasks(vym)
+#test_notes(vym)
+#test_headings(vym)
+#test_bugfixes(vym)
 summary
 
 =begin

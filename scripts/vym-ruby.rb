@@ -1,6 +1,6 @@
 require 'dbus'
 
-$deb = false
+$debug = false
 
 class Vym
   def initialize (name)
@@ -12,40 +12,80 @@ class Vym
     @main.default_iface = "org.insilmaril.vym.main.adaptor"
 
     # Use metaprogramming to create methods for commands in vym
+    # Getting commands for mainwindow via DBUS
+    s = @main.listCommands
+    @vym_commands = s[0].split ","
+    @vym_commands.each do |c|
+      puts "Creating vym command: #{c}" if $debug
+      self.class.send(:define_method, c) do |*pars|
+        if pars.length == 0
+          # No parameters
+          com = "vym.clearConsole(); print( vym.#{c}() );"
+          puts " * Calling vym: \"#{com}\":" if $debug
+          ret = @main.execute( com )
+        else  
+          # with parameters
+          p = "";
+          a = []
+          pars.each do |p|
+            if p.kind_of? String
+              a << "'#{p}'"
+            else
+              a << p
+            end
+          end  
+          com = "vym.clearConsole(); vym.#{c} (#{a.join(',')});"
+          puts " ** Calling vym: \"#{com}\":" if $debug
+          ret = @main.execute( com )
+        end  
+
+        # err = m.errorLevel[0]
+        if $debug
+          puts "     Returned: #{ret[0]}" if ret[0] != ""
+          # puts "        Error: #{err}" if err > 0
+        end  
+        ret[0]
+      end
+    end # Creating vym commands
+    
+    
+=begin
+    # Getting commands for model via DBUS
     if modelCount > 0
       m = model(1)
       m.default_iface = "org.insilmaril.vym.model.adaptor"
-      s=m.listCommands
+      s = m.listCommands
       @model_commands = s[0].split ","
       @model_commands.each do |c|
-	self.class.send(:define_method, c) do |*pars|
-	  if pars.length == 0
-	    puts " * Calling \"#{c}\":" if $deb
-	    ret = m.execute("#{c} ()")
-	  else  
-	    # Build string with parameters
-	    p = "";
-	    a = []
-	    pars.each do |p|
-	      if p.kind_of? String
-	        a << "'#{p}'"
-	      else
-	        a << p
-	      end
-	    end  
-	    puts " * Calling \"#{c} (#{a.join(',')})\":" if $deb
+        self.class.send(:define_method, c) do |*pars|
+          if pars.length == 0
+            puts " * Calling \"#{c}\":" if $debug
+            ret = m.execute("#{c} ()")
+          else  
+            # Build string with parameters
+            p = "";
+            a = []
+            pars.each do |p|
+              if p.kind_of? String
+                a << "'#{p}'"
+              else
+                a << p
+              end
+            end  
+            puts " * Calling model: \"#{c} (#{a.join(',')})\":" if $debug
             ret = m.execute("#{c} (#{a.join(',')})")
-	  end  
+          end  
 
-	  err = m.errorLevel[0]
-	  if $deb
-	    puts "     Returned: #{ret[0]}" if ret[0] != ""
-	    puts "        Error: #{err}" if err > 0
-	  end  
-	  ret[0]
-	end
+          err = m.errorLevel[0]
+          if $debug
+            puts "     Returned: #{ret[0]}" if ret[0] != ""
+            puts "        Error: #{err}" if err > 0
+          end  
+          ret[0]
+        end
       end
-    end
+    end # Creating model commands
+=end
   end
 
   def modelCount

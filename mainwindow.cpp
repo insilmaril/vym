@@ -261,7 +261,6 @@ Main::Main(QWidget* parent, Qt::WindowFlags f) : QMainWindow(parent,f)
     connect (headingEditor, SIGNAL (textHasChanged() ), this, SLOT (updateHeading()));
     connect (headingEditor, SIGNAL (focusReleased() ), this, SLOT (setFocusMapEditor()));
 
-    connect( scriptEditor, SIGNAL( runLegacyScript ( QString ) ),  this, SLOT( executeLegacy( QString ) ) );
     connect( scriptEditor, SIGNAL( runScript ( QString ) ),  this, SLOT( runScript ( QString ) ) );
 
     // Initialize some settings, which are platform dependant
@@ -966,18 +965,24 @@ void Main::setupAPI()
     // Below are the commands for vym itself:
     //
 
-    c = new Command ("toggleTreeEditor", Command::Any); 
+    c = new Command ("currentMap", Command::Any); 
     vymCommands.append(c);
 
-    c = new Command ("getCurrentMap", Command::Any); 
+    c = new Command ("loadMap", Command::Any); 
+    c->addPar (Command::String, false, "Path to map");
+    vymCommands.append(c);
+
+    c = new Command ("mapCount", Command::Any); 
     vymCommands.append(c);
 
     c = new Command ("selectMap", Command::Any); 
     c->addPar (Command::Int, false, "Index of map");
     vymCommands.append(c);
 
-    c = new Command ("loadMap", Command::Any); 
-    c->addPar (Command::String, false, "Path to map");
+    c = new Command ("toggleTreeEditor", Command::Any); 
+    vymCommands.append(c);
+
+    c = new Command ("version", Command::Any); 
     vymCommands.append(c);
 
 }
@@ -5136,6 +5141,11 @@ void Main::windowToggleSmoothPixmap()
     }	
 }
 
+void Main::clearScriptOutput()
+{
+    scriptOutput->clear();
+}
+
 void Main::updateHistory(SimpleSettings &undoSet)
 {
     historyWindow->update (undoSet);
@@ -5526,7 +5536,6 @@ QVariant Main::runScript (const QString &script)
     VymModel *m = currentModel();
     if (m) 
     {
-
         scriptEngine.globalObject().setProperty( "print", scriptEngine.newFunction( scriptPrint ) );
 
         // Create Wrapper object for VymModel
@@ -5548,8 +5557,10 @@ QVariant Main::runScript (const QString &script)
             int line = scriptEngine.uncaughtExceptionLineNumber();
             scriptOutput->append( QString("uncaught exception at line %1: %2").arg(line).arg(result.toString()));
         }
+        else
+            return QVariant(scriptOutput->text() );  
     }
-    return QVariant();  // FIXME-2 useless return value
+    return QVariant(""); 
 }
 
 QObject* Main::getCurrentModelWrapper()  

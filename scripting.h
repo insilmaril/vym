@@ -159,10 +159,13 @@ public:
     VymWrapper ();
 
 public slots:
-    QObject* getCurrentMap();
+    void clearConsole();
+    QObject* currentMap();
     bool loadMap( const QString &filename);
+    int mapCount();
     void selectMap (uint n);
     void toggleTreeEditor();
+    QString version();
 };
 
 

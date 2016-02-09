@@ -9,6 +9,7 @@
 #include "xlink.h"
 
 extern Main *mainWindow;
+extern QString vymVersion;
 
 ///////////////////////////////////////////////////////////////////////////
 void logError(QScriptContext *context, QScriptContext::Error error, const QString &text)
@@ -965,7 +966,12 @@ VymWrapper::VymWrapper()
 {
 }
 
-QObject* VymWrapper::getCurrentMap()    // FIXME-1 No syntax highlighting
+void VymWrapper::clearConsole()
+{
+    mainWindow->clearScriptOutput();
+}
+
+QObject* VymWrapper::currentMap()   
 {
     return mainWindow->getCurrentModelWrapper();
 }
@@ -978,7 +984,12 @@ bool VymWrapper::loadMap( const QString &filename )
         return false;
 }
 
-void VymWrapper::selectMap(uint n)      // FIXME-1 No syntax highlighting
+int VymWrapper::mapCount()
+{
+    return mainWindow->modelCount();
+}
+
+void VymWrapper::selectMap(uint n)   
 {
     if ( !mainWindow->gotoWindow( n ))
     {
@@ -988,5 +999,10 @@ void VymWrapper::selectMap(uint n)      // FIXME-1 No syntax highlighting
 void VymWrapper::toggleTreeEditor()
 {
     mainWindow->windowToggleTreeEditor();
+}
+
+QString VymWrapper::version()
+{
+    return vymVersion;
 }
 
