@@ -26,15 +26,16 @@ public slots:
     virtual void setDirectory (const QString&);
     virtual void dirChanged();
     virtual void browseDirectoryPressed();
-    virtual void imageButtonPressed( bool b );
-    virtual void TOCButtonPressed( bool b );
-    virtual void numberingButtonPressed( bool b );
-    virtual void taskFlagsButtonPressed( bool b );
-    virtual void userFlagsButtonPressed( bool b );
-    virtual void textcolorButtonPressed( bool b );
-    virtual void saveSettingsInMapButtonPressed( bool b );
-    virtual void warningsButtonPressed( bool b );
-    virtual void outputButtonPressed( bool b );
+    virtual void imageCheckBoxPressed( bool b );
+    virtual void includeImagesCheckBoxPressed( bool b );
+    virtual void TOCCheckBoxPressed( bool b );
+    virtual void numberingCheckBoxPressed( bool b );
+    virtual void taskFlagsCheckBoxPressed( bool b );
+    virtual void userFlagsCheckBoxPressed( bool b );
+    virtual void textcolorCheckBoxPressed( bool b );
+    virtual void saveSettingsInMapCheckBoxPressed( bool b );
+    virtual void warningsCheckBoxPressed( bool b );
+    virtual void outputCheckBoxPressed( bool b );
     virtual void cssSrcChanged();
     virtual void cssDstChanged();
     virtual QString getCssSrc();
@@ -49,7 +50,8 @@ public slots:
     virtual void setMapName( const QString & s );
 
 public:
-    bool useImage;
+    bool includeMapImage;
+    bool includeImages;
     bool useTOC;
     bool useNumbering;
     bool useTaskFlags;
