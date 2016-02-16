@@ -692,13 +692,28 @@ QString ExportHTML::getBranchText(BranchItem *current)
         s+="</span>";
 
         // Create imagemap
-        if (vis && dia.useImage)
+        if (vis && dia.includeMapImage)
             imageMap+=QString("  <area shape='rect' coords='%1,%2,%3,%4' href='#%5'>\n")
                     .arg(hr.left()-offset.x())
                     .arg(hr.top()-offset.y())
                     .arg(hr.right()-offset.x())
                     .arg(hr.bottom()-offset.y())
                     .arg(id);
+
+        // Include image FIXME-0 experimental
+        if (dia.includeImages)
+        {
+            int imageCount = current->imageCount();
+            ImageItem *image; 
+            QString imagePath;
+            for (int i=0; i< imageCount; i++)
+            {
+                image = current->getImageNum(i);
+                imagePath =  "image-" + image->getUuid().toString() + ".png";
+                image->save( dirPath + "/" + imagePath, "PNG");
+                s += "</br><img src=\"" + imagePath + "\"></br>";
+            }
+        }
 
         // Include note
         if (!current->isNoteEmpty())
@@ -959,7 +974,7 @@ void ExportHTML::doExport(bool useDialog)
 
     // Include image
     // (be careful: this resets Export mode, so call before exporting branches)
-    if (dia.useImage)
+    if (dia.includeMapImage)
     {
         ts<<"<center><img src=\""<<getMapName()<<".png\" usemap='#imagemap'></center>\n";
         offset=model->exportImage (dirPath+"/"+getMapName()+".png",false,"PNG");
