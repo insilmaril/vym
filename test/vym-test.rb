@@ -80,7 +80,6 @@ if !vym
   exit
 end
 
-
 #######################
 @center_0="mc:0"
 @center_1="mc:1"
@@ -95,10 +94,20 @@ end
 #######################
 def test_vym (vym)
   heading "Mainwindow checks:"
-  vym.toggleTreeEditor
-  sleep 1
   version = "2.5.2"
   expect "Version is #{version}", vym.version, version
+
+  n = vym.mapCount.to_i
+  mapname = "test/default.vym"
+  vym.loadMap (mapname)
+  expect "mapCount increased after loading \"#{mapname}\"", vym.mapCount.to_i, n + 1
+
+  map = vym.map(1)
+
+  title = "vym map used for testing"
+  expect "map title is '#{title}'", map.getMapTitle, title
+  author ="Uwe Drechsel"
+  expect "Author is '#{author}'", map.getMapAuthor, author
 end
 
 #######################

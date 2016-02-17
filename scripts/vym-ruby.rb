@@ -39,7 +39,7 @@ class Vym
           ret = @main.execute( com )
         end  
 
-        # err = m.errorLevel[0]
+        #FIXME-0  err = m.errorLevel[0]
         if $debug
           puts "     Returned: #{ret[0]}" if ret[0] != ""
           # puts "        Error: #{err}" if err > 0
@@ -47,58 +47,21 @@ class Vym
         ret[0]
       end
     end # Creating vym commands
-    
-    
-=begin
-    # Getting commands for model via DBUS
-    if modelCount > 0
-      m = model(1)
-      m.default_iface = "org.insilmaril.vym.model.adaptor"
-      s = m.listCommands
-      @model_commands = s[0].split ","
-      @model_commands.each do |c|
-        self.class.send(:define_method, c) do |*pars|
-          if pars.length == 0
-            puts " * Calling \"#{c}\":" if $debug
-            ret = m.execute("#{c} ()")
-          else  
-            # Build string with parameters
-            p = "";
-            a = []
-            pars.each do |p|
-              if p.kind_of? String
-                a << "'#{p}'"
-              else
-                a << p
-              end
-            end  
-            puts " * Calling model: \"#{c} (#{a.join(',')})\":" if $debug
-            ret = m.execute("#{c} (#{a.join(',')})")
-          end  
-
-          err = m.errorLevel[0]
-          if $debug
-            puts "     Returned: #{ret[0]}" if ret[0] != ""
-            puts "        Error: #{err}" if err > 0
-          end  
-          ret[0]
-        end
-      end
-    end # Creating model commands
-=end
   end
 
   def modelCount
     @main.modelCount[0]
   end
 
-  def model (n)
+  def map (n)
+    map = @service.object("vymmodel_#{n}")
+    map.introspect
+    map.default_iface = "org.insilmaril.vym.model.adaptor"
+
     if modelCount > 0 && n>=0
-      @model = @service.object "vymmodel_#{n}"
-      @model.default_iface = "org.insilmaril.vym.model.adaptor"
-      return @model
+      return VymMap.new(map, n )
     else
-      raise "Error: Model #{n} not accessible in #{@instance}!"
+      raise "Error: Map #{n} not accessible in #{@instance}!"
     end  
   end
 
@@ -120,13 +83,58 @@ class Vym
   end
 end
 
+
+class VymMap
+  def initialize(map, n )
+    @map = map
+    
+    # Getting commands for model via DBUS
+    #if modelCount > 0
+      # m = model(1)
+      s = @map.listCommands
+      @model_commands = s[0].split ","
+      @model_commands.each do |c|
+        puts "Creating map command: #{c}" if $debug
+        self.class.send(:define_method, c) do |*pars|
+          if pars.length == 0
+            # No parameters
+            com = "vym.clearConsole(); print( vym.currentMap().#{c}() );"
+            puts " * Calling model: \"#{com}\":" if $debug
+            ret = @map.execute( com )
+          else  
+            # Build string with parameters
+            p = "";
+            a = []
+            pars.each do |p|
+              if p.kind_of? String
+                a << "'#{p}'"
+              else
+                a << p
+              end
+            end  
+            com = "vym.clearConsole(); vym.currentMap().#{c} (#{a.join(',')});"
+            puts " ** Calling model: \"#{com}\":" if $debug
+            ret = @map.execute( com )
+          end  
+
+          #FIXME-0 err = m.errorLevel[0]
+          if $debug
+            puts "     Returned: #{ret[0]}" if ret[0] != ""
+            #puts "        Error: #{err}" if err > 0
+          end  
+          ret[0]
+        end
+      end
+  end # Initialize
+end # VymMap
+
 class VymManager
   def initialize
     @dbus = DBus::SessionBus.instance
   end
 
   def running
-    list=@dbus.proxy.ListNames[0].find_all{|item| item =~/org\.insilmaril\.vym/ }
+    list = @dbus.proxy.ListNames[0].find_all{|item| item =~/org\.insilmaril\.vym/ }
   end
 
   def show_running
@@ -149,7 +157,7 @@ class VymManager
       vym_main_obj.default_iface = "org.insilmaril.vym.main.adaptor"
 
       if vym_main_obj.getInstanceName[0] == name 
-        #puts "Found instance named '#{name}': #{list.at(i)}"
+        puts "VymManager: Found instance named '#{name}': #{list.at(i)}" if $debug
         return Vym.new list.at(i)
       end  
     end

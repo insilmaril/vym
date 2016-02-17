@@ -3979,7 +3979,30 @@ void VymModel::setXLinkWidth(int new_width)
 
 QVariant VymModel::execute (const QString &script)  // FIXME-2 still required??? (undo/redo and?)
 {
-    mainWindow->runScript( script);
+    return mainWindow->runScript( script);
+    /*
+    // Create Wrapper object for VymModel
+    VymModelWrapper vymModelWrapper( m );
+    QScriptValue val1 = scriptEngine.newQObject( &vymModelWrapper );
+    scriptEngine.globalObject().setProperty("map", val1);
+
+    // Create Wrapper object for mainwindow
+    VymWrapper vymWrapper;
+    QScriptValue val2 = scriptEngine.newQObject( &vymWrapper );
+    scriptEngine.globalObject().setProperty("vym", val2);
+
+    //QScriptValue modelVal = scriptEngine.newQObject(m);
+    //scriptEngine.globalObject().setProperty("model", modelVal);
+
+    QScriptValue result = scriptEngine.evaluate(script);
+
+    if (scriptEngine.hasUncaughtException()) {
+        int line = scriptEngine.uncaughtExceptionLineNumber();
+        scriptOutput->append( QString("uncaught exception at line %1: %2").arg(line).arg(result.toString()));
+    }
+    else
+        return QVariant(scriptOutput->text() );  
+    */
 }
 
 void VymModel::setExportMode (bool b)
