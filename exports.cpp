@@ -174,9 +174,9 @@ void ExportBase::completeExport(QString args)
     QString command;
     // Add at least filepath as argument
     if (args.isEmpty()) 
-        command = QString("export%1(\"%2\")").arg(exportName).arg(filePath);
+        command = QString("vym.currentMap().export%1(\"%2\")").arg(exportName).arg(filePath);
     else
-        command = QString("export%1(%2)").arg(exportName).arg(args);
+        command = QString("vym.currentMap().export%1(%2)").arg(exportName).arg(args);
 
     settings.setLocalValue ( model->getFilePath(), "/export/last/exportPath", filePath);
     settings.setLocalValue ( model->getFilePath(), "/export/last/command", command);

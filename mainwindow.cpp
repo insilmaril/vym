@@ -556,69 +556,12 @@ void Main::setupAPI()
     c=new Command ("remove",Command::Branch);
     modelCommands.append(c);
 
-    c=new Command ("remove",Command::Branch);
-    modelCommands.append(c);
-
     c=new Command ("remove",Command::Any);
     c->addPar (Command::Int,false,"Index of slide to remove");
     modelCommands.append(c);
 
-    c=new Command ("exportAO",Command::Any);
-    c->addPar (Command::String,false,"Filename for export");
-    modelCommands.append(c);
-
-    c=new Command ("exportASCII",Command::Any);
-    c->addPar (Command::String,false,"Filename for export");
-    c->addPar (Command::Bool,false,"Flag, if tasks should be appended");
-    modelCommands.append(c);
-
-    c=new Command ("exportCSV",Command::Any);
-    c->addPar (Command::String,false,"Filename for export");
-    modelCommands.append(c);
-
-    c=new Command ("exportHTML",Command::Any);
-    c->addPar (Command::String,false,"Path used for export");
-    c->addPar (Command::String,false,"Filename for export");
-    modelCommands.append(c);
-
-    c=new Command ("exportImage",Command::Any);
-    c->addPar (Command::String,false,"Filename for export");
-    c->addPar (Command::String,true,"Image format");
-    modelCommands.append(c);
-
-    c=new Command ("exportImpress",Command::Any);
-    c->addPar (Command::String,false,"Filename for export");
-    c->addPar (Command::String,false,"Configuration file for export");
-    modelCommands.append(c);
-
-    c=new Command ("exportLast",Command::Any);
-    modelCommands.append(c);
-
-    c=new Command ("exportLaTeX",Command::Any);
-    c->addPar (Command::String,false,"Filename for export");
-    modelCommands.append(c);
-
-    c=new Command ("exportOrgMode",Command::Any);
-    c->addPar (Command::String,false,"Filename for export");
-    modelCommands.append(c);
-
-    modelCommands.append(c);
-
-    c=new Command ("exportPDF",Command::Any);
-    c->addPar (Command::String,false,"Filename for export");
-    modelCommands.append(c);
-
-    c=new Command ("exportPDF",Command::Any);
-    c->addPar (Command::String,false,"Filename for export");
-    modelCommands.append(c);
-
-    c=new Command ("exportSVG",Command::Any);
-    c->addPar (Command::String,false,"Filename for export");
-    modelCommands.append(c);
-
-    c=new Command ("exportXML",Command::Any);
-    c->addPar (Command::String,false,"Path used for export");
-    c->addPar (Command::String,false,"Filename for export");
+    c=new Command ("exportMap",Command::Any);  
+    c->addPar (Command::String,false,"Format (AO, ASCII, CSV, HTML, Image, Impress, Last, LaTeX, OrgMode, PDF, SVG, XML)");
     modelCommands.append(c);
 
     c=new Command ("getDestPath",Command::Any);
@@ -5536,6 +5479,7 @@ QVariant Main::runScript (const QString &script)
     VymModel *m = currentModel();
     if (m) 
     {
+        //qDebug()<<"Main ::execute called: "<<script;
         scriptEngine.globalObject().setProperty( "print", scriptEngine.newFunction( scriptPrint ) );
 
         // Create Wrapper object for VymModel

@@ -41,7 +41,7 @@ public slots:
     void copy();
     void cut();
     void cycleTask();
-    bool exportMap( const QString &format, const QStringList &parameters);
+    bool exportMap(); 
     QString getDestPath();
     QString getFileDir();
     QString getFileName();

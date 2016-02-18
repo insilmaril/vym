@@ -209,77 +209,90 @@ void VymModelWrapper::cycleTask()
         logError( context(), QScriptContext::SyntaxError, "Couldn't cycle task status");
 }
 
-bool VymModelWrapper::exportMap( const QString &format, const QStringList &parameters)
+bool VymModelWrapper::exportMap( )
 {
-    QString filename;
-    bool ok;
-
-    filename = getParameter( ok, "filename", parameters).toString();
-
-    if ( !ok && format != "Last" )
+    if (argumentCount() == 0 )
     {
-        logError( context(), QScriptContext::SyntaxError, QString("Filename missing in export to %1").arg(format) );
+        logError( context(), QScriptContext::SyntaxError, "Not enough arguments");
         return false;
     }
+    
+    QString format;
+    format = argument(0).toString();
+
+    if (argumentCount() == 1 )
+    {
+        if ( format == "Last")
+        {
+            model->exportLast();
+            return true;
+        } else
+        {
+            logError( context(), QScriptContext::SyntaxError, "Filename missing" );
+            return false;
+        }
+    }
+    
+    QString filename;
+
+    filename = argument(1).toString();
 
     if (format == "AO") 
     {
         model->exportAO (filename, false);
     } else if ( format == "ASCII" ) 
     {
-        bool listTasks = getParameter( ok, "listTasks", parameters).toBool();
+        bool listTasks = false;
+        if (argumentCount() == 3 && argument(2).toString() == "listTasks")
+            listTasks = true;
         model->exportASCII (listTasks, filename, false);
     } else if ( format == "CSV" )
     {
         model->exportCSV (filename, false);
     } else if ( format == "HTML" )
     {
-        QString path = getParameter( ok, "path", parameters).toString();
-        if ( !ok )
+        if (argumentCount() < 3 )
         {
-            logError( context(), QScriptContext::SyntaxError, QString("Path missing in export to %1").arg(format) );
+            logError( context(), QScriptContext::SyntaxError, "Path missing in HTML export" );
             return false;
         }   
+        QString path = argument(2).toString();
         model->exportHTML (path, filename, false);
     } else if ( format == "Image" )
     {
-        QString format;
-        format = getParameter( ok, "format", parameters).toString();
-        if (!ok)
-            format = "PNG";
-        else
+        QString imgFormat; 
+        if (argumentCount() == 2 )
+            imgFormat = "PNG";
+        else if (argumentCount() == 3 )
+            imgFormat = argument(2).toString();
+
+        QStringList formats;
+        formats << "PNG"; 
+        formats << "GIF"; 
+        formats << "JPG"; 
+        formats << "JPEG", 
+        formats << "PNG", 
+        formats << "PBM", 
+        formats << "PGM", 
+        formats << "PPM", 
+        formats << "TIFF", 
+        formats << "XBM", 
+        formats << "XPM";
+        if ( formats.indexOf( imgFormat ) < 0 )
         {
-            QStringList formats;
-            formats << "PNG"; 
-            formats << "GIF"; 
-            formats << "JPG"; 
-            formats << "JPEG", 
-            formats << "PNG", 
-            formats << "PBM", 
-            formats << "PGM", 
-            formats << "PPM", 
-            formats << "TIFF", 
-            formats << "XBM", 
-            formats << "XPM";
-            if ( formats.indexOf( format ) < 0 )
-            {
-                logError( context(), QScriptContext::SyntaxError, QString("%1 not one of the known export formats: ").arg(format).arg(formats.join(",") ) );
-                return false;
-            }
-        }
-        model->exportImage ( filename, false, format);
-    } else if ( format == "Impress" )
-    {
-        QString templ = getParameter( ok, "template", parameters).toString();
-        if ( !ok )
-        {
-            logError( context(), QScriptContext::SyntaxError, "Template missing in exportImpress");
+            logError( context(), QScriptContext::SyntaxError, QString("%1 not one of the known export formats: ").arg(imgFormat).arg(formats.join(",") ) );
             return false;
         }
-        model->exportImpress (filename, templ);
-    } else if ( format == "Last" )
+        model->exportImage ( filename, false, imgFormat);
+    } else if ( format == "Impress" )
     {
-        model->exportLast();
+        if (argumentCount() < 3 )
+        {
+            logError( context(), QScriptContext::SyntaxError, "Template file  missing in export to Impress" );
+            return false;
+        }   
+        QString templ = argument(2).toString();
+        model->exportImpress (filename, templ);
     } else if ( format == "LaTeX" )
     {
         model->exportLaTeX (filename, false);
@@ -294,12 +307,12 @@ bool VymModelWrapper::exportMap( const QString &format, const QStringList &param
         model->exportPDF( filename, false);
     } else if ( format == "XML" )
     {
-        QString path = getParameter( ok, "path", parameters).toString();
-        if ( !ok )
+        if (argumentCount() < 3 )
         {
-            logError( context(), QScriptContext::SyntaxError, QString("Path missing in export to %1").arg(format) );
+            logError( context(), QScriptContext::SyntaxError, "path missing in export to Impress" );
             return false;
         }   
+        QString path = argument(2).toString();
         model->exportXML (path, filename, false);
     } else
     {

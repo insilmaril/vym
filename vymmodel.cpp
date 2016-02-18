@@ -3979,6 +3979,7 @@ void VymModel::setXLinkWidth(int new_width)
 
 QVariant VymModel::execute (const QString &script)  // FIXME-2 still required??? (undo/redo and?)
 {
+    qDebug()<<"VM::execute called: "<<script;
     return mainWindow->runScript( script);
     /*
     // Create Wrapper object for VymModel
