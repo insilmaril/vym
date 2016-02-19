@@ -172,11 +172,11 @@ void ExportBase::setLastCommand( const QString &s)
 void ExportBase::completeExport(QString args) 
 {
     QString command;
-    // Add at least filepath as argument
     if (args.isEmpty()) 
-        command = QString("vym.currentMap().export%1(\"%2\")").arg(exportName).arg(filePath);
+        // Add at least filepath as argument. exportName is added anyway
+        command = QString("vym.currentMap().exportMap(\"%1\",\"%2\")").arg(exportName).arg(filePath);
     else
-        command = QString("vym.currentMap().export%1(%2)").arg(exportName).arg(args);
+        command = QString("vym.currentMap().exportMap(\"%1\",%2)").arg(exportName).arg(args);
 
     settings.setLocalValue ( model->getFilePath(), "/export/last/exportPath", filePath);
     settings.setLocalValue ( model->getFilePath(), "/export/last/command", command);
@@ -1004,10 +1004,10 @@ void ExportHTML::doExport(bool useDialog)
     if (!dia.postscript.isEmpty())
     {
         VymProcess p;
-        p.runScript (dia.postscript,dirPath + "/" + filePath);
+        p.runScript (dia.postscript,dirPath + "/" + filePath);  // FIXME-0 likely bound to fail...
     }
 
-    completeExport( QString("\"%1\",\"%2\"").arg(dirPath).arg(filePath));
+    completeExport( QString("\"%1\",\"%2\"").arg(filePath).arg(dirPath));
 
     dia.saveSettings();
     model->setExportMode (false);
