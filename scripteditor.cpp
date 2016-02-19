@@ -153,9 +153,9 @@ void ScriptEditor::saveMacro()
 void ScriptEditor::loadFile()
 {
     QString filter("VYM scripts (*.vys *.js);;All (*)");
-    QString fn=QFileDialog::getOpenFileName( 
+    QString fn = QFileDialog::getOpenFileName( 
 	this,
-	vymName+" - " + tr("Load script"), 
+	vymName + " - " + tr("Load script"), 
 	lastMapDir.path(), 
 	filter);
 
@@ -170,6 +170,7 @@ void ScriptEditor::loadFile()
 	    return;
 	}   
 
+        filename = fn;
 	QTextStream ts( &f );
         ts.setCodec("UTF-8");
         ui.fileEditor->setText( ts.readAll() );
@@ -196,6 +197,7 @@ void ScriptEditor::saveFile()
         t.setCodec("UTF-8");
         t << ui.fileEditor->toPlainText();
         f.close();
+        mainWindow->statusMessage( tr("Script saved to %1").arg(filename) );
     }
 }
 
