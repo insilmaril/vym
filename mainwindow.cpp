@@ -3256,6 +3256,7 @@ void Main::fileLoad(const LoadMode &lmode)
 void Main::fileLoad()
 {
     fileLoad (NewMap);
+    tabWidget->setCurrentIndex (tabWidget->count()-1);
 }
 
 void Main::fileSaveSession()
@@ -3291,6 +3292,7 @@ void Main::fileLoadRecent()
         FileType type=getMapType (fn);
         fileLoad (fn, NewMap,type);
         removeProgressCounter();
+        tabWidget->setCurrentIndex (tabWidget->count()-1);
     }
 }
 
