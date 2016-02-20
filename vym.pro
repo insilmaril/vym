@@ -274,8 +274,3 @@ support.files = styles/ scripts/ icons/ flags/ lang/*.qm macros/ exports/ demos/
 support.path = $${DATADIR}/vym
 INSTALLS += support 
 
-doc.files = doc/vym.pdf
-doc.path = $${DOCDIR}
-INSTALLS += doc
-DEFINES += VYM_DOCDIR=\\\"$${DOCDIR}\\\"
-
