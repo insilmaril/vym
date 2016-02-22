@@ -146,7 +146,7 @@ bool ExportBase::execDialog()
             dia.setCaption(QObject::tr("Warning: Overwriting file"));
             dia.setText(QObject::tr("Exporting to %1 will overwrite the existing file:\n%2").arg(exportName).arg(fn));
             dia.setShowAgainName("/exports/overwrite/" + exportName);
-            if (!dia.exec()==QDialog::Accepted)
+            if (!(dia.exec()==QDialog::Accepted))
             {
                 cancelFlag=true;
                 return false;
@@ -559,7 +559,7 @@ void ExportKDE4Bookmarks::doExport()
     dia.setShowAgainName("/exports/overwrite/KDE4Bookmarks");
     if (dia.exec()==QDialog::Accepted)
     {
-        model->exportXML(tmpDir.path(),false);
+        model->exportXML("",tmpDir.path(),false);
 
         XSLTProc p;
         p.setInputFile (tmpDir.path()+"/"+model->getMapName()+".xml");
@@ -589,7 +589,7 @@ void ExportFirefoxBookmarks::doExport()
     dia.setShowAgainName("/vym/warnings/overwriteImportBookmarks");
     if (dia.exec()==QDialog::Accepted)
     {
-        model->exportXML(tmpDir.path(),false);
+        model->exportXML("",tmpDir.path(),false);
 
         /*
     XSLTProc p;
@@ -1016,7 +1016,7 @@ void ExportHTML::doExport(bool useDialog)
 ////////////////////////////////////////////////////////////////////////
 void ExportTaskjuggler::doExport() 
 {
-    model->exportXML(tmpDir.path(),false);
+    model->exportXML("",tmpDir.path(),false);
 
     XSLTProc p;
     p.setInputFile (tmpDir.path()+"/"+model->getMapName()+".xml");
