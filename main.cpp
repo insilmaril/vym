@@ -154,6 +154,7 @@ int main(int argc, char* argv[])
     options.add ("help", Option::Switch, "h", "help");
     options.add ("load", Option::String, "L", "load");
     options.add ("local", Option::Switch, "l", "local");
+    options.add ("locale", Option::String, "locale", "locale");
     options.add ("name", Option::String, "n", "name");
     options.add ("quit", Option::Switch, "q", "quit");
     options.add ("run", Option::String, "r", "run");
@@ -177,12 +178,13 @@ int main(int argc, char* argv[])
                 "-h           help        Show this help text\n"
                 "-L           load        Load script\n"
                 "-l           local       Run with ressources in current directory\n"
+                "--locale     locale      Override system locale setting to select language\n"
                 "-n  STRING   name        Set name of instance for DBus access\n"
                 "-q           quit        Quit immediatly after start for benchmarking\n"
                 "-r  FILE     run         Run script\n"
                 "-R           restore     Restore last session\n"
                 "-s           shortcuts   Show Keyboard shortcuts on start\n"
-                "-sl          LaTeX       Show Keyboard shortcuts in LaTeX format on start\n"
+                "--sl         LaTeX       Show Keyboard shortcuts in LaTeX format on start\n"
                 "-t           testmode    Test mode, e.g. no autosave and changing of its setting\n"
                 "-v           version     Show vym version\n"
                 );
@@ -359,10 +361,20 @@ int main(int argc, char* argv[])
     }
 
     // Initialize translations
-    QTranslator translator (0);
-    //translator.load( QString("vym_")+QTextCodec::locale(), vymBaseDir.path() + "/lang");
-    translator.load( QString("vym_")+QLocale().name(), vymBaseDir.path() + "/lang");
-    app.installTranslator( &translator );
+    QString localeName;
+    if (options.isOn ("locale"))
+        localeName = options.getArg ("locale");
+    else
+        localeName = QLocale::system().name();
+    
+    QTranslator qtTranslator;
+    qtTranslator.load("qt_" + localeName, QLibraryInfo::location(QLibraryInfo::TranslationsPath));
+    app.installTranslator(&qtTranslator);
+   
+    QTranslator vymTranslator;
+    vymTranslator.load( QString("vym_") + localeName, vymBaseDir.path() + "/lang");
+    qDebug()<<"Main  QLOCALE: "<<QLocale().name();
+    app.installTranslator( &vymTranslator );
 
     // Initializing the master rows of flags
     systemFlagsMaster=new FlagRow;
