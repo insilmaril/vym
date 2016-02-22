@@ -278,7 +278,7 @@ language.files = lang/*.qm
 language.path = $${DATADIR}/vym/lang
 INSTALLS += language
 
-support.files = styles/ scripts/ icons/ flags/ lang/ macros/ exports/ demos/
+support.files = styles/ scripts/ icons/ flags/ macros/ exports/ demos/
 support.path = $${DATADIR}/vym
 INSTALLS += support 
 
