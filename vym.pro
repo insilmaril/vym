@@ -263,9 +263,6 @@ isEmpty( BINDIR ) {
 isEmpty( DATADIR ) {
     DATADIR = $${PREFIX}
 }
-isEmpty( DOCDIR ) {
-    DOCDIR = $${DATADIR}/doc/packages/vym
-}
 
 message( "Installation directory" )
 message( $$PREFIX )
