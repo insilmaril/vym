@@ -274,7 +274,11 @@ message( $$PREFIX )
 target.path = $${BINDIR}
 INSTALLS += target
 
-support.files = styles/ scripts/ icons/ flags/ lang/ macros/ exports/ demos/
-support.path = $${DATADIR}/vym
+lang.files = lang/*.qm
+lang.path  = $${DATADIR}/vym/lang
+INSTALLS += lang
+
+support.files = styles/* scripts/* icons/* flags/* lang/*.qm macros/*.vys exports/ demos/*.vym
+support.path  = $${DATADIR}/vym
 INSTALLS += support 
 
