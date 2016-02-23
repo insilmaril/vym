@@ -1129,7 +1129,7 @@ void VymModel::redo()
 	select (redoSelection);
 
     QString errMsg;
-    QString redoScript = QString("model = vym.getCurrentMap(); model.%1").arg( redoCommand );
+    QString redoScript = QString("model = vym.currentMap(); model.%1").arg( redoCommand );
     errMsg = QVariant( execute(redoScript) ).toString();
     blockSaveState=blockSaveStateOrg;
 
@@ -1210,7 +1210,7 @@ void VymModel::undo()
 	select (undoSelection);
 
     QString errMsg;
-    QString undoScript = QString("model = vym.getCurrentMap(); model.%1").arg( undoCommand );
+    QString undoScript = QString("model = vym.currentMap(); model.%1").arg( undoCommand );
     errMsg = QVariant(execute(undoScript)).toString();
 
     undosAvail--;
@@ -1706,7 +1706,7 @@ void VymModel::setHeading(const VymText &vt, BranchItem *bi)
 
 void VymModel::setHeadingPlainText(const QString &s, BranchItem *bi)
 {
-    if (!bi) bi=getSelectedBranch();
+    if (!bi) bi = getSelectedBranch();
     if (bi)
     {
         VymText vt = bi->getHeading();
@@ -2903,43 +2903,43 @@ BranchItem* VymModel::addNewBranchInt(BranchItem *dst,int pos)
 BranchItem* VymModel::addNewBranch(BranchItem *bi, int pos)
 {
     BranchItem *newbi=NULL;
-    if (!bi) bi=getSelectedBranch();
+    if (!bi) bi = getSelectedBranch();
 
     if (bi)
     {
-	QString redosel=getSelectString(bi);
-	newbi=addNewBranchInt (bi,pos);
-	QString undosel=getSelectString(newbi);
+        QString redosel = getSelectString(bi);
+        newbi = addNewBranchInt (bi, pos);
+        QString undosel = getSelectString(newbi);
 
-	if (newbi)
-	{
-	    saveState(
-		undosel,	
-		"remove ()",
-		redosel,
-		QString ("addBranch (%1)").arg(pos),
-		QString ("Add new branch to %1").arg(getObjectName(bi)));	
+        if (newbi)
+        {
+            saveState(
+                    undosel,	
+                    "remove ()",
+                    redosel,
+                    QString ("addBranch (%1)").arg(pos),
+                    QString ("Add new branch to %1").arg(getObjectName(bi)));	
 
-	    reposition();
-	    latestAddedItem=newbi;
-	    // In Network mode, the client needs to know where the new branch is,
-	    // so we have to pass on this information via saveState.
-	    // TODO: Get rid of this positioning workaround
-	    /* FIXME-4  network problem:  QString ps=qpointfToString (newbo->getAbsPos());
-	    sendData ("selectLatestAdded ()");
-	    sendData (QString("move %1").arg(ps));
-	    sendSelection();
-	    */
-	}
+            reposition();
+            latestAddedItem = newbi;
+            // In Network mode, the client needs to know where the new branch is,
+            // so we have to pass on this information via saveState.
+            // TODO: Get rid of this positioning workaround
+            /* FIXME-4  network problem:  QString ps=qpointfToString (newbo->getAbsPos());
+               sendData ("selectLatestAdded ()");
+               sendData (QString("move %1").arg(ps));
+               sendSelection();
+               */
+        }
     }	
     return newbi;
 }
 
 
-BranchItem* VymModel::addNewBranchBefore()  // FIXME-0 undo/redo broken
+BranchItem* VymModel::addNewBranchBefore() 
 {
-    BranchItem *newbi=NULL;
-    BranchItem *selbi=getSelectedBranch();
+    BranchItem *newbi = NULL;
+    BranchItem *selbi = getSelectedBranch();
     if (selbi && selbi->getType() == TreeItem::Branch)
 	 // We accept no MapCenter here, so we _have_ a parent
     {
@@ -2948,17 +2948,17 @@ BranchItem* VymModel::addNewBranchBefore()  // FIXME-0 undo/redo broken
 
 	if (newbi)
 	{
+	    saveState (newbi, "remove ()", newbi, "addBranchBefore ()", 
+		QString ("Add branch before %1").arg(getObjectName(selbi)));
+
 	    //newbi->move2RelPos (p);
 
 	    // Move selection to new branch
-	    relinkBranch (selbi,newbi,0,true);
+	    relinkBranch (selbi, newbi, 0, true);
 
 	    // Use color of child instead of parent
 	    newbi->setHeadingColor (selbi->getHeadingColor() );
 	    emitDataChanged (newbi);
-
-	    saveState (newbi, "remove ()", newbi, "addBranchBefore ()", 
-		QString ("Add branch before %1").arg(getObjectName(selbi)));
 	}
     }	
     return newbi;
@@ -3977,9 +3977,9 @@ void VymModel::setXLinkWidth(int new_width)
 // Scripting
 //////////////////////////////////////////////
 
-QVariant VymModel::execute (const QString &script)  // FIXME-2 still required??? (undo/redo and?)
+QVariant VymModel::execute (const QString &script)  // FIXME-0 still required??? (undo/redo and?)
 {
-    qDebug()<<"VM::execute called: "<<script;
+    // qDebug()<<"VM::execute called: "<<script;
     return mainWindow->runScript( script);
     /*
     // Create Wrapper object for VymModel
@@ -4997,9 +4997,9 @@ void VymModel::readData ()
 	in >>t;
 	if (debug)
 	    qDebug() << "VymModel::readData  command="<<qPrintable (t);
-	bool noErr;
-	QString errMsg;
-	// parseAtom (t,noErr,errMsg);    //FIXME-0 needs rework using scripts
+	//bool noErr;
+	//QString errMsg;
+	// parseAtom (t,noErr,errMsg);    //FIXME-2 needs rework using scripts
 
     }
     return;
