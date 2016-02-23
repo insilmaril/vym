@@ -138,7 +138,7 @@ QString XMLObj::valueElement(QString el, QString val)
 // returns <s at> val </s>
 QString XMLObj::valueElement(QString el, QString val, QString at)
 {
-    return indent()  + "<" + el + " " + at + ">" + val + "</" +el + ">";
+    return "<" + el + " " + at + ">" + val + "</" +el + ">";
 }
 
 void XMLObj::incIndent()
