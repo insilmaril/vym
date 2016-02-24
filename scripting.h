@@ -96,7 +96,9 @@ public slots:
     bool select( const QString &s );
     bool selectID( const QString &s );
     bool selectFirstBranch();
+    bool selectFirstChildBranch();
     bool selectLastBranch();
+    bool selectLastChildBranch();
     bool selectLastImage();
     bool selectParent();
     bool selectLatestAdded();

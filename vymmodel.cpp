@@ -5392,17 +5392,39 @@ bool VymModel::selectFirstBranch()
     return false;
 }
 
-bool VymModel::selectLastBranch()
+bool VymModel::selectFirstChildBranch()
 {
-    TreeItem *ti=getSelectedBranch();
+    TreeItem *ti = getSelectedBranch();
     if (ti)
     {
-	TreeItem *par=ti->parent();
+        BranchItem *bi = ti->getFirstBranch();
+        if (bi) return select( bi );
+    }	    
+    return false;
+}
+
+bool VymModel::selectLastBranch()
+{
+    TreeItem *ti = getSelectedBranch();
+    if (ti)
+    {
+	TreeItem *par = ti->parent();
 	if (par) 
 	{
-	    TreeItem *ti2=par->getLastBranch();
+	    TreeItem *ti2 = par->getLastBranch();
 	    if (ti2) return select(ti2);
 	}
+    }	    
+    return false;
+}
+
+bool VymModel::selectLastChildBranch()
+{
+    TreeItem *ti = getSelectedBranch();
+    if (ti)
+    {
+        BranchItem *bi = ti->getLastBranch();
+        if (bi) return select( bi );
     }	    
     return false;
 }

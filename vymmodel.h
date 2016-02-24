@@ -748,7 +748,9 @@ signals:
 
 public:	
     bool selectFirstBranch();
+    bool selectFirstChildBranch();
     bool selectLastBranch();
+    bool selectLastChildBranch();
     bool selectLastSelectedBranch();
     bool selectLastImage();
     bool selectLatestAdded();

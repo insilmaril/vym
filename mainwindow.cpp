@@ -550,16 +550,6 @@ void Main::setupAPI()
     c->addPar (Command::Bool,true, "True, if cycling in reverse order");
     modelCommands.append(c);
 
-    c=new Command ("remove",Command::TreeItem);
-    modelCommands.append(c);
-
-    c=new Command ("remove",Command::Branch);
-    modelCommands.append(c);
-
-    c=new Command ("remove",Command::Any);
-    c->addPar (Command::Int,false,"Index of slide to remove");
-    modelCommands.append(c);
-
     c=new Command ("exportMap",Command::Any);  
     c->addPar (Command::String,false,"Format (AO, ASCII, CSV, HTML, Image, Impress, Last, LaTeX, OrgMode, PDF, SVG, XML)");
     modelCommands.append(c);
@@ -695,6 +685,19 @@ void Main::setupAPI()
     c->addPar (Command::Double,true,"Position y");
     modelCommands.append(c);
 
+    c=new Command ("remove",Command::TreeItem);
+    modelCommands.append(c);
+
+    c=new Command ("removeChildren",Command::Branch);
+    modelCommands.append(c);
+
+    c=new Command ("removeKeepChildren",Command::Branch);
+    modelCommands.append(c);
+
+    c=new Command ("removeSlide",Command::Any);          
+    c->addPar (Command::Int,false,"Index of slide to remove");
+    modelCommands.append(c);
+
     c=new Command ("saveImage",Command::Image); 
     c->addPar (Command::String,false,"Filename of image to save");
     c->addPar (Command::String,false,"Format of image to save");
@@ -714,11 +717,17 @@ void Main::setupAPI()
     c=new Command ("selectFirstBranch",Command::Branch); 
     modelCommands.append(c);
 
+    c=new Command ("selectFirstChildBranch",Command::Branch); 
+    modelCommands.append(c);
+
     c=new Command ("selectID",Command::Any); 
     c->addPar (Command::String,false,"Unique ID");
     modelCommands.append(c);
 
     c=new Command ("selectLastBranch",Command::Branch); 
+    modelCommands.append(c);
+
+    c=new Command ("selectLastChildBranch",Command::Branch); 
     modelCommands.append(c);
 
     c=new Command ("selectLastImage",Command::Branch); 

@@ -2032,7 +2032,6 @@ void MapEditor::dropEvent(QDropEvent *event)
     */
         if (event->mimeData()->hasUrls())
         {
-            //model->selectLastBranch();
             QList <QUrl> uris=event->mimeData()->urls();
             QString heading;
             BranchItem *bi;

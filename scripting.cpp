@@ -56,7 +56,19 @@ void VymModelWrapper::addBranch()
     BranchItem *selbi = getSelectedBranch();
     if (selbi)
     {
-        if (! model->addNewBranch() )
+        if (argumentCount() > 1 )
+        {
+            logError( context(), QScriptContext::SyntaxError, "Too many arguments");
+            return;
+        }
+
+        int pos = -2;
+        if (argumentCount() == 1 )
+        {
+            pos = argument(0).toInteger();
+        }
+
+        if (! model->addNewBranch( selbi, pos ) )
             logError( context(), QScriptContext::UnknownError, "Couldn't add branch to map");
     } 
 }
@@ -444,10 +456,9 @@ bool VymModelWrapper::hasActiveFlag( const QString &flag)
 {
     BranchItem *selbi = getSelectedBranch();
     if (selbi)
-    {
         return selbi->hasActiveStandardFlag( flag );
-    }
-    return false;
+    else
+        return false;
 }
 
 bool VymModelWrapper::hasNote()
@@ -654,6 +665,18 @@ bool VymModelWrapper::selectFirstBranch()
     return r;
 }
 
+bool VymModelWrapper::selectFirstChildBranch()
+{
+    bool r = false;
+    BranchItem *selbi = getSelectedBranch();
+    if (selbi)
+    {
+        r = model->selectFirstChildBranch();
+        if (!r) logError( context(), QScriptContext::UnknownError, "Couldn't select first child branch");
+    }
+    return r;
+}
+
 bool VymModelWrapper::selectLastBranch()
 {
     bool r = false;
@@ -666,6 +689,17 @@ bool VymModelWrapper::selectLastBranch()
     return r;
 }
 
+bool VymModelWrapper::selectLastChildBranch()
+{
+    bool r = false;
+    BranchItem *selbi = getSelectedBranch();
+    if (selbi)
+    {
+        r = model->selectLastChildBranch();
+        if (!r) logError( context(), QScriptContext::UnknownError, "Couldn't select last child branch");
+    }
+    return r;
+}
 bool VymModelWrapper::selectLastImage()
 {
     bool r = false;

@@ -112,7 +112,7 @@ class VymMap
                 a << p
               end
             end  
-            com = "vym.clearConsole(); vym.currentMap().#{c} (#{a.join(',')});"
+            com = "vym.clearConsole(); print( vym.currentMap().#{c} (#{a.join(',')}));"
             puts " ** Calling model: \"#{com}\":" if $debug
             ret = @map.execute( com )
           end  
