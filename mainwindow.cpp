@@ -5534,11 +5534,9 @@ QVariant Main::runScript (const QString &script)
     return QVariant(""); 
 }
 
-QObject* Main::getCurrentModelWrapper()  // FIXME-0  Don't create new, but reuse...
+QObject* Main::getCurrentModelWrapper() 
 {
     // Called from VymWrapper to find out current model in a script
-    //VymModelWrapper*  vymModelWrapper = new VymModelWrapper( currentModel() );
-    //return vymModelWrapper;
     VymModel *m = currentModel();
     if (m) 
         return m->getWrapper();

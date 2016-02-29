@@ -32,7 +32,6 @@ void VymWrapper::clearConsole()
 
 QObject* VymWrapper::currentMap()   
 {
-    qDebug()<<"VW::currentMap "<< mainWindow->getCurrentModelWrapper();
     return mainWindow->getCurrentModelWrapper();
 }
 
