@@ -860,7 +860,7 @@ void Main::setupAPI()
     c->addPar (Command::String,false,"Color of xlink");
     modelCommands.append(c);
 
-    c=new Command ("setXLinkLineStyle", Command::XLink); 
+    c=new Command ("setXLinkStyle", Command::XLink); 
     c->addPar (Command::String,false,"Style of xlink");
     modelCommands.append(c);
 
@@ -5495,8 +5495,9 @@ QVariant Main::runScript (const QString &script)
         scriptEngine.globalObject().setProperty( "print", scriptEngine.newFunction( scriptPrint ) );
 
         // Create Wrapper object for VymModel
-        VymModelWrapper vymModelWrapper( m );
-        QScriptValue val1 = scriptEngine.newQObject( &vymModelWrapper );
+        //VymModelWrapper vymModelWrapper( m );
+        //QScriptValue val1 = scriptEngine.newQObject( &vymModelWrapper );
+        QScriptValue val1 = scriptEngine.newQObject( m->getWrapper() );
         scriptEngine.globalObject().setProperty("model", val1);
 
         // Create Wrapper object for mainwindow
@@ -5514,16 +5515,35 @@ QVariant Main::runScript (const QString &script)
             scriptOutput->append( QString("uncaught exception at line %1: %2").arg(line).arg(result.toString()));
         }
         else
-            return QVariant(scriptOutput->text() );  
+            //if (!vymModelWrapper.lastResult().isNull() )
+            //{
+            //    qDebug()<<"MW  lastResult() = "<<vymModelWrapper.lastResult();
+            //    return vymModelWrapper.lastResult();
+            //}
+            if (! m->getWrapper()->lastResult().isNull() )
+            {
+                qDebug()<<"MW  lastResult() = "<<m->getWrapper()->lastResult();
+                return m->getWrapper()->lastResult();
+            }
+            else
+            {
+                qDebug()<<"MW  lastResult() = null";
+                return scriptOutput->text();
+            }
     }
     return QVariant(""); 
 }
 
-QObject* Main::getCurrentModelWrapper()  
+QObject* Main::getCurrentModelWrapper()  // FIXME-0  Don't create new, but reuse...
 {
     // Called from VymWrapper to find out current model in a script
-    VymModelWrapper*  vymModelWrapper = new VymModelWrapper( currentModel() );
-    return vymModelWrapper;
+    //VymModelWrapper*  vymModelWrapper = new VymModelWrapper( currentModel() );
+    //return vymModelWrapper;
+    VymModel *m = currentModel();
+    if (m) 
+        return m->getWrapper();
+    else
+        return NULL;
 }
 
 bool Main::gotoWindow (const int &n)

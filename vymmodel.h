@@ -17,6 +17,7 @@
 #include "parser.h"
 #include "treeitem.h"
 #include "treemodel.h"
+#include "vymmodelwrapper.h"
 
 class AttributeItem;
 class BranchItem;
@@ -49,6 +50,7 @@ private:
 
     static uint idLast;	    //! the last used unique ID
     uint modelID;
+    VymModelWrapper *wrapper;
 
 public:
     VymModel();
@@ -59,6 +61,7 @@ public:
 
     MapEditor* getMapEditor();		
     uint getModelID();			//! Return unique ID of model
+    VymModelWrapper* getWrapper();
 
     void setView (VymView*);	    //! Set vymView for resizing editors after load
 private:
@@ -388,7 +391,7 @@ public:
     bool createLink(Link *l);	//!< Create XLink, will create MO automatically if needed 
     QColor getXLinkColor();
     int getXLinkWidth();
-    Qt::PenStyle getXLinkPenStyle();
+    Qt::PenStyle getXLinkStyle();
     QString getXLinkStyleBegin();
     QString getXLinkStyleEnd();
 
@@ -498,7 +501,7 @@ public:
     void followXLink (int);
     void editXLink ();
     void setXLinkColor(const QString &);
-    void setXLinkLineStyle(const QString &);
+    void setXLinkStyle(const QString &);
     void setXLinkStyleBegin(const QString &);
     void setXLinkStyleEnd(const QString &);
     void setXLinkWidth(int);

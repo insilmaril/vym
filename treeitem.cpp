@@ -396,7 +396,7 @@ QColor TreeItem::getBackgroundColor()
 
 void TreeItem::setURL (const QString &u)
 {
-    url=u;
+    url = u;
     if (!url.isEmpty())
     {
 	if (url.contains ("bugzilla.novell.com"))

@@ -100,7 +100,7 @@ void EditXLinkDialog::lineStyleChanged (int i)
 	    case 4: style = "Qt::DashDotDotLine"; break;
 	    default: style = "Qt::NoPen";
 	}
-        link->getModel()->setXLinkLineStyle( style );
+        link->getModel()->setXLinkStyle( style );
     }
 }
 

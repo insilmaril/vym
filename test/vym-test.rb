@@ -122,7 +122,7 @@ def test_basics (vym)
   map.select @main_a
   expect "select mainbranch A", map.getSelectString, @main_a
   expect "getHeadingPlainText", map.getHeadingPlainText, "Main A"
-  expect "branchCount", map.branchCount.to_i, 3
+  expect "branchCount", map.branchCount, 3
 
   map.selectLastBranch
   expect "selectLastBranch", map.getHeadingPlainText, "Main B"
@@ -583,12 +583,15 @@ def test_references (vym)
   heading "References"
   map = init_map( vym )
   map.select @main_a
-  map.setURL "www.insilmaril.de"
-  expect "setURL:", map.getURL, "www.insilmaril.de"
+  url = "www.insilmaril.de"
+  map.setURL url
+  expect "setURL to '#{url}'", map.getURL, url
+
   map.undo
+  puts "url='#{map.getURL}'"
   expect "undo setURL", map.getURL, ""
   map.redo
-  expect "redo setURL", map.getURL, "www.insilmaril.de"
+  expect "redo setURL", map.getURL, url
   map.setURL ""
   expect "setURL: unset URL with empty string", map.getURL, ""
   
@@ -624,9 +627,9 @@ def test_history (vym)
   expect "Redo yet again", map.getHeadingPlainText, "C"
   map.setHeadingPlainText "Main A"
   map.paste
-  map.selectLastBranch
+  map.selectLastChildBranch
   expect "Paste from the past", map.getHeadingPlainText, "A"
-  map.delete
+  map.remove
 end  
 
 #######################
@@ -636,22 +639,22 @@ def test_xlinks (vym)
   map.addXLink("mc:0,bo:0","mc:0,bo:1",2,"#ff0000","Qt::DashDotLine")
   map.selectLatestAdded
   expect "Default color of XLink", map.getXLinkColor, "#ff0000"
-  expect "Default width of XLink", map.getXLinkWidth, 2
+  expect "Default width of XLink", map.getXLinkWidth.to_i, 2
   expect "Default style of XLink", map.getXLinkPenStyle, "Qt::DashDotLine"
   expect "Default style of XLink begin", map.getXLinkStyleBegin, "HeadFull"
   expect "Default style of XLink end",   map.getXLinkStyleEnd, "HeadFull"
 
   map.setXLinkWidth(3)
-  expect "New width of XLink", map.getXLinkWidth, 3
+  expect "New width of XLink", map.getXLinkWidth.to_i, 3
   map.undo
-  expect "Undo width of XLink", map.getXLinkWidth, 2
+  expect "Undo width of XLink", map.getXLinkWidth.to_i, 2
 
   map.setXLinkColor("#00ff00")
   expect "New color of XLink", map.getXLinkColor, "#00ff00"
   map.undo
   expect "Undo color of XLink", map.getXLinkColor, "#ff0000"
 
-  map.setXLinkLineStyle("Qt::SolidLine")
+  map.setXLinkStyle("Qt::SolidLine")
   expect "New style of XLink", map.getXLinkPenStyle, "Qt::SolidLine"
   map.undo
   expect "Undo style of XLink", map.getXLinkPenStyle, "Qt::DashDotLine"
@@ -666,7 +669,7 @@ def test_xlinks (vym)
   map.undo
   expect "Undo style of XLink end", map.getXLinkStyleEnd, "HeadFull"
 
-  map.delete
+  map.remove
 end
 
 #######################
@@ -674,17 +677,17 @@ def test_tasks (vym)
   heading "Tasks:"
   map = init_map( vym )
   map.select @main_a
-  expect "Branch has no task before test", map.hasTask, false
+  expect "Branch has no task before test", map.hasTask, "false"
   map.toggleTask
-  expect "Toggle task", map.hasTask, true
-  expect "Setting sleep days to 10", map.setTaskSleep(10), true
-  expect "Task sleep when setting to integer", map.getTaskSleepDays, 10
+  expect "Toggle task", map.hasTask, "true"
+  expect "Setting sleep days to 10", map.setTaskSleep(10), "true"
+  expect "Task sleep when setting to integer", map.getTaskSleepDays.to_i, 10
 
   date_today = DateTime.now
   date_later = date_today + 123
   date_s = date_later.strftime("%Y-%m-%d") 
   map.setTaskSleep(date_s)
-  expect "Task sleep when setting to ISO date (#{date_s})", map.getTaskSleepDays, 123
+  expect "Task sleep when setting to ISO date (#{date_s})", map.getTaskSleepDays.to_i, 123
 end
 
 ######################
@@ -713,11 +716,11 @@ def test_notes (vym)
   # Plaintext notes copy & paste
   map.copy
   map.paste
-  map.selectLastBranch
+  map.selectLastChildBranch
   s=map.getSelectString
   expect "After copy& paste: New note unchanged?", map.getNotePlainText, note_plain
   expect "After copy& paste: New note Still plaintext?", map.hasRichTextNote, false
-  map.delete
+  map.remove
 
   # Plaintext notes undo & redo
   map.select @main_a
@@ -732,24 +735,24 @@ def test_notes (vym)
   note_org = IO.read('test/note-plain.txt')
   map.loadNote("test/note-plain.txt") 
   expect "Load plain text note from file. Still plaintext?", map.hasRichTextNote, false
-  expect "Note contains 'not bold'", map.getNotePlainText.include?("not bold"), true
+  expect "Note contains 'not bold'", map.getNotePlainText.include?("not bold"), "true"
   filepath = "#{@testdir}/save-note.txt"
   map.saveNote(filepath)
-  expect "Save note to file. Check if it contains 'textMode=\"plainText\"'", IO.read(filepath).include?("textMode=\"plainText\""), true
-  expect "Save note to file. Check if it contains 'not bold'", IO.read(filepath).include?("not bold"), true
-  expect "Save note to file. Check if it contains '<b>' element", IO.read(filepath).include?("<b>"), true
-  expect "Save note to file. Check if it contains '<![CDATA['", IO.read(filepath).include?("<![CDATA["), true
+  expect "Save note to file. Check if it contains 'textMode=\"plainText\"'", IO.read(filepath).include?("textMode=\"plainText\""), "true"
+  expect "Save note to file. Check if it contains 'not bold'", IO.read(filepath).include?("not bold"), "true"
+  expect "Save note to file. Check if it contains '<b>' element", IO.read(filepath).include?("<b>"), "true"
+  expect "Save note to file. Check if it contains '<![CDATA['", IO.read(filepath).include?("<![CDATA["), "true"
   
   # Delete note
   map.setNotePlainText("")
-  expect "setNotePlainText(\"\") deletes note", map.hasNote, false
+  expect "setNotePlainText(\"\") deletes note", map.hasNote, "false"
   
   # RichText basic actions
   map = init_map( vym )
   map.select @main_a
   rt_note = '<vymnote  textMode="richText"><![CDATA[<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd"> <html><head><meta name="qrichtext" content="1" /><style type="text/css"> p, li { white-space: pre-wrap; } </style></head><body style=" font-family:\'Arial\'; font-size:12pt; font-weight:400; font-style:normal;"> <p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-family:\'DejaVu Sans Mono\'; color:#000000;">Rich Text note with <b>not bold text</b></span></p></body></html>]]></vymnote>'
   map.parseVymText(rt_note)
-  expect "parseVymText of richText note produces note", map.hasNote, true
+  expect "parseVymText of richText note produces note", map.hasNote, "true"
   expect "parseVymText of richText note produces richText note", map.hasRichTextNote, true
   map.select @center_0
   map.select @main_a
@@ -764,7 +767,7 @@ def test_notes (vym)
   s=map.getSelectString
   expect "After copy& paste: New note Still RichText?", map.hasRichTextNote, true
   expect "After copy& paste: New note unchanged?", map.getNoteXML, rt_note
-  map.delete
+  map.remove
 
   # RichText notes undo & redo
   map.select @main_a
@@ -780,14 +783,14 @@ def test_notes (vym)
   expect "Load HTML note from file and try to detect textMode. Is RichText?", map.hasRichTextNote, true
   filepath = "#{@testdir}/save-note.txt"
   map.saveNote(filepath)
-  expect "Save note to file. Check if it contains 'textMode=\"richText\"'", IO.read(filepath).include?("textMode=\"richText\""), true
-  expect "Save note to file. Check if it contains 'bold'", IO.read(filepath).include?("bold"), true
-  expect "Save note to file. Check if it contains '<b>' element", IO.read(filepath).include?("<b>"), true
-  expect "Save note to file. Check if it contains '<![CDATA['", IO.read(filepath).include?("<![CDATA["), true
+  expect "Save note to file. Check if it contains 'textMode=\"richText\"'", IO.read(filepath).include?("textMode=\"richText\""), "true"
+  expect "Save note to file. Check if it contains 'bold'", IO.read(filepath).include?("bold"), "true"
+  expect "Save note to file. Check if it contains '<b>' element", IO.read(filepath).include?("<b>"), "true"
+  expect "Save note to file. Check if it contains '<![CDATA['", IO.read(filepath).include?("<![CDATA["), "true"
   
   # Delete note
   map.setNotePlainText("")
-  expect "setNotePlainText(\"\") deletes note", map.hasNote, false
+  expect "setNotePlainText(\"\") deletes note", map.hasNote, "false"
 
   # Compatibility with version < 2.5.0  # FIXME missing
 end
@@ -806,8 +809,8 @@ def test_bugfixes (vym)
 end
 
 #######################
-#test_vym(vym)
-#test_basics(vym)
+test_vym(vym)
+test_basics(vym)
 #test_export(vym)
 #test_extrainfo(vym)
 #test_adding_branches(vym)
@@ -817,11 +820,11 @@ end
 #test_modify_branches(vym)
 #test_flags(vym)
 #test_delete_parts(vym)
-test_copy_paste(vym)
-test_references(vym)
-test_history(vym)
-test_xlinks(vym)
-test_tasks(vym)
+#test_copy_paste(vym)
+#test_references(vym)
+#test_history(vym)
+#test_xlinks(vym)
+#test_tasks(vym)
 test_notes(vym)
 test_headings(vym)
 test_bugfixes(vym)

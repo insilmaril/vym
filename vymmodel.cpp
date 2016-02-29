@@ -91,6 +91,8 @@ VymModel::VymModel()
     //qDebug()<< "Const VymModel";
     init();
     rootItem->setModel (this);
+    wrapper = new VymModelWrapper(this);
+    qDebug()<<"VM constr. wrapper="<<wrapper;
 }
 
 VymModel::~VymModel() 
@@ -104,6 +106,8 @@ VymModel::~VymModel()
 
     //qApp->processEvents();	// Update view (scene()->update() is not enough)
     //qDebug() << "Destr VymModel end   this="<<this;
+
+    delete (wrapper);
 }   
 
 void VymModel::clear() 
@@ -215,6 +219,11 @@ void VymModel::makeTmpDirectories()
 MapEditor* VymModel::getMapEditor() 
 {
     return mapEditor;
+}
+
+VymModelWrapper* VymModel::getWrapper()
+{
+    return wrapper;
 }
 
 bool VymModel::isRepositionBlocked()
@@ -1957,11 +1966,11 @@ void VymModel::findReset()
 
 void VymModel::setURL(QString url) 
 {
-    TreeItem *selti=getSelectedItem();
-    if (selti->getURL()==url) return;
+    TreeItem *selti = getSelectedItem();
+    if (selti->getURL() == url) return;
     if (selti)
     {
-	QString oldurl=selti->getURL();
+	QString oldurl = selti->getURL();
 	selti->setURL (url);
 	saveState (
 	    selti,
@@ -1979,7 +1988,7 @@ void VymModel::setURL(QString url)
 
 QString VymModel::getURL()  
 {
-    TreeItem *selti=getSelectedItem();
+    TreeItem *selti = getSelectedItem();
     if (selti)
 	return selti->getURL();
     else    
@@ -2712,16 +2721,16 @@ QColor VymModel::getXLinkColor()
 
 int VymModel::getXLinkWidth()
 {
-    Link *l=getSelectedXLink();
+    Link *l = getSelectedXLink();
     if (l)
 	return l->getPen().width();
     else
 	return -1;
 }
 
-Qt::PenStyle VymModel::getXLinkPenStyle()
+Qt::PenStyle VymModel::getXLinkStyle()
 {
-    Link *l=getSelectedXLink();
+    Link *l = getSelectedXLink();
     if (l)
 	return l->getPen().style();
     else
@@ -3900,7 +3909,7 @@ void VymModel::setXLinkColor(const QString &new_col)
     }   
 }
 
-void VymModel::setXLinkLineStyle(const QString &new_style)
+void VymModel::setXLinkStyle(const QString &new_style)
 {
     Link *l = getSelectedXLink();
     if (l) 
@@ -3913,9 +3922,9 @@ void VymModel::setXLinkLineStyle(const QString &new_style)
         l->setPen( pen );
         saveState(
                 l->getBeginLinkItem(),
-                QString("setXLinkLineStyle(\"%1\")").arg(old_style),
+                QString("setXLinkStyle(\"%1\")").arg(old_style),
                 l->getBeginLinkItem(),
-                QString("setXLinkLineStyle(\"%1\")").arg(new_style),
+                QString("setXLinkStyle(\"%1\")").arg(new_style),
                 QString("set style of xlink to %1").arg(new_style) );
     }   
 }
@@ -3979,7 +3988,7 @@ void VymModel::setXLinkWidth(int new_width)
 
 QVariant VymModel::execute (const QString &script)  // FIXME-0 still required??? (undo/redo and?)
 {
-    // qDebug()<<"VM::execute called: "<<script;
+    qDebug()<<"VM::execute called: "<<script;
     return mainWindow->runScript( script);
     /*
     // Create Wrapper object for VymModel

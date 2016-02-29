@@ -135,6 +135,7 @@ HEADERS	+= \
     texteditor.h \
     version.h \
     vymmodel.h \
+    vymmodelwrapper.h \
     vymnote.h \
     vymtext.h \
     vymview.h \
@@ -227,6 +228,7 @@ SOURCES	+= \
     treemodel.cpp \
     version.cpp \
     vymmodel.cpp \
+    vymmodelwrapper.cpp \
     vymnote.cpp \
     vymtext.cpp \
     vymview.cpp \
