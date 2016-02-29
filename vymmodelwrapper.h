@@ -18,7 +18,6 @@ class VymModelWrapper : public QObject, protected QScriptable
     Q_OBJECT
 public:
     VymModelWrapper (VymModel* m);
-    ~VymModelWrapper ();
     QVariant lastResult();
 
 private:

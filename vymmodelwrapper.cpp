@@ -14,17 +14,10 @@
 VymModelWrapper::VymModelWrapper(VymModel *m)
 {
     model = m;
-    qDebug()<<"VMW::constr m="<<m;
-}
-
-VymModelWrapper::~VymModelWrapper()
-{
-    qDebug()<<"VMW::deststr m="<<model;
 }
 
 QVariant VymModelWrapper::lastResult()
 {
-    qDebug()<<"VMW::lastresult="<<result;
     return result;
 }
 
