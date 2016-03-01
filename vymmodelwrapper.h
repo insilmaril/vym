@@ -82,7 +82,7 @@ public slots:
     void moveSlideUp();
     void nop();
     void note2URLs();
-    void parseVymText(const QString &text);
+    bool parseVymText(const QString &text);
     void paste();
     void redo();
     bool relinkTo( const QString &parent, int num, qreal x, qreal y);

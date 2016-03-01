@@ -98,7 +98,7 @@ class VymMap
         self.class.send(:define_method, c) do |*pars|
           if pars.length == 0
             # No parameters
-            com = "vym.clearConsole(); print( vym.currentMap().#{c}() );"
+            com = "vym.currentMap().#{c}();"
             puts " * Calling model: \"#{com}\":" if $debug
             ret = @map.execute( com )
           else  
@@ -112,7 +112,8 @@ class VymMap
                 a << p
               end
             end  
-            com = "vym.clearConsole(); print( vym.currentMap().#{c} (#{a.join(',')}));"
+            # com = "vym.clearConsole(); print( vym.currentMap().#{c} (#{a.join(',')}));"
+            com = " vym.currentMap().#{c} (#{a.join(',')});"
             puts " ** Calling model: \"#{com}\":" if $debug
             ret = @map.execute( com )
           end  

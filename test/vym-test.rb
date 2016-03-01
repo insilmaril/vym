@@ -334,13 +334,13 @@ def test_scrolling (vym)
   map = init_map( vym )
   map.select @main_a
   map.toggleScroll
-  expect "toggleScroll", map.isScrolled, "true"
+  expect "toggleScroll", map.isScrolled, true
   map.undo
-  expect "undo toggleScroll", map.isScrolled, "false"
+  expect "undo toggleScroll", map.isScrolled, false
   map.scroll
-  expect "scroll", map.isScrolled, "true"
+  expect "scroll", map.isScrolled, true
   map.unscroll
-  expect "unscroll", map.isScrolled, "false"
+  expect "unscroll", map.isScrolled, false
 
   map = init_map( vym )
   map.scroll
@@ -349,9 +349,9 @@ def test_scrolling (vym)
   map.select @main_a
   map.unscrollChildren
   map.select @branch_a
-  expect "unscrollChildren", map.isScrolled, "false"
+  expect "unscrollChildren", map.isScrolled, false
   map.undo
-  expect "undo unscrollChildren", map.isScrolled, "true"
+  expect "undo unscrollChildren", map.isScrolled, true
   map.unscroll
   map.select @branch_a
   map.unscroll
@@ -436,14 +436,14 @@ def test_flags (vym)
   def set_flags (map, flags)
     flags.each do |f|
       map.setFlag( f )
-      expect "Flag set: #{f}", map.hasActiveFlag( f ), "true"
+      expect "Flag set: #{f}", map.hasActiveFlag( f ), true
     end
   end
   
   def unset_flags (map, flags)
     flags.each do |f|
       map.unsetFlag( f )
-      expect "Flag unset: #{f}", map.hasActiveFlag( f ), "false"
+      expect "Flag unset: #{f}", map.hasActiveFlag( f ), false
     end
   end
   
@@ -485,13 +485,13 @@ def test_flags (vym)
   unset_flags( map, smileys )
   
   map.clearFlags
-  expect "clearFlags cleared exclamationmark", map.hasActiveFlag( "exclamationmark" ), "false"
-  expect "clearFlags cleared smiley-good", map.hasActiveFlag( "smiley-good" ), "false"
+  expect "clearFlags cleared exclamationmark", map.hasActiveFlag( "exclamationmark" ), false
+  expect "clearFlags cleared smiley-good", map.hasActiveFlag( "smiley-good" ), false
   
   map.toggleFlag "lifebelt"
-  expect "toggleFlag: flag activated", map.hasActiveFlag("lifebelt"), "true"
+  expect "toggleFlag: flag activated", map.hasActiveFlag("lifebelt"), true
   map.toggleFlag "lifebelt"
-  expect "toggleFlag: flag deactivated", map.hasActiveFlag("lifebelt"), "false"
+  expect "toggleFlag: flag deactivated", map.hasActiveFlag("lifebelt"), false
 end
 
 #######################
@@ -677,10 +677,10 @@ def test_tasks (vym)
   heading "Tasks:"
   map = init_map( vym )
   map.select @main_a
-  expect "Branch has no task before test", map.hasTask, "false"
+  expect "Branch has no task before test", map.hasTask, false
   map.toggleTask
-  expect "Toggle task", map.hasTask, "true"
-  expect "Setting sleep days to 10", map.setTaskSleep(10), "true"
+  expect "Toggle task", map.hasTask, true
+  expect "Setting sleep days to 10", map.setTaskSleep(10), true
   expect "Task sleep when setting to integer", map.getTaskSleepDays.to_i, 10
 
   date_today = DateTime.now
@@ -735,24 +735,24 @@ def test_notes (vym)
   note_org = IO.read('test/note-plain.txt')
   map.loadNote("test/note-plain.txt") 
   expect "Load plain text note from file. Still plaintext?", map.hasRichTextNote, false
-  expect "Note contains 'not bold'", map.getNotePlainText.include?("not bold"), "true"
+  expect "Note contains 'not bold'", map.getNotePlainText.include?("not bold"), true
   filepath = "#{@testdir}/save-note.txt"
   map.saveNote(filepath)
-  expect "Save note to file. Check if it contains 'textMode=\"plainText\"'", IO.read(filepath).include?("textMode=\"plainText\""), "true"
-  expect "Save note to file. Check if it contains 'not bold'", IO.read(filepath).include?("not bold"), "true"
-  expect "Save note to file. Check if it contains '<b>' element", IO.read(filepath).include?("<b>"), "true"
-  expect "Save note to file. Check if it contains '<![CDATA['", IO.read(filepath).include?("<![CDATA["), "true"
+  expect "Save note to file. Check if it contains 'textMode=\"plainText\"'", IO.read(filepath).include?("textMode=\"plainText\""), true
+  expect "Save note to file. Check if it contains 'not bold'", IO.read(filepath).include?("not bold"), true
+  expect "Save note to file. Check if it contains '<b>' element", IO.read(filepath).include?("<b>"), true
+  expect "Save note to file. Check if it contains '<![CDATA['", IO.read(filepath).include?("<![CDATA["), true
   
   # Delete note
   map.setNotePlainText("")
-  expect "setNotePlainText(\"\") deletes note", map.hasNote, "false"
+  expect "setNotePlainText(\"\") deletes note", map.hasNote, false
   
   # RichText basic actions
   map = init_map( vym )
   map.select @main_a
-  rt_note = '<vymnote  textMode="richText"><![CDATA[<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd"> <html><head><meta name="qrichtext" content="1" /><style type="text/css"> p, li { white-space: pre-wrap; } </style></head><body style=" font-family:\'Arial\'; font-size:12pt; font-weight:400; font-style:normal;"> <p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-family:\'DejaVu Sans Mono\'; color:#000000;">Rich Text note with <b>not bold text</b></span></p></body></html>]]></vymnote>'
+  rt_note = '<vymnote  textMode="richText"><![CDATA[<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd"> <html><head><meta name="qrichtext" content="1" /><style type="text/css"> p, li { white-space: pre-wrap; } </style></head><body style=" font-family:"Arial"; font-size:12pt; font-weight:400; font-style:normal;"> <p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-family:"DejaVu Sans Mono"; color:#000000;">Rich Text note with <b>not bold text</b></span></p></body></html>]]></vymnote>'
   map.parseVymText(rt_note)
-  expect "parseVymText of richText note produces note", map.hasNote, "true"
+  expect "parseVymText of richText note produces note", map.hasNote, true
   expect "parseVymText of richText note produces richText note", map.hasRichTextNote, true
   map.select @center_0
   map.select @main_a
@@ -763,10 +763,10 @@ def test_notes (vym)
   rt_note = map.getNoteXML  
   map.copy
   map.paste
-  map.selectLastBranch
-  s=map.getSelectString
-  expect "After copy& paste: New note Still RichText?", map.hasRichTextNote, true
-  expect "After copy& paste: New note unchanged?", map.getNoteXML, rt_note
+  map.selectLastChildBranch
+  s = map.getSelectString
+  expect "After copy & paste: New note Still RichText?", map.hasRichTextNote, true
+  expect "After copy & paste: New note unchanged?", map.getNoteXML, rt_note
   map.remove
 
   # RichText notes undo & redo
@@ -783,14 +783,14 @@ def test_notes (vym)
   expect "Load HTML note from file and try to detect textMode. Is RichText?", map.hasRichTextNote, true
   filepath = "#{@testdir}/save-note.txt"
   map.saveNote(filepath)
-  expect "Save note to file. Check if it contains 'textMode=\"richText\"'", IO.read(filepath).include?("textMode=\"richText\""), "true"
-  expect "Save note to file. Check if it contains 'bold'", IO.read(filepath).include?("bold"), "true"
-  expect "Save note to file. Check if it contains '<b>' element", IO.read(filepath).include?("<b>"), "true"
-  expect "Save note to file. Check if it contains '<![CDATA['", IO.read(filepath).include?("<![CDATA["), "true"
+  expect "Save note to file. Check if it contains 'textMode=\"richText\"'", IO.read(filepath).include?("textMode=\"richText\""), true
+  expect "Save note to file. Check if it contains 'bold'", IO.read(filepath).include?("bold"), true
+  expect "Save note to file. Check if it contains '<b>' element", IO.read(filepath).include?("<b>"), true
+  expect "Save note to file. Check if it contains '<![CDATA['", IO.read(filepath).include?("<![CDATA["), true
   
   # Delete note
   map.setNotePlainText("")
-  expect "setNotePlainText(\"\") deletes note", map.hasNote, "false"
+  expect "setNotePlainText(\"\") deletes note", map.hasNote, false
 
   # Compatibility with version < 2.5.0  # FIXME missing
 end
@@ -810,7 +810,7 @@ end
 
 #######################
 test_vym(vym)
-test_basics(vym)
+#test_basics(vym)
 #test_export(vym)
 #test_extrainfo(vym)
 #test_adding_branches(vym)
@@ -821,10 +821,10 @@ test_basics(vym)
 #test_flags(vym)
 #test_delete_parts(vym)
 #test_copy_paste(vym)
-#test_references(vym)
-#test_history(vym)
-#test_xlinks(vym)
-#test_tasks(vym)
+test_references(vym)
+test_history(vym)
+test_xlinks(vym)
+test_tasks(vym)
 test_notes(vym)
 test_headings(vym)
 test_bugfixes(vym)

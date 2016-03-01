@@ -5495,8 +5495,6 @@ QVariant Main::runScript (const QString &script)
         scriptEngine.globalObject().setProperty( "print", scriptEngine.newFunction( scriptPrint ) );
 
         // Create Wrapper object for VymModel
-        //VymModelWrapper vymModelWrapper( m );
-        //QScriptValue val1 = scriptEngine.newQObject( &vymModelWrapper );
         QScriptValue val1 = scriptEngine.newQObject( m->getWrapper() );
         scriptEngine.globalObject().setProperty("model", val1);
 
@@ -5505,9 +5503,6 @@ QVariant Main::runScript (const QString &script)
         QScriptValue val2 = scriptEngine.newQObject( &vymWrapper );
         scriptEngine.globalObject().setProperty("vym", val2);
 
-        //QScriptValue modelVal = scriptEngine.newQObject(m);
-        //scriptEngine.globalObject().setProperty("model", modelVal);
-
         QScriptValue result = scriptEngine.evaluate(script);
 
         if (scriptEngine.hasUncaughtException()) {
@@ -5515,21 +5510,10 @@ QVariant Main::runScript (const QString &script)
             scriptOutput->append( QString("uncaught exception at line %1: %2").arg(line).arg(result.toString()));
         }
         else
-            //if (!vymModelWrapper.lastResult().isNull() )
-            //{
-            //    qDebug()<<"MW  lastResult() = "<<vymModelWrapper.lastResult();
-            //    return vymModelWrapper.lastResult();
-            //}
             if (! m->getWrapper()->lastResult().isNull() )
-            {
-                qDebug()<<"MW  lastResult() = "<<m->getWrapper()->lastResult();
                 return m->getWrapper()->lastResult();
-            }
             else
-            {
-                qDebug()<<"MW  lastResult() = null";
                 return scriptOutput->text();
-            }
     }
     return QVariant(""); 
 }
