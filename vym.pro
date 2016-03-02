@@ -114,7 +114,6 @@ HEADERS	+= \
     noteeditor.h \
     options.h \
     ornamentedobj.h \
-    parser.h \
     scripteditor.h\
     scripting.h \
     scriptoutput.h \
@@ -207,7 +206,6 @@ SOURCES	+= \
     noteeditor.cpp \
     options.cpp \
     ornamentedobj.cpp \
-    parser.cpp \
     scripteditor.cpp \
     scriptoutput.cpp \
     scripting.cpp \
@@ -285,7 +283,7 @@ support.files = styles/ scripts/ icons/ flags/ macros/ exports/ demos/
 support.path = $${DATADIR}/vym
 INSTALLS += support 
 
-doc.files = doc/vym.pdf
-doc.path = $${DOCDIR}
-INSTALLS += doc
-DEFINES += VYM_DOCDIR=\\\"$${DOCDIR}\\\"
+# doc.files = doc/vym.pdf
+# doc.path = $${DOCDIR}
+# INSTALLS += doc
+# DEFINES += VYM_DOCDIR=\\\"$${DOCDIR}\\\"
