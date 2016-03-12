@@ -465,43 +465,43 @@ File::ErrorCode VymModel::loadMap (
     const int &contentFilter,
     int pos)
 {
-    File::ErrorCode err=File::Success;
+    File::ErrorCode err = File::Success;
 
     // Get updated zoomFactor, before applying one read from file in the end
     if (mapEditor) 
     {
-	zoomFactor=mapEditor->getZoomFactorTarget();	
-	rotationAngle=mapEditor->getAngleTarget();
+	zoomFactor = mapEditor->getZoomFactorTarget();	
+	rotationAngle = mapEditor->getAngleTarget();
     }
 
     parseBaseHandler *handler;
-    fileType=ftype;
+    fileType = ftype;
     switch (fileType)
     {
 	case VymMap: 
-	    handler=new parseVYMHandler; 
+	    handler = new parseVYMHandler; 
 	    ((parseVYMHandler*)handler)->setContentFilter (contentFilter);
 	    break;
-	case FreemindMap : handler=new parseFreemindHandler; break;
+	case FreemindMap: handler = new parseFreemindHandler; break;
 	default: 
 	    QMessageBox::critical( 0, tr( "Critical Parse Error" ),
 		   "Unknown FileType in VymModel::load()");
 	return File::Aborted;	
     }
 
-    bool zipped_org=zipped;
+    bool zipped_org = zipped;
 
-    if (lmode==NewMap)
+    if (lmode == NewMap)
     {
 	// Reset timestamp to check for later updates of file
-	fileChangedTime=QFileInfo (destPath).lastModified();
+	fileChangedTime = QFileInfo (destPath).lastModified();
 
 	selModel->clearSelection();
     } 
 
     // Create temporary directory for packing
     bool ok;
-    QString tmpZipDir=makeTmpDir (ok,"vym-pack");
+    QString tmpZipDir = makeTmpDir (ok,"vym-pack");
     if (!ok)
     {
 	QMessageBox::critical( 0, tr( "Critical Load Error" ),
@@ -514,20 +514,20 @@ File::ErrorCode VymModel::loadMap (
     else
     {
         // Try to unzip file
-        err=unzipDir (tmpZipDir,fname);
+        err = unzipDir (tmpZipDir,fname);
     }
     QString xmlfile;
-    if (err==File::NoZip)
+    if (err == File::NoZip)
     {
-	xmlfile=fname;
-	zipped=false;
+	xmlfile = fname;
+	zipped  = false;
     } else
     {
-	zipped=true;
+	zipped = true;
 	
 	// Look for mapname.xml
-	xmlfile= fname.left(fname.lastIndexOf(".",-1,Qt::CaseSensitive));
-	xmlfile=xmlfile.section( '/', -1 );
+	xmlfile = fname.left(fname.lastIndexOf(".", -1, Qt::CaseSensitive));
+	xmlfile = xmlfile.section( '/', -1 );
 	QFile mfile( tmpZipDir + "/" + xmlfile + ".xml");
 	if (!mfile.exists() )
 	{
@@ -536,19 +536,19 @@ File::ErrorCode VymModel::loadMap (
 	    // Try to find any .xml in the toplevel 
 	    // directory of the .vym file
 	    QStringList filters;
-	    filters<<"*.xml";
-	    QStringList flist=QDir (tmpZipDir).entryList(filters);
-	    if (flist.count()==1) 
+	    filters << "*.xml";
+	    QStringList flist = QDir (tmpZipDir).entryList(filters);
+	    if (flist.count() == 1) 
 	    {
 		// Only one entry, take this one
-                xmlfile=tmpZipDir + "/"+flist.first();
+                xmlfile = tmpZipDir + "/" + flist.first();
         } else
         {
             for ( QStringList::Iterator it = flist.begin(); it != flist.end(); ++it )
-                *it=tmpZipDir + "/" + *it;
+                *it = tmpZipDir + "/" + *it;
             // FIXME-4 Multiple entries, load all (but only the first one into this ME)
             //mainWindow->fileLoadFromTmp (flist);
-            //returnCode=1;	// Silently forget this attempt to load
+            //returnCode = 1;	// Silently forget this attempt to load
             qWarning ("MainWindow::load (fn)  multimap found...");
         }
 
@@ -560,7 +560,7 @@ File::ErrorCode VymModel::loadMap (
         }
 	} //file doesn't exist	
 	else
-	    xmlfile=mfile.fileName();
+	    xmlfile = mfile.fileName();
     }
 
     QFile file( xmlfile);
@@ -571,12 +571,12 @@ File::ErrorCode VymModel::loadMap (
     {
 	QMessageBox::critical( 0, tr( "Critical Parse Error" ),
 		   tr(QString("Couldn't open map %1").arg(file.fileName()).toUtf8()));
-	err=File::Aborted;	
+	err = File::Aborted;	
     } else
     {
-	bool blockSaveStateOrg=blockSaveState;
-	blockReposition=true;
-	blockSaveState=true;
+	bool blockSaveStateOrg = blockSaveState;
+	blockReposition = true;
+	blockSaveState  = true;
 	mapEditor->setViewportUpdateMode (QGraphicsView::NoViewportUpdate);
 	QXmlInputSource source( &file);
 	QXmlSimpleReader reader;
@@ -587,28 +587,28 @@ File::ErrorCode VymModel::loadMap (
 	// We need to set the tmpDir in order  to load files with rel. path
 	QString tmpdir;
 	if (zipped)
-	    tmpdir=tmpZipDir;
+	    tmpdir = tmpZipDir;
 	else
-	    tmpdir=fname.left(fname.lastIndexOf("/",-1));	
+	    tmpdir = fname.left(fname.lastIndexOf("/", -1));	
 	handler->setTmpDir (tmpdir);
 	handler->setInputFile (file.fileName());
-	if (lmode==ImportReplace)
-	    handler->setLoadMode (ImportReplace,pos);
+	if (lmode == ImportReplace)
+	    handler->setLoadMode (ImportReplace, pos);
 	else	
 	    handler->setLoadMode (lmode,pos);
 
 	bool ok = reader.parse( source );
-	blockReposition=false;
-	blockSaveState=blockSaveStateOrg;
+	blockReposition = false;
+	blockSaveState  = blockSaveStateOrg;
 	mapEditor->setViewportUpdateMode (QGraphicsView::MinimalViewportUpdate);
 	file.close();
 	if ( ok ) 
 	{
-	    if (lmode==NewMap)
+	    if (lmode == NewMap)
 	    {
-		mapDefault=false;
-		mapChanged=false;
-		mapUnsaved=false;
+		mapDefault = false;
+		mapChanged = false;
+		mapUnsaved = false;
 		autosaveTimer->stop();
 
 		resetHistory();
@@ -634,11 +634,11 @@ File::ErrorCode VymModel::loadMap (
     removeDir (QDir(tmpZipDir));
 
     // Restore original zip state
-    zipped=zipped_org;
+    zipped = zipped_org;
 
     updateActions();
     
-    if (lmode!=NewMap) emitUpdateQueries();
+    if (lmode != NewMap) emitUpdateQueries();
 
     if (mapEditor) 
     {
@@ -2451,7 +2451,7 @@ void VymModel::copy()
 
 void VymModel::paste()	
 {   
-    BranchItem *selbi=getSelectedBranch();
+    BranchItem *selbi = getSelectedBranch();
     if (selbi)
     {
 	saveStateChangingPart(
@@ -2460,9 +2460,9 @@ void VymModel::paste()
 	    QString ("paste ()"),
 	    QString("Paste")
 	);
-	bool zippedOrg=zipped;
-	loadMap (clipboardDir+"/"+clipboardFile,ImportAdd, VymMap,SlideContent);
-	zipped=zippedOrg;
+	bool zippedOrg = zipped;
+	loadMap (clipboardDir + "/" + clipboardFile, ImportAdd, VymMap, SlideContent);
+	zipped = zippedOrg;
 	reposition();
     }
 }
