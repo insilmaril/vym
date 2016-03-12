@@ -28,6 +28,7 @@ def expect (comment, v_real, v_exp)
   if v_exp == v_real
     puts "    Ok: #{comment}"
     $tests_passed += 1
+    waitkey
   else  
     puts "Failed: #{comment}. Expected '#{v_exp}', but got '#{v_real}'"
     $tests_failed += 1
@@ -107,18 +108,19 @@ def test_vym (vym)
   vym.loadMap (mapname)
   expect "mapCount increased after loading \"#{mapname}\"", vym.mapCount.to_i, n + 1
 
-  map = vym.map(1)
-
-  title = "vym map used for testing"
-  expect "map title is '#{title}'", map.getMapTitle, title
-  author ="Uwe Drechsel"
-  expect "Author is '#{author}'", map.getMapAuthor, author
+  vym.clearConsole
 end
 
 #######################
 def test_basics (vym)
   heading "Basic checks:"
   map = init_map( vym )
+
+  title = "vym map used for testing"
+  expect "map title is '#{title}'", map.getMapTitle, title
+  author ="Uwe Drechsel"
+  expect "Author is '#{author}'", map.getMapAuthor, author
+
   map.select @main_a
   expect "select mainbranch A", map.getSelectString, @main_a
   expect "getHeadingPlainText", map.getHeadingPlainText, "Main A"
@@ -588,7 +590,6 @@ def test_references (vym)
   expect "setURL to '#{url}'", map.getURL, url
 
   map.undo
-  puts "url='#{map.getURL}'"
   expect "undo setURL", map.getURL, ""
   map.redo
   expect "redo setURL", map.getURL, url

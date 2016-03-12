@@ -20,7 +20,7 @@ class Vym
       self.class.send(:define_method, c) do |*pars|
         if pars.length == 0
           # No parameters
-          com = "vym.clearConsole(); print( vym.#{c}() );"
+          com = "vym.#{c}();"
           puts " * Calling vym: \"#{com}\":" if $debug
           ret = @main.execute( com )
         else  
@@ -34,7 +34,7 @@ class Vym
               a << p
             end
           end  
-          com = "vym.clearConsole(); vym.#{c} (#{a.join(',')});"
+          com = "vym.#{c} (#{a.join(',')});"
           puts " ** Calling vym: \"#{com}\":" if $debug
           ret = @main.execute( com )
         end  

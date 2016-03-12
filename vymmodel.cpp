@@ -92,7 +92,6 @@ VymModel::VymModel()
     init();
     rootItem->setModel (this);
     wrapper = new VymModelWrapper(this);
-    qDebug()<<"VM constr. wrapper="<<wrapper;
 }
 
 VymModel::~VymModel() 
@@ -3836,7 +3835,7 @@ void VymModel::deleteVymLink()
 
 QString VymModel::getVymLink()
 {
-    BranchItem *bi=getSelectedBranch();
+    BranchItem *bi = getSelectedBranch();
     if (bi)
 	return bi->getVymLink();
     else    

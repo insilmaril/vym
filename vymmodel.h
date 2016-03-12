@@ -14,7 +14,6 @@
 #include "branchitem.h"
 #include "imageitem.h"
 #include "mapeditor.h"
-#include "parser.h"
 #include "treeitem.h"
 #include "treemodel.h"
 #include "vymmodelwrapper.h"
@@ -512,8 +511,6 @@ public:
 public:	
     /* \brief Runs the script */
     QVariant execute (const QString &script);
-
-    Parser parser;
 
 ////////////////////////////////////////////
 // Exports

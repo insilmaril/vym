@@ -7,18 +7,23 @@
 #include <QScriptable>
 #include <QScriptValue>
 #include <QVariant>
+#include "scripting.h"
 
 class BranchItem;
 class VymModel;
 
 
 
-class VymModelWrapper : public QObject, protected QScriptable
+class VymModelWrapper : public VymScriptContext
 {
     Q_OBJECT
 public:
     VymModelWrapper (VymModel* m);
-    QVariant lastResult();
+    /*
+    QString setResult( QString r );
+    bool setResult( bool r );
+    int setResult( int r );
+    */
 
 private:
     BranchItem* getSelectedBranch();
@@ -153,7 +158,6 @@ public slots:
 
 private:
     VymModel *model;
-    QVariant result;
 };
 
 #endif

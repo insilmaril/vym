@@ -21,9 +21,30 @@ void logError(QScriptContext *context, QScriptContext::Error error, const QStrin
 }
 
 ///////////////////////////////////////////////////////////////////////////
+VymScriptContext::VymScriptContext()
+{
+}
+
+QString VymScriptContext::setResult( const QString &r)
+{
+    context()->engine()->globalObject().setProperty("lastResult", r );
+    return r;
+}
+
+bool VymScriptContext::setResult( bool r)
+{
+    context()->engine()->globalObject().setProperty("lastResult", r );
+}
+
+int  VymScriptContext::setResult( int r)
+{
+    context()->engine()->globalObject().setProperty("lastResult", r );
+}
+///////////////////////////////////////////////////////////////////////////
 VymWrapper::VymWrapper()
 {
 }
+
 
 void VymWrapper::clearConsole()
 {
@@ -45,6 +66,7 @@ bool VymWrapper::loadMap( const QString &filename )
 
 int VymWrapper::mapCount()
 {
+    context()->engine()->globalObject().setProperty("lastResult", mainWindow->modelCount() );
     return mainWindow->modelCount();
 }
 
@@ -62,6 +84,6 @@ void VymWrapper::toggleTreeEditor()
 
 QString VymWrapper::version()
 {
-    return vymVersion;
+    return setResult( vymVersion );
 }
 

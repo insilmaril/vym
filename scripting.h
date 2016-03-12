@@ -14,8 +14,20 @@ class VymModel;
 
 void logError(QScriptContext *context, QScriptContext::Error error, const QString &text);
 
+
 ///////////////////////////////////////////////////////////////////////////
-class VymWrapper : public QObject, protected QScriptable
+class VymScriptContext : public QObject, protected QScriptable
+{
+    Q_OBJECT
+public:
+    VymScriptContext();
+    QString setResult( const QString &r);
+    bool setResult( bool r);
+    int setResult( int r);
+};
+
+///////////////////////////////////////////////////////////////////////////
+class VymWrapper : public VymScriptContext
 {
     Q_OBJECT
 public:

@@ -56,12 +56,12 @@ QDBusVariant AdaptorModel::execute (const QString &s)
 
 QDBusVariant AdaptorModel::errorLevel()
 {
-    return QDBusVariant (model->parser.errorLevel() );  // FIXME-0 really still needed?
+    return QDBusVariant ();  // model->parser.errorLevel() );  // FIXME-0 really still needed?
 }
 
 QDBusVariant AdaptorModel::errorDescription()
 {
-    return QDBusVariant (model->parser.errorDescription() );
+    return QDBusVariant (); // model->parser.errorDescription() );
 }
 
 QDBusVariant AdaptorModel::listCommands ()

@@ -920,6 +920,9 @@ void Main::setupAPI()
     // Below are the commands for vym itself:
     //
 
+    c = new Command ("clearConsole", Command::Any); 
+    vymCommands.append(c);
+
     c = new Command ("currentMap", Command::Any); 
     vymCommands.append(c);
 
@@ -5491,7 +5494,7 @@ QVariant Main::runScript (const QString &script)
     VymModel *m = currentModel();
     if (m) 
     {
-        //qDebug()<<"Main ::execute called: "<<script;
+        qDebug()<<"Main ::execute called: "<<script;
         scriptEngine.globalObject().setProperty( "print", scriptEngine.newFunction( scriptPrint ) );
 
         // Create Wrapper object for VymModel
@@ -5503,17 +5506,33 @@ QVariant Main::runScript (const QString &script)
         QScriptValue val2 = scriptEngine.newQObject( &vymWrapper );
         scriptEngine.globalObject().setProperty("vym", val2);
 
+        // Result variable to save return value of last processed command
+        QVariant lresult("foobar");
+        QScriptValue val3 = scriptEngine.toScriptValue(lresult);
+        scriptEngine.globalObject().setProperty("lastResult", val3);
+
+        // Run script
         QScriptValue result = scriptEngine.evaluate(script);
+
+        //result = scriptEngine.evaluate("print( lastResult )");
+
+        qDebug() << "final lastResult = " << scriptEngine.globalObject().property("lastResult").toVariant();
+
+        //qDebug()<<"Main::execute lastResult="<< m->getWrapper()->lastResult();
 
         if (scriptEngine.hasUncaughtException()) {
             int line = scriptEngine.uncaughtExceptionLineNumber();
             scriptOutput->append( QString("uncaught exception at line %1: %2").arg(line).arg(result.toString()));
-        }
+        } else
+            return scriptEngine.globalObject().property("lastResult").toVariant();
+
+        /*
         else
             if (! m->getWrapper()->lastResult().isNull() )
                 return m->getWrapper()->lastResult();
             else
                 return scriptOutput->text();
+        */
     }
     return QVariant(""); 
 }
