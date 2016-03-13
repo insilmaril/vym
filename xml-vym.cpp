@@ -275,6 +275,7 @@ bool parseVYMHandler::startElement  ( const QString&, const QString&,
                 if (loadMode==ImportAdd)
                 {
                     lastBranch=model->createBranch(lastBranch);
+                    model->setLatestAddedItem( lastBranch );
                     if (insertPos>=0)
                         model->relinkBranch (lastBranch,(BranchItem*)ti,insertPos);
                 } else
@@ -284,6 +285,7 @@ bool parseVYMHandler::startElement  ( const QString&, const QString&,
             {
                 state=StateImage;
                 lastImage=model->createImage (lastBranch);
+                model->setLatestAddedItem( lastImage );
                 if (!readImageAttr(atts)) return false;
             } else return false;
         } else return false;

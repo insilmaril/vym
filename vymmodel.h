@@ -777,6 +777,8 @@ public:
     QString getSelectString (TreeItem *item);
     QString getSelectString (BranchItem *item);
     QString getSelectString (const uint &i);
+    void setLatestAddedItem(TreeItem *ti);
+    TreeItem *getLatestAddedItem();
     
     
 signals:

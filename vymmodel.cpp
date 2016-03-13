@@ -595,9 +595,12 @@ File::ErrorCode VymModel::loadMap (
 	if (lmode == ImportReplace)
 	    handler->setLoadMode (ImportReplace, pos);
 	else	
-	    handler->setLoadMode (lmode,pos);
+	    handler->setLoadMode (lmode, pos);
 
+        // Here we actually parse the XML file
 	bool ok = reader.parse( source );
+
+        // Aftermath
 	blockReposition = false;
 	blockSaveState  = blockSaveStateOrg;
 	mapEditor->setViewportUpdateMode (QGraphicsView::MinimalViewportUpdate);
@@ -5639,6 +5642,16 @@ QString VymModel::getSelectString (BranchItem *bi)
 QString VymModel::getSelectString (const uint &i)
 {
     return getSelectString ( findID (i) );
+}
+
+void VymModel::setLatestAddedItem(TreeItem *ti)
+{
+    latestAddedItem = ti;
+}
+
+TreeItem* VymModel::getLatestAddedItem()
+{
+    return latestAddedItem;
 }
 
 SlideModel* VymModel::getSlideModel()
