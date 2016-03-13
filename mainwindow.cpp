@@ -5495,6 +5495,7 @@ QVariant Main::runScript (const QString &script)
     if (m) 
     {
         qDebug()<<"Main ::execute called: "<<script;
+
         scriptEngine.globalObject().setProperty( "print", scriptEngine.newFunction( scriptPrint ) );
 
         // Create Wrapper object for VymModel
@@ -5514,11 +5515,8 @@ QVariant Main::runScript (const QString &script)
         // Run script
         QScriptValue result = scriptEngine.evaluate(script);
 
-        //result = scriptEngine.evaluate("print( lastResult )");
+        qDebug() << "Main::execute lastResult = " << scriptEngine.globalObject().property("lastResult").toVariant();
 
-        qDebug() << "final lastResult = " << scriptEngine.globalObject().property("lastResult").toVariant();
-
-        //qDebug()<<"Main::execute lastResult="<< m->getWrapper()->lastResult();
 
         if (scriptEngine.hasUncaughtException()) {
             int line = scriptEngine.uncaughtExceptionLineNumber();
@@ -5526,13 +5524,6 @@ QVariant Main::runScript (const QString &script)
         } else
             return scriptEngine.globalObject().property("lastResult").toVariant();
 
-        /*
-        else
-            if (! m->getWrapper()->lastResult().isNull() )
-                return m->getWrapper()->lastResult();
-            else
-                return scriptOutput->text();
-        */
     }
     return QVariant(""); 
 }

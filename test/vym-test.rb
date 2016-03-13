@@ -28,7 +28,7 @@ def expect (comment, v_real, v_exp)
   if v_exp == v_real
     puts "    Ok: #{comment}"
     $tests_passed += 1
-    waitkey
+    # waitkey
   else  
     puts "Failed: #{comment}. Expected '#{v_exp}', but got '#{v_real}'"
     $tests_failed += 1
@@ -811,17 +811,17 @@ end
 
 #######################
 test_vym(vym)
-#test_basics(vym)
-#test_export(vym)
-#test_extrainfo(vym)
-#test_adding_branches(vym)
-#test_adding_maps(vym)
-#test_scrolling(vym)
-#test_moving_parts(vym)
-#test_modify_branches(vym)
-#test_flags(vym)
-#test_delete_parts(vym)
-#test_copy_paste(vym)
+test_basics(vym)
+test_export(vym)
+test_extrainfo(vym)
+test_adding_branches(vym)
+test_adding_maps(vym)
+test_scrolling(vym)
+test_moving_parts(vym)
+test_modify_branches(vym)
+test_flags(vym)
+test_delete_parts(vym)
+test_copy_paste(vym)
 test_references(vym)
 test_history(vym)
 test_xlinks(vym)

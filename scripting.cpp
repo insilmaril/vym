@@ -34,12 +34,15 @@ QString VymScriptContext::setResult( const QString &r)
 bool VymScriptContext::setResult( bool r)
 {
     context()->engine()->globalObject().setProperty("lastResult", r );
+    return r;
 }
 
 int  VymScriptContext::setResult( int r)
 {
     context()->engine()->globalObject().setProperty("lastResult", r );
+    return r;
 }
+
 ///////////////////////////////////////////////////////////////////////////
 VymWrapper::VymWrapper()
 {

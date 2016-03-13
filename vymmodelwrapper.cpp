@@ -460,12 +460,12 @@ QString VymModelWrapper::getXLinkPenStyle()
 
 QString VymModelWrapper::getXLinkStyleBegin()
 {
-    return setResult( getXLinkStyleBegin() );
+    return setResult( model->getXLinkStyleBegin() );
 }
 
 QString VymModelWrapper::getXLinkStyleEnd()
 {
-    return setResult( getXLinkStyleEnd() );
+    return setResult( model->getXLinkStyleEnd() );
 }
 
 bool VymModelWrapper::hasActiveFlag( const QString &flag)
@@ -484,7 +484,7 @@ bool VymModelWrapper::hasNote()
 
 bool VymModelWrapper::hasRichTextNote()
 {
-    return setResult( hasRichTextNote() );
+    return setResult( model->hasRichTextNote() );
 }
 
 bool VymModelWrapper::hasTask()
@@ -580,7 +580,7 @@ void VymModelWrapper::note2URLs()
 
 bool VymModelWrapper::parseVymText(const QString &text)
 {
-    return setResult( parseVymText( text) );
+    return setResult( model->parseVymText( text) );
 }
 
 void VymModelWrapper::paste()
