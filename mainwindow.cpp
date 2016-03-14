@@ -5494,7 +5494,7 @@ QVariant Main::runScript (const QString &script)
     VymModel *m = currentModel();
     if (m) 
     {
-        qDebug()<<"Main ::execute called: "<<script;
+        //qDebug()<<"Main::execute called: "<<script;
 
         scriptEngine.globalObject().setProperty( "print", scriptEngine.newFunction( scriptPrint ) );
 
@@ -5515,7 +5515,7 @@ QVariant Main::runScript (const QString &script)
         // Run script
         QScriptValue result = scriptEngine.evaluate(script);
 
-        qDebug() << "Main::execute lastResult = " << scriptEngine.globalObject().property("lastResult").toVariant();
+        // qDebug() << "Main::execute lastResult = " << scriptEngine.globalObject().property("lastResult").toVariant();
 
 
         if (scriptEngine.hasUncaughtException()) {
