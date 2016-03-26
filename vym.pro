@@ -263,9 +263,6 @@ isEmpty( BINDIR ) {
 isEmpty( DATADIR ) {
     DATADIR = $${PREFIX}
 }
-isEmpty( DOCDIR ) {
-    DOCDIR = $${DATADIR}/doc/packages/vym
-}
 
 message( "Installation directory" )
 message( $$PREFIX )
@@ -274,11 +271,11 @@ message( $$PREFIX )
 target.path = $${BINDIR}
 INSTALLS += target
 
-lang.files = lang/*.qm
-lang.path  = $${DATADIR}/vym/lang
-INSTALLS += lang
+language.files = lang/*.qm
+language.path = $${DATADIR}/vym/lang
+INSTALLS += language
 
-support.files = styles/* scripts/* icons/* flags/* lang/*.qm macros/*.vys exports/ demos/*.vym
-support.path  = $${DATADIR}/vym
+support.files = styles/ scripts/ icons/ flags/ macros/ exports/ demos/
+support.path = $${DATADIR}/vym
 INSTALLS += support 
 
