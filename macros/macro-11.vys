@@ -1,2 +1,3 @@
-# Macro F11
-setFrameType ("Ellipse");
+// Macro F11
+map = vym.currentMap();
+map.setFrameType ("Ellipse");

@@ -1,2 +1,3 @@
-# Macro F10
-setFrameType ("NoFrame");
+// Macro F10
+map = vym.currentMap();
+map.setFrameType ("NoFrame");

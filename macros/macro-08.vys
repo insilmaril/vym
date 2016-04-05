@@ -1,3 +1,4 @@
-# Macro F8
-colorSubtree ("#616147");
-toggleFlag ("clock");
+// Macro F8
+map = vym.currentMap();
+map.colorSubtree ("#616147");
+map.toggleFlag ("clock");

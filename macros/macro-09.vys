@@ -1,2 +1,3 @@
-# Macro F9
-toggleFrameIncludeChildren();
+// Macro F9
+map = vym.currentMap();
+map.toggleFrameIncludeChildren();
