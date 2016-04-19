@@ -142,12 +142,12 @@ void ScriptEditor::runFile()
 
 void ScriptEditor::loadMacro()
 {
-    QString m = macros.getMacro (ui.keyCombo->currentIndex()+1);
+    QString m = macros.getMacro (ui.keyCombo->currentIndex() + 1);
     if ( !m.isEmpty() ) ui.macroEditor->setText (m);
 }
 void ScriptEditor::saveMacro()
 {
-    filename = macros.getPath(ui.keyCombo->currentIndex());
+    filename = macros.getPath(ui.keyCombo->currentIndex() + 1);
     saveFile();
 }
 void ScriptEditor::loadFile()
