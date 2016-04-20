@@ -115,6 +115,7 @@ HEADERS	+= \
     options.h \
     ornamentedobj.h \
     parser.h \
+    satellite.h\
     scripteditor.h\
     settings.h \
     shortcuts.h\
@@ -205,7 +206,8 @@ SOURCES	+= \
     options.cpp \
     ornamentedobj.cpp \
     parser.cpp \
-    scripteditor.cpp\
+    satellite.cpp\
+    scripteditor.cpp \
     settings.cpp \
     shortcuts.cpp\
     showtextdialog.cpp \

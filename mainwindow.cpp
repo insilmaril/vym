@@ -224,6 +224,7 @@ Main::Main(QWidget* parent, Qt::WindowFlags f) : QMainWindow(parent,f)
     dw->hide();	
     addDockWidget (Qt::TopDockWidgetArea,dw);
     connect (dw, SIGNAL (visibilityChanged(bool ) ), this, SLOT (updateActions()));
+    connect (taskEditor, SIGNAL (focusReleased() ), this, SLOT (setFocusMapEditor()));
 
     scriptEditor = new ScriptEditor(this);
     dw= new QDockWidget (tr ("Script Editor","ScriptEditor"));
@@ -5132,6 +5133,7 @@ void Main::selectInNoteEditor(QString s,int i)
 
 void Main::setFocusMapEditor()
 {
+    qDebug()<<"Main::setFocusMapEditor";
     VymView *vv=currentView();
     if (vv) vv->setFocusMapEditor();
 }
