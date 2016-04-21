@@ -224,7 +224,7 @@ Main::Main(QWidget* parent, Qt::WindowFlags f) : QMainWindow(parent,f)
     dw->hide();	
     addDockWidget (Qt::TopDockWidgetArea,dw);
     connect (dw, SIGNAL (visibilityChanged(bool ) ), this, SLOT (updateActions()));
-    connect (taskEditor, SIGNAL (focusReleased() ), this, SLOT (setFocusMapEditor()));
+    //FIXME -0 connect (taskEditor, SIGNAL (focusReleased() ), this, SLOT (setFocusMapEditor()));
 
     scriptEditor = new ScriptEditor(this);
     dw= new QDockWidget (tr ("Script Editor","ScriptEditor"));
@@ -259,6 +259,15 @@ Main::Main(QWidget* parent, Qt::WindowFlags f) : QMainWindow(parent,f)
 
     connect( scriptEditor, SIGNAL( runScript ( QString ) ),  this, SLOT( execute( QString ) ) );
 
+    // Switch back  to MapEditor using Esc 
+    QAction* a = new QAction(this);
+    a->setShortcut (Qt::Key_Escape);
+    a->setShortcutContext (Qt::ApplicationShortcut);
+    a->setCheckable(false);
+    a->setEnabled (true);
+    addAction(a);
+    connect (a , SIGNAL (triggered() ), this, SLOT (setFocusMapEditor()));
+    
     // Initialize some settings, which are platform dependant
     QString p,s;
 
@@ -5133,7 +5142,6 @@ void Main::selectInNoteEditor(QString s,int i)
 
 void Main::setFocusMapEditor()
 {
-    qDebug()<<"Main::setFocusMapEditor";
     VymView *vv=currentView();
     if (vv) vv->setFocusMapEditor();
 }
