@@ -114,7 +114,6 @@ HEADERS	+= \
     noteeditor.h \
     options.h \
     ornamentedobj.h \
-    satellite.h\
     scripteditor.h\
     scripting.h \
     scriptoutput.h \
@@ -207,7 +206,6 @@ SOURCES	+= \
     noteeditor.cpp \
     options.cpp \
     ornamentedobj.cpp \
-    satellite.cpp\
     scripteditor.cpp \
     scriptoutput.cpp \
     scripting.cpp \

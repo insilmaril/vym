@@ -4,7 +4,6 @@
 #include <QWidget>
 #include <QTableView>
 
-#include "satellite.h"
 #include "taskfiltermodel.h"
 
 class BranchItem;
@@ -13,7 +12,7 @@ class Task;
 class TaskModel;
 class QSortFilterProxyModel;
 
-class TaskEditor: public Satellite
+class TaskEditor : public QWidget
 {
     Q_OBJECT
 

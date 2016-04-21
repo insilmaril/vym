@@ -11,7 +11,7 @@ class QComboBox;
 
 enum EditorState {inactiveEditor,emptyEditor,filledEditor};
 
-class TextEditor :public QMainWindow
+class TextEditor : public QMainWindow
 {    Q_OBJECT
 public:
     TextEditor(QString scope);
@@ -43,7 +43,6 @@ protected:
     void setupFormatActions();
     void setupSettingsActions();
     void closeEvent( QCloseEvent* );
-    void keyPressEvent(QKeyEvent* );
 
 public slots:
     void editorChanged();	    // received when text() changed
@@ -57,7 +56,6 @@ public slots:
 signals:
     void textHasChanged();
     void windowClosed();
-    void focusReleased();
     void fontFamilyHasChanged();
     void fontSizeHasChanged();
     
