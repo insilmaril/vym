@@ -174,13 +174,6 @@ MapEditor::MapEditor( VymModel *vm)
     connect( a, SIGNAL( triggered() ), mainWindow, SLOT( editRedo() ) );
     addAction(a);
 
-    /* not needed!
-    a = new QAction(tr( "&Restore last session","Edit menu" ), this);
-    a->setShortcut (Qt::ALT + Qt::Key_R );
-    connect( a, SIGNAL( triggered() ), mainWindow, SLOT( fileRestoreSession() ) );
-    //actionFileRestoreSession=a;
-    addAction(a);
- */
     a = new QAction( tr( "&Paste","Edit menu" ), this);
     a->setShortcut (Qt::CTRL + Qt::Key_V );
     a->setShortcutContext (Qt::WidgetWithChildrenShortcut);

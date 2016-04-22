@@ -410,9 +410,9 @@ void TextEditor::setupFormatActions()
     actionFormatUseFixedFont=a;
 
     // Original icon: ./share/icons/oxygen/22x22/actions/format-text-color.png
-    a = new QAction( QPixmap(":/formatrichtext.png"), tr( "&Richtext" ), this );
-    a->setShortcut (Qt::ALT + Qt::Key_R);
-    a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
+    a = new QAction( QPixmap(":/formatrichtext.png"), tr( "&Richtext" ), this);
+    a->setShortcut (Qt::ALT + Qt::SHIFT + Qt::Key_R);
+//    a->setShortcutContext (Qt::WidgetShortcut);
     a->setCheckable (true);
     switchboard.addSwitch( "textToggleRichText", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( toggleRichText() ) );
