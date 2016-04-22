@@ -207,8 +207,8 @@ SOURCES	+= \
     options.cpp \
     ornamentedobj.cpp \
     scripteditor.cpp \
-    scriptoutput.cpp \
     scripting.cpp \
+    scriptoutput.cpp \
     settings.cpp \
     shortcuts.cpp\
     showtextdialog.cpp \

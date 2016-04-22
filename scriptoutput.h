@@ -8,7 +8,7 @@ class ScriptOutput:public QWidget
 {
     Q_OBJECT
 public:
-    ScriptOutput(QWidget *parent = 0);
+    ScriptOutput(QWidget *parent);
     ~ScriptOutput();
     void clear();
     void setText(const QString &text);
