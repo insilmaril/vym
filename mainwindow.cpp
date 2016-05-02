@@ -251,11 +251,11 @@ Main::Main(QWidget* parent, Qt::WindowFlags f) : QMainWindow(parent,f)
     // Connect NoteEditor, so that we can update flags if text changes
     connect (noteEditor, SIGNAL (textHasChanged() ), this, SLOT (updateNoteFlag()));
     connect (noteEditor, SIGNAL (windowClosed() ), this, SLOT (updateActions()));
-    connect (noteEditor, SIGNAL (focusReleased() ), this, SLOT (setFocusMapEditor()));
+    // FIXME-0 unneeded  connect (noteEditor, SIGNAL (focusReleased() ), this, SLOT (setFocusMapEditor()));
 
     // Connect heading editor
     connect (headingEditor, SIGNAL (textHasChanged() ), this, SLOT (updateHeading()));
-    connect (headingEditor, SIGNAL (focusReleased() ), this, SLOT (setFocusMapEditor()));
+    // FIXME-0 unneeded connect (headingEditor, SIGNAL (focusReleased() ), this, SLOT (setFocusMapEditor()));
 
     connect( scriptEditor, SIGNAL( runScript ( QString ) ),  this, SLOT( execute( QString ) ) );
 
@@ -5535,6 +5535,7 @@ void Main::standardFlagChanged()
 {
     MapEditor *me = currentMapEditor();
     VymModel  *m  = currentModel();
+    qDebug()<<"Main::standardFlagChanged  me->hasFocus: "<<me->hasFocus();  // FIXME-0 testing
     if (me && m && me->getState() != MapEditor::EditingHeading) 
     {
         if ( actionSettingsUseFlagGroups->isChecked() )

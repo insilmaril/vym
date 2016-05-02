@@ -365,7 +365,7 @@ int main(int argc, char* argv[])
    
     QTranslator vymTranslator;
     vymTranslator.load( QString("vym_") + localeName, vymBaseDir.path() + "/lang");
-    qDebug()<<"Main  QLOCALE: "<<QLocale().name();
+    qDebug()<<"Main  QLOCALE: "<<QLocale().name();  // FIXME-0 testing
     app.installTranslator( &vymTranslator );
 
     // Initializing the master rows of flags
