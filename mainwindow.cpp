@@ -2308,11 +2308,11 @@ void Main::setupFlagActions()
 
     flag=new Flag(":/flag-thumb-up.png");
     flag->setGroup("standard-thumb");
-    setupFlag (flag,standardFlagsToolbar,"thumb-up",tr("I like this","Standardflag"),Qt::Key_BracketRight);
+    setupFlag (flag,standardFlagsToolbar,"thumb-up",tr("I like this","Standardflag"));
 
     flag=new Flag(":/flag-thumb-down.png");
     flag->setGroup("standard-thumb");
-    setupFlag (flag,standardFlagsToolbar,"thumb-down",tr("I do not like this","Standardflag"),Qt::Key_BracketLeft);
+    setupFlag (flag,standardFlagsToolbar,"thumb-down",tr("I do not like this","Standardflag"));
     flag->unsetGroup();
 
     flag=new Flag(":/flag-rose.png");
