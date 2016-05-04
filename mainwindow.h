@@ -328,6 +328,9 @@ public slots:
     void downloadUpdates(bool interactive);
     void checkUpdates();
 
+public:
+    QList <QAction*> mapEditorActions;  //! This allows mapEditor to clone the actions and shortcuts
+
 private:
     QString shortcutScope;          //! For listing shortcuts
     QTabWidget *tabWidget;

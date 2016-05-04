@@ -195,6 +195,16 @@ MapEditor::MapEditor( VymModel *vm)
     vPan=QPointF();
     connect (panningTimer, SIGNAL (timeout()), this, SLOT (panView() ));
 
+    // Actions defined in MainWindow
+    foreach (QAction* qa, mainWindow->mapEditorActions)
+    {
+        a = new QAction( this );
+        a->setShortcut( qa->shortcut() );
+        a->setShortcutContext( qa->shortcutContext() );
+        connect( a, SIGNAL( triggered() ), qa, SLOT( trigger() ) );
+        addAction(a);
+    }
+
     setState (Neutral);
 
     // Attributes   //FIXME-5 testing only...

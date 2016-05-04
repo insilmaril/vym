@@ -2430,7 +2430,7 @@ void Main::setupFlagActions()
     setupFlag (flag,standardFlagsToolbar,"freemind-licq",tr("Sweet","Freemind-Flag"));
 }
 
-void Main::setupFlag (Flag *flag, QToolBar *tb, const QString &name, const QString &tooltip, const QKeySequence &shortcut)
+void Main::setupFlag (Flag *flag, QToolBar *tb, const QString &name, const QString &tooltip, const QKeySequence &keyseq)
 {
     flag->setName(name);
     flag->setToolTip (tooltip);
@@ -2444,7 +2444,15 @@ void Main::setupFlag (Flag *flag, QToolBar *tb, const QString &name, const QStri
         a->setCheckable(true);
         a->setObjectName(name);
         a->setToolTip(tooltip);
-        a->setShortcut (shortcut);
+        if (keyseq != 0)
+        {
+            a->setShortcut (keyseq);
+            a->setShortcutContext (Qt::WidgetShortcut);
+
+            // Allow mapEditors to actually trigger this action
+            mapEditorActions.append( a );
+        }
+
         tb->addAction(a);
         connect (a, SIGNAL( triggered() ), this, SLOT( standardFlagChanged() ) );
         standardFlagsMaster->addFlag (flag);
