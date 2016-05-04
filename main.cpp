@@ -120,7 +120,8 @@ void msgHandler (QtMsgType type, const QMessageLogContext &context, const QStrin
     case QtFatalMsg:
         fprintf(stderr, "Fatal: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
         fatalCount++;
-        //abort();
+    default:
+        fprintf(stderr, "Info: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
     }
 }
 
@@ -357,15 +358,27 @@ int main(int argc, char* argv[])
     if (options.isOn ("locale"))
         localeName = options.getArg ("locale");
     else
+    {
+#if defined(Q_OS_LINUX)
+        localeName = QProcessEnvironment::systemEnvironment().value("LANG","foobar");
+#else
         localeName = QLocale::system().name();
+#endif
+    }
     
+    if (debug) 
+    {
+        qDebug()<<"Main     localName: " << QProcessEnvironment::systemEnvironment().value("LANG","default");
+        qDebug()<<"Main     localName: " << localeName;
+        qDebug()<<"Main  translations: " << "qt_" + localeName, QLibraryInfo::location(QLibraryInfo::TranslationsPath);
+    }
+
     QTranslator qtTranslator;
     qtTranslator.load("qt_" + localeName, QLibraryInfo::location(QLibraryInfo::TranslationsPath));
     app.installTranslator(&qtTranslator);
    
     QTranslator vymTranslator;
     vymTranslator.load( QString("vym_") + localeName, vymBaseDir.path() + "/lang");
-    qDebug()<<"Main  QLOCALE: "<<QLocale().name();  // FIXME-0 testing
     app.installTranslator( &vymTranslator );
 
     // Initializing the master rows of flags
