@@ -400,7 +400,7 @@ void TextEditor::setupFormatActions()
     QAction *a;
 
     a = new QAction( QPixmap(":/formatfixedfont.png"), tr( "&Font hint" ), this );
-    a->setShortcut(Qt::ALT + Qt::Key_I);
+    a->setShortcut(Qt::CTRL + Qt::Key_H);
     a->setCheckable (true);
     a->setChecked (settings.value("/noteeditor/fonts/useFixedByDefault",false).toBool() );
     switchboard.addSwitch( "textToggleFonthint", shortcutScope, a, tag);
@@ -411,7 +411,7 @@ void TextEditor::setupFormatActions()
 
     // Original icon: ./share/icons/oxygen/22x22/actions/format-text-color.png
     a = new QAction( QPixmap(":/formatrichtext.png"), tr( "&Richtext" ), this);
-    a->setShortcut (Qt::ALT + Qt::SHIFT + Qt::Key_R);
+    a->setShortcut ( Qt::CTRL + Qt::Key_R);
 //    a->setShortcutContext (Qt::WidgetShortcut);
     a->setCheckable (true);
     switchboard.addSwitch( "textToggleRichText", shortcutScope, a, tag);

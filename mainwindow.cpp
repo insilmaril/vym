@@ -2083,8 +2083,10 @@ void Main::setupViewActions()
 
     a = new QAction(QPixmap(":/history.png"),  tr( "History Window","View action" ),this );
     a->setShortcut ( Qt::CTRL + Qt::Key_H  );
+    a->setShortcutContext (Qt::WidgetShortcut);
     a->setCheckable(true);
     viewMenu->addAction (a);
+    mapEditorActions.append( a );
     switchboard.addSwitch ("mapToggleHistoryWindow", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT(windowToggleHistory() ) );
     actionViewToggleHistoryWindow=a;
