@@ -1039,7 +1039,7 @@ void Main::setupFileActions()
     a = new QAction("Mind Manager...",this);
     fileImportMenu->addAction(a);
 
-    a = new QAction( tr( "Import Dir%1","Import Filters").arg("... (experimental)"), this);
+    a = new QAction( tr( "Import Dir%1","Import Filters").arg("..." + tr("(still experimental)") ), this);
     fileImportMenu->addAction(a);
 
     fileExportMenu = fileMenu->addMenu (tr("Export","File menu"));
@@ -1059,7 +1059,7 @@ void Main::setupFileActions()
     connect( a, SIGNAL( triggered() ), this, SLOT( fileExportASCII() ) );
     fileExportMenu->addAction(a);
 
-    a = new QAction( "Text with tasks (ASCII) (experimental)...", this);
+    a = new QAction( tr("Text with tasks") + " (ASCII)... "  + tr("(still experimental)"), this);
     connect( a, SIGNAL( triggered() ), this, SLOT( fileExportASCIITasks() ) );
     fileExportMenu->addAction(a);
 
@@ -1091,19 +1091,19 @@ void Main::setupFileActions()
     connect( a, SIGNAL( triggered() ), this, SLOT( fileExportKDE4Bookmarks() ) );
     fileExportMenu->addAction(a);
 
-    a = new QAction( "Spreadsheet (CSV)... (experimental)", this);
+    a = new QAction( tr("Spreadsheet") + " (CSV)... " + tr("(still experimental)"), this);
     connect( a, SIGNAL( triggered() ), this, SLOT( fileExportCSV() ) );
     fileExportMenu->addAction(a);
 
-    a = new QAction( "Taskjuggler... (experimental)", this );
+    a = new QAction( "Taskjuggler... " + tr("(still experimental)"), this );
     connect( a, SIGNAL( triggered() ), this, SLOT( fileExportTaskjuggler() ) );
     fileExportMenu->addAction(a);
 
-    a = new QAction( "OrgMode... (experimental)", this);
+    a = new QAction( "OrgMode... " + tr("(still experimental)"), this);
     connect( a, SIGNAL( triggered() ), this, SLOT( fileExportOrgMode() ) );
     fileExportMenu->addAction(a);
 
-    a = new QAction( "LaTeX... (experimental)", this);
+    a = new QAction( "LaTeX... " + tr("(still experimental)"), this);
     connect( a, SIGNAL( triggered() ), this, SLOT( fileExportLaTeX() ) );
     fileExportMenu->addAction(a);
 
@@ -3601,7 +3601,7 @@ void Main::fileExportCSV()  //FIXME-3 not scriptable yet
 	ex.setModel (m);
 	ex.addFilter ("CSV (*.csv)");
 	ex.setDirPath(lastImageDir.absolutePath());
-	ex.setWindowTitle(vymName+ " -" +tr("Export as CSV")+" "+tr("(still experimental)"));
+	ex.setWindowTitle(vymName+ " -" + tr("Export as CSV") + " " + tr("(still experimental)"));
 	if (ex.execDialog() ) 
 	{
 	    m->setExportMode(true);
@@ -3641,7 +3641,7 @@ void Main::fileExportTaskjuggler()  //FIXME-3 not scriptable yet
     if (m)
     {
         ex.setModel (m);
-        ex.setWindowTitle ( vymName+" - "+tr("Export to")+" Taskjuggler"+tr("(still experimental)"));
+        ex.setWindowTitle ( vymName + " - " + tr("Export to") + " Taskjuggler" + tr("(still experimental)"));
         ex.setDirPath (lastImageDir.absolutePath());
         ex.addFilter ("Taskjuggler (*.tjp)");
 
