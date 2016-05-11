@@ -1037,9 +1037,11 @@ void Main::setupFileActions()
     fileImportMenu->addAction(a);
 
     a = new QAction("Mind Manager...",this);
+    connect( a, SIGNAL( triggered() ), this, SLOT( fileImportMM() ) );
     fileImportMenu->addAction(a);
 
     a = new QAction( tr( "Import Dir%1","Import Filters").arg("..." + tr("(still experimental)") ), this);
+    connect( a, SIGNAL( triggered() ), this, SLOT( fileImportDir() ) );
     fileImportMenu->addAction(a);
 
     fileExportMenu = fileMenu->addMenu (tr("Export","File menu"));
