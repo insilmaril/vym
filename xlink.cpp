@@ -64,8 +64,9 @@ void Link::setEndBranch (BranchItem *bi)
 {
     if (bi) 
     {
-	xLinkState=initXLink;
+	xLinkState=initXLink;   // FIXME-2 shouldn't this be activeXLink?
 	endBranch=bi;
+        if (xlo) xlo->initC1();
     }	    
 }
 
@@ -76,6 +77,7 @@ BranchItem* Link::getEndBranch()
 
 void Link::setEndPoint (QPointF p)
 {
+    // Used only while creating the link, without endBranch
     if (xlo) xlo->setEnd (p);
 }
 

@@ -11,9 +11,10 @@
 // XLinkObj
 /////////////////////////////////////////////////////////////////
 
-int XLinkObj::arrowSize=6;		    // make instances
-int XLinkObj::clickBorder=8;
-int XLinkObj::pointRadius=10;
+int XLinkObj::arrowSize = 6;		    // make instances
+int XLinkObj::clickBorder = 8;
+int XLinkObj::pointRadius = 10;
+int XLinkObj::d_control = 300;
 
 XLinkObj::XLinkObj (QGraphicsItem* parent,Link *l):MapObj(parent)
 {
@@ -38,13 +39,13 @@ XLinkObj::~XLinkObj ()
 
 void XLinkObj::init () 
 {
-    visBranch=NULL;
+    visBranch = NULL;
 
-    stateVis=Hidden;
+    stateVis = Hidden;
 
-    QPen pen=link->getPen();
+    QPen pen = link->getPen();
 
-    path=scene()->addPath (QPainterPath(), pen, Qt::NoBrush);	
+    path = scene()->addPath (QPainterPath(), pen, Qt::NoBrush);	
     path->setZValue (dZ_XLINK);
 
     pointerBegin = new ArrowObj(this);
@@ -58,27 +59,28 @@ void XLinkObj::init ()
     pointerEnd->setFixedLength( 0 );
 
     pen.setStyle (Qt::SolidLine);
-    poly=scene()->addPolygon (QPolygonF(), pen, pen.color());	
+    poly = scene()->addPolygon (QPolygonF(), pen, pen.color());	
     poly->setZValue (dZ_XLINK);
 
-    // Control points for bezier path	
-    qreal d=100;
-    c0=QPointF (d,0);
-    c1=QPointF (d,0);
-    ctrl_p0=scene()->addEllipse (
+    // Control points for bezier path
+    // (We have at least a begin branch, consider its orientation)
+    initC0();
+    initC1();
+
+    ctrl_p0 = scene()->addEllipse (
 	c0.x(), c0.y(),
 	clickBorder*2, clickBorder*2,
 	pen, pen.color() );
-    ctrl_p1=scene()->addEllipse (
+    ctrl_p1 = scene()->addEllipse (
 	c1.x(), c1.y(),
 	clickBorder*2, clickBorder*2,
 	pen, pen.color() );
 
-    beginOrient=endOrient=LinkableMapObj::UndefinedOrientation;
+    beginOrient = endOrient=LinkableMapObj::UndefinedOrientation;
     pen.setWidth (1);
     pen.setStyle (Qt::DashLine);
 
-    curSelection=Unselected;
+    curSelection = Unselected;
 
     setVisibility (true);
 }
@@ -407,6 +409,32 @@ void XLinkObj::setVisibility ()
 	    }
 	}
     }
+}
+
+void XLinkObj::initC0()
+{
+    if ( !link ) return;
+    BranchItem *beginBranch = link->getBeginBranch();
+    if ( !beginBranch ) return;
+    BranchObj *bo = beginBranch->getBranchObj();
+    if ( !bo ) return;
+    if ( bo->getOrientation() == LinkableMapObj::RightOfCenter  ) 
+        c0 = QPointF ( d_control, 0);
+    else
+        c0 = QPointF ( -d_control, 0);
+}
+
+void XLinkObj::initC1()
+{
+    if (!link ) return; 
+    BranchItem *endBranch = link->getEndBranch();
+    if (!endBranch) return;
+    BranchObj *bo = endBranch->getBranchObj();
+    if (!bo) return;
+    if ( bo->getOrientation() == LinkableMapObj::RightOfCenter  ) 
+        c1 = QPointF ( d_control, 0);
+    else
+        c1 = QPointF ( -d_control, 0);
 }
 
 void XLinkObj::setC0(const QPointF &p)
