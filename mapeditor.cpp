@@ -1696,6 +1696,7 @@ void MapEditor::moveObject ()
 	if (mosel) 
 	{
 	    mosel->move( p-movingObj_offset );	// FIXME-3 Missing savestate 
+            model->setChanged();
 	    model->emitSelectionChanged();
 	}
     } else
