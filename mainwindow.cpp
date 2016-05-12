@@ -5591,7 +5591,7 @@ void Main::testFunction2()
     
     s  = QString ("localeName: %1\nPath: %2")
         .arg(localeName)
-        .arg(QLibraryInfo::location(QLibraryInfo::TranslationsPath));
+        .arg(vymInstallDir.path() + "/lang");
     QMessageBox mb;
     mb.setText(s);
     mb.exec();
