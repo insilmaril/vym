@@ -5575,40 +5575,26 @@ void Main::testFunction1()
 
 void Main::testFunction2()
 {
-    VymModel *m = currentModel();
-    if (m)
+    // Testing locale settings...
+    QString s;
+    QString localeName;
+    if (options.isOn ("locale"))
+        localeName = options.getArg ("locale");
+    else
     {
-        // FIXME-1 remove setting to download release notes.
-        //         add actions for manual relnotes and updatecheck
-        //         show messagebox, if actions triggered or on first run
-        QMessageBox msgBox;
-        QString infoText =
-                "Do you want to allow vym to download release notes and check for updates? "
-                "Cookies will be used!";
-        msgBox.setText("Download settings");
-        msgBox.setInformativeText( infoText );
-        msgBox.setStandardButtons(QMessageBox::No | QMessageBox::Yes );
-        msgBox.setDefaultButton(QMessageBox::Yes);
-        int ret = msgBox.exec();
-
-        switch (ret) {
-          case QMessageBox::Yes:
-              // enable release notes action
-              // enable check updates action
-              // enable release notes download
-              // enable update check
-              break;
-          case QMessageBox::No:
-              // disable release notes action
-              // disable check updates action
-              // disable release notes download
-              // disable update check
-              break;
-          default:
-              // should never be reached
-              break;
-        }
+#if defined(Q_OS_LINUX)
+        localeName = QProcessEnvironment::systemEnvironment().value("LANG","foobar");
+#else
+        localeName = QLocale::system().name();
+#endif
     }
+    
+    s  = QString ("localeName: %1\nPath: %2")
+        .arg(localeName)
+        .arg(QLibraryInfo::location(QLibraryInfo::TranslationsPath));
+    QMessageBox mb;
+    mb.setText(s);
+    mb.exec();
 }
 
 void Main::toggleWinter()

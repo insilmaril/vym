@@ -368,7 +368,6 @@ int main(int argc, char* argv[])
     
     if (debug) 
     {
-        qDebug()<<"Main     localName: " << QProcessEnvironment::systemEnvironment().value("LANG","default");
         qDebug()<<"Main     localName: " << localeName;
         qDebug()<<"Main  translations: " << "qt_" + localeName, QLibraryInfo::location(QLibraryInfo::TranslationsPath);
     }
