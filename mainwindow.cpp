@@ -5633,7 +5633,7 @@ void Main::helpDoc()
     QStringList searchList;
     QDir docdir;
     #if defined(Q_OS_MACX)
-        searchList << "./vym.app/Contents/Resources/doc";
+        searchList << vymBaseDir.path() + "/doc";
     #elif defined(Q_OS_WIN32)
         searchList << vymInstallDir.path() + "doc/" + docname;
     #else
@@ -5689,13 +5689,7 @@ void Main::helpDemo()
     QStringList filters;
     filters <<"VYM example map (*.vym)";
     QFileDialog fd;
-#if defined(Q_OS_MACX)
-    fd.setDirectory (QDir("./vym.app/Contents/Resources/demos"));
-#else
-    // default path in SUSE LINUX
-    fd.setDirectory (QDir(vymBaseDir.path()+"/demos"));
-#endif
-
+    fd.setDirectory (vymBaseDir.path() + "/demos");
     fd.setFileMode (QFileDialog::ExistingFiles);
     fd.setNameFilters (filters);
     fd.setWindowTitle (vymName+ " - " +tr("Load vym example map"));
