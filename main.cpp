@@ -368,17 +368,12 @@ int main(int argc, char* argv[])
     
     if (debug) 
     {
-        qDebug()<<"Main     localName: " << QProcessEnvironment::systemEnvironment().value("LANG","default");
         qDebug()<<"Main     localName: " << localeName;
-        qDebug()<<"Main  translations: " << "qt_" + localeName, QLibraryInfo::location(QLibraryInfo::TranslationsPath);
+        qDebug()<<"Main  translations: " << localeName, vymInstallDir.path() + "/lang";
     }
-
-    QTranslator qtTranslator;
-    qtTranslator.load("qt_" + localeName, QLibraryInfo::location(QLibraryInfo::TranslationsPath));
-    app.installTranslator(&qtTranslator);
    
     QTranslator vymTranslator;
-    vymTranslator.load( QString("vym_") + localeName, vymBaseDir.path() + "/lang");
+    vymTranslator.load( QString("vym_%1").arg( localeName ), vymInstallDir.path() + "/lang");
     app.installTranslator( &vymTranslator );
 
     // Initializing the master rows of flags
