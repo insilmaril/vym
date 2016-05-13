@@ -355,6 +355,8 @@ Main::Main(QWidget* parent, Qt::WindowFlags f) : QMainWindow(parent,f)
     // Global Printer
     printer=new QPrinter (QPrinter::HighResolution );	
 
+    // Enable testmenu
+    //settings.setValue( "mainwindow/showTestMenu", true);
     updateGeometry();
 
 #if defined(VYM_DBUS)
