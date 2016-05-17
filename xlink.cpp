@@ -64,7 +64,6 @@ void Link::setEndBranch (BranchItem *bi)
 {
     if (bi) 
     {
-	xLinkState=initXLink;   // FIXME-2 shouldn't this be activeXLink?
 	endBranch=bi;
         if (xlo) xlo->initC1();
     }	    
@@ -175,9 +174,8 @@ bool Link::activate ()
 {
     if (beginBranch && endBranch)
     {
-	
-	if (beginBranch==endBranch) return false;
-	xLinkState=activeXLink;
+	if ( beginBranch == endBranch) return false;
+	xLinkState = activeXLink;
 	model->updateActions();
 	return true;
     } else
