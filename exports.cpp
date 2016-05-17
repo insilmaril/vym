@@ -700,7 +700,7 @@ QString ExportHTML::getBranchText(BranchItem *current)
                     .arg(hr.bottom()-offset.y())
                     .arg(id);
 
-        // Include image FIXME-0 experimental
+        // Include image (in branch in HTML-Export: FIXME-3 experimental)
         if (dia.includeImages)
         {
             int imageCount = current->imageCount();

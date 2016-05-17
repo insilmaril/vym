@@ -3251,7 +3251,7 @@ void Main::fileLoad(const LoadMode &lmode)
     }
 
     QString filter;
-    filter+="VYM map " + tr("or","File Dialog") +" Freemind map" + " (*.xml *.vym *.vyp *.mm);;";  //FIXME-1 xml temporary here
+    filter+="VYM map " + tr("or","File Dialog") +" Freemind map" + " (*.xml *.vym *.vyp );;";  
     filter+="VYM map (*.vym *.vyp);;";
     filter+="VYM Backups (*.vym~);;";
     filter+="Freemind map (*.mm);;";
