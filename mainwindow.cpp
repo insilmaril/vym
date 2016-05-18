@@ -1370,7 +1370,7 @@ void Main::setupEditActions()
     a->setCheckable(false);
     actionListBranches.append(a);
     addAction (a);
-    actionCollapseOneLevel=a;
+    actionCollapseOneLevel=a;  // FIXME-2 add to menu
 
     a = new QAction( QPixmap(), tr( "Collapse unselected levels","Edit menu" ), this);
     // Shortcut causes that pipe-symbol cannot be entered e.g. in NoteEditor
@@ -1381,7 +1381,7 @@ void Main::setupEditActions()
     a->setCheckable(false);
     actionListBranches.append(a);
     addAction (a);
-    actionCollapseUnselected=a;
+    actionCollapseUnselected=a  // FIXME-2 add to menu; // FIXME-2 add shortcut again
 
     a = new QAction( tr( "Unscroll children","Edit menu" ), this);
     editMenu->addAction(a);
