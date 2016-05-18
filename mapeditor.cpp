@@ -1746,6 +1746,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent* e)
 	if (dsti)
 	{   
 	    tmpLink->setEndBranch ( ((BranchItem*)dsti) );
+            tmpLink->activate();
 	    tmpLink->updateLink();
 	    if (model->createLink (tmpLink) )
 	    {

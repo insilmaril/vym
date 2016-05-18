@@ -266,7 +266,8 @@ int main(int argc, char* argv[])
             // ok, let's find my way on my own
         {
 #if defined (Q_OS_MACX)
-            vymBaseDir.setPath(vymBaseDir.currentPath() +"/vym.app/Contents/Resources");
+            // Executable is in vym.app/Contents/MacOS, so go up first:
+            vymBaseDir.setPath(vymBaseDir.currentPath().up().cd("Resources"));
 
 #elif defined (Q_OS_WIN32)
             QString basePath;
@@ -369,11 +370,15 @@ int main(int argc, char* argv[])
     if (debug) 
     {
         qDebug()<<"Main     localName: " << localeName;
-        qDebug()<<"Main  translations: " << localeName, vymInstallDir.path() + "/lang";
+        qDebug()<<"Main  translations: " << localeName, vymBaseDir.path() + "/lang";
     }
    
     QTranslator vymTranslator;
-    vymTranslator.load( QString("vym_%1").arg( localeName ), vymInstallDir.path() + "/lang");
+    if (!vymTranslator.load( QString("vym_%1").arg( localeName ), vymBaseDir.path() + "/lang") )
+        QMessageBox::warning( 0, QObject::tr( "Warning" ),
+                               QString("Couldn't load translations for locale \"%1\" in\n%2")
+                               .arg(localeName)
+                               .arg(vymBaseDir.path() + "/lang") );
     app.installTranslator( &vymTranslator );
 
     // Initializing the master rows of flags

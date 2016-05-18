@@ -251,11 +251,9 @@ Main::Main(QWidget* parent, Qt::WindowFlags f) : QMainWindow(parent,f)
     // Connect NoteEditor, so that we can update flags if text changes
     connect (noteEditor, SIGNAL (textHasChanged() ), this, SLOT (updateNoteFlag()));
     connect (noteEditor, SIGNAL (windowClosed() ), this, SLOT (updateActions()));
-    // FIXME-0 unneeded  connect (noteEditor, SIGNAL (focusReleased() ), this, SLOT (setFocusMapEditor()));
 
     // Connect heading editor
     connect (headingEditor, SIGNAL (textHasChanged() ), this, SLOT (updateHeading()));
-    // FIXME-0 unneeded connect (headingEditor, SIGNAL (focusReleased() ), this, SLOT (setFocusMapEditor()));
 
     connect( scriptEditor, SIGNAL( runScript ( QString ) ),  this, SLOT( execute( QString ) ) );
 
@@ -355,6 +353,8 @@ Main::Main(QWidget* parent, Qt::WindowFlags f) : QMainWindow(parent,f)
     // Global Printer
     printer=new QPrinter (QPrinter::HighResolution );	
 
+    // Enable testmenu
+    //settings.setValue( "mainwindow/showTestMenu", true);
     updateGeometry();
 
 #if defined(VYM_DBUS)
@@ -3251,7 +3251,7 @@ void Main::fileLoad(const LoadMode &lmode)
     }
 
     QString filter;
-    filter+="VYM map " + tr("or","File Dialog") +" Freemind map" + " (*.xml *.vym *.vyp *.mm);;";  //FIXME-1 xml temporary here
+    filter+="VYM map " + tr("or","File Dialog") +" Freemind map" + " (*.xml *.vym *.vyp *.mm);;";  
     filter+="VYM map (*.vym *.vyp);;";
     filter+="VYM Backups (*.vym~);;";
     filter+="Freemind map (*.mm);;";
@@ -5547,7 +5547,6 @@ void Main::standardFlagChanged()
 {
     MapEditor *me = currentMapEditor();
     VymModel  *m  = currentModel();
-    qDebug()<<"Main::standardFlagChanged  me->hasFocus: "<<me->hasFocus();  // FIXME-0 testing
     if (me && m && me->getState() != MapEditor::EditingHeading) 
     {
         if ( actionSettingsUseFlagGroups->isChecked() )
@@ -5591,7 +5590,7 @@ void Main::testFunction2()
     
     s  = QString ("localeName: %1\nPath: %2")
         .arg(localeName)
-        .arg(vymInstallDir.path() + "/lang");
+        .arg(vymBaseDir.path() + "/lang");
     QMessageBox mb;
     mb.setText(s);
     mb.exec();
@@ -5631,7 +5630,7 @@ void Main::helpDoc()
     QStringList searchList;
     QDir docdir;
     #if defined(Q_OS_MACX)
-        searchList << "./vym.app/Contents/Resources/doc";
+        searchList << vymBaseDir.path() + "/doc";
     #elif defined(Q_OS_WIN32)
         searchList << vymInstallDir.path() + "doc/" + docname;
     #else
@@ -5687,13 +5686,7 @@ void Main::helpDemo()
     QStringList filters;
     filters <<"VYM example map (*.vym)";
     QFileDialog fd;
-#if defined(Q_OS_MACX)
-    fd.setDirectory (QDir("./vym.app/Contents/Resources/demos"));
-#else
-    // default path in SUSE LINUX
-    fd.setDirectory (QDir(vymBaseDir.path()+"/demos"));
-#endif
-
+    fd.setDirectory (vymBaseDir.path() + "/demos");
     fd.setFileMode (QFileDialog::ExistingFiles);
     fd.setNameFilters (filters);
     fd.setWindowTitle (vymName+ " - " +tr("Load vym example map"));

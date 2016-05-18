@@ -25,8 +25,6 @@ private:
     int contentFilter;    
 public:
     bool startDocument();
-    bool startCDATA();
-    bool endCDATA();
     bool startElement ( const QString&, const QString&,
                         const QString& eName, const QXmlAttributes& atts ); 
     bool   endElement ( const QString&, const QString&, const QString& ); 
