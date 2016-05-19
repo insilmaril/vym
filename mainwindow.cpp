@@ -222,7 +222,6 @@ Main::Main(QWidget* parent, Qt::WindowFlags f) : QMainWindow(parent,f)
     dw->hide();	
     addDockWidget (Qt::TopDockWidgetArea,dw);
     connect (dw, SIGNAL (visibilityChanged(bool ) ), this, SLOT (updateActions()));
-    //FIXME -0 connect (taskEditor, SIGNAL (focusReleased() ), this, SLOT (setFocusMapEditor()));
 
     scriptEditor = new ScriptEditor( this );
     dw= new QDockWidget (tr ("Script Editor","ScriptEditor"));
@@ -5518,7 +5517,7 @@ QVariant Main::runScript (const QString &script)
         scriptEngine.globalObject().setProperty("vym", val2);
 
         // Result variable to save return value of last processed command
-        QVariant lresult("foobar");
+        QVariant lresult("foobar");  //FIXME-0 testing
         QScriptValue val3 = scriptEngine.toScriptValue(lresult);
         scriptEngine.globalObject().setProperty("lastResult", val3);
 
