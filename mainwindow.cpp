@@ -4544,31 +4544,31 @@ void Main::editToggleTarget()
 
 void Main::editGoToTarget()  
 {
-    VymModel *m=currentModel();
+    VymModel *m = currentModel();
     if (m) 
     {
 	targetsContextMenu->clear();
 
-	ItemList targets=m->getTargets();
+	ItemList targets = m->getTargets();
 	QMap<uint,QString>::const_iterator i = targets.constBegin();
 	while (i != targets.constEnd()) 
 	{
 	    (targetsContextMenu->addAction (i.value() ) )->setData (i.key());
 	    ++i;
 	}
-	QAction *a=targetsContextMenu->exec (QCursor::pos());
+	QAction *a = targetsContextMenu->exec (QCursor::pos());
 	if (a) m->select (m->findID (a->data().toUInt() ) );
     }
 }
 
 void Main::editMoveToTarget()  
 {
-    VymModel *m=currentModel();
+    VymModel *m = currentModel();
     if (m) 
     {
 	targetsContextMenu->clear();
 
-	ItemList targets=m->getTargets();
+	ItemList targets = m->getTargets();
 	QMap<uint,QString>::const_iterator i = targets.constBegin();
 	while (i != targets.constEnd()) 
 	{
@@ -4584,13 +4584,13 @@ void Main::editMoveToTarget()
 
 	    if (ti && ti->isBranchLikeType() && selbi)
 	    {
-		BranchItem *pi =selbi->parentBranch();
+		BranchItem *pi = selbi->parentBranch();
 		// If branch below exists, select that one
 		// Makes it easier to quickly resort using the MoveTo function
-		BranchItem *below=pi->getBranchNum(selbi->num()+1);
-		LinkableMapObj *lmo=selbi->getLMO();
+		BranchItem *below = pi->getBranchNum(selbi->num()+1);
+		LinkableMapObj *lmo = selbi->getLMO();
 		QPointF orgPos;
-		if (lmo) orgPos=lmo->getAbsPos();
+		if (lmo) orgPos = lmo->getAbsPos();
 
 		if (m->relinkBranch ( selbi, (BranchItem*)ti,-1,true,orgPos) )
 		{

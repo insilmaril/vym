@@ -3519,7 +3519,7 @@ ItemList VymModel::getTargets()
     while (cur) 
     {
 	if (cur->hasActiveSystemFlag("system-target"))
-        targets[cur->getID()] = (cur->getHeading()).getTextASCII();
+            targets[cur->getID()] = (cur->getHeading()).getTextASCII();
 	nextBranch(cur,prev);
     }
     return targets; 
