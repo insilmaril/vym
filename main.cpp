@@ -267,8 +267,9 @@ int main(int argc, char* argv[])
         {
 #if defined (Q_OS_MACX)
             // Executable is in vym.app/Contents/MacOS, so go up first:
-            vymBaseDir.setPath(vymBaseDir.currentPath().up().cd("Resources"));
-
+            vymBaseDir = QDir::current();
+            vymBaseDir.cdUp();
+            vymBaseDir.cd("Resources");
 #elif defined (Q_OS_WIN32)
             QString basePath;
 

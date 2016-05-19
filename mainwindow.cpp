@@ -5589,9 +5589,11 @@ void Main::testFunction2()
 #endif
     }
     
-    s  = QString ("localeName: %1\nPath: %2")
+    s  = QString ("localeName: %1\nPath: %2\n")
         .arg(localeName)
         .arg(vymBaseDir.path() + "/lang");
+    s += QString("vymBaseDir: %1\n").arg(vymBaseDir.path());
+    s += QString("currentPath: %1\n").arg(QDir::currentPath());
     QMessageBox mb;
     mb.setText(s);
     mb.exec();
