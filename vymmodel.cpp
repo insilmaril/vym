@@ -2611,7 +2611,7 @@ ImageItem* VymModel::createImage(BranchItem *dst)
         int n;
 
         QList<QVariant> cData;
-        cData << "new" << "undef";
+        cData << tr("Image","Default name for new image") << "undef";
 
         ImageItem *newii=new ImageItem(cData) ;
         //newii->setHeading (QApplication::translate("Heading of new image in map", "new image"));
