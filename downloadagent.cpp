@@ -80,34 +80,42 @@ void DownloadAgent::setUserAgent(const QString &s)
     userAgent = s.toLocal8Bit();
 }
 
-void DownloadAgent::doDownload(const QUrl &url)
+void DownloadAgent::doDownload(const QUrl &url) 
 {
     QNetworkRequest request(url);
     if (!userAgent.isEmpty()) request.setRawHeader("User-Agent", userAgent);
 
-    QByteArray idCookieValue = settings.value("/downloads/cookies/vymID/value",QByteArray() ).toByteArray();
-    //idCookieValue = QVariant("2000000002601").toByteArray(); //TESTING!!!
-    //qDebug()<<"idCookie="<<idCookieValue;
-    if (!idCookieValue.size() == 0 )
-    {
-        QNetworkCookie idCookie;
-        idCookie.setPath("/");
-//        idCookie.setDomain("localhost");
-        idCookie.setDomain("www.insilmaril.de");
-        idCookie.setName("vymID");
-        idCookie.setValue(idCookieValue);
-        //idCookie.setExpirationDate( settings.value("/downloads/cookies/id/expires", QVariant(QDateTime::currentDateTime().addSecs(60) )).toDateTime() ); // testing
-        idCookie.setExpirationDate( QDateTime( QDate(2099,1,1) ) ); 
-        agent.cookieJar()->insertCookie(idCookie);
+    // Only send cookies if talking to my own domain
+    bool useCookies = false;
+    if (url.host().contains("insilmaril.de") ) useCookies = true;
 
-        QNetworkCookie platformCookie;
-        platformCookie.setPath("/");
-//        platformCookie.setDomain("localhost");
-        platformCookie.setDomain("www.insilmaril.de");
-        platformCookie.setName("vymPlatform");
-        platformCookie.setValue( QVariant(vymPlatform).toByteArray() );
-        platformCookie.setExpirationDate( QDateTime( QDate(2099,1,1) ) ); 
-        agent.cookieJar()->insertCookie(platformCookie);
+    if (useCookies)
+    {
+        if (debug) qDebug() << "DownloadAgent::doDownload  Using cookies to download " << url.toString();
+        QByteArray idCookieValue = settings.value("/downloads/cookies/vymID/value",QByteArray() ).toByteArray();
+        //idCookieValue = QVariant("2000000002601").toByteArray(); //TESTING!!!
+        //qDebug()<<"idCookie="<<idCookieValue;
+        if (!idCookieValue.size() == 0 )
+        {
+            QNetworkCookie idCookie;
+            idCookie.setPath("/");
+    //        idCookie.setDomain("localhost");
+            idCookie.setDomain("www.insilmaril.de");
+            idCookie.setName("vymID");
+            idCookie.setValue(idCookieValue);
+            //idCookie.setExpirationDate( settings.value("/downloads/cookies/id/expires", QVariant(QDateTime::currentDateTime().addSecs(60) )).toDateTime() ); // testing
+            idCookie.setExpirationDate( QDateTime( QDate(2099,1,1) ) ); 
+            agent.cookieJar()->insertCookie(idCookie);
+
+            QNetworkCookie platformCookie;
+            platformCookie.setPath("/");
+    //        platformCookie.setDomain("localhost");
+            platformCookie.setDomain("www.insilmaril.de");
+            platformCookie.setName("vymPlatform");
+            platformCookie.setValue( QVariant(vymPlatform).toByteArray() );
+            platformCookie.setExpirationDate( QDateTime( QDate(2099,1,1) ) ); 
+            agent.cookieJar()->insertCookie(platformCookie);
+        }
     }
 
     QNetworkReply *reply = agent.get(request);
@@ -180,11 +188,11 @@ void DownloadAgent::requestFinished(QNetworkReply *reply)
 
         QString data = reply->readAll();
         if (!tmpFile.open() )
-            QMessageBox::warning( 0, tr("warning"), "Couldn't open tmpFile " + tmpFile.fileName());
+            QMessageBox::warning( 0, tr("Warning"), "Couldn't open tmpFile " + tmpFile.fileName());
         else
         {
             if (!saveToDisk(tmpFile.fileName(), data))
-                QMessageBox::warning( 0, tr("warning"), "Couldn't write to " + tmpFile.fileName());
+                QMessageBox::warning( 0, tr("Warning"), "Couldn't write to " + tmpFile.fileName());
             else
                 resultMessage = QString ("saved to %1").arg(tmpFile.fileName());
         }
