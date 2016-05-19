@@ -4850,7 +4850,7 @@ void Main::networkConnect()
     if (m) m->connectToServer();
 }
 
-void Main::downloadFinished()   // FIXME-1 only used for drop events in mapeditor and VM::downloadImage
+void Main::downloadFinished()   // only used for drop events in mapeditor and VM::downloadImage // FIXME-2 remove debug
 {
     QString s;
     DownloadAgent *agent = static_cast<DownloadAgent*>(sender());

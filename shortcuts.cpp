@@ -37,7 +37,7 @@ void Switchboard::addGroup( QString gIdentifier, QString gName)
 
 void Switchboard::addSwitch( QString identifier, QString scope, QAction *action, QString tag)
 {
-    // FIXME-1 check, if identifier already exist...
+    // FIXME-2 check, if identifier already exist...
     if (!switches.uniqueKeys().contains(identifier))
     {
         KeySwitch ksw(identifier, action->text(), scope, tag, action->shortcut());
