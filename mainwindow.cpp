@@ -1344,45 +1344,6 @@ void Main::setupEditActions()
     actionListBranches.append(a);
     actionToggleScroll=a;
 
-    a = new QAction( QPixmap(), tr( "Expand all branches","Edit menu" ), this);
-    connect( a, SIGNAL( triggered() ), this, SLOT( editExpandAll() ) );
-    actionExpandAll=a;
-    actionExpandAll->setEnabled (false);
-    actionExpandAll->setCheckable(false);
-    actionListBranches.append(actionExpandAll);
-    addAction (a);
-
-    a = new QAction( QPixmap(), tr( "Expand one level","Edit menu" ), this);
-    a->setShortcut ( Qt::Key_Greater );	    
-    switchboard.addSwitch ("mapExpandOneLevel", shortcutScope, a, tag);
-    connect( a, SIGNAL( triggered() ), this, SLOT( editExpandOneLevel() ) );
-    a->setEnabled (false);
-    a->setCheckable(false);
-    addAction (a);
-    actionListBranches.append(a);
-    actionExpandOneLevel=a;
-
-    a = new QAction( QPixmap(), tr( "Collapse one level","Edit menu" ), this);
-    a->setShortcut ( Qt::Key_Less + Qt::CTRL);	
-    switchboard.addSwitch ("mapCollapseOneLevel", shortcutScope, a, tag);
-    connect( a, SIGNAL( triggered() ), this, SLOT( editCollapseOneLevel() ) );
-    a->setEnabled (false);
-    a->setCheckable(false);
-    actionListBranches.append(a);
-    addAction (a);
-    actionCollapseOneLevel=a;  // FIXME-2 add to menu
-
-    a = new QAction( QPixmap(), tr( "Collapse unselected levels","Edit menu" ), this);
-    // Shortcut causes that pipe-symbol cannot be entered e.g. in NoteEditor
-    //a->setShortcut ( Qt::Key_Less);	  
-    //switchboard.addSwitch ("mapCollapseUnselectedLevels", shortcutScope, a, tag);
-    connect( a, SIGNAL( triggered() ), this, SLOT( editCollapseUnselected() ) );
-    a->setEnabled (false);
-    a->setCheckable(false);
-    actionListBranches.append(a);
-    addAction (a);
-    actionCollapseUnselected=a  // FIXME-2 add to menu; // FIXME-2 add shortcut again
-
     a = new QAction( tr( "Unscroll children","Edit menu" ), this);
     editMenu->addAction(a);
     connect( a, SIGNAL( triggered() ), this, SLOT( editUnscrollChildren() ) );
@@ -1416,6 +1377,46 @@ void Main::setupEditActions()
     actionResetSelectionSize=a;
 
     editMenu->addSeparator();
+
+    a = new QAction( QPixmap(), "TE: " + tr( "Collapse one level","Edit menu" ), this);
+    a->setShortcut ( Qt::Key_Less + Qt::CTRL);	
+    switchboard.addSwitch ("mapCollapseOneLevel", shortcutScope, a, tag);
+    connect( a, SIGNAL( triggered() ), this, SLOT( editCollapseOneLevel() ) );
+    editMenu->addAction(a);
+    a->setEnabled (false);
+    a->setCheckable(false);
+    actionListBranches.append(a);
+    addAction (a);
+    actionCollapseOneLevel=a;  
+
+    a = new QAction( QPixmap(), "TE: " + tr( "Collapse unselected levels","Edit menu" ), this);
+    a->setShortcut ( Qt::Key_Less);	  
+    switchboard.addSwitch ("mapCollapseUnselectedLevels", shortcutScope, a, tag);
+    connect( a, SIGNAL( triggered() ), this, SLOT( editCollapseUnselected() ) );
+    editMenu->addAction(a);
+    a->setEnabled (false);
+    a->setCheckable(false);
+    actionListBranches.append(a);
+    addAction (a);
+    actionCollapseUnselected=a;
+
+    a = new QAction( QPixmap(), tr( "Expand all branches","Edit menu" ), this);
+    connect( a, SIGNAL( triggered() ), this, SLOT( editExpandAll() ) );
+    actionExpandAll=a;
+    actionExpandAll->setEnabled (false);
+    actionExpandAll->setCheckable(false);
+    actionListBranches.append(actionExpandAll);
+    addAction (a);
+
+    a = new QAction( QPixmap(), tr( "Expand one level","Edit menu" ), this);
+    a->setShortcut ( Qt::Key_Greater );	    
+    switchboard.addSwitch ("mapExpandOneLevel", shortcutScope, a, tag);
+    connect( a, SIGNAL( triggered() ), this, SLOT( editExpandOneLevel() ) );
+    a->setEnabled (false);
+    a->setCheckable(false);
+    addAction (a);
+    actionListBranches.append(a);
+    actionExpandOneLevel=a;
 
     tag = tr("References Context menu","Shortcuts");
     a = new QAction( QPixmap(":/flag-url.png"), tr( "Open URL","Edit menu" ), this);
