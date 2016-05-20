@@ -524,8 +524,9 @@ void BranchObj::alignRelativeTo (QPointF ref,bool alignSelf)
     //    qDebug() <<"  parO="<<parObj;
         //qDebug() <<   "  bbox.tL="<<bboxTotal.topLeft();
         << "  useRelPos=" << useRelPos 
+        << " layoutHint= " << layoutHint
     //    qDebug() <<"absPos="<<absPos
-    //	<< "  relPos="<<relPos
+    	<< "  relPos="<<relPos
     //	<< "  parPos="<<pp
     //	<< "  bbox="<<bbox
     	<< "  orient="<<o<<" "<<orientation;
@@ -536,8 +537,7 @@ void BranchObj::alignRelativeTo (QPointF ref,bool alignSelf)
     //	<< "  th="<<th
         ;
     }
-*/
-
+   */
 
     setOrientation();
 

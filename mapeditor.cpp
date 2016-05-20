@@ -1661,6 +1661,8 @@ void MapEditor::moveObject ()
 			    p.y()  - movingObj_offset.y() + lmosel->getTopPad() );	    
 		    else    
 			lmosel->move(p.x() - movingObj_offset.x(), p.y() - movingObj_offset.y() - lmosel->getTopPad());
+                    BranchItem *selbi = ((BranchItem*)seli);
+                    if ( selbi->parentBranch()->getChildrenLayout() == BranchItem::FreePositioning) lmosel->setRelPos();
 		} 
 
 	    } // depth>0
