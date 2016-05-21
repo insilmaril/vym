@@ -5594,6 +5594,7 @@ void Main::testFunction2()
         .arg(vymBaseDir.path() + "/lang");
     s += QString("vymBaseDir: %1\n").arg(vymBaseDir.path());
     s += QString("currentPath: %1\n").arg(QDir::currentPath());
+    s += QString("appDirPath: %1\n").arg(QCoreApplication::applicationDirPath());
     QMessageBox mb;
     mb.setText(s);
     mb.exec();
