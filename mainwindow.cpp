@@ -1229,7 +1229,7 @@ void Main::setupEditActions()
     // Shortcut to add branch
     a = new QAction(QPixmap(":/newbranch.png"), tr( "Add branch as child","Edit menu" ), this);
     a->setShortcut (Qt::Key_A);		
-    a->setShortcutContext (Qt::WindowShortcut);
+    a->setShortcutContext (Qt::WidgetShortcut);
     mapEditorActions.append( a );
     switchboard.addSwitch ("mapEditNewBranch", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( editNewBranch() ) );
@@ -2036,6 +2036,7 @@ void Main::setupViewActions()
     //a=noteEditorDW->toggleViewAction();
     a = new QAction(QPixmap(":/flag-note.png"), tr( "Note editor","View action" ),this);
     a->setShortcut ( Qt::Key_N );
+    a->setShortcutContext (Qt::WidgetShortcut);
     a->setCheckable(true);
     viewMenu->addAction (a);
     mapEditorActions.append( a );
@@ -2045,9 +2046,11 @@ void Main::setupViewActions()
 
     //a=headingEditorDW->toggleViewAction();
     a = new QAction(QPixmap(":/headingeditor.png"), tr( "Heading editor","View action" ),this);
-    a->setShortcut ( Qt::Key_E );
     a->setCheckable(true);
     a->setIcon (QPixmap(":/headingeditor.png"));
+    a->setShortcut ( Qt::Key_E );
+    a->setShortcutContext (Qt::WidgetShortcut);
+    mapEditorActions.append( a );
     viewMenu->addAction (a);
     switchboard.addSwitch ("mapToggleHeadingEditor", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT(windowToggleHeadingEditor() ) );
@@ -2063,8 +2066,10 @@ void Main::setupViewActions()
     actionViewToggleTreeEditor=a;
 
     a = new QAction(QPixmap(":/taskeditor.png"), tr( "Task editor","View action" ),this);
-    a->setShortcut ( Qt::Key_Q );
     a->setCheckable(true);
+    a->setShortcut ( Qt::Key_Q );
+    a->setShortcutContext (Qt::WidgetShortcut);
+    mapEditorActions.append( a );
     viewMenu->addAction (a);
     switchboard.addSwitch ("mapToggleTaskEditor", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT(windowToggleTaskEditor() ) );
