@@ -1230,6 +1230,7 @@ void Main::setupEditActions()
     a = new QAction(QPixmap(":/newbranch.png"), tr( "Add branch as child","Edit menu" ), this);
     a->setShortcut (Qt::Key_A);		
     a->setShortcutContext (Qt::WindowShortcut);
+    mapEditorActions.append( a );
     switchboard.addSwitch ("mapEditNewBranch", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( editNewBranch() ) );
     actionListBranches.append(a);
@@ -2037,6 +2038,7 @@ void Main::setupViewActions()
     a->setShortcut ( Qt::Key_N );
     a->setCheckable(true);
     viewMenu->addAction (a);
+    mapEditorActions.append( a );
     switchboard.addSwitch ("mapToggleNoteEditor", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT(windowToggleNoteEditor() ) );
     actionViewToggleNoteEditor=a;
