@@ -4044,33 +4044,33 @@ void Main::editHeadingFinished(VymModel *m)
         if (!actionSettingsAutoSelectNewBranch->isChecked() &&
                 !prevSelection.isEmpty())
             m->select(prevSelection);
-        prevSelection="";
+        prevSelection = "";
     }
 }
 
 void Main::openVymLinks(const QStringList &vl, bool background)
 {
     QStringList vlmin;
-    int index=-1;
-    for (int j=0; j<vl.size(); ++j)
+    int index = -1;
+    for (int j = 0; j < vl.size(); ++j)
     {
 	// compare path with already loaded maps
-	int i;
-	index=-1;
-	for (i=0;i<=vymViews.count() -1;i++)
+        QString absPath = QFileInfo(vl.at(j)).absoluteFilePath();
+	index = -1;
+	for (int i = 0;i <= vymViews.count() -1; i++)
 	{
-	    if (vl.at(j)==vymViews.at(i)->getModel()->getFilePath() )
+	    if ( absPath == vymViews.at(i)->getModel()->getFilePath() )
 	    {
-		index=i;
+		index = i;
 		break;
 	    }
 	}   
-	if (index<0) vlmin.append (vl.at(j));
+	if (index < 0) vlmin.append ( absPath );
     }
 
     
-    progressCounterTotal=vlmin.size();
-    for (int j=0; j<vlmin.size(); j++)
+    progressCounterTotal = vlmin.size();
+    for (int j = 0; j < vlmin.size(); j++)
     {
 	// Load map
 	if (!QFile(vlmin.at(j)).exists() )
@@ -4084,14 +4084,14 @@ void Main::openVymLinks(const QStringList &vl, bool background)
 	}
     }	    
     // Go to tab containing the map
-    if (index>=0)
+    if (index >= 0)
 	tabWidget->setCurrentIndex (index);	
     removeProgressCounter();
 }
 
 void Main::editOpenVymLink(bool background)
 {
-    VymModel *m=currentModel();
+    VymModel *m = currentModel();
     if (m)
     {
 	QStringList vl;
@@ -4108,20 +4108,20 @@ void Main::editOpenVymLinkBackground()
 void Main::editOpenMultipleVymLinks()
 {
     QString currentVymLink;
-    VymModel *m=currentModel();
+    VymModel *m = currentModel();
     if (m)
     {
-	QStringList vl=m->getVymLinks();
+	QStringList vl = m->getVymLinks();
 	openVymLinks (vl, true);
     }
 }
 
 void Main::editVymLink()
 {
-    VymModel *m=currentModel();
+    VymModel *m = currentModel();
     if (m)
     {
-	BranchItem *bi=m->getSelectedBranch();
+	BranchItem *bi = m->getSelectedBranch();
 	if (bi)
 	{	    
 	    QStringList filters;
@@ -4139,8 +4139,8 @@ void Main::editVymLink()
 	    QString fn;
 	    if ( fd.exec() == QDialog::Accepted &&!fd.selectedFiles().isEmpty() )
 	    {
-		QString fn=fd.selectedFiles().first();
-		lastMapDir=QDir (fd.directory().path());
+		QString fn = fd.selectedFiles().first();
+		lastMapDir = QDir (fd.directory().path());
 		m->setVymLink (fn);
 	    }
 	}
