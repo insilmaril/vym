@@ -169,7 +169,7 @@ private slots:
     void editCycleTaskStatus();
     void editTaskSleepN();
     void editAddTimestamp();
-    void editMapInfo();
+    void editMapProperties();
     void editMoveUp();	
     void editMoveDown();    
     void editDetach();	

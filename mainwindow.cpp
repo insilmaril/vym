@@ -1764,9 +1764,9 @@ void Main::setupEditActions()
     actionListBranches.append (a);
     actionAddTimestamp=a;
 
-    a = new QAction(tr( "Edit Map Info...","Edit menu" ),this);
+    a = new QAction(tr( "Map properties...","Edit menu" ),this);
     a->setEnabled (true);
-    connect( a, SIGNAL( triggered() ), this, SLOT( editMapInfo() ) );
+    connect( a, SIGNAL( triggered() ), this, SLOT( editMapProperties() ) );
     actionListMap.append (a);
     actionMapInfo=a;
 
@@ -4225,28 +4225,29 @@ void Main::editAddTimestamp()
     if (m) m->addTimestamp();	
 }
 
-void Main::editMapInfo()    
+void Main::editMapProperties()    
 {
-    VymModel *m=currentModel();
+    VymModel *m = currentModel();
     if (!m) return;
 
     ExtraInfoDialog dia;
-    dia.setMapName (m->getFileName() );
-    dia.setMapTitle (m->getTitle() );
-    dia.setAuthor (m->getAuthor() );
-    dia.setComment(m->getComment() );
+    dia.setMapName  ( m->getFileName() );
+    dia.setMapTitle ( m->getTitle() );
+    dia.setAuthor   ( m->getAuthor() );
+    dia.setLockfile ( m->useLockfile() );
+    dia.setComment  ( m->getComment() );
 
     // Calc some stats
     QString stats;
-    stats+=tr("%1 items on map\n","Info about map").arg (m->getScene()->items().size(),6);
+    stats += tr("%1 items on map\n","Info about map").arg (m->getScene()->items().size(),6);
 
-    uint b=0;
-    uint f=0;
-    uint n=0;
-    uint xl=0;
-    BranchItem *cur=NULL;
-    BranchItem *prev=NULL;
-    m->nextBranch(cur,prev);
+    uint b  = 0;
+    uint f  = 0;
+    uint n  = 0;
+    uint xl = 0;
+    BranchItem *cur  = NULL;
+    BranchItem *prev = NULL;
+    m->nextBranch(cur, prev);
     while (cur) 
     {
         if (!cur->getNote().isEmpty() ) n++;
@@ -4256,12 +4257,12 @@ void Main::editMapInfo()
         m->nextBranch(cur,prev);
     }
 
-    stats+=QString ("%1 branches\n").arg (m->branchCount(),6);
-    stats+=QString ("%1 notes\n").arg (n,6);
-    stats+=QString ("%1 images\n").arg (f,6);
-    stats+=QString ("%1 tasks\n").arg (m->taskCount(),6 );;
-    stats+=QString ("%1 slides\n").arg (m->slideCount(),6 );;
-    stats+=QString ("%1 xLinks \n").arg (xl/2,6);
+    stats += QString ("%1 branches\n").arg (m->branchCount(),6);
+    stats += QString ("%1 notes\n").arg (n,6);
+    stats += QString ("%1 images\n").arg (f,6);
+    stats += QString ("%1 tasks\n").arg (m->taskCount(),6 );;
+    stats += QString ("%1 slides\n").arg (m->slideCount(),6 );;
+    stats += QString ("%1 xLinks \n").arg (xl/2,6);
     dia.setStats (stats);
 
     // Finally show dialog
@@ -4270,6 +4271,7 @@ void Main::editMapInfo()
 	m->setAuthor (dia.getAuthor() );
 	m->setComment (dia.getComment() );
 	m->setTitle (dia.getMapTitle() );
+        m->setUseLockfile( dia.useLockfile() );
     }
 }
 
