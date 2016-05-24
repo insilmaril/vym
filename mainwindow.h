@@ -328,9 +328,6 @@ public slots:
     void downloadUpdates(bool interactive);
     void checkUpdates();
 
-public:
-    QList <QAction*> mapEditorActions;  //! This allows mapEditor to clone the actions and shortcuts
-
 private:
     QString shortcutScope;          //! For listing shortcuts
     QTabWidget *tabWidget;
@@ -349,7 +346,12 @@ private:
 
     BranchPropertyEditor *branchPropertyEditor;
 
-    QList <QAction*> actionListMap;
+public:
+    QList <QAction*> mapEditorActions;      //! allows mapEditor to clone actions and shortcuts
+private:
+    QList <QAction*> restrictedMapActions;  //! Actions reqire map and write access
+    QList <QAction*> unrestrictedMapActions;//! Actions require map, but work also in readonly, e.g. print
+    QList <QAction*> actionListFiles;       //! File related actions, e.g. load, save, restore session
     QList <QAction*> actionListBranches;
     QList <QAction*> actionListItems;
 

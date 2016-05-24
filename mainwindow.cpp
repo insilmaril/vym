@@ -1000,7 +1000,7 @@ void Main::setupFileActions()
     switchboard.addSwitch ("fileMapRestore", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( fileRestoreSession() ) );
     fileMenu->addAction(a);
-    actionListMap.append(a);    //FIXME-2 check, if this really should go to this list
+    actionListFiles.append(a);   
     actionCopy=a;
 
     fileLastMapsMenu = fileMenu->addMenu (tr("Open Recent","File menu"));
@@ -1008,9 +1008,11 @@ void Main::setupFileActions()
 
     a = new QAction( QPixmap( ":/filesave.png"), tr( "&Save...","File menu" ), this);
     switchboard.addSwitch ("fileMapSave", shortcutScope, a, tag);
-    connect( a, SIGNAL( triggered() ), this, SLOT( fileSave() ) );
     fileMenu->addAction(a);
-    actionListMap.append (a);
+    actionListFiles.append (a);
+    restrictedMapActions.append( a );
+    mapEditorActions.append ( a );
+    connect( a, SIGNAL( triggered() ), this, SLOT( fileSave() ) );
     actionFileSave=a;
 
     a = new QAction( QPixmap(":/filesaveas.png"), tr( "Save &As...","File menu" ), this);
@@ -1048,9 +1050,10 @@ void Main::setupFileActions()
 
     a = new QAction( QPixmap(":/file-document-export.png"),tr("Repeat last export (%1)").arg("-"), this);
     a->setShortcut (Qt::ALT + Qt::Key_E);
+    fileExportMenu->addAction(a);
+    mapEditorActions.append( a );
     switchboard.addSwitch ("fileExportLast", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( fileExportLast() ) );
-    fileExportMenu->addAction(a);
     actionFileExportLast=a;
 
     a = new QAction(  "Webpage (HTML)...",this );
@@ -1115,7 +1118,7 @@ void Main::setupFileActions()
     switchboard.addSwitch ("editMapProperties", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( editMapProperties() ) );
     fileMenu->addAction(a);
-    actionListMap.append (a);
+    actionListFiles.append (a);   // FIXME-2 requires map. Dialog needs to be readonly in readonly mode
     actionFilePrint=a;
 
     fileMenu->addSeparator();
@@ -1125,7 +1128,7 @@ void Main::setupFileActions()
     switchboard.addSwitch ("fileMapPrint", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( filePrint() ) );
     fileMenu->addAction(a);
-    actionListMap.append (a);
+    unrestrictedMapActions.append (a);
     actionFilePrint=a;
 
     a = new QAction( QPixmap(":/fileclose.png"), tr( "&Close Map","File menu" ), this);
@@ -1153,19 +1156,21 @@ void Main::setupEditActions()
     a->setShortcut (Qt::CTRL + Qt::Key_Z);
     a->setShortcutContext (Qt::WidgetShortcut);
     a->setEnabled (false);
+    editMenu->addAction(a);
+    mapEditorActions.append( a );
+    actionListFiles.append ( a );
     switchboard.addSwitch ("mapUndo", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( editUndo() ) );
-    editMenu->addAction(a);
-    actionListMap.append (a);
     actionUndo=a;
 
     a = new QAction( QPixmap( ":/redo.png"), tr( "&Redo","Edit menu" ), this); 
     a->setShortcut (Qt::CTRL + Qt::Key_Y);
     a->setShortcutContext (Qt::WidgetShortcut);
+    editMenu->addAction(a);
+    actionListFiles.append (a);
+    mapEditorActions.append( a );
     switchboard.addSwitch ("mapRedo", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( editRedo() ) );
-    editMenu->addAction(a);
-    actionListMap.append (a);
     actionRedo=a;
 
     editMenu->addSeparator();
@@ -1173,20 +1178,23 @@ void Main::setupEditActions()
     a->setShortcut (Qt::CTRL + Qt::Key_C );
     a->setShortcutContext (Qt::WidgetShortcut);
     a->setEnabled (false);
+    editMenu->addAction(a);
+    actionListFiles.append ( a );
+    mapEditorActions.append( a );
     switchboard.addSwitch ("mapCopy", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( editCopy() ) );
-    editMenu->addAction(a);
-    actionListMap.append(a);
     actionCopy=a;
 
     a = new QAction(QPixmap( ":/editcut.png" ), tr( "Cu&t","Edit menu" ), this);
     a->setShortcut (Qt::CTRL + Qt::Key_X );
     a->setEnabled (false);
     a->setShortcutContext (Qt::WidgetShortcut);
+    editMenu->addAction(a);
+    actionListFiles.append( a );
+    mapEditorActions.append( a );
+    restrictedMapActions.append( a );
     switchboard.addSwitch ("mapCut", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( editCut() ) );
-    editMenu->addAction(a);
-    actionListMap.append(a);
     addAction (a);
     actionCut=a;
 
@@ -1195,9 +1203,10 @@ void Main::setupEditActions()
     a->setShortcut (Qt::CTRL + Qt::Key_V );
     a->setShortcutContext (Qt::WidgetShortcut);
     a->setEnabled (false);
-    switchboard.addSwitch ("mapPaste", shortcutScope, a, tag);
     editMenu->addAction(a);
-    actionListMap.append(a);
+    actionListFiles.append( a );
+    mapEditorActions.append( a );
+    switchboard.addSwitch ("mapPaste", shortcutScope, a, tag);
     actionPaste=a;
 
     // Shortcut to delete selection
@@ -1231,7 +1240,7 @@ void Main::setupEditActions()
     switchboard.addSwitch ("mapAddCenter", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( editAddMapCenter() ) );
     editMenu->addAction(a);
-    actionListMap.append (a);
+    actionListFiles.append (a);
     actionAddMapCenter = a;
 
 
@@ -1295,24 +1304,28 @@ void Main::setupEditActions()
     actionListBranches.append(a);
     actionAddBranchBelow=a; 
 
-    a = new QAction(QPixmap(":/up.png" ), tr( "Move up","Edit menu" ), this);
+    a = new QAction(QPixmap(":/up.png" ), tr( "Move branch up","Edit menu" ), this);
     a->setShortcut (Qt::Key_PageUp );		
     a->setShortcutContext (Qt::WidgetShortcut);
     a->setEnabled (false);
+    mapEditorActions.append( a );
+    restrictedMapActions.append( a );
+    actionListBranches.append (a);
+    editMenu->addAction(a);
     switchboard.addSwitch ("mapEditMoveBranchUp", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( editMoveUp() ) );
-    editMenu->addAction(a);
-    actionListBranches.append (a);
     actionMoveUp=a;
 
-    a = new QAction( QPixmap( ":/down.png"), tr( "Move down","Edit menu" ),this);
+    a = new QAction( QPixmap( ":/down.png"), tr( "Move branch down","Edit menu" ),this);
     a->setShortcut ( Qt::Key_PageDown );	  
     a->setShortcutContext (Qt::WidgetShortcut);
     a->setEnabled (false);
+    mapEditorActions.append( a );
+    restrictedMapActions.append( a );
+    actionListBranches.append (a);
+    editMenu->addAction(a);
     switchboard.addSwitch ("mapEditMoveBranchDown", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( editMoveDown() ) );
-    editMenu->addAction(a);
-    actionListBranches.append (a);
     actionMoveDown=a;
 
     a = new QAction(QPixmap(), tr( "&Detach","Context menu" ),this);
@@ -1767,7 +1780,7 @@ void Main::setupEditActions()
     a = new QAction(tr( "Map properties...","Edit menu" ),this);
     a->setEnabled (true);
     connect( a, SIGNAL( triggered() ), this, SLOT( editMapProperties() ) );
-    actionListMap.append (a);
+    actionListFiles.append (a);
     actionMapInfo=a;
 
     a = new QAction( tr( "Add   ...","Edit menu" ), this);
@@ -1823,18 +1836,20 @@ void Main::setupSelectActions()
     a->setShortcut (Qt::CTRL+ Qt::Key_O );	
     a->setShortcutContext (Qt::WidgetShortcut);
     selectMenu->addAction(a);
+    actionListFiles.append (a);
+    mapEditorActions.append ( a );
     switchboard.addSwitch ("mapSelectPrevious", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( editSelectPrevious() ) );
-    actionListMap.append (a);
     actionSelectPrevious=a;
 
     a = new QAction( QPixmap(":/selectnext.png"), tr( "Select next","Edit menu"), this);
     a->setShortcut (Qt::CTRL + Qt::Key_I );
     a->setShortcutContext (Qt::WidgetShortcut);
     selectMenu->addAction(a);
+    actionListFiles.append (a);
+    mapEditorActions.append ( a );
     switchboard.addSwitch ("mapSelectNext", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( editSelectNext() ) );
-    actionListMap.append (a);
     actionSelectNext=a;
 
     a = new QAction( tr( "Unselect all","Edit menu"), this);
@@ -1842,7 +1857,7 @@ void Main::setupSelectActions()
     selectMenu->addAction(a);
     switchboard.addSwitch ("mapSelectNothing", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( editSelectNothing() ) );
-    actionListMap.append (a);
+    actionListFiles.append (a);
     actionSelectNothing=a;
 
     tag = tr("Search functions","Shortcuts");
@@ -1851,7 +1866,7 @@ void Main::setupSelectActions()
     selectMenu->addAction(a);
     switchboard.addSwitch ("mapFind", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( editOpenFindResultWidget() ) );
-    actionListMap.append(a);
+    actionListFiles.append(a);
     actionFind=a;
 
     a = new QAction( QPixmap(":/find.png"), tr( "Find...","Edit menu"), this);
@@ -1859,7 +1874,7 @@ void Main::setupSelectActions()
     selectMenu->addAction(a);
     switchboard.addSwitch ("mapFindAlt", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( editOpenFindResultWidget() ) );
-    actionListMap.append(a);
+    actionListFiles.append(a);
 
     a = new QAction( tr( "Find duplicate URLs","Edit menu"), this);
     a->setShortcut (Qt::SHIFT + Qt::Key_F);	
@@ -1927,25 +1942,32 @@ void Main::setupFormatActions()
     actionGroupFormatLinkStyles->setExclusive (true);
     a= new QAction( tr( "Linkstyle Line" ), actionGroupFormatLinkStyles);
     a->setCheckable(true);
-    connect( a, SIGNAL( triggered() ), this, SLOT( formatLinkStyleLine() ) );
+    restrictedMapActions.append( a );
     formatMenu->addAction (a);
+    connect( a, SIGNAL( triggered() ), this, SLOT( formatLinkStyleLine() ) );
     actionFormatLinkStyleLine=a;
+
     a= new QAction( tr( "Linkstyle Curve" ), actionGroupFormatLinkStyles);
     a->setCheckable(true);
-    connect( a, SIGNAL( triggered() ), this, SLOT( formatLinkStyleParabel() ) );
+    restrictedMapActions.append( a );
     formatMenu->addAction (a);
+    connect( a, SIGNAL( triggered() ), this, SLOT( formatLinkStyleParabel() ) );
     actionFormatLinkStyleParabel=a;
+
     a= new QAction( tr( "Linkstyle Thick Line" ), actionGroupFormatLinkStyles );
     a->setCheckable(true);
-    connect( a, SIGNAL( triggered() ), this, SLOT( formatLinkStylePolyLine() ) );
+    restrictedMapActions.append( a );
     formatMenu->addAction (a);
+    connect( a, SIGNAL( triggered() ), this, SLOT( formatLinkStylePolyLine() ) );
     actionFormatLinkStylePolyLine=a;
+
     a= new QAction( tr( "Linkstyle Thick Curve" ), actionGroupFormatLinkStyles);
     a->setCheckable(true);
     a->setChecked (true);
-    connect( a, SIGNAL( triggered() ), this, SLOT( formatLinkStylePolyParabel() ) );
+    restrictedMapActions.append( a );
     formatMenu->addAction (a);
     formatMenu->addSeparator();
+    connect( a, SIGNAL( triggered() ), this, SLOT( formatLinkStylePolyParabel() ) );
     actionFormatLinkStylePolyParabel=a;
 
     a = new QAction( tr( "Hide link if object is not selected","Branch attribute" ), this);
@@ -1997,7 +2019,7 @@ void Main::setupViewActions()
     viewMenu->addAction (a);
     switchboard.addSwitch ("mapZoomIn", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT(viewZoomIn() ) );
-    actionListMap.append (a);
+    actionListFiles.append (a);
     actionZoomIn=a;
 
     a = new QAction( QPixmap(":/viewmag-.png"), tr( "Zoom out","View action" ), this);
@@ -2005,7 +2027,7 @@ void Main::setupViewActions()
     viewMenu->addAction (a);
     switchboard.addSwitch ("mapZoomOut", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( viewZoomOut() ) );
-    actionListMap.append (a);
+    actionListFiles.append (a);
     actionZoomOut=a;
 
     a = new QAction( QPixmap(":/rotate-ccw.png"), tr( "Rotate counterclockwise","View action" ), this);
@@ -2013,7 +2035,7 @@ void Main::setupViewActions()
     viewMenu->addAction (a);
     switchboard.addSwitch ("mapRotateCounterClockwise", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( viewRotateCounterClockwise() ) );
-    actionListMap.append (a);
+    actionListFiles.append (a);
     actionRotateCounterClockwise=a;
 
     a = new QAction( QPixmap(":/rotate-cw.png"), tr( "Rotate rclockwise","View action" ), this);
@@ -2021,7 +2043,7 @@ void Main::setupViewActions()
     viewMenu->addAction (a);
     switchboard.addSwitch ("mapRotateClockwise", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( viewRotateClockwise() ) );
-    actionListMap.append (a);
+    actionListFiles.append (a);
     actionRotateClockwise=a;
 
     a = new QAction(QPixmap(":/viewmag-reset.png"), tr( "reset Zoom","View action" ), this);
@@ -2029,7 +2051,7 @@ void Main::setupViewActions()
     switchboard.addSwitch ("mapZoomReset", shortcutScope, a, tag);
     viewMenu->addAction (a);
     connect( a, SIGNAL( triggered() ), this, SLOT(viewZoomReset() ) );
-    actionListMap.append (a);
+    actionListFiles.append (a);
     actionZoomReset=a;
 
     a = new QAction( QPixmap(":/viewshowsel.png"), tr( "Center on selection","View action" ), this);
@@ -2037,7 +2059,7 @@ void Main::setupViewActions()
     viewMenu->addAction (a);
     switchboard.addSwitch ("mapCenterOn", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( viewCenter() ) );
-    actionListMap.append (a);
+    actionListFiles.append (a);
     actionCenterOn=a;
 
     viewMenu->addSeparator();	
@@ -2174,14 +2196,14 @@ void Main::setupModeActions()
     switchboard.addSwitch ("mapModModeColor", shortcutScope, a, tag);
     a->setCheckable(true);
     a->setChecked(true);
-    actionListMap.append (a);
+    actionListFiles.append (a);
     actionModModeColor=a;
 
     a->setShortcut( Qt::Key_K); 
     addAction(a);
     switchboard.addSwitch ("mapModModeCopy", shortcutScope, a, tag);
     a->setCheckable(true);
-    actionListMap.append (a);
+    actionListFiles.append (a);
     actionModModeCopy=a;
 
     a= new QAction(QPixmap(":/modelink.png"), tr( "Use modifier to draw xLinks","Mode modifier" ), actionGroupModModes );
@@ -2189,7 +2211,7 @@ void Main::setupModeActions()
     addAction(a);
     switchboard.addSwitch ("mapModModeXLink", shortcutScope, a, tag);
     a->setCheckable(true);
-    actionListMap.append (a);
+    actionListFiles.append (a);
     actionModModeXLink=a;
 }
 
@@ -3351,6 +3373,8 @@ void Main::addRecentMap (const QString &fileName)
 void Main::fileSave(VymModel *m, const SaveMode &savemode)
 {
     if (!m) return;
+
+    if (m->isReadOnly() ) return;
 
     if ( m->getFilePath().isEmpty() ) 
     {
@@ -5224,6 +5248,7 @@ void Main::updateActions()
     actionViewToggleHistoryWindow->setChecked (historyWindow->parentWidget()->isVisible());
     actionViewTogglePropertyEditor->setChecked (branchPropertyEditor->parentWidget()->isVisible());
     actionViewToggleScriptEditor->setChecked (scriptEditor->parentWidget()->isVisible());
+
     VymView *vv=currentView();
     if (vv)
     {
@@ -5236,12 +5261,15 @@ void Main::updateActions()
     }
 
     VymModel  *m =currentModel();
-    if (m)
+    if ( m ) 
     {
-	// Enable all map actions first
-	for (int i=0; i<actionListMap.size(); ++i)	
-	    actionListMap.at(i)->setEnabled(true);
+	// Enable all files actions first   // FIXME-2 required?
+	for (int i=0; i<actionListFiles.size(); ++i)	
+	    actionListFiles.at(i)->setEnabled(true);
 
+        foreach (QAction *a, unrestrictedMapActions)
+            a->setEnabled( true  );
+        
 	// Disable other actions for now
 	for (int i=0; i<actionListBranches.size(); ++i) 
 	    actionListBranches.at(i)->setEnabled(false);
@@ -5300,7 +5328,6 @@ void Main::updateActions()
 
 	// History window
 	historyWindow->setWindowTitle (vymName + " - " +tr("History for %1","Window Caption").arg(m->getFileName()));
-
 
 	// Expanding/collapsing
 	actionExpandAll->setEnabled (true);
@@ -5414,6 +5441,7 @@ void Main::updateActions()
 
 		if (!selbi->canMoveUp()) 
 		    actionMoveUp->setEnabled (false);
+
 		if (!selbi->canMoveDown()) 
 		    actionMoveDown->setEnabled (false);
 
@@ -5438,7 +5466,6 @@ void Main::updateActions()
 		    actionPaste->setEnabled (false);	
 
 		actionToggleTarget->setEnabled (true);
-		return;
 	    }	// end of BranchItem
 
 	    if ( selti->getType()==TreeItem::Image)
@@ -5464,7 +5491,6 @@ void Main::updateActions()
 		actionShrinkSelectionSize->setEnabled (true);
 		actionResetSelectionSize->setEnabled (true);
 	    }	// Image
-	    return;
 	} // TreeItem 
 	
 	// Check (at least for some) multiple selection //FIXME-4
@@ -5480,15 +5506,24 @@ void Main::updateActions()
 	if (selbis.count()>0 )
 	    actionFormatColorBranch->setEnabled (true);
 
-	return;
-    } 
+        // Disable some actions in readonly mode
+        if (m->isReadOnly() )
+        {
+            foreach (QAction *a, restrictedMapActions)
+                a->setEnabled( false );
+        }
+    } else
+    {
+        // No map available 
+        for (int i=0; i<actionListFiles.size(); ++i)	
+            actionListFiles.at(i)->setEnabled(false);
 
-    // No map available 
-    for (int i=0; i<actionListMap.size(); ++i)	
-	actionListMap.at(i)->setEnabled(false);
+        foreach (QAction *a, unrestrictedMapActions)
+            a->setEnabled( false );
 
-    // Disable standard flags toolbar
-    standardFlagsMaster->setEnabled (false);
+        // Disable toolbars
+        standardFlagsMaster->setEnabled (false);
+    }
 }
 
 Main::ModMode Main::getModMode()
@@ -5580,13 +5615,8 @@ void Main::testFunction1()
     VymModel *m = currentModel();
     if (m)
     {
-        BranchItem *bi=m->getSelectedBranch();
-        if (bi)
-        {
-            vout<<" ME::  ticol="<<bi->getHeadingColor().name();
-            vout<<" oocol="<<((BranchObj*)(bi->getLMO()))->getColor().name();
-            vout.flush();
-        }
+        // Toggle readonly
+        m->setReadOnly( !m->isReadOnly() );
     }
 }
 

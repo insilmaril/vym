@@ -223,6 +223,7 @@ MapEditor* VymModel::getMapEditor()
 void VymModel::setReadOnly( bool b )
 {
     readonly = b;
+    updateActions();
 }
 
 bool VymModel::isReadOnly()
@@ -2456,6 +2457,8 @@ void VymModel::addTimestamp()	//FIXME-4 new function, localize
 
 void VymModel::copy()	
 {
+    if (readonly) return;
+
     TreeItem *selti=getSelectedItem();
     if (selti &&
 	(selti->getType() == TreeItem::Branch || 
@@ -2482,6 +2485,8 @@ void VymModel::copy()
 
 void VymModel::paste()	
 {   
+    if (readonly) return;
+
     BranchItem *selbi=getSelectedBranch();
     if (selbi)
     {
@@ -2500,6 +2505,8 @@ void VymModel::paste()
 
 void VymModel::cut()	
 {
+    if (readonly) return;
+
     TreeItem *selti=getSelectedItem();
     if ( selti && (selti->isBranchLikeType() ||selti->getType()==TreeItem::Image))
     {
@@ -2511,6 +2518,8 @@ void VymModel::cut()
 
 bool VymModel::moveUp(BranchItem *bi)
 {
+    if (readonly) return false;
+
     bool oldState=blockSaveState;
     blockSaveState=true;
     bool result=false;
@@ -2539,6 +2548,8 @@ void VymModel::moveUp()
 
 bool VymModel::moveDown(BranchItem *bi)	
 {
+    if (readonly) return false;
+
     bool oldState=blockSaveState;
     blockSaveState=true;
     bool result=false;
