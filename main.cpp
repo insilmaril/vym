@@ -47,7 +47,7 @@ QString vymCodeName;
 QString vymInstanceName;
 QString vymPlatform;
 
-QTextStream vout(stdout);        // vymout - Testing for now
+QTextStream vout(stdout);        // vymout - Testing for now. Flush after writing...
 
 bool bugzillaClientAvailable;	// openSUSE specific currently
 
