@@ -1111,6 +1111,15 @@ void Main::setupFileActions()
 
     fileMenu->addSeparator();
 
+    a = new QAction( tr( "Properties"), this);
+    switchboard.addSwitch ("editMapProperties", shortcutScope, a, tag);
+    connect( a, SIGNAL( triggered() ), this, SLOT( editMapProperties() ) );
+    fileMenu->addAction(a);
+    actionListMap.append (a);
+    actionFilePrint=a;
+
+    fileMenu->addSeparator();
+
     a = new QAction(QPixmap( ":/fileprint.png"), tr( "&Print")+QString("..."), this);
     a->setShortcut ( Qt::CTRL + Qt::Key_P);
     switchboard.addSwitch ("fileMapPrint", shortcutScope, a, tag);
