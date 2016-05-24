@@ -2806,8 +2806,7 @@ void Main::setupContextMenus()
     // Context menu for canvas
     canvasContextMenu =new QMenu (this);
     canvasContextMenu->addAction (actionAddMapCenter);
-    canvasContextMenu->addAction (actionMapInfo);   //FIXME-4 move to File menu?
-    canvasContextMenu->insertSeparator(actionMapInfo);   
+    canvasContextMenu->insertSeparator(actionAddMapCenter);   
 
     canvasContextMenu->addAction(actionFormatFont);
     canvasContextMenu->insertSeparator(actionFormatFont);
