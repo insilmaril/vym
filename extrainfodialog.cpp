@@ -43,6 +43,16 @@ QString ExtraInfoDialog::getAuthor()
     return ui.authorLE->text();
 }
 
+bool ExtraInfoDialog::useLockfile()
+{
+    return ui.lockfileCheckBox->isChecked();
+}
+
+void ExtraInfoDialog::setLockfile( bool b)
+{
+    ui.lockfileCheckBox->setChecked( b );
+}
+
 void ExtraInfoDialog::setStats(const QString &s)
 {
     ui.statsTE->setText (s);

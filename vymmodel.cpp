@@ -119,18 +119,18 @@ void VymModel::clear()
 void VymModel::init () 
 {
     // No MapEditor yet
-    mapEditor=NULL;
+    mapEditor       = NULL;
 
     // States and IDs
     idLast++;
-    modelID=idLast;
-    mapChanged=false;
-    mapDefault=true;
-    mapUnsaved=false;
+    modelID         = idLast;
+    mapChanged      = false;
+    mapDefault      = true;
+    mapUnsaved      = false;
 
     // Selection history
-    selModel=NULL;
-    selectionBlocked=false;
+    selModel        = NULL;
+    selectionBlocked= false;
     resetSelectionHistory();
 
     resetHistory();
@@ -139,17 +139,19 @@ void VymModel::init ()
     makeTmpDirectories();
     
     // Files
-    zipped=true;
-    filePath="";
-    fileName=tr("unnamed");
-    mapName=fileName;
-    blockReposition=false;
-    blockSaveState=false;
+    readonly        = false;
+    lockfile        = false;
+    zipped          = true;
+    filePath        = "";
+    fileName        = tr("unnamed");
+    mapName         = fileName;
+    blockReposition = false;
+    blockSaveState  = false;
 
-    autosaveTimer=new QTimer (this);
+    autosaveTimer   = new QTimer (this);
     connect(autosaveTimer, SIGNAL(timeout()), this, SLOT(autosave()));
 
-    fileChangedTimer=new QTimer (this);	
+    fileChangedTimer= new QTimer (this);	
     fileChangedTimer->start(3000);
     connect(fileChangedTimer, SIGNAL(timeout()), this, SLOT(fileChanged()));
 
@@ -158,43 +160,43 @@ void VymModel::init ()
     findReset();
 
     // animations   // FIXME-4 switch to new animation system 
-    animationUse=settings.value ("/animation/use",false).toBool();    // FIXME-4 add options to control _what_ is animated
-    animationTicks=settings.value("/animation/ticks",20).toInt();
+    animationUse    = settings.value ("/animation/use",false).toBool();    // FIXME-4 add options to control _what_ is animated
+    animationTicks  = settings.value("/animation/ticks",20).toInt();
     animationInterval=settings.value("/animation/interval",5).toInt();
     animObjList.clear();    
-    animationTimer=new QTimer (this);
+    animationTimer  = new QTimer (this);
     connect(animationTimer, SIGNAL(timeout()), this, SLOT(animate()));
 
     // View - map
     defaultFont.setPointSizeF (16);
-    defLinkColor=QColor (0,0,255);
-    linkcolorhint=LinkableMapObj::DefaultColor;
-    linkstyle=LinkableMapObj::PolyParabel;
+    defLinkColor    = QColor (0,0,255);
+    linkcolorhint   = LinkableMapObj::DefaultColor;
+    linkstyle       = LinkableMapObj::PolyParabel;
     defXLinkPen.setWidth (1);
     defXLinkPen.setColor ( QColor (50,50,255) );
     defXLinkPen.setStyle ( Qt::DashLine );
     defXLinkStyleBegin = "HeadFull";
     defXLinkStyleEnd   = "HeadFull";
 
-    hasContextPos=false;
+    hasContextPos   = false;
 
-    hidemode=TreeItem::HideNone;
+    hidemode        = TreeItem::HideNone;
 
     // Animation in MapEditor
-    zoomFactor=1;
-    rotationAngle=0;
-    animDuration=2000;
-    animCurve=QEasingCurve::OutQuint;
+    zoomFactor      = 1;
+    rotationAngle   = 0;
+    animDuration    = 2000;
+    animCurve       = QEasingCurve::OutQuint;
 
     // Initialize presentation slides
-    slideModel=new SlideModel (this);
+    slideModel      = new SlideModel (this);
     blockSlideSelection=false;
 
     // Avoid recursions later
-    cleaningUpLinks=false;
+    cleaningUpLinks = false;
 
     // Network
-    netstate=Offline;
+    netstate        = Offline;
 
 #if defined(VYM_DBUS)
      // Announce myself on DBUS
@@ -216,6 +218,26 @@ void VymModel::makeTmpDirectories()
 MapEditor* VymModel::getMapEditor() 
 {
     return mapEditor;
+}
+
+void VymModel::setReadOnly( bool b )
+{
+    readonly = b;
+}
+
+bool VymModel::isReadOnly()
+{
+    return readonly;
+}
+
+void VymModel::setUseLockfile( bool b)
+{
+    lockfile = b;
+}
+
+bool VymModel::useLockfile()
+{
+    return lockfile;
 }
 
 bool VymModel::isRepositionBlocked()
@@ -260,6 +282,9 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix, bool w
 	    break;
     }	
 
+    QString lockfileFlag;
+    lockfile ? lockfileFlag = "true": lockfileFlag = "";
+
     QString s="<?xml version=\"1.0\" encoding=\"utf-8\"?><!DOCTYPE vymmap>\n";
     QString colhint="";
     if (linkcolorhint==LinkableMapObj::HeadingColor) 
@@ -284,6 +309,7 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix, bool w
 		  xml.attribut("defXLinkStyleEnd", defXLinkStyleEnd) +
 		  xml.attribut("mapZoomFactor", QString().setNum(mapEditor->getZoomFactorTarget()) ) +
 		  xml.attribut("mapRotationAngle", QString().setNum(mapEditor->getAngleTarget()) ) +
+		  xml.attribut("useLockfile", lockfileFlag ) +
 		  colhint; 
     s+=xml.beginElement("vymmap",mapAttr); 
     xml.incIndent();

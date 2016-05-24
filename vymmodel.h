@@ -46,6 +46,8 @@ private:
     QString author;
     QString comment;
     QDate date;
+    bool lockfile;       //! Map can be locked by a user
+    bool readonly;          //! if map is locked, it can be opened readonly
 
     static uint idLast;	    //! the last used unique ID
     uint modelID;
@@ -65,8 +67,11 @@ private:
     VymView *vymView;
 
 public:
+    void setReadOnly( bool b );
+    bool isReadOnly();
+    void setUseLockfile( bool b);
+    bool useLockfile();
     bool isRepositionBlocked();	    //!< While load or undo there is no need to update graphicsview
-
     void updateActions();	    //!< Update buttons in mainwindow
 
 
