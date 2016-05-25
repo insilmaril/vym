@@ -3215,8 +3215,7 @@ File::ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode, const FileType
 		case QMessageBox::Yes:
 		    // Create new map
 		    currentMapEditor()->getModel()->setFilePath(fn);
-		    tabWidget->setTabText (tabIndex,
-			currentMapEditor()->getModel()->getFileName() );
+		    tabWidget->setTabText (tabIndex, currentMapEditor()->getModel()->getFileName() );
 		    statusBar()->showMessage( "Created " + fn , statusbarTime );
 		    return File::Success;
 			
@@ -5506,11 +5505,32 @@ void Main::updateActions()
 	if (selbis.count()>0 )
 	    actionFormatColorBranch->setEnabled (true);
 
-        // Disable some actions in readonly mode
+        // readonly mode
         if (m->isReadOnly() )
         {
             foreach (QAction *a, restrictedMapActions)
                 a->setEnabled( false );
+
+            for( int i = 0; i < vymViews.count(); i++)
+            {
+                if (vymViews.at(i)->getModel() == m )
+                {
+                    tabWidget->setTabText( i, m->getFileName() + " " + tr("(readonly)") );
+                    break;
+                }
+            }
+
+
+        } else
+        {   // not readonly     // FIXME-2 maybe only required in testing, as mode should not change
+            for( int i = 0; i < vymViews.count(); i++)
+            {
+                if (vymViews.at(i)->getModel() == m )
+                {
+                    tabWidget->setTabText( i, m->getFileName() );
+                    break;
+                }
+            }
         }
     } else
     {
