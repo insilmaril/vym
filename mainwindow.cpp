@@ -1009,7 +1009,6 @@ void Main::setupFileActions()
     a = new QAction( QPixmap( ":/filesave.png"), tr( "&Save...","File menu" ), this);
     switchboard.addSwitch ("fileMapSave", shortcutScope, a, tag);
     fileMenu->addAction(a);
-    actionListFiles.append (a);
     restrictedMapActions.append( a );
     mapEditorActions.append ( a );
     connect( a, SIGNAL( triggered() ), this, SLOT( fileSave() ) );
@@ -1158,7 +1157,7 @@ void Main::setupEditActions()
     a->setEnabled (false);
     editMenu->addAction(a);
     mapEditorActions.append( a );
-    actionListFiles.append ( a );
+    restrictedMapActions.append( a );
     switchboard.addSwitch ("mapUndo", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( editUndo() ) );
     actionUndo=a;
@@ -1167,7 +1166,7 @@ void Main::setupEditActions()
     a->setShortcut (Qt::CTRL + Qt::Key_Y);
     a->setShortcutContext (Qt::WidgetShortcut);
     editMenu->addAction(a);
-    actionListFiles.append (a);
+    restrictedMapActions.append( a );
     mapEditorActions.append( a );
     switchboard.addSwitch ("mapRedo", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( editRedo() ) );
@@ -1179,7 +1178,7 @@ void Main::setupEditActions()
     a->setShortcutContext (Qt::WidgetShortcut);
     a->setEnabled (false);
     editMenu->addAction(a);
-    actionListFiles.append ( a );
+    unrestrictedMapActions.append ( a );
     mapEditorActions.append( a );
     switchboard.addSwitch ("mapCopy", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( editCopy() ) );
@@ -1190,7 +1189,7 @@ void Main::setupEditActions()
     a->setEnabled (false);
     a->setShortcutContext (Qt::WidgetShortcut);
     editMenu->addAction(a);
-    actionListFiles.append( a );
+    restrictedMapActions.append( a );
     mapEditorActions.append( a );
     restrictedMapActions.append( a );
     switchboard.addSwitch ("mapCut", shortcutScope, a, tag);
@@ -1204,7 +1203,7 @@ void Main::setupEditActions()
     a->setShortcutContext (Qt::WidgetShortcut);
     a->setEnabled (false);
     editMenu->addAction(a);
-    actionListFiles.append( a );
+    restrictedMapActions.append( a );
     mapEditorActions.append( a );
     switchboard.addSwitch ("mapPaste", shortcutScope, a, tag);
     actionPaste=a;
@@ -4256,7 +4255,7 @@ void Main::editMapProperties()
     dia.setMapName  ( m->getFileName() );
     dia.setMapTitle ( m->getTitle() );
     dia.setAuthor   ( m->getAuthor() );
-    dia.setLockfile ( m->useLockfile() );
+    dia.setLockfile ( m->lockfileUsed() );
     dia.setComment  ( m->getComment() );
 
     // Calc some stats
@@ -4293,7 +4292,7 @@ void Main::editMapProperties()
 	m->setAuthor (dia.getAuthor() );
 	m->setComment (dia.getComment() );
 	m->setTitle (dia.getMapTitle() );
-        m->setUseLockfile( dia.useLockfile() );
+        m->setUseLockfile( dia.lockfileUsed() );
     }
 }
 
@@ -5262,6 +5261,47 @@ void Main::updateActions()
     VymModel  *m =currentModel();
     if ( m ) 
     {
+        // readonly mode
+        if (m->isReadOnly() )
+        {
+            // Disable toolbars
+            standardFlagsMaster->setEnabled (false);
+
+            // Disable map related actions
+            foreach (QAction *a, restrictedMapActions)
+                a->setEnabled( false );
+
+            // Set tabwidget "readonly"
+            for( int i = 0; i < vymViews.count(); i++)
+            {
+                if (vymViews.at(i)->getModel() == m )
+                {
+                    tabWidget->setTabText( i, m->getFileName() + " " + tr("(readonly)") );
+                    break;
+                }
+            }
+
+            // FIXME-2 refacotr actionListFiles: probably not needed, wrong actions there atm
+        } else
+        {   // not readonly     // FIXME-2 maybe only required in testing, as mode should not change
+            
+            // Enable toolbars
+            standardFlagsMaster->setEnabled (true);
+
+            // Enable map related actions
+            foreach (QAction *a, restrictedMapActions)
+                a->setEnabled( true );
+
+            // Unset tabwidget "readonly"
+            for( int i = 0; i < vymViews.count(); i++)
+            {
+                if (vymViews.at(i)->getModel() == m )
+                {
+                    tabWidget->setTabText( i, m->getFileName() );
+                    break;
+                }
+            }
+        }
 	// Enable all files actions first   // FIXME-2 required?
 	for (int i=0; i<actionListFiles.size(); ++i)	
 	    actionListFiles.at(i)->setEnabled(true);
@@ -5375,8 +5415,6 @@ void Main::updateActions()
 
 		// Note
                 actionGetURLsFromNote->setEnabled (!selbi->getNote().isEmpty());
-
-		standardFlagsMaster->setEnabled (true);
 
 		// Take care of xlinks  
 		// FIXME-4 similar code in mapeditor mousePressEvent
@@ -5505,33 +5543,6 @@ void Main::updateActions()
 	if (selbis.count()>0 )
 	    actionFormatColorBranch->setEnabled (true);
 
-        // readonly mode
-        if (m->isReadOnly() )
-        {
-            foreach (QAction *a, restrictedMapActions)
-                a->setEnabled( false );
-
-            for( int i = 0; i < vymViews.count(); i++)
-            {
-                if (vymViews.at(i)->getModel() == m )
-                {
-                    tabWidget->setTabText( i, m->getFileName() + " " + tr("(readonly)") );
-                    break;
-                }
-            }
-
-
-        } else
-        {   // not readonly     // FIXME-2 maybe only required in testing, as mode should not change
-            for( int i = 0; i < vymViews.count(); i++)
-            {
-                if (vymViews.at(i)->getModel() == m )
-                {
-                    tabWidget->setTabText( i, m->getFileName() );
-                    break;
-                }
-            }
-        }
     } else
     {
         // No map available 
@@ -5635,8 +5646,9 @@ void Main::testFunction1()
     VymModel *m = currentModel();
     if (m)
     {
-        // Toggle readonly
+        // Toggle lockfile & readonly
         m->setReadOnly( !m->isReadOnly() );
+        m->setUseLockfile( !m->lockfileUsed() );
     }
 }
 
