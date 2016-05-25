@@ -103,6 +103,8 @@ VymModel::~VymModel()
     fileChangedTimer->stop();
     stopAllAnimation();
 
+    removeLockfile();           // returns, if there is no lockfile
+
     //qApp->processEvents();	// Update view (scene()->update() is not enough)
     //qDebug() << "Destr VymModel end   this="<<this;
 }   
@@ -140,7 +142,8 @@ void VymModel::init ()
     
     // Files
     readonly        = false;
-    lockfile        = false;
+    useLockfile     = false;
+    lockfile        = NULL;
     zipped          = true;
     filePath        = "";
     fileName        = tr("unnamed");
@@ -218,27 +221,6 @@ void VymModel::makeTmpDirectories()
 MapEditor* VymModel::getMapEditor() 
 {
     return mapEditor;
-}
-
-void VymModel::setReadOnly( bool b )
-{
-    readonly = b;
-    updateActions();
-}
-
-bool VymModel::isReadOnly()
-{
-    return readonly;
-}
-
-void VymModel::setUseLockfile( bool b)
-{
-    lockfile = b;
-}
-
-bool VymModel::useLockfile()
-{
-    return lockfile;
 }
 
 bool VymModel::isRepositionBlocked()
@@ -995,6 +977,66 @@ void VymModel::importDir()
 	    reposition();
 	}
     }	
+}
+
+void VymModel::setReadOnly( bool b )
+{
+    readonly = b;
+    updateActions();
+}
+
+bool VymModel::isReadOnly()
+{
+    return readonly;
+}
+
+void VymModel::setUseLockfile( bool b)
+{
+    useLockfile = b;
+    if (useLockfile && !isLocked() )
+        createLockfile();
+    else
+        if (isLocked()) removeLockfile();
+
+    qDebug() << "Check: " << isLocked();
+}
+
+bool VymModel::lockfileUsed()
+{
+    return useLockfile;
+}
+
+void VymModel::createLockfile()
+{
+    qDebug() << "Creating lockfile for " << filePath << "  lockfile="<<lockfile;
+
+    if (!lockfile) lockfile = new QLockFile ( filePath + ".lock" );
+
+    lockfile->setStaleLockTime(0);
+    qDebug() <<"trylock: " << lockfile->tryLock( 100 );
+    qDebug() <<"exists: " << lockfile->isLocked();
+}
+
+void VymModel::removeLockfile()
+{
+    qDebug() << "Removing lockfile for " << filePath << "  lockfile="<<lockfile;
+    if (lockfile) 
+    {
+        delete lockfile;
+        lockfile = NULL;
+    }
+}
+
+bool VymModel::isLocked()
+{
+    qDebug() << "Testing  lockfile for " << filePath << "  lockfile="<<lockfile;
+    if (!lockfile) 
+    {
+        qDebug() << "Lockfile does not exist";
+        return false;
+    }
+    qDebug() <<"isLocked: " << lockfile->isLocked();
+    return lockfile->isLocked();
 }
 
 
