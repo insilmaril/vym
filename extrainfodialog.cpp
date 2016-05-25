@@ -43,7 +43,7 @@ QString ExtraInfoDialog::getAuthor()
     return ui.authorLE->text();
 }
 
-bool ExtraInfoDialog::useLockfile()
+bool ExtraInfoDialog::lockfileUsed()
 {
     return ui.lockfileCheckBox->isChecked();
 }

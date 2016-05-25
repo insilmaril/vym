@@ -16,7 +16,7 @@ public:
     virtual QString getComment();
     virtual QString getAuthor();
     virtual QString getMapTitle();
-    bool useLockfile();
+    bool lockfileUsed();
     virtual void setStats( const QString & s );
 
 public slots:
