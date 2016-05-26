@@ -993,12 +993,23 @@ bool VymModel::isReadOnly()
 void VymModel::setUseLockfile( bool b)
 {
     useLockfile = b;
-    if (useLockfile && !isLocked() )
-        createLockfile();
-    else
+    if (useLockfile)
+    { 
+        if (isLocked() )
+        {
+            setReadOnly (true);
+	    WarningDialog dia;  // FIXME-2 code duplication, see below
+            dia.setText( tr("Map seems to be already opened in another vym instance!"));
+            dia.setWindowTitle(tr("Warning: Map already opended","VymModel"));
+            dia.setShowAgainName("/mainwindow/mapIsLocked");
+            dia.exec();
+        } else
+            createLockfile();
+    } else
+    {
         if (isLocked()) removeLockfile();
-
-    qDebug() << "Check: " << isLocked();
+        if (isReadOnly() ) setReadOnly( false );
+    }
 }
 
 bool VymModel::lockfileUsed()
@@ -1008,18 +1019,28 @@ bool VymModel::lockfileUsed()
 
 void VymModel::createLockfile()
 {
-    qDebug() << "Creating lockfile for " << filePath << "  lockfile="<<lockfile;
-
-    if (!lockfile) lockfile = new QLockFile ( filePath + ".lock" );
+    if (!lockfile) lockfile = new QLockFile ( filePath  + ".lock" );
 
     lockfile->setStaleLockTime(0);
-    qDebug() <<"trylock: " << lockfile->tryLock( 100 );
-    qDebug() <<"exists: " << lockfile->isLocked();
+    if ( lockfile->tryLock( 100 ) )
+    {
+        if (debug) qDebug() << "Locking succeeded."; 
+    }
+    else
+    {
+        if (debug) qDebug() << "Locking failed."; 
+        setReadOnly( true );
+        WarningDialog dia;
+        dia.setText( tr("Map seems to be already opened in another vym instance!"));
+        dia.setWindowTitle(tr("Warning: Map already opended","VymModel"));
+        dia.setShowAgainName("/mainwindow/mapIsLocked");
+        dia.exec();
+    }
 }
 
 void VymModel::removeLockfile()
 {
-    qDebug() << "Removing lockfile for " << filePath << "  lockfile="<<lockfile;
+    if (debug) qDebug() << "Removing lockfile for " << filePath << "  lockfile="<<lockfile;
     if (lockfile) 
     {
         delete lockfile;
@@ -1029,13 +1050,12 @@ void VymModel::removeLockfile()
 
 bool VymModel::isLocked()
 {
-    qDebug() << "Testing  lockfile for " << filePath << "  lockfile="<<lockfile;
     if (!lockfile) 
     {
-        qDebug() << "Lockfile does not exist";
+        if (debug) qDebug() << "Lockfile does not exist for " << filePath;
         return false;
     }
-    qDebug() <<"isLocked: " << lockfile->isLocked();
+    if (debug) qDebug() <<"isLocked: " << lockfile->isLocked();
     return lockfile->isLocked();
 }
 

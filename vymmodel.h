@@ -171,7 +171,7 @@ private:
     bool isLocked();
 
 private:
-    bool useLockfile;       //! Map can be locked by a user
+    bool useLockfile;       //! Map is locked when open by first user. Readlonly for next
     QLockFile *lockfile;
     bool readonly;          //! if map is locked, it can be opened readonly
 
