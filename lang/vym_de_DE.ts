@@ -1847,7 +1847,7 @@ Wollen Sie</translation>
         <source>This map does not exist:
   %1
 Do you want to create a new one?</source>
-        <translation>Diese Map gibt es nich:
+        <translation>Diese Map gibt es nicht:
   %1
 Wollen Sie eine neue anlegen?</translation>
     </message>

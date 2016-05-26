@@ -126,7 +126,8 @@ void msgHandler (QtMsgType type, const QMessageLogContext &context, const QStrin
     case QtFatalMsg:
         fprintf(stderr, "Fatal: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
         fatalCount++;
-        //abort();
+    default:
+        fprintf(stderr, "Info: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
     }
 }
 
@@ -273,8 +274,10 @@ int main(int argc, char* argv[])
             // ok, let's find my way on my own
         {
 #if defined (Q_OS_MACX)
-            vymBaseDir.setPath(vymBaseDir.currentPath() +"/vym.app/Contents/Resources");
-
+            // Executable is in vym.app/Contents/MacOS, so go up first:
+            vymBaseDir = QCoreApplication::applicationDirPath();
+            vymBaseDir.cdUp();
+            vymBaseDir.cd("Resources");
 #elif defined (Q_OS_WIN32)
             QString basePath;
 
@@ -365,11 +368,19 @@ int main(int argc, char* argv[])
     if (options.isOn ("locale"))
         localeName = options.getArg ("locale");
     else
+    {
+#if defined(Q_OS_LINUX)
+        localeName = QProcessEnvironment::systemEnvironment().value("LANG","foobar");
+#else
         localeName = QLocale::system().name();
+#endif
+    }
     
-    QTranslator qtTranslator;
-    qtTranslator.load("qt_" + localeName, QLibraryInfo::location(QLibraryInfo::TranslationsPath));
-    app.installTranslator(&qtTranslator);
+    if (debug) 
+    {
+        qDebug()<<"Main     localName: " << localeName;
+        qDebug()<<"Main  translations: " << localeName, vymBaseDir.path() + "/lang";
+    }
    
     QTranslator vymTranslator;
     vymTranslator.load( QString("vym_") + localeName, vymBaseDir.path() + "/lang");

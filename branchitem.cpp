@@ -83,7 +83,7 @@ void BranchItem::insertBranch (int pos, BranchItem *branch)
     branchCounter++;
 }
 
-QString BranchItem::saveToDir (const QString &tmpdir,const QString &prefix, const QPointF& offset, QList <Link*> &tmpLinks ) //FIXME-3 Check if everything is saved...
+QString BranchItem::saveToDir (const QString &tmpdir,const QString &prefix, const QPointF& offset, QList <Link*> &tmpLinks ) 
 {
     // Cloudy stuff can be hidden during exports
     if (hidden) return QString();

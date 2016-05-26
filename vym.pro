@@ -280,6 +280,7 @@ language.path = $${DATADIR}/vym/lang
 INSTALLS += language
 
 support.files = styles/ scripts/ icons/ flags/ macros/ exports/ demos/
+support.files += LICENSE.txt
 support.path = $${DATADIR}/vym
 INSTALLS += support 
 
