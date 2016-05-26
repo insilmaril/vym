@@ -54,7 +54,6 @@ QString richTextToPlain (QString r, const QString &indent, const int &width)
     r.replace (rx,indent);
     r = indent + r;   // Don't forget first line
 
-    //r = indent+"\n" + r + indent + "\n\n";   //FIXME-1 was in noteToASCII...
     return r;
 }
 

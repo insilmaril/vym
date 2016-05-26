@@ -38,8 +38,10 @@ public:
     void calcBBoxSize();
     void setVisibility (bool);
     void setVisibility ();
+    void initC0();
     void setC0 (const QPointF &p);
     QPointF getC0();
+    void initC1();
     void setC1 (const QPointF &p);
     QPointF getC1();
     bool isInClickBox (const QPointF &p);
@@ -52,6 +54,7 @@ private:
     static int arrowSize;
     static int clickBorder;
     static int pointRadius;
+    static int d_control;
     QPainterPath clickPath;
     QGraphicsPolygonItem *poly;// Arrowhead, when one end is not visible
     ArrowObj *pointerBegin;    // Arrowhead 

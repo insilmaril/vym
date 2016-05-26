@@ -195,6 +195,16 @@ MapEditor::MapEditor( VymModel *vm)
     vPan=QPointF();
     connect (panningTimer, SIGNAL (timeout()), this, SLOT (panView() ));
 
+    // Actions defined in MainWindow
+    foreach (QAction* qa, mainWindow->mapEditorActions)
+    {
+        a = new QAction( this );
+        a->setShortcut( qa->shortcut() );
+        a->setShortcutContext( qa->shortcutContext() );
+        connect( a, SIGNAL( triggered() ), qa, SLOT( trigger() ) );
+        addAction(a);
+    }
+
     setState (Neutral);
 
     // Attributes   //FIXME-5 testing only...
@@ -1651,6 +1661,8 @@ void MapEditor::moveObject ()
 			    p.y()  - movingObj_offset.y() + lmosel->getTopPad() );	    
 		    else    
 			lmosel->move(p.x() - movingObj_offset.x(), p.y() - movingObj_offset.y() - lmosel->getTopPad());
+                    BranchItem *selbi = ((BranchItem*)seli);
+                    if ( selbi->parentBranch()->getChildrenLayout() == BranchItem::FreePositioning) lmosel->setRelPos();
 		} 
 
 	    } // depth>0
@@ -1686,6 +1698,7 @@ void MapEditor::moveObject ()
 	if (mosel) 
 	{
 	    mosel->move( p-movingObj_offset );	// FIXME-3 Missing savestate 
+            model->setChanged();
 	    model->emitSelectionChanged();
 	}
     } else
@@ -1735,6 +1748,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent* e)
 	if (dsti)
 	{   
 	    tmpLink->setEndBranch ( ((BranchItem*)dsti) );
+            tmpLink->activate();
 	    tmpLink->updateLink();
 	    if (model->createLink (tmpLink) )
 	    {

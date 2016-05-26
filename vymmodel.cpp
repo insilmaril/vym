@@ -2609,7 +2609,7 @@ ImageItem* VymModel::createImage(BranchItem *dst)
         int n;
 
         QList<QVariant> cData;
-        cData << "new" << "undef";
+        cData << tr("Image","Default name for new image") << "undef";
 
         ImageItem *newii=new ImageItem(cData) ;
         //newii->setHeading (QApplication::translate("Heading of new image in map", "new image"));
@@ -3565,7 +3565,7 @@ ItemList VymModel::getTargets()
     while (cur) 
     {
 	if (cur->hasActiveSystemFlag("system-target"))
-        targets[cur->getID()] = (cur->getHeading()).getTextASCII();
+            targets[cur->getID()] = (cur->getHeading()).getTextASCII();
 	nextBranch(cur,prev);
     }
     return targets; 

@@ -232,7 +232,7 @@ bool parseFreemindHandler::endElement  ( const QString &, const QString&, const 
 	    if (!htmldata.isEmpty()) 
 	    {
 		if (htmlPurpose==Node)
-            lastBranch->setHeadingPlainText (htmldata);  // FIXME-1 probably wrong for RT heading
+            lastBranch->setHeadingPlainText (htmldata);  // FIXME-3 probably wrong for RT heading
 		else if (htmlPurpose==Note)
 		    lastBranch->setNote (htmldata);
 	    }	
@@ -304,7 +304,7 @@ bool parseFreemindHandler::readNodeAttr (const QXmlAttributes& a)
 
     if (!a.value( "TEXT").isEmpty() )
     {
-    lastBranch->setHeadingPlainText (a.value ("TEXT"));  // FIXME-1 what about RT?
+    lastBranch->setHeadingPlainText (a.value ("TEXT"));  // FIXME-3 what about RT?
 	//model->setHeading (a.value ("TEXT"), lastBranch);
     }
 

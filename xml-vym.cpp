@@ -45,18 +45,6 @@ bool parseVYMHandler::startDocument()
     return true;
 }
 
-bool parseVYMHandler::startCDATA()
-{
-    qDebug()<<"xml-VYM: Now reading CDATA"; //FIXME-3 testing, not called?
-    return true;
-}
-
-bool parseVYMHandler::endCDATA()
-{
-    qDebug()<<"xml-VYM: Finished reading CDATA";//FIXME-3 testing, not callednipp
-    return true;
-}
-
 bool parseVYMHandler::startElement  ( const QString&, const QString&,
                     const QString& eName, const QXmlAttributes& atts ) 
 {

@@ -934,7 +934,7 @@ void ExportHTML::doExport(bool useDialog)
         }
     }
 
-    QDir flagsSrc(flagsPath);   // FIXME-1 don't use flagsPath anymore, copy required flags directly from memory
+    QDir flagsSrc(flagsPath);   // FIXME-3 don't use flagsPath as source anymore, but copy required flags directly from memory
     if (!copyDir(flagsSrc,flagsDst,true))
     {
         QMessageBox::critical( 0,

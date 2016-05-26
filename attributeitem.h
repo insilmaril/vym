@@ -29,7 +29,8 @@ enum Type {
     QString getKey ();
     void setValue (const QString &v);
     QVariant getValue ();
-    void setType (const Type &t);
+    using BranchItem::setType;
+    virtual void setType (const Type &t);
     AttributeItem::Type getAttributeType ();
     QString getTypeString ();
     void setInternal (bool b);
