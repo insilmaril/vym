@@ -999,7 +999,8 @@ void VymModel::setUseLockfile( bool b)
         {
             setReadOnly (true);
 	    WarningDialog dia;  // FIXME-2 code duplication, see below
-            dia.setText( tr("Map seems to be already opened in another vym instance!"));
+            dia.setText( tr("Map seems to be already opened in another vym instance! "
+                        "It will be opened in readonly mode."));
             dia.setWindowTitle(tr("Warning: Map already opended","VymModel"));
             dia.setShowAgainName("/mainwindow/mapIsLocked");
             dia.exec();
@@ -1031,7 +1032,8 @@ void VymModel::createLockfile()
         if (debug) qDebug() << "Locking failed."; 
         setReadOnly( true );
         WarningDialog dia;
-        dia.setText( tr("Map seems to be already opened in another vym instance!"));
+        dia.setText( tr("Map seems to be already opened in another vym instance! "
+                    "It will be opened in readonly mode."));
         dia.setWindowTitle(tr("Warning: Map already opended","VymModel"));
         dia.setShowAgainName("/mainwindow/mapIsLocked");
         dia.exec();
