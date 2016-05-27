@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1">
+<TS version="2.0">
 <context>
     <name>AboutDialog</name>
     <message>
@@ -161,8 +161,8 @@
 <context>
     <name>DownloadAgent</name>
     <message>
-        <source>warning</source>
-        <translation type="unfinished"></translation>
+        <source>Warning</source>
+        <translation type="unfinished">警告</translation>
     </message>
 </context>
 <context>
@@ -318,6 +318,10 @@ want to allow this in your system!</source>
     </message>
     <message>
         <source>Use CSS from</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Include images</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -483,6 +487,14 @@ want to allow this in your system!</source>
         <source>Title:</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Multiuser:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>use lockfile to prevent simultanous editing</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>FindWidget</name>
@@ -515,7 +527,7 @@ want to allow this in your system!</source>
     <name>Heading of mapcenter in new map</name>
     <message>
         <source>New map</source>
-        <translation type="unfinished">新圖譜</translation>
+        <translation type="obsolete">新圖譜</translation>
     </message>
 </context>
 <context>
@@ -1628,7 +1640,7 @@ exists already. Do you want to</source>
     <message>
         <source>Couldn&apos;t find configuration for export to Open Office
 </source>
-        <translation>找不到用於匯出至 OpenOffice.org 的配置</translation>
+        <translation type="obsolete">找不到用於匯出至 OpenOffice.org 的配置</translation>
     </message>
     <message>
         <source>No matches found for &quot;%1&quot;</source>
@@ -1824,12 +1836,12 @@ exists already. Do you want to</source>
     <message>
         <source>Move up</source>
         <comment>Edit menu</comment>
-        <translation type="unfinished">向上移動</translation>
+        <translation type="obsolete">向上移動</translation>
     </message>
     <message>
         <source>Move down</source>
         <comment>Edit menu</comment>
-        <translation type="unfinished">向下移動</translation>
+        <translation type="obsolete">向下移動</translation>
     </message>
     <message>
         <source>&amp;Detach</source>
@@ -1959,7 +1971,7 @@ exists already. Do you want to</source>
     <message>
         <source>Edit Map Info...</source>
         <comment>Edit menu</comment>
-        <translation type="unfinished">編輯圖譜資訊…</translation>
+        <translation type="obsolete">編輯圖譜資訊…</translation>
     </message>
     <message>
         <source>Add map (insert)</source>
@@ -2968,24 +2980,11 @@ to confusion when finishing working with vym.Do you want to</source>
     </message>
     <message>
         <source>Info</source>
-        <translation type="unfinished">資訊</translation>
-    </message>
-    <message>
-        <source>vym updates are available, please update e.g. from
-http://sourceforge.net/projects/vym</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">資訊</translation>
     </message>
     <message>
         <source>vym is up to date.</source>
         <comment>MainWindow</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Update check results</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>vym is up to date!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2995,6 +2994,56 @@ http://sourceforge.net/projects/vym</source>
     </message>
     <message>
         <source>Please allow vym to check for updates!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Text with tasks</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Spreadsheet</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Properties</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Move branch up</source>
+        <comment>Edit menu</comment>
+        <translation type="unfinished">向上移動分支</translation>
+    </message>
+    <message>
+        <source>Move branch down</source>
+        <comment>Edit menu</comment>
+        <translation type="unfinished">向下移動分支</translation>
+    </message>
+    <message>
+        <source>Map properties...</source>
+        <comment>Edit menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Note editor</source>
+        <comment>View action</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Heading editor</source>
+        <comment>View action</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t find configuration for export to LibreOffice
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>(readonly)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Update information</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3117,7 +3166,7 @@ to notifiy Browsers of changed bookmarks.</source>
     <message>
         <source>Save</source>
         <comment>MapEditor</comment>
-        <translation type="unfinished">儲存</translation>
+        <translation type="obsolete">儲存</translation>
     </message>
     <message>
         <source>Map Editor</source>
@@ -3125,43 +3174,29 @@ to notifiy Browsers of changed bookmarks.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Select previous</source>
-        <comment>Edit menu</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Select next</source>
-        <comment>Edit menu</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Cu&amp;t</source>
         <comment>Edit menu</comment>
-        <translation type="unfinished">剪下(&amp;T)</translation>
+        <translation type="obsolete">剪下(&amp;T)</translation>
     </message>
     <message>
         <source>&amp;Copy</source>
         <comment>Edit menu</comment>
-        <translation type="unfinished">複製(&amp;C)</translation>
+        <translation type="obsolete">複製(&amp;C)</translation>
     </message>
     <message>
         <source>&amp;Undo</source>
         <comment>Edit menu</comment>
-        <translation type="unfinished">復原(&amp;U)</translation>
+        <translation type="obsolete">復原(&amp;U)</translation>
     </message>
     <message>
         <source>&amp;Redo</source>
         <comment>Edit menu</comment>
-        <translation type="unfinished">重做(&amp;R)</translation>
+        <translation type="obsolete">重做(&amp;R)</translation>
     </message>
     <message>
         <source>&amp;Paste</source>
         <comment>Edit menu</comment>
-        <translation type="unfinished">貼上(&amp;P)</translation>
-    </message>
-    <message>
-        <source>Repeat last export (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">貼上(&amp;P)</translation>
     </message>
 </context>
 <context>
@@ -3448,16 +3483,27 @@ and install the perl module for Bugzilla access using YaST</source>
     <message>
         <source>Note Editor</source>
         <comment>Shortcut group</comment>
-        <translation type="unfinished">註記編輯器</translation>
-    </message>
-    <message>
-        <source>Heading Editor</source>
-        <comment>Shortcut group</comment>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">註記編輯器</translation>
     </message>
     <message>
         <source>Couldn&apos;t find tool to unzip data. Please download and install 7z and set path in Settings menu:
  </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export as LibreOffice Impress presentation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t remove target of old symbolic link %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t rename output to target of old symbolic link %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t link from %1 to target of old symbolic link %2</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3625,6 +3671,11 @@ Do you want to overwrite it?</source>
         <comment>TaskEditor</comment>
         <translation type="unfinished">編輯標頭</translation>
     </message>
+    <message>
+        <source>New tasks</source>
+        <comment>TaskEditor</comment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>TaskModel</name>
@@ -3663,6 +3714,10 @@ Do you want to overwrite it?</source>
         <comment>TaskEditor</comment>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>foobar</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>TextEditor</name>
@@ -3692,7 +3747,7 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <source>&amp;Edit</source>
-        <translation>編輯(&amp;E)</translation>
+        <translation type="obsolete">編輯(&amp;E)</translation>
     </message>
     <message>
         <source>Undo</source>
@@ -4049,6 +4104,10 @@ Do you want to overwrite it?</source>
         <comment>Shortcuts</comment>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Edi&amp;t</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>TreeEditor</name>
@@ -4274,20 +4333,38 @@ Do you want to reload that map with the new file?</source>
         <translation type="unfinished">(仍然是實驗性質)</translation>
     </message>
     <message>
-        <source>Exported: </source>
-        <comment>Export confirmation</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Export map as scalable vector graphic</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Export as csv</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Critical Save Error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Map seems to be already opened in another vym instance! It will be opened in readonly mode.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Warning: Map already opended</source>
+        <comment>VymModel</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Image</source>
+        <comment>Default name for new image</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New map</source>
+        <comment>New map</comment>
+        <translation type="unfinished">新圖譜</translation>
+    </message>
+    <message>
+        <source>Export map as SVG</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export map as XML</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
