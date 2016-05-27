@@ -362,7 +362,7 @@ int main(int argc, char* argv[])
     else
     {
 #if defined(Q_OS_LINUX)
-        localeName = QProcessEnvironment::systemEnvironment().value("LANG","foobar");
+        localeName = QProcessEnvironment::systemEnvironment().value("LANG","foobar");   // FIXME-2
 #else
         localeName = QLocale::system().name();
 #endif

@@ -78,7 +78,7 @@ QVariant TaskModel::data(const QModelIndex &index, int role) const
         {
             QString s = bi->getModel()->getMapName();
             if (s.isEmpty() )
-                return tr("foobar");
+                return tr("foobar");    // FIXME-2 ???
             else
                 return bi->getModel()->getMapName();
         }
