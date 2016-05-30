@@ -75,7 +75,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QCheckBox" name="lockfileCheckBox">
+    <widget class="QCheckBox" name="lockFileCheckBox">
      <property name="text">
       <string>use lockfile to prevent simultanous editin</string>
      </property>

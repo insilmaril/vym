@@ -104,6 +104,7 @@ HEADERS	+= \
     imports.h \
     lineeditdialog.h \
     linkablemapobj.h \
+    lockfile.h \
     macros.h \
     mainwindow.h \
     mapeditor.h \
@@ -193,6 +194,7 @@ SOURCES	+= \
     imports.cpp \
     lineeditdialog.cpp \
     linkablemapobj.cpp \
+    lockfile.cpp \
     macros.cpp \
     main.cpp \
     mainwindow.cpp \

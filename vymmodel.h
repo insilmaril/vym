@@ -1,7 +1,6 @@
 #ifndef VYMMODEL_H
 #define VYMMODEL_H
 
-#include <QLockFile>
 #include <QtNetwork>
 
 #include <QPointF>
@@ -14,6 +13,7 @@
 #include "file.h"
 #include "branchitem.h"
 #include "imageitem.h"
+#include "lockfile.h"
 #include "mapeditor.h"
 #include "parser.h"
 #include "treeitem.h"
@@ -162,17 +162,16 @@ public:
 
     void setReadOnly( bool b );
     bool isReadOnly();
-    void setUseLockfile( bool b);
-    bool lockfileUsed();
+    void setUseLockFile( bool b);
+    bool lockFileUsed();
 
 private:
-    void createLockfile();
-    void removeLockfile();
+    void removeLockFile();
     bool isLocked();
 
 private:
-    bool useLockfile;       //! Map is locked when open by first user. Readlonly for next
-    QLockFile *lockfile;
+    bool useLockFile;       //! Map is locked when open by first user. Readlonly for next
+    LockFile *lockFile;
     bool readonly;          //! if map is locked, it can be opened readonly
 
 private slots:
