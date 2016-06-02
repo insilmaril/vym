@@ -1007,6 +1007,8 @@ void Main::setupFileActions()
     fileMenu->addSeparator();
 
     a = new QAction( QPixmap( ":/filesave.png"), tr( "&Save...","File menu" ), this);
+    a->setShortcut ( Qt::CTRL + Qt::Key_S );
+    a->setShortcutContext ( Qt::WidgetShortcut );
     switchboard.addSwitch ("fileMapSave", shortcutScope, a, tag);
     fileMenu->addAction(a);
     restrictedMapActions.append( a );
