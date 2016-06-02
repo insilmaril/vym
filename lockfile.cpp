@@ -1,36 +1,38 @@
-#include "lockfile.h"
 #include <QDebug>       
+#include <QFile>       
 #include <QRegularExpression>       
 
 #include "file.h"
 
-LockFile::LockFile( const QString &fn )
+#include "lockfile.h"
+
+VymLockFile::VymLockFile( const QString &fn )
 {
     path = fn;
     isMyLockFile = false;
 }
 
-LockFile::~LockFile()
+VymLockFile::~VymLockFile()
 {
     if (isMyLockFile)
     {
-        QFile lockfile( path );
-        if (!lockfile.remove() )
-        qWarning() << "Destructor LockFile:  Removing lockfile failed";
+        QFile LockFile( path );
+        if (!LockFile.remove() )
+        qWarning() << "Destructor VymLockFile:  Removing LockFile failed";
     }
 }
 
-bool LockFile::tryLock()
+bool VymLockFile::tryLock()
 {
-    QFile lockfile( path );
-    if ( lockfile.exists() )
+    QFile lockFile( path );
+    if ( lockFile.exists() )
     {
         // File is already locked       
-        if (debug) qDebug() << "Lockfile::tryLock  failed: lockfile exists";
+        if (debug) qDebug() << "VymLockFile::tryLock  failed: LockFile exists";
 
         QString s;
         if (!loadStringFromDisk( path, s) )
-            qWarning( "Failed to read from existing lockfile");
+            qWarning( "Failed to read from existing lockFile");
         else
         {
             QRegularExpression re("^author:\\s\\\"(.*)\\\"$");
@@ -45,11 +47,11 @@ bool LockFile::tryLock()
         return false; 
     }
 
-    if (!lockfile.open(QFile::WriteOnly | QFile::Text)) 
+    if (!lockFile.open(QFile::WriteOnly | QFile::Text))
     {
-        if (debug) qWarning() << QString("LockFile::tryLock failed: Cannot open lockfile %1\n%2")
+        if (debug) qWarning() << QString("VymLockFile::tryLock failed: Cannot open lockFile %1\n%2")
                     .arg( path )
-                    .arg( lockfile.errorString() );
+                    .arg( lockFile.errorString() );
         return false;
     }
 
@@ -61,36 +63,37 @@ bool LockFile::tryLock()
 
     if (!s.isEmpty() )
     {
-        QTextStream out( &lockfile );
+        QTextStream out( &lockFile );
         out.setCodec( "UTF-8" );
         out << s;
     }
 
-    lockfile.close();
+    lockFile.close();
+    return true;
 }
 
-bool LockFile::isLocked()
+bool VymLockFile::isLocked()
 {
-    QFile lockfile( path );
-    return lockfile.exists();
+    QFile lockFile( path );
+    return lockFile.exists();
 }
 
-void LockFile::setAuthor(const QString &s)
+void VymLockFile::setAuthor(const QString &s)
 {
     author = s;
 }
 
-QString LockFile::getAuthor()
+QString VymLockFile::getAuthor()
 {
     return author;
 }
 
-void LockFile::setHost(const QString &s)
+void VymLockFile::setHost(const QString &s)
 {
     host = s;
 }
 
-QString LockFile::getHost()
+QString VymLockFile::getHost()
 {
     return host;
 }

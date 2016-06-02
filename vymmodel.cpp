@@ -28,6 +28,7 @@
 #include "exporthtmldialog.h"
 #include "file.h"
 #include "findresultmodel.h"
+#include "lockfile.h"
 #include "mainwindow.h"
 #include "misc.h"
 #include "noteeditor.h"
@@ -998,7 +999,7 @@ void VymModel::setUseLockFile( bool b)
         // Defaults for author and host
         QString defAuthor = tr( "unknown user", "Default for lockfiles of maps");
         QString defHost   = tr( "unknown host", "Default for lockfiles of maps");
-        if (!lockFile) lockFile = new LockFile ( filePath  + ".lock" );
+        if (!lockFile) lockFile = new VymLockFile ( filePath  + ".lock" );
 
         lockFile->setAuthor( settings.value( "/user/name", defAuthor ).toString() ); // FIXME-2 use author from settings, not map
         if ( getenv("HOST") != 0 ) 

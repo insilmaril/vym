@@ -13,7 +13,6 @@
 #include "file.h"
 #include "branchitem.h"
 #include "imageitem.h"
-#include "lockfile.h"
 #include "mapeditor.h"
 #include "parser.h"
 #include "treeitem.h"
@@ -23,6 +22,7 @@ class AttributeItem;
 class BranchItem;
 class FindResultModel;
 class Link;
+class VymLockFile;
 class MapEditor;
 class SlideItem;
 class SlideModel;
@@ -171,7 +171,7 @@ private:
 
 private:
     bool useLockFile;       //! Map is locked when open by first user. Readlonly for next
-    LockFile *lockFile;
+    VymLockFile  *lockFile;
     bool readonly;          //! if map is locked, it can be opened readonly
 
 private slots:
@@ -188,7 +188,7 @@ private:
 
     QString histPath;		//!< Path to history file
     SimpleSettings undoSet;	//!< undo/redo commands, saved in histPath
-    int stepsTotal;		//!< total number of steps (undos+redos) 
+    int stepsTotal;		//!< total number of steps (undos+redos)
     int curStep;		//!< Current step in history (ring buffer)
     int curClipboard;		//!< number of history step, which is the current clipboard
     int redosAvail;		//!< Available number of redo steps

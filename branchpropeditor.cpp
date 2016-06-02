@@ -5,6 +5,7 @@
 #include "branchitem.h"
 #include "frameobj.h"
 #include "settings.h"
+#include "vymmodel.h"
 
 extern Settings settings;
 extern QString vymName;

@@ -1,15 +1,13 @@
 #ifndef LOCKFILE_H
 #define LOCKFILE_H
 
-#include <QFile>
-
 extern bool debug;
 
-class LockFile
+class VymLockFile
 {
 public:
-    LockFile( const QString &fn );
-    ~LockFile();
+    VymLockFile( const QString &fn );
+    ~VymLockFile();
     bool tryLock();
     bool isLocked();
     void setAuthor(const QString &s);
@@ -17,7 +15,7 @@ public:
     void setHost(const QString &s);
     QString getHost();
 
-private:    
+private:
     QWidget *parent;
     QString path;
     QString author;
