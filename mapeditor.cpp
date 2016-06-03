@@ -485,6 +485,11 @@ void MapEditor::updateMatrix()
     setMatrix (zm * rm);
 }
 
+void MapEditor::minimizeView()
+{
+    setSceneRect( scene()->itemsBoundingRect() );
+}
+
 void MapEditor::print()
 {
     QRectF totalBBox=getTotalBBox();
@@ -565,61 +570,27 @@ void MapEditor::print()
     }
 }
 
-QRectF MapEditor::getTotalBBox()    //FIXME-8 frames and xlinks missing, esp. cloud
+QRectF MapEditor::getTotalBBox()  
 {				    
-    QRectF rt;
-    BranchObj *bo;
-    BranchItem *cur=NULL;
-    BranchItem *prev=NULL;
-    model->nextBranch(cur,prev,true);
-    while (cur) 
-    {
-	if (!cur->hasHiddenExportParent())
-	{
-	    // Branches
-	    bo=(BranchObj*)(cur->getLMO());
-	    if (bo && bo->isVisibleObj())
-            {
-		QRectF r1=bo->getBBox();
-
-		if (rt.isNull()) rt=r1;
-		rt=addBBox (r1, rt);
-	    }
-
-	    // Images
-	    FloatImageObj *fio;
-	    for (int i=0; i<cur->imageCount(); i++)
-	    {
-		fio=cur->getImageObjNum (i);
-		if (fio) rt=addBBox (fio->getBBox(),rt);
-	    }
-	}
-	model->nextBranch(cur,prev,true);
-    }
-
-    // get bboxes of XLinks	 //FIXME-3 missing
-
-    // Update scene according to new bbox
-    if (!sceneRect().contains (rt) )
-	setSceneRect(sceneRect().united (rt));
-    return rt;	
+    minimizeView();
+    return sceneRect();
 }
 
 QImage MapEditor::getImage( QPointF &offset) 
 {
-    QRectF mapRect=getTotalBBox();
+    QRectF mapRect = getTotalBBox();   // minimized sceneRect
     
-    int d=20;	// border
-    offset=QPointF (mapRect.x()-d/2, mapRect.y()-d/2 );
-    QImage pix (mapRect.width()+d, mapRect.height()+d,QImage::Format_RGB32);
+    int d = 10;	// border
+    offset = QPointF( mapRect.x() -d/2, mapRect.y() - d/2 );
+    QImage pix( mapRect.width() + d, mapRect.height() + d, QImage::Format_RGB32 );
 
     QPainter pp (&pix);
     pp.setRenderHints(renderHints());
-    mapScene->render (	&pp, 
+    mapScene->render ( &pp, 
 	// Destination:
-	QRectF(0,0,mapRect.width()+d,mapRect.height()+d),   
+	QRectF( 0, 0, mapRect.width() + d, mapRect.height() + d ),   
 	// Source in scene:
-	QRectF(mapRect.x()-d/2,mapRect.y()-d/2,mapRect.width()+d,mapRect.height()+d));
+	QRectF( mapRect.x() - d/2, mapRect.y() -d/2, mapRect.width() + d, mapRect.height() + d));
     return pix;
 }
 
