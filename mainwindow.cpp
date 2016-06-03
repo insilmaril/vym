@@ -967,6 +967,13 @@ void Main::setupAPI()
     modelCommands.append(c);
 }
 
+void Main::cloneActionMapEditor( QAction *a, QKeySequence ks)
+{
+    a->setShortcut ( ks );
+    a->setShortcutContext ( Qt::WidgetShortcut );
+    mapEditorActions.append ( a );
+}
+
 // File Actions
 void Main::setupFileActions()
 {
@@ -975,23 +982,23 @@ void Main::setupFileActions()
 
     QAction *a;
     a = new QAction(QPixmap( ":/filenew.png"), tr( "&New map","File menu" ),this);
-    a->setShortcut ( Qt::CTRL + Qt::Key_N );
     switchboard.addSwitch ("fileMapNew", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( fileNew() ) );
+    cloneActionMapEditor( a, Qt::CTRL + Qt::Key_N);
     fileMenu->addAction(a);
     actionFileNew=a;
 
     a = new QAction(QPixmap( ":/filenewcopy.png"), tr( "&Copy to new map","File menu" ),this);
-    a->setShortcut ( Qt::CTRL +Qt::SHIFT + Qt::Key_N );	 
     switchboard.addSwitch ("fileMapNewCopy", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( fileNewCopy() ) );
+    cloneActionMapEditor( a, Qt::CTRL + Qt::SHIFT + Qt::Key_C);
     fileMenu->addAction(a);
     actionFileNewCopy=a;
 
     a = new QAction( QPixmap( ":/fileopen.png"), tr( "&Open..." ,"File menu"),this);
-    a->setShortcut ( Qt::CTRL + Qt::Key_L );	 
     switchboard.addSwitch ("fileMapOpen", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( fileLoad() ) );
+    cloneActionMapEditor( a, Qt::CTRL + Qt::Key_L);
     fileMenu->addAction(a);
     actionFileOpen=a;
 
@@ -1007,12 +1014,10 @@ void Main::setupFileActions()
     fileMenu->addSeparator();
 
     a = new QAction( QPixmap( ":/filesave.png"), tr( "&Save...","File menu" ), this);
-    a->setShortcut ( Qt::CTRL + Qt::Key_S );
-    a->setShortcutContext ( Qt::WidgetShortcut );
     switchboard.addSwitch ("fileMapSave", shortcutScope, a, tag);
+    cloneActionMapEditor( a, Qt::CTRL + Qt::Key_S);
     fileMenu->addAction(a);
     restrictedMapActions.append( a );
-    mapEditorActions.append ( a );
     connect( a, SIGNAL( triggered() ), this, SLOT( fileSave() ) );
     actionFileSave=a;
 
@@ -1050,11 +1055,10 @@ void Main::setupFileActions()
     fileExportMenu = fileMenu->addMenu (tr("Export","File menu"));
 
     a = new QAction( QPixmap(":/file-document-export.png"),tr("Repeat last export (%1)").arg("-"), this);
-    a->setShortcut (Qt::ALT + Qt::Key_E);
-    fileExportMenu->addAction(a);
-    mapEditorActions.append( a );
     switchboard.addSwitch ("fileExportLast", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( fileExportLast() ) );
+    cloneActionMapEditor( a, Qt::ALT + Qt::Key_E );
+    fileExportMenu->addAction(a);
     actionFileExportLast=a;
 
     a = new QAction(  "Webpage (HTML)...",this );
@@ -5648,9 +5652,7 @@ void Main::testFunction1()
     VymModel *m = currentModel();
     if (m)
     {
-        // Toggle lockfile & readonly
-        m->setReadOnly( !m->isReadOnly() );
-        m->setUseLockFile( !m->lockFileUsed() );
+        m->getMapEditor()->minimizeView();
     }
 }
 

@@ -51,6 +51,10 @@ protected:
 
 private:
     void setupAPI();
+
+    /*! Helper method to clone actions later in MapEditor */
+    void cloneActionMapEditor( QAction *a, QKeySequence ks);
+
     void setupFileActions();
     void setupEditActions();
     void setupSelectActions();
