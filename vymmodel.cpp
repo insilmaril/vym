@@ -103,7 +103,7 @@ VymModel::~VymModel()
     fileChangedTimer->stop();
     stopAllAnimation();
 
-    removeLock();               // returns, if there is no lockfile
+    vymLock.releaseLock();
 
     //qApp->processEvents();	// Update view (scene()->update() is not enough)
     //qDebug() << "Destr VymModel end   this="<<this;
@@ -142,7 +142,6 @@ void VymModel::init ()
     
     // Files
     readonly        = false;
-    useLockFile     = false;
     zipped          = true;
     filePath        = "";
     fileName        = tr("unnamed");
@@ -1013,80 +1012,6 @@ void VymModel::setReadOnly( bool b )
 bool VymModel::isReadOnly()
 {
     return readonly;
-}
-
-void VymModel::setUseLockFile( bool b) 
-{
-    useLockFile = b;    // FIXME-2 not used atm
-    if (true)
-    { 
-        // Defaults for author and host
-        QString defAuthor = tr( "unknown user", "Default for lockfiles of maps");
-        QString defHost   = tr( "unknown host", "Default for lockfiles of maps");
-        //FIXME-2 needed? if (!lockFile) lockFile = new VymLockFile ( filePath  + ".lock" );
-
-        //FIXME-2 needed? lockFile->setAuthor( settings.value( "/user/name", defAuthor ).toString() ); // FIXME-2 create GUI to edit author in settings
-        /*
-        if ( getenv("HOST") != 0 ) 
-            lockFile->setHost( getenv("HOST") );
-        else
-            lockFile->setHost( defHost );
-        */
-
-        /*
-        if ( lockFile->tryLock() )
-        {
-            // tryLock will try to read author & host 
-            if (debug) qDebug() << "Locking succeeded: " << filePath; 
-        }
-        else
-        {
-            if (debug) qDebug() << "Locking failed: " << filePath; 
-            setReadOnly( true );
-            WarningDialog dia;
-            QString a = lockFile->getAuthor();
-            QString h = lockFile->getHost();
-            QString s = QString( tr("Map seems to be already opened in another vym instance! "
-                   "It will be opened in readonly mode.\n\n"
-                   "Map is locked by \"%1\" on \"%2\"" )) .arg(a).arg(h);
-            dia.setText( s );
-            dia.setWindowTitle(tr("Warning: Map already opended","VymModel"));
-            dia.setShowAgainName("/mainwindow/mapIsLocked");
-            dia.exec();
-        }
-*/
-    } else
-    {
-        /*
-        if (isLocked()) removeLockFile();
-        if (isReadOnly() ) setReadOnly( false );
-        */
-    }
-}
-
-bool VymModel::lockFileUsed()
-{
-    return useLockFile;
-}
-
-void VymModel::removeLock()
-{
-    if (debug) qDebug() << "VymModel::removeLock" << filePath;
-    vymLock.releaseLock();
-}
-
-bool VymModel::isLocked()   // FIXME-2 needed?
-{
-    /*
-    if (!lockFile) 
-    {
-        if (debug) qDebug() << "Lockfile does not exist for " << filePath;
-        return false;
-    }
-    if (debug) qDebug() <<"isLocked: " << lockFile->isLocked();
-    return lockFile->isLocked();
-    */
-    return false;
 }
 
 void VymModel::autosave()

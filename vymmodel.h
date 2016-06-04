@@ -166,12 +166,7 @@ public:
     bool lockFileUsed();
 
 private:
-    void removeLock();
-    bool isLocked();
-
-private:
-    bool useLockFile;       //! Map is locked when open by first user. Readlonly for next
-    VymLock  vymLock;
+    VymLock  vymLock;       //! Handle lockfiles and related information
     bool readonly;          //! if map is locked, it can be opened readonly
 
 private slots:
