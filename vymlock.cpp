@@ -4,34 +4,44 @@
 
 #include "file.h"
 
-#include "lockfile.h"
+#include "vymlock.h"
 
-VymLockFile::VymLockFile( const QString &fn )
+VymLock::VymLock() 
 {
-    path = fn;
-    isMyLockFile = false;
+    init();
 }
 
-VymLockFile::~VymLockFile()
+VymLock::VymLock( const QString &fn )
+{
+    init();
+    mapPath = fn;
+}
+
+VymLock::~VymLock()
 {
     if (isMyLockFile)
     {
-        QFile LockFile( path );
+        QFile LockFile( mapPath + ".lock" );
         if (!LockFile.remove() )
-        qWarning() << "Destructor VymLockFile:  Removing LockFile failed";
+        qWarning() << "Destructor VymLock:  Removing LockFile failed";
     }
 }
 
-bool VymLockFile::tryLock()
+void VymLock::init()
 {
-    QFile lockFile( path );
+    isMyLockFile = false;
+}
+
+bool VymLock::tryLock()
+{
+    QFile lockFile( mapPath + ".lock");
     if ( lockFile.exists() )
     {
         // File is already locked       
-        if (debug) qDebug() << "VymLockFile::tryLock  failed: LockFile exists";
+        if (debug) qDebug() << "VymLock::tryLock  failed: LockFile exists";
 
         QString s;
-        if (!loadStringFromDisk( path, s) )
+        if (!loadStringFromDisk( mapPath, s) )
             qWarning( "Failed to read from existing lockFile");
         else
         {
@@ -49,8 +59,8 @@ bool VymLockFile::tryLock()
 
     if (!lockFile.open(QFile::WriteOnly | QFile::Text))
     {
-        if (debug) qWarning() << QString("VymLockFile::tryLock failed: Cannot open lockFile %1\n%2")
-                    .arg( path )
+        if (debug) qWarning() << QString("VymLock::tryLock failed: Cannot open lockFile %1\n%2")
+                    .arg( mapPath + ".lock")
                     .arg( lockFile.errorString() );
         return false;
     }
@@ -72,28 +82,41 @@ bool VymLockFile::tryLock()
     return true;
 }
 
-bool VymLockFile::isLocked()
+bool VymLock::isLocked()
 {
-    QFile lockFile( path );
+    QFile lockFile( mapPath + ".lock" );
     return lockFile.exists();
 }
 
-void VymLockFile::setAuthor(const QString &s)
+void VymLock::releaseLock() // FIXME-2 missing
+{
+}
+
+void VymLock::setAuthor(const QString &s)
 {
     author = s;
 }
 
-QString VymLockFile::getAuthor()
+QString VymLock::getAuthor()
 {
     return author;
 }
 
-void VymLockFile::setHost(const QString &s)
+void VymLock::setHost(const QString &s)
 {
     host = s;
 }
 
-QString VymLockFile::getHost()
+QString VymLock::getHost()
 {
     return host;
+}
+void VymLock::setMapPath(const QString &s)
+{
+    mapPath = s;
+}
+
+QString VymLock::getMapPath()
+{
+    return mapPath;
 }

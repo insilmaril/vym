@@ -474,11 +474,6 @@ bool parseVYMHandler::readMapAttr (const QXmlAttributes& a)
         }
     } 
         
-    if (!a.value( "useLockFile").isEmpty() && a.value( "useLockFile") == "true" )
-    {
-        model->setUseLockFile( true );
-    }
-
     if (!a.value( "backgroundColor").isEmpty() )
     {
         col.setNamedColor(a.value("backgroundColor"));

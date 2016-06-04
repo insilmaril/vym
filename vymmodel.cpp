@@ -28,7 +28,6 @@
 #include "exporthtmldialog.h"
 #include "file.h"
 #include "findresultmodel.h"
-#include "lockfile.h"
 #include "mainwindow.h"
 #include "misc.h"
 #include "noteeditor.h"
@@ -104,7 +103,7 @@ VymModel::~VymModel()
     fileChangedTimer->stop();
     stopAllAnimation();
 
-    removeLockFile();           // returns, if there is no lockfile
+    removeLock();               // returns, if there is no lockfile
 
     //qApp->processEvents();	// Update view (scene()->update() is not enough)
     //qDebug() << "Destr VymModel end   this="<<this;
@@ -144,7 +143,6 @@ void VymModel::init ()
     // Files
     readonly        = false;
     useLockFile     = false;
-    lockFile        = NULL;
     zipped          = true;
     filePath        = "";
     fileName        = tr("unnamed");
@@ -158,7 +156,6 @@ void VymModel::init ()
     fileChangedTimer= new QTimer (this);	
     fileChangedTimer->start(3000);
     connect(fileChangedTimer, SIGNAL(timeout()), this, SLOT(fileChanged()));
-
 
     // find routine
     findReset();
@@ -266,8 +263,8 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix, bool w
 	    break;
     }	
 
-    QString lockFileFlag;
-    lockFile ? lockFileFlag = "true": lockFileFlag = "";
+    QString lockFileFlag;   // FIXME-2  not decided yet
+    lockFileFlag = "true";  //lockFile ? lockFileFlag = "true": lockFileFlag = "";
 
     QString s="<?xml version=\"1.0\" encoding=\"utf-8\"?><!DOCTYPE vymmap>\n";
     QString colhint="";
@@ -616,7 +613,34 @@ File::ErrorCode VymModel::loadMap (
 
 		resetHistory();
 		resetSelectionHistory();
-	    }
+
+                // Defaults for author and host in vymLock
+                QString defAuthor = tr( "unknown user", "Default for lockfiles of maps");
+                QString defHost   = tr( "unknown host", "Default for lockfiles of maps");
+                vymLock.setMapPath( fname );
+                vymLock.setAuthor( settings.value( "/user/name", defAuthor ).toString() ); 
+                if ( getenv("HOST") != 0 ) 
+                    vymLock.setHost( getenv("HOST") );
+                else
+                    vymLock.setHost( defHost );
+
+                // Now try to lock
+                if (!vymLock.tryLock() )
+                {
+                    setReadOnly( true );
+                    WarningDialog dia;
+                    QString a = vymLock.getAuthor();
+                    QString h = vymLock.getHost();
+                    QString s = QString( tr("Map seems to be already opened in another vym instance! "
+                           "It will be opened in readonly mode.\n\n"
+                           "Map is locked by \"%1\" on \"%2\"" )) .arg(a).arg(h);
+                    dia.setText( s );
+                    dia.setWindowTitle(tr("Warning: Map already opended","VymModel"));
+                    dia.showCancelButton( false );
+                    dia.setShowAgainName("/mainwindow/mapIsLocked");
+                    dia.exec();
+                }
+            }
     
 	    reposition();   // to generate bbox sizes
 	    emitSelectionChanged();
@@ -993,20 +1017,23 @@ bool VymModel::isReadOnly()
 
 void VymModel::setUseLockFile( bool b) 
 {
-    useLockFile = b;
-    if (useLockFile)
+    useLockFile = b;    // FIXME-2 not used atm
+    if (true)
     { 
         // Defaults for author and host
         QString defAuthor = tr( "unknown user", "Default for lockfiles of maps");
         QString defHost   = tr( "unknown host", "Default for lockfiles of maps");
-        if (!lockFile) lockFile = new VymLockFile ( filePath  + ".lock" );
+        //FIXME-2 needed? if (!lockFile) lockFile = new VymLockFile ( filePath  + ".lock" );
 
-        lockFile->setAuthor( settings.value( "/user/name", defAuthor ).toString() ); // FIXME-2 use author from settings, not map
+        //FIXME-2 needed? lockFile->setAuthor( settings.value( "/user/name", defAuthor ).toString() ); // FIXME-2 create GUI to edit author in settings
+        /*
         if ( getenv("HOST") != 0 ) 
             lockFile->setHost( getenv("HOST") );
         else
             lockFile->setHost( defHost );
+        */
 
+        /*
         if ( lockFile->tryLock() )
         {
             // tryLock will try to read author & host 
@@ -1027,11 +1054,13 @@ void VymModel::setUseLockFile( bool b)
             dia.setShowAgainName("/mainwindow/mapIsLocked");
             dia.exec();
         }
-
+*/
     } else
     {
+        /*
         if (isLocked()) removeLockFile();
         if (isReadOnly() ) setReadOnly( false );
+        */
     }
 }
 
@@ -1040,18 +1069,15 @@ bool VymModel::lockFileUsed()
     return useLockFile;
 }
 
-void VymModel::removeLockFile()
+void VymModel::removeLock()
 {
-    if (debug) qDebug() << "VymModel::removeLockFile " << filePath << "  lockFile="<<lockFile;
-    if (lockFile) 
-    {
-        delete lockFile;
-        lockFile = NULL;
-    }
+    if (debug) qDebug() << "VymModel::removeLock" << filePath;
+    vymLock.releaseLock();
 }
 
-bool VymModel::isLocked()
+bool VymModel::isLocked()   // FIXME-2 needed?
 {
+    /*
     if (!lockFile) 
     {
         if (debug) qDebug() << "Lockfile does not exist for " << filePath;
@@ -1059,6 +1085,8 @@ bool VymModel::isLocked()
     }
     if (debug) qDebug() <<"isLocked: " << lockFile->isLocked();
     return lockFile->isLocked();
+    */
+    return false;
 }
 
 void VymModel::autosave()

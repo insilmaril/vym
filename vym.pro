@@ -104,7 +104,6 @@ HEADERS	+= \
     imports.h \
     lineeditdialog.h \
     linkablemapobj.h \
-    lockfile.h \
     macros.h \
     mainwindow.h \
     mapeditor.h \
@@ -133,8 +132,10 @@ HEADERS	+= \
     treemodel.h \
     texteditor.h \
     version.h \
+    vymlock.h \
     vymmodel.h \
     vymnote.h \
+    vymprocess.h \
     vymtext.h \
     vymview.h \
     winter.h \
@@ -146,8 +147,7 @@ HEADERS	+= \
     xml-vym.h \
     xml-freemind.h \
     xmlobj.h\
-    xsltproc.h \ 
-    vymprocess.h \
+    xsltproc.h 
 
 SOURCES	+= \
     aboutdialog.cpp \
@@ -194,7 +194,6 @@ SOURCES	+= \
     imports.cpp \
     lineeditdialog.cpp \
     linkablemapobj.cpp \
-    lockfile.cpp \
     macros.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -224,8 +223,10 @@ SOURCES	+= \
     treeitem.cpp \
     treemodel.cpp \
     version.cpp \
+    vymlock.cpp \
     vymmodel.cpp \
     vymnote.cpp \
+    vymprocess.cpp \
     vymtext.cpp \
     vymview.cpp \
     warningdialog.cpp \
@@ -237,8 +238,7 @@ SOURCES	+= \
     xml-vym.cpp \
     xml-freemind.cpp \
     xmlobj.cpp \
-    xsltproc.cpp \ 
-    vymprocess.cpp \
+    xsltproc.cpp 
 
 FORMS = \
     attributewidget.ui \

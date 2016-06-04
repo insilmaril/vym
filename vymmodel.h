@@ -17,12 +17,12 @@
 #include "parser.h"
 #include "treeitem.h"
 #include "treemodel.h"
+#include "vymlock.h"
 
 class AttributeItem;
 class BranchItem;
 class FindResultModel;
 class Link;
-class VymLockFile;
 class MapEditor;
 class SlideItem;
 class SlideModel;
@@ -166,12 +166,12 @@ public:
     bool lockFileUsed();
 
 private:
-    void removeLockFile();
+    void removeLock();
     bool isLocked();
 
 private:
     bool useLockFile;       //! Map is locked when open by first user. Readlonly for next
-    VymLockFile  *lockFile;
+    VymLock  vymLock;
     bool readonly;          //! if map is locked, it can be opened readonly
 
 private slots:

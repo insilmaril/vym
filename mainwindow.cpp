@@ -4261,7 +4261,6 @@ void Main::editMapProperties()
     dia.setMapName  ( m->getFileName() );
     dia.setMapTitle ( m->getTitle() );
     dia.setAuthor   ( m->getAuthor() );
-    dia.setLockFile ( m->lockFileUsed() );
     dia.setComment  ( m->getComment() );
 
     // Calc some stats
@@ -4298,7 +4297,6 @@ void Main::editMapProperties()
 	m->setAuthor (dia.getAuthor() );
 	m->setComment (dia.getComment() );
 	m->setTitle (dia.getMapTitle() );
-        m->setUseLockFile( dia.lockFileUsed() );
     }
 }
 

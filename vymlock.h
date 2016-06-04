@@ -1,25 +1,30 @@
-#ifndef LOCKFILE_H
-#define LOCKFILE_H
+#ifndef VYMLOCK_H
+#define VYMLOCK_H
 
 extern bool debug;
 
-class VymLockFile
+class VymLock
 {
 public:
-    VymLockFile( const QString &fn );
-    ~VymLockFile();
+    VymLock();
+    VymLock( const QString &fn );
+    ~VymLock();
+    void init();
     bool tryLock();
     bool isLocked();
+    void releaseLock();
     void setAuthor(const QString &s);
     QString getAuthor();
     void setHost(const QString &s);
     QString getHost();
+    void setMapPath(const QString &s);
+    QString getMapPath();
 
 private:
     QWidget *parent;
-    QString path;
     QString author;
     QString host;
+    QString mapPath;
     bool isMyLockFile;
 };
 
