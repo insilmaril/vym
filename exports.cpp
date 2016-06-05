@@ -232,7 +232,8 @@ void ExportAO::doExport()
     QFile file (filePath);
     if ( !file.open( QIODevice::WriteOnly ) )
     {
-        qWarning()<<"ExportAO::doExport couldn't open " + filePath;//FIXME-3 missing GUI warning
+        QMessageBox::critical (0, QObject::tr("Critical Export Error"), QObject::tr("Could not export as AO to %1").arg(filePath));
+        mainWindow->statusMessage(QString(QObject::tr("Export failed.")));
         return;
     }
 
@@ -377,7 +378,8 @@ void ExportASCII::doExport()
     QFile file (filePath);
     if ( !file.open( QIODevice::WriteOnly ) )
     {
-        qWarning ()<<"ExportASCII::doExport couldn't open "+filePath;
+        QMessageBox::critical (0, QObject::tr("Critical Export Error"), QObject::tr("Could not export as ASCII to %1").arg(filePath));
+        mainWindow->statusMessage(QString(QObject::tr("Export failed.")));
         return;
     }
     QTextStream ts( &file );
@@ -506,7 +508,8 @@ void ExportCSV::doExport()
     QFile file (filePath);
     if ( !file.open( QIODevice::WriteOnly ) )
     {
-        qWarning ()<<"ExportBase::exportXML  couldn't open "+filePath;
+        QMessageBox::critical (0, QObject::tr("Critical Export Error"), QObject::tr("Could not export as CSV to %1").arg(filePath));
+        mainWindow->statusMessage(QString(QObject::tr("Export failed.")));
         return;
     }
     QTextStream ts( &file );
@@ -1042,7 +1045,7 @@ void ExportOrgMode::doExport()
     QFile file (filePath);
     if ( !file.open( QIODevice::WriteOnly ) )
     {
-        QMessageBox::critical (0,QObject::tr("Critical Export Error"),QObject::tr("Could not write %1").arg(filePath));
+        QMessageBox::critical (0, QObject::tr("Critical Export Error"), QObject::tr("Could not export as OrgMode to %1").arg(filePath));
         mainWindow->statusMessage(QString(QObject::tr("Export failed.")));
         return;
     }
@@ -1123,7 +1126,7 @@ void ExportLaTeX::doExport()
         QMessageBox::critical (
                     0,
                     QObject::tr("Critical Export Error"),
-                    QObject::tr("Could not write %1").arg(filePath));
+                    QObject::tr("Could not export as LaTeX to %1").arg(filePath));
         mainWindow->statusMessage(QString(QObject::tr("Export failed.")));
         return;
     }
