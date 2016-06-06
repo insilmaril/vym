@@ -1104,7 +1104,7 @@ void VymModel::setChanged()
     mapDefault=false;
     mapUnsaved=true;
     findReset();
-    mainWindow->updateActions();
+    updateActions();
 }
 
 QString VymModel::getObjectName (LinkableMapObj *lmo)
@@ -6408,7 +6408,7 @@ void VymModel::appendSelection()    // FIXME-4 history unable to cope with multi
 	id=ti->getID();	
 	selectionHistory.append (id);
 	currentSelection=selectionHistory.count()-1;
-	mainWindow->updateActions();
+	updateActions();
     }
 }
 
