@@ -14,7 +14,7 @@ enum EditorState {inactiveEditor,emptyEditor,filledEditor};
 class TextEditor : public QMainWindow
 {    Q_OBJECT
 public:
-    TextEditor(QString scope);
+    TextEditor();
     ~TextEditor();
 
     void init(const QString &ename);

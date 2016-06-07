@@ -4,12 +4,12 @@
 extern Settings settings;
 extern QString vymName;
 
-HeadingEditor::HeadingEditor(QString scope):TextEditor(scope)
+HeadingEditor::HeadingEditor(QString scope):TextEditor()
 {
     QMainWindow::setWindowTitle (vymName +" - " +tr ("Heading Editor","Window caption"));
 
     // Load Settings
-    init ("shortcutScope");
+    init (scope);
 }
 
 HeadingEditor::~HeadingEditor() {}

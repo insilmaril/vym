@@ -8,14 +8,14 @@
 extern Settings settings;
 extern QString vymName;
 
-NoteEditor::NoteEditor(QString scope):TextEditor(scope)
+NoteEditor::NoteEditor(QString scope):TextEditor()
 {
     setWindowTitle (vymName +" - " +tr ("Note Editor","Window caption"));
 
     menuBar()->show();
 
     // Load Settings
-    init(shortcutScope);
+    init(scope);
 }
 
 NoteEditor::~NoteEditor() {}

@@ -34,10 +34,8 @@ extern bool debug;
 ///////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////
 
-TextEditor::TextEditor(QString scope)
+TextEditor::TextEditor()
 {
-    shortcutScope = scope;
-
     statusBar()->hide();    // Hide sizeGrip on default, which comes with statusBar
 
     e = new QTextEdit( this);
@@ -86,8 +84,9 @@ TextEditor::~TextEditor()
     settings.setValue(n + "fonts/fixedFont", fixedFont.toString() );
 }
 
-void TextEditor::init (const QString &ename) // FIXME-2 parameter still required?
+void TextEditor::init (const QString &scope) 
 {   
+    shortcutScope = scope;
     QString n=QString("/satellite/%1/").arg(shortcutScope);
     restoreState (settings.value(n+"state",0).toByteArray());
     filenameHint="";
