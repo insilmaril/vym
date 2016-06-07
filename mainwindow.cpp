@@ -4585,44 +4585,70 @@ void Main::editToggleTarget()
     if (m) m->toggleTarget();
 }
 
+bool Main::initTargetsMenu( VymModel *model, QMenu *menu)
+{
+    if (model)
+    {
+        ItemList targets = model->getTargets();
+
+        menu->clear();
+
+        QStringList targetNames;
+        QList <uint> targetIDs;
+
+        // Build QStringList with all names of targets
+        QMap<uint,QString>::const_iterator i;
+        i = targets.constBegin();
+        while (i != targets.constEnd()) 
+        {
+            targetNames.append( i.value() );
+            targetIDs.append( i.key() );
+            ++i;
+        }
+
+        // Sort list of names
+        targetNames.sort( Qt::CaseInsensitive );
+
+        // Build menu based on sorted names
+        while ( !targetNames.isEmpty() )
+        {
+            // Find target by value
+            i = targets.constBegin();
+            while (i != targets.constEnd()) 
+            {
+                if ( i.value() == targetNames.first() ) break;
+                ++i;
+            }
+
+            menu->addAction( targetNames.first() )->setData( i.key() );
+            targetNames.removeFirst();
+            targets.remove( i.key() );
+        }
+        return true;
+    }
+    return false;
+}
+
 void Main::editGoToTarget()  
 {
-    VymModel *m = currentModel();
-    if (m) 
+    VymModel *model = currentModel();
+    if (initTargetsMenu( model, targetsContextMenu ) )
     {
-	targetsContextMenu->clear();
-
-	ItemList targets = m->getTargets();
-	QMap<uint,QString>::const_iterator i = targets.constBegin();
-	while (i != targets.constEnd()) 
-	{
-	    (targetsContextMenu->addAction (i.value() ) )->setData (i.key());
-	    ++i;
-	}
 	QAction *a = targetsContextMenu->exec (QCursor::pos());
-	if (a) m->select (m->findID (a->data().toUInt() ) );
+	if (a) model->select (model->findID (a->data().toUInt() ) );
     }
 }
 
 void Main::editMoveToTarget()  
 {
-    VymModel *m = currentModel();
-    if (m) 
+    VymModel *model = currentModel();
+    if (initTargetsMenu( model, targetsContextMenu ) )
     {
-	targetsContextMenu->clear();
-
-	ItemList targets = m->getTargets();
-	QMap<uint,QString>::const_iterator i = targets.constBegin();
-	while (i != targets.constEnd()) 
-	{
-	    (targetsContextMenu->addAction (i.value() ) )->setData (i.key());
-	    ++i;
-	}
-	QAction *a=targetsContextMenu->exec (QCursor::pos());
+	QAction *a = targetsContextMenu->exec (QCursor::pos());
 	if (a) 
 	{
-	    TreeItem *ti=m->findID (a->data().toUInt());
-	    BranchItem *selbi=m->getSelectedBranch();
+	    TreeItem *ti = model->findID ( a->data().toUInt() );
+	    BranchItem *selbi = model->getSelectedBranch();
 	    if (!selbi) return;
 
 	    if (ti && ti->isBranchLikeType() && selbi)
@@ -4630,17 +4656,17 @@ void Main::editMoveToTarget()
 		BranchItem *pi = selbi->parentBranch();
 		// If branch below exists, select that one
 		// Makes it easier to quickly resort using the MoveTo function
-		BranchItem *below = pi->getBranchNum(selbi->num()+1);
+		BranchItem *below = pi->getBranchNum( selbi->num() + 1 );
 		LinkableMapObj *lmo = selbi->getLMO();
 		QPointF orgPos;
 		if (lmo) orgPos = lmo->getAbsPos();
 
-		if (m->relinkBranch ( selbi, (BranchItem*)ti,-1,true,orgPos) )
+		if (model->relinkBranch ( selbi, (BranchItem*)ti, -1, true, orgPos) )
 		{
 		    if (below) 
-			m->select (below);
+			model->select (below);
 		    else    
-			if (pi) m->select (pi);
+			if (pi) model->select (pi);
 		}    
 	    }	    
 	}

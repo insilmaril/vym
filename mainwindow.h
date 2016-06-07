@@ -208,6 +208,7 @@ private slots:
 
 private slots:    
     void editToggleTarget();
+    bool initTargetsMenu( VymModel *model, QMenu *menu);
     void editGoToTarget();
     void editMoveToTarget();
     void editSelectPrevious();
