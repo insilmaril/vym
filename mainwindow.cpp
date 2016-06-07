@@ -5886,7 +5886,6 @@ void Main::checkReleaseNotes()
         if ( userTriggered ||
              versionLowerThanVym( settings.value("/downloads/releaseNotes/shownVersion", "0.0.1").toString() ) )
         {
-            qDebug() << "Checking relNotes... userTriggered="<<userTriggered;   // FIXME-2
             QUrl releaseNotesUrl(
                 //QString("http://localhost/release-notes.php?vymVersion=%1") /
                 QString("http://www.insilmaril.de/vym/release-notes.php?vymVersion=%1")
