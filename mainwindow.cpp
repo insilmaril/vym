@@ -55,21 +55,6 @@ QPrinter *printer;
 
 //#include <modeltest.h>    
 
-#if defined(Q_OS_WIN32)
-#ifndef Q_CC_MINGW
-// Define only this structure as opposed to
-// including full 'windows.h'. FindWindow
-// clashes with the one in Win32 API.
-typedef struct _PROCESS_INFORMATION
-{
-    long hProcess;
-    long hThread;
-    long dwProcessId;
-    long dwThreadId;
-} PROCESS_INFORMATION, *LPPROCESS_INFORMATION;
-#endif
-#endif
-
 #if defined(VYM_DBUS)
 #include <QDBusConnection>
 #endif
