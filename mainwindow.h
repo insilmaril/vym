@@ -322,15 +322,14 @@ private slots:
     void helpAboutQT();
 
     void callMacro ();
-    void downloadReleaseNotesFinished(bool interactive=false);
-    void downloadReleaseNotesFinishedInt();
+    void downloadReleaseNotesFinished();
 
 public slots:
     void checkReleaseNotes();
-    bool downloadsEnabled(bool interactive=false);
-    void downloadUpdatesFinished(bool interactive=false);
+    bool downloadsEnabled(bool userTriggered = false);
+    void downloadUpdatesFinished(bool userTriggered = false);
     void downloadUpdatesFinishedInt();
-    void downloadUpdates(bool interactive);
+    void downloadUpdates(bool userTriggered);
     void checkUpdates();
 
 private:

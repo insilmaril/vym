@@ -5842,7 +5842,7 @@ void Main::callMacro ()
     }	
 }
 
-void Main::downloadReleaseNotesFinished(bool interactive)
+void Main::downloadReleaseNotesFinished()
 {
     DownloadAgent *agent = static_cast<DownloadAgent*>(sender());
     QString s;
@@ -5852,7 +5852,7 @@ void Main::downloadReleaseNotesFinished(bool interactive)
         QString page;
         if (agent->isSuccess() )
         {
-            if (loadStringFromDisk(agent->getDestination(), page) )
+            if ( loadStringFromDisk(agent->getDestination(), page) )
             {
                 ShowTextDialog dia(this);
                 dia.setText(page);
@@ -5873,58 +5873,51 @@ void Main::downloadReleaseNotesFinished(bool interactive)
     }
 }
 
-void Main::downloadReleaseNotesFinishedInt()
-{
-    downloadReleaseNotesFinished(true);
-}
-
 void Main::checkReleaseNotes()
 {
-    bool interactive;
+    bool userTriggered;
     if (qobject_cast<QAction *>(sender()) )
-        interactive = true;
+        userTriggered = true;
     else
-        interactive = false;
+        userTriggered = false;
 
     if (downloadsEnabled())
     {
-        if ( interactive ||
+        if ( userTriggered ||
              versionLowerThanVym( settings.value("/downloads/releaseNotes/shownVersion", "0.0.1").toString() ) )
         {
+            qDebug() << "Checking relNotes... userTriggered="<<userTriggered;   // FIXME-2
             QUrl releaseNotesUrl(
                 //QString("http://localhost/release-notes.php?vymVersion=%1") /
                 QString("http://www.insilmaril.de/vym/release-notes.php?vymVersion=%1")
                 .arg(vymVersion)
             );
             DownloadAgent *agent = new DownloadAgent(releaseNotesUrl);
-            if (interactive)
-                connect(agent, SIGNAL( downloadFinished()), this, SLOT(downloadReleaseNotesFinishedInt()));
-            else
-                connect (agent, SIGNAL( downloadFinished()), this, SLOT(downloadReleaseNotesFinished()));
+            connect (agent, SIGNAL( downloadFinished()), this, SLOT(downloadReleaseNotesFinished()));
             QTimer::singleShot(0, agent, SLOT(execute()));
         }
     } else
     {
         // No downloads enabled
-        if (interactive)
+        if (userTriggered)
         {
             // Notification: vym could not download release notes
             QMessageBox::warning(0,  tr("Warning"), tr("Please allow vym to download release notes!"));
-            if (downloadsEnabled(interactive)) checkUpdates();
+            if (downloadsEnabled(userTriggered)) checkUpdates();
         }
     }
 }
 
-bool Main::downloadsEnabled (bool interactive)
+bool Main::downloadsEnabled (bool userTriggered)
 {
     bool result;
-    if (!interactive && settings.value("/downloads/enabled", false).toBool())
+    if (!userTriggered && settings.value("/downloads/enabled", false).toBool())
     {
         result = true;
     } else
     {
         QDate lastAsked = settings.value("/downloads/permissionLastAsked", QDate(1970,1,1) ).toDate();
-        if (interactive ||
+        if (userTriggered ||
             !settings.contains("/downloads/permissionLastAsked") ||
             lastAsked.daysTo( QDate::currentDate()) > 7
            )
@@ -5981,7 +5974,7 @@ bool Main::downloadsEnabled (bool interactive)
     return result;
 }
 
-void Main::downloadUpdatesFinished(bool interactive)
+void Main::downloadUpdatesFinished(bool userTriggered)
 {
     DownloadAgent *agent = static_cast<DownloadAgent*>(sender());
     QString s;
@@ -5996,7 +5989,7 @@ void Main::downloadUpdatesFinished(bool interactive)
             if (page.contains("vymisuptodate"))
             {
                 statusMessage( tr("vym is up to date.","MainWindow"));
-                if (interactive)
+                if (userTriggered)
                 {
                     // Notification: vym is up to date!
                     dia.setHtml( page );
@@ -6035,14 +6028,14 @@ void Main::downloadUpdatesFinishedInt()
     downloadUpdatesFinished(true);
 }
 
-void Main::downloadUpdates(bool interactive)
+void Main::downloadUpdates(bool userTriggered)
 {
     QUrl updatesUrl(
         QString("http://www.insilmaril.de/vym/updates.php?vymVersion=%1")
         .arg(vymVersion)
     );
     DownloadAgent *agent = new DownloadAgent(updatesUrl);
-    if (interactive)
+    if (userTriggered)
         connect (agent, SIGNAL( downloadFinished()), this, SLOT(downloadUpdatesFinishedInt()));
     else
         connect (agent, SIGNAL( downloadFinished()), this, SLOT(downloadUpdatesFinished()));
@@ -6052,11 +6045,11 @@ void Main::downloadUpdates(bool interactive)
 
 void Main::checkUpdates()
 {
-    bool interactive;
+    bool userTriggered;
     if (qobject_cast<QAction *>(sender()) )
-        interactive = true;
+        userTriggered = true;
     else
-        interactive = false;
+        userTriggered = false;
 
     if (downloadsEnabled())
     {
@@ -6064,18 +6057,18 @@ void Main::checkUpdates()
         QDate lastChecked = settings.value("/downloads/updates/lastChecked", QDate(1970,1,1) ).toDate();
         if ( !lastChecked.isValid()) lastChecked = QDate(1970,1,1);
         if ( lastChecked.daysTo( QDate::currentDate()) > settings.value("/downloads/updates/checkInterval",3).toInt() ||
-             interactive == true)
+             userTriggered == true)
         {
-            downloadUpdates( interactive );
+            downloadUpdates( userTriggered );
         }
     } else
     {
         // No downloads enabled
-        if (interactive)
+        if (userTriggered)
         {
             // Notification: vym could not check for updates
             QMessageBox::warning(0,  tr("Warning"), tr("Please allow vym to check for updates!"));
-            if (downloadsEnabled(interactive)) checkUpdates();
+            if (downloadsEnabled(userTriggered)) checkUpdates();
         }
     }
 }
