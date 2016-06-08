@@ -520,11 +520,6 @@ QString TreeItem::getNoteASCII()
     return note.getTextASCII();
 }
 
-QString TreeItem::getNoteOpenDoc()
-{
-    return note.getTextOpenDoc();
-}
-
 void TreeItem::activateStandardFlag (const QString &name)
 {
     standardFlags.activate (name);

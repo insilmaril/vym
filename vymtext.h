@@ -29,7 +29,6 @@ public:
     QString getText() const;
     QString getTextASCII() const;
     QString getTextASCII(QString igdent, const int &width=0) const;
-    QString getTextOpenDoc();
     void setRichText(bool b);
     bool isRichText() const;
     void setFontHint (const QString&);

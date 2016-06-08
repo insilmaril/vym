@@ -1212,7 +1212,7 @@ QString ExportOO::buildList (TreeItem *current)
                 r += quotemeta(bi->getHeadingPlain());
                 // If necessary, write note
                 if (! bi->isNoteEmpty())
-                    r += bi->getNoteOpenDoc();
+                    r += "<text:line-break/>" + bi->getNoteASCII();
                 r += "</text:p>";
                 r += buildList (bi);  // recursivly add deeper branches
                 r += "</text:list-item>\n";

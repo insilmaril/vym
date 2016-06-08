@@ -126,8 +126,6 @@ public:
     virtual VymNote getNote();
     virtual QString getNoteASCII(const QString &indent, const int &width); // returns note  (ASCII)
     virtual QString getNoteASCII();	    // returns note (ASCII)
-    virtual QString getNoteOpenDoc();	    // returns note (OpenDoc)
-
 
 protected:
     FlagRow standardFlags;
