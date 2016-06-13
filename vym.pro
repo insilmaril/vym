@@ -43,6 +43,7 @@ win32 {
 }
 
 TRANSLATIONS += lang/vym_de_DE.ts
+TRANSLATIONS += lang/vym_el.ts
 TRANSLATIONS += lang/vym_en.ts
 TRANSLATIONS += lang/vym_es.ts
 TRANSLATIONS += lang/vym_fr.ts
