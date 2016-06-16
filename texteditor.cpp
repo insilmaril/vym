@@ -108,11 +108,6 @@ void TextEditor::init (const QString &scope)
     }
 }
 
-void TextEditor::reset()
-{
-    e->clear();
-}
-
 bool TextEditor::isEmpty()
 {
     if (e->toPlainText().length()>0)
@@ -319,7 +314,7 @@ void TextEditor::setupFileActions()
     actionFilePrint=a;
     
     a = new QAction( QPixmap( ":/edittrash.png"), tr( "&Delete All" ), this);
-    connect( a, SIGNAL( triggered() ), e, SLOT( clear() ) );
+    connect( a, SIGNAL( triggered() ), this, SLOT( reset() ) );
     fileMenu->addAction (a);
     tb->addAction (a);
     actionFileDeleteAll=a;
@@ -696,6 +691,12 @@ void TextEditor::editCopyAll()
 {
     e->selectAll();
     e->copy();
+}
+
+void TextEditor::reset()
+{
+    e->selectAll();
+    e->cut();
 }
 
 void TextEditor::textSaveAs()	
