@@ -1014,10 +1014,6 @@ void Main::setupFileActions()
 
     fileImportMenu = fileMenu->addMenu (tr("Import","File menu"));
 
-    a = new QAction(tr("KDE 4 Bookmarks","Import filters"), this);
-    connect( a, SIGNAL( triggered() ), this, SLOT( fileImportKDE4Bookmarks() ) );
-    fileImportMenu->addAction(a);
-
     if (settings.value( "/mainwindow/showTestMenu",false).toBool()) 
     {
         a = new QAction( QPixmap(), tr("Firefox Bookmarks","Import filters"),this);
@@ -1080,10 +1076,6 @@ void Main::setupFileActions()
 
     a = new QAction( "XML..." , this );
     connect( a, SIGNAL( triggered() ), this, SLOT( fileExportXML() ) );
-    fileExportMenu->addAction(a);
-
-    a = new QAction( tr("KDE 4 Bookmarks","File menu"), this);
-    connect( a, SIGNAL( triggered() ), this, SLOT( fileExportKDE4Bookmarks() ) );
     fileExportMenu->addAction(a);
 
     a = new QAction( tr("Spreadsheet") + " (CSV)... " + tr("(still experimental)"), this);
@@ -3473,14 +3465,6 @@ void Main::fileSaveAs()
     fileSaveAs (CompleteMap);
 }
 
-void Main::fileImportKDE4Bookmarks()
-{
-    ImportKDE4Bookmarks im;
-    im.transform();
-    if (File::Aborted!=fileLoad (im.getTransformedFile(),NewMap,VymMap) && currentMapEditor() )
-	currentMapEditor()->getModel()->setFilePath ("");
-}
-
 void Main::fileImportFirefoxBookmarks()
 {
     QFileDialog fd;
@@ -3652,17 +3636,6 @@ void Main::fileExportOrgMode()
 {
     VymModel *m=currentModel();
     if (m) m->exportOrgMode();
-}
-
-void Main::fileExportKDE4Bookmarks()	//FIXME-3 not scriptable yet
-{
-    ExportKDE4Bookmarks ex;
-    VymModel *m=currentModel();
-    if (m)
-    {
-	ex.setModel (m);
-	ex.doExport();
-    }	
 }
 
 void Main::fileExportTaskjuggler()  //FIXME-3 not scriptable yet

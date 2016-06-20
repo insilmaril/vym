@@ -106,7 +106,6 @@ public slots:
 private slots:	
     void fileSaveAs(const SaveMode &);
     void fileSaveAs();
-    void fileImportKDE4Bookmarks();
     void fileImportFirefoxBookmarks();
     void fileImportFreemind();
     void fileImportMM();
@@ -122,7 +121,6 @@ private slots:
     void fileExportCSV();
     void fileExportOrgMode();
     void fileExportLaTeX();
-    void fileExportKDE4Bookmarks();
     void fileExportTaskjuggler();
     void fileExportImpress();
     void fileExportLast();
