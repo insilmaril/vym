@@ -4935,14 +4935,31 @@ bool Main::settingsURL()
 void Main::settingsZipTool()
 {
     // Default zip tool is 7z on windows, zip/unzip elsewhere
-    bool ok;
-    QString text = QInputDialog::getText(
+    bool ok = false;
+
+#if defined(Q_OS_WIN32)
+    QString filter;
+    filter = "Windows executable (*.exe);;";
+
+    QString fn = QFileDialog::getOpenFileName( 
+        this,
+        vymName + " - " + tr("Set application to zip/unzip files")+":", 
+        lastMapDir.path(), 
+        filter);
+
+    if (!fn.isEmpty() ) ok = true;
+
+#else
+
+    QString fn = QInputDialog::getText(
                 this,
                 "VYM", tr("Set application to zip/unzip files")+":", QLineEdit::Normal,
                 zipToolPath, &ok);
+#endif
+
     if (ok)
     {
-        zipToolPath = text;
+        zipToolPath = fn;
         settings.setValue ("/system/zipToolPath", zipToolPath);
     }
 }
