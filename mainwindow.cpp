@@ -4943,8 +4943,8 @@ void Main::settingsZipTool()
 
     QString fn = QFileDialog::getOpenFileName( 
         this,
-        vymName + " - " + tr("Set application to zip/unzip files")+":", 
-        lastMapDir.path(), 
+        vymName + " - " + tr("Set application to zip/unzip files") + ":", 
+        zipToolPath,
         filter);
 
     if (!fn.isEmpty() ) ok = true;
