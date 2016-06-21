@@ -2680,6 +2680,10 @@ void Main::setupHelpActions()
     helpMenu->addAction(a);
     connect( a, SIGNAL( triggered() ), this, SLOT( helpShortcuts() ) );
 
+    a = new QAction( "Debug info" , this);  // FIXME-2 move somewhere else, e.g. beta menu
+    helpMenu->addAction(a);
+    connect( a, SIGNAL( triggered() ), this, SLOT( debugInfo() ) );
+
     a = new QAction( tr( "About VYM","Help action" ), this);
     connect( a, SIGNAL( triggered() ), this, SLOT( helpAbout() ) );
     helpMenu->addAction (a);
@@ -5640,29 +5644,6 @@ void Main::testFunction1()
 
 void Main::testFunction2()
 {
-    // Testing locale settings...
-    QString s;
-    QString localeName;
-    if (options.isOn ("locale"))
-        localeName = options.getArg ("locale");
-    else
-    {
-#if defined(Q_OS_LINUX)
-        localeName = QProcessEnvironment::systemEnvironment().value("LANG","foobar");
-#else
-        localeName = QLocale::system().name();
-#endif
-    }
-    
-    s  = QString ("localeName: %1\nPath: %2\n")
-        .arg(localeName)
-        .arg(vymBaseDir.path() + "/lang");
-    s += QString("vymBaseDir: %1\n").arg(vymBaseDir.path());
-    s += QString("currentPath: %1\n").arg(QDir::currentPath());
-    s += QString("appDirPath: %1\n").arg(QCoreApplication::applicationDirPath());
-    QMessageBox mb;
-    mb.setText(s);
-    mb.exec();
 }
 
 void Main::toggleWinter()
@@ -5784,6 +5765,33 @@ void Main::helpShortcuts()
     dia.useFixedFont (true);
     dia.setText( switchboard.getASCII() );
     dia.exec();
+}
+
+void Main::debugInfo()  // FIXME-2 move somewhere else, e.g. beta menu...
+{
+    // Testing locale settings...
+    QString s;
+    QString localeName;
+    if (options.isOn ("locale"))
+        localeName = options.getArg ("locale");
+    else
+    {
+#if defined(Q_OS_LINUX)
+        localeName = QProcessEnvironment::systemEnvironment().value("LANG","foobar");
+#else
+        localeName = QLocale::system().name();
+#endif
+    }
+    
+    s  = QString ("localeName: %1\nPath: %2\n")
+        .arg(localeName)
+        .arg(vymBaseDir.path() + "/lang");
+    s += QString("vymBaseDir: %1\n").arg(vymBaseDir.path());
+    s += QString("currentPath: %1\n").arg(QDir::currentPath());
+    s += QString("appDirPath: %1\n").arg(QCoreApplication::applicationDirPath());
+    QMessageBox mb;
+    mb.setText(s);
+    mb.exec();
 }
 
 void Main::helpAbout()
