@@ -358,20 +358,17 @@ int main(int argc, char* argv[])
     // Initialize translations
     QString localeName;
     if (options.isOn ("locale"))
-        localeName = options.getArg ("locale");
-    else
     {
-#if defined(Q_OS_LINUX)
-        localeName = QProcessEnvironment::systemEnvironment().value("LANG","foobar");   // FIXME-2
-#else
-        localeName = QLocale::system().name();
-#endif
+        localeName = options.getArg ("locale");
+        qDebug()<< "Option locale is set to: "<<localeName;
     }
+    else
+        localeName  = QLocale::system().uiLanguages().first();
     
     if (debug) 
     {
-        qDebug()<<"Main     localName: " << localeName;
-        qDebug()<<"Main  translations: " << localeName, vymBaseDir.path() + "/lang";
+        qDebug()<<"Main:     localName: " << localeName;
+        qDebug()<<"Main:  translations: " << localeName, vymBaseDir.path() + "/lang";
     }
    
     QTranslator vymTranslator;
