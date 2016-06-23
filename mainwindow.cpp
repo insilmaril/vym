@@ -78,6 +78,7 @@ extern QString vymName;
 extern QString vymVersion;
 extern QString vymPlatform;
 extern QString vymBuildDate;
+extern QString localeName;
 extern bool debug;
 extern bool testmode;
 extern QTextStream vout;
@@ -165,92 +166,6 @@ Main::Main(QWidget* parent, Qt::WindowFlags f) : QMainWindow(parent,f)
     // Define commands in API (used globally)
     setupAPI();
 
-    // Dock widgets /////////////////////////////////////////////// /
-    // FIXME-4 Missing call to updateAction, when widget is closed
-    QDockWidget *dw;
-    dw = new QDockWidget (tr("Note Editor"));
-    dw->setWidget (noteEditor);
-    dw->setObjectName ("NoteEditor");
-    dw->hide();
-    noteEditorDW=dw;
-    addDockWidget (Qt::LeftDockWidgetArea,dw);
-
-    dw = new QDockWidget (tr("Heading Editor"));
-    dw->setWidget (headingEditor);
-    dw->setObjectName ("HeadingEditor");
-    dw->hide();
-    headingEditorDW=dw;
-    addDockWidget (Qt::BottomDockWidgetArea,dw);
-
-    dw = new QDockWidget (tr("Script Editor"));
-    dw->setWidget (scriptEditor);
-    dw->setObjectName ("ScriptEditor");
-    dw->hide();
-    scriptEditorDW=dw;
-    addDockWidget (Qt::LeftDockWidgetArea,dw);
-
-    findResultWidget=new FindResultWidget ();
-    dw= new QDockWidget (tr ("Search results list","FindResultWidget"));
-    dw->setWidget (findResultWidget);
-    dw->setObjectName ("FindResultWidget");
-    dw->hide();	
-    addDockWidget (Qt::RightDockWidgetArea,dw);
-    connect (
-	findResultWidget, SIGNAL (noteSelected (QString, int)),
-	this, SLOT (selectInNoteEditor (QString, int)));
-    connect (
-	findResultWidget, SIGNAL (findPressed (QString) ), 
-	this, SLOT (editFindNext(QString) ) );
-
-    taskEditor = new TaskEditor ();
-    dw= new QDockWidget (tr ("Task list","TaskEditor"));
-    dw->setWidget (taskEditor);
-    dw->setObjectName ("TaskEditor");
-    dw->hide();	
-    addDockWidget (Qt::TopDockWidgetArea,dw);
-    connect (dw, SIGNAL (visibilityChanged(bool ) ), this, SLOT (updateActions()));
-    //FIXME -0 connect (taskEditor, SIGNAL (focusReleased() ), this, SLOT (setFocusMapEditor()));
-
-    scriptEditor = new ScriptEditor(this);
-    dw= new QDockWidget (tr ("Script Editor","ScriptEditor"));
-    dw->setWidget (scriptEditor);
-    dw->setObjectName ("ScriptEditor");
-    dw->hide();	
-    addDockWidget (Qt::LeftDockWidgetArea,dw);
-
-    branchPropertyEditor = new BranchPropertyEditor();
-    dw = new QDockWidget (tr("Property Editor","PropertyEditor"));
-    dw->setWidget (branchPropertyEditor);
-    dw->setObjectName ("PropertyEditor");
-    dw->hide();
-    addDockWidget (Qt::LeftDockWidgetArea,dw);
-
-    historyWindow=new HistoryWindow();
-    dw = new QDockWidget (tr("History window","HistoryWidget"));
-    dw->setWidget (historyWindow);
-    dw->setObjectName ("HistoryWidget");
-    dw->hide();
-    addDockWidget (Qt::RightDockWidgetArea,dw);
-    connect (dw, SIGNAL (visibilityChanged(bool ) ), this, SLOT (updateActions()));
-
-    // Connect NoteEditor, so that we can update flags if text changes
-    connect (noteEditor, SIGNAL (textHasChanged() ), this, SLOT (updateNoteFlag()));
-    connect (noteEditor, SIGNAL (windowClosed() ), this, SLOT (updateActions()));
-
-    // Connect heading editor
-    connect (headingEditor, SIGNAL (textHasChanged() ), this, SLOT (updateHeading()));
-
-    connect( scriptEditor, SIGNAL( runScript ( QString ) ),  this, SLOT( execute( QString ) ) );
-
-    // Switch back  to MapEditor using Esc 
-    QAction* a = new QAction(this);
-    a->setShortcut (Qt::Key_Escape);
-    a->setShortcutContext (Qt::ApplicationShortcut);
-    a->setCheckable(false);
-    a->setEnabled (true);
-    addAction(a);
-    connect (a , SIGNAL (triggered() ), this, SLOT (setFocusMapEditor()));
-    
     // Initialize some settings, which are platform dependant
     QString p,s;
 
@@ -303,6 +218,7 @@ Main::Main(QWidget* parent, Qt::WindowFlags f) : QMainWindow(parent,f)
     switchboard.addGroup("MapEditor",tr("Map Editors","Shortcut group"));
     switchboard.addGroup("TextEditor",tr("Text Editors","Shortcut group"));
 
+    // Setup actions
     setupFileActions();
     setupEditActions();
     setupSelectActions();
@@ -315,6 +231,92 @@ Main::Main(QWidget* parent, Qt::WindowFlags f) : QMainWindow(parent,f)
     setupMacros();
     setupToolbars();
     setupFlagActions();
+
+    // Dock widgets ///////////////////////////////////////////////
+    QDockWidget *dw;
+    dw = new QDockWidget (tr("Note Editor"));
+    dw->setWidget (noteEditor);
+    dw->setObjectName ("NoteEditor");
+    dw->hide();
+    noteEditorDW=dw;
+    addDockWidget (Qt::LeftDockWidgetArea,dw);
+
+    dw = new QDockWidget (tr("Heading Editor"));
+    dw->setWidget (headingEditor);
+    dw->setObjectName ("HeadingEditor");
+    dw->hide();
+    headingEditorDW=dw;
+    addDockWidget (Qt::BottomDockWidgetArea,dw);
+
+    dw = new QDockWidget (tr("Script Editor"));
+    dw->setWidget (scriptEditor);
+    dw->setObjectName ("ScriptEditor");
+    dw->hide();
+    scriptEditorDW=dw;
+    addDockWidget (Qt::LeftDockWidgetArea,dw);
+
+    findResultWidget=new FindResultWidget ();
+    dw= new QDockWidget (tr ("Search results list","FindResultWidget"));
+    dw->setWidget (findResultWidget);
+    dw->setObjectName ("FindResultWidget");
+    dw->hide();	
+    addDockWidget (Qt::RightDockWidgetArea,dw);
+    connect (
+	findResultWidget, SIGNAL (noteSelected (QString, int)),
+	this, SLOT (selectInNoteEditor (QString, int)));
+    connect (
+	findResultWidget, SIGNAL (findPressed (QString) ), 
+	this, SLOT (editFindNext(QString) ) );
+
+    scriptEditor = new ScriptEditor(this);
+    dw= new QDockWidget (tr ("Script Editor","ScriptEditor"));
+    dw->setWidget (scriptEditor);
+    dw->setObjectName ("ScriptEditor");
+    dw->hide();	
+    addDockWidget (Qt::LeftDockWidgetArea,dw);
+
+    branchPropertyEditor = new BranchPropertyEditor();
+    dw = new QDockWidget (tr("Property Editor","PropertyEditor"));
+    dw->setWidget (branchPropertyEditor);
+    dw->setObjectName ("PropertyEditor");
+    dw->hide();
+    addDockWidget (Qt::LeftDockWidgetArea,dw);
+
+    historyWindow=new HistoryWindow();
+    dw = new QDockWidget (tr("History window","HistoryWidget"));
+    dw->setWidget (historyWindow);
+    dw->setObjectName ("HistoryWidget");
+    dw->hide();
+    addDockWidget (Qt::RightDockWidgetArea,dw);
+    connect (dw, SIGNAL (visibilityChanged(bool ) ), this, SLOT (updateActions()));
+
+    // Connect NoteEditor, so that we can update flags if text changes
+    connect (noteEditor, SIGNAL (textHasChanged() ), this, SLOT (updateNoteFlag()));
+    connect (noteEditor, SIGNAL (windowClosed() ), this, SLOT (updateActions()));
+
+    // Connect heading editor
+    connect (headingEditor, SIGNAL (textHasChanged() ), this, SLOT (updateHeading()));
+
+    connect( scriptEditor, SIGNAL( runScript ( QString ) ),  this, SLOT( execute( QString ) ) );
+
+    // Switch back  to MapEditor using Esc 
+    QAction* a = new QAction(this);
+    a->setShortcut (Qt::Key_Escape);
+    a->setShortcutContext (Qt::ApplicationShortcut);
+    a->setCheckable(false);
+    a->setEnabled (true);
+    addAction(a);
+    connect (a , SIGNAL (triggered() ), this, SLOT (setFocusMapEditor()));
+    
+    // Create TaskEditor after setting up above actions, allow cloning 
+    taskEditor = new TaskEditor ();
+    dw= new QDockWidget (tr ("Task list","TaskEditor"));
+    dw->setWidget (taskEditor);
+    dw->setObjectName ("TaskEditor");
+    dw->hide();
+    addDockWidget (Qt::TopDockWidgetArea,dw);
+    connect (dw, SIGNAL (visibilityChanged(bool ) ), this, SLOT (updateActions()));
+    //FIXME -0 connect (taskEditor, SIGNAL (focusReleased() ), this, SLOT (setFocusMapEditor()));
 
     if (options.isOn("shortcutsLaTeX")) switchboard.printLaTeX();
 
@@ -1289,8 +1291,9 @@ void Main::setupEditActions()
     a = new QAction(QPixmap(":/up.png" ), tr( "Move branch up","Edit menu" ), this);
     a->setShortcut (Qt::Key_PageUp );		
     a->setShortcutContext (Qt::WidgetShortcut);
-    a->setEnabled (false);
+    //a->setEnabled (false);
     mapEditorActions.append( a );
+    taskEditorActions.append( a );
     restrictedMapActions.append( a );
     actionListBranches.append (a);
     editMenu->addAction(a);
@@ -1301,8 +1304,9 @@ void Main::setupEditActions()
     a = new QAction( QPixmap( ":/down.png"), tr( "Move branch down","Edit menu" ),this);
     a->setShortcut ( Qt::Key_PageDown );	  
     a->setShortcutContext (Qt::WidgetShortcut);
-    a->setEnabled (false);
+    //a->setEnabled (false);
     mapEditorActions.append( a );
+    taskEditorActions.append( a );
     restrictedMapActions.append( a );
     actionListBranches.append (a);
     editMenu->addAction(a);
@@ -5786,21 +5790,8 @@ void Main::helpShortcuts()
 
 void Main::debugInfo()  // FIXME-2 move somewhere else, e.g. beta menu...
 {
-    // Testing locale settings...
     QString s;
-    QString localeName;
-    if (options.isOn ("locale"))
-        localeName = options.getArg ("locale");
-    else
-    {
-#if defined(Q_OS_LINUX)
-        localeName = QProcessEnvironment::systemEnvironment().value("LANG","foobar");
-#else
-        localeName = QLocale::system().name();
-#endif
-    }
-    
-    s  = QString ("localeName: %1\nPath: %2\n")
+    s = QString ("localeName: %1\nPath: %2\n")
         .arg(localeName)
         .arg(vymBaseDir.path() + "/lang");
     s += QString("vymBaseDir: %1\n").arg(vymBaseDir.path());

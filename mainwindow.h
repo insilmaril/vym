@@ -351,6 +351,7 @@ private:
 
 public:
     QList <QAction*> mapEditorActions;      //! allows mapEditor to clone actions and shortcuts
+    QList <QAction*> taskEditorActions;     //! allows taskEditor to clone actions and shortcuts
 private:
     QList <QAction*> restrictedMapActions;  //! Actions reqire map and write access
     QList <QAction*> unrestrictedMapActions;//! Actions require map, but work also in readonly, e.g. print, copy

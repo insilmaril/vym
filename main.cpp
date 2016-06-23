@@ -46,6 +46,7 @@ QString vymBuildDate;
 QString vymCodeName;
 QString vymInstanceName;
 QString vymPlatform;
+QString localeName;
 
 QTextStream vout(stdout);        // vymout - Testing for now. Flush after writing...
 
@@ -356,19 +357,25 @@ int main(int argc, char* argv[])
     }
 
     // Initialize translations
-    QString localeName;
     if (options.isOn ("locale"))
     {
         localeName = options.getArg ("locale");
-        qDebug()<< "Option locale is set to: "<<localeName;
     }
     else
-        localeName  = QLocale::system().uiLanguages().first();
+#if defined(Q_OS_LINUX)
+        if (debug) qDebug() << "Main:     using $LANG for locale";
+        localeName = QProcessEnvironment::systemEnvironment().value("LANG","en");
+#else
+        if (debug) qDebug() << "Main:   QLocale::system().uiLanguages(  using for locale";
+        localeName = QLocale::system().uiLanguages().first();
+#endif
     
     if (debug) 
     {
-        qDebug()<<"Main:     localName: " << localeName;
-        qDebug()<<"Main:  translations: " << localeName, vymBaseDir.path() + "/lang";
+        qDebug() << "Main:     localName: " << localeName;
+        qDebug() << "Main:  translations: " << localeName, vymBaseDir.path() + "/lang";
+        qDebug() << "Main:   uiLanguages: " << QLocale::system().uiLanguages();
+        qDebug() << "Main:          LANG: " << QProcessEnvironment::systemEnvironment().value("LANG","foobar");
     }
    
     QTranslator vymTranslator;
