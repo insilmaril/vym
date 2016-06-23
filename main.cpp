@@ -360,15 +360,18 @@ int main(int argc, char* argv[])
     if (options.isOn ("locale"))
     {
         localeName = options.getArg ("locale");
+        if (debug) qDebug() << "Main:  using option for locale";
     }
     else
+    {
 #if defined(Q_OS_LINUX)
-        if (debug) qDebug() << "Main:     using $LANG for locale";
+        if (debug) qDebug() << "Main:  (OS Linux)   using $LANG for locale";
         localeName = QProcessEnvironment::systemEnvironment().value("LANG","en");
 #else
-        if (debug) qDebug() << "Main:   QLocale::system().uiLanguages(  using for locale";
+        if (debug) qDebug() << "Main:  (OS other)   using  QLocale::system().uiLanguages(  using for locale";
         localeName = QLocale::system().uiLanguages().first();
 #endif
+    }
     
     if (debug) 
     {
