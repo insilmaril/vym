@@ -5791,7 +5791,8 @@ void Main::helpShortcuts()
 void Main::debugInfo()  // FIXME-2 move somewhere else, e.g. beta menu...
 {
     QString s;
-    s = QString ("localeName: %1\nPath: %2\n")
+    s = QString ("Platform: %1\n").arg(vymPlatform);
+    s += QString ("localeName: %1\nPath: %2\n")
         .arg(localeName)
         .arg(vymBaseDir.path() + "/lang");
     s += QString("vymBaseDir: %1\n").arg(vymBaseDir.path());

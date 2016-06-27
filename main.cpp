@@ -312,29 +312,14 @@ int main(int argc, char* argv[])
 #endif
         }
 
+    // Platform specific settings
+    vymPlatform = QSysInfo::prettyProductName();
+
 #if defined(Q_OS_MACX)
-    vymPlatform = "Mac";
 #elif defined(Q_OS_WIN32)
-    vymPlatform = "Win32";
     zipToolPath = settings.value("/system/zipToolPath", "c:\\Program Files\\7-Zip\\7z.exe").toString();
 #elif defined(Q_OS_LINUX)
-    QFile f("/etc/os-release");
-    QString flavour="Unknown";
-    if (f.exists())
-    {
-        QString s;
-        bool ok = loadStringFromDisk( f.fileName(), s);
-        if (ok)
-        {
-            QRegExp rx("PRETTY_NAME=.*\"(.*)\"");
-            rx.setMinimal(true);
-            int pos = rx.indexIn(s);
-            if (pos > -1) flavour = rx.cap(1);
-        }
-    }
-    vymPlatform = QString ("Linux (%1)").arg(flavour);
 #else
-    vymPlatform = "Unknown";
 #endif
     iconPath=vymBaseDir.path()+"/icons/";
     flagsPath=vymBaseDir.path()+"/flags/";
