@@ -380,9 +380,9 @@ int main(int argc, char* argv[])
         qDebug() << "Main:   uiLanguages: " << QLocale::system().uiLanguages();
         qDebug() << "Main:          LANG: " << QProcessEnvironment::systemEnvironment().value("LANG","foobar");
     }
-   
+  
     QTranslator vymTranslator;
-    if (!vymTranslator.load( QString("vym_%1").arg( localeName ), vymBaseDir.path() + "/lang") )
+    if (!vymTranslator.load( QString("vym.%1").arg( localeName ), vymBaseDir.path() + "/lang") )
         QMessageBox::warning( 0, QObject::tr( "Warning" ),
                                QString("Couldn't load translations for locale \"%1\" in\n%2")
                                .arg(localeName)

@@ -42,20 +42,20 @@ win32 {
     QT_QPA_PLATFORM_PLUGIN_PATH=%QTDIR%\plugins\platforms\
 }
 
-TRANSLATIONS += lang/vym_de_DE.ts
-TRANSLATIONS += lang/vym_el.ts
-TRANSLATIONS += lang/vym_en.ts
-TRANSLATIONS += lang/vym_es.ts
-TRANSLATIONS += lang/vym_fr.ts
-TRANSLATIONS += lang/vym_ia.ts
-TRANSLATIONS += lang/vym_it.ts
-TRANSLATIONS += lang/vym_ja.ts
-TRANSLATIONS += lang/vym_pt_BR.ts
-TRANSLATIONS += lang/vym_ru.ts
-TRANSLATIONS += lang/vym_sv.ts
-TRANSLATIONS += lang/vym_zh_CN.ts
-TRANSLATIONS += lang/vym_zh_TW.ts
-TRANSLATIONS += lang/vym_cs_CZ.ts
+TRANSLATIONS += lang/vym.de_DE.ts
+TRANSLATIONS += lang/vym.el.ts
+TRANSLATIONS += lang/vym.en.ts
+TRANSLATIONS += lang/vym.es.ts
+TRANSLATIONS += lang/vym.fr.ts
+TRANSLATIONS += lang/vym.ia.ts
+TRANSLATIONS += lang/vym.it.ts
+TRANSLATIONS += lang/vym.ja.ts
+TRANSLATIONS += lang/vym.pt_BR.ts
+TRANSLATIONS += lang/vym.ru.ts
+TRANSLATIONS += lang/vym.sv.ts
+TRANSLATIONS += lang/vym.zh_CN.ts
+TRANSLATIONS += lang/vym.zh_TW.ts
+TRANSLATIONS += lang/vym.cs_CZ.ts
 
 ICON =icons/vym.icns
 
