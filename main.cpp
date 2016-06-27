@@ -370,6 +370,12 @@ int main(int argc, char* argv[])
 #else
         if (debug) qDebug() << "Main:  (OS other)   using  QLocale::system().uiLanguages(  using for locale";
         localeName = QLocale::system().uiLanguages().first();
+
+        if (localeName.contains("-"))
+        {
+            if (debug) qDebug() << "Main:  Replacing '-' with '_' in locale";
+            localeName.replace( "-", "_");
+        }
 #endif
     }
     
