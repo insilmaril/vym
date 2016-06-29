@@ -123,6 +123,9 @@ void VymModel::init ()
     // No MapEditor yet
     mapEditor       = NULL;
 
+    // Use default author
+    author = settings.value("/user/name", tr("unknown","default name for map author in settings")).toString();
+
     // States and IDs
     idLast++;
     modelID         = idLast;
@@ -1901,36 +1904,36 @@ bool  VymModel::findAll (FindResultModel *rmodel, QString s, Qt::CaseSensitivity
     rmodel->clear();
     rmodel->setSearchString (s);
     rmodel->setSearchFlags (0);	//FIXME-4 translate cs to QTextDocument::FindFlag
-    bool hit=false;
+    bool hit = false;
 
-    BranchItem *cur=NULL;
-    BranchItem *prev=NULL;
+    BranchItem *cur  = NULL;
+    BranchItem *prev = NULL;
     nextBranch(cur,prev);
 
-    FindResultItem *lastParent=NULL;
+    FindResultItem *lastParent = NULL;
     while (cur) 
     {
-	lastParent=NULL;
-    if (cur->getHeading().getTextASCII().contains (s,cs))
+	lastParent = NULL;
+        if (cur->getHeading().getTextASCII().contains (s,cs))
+            {
+                lastParent = rmodel->addItem (cur);
+                hit = true;
+            }
+	QString n = cur->getNoteASCII();
+	int i = 0;
+	int j = 0;
+	while ( i >= 0)
 	{
-	    lastParent=rmodel->addItem (cur);
-	    hit=true;
-	}
-	QString n=cur->getNoteASCII();
-	int i=0;
-	int j=0;
-	while ( i>=0)
-	{
-	    i=n.indexOf (s,i,cs); 
-	    if (i>=0) 
+	    i = n.indexOf (s,i,cs); 
+	    if (i >= 0) 
 	    {
 		// If not there yet, add "parent" item
 		if (!lastParent)
 		{
-		    lastParent=rmodel->addItem (cur);
-		    hit=true;
+		    lastParent = rmodel->addItem (cur);
+		    hit = true;
 		    if (!lastParent)
-			qWarning()<<"VymModel::findAll still no lastParent?!";
+			qWarning() << "VymModel::findAll still no lastParent?!";
 		    /*
 		    else
 			lastParent->setSelectable (false);
@@ -1938,14 +1941,14 @@ bool  VymModel::findAll (FindResultModel *rmodel, QString s, Qt::CaseSensitivity
 		}   
 
 		// save index of occurence
-		QString e=n.mid(i-15,30);
-		n.replace('\n',' ');
-		rmodel->addSubItem (lastParent,QString(tr("Note","FindAll in VymModel")+": \"...%1...\"").arg(n.mid(i-8,80)),cur,j);
+		QString e = n.mid(i-15, 30);
+		n.replace('\n', ' ');
+		rmodel->addSubItem (lastParent, QString(tr("Note", "FindAll in VymModel") + ": \"...%1...\"").arg(n.mid(i-8,80)), cur, j);
 		j++;
 		i++;
 	    }
 	} 
-	nextBranch(cur,prev);
+	nextBranch(cur, prev);
     }
     return hit;
 }

@@ -29,6 +29,7 @@
 #include "exports.h"
 #include "file.h"
 #include "findresultwidget.h"
+#include "findresultmodel.h"
 #include "flagrow.h"
 #include "headingeditor.h"
 #include "historywindow.h"
@@ -2610,10 +2611,15 @@ void Main::setupSettingsActions()
 
     settingsMenu->addSeparator();
 
-    a = new QAction( tr( "Task editor: Set number of parents","Settings action"), this);
-    connect( a, SIGNAL( triggered() ), this, SLOT( settingsTaskShowParentsLevel() ) );
+    a = new QAction( tr( "Number of visible parents in task editor","Settings action"), this); 
+    connect( a, SIGNAL( triggered() ), this, SLOT( settingsShowParentsLevelTasks() ) );
     settingsMenu->addAction (a);
-    actionSettingsTaskShowParentsLevel=a;
+    actionSettingsShowParentsLevelTasks=a;
+
+    a = new QAction( tr( "Number of visible parents in find results window","Settings action"), this); 
+    connect( a, SIGNAL( triggered() ), this, SLOT( settingsShowParentsLevelFindResults() ) );
+    settingsMenu->addAction (a);
+    actionSettingsShowParentsLevelFindResults=a;
 
     a = new QAction( tr( "Animation","Settings action"), this);
     a->setCheckable(true);

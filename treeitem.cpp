@@ -367,6 +367,26 @@ QString TreeItem::getHeadingPlain() const
     return heading.getTextASCII().trimmed();
 }
 
+QString TreeItem::getHeadingPlainWithParents(uint numberOfParents = 0) 
+{
+    QString s = getHeadingPlain();
+    if (numberOfParents > 0) 
+    {
+        TreeItem *ti = this;
+        int l = numberOfParents;
+        while ( l > 0 && ti->depth() > 0 )
+        {
+            ti = ti->parent();
+            if (ti)
+                s = ti->getHeadingPlain() + " -> " + s;
+            else
+                l = 0;
+            l--;
+        }
+    }
+    return s;
+}
+
 QString TreeItem::getHeadingDepth () // Indent by depth for debugging
 {
     QString ds;
