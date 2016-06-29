@@ -4622,101 +4622,93 @@ exists already. Do you want to</source>
     </message>
     <message>
         <source>Set application to open PDF files</source>
-        <translation type="unfinished">Ορισμός εφαρμογής για άνοιγμα αρχείων PDF</translation>
+        <translation type="obsolete">Ορισμός εφαρμογής για άνοιγμα αρχείων PDF</translation>
     </message>
     <message>
         <source>Set application to zip/unzip files</source>
-        <translation type="unfinished">Ορισμός εφαρμογής για συμπίεση/αποσυμπίεση αρχείων</translation>
+        <translation type="obsolete">Ορισμός εφαρμογής για συμπίεση/αποσυμπίεση αρχείων</translation>
     </message>
     <message>
         <source>Directory with vym macros:</source>
-        <translation type="unfinished">Φάκελος με μακροεντολές VYM:</translation>
+        <translation type="obsolete">Φάκελος με μακροεντολές VYM:</translation>
     </message>
     <message>
         <source>Number of undo/redo levels:</source>
-        <translation type="unfinished">Αριθμός αναιρέσεων/ακύρωσης αναιρέσεων:</translation>
+        <translation type="obsolete">Αριθμός αναιρέσεων/ακύρωσης αναιρέσεων:</translation>
     </message>
     <message>
         <source>VYM -Information:</source>
-        <translation type="unfinished">Πληροφορίες για το VYM:</translation>
+        <translation type="obsolete">Πληροφορίες για το VYM:</translation>
     </message>
     <message>
         <source>Settings have been changed. The next map opened will have &quot;%1&quot; undo/redo levels</source>
-        <translation type="unfinished">Οι ρυθμίσεις άλλαξαν. Το επόμενο διάγραμμα θα έχει %1 επίπεδα αναιρέσεων/ακύρωσης αναιρέσεων</translation>
+        <translation type="obsolete">Οι ρυθμίσεις άλλαξαν. Το επόμενο διάγραμμα θα έχει %1 επίπεδα αναιρέσεων/ακύρωσης αναιρέσεων</translation>
     </message>
     <message>
         <source>Number of seconds before autosave:</source>
-        <translation type="unfinished">Δευτερόλεπτα πριν την αυτόματη αποθήκευση:</translation>
+        <translation type="obsolete">Δευτερόλεπτα πριν την αυτόματη αποθήκευση:</translation>
     </message>
     <message>
         <source>Number of parents shown for a task:</source>
-        <translation type="unfinished">Αριθμός πρόγονων κόμβων που εμφανιζονται για κάθε εργασία:</translation>
-    </message>
-    <message>
-        <source>(readonly)</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Αριθμός πρόγονων κόμβων που εμφανιζονται για κάθε εργασία:</translation>
     </message>
     <message>
         <source>History for %1</source>
         <comment>Window Caption</comment>
-        <translation type="unfinished">Ιστορικό για %1</translation>
+        <translation type="obsolete">Ιστορικό για %1</translation>
     </message>
     <message>
         <source>Export in last used format (%1) to: %2</source>
         <comment>status tip</comment>
-        <translation type="unfinished">Εξαγωγή στη τελευταία χρησιμοποιούμενη μορφή (%1) σε: %2</translation>
+        <translation type="obsolete">Εξαγωγή στη τελευταία χρησιμοποιούμενη μορφή (%1) σε: %2</translation>
     </message>
     <message>
         <source>Critcal error</source>
-        <translation type="unfinished">Κρίσιμο σφάλμα</translation>
+        <translation type="obsolete">Κρίσιμο σφάλμα</translation>
     </message>
     <message>
         <source>Couldn&apos;t find the documentation %1 in:
 %2</source>
-        <translation type="unfinished">Αδυναμία εύρεσης της τεκμηρίωσης %1 στο:
+        <translation type="obsolete">Αδυναμία εύρεσης της τεκμηρίωσης %1 στο:
 %2</translation>
     </message>
     <message>
         <source>Load vym example map</source>
-        <translation type="unfinished">Φόρτωση  διαγράμματος VYM ως παράδειγμα</translation>
+        <translation type="obsolete">Φόρτωση  διαγράμματος VYM ως παράδειγμα</translation>
     </message>
     <message>
         <source>Please allow vym to download release notes!</source>
-        <translation type="unfinished">Παρακαλώ επιτρέψτε στο VYM να κάνει λήψη των σημειώσεων έκδοσης!</translation>
+        <translation type="obsolete">Παρακαλώ επιτρέψτε στο VYM να κάνει λήψη των σημειώσεων έκδοσης!</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;h3&gt;Do you allow vym to check online for updates or release notes?&lt;/h3&gt;If you allow, vym will &lt;ul&gt;&lt;li&gt;check once for release notes&lt;/li&gt;&lt;li&gt;check regulary for updates and notify you in case you should update, e.g. if there are important bug fixes available&lt;/li&gt;&lt;li&gt;receive a cookie with a random ID and send vym version and platform name and the ID  (e.g. &quot;Windows&quot; or &quot;Linux&quot;) back to me, Uwe Drechsel.&lt;p&gt;As vym developer I am motivated to see many people using vym. Of course I am curious to see, on which system vym is used. Maintaining each of the systems requires a lot of my (spare) time.&lt;/p&gt; &lt;p&gt;No other data than above will be sent, especially no private data will be collected or sent.(Check the source code, if you don&apos;t believe.)&lt;/p&gt;&lt;/li&gt;&lt;/ul&gt;If you do not allow, &lt;ul&gt;&lt;li&gt;nothing will be downloaded and especially I will &lt;b&gt;not be motivated&lt;/b&gt; to spend some more thousands of hours on developing a free software tool.&lt;/ul&gt;Please allow vym to check for updates :-)</source>
-        <translation type="unfinished">&lt;html&gt;&lt;h3&gt;Επιτρέπετε στο VYM να ελέγχει για ενημερώσεις ή πληροφορίες εκδόσεων;&lt;/h3&gt;Εάν το επιτρέπετε, το VYM θα &lt;ul&gt;&lt;li&gt;κάνει μια φορά έλεγχο για πληροφορίες έκδοσης&lt;/li&gt;&lt;li&gt;, θα ελέγχει τακτικά για ενημερώσεις και θα σας ενημερώνει σε περίπτωση που θα πρέπει να κάνετε ενημέρωση, π.χ. αν υπάρχουν διαθέσιμες διορθώσεις σφαλμάτων &lt;/li&gt;&lt;li&gt;ένα cookie με τυχαίο ID θα στέλνει την έκδοση του VYM, τον τύπο του λειτουργικού συστήματος και το ID του (π.χ. &quot;Windows&quot; or &quot;Linux&quot;) στον Uwe Drechsel.&lt;p&gt;Ως δημιουργός του VYM θα ήθελα να δω ολοένα και περισσότερους ανθρώπους να το χρησιμοποιούν. Επίσης, θα ήθελα να γνωρίζω σε ποια λειτουργικά συστήματα εκτελείται η εφαρμογή αυτή. Η στήριξη που θα πρέπει να παρέχω για καθένα σύστημα απαιτεί πολύ προσωπικό χρόνο.&lt;/p&gt; &lt;p&gt;Καμμιά άλλη πληροφορία ή δεδομένο δεν θα φτάνει σε μένα, όπως επίσης δεν θα λαμβάνω και δεν θα συλλέγω κανένα προσωπικό δεδομένο. (Μπορείτε να διασταυρώσετε τον ισχυρισμό μου ελέγχοντας τον πηγαίο κώδικα της εφαρμογής. &lt;/p&gt;&lt;/li&gt;&lt;/ul&gt;Εάν δεν το επιτρέπετε, &lt;ul&gt;&lt;li&gt;δεν θα γίνεται λήψη καμιάς πληροφορίας και, επίσης, &lt;b&gt;δεν θα έχω κίνητρο&lt;/b&gt; να διαθέσω χρόνο για την ανάπτυξη της εφαρμογής.&lt;/ul&gt;Παρακαλώ, να επιτρέψετε στο VYM να κάνει έλεγχο ενημερώσεων :-)</translation>
+        <translation type="obsolete">&lt;html&gt;&lt;h3&gt;Επιτρέπετε στο VYM να ελέγχει για ενημερώσεις ή πληροφορίες εκδόσεων;&lt;/h3&gt;Εάν το επιτρέπετε, το VYM θα &lt;ul&gt;&lt;li&gt;κάνει μια φορά έλεγχο για πληροφορίες έκδοσης&lt;/li&gt;&lt;li&gt;, θα ελέγχει τακτικά για ενημερώσεις και θα σας ενημερώνει σε περίπτωση που θα πρέπει να κάνετε ενημέρωση, π.χ. αν υπάρχουν διαθέσιμες διορθώσεις σφαλμάτων &lt;/li&gt;&lt;li&gt;ένα cookie με τυχαίο ID θα στέλνει την έκδοση του VYM, τον τύπο του λειτουργικού συστήματος και το ID του (π.χ. &quot;Windows&quot; or &quot;Linux&quot;) στον Uwe Drechsel.&lt;p&gt;Ως δημιουργός του VYM θα ήθελα να δω ολοένα και περισσότερους ανθρώπους να το χρησιμοποιούν. Επίσης, θα ήθελα να γνωρίζω σε ποια λειτουργικά συστήματα εκτελείται η εφαρμογή αυτή. Η στήριξη που θα πρέπει να παρέχω για καθένα σύστημα απαιτεί πολύ προσωπικό χρόνο.&lt;/p&gt; &lt;p&gt;Καμμιά άλλη πληροφορία ή δεδομένο δεν θα φτάνει σε μένα, όπως επίσης δεν θα λαμβάνω και δεν θα συλλέγω κανένα προσωπικό δεδομένο. (Μπορείτε να διασταυρώσετε τον ισχυρισμό μου ελέγχοντας τον πηγαίο κώδικα της εφαρμογής. &lt;/p&gt;&lt;/li&gt;&lt;/ul&gt;Εάν δεν το επιτρέπετε, &lt;ul&gt;&lt;li&gt;δεν θα γίνεται λήψη καμιάς πληροφορίας και, επίσης, &lt;b&gt;δεν θα έχω κίνητρο&lt;/b&gt; να διαθέσω χρόνο για την ανάπτυξη της εφαρμογής.&lt;/ul&gt;Παρακαλώ, να επιτρέψετε στο VYM να κάνει έλεγχο ενημερώσεων :-)</translation>
     </message>
     <message>
         <source>Allow</source>
-        <translation type="unfinished">Επιτρέπεται</translation>
+        <translation type="obsolete">Επιτρέπεται</translation>
     </message>
     <message>
         <source>Do not allow</source>
-        <translation type="unfinished">Δεν επιτρέπεται</translation>
+        <translation type="obsolete">Δεν επιτρέπεται</translation>
     </message>
     <message>
         <source>Thank you for enabling downloads!</source>
-        <translation type="unfinished">Ευχαριστούμε που ενεργοποιήσατε τις λήψεις!</translation>
-    </message>
-    <message>
-        <source>Update information</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Ευχαριστούμε που ενεργοποιήσατε τις λήψεις!</translation>
     </message>
     <message>
         <source>vym is up to date.</source>
         <comment>MainWindow</comment>
-        <translation type="unfinished">Το VYM είναι ενημερωμένο.</translation>
+        <translation type="obsolete">Το VYM είναι ενημερωμένο.</translation>
     </message>
     <message>
         <source>Checking for updates...</source>
         <comment>MainWindow</comment>
-        <translation type="unfinished">Έλεγχος για ενημερώσεις...</translation>
+        <translation type="obsolete">Έλεγχος για ενημερώσεις...</translation>
     </message>
     <message>
         <source>Please allow vym to check for updates!</source>
-        <translation type="unfinished">Παρακαλώ, να επιτρέψετε στο VYM να κάνει έλεγχο ενημερώσεων!</translation>
+        <translation type="obsolete">Παρακαλώ, να επιτρέψετε στο VYM να κάνει έλεγχο ενημερώσεων!</translation>
     </message>
     <message>
         <source>Set author for new maps</source>
@@ -4731,14 +4723,6 @@ exists already. Do you want to</source>
     <message>
         <source>Number of visible parents in find results window</source>
         <comment>Settings action</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Set author for new maps (used in lockfile)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Number of parents shown in find results:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4757,8 +4741,43 @@ exists already. Do you want to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>unknown user</source>
-        <comment>default name for map author in settings</comment>
+        <source>Text (A&amp;O report)...</source>
+        <comment>Export format</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Debug info</source>
+        <comment>Option to show debugging info</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>branches</source>
+        <comment>Info about map</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>notes</source>
+        <comment>Info about map</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>images</source>
+        <comment>Info about map</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>tasks</source>
+        <comment>Info about map</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>slides</source>
+        <comment>Info about map</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>xLinks</source>
+        <comment>Info about map</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>

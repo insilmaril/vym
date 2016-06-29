@@ -1095,9 +1095,8 @@ Hint: You can pick a color from another branch and color using CTRL+Left Button<
         <translation type="obsolete">Сохранить Карту</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="5007"/>
         <source>VYM -Information:</source>
-        <translation>Информация VYM:</translation>
+        <translation type="vanished">Информация VYM:</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="4091"/>
@@ -1105,15 +1104,8 @@ Hint: You can pick a color from another branch and color using CTRL+Left Button<
         <translation>Критическая ошибка</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="5437"/>
-        <source>Export in last used format (%1) to: %2</source>
-        <comment>status tip</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="5766"/>
         <source>Critcal error</source>
-        <translation>Критическая ошибка</translation>
+        <translation type="vanished">Критическая ошибка</translation>
     </message>
     <message>
         <source>Remove only branch and keep its childs</source>
@@ -1532,70 +1524,8 @@ Hint: You can pick a color from another branch and color using CTRL+Left Button<
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="5038"/>
-        <source>Set author for new maps (used in lockfile)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="5050"/>
-        <source>Number of parents shown in find results:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="5324"/>
-        <source>(readonly)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="5926"/>
-        <source>Please allow vym to download release notes!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="5947"/>
-        <source>&lt;html&gt;&lt;h3&gt;Do you allow vym to check online for updates or release notes?&lt;/h3&gt;If you allow, vym will &lt;ul&gt;&lt;li&gt;check once for release notes&lt;/li&gt;&lt;li&gt;check regulary for updates and notify you in case you should update, e.g. if there are important bug fixes available&lt;/li&gt;&lt;li&gt;receive a cookie with a random ID and send vym version and platform name and the ID  (e.g. &quot;Windows&quot; or &quot;Linux&quot;) back to me, Uwe Drechsel.&lt;p&gt;As vym developer I am motivated to see many people using vym. Of course I am curious to see, on which system vym is used. Maintaining each of the systems requires a lot of my (spare) time.&lt;/p&gt; &lt;p&gt;No other data than above will be sent, especially no private data will be collected or sent.(Check the source code, if you don&apos;t believe.)&lt;/p&gt;&lt;/li&gt;&lt;/ul&gt;If you do not allow, &lt;ul&gt;&lt;li&gt;nothing will be downloaded and especially I will &lt;b&gt;not be motivated&lt;/b&gt; to spend some more thousands of hours on developing a free software tool.&lt;/ul&gt;Please allow vym to check for updates :-)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="5976"/>
-        <source>Allow</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="5977"/>
-        <source>Do not allow</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="5983"/>
-        <source>Thank you for enabling downloads!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="6006"/>
-        <source>Update information</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Info</source>
         <translation type="obsolete">Информация</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="6012"/>
-        <source>vym is up to date.</source>
-        <comment>MainWindow</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="6063"/>
-        <source>Checking for updates...</source>
-        <comment>MainWindow</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="6091"/>
-        <source>Please allow vym to check for updates!</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1448"/>
@@ -1673,6 +1603,12 @@ Hint: You can pick a color from another branch and color using CTRL+Left Button<
         <location filename="../mainwindow.cpp" line="1056"/>
         <source>Text with tasks</source>
         <comment>File export menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="1060"/>
+        <source>Text (A&amp;O report)...</source>
+        <comment>Export format</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1826,6 +1762,12 @@ Hint: You can pick a color from another branch and color using CTRL+Left Button<
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../mainwindow.cpp" line="2699"/>
+        <source>Debug info</source>
+        <comment>Option to show debugging info</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../mainwindow.cpp" line="2756"/>
         <source>Tasks</source>
         <comment>Context menu</comment>
@@ -1970,6 +1912,42 @@ exists already. Do you want to</source>
         <location filename="../mainwindow.cpp" line="4092"/>
         <source>Couldn&apos;t open map %1</source>
         <translation>Ошибка при открытии Карты %1</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="4264"/>
+        <source>branches</source>
+        <comment>Info about map</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="4265"/>
+        <source>notes</source>
+        <comment>Info about map</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="4266"/>
+        <source>images</source>
+        <comment>Info about map</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="4267"/>
+        <source>tasks</source>
+        <comment>Info about map</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="4268"/>
+        <source>slides</source>
+        <comment>Info about map</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="4269"/>
+        <source>xLinks</source>
+        <comment>Info about map</comment>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Exit</source>
@@ -2129,28 +2107,22 @@ exists already. Do you want to</source>
         <location filename="../mainwindow.cpp" line="3836"/>
         <location filename="../mainwindow.cpp" line="3879"/>
         <location filename="../mainwindow.cpp" line="4221"/>
-        <location filename="../mainwindow.cpp" line="5779"/>
-        <location filename="../mainwindow.cpp" line="5926"/>
-        <location filename="../mainwindow.cpp" line="6091"/>
         <source>Warning</source>
         <translation>Предупреждение</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="3837"/>
-        <location filename="../mainwindow.cpp" line="5780"/>
         <source>Couldn&apos;t find a viewer to open %1.
 </source>
         <translation>Не найдено приложение для открытия %1.</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="3838"/>
-        <location filename="../mainwindow.cpp" line="5781"/>
         <source>Please use Settings-&gt;</source>
         <translation> Используйте пункт &quot;Настройки&quot;-&gt;</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="3838"/>
-        <location filename="../mainwindow.cpp" line="4943"/>
         <source>Set application to open an URL</source>
         <translation>Выберите приложение для открытия URL</translation>
     </message>
@@ -2166,10 +2138,8 @@ exists already. Do you want to</source>
         <translation type="unfinished">Ссылка на другую Карту</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="4929"/>
-        <location filename="../mainwindow.cpp" line="5781"/>
         <source>Set application to open PDF files</source>
-        <translation>Выберите приложение для открытия PDF документов</translation>
+        <translation type="vanished">Выберите приложение для открытия PDF документов</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2309"/>
@@ -3266,62 +3236,38 @@ exists already. Do you want to</source>
 </translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="4962"/>
-        <location filename="../mainwindow.cpp" line="4972"/>
-        <source>Set application to zip/unzip files</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="4990"/>
         <source>Directory with vym macros:</source>
-        <translation>Папка с vym-макросами:</translation>
+        <translation type="vanished">Папка с vym-макросами:</translation>
     </message>
     <message>
         <source>QInputDialog::getInteger()</source>
         <translation type="obsolete">QInputDialog::getInteger()</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="5003"/>
         <source>Number of undo/redo levels:</source>
-        <translation>Количество уровней отмены/повтора:</translation>
+        <translation type="vanished">Количество уровней отмены/повтора:</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="5008"/>
         <source>Settings have been changed. The next map opened will have &quot;%1&quot; undo/redo levels</source>
-        <translation>Настройки были измененеы. Следующая открытая карта будет использовать &quot;%1&quot; уровней повтора/отмены</translation>
+        <translation type="vanished">Настройки были измененеы. Следующая открытая карта будет использовать &quot;%1&quot; уровней повтора/отмены</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="5028"/>
         <source>Number of seconds before autosave:</source>
-        <translation>Интервал автосохранения (сек.):</translation>
+        <translation type="vanished">Интервал автосохранения (сек.):</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="5039"/>
-        <source>unknown user</source>
-        <comment>default name for map author in settings</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="5060"/>
-        <source>Number of parents shown for a task:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="5414"/>
         <source>History for %1</source>
         <comment>Window Caption</comment>
-        <translation>История для %1</translation>
+        <translation type="vanished">История для %1</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="5767"/>
         <source>Couldn&apos;t find the documentation %1 in:
 %2</source>
-        <translation>Не найдена документация %1 в: %2</translation>
+        <translation type="vanished">Не найдена документация %1 в: %2</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="5795"/>
         <source>Load vym example map</source>
-        <translation>Загрузить примеры карт</translation>
+        <translation type="vanished">Загрузить примеры карт</translation>
     </message>
     <message>
         <source>Couldn&apos;t find a macro at  %1.

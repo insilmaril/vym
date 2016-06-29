@@ -2696,7 +2696,7 @@ void Main::setupHelpActions()
     helpMenu->addAction(a);
     connect( a, SIGNAL( triggered() ), this, SLOT( helpShortcuts() ) );
 
-    a = new QAction( "Debug info" , this);  // FIXME-2 move somewhere else, e.g. beta menu
+    a = new QAction( tr("Debug info","Option to show debugging info") , this);  // FIXME-2 move somewhere else, e.g. beta menu
     helpMenu->addAction(a);
     connect( a, SIGNAL( triggered() ), this, SLOT( debugInfo() ) );
 
@@ -4261,12 +4261,12 @@ void Main::editMapProperties()
         m->nextBranch(cur,prev);
     }
 
-    stats += QString ("%1 branches\n").arg (m->branchCount(),6);
-    stats += QString ("%1 notes\n").arg (n,6);
-    stats += QString ("%1 images\n").arg (f,6);
-    stats += QString ("%1 tasks\n").arg (m->taskCount(),6 );;
-    stats += QString ("%1 slides\n").arg (m->slideCount(),6 );;
-    stats += QString ("%1 xLinks \n").arg (xl/2,6);
+    stats += QString ("%1 %2\n").arg (m->branchCount(),6).arg(tr("branches","Info about map");
+    stats += QString ("%1 %2\n").arg (n,6).arg(tr("notes","Info about map");
+    stats += QString ("%1 %2\n").arg (f,6).arg(tr("images","Info about map");
+    stats += QString ("%1 %2\n").arg (m->taskCount(),6 ).arg(tr("tasks","Info about map");
+    stats += QString ("%1 %2\n").arg (m->slideCount(),6 ).arg(tr("slides","Info about map");
+    stats += QString ("%1 %2\n").arg (xl/2,6).arg(tr("xLinks","Info about map");
     dia.setStats (stats);
 
     // Finally show dialog
