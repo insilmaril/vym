@@ -4261,12 +4261,12 @@ void Main::editMapProperties()
         m->nextBranch(cur,prev);
     }
 
-    stats += QString ("%1 %2\n").arg (m->branchCount(),6).arg(tr("branches","Info about map");
-    stats += QString ("%1 %2\n").arg (n,6).arg(tr("notes","Info about map");
-    stats += QString ("%1 %2\n").arg (f,6).arg(tr("images","Info about map");
-    stats += QString ("%1 %2\n").arg (m->taskCount(),6 ).arg(tr("tasks","Info about map");
-    stats += QString ("%1 %2\n").arg (m->slideCount(),6 ).arg(tr("slides","Info about map");
-    stats += QString ("%1 %2\n").arg (xl/2,6).arg(tr("xLinks","Info about map");
+    stats += QString ("%1 %2\n").arg (m->branchCount(),6).arg(tr("branches","Info about map") );
+    stats += QString ("%1 %2\n").arg (n,6).arg(tr("notes","Info about map") );
+    stats += QString ("%1 %2\n").arg (f,6).arg(tr("images","Info about map") );
+    stats += QString ("%1 %2\n").arg (m->taskCount(),6 ).arg(tr("tasks","Info about map") );
+    stats += QString ("%1 %2\n").arg (m->slideCount(),6 ).arg(tr("slides","Info about map") );
+    stats += QString ("%1 %2\n").arg (xl/2,6).arg(tr("xLinks","Info about map") );
     dia.setStats (stats);
 
     // Finally show dialog
