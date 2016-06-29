@@ -2522,6 +2522,12 @@ void Main::setupSettingsActions()
     settingsMenu->addAction (a);
     actionSettingsToggleDownloads = a;
 
+    a = new QAction( tr( "Set author for new maps","Settings action"), this);
+    connect( a, SIGNAL( triggered() ), this, SLOT( settingsDefaultMapAuthor() ) );
+    settingsMenu->addAction (a);
+
+    settingsMenu->addSeparator();
+
     a = new QAction( tr( "Set application to open pdf files","Settings action"), this);
     connect( a, SIGNAL( triggered() ), this, SLOT( settingsPDF() ) );
     settingsMenu->addAction (a);
@@ -4957,7 +4963,7 @@ void Main::settingsZipTool()
 
     QString fn = QInputDialog::getText(
                 this,
-                "VYM", tr("Set application to zip/unzip files")+":", QLineEdit::Normal,
+                vymName, tr("Set application to zip/unzip files")+":", QLineEdit::Normal,
                 zipToolPath, &ok);
 #endif
 
@@ -5012,21 +5018,41 @@ void Main::settingsAutosaveTime()
     bool ok;
     int i = QInputDialog::getInt(
 	this, 
-	"QInputDialog::getInt()",
+	vymName,
 	tr("Number of seconds before autosave:"), settings.value("/system/autosave/ms").toInt() / 1000, 10, 60000, 1, &ok);
     if (ok)
 	settings.setValue ("/system/autosave/ms",i * 1000);
 }
 
-void Main::settingsTaskShowParentsLevel()	    
+void Main::settingsDefaultMapAuthor()	    
+{
+    bool ok;
+    QString s = QInputDialog::getText(
+                this,
+                vymName, tr("Set author for new maps (used in lockfile)") + ":", QLineEdit::Normal,
+                settings.value("/user/name", tr("unknown","default name for map author in settings")).toString(), 
+                &ok);
+    if (ok) settings.setValue("/user/name", s);
+}
+
+void Main::settingsShowParentsLevelFindResults()	    
 {
     bool ok;
     int i = QInputDialog::getInt(
 	this, 
-	"QInputDialog::getInt()",
+	vymName,
+	tr("Number of parents shown in find results:"), findResultWidget->getResultModel()->getShowParentsLevel(), 0, 10, 0, &ok);
+    if (ok) findResultWidget->getResultModel()->setShowParentsLevel(i);
+}
+
+void Main::settingsShowParentsLevelTasks()	    
+{
+    bool ok;
+    int i = QInputDialog::getInt(
+	this, 
+	vymName,
 	tr("Number of parents shown for a task:"), taskModel->getShowParentsLevel(), 0, 10, 0, &ok);
     if (ok) taskModel->setShowParentsLevel(i);
-
 }
 
 void Main::settingsToggleAutoLayout()

@@ -261,7 +261,9 @@ public:
 
 public slots:
     void settingsAutosaveTime();
-    void settingsTaskShowParentsLevel();
+    void settingsDefaultMapAuthor();
+    void settingsShowParentsLevelTasks();
+    void settingsShowParentsLevelFindResults();
     void settingsToggleAutoLayout();
     void settingsToggleWriteBackupFile();
     void settingsToggleAnimation();
@@ -520,7 +522,8 @@ private:
     QAction* actionSettingsUseHideExport;
     QAction* actionSettingsToggleAutosave;
     QAction* actionSettingsAutosaveTime;
-    QAction* actionSettingsTaskShowParentsLevel;
+    QAction* actionSettingsShowParentsLevelTasks;
+    QAction* actionSettingsShowParentsLevelFindResults;
     QAction* actionSettingsToggleAutoLayout;
     QAction* actionSettingsWriteBackupFile;
     QAction* actionSettingsToggleDownloads;
