@@ -3259,7 +3259,7 @@ want to allow this in your system!</source>
     <message>
         <source>KDE 4 Bookmarks</source>
         <comment>Import filters</comment>
-        <translation type="unfinished">Σελιδοδείκτες KDE 4</translation>
+        <translation type="obsolete">Σελιδοδείκτες KDE 4</translation>
     </message>
     <message>
         <source>Firefox Bookmarks</source>
@@ -3285,10 +3285,6 @@ want to allow this in your system!</source>
         <translation type="unfinished">Επανάληψη τελευταίας εξαγωγής (%1)</translation>
     </message>
     <message>
-        <source>Text with tasks</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Image%1</source>
         <comment>File export menu</comment>
         <translation type="unfinished">Εικόνα%1</translation>
@@ -3306,7 +3302,7 @@ want to allow this in your system!</source>
     <message>
         <source>KDE 4 Bookmarks</source>
         <comment>File menu</comment>
-        <translation type="unfinished">Σελιδοδείκτες KDE 4</translation>
+        <translation type="obsolete">Σελιδοδείκτες KDE 4</translation>
     </message>
     <message>
         <source>Spreadsheet</source>
@@ -4281,7 +4277,7 @@ want to allow this in your system!</source>
     <message>
         <source>Task editor: Set number of parents</source>
         <comment>Settings action</comment>
-        <translation type="unfinished">Επεξεργαστής εργασιών: ορισμός αριθμού πρόγονων κόμβων</translation>
+        <translation type="obsolete">Επεξεργαστής εργασιών: ορισμός αριθμού πρόγονων κόμβων</translation>
     </message>
     <message>
         <source>Animation</source>
@@ -4721,6 +4717,49 @@ exists already. Do you want to</source>
     <message>
         <source>Please allow vym to check for updates!</source>
         <translation type="unfinished">Παρακαλώ, να επιτρέψετε στο VYM να κάνει έλεγχο ενημερώσεων!</translation>
+    </message>
+    <message>
+        <source>Set author for new maps</source>
+        <comment>Settings action</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Number of visible parents in task editor</source>
+        <comment>Settings action</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Number of visible parents in find results window</source>
+        <comment>Settings action</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set author for new maps (used in lockfile)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Number of parents shown in find results:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Webpage (HTML)...</source>
+        <comment>File export menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Text (ASCII)...</source>
+        <comment>File export menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Text with tasks</source>
+        <comment>File export menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>unknown user</source>
+        <comment>default name for map author in settings</comment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -5163,10 +5202,6 @@ Do you want to overwrite it?</source>
 <context>
     <name>TaskModel</name>
     <message>
-        <source>foobar</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Prio</source>
         <comment>TaskEditor</comment>
         <translation type="unfinished">Προτεραιότητα</translation>
@@ -5455,11 +5490,6 @@ Do you want to overwrite it?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>unknown host</source>
-        <comment>Default for lockfiles of maps</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Map seems to be already opened in another vym instance! It will be opened in readonly mode.
 
 Map is locked by &quot;%1&quot; on &quot;%2&quot;</source>
@@ -5670,6 +5700,11 @@ Do you want to reload that map with the new file?</source>
     <message>
         <source>Load background image</source>
         <translation type="unfinished">Φόρτωση εικόνας παρασκηνίου</translation>
+    </message>
+    <message>
+        <source>unknown user</source>
+        <comment>default name for map author in settings</comment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

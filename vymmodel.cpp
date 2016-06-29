@@ -124,7 +124,7 @@ void VymModel::init ()
     mapEditor       = NULL;
 
     // Use default author
-    author = settings.value("/user/name", tr("unknown","default name for map author in settings")).toString();
+    author = settings.value("/user/name", tr("unknown user","default name for map author in settings")).toString();
 
     // States and IDs
     idLast++;

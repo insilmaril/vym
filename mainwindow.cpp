@@ -1045,19 +1045,19 @@ void Main::setupFileActions()
     fileExportMenu->addAction(a);
     actionFileExportLast=a;
 
-    a = new QAction(  "Webpage (HTML)...",this );
+    a = new QAction(  tr("Webpage (HTML)...","File export menu"),this );
     connect( a, SIGNAL( triggered() ), this, SLOT( fileExportHTML() ) );
     fileExportMenu->addAction(a);
 
-    a = new QAction( "Text (ASCII)...", this);
+    a = new QAction( tr("Text (ASCII)...","File export menu"), this);
     connect( a, SIGNAL( triggered() ), this, SLOT( fileExportASCII() ) );
     fileExportMenu->addAction(a);
 
-    a = new QAction( tr("Text with tasks") + " (ASCII)... "  + tr("(still experimental)"), this);
+    a = new QAction( tr("Text with tasks","File export menu") + " (ASCII)... "  + tr("(still experimental)"), this);
     connect( a, SIGNAL( triggered() ), this, SLOT( fileExportASCIITasks() ) );
     fileExportMenu->addAction(a);
 
-    a = new QAction( "Text (A&O report)...", this);
+    a = new QAction( tr("Text (A&O report)...","Export format"), this);
     connect( a, SIGNAL( triggered() ), this, SLOT( fileExportAO() ) );
     fileExportMenu->addAction(a);
 
@@ -5036,7 +5036,7 @@ void Main::settingsDefaultMapAuthor()
     QString s = QInputDialog::getText(
                 this,
                 vymName, tr("Set author for new maps (used in lockfile)") + ":", QLineEdit::Normal,
-                settings.value("/user/name", tr("unknown","default name for map author in settings")).toString(), 
+                settings.value("/user/name", tr("unknown user","default name for map author in settings")).toString(), 
                 &ok);
     if (ok) settings.setValue("/user/name", s);
 }
