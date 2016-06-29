@@ -614,8 +614,8 @@ File::ErrorCode VymModel::loadMap (
 		resetSelectionHistory();
 
                 // Defaults for author and host in vymLock
-                QString defAuthor = tr( "unknown user", "Default for lockfiles of maps");
-                QString defHost   = tr( "unknown host", "Default for lockfiles of maps");
+                QString defAuthor = tr( "unknown user", "Default for lockfiles of maps");   // FIXME-2 set default author in settings
+                QString defHost   = QHostInfo::localHostName();      
                 vymLock.setMapPath( fname );
                 vymLock.setAuthor( settings.value( "/user/name", defAuthor ).toString() ); 
                 if ( getenv("HOST") != 0 ) 
