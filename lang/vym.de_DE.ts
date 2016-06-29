@@ -2791,7 +2791,7 @@ aber noch nicht gespeichert. Wollen Sie </translation>
         <location filename="../mainwindow.cpp" line="2458"/>
         <source>Set application to zip/unzip files</source>
         <comment>Settings action</comment>
-        <translation type="unfinished">Anwendung um Daten zu speichern (zip/unzip)</translation>
+        <translation>Anwendung um Daten zu speichern (zip/unzip)</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2599"/>
@@ -2814,7 +2814,7 @@ aber noch nicht gespeichert. Wollen Sie </translation>
     <message>
         <location filename="../mainwindow.cpp" line="4858"/>
         <source>Set application to zip/unzip files</source>
-        <translation type="unfinished">Anwendung um Daten zu speichern (zip/unzip)</translation>
+        <translation>Anwendung um Daten zu speichern (zip/unzip)</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="4923"/>
@@ -3455,13 +3455,13 @@ aber noch nicht gespeichert. Wollen Sie </translation>
         <location filename="../mainwindow.cpp" line="1383"/>
         <source>References Context menu</source>
         <comment>Shortcuts</comment>
-        <translation type="unfinished"></translation>
+        <translation>Tastenkürzel</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1452"/>
         <source>Bugzilla handling</source>
         <comment>Shortcuts</comment>
-        <translation type="unfinished"></translation>
+        <translation>Tastenkürzel</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1453"/>
