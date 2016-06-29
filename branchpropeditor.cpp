@@ -79,7 +79,7 @@ void BranchPropertyEditor::setItem (TreeItem *ti)
 
             // Frame
             FrameObj::FrameType t=branchObj->getFrameType();
-            if (t==FrameObj::NoFrame)   // FIXME-2 Check if all below depends on frame type???
+            if (t==FrameObj::NoFrame)   // FIXME-3 Check if all below depends on frame type???
             {
                 ui.frameTypeCombo->setCurrentIndex (0);
                 penColor=Qt::white;

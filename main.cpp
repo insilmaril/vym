@@ -394,7 +394,7 @@ int main(int argc, char* argv[])
     // Check if there is a BugzillaClient
     QFileInfo fi(vymBaseDir.path()+"/scripts/BugzillaClient.pm");
     //bugzillaClientAvailable=fi.exists();
-    bugzillaClientAvailable=true;   //FIXME-2 add real check again
+    bugzillaClientAvailable=true;   //FIXME-3 add real check again
 
     // Initialize mainwindow
 #if defined(Q_OS_WIN32)

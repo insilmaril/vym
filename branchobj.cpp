@@ -231,7 +231,7 @@ void BranchObj::moveBy (QPointF p)
     moveBy (p.x(), p.y());
 }
 
-void BranchObj::positionBBox() // FIXME-2 consider dimensions of frame (thickness, geometry, padding...
+void BranchObj::positionBBox() // FIXME-3 consider dimensions of frame (thickness, geometry, padding...
 {
     QPointF ap=getAbsPos();
     bbox.moveTopLeft (ap);

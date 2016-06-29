@@ -2696,7 +2696,7 @@ void Main::setupHelpActions()
     helpMenu->addAction(a);
     connect( a, SIGNAL( triggered() ), this, SLOT( helpShortcuts() ) );
 
-    a = new QAction( tr("Debug info","Option to show debugging info") , this);  // FIXME-2 move somewhere else, e.g. beta menu
+    a = new QAction( tr("Debug info","Option to show debugging info") , this);  
     helpMenu->addAction(a);
     connect( a, SIGNAL( triggered() ), this, SLOT( debugInfo() ) );
 
@@ -4897,25 +4897,23 @@ void Main::networkConnect()
     if (m) m->connectToServer();
 }
 
-void Main::downloadFinished()   // only used for drop events in mapeditor and VM::downloadImage // FIXME-2 remove debug
+void Main::downloadFinished()   // only used for drop events in mapeditor and VM::downloadImage 
 {
     QString s;
     DownloadAgent *agent = static_cast<DownloadAgent*>(sender());
     agent->isSuccess() ? s="Success" : s="Error  "; 
 
+    /*
     qDebug()<<"Main::downloadFinished ";
     qDebug()<<"  result" <<  s;
     qDebug()<<"     msg" << agent->getResultMessage();
+    */
 
     QString script = agent->getFinishedScript();
     VymModel *model=getModel (agent->getFinishedScriptModelID());
     if (!script.isEmpty() && model)
     {
-        qDebug()<<"   model" << agent->getFinishedScriptModelID();
-
         script.replace("$TMPFILE",agent->getDestination());
-
-        qDebug()<<"  script\n" << script;
         model->execute(script);
     }
 }
@@ -5326,9 +5324,9 @@ void Main::updateActions()
                 }
             }
 
-            // FIXME-2 refacotr actionListFiles: probably not needed, wrong actions there atm
+            // FIXME-2 updateactions: refactor actionListFiles: probably not needed, wrong actions there atm
         } else
-        {   // not readonly     // FIXME-2 maybe only required in testing, as mode should not change
+        {   // not readonly     // FIXME-2 updateactions: maybe only required in testing, as mode should not change
             
             // Enable toolbars
             standardFlagsMaster->setEnabled (true);
@@ -5347,7 +5345,7 @@ void Main::updateActions()
                 }
             }
         }
-	// Enable all files actions first   // FIXME-2 required?
+	// Enable all files actions first   // FIXME-2 updateactions: required?
 	for (int i=0; i<actionListFiles.size(); ++i)	
 	    actionListFiles.at(i)->setEnabled(true);
 
@@ -5820,7 +5818,7 @@ void Main::helpShortcuts()
     dia.exec();
 }
 
-void Main::debugInfo()  // FIXME-2 move somewhere else, e.g. beta menu...
+void Main::debugInfo()  
 {
     QString s;
     s = QString ("Platform: %1\n").arg(vymPlatform);

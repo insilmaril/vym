@@ -1418,7 +1418,7 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
     }
 }
 
-void MapEditor::mouseMoveEvent(QMouseEvent* e)  // FIXME-2 Moving MCOs does not move images
+void MapEditor::mouseMoveEvent(QMouseEvent* e)  
 {
     // Show mouse position for debugging in statusBar
     if (debug && e->modifiers() & Qt::ControlModifier )
