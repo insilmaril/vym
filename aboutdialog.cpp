@@ -102,7 +102,7 @@ AboutDialog::AboutDialog( QWidget *parent)
     "</ul>"
     "</li>").arg( QDate::currentDate().year() ) );;
     credits->setFrameStyle( QFrame::Panel | QFrame::Plain );
-    tabs->addTab (credits,"Credits");
+    tabs->addTab (credits, tr("Credits","Help->About vym dialog"));
 
     license=new AboutTextBrowser (parent);
     license->setText ( QString(
@@ -217,7 +217,7 @@ AboutDialog::AboutDialog( QWidget *parent)
 "<p align=\"center\">END OF TERMS AND CONDITIONS</p>").arg( QDate::currentDate().year() ) );
 
     credits->setFrameStyle( QFrame::Panel | QFrame::Plain );
-    tabs->addTab (license,"License");
+    tabs->addTab (license, tr("Credits","Help->About vym dialog"));
 
     mainLayout->addWidget (tabs);
 
