@@ -696,7 +696,7 @@ void TextEditor::editCopyAll()
 void TextEditor::reset()
 {
     e->selectAll();
-    e->cut();
+    e->textCursor().deleteChar();
 }
 
 void TextEditor::textSaveAs()	
