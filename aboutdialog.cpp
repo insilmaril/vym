@@ -217,7 +217,7 @@ AboutDialog::AboutDialog( QWidget *parent)
 "<p align=\"center\">END OF TERMS AND CONDITIONS</p>").arg( QDate::currentDate().year() ) );
 
     credits->setFrameStyle( QFrame::Panel | QFrame::Plain );
-    tabs->addTab (license, tr("Credits","Help->About vym dialog"));
+    tabs->addTab (license, tr("License","Help->About vym dialog"));
 
     mainLayout->addWidget (tabs);
 
