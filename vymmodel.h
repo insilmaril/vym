@@ -160,6 +160,7 @@ private:
 public:	
     void importDir();
 
+    bool renameMap( const QString &newPath); //! Rename map and change lockfile
     void setReadOnly( bool b );
     bool isReadOnly();
     void setUseLockFile( bool b);

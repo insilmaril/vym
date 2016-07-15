@@ -1006,6 +1006,19 @@ void VymModel::importDir()
     }	
 }
 
+bool VymModel::renameMap( const QString &newPath)
+{
+    QString oldPath = filePath;
+    setFilePath ( newPath );
+    if (! vymLock.rename( fileName ))
+    {
+        qWarning ("Warning: VymModel::renameMap failed");
+        setFilePath( oldPath );
+        return false;
+    }
+    return true;
+}
+
 void VymModel::setReadOnly( bool b )
 {
     readonly = b;

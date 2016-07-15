@@ -3412,13 +3412,13 @@ void Main::fileSaveAs(const SaveMode& savemode)
     if (currentMapEditor())
     {
 	QString filter;
-	if (savemode==CompleteMap)
-	    filter="VYM map (*.vym)";
+	if (savemode == CompleteMap)
+	    filter = "VYM map (*.vym)";
 	else    
-	    filter="VYM part of map (*vyp)";
-	filter+=";;All (* *.*)";
+	    filter = "VYM part of map (*vyp)";
+	filter += ";;All (* *.*)";
 
-	QString fn=QFileDialog::getSaveFileName (
+	QString fn = QFileDialog::getSaveFileName (
 	    this,
 	    tr("Save map as"),
 	    lastMapDir.path(),
@@ -3453,29 +3453,47 @@ void Main::fileSaveAs(const SaveMode& savemode)
 	    {
 		// New file, add extension to filename, if missing
 		// This is always .vym or .vyp, depending on savemode
-		if (savemode==CompleteMap)
+		if (savemode == CompleteMap)
 		{
 		    if (!fn.contains (".vym") && !fn.contains (".xml"))
-			fn +=".vym";
+			fn += ".vym";
 		} else	    
 		{
 		    if (!fn.contains (".vyp") && !fn.contains (".xml"))
-			fn +=".vyp";
+			fn += ".vyp";
 		}
 	    }
     
 	    // Save now
-	    VymModel *m=currentModel();
-	    QString fn_org=m->getFilePath(); // Restore fn later, if savemode != CompleteMap
-	    m->setFilePath(fn);
+	    VymModel *m = currentModel();
+	    QString fn_org = m->getFilePath(); // Restore fn later, if savemode != CompleteMap
+	    if (savemode == CompleteMap )
+            {
+                // Check for existing lockfile 
+                QFile lockFile( fn + ".lock" );
+                if (lockFile.exists() )
+                {
+                    QMessageBox::critical( 0, tr( "Critical Error" ), tr("Couldn't save, because of existing lockfile:\n\n%2").arg( lockFile.fileName()  ));
+                    return;
+                }
+
+                if ( !m->renameMap( fn ) )
+                {
+                    QMessageBox::critical( 0, tr( "Critical Error" ), tr("Couldn't save %1").arg( fn ));
+                    return;
+                }
+            }
 	    fileSave(m, savemode);
 
 	    // Set name of tab, assuming current tab is the one we just saved
-	    if (savemode==CompleteMap)
+	    if (savemode == CompleteMap)
 		tabWidget->setTabText (tabWidget->currentIndex(), m->getFileName() );
 	    else
+            {   // Renaming map to original name, because we only saved the selected part of it 
 		m->setFilePath (fn_org);
+            }
 	    return; 
+
 	}
     }
 }

@@ -92,6 +92,18 @@ void VymLock::releaseLock() // FIXME-2 missing
 {
 }
 
+bool VymLock::rename( const QString &newMapPath)
+{
+    QFile lockFile( mapPath + ".lock" );
+
+    if ( lockFile.rename( newMapPath + ".lock") )
+    {
+        mapPath = newMapPath;
+        return true;
+    }
+    return false;
+}
+
 void VymLock::setAuthor(const QString &s)
 {
     author = s;
