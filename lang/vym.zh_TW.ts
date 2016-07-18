@@ -960,7 +960,7 @@ Hint: You can pick a color from another branch and color using CTRL+Left Button<
     </message>
     <message>
         <source>Set application to open an URL</source>
-        <translation type="vanished">設定開啟 URL 的應用程式</translation>
+        <translation>設定開啟 URL 的應用程式</translation>
     </message>
     <message>
         <source>Edit branch after adding it</source>
@@ -1024,11 +1024,11 @@ Hint: You can pick a color from another branch and color using CTRL+Left Button<
     </message>
     <message>
         <source>Save modified map before closing it</source>
-        <translation type="vanished">關閉已修改圖譜之前儲存它</translation>
+        <translation>關閉已修改圖譜之前儲存它</translation>
     </message>
     <message>
         <source>Discard changes</source>
-        <translation type="vanished">捨棄變更</translation>
+        <translation>捨棄變更</translation>
     </message>
     <message>
         <source>This map is not saved yet. Do you want to</source>
@@ -1072,7 +1072,7 @@ Hint: You can pick a color from another branch and color using CTRL+Left Button<
     </message>
     <message>
         <source>Critcal error</source>
-        <translation type="vanished">嚴重錯誤</translation>
+        <translation>嚴重錯誤</translation>
     </message>
     <message>
         <source>Couldn&apos;t find the documentation
@@ -1114,7 +1114,7 @@ vym.pdf in various places.</source>
     </message>
     <message>
         <source>VYM -Information:</source>
-        <translation type="vanished">VYM - 資訊：</translation>
+        <translation>VYM - 資訊：</translation>
     </message>
     <message>
         <source>compressed (vym default)</source>
@@ -1319,11 +1319,11 @@ exists already. Do you want to</source>
     </message>
     <message>
         <source>The map %1 has been modified but not saved yet. Do you want to</source>
-        <translation type="vanished">圖譜 %1 已被修改但尚未儲存。您想要</translation>
+        <translation>圖譜 %1 已被修改但尚未儲存。您想要</translation>
     </message>
     <message>
         <source>Couldn&apos;t open map %1</source>
-        <translation type="vanished">無法開啟圖譜 %1</translation>
+        <translation>無法開啟圖譜 %1</translation>
     </message>
     <message>
         <source>Set application to open pdf files  ...</source>
@@ -1492,7 +1492,7 @@ exists already. Do you want to</source>
     </message>
     <message>
         <source>Import</source>
-        <translation type="vanished">匯入</translation>
+        <translation>匯入</translation>
     </message>
     <message>
         <source>KDE Bookmarks</source>
@@ -1532,7 +1532,7 @@ exists already. Do you want to</source>
     </message>
     <message>
         <source>Export to</source>
-        <translation type="vanished">匯出至</translation>
+        <translation>匯出至</translation>
     </message>
     <message>
         <source>Hide object in exports</source>
@@ -1561,24 +1561,24 @@ exists already. Do you want to</source>
     </message>
     <message>
         <source>Warning</source>
-        <translation type="vanished">警告</translation>
+        <translation>警告</translation>
     </message>
     <message>
         <source>Couldn&apos;t find a viewer to open %1.
 </source>
-        <translation type="vanished">找不到檢視器以開啟 %1。</translation>
+        <translation>找不到檢視器以開啟 %1。</translation>
     </message>
     <message>
         <source>Please use Settings-&gt;</source>
-        <translation type="vanished">請使用 設定值-&gt;</translation>
+        <translation>請使用 設定值-&gt;</translation>
     </message>
     <message>
         <source>Couldn&apos;t start %1 to open a new tab in %2.</source>
-        <translation type="vanished">無法啟動 %1 以在 %2 中開啟新的頁標。</translation>
+        <translation>無法啟動 %1 以在 %2 中開啟新的頁標。</translation>
     </message>
     <message>
         <source>Set application to open PDF files</source>
-        <translation type="vanished">設定開啟 PDF 檔案的應用程式</translation>
+        <translation>設定開啟 PDF 檔案的應用程式</translation>
     </message>
     <message>
         <source>Oh no!</source>
@@ -1633,7 +1633,7 @@ exists already. Do you want to</source>
     </message>
     <message>
         <source>Bookmarks</source>
-        <translation type="vanished">書籤</translation>
+        <translation>書籤</translation>
     </message>
     <message>
         <source>Couldn&apos;t start %1 to open a new tab</source>
@@ -2551,16 +2551,16 @@ to confusion when finishing working with vym.Do you want to</source>
     </message>
     <message>
         <source>Enter URL:</source>
-        <translation type="obsolete">輸入 URL：</translation>
+        <translation type="unfinished">輸入 URL：</translation>
     </message>
     <message>
         <source>Images</source>
         <comment>Filedialog</comment>
-        <translation type="obsolete">圖像</translation>
+        <translation type="unfinished">圖像</translation>
     </message>
     <message>
         <source>Link to another map</source>
-        <translation type="obsolete">連結到另外的圖譜</translation>
+        <translation type="unfinished">連結到另外的圖譜</translation>
     </message>
     <message>
         <source>Select previous</source>
@@ -2936,6 +2936,187 @@ to confusion when finishing working with vym.Do you want to</source>
 because of existing lockfile:
 
 %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Load Freemind map</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export as CSV</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t find configuration for export to LibreOffice
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>HTML</source>
+        <comment>Filedialog</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Text</source>
+        <comment>Filedialog</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Spreadsheet</source>
+        <comment>Filedialog</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Textdocument</source>
+        <comment>Filedialog</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set URL to a local file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enter sleep time (number of days or date YYYY-MM-DD or DD.MM[.YYYY]</source>
+        <comment>task sleep time dialog</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t set sleep time to %1.
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 items on map
+</source>
+        <comment>Info about map</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>branches</source>
+        <comment>Info about map</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>notes</source>
+        <comment>Info about map</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>images</source>
+        <comment>Info about map</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>tasks</source>
+        <comment>Info about map</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>slides</source>
+        <comment>Info about map</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>xLinks</source>
+        <comment>Info about map</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set application to zip/unzip files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Directory with vym macros:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Number of undo/redo levels:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Settings have been changed. The next map opened will have &quot;%1&quot; undo/redo levels</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Number of seconds before autosave:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set author for new maps (used in lockfile)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>unknown user</source>
+        <comment>default name for map author in settings</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Number of parents shown in find results:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Number of parents shown for a task:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>(readonly)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>History for %1</source>
+        <comment>Window Caption</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export in last used format (%1) to: %2</source>
+        <comment>status tip</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t find the documentation %1 in:
+%2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Load vym example map</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please allow vym to download release notes!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;h3&gt;Do you allow vym to check online for updates or release notes?&lt;/h3&gt;If you allow, vym will &lt;ul&gt;&lt;li&gt;check once for release notes&lt;/li&gt;&lt;li&gt;check regulary for updates and notify you in case you should update, e.g. if there are important bug fixes available&lt;/li&gt;&lt;li&gt;receive a cookie with a random ID and send vym version and platform name and the ID  (e.g. &quot;Windows&quot; or &quot;Linux&quot;) back to me, Uwe Drechsel.&lt;p&gt;As vym developer I am motivated to see many people using vym. Of course I am curious to see, on which system vym is used. Maintaining each of the systems requires a lot of my (spare) time.&lt;/p&gt; &lt;p&gt;No other data than above will be sent, especially no private data will be collected or sent.(Check the source code, if you don&apos;t believe.)&lt;/p&gt;&lt;/li&gt;&lt;/ul&gt;If you do not allow, &lt;ul&gt;&lt;li&gt;nothing will be downloaded and especially I will &lt;b&gt;not be motivated&lt;/b&gt; to spend some more thousands of hours on developing a free software tool.&lt;/ul&gt;Please allow vym to check for updates :-)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Allow</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Do not allow</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Thank you for enabling downloads!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Update information</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>vym is up to date.</source>
+        <comment>MainWindow</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Checking for updates...</source>
+        <comment>MainWindow</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please allow vym to check for updates!</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

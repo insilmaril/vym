@@ -1357,8 +1357,10 @@ Consiglio: Puoi prendere il colore di un altro ramo usando CTRL+Tasto Sinistro</
         <translation type="obsolete">Scegli il programma per aprire i file pdf</translation>
     </message>
     <message>
+        <location filename="../mainwindow.cpp" line="3869"/>
+        <location filename="../mainwindow.cpp" line="4972"/>
         <source>Set application to open an URL</source>
-        <translation type="vanished">Scegli l&apos;applicazione per aprire gli URL</translation>
+        <translation>Scegli l&apos;applicazione per aprire gli URL</translation>
     </message>
     <message>
         <source>Edit branch after adding it</source>
@@ -1614,12 +1616,14 @@ esiste già. Vuoi</translation>
         <translation type="obsolete"> è stato modificato ma non ancora salvato. Vuoi</translation>
     </message>
     <message>
+        <location filename="../mainwindow.cpp" line="3767"/>
         <source>Save modified map before closing it</source>
-        <translation type="vanished">Salvare la mappa modificata prima di chiudere</translation>
+        <translation>Salvare la mappa modificata prima di chiudere</translation>
     </message>
     <message>
+        <location filename="../mainwindow.cpp" line="3768"/>
         <source>Discard changes</source>
-        <translation type="vanished">Tralascia le modifiche</translation>
+        <translation>Tralascia le modifiche</translation>
     </message>
     <message>
         <source>This map is not saved yet. Do you want to</source>
@@ -1630,8 +1634,9 @@ esiste già. Vuoi</translation>
         <translation type="obsolete">Salvare la mappa</translation>
     </message>
     <message>
+        <location filename="../mainwindow.cpp" line="5036"/>
         <source>VYM -Information:</source>
-        <translation type="vanished">VIM - Informazioni:</translation>
+        <translation>VIM - Informazioni:</translation>
     </message>
     <message>
         <source>No matches found for </source>
@@ -1640,6 +1645,7 @@ esiste già. Vuoi</translation>
     <message>
         <location filename="../mainwindow.cpp" line="3489"/>
         <location filename="../mainwindow.cpp" line="3495"/>
+        <location filename="../mainwindow.cpp" line="4122"/>
         <source>Critical Error</source>
         <translation>Errore Critico</translation>
     </message>
@@ -1652,8 +1658,9 @@ esiste già. Vuoi</translation>
         <translation type="obsolete">Seleziona il percorso dell&apos;aplicazione per aprire gli URL:</translation>
     </message>
     <message>
+        <location filename="../mainwindow.cpp" line="5795"/>
         <source>Critcal error</source>
-        <translation type="vanished">Errore Critico</translation>
+        <translation>Errore Critico</translation>
     </message>
     <message>
         <source>Couldn&apos;t find the documentation
@@ -1737,8 +1744,10 @@ Vuoi crearne una nuova?</translation>
         <translation type="obsolete">Abilita i flag esclusivi</translation>
     </message>
     <message>
+        <location filename="../mainwindow.cpp" line="3528"/>
+        <location filename="../mainwindow.cpp" line="3588"/>
         <source>Import</source>
-        <translation type="vanished">Importa</translation>
+        <translation>Importa</translation>
     </message>
     <message>
         <source>KDE Bookmarks</source>
@@ -1923,6 +1932,8 @@ Vuoi crearne una nuova?</translation>
         <location filename="../mainwindow.cpp" line="1088"/>
         <location filename="../mainwindow.cpp" line="1092"/>
         <location filename="../mainwindow.cpp" line="1096"/>
+        <location filename="../mainwindow.cpp" line="3670"/>
+        <location filename="../mainwindow.cpp" line="3699"/>
         <source>(still experimental)</source>
         <translation>(in via di sperimentazione)</translation>
     </message>
@@ -1983,42 +1994,60 @@ exists already. Do you want to</source>
         <translation type="obsolete">Esporta  in LaTex</translation>
     </message>
     <message>
+        <location filename="../mainwindow.cpp" line="3699"/>
+        <location filename="../mainwindow.cpp" line="3716"/>
         <source>Export to</source>
-        <translation type="vanished">Esporta in</translation>
+        <translation>Esporta in</translation>
     </message>
     <message>
+        <location filename="../mainwindow.cpp" line="3762"/>
         <source>The map %1 has been modified but not saved yet. Do you want to</source>
-        <translation type="vanished">La mappa %1 è stata modificata ma non salvata. Si vuole</translation>
+        <translation>La mappa %1 è stata modificata ma non salvata. Si vuole</translation>
     </message>
     <message>
+        <location filename="../mainwindow.cpp" line="4123"/>
         <source>Couldn&apos;t open map %1</source>
-        <translation type="vanished">Non è possibile aprire la mappa %1</translation>
+        <translation>Non è possibile aprire la mappa %1</translation>
     </message>
     <message>
         <source>Open URL in new tab</source>
         <translation type="obsolete">Apri l&apos;URL in una nuova scheda</translation>
     </message>
     <message>
+        <location filename="../mainwindow.cpp" line="3737"/>
+        <location filename="../mainwindow.cpp" line="3867"/>
+        <location filename="../mainwindow.cpp" line="3910"/>
+        <location filename="../mainwindow.cpp" line="4252"/>
+        <location filename="../mainwindow.cpp" line="5808"/>
+        <location filename="../mainwindow.cpp" line="5955"/>
+        <location filename="../mainwindow.cpp" line="6120"/>
         <source>Warning</source>
-        <translation type="vanished">Attenzione</translation>
+        <translation>Attenzione</translation>
     </message>
     <message>
+        <location filename="../mainwindow.cpp" line="3868"/>
+        <location filename="../mainwindow.cpp" line="5809"/>
         <source>Couldn&apos;t find a viewer to open %1.
 </source>
-        <translation type="vanished">Non è possibile trovare un applicazione per aprire %1.
+        <translation>Non è possibile trovare un applicazione per aprire %1.
 </translation>
     </message>
     <message>
+        <location filename="../mainwindow.cpp" line="3869"/>
+        <location filename="../mainwindow.cpp" line="5810"/>
         <source>Please use Settings-&gt;</source>
-        <translation type="vanished">Usare le Impostazioni-&gt;</translation>
+        <translation>Usare le Impostazioni-&gt;</translation>
     </message>
     <message>
+        <location filename="../mainwindow.cpp" line="3911"/>
         <source>Couldn&apos;t start %1 to open a new tab in %2.</source>
-        <translation type="vanished">Non è possibile avviare %1 per aprire una nuova scheda in %2.</translation>
+        <translation>Non è possibile avviare %1 per aprire una nuova scheda in %2.</translation>
     </message>
     <message>
+        <location filename="../mainwindow.cpp" line="4958"/>
+        <location filename="../mainwindow.cpp" line="5810"/>
         <source>Set application to open PDF files</source>
-        <translation type="vanished">Scegli il programma per aprire i file PDF</translation>
+        <translation>Scegli il programma per aprire i file PDF</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2309"/>
@@ -2495,6 +2524,53 @@ because of existing lockfile:
         <translation type="unfinished">Non è possibile salvare %1</translation>
     </message>
     <message>
+        <location filename="../mainwindow.cpp" line="5955"/>
+        <source>Please allow vym to download release notes!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="5976"/>
+        <source>&lt;html&gt;&lt;h3&gt;Do you allow vym to check online for updates or release notes?&lt;/h3&gt;If you allow, vym will &lt;ul&gt;&lt;li&gt;check once for release notes&lt;/li&gt;&lt;li&gt;check regulary for updates and notify you in case you should update, e.g. if there are important bug fixes available&lt;/li&gt;&lt;li&gt;receive a cookie with a random ID and send vym version and platform name and the ID  (e.g. &quot;Windows&quot; or &quot;Linux&quot;) back to me, Uwe Drechsel.&lt;p&gt;As vym developer I am motivated to see many people using vym. Of course I am curious to see, on which system vym is used. Maintaining each of the systems requires a lot of my (spare) time.&lt;/p&gt; &lt;p&gt;No other data than above will be sent, especially no private data will be collected or sent.(Check the source code, if you don&apos;t believe.)&lt;/p&gt;&lt;/li&gt;&lt;/ul&gt;If you do not allow, &lt;ul&gt;&lt;li&gt;nothing will be downloaded and especially I will &lt;b&gt;not be motivated&lt;/b&gt; to spend some more thousands of hours on developing a free software tool.&lt;/ul&gt;Please allow vym to check for updates :-)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="6005"/>
+        <source>Allow</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="6006"/>
+        <source>Do not allow</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="6012"/>
+        <source>Thank you for enabling downloads!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="6035"/>
+        <source>Update information</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="6041"/>
+        <source>vym is up to date.</source>
+        <comment>MainWindow</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="6092"/>
+        <source>Checking for updates...</source>
+        <comment>MainWindow</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="6120"/>
+        <source>Please allow vym to check for updates!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Info</source>
         <translation type="obsolete">Info</translation>
     </message>
@@ -2772,46 +2848,142 @@ because of existing lockfile:
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Enter URL:</source>
-        <translation type="vanished">Inserisci URL:</translation>
+        <location filename="../mainwindow.cpp" line="3738"/>
+        <source>Couldn&apos;t find configuration for export to LibreOffice
+</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../mainwindow.cpp" line="3986"/>
+        <source>Enter URL:</source>
+        <translation>Inserisci URL:</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="4009"/>
         <source>HTML</source>
         <comment>Filedialog</comment>
-        <translation type="vanished">HTML</translation>
+        <translation>HTML</translation>
     </message>
     <message>
+        <location filename="../mainwindow.cpp" line="4010"/>
         <source>Text</source>
         <comment>Filedialog</comment>
-        <translation type="vanished">Testo</translation>
+        <translation>Testo</translation>
     </message>
     <message>
+        <location filename="../mainwindow.cpp" line="4011"/>
         <source>Spreadsheet</source>
         <comment>Filedialog</comment>
-        <translation type="vanished">Foglio di calcolo</translation>
+        <translation>Foglio di calcolo</translation>
     </message>
     <message>
+        <location filename="../mainwindow.cpp" line="4012"/>
         <source>Textdocument</source>
         <comment>Filedialog</comment>
-        <translation type="vanished">Documento di testo</translation>
+        <translation>Documento di testo</translation>
     </message>
     <message>
+        <location filename="../mainwindow.cpp" line="4013"/>
         <source>Images</source>
         <comment>Filedialog</comment>
-        <translation type="vanished">Immagini</translation>
+        <translation>Immagini</translation>
     </message>
     <message>
+        <location filename="../mainwindow.cpp" line="4017"/>
         <source>Set URL to a local file</source>
-        <translation type="vanished">Imposta URL come file locale</translation>
+        <translation>Imposta URL come file locale</translation>
     </message>
     <message>
+        <location filename="../mainwindow.cpp" line="4175"/>
+        <location filename="../mainwindow.cpp" line="4177"/>
         <source>Link to another map</source>
-        <translation type="vanished">Collega ad un&apos;altra mappa vym</translation>
+        <translation>Collega ad un&apos;altra mappa vym</translation>
     </message>
     <message>
+        <location filename="../mainwindow.cpp" line="4236"/>
+        <source>Enter sleep time (number of days or date YYYY-MM-DD or DD.MM[.YYYY]</source>
+        <comment>task sleep time dialog</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="4253"/>
+        <source>Couldn&apos;t set sleep time to %1.
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="4295"/>
+        <source>branches</source>
+        <comment>Info about map</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="4296"/>
+        <source>notes</source>
+        <comment>Info about map</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="4297"/>
+        <source>images</source>
+        <comment>Info about map</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="4298"/>
+        <source>tasks</source>
+        <comment>Info about map</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="4299"/>
+        <source>slides</source>
+        <comment>Info about map</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="4300"/>
+        <source>xLinks</source>
+        <comment>Info about map</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="4991"/>
+        <location filename="../mainwindow.cpp" line="5001"/>
+        <source>Set application to zip/unzip files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="5067"/>
+        <source>Set author for new maps (used in lockfile)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="5068"/>
+        <source>unknown user</source>
+        <comment>default name for map author in settings</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="5079"/>
+        <source>Number of parents shown in find results:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="5089"/>
+        <source>Number of parents shown for a task:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="5353"/>
+        <source>(readonly)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="5466"/>
         <source>Export in last used format (%1) to: %2</source>
         <comment>status tip</comment>
-        <translation type="vanished">Esporta nell&apos;ultimo formato usato (%1) in %2</translation>
+        <translation>Esporta nell&apos;ultimo formato usato (%1) in %2</translation>
     </message>
     <message>
         <source>Firefox Bookmarks</source>
@@ -2826,8 +2998,10 @@ because of existing lockfile:
         <translation type="obsolete">Mostra la finestra di Cronologia</translation>
     </message>
     <message>
+        <location filename="../mainwindow.cpp" line="3525"/>
+        <location filename="../mainwindow.cpp" line="3528"/>
         <source>Bookmarks</source>
-        <translation type="vanished">Segnalibri</translation>
+        <translation>Segnalibri</translation>
     </message>
     <message>
         <source>Couldn&apos;t start %1 to open a new tab</source>
@@ -4085,12 +4259,14 @@ Si rischia di sovvrascrivere i contenuti?</translation>
         <translation>Caricante %1</translation>
     </message>
     <message>
+        <location filename="../mainwindow.cpp" line="3555"/>
         <source>Load Freemind map</source>
-        <translation type="vanished">Carica mappa Freemind</translation>
+        <translation>Carica mappa Freemind</translation>
     </message>
     <message>
+        <location filename="../mainwindow.cpp" line="3670"/>
         <source>Export as CSV</source>
-        <translation type="vanished">Esporta come CSV</translation>
+        <translation>Esporta come CSV</translation>
     </message>
     <message>
         <source>Sorry, currently only Konqueror supports integrated tabbed browsing.</source>
@@ -4105,31 +4281,36 @@ Si rischia di sovvrascrivere i contenuti?</translation>
 (modifica nel menu delle Preferenze)</translation>
     </message>
     <message>
+        <location filename="../mainwindow.cpp" line="4277"/>
         <source>%1 items on map
 </source>
         <comment>Info about map</comment>
-        <translation type="vanished">%1 cose nella mappa
+        <translation>%1 cose nella mappa
 </translation>
     </message>
     <message>
+        <location filename="../mainwindow.cpp" line="5019"/>
         <source>Directory with vym macros:</source>
-        <translation type="vanished">Cartella con macro di vym:</translation>
+        <translation>Cartella con macro di vym:</translation>
     </message>
     <message>
         <source>QInputDialog::getInteger()</source>
         <translation type="obsolete">QInputDialog::getInteger()</translation>
     </message>
     <message>
+        <location filename="../mainwindow.cpp" line="5032"/>
         <source>Number of undo/redo levels:</source>
-        <translation type="vanished">Numero di annullamenti/rifacimenti:</translation>
+        <translation>Numero di annullamenti/rifacimenti:</translation>
     </message>
     <message>
+        <location filename="../mainwindow.cpp" line="5037"/>
         <source>Settings have been changed. The next map opened will have &quot;%1&quot; undo/redo levels</source>
-        <translation type="vanished">Le impostazioni sono state cambiate. Dalla prossima mappa ci saranno &quot;%1&quot; livelli di annullamento</translation>
+        <translation>Le impostazioni sono state cambiate. Dalla prossima mappa ci saranno &quot;%1&quot; livelli di annullamento</translation>
     </message>
     <message>
+        <location filename="../mainwindow.cpp" line="5057"/>
         <source>Number of seconds before autosave:</source>
-        <translation type="vanished">Numero di secondi prima del salvataggio automatico:</translation>
+        <translation>Numero di secondi prima del salvataggio automatico:</translation>
     </message>
     <message>
         <source>Information</source>
@@ -4140,19 +4321,22 @@ Si rischia di sovvrascrivere i contenuti?</translation>
         <translation type="obsolete">Le preferenze modificate saranno applicate dopo il riavvio di vym</translation>
     </message>
     <message>
+        <location filename="../mainwindow.cpp" line="5443"/>
         <source>History for %1</source>
         <comment>Window Caption</comment>
-        <translation type="vanished">Storia per %1</translation>
+        <translation>Storia per %1</translation>
     </message>
     <message>
+        <location filename="../mainwindow.cpp" line="5796"/>
         <source>Couldn&apos;t find the documentation %1 in:
 %2</source>
-        <translation type="vanished">Non è possibile trovare la documentazione %1 in:
+        <translation>Non è possibile trovare la documentazione %1 in:
 %2</translation>
     </message>
     <message>
+        <location filename="../mainwindow.cpp" line="5824"/>
         <source>Load vym example map</source>
-        <translation type="vanished">Carica la mappa vym di esempio</translation>
+        <translation>Carica la mappa vym di esempio</translation>
     </message>
     <message>
         <source>Couldn&apos;t find a macro at  %1.

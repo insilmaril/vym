@@ -4511,95 +4511,95 @@ exists already. Do you want to</source>
     </message>
     <message>
         <source>Bookmarks</source>
-        <translation type="vanished">Σελιδοδείκτες</translation>
+        <translation>Σελιδοδείκτες</translation>
     </message>
     <message>
         <source>Import</source>
-        <translation type="vanished">Εισαγωγή</translation>
+        <translation>Εισαγωγή</translation>
     </message>
     <message>
         <source>Load Freemind map</source>
-        <translation type="vanished">Φόρτωση διαγράμματος Freemind</translation>
+        <translation>Φόρτωση διαγράμματος Freemind</translation>
     </message>
     <message>
         <source>Export as CSV</source>
-        <translation type="vanished">Εξαγωγή ως CSV</translation>
+        <translation>Εξαγωγή ως CSV</translation>
     </message>
     <message>
         <source>Export to</source>
-        <translation type="vanished">Εξαγωγή σε</translation>
+        <translation>Εξαγωγή σε</translation>
     </message>
     <message>
         <source>Warning</source>
-        <translation type="vanished">Προειδοποίηση</translation>
+        <translation>Προειδοποίηση</translation>
     </message>
     <message>
         <source>Couldn&apos;t find configuration for export to LibreOffice
 </source>
-        <translation type="vanished">Αδυναμία εντοπισμού ρυθμίσεων για εξαγωγή σε LibreOffice</translation>
+        <translation>Αδυναμία εντοπισμού ρυθμίσεων για εξαγωγή σε LibreOffice</translation>
     </message>
     <message>
         <source>The map %1 has been modified but not saved yet. Do you want to</source>
-        <translation type="vanished">Το διάγραμμα %1 έχει τροποποιηθεί, αλλά δεν
+        <translation>Το διάγραμμα %1 έχει τροποποιηθεί, αλλά δεν
 έχει ακόμη αποθηκευτεί. Τι θέλετε να γίνει;</translation>
     </message>
     <message>
         <source>Save modified map before closing it</source>
-        <translation type="vanished">Αποθήκευση τροποποιημένου διαγράμματος πριν το κλείσιμο</translation>
+        <translation>Αποθήκευση τροποποιημένου διαγράμματος πριν το κλείσιμο</translation>
     </message>
     <message>
         <source>Discard changes</source>
-        <translation type="vanished">Απόρριψη αλλαγών</translation>
+        <translation>Απόρριψη αλλαγών</translation>
     </message>
     <message>
         <source>Couldn&apos;t find a viewer to open %1.
 </source>
-        <translation type="vanished">Αδυναμία εύρεσης εφαρμογής προβολης για ανοιγμα του %1.</translation>
+        <translation>Αδυναμία εύρεσης εφαρμογής προβολης για ανοιγμα του %1.</translation>
     </message>
     <message>
         <source>Please use Settings-&gt;</source>
-        <translation type="vanished">Παρακαλώ χρησιμοποιήστε τις Ρυθμίσεις-&gt;</translation>
+        <translation>Παρακαλώ χρησιμοποιήστε τις Ρυθμίσεις-&gt;</translation>
     </message>
     <message>
         <source>Set application to open an URL</source>
-        <translation type="vanished">Ορισμός μιας εφαρμογής για άνοιγμα URL</translation>
+        <translation>Ορισμός μιας εφαρμογής για άνοιγμα URL</translation>
     </message>
     <message>
         <source>Couldn&apos;t start %1 to open a new tab in %2.</source>
-        <translation type="vanished">Αδυναμία έναρξης %1 για άνοιγμα νέας καρτέλας %2.</translation>
+        <translation>Αδυναμία έναρξης %1 για άνοιγμα νέας καρτέλας %2.</translation>
     </message>
     <message>
         <source>Enter URL:</source>
-        <translation type="vanished">Εισαγωγή URL:</translation>
+        <translation>Εισαγωγή URL:</translation>
     </message>
     <message>
         <source>HTML</source>
         <comment>Filedialog</comment>
-        <translation type="vanished">HTML</translation>
+        <translation>HTML</translation>
     </message>
     <message>
         <source>Text</source>
         <comment>Filedialog</comment>
-        <translation type="vanished">Κείμενο</translation>
+        <translation>Κείμενο</translation>
     </message>
     <message>
         <source>Spreadsheet</source>
         <comment>Filedialog</comment>
-        <translation type="vanished">Φύλλο δεδομένων</translation>
+        <translation>Φύλλο δεδομένων</translation>
     </message>
     <message>
         <source>Textdocument</source>
         <comment>Filedialog</comment>
-        <translation type="vanished">Έγγραφο κειμένου</translation>
+        <translation>Έγγραφο κειμένου</translation>
     </message>
     <message>
         <source>Images</source>
         <comment>Filedialog</comment>
-        <translation type="vanished">Εικόνες</translation>
+        <translation>Εικόνες</translation>
     </message>
     <message>
         <source>Set URL to a local file</source>
-        <translation type="vanished">Ορισμός URL για ένα τοπικό αρχείο</translation>
+        <translation>Ορισμός URL για ένα τοπικό αρχείο</translation>
     </message>
     <message>
         <source>Critical Error</source>
@@ -4607,125 +4607,125 @@ exists already. Do you want to</source>
     </message>
     <message>
         <source>Couldn&apos;t open map %1</source>
-        <translation type="vanished">Αδυναμία ανοίγματος του διαγράμματος %1</translation>
+        <translation>Αδυναμία ανοίγματος του διαγράμματος %1</translation>
     </message>
     <message>
         <source>Link to another map</source>
-        <translation type="vanished">Σύνδεσμος προς άλλο διάγραμμα</translation>
+        <translation>Σύνδεσμος προς άλλο διάγραμμα</translation>
     </message>
     <message>
         <source>Enter sleep time (number of days or date YYYY-MM-DD or DD.MM[.YYYY]</source>
         <comment>task sleep time dialog</comment>
-        <translation type="vanished">Καταχωρίστε χρόνο ύπνου (αριθμό ημερών ή ημερομηνία YYYY-MM-DD ή DD.MM[.YYYY]</translation>
+        <translation>Καταχωρίστε χρόνο ύπνου (αριθμό ημερών ή ημερομηνία YYYY-MM-DD ή DD.MM[.YYYY]</translation>
     </message>
     <message>
         <source>Couldn&apos;t set sleep time to %1.
 </source>
-        <translation type="vanished">Αδυναμία ορισμού χρόνου ύπνου σε %1.</translation>
+        <translation>Αδυναμία ορισμού χρόνου ύπνου σε %1.</translation>
     </message>
     <message>
         <source>%1 items on map
 </source>
         <comment>Info about map</comment>
-        <translation type="vanished">%1 αντικείμενα στο διάγραμμα</translation>
+        <translation>%1 αντικείμενα στο διάγραμμα</translation>
     </message>
     <message>
         <source>Set application to open PDF files</source>
-        <translation type="vanished">Ορισμός εφαρμογής για άνοιγμα αρχείων PDF</translation>
+        <translation>Ορισμός εφαρμογής για άνοιγμα αρχείων PDF</translation>
     </message>
     <message>
         <source>Set application to zip/unzip files</source>
-        <translation type="vanished">Ορισμός εφαρμογής για συμπίεση/αποσυμπίεση αρχείων</translation>
+        <translation>Ορισμός εφαρμογής για συμπίεση/αποσυμπίεση αρχείων</translation>
     </message>
     <message>
         <source>Directory with vym macros:</source>
-        <translation type="vanished">Φάκελος με μακροεντολές VYM:</translation>
+        <translation>Φάκελος με μακροεντολές VYM:</translation>
     </message>
     <message>
         <source>Number of undo/redo levels:</source>
-        <translation type="vanished">Αριθμός αναιρέσεων/ακύρωσης αναιρέσεων:</translation>
+        <translation>Αριθμός αναιρέσεων/ακύρωσης αναιρέσεων:</translation>
     </message>
     <message>
         <source>VYM -Information:</source>
-        <translation type="vanished">Πληροφορίες για το VYM:</translation>
+        <translation>Πληροφορίες για το VYM:</translation>
     </message>
     <message>
         <source>Settings have been changed. The next map opened will have &quot;%1&quot; undo/redo levels</source>
-        <translation type="vanished">Οι ρυθμίσεις άλλαξαν. Το επόμενο διάγραμμα θα έχει %1 επίπεδα αναιρέσεων/ακύρωσης αναιρέσεων</translation>
+        <translation>Οι ρυθμίσεις άλλαξαν. Το επόμενο διάγραμμα θα έχει %1 επίπεδα αναιρέσεων/ακύρωσης αναιρέσεων</translation>
     </message>
     <message>
         <source>Number of seconds before autosave:</source>
-        <translation type="vanished">Δευτερόλεπτα πριν την αυτόματη αποθήκευση:</translation>
+        <translation>Δευτερόλεπτα πριν την αυτόματη αποθήκευση:</translation>
     </message>
     <message>
         <source>Number of parents shown for a task:</source>
-        <translation type="vanished">Αριθμός πρόγονων κόμβων που εμφανιζονται για κάθε εργασία:</translation>
+        <translation>Αριθμός πρόγονων κόμβων που εμφανιζονται για κάθε εργασία:</translation>
     </message>
     <message>
         <source>(readonly)</source>
-        <translation type="vanished">(μόνο για ανάγνωση)</translation>
+        <translation>(μόνο για ανάγνωση)</translation>
     </message>
     <message>
         <source>History for %1</source>
         <comment>Window Caption</comment>
-        <translation type="vanished">Ιστορικό για %1</translation>
+        <translation>Ιστορικό για %1</translation>
     </message>
     <message>
         <source>Export in last used format (%1) to: %2</source>
         <comment>status tip</comment>
-        <translation type="vanished">Εξαγωγή στη τελευταία χρησιμοποιούμενη μορφή (%1) σε: %2</translation>
+        <translation>Εξαγωγή στη τελευταία χρησιμοποιούμενη μορφή (%1) σε: %2</translation>
     </message>
     <message>
         <source>Critcal error</source>
-        <translation type="vanished">Κρίσιμο σφάλμα</translation>
+        <translation>Κρίσιμο σφάλμα</translation>
     </message>
     <message>
         <source>Couldn&apos;t find the documentation %1 in:
 %2</source>
-        <translation type="vanished">Αδυναμία εύρεσης της τεκμηρίωσης %1 στο:
+        <translation>Αδυναμία εύρεσης της τεκμηρίωσης %1 στο:
 %2</translation>
     </message>
     <message>
         <source>Load vym example map</source>
-        <translation type="vanished">Φόρτωση  διαγράμματος VYM ως παράδειγμα</translation>
+        <translation>Φόρτωση  διαγράμματος VYM ως παράδειγμα</translation>
     </message>
     <message>
         <source>Please allow vym to download release notes!</source>
-        <translation type="vanished">Παρακαλώ επιτρέψτε στο VYM να κάνει λήψη των σημειώσεων έκδοσης!</translation>
+        <translation>Παρακαλώ επιτρέψτε στο VYM να κάνει λήψη των σημειώσεων έκδοσης!</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;h3&gt;Do you allow vym to check online for updates or release notes?&lt;/h3&gt;If you allow, vym will &lt;ul&gt;&lt;li&gt;check once for release notes&lt;/li&gt;&lt;li&gt;check regulary for updates and notify you in case you should update, e.g. if there are important bug fixes available&lt;/li&gt;&lt;li&gt;receive a cookie with a random ID and send vym version and platform name and the ID  (e.g. &quot;Windows&quot; or &quot;Linux&quot;) back to me, Uwe Drechsel.&lt;p&gt;As vym developer I am motivated to see many people using vym. Of course I am curious to see, on which system vym is used. Maintaining each of the systems requires a lot of my (spare) time.&lt;/p&gt; &lt;p&gt;No other data than above will be sent, especially no private data will be collected or sent.(Check the source code, if you don&apos;t believe.)&lt;/p&gt;&lt;/li&gt;&lt;/ul&gt;If you do not allow, &lt;ul&gt;&lt;li&gt;nothing will be downloaded and especially I will &lt;b&gt;not be motivated&lt;/b&gt; to spend some more thousands of hours on developing a free software tool.&lt;/ul&gt;Please allow vym to check for updates :-)</source>
-        <translation type="vanished">&lt;html&gt;&lt;h3&gt;Επιτρέπετε στο VYM να ελέγχει για ενημερώσεις ή πληροφορίες εκδόσεων;&lt;/h3&gt;Εάν το επιτρέπετε, το VYM θα &lt;ul&gt;&lt;li&gt;κάνει μια φορά έλεγχο για πληροφορίες έκδοσης&lt;/li&gt;&lt;li&gt;, θα ελέγχει τακτικά για ενημερώσεις και θα σας ενημερώνει σε περίπτωση που θα πρέπει να κάνετε ενημέρωση, π.χ. αν υπάρχουν διαθέσιμες διορθώσεις σφαλμάτων &lt;/li&gt;&lt;li&gt;ένα cookie με τυχαίο ID θα στέλνει την έκδοση του VYM, τον τύπο του λειτουργικού συστήματος και το ID του (π.χ. &quot;Windows&quot; or &quot;Linux&quot;) στον Uwe Drechsel.&lt;p&gt;Ως δημιουργός του VYM θα ήθελα να δω ολοένα και περισσότερους ανθρώπους να το χρησιμοποιούν. Επίσης, θα ήθελα να γνωρίζω σε ποια λειτουργικά συστήματα εκτελείται η εφαρμογή αυτή. Η στήριξη που θα πρέπει να παρέχω για καθένα σύστημα απαιτεί πολύ προσωπικό χρόνο.&lt;/p&gt; &lt;p&gt;Καμμιά άλλη πληροφορία ή δεδομένο δεν θα φτάνει σε μένα, όπως επίσης δεν θα λαμβάνω και δεν θα συλλέγω κανένα προσωπικό δεδομένο. (Μπορείτε να διασταυρώσετε τον ισχυρισμό μου ελέγχοντας τον πηγαίο κώδικα της εφαρμογής. &lt;/p&gt;&lt;/li&gt;&lt;/ul&gt;Εάν δεν το επιτρέπετε, &lt;ul&gt;&lt;li&gt;δεν θα γίνεται λήψη καμιάς πληροφορίας και, επίσης, &lt;b&gt;δεν θα έχω κίνητρο&lt;/b&gt; να διαθέσω χρόνο για την ανάπτυξη της εφαρμογής.&lt;/ul&gt;Παρακαλώ, να επιτρέψετε στο VYM να κάνει έλεγχο ενημερώσεων :-)</translation>
+        <translation>&lt;html&gt;&lt;h3&gt;Επιτρέπετε στο VYM να ελέγχει για ενημερώσεις ή πληροφορίες εκδόσεων;&lt;/h3&gt;Εάν το επιτρέπετε, το VYM θα &lt;ul&gt;&lt;li&gt;κάνει μια φορά έλεγχο για πληροφορίες έκδοσης&lt;/li&gt;&lt;li&gt;, θα ελέγχει τακτικά για ενημερώσεις και θα σας ενημερώνει σε περίπτωση που θα πρέπει να κάνετε ενημέρωση, π.χ. αν υπάρχουν διαθέσιμες διορθώσεις σφαλμάτων &lt;/li&gt;&lt;li&gt;ένα cookie με τυχαίο ID θα στέλνει την έκδοση του VYM, τον τύπο του λειτουργικού συστήματος και το ID του (π.χ. &quot;Windows&quot; or &quot;Linux&quot;) στον Uwe Drechsel.&lt;p&gt;Ως δημιουργός του VYM θα ήθελα να δω ολοένα και περισσότερους ανθρώπους να το χρησιμοποιούν. Επίσης, θα ήθελα να γνωρίζω σε ποια λειτουργικά συστήματα εκτελείται η εφαρμογή αυτή. Η στήριξη που θα πρέπει να παρέχω για καθένα σύστημα απαιτεί πολύ προσωπικό χρόνο.&lt;/p&gt; &lt;p&gt;Καμμιά άλλη πληροφορία ή δεδομένο δεν θα φτάνει σε μένα, όπως επίσης δεν θα λαμβάνω και δεν θα συλλέγω κανένα προσωπικό δεδομένο. (Μπορείτε να διασταυρώσετε τον ισχυρισμό μου ελέγχοντας τον πηγαίο κώδικα της εφαρμογής. &lt;/p&gt;&lt;/li&gt;&lt;/ul&gt;Εάν δεν το επιτρέπετε, &lt;ul&gt;&lt;li&gt;δεν θα γίνεται λήψη καμιάς πληροφορίας και, επίσης, &lt;b&gt;δεν θα έχω κίνητρο&lt;/b&gt; να διαθέσω χρόνο για την ανάπτυξη της εφαρμογής.&lt;/ul&gt;Παρακαλώ, να επιτρέψετε στο VYM να κάνει έλεγχο ενημερώσεων :-)</translation>
     </message>
     <message>
         <source>Allow</source>
-        <translation type="vanished">Επιτρέπεται</translation>
+        <translation>Επιτρέπεται</translation>
     </message>
     <message>
         <source>Do not allow</source>
-        <translation type="vanished">Δεν επιτρέπεται</translation>
+        <translation>Δεν επιτρέπεται</translation>
     </message>
     <message>
         <source>Thank you for enabling downloads!</source>
-        <translation type="vanished">Ευχαριστούμε που ενεργοποιήσατε τις λήψεις!</translation>
+        <translation>Ευχαριστούμε που ενεργοποιήσατε τις λήψεις!</translation>
     </message>
     <message>
         <source>Update information</source>
-        <translation type="vanished">Πληροφορίες ενημερώσεων</translation>
+        <translation>Πληροφορίες ενημερώσεων</translation>
     </message>
     <message>
         <source>vym is up to date.</source>
         <comment>MainWindow</comment>
-        <translation type="vanished">Το VYM είναι ενημερωμένο.</translation>
+        <translation>Το VYM είναι ενημερωμένο.</translation>
     </message>
     <message>
         <source>Checking for updates...</source>
         <comment>MainWindow</comment>
-        <translation type="vanished">Έλεγχος για ενημερώσεις...</translation>
+        <translation>Έλεγχος για ενημερώσεις...</translation>
     </message>
     <message>
         <source>Please allow vym to check for updates!</source>
-        <translation type="vanished">Παρακαλώ, να επιτρέψετε στο VYM να κάνει έλεγχο ενημερώσεων!</translation>
+        <translation>Παρακαλώ, να επιτρέψετε στο VYM να κάνει έλεγχο ενημερώσεων!</translation>
     </message>
     <message>
         <source>Set author for new maps</source>
@@ -4744,11 +4744,11 @@ exists already. Do you want to</source>
     </message>
     <message>
         <source>Set author for new maps (used in lockfile)</source>
-        <translation type="vanished">Ορισμός συγγραφέα για νέα διαγράμματα (χρησιμοποιείται στο αρχείο κλειδώματος)</translation>
+        <translation>Ορισμός συγγραφέα για νέα διαγράμματα (χρησιμοποιείται στο αρχείο κλειδώματος)</translation>
     </message>
     <message>
         <source>Number of parents shown in find results:</source>
-        <translation type="vanished">Αριθμός γονικών κόμβων που εμφανίζονται στο παράθυρο αποτελεσμάτων:</translation>
+        <translation>Αριθμός γονικών κόμβων που εμφανίζονται στο παράθυρο αποτελεσμάτων:</translation>
     </message>
     <message>
         <source>Webpage (HTML)...</source>
@@ -4768,7 +4768,7 @@ exists already. Do you want to</source>
     <message>
         <source>unknown user</source>
         <comment>default name for map author in settings</comment>
-        <translation type="vanished">Άγνωστος χρήστης</translation>
+        <translation>Άγνωστος χρήστης</translation>
     </message>
     <message>
         <source>Text (A&amp;O report)...</source>
@@ -4789,6 +4789,36 @@ exists already. Do you want to</source>
 because of existing lockfile:
 
 %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>branches</source>
+        <comment>Info about map</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>notes</source>
+        <comment>Info about map</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>images</source>
+        <comment>Info about map</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>tasks</source>
+        <comment>Info about map</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>slides</source>
+        <comment>Info about map</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>xLinks</source>
+        <comment>Info about map</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>
