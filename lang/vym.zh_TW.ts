@@ -12,6 +12,16 @@
         <comment>Ok Button</comment>
         <translation type="unfinished">確定</translation>
     </message>
+    <message>
+        <source>Credits</source>
+        <comment>Help-&gt;About vym dialog</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>License</source>
+        <comment>Help-&gt;About vym dialog</comment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>AboutTextBrowser</name>
@@ -950,7 +960,7 @@ Hint: You can pick a color from another branch and color using CTRL+Left Button<
     </message>
     <message>
         <source>Set application to open an URL</source>
-        <translation>設定開啟 URL 的應用程式</translation>
+        <translation type="vanished">設定開啟 URL 的應用程式</translation>
     </message>
     <message>
         <source>Edit branch after adding it</source>
@@ -1014,11 +1024,11 @@ Hint: You can pick a color from another branch and color using CTRL+Left Button<
     </message>
     <message>
         <source>Save modified map before closing it</source>
-        <translation>關閉已修改圖譜之前儲存它</translation>
+        <translation type="vanished">關閉已修改圖譜之前儲存它</translation>
     </message>
     <message>
         <source>Discard changes</source>
-        <translation>捨棄變更</translation>
+        <translation type="vanished">捨棄變更</translation>
     </message>
     <message>
         <source>This map is not saved yet. Do you want to</source>
@@ -1309,11 +1319,11 @@ exists already. Do you want to</source>
     </message>
     <message>
         <source>The map %1 has been modified but not saved yet. Do you want to</source>
-        <translation>圖譜 %1 已被修改但尚未儲存。您想要</translation>
+        <translation type="vanished">圖譜 %1 已被修改但尚未儲存。您想要</translation>
     </message>
     <message>
         <source>Couldn&apos;t open map %1</source>
-        <translation>無法開啟圖譜 %1</translation>
+        <translation type="vanished">無法開啟圖譜 %1</translation>
     </message>
     <message>
         <source>Set application to open pdf files  ...</source>
@@ -1478,11 +1488,11 @@ exists already. Do you want to</source>
     </message>
     <message>
         <source>Couldn&apos;t save %1</source>
-        <translation type="obsolete">無法儲存 %1</translation>
+        <translation type="unfinished">無法儲存 %1</translation>
     </message>
     <message>
         <source>Import</source>
-        <translation>匯入</translation>
+        <translation type="vanished">匯入</translation>
     </message>
     <message>
         <source>KDE Bookmarks</source>
@@ -1522,7 +1532,7 @@ exists already. Do you want to</source>
     </message>
     <message>
         <source>Export to</source>
-        <translation>匯出至</translation>
+        <translation type="vanished">匯出至</translation>
     </message>
     <message>
         <source>Hide object in exports</source>
@@ -1551,20 +1561,20 @@ exists already. Do you want to</source>
     </message>
     <message>
         <source>Warning</source>
-        <translation>警告</translation>
+        <translation type="vanished">警告</translation>
     </message>
     <message>
         <source>Couldn&apos;t find a viewer to open %1.
 </source>
-        <translation>找不到檢視器以開啟 %1。</translation>
+        <translation type="vanished">找不到檢視器以開啟 %1。</translation>
     </message>
     <message>
         <source>Please use Settings-&gt;</source>
-        <translation>請使用 設定值-&gt;</translation>
+        <translation type="vanished">請使用 設定值-&gt;</translation>
     </message>
     <message>
         <source>Couldn&apos;t start %1 to open a new tab in %2.</source>
-        <translation>無法啟動 %1 以在 %2 中開啟新的頁標。</translation>
+        <translation type="vanished">無法啟動 %1 以在 %2 中開啟新的頁標。</translation>
     </message>
     <message>
         <source>Set application to open PDF files</source>
@@ -1623,7 +1633,7 @@ exists already. Do you want to</source>
     </message>
     <message>
         <source>Bookmarks</source>
-        <translation>書籤</translation>
+        <translation type="vanished">書籤</translation>
     </message>
     <message>
         <source>Couldn&apos;t start %1 to open a new tab</source>
@@ -2426,20 +2436,6 @@ to confusion when finishing working with vym.Do you want to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Load Freemind map</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Export as CSV</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>%1 items on map
-</source>
-        <comment>Info about map</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>PDF%1</source>
         <comment>File export menu</comment>
         <translation type="unfinished"></translation>
@@ -2555,40 +2551,16 @@ to confusion when finishing working with vym.Do you want to</source>
     </message>
     <message>
         <source>Enter URL:</source>
-        <translation type="unfinished">輸入 URL：</translation>
-    </message>
-    <message>
-        <source>HTML</source>
-        <comment>Filedialog</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Text</source>
-        <comment>Filedialog</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Spreadsheet</source>
-        <comment>Filedialog</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Textdocument</source>
-        <comment>Filedialog</comment>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">輸入 URL：</translation>
     </message>
     <message>
         <source>Images</source>
         <comment>Filedialog</comment>
-        <translation type="unfinished">圖像</translation>
-    </message>
-    <message>
-        <source>Set URL to a local file</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">圖像</translation>
     </message>
     <message>
         <source>Link to another map</source>
-        <translation type="unfinished">連結到另外的圖譜</translation>
+        <translation type="obsolete">連結到另外的圖譜</translation>
     </message>
     <message>
         <source>Select previous</source>
@@ -2735,16 +2707,6 @@ to confusion when finishing working with vym.Do you want to</source>
     <message>
         <source>Previous slide</source>
         <comment>View action</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enter sleep time (number of days or date YYYY-MM-DD or DD.MM[.YYYY]</source>
-        <comment>task sleep time dialog</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Couldn&apos;t set sleep time to %1.
-</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2945,11 +2907,6 @@ to confusion when finishing working with vym.Do you want to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Couldn&apos;t find configuration for export to LibreOffice
-</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Webpage (HTML)...</source>
         <comment>File export menu</comment>
         <translation type="unfinished"></translation>
@@ -2975,33 +2932,10 @@ to confusion when finishing working with vym.Do you want to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>branches</source>
-        <comment>Info about map</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>notes</source>
-        <comment>Info about map</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>images</source>
-        <comment>Info about map</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>tasks</source>
-        <comment>Info about map</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>slides</source>
-        <comment>Info about map</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>xLinks</source>
-        <comment>Info about map</comment>
+        <source>Couldn&apos;t save %1,
+because of existing lockfile:
+
+%2</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4352,6 +4286,17 @@ Map is locked by &quot;%1&quot; on &quot;%2&quot;</source>
         <source>unknown user</source>
         <comment>default name for map author in settings</comment>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot create lockfile of map! It will be opened in readonly mode.
+
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Warning</source>
+        <comment>VymModel</comment>
+        <translation type="unfinished">警告</translation>
     </message>
 </context>
 <context>

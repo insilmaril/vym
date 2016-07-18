@@ -4,6 +4,18 @@
 <context>
     <name>AboutDialog</name>
     <message>
+        <location filename="../aboutdialog.cpp" line="105"/>
+        <source>Credits</source>
+        <comment>Help-&gt;About vym dialog</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../aboutdialog.cpp" line="220"/>
+        <source>License</source>
+        <comment>Help-&gt;About vym dialog</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../aboutdialog.cpp" line="225"/>
         <source>Ok</source>
         <comment>Ok Button</comment>
@@ -522,70 +534,67 @@ want to allow this in your system!</source>
         <translation>表示（&amp;V）</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3439"/>
+        <location filename="../mainwindow.cpp" line="3452"/>
         <source>Overwrite</source>
         <translation>上書きする</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3164"/>
-        <location filename="../mainwindow.cpp" line="3214"/>
-        <location filename="../mainwindow.cpp" line="3440"/>
+        <location filename="../mainwindow.cpp" line="3177"/>
+        <location filename="../mainwindow.cpp" line="3227"/>
+        <location filename="../mainwindow.cpp" line="3453"/>
         <source>Cancel</source>
         <translation>キャンセル</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3163"/>
+        <location filename="../mainwindow.cpp" line="3176"/>
         <source>Open anyway</source>
         <translation>とにかく開いてみる</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3213"/>
+        <location filename="../mainwindow.cpp" line="3226"/>
         <source>Create</source>
         <translation>新規作成</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3282"/>
+        <location filename="../mainwindow.cpp" line="3295"/>
         <source>Load vym map</source>
         <translation>VYMマップを開く</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3285"/>
+        <location filename="../mainwindow.cpp" line="3298"/>
         <source>Import: Add vym map to selection</source>
         <translation>インポート：選択にVYMマップを追加</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3288"/>
+        <location filename="../mainwindow.cpp" line="3301"/>
         <source>Import: Replace selection with vym map</source>
         <translation>インポート：選択をVYMマップに置き換え</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3736"/>
         <source>Save modified map before closing it</source>
-        <translation>閉じる前に変更されたマップを保存</translation>
+        <translation type="vanished">閉じる前に変更されたマップを保存</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3737"/>
         <source>Discard changes</source>
-        <translation>変更破棄</translation>
+        <translation type="vanished">変更破棄</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="4205"/>
         <source>Enter sleep time (number of days or date YYYY-MM-DD or DD.MM[.YYYY]</source>
         <comment>task sleep time dialog</comment>
-        <translation>スリープタイムに入る（YYYY-MM-DD or DD.MM[.YYYY]）</translation>
+        <translation type="vanished">スリープタイムに入る（YYYY-MM-DD or DD.MM[.YYYY]）</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="4222"/>
         <source>Couldn&apos;t set sleep time to %1.
 </source>
-        <translation>スリープタイムを%1に設定できませんでした。</translation>
+        <translation type="vanished">スリープタイムを%1に設定できませんでした。</translation>
     </message>
     <message>
         <source>VYM -Information:</source>
         <translation type="vanished">VYM - 詳細：</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="4091"/>
+        <location filename="../mainwindow.cpp" line="3489"/>
+        <location filename="../mainwindow.cpp" line="3495"/>
         <source>Critical Error</source>
         <translation>重大なエラー</translation>
     </message>
@@ -919,13 +928,13 @@ want to allow this in your system!</source>
         <translation>XLinkに従う</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3102"/>
+        <location filename="../mainwindow.cpp" line="3115"/>
         <source>unnamed</source>
         <comment>MainWindow: name for new and empty file</comment>
         <translation>名無し</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3155"/>
+        <location filename="../mainwindow.cpp" line="3168"/>
         <source>The map %1
 is already opened.Opening the same map in multiple editors may lead 
 to confusion when finishing working with vym.Do you want to</source>
@@ -934,7 +943,7 @@ to confusion when finishing working with vym.Do you want to</source>
 すると仕上げの段階で混乱するかもしれません</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3207"/>
+        <location filename="../mainwindow.cpp" line="3220"/>
         <source>This map does not exist:
   %1
 Do you want to create a new one?</source>
@@ -943,37 +952,35 @@ Do you want to create a new one?</source>
 新しいものを作成しますか？</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3243"/>
+        <location filename="../mainwindow.cpp" line="3256"/>
         <source>Loading: %1</source>
         <comment>Progress dialog while loading maps</comment>
         <translation>ロード中: %1</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3392"/>
+        <location filename="../mainwindow.cpp" line="3405"/>
         <source>Saved  %1</source>
         <translation>%1を保存しました</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3396"/>
+        <location filename="../mainwindow.cpp" line="3409"/>
         <source>Couldn&apos;t save </source>
         <translation>保存できませんでした</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3434"/>
+        <location filename="../mainwindow.cpp" line="3447"/>
         <source>The file %1
 exists already. Do you want to</source>
         <translation>%1は、既に
 存在します、どうします</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3731"/>
         <source>The map %1 has been modified but not saved yet. Do you want to</source>
-        <translation>マップ%1は変更されましたが保存されていません。保存しますか</translation>
+        <translation type="vanished">マップ%1は変更されましたが保存されていません。保存しますか</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="4092"/>
         <source>Couldn&apos;t open map %1</source>
-        <translation>マップ%1を開くことができませんでした</translation>
+        <translation type="vanished">マップ%1を開くことができませんでした</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2293"/>
@@ -1054,10 +1061,8 @@ exists already. Do you want to</source>
         <translation>これが役立ちます</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3497"/>
-        <location filename="../mainwindow.cpp" line="3557"/>
         <source>Import</source>
-        <translation>重要</translation>
+        <translation type="vanished">重要</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1035"/>
@@ -1066,8 +1071,6 @@ exists already. Do you want to</source>
         <location filename="../mainwindow.cpp" line="1088"/>
         <location filename="../mainwindow.cpp" line="1092"/>
         <location filename="../mainwindow.cpp" line="1096"/>
-        <location filename="../mainwindow.cpp" line="3639"/>
-        <location filename="../mainwindow.cpp" line="3668"/>
         <source>(still experimental)</source>
         <translation>（実験中）</translation>
     </message>
@@ -1077,40 +1080,25 @@ exists already. Do you want to</source>
         <translation>印刷（&amp;P）</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3668"/>
-        <location filename="../mainwindow.cpp" line="3685"/>
         <source>Export to</source>
-        <translation>エクスポート</translation>
+        <translation type="vanished">エクスポート</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3706"/>
-        <location filename="../mainwindow.cpp" line="3836"/>
-        <location filename="../mainwindow.cpp" line="3879"/>
-        <location filename="../mainwindow.cpp" line="4221"/>
         <source>Warning</source>
-        <translation>警告</translation>
+        <translation type="vanished">警告</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3837"/>
         <source>Couldn&apos;t find a viewer to open %1.
 </source>
-        <translation>%1を開くためのビューワー·ソフトが見つかりませんでした。</translation>
+        <translation type="vanished">%1を開くためのビューワー·ソフトが見つかりませんでした。</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3838"/>
         <source>Please use Settings-&gt;</source>
-        <translation>設定を利用してください-＞</translation>
+        <translation type="vanished">設定を利用してください-＞</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3838"/>
         <source>Set application to open an URL</source>
-        <translation>URLを開けるアプリを設定する</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="3880"/>
-        <source>Couldn&apos;t start %1 to open a new tab in %2.</source>
-        <translatorcomment>%2で新しいタブを開くための%1を開始できませんでした。</translatorcomment>
-        <translation></translation>
+        <translation type="vanished">URLを開けるアプリを設定する</translation>
     </message>
     <message>
         <source>Set application to open PDF files</source>
@@ -1159,10 +1147,8 @@ exists already. Do you want to</source>
         <translation>詳細</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3494"/>
-        <location filename="../mainwindow.cpp" line="3497"/>
         <source>Bookmarks</source>
-        <translation>ブックマーク</translation>
+        <translation type="vanished">ブックマーク</translation>
     </message>
     <message>
         <source>Couldn&apos;t find configuration for export to Open Office
@@ -1896,40 +1882,17 @@ exists already. Do you want to</source>
         <translation>画像を保存</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="4264"/>
-        <source>branches</source>
-        <comment>Info about map</comment>
+        <location filename="../mainwindow.cpp" line="3489"/>
+        <source>Couldn&apos;t save %1,
+because of existing lockfile:
+
+%2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="4265"/>
-        <source>notes</source>
-        <comment>Info about map</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="4266"/>
-        <source>images</source>
-        <comment>Info about map</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="4267"/>
-        <source>tasks</source>
-        <comment>Info about map</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="4268"/>
-        <source>slides</source>
-        <comment>Info about map</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="4269"/>
-        <source>xLinks</source>
-        <comment>Info about map</comment>
-        <translation type="unfinished"></translation>
+        <location filename="../mainwindow.cpp" line="3495"/>
+        <source>Couldn&apos;t save %1</source>
+        <translation type="unfinished">%1を保存できませんでした</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="972"/>
@@ -2423,84 +2386,66 @@ exists already. Do you want to</source>
         <translation>色のツールバー</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3293"/>
+        <location filename="../mainwindow.cpp" line="3306"/>
         <source>or</source>
         <comment>File Dialog</comment>
         <translation>または</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3423"/>
+        <location filename="../mainwindow.cpp" line="3436"/>
         <source>Save map as</source>
         <translation>マップを名前をつけて保存</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3524"/>
         <source>Load Freemind map</source>
-        <translation>Freemind mapを開く</translation>
+        <translation type="vanished">Freemind mapを開く</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3639"/>
         <source>Export as CSV</source>
-        <translation>CSVファイルとしてエクスポート</translation>
+        <translation type="vanished">CSVファイルとしてエクスポート</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3707"/>
-        <source>Couldn&apos;t find configuration for export to LibreOffice
-</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="3955"/>
         <source>Enter URL:</source>
-        <translation>URLを入力：</translation>
+        <translation type="vanished">URLを入力：</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3978"/>
         <source>HTML</source>
         <comment>Filedialog</comment>
-        <translation>HTML</translation>
+        <translation type="vanished">HTML</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3979"/>
         <source>Text</source>
         <comment>Filedialog</comment>
-        <translation>テキスト</translation>
+        <translation type="vanished">テキスト</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3980"/>
         <source>Spreadsheet</source>
         <comment>Filedialog</comment>
-        <translation>スプレッドシート</translation>
+        <translation type="vanished">スプレッドシート</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3981"/>
         <source>Textdocument</source>
         <comment>Filedialog</comment>
-        <translation>テキスト文書</translation>
+        <translation type="vanished">テキスト文書</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3982"/>
         <source>Images</source>
         <comment>Filedialog</comment>
-        <translation>画像</translation>
+        <translation type="vanished">画像</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3986"/>
         <source>Set URL to a local file</source>
-        <translation>URLをローカルファイルに設定</translation>
+        <translation type="vanished">URLをローカルファイルに設定</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="4144"/>
-        <location filename="../mainwindow.cpp" line="4146"/>
         <source>Link to another map</source>
-        <translation>別のマップへのリンク</translation>
+        <translation type="vanished">別のマップへのリンク</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="4246"/>
         <source>%1 items on map
 </source>
         <comment>Info about map</comment>
-        <translation>マップ上には%1アイテムあります</translation>
+        <translation type="vanished">マップ上には%1アイテムあります</translation>
     </message>
     <message>
         <source>Directory with vym macros:</source>
@@ -2916,7 +2861,7 @@ Do you risk to overwrite its contents?</source>
 内容を上書きしますか？</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="3741"/>
+        <location filename="../vymmodel.cpp" line="3784"/>
         <source>No Bugzilla client found.  For openSUSE you can install by (running as root):
 
 </source>
@@ -2924,7 +2869,7 @@ Do you risk to overwrite its contents?</source>
         <translation>Bugzillaのクライアントが見つかりませんでした。openSUSE用のは、rootとして実行することによってインストールすることができます。：</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="3746"/>
+        <location filename="../vymmodel.cpp" line="3789"/>
         <source>Alternatively you can also add the repository
 and install the perl module for Bugzilla access using YaST</source>
         <comment>VymModel, how to install Bugzilla client module</comment>
@@ -2932,7 +2877,7 @@ and install the perl module for Bugzilla access using YaST</source>
 BugzillaのアクセスのためのPerlモジュールをインストールできます</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="3749"/>
+        <location filename="../vymmodel.cpp" line="3792"/>
         <source>Warning: Couldn&apos;t find Bugzilla client</source>
         <comment>VymModel</comment>
         <translation>警告：Bugzillaのクライアントが見つかりませんでした</translation>
@@ -3473,63 +3418,63 @@ Do you want to overwrite it?</source>
 <context>
     <name>VymModel</name>
     <message>
-        <location filename="../vymmodel.cpp" line="127"/>
+        <location filename="../vymmodel.cpp" line="125"/>
         <source>unknown user</source>
         <comment>default name for map author in settings</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="150"/>
+        <location filename="../vymmodel.cpp" line="148"/>
         <source>unnamed</source>
         <translation>名無し</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="453"/>
-        <location filename="../vymmodel.cpp" line="489"/>
-        <location filename="../vymmodel.cpp" line="574"/>
-        <location filename="../vymmodel.cpp" line="654"/>
+        <location filename="../vymmodel.cpp" line="451"/>
+        <location filename="../vymmodel.cpp" line="487"/>
+        <location filename="../vymmodel.cpp" line="572"/>
+        <location filename="../vymmodel.cpp" line="629"/>
         <source>Critical Parse Error</source>
         <translation>重大な解析エラー</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="509"/>
-        <location filename="../vymmodel.cpp" line="559"/>
+        <location filename="../vymmodel.cpp" line="507"/>
+        <location filename="../vymmodel.cpp" line="557"/>
         <source>Critical Load Error</source>
         <translation>重大な読み込みエラー</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="510"/>
+        <location filename="../vymmodel.cpp" line="508"/>
         <source>Couldn&apos;t create temporary directory before load
 </source>
         <translation>テンポラリ·ディレクトリをロードする前に作成できませんでした</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="560"/>
+        <location filename="../vymmodel.cpp" line="558"/>
         <source>Couldn&apos;t find a map (*.xml) in .vym archive.
 </source>
         <translation>.vymアーカイブ内のマップ（*.xmlファイル）が見つかりませんでした。</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="620"/>
+        <location filename="../vymmodel.cpp" line="987"/>
         <source>unknown user</source>
         <comment>Default for lockfiles of maps</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="636"/>
+        <location filename="../vymmodel.cpp" line="1006"/>
         <source>Map seems to be already opened in another vym instance! It will be opened in readonly mode.
 
 Map is locked by &quot;%1&quot; on &quot;%2&quot;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="640"/>
+        <location filename="../vymmodel.cpp" line="1010"/>
         <source>Warning: Map already opended</source>
         <comment>VymModel</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="703"/>
+        <location filename="../vymmodel.cpp" line="678"/>
         <source>The map %1
 did not use the compressed vym file format.
 Writing it uncompressed will also write images 
@@ -3544,123 +3489,136 @@ Do you want to write the map</source>
 マップを書き込みますか</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="711"/>
+        <location filename="../vymmodel.cpp" line="686"/>
         <source>compressed (vym default)</source>
         <translation>圧縮（VYMデフォルト）</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="712"/>
+        <location filename="../vymmodel.cpp" line="687"/>
         <source>uncompressed</source>
         <translation>圧縮抜き</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="713"/>
-        <location filename="../vymmodel.cpp" line="896"/>
+        <location filename="../vymmodel.cpp" line="688"/>
+        <location filename="../vymmodel.cpp" line="871"/>
         <source>Cancel</source>
         <translation>キャンセル</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="742"/>
-        <location filename="../vymmodel.cpp" line="747"/>
+        <location filename="../vymmodel.cpp" line="717"/>
+        <location filename="../vymmodel.cpp" line="722"/>
         <source>Save Error</source>
         <translation>保存エラー</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="743"/>
+        <location filename="../vymmodel.cpp" line="718"/>
         <source>%1
 could not be removed before saving</source>
         <translation>%1
 を保存前に削除できませんでした</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="748"/>
+        <location filename="../vymmodel.cpp" line="723"/>
         <source>%1
 could not be renamed before saving</source>
         <translation>%1
 を保存前に改名できませんでした</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="760"/>
+        <location filename="../vymmodel.cpp" line="735"/>
         <source>Critical Save Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="761"/>
+        <location filename="../vymmodel.cpp" line="736"/>
         <source>Couldn&apos;t create temporary directory before save
 </source>
         <translation>テンポラリ·ディレクトリを保存する前に作成できませんでした</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="819"/>
-        <location filename="../vymmodel.cpp" line="872"/>
-        <location filename="../vymmodel.cpp" line="5737"/>
+        <location filename="../vymmodel.cpp" line="794"/>
+        <location filename="../vymmodel.cpp" line="847"/>
+        <location filename="../vymmodel.cpp" line="5780"/>
         <source>Images</source>
         <translation>画像</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="819"/>
-        <location filename="../vymmodel.cpp" line="872"/>
+        <location filename="../vymmodel.cpp" line="794"/>
+        <location filename="../vymmodel.cpp" line="847"/>
         <source>All</source>
         <comment>Filedialog</comment>
         <translation>全て</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="824"/>
+        <location filename="../vymmodel.cpp" line="799"/>
         <source>Load image</source>
         <translation>画像をロード</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="876"/>
+        <location filename="../vymmodel.cpp" line="851"/>
         <source>Save image</source>
         <translation>画像を保存</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="888"/>
+        <location filename="../vymmodel.cpp" line="863"/>
         <source>The file %1 exists already.
 Do you want to overwrite it?</source>
         <translation>%1は、既に存在します。
 上書きしますか?</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="895"/>
+        <location filename="../vymmodel.cpp" line="870"/>
         <source>Overwrite</source>
         <translation>上書き</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="910"/>
-        <location filename="../vymmodel.cpp" line="912"/>
-        <location filename="../vymmodel.cpp" line="5148"/>
+        <location filename="../vymmodel.cpp" line="885"/>
+        <location filename="../vymmodel.cpp" line="887"/>
+        <location filename="../vymmodel.cpp" line="5191"/>
         <source>Critical Error</source>
         <translation>重大なエラー</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="910"/>
+        <location filename="../vymmodel.cpp" line="885"/>
         <source>Unsupported format in %1</source>
         <translation>%1はサポートされていないフォーマットです</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="912"/>
+        <location filename="../vymmodel.cpp" line="887"/>
         <source>Couldn&apos;t save %1</source>
         <translation>%1を保存できませんでした</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="942"/>
+        <location filename="../vymmodel.cpp" line="917"/>
         <source>Critical Import Error</source>
         <translation>重大なエラー（インポート）</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="942"/>
+        <location filename="../vymmodel.cpp" line="917"/>
         <source>Cannot find the directory %1</source>
         <translation>ディレクトリ%1がみつかりませんでした</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="994"/>
-        <location filename="../vymmodel.cpp" line="997"/>
+        <location filename="../vymmodel.cpp" line="969"/>
+        <location filename="../vymmodel.cpp" line="972"/>
         <source>Choose directory structure to import</source>
         <translation>インポートするディレクトリ構造を選択してください</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="1062"/>
+        <location filename="../vymmodel.cpp" line="1019"/>
+        <source>Cannot create lockfile of map! It will be opened in readonly mode.
+
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../vymmodel.cpp" line="1022"/>
+        <source>Warning</source>
+        <comment>VymModel</comment>
+        <translation type="unfinished">警告</translation>
+    </message>
+    <message>
+        <location filename="../vymmodel.cpp" line="1105"/>
         <source>The file of the map  on disk has changed:
 
    %1
@@ -3673,40 +3631,40 @@ Do you want to reload that map with the new file?</source>
 新しいファイルと、そのマップを再ロードしますか？</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="1069"/>
+        <location filename="../vymmodel.cpp" line="1112"/>
         <source>Reload</source>
         <translation>再ロード</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="1070"/>
+        <location filename="../vymmodel.cpp" line="1113"/>
         <source>Ignore</source>
         <translation>無視</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="1184"/>
-        <location filename="../vymmodel.cpp" line="5096"/>
+        <location filename="../vymmodel.cpp" line="1227"/>
+        <location filename="../vymmodel.cpp" line="5139"/>
         <source>Warning</source>
         <translation>警告</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="1184"/>
+        <location filename="../vymmodel.cpp" line="1227"/>
         <source>Redo failed:
 %1</source>
         <translation>やり直し失敗:
 %1</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="1219"/>
+        <location filename="../vymmodel.cpp" line="1262"/>
         <source>Autosave disabled during undo.</source>
         <translation>自動保存は、元に戻す時には無効になっています。</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="5228"/>
+        <location filename="../vymmodel.cpp" line="5271"/>
         <source>Export map as SVG</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="5262"/>
+        <location filename="../vymmodel.cpp" line="5305"/>
         <source>Export map as XML</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3717,43 +3675,43 @@ Do you want to reload that map with the new file?</source>
 %1</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="1946"/>
+        <location filename="../vymmodel.cpp" line="1989"/>
         <source>Note</source>
         <comment>FindAll in VymModel</comment>
         <translation>ノート</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="2670"/>
+        <location filename="../vymmodel.cpp" line="2713"/>
         <source>Image</source>
         <comment>Default name for new image</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="2903"/>
+        <location filename="../vymmodel.cpp" line="2946"/>
         <source>New map</source>
         <comment>New map</comment>
         <translation type="unfinished">新しいマップ</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="3771"/>
+        <location filename="../vymmodel.cpp" line="3814"/>
         <source>Contacting Bugzilla...</source>
         <comment>VymModel</comment>
         <translation>Bugzillaのに問い合わせ...</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="5096"/>
+        <location filename="../vymmodel.cpp" line="5139"/>
         <source>Script aborted:
 %1</source>
         <translation>スクリプト中断:
 %1</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="5133"/>
+        <location filename="../vymmodel.cpp" line="5176"/>
         <source>Export map as image</source>
         <translation>画像としてマップをエクスポート</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="5148"/>
+        <location filename="../vymmodel.cpp" line="5191"/>
         <source>Couldn&apos;t save QImage %1 in format %2</source>
         <translation>QImage %1を %2のフォーマットで保存できませんでした</translation>
     </message>
@@ -3763,7 +3721,7 @@ Do you want to reload that map with the new file?</source>
         <translation type="vanished">エクスポート済：</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="5173"/>
+        <location filename="../vymmodel.cpp" line="5216"/>
         <source>Export map as PDF</source>
         <translation>PDFとしてマップをエクスポート</translation>
     </message>
@@ -3772,27 +3730,27 @@ Do you want to reload that map with the new file?</source>
         <translation type="vanished">SVGとしてマップをエクスポート</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="5269"/>
+        <location filename="../vymmodel.cpp" line="5312"/>
         <source>Export XML to directory</source>
         <translation>ディレクトリにXMLをエクスポート</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="5321"/>
+        <location filename="../vymmodel.cpp" line="5364"/>
         <source>Critical Export Error</source>
         <translation>重大なエラー（エクスポート）</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="5403"/>
+        <location filename="../vymmodel.cpp" line="5446"/>
         <source>(still experimental)</source>
         <translation>（実験用）</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="5403"/>
+        <location filename="../vymmodel.cpp" line="5446"/>
         <source>Export as csv</source>
         <translation>CSVファイルとしてエクスポート</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="5740"/>
+        <location filename="../vymmodel.cpp" line="5783"/>
         <source>Load background image</source>
         <translation>背景画像をロード</translation>
     </message>

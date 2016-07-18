@@ -4,6 +4,18 @@
 <context>
     <name>AboutDialog</name>
     <message>
+        <location filename="../aboutdialog.cpp" line="105"/>
+        <source>Credits</source>
+        <comment>Help-&gt;About vym dialog</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../aboutdialog.cpp" line="220"/>
+        <source>License</source>
+        <comment>Help-&gt;About vym dialog</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../aboutdialog.cpp" line="225"/>
         <source>Ok</source>
         <comment>Ok Button</comment>
@@ -974,24 +986,24 @@ Dica: Você pode capturar a cor de outro ramo ou região usando CTRL+Botão esqu
         <translation type="obsolete">Informações sobre ferramentas QT</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3439"/>
+        <location filename="../mainwindow.cpp" line="3452"/>
         <source>Overwrite</source>
         <translation>Sobrescrever</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3164"/>
-        <location filename="../mainwindow.cpp" line="3214"/>
-        <location filename="../mainwindow.cpp" line="3440"/>
+        <location filename="../mainwindow.cpp" line="3177"/>
+        <location filename="../mainwindow.cpp" line="3227"/>
+        <location filename="../mainwindow.cpp" line="3453"/>
         <source>Cancel</source>
         <translation>Cancelar</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3163"/>
+        <location filename="../mainwindow.cpp" line="3176"/>
         <source>Open anyway</source>
         <translation>Forçar abrir</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3213"/>
+        <location filename="../mainwindow.cpp" line="3226"/>
         <source>Create</source>
         <translation>Criar</translation>
     </message>
@@ -1006,17 +1018,17 @@ Dica: Você pode capturar a cor de outro ramo ou região usando CTRL+Botão esqu
 </translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3282"/>
+        <location filename="../mainwindow.cpp" line="3295"/>
         <source>Load vym map</source>
         <translation>Carregar mapa VYM</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3285"/>
+        <location filename="../mainwindow.cpp" line="3298"/>
         <source>Import: Add vym map to selection</source>
         <translation>Importar: Adicionar mapa à seleção</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3288"/>
+        <location filename="../mainwindow.cpp" line="3301"/>
         <source>Import: Replace selection with vym map</source>
         <translation>Importar: Substituir seleção com um mapa</translation>
     </message>
@@ -1043,14 +1055,12 @@ não foi possível remover antes de salvar</translation>
         <translation type="obsolete">Exportar XML para diretório</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3736"/>
         <source>Save modified map before closing it</source>
-        <translation>Salvar mapa modificado antes de fechar</translation>
+        <translation type="vanished">Salvar mapa modificado antes de fechar</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3737"/>
         <source>Discard changes</source>
-        <translation>Descartas alterações</translation>
+        <translation type="vanished">Descartas alterações</translation>
     </message>
     <message>
         <source>This map is not saved yet. Do you want to</source>
@@ -1065,21 +1075,10 @@ não foi possível remover antes de salvar</translation>
         <translation type="vanished">VYM - Informações:</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="4091"/>
+        <location filename="../mainwindow.cpp" line="3489"/>
+        <location filename="../mainwindow.cpp" line="3495"/>
         <source>Critical Error</source>
         <translation>Erro Crítico</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="4205"/>
-        <source>Enter sleep time (number of days or date YYYY-MM-DD or DD.MM[.YYYY]</source>
-        <comment>task sleep time dialog</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="4222"/>
-        <source>Couldn&apos;t set sleep time to %1.
-</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Critcal error</source>
@@ -1129,7 +1128,7 @@ vym.pdf in various places.</source>
         <translation type="obsolete">Tecla Delete para apagar ramos</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3155"/>
+        <location filename="../mainwindow.cpp" line="3168"/>
         <source>The map %1
 is already opened.Opening the same map in multiple editors may lead 
 to confusion when finishing working with vym.Do you want to</source>
@@ -1139,7 +1138,7 @@ causar perda de dados pois as mudanças em um não será automaticamente
 replicada no outro. Deseja continuar?</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3207"/>
+        <location filename="../mainwindow.cpp" line="3220"/>
         <source>This map does not exist:
   %1
 Do you want to create a new one?</source>
@@ -1161,31 +1160,29 @@ e emblemas que podem sobrescrever arquivos já presentes no diretório.
 Deseja continuar salvando este mapa?</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3392"/>
+        <location filename="../mainwindow.cpp" line="3405"/>
         <source>Saved  %1</source>
         <translation>Salvo %1</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3396"/>
+        <location filename="../mainwindow.cpp" line="3409"/>
         <source>Couldn&apos;t save </source>
         <translation>Não foi possível salvar </translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3434"/>
+        <location filename="../mainwindow.cpp" line="3447"/>
         <source>The file %1
 exists already. Do you want to</source>
         <translation>O arquivo %1
 já existe. Deseja continuar?</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3731"/>
         <source>The map %1 has been modified but not saved yet. Do you want to</source>
-        <translation>O mapa %1 foi modificado mas não foi salvo ainda. Deseja salvar?</translation>
+        <translation type="vanished">O mapa %1 foi modificado mas não foi salvo ainda. Deseja salvar?</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="4092"/>
         <source>Couldn&apos;t open map %1</source>
-        <translation>Não foi possível abrir o mapa %1</translation>
+        <translation type="vanished">Não foi possível abrir o mapa %1</translation>
     </message>
     <message>
         <source>Exit</source>
@@ -1334,10 +1331,8 @@ já existe. Deseja continuar?</translation>
         <translation type="obsolete">Sobre VYM</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3497"/>
-        <location filename="../mainwindow.cpp" line="3557"/>
         <source>Import</source>
-        <translation>Importar</translation>
+        <translation type="vanished">Importar</translation>
     </message>
     <message>
         <source>KDE Bookmarks</source>
@@ -1354,8 +1349,6 @@ já existe. Deseja continuar?</translation>
         <location filename="../mainwindow.cpp" line="1088"/>
         <location filename="../mainwindow.cpp" line="1092"/>
         <location filename="../mainwindow.cpp" line="1096"/>
-        <location filename="../mainwindow.cpp" line="3639"/>
-        <location filename="../mainwindow.cpp" line="3668"/>
         <source>(still experimental)</source>
         <translation>(ainda em testes)</translation>
     </message>
@@ -1369,10 +1362,8 @@ já existe. Deseja continuar?</translation>
         <translation>Im&amp;primir</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3668"/>
-        <location filename="../mainwindow.cpp" line="3685"/>
         <source>Export to</source>
-        <translation>Exportar para</translation>
+        <translation type="vanished">Exportar para</translation>
     </message>
     <message>
         <source>Hide object in exports</source>
@@ -1763,12 +1754,6 @@ já existe. Deseja continuar?</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3707"/>
-        <source>Couldn&apos;t find configuration for export to LibreOffice
-</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Info</source>
         <translation type="obsolete">Informação</translation>
     </message>
@@ -1887,53 +1872,38 @@ já existe. Deseja continuar?</translation>
         <translation type="unfinished">Seguir Ligação Externa</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3102"/>
+        <location filename="../mainwindow.cpp" line="3115"/>
         <source>unnamed</source>
         <comment>MainWindow: name for new and empty file</comment>
         <translation type="unfinished">sem nome</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3243"/>
+        <location filename="../mainwindow.cpp" line="3256"/>
         <source>Loading: %1</source>
         <comment>Progress dialog while loading maps</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3706"/>
-        <location filename="../mainwindow.cpp" line="3836"/>
-        <location filename="../mainwindow.cpp" line="3879"/>
-        <location filename="../mainwindow.cpp" line="4221"/>
         <source>Warning</source>
-        <translation>Aviso</translation>
+        <translation type="vanished">Aviso</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3837"/>
         <source>Couldn&apos;t find a viewer to open %1.
 </source>
-        <translation>Não foi possível encontrar um programa para abrir %1.
+        <translation type="vanished">Não foi possível encontrar um programa para abrir %1.
 </translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3838"/>
         <source>Please use Settings-&gt;</source>
-        <translation>Por favor use Configurações-&gt;</translation>
+        <translation type="vanished">Por favor use Configurações-&gt;</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3838"/>
         <source>Set application to open an URL</source>
-        <translation>Definir aplicação externa para abrir URL</translation>
+        <translation type="vanished">Definir aplicação externa para abrir URL</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3880"/>
         <source>Couldn&apos;t start %1 to open a new tab in %2.</source>
-        <translation>Não foi possível executar %1 para abrir uma nova aba em %2.</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="4246"/>
-        <source>%1 items on map
-</source>
-        <comment>Info about map</comment>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">Não foi possível executar %1 para abrir uma nova aba em %2.</translation>
     </message>
     <message>
         <source>Set application to open PDF files</source>
@@ -2030,10 +2000,8 @@ já existe. Deseja continuar?</translation>
         <translation type="obsolete">Mostrar janela de histórico</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3494"/>
-        <location filename="../mainwindow.cpp" line="3497"/>
         <source>Bookmarks</source>
-        <translation>Favoritos</translation>
+        <translation type="vanished">Favoritos</translation>
     </message>
     <message>
         <source>Couldn&apos;t start %1 to open a new tab</source>
@@ -3165,39 +3133,16 @@ Deseja sobrescrever o conteúdo?</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="4264"/>
-        <source>branches</source>
-        <comment>Info about map</comment>
+        <location filename="../mainwindow.cpp" line="3489"/>
+        <source>Couldn&apos;t save %1,
+because of existing lockfile:
+
+%2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="4265"/>
-        <source>notes</source>
-        <comment>Info about map</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="4266"/>
-        <source>images</source>
-        <comment>Info about map</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="4267"/>
-        <source>tasks</source>
-        <comment>Info about map</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="4268"/>
-        <source>slides</source>
-        <comment>Info about map</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="4269"/>
-        <source>xLinks</source>
-        <comment>Info about map</comment>
+        <location filename="../mainwindow.cpp" line="3495"/>
+        <source>Couldn&apos;t save %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3273,71 +3218,28 @@ Deseja sobrescrever o conteúdo?</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3293"/>
+        <location filename="../mainwindow.cpp" line="3306"/>
         <source>or</source>
         <comment>File Dialog</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3423"/>
+        <location filename="../mainwindow.cpp" line="3436"/>
         <source>Save map as</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3524"/>
-        <source>Load Freemind map</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="3639"/>
-        <source>Export as CSV</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="3955"/>
         <source>Enter URL:</source>
-        <translation type="unfinished">Informe URL:</translation>
+        <translation type="obsolete">Informe URL:</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3978"/>
-        <source>HTML</source>
-        <comment>Filedialog</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="3979"/>
-        <source>Text</source>
-        <comment>Filedialog</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="3980"/>
-        <source>Spreadsheet</source>
-        <comment>Filedialog</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="3981"/>
-        <source>Textdocument</source>
-        <comment>Filedialog</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="3982"/>
         <source>Images</source>
         <comment>Filedialog</comment>
-        <translation type="unfinished">Imagens</translation>
+        <translation type="obsolete">Imagens</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="3986"/>
-        <source>Set URL to a local file</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="4144"/>
-        <location filename="../mainwindow.cpp" line="4146"/>
         <source>Link to another map</source>
-        <translation type="unfinished">Ligar a outro mapa</translation>
+        <translation type="obsolete">Ligar a outro mapa</translation>
     </message>
 </context>
 <context>
@@ -3928,7 +3830,7 @@ Do you risk to overwrite its contents?</source>
 Deseja sobrescrever o conteúdo?</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="3741"/>
+        <location filename="../vymmodel.cpp" line="3784"/>
         <source>No Bugzilla client found.  For openSUSE you can install by (running as root):
 
 </source>
@@ -3936,14 +3838,14 @@ Deseja sobrescrever o conteúdo?</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="3746"/>
+        <location filename="../vymmodel.cpp" line="3789"/>
         <source>Alternatively you can also add the repository
 and install the perl module for Bugzilla access using YaST</source>
         <comment>VymModel, how to install Bugzilla client module</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="3749"/>
+        <location filename="../vymmodel.cpp" line="3792"/>
         <source>Warning: Couldn&apos;t find Bugzilla client</source>
         <comment>VymModel</comment>
         <translation type="unfinished"></translation>
@@ -4617,65 +4519,65 @@ Deseja sobrescrevê-lo?</translation>
 <context>
     <name>VymModel</name>
     <message>
-        <location filename="../vymmodel.cpp" line="127"/>
+        <location filename="../vymmodel.cpp" line="125"/>
         <source>unknown user</source>
         <comment>default name for map author in settings</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="150"/>
+        <location filename="../vymmodel.cpp" line="148"/>
         <source>unnamed</source>
         <translation type="unfinished">sem nome</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="453"/>
-        <location filename="../vymmodel.cpp" line="489"/>
-        <location filename="../vymmodel.cpp" line="574"/>
-        <location filename="../vymmodel.cpp" line="654"/>
+        <location filename="../vymmodel.cpp" line="451"/>
+        <location filename="../vymmodel.cpp" line="487"/>
+        <location filename="../vymmodel.cpp" line="572"/>
+        <location filename="../vymmodel.cpp" line="629"/>
         <source>Critical Parse Error</source>
         <translation type="unfinished">Erro Crítico ao Ler</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="509"/>
-        <location filename="../vymmodel.cpp" line="559"/>
+        <location filename="../vymmodel.cpp" line="507"/>
+        <location filename="../vymmodel.cpp" line="557"/>
         <source>Critical Load Error</source>
         <translation type="unfinished">Erro Crítico ao Carregar</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="510"/>
+        <location filename="../vymmodel.cpp" line="508"/>
         <source>Couldn&apos;t create temporary directory before load
 </source>
         <translation type="unfinished">Não foi possível criar diretório temporário antes de carregar
 </translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="560"/>
+        <location filename="../vymmodel.cpp" line="558"/>
         <source>Couldn&apos;t find a map (*.xml) in .vym archive.
 </source>
         <translation type="unfinished">Não foi possível encontrar um mapa (.xml) dentro do arquivo .vym.
 </translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="620"/>
+        <location filename="../vymmodel.cpp" line="987"/>
         <source>unknown user</source>
         <comment>Default for lockfiles of maps</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="636"/>
+        <location filename="../vymmodel.cpp" line="1006"/>
         <source>Map seems to be already opened in another vym instance! It will be opened in readonly mode.
 
 Map is locked by &quot;%1&quot; on &quot;%2&quot;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="640"/>
+        <location filename="../vymmodel.cpp" line="1010"/>
         <source>Warning: Map already opended</source>
         <comment>VymModel</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="703"/>
+        <location filename="../vymmodel.cpp" line="678"/>
         <source>The map %1
 did not use the compressed vym file format.
 Writing it uncompressed will also write images 
@@ -4689,122 +4591,135 @@ e emblemas que podem sobrescrever arquivos já presentes no diretório.
 Deseja continuar salvando este mapa?</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="711"/>
+        <location filename="../vymmodel.cpp" line="686"/>
         <source>compressed (vym default)</source>
         <translation type="unfinished">comprimido (padrão)</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="712"/>
+        <location filename="../vymmodel.cpp" line="687"/>
         <source>uncompressed</source>
         <translation type="unfinished">descomprimido</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="713"/>
-        <location filename="../vymmodel.cpp" line="896"/>
+        <location filename="../vymmodel.cpp" line="688"/>
+        <location filename="../vymmodel.cpp" line="871"/>
         <source>Cancel</source>
         <translation type="unfinished">Cancelar</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="742"/>
-        <location filename="../vymmodel.cpp" line="747"/>
+        <location filename="../vymmodel.cpp" line="717"/>
+        <location filename="../vymmodel.cpp" line="722"/>
         <source>Save Error</source>
         <translation type="unfinished">Erro ao Salvar</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="743"/>
+        <location filename="../vymmodel.cpp" line="718"/>
         <source>%1
 could not be removed before saving</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="748"/>
+        <location filename="../vymmodel.cpp" line="723"/>
         <source>%1
 could not be renamed before saving</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="760"/>
+        <location filename="../vymmodel.cpp" line="735"/>
         <source>Critical Save Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="761"/>
+        <location filename="../vymmodel.cpp" line="736"/>
         <source>Couldn&apos;t create temporary directory before save
 </source>
         <translation type="unfinished">Não foi possível criar diretório temporário antes de salvar
 </translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="819"/>
-        <location filename="../vymmodel.cpp" line="872"/>
-        <location filename="../vymmodel.cpp" line="5737"/>
+        <location filename="../vymmodel.cpp" line="794"/>
+        <location filename="../vymmodel.cpp" line="847"/>
+        <location filename="../vymmodel.cpp" line="5780"/>
         <source>Images</source>
         <translation type="unfinished">Imagens</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="819"/>
-        <location filename="../vymmodel.cpp" line="872"/>
+        <location filename="../vymmodel.cpp" line="794"/>
+        <location filename="../vymmodel.cpp" line="847"/>
         <source>All</source>
         <comment>Filedialog</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="824"/>
+        <location filename="../vymmodel.cpp" line="799"/>
         <source>Load image</source>
         <translation type="unfinished">Carregar imagem</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="876"/>
+        <location filename="../vymmodel.cpp" line="851"/>
         <source>Save image</source>
         <translation type="unfinished">Salvar imagem</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="888"/>
+        <location filename="../vymmodel.cpp" line="863"/>
         <source>The file %1 exists already.
 Do you want to overwrite it?</source>
         <translation type="unfinished">O arquivo %1 já existe.
 Deseja sobrescrevê-lo?</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="895"/>
+        <location filename="../vymmodel.cpp" line="870"/>
         <source>Overwrite</source>
         <translation type="unfinished">Sobrescrever</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="910"/>
-        <location filename="../vymmodel.cpp" line="912"/>
-        <location filename="../vymmodel.cpp" line="5148"/>
+        <location filename="../vymmodel.cpp" line="885"/>
+        <location filename="../vymmodel.cpp" line="887"/>
+        <location filename="../vymmodel.cpp" line="5191"/>
         <source>Critical Error</source>
         <translation type="unfinished">Erro Crítico</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="910"/>
+        <location filename="../vymmodel.cpp" line="885"/>
         <source>Unsupported format in %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="912"/>
+        <location filename="../vymmodel.cpp" line="887"/>
         <source>Couldn&apos;t save %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="942"/>
+        <location filename="../vymmodel.cpp" line="917"/>
         <source>Critical Import Error</source>
         <translation type="unfinished">Erro Crítico ao Importar</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="942"/>
+        <location filename="../vymmodel.cpp" line="917"/>
         <source>Cannot find the directory %1</source>
         <translation type="unfinished">Não foi possível encontrar o diretório %1</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="994"/>
-        <location filename="../vymmodel.cpp" line="997"/>
+        <location filename="../vymmodel.cpp" line="969"/>
+        <location filename="../vymmodel.cpp" line="972"/>
         <source>Choose directory structure to import</source>
         <translation type="unfinished">Escolha o diretório para importar</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="1062"/>
+        <location filename="../vymmodel.cpp" line="1019"/>
+        <source>Cannot create lockfile of map! It will be opened in readonly mode.
+
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../vymmodel.cpp" line="1022"/>
+        <source>Warning</source>
+        <comment>VymModel</comment>
+        <translation type="unfinished">Aviso</translation>
+    </message>
+    <message>
+        <location filename="../vymmodel.cpp" line="1105"/>
         <source>The file of the map  on disk has changed:
 
    %1
@@ -4813,52 +4728,52 @@ Do you want to reload that map with the new file?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="1069"/>
+        <location filename="../vymmodel.cpp" line="1112"/>
         <source>Reload</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="1070"/>
+        <location filename="../vymmodel.cpp" line="1113"/>
         <source>Ignore</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="1184"/>
-        <location filename="../vymmodel.cpp" line="5096"/>
+        <location filename="../vymmodel.cpp" line="1227"/>
+        <location filename="../vymmodel.cpp" line="5139"/>
         <source>Warning</source>
         <translation type="unfinished">Aviso</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="1184"/>
+        <location filename="../vymmodel.cpp" line="1227"/>
         <source>Redo failed:
 %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="1219"/>
+        <location filename="../vymmodel.cpp" line="1262"/>
         <source>Autosave disabled during undo.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="1946"/>
+        <location filename="../vymmodel.cpp" line="1989"/>
         <source>Note</source>
         <comment>FindAll in VymModel</comment>
         <translation type="unfinished">Nota</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="2670"/>
+        <location filename="../vymmodel.cpp" line="2713"/>
         <source>Image</source>
         <comment>Default name for new image</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="2903"/>
+        <location filename="../vymmodel.cpp" line="2946"/>
         <source>New map</source>
         <comment>New map</comment>
         <translation type="unfinished">Novo mapa</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="5096"/>
+        <location filename="../vymmodel.cpp" line="5139"/>
         <source>Script aborted:
 %1</source>
         <translation type="unfinished"></translation>
@@ -4873,7 +4788,7 @@ Do you want to reload that map with the new file?</source>
         <translation type="obsolete">Imagens</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="3771"/>
+        <location filename="../vymmodel.cpp" line="3814"/>
         <source>Contacting Bugzilla...</source>
         <comment>VymModel</comment>
         <translation type="unfinished"></translation>
@@ -4883,37 +4798,37 @@ Do you want to reload that map with the new file?</source>
         <translation type="obsolete">Ligar a outro mapa</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="5133"/>
+        <location filename="../vymmodel.cpp" line="5176"/>
         <source>Export map as image</source>
         <translation type="unfinished">Exportar mapa como imagem</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="5148"/>
+        <location filename="../vymmodel.cpp" line="5191"/>
         <source>Couldn&apos;t save QImage %1 in format %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="5173"/>
+        <location filename="../vymmodel.cpp" line="5216"/>
         <source>Export map as PDF</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="5228"/>
+        <location filename="../vymmodel.cpp" line="5271"/>
         <source>Export map as SVG</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="5262"/>
+        <location filename="../vymmodel.cpp" line="5305"/>
         <source>Export map as XML</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="5269"/>
+        <location filename="../vymmodel.cpp" line="5312"/>
         <source>Export XML to directory</source>
         <translation type="unfinished">Exportar XML para diretório</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="5321"/>
+        <location filename="../vymmodel.cpp" line="5364"/>
         <source>Critical Export Error</source>
         <translation type="unfinished">Erro Crítico ao Exportar</translation>
     </message>
@@ -4922,17 +4837,17 @@ Do you want to reload that map with the new file?</source>
         <translation type="obsolete">Exportar como LaTeX</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="5403"/>
+        <location filename="../vymmodel.cpp" line="5446"/>
         <source>(still experimental)</source>
         <translation type="unfinished">(ainda em testes)</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="5403"/>
+        <location filename="../vymmodel.cpp" line="5446"/>
         <source>Export as csv</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="5740"/>
+        <location filename="../vymmodel.cpp" line="5783"/>
         <source>Load background image</source>
         <translation type="unfinished"></translation>
     </message>
