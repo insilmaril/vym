@@ -3742,7 +3742,9 @@ aber noch nicht gespeichert. Wollen Sie </translation>
 because of existing lockfile:
 
 %2</source>
-        <translation>Konnte %1 nicht speichern,\nda das Lockfile nicht angelegt werden konnte:\n%2</translation>
+        <translation type="unfinished">Konnte %1 nicht speichern,
+da das Lockfile nicht angelegt werden konnte:
+%2</translation>
     </message>
     <message>
         <source>Couldn&apos;t save, because of existing lockfile:
