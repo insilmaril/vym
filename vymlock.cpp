@@ -19,7 +19,7 @@ VymLock::VymLock( const QString &fn )
 
 VymLock::~VymLock()
 {
-    if ( !releaseLock()) 
+    if ( state == lockedByMyself && !releaseLock()) 
         qWarning() << "Destructor VymLock:  Removing LockFile failed";
 }
 
