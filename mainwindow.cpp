@@ -3486,7 +3486,7 @@ void Main::fileSaveAs(const SaveMode& savemode)
                 QFile lockFile( fn + ".lock" );
                 if (lockFile.exists() )
                 {
-                    QMessageBox::critical( 0, tr( "Critical Error" ), tr("Couldn't save, because of existing lockfile:\n\n%2").arg( lockFile.fileName()  ));
+                    QMessageBox::critical( 0, tr( "Critical Error" ), tr("Couldn't save %1,\nbecause of existing lockfile:\n\n%2").arg(arg( lockFile.fileName()  ));
                     return;
                 }
 
