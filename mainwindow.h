@@ -86,6 +86,7 @@ public:
     VymModel* getModel(uint) const;
     void gotoModel (VymModel *m);
     int modelCount();
+    void updateTabName(VymModel *vm);
     
 private slots:
     void editorChanged();

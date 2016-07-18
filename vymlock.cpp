@@ -19,17 +19,13 @@ VymLock::VymLock( const QString &fn )
 
 VymLock::~VymLock()
 {
-    if (isMyLockFile)
-    {
-        QFile LockFile( mapPath + ".lock" );
-        if (!LockFile.remove() )
+    if ( !releaseLock()) 
         qWarning() << "Destructor VymLock:  Removing LockFile failed";
-    }
 }
 
 void VymLock::init()
 {
-    isMyLockFile = false;
+    state = undefined;
 }
 
 bool VymLock::tryLock()
@@ -54,6 +50,7 @@ bool VymLock::tryLock()
             match = re.match( s );
             if ( match.hasMatch() ) host = match.captured(1);
         }
+        state = lockedByOther;
         return false; 
     }
 
@@ -62,10 +59,9 @@ bool VymLock::tryLock()
         if (debug) qWarning() << QString("VymLock::tryLock failed: Cannot open lockFile %1\n%2")
                     .arg( mapPath + ".lock")
                     .arg( lockFile.errorString() );
+        state = notWritable;
         return false;
     }
-
-    isMyLockFile = true;
 
     QString s;
     if (!author.isEmpty() ) s  = QString( "author: \"%1\"\n").arg( author );
@@ -79,17 +75,25 @@ bool VymLock::tryLock()
     }
 
     lockFile.close();
+    state = lockedByMyself;
+
     return true;
 }
 
-bool VymLock::isLocked()
+VymLock::LockState VymLock::getState()
 {
-    QFile lockFile( mapPath + ".lock" );
-    return lockFile.exists();
+    return state;
 }
 
-void VymLock::releaseLock() // FIXME-2 missing
+bool VymLock::releaseLock() 
 {
+    if (state == lockedByMyself)
+    {
+        QFile LockFile( mapPath + ".lock" );
+        if (LockFile.remove() )
+            return true;
+    }
+    return false;
 }
 
 bool VymLock::rename( const QString &newMapPath)

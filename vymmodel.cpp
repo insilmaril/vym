@@ -103,8 +103,6 @@ VymModel::~VymModel()
     fileChangedTimer->stop();
     stopAllAnimation();
 
-    vymLock.releaseLock();
-
     //qApp->processEvents();	// Update view (scene()->update() is not enough)
     //qDebug() << "Destr VymModel end   this="<<this;
 }   
@@ -616,32 +614,9 @@ File::ErrorCode VymModel::loadMap (
 		resetHistory();
 		resetSelectionHistory();
 
-                // Defaults for author and host in vymLock
-                QString defAuthor = tr( "unknown user", "Default for lockfiles of maps");   // FIXME-2 set default author in settings
-                QString defHost   = QHostInfo::localHostName();      
-                vymLock.setMapPath( fname );
-                vymLock.setAuthor( settings.value( "/user/name", defAuthor ).toString() ); 
-                if ( getenv("HOST") != 0 ) 
-                    vymLock.setHost( getenv("HOST") );
-                else
-                    vymLock.setHost( defHost );
+                if (! tryVymLock() && debug ) 
+                    qWarning() << "VM::loadMap  no lockfile created!";
 
-                // Now try to lock
-                if (!vymLock.tryLock() )
-                {
-                    setReadOnly( true );
-                    WarningDialog dia;
-                    QString a = vymLock.getAuthor();
-                    QString h = vymLock.getHost();
-                    QString s = QString( tr("Map seems to be already opened in another vym instance! "
-                           "It will be opened in readonly mode.\n\n"
-                           "Map is locked by \"%1\" on \"%2\"" )) .arg(a).arg(h);
-                    dia.setText( s );
-                    dia.setWindowTitle(tr("Warning: Map already opended","VymModel"));
-                    dia.showCancelButton( false );
-                    dia.setShowAgainName("/mainwindow/mapIsLocked");
-                    dia.exec();
-                }
             }
     
 	    reposition();   // to generate bbox sizes
@@ -675,7 +650,7 @@ File::ErrorCode VymModel::loadMap (
 	mapEditor->setAngleTarget (rotationAngle);
     }
 
-    if (vymView) vymView->readSettings();
+    if (vymView) vymView->readSettings();  
 
     qApp->processEvents();  // Update view (scene()->update() is not enough)
     return err;
@@ -1006,17 +981,72 @@ void VymModel::importDir()
     }	
 }
 
+bool VymModel::tryVymLock()
+{
+    // Defaults for author and host in vymLock
+    QString defAuthor = tr( "unknown user", "Default for lockfiles of maps");   // FIXME-2 set default author in settings
+    QString defHost   = QHostInfo::localHostName();      
+    vymLock.setMapPath( filePath );
+    vymLock.setAuthor( settings.value( "/user/name", defAuthor ).toString() ); 
+    if ( getenv("HOST") != 0 ) 
+        vymLock.setHost( getenv("HOST") );
+    else
+        vymLock.setHost( defHost );
+    
+    // Now try to lock
+    if (!vymLock.tryLock() )
+    {
+        qDebug()<<"Locking failed in vymLock!";
+        setReadOnly( true );
+        if (vymLock.getState() == VymLock::lockedByOther)
+        {
+            WarningDialog dia;
+            QString a = vymLock.getAuthor();
+            QString h = vymLock.getHost();
+            QString s = QString( tr("Map seems to be already opened in another vym instance! "
+                   "It will be opened in readonly mode.\n\n"
+                   "Map is locked by \"%1\" on \"%2\"" )) .arg(a).arg(h);
+            dia.setText( s );
+            dia.setWindowTitle(tr("Warning: Map already opended","VymModel"));
+            dia.showCancelButton( false );
+            dia.setShowAgainName("/mainwindow/mapIsLocked");
+            dia.exec();
+        } else if (vymLock.getState() == VymLock::notWritable)
+        {
+            WarningDialog dia;
+            QString a = vymLock.getAuthor();
+            QString h = vymLock.getHost();
+            QString s = QString( tr("Cannot create lockfile of map! "
+                        "It will be opened in readonly mode.\n\n" ));
+            dia.setText( s );
+            dia.setWindowTitle(tr("Warning","VymModel"));
+            dia.showCancelButton( false );
+            //dia.setShowAgainName("/mainwindow/mapIsLocked");
+            dia.exec();
+        }
+        return false;
+    }
+    return true;
+}
+
 bool VymModel::renameMap( const QString &newPath)
 {
     QString oldPath = filePath;
     setFilePath ( newPath );
-    if (! vymLock.rename( fileName ))
+    if (vymLock.getState() == VymLock::lockedByMyself)
     {
-        qWarning ("Warning: VymModel::renameMap failed");
-        setFilePath( oldPath );
-        return false;
+        // vymModel owns the lockfile, try to rename it
+        if (! vymLock.rename( fileName ))
+        {
+            qWarning ("Warning: VymModel::renameMap failed");
+            setFilePath( oldPath );
+            return false;
+        } else
+            return true;
     }
-    return true;
+
+    // try to create new lockfile for the lock states: lockedByOther and notWritable
+    return tryVymLock();
 }
 
 void VymModel::setReadOnly( bool b )
@@ -1086,7 +1116,7 @@ void VymModel::fileChanged()
 		case QMessageBox::Yes:
 		    // Reload map
 		    mainWindow->initProgressCounter (1);
-		    loadMap (filePath);
+		    loadMap (filePath);  
 		    mainWindow->removeProgressCounter ();
 		    break;
 		case QMessageBox::Cancel:

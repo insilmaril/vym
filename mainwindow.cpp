@@ -3073,6 +3073,19 @@ int Main::modelCount()
     return vymViews.count();
 }
 
+void Main::updateTabName( VymModel *vm)
+{
+    foreach (VymView *vv,vymViews)
+    {
+	VymModel *m = vv->getModel();
+	if (m == vm) 
+        {
+            tabWidget->setTabText (tabWidget->currentIndex(), m->getFileName() );
+            break;
+        }
+    }
+}
+
 void Main::editorChanged()
 {
     VymModel *vm=currentModel();
@@ -3485,9 +3498,9 @@ void Main::fileSaveAs(const SaveMode& savemode)
             }
 	    fileSave(m, savemode);
 
-	    // Set name of tab, assuming current tab is the one we just saved
+	    // Set name of tab
 	    if (savemode == CompleteMap)
-		tabWidget->setTabText (tabWidget->currentIndex(), m->getFileName() );
+                updateTabName( m );
 	    else
             {   // Renaming map to original name, because we only saved the selected part of it 
 		m->setFilePath (fn_org);

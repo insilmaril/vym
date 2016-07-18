@@ -6,13 +6,14 @@ extern bool debug;
 class VymLock
 {
 public:
+    enum LockState {undefined, lockedByMyself, lockedByOther, notWritable};
     VymLock();
     VymLock( const QString &fn );
     ~VymLock();
     void init();
     bool tryLock();
-    bool isLocked();
-    void releaseLock();
+    LockState getState();
+    bool releaseLock();
     bool rename( const QString &newMapPath);
     void setAuthor(const QString &s);
     QString getAuthor();
@@ -26,7 +27,7 @@ private:
     QString author;
     QString host;
     QString mapPath;
-    bool isMyLockFile;
+    LockState state;
 };
 
 #endif
