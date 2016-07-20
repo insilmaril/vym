@@ -1097,32 +1097,39 @@ void VymModel::fileChanged()
     // Check if file on disk has changed meanwhile
     if (!filePath.isEmpty())
     {
-	QDateTime tmod=QFileInfo (filePath).lastModified();
-	if (tmod>fileChangedTime)
-	{
-	    // FIXME-4 VM switch to current mapeditor and finish lineedits...
-	    QMessageBox mb( vymName,
-		tr("The file of the map  on disk has changed:\n\n"  
-		   "   %1\n\nDo you want to reload that map with the new file?").arg(filePath),
-		QMessageBox::Question,
-		QMessageBox::Yes ,
-		QMessageBox::Cancel | QMessageBox::Default,
-		QMessageBox::NoButton );
+        if (readonly)
+        {
+            // unset readonly if lockfile is gone
+            if (vymLock.tryLock() ) setReadOnly( false );
+        } else
+        {
+            QDateTime tmod=QFileInfo (filePath).lastModified();
+            if (tmod>fileChangedTime)
+            {
+                // FIXME-4 VM switch to current mapeditor and finish lineedits...
+                QMessageBox mb( vymName,
+                    tr("The file of the map  on disk has changed:\n\n"  
+                       "   %1\n\nDo you want to reload that map with the new file?").arg(filePath),
+                    QMessageBox::Question,
+                    QMessageBox::Yes ,
+                    QMessageBox::Cancel | QMessageBox::Default,
+                    QMessageBox::NoButton );
 
-	    mb.setButtonText( QMessageBox::Yes, tr("Reload"));
-	    mb.setButtonText( QMessageBox::No, tr("Ignore"));
-	    switch( mb.exec() ) 
-	    {
-		case QMessageBox::Yes:
-		    // Reload map
-		    mainWindow->initProgressCounter (1);
-		    loadMap (filePath);  
-		    mainWindow->removeProgressCounter ();
-		    break;
-		case QMessageBox::Cancel:
-		    fileChangedTime=tmod; // allow autosave to overwrite newer file!
-	    }
-	}
+                mb.setButtonText( QMessageBox::Yes, tr("Reload"));
+                mb.setButtonText( QMessageBox::No, tr("Ignore"));
+                switch( mb.exec() ) 
+                {
+                    case QMessageBox::Yes:
+                        // Reload map
+                        mainWindow->initProgressCounter (1);
+                        loadMap (filePath);  
+                        mainWindow->removeProgressCounter ();
+                        break;
+                    case QMessageBox::Cancel:
+                        fileChangedTime=tmod; // allow autosave to overwrite newer file!
+                }
+            }
+        }
     }	
 }
 
