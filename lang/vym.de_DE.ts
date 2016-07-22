@@ -5765,7 +5765,7 @@ Riskieren Sie es dessen Inhalt zu überschreiben?</translation>
 %1</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="3784"/>
+        <location filename="../vymmodel.cpp" line="3791"/>
         <source>No Bugzilla client found.  For openSUSE you can install by (running as root):
 
 </source>
@@ -5775,7 +5775,7 @@ Riskieren Sie es dessen Inhalt zu überschreiben?</translation>
 </translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="3789"/>
+        <location filename="../vymmodel.cpp" line="3796"/>
         <source>Alternatively you can also add the repository
 and install the perl module for Bugzilla access using YaST</source>
         <comment>VymModel, how to install Bugzilla client module</comment>
@@ -5783,7 +5783,7 @@ and install the perl module for Bugzilla access using YaST</source>
 Bugzilla Zugriff in YaST installieren</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="3792"/>
+        <location filename="../vymmodel.cpp" line="3799"/>
         <source>Warning: Couldn&apos;t find Bugzilla client</source>
         <comment>VymModel</comment>
         <translation>Warnung: Konnte Bugzilla Client nicht finden</translation>
@@ -6775,7 +6775,7 @@ konnte vor dem Speichern nicht umbenannt werden</translation>
     <message>
         <location filename="../vymmodel.cpp" line="794"/>
         <location filename="../vymmodel.cpp" line="847"/>
-        <location filename="../vymmodel.cpp" line="5780"/>
+        <location filename="../vymmodel.cpp" line="5787"/>
         <source>Images</source>
         <translation>Bilder</translation>
     </message>
@@ -6811,7 +6811,7 @@ Wollen Sie sie überschreiben?</translation>
     <message>
         <location filename="../vymmodel.cpp" line="885"/>
         <location filename="../vymmodel.cpp" line="887"/>
-        <location filename="../vymmodel.cpp" line="5191"/>
+        <location filename="../vymmodel.cpp" line="5198"/>
         <source>Critical Error</source>
         <translation>Kritischer Fehler</translation>
     </message>
@@ -6855,7 +6855,7 @@ Wollen Sie sie überschreiben?</translation>
         <translation>Warnung</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="1105"/>
+        <location filename="../vymmodel.cpp" line="1111"/>
         <source>The file of the map  on disk has changed:
 
    %1
@@ -6868,30 +6868,30 @@ Do you want to reload that map with the new file?</source>
 Soll die Map durch die neue Datei ersetzt werden?</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="1112"/>
+        <location filename="../vymmodel.cpp" line="1118"/>
         <source>Reload</source>
         <translation>Neu laden</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="1113"/>
+        <location filename="../vymmodel.cpp" line="1119"/>
         <source>Ignore</source>
         <translation>Ignorieren</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="1227"/>
-        <location filename="../vymmodel.cpp" line="5139"/>
+        <location filename="../vymmodel.cpp" line="1234"/>
+        <location filename="../vymmodel.cpp" line="5146"/>
         <source>Warning</source>
         <translation>Warnung</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="1227"/>
+        <location filename="../vymmodel.cpp" line="1234"/>
         <source>Redo failed:
 %1</source>
         <translation>Wiederholen nicht fehlgeschlagen:
 %1</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="1262"/>
+        <location filename="../vymmodel.cpp" line="1269"/>
         <source>Autosave disabled during undo.</source>
         <translation>Autosave ausgeschaltet während der Aktion &quot;Rückgängig&quot;</translation>
     </message>
@@ -6902,25 +6902,25 @@ Soll die Map durch die neue Datei ersetzt werden?</translation>
 %1</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="1989"/>
+        <location filename="../vymmodel.cpp" line="1996"/>
         <source>Note</source>
         <comment>FindAll in VymModel</comment>
         <translation>Notiz</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="2713"/>
+        <location filename="../vymmodel.cpp" line="2720"/>
         <source>Image</source>
         <comment>Default name for new image</comment>
         <translation>Bild</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="2946"/>
+        <location filename="../vymmodel.cpp" line="2953"/>
         <source>New map</source>
         <comment>New map</comment>
         <translation>Neue Map</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="5139"/>
+        <location filename="../vymmodel.cpp" line="5146"/>
         <source>Script aborted:
 %1</source>
         <translation>Skript abgebrochen:
@@ -6964,7 +6964,7 @@ Soll die Map durch die neue Datei ersetzt werden?</translation>
         <translation type="obsolete">URL zu einer lokalen Datei setzen</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="3814"/>
+        <location filename="../vymmodel.cpp" line="3821"/>
         <source>Contacting Bugzilla...</source>
         <comment>VymModel</comment>
         <translation>Kontaktiere Bugzilla...</translation>
@@ -6974,12 +6974,12 @@ Soll die Map durch die neue Datei ersetzt werden?</translation>
         <translation type="obsolete">Verbindung zu einer anderen Map</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="5176"/>
+        <location filename="../vymmodel.cpp" line="5183"/>
         <source>Export map as image</source>
         <translation>Map als Bild exportieren</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="5191"/>
+        <location filename="../vymmodel.cpp" line="5198"/>
         <source>Couldn&apos;t save QImage %1 in format %2</source>
         <translation>Konnte Bild %1 nicht im Format %2 speichern</translation>
     </message>
@@ -6989,27 +6989,27 @@ Soll die Map durch die neue Datei ersetzt werden?</translation>
         <translation type="vanished">Exportiert:</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="5216"/>
+        <location filename="../vymmodel.cpp" line="5223"/>
         <source>Export map as PDF</source>
         <translation>Als PDF exportieren</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="5271"/>
+        <location filename="../vymmodel.cpp" line="5278"/>
         <source>Export map as SVG</source>
         <translation>Als SVG exportieren</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="5305"/>
+        <location filename="../vymmodel.cpp" line="5312"/>
         <source>Export map as XML</source>
         <translation>Als XML exportieren</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="5312"/>
+        <location filename="../vymmodel.cpp" line="5319"/>
         <source>Export XML to directory</source>
         <translation>Exportiere XML in Verzeichnis</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="5364"/>
+        <location filename="../vymmodel.cpp" line="5371"/>
         <source>Critical Export Error</source>
         <translation>Kritischer Fehler beim Exportieren</translation>
     </message>
@@ -7018,17 +7018,17 @@ Soll die Map durch die neue Datei ersetzt werden?</translation>
         <translation type="obsolete">Exportiere als LaTeX Datei</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="5446"/>
+        <location filename="../vymmodel.cpp" line="5453"/>
         <source>(still experimental)</source>
         <translation>(noch experimentelle Funktion)</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="5446"/>
+        <location filename="../vymmodel.cpp" line="5453"/>
         <source>Export as csv</source>
         <translation>Exportiere als CSV</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="5783"/>
+        <location filename="../vymmodel.cpp" line="5790"/>
         <source>Load background image</source>
         <translation>Hintergrundbild laden</translation>
     </message>

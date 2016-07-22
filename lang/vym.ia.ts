@@ -3282,7 +3282,7 @@ Tu risca de super scriber su contentos?</translation>
 %2.</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="3784"/>
+        <location filename="../vymmodel.cpp" line="3791"/>
         <source>No Bugzilla client found.  For openSUSE you can install by (running as root):
 
 </source>
@@ -3292,7 +3292,7 @@ Tu risca de super scriber su contentos?</translation>
 </translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="3789"/>
+        <location filename="../vymmodel.cpp" line="3796"/>
         <source>Alternatively you can also add the repository
 and install the perl module for Bugzilla access using YaST</source>
         <comment>VymModel, how to install Bugzilla client module</comment>
@@ -3300,7 +3300,7 @@ and install the perl module for Bugzilla access using YaST</source>
 e installar le modulo de perl per le accesso de Bugzilla usante YaST</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="3792"/>
+        <location filename="../vymmodel.cpp" line="3799"/>
         <source>Warning: Couldn&apos;t find Bugzilla client</source>
         <comment>VymModel</comment>
         <translation>Advertimento: il non pote trovar cliente de Bugzilla</translation>
@@ -4026,7 +4026,7 @@ could not be renamed before saving</source>
     <message>
         <location filename="../vymmodel.cpp" line="794"/>
         <location filename="../vymmodel.cpp" line="847"/>
-        <location filename="../vymmodel.cpp" line="5780"/>
+        <location filename="../vymmodel.cpp" line="5787"/>
         <source>Images</source>
         <translation>Imagines</translation>
     </message>
@@ -4061,7 +4061,7 @@ Do you want to overwrite it?</source>
     <message>
         <location filename="../vymmodel.cpp" line="885"/>
         <location filename="../vymmodel.cpp" line="887"/>
-        <location filename="../vymmodel.cpp" line="5191"/>
+        <location filename="../vymmodel.cpp" line="5198"/>
         <source>Critical Error</source>
         <translation>Error critic</translation>
     </message>
@@ -4105,7 +4105,7 @@ Do you want to overwrite it?</source>
         <translation type="unfinished">Advertimento</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="1105"/>
+        <location filename="../vymmodel.cpp" line="1111"/>
         <source>The file of the map  on disk has changed:
 
    %1
@@ -4118,94 +4118,94 @@ Do you want to reload that map with the new file?</source>
 Tu vole recargar le mappa con le nove file?</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="1112"/>
+        <location filename="../vymmodel.cpp" line="1118"/>
         <source>Reload</source>
         <translation>Recarga</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="1113"/>
+        <location filename="../vymmodel.cpp" line="1119"/>
         <source>Ignore</source>
         <translation>Ignora</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="1227"/>
-        <location filename="../vymmodel.cpp" line="5139"/>
+        <location filename="../vymmodel.cpp" line="1234"/>
+        <location filename="../vymmodel.cpp" line="5146"/>
         <source>Warning</source>
         <translation type="unfinished">Advertimento</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="1227"/>
+        <location filename="../vymmodel.cpp" line="1234"/>
         <source>Redo failed:
 %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="1262"/>
+        <location filename="../vymmodel.cpp" line="1269"/>
         <source>Autosave disabled during undo.</source>
         <translation>Salveguardar automatc dishabilitate durante annullation.</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="1989"/>
+        <location filename="../vymmodel.cpp" line="1996"/>
         <source>Note</source>
         <comment>FindAll in VymModel</comment>
         <translation>Nota</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="2713"/>
+        <location filename="../vymmodel.cpp" line="2720"/>
         <source>Image</source>
         <comment>Default name for new image</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="2946"/>
+        <location filename="../vymmodel.cpp" line="2953"/>
         <source>New map</source>
         <comment>New map</comment>
         <translation type="unfinished">Nove mappa</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="3814"/>
+        <location filename="../vymmodel.cpp" line="3821"/>
         <source>Contacting Bugzilla...</source>
         <comment>VymModel</comment>
         <translation>Contingente Bugzilla...</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="5139"/>
+        <location filename="../vymmodel.cpp" line="5146"/>
         <source>Script aborted:
 %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="5176"/>
+        <location filename="../vymmodel.cpp" line="5183"/>
         <source>Export map as image</source>
         <translation>Exporta mappa como imagine</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="5191"/>
+        <location filename="../vymmodel.cpp" line="5198"/>
         <source>Couldn&apos;t save QImage %1 in format %2</source>
         <translation>Il non pote salveguardar QImage %1 in formato %2</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="5216"/>
+        <location filename="../vymmodel.cpp" line="5223"/>
         <source>Export map as PDF</source>
         <translation>Exporta mappa como PDF</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="5271"/>
+        <location filename="../vymmodel.cpp" line="5278"/>
         <source>Export map as SVG</source>
         <translation type="unfinished">Exporta mappa como SVG</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="5305"/>
+        <location filename="../vymmodel.cpp" line="5312"/>
         <source>Export map as XML</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="5312"/>
+        <location filename="../vymmodel.cpp" line="5319"/>
         <source>Export XML to directory</source>
         <translation>Exporta XML in directorio</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="5364"/>
+        <location filename="../vymmodel.cpp" line="5371"/>
         <source>Critical Export Error</source>
         <translation>Error critic de exportation</translation>
     </message>
@@ -4214,17 +4214,17 @@ Tu vole recargar le mappa con le nove file?</translation>
         <translation type="obsolete">Exporta como LaTeX</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="5446"/>
+        <location filename="../vymmodel.cpp" line="5453"/>
         <source>(still experimental)</source>
         <translation type="unfinished">(ancora experimental)</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="5446"/>
+        <location filename="../vymmodel.cpp" line="5453"/>
         <source>Export as csv</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="5783"/>
+        <location filename="../vymmodel.cpp" line="5790"/>
         <source>Load background image</source>
         <translation>Carga imagine de fundo</translation>
     </message>

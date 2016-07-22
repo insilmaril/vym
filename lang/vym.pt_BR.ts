@@ -4087,7 +4087,7 @@ Do you risk to overwrite its contents?</source>
 Deseja sobrescrever o conteúdo?</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="3784"/>
+        <location filename="../vymmodel.cpp" line="3791"/>
         <source>No Bugzilla client found.  For openSUSE you can install by (running as root):
 
 </source>
@@ -4095,14 +4095,14 @@ Deseja sobrescrever o conteúdo?</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="3789"/>
+        <location filename="../vymmodel.cpp" line="3796"/>
         <source>Alternatively you can also add the repository
 and install the perl module for Bugzilla access using YaST</source>
         <comment>VymModel, how to install Bugzilla client module</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="3792"/>
+        <location filename="../vymmodel.cpp" line="3799"/>
         <source>Warning: Couldn&apos;t find Bugzilla client</source>
         <comment>VymModel</comment>
         <translation type="unfinished"></translation>
@@ -4896,7 +4896,7 @@ could not be renamed before saving</source>
     <message>
         <location filename="../vymmodel.cpp" line="794"/>
         <location filename="../vymmodel.cpp" line="847"/>
-        <location filename="../vymmodel.cpp" line="5780"/>
+        <location filename="../vymmodel.cpp" line="5787"/>
         <source>Images</source>
         <translation type="unfinished">Imagens</translation>
     </message>
@@ -4932,7 +4932,7 @@ Deseja sobrescrevê-lo?</translation>
     <message>
         <location filename="../vymmodel.cpp" line="885"/>
         <location filename="../vymmodel.cpp" line="887"/>
-        <location filename="../vymmodel.cpp" line="5191"/>
+        <location filename="../vymmodel.cpp" line="5198"/>
         <source>Critical Error</source>
         <translation type="unfinished">Erro Crítico</translation>
     </message>
@@ -4976,7 +4976,7 @@ Deseja sobrescrevê-lo?</translation>
         <translation type="unfinished">Aviso</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="1105"/>
+        <location filename="../vymmodel.cpp" line="1111"/>
         <source>The file of the map  on disk has changed:
 
    %1
@@ -4985,52 +4985,52 @@ Do you want to reload that map with the new file?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="1112"/>
+        <location filename="../vymmodel.cpp" line="1118"/>
         <source>Reload</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="1113"/>
+        <location filename="../vymmodel.cpp" line="1119"/>
         <source>Ignore</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="1227"/>
-        <location filename="../vymmodel.cpp" line="5139"/>
+        <location filename="../vymmodel.cpp" line="1234"/>
+        <location filename="../vymmodel.cpp" line="5146"/>
         <source>Warning</source>
         <translation type="unfinished">Aviso</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="1227"/>
+        <location filename="../vymmodel.cpp" line="1234"/>
         <source>Redo failed:
 %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="1262"/>
+        <location filename="../vymmodel.cpp" line="1269"/>
         <source>Autosave disabled during undo.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="1989"/>
+        <location filename="../vymmodel.cpp" line="1996"/>
         <source>Note</source>
         <comment>FindAll in VymModel</comment>
         <translation type="unfinished">Nota</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="2713"/>
+        <location filename="../vymmodel.cpp" line="2720"/>
         <source>Image</source>
         <comment>Default name for new image</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="2946"/>
+        <location filename="../vymmodel.cpp" line="2953"/>
         <source>New map</source>
         <comment>New map</comment>
         <translation type="unfinished">Novo mapa</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="5139"/>
+        <location filename="../vymmodel.cpp" line="5146"/>
         <source>Script aborted:
 %1</source>
         <translation type="unfinished"></translation>
@@ -5045,7 +5045,7 @@ Do you want to reload that map with the new file?</source>
         <translation type="obsolete">Imagens</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="3814"/>
+        <location filename="../vymmodel.cpp" line="3821"/>
         <source>Contacting Bugzilla...</source>
         <comment>VymModel</comment>
         <translation type="unfinished"></translation>
@@ -5055,37 +5055,37 @@ Do you want to reload that map with the new file?</source>
         <translation type="obsolete">Ligar a outro mapa</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="5176"/>
+        <location filename="../vymmodel.cpp" line="5183"/>
         <source>Export map as image</source>
         <translation type="unfinished">Exportar mapa como imagem</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="5191"/>
+        <location filename="../vymmodel.cpp" line="5198"/>
         <source>Couldn&apos;t save QImage %1 in format %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="5216"/>
+        <location filename="../vymmodel.cpp" line="5223"/>
         <source>Export map as PDF</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="5271"/>
+        <location filename="../vymmodel.cpp" line="5278"/>
         <source>Export map as SVG</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="5305"/>
+        <location filename="../vymmodel.cpp" line="5312"/>
         <source>Export map as XML</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="5312"/>
+        <location filename="../vymmodel.cpp" line="5319"/>
         <source>Export XML to directory</source>
         <translation type="unfinished">Exportar XML para diretório</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="5364"/>
+        <location filename="../vymmodel.cpp" line="5371"/>
         <source>Critical Export Error</source>
         <translation type="unfinished">Erro Crítico ao Exportar</translation>
     </message>
@@ -5094,17 +5094,17 @@ Do you want to reload that map with the new file?</source>
         <translation type="obsolete">Exportar como LaTeX</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="5446"/>
+        <location filename="../vymmodel.cpp" line="5453"/>
         <source>(still experimental)</source>
         <translation type="unfinished">(ainda em testes)</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="5446"/>
+        <location filename="../vymmodel.cpp" line="5453"/>
         <source>Export as csv</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="5783"/>
+        <location filename="../vymmodel.cpp" line="5790"/>
         <source>Load background image</source>
         <translation type="unfinished"></translation>
     </message>
