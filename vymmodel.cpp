@@ -996,7 +996,7 @@ bool VymModel::tryVymLock()
     // Now try to lock
     if (!vymLock.tryLock() )
     {
-        qDebug()<<"Locking failed in vymLock!";
+        if (debug) qDebug() << "VymModel::tryLock failed!";
         setReadOnly( true );
         if (vymLock.getState() == VymLock::lockedByOther)
         {
