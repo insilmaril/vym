@@ -12,6 +12,16 @@
         <comment>Ok Button</comment>
         <translation type="unfinished">確定</translation>
     </message>
+    <message>
+        <source>Credits</source>
+        <comment>Help-&gt;About vym dialog</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>License</source>
+        <comment>Help-&gt;About vym dialog</comment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>AboutTextBrowser</name>
@@ -161,8 +171,8 @@
 <context>
     <name>DownloadAgent</name>
     <message>
-        <source>warning</source>
-        <translation type="unfinished"></translation>
+        <source>Warning</source>
+        <translation type="unfinished">警告</translation>
     </message>
 </context>
 <context>
@@ -318,6 +328,10 @@ want to allow this in your system!</source>
     </message>
     <message>
         <source>Use CSS from</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Include images</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -515,7 +529,7 @@ want to allow this in your system!</source>
     <name>Heading of mapcenter in new map</name>
     <message>
         <source>New map</source>
-        <translation type="unfinished">新圖譜</translation>
+        <translation type="obsolete">新圖譜</translation>
     </message>
 </context>
 <context>
@@ -1474,7 +1488,7 @@ exists already. Do you want to</source>
     </message>
     <message>
         <source>Couldn&apos;t save %1</source>
-        <translation type="obsolete">無法儲存 %1</translation>
+        <translation type="unfinished">無法儲存 %1</translation>
     </message>
     <message>
         <source>Import</source>
@@ -1628,7 +1642,7 @@ exists already. Do you want to</source>
     <message>
         <source>Couldn&apos;t find configuration for export to Open Office
 </source>
-        <translation>找不到用於匯出至 OpenOffice.org 的配置</translation>
+        <translation type="vanished">找不到用於匯出至 OpenOffice.org 的配置</translation>
     </message>
     <message>
         <source>No matches found for &quot;%1&quot;</source>
@@ -1733,11 +1747,6 @@ exists already. Do you want to</source>
         <translation type="obsolete">匯出例如在 OpenOffice.org 使用的開放文件格式</translation>
     </message>
     <message>
-        <source>KDE 4 Bookmarks</source>
-        <comment>File menu</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Print</source>
         <comment>File menu</comment>
         <translation type="obsolete">列印</translation>
@@ -1824,12 +1833,12 @@ exists already. Do you want to</source>
     <message>
         <source>Move up</source>
         <comment>Edit menu</comment>
-        <translation type="unfinished">向上移動</translation>
+        <translation type="obsolete">向上移動</translation>
     </message>
     <message>
         <source>Move down</source>
         <comment>Edit menu</comment>
-        <translation type="unfinished">向下移動</translation>
+        <translation type="obsolete">向下移動</translation>
     </message>
     <message>
         <source>&amp;Detach</source>
@@ -1959,7 +1968,7 @@ exists already. Do you want to</source>
     <message>
         <source>Edit Map Info...</source>
         <comment>Edit menu</comment>
-        <translation type="unfinished">編輯圖譜資訊…</translation>
+        <translation type="obsolete">編輯圖譜資訊…</translation>
     </message>
     <message>
         <source>Add map (insert)</source>
@@ -2427,50 +2436,6 @@ to confusion when finishing working with vym.Do you want to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Load Freemind map</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Export as CSV</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>%1 items on map
-</source>
-        <comment>Info about map</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Directory with vym macros:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Number of undo/redo levels:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Settings have been changed. The next map opened will have &quot;%1&quot; undo/redo levels</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Number of seconds before autosave:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>History for %1</source>
-        <comment>Window Caption</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Couldn&apos;t find the documentation %1 in:
-%2</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Load vym example map</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>PDF%1</source>
         <comment>File export menu</comment>
         <translation type="unfinished"></translation>
@@ -2535,11 +2500,6 @@ to confusion when finishing working with vym.Do you want to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>KDE 4 Bookmarks</source>
-        <comment>Import filters</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Firefox Bookmarks</source>
         <comment>Import filters</comment>
         <translation type="unfinished">Firefox 書籤</translation>
@@ -2557,11 +2517,6 @@ to confusion when finishing working with vym.Do you want to</source>
     <message>
         <source>Loading: %1</source>
         <comment>Progress dialog while loading maps</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Export in last used format (%1) to: %2</source>
-        <comment>status tip</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2599,33 +2554,9 @@ to confusion when finishing working with vym.Do you want to</source>
         <translation type="unfinished">輸入 URL：</translation>
     </message>
     <message>
-        <source>HTML</source>
-        <comment>Filedialog</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Text</source>
-        <comment>Filedialog</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Spreadsheet</source>
-        <comment>Filedialog</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Textdocument</source>
-        <comment>Filedialog</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Images</source>
         <comment>Filedialog</comment>
         <translation type="unfinished">圖像</translation>
-    </message>
-    <message>
-        <source>Set URL to a local file</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Link to another map</source>
@@ -2779,25 +2710,6 @@ to confusion when finishing working with vym.Do you want to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Task editor: Set number of parents</source>
-        <comment>Settings action</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enter sleep time (number of days or date YYYY-MM-DD or DD.MM[.YYYY]</source>
-        <comment>task sleep time dialog</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Couldn&apos;t set sleep time to %1.
-</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Number of parents shown for a task:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Main window</source>
         <comment>Shortcut scope</comment>
         <translation type="unfinished"></translation>
@@ -2943,7 +2855,230 @@ to confusion when finishing working with vym.Do you want to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Info</source>
+        <translation type="obsolete">資訊</translation>
+    </message>
+    <message>
+        <source>Spreadsheet</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Properties</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Move branch up</source>
+        <comment>Edit menu</comment>
+        <translation type="unfinished">向上移動分支</translation>
+    </message>
+    <message>
+        <source>Move branch down</source>
+        <comment>Edit menu</comment>
+        <translation type="unfinished">向下移動分支</translation>
+    </message>
+    <message>
+        <source>Map properties...</source>
+        <comment>Edit menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Note editor</source>
+        <comment>View action</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Heading editor</source>
+        <comment>View action</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set author for new maps</source>
+        <comment>Settings action</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Number of visible parents in task editor</source>
+        <comment>Settings action</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Number of visible parents in find results window</source>
+        <comment>Settings action</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Webpage (HTML)...</source>
+        <comment>File export menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Text (ASCII)...</source>
+        <comment>File export menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Text with tasks</source>
+        <comment>File export menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Text (A&amp;O report)...</source>
+        <comment>Export format</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Debug info</source>
+        <comment>Option to show debugging info</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t save %1,
+because of existing lockfile:
+
+%2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Load Freemind map</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export as CSV</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t find configuration for export to LibreOffice
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>HTML</source>
+        <comment>Filedialog</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Text</source>
+        <comment>Filedialog</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Spreadsheet</source>
+        <comment>Filedialog</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Textdocument</source>
+        <comment>Filedialog</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set URL to a local file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enter sleep time (number of days or date YYYY-MM-DD or DD.MM[.YYYY]</source>
+        <comment>task sleep time dialog</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t set sleep time to %1.
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 items on map
+</source>
+        <comment>Info about map</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>branches</source>
+        <comment>Info about map</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>notes</source>
+        <comment>Info about map</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>images</source>
+        <comment>Info about map</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>tasks</source>
+        <comment>Info about map</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>slides</source>
+        <comment>Info about map</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>xLinks</source>
+        <comment>Info about map</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Set application to zip/unzip files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Directory with vym macros:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Number of undo/redo levels:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Settings have been changed. The next map opened will have &quot;%1&quot; undo/redo levels</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Number of seconds before autosave:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set author for new maps (used in lockfile)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>unknown user</source>
+        <comment>default name for map author in settings</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Number of parents shown in find results:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Number of parents shown for a task:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>(readonly)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>History for %1</source>
+        <comment>Window Caption</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export in last used format (%1) to: %2</source>
+        <comment>status tip</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t find the documentation %1 in:
+%2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Load vym example map</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2967,25 +3102,12 @@ to confusion when finishing working with vym.Do you want to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Info</source>
-        <translation type="unfinished">資訊</translation>
-    </message>
-    <message>
-        <source>vym updates are available, please update e.g. from
-http://sourceforge.net/projects/vym</source>
+        <source>Update information</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>vym is up to date.</source>
         <comment>MainWindow</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Update check results</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>vym is up to date!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3117,7 +3239,7 @@ to notifiy Browsers of changed bookmarks.</source>
     <message>
         <source>Save</source>
         <comment>MapEditor</comment>
-        <translation type="unfinished">儲存</translation>
+        <translation type="obsolete">儲存</translation>
     </message>
     <message>
         <source>Map Editor</source>
@@ -3125,43 +3247,29 @@ to notifiy Browsers of changed bookmarks.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Select previous</source>
-        <comment>Edit menu</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Select next</source>
-        <comment>Edit menu</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Cu&amp;t</source>
         <comment>Edit menu</comment>
-        <translation type="unfinished">剪下(&amp;T)</translation>
+        <translation type="obsolete">剪下(&amp;T)</translation>
     </message>
     <message>
         <source>&amp;Copy</source>
         <comment>Edit menu</comment>
-        <translation type="unfinished">複製(&amp;C)</translation>
+        <translation type="obsolete">複製(&amp;C)</translation>
     </message>
     <message>
         <source>&amp;Undo</source>
         <comment>Edit menu</comment>
-        <translation type="unfinished">復原(&amp;U)</translation>
+        <translation type="obsolete">復原(&amp;U)</translation>
     </message>
     <message>
         <source>&amp;Redo</source>
         <comment>Edit menu</comment>
-        <translation type="unfinished">重做(&amp;R)</translation>
+        <translation type="obsolete">重做(&amp;R)</translation>
     </message>
     <message>
         <source>&amp;Paste</source>
         <comment>Edit menu</comment>
-        <translation type="unfinished">貼上(&amp;P)</translation>
-    </message>
-    <message>
-        <source>Repeat last export (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">貼上(&amp;P)</translation>
     </message>
 </context>
 <context>
@@ -3448,16 +3556,47 @@ and install the perl module for Bugzilla access using YaST</source>
     <message>
         <source>Note Editor</source>
         <comment>Shortcut group</comment>
-        <translation type="unfinished">註記編輯器</translation>
-    </message>
-    <message>
-        <source>Heading Editor</source>
-        <comment>Shortcut group</comment>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">註記編輯器</translation>
     </message>
     <message>
         <source>Couldn&apos;t find tool to unzip data. Please download and install 7z and set path in Settings menu:
  </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Could not export as AO to %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Could not export as ASCII to %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Could not export as CSV to %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Could not export as OrgMode to %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Could not export as LaTeX to %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export as LibreOffice Impress presentation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t remove target of old symbolic link %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t rename output to target of old symbolic link %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t link from %1 to target of old symbolic link %2</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3625,6 +3764,11 @@ Do you want to overwrite it?</source>
         <comment>TaskEditor</comment>
         <translation type="unfinished">編輯標頭</translation>
     </message>
+    <message>
+        <source>New tasks</source>
+        <comment>TaskEditor</comment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>TaskModel</name>
@@ -3692,7 +3836,7 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <source>&amp;Edit</source>
-        <translation>編輯(&amp;E)</translation>
+        <translation type="vanished">編輯(&amp;E)</translation>
     </message>
     <message>
         <source>Undo</source>
@@ -4049,6 +4193,10 @@ Do you want to overwrite it?</source>
         <comment>Shortcuts</comment>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Edi&amp;t</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>TreeEditor</name>
@@ -4274,21 +4422,62 @@ Do you want to reload that map with the new file?</source>
         <translation type="unfinished">(仍然是實驗性質)</translation>
     </message>
     <message>
-        <source>Exported: </source>
-        <comment>Export confirmation</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Export map as scalable vector graphic</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Export as csv</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Critical Save Error</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>unknown user</source>
+        <comment>Default for lockfiles of maps</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Map seems to be already opened in another vym instance! It will be opened in readonly mode.
+
+Map is locked by &quot;%1&quot; on &quot;%2&quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Warning: Map already opended</source>
+        <comment>VymModel</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Image</source>
+        <comment>Default name for new image</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New map</source>
+        <comment>New map</comment>
+        <translation type="unfinished">新圖譜</translation>
+    </message>
+    <message>
+        <source>Export map as SVG</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export map as XML</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>unknown user</source>
+        <comment>default name for map author in settings</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot create lockfile of map! It will be opened in readonly mode.
+
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Warning</source>
+        <comment>VymModel</comment>
+        <translation type="unfinished">警告</translation>
     </message>
 </context>
 <context>

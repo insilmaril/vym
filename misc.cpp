@@ -11,8 +11,8 @@
 
 QString richTextToPlain (QString r, const QString &indent, const int &width)
 {
-    Q_UNUSED( width )
-    //
+    Q_UNUSED( width );
+
     // Avoid failing assert with mingw
     if (r.isEmpty()) return r;
 

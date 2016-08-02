@@ -223,48 +223,6 @@ QString VymText::getTextASCII(QString indent, const int &) const //FIXME-3 use w
     return s;
 }
 
-QString VymText::getTextOpenDoc()
-{
-    // Evil hack to transform QT Richtext into
-    // something which can be used in OpenDoc format
-    // 
-    // TODO create clean XML transformation which also
-    // considers fonts, colors, ...
-
-    QString r = text;
-
-    // Remove header
-    QRegExp re("<head>.*</head>");
-    re.setMinimal(true);
-    r.replace (re,"");
-    re.setPattern("<!DOCTYPE.*>");
-    r.replace (re,"");
-
-    // convert all "<br*>"
-    re.setPattern ("<br.*>");
-    r.replace (re,"<text:line-break/>");
-
-    // convert all "<p.*>" 
-    re.setPattern ("</?p.*>");
-    r.replace (re,"<text:line-break/>");
-    
-    // Remove all other tags, e.g. paragraphs will be added in 
-    // templates used during export
-    re.setPattern ("</?html.*>");
-    r.replace (re,"");
-    re.setPattern ("</?body.*>");
-    r.replace (re,"");
-    re.setPattern ("</?meta.*>");
-    r.replace (re,"");
-    re.setPattern ("</?span.*>");
-    r.replace (re,"");
-    re.setPattern ("</?p.*>");
-    r.replace (re,"");
-
-    r = "<text:span text:style-name=\"vym-notestyle\">" + r + "</text:span>";
-    return r;
-}
-
 void VymText::setFontHint (const QString &s)
 {
     // only for backward compatibility (pre 1.5 )

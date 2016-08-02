@@ -342,24 +342,16 @@ void LinkableMapObj::setOrientation()
         return;
     }
 
-    //
-    // Set orientation, first look for orientation of parent
-    if (false) //(parObj->getOrientation() != UndefinedOrientation )    //FIXME-2 unused!
+    // calc orientation depending on position rel to parent
+    if (useRelPos)
+    {
+        if (relPos.x() < 0)
+            orientation = LeftOfCenter;
+        else
+            orientation = RightOfCenter;
+    }  else
         // use the orientation of the parent:
         orientation = parObj->getOrientation();
-    else
-    {
-        // calc orientation depending on position rel to parent
-        if (useRelPos)
-        {
-            if (relPos.x() < 0)
-                orientation = LeftOfCenter;
-            else
-                orientation = RightOfCenter;
-        }  else
-            // use the orientation of the parent:
-            orientation = parObj->getOrientation();
-    }
 }
 
 void LinkableMapObj::updateVisibility()

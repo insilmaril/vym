@@ -47,8 +47,9 @@ QString vymBuildDate;
 QString vymCodeName;
 QString vymInstanceName;
 QString vymPlatform;
+QString localeName;
 
-QTextStream vout(stdout);        // vymout - Testing for now
+QTextStream vout(stdout);        // vymout - Testing for now. Flush after writing...
 
 bool bugzillaClientAvailable;	// openSUSE specific currently
 
@@ -319,29 +320,14 @@ int main(int argc, char* argv[])
 #endif
         }
 
+    // Platform specific settings
+    vymPlatform = QSysInfo::prettyProductName();
+
 #if defined(Q_OS_MACX)
-    vymPlatform = "Mac";
 #elif defined(Q_OS_WIN32)
-    vymPlatform = "Win32";
     zipToolPath = settings.value("/system/zipToolPath", "c:\\Program Files\\7-Zip\\7z.exe").toString();
 #elif defined(Q_OS_LINUX)
-    QFile f("/etc/os-release");
-    QString flavour="Unknown";
-    if (f.exists())
-    {
-        QString s;
-        bool ok = loadStringFromDisk( f.fileName(), s);
-        if (ok)
-        {
-            QRegExp rx("PRETTY_NAME=.*\"(.*)\"");
-            rx.setMinimal(true);
-            int pos = rx.indexIn(s);
-            if (pos > -1) flavour = rx.cap(1);
-        }
-    }
-    vymPlatform = QString ("Linux (%1)").arg(flavour);
 #else
-    vymPlatform = "Unknown";
 #endif
     iconPath=vymBaseDir.path()+"/icons/";
     flagsPath=vymBaseDir.path()+"/flags/";
@@ -364,26 +350,42 @@ int main(int argc, char* argv[])
     }
 
     // Initialize translations
-    QString localeName;
     if (options.isOn ("locale"))
+    {
         localeName = options.getArg ("locale");
+        if (debug) qDebug() << "Main:  using option for locale";
+    }
     else
     {
 #if defined(Q_OS_LINUX)
-        localeName = QProcessEnvironment::systemEnvironment().value("LANG","foobar");
+        if (debug) qDebug() << "Main:  (OS Linux)   using $LANG for locale";
+        localeName = QProcessEnvironment::systemEnvironment().value("LANG","en");
 #else
-        localeName = QLocale::system().name();
+        if (debug) qDebug() << "Main:  (OS other)   using  QLocale::system().uiLanguages(  using for locale";
+        localeName = QLocale::system().uiLanguages().first();
+
+        if (localeName.contains("-"))
+        {
+            if (debug) qDebug() << "Main:  Replacing '-' with '_' in locale";
+            localeName.replace( "-", "_");
+        }
 #endif
     }
     
     if (debug) 
     {
-        qDebug()<<"Main     localName: " << localeName;
-        qDebug()<<"Main  translations: " << localeName, vymBaseDir.path() + "/lang";
+        qDebug() << "Main:     localName: " << localeName;
+        qDebug() << "Main:  translations: " << localeName, vymBaseDir.path() + "/lang";
+        qDebug() << "Main:   uiLanguages: " << QLocale::system().uiLanguages();
+        qDebug() << "Main:          LANG: " << QProcessEnvironment::systemEnvironment().value("LANG","foobar");
     }
-   
+  
     QTranslator vymTranslator;
-    vymTranslator.load( QString("vym_") + localeName, vymBaseDir.path() + "/lang");
+    if (!vymTranslator.load( QString("vym.%1").arg( localeName ), vymBaseDir.path() + "/lang") )
+        QMessageBox::warning( 0, QObject::tr( "Warning" ),
+                               QString("Couldn't load translations for locale \"%1\" in\n%2")
+                               .arg(localeName)
+                               .arg(vymBaseDir.path() + "/lang") );
     app.installTranslator( &vymTranslator );
 
     // Initializing the master rows of flags
@@ -400,7 +402,7 @@ int main(int argc, char* argv[])
     // Check if there is a BugzillaClient
     QFileInfo fi(vymBaseDir.path()+"/scripts/BugzillaClient.pm");
     //bugzillaClientAvailable=fi.exists();
-    bugzillaClientAvailable=true;   //FIXME-2 add real check again
+    bugzillaClientAvailable=true;   //FIXME-3 add real check again
 
     // Initialize mainwindow
 #if defined(Q_OS_WIN32)
@@ -480,7 +482,7 @@ int main(int argc, char* argv[])
         if (!scriptEditor->setScriptFile ( fn ) )
         {
             QString error (QObject::tr("Error"));
-            QString msg (QObject::tr("Couldn't open \"%1\"\n%2.").arg(fn).arg(f.errorString()));
+            QString msg (QObject::tr("Couldn't open \"%1\"\n.").arg(fn));
             if (options.isOn("batch"))
                 qWarning ()<<error+": "+msg;
             else QMessageBox::warning(0, error,msg);
@@ -496,7 +498,7 @@ int main(int argc, char* argv[])
         if (!scriptEditor->setScriptFile ( fn ) )
         {
             QString error (QObject::tr("Error"));
-            QString msg (QObject::tr("Couldn't open \"%1\"\n%2.").arg(fn).arg(f.errorString()));
+            QString msg (QObject::tr("Couldn't open \"%1\"\n.").arg(fn));
             if (options.isOn("batch"))
                 qWarning ()<<error+": "+msg;
             else QMessageBox::warning(0, error,msg);

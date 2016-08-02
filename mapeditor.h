@@ -113,6 +113,7 @@ public:
     QPropertyAnimation viewCenterAnimation;
 
     void updateMatrix();	    //! Sets transformation matrix with current rotation and zoom values
+    void minimizeView();
 
 // xmas egg
 protected:

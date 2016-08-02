@@ -55,6 +55,10 @@ protected:
 
 private:
     void setupAPI();
+
+    /*! Helper method to clone actions later in MapEditor */
+    void cloneActionMapEditor( QAction *a, QKeySequence ks);
+
     void setupFileActions();
     void setupEditActions();
     void setupSelectActions();
@@ -86,6 +90,7 @@ public:
     VymModel* getModel(uint) const;
     void gotoModel (VymModel *m);
     int modelCount();
+    void updateTabName(VymModel *vm);
     
 private slots:
     void editorChanged();
@@ -108,7 +113,6 @@ public slots:
 private slots:	
     void fileSaveAs(const SaveMode &);
     void fileSaveAs();
-    void fileImportKDE4Bookmarks();
     void fileImportFirefoxBookmarks();
     void fileImportFreemind();
     void fileImportMM();
@@ -124,7 +128,6 @@ private slots:
     void fileExportCSV();
     void fileExportOrgMode();
     void fileExportLaTeX();
-    void fileExportKDE4Bookmarks();
     void fileExportTaskjuggler();
     void fileExportImpress();
     void fileExportLast();
@@ -175,7 +178,7 @@ private slots:
     void editCycleTaskStatus();
     void editTaskSleepN();
     void editAddTimestamp();
-    void editMapInfo();
+    void editMapProperties();
     void editMoveUp();	
     void editMoveDown();    
     void editDetach();	
@@ -210,6 +213,7 @@ private slots:
 
 private slots:    
     void editToggleTarget();
+    bool initTargetsMenu( VymModel *model, QMenu *menu);
     void editGoToTarget();
     void editMoveToTarget();
     void editSelectPrevious();
@@ -264,7 +268,9 @@ public:
 
 public slots:
     void settingsAutosaveTime();
-    void settingsTaskShowParentsLevel();
+    void settingsDefaultMapAuthor();
+    void settingsShowParentsLevelTasks();
+    void settingsShowParentsLevelFindResults();
     void settingsToggleAutoLayout();
     void settingsToggleWriteBackupFile();
     void settingsToggleAnimation();
@@ -318,23 +324,20 @@ private slots:
     void helpDoc();
     void helpDemo();
     void helpShortcuts();
+    void debugInfo();
     void helpAbout();
     void helpAboutQT();
 
     void callMacro ();
-    void downloadReleaseNotesFinished(bool interactive=false);
-    void downloadReleaseNotesFinishedInt();
+    void downloadReleaseNotesFinished();
 
 public slots:
     void checkReleaseNotes();
-    bool downloadsEnabled(bool interactive=false);
-    void downloadUpdatesFinished(bool interactive=false);
+    bool downloadsEnabled(bool userTriggered = false);
+    void downloadUpdatesFinished(bool userTriggered = false);
     void downloadUpdatesFinishedInt();
-    void downloadUpdates(bool interactive);
+    void downloadUpdates(bool userTriggered);
     void checkUpdates();
-
-public:
-    QList <QAction*> mapEditorActions;  //! This allows mapEditor to clone the actions and shortcuts
 
 private:
     QString shortcutScope;          //! For listing shortcuts
@@ -356,7 +359,13 @@ private:
 
     BranchPropertyEditor *branchPropertyEditor;
 
-    QList <QAction*> actionListMap;
+public:
+    QList <QAction*> mapEditorActions;      //! allows mapEditor to clone actions and shortcuts
+    QList <QAction*> taskEditorActions;     //! allows taskEditor to clone actions and shortcuts
+private:
+    QList <QAction*> restrictedMapActions;  //! Actions reqire map and write access
+    QList <QAction*> unrestrictedMapActions;//! Actions require map, but work also in readonly, e.g. print, copy
+    QList <QAction*> actionListFiles;       //! File related actions, e.g. load, save, restore session
     QList <QAction*> actionListBranches;
     QList <QAction*> actionListItems;
 
@@ -522,7 +531,8 @@ private:
     QAction* actionSettingsUseHideExport;
     QAction* actionSettingsToggleAutosave;
     QAction* actionSettingsAutosaveTime;
-    QAction* actionSettingsTaskShowParentsLevel;
+    QAction* actionSettingsShowParentsLevelTasks;
+    QAction* actionSettingsShowParentsLevelFindResults;
     QAction* actionSettingsToggleAutoLayout;
     QAction* actionSettingsWriteBackupFile;
     QAction* actionSettingsToggleDownloads;

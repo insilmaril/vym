@@ -68,6 +68,16 @@ TaskEditor::TaskEditor(QWidget *)
     addAction (a);
     connect( a, SIGNAL( triggered() ), mainWindow, SLOT( editHeading() ) );
 
+    // Clone actions defined in MainWindow
+    foreach (QAction* qa, mainWindow->taskEditorActions)
+    {
+        a = new QAction( this );
+        a->setShortcut( qa->shortcut() );
+        a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
+        connect( a, SIGNAL( triggered() ), qa, SLOT( trigger() ) );
+        addAction(a);
+    }
+
     mainLayout->addWidget (view);
     setLayout (mainLayout);
 

@@ -2,7 +2,10 @@
 
 #include "findresultitem.h"
 #include "findresultmodel.h"
+#include "settings.h"
 #include "treeitem.h"
+
+extern Settings settings;
 
 FindResultModel::FindResultModel( QObject *parent)
     : QAbstractItemModel(parent)
@@ -10,6 +13,7 @@ FindResultModel::FindResultModel( QObject *parent)
     QVector<QVariant> rootData;
     rootData << "Heading";
     rootItem = new FindResultItem(rootData);
+    showParentsLevel = ("/satellite/findResults/showParentsLevel", 1);
 }
 
 FindResultModel::~FindResultModel()
@@ -206,13 +210,13 @@ FindResultItem*  FindResultModel::addItem (TreeItem *ti)
 	int n=rowCount (parix);
 	beginInsertRows (parix,n,n);
 	if (rootItem->insertChildren (n,1,0) )
-    {
-        QString h=ti->getHeadingPlain();
-        QModelIndex ix=index(n,0,QModelIndex());
-        setData (ix,QVariant(h),Qt::EditRole);
-        ni=getItem(ix);
-        ni->setOriginal (ti);
-    }
+        {
+            QString h=ti->getHeadingPlainWithParents( showParentsLevel );
+            QModelIndex ix=index(n,0,QModelIndex());
+            setData (ix,QVariant(h),Qt::EditRole);
+            ni=getItem(ix);
+            ni->setOriginal (ti);
+        }
 	endInsertRows ();
 
 	emit (layoutChanged() );
@@ -265,5 +269,16 @@ void FindResultModel::setSearchFlags( QTextDocument::FindFlags f)
 QTextDocument::FindFlags FindResultModel::getSearchFlags()
 {
     return searchFlags;
+}
+
+void FindResultModel::setShowParentsLevel(uint i)
+{
+    showParentsLevel = i;
+    settings.setValue("/findResults/showParentsLevel", showParentsLevel);
+}
+
+uint FindResultModel::getShowParentsLevel()
+{
+    return showParentsLevel;
 }
 

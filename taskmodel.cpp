@@ -78,27 +78,14 @@ QVariant TaskModel::data(const QModelIndex &index, int role) const
         {
             QString s = bi->getModel()->getMapName();
             if (s.isEmpty() )
-                return "-";
+                return "-";    
             else
                 return bi->getModel()->getMapName();
         }
         else if (index.column() == 6)
         {
             BranchItem *bi = tasks.at(index.row())->getBranch();
-            QString s;
-            if (bi)
-                s = bi->getHeadingPlain();
-            else
-                qDebug()<<"bi == NULL";
-
-            int l = showParentsLevel;
-            while ( l > 0 && bi->depth() >0 )
-            {
-                bi = bi->parentBranch();
-                if (bi) s = bi->getHeadingPlain() + " -> " + s;
-                l--;
-            }
-            return s;
+            return bi->getHeadingPlainWithParents( showParentsLevel );
         }
     } else if (role == Qt::DecorationRole && index.column() == 1)
     {
