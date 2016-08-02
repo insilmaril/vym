@@ -69,18 +69,6 @@ MapEditor::MapEditor( VymModel *vm)
     // Shortcuts and actions
     QAction *a;
 
-    a = new QAction( QPixmap(":/selectprevious.png"), tr( "Select previous","Edit menu"), this);
-    a->setShortcut (Qt::CTRL+ Qt::Key_O );
-    a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
-    connect( a, SIGNAL( triggered() ), mainWindow, SLOT( editSelectPrevious() ) );
-    addAction (a);
-
-    a = new QAction( QPixmap(":/selectnext.png"), tr( "Select next","Edit menu"), this);
-    a->setShortcut (Qt::CTRL + Qt::Key_I );
-    a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
-    connect( a, SIGNAL( triggered() ), mainWindow, SLOT( editSelectNext() ) );
-    addAction (a);
-
     a = new QAction("Select upper branch", this);
     a->setShortcut (Qt::Key_Up );
     a->setShortcutContext (Qt::WidgetShortcut);
@@ -120,19 +108,6 @@ MapEditor::MapEditor( VymModel *vm)
     // Action to embed LineEdit for heading in Scene
     lineEdit=NULL;
 
-    // Moving branches:
-    a = new QAction("Move branch up", this);
-    a->setShortcut (Qt::Key_PageUp );
-    a->setShortcutContext (Qt::WidgetShortcut);
-    addAction (a);
-    connect( a, SIGNAL( triggered() ), mainWindow, SLOT( editMoveUp() ) );
-
-    a = new QAction("Move branch down", this);
-    a->setShortcut (Qt::Key_PageDown );
-    a->setShortcutContext (Qt::WidgetShortcut);
-    addAction (a);
-    connect( a, SIGNAL( triggered() ), mainWindow, SLOT( editMoveDown() ) );
-
     a = new QAction( tr( "Edit heading","MapEditor" ), this);
     a->setShortcut ( Qt::Key_Return );			//Edit heading
     a->setShortcutContext (Qt::WidgetShortcut);
@@ -144,49 +119,6 @@ MapEditor::MapEditor( VymModel *vm)
     addAction (a);
     connect( a, SIGNAL( triggered() ), this, SLOT( editHeading() ) );
 
-    a = new QAction( tr( "Save","MapEditor" ), this);
-    a->setShortcut (Qt::CTRL + Qt::Key_S );	 
-    a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
-    addAction (a);
-    connect( a, SIGNAL( triggered() ), mainWindow, SLOT( fileSave() ) );
-    
-    a = new QAction(QPixmap( ":/editcut.png" ), tr( "Cu&t","Edit menu" ), this);
-    a->setShortcut (Qt::CTRL + Qt::Key_X );	  
-    a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
-    connect( a, SIGNAL( triggered() ), mainWindow, SLOT( editCut() ) );
-    addAction(a);
-    
-    a = new QAction(QPixmap( ":/editcopy.png" ), tr( "&Copy","Edit menu" ), this);
-    a->setShortcut (Qt::CTRL + Qt::Key_C );	  
-    a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
-    connect( a, SIGNAL( triggered() ), mainWindow, SLOT( editCopy() ) );
-    addAction(a);
-
-    a = new QAction( tr("&Undo","Edit menu"), this);
-    a->setShortcut (Qt::CTRL + Qt::Key_Z );
-    a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
-    connect( a, SIGNAL( triggered() ), mainWindow, SLOT( editUndo() ) );
-    addAction(a);
-
-    a = new QAction( tr("&Redo","Edit menu"), this);
-    a->setShortcut (Qt::CTRL + Qt::Key_Y );
-    a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
-    connect( a, SIGNAL( triggered() ), mainWindow, SLOT( editRedo() ) );
-    addAction(a);
-
-    a = new QAction( tr( "&Paste","Edit menu" ), this);
-    a->setShortcut (Qt::CTRL + Qt::Key_V );
-    a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
-    connect( a, SIGNAL( triggered() ), mainWindow, SLOT( editPaste() ) );
-    addAction(a);
-
-    // Export
-    a = new QAction( QPixmap(":/file-document-export.png"),tr("Repeat last export (%1)").arg("-"), this);
-    a->setShortcut (Qt::ALT + Qt::Key_E);	    
-    a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
-    connect( a, SIGNAL( triggered() ), mainWindow, SLOT( fileExportLast() ) );
-    addAction(a);
-
     // Selections
     selectionColor =QColor (255,255,0);
     
@@ -195,7 +127,7 @@ MapEditor::MapEditor( VymModel *vm)
     vPan=QPointF();
     connect (panningTimer, SIGNAL (timeout()), this, SLOT (panView() ));
 
-    // Actions defined in MainWindow
+    // Clone actions defined in MainWindow
     foreach (QAction* qa, mainWindow->mapEditorActions)
     {
         a = new QAction( this );
@@ -553,6 +485,11 @@ void MapEditor::updateMatrix()
     setMatrix (zm * rm);
 }
 
+void MapEditor::minimizeView()
+{
+    setSceneRect( scene()->itemsBoundingRect() );
+}
+
 void MapEditor::print()
 {
     QRectF totalBBox=getTotalBBox();
@@ -633,61 +570,27 @@ void MapEditor::print()
     }
 }
 
-QRectF MapEditor::getTotalBBox()    //FIXME-8 frames and xlinks missing, esp. cloud
+QRectF MapEditor::getTotalBBox()  
 {				    
-    QRectF rt;
-    BranchObj *bo;
-    BranchItem *cur=NULL;
-    BranchItem *prev=NULL;
-    model->nextBranch(cur,prev,true);
-    while (cur) 
-    {
-	if (!cur->hasHiddenExportParent())
-	{
-	    // Branches
-	    bo=(BranchObj*)(cur->getLMO());
-	    if (bo && bo->isVisibleObj())
-            {
-		QRectF r1=bo->getBBox();
-
-		if (rt.isNull()) rt=r1;
-		rt=addBBox (r1, rt);
-	    }
-
-	    // Images
-	    FloatImageObj *fio;
-	    for (int i=0; i<cur->imageCount(); i++)
-	    {
-		fio=cur->getImageObjNum (i);
-		if (fio) rt=addBBox (fio->getBBox(),rt);
-	    }
-	}
-	model->nextBranch(cur,prev,true);
-    }
-
-    // get bboxes of XLinks	 //FIXME-3 missing
-
-    // Update scene according to new bbox
-    if (!sceneRect().contains (rt) )
-	setSceneRect(sceneRect().united (rt));
-    return rt;	
+    minimizeView();
+    return sceneRect();
 }
 
 QImage MapEditor::getImage( QPointF &offset) 
 {
-    QRectF mapRect=getTotalBBox();
+    QRectF mapRect = getTotalBBox();   // minimized sceneRect
     
-    int d=20;	// border
-    offset=QPointF (mapRect.x()-d/2, mapRect.y()-d/2 );
-    QImage pix (mapRect.width()+d, mapRect.height()+d,QImage::Format_RGB32);
+    int d = 10;	// border
+    offset = QPointF( mapRect.x() -d/2, mapRect.y() - d/2 );
+    QImage pix( mapRect.width() + d, mapRect.height() + d, QImage::Format_RGB32 );
 
     QPainter pp (&pix);
     pp.setRenderHints(renderHints());
-    mapScene->render (	&pp, 
+    mapScene->render ( &pp, 
 	// Destination:
-	QRectF(0,0,mapRect.width()+d,mapRect.height()+d),   
+	QRectF( 0, 0, mapRect.width() + d, mapRect.height() + d ),   
 	// Source in scene:
-	QRectF(mapRect.x()-d/2,mapRect.y()-d/2,mapRect.width()+d,mapRect.height()+d));
+	QRectF( mapRect.x() - d/2, mapRect.y() -d/2, mapRect.width() + d, mapRect.height() + d));
     return pix;
 }
 
@@ -1515,7 +1418,7 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
     }
 }
 
-void MapEditor::mouseMoveEvent(QMouseEvent* e)  // FIXME-2 Moving MCOs does not move images
+void MapEditor::mouseMoveEvent(QMouseEvent* e)  
 {
     // Show mouse position for debugging in statusBar
     if (debug && e->modifiers() & Qt::ControlModifier )

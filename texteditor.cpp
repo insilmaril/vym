@@ -34,10 +34,8 @@ extern bool debug;
 ///////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////
 
-TextEditor::TextEditor(QString scope)
+TextEditor::TextEditor()
 {
-    shortcutScope = scope;
-
     statusBar()->hide();    // Hide sizeGrip on default, which comes with statusBar
 
     e = new QTextEdit( this);
@@ -86,8 +84,9 @@ TextEditor::~TextEditor()
     settings.setValue(n + "fonts/fixedFont", fixedFont.toString() );
 }
 
-void TextEditor::init (const QString &shortcutScope) 
+void TextEditor::init (const QString &scope) 
 {   
+    shortcutScope = scope;
     QString n=QString("/satellite/%1/").arg(shortcutScope);
     restoreState (settings.value(n+"state",0).toByteArray());
     filenameHint="";
@@ -107,11 +106,6 @@ void TextEditor::init (const QString &shortcutScope)
         actionSettingsFonthintDefault->setChecked (false);
         e->setCurrentFont (varFont);
     }
-}
-
-void TextEditor::reset()
-{
-    e->clear();
 }
 
 bool TextEditor::isEmpty()
@@ -320,7 +314,7 @@ void TextEditor::setupFileActions()
     actionFilePrint=a;
     
     a = new QAction( QPixmap( ":/edittrash.png"), tr( "&Delete All" ), this);
-    connect( a, SIGNAL( triggered() ), e, SLOT( clear() ) );
+    connect( a, SIGNAL( triggered() ), this, SLOT( reset() ) );
     fileMenu->addAction (a);
     tb->addAction (a);
     actionFileDeleteAll=a;
@@ -688,6 +682,12 @@ void TextEditor::editCopyAll()
 {
     e->selectAll();
     e->copy();
+}
+
+void TextEditor::reset()
+{
+    e->selectAll();
+    e->textCursor().deleteChar();
 }
 
 void TextEditor::textSaveAs()	

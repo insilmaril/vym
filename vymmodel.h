@@ -17,6 +17,7 @@
 #include "treeitem.h"
 #include "treemodel.h"
 #include "vymmodelwrapper.h"
+#include "vymlock.h"
 
 class AttributeItem;
 class BranchItem;
@@ -68,7 +69,6 @@ private:
 
 public:
     bool isRepositionBlocked();	    //!< While load or undo there is no need to update graphicsview
-
     void updateActions();	    //!< Update buttons in mainwindow
 
 
@@ -162,6 +162,17 @@ public:
     void importDir(const QString&);
     void importDir();
 
+    bool tryVymLock();
+    bool renameMap( const QString &newPath); //! Rename map and change lockfile
+    void setReadOnly( bool b );
+    bool isReadOnly();
+    void setUseLockFile( bool b);
+    bool lockFileUsed();
+
+private:
+    VymLock  vymLock;       //! Handle lockfiles and related information
+    bool readonly;          //! if map is locked, it can be opened readonly
+
 private slots:
     void autosave ();
     void fileChanged();
@@ -176,7 +187,7 @@ private:
 
     QString histPath;		//!< Path to history file
     SimpleSettings undoSet;	//!< undo/redo commands, saved in histPath
-    int stepsTotal;		//!< total number of steps (undos+redos) 
+    int stepsTotal;		//!< total number of steps (undos+redos)
     int curStep;		//!< Current step in history (ring buffer)
     int curClipboard;		//!< number of history step, which is the current clipboard
     int redosAvail;		//!< Available number of redo steps

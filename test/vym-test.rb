@@ -557,7 +557,6 @@ def test_copy_paste (vym)
   map.paste
   map.selectLatestAdded     #FIXME-0 not set for ImportAdd, which is used by paste
   s = map.getSelectString
-  puts "selstring: #{s}"
   expect "Normal paste of branch, check heading of #{s}", map.getHeadingPlainText, "Main A"
   
   map.undo

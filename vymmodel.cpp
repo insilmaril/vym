@@ -121,18 +121,21 @@ void VymModel::clear()
 void VymModel::init () 
 {
     // No MapEditor yet
-    mapEditor=NULL;
+    mapEditor       = NULL;
+
+    // Use default author
+    author = settings.value("/user/name", tr("unknown user","default name for map author in settings")).toString();
 
     // States and IDs
     idLast++;
-    modelID=idLast;
-    mapChanged=false;
-    mapDefault=true;
-    mapUnsaved=false;
+    modelID         = idLast;
+    mapChanged      = false;
+    mapDefault      = true;
+    mapUnsaved      = false;
 
     // Selection history
-    selModel=NULL;
-    selectionBlocked=false;
+    selModel        = NULL;
+    selectionBlocked= false;
     resetSelectionHistory();
 
     resetHistory();
@@ -141,62 +144,62 @@ void VymModel::init ()
     makeTmpDirectories();
     
     // Files
-    zipped=true;
-    filePath="";
-    fileName=tr("unnamed");
-    mapName=fileName;
-    blockReposition=false;
-    blockSaveState=false;
+    readonly        = false;
+    zipped          = true;
+    filePath        = "";
+    fileName        = tr("unnamed");
+    mapName         = fileName;
+    blockReposition = false;
+    blockSaveState  = false;
 
-    autosaveTimer=new QTimer (this);
+    autosaveTimer   = new QTimer (this);
     connect(autosaveTimer, SIGNAL(timeout()), this, SLOT(autosave()));
 
-    fileChangedTimer=new QTimer (this);	
+    fileChangedTimer= new QTimer (this);	
     fileChangedTimer->start(3000);
     connect(fileChangedTimer, SIGNAL(timeout()), this, SLOT(fileChanged()));
-
 
     // find routine
     findReset();
 
     // animations   // FIXME-4 switch to new animation system 
-    animationUse=settings.value ("/animation/use",false).toBool();    // FIXME-4 add options to control _what_ is animated
-    animationTicks=settings.value("/animation/ticks",20).toInt();
+    animationUse    = settings.value ("/animation/use",false).toBool();    // FIXME-4 add options to control _what_ is animated
+    animationTicks  = settings.value("/animation/ticks",20).toInt();
     animationInterval=settings.value("/animation/interval",5).toInt();
     animObjList.clear();    
-    animationTimer=new QTimer (this);
+    animationTimer  = new QTimer (this);
     connect(animationTimer, SIGNAL(timeout()), this, SLOT(animate()));
 
     // View - map
     defaultFont.setPointSizeF (16);
-    defLinkColor=QColor (0,0,255);
-    linkcolorhint=LinkableMapObj::DefaultColor;
-    linkstyle=LinkableMapObj::PolyParabel;
+    defLinkColor    = QColor (0,0,255);
+    linkcolorhint   = LinkableMapObj::DefaultColor;
+    linkstyle       = LinkableMapObj::PolyParabel;
     defXLinkPen.setWidth (1);
     defXLinkPen.setColor ( QColor (50,50,255) );
     defXLinkPen.setStyle ( Qt::DashLine );
     defXLinkStyleBegin = "HeadFull";
     defXLinkStyleEnd   = "HeadFull";
 
-    hasContextPos=false;
+    hasContextPos   = false;
 
-    hidemode=TreeItem::HideNone;
+    hidemode        = TreeItem::HideNone;
 
     // Animation in MapEditor
-    zoomFactor=1;
-    rotationAngle=0;
-    animDuration=2000;
-    animCurve=QEasingCurve::OutQuint;
+    zoomFactor      = 1;
+    rotationAngle   = 0;
+    animDuration    = 2000;
+    animCurve       = QEasingCurve::OutQuint;
 
     // Initialize presentation slides
-    slideModel=new SlideModel (this);
+    slideModel      = new SlideModel (this);
     blockSlideSelection=false;
 
     // Avoid recursions later
-    cleaningUpLinks=false;
+    cleaningUpLinks = false;
 
     // Network
-    netstate=Offline;
+    netstate        = Offline;
 
 #if defined(VYM_DBUS)
      // Announce myself on DBUS
@@ -267,6 +270,9 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix, bool w
 	    break;
     }	
 
+    QString lockFileFlag;   // FIXME-2  not decided yet
+    lockFileFlag = "true";  //lockFile ? lockFileFlag = "true": lockFileFlag = "";
+
     QString s="<?xml version=\"1.0\" encoding=\"utf-8\"?><!DOCTYPE vymmap>\n";
     QString colhint="";
     if (linkcolorhint==LinkableMapObj::HeadingColor) 
@@ -291,6 +297,7 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix, bool w
 		  xml.attribut("defXLinkStyleEnd", defXLinkStyleEnd) +
 		  xml.attribut("mapZoomFactor", QString().setNum(mapEditor->getZoomFactorTarget()) ) +
 		  xml.attribut("mapRotationAngle", QString().setNum(mapEditor->getAngleTarget()) ) +
+		  xml.attribut("useLockFile", lockFileFlag ) +
 		  colhint; 
     s+=xml.beginElement("vymmap",mapAttr); 
     xml.incIndent();
@@ -482,7 +489,7 @@ File::ErrorCode VymModel::loadMap (
 	    handler = new parseVYMHandler; 
 	    ((parseVYMHandler*)handler)->setContentFilter (contentFilter);
 	    break;
-	case FreemindMap: handler = new parseFreemindHandler; break;
+	case FreemindMap : handler = new parseFreemindHandler; break;
 	default: 
 	    QMessageBox::critical( 0, tr( "Critical Parse Error" ),
 		   "Unknown FileType in VymModel::load()");
@@ -509,8 +516,8 @@ File::ErrorCode VymModel::loadMap (
 	return File::Aborted; 
     }
 
-    if (fname.right(4) == ".xml")
-        err=File::NoZip;
+    if (fname.right(4) == ".xml" || fname.right(3) == ".mm")
+        err = File::NoZip;
     else
     {
         // Try to unzip file
@@ -520,7 +527,7 @@ File::ErrorCode VymModel::loadMap (
     if (err == File::NoZip)
     {
 	xmlfile = fname;
-	zipped  = false;
+	zipped = false;
     } else
     {
 	zipped = true;
@@ -616,7 +623,11 @@ File::ErrorCode VymModel::loadMap (
 
 		resetHistory();
 		resetSelectionHistory();
-	    }
+
+                if (! tryVymLock() && debug ) 
+                    qWarning() << "VM::loadMap  no lockfile created!";
+
+            }
     
 	    reposition();   // to generate bbox sizes
 	    emitSelectionChanged();
@@ -649,7 +660,7 @@ File::ErrorCode VymModel::loadMap (
 	mapEditor->setAngleTarget (rotationAngle);
     }
 
-    if (vymView) vymView->readSettings();
+    if (vymView) vymView->readSettings();  
 
     qApp->processEvents();  // Update view (scene()->update() is not enough)
     return err;
@@ -980,6 +991,84 @@ void VymModel::importDir()
     }	
 }
 
+bool VymModel::tryVymLock()
+{
+    // Defaults for author and host in vymLock
+    QString defAuthor = tr( "unknown user", "Default for lockfiles of maps");   // FIXME-2 set default author in settings
+    QString defHost   = QHostInfo::localHostName();      
+    vymLock.setMapPath( filePath );
+    vymLock.setAuthor( settings.value( "/user/name", defAuthor ).toString() ); 
+    if ( getenv("HOST") != 0 ) 
+        vymLock.setHost( getenv("HOST") );
+    else
+        vymLock.setHost( defHost );
+    
+    // Now try to lock
+    if (!vymLock.tryLock() )
+    {
+        if (debug) qDebug() << "VymModel::tryLock failed!";
+        setReadOnly( true );
+        if (vymLock.getState() == VymLock::lockedByOther)
+        {
+            WarningDialog dia;
+            QString a = vymLock.getAuthor();
+            QString h = vymLock.getHost();
+            QString s = QString( tr("Map seems to be already opened in another vym instance! "
+                   "It will be opened in readonly mode.\n\n"
+                   "Map is locked by \"%1\" on \"%2\"" )) .arg(a).arg(h);
+            dia.setText( s );
+            dia.setWindowTitle(tr("Warning: Map already opended","VymModel"));
+            dia.showCancelButton( false );
+            dia.setShowAgainName("/mainwindow/mapIsLocked");
+            dia.exec();
+        } else if (vymLock.getState() == VymLock::notWritable)
+        {
+            WarningDialog dia;
+            QString a = vymLock.getAuthor();
+            QString h = vymLock.getHost();
+            QString s = QString( tr("Cannot create lockfile of map! "
+                        "It will be opened in readonly mode.\n\n" ));
+            dia.setText( s );
+            dia.setWindowTitle(tr("Warning","VymModel"));
+            dia.showCancelButton( false );
+            //dia.setShowAgainName("/mainwindow/mapIsLocked");
+            dia.exec();
+        }
+        return false;
+    }
+    return true;
+}
+
+bool VymModel::renameMap( const QString &newPath)
+{
+    QString oldPath = filePath;
+    setFilePath ( newPath );
+    if (vymLock.getState() == VymLock::lockedByMyself)
+    {
+        // vymModel owns the lockfile, try to rename it
+        if (! vymLock.rename( fileName ))
+        {
+            qWarning ("Warning: VymModel::renameMap failed");
+            setFilePath( oldPath );
+            return false;
+        } else
+            return true;
+    }
+
+    // try to create new lockfile for the lock states: lockedByOther and notWritable
+    return tryVymLock();
+}
+
+void VymModel::setReadOnly( bool b )
+{
+    readonly = b;
+    updateActions();
+}
+
+bool VymModel::isReadOnly()
+{
+    return readonly;
+}
 
 void VymModel::autosave()
 {
@@ -1018,32 +1107,39 @@ void VymModel::fileChanged()
     // Check if file on disk has changed meanwhile
     if (!filePath.isEmpty())
     {
-	QDateTime tmod=QFileInfo (filePath).lastModified();
-	if (tmod>fileChangedTime)
-	{
-	    // FIXME-4 VM switch to current mapeditor and finish lineedits...
-	    QMessageBox mb( vymName,
-		tr("The file of the map  on disk has changed:\n\n"  
-		   "   %1\n\nDo you want to reload that map with the new file?").arg(filePath),
-		QMessageBox::Question,
-		QMessageBox::Yes ,
-		QMessageBox::Cancel | QMessageBox::Default,
-		QMessageBox::NoButton );
+        if (readonly)
+        {
+            // unset readonly if lockfile is gone
+            if (vymLock.tryLock() ) setReadOnly( false );
+        } else
+        {
+            QDateTime tmod=QFileInfo (filePath).lastModified();
+            if (tmod>fileChangedTime)
+            {
+                // FIXME-4 VM switch to current mapeditor and finish lineedits...
+                QMessageBox mb( vymName,
+                    tr("The file of the map  on disk has changed:\n\n"  
+                       "   %1\n\nDo you want to reload that map with the new file?").arg(filePath),
+                    QMessageBox::Question,
+                    QMessageBox::Yes ,
+                    QMessageBox::Cancel | QMessageBox::Default,
+                    QMessageBox::NoButton );
 
-	    mb.setButtonText( QMessageBox::Yes, tr("Reload"));
-	    mb.setButtonText( QMessageBox::No, tr("Ignore"));
-	    switch( mb.exec() ) 
-	    {
-		case QMessageBox::Yes:
-		    // Reload map
-		    mainWindow->initProgressCounter (1);
-		    loadMap (filePath);
-		    mainWindow->removeProgressCounter ();
-		    break;
-		case QMessageBox::Cancel:
-		    fileChangedTime=tmod; // allow autosave to overwrite newer file!
-	    }
-	}
+                mb.setButtonText( QMessageBox::Yes, tr("Reload"));
+                mb.setButtonText( QMessageBox::No, tr("Ignore"));
+                switch( mb.exec() ) 
+                {
+                    case QMessageBox::Yes:
+                        // Reload map
+                        mainWindow->initProgressCounter (1);
+                        loadMap (filePath);  
+                        mainWindow->removeProgressCounter ();
+                        break;
+                    case QMessageBox::Cancel:
+                        fileChangedTime=tmod; // allow autosave to overwrite newer file!
+                }
+            }
+        }
     }	
 }
 
@@ -1071,7 +1167,7 @@ void VymModel::setChanged()
     mapDefault=false;
     mapUnsaved=true;
     findReset();
-    mainWindow->updateActions();
+    updateActions();
 }
 
 QString VymModel::getObjectName (LinkableMapObj *lmo)
@@ -1220,6 +1316,7 @@ void VymModel::undo()
     if (!undoSelection.isEmpty())
 	select (undoSelection);
 
+    // bool noErr;
     QString errMsg;
     QString undoScript = QString("model = vym.currentMap(); model.%1").arg( undoCommand );
     errMsg = QVariant(execute(undoScript)).toString();
@@ -1854,36 +1951,36 @@ bool  VymModel::findAll (FindResultModel *rmodel, QString s, Qt::CaseSensitivity
     rmodel->clear();
     rmodel->setSearchString (s);
     rmodel->setSearchFlags (0);	//FIXME-4 translate cs to QTextDocument::FindFlag
-    bool hit=false;
+    bool hit = false;
 
-    BranchItem *cur=NULL;
-    BranchItem *prev=NULL;
+    BranchItem *cur  = NULL;
+    BranchItem *prev = NULL;
     nextBranch(cur,prev);
 
-    FindResultItem *lastParent=NULL;
+    FindResultItem *lastParent = NULL;
     while (cur) 
     {
-	lastParent=NULL;
-    if (cur->getHeading().getTextASCII().contains (s,cs))
+	lastParent = NULL;
+        if (cur->getHeading().getTextASCII().contains (s,cs))
+            {
+                lastParent = rmodel->addItem (cur);
+                hit = true;
+            }
+	QString n = cur->getNoteASCII();
+	int i = 0;
+	int j = 0;
+	while ( i >= 0)
 	{
-	    lastParent=rmodel->addItem (cur);
-	    hit=true;
-	}
-	QString n=cur->getNoteASCII();
-	int i=0;
-	int j=0;
-	while ( i>=0)
-	{
-	    i=n.indexOf (s,i,cs); 
-	    if (i>=0) 
+	    i = n.indexOf (s,i,cs); 
+	    if (i >= 0) 
 	    {
 		// If not there yet, add "parent" item
 		if (!lastParent)
 		{
-		    lastParent=rmodel->addItem (cur);
-		    hit=true;
+		    lastParent = rmodel->addItem (cur);
+		    hit = true;
 		    if (!lastParent)
-			qWarning()<<"VymModel::findAll still no lastParent?!";
+			qWarning() << "VymModel::findAll still no lastParent?!";
 		    /*
 		    else
 			lastParent->setSelectable (false);
@@ -1891,14 +1988,14 @@ bool  VymModel::findAll (FindResultModel *rmodel, QString s, Qt::CaseSensitivity
 		}   
 
 		// save index of occurence
-		QString e=n.mid(i-15,30);
-		n.replace('\n',' ');
-		rmodel->addSubItem (lastParent,QString(tr("Note","FindAll in VymModel")+": \"...%1...\"").arg(n.mid(i-8,80)),cur,j);
+		QString e = n.mid(i-15, 30);
+		n.replace('\n', ' ');
+		rmodel->addSubItem (lastParent, QString(tr("Note", "FindAll in VymModel") + ": \"...%1...\"").arg(n.mid(i-8,80)), cur, j);
 		j++;
 		i++;
 	    }
 	} 
-	nextBranch(cur,prev);
+	nextBranch(cur, prev);
     }
     return hit;
 }
@@ -2428,6 +2525,8 @@ void VymModel::addTimestamp()	//FIXME-4 new function, localize
 
 void VymModel::copy()	
 {
+    if (readonly) return;
+
     TreeItem *selti=getSelectedItem();
     if (selti &&
 	(selti->getType() == TreeItem::Branch || 
@@ -2454,7 +2553,9 @@ void VymModel::copy()
 
 void VymModel::paste()	
 {   
-    BranchItem *selbi = getSelectedBranch();
+    if (readonly) return;
+
+    BranchItem *selbi=getSelectedBranch();
     if (selbi)
     {
 	saveStateChangingPart(
@@ -2472,6 +2573,8 @@ void VymModel::paste()
 
 void VymModel::cut()	
 {
+    if (readonly) return;
+
     TreeItem *selti=getSelectedItem();
     if ( selti && (selti->isBranchLikeType() ||selti->getType()==TreeItem::Image))
     {
@@ -2483,6 +2586,8 @@ void VymModel::cut()
 
 bool VymModel::moveUp(BranchItem *bi)
 {
+    if (readonly) return false;
+
     bool oldState=blockSaveState;
     blockSaveState=true;
     bool result=false;
@@ -2511,6 +2616,8 @@ void VymModel::moveUp()
 
 bool VymModel::moveDown(BranchItem *bi)	
 {
+    if (readonly) return false;
+
     bool oldState=blockSaveState;
     blockSaveState=true;
     bool result=false;
@@ -5327,7 +5434,7 @@ void VymModel::appendSelection()    // FIXME-4 history unable to cope with multi
 	id=ti->getID();	
 	selectionHistory.append (id);
 	currentSelection=selectionHistory.count()-1;
-	mainWindow->updateActions();
+	updateActions();
     }
 }
 

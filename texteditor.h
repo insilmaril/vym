@@ -14,11 +14,10 @@ enum EditorState {inactiveEditor,emptyEditor,filledEditor};
 class TextEditor : public QMainWindow
 {    Q_OBJECT
 public:
-    TextEditor(QString scope);
+    TextEditor();
     ~TextEditor();
 
     void init(const QString &ename);
-    void reset();
     bool isEmpty();
     void setFont (const QFont &);
     void setFontHint(const QString&);
@@ -52,6 +51,7 @@ public slots:
     void setVymText(const VymText &vt);
     void setInactive();		    // Nothing can be entered
     void editCopyAll();
+    void reset();
 
 signals:
     void textHasChanged();

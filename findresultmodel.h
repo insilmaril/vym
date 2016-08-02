@@ -55,8 +55,11 @@ public:
     QString getSearchString();
     void setSearchFlags( QTextDocument::FindFlags f);
     QTextDocument::FindFlags getSearchFlags();
+    void setShowParentsLevel(uint i);
+    uint getShowParentsLevel();
 
 private:
+    uint showParentsLevel;
 
     FindResultItem *rootItem;
 
