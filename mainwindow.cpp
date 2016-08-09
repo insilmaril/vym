@@ -392,10 +392,9 @@ Main::~Main()
 	settings.setValue( "/system/version", vymVersion );
 	settings.setValue( "/system/builddate", vymBuildDate );
     }
-    //FIXME-4 save scriptEditor settings
-
+    //
     // call the destructors
-    delete noteEditor;	    // FIXME-4 shouldn't this be done in main?
+    delete noteEditorDW;
     delete historyWindow;
     delete branchPropertyEditor;
 
@@ -2838,7 +2837,9 @@ void Main::setupContextMenus()
     canvasContextMenu->addAction(actionFormatLinkColor);
     canvasContextMenu->addAction(actionFormatSelectionColor);
     canvasContextMenu->addAction(actionFormatBackColor);
-    // actionFormatBackImage->addTo( canvasContextMenu );  //FIXME-4 makes vym too slow: postponed for later version 
+    //if (settings.value( "/mainwindow/showTestMenu",false).toBool() )
+    //    canvasContextMenu->addAction( actionFormatBackImage );  //FIXME-5 makes vym too slow: postponed for later version 
+
 
     // Menu for last opened files
     // Create actions

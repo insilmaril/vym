@@ -25,7 +25,7 @@ extern QString vymVersion;
 parseVYMHandler::parseVYMHandler()
 {
     // Default is to load everything
-    contentFilter = 0x0000; //FIXME-4 use filters for all content types below
+    contentFilter = 0x0000; // TODO  use filters for all content types below
 }
 
 void parseVYMHandler::setContentFilter (const int &c)
@@ -569,7 +569,7 @@ bool parseVYMHandler::readBranchAttr (const QXmlAttributes& a)
     return true;    
 }
 
-bool parseVYMHandler::readFrameAttr (const QXmlAttributes& a)        // FIXME-4 does not work if there is no lmo for treeitem
+bool parseVYMHandler::readFrameAttr (const QXmlAttributes& a)       
 {
     if (lastMI)
     {

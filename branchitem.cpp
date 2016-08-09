@@ -53,7 +53,7 @@ void BranchItem::clear()
     if (task) taskModel->deleteTask (task);
 }
 
-void BranchItem::copy (BranchItem *other)  // FIXME-5 lacks most of data...
+void BranchItem::copy (BranchItem *other)  // TODO lacks most of data...
 {
     scrolled=other->scrolled;
     tmpUnscrolled=other->tmpUnscrolled;
@@ -101,8 +101,8 @@ QString BranchItem::saveToDir (const QString &tmpdir,const QString &prefix, cons
     else
 	scrolledAttr="";
 
-    // save area, if not scrolled   // FIXME-5 not needed if HTML is rewritten...
-				    // also we should check if _any_ of parents is scrolled
+    // save area, if not scrolled   // not needed if HTML is rewritten...
+				    // also we could check if _any_ of parents is scrolled
     QString areaAttr;
     if (mo && parentItem->isBranchLikeType() && !((BranchItem*)parentItem)->isScrolled() )
     {
@@ -147,7 +147,7 @@ QString BranchItem::saveToDir (const QString &tmpdir,const QString &prefix, cons
     // save heading
     s += heading.saveToDir();
 
-    // Save frame  //FIXME-5 not saved if there is no MO
+    // Save frame  // not saved if there is no MO
     if (mo)
     {
         // Avoid saving NoFrame for objects other than MapCenter
@@ -536,7 +536,7 @@ BranchObj* BranchItem::getBranchObj()
     return (BranchObj*)mo;
 }
 
-BranchObj* BranchItem::createMapObj(QGraphicsScene *scene)  // FIXME-5 maybe move this into MapEditor to get rid of scene in VymModel?
+BranchObj* BranchItem::createMapObj(QGraphicsScene *scene)  
 {
     BranchObj *newbo;
 
@@ -566,8 +566,8 @@ BranchObj* BranchItem::createMapObj(QGraphicsScene *scene)  // FIXME-5 maybe mov
 
     if (!getHeading().isEmpty() ) 
     {
-	newbo->updateData();	//FIXME-5 maybe better model->emitDataChanged()?
-    newbo->setColor (heading.getColor());
+	newbo->updateData();	
+        newbo->setColor (heading.getColor());
     }	
 	
     return newbo;

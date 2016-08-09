@@ -2111,7 +2111,7 @@ QStringList VymModel::getURLs(bool ignoreScrolled)
 }
 
 
-void VymModel::setFrameType(const FrameObj::FrameType &t)   //FIXME-5 not saved if there is no LMO
+void VymModel::setFrameType(const FrameObj::FrameType &t)   
 {
     BranchItem *bi=getSelectedBranch();
     if (bi)
@@ -2129,7 +2129,7 @@ void VymModel::setFrameType(const FrameObj::FrameType &t)   //FIXME-5 not saved 
     }
 }
 
-void VymModel::setFrameType(const QString &s)	//FIXME-5 not saved if there is no LMO
+void VymModel::setFrameType(const QString &s)	
 {
     BranchItem *bi=getSelectedBranch();
     if (bi)
@@ -2864,7 +2864,7 @@ QString VymModel::getXLinkStyleEnd()
 	return QString();
 }
 
-AttributeItem* VymModel::addAttribute()	    // FIXME-5 savestate missing
+AttributeItem* VymModel::addAttribute()	    // Experimental, savestate missing
 
 {
     BranchItem* selbi=getSelectedBranch();
@@ -3262,10 +3262,6 @@ bool VymModel::relinkTo ( const QString &dest, int num, QPointF pos)
 
 void VymModel::cleanupItems()
 {
-
-    // Search for double entries (should not be necessary now) //FIXME-5
-    // --> not implemented yet
-
     while (!deleteLaterIDs.isEmpty())
     {
 	TreeItem *ti=findID (deleteLaterIDs.takeFirst());
@@ -4760,15 +4756,15 @@ void VymModel::selectMapBackgroundImage ()  // FIXME-5 for using background imag
     filters<< tr("Images") + " (*.png *.bmp *.xbm *.jpg *.png *.xpm *.gif *.pnm)";
     QFileDialog fd;
     fd.setFileMode (QFileDialog::ExistingFile);
-    fd.setWindowTitle(vymName+" - " +tr("Load background image"));
+    fd.setWindowTitle(vymName + " - " + tr("Load background image"));
     fd.setDirectory (lastImageDir);
     fd.setAcceptMode (QFileDialog::AcceptOpen);
 
     if ( fd.exec() == QDialog::Accepted &&!fd.selectedFiles().isEmpty())
     {
 	// TODO selectMapBackgroundImg in QT4 use:  lastImageDir=fd.directory();
-	lastImageDir=QDir (fd.directory().path());
-	setMapBackgroundImage (fd.selectedFiles().first());
+	lastImageDir=QDir ( fd.directory().path() );
+	setMapBackgroundImage ( fd.selectedFiles().first() );
     }
 }   
 
@@ -4788,7 +4784,7 @@ void VymModel::setMapBackgroundImage (const QString &fn)    //FIXME-5 missing sa
     mapEditor->getScene()->setBackgroundBrush(brush);
 }
 
-void VymModel::selectMapBackgroundColor()   // FIXME-4 move to ME
+void VymModel::selectMapBackgroundColor() 
 {
     QColor col = QColorDialog::getColor( mapEditor->getScene()->backgroundBrush().color(), NULL);
     if ( !col.isValid() ) return;

@@ -166,8 +166,6 @@ public:
     bool renameMap( const QString &newPath); //! Rename map and change lockfile
     void setReadOnly( bool b );
     bool isReadOnly();
-    void setUseLockFile( bool b);
-    bool lockFileUsed();
 
 private:
     VymLock  vymLock;       //! Handle lockfiles and related information

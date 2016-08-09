@@ -88,7 +88,7 @@ void AttributeDialog::updateTable()
     {
 	aw=new AttributeWidget (this);
 	aw->setKey (keyList.at(i) );
-	// FIXME-5 aw->setValues (table->getValues (keyList.at(i) ));
+	// TODO aw->setValues (table->getValues (keyList.at(i) ));
 	aw->show();
 	tableLayout->addWidget (aw);
     }
