@@ -25,14 +25,6 @@ FindResultWidget::FindResultWidget(QWidget *)
 
     QVBoxLayout* mainLayout = new QVBoxLayout;
     
-    // FIXME-5 feature: show number of hits at bottom of FindResultWidget
-
-    /* FIXME-5 testing QMenuBar *mb=new QMenuBar;
-    QAction *a=new  QAction ("Foo action",NULL);
-    mb->addAction (a);
-    mb->insertSeparator();
-    mainLayout->addWidget(mb);
-    */
     mainLayout->addWidget(view);
     mainLayout->addWidget(findWidget);
 

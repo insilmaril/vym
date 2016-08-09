@@ -146,7 +146,7 @@ void TreeItem::appendChild(TreeItem *item)
 	childItems.append(item);
 	branchCounter++;
 
-	// Set correct type	//FIXME-5 DUP in constr branchitem
+	// Set correct type	
 	if (this==rootItem)
 	    item->setType(MapCenter);
 	else
@@ -298,7 +298,7 @@ void TreeItem::setType(const Type t)
 
 TreeItem::Type TreeItem::getType()
 {
-    if (type==Branch && depth()==0) return MapCenter;	//FIXME-5 should not be necesssary
+    if (type==Branch && depth()==0) return MapCenter;	// should not be necesssary
     return type;
 }
 
@@ -727,7 +727,7 @@ ImageItem* TreeItem::getImageNum (const int &n)
 	return NULL;
 }
 
-FloatImageObj* TreeItem::getImageObjNum (const int &n)	// FIXME-5 what about SVGs later?
+FloatImageObj* TreeItem::getImageObjNum (const int &n)	
 {
     if (imageCounter>0 )
 	return (FloatImageObj*)(getImageNum(n)->getLMO());

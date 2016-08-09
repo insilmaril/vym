@@ -52,7 +52,7 @@ void VymProcess::runScript(QString spath, QString fpath)
     //	    if (exitStatus()>0) showOutput=true;
 	    
     }	
-    /* FIXME-5	output for Process::runScript
+    /* TODO output for Process::runScript
     qDebug()<<readAllStandardOutput();
     qDebug()<<getStdout();
     qDebug()<<getErrout();

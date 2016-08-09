@@ -156,7 +156,7 @@ void BranchPropertyEditor::setItem (TreeItem *ti)
         // Attributes
         attributeModel->removeRows(0, attributeModel->rowCount(), QModelIndex());
 
-        // FIXME-5 some samples for attribute testing
+        // some samples for attribute testing
         QStringList attrTypes=mapEditor->attributeTable()->getTypes();
         for (int i=0; i<attrTypes.count()-1;i++)
         {
