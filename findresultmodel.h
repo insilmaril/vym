@@ -46,7 +46,6 @@ public:
                     const QModelIndex &parent = QModelIndex());
 
     FindResultItem* getItem(const QModelIndex &index) const;
-    FindResultItem* findTreeItem (TreeItem *ti);
 
     FindResultItem* addItem (TreeItem *ti);
     FindResultItem* addSubItem (FindResultItem *parent,const QString &s, TreeItem *pi, int i);

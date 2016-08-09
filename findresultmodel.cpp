@@ -193,11 +193,6 @@ FindResultItem* FindResultModel::getItem(const QModelIndex &index) const
     return rootItem;
 }
 
-FindResultItem *FindResultModel::findTreeItem(TreeItem *)
-{
-    return NULL;    // FIXME-5 not used so far
-}
-
 FindResultItem*  FindResultModel::addItem (TreeItem *ti)
 {
     FindResultItem *ni=NULL;
