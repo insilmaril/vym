@@ -390,7 +390,7 @@ Main::~Main()
     //FIXME-4 save scriptEditor settings
 
     // call the destructors
-    delete noteEditor;	    // FIXME-4 shouldn't this be done in main?
+    delete noteEditorDW;
     delete historyWindow;
     delete branchPropertyEditor;
 

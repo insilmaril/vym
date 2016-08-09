@@ -496,6 +496,9 @@ int main(int argc, char* argv[])
 
     app.exec();
 
+    // Cleanup
+    delete noteEditor;
+
     int s = warningCount + criticalCount + fatalCount;
     if ( s > 0 ) 
         qDebug() << "vym exiting with:\n" << 
