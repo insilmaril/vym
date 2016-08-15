@@ -286,6 +286,9 @@ void TaskModel::recalcPriorities()
 	p-=t->getAgeModified();
 	p-=t->getAgeCreation() * 1.0 / 365 * 80; // After a year, this is as important as "red"
 
+        // Position in subtree
+        p += bi->num();
+
 	t->setPriority (p);
 	if (p<minPrio) minPrio=p;
     }
