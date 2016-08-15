@@ -263,9 +263,6 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix, bool w
 	    break;
     }	
 
-    QString lockFileFlag;   // FIXME-2  not decided yet
-    lockFileFlag = "true";  //lockFile ? lockFileFlag = "true": lockFileFlag = "";
-
     QString s="<?xml version=\"1.0\" encoding=\"utf-8\"?><!DOCTYPE vymmap>\n";
     QString colhint="";
     if (linkcolorhint==LinkableMapObj::HeadingColor) 
@@ -290,7 +287,6 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix, bool w
 		  xml.attribut("defXLinkStyleEnd", defXLinkStyleEnd) +
 		  xml.attribut("mapZoomFactor", QString().setNum(mapEditor->getZoomFactorTarget()) ) +
 		  xml.attribut("mapRotationAngle", QString().setNum(mapEditor->getAngleTarget()) ) +
-		  xml.attribut("useLockFile", lockFileFlag ) +
 		  colhint; 
     s+=xml.beginElement("vymmap",mapAttr); 
     xml.incIndent();
