@@ -3131,7 +3131,7 @@ bool VymModel::relinkBranch (
 	// reset parObj, fonts, frame, etc in related LMO or other view-objects
 	branch->updateStyles(keepFrame);
 
-	emit (layoutChanged() );
+        emitDataChanged( branch );
 	reposition();	// both for moveUp/Down and relinking
 
 	// Savestate
