@@ -3076,12 +3076,14 @@ int Main::modelCount()
 
 void Main::updateTabName( VymModel *vm)
 {
-    foreach (VymView *vv,vymViews)
+    for( int i = 0; i < vymViews.count(); i++)
     {
-	VymModel *m = vv->getModel();
-	if (m == vm) 
+        if (vymViews.at(i)->getModel() == vm )
         {
-            tabWidget->setTabText (tabWidget->currentIndex(), m->getFileName() );
+            if ( vm->isReadOnly() )
+                tabWidget->setTabText( i, vm->getFileName() + " " + tr("(readonly)") );
+            else
+                tabWidget->setTabText( i, vm->getFileName() );
             break;
         }
     }
@@ -3192,7 +3194,6 @@ File::ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode, const FileType
 	}
     }
 
-    int tabIndex=tabWidget->currentIndex();
 
     // Try to load map
     if ( !fn.isEmpty() )
@@ -3208,8 +3209,6 @@ File::ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode, const FileType
 	    vymViews.append (vv);
 
 	    tabWidget->addTab (vv,fn);
-	    tabIndex=tabWidget->count()-1;
-	    //tabWidget->setCurrentIndex (tabIndex);
 	    vv->initFocus();
 	}
 	
@@ -3226,12 +3225,14 @@ File::ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode, const FileType
 
 	    mb.setButtonText( QMessageBox::Yes, tr("Create"));
 	    mb.setButtonText( QMessageBox::No, tr("Cancel"));
+
+            VymModel *vm = currentMapEditor()->getModel();
 	    switch( mb.exec() ) 
 	    {
 		case QMessageBox::Yes:
 		    // Create new map
-		    currentMapEditor()->getModel()->setFilePath(fn);
-		    tabWidget->setTabText (tabIndex, currentMapEditor()->getModel()->getFileName() );
+                    vm->setFilePath(fn);
+                    updateTabName( vm );
 		    statusBar()->showMessage( "Created " + fn , statusbarTime );
 		    return File::Success;
 			
@@ -3245,8 +3246,6 @@ File::ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode, const FileType
 		    return File::Aborted;
 	    }
 	}   
-
-	//tabWidget->setCurrentIndex (tabIndex);
 
 	if (err!=File::Aborted)
 	{
@@ -3274,7 +3273,7 @@ File::ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode, const FileType
 	    if (lmode == NewMap)
             {
                 vm->setFilePath (fn);
-                tabWidget->setTabText (tabIndex, vm->getFileName());
+                updateTabName( vm );
                 actionFilePrint->setEnabled (true);
             }	
 	    editorChanged();
@@ -5346,16 +5345,6 @@ void Main::updateActions()
             foreach (QAction *a, restrictedMapActions)
                 a->setEnabled( false );
 
-            // Set tabwidget "readonly"
-            for( int i = 0; i < vymViews.count(); i++)
-            {
-                if (vymViews.at(i)->getModel() == m )
-                {
-                    tabWidget->setTabText( i, m->getFileName() + " " + tr("(readonly)") );
-                    break;
-                }
-            }
-
             // FIXME-2 updateactions: refactor actionListFiles: probably not needed, wrong actions there atm
         } else
         {   // not readonly     // FIXME-2 updateactions: maybe only required in testing, as mode should not change
@@ -5367,15 +5356,6 @@ void Main::updateActions()
             foreach (QAction *a, restrictedMapActions)
                 a->setEnabled( true );
 
-            // Unset tabwidget "readonly"
-            for( int i = 0; i < vymViews.count(); i++)
-            {
-                if (vymViews.at(i)->getModel() == m )
-                {
-                    tabWidget->setTabText( i, m->getFileName() );
-                    break;
-                }
-            }
         }
 	// Enable all files actions first   // FIXME-2 updateactions: required?
 	for (int i=0; i<actionListFiles.size(); ++i)	
@@ -5718,11 +5698,13 @@ void Main::standardFlagChanged()
 
 void Main::testFunction1()
 {
+    /*
     VymModel *m = currentModel();
     if (m)
     {
         m->getMapEditor()->minimizeView();
     }
+    */
 }
 
 void Main::testFunction2()

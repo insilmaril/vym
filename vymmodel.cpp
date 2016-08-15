@@ -1052,7 +1052,7 @@ bool VymModel::renameMap( const QString &newPath)
 void VymModel::setReadOnly( bool b )
 {
     readonly = b;
-    updateActions();
+    mainWindow->updateTabName( this );
 }
 
 bool VymModel::isReadOnly()
