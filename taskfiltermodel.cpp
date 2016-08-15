@@ -12,8 +12,7 @@ void TaskFilterModel::setFilter (bool b)
     useFilter = b;
 }
 
-void TaskFilterModel::setMapFilter (const QString &s)	
-//FIXME-2 changing mapname does not retrigger filtering
+void TaskFilterModel::setMapFilter (const QString &s)	//FIXME-2 changing mapname does not retrigger filtering
 {
     mapFilter = s;
 }
