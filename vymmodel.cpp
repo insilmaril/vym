@@ -980,7 +980,7 @@ void VymModel::importDir()
 bool VymModel::tryVymLock()
 {
     // Defaults for author and host in vymLock
-    QString defAuthor = tr( "unknown user", "Default for lockfiles of maps");   // FIXME-2 set default author in settings
+    QString defAuthor = settings.value("/user/name", tr( "unknown user", "Default for lockfiles of maps") ).toString();
     QString defHost   = QHostInfo::localHostName();      
     vymLock.setMapPath( filePath );
     vymLock.setAuthor( settings.value( "/user/name", defAuthor ).toString() ); 
@@ -1313,7 +1313,7 @@ void VymModel::undo()
     QString errMsg;
     //parseAtom (undoCommand,noErr,errMsg);
     errMsg = QVariant(execute(undoCommand)).toString();
-    // FIXME-2 add noErr to parameters of execute above or ignore (error message already within parseAtom)
+    // FIXME-3 add noErr to parameters of execute above or ignore (error message already within parseAtom)
     // 
     /*
     if (!noErr)
@@ -2284,7 +2284,7 @@ void VymModel::setIncludeImagesHor(bool b)
     }	
 }
 
-void VymModel::setChildrenLayout(BranchItem::LayoutHint layoutHint) // FIXME-2 no savestate yet
+void VymModel::setChildrenLayout(BranchItem::LayoutHint layoutHint) // FIXME-3 no savestate yet
 {
     BranchItem *bi=getSelectedBranch();
     if (bi)
@@ -4835,7 +4835,7 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
     if (com=="setHeadingPlainText")
 	{
 	    s=parser.parString (ok,0);
-            setHeadingPlainText (s); // FIXME-2  what about RT? Nothing implemented.
+            setHeadingPlainText (s); // FIXME-3  what about RT? Nothing implemented.
         break;
     }
 	/////////////////////////////////////////////////////////////////////
@@ -5323,13 +5323,7 @@ void VymModel::exportXML (QString dpath, QString fpath, bool useDialog)
         //dpath = dpath.left(dpath.lastIndexOf("/"));
 	fpath = dpath + "/" + mapName + ".xml";
 
-	if (!reallyWriteDirectory(dpath) )
-	{
-	    qDebug() << "exportXML: fd    = "<<fd.selectedFiles().first(); //FIXME-2
-	    qDebug() << "exportXML: dpath = "<<dpath; //FIXME-2
-	    return;
-	}
-
+	if (!reallyWriteDirectory(dpath) ) return;
     }
     ex.setFilePath( fpath );
 
@@ -5500,7 +5494,7 @@ bool VymModel::exportLastAvailable(QString &description, QString &command, QStri
 
 void VymModel::exportLast()
 {
-    QString desc, command, path, configFile;  //FIXME-2 better integrate configFIle into command
+    QString desc, command, path, configFile;  //FIXME-3 better integrate configFile into command
     if (exportLastAvailable(desc, command, path, configFile) )
     {
         execute (command);
@@ -6152,7 +6146,7 @@ void VymModel::downloadImage (const QUrl &url, BranchItem *bi)
 	return;
     }
 
-    // FIXME-2 download img to tmpfile and delete after running script in mainWindow
+    // FIXME-3 download img to tmpfile and delete after running script in mainWindow
     QString script;
     script += QString("selectID(\"%1\");").arg(bi->getUuid().toString());
     script += QString("loadImage(\"$TMPFILE\");");
