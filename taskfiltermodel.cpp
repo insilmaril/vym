@@ -30,9 +30,8 @@ bool TaskFilterModel::filterAcceptsRow(int sourceRow,
 
     // Filter by mapname
     QString mapname = taskModel->getTask(ix)->getMapName();
-    if (mapname.isEmpty()) mapname = "barfoo";
+    if (mapname.isEmpty()) mapname = "justSomePseudoMapNameForFiltering";
     if ( !mapFilter.isEmpty() && mapname != mapFilter )
-        //FIXME-2 new (unnamed) map does not filter, but shows tasks from all maps
         return false;
 
     // Filter new tasks
