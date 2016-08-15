@@ -17,6 +17,8 @@ public:
     virtual QString getAuthor();
     virtual QString getMapTitle();
     virtual void setStats( const QString & s );
+    void setReadOnly( bool b );
+    bool isReadOnly();
 
 public slots:
     virtual void setMapName( const QString & s );
@@ -26,6 +28,7 @@ public slots:
 
 private:
     Ui::ExtraInfoDialog ui;
+    bool readOnly;
 
 };
 
