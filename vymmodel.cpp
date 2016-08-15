@@ -5767,7 +5767,7 @@ void VymModel::toggleMapLinkColorHint()
     }
 }
 
-void VymModel::selectMapBackgroundImage ()  // FIXME-5 for using background image: view.setCacheMode(QGraphicsView::CacheBackground);  Also this belongs into ME
+void VymModel::selectMapBackgroundImage ()  // FIXME-3 for using background image: view.setCacheMode(QGraphicsView::CacheBackground);  Also this belongs into ME
 {
     QStringList filters;
     filters<< tr("Images") + " (*.png *.bmp *.xbm *.jpg *.png *.xpm *.gif *.pnm)";
@@ -5785,7 +5785,7 @@ void VymModel::selectMapBackgroundImage ()  // FIXME-5 for using background imag
     }
 }   
 
-void VymModel::setMapBackgroundImage (const QString &fn)    //FIXME-5 missing savestate, move to ME
+void VymModel::setMapBackgroundImage (const QString &fn)    //FIXME-3 missing savestate, move to ME
 {
     /*
     QColor oldcol=mapEditor->getScene()->backgroundBrush().color();

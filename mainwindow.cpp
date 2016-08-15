@@ -1102,7 +1102,7 @@ void Main::setupFileActions()
     switchboard.addSwitch ("editMapProperties", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( editMapProperties() ) );
     fileMenu->addAction(a);
-    actionListFiles.append (a);   // FIXME-2 requires map. Dialog needs to be readonly in readonly mode
+    actionListFiles.append (a);   
     actionFilePrint=a;
 
     fileMenu->addSeparator();
@@ -2842,7 +2842,7 @@ void Main::setupContextMenus()
     canvasContextMenu->addAction(actionFormatSelectionColor);
     canvasContextMenu->addAction(actionFormatBackColor);
     //if (settings.value( "/mainwindow/showTestMenu",false).toBool() )
-    //    canvasContextMenu->addAction( actionFormatBackImage );  //FIXME-5 makes vym too slow: postponed for later version 
+    //    canvasContextMenu->addAction( actionFormatBackImage );  //FIXME-3 makes vym too slow: postponed for later version 
 
 
     // Menu for last opened files
