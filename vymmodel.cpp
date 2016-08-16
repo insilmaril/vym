@@ -270,9 +270,6 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix, bool w
 	    break;
     }	
 
-    QString lockFileFlag;   // FIXME-2  not decided yet
-    lockFileFlag = "true";  //lockFile ? lockFileFlag = "true": lockFileFlag = "";
-
     QString s="<?xml version=\"1.0\" encoding=\"utf-8\"?><!DOCTYPE vymmap>\n";
     QString colhint="";
     if (linkcolorhint==LinkableMapObj::HeadingColor) 
@@ -297,7 +294,6 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix, bool w
 		  xml.attribut("defXLinkStyleEnd", defXLinkStyleEnd) +
 		  xml.attribut("mapZoomFactor", QString().setNum(mapEditor->getZoomFactorTarget()) ) +
 		  xml.attribut("mapRotationAngle", QString().setNum(mapEditor->getAngleTarget()) ) +
-		  xml.attribut("useLockFile", lockFileFlag ) +
 		  colhint; 
     s+=xml.beginElement("vymmap",mapAttr); 
     xml.incIndent();
@@ -450,9 +446,6 @@ bool VymModel::parseVymText (const QString &s)
             emitNoteChanged( bi );
             emitDataChanged( bi );
             reposition();   // to generate bbox sizes
-
-            // Recalc priorities and sort
-            taskModel->recalcPriorities();  //FIXME-2 why recalc prios when reading vymtext?
         } else
         {
             QMessageBox::critical( 0, tr( "Critical Parse Error" ),
@@ -994,7 +987,7 @@ void VymModel::importDir()
 bool VymModel::tryVymLock()
 {
     // Defaults for author and host in vymLock
-    QString defAuthor = tr( "unknown user", "Default for lockfiles of maps");   // FIXME-2 set default author in settings
+    QString defAuthor = settings.value("/user/name", tr( "unknown user", "Default for lockfiles of maps") ).toString();
     QString defHost   = QHostInfo::localHostName();      
     vymLock.setMapPath( filePath );
     vymLock.setAuthor( settings.value( "/user/name", defAuthor ).toString() ); 
@@ -1062,7 +1055,7 @@ bool VymModel::renameMap( const QString &newPath)
 void VymModel::setReadOnly( bool b )
 {
     readonly = b;
-    updateActions();
+    mainWindow->updateTabName( this );
 }
 
 bool VymModel::isReadOnly()
@@ -2285,7 +2278,7 @@ void VymModel::setIncludeImagesHor(bool b)
     }	
 }
 
-void VymModel::setChildrenLayout(BranchItem::LayoutHint layoutHint) // FIXME-2 no savestate yet
+void VymModel::setChildrenLayout(BranchItem::LayoutHint layoutHint) // FIXME-3 no savestate yet
 {
     BranchItem *bi=getSelectedBranch();
     if (bi)
@@ -3134,7 +3127,7 @@ bool VymModel::relinkBranch (
 	// reset parObj, fonts, frame, etc in related LMO or other view-objects
 	branch->updateStyles(keepFrame);
 
-	emit (layoutChanged() );
+        emitDataChanged( branch );
 	reposition();	// both for moveUp/Down and relinking
 
 	// Savestate
@@ -4278,13 +4271,7 @@ void VymModel::exportXML (QString dpath, QString fpath, bool useDialog)
         //dpath = dpath.left(dpath.lastIndexOf("/"));
 	fpath = dpath + "/" + mapName + ".xml";
 
-	if (!reallyWriteDirectory(dpath) )
-	{
-	    qDebug() << "exportXML: fd    = "<<fd.selectedFiles().first(); //FIXME-2
-	    qDebug() << "exportXML: dpath = "<<dpath; //FIXME-2
-	    return;
-	}
-
+	if (!reallyWriteDirectory(dpath) ) return;
     }
     ex.setFilePath( fpath );
 
@@ -4455,7 +4442,7 @@ bool VymModel::exportLastAvailable(QString &description, QString &command, QStri
 
 void VymModel::exportLast()
 {
-    QString desc, command, path, configFile;  //FIXME-2 better integrate configFIle into command
+    QString desc, command, path, configFile;  //FIXME-3 better integrate configFile into command
     if (exportLastAvailable(desc, command, path, configFile) )
     {
         execute (command);
@@ -4750,7 +4737,7 @@ void VymModel::toggleMapLinkColorHint()
     }
 }
 
-void VymModel::selectMapBackgroundImage ()  // FIXME-5 for using background image: view.setCacheMode(QGraphicsView::CacheBackground);  Also this belongs into ME
+void VymModel::selectMapBackgroundImage ()  // FIXME-3 for using background image: view.setCacheMode(QGraphicsView::CacheBackground);  Also this belongs into ME
 {
     QStringList filters;
     filters<< tr("Images") + " (*.png *.bmp *.xbm *.jpg *.png *.xpm *.gif *.pnm)";
@@ -4768,7 +4755,7 @@ void VymModel::selectMapBackgroundImage ()  // FIXME-5 for using background imag
     }
 }   
 
-void VymModel::setMapBackgroundImage (const QString &fn)    //FIXME-5 missing savestate, move to ME
+void VymModel::setMapBackgroundImage (const QString &fn)    //FIXME-3 missing savestate, move to ME
 {
     /*
     QColor oldcol=mapEditor->getScene()->backgroundBrush().color();
@@ -5129,8 +5116,9 @@ void VymModel::downloadImage (const QUrl &url, BranchItem *bi) // FIXME-1 downlo
 	return;
     }
 
-    QString script;
+    // FIXME-3 download img to tmpfile and delete after running script in mainWindow
     // FIXME-1 change to new scripting syntax: getCurrentMap
+    QString script;
     script += QString("selectID(\"%1\");").arg(bi->getUuid().toString());
     script += QString("loadImage(\"$TMPFILE\");");
 

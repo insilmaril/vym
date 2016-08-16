@@ -47,3 +47,16 @@ void ExtraInfoDialog::setStats(const QString &s)
 {
     ui.statsTE->setText (s);
 }
+
+void ExtraInfoDialog::setReadOnly(bool b)
+{
+    readOnly = b;
+    ui.authorLE->setReadOnly( readOnly );
+    ui.commentTE->setReadOnly( readOnly );
+    ui.mapTitleLE->setReadOnly( readOnly );
+}
+
+bool ExtraInfoDialog::isReadOnly()
+{
+    return readOnly;
+}

@@ -139,7 +139,7 @@ MapEditor::MapEditor( VymModel *vm)
 
     setState (Neutral);
 
-    // Attributes   //FIXME-5 testing only...
+    // Attributes   //TODO  testing only...
     QString k;
     AttributeDef *ad;
     attrTable= new AttributeTable();

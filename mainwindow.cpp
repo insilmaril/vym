@@ -1090,7 +1090,7 @@ void Main::setupFileActions()
     switchboard.addSwitch ("editMapProperties", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( editMapProperties() ) );
     fileMenu->addAction(a);
-    actionListFiles.append (a);   // FIXME-2 requires map. Dialog needs to be readonly in readonly mode
+    actionListFiles.append (a);   
     actionFilePrint=a;
 
     fileMenu->addSeparator();
@@ -1109,7 +1109,7 @@ void Main::setupFileActions()
     connect( a, SIGNAL( triggered() ), this, SLOT( fileCloseMap() ) );
     fileMenu->addAction(a);
 
-    a = new QAction(QPixmap(":/exit.png"), tr( "E&xit","File menu")+" "+vymName, this);
+    a = new QAction(QPixmap(":/exit.png"), tr( "E&xit","File menu"), this);
     a->setShortcut (Qt::CTRL + Qt::Key_Q );	  
     switchboard.addSwitch ("fileExit", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( fileExitVYM() ) );
@@ -2838,7 +2838,7 @@ void Main::setupContextMenus()
     canvasContextMenu->addAction(actionFormatSelectionColor);
     canvasContextMenu->addAction(actionFormatBackColor);
     //if (settings.value( "/mainwindow/showTestMenu",false).toBool() )
-    //    canvasContextMenu->addAction( actionFormatBackImage );  //FIXME-5 makes vym too slow: postponed for later version 
+    //    canvasContextMenu->addAction( actionFormatBackImage );  //FIXME-3 makes vym too slow: postponed for later version 
 
 
     // Menu for last opened files
@@ -3072,12 +3072,14 @@ int Main::modelCount()
 
 void Main::updateTabName( VymModel *vm)
 {
-    foreach (VymView *vv,vymViews)
+    for( int i = 0; i < vymViews.count(); i++)
     {
-	VymModel *m = vv->getModel();
-	if (m == vm) 
+        if (vymViews.at(i)->getModel() == vm )
         {
-            tabWidget->setTabText (tabWidget->currentIndex(), m->getFileName() );
+            if ( vm->isReadOnly() )
+                tabWidget->setTabText( i, vm->getFileName() + " " + tr("(readonly)") );
+            else
+                tabWidget->setTabText( i, vm->getFileName() );
             break;
         }
     }
@@ -3188,7 +3190,6 @@ File::ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode, const FileType
 	}
     }
 
-    int tabIndex=tabWidget->currentIndex();
 
     // Try to load map
     if ( !fn.isEmpty() )
@@ -3204,8 +3205,6 @@ File::ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode, const FileType
 	    vymViews.append (vv);
 
 	    tabWidget->addTab (vv,fn);
-	    tabIndex=tabWidget->count()-1;
-	    //tabWidget->setCurrentIndex (tabIndex);
 	    vv->initFocus();
 	}
 	
@@ -3222,12 +3221,14 @@ File::ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode, const FileType
 
 	    mb.setButtonText( QMessageBox::Yes, tr("Create"));
 	    mb.setButtonText( QMessageBox::No, tr("Cancel"));
+
+            VymModel *vm = currentMapEditor()->getModel();
 	    switch( mb.exec() ) 
 	    {
 		case QMessageBox::Yes:
 		    // Create new map
-		    currentMapEditor()->getModel()->setFilePath(fn);
-		    tabWidget->setTabText (tabIndex, currentMapEditor()->getModel()->getFileName() );
+                    vm->setFilePath(fn);
+                    updateTabName( vm );
 		    statusBar()->showMessage( "Created " + fn , statusbarTime );
 		    return File::Success;
 			
@@ -3241,8 +3242,6 @@ File::ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode, const FileType
 		    return File::Aborted;
 	    }
 	}   
-
-	//tabWidget->setCurrentIndex (tabIndex);
 
 	if (err!=File::Aborted)
 	{
@@ -3270,7 +3269,7 @@ File::ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode, const FileType
 	    if (lmode == NewMap)
             {
                 vm->setFilePath (fn);
-                tabWidget->setTabText (tabIndex, vm->getFileName());
+                updateTabName( vm );
                 actionFilePrint->setEnabled (true);
             }	
 	    editorChanged();
@@ -4268,6 +4267,7 @@ void Main::editMapProperties()
     dia.setMapTitle ( m->getTitle() );
     dia.setAuthor   ( m->getAuthor() );
     dia.setComment  ( m->getComment() );
+    dia.setReadOnly ( m->isReadOnly() );
 
     // Calc some stats
     QString stats;
@@ -5300,7 +5300,7 @@ void Main::changeSelection (VymModel *model, const QItemSelection &newsel, const
         if (!ti->hasEmptyNote() )
             noteEditor->setNote(ti->getNote() );
         else
-            noteEditor->setNote(VymNote() );    //FIXME-2 maybe add a clear() to TE
+            noteEditor->setNote(VymNote() );
         // Show URL and link in statusbar
         QString status;
         QString s=ti->getURL();
@@ -5360,16 +5360,6 @@ void Main::updateActions()
             foreach (QAction *a, restrictedMapActions)
                 a->setEnabled( false );
 
-            // Set tabwidget "readonly"
-            for( int i = 0; i < vymViews.count(); i++)
-            {
-                if (vymViews.at(i)->getModel() == m )
-                {
-                    tabWidget->setTabText( i, m->getFileName() + " " + tr("(readonly)") );
-                    break;
-                }
-            }
-
             // FIXME-2 updateactions: refactor actionListFiles: probably not needed, wrong actions there atm
         } else
         {   // not readonly     // FIXME-2 updateactions: maybe only required in testing, as mode should not change
@@ -5381,15 +5371,6 @@ void Main::updateActions()
             foreach (QAction *a, restrictedMapActions)
                 a->setEnabled( true );
 
-            // Unset tabwidget "readonly"
-            for( int i = 0; i < vymViews.count(); i++)
-            {
-                if (vymViews.at(i)->getModel() == m )
-                {
-                    tabWidget->setTabText( i, m->getFileName() );
-                    break;
-                }
-            }
         }
 	// Enable all files actions first   // FIXME-2 updateactions: required?
 	for (int i=0; i<actionListFiles.size(); ++i)	

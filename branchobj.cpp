@@ -276,7 +276,7 @@ void BranchObj::calcBBoxSize()
     // Floatimages 
     QPointF rp;
 
-    topPad=botPad=leftPad=rightPad=0;
+    topPad = botPad = leftPad = rightPad = 0;
     bool incV=((BranchItem*)treeItem)->getIncludeImagesVer();
     bool incH=((BranchItem*)treeItem)->getIncludeImagesHor();
     if (incH || incV)
@@ -291,8 +291,8 @@ void BranchObj::calcBBoxSize()
                 qreal y;
                 if (rp.y() > 0)
                 {
-                    y=rp.y() + fio->height()/2 - ornamentsBBox.height()/2;
-                    botPad=max(botPad, y);
+                    y = rp.y() + fio->height()/2 - ornamentsBBox.height()/2;
+                    botPad = max(botPad, y);
                 } else
                 {
                     y=-rp.y() + fio->height()/2 - ornamentsBBox.height()/2;
@@ -313,8 +313,8 @@ void BranchObj::calcBBoxSize()
                 }
 	    }	    
 	}   
-	h+=topPad+botPad;
-	w+=leftPad+rightPad;
+	h += topPad + botPad;
+	w += leftPad + rightPad;
     }
 
     // Frame thickness  

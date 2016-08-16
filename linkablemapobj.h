@@ -106,7 +106,7 @@ public:
     virtual void calcBBoxSizeWithChildren()=0;// calc size of  BBox including children recursivly
 
 protected:
-    void parabel(QPolygonF &,double,double,double,double);  // Create Parabel connecting two points
+    void parabel(QPolygonF &, qreal, qreal, qreal, qreal);  // Create Parabel connecting two points
 
     QPointF childRefPos;
     QPointF floatRefPos;

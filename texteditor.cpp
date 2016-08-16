@@ -911,11 +911,9 @@ void TextEditor::textColor()
     actionTextColor->setIcon( pix );
 }
 
-void TextEditor::textAlign( QAction *a )  //FIXME-2 center only centers first line
+void TextEditor::textAlign( QAction *a ) 
 {
-    QTextCursor c=e->textCursor();
-    c.setPosition (3,QTextCursor::MoveAnchor);
-    e->setTextCursor (c);
+    QTextCursor c = e->textCursor();
 
     if ( a == actionAlignLeft )
         e->setAlignment( Qt::AlignLeft );

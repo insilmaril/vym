@@ -32,18 +32,22 @@ Switchboard::Switchboard ()
 
 void Switchboard::addGroup( QString gIdentifier, QString gName)
 {
-    groups.insert(gIdentifier, gName); // FIXME-2 check if identifier already exists
+    if (groups.contains(gIdentifier))
+    {
+        qDebug() << "Warning switchboard: Shortcut group " << gIdentifier << " already exists";
+        return;
+    }
+    groups.insert(gIdentifier, gName); 
 }
 
 void Switchboard::addSwitch( QString identifier, QString scope, QAction *action, QString tag)
 {
-    // FIXME-2 check, if identifier already exist...
-    if (!switches.uniqueKeys().contains(identifier))
+    if (!switches.contains(identifier))
     {
         KeySwitch ksw(identifier, action->text(), scope, tag, action->shortcut());
         switches.insert(scope, ksw);
     } else
-        qDebug() << "Switchboard::addSwitch warning: Existing idenifier " << identifier;
+        qDebug() << "Warning switchboard::addSwitch warning: Existing idenifier " << identifier;
 }
 
 QString Switchboard::getASCII()  

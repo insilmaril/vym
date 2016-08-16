@@ -111,6 +111,6 @@ void SlideEditor::moveSlideDown()
 
 void SlideEditor::updateSelection(QItemSelection, QItemSelection)
 {
-    // FIXME-2 updateActions missing, e.g. state for moveUp/down
+    // FIXME-3 updateActions missing, e.g. state for moveUp/down
 }
 
