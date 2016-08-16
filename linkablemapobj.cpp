@@ -438,7 +438,7 @@ void LinkableMapObj::updateLinkGeometry()
     // updateLinkGeometry is called from move, but called from constructor we don't
     // have parents yet...
 
-    if (style==UndefinedStyle)
+    if (style == UndefinedStyle)
     {
         setDockPos();
         return;
@@ -446,42 +446,42 @@ void LinkableMapObj::updateLinkGeometry()
 
     switch (linkpos)
     {
-    case Middle:
-        bottomlineY=bbox.top() + bbox.height()/2;	// draw link to middle (of frame)
-        break;
-    case Bottom:
-        //bottomlineY=bbox.bottom()-1;  // draw link to bottom of box
-        bottomlineY=bbox.bottom() - botPad;
-        break;
+        case Middle:
+            bottomlineY = bbox.top() + bbox.height()/2;	// draw link to middle (of frame)
+            break;
+        case Bottom:
+            //bottomlineY = bbox.bottom()-1;  // draw link to bottom of box
+            bottomlineY = bbox.bottom()  - botPad;  // FIXME-2 bottom line approx. 1 pixel below link
+            break;
     }
     
-    double p2x,p2y;				// Set P2 Before setting
+    double p2x, p2y;				// Set P2 Before setting
     if (!link2ParPos)
     {
-        p2x=QPointF( parObj->getChildRefPos() ).x();   // P1, we have to look at
-        p2y=QPointF( parObj->getChildRefPos() ).y();   // orientation
+        p2x = QPointF( parObj->getChildRefPos() ).x();   // P1, we have to look at
+        p2y = QPointF( parObj->getChildRefPos() ).y();   // orientation
     } else
     {
-        p2x=QPointF( parObj->getParPos() ).x();
-        p2y=QPointF( parObj->getParPos() ).y();
+        p2x = QPointF( parObj->getParPos() ).x();
+        p2y = QPointF( parObj->getParPos() ).y();
     }
 
     setOrientation();
     setDockPos(); // Call overloaded method
 
-    double p1x=parPos.x();  // Link is drawn from P1 to P2
-    double p1y=parPos.y();
+    double p1x = parPos.x();  // Link is drawn from P1 to P2
+    double p1y = parPos.y();
 
-    double vx=p2x - p1x;    // V=P2-P1
-    double vy=p2y - p1y;
+    double vx = p2x - p1x;    // V=P2-P1
+    double vy = p2y - p1y;
 
     int z;
     // Hack to z-move links to MapCenter (d==1) below MCOs frame (d==0) //FIXME-4 no longer used?
     if (treeItem->depth()<2)
         //z=(treeItem->depth() -2)*dZ_DEPTH + dZ_LINK;
-        z=- dZ_LINK;
+        z =- dZ_LINK;
     else
-        z=dZ_LINK;
+        z = dZ_LINK;
 
     //qDebug()<<"LMO::updateGeo d="<<treeItem->depth()<<"  this="<<this<<"  "<<treeItem->getHeading();
 
@@ -495,11 +495,11 @@ void LinkableMapObj::updateLinkGeometry()
 
     double a;	// angle
     if (vx > -0.000001 && vx < 0.000001)
-        a=M_PI_2;
+        a = M_PI_2;
     else
-        a=atan( vy / vx );
+        a = atan( vy / vx );
     // "turning point" for drawing polygonal links
-    QPointF tp (-qRound(sin (a)*thickness_start), qRound(cos (a)*thickness_start));
+    QPointF tp ( -qRound(sin (a) * thickness_start), qRound(cos (a) * thickness_start));
     
     // Draw the link
     switch (style)
@@ -515,15 +515,15 @@ void LinkableMapObj::updateLinkGeometry()
         parabel (pa0, p1x,p1y,p2x,p2y);
         for (int i=0; i<segment.size(); ++i)
         {
-            segment.at(i)->setLine(QLineF( pa0.at(i).x(), pa0.at(i).y(),pa0.at(i+1).x(),pa0.at(i+1).y()));
+            segment.at(i)->setLine(QLineF( pa0.at(i).x(), pa0.at(i).y(), pa0.at(i + 1).x(),pa0.at(i + 1).y()));
             segment.at(i)->setZValue (z);
         }
         break;
     case PolyLine:
         pa0.clear();
-        pa0<<QPointF (qRound(p2x+tp.x()), qRound(p2y+tp.y()));
-        pa0<<QPointF (qRound(p2x-tp.x()), qRound(p2y-tp.y()));
-        pa0<<QPointF (qRound (parPos.x()), qRound(parPos.y()) );
+        pa0 << QPointF (qRound(p2x + tp.x()), qRound(p2y + tp.y()));
+        pa0 << QPointF (qRound(p2x - tp.x()), qRound(p2y - tp.y()));
+        pa0 << QPointF (qRound (parPos.x()), qRound(parPos.y()) );
         p->setPolygon(QPolygonF (pa0));
         p->setZValue (z);
         break;
@@ -531,9 +531,9 @@ void LinkableMapObj::updateLinkGeometry()
         parabel (pa1, p1x,p1y,p2x+tp.x(),p2y+tp.y());
         parabel (pa2, p1x,p1y,p2x-tp.x(),p2y-tp.y());
         pa0.clear();
-        for (int i=0;i<=arcsegs;i++)
+        for (int i = 0; i <= arcsegs; i++)
             pa0 << QPointF (pa1.at(i));
-        for (int i=0;i<=arcsegs;i++)
+        for (int i = 0; i<= arcsegs; i++)
             pa0 << QPointF (pa2.at(arcsegs-i));
         p->setPolygon(QPolygonF (pa0));
         p->setZValue (z);
