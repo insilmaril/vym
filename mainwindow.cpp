@@ -1121,7 +1121,7 @@ void Main::setupFileActions()
     connect( a, SIGNAL( triggered() ), this, SLOT( fileCloseMap() ) );
     fileMenu->addAction(a);
 
-    a = new QAction(QPixmap(":/exit.png"), tr( "E&xit","File menu")+" "+vymName, this);
+    a = new QAction(QPixmap(":/exit.png"), tr( "E&xit","File menu"), this);
     a->setShortcut (Qt::CTRL + Qt::Key_Q );	  
     switchboard.addSwitch ("fileExit", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( fileExitVYM() ) );
