@@ -488,10 +488,7 @@ void LinkableMapObj::updateLinkGeometry()
     // Draw the horizontal line below heading (from childRefPos to ParPos)
     if (bottomline) 
     {
-        bottomline->setLine (QLine (childRefPos.x(),
-                                                childRefPos.y(),
-                                                p1x,
-                                                p1y) );
+        bottomline->setLine (QLineF (childRefPos.x(), childRefPos.y(), p1x, p1y) );
         bottomline->setZValue (z);
     }
 
