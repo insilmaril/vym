@@ -439,9 +439,6 @@ bool VymModel::parseVymText (const QString &s)
             emitNoteChanged( bi );
             emitDataChanged( bi );
             reposition();   // to generate bbox sizes
-
-            // Recalc priorities and sort
-            // taskModel->recalcPriorities();  //FIXME-2 ??? why recalc prios when reading vymtext?
         } else
         {
             QMessageBox::critical( 0, tr( "Critical Parse Error" ),

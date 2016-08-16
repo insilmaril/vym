@@ -5286,7 +5286,7 @@ void Main::changeSelection (VymModel *model, const QItemSelection &newsel, const
         if (!ti->hasEmptyNote() )
             noteEditor->setNote(ti->getNote() );
         else
-            noteEditor->setNote(VymNote() );    //FIXME-2 maybe add a clear() to TE
+            noteEditor->setNote(VymNote() );
         // Show URL and link in statusbar
         QString status;
         QString s=ti->getURL();
