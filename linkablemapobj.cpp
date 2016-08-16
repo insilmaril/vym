@@ -486,12 +486,14 @@ void LinkableMapObj::updateLinkGeometry()
     //qDebug()<<"LMO::updateGeo d="<<treeItem->depth()<<"  this="<<this<<"  "<<treeItem->getHeading();
 
     // Draw the horizontal line below heading (from childRefPos to ParPos)
-
-    if (bottomline) bottomline->setLine (QLine (qRound(childRefPos.x()),
-                                                qRound(childRefPos.y()),
-                                                qRound(p1x),
-                                                qRound(p1y) ));
-    if (bottomline) bottomline->setZValue (z);
+    if (bottomline) 
+    {
+        bottomline->setLine (QLine (childRefPos.x(),
+                                                childRefPos.y(),
+                                                p1x,
+                                                p1y) );
+        bottomline->setZValue (z);
+    }
 
     double a;	// angle
     if (vx > -0.000001 && vx < 0.000001)
@@ -603,32 +605,32 @@ bool LinkableMapObj::repositionRequested()
     return repositionRequest;
 }
 
-void LinkableMapObj::parabel (QPolygonF &ya, double p1x, double p1y, double p2x, double p2y)
+void LinkableMapObj::parabel (QPolygonF &ya, qreal p1x, qreal p1y, qreal p2x, qreal p2y)
 
 {
-    double vx=p2x - p1x;    // V=P2-P1
-    double vy=p2y - p1y;
+    qreal vx = p2x - p1x;    // V=P2-P1
+    qreal vy = p2y - p1y;
 
-    double dx;		    // delta x during calculation of parabel
+    qreal dx;		    // delta x during calculation of parabel
     
-    double pnx;		    // next point
-    double pny;
-    double m;
+    qreal pnx;		    // next point
+    qreal pny;
+    qreal m;
 
     if (vx > -0.0001 && vx < 0.0001)
-	m=0;
+	m = 0;
     else    
-	m=(vy / (vx*vx));
-    dx=vx/(arcsegs);
+	m = (vy / (vx*vx));
+    dx = vx/(arcsegs);
     ya.clear();
-    ya<<QPointF (p1x,p1y);
-    for (int i=1;i<=arcsegs;i++)
+    ya << QPointF (p1x,p1y);
+    for (int i=1; i <= arcsegs; i++)
     {	
-	pnx=p1x+dx;
-	pny=m*(pnx-parPos.x())*(pnx-parPos.x())+parPos.y();
-	ya<<QPointF (pnx,pny);
-	p1x=pnx;
-	p1y=pny;
+	pnx = p1x + dx;
+	pny = m * (pnx - parPos.x()) * (pnx - parPos.x()) + parPos.y();
+	ya << QPointF (pnx, pny);
+	p1x = pnx;
+	p1y = pny;
     }	
 }
 
