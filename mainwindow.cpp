@@ -5358,7 +5358,7 @@ void Main::updateActions()
                 a->setEnabled( true );
 
         }
-	// Enable all files actions first   // FIXME-2 updateactions: required?
+	// Enable all files actions first   
 	for (int i=0; i<actionListFiles.size(); ++i)	
 	    actionListFiles.at(i)->setEnabled(true);
 
