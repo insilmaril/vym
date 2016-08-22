@@ -451,7 +451,7 @@ void LinkableMapObj::updateLinkGeometry()
             break;
         case Bottom:
             //bottomlineY = bbox.bottom()-1;  // draw link to bottom of box
-            bottomlineY = bbox.bottom()  - botPad;  // FIXME-2 bottom line approx. 1 pixel below link
+            bottomlineY = bbox.bottom()  - botPad;  
             break;
     }
     
