@@ -1103,7 +1103,7 @@ void Main::setupFileActions()
     connect( a, SIGNAL( triggered() ), this, SLOT( editMapProperties() ) );
     fileMenu->addAction(a);
     actionListFiles.append (a);   
-    actionFilePrint=a;
+    actionMapProperties = a;
 
     fileMenu->addSeparator();
 
@@ -2828,16 +2828,24 @@ void Main::setupContextMenus()
 
     // Context menu for canvas
     canvasContextMenu =new QMenu (this);
-    canvasContextMenu->addAction (actionAddMapCenter);
-    canvasContextMenu->insertSeparator(actionAddMapCenter);   
 
+    canvasContextMenu->addAction (actionAddMapCenter);
+
+    canvasContextMenu->addSeparator();   
+
+    canvasContextMenu->addAction(actionMapProperties);
     canvasContextMenu->addAction(actionFormatFont);
-    canvasContextMenu->insertSeparator(actionFormatFont);
+
+    canvasContextMenu->addSeparator();   
 
     canvasContextMenu->addActions(actionGroupFormatLinkStyles->actions() );
-    canvasContextMenu->insertSeparator(actionGroupFormatLinkStyles->actions().first() );   
+
+    canvasContextMenu->addSeparator();   
+
     canvasContextMenu->addAction(actionFormatLinkColorHint);
-    canvasContextMenu->insertSeparator(actionFormatLinkColorHint);
+
+    canvasContextMenu->addSeparator();   
+
     canvasContextMenu->addAction(actionFormatLinkColor);
     canvasContextMenu->addAction(actionFormatSelectionColor);
     canvasContextMenu->addAction(actionFormatBackColor);
