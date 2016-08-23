@@ -1230,11 +1230,10 @@ void Main::setupEditActions()
 
     // Shortcut to add branch
     a = new QAction(QPixmap(":/newbranch.png"), tr( "Add branch as child","Edit menu" ), this);
-    a->setShortcut (Qt::Key_A);		
-    a->setShortcutContext (Qt::WidgetShortcut);
-    mapEditorActions.append( a );
     switchboard.addSwitch ("mapEditNewBranch", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( editNewBranch() ) );
+    cloneActionMapEditor( a, Qt::Key_A );
+    taskEditorActions.append( a );
     actionListBranches.append(a);
     actionAddBranch=a;
 
