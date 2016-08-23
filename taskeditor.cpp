@@ -56,6 +56,14 @@ TaskEditor::TaskEditor(QWidget *)
     connect( a, SIGNAL( triggered() ), this, SLOT(toggleFilterNew() ) );
     actionToggleFilterNew = a;
 
+    a = new QAction(icon,  "Flag", this); //tr( "Flags","TaskEditor" ),this );   // FIXME-1 add translation
+    a->setCheckable(true);
+    a->setChecked  (settings.value("/taskeditor/filterNew", false).toBool());
+    if (settings.value( "/mainwindow/showTestMenu",false).toBool())
+        tb->addAction (a);
+    connect( a, SIGNAL( triggered() ), this, SLOT(toggleFilterFlags() ) );
+    actionToggleFilterFlags = a;
+
     // Forward Enter and Return to MapEditor
     a = new QAction(icon, tr( "Edit heading","TaskEditor" ), this);
     a->setShortcut ( Qt::Key_Return);		
@@ -115,6 +123,7 @@ TaskEditor::TaskEditor(QWidget *)
     setFilterMap();
     setFilterActive();
     setFilterNew();
+    setFilterFlags();
 
     // Initialize column widths
     QString s;
@@ -176,6 +185,12 @@ void TaskEditor::setFilterActive ()
 void TaskEditor::setFilterNew ()
 {
     filterActiveModel->setFilterNew (actionToggleFilterNew->isChecked() );
+    sort();
+}
+
+void TaskEditor::setFilterFlags ()  // FIXME-1 experimental
+{
+    filterActiveModel->setFilterFlags (actionToggleFilterFlags->isChecked() );
     sort();
 }
 
@@ -258,9 +273,14 @@ void TaskEditor::toggleFilterMap ()
 void TaskEditor::toggleFilterActive ()
 {
     setFilterActive();
-}
 
+}
 void TaskEditor::toggleFilterNew ()
 {
     setFilterNew();
+}
+
+void TaskEditor::toggleFilterFlags ()
+{
+    setFilterFlags();
 }
