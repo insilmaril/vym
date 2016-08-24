@@ -2479,6 +2479,7 @@ void Main::setupFlag (Flag *flag, QToolBar *tb, const QString &name, const QStri
 
             // Allow mapEditors to actually trigger this action
             mapEditorActions.append( a );
+            taskEditorActions.append( a );
         }
 
         tb->addAction(a);
