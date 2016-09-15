@@ -4217,15 +4217,16 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
     }
 	/////////////////////////////////////////////////////////////////////
     if (com=="colorBranch")
-	{
-	    QColor c=parser.parColor (ok,0);
-	    colorBranch (c);
+    {
+        QColor c=parser.parColor (ok,0);
+        colorBranch (c);
+        break;
     }
 	/////////////////////////////////////////////////////////////////////
     if (com=="colorSubtree")
-	{
-	    QColor c=parser.parColor (ok,0);
-	    colorSubtree (c);
+    {
+        QColor c=parser.parColor (ok,0);
+        colorSubtree (c);
         break;
     }
 	/////////////////////////////////////////////////////////////////////
