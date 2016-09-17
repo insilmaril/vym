@@ -13,7 +13,7 @@ FindResultModel::FindResultModel( QObject *parent)
     QVector<QVariant> rootData;
     rootData << "Heading";
     rootItem = new FindResultItem(rootData);
-    showParentsLevel = ("/satellite/findResults/showParentsLevel", 1);
+    showParentsLevel = settings.value("/satellite/findResults/showParentsLevel", 1).toInt();
 }
 
 FindResultModel::~FindResultModel()
