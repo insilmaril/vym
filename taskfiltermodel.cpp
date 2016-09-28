@@ -22,6 +22,10 @@ void TaskFilterModel::setFilterNew (bool b)
     filterNew = b;
 }
 
+void TaskFilterModel::setFilterFlags (bool b)
+{
+    filterFlags = b;
+}
 bool TaskFilterModel::filterAcceptsRow(int sourceRow, 
          const QModelIndex &sourceParent) const
 {
@@ -40,6 +44,11 @@ bool TaskFilterModel::filterAcceptsRow(int sourceRow,
     // Filter active tasks
     if (useFilter && ((taskModel->getTask(ix)->getDaysSleep() > 0) || (taskModel->getTask(ix)->getStatus() == Task::Finished) ) )
         return false;
+
+    // Filter flags  // FIXME-1 currently only "arrow-up"
+    if (filterFlags && !taskModel->getTask(ix)->getBranch()->hasActiveStandardFlag("arrow-up") )
+        return false;
+
     return true;
 }
 

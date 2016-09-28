@@ -398,6 +398,7 @@ private:
     QAction* actionFileRestoreSession;
     QAction* actionFileSave;
     QAction* actionFilePrint;
+    QAction* actionMapProperties;
     QAction* actionFileExportLast;
     QAction* actionUndo;
     QAction* actionRedo;

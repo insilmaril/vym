@@ -55,10 +55,12 @@
 
 \begin{document}
 \title{
-    \includegraphics[width=8cm]{images/vym-logo-new.png}
-    \\
-VYM \\ -- \\View Your Mind\\ {\small Version 2.2.4}}
+    \includegraphics[width=8cm]{images/vym-logo-new.png} \\ 
+    VYM  -- View Your Mind \\ 
+    {\small Version 2.6.0} \\ 
+    {\b Usermanual }
 \author{\textcopyright Uwe Drechsel  }
+}
 
 
 \maketitle
@@ -936,6 +938,8 @@ The priorities are calculated based on the next visible columns:
     \item Age total: Days, since the task has been created
     \item Age modified: Days, since the task has been changed
     \item Sleep: Days, which will pass until task will wake up 
+    \item Position of tasks branch in its subtree (higher priority if
+        further up)
 \end{itemize}
 Note that the priorities cannot be set manually, but e.g. you can reset
 the \lq Age modified\rq\ by pressing \key{W} three times to cycle
@@ -1406,11 +1410,12 @@ by pressing \key{Ctrl+B}.
 
 \section{\vym on Mac OS X}
 %FIXME-3 Currently not yet supported on Mac OS X in 1.13.x
-\subsection{Overview}
-Sorry, currently (\vym 2.2.2) there is no Mac port available. Please
-contact the author\footnote{
-    Email Uwe Drechsel: \href{mailto:vym@insilmaril.de}{vym@insilmaril.de}} if
-you are interested in a Mac version.
+
+%\subsection{Overview}
+%Sorry, currently (\vym 2.2.2) there is no Mac port available. Please
+%contact the author\footnote{
+%    Email Uwe Drechsel: \href{mailto:vym@insilmaril.de}{vym@insilmaril.de}} if
+%you are interested in a Mac version.
 
 %Basically there are two ways to run \vym on Macs:
 %\subsubsection*{Qt Mac Edition:}
@@ -1430,7 +1435,7 @@ the context menu which usually would be opened with the right mouse
 button, you can click while pressing the \key{kommand}-key.
 
 Especially on Laptops some of the keys usually used on PC keyboards seem
-to be missing. The QT-Mac Edition of \vym has its own keyboard
+to be missing. The Qt-Mac Edition of \vym has its own keyboard
 shortcuts. To find the shortcuts just have a look at all the menu
 entries, the shortcut is visible next to an entry. Toolbar buttons also
 may have shortcuts, just position the mouse pointer over a button and
@@ -1440,7 +1445,6 @@ wait for the little help window to appear.
 \vym on Mac uses the system call {\tt /usr/bin/open} to view links.
 Mac~OS determines automatically if the link is a pdf or www page and
 opens the right browser.
-
 
 \newpage
 
@@ -1524,14 +1528,15 @@ like window positions, toolbars etc. If this file does not already
 exist, it will be created. The file is located in the users home
 directory. The exact position depends on the platform:
 \begin{center}
-\begin{tabular}{cl}
+\begin{tabular}{ll}
     {\bf Platform}  & {\bf Configuration file} \\ \hline
-    Linux       & {\tt $\sim$/.config/InSilmaril/vym.conf  } \\
-    Mac OS X    & {\tt /Users/NAME/Library/Preferences/com.insilmaril.vym.plist  } \\
+    Linux              & {\tt $\sim$/.config/InSilmaril/vym.conf  } \\
+    Mac OS X           & {\tt /Users/NAME/Library/Preferences/com.insilmaril.vym.plist  } \\
+    Windows (registry) & {\tt HKEY\_Current\_User/Software/InSilmaril/vym  } \\
 \end{tabular}
 \end{center}
 The file can be edited manually, or on Mac~OS~X with Property List
-Editor (installed with xtools).
+Editor (installed with xtools). On windows you can use {\tt regedit.exe}.
 
 \subsection{Path to ressources}
 \vym will try to find its ressources (images, stylesheets, filters,
@@ -1554,17 +1559,15 @@ Open FILEs with vym
 -d           debug       Show debugging output
 -h           help        Show this help text
 -l           local       Run with ressources in current directory
+--locale     locale      Override system locale setting to select language
 -n  STRING   name        Set name of instance for DBus access
 -q           quit        Quit immediatly after start for benchmarking
 -r  FILE     run         Run script
 -R           restore     Restore last session
 -s           shortcuts   Show Keyboard shortcuts on start
--sl          LaTeX       Show Keyboard shortcuts in LaTeX format on
-start
--t           testmode    Test mode, e.g. no autosave and changing of its
-setting
+-sl          LaTeX       Show Keyboard shortcuts in LaTeX format on start
+-t           testmode    Test mode, e.g. no autosave and changing of its setting
 -v           version     Show vym version
-
 \end{verbatim}
 You can also give several filenames at the commandline to let \vym open
 several maps at once.
@@ -1723,9 +1726,9 @@ or access the git repository directly:
 Qt is C++ toolkit for multiplatform GUI and application development. It
 provides single-source portability across MS~Windows, Mac~OS~X, Linux
 and all major commercial Unix variants. Qt is also available for
-embedded devices. Qt is a Nokia product. For more information see
+embedded devices. Qt is a product of the Qt Company. For more information see
 \begin{center} 
-    \href{http://www.qt.nokia.com}{www.qt.nokia.com} 
+    \href{https://www.qt.io}{https://www.qt.io} 
 \end{center}
 
 

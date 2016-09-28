@@ -1091,7 +1091,7 @@ void Main::setupFileActions()
     connect( a, SIGNAL( triggered() ), this, SLOT( editMapProperties() ) );
     fileMenu->addAction(a);
     actionListFiles.append (a);   
-    actionFilePrint=a;
+    actionMapProperties = a;
 
     fileMenu->addSeparator();
 
@@ -1218,11 +1218,10 @@ void Main::setupEditActions()
 
     // Shortcut to add branch
     a = new QAction(QPixmap(":/newbranch.png"), tr( "Add branch as child","Edit menu" ), this);
-    a->setShortcut (Qt::Key_A);		
-    a->setShortcutContext (Qt::WidgetShortcut);
-    mapEditorActions.append( a );
     switchboard.addSwitch ("mapEditNewBranch", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( editNewBranch() ) );
+    cloneActionMapEditor( a, Qt::Key_A );
+    taskEditorActions.append( a );
     actionListBranches.append(a);
     actionAddBranch=a;
 
@@ -2476,6 +2475,7 @@ void Main::setupFlag (Flag *flag, QToolBar *tb, const QString &name, const QStri
 
             // Allow mapEditors to actually trigger this action
             mapEditorActions.append( a );
+            taskEditorActions.append( a );
         }
 
         tb->addAction(a);
@@ -2824,16 +2824,24 @@ void Main::setupContextMenus()
 
     // Context menu for canvas
     canvasContextMenu =new QMenu (this);
-    canvasContextMenu->addAction (actionAddMapCenter);
-    canvasContextMenu->insertSeparator(actionAddMapCenter);   
 
+    canvasContextMenu->addAction (actionAddMapCenter);
+
+    canvasContextMenu->addSeparator();   
+
+    canvasContextMenu->addAction(actionMapProperties);
     canvasContextMenu->addAction(actionFormatFont);
-    canvasContextMenu->insertSeparator(actionFormatFont);
+
+    canvasContextMenu->addSeparator();   
 
     canvasContextMenu->addActions(actionGroupFormatLinkStyles->actions() );
-    canvasContextMenu->insertSeparator(actionGroupFormatLinkStyles->actions().first() );   
+
+    canvasContextMenu->addSeparator();   
+
     canvasContextMenu->addAction(actionFormatLinkColorHint);
-    canvasContextMenu->insertSeparator(actionFormatLinkColorHint);
+
+    canvasContextMenu->addSeparator();   
+
     canvasContextMenu->addAction(actionFormatLinkColor);
     canvasContextMenu->addAction(actionFormatSelectionColor);
     canvasContextMenu->addAction(actionFormatBackColor);
@@ -5372,7 +5380,7 @@ void Main::updateActions()
                 a->setEnabled( true );
 
         }
-	// Enable all files actions first   // FIXME-2 updateactions: required?
+	// Enable all files actions first   
 	for (int i=0; i<actionListFiles.size(); ++i)	
 	    actionListFiles.at(i)->setEnabled(true);
 
