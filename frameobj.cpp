@@ -109,9 +109,6 @@ void FrameObj::setRect(const QRectF &r)
 	    qreal n=10;
 	    path.moveTo (tl.x() +n/2, tl.y());
 
-	    float w=bbox.width();   // width
-	    float h=bbox.height();  // height
-
 	    // Top path
 	    path.lineTo (tr.x()-n, tr.y());
 	    path.arcTo  (tr.x()-n, tr.y(), n, n,90,-90);

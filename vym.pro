@@ -4,18 +4,29 @@ LANGUAGE    = C++
 
 CONFIG	+= qt warn_on x86_64 
 
-QT += network xml svg
+QMAKE_MAC_SDK = macosx10.7
 
-#nclude(tmp/modeltest/modeltest.pri)
+QT += network 
+QT += xml 
+QT += svg 
+QT += printsupport
+
+QT += widgets
+
+#  include(tmp/modeltest/modeltest.pri)
 
 RESOURCES = vym.qrc
 
 unix:!macx:isEmpty(NO_DBUS) {
     message("Compiling with DBUS")
     DEFINES += VYM_DBUS
-    CONFIG  += qdbus 
+    QT      += dbus 
     HEADERS += adaptormodel.h adaptorvym.h 
     SOURCES += adaptormodel.cpp adaptorvym.cpp 
+}
+
+macx:isEmpty(NO_DBUS) {
+    QT_QPA_PLATFORM_PLUGIN_PATH=%QTDIR%\plugins\platforms\
 }
 
 win32 {
@@ -27,20 +38,24 @@ win32 {
 
     # Without this, M_PI, and M_PI_2 won`t be defined.
     win32:DEFINES *= _USE_MATH_DEFINES
+
+    QT_QPA_PLATFORM_PLUGIN_PATH=%QTDIR%\plugins\platforms\
 }
 
-TRANSLATIONS += lang/vym_de_DE.ts
-TRANSLATIONS += lang/vym_en.ts
-TRANSLATIONS += lang/vym_es.ts
-TRANSLATIONS += lang/vym_fr.ts
-TRANSLATIONS += lang/vym_ia.ts
-TRANSLATIONS += lang/vym_it.ts
-TRANSLATIONS += lang/vym_pt_BR.ts
-TRANSLATIONS += lang/vym_ru.ts
-TRANSLATIONS += lang/vym_sv.ts
-TRANSLATIONS += lang/vym_zh_CN.ts
-TRANSLATIONS += lang/vym_zh_TW.ts
-TRANSLATIONS += lang/vym_cs_CZ.ts
+TRANSLATIONS += lang/vym.de_DE.ts
+TRANSLATIONS += lang/vym.el.ts
+TRANSLATIONS += lang/vym.en.ts
+TRANSLATIONS += lang/vym.es.ts
+TRANSLATIONS += lang/vym.fr.ts
+TRANSLATIONS += lang/vym.ia.ts
+TRANSLATIONS += lang/vym.it.ts
+TRANSLATIONS += lang/vym.ja.ts
+TRANSLATIONS += lang/vym.pt_BR.ts
+TRANSLATIONS += lang/vym.ru.ts
+TRANSLATIONS += lang/vym.sv.ts
+TRANSLATIONS += lang/vym.zh_CN.ts
+TRANSLATIONS += lang/vym.zh_TW.ts
+TRANSLATIONS += lang/vym.cs_CZ.ts
 
 ICON =icons/vym.icns
 
@@ -80,6 +95,7 @@ HEADERS	+= \
     floatobj.h \
     frameobj.h \
     geometry.h \
+    heading.h \
     headingeditor.h \
     headingobj.h \
     highlighter.h \
@@ -97,11 +113,9 @@ HEADERS	+= \
     misc.h \
     mysortfilterproxymodel.h \
     noteeditor.h \
-    noteobj.h \
     options.h \
     ornamentedobj.h \
     parser.h \
-    process.h \
     scripteditor.h\
     settings.h \
     shortcuts.h\
@@ -119,7 +133,11 @@ HEADERS	+= \
     treemodel.h \
     texteditor.h \
     version.h \
+    vymlock.h \
     vymmodel.h \
+    vymnote.h \
+    vymprocess.h \
+    vymtext.h \
     vymview.h \
     winter.h \
     warningdialog.h \
@@ -167,6 +185,7 @@ SOURCES	+= \
     floatobj.cpp \
     frameobj.cpp \
     geometry.cpp \
+    heading.cpp \
     headingeditor.cpp \
     headingobj.cpp \
     highlighter.cpp \
@@ -185,12 +204,10 @@ SOURCES	+= \
     misc.cpp \
     mysortfilterproxymodel.cpp \
     noteeditor.cpp \
-    noteobj.cpp \
     options.cpp \
     ornamentedobj.cpp \
     parser.cpp \
-    process.cpp \
-    scripteditor.cpp\
+    scripteditor.cpp \
     settings.cpp \
     shortcuts.cpp\
     showtextdialog.cpp \
@@ -207,7 +224,11 @@ SOURCES	+= \
     treeitem.cpp \
     treemodel.cpp \
     version.cpp \
+    vymlock.cpp \
     vymmodel.cpp \
+    vymnote.cpp \
+    vymprocess.cpp \
+    vymtext.cpp \
     vymview.cpp \
     warningdialog.cpp \
     winter.cpp \
@@ -230,7 +251,7 @@ FORMS = \
     lineeditdialog.ui \
     scripteditor.ui \
     showtextdialog.ui \
-    warningdialog.ui
+    warningdialog.ui \
 
 isEmpty( PREFIX ) {
     PREFIX = /usr/local
@@ -243,10 +264,7 @@ isEmpty( BINDIR ) {
     BINDIR = $${PREFIX}/bin
 }
 isEmpty( DATADIR ) {
-    DATADIR = $${PREFIX}/share
-}
-isEmpty( DOCDIR ) {
-    DOCDIR = $${DATADIR}/doc/packages/vym
+    DATADIR = $${PREFIX}
 }
 
 message( "Installation directory" )
@@ -256,12 +274,12 @@ message( $$PREFIX )
 target.path = $${BINDIR}
 INSTALLS += target
 
-support.files = styles/ scripts/ icons/ flags/ lang/ macros/ exports/ demos/
+language.files = lang/*.qm
+language.path = $${DATADIR}/vym/lang
+INSTALLS += language
+
+support.files = styles/ scripts/ icons/ flags/ macros/ exports/ demos/
+support.files += LICENSE.txt
 support.path = $${DATADIR}/vym
 INSTALLS += support 
-
-doc.files = doc/vym.pdf
-doc.path = $${DOCDIR}
-INSTALLS += doc
-DEFINES += VYM_DOCDIR=\\\"$${DOCDIR}\\\"
 

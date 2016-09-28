@@ -1,7 +1,6 @@
 #include "warningdialog.h"
 #include "settings.h"
 
-extern QString iconPath;
 extern Settings settings;
 
 WarningDialog::WarningDialog(QWidget* parent):QDialog (parent)
@@ -9,7 +8,7 @@ WarningDialog::WarningDialog(QWidget* parent):QDialog (parent)
     ui.setupUi(this);
     //TODO proper icon for proceed needed
     ui.okButton->setText(tr("Proceed"));
-    // ui.warningSign->setPixmap (QPixmap(iconPath + "icons/vym.png"));
+    // ui.warningSign->setPixmap (QPixmap(":/vym.png"));
     ui.showAgainBox->setText (tr("Show this message again"));
     useShowAgain=false;
     ui.showAgainBox->hide();

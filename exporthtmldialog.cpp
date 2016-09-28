@@ -26,17 +26,18 @@ ExportHTMLDialog::ExportHTMLDialog(QWidget* parent) : QDialog(parent)
     connect(ui.browseExportDirButton, SIGNAL(pressed()), this, SLOT(browseDirectoryPressed()));
     connect(ui.browseCssSrcButton, SIGNAL(pressed()), this, SLOT(browseCssSrcPressed()));
     connect(ui.browseCssDstButton, SIGNAL(pressed()), this, SLOT(browseCssDstPressed()));
-    connect(ui.imageButton, SIGNAL(toggled(bool)), this, SLOT(imageButtonPressed(bool)));
-    connect(ui.TOCButton, SIGNAL(toggled(bool)), this, SLOT(TOCButtonPressed(bool)));
-    connect(ui.numberingButton, SIGNAL(toggled(bool)), this, SLOT(numberingButtonPressed(bool)));
-    connect(ui.taskFlagsButton, SIGNAL(toggled(bool)), this, SLOT(taskFlagsButtonPressed(bool)));
-    connect(ui.userFlagsButton, SIGNAL(toggled(bool)), this, SLOT(userFlagsButtonPressed(bool)));
-    connect(ui.textColorButton, SIGNAL(toggled(bool)), this, SLOT(textcolorButtonPressed(bool)));
+    connect(ui.imageCheckBox, SIGNAL(toggled(bool)), this, SLOT(imageCheckBoxPressed(bool)));
+    connect(ui.includeImagesCheckBox, SIGNAL(toggled(bool)), this, SLOT(includeImagesCheckBoxPressed(bool)));
+    connect(ui.TOCCheckBox, SIGNAL(toggled(bool)), this, SLOT(TOCCheckBoxPressed(bool)));
+    connect(ui.numberingCheckBox, SIGNAL(toggled(bool)), this, SLOT(numberingCheckBoxPressed(bool)));
+    connect(ui.taskFlagsCheckBox, SIGNAL(toggled(bool)), this, SLOT(taskFlagsCheckBoxPressed(bool)));
+    connect(ui.userFlagsCheckBox, SIGNAL(toggled(bool)), this, SLOT(userFlagsCheckBoxPressed(bool)));
+    connect(ui.textColorCheckBox, SIGNAL(toggled(bool)), this, SLOT(textcolorCheckBoxPressed(bool)));
     connect(ui.lineEditDir, SIGNAL(textChanged(const QString&)), this, SLOT(dirChanged()));
-    connect(ui.copyCssButton, SIGNAL(pressed()), this, SLOT(copyCssPressed()));
+    connect(ui.copyCssCheckBox, SIGNAL(pressed()), this, SLOT(copyCssPressed()));
     connect(ui.lineEditCssSrc, SIGNAL(textChanged(const QString&)), this, SLOT(cssSrcChanged()));
     connect(ui.lineEditCssDst, SIGNAL(textChanged(const QString&)), this, SLOT(cssDstChanged()));
-    connect(ui.saveSettingsInMapButton, SIGNAL(toggled(bool)), this, SLOT(saveSettingsInMapButtonPressed(bool)));
+    connect(ui.saveSettingsInMapCheckBox, SIGNAL(toggled(bool)), this, SLOT(saveSettingsInMapCheckBoxPressed(bool)));
     connect(ui.lineEditPostScript, SIGNAL(textChanged(const QString&)), this, SLOT(postscriptChanged()));
     connect(ui.browsePostExportButton, SIGNAL(pressed()), this, SLOT(browsePostExportButtonPressed()));
 }   
@@ -46,23 +47,26 @@ void ExportHTMLDialog::readSettings()
     dir=settings.localValue (filepath,"/export/html/exportDir",vymBaseDir.currentPath() ).toString(); //FIXME-3 exportDir only needed for dialog
     ui.lineEditDir->setText(dir.absolutePath());
     
-    useImage=settings.localValue (filepath,"/export/html/useImage","true").toBool();
-    ui.imageButton->setChecked(useImage);
+    includeMapImage = settings.localValue (filepath,"/export/html/includeMapImage","true").toBool();
+    ui.imageCheckBox->setChecked(includeMapImage);
+	
+    includeImages = settings.localValue (filepath,"/export/html/includeImages","true").toBool();
+    ui.includeImagesCheckBox->setChecked(includeImages);
 	
     useTOC=settings.localValue (filepath,"/export/html/useTOC","true").toBool();
-    ui.TOCButton->setChecked(useTOC);
+    ui.TOCCheckBox->setChecked(useTOC);
 	
     useNumbering=settings.localValue (filepath,"/export/html/useNumbering","true").toBool();
-    ui.numberingButton->setChecked(useNumbering);
+    ui.numberingCheckBox->setChecked(useNumbering);
 	
     useTaskFlags=settings.localValue (filepath,"/export/html/useTaskFlags","true").toBool();
-    ui.taskFlagsButton->setChecked(useTaskFlags);
+    ui.taskFlagsCheckBox->setChecked(useTaskFlags);
 	
     useUserFlags=settings.localValue (filepath,"/export/html/useUserFlags","true").toBool();
-    ui.userFlagsButton->setChecked(useUserFlags);
+    ui.userFlagsCheckBox->setChecked(useUserFlags);
 	
     useTextColor=settings.localValue (filepath,"/export/html/useTextColor","no").toBool();
-    ui.textColorButton->setChecked(useTextColor);
+    ui.textColorCheckBox->setChecked(useTextColor);
     
 /* FIXME-3 this was used in old html export, is not yet in new stylesheet
     useHeading=settings.readValue ("/export/html/useHeading","false").toBool();
@@ -70,12 +74,12 @@ void ExportHTMLDialog::readSettings()
 */	
 
     saveSettingsInMap=settings.localValue (filepath,"/export/html/saveSettingsInMap","no").toBool();
-    ui.saveSettingsInMapButton->setChecked(saveSettingsInMap);
+    ui.saveSettingsInMapCheckBox->setChecked(saveSettingsInMap);
 
     //CSS settings
     css_copy=settings.localValue 
         (filepath,"/export/html/copy_css",true).toBool();   
-    ui.copyCssButton->setChecked (css_copy);
+    ui.copyCssCheckBox->setChecked (css_copy);
 
     QString css_org=vymBaseDir.path() + "/styles/vym.css";
     css_src=settings.localValue 
@@ -129,56 +133,62 @@ void ExportHTMLDialog::browseDirectoryPressed()
     }
 }
 
-void ExportHTMLDialog::imageButtonPressed(bool b)
+void ExportHTMLDialog::imageCheckBoxPressed(bool b)
 {
-    useImage=b;
-    settingsChanged=true;
+    includeMapImage = b;
+    settingsChanged = true;
 }
 
-void ExportHTMLDialog::TOCButtonPressed(bool b)
+void ExportHTMLDialog::includeImagesCheckBoxPressed(bool b)
+{
+    includeImages = b;
+    settingsChanged = true;
+}
+
+void ExportHTMLDialog::TOCCheckBoxPressed(bool b)
 {
     useTOC=b;
     settingsChanged=true;
 }
 
-void ExportHTMLDialog::numberingButtonPressed(bool b)
+void ExportHTMLDialog::numberingCheckBoxPressed(bool b)
 {
     useNumbering=b;
     settingsChanged=true;
 }
 
-void ExportHTMLDialog::taskFlagsButtonPressed(bool b)
+void ExportHTMLDialog::taskFlagsCheckBoxPressed(bool b)
 {
     useTaskFlags=b;
     settingsChanged=true;
 }
 
-void ExportHTMLDialog::userFlagsButtonPressed(bool b)
+void ExportHTMLDialog::userFlagsCheckBoxPressed(bool b)
 {
     useUserFlags=b;
     settingsChanged=true;
 }
 
-void ExportHTMLDialog::textcolorButtonPressed(bool b)
+void ExportHTMLDialog::textcolorCheckBoxPressed(bool b)
 {
     useTextColor=b; 
     settingsChanged=true;
 }
 
-void ExportHTMLDialog::saveSettingsInMapButtonPressed(bool b)
+void ExportHTMLDialog::saveSettingsInMapCheckBoxPressed(bool b)
 {
     saveSettingsInMap=b;    
     settingsChanged=true;
 }
 
-void ExportHTMLDialog::warningsButtonPressed(bool b)
+void ExportHTMLDialog::warningsCheckBoxPressed(bool b)
 {
     showWarnings=b;
     settingsChanged=true;
 }
 
 
-void ExportHTMLDialog::outputButtonPressed(bool b)
+void ExportHTMLDialog::outputCheckBoxPressed(bool b)
 {
     showOutput=b;
     settingsChanged=true;
@@ -211,7 +221,7 @@ QString ExportHTMLDialog::getCssDst()
 
 void ExportHTMLDialog::copyCssPressed()
 {
-    css_copy=ui.imageButton->isChecked();
+    css_copy=ui.imageCheckBox->isChecked();
     settingsChanged=true;
 }
 
@@ -219,7 +229,7 @@ void ExportHTMLDialog::browseCssSrcPressed()
 {
     QFileDialog fd( this);
     fd.setModal (true);
-    fd.setFilter ("Cascading Stylesheet (*.css)");
+    fd.setNameFilter ("Cascading Stylesheet (*.css)");
     fd.setDirectory (QDir::current());
     fd.show();
 
@@ -238,7 +248,7 @@ void ExportHTMLDialog::browseCssDstPressed()
 {
     QFileDialog fd( this);
     fd.setModal (true);
-    fd.setFilter ("Cascading Stylesheet (*.css)");
+    fd.setNameFilter ("Cascading Stylesheet (*.css)");
     fd.setDirectory (QDir::current());
     fd.show();
 
@@ -263,7 +273,7 @@ void ExportHTMLDialog::browsePostExportButtonPressed()
 {
     QFileDialog fd( this);
     fd.setModal (true);
-    fd.setFilter ("Scripts (*.sh *.pl *.py *.php)");
+    fd.setNameFilter ("Scripts (*.sh *.pl *.py *.php)");
     fd.setDirectory (QDir::current());
     fd.show();
 
@@ -290,7 +300,8 @@ void ExportHTMLDialog::saveSettings ()
 	settings.setLocalValue (filepath,"/export/html/exportDir",dir.absolutePath()); //FIXME-3 exportDir only needed for dialog
 	settings.setLocalValue (filepath,"/export/html/saveSettingsInMap","yes");
         settings.setLocalValue (filepath,"/export/html/postscript",postscript);
-        settings.setLocalValue (filepath,"/export/html/useImage",useImage);
+        settings.setLocalValue (filepath,"/export/html/includeMapImage",includeMapImage);
+        settings.setLocalValue (filepath,"/export/html/includeImages",includeImages);
         settings.setLocalValue (filepath,"/export/html/useTOC",useTOC);
         settings.setLocalValue (filepath,"/export/html/useNumbering",useNumbering);
         settings.setLocalValue (filepath,"/export/html/useTaskFlags",useTaskFlags);

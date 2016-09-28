@@ -21,16 +21,7 @@
     <number>6</number>
    </property>
    <item row="0" column="0">
-    <widget class="QTextEdit" name="textEdit">
-     <property name="font">
-      <font>
-       <family>Courier [Adobe]</family>
-      </font>
-     </property>
-     <property name="textInteractionFlags">
-      <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-     </property>
-    </widget>
+    <widget class="QTextBrowser" name="textBrowser"/>
    </item>
    <item row="1" column="0">
     <layout class="QHBoxLayout">

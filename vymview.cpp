@@ -122,7 +122,13 @@ VymView::VymView(VymModel *m)
     mapEditor->setSmoothPixmap(mainWindow->hasSmoothPixmapTransform());
 }
 
-VymView::~VymView() {}
+VymView::~VymView() 
+{
+    if (treeEditorIsVisible() )
+        settings.setLocalValue(model->getFilePath(),"/treeeditor/visible","true");
+    else
+        settings.setLocalValue(model->getFilePath(),"/treeeditor/visible","false");
+}
 
 void VymView::readSettings()
 {
@@ -344,4 +350,9 @@ void VymView::toggleSlideEditor()
 	slideEditorDE->show();
 	settings.setLocalValue(model->getFilePath(),"/slideeditor/visible","true");
     }
+}
+
+void VymView::setFocusMapEditor()
+{
+    mapEditor->setFocus();
 }

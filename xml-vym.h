@@ -3,7 +3,7 @@
 
 #include "xml-base.h"
 
-#include "noteobj.h"
+#include "vymnote.h"
 
 class BranchItem;
 class ImageItem;
@@ -44,26 +44,26 @@ public:
 
 private:
     enum State 
-    { 
-	StateInit, 
-	StateMap, 
-	StateMapSelect, 
-	StateMapSetting,
-	StateMapSlide,
-	StateMapCenter, 
-	StateBranch, 
-	StateBranchXLink,	    // Obsolete
-	StateVymNote,
-	StateHtmlNote,		    // Obsolete >= 1.13.6
-	StateHtml, 
-	StateFrame,
-	StateStandardFlag,
-	StateNote,		    // Obsolete >= 1.4.6
-	StateImage,
-	StateHeading,
-	StateLink,
-	StateAttribute,
-	StateTask
+    {
+        StateInit,
+        StateMap,
+        StateMapSelect,
+        StateMapSetting,
+        StateMapSlide,
+        StateMapCenter,
+        StateBranch,
+        StateBranchXLink,	    // Obsolete
+        StateVymNote,
+        StateHtmlNote,		    // Obsolete >= 1.13.6
+        StateHtml,
+        StateFrame,
+        StateStandardFlag,
+        StateNote,		    // Obsolete >= 1.4.6
+        StateImage,
+        StateHeading,
+        StateLink,
+        StateAttribute,
+        StateTask
      };
 
      int branchesCounter;
@@ -71,13 +71,14 @@ private:
 
     State state;	     
     QList <State> stateStack;
-    NoteObj no;
+    VymText vymtext;
 
     BranchItem* lastBranch;
     ImageItem* lastImage;
     MapItem* lastMI;
     SlideItem *lastSlide;
     Task *lastTask;
+    QString lastSetting;
 
     bool useProgress;
 }; 

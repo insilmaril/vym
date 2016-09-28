@@ -7,8 +7,6 @@
 #include "findresultmodel.h"
 #include "vymmodel.h"
 
-extern QString iconPath;
-
 FindResultWidget::FindResultWidget(QWidget *)
 {
     // Create results model
@@ -27,14 +25,6 @@ FindResultWidget::FindResultWidget(QWidget *)
 
     QVBoxLayout* mainLayout = new QVBoxLayout;
     
-    // FIXME-5 feature: show number of hits at bottom of FindResultWidget
-
-    /* FIXME-5 testing QMenuBar *mb=new QMenuBar;
-    QAction *a=new  QAction ("Foo action",NULL);
-    mb->addAction (a);
-    mb->insertSeparator();
-    mainLayout->addWidget(mb);
-    */
     mainLayout->addWidget(view);
     mainLayout->addWidget(findWidget);
 
@@ -59,7 +49,7 @@ void FindResultWidget::addItem (TreeItem *ti)
 
 	for (int column = 0; column < resultsModel->columnCount(index.parent()); ++column) {
 	    QModelIndex child = resultsModel->index(index.row()+1, column, index.parent());
-	    resultsModel->setData(child, QVariant(ti->getHeading()), Qt::EditRole);
+        resultsModel->setData(child, QVariant(ti->getHeadingPlain()), Qt::EditRole);
 	    resultsModel->getItem(child)->setOriginal (ti);
 	}
     }

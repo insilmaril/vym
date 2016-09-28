@@ -5,6 +5,7 @@
 #include "branchitem.h"
 #include "frameobj.h"
 #include "settings.h"
+#include "vymmodel.h"
 
 extern Settings settings;
 extern QString vymName;
@@ -31,10 +32,10 @@ BranchPropertyEditor::BranchPropertyEditor (QWidget *parent): QDialog (parent)	/
     ui.frameBrushColorButton->setIcon (pix);
 
     if (!settings.value( "/mainwindow/showTestMenu",false).toBool() )
-	ui.tabWidget->widget (3)->hide();
+        ui.tabWidget->widget (3)->hide();
 
-	
-    /* Create Model and View to hold attributes	    
+
+    /* Create Model and View to hold attributes
     attributeModel = new QStandardItemModel (1,3,this);
     attributeModel->setHeaderData(0, Qt::Horizontal, tr("Name","Branchprop window: Attribute name"));
     attributeModel->setHeaderData(1, Qt::Horizontal, tr("Value","Branchprop window: Attribute value"));
@@ -47,9 +48,9 @@ BranchPropertyEditor::BranchPropertyEditor (QWidget *parent): QDialog (parent)	/
     move   (settings.value ( "/satellite/propertywindow/geometry/pos", QPoint (250,50)).toPoint());
     
     if (settings.value ( "/satellite/propertywindow/showWithMain",true).toBool())
-	show();
-    else    
-	hide();
+        show();
+    else
+        hide();
 }
 
 BranchPropertyEditor::~BranchPropertyEditor ()
@@ -63,123 +64,128 @@ void BranchPropertyEditor::setItem (TreeItem *ti)
 {
     disconnectSignals();
     if (!ti)
-	ui.tabWidget->setEnabled (false);
+        ui.tabWidget->setEnabled (false);
     else if (ti->isBranchLikeType() )
     {
-	branchItem=(BranchItem*)ti;
+        branchItem=(BranchItem*)ti;
 
-	branchObj=(BranchObj*)(branchItem->getLMO());
-	if (branchObj)	    // FIXME-4 replace by branchItem later, when Frame is ported...
-	{
-	    ui.tabWidget->setEnabled (true);
-	    for (int i=0; i<3;++i)
-		ui.tabWidget->setTabEnabled (i,true);
-	    ui.tabWidget->setTabEnabled (3,false);
+        branchObj=(BranchObj*)(branchItem->getLMO());
+        if (branchObj)	    // FIXME-4 replace by branchItem later, when Frame is ported...
+        {
+            ui.tabWidget->setEnabled (true);
+            for (int i=0; i<3;++i)
+                ui.tabWidget->setTabEnabled (i,true);
+            ui.tabWidget->setTabEnabled (3,false);
 
-	    // Frame
-	    FrameObj::FrameType t=branchObj->getFrameType();
-	    if (t==FrameObj::NoFrame)
-	    {
-		ui.frameTypeCombo->setCurrentIndex (0);
-		penColor=Qt::white;
-		brushColor=Qt::white;
-		ui.colorGroupBox->setEnabled (false);
-		ui.framePaddingSpinBox->setEnabled (false);
-		ui.frameWidthSpinBox->setEnabled (false);
-		ui.framePaddingLabel->setEnabled (false);
-		ui.frameBorderLabel->setEnabled (false);
-		ui.includeChildrenCheckBox->setEnabled (false);
-	    } else  
-	    {
-		penColor=branchObj->getFramePenColor();
-		brushColor=branchObj->getFrameBrushColor();
-		QPixmap pix( 16,16);
-		pix.fill (penColor);
-		ui.framePenColorButton->setIcon (pix);
-		pix.fill (brushColor);
-		ui.frameBrushColorButton->setIcon (pix);
-		ui.colorGroupBox->setEnabled (true);
-		ui.framePaddingSpinBox->setEnabled (true);
-		ui.framePaddingSpinBox->setValue (branchObj->getFramePadding());
-		ui.frameWidthSpinBox->setEnabled (true);
-		ui.frameWidthSpinBox->setValue (branchObj->getFrameBorderWidth());
-		ui.framePaddingLabel->setEnabled (true);
-		ui.frameBorderLabel->setEnabled (true);
-		ui.includeChildrenCheckBox->setEnabled (true);
+            // Frame
+            FrameObj::FrameType t=branchObj->getFrameType();
+            if (t==FrameObj::NoFrame)   // FIXME-3 Check if all below depends on frame type???
+            {
+                ui.frameTypeCombo->setCurrentIndex (0);
+                penColor=Qt::white;
+                brushColor=Qt::white;
+                ui.colorGroupBox->setEnabled (false);
+                ui.framePaddingSpinBox->setEnabled (false);
+                ui.frameWidthSpinBox->setEnabled (false);
+                ui.framePaddingLabel->setEnabled (false);
+                ui.frameBorderLabel->setEnabled (false);
+                ui.includeChildrenCheckBox->setEnabled (false);
+                ui.includeChildrenCheckBox->setEnabled (false);
+            } else
+            {
+                penColor=branchObj->getFramePenColor();
+                brushColor=branchObj->getFrameBrushColor();
+                QPixmap pix( 16,16);
+                pix.fill (penColor);
+                ui.framePenColorButton->setIcon (pix);
+                pix.fill (brushColor);
+                ui.frameBrushColorButton->setIcon (pix);
+                ui.colorGroupBox->setEnabled (true);
+                ui.framePaddingSpinBox->setEnabled (true);
+                ui.framePaddingSpinBox->setValue (branchObj->getFramePadding());
+                ui.frameWidthSpinBox->setEnabled (true);
+                ui.frameWidthSpinBox->setValue (branchObj->getFrameBorderWidth());
+                ui.framePaddingLabel->setEnabled (true);
+                ui.frameBorderLabel->setEnabled (true);
+                ui.includeChildrenCheckBox->setEnabled (true);
 
-		switch (t)
-		{
-		    case FrameObj::Rectangle: 
-			ui.frameTypeCombo->setCurrentIndex (1);
-			break;
-		    case FrameObj::RoundedRectangle: 
-			ui.frameTypeCombo->setCurrentIndex (2);
-			break;
-		    case FrameObj::Ellipse: 
-			ui.frameTypeCombo->setCurrentIndex (3);
-			break;
-		    case FrameObj::Cloud: 
-			ui.frameTypeCombo->setCurrentIndex (4);
-			break;
-		    default: 
-			break;
-		}
-		if (branchItem->getFrameIncludeChildren())
-		    ui.includeChildrenCheckBox->setCheckState (Qt::Checked);
-		else    
-		    ui.includeChildrenCheckBox->setCheckState (Qt::Unchecked);
-	    }	
-	    
-	    // Link
-	    if (branchItem->getHideLinkUnselected())
-		ui.hideLinkIfUnselected->setCheckState (Qt::Checked);
-	    else    
-		ui.hideLinkIfUnselected->setCheckState (Qt::Unchecked);
+                switch (t)
+                {
+                case FrameObj::Rectangle:
+                    ui.frameTypeCombo->setCurrentIndex (1);
+                    break;
+                case FrameObj::RoundedRectangle:
+                    ui.frameTypeCombo->setCurrentIndex (2);
+                    break;
+                case FrameObj::Ellipse:
+                    ui.frameTypeCombo->setCurrentIndex (3);
+                    break;
+                case FrameObj::Cloud:
+                    ui.frameTypeCombo->setCurrentIndex (4);
+                    break;
+                default:
+                    break;
+                }
+                if (branchItem->getFrameIncludeChildren())
+                    ui.includeChildrenCheckBox->setCheckState (Qt::Checked);
+                else
+                    ui.includeChildrenCheckBox->setCheckState (Qt::Unchecked);
+            }
+            // Link
+            if (branchItem->getHideLinkUnselected())
+                ui.hideLinkIfUnselected->setCheckState (Qt::Checked);
+            else
+                ui.hideLinkIfUnselected->setCheckState (Qt::Unchecked);
 
-	    // Layout
-	    if (branchItem->getIncludeImagesVer())
-		ui.incImgVer->setCheckState (Qt::Checked);
-	    else    
-		ui.incImgVer->setCheckState (Qt::Unchecked);
-	    if (branchItem->getIncludeImagesHor())
-		ui.incImgHor->setCheckState (Qt::Checked);
-	    else    
-		ui.incImgHor->setCheckState (Qt::Unchecked);
-
-    /*
-	    // Attributes
-	    attributeModel->removeRows(0, attributeModel->rowCount(), QModelIndex());
-
-	    // FIXME-5 some samples for attribute testing
-	    QStringList attrTypes=mapEditor->attributeTable()->getTypes();
-	    for (int i=0; i<attrTypes.count()-1;i++)
-	    {
-		attributeModel->insertRow (i,QModelIndex ());
-		attributeModel->setData(attributeModel->index(i, 0, QModelIndex()), QString ("Name %1").arg(i));
-		attributeModel->setData(attributeModel->index(i, 1, QModelIndex()), i);
-		attributeModel->setData(attributeModel->index(i, 2, QModelIndex()), attrTypes.at(i));
-	    }
+            // Layout
+            if (branchItem->getIncludeImagesVer())
+                ui.incImgVer->setCheckState (Qt::Checked);
+            else
+                ui.incImgVer->setCheckState (Qt::Unchecked);
+            if (branchItem->getIncludeImagesHor())
+                ui.incImgHor->setCheckState (Qt::Checked);
+            else
+                ui.incImgHor->setCheckState (Qt::Unchecked);
+            if (branchItem->getChildrenLayout() == BranchItem::FreePositioning)
+                ui.childrenFreePositioning->setCheckState( Qt::Checked);
+            else
+                ui.childrenFreePositioning->setCheckState( Qt::Unchecked);
 
 
-	    ui.attributeTableView->resizeColumnsToContents();
+            /*
+        // Attributes
+        attributeModel->removeRows(0, attributeModel->rowCount(), QModelIndex());
 
-	    // Initialize Delegate
-	    delegate.setAttributeTable (mapEditor->attributeTable());
-	    ui.attributeTableView->setItemDelegate (&delegate);
+        // some samples for attribute testing
+        QStringList attrTypes=mapEditor->attributeTable()->getTypes();
+        for (int i=0; i<attrTypes.count()-1;i++)
+        {
+        attributeModel->insertRow (i,QModelIndex ());
+        attributeModel->setData(attributeModel->index(i, 0, QModelIndex()), QString ("Name %1").arg(i));
+        attributeModel->setData(attributeModel->index(i, 1, QModelIndex()), i);
+        attributeModel->setData(attributeModel->index(i, 2, QModelIndex()), attrTypes.at(i));
+        }
+
+
+        ui.attributeTableView->resizeColumnsToContents();
+
+        // Initialize Delegate
+        delegate.setAttributeTable (mapEditor->attributeTable());
+        ui.attributeTableView->setItemDelegate (&delegate);
     */
 
-	    // Finally activate signals
-	    connectSignals();
-	} // BranchItem
+            // Finally activate signals
+            connectSignals();
+        } // BranchItem
     } else if (ti->getType()==TreeItem::Attribute)
     {
-	ui.tabWidget->setEnabled (true);
-	for (int i=0; i<3;++i)
-	    ui.tabWidget->setTabEnabled (i,false);
-	ui.tabWidget->setTabEnabled (3,true);
+        ui.tabWidget->setEnabled (true);
+        for (int i=0; i<3;++i)
+            ui.tabWidget->setTabEnabled (i,false);
+        ui.tabWidget->setTabEnabled (3,true);
     } else
     {
-	ui.tabWidget->setEnabled (false);
+        ui.tabWidget->setEnabled (false);
     }
 }
 
@@ -274,6 +280,17 @@ void BranchPropertyEditor::incImgHorChanged (int  i)
     if (model) model->setIncludeImagesHor (i);
 }
 
+void BranchPropertyEditor::childrenFreePositioningChanged (int  i)
+{
+    if (model)
+    {
+        if (i>0)
+            model->setChildrenLayout( BranchItem::FreePositioning);
+        else
+            model->setChildrenLayout( BranchItem::AutoPositioning);
+    }
+}
+
 void BranchPropertyEditor::closeEvent( QCloseEvent* ce )
 {
     ce->accept();   // can be reopened with show()
@@ -313,36 +330,39 @@ void BranchPropertyEditor::connectSignals()
 {
     // Frame
     connect ( 
-	ui.framePenColorButton, SIGNAL (clicked()), 
-	this, SLOT (framePenColorClicked()));
+        ui.framePenColorButton, SIGNAL (clicked()),
+        this, SLOT (framePenColorClicked()));
     connect ( 
-	ui.framePaddingSpinBox, SIGNAL (valueChanged( int)), 
-	this, SLOT (framePaddingChanged (int)));
+        ui.framePaddingSpinBox, SIGNAL (valueChanged( int)),
+        this, SLOT (framePaddingChanged (int)));
     connect ( 
-	ui.frameWidthSpinBox, SIGNAL (valueChanged( int)), 
-	this, SLOT (frameBorderWidthChanged (int)));
+        ui.frameWidthSpinBox, SIGNAL (valueChanged( int)),
+        this, SLOT (frameBorderWidthChanged (int)));
     connect ( 
-	ui.frameBrushColorButton, SIGNAL (clicked()), 
-	this, SLOT (frameBrushColorClicked()));
+        ui.frameBrushColorButton, SIGNAL (clicked()),
+        this, SLOT (frameBrushColorClicked()));
     connect ( 
-	ui.frameTypeCombo, SIGNAL (currentIndexChanged( int)), 
-	this, SLOT (frameTypeChanged (int)));
+        ui.frameTypeCombo, SIGNAL (currentIndexChanged( int)),
+        this, SLOT (frameTypeChanged (int)));
     connect ( 
-	ui.includeChildrenCheckBox, SIGNAL (stateChanged( int)), 
-	this, SLOT (frameIncludeChildrenChanged (int)));
+        ui.includeChildrenCheckBox, SIGNAL (stateChanged( int)),
+        this, SLOT (frameIncludeChildrenChanged (int)));
 
     // Link 
     connect ( 
-	ui.hideLinkIfUnselected, SIGNAL (stateChanged( int)), 
-	this, SLOT (linkHideUnselectedChanged (int)));
+        ui.hideLinkIfUnselected, SIGNAL (stateChanged( int)),
+        this, SLOT (linkHideUnselectedChanged (int)));
 
     // Layout	
     connect ( 
-	ui.incImgVer, SIGNAL (stateChanged( int)), 
-	this, SLOT (incImgVerChanged (int)));
+        ui.incImgVer, SIGNAL (stateChanged( int)),
+        this, SLOT (incImgVerChanged (int)));
     connect ( 
-	ui.incImgHor, SIGNAL (stateChanged( int)), 
-	this, SLOT (incImgHorChanged (int)));
+        ui.incImgHor, SIGNAL (stateChanged( int)),
+        this, SLOT (incImgHorChanged (int)));
+    connect (
+        ui.childrenFreePositioning, SIGNAL (stateChanged( int)),
+        this, SLOT (childrenFreePositioningChanged (int)));
 
 /*
     // Attributes   
@@ -372,6 +392,7 @@ void BranchPropertyEditor::disconnectSignals()
     // Layout	
     disconnect ( ui.incImgVer, 0,0,0);
     disconnect ( ui.incImgHor, 0,0,0);
+    disconnect ( ui.childrenFreePositioning, 0,0,0);
 
     // Attributes
     /*

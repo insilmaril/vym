@@ -7,8 +7,6 @@
 #include "task.h"
 #include "vymmodel.h"
 
-extern QString flagsPath;
-
 TaskModel::TaskModel(QObject *parent)
     : QAbstractTableModel(parent)
 {
@@ -71,34 +69,27 @@ QVariant TaskModel::data(const QModelIndex &index, int role) const
         else if (index.column() == 1)
             return t->getStatusString() + " - " +t->getAwakeString();
         else if (index.column() == 2)
-	    return t->getAgeCreation();
+            return t->getAgeCreation();
         else if (index.column() == 3)
-	    return t->getAgeModified();
+            return t->getAgeModified();
         else if (index.column() == 4)
-	    return t->getDaysSleep();
+            return t->getDaysSleep();
         else if (index.column() == 5)
-	    return bi->getModel()->getMapName();
+        {
+            QString s = bi->getModel()->getMapName();
+            if (s.isEmpty() )
+                return "-";    
+            else
+                return bi->getModel()->getMapName();
+        }
         else if (index.column() == 6)
         {
             BranchItem *bi = tasks.at(index.row())->getBranch();
-            QString s;
-            if (bi)
-                s = bi->getHeading(); 
-            else
-                qDebug()<<"bi == NULL";
-
-            int l = showParentsLevel;
-            while ( l > 0 && bi->depth() >0 )
-            {
-                bi = bi->parentBranch();
-                if (bi) s = bi->getHeading() + " -> " + s;
-                l--;
-            }
-            return s;
+            return bi->getHeadingPlainWithParents( showParentsLevel );
         }
     } else if (role == Qt::DecorationRole && index.column() == 1)
     {
-        return QIcon( flagsPath + "flag-" + t->getIconString() + ".png");
+        return QIcon(":/flag-" + t->getIconString() + ".png");
     }
     else // role != Qt::DisplayRole
     {
@@ -295,6 +286,9 @@ void TaskModel::recalcPriorities()
 	p-=t->getAgeModified();
 	p-=t->getAgeCreation() * 1.0 / 365 * 80; // After a year, this is as important as "red"
 
+        // Position in subtree
+        p += bi->num();
+
 	t->setPriority (p);
 	if (p<minPrio) minPrio=p;
     }
@@ -302,7 +296,7 @@ void TaskModel::recalcPriorities()
     foreach (Task *t,tasks)
     {   
 	t->setPriority (1-  minPrio + t->getPriority() );
-	emitDataChanged (t);
+	//emitDataChanged (t);
     }
 
     emit (layoutChanged() );

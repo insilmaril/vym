@@ -1,31 +1,61 @@
-#ifndef DOWNLOADAGENT_H
-#define DOWNLOADAGENT_H
-
-#include <QObject>
-#include <QUrl>
+#include <QCoreApplication>
+#include <QFile>
+#include <QFileInfo>
+#include <QList>
 #include <QNetworkAccessManager>
+#include <QNetworkRequest>
 #include <QNetworkReply>
+#include <QSslError>
+#include <QStringList>
+#include <QTemporaryFile>
+#include <QTimer>
+#include <QUrl>
 
-class BranchItem;
+#include <stdio.h>
+
+QT_BEGIN_NAMESPACE
+class QSslError;
+QT_END_NAMESPACE
+
+QT_USE_NAMESPACE
+
 class VymModel;
 
-class DownloadAgent:public QObject
+class DownloadAgent: public QObject
 {
     Q_OBJECT
+    QNetworkAccessManager agent;
+    QList<QNetworkReply *> currentDownloads;
 
-public:	
-    DownloadAgent (const QUrl &url, BranchItem *bi);
-    ~DownloadAgent();
+public:
+    DownloadAgent(const QUrl &u);
+    QString getDestination ();
+    void setFinishedAction (VymModel *m, const QString &script);
+    QString getFinishedScript();
+    uint getFinishedScriptModelID();
+    void setUserAgent(const QString &s);
+    bool  isSuccess();
+    QString getResultMessage();
+    void doDownload(const QUrl &url);
+    bool saveToDisk(const QString &filename, const QString &data);
 
 public slots:
-    virtual void downloadFinished   (QNetworkReply *reply);
+    void execute();
+    void requestFinished(QNetworkReply *reply);
+    void sslErrors(const QList<QSslError> &errors);
+
+signals:
+    void downloadFinished();
 
 private:
-    uint branchID;
-    uint modelID;
+    QTemporaryFile tmpFile;
+    QByteArray userAgent;
+    QUrl url;
 
-    QNetworkAccessManager networkManager;
-    QList <QNetworkReply*> currentDownloads;
+    bool success;
+    QString resultMessage;
+
+    QString finishedScript;
+    uint finishedScriptModelID;
 };
-#endif
 

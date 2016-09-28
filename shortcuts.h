@@ -5,29 +5,34 @@
 #include <QShortcut>
 #include <QString>
 
-class Shortcut:public QShortcut {
+class KeySwitch {
 public:
-    Shortcut(QWidget *parent=NULL);
-    void setGroup(const QString &);
-    QString getGroup ();
-    void setContextName (const QString &);
-    QString getContextName();
-
-protected:
+    KeySwitch(
+            const QString &kIdentifier, //! Unique identifier (still unused)
+            const QString &kName,       //! text saved in related action (translated)
+            const QString &kGroup,      //! Scope
+            const QString &kTag,        //! Tag, used for listing related shortcuts
+            const QKeySequence &kseq);  //! Keysequence from action
     QString group;
-    QString context;
+    QString name;
+    QString identifier;
+    QString tag;
+    QKeySequence keySequence;
 };
 
 class Switchboard {
 public:
     Switchboard ();
-    void addConnection(QAction *a,const QString &s);
-    void addConnection(QWidget *w, QAction *a,const QString &s);
+    void addGroup( QString gIdentifier, QString gName);
+    void addSwitch( QString identifier, QString scope, QAction *a, QString tag);
     QString getASCII();
     void printASCII();
     void printLaTeX();
 protected:  
     QMultiMap <QString,QAction*> actions;
+    QMultiMap <QString, KeySwitch> switches;
+    QMap <QString, QString> groups;
+    QStringList tags;
 };
 
 #endif

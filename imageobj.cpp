@@ -2,7 +2,7 @@
 #include "mapobj.h"
 
 /////////////////////////////////////////////////////////////////
-// ImageObj	//FIXME-5 maybe join IO and FIO (or use FIO for svg?)
+// ImageObj	
 /////////////////////////////////////////////////////////////////
 ImageObj::ImageObj( QGraphicsItem *parent) : QGraphicsPixmapItem (parent )
 {
@@ -28,10 +28,10 @@ void ImageObj::copy(ImageObj* other)
 
 void ImageObj::setVisibility (bool v)
 {
-    if (v)  
-	show();
+    if (v)
+        show();
     else
-	hide();
+        hide();
 }
 
 void ImageObj::save(const QString &fn, const char *format)
@@ -42,12 +42,12 @@ void ImageObj::save(const QString &fn, const char *format)
 bool ImageObj::load (const QString &fn)
 {
     QPixmap pixmap;
-    if (pixmap.load (fn)) 
+    if (pixmap.load (fn))
     {
-	prepareGeometryChange();
-	setPixmap (pixmap);
-	return true;
-    }	
+        prepareGeometryChange();
+        setPixmap (pixmap);
+        return true;
+    }
     return false;
 }
 

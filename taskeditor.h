@@ -12,7 +12,7 @@ class Task;
 class TaskModel;
 class QSortFilterProxyModel;
 
-class TaskEditor: public QWidget
+class TaskEditor : public QWidget
 {
     Q_OBJECT
 
@@ -24,6 +24,8 @@ public:
     void setFilterMap  ();
     bool isUsedFilterActive ();
     void setFilterActive ();
+    void setFilterNew ();
+    void setFilterFlags ();
     bool select (Task *task);
     void clearSelection ();
     void showSelection ();
@@ -36,6 +38,8 @@ private slots:
     void selectionChanged (const QItemSelection & selected, const QItemSelection & );
     void toggleFilterMap ();
     void toggleFilterActive ();
+    void toggleFilterNew ();
+    void toggleFilterFlags ();
 
 private:
     QTableView *view;
@@ -43,6 +47,8 @@ private:
     QString currentMapName;
     QAction *actionToggleFilterMap;
     QAction *actionToggleFilterActive;
+    QAction *actionToggleFilterNew;
+    QAction *actionToggleFilterFlags;
     bool blockExternalSelect;
 };
 

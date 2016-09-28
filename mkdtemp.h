@@ -1,6 +1,6 @@
 #ifndef MKDTEMP_H
 #define MKDTEMP_H
 
-extern char *mkdtemp(char *_template);
+extern QString mkdtemp(QString _template);
 
 #endif

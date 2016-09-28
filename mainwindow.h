@@ -1,7 +1,8 @@
-#ifndef MAINWINDOW_H 
+#ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QProgressDialog>
 
 #include "branchpropeditor.h"
 #include "extrainfodialog.h"
@@ -9,7 +10,6 @@
 #include "file.h"
 #include "historywindow.h"
 #include "mapeditor.h"
-#include "shortcuts.h"
 #include "texteditor.h"
 #include "vymview.h"
 
@@ -26,7 +26,7 @@ public:
 	ModModeXLink	//!< Create a XLink (XLinkObj) from selected object
 	};
 
-    Main(QWidget* parent=0, Qt::WFlags f=0);
+    Main(QWidget* parent=0, Qt::WindowFlags f=0);
     ~Main();
     void loadCmdLine();
 
@@ -51,6 +51,10 @@ protected:
 
 private:
     void setupAPI();
+
+    /*! Helper method to clone actions later in MapEditor */
+    void cloneActionMapEditor( QAction *a, QKeySequence ks);
+
     void setupFileActions();
     void setupEditActions();
     void setupSelectActions();
@@ -82,9 +86,10 @@ public:
     VymModel* getModel(uint) const;
     void gotoModel (VymModel *m);
     int modelCount();
+    void updateTabName(VymModel *vm);
     
 private slots:
-    void editorChanged(QWidget*);
+    void editorChanged();
 
     File::ErrorCode fileLoad(QString ,const LoadMode &, const FileType &ftype);
     void fileLoad(const LoadMode &);
@@ -102,7 +107,6 @@ public slots:
 private slots:	
     void fileSaveAs(const SaveMode &);
     void fileSaveAs();
-    void fileImportKDE4Bookmarks();
     void fileImportFirefoxBookmarks();
     void fileImportFreemind();
     void fileImportMM();
@@ -114,15 +118,14 @@ private slots:
     void fileExportSVG();
     void fileExportAO();
     void fileExportASCII();
+    void fileExportASCIITasks();
     void fileExportCSV();
     void fileExportOrgMode();
     void fileExportLaTeX();
-    void fileExportKDE4Bookmarks();
     void fileExportTaskjuggler();
     void fileExportImpress();
     void fileExportLast();
-    bool closeTab(int i);
-    bool fileCloseMap();
+    bool fileCloseMap(int i = -1);  // Optionally pass number of tab
     void filePrint();
     bool fileExitVYM();
 
@@ -169,7 +172,7 @@ private slots:
     void editCycleTaskStatus();
     void editTaskSleepN();
     void editAddTimestamp();
-    void editMapInfo();
+    void editMapProperties();
     void editMoveUp();	
     void editMoveDown();    
     void editDetach();	
@@ -204,6 +207,7 @@ private slots:
 
 private slots:    
     void editToggleTarget();
+    bool initTargetsMenu( VymModel *model, QMenu *menu);
     void editGoToTarget();
     void editMoveToTarget();
     void editSelectPrevious();
@@ -245,8 +249,10 @@ public slots:
 public slots:
     void networkStartServer();
     void networkConnect();
+    void downloadFinished();
     bool settingsPDF();
     bool settingsURL();
+    void settingsZipTool();
     void settingsMacroDir();
     void settingsUndoLevels();
 
@@ -256,10 +262,13 @@ public:
 
 public slots:
     void settingsAutosaveTime();
-    void settingsTaskShowParentsLevel();
-    void settingsAutoLayoutToggle();
-    void settingsWriteBackupFileToggle();
+    void settingsDefaultMapAuthor();
+    void settingsShowParentsLevelTasks();
+    void settingsShowParentsLevelFindResults();
+    void settingsToggleAutoLayout();
+    void settingsToggleWriteBackupFile();
     void settingsToggleAnimation();
+    void settingsToggleDownloads();
 
     void windowToggleNoteEditor();
     void windowToggleTreeEditor();
@@ -268,6 +277,8 @@ public slots:
     void windowToggleScriptEditor();
     void windowToggleHistory();
     void windowToggleProperty();
+    void windowShowHeadingEditor();
+    void windowToggleHeadingEditor();
     void updateHistory(SimpleSettings &);
     void windowToggleAntiAlias();
 public:
@@ -279,6 +290,7 @@ public slots:
     void updateNoteFlag();
     void updateNoteEditor (QModelIndex index);
     void selectInNoteEditor (QString s, int i);
+    void setFocusMapEditor();
     void changeSelection (VymModel *model,const QItemSelection &newSel, const QItemSelection &delSel);
 
     void updateActions();
@@ -307,12 +319,23 @@ private slots:
     void helpDoc();
     void helpDemo();
     void helpShortcuts();
+    void debugInfo();
     void helpAbout();
     void helpAboutQT();
 
     void callMacro ();
+    void downloadReleaseNotesFinished();
+
+public slots:
+    void checkReleaseNotes();
+    bool downloadsEnabled(bool userTriggered = false);
+    void downloadUpdatesFinished(bool userTriggered = false);
+    void downloadUpdatesFinishedInt();
+    void downloadUpdates(bool userTriggered);
+    void checkUpdates();
 
 private:
+    QString shortcutScope;          //! For listing shortcuts
     QTabWidget *tabWidget;
     qint64 *browserPID;
 
@@ -329,7 +352,13 @@ private:
 
     BranchPropertyEditor *branchPropertyEditor;
 
-    QList <QAction*> actionListMap;
+public:
+    QList <QAction*> mapEditorActions;      //! allows mapEditor to clone actions and shortcuts
+    QList <QAction*> taskEditorActions;     //! allows taskEditor to clone actions and shortcuts
+private:
+    QList <QAction*> restrictedMapActions;  //! Actions reqire map and write access
+    QList <QAction*> unrestrictedMapActions;//! Actions require map, but work also in readonly, e.g. print, copy
+    QList <QAction*> actionListFiles;       //! File related actions, e.g. load, save, restore session
     QList <QAction*> actionListBranches;
     QList <QAction*> actionListItems;
 
@@ -343,8 +372,6 @@ private:
 
     QAction *macroActions[13];
     QStringList macro;
-
-    Switchboard switchboard;
 
     QMenu *toolbarsMenu;
     QToolBar *fileToolbar;
@@ -361,8 +388,10 @@ private:
     QAction* actionFileNew;
     QAction* actionFileNewCopy;
     QAction* actionFileOpen;
+    QAction* actionFileRestoreSession;
     QAction* actionFileSave;
     QAction* actionFilePrint;
+    QAction* actionMapProperties;
     QAction* actionFileExportLast;
     QAction* actionUndo;
     QAction* actionRedo;
@@ -493,11 +522,13 @@ private:
     QAction* actionSettingsAutoSelectText;
     QAction* actionSettingsUseFlagGroups;
     QAction* actionSettingsUseHideExport;
-    QAction* actionSettingsAutosaveToggle;
+    QAction* actionSettingsToggleAutosave;
     QAction* actionSettingsAutosaveTime;
-    QAction* actionSettingsTaskShowParentsLevel;
-    QAction* actionSettingsAutoLayoutToggle;
+    QAction* actionSettingsShowParentsLevelTasks;
+    QAction* actionSettingsShowParentsLevelFindResults;
+    QAction* actionSettingsToggleAutoLayout;
     QAction* actionSettingsWriteBackupFile;
+    QAction* actionSettingsToggleDownloads;
     QAction* actionSettingsUseAnimation;
 };
 

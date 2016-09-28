@@ -4,12 +4,12 @@
 extern Settings settings;
 extern QString vymName;
 
-HeadingEditor::HeadingEditor()	
+HeadingEditor::HeadingEditor(QString scope):TextEditor()
 {
-    setWindowTitle (vymName +" - " +tr ("Heading Editor","Window caption"));
+    QMainWindow::setWindowTitle (vymName +" - " +tr ("Heading Editor","Window caption"));
 
     // Load Settings
-    init ("headingeditor");
+    init (scope);
 }
 
 HeadingEditor::~HeadingEditor() {}

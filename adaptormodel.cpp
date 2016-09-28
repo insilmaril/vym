@@ -37,22 +37,6 @@ QDBusVariant AdaptorModel::getCurrentModelID()
     return QDBusVariant (mainWindow->currentModelID());
 }
 
-QDBusVariant AdaptorModel::getHeading()
-{
-    QString s;
-    if (model)
-	s=model->getHeading();
-    else
-	s="oops, no vymModel?";
-
-    return QDBusVariant (s);
-}
-
-void AdaptorModel::setHeading (const QString &s)
-{
-    if (model) model->setHeading(s);
-}
-
 QDBusVariant AdaptorModel::branchCount()
 {
     BranchItem *selbi=model->getSelectedBranch();

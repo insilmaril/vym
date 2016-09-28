@@ -14,7 +14,6 @@
 #include "mainwindow.h"
 
 
-extern QString iconPath;
 extern Main *mainWindow;
 
 FindWidget::FindWidget(QWidget *)
@@ -34,11 +33,11 @@ FindWidget::FindWidget(QWidget *)
     findcombo->setSizePolicy(sizePolicy);
     connect ( findcombo, SIGNAL( highlighted(int) ), 
 	this, SLOT( nextPressed() ) );
-    connect ( findcombo, SIGNAL( textChanged(const QString &) ), 
+    connect ( findcombo, SIGNAL( editTextChanged(const QString &) ), 
 	this, SLOT( findTextChanged(const QString&) ) );
 
     nextbutton = new QPushButton;
-    nextbutton->setIcon (QPixmap(iconPath+"find.png"));
+    nextbutton->setIcon (QPixmap(":/find.png"));
     //nextbutton->setText (tr("Find","Find widget"));
     connect ( nextbutton, SIGNAL( clicked() ), this, SLOT( nextPressed() ) );
 

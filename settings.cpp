@@ -238,10 +238,10 @@ QString Settings::getDataXML (const QString &fpath)
     {
 	if (pathlist.at(i)==fpath)
 	    if (!valuelist.at(i).isNull())
-		s+=singleElement (
-		    "setting",
-		    attribut ("key",keylist.at(i)) 
-		    +attribut ("value",valuelist.at(i).toString())
+        s += valueElement (
+            "setting",
+            getCDATA( valuelist.at(i).toString() ),
+            attribut ("key",keylist.at(i))
 		);
         i++;
     }

@@ -11,11 +11,13 @@
 #endif
 
 #include "file.h"
+#include "branchitem.h"
 #include "imageitem.h"
 #include "mapeditor.h"
 #include "parser.h"
 #include "treeitem.h"
 #include "treemodel.h"
+#include "vymlock.h"
 
 class AttributeItem;
 class BranchItem;
@@ -65,7 +67,6 @@ private:
 
 public:
     bool isRepositionBlocked();	    //!< While load or undo there is no need to update graphicsview
-
     void updateActions();	    //!< Update buttons in mainwindow
 
 
@@ -130,6 +131,8 @@ public:
     QString getMapName ();  //!< e.g. "map"
     QString getDestPath (); //!< e.g. "/home/tux/map.vym"
 
+    bool parseVymText(const QString &s);
+
     /*! \brief Load map
 
 	The data is read from file. Depending on LoadMode the current
@@ -157,6 +160,15 @@ private:
 public:	
     void importDir();
 
+    bool tryVymLock();
+    bool renameMap( const QString &newPath); //! Rename map and change lockfile
+    void setReadOnly( bool b );
+    bool isReadOnly();
+
+private:
+    VymLock  vymLock;       //! Handle lockfiles and related information
+    bool readonly;          //! if map is locked, it can be opened readonly
+
 private slots:
     void autosave ();
     void fileChanged();
@@ -171,7 +183,7 @@ private:
 
     QString histPath;		//!< Path to history file
     SimpleSettings undoSet;	//!< undo/redo commands, saved in histPath
-    int stepsTotal;		//!< total number of steps (undos+redos) 
+    int stepsTotal;		//!< total number of steps (undos+redos)
     int curStep;		//!< Current step in history (ring buffer)
     int curClipboard;		//!< number of history step, which is the current clipboard
     int redosAvail;		//!< Available number of redo steps
@@ -304,12 +316,14 @@ signals:
     void sortFilterChanged (QString );	    //!< Notify editors of new filter
 
 public:
-    void setHeading(const QString &s, BranchItem *bi=NULL);	    //!< Set heading of item	
-    QString getHeading ();		    //!< Get heading of item
-    void setNote(const QString &s);	    //!< Set note text
-    QString getNote();			    //!< Get note text
-    void loadNote (const QString &fn);	    //!< Load note from file
-    void saveNote (const QString &fn);	    //!< Save note to file
+    void setHeading(const VymText &vt, BranchItem *bi=NULL);	    //!< Set heading of item
+    void setHeadingPlainText(const QString &s, BranchItem *bi=NULL);	//!< Set heading of item
+    Heading getHeading();		        //!< Get heading of item
+    void setNote(const VymNote &vn);    //!< Set note text
+    VymNote getNote();			        //!< Get note text
+    bool hasRichTextNote();             //!< Check type of vymText used
+    void loadNote (const QString &fn);	//!< Load note from file
+    void saveNote (const QString &fn);	//!< Save note to file
 
 private:
     BranchItem* findCurrent;		    // next object in find process
@@ -340,6 +354,7 @@ public:
     void setFrameBorderWidth (const int &);
     void setIncludeImagesVer(bool);
     void setIncludeImagesHor(bool);
+    void setChildrenLayout(BranchItem::LayoutHint layoutHint);
     void setHideLinkUnselected (bool);
 
     /*! Should object be hidden in exports (clouded)? */
@@ -523,7 +538,7 @@ public:
     QPointF exportImage (QString fname="",bool askForName=true,QString format="PNG");
 
     /*! Save as PDF  . Returns offset to upper left corner of image */
-    QPointF exportPDF (QString fname="",bool askForName=true);
+    void exportPDF (QString fname="",bool askForName=true);
 
     /*! Save as SVG  . Returns offset to upper left corner of image */
     QPointF exportSVG (QString fname="",bool askForName=true);
@@ -535,7 +550,7 @@ public:
     void exportAO (QString fname="",bool askForName=true);  
 
     /*! Export as ASCII text to file */
-    void exportASCII (const QString &fname="",bool askForName=true);  
+    void exportASCII (bool listTasks = false, const QString &fname = "",bool askForName = true);
 
     /*! Export as CSV text to file */
     void exportCSV (const QString &fname="",bool askForName=true);  
@@ -701,7 +716,7 @@ private slots:
     void displayNetworkError (QAbstractSocket::SocketError);
 
 public:
-    void download (const QUrl &url, BranchItem *bi=NULL);
+    void downloadImage (const QUrl &url, BranchItem *bi=NULL);
 
 ////////////////////////////////////////////
 // Selection related 
@@ -752,7 +767,7 @@ public:
 public:
     TreeItem::Type selectionType();
     LinkableMapObj* getSelectedLMO();
-    BranchObj* getSelectedBranchObj();	
+    BranchObj* getSelectedBranchObj();
     BranchItem* getSelectedBranch();
     QList <BranchItem*> getSelectedBranches();
     ImageItem* getSelectedImage();

@@ -1,27 +1,40 @@
 #include "texteditor.h"
 
+#include <QAction>
+#include <QActionGroup>
+#include <QColorDialog>
+#include <QComboBox>
+#include <QFileDialog>
+#include <QFontDialog>
+#include <QMenuBar>
+#include <QMessageBox>
+#include <QPrintDialog>
+#include <QPrinter>
+#include <QStatusBar>
+#include <QTextEdit>
+#include <QToolBar>
+
 #include <typeinfo>
 
-#include "noteobj.h"	//Still needed for ascii conversion
 #include "settings.h"
+#include "shortcuts.h"
 
 extern int statusbarTime;
 extern Settings settings;
 
 extern QAction *actionViewToggleNoteEditor;
 
-extern QString iconPath;
 extern QString vymName;
+
+extern Switchboard switchboard;
 
 extern QPrinter *printer;
 extern bool debug;
 
-
 ///////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////
 
-
-TextEditor::TextEditor()  
+TextEditor::TextEditor()
 {
     statusBar()->hide();    // Hide sizeGrip on default, which comes with statusBar
 
@@ -34,7 +47,6 @@ TextEditor::TextEditor()
     setCentralWidget( e );
     statusBar()->showMessage( tr("Ready","Statusbar message"), statusbarTime);
     setWindowTitle (vymName +" - " +tr ("Text Editor","Text Editor Window caption"));
-
 
     connect(e, SIGNAL(currentCharFormatChanged(const QTextCharFormat &)),
             this, SLOT(formatChanged(const QTextCharFormat &)));
@@ -57,48 +69,43 @@ TextEditor::TextEditor()
 TextEditor::~TextEditor()
 {
     // Save Settings
-    QString n=QString("/satellite/%1/").arg(editorName);
-    settings.setValue(n+"geometry/size", size() );
-    settings.setValue(n+"geometry/pos", pos() );
-    settings.setValue(n+"state",saveState(0));
+    QString n = QString("/satellite/%1/").arg(shortcutScope);
+    settings.setValue( n + "geometry/size", size() );
+    settings.setValue( n + "geometry/pos", pos() );
+    settings.setValue( n + "state",saveState(0));
 
     QString s;
     if (actionSettingsFonthintDefault->isChecked() )
 	s="fixed";
     else    
 	s="variable";
-    settings.setValue(n+"fonts/fonthintDefault",s );
-    settings.setValue(n+"fonts/varFont", varFont.toString() );
-    settings.setValue(n+"fonts/fixedFont", fixedFont.toString() );
+    settings.setValue(n + "fonts/fonthintDefault",s );
+    settings.setValue(n + "fonts/varFont", varFont.toString() );
+    settings.setValue(n + "fonts/fixedFont", fixedFont.toString() );
 }
 
-void TextEditor::init (const QString &ename)
+void TextEditor::init (const QString &scope) 
 {   
-    editorName=ename;
-    QString n=QString("/satellite/%1/").arg(editorName);
+    shortcutScope = scope;
+    QString n=QString("/satellite/%1/").arg(shortcutScope);
     restoreState (settings.value(n+"state",0).toByteArray());
     filenameHint="";
     fixedFont.fromString (settings.value(
-	n+"fonts/fixedFont", "Courier,12,-1,5,48,0,0,0,1,0").toString() 
-    );
+        n + "fonts/fixedFont", "Courier,12,-1,5,48,0,0,0,1,0").toString()
+                          );
     varFont.fromString( settings.value(
-	n+"fonts/varFont", "DejaVu Sans Mono,12,-1,0,50,0,0,0,0,0").toString() 
-    );
+        n + "fonts/varFont", "DejaVu Sans Mono,12,-1,0,50,0,0,0,0,0").toString()
+                        );
     QString s=settings.value (n+"fonts/fonthintDefault","variable").toString();
     if (s == "fixed")
-    {	
-	actionSettingsFonthintDefault->setChecked (true);
-	e->setCurrentFont (fixedFont);
-    } else  
     {
-	actionSettingsFonthintDefault->setChecked (false);
-	e->setCurrentFont (varFont);
-    }	
-}
-
-void TextEditor::reset()
-{
-    e->clear();
+        actionSettingsFonthintDefault->setChecked (true);
+        e->setCurrentFont (fixedFont);
+    } else
+    {
+        actionSettingsFonthintDefault->setChecked (false);
+        e->setCurrentFont (varFont);
+    }
 }
 
 bool TextEditor::isEmpty()
@@ -111,6 +118,8 @@ bool TextEditor::isEmpty()
 
 void TextEditor::setFont (const QFont &font)
 {
+    blockChangedSignal = true;
+
     QTextCursor tc=e->textCursor();
     QTextCharFormat format=tc.charFormat();
 
@@ -119,54 +128,56 @@ void TextEditor::setFont (const QFont &font)
     tc.setCharFormat (format);
     tc.clearSelection();
     fontChanged(fixedFont);
+
+    blockChangedSignal = false;
 }
 
 void TextEditor::setFontHint (const QString &fh)
 {
     if (fh=="fixed")
     {
-	actionFormatUseFixedFont->setChecked (true);
-	e->setCurrentFont (fixedFont);
-	setFont (fixedFont);
-    }	
+        actionFormatUseFixedFont->setChecked (true);
+        e->setCurrentFont (fixedFont);
+        setFont (fixedFont);
+    }
     else
     {
-	actionFormatUseFixedFont->setChecked (false);
-	e->setCurrentFont (varFont);
-	setFont (varFont);
-    }	
+        actionFormatUseFixedFont->setChecked (false);
+        e->setCurrentFont (varFont);
+        setFont (varFont);
+    }
 }
 
 QString TextEditor::getFontHint()
 {
     if (actionFormatUseFixedFont->isChecked())
-	return "fixed";
-    else    
-	return "var";
+        return "fixed";
+    else
+        return "var";
 }
 
 QString TextEditor::getFontHintDefault()
 {
     if (actionSettingsFonthintDefault->isChecked())
-	return "fixed";
-    else    
-	return "var";
+        return "fixed";
+    else
+        return "var";
 }
 
 void TextEditor::setFilename(const QString &fn)
 {
     if (state==filledEditor)
     {
-	if (fn.isEmpty() )
-	{
-	    filename="";
-	    statusBar()->showMessage( tr("No filename available for this note.","Statusbar message"), statusbarTime );
-	}   
-	else
-	{
-	    filename=fn;
-	    statusBar()->showMessage( tr(QString( "Current filename is %1" ).arg( filename ).toUtf8(),"Statusbar message"), statusbarTime );
-	}   
+        if (fn.isEmpty() )
+        {
+            filename="";
+            statusBar()->showMessage( tr("No filename available for this note.","Statusbar message"), statusbarTime );
+        }
+        else
+        {
+            filename=fn;
+            statusBar()->showMessage( tr(QString( "Current filename is %1" ).arg( filename ).toUtf8(),"Statusbar message"), statusbarTime );
+        }
     }
 }
 
@@ -187,29 +198,35 @@ QString TextEditor::getFilenameHint()
 
 QString TextEditor::getText()
 {
-    if (e->toPlainText().isEmpty())
-	return QString();
-    else    
-	if (actionFormatRichText->isChecked())
-	    return e->toHtml();
-	else
-	    return e->toPlainText();
-    }
+    if (e->toPlainText().isEmpty()) return QString();
 
-NoteObj TextEditor::getNote()
+    if (actionFormatRichText->isChecked())
+        return e->toHtml();
+    else
+        return e->toPlainText();
+}
+
+VymText TextEditor::getVymText()
 {
-    NoteObj n;
-    n.setNote (getText() );
-    n.setFontHint ( getFontHint() );
-    return n;
+    VymText vt;
+
+    if (actionFormatRichText->isChecked())
+        vt.setRichText(e->toHtml());
+    else
+        vt.setPlainText(e->toPlainText());
+
+    if (actionFormatUseFixedFont->isChecked() )
+        vt.setFontHint(getFontHint());
+
+    return vt;
 }
 
 bool TextEditor::findText(const QString &t, const QTextDocument::FindFlags &flags)
 {
     if (e->find (t,flags))
-	return true;
-    else    
-	return false;
+        return true;
+    else
+        return false;
 }
 
 bool TextEditor::findText(const QString &t, const QTextDocument::FindFlags &flags, int i)
@@ -223,8 +240,8 @@ bool TextEditor::findText(const QString &t, const QTextDocument::FindFlags &flag
     int j=0;
     while (j<=i)
     {
-	if (!e->find (t,flags)) return false;
-	j++;
+        if (!e->find (t,flags)) return false;
+        j++;
     }
     return true;
 
@@ -240,103 +257,128 @@ QTextCursor TextEditor::getTextCursor()
     return e->textCursor();
 }
 
+void TextEditor::setFocus()
+{
+    e->setFocus();
+}
+
 void TextEditor::setupFileActions()
 {
     QToolBar *tb = addToolBar ( tr("Note Actions") );
     tb->setObjectName ("noteEditorFileActions");
     QMenu *fileMenu = menuBar()->addMenu( tr( "&Note","Menubar" ));
 
+    QString tag = tr ("Texteditor","Shortcuts");
     QAction *a;
-    a = new QAction( QPixmap( iconPath+"fileopen.png"), tr( "&Import..." ),this);
+    a = new QAction( QPixmap( ":/fileopen.png"), tr( "&Import..." ),this);
     a->setShortcut( Qt::CTRL + Qt::Key_O );
-    connect( a, SIGNAL( activated() ), this, SLOT( textLoad() ) );
+    a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
+    switchboard.addSwitch( "textLoad", shortcutScope, a, tag);
+    connect( a, SIGNAL( triggered() ), this, SLOT( textLoad() ) );
     tb->addAction (a);
     fileMenu->addAction (a);
     actionFileLoad=a;
 
     fileMenu->addSeparator();
-    a = new QAction( QPixmap(iconPath+"filesave.png" ), tr( "&Export..." ), this);
+    a = new QAction( QPixmap(":/filesave.png" ), tr( "&Export..." ), this);
     a->setShortcut( Qt::CTRL + Qt::Key_S );
-    //a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
-    connect( a, SIGNAL( activated() ), this, SLOT( textSave() ) );
+    a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
+    switchboard.addSwitch( "textSave", shortcutScope, a, tag);
+    connect( a, SIGNAL( triggered() ), this, SLOT( textSave() ) );
     tb->addAction (a);
     fileMenu->addAction (a);
+    addAction (a);
     actionFileSave=a;
     
-    a = new QAction(  QPixmap(), tr( "Export &As... (HTML)" ), this);
-    connect( a, SIGNAL( activated() ), this, SLOT( textSaveAs() ) );
+    a = new QAction(  tr( "Export &As... (HTML)" ), this);
+    connect( a, SIGNAL( triggered() ), this, SLOT( textSaveAs() ) );
     fileMenu->addAction (a);
     actionFileSaveAs=a;
 
-    a = new QAction(QPixmap(), tr( "Export &As...(ASCII)" ), this);
+    a = new QAction( tr( "Export &As...(ASCII)" ), this);
     a->setShortcut(Qt::ALT + Qt::Key_X );
-    connect( a, SIGNAL( activated() ), this, SLOT( textExportAsASCII() ) );
+    a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
+    switchboard.addSwitch( "textExportAsASCII", shortcutScope, a, tag);
+    connect( a, SIGNAL( triggered() ), this, SLOT( textExportAsASCII() ) );
     fileMenu->addAction (a);
+    addAction (a);
     actionFileSaveAs=a;
 
     fileMenu->addSeparator();
-    a = new QAction( QPixmap(iconPath+"fileprint.png" ), tr( "&Print..." ),this);
-    a->setShortcut( Qt::CTRL + Qt::Key_P );
-    connect( a, SIGNAL( activated() ), this, SLOT( textPrint() ) );
+    a = new QAction( QPixmap(":/fileprint.png" ), tr( "&Print..." ),this);
+    a->setShortcut (Qt::CTRL + Qt::Key_P);
+    switchboard.addSwitch( "textPrint", shortcutScope, a, tag);
+    connect( a, SIGNAL( triggered() ), this, SLOT( textPrint() ) );
     tb->addAction (a);
     fileMenu->addAction (a);
     actionFilePrint=a;
     
-    a = new QAction( QPixmap( iconPath+"edittrash.png"), tr( "&Delete All" ), this);
-    connect( a, SIGNAL( activated() ), e, SLOT( clear() ) );
+    a = new QAction( QPixmap( ":/edittrash.png"), tr( "&Delete All" ), this);
+    connect( a, SIGNAL( triggered() ), this, SLOT( reset() ) );
     fileMenu->addAction (a);
     tb->addAction (a);
     actionFileDeleteAll=a;
-
 }
 
 void TextEditor::setupEditActions()
 {
+    QString tag = tr ("Texteditor","Shortcuts");
     QToolBar *editToolBar = addToolBar ( tr( "Edit Actions" ));
     editToolBar->setObjectName ("noteEditorEditActions");
     editToolBar->hide();
-    QMenu *editMenu = menuBar()->addMenu ( tr( "&Edit" ));
+    QMenu *editMenu = menuBar()->addMenu ( tr( "Edi&t" ));
 
     QAction *a;
-    a = new QAction(QPixmap(iconPath+"undo.png"), tr( "&Undo" ), this );
+    a = new QAction(QPixmap(":/undo.png"), tr( "&Undo" ), this );
     a->setShortcut(Qt::CTRL + Qt::Key_Z );
-    connect( a, SIGNAL( activated() ), e, SLOT( undo() ) );
+    a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
+    switchboard.addSwitch( "textUndo", shortcutScope, a, tag);
+    connect( a, SIGNAL( triggered() ), e, SLOT( undo() ) );
     editMenu->addAction (a);
     editToolBar->addAction (a);
     actionEditUndo=a;
     
-    a = new QAction(QPixmap(iconPath+"redo.png" ), tr( "&Redo" ),this); 
+    a = new QAction(QPixmap(":/redo.png" ), tr( "&Redo" ),this);
     a->setShortcut( Qt::CTRL + Qt::Key_Y );
-    connect( a, SIGNAL( activated() ), e, SLOT( redo() ) );
+    a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
+    switchboard.addSwitch( "textRedo", shortcutScope, a, tag);
+    connect( a, SIGNAL( triggered() ), e, SLOT( redo() ) );
     editMenu->addAction (a);
     editToolBar->addAction (a);
     actionEditRedo=a;
 
     editMenu->addSeparator();
-    a = new QAction(QPixmap(), tr( "Select and copy &all" ),this); 
+    a = new QAction(QPixmap(), tr( "Select and copy &all" ),this);
+    a->setShortcutContext (Qt::WidgetShortcut);
     a->setShortcut( Qt::CTRL + Qt::Key_A );
-    connect( a, SIGNAL( activated() ), this, SLOT( editCopyAll() ) );
+    switchboard.addSwitch( "textCopyAll", shortcutScope, a, tag);
+    connect( a, SIGNAL( triggered() ), this, SLOT( editCopyAll() ) );
     editMenu->addAction (a);
 
     editMenu->addSeparator();
-    a = new QAction(QPixmap(iconPath+"editcopy.png" ), tr( "&Copy" ),this);
+    a = new QAction(QPixmap(":/editcopy.png" ), tr( "&Copy" ),this);
     a->setShortcut( Qt::CTRL + Qt::Key_C );
-    a->setShortcutContext (Qt::WidgetShortcut);    
-    connect( a, SIGNAL( activated() ), e, SLOT( copy() ) );
+    a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
+    switchboard.addSwitch( "textCopy", shortcutScope, a, tag);
+    connect( a, SIGNAL( triggered() ), e, SLOT( copy() ) );
     editMenu->addAction (a);
     editToolBar->addAction (a);
     actionEditCopy=a;
     
-    a = new QAction(QPixmap(iconPath+"editcut.png" ), tr( "Cu&t" ),this);
+    a = new QAction(QPixmap(":/editcut.png" ), tr( "Cu&t" ),this);
     a->setShortcut( Qt::CTRL + Qt::Key_X );
-    connect( a, SIGNAL( activated() ), e, SLOT( cut() ) );
+    a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
+    switchboard.addSwitch( "textCut", shortcutScope, a, tag);
+    connect( a, SIGNAL( triggered() ), e, SLOT( cut() ) );
     editMenu->addAction (a);
     editToolBar->addAction (a);
     actionEditCut=a;
 
-    a = new QAction(QPixmap(iconPath+"editpaste.png" ), tr( "&Paste" ),this);
+    a = new QAction(QPixmap(":/editpaste.png" ), tr( "&Paste" ),this);
     a->setShortcut( Qt::CTRL + Qt::Key_V );
-    connect( a, SIGNAL( activated() ), e, SLOT( paste() ) );
+    a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
+    switchboard.addSwitch( "textPaste", shortcutScope, a, tag);
+    connect( a, SIGNAL( triggered() ), e, SLOT( paste() ) );
     editMenu->addAction (a);
     editToolBar->addAction (a);
     actionEditPaste=a;
@@ -344,26 +386,30 @@ void TextEditor::setupEditActions()
 
 void TextEditor::setupFormatActions()
 {
+    QString tag = tr ("Texteditor","Shortcuts");
     QToolBar *fontHintsToolBar = addToolBar ( tr("Font hints","toolbar in texteditor" ));
     fontHintsToolBar->setObjectName ("noteEditorFontToolBar");
     QMenu *formatMenu = menuBar()->addMenu ( tr( "F&ormat" ));
 
     QAction *a;
 
-    a = new QAction( QPixmap(iconPath+"formatfixedfont.png"), tr( "&Font hint" ), this );
-    a->setShortcut(Qt::ALT + Qt::Key_I);
+    a = new QAction( QPixmap(":/formatfixedfont.png"), tr( "&Font hint" ), this );
+    a->setShortcut(Qt::CTRL + Qt::Key_H);
     a->setCheckable (true);
     a->setChecked (settings.value("/noteeditor/fonts/useFixedByDefault",false).toBool() );
-    connect( a, SIGNAL( activated() ), this, SLOT( toggleFonthint() ) );
+    switchboard.addSwitch( "textToggleFonthint", shortcutScope, a, tag);
+    connect( a, SIGNAL( triggered() ), this, SLOT( toggleFonthint() ) );
     formatMenu->addAction (a);
     fontHintsToolBar->addAction (a);
     actionFormatUseFixedFont=a;
 
     // Original icon: ./share/icons/oxygen/22x22/actions/format-text-color.png
-    a = new QAction( QPixmap(iconPath+"formatrichtext.png"), tr( "&Richtext" ), this ); 
-    a->setShortcut (Qt::ALT + Qt::Key_R);
+    a = new QAction( QPixmap(":/formatrichtext.png"), tr( "&Richtext" ), this);
+    a->setShortcut ( Qt::CTRL + Qt::Key_R);
+//    a->setShortcutContext (Qt::WidgetShortcut);
     a->setCheckable (true);
-    connect( a, SIGNAL( activated() ), this, SLOT( toggleRichText() ) );
+    switchboard.addSwitch( "textToggleRichText", shortcutScope, a, tag);
+    connect( a, SIGNAL( triggered() ), this, SLOT( toggleRichText() ) );
     formatMenu->addAction (a);
     fontHintsToolBar->addAction (a);
     actionFormatRichText=a;
@@ -376,21 +422,21 @@ void TextEditor::setupFormatActions()
     QFontDatabase fontDB;
     comboFont->insertItems ( 0,fontDB.families() );
     connect( comboFont, SIGNAL( activated( const QString & ) ),
-	 this, SLOT( textFamily( const QString & ) ) );
+             this, SLOT( textFamily( const QString & ) ) );
 
     comboSize = new QComboBox;
     fontToolBar->addWidget (comboSize);
     QList<int> sizes=fontDB.standardSizes();
     QList<int>::iterator it = sizes.begin();
     int i=0;
-    while (it != sizes.end()) 
+    while (it != sizes.end())
     {
-	i++;
-	++it; // increment i before using it
-	comboSize->insertItem ( i, QString::number(*it));
-    }	
+        i++;
+        ++it; // increment i before using it
+        comboSize->insertItem ( i, QString::number(*it));
+    }
     connect( comboSize, SIGNAL( activated( const QString & ) ),
-	 this, SLOT( textSize( const QString & ) ) );
+             this, SLOT( textSize( const QString & ) ) );
 
     formatMenu->addSeparator();
 
@@ -402,28 +448,34 @@ void TextEditor::setupFormatActions()
     a = new QAction( pix, tr( "&Color..." ), this);
     formatMenu->addAction (a);
     formatToolBar->addAction (a);
-    connect( a, SIGNAL( activated() ), this, SLOT( textColor() ) );
+    connect( a, SIGNAL( triggered() ), this, SLOT( textColor() ) );
     actionTextColor=a;
 
-    a = new QAction( QPixmap (iconPath+"text_bold.png"), tr( "&Bold" ), this);
+    a = new QAction( QPixmap (":/text_bold.png"), tr( "&Bold" ), this);
     a->setShortcut(Qt::CTRL + Qt::Key_B );
-    connect( a, SIGNAL( activated() ), this, SLOT( textBold() ) );
+    a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
+    switchboard.addSwitch( "textToggleBold", shortcutScope, a, tag);
+    connect( a, SIGNAL( triggered() ), this, SLOT( textBold() ) );
     formatToolBar->addAction (a);
     formatMenu->addAction (a);
     a->setCheckable( true );
     actionTextBold=a;
     
-    a = new QAction( QPixmap(iconPath+"text_italic.png"), tr( "&Italic" ),  this);
+    a = new QAction( QPixmap(":/text_italic.png"), tr( "&Italic" ),  this);
     a->setShortcut(Qt::CTRL + Qt::Key_I);
-    connect( a, SIGNAL( activated() ), this, SLOT( textItalic() ) );
+    a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
+    switchboard.addSwitch( "textToggleItalic", shortcutScope, a, tag);
+    connect( a, SIGNAL( triggered() ), this, SLOT( textItalic() ) );
     formatToolBar->addAction (a);
     formatMenu->addAction (a);
     a->setCheckable( true );
     actionTextItalic=a;
     
-    a = new QAction( QPixmap (iconPath+"text_under.png"), tr( "&Underline" ), this);
+    a = new QAction( QPixmap (":/text_under.png"), tr( "&Underline" ), this);
     a->setShortcut(Qt::CTRL + Qt::Key_U );
-    connect( a, SIGNAL( activated() ), this, SLOT( textUnderline() ) );
+    a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
+    switchboard.addSwitch( "textToggleUnderline", shortcutScope, a, tag);
+    connect( a, SIGNAL( triggered() ), this, SLOT( textUnderline() ) );
     formatToolBar->addAction (a);
     formatMenu->addAction (a);
     a->setCheckable( true );
@@ -431,47 +483,51 @@ void TextEditor::setupFormatActions()
     actionTextUnderline=a;
     formatMenu->addSeparator();
 
-    QActionGroup *grp2 = new QActionGroup( this );
-    grp2->setExclusive(true);
-    a = new QAction( QPixmap (iconPath+"text_sub.png"), tr( "Subs&cript" ),grp2 );
+    QActionGroup * actGrp2 = new QActionGroup( this );
+    actGrp2->setExclusive(true);
+    a = new QAction( QPixmap (":/text_sub.png"), tr( "Subs&cript" ),actGrp2 );
     a->setShortcut( Qt::CTRL + Qt::SHIFT + Qt::Key_B );
+    a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
     a->setCheckable( true );
     formatToolBar->addAction (a);
     formatMenu->addAction (a);
-    connect(a, SIGNAL(activated()), this, SLOT(textVAlign()));
+    switchboard.addSwitch( "textToggleSub", shortcutScope, a, tag);
+    connect(a, SIGNAL(triggered()), this, SLOT(textVAlign()));
     actionAlignSubScript=a;
 
-    a = new QAction( QPixmap (iconPath+"text_super.png"), tr( "Su&perscript" ),grp2  );
+    a = new QAction( QPixmap (":/text_super.png"), tr( "Su&perscript" ),actGrp2  );
     a->setShortcut( Qt::CTRL + Qt::SHIFT + Qt::Key_P );
+    a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
     a->setCheckable( true );
     formatToolBar->addAction (a);
     formatMenu->addAction (a);
-    connect(a, SIGNAL(activated()), this, SLOT(textVAlign()));
+    switchboard.addSwitch( "textToggleSuper", shortcutScope, a, tag);
+    connect(a, SIGNAL(triggered()), this, SLOT(textVAlign()));
     actionAlignSuperScript=a;
     QActionGroup *grp = new QActionGroup( this );
-    connect( grp, SIGNAL( selected( QAction* ) ), this, SLOT( textAlign( QAction* ) ) );
+    connect( grp, SIGNAL( triggered( QAction* ) ), this, SLOT( textAlign( QAction* ) ) );
 
     formatMenu->addSeparator();
 
-    a = new QAction( QPixmap (iconPath+"text_left.png"), tr( "&Left" ),grp );
+    a = new QAction( QPixmap (":/text_left.png"), tr( "&Left" ),grp );
     //a->setShortcut( Qt::CTRL+Qt::Key_L );
     a->setCheckable( true );
     formatToolBar->addAction (a);
     formatMenu->addAction (a);
     actionAlignLeft=a;
-    a = new QAction( QPixmap (iconPath+"text_center.png"), tr( "C&enter" ),grp);
+    a = new QAction( QPixmap (":/text_center.png"), tr( "C&enter" ),grp);
     //a->setShortcut(  Qt::CTRL + Qt::Key_E);
     a->setCheckable( true );
     formatToolBar->addAction (a);
     formatMenu->addAction (a);
     actionAlignCenter=a;
-    a = new QAction( QPixmap (iconPath+"text_right.png" ), tr( "&Right" ), grp);
+    a = new QAction( QPixmap (":/text_right.png" ), tr( "&Right" ), grp);
     //a->setShortcut(Qt::CTRL + Qt::Key_R );
     a->setCheckable( true );
     formatToolBar->addAction (a);
     formatMenu->addAction (a);
     actionAlignRight=a;
-    a = new QAction( QPixmap ( iconPath+"text_block.png"), tr( "&Justify" ), grp );
+    a = new QAction( QPixmap ( ":/text_block.png"), tr( "&Justify" ), grp );
     //a->setShortcut(Qt::CTRL + Qt::Key_J );
     a->setCheckable( true );
     formatToolBar->addAction (a);
@@ -485,12 +541,12 @@ void TextEditor::setupSettingsActions()
 
     QAction *a;
     a = new QAction(tr( "Set &fixed font" ), this);
-    connect( a, SIGNAL( activated() ), this, SLOT( setFixedFont() ) );
+    connect( a, SIGNAL( triggered() ), this, SLOT( setFixedFont() ) );
     settingsMenu->addAction (a);
     actionSettingsFixedFont=a;
 
     a = new QAction(tr( "Set &variable font" ), this);
-    connect( a, SIGNAL( activated() ), this, SLOT( setVarFont() ) );
+    connect( a, SIGNAL( triggered() ), this, SLOT( setVarFont() ) );
     settingsMenu->addAction (a);
     actionSettingsVarFont=a;
 
@@ -505,45 +561,45 @@ void TextEditor::textLoad()
 {
     if (state!=inactiveEditor)
     {
-	if (!isEmpty()) 
-	{
-	    QMessageBox mb( vymName + " - " +tr("Note Editor"),
-		"Loading will overwrite the existing note",
-		QMessageBox::Warning,
-		QMessageBox::Yes | QMessageBox::Default,
-		QMessageBox::Cancel,
-		0 );
-	    mb.setButtonText( QMessageBox::Yes, "Load note" );
-	    switch( mb.exec() ) {
-		case QMessageBox::Cancel:
-		    return;
-		    break;
-	    }
-	} 
-	// Load note
-	QFileDialog *fd=new QFileDialog( this);
-	QStringList types;
-	types<< "Text (*.txt *.html)"<<
-	    "VYM notes and HTML (*.html)" <<
-	    "ASCII texts (*.txt)" <<
-	    "All files (*)";
-	fd->setFilters (types);
-	fd->setDirectory (QDir().current());
-	fd->show();
-	QString fn;
-	if ( fd->exec() == QDialog::Accepted &&!fd->selectedFiles().isEmpty() )
-	    fn = fd->selectedFiles().first();
+        if (!isEmpty())
+        {
+            QMessageBox mb( vymName + " - " +tr("Note Editor"),
+                            "Loading will overwrite the existing note",
+                            QMessageBox::Warning,
+                            QMessageBox::Yes | QMessageBox::Default,
+                            QMessageBox::Cancel,
+                            0 );
+            mb.setButtonText( QMessageBox::Yes, "Load note" );
+            switch( mb.exec() ) {
+            case QMessageBox::Cancel:
+                return;
+                break;
+            }
+        }
+        // Load note
+        QFileDialog *fd=new QFileDialog( this);
+        QStringList types;
+        types<< "Text (*.txt *.html)"<<
+                "VYM notes and HTML (*.html)" <<
+                "ASCII texts (*.txt)" <<
+                "All files (*)";
+        fd->setNameFilters (types);
+        fd->setDirectory (QDir().current());
+        fd->show();
+        QString fn;
+        if ( fd->exec() == QDialog::Accepted &&!fd->selectedFiles().isEmpty() )
+            fn = fd->selectedFiles().first();
 
-	if ( !fn.isEmpty() )
-	{
-	    QFile f( fn );
-	    if ( !f.open( QIODevice::ReadOnly ) )
-	    return;
+        if ( !fn.isEmpty() )
+        {
+            QFile f( fn );
+            if ( !f.open( QIODevice::ReadOnly ) )
+                return;
 
-	    QTextStream ts( &f );
-	    setText( ts.readAll() );
-	    editorChanged();
-	}
+            QTextStream ts( &f );
+            setTextAuto ( ts.readAll() );
+            editorChanged();
+        }
     }
 }
 
@@ -555,44 +611,76 @@ void TextEditor::closeEvent( QCloseEvent* ce )
     return;
 }
 
+/*
+void TextEditor::keyPressEvent(QKeyEvent* e)
+{
+    if (e->key() == Qt::Key_Escape)
+        emit( focusReleased());
+    else
+        QMainWindow::keyPressEvent(e);
+}
+*/
 void TextEditor::editorChanged()
 {
     if (isEmpty())
-	state=emptyEditor;
+        state=emptyEditor;
     else
-	state=filledEditor;
+        state=filledEditor;
 
-	if (state==emptyEditor)
-	    setState (emptyEditor);
-	else
-	    setState (filledEditor);
+    if (state==emptyEditor)
+        setState (emptyEditor);
+    else
+        setState (filledEditor);
     if (!blockChangedSignal) emit (textHasChanged() );
 }
 
-
-void TextEditor::setText(const QString &t)
+void TextEditor::setRichText(const QString &t)
 {
     blockChangedSignal=true;
     e->setReadOnly(false);
     reset();
-    if (Qt::mightBeRichText (t))
-    {
-	e->setHtml(t);
-	actionFormatRichText->setChecked (true);
-    } else
-    {
-	actionFormatUseFixedFont->setChecked (true);
-	e->setPlainText(t);
-	actionFormatRichText->setChecked (false);
-    }	
+
+    e->setHtml(t);
+    actionFormatRichText->setChecked (true);
+
     updateActions();
     blockChangedSignal=false;
+}
+
+void TextEditor::setPlainText(const QString &t)
+{
+    blockChangedSignal=true;
+    e->setReadOnly(false);
+    reset();
+
+    e->setPlainText(t);
+    actionFormatRichText->setChecked (false);
+
+    updateActions();
+    blockChangedSignal=false;
+}
+
+
+void TextEditor::setTextAuto(const QString &t)
+{
+    if (Qt::mightBeRichText (t))
+        setRichText( t);
+    else
+        setPlainText( t );
+}
+
+void TextEditor::setVymText( const VymText &vt)
+{
+    if (vt.isRichText())
+        setRichText(vt.getText());
+    else
+        setPlainText(vt.getText());
 }
 
 void TextEditor::setInactive()
 {
     state=inactiveEditor;
-    setText("");
+    e->setPlainText("");
     setState (inactiveEditor);
     e->setReadOnly (true);
 
@@ -605,46 +693,52 @@ void TextEditor::editCopyAll()
     e->copy();
 }
 
+void TextEditor::reset()
+{
+    e->selectAll();
+    e->textCursor().deleteChar();
+}
+
 void TextEditor::textSaveAs()	
 {
     QString caption=tr ("Export Note to single file");
     QString fn = QFileDialog::getSaveFileName(
-	this, 
-	caption, 
-	QString::null, 
-	"VYM Note (HTML) (*.html);;All files (*)",
-	0,
-	QFileDialog::DontConfirmOverwrite );
+                this,
+                caption,
+                QString::null,
+                "VYM Note (HTML) (*.html);;All files (*)",
+                0,
+                QFileDialog::DontConfirmOverwrite );
 
-    if ( !fn.isEmpty() ) 
+    if ( !fn.isEmpty() )
     {
-	QFile file (fn);
-	if (file.exists())
-	{
-	    QMessageBox mb( vymName,
-		tr("The file %1\nexists already.\nDo you want to overwrite it?","dialog 'save note as'").arg(fn),
-	    QMessageBox::Warning,
-	    QMessageBox::Yes | QMessageBox::Default,
-	    QMessageBox::Cancel | QMessageBox::Escape,
-	    Qt::NoButton );
-	    mb.setButtonText( QMessageBox::Yes, tr("Overwrite") );
-	    mb.setButtonText( QMessageBox::No, tr("Cancel"));
-	    switch( mb.exec() ) {
-		case QMessageBox::Yes:
-		    // save 
-		    filename = fn;
-		    textSave();
-		    return;
-		case QMessageBox::Cancel:
-		    // do nothing
-		    break;
-	    }
-	} else
-	{
-	    filename = fn;
-	    textSave();
-	    return;
-	}	    
+        QFile file (fn);
+        if (file.exists())
+        {
+            QMessageBox mb( vymName,
+                            tr("The file %1\nexists already.\nDo you want to overwrite it?","dialog 'save note as'").arg(fn),
+                            QMessageBox::Warning,
+                            QMessageBox::Yes | QMessageBox::Default,
+                            QMessageBox::Cancel | QMessageBox::Escape,
+                            Qt::NoButton );
+            mb.setButtonText( QMessageBox::Yes, tr("Overwrite") );
+            mb.setButtonText( QMessageBox::No, tr("Cancel"));
+            switch( mb.exec() ) {
+            case QMessageBox::Yes:
+                // save
+                filename = fn;
+                textSave();
+                return;
+            case QMessageBox::Cancel:
+                // do nothing
+                break;
+            }
+        } else
+        {
+            filename = fn;
+            textSave();
+            return;
+        }
     }
     statusBar()->showMessage(tr( "Couldn't export note ","dialog 'save note as'") + fn, statusbarTime );
 }
@@ -652,22 +746,23 @@ void TextEditor::textSaveAs()
 
 void TextEditor::textSave()
 {
-    if ( filename.isEmpty() ) 
+    if ( filename.isEmpty() )
     {
-	textSaveAs();
-	return;
+        textSaveAs();
+        return;
     }
 
     QString text = e->toHtml(); //FIXME-4 or plaintext? check...
     QFile f( filename );
-    if ( !f.open( QIODevice::WriteOnly ) ) 
+    if ( !f.open( QIODevice::WriteOnly ) )
     {
-	statusBar()->showMessage( QString("Could not write to %1").arg(filename),
-		      statusbarTime );
-	return;
+        statusBar()->showMessage( QString("Could not write to %1").arg(filename),
+                                  statusbarTime );
+        return;
     }
 
     QTextStream t( &f );
+    t.setCodec("UTF-8");
     t << text;
     f.close();
 
@@ -678,50 +773,49 @@ void TextEditor::textSave()
 
 void TextEditor::textExportAsASCII()
 {
-    QString text = NoteObj (e->toPlainText()).getNoteASCII();
     QString fn,s;
     if (!filenameHint.isEmpty())
     {
-	if (!filenameHint.contains (".txt"))
-	    s=filenameHint+".txt";
-	else	
-	    s=filenameHint;
-    } else  
-	s=QString::null;
-    QString caption=tr("Export Note to single file (ASCII)");
+        if (!filenameHint.contains (".txt"))
+            s = filenameHint+".txt";
+        else
+            s = filenameHint;
+    } else
+        s = QString::null;
+    QString caption = tr("Export Note to single file (ASCII)");
     fn = QFileDialog::getSaveFileName(this, caption, s, "VYM Note (ASCII) (*.txt);;All files (*)" );
-    int ret=-1;
+    int ret = -1;
 
-    if ( !fn.isEmpty() ) 
+    if ( !fn.isEmpty() )
     {
-	QFile file (fn);
-	if (file.exists())
-	{
-	    QMessageBox mb( vymName,
-		tr("The file %1\nexists already.\nDo you want to overwrite it?","dialog 'save note as'").arg(fn),
-	    QMessageBox::Warning,
-	    QMessageBox::Yes | QMessageBox::Default,
-	    QMessageBox::Cancel | QMessageBox::Escape,
-	    Qt::NoButton );
-	    mb.setButtonText( QMessageBox::Yes, tr("Overwrite") );
-	    mb.setButtonText( QMessageBox::No, tr("Cancel"));
-	    ret=mb.exec();
-	}   
-	if (ret==QMessageBox::Cancel)
-	    return;
-	    
-	// save 
-	if ( !file.open( QIODevice::WriteOnly ) ) 
-	    statusBar()->showMessage( QString("Could not write to %1").arg(filename),
-			  statusbarTime );
-	else
-	{
-	    QTextStream t( &file );
-	    t << text;
-	    file.close();
+        QFile file (fn);
+        if (file.exists())
+        {
+            QMessageBox mb( vymName,
+                            tr("The file %1\nexists already.\nDo you want to overwrite it?","dialog 'save note as'").arg(fn),
+                            QMessageBox::Warning,
+                            QMessageBox::Yes | QMessageBox::Default,
+                            QMessageBox::Cancel | QMessageBox::Escape,
+                            Qt::NoButton );
+            mb.setButtonText( QMessageBox::Yes, tr("Overwrite") );
+            mb.setButtonText( QMessageBox::No, tr("Cancel"));
+            ret=mb.exec();
+        }
+        if (ret==QMessageBox::Cancel)
+            return;
 
-	    statusBar()->showMessage( QString( "Note exported as %1" ).arg( fn ), statusbarTime );
-	}
+        // save
+        if ( !file.open( QIODevice::WriteOnly ) )
+            statusBar()->showMessage( QString("Could not write to %1").arg(filename),
+                                      statusbarTime );
+        else
+        {
+            QTextStream t( &file );
+            t << getVymText().getTextASCII();
+            file.close();
+
+            statusBar()->showMessage( QString( "Note exported as %1" ).arg( fn ), statusbarTime );
+        }
     }
 }
 
@@ -744,31 +838,33 @@ void TextEditor::textEditUndo()
 
 void TextEditor::toggleFonthint()
 {
-    if (!actionFormatUseFixedFont->isChecked() ) 
+    if (!actionFormatUseFixedFont->isChecked() )
     {
-	e->setCurrentFont (varFont);
-	setFont (varFont);
-    }	
-    else    
+        e->setCurrentFont (varFont);
+        setFont (varFont);
+    }
+    else
     {
-	e->setCurrentFont (fixedFont);
-	setFont (fixedFont);
-    }	
+        e->setCurrentFont (fixedFont);
+        setFont (fixedFont);
+    }
+    emit( textHasChanged() );
 }
 
 void TextEditor::toggleRichText()
 {
-    if (!actionFormatRichText->isChecked() ) 
+    if (!actionFormatRichText->isChecked() )
     {
-	e->setPlainText (e->toPlainText());
-	actionFormatUseFixedFont->setEnabled(true);
+        e->setPlainText (e->toPlainText());
+        actionFormatUseFixedFont->setEnabled(true);
     }
-    else    
+    else
     {
-	e->setHtml (e->toHtml());
-	actionFormatUseFixedFont->setEnabled(false);
+        e->setHtml (e->toHtml());
+        actionFormatUseFixedFont->setEnabled(false);
     }
-    updateActions();	
+    updateActions();
+    emit( textHasChanged() );
 }
 
 void TextEditor::setFixedFont()
@@ -788,9 +884,9 @@ void TextEditor::setVarFont()
 void TextEditor::textBold()
 {
     if ( actionTextBold->isChecked())
-	e->setFontWeight( QFont::Bold );
-    else	
-	e->setFontWeight( QFont::Normal);
+        e->setFontWeight( QFont::Bold );
+    else
+        e->setFontWeight( QFont::Normal);
 }
 
 void TextEditor::textUnderline()
@@ -824,20 +920,18 @@ void TextEditor::textColor()
     actionTextColor->setIcon( pix );
 }
 
-void TextEditor::textAlign( QAction *a )  //FIXME-2 center only centers first line
+void TextEditor::textAlign( QAction *a ) 
 {
-    QTextCursor c=e->textCursor();
-    c.setPosition (3,QTextCursor::MoveAnchor);
-    e->setTextCursor (c);
+    QTextCursor c = e->textCursor();
 
     if ( a == actionAlignLeft )
-	e->setAlignment( Qt::AlignLeft );
+        e->setAlignment( Qt::AlignLeft );
     else if ( a == actionAlignCenter )
-	e->setAlignment( Qt::AlignHCenter );
+        e->setAlignment( Qt::AlignHCenter );
     else if ( a == actionAlignRight )
-	e->setAlignment( Qt::AlignRight );
+        e->setAlignment( Qt::AlignRight );
     else if ( a == actionAlignJustify )
-	e->setAlignment( Qt::AlignJustify );
+        e->setAlignment( Qt::AlignJustify );
 }
 
 void TextEditor::textVAlign()
@@ -845,11 +939,11 @@ void TextEditor::textVAlign()
     QTextCharFormat format;
 
     if ( sender() == actionAlignSuperScript && actionAlignSuperScript->isChecked()) {
-	format.setVerticalAlignment(QTextCharFormat::AlignSuperScript);
+        format.setVerticalAlignment(QTextCharFormat::AlignSuperScript);
     } else if (sender() == actionAlignSubScript && actionAlignSubScript->isChecked()) {
-	format.setVerticalAlignment(QTextCharFormat::AlignSubScript);
+        format.setVerticalAlignment(QTextCharFormat::AlignSubScript);
     } else {
-	format.setVerticalAlignment(QTextCharFormat::AlignNormal);
+        format.setVerticalAlignment(QTextCharFormat::AlignNormal);
     }
     e->mergeCurrentCharFormat(format);
 }
@@ -885,13 +979,13 @@ void TextEditor::formatChanged( const QTextCharFormat &f )
 void TextEditor::alignmentChanged( int a )
 {
     if ( ( a == Qt::AlignLeft ) || ( a & Qt::AlignLeft ))
-	actionAlignLeft->setChecked( true );
+        actionAlignLeft->setChecked( true );
     else if ( ( a & Qt::AlignHCenter ) )
-	actionAlignCenter->setChecked( true );
+        actionAlignCenter->setChecked( true );
     else if ( ( a & Qt::AlignRight ) )
-	actionAlignRight->setChecked( true );
+        actionAlignRight->setChecked( true );
     else if ( ( a & Qt::AlignJustify ) )
-	actionAlignJustify->setChecked( true );
+        actionAlignJustify->setChecked( true );
 }
 
 void TextEditor::verticalAlignmentChanged(QTextCharFormat::VerticalAlignment a)
@@ -900,13 +994,13 @@ void TextEditor::verticalAlignmentChanged(QTextCharFormat::VerticalAlignment a)
     actionAlignSuperScript->setChecked (false);
     switch (a)
     {
-	case QTextCharFormat::AlignSuperScript: 
-	    actionAlignSuperScript->setChecked (true);
-	    break;
-	case QTextCharFormat::AlignSubScript:
-	    actionAlignSubScript->setChecked (true);
-	    break;
-	default: ;  
+    case QTextCharFormat::AlignSuperScript:
+        actionAlignSuperScript->setChecked (true);
+        break;
+    case QTextCharFormat::AlignSubScript:
+        actionAlignSubScript->setChecked (true);
+        break;
+    default: ;
     }
 }
 
@@ -914,9 +1008,9 @@ void TextEditor::updateActions()
 {
     bool b;
     if (state==inactiveEditor)
-	b=false;
+        b=false;
     else
-	b=true;
+        b=true;
     actionFileLoad->setEnabled(b);
     actionFileSave->setEnabled(b);
     actionFileSaveAs->setEnabled(b);
@@ -930,38 +1024,38 @@ void TextEditor::updateActions()
     actionFormatUseFixedFont->setEnabled(b);
     actionFormatRichText->setEnabled(b);
     
-    if (!actionFormatRichText->isChecked() || !b) 
+    if (!actionFormatRichText->isChecked() || !b)
     {
-	comboFont->setEnabled (false);
-	comboSize->setEnabled (false);
-	actionTextColor->setEnabled (false);
-	actionTextBold->setEnabled (false);
-	actionTextUnderline->setEnabled(false);
-	actionTextItalic->setEnabled(false);
-	actionTextColor->setEnabled(false);
-	actionAlignSubScript->setEnabled(false);
-	actionAlignSuperScript->setEnabled(false);
-	actionAlignLeft->setEnabled(false);
-	actionAlignCenter->setEnabled(false);
-	actionAlignRight->setEnabled(false);
-	actionAlignJustify->setEnabled(false);
+        comboFont->setEnabled (false);
+        comboSize->setEnabled (false);
+        actionTextColor->setEnabled (false);
+        actionTextBold->setEnabled (false);
+        actionTextUnderline->setEnabled(false);
+        actionTextItalic->setEnabled(false);
+        actionTextColor->setEnabled(false);
+        actionAlignSubScript->setEnabled(false);
+        actionAlignSuperScript->setEnabled(false);
+        actionAlignLeft->setEnabled(false);
+        actionAlignCenter->setEnabled(false);
+        actionAlignRight->setEnabled(false);
+        actionAlignJustify->setEnabled(false);
     }
-    else    
+    else
     {
-	comboFont->setEnabled (true);
-	comboSize->setEnabled (true);
-	actionTextColor->setEnabled (true);
-	actionTextBold->setEnabled (true);
-	actionTextUnderline->setEnabled(true);
-	actionTextItalic->setEnabled(true);
-	actionTextColor->setEnabled(true);
-	actionAlignSubScript->setEnabled(true);
-	actionAlignSuperScript->setEnabled(true);
-	actionAlignLeft->setEnabled(true);
-	actionAlignCenter->setEnabled(true);
-	actionAlignRight->setEnabled(true);
-	actionAlignJustify->setEnabled(true);
-	actionFormatUseFixedFont->setEnabled(false);
+        comboFont->setEnabled (true);
+        comboSize->setEnabled (true);
+        actionTextColor->setEnabled (true);
+        actionTextBold->setEnabled (true);
+        actionTextUnderline->setEnabled(true);
+        actionTextItalic->setEnabled(true);
+        actionTextColor->setEnabled(true);
+        actionAlignSubScript->setEnabled(true);
+        actionAlignSuperScript->setEnabled(true);
+        actionAlignLeft->setEnabled(true);
+        actionAlignCenter->setEnabled(true);
+        actionAlignRight->setEnabled(true);
+        actionAlignJustify->setEnabled(true);
+        actionFormatUseFixedFont->setEnabled(false);
     }
 }
 
@@ -972,9 +1066,9 @@ void TextEditor::setState (EditorState s)
     QColor c;
     switch (s)
     {
-	case emptyEditor:    c=QColor (150,150,150); break;
-	case filledEditor:   c=QColor (255,255,255); break;
-	case inactiveEditor: c=QColor (0,0,0);
+        case emptyEditor:    c=QColor (150,150,150); break;
+        case filledEditor:   c=QColor (255,255,255); break;
+        case inactiveEditor: c=QColor (0,0,0);
     }
     p.setColor(QPalette::Active, static_cast<QPalette::ColorRole>(9), c);
     p.setColor(QPalette::Inactive, static_cast<QPalette::ColorRole>(9), c);

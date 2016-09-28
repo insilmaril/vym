@@ -1,15 +1,15 @@
-#ifndef PROCESS_H
-#define PROCESS_H
+#ifndef VYMPROCESS_H
+#define VYMPROCESS_H
 
 #include <QProcess>
 #include <QString>
 
-class Process:public QProcess
+class VymProcess:public QProcess
 {
     Q_OBJECT
 public:
-    Process ();
-    ~Process ();
+    VymProcess ();
+    ~VymProcess ();
     void clear();
     void runScript( QString spath, QString fpath );
     QString getErrout();

@@ -8,7 +8,6 @@
 #include "vymmodel.h"
 #include "xlinkobj.h"
 
-extern QString iconPath;
 
 EditXLinkDialog::EditXLinkDialog (QWidget *parent):QDialog (parent) 
 {
@@ -17,11 +16,11 @@ EditXLinkDialog::EditXLinkDialog (QWidget *parent):QDialog (parent)
     delink=false;
     link=NULL;
 
-    ui.lineStyleCombo->addItem (QIcon(iconPath+"/linestyle-solid.png"),"Solid line",0);   
-    ui.lineStyleCombo->addItem (QIcon(iconPath+"/linestyle-dash.png"),"Dash line",1);
-    ui.lineStyleCombo->addItem (QIcon(iconPath+"/linestyle-dot.png"),"Dot line",2);
-    ui.lineStyleCombo->addItem (QIcon(iconPath+"/linestyle-dashdot.png"),"Dash Dot line",3);
-    ui.lineStyleCombo->addItem (QIcon(iconPath+"/linestyle-dashdotdot.png"),"Dash Dot Dot line",4);
+    ui.lineStyleCombo->addItem (QIcon("://linestyle-solid.png"),"Solid line",0);   
+    ui.lineStyleCombo->addItem (QIcon("://linestyle-dash.png"),"Dash line",1);
+    ui.lineStyleCombo->addItem (QIcon("://linestyle-dot.png"),"Dot line",2);
+    ui.lineStyleCombo->addItem (QIcon("://linestyle-dashdot.png"),"Dash Dot line",3);
+    ui.lineStyleCombo->addItem (QIcon("://linestyle-dashdotdot.png"),"Dash Dot Dot line",4);
     connect ( ui.widthBox, SIGNAL (valueChanged( int)), this, SLOT (widthChanged (int)));
     connect ( ui.colorButton, SIGNAL (clicked( )), this, SLOT (colorButtonPressed()));
     connect ( ui.lineStyleCombo, SIGNAL (currentIndexChanged( int )), this, SLOT (lineStyleChanged(int)));

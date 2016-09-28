@@ -190,6 +190,6 @@ QString AttributeItem::getDataXML()
 
 void AttributeItem::createHeading()
 {
-    setHeading (QString ("K: %1 | V: %2").arg(key).arg(value.toString()));
+    setHeadingPlainText (QString ("K: %1 | V: %2").arg(key).arg(value.toString()));
 }
 

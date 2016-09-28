@@ -1,11 +1,17 @@
 #include "mapeditor.h"
 
+#include <QGraphicsProxyWidget>
+#include <QMenuBar>
 #include <QObject>
+#include <QPrinter>
+#include <QPrintDialog>
+#include <QScrollBar>
 
 #include "branchitem.h"
 #include "geometry.h"
 #include "mainwindow.h"
 #include "misc.h"
+#include "shortcuts.h"
 #include "warningdialog.h"
 #include "xlinkitem.h"
 
@@ -23,14 +29,18 @@ extern QMenu* canvasContextMenu;
 extern QMenu* floatimageContextMenu;
 extern QMenu* taskContextMenu;
 
+extern Switchboard switchboard;
 extern Settings settings;
-extern QString iconPath;
+
+extern QTextStream vout;
 
 ///////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////
 MapEditor::MapEditor( VymModel *vm)	
 {
     //qDebug() << "Constructor ME "<<this;
+
+    QString shortcutScope = tr("Map Editor","Shortcut scope");
     mapScene= new QGraphicsScene(NULL);
     mapScene->setBackgroundBrush (QBrush(Qt::white, Qt::SolidPattern));
 
@@ -44,10 +54,10 @@ MapEditor::MapEditor( VymModel *vm)
     setScene (mapScene);
 
     // Create bitmap cursors, platform dependant
-    HandOpenCursor=QCursor (QPixmap(iconPath+"cursorhandopen.png"),1,1);	
-    PickColorCursor=QCursor ( QPixmap(iconPath+"cursorcolorpicker.png"), 5,27 ); 
-    CopyCursor=QCursor ( QPixmap(iconPath+"cursorcopy.png"), 1,1 ); 
-    XLinkCursor=QCursor ( QPixmap(iconPath+"cursorxlink.png"), 1,7 ); 
+    HandOpenCursor=QCursor (QPixmap(":/cursorhandopen.png"),1,1);	
+    PickColorCursor=QCursor ( QPixmap(":/cursorcolorpicker.png"), 5,27 ); 
+    CopyCursor=QCursor ( QPixmap(":/cursorcopy.png"), 1,1 ); 
+    XLinkCursor=QCursor ( QPixmap(":/cursorxlink.png"), 1,7 ); 
 
     editingBO=NULL;
 
@@ -58,11 +68,12 @@ MapEditor::MapEditor( VymModel *vm)
 
     // Shortcuts and actions
     QAction *a;
+
     a = new QAction("Select upper branch", this);
     a->setShortcut (Qt::Key_Up );
     a->setShortcutContext (Qt::WidgetShortcut);
-    addAction (a);
     connect( a, SIGNAL( triggered() ), this, SLOT( cursorUp() ) );
+    addAction (a);
 
     a = new QAction( "Select lower branch",this);
     a->setShortcut ( Qt::Key_Down );
@@ -72,7 +83,6 @@ MapEditor::MapEditor( VymModel *vm)
 
     a = new QAction( "Select left branch", this);
     a->setShortcut (Qt::Key_Left );
-//  a->setShortcutContext (Qt::WindowShortcut);
 //  a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
     addAction (a);
     connect( a, SIGNAL( triggered() ), this, SLOT( cursorLeft() ) );
@@ -98,19 +108,6 @@ MapEditor::MapEditor( VymModel *vm)
     // Action to embed LineEdit for heading in Scene
     lineEdit=NULL;
 
-    // Moving branches:
-    a = new QAction("Move branch up", this);
-    a->setShortcut (Qt::Key_PageUp );
-    a->setShortcutContext (Qt::WidgetShortcut);
-    addAction (a);
-    connect( a, SIGNAL( triggered() ), mainWindow, SLOT( editMoveUp() ) );
-
-    a = new QAction("Move branch down", this);
-    a->setShortcut (Qt::Key_PageDown );
-    a->setShortcutContext (Qt::WidgetShortcut);
-    addAction (a);
-    connect( a, SIGNAL( triggered() ), mainWindow, SLOT( editMoveDown() ) );
-
     a = new QAction( tr( "Edit heading","MapEditor" ), this);
     a->setShortcut ( Qt::Key_Return );			//Edit heading
     a->setShortcutContext (Qt::WidgetShortcut);
@@ -122,12 +119,6 @@ MapEditor::MapEditor( VymModel *vm)
     addAction (a);
     connect( a, SIGNAL( triggered() ), this, SLOT( editHeading() ) );
 
-    a = new QAction( tr( "Save","MapEditor" ), this);
-    a->setShortcut (Qt::CTRL + Qt::Key_S );	 
-    a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
-    addAction (a);
-    connect( a, SIGNAL( triggered() ), mainWindow, SLOT( fileSave() ) );
-    
     // Selections
     selectionColor =QColor (255,255,0);
     
@@ -136,9 +127,19 @@ MapEditor::MapEditor( VymModel *vm)
     vPan=QPointF();
     connect (panningTimer, SIGNAL (timeout()), this, SLOT (panView() ));
 
+    // Clone actions defined in MainWindow
+    foreach (QAction* qa, mainWindow->mapEditorActions)
+    {
+        a = new QAction( this );
+        a->setShortcut( qa->shortcut() );
+        a->setShortcutContext( qa->shortcutContext() );
+        connect( a, SIGNAL( triggered() ), qa, SLOT( trigger() ) );
+        addAction(a);
+    }
+
     setState (Neutral);
 
-    // Attributes   //FIXME-5 testing only...
+    // Attributes   //TODO  testing only...
     QString k;
     AttributeDef *ad;
     attrTable= new AttributeTable();
@@ -484,6 +485,11 @@ void MapEditor::updateMatrix()
     setMatrix (zm * rm);
 }
 
+void MapEditor::minimizeView()
+{
+    setSceneRect( scene()->itemsBoundingRect() );
+}
+
 void MapEditor::print()
 {
     QRectF totalBBox=getTotalBBox();
@@ -564,61 +570,27 @@ void MapEditor::print()
     }
 }
 
-QRectF MapEditor::getTotalBBox()    //FIXME-8 frames and xlinks missing, esp. cloud
+QRectF MapEditor::getTotalBBox()  
 {				    
-    QRectF rt;
-    BranchObj *bo;
-    BranchItem *cur=NULL;
-    BranchItem *prev=NULL;
-    model->nextBranch(cur,prev,true);
-    while (cur) 
-    {
-	if (!cur->hasHiddenExportParent())
-	{
-	    // Branches
-	    bo=(BranchObj*)(cur->getLMO());
-	    if (bo && bo->isVisibleObj())
-            {
-		QRectF r1=bo->getBBox();
-
-		if (rt.isNull()) rt=r1;
-		rt=addBBox (r1, rt);
-	    }
-
-	    // Images
-	    FloatImageObj *fio;
-	    for (int i=0; i<cur->imageCount(); i++)
-	    {
-		fio=cur->getImageObjNum (i);
-		if (fio) rt=addBBox (fio->getBBox(),rt);
-	    }
-	}
-	model->nextBranch(cur,prev,true);
-    }
-
-    // get bboxes of XLinks	 //FIXME-3 missing
-
-    // Update scene according to new bbox
-    if (!sceneRect().contains (rt) )
-	setSceneRect(sceneRect().united (rt));
-    return rt;	
+    minimizeView();
+    return sceneRect();
 }
 
 QImage MapEditor::getImage( QPointF &offset) 
 {
-    QRectF mapRect=getTotalBBox();
+    QRectF mapRect = getTotalBBox();   // minimized sceneRect
     
-    int d=20;	// border
-    offset=QPointF (mapRect.x()-d/2, mapRect.y()-d/2 );
-    QImage pix (mapRect.width()+d, mapRect.height()+d,QImage::Format_RGB32);
+    int d = 10;	// border
+    offset = QPointF( mapRect.x() -d/2, mapRect.y() - d/2 );
+    QImage pix( mapRect.width() + d, mapRect.height() + d, QImage::Format_RGB32 );
 
     QPainter pp (&pix);
     pp.setRenderHints(renderHints());
-    mapScene->render (	&pp, 
+    mapScene->render ( &pp, 
 	// Destination:
-	QRectF(0,0,mapRect.width()+d,mapRect.height()+d),   
+	QRectF( 0, 0, mapRect.width() + d, mapRect.height() + d ),   
 	// Source in scene:
-	QRectF(mapRect.x()-d/2,mapRect.y()-d/2,mapRect.width()+d,mapRect.height()+d));
+	QRectF( mapRect.x() - d/2, mapRect.y() -d/2, mapRect.width() + d, mapRect.height() + d));
     return pix;
 }
 
@@ -664,7 +636,7 @@ void MapEditor::autoLayout()
 		polys.append(p);
 		vectors.append (QPointF(0,0));
 		orgpos.append (p.at(0));
-		headings.append (bi->getHeading());
+        headings.append (bi->getHeadingPlain());
 	    }
 	    for (int j=0;j<bi->branchCount();++j)
 	    {
@@ -678,7 +650,7 @@ void MapEditor::autoLayout()
 		    polys.append(p);
 		    vectors.append (QPointF(0,0));
 		    orgpos.append (p.at(0));
-		    headings.append (bi2->getHeading());
+            headings.append (bi2->getHeadingPlain());
 		}   
 	    }
 	}
@@ -722,8 +694,8 @@ void MapEditor::autoLayout()
 		if (!vectors[i].isNull() )
 		polys[i].translate (vectors[i]);
 	    }
-	    if (debug) qDebug()<< "Collisions total: "<<collisions;
-	    //collisions=0;
+        // if (debug) qDebug()<< "Collisions total: "<<collisions;
+        // collisions=0;
 	}   
 
 	// Finally move the real objects and update 
@@ -1012,7 +984,7 @@ BranchItem* MapEditor::getRightBranch(BranchItem *bi)
 		    newbi=bi->getBranchNum(i);
 		    bo=newbi->getBranchObj();
 		    if (bo && bo->getOrientation()==LinkableMapObj::RightOfCenter)
-			qDebug()<<"BI found right: "<<newbi->getHeading();
+            qDebug()<<"BI found right: "<<newbi->getHeadingPlain();
 		}
 	    }
 	    return newbi;
@@ -1032,6 +1004,8 @@ BranchItem* MapEditor::getRightBranch(BranchItem *bi)
 
 void MapEditor::cursorUp()
 {
+    if (state == MapEditor::EditingHeading) return;
+
     BranchItem *bi=model->getSelectedBranch();
     if (bi) model->select (getBranchAbove(bi));
 }
@@ -1039,6 +1013,8 @@ void MapEditor::cursorUp()
 void MapEditor::cursorDown()	
 
 {
+    if (state == MapEditor::EditingHeading) return;
+
     BranchItem *bi=model->getSelectedBranch();
     if (bi) model->select (getBranchBelow(bi));
 }
@@ -1070,35 +1046,46 @@ void MapEditor::editHeading()
 {
     if (state==EditingHeading)
     {
-	editHeadingFinished();
-	return;
+        editHeadingFinished();
+        return;
     }
+
     BranchObj *bo=model->getSelectedBranchObj();
     BranchItem *bi=model->getSelectedBranch();
-    if (bo) 
+    if (bo && bo)
     {
-	model->setSelectionBlocked(true);
+        VymText heading = bi->getHeading();
+        if (heading.isRichText())
+        {
+            mainWindow->windowShowHeadingEditor();
+            return;
+        }
+        model->setSelectionBlocked(true);
 
-	lineEdit=new QLineEdit;
-	QGraphicsProxyWidget *pw=mapScene->addWidget (lineEdit);
-	pw->setZValue (Z_LINEEDIT);
-	lineEdit->setCursor(Qt::IBeamCursor);
-	lineEdit->setCursorPosition(1);
+        lineEdit=new QLineEdit;
+        QGraphicsProxyWidget *pw=mapScene->addWidget (lineEdit);
+        pw->setZValue (Z_LINEEDIT);
+        lineEdit->setCursor(Qt::IBeamCursor);
+        lineEdit->setCursorPosition(1);
 
-	QPointF tl=bo->getOrnamentsBBox().topLeft();
-	QPointF br=tl + QPointF (230,30);
-	QRectF r (tl, br);
-	lineEdit->setGeometry(r.toRect() );
+        QPointF tl=bo->getOrnamentsBBox().topLeft();
+        QPointF br=tl + QPointF (230,30);
+        QRectF r (tl, br);
+        lineEdit->setGeometry(r.toRect() );
 
-	setScrollBarPosTarget ( r );
-	scene()->update();
+        setScrollBarPosTarget ( r );
+        scene()->update();
 
-	animateScrollBars();
-	lineEdit->setText (bi->getHeading());
-	lineEdit->setFocus();
-	lineEdit->selectAll();	// Hack to enable cursor in lineEdit
-	lineEdit->deselect();	// probably a Qt bug...
-	setState (EditingHeading);
+        // Set focus to MapEditor first
+        // To avoid problems with Cursor up/down
+        setFocus();
+
+        animateScrollBars();
+        lineEdit->setText (heading.getTextASCII() );
+        lineEdit->setFocus();
+        lineEdit->selectAll();	// Hack to enable cursor in lineEdit
+        lineEdit->deselect();	// probably a Qt bug...
+        setState (EditingHeading);
     }
 }
 
@@ -1109,7 +1096,7 @@ void MapEditor::editHeadingFinished()
     lineEdit->clearFocus();
     QString s=lineEdit->text();
     s.replace (QRegExp ("\\n")," ");	// Don't paste newline chars
-    model->setHeading (s);
+    model->setHeadingPlainText (s);
     model->setSelectionBlocked(false);
     delete (lineEdit);
     lineEdit=NULL;
@@ -1319,11 +1306,7 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
 		    {
 			XLinkItem *xli=ti->getXLinkItemNum(i);
 			BranchItem *bit=xli->getPartnerBranch();
-			if (bit) 
-			{
-			    alist.append (new QAction(ti->getXLinkItemNum(i)->getPartnerBranch()->getHeading(),&menu));
-			    blist.append (bit);
-			}
+			if (bit) alist.append (new QAction(ti->getXLinkItemNum(i)->getPartnerBranch()->getHeadingPlain(),&menu));
 		    }	
 		    menu.addActions (alist);	
 		    QAction *ra=menu.exec (e->globalPos() );
@@ -1435,7 +1418,7 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
     }
 }
 
-void MapEditor::mouseMoveEvent(QMouseEvent* e)  // FIXME-2 Moving MCOs does not move images
+void MapEditor::mouseMoveEvent(QMouseEvent* e)  
 {
     // Show mouse position for debugging in statusBar
     if (debug && e->modifiers() & Qt::ControlModifier )
@@ -1581,7 +1564,8 @@ void MapEditor::moveObject ()
 			    p.y()  - movingObj_offset.y() + lmosel->getTopPad() );	    
 		    else    
 			lmosel->move(p.x() - movingObj_offset.x(), p.y() - movingObj_offset.y() - lmosel->getTopPad());
-		    lmosel->setRelPos();    
+                    BranchItem *selbi = ((BranchItem*)seli);
+                    if ( selbi->parentBranch()->getChildrenLayout() == BranchItem::FreePositioning) lmosel->setRelPos();
 		} 
 
 	    } // depth>0
@@ -1617,6 +1601,7 @@ void MapEditor::moveObject ()
 	if (mosel) 
 	{
 	    mosel->move( p-movingObj_offset );	// FIXME-3 Missing savestate 
+            model->setChanged();
 	    model->emitSelectionChanged();
 	}
     } else
@@ -1666,6 +1651,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent* e)
 	if (dsti)
 	{   
 	    tmpLink->setEndBranch ( ((BranchItem*)dsti) );
+            tmpLink->activate();
 	    tmpLink->updateLink();
 	    if (model->createLink (tmpLink) )
 	    {
@@ -1798,23 +1784,32 @@ void MapEditor::mouseReleaseEvent(QMouseEvent* e)
                     }
 		}
 
-		// Draw the original link, before selection was moved around
-		if (settings.value("/animation/use",true).toBool() 
-		    && seli->depth()>1
-//		    && distance (lmosel->getRelPos(),movingObj_orgRelPos)<3
-		) 
-		{
-		    lmosel->setRelPos();    // calc relPos first for starting point
-		    
-		    model->startAnimation(
-			(BranchObj*)lmosel,
-			lmosel->getRelPos(),
-			movingObj_orgRelPos
-		    );	
-		} else	
-		    model->reposition();
-	    }
-	}
+        if (selbi->parentBranch()->getChildrenLayout() == BranchItem::FreePositioning)
+        {
+            lmosel->setRelPos();
+            model->reposition();
+        }else
+        {
+
+
+            // Draw the original link, before selection was moved around
+            if (settings.value("/animation/use",true).toBool()
+                    && seli->depth()>1
+                    //		    && distance (lmosel->getRelPos(),movingObj_orgRelPos)<3
+                    )
+            {
+                lmosel->setRelPos();    // calc relPos first for starting point
+
+                model->startAnimation(
+                            (BranchObj*)lmosel,
+                            lmosel->getRelPos(),
+                            movingObj_orgRelPos
+                            );
+            } else
+                model->reposition();
+        }
+        }
+    }
 	// Finally resize scene, if needed
 	scene()->update();
 	movingObj=NULL;	    
@@ -1906,83 +1901,88 @@ void MapEditor::dropEvent(QDropEvent *event)
     BranchItem *selbi=model->getSelectedBranch();
     if (selbi)
     {
-	if (debug)
-	{
-	    foreach (QString format,event->mimeData()->formats()) 
-		qDebug()<< "MapEditor: Dropped format: "<<qPrintable (format);
-	    foreach (QUrl url,event->mimeData()->urls())
-		qDebug()<< "  URL:"<<url.path();
-	    //foreach (QString plain,event->mimeData()->text())
-	    //	qDebug()<< "   PLAIN:"<<plain;
-	    QByteArray ba=event->mimeData()->data("STRING");
-	    
-	    QString s;
-	    s=ba;
-	    qDebug() << "  STRING:" <<s;
+        if (debug)
+        {
+            foreach (QString format,event->mimeData()->formats())
+                qDebug()<< "MapEditor: Dropped format: "<<qPrintable (format);
+            foreach (QUrl url,event->mimeData()->urls())
+                qDebug()<< "  URL:" <<url.path();
+            qDebug()    << " text: " << event->mimeData()->text();
+            //foreach (QString plain,event->mimeData()->text())
+            //	qDebug()<< "   PLAIN:"<<plain;
+            QByteArray ba = event->mimeData()->data("STRING");
 
-	    ba=event->mimeData()->data("TEXT");
-	    s=ba;
-	    qDebug() << "    TEXT:" <<s;
+            QString s;
+            s = ba;
+            qDebug() << "  STRING:" <<s;
 
-	    ba=event->mimeData()->data("COMPOUND_TEXT");
-	    s=ba;
-	    qDebug() << "   CTEXT:" <<s;
+            ba= event->mimeData()->data("TEXT");
+            s = ba;
+            qDebug() << "    TEXT:" <<s;
 
-	    ba=event->mimeData()->data("text/x-moz-url");
-	    s=ba;
-	    qDebug() << "   x-moz-url:" <<s;
-	    //foreach (char b,ba) if (b!=0) qDebug() << "b="<<b;
-	}
+            ba= event->mimeData()->data("COMPOUND_TEXT");
+            s = ba;
+            qDebug() << "   CTEXT:" <<s;
 
-	/*
-	if (event->mimeData()->hasImage()) //Usually not there anymore :-(
-	{
-	    if (debug) qDebug()<<"MapEditor::dropEvent hasImage!";
-	     QVariant imageData = event->mimeData()->imageData();
-	     model->addFloatImage (qvariant_cast<QImage>(imageData));
+            ba= event->mimeData()->data("text/x-moz-url");
+            s = ba;
+            qDebug() << "   x-moz-url:" <<s;
+            //foreach (char b,ba) if (b!=0) qDebug() << "b="<<b;
+        }
 
-	} else
-	*/
-	if (event->mimeData()->hasUrls())
-	{
-	    //model->selectLastBranch();
-	    QList <QUrl> uris=event->mimeData()->urls();
-	    QString heading;
-	    BranchItem *bi;
-	    for (int i=0; i<uris.count();i++)
-	    {
-		if (debug) qDebug()<<"ME::dropEvent  uri="<<uris.at(i).toString();
-		// Workaround to avoid adding empty branches
-		if (!uris.at(i).toString().isEmpty())
-		{
-		    QString u=uris.at(i).toString();
-		    heading=u;
-		    if (isImage (u))
-		    {
-			// Image, try to download or set image from local file
-			model->download (uris.at(i));
-		    } else
-		    {
-			bi=model->addNewBranch();
-			if (bi)
-			{
-			    model->select(bi);
-			    if (u.startsWith("file:")) 
-				heading = QFileInfo( QDir::fromNativeSeparators(u) ).baseName();
+        /*
+    if (event->mimeData()->hasImage()) //Usually not there anymore :-(
+    {
+        if (debug) qDebug()<<"MapEditor::dropEvent hasImage!";
+         QVariant imageData = event->mimeData()->imageData();
+         model->addFloatImage (qvariant_cast<QImage>(imageData));
 
-			    model->setHeading(heading);
-			    if (u.endsWith(".vym", Qt::CaseInsensitive))
-			       model->setVymLink(u.replace ("file://","") );
-			    else
-			       model->setURL(u);
+    } else
+    */
+        if (event->mimeData()->hasUrls())
+        {
+            //model->selectLastBranch();
+            QList <QUrl> uris=event->mimeData()->urls();
+            QString heading;
+            BranchItem *bi;
+            for (int i=0; i<uris.count();i++)
+            {
+                if (debug) qDebug()<<"ME::dropEvent  uri="<<uris.at(i).toString();
+                // Workaround to avoid adding empty branches
+                if (!uris.at(i).toString().isEmpty())
+                {
+                    QString u=uris.at(i).toString();
+                    heading=u;
+                    if (isImage (u))
+                    {
+                        // Image, try to download or set image from local file
+                        model->downloadImage (uris.at(i));
+                    } else
+                    {
+                        bi=model->addNewBranch();
+                        if (bi)
+                        {
+                            model->select(bi);
+                            if (u.startsWith("file:"))
+                            {
+                                heading = QFileInfo( QDir::fromNativeSeparators(u) ).baseName();
+                                model->setHeadingPlainText(heading);
+                            }
+                            if (u.endsWith(".vym", Qt::CaseInsensitive))
+                                model->setVymLink(u.replace ("file://","") );
+                            else
+                            {
+                                model->setURL(u);
+                                model->setHeadingPlainText(u);
+                            }
 
-			    model->select (bi->parent());	   
-			}
-		    }
-		}
-	    }
-	}
-    }	
+                            model->select (bi->parent());
+                        }
+                    }
+                }
+            }
+        }
+    }
     event->acceptProposedAction();
 }
 
@@ -1991,22 +1991,28 @@ void MapEditor::setState (EditorState s)
     if (state!=Neutral && s!=Neutral)
 	qWarning ()<<"MapEditor::setState  switching directly from "<<state<<" to "<<s;
     state=s;
-    if (debug) 
+    /* if (debug)
     {
-	QString s;
-	switch (state)
-	{
-	    case Neutral: s="Neutral";break;
-	    case EditingHeading: s="EditingHeading";break;
-	    case EditingLink: s="EditingLink";break;
-	    case MovingObject: s="MovingObject";break;
-	    case MovingView: s="MovingView";break;
-	    case PickingColor: s="PickingColor";break;
-	    case CopyingObject: s="CopyingObject";break;
-	    case DrawingLink: s="DrawingLink";break;
-	}
+        QString s;
+        switch (state)
+        {
+        case Neutral: s="Neutral";break;
+        case EditingHeading: s="EditingHeading";break;
+        case EditingLink: s="EditingLink";break;
+        case MovingObject: s="MovingObject";break;
+        case MovingView: s="MovingView";break;
+        case PickingColor: s="PickingColor";break;
+        case CopyingObject: s="CopyingObject";break;
+        case DrawingLink: s="DrawingLink";break;
+        }
         qDebug()<<"MapEditor: State "<<s<< " of "<<model->getMapName();
     }
+    */
+}
+
+MapEditor::EditorState MapEditor::getState()
+{
+    return state;
 }
 
 void MapEditor::updateSelection(QItemSelection nsel,QItemSelection dsel)	

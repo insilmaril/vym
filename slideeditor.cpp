@@ -9,7 +9,6 @@
 
 #include "slideeditor.h"
 
-extern QString iconPath;
 extern Main *mainWindow;
 extern SlideEditor *slideEditor;
 
@@ -112,6 +111,6 @@ void SlideEditor::moveSlideDown()
 
 void SlideEditor::updateSelection(QItemSelection, QItemSelection)
 {
-    // FIXME-2 updateActions missing, e.g. state for moveUp/down
+    // FIXME-3 updateActions missing, e.g. state for moveUp/down
 }
 

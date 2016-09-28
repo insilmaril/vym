@@ -1,7 +1,6 @@
 #include "lineeditdialog.h"
 #include "settings.h"
 
-extern QString iconPath;
 extern Settings settings;
 
 LineEditDialog::LineEditDialog(QWidget* parent):QDialog (parent)

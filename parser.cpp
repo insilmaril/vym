@@ -33,19 +33,20 @@ void Parser::initAtom()
 void Parser::parseAtom (QString s)
 {
     initAtom();
-    atom=s;
     QRegExp re;
     int pos;
 
     // Strip WS at beginning
-    re.setPattern ("\\w");
-    re.setMinimal (true);
-    pos=re.indexIn (atom);
-    if (pos>=0)
-	s=s.right(s.length()-pos);
+    while (s.length() > 0 && (
+               s.at(0) == '\n' ||
+               s.at(0) == '\r' ||
+               s.at(0) == ' ') )
+        s = s.mid(1);
+    if (s.length() == 0)
+        return;
 
     // Get command
-    re.setPattern ("\\b(.*)(\\s|\\()");
+    re.setPattern ("^(\\w*)");
     pos=re.indexIn (s);
     if (pos>=0)
 	com=re.cap(1);
@@ -57,8 +58,8 @@ void Parser::parseAtom (QString s)
     int rightParenthesis;
     if (!nextParenthesisContents(s, leftParenthesis, rightParenthesis, t)) return;
 
-
-    paramList=findParameters(t);
+    paramList = findParameters(t);
+    atom = s;
 }
 
 QString Parser::getAtom()
@@ -299,21 +300,46 @@ int Parser::parInt (bool &ok,const uint &index)
     return 0;
 }
 
-QString Parser::parString (bool &ok,const int &index)
+QString Parser::parString (bool &ok, const int &index)
 {
     // return the string at index, this could be also stored in
     // a variable later
+    
+    // Try to find out if string boundaries are "" or ''
+    QRegExp rx;
+    int pos = paramList[index].indexOf("\"");
+    int n   = paramList[index].indexOf("'");
+
+    if ( n < 0 && pos < 0 )
+    {
+        // Neither " nor ' found
+        ok = false;
+        return "";
+    } else if ( pos >= 0 && n < 0) 
+        // Found ", but no ' 
+        rx.setPattern("\"(.*)\"");
+    else if ( n >= 0 && pos < 0) 
+        // Found ', but no "
+        rx.setPattern("'(.*)'");
+    else if ( pos > n )
+        // "" is within ''
+        rx.setPattern("'(.*)'");
+    else
+        // '' is within ""
+        rx.setPattern("\"(.*)\"");
+
+
+
     QString r;
-    QRegExp re("\"(.*)\"");
-    int pos=re.indexIn (paramList[index]);
+    pos=rx.indexIn (paramList[index]);
     if (pos>=0)
     {
-	r=re.cap (1);
-	ok=true;
+	r = rx.cap (1);
+	ok = true;
     } else    
     {
-	r="";
-	ok=false;
+	r = "";
+	ok = false;
     }
     return r;
 }
@@ -336,16 +362,19 @@ bool Parser::parBool (bool &ok,const int &index)
 QColor Parser::parColor(bool &ok,const int &index)
 {
     // return the QColor at index
-    ok=false;
+    ok = false;
     QString r;
     QColor c;
+
+    // testscipts use single quotes, convert them first
+    paramList[index].replace ("'", "\"");
     QRegExp re("\"(.*)\"");
-    int pos=re.indexIn (paramList[index]);
-    if (pos>=0)
+    int pos = re.indexIn (paramList[index]);
+    if (pos >= 0)
     {
-	r=re.cap (1);
+	r = re.cap (1);
 	c.setNamedColor(r);
-	ok=c.isValid();
+	ok = c.isValid();
     }	
     return c;
 }
@@ -379,54 +408,83 @@ bool Parser::next() //FIXME-3 parser does not detect missing closing " or '("foo
     if (current<0) execute();
     if (current+1>=script.length()) return false;
 
-    bool inBracket=false;
+    bool inQuote=false;
+    QChar bnd;
+
     while (true)
     {
-	//qDebug() <<"current="<<current<< "   start="<<start<<"  length="<<script.length();
+        // Check if we are inside a string
+        if (script.at(current) == '\"')
+        {
+            if (inQuote)
+            {
+                if (script.at(current) == bnd)
+                    inQuote=false;
+            } else
+            {
+                inQuote = true;
+                bnd = '\"';
+            }
+        } else if (script.at(current) == '\'' )
+        {
+            if (inQuote)
+            {
+                if (script.at(current) == bnd)
+                    inQuote=false;
+            } else
+            {
+                inQuote = true;
+                bnd = '\'';
+            }
+        }
 
-	// Check if we are inside a string
-	if (script.at(current)=='"')
-	{
-	    if (inBracket)
-		inBracket=false;
-	    else    
-		inBracket=true;
-	}
+        // Check for EOL
+        if (script.at(current) == '\n')
+        {
+            if (current+1 < script.length())
+            {
+                current++;
+                if (script.at(current) == '\r')
+                    current++;
+            }
+        }
 
-	// Check if we are in a comment
-	if (!inBracket && script.at(current)=='#')
-	{
-	    while (script.at(current)!='\n')
-	    {
-		current++;
-		if (current+1>=script.length()) 
-		    return false;
-	    }
-	    start=current;
-	}
+        // Check if we are in a comment
+        if (!inQuote && script.at(current)=='#')
+        {
+            while (script.at(current)!='\n')
+            {
+                current++;
+                if (script.at(current) == '\r')
+                    current++;
+                if (current+1>=script.length())
+                    return false;
+            }
+            start=current;
+        }
 
-	// Check for end of atom
-	if (!inBracket && script.at(current)==';')
-	{
-	    atom=script.mid(start,current-start);
-	    current++;
-	    return true;
-	}
-	
-	// Check for end of script
-	if (current+1>=script.length() )
-	{
-	    if (inBracket)
-	    {
-		setError (Aborted,"Runaway string");
-		return false;
-	    } else
-	    {
-		atom=script.mid(start);
-		return true;
-	    }
-	}
-	current++;
+        // Check for end of atom
+        if (!inQuote && script.at(current)==';')
+        {
+            parseAtom(script.mid(start,current-start) );
+            current++;
+            return true;
+        }
+
+        // Check for end of script
+        if (current+1>=script.length() )
+        {
+            if (inQuote)
+            {
+                setError (Aborted,"Runaway string");
+                return false;
+            } else
+            {
+                atom=script.mid(start);
+                return true;
+            }
+        }
+        current++;
     }
 }   
 
@@ -440,20 +498,43 @@ QStringList Parser::getCommands()
 
 QStringList Parser::findParameters(const QString &s)
 {
-    int pos=0;
-    int left=0;
-    bool inquote=false;
     QStringList ret;
+    int left = 0;
+    bool inquote = false;
+
+    // Try to find out if string boundaries are "" or ''
+    QString bnd;
+    int pos = s.indexOf("\"");
+    int n   = s.indexOf("'");
+
+    if ( n < 0 && pos < 0 )
+    {
+        // Neither " nor ' found, ignore later
+        bnd = "\"";
+    } else if ( pos >= 0 && n < 0) 
+        // Found ", but no ' 
+        bnd = "\"";
+    else if ( n >= 0 && pos < 0) 
+        // Found ', but no "
+        bnd = "'";
+    else if ( pos > n )
+        // "" is within ''
+        bnd = "'";
+    else
+        // '' is within ""
+        bnd = "\"";
+
+    pos = 0;
     while (pos < s.length())
     {
-        if (s.at(pos)=='\"') 
+        if (s.at(pos) == bnd ) 
         {
             if (inquote)
-                inquote=false;
+                inquote = false;
             else    
-                inquote=true;
+                inquote = true;
         }
-        if (s.at(pos)==',' && !inquote)
+        if (s.at(pos) == ',' && !inquote)
         {
             ret << s.mid(left, pos - left );
             left = pos + 1;
@@ -473,33 +554,52 @@ bool Parser::nextParenthesisContents(
         int &rightParenthesis, 
         QString &contents)
 {
-    int pos=0;
-    int leftP=-1;
-    int rightP=-1;
-    int openParenthesis=0;
-    bool inquote=false;
+    int pos = 0;
+    int leftP  = -1;
+    int rightP = -1;
+    int openParenthesis = 0;
+    bool inQuote = false;
+    QChar bnd;
     while (pos < s.length())
     {
-        if (s.at(pos)=='\"') 
+        // Check if we are inside a string
+        if (s.at(current) == '\"')
         {
-            if (inquote)
-                inquote=false;
-            else    
-                inquote=true;
+            if (inQuote)
+            {
+                if (s.at(current) == bnd)
+                    inQuote=false;
+            } else
+            {
+                inQuote = true;
+                bnd = '\"';
+            }
+        } else if (s.at(current) == '\'' )
+        {
+            if (inQuote)
+            {
+                if (s.at(current) == bnd)
+                    inQuote=false;
+            } else
+            {
+                inQuote = true;
+                bnd = '\'';
+            }
         }
-        if (s.at(pos)=='(' && !inquote) 
+
+        if (s.at(pos) == '(' && !inQuote)
         {
             openParenthesis++;
-            if (openParenthesis==1) leftP=pos;
+            if (openParenthesis == 1) leftP=pos;
         }
 
-        if (s.at(pos)==')' && !inquote) 
+        if (s.at(pos) == ')' && !inQuote)
         {
             openParenthesis--;
-            if (openParenthesis==0) rightP=pos;
+            if (openParenthesis == 0) rightP=pos;
         }
 
-        if (openParenthesis<0) 
+        if (openParenthesis < 0) 
         {
             setError(Aborted, "Error, too many closing parenthesis!");
             return false;
@@ -507,22 +607,24 @@ bool Parser::nextParenthesisContents(
 
         pos++;
     }
-    if (leftP< 0) 
+
+    if (leftP < 0)
     {
         setError(Aborted, "Error: No left parenthesis found");
         return false;
     }
 
-    if (rightP< 0) 
+    if (rightP < 0) 
     {
         setError(Aborted, "Error: No right parenthesis found");
         return false;
     }
 
-    contents=s.mid(leftP+1, rightP - leftP - 1);
+    contents = s.mid(leftP+1, rightP - leftP - 1);
     pos = leftParenthesis;
-    leftParenthesis=leftP;
-    rightParenthesis=rightP;
+    leftParenthesis  = leftP;
+    rightParenthesis = rightP;
+
     return true;
 }
 

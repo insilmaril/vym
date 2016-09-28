@@ -11,7 +11,6 @@
 #include "mainwindow.h"
 
 
-extern QString iconPath;
 extern Main *mainWindow;
 
 SlideControlWidget::SlideControlWidget(QWidget *)
@@ -20,33 +19,33 @@ SlideControlWidget::SlideControlWidget(QWidget *)
     QHBoxLayout *row2Layout = new QHBoxLayout;
     
     previousButton = new QPushButton;
-    previousButton->setIcon ( QPixmap( iconPath + "slideprevious.png") );
+    previousButton->setIcon ( QPixmap( ":/slideprevious.png") );
     connect ( previousButton, SIGNAL( clicked() ), this, SLOT( previousPressed() ) );
 
     nextButton = new QPushButton;
-    nextButton->setIcon ( QPixmap( iconPath + "slidenext.png") );
+    nextButton->setIcon ( QPixmap( ":/slidenext.png") );
     connect ( nextButton, SIGNAL( clicked() ), this, SLOT( nextPressed() ) );
 
     upButton = new QPushButton;
-    upButton->setIcon ( QPixmap( iconPath + "up.png") );
+    upButton->setIcon ( QPixmap( ":/up.png") );
     connect ( upButton, SIGNAL( clicked() ), this, SLOT( upPressed() ) );
 
     downButton = new QPushButton;
-    downButton->setIcon ( QPixmap( iconPath + "down.png") );
+    downButton->setIcon ( QPixmap( ":/down.png") );
     connect ( downButton, SIGNAL( clicked() ), this, SLOT( downPressed() ) );
 
     snapshotButton = new QPushButton;
-    //snapshotButton->setIcon (QPixmap ( iconPath + "sliderecord.png" ));
+    //snapshotButton->setIcon (QPixmap ( ":/sliderecord.png" ));
     // Original: /usr/share/icons/oxygen/32x32/devices/camera-photo.png
-    snapshotButton->setIcon (QPixmap ( iconPath + "slide-camera.png" ));
+    snapshotButton->setIcon (QPixmap ( ":/slide-camera.png" ));
     connect ( snapshotButton, SIGNAL( clicked() ), this, SLOT( snapshotPressed() ) );
 
     editButton = new QPushButton;
-    editButton->setIcon (QPixmap ( iconPath + "scripteditor.png" ));   
+    editButton->setIcon (QPixmap ( ":/scripteditor.png" ));   
     connect ( editButton, SIGNAL( clicked() ), this, SLOT( editPressed() ) );
 
     deleteButton = new QPushButton;
-    deleteButton->setIcon (QPixmap ( iconPath + "edittrash.png" ));
+    deleteButton->setIcon (QPixmap ( ":/edittrash.png" ));
     connect ( deleteButton, SIGNAL( clicked() ), this, SLOT( deletePressed() ) );
 
     row2Layout->addWidget(previousButton);

@@ -8,7 +8,7 @@
 
 
 extern Settings settings;
-extern QString iconPath;
+extern QString iconPath;    // FIXME-4 embed vym logo as ressource?
 extern QString vymVersion;
 extern QString vymBuildDate;
 extern QString vymCodeName;
@@ -23,7 +23,7 @@ AboutDialog::AboutDialog( QWidget *parent)
     credits=new AboutTextBrowser (parent);
 
     credits->setHtml( QString(
-    "<center><img src=\""+iconPath+"vym-128x128.png\"></center>"
+    "<center><img src=\"" + iconPath + "vym-128x128.png\"></center>"
     "<h3><center>VYM - View Your Mind </h3>"
     "<p align=\"center\"> A tool to put the things you have got in your mind into a map.</p>"
     "<p align=\"center\"> (c) 2004-%1 by Uwe Drechsel (<a href=\"mailto:vym@InSilmaril.de\">vym@InSilmaril.de</a>)</p>"
@@ -53,19 +53,23 @@ AboutDialog::AboutDialog( QWidget *parent)
     "</li>"
     "<li>Translation"
     "  <ul>"
-    "    <li>Spanish: <a href=\"http://ieee.udistrital.edu.co/aclibre\">"
-    "                 ACLibre (Academia y Conocimiento Libre)</a> and David Amian</li>"
-    "    <li>French: Marc Sert, Philippe Caillaud and Claude </li>"
-    "    <li>Italian: Giovanni Sora, Seyed Puria Nafisi Azizi </li>"
-    "    <li>Interlingua: Giovanni Sora</li>"
     "    <li>Brasilian: Amadeu Júnior</li>"
+    "    <li>Chinese (simplified): Moligaloo</li>"
+    "    <li>Chinese (traditional): Wei-Lun Chao </li>"
+    "    <li>Czech: Pavel Fric</li>"
+    "    <li>French: Marc Sert, Philippe Caillaud and Claude </li>"
+    "    <li>Greek: Yannis Kaskamanidis</li>"
+    "    <li>Interlingua: Giovanni Sora</li>"
+    "    <li>Italian: Giovanni Sora, Seyed Puria Nafisi Azizi </li>"
+    "    <li>Japanese: Tsuren Tsuchiya</li>"
     "    <li>Russian: Anton Olenev</li>"
-    "    <li>Simplified Chinese: Moligaloo</li>"
-    "    <li>Traditional Chinese: Wei-Lun Chao </li>"
+    "    <li>Spanish: <a href=\"http://ieee.udistrital.edu.co/aclibre\">" 
+    "                 ACLibre (Academia y Conocimiento Libre)</a> and David Amian</li>"
     "  </ul>"
     "</li>"
     "<li> Patches"
     "  <ul>"
+    "    <li>Darren Lissimore: Windows compiler patch </li>"
     "    <li>Konstantin Goudkov: sort branches</li>"
     "    <li>Jakob Hilmer: image drag and drop in 1.8.1, &quot;About vym&quot; window patch </li>"
     "    <li>Edward Wang: adding close tab buttons</li>"
@@ -74,6 +78,8 @@ AboutDialog::AboutDialog( QWidget *parent)
     "</li>"
     "<li> Patches in previous vym versions"
     "  <ul>"
+    "    <li>Łukasz Pietrzak, Scott Dillman and Patrick Spendrin, Andrew Ng, " 
+            "Juha Ruotsalainen and Thomas Kriener: windows patches</li>"
     "    <li>Thomas Schraitle for the stylesheet"  
     "        formerly used for XHTML-export and help with XML processing in general</li>"
     "    <li>Matt from <a href=\"http://www.satbp.com\">www.satbp.com</a>: "
@@ -83,9 +89,7 @@ AboutDialog::AboutDialog( QWidget *parent)
     "<li> Packaging"
     "</li>"
     "  <ul>"
-    "    <li>Scott Dillman and Patrick Spendrin: Recent windows patches</li>"
     "    <li>Jon Ciesla: Sourceforge file releases</li>"
-    "    <li>Andrew Ng, Juha Ruotsalainen and Thomas Kriener: Older windows patches</li>"
     "    <li>Xavier Oswald, Christoph Thielecke, Pierre, and Steffen Joeris: Debian packaging</li>"
     "  </ul>"
     "<li> General"
@@ -99,7 +103,7 @@ AboutDialog::AboutDialog( QWidget *parent)
     "</ul>"
     "</li>").arg( QDate::currentDate().year() ) );;
     credits->setFrameStyle( QFrame::Panel | QFrame::Plain );
-    tabs->addTab (credits,"Credits");
+    tabs->addTab (credits, tr("Credits","Help->About vym dialog"));
 
     license=new AboutTextBrowser (parent);
     license->setText ( QString(
@@ -214,7 +218,7 @@ AboutDialog::AboutDialog( QWidget *parent)
 "<p align=\"center\">END OF TERMS AND CONDITIONS</p>").arg( QDate::currentDate().year() ) );
 
     credits->setFrameStyle( QFrame::Panel | QFrame::Plain );
-    tabs->addTab (license,"License");
+    tabs->addTab (license, tr("License","Help->About vym dialog"));
 
     mainLayout->addWidget (tabs);
 
@@ -235,7 +239,7 @@ AboutTextBrowser::AboutTextBrowser(QWidget *parent)
 void AboutTextBrowser::setSource(const QUrl &url )
 {
     QProcess *proc= new QProcess ();
-    proc->start( settings.value("/mainwindow/readerURL").toString(),QStringList ()<<url.toString());
+    proc->start( settings.value("/system/readerURL").toString(),QStringList ()<<url.toString());
     //if (!proc->waitForStarted() &&mainWindow->settingsURL() ) setSource(url);
     if (!proc->waitForStarted() )
 	QMessageBox::warning(0, 

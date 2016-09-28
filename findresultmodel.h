@@ -46,7 +46,6 @@ public:
                     const QModelIndex &parent = QModelIndex());
 
     FindResultItem* getItem(const QModelIndex &index) const;
-    FindResultItem* findTreeItem (TreeItem *ti);
 
     FindResultItem* addItem (TreeItem *ti);
     FindResultItem* addSubItem (FindResultItem *parent,const QString &s, TreeItem *pi, int i);
@@ -55,8 +54,11 @@ public:
     QString getSearchString();
     void setSearchFlags( QTextDocument::FindFlags f);
     QTextDocument::FindFlags getSearchFlags();
+    void setShowParentsLevel(uint i);
+    uint getShowParentsLevel();
 
 private:
+    uint showParentsLevel;
 
     FindResultItem *rootItem;
 

@@ -10,9 +10,9 @@
 
 //#include "attributedelegate.h"
 #include "branchobj.h"
-#include "vymmodel.h"
 
 class QAbstractItemModel;
+class VymModel;
 
 class BranchPropertyEditor:public QDialog
 {
@@ -33,6 +33,7 @@ private slots:
     void linkHideUnselectedChanged (int);
     void incImgVerChanged (int);
     void incImgHorChanged (int);
+    void childrenFreePositioningChanged (int);
 //  void addAttributeClicked();
 //  void deleteAttributeClicked();
 

@@ -1,9 +1,12 @@
 #include "taskeditor.h"
 
 #include <QAbstractTableModel>
+#include <QAction>
 #include <QDebug>
 #include <QHeaderView>
+#include <QMenu>
 #include <QSortFilterProxyModel>
+#include <QTextEdit>
 #include <QToolBar>
 #include <QVBoxLayout>
 
@@ -18,8 +21,6 @@ extern Settings settings;
 extern QMenu* taskContextMenu;
 extern TaskModel* taskModel;
 
-extern QString iconPath;
-
 TaskEditor::TaskEditor(QWidget *)
 {
     // Creat Table view
@@ -33,20 +34,35 @@ TaskEditor::TaskEditor(QWidget *)
 
     // Original icon from KDE: /usr/share/icons/oxygen/16x16/actions/view-filter.png
 
-    QIcon icon=QIcon (iconPath + "view-filter.png");
+    QIcon icon=QIcon (":/view-filter.png");
     QAction *a = new QAction(icon,  tr( "Current map","TaskEditor" ),this );
     a->setCheckable(true);
     a->setChecked  (settings.value("/taskeditor/filterMap", false).toBool());
     tb->addAction (a);
     connect( a, SIGNAL( triggered() ), this, SLOT(toggleFilterMap() ) );
-    actionToggleFilterMap=a;
+    actionToggleFilterMap = a;
 
     a = new QAction(icon,  tr( "Active tasks","TaskEditor" ),this );
     a->setCheckable(true);
     a->setChecked  (settings.value("/taskeditor/filterActive", false).toBool());
     tb->addAction (a);
     connect( a, SIGNAL( triggered() ), this, SLOT(toggleFilterActive() ) );
-    actionToggleFilterActive=a;
+    actionToggleFilterActive = a;
+
+    a = new QAction(icon,  tr( "New tasks","TaskEditor" ),this );
+    a->setCheckable(true);
+    a->setChecked  (settings.value("/taskeditor/filterNew", false).toBool());
+    tb->addAction (a);
+    connect( a, SIGNAL( triggered() ), this, SLOT(toggleFilterNew() ) );
+    actionToggleFilterNew = a;
+
+    a = new QAction(icon,  "Flag", this); //tr( "Flags","TaskEditor" ),this );   // FIXME-1 add translation
+    a->setCheckable(true);
+    a->setChecked  (settings.value("/taskeditor/filterNew", false).toBool());
+    if (settings.value( "/mainwindow/showTestMenu",false).toBool())
+        tb->addAction (a);
+    connect( a, SIGNAL( triggered() ), this, SLOT(toggleFilterFlags() ) );
+    actionToggleFilterFlags = a;
 
     // Forward Enter and Return to MapEditor
     a = new QAction(icon, tr( "Edit heading","TaskEditor" ), this);
@@ -59,6 +75,16 @@ TaskEditor::TaskEditor(QWidget *)
     a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
     addAction (a);
     connect( a, SIGNAL( triggered() ), mainWindow, SLOT( editHeading() ) );
+
+    // Clone actions defined in MainWindow
+    foreach (QAction* qa, mainWindow->taskEditorActions)
+    {
+        a = new QAction( this );
+        a->setShortcut( qa->shortcut() );
+        a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
+        connect( a, SIGNAL( triggered() ), qa, SLOT( trigger() ) );
+        addAction(a);
+    }
 
     mainLayout->addWidget (view);
     setLayout (mainLayout);
@@ -84,9 +110,20 @@ TaskEditor::TaskEditor(QWidget *)
     // layout changes trigger resorting
     connect( taskModel, SIGNAL( layoutChanged() ), this, SLOT(sort() ) );
 
+    // Enable wordwrap when data changes
+    connect ( 
+        taskModel, SIGNAL( dataChanged( QModelIndex, QModelIndex)),
+        view, SLOT( resizeRowsToContents() ) );
+    connect ( 
+        view->horizontalHeader(), SIGNAL( sectionResized(int, int, int)),
+        view, SLOT( resizeRowsToContents() ) );
+
+
     // Initialize view filters according to previous settings
     setFilterMap();
     setFilterActive();
+    setFilterNew();
+    setFilterFlags();
 
     // Initialize column widths
     QString s;
@@ -108,6 +145,7 @@ TaskEditor::~TaskEditor()
 {
     settings.setValue ("/taskeditor/filterMap",actionToggleFilterMap->isChecked());
     settings.setValue ("/taskeditor/filterActive",actionToggleFilterActive->isChecked());
+    settings.setValue ("/taskeditor/filterNew",actionToggleFilterNew->isChecked());
     settings.setValue ("/taskeditor/showParentsLevel",taskModel->getShowParentsLevel() );
     for (int i=0; i<7; i++)
 	settings.setValue (QString("/taskeditor/columnWidth/%1").arg(i),view->columnWidth(i) );
@@ -127,9 +165,9 @@ bool TaskEditor::isUsedFilterMap()
 void TaskEditor::setFilterMap () 
 {
     if (isUsedFilterMap() )
-	filterActiveModel->setMapFilter(currentMapName);
+        filterActiveModel->setMapFilter(currentMapName);
     else
-	filterActiveModel->setMapFilter(QString() );
+        filterActiveModel->setMapFilter(QString() );
     sort();
 }
 
@@ -142,6 +180,18 @@ void TaskEditor::setFilterActive ()
 {
     filterActiveModel->setFilter (actionToggleFilterActive->isChecked() );   
     sort();	
+}
+
+void TaskEditor::setFilterNew ()
+{
+    filterActiveModel->setFilterNew (actionToggleFilterNew->isChecked() );
+    sort();
+}
+
+void TaskEditor::setFilterFlags ()  // FIXME-1 experimental
+{
+    filterActiveModel->setFilterFlags (actionToggleFilterFlags->isChecked() );
+    sort();
 }
 
 void TaskEditor::showSelection()
@@ -223,5 +273,14 @@ void TaskEditor::toggleFilterMap ()
 void TaskEditor::toggleFilterActive ()
 {
     setFilterActive();
+
+}
+void TaskEditor::toggleFilterNew ()
+{
+    setFilterNew();
 }
 
+void TaskEditor::toggleFilterFlags ()
+{
+    setFilterFlags();
+}

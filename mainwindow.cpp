@@ -11,14 +11,25 @@
 #include "adaptorvym.h"
 #endif
 
+#include <QColorDialog>
+#include <QDockWidget>
+#include <QFontDialog>
+#include <QInputDialog>
+#include <QMenuBar>
+#include <QPrinter>
+#include <QStatusBar>
+#include <QTextStream>
+
 #include "aboutdialog.h"
 #include "branchpropeditor.h"
 #include "branchitem.h"
 #include "command.h"
+#include "downloadagent.h"
 #include "exportoofiledialog.h"
 #include "exports.h"
 #include "file.h"
 #include "findresultwidget.h"
+#include "findresultmodel.h"
 #include "flagrow.h"
 #include "headingeditor.h"
 #include "historywindow.h"
@@ -28,7 +39,7 @@
 #include "mapeditor.h"
 #include "misc.h"
 #include "options.h"
-#include "process.h"
+#include "vymprocess.h"
 #include "scripteditor.h"
 #include "settings.h"
 #include "shortcuts.h"
@@ -37,6 +48,7 @@
 #include "taskeditor.h"
 #include "taskmodel.h"
 #include "treeeditor.h"
+#include "version.h"
 #include "warningdialog.h"
 #include "xlinkitem.h"
 
@@ -44,22 +56,8 @@ QPrinter *printer;
 
 //#include <modeltest.h>    
 
-#if defined(Q_OS_WIN32)
-// Define only this structure as opposed to
-// including full 'windows.h'. FindWindow
-// clashes with the one in Win32 API.
-typedef struct _PROCESS_INFORMATION
-{
-    long hProcess;
-    long hThread;
-    long dwProcessId;
-    long dwThreadId;
-} PROCESS_INFORMATION, *LPPROCESS_INFORMATION;
-#endif
-
 #if defined(VYM_DBUS)
 #include <QDBusConnection>
-extern QDBusConnection dbusConnection;
 #endif
 
 extern NoteEditor    *noteEditor;
@@ -79,11 +77,15 @@ extern FlagRow *standardFlagsMaster;
 extern FlagRow *systemFlagsMaster;
 extern QString vymName;
 extern QString vymVersion;
-extern QString vymUID;
+extern QString vymPlatform;
 extern QString vymBuildDate;
+extern QString localeName;
 extern bool debug;
 extern bool testmode;
+extern QTextStream vout;
 extern bool bugzillaClientAvailable;
+extern Switchboard switchboard;
+
 
 extern QList <Command*> modelCommands;
 
@@ -111,15 +113,15 @@ extern QDir lastMapDir;
 #if defined(Q_OS_WIN32)
 extern QDir vymInstallDir;
 #endif
-extern QString iconPath;
-extern QString flagsPath;
+extern QString zipToolPath;
 
-
-Main::Main(QWidget* parent, Qt::WFlags f) : QMainWindow(parent,f)
+Main::Main(QWidget* parent, Qt::WindowFlags f) : QMainWindow(parent,f)
 {
-    mainWindow=this;
+    mainWindow = this;
 
     setWindowTitle ("VYM - View Your Mind");
+
+    shortcutScope = tr("Main window","Shortcut scope");
 
     // Load window settings
     #if defined(Q_OS_WIN32)
@@ -165,8 +167,73 @@ Main::Main(QWidget* parent, Qt::WFlags f) : QMainWindow(parent,f)
     // Define commands in API (used globally)
     setupAPI();
 
-    // Dock widgets /////////////////////////////////////////////// /
-    // FIXME-4 Missing call to updateAction, when widget is closed
+    // Initialize some settings, which are platform dependant
+    QString p,s;
+
+	// application to open URLs
+	p="/system/readerURL";
+	#if defined(Q_OS_WIN)
+	    // Assume that system has been set up so that
+	    // Explorer automagically opens up the URL
+	    // in the user's preferred browser.
+	    s=settings.value (p,"explorer").toString();
+	#elif defined(Q_OS_MACX)
+	    s=settings.value (p,"/usr/bin/open").toString();
+	#else
+	    s=settings.value (p,"xdg-open").toString();
+	#endif
+	settings.setValue( p,s);
+
+	// application to open PDFs
+	p="/system/readerPDF";
+	#if defined(Q_OS_WIN)
+	    s=settings.value (p,"explorer").toString();
+	#elif defined(Q_OS_MACX)
+	    s=settings.value (p,"/usr/bin/open").toString();
+	#else
+	    s=settings.value (p,"xdg-open").toString();
+	#endif
+	settings.setValue( p,s);
+
+    // width of xLinksMenu
+    xLinkMenuWidth=60;
+
+    // Create Layout
+    QWidget* centralWidget = new QWidget (this);
+    QVBoxLayout *layout=new QVBoxLayout (centralWidget);
+    setCentralWidget(centralWidget);	
+
+    // Create tab widget which holds the maps
+    tabWidget= new QTabWidget (centralWidget);
+    connect(tabWidget, SIGNAL( currentChanged( int  ) ), 
+            this, SLOT( editorChanged( ) ) );
+
+    // Allow closing of tabs (introduced in Qt 4.5)
+    tabWidget->setTabsClosable( true ); 
+    connect(tabWidget, SIGNAL(tabCloseRequested(int)), 
+            this, SLOT( fileCloseMap(int) ));
+
+    layout->addWidget (tabWidget);
+
+    switchboard.addGroup("MainWindow",tr("Main window","Shortcut group"));
+    switchboard.addGroup("MapEditor",tr("Map Editors","Shortcut group"));
+    switchboard.addGroup("TextEditor",tr("Text Editors","Shortcut group"));
+
+    // Setup actions
+    setupFileActions();
+    setupEditActions();
+    setupSelectActions();
+    setupFormatActions();
+    setupViewActions();
+    setupModeActions();
+    setupNetworkActions();
+    setupSettingsActions();
+    setupContextMenus();
+    setupMacros();
+    setupToolbars();
+    setupFlagActions();
+
+    // Dock widgets ///////////////////////////////////////////////
     QDockWidget *dw;
     dw = new QDockWidget (tr("Note Editor"));
     dw->setWidget (noteEditor);
@@ -202,14 +269,6 @@ Main::Main(QWidget* parent, Qt::WFlags f) : QMainWindow(parent,f)
 	findResultWidget, SIGNAL (findPressed (QString) ), 
 	this, SLOT (editFindNext(QString) ) );
 
-    taskEditor = new TaskEditor ();
-    dw= new QDockWidget (tr ("Task list","TaskEditor"));
-    dw->setWidget (taskEditor);
-    dw->setObjectName ("TaskEditor");
-    dw->hide();	
-    addDockWidget (Qt::TopDockWidgetArea,dw);
-    connect (dw, SIGNAL (visibilityChanged(bool ) ), this, SLOT (updateActions()));
-
     scriptEditor = new ScriptEditor(this);
     dw= new QDockWidget (tr ("Script Editor","ScriptEditor"));
     dw->setWidget (scriptEditor);
@@ -239,71 +298,27 @@ Main::Main(QWidget* parent, Qt::WFlags f) : QMainWindow(parent,f)
     // Connect heading editor
     connect (headingEditor, SIGNAL (textHasChanged() ), this, SLOT (updateHeading()));
 
-    connect( scriptEditor, SIGNAL( runScript ( QString ) ), 
-	this, SLOT( execute( QString ) ) );
+    connect( scriptEditor, SIGNAL( runScript ( QString ) ),  this, SLOT( execute( QString ) ) );
 
-    // Initialize some settings, which are platform dependant
-    QString p,s;
+    // Switch back  to MapEditor using Esc 
+    QAction* a = new QAction(this);
+    a->setShortcut (Qt::Key_Escape);
+    a->setShortcutContext (Qt::ApplicationShortcut);
+    a->setCheckable(false);
+    a->setEnabled (true);
+    addAction(a);
+    connect (a , SIGNAL (triggered() ), this, SLOT (setFocusMapEditor()));
+    
+    // Create TaskEditor after setting up above actions, allow cloning 
+    taskEditor = new TaskEditor ();
+    dw= new QDockWidget (tr ("Task list","TaskEditor"));
+    dw->setWidget (taskEditor);
+    dw->setObjectName ("TaskEditor");
+    dw->hide();
+    addDockWidget (Qt::TopDockWidgetArea,dw);
+    connect (dw, SIGNAL (visibilityChanged(bool ) ), this, SLOT (updateActions()));
+    //FIXME -0 connect (taskEditor, SIGNAL (focusReleased() ), this, SLOT (setFocusMapEditor()));
 
-	// application to open URLs
-	p="/mainwindow/readerURL";
-	#if defined(Q_OS_WIN)
-	    // Assume that system has been set up so that
-	    // Explorer automagically opens up the URL
-	    // in the user's preferred browser.
-	    s=settings.value (p,"explorer").toString();
-	#elif defined(Q_OS_MACX)
-	    s=settings.value (p,"/usr/bin/open").toString();
-	#else
-	    s=settings.value (p,"xdg-open").toString();
-	#endif
-	settings.setValue( p,s);
-
-	// application to open PDFs
-	p="/mainwindow/readerPDF";
-	#if defined(Q_OS_WIN)
-	    s=settings.value (p,"explorer").toString();
-	#elif defined(Q_OS_MACX)
-	    s=settings.value (p,"/usr/bin/open").toString();
-	#else
-	    s=settings.value (p,"xdg-open").toString();
-	#endif
-	settings.setValue( p,s);
-
-    // width of xLinksMenu
-    xLinkMenuWidth=60;
-
-    // Create Layout
-    QWidget* centralWidget = new QWidget (this);
-    QVBoxLayout *layout=new QVBoxLayout (centralWidget);
-    setCentralWidget(centralWidget);	
-
-    // Create tab widget which holds the maps
-    tabWidget= new QTabWidget (centralWidget);
-    connect(tabWidget, SIGNAL( currentChanged( QWidget * ) ), 
-            this, SLOT( editorChanged( QWidget * ) ) );
-
-    // Allow closing of tabs (introduced in Qt 4.5)
-    tabWidget->setTabsClosable( true ); 
-    connect(tabWidget, SIGNAL(tabCloseRequested(int)), 
-            this, SLOT( closeTab(int) ));
-
-    layout->addWidget (tabWidget);
-
-    setupFileActions();
-    setupEditActions();
-    setupSelectActions();
-    setupFormatActions();
-    setupViewActions();
-    setupModeActions();
-    setupNetworkActions();
-    setupSettingsActions();
-    setupContextMenus();
-    setupMacros();
-    setupToolbars();
-    setupFlagActions();
-
-    if (options.isOn("shortcuts")) switchboard.printASCII();    //FIXME-3 needs to go to main.cpp with global switchboard and exit after listing
     if (options.isOn("shortcutsLaTeX")) switchboard.printLaTeX();
 
     if (settings.value( "/mainwindow/showTestMenu",false).toBool()) setupTestActions();
@@ -326,6 +341,8 @@ Main::Main(QWidget* parent, Qt::WFlags f) : QMainWindow(parent,f)
     // Global Printer
     printer=new QPrinter (QPrinter::HighResolution );	
 
+    // Enable testmenu
+    //settings.setValue( "mainwindow/showTestMenu", true);
     updateGeometry();
 
 #if defined(VYM_DBUS)
@@ -334,10 +351,13 @@ Main::Main(QWidget* parent, Qt::WFlags f) : QMainWindow(parent,f)
     if (!QDBusConnection::sessionBus().registerObject ("/vym",this))
 	qWarning ("MainWindow: Couldn't register DBUS object!");
 #endif    
+
 }
 
 Main::~Main()
 {
+    // qDebug()<<"Destr Mainwindow"<<flush;
+
     // Save Settings
 
     if (!testmode) 
@@ -351,27 +371,25 @@ Main::~Main()
 
 	settings.setValue ("/mainwindow/view/AntiAlias",actionViewToggleAntiAlias->isChecked());
 	settings.setValue ("/mainwindow/view/SmoothPixmapTransform",actionViewToggleSmoothPixmapTransform->isChecked());
-	settings.setValue( "/mainwindow/autosave/use",actionSettingsAutosaveToggle->isChecked() );
-	settings.setValue ("/mainwindow/autosave/ms", settings.value("/mainwindow/autosave/ms",60000)); 
-	settings.setValue ("/mainwindow/autoLayout/use",actionSettingsAutoLayoutToggle->isChecked() );
+	settings.setValue( "/system/autosave/use",actionSettingsToggleAutosave->isChecked() );
+	settings.setValue ("/system/autosave/ms", settings.value("/system/autosave/ms",60000)); 
+	settings.setValue ("/mainwindow/autoLayout/use",actionSettingsToggleAutoLayout->isChecked() );
 	settings.setValue( "/mapeditor/editmode/autoSelectNewBranch",actionSettingsAutoSelectNewBranch->isChecked() );
-	settings.setValue( "/mainwindow/writeBackupFile",actionSettingsWriteBackupFile->isChecked() );
+	settings.setValue( "/system/writeBackupFile",actionSettingsWriteBackupFile->isChecked() );
 
-	settings.setValue("/mainwindow/printerName",printer->printerName());
-	settings.setValue("/mainwindow/printerFormat",printer->outputFormat());
-	settings.setValue("/mainwindow/printerFileName",printer->outputFileName());
+	settings.setValue("/system/printerName",printer->printerName());
+	settings.setValue("/system/printerFormat",printer->outputFormat());
+	settings.setValue("/system/printerFileName",printer->outputFileName());
 	settings.setValue( "/mapeditor/editmode/autoSelectText",actionSettingsAutoSelectText->isChecked() );
 	settings.setValue( "/mapeditor/editmode/autoEditNewBranch",actionSettingsAutoEditNewBranch->isChecked() );
 	settings.setValue( "/mapeditor/editmode/useFlagGroups",actionSettingsUseFlagGroups->isChecked() );
 	settings.setValue( "/export/useHideExport",actionSettingsUseHideExport->isChecked() );
 	settings.setValue( "/system/version", vymVersion );
 	settings.setValue( "/system/builddate", vymBuildDate );
-	settings.setValue( "/system/uid", vymUID );
     }
-    //FIXME-4 save scriptEditor settings
-
+    //
     // call the destructors
-    delete noteEditor;	    // FIXME-4 shouldn't this be done in main?
+    delete noteEditorDW;
     delete historyWindow;
     delete branchPropertyEditor;
 
@@ -408,34 +426,31 @@ void Main::setProgressMaximum (int max)	{
 	// Init range only on first time, when progressCounter still 0
 	// Normalize range to 1000
 	progressDialog.setRange (0,1000);
-	progressDialog.setValue (0);
+	progressDialog.setValue (1);
     }
     progressCounter++;	// Another map is loaded
 
     progressMax=max*1000;
-    //qDebug() << "Main  max="<<max<<"  v="<<progressDialog.value();
-    if (!options.isOn("batch"))
-	progressDialog.show();
-    else	
-	progressDialog.hide();
+    QApplication::processEvents();
 }
 
 void Main::addProgressValue (float v) 
 
 {
+    int progress_value= (v + progressCounter -1)*1000/progressCounterTotal;
 /*
     qDebug() << "addVal v="<<v
 	 <<"  cur="<<progressDialog.value()
 	 <<"  pCounter="<<progressCounter
 	 <<"  pCounterTotal="<<progressCounterTotal
+         <<"  newv="<< progress_value
 	 ;
 	 */
-    if (!options.isOn("batch"))
-	progressDialog.show();
-    else	
-	progressDialog.hide();
-    progressDialog.setValue ( (v + progressCounter -1)*1000/progressCounterTotal );
-    progressDialog.repaint();
+
+    // Make sure the progress dialog shows, even if value == 0
+    if (progress_value < 1) progress_value = 1; 
+    progressDialog.setValue ( progress_value );
+    if (progress_value == 1) QApplication::processEvents();
 }
 
 void Main::initProgressCounter(uint n)
@@ -546,6 +561,7 @@ void Main::setupAPI()
 
     c=new Command ("exportASCII",Command::Any);
     c->addPar (Command::String,false,"Filename for export");
+    c->addPar (Command::Bool,false,"Flag, if tasks should be appended");
     modelCommands.append(c);
 
     c=new Command ("exportCSV",Command::Any);
@@ -565,6 +581,8 @@ void Main::setupAPI()
     c=new Command ("exportImpress",Command::Any);
     c->addPar (Command::String,false,"Filename for export");
     c->addPar (Command::String,false,"Configuration file for export");
+    modelCommands.append(c);
+
     c=new Command ("exportLast",Command::Any);
     modelCommands.append(c);
 
@@ -604,7 +622,10 @@ void Main::setupAPI()
     c=new Command ("getFrameType",Command::Branch);
     modelCommands.append(c);
 
-    c=new Command ("getHeading",Command::TreeItem);
+    c=new Command ("getHeadingPlainText",Command::TreeItem);
+    modelCommands.append(c);
+
+    c=new Command ("getHeadingXML",Command::TreeItem);
     modelCommands.append(c);
 
     c=new Command ("getMapAuthor",Command::Any);
@@ -616,7 +637,10 @@ void Main::setupAPI()
     c=new Command ("getMapTitle",Command::Any);
     modelCommands.append(c);
 
-    c=new Command ("getNote",Command::TreeItem);
+    c=new Command ("getNotePlainText",Command::TreeItem);
+    modelCommands.append(c);
+
+    c=new Command ("getNoteXML",Command::TreeItem);
     modelCommands.append(c);
 
     c=new Command ("getSelectString",Command::TreeItem);
@@ -650,6 +674,12 @@ void Main::setupAPI()
     c->addPar (Command::String,false,"Name of flag");
     modelCommands.append(c);
 
+    c=new Command ("hasNote",Command::Branch); 
+    modelCommands.append(c);
+
+    c=new Command ("hasRichTextNote",Command::Branch); 
+    modelCommands.append(c);
+
     c=new Command ("hasTask",Command::Branch); 
     modelCommands.append(c);
 
@@ -667,7 +697,6 @@ void Main::setupAPI()
     c=new Command ("loadNote",Command::Branch); 
     c->addPar (Command::String,false,"Filename of note");
     modelCommands.append(c);
-
 
     c=new Command ("moveDown",Command::Branch); 
     modelCommands.append(c);
@@ -697,7 +726,12 @@ void Main::setupAPI()
     c=new Command ("note2URLs",Command::Branch); 
     modelCommands.append(c);
 
-    c=new Command ("paste",Command::Branch); 
+    //internally required for undo/redo of changing VymText:
+    c=new Command ("parseVymText",Command::Branch);
+    c->addPar (Command::String,false,"parse XML of VymText, e.g for Heading or VymNote");
+    modelCommands.append(c);
+
+    c=new Command ("paste",Command::Branch);
     modelCommands.append(c);
 
     c=new Command ("redo",Command::Any); 
@@ -774,7 +808,7 @@ void Main::setupAPI()
     c->addPar (Command::Int,false,"Width of frame borderline");
     modelCommands.append(c);
 
-    c=new Command ("setHeading",Command::TreeItem); 
+    c=new Command ("setHeadingPlainText",Command::TreeItem); 
     c->addPar (Command::String,false,"New heading");
     modelCommands.append(c);
 
@@ -838,7 +872,7 @@ void Main::setupAPI()
     c->addPar (Command::Double,false,"Zoomfactor of map");
     modelCommands.append(c);
 
-    c=new Command ("setNote",Command::Branch); 
+    c=new Command ("setNotePlainText",Command::Branch); 
     c->addPar (Command::String,false,"Note of branch");
     modelCommands.append(c);
 
@@ -920,208 +954,253 @@ void Main::setupAPI()
     modelCommands.append(c);
 }
 
+void Main::cloneActionMapEditor( QAction *a, QKeySequence ks)
+{
+    a->setShortcut ( ks );
+    a->setShortcutContext ( Qt::WidgetShortcut );
+    mapEditorActions.append ( a );
+}
+
 // File Actions
 void Main::setupFileActions()
 {
-    QMenu *fileMenu = menuBar()->addMenu ( tr ("&Map","Toolbar for file actions") );
+    QString tag = tr ("&Map","Menu for file actions");
+    QMenu *fileMenu = menuBar()->addMenu ( tag );
 
     QAction *a;
-    a = new QAction(QPixmap( iconPath+"filenew.png"), tr( "&New map","File menu" ),this);
-    a->setShortcut ( Qt::CTRL + Qt::Key_N );
-    switchboard.addConnection(fileMenu, a,tr("File","Shortcut group"));
+    a = new QAction(QPixmap( ":/filenew.png"), tr( "&New map","File menu" ),this);
+    switchboard.addSwitch ("fileMapNew", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( fileNew() ) );
+    cloneActionMapEditor( a, Qt::CTRL + Qt::Key_N);
+    fileMenu->addAction(a);
     actionFileNew=a;
 
-    a = new QAction(QPixmap( iconPath+"filenewcopy.png"), tr( "&Copy to new map","File menu" ),this);
-    a->setShortcut ( Qt::CTRL +Qt::SHIFT + Qt::Key_N );	 
-    switchboard.addConnection(fileMenu, a,tr("File","Shortcut group"));
+    a = new QAction(QPixmap( ":/filenewcopy.png"), tr( "&Copy to new map","File menu" ),this);
+    switchboard.addSwitch ("fileMapNewCopy", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( fileNewCopy() ) );
+    cloneActionMapEditor( a, Qt::CTRL + Qt::SHIFT + Qt::Key_C);
+    fileMenu->addAction(a);
     actionFileNewCopy=a;
 
-    a = new QAction( QPixmap( iconPath+"fileopen.png"), tr( "&Open..." ,"File menu"),this);
-    a->setShortcut ( Qt::CTRL + Qt::Key_L );	 
-    switchboard.addConnection(fileMenu, a,tr("File","Shortcut group"));
+    a = new QAction( QPixmap( ":/fileopen.png"), tr( "&Open..." ,"File menu"),this);
+    switchboard.addSwitch ("fileMapOpen", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( fileLoad() ) );
+    cloneActionMapEditor( a, Qt::CTRL + Qt::Key_L);
+    fileMenu->addAction(a);
     actionFileOpen=a;
 
-    a = new QAction( tr( "&Restore last session" ,"File menu"),this);
-    switchboard.addConnection(fileMenu, a,tr("File","Shortcut group"));
+    a = new QAction(tr( "&Restore last session","Edit menu" ), this);
+    a->setShortcut (Qt::ALT + Qt::Key_R );
+    switchboard.addSwitch ("fileMapRestore", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( fileRestoreSession() ) );
+    fileMenu->addAction(a);
+    actionListFiles.append(a);   
+    actionCopy=a;
 
     fileLastMapsMenu = fileMenu->addMenu (tr("Open Recent","File menu"));
     fileMenu->addSeparator();
 
-    a = new QAction( QPixmap( iconPath+"filesave.png"), tr( "&Save...","File menu" ), this);
-    switchboard.addConnection(fileMenu, a,tr("File","Shortcut group"));
+    a = new QAction( QPixmap( ":/filesave.png"), tr( "&Save...","File menu" ), this);
+    switchboard.addSwitch ("fileMapSave", shortcutScope, a, tag);
+    cloneActionMapEditor( a, Qt::CTRL + Qt::Key_S);
+    fileMenu->addAction(a);
+    restrictedMapActions.append( a );
     connect( a, SIGNAL( triggered() ), this, SLOT( fileSave() ) );
-    actionListMap.append (a);
     actionFileSave=a;
 
-    a = new QAction( QPixmap(iconPath+"filesaveas.png"), tr( "Save &As...","File menu" ), this);
-    switchboard.addConnection(fileMenu, a,tr("File","Shortcut group"));
+    a = new QAction( QPixmap(":/filesaveas.png"), tr( "Save &As...","File menu" ), this);
+    fileMenu->addAction(a);
     connect( a, SIGNAL( triggered() ), this, SLOT( fileSaveAs() ) );
 
     fileMenu->addSeparator();
 
     fileImportMenu = fileMenu->addMenu (tr("Import","File menu"));
 
-    a = new QAction(tr("KDE 4 Bookmarks","Import filters"), this);
-    switchboard.addConnection(fileImportMenu, a,tr("File","Shortcut group"));
-    connect( a, SIGNAL( triggered() ), this, SLOT( fileImportKDE4Bookmarks() ) );
-
     if (settings.value( "/mainwindow/showTestMenu",false).toBool()) 
     {
-	a = new QAction( QPixmap(), tr("Firefox Bookmarks","Import filters"),this);
-	switchboard.addConnection(fileImportMenu, a,tr("File","Shortcut group"));
-	connect( a, SIGNAL( triggered() ), this, SLOT( fileImportFirefoxBookmarks() ) );
-    }	
+        a = new QAction( QPixmap(), tr("Firefox Bookmarks","Import filters"),this);
+        connect( a, SIGNAL( triggered() ), this, SLOT( fileImportFirefoxBookmarks() ) );
+        fileImportMenu->addAction(a);
+    }
 
     a = new QAction("Freemind...",this);
-    switchboard.addConnection(fileImportMenu, a,tr("File","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( fileImportFreemind() ) );
+    fileImportMenu->addAction(a);
 
     a = new QAction("Mind Manager...",this);
-    switchboard.addConnection(fileImportMenu, a,tr("File","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( fileImportMM() ) );
+    fileImportMenu->addAction(a);
 
-    a = new QAction( tr( "Import Dir%1","Import Filters").arg("... (experimental)"), this);
-    switchboard.addConnection(fileImportMenu, a,tr("File","Shortcut group"));
+    a = new QAction( tr( "Import Dir%1","Import Filters").arg("..." + tr("(still experimental)") ), this);
     connect( a, SIGNAL( triggered() ), this, SLOT( fileImportDir() ) );
+    fileImportMenu->addAction(a);
 
     fileExportMenu = fileMenu->addMenu (tr("Export","File menu"));
 
-    a = new QAction( QPixmap(iconPath+"file-document-export.png"),tr("Repeat last export (%1)").arg("-"), this);
-    a->setShortcut (Qt::ALT + Qt::Key_E);	    
-    switchboard.addConnection(fileExportMenu, a,tr("File","Shortcut group"));
+    a = new QAction( QPixmap(":/file-document-export.png"),tr("Repeat last export (%1)").arg("-"), this);
+    switchboard.addSwitch ("fileExportLast", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( fileExportLast() ) );
+    cloneActionMapEditor( a, Qt::ALT + Qt::Key_E );
+    fileExportMenu->addAction(a);
     actionFileExportLast=a;
 
-    a = new QAction(  "Webpage (HTML)...",this );
-    switchboard.addConnection(fileExportMenu, a,tr("File","Shortcut group"));
+    a = new QAction(  tr("Webpage (HTML)...","File export menu"),this );
     connect( a, SIGNAL( triggered() ), this, SLOT( fileExportHTML() ) );
+    fileExportMenu->addAction(a);
 
-    a = new QAction( "Text (ASCII)...", this);
-    switchboard.addConnection(fileExportMenu, a,tr("File","Shortcut group"));
+    a = new QAction( tr("Text (ASCII)...","File export menu"), this);
     connect( a, SIGNAL( triggered() ), this, SLOT( fileExportASCII() ) );
+    fileExportMenu->addAction(a);
 
-    a = new QAction( "Text (A&O report)...", this);
-    switchboard.addConnection(fileExportMenu, a,tr("File","Shortcut group"));
+    a = new QAction( tr("Text with tasks","File export menu") + " (ASCII)... "  + tr("(still experimental)"), this);
+    connect( a, SIGNAL( triggered() ), this, SLOT( fileExportASCIITasks() ) );
+    fileExportMenu->addAction(a);
+
+    a = new QAction( tr("Text (A&O report)...","Export format"), this);
     connect( a, SIGNAL( triggered() ), this, SLOT( fileExportAO() ) );
+    fileExportMenu->addAction(a);
 
     a = new QAction( tr("Image%1","File export menu").arg("..."), this);
-    switchboard.addConnection(fileExportMenu, a,tr("File","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( fileExportImage() ) );
+    fileExportMenu->addAction(a);
 
     a = new QAction( tr("PDF%1","File export menu").arg("..."), this);
-    switchboard.addConnection(fileExportMenu, a,tr("File","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( fileExportPDF() ) );
+    fileExportMenu->addAction(a);
 
     a = new QAction( tr("SVG%1","File export menu").arg("..."), this);
-    switchboard.addConnection(fileExportMenu, a,tr("File","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( fileExportSVG() ) );
+    fileExportMenu->addAction(a);
 
-    a = new QAction( "Open Office...", this);
-    switchboard.addConnection(fileExportMenu, a,tr("File","Shortcut group"));
+    a = new QAction( "LibreOffice...", this);
     connect( a, SIGNAL( triggered() ), this, SLOT( fileExportImpress() ) );
+    fileExportMenu->addAction(a);
 
     a = new QAction( "XML..." , this );
-    switchboard.addConnection(fileExportMenu, a,tr("File","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( fileExportXML() ) );
+    fileExportMenu->addAction(a);
 
-    a = new QAction( tr("KDE 4 Bookmarks","File menu"), this);
-    switchboard.addConnection(fileExportMenu, a,tr("File","Shortcut group"));
-    connect( a, SIGNAL( triggered() ), this, SLOT( fileExportKDE4Bookmarks() ) );
-
-    a = new QAction( "Spreadsheet (CSV)... (experimental)", this);
-    switchboard.addConnection(fileExportMenu, a,tr("File","Shortcut group"));
+    a = new QAction( tr("Spreadsheet") + " (CSV)... " + tr("(still experimental)"), this);
     connect( a, SIGNAL( triggered() ), this, SLOT( fileExportCSV() ) );
+    fileExportMenu->addAction(a);
 
-    a = new QAction( "Taskjuggler... (experimental)", this );
-    switchboard.addConnection(fileExportMenu, a,tr("File","Shortcut group"));
+    a = new QAction( "Taskjuggler... " + tr("(still experimental)"), this );
     connect( a, SIGNAL( triggered() ), this, SLOT( fileExportTaskjuggler() ) );
+    fileExportMenu->addAction(a);
 
-    a = new QAction( "OrgMode... (experimental)", this);
-    switchboard.addConnection(fileExportMenu, a,tr("File","Shortcut group"));
+    a = new QAction( "OrgMode... " + tr("(still experimental)"), this);
     connect( a, SIGNAL( triggered() ), this, SLOT( fileExportOrgMode() ) );
+    fileExportMenu->addAction(a);
 
-    a = new QAction( "LaTeX... (experimental)", this);
-    switchboard.addConnection(fileExportMenu, a,tr("File","Shortcut group"));
+    a = new QAction( "LaTeX... " + tr("(still experimental)"), this);
     connect( a, SIGNAL( triggered() ), this, SLOT( fileExportLaTeX() ) );
+    fileExportMenu->addAction(a);
 
     fileMenu->addSeparator();
 
-    a = new QAction(QPixmap( iconPath+"fileprint.png"), tr( "&Print")+QString("..."), this);
-    a->setShortcut (Qt::CTRL + Qt::Key_P );
-    switchboard.addConnection(fileMenu, a,tr("File","Shortcut group"));
+    a = new QAction( tr( "Properties"), this);
+    switchboard.addSwitch ("editMapProperties", shortcutScope, a, tag);
+    connect( a, SIGNAL( triggered() ), this, SLOT( editMapProperties() ) );
+    fileMenu->addAction(a);
+    actionListFiles.append (a);   
+    actionMapProperties = a;
+
+    fileMenu->addSeparator();
+
+    a = new QAction(QPixmap( ":/fileprint.png"), tr( "&Print")+QString("..."), this);
+    a->setShortcut ( Qt::CTRL + Qt::Key_P);
+    switchboard.addSwitch ("fileMapPrint", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( filePrint() ) );
-    actionListMap.append (a);
+    fileMenu->addAction(a);
+    unrestrictedMapActions.append (a);
     actionFilePrint=a;
 
-    a = new QAction( QPixmap(iconPath+"fileclose.png"), tr( "&Close Map","File menu" ), this);
+    a = new QAction( QPixmap(":/fileclose.png"), tr( "&Close Map","File menu" ), this);
     a->setShortcut (Qt::CTRL + Qt::Key_W );	 
-    switchboard.addConnection(fileMenu, a,tr("File","Shortcut group"));
+    switchboard.addSwitch ("fileMapClose", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( fileCloseMap() ) );
+    fileMenu->addAction(a);
 
-    a = new QAction(QPixmap(iconPath+"exit.png"), tr( "E&xit","File menu")+" "+vymName, this);
+    a = new QAction(QPixmap(":/exit.png"), tr( "E&xit","File menu"), this);
     a->setShortcut (Qt::CTRL + Qt::Key_Q );	  
-    switchboard.addConnection(fileMenu, a,tr("File","Shortcut group"));
+    switchboard.addSwitch ("fileExit", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( fileExitVYM() ) );
+    fileMenu->addAction(a);
 }
 
 
 //Edit Actions
 void Main::setupEditActions()
 {
-    QMenu *editMenu = menuBar()->addMenu( tr("E&dit","Edit menu") );
+    QString tag = tr("E&dit","Edit menu") ;
+    QMenu *editMenu = menuBar()->addMenu( tag );
 
     QAction *a;
-    a = new QAction( QPixmap( iconPath+"undo.png"), tr( "&Undo","Edit menu" ),this);
-    connect( a, SIGNAL( triggered() ), this, SLOT( editUndo() ) );
-    a->setShortcut ( Qt::CTRL + Qt::Key_Z );	  
+    a = new QAction( QPixmap( ":/undo.png"), tr( "&Undo","Edit menu" ),this);
+    a->setShortcut (Qt::CTRL + Qt::Key_Z);
+    a->setShortcutContext (Qt::WidgetShortcut);
     a->setEnabled (false);
-    switchboard.addConnection(editMenu, a,tr("Edit","Shortcut group"));
-    actionListMap.append (a);
+    editMenu->addAction(a);
+    mapEditorActions.append( a );
+    restrictedMapActions.append( a );
+    switchboard.addSwitch ("mapUndo", shortcutScope, a, tag);
+    connect( a, SIGNAL( triggered() ), this, SLOT( editUndo() ) );
     actionUndo=a;
 
-    a = new QAction( QPixmap( iconPath+"redo.png"), tr( "&Redo","Edit menu" ), this); 
-    a->setShortcut (Qt::CTRL + Qt::Key_Y );	  
-    switchboard.addConnection(editMenu, a,tr("Edit","Shortcut group"));
+    a = new QAction( QPixmap( ":/redo.png"), tr( "&Redo","Edit menu" ), this); 
+    a->setShortcut (Qt::CTRL + Qt::Key_Y);
+    a->setShortcutContext (Qt::WidgetShortcut);
+    editMenu->addAction(a);
+    restrictedMapActions.append( a );
+    mapEditorActions.append( a );
+    switchboard.addSwitch ("mapRedo", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( editRedo() ) );
-    actionListMap.append (a);
     actionRedo=a;
 
     editMenu->addSeparator();
-    a = new QAction(QPixmap( iconPath+"editcopy.png"), tr( "&Copy","Edit menu" ), this);
-    a->setShortcut (Qt::CTRL + Qt::Key_C );	 
+    a = new QAction(QPixmap( ":/editcopy.png"), tr( "&Copy","Edit menu" ), this);
+    a->setShortcut (Qt::CTRL + Qt::Key_C );
+    a->setShortcutContext (Qt::WidgetShortcut);
     a->setEnabled (false);
-    switchboard.addConnection(editMenu, a,tr("Edit","Shortcut group"));
+    editMenu->addAction(a);
+    unrestrictedMapActions.append ( a );
+    mapEditorActions.append( a );
+    switchboard.addSwitch ("mapCopy", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( editCopy() ) );
-    actionListMap.append(a);
     actionCopy=a;
 
-    a = new QAction(QPixmap( iconPath+"editcut.png" ), tr( "Cu&t","Edit menu" ), this);
-    a->setShortcut (Qt::CTRL + Qt::Key_X );	  
+    a = new QAction(QPixmap( ":/editcut.png" ), tr( "Cu&t","Edit menu" ), this);
+    a->setShortcut (Qt::CTRL + Qt::Key_X );
     a->setEnabled (false);
-    switchboard.addConnection(editMenu, a,tr("Edit","Shortcut group"));
+    a->setShortcutContext (Qt::WidgetShortcut);
+    editMenu->addAction(a);
+    restrictedMapActions.append( a );
+    mapEditorActions.append( a );
+    restrictedMapActions.append( a );
+    switchboard.addSwitch ("mapCut", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( editCut() ) );
-    actionListMap.append(a);
+    addAction (a);
     actionCut=a;
 
-    a = new QAction(QPixmap( iconPath+"editpaste.png"), tr( "&Paste","Edit menu" ),this);
+    a = new QAction(QPixmap( ":/editpaste.png"), tr( "&Paste","Edit menu" ),this);
     connect( a, SIGNAL( triggered() ), this, SLOT( editPaste() ) );
-    a->setShortcut ( Qt::CTRL + Qt::Key_V );	  
+    a->setShortcut (Qt::CTRL + Qt::Key_V );
+    a->setShortcutContext (Qt::WidgetShortcut);
     a->setEnabled (false);
-    switchboard.addConnection(editMenu, a,tr("Edit","Shortcut group"));
-    actionListMap.append(a);
+    editMenu->addAction(a);
+    restrictedMapActions.append( a );
+    mapEditorActions.append( a );
+    switchboard.addSwitch ("mapPaste", shortcutScope, a, tag);
     actionPaste=a;
 
     // Shortcut to delete selection
     a = new QAction( tr( "Delete Selection","Edit menu" ),this);
     a->setShortcut ( Qt::Key_Delete);		 
     a->setShortcutContext (Qt::WindowShortcut);
-    switchboard.addConnection(a,tr("Edit","Shortcut group"));
+    switchboard.addSwitch ("mapDelete", shortcutScope, a, tag);
     addAction (a);
     connect( a, SIGNAL( triggered() ), this, SLOT( editDeleteSelection() ) );
+    editMenu->addAction(a);
     actionListItems.append (a);
     actionDelete=a;
 
@@ -1131,30 +1210,30 @@ void Main::setupEditActions()
     {
 	//a->setShortcut ( Qt::Key_Q);	
 	a->setShortcutContext (Qt::WindowShortcut);
-	switchboard.addConnection(a,tr("Edit","Shortcut group"));
+        switchboard.addSwitch ("mapAddAttribute", shortcutScope, a, tag);
     }
-    addAction (a);
     connect( a, SIGNAL( triggered() ), this, SLOT( editAddAttribute() ) );
+    editMenu->addAction(a);
     actionAddAttribute= a;
 
 
     // Shortcut to add mapcenter
-    a= new QAction(QPixmap(iconPath+"newmapcenter.png"),tr( "Add mapcenter","Canvas context menu" ), this);
+    a= new QAction(QPixmap(":/newmapcenter.png"),tr( "Add mapcenter","Canvas context menu" ), this);
     a->setShortcut ( Qt::Key_C);    
     a->setShortcutContext (Qt::WindowShortcut);
-    switchboard.addConnection(editMenu, a,tr("Edit","Shortcut group"));
+    switchboard.addSwitch ("mapAddCenter", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( editAddMapCenter() ) );
-    actionListMap.append (a);
+    editMenu->addAction(a);
+    actionListFiles.append (a);
     actionAddMapCenter = a;
 
 
     // Shortcut to add branch
-    a = new QAction(QPixmap(iconPath+"newbranch.png"), tr( "Add branch as child","Edit menu" ), this);
-    a->setShortcut (Qt::Key_A);		
-    a->setShortcutContext (Qt::WindowShortcut);
-    switchboard.addConnection(editMenu, a,tr("Edit","Shortcut group"));
-    addAction (a);
+    a = new QAction(QPixmap(":/newbranch.png"), tr( "Add branch as child","Edit menu" ), this);
+    switchboard.addSwitch ("mapEditNewBranch", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( editNewBranch() ) );
+    cloneActionMapEditor( a, Qt::Key_A );
+    taskEditorActions.append( a );
     actionListBranches.append(a);
     actionAddBranch=a;
 
@@ -1163,9 +1242,9 @@ void Main::setupEditActions()
     a = new QAction(tr( "Add branch (insert)","Edit menu" ),this);
     a->setShortcut ( Qt::ALT + Qt::Key_A );	 
     a->setShortcutContext (Qt::WindowShortcut);
-    switchboard.addConnection(a,tr("Edit","Shortcut group"));
-    addAction (a);
+    switchboard.addSwitch ("mapEditAddBranchBefore", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( editNewBranchBefore() ) );
+    editMenu->addAction(a);
     actionListBranches.append(a);
     actionAddBranchBefore=a;
 
@@ -1173,92 +1252,163 @@ void Main::setupEditActions()
     a = new QAction(tr( "Add branch above","Edit menu" ), this);
     a->setShortcut (Qt::SHIFT+Qt::Key_Insert );	  
     a->setShortcutContext (Qt::WindowShortcut);
-    switchboard.addConnection(a,tr("Edit","Shortcut group"));
+    switchboard.addSwitch ("mapEditAddBranchAbove", shortcutScope, a, tag);
     addAction (a);
     connect( a, SIGNAL( triggered() ), this, SLOT( editNewBranchAbove() ) );
     a->setEnabled (false);
     actionListBranches.append(a);
     actionAddBranchAbove=a;
+
     a = new QAction(tr( "Add branch above","Edit menu" ), this);
     a->setShortcut (Qt::SHIFT+Qt::Key_A );	 
     a->setShortcutContext (Qt::WindowShortcut);
-    switchboard.addConnection(a,tr("Edit","Shortcut group"));
+    switchboard.addSwitch ("mapEditAddBranchAboveAlt", shortcutScope, a, tag);
     addAction (a);
     connect( a, SIGNAL( triggered() ), this, SLOT( editNewBranchAbove() ) );
     actionListBranches.append(a);
+    editMenu->addAction(a);
 
     // Add branch below 
     a = new QAction(tr( "Add branch below","Edit menu" ), this);
     a->setShortcut (Qt::CTRL +Qt::Key_Insert );	  
     a->setShortcutContext (Qt::WindowShortcut);
-    switchboard.addConnection(a,tr("Edit","Shortcut group"));
+    switchboard.addSwitch ("mapEditAddBranchBelow", shortcutScope, a, tag);
     addAction (a);
     connect( a, SIGNAL( triggered() ), this, SLOT( editNewBranchBelow() ) );
     a->setEnabled (false);
     actionListBranches.append(a);
-    actionAddBranchBelow=a;
+
     a = new QAction(tr( "Add branch below","Edit menu" ), this);
     a->setShortcut (Qt::CTRL +Qt::Key_A );	 
     a->setShortcutContext (Qt::WindowShortcut);
-    switchboard.addConnection(a,tr("Edit","Shortcut group"));
+    switchboard.addSwitch ("mapEditAddBranchBelowAlt", shortcutScope, a, tag);
     addAction (a);
     connect( a, SIGNAL( triggered() ), this, SLOT( editNewBranchBelow() ) );
     actionListBranches.append(a);
+    actionAddBranchBelow=a; 
 
-    a = new QAction(QPixmap(iconPath+"up.png" ), tr( "Move up","Edit menu" ), this);
+    a = new QAction(QPixmap(":/up.png" ), tr( "Move branch up","Edit menu" ), this);
     a->setShortcut (Qt::Key_PageUp );		
     a->setShortcutContext (Qt::WidgetShortcut);
-    a->setEnabled (false);
-    switchboard.addConnection(editMenu, a,tr("Edit","Shortcut group"));
-    connect( a, SIGNAL( triggered() ), this, SLOT( editMoveUp() ) );
+    //a->setEnabled (false);
+    mapEditorActions.append( a );
+    taskEditorActions.append( a );
+    restrictedMapActions.append( a );
     actionListBranches.append (a);
+    editMenu->addAction(a);
+    switchboard.addSwitch ("mapEditMoveBranchUp", shortcutScope, a, tag);
+    connect( a, SIGNAL( triggered() ), this, SLOT( editMoveUp() ) );
     actionMoveUp=a;
 
-    a = new QAction( QPixmap( iconPath+"down.png"), tr( "Move down","Edit menu" ),this);
-    connect( a, SIGNAL( triggered() ), this, SLOT( editMoveDown() ) );
+    a = new QAction( QPixmap( ":/down.png"), tr( "Move branch down","Edit menu" ),this);
     a->setShortcut ( Qt::Key_PageDown );	  
     a->setShortcutContext (Qt::WidgetShortcut);
-    a->setEnabled (false);
-    switchboard.addConnection(editMenu, a,tr("Edit","Shortcut group"));
+    //a->setEnabled (false);
+    mapEditorActions.append( a );
+    taskEditorActions.append( a );
+    restrictedMapActions.append( a );
     actionListBranches.append (a);
+    editMenu->addAction(a);
+    switchboard.addSwitch ("mapEditMoveBranchDown", shortcutScope, a, tag);
+    connect( a, SIGNAL( triggered() ), this, SLOT( editMoveDown() ) );
     actionMoveDown=a;
 
     a = new QAction(QPixmap(), tr( "&Detach","Context menu" ),this);
     a->setStatusTip ( tr( "Detach branch and use as mapcenter","Context menu" ) );
     a->setShortcut ( Qt::Key_D );		 
-    switchboard.addConnection(editMenu, a,tr("Edit","Shortcut group"));
+    switchboard.addSwitch ("mapDetachBranch", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( editDetach() ) );
+    editMenu->addAction(a);
     actionListBranches.append (a);
     actionDetach=a;
 
-    a = new QAction( QPixmap(iconPath+"editsort.png" ), tr( "Sort children","Edit menu" ), this );
-    connect( a, SIGNAL( activated() ), this, SLOT( editSortChildren() ) );
+    a = new QAction( QPixmap(":/editsort.png" ), tr( "Sort children","Edit menu" ), this );
     a->setEnabled (true);
     a->setShortcut ( Qt::Key_O );		  
-    switchboard.addConnection(editMenu, a,tr("Edit","Shortcut group"));
+    switchboard.addSwitch ("mapSortBranches", shortcutScope, a, tag);
+    connect( a, SIGNAL( triggered() ), this, SLOT( editSortChildren() ) );
+    editMenu->addAction(a);
     actionListBranches.append (a);
     actionSortChildren=a;
 
-    a = new QAction( QPixmap(iconPath+"editsortback.png" ), tr( "Sort children backwards","Edit menu" ), this );
-    connect( a, SIGNAL( activated() ), this, SLOT( editSortBackChildren() ) );
+    a = new QAction( QPixmap(":/editsortback.png" ), tr( "Sort children backwards","Edit menu" ), this );
     a->setEnabled (true);
     a->setShortcut ( Qt::SHIFT + Qt::Key_O );		
-    switchboard.addConnection(editMenu, a,tr("Edit","Shortcut group"));
+    switchboard.addSwitch ("mapSortBranchesReverse", shortcutScope, a, tag);
+    connect( a, SIGNAL( triggered() ), this, SLOT( editSortBackChildren() ) );
+    editMenu->addAction(a);
     actionListBranches.append (a);
     actionSortBackChildren=a;	
 
-    a = new QAction( QPixmap(flagsPath+"flag-scrolled-right.png"), tr( "Scroll branch","Edit menu" ), this);
+    a = new QAction( QPixmap(":/flag-scrolled-right.png"), tr( "Scroll branch","Edit menu" ), this);
     a->setShortcut ( Qt::Key_S );		  
-    switchboard.addConnection(editMenu, a,tr("Edit","Shortcut group"));
+    switchboard.addSwitch ("mapToggleScroll", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( editToggleScroll() ) );
+    editMenu->addAction(a);
+    actionListBranches.append (a);
     a->setEnabled (false);
     a->setCheckable(true);
     addAction (a);
     actionListBranches.append(a);
     actionToggleScroll=a;
 
+    a = new QAction( tr( "Unscroll children","Edit menu" ), this);
+    editMenu->addAction(a);
+    connect( a, SIGNAL( triggered() ), this, SLOT( editUnscrollChildren() ) );
+    actionListBranches.append (a);
+
+    a = new QAction( tr( "Grow selection","Edit menu" ), this);
+    a->setShortcut ( Qt::CTRL + Qt::Key_Plus);	  
+    switchboard.addSwitch ("mapGrowSelection", shortcutScope, a, tag);
+    connect( a, SIGNAL( triggered() ), this, SLOT( editGrowSelectionSize() ) );
+    editMenu->addAction(a);
+    actionListBranches.append (a);
+    actionListItems.append (a);
+    actionGrowSelectionSize=a;
+
+    a = new QAction( tr( "Shrink selection","Edit menu" ), this);
+    a->setShortcut ( Qt::CTRL + Qt::Key_Minus);	   
+    switchboard.addSwitch ("mapShrinkSelection", shortcutScope, a, tag);
+    connect( a, SIGNAL( triggered() ), this, SLOT( editShrinkSelectionSize() ) );
+    editMenu->addAction(a);
+    actionListBranches.append (a);
+    actionListItems.append (a);
+    actionShrinkSelectionSize=a;
+
+    a = new QAction( tr( "Reset selection size","Edit menu" ), this);
+    a->setShortcut ( Qt::CTRL + Qt::Key_0);	    
+    switchboard.addSwitch ("mapResetSelectionSize", shortcutScope, a, tag);
+    connect( a, SIGNAL( triggered() ), this, SLOT( editResetSelectionSize() ) );
+    editMenu->addAction(a);
+    actionListBranches.append (a);
+    actionListItems.append (a);
+    actionResetSelectionSize=a;
+
+    editMenu->addSeparator();
+
+    a = new QAction( QPixmap(), "TE: " + tr( "Collapse one level","Edit menu" ), this);
+    a->setShortcut ( Qt::Key_Less + Qt::CTRL);	
+    switchboard.addSwitch ("mapCollapseOneLevel", shortcutScope, a, tag);
+    connect( a, SIGNAL( triggered() ), this, SLOT( editCollapseOneLevel() ) );
+    editMenu->addAction(a);
+    a->setEnabled (false);
+    a->setCheckable(false);
+    actionListBranches.append(a);
+    addAction (a);
+    actionCollapseOneLevel=a;  
+
+    a = new QAction( QPixmap(), "TE: " + tr( "Collapse unselected levels","Edit menu" ), this);
+    a->setShortcut ( Qt::Key_Less);	  
+    switchboard.addSwitch ("mapCollapseUnselectedLevels", shortcutScope, a, tag);
+    connect( a, SIGNAL( triggered() ), this, SLOT( editCollapseUnselected() ) );
+    editMenu->addAction(a);
+    a->setEnabled (false);
+    a->setCheckable(false);
+    actionListBranches.append(a);
+    addAction (a);
+    actionCollapseUnselected=a;
+
     a = new QAction( QPixmap(), tr( "Expand all branches","Edit menu" ), this);
-    switchboard.addConnection(editMenu, a,tr("Edit","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( editExpandAll() ) );
     actionExpandAll=a;
     actionExpandAll->setEnabled (false);
@@ -1268,7 +1418,7 @@ void Main::setupEditActions()
 
     a = new QAction( QPixmap(), tr( "Expand one level","Edit menu" ), this);
     a->setShortcut ( Qt::Key_Greater );	    
-    switchboard.addConnection(editMenu, a,tr("Edit","Shortcut group"));
+    switchboard.addSwitch ("mapExpandOneLevel", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( editExpandOneLevel() ) );
     a->setEnabled (false);
     a->setCheckable(false);
@@ -1276,57 +1426,10 @@ void Main::setupEditActions()
     actionListBranches.append(a);
     actionExpandOneLevel=a;
 
-    a = new QAction( QPixmap(), tr( "Collapse one level","Edit menu" ), this);
-    a->setShortcut ( Qt::Key_Less + Qt::CTRL);	
-    switchboard.addConnection(editMenu, a,tr("Edit","Shortcut group"));
-    connect( a, SIGNAL( triggered() ), this, SLOT( editCollapseOneLevel() ) );
-    a->setEnabled (false);
-    a->setCheckable(false);
-    actionListBranches.append(a);
-    addAction (a);
-    actionCollapseOneLevel=a;
-
-    a = new QAction( QPixmap(), tr( "Collapse unselected levels","Edit menu" ), this);
-    a->setShortcut ( Qt::Key_Less);	  
-    switchboard.addConnection(editMenu, a,tr("Edit","Shortcut group"));
-    connect( a, SIGNAL( triggered() ), this, SLOT( editCollapseUnselected() ) );
-    a->setEnabled (false);
-    a->setCheckable(false);
-    actionListBranches.append(a);
-    addAction (a);
-    actionCollapseUnselected=a;
-
-    a = new QAction( tr( "Unscroll children","Edit menu" ), this);
-    switchboard.addConnection(editMenu, a,tr("Edit","Shortcut group"));
-    connect( a, SIGNAL( triggered() ), this, SLOT( editUnscrollChildren() ) );
-    actionListBranches.append (a);
-
-    a = new QAction( tr( "Grow selection","Edit menu" ), this);
-    a->setShortcut ( Qt::CTRL + Qt::Key_Plus);	  
-    switchboard.addConnection(editMenu, a,tr("Edit","Shortcut group"));
-    connect( a, SIGNAL( triggered() ), this, SLOT( editGrowSelectionSize() ) );
-    actionListItems.append (a);
-    actionGrowSelectionSize=a;
-
-    a = new QAction( tr( "Shrink selection","Edit menu" ), this);
-    a->setShortcut ( Qt::CTRL + Qt::Key_Minus);	   
-    switchboard.addConnection(editMenu, a,tr("Edit","Shortcut group"));
-    connect( a, SIGNAL( triggered() ), this, SLOT( editShrinkSelectionSize() ) );
-    actionListItems.append (a);
-    actionShrinkSelectionSize=a;
-
-    a = new QAction( tr( "Reset selection size","Edit menu" ), this);
-    a->setShortcut ( Qt::CTRL + Qt::Key_0);	    
-    switchboard.addConnection(editMenu, a,tr("Edit","Shortcut group"));
-    connect( a, SIGNAL( triggered() ), this, SLOT( editResetSelectionSize() ) );
-    actionListItems.append (a);
-    actionResetSelectionSize=a;
-
-    editMenu->addSeparator();
-
-    a = new QAction( QPixmap(flagsPath+"flag-url.png"), tr( "Open URL","Edit menu" ), this);
+    tag = tr("References Context menu","Shortcuts");
+    a = new QAction( QPixmap(":/flag-url.png"), tr( "Open URL","Edit menu" ), this);
     a->setShortcut (Qt::SHIFT + Qt::Key_U );
-    switchboard.addConnection(a,tr("Edit","Shortcut group"));
+    switchboard.addSwitch ("mapOpenUrl", shortcutScope, a, tag);
     addAction(a);
     connect( a, SIGNAL( triggered() ), this, SLOT( editOpenURL() ) );
     actionListBranches.append (a);
@@ -1334,7 +1437,7 @@ void Main::setupEditActions()
 
     a = new QAction( tr( "Open URL in new tab","Edit menu" ), this);
     //a->setShortcut (Qt::CTRL+Qt::Key_U );
-    switchboard.addConnection(a,tr("Edit","Shortcut group"));
+    switchboard.addSwitch ("mapOpenUrlTab", shortcutScope, a, tag);
     addAction(a);
     connect( a, SIGNAL( triggered() ), this, SLOT( editOpenURLTab() ) );
     actionListBranches.append (a);
@@ -1342,14 +1445,14 @@ void Main::setupEditActions()
 
     a = new QAction( tr( "Open all URLs in subtree (including scrolled branches)","Edit menu" ), this);
     a->setShortcut ( Qt::CTRL + Qt::Key_U );
-    switchboard.addConnection(a,tr("Edit","Shortcut group"));
+    switchboard.addSwitch ("mapOpenUrlsSubTree", shortcutScope, a, tag);
     addAction(a);
     connect( a, SIGNAL( triggered() ), this, SLOT( editOpenMultipleVisURLTabs() ) );
     actionListBranches.append(a);
     actionOpenMultipleVisURLTabs=a;
 
     a = new QAction( tr( "Open all URLs in subtree","Edit menu" ), this);
-    switchboard.addConnection(a,tr("Edit","Shortcut group"));
+    switchboard.addSwitch ("mapOpenMultipleUrlTabs", shortcutScope, a, tag);
     addAction(a);
     connect( a, SIGNAL( triggered() ), this, SLOT( editOpenMultipleURLTabs() ) );
     actionListBranches.append(a);
@@ -1358,16 +1461,16 @@ void Main::setupEditActions()
     a = new QAction(QPixmap(), tr( "Extract URLs from note","Edit menu"), this);
     a->setShortcut ( Qt::SHIFT + Qt::Key_N );
     a->setShortcutContext (Qt::WindowShortcut);
-    switchboard.addConnection(a,tr("Edit","Shortcut group"));
+    switchboard.addSwitch ("mapUrlsFromNote", shortcutScope, a, tag);
     addAction(a);
     connect( a, SIGNAL( triggered() ), this, SLOT( editNote2URLs() ) );
     actionListBranches.append(a);
     actionGetURLsFromNote=a;
 
-    a = new QAction(QPixmap(flagsPath+"flag-urlnew.png"), tr( "Edit URL...","Edit menu"), this);
+    a = new QAction(QPixmap(":/flag-urlnew.png"), tr( "Edit URL...","Edit menu"), this);
     a->setShortcut ( Qt::Key_U );
     a->setShortcutContext (Qt::WindowShortcut);
-    switchboard.addConnection(a,tr("Edit","Shortcut group"));
+    switchboard.addSwitch ("mapEditURL", shortcutScope, a, tag);
     addAction(a);
     connect( a, SIGNAL( triggered() ), this, SLOT( editURL() ) );
     actionListBranches.append(a);
@@ -1376,7 +1479,7 @@ void Main::setupEditActions()
     a = new QAction(QPixmap(), tr( "Edit local URL...","Edit menu"), this);
     //a->setShortcut (Qt::SHIFT +  Qt::Key_U );
     a->setShortcutContext (Qt::WindowShortcut);
-    switchboard.addConnection(a,tr("Edit","Shortcut group"));
+    switchboard.addSwitch ("mapEditLocalURL", shortcutScope, a, tag);
     addAction(a);
     connect( a, SIGNAL( triggered() ), this, SLOT( editLocalURL() ) );
     actionListBranches.append(a);
@@ -1386,101 +1489,108 @@ void Main::setupEditActions()
     a->setShortcut ( Qt::ALT + Qt::Key_U );
     a->setShortcutContext (Qt::ApplicationShortcut);
     a->setEnabled (false);
-    switchboard.addConnection(a,tr("Edit","Shortcut group"));
+    switchboard.addSwitch ("mapHeading2URL", shortcutScope, a, tag);
     addAction(a);
     connect( a, SIGNAL( triggered() ), this, SLOT( editHeading2URL() ) );
     actionListBranches.append(a);
     actionHeading2URL=a;
 
-    a = new QAction(tr( "Create URL to Novell Bugzilla","Edit menu" ), this);
+    tag = tr("Bugzilla handling","Shortcuts");
+    a = new QAction(tr( "Create URL to SUSE Bugzilla","Edit menu" ), this);
     a->setEnabled (false);
     actionListBranches.append(a);
     a->setShortcut ( Qt::Key_B );
     a->setShortcutContext (Qt::WindowShortcut);
-    switchboard.addConnection(a,tr("Edit","Shortcut group"));
+    switchboard.addSwitch ("mapUseHeadingForURL", shortcutScope, a, tag);
     addAction(a);
     connect( a, SIGNAL( triggered() ), this, SLOT( editBugzilla2URL() ) );
     actionListBranches.append(a);
     actionBugzilla2URL=a;
 
-    a = new QAction(tr( "Get data from Novell Bugzilla","Edit menu" ), this);
+    a = new QAction(tr( "Get data from SUSE Bugzilla","Edit menu" ), this);
     a->setShortcut ( Qt::Key_B + Qt::SHIFT);
     a->setShortcutContext (Qt::WindowShortcut);
-    switchboard.addConnection(a,tr("Edit","Shortcut group"));
+    switchboard.addSwitch ("mapUpdateFromBugzilla", shortcutScope, a, tag);
     addAction(a);
     connect( a, SIGNAL( triggered() ), this, SLOT( getBugzillaData() ) );
     actionListBranches.append(a);
     actionGetBugzillaData=a;
 
-    a = new QAction(tr( "Get data from Novell Bugzilla for subtree","Edit menu" ), this);
+    a = new QAction(tr( "Get data from SUSE Bugzilla for subtree","Edit menu" ), this);
     a->setShortcut ( Qt::Key_B + Qt::CTRL);
     a->setShortcutContext (Qt::WindowShortcut);
-    switchboard.addConnection(a,tr("Edit","Shortcut group"));
+    switchboard.addSwitch ("mapUpdateSubTreeFromBugzilla", shortcutScope, a, tag);
     addAction(a);
     connect( a, SIGNAL( triggered() ), this, SLOT( getBugzillaDataSubtree() ) );
     actionListBranches.append(a);
     actionGetBugzillaDataSubtree=a;
 
-    a = new QAction(tr( "Create URL to Novell FATE","Edit menu" ), this);
+    tag = tr("SUSE Fate tool handling","Shortcuts");
+    a = new QAction(tr( "Create URL to SUSE FATE tool","Edit menu" ), this);
     a->setEnabled (false);
-    switchboard.addConnection(a,tr("Edit","Shortcut group"));
+    switchboard.addSwitch ("mapFate2URL", shortcutScope, a, tag);
     actionListBranches.append(a);
     connect( a, SIGNAL( triggered() ), this, SLOT( editFATE2URL() ) );
     actionListBranches.append(a);
     actionFATE2URL=a;
 
-    a = new QAction(QPixmap(flagsPath+"flag-vymlink.png"), tr( "Open linked map","Edit menu" ), this);
+    tag = tr("vymlinks - linking maps","Shortcuts");
+    a = new QAction(QPixmap(":/flag-vymlink.png"), tr( "Open linked map","Edit menu" ), this);
     a->setEnabled (false);
-    switchboard.addConnection(a,tr("Edit","Shortcut group"));
+    switchboard.addSwitch ("mapOpenVymLink", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( editOpenVymLink() ) );
     actionListBranches.append (a);
     actionOpenVymLink=a;
 
-    a = new QAction(QPixmap(flagsPath+"flag-vymlink.png"), tr( "Open linked map in background tab","Edit menu" ), this);
+    a = new QAction(QPixmap(":/flag-vymlink.png"), tr( "Open linked map in background tab","Edit menu" ), this);
     a->setEnabled (false);
-    switchboard.addConnection(a,tr("Edit","Shortcut group"));
+    switchboard.addSwitch ("mapOpenVymLink", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( editOpenVymLinkBackground() ) );
     actionListBranches.append (a);
     actionOpenVymLinkBackground=a;
 
     a = new QAction(QPixmap(), tr( "Open all vym links in subtree","Edit menu" ), this);
     a->setEnabled (false);
-    switchboard.addConnection(a,tr("Edit","Shortcut group"));
+    switchboard.addSwitch ("mapOpenMultipleVymLinks", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( editOpenMultipleVymLinks() ) );
     actionListBranches.append(a);
     actionOpenMultipleVymLinks=a;
 
 
-    a = new QAction(QPixmap(flagsPath+"flag-vymlinknew.png"), tr( "Edit vym link...","Edit menu" ), this);
+    a = new QAction(QPixmap(":/flag-vymlinknew.png"), tr( "Edit vym link...","Edit menu" ), this);
     a->setEnabled (false);
-    switchboard.addConnection(a,tr("Edit","Shortcut group"));
+    switchboard.addSwitch ("mapEditVymLink", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( editVymLink() ) );
     actionListBranches.append(a);
     actionEditVymLink=a;
 
     a = new QAction(tr( "Delete vym link","Edit menu" ),this);
     a->setEnabled (false);
-    switchboard.addConnection(a,tr("Edit","Shortcut group"));
+    switchboard.addSwitch ("mapDeleteVymLink", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( editDeleteVymLink() ) );
     actionListBranches.append(a);
     actionDeleteVymLink=a;
 
-    a = new QAction(QPixmap(flagsPath+"flag-hideexport.png"), tr( "Hide in exports","Edit menu" ), this);
+    tag = tr("Exports","Shortcuts");
+    a = new QAction(QPixmap(":/flag-hideexport.png"), tr( "Hide in exports","Edit menu" ), this);
     a->setShortcut (Qt::Key_H );
     a->setShortcutContext (Qt::WindowShortcut);
     a->setCheckable(true);
     a->setEnabled (false);
-    switchboard.addConnection(this, a,tr("Edit","Shortcut group"));
+    addAction(a);
+    switchboard.addSwitch ("mapToggleHideExport", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( editToggleHideExport() ) );
     actionListItems.append (a);
     actionToggleHideExport=a;
 
-    a = new QAction(QPixmap(flagsPath+"flag-task.png"), tr( "Toggle task","Edit menu" ), this);
+    tag = tr("Tasks","Shortcuts");
+    a = new QAction(QPixmap(":/flag-task.png"), tr( "Toggle task","Edit menu" ), this);
     a->setShortcut (Qt::Key_W + Qt::SHIFT);
     a->setShortcutContext (Qt::WindowShortcut);
     a->setCheckable(true);
     a->setEnabled (false);
-    switchboard.addConnection(this, a,tr("Edit","Shortcut group"));
+    addAction(a);
+    switchboard.addSwitch ("mapToggleTask", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( editToggleTask() ) );
     actionListBranches.append (a);
     actionToggleTask=a;
@@ -1490,7 +1600,8 @@ void Main::setupEditActions()
     a->setShortcutContext (Qt::WindowShortcut);
     a->setCheckable(false);
     a->setEnabled (false);
-    switchboard.addConnection(this, a,tr("Edit","Shortcut group"));
+    addAction(a);
+    switchboard.addSwitch ("mapCycleTaskStatus", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( editCycleTaskStatus() ) );
     actionListBranches.append (a);
     actionCycleTaskStatus=a;
@@ -1500,7 +1611,8 @@ void Main::setupEditActions()
     a->setCheckable(false);
     a->setEnabled (false);
     a->setData (0);
-    switchboard.addConnection(this, a,tr("Edit","Shortcut group"));
+    addAction(a);
+    switchboard.addSwitch ("mapResetSleep", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( editTaskSleepN() ) );
     actionListBranches.append (a);
     actionTaskSleep0=a;
@@ -1511,7 +1623,8 @@ void Main::setupEditActions()
     a->setCheckable(false);
     a->setEnabled (false);
     a->setData (-1);
-    switchboard.addConnection(this, a,tr("Edit","Shortcut group"));
+    addAction(a);
+    switchboard.addSwitch ("mapTaskSleepN", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( editTaskSleepN() ) );
     actionListBranches.append (a);
     actionTaskSleepN=a;
@@ -1521,7 +1634,8 @@ void Main::setupEditActions()
     a->setCheckable(false);
     a->setEnabled (false);
     a->setData (1);
-    switchboard.addConnection(this, a,tr("Edit","Shortcut group"));
+    addAction(a);
+    switchboard.addSwitch ("mapTaskSleep1", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( editTaskSleepN() ) );
     actionListBranches.append (a);
     actionTaskSleep1=a;
@@ -1531,7 +1645,8 @@ void Main::setupEditActions()
     a->setCheckable(false);
     a->setEnabled (false);
     a->setData (2);
-    switchboard.addConnection(this, a,tr("Edit","Shortcut group"));
+    addAction(a);
+    switchboard.addSwitch ("mapTaskSleep2", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( editTaskSleepN() ) );
     actionListBranches.append (a);
     actionTaskSleep2=a;
@@ -1541,7 +1656,8 @@ void Main::setupEditActions()
     a->setCheckable(false);
     a->setEnabled (false);
     a->setData (3);
-    switchboard.addConnection(this, a,tr("Edit","Shortcut group"));
+    addAction(a);
+    switchboard.addSwitch ("mapTaskSleep3", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( editTaskSleepN() ) );
     actionListBranches.append (a);
     actionTaskSleep3=a;
@@ -1551,7 +1667,8 @@ void Main::setupEditActions()
     a->setCheckable(false);
     a->setEnabled (false);
     a->setData (5);
-    switchboard.addConnection(this, a,tr("Edit","Shortcut group"));
+    addAction(a);
+    switchboard.addSwitch ("mapTaskSleep5", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( editTaskSleepN() ) );
     actionListBranches.append (a);
     actionTaskSleep5=a;
@@ -1561,7 +1678,8 @@ void Main::setupEditActions()
     a->setCheckable(false);
     a->setEnabled (false);
     a->setData (7);
-    switchboard.addConnection(this, a,tr("Edit","Shortcut group"));
+    addAction(a);
+    switchboard.addSwitch ("mapTaskSleep7", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( editTaskSleepN() ) );
     actionListBranches.append (a);
     actionTaskSleep7=a;
@@ -1571,7 +1689,8 @@ void Main::setupEditActions()
     a->setCheckable(false);
     a->setEnabled (false);
     a->setData (14);
-    switchboard.addConnection(this, a,tr("Edit","Shortcut group"));
+    addAction(a);
+    switchboard.addSwitch ("mapTaskSleep14", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( editTaskSleepN() ) );
     actionListBranches.append (a);
     actionTaskSleep14=a;
@@ -1581,39 +1700,21 @@ void Main::setupEditActions()
     a->setCheckable(false);
     a->setEnabled (false);
     a->setData (28);
-    switchboard.addConnection(this, a,tr("Edit","Shortcut group"));
+    addAction(a);
+    switchboard.addSwitch ("mapTaskSleep28", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( editTaskSleepN() ) );
     actionListBranches.append (a);
     actionTaskSleep28=a;
-
-    a = new QAction(tr( "Add timestamp","Edit menu" ), this);
-    a->setEnabled (false);
-    actionListBranches.append(a);
-    a->setShortcut ( Qt::Key_T ); 
-    a->setShortcutContext (Qt::WindowShortcut);
-    switchboard.addConnection(this, a,tr("Edit","Shortcut group"));
-    connect( a, SIGNAL( triggered() ), this, SLOT( editAddTimestamp() ) );
-    actionListBranches.append (a);
-    actionAddTimestamp=a;
-
-    a = new QAction(tr( "Edit Map Info...","Edit menu" ),this);
-    a->setEnabled (true);
-    switchboard.addConnection(NULL, a,tr("Edit","Shortcut group"));
-    connect( a, SIGNAL( triggered() ), this, SLOT( editMapInfo() ) );
-    actionListMap.append (a);
-    actionMapInfo=a;
 
     // Import at selection (adding to selection)
     a = new QAction( tr( "Add map (insert)","Edit menu" ),this);
     connect( a, SIGNAL( triggered() ), this, SLOT( editImportAdd() ) );
     a->setEnabled (false);
-    switchboard.addConnection(NULL, a,tr("Edit","Shortcut group"));
     actionListBranches.append(a);
     actionImportAdd=a;
 
     // Import at selection (replacing selection)
     a = new QAction( tr( "Add map (replace)","Edit menu" ), this);
-    switchboard.addConnection(a,tr("Edit","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( editImportReplace() ) );
     a->setEnabled (false);
     actionListBranches.append(a);
@@ -1623,34 +1724,55 @@ void Main::setupEditActions()
     a = new QAction( tr( "Save selection","Edit menu" ), this);
     connect( a, SIGNAL( triggered() ), this, SLOT( editSaveBranch() ) );
     a->setEnabled (false);
-    switchboard.addConnection(a,tr("Edit","Shortcut group"));
     actionListBranches.append(a);
     actionSaveBranch=a;
+
+    tag = tr("Removing parts of a map","Shortcuts");
 
     // Only remove branch, not its children
     a = new QAction(tr( "Remove only branch and keep its children ","Edit menu" ), this);
     a->setShortcut (Qt::ALT + Qt::Key_X );
     connect( a, SIGNAL( triggered() ), this, SLOT( editDeleteKeepChildren() ) );
     a->setEnabled (false);
-    switchboard.addConnection(this, a,tr("Edit","Shortcut group"));
+    addAction(a);
+    switchboard.addSwitch ("mapDeleteKeepChildren", shortcutScope, a, tag);
     actionListBranches.append(a);
     actionDeleteKeepChildren=a;
 
     // Only remove children of a branch
     a = new QAction( tr( "Remove children","Edit menu" ), this);
     a->setShortcut (Qt::SHIFT + Qt::Key_X );
-    switchboard.addConnection(a,tr("Edit","Shortcut group"));
+    addAction(a);
+    switchboard.addSwitch ("mapDeleteChildren", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( editDeleteChildren() ) );
     a->setEnabled (false);
     addAction (a);
     actionListBranches.append(a);
     actionDeleteChildren=a;
 
-    a = new QAction( tr( "Add Image...","Edit menu" ), this);
+    tag = tr("Various","Shortcuts");
+    a = new QAction(tr( "Add timestamp","Edit menu" ), this);
+    a->setEnabled (false);
+    actionListBranches.append(a);
+    a->setShortcut ( Qt::Key_T ); 
+    a->setShortcutContext (Qt::WindowShortcut);
+    addAction(a);
+    switchboard.addSwitch ("mapAddTimestamp", shortcutScope, a, tag);
+    connect( a, SIGNAL( triggered() ), this, SLOT( editAddTimestamp() ) );
+    actionListBranches.append (a);
+    actionAddTimestamp=a;
+
+    a = new QAction(tr( "Map properties...","Edit menu" ),this);
+    a->setEnabled (true);
+    connect( a, SIGNAL( triggered() ), this, SLOT( editMapProperties() ) );
+    actionListFiles.append (a);
+    actionMapInfo=a;
+
+    a = new QAction( tr( "Add   ...","Edit menu" ), this);
     a->setShortcutContext (Qt::WindowShortcut);
     a->setShortcut (Qt::Key_I + Qt::SHIFT);    
-    switchboard.addConnection(a,tr("Edit","Shortcut group"));
-    addAction (a);
+    addAction(a);
+    switchboard.addSwitch ("mapLoadImage", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( editLoadImage() ) );
     actionLoadImage=a;
 
@@ -1658,8 +1780,8 @@ void Main::setupEditActions()
     a->setShortcut ( Qt::Key_P );	 
     a->setShortcutContext (Qt::WindowShortcut);
     a->setCheckable (true);
-    switchboard.addConnection(a,tr("View shortcuts","Shortcut group"));
-    addAction (a);
+    addAction(a);
+    switchboard.addSwitch ("mapTogglePropertEditor", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( windowToggleProperty() ) );
     actionViewTogglePropertyEditor=a;
 }
@@ -1667,67 +1789,81 @@ void Main::setupEditActions()
 // Select Actions
 void Main::setupSelectActions()
 {
+    QString tag = tr("Selections","Shortcuts");
     QMenu *selectMenu = menuBar()->addMenu( tr("Select","Select menu") );
     QAction *a;
-    a = new QAction( QPixmap(flagsPath + "flag-target"), tr( "Toggle target...","Edit menu"), this);
+    a = new QAction( QPixmap(":/flag-target.png"), tr( "Toggle target...","Edit menu"), this);
     a->setShortcut (Qt::SHIFT + Qt::Key_T );		
     a->setCheckable(true);
-    switchboard.addConnection(selectMenu, a,tr("Edit","Shortcut group"));
+    selectMenu->addAction(a);
+    switchboard.addSwitch ("mapToggleTarget", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( editToggleTarget() ) );
     actionListBranches.append (a);
     actionToggleTarget=a;
 
-    a = new QAction( QPixmap(flagsPath + "flag-target"), tr( "Goto target...","Edit menu"), this);
+    a = new QAction( QPixmap(":/flag-target.png"), tr( "Goto target...","Edit menu"), this);
     a->setShortcut (Qt::Key_G );		
-    switchboard.addConnection(selectMenu, a,tr("Edit","Shortcut group"));
+    selectMenu->addAction(a);
+    switchboard.addSwitch ("mapGotoTarget", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( editGoToTarget() ) );
     actionListBranches.append (a);
     actionGoToTarget=a;
 
-    a = new QAction( QPixmap(flagsPath + "flag-target"), tr( "Move to target...","Edit menu"), this);
+    a = new QAction( QPixmap(":/flag-target.png"), tr( "Move to target...","Edit menu"), this);
     a->setShortcut (Qt::Key_M );		
-    switchboard.addConnection(selectMenu, a,tr("Edit","Shortcut group"));
+    selectMenu->addAction(a);
+    switchboard.addSwitch ("mapMoveToTarget", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( editMoveToTarget() ) );
     actionListBranches.append (a);
     actionMoveToTarget=a;
 
-    a = new QAction( QPixmap(iconPath + "selectprevious.png"), tr( "Select previous","Edit menu"), this);
+    a = new QAction( QPixmap(":/selectprevious.png"), tr( "Select previous","Edit menu"), this);
     a->setShortcut (Qt::CTRL+ Qt::Key_O );	
-    switchboard.addConnection(selectMenu, a,tr("Edit","Shortcut group"));
+    a->setShortcutContext (Qt::WidgetShortcut);
+    selectMenu->addAction(a);
+    actionListFiles.append (a);
+    mapEditorActions.append ( a );
+    switchboard.addSwitch ("mapSelectPrevious", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( editSelectPrevious() ) );
-    actionListMap.append (a);
     actionSelectPrevious=a;
 
-    a = new QAction( QPixmap(iconPath + "selectnext.png"), tr( "Select next","Edit menu"), this);
+    a = new QAction( QPixmap(":/selectnext.png"), tr( "Select next","Edit menu"), this);
     a->setShortcut (Qt::CTRL + Qt::Key_I );
-    switchboard.addConnection(selectMenu, a,tr("Edit","Shortcut group"));
+    a->setShortcutContext (Qt::WidgetShortcut);
+    selectMenu->addAction(a);
+    actionListFiles.append (a);
+    mapEditorActions.append ( a );
+    switchboard.addSwitch ("mapSelectNext", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( editSelectNext() ) );
-    actionListMap.append (a);
     actionSelectNext=a;
 
     a = new QAction( tr( "Unselect all","Edit menu"), this);
     //a->setShortcut (Qt::CTRL + Qt::Key_I );
-    switchboard.addConnection(selectMenu, a,tr("Edit","Shortcut group"));
+    selectMenu->addAction(a);
+    switchboard.addSwitch ("mapSelectNothing", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( editSelectNothing() ) );
-    actionListMap.append (a);
+    actionListFiles.append (a);
     actionSelectNothing=a;
 
-    a = new QAction( QPixmap(iconPath+"find.png"), tr( "Find...","Edit menu"), this);
+    tag = tr("Search functions","Shortcuts");
+    a = new QAction( QPixmap(":/find.png"), tr( "Find...","Edit menu"), this);
     a->setShortcut (Qt::CTRL + Qt::Key_F );	
-    switchboard.addConnection(selectMenu, a,tr("Edit","Shortcut group"));
+    selectMenu->addAction(a);
+    switchboard.addSwitch ("mapFind", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( editOpenFindResultWidget() ) );
-    actionListMap.append(a);
+    actionListFiles.append(a);
     actionFind=a;
 
-    a = new QAction( QPixmap(iconPath+"find.png"), tr( "Find...","Edit menu"), this);
+    a = new QAction( QPixmap(":/find.png"), tr( "Find...","Edit menu"), this);
     a->setShortcut (Qt::Key_Slash );	
-    switchboard.addConnection(selectMenu, a,tr("Edit","Shortcut group"));
+    selectMenu->addAction(a);
+    switchboard.addSwitch ("mapFindAlt", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( editOpenFindResultWidget() ) );
-    actionListMap.append(a);
+    actionListFiles.append(a);
 
     a = new QAction( tr( "Find duplicate URLs","Edit menu"), this);
     a->setShortcut (Qt::SHIFT + Qt::Key_F);	
-    switchboard.addConnection(a,tr("Edit","Shortcut group"));
+    switchboard.addSwitch ("mapFindDuplicates", shortcutScope, a, tag);
     if (settings.value( "/mainwindow/showTestMenu",false).toBool() ) 
 	selectMenu->addAction (a);
     connect( a, SIGNAL( triggered() ), this, SLOT( editFindDuplicateURLs() ) );
@@ -1739,33 +1875,39 @@ void Main::setupFormatActions()
 {
     QMenu *formatMenu = menuBar()->addMenu (tr ("F&ormat","Format menu"));
 
+    QString tag = tr("Formatting","Shortcuts");
+
     QAction *a;
     QPixmap pix( 16,16);
     pix.fill (Qt::black);
     a= new QAction(pix, tr( "Set &Color" )+QString("..."), this);
-    switchboard.addConnection(formatMenu, a,tr("Format shortcuts","Shortcut group"));
+    formatMenu->addAction(a);
+    switchboard.addSwitch ("mapFormatColor", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( formatSelectColor() ) );
     actionFormatColor=a;
 
-    a= new QAction( QPixmap(iconPath+"formatcolorpicker.png"), tr( "Pic&k color","Edit menu" ), this);
+    a= new QAction( QPixmap(":/formatcolorpicker.png"), tr( "Pic&k color","Edit menu" ), this);
     a->setShortcut (Qt::CTRL + Qt::Key_K );
-    switchboard.addConnection(formatMenu, a,tr("Format shortcuts","Shortcut group"));
+    formatMenu->addAction(a);
+    switchboard.addSwitch ("mapFormatColorPicker", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( formatPickColor() ) );
     a->setEnabled (false);
     actionListBranches.append(a);
     actionFormatPickColor=a;
 
-    a= new QAction(QPixmap(iconPath+"formatcolorbranch.png"), tr( "Color &branch","Edit menu" ), this);
+    a= new QAction(QPixmap(":/formatcolorbranch.png"), tr( "Color &branch","Edit menu" ), this);
     //a->setShortcut (Qt::CTRL + Qt::Key_B + Qt::SHIFT);
-    switchboard.addConnection(formatMenu, a,tr("Format shortcuts","Shortcut group"));
+    formatMenu->addAction(a);
+    switchboard.addSwitch ("mapFormatColorBranch", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( formatColorBranch() ) );
     a->setEnabled (false);
     actionListBranches.append(a);
     actionFormatColorBranch=a;
 
-    a= new QAction(QPixmap(iconPath+"formatcolorsubtree.png"), tr( "Color sub&tree","Edit menu" ), this);
+    a= new QAction(QPixmap(":/formatcolorsubtree.png"), tr( "Color sub&tree","Edit menu" ), this);
     //a->setShortcut (Qt::CTRL + Qt::Key_B);	// Color subtree
-    switchboard.addConnection(formatMenu, a,tr("Format shortcuts","Shortcut group"));
+    formatMenu->addAction(a);
+    switchboard.addSwitch ("mapFormatColorSubtree", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( formatColorSubtree() ) );
     a->setEnabled (false);
     actionListBranches.append(a);
@@ -1785,25 +1927,32 @@ void Main::setupFormatActions()
     actionGroupFormatLinkStyles->setExclusive (true);
     a= new QAction( tr( "Linkstyle Line" ), actionGroupFormatLinkStyles);
     a->setCheckable(true);
-    connect( a, SIGNAL( triggered() ), this, SLOT( formatLinkStyleLine() ) );
+    restrictedMapActions.append( a );
     formatMenu->addAction (a);
+    connect( a, SIGNAL( triggered() ), this, SLOT( formatLinkStyleLine() ) );
     actionFormatLinkStyleLine=a;
+
     a= new QAction( tr( "Linkstyle Curve" ), actionGroupFormatLinkStyles);
     a->setCheckable(true);
-    connect( a, SIGNAL( triggered() ), this, SLOT( formatLinkStyleParabel() ) );
+    restrictedMapActions.append( a );
     formatMenu->addAction (a);
+    connect( a, SIGNAL( triggered() ), this, SLOT( formatLinkStyleParabel() ) );
     actionFormatLinkStyleParabel=a;
+
     a= new QAction( tr( "Linkstyle Thick Line" ), actionGroupFormatLinkStyles );
     a->setCheckable(true);
-    connect( a, SIGNAL( triggered() ), this, SLOT( formatLinkStylePolyLine() ) );
+    restrictedMapActions.append( a );
     formatMenu->addAction (a);
+    connect( a, SIGNAL( triggered() ), this, SLOT( formatLinkStylePolyLine() ) );
     actionFormatLinkStylePolyLine=a;
+
     a= new QAction( tr( "Linkstyle Thick Curve" ), actionGroupFormatLinkStyles);
     a->setCheckable(true);
     a->setChecked (true);
-    connect( a, SIGNAL( triggered() ), this, SLOT( formatLinkStylePolyParabel() ) );
+    restrictedMapActions.append( a );
     formatMenu->addAction (a);
     formatMenu->addSeparator();
+    connect( a, SIGNAL( triggered() ), this, SLOT( formatLinkStylePolyParabel() ) );
     actionFormatLinkStylePolyParabel=a;
 
     a = new QAction( tr( "Hide link if object is not selected","Branch attribute" ), this);
@@ -1845,113 +1994,126 @@ void Main::setupViewActions()
 {
     QMenu *viewMenu = menuBar()->addMenu ( tr( "&View" ));
     toolbarsMenu=viewMenu->addMenu (tr("Toolbars","Toolbars overview in view menu") );
+    QString tag = tr("Views","Shortcuts");
+
     viewMenu->addSeparator();	
 
     QAction *a;
-    a = new QAction( QPixmap(iconPath+"viewmag+.png"), tr( "Zoom in","View action" ), this);
+    a = new QAction( QPixmap(":/viewmag+.png"), tr( "Zoom in","View action" ), this);
     a->setShortcut(Qt::Key_Plus);
-    switchboard.addConnection(a,tr("View shortcuts","Shortcut group"));
     viewMenu->addAction (a);
+    switchboard.addSwitch ("mapZoomIn", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT(viewZoomIn() ) );
-    actionListMap.append (a);
+    actionListFiles.append (a);
     actionZoomIn=a;
 
-    a = new QAction( QPixmap(iconPath+"viewmag-.png"), tr( "Zoom out","View action" ), this);
+    a = new QAction( QPixmap(":/viewmag-.png"), tr( "Zoom out","View action" ), this);
     a->setShortcut(Qt::Key_Minus);
-    switchboard.addConnection(a,tr("View shortcuts","Shortcut group"));
     viewMenu->addAction (a);
+    switchboard.addSwitch ("mapZoomOut", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( viewZoomOut() ) );
-    actionListMap.append (a);
+    actionListFiles.append (a);
     actionZoomOut=a;
 
-    a = new QAction( QPixmap(iconPath+"rotate-ccw.png"), tr( "Rotate counterclockwise","View action" ), this);
+    a = new QAction( QPixmap(":/rotate-ccw.png"), tr( "Rotate counterclockwise","View action" ), this);
     a->setShortcut( Qt::SHIFT + Qt::Key_R);
-    switchboard.addConnection(a,tr("View shortcuts","Shortcut group"));
     viewMenu->addAction (a);
+    switchboard.addSwitch ("mapRotateCounterClockwise", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( viewRotateCounterClockwise() ) );
-    actionListMap.append (a);
+    actionListFiles.append (a);
     actionRotateCounterClockwise=a;
 
-    a = new QAction( QPixmap(iconPath+"rotate-cw.png"), tr( "Rotate rclockwise","View action" ), this);
+    a = new QAction( QPixmap(":/rotate-cw.png"), tr( "Rotate rclockwise","View action" ), this);
     a->setShortcut(Qt::Key_R);
-    switchboard.addConnection(a,tr("View shortcuts","Shortcut group"));
     viewMenu->addAction (a);
+    switchboard.addSwitch ("mapRotateClockwise", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( viewRotateClockwise() ) );
-    actionListMap.append (a);
+    actionListFiles.append (a);
     actionRotateClockwise=a;
 
-    a = new QAction(QPixmap(iconPath+"viewmag-reset.png"), tr( "reset Zoom","View action" ), this);
+    a = new QAction(QPixmap(":/viewmag-reset.png"), tr( "reset Zoom","View action" ), this);
     a->setShortcut (Qt::Key_Comma);
-    switchboard.addConnection(a,tr("View shortcuts","Shortcut group"));
+    switchboard.addSwitch ("mapZoomReset", shortcutScope, a, tag);
     viewMenu->addAction (a);
     connect( a, SIGNAL( triggered() ), this, SLOT(viewZoomReset() ) );
-    actionListMap.append (a);
+    actionListFiles.append (a);
     actionZoomReset=a;
 
-    a = new QAction( QPixmap(iconPath+"viewshowsel.png"), tr( "Center on selection","View action" ), this);
+    a = new QAction( QPixmap(":/viewshowsel.png"), tr( "Center on selection","View action" ), this);
     a->setShortcut(Qt::Key_Period);
-    switchboard.addConnection(a,tr("View shortcuts","Shortcut group"));
     viewMenu->addAction (a);
+    switchboard.addSwitch ("mapCenterOn", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( viewCenter() ) );
-    actionListMap.append (a);
+    actionListFiles.append (a);
     actionCenterOn=a;
 
     viewMenu->addSeparator();	
 
-    a=noteEditorDW->toggleViewAction();
-    a->setShortcut ( Qt::Key_N );  
-    switchboard.addConnection(a,tr("View shortcuts","Shortcut group"));
+    //a=noteEditorDW->toggleViewAction();
+    a = new QAction(QPixmap(":/flag-note.png"), tr( "Note editor","View action" ),this);
+    a->setShortcut ( Qt::Key_N );
+    a->setShortcutContext (Qt::WidgetShortcut);
     a->setCheckable(true);
-    a->setIcon (QPixmap(flagsPath+"flag-note.png"));
     viewMenu->addAction (a);
+    mapEditorActions.append( a );
+    switchboard.addSwitch ("mapToggleNoteEditor", shortcutScope, a, tag);
+    connect( a, SIGNAL( triggered() ), this, SLOT(windowToggleNoteEditor() ) );
     actionViewToggleNoteEditor=a;
 
-    a=headingEditorDW->toggleViewAction();
-    a->setShortcut ( Qt::Key_E );  
-    switchboard.addConnection(a,tr("View shortcuts","Shortcut group"));
+    //a=headingEditorDW->toggleViewAction();
+    a = new QAction(QPixmap(":/headingeditor.png"), tr( "Heading editor","View action" ),this);
     a->setCheckable(true);
-    a->setIcon (QPixmap(iconPath+"headingeditor.png"));
+    a->setIcon (QPixmap(":/headingeditor.png"));
+    a->setShortcut ( Qt::Key_E );
+    a->setShortcutContext (Qt::WidgetShortcut);
+    mapEditorActions.append( a );
     viewMenu->addAction (a);
+    switchboard.addSwitch ("mapToggleHeadingEditor", shortcutScope, a, tag);
+    connect( a, SIGNAL( triggered() ), this, SLOT(windowToggleHeadingEditor() ) );
     actionViewToggleHeadingEditor=a;
 
     // Original icon is "category" from KDE
-    a = new QAction(QPixmap(iconPath+"treeeditor.png"), tr( "Tree editor","View action" ),this);
+    a = new QAction(QPixmap(":/treeeditor.png"), tr( "Tree editor","View action" ),this);
     a->setShortcut ( Qt::CTRL + Qt::Key_T );
-    switchboard.addConnection(a,tr("View shortcuts","Shortcut group"));
     a->setCheckable(true);
     viewMenu->addAction (a);
+    switchboard.addSwitch ("mapToggleTreeEditor", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT(windowToggleTreeEditor() ) );
     actionViewToggleTreeEditor=a;
 
-    a = new QAction(QPixmap(iconPath+"taskeditor.png"), tr( "Task editor","View action" ),this);
-    a->setShortcut ( Qt::Key_Q );
-    switchboard.addConnection(a,tr("View shortcuts","Shortcut group"));
+    a = new QAction(QPixmap(":/taskeditor.png"), tr( "Task editor","View action" ),this);
     a->setCheckable(true);
+    a->setShortcut ( Qt::Key_Q );
+    a->setShortcutContext (Qt::WidgetShortcut);
+    mapEditorActions.append( a );
     viewMenu->addAction (a);
+    switchboard.addSwitch ("mapToggleTaskEditor", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT(windowToggleTaskEditor() ) );
     actionViewToggleTaskEditor=a;
 
-    a = new QAction(QPixmap(iconPath+"slideeditor.png"), tr( "Slide editor","View action" ),this);
+    a = new QAction(QPixmap(":/slideeditor.png"), tr( "Slide editor","View action" ),this);
     a->setShortcut ( Qt::SHIFT + Qt::Key_S );
-    switchboard.addConnection(a,tr("View shortcuts","Shortcut group"));
     a->setCheckable(true);
     viewMenu->addAction (a);
+    switchboard.addSwitch ("mapToggleSlideEditor", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT(windowToggleSlideEditor() ) );
     actionViewToggleSlideEditor=a;
 
-    a = new QAction(QPixmap(iconPath+"scripteditor.png"), tr("Script editor","View action"), this);
+    a = new QAction(QPixmap(":/scripteditor.png"), tr("Script editor","View action"), this);
     a->setShortcut ( Qt::ALT + Qt::Key_S );
     a->setCheckable(true);
     viewMenu->addAction (a);
-    switchboard.addConnection(a, tr("View shortcuts","Shortcut group"));
+    switchboard.addSwitch ("mapToggleScriptEditor", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( windowToggleScriptEditor() ) );
     actionViewToggleScriptEditor=a;
 
-    a = new QAction(QPixmap(iconPath+"history.png"),  tr( "History Window","View action" ),this );
+    a = new QAction(QPixmap(":/history.png"),  tr( "History Window","View action" ),this );
     a->setShortcut ( Qt::CTRL + Qt::Key_H  );
-    switchboard.addConnection(a,tr("View shortcuts","Shortcut group"));
+    a->setShortcutContext (Qt::WidgetShortcut);
     a->setCheckable(true);
     viewMenu->addAction (a);
+    mapEditorActions.append( a );
+    switchboard.addSwitch ("mapToggleHistoryWindow", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT(windowToggleHistory() ) );
     actionViewToggleHistoryWindow=a;
 
@@ -1962,7 +2124,6 @@ void Main::setupViewActions()
     a = new QAction(tr( "Antialiasing","View action" ),this );
     a->setCheckable(true);
     a->setChecked (settings.value("/mainwindow/view/AntiAlias",true).toBool());
-    switchboard.addConnection(a,tr("View shortcuts","Shortcut group"));
     viewMenu->addAction (a);
     connect( a, SIGNAL( triggered() ), this, SLOT(windowToggleAntiAlias() ) );
     actionViewToggleAntiAlias=a;
@@ -1971,7 +2132,6 @@ void Main::setupViewActions()
     a->setStatusTip (a->text());
     a->setCheckable(true);
     a->setChecked (settings.value("/mainwindow/view/SmoothPixmapTransformation",true).toBool());
-    switchboard.addConnection(a,tr("View shortcuts","Shortcut group"));
     viewMenu->addAction (a);
     connect( a, SIGNAL( triggered() ), this, SLOT(windowToggleSmoothPixmap() ) );
     actionViewToggleSmoothPixmapTransform=a;
@@ -1979,29 +2139,29 @@ void Main::setupViewActions()
     a = new QAction(tr( "Next Map","View action" ), this);
     a->setStatusTip (a->text());
     a->setShortcut (Qt::SHIFT+ Qt::Key_Right );
-    switchboard.addConnection(a,tr("View shortcuts","Shortcut group"));
     viewMenu->addAction (a);
+    switchboard.addSwitch ("mapPrevious", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT(windowNextEditor() ) );
 
     a = new QAction (tr( "Previous Map","View action" ), this );
     a->setStatusTip (a->text());
     a->setShortcut (Qt::SHIFT+ Qt::Key_Left );
-    switchboard.addConnection(a,tr("View shortcuts","Shortcut group"));
     viewMenu->addAction (a);
+    switchboard.addSwitch ("mapNext", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT(windowPreviousEditor() ) );
 
     a = new QAction (tr( "Next slide","View action" ), this );
     a->setStatusTip (a->text());
     a->setShortcut (Qt::Key_Space);
-    switchboard.addConnection(a,tr("Next slide","Shortcut group"));
     viewMenu->addAction (a);
+    switchboard.addSwitch ("mapNextSlide", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT(nextSlide() ) );
 
     a = new QAction (tr( "Previous slide","View action" ), this );
     a->setStatusTip (a->text());
     a->setShortcut (Qt::Key_Backspace);
-    switchboard.addConnection(a,tr("Previous  slide","Shortcut group"));
     viewMenu->addAction (a);
+    switchboard.addSwitch ("mapPreviousSlide", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT(previousSlide() ) );
 }
 
@@ -2011,28 +2171,32 @@ void Main::setupModeActions()
     //QPopupMenu *menu = new QPopupMenu( this );
     //menuBar()->insertItem( tr( "&Mode (using modifiers)" ), menu );
 
+    QString tag = tr("Modifier modes","Shortcuts");
     QAction *a;
     actionGroupModModes=new QActionGroup ( this);
     actionGroupModModes->setExclusive (true);
-    a= new QAction( QPixmap(iconPath+"modecolor.png"), tr( "Use modifier to color branches","Mode modifier" ), actionGroupModModes);
+    a= new QAction( QPixmap(":/modecolor.png"), tr( "Use modifier to color branches","Mode modifier" ), actionGroupModModes);
     a->setShortcut (Qt::Key_J);
-    switchboard.addConnection(this,a,tr("Modes","Shortcut group"));
+    addAction(a);
+    switchboard.addSwitch ("mapModModeColor", shortcutScope, a, tag);
     a->setCheckable(true);
     a->setChecked(true);
-    actionListMap.append (a);
+    actionListFiles.append (a);
     actionModModeColor=a;
 
     a->setShortcut( Qt::Key_K); 
-    switchboard.addConnection(this,a,tr("Modes","Shortcut group"));
+    addAction(a);
+    switchboard.addSwitch ("mapModModeCopy", shortcutScope, a, tag);
     a->setCheckable(true);
-    actionListMap.append (a);
+    actionListFiles.append (a);
     actionModModeCopy=a;
 
-    a= new QAction(QPixmap(iconPath+"modelink.png"), tr( "Use modifier to draw xLinks","Mode modifier" ), actionGroupModModes );
+    a= new QAction(QPixmap(":/modelink.png"), tr( "Use modifier to draw xLinks","Mode modifier" ), actionGroupModModes );
     a->setShortcut (Qt::Key_L);
-    switchboard.addConnection(this,a,tr("Modes","Shortcut group"));
+    addAction(a);
+    switchboard.addSwitch ("mapModModeXLink", shortcutScope, a, tag);
     a->setCheckable(true);
-    actionListMap.append (a);
+    actionListFiles.append (a);
     actionModModeXLink=a;
 }
 
@@ -2044,55 +2208,55 @@ void Main::setupFlagActions()
 
     // Tasks
     // Origin: ./share/icons/oxygen/48x48/status/task-reject.png
-    flag=new Flag(flagsPath+"flag-task-new.png");
+    flag=new Flag(":/flag-task-new.png");
     flag->setGroup("system-tasks");
     setupFlag (flag,NULL,"system-task-new",tr("Note","SystemFlag"));
-    flag=new Flag(flagsPath+"flag-task-new-morning.png");
+    flag=new Flag(":/flag-task-new-morning.png");
     flag->setGroup("system-tasks");
     setupFlag (flag,NULL,"system-task-new-morning",tr("Note","SystemFlag"));
-    flag=new Flag(flagsPath+"flag-task-new-sleeping.png");
+    flag=new Flag(":/flag-task-new-sleeping.png");
     flag->setGroup("system-tasks");
     setupFlag (flag,NULL,"system-task-new-sleeping",tr("Note","SystemFlag"));
     // Origin: ./share/icons/oxygen/48x48/status/task-reject.png
-    flag=new Flag(flagsPath+"flag-task-wip.png");
+    flag=new Flag(":/flag-task-wip.png");
     flag->setGroup("system-tasks");
     setupFlag (flag,NULL,"system-task-wip",tr("Note","SystemFlag"));
-    flag=new Flag(flagsPath+"flag-task-wip-morning.png");
+    flag=new Flag(":/flag-task-wip-morning.png");
     flag->setGroup("system-tasks");
     setupFlag (flag,NULL,"system-task-wip-morning",tr("Note","SystemFlag"));
-    flag=new Flag(flagsPath+"flag-task-wip-sleeping.png");
+    flag=new Flag(":/flag-task-wip-sleeping.png");
     flag->setGroup("system-tasks");
     setupFlag (flag,NULL,"system-task-wip-sleeping",tr("Note","SystemFlag"));
     // Origin: ./share/icons/oxygen/48x48/status/task-complete.png
-    flag=new Flag(flagsPath+"flag-task-finished.png");
+    flag=new Flag(":/flag-task-finished.png");
     flag->setGroup("system-tasks");
     setupFlag (flag,NULL,"system-task-finished",tr("Note","SystemFlag"));
 
-    flag=new Flag(flagsPath+"flag-note.png");
+    flag=new Flag(":/flag-note.png");
     setupFlag (flag,NULL,"system-note",tr("Note","SystemFlag"));
 
-    flag=new Flag(flagsPath+"flag-url.png");
+    flag=new Flag(":/flag-url.png");
     setupFlag (flag,NULL,"system-url",tr("URL to Document ","SystemFlag"));
 
-    flag=new Flag(flagsPath+"flag-url-bugzilla-novell.png");
+    flag=new Flag(":/flag-url-bugzilla-novell.png");
     setupFlag (flag,NULL,"system-url-bugzilla-novell",tr("URL to Bugzilla ","SystemFlag"));
 
-    flag=new Flag(flagsPath+"flag-url-bugzilla-novell-closed.png");
+    flag=new Flag(":/flag-url-bugzilla-novell-closed.png");
     setupFlag (flag,NULL,"system-url-bugzilla-novell-closed",tr("URL to Bugzilla ","SystemFlag"));
 
-    flag=new Flag(flagsPath+"flag-target.png");
+    flag=new Flag(":/flag-target.png");
     setupFlag (flag,NULL,"system-target",tr("Map target","SystemFlag"));
 
-    flag=new Flag(flagsPath+"flag-vymlink.png");
+    flag=new Flag(":/flag-vymlink.png");
     setupFlag (flag,NULL,"system-vymLink",tr("Link to another vym map","SystemFlag"));
 
-    flag=new Flag(flagsPath+"flag-scrolled-right.png");
+    flag=new Flag(":/flag-scrolled-right.png");
     setupFlag (flag,NULL,"system-scrolledright",tr("subtree is scrolled","SystemFlag"));
 
-    flag=new Flag(flagsPath+"flag-tmpUnscrolled-right.png");
+    flag=new Flag(":/flag-tmpUnscrolled-right.png");
     setupFlag (flag,NULL,"system-tmpUnscrolledRight",tr("subtree is temporary scrolled","SystemFlag"));
 
-    flag=new Flag(flagsPath+"flag-hideexport.png");
+    flag=new Flag(":/flag-hideexport.png");
     setupFlag (flag,NULL,"system-hideInExport",tr("Hide object in exported maps","SystemFlag"));
 
     addToolBarBreak();
@@ -2106,236 +2270,241 @@ void Main::setupFlagActions()
     // after all others:
     toolbarsMenu->addAction (standardFlagsToolbar->toggleViewAction() );
 
-    flag=new Flag(flagsPath+"flag-stopsign.png");
+    flag=new Flag(":/flag-stopsign.png");
     setupFlag (flag,standardFlagsToolbar,"stopsign",tr("This won't work!","Standardflag"),Qt::Key_1);
     flag->unsetGroup();
 
-    flag=new Flag(flagsPath+"flag-hook-green.png");
+    flag=new Flag(":/flag-hook-green.png");
     flag->setGroup("standard-status");
     setupFlag (flag,standardFlagsToolbar,"hook-green",tr("Status - ok,done","Standardflag"),Qt::Key_2);
 
-    flag=new Flag(flagsPath+"flag-wip.png");
+    flag=new Flag(":/flag-wip.png");
     flag->setGroup("standard-status");
     setupFlag (flag,standardFlagsToolbar,"wip",tr("Status - work in progress","Standardflag"),Qt::Key_3);
 
-    flag=new Flag(flagsPath+"flag-cross-red.png");
+    flag=new Flag(":/flag-cross-red.png");
     flag->setGroup("standard-status");
     setupFlag (flag,standardFlagsToolbar,"cross-red",tr("Status - missing, not started","Standardflag"),Qt::Key_4);
 
-    flag=new Flag(flagsPath+"flag-exclamationmark.png");
+    flag=new Flag(":/flag-exclamationmark.png");
     flag->setGroup("standard-mark");
     setupFlag (flag,standardFlagsToolbar,"exclamationmark",tr("Take care!","Standardflag"),Qt::Key_Exclam);
 
-    flag=new Flag(flagsPath+"flag-questionmark.png");
+    flag=new Flag(":/flag-questionmark.png");
     flag->setGroup("standard-mark");
     setupFlag (flag,standardFlagsToolbar,"questionmark",tr("Really?","Standardflag"),Qt::Key_Question);
 
-    flag=new Flag(flagsPath+"flag-smiley-good.png");
+    flag=new Flag(":/flag-smiley-good.png");
     flag->setGroup("standard-smiley");
     setupFlag (flag,standardFlagsToolbar,"smiley-good",tr("Good","Standardflag"),Qt::Key_ParenRight);
 
-    flag=new Flag(flagsPath+"flag-smiley-sad.png");
+    flag=new Flag(":/flag-smiley-sad.png");
     flag->setGroup("standard-smiley");
     setupFlag (flag,standardFlagsToolbar,"smiley-sad",tr("Bad","Standardflag"),Qt::Key_ParenLeft);
 
-    flag=new Flag(flagsPath+"flag-smiley-omb.png");
+    flag=new Flag(":/flag-smiley-omb.png");
     flag->setGroup("standard-smiley");
     setupFlag (flag,standardFlagsToolbar,"smiley-omb",tr("Oh no!","Standardflag"));
     // Original omg.png (in KDE emoticons)
     flag->unsetGroup();
 
-    flag=new Flag(flagsPath+"flag-clock.png");
+    flag=new Flag(":/flag-clock.png");
     setupFlag (flag,standardFlagsToolbar,"clock",tr("Time critical","Standardflag"));
 
-    flag=new Flag(flagsPath+"flag-phone.png");
+    flag=new Flag(":/flag-phone.png");
     setupFlag (flag,standardFlagsToolbar,"phone",tr("Call...","Standardflag"));
 
-    flag=new Flag(flagsPath+"flag-lamp.png");
+    flag=new Flag(":/flag-lamp.png");
     setupFlag (flag,standardFlagsToolbar,"lamp",tr("Idea!","Standardflag"),Qt::Key_Asterisk);
 
-    flag=new Flag(flagsPath+"flag-arrow-up.png");
+    flag=new Flag(":/flag-arrow-up.png");
     flag->setGroup("standard-arrow");
     setupFlag (flag,standardFlagsToolbar,"arrow-up",tr("Important","Standardflag"),Qt::SHIFT + Qt::Key_PageUp);
 
-    flag=new Flag(flagsPath+"flag-arrow-down.png");
+    flag=new Flag(":/flag-arrow-down.png");
     flag->setGroup("standard-arrow");
     setupFlag (flag,standardFlagsToolbar,"arrow-down",tr("Unimportant","Standardflag"),Qt::SHIFT + Qt::Key_PageDown);
 
-    flag=new Flag(flagsPath+"flag-2arrow-up.png");
+    flag=new Flag(":/flag-2arrow-up.png");
     flag->setGroup("standard-arrow");
     setupFlag (flag,standardFlagsToolbar,"2arrow-up",tr("Very important!","Standardflag"),Qt::SHIFT + +Qt::CTRL + Qt::Key_PageUp);
 
-    flag=new Flag(flagsPath+"flag-2arrow-down.png");
+    flag=new Flag(":/flag-2arrow-down.png");
     flag->setGroup("standard-arrow");
     setupFlag (flag,standardFlagsToolbar,"2arrow-down",tr("Very unimportant!","Standardflag"),Qt::SHIFT + Qt::CTRL + Qt::Key_PageDown);
     flag->unsetGroup();
 
-    flag=new Flag(flagsPath+"flag-thumb-up.png");
+    flag=new Flag(":/flag-thumb-up.png");
     flag->setGroup("standard-thumb");
-    setupFlag (flag,standardFlagsToolbar,"thumb-up",tr("I like this","Standardflag"),Qt::Key_BracketRight);
+    setupFlag (flag,standardFlagsToolbar,"thumb-up",tr("I like this","Standardflag"));
 
-    flag=new Flag(flagsPath+"flag-thumb-down.png");
+    flag=new Flag(":/flag-thumb-down.png");
     flag->setGroup("standard-thumb");
-    setupFlag (flag,standardFlagsToolbar,"thumb-down",tr("I do not like this","Standardflag"),Qt::Key_BracketLeft);
+    setupFlag (flag,standardFlagsToolbar,"thumb-down",tr("I do not like this","Standardflag"));
     flag->unsetGroup();
 
-    flag=new Flag(flagsPath+"flag-rose.png");
+    flag=new Flag(":/flag-rose.png");
     setupFlag (flag,standardFlagsToolbar,"rose",tr("Rose","Standardflag"));
 
-    flag=new Flag(flagsPath+"flag-heart.png");
+    flag=new Flag(":/flag-heart.png");
     setupFlag (flag,standardFlagsToolbar,"heart",tr("I just love...","Standardflag"));
 
-    flag=new Flag(flagsPath+"flag-present.png");
+    flag=new Flag(":/flag-present.png");
     setupFlag (flag,standardFlagsToolbar,"present",tr("Surprise!","Standardflag"));
 
-    flag=new Flag(flagsPath+"flag-flash.png");
+    flag=new Flag(":/flag-flash.png");
     setupFlag (flag,standardFlagsToolbar,"flash",tr("Dangerous","Standardflag"));
 
     // Original: xsldbg_output.png
-    flag=new Flag(flagsPath+"flag-info.png");
+    flag=new Flag(":/flag-info.png");
     setupFlag (flag,standardFlagsToolbar,"info",tr("Info","Standardflag"),Qt::Key_I);
 
     // Original khelpcenter.png
-    flag=new Flag(flagsPath+"flag-lifebelt.png");
+    flag=new Flag(":/flag-lifebelt.png");
     setupFlag (flag,standardFlagsToolbar,"lifebelt",tr("This will help","Standardflag"));
 
     // Freemind flags
-    flag=new Flag(flagsPath+"freemind/warning.png");
+    flag=new Flag(":/freemind/warning.png");
     flag->setVisible(false);
     setupFlag (flag,standardFlagsToolbar,  "freemind-warning",tr("Important","Freemind-Flag"));
 
     for (int i=1; i<8; i++)
     {
-	flag=new Flag(flagsPath+QString("freemind/priority-%1.png").arg(i));
+	flag=new Flag(QString(":/freemind/priority-%1.png").arg(i));
 	flag->setVisible(false);
 	flag->setGroup ("Freemind-priority");
 	setupFlag (flag,standardFlagsToolbar, QString("freemind-priority-%1").arg(i),tr("Priority","Freemind-Flag"));
     }
 
-    flag=new Flag(flagsPath+"freemind/back.png");
+    flag=new Flag(":/freemind/back.png");
     flag->setVisible(false);
     setupFlag (flag,standardFlagsToolbar,"freemind-back",tr("Back","Freemind-Flag"));
 
-    flag=new Flag(flagsPath+"freemind/forward.png");
+    flag=new Flag(":/freemind/forward.png");
     flag->setVisible(false);
     setupFlag (flag,standardFlagsToolbar,"freemind-forward",tr("forward","Freemind-Flag"));
 
-    flag=new Flag(flagsPath+"freemind/attach.png");
+    flag=new Flag(":/freemind/attach.png");
     flag->setVisible(false);
     setupFlag (flag,standardFlagsToolbar,"freemind-attach",tr("Look here","Freemind-Flag"));
 
-    flag=new Flag(flagsPath+"freemind/clanbomber.png");
+    flag=new Flag(":/freemind/clanbomber.png");
     flag->setVisible(false);
     setupFlag (flag,standardFlagsToolbar,"freemind-clanbomber",tr("Dangerous","Freemind-Flag"));
 
-    flag=new Flag(flagsPath+"freemind/desktopnew.png");
+    flag=new Flag(":/freemind/desktopnew.png");
     flag->setVisible(false);
     setupFlag (flag,standardFlagsToolbar,"freemind-desktopnew",tr("Don't flagrget","Freemind-Flag"));
 
-    flag=new Flag(flagsPath+"freemind/flag.png");
+    flag=new Flag(":/freemind/flag.png");
     flag->setVisible(false);
     setupFlag (flag,standardFlagsToolbar,"freemind-flag",tr("Flag","Freemind-Flag"));
 
 
-    flag=new Flag(flagsPath+"freemind/gohome.png");
+    flag=new Flag(":/freemind/gohome.png");
     flag->setVisible(false);
     setupFlag (flag,standardFlagsToolbar,"freemind-gohome",tr("Home","Freemind-Flag"));
 
-    flag=new Flag(flagsPath+"freemind/kaddressbook.png");
+    flag=new Flag(":/freemind/kaddressbook.png");
     flag->setVisible(false);
     setupFlag (flag,standardFlagsToolbar,"freemind-kaddressbook",tr("Telephone","Freemind-Flag"));
 
-    flag=new Flag(flagsPath+"freemind/knotify.png");
+    flag=new Flag(":/freemind/knotify.png");
     flag->setVisible(false);
     setupFlag (flag,standardFlagsToolbar,"freemind-knotify",tr("Music","Freemind-Flag"));
 
-    flag=new Flag(flagsPath+"freemind/korn.png");
+    flag=new Flag(":/freemind/korn.png");
     flag->setVisible(false);
     setupFlag (flag,standardFlagsToolbar,"freemind-korn",tr("Mailbox","Freemind-Flag"));
 
-    flag=new Flag(flagsPath+"freemind/mail.png");
+    flag=new Flag(":/freemind/mail.png");
     flag->setVisible(false);
     setupFlag (flag,standardFlagsToolbar,"freemind-mail",tr("Maix","Freemind-Flag"));
 
-    flag=new Flag(flagsPath+"freemind/password.png");
+    flag=new Flag(":/freemind/password.png");
     flag->setVisible(false);
     setupFlag (flag,standardFlagsToolbar,"freemind-password",tr("Password","Freemind-Flag"));
 
-    flag=new Flag(flagsPath+"freemind/pencil.png");
+    flag=new Flag(":/freemind/pencil.png");
     flag->setVisible(false);
     setupFlag (flag,standardFlagsToolbar,"freemind-pencil",tr("To be improved","Freemind-Flag"));
 
-    flag=new Flag(flagsPath+"freemind/stop.png");
+    flag=new Flag(":/freemind/stop.png");
     flag->setVisible(false);
     setupFlag (flag,standardFlagsToolbar,"freemind-stop",tr("Stop","Freemind-Flag"));
 
-    flag=new Flag(flagsPath+"freemind/wizard.png");
+    flag=new Flag(":/freemind/wizard.png");
     flag->setVisible(false);
     setupFlag (flag,standardFlagsToolbar,"freemind-wizard",tr("Magic","Freemind-Flag"));
 
-    flag=new Flag(flagsPath+"freemind/xmag.png");
+    flag=new Flag(":/freemind/xmag.png");
     flag->setVisible(false);
     setupFlag (flag,standardFlagsToolbar,"freemind-xmag",tr("To be discussed","Freemind-Flag"));
 
-    flag=new Flag(flagsPath+"freemind/bell.png");
+    flag=new Flag(":/freemind/bell.png");
     flag->setVisible(false);
     setupFlag (flag,standardFlagsToolbar,"freemind-bell",tr("Reminder","Freemind-Flag"));
 
-    flag=new Flag(flagsPath+"freemind/bookmark.png");
+    flag=new Flag(":/freemind/bookmark.png");
     flag->setVisible(false);
     setupFlag (flag,standardFlagsToolbar,"freemind-bookmark",tr("Excellent","Freemind-Flag"));
 
-    flag= new Flag(flagsPath+"freemind/penguin.png");
+    flag= new Flag(":/freemind/penguin.png");
     flag->setVisible(false);
     setupFlag (flag,standardFlagsToolbar,"freemind-penguin",tr("Linux","Freemind-Flag"));
 
-    flag=new Flag (flagsPath+"freemind/licq.png");
+    flag=new Flag (":/freemind/licq.png");
     flag->setVisible(false);
     setupFlag (flag,standardFlagsToolbar,"freemind-licq",tr("Sweet","Freemind-Flag"));
 }
 
-void Main::setupFlag (Flag *flag, QToolBar *tb, const QString &name, const QString &tooltip, const QKeySequence &shortcut)
+void Main::setupFlag (Flag *flag, QToolBar *tb, const QString &name, const QString &tooltip, const QKeySequence &keyseq)
 {
     flag->setName(name);
     flag->setToolTip (tooltip);
     QAction *a;
     if (tb)
     {
-	a=new QAction (flag->getPixmap(),name,this);
-	// StandardFlag
-	flag->setAction (a);
-	a->setVisible (flag->isVisible());
-	a->setCheckable(true);
-	a->setObjectName(name);
-	a->setToolTip(tooltip);
-	a->setShortcut (shortcut);
-	connect (a, SIGNAL( triggered() ), this, SLOT( standardFlagChanged() ) );
-	standardFlagsMaster->addFlag (flag);	
-	switchboard.addConnection (tb, a, tr("Flags toolbar"));
+        a=new QAction (flag->getPixmap(),name,this);
+        // StandardFlag
+        flag->setAction (a);
+        a->setVisible (flag->isVisible());
+        a->setCheckable(true);
+        a->setObjectName(name);
+        a->setToolTip(tooltip);
+        if (keyseq != 0)
+        {
+            a->setShortcut (keyseq);
+            a->setShortcutContext (Qt::WidgetShortcut);
+
+            // Allow mapEditors to actually trigger this action
+            mapEditorActions.append( a );
+            taskEditorActions.append( a );
+        }
+
+        tb->addAction(a);
+        connect (a, SIGNAL( triggered() ), this, SLOT( standardFlagChanged() ) );
+        standardFlagsMaster->addFlag (flag);
     } else
     {
-	// SystemFlag
-	systemFlagsMaster->addFlag (flag);  
+        // SystemFlag
+        systemFlagsMaster->addFlag (flag);
     }
 }
 
 // Network Actions
 void Main::setupNetworkActions()
 {
-    if (!settings.value( "/mainwindow/showTestMenu",false).toBool() ) 
-	return;
-    QMenu *netMenu = menuBar()->addMenu(  "Network" );
+    if (!settings.value( "/mainwindow/showTestMenu",false).toBool() ) return;
 
     QAction *a;
 
     a = new QAction(  "Start TCPserver for MapEditor",this);
     //a->setShortcut ( Qt::ALT + Qt::Key_T );	 
-    switchboard.addConnection(netMenu, a,tr("Network shortcuts","Shortcut group"));
     connect( a, SIGNAL( triggered() ), this, SLOT( networkStartServer() ) );
 
     a = new QAction(  "Connect MapEditor to server",this);
-    a->setShortcut ( Qt::ALT + Qt::Key_C );
-    switchboard.addConnection(netMenu, a,tr("Network shortcuts","Shortcut group"));
+    //a->setShortcut ( Qt::ALT + Qt::Key_C );
     connect( a, SIGNAL( triggered() ), this, SLOT( networkConnect() ) );
 }
 
@@ -2346,12 +2515,29 @@ void Main::setupSettingsActions()
 
     QAction *a;
 
+    a = new QAction( tr( "Check for release notes and updates","Settings action"), this);
+    a->setCheckable(true);
+    a->setChecked ( settings.value ("/downloads/enabled",true).toBool());
+    connect( a, SIGNAL( triggered() ), this, SLOT( settingsToggleDownloads() ) );
+    settingsMenu->addAction (a);
+    actionSettingsToggleDownloads = a;
+
+    a = new QAction( tr( "Set author for new maps","Settings action"), this);
+    connect( a, SIGNAL( triggered() ), this, SLOT( settingsDefaultMapAuthor() ) );
+    settingsMenu->addAction (a);
+
+    settingsMenu->addSeparator();
+
     a = new QAction( tr( "Set application to open pdf files","Settings action"), this);
     connect( a, SIGNAL( triggered() ), this, SLOT( settingsPDF() ) );
     settingsMenu->addAction (a);
 
     a = new QAction( tr( "Set application to open external links","Settings action"), this);
     connect( a, SIGNAL( triggered() ), this, SLOT( settingsURL() ) );
+    settingsMenu->addAction (a);
+
+    a = new QAction( tr( "Set application to zip/unzip files","Settings action"), this);
+    connect( a, SIGNAL( triggered() ), this, SLOT( settingsZipTool() ) );
     settingsMenu->addAction (a);
 
     a = new QAction( tr( "Set path for macros","Settings action")+"...", this);
@@ -2366,9 +2552,9 @@ void Main::setupSettingsActions()
 
     a = new QAction( tr( "Autosave","Settings action"), this);
     a->setCheckable(true);
-    a->setChecked ( settings.value ("/mainwindow/autosave/use",true).toBool());
+    a->setChecked ( settings.value ("/system/autosave/use",true).toBool());
     settingsMenu->addAction (a);
-    actionSettingsAutosaveToggle=a;
+    actionSettingsToggleAutosave=a;
 
     a = new QAction( tr( "Autosave time","Settings action")+"...", this);
     connect( a, SIGNAL( triggered() ), this, SLOT( settingsAutosaveTime() ) );
@@ -2378,15 +2564,15 @@ void Main::setupSettingsActions()
     // Disable certain actions during testing
     if (testmode)
     {
-	actionSettingsAutosaveToggle->setChecked (false);
-	actionSettingsAutosaveToggle->setEnabled (false);
+	actionSettingsToggleAutosave->setChecked (false);
+	actionSettingsToggleAutosave->setEnabled (false);
 	actionSettingsAutosaveTime->setEnabled (false);
     }
 
     a = new QAction( tr( "Write backup file on save","Settings action"), this);
     a->setCheckable(true);
-    a->setChecked ( settings.value ("/mainwindow/writeBackupFile",false).toBool());
-    connect( a, SIGNAL( triggered() ), this, SLOT( settingsWriteBackupFileToggle() ) );
+    a->setChecked ( settings.value ("/system/writeBackupFile",false).toBool());
+    connect( a, SIGNAL( triggered() ), this, SLOT( settingsToggleWriteBackupFile() ) );
     settingsMenu->addAction (a);
     actionSettingsWriteBackupFile=a;
 
@@ -2424,10 +2610,15 @@ void Main::setupSettingsActions()
 
     settingsMenu->addSeparator();
 
-    a = new QAction( tr( "Task editor: Set number of parents","Settings action"), this);
-    connect( a, SIGNAL( triggered() ), this, SLOT( settingsTaskShowParentsLevel() ) );
+    a = new QAction( tr( "Number of visible parents in task editor","Settings action"), this); 
+    connect( a, SIGNAL( triggered() ), this, SLOT( settingsShowParentsLevelTasks() ) );
     settingsMenu->addAction (a);
-    actionSettingsTaskShowParentsLevel=a;
+    actionSettingsShowParentsLevelTasks=a;
+
+    a = new QAction( tr( "Number of visible parents in find results window","Settings action"), this); 
+    connect( a, SIGNAL( triggered() ), this, SLOT( settingsShowParentsLevelFindResults() ) );
+    settingsMenu->addAction (a);
+    actionSettingsShowParentsLevelFindResults=a;
 
     a = new QAction( tr( "Animation","Settings action"), this);
     a->setCheckable(true);
@@ -2439,9 +2630,9 @@ void Main::setupSettingsActions()
     a = new QAction( tr( "Automatic layout","Settings action"), this);
     a->setCheckable(true);
     a->setChecked ( settings.value ("/mainwindow/autoLayout/use",true).toBool());
-    connect( a, SIGNAL( triggered() ), this, SLOT( settingsAutoLayoutToggle() ) );
+    connect( a, SIGNAL( triggered() ), this, SLOT( settingsToggleAutoLayout() ) );
     settingsMenu->addAction (a);
-    actionSettingsAutoLayoutToggle=a;
+    actionSettingsToggleAutoLayout=a;
 }
 
 // Test Actions
@@ -2449,26 +2640,29 @@ void Main::setupTestActions()
 {
     QMenu *testMenu = menuBar()->addMenu( tr( "Test" ));
 
+    QString tag = "Testing";
     QAction *a;
     a = new QAction( "Test function 1" , this);
     a->setShortcut (Qt::ALT + Qt::Key_T); 
-    switchboard.addConnection(testMenu, a, tr("Test shortcuts","Shortcut group"));
+    testMenu->addAction(a);
+    switchboard.addSwitch ("mapTest1", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( testFunction1() ) );
 
     a = new QAction( "Test function 2" , this);
-    switchboard.addConnection(testMenu, a, tr("Test shortcuts","Shortcut group"));
+    testMenu->addAction(a);
     connect( a, SIGNAL( triggered() ), this, SLOT( testFunction2() ) );
 
     a = new QAction( "Toggle hide export mode" , this);
     a->setCheckable (true);
     a->setChecked (false);
-    switchboard.addConnection(testMenu, a, tr("Test shortcuts","Shortcut group"));
+    testMenu->addAction(a);
     connect( a, SIGNAL( triggered() ), this, SLOT( toggleHideExport() ) );
     actionToggleHideMode=a;
 
     a = new QAction( "Toggle winter mode" , this);
     a->setShortcut (Qt::ALT + Qt::Key_Asterisk); 
-    switchboard.addConnection(testMenu, a, "Toggle Winter mode");
+    testMenu->addAction(a);
+    switchboard.addSwitch ("mapWinterMode", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( toggleWinter() ) );
     actionToggleWinter=a;
 }
@@ -2480,16 +2674,30 @@ void Main::setupHelpActions()
 
     QAction *a;
     a = new QAction(  tr( "Open VYM Documentation (pdf) ","Help action" ), this );
-    switchboard.addConnection(helpMenu, a,tr("Help shortcuts","Shortcut group"));
+    helpMenu->addAction(a);
     connect( a, SIGNAL( triggered() ), this, SLOT( helpDoc() ) );
 
     a = new QAction(  tr( "Open VYM example maps ","Help action" ), this );
-    switchboard.addConnection(helpMenu, a,tr("Help shortcuts","Shortcut group"));
+    helpMenu->addAction(a);
     connect( a, SIGNAL( triggered() ), this, SLOT( helpDemo() ) );
+    helpMenu->addSeparator();
+
+    a = new QAction(  tr( "Download and show release notes","Help action" ), this );
+    helpMenu->addAction(a);
+    connect( a, SIGNAL( triggered() ), this, SLOT( checkReleaseNotes() ) );
+
+    a = new QAction(  tr( "Check, if updates are available","Help action" ), this );
+    helpMenu->addAction(a);
+    connect( a, SIGNAL( triggered() ), this, SLOT( checkUpdates() ) );
+    helpMenu->addSeparator();
 
     a = new QAction(  tr( "Show keyboard shortcuts","Help action" ), this );
-    switchboard.addConnection(helpMenu, a,tr("Help shortcuts","Shortcut group"));
+    helpMenu->addAction(a);
     connect( a, SIGNAL( triggered() ), this, SLOT( helpShortcuts() ) );
+
+    a = new QAction( tr("Debug info","Option to show debugging info") , this);  
+    helpMenu->addAction(a);
+    connect( a, SIGNAL( triggered() ), this, SLOT( debugInfo() ) );
 
     a = new QAction( tr( "About VYM","Help action" ), this);
     connect( a, SIGNAL( triggered() ), this, SLOT( helpAbout() ) );
@@ -2585,6 +2793,7 @@ void Main::setupContextMenus()
 
     // Context Menu for XLinks in a branch menu
     // This will be populated "on demand" in updateActions
+    QString tag = tr ("XLinks","Menu for file actions");
     branchContextMenu->addSeparator();	
     branchXLinksContextMenuEdit =branchContextMenu->addMenu (tr ("Edit XLink","Context menu name"));
     connect( 
@@ -2593,7 +2802,8 @@ void Main::setupContextMenus()
     QAction *a;
     a = new QAction( tr("Follow XLink","Context menu") , this);
     a->setShortcut (Qt::Key_F); 
-    switchboard.addConnection(this, a,tr("Edit","Shortcut group"));
+    addAction(a);
+    switchboard.addSwitch ("mapFollowXLink", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( popupFollowXLink() ) );
 
     branchXLinksContextMenuFollow =branchContextMenu->addMenu (tr ("Follow XLink","Context menu name"));
@@ -2618,21 +2828,30 @@ void Main::setupContextMenus()
 
     // Context menu for canvas
     canvasContextMenu =new QMenu (this);
-    canvasContextMenu->addAction (actionAddMapCenter);
-    canvasContextMenu->addAction (actionMapInfo);   //FIXME-4 move to File menu?
-    canvasContextMenu->insertSeparator(actionMapInfo);   
 
+    canvasContextMenu->addAction (actionAddMapCenter);
+
+    canvasContextMenu->addSeparator();   
+
+    canvasContextMenu->addAction(actionMapProperties);
     canvasContextMenu->addAction(actionFormatFont);
-    canvasContextMenu->insertSeparator(actionFormatFont);
+
+    canvasContextMenu->addSeparator();   
 
     canvasContextMenu->addActions(actionGroupFormatLinkStyles->actions() );
-    canvasContextMenu->insertSeparator(actionGroupFormatLinkStyles->actions().first() );   
+
+    canvasContextMenu->addSeparator();   
+
     canvasContextMenu->addAction(actionFormatLinkColorHint);
-    canvasContextMenu->insertSeparator(actionFormatLinkColorHint);
+
+    canvasContextMenu->addSeparator();   
+
     canvasContextMenu->addAction(actionFormatLinkColor);
     canvasContextMenu->addAction(actionFormatSelectionColor);
     canvasContextMenu->addAction(actionFormatBackColor);
-    // actionFormatBackImage->addTo( canvasContextMenu );  //FIXME-4 makes vym too slow: postponed for later version 
+    //if (settings.value( "/mainwindow/showTestMenu",false).toBool() )
+    //    canvasContextMenu->addAction( actionFormatBackImage );  //FIXME-3 makes vym too slow: postponed for later version 
+
 
     // Menu for last opened files
     // Create actions
@@ -2670,7 +2889,6 @@ void Main::setupMacros()
 	macroActions[i] = new QAction(this);
 	macroActions[i]->setData(i);
 	addAction (macroActions[i]);
-	//switchboard.addConnection(macroActions[i],tr("Macro shortcuts","Shortcut group"));
 	connect(macroActions[i], SIGNAL(triggered()), this, SLOT(callMacro()));
     }		
     macroActions[0]->setShortcut ( Qt::Key_F1 );
@@ -2737,9 +2955,9 @@ void Main::setupToolbars()
     // URLs and vymLinks
     referencesToolbar=addToolBar( tr ("URLs and vymLinks toolbar","Toolbar for URLs and vymlinks"));
     referencesToolbar->setObjectName ("URLs and vymlinks toolbar");
-    referencesToolbar->addAction (actionOpenURL);
+    //referencesToolbar->addAction (actionOpenURL); //FIXME-4 removed 2015-06-22
     referencesToolbar->addAction (actionURLNew);
-    referencesToolbar->addAction (actionOpenVymLink);
+    //referencesToolbar->addAction (actionOpenVymLink)//FIXME-4 removed 2015-06-22;
     referencesToolbar->addAction (actionEditVymLink);
 
     // Format and colors
@@ -2840,6 +3058,8 @@ VymModel* Main::currentModel() const
 
 VymModel* Main::getModel(uint id) const	
 {
+    if (id <=0) return NULL;
+
     // Used in BugAgent
     for (int i=0; i<vymViews.count();i++)
 	if (vymViews.at(i)->getModel()->getModelID()==id)
@@ -2862,7 +3082,22 @@ int Main::modelCount()
     return vymViews.count();
 }
 
-void Main::editorChanged(QWidget *)
+void Main::updateTabName( VymModel *vm)
+{
+    for( int i = 0; i < vymViews.count(); i++)
+    {
+        if (vymViews.at(i)->getModel() == vm )
+        {
+            if ( vm->isReadOnly() )
+                tabWidget->setTabText( i, vm->getFileName() + " " + tr("(readonly)") );
+            else
+                tabWidget->setTabText( i, vm->getFileName() );
+            break;
+        }
+    }
+}
+
+void Main::editorChanged()
 {
     VymModel *vm=currentModel();
     if (vm) 
@@ -2967,7 +3202,6 @@ File::ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode, const FileType
 	}
     }
 
-    int tabIndex=tabWidget->currentIndex();
 
     // Try to load map
     if ( !fn.isEmpty() )
@@ -2983,8 +3217,6 @@ File::ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode, const FileType
 	    vymViews.append (vv);
 
 	    tabWidget->addTab (vv,fn);
-	    tabIndex=tabWidget->count()-1;
-	    //tabWidget->setCurrentIndex (tabIndex);
 	    vv->initFocus();
 	}
 	
@@ -3001,13 +3233,14 @@ File::ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode, const FileType
 
 	    mb.setButtonText( QMessageBox::Yes, tr("Create"));
 	    mb.setButtonText( QMessageBox::No, tr("Cancel"));
+
+            VymModel *vm = currentMapEditor()->getModel();
 	    switch( mb.exec() ) 
 	    {
 		case QMessageBox::Yes:
 		    // Create new map
-		    currentMapEditor()->getModel()->setFilePath(fn);
-		    tabWidget->setTabText (tabIndex,
-			currentMapEditor()->getModel()->getFileName() );
+                    vm->setFilePath(fn);
+                    updateTabName( vm );
 		    statusBar()->showMessage( "Created " + fn , statusbarTime );
 		    return File::Success;
 			
@@ -3022,45 +3255,38 @@ File::ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode, const FileType
 	    }
 	}   
 
-	//tabWidget->setCurrentIndex (tabIndex);
-
 	if (err!=File::Aborted)
 	{
 	    // Save existing filename in case  we import
-	    QString fn_org=vm->getFilePath();
+	    QString fn_org = vm->getFilePath();
 
 	    // Finally load map into mapEditor
 	    progressDialog.setLabelText (tr("Loading: %1","Progress dialog while loading maps").arg(fn));
 	    vm->setFilePath (fn);
 	    vm->saveStateBeforeLoad (lmode,fn);
-	    err=vm->loadMap(fn,lmode,ftype);
+	    err = vm->loadMap(fn,lmode,ftype);
 
 	    // Restore old (maybe empty) filepath, if this is an import
-	    if (lmode!=NewMap)
+	    if (lmode != NewMap)
 		vm->setFilePath (fn_org);
 	}   
 
 	// Finally check for errors and go home
-	if (err==File::Aborted) 
+	if (err == File::Aborted) 
 	{
-	    if (lmode==NewMap) fileCloseMap();
+	    if (lmode == NewMap) fileCloseMap();
 	    statusBar()->showMessage( "Could not load " + fn, statusbarTime );
 	} else 
 	{
-	    if (lmode==NewMap)
-	    {
-		vm->setFilePath (fn);
-		tabWidget->setTabText (tabIndex, vm->getFileName());
-		if (!isInTmpDir (fn))
-		{
-		    // Only append to lastMaps if not loaded from a tmpDir
-		    // e.g. imported bookmarks are in a tmpDir
-		    addRecentMap(vm->getFilePath() );
-		}
-		actionFilePrint->setEnabled (true);
-	    }	
-	    editorChanged(this);
+	    if (lmode == NewMap)
+            {
+                vm->setFilePath (fn);
+                updateTabName( vm );
+                actionFilePrint->setEnabled (true);
+            }	
+	    editorChanged();
 	    vm->emitShowSelection();
+            addRecentMap( fn );
 	    statusBar()->showMessage( "Loaded " + fn, statusbarTime );
 	}   
     }
@@ -3085,7 +3311,7 @@ void Main::fileLoad(const LoadMode &lmode)
     }
 
     QString filter;
-    filter+="VYM map " + tr("or","File Dialog") +" Freemind map" + " (*.vym *.vyp *.mm);;";
+    filter+="VYM map " + tr("or","File Dialog") +" Freemind map" + " (*.xml *.vym *.vyp *.mm);;";  
     filter+="VYM map (*.vym *.vyp);;";
     filter+="VYM Backups (*.vym~);;";
     filter+="Freemind map (*.mm);;";
@@ -3099,6 +3325,7 @@ void Main::fileLoad(const LoadMode &lmode)
 
     if (!fns.isEmpty() )
     {
+        initProgressCounter (fns.count() );
 	lastMapDir.setPath(fns.first().left(fns.first().lastIndexOf ("/")) );
 	foreach (QString fn, fns)
 	    fileLoad(fn, lmode, getMapType (fn) );		   
@@ -3111,6 +3338,7 @@ void Main::fileLoad(const LoadMode &lmode)
 void Main::fileLoad()
 {
     fileLoad (NewMap);
+    tabWidget->setCurrentIndex (tabWidget->count()-1);
 }
 
 void Main::fileSaveSession()
@@ -3129,10 +3357,10 @@ void Main::fileRestoreSession()
     initProgressCounter (flist.count());
     while (it !=flist.end() )
     {
-	FileType type=getMapType (*it);
-	fileLoad (*it, NewMap,type);
-	*it++;
-    }	
+        FileType type=getMapType (*it);
+        fileLoad (*it, NewMap,type);
+        *it++;
+    }
     removeProgressCounter();
 }
 
@@ -3141,11 +3369,12 @@ void Main::fileLoadRecent()
     QAction *action = qobject_cast<QAction *>(sender());
     if (action)
     {
-	initProgressCounter ();
+        initProgressCounter ();
         QString fn=action->data().toString();
-	FileType type=getMapType (fn);
+        FileType type=getMapType (fn);
         fileLoad (fn, NewMap,type);
-	removeProgressCounter();
+        removeProgressCounter();
+        tabWidget->setCurrentIndex (tabWidget->count()-1);
     }
 }
 
@@ -3167,6 +3396,8 @@ void Main::fileSave(VymModel *m, const SaveMode &savemode)
 {
     if (!m) return;
 
+    if (m->isReadOnly() ) return;
+
     if ( m->getFilePath().isEmpty() ) 
     {
 	// We have  no filepath yet,
@@ -3181,8 +3412,6 @@ void Main::fileSave(VymModel *m, const SaveMode &savemode)
 	statusBar()->showMessage( 
 	    tr("Saved  %1").arg(m->getFilePath()), 
 	    statusbarTime );
-	addRecentMap (m->getFilePath() );
-	fileSaveSession();
     } else	
 	statusBar()->showMessage( 
 	    tr("Couldn't save ").arg(m->getFilePath()), 
@@ -3204,13 +3433,13 @@ void Main::fileSaveAs(const SaveMode& savemode)
     if (currentMapEditor())
     {
 	QString filter;
-	if (savemode==CompleteMap)
-	    filter="VYM map (*.vym)";
+	if (savemode == CompleteMap)
+	    filter = "VYM map (*.vym)";
 	else    
-	    filter="VYM part of map (*vyp)";
-	filter+=";;All (* *.*)";
+	    filter = "VYM part of map (*vyp)";
+	filter += ";;All (* *.*)";
 
-	QString fn=QFileDialog::getSaveFileName (
+	QString fn = QFileDialog::getSaveFileName (
 	    this,
 	    tr("Save map as"),
 	    lastMapDir.path(),
@@ -3245,29 +3474,47 @@ void Main::fileSaveAs(const SaveMode& savemode)
 	    {
 		// New file, add extension to filename, if missing
 		// This is always .vym or .vyp, depending on savemode
-		if (savemode==CompleteMap)
+		if (savemode == CompleteMap)
 		{
 		    if (!fn.contains (".vym") && !fn.contains (".xml"))
-			fn +=".vym";
+			fn += ".vym";
 		} else	    
 		{
 		    if (!fn.contains (".vyp") && !fn.contains (".xml"))
-			fn +=".vyp";
+			fn += ".vyp";
 		}
 	    }
     
 	    // Save now
-	    VymModel *m=currentModel();
-	    QString fn_org=m->getFilePath(); // Restore fn later, if savemode != CompleteMap
-	    m->setFilePath(fn);
+	    VymModel *m = currentModel();
+	    QString fn_org = m->getFilePath(); // Restore fn later, if savemode != CompleteMap
+	    if (savemode == CompleteMap )
+            {
+                // Check for existing lockfile 
+                QFile lockFile( fn + ".lock" );
+                if (lockFile.exists() )
+                {
+                    QMessageBox::critical( 0, tr( "Critical Error" ), tr("Couldn't save %1,\nbecause of existing lockfile:\n\n%2").arg(fn).arg( lockFile.fileName()  ));
+                    return;
+                }
+
+                if ( !m->renameMap( fn ) )
+                {
+                    QMessageBox::critical( 0, tr( "Critical Error" ), tr("Couldn't save %1").arg( fn ));
+                    return;
+                }
+            }
 	    fileSave(m, savemode);
 
-	    // Set name of tab, assuming current tab is the one we just saved
-	    if (savemode==CompleteMap)
-		tabWidget->setTabText (tabWidget->currentIndex(), m->getFileName() );
+	    // Set name of tab
+	    if (savemode == CompleteMap)
+                updateTabName( m );
 	    else
+            {   // Renaming map to original name, because we only saved the selected part of it 
 		m->setFilePath (fn_org);
+            }
 	    return; 
+
 	}
     }
 }
@@ -3277,14 +3524,6 @@ void Main::fileSaveAs()
     fileSaveAs (CompleteMap);
 }
 
-void Main::fileImportKDE4Bookmarks()
-{
-    ImportKDE4Bookmarks im;
-    im.transform();
-    if (File::Aborted!=fileLoad (im.getTransformedFile(),NewMap,VymMap) && currentMapEditor() )
-	currentMapEditor()->getModel()->setFilePath ("");
-}
-
 void Main::fileImportFirefoxBookmarks()
 {
     QFileDialog fd;
@@ -3292,7 +3531,7 @@ void Main::fileImportFirefoxBookmarks()
     fd.setFileMode (QFileDialog::ExistingFiles);
     QStringList filters;
     filters<<"Firefox "+tr("Bookmarks")+" (*.html)";
-    fd.setFilters(filters);
+    fd.setNameFilters(filters);
     fd.setAcceptMode (QFileDialog::AcceptOpen);
     fd.setWindowTitle(tr("Import")+" "+"Firefox "+tr("Bookmarks"));
 
@@ -3320,7 +3559,7 @@ void Main::fileImportFreemind()
     QFileDialog fd;
     fd.setDirectory (lastMapDir);
     fd.setFileMode (QFileDialog::ExistingFiles);
-    fd.setFilters (filters);
+    fd.setNameFilters (filters);
     fd.setWindowTitle(vymName+ " - " +tr("Load Freemind map"));
     fd.setAcceptMode (QFileDialog::AcceptOpen);
 
@@ -3352,7 +3591,7 @@ void Main::fileImportMM()
     fd.setFileMode (QFileDialog::ExistingFiles);
     QStringList filters;
     filters<<"Mind Manager (*.mmap)";
-    fd.setFilters (filters);
+    fd.setNameFilters (filters);
     fd.setAcceptMode (QFileDialog::AcceptOpen);
     fd.setWindowTitle(tr("Import")+" "+"Mind Manager");
 
@@ -3379,7 +3618,7 @@ void Main::fileImportDir()
     if (m) m->importDir();
 }
 
-void Main::fileExportXML()  
+void Main::fileExportXML()
 {
     VymModel *m=currentModel();
     if (m) m->exportXML();
@@ -3421,6 +3660,12 @@ void Main::fileExportASCII()
     if (m) m->exportASCII();
 }
 
+void Main::fileExportASCIITasks()
+{
+    VymModel *m=currentModel();
+    if (m) m->exportASCII(true);
+}
+
 void Main::fileExportCSV()  //FIXME-3 not scriptable yet
 {
     VymModel *m=currentModel();
@@ -3430,7 +3675,7 @@ void Main::fileExportCSV()  //FIXME-3 not scriptable yet
 	ex.setModel (m);
 	ex.addFilter ("CSV (*.csv)");
 	ex.setDirPath(lastImageDir.absolutePath());
-	ex.setWindowTitle(vymName+ " -" +tr("Export as CSV")+" "+tr("(still experimental)"));
+	ex.setWindowTitle(vymName+ " -" + tr("Export as CSV") + " " + tr("(still experimental)"));
 	if (ex.execDialog() ) 
 	{
 	    m->setExportMode(true);
@@ -3452,64 +3697,53 @@ void Main::fileExportOrgMode()
     if (m) m->exportOrgMode();
 }
 
-void Main::fileExportKDE4Bookmarks()	//FIXME-3 not scriptable yet
-{
-    ExportKDE4Bookmarks ex;
-    VymModel *m=currentModel();
-    if (m)
-    {
-	ex.setModel (m);
-	ex.doExport();
-    }	
-}
-
 void Main::fileExportTaskjuggler()  //FIXME-3 not scriptable yet
 {
     ExportTaskjuggler ex;
     VymModel *m=currentModel();
     if (m)
     {
-	ex.setModel (m);
-	ex.setWindowTitle ( vymName+" - "+tr("Export to")+" Taskjuggler"+tr("(still experimental)"));
-	ex.setDirPath (lastImageDir.absolutePath());
-	ex.addFilter ("Taskjuggler (*.tjp)");
+        ex.setModel (m);
+        ex.setWindowTitle ( vymName + " - " + tr("Export to") + " Taskjuggler" + tr("(still experimental)"));
+        ex.setDirPath (lastImageDir.absolutePath());
+        ex.addFilter ("Taskjuggler (*.tjp)");
 
-	if (ex.execDialog() ) 
-	{
-	    m->setExportMode(true);
-	    ex.doExport();
-	    m->setExportMode(false);
-	}
-    }	
+        if (ex.execDialog() )
+        {
+            m->setExportMode(true);
+            ex.doExport();
+            m->setExportMode(false);
+        }
+    }
 }
 
 void Main::fileExportImpress()	
 {
     ExportOOFileDialog fd;
     // TODO add preview in dialog
-    fd.setWindowTitle(vymName+" - "+tr("Export to")+" Open Office");
+    fd.setWindowTitle(vymName+" - "+tr("Export to")+" LibreOffice");
     fd.setDirectory (QDir().current());
     fd.setAcceptMode (QFileDialog::AcceptSave);
     fd.setFileMode (QFileDialog::AnyFile);
     if (fd.foundConfig())
     {
-	if ( fd.exec() == QDialog::Accepted )
-	{
-	    if (!fd.selectedFiles().isEmpty())
-	    {
-		QString fn=fd.selectedFiles().first();
-		if (!fn.contains (".odp")) fn +=".odp";
+        if ( fd.exec() == QDialog::Accepted )
+        {
+            if (!fd.selectedFiles().isEmpty())
+            {
+                QString fn=fd.selectedFiles().first();
+                if (!fn.contains (".odp")) fn +=".odp";
 
-		//lastImageDir=fn.left(fn.findRev ("/"));
-		VymModel *m=currentModel();
-		if (m) m->exportImpress (fn,fd.selectedConfig());	
-	    }
-	}
+                //lastImageDir=fn.left(fn.findRev ("/"));
+                VymModel *m=currentModel();
+                if (m) m->exportImpress (fn,fd.selectedConfig());
+            }
+        }
     } else
     {
-	QMessageBox::warning(0, 
-	tr("Warning"),
-	tr("Couldn't find configuration for export to Open Office\n"));
+        QMessageBox::warning(0,
+                             tr("Warning"),
+                             tr("Couldn't find configuration for export to LibreOffice\n"));
     }
 }
 
@@ -3519,54 +3753,54 @@ void Main::fileExportLast()
     if (m) m->exportLast();
 }
 
-bool Main::closeTab(int i)
+bool Main::fileCloseMap(int i)
 {
-    // Find model
-    VymModel *m=vymViews.at(i)->getModel();
-    if (!m) return true;
+    VymModel *m;
+    VymView *vv;
+    if ( i<0) i  = tabWidget->currentIndex();
 
-    vymViews.removeAt (i);
-    tabWidget->removeTab (i);
+    vv = vymViews.at(i);
+    m  = vv->getModel();
 
-    delete (m->getMapEditor()); 
-    delete (m); 
-
-    updateActions();
-    return false;
-}
-
-bool Main::fileCloseMap()   
-{
-    VymModel *m=currentModel();
     if (m)
     {
-	if (m->hasChanged())
-	{
-	    QMessageBox mb( vymName,
-		tr("The map %1 has been modified but not saved yet. Do you want to").arg(m->getFileName()),
-		QMessageBox::Warning,
-		QMessageBox::Yes | QMessageBox::Default,
-		QMessageBox::No,
-		QMessageBox::Cancel | QMessageBox::Escape );
-	    mb.setButtonText( QMessageBox::Yes, tr("Save modified map before closing it") );
-	    mb.setButtonText( QMessageBox::No, tr("Discard changes"));
-	    mb.setModal (true);
-	    mb.show();
-	    switch( mb.exec() ) 
-	    {
-		case QMessageBox::Yes:
-		    // save and close
-		    fileSave(m, CompleteMap);
-		    break;
-		case QMessageBox::No:
-		// close  without saving
-		    break;
-		case QMessageBox::Cancel:
-		    // do nothing
-		    return true;
-	    }
-	} 
-        return closeTab(tabWidget->currentIndex());
+        if (m->hasChanged())
+        {
+            QMessageBox mb( vymName,
+                            tr("The map %1 has been modified but not saved yet. Do you want to").arg(m->getFileName()),
+                            QMessageBox::Warning,
+                            QMessageBox::Yes | QMessageBox::Default,
+                            QMessageBox::No,
+                            QMessageBox::Cancel | QMessageBox::Escape );
+            mb.setButtonText( QMessageBox::Yes, tr("Save modified map before closing it") );
+            mb.setButtonText( QMessageBox::No, tr("Discard changes"));
+            mb.setModal (true);
+            mb.show();
+            switch( mb.exec() )
+            {
+            case QMessageBox::Yes:
+                // save and close
+                fileSave(m, CompleteMap);
+                break;
+            case QMessageBox::No:
+                // close  without saving
+                break;
+            case QMessageBox::Cancel:
+                // do nothing
+                return true;
+            }
+        }
+
+        vymViews.removeAt (i);
+        tabWidget->removeTab (i);
+
+        // Destroy stuff, order is important
+        delete (m->getMapEditor());
+        delete(vv);
+        delete (m);
+
+        updateActions();
+        return false;
     }
     return true; // Better don't exit vym if there is no currentModel()...
 }
@@ -3582,12 +3816,11 @@ bool Main::fileExitVYM()
     fileSaveSession();
 
     // Check if one or more editors have changed
-    int i=0;
     while (vymViews.count()>0)
     {
-	tabWidget->setCurrentIndex(i);
-	if (fileCloseMap()) return true;
-    } 
+        tabWidget->setCurrentIndex(0);
+        if (fileCloseMap()) return true;
+    }
     qApp->quit();
     return false;
 }
@@ -3632,7 +3865,7 @@ bool Main::openURL(const QString &url)
 {
     if (url.isEmpty()) return false;
 
-    QString browser=settings.value("/mainwindow/readerURL" ).toString();
+    QString browser=settings.value("/system/readerURL" ).toString();
     QStringList args;
     args<<url;
     if (!QProcess::startDetached(browser,args,QDir::currentPath(),browserPID))
@@ -3653,7 +3886,7 @@ void Main::openTabs(QStringList urls)
     if (urls.isEmpty()) return;
     	
     QStringList args;
-    QString browser=settings.value("/mainwindow/readerURL" ).toString();
+    QString browser=settings.value("/system/readerURL" ).toString();
 #if defined(VYM_DBUS)
     if ( browser.contains("konqueror") && 
             (browserPID==0 || !QDBusConnection::sessionBus().interface()->registeredServiceNames().value().contains (QString("org.kde.konqueror-%1").arg(*browserPID)))
@@ -3861,36 +4094,36 @@ void Main::editHeadingFinished(VymModel *m)
 {
     if (m)
     {
-	if (!actionSettingsAutoSelectNewBranch->isChecked() && 
-	    !prevSelection.isEmpty()) 
-	    m->select(prevSelection);
-	prevSelection="";
+        if (!actionSettingsAutoSelectNewBranch->isChecked() &&
+                !prevSelection.isEmpty())
+            m->select(prevSelection);
+        prevSelection = "";
     }
 }
 
 void Main::openVymLinks(const QStringList &vl, bool background)
 {
     QStringList vlmin;
-    int index=-1;
-    for (int j=0; j<vl.size(); ++j)
+    int index = -1;
+    for (int j = 0; j < vl.size(); ++j)
     {
 	// compare path with already loaded maps
-	int i;
-	index=-1;
-	for (i=0;i<=vymViews.count() -1;i++)
+        QString absPath = QFileInfo(vl.at(j)).absoluteFilePath();
+	index = -1;
+	for (int i = 0;i <= vymViews.count() -1; i++)
 	{
-	    if (vl.at(j)==vymViews.at(i)->getModel()->getFilePath() )
+	    if ( absPath == vymViews.at(i)->getModel()->getFilePath() )
 	    {
-		index=i;
+		index = i;
 		break;
 	    }
 	}   
-	if (index<0) vlmin.append (vl.at(j));
+	if (index < 0) vlmin.append ( absPath );
     }
 
     
-    progressCounterTotal=vlmin.size();
-    for (int j=0; j<vlmin.size(); j++)
+    progressCounterTotal = vlmin.size();
+    for (int j = 0; j < vlmin.size(); j++)
     {
 	// Load map
 	if (!QFile(vlmin.at(j)).exists() )
@@ -3904,14 +4137,14 @@ void Main::openVymLinks(const QStringList &vl, bool background)
 	}
     }	    
     // Go to tab containing the map
-    if (index>=0)
+    if (index >= 0)
 	tabWidget->setCurrentIndex (index);	
     removeProgressCounter();
 }
 
 void Main::editOpenVymLink(bool background)
 {
-    VymModel *m=currentModel();
+    VymModel *m = currentModel();
     if (m)
     {
 	QStringList vl;
@@ -3928,27 +4161,27 @@ void Main::editOpenVymLinkBackground()
 void Main::editOpenMultipleVymLinks()
 {
     QString currentVymLink;
-    VymModel *m=currentModel();
+    VymModel *m = currentModel();
     if (m)
     {
-	QStringList vl=m->getVymLinks();
+	QStringList vl = m->getVymLinks();
 	openVymLinks (vl, true);
     }
 }
 
 void Main::editVymLink()
 {
-    VymModel *m=currentModel();
+    VymModel *m = currentModel();
     if (m)
     {
-	BranchItem *bi=m->getSelectedBranch();
+	BranchItem *bi = m->getSelectedBranch();
 	if (bi)
 	{	    
 	    QStringList filters;
 	    filters <<"VYM map (*.vym)";
 	    QFileDialog fd;
 	    fd.setWindowTitle (vymName+" - " +tr("Link to another map"));
-	    fd.setFilters (filters);
+	    fd.setNameFilters (filters);
 	    fd.setWindowTitle(vymName+" - " +tr("Link to another map"));
 	    fd.setDirectory (lastMapDir);
 	    fd.setAcceptMode (QFileDialog::AcceptOpen);
@@ -3959,8 +4192,8 @@ void Main::editVymLink()
 	    QString fn;
 	    if ( fd.exec() == QDialog::Accepted &&!fd.selectedFiles().isEmpty() )
 	    {
-		QString fn=fd.selectedFiles().first();
-		lastMapDir=QDir (fd.directory().path());
+		QString fn = fd.selectedFiles().first();
+		lastMapDir = QDir (fd.directory().path());
 		m->setVymLink (fn);
 	    }
 	}
@@ -4036,43 +4269,44 @@ void Main::editAddTimestamp()
     if (m) m->addTimestamp();	
 }
 
-void Main::editMapInfo()    
+void Main::editMapProperties()    
 {
-    VymModel *m=currentModel();
+    VymModel *m = currentModel();
     if (!m) return;
 
     ExtraInfoDialog dia;
-    dia.setMapName (m->getFileName() );
-    dia.setMapTitle (m->getTitle() );
-    dia.setAuthor (m->getAuthor() );
-    dia.setComment(m->getComment() );
+    dia.setMapName  ( m->getFileName() );
+    dia.setMapTitle ( m->getTitle() );
+    dia.setAuthor   ( m->getAuthor() );
+    dia.setComment  ( m->getComment() );
+    dia.setReadOnly ( m->isReadOnly() );
 
     // Calc some stats
     QString stats;
-    stats+=tr("%1 items on map\n","Info about map").arg (m->getScene()->items().size(),6);
+    stats += tr("%1 items on map\n","Info about map").arg (m->getScene()->items().size(),6);
 
-    uint b=0;
-    uint f=0;
-    uint n=0;
-    uint xl=0;
-    BranchItem *cur=NULL;
-    BranchItem *prev=NULL;
-    m->nextBranch(cur,prev);
+    uint b  = 0;
+    uint f  = 0;
+    uint n  = 0;
+    uint xl = 0;
+    BranchItem *cur  = NULL;
+    BranchItem *prev = NULL;
+    m->nextBranch(cur, prev);
     while (cur) 
     {
-	if (!cur->getNote().isEmpty() ) n++;
-	f+= cur->imageCount();
-	b++;
-	xl+=cur->xlinkCount();
-	m->nextBranch(cur,prev);
+        if (!cur->getNote().isEmpty() ) n++;
+        f += cur->imageCount();
+        b++;
+        xl += cur->xlinkCount();
+        m->nextBranch(cur,prev);
     }
 
-    stats+=QString ("%1 branches\n").arg (m->branchCount(),6);
-    stats+=QString ("%1 notes\n").arg (n,6);
-    stats+=QString ("%1 images\n").arg (f,6);
-    stats+=QString ("%1 tasks\n").arg (m->taskCount(),6 );;
-    stats+=QString ("%1 slides\n").arg (m->slideCount(),6 );;
-    stats+=QString ("%1 xLinks \n").arg (xl/2,6);
+    stats += QString ("%1 %2\n").arg (m->branchCount(),6).arg(tr("branches","Info about map") );
+    stats += QString ("%1 %2\n").arg (n,6).arg(tr("notes","Info about map") );
+    stats += QString ("%1 %2\n").arg (f,6).arg(tr("images","Info about map") );
+    stats += QString ("%1 %2\n").arg (m->taskCount(),6 ).arg(tr("tasks","Info about map") );
+    stats += QString ("%1 %2\n").arg (m->slideCount(),6 ).arg(tr("slides","Info about map") );
+    stats += QString ("%1 %2\n").arg (xl/2,6).arg(tr("xLinks","Info about map") );
     dia.setStats (stats);
 
     // Finally show dialog
@@ -4086,14 +4320,16 @@ void Main::editMapInfo()
 
 void Main::editMoveUp()
 {
-    VymModel *m=currentModel();
-    if (m) m->moveUp();
+    MapEditor *me = currentMapEditor();
+    VymModel  *m  = currentModel();
+    if (me && m && me->getState() != MapEditor::EditingHeading) m->moveUp();
 }
 
 void Main::editMoveDown()
 {
-    VymModel *m=currentModel();
-    if (m) m->moveDown();
+    MapEditor *me = currentMapEditor();
+    VymModel  *m  = currentModel();
+    if (me && m && me->getState() != MapEditor::EditingHeading) m->moveDown();
 }
 
 void Main::editDetach()
@@ -4187,7 +4423,7 @@ void Main::editAddMapCenter()
 	MapEditor *me=currentMapEditor();
 	if (me) 
 	{
-	    m->setHeading("");
+        m->setHeadingPlainText("");
 	    me->editHeading();
 	}    
     }
@@ -4367,62 +4603,88 @@ void Main::editToggleTarget()
     if (m) m->toggleTarget();
 }
 
+bool Main::initTargetsMenu( VymModel *model, QMenu *menu)
+{
+    if (model)
+    {
+        ItemList targets = model->getTargets();
+
+        menu->clear();
+
+        QStringList targetNames;
+        QList <uint> targetIDs;
+
+        // Build QStringList with all names of targets
+        QMap<uint,QString>::const_iterator i;
+        i = targets.constBegin();
+        while (i != targets.constEnd()) 
+        {
+            targetNames.append( i.value() );
+            targetIDs.append( i.key() );
+            ++i;
+        }
+
+        // Sort list of names
+        targetNames.sort( Qt::CaseInsensitive );
+
+        // Build menu based on sorted names
+        while ( !targetNames.isEmpty() )
+        {
+            // Find target by value
+            i = targets.constBegin();
+            while (i != targets.constEnd()) 
+            {
+                if ( i.value() == targetNames.first() ) break;
+                ++i;
+            }
+
+            menu->addAction( targetNames.first() )->setData( i.key() );
+            targetNames.removeFirst();
+            targets.remove( i.key() );
+        }
+        return true;
+    }
+    return false;
+}
+
 void Main::editGoToTarget()  
 {
-    VymModel *m=currentModel();
-    if (m) 
+    VymModel *model = currentModel();
+    if (initTargetsMenu( model, targetsContextMenu ) )
     {
-	targetsContextMenu->clear();
-
-	ItemList targets=m->getTargets();
-	QMap<uint,QString>::const_iterator i = targets.constBegin();
-	while (i != targets.constEnd()) 
-	{
-	    (targetsContextMenu->addAction (i.value() ) )->setData (i.key());
-	    ++i;
-	}
-	QAction *a=targetsContextMenu->exec (QCursor::pos());
-	if (a) m->select (m->findID (a->data().toUInt() ) );
+	QAction *a = targetsContextMenu->exec (QCursor::pos());
+	if (a) model->select (model->findID (a->data().toUInt() ) );
     }
 }
 
 void Main::editMoveToTarget()  
 {
-    VymModel *m=currentModel();
-    if (m) 
+    VymModel *model = currentModel();
+    if (initTargetsMenu( model, targetsContextMenu ) )
     {
-	targetsContextMenu->clear();
-
-	ItemList targets=m->getTargets();
-	QMap<uint,QString>::const_iterator i = targets.constBegin();
-	while (i != targets.constEnd()) 
-	{
-	    (targetsContextMenu->addAction (i.value() ) )->setData (i.key());
-	    ++i;
-	}
-	QAction *a=targetsContextMenu->exec (QCursor::pos());
+	QAction *a = targetsContextMenu->exec (QCursor::pos());
 	if (a) 
 	{
-	    TreeItem *ti=m->findID (a->data().toUInt());
-	    BranchItem *selbi=m->getSelectedBranch();
+	    TreeItem *ti = model->findID ( a->data().toUInt() );
+	    BranchItem *selbi = model->getSelectedBranch();
 	    if (!selbi) return;
 
 	    if (ti && ti->isBranchLikeType() && selbi)
 	    {
-		BranchItem *pi =selbi->parentBranch();
+		BranchItem *pi = selbi->parentBranch();
 		// If branch below exists, select that one
 		// Makes it easier to quickly resort using the MoveTo function
-		BranchItem *below=pi->getBranchNum(selbi->num()+1);
-		LinkableMapObj *lmo=selbi->getLMO();
+		BranchItem *below = pi->getBranchNum( selbi->num() + 1 );
+		LinkableMapObj *lmo = selbi->getLMO();
 		QPointF orgPos;
-		if (lmo) orgPos=lmo->getAbsPos();
+		if (lmo) orgPos = lmo->getAbsPos();
 
-		if (m->relinkBranch ( selbi, (BranchItem*)ti,-1,true,orgPos) )
+		if (model->relinkBranch ( selbi, (BranchItem*)ti, -1, true, orgPos) )
 		{
 		    if (below) 
-			m->select (below);
+			model->select (below);
 		    else    
-			if (pi) m->select (pi);
+			if (pi) model->select (pi);
 		}    
 	    }	    
 	}
@@ -4675,6 +4937,27 @@ void Main::networkConnect()
     if (m) m->connectToServer();
 }
 
+void Main::downloadFinished()   // only used for drop events in mapeditor and VM::downloadImage 
+{
+    QString s;
+    DownloadAgent *agent = static_cast<DownloadAgent*>(sender());
+    agent->isSuccess() ? s="Success" : s="Error  "; 
+
+    /*
+    qDebug()<<"Main::downloadFinished ";
+    qDebug()<<"  result" <<  s;
+    qDebug()<<"     msg" << agent->getResultMessage();
+    */
+
+    QString script = agent->getFinishedScript();
+    VymModel *model=getModel (agent->getFinishedScriptModelID());
+    if (!script.isEmpty() && model)
+    {
+        script.replace("$TMPFILE",agent->getDestination());
+        model->execute(script);
+    }
+}
+
 bool Main::settingsPDF()
 {
     // Default browser is set in constructor
@@ -4682,9 +4965,9 @@ bool Main::settingsPDF()
     QString text = QInputDialog::getText(
 	this,
 	"VYM", tr("Set application to open PDF files")+":", QLineEdit::Normal,
-	settings.value("/mainwindow/readerPDF").toString(), &ok);
+	settings.value("/system/readerPDF").toString(), &ok);
     if (ok)
-	settings.setValue ("/mainwindow/readerPDF",text);
+	settings.setValue ("/system/readerPDF",text);
     return ok;
 }
 
@@ -4696,11 +4979,43 @@ bool Main::settingsURL()
     QString text = QInputDialog::getText(
 	this,
 	"VYM", tr("Set application to open an URL")+":", QLineEdit::Normal,
-	settings.value("/mainwindow/readerURL").toString()
+	settings.value("/system/readerURL").toString()
 	, &ok);
     if (ok)
-	settings.setValue ("/mainwindow/readerURL",text);
+	settings.setValue ("/system/readerURL",text);
     return ok;
+}
+
+void Main::settingsZipTool()
+{
+    // Default zip tool is 7z on windows, zip/unzip elsewhere
+    bool ok = false;
+
+#if defined(Q_OS_WIN32)
+    QString filter;
+    filter = "Windows executable (*.exe);;";
+
+    QString fn = QFileDialog::getOpenFileName( 
+        this,
+        vymName + " - " + tr("Set application to zip/unzip files") + ":", 
+        zipToolPath,
+        filter);
+
+    if (!fn.isEmpty() ) ok = true;
+
+#else
+
+    QString fn = QInputDialog::getText(
+                this,
+                vymName, tr("Set application to zip/unzip files")+":", QLineEdit::Normal,
+                zipToolPath, &ok);
+#endif
+
+    if (ok)
+    {
+        zipToolPath = fn;
+        settings.setValue ("/system/zipToolPath", zipToolPath);
+    }
 }
 
 void Main::settingsMacroDir()
@@ -4720,9 +5035,9 @@ void Main::settingsMacroDir()
 void Main::settingsUndoLevels()	    
 {
     bool ok;
-    int i = QInputDialog::getInteger(
+    int i = QInputDialog::getInt(
 	this, 
-	"QInputDialog::getInteger()",
+	"QInputDialog::getInt()",
 	tr("Number of undo/redo levels:"), settings.value("/history/stepsTotal",1000).toInt(), 0, 100000, 1, &ok);
     if (ok)
     {
@@ -4734,44 +5049,64 @@ void Main::settingsUndoLevels()
 
 bool Main::useAutosave()
 {
-    return actionSettingsAutosaveToggle->isChecked();
+    return actionSettingsToggleAutosave->isChecked();
 }
 
 void Main::setAutosave(bool b)
 {
-    actionSettingsAutosaveToggle->setChecked(b);
+    actionSettingsToggleAutosave->setChecked(b);
 }
 
 void Main::settingsAutosaveTime()
 {
     bool ok;
-    int i = QInputDialog::getInteger(
+    int i = QInputDialog::getInt(
 	this, 
-	"QInputDialog::getInteger()",
-	tr("Number of seconds before autosave:"), settings.value("/mainwindow/autosave/ms").toInt() / 1000, 10, 60000, 1, &ok);
+	vymName,
+	tr("Number of seconds before autosave:"), settings.value("/system/autosave/ms").toInt() / 1000, 10, 60000, 1, &ok);
     if (ok)
-	settings.setValue ("/mainwindow/autosave/ms",i * 1000);
+	settings.setValue ("/system/autosave/ms",i * 1000);
 }
 
-void Main::settingsTaskShowParentsLevel()	    
+void Main::settingsDefaultMapAuthor()	    
 {
     bool ok;
-    int i = QInputDialog::getInteger(
+    QString s = QInputDialog::getText(
+                this,
+                vymName, tr("Set author for new maps (used in lockfile)") + ":", QLineEdit::Normal,
+                settings.value("/user/name", tr("unknown user","default name for map author in settings")).toString(), 
+                &ok);
+    if (ok) settings.setValue("/user/name", s);
+}
+
+void Main::settingsShowParentsLevelFindResults()	    
+{
+    bool ok;
+    int i = QInputDialog::getInt(
 	this, 
-	"QInputDialog::getInteger()",
+	vymName,
+	tr("Number of parents shown in find results:"), findResultWidget->getResultModel()->getShowParentsLevel(), 0, 10, 0, &ok);
+    if (ok) findResultWidget->getResultModel()->setShowParentsLevel(i);
+}
+
+void Main::settingsShowParentsLevelTasks()	    
+{
+    bool ok;
+    int i = QInputDialog::getInt(
+	this, 
+	vymName,
 	tr("Number of parents shown for a task:"), taskModel->getShowParentsLevel(), 0, 10, 0, &ok);
     if (ok) taskModel->setShowParentsLevel(i);
-
 }
 
-void Main::settingsAutoLayoutToggle()
+void Main::settingsToggleAutoLayout()
 {
-    settings.setValue ("/mainwindow/autoLayout/use",actionSettingsAutosaveToggle->isChecked() );
+    settings.setValue ("/mainwindow/autoLayout/use",actionSettingsToggleAutoLayout->isChecked() );
 }
 
-void Main::settingsWriteBackupFileToggle()
+void Main::settingsToggleWriteBackupFile()
 {
-    settings.setValue ("/mainwindow/writeBackupFile",actionSettingsWriteBackupFile->isChecked() );
+    settings.setValue ("/system/writeBackupFile",actionSettingsWriteBackupFile->isChecked() );
 }
 
 void Main::settingsToggleAnimation()
@@ -4779,12 +5114,20 @@ void Main::settingsToggleAnimation()
     settings.setValue ("/animation/use",actionSettingsUseAnimation->isChecked() );
 }
 
+void Main::settingsToggleDownloads()
+{
+    downloadsEnabled(true);
+}
+
 void Main::windowToggleNoteEditor()
 {
-    if (noteEditorDW->isVisible() )
-	noteEditorDW->hide();
+    if (noteEditor->parentWidget()->isVisible() )
+        noteEditor->parentWidget()->hide();
     else
-	noteEditorDW->show();
+    {
+        noteEditor->parentWidget()->show();
+        noteEditor->setFocus();
+    }
 }
 
 void Main::windowToggleTreeEditor()
@@ -4842,6 +5185,22 @@ void Main::windowToggleProperty()
     branchPropertyEditor->setModel (currentModel() );
 }
 
+void Main::windowShowHeadingEditor()
+{
+    headingEditorDW->show();
+}
+
+void Main::windowToggleHeadingEditor()
+{
+    if (headingEditor->parentWidget()->isVisible() )
+        headingEditor->parentWidget()->hide();
+    else
+    {
+        headingEditor->parentWidget()->show();
+        headingEditor->setFocus();
+    }
+}
+
 void Main::windowToggleAntiAlias()
 {
     bool b=actionViewToggleAntiAlias->isChecked();
@@ -4884,7 +5243,7 @@ void Main::updateHistory(SimpleSettings &undoSet)
 void Main::updateHeading()
 {
     VymModel *m=currentModel();
-    if (m) m->setHeading (headingEditor->getText() );
+    if (m) m->setHeading (headingEditor->getVymText() );
 }
 
 void Main::updateNoteFlag() 
@@ -4898,12 +5257,14 @@ void Main::updateNoteEditor(QModelIndex index ) //FIXME-4 maybe change to TreeIt
 {
     if (index.isValid() )
     {
-	TreeItem *ti=((VymModel*) QObject::sender())->getItem(index);
-	/*
-	qDebug()<< "Main::updateNoteEditor model="<<sender() 
-		<< "  item="<<ti->getHeadingStd()<<" ("<<ti<<")";
-	*/
-	if (ti) noteEditor->setNote (ti->getNoteObj() );
+        TreeItem *ti=((VymModel*) QObject::sender())->getItem(index);
+        /*
+    qDebug()<< "Main::updateNoteEditor model="<<sender()
+        << "  item="<<ti->getHeading()<<" ("<<ti<<")";
+    qDebug()<< "RT="<<ti->getNote().isRichText();
+    */
+        if (ti)
+            noteEditor->setNote (ti->getNote() );
     }
 }
 
@@ -4914,6 +5275,12 @@ void Main::selectInNoteEditor(QString s,int i)
     noteEditor->findText (s,0,i);
 }
 
+void Main::setFocusMapEditor()
+{
+    VymView *vv=currentView();
+    if (vv) vv->setFocusMapEditor();
+}
+
 void Main::changeSelection (VymModel *model, const QItemSelection &newsel, const QItemSelection &)
 {
     branchPropertyEditor->setModel (model ); 
@@ -4922,35 +5289,35 @@ void Main::changeSelection (VymModel *model, const QItemSelection &newsel, const
     {
 	TreeItem *ti;
 	if (!newsel.indexes().isEmpty() )
-	{
-	    ti=model->getItem(newsel.indexes().first());
-	    if (!ti->hasEmptyNote() )
-		noteEditor->setNote(ti->getNoteObj() );
-	    else
-		noteEditor->setNote(NoteObj() );    //FIXME-5 maybe add a clear() to TE
-	    // Show URL and link in statusbar	
-	    QString status;
-	    QString s=ti->getURL();
-	    if (!s.isEmpty() ) status+="URL: "+s+"  ";
-	    s=ti->getVymLink();
-	    if (!s.isEmpty() ) status+="Link: "+s;
-	    if (!status.isEmpty() ) statusMessage (status);
+    {
+        ti=model->getItem(newsel.indexes().first());
+        if (!ti->hasEmptyNote() )
+            noteEditor->setNote(ti->getNote() );
+        else
+            noteEditor->setNote(VymNote() );
+        // Show URL and link in statusbar
+        QString status;
+        QString s=ti->getURL();
+        if (!s.isEmpty() ) status+="URL: "+s+"  ";
+        s=ti->getVymLink();
+        if (!s.isEmpty() ) status+="Link: "+s;
+        if (!status.isEmpty() ) statusMessage (status);
 
-	    headingEditor->setText (ti->getHeading() );
+        headingEditor->setVymText (ti->getHeading() );
 
-	    // Select in TaskEditor, if necessary 
-            Task *t=NULL;
-	    if (ti->isBranchLikeType() )
-		t=((BranchItem*)ti)->getTask();
+        // Select in TaskEditor, if necessary
+        Task *t=NULL;
+        if (ti->isBranchLikeType() )
+            t=((BranchItem*)ti)->getTask();
 
-            if (t)
-		taskEditor->select (t);
-            else
-                taskEditor->clearSelection();
-	} else
-	    noteEditor->setInactive();
+        if (t)
+            taskEditor->select (t);
+        else
+            taskEditor->clearSelection();
+    } else
+        noteEditor->setInactive();
 
-	updateActions();
+    updateActions();
     }
 }
 
@@ -4962,6 +5329,7 @@ void Main::updateActions()
     actionViewToggleHistoryWindow->setChecked (historyWindow->parentWidget()->isVisible());
     actionViewTogglePropertyEditor->setChecked (branchPropertyEditor->parentWidget()->isVisible());
     actionViewToggleScriptEditor->setChecked (scriptEditor->parentWidget()->isVisible());
+
     VymView *vv=currentView();
     if (vv)
     {
@@ -4974,12 +5342,37 @@ void Main::updateActions()
     }
 
     VymModel  *m =currentModel();
-    if (m)
+    if ( m ) 
     {
-	// Enable all map actions first
-	for (int i=0; i<actionListMap.size(); ++i)	
-	    actionListMap.at(i)->setEnabled(true);
+        // readonly mode
+        if (m->isReadOnly() )
+        {
+            // Disable toolbars
+            standardFlagsMaster->setEnabled (false);
 
+            // Disable map related actions
+            foreach (QAction *a, restrictedMapActions)
+                a->setEnabled( false );
+
+            // FIXME-2 updateactions: refactor actionListFiles: probably not needed, wrong actions there atm
+        } else
+        {   // not readonly     // FIXME-2 updateactions: maybe only required in testing, as mode should not change
+            
+            // Enable toolbars
+            standardFlagsMaster->setEnabled (true);
+
+            // Enable map related actions
+            foreach (QAction *a, restrictedMapActions)
+                a->setEnabled( true );
+
+        }
+	// Enable all files actions first   
+	for (int i=0; i<actionListFiles.size(); ++i)	
+	    actionListFiles.at(i)->setEnabled(true);
+
+        foreach (QAction *a, unrestrictedMapActions)
+            a->setEnabled( true  );
+        
 	// Disable other actions for now
 	for (int i=0; i<actionListBranches.size(); ++i) 
 	    actionListBranches.at(i)->setEnabled(false);
@@ -5039,7 +5432,6 @@ void Main::updateActions()
 	// History window
 	historyWindow->setWindowTitle (vymName + " - " +tr("History for %1","Window Caption").arg(m->getFileName()));
 
-
 	// Expanding/collapsing
 	actionExpandAll->setEnabled (true);
 	actionExpandOneLevel->setEnabled (true);
@@ -5086,9 +5478,7 @@ void Main::updateActions()
 		actionHeading2URL->setEnabled (true);  
 
 		// Note
-		actionGetURLsFromNote->setEnabled (!selbi->getNote().isEmpty());
-
-		standardFlagsMaster->setEnabled (true);
+                actionGetURLsFromNote->setEnabled (!selbi->getNote().isEmpty());
 
 		// Take care of xlinks  
 		// FIXME-4 similar code in mapeditor mousePressEvent
@@ -5106,7 +5496,7 @@ void Main::updateActions()
 			bi=selbi->getXLinkItemNum(i)->getPartnerBranch();
 			if (bi)
 			{
-			    s=bi->getHeading();
+                s=bi->getHeadingPlain();
 			    if (s.length()>xLinkMenuWidth)
 				s=s.left(xLinkMenuWidth)+"...";
 			    branchXLinksContextMenuEdit->addAction (s);
@@ -5152,6 +5542,7 @@ void Main::updateActions()
 
 		if (!selbi->canMoveUp()) 
 		    actionMoveUp->setEnabled (false);
+
 		if (!selbi->canMoveDown()) 
 		    actionMoveDown->setEnabled (false);
 
@@ -5176,7 +5567,6 @@ void Main::updateActions()
 		    actionPaste->setEnabled (false);	
 
 		actionToggleTarget->setEnabled (true);
-		return;
 	    }	// end of BranchItem
 
 	    if ( selti->getType()==TreeItem::Image)
@@ -5202,7 +5592,6 @@ void Main::updateActions()
 		actionShrinkSelectionSize->setEnabled (true);
 		actionResetSelectionSize->setEnabled (true);
 	    }	// Image
-	    return;
 	} // TreeItem 
 	
 	// Check (at least for some) multiple selection //FIXME-4
@@ -5218,15 +5607,18 @@ void Main::updateActions()
 	if (selbis.count()>0 )
 	    actionFormatColorBranch->setEnabled (true);
 
-	return;
-    } 
+    } else
+    {
+        // No map available 
+        for (int i=0; i<actionListFiles.size(); ++i)	
+            actionListFiles.at(i)->setEnabled(false);
 
-    // No map available 
-    for (int i=0; i<actionListMap.size(); ++i)	
-	actionListMap.at(i)->setEnabled(false);
+        foreach (QAction *a, unrestrictedMapActions)
+            a->setEnabled( false );
 
-    // Disable standard flags toolbar
-    standardFlagsMaster->setEnabled (false);
+        // Disable toolbars
+        standardFlagsMaster->setEnabled (false);
+    }
 }
 
 Main::ModMode Main::getModMode()
@@ -5292,6 +5684,7 @@ void Main::nextSlide()
     if (cv) cv->nextSlide();
 }
 
+
 void Main::previousSlide()
 {
     VymView *cv=currentView();
@@ -5300,28 +5693,31 @@ void Main::previousSlide()
 
 void Main::standardFlagChanged()
 {
-    if (currentModel())
+    MapEditor *me = currentMapEditor();
+    VymModel  *m  = currentModel();
+    if (me && m && me->getState() != MapEditor::EditingHeading) 
     {
-	if ( actionSettingsUseFlagGroups->isChecked() )
-	    currentModel()->toggleStandardFlag(sender()->objectName(),standardFlagsMaster);
-	else	
-	    currentModel()->toggleStandardFlag(sender()->objectName());
-	updateActions();    
+        if ( actionSettingsUseFlagGroups->isChecked() )
+            m->toggleStandardFlag(sender()->objectName(),standardFlagsMaster);
+        else
+            m->toggleStandardFlag(sender()->objectName());
+        updateActions();
     }
 }
 
 void Main::testFunction1()
 {
-    //if (!currentMapEditor()) return;
-    //currentMapEditor()->testFunction1();
-    if (!currentModel()) return;
-    currentModel()->exportImage();
+    /*
+    VymModel *m = currentModel();
+    if (m)
+    {
+        m->getMapEditor()->minimizeView();
+    }
+    */
 }
 
 void Main::testFunction2()
 {
-    if (!currentMapEditor()) return;
-    currentMapEditor()->testFunction2();
 }
 
 void Main::toggleWinter()
@@ -5335,9 +5731,9 @@ void Main::toggleHideExport()
     VymModel *m=currentModel();
     if (!m) return;
     if (actionToggleHideMode->isChecked() )
-	m->setHideTmpMode (TreeItem::HideExport);
+        m->setHideTmpMode (TreeItem::HideExport);
     else
-	m->setHideTmpMode (TreeItem::HideNone);
+        m->setHideTmpMode (TreeItem::HideNone);
 }
 
 void Main::testCommand()
@@ -5358,15 +5754,15 @@ void Main::helpDoc()
     QStringList searchList;
     QDir docdir;
     #if defined(Q_OS_MACX)
-	searchList << "./vym.app/Contents/Resources/doc";
+        searchList << vymBaseDir.path() + "/doc";
     #elif defined(Q_OS_WIN32)
-        searchList << vymInstallDir.path() + "/share/doc/packages/vym";
+        searchList << vymInstallDir.path() + "doc/" + docname;
     #else
 	#if defined(VYM_DOCDIR)
 	    searchList << VYM_DOCDIR;
 	#endif
-	// default path in SUSE LINUX
-	searchList << "/usr/share/doc/packages/vym";
+        // default path in SUSE LINUX
+        searchList << "/usr/share/doc/packages/vym";
     #endif
 
     searchList << "doc";    // relative path for easy testing in tarball
@@ -5389,15 +5785,15 @@ void Main::helpDoc()
     {
 	QMessageBox::critical(0, 
 	    tr("Critcal error"),
-	    tr("Couldn't find the documentation %1 in:\n%2").arg(searchList.join("\n")));
+        tr("Couldn't find the documentation %1 in:\n%2").arg(docname).arg(searchList.join("\n")));
 	return;
     }	
 
     QStringList args;
-    Process *pdfProc = new Process();
+    VymProcess *pdfProc = new VymProcess();
     args << QDir::toNativeSeparators(docfile.fileName());
 
-    if (!pdfProc->startDetached( settings.value("/mainwindow/readerPDF").toString(),args) )
+    if (!pdfProc->startDetached( settings.value("/system/readerPDF").toString(),args) )
     {
 	// error handling
 	QMessageBox::warning(0, 
@@ -5409,44 +5805,55 @@ void Main::helpDoc()
     }
 }
 
-
 void Main::helpDemo()
 {
     QStringList filters;
     filters <<"VYM example map (*.vym)";
     QFileDialog fd;
-    #if defined(Q_OS_MACX)
-	fd.setDirectory (QDir("./vym.app/Contents/Resources/demos"));
-    #else
-	// default path in SUSE LINUX
-	fd.setDirectory (QDir(vymBaseDir.path()+"/demos"));
-    #endif
-
+    fd.setDirectory (vymBaseDir.path() + "/demos");
     fd.setFileMode (QFileDialog::ExistingFiles);
-    fd.setFilters (filters);
+    fd.setNameFilters (filters);
     fd.setWindowTitle (vymName+ " - " +tr("Load vym example map"));
     fd.setAcceptMode (QFileDialog::AcceptOpen);
 
     QString fn;
     if ( fd.exec() == QDialog::Accepted )
     {
-	lastMapDir=fd.directory().path();
-	QStringList flist = fd.selectedFiles();
-	QStringList::Iterator it = flist.begin();
-	while( it != flist.end() ) 
-	{
-	    fn = *it;
-	    fileLoad(*it, NewMap,VymMap);		   
-	    ++it;
-	}
+        lastMapDir=fd.directory().path();
+        QStringList flist = fd.selectedFiles();
+        QStringList::Iterator it = flist.begin();
+        initProgressCounter( flist.count());
+        while( it != flist.end() )
+        {
+            fn = *it;
+            fileLoad(*it, NewMap,VymMap);
+            ++it;
+        }
+        removeProgressCounter();
     }
 }
 
 void Main::helpShortcuts()
 {
     ShowTextDialog dia;
+    dia.useFixedFont (true);
     dia.setText( switchboard.getASCII() );
     dia.exec();
+}
+
+void Main::debugInfo()  
+{
+    QString s;
+    s = QString ("Platform: %1\n").arg(vymPlatform);
+    s += QString ("localeName: %1\nPath: %2\n")
+        .arg(localeName)
+        .arg(vymBaseDir.path() + "/lang");
+    s += QString("vymBaseDir: %1\n").arg(vymBaseDir.path());
+    s += QString("currentPath: %1\n").arg(QDir::currentPath());
+    s += QString("appDirPath: %1\n").arg(QCoreApplication::applicationDirPath());
+    QMessageBox mb;
+    mb.setText(s);
+    mb.exec();
 }
 
 void Main::helpAbout()
@@ -5471,11 +5878,239 @@ void Main::callMacro ()
         i=action->data().toInt();
         QString s=macros.getMacro (i+1);
         if (!s.isEmpty())
-	{
-	    VymModel *m=currentModel();
-	    if (m) m->execute(s);
-	}   
+        {
+            VymModel *m=currentModel();
+            if (m) m->execute(s);
+        }
     }	
 }
 
+void Main::downloadReleaseNotesFinished()
+{
+    DownloadAgent *agent = static_cast<DownloadAgent*>(sender());
+    QString s;
+    
+    if (agent->isSuccess() )
+    {
+        QString page;
+        if (agent->isSuccess() )
+        {
+            if ( loadStringFromDisk(agent->getDestination(), page) )
+            {
+                ShowTextDialog dia(this);
+                dia.setText(page);
+                dia.exec();
 
+                // Don't load the release notes automatically again
+                settings.setValue("/downloads/releaseNotes/shownVersion", __VYM_VERSION);
+            } 
+        }
+    } else
+    {
+        if (debug)
+        {
+            qDebug()<<"Main::downloadReleaseNotesFinished ";
+            qDebug()<<"  result: failed";
+            qDebug()<<"     msg: " << agent->getResultMessage();
+        }
+    }
+}
+
+void Main::checkReleaseNotes()
+{
+    bool userTriggered;
+    if (qobject_cast<QAction *>(sender()) )
+        userTriggered = true;
+    else
+        userTriggered = false;
+
+    if (downloadsEnabled())
+    {
+        if ( userTriggered ||
+             versionLowerThanVym( settings.value("/downloads/releaseNotes/shownVersion", "0.0.1").toString() ) )
+        {
+            QUrl releaseNotesUrl(
+                //QString("http://localhost/release-notes.php?vymVersion=%1") /
+                QString("http://www.insilmaril.de/vym/release-notes.php?vymVersion=%1")
+                .arg(vymVersion)
+            );
+            DownloadAgent *agent = new DownloadAgent(releaseNotesUrl);
+            connect (agent, SIGNAL( downloadFinished()), this, SLOT(downloadReleaseNotesFinished()));
+            QTimer::singleShot(0, agent, SLOT(execute()));
+        }
+    } else
+    {
+        // No downloads enabled
+        if (userTriggered)
+        {
+            // Notification: vym could not download release notes
+            QMessageBox::warning(0,  tr("Warning"), tr("Please allow vym to download release notes!"));
+            if (downloadsEnabled(userTriggered)) checkUpdates();
+        }
+    }
+}
+
+bool Main::downloadsEnabled (bool userTriggered)
+{
+    bool result;
+    if (!userTriggered && settings.value("/downloads/enabled", false).toBool())
+    {
+        result = true;
+    } else
+    {
+        QDate lastAsked = settings.value("/downloads/permissionLastAsked", QDate(1970,1,1) ).toDate();
+        if (userTriggered ||
+            !settings.contains("/downloads/permissionLastAsked") ||
+            lastAsked.daysTo( QDate::currentDate()) > 7
+           )
+        {
+            QString infotext;
+            infotext = tr("<html>"
+                          "<h3>Do you allow vym to check online for updates or release notes?</h3>"
+                          "If you allow, vym will "
+                          "<ul>"
+                            "<li>check once for release notes</li>"
+                            "<li>check regulary for updates and notify you in case you should update, e.g. if there are "
+                              "important bug fixes available</li>"
+                            "<li>receive a cookie with a random ID and send vym version and platform name and the ID  "
+                              "(e.g. \"Windows\" or \"Linux\") back to me, Uwe Drechsel."
+                              "<p>As vym developer I am motivated to see "
+                              "many people using vym. Of course I am curious to see, on which system vym is used. Maintaining each "
+                              "of the systems requires a lot of my (spare) time.</p> "
+                              "<p>No other data than above will be sent, especially no private data will be collected or sent."
+                              "(Check the source code, if you don't believe.)"
+                              "</p>"
+                            "</li>"
+                          "</ul>"
+                          "If you do not allow, "
+                          "<ul>"
+                            "<li>nothing will be downloaded and especially I will <b>not be motivated</b> "
+                            "to spend some more thousands of hours on developing a free software tool."
+                          "</ul>"
+                          "Please allow vym to check for updates :-)"
+                          );
+            QMessageBox mb( vymName, infotext,
+                QMessageBox::Information,
+                QMessageBox::Yes | QMessageBox::Default,
+                QMessageBox::Cancel | QMessageBox::Escape,
+                QMessageBox::NoButton);
+            mb.setButtonText( QMessageBox::Yes, tr("Allow") );
+            mb.setButtonText( QMessageBox::Cancel, tr("Do not allow"));
+            switch( mb.exec() )
+            {
+                case QMessageBox::Yes:
+                    result = true;
+                    QMessageBox::information(0, vymName,
+                        tr("Thank you for enabling downloads!"));
+                break;
+                default :
+                    result = false;
+                break;
+            }
+        } else
+            result = false;
+        actionSettingsToggleDownloads->setChecked( result );
+        settings.setValue("/downloads/enabled", result);
+        settings.setValue("/downloads/permissionLastAsked", QDate::currentDate().toString(Qt::ISODate));
+    }
+    return result;
+}
+
+void Main::downloadUpdatesFinished(bool userTriggered)
+{
+    DownloadAgent *agent = static_cast<DownloadAgent*>(sender());
+    QString s;
+
+    if (agent->isSuccess() )
+    {
+        ShowTextDialog dia;
+        dia.setWindowTitle( vymName + " - " + tr("Update information") );
+        QString page;
+        if (loadStringFromDisk(agent->getDestination(), page) )
+        {
+            if (page.contains("vymisuptodate"))
+            {
+                statusMessage( tr("vym is up to date.","MainWindow"));
+                if (userTriggered)
+                {
+                    // Notification: vym is up to date!
+                    dia.setHtml( page );
+                    dia.exec();
+                }
+            } else if (page.contains("vymneedsupdate"))
+            {
+                // Notification: updates available
+                dia.setHtml( page );
+                dia.exec();
+            } else 
+            {
+                // Notification: Unknown version found
+                dia.setHtml( page );
+                dia.exec();
+            } 
+
+            // Prepare to check again later
+            settings.setValue("/downloads/updates/lastChecked", QDate::currentDate().toString(Qt::ISODate));
+        } else
+            statusMessage( "Couldn't load update page from " + agent->getDestination());
+
+    } else
+    {
+        statusMessage( "Check for updates failed.");
+        if (debug)
+        {
+            qDebug()<<"Main::downloadUpdatesFinished ";
+            qDebug()<<"  result: failed";
+            qDebug()<<"     msg: " << agent->getResultMessage();
+        }
+    }
+}
+void Main::downloadUpdatesFinishedInt()
+{
+    downloadUpdatesFinished(true);
+}
+
+void Main::downloadUpdates(bool userTriggered)
+{
+    QUrl updatesUrl(
+        QString("http://www.insilmaril.de/vym/updates.php?vymVersion=%1")
+        .arg(vymVersion)
+    );
+    DownloadAgent *agent = new DownloadAgent(updatesUrl);
+    if (userTriggered)
+        connect (agent, SIGNAL( downloadFinished()), this, SLOT(downloadUpdatesFinishedInt()));
+    else
+        connect (agent, SIGNAL( downloadFinished()), this, SLOT(downloadUpdatesFinished()));
+    statusMessage( tr("Checking for updates...","MainWindow"));
+    QTimer::singleShot(0, agent, SLOT(execute()));
+}
+
+void Main::checkUpdates()
+{
+    bool userTriggered;
+    if (qobject_cast<QAction *>(sender()) )
+        userTriggered = true;
+    else
+        userTriggered = false;
+
+    if (downloadsEnabled())
+    {
+        // Too much time passed since last update check?
+        QDate lastChecked = settings.value("/downloads/updates/lastChecked", QDate(1970,1,1) ).toDate();
+        if ( !lastChecked.isValid()) lastChecked = QDate(1970,1,1);
+        if ( lastChecked.daysTo( QDate::currentDate()) > settings.value("/downloads/updates/checkInterval",3).toInt() ||
+             userTriggered == true)
+        {
+            downloadUpdates( userTriggered );
+        }
+    } else
+    {
+        // No downloads enabled
+        if (userTriggered)
+        {
+            // Notification: vym could not check for updates
+            QMessageBox::warning(0,  tr("Warning"), tr("Please allow vym to check for updates!"));
+            if (downloadsEnabled(userTriggered)) checkUpdates();
+        }
+    }
+}

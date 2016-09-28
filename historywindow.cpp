@@ -2,7 +2,6 @@
 #include "mainwindow.h"
 
 
-extern QString iconPath;
 extern Settings settings;
 extern Main *mainWindow;
 
@@ -26,8 +25,8 @@ HistoryWindow::HistoryWindow (QWidget *parent):QDialog (parent)
 
     ui.historyTable->setSelectionBehavior (QAbstractItemView::SelectRows);
 
-    ui.undoButton->setIcon (QIcon(iconPath+"/undo.png"));
-    ui.redoButton->setIcon (QIcon(iconPath+"/redo.png"));
+    ui.undoButton->setIcon (QIcon(":/undo.png"));
+    ui.redoButton->setIcon (QIcon(":/redo.png"));
 
     connect ( ui.undoButton, SIGNAL (clicked()), this, SLOT (undo()));
     connect ( ui.redoButton, SIGNAL (clicked()), this, SLOT (redo()));

@@ -11,6 +11,11 @@
 #define sleep Sleep
 #endif
 
+#include <QColorDialog>
+#include <QFileDialog>
+#include <QMessageBox>
+#include <QPrinter>
+
 #include "vymmodel.h"
 
 #include "attributeitem.h"
@@ -28,7 +33,7 @@
 #include "noteeditor.h"
 #include "options.h"
 #include "parser.h"
-#include "process.h"
+#include "vymprocess.h"
 #include "scripteditor.h" 
 #include "slideitem.h"
 #include "slidemodel.h"
@@ -49,12 +54,9 @@ extern bool debug;
 extern bool testmode;
 extern Main *mainWindow;
 
-#if defined(VYM_DBUS)
-extern QDBusConnection dbusConnection;
-#endif
-
 extern Settings settings;
 extern QString tmpVymDir;
+extern QString macroPath;
 
 extern NoteEditor *noteEditor;
 extern TaskEditor *taskEditor;
@@ -92,10 +94,9 @@ VymModel::VymModel()
     rootItem->setModel (this);
 }
 
-
 VymModel::~VymModel() 
 {
-    //qDebug() << "Destr VymModel begin this="<<this<<"  "<<mapName;
+    //out << "Destr VymModel begin this="<<this<<"  "<<mapName<<flush;
     mapEditor=NULL;
     blockReposition=true;
     autosaveTimer->stop();
@@ -118,18 +119,21 @@ void VymModel::clear()
 void VymModel::init () 
 {
     // No MapEditor yet
-    mapEditor=NULL;
+    mapEditor       = NULL;
+
+    // Use default author
+    author = settings.value("/user/name", tr("unknown user","default name for map author in settings")).toString();
 
     // States and IDs
     idLast++;
-    modelID=idLast;
-    mapChanged=false;
-    mapDefault=true;
-    mapUnsaved=false;
+    modelID         = idLast;
+    mapChanged      = false;
+    mapDefault      = true;
+    mapUnsaved      = false;
 
     // Selection history
-    selModel=NULL;
-    selectionBlocked=false;
+    selModel        = NULL;
+    selectionBlocked= false;
     resetSelectionHistory();
 
     resetHistory();
@@ -138,62 +142,62 @@ void VymModel::init ()
     makeTmpDirectories();
     
     // Files
-    zipped=true;
-    filePath="";
-    fileName=tr("unnamed");
-    mapName="";
-    blockReposition=false;
-    blockSaveState=false;
+    readonly        = false;
+    zipped          = true;
+    filePath        = "";
+    fileName        = tr("unnamed");
+    mapName         = fileName;
+    blockReposition = false;
+    blockSaveState  = false;
 
-    autosaveTimer=new QTimer (this);
+    autosaveTimer   = new QTimer (this);
     connect(autosaveTimer, SIGNAL(timeout()), this, SLOT(autosave()));
 
-    fileChangedTimer=new QTimer (this);	
+    fileChangedTimer= new QTimer (this);	
     fileChangedTimer->start(3000);
     connect(fileChangedTimer, SIGNAL(timeout()), this, SLOT(fileChanged()));
-
 
     // find routine
     findReset();
 
     // animations   // FIXME-4 switch to new animation system 
-    animationUse=settings.value ("/animation/use",false).toBool();    // FIXME-4 add options to control _what_ is animated
-    animationTicks=settings.value("/animation/ticks",20).toInt();
+    animationUse    = settings.value ("/animation/use",false).toBool();    // FIXME-4 add options to control _what_ is animated
+    animationTicks  = settings.value("/animation/ticks",20).toInt();
     animationInterval=settings.value("/animation/interval",5).toInt();
     animObjList.clear();    
-    animationTimer=new QTimer (this);
+    animationTimer  = new QTimer (this);
     connect(animationTimer, SIGNAL(timeout()), this, SLOT(animate()));
 
     // View - map
     defaultFont.setPointSizeF (16);
-    defLinkColor=QColor (0,0,255);
-    linkcolorhint=LinkableMapObj::DefaultColor;
-    linkstyle=LinkableMapObj::PolyParabel;
+    defLinkColor    = QColor (0,0,255);
+    linkcolorhint   = LinkableMapObj::DefaultColor;
+    linkstyle       = LinkableMapObj::PolyParabel;
     defXLinkPen.setWidth (1);
     defXLinkPen.setColor ( QColor (50,50,255) );
     defXLinkPen.setStyle ( Qt::DashLine );
     defXLinkStyleBegin = "HeadFull";
     defXLinkStyleEnd   = "HeadFull";
 
-    hasContextPos=false;
+    hasContextPos   = false;
 
-    hidemode=TreeItem::HideNone;
+    hidemode        = TreeItem::HideNone;
 
     // Animation in MapEditor
-    zoomFactor=1;
-    rotationAngle=0;
-    animDuration=2000;
-    animCurve=QEasingCurve::OutQuint;
+    zoomFactor      = 1;
+    rotationAngle   = 0;
+    animDuration    = 2000;
+    animCurve       = QEasingCurve::OutQuint;
 
     // Initialize presentation slides
-    slideModel=new SlideModel (this);
+    slideModel      = new SlideModel (this);
     blockSlideSelection=false;
 
     // Avoid recursions later
-    cleaningUpLinks=false;
+    cleaningUpLinks = false;
 
     // Network
-    netstate=Offline;
+    netstate        = Offline;
 
 #if defined(VYM_DBUS)
      // Announce myself on DBUS
@@ -406,20 +410,61 @@ QString VymModel::getDestPath()
     return destPath;
 }
 
-File::ErrorCode VymModel::loadMap (	
-    QString fname, 
+bool VymModel::parseVymText (const QString &s)
+{
+    bool ok = false;
+    BranchItem *bi = getSelectedBranch();
+    if (bi)
+    {
+        parseBaseHandler *handler = new parseVYMHandler;
+
+        bool blockSaveStateOrg=blockSaveState;
+        blockReposition=true;
+        blockSaveState=true;
+        QXmlInputSource source;
+        source.setData( s );
+        QXmlSimpleReader reader;
+        reader.setContentHandler( handler );
+        reader.setErrorHandler( handler );
+
+        handler->setInputString (s);
+        handler->setModel ( this );
+        handler->setLoadMode (ImportReplace, 0);
+
+        ok = reader.parse( source );
+        blockReposition=false;
+        blockSaveState=blockSaveStateOrg;
+        if ( ok )
+        {
+            emitNoteChanged( bi );
+            emitDataChanged( bi );
+            reposition();   // to generate bbox sizes
+        } else
+        {
+            QMessageBox::critical( 0, tr( "Critical Parse Error" ),
+                                   tr( handler->errorProtocol().toUtf8() ) );
+            // returnCode=1;
+            // Still return "success": the map maybe at least
+            // partially read by the parser
+        }
+    }
+    return ok;
+}
+
+File::ErrorCode VymModel::loadMap (
+    QString fname,
     const LoadMode &lmode, 
     const FileType &ftype,
     const int &contentFilter,
     int pos)
 {
-    File::ErrorCode err=File::Success;
+    File::ErrorCode err = File::Success;
 
     // Get updated zoomFactor, before applying one read from file in the end
     if (mapEditor) 
     {
-	zoomFactor=mapEditor->getZoomFactorTarget();	
-	rotationAngle=mapEditor->getAngleTarget();
+	zoomFactor = mapEditor->getZoomFactorTarget();	
+	rotationAngle = mapEditor->getAngleTarget();
     }
 
     parseBaseHandler *handler;
@@ -427,29 +472,29 @@ File::ErrorCode VymModel::loadMap (
     switch (fileType)
     {
 	case VymMap: 
-	    handler=new parseVYMHandler; 
+	    handler = new parseVYMHandler; 
 	    ((parseVYMHandler*)handler)->setContentFilter (contentFilter);
 	    break;
-	case FreemindMap : handler=new parseFreemindHandler; break;
+	case FreemindMap : handler = new parseFreemindHandler; break;
 	default: 
 	    QMessageBox::critical( 0, tr( "Critical Parse Error" ),
 		   "Unknown FileType in VymModel::load()");
 	return File::Aborted;	
     }
 
-    bool zipped_org=zipped;
+    bool zipped_org = zipped;
 
-    if (lmode==NewMap)
+    if (lmode == NewMap)
     {
 	// Reset timestamp to check for later updates of file
-	fileChangedTime=QFileInfo (destPath).lastModified();
+	fileChangedTime = QFileInfo (destPath).lastModified();
 
 	selModel->clearSelection();
     } 
 
     // Create temporary directory for packing
     bool ok;
-    QString tmpZipDir=makeTmpDir (ok,"vym-pack");
+    QString tmpZipDir = makeTmpDir (ok,"vym-pack");
     if (!ok)
     {
 	QMessageBox::critical( 0, tr( "Critical Load Error" ),
@@ -457,20 +502,25 @@ File::ErrorCode VymModel::loadMap (
 	return File::Aborted; 
     }
 
-    // Try to unzip file
-    err=unzipDir (tmpZipDir,fname);
-    QString xmlfile;
-    if (err==File::NoZip)
+    if (fname.right(4) == ".xml" || fname.right(3) == ".mm")
+        err = File::NoZip;
+    else
     {
-	xmlfile=fname;
-	zipped=false;
+        // Try to unzip file
+        err = unzipDir (tmpZipDir,fname);
+    }
+    QString xmlfile;
+    if (err == File::NoZip)
+    {
+	xmlfile = fname;
+	zipped = false;
     } else
     {
-	zipped=true;
+	zipped = true;
 	
 	// Look for mapname.xml
-	xmlfile= fname.left(fname.lastIndexOf(".",-1,Qt::CaseSensitive));
-	xmlfile=xmlfile.section( '/', -1 );
+	xmlfile = fname.left(fname.lastIndexOf(".", -1, Qt::CaseSensitive));
+	xmlfile = xmlfile.section( '/', -1 );
 	QFile mfile( tmpZipDir + "/" + xmlfile + ".xml");
 	if (!mfile.exists() )
 	{
@@ -480,27 +530,27 @@ File::ErrorCode VymModel::loadMap (
 	    // directory of the .vym file
 	    QStringList filters;
 	    filters<<"*.xml";
-	    QStringList flist=QDir (tmpZipDir).entryList(filters);
-	    if (flist.count()==1) 
+	    QStringList flist = QDir (tmpZipDir).entryList(filters);
+	    if (flist.count() == 1) 
 	    {
 		// Only one entry, take this one
-                xmlfile=tmpZipDir + "/"+flist.first();
-            } else
-	    {
-		for ( QStringList::Iterator it = flist.begin(); it != flist.end(); ++it ) 
-		    *it=tmpZipDir + "/" + *it;
-		// FIXME-4 Multiple entries, load all (but only the first one into this ME)
-		//mainWindow->fileLoadFromTmp (flist);
-		//returnCode=1;	// Silently forget this attempt to load
-		qWarning ("MainWindow::load (fn)  multimap found...");
-	    }	
-		
-	    if (flist.isEmpty() )
-	    {
-		QMessageBox::critical( 0, tr( "Critical Load Error" ),
-			   tr("Couldn't find a map (*.xml) in .vym archive.\n"));
-		err=File::Aborted;		       
-	    }	
+                xmlfile = tmpZipDir + "/"+flist.first();
+        } else
+        {
+            for ( QStringList::Iterator it = flist.begin(); it != flist.end(); ++it )
+                *it=tmpZipDir + "/" + *it;
+            // FIXME-4 Multiple entries, load all (but only the first one into this ME)
+            //mainWindow->fileLoadFromTmp (flist);
+            //returnCode=1;	// Silently forget this attempt to load
+            qWarning ("MainWindow::load (fn)  multimap found...");
+        }
+
+        if (flist.isEmpty() )
+        {
+            QMessageBox::critical( 0, tr( "Critical Load Error" ),
+                                   tr("Couldn't find a map (*.xml) in .vym archive.\n"));
+            err=File::Aborted;
+        }
 	} //file doesn't exist	
 	else
 	    xmlfile=mfile.fileName();
@@ -517,9 +567,9 @@ File::ErrorCode VymModel::loadMap (
 	err=File::Aborted;	
     } else
     {
-	bool blockSaveStateOrg=blockSaveState;
-	blockReposition=true;
-	blockSaveState=true;
+	bool blockSaveStateOrg = blockSaveState;
+	blockReposition = true;
+	blockSaveState  = true;
 	mapEditor->setViewportUpdateMode (QGraphicsView::NoViewportUpdate);
 	QXmlInputSource source( &file);
 	QXmlSimpleReader reader;
@@ -530,33 +580,37 @@ File::ErrorCode VymModel::loadMap (
 	// We need to set the tmpDir in order  to load files with rel. path
 	QString tmpdir;
 	if (zipped)
-	    tmpdir=tmpZipDir;
+	    tmpdir = tmpZipDir;
 	else
-	    tmpdir=fname.left(fname.lastIndexOf("/",-1));	
+	    tmpdir = fname.left(fname.lastIndexOf("/", -1));	
 	handler->setTmpDir (tmpdir);
 	handler->setInputFile (file.fileName());
-	if (lmode==ImportReplace)
-	    handler->setLoadMode (ImportReplace,pos);
+	if (lmode == ImportReplace)
+	    handler->setLoadMode (ImportReplace, pos);
 	else	
-	    handler->setLoadMode (lmode,pos);
+	    handler->setLoadMode (lmode, pos);
 
 	bool ok = reader.parse( source );
-	blockReposition=false;
-	blockSaveState=blockSaveStateOrg;
+	blockReposition = false;
+	blockSaveState  = blockSaveStateOrg;
 	mapEditor->setViewportUpdateMode (QGraphicsView::MinimalViewportUpdate);
 	file.close();
 	if ( ok ) 
 	{
-	    if (lmode==NewMap)
+	    if (lmode == NewMap)
 	    {
-		mapDefault=false;
-		mapChanged=false;
-		mapUnsaved=false;
+		mapDefault = false;
+		mapChanged = false;
+		mapUnsaved = false;
 		autosaveTimer->stop();
 
 		resetHistory();
 		resetSelectionHistory();
-	    }
+
+                if (! tryVymLock() && debug ) 
+                    qWarning() << "VM::loadMap  no lockfile created!";
+
+            }
     
 	    reposition();   // to generate bbox sizes
 	    emitSelectionChanged();
@@ -577,7 +631,7 @@ File::ErrorCode VymModel::loadMap (
     removeDir (QDir(tmpZipDir));
 
     // Restore original zip state
-    zipped=zipped_org;
+    zipped = zipped_org;
 
     updateActions();
     
@@ -589,7 +643,7 @@ File::ErrorCode VymModel::loadMap (
 	mapEditor->setAngleTarget (rotationAngle);
     }
 
-    if (vymView) vymView->readSettings();
+    if (vymView) vymView->readSettings();  
 
     qApp->processEvents();  // Update view (scene()->update() is not enough)
     return err;
@@ -671,7 +725,7 @@ File::ErrorCode VymModel::save (const SaveMode &savemode)
 	tmpZipDir=makeTmpDir (ok,"vym-zip");
 	if (!ok)
 	{
-	    QMessageBox::critical( 0, tr( "Critical Load Error" ),
+	    QMessageBox::critical( 0, tr( "Critical Save Error" ),
 	       tr("Couldn't create temporary directory before save\n"));
 	    return File::Aborted; 
 	}
@@ -730,50 +784,51 @@ void VymModel::loadImage (BranchItem *dst,const QString &fn)
     if (!dst) dst=getSelectedBranch();
     if (dst)
     {
-	QString filter=QString (tr("Images") + " (*.png *.bmp *.xbm *.jpg *.png *.xpm *.gif *.pnm *.svg);;"+tr("All","Filedialog") +" (*.*)");
-	QStringList fns;
-	if (fn.isEmpty() )
-	    fns=QFileDialog::getOpenFileNames( 
-		NULL,
-		vymName+" - " + tr("Load image"), 
-		lastImageDir.path(), 
-		filter);
-	else
-	    fns.append (fn);
+        QString filter=QString (tr("Images") + " (*.png *.bmp *.xbm *.jpg *.png *.xpm *.gif *.pnm *.svg);;"+tr("All","Filedialog") +" (*.*)");
+        QStringList fns;
+        if (fn.isEmpty() )
+            fns=QFileDialog::getOpenFileNames(
+                        NULL,
+                        vymName+" - " + tr("Load image"),
+                        lastImageDir.path(),
+                        filter);
+        else
+            fns.append (fn);
 
-	if (!fns.isEmpty() )
-	{
-	    lastImageDir.setPath(fns.first().left(fns.first().lastIndexOf ("/")) );
-	    QString s;
-	    for (int j=0; j<fns.count(); j++)
-	    {
-		s=fns.at(j);
-		ImageItem *ii=createImage(dst);
-		if (ii && ii->load (s) )
-		{
-		    saveState(
-			(TreeItem*)ii,
-			"delete ()",
-			dst, 
-			QString ("loadImage (\"%1\")").arg(s ),
-			QString("Add image %1 to %2").arg(s).arg(getObjectName(dst))
-		    );
-		    // Find nice position
-		    FloatImageObj *fio=(FloatImageObj*)(ii->getMO() );
-		    if (fio)
-			fio->move2RelPos (0,0);
+        if (!fns.isEmpty() )
+        {
+            lastImageDir.setPath(fns.first().left(fns.first().lastIndexOf ("/")) );
+            QString s;
+            for (int j=0; j<fns.count(); j++)
+            {
+                s=fns.at(j);
+                ImageItem *ii=createImage(dst);
+                if (ii && ii->load (s) )
+                {
+                    saveState(
+                                (TreeItem*)ii,
+                                "delete ()",
+                                dst,
+                                QString ("loadImage (\"%1\")").arg(s ),
+                                QString("Add image %1 to %2").arg(s).arg(getObjectName(dst))
+                                );
+                    // Find nice position
+                    FloatImageObj *fio=(FloatImageObj*)(ii->getMO() );
+                    if (fio)
+                        fio->move2RelPos (0,0);
 
-		    // On default include image // FIXME-4 check, if we change default settings...
-		    setIncludeImagesHor (true);
-		    setIncludeImagesVer (true);
+                    // On default include image // FIXME-4 check, if we change default settings...
+                    select(dst);
+                    setIncludeImagesHor (false);
+                    setIncludeImagesVer (true);
 
-		    reposition();
-		} else
-		    // FIXME-4 loadFIO error handling
-		    qWarning ()<<"Failed to load "+s;
-	    }
+                    reposition();
+                } else
+                    // FIXME-4 loadFIO error handling
+                    qWarning ()<<"Failed to load "+s;
+            }
 
-	}
+        }
     }
 }
 
@@ -782,48 +837,48 @@ void VymModel::saveImage (ImageItem *ii, QString format, QString fn)
     if (!ii) ii=getSelectedImage();
     if (ii)
     {
-	QString filter=QString (tr("Images") + " (*.png *.bmp *.xbm *.jpg *.png *.xpm *.gif *.pnm *.svg);;"+tr("All","Filedialog") +" (*.*)");
-	if (fn.isEmpty() )
-	    fn=QFileDialog::getSaveFileName( 
-		NULL,
-		vymName+" - " + tr("Save image"), 
-		lastImageDir.path(), 
-		filter,
-		NULL,
-		QFileDialog::DontConfirmOverwrite);
+        QString filter=QString (tr("Images") + " (*.png *.bmp *.xbm *.jpg *.png *.xpm *.gif *.pnm *.svg);;"+tr("All","Filedialog") +" (*.*)");
+        if (fn.isEmpty() )
+            fn=QFileDialog::getSaveFileName(
+                        NULL,
+                        vymName+" - " + tr("Save image"),
+                        lastImageDir.path(),
+                        filter,
+                        NULL,
+                        QFileDialog::DontConfirmOverwrite);
 
-	if (!fn.isEmpty() )
-	{
-	    lastImageDir.setPath(fn.left(fn.lastIndexOf ("/")) );
-	    if (QFile (fn).exists() )
-	    {
-		QMessageBox mb( vymName,
-		    tr("The file %1 exists already.\n"
-		    "Do you want to overwrite it?").arg(fn),
-		QMessageBox::Warning,
-		QMessageBox::Yes | QMessageBox::Default,
-		QMessageBox::Cancel | QMessageBox::Escape,
-		QMessageBox::NoButton );
+        if (!fn.isEmpty() )
+        {
+            lastImageDir.setPath(fn.left(fn.lastIndexOf ("/")) );
+            if (QFile (fn).exists() )
+            {
+                QMessageBox mb( vymName,
+                                tr("The file %1 exists already.\n"
+                                   "Do you want to overwrite it?").arg(fn),
+                                QMessageBox::Warning,
+                                QMessageBox::Yes | QMessageBox::Default,
+                                QMessageBox::Cancel | QMessageBox::Escape,
+                                QMessageBox::NoButton );
 
-		mb.setButtonText( QMessageBox::Yes, tr("Overwrite") );
-		mb.setButtonText( QMessageBox::No, tr("Cancel"));
-		switch( mb.exec() ) 
-		{
-		    case QMessageBox::Yes:
-			// save 
-			break;
-		    case QMessageBox::Cancel:
-			// do nothing
-			return;
-			break;
-		}
-	    }
-	    if (format.isEmpty() ) format=imageIO.guessType(fn);
-	    if (format.isEmpty())
-		QMessageBox::critical (0,tr("Critical Error"),tr("Unsupported format in %1").arg(fn));
-	    else if (!ii->save (fn, format) )
-		QMessageBox::critical (0,tr("Critical Error"),tr("Couldn't save %1").arg(fn));
-	} 
+                mb.setButtonText( QMessageBox::Yes, tr("Overwrite") );
+                mb.setButtonText( QMessageBox::No, tr("Cancel"));
+                switch( mb.exec() )
+                {
+                case QMessageBox::Yes:
+                    // save
+                    break;
+                case QMessageBox::Cancel:
+                    // do nothing
+                    return;
+                    break;
+                }
+            }
+            if (format.isEmpty() ) format=imageIO.guessType(fn);
+            if (format.isEmpty())
+                QMessageBox::critical (0,tr("Critical Error"),tr("Unsupported format in %1").arg(fn));
+            else if (!ii->save (fn, format) )
+                QMessageBox::critical (0,tr("Critical Error"),tr("Couldn't save %1").arg(fn));
+        }
     }
 }
 
@@ -849,7 +904,7 @@ void VymModel::importDirInt(BranchItem *dst, QDir d)
 	    if (fi.isDir() && fi.fileName() != "." && fi.fileName() != ".." )
 	    {
 		bi=addNewBranchInt(dst,-2);
-		bi->setHeading (fi.fileName() );   
+                bi->setHeadingPlainText (fi.fileName() );
 		bi->setHeadingColor (QColor("blue"));
 		if ( !d.cd(fi.fileName()) ) 
 		    QMessageBox::critical (0,tr("Critical Import Error"),tr("Cannot find the directory %1").arg(fi.fileName()));
@@ -869,7 +924,7 @@ void VymModel::importDirInt(BranchItem *dst, QDir d)
 	    if (fi.isFile())
 	    {
 		bi=addNewBranchInt (dst,-2);
-		bi->setHeading (fi.fileName() );
+                bi->setHeadingPlainText (fi.fileName() );
 		bi->setHeadingColor (QColor("black"));
 		if (fi.fileName().right(4) == ".vym" )
 		    bi->setVymLink (fi.filePath());
@@ -906,7 +961,7 @@ void VymModel::importDir()
 	QFileDialog fd;
 	fd.setWindowTitle (vymName+ " - " +tr("Choose directory structure to import"));
 	fd.setFileMode (QFileDialog::DirectoryOnly);
-	fd.setFilters (filters);
+	fd.setNameFilters (filters);
 	fd.setWindowTitle(vymName+" - " +tr("Choose directory structure to import"));
 	fd.setAcceptMode (QFileDialog::AcceptOpen);
 
@@ -919,6 +974,84 @@ void VymModel::importDir()
     }	
 }
 
+bool VymModel::tryVymLock()
+{
+    // Defaults for author and host in vymLock
+    QString defAuthor = settings.value("/user/name", tr( "unknown user", "Default for lockfiles of maps") ).toString();
+    QString defHost   = QHostInfo::localHostName();      
+    vymLock.setMapPath( filePath );
+    vymLock.setAuthor( settings.value( "/user/name", defAuthor ).toString() ); 
+    if ( getenv("HOST") != 0 ) 
+        vymLock.setHost( getenv("HOST") );
+    else
+        vymLock.setHost( defHost );
+    
+    // Now try to lock
+    if (!vymLock.tryLock() )
+    {
+        if (debug) qDebug() << "VymModel::tryLock failed!";
+        setReadOnly( true );
+        if (vymLock.getState() == VymLock::lockedByOther)
+        {
+            WarningDialog dia;
+            QString a = vymLock.getAuthor();
+            QString h = vymLock.getHost();
+            QString s = QString( tr("Map seems to be already opened in another vym instance! "
+                   "It will be opened in readonly mode.\n\n"
+                   "Map is locked by \"%1\" on \"%2\"" )) .arg(a).arg(h);
+            dia.setText( s );
+            dia.setWindowTitle(tr("Warning: Map already opended","VymModel"));
+            dia.showCancelButton( false );
+            dia.setShowAgainName("/mainwindow/mapIsLocked");
+            dia.exec();
+        } else if (vymLock.getState() == VymLock::notWritable)
+        {
+            WarningDialog dia;
+            QString a = vymLock.getAuthor();
+            QString h = vymLock.getHost();
+            QString s = QString( tr("Cannot create lockfile of map! "
+                        "It will be opened in readonly mode.\n\n" ));
+            dia.setText( s );
+            dia.setWindowTitle(tr("Warning","VymModel"));
+            dia.showCancelButton( false );
+            //dia.setShowAgainName("/mainwindow/mapIsLocked");
+            dia.exec();
+        }
+        return false;
+    }
+    return true;
+}
+
+bool VymModel::renameMap( const QString &newPath)
+{
+    QString oldPath = filePath;
+    setFilePath ( newPath );
+    if (vymLock.getState() == VymLock::lockedByMyself)
+    {
+        // vymModel owns the lockfile, try to rename it
+        if (! vymLock.rename( fileName ))
+        {
+            qWarning ("Warning: VymModel::renameMap failed");
+            setFilePath( oldPath );
+            return false;
+        } else
+            return true;
+    }
+
+    // try to create new lockfile for the lock states: lockedByOther and notWritable
+    return tryVymLock();
+}
+
+void VymModel::setReadOnly( bool b )
+{
+    readonly = b;
+    mainWindow->updateTabName( this );
+}
+
+bool VymModel::isReadOnly()
+{
+    return readonly;
+}
 
 void VymModel::autosave()
 {
@@ -957,32 +1090,39 @@ void VymModel::fileChanged()
     // Check if file on disk has changed meanwhile
     if (!filePath.isEmpty())
     {
-	QDateTime tmod=QFileInfo (filePath).lastModified();
-	if (tmod>fileChangedTime)
-	{
-	    // FIXME-4 VM switch to current mapeditor and finish lineedits...
-	    QMessageBox mb( vymName,
-		tr("The file of the map  on disk has changed:\n\n"  
-		   "   %1\n\nDo you want to reload that map with the new file?").arg(filePath),
-		QMessageBox::Question,
-		QMessageBox::Yes ,
-		QMessageBox::Cancel | QMessageBox::Default,
-		QMessageBox::NoButton );
+        if (readonly)
+        {
+            // unset readonly if lockfile is gone
+            if (vymLock.tryLock() ) setReadOnly( false );
+        } else
+        {
+            QDateTime tmod=QFileInfo (filePath).lastModified();
+            if (tmod>fileChangedTime)
+            {
+                // FIXME-4 VM switch to current mapeditor and finish lineedits...
+                QMessageBox mb( vymName,
+                    tr("The file of the map  on disk has changed:\n\n"  
+                       "   %1\n\nDo you want to reload that map with the new file?").arg(filePath),
+                    QMessageBox::Question,
+                    QMessageBox::Yes ,
+                    QMessageBox::Cancel | QMessageBox::Default,
+                    QMessageBox::NoButton );
 
-	    mb.setButtonText( QMessageBox::Yes, tr("Reload"));
-	    mb.setButtonText( QMessageBox::No, tr("Ignore"));
-	    switch( mb.exec() ) 
-	    {
-		case QMessageBox::Yes:
-		    // Reload map
-		    mainWindow->initProgressCounter (1);
-		    loadMap (filePath);
-		    mainWindow->removeProgressCounter ();
-		    break;
-		case QMessageBox::Cancel:
-		    fileChangedTime=tmod; // allow autosave to overwrite newer file!
-	    }
-	}
+                mb.setButtonText( QMessageBox::Yes, tr("Reload"));
+                mb.setButtonText( QMessageBox::No, tr("Ignore"));
+                switch( mb.exec() ) 
+                {
+                    case QMessageBox::Yes:
+                        // Reload map
+                        mainWindow->initProgressCounter (1);
+                        loadMap (filePath);  
+                        mainWindow->removeProgressCounter ();
+                        break;
+                    case QMessageBox::Cancel:
+                        fileChangedTime=tmod; // allow autosave to overwrite newer file!
+                }
+            }
+        }
     }	
 }
 
@@ -1005,12 +1145,12 @@ bool VymModel::hasChanged()
 void VymModel::setChanged()
 {
     if (!mapChanged)
-	autosaveTimer->start(settings.value("/mainwindow/autosave/ms/",300000).toInt());
+	autosaveTimer->start(settings.value("/system/autosave/ms/",300000).toInt());
     mapChanged=true;
     mapDefault=false;
     mapUnsaved=true;
     findReset();
-    mainWindow->updateActions();
+    updateActions();
 }
 
 QString VymModel::getObjectName (LinkableMapObj *lmo)
@@ -1162,24 +1302,32 @@ void VymModel::undo()
 	qDebug() << "    ---------------------------";
     }	
 
-    bool noErr;
+    // select  object before undo
+    if (!undoSelection.isEmpty())
+	select (undoSelection);
+
+    // bool noErr;
     QString errMsg;
-    parseAtom (undoCommand,noErr,errMsg);
+    //parseAtom (undoCommand,noErr,errMsg);
+    errMsg = QVariant(execute(undoCommand)).toString();
+    // FIXME-3 add noErr to parameters of execute above or ignore (error message already within parseAtom)
+    // 
+    /*
     if (!noErr)
     {
-	if (!options.isOn("batch") )
-	    QMessageBox::warning(0,tr("Warning"),tr("Undo failed:\n%1").arg(errMsg));
-	qWarning()<< "VM::undo failed:\n"<<errMsg;
+        if (!options.isOn("batch") )
+            QMessageBox::warning(0,tr("Warning"),tr("Undo failed:\n%1").arg(errMsg));
+        qWarning()<< "VM::undo failed:\n"<<errMsg;
     }
-
+    */
 
     undosAvail--;
     curStep--; 
-    if (curStep<1) curStep=stepsTotal;
+    if (curStep<1) curStep = stepsTotal;
 
     redosAvail++;
 
-    blockSaveState=blockSaveStateOrg;
+    blockSaveState = blockSaveStateOrg;
 /* testing only
     qDebug() << "VymModel::undo() end\n";
     qDebug() << "    undosAvail="<<undosAvail;
@@ -1314,22 +1462,23 @@ void VymModel::saveState(
 
     if (debug)
     {
-	//qDebug() << "          into="<< histPath;
-	qDebug() << "    stepsTotal="<<stepsTotal<<
-	", undosAvail="<<undosAvail<<
-	", redosAvail="<<redosAvail<<
-	", curStep="<<curStep;
-	qDebug() << "    ---------------------------";
-	qDebug() << "    comment="<<comment;
-	qDebug() << "    undoCom="<<undoCommand;
-	qDebug() << "    undoSel="<<undoSelection;
-	qDebug() << "    redoCom="<<redoCommand;
-	qDebug() << "    redoSel="<<redoSelection;
-	if (saveSel) qDebug() << "    saveSel="<<qPrintable (getSelectString(saveSel));
-	qDebug() << "    ---------------------------";
+        //qDebug() << "          into="<< histPath;
+        qDebug() << "    stepsTotal="<<stepsTotal<<
+        ", undosAvail="<<undosAvail<<
+        ", redosAvail="<<redosAvail<<
+        ", curStep="<<curStep;
+        qDebug() << "    ---------------------------";
+        qDebug() << "    comment="<<comment;
+        qDebug() << "    undoCom="<<undoCommand;
+        qDebug() << "    undoSel="<<undoSelection;
+        qDebug() << "    redoCom="<<redoCommand;
+        qDebug() << "    redoSel="<<redoSelection;
+        if (saveSel) qDebug() << "    saveSel="<<qPrintable (getSelectString(saveSel));
+        qDebug() << "    ---------------------------";
     }
 
     mainWindow->updateHistory (undoSet);
+
     setChanged();
     updateActions();
 }
@@ -1637,58 +1786,89 @@ QString VymModel::getSortFilter ()
     return sortFilter;
 }
 
-void VymModel::setHeading(const QString &s, BranchItem *bi)
+void VymModel::setHeading(const VymText &vt, BranchItem *bi)
+{
+    Heading h_old;
+    Heading h_new;
+    h_new = vt;
+    QString s = vt.getTextASCII();
+    if (!bi) bi=getSelectedBranch();
+    if (bi)
+    {
+        h_old = bi->getHeading();
+        if (h_old == h_new) return;
+        saveState(
+            bi, "parseVymText ('" +  h_old.saveToDir() + "')",
+            bi, "parseVymText ('" +  h_new.saveToDir() + "')",
+            QString("Set heading of %1 to \"%2\"").arg(getObjectName(bi)).arg(s) );
+        bi->setHeading(vt);
+        emitDataChanged ( bi);
+        emitUpdateQueries ();
+        reposition();
+    }
+}
+
+void VymModel::setHeadingPlainText(const QString &s, BranchItem *bi)
 {
     if (!bi) bi=getSelectedBranch();
     if (bi)
     {
-	if (bi->getHeading()==s) return;
-	saveState(
-	    bi,
-	    "setHeading (\""+bi->getHeading()+"\")", 
-	    bi,
-	    "setHeading (\""+s+"\")", 
-	    QString("Set heading of %1 to \"%2\"").arg(getObjectName(bi)).arg(s) );
-	bi->setHeading(s );
-	emitDataChanged ( bi);
-	emitUpdateQueries ();
-	reposition();
+        VymText vt = bi->getHeading();
+        vt.setPlainText(s);
+        if (bi->getHeading() == vt) return;
+        setHeading (vt, bi);
     }
 }
 
-QString VymModel::getHeading()
+Heading VymModel::getHeading()
 {
     TreeItem *selti=getSelectedItem();
-    if (selti)
-	return selti->getHeading();
-    else    
-	return QString();
+    if (selti) return  selti->getHeading();
+    qWarning() << "VymModel::getHeading Nothing selected.";
+    return Heading();
 }
 
-void VymModel::setNote(const QString &s)
+void VymModel::setNote(const  VymNote &vn)
 {
     TreeItem *selti=getSelectedItem();
     if (selti) 
     {
-	saveState(
-	    selti,
-	    "setNote (\"" + selti->getNote() + "\")", 
-	    selti,
-	    "setNote (\"" + s + "\")", 
-	    QString("Set note of %1 ").arg(getObjectName(selti)) );
+        VymNote n_old;
+        VymNote n_new;
+        n_old = selti->getNote();
+        n_new = vn;
+        saveState(
+            selti,
+            "parseVymText ('" + n_old.saveToDir() + "')",
+            selti,
+            "parseVymText ('" + n_new.saveToDir() + "')",
+            QString("Set note of %1 to \"%2\"").arg(getObjectName(selti)).arg(n_new.getTextASCII().left(20) ) );
+        selti->setNote( n_new );
+        emitNoteChanged( selti );
+        emitDataChanged( selti );
     }
-    selti->setNote(s);
-    emitNoteChanged(selti);
-    emitDataChanged(selti);
 }
 
-QString VymModel::getNote()
+VymNote VymModel::getNote()
 {
     TreeItem *selti=getSelectedItem();
     if (selti)
-	return selti->getNote();
-    else    
-	return QString();
+    {
+        VymNote n = selti->getNote();
+        return n;
+    }
+    qWarning() << "VymModel::getNote Nothing selected.";
+    return VymNote();
+}
+
+bool VymModel::hasRichTextNote()
+{
+    TreeItem *selti=getSelectedItem();
+    if (selti)
+    {
+        return selti->getNote().isRichText();
+    }
+    return false;
 }
 
 void VymModel::loadNote (const QString &fn)
@@ -1696,32 +1876,34 @@ void VymModel::loadNote (const QString &fn)
     BranchItem *selbi=getSelectedBranch();
     if (selbi)
     {
-	QString n;
-	if (!loadStringFromDisk (fn,n))
-	    qWarning ()<<"VymModel::loadNote Couldn't load "<<fn;
-	else
-	    setNote (n);
+        QString n;
+        if (!loadStringFromDisk (fn,n))
+            qWarning ()<<"VymModel::loadNote Couldn't load "<<fn;
+        else
+        {
+            VymNote vn;
+            vn.setAutoText(n);
+            setNote (vn);
+        }
     } else
-	qWarning ("VymModel::loadNote no branch selected");
+        qWarning ("VymModel::loadNote no branch selected");
 }
 
 void VymModel::saveNote (const QString &fn)
 {
-    BranchItem *selbi=getSelectedBranch();
+    BranchItem *selbi = getSelectedBranch();
     if (selbi)
     {
-	QString n=selbi->getNote();
-	if (n.isEmpty())
-	    qWarning ()<<"VymModel::saveNote  note is empty, won't save to "<<fn;
-	else
-	{
-	    if (!saveStringToDisk (fn,n))
-		qWarning ()<<"VymModel::saveNote Couldn't save "<<fn;
-	    else
-		selbi->setNote (n);
-	}   
+        VymNote n = selbi->getNote();
+        if ( n.isEmpty() )
+            qWarning ()<<"VymModel::saveNote  note is empty, won't save to "<<fn;
+        else
+        {
+            if (!saveStringToDisk (fn, n.saveToDir() ))
+                qWarning ()<<"VymModel::saveNote Couldn't save "<<fn;
+        }
     } else
-	qWarning ("VymModel::saveNote no branch selected");
+        qWarning ("VymModel::saveNote no branch selected");
 }
 
 void VymModel::findDuplicateURLs()  // FIXME-3 needs GUI
@@ -1750,9 +1932,9 @@ void VymModel::findDuplicateURLs()  // FIXME-3 needs GUI
 	    if (  i-1==firstdup )
 	    {
 		qDebug() << firstdup.key();
-		qDebug() << " - "<< firstdup.value() <<" - "<<firstdup.value()->getHeading();
+        qDebug() << " - "<< firstdup.value() <<" - "<<firstdup.value()->getHeading().getText();
 	    }	
-	    qDebug() << " - "<< i.value() <<" - "<<i.value()->getHeading();
+        qDebug() << " - "<< i.value() <<" - "<<i.value()->getHeading().getText();
 	} else
 	    firstdup=i;
 
@@ -1765,36 +1947,36 @@ bool  VymModel::findAll (FindResultModel *rmodel, QString s, Qt::CaseSensitivity
     rmodel->clear();
     rmodel->setSearchString (s);
     rmodel->setSearchFlags (0);	//FIXME-4 translate cs to QTextDocument::FindFlag
-    bool hit=false;
+    bool hit = false;
 
-    BranchItem *cur=NULL;
-    BranchItem *prev=NULL;
+    BranchItem *cur  = NULL;
+    BranchItem *prev = NULL;
     nextBranch(cur,prev);
 
-    FindResultItem *lastParent=NULL;
+    FindResultItem *lastParent = NULL;
     while (cur) 
     {
-	lastParent=NULL;
-	if (cur->getHeading().contains (s,cs))
+	lastParent = NULL;
+        if (cur->getHeading().getTextASCII().contains (s,cs))
+            {
+                lastParent = rmodel->addItem (cur);
+                hit = true;
+            }
+	QString n = cur->getNoteASCII();
+	int i = 0;
+	int j = 0;
+	while ( i >= 0)
 	{
-	    lastParent=rmodel->addItem (cur);
-	    hit=true;
-	}
-	QString n=cur->getNoteASCII();
-	int i=0;
-	int j=0;
-	while ( i>=0)
-	{
-	    i=n.indexOf (s,i,cs); 
-	    if (i>=0) 
+	    i = n.indexOf (s,i,cs); 
+	    if (i >= 0) 
 	    {
 		// If not there yet, add "parent" item
 		if (!lastParent)
 		{
-		    lastParent=rmodel->addItem (cur);
-		    hit=true;
+		    lastParent = rmodel->addItem (cur);
+		    hit = true;
 		    if (!lastParent)
-			qWarning()<<"VymModel::findAll still no lastParent?!";
+			qWarning() << "VymModel::findAll still no lastParent?!";
 		    /*
 		    else
 			lastParent->setSelectable (false);
@@ -1802,14 +1984,14 @@ bool  VymModel::findAll (FindResultModel *rmodel, QString s, Qt::CaseSensitivity
 		}   
 
 		// save index of occurence
-		QString e=n.mid(i-15,30);
-		n.replace('\n',' ');
-		rmodel->addSubItem (lastParent,QString(tr("Note","FindAll in VymModel")+": \"...%1...\"").arg(n.mid(i-8,80)),cur,j);
+		QString e = n.mid(i-15, 30);
+		n.replace('\n', ' ');
+		rmodel->addSubItem (lastParent, QString(tr("Note", "FindAll in VymModel") + ": \"...%1...\"").arg(n.mid(i-8,80)), cur, j);
 		j++;
 		i++;
 	    }
 	} 
-	nextBranch(cur,prev);
+	nextBranch(cur, prev);
     }
     return hit;
 }
@@ -1841,7 +2023,7 @@ BranchItem* VymModel::findText (QString s,Qt::CaseSensitivity cs)
 	if (findCurrent)
 	{
 	    // Searching in Note
-	    if (findCurrent->getNote().contains(findString,cs))
+        if (findCurrent->getNoteASCII().contains(findString,cs))
 	    {
 		select (findCurrent);
 		if (noteEditor->findText(findString,flags)) 
@@ -1851,7 +2033,7 @@ BranchItem* VymModel::findText (QString s,Qt::CaseSensitivity cs)
 		}   
 	    }
 	    // Searching in Heading
-	    if (searching && findCurrent->getHeading().contains (findString,cs) ) 
+        if (searching && findCurrent->getHeading().getTextASCII().contains (findString,cs) )
 	    {
 		select(findCurrent);
 		searching=false;
@@ -1881,8 +2063,6 @@ void VymModel::setURL(QString url)
 {
     TreeItem *selti=getSelectedItem();
     if (selti->getURL()==url) return;
- //   if (!url.isEmpty() && (! (url.startsWith("http://") || url.startsWith("https://") ) && !url.startsWith("file://") ) )   //FIXME-3 needed?
- //	url="http://"+url;
     if (selti)
     {
 	QString oldurl=selti->getURL();
@@ -1927,7 +2107,7 @@ QStringList VymModel::getURLs(bool ignoreScrolled)
 }
 
 
-void VymModel::setFrameType(const FrameObj::FrameType &t)   //FIXME-5 not saved if there is no LMO
+void VymModel::setFrameType(const FrameObj::FrameType &t)   
 {
     BranchItem *bi=getSelectedBranch();
     if (bi)
@@ -1945,7 +2125,7 @@ void VymModel::setFrameType(const FrameObj::FrameType &t)   //FIXME-5 not saved 
     }
 }
 
-void VymModel::setFrameType(const QString &s)	//FIXME-5 not saved if there is no LMO
+void VymModel::setFrameType(const QString &s)	
 {
     BranchItem *bi=getSelectedBranch();
     if (bi)
@@ -2101,7 +2281,30 @@ void VymModel::setIncludeImagesHor(bool b)
     }	
 }
 
-void VymModel::setHideLinkUnselected (bool b) 
+void VymModel::setChildrenLayout(BranchItem::LayoutHint layoutHint) // FIXME-3 no savestate yet
+{
+    BranchItem *bi=getSelectedBranch();
+    if (bi)
+    {
+        /*
+        QString u= b ? "false" : "true";
+        QString r=!b ? "false" : "true";
+
+        saveState(      
+            bi,
+            QString("setIncludeImagesHorizontally (%1)").arg(u),
+            bi,
+            QString("setIncludeImagesHorizontally (%1)").arg(r),
+            QString("Include images horizontally in %1").arg(getObjectName(bi))
+        );
+        */
+        bi->setChildrenLayout(layoutHint);
+        emitDataChanged ( bi);
+        reposition();
+    }
+}
+
+void VymModel::setHideLinkUnselected (bool b)
 {
     TreeItem *ti=getSelectedItem();
     if (ti && (ti->getType()==TreeItem::Image ||ti->isBranchLikeType()))
@@ -2302,10 +2505,11 @@ void VymModel::addTimestamp()	//FIXME-4 new function, localize
     {
 	QDate today=QDate::currentDate();
 	QChar c='0';
-	selbi->setHeading (QString ("%1-%2-%3")
-	    .arg(today.year(),4,10,c)
-	    .arg(today.month(),2,10,c)
-	    .arg(today.day(),2,10,c));
+        selbi->setHeadingPlainText (
+        QString ("%1-%2-%3")
+            .arg(today.year(),4,10,c)
+            .arg(today.month(),2,10,c)
+            .arg(today.day(),2,10,c));
 	emitDataChanged ( selbi);	
 	reposition();
 	select (selbi);
@@ -2315,6 +2519,8 @@ void VymModel::addTimestamp()	//FIXME-4 new function, localize
 
 void VymModel::copy()	
 {
+    if (readonly) return;
+
     TreeItem *selti=getSelectedItem();
     if (selti &&
 	(selti->getType() == TreeItem::Branch || 
@@ -2341,6 +2547,8 @@ void VymModel::copy()
 
 void VymModel::paste()	
 {   
+    if (readonly) return;
+
     BranchItem *selbi=getSelectedBranch();
     if (selbi)
     {
@@ -2359,6 +2567,8 @@ void VymModel::paste()
 
 void VymModel::cut()	
 {
+    if (readonly) return;
+
     TreeItem *selti=getSelectedItem();
     if ( selti && (selti->isBranchLikeType() ||selti->getType()==TreeItem::Image))
     {
@@ -2370,6 +2580,8 @@ void VymModel::cut()
 
 bool VymModel::moveUp(BranchItem *bi)
 {
+    if (readonly) return false;
+
     bool oldState=blockSaveState;
     blockSaveState=true;
     bool result=false;
@@ -2398,6 +2610,8 @@ void VymModel::moveUp()
 
 bool VymModel::moveDown(BranchItem *bi)	
 {
+    if (readonly) return false;
+
     bool oldState=blockSaveState;
     blockSaveState=true;
     bool result=false;
@@ -2492,33 +2706,33 @@ ImageItem* VymModel::createImage(BranchItem *dst)
 {
     if (dst)
     {
-	QModelIndex parix;
-	int n;
+        QModelIndex parix;
+        int n;
 
-	QList<QVariant> cData;
-	cData << "new" << "undef";
+        QList<QVariant> cData;
+        cData << tr("Image","Default name for new image") << "undef";
 
-	ImageItem *newii=new ImageItem(cData) ;	
-	//newii->setHeading (QApplication::translate("Heading of new image in map", "new image"));
+        ImageItem *newii=new ImageItem(cData) ;
+        //newii->setHeading (QApplication::translate("Heading of new image in map", "new image"));
 
-	emit (layoutAboutToBeChanged() );
+        emit (layoutAboutToBeChanged() );
 
-	    parix=index(dst);
-	    if (!parix.isValid()) qDebug() << "VM::createII invalid index\n";
-	    n=dst->getRowNumAppend(newii);
-	    beginInsertRows (parix,n,n);
-	    dst->appendChild (newii);	
-	    endInsertRows ();
+        parix=index(dst);
+        if (!parix.isValid()) qDebug() << "VM::createII invalid index\n";
+        n=dst->getRowNumAppend(newii);
+        beginInsertRows (parix,n,n);
+        dst->appendChild (newii);
+        endInsertRows ();
 
-	emit (layoutChanged() );
+        emit (layoutChanged() );
 
-	// save scroll state. If scrolled, automatically select
-	// new branch in order to tmp unscroll parent...
-	newii->createMapObj();
-	latestAddedItem=newii;
-	reposition();
-	return newii;
-    } 
+        // save scroll state. If scrolled, automatically select
+        // new branch in order to tmp unscroll parent...
+        newii->createMapObj();
+        latestAddedItem=newii;
+        reposition();
+        return newii;
+    }
     return NULL;
 }
 
@@ -2644,7 +2858,7 @@ QString VymModel::getXLinkStyleEnd()
 	return QString();
 }
 
-AttributeItem* VymModel::addAttribute()	    // FIXME-5 savestate missing
+AttributeItem* VymModel::addAttribute()	    // Experimental, savestate missing
 
 {
     BranchItem* selbi=getSelectedBranch();
@@ -2707,15 +2921,16 @@ BranchItem* VymModel::addMapCenter (bool saveStateFlag)
     BranchItem *bi=addMapCenter (contextPos);
     updateActions();
     emitShowSelection();
-    if (saveStateFlag) saveState (
-	bi,
-	"delete()",
-	NULL,
-	QString ("addMapCenter (%1,%2)").arg (contextPos.x()).arg(contextPos.y()),
-	QString ("Adding MapCenter to (%1,%2)").arg (contextPos.x()).arg(contextPos.y())
-    );	
-    emitUpdateLayout();	
-    return bi;	
+    if (saveStateFlag)
+        saveState (
+            bi,
+            "delete()",
+            NULL,
+            QString ("addMapCenter (%1,%2)").arg (contextPos.x()).arg(contextPos.y()),
+            QString ("Adding MapCenter to (%1,%2)").arg (contextPos.x()).arg(contextPos.y())
+        );
+            emitUpdateLayout();
+    return bi;
 }
 
 BranchItem* VymModel::addMapCenter(QPointF absPos)  
@@ -2728,7 +2943,7 @@ BranchItem* VymModel::addMapCenter(QPointF absPos)
     QList<QVariant> cData;
     cData << "VM:addMapCenter" << "undef";
     BranchItem *newbi=new BranchItem (cData,rootItem);
-    newbi->setHeading (QApplication::translate("Heading of mapcenter in new map", "New map"));
+    newbi->setHeadingPlainText (tr("New map", "New map"));
     int n=rootItem->getRowNumAppend (newbi);
 
     emit (layoutAboutToBeChanged() );
@@ -2759,19 +2974,19 @@ BranchItem* VymModel::addNewBranchInt(BranchItem *dst,int pos)
     QList<QVariant> cData;
     cData << "" << "undef";
 
-    BranchItem *parbi=dst;
+    BranchItem *parbi = dst;
     int n;
-    BranchItem *newbi=new BranchItem (cData);	
+    BranchItem *newbi = new BranchItem (cData);	
 
     emit (layoutAboutToBeChanged() );
 
-    if (pos==-2)
+    if (pos == -2)
     {
-	n=parbi->getRowNumAppend (newbi);
+	n = parbi->getRowNumAppend (newbi);
 	beginInsertRows (index(parbi), n, n);	
 	parbi->appendChild (newbi); 
 	endInsertRows ();
-    }else if (pos==-1 || pos==-3)
+    }else if (pos == -1 || pos == -3)
     {
 	// insert below selection
 	parbi=(BranchItem*)dst->parent();
@@ -2788,12 +3003,11 @@ BranchItem* VymModel::addNewBranchInt(BranchItem *dst,int pos)
     }
     emit (layoutChanged() );
 
+    newbi->createMapObj(mapEditor->getScene());
+    
     // Set color of heading to that of parent
     newbi->setHeadingColor (parbi->getHeadingColor());
 
-    // save scroll state. If scrolled, automatically select
-    // new branch in order to tmp unscroll parent...
-    newbi->createMapObj(mapEditor->getScene());
     reposition();
     return newbi;
 }   
@@ -2914,7 +3128,7 @@ bool VymModel::relinkBranch (
 	// reset parObj, fonts, frame, etc in related LMO or other view-objects
 	branch->updateStyles(keepFrame);
 
-	emit (layoutChanged() );
+        emitDataChanged( branch );
 	reposition();	// both for moveUp/Down and relinking
 
 	// Savestate
@@ -2994,10 +3208,6 @@ bool VymModel::relinkImage (ImageItem *image, BranchItem *dst)
 
 void VymModel::cleanupItems()
 {
-
-    // Search for double entries (should not be necessary now) //FIXME-5
-    // --> not implemented yet
-
     while (!deleteLaterIDs.isEmpty())
     {
 	TreeItem *ti=findID (deleteLaterIDs.takeFirst());
@@ -3404,7 +3614,7 @@ ItemList VymModel::getTargets()
     while (cur) 
     {
 	if (cur->hasActiveSystemFlag("system-target"))
-	    targets[cur->getID()]=cur->getHeading();
+            targets[cur->getID()] = (cur->getHeading()).getTextASCII();
 	nextBranch(cur,prev);
     }
     return targets; 
@@ -3523,7 +3733,7 @@ void VymModel::note2URLs()
 	    QString ("Extract URLs from note of %1").arg(getObjectName(selbi))
 	);  
 
-	QString n=selbi->getNote();
+    QString n = selbi->getNoteASCII();
 	if (n.isEmpty()) return;
 	QRegExp re ("(http.*)(\\s|\"|')");
 	re.setMinimal (true);
@@ -3533,7 +3743,7 @@ void VymModel::note2URLs()
 	while ((pos = re.indexIn(n, pos)) != -1) 
 	{
 	    bi=createBranch (selbi);
-	    bi->setHeading (re.cap(1));
+            bi->setHeadingPlainText (re.cap(1));
 	    bi->setURL (re.cap(1));
 	    emitDataChanged (bi);
 	    pos += re.matchedLength();
@@ -3546,7 +3756,7 @@ void VymModel::editHeading2URL()
 {
     TreeItem *selti=getSelectedItem();
     if (selti)
-	setURL (selti->getHeading());
+    setURL (selti->getHeadingPlain());
 }   
 
 void VymModel::editBugzilla2URL()   
@@ -3554,7 +3764,7 @@ void VymModel::editBugzilla2URL()
     TreeItem *selti=getSelectedItem();
     if (selti)
     {	    
-	QString h=selti->getHeading();
+    QString h=selti->getHeadingPlain();
 	QRegExp rx("(\\d+)");
 	if (rx.indexIn(h) !=-1)
 	    setURL ("https://bugzilla.novell.com/show_bug.cgi?id="+rx.cap(1) );
@@ -3613,7 +3823,7 @@ void VymModel::editFATE2URL()
     TreeItem *selti=getSelectedItem();
     if (selti)
     {	    
-	QString url= "http://keeper.suse.de:8080/webfate/match/id?value=ID"+selti->getHeading();
+    QString url= "http://keeper.suse.de:8080/webfate/match/id?value=ID"+selti->getHeadingPlain();
 	saveState(
 	    selti,
 	    "setURL (\""+selti->getURL()+"\")",
@@ -3828,10 +4038,20 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
     // Split string s into command and parameters
     parser.parseAtom (atom);
 
+    if (parser.getCommand().length() == 0)
+    {
+        errorMsg.clear();
+        noErr=true;
+        return returnValue;
+    }
+
     // Check set of parameters
     if (parser.errorLevel()==NoError && parser.checkParameters(selti) )
     {
 	QString com=parser.getCommand();
+    // - MS VS2013 compiler has nested if limit - work around that with
+    //   do{}while(0); and breaks
+    do {
 	/////////////////////////////////////////////////////////////////////
 	if (com=="addBranch")  
 	{
@@ -3839,17 +4059,23 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 		addNewBranch ();
 	    else
 		addNewBranch ( selbi,parser.parInt (ok,0) );
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="addBranchBefore")
+    if (com=="addBranchBefore")
 	{
 	    addNewBranchBefore ();
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com==QString("addMapCenter"))
+    if (com==QString("addMapCenter"))
 	{
 	    x=parser.parDouble (ok,0);
 	    y=parser.parDouble (ok,1);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com==QString("addMapInsert"))
+    if (com==QString("addMapInsert"))
 	{
 	    t=parser.parString (ok,0);  // path to map
 	    int contentFilter=0x0000;
@@ -3880,8 +4106,10 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 		if (File::Aborted==loadMap (t,ImportAdd,VymMap,contentFilter,pos) )
 		    parser.setError (Aborted,QString("Couldn't load %1").arg(t) );
 	    }	
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com==QString("addMapReplace"))
+    if (com==QString("addMapReplace"))
 	{
 	    t=parser.parString (ok,0);	// path to map
 	    if (QDir::isRelativePath(t)) 
@@ -3889,12 +4117,16 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 	    saveStateBeforeLoad (ImportReplace, t);
 	    if (File::Aborted==loadMap (t,ImportReplace,VymMap) )
 		parser.setError (Aborted,QString("Couldn't load %1").arg(t) );
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com==QString("addSlide"))
+    if (com==QString("addSlide"))
 	{
 	    addSlide();
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com==QString("addXLink")) 
+    if (com==QString("addXLink"))
 	{
 	    s=parser.parString (ok,0);	// begin
 	    t=parser.parString (ok,1);	// end
@@ -3939,16 +4171,22 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 		
 	    } else
 		parser.setError (Aborted,"Couldn't find begin or end of xLink");
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="branchCount")
+    if (com=="branchCount")
 	{ 
 	    returnValue=selti->branchCount();
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="centerCount")
+    if (com=="centerCount")
 	{ 
 	    returnValue=rootItem->branchCount();
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="centerOnID")
+    if (com=="centerOnID")
 	{
 	    s=parser.parString(ok,0);
 	    TreeItem *ti=findUuid(QUuid(s));
@@ -3966,279 +4204,427 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
                     qWarning()<<"VymModel::centerOnID failed!";
 	    } else
 		parser.setError(Aborted,QString("Could not find ID: \"%1\"").arg(s));
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="clearFlags")   
-	{
-	    selbi->deactivateAllStandardFlags();
-	    reposition();
-	    emitDataChanged(selbi);
-	    setChanged();
+    if (com=="clearFlags")
+    {
+        selbi->deactivateAllStandardFlags();
+        reposition();
+        emitDataChanged(selbi);
+        setChanged();
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="colorBranch")
-	{
-	    QColor c=parser.parColor (ok,0);
-	    colorBranch (c);
+    if (com=="colorBranch")
+    {
+        QColor c=parser.parColor (ok,0);
+        colorBranch (c);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="colorSubtree")
-	{
-	    QColor c=parser.parColor (ok,0);
-	    colorSubtree (c);
+    if (com=="colorSubtree")
+    {
+        QColor c=parser.parColor (ok,0);
+        colorSubtree (c);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="copy")
+    if (com=="copy")
 	{
 	    copy();
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="cut")
+    if (com=="cut")
 	{
 		cut();
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="cycleTask")
+    if (com=="cycleTask")
 	{
 	    ok=true;
 	    if (parser.parCount()==0) b=false;
 	    if (parser.parCount()==1) b=parser.parBool(ok,0);
 	    if (ok) cycleTaskStatus (b);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="delete")
+    if (com=="delete")
 	{
 	    deleteSelection();
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="deleteKeepChildren")
+    if (com=="deleteKeepChildren")
 	{
 	    deleteKeepChildren();
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="deleteChildren")
+    if (com=="deleteChildren")
 	{
 	    deleteChildren();
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="deleteSlide")   
+    if (com=="deleteSlide")
 	{
-	    if (ok) deleteSlide(n);
+	    n = parser.parInt (ok,0);
+	    if (!ok || n < 0 || n >= slideModel->count() - 1)
+		parser.setError (Aborted,"Index out of range");
+	    else    
+                deleteSlide(n);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="exportAO")
+    if (com=="exportAO")
 	{
 	    QString fname=parser.parString(ok,0); 
 	    exportAO (fname,false);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="exportASCII")
+    if (com=="exportASCII")
 	{
-	   QString fname=parser.parString(ok,0); 
-	   exportASCII (fname,false);
+       QString fname  = parser.parString(ok, 0);
+       bool listTasks = parser.parBool(ok, 1);
+       exportASCII (listTasks, fname, false);
+       break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="exportCSV")
+    if (com=="exportCSV")
 	{
 	   QString fname=parser.parString(ok,0); 
 	   exportCSV (fname,false);
+       break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="exportHTML")
+    if (com=="exportHTML")
 	{
 	    QString path=parser.parString(ok,0); 
 	    QString fname=parser.parString(ok,1); 
 	    exportHTML (path,fname,false);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="exportImage")
+    if (com=="exportImage")
 	{
 	    QString fname=parser.parString(ok,0); 
 	    QString format="PNG";
 	    if (parser.parCount()>=2)
 		format=parser.parString(ok,1);
 	    exportImage (fname,false,format);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="exportImpress")
+    if (com=="exportImpress")
 	{
 	    QString fn=parser.parString(ok,0); 
 	    QString cf=parser.parString(ok,1); 
 	    exportImpress (fn,cf);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="exportLast")
+    if (com=="exportLast")
 	{
 	    exportLast ();
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="exportLaTeX")
+    if (com=="exportLaTeX")
 	{
 	    QString fname=parser.parString(ok,0); 
 	    exportLaTeX (fname,false);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="exportOrgMode")
+    if (com=="exportOrgMode")
 	{
 	    QString fname=parser.parString(ok,0); 
 	    exportOrgMode (fname,false);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="exportPDF")
+    if (com=="exportPDF")
 	{
 	    QString fname=parser.parString(ok,0); 
 	    exportPDF(fname,false);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="exportSVG")
+    if (com=="exportSVG")
 	{
 	    QString fname=parser.parString(ok,0); 
 	    exportSVG(fname,false);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="exportXML")
+    if (com=="exportXML")
 	{
 	    QString dpath=parser.parString(ok,0); 
 	    QString fpath=parser.parString(ok,1); 
 	    exportXML (dpath,fpath,false);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="getDestPath")
+    if (com=="getDestPath")
 	{ 
 	    returnValue=getDestPath();
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="getFileDir")
+    if (com=="getFileDir")
 	{ 
 	    returnValue=getFileDir();
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="getFrameType")
+    if (com=="getFrameType")
 	{ 
 	    BranchObj *bo=(BranchObj*)(selbi->getLMO());
 	    if (!bo)
 		parser.setError (Aborted,"No BranchObj");
 	    else
 		returnValue=bo->getFrame()->getFrameTypeName();
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="getHeading")
+    if (com=="getHeadingPlainText")
 	{ 
-	    returnValue=getHeading();
+            returnValue = getHeading().getTextASCII();
+            break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="getMapAuthor")
+    if (com=="getHeadingXML")
+	{ 
+            returnValue = getHeading().saveToDir();
+            break;
+    }
+	/////////////////////////////////////////////////////////////////////
+    if (com=="getMapAuthor")
 	{ 
 	    returnValue=author;
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="getMapComment")
+    if (com=="getMapComment")
 	{ 
 	    returnValue=comment;
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="getMapTitle")
+    if (com=="getMapTitle")
 	{ 
 	    returnValue=title;
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="getNote")
+    if (com=="getNotePlainText")
 	{ 
-	    returnValue=getNote();
+            returnValue= getNote().getTextASCII();
+            break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="getSelectString")
+    if (com=="getNoteXML")
+	{ 
+            returnValue= getNote().saveToDir();
+            break;
+    }
+	/////////////////////////////////////////////////////////////////////
+    if (com=="getSelectString")
 	{ 
 	    returnValue=getSelectString();
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="getTaskSleepDays")
+    if (com=="getTaskSleepDays")
 	{ 
-      Task *task=selbi->getTask();
-      if (task)
-        returnValue=task->getDaysSleep();
-      else
-        parser.setError (Aborted,"Branch has no task set");
+            Task *task=selbi->getTask();
+            if (task)
+                returnValue=task->getDaysSleep();
+            else
+                parser.setError (Aborted,"Branch has no task set");
+            break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="getURL")
+    if (com=="getURL")
 	{ 
 	    returnValue=selti->getURL();
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="getVymLink")
+    if (com=="getVymLink")
 	{ 
 	    returnValue=selti->getVymLink();
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="getXLinkColor")
+    if (com=="getXLinkColor")
 	{ 
 	    returnValue=getXLinkColor().name();
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="getXLinkWidth")
+    if (com=="getXLinkWidth")
 	{ 
 	    returnValue=getXLinkWidth();
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="getXLinkPenStyle")
+    if (com=="getXLinkPenStyle")
 	{ 
 	    returnValue=penStyleToString( getXLinkPenStyle() );
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="getXLinkStyleBegin")
+    if (com=="getXLinkStyleBegin")
 	{ 
 	    returnValue = getXLinkStyleBegin();
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="getXLinkStyleEnd")
+    if (com=="getXLinkStyleEnd")
 	{ 
 	    returnValue = getXLinkStyleEnd();
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="hasActiveFlag")
+    if (com=="hasActiveFlag")
 	{ 
 	    s=parser.parString(ok,0);
 	    returnValue=selti->hasActiveStandardFlag(s);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="hasTask")
+    if (com=="hasNote")
+	{
+	    returnValue = !getNote().isEmpty();
+        break;
+    }
+	/////////////////////////////////////////////////////////////////////
+    if (com=="hasRichTextNote")
+	{
+	    returnValue=hasRichTextNote();
+        break;
+    }
+	/////////////////////////////////////////////////////////////////////
+    if (com=="hasTask")
 	{ 
-      if (selbi && selbi->getTask() )
-        returnValue=true;
-      else
-        returnValue=false;
+            if (selbi && selbi->getTask() )
+                returnValue=true;
+            else
+                returnValue=false;
+            break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="importDir")
+    if (com=="importDir")
 	{
 	    s=parser.parString(ok,0);
 	    importDirInt(s);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="isScrolled")
+    if (com=="isScrolled")
 	{
 	    returnValue=selbi->isScrolled();
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="loadImage")
+    if (com=="loadImage")
 	{
 	    s=parser.parString(ok,0);
 	    loadImage (selbi,s);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="loadNote")
+    if (com=="loadNote")
 	{
 	    s=parser.parString(ok,0);
 	    loadNote (s);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="moveDown")
+    if (com=="moveDown")
 	{
 	    moveDown();
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="moveUp")
+    if (com=="moveUp")
 	{
 	    moveUp();
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="moveSlideUp")
+    if (com=="moveSlideUp")
 	{
-	    n=parser.parInt (ok,0);
-	    if (n>=slideModel->count())
+	    n = parser.parInt (ok, 0);
+	    if (!ok || n < 0 || n >= slideModel->count() - 1)
 		parser.setError (Aborted,"Index out of range");
 	    else    
 		moveSlideUp(n);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="moveSlideDown")
+    if (com=="moveSlideDown")
 	{
-	    n=parser.parInt (ok,0);
-	    if (n>=slideModel->count()-1)
+	    n = parser.parInt (ok, 0);
+	    if (!ok || n < 0 || n >= slideModel->count() - 1)
 		parser.setError (Aborted,"Index out of range");
 	    else    
 		moveSlideDown(n);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="move")
+    if (com=="move")
 	{
 	    x=parser.parDouble (ok,0);
 	    y=parser.parDouble (ok,1);
 	    move (x,y);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="moveRel")
+    if (com=="moveRel")
 	{
 	    x=parser.parDouble (ok,0);
 	    y=parser.parDouble (ok,1);
 	    moveRel (x,y);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="nop")
+    if (com=="nop")
 	{
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="note2URLs")
+    if (com=="note2URLs")
 	{
 	    note2URLs();
-	/////////////////////////////////////////////////////////////////////
-	} else if (com=="paste")
+        break;
+    }
+        /////////////////////////////////////////////////////////////////////
+    if (com=="parseVymText")
+        {
+            s = parser.parString(ok,0);
+            parseVymText( s );
+        break;
+    }
+        /////////////////////////////////////////////////////////////////////
+    if (com=="paste")
 	{
 	    paste();
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="redo")
+    if (com=="redo")
 	{
 	    redo();
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="relinkTo")
+    if (com=="relinkTo")
 	{
 	    if (!selti)
 	    {
@@ -4309,55 +4695,73 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 		}	    
 	    } else
 		parser.setError (Aborted,"Type of selection is not a floatimage or branch");
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="saveImage")
+    if (com=="saveImage")
 	{
 	    ImageItem *ii=getSelectedImage();
 	    s=parser.parString(ok,0);
 	    t=parser.parString(ok,1);
 	    saveImage (ii,t,s);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="saveNote")
+    if (com=="saveNote")
 	{
 	    s=parser.parString(ok,0);
 	    saveNote (s);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="scroll")
+    if (com=="scroll")
 	{
 	    if (!scrollBranch (selbi))	
 		parser.setError (Aborted,"Could not scroll branch");
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="select")
+    if (com=="select")
 	{
 	    s=parser.parString(ok,0);
 	    if (!select (s))
 		parser.setError(Aborted,QString("Could not select \"%1\"").arg(s));
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="selectID")
+    if (com=="selectID")
 	{
 	    s=parser.parString(ok,0);
 	    if (!selectID (s))
 		parser.setError(Aborted,QString("Could not select ID: \"%1\"").arg(s));
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="selectLastBranch")
+    if (com=="selectLastBranch")
 	{
 	    BranchItem *bi=selbi->getLastBranch();
 	    if (!bi)
 		parser.setError (Aborted,"Could not select last branch");
 	    select (bi);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="selectLastImage")
+    if (com=="selectLastImage")
 	{
 	    ImageItem *ii=selbi->getLastImage();
 	    if (!ii)
 		parser.setError (Aborted,"Could not select last image");
 	    select (ii);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="selectParent")
+    if (com=="selectParent")
 	{
 	    selectParent ();
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="selectLatestAdded")
+    if (com=="selectLatestAdded")
 	{
 	    if (!latestAddedItem)
 	    {
@@ -4367,73 +4771,101 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 		if (!select (latestAddedItem))
 		    parser.setError (Aborted,"Could not select latest added object ");
 	    }   
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="setFlag")
+    if (com=="setFlag")
 	{
 	    s=parser.parString(ok,0);
 	    selbi->activateStandardFlag(s);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="setTaskSleep")
+    if (com=="setTaskSleep")
 	{
 	    s=parser.parString(ok,0);
 	    returnValue=setTaskSleep (s);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="setFrameIncludeChildren")
+    if (com=="setFrameIncludeChildren")
 	{
 	    b=parser.parBool(ok,0);
 	    setFrameIncludeChildren(b);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="setFrameType")
+    if (com=="setFrameType")
 	{
 	    s=parser.parString(ok,0);
 	    setFrameType (s);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="setFramePenColor")
+    if (com=="setFramePenColor")
 	{
 	    QColor c=parser.parColor(ok,0);
 	    setFramePenColor (c);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="setFrameBrushColor")
+    if (com=="setFrameBrushColor")
 	{
 	    QColor c=parser.parColor(ok,0);
 	    setFrameBrushColor (c);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="setFramePadding")
+    if (com=="setFramePadding")
 	{
 	    n=parser.parInt(ok,0);
 	    setFramePadding(n);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="setFrameBorderWidth")
+    if (com=="setFrameBorderWidth")
 	{
 	    n=parser.parInt(ok,0);
 	    setFrameBorderWidth (n);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="setHeading")
+    if (com=="setHeadingPlainText")
 	{
 	    s=parser.parString (ok,0);
-	    setHeading (s);
+            setHeadingPlainText (s); // FIXME-3  what about RT? Nothing implemented.
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="setHideExport")
+    if (com=="setHideExport")
 	{
 	    b=parser.parBool(ok,0);
 	    setHideExport (b);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="setIncludeImagesHorizontally")
+    if (com=="setIncludeImagesHorizontally")
 	{ 
 	    b=parser.parBool(ok,0);
 	    setIncludeImagesHor(b);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="setIncludeImagesVertically")
+    if (com=="setIncludeImagesVertically")
 	{
 	    b=parser.parBool(ok,0);
 	    if (ok) setIncludeImagesVer(b);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="setHideLinkUnselected")
+    if (com=="setHideLinkUnselected")
 	{
 	    b=parser.parBool(ok,0);
 	    setHideLinkUnselected(b);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="setMapAnimCurve")
+    if (com=="setMapAnimCurve")
 	{
 	    n=parser.parInt(ok,0);
 	    if (n<0 || n>QEasingCurve::OutInBounce)
@@ -4444,179 +4876,247 @@ QVariant VymModel::parseAtom(const QString &atom, bool &noErr, QString &errorMsg
 		c.setType ( (QEasingCurve::Type) n);
 		setMapAnimCurve(c);
 	    }
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="setMapAnimDuration")
+    if (com=="setMapAnimDuration")
 	{
 	    n=parser.parInt(ok,0);
 	    setMapAnimDuration(n);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="setMapAuthor")
+    if (com=="setMapAuthor")
 	{
 	    s=parser.parString(ok,0);
 	    setAuthor (s);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="setMapComment")
+    if (com=="setMapComment")
 	{
 	    s=parser.parString(ok,0);
 	    if (ok) setComment(s);
-	/////////////////////////////////////////////////////////////////////
-	} else if (com=="setMapTitle")
+        break;
+    }
+    if (com=="setMapTitle")
 	{
 	    s=parser.parString(ok,0);
 	    if (ok) setTitle(s);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="setMapBackgroundColor")
+    if (com=="setMapBackgroundColor")
 	{
 	    QColor c=parser.parColor (ok,0);
 	    setMapBackgroundColor (c);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="setMapDefLinkColor")
+    if (com=="setMapDefLinkColor")
 	{
 	    QColor c=parser.parColor (ok,0);
 	    setMapDefLinkColor (c);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="setMapLinkStyle")
+    if (com=="setMapLinkStyle")
 	{
 	    s=parser.parString (ok,0);
 	    if (!setMapLinkStyle(s) )
 		parser.setError (Aborted,"Unknown link style");
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="setMapRotation")
+    if (com=="setMapRotation")
 	{
 	    x=parser.parDouble (ok,0);
 	    setMapRotationAngle(x);
 	    mapEditor->setAngleTarget(x);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="setMapZoom")
+    if (com=="setMapZoom")
 	{
 	    x=parser.parDouble (ok,0);
 	    setMapZoomFactor(x);
 	    mapEditor->setZoomFactorTarget(x);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="setNote")
+    if (com=="setNotePlainText")
 	{
 	    s=parser.parString (ok,0);
-	    setNote (s);
+            VymNote vn;
+            vn.setPlainText(s);
+            setNote (vn);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="setScale")
+    if (com=="setScale")
 	{
 	    x=parser.parDouble (ok,0);
 	    y=parser.parDouble (ok,1);
 	    setScale (x,y);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="setSelectionColor")
+    if (com=="setSelectionColor")
 	{
 	    QColor c=parser.parColor (ok,0);
 	    setSelectionColorInt (c);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="setURL")
+    if (com=="setURL")
 	{
 	    s=parser.parString (ok,0);
 	    setURL(s);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="setVymLink")
+    if (com=="setVymLink")
 	{
 	    s=parser.parString (ok,0);
 	    setVymLink(s);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="setXLinkColor")       
+    if (com=="setXLinkColor")
 	{
 	    s=parser.parString (ok,0);
 	    setXLinkColor(s);     
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="setXLinkLineStyle")       
+    if (com=="setXLinkLineStyle")
 	{
 	    s=parser.parString (ok,0);
 	    setXLinkLineStyle(s);     
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="setXLinkStyleBegin")       
+    if (com=="setXLinkStyleBegin")
 	{
 	    s=parser.parString (ok,0);
 	    setXLinkStyleBegin(s);     
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="setXLinkStyleEnd")       
+    if (com=="setXLinkStyleEnd")
 	{
 	    s=parser.parString (ok,0);
 	    setXLinkStyleEnd(s);     
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="setXLinkWidth")       
+    if (com=="setXLinkWidth")
 	{
 	    n=parser.parInt (ok,0);
 	    setXLinkWidth(n);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="sleep")
+    if (com=="sleep")
 	{
 	    n=parser.parInt (ok,0);
 	    sleep (n);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="sortChildren")
+    if (com=="sortChildren")
 	{
 	    b=false;
 	    if (parser.parCount()==1)
 		b=parser.parBool(ok,0);
 	    sortChildren(b);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="toggleFlag")
+    if (com=="toggleFlag")
 	{
 	    s=parser.parString(ok,0);
             toggleStandardFlag (s);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="toggleFrameIncludeChildren")
+    if (com=="toggleFrameIncludeChildren")
 	{
 	    toggleFrameIncludeChildren();
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="toggleScroll")
+    if (com=="toggleScroll")
 	{
 	    toggleScroll();	
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="toggleTarget")
+    if (com=="toggleTarget")
 	{
 	    toggleTarget();	
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="toggleTask")
+    if (com=="toggleTask")
 	{
 	    toggleTask();	
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="undo")
+    if (com=="undo")
 	{
 	    undo();
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else  if (com=="unscroll")
+    if (com=="unscroll")
 	{
 	    if (!unscrollBranch (selbi))    
 		parser.setError (Aborted,"Could not unscroll branch");
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="unscrollChildren")
+    if (com=="unscrollChildren")
 	{
 	    unscrollChildren ();
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="unselectAll")
+    if (com=="unselectAll")
 	{
 	    unselectAll();
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else if (com=="unsetFlag")
+    if (com=="unsetFlag")
 	{
 	    s=parser.parString(ok,0);
 	    selbi->deactivateStandardFlag(s);
+        break;
+    }
 	/////////////////////////////////////////////////////////////////////
-	} else 
+    //else must be an Unknown command
 	    parser.setError (Aborted,"Unknown command");
-    } // End of iterating over commands
+    break;
 
+    } while(0); // End of do{}while(0); MS VS2013 nested if bug workaround
+
+    } // end check set of parameters if
     // Any errors?
     if (parser.errorLevel()==NoError)
     {
-	reposition();
-	errorMsg.clear();
-	noErr=true;
-    }	
-    else    
+        reposition();
+        errorMsg.clear();
+        noErr=true;
+    }
+    else
     {
-	// TODO Error handling
-	noErr=false;
-	errorMsg=parser.errorMessage();
-	returnValue=errorMsg;
-    } 
+        // TODO Error handling
+        noErr=false;
+        errorMsg=parser.errorMessage();
+        returnValue=errorMsg;
+    }
     return returnValue;
 }
 
@@ -4629,14 +5129,14 @@ QVariant VymModel::execute (const QString &script)
     QString errMsg;
     while (parser.next() && noErr) 
     {
-	r=parseAtom(parser.getAtom(),noErr,errMsg);
-	if (!noErr)
-	{
-	    if (!options.isOn("batch") && !testmode )
-		QMessageBox::warning(0,tr("Warning"),tr("Script aborted:\n%1").arg(errMsg));
-	    qWarning()<< QString("VM::execute aborted: "+errMsg + "\n" + script);
-	}
-    }	
+        r=parseAtom(parser.getAtom(),noErr,errMsg);
+        if (!noErr)
+        {
+            if (!options.isOn("batch") && !testmode )
+                QMessageBox::warning(0,tr("Warning"),tr("Script aborted:\n%1").arg(errMsg));
+            qWarning()<< QString("VM::execute aborted: "+errMsg + "\n" + script);
+        }
+    }
     return r;
 }
 
@@ -4652,76 +5152,75 @@ void VymModel::setExportMode (bool b)
 
 QPointF VymModel::exportImage(QString fname, bool askName, QString format)  
 {
+    QPointF offset; // set later, when getting image from MapEditor
+
     if (fname=="")
     {
         if (!askName) 
         {
             qWarning("VymModel::exportImage called without filename (and askName==false)");
-            return QPointF();
+            return offset;
         }
 
 	fname=lastImageDir.absolutePath() + "/" + getMapName()+".png";
 	format="PNG";
     }	
 
+    ExportBase ex;
+    ex.setName( "Image" );
+    ex.setModel( this );
+    ex.setFilePath( fname );
+    ex.setWindowTitle ( tr("Export map as image") );
+    ex.addFilter( "PNG (*.png);;All (* *.*)" ); //  imageIO.getFilters().join(";;")
+    ex.setLastCommand( settings.localValue(filePath,"/export/last/command","").toString() );
+
     if (askName)
     {
-        fname=QFileDialog::getSaveFileName ( 
-                mainWindow, 
-                tr("Export map as image"),
-                fname,
-                imageIO.getFilters().join(";;")
-                );
+        if (! ex.execDialog() ) return offset;
+        fname = ex.getFilePath();
         lastImageDir=dirname(fname);
     }
 
-    if (fname.isEmpty()) return QPointF();
-
     setExportMode (true);
-    QPointF offset;
+
     QImage img (mapEditor->getImage(offset));
-    if (!img.save(fname, format.toAscii()))
+    if (!img.save(fname, format.toLocal8Bit()))
 	QMessageBox::critical (0,tr("Critical Error"),tr("Couldn't save QImage %1 in format %2").arg(fname).arg(format));
     setExportMode (false);
 
-    QString cmd= QString("exportImage(\"%1\",\"PNG\")").arg(fname);
-    settings.setLocalValue ( filePath, "/export/last/exportPath",fname);
-    settings.setLocalValue ( filePath, "/export/last/command",cmd);
-    settings.setLocalValue ( filePath, "/export/last/description","Image");
-    setChanged();
-    mainWindow->statusMessage(tr("Exported: ","Export confirmation") + fname);
+    ex.completeExport();
 
     return offset;
 }
 
-QPointF VymModel::exportPDF (QString fname, bool askName)
+void VymModel::exportPDF (QString fname, bool askName)
 {
-    if (fname=="")
+    if (fname == "")
     {
         if (!askName) 
         {
             qWarning("VymModel::exportPDF called without filename (and askName==false)");
-            return QPointF();
+            return;
         }
 
-	fname=lastImageDir.absolutePath() + "/" + getMapName()+".pdf";
+	fname = lastExportDir.absolutePath() + "/" + getMapName()+".pdf";
     }	
+
+    ExportBase ex;
+    ex.setName( "PDF" );
+    ex.setModel( this );
+    ex.setFilePath( fname );
+    ex.setWindowTitle ( tr("Export map as PDF") );
+    ex.addFilter( "PDF (*.pdf);;All (* *.*)" );
+    ex.setLastCommand( settings.localValue(filePath,"/export/last/command","").toString() );
 
     if (askName)
     {
-        fname=QFileDialog::getSaveFileName ( 
-                mainWindow, 
-                tr("Export map as PDF"),
-                fname,
-                "PDF (*.pdf);;All (* *.*)"
-                );
-        lastImageDir=dirname(fname);
+        if (! ex.execDialog() ) return;
+        fname = ex.getFilePath();
     }
 
-    if (fname.isEmpty()) return QPointF();
-
     setExportMode (true);
-    QPointF offset;
 
     // To PDF
     QPrinter printer(QPrinter::HighResolution);
@@ -4744,44 +5243,40 @@ QPointF VymModel::exportPDF (QString fname, bool askName)
 
     setExportMode (false);
 
-    QString cmd= QString("exportPDF(\"%1\")").arg(fname);
-    settings.setLocalValue ( filePath, "/export/last/exportPath",fname);
-    settings.setLocalValue ( filePath, "/export/last/command",cmd);
-    settings.setLocalValue ( filePath, "/export/last/description","PDF");
-    setChanged();
-    mainWindow->statusMessage(tr("Exported: ","Export confirmation") + fname);
-
-    return offset;
+    ex.completeExport();
 }
 
 QPointF VymModel::exportSVG (QString fname, bool askName) 
 {
+    QPointF offset; // FIXME-3 not needed?
+
     if (fname=="")
     {
         if (!askName) 
         {
             qWarning("VymModel::exportSVG called without filename (and askName==false)");
-            return QPointF();
+            return offset;
         }
 
 	fname=lastImageDir.absolutePath() + "/" + getMapName()+".png";
     }	
 
+    ExportBase ex;
+    ex.setName( "SVG" );
+    ex.setModel( this );
+    ex.setFilePath( fname );
+    ex.setWindowTitle ( tr("Export map as SVG") );
+    ex.addFilter( "SVG (*.svg);;All (* *.*)" );
+    ex.setLastCommand( settings.localValue(filePath,"/export/last/command","").toString() );
+
     if (askName)
     {
-        fname=QFileDialog::getSaveFileName ( 
-                mainWindow, 
-                tr("Export map as scalable vector graphic"),
-                fname,
-                "SVG (*.svg);;All (* *.*)"
-                );
-        lastImageDir=dirname(fname);
+        if (! ex.execDialog() ) return offset;
+        fname = ex.getFilePath();
+        lastImageDir = dirname(fname);
     }
 
-    if (fname.isEmpty()) return QPointF();
-
     setExportMode (true);
-    QPointF offset;
 
     QSvgGenerator generator;
     generator.setFileName(fname);
@@ -4794,49 +5289,43 @@ QPointF VymModel::exportSVG (QString fname, bool askName)
     delete svgPainter;
 
     setExportMode (false);
+    ex.completeExport();
 
-    QString cmd= QString("exportSVG(\"%1\")").arg(fname);
-    settings.setLocalValue ( filePath, "/export/last/exportPath",fname);
-    settings.setLocalValue ( filePath, "/export/last/command",cmd);
-    settings.setLocalValue ( filePath, "/export/last/description","SVG");
-    setChanged();
-    mainWindow->statusMessage(tr("Exported: ","Export confirmation") + fname);
     return offset;
 }
 
 void VymModel::exportXML (QString dpath, QString fpath, bool useDialog)
 {
+    ExportBase ex;
+    ex.setName( "XML" );
+    ex.setModel( this );
+    ex.setWindowTitle ( tr("Export map as XML") );
+    ex.addFilter( "XML (*.xml);;All (* *.*)" );
+    ex.setLastCommand( settings.localValue(filePath,"/export/last/command","").toString() );
+
     if (useDialog)
     {
     	QFileDialog fd;
 	fd.setWindowTitle (vymName+ " - " + tr("Export XML to directory"));
 	fd.setFileMode (QFileDialog::DirectoryOnly);
 	QStringList filters;
-	filters <<"XML data (*.xml)";
-	fd.setFilters (filters);
+	filters << "XML data (*.xml)";
+	fd.setNameFilters (filters);
 	fd.setConfirmOverwrite (false);
 	fd.setAcceptMode (QFileDialog::AcceptSave);
 
 	QString fn;
-	if (fd.exec() != QDialog::Accepted || fd.selectedFiles().isEmpty() )
-        {
-            qDebug()<<"exportXML returning 1"; //FIXME-2
-            return;
-        }
+	if (fd.exec() != QDialog::Accepted || fd.selectedFiles().isEmpty() ) return;
 
-	if (dpath=="" && !reallyWriteDirectory(dpath) )
-	{
-	    qDebug()<<"exportXML returning 2"; //FIXME-2
-	    return;
-	}
-	setChanged();
+	dpath = fd.selectedFiles().first();
+        //dpath = dpath.left(dpath.lastIndexOf("/"));
+	fpath = dpath + "/" + mapName + ".xml";
 
-	dpath=fd.selectedFiles().first();
-        dpath=dpath.left(dpath.lastIndexOf("/"));
-	fpath=dpath + "/" + mapName + ".xml";
+	if (!reallyWriteDirectory(dpath) ) return;
     }
+    ex.setFilePath( fpath );
 
-    QString mname=basename(fpath);
+    QString mname = basename(fpath);
 
     // Hide stuff during export, if settings want this
     setExportMode (true);
@@ -4844,8 +5333,14 @@ void VymModel::exportXML (QString dpath, QString fpath, bool useDialog)
     // Create subdirectories
     makeSubDirs (dpath);
 
-    // write image and calculate offset
-    QPointF offset=exportImage (dpath + "/images/" + mname + ".png",false,"PNG");
+    // write image and calculate offset (Remember old mapSaved setting while exporting image)
+    bool mchanged = mapChanged;
+    bool munsaved = mapUnsaved;
+
+    QPointF offset = exportImage (dpath + "/images/" + mname + ".png",false,"PNG");
+
+    mapChanged = mchanged;
+    mapUnsaved = munsaved;
 
     // write to directory   //FIXME-3 check totalBBox here...
     QString saveFile=saveToDir (dpath , mname + "-", true, offset, NULL); 
@@ -4865,23 +5360,21 @@ void VymModel::exportXML (QString dpath, QString fpath, bool useDialog)
 
     // Write it finally, and write in UTF8, no matter what 
     QTextStream ts( &file );
+    ts.setCodec("UTF-8");
     ts << saveFile;
     file.close();
 
     setExportMode (false);
 
-    QString cmd=QString("exportXML(\"%1\",\"%2\")")
-        .arg(dpath)
-        .arg(fpath);
-    settings.setLocalValue ( filePath, "/export/last/exportPath",dpath);
-    settings.setLocalValue ( filePath, "/export/last/command",cmd);
-    settings.setLocalValue ( filePath, "/export/last/description","XML");
+    ex.completeExport( QString("\"%1\",\"%2\"").arg(dpath).arg(fpath) );
 }
 
 void VymModel::exportAO (QString fname,bool askName)
 {
     ExportAO ex;
     ex.setModel (this);
+    ex.setLastCommand( settings.localValue(filePath,"/export/last/command","").toString() );
+
     if (fname=="") 
 	ex.setFilePath (mapName+".txt");	
     else
@@ -4900,26 +5393,29 @@ void VymModel::exportAO (QString fname,bool askName)
     }
 }
 
-void VymModel::exportASCII(const QString &fname, bool askName)
+void VymModel::exportASCII(bool listTasks, const QString &fname, bool askName)
 {
     ExportASCII ex;
     ex.setModel (this);
-    if (fname=="") 
-	ex.setFilePath (mapName+".txt");	
-    else
-	ex.setFilePath (fname);
+    ex.setListTasks(listTasks);
+    ex.setLastCommand( settings.localValue(filePath,"/export/last/command","").toString() );
 
-    if (askName) 
+    if (fname=="")
+        ex.setFilePath (mapName+".txt");
+    else
+        ex.setFilePath (fname);
+
+    if (askName)
     {
-	ex.setDirPath (lastExportDir.absolutePath());
-        ex.execDialog() ; 
+        ex.setDirPath (lastExportDir.absolutePath());
+        ex.execDialog() ;
     }
 
     if (!ex.canceled())
     {
-	setExportMode(true);
-	ex.doExport();
-	setExportMode(false);
+        setExportMode(true);
+        ex.doExport();
+        setExportMode(false);
     }
 }
 
@@ -4927,30 +5423,34 @@ void VymModel::exportCSV(const QString &fname, bool askName)
 {
     ExportCSV ex;
     ex.setModel (this);
-    if (fname=="") 
-	ex.setFilePath (mapName+".csv");	
-    else
-	ex.setFilePath (fname);
+    ex.setLastCommand( settings.localValue(filePath,"/export/last/command","").toString() );
 
-    if (askName) 
+    if (fname=="")
+        ex.setFilePath (mapName+".csv");
+    else
+        ex.setFilePath (fname);
+
+    if (askName)
     {
-	ex.addFilter ("CSV (*.csb);;All (* *.*)");
-	ex.setDirPath (lastExportDir.absolutePath());
-	ex.setWindowTitle(vymName+ " -" +tr("Export as csv")+" "+tr("(still experimental)"));
-        ex.execDialog() ; 
+        ex.addFilter ("CSV (*.csb);;All (* *.*)");
+        ex.setDirPath (lastExportDir.absolutePath());
+        ex.setWindowTitle(vymName+ " -" +tr("Export as csv")+" "+tr("(still experimental)"));
+        ex.execDialog() ;
     }
 
     if (!ex.canceled())
     {
-	setExportMode(true);
-	ex.doExport();
-	setExportMode(false);
+        setExportMode(true);
+        ex.doExport();
+        setExportMode(false);
     }
 }
 
 void VymModel::exportHTML (const QString &dpath, const QString &fpath,bool useDialog)
 {
     ExportHTML ex (this);
+    ex.setLastCommand( settings.localValue(filePath,"/export/last/command","").toString() );
+
     if (!dpath.isEmpty()) ex.setDirPath (dpath);
     if (!fpath.isEmpty()) ex.setFilePath (fpath);
     setExportMode(true);
@@ -4963,20 +5463,27 @@ void VymModel::exportImpress(const QString &fn, const QString &cf)
     ExportOO ex;
     ex.setFilePath (fn);
     ex.setModel (this);
+    ex.setLastCommand( settings.localValue(filePath,"/export/last/command","").toString() );
+
     if (ex.setConfigFile(cf)) 
     {
-	setExportMode (true);
-	ex.exportPresentation();
-	setExportMode (false);
+        QString lastCommand = settings.localValue(filePath,"/export/last/command","").toString();
+
+        setExportMode (true);
+        ex.exportPresentation();
+        setExportMode (false);
+
+        QString command = settings.localValue(filePath,"/export/last/command","").toString();
+        if (lastCommand != command) setChanged();
     }
 }
 
 bool VymModel::exportLastAvailable(QString &description, QString &command, QString &path, QString &configFile)
 {
-    command=settings.localValue(filePath,"/export/last/command","").toString();
-    description=settings.localValue(filePath,"/export/last/description","").toString();
-    path=settings.localValue(filePath,"/export/last/exportPath","").toString();
-    configFile=settings.localValue(filePath,"/export/last/configFile","").toString();
+    command     = settings.localValue(filePath,"/export/last/command","").toString();
+    description = settings.localValue(filePath,"/export/last/description","").toString();
+    path        = settings.localValue(filePath,"/export/last/exportPath","").toString();
+    configFile  = settings.localValue(filePath,"/export/last/configFile","").toString();
     if (!command.isEmpty() && command.startsWith("export")) 
 	return true;
     else
@@ -4985,7 +5492,7 @@ bool VymModel::exportLastAvailable(QString &description, QString &command, QStri
 
 void VymModel::exportLast()
 {
-    QString desc, command, path, configFile;  //FIXME-2 better integrate configFIle into command
+    QString desc, command, path, configFile;  //FIXME-3 better integrate configFile into command
     if (exportLastAvailable(desc, command, path, configFile) )
     {
         execute (command);
@@ -5002,6 +5509,8 @@ void VymModel::exportLaTeX (const QString &fname,bool askName)
 {
     ExportLaTeX ex;
     ex.setModel (this);
+    ex.setLastCommand( settings.localValue(filePath,"/export/last/command","").toString() );
+
     if (fname=="") 
 	ex.setFilePath (mapName+".tex");	
     else
@@ -5020,6 +5529,8 @@ void VymModel::exportOrgMode (const QString &fname, bool askName)
 {
     ExportOrgMode ex;
     ex.setModel (this);
+    ex.setLastCommand( settings.localValue(filePath,"/export/last/command","").toString() );
+
     if (fname=="") 
 	ex.setFilePath (mapName+".org");	
     else
@@ -5091,17 +5602,17 @@ void VymModel::updateNoteFlag()
     TreeItem *selti=getSelectedItem();
     if (selti)
     {
-	if (!mapChanged)
-	{
-	    setChanged();
-	    updateActions();
-	}
+        if (!mapChanged)
+        {
+            setChanged();
+            updateActions();
+        }
 
-	if (noteEditor->isEmpty()) 
-	    selti->clearNote();
-	else
-	    selti->setNoteObj (noteEditor->getNote());
-	emitDataChanged(selti);	
+        if (noteEditor->isEmpty())
+            selti->clearNote();
+        else
+            selti->setNote(noteEditor->getNote());
+        emitDataChanged(selti);
         reposition();
     }
 }
@@ -5254,25 +5765,25 @@ void VymModel::toggleMapLinkColorHint()
     }
 }
 
-void VymModel::selectMapBackgroundImage ()  // FIXME-5 for using background image: view.setCacheMode(QGraphicsView::CacheBackground);  Also this belongs into ME
+void VymModel::selectMapBackgroundImage ()  // FIXME-3 for using background image: view.setCacheMode(QGraphicsView::CacheBackground);  Also this belongs into ME
 {
     QStringList filters;
     filters<< tr("Images") + " (*.png *.bmp *.xbm *.jpg *.png *.xpm *.gif *.pnm)";
     QFileDialog fd;
     fd.setFileMode (QFileDialog::ExistingFile);
-    fd.setWindowTitle(vymName+" - " +tr("Load background image"));
+    fd.setWindowTitle(vymName + " - " + tr("Load background image"));
     fd.setDirectory (lastImageDir);
     fd.setAcceptMode (QFileDialog::AcceptOpen);
 
     if ( fd.exec() == QDialog::Accepted &&!fd.selectedFiles().isEmpty())
     {
 	// TODO selectMapBackgroundImg in QT4 use:  lastImageDir=fd.directory();
-	lastImageDir=QDir (fd.directory().path());
-	setMapBackgroundImage (fd.selectedFiles().first());
+	lastImageDir=QDir ( fd.directory().path() );
+	setMapBackgroundImage ( fd.selectedFiles().first() );
     }
 }   
 
-void VymModel::setMapBackgroundImage (const QString &fn)    //FIXME-5 missing savestate, move to ME
+void VymModel::setMapBackgroundImage (const QString &fn)    //FIXME-3 missing savestate, move to ME
 {
     /*
     QColor oldcol=mapEditor->getScene()->backgroundBrush().color();
@@ -5288,7 +5799,7 @@ void VymModel::setMapBackgroundImage (const QString &fn)    //FIXME-5 missing sa
     mapEditor->getScene()->setBackgroundBrush(brush);
 }
 
-void VymModel::selectMapBackgroundColor()   // FIXME-4 move to ME
+void VymModel::selectMapBackgroundColor() 
 {
     QColor col = QColorDialog::getColor( mapEditor->getScene()->backgroundBrush().color(), NULL);
     if ( !col.isValid() ) return;
@@ -5624,9 +6135,8 @@ void VymModel::displayNetworkError(QAbstractSocket::SocketError socketError)
     }
 }
 
-void VymModel::download (const QUrl &url, BranchItem *bi) 
+void VymModel::downloadImage (const QUrl &url, BranchItem *bi) 
 {
-    //qDebug()<<"VM::download "<<url; 
     if (!bi) bi=getSelectedBranch();
     if (!bi) 
     {
@@ -5634,7 +6144,15 @@ void VymModel::download (const QUrl &url, BranchItem *bi)
 	return;
     }
 
-    new DownloadAgent (url,bi);
+    // FIXME-3 download img to tmpfile and delete after running script in mainWindow
+    QString script;
+    script += QString("selectID(\"%1\");").arg(bi->getUuid().toString());
+    script += QString("loadImage(\"$TMPFILE\");");
+
+    DownloadAgent *agent = new DownloadAgent(url);
+    agent->setFinishedAction (this, script);
+    connect (agent, SIGNAL (downloadFinished()), mainWindow, SLOT (downloadFinished()));
+    QTimer::singleShot(0, agent, SLOT(execute()));
 }
 
 void VymModel::selectMapSelectionColor()
@@ -5647,8 +6165,8 @@ void VymModel::setSelectionColorInt (QColor col)
 {
     if ( !col.isValid() ) return;
     saveState (
-	QString("setSelectionColor (%1)").arg(mapEditor->getSelectionColor().name()),
-	QString("setSelectionColor (%1)").arg(col.name()),
+	QString("setSelectionColor (\"%1\")").arg(mapEditor->getSelectionColor().name()),
+	QString("setSelectionColor (\"%1\")").arg(col.name()),
 	QString("Set color of selection box to %1").arg(col.name())
     );
 
@@ -5670,11 +6188,6 @@ void VymModel::emitSelectionChanged()
 void VymModel::setSelectionColor(QColor col)
 {
     if ( !col.isValid() ) return;
-    saveState (
-	QString("setSelectionColor (%1)").arg(mapEditor->getSelectionColor().name()),
-	QString("setSelectionColor (%1)").arg(col.name()),
-	QString("Set color of selection box to %1").arg(col.name())
-    );
     setSelectionColorInt (col);
 }
 
@@ -5828,13 +6341,13 @@ bool VymModel::select (const QModelIndex &index)
 {
     if (index.isValid() )
     {
-	TreeItem *ti=getItem (index);
-	if (ti->isBranchLikeType() )
-	    ((BranchItem*)ti)->tmpUnscroll(); 
-	reposition();
-	selModel->select (index,QItemSelectionModel::ClearAndSelect  );
-	appendSelection();
-	return true;
+        TreeItem *ti=getItem (index);
+        if (ti->isBranchLikeType() )
+            ((BranchItem*)ti)->tmpUnscroll();
+        reposition();
+        selModel->select (index,QItemSelectionModel::ClearAndSelect  );
+        appendSelection();
+        return true;
     }
     return false;
 }
@@ -5932,7 +6445,7 @@ void VymModel::appendSelection()    // FIXME-4 history unable to cope with multi
 	id=ti->getID();	
 	selectionHistory.append (id);
 	currentSelection=selectionHistory.count()-1;
-	mainWindow->updateActions();
+	updateActions();
     }
 }
 
@@ -5953,8 +6466,8 @@ void VymModel::emitDataChanged (TreeItem *ti)
     emit ( dataChanged (ix,ix) );
     if (!blockReposition && ti->isBranchLikeType() && ((BranchItem*)ti)->getTask()  )
     {
-	taskModel->emitDataChanged ( ((BranchItem*)ti)->getTask() );
-	taskModel->recalcPriorities();
+        taskModel->emitDataChanged ( ((BranchItem*)ti)->getTask() );
+        taskModel->recalcPriorities();
     }
 }
 
@@ -6245,7 +6758,7 @@ SlideItem* VymModel::addSlide()
     if (si && seli)
     {
 	QString inScript;
-        if (!loadStringFromDisk(vymBaseDir.path() + "/macros/slideeditor-snapshot.vys", inScript) )
+        if (!loadStringFromDisk(macroPath + "slideeditor-snapshot.vys", inScript) )
         {
             qWarning()<<"VymModel::addSlide couldn't load template for taking snapshot";
             return NULL;
@@ -6256,7 +6769,7 @@ SlideItem* VymModel::addSlide()
         inScript.replace("CURRENT_ID", "\"" + seli->getUuid().toString() + "\"");
 
 	si->setInScript(inScript);
-	slideModel->setData ( slideModel->index(si), seli->getHeading() );
+    slideModel->setData ( slideModel->index(si), seli->getHeadingPlain() );
     }
     QString s="<vymmap>" + si->saveToDir() + "</vymmap>";
     int pos=si->childNumber();
@@ -6356,5 +6869,3 @@ void VymModel::updateSlideSelection (QItemSelection newsel,QItemSelection)
 	execute (inScript);
     }
 }
-
-

@@ -5,6 +5,8 @@
 #include "mainwindow.h"
 #include "xsltproc.h"
 
+#include <QMessageBox>
+
 extern Main *mainWindow;
 extern QDir vymBaseDir;
 
@@ -43,22 +45,6 @@ QString ImportBase::getTransformedFile()
 {
     return transformedFile;
 }
-
-/////////////////////////////////////////////////
-bool ImportKDE4Bookmarks::transform() 
-{
-    transformedFile=tmpDir.path()+"/bookmarks.xml";
-
-    XSLTProc p;
-    p.setInputFile (tmpDir.home().path()+"/.kde4/share/apps/konqueror/bookmarks.xml");
-    p.setOutputFile (transformedFile);
-    p.setXSLFile (vymBaseDir.path()+"/styles/kdebookmarks2vym.xsl");
-    p.process();
-
-    return true;
-}
-
-
 
 /////////////////////////////////////////////////
 bool ImportFirefoxBookmarks::transform()

@@ -29,6 +29,7 @@ BranchItem::BranchItem(const QList<QVariant> &data, TreeItem *parent):MapItem (d
     includeImagesVer=false;
     includeImagesHor=false;
     includeChildren=false;
+    childrenLayout = BranchItem::AutoPositioning;
      
     lastSelectedBranchNum=-1;
     lastSelectedBranchNumAlt=-1;
@@ -52,7 +53,7 @@ void BranchItem::clear()
     if (task) taskModel->deleteTask (task);
 }
 
-void BranchItem::copy (BranchItem *other)  // FIXME-5 lacks most of data...
+void BranchItem::copy (BranchItem *other)  // TODO lacks most of data...
 {
     scrolled=other->scrolled;
     tmpUnscrolled=other->tmpUnscrolled;
@@ -82,7 +83,7 @@ void BranchItem::insertBranch (int pos, BranchItem *branch)
     branchCounter++;
 }
 
-QString BranchItem::saveToDir (const QString &tmpdir,const QString &prefix, const QPointF& offset, QList <Link*> &tmpLinks ) //FIXME-3 Check if everything is saved...
+QString BranchItem::saveToDir (const QString &tmpdir,const QString &prefix, const QPointF& offset, QList <Link*> &tmpLinks ) 
 {
     // Cloudy stuff can be hidden during exports
     if (hidden) return QString();
@@ -91,7 +92,6 @@ QString BranchItem::saveToDir (const QString &tmpdir,const QString &prefix, cons
     QString idAttr=attribut("uuid",uuid.toString());
 
     QString s,a;
-    BranchObj *bo=(BranchObj*)mo;
 
     // Update of note is usually done while unselecting a branch
     
@@ -101,8 +101,8 @@ QString BranchItem::saveToDir (const QString &tmpdir,const QString &prefix, cons
     else
 	scrolledAttr="";
 
-    // save area, if not scrolled   // FIXME-5 not needed if HTML is rewritten...
-				    // also we should check if _any_ of parents is scrolled
+    // save area, if not scrolled   // not needed if HTML is rewritten...
+				    // also we could check if _any_ of parents is scrolled
     QString areaAttr;
     if (mo && parentItem->isBranchLikeType() && !((BranchItem*)parentItem)->isScrolled() )
     {
@@ -119,9 +119,14 @@ QString BranchItem::saveToDir (const QString &tmpdir,const QString &prefix, cons
     
     QString elementName;
     if (parentItem==rootItem)
-	elementName="mapcenter";
-    else    
-	elementName="branch";
+        elementName="mapcenter";
+    else
+        elementName="branch";
+
+    // Free positioning of children
+    QString layoutAttr;
+    if (childrenLayout == BranchItem::FreePositioning)
+        layoutAttr += attribut ("childrenFreePos","true");
 
     // Save rotation
     QString rotAttr;
@@ -133,20 +138,22 @@ QString BranchItem::saveToDir (const QString &tmpdir,const QString &prefix, cons
 	+ getGeneralAttr()
 	+ scrolledAttr 
 	+ getIncludeImageAttr() 
-	+ rotAttr
+    + rotAttr
+    + layoutAttr
 	+ idAttr
 	);
     incIndent();
 
     // save heading
-    s+=valueElement("heading", getHeading(),
-	attribut ("textColor",QColor( bo->getColor()).name()));
+    s += heading.saveToDir();
 
-    // Save frame  //FIXME-5 not saved if there is no MO
-    if (mo) 
-	// Avoid saving NoFrame for objects other than MapCenter
-	if (depth() == 0  || ((OrnamentedObj*)mo)->getFrame()->getFrameType()!=FrameObj::NoFrame) 
-	    s+=((OrnamentedObj*)mo)->getFrame()->saveToDir ();
+    // Save frame  // not saved if there is no MO
+    if (mo)
+    {
+        // Avoid saving NoFrame for objects other than MapCenter
+        if (depth() == 0  || ((OrnamentedObj*)mo)->getFrame()->getFrameType()!=FrameObj::NoFrame)
+            s+=((OrnamentedObj*)mo)->getFrame()->saveToDir ();
+    }
 
     // save names of flags set
     s+=standardFlags.saveToDir(tmpdir,prefix,0);
@@ -184,7 +191,7 @@ QString BranchItem::saveToDir (const QString &tmpdir,const QString &prefix, cons
 	if (l && !tmpLinks.contains (l)) tmpLinks.append (l);
     }
     decIndent();
-    s+=endElement   (elementName);
+    s += endElement (elementName);
     return s;
 }
 
@@ -342,19 +349,29 @@ void BranchItem::sortChildren(bool inverse) //FIXME-4 optimize by not using move
 	    BranchItem* prevChild=getBranchNum(curChildIndex-1);
 	    if (inverse)
 	    {
-		if (prevChild->getHeading().compare(curChild->getHeading())<0)
+        if (prevChild->getHeadingPlain().compare(curChild->getHeadingPlain())<0)
 		{
 		    model->moveUp (curChild);
 		    madeChanges=true;
 		}   
 	    } else  
-		if (prevChild->getHeading().compare(curChild->getHeading())>0)
+        if (prevChild->getHeadingPlain().compare(curChild->getHeadingPlain())>0)
 		{
 		    model->moveUp (curChild);
 		    madeChanges=true;
 		}   
 	} 
     }while(madeChanges);
+}
+
+void BranchItem::setChildrenLayout(BranchItem::LayoutHint layoutHint)
+{
+    childrenLayout = layoutHint;
+}
+
+BranchItem::LayoutHint BranchItem::getChildrenLayout()
+{
+    return childrenLayout;
 }
 
 void BranchItem::setIncludeImagesVer(bool b)
@@ -519,7 +536,7 @@ BranchObj* BranchItem::getBranchObj()
     return (BranchObj*)mo;
 }
 
-BranchObj* BranchItem::createMapObj(QGraphicsScene *scene)  // FIXME-5 maybe move this into MapEditor to get rid of scene in VymModel?
+BranchObj* BranchItem::createMapObj(QGraphicsScene *scene)  
 {
     BranchObj *newbo;
 
@@ -549,8 +566,8 @@ BranchObj* BranchItem::createMapObj(QGraphicsScene *scene)  // FIXME-5 maybe mov
 
     if (!getHeading().isEmpty() ) 
     {
-	newbo->updateData();	//FIXME-5 maybe better model->emitDataChanged()?
-	newbo->setColor (headingColor);
+	newbo->updateData();	
+        newbo->setColor (heading.getColor());
     }	
 	
     return newbo;

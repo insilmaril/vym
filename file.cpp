@@ -8,54 +8,59 @@
 #include <cstdlib>
 
 #include "file.h"
-#include "process.h"
+#include "vymprocess.h"
 
 #if defined(Q_OS_WIN32)
-#include "mkdtemp.h"
-#include <windows.h>
+    #include "mkdtemp.h"
+    #include <windows.h>
 #endif
 
 using namespace File;
 
-QString maskPath(QString p)
-{
-    // Change " " to "\ " to enable blanks in filenames
-    p=p.replace(QChar('&'),"\\&");
-    return p.replace(QChar(' '),"\\ ");
-}
+extern QString zipToolPath;
 
 QString convertToRel (const QString &src, const QString &dst)
 {
+    // Creates a relative path pointing from src to dst
+
     QString s=src;
     QString d=dst;
     int i;
 
-    if (s==d) 
+    if (s==d)
     {
-	// Special case, we just need the name of the file,
-	// not the complete path
-	i=d.lastIndexOf ("/");
-	d=d.right (d.length()-i-1);
+        // Special case, we just need the name of the file,
+        // not the complete path
+        i=d.lastIndexOf ("/");
+        d=d.right (d.length()-i-1);
     } else
     {
-	// remove identical left parts
-	while (s.section("/",0,0) == d.section("/",0,0) ) 
-	{
-	    i=s.indexOf ("/");
-	    s=s.right (s.length()-i-1);
-	    d=d.right (d.length()-i-1);
-	}
+        // remove identical left parts
+        while (s.section("/",0,0) == d.section("/",0,0) )
+        {
+            i=s.indexOf ("/");
+            s=s.right (s.length()-i-1);
+            d=d.right (d.length()-i-1);
+        }
 
-	// Now take care of paths where we have to go back first
-	int srcsep=s.count("/");
-	while (srcsep > 0 )
-	{
-	    d="../"+d;
-	    srcsep--;
-	} 
-    }	
+        // Now take care of paths where we have to go back first
+        int srcsep=s.count("/");
+        while (srcsep > 0 )
+        {
+            d="../"+d;
+            srcsep--;
+        }
+    }
     return d;
 }
+
+QString convertToAbs (const QString &src, const QString &dst)
+{
+    // Creates a relative path pointing from src to dst
+    QDir dd(src);
+    return dd.absoluteFilePath(dst);
+}
+
 
 QString basename(const QString &path)
 {
@@ -75,29 +80,29 @@ bool reallyWriteDirectory(const QString &dir)
     if (eList.first() =="..") eList.pop_front();    // remove "."
     if (!eList.isEmpty())
     {
-	QMessageBox mb( vymName,
-	    QObject::tr("The directory %1 is not empty.\nDo you risk to overwrite its contents?","write directory").arg(dir),
-	QMessageBox::Warning,
-	QMessageBox::Yes ,
-	QMessageBox::Cancel | QMessageBox::Default,
-	QMessageBox::NoButton );
+        QMessageBox mb( vymName,
+                        QObject::tr("The directory %1 is not empty.\nDo you risk to overwrite its contents?","write directory").arg(dir),
+                        QMessageBox::Warning,
+                        QMessageBox::Yes ,
+                        QMessageBox::Cancel | QMessageBox::Default,
+                        QMessageBox::NoButton );
 
-	mb.setButtonText( QMessageBox::Yes, QObject::tr("Overwrite") );
-	mb.setButtonText( QMessageBox::No, QObject::tr("Cancel"));
-	switch( mb.exec() ) 
-	{
-	    case QMessageBox::Yes:
-		// save 
-		return true;
-	    case QMessageBox::Cancel:
-		// do nothing
-		return false;
-	}
+        mb.setButtonText( QMessageBox::Yes, QObject::tr("Overwrite") );
+        mb.setButtonText( QMessageBox::No, QObject::tr("Cancel"));
+        switch( mb.exec() )
+        {
+        case QMessageBox::Yes:
+            // save
+            return true;
+        case QMessageBox::Cancel:
+            // do nothing
+            return false;
+        }
     }
     return true;
 }
 
-QString makeTmpDir (bool &ok, QString prefix)
+QString makeTmpDir (bool &ok, QString prefix)   //FIXME-3 use QTemporaryDir
 {
     bool b;
     QString path=makeUniqueDir (b,QDir::tempPath()+"/"+prefix+"-XXXXXX");
@@ -114,11 +119,15 @@ bool isInTmpDir(QString fn)
 
 QString makeUniqueDir (bool &ok,QString s)
 {
-    // Create unique directory e.g. for s="/tmp/vym-XXXXXX"
+    ok=true;
 
-    // Convert Separators
-    s=QDir::convertSeparators(s);
+    QString r;
 
+#if defined(Q_OS_WIN32)
+    r=mkdtemp (s);
+#else
+    // On Linux and friends use cstdlib
+    
     // Convert QString to string 
     ok=true;
     char *p;
@@ -129,9 +138,11 @@ QString makeUniqueDir (bool &ok,QString s)
 	p[i]=s.at(i).unicode();
     p[bytes]=0;	
 
-    QString r=mkdtemp (p);
-    if (r.isEmpty()) ok=false;
+    r=mkdtemp (p);
     free (p);
+#endif
+
+    if (r.isEmpty()) ok=false;
     return r;
 }
 
@@ -140,8 +151,8 @@ void removeDir(QDir d)
     // This check should_ not be necessary, but proved to be useful ;-)
     if (!isInTmpDir(d.path()))
     {
-	qWarning ()<<"file.cpp::removeDir should remove "+d.path()+" - aborted.";
-	return;
+        qWarning ()<<"file.cpp::removeDir should remove "+d.path()+" - aborted.";
+        return;
     }
 
     // Traverse directories
@@ -149,34 +160,34 @@ void removeDir(QDir d)
     QFileInfoList list = d.entryInfoList();
     QFileInfo fi;
 
-    for (int i = 0; i < list.size(); ++i) 
+    for (int i = 0; i < list.size(); ++i)
     {
-	fi=list.at(i);
-	if (fi.fileName() != "." && fi.fileName() != ".." )
-	{
-	    if ( !d.cd(fi.fileName()) ) 
-		qWarning ()<<"removeDir() cannot find the directory "+fi.fileName();
-	    else 
-	    {
-		// Recursively remove subdirs
-		removeDir (d);
-		d.cdUp();
-	    }
-	}   
+        fi=list.at(i);
+        if (fi.fileName() != "." && fi.fileName() != ".." )
+        {
+            if ( !d.cd(fi.fileName()) )
+                qWarning ()<<"removeDir() cannot find the directory "+fi.fileName();
+            else
+            {
+                // Recursively remove subdirs
+                removeDir (d);
+                d.cdUp();
+            }
+        }
     }
 
     // Traverse files
     d.setFilter( QDir::Files| QDir::Hidden | QDir::NoSymLinks );
     list = d.entryInfoList();
 
-    for (int i = 0; i < list.size(); ++i) 
+    for (int i = 0; i < list.size(); ++i)
     {
-	fi=list.at(i);
-	QFile (fi.filePath()).remove(); 
-    }	
+        fi=list.at(i);
+        QFile (fi.filePath()).remove();
+    }
 
     if (!d.rmdir(d.path()))
-	qWarning ()<<"removeDir("+d.path()+") failed!";
+        qWarning ()<<"removeDir("+d.path()+") failed!";
 }	
 
 bool copyDir (QDir src, QDir dst, const bool &override)   
@@ -222,73 +233,124 @@ void makeSubDirs (const QString &s)
     d.mkdir ("flags");	
 }
 
-ErrorCode zipDir (const QDir &zipDir, const QString &zipName)	
+ErrorCode zipDir ( QDir zipInputDir, QString zipName)
 {
     ErrorCode err = Success;
-    
+
+    QString symLinkTarget;
+
     QString newName;
     // Move existing file away
     QFile file(zipName);
     if (file.exists() )
-    { 
-	newName = zipName + ".tmp";
-	int n=0;
-	while (!file.rename (newName) && n<5)
-	{
-	    newName = newName + QString().setNum(n);
-	    n++;
-	}
-	if (n>=5)
-	{
-	    QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
-			   QObject::tr("Couldn't move existing file out of the way before saving."));
-	    return Aborted;
-	}
+    {
+        symLinkTarget = file.symLinkTarget();
+        newName = zipName + ".tmp";
+        int n=0;
+        while (!file.rename (newName) && n<5)
+        {
+            newName = newName + QString().setNum(n);
+            n++;
+        }
+        if (n>=5)
+        {
+            QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
+                                   QObject::tr("Couldn't move existing file out of the way before saving."));
+            return Aborted;
+        }
     }
 
     // zip the temporary directory
+    VymProcess *zipProc=new VymProcess ();
+    zipProc->setWorkingDirectory (zipInputDir.path());
+
+#if defined(Q_OS_WIN32)
+    QByteArray result;
+    zipProc->start("cmd");
+    if (!zipProc->waitForStarted())
+    {
+        QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
+            QObject::tr("Couldn't start tool to decompress data."));
+        err=Aborted;
+
+    }
+    zipProc->write(QString("\"%1\" a \"%2\" -tzip -r %3\\*\n").arg(zipToolPath).arg(zipName).arg(zipInputDir.path()).toUtf8());
+    zipProc->closeWriteChannel();   //done Writing
+
+    while(zipProc->state()!=QProcess::NotRunning){
+        zipProc->waitForReadyRead();
+        result = zipProc->readAll();
+        //vout << result << flush;
+    }
+    //vout << zipProc->getStdout()<<flush;
+#else
     QStringList args;
-    Process *zipProc=new Process ();
-    zipProc->setWorkingDirectory (zipDir.path());
     args <<"-r";
     args <<zipName;
     args <<".";
 
     zipProc->start ("zip",args);
     if (!zipProc->waitForStarted() )
-    {	
-	// zip could not be started
-	QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
-		       QObject::tr("Couldn't start zip to compress data."));
-	err=Aborted;
+    {
+        // zip could not be started
+        QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
+                               QObject::tr("Couldn't start zip to compress data."));
+        err=Aborted;
     } else
     {
-	// zip could be started
-	zipProc->waitForFinished();
-	if (zipProc->exitStatus()!=QProcess::NormalExit )
-	{
-	    QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
-			   QObject::tr("zip didn't exit normally")+
-			   "\n" + zipProc->getErrout());
-	    err=Aborted;
-	} else
-	{
-	    if (zipProc->exitCode()>0)
-	    {
-		QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
-			   QString("zip exit code:  %1").arg(zipProc->exitCode() )+
-			   "\n" + zipProc->getErrout() );
-		err=Aborted;
-	    }
-	}
-    }	
-
+        // zip could be started
+        zipProc->waitForFinished();
+        if (zipProc->exitStatus()!=QProcess::NormalExit )
+        {
+            QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
+                                   QObject::tr("zip didn't exit normally")+
+                                   "\n" + zipProc->getErrout());
+            err=Aborted;
+        } else
+        {
+            if (zipProc->exitCode()>0)
+            {
+                QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
+                                       QString("zip exit code:  %1").arg(zipProc->exitCode() )+
+                                       "\n" + zipProc->getErrout() );
+                err=Aborted;
+            }
+        }
+    }
+#endif
     // Try to restore previous file, if zipping failed
     if (err == Aborted && !newName.isEmpty() && !file.rename (zipName) )
 	QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
 	   QObject::tr("Couldn't rename %1 back to %2").arg(newName).arg(zipName) );
     else
     {
+        // Take care of symbolic link
+        if (!symLinkTarget.isEmpty() )
+        {
+            if (!QFile(symLinkTarget).remove() )
+            {
+                QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
+                   QObject::tr("Couldn't remove target of old symbolic link %1").arg(symLinkTarget));
+                err = Aborted;
+                return err;
+            }
+
+            if (!QFile(zipName).rename(symLinkTarget) )
+            {
+                QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
+                   QObject::tr("Couldn't rename output to target of old symbolic link %1").arg(symLinkTarget));
+                err = Aborted;
+                return err;
+            }
+            if (!QFile(symLinkTarget).link(zipName) )
+            {
+                QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
+                   QObject::tr("Couldn't link from %1 to target of old symbolic link %2").arg(zipName).arg(symLinkTarget));
+                err = Aborted;
+                return err;
+            }
+        }
+
 	// Remove temporary file
 	if (!newName.isEmpty()  && !file.remove() )
 	    QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
@@ -298,53 +360,76 @@ ErrorCode zipDir (const QDir &zipDir, const QString &zipName)
     return err;	
 }
 
-File::ErrorCode unzipDir (const QDir &zipDir, const QString &zipName)
+File::ErrorCode unzipDir ( QDir zipOutputDir, QString zipName)
 {
     ErrorCode err=Success;
 
     // Try to unzip file
+
+    VymProcess *zipProc=new VymProcess ();
+    zipProc->setWorkingDirectory (zipOutputDir.path());
+
+#if defined(Q_OS_WIN32)
+    QByteArray result;
+    zipProc->start("cmd");
+    if (!zipProc->waitForStarted())
+    {
+        QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
+                               QObject::tr("Couldn't start tool to decompress data."));
+        err=Aborted;
+    }
+    zipProc->write(QString("\"%1\" -o%2 x \"%3\"\n").arg(zipToolPath).arg(zipOutputDir.path()).arg(zipName).toUtf8());
+    zipProc->closeWriteChannel();   //done Writing
+
+    while(zipProc->state()!=QProcess::NotRunning){
+        zipProc->waitForReadyRead();
+        result = zipProc->readAll();
+        //vout << result << flush;
+    }
+    //vout << zipProc->getStdout()<<flush;
+#else
     QStringList args;
-    Process *zipProc=new Process ();
-    zipProc->setWorkingDirectory (zipDir.path());
     args << "-o";   // overwrite existing files!
     args << zipName ;
     args << "-d";
-    args << zipDir.path();
+    args << zipOutputDir.path();
 
     zipProc->start ("unzip",args);
     if (!zipProc->waitForStarted() )
     {
-	QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
-		       QObject::tr("Couldn't start unzip to decompress data."));
-	err=Aborted;
-	
+        QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
+                               QObject::tr("Couldn't start unzip to decompress data."));
+        err=Aborted;
+
+
     } else
     {
-	zipProc->waitForFinished();
-	if (zipProc->exitStatus()!=QProcess::NormalExit )
-	{
-	    QMessageBox::critical( 0,QObject::tr( "Critical Error" ),
-			   QObject::tr("unzip didn't exit normally") +
-			   zipProc->getErrout() );
-	    err=Aborted;
-	} else
-	{
-	    if (zipProc->exitCode()>0)
-	    {
-		if (zipProc->exitCode()==9)
-		    // no zipped file, but maybe .xml or old version? Try again.
-		    err=NoZip;
-		else	
-		{
-		    QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
-				   QString("unzip exit code:  %1").arg(zipProc->exitCode() ) +
-				   zipProc->getErrout() );
-		    err=Aborted;
-		}
-	    } 
-	}
+        zipProc->waitForFinished();
+        if (zipProc->exitStatus()!=QProcess::NormalExit )
+        {
+            QMessageBox::critical( 0,QObject::tr( "Critical Error" ),
+                                   QObject::tr("unzip didn't exit normally") +
+                                   zipProc->getErrout() );
+            err=Aborted;
+        } else
+        {
+            if (zipProc->exitCode()>0)
+            {
+                if (zipProc->exitCode()==9)
+                    // no zipped file, but maybe .xml or old version? Try again.
+                    err=NoZip;
+                else
+                {
+                    QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
+                                           QString("unzip exit code:  %1").arg(zipProc->exitCode() ) +
+                                           zipProc->getErrout() );
+                    err=Aborted;
+                }
+            }
+        }
     }
-    return err;	
+#endif
+    return err;
 }
 
 bool loadStringFromDisk (const QString &fname, QString &s)
@@ -352,10 +437,10 @@ bool loadStringFromDisk (const QString &fname, QString &s)
     s="";
     QFile file(fname);
     if (!file.open(QFile::ReadOnly | QFile::Text)) {
-	qWarning()<<QString("loadStringFromDisk: Cannot read file %1\n%2")
-	.arg(fname)
-	.arg(file.errorString());
-	return false;
+        qWarning()<<QString("loadStringFromDisk: Cannot read file %1\n%2")
+                    .arg(fname)
+                    .arg(file.errorString());
+        return false;
     }
 
     QTextStream in(&file);
@@ -366,11 +451,12 @@ bool loadStringFromDisk (const QString &fname, QString &s)
 bool saveStringToDisk (const QString &fname, const QString &s)
 {
     QFile file(fname);
-    if (!file.open(QFile::WriteOnly | QFile::Text)) {
-         qWarning()<<QString("saveStringToDisk: Cannot write file %1:\n%2.")
-	      .arg(fname)
-	      .arg(file.errorString());
-         return false;
+    // Write as binary (default), QFile::Text would convert linebreaks
+    if (!file.open(QFile::WriteOnly  )) {
+        qWarning()<<QString("saveStringToDisk: Cannot write file %1:\n%2.")
+                    .arg(fname)
+                    .arg(file.errorString());
+        return false;
     }
 
     QTextStream out(&file);
@@ -385,9 +471,9 @@ FileType getMapType (const QString &fn)
     int i=fn.lastIndexOf(".");
     if (i>=0)
     {
-	QString postfix=fn.mid(i+1);
-	if (postfix=="vym" || postfix=="vyp" || postfix=="xml") return VymMap;
-	if (postfix=="mm") return FreemindMap;	
+        QString postfix=fn.mid(i+1);
+        if (postfix=="vym" || postfix=="vyp" || postfix=="xml") return VymMap;
+        if (postfix=="mm") return FreemindMap;
     }
     return UnknownMap;
 }
@@ -395,7 +481,7 @@ FileType getMapType (const QString &fn)
 ImageIO::ImageIO ()
 {
     // Create list with supported image types
-    // foreach (QByteArray format, QImageWriter::supportedImageFormats()) 
+    // foreach (QByteArray format, QImageWriter::supportedImageFormats())
     // imageTypes.append( tr("%1...").arg(QString(format).toUpper()));
     imageFilters.append ("Images (*.png *.jpg *.jpeg *.bmp *.bmp *.ppm *.xpm *.xbm)");
     imageTypes.append ("PNG");
@@ -423,7 +509,7 @@ QStringList ImageIO::getFilters()
 QString ImageIO::getType(QString filter)
 {
     for (int i=0;i<imageFilters.count()+1;i++)
-	if (imageFilters.at(i)==filter) return imageTypes.at(i);
+        if (imageFilters.at(i)==filter) return imageTypes.at(i);
     return QString();
 }
 
@@ -432,9 +518,9 @@ QString ImageIO::guessType(QString fn)
     int i=fn.lastIndexOf(".");
     if (i>=0)
     {
-	QString postfix=fn.mid(i+1);
-	for (int i=1;i<imageFilters.count();i++)
-	    if (imageFilters.at(i).contains(postfix)) return imageTypes.at(i);
+        QString postfix=fn.mid(i+1);
+        for (int i=1;i<imageFilters.count();i++)
+            if (imageFilters.at(i).contains(postfix)) return imageTypes.at(i);
     }
     return QString();
 }

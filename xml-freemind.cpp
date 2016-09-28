@@ -9,9 +9,8 @@
 
 extern Settings settings;
 extern QString vymVersion;
-extern QString flagsPath;
 
-bool parseFreemindHandler::startDocument()  //FIXME-1 import not complete yet
+bool parseFreemindHandler::startDocument()  //FIXME-3 import not complete yet
 {
     errorProt = "";
     state = StateInit;
@@ -51,7 +50,7 @@ bool parseFreemindHandler::startElement  ( const QString&, const QString&,
 	if (!atts.value( "version").isEmpty() ) 
 	{
 	    QString v="0.9.0";
-	    if (!checkVersion(atts.value("version"),v))
+	    if (! versionLowerOrEqual( atts.value("version"),v ) )
 		QMessageBox::warning( 0, "Warning: Version Problem" ,
 		   "<h3>Freemind map is newer than version " +v +" </h3>"
 		   "<p>The map you are just trying to load was "
@@ -69,9 +68,9 @@ bool parseFreemindHandler::startElement  ( const QString&, const QString&,
 	mainBranchRight = model->createBranch (lastBranch);
 
 	mainBranchLeft->setRelPos ( QPointF(-200,0));
-	mainBranchLeft->setHeading ("  ");
+    mainBranchLeft->setHeadingPlainText ("  ");
 	mainBranchRight->setRelPos ( QPointF(200,0));
-	mainBranchRight->setHeading ("  ");
+    mainBranchRight->setHeadingPlainText ("  ");
     } else if ( eName == "attribute_registry" &&  state == StateMap ) 
     {
         state = StateAttributeRegistry;
@@ -233,7 +232,7 @@ bool parseFreemindHandler::endElement  ( const QString &, const QString&, const 
 	    if (!htmldata.isEmpty()) 
 	    {
 		if (htmlPurpose==Node)
-		    lastBranch->setHeading (htmldata);
+            lastBranch->setHeadingPlainText (htmldata);  // FIXME-3 probably wrong for RT heading
 		else if (htmlPurpose==Note)
 		    lastBranch->setNote (htmldata);
 	    }	
@@ -305,7 +304,7 @@ bool parseFreemindHandler::readNodeAttr (const QXmlAttributes& a)
 
     if (!a.value( "TEXT").isEmpty() )
     {
-	lastBranch->setHeading (a.value ("TEXT"));
+    lastBranch->setHeadingPlainText (a.value ("TEXT"));  // FIXME-3 what about RT?
 	//model->setHeading (a.value ("TEXT"), lastBranch);
     }
 

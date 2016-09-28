@@ -2,19 +2,22 @@
 #define TEXTEDITOR_H
 
 #include <QtGui>
+#include <QMainWindow>
 
-#include "noteobj.h"
+class QTextEdit;
+class QComboBox;
+
+#include "vymtext.h"
 
 enum EditorState {inactiveEditor,emptyEditor,filledEditor};
 
-class TextEditor :public QMainWindow
+class TextEditor : public QMainWindow
 {    Q_OBJECT
 public:
     TextEditor();
     ~TextEditor();
 
     void init(const QString &ename);
-    void reset();
     bool isEmpty();
     void setFont (const QFont &);
     void setFontHint(const QString&);
@@ -25,12 +28,13 @@ public:
     void setFilenameHint (const QString&);
     QString getFilenameHint ();
     QString getText();
-    NoteObj getNote();
+    VymText getVymText();
 
     bool findText(const QString &, const QTextDocument::FindFlags &); 
     bool findText(const QString &, const QTextDocument::FindFlags &,int i); 
     void setTextCursor (const QTextCursor & cursor );
     QTextCursor getTextCursor();
+    void setFocus();
 
 protected:
     void setupFileActions();
@@ -41,9 +45,13 @@ protected:
 
 public slots:
     void editorChanged();	    // received when text() changed
-    void setText(const QString &);  // set Text (by MapEditor)
+    void setRichText(const QString &t);
+    void setPlainText(const QString &t);
+    void setTextAuto(const QString &);  // set Text and autodetect mode
+    void setVymText(const VymText &vt);
     void setInactive();		    // Nothing can be entered
     void editCopyAll();
+    void reset();
 
 signals:
     void textHasChanged();
@@ -79,7 +87,7 @@ private slots:
     void setState (EditorState);
 
 protected:
-    QString editorName;	    // "note" or "heading" editor, used for settings
+    QString shortcutScope;  // used for settings and shortcut scopes
     QTextEdit *e;
     QPoint lastPos;	    // save last position of window
     QString filename;

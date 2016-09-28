@@ -64,8 +64,8 @@ void Link::setEndBranch (BranchItem *bi)
 {
     if (bi) 
     {
-	xLinkState=initXLink;
 	endBranch=bi;
+        if (xlo) xlo->initC1();
     }	    
 }
 
@@ -76,6 +76,7 @@ BranchItem* Link::getEndBranch()
 
 void Link::setEndPoint (QPointF p)
 {
+    // Used only while creating the link, without endBranch
     if (xlo) xlo->setEnd (p);
 }
 
@@ -173,9 +174,8 @@ bool Link::activate ()
 {
     if (beginBranch && endBranch)
     {
-	
-	if (beginBranch==endBranch) return false;
-	xLinkState=activeXLink;
+	if ( beginBranch == endBranch) return false;
+	xLinkState = activeXLink;
 	model->updateActions();
 	return true;
     } else

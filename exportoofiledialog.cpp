@@ -37,7 +37,7 @@ void ExportOOFileDialog::newConfigPath(const QString &s)
 
 void ExportOOFileDialog::show()
 {
-    setFilters (filters);
+    setNameFilters (filters);
     QFileDialog::show();
 }
 

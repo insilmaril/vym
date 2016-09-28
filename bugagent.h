@@ -4,7 +4,7 @@
 #include <QHash>
 #include <QObject>
 
-#include "process.h"
+#include "vymprocess.h"
 
 class BranchItem;
 class VymModel;
@@ -34,7 +34,7 @@ private:
     QString bugID;
     QString bugScript;
     QStringList result;
-    Process *p;
+    VymProcess *p;
 
     QHash <QString,QString> bug_desc;
     QHash <QString,QString> bug_prio;
