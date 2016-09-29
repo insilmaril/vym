@@ -704,7 +704,7 @@ QString ExportHTML::getBranchText(BranchItem *current)
                     .arg(id);
 
         // Include image experimental
-        if (dia.includeImages)
+        idf (dia.includeImages)
         {
             int imageCount = current->imageCount();
             ImageItem *image; 
@@ -1007,7 +1007,7 @@ void ExportHTML::doExport(bool useDialog)
     if (!dia.postscript.isEmpty())
     {
         VymProcess p;
-        p.runScript (dia.postscript,dirPath + "/" + filePath);  // FIXME-0 likely bound to fail...
+        p.runScript (dia.postscript,dirPath + "/" + filePath);  
     }
 
     completeExport( QString("\"%1\",\"%2\"").arg(filePath).arg(dirPath));
