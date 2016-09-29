@@ -704,7 +704,7 @@ QString ExportHTML::getBranchText(BranchItem *current)
                     .arg(id);
 
         // Include image experimental
-        idf (dia.includeImages)
+        if (dia.includeImages)
         {
             int imageCount = current->imageCount();
             ImageItem *image; 

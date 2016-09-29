@@ -5659,14 +5659,24 @@ QScriptValue scriptPrint( QScriptContext * context, QScriptEngine *)
     return QScriptValue();
 }
 
+QScriptValue scriptAbort( QScriptContext *context, QScriptEngine *engine)    
+{
+    scriptOutput->append( "Abort called: " + context->argument(0).toString() );
+    engine->abortEvaluation();
+    return QScriptValue();  
+}
+
 QVariant Main::runScript (const QString &script)
 {
+    // FIXME-2 add timer to allow aborting long running script
+    
     VymModel *m = currentModel();
     if (m) 
     {
         //qDebug()<<"Main::execute called: "<<script;
 
         scriptEngine.globalObject().setProperty( "print", scriptEngine.newFunction( scriptPrint ) );
+        scriptEngine.globalObject().setProperty( "abort", scriptEngine.newFunction( scriptAbort ) );
 
         // Create Wrapper object for VymModel
         QScriptValue val1 = scriptEngine.newQObject( m->getWrapper() );
@@ -5684,6 +5694,16 @@ QVariant Main::runScript (const QString &script)
 
         // Run script
         QScriptValue result = scriptEngine.evaluate(script);
+        qDebug() << "MainL::runScript finished:";
+        qDebug() << "   hasException: "<<scriptEngine.hasUncaughtException();
+        /*
+        if (scriptEngine.hasUncaughtException() )
+        {
+            qDebug() << "      exception: "<< scriptEngine.uncaughtException();
+        }
+        */
+
+        qDebug() << "         result: "<<result.toString();
 
         // qDebug() << "Main::execute lastResult = " << scriptEngine.globalObject().property("lastResult").toVariant();
 
