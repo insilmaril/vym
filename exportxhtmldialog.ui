@@ -67,7 +67,7 @@
     </layout>
    </item>
    <item>
-    <widget class="Q3ButtonGroup" name="buttonGroup2">
+    <widget class="QGroupBox" name="buttonGroup2">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
        <horstretch>0</horstretch>
@@ -151,7 +151,7 @@
     </widget>
    </item>
    <item>
-    <widget class="Q3GroupBox" name="groupBox2">
+    <widget class="QGroupBox" name="groupBox2">
      <property name="title">
       <string>Stylesheets</string>
      </property>
@@ -265,7 +265,7 @@
     </widget>
    </item>
    <item>
-    <widget class="Q3GroupBox" name="groupBox1">
+    <widget class="QGroupBox" name="groupBox1">
      <property name="title">
       <string>Scripts</string>
      </property>
@@ -437,18 +437,13 @@
   </layout>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
-   <class>Q3GroupBox</class>
-   <extends>QGroupBox</extends>
-   <header>Qt3Support/Q3GroupBox</header>
+   <class>QGroupBox</class>
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>Q3ButtonGroup</class>
-   <extends>Q3GroupBox</extends>
-   <header>Qt3Support/Q3ButtonGroup</header>
+   <class>QGroupBox</class>
    <container>1</container>
   </customwidget>
  </customwidgets>

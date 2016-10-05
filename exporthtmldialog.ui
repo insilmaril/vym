@@ -398,7 +398,6 @@
   </layout>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <includes>
   <include location="local">xsltproc.h</include>
   <include location="local">vymprocess.h</include>
