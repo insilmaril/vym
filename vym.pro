@@ -105,6 +105,7 @@ HEADERS	+= \
     imports.h \
     lineeditdialog.h \
     linkablemapobj.h \
+    lockedfiledialog.h \
     macros.h \
     mainwindow.h \
     mapeditor.h \
@@ -195,6 +196,7 @@ SOURCES	+= \
     imports.cpp \
     lineeditdialog.cpp \
     linkablemapobj.cpp \
+    lockedfiledialog.cpp \
     macros.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -249,6 +251,7 @@ FORMS = \
     editxlinkdialog.ui \
     historywindow.ui \
     lineeditdialog.ui \
+    lockedfiledialog.ui \
     scripteditor.ui \
     showtextdialog.ui \
     warningdialog.ui \

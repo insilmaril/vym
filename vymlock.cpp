@@ -85,6 +85,15 @@ VymLock::LockState VymLock::getState()
     return state;
 }
 
+bool VymLock::removeLock() 
+{
+    QFile LockFile( mapPath + ".lock" );
+    if (LockFile.remove() )
+        return true;
+    else
+        return false;
+}
+
 bool VymLock::releaseLock() 
 {
     if (state == lockedByMyself)

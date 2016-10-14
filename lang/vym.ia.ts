@@ -624,6 +624,26 @@ vole permitter isto in tu systema!</translation>
     </message>
 </context>
 <context>
+    <name>LockedFileDialog</name>
+    <message>
+        <location filename="../lockedfiledialog.ui" line="14"/>
+        <source>Dialog</source>
+        <translation type="unfinished">Dialogo</translation>
+    </message>
+    <message>
+        <location filename="../lockedfiledialog.ui" line="116"/>
+        <location filename="../lockedfiledialog.cpp" line="7"/>
+        <source>Delete lockfile</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../lockedfiledialog.ui" line="123"/>
+        <location filename="../lockedfiledialog.cpp" line="6"/>
+        <source>Open readonly</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Main</name>
     <message>
         <location filename="../mainwindow.cpp" line="238"/>
@@ -3288,7 +3308,7 @@ Tu risca de super scriber su contentos?</translation>
 %2.</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="3780"/>
+        <location filename="../vymmodel.cpp" line="3792"/>
         <source>No Bugzilla client found.  For openSUSE you can install by (running as root):
 
 </source>
@@ -3298,7 +3318,7 @@ Tu risca de super scriber su contentos?</translation>
 </translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="3785"/>
+        <location filename="../vymmodel.cpp" line="3797"/>
         <source>Alternatively you can also add the repository
 and install the perl module for Bugzilla access using YaST</source>
         <comment>VymModel, how to install Bugzilla client module</comment>
@@ -3306,7 +3326,7 @@ and install the perl module for Bugzilla access using YaST</source>
 e installar le modulo de perl per le accesso de Bugzilla usante YaST</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="3788"/>
+        <location filename="../vymmodel.cpp" line="3800"/>
         <source>Warning: Couldn&apos;t find Bugzilla client</source>
         <comment>VymModel</comment>
         <translation>Advertimento: il non pote trovar cliente de Bugzilla</translation>
@@ -3911,39 +3931,39 @@ Do you want to overwrite it?</source>
 <context>
     <name>VymModel</name>
     <message>
-        <location filename="../vymmodel.cpp" line="125"/>
+        <location filename="../vymmodel.cpp" line="126"/>
         <source>unknown user</source>
         <comment>default name for map author in settings</comment>
         <translation>usator incognite</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="148"/>
+        <location filename="../vymmodel.cpp" line="149"/>
         <source>unnamed</source>
         <translation>sin nomine</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="444"/>
-        <location filename="../vymmodel.cpp" line="480"/>
-        <location filename="../vymmodel.cpp" line="565"/>
+        <location filename="../vymmodel.cpp" line="445"/>
+        <location filename="../vymmodel.cpp" line="481"/>
+        <location filename="../vymmodel.cpp" line="566"/>
         <location filename="../vymmodel.cpp" line="622"/>
         <source>Critical Parse Error</source>
         <translation>Error critic de analysator syntactic</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="500"/>
-        <location filename="../vymmodel.cpp" line="550"/>
+        <location filename="../vymmodel.cpp" line="501"/>
+        <location filename="../vymmodel.cpp" line="551"/>
         <source>Critical Load Error</source>
         <translation>Errioc critic de cargar</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="501"/>
+        <location filename="../vymmodel.cpp" line="502"/>
         <source>Couldn&apos;t create temporary directory before load
 </source>
         <translation>Il non pote crear directorio temporanee ante cargar
 </translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="551"/>
+        <location filename="../vymmodel.cpp" line="552"/>
         <source>Couldn&apos;t find a map (*.xml) in .vym archive.
 </source>
         <translation>Il non pot etrovar un mappa (é.xml) in archivo .vym.
@@ -3956,11 +3976,10 @@ Do you want to overwrite it?</source>
         <translation>usator incognite</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="999"/>
         <source>Map seems to be already opened in another vym instance! It will be opened in readonly mode.
 
 Map is locked by &quot;%1&quot; on &quot;%2&quot;</source>
-        <translation>Mappa semla esser ja aperite in altere instantia de vym! Il essera aperite in modo de sol lectura.
+        <translation type="vanished">Mappa semla esser ja aperite in altere instantia de vym! Il essera aperite in modo de sol lectura.
 
 Mappa es blocate per &quot;%1&quot; sur &quot;%2&quot;</translation>
     </message>
@@ -4034,7 +4053,7 @@ could not be renamed before saving</source>
     <message>
         <location filename="../vymmodel.cpp" line="787"/>
         <location filename="../vymmodel.cpp" line="840"/>
-        <location filename="../vymmodel.cpp" line="5771"/>
+        <location filename="../vymmodel.cpp" line="5783"/>
         <source>Images</source>
         <translation>Imagines</translation>
     </message>
@@ -4069,7 +4088,7 @@ Do you want to overwrite it?</source>
     <message>
         <location filename="../vymmodel.cpp" line="878"/>
         <location filename="../vymmodel.cpp" line="880"/>
-        <location filename="../vymmodel.cpp" line="5188"/>
+        <location filename="../vymmodel.cpp" line="5200"/>
         <source>Critical Error</source>
         <translation>Error critic</translation>
     </message>
@@ -4100,7 +4119,26 @@ Do you want to overwrite it?</source>
         <translation>Selige structura de directorio de importar</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="1012"/>
+        <location filename="../vymmodel.cpp" line="999"/>
+        <source>Map seems to be already opened in another vym instance!
+
+ Map is locked by &quot;%1&quot; on &quot;%2&quot;
+
+Please only delete the lockfile, if you are sure nobody else is currently working on this map.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../vymmodel.cpp" line="1008"/>
+        <source>Removed lockfile for %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../vymmodel.cpp" line="1014"/>
+        <source>Couldn&apos;t remove lockfile for %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../vymmodel.cpp" line="1021"/>
         <source>Cannot create lockfile of map! It will be opened in readonly mode.
 
 </source>
@@ -4109,13 +4147,13 @@ Do you want to overwrite it?</source>
 </translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="1015"/>
+        <location filename="../vymmodel.cpp" line="1024"/>
         <source>Warning</source>
         <comment>VymModel</comment>
         <translation>Advertimento</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="1104"/>
+        <location filename="../vymmodel.cpp" line="1116"/>
         <source>The file of the map  on disk has changed:
 
    %1
@@ -4128,96 +4166,97 @@ Do you want to reload that map with the new file?</source>
 Tu vole recargar le mappa con le nove file?</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="1111"/>
+        <location filename="../vymmodel.cpp" line="1123"/>
         <source>Reload</source>
         <translation>Recarga</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="1112"/>
+        <location filename="../vymmodel.cpp" line="1124"/>
         <source>Ignore</source>
         <translation>Ignora</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="1227"/>
-        <location filename="../vymmodel.cpp" line="5136"/>
+        <location filename="../vymmodel.cpp" line="1013"/>
+        <location filename="../vymmodel.cpp" line="1239"/>
+        <location filename="../vymmodel.cpp" line="5148"/>
         <source>Warning</source>
         <translation>Advertimento</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="1227"/>
+        <location filename="../vymmodel.cpp" line="1239"/>
         <source>Redo failed:
 %1</source>
         <translation>Il falleva a refacer:
 %1</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="1262"/>
+        <location filename="../vymmodel.cpp" line="1274"/>
         <source>Autosave disabled during undo.</source>
         <translation>Salveguardar automatc dishabilitate durante annullation.</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="1989"/>
+        <location filename="../vymmodel.cpp" line="2001"/>
         <source>Note</source>
         <comment>FindAll in VymModel</comment>
         <translation>Nota</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="2713"/>
+        <location filename="../vymmodel.cpp" line="2725"/>
         <source>Image</source>
         <comment>Default name for new image</comment>
         <translation>Image</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="2946"/>
+        <location filename="../vymmodel.cpp" line="2958"/>
         <source>New map</source>
         <comment>New map</comment>
         <translation>Nove mappa</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="3810"/>
+        <location filename="../vymmodel.cpp" line="3822"/>
         <source>Contacting Bugzilla...</source>
         <comment>VymModel</comment>
         <translation>Contingente Bugzilla...</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="5136"/>
+        <location filename="../vymmodel.cpp" line="5148"/>
         <source>Script aborted:
 %1</source>
         <translation>Script abortite:
 %1</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="5173"/>
+        <location filename="../vymmodel.cpp" line="5185"/>
         <source>Export map as image</source>
         <translation>Exporta mappa como imagine</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="5188"/>
+        <location filename="../vymmodel.cpp" line="5200"/>
         <source>Couldn&apos;t save QImage %1 in format %2</source>
         <translation>Il non pote salveguardar QImage %1 in formato %2</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="5213"/>
+        <location filename="../vymmodel.cpp" line="5225"/>
         <source>Export map as PDF</source>
         <translation>Exporta mappa como PDF</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="5268"/>
+        <location filename="../vymmodel.cpp" line="5280"/>
         <source>Export map as SVG</source>
         <translation>Exporta mappa como SVG</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="5302"/>
+        <location filename="../vymmodel.cpp" line="5314"/>
         <source>Export map as XML</source>
         <translation>Exporta mappa como XML</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="5309"/>
+        <location filename="../vymmodel.cpp" line="5321"/>
         <source>Export XML to directory</source>
         <translation>Exporta XML in directorio</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="5355"/>
+        <location filename="../vymmodel.cpp" line="5367"/>
         <source>Critical Export Error</source>
         <translation>Error critic de exportation</translation>
     </message>
@@ -4226,17 +4265,17 @@ Tu vole recargar le mappa con le nove file?</translation>
         <translation type="obsolete">Exporta como LaTeX</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="5437"/>
+        <location filename="../vymmodel.cpp" line="5449"/>
         <source>(still experimental)</source>
         <translation>(ancora experimental)</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="5437"/>
+        <location filename="../vymmodel.cpp" line="5449"/>
         <source>Export as csv</source>
         <translation>Exporta como csv</translation>
     </message>
     <message>
-        <location filename="../vymmodel.cpp" line="5774"/>
+        <location filename="../vymmodel.cpp" line="5786"/>
         <source>Load background image</source>
         <translation>Carga imagine de fundo</translation>
     </message>
