@@ -15,6 +15,10 @@
     #include <windows.h>
 #endif
 
+#if defined(Q_OS_MACX)
+    #include "unistd.h"
+#endif
+
 using namespace File;
 
 extern QString zipToolPath;

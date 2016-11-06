@@ -1,6 +1,12 @@
 Installation of vym - view your mind
 ====================================
 
+Mac OSX:
+
+Drag the vym application to your desktop, or if you have admin rights,
+directly to your Application folder
+
+
 Please check the vym webpage for installation tipps:
 
     http://www.insilmaril.de/vym
