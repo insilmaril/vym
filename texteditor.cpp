@@ -46,7 +46,6 @@ TextEditor::TextEditor()
     connect (e, SIGNAL( textChanged() ), this, SLOT( editorChanged() ) );
     setCentralWidget( e );
     statusBar()->showMessage( tr("Ready","Statusbar message"), statusbarTime);
-    setWindowTitle (vymName +" - " +tr ("Text Editor","Text Editor Window caption"));
 
     connect(e, SIGNAL(currentCharFormatChanged(const QTextCharFormat &)),
             this, SLOT(formatChanged(const QTextCharFormat &)));
@@ -63,6 +62,9 @@ TextEditor::TextEditor()
     // Various states
     blockChangedSignal=false;
     setInactive();
+
+    editorName = "Text editor";
+    setEditorTitle("");
 }
 
 
@@ -114,6 +116,25 @@ bool TextEditor::isEmpty()
 	return false;
     else
 	return true;
+}
+
+
+void TextEditor::setEditorTitle(const QString &s)
+{
+    QString h;
+    s.isEmpty() ? h = editorName : h = editorName + ": " + s;
+    editorTitle = h;
+    setWindowTitle (editorTitle);
+}
+
+QString TextEditor::getEditorTitle()
+{
+    return editorTitle;
+}
+
+void TextEditor::setEditorName( const QString &s)
+{
+    editorName = s;
 }
 
 void TextEditor::setFont (const QFont &font)

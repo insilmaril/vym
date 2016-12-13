@@ -29,6 +29,7 @@ public:
 
 public slots:
     void changeSelection (const QItemSelection &newSel, const QItemSelection &delSel);
+    void updateDockWidgetTitles();
     void expandAll ();
     void expandOneLevel ();
     void collapseOneLevel ();

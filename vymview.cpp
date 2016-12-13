@@ -87,6 +87,10 @@ VymView::VymView(VymModel *m)
 	mapEditor,SLOT (updateData(const QModelIndex &) ) );
 
     connect (
+	model, SIGNAL (dataChanged(const QModelIndex &, const QModelIndex &)), 
+	this, SLOT (updateDockWidgetTitles() ) );
+
+    connect (
 	model, SIGNAL (updateQueries (VymModel*)), 
 	mainWindow,SLOT (updateQueries(VymModel*) ) );
 
@@ -182,8 +186,14 @@ void VymView::changeSelection (const QItemSelection &newsel, const QItemSelectio
     // Update note editor and heading editor // FIXME-3 improve this, evtl. move from mainwindow to here
     model->updateSelection (newsel,desel);
     mainWindow->changeSelection (model,newsel,desel);	
+    mainWindow->updateDockWidgetTitles( model );
     mapEditor->updateSelection (newsel,desel);
     showSelection();
+}
+
+void VymView::updateDockWidgetTitles()
+{
+    mainWindow->updateDockWidgetTitles( model );
 }
 
 void VymView::expandAll()

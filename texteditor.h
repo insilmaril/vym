@@ -19,6 +19,9 @@ public:
 
     void init(const QString &ename);
     bool isEmpty();
+    void setEditorName( const QString & );
+    void setEditorTitle(const QString &);
+    QString getEditorTitle();
     void setFont (const QFont &);
     void setFontHint(const QString&);
     QString getFontHint();
@@ -90,6 +93,8 @@ protected:
     QString shortcutScope;  // used for settings and shortcut scopes
     QTextEdit *e;
     QPoint lastPos;	    // save last position of window
+    QString editorName;     // Name of editor, e.g. note editor, heading editor, ...
+    QString editorTitle;    // window title: Editor name + selected branch
     QString filename;
     QString filenameHint;
 
