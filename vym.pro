@@ -4,7 +4,7 @@ LANGUAGE    = C++
 
 CONFIG	+= qt warn_on x86_64 
 
-QMAKE_MAC_SDK = macosx10.7
+QMAKE_MAC_SDK = macosx10.10
 
 QT += network 
 QT += xml 
@@ -25,10 +25,6 @@ unix:!macx:isEmpty(NO_DBUS) {
     SOURCES += adaptormodel.cpp adaptorvym.cpp 
 }
 
-macx:isEmpty(NO_DBUS) {
-    QT_QPA_PLATFORM_PLUGIN_PATH=%QTDIR%\plugins\platforms\
-}
-
 win32 {
     HEADERS += mkdtemp.h
     SOURCES += mkdtemp.cpp
@@ -40,6 +36,10 @@ win32 {
     win32:DEFINES *= _USE_MATH_DEFINES
 
     QT_QPA_PLATFORM_PLUGIN_PATH=%QTDIR%\plugins\platforms\
+}
+macx {
+    QMAK_MAC_SDK = macosx10.10
+    QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.10
 }
 
 TRANSLATIONS += lang/vym.de_DE.ts
