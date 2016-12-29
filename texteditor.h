@@ -45,6 +45,7 @@ protected:
     void setupFormatActions();
     void setupSettingsActions();
     void closeEvent( QCloseEvent* );
+    bool eventFilter(QObject *obj, QEvent *ev);
 
 public slots:
     void editorChanged();	    // received when text() changed
@@ -70,6 +71,7 @@ private slots:
     void textPrint();
     void textEditUndo();
     void toggleFonthint();
+    void setRichTextMode(bool b);
     void toggleRichText();
     void setFixedFont();
     void setVarFont();

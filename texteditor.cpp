@@ -2,6 +2,7 @@
 
 #include <QAction>
 #include <QActionGroup>
+#include <QApplication>
 #include <QColorDialog>
 #include <QComboBox>
 #include <QFileDialog>
@@ -43,6 +44,7 @@ TextEditor::TextEditor()
     e->setTabStopWidth (20);		// unit is pixel
     e->setTextColor (Qt::black);
     e->setAutoFillBackground (true);
+    e->installEventFilter(this);
     connect (e, SIGNAL( textChanged() ), this, SLOT( editorChanged() ) );
     setCentralWidget( e );
     statusBar()->showMessage( tr("Ready","Statusbar message"), statusbarTime);
@@ -632,15 +634,25 @@ void TextEditor::closeEvent( QCloseEvent* ce )
     return;
 }
 
-/*
-void TextEditor::keyPressEvent(QKeyEvent* e)
+bool TextEditor::eventFilter( QObject *obj, QEvent *ev)
 {
-    if (e->key() == Qt::Key_Escape)
-        emit( focusReleased());
-    else
-        QMainWindow::keyPressEvent(e);
+    if (obj == e ) {
+        if (ev->type() == QEvent::KeyPress) {
+            QKeyEvent *keyEvent = static_cast<QKeyEvent*>(ev);
+            if(keyEvent == QKeySequence::Paste) 
+            {
+                // switch editor mode to match clipboard content before pasting
+                const QClipboard *clipboard = QApplication::clipboard();
+                const QMimeData *mimeData = clipboard->mimeData();
+
+                if (mimeData->hasHtml()) setRichTextMode(true);
+            } 
+        }
+    }
+    // pass the event on to the parent class
+    return QMainWindow::eventFilter(obj, ev);
 }
-*/
+
 void TextEditor::editorChanged()
 {
     if (isEmpty())
@@ -872,20 +884,29 @@ void TextEditor::toggleFonthint()
     emit( textHasChanged() );
 }
 
-void TextEditor::toggleRichText()
+void TextEditor::setRichTextMode(bool b)
 {
-    if (!actionFormatRichText->isChecked() )
-    {
-        e->setPlainText (e->toPlainText());
-        actionFormatUseFixedFont->setEnabled(true);
-    }
-    else
+    if (b)
     {
         e->setHtml (e->toHtml());
         actionFormatUseFixedFont->setEnabled(false);
+        actionFormatRichText->setChecked(true);
+    } else
+    {
+        e->setPlainText (e->toPlainText());
+        actionFormatUseFixedFont->setEnabled(true);
+        actionFormatRichText->setChecked(false);
     }
     updateActions();
     emit( textHasChanged() );
+}
+
+void TextEditor::toggleRichText()
+{
+    if (actionFormatRichText->isChecked() )
+        setRichTextMode( true );
+    else
+        setRichTextMode( false );
 }
 
 void TextEditor::setFixedFont()
@@ -1095,5 +1116,4 @@ void TextEditor::setState (EditorState s)
     p.setColor(QPalette::Inactive, static_cast<QPalette::ColorRole>(9), c);
     e->setPalette(p);
 }
-
 
