@@ -90,6 +90,10 @@ private slots:
     void verticalAlignmentChanged(QTextCharFormat::VerticalAlignment);
     void updateActions();
     void setState (EditorState);
+    void setEmptyEditorColor();
+    void setInactiveEditorColor();
+    void setFilledEditorColor();
+    void setFontColor();
 
 protected:
     QString shortcutScope;  // used for settings and shortcut scopes
@@ -105,6 +109,11 @@ protected:
     QBrush inactivePaper;   // depending on the state
     EditorState state;
     bool blockChangedSignal;
+
+    QColor colorEmptyEditor;
+    QColor colorFilledEditor;
+    QColor colorInactiveEditor;
+    QColor colorFont;
 
     QFont varFont;
     QFont fixedFont;
@@ -129,7 +138,11 @@ protected:
     *actionFormatRichText,
     *actionSettingsVarFont,
     *actionSettingsFixedFont,
-    *actionSettingsFonthintDefault;
+    *actionSettingsFonthintDefault,
+    *actionEmptyEditorColor,
+    *actionFilledEditorColor,
+    *actionInactiveEditorColor,
+    *actionFontColor;
 
     QAction *actionTextBold,
     *actionTextUnderline,
