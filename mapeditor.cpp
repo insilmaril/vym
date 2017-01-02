@@ -1934,18 +1934,22 @@ void MapEditor::dropEvent(QDropEvent *event)
             }
 
 
-            BranchItem *bi;
+            BranchItem *bi = NULL;
             // Workaround to avoid adding empty branches
             if (!url.isEmpty())
             {
                 if (url.startsWith("file://")) url.remove(0,7);
 
+#if defined(Q_OS_WIN32)
+                if (url.startsWith("/")) url.remove(0,1);
+#endif
                 if (isImage (url))
                 {
-                    if (debug) qDebug() << "dropped url seems to be image";
+                    if (debug) qDebug() << "dropped url seems to be image: " << url;
                     // Image, try to download or set image from local file
                     //model->downloadImage (url);
                     model->loadImage(bi, url);
+                    if (debug) qDebug() << "finished loading image";
                 } else
                 {
                     bi = model->addNewBranch();
@@ -1953,7 +1957,7 @@ void MapEditor::dropEvent(QDropEvent *event)
                     {
                         model->select(bi);
                         if (url.endsWith(".vym", Qt::CaseInsensitive))
-                            model->setVymLink(url.replace ("file://","") );
+                            model->setVymLink(url);
                         else
                         {
                             model->setURL(url);
