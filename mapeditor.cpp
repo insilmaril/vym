@@ -1921,21 +1921,25 @@ void MapEditor::dropEvent(QDropEvent *event)
 
         if (event->mimeData()->hasUrls())
         {
-            QByteArray ba = event->mimeData()->urls().first().path().toLatin1();
-            QByteArray ba2;
-            for (int i = 0; i < ba.count(); i++)
-                if (ba.at(i) != 0) ba2.append(ba.at(i));
+            // Try text representation first, which works on windows, but in 
+            // Linux only for https, not local images
+            QString url = event->mimeData()->text();
+            if (url.isEmpty() )
+            {
+                QByteArray ba = event->mimeData()->urls().first().path().toLatin1();
+                QByteArray ba2;
+                for (int i = 0; i < ba.count(); i++)
+                    if (ba.at(i) != 0) ba2.append(ba.at(i));
+                url = ba2;
+            }
 
-            QString url = ba2;
 
             BranchItem *bi;
             // Workaround to avoid adding empty branches
             if (!url.isEmpty())
             {
-                if (url.startsWith("file:") || url.startsWith("/") )
-                {
-                    QString heading = QFileInfo( QDir::fromNativeSeparators(url) ).baseName();
-                }
+                if (url.startsWith("file://")) url.remove(0,7);
+
                 if (isImage (url))
                 {
                     if (debug) qDebug() << "dropped url seems to be image";
