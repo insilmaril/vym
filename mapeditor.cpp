@@ -1909,55 +1909,54 @@ void MapEditor::dropEvent(QDropEvent *event)
             {
                 qDebug()<< "  URL-path:" <<url.path();
                 qDebug()<< "URL-string:" <<url.toString();
+                qDebug()<< "       enc:" <<url.toEncoded();
+                qDebug()<< "     valid:" <<url.isValid();
             }
-            qDebug()    << "===========================================";
+            qDebug()    << "============== mimeData ===================";
             qDebug()    << "has-img : " << event->mimeData()->hasImage();
             qDebug()    << "has-urls: " << event->mimeData()->hasUrls();
-            qDebug()    << "      text: " << event->mimeData()->text();
-            //foreach (QString plain,event->mimeData()->text())
-            //	qDebug()<< "   PLAIN:"<<plain;
-            QByteArray ba = event->mimeData()->data("STRING");
+            qDebug()    << "    text: " << event->mimeData()->text();
+            qDebug()    << "===========================================";
         }
 
         if (event->mimeData()->hasUrls())
         {
-            //model->selectLastBranch();
-            QList <QUrl> uris=event->mimeData()->urls();
-            QString heading;
-            BranchItem *bi;
-            for (int i=0; i<uris.count();i++)
-            {
-                if (debug) qDebug()<<"ME::dropEvent i="<<i<<" uri="<<uris.at(i).toDisplayString();
-                // Workaround to avoid adding empty branches
-                if (!uris.at(i).toString().isEmpty())
-                {
-                    QString u=uris.at(i).toString();
-                    heading=u;
-                    if (isImage (u))
-                    {
-                        // Image, try to download or set image from local file
-                        model->downloadImage (uris.at(i));
-                    } else
-                    {
-                        bi=model->addNewBranch();
-                        if (bi)
-                        {
-                            model->select(bi);
-                            if (u.startsWith("file:"))
-                            {
-                                heading = QFileInfo( QDir::fromNativeSeparators(u) ).baseName();
-                                model->setHeadingPlainText(heading);
-                            }
-                            if (u.endsWith(".vym", Qt::CaseInsensitive))
-                                model->setVymLink(u.replace ("file://","") );
-                            else
-                            {
-                                model->setURL(u);
-                                model->setHeadingPlainText(u);
-                            }
+            QByteArray ba = event->mimeData()->urls().first().path().toLatin1();
+            QByteArray ba2;
+            for (int i = 0; i < ba.count(); i++)
+                if (ba.at(i) != 0) ba2.append(ba.at(i));
 
-                            model->select (bi->parent());
+            QString url = ba2;
+
+            BranchItem *bi;
+            // Workaround to avoid adding empty branches
+            if (!url.isEmpty())
+            {
+                if (url.startsWith("file:") || url.startsWith("/") )
+                {
+                    QString heading = QFileInfo( QDir::fromNativeSeparators(url) ).baseName();
+                }
+                if (isImage (url))
+                {
+                    if (debug) qDebug() << "dropped url seems to be image";
+                    // Image, try to download or set image from local file
+                    //model->downloadImage (url);
+                    model->loadImage(bi, url);
+                } else
+                {
+                    bi = model->addNewBranch();
+                    if (bi)
+                    {
+                        model->select(bi);
+                        if (url.endsWith(".vym", Qt::CaseInsensitive))
+                            model->setVymLink(url.replace ("file://","") );
+                        else
+                        {
+                            model->setURL(url);
+                            model->setHeadingPlainText(url);
                         }
+
+                        model->select (bi->parent());
                     }
                 }
             }
