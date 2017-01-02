@@ -1906,39 +1906,19 @@ void MapEditor::dropEvent(QDropEvent *event)
             foreach (QString format,event->mimeData()->formats())
                 qDebug()<< "MapEditor: Dropped format: "<<qPrintable (format);
             foreach (QUrl url,event->mimeData()->urls())
-                qDebug()<< "  URL:" <<url.path();
-            qDebug()    << " text: " << event->mimeData()->text();
+            {
+                qDebug()<< "  URL-path:" <<url.path();
+                qDebug()<< "URL-string:" <<url.toString();
+            }
+            qDebug()    << "===========================================";
+            qDebug()    << "has-img : " << event->mimeData()->hasImage();
+            qDebug()    << "has-urls: " << event->mimeData()->hasUrls();
+            qDebug()    << "      text: " << event->mimeData()->text();
             //foreach (QString plain,event->mimeData()->text())
             //	qDebug()<< "   PLAIN:"<<plain;
             QByteArray ba = event->mimeData()->data("STRING");
-
-            QString s;
-            s = ba;
-            qDebug() << "  STRING:" <<s;
-
-            ba= event->mimeData()->data("TEXT");
-            s = ba;
-            qDebug() << "    TEXT:" <<s;
-
-            ba= event->mimeData()->data("COMPOUND_TEXT");
-            s = ba;
-            qDebug() << "   CTEXT:" <<s;
-
-            ba= event->mimeData()->data("text/x-moz-url");
-            s = ba;
-            qDebug() << "   x-moz-url:" <<s;
-            //foreach (char b,ba) if (b!=0) qDebug() << "b="<<b;
         }
 
-        /*
-    if (event->mimeData()->hasImage()) //Usually not there anymore :-(
-    {
-        if (debug) qDebug()<<"MapEditor::dropEvent hasImage!";
-         QVariant imageData = event->mimeData()->imageData();
-         model->addFloatImage (qvariant_cast<QImage>(imageData));
-
-    } else
-    */
         if (event->mimeData()->hasUrls())
         {
             //model->selectLastBranch();
@@ -1947,7 +1927,7 @@ void MapEditor::dropEvent(QDropEvent *event)
             BranchItem *bi;
             for (int i=0; i<uris.count();i++)
             {
-                if (debug) qDebug()<<"ME::dropEvent  uri="<<uris.at(i).toString();
+                if (debug) qDebug()<<"ME::dropEvent i="<<i<<" uri="<<uris.at(i).toDisplayString();
                 // Workaround to avoid adding empty branches
                 if (!uris.at(i).toString().isEmpty())
                 {
