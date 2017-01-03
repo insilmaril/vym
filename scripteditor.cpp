@@ -127,12 +127,12 @@ void ScriptEditor::setSlideScript(uint model_id, uint slide_id,const QString &s)
 
 void ScriptEditor::runMacro()
 {
-    emit runLegacyScript (ui.macroEditor->toPlainText() );
+    emit runScript (ui.macroEditor->toPlainText() );
 }
 
 void ScriptEditor::runSlide()
 {
-    emit runLegacyScript (ui.slideEditor->toPlainText() );
+    emit runScript (ui.slideEditor->toPlainText() );
 }
 
 void ScriptEditor::runFile()
@@ -152,7 +152,7 @@ void ScriptEditor::saveMacro()
 }
 void ScriptEditor::loadFile()
 {
-    QString filter("VYM scripts (*.vys *.js);;All (*)");
+    QString filter("VYM scripts (*.vys);;All (*)");
     QString fn = QFileDialog::getOpenFileName( 
 	this,
 	vymName + " - " + tr("Load script"), 

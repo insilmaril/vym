@@ -35,7 +35,6 @@ public slots:
     void saveFileAs();
 
 signals:
-    void runLegacyScript (QString);
     void runScript (QString);
     
 private:
