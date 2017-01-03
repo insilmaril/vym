@@ -6,7 +6,8 @@ extern QString vymName;
 
 HeadingEditor::HeadingEditor(QString scope):TextEditor()
 {
-    QMainWindow::setWindowTitle (vymName +" - " +tr ("Heading Editor","Window caption"));
+    editorName = tr("Note Editor","Name of editor shown as window title");
+    setWindowTitle("");
 
     // Load Settings
     init (scope);

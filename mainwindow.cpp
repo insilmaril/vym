@@ -240,16 +240,18 @@ Main::Main(QWidget* parent, Qt::WindowFlags f) : QMainWindow(parent,f)
 
     // Dock widgets ///////////////////////////////////////////////
     QDockWidget *dw;
-    dw = new QDockWidget (tr("Note Editor"));
+    dw = new QDockWidget ();
     dw->setWidget (noteEditor);
     dw->setObjectName ("NoteEditor");
+    dw->setWindowTitle(noteEditor->getEditorTitle() );
     dw->hide();
     noteEditorDW=dw;
     addDockWidget (Qt::LeftDockWidgetArea,dw);
 
-    dw = new QDockWidget (tr("Heading Editor"));
+    dw = new QDockWidget ();
     dw->setWidget (headingEditor);
     dw->setObjectName ("HeadingEditor");
+    dw->setWindowTitle(headingEditor->getEditorTitle() );
     dw->hide();
     headingEditorDW=dw;
     addDockWidget (Qt::BottomDockWidgetArea,dw);
@@ -5279,6 +5281,7 @@ void Main::updateNoteEditor(QModelIndex index ) //FIXME-4 maybe change to TreeIt
     */
         if (ti)
             noteEditor->setNote (ti->getNote() );
+        updateDockWidgetTitles( ti->getModel());
     }
 }
 
@@ -5299,39 +5302,54 @@ void Main::changeSelection (VymModel *model, const QItemSelection &newsel, const
 {
     branchPropertyEditor->setModel (model ); 
 
-    if (model && model==currentModel() )
+    if (model && model == currentModel() )
     {
 	TreeItem *ti;
 	if (!newsel.indexes().isEmpty() )
+        {
+            ti = model->getItem(newsel.indexes().first());
+
+            // Update note editor
+            if (!ti->hasEmptyNote() )
+                noteEditor->setNote(ti->getNote() );
+            else
+                noteEditor->setNote(VymNote() );
+            // Show URL and link in statusbar
+            QString status;
+            QString s = ti->getURL();
+            if (!s.isEmpty() ) status += "URL: " + s + "  ";
+            s = ti->getVymLink();
+            if (!s.isEmpty() ) status += "Link: " + s;
+            if (!status.isEmpty() ) statusMessage (status);
+
+            headingEditor->setVymText (ti->getHeading() );
+
+            // Select in TaskEditor, if necessary
+            Task *t = NULL;
+            if (ti->isBranchLikeType() )
+                t = ((BranchItem*)ti)->getTask();
+
+            if (t)
+                taskEditor->select (t);
+            else
+                taskEditor->clearSelection();
+        } else
+            noteEditor->setInactive();
+
+        updateActions();
+    }
+}
+
+void Main::updateDockWidgetTitles( VymModel *model)
+{
+    QString s;
+    if (model && !model->isRepositionBlocked() ) 
     {
-        ti=model->getItem(newsel.indexes().first());
-        if (!ti->hasEmptyNote() )
-            noteEditor->setNote(ti->getNote() );
-        else
-            noteEditor->setNote(VymNote() );
-        // Show URL and link in statusbar
-        QString status;
-        QString s=ti->getURL();
-        if (!s.isEmpty() ) status+="URL: "+s+"  ";
-        s=ti->getVymLink();
-        if (!s.isEmpty() ) status+="Link: "+s;
-        if (!status.isEmpty() ) statusMessage (status);
+	BranchItem *bi = model->getSelectedBranch();
+        if (bi) s = bi->getHeadingPlain();
 
-        headingEditor->setVymText (ti->getHeading() );
-
-        // Select in TaskEditor, if necessary
-        Task *t=NULL;
-        if (ti->isBranchLikeType() )
-            t=((BranchItem*)ti)->getTask();
-
-        if (t)
-            taskEditor->select (t);
-        else
-            taskEditor->clearSelection();
-    } else
-        noteEditor->setInactive();
-
-    updateActions();
+        noteEditor->setEditorTitle(s);
+        noteEditorDW->setWindowTitle (noteEditor->getEditorTitle() );
     }
 }
 

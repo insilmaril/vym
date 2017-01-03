@@ -27,6 +27,7 @@
 #include "exports.h"
 #include "file.h"
 #include "findresultmodel.h"
+#include "lockedfiledialog.h"
 #include "mainwindow.h"
 #include "misc.h"
 #include "noteeditor.h"
@@ -607,6 +608,9 @@ File::ErrorCode VymModel::loadMap (
 	file.close();
 	if ( ok ) 
 	{
+	    reposition();   // to generate bbox sizes
+	    emitSelectionChanged();
+
 	    if (lmode == NewMap)
 	    {
 		mapDefault = false;
@@ -619,11 +623,7 @@ File::ErrorCode VymModel::loadMap (
 
                 if (! tryVymLock() && debug ) 
                     qWarning() << "VM::loadMap  no lockfile created!";
-
             }
-    
-	    reposition();   // to generate bbox sizes
-	    emitSelectionChanged();
 
 	    // Recalc priorities and sort   
 	    taskModel->recalcPriorities();
@@ -1003,17 +1003,26 @@ bool VymModel::tryVymLock()
         setReadOnly( true );
         if (vymLock.getState() == VymLock::lockedByOther)
         {
-            WarningDialog dia;
+            LockedFileDialog dia;
             QString a = vymLock.getAuthor();
             QString h = vymLock.getHost();
-            QString s = QString( tr("Map seems to be already opened in another vym instance! "
-                   "It will be opened in readonly mode.\n\n"
-                   "Map is locked by \"%1\" on \"%2\"" )) .arg(a).arg(h);
+            QString s = QString( tr("Map seems to be already opened in another vym instance!\n\n "
+                   "Map is locked by \"%1\" on \"%2\"\n\n"
+                   "Please only delete the lockfile, if you are sure nobody else is currently working on this map." )) .arg(a).arg(h);
             dia.setText( s );
             dia.setWindowTitle(tr("Warning: Map already opended","VymModel"));
-            dia.showCancelButton( false );
-            dia.setShowAgainName("/mainwindow/mapIsLocked");
-            dia.exec();
+            if (dia.execDialog() == LockedFileDialog::DeleteLockfile)
+            {
+                if (vymLock.removeLock() )
+                {
+                    mainWindow->statusMessage (tr("Removed lockfile for %1").arg(mapName));
+                    setReadOnly(false);
+                    return true;
+                } else
+                    QMessageBox::warning(0,
+                             tr("Warning"),
+                             tr("Couldn't remove lockfile for %1").arg(mapName));
+            }
         } else if (vymLock.getState() == VymLock::notWritable)
         {
             WarningDialog dia;
@@ -1106,8 +1115,11 @@ void VymModel::fileChanged()
             if (vymLock.tryLock() ) setReadOnly( false );
         } else
         {
-            QDateTime tmod=QFileInfo (filePath).lastModified();
-            if (tmod>fileChangedTime)
+            // FIXME-0 Check, if somebody else removed/replaced lockfile
+            // Here a unique vym ID would be needed to be checked
+            
+            QDateTime tmod = QFileInfo (filePath).lastModified();
+            if (tmod > fileChangedTime)
             {
                 // FIXME-4 VM switch to current mapeditor and finish lineedits...
                 QMessageBox mb( vymName,
@@ -5445,10 +5457,13 @@ void VymModel::emitDataChanged (TreeItem *ti)
 {
     QModelIndex ix=index(ti);
     emit ( dataChanged (ix,ix) );
-    if (!blockReposition && ti->isBranchLikeType() && ((BranchItem*)ti)->getTask()  )
+    if (!blockReposition)
     {
-        taskModel->emitDataChanged ( ((BranchItem*)ti)->getTask() );
-        taskModel->recalcPriorities();
+        if ( ti->isBranchLikeType() && ((BranchItem*)ti)->getTask()  )
+        {
+            taskModel->emitDataChanged ( ((BranchItem*)ti)->getTask() );
+            taskModel->recalcPriorities();
+        }
     }
 }
 

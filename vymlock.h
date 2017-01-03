@@ -13,6 +13,7 @@ public:
     void init();
     bool tryLock();
     LockState getState();
+    bool removeLock();
     bool releaseLock();
     bool rename( const QString &newMapPath);
     void setAuthor(const QString &s);

@@ -19,6 +19,9 @@ public:
 
     void init(const QString &ename);
     bool isEmpty();
+    void setEditorName( const QString & );
+    void setEditorTitle(const QString &);
+    QString getEditorTitle();
     void setFont (const QFont &);
     void setFontHint(const QString&);
     QString getFontHint();
@@ -42,6 +45,7 @@ protected:
     void setupFormatActions();
     void setupSettingsActions();
     void closeEvent( QCloseEvent* );
+    bool eventFilter(QObject *obj, QEvent *ev);
 
 public slots:
     void editorChanged();	    // received when text() changed
@@ -67,6 +71,7 @@ private slots:
     void textPrint();
     void textEditUndo();
     void toggleFonthint();
+    void setRichTextMode(bool b);
     void toggleRichText();
     void setFixedFont();
     void setVarFont();
@@ -85,11 +90,17 @@ private slots:
     void verticalAlignmentChanged(QTextCharFormat::VerticalAlignment);
     void updateActions();
     void setState (EditorState);
+    void setEmptyEditorColor();
+    void setInactiveEditorColor();
+    void setFilledEditorColor();
+    void setFontColor();
 
 protected:
     QString shortcutScope;  // used for settings and shortcut scopes
     QTextEdit *e;
     QPoint lastPos;	    // save last position of window
+    QString editorName;     // Name of editor, e.g. note editor, heading editor, ...
+    QString editorTitle;    // window title: Editor name + selected branch
     QString filename;
     QString filenameHint;
 
@@ -98,6 +109,11 @@ protected:
     QBrush inactivePaper;   // depending on the state
     EditorState state;
     bool blockChangedSignal;
+
+    QColor colorEmptyEditor;
+    QColor colorFilledEditor;
+    QColor colorInactiveEditor;
+    QColor colorFont;
 
     QFont varFont;
     QFont fixedFont;
@@ -122,7 +138,11 @@ protected:
     *actionFormatRichText,
     *actionSettingsVarFont,
     *actionSettingsFixedFont,
-    *actionSettingsFonthintDefault;
+    *actionSettingsFonthintDefault,
+    *actionEmptyEditorColor,
+    *actionFilledEditorColor,
+    *actionInactiveEditorColor,
+    *actionFontColor;
 
     QAction *actionTextBold,
     *actionTextUnderline,

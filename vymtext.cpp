@@ -269,8 +269,8 @@ QString VymText::getAttributes()
     {
         ret += attribut("textMode","plainText");
         ret += " " + attribut("fonthint", fonthint);
-        ret += " " + attribut("textColor", color.name() );
     }
+    ret += " " + attribut("textColor", color.name() );
     return ret;
 }
 

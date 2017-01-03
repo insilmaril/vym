@@ -1907,77 +1907,65 @@ void MapEditor::dropEvent(QDropEvent *event)
             foreach (QString format,event->mimeData()->formats())
                 qDebug()<< "MapEditor: Dropped format: "<<qPrintable (format);
             foreach (QUrl url,event->mimeData()->urls())
-                qDebug()<< "  URL:" <<url.path();
-            qDebug()    << " text: " << event->mimeData()->text();
-            //foreach (QString plain,event->mimeData()->text())
-            //	qDebug()<< "   PLAIN:"<<plain;
-            QByteArray ba = event->mimeData()->data("STRING");
-
-            QString s;
-            s = ba;
-            qDebug() << "  STRING:" <<s;
-
-            ba= event->mimeData()->data("TEXT");
-            s = ba;
-            qDebug() << "    TEXT:" <<s;
-
-            ba= event->mimeData()->data("COMPOUND_TEXT");
-            s = ba;
-            qDebug() << "   CTEXT:" <<s;
-
-            ba= event->mimeData()->data("text/x-moz-url");
-            s = ba;
-            qDebug() << "   x-moz-url:" <<s;
-            //foreach (char b,ba) if (b!=0) qDebug() << "b="<<b;
+            {
+                qDebug()<< "  URL-path:" <<url.path();
+                qDebug()<< "URL-string:" <<url.toString();
+                qDebug()<< "       enc:" <<url.toEncoded();
+                qDebug()<< "     valid:" <<url.isValid();
+            }
+            qDebug()    << "============== mimeData ===================";
+            qDebug()    << "has-img : " << event->mimeData()->hasImage();
+            qDebug()    << "has-urls: " << event->mimeData()->hasUrls();
+            qDebug()    << "    text: " << event->mimeData()->text();
+            qDebug()    << "===========================================";
         }
 
-        /*
-    if (event->mimeData()->hasImage()) //Usually not there anymore :-(
-    {
-        if (debug) qDebug()<<"MapEditor::dropEvent hasImage!";
-         QVariant imageData = event->mimeData()->imageData();
-         model->addFloatImage (qvariant_cast<QImage>(imageData));
-
-    } else
-    */
         if (event->mimeData()->hasUrls())
         {
-            QList <QUrl> uris=event->mimeData()->urls();
-            QString heading;
-            BranchItem *bi;
-            for (int i=0; i<uris.count();i++)
+            // Try text representation first, which works on windows, but in 
+            // Linux only for https, not local images
+            QString url = event->mimeData()->text();
+            if (url.isEmpty() )
             {
-                if (debug) qDebug()<<"ME::dropEvent  uri="<<uris.at(i).toString();
-                // Workaround to avoid adding empty branches
-                if (!uris.at(i).toString().isEmpty())
-                {
-                    QString u=uris.at(i).toString();
-                    heading=u;
-                    if (isImage (u))
-                    {
-                        // Image, try to download or set image from local file
-                        model->downloadImage (uris.at(i));
-                    } else
-                    {
-                        bi=model->addNewBranch();
-                        if (bi)
-                        {
-                            model->select(bi);
-                            if (u.startsWith("file:"))
-                            {
-                                heading = QFileInfo( QDir::fromNativeSeparators(u) ).baseName();
-                                model->setHeadingPlainText(heading);
-                            }
-                            if (u.endsWith(".vym", Qt::CaseInsensitive))
-                                model->setVymLink(u.replace ("file://","") );
-                            else
-                            {
-                                model->setURL(u);
-                                model->setHeadingPlainText(u);
-                            }
+                QByteArray ba = event->mimeData()->urls().first().path().toLatin1();
+                QByteArray ba2;
+                for (int i = 0; i < ba.count(); i++)
+                    if (ba.at(i) != 0) ba2.append(ba.at(i));
+                url = ba2;
+            }
 
-                            model->select (bi->parent());
+
+            BranchItem *bi = NULL;
+            // Workaround to avoid adding empty branches
+            if (!url.isEmpty())
+            {
+                if (url.startsWith("file://")) url.remove(0,7);
+
+#if defined(Q_OS_WIN32)
+                if (url.startsWith("/")) url.remove(0,1);
+#endif
+                if (isImage (url))
+                {
+                    if (debug) qDebug() << "dropped url seems to be image: " << url;
+                    // Image, try to download or set image from local file
+                    //model->downloadImage (url);
+                    model->loadImage(bi, url);
+                    if (debug) qDebug() << "finished loading image";
+                } else
+                {
+                    bi = model->addNewBranch();
+                    if (bi)
+                    {
+                        model->select(bi);
+                        if (url.endsWith(".vym", Qt::CaseInsensitive))
+                            model->setVymLink(url);
+                        else
+                        {
+                            model->setURL(url);
+                            model->setHeadingPlainText(url);
                         }
+
+                        model->select (bi->parent());
                     }
                 }
             }
@@ -2091,7 +2079,7 @@ void MapEditor::updateData (const QModelIndex &sel)
 	return;
     }
     qDebug() << "  ti="<<ti;
-    qDebug() << "  h="<<ti->getHeading();
+    qDebug() << "  h="<<ti->getHeadingPlain();
 */
     
     if (ti && ti->isBranchLikeType())

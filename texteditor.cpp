@@ -2,6 +2,7 @@
 
 #include <QAction>
 #include <QActionGroup>
+#include <QApplication>
 #include <QColorDialog>
 #include <QComboBox>
 #include <QFileDialog>
@@ -41,12 +42,11 @@ TextEditor::TextEditor()
     e = new QTextEdit( this);
     e->setFocus();
     e->setTabStopWidth (20);		// unit is pixel
-    e->setTextColor (Qt::black);
     e->setAutoFillBackground (true);
+    e->installEventFilter(this);
     connect (e, SIGNAL( textChanged() ), this, SLOT( editorChanged() ) );
     setCentralWidget( e );
     statusBar()->showMessage( tr("Ready","Statusbar message"), statusbarTime);
-    setWindowTitle (vymName +" - " +tr ("Text Editor","Text Editor Window caption"));
 
     connect(e, SIGNAL(currentCharFormatChanged(const QTextCharFormat &)),
             this, SLOT(formatChanged(const QTextCharFormat &)));
@@ -63,6 +63,9 @@ TextEditor::TextEditor()
     // Various states
     blockChangedSignal=false;
     setInactive();
+
+    editorName = "Text editor";
+    setEditorTitle("");
 }
 
 
@@ -76,19 +79,24 @@ TextEditor::~TextEditor()
 
     QString s;
     if (actionSettingsFonthintDefault->isChecked() )
-	s="fixed";
+	s = "fixed";
     else    
-	s="variable";
+	s = "variable";
     settings.setValue(n + "fonts/fonthintDefault",s );
     settings.setValue(n + "fonts/varFont", varFont.toString() );
     settings.setValue(n + "fonts/fixedFont", fixedFont.toString() );
+
+    settings.setValue(n + "colors/emptyEditor", colorEmptyEditor.name());
+    settings.setValue(n + "colors/filledEditor", colorFilledEditor.name());
+    settings.setValue(n + "colors/inactiveEditor", colorInactiveEditor.name());
+    settings.setValue(n + "colors/font", colorFont.name());
 }
 
 void TextEditor::init (const QString &scope) 
 {   
     shortcutScope = scope;
-    QString n=QString("/satellite/%1/").arg(shortcutScope);
-    restoreState (settings.value(n+"state",0).toByteArray());
+    QString n = QString("/satellite/%1/").arg(shortcutScope);
+    restoreState (settings.value(n + "state", 0).toByteArray());
     filenameHint="";
     fixedFont.fromString (settings.value(
         n + "fonts/fixedFont", "Courier,12,-1,5,48,0,0,0,1,0").toString()
@@ -96,7 +104,7 @@ void TextEditor::init (const QString &scope)
     varFont.fromString( settings.value(
         n + "fonts/varFont", "DejaVu Sans Mono,12,-1,0,50,0,0,0,0,0").toString()
                         );
-    QString s=settings.value (n+"fonts/fonthintDefault","variable").toString();
+    QString s = settings.value (n + "fonts/fonthintDefault", "variable").toString();
     if (s == "fixed")
     {
         actionSettingsFonthintDefault->setChecked (true);
@@ -106,6 +114,25 @@ void TextEditor::init (const QString &scope)
         actionSettingsFonthintDefault->setChecked (false);
         e->setCurrentFont (varFont);
     }
+    
+    // Default colors
+    QPixmap pix( 16, 16 );
+    colorEmptyEditor.setNamedColor(   settings.value(n + "colors/emptyEditor", "#969696").toString() );
+    pix.fill( colorEmptyEditor );
+    actionEmptyEditorColor->setIcon(pix);
+
+    colorFilledEditor.setNamedColor(  settings.value(n + "colors/filledEditor","#ffffff").toString() );
+    pix.fill( colorFilledEditor );
+    actionFilledEditorColor->setIcon(pix);
+
+    colorInactiveEditor.setNamedColor(settings.value(n + "colors/inactiveEditor","#000000").toString() );
+    pix.fill( colorInactiveEditor );
+    actionInactiveEditorColor->setIcon(pix);
+
+    colorFont.setNamedColor(          settings.value(n + "colors/font","#000000").toString() );
+    e->setTextColor( colorFont );
+    pix.fill( colorFont );
+    actionFontColor->setIcon(pix);
 }
 
 bool TextEditor::isEmpty()
@@ -114,6 +141,25 @@ bool TextEditor::isEmpty()
 	return false;
     else
 	return true;
+}
+
+
+void TextEditor::setEditorTitle(const QString &s)
+{
+    QString h;
+    s.isEmpty() ? h = editorName : h = editorName + ": " + s;
+    editorTitle = h;
+    setWindowTitle (editorTitle);
+}
+
+QString TextEditor::getEditorTitle()
+{
+    return editorTitle;
+}
+
+void TextEditor::setEditorName( const QString &s)
+{
+    editorName = s;
 }
 
 void TextEditor::setFont (const QFont &font)
@@ -555,6 +601,28 @@ void TextEditor::setupSettingsActions()
     // set state later in constructor...
     settingsMenu->addAction (a);
     actionSettingsFonthintDefault=a;
+
+    settingsMenu->addSeparator();
+
+    a = new QAction( tr( "Set empty editor background color", "TextEditor") + "...", this  );
+    settingsMenu->addAction (a);
+    connect( a, SIGNAL( triggered() ), this, SLOT( setEmptyEditorColor() ) );
+    actionEmptyEditorColor = a;
+
+    a = new QAction( tr( "Set filled editor background color", "TextEditor") + "...", this  );
+    settingsMenu->addAction (a);
+    connect( a, SIGNAL( triggered() ), this, SLOT( setFilledEditorColor() ) );
+    actionFilledEditorColor = a;
+
+    a = new QAction( tr( "Set inactive editor background color", "TextEditor") + "...", this  );
+    settingsMenu->addAction (a);
+    connect( a, SIGNAL( triggered() ), this, SLOT( setInactiveEditorColor() ) );
+    actionInactiveEditorColor = a;
+
+    a = new QAction( tr( "Set default font color", "TextEditor") + "...", this  );
+    settingsMenu->addAction (a);
+    connect( a, SIGNAL( triggered() ), this, SLOT( setFontColor() ) );
+    actionFontColor = a;
 }
 
 void TextEditor::textLoad()
@@ -609,6 +677,25 @@ void TextEditor::closeEvent( QCloseEvent* ce )
     hide();
     emit (windowClosed() );
     return;
+}
+
+bool TextEditor::eventFilter( QObject *obj, QEvent *ev)
+{
+    if (obj == e ) {
+        if (ev->type() == QEvent::KeyPress) {
+            QKeyEvent *keyEvent = static_cast<QKeyEvent*>(ev);
+            if(keyEvent == QKeySequence::Paste) 
+            {
+                // switch editor mode to match clipboard content before pasting
+                const QClipboard *clipboard = QApplication::clipboard();
+                const QMimeData *mimeData = clipboard->mimeData();
+
+                if (mimeData->hasHtml()) setRichTextMode(true);
+            } 
+        }
+    }
+    // pass the event on to the parent class
+    return QMainWindow::eventFilter(obj, ev);
 }
 
 void TextEditor::editorChanged()
@@ -688,6 +775,7 @@ void TextEditor::reset()
 {
     e->selectAll();
     e->textCursor().deleteChar();
+    e->setTextColor( colorFont );
 }
 
 void TextEditor::textSaveAs()	
@@ -842,20 +930,29 @@ void TextEditor::toggleFonthint()
     emit( textHasChanged() );
 }
 
-void TextEditor::toggleRichText()
+void TextEditor::setRichTextMode(bool b)
 {
-    if (!actionFormatRichText->isChecked() )
-    {
-        e->setPlainText (e->toPlainText());
-        actionFormatUseFixedFont->setEnabled(true);
-    }
-    else
+    if (b)
     {
         e->setHtml (e->toHtml());
         actionFormatUseFixedFont->setEnabled(false);
+        actionFormatRichText->setChecked(true);
+    } else
+    {
+        e->setPlainText (e->toPlainText());
+        actionFormatUseFixedFont->setEnabled(true);
+        actionFormatRichText->setChecked(false);
     }
     updateActions();
     emit( textHasChanged() );
+}
+
+void TextEditor::toggleRichText()
+{
+    if (actionFormatRichText->isChecked() )
+        setRichTextMode( true );
+    else
+        setRichTextMode( false );
 }
 
 void TextEditor::setFixedFont()
@@ -906,9 +1003,11 @@ void TextEditor::textColor()
     QColor col = QColorDialog::getColor( e->textColor(), this );
     if ( !col.isValid() ) return;
     e->setTextColor( col );
+    /*
     QPixmap pix( 16, 16 );
-    pix.fill( Qt::black );
+    pix.fill( col );
     actionTextColor->setIcon( pix );
+    */
 }
 
 void TextEditor::textAlign( QAction *a ) 
@@ -1053,17 +1152,56 @@ void TextEditor::updateActions()
 void TextEditor::setState (EditorState s)
 {
     
-    QPalette p=palette();
+    QPalette p = palette();
     QColor c;
     switch (s)
     {
-        case emptyEditor:    c=QColor (150,150,150); break;
-        case filledEditor:   c=QColor (255,255,255); break;
-        case inactiveEditor: c=QColor (0,0,0);
+        case emptyEditor:    c = colorEmptyEditor; break;
+        case filledEditor:   c = colorFilledEditor; break; 
+        case inactiveEditor: c = colorInactiveEditor;
     }
     p.setColor(QPalette::Active, static_cast<QPalette::ColorRole>(9), c);
     p.setColor(QPalette::Inactive, static_cast<QPalette::ColorRole>(9), c);
     e->setPalette(p);
 }
 
+void TextEditor::setEmptyEditorColor()
+{
+    QColor col = QColorDialog::getColor( colorEmptyEditor, NULL);
+    if ( !col.isValid() ) return;
+    colorEmptyEditor = col;
+    QPixmap pix( 16, 16 );
+    pix.fill( colorEmptyEditor );
+    actionEmptyEditorColor->setIcon(pix);
+}
+
+void TextEditor::setInactiveEditorColor()
+{
+    QColor col = QColorDialog::getColor( colorInactiveEditor, NULL);
+    if ( !col.isValid() ) return;
+    colorInactiveEditor = col;
+    QPixmap pix( 16, 16 );
+    pix.fill( colorInactiveEditor );
+    actionInactiveEditorColor->setIcon(pix);
+}
+
+void TextEditor::setFilledEditorColor()
+{
+    QColor col = QColorDialog::getColor( colorFilledEditor, NULL);
+    if ( !col.isValid() ) return;
+    colorFilledEditor = col;
+    QPixmap pix( 16, 16 );
+    pix.fill( colorFilledEditor );
+    actionFilledEditorColor->setIcon(pix);
+}
+
+void TextEditor::setFontColor()
+{
+    QColor col = QColorDialog::getColor( colorFont, NULL);
+    if ( !col.isValid() ) return;
+    colorFont = col;
+    QPixmap pix( 16, 16 );
+    pix.fill( colorFont );
+    actionFontColor->setIcon(pix);
+}
 

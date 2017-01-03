@@ -47,7 +47,6 @@ void FloatObj::moveCenter (double x, double y)
     absPos=QPointF(x,y);
     bbox.moveTo(x - bbox.width()/2, y - bbox.height()/2 );
     clickPoly=QPolygonF (bbox);
-    if (debug) qDebug()<<"FO::moveCenter "<<x<<","<<y<<"  bbox="<<bbox;
 }
 
 void FloatObj::moveCenter2RelPos(double x, double y)  

@@ -607,6 +607,21 @@ want to allow this in your system!</source>
     </message>
 </context>
 <context>
+    <name>LockedFileDialog</name>
+    <message>
+        <source>Dialog</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete lockfile</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open readonly</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Main</name>
     <message>
         <source>&amp;File</source>
@@ -4435,12 +4450,6 @@ Do you want to reload that map with the new file?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Map seems to be already opened in another vym instance! It will be opened in readonly mode.
-
-Map is locked by &quot;%1&quot; on &quot;%2&quot;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Warning: Map already opended</source>
         <comment>VymModel</comment>
         <translation type="unfinished"></translation>
@@ -4478,6 +4487,22 @@ Map is locked by &quot;%1&quot; on &quot;%2&quot;</source>
         <source>Warning</source>
         <comment>VymModel</comment>
         <translation type="unfinished">警告</translation>
+    </message>
+    <message>
+        <source>Map seems to be already opened in another vym instance!
+
+ Map is locked by &quot;%1&quot; on &quot;%2&quot;
+
+Please only delete the lockfile, if you are sure nobody else is currently working on this map.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Removed lockfile for %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t remove lockfile for %1</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

@@ -298,6 +298,7 @@ public slots:
     void selectInNoteEditor (QString s, int i);
     void setFocusMapEditor();
     void changeSelection (VymModel *model,const QItemSelection &newSel, const QItemSelection &delSel);
+    void updateDockWidgetTitles(VymModel *model);
 
     void updateActions();
     ModMode getModMode();

@@ -10,7 +10,8 @@ extern QString vymName;
 
 NoteEditor::NoteEditor(QString scope):TextEditor()
 {
-    setWindowTitle (vymName +" - " +tr ("Note Editor","Window caption"));
+    editorName = tr("Note Editor","Name of editor shown as window title");
+    setWindowTitle("");
 
     menuBar()->show();
 

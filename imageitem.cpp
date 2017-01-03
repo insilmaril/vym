@@ -9,7 +9,7 @@
 
 bool isImage (const QString &fname)
 {
-    QRegExp rx("(jpg|jpeg|png|xmp|gif|svg)");
+    QRegExp rx("(jpg|jpeg|png|xmp|gif|svg)$");
     rx.setCaseSensitivity (Qt::CaseInsensitive);
     return fname.contains (rx);
 }
@@ -60,14 +60,14 @@ void ImageItem::load(const QImage &img)
 
 bool ImageItem::load(const QString &fname)
 {
-    bool ok=originalImage.load (fname);    //FIXME-4 Error handling missing
+    bool ok = originalImage.load (fname);   
     if (mo && ok)
     {
 	setOriginalFilename (fname);
-    setHeadingPlainText (originalFilename);
+        setHeadingPlainText (originalFilename);
 	((FloatImageObj*)mo)->load (originalImage);
     }	else
-	qDebug() <<"ImageItem::load failed for "<<fname;
+	qWarning() << "ImageItem::load failed for " << fname;
     return ok;	
 }
 
