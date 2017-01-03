@@ -4084,7 +4084,15 @@ void VymModel::setXLinkWidth(int new_width)
 // Scripting
 //////////////////////////////////////////////
 
-QVariant VymModel::execute (const QString &script)  // FIXME-0 still required??? (undo/redo and?)
+QVariant VymModel::execute (const QString &script)  // FIXME-0 still required??? 
+    // Called from
+    // scripts/vym-ruby.rb  used for testing
+    // Main::callMacro
+    // Main::checkReleaseNotes   
+    // VymModel::undo
+    // VymModel::redo
+    // VymModel::exportLast
+    // VymModel::updateSlideSelection
 {
     // qDebug()<<"VM::execute called: "<<script;
     return mainWindow->runScript( script);
