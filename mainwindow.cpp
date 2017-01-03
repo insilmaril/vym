@@ -5329,13 +5329,14 @@ void Main::changeSelection (VymModel *model, const QItemSelection &newsel, const
 void Main::updateDockWidgetTitles( VymModel *model)
 {
     QString s;
-    if (model) 
+    if (model && !model->isRepositionBlocked() ) 
     {
 	BranchItem *bi = model->getSelectedBranch();
         if (bi) s = bi->getHeadingPlain();
+
+        noteEditor->setEditorTitle(s);
+        noteEditorDW->setWindowTitle (noteEditor->getEditorTitle() );
     }
-    noteEditor->setEditorTitle(s);
-    noteEditorDW->setWindowTitle (noteEditor->getEditorTitle() );
 }
 
 void Main::updateActions()
