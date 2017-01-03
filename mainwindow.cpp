@@ -5712,19 +5712,18 @@ QVariant Main::runScript (const QString &script)
 
         // Run script
         QScriptValue result = scriptEngine.evaluate(script);
-        qDebug() << "MainL::runScript finished:";
-        qDebug() << "   hasException: "<<scriptEngine.hasUncaughtException();
-        /*
-        if (scriptEngine.hasUncaughtException() )
+        if (debug)
         {
-            qDebug() << "      exception: "<< scriptEngine.uncaughtException();
+            qDebug() << "MainL::runScript finished:";
+            qDebug() << "   hasException: " << scriptEngine.hasUncaughtException();
+            /*
+            if (scriptEngine.hasUncaughtException() )
+            {
+                qDebug() << "      exception: "<< scriptEngine.uncaughtException();
+            }
+            */
+            qDebug() << "         result: "<<result.toString();
         }
-        */
-
-        qDebug() << "         result: "<<result.toString();
-
-        // qDebug() << "Main::execute lastResult = " << scriptEngine.globalObject().property("lastResult").toVariant();
-
 
         if (scriptEngine.hasUncaughtException()) {
             int line = scriptEngine.uncaughtExceptionLineNumber();
