@@ -5686,52 +5686,46 @@ QScriptValue scriptAbort( QScriptContext *context, QScriptEngine *engine)
 
 QVariant Main::runScript (const QString &script)
 {
-    // FIXME-2 add timer to allow aborting long running script
-    
-    VymModel *m = currentModel();
-    if (m) 
+    scriptEngine.globalObject().setProperty( "print", scriptEngine.newFunction( scriptPrint ) );
+    scriptEngine.globalObject().setProperty( "abort", scriptEngine.newFunction( scriptAbort ) );
+
+    // Create Wrapper object for VymModel
+    //QScriptValue val1 = scriptEngine.newQObject( m->getWrapper() );
+    //scriptEngine.globalObject().setProperty("model", val1);
+
+    // Create Wrapper object for vym itself (mainwindow)
+    VymWrapper vymWrapper;
+    QScriptValue val2 = scriptEngine.newQObject( &vymWrapper );
+    scriptEngine.globalObject().setProperty("vym", val2);
+
+    // Result variable to save return value of last processed command
+    //QVariant lresult("foobar");  //FIXME-0 testing
+    //QScriptValue val3 = scriptEngine.toScriptValue(lresult);
+    //scriptEngine.globalObject().setProperty("lastResult", val3);
+
+    // Run script
+    QScriptValue result = scriptEngine.evaluate(script);
+
+    if (debug)
     {
-        //qDebug()<<"Main::execute called: "<<script;
-
-        scriptEngine.globalObject().setProperty( "print", scriptEngine.newFunction( scriptPrint ) );
-        scriptEngine.globalObject().setProperty( "abort", scriptEngine.newFunction( scriptAbort ) );
-
-        // Create Wrapper object for VymModel
-        QScriptValue val1 = scriptEngine.newQObject( m->getWrapper() );
-        scriptEngine.globalObject().setProperty("model", val1);
-
-        // Create Wrapper object for mainwindow
-        VymWrapper vymWrapper;
-        QScriptValue val2 = scriptEngine.newQObject( &vymWrapper );
-        scriptEngine.globalObject().setProperty("vym", val2);
-
-        // Result variable to save return value of last processed command
-        QVariant lresult("foobar");  //FIXME-0 testing
-        QScriptValue val3 = scriptEngine.toScriptValue(lresult);
-        scriptEngine.globalObject().setProperty("lastResult", val3);
-
-        // Run script
-        QScriptValue result = scriptEngine.evaluate(script);
-        if (debug)
+        qDebug() << "MainL::runScript finished:";
+        qDebug() << "   hasException: " << scriptEngine.hasUncaughtException();
+        /*
+        if (scriptEngine.hasUncaughtException() )
         {
-            qDebug() << "MainL::runScript finished:";
-            qDebug() << "   hasException: " << scriptEngine.hasUncaughtException();
-            /*
-            if (scriptEngine.hasUncaughtException() )
-            {
-                qDebug() << "      exception: "<< scriptEngine.uncaughtException();
-            }
-            */
-            qDebug() << "         result: "<<result.toString();
+            qDebug() << "      exception: "<< scriptEngine.uncaughtException();
         }
-
-        if (scriptEngine.hasUncaughtException()) {
-            int line = scriptEngine.uncaughtExceptionLineNumber();
-            scriptOutput->append( QString("uncaught exception at line %1: %2").arg(line).arg(result.toString()));
-        } else
-            return scriptEngine.globalObject().property("lastResult").toVariant();
-
+        */
+        qDebug() << "         result: " << result.toString();   // not used so far...
+        qDebug() << "     lastResult: " << scriptEngine.globalObject().property("lastResult").toVariant();
     }
+
+    if (scriptEngine.hasUncaughtException()) {
+        int line = scriptEngine.uncaughtExceptionLineNumber();
+        scriptOutput->append( QString("uncaught exception at line %1: %2").arg(line).arg(result.toString()));
+    } else
+        return scriptEngine.globalObject().property("lastResult").toVariant();
+
     return QVariant(""); 
 }
 

@@ -2,6 +2,9 @@
 function foofunction(s) {print ("Foofunction: " +  s);}
 
 foofunction("asdfs");
-abort("xxx");
+//abort("xxx");
 print ("bar");
-"ok, I'm done";
+
+m=vym.currentMap();
+m.setHeadingPlainText("foobar");
+print( m.getHeadingPlainText());
