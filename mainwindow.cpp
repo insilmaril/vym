@@ -5698,11 +5698,6 @@ QVariant Main::runScript (const QString &script)
     QScriptValue val2 = scriptEngine.newQObject( &vymWrapper );
     scriptEngine.globalObject().setProperty("vym", val2);
 
-    // Result variable to save return value of last processed command
-    //QVariant lresult("foobar");  //FIXME-0 testing
-    //QScriptValue val3 = scriptEngine.toScriptValue(lresult);
-    //scriptEngine.globalObject().setProperty("lastResult", val3);
-
     // Run script
     QScriptValue result = scriptEngine.evaluate(script);
 
