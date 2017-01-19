@@ -190,8 +190,10 @@ void removeDir(QDir d)
         QFile (fi.filePath()).remove();
     }
 
-    if (!d.rmdir(d.path()))
-        qWarning ()<<"removeDir("+d.path()+") failed!";
+    QString dirName = d.dirName();
+    d.cdUp();
+    if (!d.rmdir(dirName))
+        qWarning ()<< "removeDir(" + dirName + ") failed!";
 }	
 
 bool copyDir (QDir src, QDir dst, const bool &override)   
