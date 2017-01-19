@@ -5731,6 +5731,30 @@ void Main::testFunction1()
         m->getMapEditor()->minimizeView();
     }
     */
+
+    /*
+    QString zp = "c:\\Program Files\\7-Zip\\7z.exe";
+    QString zipName = "c:\\Users\\uwdr9542\\x\\ü1.vym";
+    QString zipDir  = "c:\\Users\\uwdr9542\\x\\y\\";
+    */
+    QString zp = "c:/Program Files/7-Zip/7z.exe";
+    QString zipName = "c:/Users/uwdr9542/x/ü1.vym";
+    QString zipDir  = "c:/Users/uwdr9542/x/y/";
+
+    zp = QDir::toNativeSeparators(zp);
+    zipName = QDir::toNativeSeparators(zipName);
+    zipDir  = QDir::toNativeSeparators(zipDir);
+    QStringList args;
+    args << "a" << zipName << "-tzip" << "-scsUTF-8" << "-sccUTF-8" << "*" ;
+
+    VymProcess *zipProc=new VymProcess ();
+    zipProc->setWorkingDirectory (zipDir);
+
+    zipProc->start(zipToolPath, args);
+    qDebug() << "7z:" << zp;
+    qDebug() << "7z started in dir: " << zipProc->workingDirectory();
+    qDebug() << "args:" << args;
+    qDebug() << zipProc->getStdout()<<flush;
 }
 
 void Main::testFunction2()
