@@ -155,7 +155,7 @@ void removeDir(QDir d)
     // This check should_ not be necessary, but proved to be useful ;-)
     if (!isInTmpDir(d.path()))
     {
-        qWarning ()<<"file.cpp::removeDir should remove "+d.path()+" - aborted.";
+        qWarning ()<<"file.cpp::removeDir should remove " + d.path() + " - aborted.";
         return;
     }
 
