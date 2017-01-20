@@ -239,6 +239,7 @@ void makeSubDirs (const QString &s)
 
 ErrorCode zipDir ( QDir zipInputDir, QString zipName)
 {
+    qDebug() << "file::zipDir " << zipName;     // FIXME-0 zipDir called twice for single save :-(
     ErrorCode err = Success;
 
     QString symLinkTarget;
