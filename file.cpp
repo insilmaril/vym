@@ -155,7 +155,7 @@ void removeDir(QDir d)
     // This check should_ not be necessary, but proved to be useful ;-)
     if (!isInTmpDir(d.path()))
     {
-        qWarning ()<<"file.cpp::removeDir should remove "+d.path()+" - aborted.";
+        qWarning ()<<"file.cpp::removeDir should remove " + d.path() + " - aborted.";
         return;
     }
 
@@ -190,8 +190,10 @@ void removeDir(QDir d)
         QFile (fi.filePath()).remove();
     }
 
-    if (!d.rmdir(d.path()))
-        qWarning ()<<"removeDir("+d.path()+") failed!";
+    QString dirName = d.dirName();
+    d.cdUp();
+    if (!d.rmdir(dirName))
+        qWarning ()<< "removeDir(" + dirName + ") failed!";
 }	
 
 bool copyDir (QDir src, QDir dst, const bool &override)   
@@ -239,7 +241,11 @@ void makeSubDirs (const QString &s)
 
 ErrorCode zipDir ( QDir zipInputDir, QString zipName)
 {
-    qDebug() << "file::zipDir " << zipName;     // FIXME-0 zipDir called twice for single save :-(
+    zipName = QDir::toNativeSeparators(zipName);
+    // FIXME-0 debugging
+    qDebug() << "zipDir  called for " << zipName;
+    qDebug() << "zipInputDir          : " << zipInputDir.path();
+    qDebug() << "zipInputDir  Contents: " << zipInputDir.entryList();
     ErrorCode err = Success;
 
     QString symLinkTarget;
@@ -251,13 +257,13 @@ ErrorCode zipDir ( QDir zipInputDir, QString zipName)
     {
         symLinkTarget = file.symLinkTarget();
         newName = zipName + ".tmp";
-        int n=0;
-        while (!file.rename (newName) && n<5)
+        int n = 0;
+        while (!file.rename (newName) && n < 5)
         {
             newName = newName + QString().setNum(n);
             n++;
         }
-        if (n>=5)
+        if (n >= 5)
         {
             QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
                                    QObject::tr("Couldn't move existing file out of the way before saving."));
@@ -267,11 +273,18 @@ ErrorCode zipDir ( QDir zipInputDir, QString zipName)
 
     // zip the temporary directory
     VymProcess *zipProc=new VymProcess ();
-    zipProc->setWorkingDirectory (zipInputDir.path());
+    zipProc->setWorkingDirectory (QDir::toNativeSeparators(zipInputDir.path() + "\\") );
 
 #if defined(Q_OS_WIN32)
-    QByteArray result;
-    zipProc->start("cmd");
+    QStringList args;
+    args << "a" << zipName << "-tzip" << "-scsUTF-8"  << "*";
+    // 7z a test.zip ./y/*   works in Linux as expected...
+    // or in WIndows: "c:\Program Files\7-Zip\7z.exe" a ü1.vym y\*"
+    qDebug() << "7z:" << zipToolPath;   // FIXME-0
+    qDebug() << "7z started in dir: " << zipProc->workingDirectory();
+    qDebug() << "args:" << args;
+    zipProc->start(zipToolPath, args);
+    /* FIXME-0
     if (!zipProc->waitForStarted())
     {
         QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
@@ -279,15 +292,40 @@ ErrorCode zipDir ( QDir zipInputDir, QString zipName)
         err=Aborted;
 
     }
-    zipProc->write(QString("\"%1\" a \"%2\" -tzip -r %3\\*\n").arg(zipToolPath).arg(zipName).arg(zipInputDir.path()).toUtf8());
-    zipProc->closeWriteChannel();   //done Writing
-
     while(zipProc->state()!=QProcess::NotRunning){
         zipProc->waitForReadyRead();
         result = zipProc->readAll();
         //vout << result << flush;
     }
-    //vout << zipProc->getStdout()<<flush;
+    */
+    if (!zipProc->waitForStarted() )
+    {
+        // zip could not be started
+        QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
+                               QObject::tr("Couldn't start zip to compress data."));
+        err=Aborted;
+    } else
+    {
+        // zip could be started
+        zipProc->waitForFinished();
+        if (zipProc->exitStatus()!=QProcess::NormalExit )
+        {
+            QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
+                                   QObject::tr("zip didn't exit normally")+
+                                   "\n" + zipProc->getErrout());
+            err=Aborted;
+        } else
+        {
+            if (zipProc->exitCode()>0)
+            {
+                QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
+                                       QString("zip exit code:  %1").arg(zipProc->exitCode() )+
+                                       "\n" + zipProc->getErrout() );
+                err=Aborted;
+            }
+        }
+    }
+    qDebug() <<"Output: " << zipProc->getStdout()<<flush;   // FIXME-0
 #else
     QStringList args;
     args <<"-r";
@@ -356,10 +394,13 @@ ErrorCode zipDir ( QDir zipInputDir, QString zipName)
             }
         }
 
-	// Remove temporary file
+/*  // FIXME-0
+
+    // Remove temporary file
 	if (!newName.isEmpty()  && !file.remove() )
 	    QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
-	       QObject::tr("Saved %1, but couldn't remove %2").arg(zipName).arg(newName));
+           QObject::tr("Saved %1, but couldn't remove %2").arg(zipName).arg(newName));
+*/
     }
 
     return err;	
@@ -369,14 +410,23 @@ File::ErrorCode unzipDir ( QDir zipOutputDir, QString zipName)
 {
     ErrorCode err=Success;
 
+    // FIXME-0 debugging
+    qDebug() << "unzipDir  called for " << zipName;
+    qDebug() << "unzipInputDir          : " << zipOutputDir.path();
+    qDebug() << "unzipInputDir  Contents: " << zipOutputDir.entryList();
     // Try to unzip file
 
-    VymProcess *zipProc=new VymProcess ();
-    zipProc->setWorkingDirectory (zipOutputDir.path());
+    VymProcess *zipProc = new VymProcess ();
+    zipProc->setWorkingDirectory (QDir::toNativeSeparators(zipOutputDir.path() + "\\") );
 
 #if defined(Q_OS_WIN32)
-    QByteArray result;
-    zipProc->start("cmd");
+    QStringList args;
+    args << "-o" + zipOutputDir.path() << "x" << zipName.toUtf8() << "-scsUTF-8";
+    qDebug() << "7z:" << zipToolPath;   // FIXME-0
+    qDebug() << "7z started in dir: " << zipProc->workingDirectory();
+    qDebug() << "args:" << args;
+    zipProc->start(zipToolPath, args);
+    /* FIXME-0
     if (!zipProc->waitForStarted())
     {
         QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
@@ -392,6 +442,7 @@ File::ErrorCode unzipDir ( QDir zipOutputDir, QString zipName)
         //vout << result << flush;
     }
     //vout << zipProc->getStdout()<<flush;
+    */
 #else
     QStringList args;
     args << "-o";   // overwrite existing files!
@@ -400,10 +451,11 @@ File::ErrorCode unzipDir ( QDir zipOutputDir, QString zipName)
     args << zipOutputDir.path();
 
     zipProc->start ("unzip",args);
+#endif
     if (!zipProc->waitForStarted() )
     {
         QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
-                               QObject::tr("Couldn't start unzip to decompress data."));
+                               QObject::tr("Couldn't start %1 to decompress data.").arg(zipToolPath));
         err=Aborted;
 
 
@@ -413,7 +465,7 @@ File::ErrorCode unzipDir ( QDir zipOutputDir, QString zipName)
         if (zipProc->exitStatus()!=QProcess::NormalExit )
         {
             QMessageBox::critical( 0,QObject::tr( "Critical Error" ),
-                                   QObject::tr("unzip didn't exit normally") +
+                                   QObject::tr("%1 didn't exit normally").arg(zipToolPath) +
                                    zipProc->getErrout() );
             err=Aborted;
         } else
@@ -426,14 +478,13 @@ File::ErrorCode unzipDir ( QDir zipOutputDir, QString zipName)
                 else
                 {
                     QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
-                                           QString("unzip exit code:  %1").arg(zipProc->exitCode() ) +
+                                           QString("%1 exit code:  %2").arg(zipToolPath).arg(zipProc->exitCode() ) +
                                            zipProc->getErrout() );
                     err=Aborted;
                 }
             }
         }
     }
-#endif
     return err;
 }
 
