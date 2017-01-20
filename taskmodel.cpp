@@ -273,11 +273,19 @@ void TaskModel::recalcPriorities()
 	}
 
 	// Color (importance)
-	QColor c=bi->getHeadingColor();
-	if (c==QColor ("#00aa7f") ) p-=20;
-	if (c==QColor ("#005500") ) p-=40;
-	if (c==QColor ("#d95100") ) p-=60;
-	if (c==QColor ("#ff0000") ) p-=80;
+	QColor c = bi->getHeadingColor();
+
+        // light blueish green
+	if (c == QColor ("#00aa7f") ) p -= 20;
+
+        // green (e.g. from vym < 2.6.3 with #005500)
+	if (c.red() == 0 && c.blue() == 0 && c.green() < 160) p -= 40;
+
+        // orange
+	if (c == QColor ("#d95100") ) p -= 60;
+
+        // red
+	if (c == QColor ("#ff0000") ) p -= 80;
 
 	// Flags
 	if (bi->hasActiveStandardFlag ("stopsign") ) p-=800;

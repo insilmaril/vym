@@ -2078,7 +2078,7 @@ void MapEditor::updateData (const QModelIndex &sel)
 	return;
     }
     qDebug() << "  ti="<<ti;
-    qDebug() << "  h="<<ti->getHeading();
+    qDebug() << "  h="<<ti->getHeadingPlain();
 */
     
     if (ti && ti->isBranchLikeType())

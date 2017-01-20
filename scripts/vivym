@@ -16,8 +16,15 @@ for MAP in $*; do
     DIR=`mktemp -d /tmp/vivym.XXXXXX`
     unzip $MAP -d $DIR
     FILE=${MAP##*/}
-    BASE=${FILE%%.*}
     EXT=${FILE#*.}
+    BASE=${FILE%%.*}
+
+    if ! [ -e $DIR/$BASE.xml ] ; then 
+        BASE=$(ls -1 $DIR/*.xml)
+        BASE=${BASE##*/}
+        BASE=${BASE%%.*}
+        echo "Map is renamed, setting BASE=$BASE"
+    fi
     
     #echo MAP=$MAP
     #echo FILE=$FILE
@@ -27,8 +34,8 @@ for MAP in $*; do
     # Count images
     IMGCOUNT=$(ls $DIR/images |wc -l)
     SLIDECOUNT=$(grep "<slide" $DIR/$BASE.xml | wc -l)
-    echo "Found $IMGCOUNT images." 
-    echo "Found $SLIDECOUNT slides."
+    #echo "Found $IMGCOUNT images." 
+    #echo "Found $SLIDECOUNT slides."
     #read
 
     # Create backup for comparison after edit
