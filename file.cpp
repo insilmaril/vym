@@ -394,13 +394,10 @@ ErrorCode zipDir ( QDir zipInputDir, QString zipName)
             }
         }
 
-/*  // FIXME-0
-
     // Remove temporary file
 	if (!newName.isEmpty()  && !file.remove() )
 	    QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
            QObject::tr("Saved %1, but couldn't remove %2").arg(zipName).arg(newName));
-*/
     }
 
     return err;	
