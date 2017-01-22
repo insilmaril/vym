@@ -20,10 +20,10 @@ for MAP in $*; do
     BASE=${FILE%%.*}
 
     if ! [ -e $DIR/$BASE.xml ] ; then 
+        # echo "Map is renamed, setting BASE=$BASE"
         BASE=$(ls -1 $DIR/*.xml)
         BASE=${BASE##*/}
         BASE=${BASE%%.*}
-        echo "Map is renamed, setting BASE=$BASE"
     fi
     
     #echo MAP=$MAP
