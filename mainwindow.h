@@ -105,8 +105,8 @@ private slots:
 public slots:	
     void fileSave(VymModel*);	// autosave from MapEditor
 private slots:	
-    void fileSaveAs(const SaveMode &);
     void fileSaveAs();
+    void fileSaveAs(const SaveMode &);
     void fileImportFirefoxBookmarks();
     void fileImportFreemind();
     void fileImportMM();
