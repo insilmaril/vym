@@ -273,13 +273,15 @@ ErrorCode zipDir ( QDir zipInputDir, QString zipName)
 
     // zip the temporary directory
     VymProcess *zipProc=new VymProcess ();
-    zipProc->setWorkingDirectory (QDir::toNativeSeparators(zipInputDir.path() + "\\") );
 
 #if defined(Q_OS_WIN32)
+    zipProc->setWorkingDirectory (QDir::toNativeSeparators(zipInputDir.path() + "\\") );    //FIXME-0 does not work on Linux
     QStringList args;
     args << "a" << zipName << "-tzip" << "-scsUTF-8"  << "*";
     // 7z a test.zip ./y/*   works in Linux as expected...
     // or in WIndows: "c:\Program Files\7-Zip\7z.exe" a ü1.vym y\*"
+    qDebug() << "workingDir          : " << zipProc->workingDirectory(); // FIXME-0
+    qDebug() << "workingDir  Contents: " << QDir(zipProc->workingDirectory()).entryList(); // FIXME-0
     qDebug() << "7z:" << zipToolPath;   // FIXME-0
     qDebug() << "7z started in dir: " << zipProc->workingDirectory();
     qDebug() << "args:" << args;
@@ -327,10 +329,17 @@ ErrorCode zipDir ( QDir zipInputDir, QString zipName)
     }
     qDebug() <<"Output: " << zipProc->getStdout()<<flush;   // FIXME-0
 #else
+    zipProc->setWorkingDirectory (QDir::toNativeSeparators(zipInputDir.path() ));  
+    qDebug() << "workingDir          : " << zipProc->workingDirectory(); // FIXME-0
+    qDebug() << "workingDir  Contents: " << QDir(zipProc->workingDirectory()).entryList(); // FIXME-0
     QStringList args;
     args <<"-r";
     args <<zipName;
     args <<".";
+
+    qDebug() << "zip:" << zipToolPath;   // FIXME-0
+    qDebug() << "zip started in dir: " << zipProc->workingDirectory();
+    qDebug() << "args:" << args;
 
     zipProc->start ("zip",args);
     if (!zipProc->waitForStarted() )
