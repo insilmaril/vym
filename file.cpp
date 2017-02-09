@@ -275,7 +275,7 @@ ErrorCode zipDir ( QDir zipInputDir, QString zipName)
     zipProc->setWorkingDirectory (QDir::toNativeSeparators(zipInputDir.path() + "\\") );    
     args << "a" << zipName << "-tzip" << "-scsUTF-8"  << "*";
     zipProc->start(zipToolPath, args);
-    /* FIXME-0
+ 
     if (!zipProc->waitForStarted())
     {
         QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
@@ -286,9 +286,8 @@ ErrorCode zipDir ( QDir zipInputDir, QString zipName)
     while(zipProc->state()!=QProcess::NotRunning){
         zipProc->waitForReadyRead();
         result = zipProc->readAll();
-        //vout << result << flush;
     }
-    */
+    
     if (!zipProc->waitForStarted() )
     {
         // zip could not be started
@@ -405,23 +404,20 @@ File::ErrorCode unzipDir ( QDir zipOutputDir, QString zipName)
     zipProc->setWorkingDirectory (QDir::toNativeSeparators(zipOutputDir.path() + "\\") );
     args << "-o" + zipOutputDir.path() << "x" << zipName.toUtf8() << "-scsUTF-8";
     zipProc->start(zipToolPath, args);
-    /* FIXME-0
+
     if (!zipProc->waitForStarted())
     {
         QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
                                QObject::tr("Couldn't start tool to decompress data."));
         err=Aborted;
     }
-    zipProc->write(QString("\"%1\" -o%2 x \"%3\"\n").arg(zipToolPath).arg(zipOutputDir.path()).arg(zipName).toUtf8());
-    zipProc->closeWriteChannel();   //done Writing
 
     while(zipProc->state()!=QProcess::NotRunning){
         zipProc->waitForReadyRead();
         result = zipProc->readAll();
-        //vout << result << flush;
+        //qDebug() << result << flush;
     }
-    //vout << zipProc->getStdout()<<flush;
-    */
+    //qDebug() << zipProc->getStdout()<<flush;
 #else
     zipProc->setWorkingDirectory (QDir::toNativeSeparators(zipOutputDir.path()));
     args << "-o";   // overwrite existing files!
