@@ -28,7 +28,7 @@ TaskEditor::TaskEditor(QWidget *)
 
     QVBoxLayout* mainLayout = new QVBoxLayout;
 
-    QToolBar *tb=new QToolBar ("TaskEditor filters");
+    QToolBar *tb = new QToolBar ("TaskEditor filters");
     tb->setToolButtonStyle (Qt::ToolButtonTextBesideIcon);
     mainLayout->addWidget (tb);
 
@@ -101,6 +101,11 @@ TaskEditor::TaskEditor(QWidget *)
     view->setSortingEnabled(true);
     view->horizontalHeader()->setSortIndicator (0,Qt::AscendingOrder);
 
+    // Experimental, don't show all columns
+    view->setColumnHidden(2, true);
+    view->setColumnHidden(3, true);
+    view->setColumnHidden(4, true);
+
     blockExternalSelect=false;
 
     connect (
@@ -125,13 +130,16 @@ TaskEditor::TaskEditor(QWidget *)
     setFilterNew();
     setFilterFlags();
 
-    // Initialize column widths
+    // Initialize column widths and visibility
     QString s;
-    for (int i=0; i<6; i++)
+    for (int i = 0; i < 6; i++)
     {
-	s=QString("/taskeditor/columnWidth/%1").arg(i);
+	s = QString("/taskeditor/column/%1/width").arg(i);
 	if (settings.contains (s) )
 	    view->setColumnWidth (i, settings.value(s, 100).toInt() );
+
+	s = QString("/taskeditor/column/%1/hidden").arg(i);
+        view->setColumnHidden (i, settings.value(s, false).toBool() );
     }
 
     // Initialize display of parents of a task
@@ -148,7 +156,10 @@ TaskEditor::~TaskEditor()
     settings.setValue ("/taskeditor/filterNew",actionToggleFilterNew->isChecked());
     settings.setValue ("/taskeditor/showParentsLevel",taskModel->getShowParentsLevel() );
     for (int i=0; i<7; i++)
-	settings.setValue (QString("/taskeditor/columnWidth/%1").arg(i),view->columnWidth(i) );
+    {
+	settings.setValue (QString("/taskeditor/column/%1/width").arg(i),view->columnWidth(i) );
+	settings.setValue (QString("/taskeditor/column/%1/hidden").arg(i),view->isColumnHidden(i) );
+    }
 }
 
 void TaskEditor::setMapName (const QString &n)
