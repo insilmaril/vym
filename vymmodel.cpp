@@ -751,22 +751,34 @@ File::ErrorCode VymModel::save (const SaveMode &savemode)
     if (savemode==CompleteMap || selModel->selection().isEmpty())
     {
 	// Save complete map
-	saveFile=saveToDir (fileDir,mapName+"-",true,QPointF(),NULL);
-	mapChanged=false;
+        if (zipped)
+            // Use defined name for map within zipfile to avoid problems
+            //with zip library and umlauts (see #98)
+            saveFile=saveToDir (fileDir, "", true, QPointF(), NULL);
+        else
+            saveFile=saveToDir (fileDir, mapName + "-", true, QPointF(), NULL);
+    mapChanged=false;
 	mapUnsaved=false;
 	autosaveTimer->stop();
     }
     else    
     {
 	// Save part of map
-	if (selectionType()==TreeItem::Image)
+    if (selectionType() == TreeItem::Image)
 	    saveImage();
 	else	
-	    saveFile=saveToDir (fileDir,mapName+"-",true,QPointF(),getSelectedBranch());    
+        saveFile = saveToDir (fileDir, mapName + "-", true, QPointF(), getSelectedBranch());
 	// TODO take care of multiselections
     }	
 
-    if (!saveStringToDisk(fileDir+mapFileName,saveFile))
+    bool saved;
+    if (zipped)
+        // Use defined map name "map.xml", if zipped. Introduce in 2.6.6
+        saved = saveStringToDisk(fileDir + "map.xml", saveFile);
+    else
+        // Use regular mapName, when saved as XML
+        saved = saveStringToDisk(fileDir + mapFileName, saveFile);
+    if (!saved)
     {
 	err=File::Aborted;
 	qWarning ("ME::saveStringToDisk failed!");
