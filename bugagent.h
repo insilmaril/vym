@@ -13,7 +13,7 @@ class BugAgent:public QObject
 {
     Q_OBJECT
 
-enum MissionType {SingleBug,Query};
+enum MissionType {SingleBug, Query};
 
 public:	
     BugAgent (BranchItem *bi,const QString &bug);
@@ -24,7 +24,7 @@ public slots:
 
 protected:
     virtual void processBugzillaData ();
-    virtual void setModelBugzillaData (VymModel *model, BranchItem *bi,const QString &bugID);
+    virtual void setModelBugzillaData (VymModel *model, BranchItem *bi, const QString &bugID);
 
 private:
     MissionType missionType;

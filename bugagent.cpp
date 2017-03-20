@@ -61,10 +61,10 @@ BugAgent::BugAgent (BranchItem *bi,const QString &u)
 
     p = new VymProcess;
 
-    connect (p, SIGNAL (finished(int,QProcess::ExitStatus) ), 
-	this, SLOT (processFinished(int,QProcess::ExitStatus) ));
+    connect (p, SIGNAL (finished(int, QProcess::ExitStatus) ), 
+	this, SLOT (processFinished(int, QProcess::ExitStatus) ));
 
-    p->start (bugScript,args);
+    p->start (bugScript, args);
     if (!p->waitForStarted())
     {
 	qWarning() << "BugAgent::getBugzillaData couldn't start " << bugScript;
