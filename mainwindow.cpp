@@ -1488,7 +1488,7 @@ void Main::setupEditActions()
     actionHeading2URL=a;
 
     tag = tr("Jira handling","Shortcuts");
-    a = new QAction(tr( "Get data from Jira","Edit menu" ) + "experimental", this);
+    a = new QAction(tr( "Get data from Jira","Edit menu" ) + " (experimental)", this);
     a->setShortcut ( Qt::Key_J + Qt::SHIFT);
     a->setShortcutContext (Qt::WindowShortcut);
     switchboard.addSwitch ("mapUpdateFromJira", shortcutScope, a, tag);
@@ -1497,7 +1497,7 @@ void Main::setupEditActions()
     actionListBranches.append(a);
     actionGetJiraData=a;
 
-    a = new QAction(tr( "Get data from Jira for subtree","Edit menu" ) + "experimental", this);
+    a = new QAction(tr( "Get data from Jira for subtree","Edit menu" ) + " (experimental)", this);
     a->setShortcut ( Qt::Key_J + Qt::CTRL);
     a->setShortcutContext (Qt::WindowShortcut);
     switchboard.addSwitch ("mapUpdateSubTreeFromJira", shortcutScope, a, tag);
@@ -1518,7 +1518,7 @@ void Main::setupEditActions()
     actionListBranches.append(a);
     actionBugzilla2URL=a;
 
-    a = new QAction(tr( "Get data from SUSE Bugzilla","Edit menu" ) + "experimental", this);
+    a = new QAction(tr( "Get data from SUSE Bugzilla","Edit menu" ) + " (experimental)", this);
     a->setShortcut ( Qt::Key_B + Qt::SHIFT);
     a->setShortcutContext (Qt::WindowShortcut);
     switchboard.addSwitch ("mapUpdateFromBugzilla", shortcutScope, a, tag);
@@ -1527,7 +1527,7 @@ void Main::setupEditActions()
     actionListBranches.append(a);
     actionGetBugzillaData=a;
 
-    a = new QAction(tr( "Get data from SUSE Bugzilla for subtree","Edit menu" ) + "experimental", this);
+    a = new QAction(tr( "Get data from SUSE Bugzilla for subtree","Edit menu" ) + " (experimental)", this);
     a->setShortcut ( Qt::Key_B + Qt::CTRL);
     a->setShortcutContext (Qt::WindowShortcut);
     switchboard.addSwitch ("mapUpdateSubTreeFromBugzilla", shortcutScope, a, tag);
