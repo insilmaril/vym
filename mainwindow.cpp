@@ -87,6 +87,8 @@ extern QString localeName;
 extern bool debug;
 extern bool testmode;
 extern QTextStream vout;
+extern QStringList jiraPrefixList;
+extern bool jiraClientAvailable;
 extern bool bugzillaClientAvailable;
 extern Switchboard switchboard;
 
@@ -1485,6 +1487,25 @@ void Main::setupEditActions()
     actionListBranches.append(a);
     actionHeading2URL=a;
 
+    tag = tr("Jira handling","Shortcuts");
+    a = new QAction(tr( "Get data from Jira","Edit menu" ) + "experimental", this);
+    a->setShortcut ( Qt::Key_J + Qt::SHIFT);
+    a->setShortcutContext (Qt::WindowShortcut);
+    switchboard.addSwitch ("mapUpdateFromJira", shortcutScope, a, tag);
+    addAction(a);
+    connect( a, SIGNAL( triggered() ), this, SLOT( getJiraData() ) );
+    actionListBranches.append(a);
+    actionGetJiraData=a;
+
+    a = new QAction(tr( "Get data from Jira for subtree","Edit menu" ) + "experimental", this);
+    a->setShortcut ( Qt::Key_J + Qt::CTRL);
+    a->setShortcutContext (Qt::WindowShortcut);
+    switchboard.addSwitch ("mapUpdateSubTreeFromJira", shortcutScope, a, tag);
+    addAction(a);
+    connect( a, SIGNAL( triggered() ), this, SLOT( getJiraDataSubtree() ) );
+    actionListBranches.append(a);
+    actionGetJiraDataSubtree=a;
+
     tag = tr("Bugzilla handling","Shortcuts");
     a = new QAction(tr( "Create URL to SUSE Bugzilla","Edit menu" ), this);
     a->setEnabled (false);
@@ -1497,7 +1518,7 @@ void Main::setupEditActions()
     actionListBranches.append(a);
     actionBugzilla2URL=a;
 
-    a = new QAction(tr( "Get data from SUSE Bugzilla","Edit menu" ), this);
+    a = new QAction(tr( "Get data from SUSE Bugzilla","Edit menu" ) + "experimental", this);
     a->setShortcut ( Qt::Key_B + Qt::SHIFT);
     a->setShortcutContext (Qt::WindowShortcut);
     switchboard.addSwitch ("mapUpdateFromBugzilla", shortcutScope, a, tag);
@@ -1506,7 +1527,7 @@ void Main::setupEditActions()
     actionListBranches.append(a);
     actionGetBugzillaData=a;
 
-    a = new QAction(tr( "Get data from SUSE Bugzilla for subtree","Edit menu" ), this);
+    a = new QAction(tr( "Get data from SUSE Bugzilla for subtree","Edit menu" ) + "experimental", this);
     a->setShortcut ( Qt::Key_B + Qt::CTRL);
     a->setShortcutContext (Qt::WindowShortcut);
     switchboard.addSwitch ("mapUpdateSubTreeFromBugzilla", shortcutScope, a, tag);
@@ -2776,6 +2797,8 @@ void Main::setupContextMenus()
 	branchLinksContextMenu->addAction ( actionLocalURL );
 	branchLinksContextMenu->addAction ( actionGetURLsFromNote );
 	branchLinksContextMenu->addAction ( actionHeading2URL );
+	branchLinksContextMenu->addAction ( actionGetJiraData );
+	branchLinksContextMenu->addAction ( actionGetJiraDataSubtree );
 	branchLinksContextMenu->addAction ( actionBugzilla2URL );
 	branchLinksContextMenu->addAction ( actionGetBugzillaData );
 	branchLinksContextMenu->addAction ( actionGetBugzillaDataSubtree );
@@ -4042,33 +4065,28 @@ void Main::editHeading2URL()
     if (m) m->editHeading2URL();
 }
 
-void Main::editBugzilla2URL()
+void Main::getJiraData()
 {
     VymModel *m=currentModel();
-    if (m) m->editBugzilla2URL();
+    if (m) m->getJiraData(false);
+}
+
+void Main::getJiraDataSubtree()
+{
+    VymModel *m=currentModel();
+    if (m) m->getJiraData(true);
 }
 
 void Main::getBugzillaData()
 {
     VymModel *m=currentModel();
-    /*
-    QProgressDialog progress ("Doing stuff","cancl",0,10,this);
-    progress.setWindowModality(Qt::WindowModal);
-    //progress.setCancelButton (NULL);
-    progress.show();
-    progress.setMinimumDuration (0);
-    progress.setValue (1);
-    progress.setValue (5);
-    progress.update();
-    */
-    /*
-    QProgressBar *pb=new QProgressBar;
-    pb->setMinimum (0);
-    pb->setMaximum (0);
-    pb->show();
-    pb->repaint();
-    */
     if (m) m->getBugzillaData(false);
+}
+
+void Main::editBugzilla2URL()
+{
+    VymModel *m=currentModel();
+    if (m) m->editBugzilla2URL();
 }
 
 void Main::getBugzillaDataSubtree()
@@ -5547,11 +5565,14 @@ void Main::updateActions()
 		else	
 		    actionToggleScroll->setChecked(false);
 
+		actionGetJiraDataSubtree->setEnabled (bugzillaClientAvailable);
 		actionGetBugzillaDataSubtree->setEnabled (bugzillaClientAvailable);
+
 		if ( selti->getURL().isEmpty() )
 		{
 		    actionOpenURL->setEnabled (false);
 		    actionOpenURLTab->setEnabled (false);
+		    actionGetJiraData->setEnabled (false);
 		    actionGetBugzillaData->setEnabled (false);
 		}   
 		else	
@@ -5560,6 +5581,18 @@ void Main::updateActions()
 		    actionOpenURLTab->setEnabled (true);
 		    actionGetBugzillaData->setEnabled (
 			selti->getURL().contains("bugzilla") && bugzillaClientAvailable);
+		    
+                    bool ok = false;
+                    QString u = selti->getURL();
+                    foreach (QString prefix, jiraPrefixList)
+                    {
+                        if (u.contains( prefix) )
+                        {
+                            ok = true;
+                            break;
+                        }
+                    }
+                    actionGetJiraData->setEnabled ( ok && jiraClientAvailable);
 		}
 		if ( selti->getVymLink().isEmpty() )
 		{

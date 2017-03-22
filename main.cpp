@@ -51,6 +51,8 @@ QString localeName;
 
 QTextStream vout(stdout);        // vymout - Testing for now. Flush after writing...
 
+QStringList jiraPrefixList;     // List containing URLs of Jira systems
+bool jiraClientAvailable;	// collabzone specific currently
 bool bugzillaClientAvailable;	// openSUSE specific currently
 
 TaskModel     *taskModel;
@@ -399,10 +401,17 @@ int main(int argc, char* argv[])
     noteEditor->setWindowIcon (QPixmap (":/vym-editor.png"));
     headingEditor = new HeadingEditor("headingeditor");
 
+    // Check if there is a JiraClient
+    //QFileInfo fi(vymBaseDir.path() + "/scripts/BugzillaClient.pm");   
+    //bugzillaClientAvailable = fi.exists();
+    jiraClientAvailable = true;   //FIXME-0 add real check again
+    jiraPrefixList << "https://ticket.asw.zone";
+
+
     // Check if there is a BugzillaClient
-    QFileInfo fi(vymBaseDir.path()+"/scripts/BugzillaClient.pm");
-    //bugzillaClientAvailable=fi.exists();
-    bugzillaClientAvailable=true;   //FIXME-3 add real check again
+    QFileInfo fi(vymBaseDir.path() + "/scripts/BugzillaClient.pm");   
+    //bugzillaClientAvailable = fi.exists();
+    bugzillaClientAvailable = true;   //FIXME-0 add real check again
 
     // Initialize mainwindow
 #if defined(Q_OS_WIN32)

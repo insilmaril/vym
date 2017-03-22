@@ -159,6 +159,8 @@ private slots:
     void editURL();
     void editLocalURL();
     void editHeading2URL();
+    void getJiraData();
+    void getJiraDataSubtree();
     void editBugzilla2URL();
     void getBugzillaData();
     void getBugzillaDataSubtree();
@@ -424,6 +426,8 @@ private:
     QAction* actionURLNew;
     QAction* actionLocalURL;
     QAction* actionHeading2URL;
+    QAction* actionGetJiraData;
+    QAction* actionGetJiraDataSubtree;
     QAction* actionBugzilla2URL;
     QAction* actionGetBugzillaData;
     QAction* actionGetBugzillaDataSubtree;

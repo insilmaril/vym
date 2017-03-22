@@ -27,6 +27,7 @@
 #include "exports.h"
 #include "file.h"
 #include "findresultmodel.h"
+#include "jiraagent.h"
 #include "lockedfiledialog.h"
 #include "mainwindow.h"
 #include "misc.h"
@@ -81,6 +82,7 @@ extern QDir lastImageDir;
 extern QDir lastMapDir;
 extern QDir lastExportDir;
 
+extern bool jiraClientAvailable;
 extern bool bugzillaClientAvailable;
 
 extern Settings settings;
@@ -3842,6 +3844,53 @@ void VymModel::editHeading2URL()
     setURL (selti->getHeadingPlain());
 }   
 
+void VymModel::getJiraData(bool subtree)	    // FIXME-0 update error message
+{
+    if (!jiraClientAvailable)
+    {
+	WarningDialog dia;
+	dia.setText(
+	    QObject::tr("No Bugzilla client found. "
+	    " For openSUSE you can install by (running as root):\n\n","VymModel, how to install Bugzilla client module")+
+	    "  zypper ar http://download.opensuse.org/repositories/openSUSE:/Tools/openSUSE_XX.Y/ openSUSE:Tools_XX.Y\n"+
+	    "  zypper in perl-SUSE-BugzillaClient\n\n"+
+	    "  and replace XX.Y with your version of openSUSE, e.g. 11.4\n\n"+
+	    QObject::tr("Alternatively you can also add the repository\n"
+	    "and install the perl module for Bugzilla access using YaST","VymModel, how to install Bugzilla client module")
+	);
+	dia.setWindowTitle(QObject::tr("Warning: Couldn't find Bugzilla client","VymModel"));
+	dia.setShowAgainName("/BugzillaClient/missing");
+	dia.exec();
+	return;
+    }
+    
+    BranchItem *selbi = getSelectedBranch();
+    if (selbi)
+    {	    
+	QString url;
+	BranchItem *prev = NULL;
+	BranchItem *cur  = NULL;
+        nextBranch (cur, prev, true, selbi);
+	while (cur) 
+	{
+	    url = cur->getURL();
+	    if (!url.isEmpty())
+	    {
+		// Don't run query again if we are in update mode
+		if (!subtree || ! url.contains("buglist.cgi") )
+		{
+		    new JiraAgent (cur,url);
+		    mainWindow->statusMessage (tr("Contacting Jira...", "VymModel"));
+		}
+	    }
+	    if (subtree) 
+		nextBranch (cur, prev, true, selbi);
+	    else
+		cur = NULL;
+	}   
+    }
+}   
+
 void VymModel::editBugzilla2URL()   
 {
     TreeItem *selti=getSelectedItem();
@@ -3854,7 +3903,7 @@ void VymModel::editBugzilla2URL()
     }
 }   
 
-void VymModel::getBugzillaData(bool subtree)	
+void VymModel::getBugzillaData(bool subtree)	    // FIXME-0 no longer reference perl
 {
     if (!bugzillaClientAvailable)
     {
@@ -3874,29 +3923,29 @@ void VymModel::getBugzillaData(bool subtree)
 	return;
     }
     
-    BranchItem *selbi=getSelectedBranch();
+    BranchItem *selbi = getSelectedBranch();
     if (selbi)
     {	    
 	QString url;
-	BranchItem *prev=NULL;
-	BranchItem *cur=NULL;
-        nextBranch (cur,prev,true,selbi);
+	BranchItem *prev = NULL;
+	BranchItem *cur  = NULL;
+        nextBranch (cur, prev, true, selbi);
 	while (cur) 
 	{
-	    url=cur->getURL();
+	    url = cur->getURL();
 	    if (!url.isEmpty())
 	    {
 		// Don't run query again if we are in update mode
 		if (!subtree || ! url.contains("buglist.cgi") )
 		{
 		    new BugAgent (cur,url);
-		    mainWindow->statusMessage (tr("Contacting Bugzilla...","VymModel"));
+		    mainWindow->statusMessage (tr("Contacting Bugzilla...", "VymModel"));
 		}
 	    }
 	    if (subtree) 
-		nextBranch (cur,prev,true,selbi);
+		nextBranch (cur, prev, true, selbi);
 	    else
-		cur=NULL;
+		cur = NULL;
 	}   
     }
 }   

@@ -103,6 +103,7 @@ HEADERS	+= \
     imageitem.h \
     imageobj.h \
     imports.h \
+    jiraagent.h \
     lineeditdialog.h \
     linkablemapobj.h \
     lockedfiledialog.h \
@@ -196,6 +197,7 @@ SOURCES	+= \
     imageitem.cpp \
     imageobj.cpp \
     imports.cpp \
+    jiraagent.cpp \
     lineeditdialog.cpp \
     linkablemapobj.cpp \
     lockedfiledialog.cpp \

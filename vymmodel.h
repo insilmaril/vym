@@ -499,6 +499,7 @@ public:
 
     void note2URLs();			    // get URLs from note
     void editHeading2URL();		    // copy heading to URL
+    void getJiraData(bool subtree);	    // get data from Jira
     void editBugzilla2URL();		    // create URL to Bugzilla
     void getBugzillaData(bool subtree);	    // get data from Novell Bugzilla
     void editFATE2URL();		    // create URL to FATE
