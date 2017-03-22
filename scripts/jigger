@@ -1,0 +1,25 @@
+#!/usr/bin/env ruby
+
+require 'jira-ruby'
+require 'parseconfig'
+
+config = ParseConfig.new('/home/uwe/.eb-login')
+
+options = {
+  :username     => config['username'],
+  :password     => config['password'],
+  :site         => 'https://ticket.asw.zone/',
+  :context_path => '',
+  :auth_type    => :basic
+}
+
+client = JIRA::Client.new(options)
+
+ARGV.each do |id| 
+
+  # Query ticket and display info
+  t = client.Issue.find(id)
+  puts "#{id}:short_desc:\"#{t.summary}\""
+  puts "#{id}:priority:\"#{t.priority.name}\""
+  puts "#{id}:ticket_status:\"#{t.status.name}\""
+end
