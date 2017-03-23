@@ -2523,7 +2523,7 @@ int VymModel::taskCount()
     return taskModel->count (this);
 }
 
-void VymModel::addTimestamp()	//FIXME-4 new function, localize
+BranchItem* VymModel::addTimestamp()	//FIXME-4 new function, localize
 {
     BranchItem *selbi=addNewBranch();
     if (selbi)
@@ -2539,6 +2539,7 @@ void VymModel::addTimestamp()	//FIXME-4 new function, localize
 	reposition();
 	select (selbi);
     }
+    return selbi;
 }
 
 

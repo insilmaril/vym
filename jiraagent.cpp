@@ -130,17 +130,30 @@ void JiraAgent::processJiraData()
 		    {
 			tickets.append(re.cap(1));
 			ticket_desc[re.cap(1)] = re.cap(3).replace("\\\"","\"");
-                        qDebug() << "shortdesc: " << re.cap(3);
 		    }	
 		    else if (re.cap(2) == "priority") 
                     {
 			ticket_prio[re.cap(1)] = re.cap(3).replace("\\\"","\"");
-                        qDebug() << "priority : " << re.cap(3);
                     }
-		    else if (re.cap(2) == "ticket_status") 
+		    else if (re.cap(2) == "status") 
                     {
 			ticket_status[re.cap(1)] = re.cap(3).replace("\\\"","\"");
-                        qDebug() << "status   : " << re.cap(3);
+                    }
+		    else if (re.cap(2) == "created") 
+                    {
+			ticket_created[re.cap(1)] = re.cap(3).replace("\\\"","\"");
+                    }
+		    else if (re.cap(2) == "updated") 
+                    {
+			ticket_updated[re.cap(1)] = re.cap(3).replace("\\\"","\"");
+                    }
+		    else if (re.cap(2) == "assignee") 
+                    {
+			ticket_assignee[re.cap(1)] = re.cap(3).replace("\\\"","\"");
+                    }
+		    else if (re.cap(2) == "reporter") 
+                    {
+			ticket_reporter[re.cap(1)] = re.cap(3).replace("\\\"","\"");
                     }
 		}
 	    }
@@ -170,8 +183,6 @@ void JiraAgent::processJiraData()
 	    qWarning () << "JiraAgent: Found model, but not branch #" << branchID;
     } else
 	qWarning () << "JiraAgent: Couldn't find model #" << modelID;
-
-
 }
 
 void JiraAgent::setModelJiraData (VymModel *model, BranchItem *bi, const QString &bugID)
@@ -181,8 +192,8 @@ void JiraAgent::setModelJiraData (VymModel *model, BranchItem *bi, const QString
         qDebug() << "JiraAgent::setModelJiraData for " << bugID;
     }
 
-    QString ps = ticket_prio[ticketID];
     QStringList solvedStates;
+    /*
     solvedStates << "Open";
     solvedStates << "To Do";
     solvedStates << "In Analysis";
@@ -190,13 +201,42 @@ void JiraAgent::setModelJiraData (VymModel *model, BranchItem *bi, const QString
     solvedStates << "Implemented";
     solvedStates << "In Overall Integration";	
     solvedStates << "Overall Integration Done";
+    */
+    solvedStates << "Verification Done";
+    solvedStates << "Resolved";
+    solvedStates << "Closed";
+
+    // FIXME-1 check if model still exists (better use modelID)
+
+    QString idName = ticketID;
+
     if (solvedStates.contains( ticket_status[ticketID] ) )
     {
-        model->setHeadingPlainText ("(" + ps + ") - " + ticketID + " - " + ticket_desc[ticketID], bi);
-    } else   
-    {
-        model->setHeadingPlainText (ps + " - " + ticketID + " - " + ticket_desc[ticketID], bi);
+        idName = "(" + idName + ")";
 	model->colorSubtree (Qt::blue, bi);
     }
+
+    model->setHeadingPlainText (idName + " - " + ticket_desc[ticketID], bi);
+
+    model->select(bi);
+
+    BranchItem *timestampBranch = model->addTimestamp();
+    BranchItem *infoBranch;
+
+    model->select(timestampBranch);
+    infoBranch = model->addNewBranch();
+    if (infoBranch) model->setHeadingPlainText( "Prio: " + ticket_prio[ticketID], infoBranch);
+
+    infoBranch = model->addNewBranch();
+    if (infoBranch) model->setHeadingPlainText( "Status: " + ticket_status[ticketID], infoBranch);
+
+    infoBranch = model->addNewBranch();
+    if (infoBranch) model->setHeadingPlainText( "Assignee: " + ticket_assignee[ticketID], infoBranch);
+
+    infoBranch = model->addNewBranch();
+    if (infoBranch) model->setHeadingPlainText( "Created: " + ticket_created[ticketID], infoBranch);
+
+    infoBranch = model->addNewBranch();
+    if (infoBranch) model->setHeadingPlainText( "Updated: " + ticket_updated[ticketID], infoBranch);
 }
 

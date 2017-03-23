@@ -376,10 +376,9 @@ public:
     /*! count tasks in this model */
     int taskCount();
 
-    void addTimestamp();	
+    BranchItem*  addTimestamp();	
 
     void copy();			//!< Copy to clipboard
-public:	
     void paste();	    //!< Paste clipboard to branch and backup
     void cut();		    //!< Cut to clipboard (and copy)
 

@@ -2,6 +2,7 @@
 
 require 'jira-ruby'
 require 'parseconfig'
+require 'pp'
 
 config = ParseConfig.new('/home/uwe/.eb-login')
 
@@ -21,5 +22,11 @@ ARGV.each do |id|
   t = client.Issue.find(id)
   puts "#{id}:short_desc:\"#{t.summary}\""
   puts "#{id}:priority:\"#{t.priority.name}\""
-  puts "#{id}:ticket_status:\"#{t.status.name}\""
+  puts "#{id}:status:\"#{t.status.name}\""
+  puts "#{id}:created:\"#{t.created[0..15]}\""
+  puts "#{id}:updated:\"#{t.updated[0..15]}\""
+  puts "#{id}:reporter:\"#{t.updated[0..15]}\""
+  s = ""
+  s = t.assignee.emailAddress if ! t.assignee.nil? 
+  puts "#{id}:assignee:\"#{s}\""
 end
