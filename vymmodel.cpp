@@ -2525,11 +2525,11 @@ int VymModel::taskCount()
 
 BranchItem* VymModel::addTimestamp()	//FIXME-4 new function, localize
 {
-    BranchItem *selbi=addNewBranch();
+    BranchItem *selbi = addNewBranch();
     if (selbi)
     {
-	QDate today=QDate::currentDate();
-	QChar c='0';
+	QDate today = QDate::currentDate();
+	QChar c = '0';
         selbi->setHeadingPlainText (
         QString ("%1-%2-%3")
             .arg(today.year(),4,10,c)
