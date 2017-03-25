@@ -139,6 +139,10 @@ void JiraAgent::processJiraData()
                     {
 			ticket_status[re.cap(1)] = re.cap(3).replace("\\\"","\"");
                     }
+		    else if (re.cap(2) == "resolution") 
+                    {
+			ticket_resolution[re.cap(1)] = re.cap(3).replace("\\\"","\"");
+                    }
 		    else if (re.cap(2) == "created") 
                     {
 			ticket_created[re.cap(1)] = re.cap(3).replace("\\\"","\"");
@@ -229,6 +233,9 @@ void JiraAgent::setModelJiraData (VymModel *model, BranchItem *bi, const QString
 
     infoBranch = model->addNewBranch();
     if (infoBranch) model->setHeadingPlainText( "Status: " + ticket_status[ticketID], infoBranch);
+
+    infoBranch = model->addNewBranch();
+    if (infoBranch) model->setHeadingPlainText( "Resolution: " + ticket_resolution[ticketID], infoBranch);
 
     infoBranch = model->addNewBranch();
     if (infoBranch) model->setHeadingPlainText( "Assignee: " + ticket_assignee[ticketID], infoBranch);
