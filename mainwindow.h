@@ -453,6 +453,7 @@ private:
     QAction *actionMapInfo;
     QAction *actionHeading;
     QAction *actionDelete;
+    QAction *actionDeleteAlt;
     QAction *actionAddAttribute;
 public:
     QAction *actionAddMapCenter;

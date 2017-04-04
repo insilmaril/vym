@@ -1191,10 +1191,20 @@ void Main::setupEditActions()
     a->setShortcutContext (Qt::WindowShortcut);
     switchboard.addSwitch ("mapDelete", shortcutScope, a, tag);
     addAction (a);
-    connect( a, SIGNAL( triggered() ), this, SLOT( editDeleteSelection() ) );
     editMenu->addAction(a);
     actionListItems.append (a);
     actionDelete=a;
+
+    connect( a, SIGNAL( triggered() ), this, SLOT( editDeleteSelection() ) );
+    a = new QAction( tr( "Delete Selection","Edit menu" ),this);
+    a->setShortcut ( Qt::Key_D);		 
+    a->setShortcutContext (Qt::WindowShortcut);
+    switchboard.addSwitch ("mapDelete", shortcutScope, a, tag);
+    addAction (a);
+    connect( a, SIGNAL( triggered() ), this, SLOT( editDeleteSelection() ) );
+    editMenu->addAction(a);
+    actionListItems.append (a);
+    actionDeleteAlt=a;
 
     // Shortcut to add attribute
     a= new QAction(tr( "Add attribute" ), this);
@@ -1307,7 +1317,7 @@ void Main::setupEditActions()
 
     a = new QAction(QPixmap(), tr( "&Detach","Context menu" ),this);
     a->setStatusTip ( tr( "Detach branch and use as mapcenter","Context menu" ) );
-    a->setShortcut ( Qt::Key_D );		 
+    a->setShortcut ( Qt::Key_D + Qt::SHIFT);		 
     switchboard.addSwitch ("mapDetachBranch", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( editDetach() ) );
     editMenu->addAction(a);
@@ -5513,6 +5523,7 @@ void Main::updateActions()
 	{   // Tree Item selected
 	    actionToggleTarget->setChecked (selti->isTarget() );
 	    actionDelete->setEnabled (true);
+	    actionDeleteAlt->setEnabled (true);
 	    actionDeleteChildren->setEnabled (true);
 
 	    if (selbi || selti->getType()==TreeItem::Image)
@@ -5653,6 +5664,7 @@ void Main::updateActions()
 
 		actionPaste->setEnabled (false); 
 		actionDelete->setEnabled (true);
+		actionDeleteAlt->setEnabled (true);
 
 		actionGrowSelectionSize->setEnabled (true);
 		actionShrinkSelectionSize->setEnabled (true);
@@ -5665,6 +5677,7 @@ void Main::updateActions()
 	if (selItems.count()>0 )
 	{
 	    actionDelete->setEnabled (true);
+	    actionDeleteAlt->setEnabled (true);
 	    actionToggleHideExport->setEnabled (true);  
 	    actionToggleHideExport->setChecked (false);	
 	}
