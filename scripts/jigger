@@ -23,7 +23,11 @@ ARGV.each do |id|
   puts "#{id}:short_desc:\"#{t.summary}\""
   puts "#{id}:priority:\"#{t.priority.name}\""
   puts "#{id}:status:\"#{t.status.name}\""
-  puts "#{id}:resolution:\"#{t.resolution['name']}\""
+  if t.resolution.nil?
+    puts "#{id}:resolution:\"\""
+  else
+    puts "#{id}:resolution:\"#{t.resolution['name']}\""
+  end
   puts "#{id}:created:\"#{t.created[0..15]}\""
   puts "#{id}:updated:\"#{t.updated[0..15]}\""
   puts "#{id}:reporter:\"#{t.updated[0..15]}\""
