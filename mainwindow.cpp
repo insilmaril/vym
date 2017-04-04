@@ -75,7 +75,7 @@ extern Macros macros;
 extern QString tmpVymDir;
 extern QString clipboardDir;
 extern QString clipboardFile;
-extern bool clipboardEmpty;
+extern uint  clipboardItemCount;
 extern int statusbarTime;
 extern FlagRow *standardFlagsMaster;	
 extern FlagRow *systemFlagsMaster;
@@ -160,12 +160,12 @@ Main::Main(QWidget* parent, Qt::WindowFlags f) : QMainWindow(parent,f)
     if (debug) qDebug ()<<"tmpDir="<<tmpVymDir;
 
     // Create direcctory for clipboard
-    clipboardDir=tmpVymDir+"/clipboard";
-    clipboardFile="map.xml";
+    clipboardDir  = tmpVymDir+"/clipboard";
+    clipboardFile = "clipboard";
     QDir d(clipboardDir);
     d.mkdir (clipboardDir);
     makeSubDirs (clipboardDir);
-    clipboardEmpty=true;
+    clipboardItemCount = 0;
 
     // Remember PID of our friendly webbrowser
     browserPID=new qint64;
@@ -5627,7 +5627,7 @@ void Main::updateActions()
 		else
 		    actionToggleTask->setChecked (true);
 
-		if (!clipboardEmpty)
+		if (clipboardItemCount > 0)
 		    actionPaste->setEnabled (true); 
 		else	
 		    actionPaste->setEnabled (false);	

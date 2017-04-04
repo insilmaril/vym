@@ -20,7 +20,7 @@ extern Main *mainWindow;
 extern QString tmpVymDir;
 extern QString clipboardDir;
 extern QString clipboardFile;
-extern bool clipboardEmpty;
+extern uint clipboardItemCount;
 extern bool debug;
 extern QPrinter *printer;
 

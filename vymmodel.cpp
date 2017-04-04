@@ -68,7 +68,7 @@ extern Options options;
 
 extern QString clipboardDir;
 extern QString clipboardFile;
-extern bool clipboardEmpty;
+extern uint clipboardItemCount;
 
 extern ImageIO imageIO;
 
@@ -2547,36 +2547,31 @@ void VymModel::copy()
 {
     if (readonly) return;
 
-    TreeItem *selti=getSelectedItem();
-    if (selti &&
-	(selti->getType() == TreeItem::Branch || 
-	selti->getType() == TreeItem::MapCenter  ||
-	selti->getType() == TreeItem::Image ))
+    QList <TreeItem*> itemList = getSelectedItems();
+
+    clipboardItemCount = itemList.count();
+
+    if (clipboardItemCount > 0)
     {
-	// Copy to global clipboard
-	QString saveFile=saveToDir (clipboardDir, clipboardFile, true, QPointF(), selti);
-	if (!saveStringToDisk(clipboardDir + "/" + clipboardFile,saveFile))
-	    qWarning ("ME::saveStringToDisk failed!");
-
-	clipboardEmpty=false;
-
-	if (redosAvail == 0)
-	{
-	    // Copy also to history
-	    QString s=getSelectString(selti);
-	    saveState (PartOfMap, s, "nop ()", s, "copy ()","Copy selection to clipboard",selti  );
-	    curClipboard=curStep;
-	}
-	updateActions();
-    }	    
+        uint i = 0;
+        QString fn;
+        foreach (TreeItem *ti, itemList)
+        {
+            fn = QString("%1/%2-%3.xml").arg(clipboardDir).arg(clipboardFile).arg(i);
+            QString content = saveToDir (clipboardDir, clipboardFile, true, QPointF(), ti);
+            if (!saveStringToDisk(fn, content))
+                qWarning () << "ME::saveStringToDisk failed: " << fn;
+            i++;
+        }
+    }
 }
 
 void VymModel::paste()	
 {   
     if (readonly) return;
 
-    BranchItem *selbi=getSelectedBranch();
-    if (selbi)
+    BranchItem *selbi = getSelectedBranch();   
+    if (selbi && clipboardItemCount > 0)
     {
 	saveStateChangingPart(
 	    selbi,
@@ -2584,9 +2579,17 @@ void VymModel::paste()
 	    QString ("paste ()"),
 	    QString("Paste")
 	);
+
 	bool zippedOrg = zipped;
-	loadMap (clipboardDir + "/" + clipboardFile, ImportAdd, VymMap, SlideContent);
-	zipped = zippedOrg;
+        uint i = 0;
+        QString fn;
+        while (i < clipboardItemCount)
+        {
+            fn = QString("%1/%2-%3.xml").arg(clipboardDir).arg(clipboardFile).arg(i);
+            loadMap (fn, ImportAdd, VymMap, SlideContent);
+            i++;
+        }
+        zipped = zippedOrg;
 	reposition();
     }
 }

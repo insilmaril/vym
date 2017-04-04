@@ -71,8 +71,11 @@ Macros macros;
 uint itemLastID=0;		// Unique ID for all items in all models
 
 QString tmpVymDir;		// All temp files go there, created in mainwindow
+
 QString clipboardDir;		// Clipboard used in all mapEditors
 QString clipboardFile;		// Clipboard used in all mapEditors
+uint clipboardItemCount;        // Number of items in clipboard
+
 QDir vymBaseDir;		// Containing all styles, scripts, images, ...
 QDir lastImageDir;
 QDir lastMapDir;
@@ -84,7 +87,6 @@ QString iconPath;		// Pointing to icons used for toolbars
 QString flagsPath;		// Pointing to flags
 QString macroPath;              // Pointing to macros
 
-bool clipboardEmpty;		
 bool debug;             // global debugging flag
 bool testmode;			// Used to disable saving of autosave setting
 FlagRow *systemFlagsMaster; 
