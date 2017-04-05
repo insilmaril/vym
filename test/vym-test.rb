@@ -100,7 +100,7 @@ end
 #######################
 def test_vym (vym)
   heading "Mainwindow checks:"
-  version = "2.6.200"
+  version = "2.6.201"
   expect "Version is #{version}", vym.version, version
 
   n = vym.mapCount.to_i

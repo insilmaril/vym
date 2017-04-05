@@ -2553,7 +2553,7 @@ void VymModel::copy()
 
     if (clipboardItemCount > 0)
     {
-        uint i = 0;
+        uint i = 1;
         QString fn;
         foreach (TreeItem *ti, itemList)
         {
@@ -2564,7 +2564,7 @@ void VymModel::copy()
             else
                 i++;
         }
-        clipboardItemCount = i;
+        clipboardItemCount = i - 1;
     }
 }
 
@@ -2583,12 +2583,14 @@ void VymModel::paste()
 	);
 
 	bool zippedOrg = zipped;
-        uint i = 0;
+        uint i = 1;
         QString fn;
-        while (i < clipboardItemCount)
+        while (i <= clipboardItemCount)
         {
-            fn = QString("%1/%2-%3.xml").arg(clipboardDir).arg(clipboardFile).arg(i + 1);
-            loadMap (fn, ImportAdd, VymMap, SlideContent);
+            fn = QString("%1/%2-%3.xml").arg(clipboardDir).arg(clipboardFile).arg(i);
+            if (! File::Success == loadMap (fn, ImportAdd, VymMap, SlideContent) )
+                qWarning() << "Loading clipboard failed: " << fn ;
+
             i++;
         }
         zipped = zippedOrg;
