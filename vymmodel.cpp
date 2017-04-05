@@ -2605,6 +2605,24 @@ void VymModel::cut()
 	deleteSelection();
 	reposition();
     }
+
+    QList <TreeItem*> itemList = getSelectedItems();
+
+    clipboardItemCount = itemList.count();
+
+    if (clipboardItemCount > 0)
+    {
+        uint i = 0;
+        QString fn;
+        foreach (TreeItem *ti, itemList)
+        {
+            fn = QString("%1/%2-%3.xml").arg(clipboardDir).arg(clipboardFile).arg(i);
+            QString content = saveToDir (clipboardDir, clipboardFile, true, QPointF(), ti);
+            if (!saveStringToDisk(fn, content))
+                qWarning () << "ME::saveStringToDisk failed: " << fn;
+            i++;
+        }
+    }
 }
 
 bool VymModel::moveUp(BranchItem *bi)
@@ -5342,7 +5360,7 @@ QItemSelectionModel* VymModel::getSelectionModel()
 
 void VymModel::setSelectionBlocked (bool b)
 {
-    selectionBlocked=b;
+    selectionBlocked = b;
 }
 
 bool VymModel::isSelectionBlocked()
@@ -5353,7 +5371,7 @@ bool VymModel::isSelectionBlocked()
 bool VymModel::select (const QString &s)
 {
     if (s.isEmpty()) return false;
-    TreeItem *ti=findBySelectString(s);
+    TreeItem *ti = findBySelectString(s);
     if (ti) return select (index(ti));
     return false;
 }
@@ -5361,14 +5379,14 @@ bool VymModel::select (const QString &s)
 bool VymModel::selectID (const QString &s)
 {
     if (s.isEmpty()) return false;
-    TreeItem *ti=findUuid(QUuid(s));
+    TreeItem *ti = findUuid(QUuid(s));
     if (ti) return select (index(ti));
     return false;
 }
 
 bool VymModel::select (LinkableMapObj *lmo)
 {
-    QItemSelection oldsel=selModel->selection();
+    QItemSelection oldsel = selModel->selection();
 
     if (lmo)
 	return select (lmo->getTreeItem() );
