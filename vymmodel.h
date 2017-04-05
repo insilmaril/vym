@@ -457,8 +457,8 @@ private:
 public:	
    void cleanupItems();		//!< Delete orphaned Items
     void deleteLater (uint);		//!< Delete later with new beginRemoveRow
-    void deleteSelection();		//!< Delete selection
-    void deleteKeepChildren(bool saveStateFlag=true);	//!< remove branch, but keep children
+    void deleteSelection(bool copyToClipboard = false); //!< Delete selection
+    void deleteKeepChildren(bool saveStateFlag = true);	//!< remove branch, but keep children
 public:	
     void deleteChildren();		//!< keep branch, but remove children
 
@@ -780,6 +780,7 @@ public:
     QList <TreeItem*> getSelectedItems();
     QModelIndex getSelectedIndex();
     QList <uint> getSelectedIDs();
+    QStringList getSelectedUUIDs();
     bool isSelected(TreeItem*);
     QString getSelectString ();
     QString getSelectString (LinkableMapObj *lmo);

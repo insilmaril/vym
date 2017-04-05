@@ -2561,8 +2561,10 @@ void VymModel::copy()
             QString content = saveToDir (clipboardDir, clipboardFile, true, QPointF(), ti);
             if (!saveStringToDisk(fn, content))
                 qWarning () << "ME::saveStringToDisk failed: " << fn;
-            i++;
+            else
+                i++;
         }
+        clipboardItemCount = i;
     }
 }
 
@@ -2585,7 +2587,7 @@ void VymModel::paste()
         QString fn;
         while (i < clipboardItemCount)
         {
-            fn = QString("%1/%2-%3.xml").arg(clipboardDir).arg(clipboardFile).arg(i);
+            fn = QString("%1/%2-%3.xml").arg(clipboardDir).arg(clipboardFile).arg(i + 1);
             loadMap (fn, ImportAdd, VymMap, SlideContent);
             i++;
         }
@@ -2598,15 +2600,10 @@ void VymModel::cut()
 {
     if (readonly) return;
 
-    TreeItem *selti=getSelectedItem();
-    if ( selti && (selti->isBranchLikeType() ||selti->getType()==TreeItem::Image))
-    {
-	copy();
-	deleteSelection();
-	reposition();
-    }
+    deleteSelection(true);
+    return;
 
-    QList <TreeItem*> itemList = getSelectedItems();
+    QStringList itemList = getSelectedUUIDs();
 
     clipboardItemCount = itemList.count();
 
@@ -2614,14 +2611,25 @@ void VymModel::cut()
     {
         uint i = 0;
         QString fn;
-        foreach (TreeItem *ti, itemList)
+        TreeItem *ti;
+        foreach (QString id, itemList)
         {
-            fn = QString("%1/%2-%3.xml").arg(clipboardDir).arg(clipboardFile).arg(i);
-            QString content = saveToDir (clipboardDir, clipboardFile, true, QPointF(), ti);
-            if (!saveStringToDisk(fn, content))
-                qWarning () << "ME::saveStringToDisk failed: " << fn;
-            i++;
+            ti = findUuid( QUuid(id) );
+            if (ti)
+            {
+                fn = QString("%1/%2-%3.xml").arg(clipboardDir).arg(clipboardFile).arg(i);
+                QString content = saveToDir (clipboardDir, clipboardFile, true, QPointF(), ti);
+                if (!saveStringToDisk(fn, content))
+                    qWarning () << "ME::saveStringToDisk failed: " << fn;
+                else
+                {
+                        
+                    i++;
+                }
+            }
         }
+        clipboardItemCount = i;
+        reposition();
     }
 }
 
@@ -3316,50 +3324,77 @@ void VymModel::deleteLater(uint id)
 	deleteLaterIDs.append (id);
 }
 
-void VymModel::deleteSelection()    
+void VymModel::deleteSelection(bool copyToClipboard)    
 {
-    QList <uint> selectedIDs=getSelectedIDs();
+    QList <uint> selectedIDs = getSelectedIDs();
+    unselectAll();
+    QString fn;
+
+    if (copyToClipboard) clipboardItemCount = 0;
+
     foreach (uint id, selectedIDs)
     {
-	TreeItem *ti=findID (id);
-	if (ti && ti->isBranchLikeType ())
-	{   // Delete branch
-	    BranchItem *selbi=(BranchItem*)ti;
-	    unselectAll();
-	    saveStateRemovingPart (selbi, QString ("remove %1").arg(getObjectName(selbi)));
+	TreeItem *ti = findID (id);
+        if (ti)
+        {
+            if (ti->isBranchLikeType ())
+            {   // Delete branch
+                BranchItem *selbi = (BranchItem*)ti;
+                saveStateRemovingPart (selbi, QString ("remove %1").arg(getObjectName(selbi)));
 
-	    BranchItem *pi=(BranchItem*)(deleteItem (selbi));
-	    if (pi)
-	    {
-		if (pi->isScrolled() && pi->branchCount()==0)
-		    pi->unScroll();
-		emitDataChanged(pi);
-		select (pi);
-	    } else
-		emitDataChanged(rootItem); 
-	    ti=NULL;		
-	}
+                if (copyToClipboard)
+                {
+                    fn = QString("%1/%2-%3.xml").arg(clipboardDir).arg(clipboardFile).arg(clipboardItemCount + 1);
+                    QString content = saveToDir (clipboardDir, clipboardFile, true, QPointF(), ti);
+                    if (!saveStringToDisk(fn, content))
+                        qWarning () << "ME::saveStringToDisk failed: " << fn;
+                    else
+                        clipboardItemCount++;
+                }
 
-	// Delete other item
-	if (ti)
-	{
-	    TreeItem *pi=ti->parent(); 
-	    if (!pi) return;
-	    if (ti->getType()==TreeItem::Image || ti->getType()==TreeItem::Attribute||ti->getType()==TreeItem::XLink)
-	    {
-		saveStateChangingPart(
-		    pi, 
-		    ti,
-		    "remove ()",
-		    QString("Remove %1").arg(getObjectName(ti))
-		);
-		unselectAll();
-		deleteItem (ti);
-		emitDataChanged (pi);
-		select (pi);
-		reposition();
-	    } else
-		qWarning ("VymmModel::deleteSelection()  unknown type?!");
+                BranchItem *pi = (BranchItem*)(deleteItem (selbi));
+                if (pi)
+                {
+                    if (pi->isScrolled() && pi->branchCount() == 0)
+                        pi->unScroll();
+                    emitDataChanged(pi);
+                    select (pi);
+                } else
+                    emitDataChanged(rootItem); 
+                ti = NULL;		
+            } else
+            {
+                // Delete other item
+                TreeItem *pi = ti->parent(); 
+                if (pi) 
+                {
+                    if (ti->getType() == TreeItem::Image || ti->getType() == TreeItem::Attribute || ti->getType() == TreeItem::XLink)
+                    {
+                        saveStateChangingPart(
+                            pi, 
+                            ti,
+                            "remove ()",
+                            QString("Remove %1").arg(getObjectName(ti))
+                        );
+
+                        if (copyToClipboard)
+                        {
+                            fn = QString("%1/%2-%3.xml").arg(clipboardDir).arg(clipboardFile).arg(clipboardItemCount + 1);
+                            QString content = saveToDir (clipboardDir, clipboardFile, true, QPointF(), ti);
+                            if (!saveStringToDisk(fn, content))
+                                qWarning () << "ME::saveStringToDisk failed: " << fn;
+                            else
+                                clipboardItemCount++;
+                        }
+
+                        deleteItem (ti);
+                        emitDataChanged (pi);
+                        select (pi);
+                        reposition();
+                    } else
+                        qWarning ("VymmModel::deleteSelection()  unknown type?!");
+                }
+            }
 	}
     }
 }
@@ -5788,8 +5823,16 @@ QModelIndex VymModel::getSelectedIndex()
 QList <uint> VymModel::getSelectedIDs()
 {
     QList <uint> uids;
-    foreach (TreeItem* ti,getSelectedItems() )
+    foreach (TreeItem* ti, getSelectedItems() )
 	uids.append (ti->getID() );
+    return uids;	
+}
+
+QStringList VymModel::getSelectedUUIDs()
+{
+    QStringList uids;
+    foreach (TreeItem* ti, getSelectedItems() )
+	uids.append (ti->getUuid().toString() );
     return uids;	
 }
 
