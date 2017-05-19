@@ -4,7 +4,7 @@
 #include <QString>
 
 #define __VYM_NAME "VYM"
-#define __VYM_VERSION "2.6.201"
+#define __VYM_VERSION "2.6.201" 
 //#define __VYM_CODENAME "Codename: Production release"
 #define __VYM_CODENAME "Codename: development leap version, not for production!"
 #define __VYM_BUILD_DATE "2017-05-19"
