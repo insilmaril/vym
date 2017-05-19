@@ -909,13 +909,12 @@ void VymModel::saveImage (ImageItem *ii, QString format, QString fn)
 
 void VymModel::importDirInt(BranchItem *dst, QDir d) 
 {
-    bool oldSaveState=blockSaveState;
-    blockSaveState=true;
-    BranchItem *selbi=getSelectedBranch();
-    BranchItem *bi;
-    if (selbi)
+    bool oldSaveState = blockSaveState;
+    blockSaveState = true;
+    BranchItem *bi = dst;
+    if (bi)
     {
-	int beginDepth=selbi->depth();
+	int beginDepth = bi->depth();
 
 	d.setFilter(QDir::AllEntries | QDir::Hidden);
 	QFileInfoList list = d.entryInfoList();
@@ -924,10 +923,10 @@ void VymModel::importDirInt(BranchItem *dst, QDir d)
 	// Traverse directories
 	for (int i = 0; i < list.size(); ++i) 
 	{
-	    fi=list.at(i);
+	    fi = list.at(i);
 	    if (fi.isDir() && fi.fileName() != "." && fi.fileName() != ".." )
 	    {
-		bi=addNewBranchInt(dst,-2);
+		bi = addNewBranchInt(dst, -2);
                 bi->setHeadingPlainText (fi.fileName() );
 		bi->setHeadingColor (QColor("blue"));
 		if ( !d.cd(fi.fileName()) ) 
@@ -935,7 +934,8 @@ void VymModel::importDirInt(BranchItem *dst, QDir d)
 		else 
 		{
 		    // Recursively add subdirs
-		    importDirInt (bi,d);
+                    qDebug() << "Add subdir " << bi->getHeadingPlain();
+		    importDirInt (bi, d);
 		    d.cdUp();
 		}
 		emitDataChanged(bi);
@@ -944,10 +944,10 @@ void VymModel::importDirInt(BranchItem *dst, QDir d)
 
 	for (int i = 0; i < list.size(); ++i) 
 	{
-	    fi=list.at(i);
+	    fi = list.at(i);
 	    if (fi.isFile())
 	    {
-		bi=addNewBranchInt (dst,-2);
+		bi = addNewBranchInt (dst,-2);
                 bi->setHeadingPlainText (fi.fileName() );
 		bi->setHeadingColor (QColor("black"));
 		if (fi.fileName().right(4) == ".vym" )
@@ -965,28 +965,28 @@ void VymModel::importDirInt(BranchItem *dst, QDir d)
 
 void VymModel::importDir (const QString &s)	
 {
-    BranchItem *selbi=getSelectedBranch();
+    BranchItem *selbi = getSelectedBranch();
     if (selbi)
     {
-	saveStateChangingPart (selbi,selbi,QString ("importDir (\"%1\")").arg(s),QString("Import directory structure from %1").arg(s));
+	saveStateChangingPart (selbi, selbi, QString ("importDir (\"%1\")").arg(s),QString("Import directory structure from %1").arg(s));
 
 	QDir d(s);
-	importDirInt (selbi,d);
+	importDirInt (selbi, d);
     }
 }   
 
 void VymModel::importDir()  
 {
-    BranchItem *selbi=getSelectedBranch();
+    BranchItem *selbi = getSelectedBranch();
     if (selbi)
     {
 	QStringList filters;
 	filters <<"VYM map (*.vym)";
 	QFileDialog fd;
-	fd.setWindowTitle (vymName+ " - " +tr("Choose directory structure to import"));
+	fd.setWindowTitle (vymName + " - " +tr("Choose directory structure to import"));
 	fd.setFileMode (QFileDialog::DirectoryOnly);
 	fd.setNameFilters (filters);
-	fd.setWindowTitle(vymName+" - " +tr("Choose directory structure to import"));
+	fd.setWindowTitle(vymName + " - " + tr("Choose directory structure to import"));
 	fd.setAcceptMode (QFileDialog::AcceptOpen);
 
 	QString fn;

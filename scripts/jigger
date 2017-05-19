@@ -8,18 +8,24 @@ config = ParseConfig.new('/home/uwe/.eb-login')
 options = {
   :username     => config['username'],
   :password     => config['password'],
-#  :site         => 'https://ticket.asw.zone/',
-  :site         => 'https://issue.ebgroup.elektrobit.com/',
+  :site         => 'https://issue.YOURDOMAIN-XYZ.XYZ/', # Adapt this to your need 
   :context_path => '',
   :ssl_verify_mode =>OpenSSL::SSL::VERIFY_NONE,
   :read_timeout => 120,
   :auth_type    => :basic
 }
 
-client = JIRA::Client.new(options)
-
 ARGV.each do |id| 
 
+  # This should be removed. Used to switch between various Jira systems 
+  if id.include? "RVD"
+    options[:site] = config['jira-extern']
+  else
+    options[:site] = config['jira-intern']
+  end
+
+  client = JIRA::Client.new(options)
+  
   # Query ticket and display info
   t = client.Issue.find(id)
   puts "#{id}:short_desc:\"#{t.summary}\""
