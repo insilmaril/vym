@@ -3903,13 +3903,13 @@ void VymModel::editHeading2URL()
     setURL (selti->getHeadingPlain());
 }   
 
-void VymModel::getJiraData(bool subtree)	    // FIXME-0 update error message
+void VymModel::getJiraData(bool subtree)	    // FIXME-0 update error message, check if jiraClientAvail is set correctly
 {
     if (!jiraClientAvailable)
     {
 	WarningDialog dia;
 	dia.setText(
-	    QObject::tr("No Bugzilla client found. "
+	    QObject::tr("No Jira client found. "
 	    " For openSUSE you can install by (running as root):\n\n","VymModel, how to install Bugzilla client module")+
 	    "  zypper ar http://download.opensuse.org/repositories/openSUSE:/Tools/openSUSE_XX.Y/ openSUSE:Tools_XX.Y\n"+
 	    "  zypper in perl-SUSE-BugzillaClient\n\n"+
@@ -3917,8 +3917,8 @@ void VymModel::getJiraData(bool subtree)	    // FIXME-0 update error message
 	    QObject::tr("Alternatively you can also add the repository\n"
 	    "and install the perl module for Bugzilla access using YaST","VymModel, how to install Bugzilla client module")
 	);
-	dia.setWindowTitle(QObject::tr("Warning: Couldn't find Bugzilla client","VymModel"));
-	dia.setShowAgainName("/BugzillaClient/missing");
+	dia.setWindowTitle(QObject::tr("Warning: Couldn't find Jira client","VymModel"));
+	dia.setShowAgainName("/JiraClient/missing");
 	dia.exec();
 	return;
     }

@@ -1,7 +1,13 @@
 //Example function definition
-function foofunction(s) {print ("Foofunction: " +  s);}
+function foofunction(s) {
+  print ("Foofunction output: " +  s); 
+  s = "changed par";
+  return {a: "ret-value", b: "bla"};
+}
 
-foofunction("asdfs");
+par = "I am a parameter!";
+print (foofunction(par));
+print ("par is now: " + par);
 //abort("xxx");
 print ("bar");
 

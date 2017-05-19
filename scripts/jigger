@@ -2,15 +2,17 @@
 
 require 'jira-ruby'
 require 'parseconfig'
-require 'pp'
 
 config = ParseConfig.new('/home/uwe/.eb-login')
 
 options = {
   :username     => config['username'],
   :password     => config['password'],
-  :site         => 'https://ticket.asw.zone/',
+#  :site         => 'https://ticket.asw.zone/',
+  :site         => 'https://issue.ebgroup.elektrobit.com/',
   :context_path => '',
+  :ssl_verify_mode =>OpenSSL::SSL::VERIFY_NONE,
+  :read_timeout => 120,
   :auth_type    => :basic
 }
 
