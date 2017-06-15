@@ -929,12 +929,13 @@ void VymModel::importDirInt(BranchItem *dst, QDir d)
 		bi = addNewBranchInt(dst, -2);
                 bi->setHeadingPlainText (fi.fileName() );
 		bi->setHeadingColor (QColor("blue"));
+                if (debug) qDebug() << "Added subdir: " << fi.fileName();
 		if ( !d.cd(fi.fileName()) ) 
 		    QMessageBox::critical (0,tr("Critical Import Error"),tr("Cannot find the directory %1").arg(fi.fileName()));
 		else 
 		{
 		    // Recursively add subdirs
-                    qDebug() << "Add subdir " << bi->getHeadingPlain();
+                    if (debug) qDebug() << "Entering subdir: " << bi->getHeadingPlain();
 		    importDirInt (bi, d);
 		    d.cdUp();
 		}
@@ -947,6 +948,7 @@ void VymModel::importDirInt(BranchItem *dst, QDir d)
 	    fi = list.at(i);
 	    if (fi.isFile())
 	    {
+                if (debug) qDebug() << "Added file: " << fi.fileName();
 		bi = addNewBranchInt (dst,-2);
                 bi->setHeadingPlainText (fi.fileName() );
 		bi->setHeadingColor (QColor("black"));
