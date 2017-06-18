@@ -5415,6 +5415,7 @@ void Main::updateActions()
             foreach (QAction *a, restrictedMapActions)
                 a->setEnabled( false );
 
+            // FIXME-2 updateactions: Disable import/export map functions (and probably more) if no map available
             // FIXME-2 updateactions: refactor actionListFiles: probably not needed, wrong actions there atm
         } else
         {   // not readonly     // FIXME-2 updateactions: maybe only required in testing, as mode should not change
