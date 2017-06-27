@@ -3852,6 +3852,7 @@ bool Main::fileExitVYM()
     {
         tabWidget->setCurrentIndex(0);
         if (fileCloseMap()) return true;
+        qApp->processEvents();  // Update widgets to show progress
     }
     qApp->quit();
     return false;
