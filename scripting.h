@@ -11,9 +11,7 @@
 class BranchItem;
 class VymModel;
 
-
 void logError(QScriptContext *context, QScriptContext::Error error, const QString &text);
-
 
 ///////////////////////////////////////////////////////////////////////////
 class VymScriptContext : public QObject, protected QScriptable
@@ -42,6 +40,5 @@ public slots:
     void toggleTreeEditor();
     QString version();
 };
-
 
 #endif
