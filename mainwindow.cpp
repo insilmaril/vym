@@ -585,7 +585,7 @@ void Main::setupAPI()
     c=new Command ("getNoteXML",Command::TreeItem);
     modelCommands.append(c);
 
-    c=new Command ("getSelectString",Command::TreeItem);
+    c=new Command ("getSelectionString",Command::TreeItem);
     modelCommands.append(c);
 
     c=new Command ("getTaskSleepDays",Command::Branch);
@@ -4750,11 +4750,11 @@ void Main::editOpenFindResultWidget()
 #include "findwidget.h" // FIXME-4 Integrated FRW and FW
 void Main::editFindNext(QString s)  
 {
-    Qt::CaseSensitivity cs=Qt::CaseInsensitive;
-    VymModel *m=currentModel();
+    Qt::CaseSensitivity cs = Qt::CaseInsensitive;
+    VymModel *m = currentModel();
     if (m) 
     {
-	if (m->findAll (findResultWidget->getResultModel(),s,cs) )
+	if (m->findAll (findResultWidget->getResultModel(), s, cs) )
 	    findResultWidget->setStatus (FindWidget::Success);
 	else
 	    findResultWidget->setStatus (FindWidget::Failed);
@@ -4763,7 +4763,7 @@ void Main::editFindNext(QString s)
 
 void Main::editFindDuplicateURLs() //FIXME-4 feature: use FindResultWidget for display
 {
-    VymModel *m=currentModel();
+    VymModel *m = currentModel();
     if (m) m->findDuplicateURLs();
 }
 
