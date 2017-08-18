@@ -312,7 +312,7 @@ public:
 
     void setSortFilter (const QString &);
     QString getSortFilter ();
-protected:  
+protected:
     QString sortFilter;
 signals:
     void sortFilterChanged (QString );	    //!< Notify editors of new filter
@@ -334,10 +334,13 @@ private:
 
 public:
     void findDuplicateURLs();		    // find duplicate URLs, testing only so far
-    bool findAll (FindResultModel*, QString s, Qt::CaseSensitivity cs=Qt::CaseInsensitive);	// Search all objects at once, also notes
+    bool findAll (FindResultModel*,         // Search all objects at once, also notes
+            QString s,
+            Qt::CaseSensitivity cs = Qt::CaseInsensitive,
+            bool searchNotes = true);
     BranchItem* findText(QString s,Qt::CaseSensitivity cs); // Find object, also in note
     void findReset();			    // Reset Search
-private:    
+private:
     QString findString;
 
 public:
@@ -360,10 +363,10 @@ public:
     void setHideLinkUnselected (bool);
 
     /*! Should object be hidden in exports (clouded)? */
-    void setHideExport(bool, TreeItem* ti=NULL);		
+    void setHideExport(bool, TreeItem* ti=NULL);
 
     /*! Should object be hidden in exports (clouded)? */
-    void toggleHideExport();	    
+    void toggleHideExport();
 
     /*! Toggle task for branch */
     void toggleTask();	    

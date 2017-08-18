@@ -4751,10 +4751,11 @@ void Main::editOpenFindResultWidget()
 void Main::editFindNext(QString s)  
 {
     Qt::CaseSensitivity cs = Qt::CaseInsensitive;
+    bool searchNotes = true;
     VymModel *m = currentModel();
     if (m) 
     {
-	if (m->findAll (findResultWidget->getResultModel(), s, cs) )
+	if (m->findAll (findResultWidget->getResultModel(), s, cs, searchNotes) )
 	    findResultWidget->setStatus (FindWidget::Success);
 	else
 	    findResultWidget->setStatus (FindWidget::Failed);

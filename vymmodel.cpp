@@ -1967,7 +1967,7 @@ void VymModel::findDuplicateURLs()  // FIXME-3 needs GUI
     }
 }
 
-bool  VymModel::findAll (FindResultModel *rmodel, QString s, Qt::CaseSensitivity cs)   
+bool  VymModel::findAll (FindResultModel *rmodel, QString s, Qt::CaseSensitivity cs, bool searchNotes)
 {
     rmodel->clear();
     rmodel->setSearchString (s);
@@ -1979,7 +1979,7 @@ bool  VymModel::findAll (FindResultModel *rmodel, QString s, Qt::CaseSensitivity
     nextBranch(cur,prev);
 
     FindResultItem *lastParent = NULL;
-    while (cur) 
+    while (cur)
     {
 	lastParent = NULL;
         if (cur->getHeading().getTextASCII().contains (s,cs))
@@ -1987,41 +1987,44 @@ bool  VymModel::findAll (FindResultModel *rmodel, QString s, Qt::CaseSensitivity
                 lastParent = rmodel->addItem (cur);
                 hit = true;
             }
-	QString n = cur->getNoteASCII();
-	int i = 0;
-	int j = 0;
-	while ( i >= 0)
-	{
-	    i = n.indexOf (s,i,cs); 
-	    if (i >= 0) 
-	    {
-		// If not there yet, add "parent" item
-		if (!lastParent)
-		{
-		    lastParent = rmodel->addItem (cur);
-		    hit = true;
-		    if (!lastParent)
-			qWarning() << "VymModel::findAll still no lastParent?!";
-		    /*
-		    else
-			lastParent->setSelectable (false);
-		    */	
-		}   
+        if (searchNotes)
+        {
+            QString n = cur->getNoteASCII();
+            int i = 0;
+            int j = 0;
+            while ( i >= 0)
+            {
+                i = n.indexOf (s,i,cs);
+                if (i >= 0)
+                {
+                    // If not there yet, add "parent" item
+                    if (!lastParent)
+                    {
+                        lastParent = rmodel->addItem (cur);
+                        hit = true;
+                        if (!lastParent)
+                            qWarning() << "VymModel::findAll still no lastParent?!";
+                        /*
+                        else
+                            lastParent->setSelectable (false);
+                        */
+                    }
 
-		// save index of occurence
-		QString e = n.mid(i-15, 30);
-		n.replace('\n', ' ');
-		rmodel->addSubItem (lastParent, QString(tr("Note", "FindAll in VymModel") + ": \"...%1...\"").arg(n.mid(i-8,80)), cur, j);
-		j++;
-		i++;
-	    }
-	} 
+                    // save index of occurence
+                    QString e = n.mid(i-15, 30);
+                    n.replace('\n', ' ');
+                    rmodel->addSubItem (lastParent, QString(tr("Note", "FindAll in VymModel") + ": \"...%1...\"").arg(n.mid(i-8,80)), cur, j);
+                    j++;
+                    i++;
+                }
+            }
+        }
 	nextBranch(cur, prev);
     }
     return hit;
 }
 
-BranchItem* VymModel::findText (QString s,Qt::CaseSensitivity cs)
+BranchItem* VymModel::findText (QString s,Qt::CaseSensitivity cs)     // FIXME-0 used at all?
 {
     if (!s.isEmpty() && s!=findString)
     {

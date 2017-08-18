@@ -48,9 +48,13 @@ FindWidget::FindWidget(QWidget *)
     connect ( a, SIGNAL( triggered() ), this, SLOT( nextPressed() ) );
     addAction (a);
 
+    QPushButton *filterNotesButton = new QPushButton;
+    filterNotesButton->setIcon (QPixmap(":/flag-note.png"));
+
     row2Layout->addWidget (label);
     row2Layout->addWidget(findcombo);
     row2Layout->addWidget(nextbutton);
+    row2Layout->addWidget(filterNotesButton);
 
     mainLayout->addLayout (row2Layout);
 
