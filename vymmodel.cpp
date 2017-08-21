@@ -1987,6 +1987,7 @@ bool  VymModel::findAll (FindResultModel *rmodel, QString s, Qt::CaseSensitivity
                 lastParent = rmodel->addItem (cur);
                 hit = true;
             }
+
         if (searchNotes)
         {
             QString n = cur->getNoteASCII();
@@ -3934,7 +3935,7 @@ void VymModel::getJiraData(bool subtree)	    // FIXME-0 update error message, ch
 	QString url;
 	BranchItem *prev = NULL;
 	BranchItem *cur  = NULL;
-        nextBranch (cur, prev, false, selbi);
+        nextBranch (cur, prev, true, selbi);
 	while (cur) 
 	{
 	    url = cur->getURL();
