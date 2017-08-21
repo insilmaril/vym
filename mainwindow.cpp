@@ -268,8 +268,8 @@ Main::Main(QWidget* parent, Qt::WindowFlags f) : QMainWindow(parent,f)
 	findResultWidget, SIGNAL (noteSelected (QString, int)),
 	this, SLOT (selectInNoteEditor (QString, int)));
     connect (
-	findResultWidget, SIGNAL (findPressed (QString) ), 
-	this, SLOT (editFindNext(QString) ) );
+	findResultWidget, SIGNAL (findPressed (QString, bool) ),
+	this, SLOT (editFindNext(QString, bool) ) );
 
     scriptEditor = new ScriptEditor(this);
     dw= new QDockWidget (tr ("Script Editor","ScriptEditor"));
@@ -4748,14 +4748,13 @@ void Main::editOpenFindResultWidget()
 }
 
 #include "findwidget.h" // FIXME-4 Integrated FRW and FW
-void Main::editFindNext(QString s)  
+void Main::editFindNext(QString s, bool searchNotesFlag)
 {
     Qt::CaseSensitivity cs = Qt::CaseInsensitive;
-    bool searchNotes = true;
     VymModel *m = currentModel();
-    if (m) 
+    if (m)
     {
-	if (m->findAll (findResultWidget->getResultModel(), s, cs, searchNotes) )
+	if (m->findAll (findResultWidget->getResultModel(), s, cs, searchNotesFlag) )
 	    findResultWidget->setStatus (FindWidget::Success);
 	else
 	    findResultWidget->setStatus (FindWidget::Failed);

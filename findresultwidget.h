@@ -24,17 +24,17 @@ public:
     void addItem (const QString &s);
     QString getFindText();
 
-public slots:	
+public slots:
     void popup();
     void cancelPressed();
-    void nextButtonPressed (QString);
+    void nextButtonPressed (QString, bool);
     void updateSelection(QItemSelection ,QItemSelection);
     void setStatus (FindWidget::Status st);
 
 signals:
     void hideFindResultWidget();
-    void noteSelected (QString , int );
-    void findPressed (QString);
+    void noteSelected (QString, int );
+    void findPressed (QString, bool);
 
 public:
     FindWidget *findWidget;

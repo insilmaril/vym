@@ -222,7 +222,7 @@ private slots:
     void editSelectNext();
     void editSelectNothing();
     void editOpenFindResultWidget();
-    void editFindNext(QString s);
+    void editFindNext(QString s, bool searchNotesFlag);
     void editFindDuplicateURLs();
 
 public slots:

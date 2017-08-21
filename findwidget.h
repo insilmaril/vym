@@ -18,7 +18,7 @@ public:
     FindWidget (QWidget *parent=NULL);
     QString getFindText ();
 
-public slots:	
+public slots:
     void cancelPressed();
     void nextPressed();
     void findTextChanged(const QString&);
@@ -30,12 +30,13 @@ private:
 
 signals:
     void hideFindWidget();
-    void nextButton(QString);
+    void nextButtonPressed(QString, bool);
 
 private:
     QComboBox *findcombo;
     QGroupBox *findbox;
-    QPushButton *nextbutton;
+    QPushButton *nextButton;
+    QPushButton *filterNotesButton;
 };
 
 #endif
