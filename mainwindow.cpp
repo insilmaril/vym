@@ -3078,6 +3078,11 @@ uint  Main::currentModelID() const
 	return 0;    
 }
 
+uint  Main::currentModelNumber() const
+{
+    return tabWidget->currentIndex();
+}
+
 VymModel* Main::currentModel() const
 {
     VymView *vv=currentView();

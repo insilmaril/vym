@@ -53,3 +53,7 @@ QDBusVariant AdaptorVym::listCommands ()
     return QDBusVariant (list.join(",") );
 }
 
+QDBusVariant AdaptorVym::currentModel ()
+{
+    return QDBusVariant (mainWindow->currentModelNumber() );
+}

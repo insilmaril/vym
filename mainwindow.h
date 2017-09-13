@@ -87,6 +87,7 @@ public:
     MapEditor* currentMapEditor() const;
     VymModel* currentModel() const;
     uint currentModelID() const;
+    uint currentModelNumber() const;
     VymModel* getModel(uint) const;
     void gotoModel (VymModel *m);
     int modelCount();

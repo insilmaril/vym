@@ -53,6 +53,10 @@ class Vym
     @main.modelCount[0]
   end
 
+  def currentModel
+    @main.currentModel
+  end
+
   def map (n)
     map = @service.object("vymmodel_#{n}")
     map.introspect

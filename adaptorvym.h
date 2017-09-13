@@ -21,6 +21,7 @@ public slots: // METHODS
     QDBusVariant getVersion();
     QDBusVariant execute ( const QString &s);
     QDBusVariant listCommands();
+    QDBusVariant currentModel();
 
 Q_SIGNALS: // SIGNALS
     void crashed();
