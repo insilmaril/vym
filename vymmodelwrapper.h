@@ -60,7 +60,7 @@ public slots:
     QString getMapTitle();
     QString getNotePlainText();
     QString getNoteXML();
-    QString getSelectString();
+    QString getSelectionString();
     int getTaskSleepDays();
     QString getURL();
     QString getVymLink();

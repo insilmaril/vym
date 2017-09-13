@@ -412,7 +412,7 @@ QString VymModelWrapper::getNoteXML()
     return setResult( model->getNote().saveToDir() );
 }
 
-QString VymModelWrapper::getSelectString()
+QString VymModelWrapper::getSelectionString()
 {
     return setResult( model->getSelectString() );
 }

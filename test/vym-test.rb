@@ -122,7 +122,7 @@ def test_basics (vym)
   expect "Author is '#{author}'", map.getMapAuthor, author
 
   map.select @main_a
-  expect "select mainbranch A", map.getSelectString, @main_a
+  expect "select mainbranch A", map.getSelectionString, @main_a
   expect "getHeadingPlainText", map.getHeadingPlainText, "Main A"
   expect "branchCount", map.branchCount, 3
 
@@ -264,7 +264,7 @@ def test_adding_branches (vym)
   expect( "addBranch", map.branchCount.to_i, n + 1 )
 
   map.selectLatestAdded
-  expect "selectLatestAdded", map.getSelectString, @main_a + ",bo:3"
+  expect "selectLatestAdded", map.getSelectionString, @main_a + ",bo:3"
 
   map.undo
   expect( "Undo: addBranch", map.branchCount.to_i, n )
@@ -556,7 +556,7 @@ def test_copy_paste (vym)
   map.copy
   map.paste
   map.selectLatestAdded     #FIXME-0 not set for ImportAdd, which is used by paste
-  s = map.getSelectString
+  s = map.getSelectionString
   expect "Normal paste of branch, check heading of #{s}", map.getHeadingPlainText, "Main A"
   
   map.undo
@@ -574,7 +574,7 @@ def test_copy_paste (vym)
 
   map.paste
   map.selectLastChildBranch
-  s = map.getSelectString
+  s = map.getSelectionString
   expect "Normal paste of branch, check heading of #{s}", map.getHeadingPlainText, "branch a"
   map.cut 
 end 
@@ -717,7 +717,7 @@ def test_notes (vym)
   map.copy
   map.paste
   map.selectLastChildBranch
-  s=map.getSelectString
+  s=map.getSelectionString
   expect "After copy& paste: New note unchanged?", map.getNotePlainText, note_plain
   expect "After copy& paste: New note Still plaintext?", map.hasRichTextNote, false
   map.remove
@@ -764,7 +764,7 @@ def test_notes (vym)
   map.copy
   map.paste
   map.selectLastChildBranch
-  s = map.getSelectString
+  s = map.getSelectionString
   expect "After copy & paste: New note Still RichText?", map.hasRichTextNote, true
   expect "After copy & paste: New note unchanged?", map.getNoteXML, rt_note
   map.remove
