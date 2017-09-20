@@ -46,7 +46,7 @@ JiraAgent::JiraAgent (BranchItem *bi,const QString &u)
 	    return;
 	}
 
-    } else if (u.contains("buglist.cgi"))   // FIXME-0
+    } else if (u.contains("fixme-filter"))   // FIXME-0 not supported yet for jira
     {
 	missionType = Query; //FIXME-0 query not supported yet by new bugger
 	args << "--query";
@@ -54,7 +54,6 @@ JiraAgent::JiraAgent (BranchItem *bi,const QString &u)
     } else
     {
 	qDebug() << "JiraAgent: Unknown command:\n" << url; // FIXME-0
-	delete (this);
 	return;
     }
 	

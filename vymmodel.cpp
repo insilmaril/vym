@@ -3938,15 +3938,12 @@ void VymModel::getJiraData(bool subtree)	    // FIXME-0 update error message, ch
         nextBranch (cur, prev, true, selbi);
 	while (cur) 
 	{
+            qDebug() << "getJiraData: " << cur->getHeadingPlain();
 	    url = cur->getURL();
 	    if (!url.isEmpty())
 	    {
-		// Don't run query again if we are in update mode
-		if (!subtree || ! url.contains("buglist.cgi") ) // FIXME-0   buglist not in Jira...
-		{
-		    new JiraAgent (cur,url);
-		    mainWindow->statusMessage (tr("Contacting Jira...", "VymModel"));
-		}
+                new JiraAgent (cur,url);
+                mainWindow->statusMessage (tr("Contacting Jira...", "VymModel"));
 	    }
 	    if (subtree) 
 		nextBranch (cur, prev, true, selbi);
