@@ -221,6 +221,9 @@ void JiraAgent::setModelJiraData (VymModel *model, BranchItem *bi, const QString
 
     model->setHeadingPlainText (idName + " - " + ticket_desc[ticketID], bi);
 
+    // Save current selections  // FIXME-0 No multiselection yet (cleanup IDs vs UUIDs in treeitem)
+    QString oldSelection = model->getSelectString();
+
     model->select(bi);
 
     BranchItem *timestampBranch = model->addTimestamp();
@@ -244,5 +247,8 @@ void JiraAgent::setModelJiraData (VymModel *model, BranchItem *bi, const QString
 
     infoBranch = model->addNewBranch();
     if (infoBranch) model->setHeadingPlainText( "Updated: " + ticket_updated[ticketID], infoBranch);
+    
+    // Selected previous objects
+    model->select(oldSelection);
 }
 

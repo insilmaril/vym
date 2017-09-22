@@ -169,7 +169,7 @@ void BugAgent::processBugzillaData()
 		setModelBugzillaData (model, missionBI, b);
 	    } else
 	    {
-		// Process results of query
+		// Process results of query 
 		BranchItem *newbi;
 		foreach (QString b,bugs)
 		{
@@ -184,10 +184,9 @@ void BugAgent::processBugzillaData()
 	    } 
 	} else
 	    qWarning () << "BugAgent: Found model, but not branch #" << branchID;
+
     } else
 	qWarning () << "BugAgent: Couldn't find model #" << modelID;
-
-
 }
 
 void BugAgent::setModelBugzillaData (VymModel *model, BranchItem *bi, const QString &bugID)
@@ -198,9 +197,9 @@ void BugAgent::setModelBugzillaData (VymModel *model, BranchItem *bi, const QStr
 	|| bug_status[bugID] == "VERIFIED"
 	|| bug_status[bugID] == "RESOLVED")
     {
-    model->setHeadingPlainText ("(" + ps + ") - " + bugID + " - " + bug_desc[bugID], bi);
-	model->colorSubtree (Qt::blue, bi);
+        model->setHeadingPlainText ("(" + ps + ") - " + bugID + " - " + bug_desc[bugID], bi);
+        model->colorSubtree (Qt::blue, bi);
     } else   
-    model->setHeadingPlainText (ps + " - " + bugID + " - " + bug_desc[bugID], bi);
+        model->setHeadingPlainText (ps + " - " + bugID + " - " + bug_desc[bugID], bi);
 }
 
