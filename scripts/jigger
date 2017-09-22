@@ -44,4 +44,5 @@ ARGV.each do |id|
   s = ""
   s = t.assignee.emailAddress if ! t.assignee.nil? 
   puts "#{id}:assignee:\"#{s}\""
+  puts "#{id}:url:\"#{options[:site]}browse/#{id}\""
 end
