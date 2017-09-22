@@ -44,6 +44,7 @@ private:
     QHash <QString,QString> ticket_created;
     QHash <QString,QString> ticket_assignee;
     QHash <QString,QString> ticket_reporter;
+    QHash <QString,QString> ticket_url;
 
 };
 #endif

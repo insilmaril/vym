@@ -31,6 +31,8 @@ JiraAgent::JiraAgent (BranchItem *bi,const QString &u)
 
     if (url.contains("/browse/")) 
     {
+        // Extract ID from URL first:
+
 	missionType = SingleTicket;
 	QRegExp rx("browse/(.*)$");
         rx.setMinimal(true);
@@ -38,7 +40,7 @@ JiraAgent::JiraAgent (BranchItem *bi,const QString &u)
 	{
 	    ticketID = rx.cap(1);
 	    args << ticketID;
-            qDebug() << "JiraAgent:  ticket id: "<< ticketID;
+            qDebug() << "JiraAgent:  ticket id: "<< ticketID;   // FIXME-0 debugging
 	} else
 	{
 	    qWarning() << "JiraAgent: No ticketID found in: " << url;
@@ -53,8 +55,17 @@ JiraAgent::JiraAgent (BranchItem *bi,const QString &u)
 	args << url;
     } else
     {
-	qDebug() << "JiraAgent: Unknown command:\n" << url; // FIXME-0
-	return;
+        // Try to pass string or ID directly
+        if (url.length() > 15) 
+        {
+            // For security limit length    
+            qWarning() << "JiraAgent: URL too long, aborting!";
+            return;
+        }
+
+	missionType = SingleTicket;
+        args << url;
+        ticketID = url;
     }
 	
 
@@ -69,7 +80,8 @@ JiraAgent::JiraAgent (BranchItem *bi,const QString &u)
     if (!p->waitForStarted())
     {
 	qWarning() << "JiraAgent::getJiraData couldn't start " << ticketScript;
-	return;
+	return; 
+        // FIXME-0 cleanup and delete JiraAgent missing
     }	 
 
     // Visual hint that we are doing something  // FIXME-4 show spinner instead?
@@ -157,6 +169,10 @@ void JiraAgent::processJiraData()
 		    else if (re.cap(2) == "reporter") 
                     {
 			ticket_reporter[re.cap(1)] = re.cap(3).replace("\\\"","\"");
+                    }
+		    else if (re.cap(2) == "url") 
+                    {
+			ticket_url[re.cap(1)] = re.cap(3).replace("\\\"","\"");
                     }
 		}
 	    }
@@ -248,6 +264,12 @@ void JiraAgent::setModelJiraData (VymModel *model, BranchItem *bi, const QString
     infoBranch = model->addNewBranch();
     if (infoBranch) model->setHeadingPlainText( "Updated: " + ticket_updated[ticketID], infoBranch);
     
+    if (bi->getURL().isEmpty() )
+    {
+        model->select(bi);
+        model->setURL(ticket_url[ticketID]); 
+    }
+
     // Selected previous objects
     model->select(oldSelection);
 }
