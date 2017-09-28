@@ -3938,13 +3938,31 @@ void VymModel::getJiraData(bool subtree)	    // FIXME-0 update error message, ch
         nextBranch (cur, prev, true, selbi);
 	while (cur) 
 	{
-            qDebug() << "getJiraData: " << cur->getHeadingPlain();
 	    url = cur->getURL();
+
+            if (url.isEmpty() )
+            {
+                QString heading = cur->getHeadingPlain();
+                if ( heading.left(4) == "http" )
+                {
+                    // Set URL from heading
+                    cur->setURL(heading);
+                    url = heading;
+                } else 
+                {
+                    // Heading could contain a JIRA ID, call jigger using that
+                    // Afterwards jiraagent could update URL, if successfully retrieved data
+                    new JiraAgent (cur, heading);
+                    mainWindow->statusMessage (tr("Contacting Jira...", "VymModel"));
+                }
+            }
+
 	    if (!url.isEmpty())
 	    {
                 new JiraAgent (cur,url);
                 mainWindow->statusMessage (tr("Contacting Jira...", "VymModel"));
-	    }
+	    } 
+
 	    if (subtree) 
 		nextBranch (cur, prev, true, selbi);
 	    else
