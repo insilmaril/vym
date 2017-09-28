@@ -40,7 +40,7 @@ JiraAgent::JiraAgent (BranchItem *bi,const QString &u)
 	{
 	    ticketID = rx.cap(1);
 	    args << ticketID;
-            qDebug() << "JiraAgent:  ticket id: "<< ticketID;   // FIXME-0 debugging
+            qDebug() << "JiraAgent:  ticket id: "<< ticketID;   // TODO debugging
 	} else
 	{
 	    qWarning() << "JiraAgent: No ticketID found in: " << url;
