@@ -4,10 +4,10 @@
 #include <QString>
 
 #define __VYM_NAME "VYM"
-#define __VYM_VERSION "2.6.203" 
+#define __VYM_VERSION "2.6.204" 
 //#define __VYM_CODENAME "Codename: Production release"
 #define __VYM_CODENAME "Codename: development leap version, not for production!"
-#define __VYM_BUILD_DATE "2017-09-28"
+#define __VYM_BUILD_DATE "2017-09-29"
 #define __VYM_HOME "http://www.insilmaril.de/vym"
 
 bool versionLowerThanVym(const QString &);

@@ -1498,7 +1498,7 @@ void Main::setupEditActions()
     actionHeading2URL=a;
 
     tag = tr("Jira handling","Shortcuts");
-    a = new QAction(tr( "Get data from Jira","Edit menu" ) + " (experimental)", this);
+    a = new QAction(tr( "Create URL to Jira","Edit menu" ) + " (experimental)", this);
     a->setShortcut ( Qt::Key_J + Qt::SHIFT);
     a->setShortcutContext (Qt::WindowShortcut);
     switchboard.addSwitch ("mapUpdateFromJira", shortcutScope, a, tag);

@@ -3,6 +3,7 @@
 
 #include <QHash>
 #include <QObject>
+#include "heading.h"
 
 #include "vymprocess.h"
 
@@ -21,10 +22,12 @@ public:
 
 public slots:
     virtual void processFinished(int exitCode, QProcess::ExitStatus exitStatus);
+    virtual void timeout();
 
 protected:
     virtual void processJiraData ();
     virtual void setModelJiraData (VymModel *model, BranchItem *bi, const QString &ticketID);
+    virtual void undoUpdateMessage( BranchItem *bi = NULL);
 
 private:
     MissionType missionType;
@@ -35,6 +38,7 @@ private:
     QString ticketScript;
     QStringList result;
     VymProcess *p;
+    Heading oldHeading;
 
     QHash <QString,QString> ticket_desc;
     QHash <QString,QString> ticket_prio;

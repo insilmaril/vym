@@ -40,7 +40,6 @@ JiraAgent::JiraAgent (BranchItem *bi,const QString &u)
 	{
 	    ticketID = rx.cap(1);
 	    args << ticketID;
-            qDebug() << "JiraAgent:  ticket id: "<< ticketID;   // TODO debugging
 	} else
 	{
 	    qWarning() << "JiraAgent: No ticketID found in: " << url;
@@ -81,18 +80,26 @@ JiraAgent::JiraAgent (BranchItem *bi,const QString &u)
     {
 	qWarning() << "JiraAgent::getJiraData couldn't start " << ticketScript;
 	return; 
-        // FIXME-0 cleanup and delete JiraAgent missing
     }	 
 
     // Visual hint that we are doing something  // FIXME-4 show spinner instead?
     if (missionType == SingleTicket)
+    {
+        oldHeading = bi->getHeading();
         model->setHeading ("Updating: " + bi->getHeadingPlain(), bi ); //FIXME-4 translation needed?
+    }
 	
+    QTimer *killTimer = new QTimer(p); 
+    killTimer->setInterval(3000); 
+    killTimer->setSingleShot(true); 
+
+    QObject::connect(killTimer, SIGNAL(timeout()), this, SLOT(timeout()));
+    killTimer->start();
 }
 
 JiraAgent::~JiraAgent ()
 {
-    //qDebug()<<"Destr. JiraAgent for "<<branchID;
+    qDebug() <<" Destr JA";
     delete p;
 }
 
@@ -112,7 +119,11 @@ void JiraAgent::processFinished(int exitCode, QProcess::ExitStatus exitStatus)
     deleteLater();
 }
 
-
+void JiraAgent::timeout()
+{
+    undoUpdateMessage();
+}
+    
 void JiraAgent::processJiraData()
 {
     // Find model from which we had been started
@@ -177,7 +188,10 @@ void JiraAgent::processJiraData()
 		}
 	    }
 	    if (ticket_desc.count() <= 0 )
-		qWarning() << "JiraAgent: Couldn't find data";
+            {
+                qWarning() << "JiraAgent: Couldn't find data";
+                undoUpdateMessage( missionBI );
+            }
 	    else if (missionType == SingleTicket)
 	    {
 		// Only single ticket changed
@@ -274,3 +288,16 @@ void JiraAgent::setModelJiraData (VymModel *model, BranchItem *bi, const QString
     model->select(oldSelection);
 }
 
+void JiraAgent::undoUpdateMessage(BranchItem *bi)
+{
+    VymModel *model = mainWindow->getModel (modelID);
+    if (model)
+    {
+	if (!bi) bi = (BranchItem*)(model->findID (branchID));	    
+	if (bi)
+	{
+            model->setHeading(oldHeading, bi);
+        } else
+            qWarning() << "JiraAgent::undoUpdateMessage couldn't find branch item!";
+    }
+}
