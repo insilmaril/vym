@@ -90,7 +90,7 @@ JiraAgent::JiraAgent (BranchItem *bi,const QString &u)
     }
 	
     QTimer *killTimer = new QTimer(p); 
-    killTimer->setInterval(3000); 
+    killTimer->setInterval(10000); 
     killTimer->setSingleShot(true); 
 
     QObject::connect(killTimer, SIGNAL(timeout()), this, SLOT(timeout()));
@@ -99,6 +99,7 @@ JiraAgent::JiraAgent (BranchItem *bi,const QString &u)
 
 JiraAgent::~JiraAgent ()
 {
+    // qDebug() <<" Destr JA";
     delete p;
 }
 
