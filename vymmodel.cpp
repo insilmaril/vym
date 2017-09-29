@@ -1847,7 +1847,7 @@ void VymModel::setHeadingPlainText(const QString &s, BranchItem *bi)
 
 Heading VymModel::getHeading()
 {
-    TreeItem *selti=getSelectedItem();
+    TreeItem *selti = getSelectedItem();
     if (selti) return  selti->getHeading();
     qWarning() << "VymModel::getHeading Nothing selected.";
     return Heading();
