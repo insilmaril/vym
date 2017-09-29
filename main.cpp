@@ -163,8 +163,8 @@ int main(int argc, char* argv[])
     options.add ("locale", Option::String, "locale", "locale");
     options.add ("name", Option::String, "n", "name");
     options.add ("quit", Option::Switch, "q", "quit");
-    options.add ("run", Option::String, "r", "run");
-    options.add ("restore", Option::Switch, "R", "restore");
+    options.add ("run", Option::String, "R", "run");
+    options.add ("restore", Option::Switch, "r", "restore");
     options.add ("shortcuts", Option::Switch, "s", "shortcuts");
     options.add ("shortcutsLaTeX", Option::Switch, "sl", "shortcutsLaTeX");
     options.add ("testmode", Option::Switch, "t", "testmode");
@@ -187,8 +187,8 @@ int main(int argc, char* argv[])
                 "--locale     locale      Override system locale setting to select language\n"
                 "-n  STRING   name        Set name of instance for DBus access\n"
                 "-q           quit        Quit immediatly after start for benchmarking\n"
-                "-r  FILE     run         Run script\n"
-                "-R           restore     Restore last session\n"
+                "-R  FILE     run         Run script\n"
+                "-r           restore     Restore last session\n"
                 "-s           shortcuts   Show Keyboard shortcuts on start\n"
                 "--sl         LaTeX       Show Keyboard shortcuts in LaTeX format on start\n"
                 "-t           testmode    Test mode, e.g. no autosave and changing of its setting\n"
