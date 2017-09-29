@@ -19,7 +19,6 @@ private:
 
 public:
     ScriptEditor (QWidget *parent = 0);
-    bool setScriptFile (const QString &fn);
     QString getScriptFile();
     void setSlideScript(uint vymModelID, uint slideID, const QString &);
 
@@ -30,7 +29,7 @@ public slots:
     void saveSlide();
     void loadMacro();
     void saveMacro();
-    void loadFile();
+    bool loadFile(QString fn = "");
     void saveFile();
     void saveFileAs();
 

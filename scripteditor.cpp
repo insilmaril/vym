@@ -84,17 +84,6 @@ ScriptEditor::ScriptEditor (QWidget *parent):QWidget( parent )
     //connect( a, SIGNAL( triggered() ), this, SLOT( saveSlide() ) );
 }
 
-bool ScriptEditor::setScriptFile(const QString &fn) 
-{
-    QString script;
-    if ( loadStringFromDisk( fn, script) )
-    {
-        ui.fileEditor->setText ( script );
-        return true;
-    } else
-        return false;
-}
-
 QString ScriptEditor::getScriptFile()
 {
     return ui.fileEditor->toPlainText();
@@ -150,14 +139,18 @@ void ScriptEditor::saveMacro()
     filename = macros.getPath(ui.keyCombo->currentIndex() + 1);
     saveFile();
 }
-void ScriptEditor::loadFile()
+
+bool ScriptEditor::loadFile(QString fn)
 {
-    QString filter("VYM scripts (*.vys);;All (*)");
-    QString fn = QFileDialog::getOpenFileName( 
-	this,
-	vymName + " - " + tr("Load script"), 
-	lastMapDir.path(), 
-	filter);
+    if (fn.isEmpty() )
+    {
+        QString filter("VYM scripts (*.vys);;All (*)");
+        fn = QFileDialog::getOpenFileName( 
+            this,
+            vymName + " - " + tr("Load script"), 
+            lastMapDir.path(), 
+            filter);
+    }
 
     if (!fn.isEmpty() )
     {
@@ -167,7 +160,7 @@ void ScriptEditor::loadFile()
 	    QMessageBox::warning(0, 
 		tr("Error"),
 		tr("Couldn't open %1.\n").arg(filename));
-	    return;
+	    return false;
 	}   
 
         filename = fn;
@@ -177,7 +170,9 @@ void ScriptEditor::loadFile()
         ui.fileNameLabel->setText( filename );
 	f.close();
 	lastMapDir.setPath(fn.left(fn.lastIndexOf ("/")) );
-    }
+        return true;
+    } else
+        return false;
 }
 
 void ScriptEditor::saveFile()

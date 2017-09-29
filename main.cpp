@@ -490,13 +490,13 @@ int main(int argc, char* argv[])
     if (options.isOn ("load"))
     {
         QString fn = options.getArg ("load");
-        if (!scriptEditor->setScriptFile ( fn ) )
+        if (!scriptEditor->loadFile ( fn ) )
         {
             QString error (QObject::tr("Error"));
             QString msg (QObject::tr("Couldn't open \"%1\"\n.").arg(fn));
             if (options.isOn("batch"))
-                qWarning ()<<error+": "+msg;
-            else QMessageBox::warning(0, error,msg);
+                qWarning () << error + ": " + msg;
+            else QMessageBox::warning(0, error, msg);
             return 0;
         }
     }
@@ -506,13 +506,13 @@ int main(int argc, char* argv[])
     {
         QString script;
         QString fn = options.getArg ("run");
-        if (!scriptEditor->setScriptFile ( fn ) )
+        if (!scriptEditor->loadFile ( fn ) )
         {
             QString error (QObject::tr("Error"));
             QString msg (QObject::tr("Couldn't open \"%1\"\n.").arg(fn));
             if (options.isOn("batch"))
-                qWarning ()<<error+": "+msg;
-            else QMessageBox::warning(0, error,msg);
+                qWarning () << error + ": " + msg;
+            else QMessageBox::warning(0, error, msg);
             return 0;
         }
         m.runScript (scriptEditor->getScriptFile() );
