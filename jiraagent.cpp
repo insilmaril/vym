@@ -99,7 +99,6 @@ JiraAgent::JiraAgent (BranchItem *bi,const QString &u)
 
 JiraAgent::~JiraAgent ()
 {
-    qDebug() <<" Destr JA";
     delete p;
 }
 
