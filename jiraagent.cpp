@@ -110,8 +110,10 @@ void JiraAgent::processFinished(int exitCode, QProcess::ExitStatus exitStatus)
 	result=p->getStdout().split("\n");
 	QString err = p->getErrout();
 	if (!err.isEmpty())
-	    qWarning() << "JiraAgent Error: " << err;
-	else 
+        {
+	    qWarning() << "JiraAgent Error: \n" << err;
+            undoUpdateMessage();
+        } else 
 	    processJiraData ();
 
     } else	
