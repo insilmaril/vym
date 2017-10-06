@@ -80,13 +80,13 @@ JiraAgent::JiraAgent (BranchItem *bi,const QString &u)
     {
 	qWarning() << "JiraAgent::getJiraData couldn't start " << ticketScript;
 	return; 
-    }	 
+    }
 
     // Visual hint that we are doing something  // FIXME-4 show spinner instead?
     if (missionType == SingleTicket)
     {
         oldHeading = bi->getHeading();
-        model->setHeading ("Updating: " + bi->getHeadingPlain(), bi ); //FIXME-4 translation needed?
+        model->setHeadingPlainText ("Updating: " + bi->getHeadingPlain(), bi ); //FIXME-4 translation needed?
     }
 	
     QTimer *killTimer = new QTimer(p); 

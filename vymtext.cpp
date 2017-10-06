@@ -31,7 +31,8 @@ bool VymText::operator== (const VymText &other)
     if ( text == other.text &&
          fonthint == other.fonthint &&
         textmode == other.textmode &&
-        filenamehint == other.filenamehint
+        filenamehint == other.filenamehint &&
+        color == other.color
     )
         return true;
     else
