@@ -684,7 +684,7 @@ bool TextEditor::eventFilter( QObject *obj, QEvent *ev)
     if (obj == e ) {
         if (ev->type() == QEvent::KeyPress) {
             QKeyEvent *keyEvent = static_cast<QKeyEvent*>(ev);
-            if(keyEvent == QKeySequence::Paste) 
+            if(keyEvent == QKeySequence::Paste)    
             {
                 // switch editor mode to match clipboard content before pasting
                 const QClipboard *clipboard = QApplication::clipboard();
@@ -932,6 +932,9 @@ void TextEditor::toggleFonthint()
 
 void TextEditor::setRichTextMode(bool b)
 {
+    // Avoid changes which would reposition cursor before pasting
+    if (b == actionFormatRichText->isChecked() ) return;
+
     if (b)
     {
         e->setHtml (e->toHtml());
