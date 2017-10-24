@@ -100,7 +100,7 @@ Selection::Selection()
 void Selection::test()
 {
     qDebug() << "Selection::testSelection called"; // TODO debug
-    if (modelWrapper) odelWrapper->setHeadingPlainText("huhu!");
+    if (modelWrapper) modelWrapper->setHeadingPlainText("huhu!");
 }
 
 bool Selection::setModel(VymModelWrapper *mw)
