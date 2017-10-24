@@ -5752,6 +5752,11 @@ QVariant Main::runScript (const QString &script)
     QScriptValue val2 = scriptEngine.newQObject( &vymWrapper );
     scriptEngine.globalObject().setProperty("vym", val2);
 
+    // Create wrapper object for selection
+    Selection selection;
+    QScriptValue val3 = scriptEngine.newQObject( &selection );
+    scriptEngine.globalObject().setProperty("selection", val3);
+
     // Run script
     QScriptValue result = scriptEngine.evaluate(script);
 

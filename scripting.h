@@ -9,7 +9,7 @@
 #include <QVariant>
 
 class BranchItem;
-class VymModel;
+class VymModelWrapper;
 
 void logError(QScriptContext *context, QScriptContext::Error error, const QString &text);
 
@@ -40,5 +40,20 @@ public slots:
     void toggleTreeEditor();
     QString version();
 };
+
+class Selection : public VymScriptContext
+{
+    Q_OBJECT
+public:
+    Selection();
+
+public slots:
+    void test();
+    bool setModel(VymModelWrapper* mw);
+
+private:
+    VymModelWrapper* modelWrapper;
+};
+
 
 #endif

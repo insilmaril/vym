@@ -830,7 +830,6 @@ public slots:
 private:
     SlideModel* slideModel;
     bool blockSlideSelection;
-
 };
 
 #endif

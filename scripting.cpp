@@ -4,7 +4,7 @@
 #include "imageitem.h"
 #include "mainwindow.h"
 #include "misc.h"
-#include "vymmodel.h"
+#include "vymmodelwrapper.h"
 #include "vymtext.h"
 #include "xlink.h"
 
@@ -88,5 +88,24 @@ void VymWrapper::toggleTreeEditor()
 QString VymWrapper::version()
 {
     return setResult( vymVersion );
+}
+
+
+// See also http://doc.qt.io/qt-5/qscriptengine.html#newFunction
+Selection::Selection()
+{
+    modelWrapper = NULL;
+}
+
+void Selection::test()
+{
+    qDebug() << "Selection::testSelection called"; // TODO debug
+    if (modelWrapper) odelWrapper->setHeadingPlainText("huhu!");
+}
+
+bool Selection::setModel(VymModelWrapper *mw)
+{
+    qDebug() << "Selection::setModel called: " << mw; // TODO debug
+    modelWrapper = mw;
 }
 

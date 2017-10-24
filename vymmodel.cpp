@@ -6062,4 +6062,3 @@ void VymModel::updateSlideSelection (QItemSelection newsel,QItemSelection)
     }
 }
 
-
