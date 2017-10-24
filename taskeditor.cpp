@@ -34,7 +34,7 @@ TaskEditor::TaskEditor(QWidget *)
 
     // Original icon from KDE: /usr/share/icons/oxygen/16x16/actions/view-filter.png
 
-    QIcon icon=QIcon (":/view-filter.png");
+    QIcon icon = QIcon (":/view-filter.png");
     QAction *a = new QAction(icon,  tr( "Current map","TaskEditor" ),this );
     a->setCheckable(true);
     a->setChecked  (settings.value("/taskeditor/filterMap", false).toBool());
@@ -56,14 +56,36 @@ TaskEditor::TaskEditor(QWidget *)
     connect( a, SIGNAL( triggered() ), this, SLOT(toggleFilterNew() ) );
     actionToggleFilterNew = a;
 
-    a = new QAction(icon,  "Flag", this); //tr( "Flags","TaskEditor" ),this );   // FIXME-1 add translation
+    icon = QIcon (":/flag-arrow-up.png");
+    a = new QAction(icon, "", this); //tr( "Flags","TaskEditor" ),this );   // FIXME-1 add translation
+    a->setToolTip("Flag 1 (arrow-up)");
     a->setCheckable(true);
-    a->setChecked  (settings.value("/taskeditor/filterNew", false).toBool());
+    a->setChecked  (settings.value("/taskeditor/filterFlags1", false).toBool());
     if (settings.value( "/mainwindow/showTestMenu",false).toBool())
         tb->addAction (a);
-    connect( a, SIGNAL( triggered() ), this, SLOT(toggleFilterFlags() ) );
-    actionToggleFilterFlags = a;
+    connect( a, SIGNAL( triggered() ), this, SLOT(toggleFilterFlags1() ) );
+    actionToggleFilterFlags1 = a;
 
+    icon = QIcon (":/flag-2arrow-up.png");
+    a = new QAction(icon,  "", this); //tr( "Flags","TaskEditor" ),this );   // FIXME-1 add translation
+    a->setToolTip("Flag 2 (2arrow-up)");
+    a->setCheckable(true);
+    a->setChecked  (settings.value("/taskeditor/filterFlags2", false).toBool());
+    if (settings.value( "/mainwindow/showTestMenu",false).toBool())
+        tb->addAction (a);
+    connect( a, SIGNAL( triggered() ), this, SLOT(toggleFilterFlags2() ) );
+    actionToggleFilterFlags2 = a;
+
+    icon = QIcon (":/flag-stopsign.png");
+    a = new QAction(icon,  "", this); //tr( "Flags","TaskEditor" ),this );   // FIXME-1 add translation
+    a->setToolTip("Flag 3 (stopsign)");
+    a->setCheckable(true);
+    a->setChecked  (settings.value("/taskeditor/filterFlags3", false).toBool());
+    if (settings.value( "/mainwindow/showTestMenu",false).toBool())
+        tb->addAction (a);
+    connect( a, SIGNAL( triggered() ), this, SLOT(toggleFilterFlags3() ) );
+    actionToggleFilterFlags3 = a;
+    //
     // Forward Enter and Return to MapEditor
     a = new QAction(icon, tr( "Edit heading","TaskEditor" ), this);
     a->setShortcut ( Qt::Key_Return);		
@@ -128,7 +150,9 @@ TaskEditor::TaskEditor(QWidget *)
     setFilterMap();
     setFilterActive();
     setFilterNew();
-    setFilterFlags();
+    setFilterFlags1();
+    setFilterFlags2();
+    setFilterFlags3();
 
     // Initialize column widths and visibility
     QString s;
@@ -199,9 +223,21 @@ void TaskEditor::setFilterNew ()
     sort();
 }
 
-void TaskEditor::setFilterFlags ()  // FIXME-1 experimental
+void TaskEditor::setFilterFlags1 ()  // FIXME-1 experimental
 {
-    filterActiveModel->setFilterFlags (actionToggleFilterFlags->isChecked() );
+    filterActiveModel->setFilterFlags1 (actionToggleFilterFlags1->isChecked() );
+    sort();
+}
+
+void TaskEditor::setFilterFlags2 ()  // FIXME-1 experimental
+{
+    filterActiveModel->setFilterFlags2(actionToggleFilterFlags2->isChecked() );
+    sort();
+}
+
+void TaskEditor::setFilterFlags3 ()  // FIXME-1 experimental
+{
+    filterActiveModel->setFilterFlags3 (actionToggleFilterFlags3->isChecked() );
     sort();
 }
 
@@ -291,7 +327,15 @@ void TaskEditor::toggleFilterNew ()
     setFilterNew();
 }
 
-void TaskEditor::toggleFilterFlags ()
+void TaskEditor::toggleFilterFlags1 ()
 {
-    setFilterFlags();
+    setFilterFlags1();
+}
+void TaskEditor::toggleFilterFlags2 ()
+{
+    setFilterFlags2();
+}
+void TaskEditor::toggleFilterFlags3 ()
+{
+    setFilterFlags3();
 }

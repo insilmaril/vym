@@ -22,10 +22,21 @@ void TaskFilterModel::setFilterNew (bool b)
     filterNew = b;
 }
 
-void TaskFilterModel::setFilterFlags (bool b)
+void TaskFilterModel::setFilterFlags1 (bool b)
 {
-    filterFlags = b;
+    filterFlags1 = b;
 }
+
+void TaskFilterModel::setFilterFlags2 (bool b)
+{
+    filterFlags2 = b;
+}
+
+void TaskFilterModel::setFilterFlags3 (bool b)
+{
+    filterFlags3 = b;
+}
+
 bool TaskFilterModel::filterAcceptsRow(int sourceRow, 
          const QModelIndex &sourceParent) const
 {
@@ -46,9 +57,16 @@ bool TaskFilterModel::filterAcceptsRow(int sourceRow,
         return false;
 
     // Filter flags  // FIXME-1 currently only "arrow-up"
-    if (filterFlags && !taskModel->getTask(ix)->getBranch()->hasActiveStandardFlag("arrow-up") )
+    if (filterFlags1 && !taskModel->getTask(ix)->getBranch()->hasActiveStandardFlag("arrow-up") )
         return false;
 
+    // Filter flags  // FIXME-1 currently only "2arrow-up"
+    if (filterFlags2 && !taskModel->getTask(ix)->getBranch()->hasActiveStandardFlag("2arrow-up") )
+        return false;
+
+    // Filter flags  // FIXME-1 currently only "stopsign"
+    if (filterFlags3 && !taskModel->getTask(ix)->getBranch()->hasActiveStandardFlag("stopsign") )
+        return false;
     return true;
 }
 
