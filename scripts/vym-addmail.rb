@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-load File.expand_path("../vym-ruby.rb", __FILE__)
+require File.expand_path("../vym-ruby", __FILE__) 
 require 'tempfile'
 require 'mail'
 
@@ -41,7 +41,6 @@ begin
 
     out.rewind
 
-
     vym_mgr = VymManager.new
     vym = vym_mgr.find('production') 
     if !vym
@@ -53,11 +52,14 @@ begin
     mapNumber = vym.currentModel
     map = vym.map(1)
 
+    # Before doing anything, make sure there is a return value available
+    # Otherwise the script might block     // FIXME-1
+    vym.version
+
     map.addBranch()
     map.selectLatestAdded
     map.setHeadingPlainText(mail.subject)
     map.loadNote(out.path)
-    exit
   ensure
     out.close
     out.unlink

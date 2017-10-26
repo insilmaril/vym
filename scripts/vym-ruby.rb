@@ -13,6 +13,7 @@ class Vym
 
     # Use metaprogramming to create methods for commands in vym
     # Getting commands for mainwindow via DBUS
+    puts "Vym::initialize Retrieving commands via dbus..." if $debug
     s = @main.listCommands
     @vym_commands = s[0].split ","
     @vym_commands.each do |c|
@@ -96,9 +97,10 @@ class VymMap
     #if modelCount > 0
       # m = model(1)
       s = @map.listCommands
+      puts "VymMap::initialize Retrieving commands via dbus..." if $debug
       @model_commands = s[0].split ","
       @model_commands.each do |c|
-        puts "Creating map command: #{c}" if $debug
+      #puts "Creating map command: #{c}" if $debug
         self.class.send(:define_method, c) do |*pars|
           if pars.length == 0
             # No parameters
@@ -120,6 +122,7 @@ class VymMap
             com = " vym.currentMap().#{c} (#{a.join(',')});"
             puts " ** Calling model: \"#{com}\":" if $debug
             ret = @map.execute( com )
+            puts "Done calling" if $debug
           end  
 
           #FIXME-0 err = m.errorLevel[0]
