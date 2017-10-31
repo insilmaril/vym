@@ -638,32 +638,32 @@ QString ExportHTML::getBranchText(BranchItem *current)
 {
     if (current)
     {
-        bool vis=false;
+        bool vis = false;
         QRectF hr;
-        LinkableMapObj *lmo=current->getLMO();
+        LinkableMapObj *lmo = current->getLMO();
         if (lmo)
         {
-            hr=((BranchObj*)lmo)->getBBoxHeading();
-            vis=lmo->isVisibleObj();
+            hr = ((BranchObj*)lmo)->getBBoxHeading();
+            vis = lmo->isVisibleObj();
         }
         QString col;
-        QString id=model->getSelectString(current);
+        QString id = model->getSelectString(current);
         if (dia.useTextColor)
-            col=QString("style='color:%1'").arg(current->getHeadingColor().name());
-        QString s=QString("<span class='vym-branch-%1' %2 id='%3'>")
+            col = QString("style='color:%1'").arg(current->getHeadingColor().name());
+        QString s = QString("<span class='vym-branch-%1' %2 id='%3'>")
                 .arg(current->depth())
                 .arg(col)
                 .arg(id);
-        QString url=current->getURL();
-        QString heading=quotemeta(current->getHeadingPlain());
+        QString url = current->getURL();
+        QString heading = quotemeta(current->getHeadingPlain());
 
         // Task flags
         QString taskFlags;
         if (dia.useTaskFlags)
         {
-            Task *task=current->getTask();
+            Task *task = current->getTask();
             if (task)
-                taskFlags+=QString("<img src=\"flags/flag-%1.png\">").arg(task->getIconString());
+                taskFlags += QString("<img src=\"flags/flag-%1.png\">").arg(task->getIconString());
         }
 
         // User flags
@@ -671,36 +671,36 @@ QString ExportHTML::getBranchText(BranchItem *current)
         if (dia.useUserFlags)
         {
             foreach (QString flag, current->activeStandardFlagNames())
-                userFlags+=QString("<img src=\"flags/flag-%1.png\">").arg(flag);
+                userFlags += QString("<img src=\"flags/flag-%1.png\">").arg(flag);
         }
 
         // URL
         if (!url.isEmpty())
         {
-            s+=QString ("<a href=\"%1\"><img src=\"flags/flag-url-16x16.png\">%2</a>")
+            s += QString ("<a href=\"%1\"><img src=\"flags/flag-url-16x16.png\">%2</a>")
                     .arg(url)
                     .arg(taskFlags + heading + userFlags);
 
-            QRectF fbox=current->getBBoxURLFlag ();
+            QRectF fbox = current->getBBoxURLFlag ();
             if (vis)
-                imageMap+=QString("  <area shape='rect' coords='%1,%2,%3,%4' href='%5'>\n")
-                        .arg(fbox.left()-offset.x())
-                        .arg(fbox.top()-offset.y())
-                        .arg(fbox.right()-offset.x())
-                        .arg(fbox.bottom()-offset.y())
+                imageMap += QString("  <area shape='rect' coords='%1,%2,%3,%4' href='%5'>\n")
+                        .arg(fbox.left()   - offset.x())
+                        .arg(fbox.top()    - offset.y())
+                        .arg(fbox.right()  - offset.x())
+                        .arg(fbox.bottom() - offset.y())
                         .arg(url);
         } else
-            s+=taskFlags + heading + userFlags;
+            s += taskFlags + heading + userFlags;
 
-        s+="</span>";
+        s += "</span>";
 
         // Create imagemap
         if (vis && dia.includeMapImage)
-            imageMap+=QString("  <area shape='rect' coords='%1,%2,%3,%4' href='#%5'>\n")
-                    .arg(hr.left()-offset.x())
-                    .arg(hr.top()-offset.y())
-                    .arg(hr.right()-offset.x())
-                    .arg(hr.bottom()-offset.y())
+            imageMap += QString("  <area shape='rect' coords='%1,%2,%3,%4' href='#%5'>\n")
+                    .arg(hr.left()   - offset.x())
+                    .arg(hr.top()    - offset.y())
+                    .arg(hr.right()  - offset.x())
+                    .arg(hr.bottom() - offset.y())
                     .arg(id);
 
         // Include image experimental
