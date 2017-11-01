@@ -771,12 +771,12 @@ QString ExportHTML::buildList (BranchItem *current)
 {
     QString r;
 
-    uint i=0;
-    uint visChilds=0;
+    uint i = 0;
+    uint visChilds = 0;
 
-    BranchItem *bi=current->getFirstBranch();
+    BranchItem *bi = current->getFirstBranch();
 
-    QString ind="\n" + indent(current->depth() + 1, false);
+    QString ind = "\n" + indent(current->depth() + 1, false);
 
     QString sectionBegin;
     QString sectionEnd;
@@ -786,22 +786,22 @@ QString ExportHTML::buildList (BranchItem *current)
     switch (current->depth() + 1)
     {
     case 0:
-        sectionBegin="";
-        sectionEnd="";
-        itemBegin="<h1>";
-        itemEnd="</h1>";
+        sectionBegin = "";
+        sectionEnd   = "";
+        itemBegin    = "<h1>";
+        itemEnd      = "</h1>";
         break;
     case 1:
-        sectionBegin="";
-        sectionEnd="";
-        itemBegin="<h2>";
-        itemEnd="</h2>";
+        sectionBegin = "";
+        sectionEnd   = "";
+        itemBegin    = "<h2>";
+        itemEnd      = "</h2>";
         break;
     default:
-        sectionBegin="<ul " + QString("class=\"vym-list-ul-%1\"").arg(current->depth() + 1)  +">";
-        sectionEnd="</ul>";
-        itemBegin="  <li>";
-        itemEnd="  </li>";
+        sectionBegin = "<ul " + QString("class=\"vym-list-ul-%1\"").arg(current->depth() + 1)  +">";
+        sectionEnd   = "</ul>";
+        itemBegin    = "  <li>";
+        itemEnd      = "  </li>";
         break;
     }
     
@@ -813,18 +813,18 @@ QString ExportHTML::buildList (BranchItem *current)
             if (!bi->hasHiddenExportParent() && !bi->isHidden())
             {
                 visChilds++;
-                r+=ind + itemBegin;
-                r+=getBranchText (bi);
+                r += ind + itemBegin;
+                r += getBranchText (bi);
 
                 if (itemBegin.startsWith("<h") )
-                    r+=itemEnd + buildList (bi);
+                    r += itemEnd + buildList (bi);
                 else
-                    r+=buildList (bi) + itemEnd;
+                    r += buildList (bi) + itemEnd;
             }
             i++;
-            bi=current->getBranchNum(i);
+            bi = current->getBranchNum(i);
         }
-        r+=ind + sectionEnd;
+        r += ind + sectionEnd;
     }
 
     return r;
@@ -932,18 +932,18 @@ void ExportHTML::doExport(bool useDialog)
         if (!dia.getDir().mkdir("flags"))
         {
             QMessageBox::critical( 0,
-                                   QObject:: tr( "Critical" ),
-                                   QObject::tr("Trying to create directory for flags:")+"\n\n"+
+                                   QObject::tr( "Critical" ),
+                                   QObject::tr("Trying to create directory for flags:") + "\n\n" +
                                    QObject::tr("Could not create %1").arg(flagsDst.absolutePath()));
             return;
         }
     }
 
     QDir flagsSrc(flagsPath);   // FIXME-3 don't use flagsPath as source anymore, but copy required flags directly from memory
-    if (!copyDir(flagsSrc,flagsDst,true))
+    if (!copyDir(flagsSrc, flagsDst, true))
     {
         QMessageBox::critical( 0,
-                               QObject:: tr( "Critical" ),
+                               QObject::tr( "Critical" ),
                                QObject::tr("Could not copy %1 to %2").arg(flagsSrc.absolutePath()).arg(flagsDst.absolutePath()));
         return;
     }
@@ -954,7 +954,7 @@ void ExportHTML::doExport(bool useDialog)
     {
         QMessageBox::critical (0,
                                QObject::tr("Critical Export Error"),
-                               QObject::tr("Trying to save HTML file:")+"\n\n"+
+                               QObject::tr("Trying to save HTML file:") + "\n\n"+
                                QObject::tr("Could not write %1").arg(filePath));
         mainWindow->statusMessage(QString(QObject::tr("Export failed.")));
         return;
@@ -966,23 +966,24 @@ void ExportHTML::doExport(bool useDialog)
     model->setExportMode (true);
 
     // Write header
-    ts<<"<html>";
-    ts<<"\n<meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\"> ";
-    ts<<"\n<meta name=\"generator=\" content=\" vym - view your mind - " + vymHome + "\">";
-    ts<<"\n<meta name=\"author\" content=\"" + quotemeta(model->getAuthor()) + "\"> ";
-    ts<<"\n<meta name=\"description\" content=\"" + quotemeta(model->getComment()) + "\"> ";
-    ts<<"\n<link rel='stylesheet' id='css.stylesheet' href='"<<basename(cssDst)<<"' />\n";
+    ts << "<html>";
+    ts << "\n<meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\"> ";
+    ts << "\n<meta name=\"generator=\" content=\" vym - view your mind - " + vymHome + "\">";
+    ts << "\n<meta name=\"author\" content=\"" + quotemeta(model->getAuthor()) + "\"> ";
+    ts << "\n<meta name=\"description\" content=\"" + quotemeta(model->getComment()) + "\"> ";
+    ts << "\n<link rel='stylesheet' id='css.stylesheet' href='" << basename(cssDst) << "' />\n";
     QString title=model->getTitle();
     if (title.isEmpty()) title=model->getMapName();
-    ts<<"\n<head><title>" + quotemeta(title) + "</title></head>";
-    ts<<"\n<body>\n";
+    ts << "\n<head><title>" + quotemeta(title) + "</title></head>";
+    ts << "\n<body>\n";
 
     // Include image
     // (be careful: this resets Export mode, so call before exporting branches)
     if (dia.includeMapImage)
     {
-        ts<<"<center><img src=\""<<getMapName()<<".png\" usemap='#imagemap'></center>\n";
-        offset=model->exportImage (dirPath+"/"+getMapName()+".png",false,"PNG");
+        QString mapName = getMapName();
+        ts << "<center><img src=\"" << mapName << ".png\" alt=\"" << mapName + ".png" << "\" usemap='#imagemap'></center>\n";
+        offset = model->exportImage (dirPath + "/" + mapName + ".png", false, "PNG");
     }
 
     // Include table of contents
@@ -992,18 +993,18 @@ void ExportHTML::doExport(bool useDialog)
     ts << buildList(model->getRootItem()) << "\n";
 
     // Imagemap
-    ts<<"<map name='imagemap'>\n"+imageMap+"</map>\n";
+    ts << "<map name='imagemap'>\n" + imageMap + "</map>\n";
 
     // Write footer
-    ts<<"<hr/>\n";
-    ts<<"<table class=\"vym-footer\">   \n\
+    ts << "<hr/>\n";
+    ts << "<table class=\"vym-footer\">   \n\
         <tr> \n\
-        <td class=\"vym-footerL\">"+filePath+"</td> \n\
-            <td class=\"vym-footerC\">"+model->getDate()+"</td> \n\
-            <td class=\"vym-footerR\"> <a href='" + vymHome + "'>vym "+vymVersion+"</a></td> \n\
+        <td class=\"vym-footerL\">" + filePath + "</td> \n\
+            <td class=\"vym-footerC\">" + model->getDate() + "</td> \n\
+            <td class=\"vym-footerR\"> <a href='" + vymHome + "'>vym " + vymVersion + "</a></td> \n\
             </tr> \n \
             </table>\n";
-            ts<<"</body></html>";
+            ts << "</body></html>";
     file.close();
 
     if (!dia.postscript.isEmpty())
