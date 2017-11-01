@@ -683,11 +683,12 @@ QString ExportHTML::getBranchText(BranchItem *current)
 
             QRectF fbox = current->getBBoxURLFlag ();
             if (vis)
-                imageMap += QString("  <area shape='rect' coords='%1,%2,%3,%4' href='%5'>\n")
+                imageMap += QString("  <area shape='rect' coords='%1,%2,%3,%4' href='%5' alt='%6'>\n")
                         .arg(fbox.left()   - offset.x())
                         .arg(fbox.top()    - offset.y())
                         .arg(fbox.right()  - offset.x())
                         .arg(fbox.bottom() - offset.y())
+                        .arg(url)
                         .arg(url);
         } else
             s += taskFlags + heading + userFlags;
@@ -696,14 +697,15 @@ QString ExportHTML::getBranchText(BranchItem *current)
 
         // Create imagemap
         if (vis && dia.includeMapImage)
-            imageMap += QString("  <area shape='rect' coords='%1,%2,%3,%4' href='#%5'>\n")
+            imageMap += QString("  <area shape='rect' coords='%1,%2,%3,%4' href='#%5' alt='%6'>\n")
                     .arg(hr.left()   - offset.x())
                     .arg(hr.top()    - offset.y())
                     .arg(hr.right()  - offset.x())
                     .arg(hr.bottom() - offset.y())
-                    .arg(id);
+                    .arg(id)
+                    .arg(heading);
 
-        // Include image experimental
+        // Include images experimental
         if (dia.includeImages)
         {
             int imageCount = current->imageCount();
