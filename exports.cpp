@@ -677,7 +677,7 @@ QString ExportHTML::getBranchText(BranchItem *current)
         // URL
         if (!url.isEmpty())
         {
-            s += QString ("<a href=\"%1\"><img src=\"flags/flag-url-16x16.png\">%2</a>")
+            s += QString ("<a href=\"%1\"><img src=\"flags/flag-url.png\">%2</a>")
                     .arg(url)
                     .arg(taskFlags + heading + userFlags);
 
