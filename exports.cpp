@@ -689,7 +689,7 @@ QString ExportHTML::getBranchText(BranchItem *current)
                         .arg(fbox.right()  - offset.x())
                         .arg(fbox.bottom() - offset.y())
                         .arg(url)
-                        .arg(url);
+                        .arg(QObject::tr("External link: %1","Alt tag in HTML export").arg(heading));
         } else
             s += taskFlags + heading + userFlags;
 
@@ -716,7 +716,9 @@ QString ExportHTML::getBranchText(BranchItem *current)
                 image = current->getImageNum(i);
                 imagePath =  "image-" + image->getUuid().toString() + ".png";
                 image->save( dirPath + "/" + imagePath, "PNG");
-                s += "</br><img src=\"" + imagePath + "\"></br>";
+                s += "</br><img src=\"" + imagePath;
+                s += "\" alt=\"" + QObject::tr("Image: %1","Alt tag in HTML export").arg(image->getOriginalFilename());
+                s += "\"></br>";
             }
         }
 
@@ -982,7 +984,9 @@ void ExportHTML::doExport(bool useDialog)
     if (dia.includeMapImage)
     {
         QString mapName = getMapName();
-        ts << "<center><img src=\"" << mapName << ".png\" alt=\"" << mapName + ".png" << "\" usemap='#imagemap'></center>\n";
+        ts << "<center><img src=\"" << mapName << ".png\"";
+        ts << "alt=\"" << QObject::tr("Image of map: %1.png","Alt tag in HTML export").arg(mapName) << "\"";
+        ts << " usemap='#imagemap'></center>\n";
         offset = model->exportImage (dirPath + "/" + mapName + ".png", false, "PNG");
     }
 
