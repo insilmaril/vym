@@ -681,13 +681,17 @@ QString ExportHTML::getBranchText(BranchItem *current)
                     .arg(QObject::tr("Flag: %1","Alt tag in HTML export").arg(flag));
         }
 
+        // Numbering
+        QString number;
+        if (dia.useNumbering) number = getSectionString(current) + " ";
+        
         // URL
         if (!url.isEmpty())
         {
-            s += QString ("<a href=\"%1\"><img src=\"flags/flag-url.png\" alt=\"%2\">%3</a>")
+            s += QString ("<a href=\"%1\">%2<img src=\"flags/flag-url.png\" alt=\"%3\"></a>")
                     .arg(url)
-                    .arg(QObject::tr("Flag: url","Alt tag in HTML export"))
-                    .arg(taskFlags + heading + userFlags);
+                    .arg(number + taskFlags + heading + userFlags)
+                    .arg(QObject::tr("Flag: url","Alt tag in HTML export"));
 
             QRectF fbox = current->getBBoxURLFlag ();
             if (vis)
@@ -699,7 +703,7 @@ QString ExportHTML::getBranchText(BranchItem *current)
                         .arg(url)
                         .arg(QObject::tr("External link: %1","Alt tag in HTML export").arg(heading));
         } else
-            s += taskFlags + heading + userFlags;
+            s += number + taskFlags + heading + userFlags;
 
         s += "</span>";
 
