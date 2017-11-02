@@ -663,7 +663,12 @@ QString ExportHTML::getBranchText(BranchItem *current)
         {
             Task *task = current->getTask();
             if (task)
-                taskFlags += QString("<img src=\"flags/flag-%1.png\">").arg(task->getIconString());
+            {
+                QString taskName = task->getIconString();
+                taskFlags += QString("<img src=\"flags/flag-%1.png\" alt=\"%2\">")
+                    .arg(taskName)
+                    .arg(QObject::tr("Flag: %1","Alt tag in HTML export").arg(taskName));
+            }
         }
 
         // User flags
@@ -671,14 +676,17 @@ QString ExportHTML::getBranchText(BranchItem *current)
         if (dia.useUserFlags)
         {
             foreach (QString flag, current->activeStandardFlagNames())
-                userFlags += QString("<img src=\"flags/flag-%1.png\">").arg(flag);
+                userFlags += QString("<img src=\"flags/flag-%1.png\" alt=\"%2\">")
+                    .arg(flag)
+                    .arg(QObject::tr("Flag: %1","Alt tag in HTML export").arg(flag));
         }
 
         // URL
         if (!url.isEmpty())
         {
-            s += QString ("<a href=\"%1\"><img src=\"flags/flag-url.png\">%2</a>")
+            s += QString ("<a href=\"%1\"><img src=\"flags/flag-url.png\" alt=\"%2\">%3</a>")
                     .arg(url)
+                    .arg(QObject::tr("Flag: url","Alt tag in HTML export"))
                     .arg(taskFlags + heading + userFlags);
 
             QRectF fbox = current->getBBoxURLFlag ();
@@ -985,7 +993,7 @@ void ExportHTML::doExport(bool useDialog)
     {
         QString mapName = getMapName();
         ts << "<center><img src=\"" << mapName << ".png\"";
-        ts << "alt=\"" << QObject::tr("Image of map: %1.png","Alt tag in HTML export").arg(mapName) << "\"";
+        ts << "alt=\"" << QObject::tr("Image of map: %1.vym","Alt tag in HTML export").arg(mapName) << "\"";
         ts << " usemap='#imagemap'></center>\n";
         offset = model->exportImage (dirPath + "/" + mapName + ".png", false, "PNG");
     }
