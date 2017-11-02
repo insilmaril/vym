@@ -817,7 +817,7 @@ QString ExportHTML::buildList (BranchItem *current)
     
     if (bi && !bi->hasHiddenExportParent() && !bi->isHidden() )
     {
-        r+=ind + sectionBegin;
+        r += ind + sectionBegin;
         while (bi)
         {
             if (!bi->hasHiddenExportParent() && !bi->isHidden())
@@ -850,20 +850,20 @@ QString ExportHTML::createTOC()
     toc += "\n";
     toc += "</td></tr>\n";
     toc += "<tr><td>\n";
-    BranchItem *cur=NULL;
-    BranchItem *prev=NULL;
-    model->nextBranch(cur,prev);
+    BranchItem *cur  = NULL;
+    BranchItem *prev = NULL;
+    model->nextBranch(cur, prev);
     while (cur)
     {
         if (!cur->hasHiddenExportParent() && !cur->hasScrolledParent() )
         {
-            if (dia.useNumbering) number=getSectionString(cur);
-            toc +=QString("<div class=\"vym-toc-branch-%1\">").arg(cur->depth());
-            toc +=QString("<a href=\"#%1\"> %2 %3</a></br>\n")
+            if (dia.useNumbering) number = getSectionString(cur);
+            toc += QString("<div class=\"vym-toc-branch-%1\">").arg(cur->depth());
+            toc += QString("<a href=\"#%1\"> %2 %3</a></br>\n")
                     .arg(model->getSelectString(cur))
                     .arg(number)
                     .arg(quotemeta( cur->getHeadingPlain() ));
-            toc +="</div>";
+            toc += "</div>";
         }
         model->nextBranch(cur,prev);
     }
