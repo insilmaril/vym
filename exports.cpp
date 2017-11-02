@@ -968,7 +968,7 @@ void ExportHTML::doExport(bool useDialog)
     // Write header
     ts << "<html>";
     ts << "\n<meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\"> ";
-    ts << "\n<meta name=\"generator=\" content=\" vym - view your mind - " + vymHome + "\">";
+    ts << "\n<meta name=\"generator=\" content=\" vym - view your mind - " + vymVersion + " - " + vymHome + "\">";
     ts << "\n<meta name=\"author\" content=\"" + quotemeta(model->getAuthor()) + "\"> ";
     ts << "\n<meta name=\"description\" content=\"" + quotemeta(model->getComment()) + "\"> ";
     ts << "\n<link rel='stylesheet' id='css.stylesheet' href='" << basename(cssDst) << "' />\n";
