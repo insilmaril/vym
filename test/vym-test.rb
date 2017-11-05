@@ -132,7 +132,7 @@ def test_export (vym)
   File.delete(pngpath)
   File.delete(csspath)
   vym.exportLast
-  expect "exportLast: HTML file exists", File.exists?(htmlpath), true
+  expect "exportLast: HTML #{htmlpath} file exists", File.exists?(htmlpath), true
   expect "exportLast: HTML image exists", File.exists?(pngpath), true
   expect "exportLast: HTML flags exists", File.exists?(flagpath), true
   expect "exportLast: HTML CSS exists", File.exists?(csspath), true
