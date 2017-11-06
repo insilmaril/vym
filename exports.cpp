@@ -918,6 +918,9 @@ void ExportHTML::doExport(bool useDialog)
     {
         cssSrc=dia.getCssSrc();
         cssDst=dirPath + "/" + basename(dia.getCssDst());
+        qDebug() << "  dirPath: " << dirPath;  // FIXME-0 debug
+        qDebug() << "  dia.css: " << dia.getCssDst();  // FIXME-0 debug
+        qDebug() << "     base: " << basename(dia.getCssDst());  // FIXME-0 debug
         if (cssSrc.isEmpty() )
         {
             QMessageBox::critical( 0,
