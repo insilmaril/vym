@@ -709,14 +709,15 @@ QString ExportHTML::getBranchText(BranchItem *current)
 
         // Create imagemap
         if (vis && dia.includeMapImage)
-            imageMap+=QString("  <area shape='rect' coords='%1,%2,%3,%4' href='#%5'>\n")
-                    .arg(hr.left()-offset.x())
-                    .arg(hr.top()-offset.y())
-                    .arg(hr.right()-offset.x())
-                    .arg(hr.bottom()-offset.y())
-                    .arg(id);
+            imageMap += QString("  <area shape='rect' coords='%1,%2,%3,%4' href='#%5' alt='%6'>\n")
+                    .arg(hr.left()   - offset.x())
+                    .arg(hr.top()    - offset.y())
+                    .arg(hr.right()  - offset.x())
+                    .arg(hr.bottom() - offset.y())
+                    .arg(id)
+                    .arg(heading);
 
-        // Include image experimental
+        // Include images experimental
         if (dia.includeImages)
         {
             int imageCount = current->imageCount();
