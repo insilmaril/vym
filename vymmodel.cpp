@@ -935,7 +935,6 @@ void VymModel::importDirInt(BranchItem *dst, QDir d)
 		else 
 		{
 		    // Recursively add subdirs
-                    if (debug) qDebug() << "Entering subdir: " << bi->getHeadingPlain();
 		    importDirInt (bi, d);
 		    d.cdUp();
 		}
@@ -948,7 +947,6 @@ void VymModel::importDirInt(BranchItem *dst, QDir d)
 	    fi = list.at(i);
 	    if (fi.isFile())
 	    {
-                if (debug) qDebug() << "Added file: " << fi.fileName();
 		bi = addNewBranchInt (dst,-2);
                 bi->setHeadingPlainText (fi.fileName() );
 		bi->setHeadingColor (QColor("black"));

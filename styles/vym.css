@@ -82,9 +82,9 @@ a:hover {
     width:100%; 
     border:1;
 }
-.vym-footerL { font-size:0.7em; color:#676767; text-align:left; }
-.vym-footerC { font-size:0.7em; color:#676767; text-align:center; }
-.vym-footerR { font-size:0.7em; color:#676767; text-align:right; }
+.vym-footerL { font-size:0.7em; color:#676767; text-align:left; width:33%}
+.vym-footerC { font-size:0.7em; color:#676767; text-align:center; width:33%}
+.vym-footerR { font-size:0.7em; color:#676767; text-align:right; width:33%}
 
 .vym-url {} 
 
