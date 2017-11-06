@@ -1044,14 +1044,14 @@ void MapEditor::cursorLast()
 
 void MapEditor::editHeading()
 {
-    if (state==EditingHeading)
+    if (state == EditingHeading)
     {
         editHeadingFinished();
         return;
     }
 
-    BranchObj *bo=model->getSelectedBranchObj();
-    BranchItem *bi=model->getSelectedBranch();
+    BranchObj *bo  = model->getSelectedBranchObj();
+    BranchItem *bi = model->getSelectedBranch();
     if (bo && bo)
     {
         VymText heading = bi->getHeading();
@@ -1062,8 +1062,8 @@ void MapEditor::editHeading()
         }
         model->setSelectionBlocked(true);
 
-        lineEdit=new QLineEdit;
-        QGraphicsProxyWidget *pw=mapScene->addWidget (lineEdit);
+        lineEdit = new QLineEdit;
+        QGraphicsProxyWidget *pw = mapScene->addWidget (lineEdit);
         pw->setZValue (Z_LINEEDIT);
         lineEdit->setCursor(Qt::IBeamCursor);
         lineEdit->setCursorPosition(1);
@@ -1129,20 +1129,20 @@ void MapEditor::contextMenuEvent ( QContextMenuEvent * e )
     // mouseEvent, we don't need to close here.
 
     QPointF p = mapToScene(e->pos());
-    TreeItem *ti=findMapItem (p, NULL);	
+    TreeItem *ti = findMapItem (p, NULL);	
     
     if (ti) 
     {	// MapObj was found
 	model->select (ti);
 
-	LinkableMapObj* lmo=NULL;
+	LinkableMapObj* lmo = NULL;
 	BranchItem* selbi=model->getSelectedBranch();
-	if (ti) lmo=((MapItem*)ti)->getLMO();
+	if (ti) lmo = ((MapItem*)ti)->getLMO();
 
 	// Context Menu 
 	if (lmo && selbi )
 	{
-	    QString foname=((BranchObj*)lmo)->getSystemFlagName(p);
+	    QString foname = ((BranchObj*)lmo)->getSystemFlagName(p);
 	    if (foname.startsWith ("system-task")) 
 		taskContextMenu->popup (e->globalPos() );
 	    else	
