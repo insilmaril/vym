@@ -1068,8 +1068,19 @@ void MapEditor::editHeading()
         lineEdit->setCursor(Qt::IBeamCursor);
         lineEdit->setCursorPosition(1);
 
-        QPointF tl=bo->getOrnamentsBBox().topLeft();
-        QPointF br=tl + QPointF (230,30);
+        QPointF tl;
+        QPointF br;
+        qreal w = 230;
+        qreal h = 30;
+        if (bo->getOrientation() != LinkableMapObj::LeftOfCenter)
+        {
+            tl = bo->getOrnamentsBBox().topLeft();
+            br = tl + QPointF (w, h);
+        } else
+        {
+            br = bo->getOrnamentsBBox().bottomRight();
+            tl = br - QPointF (w, h);
+        }
         QRectF r (tl, br);
         lineEdit->setGeometry(r.toRect() );
 
