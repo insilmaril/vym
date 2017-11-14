@@ -1,4 +1,4 @@
-#!/usr/bin/env ruby
+#!/usr/bin/ruby
 
 load File.expand_path("../vym-ruby.rb", __FILE__)
 require 'tempfile'
