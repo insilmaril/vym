@@ -67,6 +67,7 @@ void FrameObj::move(double x, double y)
 	    break;
 	case Ellipse:
 	    ellipseFrame->setPos (x,y);
+            break;
 	case Cloud:
 	    pathFrame->setPos (x,y);
 	    break;
