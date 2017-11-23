@@ -31,6 +31,7 @@ ARGV.each do |id|
   # Query ticket and display info
   t = client.Issue.find(id)
   puts "#{id}:short_desc:\"#{t.summary}\""
+  puts "#{id}:type:\"#{t.issuetype.name}\""
   puts "#{id}:priority:\"#{t.priority.name}\""
   puts "#{id}:status:\"#{t.status.name}\""
   if t.resolution.nil?

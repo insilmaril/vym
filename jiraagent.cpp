@@ -155,6 +155,11 @@ void JiraAgent::processJiraData()
 			tickets.append(re.cap(1));
 			ticket_desc[re.cap(1)] = re.cap(3).replace("\\\"","\"");
 		    }	
+                    else if (re.cap(2) == "type") 
+		    {
+			tickets.append(re.cap(1));
+			ticket_type[re.cap(1)] = re.cap(3).replace("\\\"","\"");
+		    }	
 		    else if (re.cap(2) == "priority") 
                     {
 			ticket_prio[re.cap(1)] = re.cap(3).replace("\\\"","\"");
@@ -264,6 +269,9 @@ void JiraAgent::setModelJiraData (VymModel *model, BranchItem *bi, const QString
     model->select(timestampBranch);
     infoBranch = model->addNewBranch();
     if (infoBranch) model->setHeadingPlainText( "Prio: " + ticket_prio[ticketID], infoBranch);
+
+    infoBranch = model->addNewBranch();
+    if (infoBranch) model->setHeadingPlainText( "Type: " + ticket_type[ticketID], infoBranch);
 
     infoBranch = model->addNewBranch();
     if (infoBranch) model->setHeadingPlainText( "Status: " + ticket_status[ticketID], infoBranch);

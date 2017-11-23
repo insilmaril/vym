@@ -40,15 +40,16 @@ private:
     VymProcess *p;
     Heading oldHeading;
 
-    QHash <QString,QString> ticket_desc;
-    QHash <QString,QString> ticket_prio;
-    QHash <QString,QString> ticket_status;
-    QHash <QString,QString> ticket_resolution;
-    QHash <QString,QString> ticket_updated;
-    QHash <QString,QString> ticket_created;
-    QHash <QString,QString> ticket_assignee;
-    QHash <QString,QString> ticket_reporter;
-    QHash <QString,QString> ticket_url;
+    QHash <QString, QString> ticket_desc;
+    QHash <QString, QString> ticket_type;
+    QHash <QString, QString> ticket_prio;
+    QHash <QString, QString> ticket_status;
+    QHash <QString, QString> ticket_resolution;
+    QHash <QString, QString> ticket_updated;
+    QHash <QString, QString> ticket_created;
+    QHash <QString, QString> ticket_assignee;
+    QHash <QString, QString> ticket_reporter;
+    QHash <QString, QString> ticket_url;
 
 };
 #endif
