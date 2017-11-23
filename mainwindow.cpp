@@ -1557,8 +1557,10 @@ void Main::setupEditActions()
 
     tag = tr("vymlinks - linking maps","Shortcuts");
     a = new QAction(QPixmap(":/flag-vymlink.png"), tr( "Open linked map","Edit menu" ), this);
+    a->setShortcut ( Qt::SHIFT + Qt::Key_V );
     a->setEnabled (false);
     switchboard.addSwitch ("mapOpenVymLink", shortcutScope, a, tag);
+    addAction(a);
     connect( a, SIGNAL( triggered() ), this, SLOT( editOpenVymLink() ) );
     actionListBranches.append (a);
     actionOpenVymLink=a;
@@ -1577,8 +1579,9 @@ void Main::setupEditActions()
     actionListBranches.append(a);
     actionOpenMultipleVymLinks=a;
 
-
     a = new QAction(QPixmap(":/flag-vymlinknew.png"), tr( "Edit vym link...","Edit menu" ), this);
+    a->setShortcut ( Qt::Key_V );
+    a->setShortcutContext (Qt::WindowShortcut);
     a->setEnabled (false);
     switchboard.addSwitch ("mapEditVymLink", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( editVymLink() ) );
@@ -2986,9 +2989,7 @@ void Main::setupToolbars()
     // URLs and vymLinks
     referencesToolbar=addToolBar( tr ("URLs and vymLinks toolbar","Toolbar for URLs and vymlinks"));
     referencesToolbar->setObjectName ("URLs and vymlinks toolbar");
-    //referencesToolbar->addAction (actionOpenURL); //FIXME-4 removed 2015-06-22
     referencesToolbar->addAction (actionURLNew);
-    //referencesToolbar->addAction (actionOpenVymLink)//FIXME-4 removed 2015-06-22;
     referencesToolbar->addAction (actionEditVymLink);
 
     // Format and colors
