@@ -3,8 +3,9 @@
 
 #include <QHash>
 #include <QObject>
-#include "heading.h"
+#include <QTimer>
 
+#include "heading.h"
 #include "vymprocess.h"
 
 class BranchItem;
@@ -39,6 +40,7 @@ private:
     QStringList result;
     VymProcess *p;
     Heading oldHeading;
+    QTimer *killTimer;
 
     QHash <QString, QString> ticket_desc;
     QHash <QString, QString> ticket_type;

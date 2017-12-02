@@ -13,6 +13,9 @@ extern bool debug;
 
 JiraAgent::JiraAgent (BranchItem *bi,const QString &u)
 {
+    p = NULL;
+    killTimer = NULL;
+
     if (!bi) 
     {
 	qWarning ("Const JiraAgent: bi == NULL");
@@ -89,7 +92,7 @@ JiraAgent::JiraAgent (BranchItem *bi,const QString &u)
         model->setHeadingPlainText ("Updating: " + bi->getHeadingPlain(), bi ); //FIXME-4 translation needed?
     }
 	
-    QTimer *killTimer = new QTimer(p); 
+    killTimer = new QTimer(p); 
     killTimer->setInterval(10000); 
     killTimer->setSingleShot(true); 
 
@@ -100,7 +103,8 @@ JiraAgent::JiraAgent (BranchItem *bi,const QString &u)
 JiraAgent::~JiraAgent ()
 {
     // qDebug() <<" Destr JA";
-    delete p;
+    if (p) delete p;
+    if (killTimer) delete killTimer;
 }
 
 void JiraAgent::processFinished(int exitCode, QProcess::ExitStatus exitStatus)
