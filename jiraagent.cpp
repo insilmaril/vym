@@ -92,7 +92,7 @@ JiraAgent::JiraAgent (BranchItem *bi,const QString &u)
         model->setHeadingPlainText ("Updating: " + bi->getHeadingPlain(), bi ); //FIXME-4 translation needed?
     }
 	
-    killTimer = new QTimer(p); 
+    killTimer = new QTimer(this); 
     killTimer->setInterval(10000); 
     killTimer->setSingleShot(true); 
 
@@ -102,7 +102,6 @@ JiraAgent::JiraAgent (BranchItem *bi,const QString &u)
 
 JiraAgent::~JiraAgent ()
 {
-    // qDebug() <<" Destr JA";
     if (p) delete p;
     if (killTimer) delete killTimer;
 }
@@ -111,7 +110,7 @@ void JiraAgent::processFinished(int exitCode, QProcess::ExitStatus exitStatus)
 {
     if (exitStatus == QProcess::NormalExit)
     {
-	result=p->getStdout().split("\n");
+	result = p->getStdout().split("\n");
 	QString err = p->getErrout();
 	if (!err.isEmpty())
         {
