@@ -753,8 +753,8 @@ public:
     bool selectNext();
     void resetSelectionHistory();
     void appendSelection();
-
     void emitShowSelection();		    //!< Show selection in all views
+
 signals:
     void showSelection();
 
@@ -811,6 +811,18 @@ private:
 public:	
     void setSelectionColor(QColor);
     QColor getSelectionColor();
+
+////////////////////////////////////////////
+// Iterating and selecting branches
+////////////////////////////////////////////
+public:
+    bool initIterator(const QString &iname, bool deepLevelsFirst = false); //! Named iterator
+    bool nextIterator(const QString &iname);    //! Select next iterator
+private:
+    QUuid selIterCur;
+    QUuid selIterPrev;
+    QUuid selIterStart;
+
 
 ////////////////////////////////////////////
 // Slide related

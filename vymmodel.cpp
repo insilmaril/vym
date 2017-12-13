@@ -5328,6 +5328,51 @@ QColor VymModel::getSelectionColor()
     return mapEditor->getSelectionColor();
 }
 
+bool VymModel::initIterator(const QString &iname, bool deepLevelsFirst )
+{
+    QList <BranchItem*> selbis;
+    selbis = getSelectedBranches();
+    if (selbis.count() == 1)
+    {
+	BranchItem *prev = NULL;
+	BranchItem *cur  = NULL;
+        nextBranch (cur, prev, true, selbis.first() );
+	if (cur)
+	{
+            select (cur);
+            selIterCur   = cur->getUuid();
+            selIterPrev  = prev->getUuid();
+            selIterStart = selbis.first()->getUuid();
+            return true;
+	}
+    }
+    return false;
+}
+
+bool VymModel::nextIterator(const QString &iname)
+{
+    BranchItem *prev  = (BranchItem*)(findUuid (selIterPrev));
+    BranchItem *cur   = (BranchItem*)(findUuid (selIterCur));
+    BranchItem *start = (BranchItem*)(findUuid (selIterStart));
+    if (!prev)  qWarning() << "VM::nextIterator couldn't find prev"   << selIterPrev;
+    if (!cur)   qWarning() << "VM::nextIterator couldn't find cur"    << selIterCur;
+    if (!start) qWarning() << "VM::nextIterator couldn't find start " << selIterStart;
+
+    if (cur && prev && start)
+    {
+        nextBranch (cur, prev, true, start);
+        if (cur) 
+        {
+            selIterCur   = cur->getUuid();
+            selIterPrev  = prev->getUuid();
+            select (cur);
+            return true;
+        } else
+            return false;
+    }
+    return false;
+}
+
 void VymModel::setHideTmpMode (TreeItem::HideTmpMode mode)  
 {
     hidemode=mode;

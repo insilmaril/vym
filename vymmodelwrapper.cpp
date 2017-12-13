@@ -507,6 +507,16 @@ void VymModelWrapper::importDir( const QString &path)
     model->importDir( path );    // FIXME-1 error handling missing (in vymmodel and here)
 }
 
+bool VymModelWrapper::initIterator( const QString &iname, bool deepLevelsFirst)
+{
+    return model->initIterator(iname, deepLevelsFirst);
+}
+
+bool VymModelWrapper::nextIterator( const QString &iname)
+{
+    return model->nextIterator(iname);
+}
+
 bool VymModelWrapper::isScrolled()
 {
     bool r = false;
