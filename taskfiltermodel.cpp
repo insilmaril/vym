@@ -57,7 +57,8 @@ bool TaskFilterModel::filterAcceptsRow(int sourceRow,
         return false;
 
     // Filter flags  // FIXME-1 currently only "arrow-up"
-    if (filterFlags1 && !taskModel->getTask(ix)->getBranch()->hasActiveStandardFlag("arrow-up") )
+    if (filterFlags1 && (!taskModel->getTask(ix)->getBranch()->hasActiveStandardFlag("arrow-up") &&
+                         !taskModel->getTask(ix)->getBranch()->hasActiveStandardFlag("2arrow-up") ) )
         return false;
 
     // Filter flags  // FIXME-1 currently only "2arrow-up"
