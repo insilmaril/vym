@@ -2471,7 +2471,7 @@ bool VymModel::setTaskSleep(const QString &s)
                         QStringList list = re.capturedTexts();
                         if (pos >= 0)
                         {
-                            // German formate, e.g. 24.12.2012
+                            // German format, e.g. 24.12.2012
                             d = QDate(list.at(3).toInt(), list.at(2).toInt(), list.at(1).toInt());
                             ok = true;
                         } else
@@ -2481,7 +2481,7 @@ bool VymModel::setTaskSleep(const QString &s)
                             list = re.capturedTexts();
                             if (pos >= 0)
                             {
-                                // Short German formate, e.g. 24.12.
+                                // Short German format, e.g. 24.12.
                                 int month = list.at(2).toInt();
                                 int day = list.at(1).toInt();
                                 int year = QDate::currentDate().year();
