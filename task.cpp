@@ -10,13 +10,13 @@
 Task::Task(TaskModel *tm)
 {
 //    qDebug()<<"Constr. Task";
-    status=NotStarted;
-    awake=Task::WideAwake;
-    branch=NULL;
-    prio='X';
-    model=tm;
-    date_creation=QDateTime::currentDateTime();
-    date_sleep=QDate::currentDate();
+    status = NotStarted;
+    awake  = Task::WideAwake;
+    branch = NULL;
+    prio   = 'X';
+    model  = tm;
+    date_creation = QDateTime::currentDateTime();
+    date_sleep = QDate::currentDate();
 }
 
 Task::~Task()
@@ -27,21 +27,21 @@ Task::~Task()
 
 void Task::setModel (TaskModel* tm)
 {
-    model=tm;
+    model = tm;
 }
 
 void Task::cycleStatus(bool reverse)
 {
-    if (awake==Morning)
+    if (awake == Morning)
     {
 	setAwake (WideAwake);
 	return;
     }
-    int i=status;
+    int i = status;
     reverse ?  i-- : i++;
 
-    if (i<0) i=2;
-    if (i>2) i=0;
+    if ( i < 0) i = 2;
+    if ( i > 2) i = 0;
 
     setStatus ( (Task::Status) i );
 
@@ -50,20 +50,20 @@ void Task::cycleStatus(bool reverse)
 
 void Task::setStatus(const QString &s)
 {
-    if (s=="NotStarted")
+    if (s == "NotStarted")
 	setStatus(NotStarted);
-    else if (s=="WIP")
+    else if (s == "WIP")
 	setStatus(WIP);
-    else if (s=="Finished")
+    else if (s == "Finished")
 	setStatus(Finished);
     else
-	qWarning()<<"Task::setStatus Unknown value: "<<s;
+	qWarning() << "Task::setStatus Unknown value: " << s;
 }
 
 void Task::setStatus(Status s)
 {
-    if (s==status) return;
-    status=s;
+    if (s == status) return;
+    status = s;
     if (branch) branch->updateTaskFlag();
 }
 
@@ -89,23 +89,23 @@ QString Task::getIconString()
     switch (status) 
     {
         case NotStarted: 
-            s="task-new";
+            s = "task-new";
             break;
         case WIP: 
-            s="task-wip";
+            s = "task-wip";
             break;
         case Finished: 
-            s="task-finished";
+            s = "task-finished";
         break;
     }
     if (status != Finished)
         switch (awake) 
         {
             case Sleeping: 
-                s+="-sleeping";
+                s += "-sleeping";
                 break;
             case Morning: 
-                s+="-morning";
+                s += "-morning";
                 break;
             default: break;
         }
@@ -114,20 +114,20 @@ QString Task::getIconString()
 
 void Task::setAwake(const QString &s)
 {
-    if (s=="Sleeping")
+    if (s == "Sleeping")
 	setAwake(Sleeping);
-    else if (s=="Morning")
+    else if (s == "Morning")
 	setAwake(Morning);
-    else if (s=="WideAwake")
+    else if (s == "WideAwake")
 	setAwake(WideAwake);
     else
-	qWarning()<<"Task::setAwake Unknown value: "<<s;
+	qWarning() << "Task::setAwake Unknown value: " << s;
 }
 
 void Task::setAwake(Task::Awake a)
 {
-    if (a==awake) return;
-    awake=a;
+    if (a == awake) return;
+    awake = a;
     recalcAwake();
     if (branch) branch->updateTaskFlag();
 }
@@ -150,13 +150,13 @@ QString Task::getAwakeString()
 
 void Task::recalcAwake()
 {
-    if ( getDaysSleep() <= 0 && awake==Task::Sleeping)
+    if ( getDaysSleep() <= 0 && awake == Task::Sleeping)
 	setAwake(Task::Morning);
 }
 
 void Task::setPriority (int p)
 {
-    prio=p;
+    prio = p;
 }
 
 int Task::getPriority()
@@ -179,18 +179,18 @@ int Task::getAgeModified()
 
 void Task::setDateCreation (const QString &s)
 {
-    date_creation=QDateTime().fromString (s,Qt::ISODate);
+    date_creation = QDateTime().fromString (s,Qt::ISODate);
 }
 
 
 void Task::setDateModified()
 {
-    date_modified=QDateTime::currentDateTime();
+    date_modified = QDateTime::currentDateTime();
 }
 
 void Task::setDateModified(const QString &s)
 {
-    date_modified=QDateTime().fromString (s,Qt::ISODate);
+    date_modified = QDateTime().fromString (s,Qt::ISODate);
 }
 
 void Task::setDateSleep(int n)
@@ -200,8 +200,8 @@ void Task::setDateSleep(int n)
 
 void Task::setDateSleep(const QString &s)
 {
-    date_sleep=QDate().fromString (s,Qt::ISODate);
-    if (getDaysSleep()>0) 
+    date_sleep = QDate().fromString (s,Qt::ISODate);
+    if (getDaysSleep() > 0) 
 	setAwake(Sleeping);
     else
 	setAwake (Morning);
@@ -210,16 +210,16 @@ void Task::setDateSleep(const QString &s)
 
 int Task::getDaysSleep()
 {
-    int d=0;
+    int d = 0;
     if (date_sleep.isValid() )
-	d=QDate::currentDate().daysTo (date_sleep);
+	d = QDate::currentDate().daysTo (date_sleep);
     return d;
 }
 
 void Task::setBranch (BranchItem *bi)
 {
-    branch=bi;
-    mapName=bi->getModel()->getMapName();
+    branch  = bi;
+    mapName = bi->getModel()->getMapName();
 }
 
 BranchItem* Task::getBranch ()

@@ -2441,57 +2441,57 @@ bool VymModel::cycleTaskStatus(bool reverse)
 
 bool VymModel::setTaskSleep(const QString &s) 
 {
-    BranchItem *selbi=getSelectedBranch();
+    BranchItem *selbi = getSelectedBranch();
     if (selbi && !s.isEmpty() ) 
     {
-	Task *task=selbi->getTask();
+	Task *task = selbi->getTask();
 	if (task ) 
 	{
             bool ok;
-            int n=s.toInt(&ok);
+            int n = s.toInt(&ok);
             if (!ok)
             {
                 // Is s a date?
-                QDate d=QDate::fromString(s,Qt::ISODate);
-                d=QDate::fromString(s,Qt::ISODate);
+                QDate d = QDate::fromString(s,Qt::ISODate);
+                d = QDate::fromString(s,Qt::ISODate);
                 if (d.isValid())
                     // ISO date YYYY-MM-DD
-                    ok=true;
+                    ok = true;
                 else
                 {
-                    d=QDate::fromString(s,Qt::DefaultLocaleShortDate);
+                    d = QDate::fromString(s,Qt::DefaultLocaleShortDate);
                     if (d.isValid()) 
                         // Locale date, e.g. 24 Dec 2012
-                        ok=true;
+                        ok = true;
                     else
                     {
                         QRegExp re ("(\\d+).(\\d+).(\\d+)");
                         re.setMinimal(false);
-                        int pos=re.indexIn(s);
-                        QStringList list=re.capturedTexts();
-                        if (pos>=0)
+                        int pos = re.indexIn(s);
+                        QStringList list = re.capturedTexts();
+                        if (pos >= 0)
                         {
                             // German formate, e.g. 24.12.2012
-                            d=QDate(list.at(3).toInt(), list.at(2).toInt(), list.at(1).toInt());
-                            ok=true;
+                            d = QDate(list.at(3).toInt(), list.at(2).toInt(), list.at(1).toInt());
+                            ok = true;
                         } else
                         {
                             re.setPattern("(\\d+).(\\d+).");
-                            pos=re.indexIn(s);
-                            list=re.capturedTexts();
-                            if (pos>=0)
+                            pos  = re.indexIn(s);
+                            list = re.capturedTexts();
+                            if (pos >= 0)
                             {
                                 // Short German formate, e.g. 24.12.
-                                int month=list.at(2).toInt();
-                                int day=list.at(1).toInt();
-                                int year=QDate::currentDate().year();
-                                d=QDate(year, month, day);
+                                int month = list.at(2).toInt();
+                                int day = list.at(1).toInt();
+                                int year = QDate::currentDate().year();
+                                d = QDate(year, month, day);
                                 if (QDate::currentDate().daysTo(d) < 0)
                                 {
                                     year++;
-                                    d=QDate(year, month, day);
+                                    d = QDate(year, month, day);
                                 }
-                                ok=true;
+                                ok = true;
                             } else
                             {
                                 re.setPattern("(\\d+).(\\d+).");
@@ -2499,12 +2499,12 @@ bool VymModel::setTaskSleep(const QString &s)
                         }
                     }
                 }
-                if (ok) n=QDate::currentDate().daysTo(d);
+                if (ok) n = QDate::currentDate().daysTo(d);
             }
 
             if (ok)
             {
-                int oldsleep=task->getDaysSleep();
+                int oldsleep = task->getDaysSleep();
                 task->setDateSleep (n);
                 task->setDateModified();
                 saveState (
