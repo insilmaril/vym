@@ -61,7 +61,7 @@ TaskEditor::TaskEditor(QWidget *)
 
     icon = QIcon (":/flag-arrow-up.png");
     a = new QAction(icon, "", this); //tr( "Flags","TaskEditor" ),this );   // FIXME-1 add translation
-    a->setToolTip(tr("Show only tasks marked with at this arrow-up flag","Filters in task Editor"));
+    a->setToolTip(tr("Show only tasks marked with this arrow-up flag","Filters in task Editor"));
     a->setCheckable(true);
     a->setChecked  (settings.value("/taskeditor/filterFlags1", false).toBool());
     if (settings.value( "/mainwindow/showTestMenu",false).toBool())
@@ -82,7 +82,6 @@ TaskEditor::TaskEditor(QWidget *)
     icon = QIcon (":/flag-no-arrow-up.png");
     a = new QAction(icon,  "", this); //tr( "Flags","TaskEditor" ),this );   // FIXME-1 add translation
     a->setToolTip(tr("Show only tasks marked without any arrow-up flag","Filters in task Editor"));
-    a->setToolTip("Flag 3 (stopsign)");
     a->setCheckable(true);
     a->setChecked  (settings.value("/taskeditor/filterFlags3", false).toBool());
     if (settings.value( "/mainwindow/showTestMenu",false).toBool())
