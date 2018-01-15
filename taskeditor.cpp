@@ -76,7 +76,7 @@ TaskEditor::TaskEditor(QWidget *)
     connect( a, SIGNAL( triggered() ), this, SLOT(toggleFilterFlags2() ) );
     actionToggleFilterFlags2 = a;
 
-    icon = QIcon (":/flag-stopsign.png");
+    icon = QIcon (":/flag-no-arrow-up.png");
     a = new QAction(icon,  "", this); //tr( "Flags","TaskEditor" ),this );   // FIXME-1 add translation
     a->setToolTip("Flag 3 (stopsign)");
     a->setCheckable(true);
