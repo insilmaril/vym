@@ -184,6 +184,9 @@ TaskEditor::~TaskEditor()
     settings.setValue ("/taskeditor/filterMap",actionToggleFilterMap->isChecked());
     settings.setValue ("/taskeditor/filterActive",actionToggleFilterActive->isChecked());
     settings.setValue ("/taskeditor/filterNew",actionToggleFilterNew->isChecked());
+    settings.setValue ("/taskeditor/filterFlags1",actionToggleFilterFlags1->isChecked());
+    settings.setValue ("/taskeditor/filterFlags2",actionToggleFilterFlags2->isChecked());
+    settings.setValue ("/taskeditor/filterFlags3",actionToggleFilterFlags3->isChecked());
     settings.setValue ("/taskeditor/showParentsLevel",taskModel->getShowParentsLevel() );
     for (int i=0; i<7; i++)
     {
