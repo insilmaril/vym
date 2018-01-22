@@ -16,7 +16,7 @@ Task::Task(TaskModel *tm)
     prio   = 'X';
     model  = tm;
     date_creation = QDateTime::currentDateTime();
-    date_sleep = QDate::currentDate();
+    date_sleep = QDateTime::currentDateTime();
 }
 
 Task::~Task()
@@ -193,14 +193,24 @@ void Task::setDateModified(const QString &s)
     date_modified = QDateTime().fromString (s,Qt::ISODate);
 }
 
-void Task::setDateSleep(int n)
+void Task::setDaysSleep(qint64 n) 
 {
     setDateSleep ( QDate::currentDate().addDays (n).toString(Qt::ISODate) );
 }
 
+void Task::setHoursSleep(qint64 n) 
+{
+    setDateSleep ( QDateTime::currentDateTime().addSecs (n * 3600 ).toString(Qt::ISODate) );
+}
+
+void Task::setSecsSleep(qint64 n) 
+{
+    setDateSleep ( QDateTime::currentDateTime().addSecs (n).toString(Qt::ISODate) );
+}
+
 void Task::setDateSleep(const QString &s)
 {
-    date_sleep = QDate().fromString (s,Qt::ISODate);
+    date_sleep = QDateTime().fromString (s, Qt::ISODate);   // FIXME-0 isValid missing
     if (getDaysSleep() > 0) 
 	setAwake(Sleeping);
     else
@@ -208,12 +218,29 @@ void Task::setDateSleep(const QString &s)
     if (status == Finished) setStatus(WIP); 
 }
 
-int Task::getDaysSleep()
+qint64 Task::getDaysSleep()
 {
-    int d = 0;
+    qint64 d = 1;
     if (date_sleep.isValid() )
-	d = QDate::currentDate().daysTo (date_sleep);
+	d = QDateTime::currentDateTime().daysTo (date_sleep);
+    else
+        qWarning() << "Task::getDaysSleep date_sleep is invalid";
     return d;
+}
+
+qint64 Task::getSecsSleep()
+{
+    qint64 d = 1;
+    if (date_sleep.isValid() )
+	d = QDateTime::currentDateTime().secsTo (date_sleep);
+    else
+        qWarning() << "Task::getSecsSleep date_sleep is invalid";
+    return d;
+}
+
+QDateTime Task::getSleep()
+{
+    return date_sleep;
 }
 
 void Task::setBranch (BranchItem *bi)
@@ -246,13 +273,13 @@ QString Task::getMapName ()
 QString Task::saveToDir()
 {
     QString sleepAttr;
-    if (getDaysSleep()>0)
-	sleepAttr = attribut ("date_sleep",date_sleep.toString (Qt::ISODate) );
+    if (getDaysSleep() > 0)
+	sleepAttr = attribut ("date_sleep", date_sleep.toString (Qt::ISODate) );
     return singleElement ("task",
-	attribut ("status",getStatusString() ) +
-	attribut ("awake",getAwakeString() ) +
-	attribut ("date_creation",date_creation.toString (Qt::ISODate) ) +
-	attribut ("date_modified",date_modified.toString (Qt::ISODate) ) +
+	attribut ("status", getStatusString() ) +
+	attribut ("awake",  getAwakeString() ) +
+	attribut ("date_creation", date_creation.toString (Qt::ISODate) ) +
+	attribut ("date_modified", date_modified.toString (Qt::ISODate) ) +
 	sleepAttr
      );
 }

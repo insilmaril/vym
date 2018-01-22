@@ -29,7 +29,6 @@ public:
     void setAwake(Awake a);
     Awake getAwake();
     QString getAwakeString();
-private:
     void recalcAwake();
 public:
     void setPriority(int  p);
@@ -39,9 +38,13 @@ public:
     void setDateCreation (const QString &s);
     void setDateModified ();
     void setDateModified (const QString &s);
-    void setDateSleep    (int n);
+    void setDaysSleep    (qint64 n);
+    void setHoursSleep   (qint64 n);
+    void setSecsSleep    (qint64 n);
     void setDateSleep    (const QString &s);
-    int getDaysSleep();
+    qint64 getDaysSleep();
+    qint64 getSecsSleep();
+    QDateTime getSleep();
     QString getName();
     void setBranch (BranchItem *bi);
     BranchItem* getBranch();
@@ -57,7 +60,7 @@ private:
     QString mapName;
     QDateTime date_creation;
     QDateTime date_modified;
-    QDate     date_sleep;
+    QDateTime date_sleep;
 };
 
 #endif
