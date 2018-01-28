@@ -4660,6 +4660,30 @@ void VymModel::exportOrgMode (const QString &fname, bool askName)
 }
 
 
+void VymModel::exportMarkdown (const QString &fname, bool askName)
+{
+    ExportMarkdown ex;
+    ex.setModel (this);
+    ex.setLastCommand( settings.localValue(filePath,"/export/last/command","").toString() );
+
+    if (fname=="") 
+	ex.setFilePath (mapName+".org");	
+    else
+	ex.setFilePath (fname);
+
+    if (askName) 
+    {
+	ex.setDirPath (lastExportDir.absolutePath());
+        ex.execDialog();
+    }
+
+    if (!ex.canceled())
+    {
+	setExportMode(true);
+	ex.doExport();
+	setExportMode(false);
+    }
+}
 //////////////////////////////////////////////
 // View related
 //////////////////////////////////////////////

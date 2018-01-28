@@ -318,6 +318,9 @@ bool VymModelWrapper::exportMap( )
     } else if ( format == "LaTeX" )
     {
         model->exportLaTeX (filename, false);
+    } else if ( format == "Markdown" )
+    {
+        model->exportMarkdown ( filename,false);
     } else if ( format == "OrgMode" )
     {
         model->exportOrgMode ( filename,false);

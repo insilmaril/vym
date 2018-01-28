@@ -574,6 +574,9 @@ public:
     /*! Export as LaTeX */
     void exportLaTeX (const QString& dir="", bool useDialog=true);    
 
+    /*! Export as Markdown */
+    void exportMarkdown (const QString& fname="", bool useDialog=true);    
+
     /*! Export as OrgMode input for emacs*/
     void exportOrgMode (const QString& fname="", bool useDialog=true);    
 

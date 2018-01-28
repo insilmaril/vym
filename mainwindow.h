@@ -129,6 +129,7 @@ private slots:
     void fileExportCSV();
     void fileExportOrgMode();
     void fileExportLaTeX();
+    void fileExportMarkdown();
     void fileExportTaskjuggler();
     void fileExportImpress();
     void fileExportLast();

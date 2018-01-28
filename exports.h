@@ -139,6 +139,15 @@ private:
 };  
 
 ///////////////////////////////////////////////////////////////////////
+class ExportMarkdown:public ExportBase
+{
+public:
+    ExportMarkdown();
+    virtual void doExport();
+    virtual QString underline (const QString &text, const QString &line);
+};
+
+///////////////////////////////////////////////////////////////////////
 class ExportOrgMode:public ExportBase
 {
 public:

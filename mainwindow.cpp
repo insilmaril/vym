@@ -552,7 +552,7 @@ void Main::setupAPI()
     modelCommands.append(c);
 
     c=new Command ("exportMap",Command::Any);  
-    c->addPar (Command::String,false,"Format (AO, ASCII, CSV, HTML, Image, Impress, Last, LaTeX, OrgMode, PDF, SVG, XML)");
+    c->addPar (Command::String,false,"Format (AO, ASCII, CSV, HTML, Image, Impress, Last, LaTeX, Markdown, OrgMode, PDF, SVG, XML)");
     modelCommands.append(c);
 
     c=new Command ("getDestPath",Command::Any);
@@ -1042,6 +1042,10 @@ void Main::setupFileActions()
 
     a = new QAction( tr("Text (ASCII)...","File export menu"), this);
     connect( a, SIGNAL( triggered() ), this, SLOT( fileExportASCII() ) );
+    fileExportMenu->addAction(a);
+
+    a = new QAction( tr("Text (Markdown)...","File export menu") + " (ASCII)... "  + tr("(still experimental)"), this);
+    connect( a, SIGNAL( triggered() ), this, SLOT( fileExportMarkdown() ) );
     fileExportMenu->addAction(a);
 
     a = new QAction( tr("Text with tasks","File export menu") + " (ASCII)... "  + tr("(still experimental)"), this);
@@ -3727,6 +3731,12 @@ void Main::fileExportLaTeX()
 {
     VymModel *m=currentModel();
     if (m) m->exportLaTeX();
+}
+
+void Main::fileExportMarkdown()
+{
+    VymModel *m=currentModel();
+    if (m) m->exportMarkdown();
 }
 
 void Main::fileExportOrgMode()	
