@@ -447,6 +447,7 @@ private:
     QAction *actionTaskSleep1;
     QAction *actionTaskSleep2;
     QAction *actionTaskSleep3;
+    QAction *actionTaskSleep4;
     QAction *actionTaskSleep5;
     QAction *actionTaskSleep7;
     QAction *actionTaskSleep14;

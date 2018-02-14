@@ -1690,6 +1690,17 @@ void Main::setupEditActions()
     actionListBranches.append (a);
     actionTaskSleep3=a;
 
+    a = new QAction(QPixmap(), tr( "Sleep %1 days","Task sleep" ).arg(4), this);
+    a->setShortcutContext (Qt::WindowShortcut);
+    a->setCheckable(false);
+    a->setEnabled (false);
+    a->setData (4);
+    addAction(a);
+    switchboard.addSwitch ("mapTaskSleep4", shortcutScope, a, tag);
+    connect( a, SIGNAL( triggered() ), this, SLOT( editTaskSleepN() ) );
+    actionListBranches.append (a);
+    actionTaskSleep4=a;
+
     a = new QAction(QPixmap(), tr( "Sleep %1 days","Task sleep" ).arg(5), this); 
     a->setShortcutContext (Qt::WindowShortcut);
     a->setCheckable(false);
@@ -2797,6 +2808,7 @@ void Main::setupContextMenus()
 	taskContextMenu->addAction (actionTaskSleep1);
 	taskContextMenu->addAction (actionTaskSleep2);
 	taskContextMenu->addAction (actionTaskSleep3);
+	taskContextMenu->addAction (actionTaskSleep4);
 	taskContextMenu->addAction (actionTaskSleep5);
 	taskContextMenu->addAction (actionTaskSleep7);
 	taskContextMenu->addAction (actionTaskSleep14);
