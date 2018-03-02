@@ -376,8 +376,12 @@ public:
 
     /*! Set task to sleep for number of days or until a given date*/
     bool setTaskSleep(const QString &s);
+
     /*! count tasks in this model */
     int taskCount();
+
+    /*! Update task priorities */
+    void updateTaskPriorities();
 
     BranchItem*  addTimestamp();	
 

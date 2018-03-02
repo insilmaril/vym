@@ -53,7 +53,7 @@ bool TaskFilterModel::filterAcceptsRow(int sourceRow,
         return false;
 
     // Filter active tasks
-    if (useFilter && ((taskModel->getTask(ix)->getDaysSleep() > 0) || (taskModel->getTask(ix)->getStatus() == Task::Finished) ) )
+    if (useFilter && ((taskModel->getTask(ix)->getSecsSleep() > 0) || (taskModel->getTask(ix)->getStatus() == Task::Finished) ) )
         return false;
 
     // Filter flags  // FIXME-1 currently only "arrow-up"

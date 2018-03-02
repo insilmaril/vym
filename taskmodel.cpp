@@ -247,6 +247,20 @@ void TaskModel::deleteTask (Task* t)
 	removeRows(pos, 1,QModelIndex() );
 }
 
+bool TaskModel::updateAwake()
+{
+    bool awake_changed = false;
+    foreach (Task *t,tasks)
+    {
+        if (t->updateAwake() )
+        {
+            t->getBranch()->updateTaskFlag(); // FIXME-0 testing only
+            awake_changed = true;
+        }
+    }
+    return awake_changed;
+}
+
 void TaskModel::recalcPriorities() 
 {
     emit (layoutAboutToBeChanged() );
@@ -304,7 +318,6 @@ void TaskModel::recalcPriorities()
     foreach (Task *t,tasks)
     {   
 	t->setPriority (1-  minPrio + t->getPriority() );
-	//emitDataChanged (t);
     }
 
     emit (layoutChanged() );

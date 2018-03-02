@@ -32,6 +32,7 @@ public:
     int count (VymModel *model=NULL);
     Task* createTask (BranchItem *bi);
     void deleteTask (Task* t);
+    bool updateAwake();
     void recalcPriorities();
 
     void setShowParentsLevel (uint i);

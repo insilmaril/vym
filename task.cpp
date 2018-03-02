@@ -126,10 +126,7 @@ void Task::setAwake(const QString &s)
 
 void Task::setAwake(Task::Awake a)
 {
-    if (a == awake) return;
     awake = a;
-    recalcAwake();
-    if (branch) branch->updateTaskFlag();
 }
 
 Task::Awake Task::getAwake()
@@ -148,10 +145,26 @@ QString Task::getAwakeString()
     return "Undefined";
 }
 
-void Task::recalcAwake()
+bool Task::updateAwake()
 {
-    if ( getDaysSleep() <= 0 && awake == Task::Sleeping)
-	setAwake(Task::Morning);
+    qint64 secs = getSecsSleep();
+
+    if ( secs < 0 )
+    {
+        if ( awake == Task::Sleeping)
+        {
+            setAwake(Task::Morning);
+            return true;
+        }
+    } else
+    {
+        if ( awake != Task::Sleeping)
+        {
+            setAwake(Task::Sleeping);
+            return true;
+        }
+    }
+    return false;
 }
 
 void Task::setPriority (int p)
@@ -211,10 +224,7 @@ void Task::setSecsSleep(qint64 n)
 void Task::setDateSleep(const QString &s)
 {
     date_sleep = QDateTime().fromString (s, Qt::ISODate);   // FIXME-0 isValid missing
-    if (getDaysSleep() > 0) 
-	setAwake(Sleeping);
-    else
-	setAwake (Morning);
+    updateAwake();
     if (status == Finished) setStatus(WIP); 
 }
 
@@ -273,7 +283,7 @@ QString Task::getMapName ()
 QString Task::saveToDir()
 {
     QString sleepAttr;
-    if (getDaysSleep() > 0)
+    if (getSecsSleep() > 0)
 	sleepAttr = attribut ("date_sleep", date_sleep.toString (Qt::ISODate) );
     return singleElement ("task",
 	attribut ("status", getStatusString() ) +

@@ -29,7 +29,7 @@ public:
     void setAwake(Awake a);
     Awake getAwake();
     QString getAwakeString();
-    void recalcAwake();
+    bool updateAwake();
 public:
     void setPriority(int  p);
     int getPriority();
