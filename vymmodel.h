@@ -381,8 +381,14 @@ public:
     int taskCount();
 
     /*! Update task priorities */
-    void updateTaskPriorities();
+private slots:
+    void updateTasksAlarm();
 
+private:
+    /*! Timer to check if tasks need to be awoken */
+    QTimer *taskAlarmTimer;
+
+public:
     BranchItem*  addTimestamp();	
 
     void copy();			//!< Copy to clipboard

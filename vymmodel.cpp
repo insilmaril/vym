@@ -159,9 +159,13 @@ void VymModel::init ()
     connect(autosaveTimer, SIGNAL(timeout()), this, SLOT(autosave()));
 
     fileChangedTimer= new QTimer (this);	
-    fileChangedTimer->start(3000);
     connect(fileChangedTimer, SIGNAL(timeout()), this, SLOT(fileChanged()));
+    fileChangedTimer->start(3000);
 
+    taskAlarmTimer   = new QTimer (this);
+    connect(taskAlarmTimer, SIGNAL(timeout()), this, SLOT(updateTasksAlarm()));
+    taskAlarmTimer->start(3000);
+    
     // find routine
     findReset();
 
@@ -2447,19 +2451,60 @@ bool VymModel::setTaskSleep(const QString &s)
 	Task *task = selbi->getTask();
 	if (task ) 
 	{
+            QString oldsleep = task->getSleep().toString(Qt::ISODate);
+            
+            // Parse the string, which could be days, hours or one of several time formats
+            QRegExp re ("^\\s*(\\d+)\\s*$");
+            re.setMinimal(false);
+            int pos = re.indexIn(s);
+            if (pos >= 0)
+            {
+                // Found only digit, considered as days
+                qDebug() << "Found " << re.cap(1) << " days in " << s;
+                task->setDaysSleep (re.cap(1).toInt() );
+            } else
+            {
+                QRegExp re ("^\\s*(\\d+)\\s*h\\s*$");
+                pos = re.indexIn(s);
+                if (pos >= 0)
+                {
+                    // Found digit followed by "h", considered as hours
+                        qDebug() << "Found " << re.cap(1) << " hours in " << s;
+                        task->setHoursSleep (re.cap(1).toInt() );
+                } else
+                {
+                    QRegExp re ("^\\s*(\\d+)\\s*s\\s*$");
+                    pos = re.indexIn(s);
+                    if (pos >= 0)
+                    {
+                        // Found digit followed by "s", considered as seconds
+                        qDebug() << "Found " << re.cap(1) << " seconds in " << s;
+                        task->setSecsSleep (re.cap(1).toInt() );
+                    } else
+                    {
+                        // Try to parse date
+                        qDebug() << "Looking for some date in " << s;
+                        return false;
+                    }
+                }
+            }
+
+
+            /*
+
+            // FIXME-0 old parser:
             bool ok;
             int n = s.toInt(&ok);
             if (!ok)
             {
                 // Is s a date?
-                QDate d = QDate::fromString(s,Qt::ISODate);
-                d = QDate::fromString(s,Qt::ISODate);
+                QDateTime d = QDateTime::fromString(s, Qt::ISODate);
                 if (d.isValid())
-                    // ISO date YYYY-MM-DD
+                    // ISO date YYYY-MM-DDTHH:mm:ss
                     ok = true;
                 else
                 {
-                    d = QDate::fromString(s,Qt::DefaultLocaleShortDate);
+                    d = QDateTime::fromString(s, Qt::DefaultLocaleShortDate);
                     if (d.isValid()) 
                         // Locale date, e.g. 24 Dec 2012
                         ok = true;
@@ -2472,7 +2517,7 @@ bool VymModel::setTaskSleep(const QString &s)
                         if (pos >= 0)
                         {
                             // German format, e.g. 24.12.2012
-                            d = QDate(list.at(3).toInt(), list.at(2).toInt(), list.at(1).toInt());
+                            d = QDateTime (QDate(list.at(3).toInt(), list.at(2).toInt(), list.at(1).toInt()) );
                             ok = true;
                         } else
                         {
@@ -2485,11 +2530,11 @@ bool VymModel::setTaskSleep(const QString &s)
                                 int month = list.at(2).toInt();
                                 int day = list.at(1).toInt();
                                 int year = QDate::currentDate().year();
-                                d = QDate(year, month, day);
-                                if (QDate::currentDate().daysTo(d) < 0)
+                                d = QDateTime ( QDate(year, month, day) );
+                                if (QDateTime::currentDateTime().daysTo(d) < 0)
                                 {
                                     year++;
-                                    d = QDate(year, month, day);
+                                    d = QDateTime( QDate(year, month, day) );
                                 }
                                 ok = true;
                             } else
@@ -2499,25 +2544,24 @@ bool VymModel::setTaskSleep(const QString &s)
                         }
                     }
                 }
-                if (ok) n = QDate::currentDate().daysTo(d);
+                if (ok) n = QDateTime::currentDateTime().daysTo(d);
             }
+            */
 
-            if (ok)
-            {
-                int oldsleep = task->getDaysSleep();
-                task->setDateSleep (n);
-                task->setDateModified();
-                saveState (
-                    selbi,
-                    QString("setTaskSleep (%1)").arg(oldsleep),
-                    selbi,
-                    QString("setTaskSleep (%1)").arg(n),
-                    QString("setTaskSleep (%1)").arg(n) );
-                emitDataChanged (selbi);
-                reposition();
-                return true;
-            }
-	}
+            QString newsleep = task->getSleep().toString(Qt::ISODate);
+            task->setDateModified();
+            selbi->updateTaskFlag(); // If tasks changes awake mode, then flag needs to change
+            saveState (
+                selbi,
+                QString("setTaskSleep (%1)").arg(oldsleep),
+                selbi,
+                QString("setTaskSleep (%1)").arg(newsleep),
+                QString("setTaskSleep (%1)").arg(newsleep) );
+            emitDataChanged (selbi);
+            reposition();
+            return true;
+
+	}   // Found task
     }
     return false;
 }
@@ -2525,6 +2569,14 @@ bool VymModel::setTaskSleep(const QString &s)
 int VymModel::taskCount()
 {
     return taskModel->count (this);
+}
+
+void VymModel::updateTasksAlarm()
+{
+    if (taskModel->updateAwake())
+    {
+        reposition();
+    }
 }
 
 BranchItem* VymModel::addTimestamp()	//FIXME-4 new function, localize

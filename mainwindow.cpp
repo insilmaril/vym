@@ -5851,8 +5851,6 @@ void Main::testFunction1()
 
 void Main::testFunction2()
 {
-    VymModel  *m  = currentModel();
-    if (m) m->recalcTaskPriorities();  // FIXME-0 testing
 }
 
 void Main::toggleWinter()
