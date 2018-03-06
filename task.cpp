@@ -206,26 +206,34 @@ void Task::setDateModified(const QString &s)
     date_modified = QDateTime().fromString (s,Qt::ISODate);
 }
 
-void Task::setDaysSleep(qint64 n) 
+bool Task::setDaysSleep(qint64 n) 
 {
-    setDateSleep ( QDate::currentDate().addDays (n).toString(Qt::ISODate) );
+    return setDateSleep ( QDate::currentDate().addDays (n).toString(Qt::ISODate) );
 }
 
-void Task::setHoursSleep(qint64 n) 
+bool Task::setHoursSleep(qint64 n) 
 {
-    setDateSleep ( QDateTime::currentDateTime().addSecs (n * 3600 ).toString(Qt::ISODate) );
+    return setDateSleep ( QDateTime::currentDateTime().addSecs (n * 3600 ).toString(Qt::ISODate) );
 }
 
-void Task::setSecsSleep(qint64 n) 
+bool Task::setSecsSleep(qint64 n) 
 {
-    setDateSleep ( QDateTime::currentDateTime().addSecs (n).toString(Qt::ISODate) );
+    return setDateSleep ( QDateTime::currentDateTime().addSecs (n).toString(Qt::ISODate) );
 }
 
-void Task::setDateSleep(const QString &s)
+bool Task::setDateSleep(const QString &s)
 {
-    date_sleep = QDateTime().fromString (s, Qt::ISODate);   // FIXME-0 isValid missing
+    return setDateSleep( QDateTime().fromString (s, Qt::ISODate) );
+}
+
+bool Task::setDateSleep(const QDateTime &d)
+{
+    if (!d.isValid() ) return false;
+
+    date_sleep = d;
     updateAwake();
     if (status == Finished) setStatus(WIP); 
+    return true;
 }
 
 qint64 Task::getDaysSleep()

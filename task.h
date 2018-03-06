@@ -38,10 +38,11 @@ public:
     void setDateCreation (const QString &s);
     void setDateModified ();
     void setDateModified (const QString &s);
-    void setDaysSleep    (qint64 n);
-    void setHoursSleep   (qint64 n);
-    void setSecsSleep    (qint64 n);
-    void setDateSleep    (const QString &s);
+    bool setDaysSleep    (qint64 n);
+    bool setHoursSleep   (qint64 n);
+    bool setSecsSleep    (qint64 n);
+    bool setDateSleep    (const QString &s);
+    bool setDateSleep    (const QDateTime &d);
     qint64 getDaysSleep();
     qint64 getSecsSleep();
     QDateTime getSleep();
