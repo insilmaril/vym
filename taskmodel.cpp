@@ -247,14 +247,14 @@ void TaskModel::deleteTask (Task* t)
 	removeRows(pos, 1,QModelIndex() );
 }
 
-bool TaskModel::updateAwake()
+bool TaskModel::updateAwake(bool force)
 {
     bool awake_changed = false;
     foreach (Task *t,tasks)
     {
-        if (t->updateAwake() )
+        if (t->updateAwake() || force)
         {
-            t->getBranch()->updateTaskFlag(); // FIXME-0 testing only
+            t->getBranch()->updateTaskFlag(); 
             awake_changed = true;
         }
     }

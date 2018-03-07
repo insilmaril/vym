@@ -382,7 +382,7 @@ public:
 
     /*! Update task priorities */
 private slots:
-    void updateTasksAlarm();
+    void updateTasksAlarm(bool force = false);
 
 private:
     /*! Timer to check if tasks need to be awoken */

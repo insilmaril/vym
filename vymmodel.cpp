@@ -632,6 +632,7 @@ File::ErrorCode VymModel::loadMap (
             }
 
 	    // Recalc priorities and sort   
+            updateTasksAlarm (true);    
 	    taskModel->recalcPriorities();
 	} else 
 	{
@@ -2443,8 +2444,9 @@ bool VymModel::cycleTaskStatus(bool reverse)
     return false;
 }
 
-bool VymModel::setTaskSleep(const QString &s) 
+bool VymModel::setTaskSleep(const QString &s)   // FIXME-0 tests and doc missing
 {
+    bool ok = false;
     BranchItem *selbi = getSelectedBranch();
     if (selbi && !s.isEmpty() ) 
     {
@@ -2460,8 +2462,7 @@ bool VymModel::setTaskSleep(const QString &s)
             if (pos >= 0)
             {
                 // Found only digit, considered as days
-                qDebug() << "Found " << re.cap(1) << " days in " << s;
-                task->setDaysSleep (re.cap(1).toInt() );
+                ok = task->setDaysSleep (re.cap(1).toInt() );
             } else
             {
                 QRegExp re ("^\\s*(\\d+)\\s*h\\s*$");
@@ -2469,8 +2470,7 @@ bool VymModel::setTaskSleep(const QString &s)
                 if (pos >= 0)
                 {
                     // Found digit followed by "h", considered as hours
-                        qDebug() << "Found " << re.cap(1) << " hours in " << s;
-                        task->setHoursSleep (re.cap(1).toInt() );
+                    ok = task->setHoursSleep (re.cap(1).toInt() );
                 } else
                 {
                     QRegExp re ("^\\s*(\\d+)\\s*s\\s*$");
@@ -2478,92 +2478,63 @@ bool VymModel::setTaskSleep(const QString &s)
                     if (pos >= 0)
                     {
                         // Found digit followed by "s", considered as seconds
-                        qDebug() << "Found " << re.cap(1) << " seconds in " << s;
-                        task->setSecsSleep (re.cap(1).toInt() );
+                        ok = task->setSecsSleep (re.cap(1).toInt() );
                     } else
                     {
-                        // Try to parse date
-                        qDebug() << "Looking for some date in " << s;
-                        return false;
-                    }
-                }
-            }
-
-
-            /*
-
-            // FIXME-0 old parser:
-            bool ok;
-            int n = s.toInt(&ok);
-            if (!ok)
-            {
-                // Is s a date?
-                QDateTime d = QDateTime::fromString(s, Qt::ISODate);
-                if (d.isValid())
-                    // ISO date YYYY-MM-DDTHH:mm:ss
-                    ok = true;
-                else
-                {
-                    d = QDateTime::fromString(s, Qt::DefaultLocaleShortDate);
-                    if (d.isValid()) 
-                        // Locale date, e.g. 24 Dec 2012
-                        ok = true;
-                    else
-                    {
-                        QRegExp re ("(\\d+).(\\d+).(\\d+)");
-                        re.setMinimal(false);
-                        int pos = re.indexIn(s);
-                        QStringList list = re.capturedTexts();
-                        if (pos >= 0)
+                        ok = task->setDateSleep (s); // ISO date YYYY-MM-DDTHH:mm:ss
+                        if (!ok)
                         {
-                            // German format, e.g. 24.12.2012
-                            d = QDateTime (QDate(list.at(3).toInt(), list.at(2).toInt(), list.at(1).toInt()) );
-                            ok = true;
-                        } else
-                        {
-                            re.setPattern("(\\d+).(\\d+).");
-                            pos  = re.indexIn(s);
-                            list = re.capturedTexts();
+                            QRegExp re ("(\\d+).(\\d+).(\\d+)");
+                            re.setMinimal(false);
+                            int pos = re.indexIn(s);
+                            QStringList list = re.capturedTexts();
+                            QDateTime d;
                             if (pos >= 0)
                             {
-                                // Short German format, e.g. 24.12.
-                                int month = list.at(2).toInt();
-                                int day = list.at(1).toInt();
-                                int year = QDate::currentDate().year();
-                                d = QDateTime ( QDate(year, month, day) );
-                                if (QDateTime::currentDateTime().daysTo(d) < 0)
-                                {
-                                    year++;
-                                    d = QDateTime( QDate(year, month, day) );
-                                }
-                                ok = true;
+                                d = QDateTime (QDate(list.at(3).toInt(), list.at(2).toInt(), list.at(1).toInt()) );
+                                ok = task->setDateSleep (d); // German format, e.g. 24.12.2012
                             } else
                             {
                                 re.setPattern("(\\d+).(\\d+).");
+                                pos  = re.indexIn(s);
+                                list = re.capturedTexts();
+                                if (pos >= 0)
+                                {
+                                    int month = list.at(2).toInt();
+                                    int day = list.at(1).toInt();
+                                    int year = QDate::currentDate().year();
+                                    d = QDateTime ( QDate(year, month, day) );
+                                    if (QDateTime::currentDateTime().daysTo(d) < 0)
+                                    {
+                                        year++;
+                                        d = QDateTime( QDate(year, month, day) );
+                                    }
+                                    ok = task->setDateSleep (d); // Short German format, e.g. 24.12.
+                                } 
                             }
                         }
                     }
                 }
-                if (ok) n = QDateTime::currentDateTime().daysTo(d);
             }
-            */
 
-            QString newsleep = task->getSleep().toString(Qt::ISODate);
-            task->setDateModified();
-            selbi->updateTaskFlag(); // If tasks changes awake mode, then flag needs to change
-            saveState (
-                selbi,
-                QString("setTaskSleep (%1)").arg(oldsleep),
-                selbi,
-                QString("setTaskSleep (%1)").arg(newsleep),
-                QString("setTaskSleep (%1)").arg(newsleep) );
-            emitDataChanged (selbi);
-            reposition();
-            return true;
+            if (ok)
+            {
+                QString newsleep = task->getSleep().toString(Qt::ISODate);
+                task->setDateModified();
+                selbi->updateTaskFlag(); // If tasks changes awake mode, then flag needs to change
+                saveState (
+                    selbi,
+                    QString("setTaskSleep (%1)").arg(oldsleep),
+                    selbi,
+                    QString("setTaskSleep (%1)").arg(newsleep),
+                    QString("setTaskSleep (%1)").arg(newsleep) );
+                emitDataChanged (selbi);
+                reposition();
+            }
 
 	}   // Found task
-    }
-    return false;
+    }   // Found branch
+    return ok;
 }
 
 int VymModel::taskCount()
@@ -2571,9 +2542,9 @@ int VymModel::taskCount()
     return taskModel->count (this);
 }
 
-void VymModel::updateTasksAlarm()
+void VymModel::updateTasksAlarm(bool force)
 {
-    if (taskModel->updateAwake())
+    if (taskModel->updateAwake( force) || force)
     {
         reposition();
     }
