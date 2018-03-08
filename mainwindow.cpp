@@ -4263,31 +4263,31 @@ void Main::editTaskSleepN()
     VymModel *m=currentModel();
     if (m) 
     {
-	int n=((QAction*)sender())->data().toInt();
-	Task *task=m->getSelectedTask();
+	qint64 n = ((QAction*)sender())->data().toInt();
+	Task *task = m->getSelectedTask();
 	if (task)
 	{
 	    bool ok=true;
             QString s;
-	    if (n<0)
+	    if ( n < 0)
             {
-                n=task->getDaysSleep();
-                if (n<=0) n=0;
+                n = task->getDaysSleep();
+                if ( n <= 0) n = 0;
 
-                LineEditDialog *dia=new LineEditDialog(this);
-                dia->setLabel(tr("Enter sleep time (number of days or date YYYY-MM-DD or DD.MM[.YYYY]","task sleep time dialog"));
+                LineEditDialog *dia = new LineEditDialog(this);
+                dia->setLabel(tr("Enter sleep time (number of days, hours with 'h' or date YYYY-MM-DD or DD.MM[.YYYY]","task sleep time dialog"));
                 dia->setText(QString("%1").arg(n));
                 centerDialog (dia);
                 if (dia->exec() == QDialog::Accepted)
                 {
-                    ok=true;
-                    s=dia->getText();
+                    ok = true;
+                    s = dia->getText();
                 } else
-                    ok=false;
+                    ok = false;
 
                 delete dia;
             } else
-                s=QString("%1").arg(n);
+                s = QString("%1").arg(n);
 
             if (ok && !m->setTaskSleep(s) )
                 QMessageBox::warning(0, 
