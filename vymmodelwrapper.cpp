@@ -417,6 +417,21 @@ QString VymModelWrapper::getSelectionString()
     return setResult( model->getSelectString() );
 }
 
+QString VymModelWrapper::getTaskSleep()
+{
+    QString r;
+    BranchItem *selbi = getSelectedBranch();
+    if (selbi)
+    {
+        Task *task = selbi->getTask();
+        if (task)
+            r = task->getSleep().toString(Qt::ISODate);
+        else
+            logError( context(), QScriptContext::UnknownError, "Branch has no task");
+    }
+    return setResult( r );
+}
+
 int VymModelWrapper::getTaskSleepDays()
 {
     int r = -1;

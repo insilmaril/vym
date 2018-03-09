@@ -61,6 +61,7 @@ public slots:
     QString getNotePlainText();
     QString getNoteXML();
     QString getSelectionString();
+    QString getTaskSleep();
     int getTaskSleepDays();
     QString getURL();
     QString getVymLink();
