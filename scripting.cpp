@@ -61,16 +61,18 @@ QObject* VymWrapper::currentMap()
 
 bool VymWrapper::loadMap( const QString &filename )
 {
+    bool r;
     if ( File::Success == mainWindow->fileLoad( filename, NewMap, VymMap ) )
-        return true;
+        r = true;
     else
-        return false;
+        r = false;
+    return setResult( r );
 }
 
 int VymWrapper::mapCount()
 {
     context()->engine()->globalObject().setProperty("lastResult", mainWindow->modelCount() );
-    return mainWindow->modelCount();
+    return setResult( mainWindow->modelCount() );
 }
 
 void VymWrapper::selectMap(uint n)   
