@@ -2463,7 +2463,6 @@ bool VymModel::setTaskSleep(const QString &s)   // FIXME-0 tests and doc missing
             if (pos >= 0)
             {
                 // Found only digit, considered as days
-                qDebug() << "Setting sleep: days";
                 ok = task->setDaysSleep (re.cap(1).toInt() );
             } else
             {
@@ -2473,7 +2472,6 @@ bool VymModel::setTaskSleep(const QString &s)   // FIXME-0 tests and doc missing
                 {
                     // Found digit followed by "h", considered as hours
                     ok = task->setHoursSleep (re.cap(1).toInt() );
-                    qDebug() << "Setting sleep: hours";
                 } else
                 {
                     QRegExp re ("^\\s*(\\d+)\\s*s\\s*$");
@@ -2482,11 +2480,9 @@ bool VymModel::setTaskSleep(const QString &s)   // FIXME-0 tests and doc missing
                     {
                         // Found digit followed by "s", considered as seconds
                         ok = task->setSecsSleep (re.cap(1).toInt() );
-                        qDebug() << "Setting sleep: seconds";
                     } else
                     {
                         ok = task->setDateSleep (s); // ISO date YYYY-MM-DDTHH:mm:ss
-                        qDebug() << "Setting sleep: string";
 
                         if (!ok)
                         {
@@ -2499,7 +2495,6 @@ bool VymModel::setTaskSleep(const QString &s)   // FIXME-0 tests and doc missing
                             {
                                 d = QDateTime (QDate(list.at(3).toInt(), list.at(2).toInt(), list.at(1).toInt()) );
                                 ok = task->setDateSleep (d); // German format, e.g. 24.12.2012
-                                qDebug() << "Setting sleep: German long";
                             } else
                             {
                                 re.setPattern("(\\d+)\\.(\\d+)\\.");
@@ -2517,8 +2512,19 @@ bool VymModel::setTaskSleep(const QString &s)   // FIXME-0 tests and doc missing
                                         d = QDateTime( QDate(year, month, day) );
                                     }
                                     ok = task->setDateSleep (d); // Short German format, e.g. 24.12.
-                                    qDebug() << "Setting sleep: German short";
-                                } 
+                                } else
+                                {
+                                    re.setPattern("(\\d+)\\:(\\d+)");
+                                    pos  = re.indexIn(s);
+                                    list = re.capturedTexts();
+                                    if (pos >= 0)
+                                    {
+                                        int hour = list.at(1).toInt();
+                                        int min  = list.at(2).toInt();
+                                        d = QDateTime ( QDate::currentDate(), QTime(hour, min));
+                                        ok = task->setDateSleep (d); // Time HH:MM
+                                    }
+                                }
                             }
                         }
                     }

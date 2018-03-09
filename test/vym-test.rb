@@ -678,38 +678,69 @@ def test_tasks (vym)
   map.toggleTask
   expect "Toggle task", map.hasTask, true
 
-  map.setTaskSleep(10)
-  expect "Set task sleep to 10 (days, integer):", map.getTaskSleepDays.to_i, 10
-
   date_today = DateTime.now
   delta_days = 123
   date_later = date_today + delta_days
   date_later_iso = date_later.strftime("%Y-%m-%dT%H:%M:%S") 
 
-  # Delta days
-  date_s = date_later.strftime("%Y-%m-%d") 
-  expect "Set task sleep to ISO Date '#{date_s}' accepts input", map.setTaskSleep(date_s), true
-  expect "Set task sleep to ISO Date '#{date_s}' has correct sleep value '#{delta_days}' days", map.getTaskSleepDays.to_i, delta_days
+  # Input: number of days
+  date_new = delta_days
+  expect "Set task sleep to number of days '#{date_new}' accepts input", map.setTaskSleep(date_new),  true
+  expect "Set task sleep to number of days '#{date_new}' has correct sleep value '#{delta_days}' days", map.getTaskSleepDays.to_i, delta_days
 
-  date_s = date_later.strftime("%d.%m.") 
-  expect "Set task sleep to German short form '#{date_s}' accepts input '#{date_s}'", map.setTaskSleep(date_s), true
-  expect "Set task sleep to German short form '#{date_s}' has correct sleep value (days)", map.getTaskSleepDays.to_i, delta_days
+  # Input: number of seconds
+  date_new = "10s"
+  expect "Set task sleep to number of seconds '#{date_new}' accepts input", map.setTaskSleep(date_new),  true
 
-  date_s = date_later.strftime("%d.%m.%Y") 
-  expect "Set task sleep to German long form '#{date_s}' accepts input '#{date_s}'", map.setTaskSleep(date_s), true
-  expect "Set task sleep to German long form '#{date_s}' has correct sleep value (days)", map.getTaskSleepDays.to_i, delta_days
+  # Input: number of hours
+  date_new = "10h"
+  expect "Set task sleep to number of hours '#{date_new}' accepts input", map.setTaskSleep(date_new),  true
+  
+  # Input: Date
+  date_new = date_later.strftime("%Y-%m-%d") 
+  expect "Set task sleep to ISO Date '#{date_new}' accepts input", map.setTaskSleep(date_new), true
+  expect "Set task sleep to ISO Date '#{date_new}' has correct sleep value '#{delta_days}' days", map.getTaskSleepDays.to_i, delta_days
 
-  # Invalid date strings
-  date_s = "invalidDate"
-  expect "Set task sleep to '#{date_s}' should fail", map.setTaskSleep(date_s), false
+  date_new = date_later.strftime("%d.%m.") 
+  expect "Set task sleep to German short form '#{date_new}' accepts input '#{date_new}'", map.setTaskSleep(date_new), true
+  expect "Set task sleep to German short form '#{date_new}' has correct sleep value (days)", map.getTaskSleepDays.to_i, delta_days
 
-  date_s = date_later.strftime("%d %m.%Y") 
-  expect "Set task sleep to '#{date_s}' should fail", map.setTaskSleep(date_s), false
+  date_new = date_later.strftime("%d.%m.%Y") 
+  expect "Set task sleep to German long form '#{date_new}' accepts input '#{date_new}'", map.setTaskSleep(date_new), true
+  expect "Set task sleep to German long form '#{date_new}' has correct sleep value (days)", map.getTaskSleepDays.to_i, delta_days
+
+  # Input: Invalid strings
+  date_new = "invalidDate"
+  expect "Set task sleep to '#{date_new}' should fail", map.setTaskSleep(date_new), false
+
+  date_new = date_later.strftime("%d %m.%Y") 
+  expect "Set task sleep to '#{date_new}' should fail", map.setTaskSleep(date_new), false
 
   # DateTime
-  date_s = date_later_iso
-  expect "Set task sleep to ISO DateTime '#{date_s}' accepts input", map.setTaskSleep(date_s), true
-  expect "Set task sleep to ISO DateTime '#{date_s}' returns correct sleep value '#{date_later_iso}'", map.getTaskSleep, date_s
+  date_new = date_later_iso
+  expect "Set task sleep to ISO DateTime '#{date_new}' accepts input", map.setTaskSleep(date_new), true
+  expect "Set task sleep to ISO DateTime '#{date_new}' returns correct sleep value '#{date_later_iso}'", map.getTaskSleep, date_later_iso
+  
+  # Time only
+  date_later = date_today
+
+  date_new = "12:34"
+  date_later_iso = date_today.strftime("%Y-%m-%dT12:34:00") 
+  expect "Set task sleep to time '#{date_new}' accepts input", map.setTaskSleep(date_new), true
+  expect "Set task sleep to time '#{date_new}' returns correct sleep value '#{date_later_iso}'", 
+    map.getTaskSleep, date_later_iso
+  
+  date_new = "2:4"
+  date_later_iso = date_today.strftime("%Y-%m-%dT02:04:00") 
+  expect "Set task sleep to time '#{date_new}' accepts input", map.setTaskSleep(date_new), true
+  expect "Set task sleep to time '#{date_new}' returns correct sleep value '#{date_later_iso}'", 
+    map.getTaskSleep, date_later_iso
+
+  date_new = "03:05"
+  date_later_iso = date_today.strftime("%Y-%m-%dT03:05:00") 
+  expect "Set task sleep to time '#{date_new}' accepts input", map.setTaskSleep(date_new), true
+  expect "Set task sleep to time '#{date_new}' returns correct sleep value '#{date_later_iso}'", 
+    map.getTaskSleep, date_later_iso
 end
 
 ######################
