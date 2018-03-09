@@ -14,6 +14,7 @@ OptionParser.new do |opts|
 end.parse!
 
 @testdir = options[:testdir]
+@testmap = ARGV[0]
 
 $tests_passed = 0
 $tests_failed = 0
@@ -65,8 +66,7 @@ def init_map( vym )
   # MapCenter 1
 
   #n = vym.mapCount.to_i
-  #mapname = "test/default.vym"
-  #vym.loadMap (mapname)
+  #vym.loadMap (@testmap)
   return vym.map ( 1 )
 end
 
