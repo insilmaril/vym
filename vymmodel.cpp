@@ -1009,6 +1009,7 @@ bool VymModel::tryVymLock()
     QString defAuthor = settings.value("/user/name", tr( "unknown user", "Default for lockfiles of maps") ).toString();
     QString defHost   = QHostInfo::localHostName();      
     vymLock.setMapPath( filePath );
+    qDebug() << "VM::tryVymLock  filePath=" << filePath;
     vymLock.setAuthor( settings.value( "/user/name", defAuthor ).toString() ); 
     if ( getenv("HOST") != 0 ) 
         vymLock.setHost( getenv("HOST") );
@@ -2462,6 +2463,7 @@ bool VymModel::setTaskSleep(const QString &s)   // FIXME-0 tests and doc missing
             if (pos >= 0)
             {
                 // Found only digit, considered as days
+                qDebug() << "Setting sleep: days";
                 ok = task->setDaysSleep (re.cap(1).toInt() );
             } else
             {
@@ -2471,6 +2473,7 @@ bool VymModel::setTaskSleep(const QString &s)   // FIXME-0 tests and doc missing
                 {
                     // Found digit followed by "h", considered as hours
                     ok = task->setHoursSleep (re.cap(1).toInt() );
+                    qDebug() << "Setting sleep: hours";
                 } else
                 {
                     QRegExp re ("^\\s*(\\d+)\\s*s\\s*$");
@@ -2479,12 +2482,15 @@ bool VymModel::setTaskSleep(const QString &s)   // FIXME-0 tests and doc missing
                     {
                         // Found digit followed by "s", considered as seconds
                         ok = task->setSecsSleep (re.cap(1).toInt() );
+                        qDebug() << "Setting sleep: seconds";
                     } else
                     {
                         ok = task->setDateSleep (s); // ISO date YYYY-MM-DDTHH:mm:ss
+                        qDebug() << "Setting sleep: string";
+
                         if (!ok)
                         {
-                            QRegExp re ("(\\d+).(\\d+).(\\d+)");
+                            QRegExp re ("(\\d+)\\.(\\d+)\\.(\\d+)");
                             re.setMinimal(false);
                             int pos = re.indexIn(s);
                             QStringList list = re.capturedTexts();
@@ -2493,9 +2499,10 @@ bool VymModel::setTaskSleep(const QString &s)   // FIXME-0 tests and doc missing
                             {
                                 d = QDateTime (QDate(list.at(3).toInt(), list.at(2).toInt(), list.at(1).toInt()) );
                                 ok = task->setDateSleep (d); // German format, e.g. 24.12.2012
+                                qDebug() << "Setting sleep: German long";
                             } else
                             {
-                                re.setPattern("(\\d+).(\\d+).");
+                                re.setPattern("(\\d+)\\.(\\d+)\\.");
                                 pos  = re.indexIn(s);
                                 list = re.capturedTexts();
                                 if (pos >= 0)
@@ -2510,6 +2517,7 @@ bool VymModel::setTaskSleep(const QString &s)   // FIXME-0 tests and doc missing
                                         d = QDateTime( QDate(year, month, day) );
                                     }
                                     ok = task->setDateSleep (d); // Short German format, e.g. 24.12.
+                                    qDebug() << "Setting sleep: German short";
                                 } 
                             }
                         }

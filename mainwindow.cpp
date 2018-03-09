@@ -588,6 +588,9 @@ void Main::setupAPI()
     c=new Command ("getSelectionString",Command::TreeItem);
     modelCommands.append(c);
 
+    c=new Command ("getTaskSleep",Command::Branch);
+    modelCommands.append(c);
+
     c=new Command ("getTaskSleepDays",Command::Branch);
     modelCommands.append(c);
 
@@ -4271,12 +4274,27 @@ void Main::editTaskSleepN()
             QString s;
 	    if ( n < 0)
             {
-                n = task->getDaysSleep();
-                if ( n <= 0) n = 0;
+                QString currentSleep;
+                QDateTime d = task->getSleep();
+                n = task->getSecsSleep();
+                if ( n <= 0) 
+                    currentSleep = "";
+                else if (n < 60) 
+                    currentSleep = QString("%1s").arg(n);
+                else if (n < 24 * 3600) 
+                {
+                    currentSleep = QString("today: %1").arg(d.time().toString("hh:mm") );
+                } else if (d.time().hour() == 0 && d.time().minute() == 0 )
+                {
+                    currentSleep = QString("date: %1").arg(d.date().toString( Qt::SystemLocaleShortDate ));
+                } else 
+                    currentSleep = QString("datetime: %1").arg(d.toString( Qt::SystemLocaleShortDate ));
+
+
 
                 LineEditDialog *dia = new LineEditDialog(this);
                 dia->setLabel(tr("Enter sleep time (number of days, hours with 'h' or date YYYY-MM-DD or DD.MM[.YYYY]","task sleep time dialog"));
-                dia->setText(QString("%1").arg(n));
+                dia->setText(currentSleep);
                 centerDialog (dia);
                 if (dia->exec() == QDialog::Accepted)
                 {
@@ -5763,7 +5781,7 @@ QVariant Main::runScript (const QString &script)
 
     if (debug)
     {
-        qDebug() << "MainL::runScript finished:";
+        qDebug() << "MainWindow::runScript finished:";
         qDebug() << "   hasException: " << scriptEngine.hasUncaughtException();
         /*
         if (scriptEngine.hasUncaughtException() )

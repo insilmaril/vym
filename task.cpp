@@ -223,7 +223,16 @@ bool Task::setSecsSleep(qint64 n)
 
 bool Task::setDateSleep(const QString &s)
 {
-    return setDateSleep( QDateTime().fromString (s, Qt::ISODate) );
+    if (setDateSleep( QDateTime().fromString (s, Qt::ISODate) ))
+        return true;
+    else if (setDateSleep( QDateTime().fromString (s, Qt::TextDate) ))
+        return true;
+    else if (setDateSleep( QDateTime().fromString (s, Qt::DefaultLocaleShortDate) ))
+        return true;
+    else if (setDateSleep( QDateTime().fromString (s, Qt::DefaultLocaleLongDate) ))
+        return true;
+    else
+        return false;
 }
 
 bool Task::setDateSleep(const QDateTime &d)

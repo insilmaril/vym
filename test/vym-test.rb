@@ -100,13 +100,10 @@ end
 #######################
 def test_vym (vym)
   heading "Mainwindow checks:"
-  version = "2.6.205"
+  version = "2.6.207"
   expect "Version is #{version}", vym.version, version
 
-  n = vym.mapCount.to_i
-  mapname = "test/default.vym"
-  vym.loadMap (mapname)
-  expect "mapCount increased after loading \"#{mapname}\"", vym.mapCount.to_i, n + 1
+  expect "Loading map '#{@testmap}'", vym.loadMap(@testmap), true
 
   vym.clearConsole
 end
@@ -145,10 +142,10 @@ def test_export (vym)
   map = init_map( vym )
 
   #HTML
-  mapname = "export-html"
-  htmlpath = "#{@testdir}/#{mapname}.html"
+  exportname = "export-html"
+  htmlpath = "#{@testdir}/#{exportname}.html"
   flagpath = "#{@testdir}/flags/flag-stopsign.png"
-  pngpath = "#{@testdir}/#{mapname}.png"
+  pngpath = "#{@testdir}/#{exportname}.png"
   csspath = "#{@testdir}/vym.css"
   map.exportMap("HTML", htmlpath, @testdir)
   expect "exportHTML: HTML file exists", File.exists?(htmlpath), true
@@ -680,14 +677,39 @@ def test_tasks (vym)
   expect "Branch has no task before test", map.hasTask, false
   map.toggleTask
   expect "Toggle task", map.hasTask, true
-  expect "Setting sleep days to 10", map.setTaskSleep(10), true
-  expect "Task sleep when setting to integer", map.getTaskSleepDays.to_i, 10
+
+  map.setTaskSleep(10)
+  expect "Set task sleep to 10 (days, integer):", map.getTaskSleepDays.to_i, 10
 
   date_today = DateTime.now
-  date_later = date_today + 123
+  delta_days = 123
+  date_later = date_today + delta_days
+  date_later_iso = date_later.strftime("%Y-%m-%dT%H:%M:%S") 
+
+  # Delta days
   date_s = date_later.strftime("%Y-%m-%d") 
-  map.setTaskSleep(date_s)
-  expect "Task sleep when setting to ISO date (#{date_s})", map.getTaskSleepDays.to_i, 123
+  expect "Set task sleep to ISO Date '#{date_s}' accepts input", map.setTaskSleep(date_s), true
+  expect "Set task sleep to ISO Date '#{date_s}' has correct sleep value '#{delta_days}' days", map.getTaskSleepDays.to_i, delta_days
+
+  date_s = date_later.strftime("%d.%m.") 
+  expect "Set task sleep to German short form '#{date_s}' accepts input '#{date_s}'", map.setTaskSleep(date_s), true
+  expect "Set task sleep to German short form '#{date_s}' has correct sleep value (days)", map.getTaskSleepDays.to_i, delta_days
+
+  date_s = date_later.strftime("%d.%m.%Y") 
+  expect "Set task sleep to German long form '#{date_s}' accepts input '#{date_s}'", map.setTaskSleep(date_s), true
+  expect "Set task sleep to German long form '#{date_s}' has correct sleep value (days)", map.getTaskSleepDays.to_i, delta_days
+
+  # Invalid date strings
+  date_s = "invalidDate"
+  expect "Set task sleep to '#{date_s}' should fail", map.setTaskSleep(date_s), false
+
+  date_s = date_later.strftime("%d %m.%Y") 
+  expect "Set task sleep to '#{date_s}' should fail", map.setTaskSleep(date_s), false
+
+  # DateTime
+  date_s = date_later_iso
+  expect "Set task sleep to ISO DateTime '#{date_s}' accepts input", map.setTaskSleep(date_s), true
+  expect "Set task sleep to ISO DateTime '#{date_s}' returns correct sleep value '#{date_later_iso}'", map.getTaskSleep, date_s
 end
 
 ######################
@@ -810,24 +832,24 @@ end
 
 #######################
 test_vym(vym)
-test_basics(vym)
-test_export(vym)
-test_extrainfo(vym)
-test_adding_branches(vym)
-test_adding_maps(vym)
-test_scrolling(vym)
-test_moving_parts(vym)
-test_modify_branches(vym)
-test_flags(vym)
-test_delete_parts(vym)
-test_copy_paste(vym)
-test_references(vym)
-test_history(vym)
-test_xlinks(vym)
+#test_basics(vym)
+#test_export(vym)
+#test_extrainfo(vym)
+#test_adding_branches(vym)
+#test_adding_maps(vym)
+#test_scrolling(vym)
+#test_moving_parts(vym)
+#test_modify_branches(vym)
+#test_flags(vym)
+#test_delete_parts(vym)
+#test_copy_paste(vym)
+#test_references(vym)
+#test_history(vym)
+#test_xlinks(vym)
 test_tasks(vym)
-test_notes(vym)
-test_headings(vym)
-test_bugfixes(vym)
+#test_notes(vym)
+#test_headings(vym)
+#test_bugfixes(vym)
 summary
 
 =begin
