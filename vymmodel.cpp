@@ -1009,7 +1009,6 @@ bool VymModel::tryVymLock()
     QString defAuthor = settings.value("/user/name", tr( "unknown user", "Default for lockfiles of maps") ).toString();
     QString defHost   = QHostInfo::localHostName();      
     vymLock.setMapPath( filePath );
-    qDebug() << "VM::tryVymLock  filePath=" << filePath;
     vymLock.setAuthor( settings.value( "/user/name", defAuthor ).toString() ); 
     if ( getenv("HOST") != 0 ) 
         vymLock.setHost( getenv("HOST") );
@@ -2445,7 +2444,7 @@ bool VymModel::cycleTaskStatus(bool reverse)
     return false;
 }
 
-bool VymModel::setTaskSleep(const QString &s)   // FIXME-0 tests and doc missing
+bool VymModel::setTaskSleep(const QString &s)   // FIXME-0 doc missing
 {
     bool ok = false;
     BranchItem *selbi = getSelectedBranch();

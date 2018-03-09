@@ -4283,17 +4283,15 @@ void Main::editTaskSleepN()
                     currentSleep = QString("%1s").arg(n);
                 else if (n < 24 * 3600) 
                 {
-                    currentSleep = QString("today: %1").arg(d.time().toString("hh:mm") );
+                    currentSleep = d.time().toString("hh:mm");
                 } else if (d.time().hour() == 0 && d.time().minute() == 0 )
                 {
-                    currentSleep = QString("date: %1").arg(d.date().toString( Qt::SystemLocaleShortDate ));
+                    currentSleep = d.date().toString( "dd.MM.yyyy");
                 } else 
-                    currentSleep = QString("datetime: %1").arg(d.toString( Qt::SystemLocaleShortDate ));
-
-
+                    currentSleep = d.toString( Qt::ISODate );
 
                 LineEditDialog *dia = new LineEditDialog(this);
-                dia->setLabel(tr("Enter sleep time (number of days, hours with 'h' or date YYYY-MM-DD or DD.MM[.YYYY]","task sleep time dialog"));
+                dia->setLabel(tr("Enter sleep time (number of days, hours with^ 'h' or date YYYY-MM-DD or DD.MM[.YYYY]","task sleep time dialog"));
                 dia->setText(currentSleep);
                 centerDialog (dia);
                 if (dia->exec() == QDialog::Accepted)
