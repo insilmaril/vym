@@ -202,6 +202,14 @@ def test_export (vym)
   map.exportMap("Last")
   expect "exportLast:   LaTeX file exists", File.exists?(filepath), true
 
+  #Markdown
+  filepath = "#{@testdir}/export-markdown.org"
+  map.exportMap("Markdown", filepath)
+  expect "exportMarkdown:  Markdown file exists", File.exists?(filepath), true
+  File.delete(filepath)
+  map.exportMap("Last")
+  expect "exportLast:     Markdown file exists", File.exists?(filepath), true
+
   #OrgMode
   filepath = "#{@testdir}/export-orgmode.org"
   map.exportMap("OrgMode", filepath)

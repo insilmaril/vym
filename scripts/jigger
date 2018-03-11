@@ -20,7 +20,9 @@ ARGV.each do |id|
   # This should be removed. Used to switch between various Jira systems 
   if  id.include?("VD") then
     options[:site] = config['jira-collab']
-  elsif   id.include?("TEK")|| id.include?("MLI") then
+  elsif id.include?("TEK")|| id.include?("MLI") then
+    options[:site] = config['jira-extern']
+  elsif id.include?("EBHV")|| id.include?("EBLINUX") then
     options[:site] = config['jira-extern']
   else
     options[:site] = config['jira-intern']

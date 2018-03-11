@@ -36,6 +36,7 @@ TaskEditor::TaskEditor(QWidget *)
 
     QIcon icon = QIcon (":/view-filter.png");
     QAction *a = new QAction(icon,  tr( "Current map","TaskEditor" ),this );
+    a->setToolTip(tr("Show only tasks from current map","Filters in task Editor"));
     a->setCheckable(true);
     a->setChecked  (settings.value("/taskeditor/filterMap", false).toBool());
     tb->addAction (a);
@@ -43,6 +44,7 @@ TaskEditor::TaskEditor(QWidget *)
     actionToggleFilterMap = a;
 
     a = new QAction(icon,  tr( "Active tasks","TaskEditor" ),this );
+    a->setToolTip(tr("Show only active tasks","Filters in task Editor"));
     a->setCheckable(true);
     a->setChecked  (settings.value("/taskeditor/filterActive", false).toBool());
     tb->addAction (a);
@@ -50,6 +52,7 @@ TaskEditor::TaskEditor(QWidget *)
     actionToggleFilterActive = a;
 
     a = new QAction(icon,  tr( "New tasks","TaskEditor" ),this );
+    a->setToolTip(tr("Show only new tasks","Filters in task Editor"));
     a->setCheckable(true);
     a->setChecked  (settings.value("/taskeditor/filterNew", false).toBool());
     tb->addAction (a);
@@ -58,7 +61,7 @@ TaskEditor::TaskEditor(QWidget *)
 
     icon = QIcon (":/flag-arrow-up.png");
     a = new QAction(icon, "", this); //tr( "Flags","TaskEditor" ),this );   // FIXME-1 add translation
-    a->setToolTip("Flag 1 (arrow-up)");
+    a->setToolTip(tr("Show only tasks marked with this arrow-up flag","Filters in task Editor"));
     a->setCheckable(true);
     a->setChecked  (settings.value("/taskeditor/filterFlags1", false).toBool());
     if (settings.value( "/mainwindow/showTestMenu",false).toBool())
@@ -68,7 +71,7 @@ TaskEditor::TaskEditor(QWidget *)
 
     icon = QIcon (":/flag-2arrow-up.png");
     a = new QAction(icon,  "", this); //tr( "Flags","TaskEditor" ),this );   // FIXME-1 add translation
-    a->setToolTip("Flag 2 (2arrow-up)");
+    a->setToolTip(tr("Show only tasks marked with this arrow-up flag","Filters in task Editor"));
     a->setCheckable(true);
     a->setChecked  (settings.value("/taskeditor/filterFlags2", false).toBool());
     if (settings.value( "/mainwindow/showTestMenu",false).toBool())
@@ -76,9 +79,9 @@ TaskEditor::TaskEditor(QWidget *)
     connect( a, SIGNAL( triggered() ), this, SLOT(toggleFilterFlags2() ) );
     actionToggleFilterFlags2 = a;
 
-    icon = QIcon (":/flag-stopsign.png");
+    icon = QIcon (":/flag-no-arrow-up.png");
     a = new QAction(icon,  "", this); //tr( "Flags","TaskEditor" ),this );   // FIXME-1 add translation
-    a->setToolTip("Flag 3 (stopsign)");
+    a->setToolTip(tr("Show only tasks marked without any arrow-up flag","Filters in task Editor"));
     a->setCheckable(true);
     a->setChecked  (settings.value("/taskeditor/filterFlags3", false).toBool());
     if (settings.value( "/mainwindow/showTestMenu",false).toBool())
@@ -181,6 +184,9 @@ TaskEditor::~TaskEditor()
     settings.setValue ("/taskeditor/filterMap",actionToggleFilterMap->isChecked());
     settings.setValue ("/taskeditor/filterActive",actionToggleFilterActive->isChecked());
     settings.setValue ("/taskeditor/filterNew",actionToggleFilterNew->isChecked());
+    settings.setValue ("/taskeditor/filterFlags1",actionToggleFilterFlags1->isChecked());
+    settings.setValue ("/taskeditor/filterFlags2",actionToggleFilterFlags2->isChecked());
+    settings.setValue ("/taskeditor/filterFlags3",actionToggleFilterFlags3->isChecked());
     settings.setValue ("/taskeditor/showParentsLevel",taskModel->getShowParentsLevel() );
     for (int i=0; i<7; i++)
     {
