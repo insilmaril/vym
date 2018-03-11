@@ -896,10 +896,29 @@ in the taskeditor:
     morning\includegraphics[width=0.5cm]{../flags/flag-task-new-morning.png}
     \item Work in progress - morning
     \includegraphics[width=0.5cm]{../flags/flag-task-wip-morning.png}
+    \item New tasks - only show new freshly \lq woken up\rq tasks
+    \item Various filters for priorty flags
+    \includegraphics[width=0.5cm]{../flags/flag-arrow-up.png}
+    \includegraphics[width=0.5cm]{../flags/flag-2arrow-up.png}
+%    \includegraphics[width=0.5cm]{../flags/flag-no-arrow-up.png}
+    \ldots
 \end{itemize}
 Additionally these poor tasks, which have just been woken up, will get a
 way higher priority, so that they pop up on top of your list in the
 taskeditor, see next section.
+
+\paragraph{Letting a task sleep}
+If you press \key{Shift-Q}, a dialog window will pop up and lets you
+enter the sleep time. Currently the following formats are alloed:
+\begin{itemize}
+    \item \lq 12\rq -- sleep for 12 days
+    \item \lq 34s\rq -- sleep for 34 seconds
+    \item \lq 2h\rq -- sleep for 2 hours
+    \item \lq 24.12.\rq -- sleep until December 24 this year
+    \item \lq 24.12.2038\ -- sleep until December 24 in 2038
+        \item \lq 21:34\rq -- sleep until 21:34, or 9:34 pm
+    \item \lq 2038-12-24T21:34\rq -- sleep until December 24 in 2038, 9:34 pm
+\end{itemize}
 
 \subsection{Priority of tasks}
 The tasks visible in the taskeditor are ordered by their {\em
