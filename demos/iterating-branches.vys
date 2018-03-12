@@ -2,7 +2,7 @@ vym.clearConsole();
 m1 = vym.currentMap();
 
 m1.initIterator("foobar");
-print (m1.getHeadingPlainText() );
+print ("Starting with branch: " + m1.getHeadingPlainText() );
 
 while (m1.nextIterator("foobar") )
 {

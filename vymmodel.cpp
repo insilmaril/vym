@@ -5399,10 +5399,10 @@ bool VymModel::initIterator(const QString &iname, bool deepLevelsFirst )
         nextBranch (cur, prev, true, selbis.first() );
 	if (cur)
 	{
-            select (cur);
             selIterCur   = cur->getUuid();
             selIterPrev  = prev->getUuid();
             selIterStart = selbis.first()->getUuid();
+            selIterActive = false;
             return true;
 	}
     }
@@ -5411,11 +5411,24 @@ bool VymModel::initIterator(const QString &iname, bool deepLevelsFirst )
 
 bool VymModel::nextIterator(const QString &iname)
 {
+    BranchItem *cur  = (BranchItem*)(findUuid (selIterCur));
+    if (!cur) // FIXME-0 provide error message?
+    {
+        qWarning() << "VM::nextIterator couldn't find cur"    << selIterCur;
+        return false;
+    }
+
+    if (!selIterActive)
+    {
+        // Select for the first time
+        select (cur);
+        selIterActive = true;
+        return true;
+    }
+    
     BranchItem *prev  = (BranchItem*)(findUuid (selIterPrev));
-    BranchItem *cur   = (BranchItem*)(findUuid (selIterCur));
     BranchItem *start = (BranchItem*)(findUuid (selIterStart));
     if (!prev)  qWarning() << "VM::nextIterator couldn't find prev"   << selIterPrev;
-    if (!cur)   qWarning() << "VM::nextIterator couldn't find cur"    << selIterCur;
     if (!start) qWarning() << "VM::nextIterator couldn't find start " << selIterStart;
 
     if (cur && prev && start)

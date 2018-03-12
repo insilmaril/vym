@@ -835,6 +835,7 @@ private:
     QUuid selIterCur;
     QUuid selIterPrev;
     QUuid selIterStart;
+    bool selIterActive;
 
 
 ////////////////////////////////////////////
