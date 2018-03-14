@@ -1,3 +1,3 @@
 // Macro F9
 map = vym.currentMap();
-map.toggleFrameIncludeChildren();
+map.setTaskSleep("17:00");
