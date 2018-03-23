@@ -4822,7 +4822,7 @@ void VymModel::reposition() //FIXME-4 VM should have no need to reposition, but 
 	    qDebug()<<"VM::reposition bo=0";
     }	
     mapEditor->getTotalBBox();	
-    emitSelectionChanged();
+    //emitSelectionChanged();   // FIXME-0 removed!
 }
 
 
@@ -5582,9 +5582,9 @@ bool VymModel::selectToggle (TreeItem *ti)
 bool VymModel::select (TreeItem *ti)
 {
     if (ti) 
-	return select (index(ti));
+        return = select (index(ti));
     else
-	return false;
+        return false;
 }
 
 bool VymModel::select (const QModelIndex &index) 
@@ -5593,8 +5593,10 @@ bool VymModel::select (const QModelIndex &index)
     {
         TreeItem *ti=getItem (index);
         if (ti->isBranchLikeType() )
-            ((BranchItem*)ti)->tmpUnscroll();
-        reposition();
+        {
+            if ( ((BranchItem*)ti)->tmpUnscroll() )
+                reposition();
+        }
         selModel->select (index,QItemSelectionModel::ClearAndSelect  );
         appendSelection();
         return true;

@@ -16,7 +16,6 @@ Task::Task(TaskModel *tm)
     prio   = 'X';
     model  = tm;
     date_creation = QDateTime::currentDateTime();
-    date_sleep = QDateTime::currentDateTime();
 }
 
 Task::~Task()
@@ -156,7 +155,7 @@ bool Task::updateAwake()
             setAwake(Task::Morning);
             return true;
         }
-    } else
+    } else if ( secs > 0 )
     {
         if ( awake != Task::Sleeping)
         {
@@ -257,11 +256,9 @@ qint64 Task::getDaysSleep()
 
 qint64 Task::getSecsSleep()
 {
-    qint64 d = 1;
+    qint64 d = 0;   // Meaning: No sleep time set so far
     if (date_sleep.isValid() )
 	d = QDateTime::currentDateTime().secsTo (date_sleep);
-    else
-        qWarning() << "Task::getSecsSleep date_sleep is invalid";
     return d;
 }
 
