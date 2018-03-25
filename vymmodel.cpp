@@ -5582,7 +5582,7 @@ bool VymModel::selectToggle (TreeItem *ti)
 bool VymModel::select (TreeItem *ti)
 {
     if (ti) 
-        return = select (index(ti));
+        return select (index(ti));
     else
         return false;
 }
