@@ -4374,6 +4374,8 @@ void Main::editMapProperties()
     }
 
     stats += QString ("%1 %2\n").arg (m->branchCount(),6).arg(tr("branches","Info about map") );
+    stats += QString ("%1 %2\n").arg (taskModel->count(),6).arg(tr("tasks total","Info about map") );
+    stats += QString ("%1 %2\n").arg (taskModel->count(m),6).arg(tr("tasks in map","Info about map") );
     stats += QString ("%1 %2\n").arg (n,6).arg(tr("notes","Info about map") );
     stats += QString ("%1 %2\n").arg (f,6).arg(tr("images","Info about map") );
     stats += QString ("%1 %2\n").arg (m->taskCount(),6 ).arg(tr("tasks","Info about map") );
