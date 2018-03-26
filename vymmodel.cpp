@@ -5716,6 +5716,7 @@ void VymModel::emitDataChanged (TreeItem *ti)
 {
     QModelIndex ix=index(ti);
     emit ( dataChanged (ix,ix) );
+    emitSelectionChanged();
     if (!blockReposition)
     {
         if ( ti->isBranchLikeType() && ((BranchItem*)ti)->getTask()  )
