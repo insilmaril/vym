@@ -297,8 +297,10 @@ QString Task::getMapName ()
 QString Task::saveToDir()
 {
     QString sleepAttr;
-    if (getSecsSleep() > 0)
+    if (date_sleep.isValid() )
 	sleepAttr = attribut ("date_sleep", date_sleep.toString (Qt::ISODate) );
+    else
+	sleepAttr = attribut ("date_sleep", "2018-01-01T00:00:00");
     return singleElement ("task",
 	attribut ("status", getStatusString() ) +
 	attribut ("awake",  getAwakeString() ) +
