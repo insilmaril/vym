@@ -250,7 +250,7 @@ qint64 Task::getDaysSleep()
     if (date_sleep.isValid() )
 	d = QDateTime::currentDateTime().daysTo (date_sleep);
     else
-        qWarning() << "Task::getDaysSleep date_sleep is invalid";
+        qWarning() << "Task::getDaysSleep date_sleep is invalid for branch " << branch->getHeadingPlain();
     return d;
 }
 
