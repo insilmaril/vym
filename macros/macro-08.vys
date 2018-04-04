@@ -1,4 +1,3 @@
 // Macro F8
 map = vym.currentMap();
-map.colorSubtree ("#616147");
-map.toggleFlag ("clock");
+map.setTaskSleep("15:00");
