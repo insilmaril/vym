@@ -4300,7 +4300,7 @@ void Main::editTaskSleepN()
                 QDateTime d = task->getSleep();
                 n = task->getSecsSleep();
                 if ( n <= 0) 
-                    currentSleep = "";
+                    currentSleep = "0";
                 else if (n < 60) 
                     currentSleep = QString("%1s").arg(n);
                 else if (n < 24 * 3600) 
