@@ -18,7 +18,7 @@ options = {
 ARGV.each do |id| 
 
   # This should be removed. Used to switch between various Jira systems 
-  if id.include?("jira.elektrobit.com") then
+  if id.include?("jira.elektrobit.com") || id.include?("lix") then
     options[:site] = config['jira-extern']
   else
     options[:site] = config['jira-intern']
