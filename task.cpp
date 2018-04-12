@@ -217,6 +217,7 @@ bool Task::setHoursSleep(qint64 n)
 
 bool Task::setSecsSleep(qint64 n) 
 {
+    if (n == 0) setAwake(Morning);
     return setDateSleep ( QDateTime::currentDateTime().addSecs (n).toString(Qt::ISODate) );
 }
 

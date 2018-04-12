@@ -2456,72 +2456,79 @@ bool VymModel::setTaskSleep(const QString &s)   // FIXME-0 doc missing
             QString oldsleep = task->getSleep().toString(Qt::ISODate);
             
             // Parse the string, which could be days, hours or one of several time formats
-            QRegExp re ("^\\s*(\\d+)\\s*$");
-            re.setMinimal(false);
-            int pos = re.indexIn(s);
-            if (pos >= 0)
+
+            if (s == "0") 
             {
-                // Found only digit, considered as days
-                ok = task->setDaysSleep (re.cap(1).toInt() );
+                ok = task->setSecsSleep(0);
             } else
             {
-                QRegExp re ("^\\s*(\\d+)\\s*h\\s*$");
-                pos = re.indexIn(s);
+                QRegExp re ("^\\s*(\\d+)\\s*$");
+                re.setMinimal(false);
+                int pos = re.indexIn(s);
                 if (pos >= 0)
                 {
-                    // Found digit followed by "h", considered as hours
-                    ok = task->setHoursSleep (re.cap(1).toInt() );
+                    // Found only digit, considered as days
+                    ok = task->setDaysSleep (re.cap(1).toInt() );
                 } else
                 {
-                    QRegExp re ("^\\s*(\\d+)\\s*s\\s*$");
+                    QRegExp re ("^\\s*(\\d+)\\s*h\\s*$");
                     pos = re.indexIn(s);
                     if (pos >= 0)
                     {
-                        // Found digit followed by "s", considered as seconds
-                        ok = task->setSecsSleep (re.cap(1).toInt() );
+                        // Found digit followed by "h", considered as hours
+                        ok = task->setHoursSleep (re.cap(1).toInt() );
                     } else
                     {
-                        ok = task->setDateSleep (s); // ISO date YYYY-MM-DDTHH:mm:ss
-
-                        if (!ok)
+                        QRegExp re ("^\\s*(\\d+)\\s*s\\s*$");
+                        pos = re.indexIn(s);
+                        if (pos >= 0)
                         {
-                            QRegExp re ("(\\d+)\\.(\\d+)\\.(\\d+)");
-                            re.setMinimal(false);
-                            int pos = re.indexIn(s);
-                            QStringList list = re.capturedTexts();
-                            QDateTime d;
-                            if (pos >= 0)
+                            // Found digit followed by "s", considered as seconds
+                            ok = task->setSecsSleep (re.cap(1).toInt() );
+                        } else
+                        {
+                            ok = task->setDateSleep (s); // ISO date YYYY-MM-DDTHH:mm:ss
+
+                            if (!ok)
                             {
-                                d = QDateTime (QDate(list.at(3).toInt(), list.at(2).toInt(), list.at(1).toInt()) );
-                                ok = task->setDateSleep (d); // German format, e.g. 24.12.2012
-                            } else
-                            {
-                                re.setPattern("(\\d+)\\.(\\d+)\\.");
-                                pos  = re.indexIn(s);
-                                list = re.capturedTexts();
+                                QRegExp re ("(\\d+)\\.(\\d+)\\.(\\d+)");
+                                re.setMinimal(false);
+                                int pos = re.indexIn(s);
+                                QStringList list = re.capturedTexts();
+                                QDateTime d;
                                 if (pos >= 0)
                                 {
-                                    int month = list.at(2).toInt();
-                                    int day = list.at(1).toInt();
-                                    int year = QDate::currentDate().year();
-                                    d = QDateTime ( QDate(year, month, day) );
-                                    if (QDateTime::currentDateTime().daysTo(d) < 0)
-                                    {
-                                        year++;
-                                        d = QDateTime( QDate(year, month, day) );
-                                    }
-                                    ok = task->setDateSleep (d); // Short German format, e.g. 24.12.
+                                    d = QDateTime (QDate(list.at(3).toInt(), list.at(2).toInt(), list.at(1).toInt()) );
+                                    ok = task->setDateSleep (d); // German format, e.g. 24.12.2012
                                 } else
                                 {
-                                    re.setPattern("(\\d+)\\:(\\d+)");
+                                    re.setPattern("(\\d+)\\.(\\d+)\\.");
                                     pos  = re.indexIn(s);
                                     list = re.capturedTexts();
                                     if (pos >= 0)
                                     {
-                                        int hour = list.at(1).toInt();
-                                        int min  = list.at(2).toInt();
-                                        d = QDateTime ( QDate::currentDate(), QTime(hour, min));
-                                        ok = task->setDateSleep (d); // Time HH:MM
+                                        int month = list.at(2).toInt();
+                                        int day = list.at(1).toInt();
+                                        int year = QDate::currentDate().year();
+                                        d = QDateTime ( QDate(year, month, day) );
+                                        if (QDateTime::currentDateTime().daysTo(d) < 0)
+                                        {
+                                            year++;
+                                            d = QDateTime( QDate(year, month, day) );
+                                        }
+                                        ok = task->setDateSleep (d); // Short German format, e.g. 24.12.
+                                    } else
+                                    {
+                                        re.setPattern("(\\d+)\\:(\\d+)");
+                                        pos  = re.indexIn(s);
+                                        list = re.capturedTexts();
+                                        if (pos >= 0)
+                                        {
+                                            int hour = list.at(1).toInt();
+                                            int min  = list.at(2).toInt();
+                                            d = QDateTime ( QDate::currentDate(), QTime(hour, min));
+                                            ok = task->setDateSleep (d); // Time HH:MM
+                                        }
                                     }
                                 }
                             }
