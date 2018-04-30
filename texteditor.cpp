@@ -342,7 +342,7 @@ void TextEditor::setupFileActions()
     actionFileSaveAs=a;
 
     a = new QAction( tr( "Export &As...(ASCII)" ), this);
-    // a->setShortcut(Qt::ALT + Qt::Key_X );
+    a->setShortcut(Qt::ALT + Qt::Key_X );
     a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
     switchboard.addSwitch( "textExportAsASCII", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( textExportAsASCII() ) );
