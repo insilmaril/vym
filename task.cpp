@@ -32,18 +32,17 @@ void Task::setModel (TaskModel* tm)
 void Task::cycleStatus(bool reverse)
 {
     if (awake == Morning)
-    {
 	setAwake (WideAwake);
-	return;
+    else
+    {
+        int i = status;
+        reverse ?  i-- : i++;
+
+        if ( i < 0) i = 2;
+        if ( i > 2) i = 0;
+
+        setStatus ( (Task::Status) i );
     }
-    int i = status;
-    reverse ?  i-- : i++;
-
-    if ( i < 0) i = 2;
-    if ( i > 2) i = 0;
-
-    setStatus ( (Task::Status) i );
-
     if (branch) branch->updateTaskFlag ();
 }
 
