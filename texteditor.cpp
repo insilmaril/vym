@@ -690,7 +690,8 @@ bool TextEditor::eventFilter( QObject *obj, QEvent *ev)
                 const QClipboard *clipboard = QApplication::clipboard();
                 const QMimeData *mimeData = clipboard->mimeData();
 
-                if (mimeData->hasHtml()) setRichTextMode(true);
+                if (mimeData->hasHtml() && !actionFormatRichText->isChecked() ) 
+                    setRichTextMode(true);
             } 
         }
     }
@@ -932,9 +933,6 @@ void TextEditor::toggleFonthint()
 
 void TextEditor::setRichTextMode(bool b)
 {
-    // Avoid changes which would reposition cursor before pasting
-    if (b == actionFormatRichText->isChecked() ) return;
-
     if (b)
     {
         e->setHtml (e->toHtml());
