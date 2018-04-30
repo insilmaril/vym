@@ -632,7 +632,7 @@ File::ErrorCode VymModel::loadMap (
             }
 
 	    // Recalc priorities and sort   
-            updateTasksAlarm (true);    
+            //updateTasksAlarm (true);    // FIXME-2 not needed? makes vym to slow on paste...
 	    taskModel->recalcPriorities();
 	} else 
 	{
@@ -2639,6 +2639,7 @@ void VymModel::paste()
                 qWarning() << "Loading clipboard failed: " << fn ;
 
             i++;
+
         }
         zipped = zippedOrg;
 	reposition();
