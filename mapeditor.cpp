@@ -2019,22 +2019,26 @@ void MapEditor::updateSelection(QItemSelection nsel,QItemSelection dsel)
     QList <MapItem*> itemsSelected;
     QList <MapItem*> itemsDeselected;
 
-    QItemSelection sel=model->getSelectionModel()->selection();
+    QItemSelection sel = model->getSelectionModel()->selection();
+
+    // Add new selected objects
     foreach (QModelIndex ix,sel.indexes() )
     {
-	MapItem *mi= static_cast<MapItem*>(ix.internalPointer());
+	MapItem *mi= static_cast <MapItem*>(ix.internalPointer());
 	if (mi->isBranchLikeType() 
 	    ||mi->getType()==TreeItem::Image 
 	    ||mi->getType()==TreeItem::XLink)
 	    if (!itemsSelected.contains(mi)) 
 		itemsSelected.append (mi);
     }
+
+    // Delete objects meanwhile removed from selection
     foreach (QModelIndex ix,dsel.indexes() )
     {
-	MapItem *mi= static_cast<MapItem*>(ix.internalPointer());
+	MapItem *mi = static_cast <MapItem*>(ix.internalPointer());
 	if (mi->isBranchLikeType() 
-	    ||mi->getType()==TreeItem::Image 
-	    ||mi->getType()==TreeItem::XLink)
+	    || mi->getType() == TreeItem::Image 
+	    || mi->getType() == TreeItem::XLink)
 	    if (!itemsDeselected.contains(mi)) 
 		itemsDeselected.append (mi);
     }
@@ -2061,9 +2065,9 @@ void MapEditor::updateSelection(QItemSelection nsel,QItemSelection dsel)
 
 
     // Reposition polygons 
-    for (int i=0; i<itemsSelected.count();++i)
+    for (int i=0; i < itemsSelected.count();++i)
     {
-	MapObj *mo=itemsSelected.at(i)->getMO();
+	MapObj *mo = itemsSelected.at(i)->getMO();
 	sp=selPathList.at(i);
 	sp->setPath (mo->getClickPath() );
 	sp->setPen (selectionColor);	
