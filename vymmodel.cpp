@@ -4830,7 +4830,9 @@ void VymModel::reposition() //FIXME-4 VM should have no need to reposition, but 
 	    qDebug()<<"VM::reposition bo=0";
     }	
     mapEditor->getTotalBBox();	
-    //emitSelectionChanged();   // FIXME-0 removed!
+
+    // required to *reposition* the selection box. size is already correct:
+    emitSelectionChanged();   
 }
 
 
