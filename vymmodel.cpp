@@ -1134,7 +1134,7 @@ void VymModel::fileChanged()
             if (vymLock.tryLock() ) setReadOnly( false );
         } else
         {
-            // FIXME-0 Check, if somebody else removed/replaced lockfile
+            // FIXME-0 fileChanged(): Check, if somebody else removed/replaced lockfile
             // Here a unique vym ID would be needed to be checked
             
             QDateTime tmod = QFileInfo (filePath).lastModified();
@@ -2028,7 +2028,7 @@ bool  VymModel::findAll (FindResultModel *rmodel, QString s, Qt::CaseSensitivity
     return hit;
 }
 
-BranchItem* VymModel::findText (QString s,Qt::CaseSensitivity cs)     // FIXME-0 used at all?
+BranchItem* VymModel::findText (QString s,Qt::CaseSensitivity cs)     // FIXME-2 used at all?
 {
     if (!s.isEmpty() && s!=findString)
     {
@@ -2444,7 +2444,7 @@ bool VymModel::cycleTaskStatus(bool reverse)
     return false;
 }
 
-bool VymModel::setTaskSleep(const QString &s)   // FIXME-0 doc missing
+bool VymModel::setTaskSleep(const QString &s)   // FIXME-2 doc missing
 {
     bool ok = false;
     BranchItem *selbi = getSelectedBranch();
@@ -3951,14 +3951,14 @@ void VymModel::editHeading2URL()
     setURL (selti->getHeadingPlain());
 }   
 
-void VymModel::getJiraData(bool subtree)	    // FIXME-0 update error message, check if jiraClientAvail is set correctly
+void VymModel::getJiraData(bool subtree)	    // FIXME-2 update error message, check if jiraClientAvail is set correctly
 {
     if (!jiraClientAvailable)
     {
 	WarningDialog dia;
 	dia.setText(
 	    QObject::tr("No Jira client found. "
-	    " For openSUSE you can install by (running as root):\n\n","VymModel, how to install Bugzilla client module")+
+	    " For openSUSE you install by (running as root):\n\n","VymModel, how to install Bugzilla client module")+
 	    "  zypper ar http://download.opensuse.org/repositories/openSUSE:/Tools/openSUSE_XX.Y/ openSUSE:Tools_XX.Y\n"+
 	    "  zypper in perl-SUSE-BugzillaClient\n\n"+
 	    "  and replace XX.Y with your version of openSUSE, e.g. 11.4\n\n"+
@@ -4025,7 +4025,7 @@ void VymModel::editBugzilla2URL()
     }
 }   
 
-void VymModel::getBugzillaData(bool subtree)	    // FIXME-0 no longer reference perl
+void VymModel::getBugzillaData(bool subtree)	    // FIXME-2 no longer reference perl
 {
     if (!bugzillaClientAvailable)
     {

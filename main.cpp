@@ -403,17 +403,14 @@ int main(int argc, char* argv[])
     noteEditor->setWindowIcon (QPixmap (":/vym-editor.png"));
     headingEditor = new HeadingEditor("headingeditor");
 
-    // Check if there is a JiraClient
-    //QFileInfo fi(vymBaseDir.path() + "/scripts/BugzillaClient.pm");   
-    //bugzillaClientAvailable = fi.exists();
-    jiraClientAvailable = true;   //FIXME-0 add real check again
-    jiraPrefixList << "https://ticket.asw.zone";
+    // Check if there is a JiraClient       // FIXME-4 check for ruby
+    QFileInfo fi(vymBaseDir.path() + "/scripts/jigger");   
+    jiraClientAvailable = fi.exists();
+    jiraPrefixList = settings.value("/system/jiraPrefixList").toStringList();   // FIXME-2 currently not used
 
-
-    // Check if there is a BugzillaClient
-    QFileInfo fi(vymBaseDir.path() + "/scripts/BugzillaClient.pm");   
-    //bugzillaClientAvailable = fi.exists();
-    bugzillaClientAvailable = true;   //FIXME-0 add real check again
+    // Check if there is a BugzillaClient   // FIXME-4 check for ruby
+    fi.setFile( vymBaseDir.path() + "/scripts/bugger");   
+    bugzillaClientAvailable = fi.exists();
 
     // Initialize mainwindow
 #if defined(Q_OS_WIN32)

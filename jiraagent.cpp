@@ -50,9 +50,9 @@ JiraAgent::JiraAgent (BranchItem *bi,const QString &u)
 	    return;
 	}
 
-    } else if (u.contains("fixme-filter"))   // FIXME-0 not supported yet for jira
+    } else if (u.contains("fixme-filter"))   // FIXME-4 not supported yet for jira
     {
-	missionType = Query; //FIXME-0 query not supported yet by new bugger
+	missionType = Query; 
 	args << "--query";
 	args << url;
     } else
@@ -215,7 +215,7 @@ void JiraAgent::processJiraData()
 		{
 		    //qDeticket ()<<" -> "<<b<<" "<<ticket_desc[b];
 		    newbi = model->addNewBranch(missionBI);    
-		    newbi->setURL ("https://bugzilla.novell.com/show_bug.cgi?id=" + b); // FIXME-0
+		    newbi->setURL ("https://" + b); // FIXME-4 no filters yet
 		    if (!newbi)
 			qWarning() << "JiraAgent: Couldn't create new branch?!";
 		    else
@@ -261,7 +261,7 @@ void JiraAgent::setModelJiraData (VymModel *model, BranchItem *bi, const QString
 
     model->setHeadingPlainText (idName + " - " + ticket_desc[ticketID], bi);
 
-    // Save current selections  // FIXME-0 No multiselection yet (cleanup IDs vs UUIDs in treeitem)
+    // Save current selections  // FIXME-4 No multiselection yet (cleanup IDs vs UUIDs in treeitem)
     QString oldSelection = model->getSelectString();
 
     model->select(bi);
