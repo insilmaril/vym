@@ -4313,7 +4313,7 @@ void Main::editTaskSleepN()
                     currentSleep = d.toString( Qt::ISODate );
 
                 LineEditDialog *dia = new LineEditDialog(this);
-                dia->setLabel(tr("Enter sleep time (number of days, hours with^ 'h' or date YYYY-MM-DD or DD.MM[.YYYY]","task sleep time dialog"));
+                dia->setLabel(tr("Enter sleep time (number of days, hours with 'h' or date YYYY-MM-DD or DD.MM[.YYYY]","task sleep time dialog"));
                 dia->setText(currentSleep);
                 centerDialog (dia);
                 if (dia->exec() == QDialog::Accepted)
