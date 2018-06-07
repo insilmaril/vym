@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QPrinter>
 #include <QProgressDialog>
 #include <QScriptContext>
 #include <QScriptEngine>
@@ -52,6 +53,9 @@ public slots:
 
 protected:
     void closeEvent( QCloseEvent* );
+
+public:
+    QPrinter* setupPrinter();
 
 private:
     void setupAPI();

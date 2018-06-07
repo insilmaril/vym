@@ -16,7 +16,6 @@
 #include <QFontDialog>
 #include <QInputDialog>
 #include <QMenuBar>
-#include <QPrinter>
 #include <QScriptEngine>
 #include <QStatusBar>
 #include <QTextStream>
@@ -55,7 +54,7 @@
 #include "warningdialog.h"
 #include "xlinkitem.h"
 
-QPrinter *printer;  // FIXME-0  Initialization requires approx. 3s at startup
+QPrinter *printer = NULL; 
 
 //#include <modeltest.h>    
 
@@ -347,9 +346,6 @@ Main::Main(QWidget* parent, Qt::WindowFlags f) : QMainWindow(parent,f)
 
     restoreState (settings.value("/mainwindow/state",0).toByteArray());
 
-    // Global Printer
-    printer=new QPrinter (QPrinter::HighResolution );	
-
     // Enable testmenu
     //settings.setValue( "mainwindow/showTestMenu", true);
     updateGeometry();
@@ -386,9 +382,12 @@ Main::~Main()
 	settings.setValue( "/mapeditor/editmode/autoSelectNewBranch",actionSettingsAutoSelectNewBranch->isChecked() );
 	settings.setValue( "/system/writeBackupFile",actionSettingsWriteBackupFile->isChecked() );
 
-	settings.setValue("/system/printerName",printer->printerName());
-	settings.setValue("/system/printerFormat",printer->outputFormat());
-	settings.setValue("/system/printerFileName",printer->outputFileName());
+        if (printer)
+        {
+            settings.setValue("/system/printerName",printer->printerName());
+            settings.setValue("/system/printerFormat",printer->outputFormat());
+            settings.setValue("/system/printerFileName",printer->outputFileName());
+        }
 	settings.setValue( "/mapeditor/editmode/autoSelectText",actionSettingsAutoSelectText->isChecked() );
 	settings.setValue( "/mapeditor/editmode/autoEditNewBranch",actionSettingsAutoEditNewBranch->isChecked() );
 	settings.setValue( "/mapeditor/editmode/useFlagGroups",actionSettingsUseFlagGroups->isChecked() );
@@ -482,6 +481,13 @@ void Main::closeEvent (QCloseEvent* event)
 	event->ignore();
     else	
 	event->accept();
+}
+
+QPrinter* Main::setupPrinter()
+{
+    // Global Printer
+    printer = new QPrinter (QPrinter::HighResolution );	
+    return printer;
 }
 
 // Define commands for models

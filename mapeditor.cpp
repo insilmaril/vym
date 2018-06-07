@@ -492,7 +492,9 @@ void MapEditor::minimizeView()
 
 void MapEditor::print()
 {
-    QRectF totalBBox=getTotalBBox();
+    QRectF totalBBox = getTotalBBox();
+
+    if (!printer) printer = mainWindow->setupPrinter();
 
     // Try to set orientation automagically
     // Note: Interpretation of generated postscript is amibiguous, if 

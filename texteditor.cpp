@@ -17,9 +17,11 @@
 
 #include <typeinfo>
 
+#include "mainwindow.h"
 #include "settings.h"
 #include "shortcuts.h"
 
+extern Main *mainWindow;
 extern int statusbarTime;
 extern Settings settings;
 
@@ -903,6 +905,8 @@ void TextEditor::textExportAsASCII()
 void TextEditor::textPrint()
 {
     QTextDocument *document = e->document();
+
+    if (!printer) mainWindow->setupPrinter();
 
     QPrintDialog dialog (printer, this);
     dialog.setWindowTitle(tr("Print","TextEditor"));
