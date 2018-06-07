@@ -632,7 +632,7 @@ File::ErrorCode VymModel::loadMap (
             }
 
 	    // Recalc priorities and sort   
-            //updateTasksAlarm (true);    // FIXME-2 not needed? makes vym to slow on paste...
+            //updateTasksAlarm (true);    // FIXME-0 not needed? makes vym to slow on paste, but fixes sleeping tasks shown as morning after load
 	    taskModel->recalcPriorities();
 	} else 
 	{
