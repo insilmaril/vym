@@ -94,7 +94,9 @@ QString Task::getIconString()
             break;
         case Finished: 
             s = "task-finished";
-        break;
+            break;
+        default:
+            s = "status:undefined";
     }
     if (status != Finished)
         switch (awake) 
@@ -124,7 +126,11 @@ void Task::setAwake(const QString &s)
 
 void Task::setAwake(Task::Awake a)
 {
-    awake = a;
+    if (awake != a )
+    {
+        awake = a;
+        if (branch) branch->updateTaskFlag();
+    }
 }
 
 Task::Awake Task::getAwake()
@@ -149,7 +155,7 @@ bool Task::updateAwake()
 
     if ( secs < 0 )
     {
-        if ( awake == Task::Sleeping)
+        if ( awake == Task::Sleeping )
         {
             setAwake(Task::Morning);
             return true;
@@ -240,7 +246,6 @@ bool Task::setDateSleep(const QDateTime &d)
 
     date_sleep = d;
     updateAwake();
-    if (status == Finished) setStatus(WIP); 
     return true;
 }
 
