@@ -1816,7 +1816,7 @@ void Main::setupEditActions()
     actionListFiles.append (a);
     actionMapInfo=a;
 
-    a = new QAction( tr( "Add   ...","Edit menu" ), this);
+    a = new QAction( tr( "Add image...","Edit menu" ), this);
     a->setShortcutContext (Qt::WindowShortcut);
     a->setShortcut (Qt::Key_I + Qt::SHIFT);    
     addAction(a);
