@@ -222,6 +222,8 @@ void BranchItem::updateTaskFlag()
 	systemFlags.activate (s);
 	model->emitDataChanged(this);
     } 
+    // else: During initialization the task is not yet attached to branch, 
+    // so ignore it for now
 }
 
 void BranchItem::setTask(Task *t) 
