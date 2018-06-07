@@ -55,7 +55,7 @@
 #include "warningdialog.h"
 #include "xlinkitem.h"
 
-QPrinter *printer;
+QPrinter *printer;  // FIXME-0  Initialization requires approx. 3s at startup
 
 //#include <modeltest.h>    
 
