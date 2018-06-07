@@ -4376,20 +4376,20 @@ void VymModel::exportPDF (QString fname, bool askName)
     setExportMode (true);
 
     // To PDF
-    QPrinter printer(QPrinter::HighResolution);
-    printer.setOutputFormat(QPrinter::PdfFormat);
-    printer.setOutputFileName(fname);
-    printer.setPageSize(QPrinter::A3);
+    QPrinter pdfPrinter(QPrinter::HighResolution);
+    pdfPrinter.setOutputFormat(QPrinter::PdfFormat);
+    pdfPrinter.setOutputFileName(fname);
+    pdfPrinter.setPageSize(QPrinter::A3);
 
     QRectF bbox=mapEditor->getTotalBBox();
     if (bbox.width()>bbox.height())
 	// recommend landscape
-	printer.setOrientation (QPrinter::Landscape);
+	pdfPrinter.setOrientation (QPrinter::Landscape);
     else    
 	// recommend portrait
-	printer.setOrientation (QPrinter::Portrait);
+	pdfPrinter.setOrientation (QPrinter::Portrait);
 
-    QPainter *pdfPainter = new QPainter(&printer);
+    QPainter *pdfPainter = new QPainter(&pdfPrinter);
     getScene()->render(pdfPainter);
     pdfPainter->end();
     delete pdfPainter;
