@@ -1133,7 +1133,7 @@ void VymModel::fileChanged()
             if (vymLock.tryLock() ) setReadOnly( false );
         } else
         {
-            // FIXME-0 fileChanged(): Check, if somebody else removed/replaced lockfile
+            // FIXME-5 fileChanged(): Check, if somebody else removed/replaced lockfile
             // Here a unique vym ID would be needed to be checked
             
             QDateTime tmod = QFileInfo (filePath).lastModified();
