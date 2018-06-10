@@ -387,7 +387,7 @@ int main(int argc, char* argv[])
     QTranslator vymTranslator;
     if (!vymTranslator.load( QString("vym.%1").arg( localeName ), vymBaseDir.path() + "/lang") )
         QMessageBox::warning( 0, QObject::tr( "Warning" ),
-                               QString("Couldn't load translations for locale \"%1\" in\n%2")
+                               QString("Couldn't load translations for locale \"%1\" in\n%2")       // FIXME-0 add "don't show next time" option
                                .arg(localeName)
                                .arg(vymBaseDir.path() + "/lang") );
     app.installTranslator( &vymTranslator );
