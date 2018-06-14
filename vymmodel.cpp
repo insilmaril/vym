@@ -4279,8 +4279,9 @@ void VymModel::setXLinkWidth(int new_width)
 //////////////////////////////////////////////
 
 QVariant VymModel::execute (const QString &script)  // FIXME-0 still required??? 
-    // Called from
-    // scripts/vym-ruby.rb  used for testing
+    // Called from these places:
+    // 
+    // scripts/vym-ruby.rb  (and adaptormodel) used for testing
     // Main::callMacro
     // Main::checkReleaseNotes   
     // VymModel::undo
