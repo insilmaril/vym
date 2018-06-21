@@ -56,18 +56,17 @@ bool TaskFilterModel::filterAcceptsRow(int sourceRow,
     if (useFilter && ((taskModel->getTask(ix)->getSecsSleep() > 0) || (taskModel->getTask(ix)->getStatus() == Task::Finished) ) )
         return false;
 
-    // Filter flags  // FIXME-1 currently only "arrow-up"
-    if (filterFlags1 && (!taskModel->getTask(ix)->getBranch()->hasActiveStandardFlag("arrow-up") &&
-                         !taskModel->getTask(ix)->getBranch()->hasActiveStandardFlag("2arrow-up") ) )
+    // Filter flags: only arrow-up   // FIXME-1 review
+    if (filterFlags1 && !taskModel->getTask(ix)->getBranch()->hasActiveStandardFlag("arrow-up") )
         return false;
 
-    // Filter flags  // FIXME-1 currently only "2arrow-up"
+    // Filter flags: only 2arrow-up  // FIXME-1 review
     if (filterFlags2 && !taskModel->getTask(ix)->getBranch()->hasActiveStandardFlag("2arrow-up") )
         return false;
 
-    // Filter flags  // FIXME-1 currently only "stopsign"
+    // Filter flags: Flags, which have neither arrow-up nor 2arrow-up   // FIXME-1 review
     if (filterFlags3 && (taskModel->getTask(ix)->getBranch()->hasActiveStandardFlag("arrow-up") 
-                     || taskModel->getTask(ix)->getBranch()->hasActiveStandardFlag("2arrow-up") ) )
+                     ||  taskModel->getTask(ix)->getBranch()->hasActiveStandardFlag("2arrow-up") ) )
         return false;
     return true;
 }

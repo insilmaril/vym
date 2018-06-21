@@ -7,7 +7,7 @@
 #define __VYM_VERSION "2.6.209" 
 //#define __VYM_CODENAME "Codename: Production release"
 #define __VYM_CODENAME "Codename: development leap version, not for production!"
-#define __VYM_BUILD_DATE "2018-06-10"
+#define __VYM_BUILD_DATE "2018-06-21"
 #define __VYM_HOME "http://www.insilmaril.de/vym"
 
 bool versionLowerThanVym(const QString &);
