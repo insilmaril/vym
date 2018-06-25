@@ -31,8 +31,8 @@ BranchItem::BranchItem(const QList<QVariant> &data, TreeItem *parent):MapItem (d
     includeChildren=false;
     childrenLayout = BranchItem::AutoPositioning;
      
-    lastSelectedBranchNum=-1;
-    lastSelectedBranchNumAlt=-1;
+    lastSelectedBranchNum = 0;
+    lastSelectedBranchNumAlt = 0;
 
     task=NULL;
 }
