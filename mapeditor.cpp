@@ -986,7 +986,7 @@ BranchItem* MapEditor::getRightBranch(BranchItem *bi)
 		    newbi=bi->getBranchNum(i);
 		    bo=newbi->getBranchObj();
 		    if (bo && bo->getOrientation()==LinkableMapObj::RightOfCenter)
-            qDebug()<<"BI found right: "<<newbi->getHeadingPlain();
+                        qDebug()<<"BI found right: "<<newbi->getHeadingPlain();
 		}
 	    }
 	    return newbi;

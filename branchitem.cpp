@@ -439,31 +439,31 @@ bool BranchItem::getFrameIncludeChildren()
 
 void BranchItem::setLastSelectedBranch()
 {
-    int d=depth();
-    if (d>=0)
+    int d = depth();
+    if (d >= 0)
     {
-	if (d==1)
+	if (d == 1)
 	    // Hack to save an additional lastSelected for mapcenters in MapEditor
 	    // depending on orientation
 	    // this allows to go both left and right from there
-	    if (mo && ((BranchObj*)mo)->getOrientation()==LinkableMapObj::LeftOfCenter)
+	    if (mo && ((BranchObj*)mo)->getOrientation() == LinkableMapObj::LeftOfCenter)
 	    {
-		((BranchItem*)parentItem)->lastSelectedBranchNumAlt=parentItem->num(this);
+		((BranchItem*)parentItem)->lastSelectedBranchNumAlt = parentItem->num(this);
 		return;
 	    }
-	((BranchItem*)parentItem)->lastSelectedBranchNum=parentItem->num(this);
+	((BranchItem*)parentItem)->lastSelectedBranchNum = parentItem->num(this);
     }
 }
 
 void BranchItem::setLastSelectedBranch(int i)
 {
-	lastSelectedBranchNum=i;
+	lastSelectedBranchNum = i;
 }
 
 BranchItem* BranchItem::getLastSelectedBranch()
 {
-    if (lastSelectedBranchNum>=branchCounter)
-	return getBranchNum (branchCounter-1);
+    if (lastSelectedBranchNum >= branchCounter)
+	return getBranchNum (branchCounter - 1);
     else    
 	return getBranchNum (lastSelectedBranchNum);
 }
@@ -480,7 +480,7 @@ TreeItem* BranchItem::findMapItem (QPointF p, TreeItem* excludeTI)
 {
     // Search branches
     TreeItem *ti;
-    for (int i=0; i<branchCount(); ++i)
+    for (int i = 0; i<branchCount(); ++i)
     {	
 	ti=getBranchNum(i)->findMapItem(p, excludeTI);
 	if (ti != NULL) return ti;
