@@ -269,28 +269,27 @@ void VymView::collapseOneLevel()
 
 void VymView::collapseUnselected()
 {
-    BranchItem *cur=NULL;
-    BranchItem *prev=NULL;
+    BranchItem *cur  = NULL;
+    BranchItem *prev = NULL;
     QModelIndex pix;
 
     // Find level to collapse
     TreeItem *selti=model->getSelectedItem();
     if (!selti) return;
 
-    int level=selti->depth();
+    int level = selti->depth();
 
     // collapse all to level
-    model->nextBranch(cur,prev);
+    model->nextBranch(cur, prev);
     //bool b=false;
     while (cur) 
     {
-	pix=model->index (cur);
+	pix = model->index (cur);
 	if (treeEditor->isExpanded(pix) &&  level <= cur->depth())
 	{
 	    treeEditor->setExpanded(pix,false);
-	    //b=true;
 	}
-	model->nextBranch(cur,prev);	
+	model->nextBranch(cur, prev);
     }
 
 /* FIXME-3 "collapse more" unimplemented yet
