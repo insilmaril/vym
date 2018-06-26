@@ -52,6 +52,7 @@ FindWidget::FindWidget(QWidget *)
     filterNotesButton->setIcon (QPixmap(":/flag-note.png"));
     filterNotesButton->setCheckable(true);
     filterNotesButton->setChecked(true);
+    connect ( filterNotesButton, SIGNAL( clicked() ), this, SLOT( nextPressed() ) );
 
     row2Layout->addWidget (label);
     row2Layout->addWidget(findcombo);
