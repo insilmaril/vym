@@ -328,11 +328,11 @@ bool BranchItem::resetTmpUnscroll()
     // Unscroll myself
     if (tmpUnscrolled)
     {
-	tmpUnscrolled=false;
+	tmpUnscrolled = false;
 	systemFlags.deactivate("system-tmpUnscrolledRight");
 	toggleScroll();
 	model->emitDataChanged (this);
-	result=true;
+	result = true;
     }	
     return result;
 }
@@ -341,29 +341,29 @@ void BranchItem::sortChildren(bool inverse) //FIXME-4 optimize by not using move
 {
     int childCount=branchCounter; 
     int curChildIndex;
-    bool madeChanges=false;
+    bool madeChanges = false;
     do
     {
-	madeChanges=false;
-	for(curChildIndex=1;curChildIndex<childCount;curChildIndex++)
+	madeChanges = false;
+	for(curChildIndex = 1; curChildIndex < childCount; curChildIndex++)
 	{
 	    BranchItem* curChild =getBranchNum(curChildIndex);
 	    BranchItem* prevChild=getBranchNum(curChildIndex-1);
 	    if (inverse)
 	    {
-        if (prevChild->getHeadingPlain().compare(curChild->getHeadingPlain())<0)
+        if (prevChild->getHeadingPlain().compare(curChild->getHeadingPlain(), Qt::CaseInsensitive) < 0)
 		{
 		    model->moveUp (curChild);
-		    madeChanges=true;
+		    madeChanges = true;
 		}   
 	    } else  
-        if (prevChild->getHeadingPlain().compare(curChild->getHeadingPlain())>0)
+        if (prevChild->getHeadingPlain().compare(curChild->getHeadingPlain(), Qt::CaseInsensitive) > 0)
 		{
 		    model->moveUp (curChild);
-		    madeChanges=true;
+		    madeChanges = true;
 		}   
 	} 
-    }while(madeChanges);
+    } while (madeChanges);
 }
 
 void BranchItem::setChildrenLayout(BranchItem::LayoutHint layoutHint)
