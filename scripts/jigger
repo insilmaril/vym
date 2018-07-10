@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
 require 'jira-ruby'
+require 'optparse'
 require 'parseconfig'
 
 config = ParseConfig.new('/home/uwe/.eb-login')
@@ -15,15 +16,29 @@ options = {
   :auth_type    => :basic
 }
 
+OptionParser.new do |opts|
+  opts.banner = "Usage: jigger [options]"
+
+  opts.on('-d', '--debug', 'Debug mode') { |s| options[:debug] = true }
+  opts.on('-h', '--help', 'Display help') do 
+    puts opts
+    exit
+  end
+end.parse!
+
 ARGV.each do |id| 
 
   # This should be removed. Used to switch between various Jira systems 
-  if id.include?("jira.elektrobit.com") || id.downcase.include?("lix") 
-    options[:site] = config['jira-extern']
+  if id.downcase.include?("as1-") 
+    options[:site] = config['jira-intern']
   elsif id.include?("albatros") || (id.include? "EBACQ") 
     options[:site] = config['jira-servicedesk']
   else
-    options[:site] = config['jira-intern']
+    options[:site] = config['jira-extern']
+  end
+
+  if options[:debug]
+    puts "Debug: Site = #{options[:site]}"
   end
 
   client = JIRA::Client.new(options)
