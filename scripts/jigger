@@ -17,7 +17,7 @@ options = {
 }
 
 OptionParser.new do |opts|
-  opts.banner = "Usage: jigger [options]"
+  opts.banner = "Usage: #{$0} [options]"
 
   opts.on('-d', '--debug', 'Debug mode') { |s| options[:debug] = true }
   opts.on('-h', '--help', 'Display help') do 
