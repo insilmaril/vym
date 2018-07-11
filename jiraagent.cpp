@@ -266,17 +266,19 @@ void JiraAgent::setModelJiraData (VymModel *model, BranchItem *bi, const QString
 
     // Try to find subbranch named "JIRA log"
 
-    BranchItem *logBranch = bi;
+    BranchItem *logBranch;
+    bool logBranchAvailable = false;
     for (int n = 0; n < bi->branchCount(); n++)
     {
         logBranch = bi->getBranchNum(n);
         if (logBranch->getHeadingPlain() == "JIRA log")
         {
             model->select(logBranch);
+            logBranchAvailable = true;
             break;
         }
     }
-    if (bi == logBranch)
+    if (!logBranchAvailable)
     {
         logBranch = model->addNewBranch(bi, -2);
         model->setHeadingPlainText("JIRA log", logBranch);
