@@ -3993,8 +3993,17 @@ void VymModel::getJiraData(bool subtree)	    // FIXME-2 update error message, ch
                 {
                     // Heading could contain a JIRA ID, call jigger using that
                     // Afterwards jiraagent could update URL, if successfully retrieved data
-                    new JiraAgent (cur, heading);
-                    mainWindow->statusMessage (tr("Contacting Jira...", "VymModel"));
+                    // But only do that, if heading looks like a JIRA ID
+                    // and without URL yet also only do if there are no children
+                    // and no whitespaces (created in log info later)
+                    if (cur->branchCount() == 0 && heading.contains(QRegExp("\s"))) 
+                    {
+                        if (heading.contains(QRegExp("\\w-(\\d+)")))
+                        {
+                            new JiraAgent (cur, heading);
+                            mainWindow->statusMessage (tr("Contacting Jira...", "VymModel"));
+                        }
+                    }
                 }
             }
 

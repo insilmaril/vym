@@ -264,7 +264,23 @@ void JiraAgent::setModelJiraData (VymModel *model, BranchItem *bi, const QString
     // Save current selections  // FIXME-4 No multiselection yet (cleanup IDs vs UUIDs in treeitem)
     QString oldSelection = model->getSelectString();
 
-    model->select(bi);
+    // Try to find subbranch named "JIRA log"
+    BranchItem *logBranch = bi;
+    for (int n = 0; n < bi->branchCount(); n++)
+    {
+        logBranch = bi->getBranchNum(n);
+        if (logBranch->getHeadingPlain() == "JIRA log")
+        {
+            model->select(logBranch);
+            break;
+        }
+    }
+    if (bi == logBranch)
+    {
+        logBranch = model->addNewBranch();
+        model->setHeadingPlainText("JIRA log", logBranch);
+        model->select(logBranch);
+    }
 
     BranchItem *timestampBranch = model->addTimestamp();
     BranchItem *infoBranch;
