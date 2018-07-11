@@ -265,6 +265,7 @@ void JiraAgent::setModelJiraData (VymModel *model, BranchItem *bi, const QString
     QString oldSelection = model->getSelectString();
 
     // Try to find subbranch named "JIRA log"
+
     BranchItem *logBranch = bi;
     for (int n = 0; n < bi->branchCount(); n++)
     {
@@ -277,7 +278,7 @@ void JiraAgent::setModelJiraData (VymModel *model, BranchItem *bi, const QString
     }
     if (bi == logBranch)
     {
-        logBranch = model->addNewBranch();
+        logBranch = model->addNewBranch(bi, -2);
         model->setHeadingPlainText("JIRA log", logBranch);
         model->select(logBranch);
     }
