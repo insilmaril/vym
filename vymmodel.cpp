@@ -5415,7 +5415,7 @@ bool VymModel::initIterator(const QString &iname, bool deepLevelsFirst )
     {
 	BranchItem *prev = NULL;
 	BranchItem *cur  = NULL;
-        nextBranch (cur, prev, true, selbis.first() );
+        nextBranch (cur, prev, false, selbis.first() );
 	if (cur)
 	{
             selIterCur   = cur->getUuid();
@@ -5452,7 +5452,7 @@ bool VymModel::nextIterator(const QString &iname)
 
     if (cur && prev && start)
     {
-        nextBranch (cur, prev, true, start);
+        nextBranch (cur, prev, false, start);
         if (cur) 
         {
             selIterCur   = cur->getUuid();
