@@ -5409,6 +5409,12 @@ QColor VymModel::getSelectionColor()
 
 bool VymModel::initIterator(const QString &iname, bool deepLevelsFirst )
 {
+    // Remove existing iterators first
+    selIterCur.remove (iname);
+    selIterPrev.remove (iname);
+    selIterStart.remove (iname);
+    selIterActive.remove (iname);
+
     QList <BranchItem*> selbis;
     selbis = getSelectedBranches();
     if (selbis.count() == 1)
@@ -5418,10 +5424,11 @@ bool VymModel::initIterator(const QString &iname, bool deepLevelsFirst )
         nextBranch (cur, prev, false, selbis.first() );
 	if (cur)
 	{
-            selIterCur   = cur->getUuid();
-            selIterPrev  = prev->getUuid();
-            selIterStart = selbis.first()->getUuid();
-            selIterActive = false;
+            selIterCur.insert   (iname, cur->getUuid() );
+            selIterPrev.insert  (iname, prev->getUuid() );
+            selIterStart.insert (iname, selbis.first()->getUuid() );
+            selIterActive.insert(iname, false );
+            qDebug() << "Created iterator " << iname;
             return true;
 	}
     }
@@ -5430,33 +5437,38 @@ bool VymModel::initIterator(const QString &iname, bool deepLevelsFirst )
 
 bool VymModel::nextIterator(const QString &iname)
 {
-    BranchItem *cur  = (BranchItem*)(findUuid (selIterCur));
-    if (!cur) // FIXME-0 provide error message?
+    // FIXME-0 check if iname is a key in the hashes of iterators
+
+    BranchItem *cur  = (BranchItem*)(findUuid (selIterCur.value(iname) ));
+    if (!cur) // FIXME-0 provide error message box?
     {
         qWarning() << "VM::nextIterator couldn't find cur"    << selIterCur;
         return false;
     }
 
-    if (!selIterActive)
+    qDebug() << "  " << iname << "selecting " << cur->getHeadingPlain();
+    select (cur);
+
+    if (!selIterActive.value(iname))
     {
         // Select for the first time
         select (cur);
-        selIterActive = true;
+        selIterActive[iname] = true;
         return true;
     }
     
-    BranchItem *prev  = (BranchItem*)(findUuid (selIterPrev));
-    BranchItem *start = (BranchItem*)(findUuid (selIterStart));
-    if (!prev)  qWarning() << "VM::nextIterator couldn't find prev"   << selIterPrev;
-    if (!start) qWarning() << "VM::nextIterator couldn't find start " << selIterStart;
+    BranchItem *prev  = (BranchItem*)(findUuid (selIterPrev.value(iname)));
+    BranchItem *start = (BranchItem*)(findUuid (selIterStart.value(iname)));
+    if (!prev)  qWarning() << "VM::nextIterator couldn't find prev"   << selIterPrev.value(iname);
+    if (!start) qWarning() << "VM::nextIterator couldn't find start " << selIterStart.value(iname);
 
     if (cur && prev && start)
     {
         nextBranch (cur, prev, false, start);
         if (cur) 
         {
-            selIterCur   = cur->getUuid();
-            selIterPrev  = prev->getUuid();
+            selIterCur[iname]   = cur->getUuid();
+            selIterPrev[iname]  = prev->getUuid();
             select (cur);
             return true;
         } else

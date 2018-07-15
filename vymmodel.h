@@ -832,10 +832,10 @@ public:
     bool initIterator(const QString &iname, bool deepLevelsFirst = false); //! Named iterator
     bool nextIterator(const QString &iname);    //! Select next iterator
 private:
-    QUuid selIterCur;
-    QUuid selIterPrev;
-    QUuid selIterStart;
-    bool selIterActive;
+    QHash <QString, QUuid> selIterCur;
+    QHash <QString, QUuid> selIterPrev;
+    QHash <QString, QUuid> selIterStart;
+    QHash <QString, bool> selIterActive;
 
 
 ////////////////////////////////////////////
