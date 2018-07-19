@@ -29,7 +29,7 @@ end.parse!
 ARGV.each do |id| 
 
   # This should be removed. Used to switch between various Jira systems 
-  if id.downcase.include?("as1-") 
+  if id.downcase.include?("prosolution")
     options[:site] = config['jira-intern']
   elsif id.include?("albatros") || (id.include? "EBACQ") 
     options[:site] = config['jira-servicedesk']
