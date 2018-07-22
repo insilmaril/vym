@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1091</width>
-    <height>893</height>
+    <width>830</width>
+    <height>440</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -150,6 +150,9 @@
        <string>Page</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout_5"/>
+       </item>
        <item>
         <widget class="QTextEdit" name="fileEditor">
          <property name="sizePolicy">

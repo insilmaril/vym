@@ -27,6 +27,10 @@ ScriptEditor::ScriptEditor (QWidget *parent):QWidget( parent )
 {
     ui.setupUi (this);
 
+    codeEditor = new CodeEditor (this);
+    ui.fileEditor->hide();
+    ui.verticalLayout_5->addWidget (codeEditor);
+
     connect ( ui.slideSaveButton,  SIGNAL (clicked() ), this, SLOT (saveSlide() ));
     connect ( ui.slideRunButton,   SIGNAL (clicked() ), this, SLOT (runSlide() ));
     connect ( ui.macroRunButton,   SIGNAL (clicked() ), this, SLOT (runMacro() ));
@@ -47,7 +51,7 @@ ScriptEditor::ScriptEditor (QWidget *parent):QWidget( parent )
     font.setPointSize(12);
     ui.slideEditor->setFont(font);
     ui.macroEditor->setFont(font);
-    ui.fileEditor->setFont(font);
+    codeEditor->setFont(font);
 
     ui.modeTabWidget->setTabText(0,tr("Slide","Mode in scriptEditor"));
     ui.modeTabWidget->setTabText(1,tr("Macro","Mode in scriptEditor"));
@@ -67,7 +71,7 @@ ScriptEditor::ScriptEditor (QWidget *parent):QWidget( parent )
     
     highlighterMacro = new Highlighter(ui.macroEditor->document());
     highlighterSlide = new Highlighter(ui.slideEditor->document());
-    highlighterFile = new Highlighter(ui.fileEditor->document());
+    highlighterFile = new Highlighter(codeEditor->document());
     QStringList list;
     foreach (Command *c, modelCommands)
 	list.append (c->getName() );
@@ -82,11 +86,12 @@ ScriptEditor::ScriptEditor (QWidget *parent):QWidget( parent )
     //a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
     //addAction (a);
     //connect( a, SIGNAL( triggered() ), this, SLOT( saveSlide() ) );
+
 }
 
 QString ScriptEditor::getScriptFile()
 {
-    return ui.fileEditor->toPlainText();
+    return codeEditor->toPlainText();
 }
 
 void ScriptEditor::saveSlide()
@@ -126,7 +131,7 @@ void ScriptEditor::runSlide()
 
 void ScriptEditor::runFile()
 {
-    emit runScript (ui.fileEditor->toPlainText() );
+    emit runScript (codeEditor->toPlainText() );
 }
 
 void ScriptEditor::loadMacro()
@@ -166,7 +171,7 @@ bool ScriptEditor::loadFile(QString fn)
         filename = fn;
 	QTextStream ts( &f );
         ts.setCodec("UTF-8");
-        ui.fileEditor->setText( ts.readAll() );
+        codeEditor->setPlainText( ts.readAll() );
         ui.fileNameLabel->setText( filename );
 	f.close();
 	lastMapDir.setPath(fn.left(fn.lastIndexOf ("/")) );
@@ -190,7 +195,7 @@ void ScriptEditor::saveFile()
 
         QTextStream t( &f );
         t.setCodec("UTF-8");
-        t << ui.fileEditor->toPlainText();
+        t << codeEditor->toPlainText();
         f.close();
         mainWindow->statusMessage( tr("Script saved to %1").arg(filename) );
     }

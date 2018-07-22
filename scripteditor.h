@@ -2,6 +2,7 @@
 #define SCRIPTEDITOR_H
 
 #include "ui_scripteditor.h"
+#include "codeeditor.h"
 #include "highlighter.h"
 
 class VymModel;
@@ -38,6 +39,7 @@ signals:
     
 private:
     Ui::ScriptEditor ui;
+    CodeEditor *codeEditor;
     QString filename;
     Highlighter *highlighterMacro;
     Highlighter *highlighterSlide;

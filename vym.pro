@@ -63,6 +63,7 @@ ICON =icons/vym.icns
 
 HEADERS	+= \
     aboutdialog.h \
+    codeeditor.h \
     taskfiltermodel.h \
     animpoint.h \
     arrowobj.h \
@@ -157,6 +158,7 @@ HEADERS	+= \
 
 SOURCES	+= \
     aboutdialog.cpp \
+    codeeditor.cpp \
     taskfiltermodel.cpp \
     animpoint.cpp \
     arrowobj.cpp \
