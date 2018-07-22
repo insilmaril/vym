@@ -3996,7 +3996,7 @@ void VymModel::getJiraData(bool subtree)	    // FIXME-2 update error message, ch
                     // But only do that, if heading looks like a JIRA ID
                     // and without URL yet also only do if there are no children
                     // and no whitespaces (created in log info later)
-                    if (cur->branchCount() == 0 && heading.contains(QRegExp("\s"))) 
+                    if (cur->branchCount() == 0 && !heading.contains(QRegExp("\\s")))
                     {
                         if (heading.contains(QRegExp("\\w-(\\d+)")))
                         {
