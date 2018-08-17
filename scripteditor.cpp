@@ -6,6 +6,7 @@
 #include <QTextStream>
 
 #include "command.h"
+#include "file.h"
 #include "macros.h"
 #include "mainwindow.h"
 #include "options.h"
@@ -34,12 +35,12 @@ ScriptEditor::ScriptEditor (QWidget *parent):QWidget( parent )
     connect ( ui.slideSaveButton,  SIGNAL (clicked() ), this, SLOT (saveSlide() ));
     connect ( ui.slideRunButton,   SIGNAL (clicked() ), this, SLOT (runSlide() ));
     connect ( ui.macroRunButton,   SIGNAL (clicked() ), this, SLOT (runMacro() ));
-    connect ( ui.fileRunButton,   SIGNAL (clicked() ), this, SLOT (runFile() ));
-    connect ( ui.macroLoadButton,  SIGNAL (clicked() ), this, SLOT (loadMacro() ) );
-    connect ( ui.macroSaveButton,  SIGNAL (clicked() ), this, SLOT (saveMacro() ) );
-    connect ( ui.fileLoadButton,   SIGNAL (clicked() ), this, SLOT (loadFile() ) );
-    connect ( ui.fileSaveButton,   SIGNAL (clicked() ), this, SLOT (saveFile() ) );
-    connect ( ui.fileSaveAsButton, SIGNAL (clicked() ), this, SLOT (saveFileAs() ) );
+    connect ( ui.fileRunButton,   SIGNAL (clicked() ), this, SLOT (runScript() ));
+    connect ( ui.macroLoadButton,  SIGNAL (clicked() ), this, SLOT (reloadMacros() ) );
+    connect ( ui.macroSaveButton,  SIGNAL (clicked() ), this, SLOT (saveMacros() ) );
+    connect ( ui.fileLoadButton,   SIGNAL (clicked() ), this, SLOT (loadScript() ) );
+    connect ( ui.fileSaveButton,   SIGNAL (clicked() ), this, SLOT (saveScript() ) );
+    connect ( ui.fileSaveAsButton, SIGNAL (clicked() ), this, SLOT (saveScriptAs() ) );
 
 
     vymModelID=-1;
@@ -57,18 +58,10 @@ ScriptEditor::ScriptEditor (QWidget *parent):QWidget( parent )
     ui.modeTabWidget->setTabText(1,tr("Macro","Mode in scriptEditor"));
     ui.modeTabWidget->setTabText(2,tr("Script","Mode in scriptEditor"));
 
-    ui.fileNameLabel->setText( tr("No script selected","scriptname in scriptEditor"));
-    ui.keyCombo->insertItem(0, QString("---") );
+    ui.scriptfileLabel->setText( tr("No script selected","scriptname in scriptEditor"));
 
-    // Init function key selection
-    for (int i=0; i<24; i++)
-    {
-        QString prefix="";
-        if (i>11) prefix="Shift +";
-        int n=i%12 + 1;
-        ui.keyCombo->insertItem(i, QString("%1 F%2").arg(prefix).arg(n) );
-    }
-    
+    reloadMacros();
+
     highlighterMacro = new Highlighter(ui.macroEditor->document());
     highlighterSlide = new Highlighter(ui.slideEditor->document());
     highlighterFile = new Highlighter(codeEditor->document());
@@ -129,23 +122,39 @@ void ScriptEditor::runSlide()
     emit runScript (ui.slideEditor->toPlainText() );
 }
 
-void ScriptEditor::runFile()
+void ScriptEditor::runScript()
 {
     emit runScript (codeEditor->toPlainText() );
 }
 
-void ScriptEditor::loadMacro()
+void ScriptEditor::reloadMacros()
 {
-    QString m = macros.getMacro (ui.keyCombo->currentIndex() + 1);
-    if ( !m.isEmpty() ) ui.macroEditor->setText (m);
+    QString m = macros.get();
+    if ( !m.isEmpty() ) 
+    {
+        ui.macroEditor->setText (m);
+        ui.macrofileLabel->setText( macros.getPath() );
+    } else
+    {
+        QString error (QObject::tr("Error"));
+        QString msg (QObject::tr("Couldn't read macros from \"%1\"\n.").arg(macros.getPath() ));
+        QMessageBox::warning(0, error, msg);
+    }
 }
-void ScriptEditor::saveMacro()
+void ScriptEditor::saveMacros()
 {
-    filename = macros.getPath(ui.keyCombo->currentIndex() + 1);
-    saveFile();
+    qDebug() << "SE::savingMacros()";
+    if (saveStringToDisk(macros.getPath(), ui.macroEditor->toPlainText()) )
+        mainWindow->statusMessage( tr("Macros saved to %1").arg(macros.getPath()) );
+    else
+    {
+        QString error (QObject::tr("Error"));
+        QString msg (QObject::tr("Couldn't write macros to \"%1\"\n.").arg(macros.getPath() ));
+        QMessageBox::warning(0, error, msg);
+    }
 }
 
-bool ScriptEditor::loadFile(QString fn)
+bool ScriptEditor::loadScript(QString fn)
 {
     if (fn.isEmpty() )
     {
@@ -159,49 +168,42 @@ bool ScriptEditor::loadFile(QString fn)
 
     if (!fn.isEmpty() )
     {
-	QFile f( fn);
-	if ( !f.open( QIODevice::ReadOnly ) )
-	{
-	    QMessageBox::warning(0, 
-		tr("Error"),
-		tr("Couldn't open %1.\n").arg(filename));
-	    return false;
-	}   
-
         filename = fn;
-	QTextStream ts( &f );
-        ts.setCodec("UTF-8");
-        codeEditor->setPlainText( ts.readAll() );
-        ui.fileNameLabel->setText( filename );
-	f.close();
-	lastMapDir.setPath(fn.left(fn.lastIndexOf ("/")) );
-        return true;
-    } else
-        return false;
+        QString s;
+        if (loadStringFromDisk(filename, s))
+        {
+            codeEditor->setPlainText( s );
+            ui.scriptfileLabel->setText( filename );
+            lastMapDir.setPath(filename.left(filename.lastIndexOf ("/")) );
+            return true;
+        } else
+        {
+            QString error (QObject::tr("Error"));
+            QString msg (QObject::tr("Couldn't read script from \"%1\"\n.").arg(fn));
+            QMessageBox::warning(0, error, msg);
+        }
+    } 
+    return false;
 }
 
-void ScriptEditor::saveFile()
+void ScriptEditor::saveScript()
 {
     if (filename.isEmpty() )
-	saveFileAs();
+	saveScriptAs();
     else
     {
-        QFile f( filename );
-        if ( !f.open( QIODevice::WriteOnly ) ) 
+        if ( saveStringToDisk( filename, codeEditor->toPlainText()) )
+            mainWindow->statusMessage( tr("Script saved to %1").arg(filename) );
+        else 
         {
-            QMessageBox::warning(0, QObject::tr("Error"),QObject::tr("Couldn't save \"%1\"").arg(filename));
-            return;
+            QString error (QObject::tr("Error"));
+            QString msg (QObject::tr("Couldn't write script to \"%1\"\n.").arg(filename));
+            QMessageBox::warning(0, error, msg);
         }
-
-        QTextStream t( &f );
-        t.setCodec("UTF-8");
-        t << codeEditor->toPlainText();
-        f.close();
-        mainWindow->statusMessage( tr("Script saved to %1").arg(filename) );
     }
 }
 
-void ScriptEditor::saveFileAs()
+void ScriptEditor::saveScriptAs()
 {
     QString filter("VYM scripts (*.vys *.js);;All (*)");
     QString fn = QFileDialog::getSaveFileName( 
@@ -228,7 +230,9 @@ void ScriptEditor::saveFileAs()
 		case QMessageBox::Yes:
 		    // save 
 		    filename = fn;
-		    saveFile();
+                    ui.scriptfileLabel->setText( filename );
+                    lastMapDir.setPath(filename.left(filename.lastIndexOf ("/")) );
+		    saveScript();
 		    return;
 		case QMessageBox::Cancel:
 		    // do nothing
@@ -236,7 +240,7 @@ void ScriptEditor::saveFileAs()
 	    }
 	} 
 	filename = fn;
-	saveFile();
+	saveScript();
     }
 }
 

@@ -335,8 +335,8 @@ int main(int argc, char* argv[])
 #endif
     iconPath  = vymBaseDir.path()+"/icons/";
     flagsPath = vymBaseDir.path()+"/flags/";
-    macroPath = vymBaseDir.path() + "/macros/";
-
+    macroPath = settings.value ("/macros/macroDir", vymBaseDir.path() + "/macros").toString();
+    
     // Some directories
     QDir useDir;
     if (options.isOn ("local"))
@@ -487,7 +487,7 @@ int main(int argc, char* argv[])
     if (options.isOn ("load"))
     {
         QString fn = options.getArg ("load");
-        if (!scriptEditor->loadFile ( fn ) )
+        if (!scriptEditor->loadScript ( fn ) )
         {
             QString error (QObject::tr("Error"));
             QString msg (QObject::tr("Couldn't open \"%1\"\n.").arg(fn));
@@ -503,7 +503,7 @@ int main(int argc, char* argv[])
     {
         QString script;
         QString fn = options.getArg ("run");
-        if (!scriptEditor->loadFile ( fn ) )
+        if (!scriptEditor->loadScript ( fn ) )
         {
             QString error (QObject::tr("Error"));
             QString msg (QObject::tr("Couldn't open \"%1\"\n.").arg(fn));

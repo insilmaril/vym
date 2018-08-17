@@ -118,19 +118,16 @@
           </spacer>
          </item>
          <item>
-          <widget class="QLabel" name="label">
+          <widget class="QLabel" name="macrofileLabel">
            <property name="text">
-            <string>Current key:</string>
+            <string>filenameLabel</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QComboBox" name="keyCombo"/>
-         </item>
-         <item>
           <widget class="QPushButton" name="macroLoadButton">
            <property name="text">
-            <string>Load</string>
+            <string>Reload</string>
            </property>
           </widget>
          </item>
@@ -186,9 +183,9 @@
           </spacer>
          </item>
          <item>
-          <widget class="QLabel" name="fileNameLabel">
+          <widget class="QLabel" name="scriptfileLabel">
            <property name="text">
-            <string>TextLabel</string>
+            <string>scriptfileLabel</string>
            </property>
           </widget>
          </item>

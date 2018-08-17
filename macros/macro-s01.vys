@@ -1,4 +1,0 @@
-// Macro F1 + Shift
-map = vym.currentMap();
-map.toggleTask();
-map.toggleFlag("cross-red");

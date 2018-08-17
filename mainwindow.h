@@ -386,7 +386,7 @@ private:
     enum { MaxRecentFiles = 9 };
     QAction *recentFileActions[MaxRecentFiles];
 
-    QAction *macroActions[13];
+    QAction *macroActions[24];
     QStringList macro;
 
     QMenu *toolbarsMenu;

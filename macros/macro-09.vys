@@ -1,3 +1,0 @@
-// Macro F9
-map = vym.currentMap();
-map.setTaskSleep("17:00");

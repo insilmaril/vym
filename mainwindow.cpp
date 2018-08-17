@@ -83,6 +83,7 @@ extern QString vymVersion;
 extern QString vymPlatform;
 extern QString vymBuildDate;
 extern QString localeName;
+extern QString macroPath;
 extern bool debug;
 extern bool testmode;
 extern QTextStream vout;
@@ -2943,7 +2944,7 @@ void Main::setupRecentMapsMenu()
 
 void Main::setupMacros()
 {
-    for (int i = 0; i <= 12; i++) 
+    for (int i = 0; i <= 23; i++) 
     {
 	macroActions[i] = new QAction(this);
 	macroActions[i]->setData(i);
@@ -2954,7 +2955,7 @@ void Main::setupMacros()
     macroActions[1]->setShortcut ( Qt::Key_F2 );
     macroActions[2]->setShortcut ( Qt::Key_F3 );
     macroActions[3]->setShortcut ( Qt::Key_F4 );
-    macroActions[4]->setShortcut ( Qt::Key_F5 );
+    macroActions[5]->setShortcut ( Qt::Key_F5 );
     macroActions[5]->setShortcut ( Qt::Key_F6 );
     macroActions[6]->setShortcut ( Qt::Key_F7 );
     macroActions[7]->setShortcut ( Qt::Key_F8 );
@@ -2964,6 +2965,17 @@ void Main::setupMacros()
     macroActions[11]->setShortcut ( Qt::Key_F12 );
 
     macroActions[12]->setShortcut ( Qt::Key_F1 + Qt::SHIFT);
+    macroActions[13]->setShortcut ( Qt::Key_F2 + Qt::SHIFT);
+    macroActions[14]->setShortcut ( Qt::Key_F3 + Qt::SHIFT);
+    macroActions[15]->setShortcut ( Qt::Key_F4 + Qt::SHIFT);
+    macroActions[16]->setShortcut ( Qt::Key_F5 + Qt::SHIFT);
+    macroActions[17]->setShortcut ( Qt::Key_F6 + Qt::SHIFT);
+    macroActions[18]->setShortcut ( Qt::Key_F7 + Qt::SHIFT);
+    macroActions[19]->setShortcut ( Qt::Key_F8 + Qt::SHIFT);
+    macroActions[20]->setShortcut ( Qt::Key_F9 + Qt::SHIFT);
+    macroActions[21]->setShortcut ( Qt::Key_F10 + Qt::SHIFT);
+    macroActions[22]->setShortcut ( Qt::Key_F11 + Qt::SHIFT);
+    macroActions[23]->setShortcut ( Qt::Key_F12 + Qt::SHIFT);
 }
 
 void Main::setupToolbars()
@@ -5102,14 +5114,14 @@ void Main::settingsMacroDir()
 {
     QDir defdir(vymBaseDir.path() + "/macros");
     if (!defdir.exists())
-	defdir=vymBaseDir;
-    QDir dir=QFileDialog::getExistingDirectory (
+	defdir = vymBaseDir;
+    QDir dir = QFileDialog::getExistingDirectory (
 	this,
 	tr ("Directory with vym macros:"), 
-	settings.value ("/macros/macroDir",defdir.path()).toString()
+	settings.value ("/macros/macroDir", defdir.path()).toString()
     );
     if (dir.exists())
-	settings.setValue ("/macros/macroDir",dir.absolutePath());
+	settings.setValue ("/macros/macroDir", dir.absolutePath());
 }
 
 void Main::settingsUndoLevels()	    
@@ -5892,7 +5904,7 @@ void Main::standardFlagChanged()
 
 void Main::testFunction1()
 {
-    scriptEditor->runFile();
+    scriptEditor->runScript();
 }
 
 void Main::testFunction2()
@@ -6051,16 +6063,24 @@ void Main::helpAboutQT()
 void Main::callMacro ()
 {
     QAction *action = qobject_cast<QAction *>(sender());
-    int i=-1;
+    int i =- 1;
     if (action)
     {
-        i=action->data().toInt();
-        QString s=macros.getMacro (i+1);
-        if (!s.isEmpty())
+        QString s = macros.get();
+        QString shift;
+
+        i = action->data().toInt() + 1;
+
+        if (i > 12) 
         {
-            VymModel *m=currentModel();
-            if (m) m->execute(s);
+            shift = "shift_";
+            i = i - 12;
         }
+
+        s += QString("macro_%1f%2();").arg(shift).arg(i);
+
+        VymModel *m = currentModel();
+        if (m) m->execute(s);
     }	
 }
 

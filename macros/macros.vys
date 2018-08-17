@@ -1,0 +1,148 @@
+// Macro F1
+function macro_f1()
+{
+    map = vym.currentMap();
+    map.colorSubtree ("#ff0000");
+}
+
+// Macro F2
+function macro_f2()
+{
+    map = vym.currentMap();
+    map.colorSubtree ("#d95100");
+}
+
+// Macro F3 
+function macro_f3()
+{
+    map = vym.currentMap();
+    map.colorSubtree ("#009900");
+}
+
+// Macro F4
+function macro_f4()
+{
+    map = vym.currentMap();
+    map.colorSubtree ("#00aa7f");
+}
+
+// Macro F5
+function macro_f5()
+{
+    map = vym.currentMap();
+    map.colorSubtree ("#aa00ff");
+}
+
+// Macro F6
+function macro_f6()
+{
+    map = vym.currentMap();
+    map.colorSubtree ("#c466ff");
+}
+
+// Macro F7
+function macro_f7()
+{
+    map = vym.currentMap();
+    map.colorSubtree ("#0000ff");
+}
+
+// Macro F8
+function macro_f8()
+{
+    map = vym.currentMap();
+    map.setTaskSleep("15:00");
+}
+
+// Macro F9
+function macro_f9()
+{
+    map = vym.currentMap();
+    map.setTaskSleep("17:00");
+}
+
+// Macro F9
+function macro_f10()
+{
+    map = vym.currentMap();
+    map.toggleFrameIncludeChildren();
+}
+
+// Macro F10
+function macro_f11()
+{
+    map = vym.currentMap();
+    map.setFrameType ("NoFrame");
+}
+
+// Macro F12
+function macro_f12()
+{
+    map = vym.currentMap();
+    map.setFrameType ("RoundedRectangle");
+    map.setFramePadding (10);
+    map.setFrameIncludeChildren (true);
+}
+
+// Macro F1 + Shift
+function macro_shift_f1()
+{
+    map = vym.currentMap();
+    map.toggleTask();
+    map.toggleFlag("cross-red");
+}
+
+// Macro F2 + Shift
+function macro_shift_f2()
+{
+}
+
+// Macro F3 + Shift
+function macro_shift_f3()
+{
+}
+
+// Macro F4 + Shift
+function macro_shift_f4()
+{
+}
+
+// Macro F5 + Shift
+function macro_shift_f5()
+{
+}
+
+// Macro F6 + Shift
+function macro_shift_f6()
+{
+}
+
+// Macro F7 + Shift
+function macro_shift_f7()
+{
+}
+
+// Macro F8 + Shift
+function macro_shift_f8()
+{
+}
+
+// Macro F9 + Shift
+function macro_shift_f9()
+{
+}
+
+// Macro shift_f10 + Shift
+function macro_shift_f10()
+{
+}
+
+// Macro shift_f11 + Shift
+function macro_shift_f11()
+{
+}
+
+// Macro shift_f12 + Shift
+function macro_shift_f12()
+{
+}

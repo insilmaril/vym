@@ -1,5 +1,0 @@
-// Macro F12
-map = vym.currentMap();
-map.setFrameType ("RoundedRectangle");
-map.setFramePadding (10);
-map.setFrameIncludeChildren (true);

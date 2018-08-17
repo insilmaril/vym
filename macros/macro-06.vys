@@ -1,3 +1,0 @@
-// Macro F6
-map = vym.currentMap();
-map.colorSubtree ("#c466ff");

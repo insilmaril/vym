@@ -26,13 +26,13 @@ public:
 public slots:
     void runMacro();
     void runSlide();
-    void runFile();
+    void runScript();
     void saveSlide();
-    void loadMacro();
-    void saveMacro();
-    bool loadFile(QString fn = "");
-    void saveFile();
-    void saveFileAs();
+    void reloadMacros();
+    void saveMacros();
+    bool loadScript(QString fn = "");
+    void saveScript();
+    void saveScriptAs();
 
 signals:
     void runScript (QString);
