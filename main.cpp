@@ -333,19 +333,19 @@ int main(int argc, char* argv[])
 #elif defined(Q_OS_LINUX)
 #else
 #endif
-    iconPath=vymBaseDir.path()+"/icons/";
-    flagsPath=vymBaseDir.path()+"/flags/";
-    macroPath=vymBaseDir.path() + "/macros/";
+    iconPath  = vymBaseDir.path()+"/icons/";
+    flagsPath = vymBaseDir.path()+"/flags/";
+    macroPath = vymBaseDir.path() + "/macros/";
 
     // Some directories
     QDir useDir;
     if (options.isOn ("local"))
-        useDir=QDir().current();
+        useDir = QDir().current();
     else
-        useDir=QDir().home();
-    lastImageDir=useDir;
-    lastMapDir=useDir;
-    lastExportDir=useDir;
+        useDir = QDir().home();
+    lastImageDir  = useDir;
+    lastMapDir    = useDir;
+    lastExportDir = useDir;
 
     if (options.isOn ("help"))
     {
