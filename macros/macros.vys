@@ -61,27 +61,26 @@ function macro_f9()
     map.setTaskSleep("17:00");
 }
 
-// Macro F9
+// Macro F10
 function macro_f10()
 {
-    map = vym.currentMap();
-    map.toggleFrameIncludeChildren();
 }
 
-// Macro F10
+// Macro F11
 function macro_f11()
 {
     map = vym.currentMap();
-    map.setFrameType ("NoFrame");
+    map.toggleFrameIncludeChildren();
 }
 
 // Macro F12
 function macro_f12()
 {
     map = vym.currentMap();
-    map.setFrameType ("RoundedRectangle");
-    map.setFramePadding (10);
-    map.setFrameIncludeChildren (true);
+    if (map.getFrameType() == "NoFrame" ) 
+        map.setFrameType ("RoundedRectangle");
+    else
+        map.setFrameType ("NoFrame");
 }
 
 // Macro F1 + Shift
