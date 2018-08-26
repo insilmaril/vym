@@ -22,6 +22,7 @@ using namespace std;
 #include "taskeditor.h"
 #include "taskmodel.h"
 #include "version.h"
+#include "warningdialog.h"
 
 #if defined(VYM_DBUS)
 #include <sys/types.h>		// To retrieve PID for use in DBUS
@@ -386,10 +387,15 @@ int main(int argc, char* argv[])
   
     QTranslator vymTranslator;
     if (!vymTranslator.load( QString("vym.%1").arg( localeName ), vymBaseDir.path() + "/lang") )
-        QMessageBox::warning( 0, QObject::tr( "Warning" ),
-                               QString("Couldn't load translations for locale \"%1\" in\n%2")       // FIXME-0 add "don't show next time" option
+    {
+        WarningDialog warn;
+        warn.showCancelButton (false);
+        warn.setText(QString( "Couldn't load translations for locale \"%1\" in\n%2")      
                                .arg(localeName)
                                .arg(vymBaseDir.path() + "/lang") );
+        warn.setShowAgainName("mainwindow/loadTranslations");
+
+    }
     app.installTranslator( &vymTranslator );
 
     // Initializing the master rows of flags

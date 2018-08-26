@@ -12,6 +12,7 @@ WarningDialog::WarningDialog(QWidget* parent):QDialog (parent)
     ui.showAgainBox->setText (tr("Show this message again"));
     useShowAgain=false;
     ui.showAgainBox->hide();
+    QDialog::setWindowTitle("VYM - " + tr("Warning","Warning dialog default window name"));
 }
 
 int WarningDialog::exec()
@@ -25,7 +26,7 @@ int WarningDialog::exec()
 	{
 	    if (useShowAgain)
 	    {
-		settings.setValue ("/warningDialog/"+showAgainName+"/value",result);
+		settings.setValue ("/warningDialog/"+showAgainName+"/value",result);		settings.setValue ("/warningDialog/"+showAgainName+"/showAgain",ui.showAgainBox->isChecked() );
 		settings.setValue ("/warningDialog/"+showAgainName+"/showAgain",ui.showAgainBox->isChecked() );
 	    }
 	}
@@ -61,5 +62,5 @@ void WarningDialog::setText (const QString &s)
 
 void WarningDialog::setCaption(const QString &s)
 {
-    QDialog::setWindowTitle("VYM - "+s);
+    QDialog::setWindowTitle("VYM - " + s);
 }

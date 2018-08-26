@@ -1586,9 +1586,10 @@ Usage: vym [OPTION]... [FILE]...
 Open FILEs with vym
 
 -b           batch       batch mode: hide windows
--c           commands     List all available commands
+-c           commands	  List all available commands
 -d           debug       Show debugging output
 -h           help        Show this help text
+-L           load        Load script
 -l           local       Run with ressources in current directory
 --locale     locale      Override system locale setting to select language
 -n  STRING   name        Set name of instance for DBus access
@@ -1596,7 +1597,7 @@ Open FILEs with vym
 -R  FILE     run         Run script
 -r           restore     Restore last session
 -s           shortcuts   Show Keyboard shortcuts on start
--sl          LaTeX       Show Keyboard shortcuts in LaTeX format on start
+--sl         LaTeX       Show Keyboard shortcuts in LaTeX format on start
 -t           testmode    Test mode, e.g. no autosave and changing of its setting
 -v           version     Show vym version
 \end{verbatim}
@@ -1606,25 +1607,31 @@ several maps at once.
 
 \section{Scripts} \label{scripts}   
 \subsection{Overview}
-Scripts within \vym are so far just a set of instructions, telling \vym
-what to do. Scripts are internally used for
+Beginning with version 2.7.0 \vym is fully scriptable, though the
+scripting support is still considered a {\em technical preview}. Some
+parts still might change and improve in later versions.
+Scripts are internally used for
 \begin{itemize}
     \item Undo and Redo
     \item Macros on function keys
     \item Slideshow
 \end{itemize}
-So far the scripts have no loop constructs, conditionals, variables,
-etc. The good news: You can use external ruby scripts to get all that,
-see the examples in \ref{examplescripts}.
+In addition to the internal scriptengine, which is using QScript, 
+you can also  use external ruby scripts, which communicate with \vym via
+DBUS. Please note that the latter is currently only possible on Linux.
+See also the examples in \ref{examplescripts}.
 
 The scripts within \vym are edited using the {\em script editor}:
 \begin{center} \label{scripteditor}
     \includegraphics[width=13cm]{images/scripteditor.png}
 \end{center}
 Open the scripteditor by pressing \key{Alt + S} or from the {\em
-View}-menu.
+View}-menu. The output of of scritps cans be seen in the script output
+window with \key{Alt + Shift + S}
 
 \subsection{Example scripts}  \label{examplescripts}
+A set of example scripts is installed together with \vym, see the
+installation directory and the subfolder {\tt scripts/examples/}.
 \subsubsection{Macro to create a rounded rectangle frame}
 \begin{code}
 \# Macro F12
