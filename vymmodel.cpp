@@ -4287,7 +4287,7 @@ void VymModel::setXLinkWidth(int new_width)
 // Scripting
 //////////////////////////////////////////////
 
-QVariant VymModel::execute (const QString &script)  // FIXME-0 still required??? 
+QVariant VymModel::execute (const QString &script)  // FIXME-3 still required??? 
     // Called from these places:
     // 
     // scripts/vym-ruby.rb  (and adaptormodel) used for testing
@@ -5437,10 +5437,15 @@ bool VymModel::initIterator(const QString &iname, bool deepLevelsFirst )
 
 bool VymModel::nextIterator(const QString &iname)
 {
-    // FIXME-0 check if iname is a key in the hashes of iterators
+    if (selIterCur.keys().indexOf(iname) < 0 )
+    {
+        qWarning() << QString("VM::nextIterator couldn't find %1 in hash of iterators").arg(iname);
+        return false;
+    }
+
 
     BranchItem *cur  = (BranchItem*)(findUuid (selIterCur.value(iname) ));
-    if (!cur) // FIXME-0 provide error message box?
+    if (!cur) 
     {
         qWarning() << "VM::nextIterator couldn't find cur"    << selIterCur;
         return false;
