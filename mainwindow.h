@@ -313,7 +313,7 @@ public slots:
     bool autoEditNewBranch();
     bool autoSelectNewBranch();
     QVariant runScript(const QString &);
-    QObject* getCurrentModelWrapper();   // FIXME-0 testing
+    QObject* getCurrentModelWrapper();
     bool gotoWindow (const int &n);
 
 private slots:
@@ -355,7 +355,7 @@ private:
 
     QStringList imageTypes;
 
-    QScriptEngine scriptEngine;      // FIXME-0 testing for now
+    QScriptEngine scriptEngine;
 
     QList <VymView*> vymViews;	    //! Keeps track of models and views related to a tab 
     QString prevSelection;
