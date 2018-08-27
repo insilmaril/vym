@@ -63,7 +63,12 @@ function macro_f9()
 
 // Macro F10
 function macro_f10()
-{
+{   // switch off task attributes and replace
+    // with checkmark ("hook-green")
+    map = vym.currentMap();
+    map.clearFlags();
+    map.setFlag("hook-green");
+    if (map.hasTask() ) { map.toggleTask() }
 }
 
 // Macro F11
@@ -86,9 +91,6 @@ function macro_f12()
 // Macro F1 + Shift
 function macro_shift_f1()
 {
-    map = vym.currentMap();
-    map.toggleTask();
-    map.toggleFlag("cross-red");
 }
 
 // Macro F2 + Shift
