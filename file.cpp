@@ -503,8 +503,8 @@ FileType getMapType (const QString &fn)
     if (i>=0)
     {
         QString postfix=fn.mid(i+1);
-        if (postfix=="vym" || postfix=="vyp" || postfix=="xml") return VymMap;
-        if (postfix=="mm") return FreemindMap;
+        if (postfix == "vym" || postfix == "vyp" || postfix == "xml" || postfix == "vym~") return VymMap;
+        if (postfix == "mm") return FreemindMap;
     }
     return UnknownMap;
 }
