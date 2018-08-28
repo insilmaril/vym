@@ -717,7 +717,7 @@ File::ErrorCode VymModel::save (const SaveMode &savemode)
     QFile f(destPath);
     if (f.exists())
     {
-	if ( settings.value ("/mapeditor/writeBackupFile").toBool())
+	if ( settings.value ("/system/writeBackupFile").toBool())
 	{
 	    QString backupFileName(destPath + "~");
 	    QFile backupFile(backupFileName);
@@ -726,11 +726,14 @@ File::ErrorCode VymModel::save (const SaveMode &savemode)
 		QMessageBox::warning(0, tr("Save Error"),
 				     tr("%1\ncould not be removed before saving").arg(backupFileName));
 	    }
-	    else if (!f.rename(backupFileName))
-	    {
-		QMessageBox::warning(0, tr("Save Error"),
-				     tr("%1\ncould not be renamed before saving").arg(destPath));
-	    }
+	    else 
+            {
+                if (!f.rename(backupFileName))
+                {
+                    QMessageBox::warning(0, tr("Save Error"),
+                                         tr("%1\ncould not be renamed before saving").arg(destPath));
+                } 
+            }
 	}
     }
 
