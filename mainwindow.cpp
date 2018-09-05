@@ -5797,10 +5797,17 @@ QScriptValue scriptAbort( QScriptContext *context, QScriptEngine *engine)
     return QScriptValue();  
 }
 
+QScriptValue scriptStatusMessage( QScriptContext * context, QScriptEngine *)
+{
+    mainWindow->statusMessage ( context->argument(0).toString() );
+    return QScriptValue();
+}
+
 QVariant Main::runScript (const QString &script)
 {
     scriptEngine.globalObject().setProperty( "print", scriptEngine.newFunction( scriptPrint ) );
     scriptEngine.globalObject().setProperty( "abort", scriptEngine.newFunction( scriptAbort ) );
+    scriptEngine.globalObject().setProperty( "statusMessage", scriptEngine.newFunction( scriptStatusMessage ) );
 
     // Create Wrapper object for VymModel
     //QScriptValue val1 = scriptEngine.newQObject( m->getWrapper() );

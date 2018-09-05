@@ -1,0 +1,34 @@
+// Strip path in URL and replace "+" in URL
+
+vym.clearConsole();
+m1 = vym.currentMap();
+
+org = m1.getHeadingPlainText();
+print ("Original:");
+print (org);
+
+s = org;
+
+// Chop trailing "/"
+if (s[s.length-1] == '/') {
+  s = s.slice(0, s.length - 1);
+  }
+
+// Remove path
+s = s.replace(/^.*\//g, "");
+print ("After shortening:");
+print (s);
+
+// Replace "+" and "-"
+s = s.replace(/\+/g, " ");
+print ("After replacing:");
+print (s);
+
+// Write new header
+m1.setHeadingPlainText(s);
+
+if ( org == s ) {
+  statusMessage ("Heading not changed.");
+} else {
+  statusMessage("Changed heading: " + org + " -> " + s);
+}
