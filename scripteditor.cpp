@@ -1,6 +1,5 @@
 #include "scripteditor.h"
 
-#include <QDebug> //FIXME-3 testing
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QTextStream>
@@ -143,7 +142,6 @@ void ScriptEditor::reloadMacros()
 }
 void ScriptEditor::saveMacros()
 {
-    qDebug() << "SE::savingMacros()";
     if (saveStringToDisk(macros.getPath(), ui.macroEditor->toPlainText()) )
         mainWindow->statusMessage( tr("Macros saved to %1").arg(macros.getPath()) );
     else
