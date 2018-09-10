@@ -1,9 +1,10 @@
-// Strip path in URL and replace "+" in URL
+// Strip URLs from confluence and generate readable heading
+// by removing path and replacing characters like  "+" 
 
 vym.clearConsole();
 m1 = vym.currentMap();
 
-org = m1.getHeadingPlainText();
+org = m1.getURL();
 print ("Original:");
 print (org);
 
@@ -12,15 +13,30 @@ s = org;
 // Chop trailing "/"
 if (s[s.length-1] == '/') {
   s = s.slice(0, s.length - 1);
-  }
+}
 
-// Remove path
-s = s.replace(/^.*\//g, "");
-print ("After shortening:");
+// Remove confluence parts
+if (s.indexOf("infohub") != -1) {
+  print("Found infohub page");
+  if (s.indexOf("spaceKey") != -1) {
+    s = s.replace(/^.*spaceKey=/g, "");
+    s = s.replace(/(&title=)/g, ": ");
+  } else
+  {
+    s = s.replace(/^.*display\//g, "");
+    s = s.replace(/\//g, ": ");
+  }
+} else // no infohub page
+{
+  // remove path
+  s = s.replace(/^.*\//g, "");
+}
+
 print (s);
 
 // Replace "+" and "-"
 s = s.replace(/\+/g, " ");
+s = s.replace(/%3A/g, "");
 print ("After replacing:");
 print (s);
 

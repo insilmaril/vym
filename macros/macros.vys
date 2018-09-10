@@ -59,8 +59,8 @@ function macro_f8()
 function macro_f9()
 {
     map = vym.currentMap();
-    map.setTaskSleep("17:00");
-    statusMessage("Task sleeping until 17:00");
+    map.setTaskSleep("18:00");
+    statusMessage("Task sleeping until 18:00");
 }
 
 // Macro F10
