@@ -316,6 +316,13 @@ void JiraAgent::setModelJiraData (VymModel *model, BranchItem *bi, const QString
         model->setURL(ticket_url[ticketID]); 
     }
 
+    // Scroll log branch
+    if (!logBranch->isScrolled()) 
+    {
+        model->select(logBranch);
+        model->toggleScroll();
+    }
+
     // Selected previous objects
     model->select(oldSelection);
 }
