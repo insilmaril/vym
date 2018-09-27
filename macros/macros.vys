@@ -1,53 +1,55 @@
-// Macro F1
+// vim:syntax=javascript
+
+// Macro F1: Color subtree red
 function macro_f1()
 {
     map = vym.currentMap();
     map.colorSubtree ("#ff0000");
 }
 
-// Macro F2
+// Macro F2: Color subtree amber
 function macro_f2()
 {
     map = vym.currentMap();
     map.colorSubtree ("#d95100");
 }
 
-// Macro F3 
+// Macro F3: color subtree green
 function macro_f3()
 {
     map = vym.currentMap();
     map.colorSubtree ("#009900");
 }
 
-// Macro F4
-function macro_f4()
+// Macro F4: color subtree light green
+function macro_f4() 
 {
     map = vym.currentMap();
     map.colorSubtree ("#00aa7f");
 }
 
-// Macro F5
+// Macro F5: color subtree purple
 function macro_f5()
 {
     map = vym.currentMap();
     map.colorSubtree ("#aa00ff");
 }
 
-// Macro F6
+// Macro F6: color subtree light purple
 function macro_f6()
 {
     map = vym.currentMap();
     map.colorSubtree ("#c466ff");
 }
 
-// Macro F7
+// Macro F7: color subtree blue
 function macro_f7()
 {
     map = vym.currentMap();
     map.colorSubtree ("#0000ff");
 }
 
-// Macro F8
+// Macro F8: Set task to sleep until 15:00
 function macro_f8()
 {
     map = vym.currentMap();
@@ -55,7 +57,7 @@ function macro_f8()
     statusMessage("Task sleeping until 15:00");
 }
 
-// Macro F9
+// Macro F9: Set task to sleep until 18:00
 function macro_f9()
 {
     map = vym.currentMap();
@@ -63,24 +65,23 @@ function macro_f9()
     statusMessage("Task sleeping until 18:00");
 }
 
-// Macro F10
+// Macro F10: switch off task attributes and replace with green hook
 function macro_f10()
-{   // switch off task attributes and replace
-    // with checkmark ("hook-green")
+{ 
     map = vym.currentMap();
     map.clearFlags();
     map.setFlag("hook-green");
     if (map.hasTask() ) { map.toggleTask() }
 }
 
-// Macro F11
+// Macro F11: Toggle frame to include children
 function macro_f11()
 {
     map = vym.currentMap();
     map.toggleFrameIncludeChildren();
 }
 
-// Macro F12
+// Macro F12: Cycle frame types
 function macro_f12()
 {
     map = vym.currentMap();
@@ -90,62 +91,110 @@ function macro_f12()
         map.setFrameType ("NoFrame");
 }
 
-// Macro F1 + Shift
+// Macro Shift + F1:
 function macro_shift_f1()
 {
 }
 
-// Macro F2 + Shift
+// Macro Shift + F2:
 function macro_shift_f2()
 {
 }
 
-// Macro F3 + Shift
+// Macro Shift + F3:
 function macro_shift_f3()
 {
 }
 
-// Macro F4 + Shift
+// Macro Shift + F4:
 function macro_shift_f4()
 {
 }
 
-// Macro F5 + Shift
+// Macro Shift + F5:
 function macro_shift_f5()
 {
 }
 
-// Macro F6 + Shift
+// Macro Shift + F6:
 function macro_shift_f6()
 {
 }
 
-// Macro F7 + Shift
+// Macro Shift + F7:
 function macro_shift_f7()
 {
 }
 
-// Macro F8 + Shift
+// Macro Shift + F8:
 function macro_shift_f8()
 {
 }
 
-// Macro F9 + Shift
+// Macro Shift + F9:
 function macro_shift_f9()
 {
 }
 
-// Macro shift_f10 + Shift
+// Macro Shift + F10:
 function macro_shift_f10()
 {
 }
 
-// Macro shift_f11 + Shift
+// Macro Shift + F11:
 function macro_shift_f11()
 {
 }
 
-// Macro shift_f12 + Shift
+// Macro Shift + F12: Strip URLs from confluence and generate readable heading
 function macro_shift_f12()
 {
+
+    vym.clearConsole();
+    m1 = vym.currentMap();
+
+    org = m1.getURL();
+    print ("Original:");
+    print (org);
+
+    s = org;
+
+    // Chop trailing "/"
+    if (s[s.length-1] == '/') {
+      s = s.slice(0, s.length - 1);
+    }
+
+    // Remove confluence parts
+    if (s.indexOf("infohub") != -1) {
+      print("Found infohub page");
+      if (s.indexOf("spaceKey") != -1) {
+        s = s.replace(/^.*spaceKey=/g, "");
+        s = s.replace(/(&title=)/g, ": ");
+      } else
+      {
+        s = s.replace(/^.*display\//g, "");
+        s = s.replace(/\//g, ": ");
+      }
+    } else // no infohub page
+    {
+      // remove path
+      s = s.replace(/^.*\//g, "");
+    }
+
+    print (s);
+
+    // Replace "+" and "-"
+    s = s.replace(/\+/g, " ");
+    s = s.replace(/%3A/g, "");
+    print ("After replacing:");
+    print (s);
+
+    // Write new header
+    m1.setHeadingPlainText(s);
+
+    if ( org == s ) {
+      statusMessage ("Heading not changed.");
+    } else {
+      statusMessage("Changed heading: " + org + " -> " + s);
+    }
 }
