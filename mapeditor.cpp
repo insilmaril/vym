@@ -1865,12 +1865,15 @@ void MapEditor::mouseDoubleClickEvent(QMouseEvent* e)
 
 void MapEditor::wheelEvent(QWheelEvent* e)
 {
-    if (e->modifiers() & Qt::ControlModifier && e->orientation()==Qt::Vertical)
+    if (e->modifiers() & Qt::ControlModifier && e->orientation() == Qt::Vertical)
     {
-	if (e->delta()>0)
-	    setZoomFactorTarget (zoomFactorTarget*1.15);
+	QPointF p = mapToScene(e->pos());
+	if (e->delta() > 0)
+	    //setZoomFactorTarget (zoomFactorTarget*1.15);
+	    setViewCenterTarget (p, zoomFactorTarget * 1.15, 0);
 	else    
-	    setZoomFactorTarget (zoomFactorTarget*0.85);
+	    //setZoomFactorTarget (zoomFactorTarget*0.85);
+	    setViewCenterTarget (p, zoomFactorTarget * 0.85, 0);
     } else	
     {
 	scrollBarPosAnimation.stop();
