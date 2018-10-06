@@ -1,7 +1,8 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>HistoryWindow</class>
- <widget class="QDialog" name="HistoryWindow" >
-  <property name="geometry" >
+ <widget class="QDialog" name="HistoryWindow">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -9,34 +10,31 @@
     <height>340</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <layout class="QGridLayout" >
-   <property name="leftMargin" >
+  <layout class="QGridLayout">
+   <property name="leftMargin">
     <number>9</number>
    </property>
-   <property name="topMargin" >
+   <property name="topMargin">
     <number>9</number>
    </property>
-   <property name="rightMargin" >
+   <property name="rightMargin">
     <number>9</number>
    </property>
-   <property name="bottomMargin" >
+   <property name="bottomMargin">
     <number>9</number>
    </property>
-   <property name="horizontalSpacing" >
+   <property name="spacing">
     <number>6</number>
    </property>
-   <property name="verticalSpacing" >
-    <number>6</number>
-   </property>
-   <item row="0" column="0" >
+   <item row="0" column="0">
     <spacer>
-     <property name="orientation" >
+     <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
-     <property name="sizeHint" >
+     <property name="sizeHint" stdset="0">
       <size>
        <width>20</width>
        <height>40</height>
@@ -44,19 +42,19 @@
      </property>
     </spacer>
    </item>
-   <item row="2" column="0" >
-    <widget class="QPushButton" name="redoButton" >
-     <property name="text" >
+   <item row="2" column="0">
+    <widget class="QPushButton" name="redoButton">
+     <property name="text">
       <string>Redo</string>
      </property>
     </widget>
    </item>
-   <item row="3" column="0" >
+   <item row="3" column="0">
     <spacer>
-     <property name="orientation" >
+     <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
-     <property name="sizeHint" >
+     <property name="sizeHint" stdset="0">
       <size>
        <width>20</width>
        <height>61</height>
@@ -64,86 +62,49 @@
      </property>
     </spacer>
    </item>
-   <item rowspan="4" row="0" column="1" >
-    <widget class="QTableWidget" name="historyTable" >
+   <item row="0" column="1" rowspan="4">
+    <widget class="QTableWidget" name="historyTable">
      <row/>
      <column>
-      <property name="text" >
+      <property name="text">
        <string>Time</string>
       </property>
      </column>
      <column>
-      <property name="text" >
+      <property name="text">
        <string>Comment</string>
       </property>
      </column>
     </widget>
    </item>
-   <item row="1" column="0" >
-    <widget class="QPushButton" name="undoButton" >
-     <property name="text" >
+   <item row="1" column="0">
+    <widget class="QPushButton" name="undoButton">
+     <property name="text">
       <string>Undo</string>
      </property>
     </widget>
    </item>
-   <item row="4" column="0" colspan="2" >
-    <layout class="QHBoxLayout" >
-     <property name="spacing" >
+   <item row="4" column="0" colspan="2">
+    <layout class="QHBoxLayout">
+     <property name="spacing">
       <number>6</number>
      </property>
-     <property name="leftMargin" >
+     <property name="leftMargin">
       <number>0</number>
      </property>
-     <property name="topMargin" >
+     <property name="topMargin">
       <number>0</number>
      </property>
-     <property name="rightMargin" >
+     <property name="rightMargin">
       <number>0</number>
      </property>
-     <property name="bottomMargin" >
+     <property name="bottomMargin">
       <number>0</number>
      </property>
-     <item>
-      <spacer>
-       <property name="orientation" >
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" >
-        <size>
-         <width>131</width>
-         <height>31</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <widget class="QPushButton" name="closeButton" >
-       <property name="text" >
-        <string>Close</string>
-       </property>
-      </widget>
-     </item>
     </layout>
    </item>
   </layout>
  </widget>
  <resources/>
- <connections>
-  <connection>
-   <sender>closeButton</sender>
-   <signal>clicked()</signal>
-   <receiver>HistoryWindow</receiver>
-   <slot>close()</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>369</x>
-     <y>253</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>179</x>
-     <y>282</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

@@ -152,8 +152,9 @@ void HistoryWindow::setStepsTotal (int st)
 }
 
 
-void HistoryWindow::closeEvent (QCloseEvent *)
+void HistoryWindow::closeEvent (QCloseEvent *ce)
 {
+    ce->accept();
     hide();
     emit (windowClosed() );
 }
