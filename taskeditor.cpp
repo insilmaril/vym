@@ -28,14 +28,15 @@ TaskEditor::TaskEditor(QWidget *)
 
     QVBoxLayout* mainLayout = new QVBoxLayout;
 
-    QToolBar *tb=new QToolBar ("TaskEditor filters");
+    QToolBar *tb = new QToolBar ("TaskEditor filters");
     tb->setToolButtonStyle (Qt::ToolButtonTextBesideIcon);
     mainLayout->addWidget (tb);
 
     // Original icon from KDE: /usr/share/icons/oxygen/16x16/actions/view-filter.png
 
-    QIcon icon=QIcon (":/view-filter.png");
+    QIcon icon = QIcon (":/view-filter.png");
     QAction *a = new QAction(icon,  tr( "Current map","TaskEditor" ),this );
+    a->setToolTip(tr("Show only tasks from current map","Filters in task Editor"));
     a->setCheckable(true);
     a->setChecked  (settings.value("/taskeditor/filterMap", false).toBool());
     tb->addAction (a);
@@ -43,6 +44,7 @@ TaskEditor::TaskEditor(QWidget *)
     actionToggleFilterMap = a;
 
     a = new QAction(icon,  tr( "Active tasks","TaskEditor" ),this );
+    a->setToolTip(tr("Show only active tasks","Filters in task Editor"));
     a->setCheckable(true);
     a->setChecked  (settings.value("/taskeditor/filterActive", false).toBool());
     tb->addAction (a);
@@ -50,20 +52,43 @@ TaskEditor::TaskEditor(QWidget *)
     actionToggleFilterActive = a;
 
     a = new QAction(icon,  tr( "New tasks","TaskEditor" ),this );
+    a->setToolTip(tr("Show only new tasks","Filters in task Editor"));
     a->setCheckable(true);
     a->setChecked  (settings.value("/taskeditor/filterNew", false).toBool());
     tb->addAction (a);
     connect( a, SIGNAL( triggered() ), this, SLOT(toggleFilterNew() ) );
     actionToggleFilterNew = a;
 
-    a = new QAction(icon,  "Flag", this); //tr( "Flags","TaskEditor" ),this );   // FIXME-1 add translation
+    icon = QIcon (":/flag-arrow-up.png");
+    a = new QAction(icon, "", this); //tr( "Flags","TaskEditor" ),this );   // FIXME-1 add translation
+    a->setToolTip(tr("Show only tasks marked with this arrow-up flag","Filters in task Editor"));
     a->setCheckable(true);
-    a->setChecked  (settings.value("/taskeditor/filterNew", false).toBool());
+    a->setChecked  (settings.value("/taskeditor/filterFlags1", false).toBool());
     if (settings.value( "/mainwindow/showTestMenu",false).toBool())
         tb->addAction (a);
-    connect( a, SIGNAL( triggered() ), this, SLOT(toggleFilterFlags() ) );
-    actionToggleFilterFlags = a;
+    connect( a, SIGNAL( triggered() ), this, SLOT(toggleFilterFlags1() ) );
+    actionToggleFilterFlags1 = a;
 
+    icon = QIcon (":/flag-2arrow-up.png");
+    a = new QAction(icon,  "", this); //tr( "Flags","TaskEditor" ),this );   // FIXME-1 add translation
+    a->setToolTip(tr("Show only tasks marked with this arrow-up flag","Filters in task Editor"));
+    a->setCheckable(true);
+    a->setChecked  (settings.value("/taskeditor/filterFlags2", false).toBool());
+    if (settings.value( "/mainwindow/showTestMenu",false).toBool())
+        tb->addAction (a);
+    connect( a, SIGNAL( triggered() ), this, SLOT(toggleFilterFlags2() ) );
+    actionToggleFilterFlags2 = a;
+
+    icon = QIcon (":/flag-no-arrow-up.png");
+    a = new QAction(icon,  "", this); //tr( "Flags","TaskEditor" ),this );   // FIXME-1 add translation
+    a->setToolTip(tr("Show only tasks marked without any arrow-up flag","Filters in task Editor"));
+    a->setCheckable(true);
+    a->setChecked  (settings.value("/taskeditor/filterFlags3", false).toBool());
+    if (settings.value( "/mainwindow/showTestMenu",false).toBool())
+        tb->addAction (a);
+    connect( a, SIGNAL( triggered() ), this, SLOT(toggleFilterFlags3() ) );
+    actionToggleFilterFlags3 = a;
+    //
     // Forward Enter and Return to MapEditor
     a = new QAction(icon, tr( "Edit heading","TaskEditor" ), this);
     a->setShortcut ( Qt::Key_Return);		
@@ -101,6 +126,11 @@ TaskEditor::TaskEditor(QWidget *)
     view->setSortingEnabled(true);
     view->horizontalHeader()->setSortIndicator (0,Qt::AscendingOrder);
 
+    // Experimental, don't show all columns
+    view->setColumnHidden(2, true);
+    view->setColumnHidden(3, true);
+    view->setColumnHidden(4, true);
+
     blockExternalSelect=false;
 
     connect (
@@ -111,27 +141,35 @@ TaskEditor::TaskEditor(QWidget *)
     connect( taskModel, SIGNAL( layoutChanged() ), this, SLOT(sort() ) );
 
     // Enable wordwrap when data changes
-    connect ( 
-        taskModel, SIGNAL( dataChanged( QModelIndex, QModelIndex)),
-        view, SLOT( resizeRowsToContents() ) );
-    connect ( 
-        view->horizontalHeader(), SIGNAL( sectionResized(int, int, int)),
-        view, SLOT( resizeRowsToContents() ) );
+    if (settings.value ("/taskeditor/wordWrap", true).toBool())
+    {
+        connect ( 
+            taskModel, SIGNAL( dataChanged( QModelIndex, QModelIndex)),
+            view, SLOT( resizeRowsToContents() ) );
+        connect ( 
+            view->horizontalHeader(), SIGNAL( sectionResized(int, int, int)),
+            view, SLOT( resizeRowsToContents() ) );
+    }
 
 
     // Initialize view filters according to previous settings
     setFilterMap();
     setFilterActive();
     setFilterNew();
-    setFilterFlags();
+    setFilterFlags1();
+    setFilterFlags2();
+    setFilterFlags3();
 
-    // Initialize column widths
+    // Initialize column widths and visibility
     QString s;
-    for (int i=0; i<6; i++)
+    for (int i = 0; i < 6; i++)
     {
-	s=QString("/taskeditor/columnWidth/%1").arg(i);
+	s = QString("/taskeditor/column/%1/width").arg(i);
 	if (settings.contains (s) )
 	    view->setColumnWidth (i, settings.value(s, 100).toInt() );
+
+	s = QString("/taskeditor/column/%1/hidden").arg(i);
+        view->setColumnHidden (i, settings.value(s, false).toBool() );
     }
 
     // Initialize display of parents of a task
@@ -146,9 +184,15 @@ TaskEditor::~TaskEditor()
     settings.setValue ("/taskeditor/filterMap",actionToggleFilterMap->isChecked());
     settings.setValue ("/taskeditor/filterActive",actionToggleFilterActive->isChecked());
     settings.setValue ("/taskeditor/filterNew",actionToggleFilterNew->isChecked());
+    settings.setValue ("/taskeditor/filterFlags1",actionToggleFilterFlags1->isChecked());
+    settings.setValue ("/taskeditor/filterFlags2",actionToggleFilterFlags2->isChecked());
+    settings.setValue ("/taskeditor/filterFlags3",actionToggleFilterFlags3->isChecked());
     settings.setValue ("/taskeditor/showParentsLevel",taskModel->getShowParentsLevel() );
     for (int i=0; i<7; i++)
-	settings.setValue (QString("/taskeditor/columnWidth/%1").arg(i),view->columnWidth(i) );
+    {
+	settings.setValue (QString("/taskeditor/column/%1/width").arg(i),view->columnWidth(i) );
+	settings.setValue (QString("/taskeditor/column/%1/hidden").arg(i),view->isColumnHidden(i) );
+    }
 }
 
 void TaskEditor::setMapName (const QString &n)
@@ -188,9 +232,21 @@ void TaskEditor::setFilterNew ()
     sort();
 }
 
-void TaskEditor::setFilterFlags ()  // FIXME-1 experimental
+void TaskEditor::setFilterFlags1 ()  // FIXME-1 experimental
 {
-    filterActiveModel->setFilterFlags (actionToggleFilterFlags->isChecked() );
+    filterActiveModel->setFilterFlags1 (actionToggleFilterFlags1->isChecked() );
+    sort();
+}
+
+void TaskEditor::setFilterFlags2 ()  // FIXME-1 experimental
+{
+    filterActiveModel->setFilterFlags2(actionToggleFilterFlags2->isChecked() );
+    sort();
+}
+
+void TaskEditor::setFilterFlags3 ()  // FIXME-1 experimental
+{
+    filterActiveModel->setFilterFlags3 (actionToggleFilterFlags3->isChecked() );
     sort();
 }
 
@@ -280,7 +336,15 @@ void TaskEditor::toggleFilterNew ()
     setFilterNew();
 }
 
-void TaskEditor::toggleFilterFlags ()
+void TaskEditor::toggleFilterFlags1 ()
 {
-    setFilterFlags();
+    setFilterFlags1();
+}
+void TaskEditor::toggleFilterFlags2 ()
+{
+    setFilterFlags2();
+}
+void TaskEditor::toggleFilterFlags3 ()
+{
+    setFilterFlags3();
 }

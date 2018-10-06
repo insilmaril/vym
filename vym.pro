@@ -8,9 +8,9 @@ QMAKE_MAC_SDK = macosx10.10
 
 QT += network 
 QT += xml 
+QT += script 
 QT += svg 
 QT += printsupport
-
 QT += widgets
 
 #  include(tmp/modeltest/modeltest.pri)
@@ -63,6 +63,7 @@ ICON =icons/vym.icns
 
 HEADERS	+= \
     aboutdialog.h \
+    codeeditor.h \
     taskfiltermodel.h \
     animpoint.h \
     arrowobj.h \
@@ -104,6 +105,7 @@ HEADERS	+= \
     imageitem.h \
     imageobj.h \
     imports.h \
+    jiraagent.h \
     lineeditdialog.h \
     linkablemapobj.h \
     lockedfiledialog.h \
@@ -117,8 +119,9 @@ HEADERS	+= \
     noteeditor.h \
     options.h \
     ornamentedobj.h \
-    parser.h \
     scripteditor.h\
+    scripting.h \
+    scriptoutput.h \
     settings.h \
     shortcuts.h\
     showtextdialog.h\
@@ -137,6 +140,7 @@ HEADERS	+= \
     version.h \
     vymlock.h \
     vymmodel.h \
+    vymmodelwrapper.h \
     vymnote.h \
     vymprocess.h \
     vymtext.h \
@@ -154,6 +158,7 @@ HEADERS	+= \
 
 SOURCES	+= \
     aboutdialog.cpp \
+    codeeditor.cpp \
     taskfiltermodel.cpp \
     animpoint.cpp \
     arrowobj.cpp \
@@ -195,6 +200,7 @@ SOURCES	+= \
     imageitem.cpp \
     imageobj.cpp \
     imports.cpp \
+    jiraagent.cpp \
     lineeditdialog.cpp \
     linkablemapobj.cpp \
     lockedfiledialog.cpp \
@@ -209,8 +215,9 @@ SOURCES	+= \
     noteeditor.cpp \
     options.cpp \
     ornamentedobj.cpp \
-    parser.cpp \
     scripteditor.cpp \
+    scripting.cpp \
+    scriptoutput.cpp \
     settings.cpp \
     shortcuts.cpp\
     showtextdialog.cpp \
@@ -229,6 +236,7 @@ SOURCES	+= \
     version.cpp \
     vymlock.cpp \
     vymmodel.cpp \
+    vymmodelwrapper.cpp \
     vymnote.cpp \
     vymprocess.cpp \
     vymtext.cpp \
@@ -242,7 +250,7 @@ SOURCES	+= \
     xml-vym.cpp \
     xml-freemind.cpp \
     xmlobj.cpp \
-    xsltproc.cpp 
+    xsltproc.cpp \
 
 FORMS = \
     attributewidget.ui \
@@ -255,7 +263,7 @@ FORMS = \
     lockedfiledialog.ui \
     scripteditor.ui \
     showtextdialog.ui \
-    warningdialog.ui \
+    warningdialog.ui 
 
 isEmpty( PREFIX ) {
     PREFIX = /usr/local
@@ -287,3 +295,7 @@ support.files += LICENSE.txt
 support.path = $${DATADIR}/vym
 INSTALLS += support 
 
+# doc.files = doc/vym.pdf
+# doc.path = $${DOCDIR}
+# INSTALLS += doc
+# DEFINES += VYM_DOCDIR=\\\"$${DOCDIR}\\\"

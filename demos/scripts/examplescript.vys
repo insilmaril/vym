@@ -1,0 +1,16 @@
+//Example function definition
+function foofunction(s) {
+  print ("Foofunction output: " +  s); 
+  s = "changed par";
+  return {a: "ret-value", b: "bla"};
+}
+
+par = "I am a parameter!";
+print (foofunction(par));
+print ("par is now: " + par);
+//abort("xxx");
+print ("bar");
+
+m=vym.currentMap();
+m.setHeadingPlainText("foobar");
+print( m.getHeadingPlainText());

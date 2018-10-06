@@ -19,12 +19,12 @@ FindResultWidget::FindResultWidget(QWidget *)
     // Create FindWidget
     findWidget = new FindWidget (this);
     connect (
-	findWidget, SIGNAL (nextButton (QString) ), 
-	this, SLOT (nextButtonPressed (QString) ) );
+	findWidget, SIGNAL (nextButtonPressed (QString, bool) ),
+	this, SLOT (nextButtonPressed (QString, bool) ) );
 
 
     QVBoxLayout* mainLayout = new QVBoxLayout;
-    
+
     mainLayout->addWidget(view);
     mainLayout->addWidget(findWidget);
 
@@ -34,7 +34,7 @@ FindResultWidget::FindResultWidget(QWidget *)
     connect (view->selectionModel(),SIGNAL (selectionChanged (QItemSelection,QItemSelection)),
 	this, SLOT (updateSelection (QItemSelection,QItemSelection)));
 
-    connect (resultsModel, SIGNAL(layoutChanged() ), view, SLOT (expandAll() ));    
+    connect (resultsModel, SIGNAL(layoutChanged() ), view, SLOT (expandAll() ));
 }
 
 void FindResultWidget::addItem (TreeItem *ti)
@@ -93,9 +93,9 @@ void FindResultWidget::cancelPressed()
     emit (hideFindResultWidget() );
 }
 
-void FindResultWidget::nextButtonPressed(QString s)
+void FindResultWidget::nextButtonPressed(QString s, bool searchNotesFlag)
 {
-    emit (findPressed(s) );
+    emit (findPressed(s, searchNotesFlag) );
 }
 
 void FindResultWidget::updateSelection(QItemSelection newsel,QItemSelection)

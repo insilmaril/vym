@@ -2,7 +2,11 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QPrinter>
 #include <QProgressDialog>
+#include <QScriptContext>
+#include <QScriptEngine>
+#include <QScriptValue>
 
 #include "branchpropeditor.h"
 #include "extrainfodialog.h"
@@ -10,6 +14,7 @@
 #include "file.h"
 #include "historywindow.h"
 #include "mapeditor.h"
+#include "scripting.h"
 #include "texteditor.h"
 #include "vymview.h"
 
@@ -49,6 +54,9 @@ public slots:
 protected:
     void closeEvent( QCloseEvent* );
 
+public:
+    QPrinter* setupPrinter();
+
 private:
     void setupAPI();
 
@@ -83,6 +91,7 @@ public:
     MapEditor* currentMapEditor() const;
     VymModel* currentModel() const;
     uint currentModelID() const;
+    uint currentModelNumber() const;
     VymModel* getModel(uint) const;
     void gotoModel (VymModel *m);
     int modelCount();
@@ -91,8 +100,10 @@ public:
 private slots:
     void editorChanged();
 
+public slots:    
     File::ErrorCode fileLoad(QString ,const LoadMode &, const FileType &ftype);
     void fileLoad(const LoadMode &);
+private slots:
     void fileLoad();
     void fileSaveSession();
 public slots:    
@@ -122,6 +133,7 @@ private slots:
     void fileExportCSV();
     void fileExportOrgMode();
     void fileExportLaTeX();
+    void fileExportMarkdown();
     void fileExportTaskjuggler();
     void fileExportImpress();
     void fileExportLast();
@@ -153,6 +165,8 @@ private slots:
     void editURL();
     void editLocalURL();
     void editHeading2URL();
+    void getJiraData();
+    void getJiraDataSubtree();
     void editBugzilla2URL();
     void getBugzillaData();
     void getBugzillaDataSubtree();
@@ -214,7 +228,7 @@ private slots:
     void editSelectNext();
     void editSelectNothing();
     void editOpenFindResultWidget();
-    void editFindNext(QString s);
+    void editFindNext(QString s, bool searchNotesFlag);
     void editFindDuplicateURLs();
 
 public slots:
@@ -275,17 +289,17 @@ public slots:
     void windowToggleTaskEditor();
     void windowToggleSlideEditor();
     void windowToggleScriptEditor();
+    void windowToggleScriptOutput();
     void windowToggleHistory();
     void windowToggleProperty();
     void windowShowHeadingEditor();
     void windowToggleHeadingEditor();
     void updateHistory(SimpleSettings &);
     void windowToggleAntiAlias();
-public:
     bool isAliased();
     bool hasSmoothPixmapTransform();
-public slots:
     void windowToggleSmoothPixmap();
+    void clearScriptOutput();
     void updateHeading();
     void updateNoteFlag();
     void updateNoteEditor (QModelIndex index);
@@ -298,10 +312,9 @@ public slots:
     ModMode getModMode();
     bool autoEditNewBranch();
     bool autoSelectNewBranch();
-    void setScriptFile(const QString &fn);
-    QVariant execute(const QString &);
-    void executeEverywhere (const QString &);
-    void gotoWindow (const int &n);
+    QVariant runScript(const QString &);
+    QObject* getCurrentModelWrapper();
+    bool gotoWindow (const int &n);
 
 private slots:
     void windowNextEditor();
@@ -342,6 +355,8 @@ private:
 
     QStringList imageTypes;
 
+    QScriptEngine scriptEngine;
+
     QList <VymView*> vymViews;	    //! Keeps track of models and views related to a tab 
     QString prevSelection;
 
@@ -371,7 +386,7 @@ private:
     enum { MaxRecentFiles = 9 };
     QAction *recentFileActions[MaxRecentFiles];
 
-    QAction *macroActions[13];
+    QAction *macroActions[24];
     QStringList macro;
 
     QMenu *toolbarsMenu;
@@ -417,6 +432,8 @@ private:
     QAction* actionURLNew;
     QAction* actionLocalURL;
     QAction* actionHeading2URL;
+    QAction* actionGetJiraData;
+    QAction* actionGetJiraDataSubtree;
     QAction* actionBugzilla2URL;
     QAction* actionGetBugzillaData;
     QAction* actionGetBugzillaDataSubtree;
@@ -434,6 +451,7 @@ private:
     QAction *actionTaskSleep1;
     QAction *actionTaskSleep2;
     QAction *actionTaskSleep3;
+    QAction *actionTaskSleep4;
     QAction *actionTaskSleep5;
     QAction *actionTaskSleep7;
     QAction *actionTaskSleep14;
@@ -442,6 +460,7 @@ private:
     QAction *actionMapInfo;
     QAction *actionHeading;
     QAction *actionDelete;
+    QAction *actionDeleteAlt;
     QAction *actionAddAttribute;
 public:
     QAction *actionAddMapCenter;
@@ -512,6 +531,7 @@ private:
     QAction *actionViewToggleTaskEditor;
     QAction *actionViewToggleSlideEditor;
     QAction *actionViewToggleScriptEditor;
+    QAction *actionViewToggleScriptOutput;
     QAction *actionViewToggleHistoryWindow;
     QAction *actionViewTogglePropertyEditor;
     QAction *actionViewToggleAntiAlias;
@@ -532,7 +552,6 @@ private:
     QAction* actionSettingsToggleDownloads;
     QAction* actionSettingsUseAnimation;
 };
-
 
 #endif
 

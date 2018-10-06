@@ -17,10 +17,12 @@ using namespace std;
 #include "options.h"
 #include "settings.h"
 #include "scripteditor.h"
+#include "scriptoutput.h"
 #include "shortcuts.h"
 #include "taskeditor.h"
 #include "taskmodel.h"
 #include "version.h"
+#include "warningdialog.h"
 
 #if defined(VYM_DBUS)
 #include <sys/types.h>		// To retrieve PID for use in DBUS
@@ -50,11 +52,14 @@ QString localeName;
 
 QTextStream vout(stdout);        // vymout - Testing for now. Flush after writing...
 
+QStringList jiraPrefixList;     // List containing URLs of Jira systems
+bool jiraClientAvailable;	// collabzone specific currently
 bool bugzillaClientAvailable;	// openSUSE specific currently
 
 TaskModel     *taskModel;
 TaskEditor    *taskEditor;
 ScriptEditor  *scriptEditor;
+ScriptOutput  *scriptOutput;
 HeadingEditor *headingEditor;	    
 NoteEditor    *noteEditor;	// used in Constr. of LinkableMapObj
 // initialized in mainwindow
@@ -67,8 +72,11 @@ Macros macros;
 uint itemLastID=0;		// Unique ID for all items in all models
 
 QString tmpVymDir;		// All temp files go there, created in mainwindow
+
 QString clipboardDir;		// Clipboard used in all mapEditors
 QString clipboardFile;		// Clipboard used in all mapEditors
+uint clipboardItemCount;        // Number of items in clipboard
+
 QDir vymBaseDir;		// Containing all styles, scripts, images, ...
 QDir lastImageDir;
 QDir lastMapDir;
@@ -80,7 +88,6 @@ QString iconPath;		// Pointing to icons used for toolbars
 QString flagsPath;		// Pointing to flags
 QString macroPath;              // Pointing to macros
 
-bool clipboardEmpty;		
 bool debug;             // global debugging flag
 bool testmode;			// Used to disable saving of autosave setting
 FlagRow *systemFlagsMaster; 
@@ -92,6 +99,7 @@ Settings settings ("InSilmaril","vym"); // Organization, Application name
 QString zipToolPath;    // Platform dependant zip tool
 
 QList <Command*> modelCommands;
+QList <Command*> vymCommands;
 
 Options options;
 ImageIO imageIO;
@@ -101,6 +109,9 @@ int statusbarTime=10000;
 int warningCount=0;
 int criticalCount=0;
 int fatalCount=0;
+
+#include <QScriptEngine>
+QScriptValue scriptPrint( QScriptContext * ctx, QScriptEngine * eng );
 
 void msgHandler (QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
@@ -148,12 +159,13 @@ int main(int argc, char* argv[])
     options.add ("commandslatex", Option::Switch, "cl", "commandslatex");
     options.add ("debug", Option::Switch, "d", "debug");
     options.add ("help", Option::Switch, "h", "help");
+    options.add ("load", Option::String, "L", "load");
     options.add ("local", Option::Switch, "l", "local");
     options.add ("locale", Option::String, "locale", "locale");
     options.add ("name", Option::String, "n", "name");
     options.add ("quit", Option::Switch, "q", "quit");
-    options.add ("run", Option::String, "r", "run");
-    options.add ("restore", Option::Switch, "R", "restore");
+    options.add ("run", Option::String, "R", "run");
+    options.add ("restore", Option::Switch, "r", "restore");
     options.add ("shortcuts", Option::Switch, "s", "shortcuts");
     options.add ("shortcutsLaTeX", Option::Switch, "sl", "shortcutsLaTeX");
     options.add ("testmode", Option::Switch, "t", "testmode");
@@ -171,12 +183,13 @@ int main(int argc, char* argv[])
                 "-c           commands	  List all available commands\n"
                 "-d           debug       Show debugging output\n"
                 "-h           help        Show this help text\n"
+                "-L           load        Load script\n"
                 "-l           local       Run with ressources in current directory\n"
                 "--locale     locale      Override system locale setting to select language\n"
                 "-n  STRING   name        Set name of instance for DBus access\n"
                 "-q           quit        Quit immediatly after start for benchmarking\n"
-                "-r  FILE     run         Run script\n"
-                "-R           restore     Restore last session\n"
+                "-R  FILE     run         Run script\n"
+                "-r           restore     Restore last session\n"
                 "-s           shortcuts   Show Keyboard shortcuts on start\n"
                 "--sl         LaTeX       Show Keyboard shortcuts in LaTeX format on start\n"
                 "-t           testmode    Test mode, e.g. no autosave and changing of its setting\n"
@@ -200,7 +213,7 @@ int main(int argc, char* argv[])
     }
     
     // Update some configurations, which were moved in 2.4.0
-    // This code should be removed later, e.g. in 2.6.0...
+    // This code should be removed later, e.g. in 2.6.0...      // FIXME-2
     QStringList settingsChanged;
     settingsChanged  << "readerURL"
                      << "readerPDF"
@@ -321,19 +334,19 @@ int main(int argc, char* argv[])
 #elif defined(Q_OS_LINUX)
 #else
 #endif
-    iconPath=vymBaseDir.path()+"/icons/";
-    flagsPath=vymBaseDir.path()+"/flags/";
-    macroPath=vymBaseDir.path() + "/macros/";
-
+    iconPath  = vymBaseDir.path()+"/icons/";
+    flagsPath = vymBaseDir.path()+"/flags/";
+    macroPath = settings.value ("/macros/macroDir", vymBaseDir.path() + "/macros").toString();
+    
     // Some directories
     QDir useDir;
     if (options.isOn ("local"))
-        useDir=QDir().current();
+        useDir = QDir().current();
     else
-        useDir=QDir().home();
-    lastImageDir=useDir;
-    lastMapDir=useDir;
-    lastExportDir=useDir;
+        useDir = QDir().home();
+    lastImageDir  = useDir;
+    lastMapDir    = useDir;
+    lastExportDir = useDir;
 
     if (options.isOn ("help"))
     {
@@ -374,10 +387,15 @@ int main(int argc, char* argv[])
   
     QTranslator vymTranslator;
     if (!vymTranslator.load( QString("vym.%1").arg( localeName ), vymBaseDir.path() + "/lang") )
-        QMessageBox::warning( 0, QObject::tr( "Warning" ),
-                               QString("Couldn't load translations for locale \"%1\" in\n%2")
+    {
+        WarningDialog warn;
+        warn.showCancelButton (false);
+        warn.setText(QString( "Couldn't load translations for locale \"%1\" in\n%2")      
                                .arg(localeName)
                                .arg(vymBaseDir.path() + "/lang") );
+        warn.setShowAgainName("mainwindow/loadTranslations");
+
+    }
     app.installTranslator( &vymTranslator );
 
     // Initializing the master rows of flags
@@ -391,10 +409,14 @@ int main(int argc, char* argv[])
     noteEditor->setWindowIcon (QPixmap (":/vym-editor.png"));
     headingEditor = new HeadingEditor("headingeditor");
 
-    // Check if there is a BugzillaClient
-    QFileInfo fi(vymBaseDir.path()+"/scripts/BugzillaClient.pm");
-    //bugzillaClientAvailable=fi.exists();
-    bugzillaClientAvailable=true;   //FIXME-3 add real check again
+    // Check if there is a JiraClient       // FIXME-4 check for ruby
+    QFileInfo fi(vymBaseDir.path() + "/scripts/jigger");   
+    jiraClientAvailable = fi.exists();
+    jiraPrefixList = settings.value("/system/jiraPrefixList").toStringList();   // FIXME-2 currently not used
+
+    // Check if there is a BugzillaClient   // FIXME-4 check for ruby
+    fi.setFile( vymBaseDir.path() + "/scripts/bugger");   
+    bugzillaClientAvailable = fi.exists();
 
     // Initialize mainwindow
 #if defined(Q_OS_WIN32)
@@ -426,12 +448,17 @@ int main(int argc, char* argv[])
         cout << "==================:\n";
         foreach (Command* c, modelCommands)
             cout << c->getDescription().toStdString() << endl;
+
+        foreach (Command* c, vymCommands)
+            cout << c->getDescription().toStdString() << endl;
         return 0;
     }
 
     if (options.isOn ("commandslatex"))
     {
         foreach (Command* c, modelCommands)
+            cout << c->getDescriptionLaTeX().toStdString() << endl;
+        foreach (Command* c, vymCommands)
             cout << c->getDescriptionLaTeX().toStdString() << endl;
         return 0;
     }
@@ -462,30 +489,36 @@ int main(int argc, char* argv[])
     if (options.isOn ("restore"))
         m.fileRestoreSession();
 
+    // Load script
+    if (options.isOn ("load"))
+    {
+        QString fn = options.getArg ("load");
+        if (!scriptEditor->loadScript ( fn ) )
+        {
+            QString error (QObject::tr("Error"));
+            QString msg (QObject::tr("Couldn't open \"%1\"\n.").arg(fn));
+            if (options.isOn("batch"))
+                qWarning () << error + ": " + msg;
+            else QMessageBox::warning(0, error, msg);
+            return 0;
+        }
+    }
+    
     // Run script
     if (options.isOn ("run"))
     {
         QString script;
-        QString fn=options.getArg ("run");
-        if ( !fn.isEmpty() )
+        QString fn = options.getArg ("run");
+        if (!scriptEditor->loadScript ( fn ) )
         {
-            QFile f( fn );
-            if ( !f.open( QFile::ReadOnly|QFile::Text ) )
-            {
-                QString error (QObject::tr("Error"));
-                QString msg (QObject::tr("Couldn't open \"%1\"\n%2.").arg(fn).arg(f.errorString()));
-                if (options.isOn("batch"))
-                    qWarning ()<<error+": "+msg;
-                else QMessageBox::warning(0, error,msg);
-                return 0;
-            }
-
-            QTextStream in( &f );
-            script=in.readAll();
-            f.close();
-            m.executeEverywhere (script);
-            m.setScriptFile (fn);
+            QString error (QObject::tr("Error"));
+            QString msg (QObject::tr("Couldn't open \"%1\"\n.").arg(fn));
+            if (options.isOn("batch"))
+                qWarning () << error + ": " + msg;
+            else QMessageBox::warning(0, error, msg);
+            return 0;
         }
+        m.runScript (scriptEditor->getScriptFile() );
     }
     
     // For benchmarking we may want to quit instead of entering event loop

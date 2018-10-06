@@ -1,0 +1,64 @@
+#!/usr/bin/env ruby
+
+require 'jira-ruby'
+require 'optparse'
+require 'parseconfig'
+
+config = ParseConfig.new('/home/uwe/.eb-login')
+
+options = {
+  :username     => config['username'],
+  :password     => config['password'],
+  :site         => 'https://issue.YOURDOMAIN-XYZ.XYZ/', # Adapt this to your need 
+  :context_path => '',
+  :ssl_verify_mode =>OpenSSL::SSL::VERIFY_NONE,
+  :read_timeout => 120,
+  :auth_type    => :basic
+}
+
+OptionParser.new do |opts|
+  opts.banner = "Usage: #{$0} [options]"
+
+  opts.on('-d', '--debug', 'Debug mode') { |s| options[:debug] = true }
+  opts.on('-h', '--help', 'Display help') do 
+    puts opts
+    exit
+  end
+end.parse!
+
+ARGV.each do |id| 
+
+  # This should be removed. Used to switch between various Jira systems 
+  if id.downcase.include?("prosolution")
+    options[:site] = config['jira-intern']
+  elsif id.include?("albatros") || (id.include? "EBACQ") 
+    options[:site] = config['jira-servicedesk']
+  else
+    options[:site] = config['jira-extern']
+  end
+
+  if options[:debug]
+    puts "Debug: Site = #{options[:site]}"
+  end
+
+  client = JIRA::Client.new(options)
+  
+  # Query ticket and display info
+  t = client.Issue.find(id)
+  puts "#{id}:short_desc:\"#{t.summary}\""
+  puts "#{id}:type:\"#{t.issuetype.name}\""
+  puts "#{id}:priority:\"#{t.priority.name}\""
+  puts "#{id}:status:\"#{t.status.name}\""
+  if t.resolution.nil?
+    puts "#{id}:resolution:\"\""
+  else
+    puts "#{id}:resolution:\"#{t.resolution['name']}\""
+  end
+  puts "#{id}:created:\"#{t.created[0..15]}\""
+  puts "#{id}:updated:\"#{t.updated[0..15]}\""
+  puts "#{id}:reporter:\"#{t.updated[0..15]}\""
+  s = ""
+  s = t.assignee.emailAddress if ! t.assignee.nil? 
+  puts "#{id}:assignee:\"#{s}\""
+  puts "#{id}:url:\"#{options[:site]}browse/#{id}\""
+end

@@ -263,6 +263,7 @@ bool parseVYMHandler::startElement  ( const QString&, const QString&,
                 if (loadMode==ImportAdd)
                 {
                     lastBranch=model->createBranch(lastBranch);
+                    model->setLatestAddedItem( lastBranch );
                     if (insertPos>=0)
                         model->relinkBranch (lastBranch,(BranchItem*)ti,insertPos);
                 } else
@@ -272,6 +273,7 @@ bool parseVYMHandler::startElement  ( const QString&, const QString&,
             {
                 state=StateImage;
                 lastImage=model->createImage (lastBranch);
+                model->setLatestAddedItem( lastImage );
                 if (!readImageAttr(atts)) return false;
             } else return false;
         } else return false;
@@ -355,10 +357,12 @@ bool parseVYMHandler::endElement  ( const QString&, const QString&, const QStrin
             // (happens if bookmarks are imported)
             if (lastBranch->isScrolled() && lastBranch->branchCount()==0) 
                 lastBranch->unScroll();
-            model->emitDataChanged (lastBranch);
+                model->emitDataChanged (lastBranch);
 
             lastBranch=(BranchItem*)(lastBranch->parent());
             lastBranch->setLastSelectedBranch (0);  
+            break;
+        case StateTask:
             break;
         case StateHeading:
             if ( versionLowerOrEqual( version, "2.4.99")  && htmldata.contains("<html>") )
@@ -965,7 +969,10 @@ bool parseVYMHandler::readTaskAttr (const QXmlAttributes& a)
         if (!a.value( "date_modified").isEmpty() ) 
             lastTask->setDateModified( a.value( "date_modified" ) );
         if (!a.value( "date_sleep").isEmpty() ) 
-            lastTask->setDateSleep( a.value( "date_sleep" ) );
+        {
+            if (!lastTask->setDateSleep( a.value( "date_sleep" ) ) )
+                return false;
+        }
     }
     return true;
 }

@@ -1,0 +1,10 @@
+vym.clearConsole();
+m1 = vym.currentMap();
+
+m1.initIterator("foobar");
+print ("Starting with branch: " + m1.getHeadingPlainText() );
+
+while (m1.nextIterator("foobar") )
+{
+    print ("Selected branch: " + m1.getHeadingPlainText() );
+}

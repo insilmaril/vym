@@ -221,7 +221,7 @@ A good starting point to learn more about Mindmaps in general is Wikipedia:
 \subsection{The Mainwindow and its satellites} \label{satellite}
 \vym comes with several windows, the central one is called {\em
 mainwindow}. It contains one or more
-tabs, each of these tabs has a {\em mapeditor} and optionionally a {\em
+tabs, each of these tabs has a {\em mapeditor} and optionally a {\em
 tree editor}, representing a different view of the same data:
 \maximage{images/mainwindow.png}
 The (currently visible) main areas of the mainwindow are the {\em tree
@@ -629,7 +629,7 @@ various parts of the map can be changed by
 
 \subsubsection*{Background }
 The colour is set (and also displayed) as "Set background colour".
-Alternatevily you can set an background image, though this is not
+Alternativily you can set a background image, though this is not
 recommended in general. Working on the map becomes slow and the image
 currently cannot be positioned freely.
 
@@ -687,7 +687,7 @@ lines for the rest of the map are always painted "thin".
 Use one of the following:
 \begin{itemize}
 \item{Drag and drop URL from a webbrowser}
-\item{Use the "URLs and vymlinks toolbal:}
+\item{Use the "URLs and vymlinks toolbar:}
     \begin{center}
 	\includegraphics[width=0.5cm]{images/flag-urlnew.png}
     \end{center}
@@ -896,10 +896,29 @@ in the taskeditor:
     morning\includegraphics[width=0.5cm]{../flags/flag-task-new-morning.png}
     \item Work in progress - morning
     \includegraphics[width=0.5cm]{../flags/flag-task-wip-morning.png}
+    \item New tasks - only show new freshly \lq woken up\rq tasks
+    \item Various filters for priorty flags
+    \includegraphics[width=0.5cm]{../flags/flag-arrow-up.png}
+    \includegraphics[width=0.5cm]{../flags/flag-2arrow-up.png}
+    \includegraphics[width=0.5cm]{../flags/flag-no-arrow-up.png}
+    \ldots
 \end{itemize}
 Additionally these poor tasks, which have just been woken up, will get a
 way higher priority, so that they pop up on top of your list in the
 taskeditor, see next section.
+
+\paragraph{Letting a task sleep}
+If you press \key{Shift-Q}, a dialog window will pop up and lets you
+enter the sleep time. Currently the following formats are alloed:
+\begin{itemize}
+    \item \lq 12\rq -- sleep for 12 days
+    \item \lq 34s\rq -- sleep for 34 seconds
+    \item \lq 2h\rq -- sleep for 2 hours
+    \item \lq 24.12.\rq -- sleep until December 24 this year
+    \item \lq 24.12.2038\ -- sleep until December 24 in 2038
+        \item \lq 21:34\rq -- sleep until 21:34, or 9:34 pm
+    \item \lq 2038-12-24T21:34\rq -- sleep until December 24 in 2038, 9:34 pm
+\end{itemize}
 
 \subsection{Priority of tasks}
 The tasks visible in the taskeditor are ordered by their {\em
@@ -1152,6 +1171,16 @@ Just add e.g. these entries>
     /export/latex/sectionName-3=subsubsection
     /export/latex/sectionName-4=paragraph
 \end{verbatim}
+
+\subsubsection*{Markdown}
+Used to export to Markdown, see also
+\href{https://daringfireball.net/projects/markdown/}{https://daringfireball.net/projects/markdown/}
+Currently considered experimental.
+
+\subsubsection*{OrgMode}
+Used to export to Emacs OrgMode, see also
+\href{https://orgmode.org/}{https://orgmode.org/}
+Currently considered experimental.
 
 
 \subsubsection*{XML} \label{xmlexport}
@@ -1557,17 +1586,18 @@ Usage: vym [OPTION]... [FILE]...
 Open FILEs with vym
 
 -b           batch       batch mode: hide windows
--c           commands     List all available commands
+-c           commands	  List all available commands
 -d           debug       Show debugging output
 -h           help        Show this help text
+-L           load        Load script
 -l           local       Run with ressources in current directory
 --locale     locale      Override system locale setting to select language
 -n  STRING   name        Set name of instance for DBus access
 -q           quit        Quit immediatly after start for benchmarking
--r  FILE     run         Run script
--R           restore     Restore last session
+-R  FILE     run         Run script
+-r           restore     Restore last session
 -s           shortcuts   Show Keyboard shortcuts on start
--sl          LaTeX       Show Keyboard shortcuts in LaTeX format on start
+--sl         LaTeX       Show Keyboard shortcuts in LaTeX format on start
 -t           testmode    Test mode, e.g. no autosave and changing of its setting
 -v           version     Show vym version
 \end{verbatim}
@@ -1577,25 +1607,31 @@ several maps at once.
 
 \section{Scripts} \label{scripts}   
 \subsection{Overview}
-Scripts within \vym are so far just a set of instructions, telling \vym
-what to do. Scripts are internally used for
+Beginning with version 2.7.0 \vym is fully scriptable, though the
+scripting support is still considered a {\em technical preview}. Some
+parts still might change and improve in later versions.
+Scripts are internally used for
 \begin{itemize}
     \item Undo and Redo
     \item Macros on function keys
     \item Slideshow
 \end{itemize}
-So far the scripts have no loop constructs, conditionals, variables,
-etc. The good news: You can use external ruby scripts to get all that,
-see the examples in \ref{examplescripts}.
+In addition to the internal scriptengine, which is using QScript, 
+you can also  use external ruby scripts, which communicate with \vym via
+DBUS. Please note that the latter is currently only possible on Linux.
+See also the examples in \ref{examplescripts}.
 
 The scripts within \vym are edited using the {\em script editor}:
 \begin{center} \label{scripteditor}
     \includegraphics[width=13cm]{images/scripteditor.png}
 \end{center}
 Open the scripteditor by pressing \key{Alt + S} or from the {\em
-View}-menu.
+View}-menu. The output of of scritps cans be seen in the script output
+window with \key{Alt + Shift + S}
 
 \subsection{Example scripts}  \label{examplescripts}
+A set of example scripts is installed together with \vym, see the
+installation directory and the subfolder {\tt scripts/examples/}.
 \subsubsection{Macro to create a rounded rectangle frame}
 \begin{code}
 \# Macro F12

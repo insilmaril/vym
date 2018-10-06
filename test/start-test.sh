@@ -8,13 +8,11 @@ TESTMAP=$VYMTESTDIR/testmap.vym
 
 cp $DEFAULTMAP $TESTMAP
 
-vym  -l -t -n test $TESTMAP  & #-geometry 768x576-0+0 &
+vym  -l -t -n test  & #-geometry 768x576-0+0 &
 
 PID=$!
 
-sleep 1
-
-$SRCDIR/vym-test.rb -d $VYMTESTDIR
+$SRCDIR/vym-test.rb -d $VYMTESTDIR $TESTMAP
 
 kill -s 15 $PID
 echo To clean up, do: rm -rf $VYMTESTDIR

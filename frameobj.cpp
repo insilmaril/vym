@@ -101,13 +101,13 @@ void FrameObj::setRect(const QRectF &r)
 
 	case RoundedRectangle:
 	{
-	    QPointF tl=bbox.topLeft();
-	    QPointF tr=bbox.topRight();
-	    QPointF bl=bbox.bottomLeft();
-	    QPointF br=bbox.bottomRight();
+	    QPointF tl = bbox.topLeft();
+	    QPointF tr = bbox.topRight();
+	    QPointF bl = bbox.bottomLeft();
+	    QPointF br = bbox.bottomRight();
 	    QPainterPath path;
 
-	    qreal n=10;
+	    qreal n = 10;
 	    path.moveTo (tl.x() +n/2, tl.y());
 
 	    // Top path
@@ -124,23 +124,23 @@ void FrameObj::setRect(const QRectF &r)
 	    break;
 	case Ellipse:
 	    ellipseFrame->setRect (QRectF(bbox.x(),bbox.y(),bbox.width(),bbox.height() ));
-            xsize=20;//max(bbox.width(), bbox.height()) / 4;
+            xsize = 20;//max(bbox.width(), bbox.height()) / 4;
 	    break;
 
 	case Cloud:
-	    QPointF tl=bbox.topLeft();
-	    QPointF tr=bbox.topRight();
-	    QPointF bl=bbox.bottomLeft();
+	    QPointF tl = bbox.topLeft();
+	    QPointF tr = bbox.topRight();
+	    QPointF bl = bbox.bottomLeft();
 	    QPainterPath path;
 	    path.moveTo (tl);
 
-	    float w=bbox.width();   // width
-	    float h=bbox.height();  // height
-	    int n=w/40;		    // number of intervalls
-	    float d=w/n;	    // width of interwall
+	    float w = bbox.width(); // width
+	    float h = bbox.height();// height
+	    int   n = w / 40;	    // number of intervalls
+	    float d = w / n;	    // width of interwall
 
 	    // Top path
-	    for (float i=0; i<n; i++)
+	    for (float i = 0; i < n; i++)
 	    {
 		path.cubicTo (
 		    tl.x() + i*d,     tl.y()- 100*roof ((i+0.5)/n) , 
@@ -148,19 +148,19 @@ void FrameObj::setRect(const QRectF &r)
 		    tl.x() + (i+1)*d + 20*roof ((i+1)/n), tl.y()- 50*roof((i+1)/n) );
 	    }
 	    // Right path
-	    n=h/20;
-	    d=h/n;
-	    for (float i=0; i<n; i++)
+	    n = h/20;
+	    d = h/n;
+	    for (float i = 0; i < n; i++)
 	    {
 		path.cubicTo (
 		    tr.x()+ 100*roof ((i+0.5)/n)        , tr.y() + i*d,
 		    tr.x()+ 100*roof ((i+0.5)/n)        , tr.y() + (i+1)*d,
 		    tr.x() + 60*roof ((i+1)/n)          , tr.y() + (i+1)*d );
 	    }
-	    n=w/60;
-	    d=w/n;
+	    n = w / 60;
+	    d = w / n;
 	    // Bottom path
-	    for (float i=n; i>0; i--)
+	    for (float i = n; i > 0; i--)
 	    {
 		path.cubicTo (
 		    bl.x() + i*d,  bl.y()+ 100*roof ((i-0.5)/n) , 
@@ -168,9 +168,9 @@ void FrameObj::setRect(const QRectF &r)
 		    bl.x() + (i-1)*d + 20*roof ((i-1)/n), bl.y()+ 50*roof((i-1)/n) );
 	    }
 	    // Left path
-	    n=h/20;
-	    d=h/n;
-	    for (float i=n; i>0; i--)
+	    n = h / 20;
+	    d = h / n;
+	    for (float i = n; i > 0; i--)
 	    {
 		path.cubicTo (
 		    tl.x()- 100*roof ((i-0.5)/n)        , tr.y() + i*d,
@@ -178,14 +178,14 @@ void FrameObj::setRect(const QRectF &r)
 		    tl.x()-  60*roof ((i-1)/n)          , tr.y() + (i-1)*d );
 	    }
 	    pathFrame->setPath(path);
-            xsize=50;
+            xsize = 50;
 	    break;
     }
 }
 
 void FrameObj::setPadding (const int &i)
 {
-    padding=i;
+    padding = i;
 }
 
 int FrameObj::getPadding()

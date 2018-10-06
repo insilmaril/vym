@@ -1,6 +1,6 @@
 require 'dbus'
 
-$deb = false
+$debug = false
 
 class Vym
   def initialize (name)
@@ -12,53 +12,61 @@ class Vym
     @main.default_iface = "org.insilmaril.vym.main.adaptor"
 
     # Use metaprogramming to create methods for commands in vym
-    if modelCount > 0
-      m = model(1)
-      m.default_iface = "org.insilmaril.vym.model.adaptor"
-      s=m.listCommands
-      @model_commands = s[0].split ","
-      @model_commands.each do |c|
-	self.class.send(:define_method, c) do |*pars|
-	  if pars.length == 0
-	    puts " * Calling \"#{c}\":" if $deb
-	    ret = m.execute("#{c} ()")
-	  else  
-	    # Build string with parameters
-	    p = "";
-	    a = []
-	    pars.each do |p|
-	      if p.kind_of? String
-	        a << "'#{p}'"
-	      else
-	        a << p
-	      end
-	    end  
-	    puts " * Calling \"#{c} (#{a.join(',')})\":" if $deb
-            ret = m.execute("#{c} (#{a.join(',')})")
-	  end  
+    # Getting commands for mainwindow via DBUS
+    puts "Vym::initialize Retrieving commands via dbus..." if $debug
+    s = @main.listCommands
+    @vym_commands = s[0].split ","
+    @vym_commands.each do |c|
+      puts "Creating vym command: #{c}" if $debug
+      self.class.send(:define_method, c) do |*pars|
+        if pars.length == 0
+          # No parameters
+          com = "vym.#{c}();"
+          puts " * Calling vym: \"#{com}\":" if $debug
+          ret = @main.execute( com )
+        else  
+          # with parameters
+          p = "";
+          a = []
+          pars.each do |p|
+            if p.kind_of? String
+              a << "'#{p}'"
+            else
+              a << p
+            end
+          end  
+          com = "vym.#{c} (#{a.join(',')});"
+          puts " ** Calling vym: \"#{com}\":" if $debug
+          ret = @main.execute( com )
+        end  
 
-	  err = m.errorLevel[0]
-	  if $deb
-	    puts "     Returned: #{ret[0]}" if ret[0] != ""
-	    puts "        Error: #{err}" if err > 0
-	  end  
-	  ret[0]
-	end
+        #FIXME-0  err = m.errorLevel[0]
+        if $debug
+          puts "     Returned: #{ret[0]}" if ret[0] != ""
+          # puts "        Error: #{err}" if err > 0
+        end  
+        ret[0]
       end
-    end
+    end # Creating vym commands
   end
 
   def modelCount
     @main.modelCount[0]
   end
 
-  def model (n)
+  def currentModel
+    @main.currentModel
+  end
+
+  def map (n)
+    map = @service.object("vymmodel_#{n}")
+    map.introspect
+    map.default_iface = "org.insilmaril.vym.model.adaptor"
+
     if modelCount > 0 && n>=0
-      @model = @service.object "vymmodel_#{n}"
-      @model.default_iface = "org.insilmaril.vym.model.adaptor"
-      return @model
+      return VymMap.new(map, n )
     else
-      raise "Error: Model #{n} not accessible in #{@instance}!"
+      raise "Error: Map #{n} not accessible in #{@instance}!"
     end  
   end
 
@@ -80,13 +88,61 @@ class Vym
   end
 end
 
+
+class VymMap
+  def initialize(map, n )
+    @map = map
+    
+    # Getting commands for model via DBUS
+    #if modelCount > 0
+      # m = model(1)
+      s = @map.listCommands
+      puts "VymMap::initialize Retrieving commands via dbus..." if $debug
+      @model_commands = s[0].split ","
+      @model_commands.each do |c|
+      #puts "Creating map command: #{c}" if $debug
+        self.class.send(:define_method, c) do |*pars|
+          if pars.length == 0
+            # No parameters
+            com = "vym.currentMap().#{c}();"
+            puts " * Calling model: \"#{com}\":" if $debug
+            ret = @map.execute( com )
+          else  
+            # Build string with parameters
+            p = "";
+            a = []
+            pars.each do |p|
+              if p.kind_of? String
+                a << "'#{p}'"
+              else
+                a << p
+              end
+            end  
+            # com = "vym.clearConsole(); print( vym.currentMap().#{c} (#{a.join(',')}));"
+            com = " vym.currentMap().#{c} (#{a.join(',')});"
+            puts " ** Calling model: \"#{com}\":" if $debug
+            ret = @map.execute( com )
+            puts "Done calling" if $debug
+          end  
+
+          #FIXME-0 err = m.errorLevel[0]
+          if $debug
+            puts "     Returned: #{ret[0]}" if ret[0] != ""
+            #puts "        Error: #{err}" if err > 0
+          end  
+          ret[0]
+        end
+      end
+  end # Initialize
+end # VymMap
+
 class VymManager
   def initialize
     @dbus = DBus::SessionBus.instance
   end
 
   def running
-    list=@dbus.proxy.ListNames[0].find_all{|item| item =~/org\.insilmaril\.vym/ }
+    list = @dbus.proxy.ListNames[0].find_all{|item| item =~/org\.insilmaril\.vym/ }
   end
 
   def show_running
@@ -109,7 +165,7 @@ class VymManager
       vym_main_obj.default_iface = "org.insilmaril.vym.main.adaptor"
 
       if vym_main_obj.getInstanceName[0] == name 
-        #puts "Found instance named '#{name}': #{list.at(i)}"
+        puts "VymManager: Found instance named '#{name}': #{list.at(i)}" if $debug
         return Vym.new list.at(i)
       end  
     end

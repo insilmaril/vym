@@ -1,0 +1,16 @@
+vym.clearConsole();
+map = vym.currentMap();
+map.exportMap("Image","export-test.png","PNG");	// Last parameter is optional
+
+
+// Parameters
+
+0: Export type
+1: Filname
+2: Image format (optional) for "Image"
+
+// Export types
+["Last", "AO", "ASCII", "CSV", "HTML", "Image", "Impress", "LaTeX", "Markdown", "OrgMode", "PDF", "SVG", "XML"]
+
+// Image formats
+["PNG", "GIF", "JPG", "JPEG", "PNG", "PBM", "PGM", "PPM", "TIFF", "XBM", "]XPM"

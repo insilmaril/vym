@@ -16,7 +16,7 @@
 #include <QFontDialog>
 #include <QInputDialog>
 #include <QMenuBar>
-#include <QPrinter>
+#include <QScriptEngine>
 #include <QStatusBar>
 #include <QTextStream>
 
@@ -41,6 +41,8 @@
 #include "options.h"
 #include "vymprocess.h"
 #include "scripteditor.h"
+#include "scripting.h"
+#include "scriptoutput.h"
 #include "settings.h"
 #include "shortcuts.h"
 #include "noteeditor.h"
@@ -52,7 +54,7 @@
 #include "warningdialog.h"
 #include "xlinkitem.h"
 
-QPrinter *printer;
+QPrinter *printer = NULL; 
 
 //#include <modeltest.h>    
 
@@ -63,6 +65,7 @@ QPrinter *printer;
 extern NoteEditor    *noteEditor;
 extern HeadingEditor *headingEditor;
 extern ScriptEditor  *scriptEditor;
+extern ScriptOutput  *scriptOutput;
 extern Main *mainWindow;
 extern FindResultWidget *findResultWidget;  
 extern TaskEditor *taskEditor;
@@ -71,7 +74,7 @@ extern Macros macros;
 extern QString tmpVymDir;
 extern QString clipboardDir;
 extern QString clipboardFile;
-extern bool clipboardEmpty;
+extern uint  clipboardItemCount;
 extern int statusbarTime;
 extern FlagRow *standardFlagsMaster;	
 extern FlagRow *systemFlagsMaster;
@@ -80,14 +83,18 @@ extern QString vymVersion;
 extern QString vymPlatform;
 extern QString vymBuildDate;
 extern QString localeName;
+extern QString macroPath;
 extern bool debug;
 extern bool testmode;
 extern QTextStream vout;
+extern QStringList jiraPrefixList;
+extern bool jiraClientAvailable;
 extern bool bugzillaClientAvailable;
 extern Switchboard switchboard;
 
 
 extern QList <Command*> modelCommands;
+extern QList <Command*> vymCommands;
 
 QMenu* branchAddContextMenu;
 QMenu* branchContextMenu;
@@ -153,12 +160,12 @@ Main::Main(QWidget* parent, Qt::WindowFlags f) : QMainWindow(parent,f)
     if (debug) qDebug ()<<"tmpDir="<<tmpVymDir;
 
     // Create direcctory for clipboard
-    clipboardDir=tmpVymDir+"/clipboard";
-    clipboardFile="map.xml";
+    clipboardDir  = tmpVymDir+"/clipboard";
+    clipboardFile = "clipboard";
     QDir d(clipboardDir);
     d.mkdir (clipboardDir);
     makeSubDirs (clipboardDir);
-    clipboardEmpty=true;
+    clipboardItemCount = 0;
 
     // Remember PID of our friendly webbrowser
     browserPID=new qint64;
@@ -251,13 +258,6 @@ Main::Main(QWidget* parent, Qt::WindowFlags f) : QMainWindow(parent,f)
     headingEditorDW=dw;
     addDockWidget (Qt::BottomDockWidgetArea,dw);
 
-    dw = new QDockWidget (tr("Script Editor"));
-    dw->setWidget (scriptEditor);
-    dw->setObjectName ("ScriptEditor");
-    dw->hide();
-    scriptEditorDW=dw;
-    addDockWidget (Qt::LeftDockWidgetArea,dw);
-
     findResultWidget=new FindResultWidget ();
     dw= new QDockWidget (tr ("Search results list","FindResultWidget"));
     dw->setWidget (findResultWidget);
@@ -268,8 +268,8 @@ Main::Main(QWidget* parent, Qt::WindowFlags f) : QMainWindow(parent,f)
 	findResultWidget, SIGNAL (noteSelected (QString, int)),
 	this, SLOT (selectInNoteEditor (QString, int)));
     connect (
-	findResultWidget, SIGNAL (findPressed (QString) ), 
-	this, SLOT (editFindNext(QString) ) );
+	findResultWidget, SIGNAL (findPressed (QString, bool) ),
+	this, SLOT (editFindNext(QString, bool) ) );
 
     scriptEditor = new ScriptEditor(this);
     dw= new QDockWidget (tr ("Script Editor","ScriptEditor"));
@@ -277,6 +277,13 @@ Main::Main(QWidget* parent, Qt::WindowFlags f) : QMainWindow(parent,f)
     dw->setObjectName ("ScriptEditor");
     dw->hide();	
     addDockWidget (Qt::LeftDockWidgetArea,dw);
+
+    scriptOutput = new ScriptOutput( this );
+    dw = new QDockWidget (tr("Script output window"));
+    dw->setWidget (scriptOutput);
+    dw->setObjectName ("ScriptOutput");
+    dw->hide();
+    addDockWidget (Qt::BottomDockWidgetArea,dw);
 
     branchPropertyEditor = new BranchPropertyEditor();
     dw = new QDockWidget (tr("Property Editor","PropertyEditor"));
@@ -300,7 +307,7 @@ Main::Main(QWidget* parent, Qt::WindowFlags f) : QMainWindow(parent,f)
     // Connect heading editor
     connect (headingEditor, SIGNAL (textHasChanged() ), this, SLOT (updateHeading()));
 
-    connect( scriptEditor, SIGNAL( runScript ( QString ) ),  this, SLOT( execute( QString ) ) );
+    connect( scriptEditor, SIGNAL( runScript ( QString ) ),  this, SLOT( runScript ( QString ) ) );
 
     // Switch back  to MapEditor using Esc 
     QAction* a = new QAction(this);
@@ -340,9 +347,6 @@ Main::Main(QWidget* parent, Qt::WindowFlags f) : QMainWindow(parent,f)
 
     restoreState (settings.value("/mainwindow/state",0).toByteArray());
 
-    // Global Printer
-    printer=new QPrinter (QPrinter::HighResolution );	
-
     // Enable testmenu
     //settings.setValue( "mainwindow/showTestMenu", true);
     updateGeometry();
@@ -379,9 +383,12 @@ Main::~Main()
 	settings.setValue( "/mapeditor/editmode/autoSelectNewBranch",actionSettingsAutoSelectNewBranch->isChecked() );
 	settings.setValue( "/system/writeBackupFile",actionSettingsWriteBackupFile->isChecked() );
 
-	settings.setValue("/system/printerName",printer->printerName());
-	settings.setValue("/system/printerFormat",printer->outputFormat());
-	settings.setValue("/system/printerFileName",printer->outputFileName());
+        if (printer)
+        {
+            settings.setValue("/system/printerName",printer->printerName());
+            settings.setValue("/system/printerFormat",printer->outputFormat());
+            settings.setValue("/system/printerFileName",printer->outputFileName());
+        }
 	settings.setValue( "/mapeditor/editmode/autoSelectText",actionSettingsAutoSelectText->isChecked() );
 	settings.setValue( "/mapeditor/editmode/autoEditNewBranch",actionSettingsAutoEditNewBranch->isChecked() );
 	settings.setValue( "/mapeditor/editmode/useFlagGroups",actionSettingsUseFlagGroups->isChecked() );
@@ -477,6 +484,13 @@ void Main::closeEvent (QCloseEvent* event)
 	event->accept();
 }
 
+QPrinter* Main::setupPrinter()
+{
+    // Global Printer
+    printer = new QPrinter (QPrinter::HighResolution );	
+    return printer;
+}
+
 // Define commands for models
 void Main::setupAPI()
 {
@@ -544,75 +558,8 @@ void Main::setupAPI()
     c->addPar (Command::Bool,true, "True, if cycling in reverse order");
     modelCommands.append(c);
 
-    c=new Command ("delete",Command::TreeItem);
-    modelCommands.append(c);
-
-    c=new Command ("deleteChildren",Command::Branch);
-    modelCommands.append(c);
-
-    c=new Command ("deleteKeepChildren",Command::Branch);
-    modelCommands.append(c);
-
-    c=new Command ("deleteSlide",Command::Any);
-    c->addPar (Command::Int,false,"Index of slide to delete");
-    modelCommands.append(c);
-
-    c=new Command ("exportAO",Command::Any);
-    c->addPar (Command::String,false,"Filename for export");
-    modelCommands.append(c);
-
-    c=new Command ("exportASCII",Command::Any);
-    c->addPar (Command::String,false,"Filename for export");
-    c->addPar (Command::Bool,false,"Flag, if tasks should be appended");
-    modelCommands.append(c);
-
-    c=new Command ("exportCSV",Command::Any);
-    c->addPar (Command::String,false,"Filename for export");
-    modelCommands.append(c);
-
-    c=new Command ("exportHTML",Command::Any);
-    c->addPar (Command::String,false,"Path used for export");
-    c->addPar (Command::String,false,"Filename for export");
-    modelCommands.append(c);
-
-    c=new Command ("exportImage",Command::Any);
-    c->addPar (Command::String,false,"Filename for export");
-    c->addPar (Command::String,true,"Image format");
-    modelCommands.append(c);
-
-    c=new Command ("exportImpress",Command::Any);
-    c->addPar (Command::String,false,"Filename for export");
-    c->addPar (Command::String,false,"Configuration file for export");
-    modelCommands.append(c);
-
-    c=new Command ("exportLast",Command::Any);
-    modelCommands.append(c);
-
-    c=new Command ("exportLaTeX",Command::Any);
-    c->addPar (Command::String,false,"Filename for export");
-    modelCommands.append(c);
-
-    c=new Command ("exportOrgMode",Command::Any);
-    c->addPar (Command::String,false,"Filename for export");
-    modelCommands.append(c);
-
-    modelCommands.append(c);
-
-    c=new Command ("exportPDF",Command::Any);
-    c->addPar (Command::String,false,"Filename for export");
-    modelCommands.append(c);
-
-    c=new Command ("exportPDF",Command::Any);
-    c->addPar (Command::String,false,"Filename for export");
-    modelCommands.append(c);
-
-    c=new Command ("exportSVG",Command::Any);
-    c->addPar (Command::String,false,"Filename for export");
-    modelCommands.append(c);
-
-    c=new Command ("exportXML",Command::Any);
-    c->addPar (Command::String,false,"Path used for export");
-    c->addPar (Command::String,false,"Filename for export");
+    c=new Command ("exportMap",Command::Any);  
+    c->addPar (Command::String,false,"Format (AO, ASCII, CSV, HTML, Image, Impress, Last, LaTeX, Markdown, OrgMode, PDF, SVG, XML)");
     modelCommands.append(c);
 
     c=new Command ("getDestPath",Command::Any);
@@ -645,7 +592,10 @@ void Main::setupAPI()
     c=new Command ("getNoteXML",Command::TreeItem);
     modelCommands.append(c);
 
-    c=new Command ("getSelectString",Command::TreeItem);
+    c=new Command ("getSelectionString",Command::TreeItem);
+    modelCommands.append(c);
+
+    c=new Command ("getTaskSleep",Command::Branch);
     modelCommands.append(c);
 
     c=new Command ("getTaskSleepDays",Command::Branch);
@@ -746,6 +696,19 @@ void Main::setupAPI()
     c->addPar (Command::Double,true,"Position y");
     modelCommands.append(c);
 
+    c=new Command ("remove",Command::TreeItem);
+    modelCommands.append(c);
+
+    c=new Command ("removeChildren",Command::Branch);
+    modelCommands.append(c);
+
+    c=new Command ("removeKeepChildren",Command::Branch);
+    modelCommands.append(c);
+
+    c=new Command ("removeSlide",Command::Any);          
+    c->addPar (Command::Int,false,"Index of slide to remove");
+    modelCommands.append(c);
+
     c=new Command ("saveImage",Command::Image); 
     c->addPar (Command::String,false,"Filename of image to save");
     c->addPar (Command::String,false,"Format of image to save");
@@ -762,11 +725,20 @@ void Main::setupAPI()
     c->addPar (Command::String,false,"Selection string");
     modelCommands.append(c);
 
+    c=new Command ("selectFirstBranch",Command::Branch); 
+    modelCommands.append(c);
+
+    c=new Command ("selectFirstChildBranch",Command::Branch); 
+    modelCommands.append(c);
+
     c=new Command ("selectID",Command::Any); 
     c->addPar (Command::String,false,"Unique ID");
     modelCommands.append(c);
 
     c=new Command ("selectLastBranch",Command::Branch); 
+    modelCommands.append(c);
+
+    c=new Command ("selectLastChildBranch",Command::Branch); 
     modelCommands.append(c);
 
     c=new Command ("selectLastImage",Command::Branch); 
@@ -899,7 +871,7 @@ void Main::setupAPI()
     c->addPar (Command::String,false,"Color of xlink");
     modelCommands.append(c);
 
-    c=new Command ("setXLinkLineStyle", Command::XLink); 
+    c=new Command ("setXLinkStyle", Command::XLink); 
     c->addPar (Command::String,false,"Style of xlink");
     modelCommands.append(c);
 
@@ -954,6 +926,34 @@ void Main::setupAPI()
     c=new Command ("unsetFlag",Command::Branch); 
     c->addPar (Command::String,false,"Name of flag to unset");
     modelCommands.append(c);
+
+    //
+    // Below are the commands for vym itself:
+    //
+
+    c = new Command ("clearConsole", Command::Any); 
+    vymCommands.append(c);
+
+    c = new Command ("currentMap", Command::Any); 
+    vymCommands.append(c);
+
+    c = new Command ("loadMap", Command::Any); 
+    c->addPar (Command::String, false, "Path to map");
+    vymCommands.append(c);
+
+    c = new Command ("mapCount", Command::Any); 
+    vymCommands.append(c);
+
+    c = new Command ("selectMap", Command::Any); 
+    c->addPar (Command::Int, false, "Index of map");
+    vymCommands.append(c);
+
+    c = new Command ("toggleTreeEditor", Command::Any); 
+    vymCommands.append(c);
+
+    c = new Command ("version", Command::Any); 
+    vymCommands.append(c);
+
 }
 
 void Main::cloneActionMapEditor( QAction *a, QKeySequence ks)
@@ -1052,6 +1052,10 @@ void Main::setupFileActions()
 
     a = new QAction( tr("Text (ASCII)...","File export menu"), this);
     connect( a, SIGNAL( triggered() ), this, SLOT( fileExportASCII() ) );
+    fileExportMenu->addAction(a);
+
+    a = new QAction( tr("Text (Markdown)...","File export menu") + " (ASCII)... "  + tr("(still experimental)"), this);
+    connect( a, SIGNAL( triggered() ), this, SLOT( fileExportMarkdown() ) );
     fileExportMenu->addAction(a);
 
     a = new QAction( tr("Text with tasks","File export menu") + " (ASCII)... "  + tr("(still experimental)"), this);
@@ -1201,10 +1205,20 @@ void Main::setupEditActions()
     a->setShortcutContext (Qt::WindowShortcut);
     switchboard.addSwitch ("mapDelete", shortcutScope, a, tag);
     addAction (a);
-    connect( a, SIGNAL( triggered() ), this, SLOT( editDeleteSelection() ) );
     editMenu->addAction(a);
     actionListItems.append (a);
     actionDelete=a;
+
+    connect( a, SIGNAL( triggered() ), this, SLOT( editDeleteSelection() ) );
+    a = new QAction( tr( "Delete Selection","Edit menu" ),this);
+    a->setShortcut ( Qt::Key_D);		 
+    a->setShortcutContext (Qt::WindowShortcut);
+    switchboard.addSwitch ("mapDelete", shortcutScope, a, tag);
+    addAction (a);
+    connect( a, SIGNAL( triggered() ), this, SLOT( editDeleteSelection() ) );
+    editMenu->addAction(a);
+    actionListItems.append (a);
+    actionDeleteAlt=a;
 
     // Shortcut to add attribute
     a= new QAction(tr( "Add attribute" ), this);
@@ -1317,7 +1331,7 @@ void Main::setupEditActions()
 
     a = new QAction(QPixmap(), tr( "&Detach","Context menu" ),this);
     a->setStatusTip ( tr( "Detach branch and use as mapcenter","Context menu" ) );
-    a->setShortcut ( Qt::Key_D );		 
+    a->setShortcut ( Qt::Key_D + Qt::SHIFT);		 
     switchboard.addSwitch ("mapDetachBranch", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( editDetach() ) );
     editMenu->addAction(a);
@@ -1497,6 +1511,25 @@ void Main::setupEditActions()
     actionListBranches.append(a);
     actionHeading2URL=a;
 
+    tag = tr("Jira handling","Shortcuts");
+    a = new QAction(tr( "Create URL to Jira","Edit menu" ) + " (experimental)", this);
+    a->setShortcut ( Qt::Key_J + Qt::SHIFT);
+    a->setShortcutContext (Qt::WindowShortcut);
+    switchboard.addSwitch ("mapUpdateFromJira", shortcutScope, a, tag);
+    addAction(a);
+    connect( a, SIGNAL( triggered() ), this, SLOT( getJiraData() ) );
+    actionListBranches.append(a);
+    actionGetJiraData=a;
+
+    a = new QAction(tr( "Get data from Jira for subtree","Edit menu" ) + " (experimental)", this);
+    a->setShortcut ( Qt::Key_J + Qt::CTRL);
+    a->setShortcutContext (Qt::WindowShortcut);
+    switchboard.addSwitch ("mapUpdateSubTreeFromJira", shortcutScope, a, tag);
+    addAction(a);
+    connect( a, SIGNAL( triggered() ), this, SLOT( getJiraDataSubtree() ) );
+    actionListBranches.append(a);
+    actionGetJiraDataSubtree=a;
+
     tag = tr("Bugzilla handling","Shortcuts");
     a = new QAction(tr( "Create URL to SUSE Bugzilla","Edit menu" ), this);
     a->setEnabled (false);
@@ -1509,7 +1542,7 @@ void Main::setupEditActions()
     actionListBranches.append(a);
     actionBugzilla2URL=a;
 
-    a = new QAction(tr( "Get data from SUSE Bugzilla","Edit menu" ), this);
+    a = new QAction(tr( "Get data from SUSE Bugzilla","Edit menu" ) + " (experimental)", this);
     a->setShortcut ( Qt::Key_B + Qt::SHIFT);
     a->setShortcutContext (Qt::WindowShortcut);
     switchboard.addSwitch ("mapUpdateFromBugzilla", shortcutScope, a, tag);
@@ -1518,7 +1551,7 @@ void Main::setupEditActions()
     actionListBranches.append(a);
     actionGetBugzillaData=a;
 
-    a = new QAction(tr( "Get data from SUSE Bugzilla for subtree","Edit menu" ), this);
+    a = new QAction(tr( "Get data from SUSE Bugzilla for subtree","Edit menu" ) + " (experimental)", this);
     a->setShortcut ( Qt::Key_B + Qt::CTRL);
     a->setShortcutContext (Qt::WindowShortcut);
     switchboard.addSwitch ("mapUpdateSubTreeFromBugzilla", shortcutScope, a, tag);
@@ -1538,8 +1571,10 @@ void Main::setupEditActions()
 
     tag = tr("vymlinks - linking maps","Shortcuts");
     a = new QAction(QPixmap(":/flag-vymlink.png"), tr( "Open linked map","Edit menu" ), this);
+    a->setShortcut ( Qt::SHIFT + Qt::Key_V );
     a->setEnabled (false);
     switchboard.addSwitch ("mapOpenVymLink", shortcutScope, a, tag);
+    addAction(a);
     connect( a, SIGNAL( triggered() ), this, SLOT( editOpenVymLink() ) );
     actionListBranches.append (a);
     actionOpenVymLink=a;
@@ -1558,8 +1593,9 @@ void Main::setupEditActions()
     actionListBranches.append(a);
     actionOpenMultipleVymLinks=a;
 
-
     a = new QAction(QPixmap(":/flag-vymlinknew.png"), tr( "Edit vym link...","Edit menu" ), this);
+    a->setShortcut ( Qt::Key_V );
+    a->setShortcutContext (Qt::WindowShortcut);
     a->setEnabled (false);
     switchboard.addSwitch ("mapEditVymLink", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( editVymLink() ) );
@@ -1663,6 +1699,17 @@ void Main::setupEditActions()
     connect( a, SIGNAL( triggered() ), this, SLOT( editTaskSleepN() ) );
     actionListBranches.append (a);
     actionTaskSleep3=a;
+
+    a = new QAction(QPixmap(), tr( "Sleep %1 days","Task sleep" ).arg(4), this);
+    a->setShortcutContext (Qt::WindowShortcut);
+    a->setCheckable(false);
+    a->setEnabled (false);
+    a->setData (4);
+    addAction(a);
+    switchboard.addSwitch ("mapTaskSleep4", shortcutScope, a, tag);
+    connect( a, SIGNAL( triggered() ), this, SLOT( editTaskSleepN() ) );
+    actionListBranches.append (a);
+    actionTaskSleep4=a;
 
     a = new QAction(QPixmap(), tr( "Sleep %1 days","Task sleep" ).arg(5), this); 
     a->setShortcutContext (Qt::WindowShortcut);
@@ -1770,7 +1817,7 @@ void Main::setupEditActions()
     actionListFiles.append (a);
     actionMapInfo=a;
 
-    a = new QAction( tr( "Add   ...","Edit menu" ), this);
+    a = new QAction( tr( "Add image...","Edit menu" ), this);
     a->setShortcutContext (Qt::WindowShortcut);
     a->setShortcut (Qt::Key_I + Qt::SHIFT);    
     addAction(a);
@@ -2108,6 +2155,14 @@ void Main::setupViewActions()
     switchboard.addSwitch ("mapToggleScriptEditor", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( windowToggleScriptEditor() ) );
     actionViewToggleScriptEditor=a;
+
+    a = new QAction(QPixmap(), tr("Script output window","View action"), this);
+    a->setShortcut ( Qt::ALT + Qt::SHIFT + Qt::Key_S );
+    a->setCheckable(true);
+    viewMenu->addAction (a);
+    switchboard.addSwitch ("mapToggleScriptOutput", shortcutScope, a, tag);
+    connect( a, SIGNAL( triggered() ), this, SLOT( windowToggleScriptOutput() ) );
+    actionViewToggleScriptOutput=a;
 
     a = new QAction(QPixmap(":/history.png"),  tr( "History Window","View action" ),this );
     a->setShortcut ( Qt::CTRL + Qt::Key_H  );
@@ -2763,6 +2818,7 @@ void Main::setupContextMenus()
 	taskContextMenu->addAction (actionTaskSleep1);
 	taskContextMenu->addAction (actionTaskSleep2);
 	taskContextMenu->addAction (actionTaskSleep3);
+	taskContextMenu->addAction (actionTaskSleep4);
 	taskContextMenu->addAction (actionTaskSleep5);
 	taskContextMenu->addAction (actionTaskSleep7);
 	taskContextMenu->addAction (actionTaskSleep14);
@@ -2780,6 +2836,8 @@ void Main::setupContextMenus()
 	branchLinksContextMenu->addAction ( actionLocalURL );
 	branchLinksContextMenu->addAction ( actionGetURLsFromNote );
 	branchLinksContextMenu->addAction ( actionHeading2URL );
+	branchLinksContextMenu->addAction ( actionGetJiraData );
+	branchLinksContextMenu->addAction ( actionGetJiraDataSubtree );
 	branchLinksContextMenu->addAction ( actionBugzilla2URL );
 	branchLinksContextMenu->addAction ( actionGetBugzillaData );
 	branchLinksContextMenu->addAction ( actionGetBugzillaDataSubtree );
@@ -2886,7 +2944,7 @@ void Main::setupRecentMapsMenu()
 
 void Main::setupMacros()
 {
-    for (int i = 0; i <= 12; i++) 
+    for (int i = 0; i <= 23; i++) 
     {
 	macroActions[i] = new QAction(this);
 	macroActions[i]->setData(i);
@@ -2897,7 +2955,7 @@ void Main::setupMacros()
     macroActions[1]->setShortcut ( Qt::Key_F2 );
     macroActions[2]->setShortcut ( Qt::Key_F3 );
     macroActions[3]->setShortcut ( Qt::Key_F4 );
-    macroActions[4]->setShortcut ( Qt::Key_F5 );
+    macroActions[5]->setShortcut ( Qt::Key_F5 );
     macroActions[5]->setShortcut ( Qt::Key_F6 );
     macroActions[6]->setShortcut ( Qt::Key_F7 );
     macroActions[7]->setShortcut ( Qt::Key_F8 );
@@ -2907,6 +2965,17 @@ void Main::setupMacros()
     macroActions[11]->setShortcut ( Qt::Key_F12 );
 
     macroActions[12]->setShortcut ( Qt::Key_F1 + Qt::SHIFT);
+    macroActions[13]->setShortcut ( Qt::Key_F2 + Qt::SHIFT);
+    macroActions[14]->setShortcut ( Qt::Key_F3 + Qt::SHIFT);
+    macroActions[15]->setShortcut ( Qt::Key_F4 + Qt::SHIFT);
+    macroActions[16]->setShortcut ( Qt::Key_F5 + Qt::SHIFT);
+    macroActions[17]->setShortcut ( Qt::Key_F6 + Qt::SHIFT);
+    macroActions[18]->setShortcut ( Qt::Key_F7 + Qt::SHIFT);
+    macroActions[19]->setShortcut ( Qt::Key_F8 + Qt::SHIFT);
+    macroActions[20]->setShortcut ( Qt::Key_F9 + Qt::SHIFT);
+    macroActions[21]->setShortcut ( Qt::Key_F10 + Qt::SHIFT);
+    macroActions[22]->setShortcut ( Qt::Key_F11 + Qt::SHIFT);
+    macroActions[23]->setShortcut ( Qt::Key_F12 + Qt::SHIFT);
 }
 
 void Main::setupToolbars()
@@ -2957,9 +3026,7 @@ void Main::setupToolbars()
     // URLs and vymLinks
     referencesToolbar=addToolBar( tr ("URLs and vymLinks toolbar","Toolbar for URLs and vymlinks"));
     referencesToolbar->setObjectName ("URLs and vymlinks toolbar");
-    //referencesToolbar->addAction (actionOpenURL); //FIXME-4 removed 2015-06-22
     referencesToolbar->addAction (actionURLNew);
-    //referencesToolbar->addAction (actionOpenVymLink)//FIXME-4 removed 2015-06-22;
     referencesToolbar->addAction (actionEditVymLink);
 
     // Format and colors
@@ -3047,6 +3114,11 @@ uint  Main::currentModelID() const
 	return m->getModelID();
     else
 	return 0;    
+}
+
+uint  Main::currentModelNumber() const
+{
+    return tabWidget->currentIndex();
 }
 
 VymModel* Main::currentModel() const
@@ -3694,6 +3766,12 @@ void Main::fileExportLaTeX()
     if (m) m->exportLaTeX();
 }
 
+void Main::fileExportMarkdown()
+{
+    VymModel *m=currentModel();
+    if (m) m->exportMarkdown();
+}
+
 void Main::fileExportOrgMode()	
 {
     VymModel *m=currentModel();
@@ -3823,6 +3901,7 @@ bool Main::fileExitVYM()
     {
         tabWidget->setCurrentIndex(0);
         if (fileCloseMap()) return true;
+        qApp->processEvents();  // Update widgets to show progress
     }
     qApp->quit();
     return false;
@@ -4046,33 +4125,28 @@ void Main::editHeading2URL()
     if (m) m->editHeading2URL();
 }
 
-void Main::editBugzilla2URL()
+void Main::getJiraData()
 {
     VymModel *m=currentModel();
-    if (m) m->editBugzilla2URL();
+    if (m) m->getJiraData(false);
+}
+
+void Main::getJiraDataSubtree()
+{
+    VymModel *m=currentModel();
+    if (m) m->getJiraData(true);
 }
 
 void Main::getBugzillaData()
 {
     VymModel *m=currentModel();
-    /*
-    QProgressDialog progress ("Doing stuff","cancl",0,10,this);
-    progress.setWindowModality(Qt::WindowModal);
-    //progress.setCancelButton (NULL);
-    progress.show();
-    progress.setMinimumDuration (0);
-    progress.setValue (1);
-    progress.setValue (5);
-    progress.update();
-    */
-    /*
-    QProgressBar *pb=new QProgressBar;
-    pb->setMinimum (0);
-    pb->setMaximum (0);
-    pb->show();
-    pb->repaint();
-    */
     if (m) m->getBugzillaData(false);
+}
+
+void Main::editBugzilla2URL()
+{
+    VymModel *m=currentModel();
+    if (m) m->editBugzilla2URL();
 }
 
 void Main::getBugzillaDataSubtree()
@@ -4232,31 +4306,44 @@ void Main::editTaskSleepN()
     VymModel *m=currentModel();
     if (m) 
     {
-	int n=((QAction*)sender())->data().toInt();
-	Task *task=m->getSelectedTask();
+	qint64 n = ((QAction*)sender())->data().toInt();
+	Task *task = m->getSelectedTask();
 	if (task)
 	{
 	    bool ok=true;
             QString s;
-	    if (n<0)
+	    if ( n < 0)
             {
-                n=task->getDaysSleep();
-                if (n<=0) n=0;
+                QString currentSleep;
+                QDateTime d = task->getSleep();
+                n = task->getSecsSleep();
+                if ( n <= 0) 
+                    currentSleep = "0";
+                else if (n < 60) 
+                    currentSleep = QString("%1s").arg(n);
+                else if (n < 24 * 3600) 
+                {
+                    currentSleep = d.time().toString("hh:mm");
+                } else if (d.time().hour() == 0 && d.time().minute() == 0 )
+                {
+                    currentSleep = d.date().toString( "dd.MM.yyyy");
+                } else 
+                    currentSleep = d.toString( Qt::ISODate );
 
-                LineEditDialog *dia=new LineEditDialog(this);
-                dia->setLabel(tr("Enter sleep time (number of days or date YYYY-MM-DD or DD.MM[.YYYY]","task sleep time dialog"));
-                dia->setText(QString("%1").arg(n));
+                LineEditDialog *dia = new LineEditDialog(this);
+                dia->setLabel(tr("Enter sleep time (number of days, hours with 'h' or date YYYY-MM-DD or DD.MM[.YYYY]","task sleep time dialog"));
+                dia->setText(currentSleep);
                 centerDialog (dia);
                 if (dia->exec() == QDialog::Accepted)
                 {
-                    ok=true;
-                    s=dia->getText();
+                    ok = true;
+                    s = dia->getText();
                 } else
-                    ok=false;
+                    ok = false;
 
                 delete dia;
             } else
-                s=QString("%1").arg(n);
+                s = QString("%1").arg(n);
 
             if (ok && !m->setTaskSleep(s) )
                 QMessageBox::warning(0, 
@@ -4305,6 +4392,8 @@ void Main::editMapProperties()
     }
 
     stats += QString ("%1 %2\n").arg (m->branchCount(),6).arg(tr("branches","Info about map") );
+    stats += QString ("%1 %2\n").arg (taskModel->count(),6).arg(tr("tasks total","Info about map") );
+    stats += QString ("%1 %2\n").arg (taskModel->count(m),6).arg(tr("tasks in map","Info about map") );
     stats += QString ("%1 %2\n").arg (n,6).arg(tr("notes","Info about map") );
     stats += QString ("%1 %2\n").arg (f,6).arg(tr("images","Info about map") );
     stats += QString ("%1 %2\n").arg (m->taskCount(),6 ).arg(tr("tasks","Info about map") );
@@ -4723,13 +4812,13 @@ void Main::editOpenFindResultWidget()
 }
 
 #include "findwidget.h" // FIXME-4 Integrated FRW and FW
-void Main::editFindNext(QString s)  
+void Main::editFindNext(QString s, bool searchNotesFlag)
 {
-    Qt::CaseSensitivity cs=Qt::CaseInsensitive;
-    VymModel *m=currentModel();
-    if (m) 
+    Qt::CaseSensitivity cs = Qt::CaseInsensitive;
+    VymModel *m = currentModel();
+    if (m)
     {
-	if (m->findAll (findResultWidget->getResultModel(),s,cs) )
+	if (m->findAll (findResultWidget->getResultModel(), s, cs, searchNotesFlag) )
 	    findResultWidget->setStatus (FindWidget::Success);
 	else
 	    findResultWidget->setStatus (FindWidget::Failed);
@@ -4738,7 +4827,7 @@ void Main::editFindNext(QString s)
 
 void Main::editFindDuplicateURLs() //FIXME-4 feature: use FindResultWidget for display
 {
-    VymModel *m=currentModel();
+    VymModel *m = currentModel();
     if (m) m->findDuplicateURLs();
 }
 
@@ -5025,14 +5114,14 @@ void Main::settingsMacroDir()
 {
     QDir defdir(vymBaseDir.path() + "/macros");
     if (!defdir.exists())
-	defdir=vymBaseDir;
-    QDir dir=QFileDialog::getExistingDirectory (
+	defdir = vymBaseDir;
+    QDir dir = QFileDialog::getExistingDirectory (
 	this,
 	tr ("Directory with vym macros:"), 
-	settings.value ("/macros/macroDir",defdir.path()).toString()
+	settings.value ("/macros/macroDir", defdir.path()).toString()
     );
     if (dir.exists())
-	settings.setValue ("/macros/macroDir",dir.absolutePath());
+	settings.setValue ("/macros/macroDir", dir.absolutePath());
 }
 
 void Main::settingsUndoLevels()	    
@@ -5162,18 +5251,31 @@ void Main::windowToggleScriptEditor()
 {
     if (scriptEditor->parentWidget()->isVisible() )
     {
-	scriptEditor->parentWidget()->hide();
-	actionViewToggleScriptEditor->setChecked (false);
+        scriptEditor->parentWidget()->hide();
+        actionViewToggleScriptEditor->setChecked (false);
     } else
     {
-	scriptEditor->parentWidget()->show();
-	actionViewToggleScriptEditor->setChecked (true);
+        scriptEditor->parentWidget()->show();
+        actionViewToggleScriptEditor->setChecked (true);
+    }
+}
+
+void Main::windowToggleScriptOutput()
+{
+    if (scriptOutput->parentWidget()->isVisible() )
+    {
+        scriptOutput->parentWidget()->hide();
+        actionViewToggleScriptOutput->setChecked (false);
+    } else
+    {
+        scriptOutput->parentWidget()->show();
+        actionViewToggleScriptOutput->setChecked (true);
     }
 }
 
 void Main::windowToggleHistory()
 {
-    if (historyWindow->isVisible())
+    if (historyWindow->parentWidget()->isVisible())
 	historyWindow->parentWidget()->hide();
     else    
 	historyWindow->parentWidget()->show();
@@ -5236,6 +5338,11 @@ void Main::windowToggleSmoothPixmap()
 	me=vymViews.at(i)->getMapEditor();
 	if (me) me->setSmoothPixmap(b);
     }	
+}
+
+void Main::clearScriptOutput()
+{
+    scriptOutput->clear();
 }
 
 void Main::updateHistory(SimpleSettings &undoSet)
@@ -5373,6 +5480,7 @@ void Main::updateActions()
             foreach (QAction *a, restrictedMapActions)
                 a->setEnabled( false );
 
+            // FIXME-2 updateactions: Disable import/export map functions (and probably more) if no map available
             // FIXME-2 updateactions: refactor actionListFiles: probably not needed, wrong actions there atm
         } else
         {   // not readonly     // FIXME-2 updateactions: maybe only required in testing, as mode should not change
@@ -5481,6 +5589,7 @@ void Main::updateActions()
 	{   // Tree Item selected
 	    actionToggleTarget->setChecked (selti->isTarget() );
 	    actionDelete->setEnabled (true);
+	    actionDeleteAlt->setEnabled (true);
 	    actionDeleteChildren->setEnabled (true);
 
 	    if (selbi || selti->getType()==TreeItem::Image)
@@ -5533,11 +5642,14 @@ void Main::updateActions()
 		else	
 		    actionToggleScroll->setChecked(false);
 
+		actionGetJiraDataSubtree->setEnabled (bugzillaClientAvailable);
 		actionGetBugzillaDataSubtree->setEnabled (bugzillaClientAvailable);
+
 		if ( selti->getURL().isEmpty() )
 		{
 		    actionOpenURL->setEnabled (false);
 		    actionOpenURLTab->setEnabled (false);
+		    actionGetJiraData->setEnabled (false);
 		    actionGetBugzillaData->setEnabled (false);
 		}   
 		else	
@@ -5546,6 +5658,18 @@ void Main::updateActions()
 		    actionOpenURLTab->setEnabled (true);
 		    actionGetBugzillaData->setEnabled (
 			selti->getURL().contains("bugzilla") && bugzillaClientAvailable);
+		    
+                    bool ok = false;
+                    QString u = selti->getURL();
+                    foreach (QString prefix, jiraPrefixList)
+                    {
+                        if (u.contains( prefix) )
+                        {
+                            ok = true;
+                            break;
+                        }
+                    }
+                    actionGetJiraData->setEnabled ( ok && jiraClientAvailable);
 		}
 		if ( selti->getVymLink().isEmpty() )
 		{
@@ -5580,7 +5704,7 @@ void Main::updateActions()
 		else
 		    actionToggleTask->setChecked (true);
 
-		if (!clipboardEmpty)
+		if (clipboardItemCount > 0)
 		    actionPaste->setEnabled (true); 
 		else	
 		    actionPaste->setEnabled (false);	
@@ -5606,6 +5730,7 @@ void Main::updateActions()
 
 		actionPaste->setEnabled (false); 
 		actionDelete->setEnabled (true);
+		actionDeleteAlt->setEnabled (true);
 
 		actionGrowSelectionSize->setEnabled (true);
 		actionShrinkSelectionSize->setEnabled (true);
@@ -5618,6 +5743,7 @@ void Main::updateActions()
 	if (selItems.count()>0 )
 	{
 	    actionDelete->setEnabled (true);
+	    actionDeleteAlt->setEnabled (true);
 	    actionToggleHideExport->setEnabled (true);  
 	    actionToggleHideExport->setChecked (false);	
 	}
@@ -5658,31 +5784,89 @@ bool Main::autoSelectNewBranch()
     return actionSettingsAutoSelectNewBranch->isChecked();
 }
 
-void Main::setScriptFile (const QString &fn)
+QScriptValue scriptPrint( QScriptContext * context, QScriptEngine *)
 {
-    scriptEditor->setScriptFile (fn);
+    scriptOutput->append( context->argument(0).toString() );
+    return QScriptValue();
 }
 
-QVariant Main::execute (const QString &script)
+QScriptValue scriptAbort( QScriptContext *context, QScriptEngine *engine)    
 {
-    VymModel *m=currentModel();
-    if (m) return m->execute (script);
-    return QVariant();
+    scriptOutput->append( "Abort called: " + context->argument(0).toString() );
+    engine->abortEvaluation();
+    return QScriptValue();  
 }
 
-void Main::executeEverywhere (const QString &script)
+QScriptValue scriptStatusMessage( QScriptContext * context, QScriptEngine *)
 {
-    foreach (VymView *vv,vymViews)
+    mainWindow->statusMessage ( context->argument(0).toString() );
+    return QScriptValue();
+}
+
+QVariant Main::runScript (const QString &script)
+{
+    scriptEngine.globalObject().setProperty( "print", scriptEngine.newFunction( scriptPrint ) );
+    scriptEngine.globalObject().setProperty( "abort", scriptEngine.newFunction( scriptAbort ) );
+    scriptEngine.globalObject().setProperty( "statusMessage", scriptEngine.newFunction( scriptStatusMessage ) );
+
+    // Create Wrapper object for VymModel
+    //QScriptValue val1 = scriptEngine.newQObject( m->getWrapper() );
+    //scriptEngine.globalObject().setProperty("model", val1);
+
+    // Create Wrapper object for vym itself (mainwindow)
+    VymWrapper vymWrapper;
+    QScriptValue val2 = scriptEngine.newQObject( &vymWrapper );
+    scriptEngine.globalObject().setProperty("vym", val2);
+
+    // Create wrapper object for selection
+    Selection selection;
+    QScriptValue val3 = scriptEngine.newQObject( &selection );
+    scriptEngine.globalObject().setProperty("selection", val3);
+
+    // Run script
+    QScriptValue result = scriptEngine.evaluate(script);
+
+    if (debug)
     {
-	VymModel *m=vv->getModel();
-	if (m) m->execute (script);
+        qDebug() << "MainWindow::runScript finished:";
+        qDebug() << "   hasException: " << scriptEngine.hasUncaughtException();
+        /*
+        if (scriptEngine.hasUncaughtException() )
+        {
+            qDebug() << "      exception: "<< scriptEngine.uncaughtException();
+        }
+        */
+        qDebug() << "         result: " << result.toString();   // not used so far...
+        qDebug() << "     lastResult: " << scriptEngine.globalObject().property("lastResult").toVariant();
     }
+
+    if (scriptEngine.hasUncaughtException()) {
+        int line = scriptEngine.uncaughtExceptionLineNumber();
+        scriptOutput->append( QString("uncaught exception at line %1: %2").arg(line).arg(result.toString()));
+    } else
+        return scriptEngine.globalObject().property("lastResult").toVariant();
+
+    return QVariant(""); 
 }
 
-void Main::gotoWindow (const int &n)
+QObject* Main::getCurrentModelWrapper() 
+{
+    // Called from VymWrapper to find out current model in a script
+    VymModel *m = currentModel();
+    if (m) 
+        return m->getWrapper();
+    else
+        return NULL;
+}
+
+bool Main::gotoWindow (const int &n)
 {
     if (n < tabWidget->count() && n>=0 )
+    {
 	tabWidget->setCurrentIndex (n);
+        return true;
+    } 
+    return false;
 }
 
 void Main::windowNextEditor()
@@ -5724,39 +5908,10 @@ void Main::standardFlagChanged()
     }
 }
 
+
 void Main::testFunction1()
 {
-    /*
-    VymModel *m = currentModel();
-    if (m)
-    {
-        m->getMapEditor()->minimizeView();
-    }
-    */
-
-    /*
-    QString zp = "c:\\Program Files\\7-Zip\\7z.exe";
-    QString zipName = "c:\\Users\\uwdr9542\\x\\ü1.vym";
-    QString zipDir  = "c:\\Users\\uwdr9542\\x\\y\\";
-    */
-    QString zp = "c:/Program Files/7-Zip/7z.exe";
-    QString zipName = "c:/Users/uwdr9542/x/ü1.vym";
-    QString zipDir  = "c:/Users/uwdr9542/x/y/";
-
-    zp = QDir::toNativeSeparators(zp);
-    zipName = QDir::toNativeSeparators(zipName);
-    zipDir  = QDir::toNativeSeparators(zipDir);
-    QStringList args;
-    args << "a" << zipName << "-tzip" << "-scsUTF-8" << "-sccUTF-8" << "*" ;
-
-    VymProcess *zipProc=new VymProcess ();
-    zipProc->setWorkingDirectory (zipDir);
-
-    zipProc->start(zipToolPath, args);
-    qDebug() << "7z:" << zp;
-    qDebug() << "7z started in dir: " << zipProc->workingDirectory();
-    qDebug() << "args:" << args;
-    qDebug() << zipProc->getStdout()<<flush;
+    scriptEditor->runScript();
 }
 
 void Main::testFunction2()
@@ -5841,8 +5996,8 @@ void Main::helpDoc()
 	// error handling
 	QMessageBox::warning(0, 
 	    tr("Warning"),
-	    tr("Couldn't find a viewer to open %1.\n").arg(docfile.fileName())+
-	    tr("Please use Settings->")+tr("Set application to open PDF files"));
+	    tr("Couldn't find a viewer to open %1.\n").arg(docfile.fileName()) +
+	    tr("Please use Settings->") + tr("Set application to open PDF files"));
 	settingsPDF();	
 	return;
     }
@@ -5915,16 +6070,24 @@ void Main::helpAboutQT()
 void Main::callMacro ()
 {
     QAction *action = qobject_cast<QAction *>(sender());
-    int i=-1;
+    int i =- 1;
     if (action)
     {
-        i=action->data().toInt();
-        QString s=macros.getMacro (i+1);
-        if (!s.isEmpty())
+        QString s = macros.get();
+        QString shift;
+
+        i = action->data().toInt() + 1;
+
+        if (i > 12) 
         {
-            VymModel *m=currentModel();
-            if (m) m->execute(s);
+            shift = "shift_";
+            i = i - 12;
         }
+
+        s += QString("macro_%1f%2();").arg(shift).arg(i);
+
+        VymModel *m = currentModel();
+        if (m) m->execute(s);
     }	
 }
 

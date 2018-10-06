@@ -25,7 +25,9 @@ public:
     bool isUsedFilterActive ();
     void setFilterActive ();
     void setFilterNew ();
-    void setFilterFlags ();
+    void setFilterFlags1 ();
+    void setFilterFlags2 ();
+    void setFilterFlags3 ();
     bool select (Task *task);
     void clearSelection ();
     void showSelection ();
@@ -39,7 +41,9 @@ private slots:
     void toggleFilterMap ();
     void toggleFilterActive ();
     void toggleFilterNew ();
-    void toggleFilterFlags ();
+    void toggleFilterFlags1 ();
+    void toggleFilterFlags2 ();
+    void toggleFilterFlags3 ();
 
 private:
     QTableView *view;
@@ -48,7 +52,9 @@ private:
     QAction *actionToggleFilterMap;
     QAction *actionToggleFilterActive;
     QAction *actionToggleFilterNew;
-    QAction *actionToggleFilterFlags;
+    QAction *actionToggleFilterFlags1;
+    QAction *actionToggleFilterFlags2;
+    QAction *actionToggleFilterFlags3;
     bool blockExternalSelect;
 };
 

@@ -17,9 +17,11 @@
 
 #include <typeinfo>
 
+#include "mainwindow.h"
 #include "settings.h"
 #include "shortcuts.h"
 
+extern Main *mainWindow;
 extern int statusbarTime;
 extern Settings settings;
 
@@ -684,13 +686,14 @@ bool TextEditor::eventFilter( QObject *obj, QEvent *ev)
     if (obj == e ) {
         if (ev->type() == QEvent::KeyPress) {
             QKeyEvent *keyEvent = static_cast<QKeyEvent*>(ev);
-            if(keyEvent == QKeySequence::Paste) 
+            if(keyEvent == QKeySequence::Paste)    
             {
                 // switch editor mode to match clipboard content before pasting
                 const QClipboard *clipboard = QApplication::clipboard();
                 const QMimeData *mimeData = clipboard->mimeData();
 
-                if (mimeData->hasHtml()) setRichTextMode(true);
+                if (mimeData->hasHtml() && !actionFormatRichText->isChecked() ) 
+                    setRichTextMode(true);
             } 
         }
     }
@@ -902,6 +905,8 @@ void TextEditor::textExportAsASCII()
 void TextEditor::textPrint()
 {
     QTextDocument *document = e->document();
+
+    if (!printer) mainWindow->setupPrinter();
 
     QPrintDialog dialog (printer, this);
     dialog.setWindowTitle(tr("Print","TextEditor"));

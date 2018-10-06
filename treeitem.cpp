@@ -416,7 +416,7 @@ QColor TreeItem::getBackgroundColor()
 
 void TreeItem::setURL (const QString &u)
 {
-    url=u;
+    url = u;
     if (!url.isEmpty())
     {
 	if (url.contains ("bugzilla.novell.com"))
@@ -645,7 +645,7 @@ QUuid TreeItem::getUuid()
 
 TreeItem* TreeItem::getChildNum(const int &n)
 {
-    if (n>=0 && n<childItems.count() )
+    if (n >= 0 && n < childItems.count() )
 	return childItems.at(n);
     else
 	return NULL;
@@ -653,7 +653,7 @@ TreeItem* TreeItem::getChildNum(const int &n)
 
 BranchItem* TreeItem::getFirstBranch()
 {
-    if (branchCounter>0)
+    if (branchCounter > 0)
 	return getBranchNum (0);
     else
 	return NULL;
@@ -661,24 +661,24 @@ BranchItem* TreeItem::getFirstBranch()
 
 BranchItem* TreeItem::getLastBranch()
 {
-    if (branchCounter>0)
-	return getBranchNum (branchCounter-1);
+    if (branchCounter > 0)
+	return getBranchNum (branchCounter - 1);
     else
 	return NULL;
 }
 
 ImageItem* TreeItem::getFirstImage()
 {
-    if (imageCounter>0)
-	return getImageNum (imageCounter-1);
+    if (imageCounter > 0)
+	return getImageNum (imageCounter - 1);
     else
 	return NULL;
 }
 
 ImageItem* TreeItem::getLastImage()
 {
-    if (imageCounter>0)
-	return getImageNum (imageCounter-1);
+    if (imageCounter > 0)
+	return getImageNum (imageCounter - 1);
     else
 	return NULL;
 }
@@ -686,8 +686,8 @@ ImageItem* TreeItem::getLastImage()
 BranchItem* TreeItem::getNextBranch(BranchItem *currentBranch)
 {
     if (!currentBranch) return NULL;
-    int n=num (currentBranch)+1;
-    if (n<branchCounter)
+    int n = num (currentBranch) + 1;
+    if (n < branchCounter)
 	return getBranchNum (branchOffset + n);
     else
 	return NULL;
@@ -696,7 +696,7 @@ BranchItem* TreeItem::getNextBranch(BranchItem *currentBranch)
 
 BranchItem* TreeItem::getBranchNum(const int &n)
 {
-    if (n>=0 && n<branchCounter)
+    if (n >= 0 && n < branchCounter)
 	return (BranchItem*)getChildNum (branchOffset + n);
     else
 	return NULL;

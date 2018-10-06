@@ -2,7 +2,7 @@
 #define SCRIPTEDITOR_H
 
 #include "ui_scripteditor.h"
-
+#include "codeeditor.h"
 #include "highlighter.h"
 
 class VymModel;
@@ -19,27 +19,31 @@ private:
     uint slideID;
 
 public:
-    ScriptEditor (QWidget* parent = 0);
-    void setScriptFile (const QString &fn);
-    void saveFile();
+    ScriptEditor (QWidget *parent = 0);
+    QString getScriptFile();
     void setSlideScript(uint vymModelID, uint slideID, const QString &);
 
 public slots:
+    void runMacro();
+    void runSlide();
+    void runScript();
     void saveSlide();
-    void saveClicked();
-    void saveAsClicked();
-    void openClicked();
-    void runClicked();
-    void loadMacroClicked();
-    void saveMacroClicked();
+    void reloadMacros();
+    void saveMacros();
+    bool loadScript(QString fn = "");
+    void saveScript();
+    void saveScriptAs();
 
 signals:
     void runScript (QString);
     
 private:
     Ui::ScriptEditor ui;
+    CodeEditor *codeEditor;
     QString filename;
-    Highlighter *highlighter;
+    Highlighter *highlighterMacro;
+    Highlighter *highlighterSlide;
+    Highlighter *highlighterFile;
 };
 
 

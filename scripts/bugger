@@ -2,7 +2,7 @@
 
 require 'bicho'
 
-server = Bicho::Client.new('https://bugzilla.novell.com')
+server = Bicho::Client.new('https://bugzilla.suse.com')
 ARGV.each do |id| 
   server.get_bugs(id).each do |bug|  
     puts "#{id}:short_desc:\"#{bug.summary}\""

@@ -4,11 +4,14 @@
 #include <QtCore/QVariant>
 
 #include "branchitem.h"
+#include "command.h"
 #include "mainwindow.h"
 #include "vymmodel.h"
 
 extern QString vymInstanceName;
 extern Main *mainWindow;
+
+extern QList <Command*> modelCommands;
 
 AdaptorModel::AdaptorModel(QObject *obj)
          : QDBusAbstractAdaptor(obj)
@@ -53,16 +56,21 @@ QDBusVariant AdaptorModel::execute (const QString &s)
 
 QDBusVariant AdaptorModel::errorLevel()
 {
-    return QDBusVariant (model->parser.errorLevel() );
+    return QDBusVariant ();  // model->parser.errorLevel() );     // FIXME-2 really still needed?
 }
 
 QDBusVariant AdaptorModel::errorDescription()
 {
-    return QDBusVariant (model->parser.errorDescription() );
+    return QDBusVariant (); // model->parser.errorDescription() );// FIXME-2 really still needed?
 }
 
 QDBusVariant AdaptorModel::listCommands ()
 {
-    return QDBusVariant (model->parser.getCommands().join(",") );
+    QStringList list;
+
+    foreach(Command *command, modelCommands)
+        list << command->getName();
+
+    return QDBusVariant (list.join(",") );
 }
 

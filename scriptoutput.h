@@ -8,9 +8,11 @@ class ScriptOutput:public QWidget
 {
     Q_OBJECT
 public:
-    ScriptOutput();
+    ScriptOutput(QWidget *parent);
     ~ScriptOutput();
+    void clear();
     void setText(const QString &text);
+    QString text();
     void append(const QString &text);
 
 private:

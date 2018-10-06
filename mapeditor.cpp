@@ -20,7 +20,7 @@ extern Main *mainWindow;
 extern QString tmpVymDir;
 extern QString clipboardDir;
 extern QString clipboardFile;
-extern bool clipboardEmpty;
+extern uint clipboardItemCount;
 extern bool debug;
 extern QPrinter *printer;
 
@@ -492,7 +492,9 @@ void MapEditor::minimizeView()
 
 void MapEditor::print()
 {
-    QRectF totalBBox=getTotalBBox();
+    QRectF totalBBox = getTotalBBox();
+
+    if (!printer) printer = mainWindow->setupPrinter();
 
     // Try to set orientation automagically
     // Note: Interpretation of generated postscript is amibiguous, if 
@@ -984,7 +986,7 @@ BranchItem* MapEditor::getRightBranch(BranchItem *bi)
 		    newbi=bi->getBranchNum(i);
 		    bo=newbi->getBranchObj();
 		    if (bo && bo->getOrientation()==LinkableMapObj::RightOfCenter)
-            qDebug()<<"BI found right: "<<newbi->getHeadingPlain();
+                        qDebug()<<"BI found right: "<<newbi->getHeadingPlain();
 		}
 	    }
 	    return newbi;
@@ -1044,14 +1046,14 @@ void MapEditor::cursorLast()
 
 void MapEditor::editHeading()
 {
-    if (state==EditingHeading)
+    if (state == EditingHeading)
     {
         editHeadingFinished();
         return;
     }
 
-    BranchObj *bo=model->getSelectedBranchObj();
-    BranchItem *bi=model->getSelectedBranch();
+    BranchObj *bo  = model->getSelectedBranchObj();
+    BranchItem *bi = model->getSelectedBranch();
     if (bo && bo)
     {
         VymText heading = bi->getHeading();
@@ -1062,14 +1064,25 @@ void MapEditor::editHeading()
         }
         model->setSelectionBlocked(true);
 
-        lineEdit=new QLineEdit;
-        QGraphicsProxyWidget *pw=mapScene->addWidget (lineEdit);
+        lineEdit = new QLineEdit;
+        QGraphicsProxyWidget *pw = mapScene->addWidget (lineEdit);
         pw->setZValue (Z_LINEEDIT);
         lineEdit->setCursor(Qt::IBeamCursor);
         lineEdit->setCursorPosition(1);
 
-        QPointF tl=bo->getOrnamentsBBox().topLeft();
-        QPointF br=tl + QPointF (230,30);
+        QPointF tl;
+        QPointF br;
+        qreal w = 230;
+        qreal h = 30;
+        if (bo->getOrientation() != LinkableMapObj::LeftOfCenter)
+        {
+            tl = bo->getOrnamentsBBox().topLeft();
+            br = tl + QPointF (w, h);
+        } else
+        {
+            br = bo->getOrnamentsBBox().bottomRight();
+            tl = br - QPointF (w, h);
+        }
         QRectF r (tl, br);
         lineEdit->setGeometry(r.toRect() );
 
@@ -1118,20 +1131,20 @@ void MapEditor::contextMenuEvent ( QContextMenuEvent * e )
     // mouseEvent, we don't need to close here.
 
     QPointF p = mapToScene(e->pos());
-    TreeItem *ti=findMapItem (p, NULL);	
+    TreeItem *ti = findMapItem (p, NULL);	
     
     if (ti) 
     {	// MapObj was found
 	model->select (ti);
 
-	LinkableMapObj* lmo=NULL;
+	LinkableMapObj* lmo = NULL;
 	BranchItem* selbi=model->getSelectedBranch();
-	if (ti) lmo=((MapItem*)ti)->getLMO();
+	if (ti) lmo = ((MapItem*)ti)->getLMO();
 
 	// Context Menu 
 	if (lmo && selbi )
 	{
-	    QString foname=((BranchObj*)lmo)->getSystemFlagName(p);
+	    QString foname = ((BranchObj*)lmo)->getSystemFlagName(p);
 	    if (foname.startsWith ("system-task")) 
 		taskContextMenu->popup (e->globalPos() );
 	    else	
@@ -1656,12 +1669,13 @@ void MapEditor::mouseReleaseEvent(QMouseEvent* e)
 	    if (model->createLink (tmpLink) )
 	    {
 		model->saveState(	
-		    tmpLink->getBeginLinkItem(),"delete ()",
-		    seli,QString("addXLink (\"%1\",\"%2\",%3,\"%4\")")
-			.arg(model->getSelectString(tmpLink->getBeginBranch()))
-			.arg(model->getSelectString(tmpLink->getEndBranch()))
-			.arg(tmpLink->getPen().width())
-			.arg(tmpLink->getPen().color().name()),
+		    tmpLink->getBeginLinkItem(),"remove ()",
+		    seli,QString("addXLink (\"%1\",\"%2\",%3,\"%4\",\"%5\")")
+			.arg( model->getSelectString(tmpLink->getBeginBranch()) )
+			.arg( model->getSelectString(tmpLink->getEndBranch()) )
+			.arg( tmpLink->getPen().width() )
+			.arg( tmpLink->getPen().color().name() )
+			.arg( penStyleToString( tmpLink->getPen().style() ) ),
 		    QString("Adding Link from %1 to %2").arg(model->getObjectName(seli)).arg(model->getObjectName (dsti)));	
 		return;
 	    }
@@ -1851,12 +1865,15 @@ void MapEditor::mouseDoubleClickEvent(QMouseEvent* e)
 
 void MapEditor::wheelEvent(QWheelEvent* e)
 {
-    if (e->modifiers() & Qt::ControlModifier && e->orientation()==Qt::Vertical)
+    if (e->modifiers() & Qt::ControlModifier && e->orientation() == Qt::Vertical)
     {
-	if (e->delta()>0)
-	    setZoomFactorTarget (zoomFactorTarget*1.15);
+	QPointF p = mapToScene(e->pos());
+	if (e->delta() > 0)
+	    //setZoomFactorTarget (zoomFactorTarget*1.15);
+	    setViewCenterTarget (p, zoomFactorTarget * 1.15, 0);
 	else    
-	    setZoomFactorTarget (zoomFactorTarget*0.85);
+	    //setZoomFactorTarget (zoomFactorTarget*0.85);
+	    setViewCenterTarget (p, zoomFactorTarget * 0.85, 0);
     } else	
     {
 	scrollBarPosAnimation.stop();
@@ -2007,22 +2024,26 @@ void MapEditor::updateSelection(QItemSelection nsel,QItemSelection dsel)
     QList <MapItem*> itemsSelected;
     QList <MapItem*> itemsDeselected;
 
-    QItemSelection sel=model->getSelectionModel()->selection();
+    QItemSelection sel = model->getSelectionModel()->selection();
+
+    // Add new selected objects
     foreach (QModelIndex ix,sel.indexes() )
     {
-	MapItem *mi= static_cast<MapItem*>(ix.internalPointer());
+	MapItem *mi= static_cast <MapItem*>(ix.internalPointer());
 	if (mi->isBranchLikeType() 
 	    ||mi->getType()==TreeItem::Image 
 	    ||mi->getType()==TreeItem::XLink)
 	    if (!itemsSelected.contains(mi)) 
 		itemsSelected.append (mi);
     }
+
+    // Delete objects meanwhile removed from selection
     foreach (QModelIndex ix,dsel.indexes() )
     {
-	MapItem *mi= static_cast<MapItem*>(ix.internalPointer());
+	MapItem *mi = static_cast <MapItem*>(ix.internalPointer());
 	if (mi->isBranchLikeType() 
-	    ||mi->getType()==TreeItem::Image 
-	    ||mi->getType()==TreeItem::XLink)
+	    || mi->getType() == TreeItem::Image 
+	    || mi->getType() == TreeItem::XLink)
 	    if (!itemsDeselected.contains(mi)) 
 		itemsDeselected.append (mi);
     }
@@ -2049,9 +2070,9 @@ void MapEditor::updateSelection(QItemSelection nsel,QItemSelection dsel)
 
 
     // Reposition polygons 
-    for (int i=0; i<itemsSelected.count();++i)
+    for (int i=0; i < itemsSelected.count();++i)
     {
-	MapObj *mo=itemsSelected.at(i)->getMO();
+	MapObj *mo = itemsSelected.at(i)->getMO();
 	sp=selPathList.at(i);
 	sp->setPath (mo->getClickPath() );
 	sp->setPen (selectionColor);	

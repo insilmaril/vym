@@ -14,9 +14,9 @@
 #include "branchitem.h"
 #include "imageitem.h"
 #include "mapeditor.h"
-#include "parser.h"
 #include "treeitem.h"
 #include "treemodel.h"
+#include "vymmodelwrapper.h"
 #include "vymlock.h"
 
 class AttributeItem;
@@ -34,7 +34,7 @@ class QGraphicsScene;
 
 typedef QMap<uint,QString> ItemList ;
 
-class VymModel :  public TreeModel {	    
+class VymModel :  public TreeModel {
     Q_OBJECT
     Q_CLASSINFO("D-Bus Interface", "org.insilmaril.vym.VymModel-h")
 
@@ -50,6 +50,7 @@ private:
 
     static uint idLast;	    //! the last used unique ID
     uint modelID;
+    VymModelWrapper *wrapper;
 
 public:
     VymModel();
@@ -60,6 +61,7 @@ public:
 
     MapEditor* getMapEditor();		
     uint getModelID();			//! Return unique ID of model
+    VymModelWrapper* getWrapper();
 
     void setView (VymView*);	    //! Set vymView for resizing editors after load
 private:
@@ -156,8 +158,8 @@ public:
 
 private:    
     void importDirInt(BranchItem *,QDir);
-    void importDirInt(const QString&);
 public:	
+    void importDir(const QString&);
     void importDir();
 
     bool tryVymLock();
@@ -292,7 +294,6 @@ public:
     TreeItem* findID   (const uint &i);	    // find MapObj by unique ID
     TreeItem* findUuid (const QUuid &i);    // find MapObj by unique ID
 
-
 ////////////////////////////////////////////
 // Interface 
 ////////////////////////////////////////////
@@ -307,10 +308,11 @@ public:
     QString getComment ();
     QString getDate();
     int branchCount();
+    int centerCount();
 
     void setSortFilter (const QString &);
     QString getSortFilter ();
-protected:  
+protected:
     QString sortFilter;
 signals:
     void sortFilterChanged (QString );	    //!< Notify editors of new filter
@@ -332,10 +334,13 @@ private:
 
 public:
     void findDuplicateURLs();		    // find duplicate URLs, testing only so far
-    bool findAll (FindResultModel*, QString s, Qt::CaseSensitivity cs=Qt::CaseInsensitive);	// Search all objects at once, also notes
+    bool findAll (FindResultModel*,         // Search all objects at once, also notes
+            QString s,
+            Qt::CaseSensitivity cs = Qt::CaseInsensitive,
+            bool searchNotes = true);
     BranchItem* findText(QString s,Qt::CaseSensitivity cs); // Find object, also in note
     void findReset();			    // Reset Search
-private:    
+private:
     QString findString;
 
 public:
@@ -358,26 +363,35 @@ public:
     void setHideLinkUnselected (bool);
 
     /*! Should object be hidden in exports (clouded)? */
-    void setHideExport(bool, TreeItem* ti=NULL);		
+    void setHideExport(bool, TreeItem* ti=NULL);
 
     /*! Should object be hidden in exports (clouded)? */
-    void toggleHideExport();	    
+    void toggleHideExport();
 
     /*! Toggle task for branch */
     void toggleTask();	    
 
     /*! Cycle through task states */
-    void cycleTaskStatus(bool reverse=false);	    
+    bool cycleTaskStatus(bool reverse=false);	    
 
     /*! Set task to sleep for number of days or until a given date*/
     bool setTaskSleep(const QString &s);
+
     /*! count tasks in this model */
     int taskCount();
 
-    void addTimestamp();	
+    /*! Update task priorities */
+private slots:
+    void updateTasksAlarm(bool force = false);
+
+private:
+    /*! Timer to check if tasks need to be awoken */
+    QTimer *taskAlarmTimer;
+
+public:
+    BranchItem*  addTimestamp();	
 
     void copy();			//!< Copy to clipboard
-public:	
     void paste();	    //!< Paste clipboard to branch and backup
     void cut();		    //!< Cut to clipboard (and copy)
 
@@ -397,7 +411,7 @@ public:
     bool createLink(Link *l);	//!< Create XLink, will create MO automatically if needed 
     QColor getXLinkColor();
     int getXLinkWidth();
-    Qt::PenStyle getXLinkPenStyle();
+    Qt::PenStyle getXLinkStyle();
     QString getXLinkStyleBegin();
     QString getXLinkStyleEnd();
 
@@ -409,7 +423,6 @@ public:
 	Disclaimer: Still experimental, not fully supported yet.
     */	
     BranchItem* addMapCenter(bool saveStateFlag=true);
-private:    
     BranchItem* addMapCenter(QPointF absPos);
 
     /*! \brief Add new branch
@@ -451,13 +464,14 @@ public:
     );   
     bool relinkImage  (ImageItem* image, BranchItem* dst);  
 
+    bool relinkTo ( const QString &dest, int num, QPointF pos);
 private:
     bool cleaningUpLinks;		//!< True while cleaning up to avoid recursion
 public:	
    void cleanupItems();		//!< Delete orphaned Items
     void deleteLater (uint);		//!< Delete later with new beginRemoveRow
-    void deleteSelection();		//!< Delete selection
-    void deleteKeepChildren(bool saveStateFlag=true);	//!< remove branch, but keep children
+    void deleteSelection(bool copyToClipboard = false); //!< Delete selection
+    void deleteKeepChildren(bool saveStateFlag = true);	//!< remove branch, but keep children
 public:	
     void deleteChildren();		//!< keep branch, but remove children
 
@@ -476,17 +490,18 @@ public:
     void emitExpandOneLevel();
     void emitCollapseOneLevel();
     void emitCollapseUnselected();
-signals:    
+signals:
     void expandAll();
     void expandOneLevel();
     void collapseOneLevel();
     void collapseUnselected();
 
-public:	
+public:
     void toggleTarget();
     ItemList getTargets();
 
     void toggleStandardFlag (const QString &name, FlagRow *master=NULL);
+    void clearFlags();
     void addFloatImage(const QImage &img);
 
     void colorBranch(QColor);
@@ -496,6 +511,7 @@ public:
 
     void note2URLs();			    // get URLs from note
     void editHeading2URL();		    // copy heading to URL
+    void getJiraData(bool subtree);	    // get data from Jira
     void editBugzilla2URL();		    // create URL to Bugzilla
     void getBugzillaData(bool subtree);	    // get data from Novell Bugzilla
     void editFATE2URL();		    // create URL to FATE
@@ -506,7 +522,7 @@ public:
     void followXLink (int);
     void editXLink ();
     void setXLinkColor(const QString &);
-    void setXLinkLineStyle(const QString &);
+    void setXLinkStyle(const QString &);
     void setXLinkStyleBegin(const QString &);
     void setXLinkStyleEnd(const QString &);
     void setXLinkWidth(int);
@@ -515,14 +531,8 @@ public:
 // Scripting
 ////////////////////////////////////////////
 public:	
-
-    /* \brief Process one command and its parameters */
-    QVariant parseAtom (const QString &atom, bool &noError, QString &errorMsg);	
-
     /* \brief Runs the script */
     QVariant execute (const QString &script);
-
-    Parser parser;
 
 ////////////////////////////////////////////
 // Exports
@@ -574,6 +584,9 @@ public:
     /*! Export as LaTeX */
     void exportLaTeX (const QString& dir="", bool useDialog=true);    
 
+    /*! Export as Markdown */
+    void exportMarkdown (const QString& fname="", bool useDialog=true);    
+
     /*! Export as OrgMode input for emacs*/
     void exportOrgMode (const QString& fname="", bool useDialog=true);    
 
@@ -588,6 +601,7 @@ public:
     void setMapRotationAngle (const double&);
     void setMapAnimDuration(const int &d);
     void setMapAnimCurve(const QEasingCurve &c);
+    bool centerOnID( const QString &id);
 private: 
     double zoomFactor;
     double rotationAngle;
@@ -752,16 +766,19 @@ public:
     bool selectNext();
     void resetSelectionHistory();
     void appendSelection();
-
     void emitShowSelection();		    //!< Show selection in all views
+
 signals:
     void showSelection();
 
 public:	
     bool selectFirstBranch();
+    bool selectFirstChildBranch();
     bool selectLastBranch();
+    bool selectLastChildBranch();
     bool selectLastSelectedBranch();
     bool selectLastImage();
+    bool selectLatestAdded();
     bool selectParent();
 
 public:
@@ -779,12 +796,15 @@ public:
     QList <TreeItem*> getSelectedItems();
     QModelIndex getSelectedIndex();
     QList <uint> getSelectedIDs();
+    QStringList getSelectedUUIDs();
     bool isSelected(TreeItem*);
     QString getSelectString ();
     QString getSelectString (LinkableMapObj *lmo);
     QString getSelectString (TreeItem *item);
     QString getSelectString (BranchItem *item);
     QString getSelectString (const uint &i);
+    void setLatestAddedItem(TreeItem *ti);
+    TreeItem *getLatestAddedItem();
     
     
 signals:
@@ -806,6 +826,19 @@ public:
     QColor getSelectionColor();
 
 ////////////////////////////////////////////
+// Iterating and selecting branches
+////////////////////////////////////////////
+public:
+    bool initIterator(const QString &iname, bool deepLevelsFirst = false); //! Named iterator
+    bool nextIterator(const QString &iname);    //! Select next iterator
+private:
+    QHash <QString, QUuid> selIterCur;
+    QHash <QString, QUuid> selIterPrev;
+    QHash <QString, QUuid> selIterStart;
+    QHash <QString, bool> selIterActive;
+
+
+////////////////////////////////////////////
 // Slide related
 ////////////////////////////////////////////
 public:
@@ -815,14 +848,14 @@ public:
     void deleteSlide (SlideItem *si);
     void deleteSlide (int n);
     void relinkSlide (SlideItem *si, int pos);
-    void moveSlideUp( int n=-1);
-    void moveSlideDown( int n=-1);
+    bool moveSlideDown( int n=-1);
+    bool moveSlideUp( int n=-1);
     SlideItem *findSlideID (uint id);
 public slots:
     void updateSlideSelection (QItemSelection ,QItemSelection);
 private:
     SlideModel* slideModel;
     bool blockSlideSelection;
-
 };
+
 #endif

@@ -14,6 +14,7 @@ OptionParser.new do |opts|
 end.parse!
 
 @testdir = options[:testdir]
+@testmap = ARGV[0]
 
 $tests_passed = 0
 $tests_failed = 0
@@ -28,6 +29,7 @@ def expect (comment, v_real, v_exp)
   if v_exp == v_real
     puts "    Ok: #{comment}"
     $tests_passed += 1
+    # waitkey
   else  
     puts "Failed: #{comment}. Expected '#{v_exp}', but got '#{v_real}'"
     $tests_failed += 1
@@ -51,7 +53,7 @@ def heading (s)
   puts "\n#{s}\n#{'-' * s.length}\n"
 end
 
-def init_map
+def init_map( vym )
   # FIXME-2 Missing: check or init default map 
   # Map Structure:
   # MapCenter 0
@@ -62,6 +64,10 @@ def init_map
   #       branch a3
   #   Main B
   # MapCenter 1
+
+  #n = vym.mapCount.to_i
+  #vym.loadMap (@testmap)
+  return vym.map ( 1 )
 end
 
 def summary
@@ -70,16 +76,15 @@ def summary
   puts "Tests failed: #{$tests_failed}"
 end
 
-vym_mgr=VymManager.new
+vym_mgr = VymManager.new
 #vym_mgr.show_running
 
-vym=vym_mgr.find(instance_name)
+vym = vym_mgr.find(instance_name)
 if !vym
   puts "Couldn't find instance name \"#{instance_name}\", please start one:"
   puts "vym -l -n \"#{instance-name}\" -t test/default.vym"
   exit
 end
-
 
 #######################
 @center_0="mc:0"
@@ -93,36 +98,56 @@ end
 @n_centers=2
 
 #######################
+def test_vym (vym)
+  heading "Mainwindow checks:"
+  version = "2.6.207"
+  expect "Version is #{version}", vym.version, version
+
+  expect "Loading map '#{@testmap}'", vym.loadMap(@testmap), true
+
+  vym.clearConsole
+end
+
+#######################
 def test_basics (vym)
   heading "Basic checks:"
-  init_map
-  vym.select @main_a
-  expect "select mainbranch A", vym.getSelectString, @main_a
-  expect "getHeadingPlainText", vym.getHeadingPlainText, "Main A"
-  expect "branchCount", vym.branchCount, 3
+  map = init_map( vym )
 
-  vym.selectLastBranch
-  expect "selectLastBranch", vym.getHeadingPlainText, "branch c"
+  title = "vym map used for testing"
+  expect "map title is '#{title}'", map.getMapTitle, title
+  author ="Uwe Drechsel"
+  expect "Author is '#{author}'", map.getMapAuthor, author
 
-  vym.selectParent
-  expect "selectParent", vym.getHeadingPlainText, "Main A"
+  map.select @main_a
+  expect "select mainbranch A", map.getSelectionString, @main_a
+  expect "getHeadingPlainText", map.getHeadingPlainText, "Main A"
+  expect "branchCount", map.branchCount, 3
 
-  expect "getDestPath: Got #{vym.getDestPath}", vym.getDestPath, @testdir + "/testmap.vym" 
-  expect "getFileDir:  Got #{vym.getFileDir}", vym.getFileDir, @testdir + "/" 
+  map.selectLastBranch
+  expect "selectLastBranch", map.getHeadingPlainText, "Main B"
+
+  map.selectFirstBranch
+  expect "selectFirstBranch", map.getHeadingPlainText, "Main A"
+
+  map.selectParent
+  expect "selectParent", map.getHeadingPlainText, "MapCenter 0"
+
+  expect "getDestPath: Got #{map.getDestPath}", map.getDestPath, @testdir + "/testmap.vym" 
+  expect "getFileDir:  Got #{map.getFileDir}", map.getFileDir, @testdir + "/" 
 end
 
 #######################
 def test_export (vym)
   heading "Export:"
-  init_map
+  map = init_map( vym )
 
   #HTML
-  mapname = "export-html"
-  htmlpath = "#{@testdir}/#{mapname}.html"
+  exportname = "export-html"
+  htmlpath = "#{@testdir}/#{exportname}.html"
   flagpath = "#{@testdir}/flags/flag-stopsign.png"
-  pngpath = "#{@testdir}/#{mapname}.png"
+  pngpath = "#{@testdir}/#{exportname}.png"
   csspath = "#{@testdir}/vym.css"
-  vym.exportHTML(@testdir,htmlpath)
+  map.exportMap("HTML", htmlpath, @testdir)
   expect "exportHTML: HTML file exists", File.exists?(htmlpath), true
   expect "exportHTML: HTML image exists", File.exists?(pngpath), true
   expect "exportHTML: HTML flags exists", File.exists?(flagpath), true
@@ -131,7 +156,7 @@ def test_export (vym)
   File.delete(flagpath)
   File.delete(pngpath)
   File.delete(csspath)
-  vym.exportLast
+  map.exportMap("Last")
   expect "exportLast: HTML #{htmlpath} file exists", File.exists?(htmlpath), true
   expect "exportLast: HTML image exists", File.exists?(pngpath), true
   expect "exportLast: HTML flags exists", File.exists?(flagpath), true
@@ -139,74 +164,82 @@ def test_export (vym)
 
   #AO
   filepath = "#{@testdir}/export-ao.txt"
-  vym.exportAO(filepath)
+  map.exportMap("AO", filepath)
   expect "exportAO:    AO file exists", File.exists?(filepath), true
   File.delete(filepath)
-  vym.exportLast
+  map.exportMap("Last")
   expect "exportLast:  AO file exists", File.exists?(filepath), true
 
   #ASCII
   filepath = "#{@testdir}/export-ascii.txt"
-  vym.exportASCII(filepath,false)
+  map.exportMap("ASCII", filepath, false)
   expect "exportASCII: ASCII file exists", File.exists?(filepath), true
   File.delete(filepath)
-  vym.exportLast
+  map.exportMap("Last")
   expect "exportLast:  ASCII file exists", File.exists?(filepath), true
 
   #CSV
   filepath = "#{@testdir}/export-csv.txt"
-  vym.exportCSV(filepath)
+  map.exportMap("CSV", filepath)
   expect "exportCSV:    CSV file exists", File.exists?(filepath), true
   File.delete(filepath)
-  vym.exportLast
+  map.exportMap("Last")
   expect "exportLast:  CSV file exists", File.exists?(filepath), true
 
   #Image
   filepath = "#{@testdir}/export-image.png"
-  vym.exportImage(filepath,"PNG")
+  map.exportMap("Image", filepath,"PNG")
   expect "exportImage: PNG file exists", File.exists?(filepath), true
   File.delete(filepath)
-  vym.exportLast
+  map.exportMap("Last")
   expect "exportLast:  PNG file exists", File.exists?(filepath), true
 
   #LaTeX
   filepath = "#{@testdir}/export-LaTeX.tex"
-  vym.exportLaTeX(filepath)
+  map.exportMap("LaTeX", filepath)
   expect "exportLaTeX:  LaTeX file exists", File.exists?(filepath), true
   File.delete(filepath)
-  vym.exportLast
+  map.exportMap("Last")
   expect "exportLast:   LaTeX file exists", File.exists?(filepath), true
+
+  #Markdown
+  filepath = "#{@testdir}/export-markdown.org"
+  map.exportMap("Markdown", filepath)
+  expect "exportMarkdown:  Markdown file exists", File.exists?(filepath), true
+  File.delete(filepath)
+  map.exportMap("Last")
+  expect "exportLast:     Markdown file exists", File.exists?(filepath), true
 
   #OrgMode
   filepath = "#{@testdir}/export-orgmode.org"
-  vym.exportOrgMode(filepath)
+  map.exportMap("OrgMode", filepath)
   expect "exportOrgMode:  OrgMode file exists", File.exists?(filepath), true
   File.delete(filepath)
-  vym.exportLast
+  map.exportMap("Last")
   expect "exportLast:     OrgMode file exists", File.exists?(filepath), true
 
   #PDF
   filepath = "#{@testdir}/export-pdf.pdf"
-  vym.exportPDF(filepath)
+  map.exportMap("PDF", filepath)
   expect "exportPDF:  PDF file exists", File.exists?(filepath), true
   File.delete(filepath)
-  vym.exportLast
+  map.exportMap("Last")
   expect "exportLast: PDF file exists", File.exists?(filepath), true
 
   #SVG
   filepath = "#{@testdir}/export-svg.svg"
-  vym.exportSVG(filepath)
+  map.exportMap("SVG", filepath)
   expect "exportSVG:  SVG file exists", File.exists?(filepath), true
   File.delete(filepath)
-  vym.exportLast
+  map.exportMap("Last")
   expect "exportLast: SVG file exists", File.exists?(filepath), true
 
   #XML
   filepath = "#{@testdir}/export-xml.xml"
-  vym.exportXML(@testdir, filepath)
+  map.exportMap("XML", filepath, @testdir)
   expect "exportXML: XML file exists", File.exists?(filepath), true
   File.delete(filepath)
-  vym.exportLast
+  map.exportMap("Last")
   expect "exportLast: XML file exists", File.exists?(filepath), true
 
   #OpenOffice Impress //FIXME-2
@@ -217,233 +250,236 @@ end
 #######################
 def test_extrainfo (vym)
   heading "Extra information:"
-  init_map
-  vym.setMapAuthor("Fra Erasmas")
-  expect "Set and get map author", vym.getMapAuthor, "Fra Erasmas"
-  vym.setMapComment("xy z")
-  expect "Set and get map comment", vym.getMapComment, "xy z"
-  vym.setMapTitle("vym rules!")
-  expect "Set and get map title", vym.getMapTitle, "vym rules!"
+  map = init_map( vym )
+  map.setMapAuthor("Fra Erasmas")
+  expect "Set and get map author", map.getMapAuthor, "Fra Erasmas"
+  map.setMapComment("xy z")
+  expect "Set and get map comment", map.getMapComment, "xy z"
+  map.setMapTitle("vym rules!")
+  expect "Set and get map title", map.getMapTitle, "vym rules!"
 end
 
 #######################
 def test_adding_branches (vym)
   heading "Adding branches:"
-  init_map
-  vym.select @main_a
-  n=vym.branchCount
-  vym.addBranch()
-  expect( "addBranch", vym.branchCount, n+1 )
+  map = init_map( vym )
+  map.select @main_a
+  n = map.branchCount.to_i
+  map.addBranch()
+  expect( "addBranch", map.branchCount.to_i, n + 1 )
 
-  vym.selectLatestAdded
-  expect "selectLatestAdded", vym.getSelectString, @main_a+",bo:3"
+  map.selectLatestAdded
+  expect "selectLatestAdded", map.getSelectionString, @main_a + ",bo:3"
 
-  vym.undo
-  expect( "Undo: addBranch", vym.branchCount, n )
+  map.undo
+  expect( "Undo: addBranch", map.branchCount.to_i, n )
 
-  init_map
-  vym.select @main_a
-  n=vym.branchCount
-  vym.select @branch_a
-  vym.addBranch(-3)
-  vym.addBranch(-1)
-  vym.select @main_a
-  expect "addBranchAbove/Below", vym.branchCount, n+2
+  map = init_map( vym )
+  map.select @main_a
+  n = map.branchCount.to_i
+  map.select @branch_a
+  map.addBranch( -3 )
+  map.addBranch( -1 )
+  map.select @main_a
+  expect "addBranchAbove/Below", map.branchCount.to_i, n + 2
 
-  vym.undo
-  vym.undo
-  expect "Undo: addBranchAbove/Below", vym.branchCount, n
+  map.undo
+  map.undo
+  expect "Undo: addBranchAbove/Below", map.branchCount.to_i, n
 
-  init_map
-  vym.select @branch_a
-  vym.addBranchBefore
-  vym.select @main_a
-  expect "addBranchBefore: check branchcount",  vym.branchCount, n
-  vym.select @branch_a
-  expect "addBranchBefore: check heading", vym.getHeadingPlainText, ""
-  vym.undo
-  vym.select @main_a
-  expect "Undo: addBranchBefore", vym.branchCount, n  
+  map = init_map( vym )
+  map.select @branch_a
+  map.addBranchBefore
+  map.select @main_a
+  expect "addBranchBefore: check branchcount",  map.branchCount.to_i, n
+  map.select @branch_a
+  expect "addBranchBefore: check heading", map.getHeadingPlainText, ""
+
+  # Undo twice: addBranchNew and relinkTo
+  map.undo
+  map.undo
+  map.select @main_a
+  expect "Undo: addBranchBefore", map.branchCount.to_i, n  
 end
 
 #######################
 def test_adding_maps (vym)
   heading "Adding maps"
-  init_map
-  vym.select @branch_a
-  n=vym.branchCount
-  vym.addMapReplace "test/default.vym"
-  vym.select @main_a
-  expect "addMapReplace: check branch count in #{@main_a}", vym.branchCount, n + @n_centers -1
-  vym.select @branch_a
-  expect "addMapReplace: check if #{@branch_a} is new", vym.branchCount, 2
+  map = init_map( vym )
+  map.select @branch_a
+  n=map.branchCount.to_i
+  map.addMapReplace "test/default.vym"
+  map.select @main_a
+  expect "addMapReplace: check branch count in #{@main_a}", map.branchCount.to_i, n + @n_centers -1
+  map.select @branch_a
+  expect "addMapReplace: check if #{@branch_a} is new", map.branchCount.to_i, 2
   
-  vym.undo
-  vym.select @main_a
-  expect "Undo: check branch count in #{@main_a}", vym.branchCount, 3
-  vym.select @branch_a
-  expect "Undo: check if #{@branch_a} is back", vym.branchCount, 3 
+  map.undo
+  map.select @main_a
+  expect "Undo: check branch count in #{@main_a}", map.branchCount.to_i, 3
+  map.select @branch_a
+  expect "Undo: check if #{@branch_a} is back", map.branchCount.to_i, 3 
   
-  init_map
-  vym.select @main_a
-  vym.addMapInsert "test/default.vym",1
-  vym.select @main_a
-  expect "addMapInsert: branch count",  vym.branchCount, n+2 
-  vym.select @main_a + ",bo:1"
-  expect "addMapInsert: new heading", vym.getHeadingPlainText, "MapCenter 0"
+  map = init_map( vym )
+  map.select @main_a
+  map.addMapInsert "test/default.vym", 1
+  map.select @main_a
+  expect "addMapInsert: branch count",  map.branchCount.to_i, n + 2 
+  map.select @main_a + ",bo:1"
+  expect "addMapInsert: new heading", map.getHeadingPlainText, "MapCenter 0"
   
-  vym.undo
-  vym.select @main_a
-  expect "Undo: check branch count in #{@main_a}", vym.branchCount, 3 
-  vym.select @branch_b
-  expect "Undo: check heading of  #{@branch_b}",  vym.getHeadingPlainText, "branch b"
+  map.undo
+  map.select @main_a
+  expect "Undo: check branch count in #{@main_a}", map.branchCount.to_i, 3 
+  map.select @branch_b
+  expect "Undo: check heading of  #{@branch_b}",  map.getHeadingPlainText, "branch b"
 end
 
 #######################
 def test_scrolling (vym)
   heading "Scrolling and unscrolling"
-  init_map
-  vym.select @main_a
-  vym.toggleScroll
-  expect "toggleScroll", vym.isScrolled, true
-  vym.undo
-  expect "undo toggleScroll", vym.isScrolled, false
-  vym.scroll
-  expect "scroll", vym.isScrolled, true
-  vym.unscroll
-  expect "unscroll", vym.isScrolled, false
+  map = init_map( vym )
+  map.select @main_a
+  map.toggleScroll
+  expect "toggleScroll", map.isScrolled, true
+  map.undo
+  expect "undo toggleScroll", map.isScrolled, false
+  map.scroll
+  expect "scroll", map.isScrolled, true
+  map.unscroll
+  expect "unscroll", map.isScrolled, false
 
-  init_map
-  vym.scroll
-  vym.select @branch_a
-  vym.scroll
-  vym.select @main_a
-  vym.unscrollChildren
-  vym.select @branch_a
-  expect "unscrollChildren", vym.isScrolled, false
-  vym.undo
-  expect "undo unscrollChildren", vym.isScrolled, true
-  vym.unscroll
-  vym.select @branch_a
-  vym.unscroll
+  map = init_map( vym )
+  map.scroll
+  map.select @branch_a
+  map.scroll
+  map.select @main_a
+  map.unscrollChildren
+  map.select @branch_a
+  expect "unscrollChildren", map.isScrolled, false
+  map.undo
+  expect "undo unscrollChildren", map.isScrolled, true
+  map.unscroll
+  map.select @branch_a
+  map.unscroll
 end
 
 #######################
 def test_moving_parts (vym)
   heading "Moving parts"
-  init_map
-  vym.select @branch_a
-  vym.moveDown
-  vym.select @branch_a
-  expect "Moving down", vym.getHeadingPlainText, "branch b"
-  vym.undo
-  vym.select @branch_a
-  expect "Undo Moving down", vym.getHeadingPlainText, "branch a"
+  map = init_map( vym )
+  map.select @branch_a
+  map.moveDown
+  map.select @branch_a
+  expect "Moving down", map.getHeadingPlainText, "branch b"
+  map.undo
+  map.select @branch_a
+  expect "Undo Moving down", map.getHeadingPlainText, "branch a"
   
-  init_map
-  vym.select @branch_b
-  vym.moveUp
-  vym.select @branch_a
-  expect "Moving up", vym.getHeadingPlainText, "branch b"
-  vym.undo
-  vym.select @branch_b
-  expect "Undo Moving up", vym.getHeadingPlainText, "branch b"
+  map = init_map( vym )
+  map.select @branch_b
+  map.moveUp
+  map.select @branch_a
+  expect "Moving up", map.getHeadingPlainText, "branch b"
+  map.undo
+  map.select @branch_b
+  expect "Undo Moving up", map.getHeadingPlainText, "branch b"
   
-  init_map
-  vym.select @main_b
-  n=vym.branchCount
-  vym.select @branch_a
-  vym.relinkTo @main_b,0,0,0
-  vym.select @main_b
-  expect "RelinkTo #{@main_b}: branchCount increased there",  vym.branchCount, n+1
+  map = init_map( vym )
+  map.select @main_b
+  n=map.branchCount.to_i
+  map.select @branch_a
+  map.relinkTo @main_b,0,0,0
+  map.select @main_b
+  expect "RelinkTo #{@main_b}: branchCount increased there",  map.branchCount.to_i, n+1
 
-  vym.undo
-  vym.select @branch_b
-  expect "Undo: RelinkTo #{@main_b}: branchCount decreased there", vym.branchCount, n
+  map.undo
+  map.select @branch_b
+  expect "Undo: RelinkTo #{@main_b}: branchCount decreased there", map.branchCount.to_i, n
   
-  init_map
-  vym.select @main_a
-  err = vym.relinkTo @branch_a,0,0,0
+  map = init_map( vym )
+  map.select @main_a
+  err = map.relinkTo @branch_a,0,0,0
   expect_error "RelinkTo myself fails.", err
 
-  vym
-  init_map
-  vym.select @branch_a
-  n=vym.branchCount
-  vym.select @main_b
-  vym.relinkTo @branch_a, 1, 0, 0
-  vym.select @branch_a
-  expect "RelinkTo #{@branch_a}, pos 1: branchCount increased there",  vym.branchCount, n+1
-  vym.select "#{@branch_a},bo:1"
-  expect "RelinkTo #{@branch_a}, pos 1: Mainbranch really moved", vym.getHeadingPlainText, "Main B"
-  vym.undo
-  vym.select @center_0
-  expect "Undo RelinkTo pos 1: branchCount of center", vym.branchCount, 2
+  map
+  map = init_map( vym )
+  map.select @branch_a
+  n=map.branchCount.to_i
+  map.select @main_b
+  map.relinkTo @branch_a, 1, 0, 0
+  map.select @branch_a
+  expect "RelinkTo #{@branch_a}, pos 1: branchCount increased there",  map.branchCount.to_i, n+1
+  map.select "#{@branch_a},bo:1"
+  expect "RelinkTo #{@branch_a}, pos 1: Mainbranch really moved", map.getHeadingPlainText, "Main B"
+  map.undo
+  map.select @center_0
+  expect "Undo RelinkTo pos 1: branchCount of center", map.branchCount.to_i, 2
   # FIXME-2 still has wrong position, check position
-  vym.select @main_b
-  vym.moveRel 100,100
+  map.select @main_b
+  map.moveRel 100,100
 end
 
 #######################
 def test_modify_branches (vym)
   heading "Modifying branches"
-  init_map
-  vym.select @branch_a
-  vym.setHeadingPlainText "Changed!"
-  expect "setHeadingPlainText", vym.getHeadingPlainText, "Changed!"
-  vym.undo
-  expect "Undo: setHeadingPlainText", vym.getHeadingPlainText, "branch a"
-  vym.redo
-  expect "redo: setHeadingPlainText", vym.getHeadingPlainText, "Changed!" 
-  vym.undo
+  map = init_map( vym )
+  map.select @branch_a
+  map.setHeadingPlainText "Changed!"
+  expect "setHeadingPlainText", map.getHeadingPlainText, "Changed!"
+  map.undo
+  expect "Undo: setHeadingPlainText", map.getHeadingPlainText, "branch a"
+  map.redo
+  expect "redo: setHeadingPlainText", map.getHeadingPlainText, "Changed!" 
+  map.undo
 end  
   
 #######################
 def test_flags (vym)
   heading "Flags"
-  init_map
-  vym.select @main_a
+  map = init_map( vym ) 
+  map.select @main_a
   
-  def set_flags (v,a)
-    a.each do |f|
-    v.setFlag f
-    expect "Flag set: #{f}", v.hasActiveFlag(f), true
+  def set_flags (map, flags)
+    flags.each do |f|
+      map.setFlag( f )
+      expect "Flag set: #{f}", map.hasActiveFlag( f ), true
     end
   end
   
-  def unset_flags (v,a)
-    a.each do |f|
-    v.unsetFlag f
-    expect "Flag unset: #{f}", v.hasActiveFlag(f), false
+  def unset_flags (map, flags)
+    flags.each do |f|
+      map.unsetFlag( f )
+      expect "Flag unset: #{f}", map.hasActiveFlag( f ), false
     end
   end
   
   # Group standard-mark
-  set_flags vym,[ "exclamationmark","questionmark"]
+  set_flags( map, [ "exclamationmark","questionmark"] )
   
   # Group standard-status
-  set_flags vym, [ "hook-green", 
+  set_flags( map, [ "hook-green", 
     "wip", 
     "cross-red", 
-    "stopsign" ]
+    "stopsign" ] )
   
   # Group standard-smiley
   smileys = [ "smiley-good",
       "smiley-sad",
       "smiley-omb" ]
-  set_flags vym, smileys
+  set_flags( map, smileys )
   
   # Group standard-arrow
-  set_flags vym, [ "arrow-up", 
+  set_flags( map, [ "arrow-up", 
     "arrow-down", 
     "2arrow-up", 
-    "2arrow-down" ]
+    "2arrow-down" ] )
   
   # Group standard-thumb
-  set_flags vym, [ "thumb-up", "thumb-down" ]
+  set_flags( map, [ "thumb-up", "thumb-down" ] )
   
   # Without group
-  set_flags vym, [ "clock",
+  set_flags( map, [ "clock",
     "phone",
     "lamp",
     "rose",
@@ -451,208 +487,268 @@ def test_flags (vym)
     "present",
     "flash",
     "info",
-    "lifebelt" ]
+    "lifebelt" ] )
   
-  unset_flags vym, smileys
+  unset_flags( map, smileys )
   
-  vym.clearFlags
-  expect "clearFlags cleared exclamationmark", vym.hasActiveFlag( "exclamationmark" ), false
-  expect "clearFlags cleared smiley-good", vym.hasActiveFlag( "smiley-good" ), false
+  map.clearFlags
+  expect "clearFlags cleared exclamationmark", map.hasActiveFlag( "exclamationmark" ), false
+  expect "clearFlags cleared smiley-good", map.hasActiveFlag( "smiley-good" ), false
   
-  vym.toggleFlag "lifebelt"
-  expect "toggleFlag: flag activated", vym.hasActiveFlag("lifebelt"),true
-  vym.toggleFlag "lifebelt"
-  expect "toggleFlag: flag deactivated", vym.hasActiveFlag("lifebelt"),false
+  map.toggleFlag "lifebelt"
+  expect "toggleFlag: flag activated", map.hasActiveFlag("lifebelt"), true
+  map.toggleFlag "lifebelt"
+  expect "toggleFlag: flag deactivated", map.hasActiveFlag("lifebelt"), false
 end
 
 #######################
 def test_delete_parts (vym)
   heading "Deleting parts"
-  init_map
-  vym.select @main_a
-  n=vym.branchCount
-  vym.select @branch_a
-  m=vym.branchCount
-  vym.delete
-  vym.select @main_a
-  expect "Delete branch: branchcount",  vym.branchCount, n-1
-  vym.undo
-  vym.select @main_a
-  expect "Undo Delete branch: branchcount parent", vym.branchCount, n
-  vym.select @branch_a
-  expect "Undo Delete branch: branchcount restored branch", vym.branchCount, m
+  map = init_map( vym ) 
+  map.select @main_a
+  n=map.branchCount.to_i
+  map.select @branch_a
+  m=map.branchCount.to_i
+  map.remove
+  map.select @main_a
+  expect "Remove branch: branchcount",  map.branchCount.to_i, n - 1
+  map.undo
+  map.select @main_a
+  expect "Undo Remove branch: branchcount parent", map.branchCount.to_i, n
+  map.select @branch_a
+  expect "Undo Remove branch: branchcount restored branch", map.branchCount.to_i, m
   
-  init_map
-  vym.select @branch_a
-  n=vym.branchCount
-  vym.deleteChildren
-  vym.select @branch_a
-  expect "deleteChildren: branchcount", vym.branchCount, 0
-  vym.undo
-  vym.select @branch_a
-  expect "Undo: deleteChildren: branchcount", vym.branchCount, n
+  map = init_map( vym )
+  map.select @branch_a
+  n = map.branchCount.to_i
+  map.removeChildren
+  map.select @branch_a
+  expect "removeChildren: branchcount", map.branchCount.to_i, 0
+  map.undo
+  map.select @branch_a
+  expect "Undo: removeChildren: branchcount", map.branchCount.to_i, n
   
-  init_map
-  vym.select @main_a
-  n=vym.branchCount
-  vym.select @branch_a
-  m=vym.branchCount
-  vym.deleteKeepChildren
-  vym.select @main_a
-  expect "deleteKeepChildren: branchcount", vym.branchCount, n+m-1
-  vym.undo
-  vym.select @main_a
-  expect "Undo: deleteKeepChildren: branchcount of parent", vym.branchCount, n
-  vym.select @branch_a
-  expect "Undo: deleteKeepChildren: branchcount of branch", vym.branchCount, m
+  map = init_map( vym )
+  map.select @main_a
+  n=map.branchCount.to_i
+  map.select @branch_a
+  m=map.branchCount.to_i
+  map.removeKeepChildren
+  map.select @main_a
+  expect "removeKeepChildren: branchcount", map.branchCount.to_i, n + m - 1
+  map.undo
+  map.select @main_a
+  expect "Undo: removeKeepChildren: branchcount of parent", map.branchCount.to_i, n
+  map.select @branch_a
+  expect "Undo: removeKeepChildren: branchcount of branch", map.branchCount.to_i, m
 
-  init_map
-  n = vym.centerCount
-  vym.select @center_1
-  vym.delete
-  expect "Delete mapCenter: number of centers decreased", vym.centerCount, n-1
-  vym.undo
-  expect "Undo Delete mapCenter: number of centers increased", vym.centerCount, n
+  map = init_map( vym )
+  n = map.centerCount.to_i
+  map.select @center_1
+  map.remove
+  expect "remove mapCenter: number of centers decreased", map.centerCount.to_i, n - 1
+  map.undo
+  expect "Undo remove mapCenter: number of centers increased", map.centerCount.to_i, n
 end  
 
 #######################
 def test_copy_paste (vym)
   heading "Copy, cut & Paste"
-  init_map
-  vym.select @main_a
-  n=vym.branchCount
+  map = init_map( vym )
+  map.select @main_a
+  n = map.branchCount.to_i
   
-  vym.copy
-  vym.paste
-  vym.selectLastBranch
-  s=vym.getSelectString
-  expect "Normal paste of branch, check heading of #{s}", vym.getHeadingPlainText, "Main A"
+  map.copy
+  map.paste
+  map.selectLatestAdded     #FIXME-0 not set for ImportAdd, which is used by paste
+  s = map.getSelectionString
+  expect "Normal paste of branch, check heading of #{s}", map.getHeadingPlainText, "Main A"
   
-  vym.undo
-  vym.select @main_a
-  expect "Undo paste: branchCount of #{@main_a}", vym.branchCount, n
+  map.undo
+  map.select @main_a
+  expect "Undo paste: branchCount of #{@main_a}", map.branchCount.to_i, n
   
-  vym.redo
-  vym.select s
-  expect "redo paste: check heading", vym.getHeadingPlainText, "Main A"
+  map.redo
+  map.select s
+  expect "redo paste: check heading", map.getHeadingPlainText, "Main A"
   
-  vym.cut
-  vym.select @main_a
-  expect "cut: branchCount of #{@main_a}", vym.branchCount, n
-  vym.paste
-  vym.selectLastBranch
-  s=vym.getSelectString
-  expect "Normal paste of branch, check heading of #{s}", vym.getHeadingPlainText, "Main A"
-  vym.cut 
+  map.select @branch_a
+  map.cut
+  map.select @main_a
+  expect "cut: branchCount of #{@main_a}", map.branchCount.to_i, n
+
+  map.paste
+  map.selectLastChildBranch
+  s = map.getSelectionString
+  expect "Normal paste of branch, check heading of #{s}", map.getHeadingPlainText, "branch a"
+  map.cut 
 end 
 
 #######################
 def test_references (vym)
   heading "References"
-  init_map
-  vym.select @main_a
-  vym.setURL "www.insilmaril.de"
-  expect "setURL:", vym.getURL, "www.insilmaril.de"
-  vym.undo
-  expect "undo setURL", vym.getURL, ""
-  vym.redo
-  expect "redo setURL", vym.getURL, "www.insilmaril.de"
-  vym.setURL ""
-  expect "setURL: unset URL with empty string", vym.getURL, ""
+  map = init_map( vym )
+  map.select @main_a
+  url = "www.insilmaril.de"
+  map.setURL url
+  expect "setURL to '#{url}'", map.getURL, url
+
+  map.undo
+  expect "undo setURL", map.getURL, ""
+  map.redo
+  expect "redo setURL", map.getURL, url
+  map.setURL ""
+  expect "setURL: unset URL with empty string", map.getURL, ""
   
   vl="default.vym"
-  vym.setVymLink vl
-  s=vym.getVymLink
-  expect "setVymLink returns absolute path", vym.getVymLink, vym.getFileDir + vl
-  vym.undo
-  expect "undo: setVymLink", vym.getVymLink, ""
-  vym.redo
-  expect "redo: setVymLink", vym.getVymLink, s
-  vym.undo
+  map.setVymLink vl
+  s=map.getVymLink
+  expect "setVymLink returns absolute path", map.getVymLink, map.getFileDir + vl
+  map.undo
+  expect "undo: setVymLink", map.getVymLink, ""
+  map.redo
+  expect "redo: setVymLink", map.getVymLink, s
+  map.undo
 end
 
 #######################
 def test_history (vym)
   heading "History"
-  init_map
-  vym.select @main_a
-  vym.setHeadingPlainText "A"
-  vym.setHeadingPlainText "B"
-  vym.setHeadingPlainText "C"
-  vym.undo
-  vym.undo
-  vym.undo
-  expect "Undo 3 times", vym.getHeadingPlainText, "Main A"
-  vym.redo
-  expect "Redo once", vym.getHeadingPlainText, "A"
-  vym.copy
-  vym.redo
-  expect "Redo once more", vym.getHeadingPlainText, "B"
-  vym.redo
-  expect "Redo yet again", vym.getHeadingPlainText, "C"
-  vym.setHeadingPlainText "Main A"
-  vym.paste
-  vym.selectLastBranch
-  expect "Paste from the past", vym.getHeadingPlainText, "A"
-  vym.delete
+  map = init_map( vym )
+  map.select @main_a
+  map.setHeadingPlainText "A"
+  map.setHeadingPlainText "B"
+  map.setHeadingPlainText "C"
+  map.undo
+  map.undo
+  map.undo
+  expect "Undo 3 times", map.getHeadingPlainText, "Main A"
+  map.redo
+  expect "Redo once", map.getHeadingPlainText, "A"
+  map.copy
+  map.redo
+  expect "Redo once more", map.getHeadingPlainText, "B"
+  map.redo
+  expect "Redo yet again", map.getHeadingPlainText, "C"
+  map.setHeadingPlainText "Main A"
+  map.paste
+  map.selectLastChildBranch
+  expect "Paste from the past", map.getHeadingPlainText, "A"
+  map.remove
 end  
 
 #######################
 def test_xlinks (vym)
   heading "XLinks:"
-  init_map
-  vym.addXLink("mc:0,bo:0","mc:0,bo:1",2,"#ff0000","Qt::DashDotLine")
-  vym.selectLatestAdded
-  expect "Default color of XLink", vym.getXLinkColor, "#ff0000"
-  expect "Default width of XLink", vym.getXLinkWidth, 2
-  expect "Default style of XLink", vym.getXLinkPenStyle, "Qt::DashDotLine"
-  expect "Default style of XLink begin", vym.getXLinkStyleBegin, "HeadFull"
-  expect "Default style of XLink end",   vym.getXLinkStyleEnd, "HeadFull"
+  map = init_map( vym )
+  map.addXLink("mc:0,bo:0","mc:0,bo:1",2,"#ff0000","Qt::DashDotLine")
+  map.selectLatestAdded
+  expect "Default color of XLink", map.getXLinkColor, "#ff0000"
+  expect "Default width of XLink", map.getXLinkWidth.to_i, 2
+  expect "Default style of XLink", map.getXLinkPenStyle, "Qt::DashDotLine"
+  expect "Default style of XLink begin", map.getXLinkStyleBegin, "HeadFull"
+  expect "Default style of XLink end",   map.getXLinkStyleEnd, "HeadFull"
 
-  vym.setXLinkWidth(3)
-  expect "New width of XLink", vym.getXLinkWidth, 3
-  vym.undo
-  expect "Undo width of XLink", vym.getXLinkWidth, 2
+  map.setXLinkWidth(3)
+  expect "New width of XLink", map.getXLinkWidth.to_i, 3
+  map.undo
+  expect "Undo width of XLink", map.getXLinkWidth.to_i, 2
 
-  vym.setXLinkColor("#00ff00")
-  expect "New color of XLink", vym.getXLinkColor, "#00ff00"
-  vym.undo
-  expect "Undo color of XLink", vym.getXLinkColor, "#ff0000"
+  map.setXLinkColor("#00ff00")
+  expect "New color of XLink", map.getXLinkColor, "#00ff00"
+  map.undo
+  expect "Undo color of XLink", map.getXLinkColor, "#ff0000"
 
-  vym.setXLinkLineStyle("Qt::SolidLine")
-  expect "New style of XLink", vym.getXLinkPenStyle, "Qt::SolidLine"
-  vym.undo
-  expect "Undo style of XLink", vym.getXLinkPenStyle, "Qt::DashDotLine"
+  map.setXLinkStyle("Qt::SolidLine")
+  expect "New style of XLink", map.getXLinkPenStyle, "Qt::SolidLine"
+  map.undo
+  expect "Undo style of XLink", map.getXLinkPenStyle, "Qt::DashDotLine"
 
-  vym.setXLinkStyleBegin("None")
-  expect "New style of XLink begin", vym.getXLinkStyleBegin, "None"
-  vym.undo
-  expect "Undo style of XLink begin", vym.getXLinkStyleBegin, "HeadFull"
+  map.setXLinkStyleBegin("None")
+  expect "New style of XLink begin", map.getXLinkStyleBegin, "None"
+  map.undo
+  expect "Undo style of XLink begin", map.getXLinkStyleBegin, "HeadFull"
 
-  vym.setXLinkStyleEnd("None")
-  expect "New style of XLink end", vym.getXLinkStyleEnd, "None"
-  vym.undo
-  expect "Undo style of XLink end", vym.getXLinkStyleEnd, "HeadFull"
+  map.setXLinkStyleEnd("None")
+  expect "New style of XLink end", map.getXLinkStyleEnd, "None"
+  map.undo
+  expect "Undo style of XLink end", map.getXLinkStyleEnd, "HeadFull"
 
-  vym.delete
+  map.remove
 end
 
 #######################
 def test_tasks (vym)
   heading "Tasks:"
-  init_map
-  vym.select @main_a
-  expect "Branch has no task before test", vym.hasTask, false
-  vym.toggleTask
-  expect "Toggle task", vym.hasTask, true
-  expect "Setting sleep days to 10", vym.setTaskSleep(10), true
-  expect "Task sleep when setting to integer", vym.getTaskSleepDays, 10
+  map = init_map( vym )
+  map.select @main_a
+  expect "Branch has no task before test", map.hasTask, false
+  map.toggleTask
+  expect "Toggle task", map.hasTask, true
 
   date_today = DateTime.now
-  date_later = date_today + 123
-  date_s = date_later.strftime("%Y-%m-%d") 
-  vym.setTaskSleep(date_s)
-  expect "Task sleep when setting to ISO date (#{date_s})", vym.getTaskSleepDays, 123
+  delta_days = 123
+  date_later = date_today + delta_days
+  date_later_iso = date_later.strftime("%Y-%m-%dT%H:%M:%S") 
+
+  # Input: number of days
+  date_new = delta_days
+  expect "Set task sleep to number of days '#{date_new}' accepts input", map.setTaskSleep(date_new),  true
+  expect "Set task sleep to number of days '#{date_new}' has correct sleep value '#{delta_days}' days", map.getTaskSleepDays.to_i, delta_days
+
+  # Input: number of seconds
+  date_new = "10s"
+  expect "Set task sleep to number of seconds '#{date_new}' accepts input", map.setTaskSleep(date_new),  true
+
+  # Input: number of hours
+  date_new = "10h"
+  expect "Set task sleep to number of hours '#{date_new}' accepts input", map.setTaskSleep(date_new),  true
+  
+  # Input: Date
+  date_new = date_later.strftime("%Y-%m-%d") 
+  expect "Set task sleep to ISO Date '#{date_new}' accepts input", map.setTaskSleep(date_new), true
+  expect "Set task sleep to ISO Date '#{date_new}' has correct sleep value '#{delta_days}' days", map.getTaskSleepDays.to_i, delta_days
+
+  date_new = date_later.strftime("%d.%m.") 
+  expect "Set task sleep to German short form '#{date_new}' accepts input '#{date_new}'", map.setTaskSleep(date_new), true
+  expect "Set task sleep to German short form '#{date_new}' has correct sleep value (days)", map.getTaskSleepDays.to_i, delta_days
+
+  date_new = date_later.strftime("%d.%m.%Y") 
+  expect "Set task sleep to German long form '#{date_new}' accepts input '#{date_new}'", map.setTaskSleep(date_new), true
+  expect "Set task sleep to German long form '#{date_new}' has correct sleep value (days)", map.getTaskSleepDays.to_i, delta_days
+
+  # Input: Invalid strings
+  date_new = "invalidDate"
+  expect "Set task sleep to '#{date_new}' should fail", map.setTaskSleep(date_new), false
+
+  date_new = date_later.strftime("%d %m.%Y") 
+  expect "Set task sleep to '#{date_new}' should fail", map.setTaskSleep(date_new), false
+
+  # DateTime
+  date_new = date_later_iso
+  expect "Set task sleep to ISO DateTime '#{date_new}' accepts input", map.setTaskSleep(date_new), true
+  expect "Set task sleep to ISO DateTime '#{date_new}' returns correct sleep value '#{date_later_iso}'", map.getTaskSleep, date_later_iso
+  
+  # Time only
+  date_later = date_today
+
+  date_new = "12:34"
+  date_later_iso = date_today.strftime("%Y-%m-%dT12:34:00") 
+  expect "Set task sleep to time '#{date_new}' accepts input", map.setTaskSleep(date_new), true
+  expect "Set task sleep to time '#{date_new}' returns correct sleep value '#{date_later_iso}'", 
+    map.getTaskSleep, date_later_iso
+  
+  date_new = "2:4"
+  date_later_iso = date_today.strftime("%Y-%m-%dT02:04:00") 
+  expect "Set task sleep to time '#{date_new}' accepts input", map.setTaskSleep(date_new), true
+  expect "Set task sleep to time '#{date_new}' returns correct sleep value '#{date_later_iso}'", 
+    map.getTaskSleep, date_later_iso
+
+  date_new = "03:05"
+  date_later_iso = date_today.strftime("%Y-%m-%dT03:05:00") 
+  expect "Set task sleep to time '#{date_new}' accepts input", map.setTaskSleep(date_new), true
+  expect "Set task sleep to time '#{date_new}' returns correct sleep value '#{date_later_iso}'", 
+    map.getTaskSleep, date_later_iso
 end
 
 ######################
@@ -660,102 +756,102 @@ def test_notes (vym)
   heading "Notes:"
 
   # Plaintext notes basic actions 
-  init_map
-  vym.select @main_a
+  map = init_map( vym )
+  map.select @main_a
   note_plain = "vymnote plaintext"
-  vym.setNotePlainText(note_plain)
-  expect "Set note to \"#{note_plain}\". Still plaintext?", vym.hasRichTextNote, false
-  vym.select @center_0
-  vym.select @main_a
-  expect "After reselect, is note plaintext?", vym.hasRichTextNote, false
+  map.setNotePlainText(note_plain)
+  expect "Set note to \"#{note_plain}\". Still plaintext?", map.hasRichTextNote, false
+  map.select @center_0
+  map.select @main_a
+  expect "After reselect, is note plaintext?", map.hasRichTextNote, false
 
   note_plain = "<b>plaintext, not bold!</b>"
-  vym.setNotePlainText(note_plain)
-  expect "Set note to plaintext containing html tags. Still plaintext", vym.hasRichTextNote, false
-  note_new = vym.getNotePlainText
-  vym.select @center_0
-  vym.select @main_a
-  expect "After reselect, is note text unchanged?", vym.getNotePlainText, note_new
-  expect "After reselect, is note plaintext?", vym.hasRichTextNote, false
+  map.setNotePlainText(note_plain)
+  expect "Set note to plaintext containing html tags. Still plaintext", map.hasRichTextNote, false
+  note_new = map.getNotePlainText
+  map.select @center_0
+  map.select @main_a
+  expect "After reselect, is note text unchanged?", map.getNotePlainText, note_new
+  expect "After reselect, is note plaintext?", map.hasRichTextNote, false
 
   # Plaintext notes copy & paste
-  vym.copy
-  vym.paste
-  vym.selectLastBranch
-  s=vym.getSelectString
-  expect "After copy& paste: New note unchanged?", vym.getNotePlainText, note_plain
-  expect "After copy& paste: New note Still plaintext?", vym.hasRichTextNote, false
-  vym.delete
+  map.copy
+  map.paste
+  map.selectLastChildBranch
+  s=map.getSelectionString
+  expect "After copy& paste: New note unchanged?", map.getNotePlainText, note_plain
+  expect "After copy& paste: New note Still plaintext?", map.hasRichTextNote, false
+  map.remove
 
   # Plaintext notes undo & redo
-  vym.select @main_a
-  vym.setNotePlainText('Foobar')
-  vym.undo
-  expect "Undo after setNotePlainText restores previous note", vym.getNotePlainText, note_plain
-  vym.redo
-  vym.select @main_a
-  expect "Redo restores previous note", vym.getNotePlainText, 'Foobar'
+  map.select @main_a
+  map.setNotePlainText('Foobar')
+  map.undo
+  expect "Undo after setNotePlainText restores previous note", map.getNotePlainText, note_plain
+  map.redo
+  map.select @main_a
+  expect "Redo restores previous note", map.getNotePlainText, 'Foobar'
 
   # Plaintext notes load & save
   note_org = IO.read('test/note-plain.txt')
-  vym.loadNote("test/note-plain.txt") 
-  expect "Load plain text note from file. Still plaintext?", vym.hasRichTextNote, false
-  expect "Note contains 'not bold'", vym.getNotePlainText.include?("not bold"), true
+  map.loadNote("test/note-plain.txt") 
+  expect "Load plain text note from file. Still plaintext?", map.hasRichTextNote, false
+  expect "Note contains 'not bold'", map.getNotePlainText.include?("not bold"), true
   filepath = "#{@testdir}/save-note.txt"
-  vym.saveNote(filepath)
+  map.saveNote(filepath)
   expect "Save note to file. Check if it contains 'textMode=\"plainText\"'", IO.read(filepath).include?("textMode=\"plainText\""), true
   expect "Save note to file. Check if it contains 'not bold'", IO.read(filepath).include?("not bold"), true
   expect "Save note to file. Check if it contains '<b>' element", IO.read(filepath).include?("<b>"), true
   expect "Save note to file. Check if it contains '<![CDATA['", IO.read(filepath).include?("<![CDATA["), true
   
   # Delete note
-  vym.setNotePlainText("")
-  expect "setNotePlainText(\"\") deletes note", vym.hasNote, false
+  map.setNotePlainText("")
+  expect "setNotePlainText(\"\") deletes note", map.hasNote, false
   
   # RichText basic actions
-  init_map
-  vym.select @main_a
-  rt_note = '<vymnote  textMode="richText"><![CDATA[<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd"> <html><head><meta name="qrichtext" content="1" /><style type="text/css"> p, li { white-space: pre-wrap; } </style></head><body style=" font-family:\'Arial\'; font-size:12pt; font-weight:400; font-style:normal;"> <p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-family:\'DejaVu Sans Mono\'; color:#000000;">Rich Text note with <b>not bold text</b></span></p></body></html>]]></vymnote>'
-  vym.parseVymText(rt_note)
-  expect "parseVymText of richText note produces note", vym.hasNote, true
-  expect "parseVymText of richText note produces richText note", vym.hasRichTextNote, true
-  vym.select @center_0
-  vym.select @main_a
-  expect "After reselect, is note RichText?", vym.hasRichTextNote, true
+  map = init_map( vym )
+  map.select @main_a
+  rt_note = '<vymnote  textMode="richText"><![CDATA[<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd"> <html><head><meta name="qrichtext" content="1" /><style type="text/css"> p, li { white-space: pre-wrap; } </style></head><body style=" font-family:"Arial"; font-size:12pt; font-weight:400; font-style:normal;"> <p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-family:"DejaVu Sans Mono"; color:#000000;">Rich Text note with <b>not bold text</b></span></p></body></html>]]></vymnote>'
+  map.parseVymText(rt_note)
+  expect "parseVymText of richText note produces note", map.hasNote, true
+  expect "parseVymText of richText note produces richText note", map.hasRichTextNote, true
+  map.select @center_0
+  map.select @main_a
+  expect "After reselect, is note RichText?", map.hasRichTextNote, true
 
 
   # RichText notes copy & paste
-  rt_note = vym.getNoteXML  
-  vym.copy
-  vym.paste
-  vym.selectLastBranch
-  s=vym.getSelectString
-  expect "After copy& paste: New note Still RichText?", vym.hasRichTextNote, true
-  expect "After copy& paste: New note unchanged?", vym.getNoteXML, rt_note
-  vym.delete
+  rt_note = map.getNoteXML  
+  map.copy
+  map.paste
+  map.selectLastChildBranch
+  s = map.getSelectionString
+  expect "After copy & paste: New note Still RichText?", map.hasRichTextNote, true
+  expect "After copy & paste: New note unchanged?", map.getNoteXML, rt_note
+  map.remove
 
   # RichText notes undo & redo
-  vym.select @main_a
-  vym.setNotePlainText('Foobar')
-  vym.undo
-  expect "Undo after setNotePlainText restores RichText note", vym.getNoteXML, rt_note
-  vym.redo
-  vym.select @main_a
-  expect "Redo restores previous plaintext note", vym.getNotePlainText, 'Foobar'
+  map.select @main_a
+  map.setNotePlainText('Foobar')
+  map.undo
+  expect "Undo after setNotePlainText restores RichText note", map.getNoteXML, rt_note
+  map.redo
+  map.select @main_a
+  expect "Redo restores previous plaintext note", map.getNotePlainText, 'Foobar'
 
   # RichText notes load & save
-  vym.loadNote("test/note.html") 
-  expect "Load HTML note from file and try to detect textMode. Is RichText?", vym.hasRichTextNote, true
+  map.loadNote("test/note.html") 
+  expect "Load HTML note from file and try to detect textMode. Is RichText?", map.hasRichTextNote, true
   filepath = "#{@testdir}/save-note.txt"
-  vym.saveNote(filepath)
+  map.saveNote(filepath)
   expect "Save note to file. Check if it contains 'textMode=\"richText\"'", IO.read(filepath).include?("textMode=\"richText\""), true
   expect "Save note to file. Check if it contains 'bold'", IO.read(filepath).include?("bold"), true
   expect "Save note to file. Check if it contains '<b>' element", IO.read(filepath).include?("<b>"), true
   expect "Save note to file. Check if it contains '<![CDATA['", IO.read(filepath).include?("<![CDATA["), true
   
   # Delete note
-  vym.setNotePlainText("")
-  expect "setNotePlainText(\"\") deletes note", vym.hasNote, false
+  map.setNotePlainText("")
+  expect "setNotePlainText(\"\") deletes note", map.hasNote, false
 
   # Compatibility with version < 2.5.0  # FIXME missing
 end
@@ -768,12 +864,13 @@ end
 ######################
 def test_bugfixes (vym)
   heading "Bugfixes:"
-  init_map
-  vym.select @main_b
-  expect "Mapcenter of #{@center_1} has no frame", vym.getFrameType, "NoFrame"
+  map = init_map( vym )
+  map.select @main_b
+  expect "Mapcenter of #{@center_1} has no frame", map.getFrameType, "NoFrame"
 end
 
 #######################
+test_vym(vym)
 test_basics(vym)
 test_export(vym)
 test_extrainfo(vym)

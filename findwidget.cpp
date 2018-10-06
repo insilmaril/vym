@@ -18,12 +18,12 @@ extern Main *mainWindow;
 
 FindWidget::FindWidget(QWidget *)
 {
-    QVBoxLayout* mainLayout = new QVBoxLayout;	
+    QVBoxLayout* mainLayout = new QVBoxLayout;
     QHBoxLayout *row2Layout = new QHBoxLayout;
-    
+
     QLabel *label=new QLabel;
     label->setText (tr("Find:","FindWidget"));
-    
+
     // Create LineEdit (here QComboBox)
     findcombo = new QComboBox;
     findcombo->setMinimumWidth(250);
@@ -31,26 +31,33 @@ FindWidget::FindWidget(QWidget *)
 
     QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     findcombo->setSizePolicy(sizePolicy);
-    connect ( findcombo, SIGNAL( highlighted(int) ), 
+    connect ( findcombo, SIGNAL( highlighted(int) ),
 	this, SLOT( nextPressed() ) );
-    connect ( findcombo, SIGNAL( editTextChanged(const QString &) ), 
+    connect ( findcombo, SIGNAL( editTextChanged(const QString &) ),
 	this, SLOT( findTextChanged(const QString&) ) );
 
-    nextbutton = new QPushButton;
-    nextbutton->setIcon (QPixmap(":/find.png"));
-    //nextbutton->setText (tr("Find","Find widget"));
-    connect ( nextbutton, SIGNAL( clicked() ), this, SLOT( nextPressed() ) );
+    nextButton = new QPushButton;
+    nextButton->setIcon (QPixmap(":/find.png"));
+    //nextButton->setText (tr("Find","Find widget"));
+    connect ( nextButton, SIGNAL( clicked() ), this, SLOT( nextPressed() ) );
 
     // QAction needed to only activate shortcut while FindWidget has focus
-    QAction *a=new QAction (nextbutton->text(),this);
+    QAction *a=new QAction (nextButton->text(),this);
     a->setShortcut (Qt::Key_Return);
     a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
     connect ( a, SIGNAL( triggered() ), this, SLOT( nextPressed() ) );
     addAction (a);
 
+    filterNotesButton = new QPushButton;
+    filterNotesButton->setIcon (QPixmap(":/flag-note.png"));
+    filterNotesButton->setCheckable(true);
+    filterNotesButton->setChecked(true);
+    connect ( filterNotesButton, SIGNAL( clicked() ), this, SLOT( nextPressed() ) );
+
     row2Layout->addWidget (label);
     row2Layout->addWidget(findcombo);
-    row2Layout->addWidget(nextbutton);
+    row2Layout->addWidget(nextButton);
+    row2Layout->addWidget(filterNotesButton);
 
     mainLayout->addLayout (row2Layout);
 
@@ -71,7 +78,7 @@ void FindWidget::cancelPressed()
 
 void FindWidget::nextPressed()
 {
-    emit (nextButton(findcombo->currentText() ) );
+    emit (nextButtonPressed(findcombo->currentText(), filterNotesButton->isChecked() ));
 }
 
 void FindWidget::findTextChanged(const QString&)

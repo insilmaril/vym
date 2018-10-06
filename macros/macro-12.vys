@@ -1,4 +1,0 @@
-# Macro F12
-setFrameType ("RoundedRectangle");
-setFramePadding (10);
-setFrameIncludeChildren (true);

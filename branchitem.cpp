@@ -31,8 +31,8 @@ BranchItem::BranchItem(const QList<QVariant> &data, TreeItem *parent):MapItem (d
     includeChildren=false;
     childrenLayout = BranchItem::AutoPositioning;
      
-    lastSelectedBranchNum=-1;
-    lastSelectedBranchNumAlt=-1;
+    lastSelectedBranchNum = 0;
+    lastSelectedBranchNumAlt = 0;
 
     task=NULL;
 }
@@ -222,6 +222,8 @@ void BranchItem::updateTaskFlag()
 	systemFlags.activate (s);
 	model->emitDataChanged(this);
     } 
+    // else: During initialization the task is not yet attached to branch, 
+    // so ignore it for now
 }
 
 void BranchItem::setTask(Task *t) 
@@ -326,11 +328,11 @@ bool BranchItem::resetTmpUnscroll()
     // Unscroll myself
     if (tmpUnscrolled)
     {
-	tmpUnscrolled=false;
+	tmpUnscrolled = false;
 	systemFlags.deactivate("system-tmpUnscrolledRight");
 	toggleScroll();
 	model->emitDataChanged (this);
-	result=true;
+	result = true;
     }	
     return result;
 }
@@ -339,29 +341,29 @@ void BranchItem::sortChildren(bool inverse) //FIXME-4 optimize by not using move
 {
     int childCount=branchCounter; 
     int curChildIndex;
-    bool madeChanges=false;
+    bool madeChanges = false;
     do
     {
-	madeChanges=false;
-	for(curChildIndex=1;curChildIndex<childCount;curChildIndex++)
+	madeChanges = false;
+	for(curChildIndex = 1; curChildIndex < childCount; curChildIndex++)
 	{
 	    BranchItem* curChild =getBranchNum(curChildIndex);
 	    BranchItem* prevChild=getBranchNum(curChildIndex-1);
 	    if (inverse)
 	    {
-        if (prevChild->getHeadingPlain().compare(curChild->getHeadingPlain())<0)
+        if (prevChild->getHeadingPlain().compare(curChild->getHeadingPlain(), Qt::CaseInsensitive) < 0)
 		{
 		    model->moveUp (curChild);
-		    madeChanges=true;
+		    madeChanges = true;
 		}   
 	    } else  
-        if (prevChild->getHeadingPlain().compare(curChild->getHeadingPlain())>0)
+        if (prevChild->getHeadingPlain().compare(curChild->getHeadingPlain(), Qt::CaseInsensitive) > 0)
 		{
 		    model->moveUp (curChild);
-		    madeChanges=true;
+		    madeChanges = true;
 		}   
 	} 
-    }while(madeChanges);
+    } while (madeChanges);
 }
 
 void BranchItem::setChildrenLayout(BranchItem::LayoutHint layoutHint)
@@ -437,31 +439,31 @@ bool BranchItem::getFrameIncludeChildren()
 
 void BranchItem::setLastSelectedBranch()
 {
-    int d=depth();
-    if (d>=0)
+    int d = depth();
+    if (d >= 0)
     {
-	if (d==1)
+	if (d == 1)
 	    // Hack to save an additional lastSelected for mapcenters in MapEditor
 	    // depending on orientation
 	    // this allows to go both left and right from there
-	    if (mo && ((BranchObj*)mo)->getOrientation()==LinkableMapObj::LeftOfCenter)
+	    if (mo && ((BranchObj*)mo)->getOrientation() == LinkableMapObj::LeftOfCenter)
 	    {
-		((BranchItem*)parentItem)->lastSelectedBranchNumAlt=parentItem->num(this);
+		((BranchItem*)parentItem)->lastSelectedBranchNumAlt = parentItem->num(this);
 		return;
 	    }
-	((BranchItem*)parentItem)->lastSelectedBranchNum=parentItem->num(this);
+	((BranchItem*)parentItem)->lastSelectedBranchNum = parentItem->num(this);
     }
 }
 
 void BranchItem::setLastSelectedBranch(int i)
 {
-	lastSelectedBranchNum=i;
+	lastSelectedBranchNum = i;
 }
 
 BranchItem* BranchItem::getLastSelectedBranch()
 {
-    if (lastSelectedBranchNum>=branchCounter)
-	return getBranchNum (branchCounter-1);
+    if (lastSelectedBranchNum >= branchCounter)
+	return getBranchNum (branchCounter - 1);
     else    
 	return getBranchNum (lastSelectedBranchNum);
 }
@@ -478,7 +480,7 @@ TreeItem* BranchItem::findMapItem (QPointF p, TreeItem* excludeTI)
 {
     // Search branches
     TreeItem *ti;
-    for (int i=0; i<branchCount(); ++i)
+    for (int i = 0; i<branchCount(); ++i)
     {	
 	ti=getBranchNum(i)->findMapItem(p, excludeTI);
 	if (ti != NULL) return ti;
