@@ -5275,7 +5275,7 @@ void Main::windowToggleScriptOutput()
 
 void Main::windowToggleHistory()
 {
-    if (historyWindow->isVisible())
+    if (historyWindow->parentWidget()->isVisible())
 	historyWindow->parentWidget()->hide();
     else    
 	historyWindow->parentWidget()->show();
