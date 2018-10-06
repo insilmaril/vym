@@ -49,20 +49,20 @@ function macro_f7()
     map.colorSubtree ("#0000ff");
 }
 
-// Macro F8: Set task to sleep until 15:00
+// Macro F8: Set task to sleep until 18:00
 function macro_f8()
-{
-    map = vym.currentMap();
-    map.setTaskSleep("15:00");
-    statusMessage("Task sleeping until 15:00");
-}
-
-// Macro F9: Set task to sleep until 18:00
-function macro_f9()
 {
     map = vym.currentMap();
     map.setTaskSleep("18:00");
     statusMessage("Task sleeping until 18:00");
+}
+
+// Macro F9: Set task to sleep until 15:00
+function macro_f9()
+{
+    map = vym.currentMap();
+    map.setTaskSleep("15:00");
+    statusMessage("Task sleeping until 15:00");
 }
 
 // Macro F10: switch off task attributes and replace with green hook
@@ -71,6 +71,7 @@ function macro_f10()
     map = vym.currentMap();
     map.clearFlags();
     map.setFlag("hook-green");
+    map.colorBranch("#0000ff");
     if (map.hasTask() ) { map.toggleTask() }
 }
 
