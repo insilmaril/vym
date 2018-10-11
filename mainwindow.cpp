@@ -220,6 +220,8 @@ Main::Main(QWidget* parent, Qt::WindowFlags f) : QMainWindow(parent,f)
     connect(tabWidget, SIGNAL(tabCloseRequested(int)), 
             this, SLOT( fileCloseMap(int) ));
 
+    tabWidget->setMovable( true );
+
     layout->addWidget (tabWidget);
 
     switchboard.addGroup("MainWindow",tr("Main window","Shortcut group"));
