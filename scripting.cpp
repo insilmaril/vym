@@ -87,6 +87,18 @@ void VymWrapper::toggleTreeEditor()
     mainWindow->windowToggleTreeEditor();
 }
 
+QString VymWrapper::loadFile( const QString &filename)
+{
+    QString s;
+    loadStringFromDisk(filename, s);
+    return s;
+}
+
+void VymWrapper::saveFile( const QString &filename, const QString &s)
+{
+    saveStringToDisk(filename, s);
+}
+
 QString VymWrapper::version()
 {
     return setResult( vymVersion );

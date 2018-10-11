@@ -38,6 +38,8 @@ public slots:
     int mapCount();
     void selectMap (uint n);
     void toggleTreeEditor();
+    QString loadFile(const QString &filename);
+    void saveFile(const QString &filename, const QString &s);
     QString version();
 };
 
