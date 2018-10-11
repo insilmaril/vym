@@ -249,8 +249,6 @@ void JiraAgent::setModelJiraData (VymModel *model, BranchItem *bi, const QString
     solvedStates << "Resolved";
     solvedStates << "Closed";
 
-    // FIXME-1 check if model still exists (better use modelID)
-
     QString idName = ticketID;
 
     if (solvedStates.contains( ticket_status[ticketID] ) )

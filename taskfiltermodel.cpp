@@ -72,7 +72,7 @@ bool TaskFilterModel::filterAcceptsRow(int sourceRow,
     if (filterFlags2 && !taskModel->getTask(ix)->getBranch()->hasActiveStandardFlag("2arrow-up") )
         return false;
 
-    // Filter flags: Flags, which have neither arrow-up nor 2arrow-up   // FIXME-1 review
+    // Filter flags: Flags, which have neither arrow-up nor 2arrow-up  
     if (filterFlags3 && (taskModel->getTask(ix)->getBranch()->hasActiveStandardFlag("arrow-up") 
                      ||  taskModel->getTask(ix)->getBranch()->hasActiveStandardFlag("2arrow-up") ) )
         return false;

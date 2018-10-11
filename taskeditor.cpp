@@ -60,7 +60,7 @@ TaskEditor::TaskEditor(QWidget *)
     actionToggleFilterNew = a;
 
     icon = QIcon (":/flag-arrow-up.png");
-    a = new QAction(icon, "", this); //tr( "Flags","TaskEditor" ),this );   // FIXME-1 add translation
+    a = new QAction(icon, "", this);
     a->setToolTip(tr("Show only tasks marked with this arrow-up flag","Filters in task Editor"));
     a->setCheckable(true);
     a->setChecked  (settings.value("/taskeditor/filterFlags1", false).toBool());
@@ -70,7 +70,7 @@ TaskEditor::TaskEditor(QWidget *)
     actionToggleFilterFlags1 = a;
 
     icon = QIcon (":/flag-2arrow-up.png");
-    a = new QAction(icon,  "", this); //tr( "Flags","TaskEditor" ),this );   // FIXME-1 add translation
+    a = new QAction(icon,  "", this);
     a->setToolTip(tr("Show only tasks marked with this arrow-up flag","Filters in task Editor"));
     a->setCheckable(true);
     a->setChecked  (settings.value("/taskeditor/filterFlags2", false).toBool());
@@ -80,7 +80,7 @@ TaskEditor::TaskEditor(QWidget *)
     actionToggleFilterFlags2 = a;
 
     icon = QIcon (":/flag-no-arrow-up.png");
-    a = new QAction(icon,  "", this); //tr( "Flags","TaskEditor" ),this );   // FIXME-1 add translation
+    a = new QAction(icon,  "", this); 
     a->setToolTip(tr("Show only tasks marked without any arrow-up flag","Filters in task Editor"));
     a->setCheckable(true);
     a->setChecked  (settings.value("/taskeditor/filterFlags3", false).toBool());
@@ -88,7 +88,7 @@ TaskEditor::TaskEditor(QWidget *)
         tb->addAction (a);
     connect( a, SIGNAL( triggered() ), this, SLOT(toggleFilterFlags3() ) );
     actionToggleFilterFlags3 = a;
-    //
+
     // Forward Enter and Return to MapEditor
     a = new QAction(icon, tr( "Edit heading","TaskEditor" ), this);
     a->setShortcut ( Qt::Key_Return);		
@@ -232,19 +232,19 @@ void TaskEditor::setFilterNew ()
     sort();
 }
 
-void TaskEditor::setFilterFlags1 ()  // FIXME-1 experimental
+void TaskEditor::setFilterFlags1 () 
 {
     filterActiveModel->setFilterFlags1 (actionToggleFilterFlags1->isChecked() );
     sort();
 }
 
-void TaskEditor::setFilterFlags2 ()  // FIXME-1 experimental
+void TaskEditor::setFilterFlags2 ()
 {
     filterActiveModel->setFilterFlags2(actionToggleFilterFlags2->isChecked() );
     sort();
 }
 
-void TaskEditor::setFilterFlags3 ()  // FIXME-1 experimental
+void TaskEditor::setFilterFlags3 ()
 {
     filterActiveModel->setFilterFlags3 (actionToggleFilterFlags3->isChecked() );
     sort();

@@ -87,14 +87,14 @@ void VymWrapper::toggleTreeEditor()
     mainWindow->windowToggleTreeEditor();
 }
 
-QString VymWrapper::loadFile( const QString &filename)
+QString VymWrapper::loadFile( const QString &filename) // FIXME-3 error handling missing (in vymmodel and here)
 {
     QString s;
     loadStringFromDisk(filename, s);
     return s;
 }
 
-void VymWrapper::saveFile( const QString &filename, const QString &s)
+void VymWrapper::saveFile( const QString &filename, const QString &s) // FIXME-3 error handling missing (in vymmodel and here)
 {
     saveStringToDisk(filename, s);
 }

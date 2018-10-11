@@ -5358,7 +5358,6 @@ void VymModel::downloadImage (const QUrl &url, BranchItem *bi) // FIXME-1 downlo
     }
 
     // FIXME-3 download img to tmpfile and delete after running script in mainWindow
-    // FIXME-1 change to new scripting syntax: getCurrentMap
     QString script;
     script += QString("selectID(\"%1\");").arg(bi->getUuid().toString());
     script += QString("loadImage(\"$TMPFILE\");");

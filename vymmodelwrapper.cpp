@@ -522,7 +522,7 @@ bool VymModelWrapper::hasTask()
 
 void VymModelWrapper::importDir( const QString &path)
 {
-    model->importDir( path );    // FIXME-1 error handling missing (in vymmodel and here)
+    model->importDir( path );    // FIXME-3 error handling missing (in vymmodel and here)
 }
 
 bool VymModelWrapper::initIterator( const QString &iname, bool deepLevelsFirst)
@@ -548,13 +548,13 @@ void VymModelWrapper::loadImage( const QString &filename)
     BranchItem *selbi = getSelectedBranch();
     if (selbi)
     {
-        model->loadImage(selbi, filename );   // FIXME-1 error handling missing (in vymmodel and here)
+        model->loadImage(selbi, filename );   // FIXME-3 error handling missing (in vymmodel and here)
     }
 }
 
 void VymModelWrapper::loadNote(  const QString &filename)
 {
-    model->loadNote( filename );    // FIXME-1 error handling missing (in vymmodel and here)
+    model->loadNote( filename );    // FIXME-3 error handling missing (in vymmodel and here)
 }
 
 void VymModelWrapper::move( qreal x, qreal y)
