@@ -4756,14 +4756,14 @@ void VymModel::unregisterEditor(QWidget *)
 
 void VymModel::setMapZoomFactor (const double &d)
 {
-    zoomFactor=d;
-    mapEditor->setZoomFactorTarget(d);  // FIXME-1 really already here? called from xml-vym...
+    zoomFactor = d;
+    mapEditor->setZoomFactorTarget(d);  
 }
 
 void VymModel::setMapRotationAngle(const double &d)
 {
-    rotationAngle=d;
-    mapEditor->setAngleTarget(d);       // FIXME-1 really already here? called from xml-vym...
+    rotationAngle = d;
+    mapEditor->setAngleTarget(d); 
 }
 
 void VymModel::setMapAnimDuration(const int &d)
