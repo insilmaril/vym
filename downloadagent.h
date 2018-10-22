@@ -29,6 +29,7 @@ class DownloadAgent: public QObject
 
 public:
     DownloadAgent(const QUrl &u);
+    ~DownloadAgent();
     QString getDestination ();
     void setFinishedAction (VymModel *m, const QString &script);
     QString getFinishedScript();
@@ -37,7 +38,7 @@ public:
     bool  isSuccess();
     QString getResultMessage();
     void doDownload(const QUrl &url);
-    bool saveToDisk(const QString &filename, const QString &data);
+    bool saveToDisk(const QString &filename, const QByteArray &data);
 
 public slots:
     void execute();
@@ -48,7 +49,7 @@ signals:
     void downloadFinished();
 
 private:
-    QTemporaryFile tmpFile;
+    QString tmpFilePath;
     QByteArray userAgent;
     QUrl url;
 

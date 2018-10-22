@@ -1964,8 +1964,10 @@ void MapEditor::dropEvent(QDropEvent *event)
                 {
                     if (debug) qDebug() << "dropped url seems to be image: " << url;
                     // Image, try to download or set image from local file
-                    //model->downloadImage (url);
-                    model->loadImage(bi, url);
+                    if (url.startsWith("http") )
+                        model->downloadImage (url);
+                    else
+                        model->loadImage(bi, url);
                     if (debug) qDebug() << "finished loading image";
                 } else
                 {

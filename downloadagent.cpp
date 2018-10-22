@@ -34,6 +34,9 @@ extern bool debug;
 
 DownloadAgent::DownloadAgent(const QUrl &u)
 {
+    // qDebug() << "Constr. DownloadAgent: " << u.toString();
+    tmpFilePath = "";
+
     finishedScriptModelID = 0;
     url = u;
     connect(&agent, SIGNAL(finished(QNetworkReply*)),
@@ -44,9 +47,15 @@ DownloadAgent::DownloadAgent(const QUrl &u)
         .arg(vymPlatform).toUtf8();
 }
 
+DownloadAgent::~DownloadAgent()
+{
+    // qDebug() << "Destr. DownloadAgent";
+    // qDebug() << getFinishedScript();
+}
+
 QString  DownloadAgent::getDestination()
 {
-    return tmpFile.fileName();
+    return tmpFilePath;
 }
 
 bool DownloadAgent::isSuccess()
@@ -124,7 +133,7 @@ void DownloadAgent::doDownload(const QUrl &url)
     currentDownloads.append(reply);
 }
 
-bool DownloadAgent::saveToDisk(const QString &filename, const QString &data)
+bool DownloadAgent::saveToDisk(const QString &filename, const QByteArray &data)
 {
     QFile file(filename);
     if (!file.open(QIODevice::WriteOnly)) {
@@ -134,7 +143,7 @@ bool DownloadAgent::saveToDisk(const QString &filename, const QString &data)
         return false;
     }
 
-    file.write(data.toLatin1() );
+    file.write(data);
     file.close();
 
     return true;
@@ -186,7 +195,10 @@ void DownloadAgent::requestFinished(QNetworkReply *reply)
             }
         }
 
-        QString data = reply->readAll();
+        QByteArray data = reply->readAll();
+        QTemporaryFile tmpFile(tmpVymDir + "/download-XXXXXX");
+        tmpFile.setAutoRemove(false);   // tmpFile is within tmpDir, removed automatically later
+
         if (!tmpFile.open() )
             QMessageBox::warning( 0, tr("Warning"), "Couldn't open tmpFile " + tmpFile.fileName());
         else
@@ -194,8 +206,12 @@ void DownloadAgent::requestFinished(QNetworkReply *reply)
             if (!saveToDisk(tmpFile.fileName(), data))
                 QMessageBox::warning( 0, tr("Warning"), "Couldn't write to " + tmpFile.fileName());
             else
+            {
+                tmpFilePath = tmpFile.fileName();
                 resultMessage = QString ("saved to %1").arg(tmpFile.fileName());
+            }
         }
+        if (debug) qDebug() << "DownloadAgent:  resultMessage  = " << resultMessage; 
         emit ( downloadFinished());
     }
 

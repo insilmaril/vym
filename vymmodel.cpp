@@ -5348,7 +5348,7 @@ void VymModel::displayNetworkError(QAbstractSocket::SocketError socketError)
     }
 }
 
-void VymModel::downloadImage (const QUrl &url, BranchItem *bi) // FIXME-1 download img to tmpfile and delete after running script in mainWindow
+void VymModel::downloadImage (const QUrl &url, BranchItem *bi) 
 {
     if (!bi) bi=getSelectedBranch();
     if (!bi) 
@@ -5359,8 +5359,8 @@ void VymModel::downloadImage (const QUrl &url, BranchItem *bi) // FIXME-1 downlo
 
     // FIXME-3 download img to tmpfile and delete after running script in mainWindow
     QString script;
-    script += QString("selectID(\"%1\");").arg(bi->getUuid().toString());
-    script += QString("loadImage(\"$TMPFILE\");");
+    script += QString("m = vym.currentMap();m.selectID(\"%1\");").arg(bi->getUuid().toString());
+    script += QString("m.loadImage(\"$TMPFILE\");");
 
     DownloadAgent *agent = new DownloadAgent(url);
     agent->setFinishedAction (this, script);

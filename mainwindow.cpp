@@ -5047,9 +5047,10 @@ void Main::downloadFinished()   // only used for drop events in mapeditor and VM
     VymModel *model=getModel (agent->getFinishedScriptModelID());
     if (!script.isEmpty() && model)
     {
-        script.replace("$TMPFILE",agent->getDestination());
+        script.replace("$TMPFILE", agent->getDestination());
         model->execute(script);
     }
+    agent->deleteLater(); 
 }
 
 bool Main::settingsPDF()
@@ -6122,6 +6123,7 @@ void Main::downloadReleaseNotesFinished()
             qDebug()<<"     msg: " << agent->getResultMessage();
         }
     }
+    agent->deleteLater();
 }
 
 void Main::checkReleaseNotes()
@@ -6272,7 +6274,9 @@ void Main::downloadUpdatesFinished(bool userTriggered)
             qDebug()<<"     msg: " << agent->getResultMessage();
         }
     }
+    agent->deleteLater();
 }
+
 void Main::downloadUpdatesFinishedInt()
 {
     downloadUpdatesFinished(true);
