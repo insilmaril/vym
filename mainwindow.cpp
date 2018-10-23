@@ -3095,17 +3095,20 @@ void Main::setupToolbars()
 VymView* Main::currentView() const
 {
     if ( tabWidget->currentWidget() )
-    {
-	int i=tabWidget->currentIndex();
-	if (i>=0 && i< vymViews.count() ) return vymViews.at(i);
-    }
-    return NULL;
+        return  (VymView*) tabWidget->currentWidget();
+    else
+        return NULL;
+}
+
+VymView* Main::view(const int i) 
+{
+    return  (VymView*) tabWidget->widget(i);
 }
 
 MapEditor* Main::currentMapEditor() const
 {
     if ( tabWidget->currentWidget())
-	return vymViews.at(tabWidget->currentIndex())->getMapEditor();
+        return  currentView()->getMapEditor();
     return NULL;    
 }
 
@@ -3118,51 +3121,51 @@ uint  Main::currentModelID() const
 	return 0;    
 }
 
-uint  Main::currentModelNumber() const
+uint  Main::currentModelNumber() const  // FIXME-1 used? Note: tab index != model index
 {
     return tabWidget->currentIndex();
 }
 
 VymModel* Main::currentModel() const
 {
-    VymView *vv=currentView();
+    VymView *vv = currentView();
     if (vv) 
 	return vv->getModel();
     else
 	return NULL;    
 }
 
-VymModel* Main::getModel(uint id) const	
+VymModel* Main::getModel(uint id) // Used in BugAgent
 {
-    if (id <=0) return NULL;
+    if (id <=0 ) return NULL;
 
-    // Used in BugAgent
-    for (int i=0; i<vymViews.count();i++)
-	if (vymViews.at(i)->getModel()->getModelID()==id)
-	    return vymViews.at(i)->getModel();
+    for (int i = 0; i < tabWidget->count(); i++)
+    {
+	if (view(i)->getModel()->getModelID() == id)
+	    return view(i)->getModel();
+    }
     return NULL;    
 }
 
 void Main::gotoModel (VymModel *m)
 {
-    for (int i=0; i<vymViews.count();i++)
-	if (vymViews.at(i)->getModel()==m)
-	{
+    for (int i = 0; i < tabWidget->count(); i++)
+        if ( view(i)->getModel() == m )
+        {
 	    tabWidget->setCurrentIndex (i);
-	    return;
-	}
+            return;
+        }
 }
 
 int Main::modelCount()
 {
-    return vymViews.count();
+    return tabWidget->count();
 }
 
 void Main::updateTabName( VymModel *vm)
 {
-    for( int i = 0; i < vymViews.count(); i++)
-    {
-        if (vymViews.at(i)->getModel() == vm )
+    for (int i = 0; i < tabWidget->count(); i++)
+        if ( view(i)->getModel() == vm )
         {
             if ( vm->isReadOnly() )
                 tabWidget->setTabText( i, vm->getFileName() + " " + tr("(readonly)") );
@@ -3170,7 +3173,6 @@ void Main::updateTabName( VymModel *vm)
                 tabWidget->setTabText( i, vm->getFileName() );
             break;
         }
-    }
 }
 
 void Main::editorChanged()
@@ -3197,10 +3199,9 @@ void Main::fileNew()
     /////////////////////////////////////
 
     VymView *vv=new VymView (vm);
-    vymViews.append (vv);
 
     tabWidget->addTab (vv,tr("unnamed","MainWindow: name for new and empty file"));
-    tabWidget->setCurrentIndex (vymViews.count() );
+    tabWidget->setCurrentIndex (tabWidget->count() );
     vv->initFocus();
 
     // Create MapCenter for empty map
@@ -3216,17 +3217,17 @@ void Main::fileNew()
 
 void Main::fileNewCopy() 
 {
-    QString fn="unnamed";
-    VymModel *srcModel=currentModel();
+    QString fn = "unnamed";
+    VymModel *srcModel = currentModel();
     if (srcModel)
     {
 	srcModel->copy();
 	fileNew();
-	VymModel *dstModel=vymViews.last()->getModel();
+	VymModel *dstModel = view(tabWidget->count() - 1)->getModel();
 	if (dstModel->select("mc:0"))
-	    dstModel->loadMap (clipboardDir+"/"+clipboardFile,ImportReplace);
+	    dstModel->loadMap (clipboardDir + "/" + clipboardFile, ImportReplace);
 	else
-	    qWarning ()<<"Main::fileNewCopy couldn't select mapcenter";
+	    qWarning () << "Main::fileNewCopy couldn't select mapcenter";
     }
 }
 
@@ -3248,7 +3249,7 @@ File::ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode, const FileType
 	int i=0;
 	while (i<=tabWidget->count() -1)
 	{
-	    if (vymViews.at(i)->getModel()->getFilePath() == fn)
+	    if ( view(i)->getModel()->getFilePath() == fn)
 	    {
 		// Already there, ask for confirmation
 		QMessageBox mb( vymName,
@@ -3290,7 +3291,6 @@ File::ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode, const FileType
 	{
 	    vm=new VymModel;
 	    VymView *vv=new VymView (vm);
-	    vymViews.append (vv);
 
 	    tabWidget->addTab (vv,fn);
 	    vv->initFocus();
@@ -3421,7 +3421,7 @@ void Main::fileSaveSession()
 {
     QStringList flist;
     for (int i = 0; i < tabWidget->count(); i++)
-        flist.append( ((VymView*)tabWidget->widget(i))->getModel()->getFilePath() );
+        flist.append( view(i)->getModel()->getFilePath() );
 
     settings.setValue("/mainwindow/sessionFileList", flist);
 }
@@ -3843,7 +3843,7 @@ bool Main::fileCloseMap(int i)
     VymView *vv;
     if ( i<0) i  = tabWidget->currentIndex();
 
-    vv = vymViews.at(i);
+    vv = view(i);
     m  = vv->getModel();
 
     if (m)
@@ -3875,12 +3875,11 @@ bool Main::fileCloseMap(int i)
             }
         }
 
-        vymViews.removeAt (i);
         tabWidget->removeTab (i);
 
         // Destroy stuff, order is important
         delete (m->getMapEditor());
-        delete(vv);
+        delete (vv);
         delete (m);
 
         updateActions();
@@ -3900,7 +3899,7 @@ bool Main::fileExitVYM()
     fileSaveSession();
 
     // Check if one or more editors have changed
-    while (vymViews.count()>0)
+    while (tabWidget->count()>0)
     {
         tabWidget->setCurrentIndex(0);
         if (fileCloseMap()) return true;
@@ -4190,9 +4189,9 @@ void Main::openVymLinks(const QStringList &vl, bool background)
 	// compare path with already loaded maps
         QString absPath = QFileInfo(vl.at(j)).absoluteFilePath();
 	index = -1;
-	for (int i = 0;i <= vymViews.count() -1; i++)
+	for (int i = 0;i <= tabWidget->count() -1; i++)
 	{
-	    if ( absPath == vymViews.at(i)->getModel()->getFilePath() )
+	    if ( absPath == view(i)->getModel()->getFilePath() )
 	    {
 		index = i;
 		break;
@@ -5229,7 +5228,7 @@ void Main::windowToggleNoteEditor()
 void Main::windowToggleTreeEditor()
 {
     if ( tabWidget->currentWidget())
-	vymViews.at(tabWidget->currentIndex())->toggleTreeEditor();
+	currentView()->toggleTreeEditor();
 }
 
 void Main::windowToggleTaskEditor()
@@ -5248,7 +5247,7 @@ void Main::windowToggleTaskEditor()
 void Main::windowToggleSlideEditor()
 {
     if ( tabWidget->currentWidget())
-	vymViews.at(tabWidget->currentIndex())->toggleSlideEditor();
+	currentView()->toggleSlideEditor();
 }
 
 void Main::windowToggleScriptEditor()
@@ -5312,11 +5311,11 @@ void Main::windowToggleHeadingEditor()
 
 void Main::windowToggleAntiAlias()
 {
-    bool b=actionViewToggleAntiAlias->isChecked();
+    bool b = actionViewToggleAntiAlias->isChecked();
     MapEditor *me;
-    for (int i=0;i<vymViews.count();i++)
+    for (int i = 0;i < tabWidget->count(); i++)
     {
-	me=vymViews.at(i)->getMapEditor();
+	me = view(i)->getMapEditor();
 	if (me) me->setAntiAlias(b);
     }	
 
@@ -5334,12 +5333,12 @@ bool Main::hasSmoothPixmapTransform()
 
 void Main::windowToggleSmoothPixmap()
 {
-    bool b=actionViewToggleSmoothPixmapTransform->isChecked();
+    bool b = actionViewToggleSmoothPixmapTransform->isChecked();
     MapEditor *me;
-    for (int i=0;i<vymViews.count();i++)
+    for (int i = 0; i < tabWidget->count(); i++)
     {
 	
-	me=vymViews.at(i)->getMapEditor();
+	me = view(i)->getMapEditor();
 	if (me) me->setSmoothPixmap(b);
     }	
 }

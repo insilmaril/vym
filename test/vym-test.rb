@@ -100,7 +100,7 @@ end
 #######################
 def test_vym (vym)
   heading "Mainwindow checks:"
-  version = "2.6.214"
+  version = "2.6.216"
   expect "Version is #{version}", vym.version, version
 
   expect "Loading map '#{@testmap}'", vym.loadMap(@testmap), true

@@ -87,12 +87,14 @@ private:
     void setupMacros();
     void setupToolbars();
     VymView* currentView() const;
+    VymView* view(const int i);
+
 public:	
     MapEditor* currentMapEditor() const;
     VymModel* currentModel() const;
     uint currentModelID() const;
     uint currentModelNumber() const;
-    VymModel* getModel(uint) const;
+    VymModel* getModel(uint);
     void gotoModel (VymModel *m);
     int modelCount();
     void updateTabName(VymModel *vm);
@@ -357,7 +359,6 @@ private:
 
     QScriptEngine scriptEngine;
 
-    QList <VymView*> vymViews;	    //! Keeps track of models and views related to a tab 
     QString prevSelection;
 
     HistoryWindow *historyWindow;
