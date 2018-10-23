@@ -3420,8 +3420,9 @@ void Main::fileLoad()
 void Main::fileSaveSession()
 {
     QStringList flist;
-    for (int i=0;i<vymViews.count(); i++)
-	flist.append (vymViews.at(i)->getModel()->getFilePath() );
+    for (int i = 0; i < tabWidget->count(); i++)
+        flist.append( ((VymView*)tabWidget->widget(i))->getModel()->getFilePath() );
+
     settings.setValue("/mainwindow/sessionFileList", flist);
 }
 
