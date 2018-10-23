@@ -496,32 +496,32 @@ QPrinter* Main::setupPrinter()
 // Define commands for models
 void Main::setupAPI()
 {
-    Command *c = new Command ("addBranch",Command::Branch);
+    Command *c = new Command ("addBranch", Command::Branch);
     c->addPar (Command::Int, true, "Index of new branch");
     modelCommands.append(c);
 
-    c = new Command ("addBranchBefore",Command::Branch);
+    c = new Command ("addBranchBefore", Command::Branch);
     modelCommands.append(c);
 
-    c = new Command ("addMapCenter",Command::Any);
+    c = new Command ("addMapCenter", Command::Any);
     c->addPar (Command::Double,false, "Position x");
     c->addPar (Command::Double,false, "Position y");
     modelCommands.append(c);
 
-    c = new Command ("addMapInsert",Command::Any);
+    c = new Command ("addMapInsert", Command::Any);
     c->addPar (Command::String,false, "Filename of map to load");
     c->addPar (Command::Int,true, "Index where map is inserted");
     c->addPar (Command::Int,true, "Content filter");
     modelCommands.append(c);
 
-    c = new Command ("addMapReplace",Command::Branch);
+    c = new Command ("addMapReplace", Command::Branch);
     c->addPar (Command::String,false, "Filename of map to load");
     modelCommands.append(c);
 
-    c = new Command ("addSlide",Command::Branch);
+    c = new Command ("addSlide", Command::Branch);
     modelCommands.append(c);
 
-    c = new Command ("addXLink",Command::BranchLike);
+    c = new Command ("addXLink", Command::BranchLike);
     c->addPar (Command::String, false, "Begin of XLink");
     c->addPar (Command::String, false, "End of XLink");
     c->addPar (Command::Int,    true, "Width of XLink");
@@ -529,343 +529,343 @@ void Main::setupAPI()
     c->addPar (Command::String, true, "Penstyle of XLink");
     modelCommands.append(c);
 
-    c = new Command ("branchCount",Command::Any);
+    c = new Command ("branchCount", Command::Any);
     modelCommands.append(c);
 
-    c = new Command ("centerCount",Command::BranchLike);
+    c = new Command ("centerCount", Command::BranchLike);
     modelCommands.append(c);
 
-    c = new Command ("centerOnID",Command::Any);
+    c = new Command ("centerOnID", Command::Any);
     c->addPar (Command::String,false, "UUID of object to center on");
     modelCommands.append(c);
 
-    c = new Command ("clearFlags",Command::BranchLike);
+    c = new Command ("clearFlags", Command::BranchLike);
     modelCommands.append(c);
 
-    c = new Command ("colorBranch",Command::Branch);
+    c = new Command ("colorBranch", Command::Branch);
     c->addPar (Command::Color,true, "New color");
     modelCommands.append(c);
 
-    c = new Command ("colorSubtree",Command::Branch);
+    c = new Command ("colorSubtree", Command::Branch);
     c->addPar (Command::Color,true, "New color");
     modelCommands.append(c);
 
-    c = new Command ("copy",Command::BranchOrImage);
+    c = new Command ("copy", Command::BranchOrImage);
     modelCommands.append(c);
 
-    c = new Command ("cut",Command::BranchOrImage);
+    c = new Command ("cut", Command::BranchOrImage);
     modelCommands.append(c);
 
-    c = new Command ("cycleTask",Command::BranchOrImage);
+    c = new Command ("cycleTask", Command::BranchOrImage);
     c->addPar (Command::Bool,true, "True, if cycling in reverse order");
     modelCommands.append(c);
 
-    c = new Command ("exportMap",Command::Any);  
+    c = new Command ("exportMap", Command::Any);  
     c->addPar (Command::String,false,"Format (AO, ASCII, CSV, HTML, Image, Impress, Last, LaTeX, Markdown, OrgMode, PDF, SVG, XML)");
     modelCommands.append(c);
 
-    c = new Command ("getDestPath",Command::Any);
+    c = new Command ("getDestPath", Command::Any);
     modelCommands.append(c);
 
-    c = new Command ("getFileDir",Command::Any);
+    c = new Command ("getFileDir", Command::Any);
     modelCommands.append(c);
 
-    c = new Command ("getFrameType",Command::Branch);
+    c = new Command ("getFrameType", Command::Branch);
     modelCommands.append(c);
 
-    c = new Command ("getHeadingPlainText",Command::TreeItem);
+    c = new Command ("getHeadingPlainText", Command::TreeItem);
     modelCommands.append(c);
 
-    c = new Command ("getHeadingXML",Command::TreeItem);
+    c = new Command ("getHeadingXML", Command::TreeItem);
     modelCommands.append(c);
 
-    c = new Command ("getMapAuthor",Command::Any);
+    c = new Command ("getMapAuthor", Command::Any);
     modelCommands.append(c);
 
-    c = new Command ("getMapComment",Command::Any);
+    c = new Command ("getMapComment", Command::Any);
     modelCommands.append(c);
 
-    c = new Command ("getMapTitle",Command::Any);
+    c = new Command ("getMapTitle", Command::Any);
     modelCommands.append(c);
 
-    c = new Command ("getNotePlainText",Command::TreeItem);
+    c = new Command ("getNotePlainText", Command::TreeItem);
     modelCommands.append(c);
 
-    c = new Command ("getNoteXML",Command::TreeItem);
+    c = new Command ("getNoteXML", Command::TreeItem);
     modelCommands.append(c);
 
-    c = new Command ("getSelectionString",Command::TreeItem);
+    c = new Command ("getSelectionString", Command::TreeItem);
     modelCommands.append(c);
 
-    c = new Command ("getTaskSleep",Command::Branch);
+    c = new Command ("getTaskSleep", Command::Branch);
     modelCommands.append(c);
 
-    c = new Command ("getTaskSleepDays",Command::Branch);
+    c = new Command ("getTaskSleepDays", Command::Branch);
     modelCommands.append(c);
 
-    c = new Command ("getURL",Command::TreeItem); 
+    c = new Command ("getURL", Command::TreeItem); 
     modelCommands.append(c);
 
-    c = new Command ("getVymLink",Command::Branch); 
+    c = new Command ("getVymLink", Command::Branch); 
     modelCommands.append(c);
 
-    c = new Command ("getXLinkColor",Command::XLink);
+    c = new Command ("getXLinkColor", Command::XLink);
     modelCommands.append(c);
 
-    c = new Command ("getXLinkWidth",Command::XLink);
+    c = new Command ("getXLinkWidth", Command::XLink);
     modelCommands.append(c);
 
-    c = new Command ("getXLinkPenStyle",Command::XLink);
+    c = new Command ("getXLinkPenStyle", Command::XLink);
     modelCommands.append(c);
 
-    c = new Command ("getXLinkStyleBegin",Command::XLink);
+    c = new Command ("getXLinkStyleBegin", Command::XLink);
     modelCommands.append(c);
 
-    c = new Command ("getXLinkStyleEnd",Command::XLink);
+    c = new Command ("getXLinkStyleEnd", Command::XLink);
     modelCommands.append(c);
 
-    c = new Command ("hasActiveFlag",Command::TreeItem);
+    c = new Command ("hasActiveFlag", Command::TreeItem);
     c->addPar (Command::String,false,"Name of flag");
     modelCommands.append(c);
 
-    c = new Command ("hasNote",Command::Branch); 
+    c = new Command ("hasNote", Command::Branch); 
     modelCommands.append(c);
 
-    c = new Command ("hasRichTextNote",Command::Branch); 
+    c = new Command ("hasRichTextNote", Command::Branch); 
     modelCommands.append(c);
 
-    c = new Command ("hasTask",Command::Branch); 
+    c = new Command ("hasTask", Command::Branch); 
     modelCommands.append(c);
 
-    c = new Command ("importDir",Command::Branch);
+    c = new Command ("importDir", Command::Branch);
     c->addPar (Command::String,false,"Directory name to import");
     modelCommands.append(c);
 
-    c = new Command ("isScrolled",Command::Branch); 
+    c = new Command ("isScrolled", Command::Branch); 
     modelCommands.append(c);
 
-    c = new Command ("loadImage",Command::Branch); 
+    c = new Command ("loadImage", Command::Branch); 
     c->addPar (Command::String,false,"Filename of image");
     modelCommands.append(c);
 
-    c = new Command ("loadNote",Command::Branch); 
+    c = new Command ("loadNote", Command::Branch); 
     c->addPar (Command::String,false,"Filename of note");
     modelCommands.append(c);
 
-    c = new Command ("moveDown",Command::Branch); 
+    c = new Command ("moveDown", Command::Branch); 
     modelCommands.append(c);
 
-    c = new Command ("moveUp",Command::Branch); 
+    c = new Command ("moveUp", Command::Branch); 
     modelCommands.append(c);
 
-    c = new Command ("moveSlideDown",Command::Any); 
+    c = new Command ("moveSlideDown", Command::Any); 
     modelCommands.append(c);
 
-    c = new Command ("moveSlideUp",Command::Any); 
+    c = new Command ("moveSlideUp", Command::Any); 
     modelCommands.append(c);
 
-    c = new Command ("move",Command::BranchOrImage); 
+    c = new Command ("move", Command::BranchOrImage); 
     c->addPar (Command::Double,false,"Position x");
     c->addPar (Command::Double,false,"Position y");
     modelCommands.append(c);
 
-    c = new Command ("moveRel",Command::BranchOrImage); 
+    c = new Command ("moveRel", Command::BranchOrImage); 
     c->addPar (Command::Double,false,"Position x");
     c->addPar (Command::Double,false,"Position y");
     modelCommands.append(c);
 
-    c = new Command ("nop",Command::Any); 
+    c = new Command ("nop", Command::Any); 
     modelCommands.append(c);
 
-    c = new Command ("note2URLs",Command::Branch); 
+    c = new Command ("note2URLs", Command::Branch); 
     modelCommands.append(c);
 
     //internally required for undo/redo of changing VymText:
-    c = new Command ("parseVymText",Command::Branch);
+    c = new Command ("parseVymText", Command::Branch);
     c->addPar (Command::String,false,"parse XML of VymText, e.g for Heading or VymNote");
     modelCommands.append(c);
 
-    c = new Command ("paste",Command::Branch);
+    c = new Command ("paste", Command::Branch);
     modelCommands.append(c);
 
-    c = new Command ("redo",Command::Any); 
+    c = new Command ("redo", Command::Any); 
     modelCommands.append(c);
 
-    c = new Command ("relinkTo",Command::TreeItem);   // FIXME different number of parameters for Image or Branch
+    c = new Command ("relinkTo", Command::TreeItem);   // FIXME different number of parameters for Image or Branch
     c->addPar (Command::String,false,"Selection string of parent");
     c->addPar (Command::Int,false,"Index position");
     c->addPar (Command::Double,true,"Position x");
     c->addPar (Command::Double,true,"Position y");
     modelCommands.append(c);
 
-    c = new Command ("remove",Command::TreeItem);
+    c = new Command ("remove", Command::TreeItem);
     modelCommands.append(c);
 
-    c = new Command ("removeChildren",Command::Branch);
+    c = new Command ("removeChildren", Command::Branch);
     modelCommands.append(c);
 
-    c = new Command ("removeKeepChildren",Command::Branch);
+    c = new Command ("removeKeepChildren", Command::Branch);
     modelCommands.append(c);
 
-    c = new Command ("removeSlide",Command::Any);          
+    c = new Command ("removeSlide", Command::Any);          
     c->addPar (Command::Int,false,"Index of slide to remove");
     modelCommands.append(c);
 
-    c = new Command ("saveImage",Command::Image); 
+    c = new Command ("saveImage", Command::Image); 
     c->addPar (Command::String,false,"Filename of image to save");
     c->addPar (Command::String,false,"Format of image to save");
     modelCommands.append(c);
 
-    c = new Command ("saveNote",Command::Branch); 
+    c = new Command ("saveNote", Command::Branch); 
     c->addPar (Command::String,false,"Filename of note to save");
     modelCommands.append(c);
 
-    c = new Command ("scroll",Command::Branch); 
+    c = new Command ("scroll", Command::Branch); 
     modelCommands.append(c);
 
-    c = new Command ("select",Command::Any); 
+    c = new Command ("select", Command::Any); 
     c->addPar (Command::String,false,"Selection string");
     modelCommands.append(c);
 
-    c = new Command ("selectFirstBranch",Command::Branch); 
+    c = new Command ("selectFirstBranch", Command::Branch); 
     modelCommands.append(c);
 
-    c = new Command ("selectFirstChildBranch",Command::Branch); 
+    c = new Command ("selectFirstChildBranch", Command::Branch); 
     modelCommands.append(c);
 
-    c = new Command ("selectID",Command::Any); 
+    c = new Command ("selectID", Command::Any); 
     c->addPar (Command::String,false,"Unique ID");
     modelCommands.append(c);
 
-    c = new Command ("selectLastBranch",Command::Branch); 
+    c = new Command ("selectLastBranch", Command::Branch); 
     modelCommands.append(c);
 
-    c = new Command ("selectLastChildBranch",Command::Branch); 
+    c = new Command ("selectLastChildBranch", Command::Branch); 
     modelCommands.append(c);
 
-    c = new Command ("selectLastImage",Command::Branch); 
+    c = new Command ("selectLastImage", Command::Branch); 
     modelCommands.append(c);
 
-    c = new Command ("selectLatestAdded",Command::Any); 
+    c = new Command ("selectLatestAdded", Command::Any); 
     modelCommands.append(c);
 
-    c = new Command ("selectParent",Command::Branch); 
+    c = new Command ("selectParent", Command::Branch); 
     modelCommands.append(c);
 
-    c = new Command ("setFlag",Command::TreeItem); 
+    c = new Command ("setFlag", Command::TreeItem); 
     c->addPar (Command::String,false,"Name of flag");
     modelCommands.append(c);
 
-    c = new Command ("setTaskSleep",Command::Branch); 
+    c = new Command ("setTaskSleep", Command::Branch); 
     c->addPar (Command::String,false,"Days to sleep");
     modelCommands.append(c);
 
-    c = new Command ("setFrameIncludeChildren",Command::BranchOrImage); 
+    c = new Command ("setFrameIncludeChildren", Command::BranchOrImage); 
     c->addPar (Command::Bool,false,"Include or don't include children in frame");
     modelCommands.append(c);
 
-    c = new Command ("setFrameType",Command::BranchOrImage); 
+    c = new Command ("setFrameType", Command::BranchOrImage); 
     c->addPar (Command::String,false,"Type of frame");
     modelCommands.append(c);
 
-    c = new Command ("setFramePenColor",Command::BranchOrImage); 
+    c = new Command ("setFramePenColor", Command::BranchOrImage); 
     c->addPar (Command::Color,false,"Color of frame border line");
     modelCommands.append(c);
 
-    c = new Command ("setFrameBrushColor",Command::BranchOrImage); 
+    c = new Command ("setFrameBrushColor", Command::BranchOrImage); 
     c->addPar (Command::Color,false,"Color of frame background");
     modelCommands.append(c);
 
-    c = new Command ("setFramePadding",Command::BranchOrImage); 
+    c = new Command ("setFramePadding", Command::BranchOrImage); 
     c->addPar (Command::Int,false,"Padding around frame");
     modelCommands.append(c);
 
-    c = new Command ("setFrameBorderWidth",Command::BranchOrImage); 
+    c = new Command ("setFrameBorderWidth", Command::BranchOrImage); 
     c->addPar (Command::Int,false,"Width of frame borderline");
     modelCommands.append(c);
 
-    c = new Command ("setHeadingPlainText",Command::TreeItem); 
+    c = new Command ("setHeadingPlainText", Command::TreeItem); 
     c->addPar (Command::String,false,"New heading");
     modelCommands.append(c);
 
-    c = new Command ("setHideExport",Command::BranchOrImage); 
+    c = new Command ("setHideExport", Command::BranchOrImage); 
     c->addPar (Command::Bool,false,"Set if item should be visible in export");
     modelCommands.append(c);
 
-    c = new Command ("setIncludeImagesHorizontally",Command::Branch); 
+    c = new Command ("setIncludeImagesHorizontally", Command::Branch); 
     c->addPar (Command::Bool,false,"Set if images should be included horizontally in parent branch");
     modelCommands.append(c);
 
-    c = new Command ("setIncludeImagesVertically",Command::Branch); 
+    c = new Command ("setIncludeImagesVertically", Command::Branch); 
     c->addPar (Command::Bool,false,"Set if images should be included vertically in parent branch");
     modelCommands.append(c);
 
-    c = new Command ("setHideLinksUnselected",Command::BranchOrImage); 
+    c = new Command ("setHideLinksUnselected", Command::BranchOrImage); 
     c->addPar (Command::Bool,false,"Set if links of items should be visible for unselected items");
     modelCommands.append(c);
 
-    c = new Command ("setMapAnimCurve",Command::Any); 
+    c = new Command ("setMapAnimCurve", Command::Any); 
     c->addPar (Command::Int,false,"EasingCurve used in animation in MapEditor");
     modelCommands.append(c);
 
-    c = new Command ("setMapAuthor",Command::Any); 
+    c = new Command ("setMapAuthor", Command::Any); 
     c->addPar (Command::String,false,"");
     modelCommands.append(c);
 
-    c = new Command ("setMapAnimDuration",Command::Any); 
+    c = new Command ("setMapAnimDuration", Command::Any); 
     c->addPar (Command::Int,false,"Duration of animation in MapEditor in milliseconds");
     modelCommands.append(c);
 
-    c = new Command ("setMapBackgroundColor",Command::Any); 
+    c = new Command ("setMapBackgroundColor", Command::Any); 
     c->addPar (Command::Color,false,"Color of map background");
     modelCommands.append(c);
 
-    c = new Command ("setMapComment",Command::Any); 
+    c = new Command ("setMapComment", Command::Any); 
     c->addPar (Command::String,false,"");
     modelCommands.append(c);
 
-    c = new Command ("setMapTitle",Command::Any); 
+    c = new Command ("setMapTitle", Command::Any); 
     c->addPar (Command::String,false,"");
     modelCommands.append(c);
 
-    c = new Command ("setMapDefLinkColor",Command::Any); 
+    c = new Command ("setMapDefLinkColor", Command::Any); 
     c->addPar (Command::Color,false,"Default color of links");
     modelCommands.append(c);
 
-    c = new Command ("setMapLinkStyle",Command::Any); 
+    c = new Command ("setMapLinkStyle", Command::Any); 
     c->addPar (Command::String,false,"Link style in map");
     modelCommands.append(c);
 
-    c = new Command ("setMapRotation",Command::Any); 
+    c = new Command ("setMapRotation", Command::Any); 
     c->addPar (Command::Double,false,"Rotation of map");
     modelCommands.append(c);
 
-    c = new Command ("setMapTitle",Command::Any); 
+    c = new Command ("setMapTitle", Command::Any); 
     c->addPar (Command::String,false,"");
     modelCommands.append(c);
 
-    c = new Command ("setMapZoom",Command::Any); 
+    c = new Command ("setMapZoom", Command::Any); 
     c->addPar (Command::Double,false,"Zoomfactor of map");
     modelCommands.append(c);
 
-    c = new Command ("setNotePlainText",Command::Branch); 
+    c = new Command ("setNotePlainText", Command::Branch); 
     c->addPar (Command::String,false,"Note of branch");
     modelCommands.append(c);
 
-    c = new Command ("setScale",Command::Image); 
+    c = new Command ("setScale", Command::Image); 
     c->addPar (Command::Double,false,"Scale image x");
     c->addPar (Command::Double,false,"Scale image y");
     modelCommands.append(c);
 
-    c = new Command ("setSelectionColor",Command::Any); 
+    c = new Command ("setSelectionColor", Command::Any); 
     c->addPar (Command::Color,false,"Color of selection box");
     modelCommands.append(c);
 
-    c = new Command ("setURL",Command::TreeItem); 
+    c = new Command ("setURL", Command::TreeItem); 
     c->addPar (Command::String,false,"URL of TreeItem");
     modelCommands.append(c);
 
-    c = new Command ("setVymLink",Command::Branch); 
+    c = new Command ("setVymLink", Command::Branch); 
     c->addPar (Command::String,false,"Vymlink of branch");
     modelCommands.append(c);
 
@@ -889,43 +889,43 @@ void Main::setupAPI()
     c->addPar (Command::Int,false,"Width of xlink");
     modelCommands.append(c);
 
-    c = new Command ("sleep",Command::Any); 
+    c = new Command ("sleep", Command::Any); 
     c->addPar (Command::Int,false,"Sleep (seconds)");
     modelCommands.append(c);
 
-    c = new Command ("sortChildren",Command::Branch); 
+    c = new Command ("sortChildren", Command::Branch); 
     c->addPar (Command::Bool,true,"Sort children of branch in revers order if set");
     modelCommands.append(c);
 
-    c = new Command ("toggleFlag",Command::Branch); 
+    c = new Command ("toggleFlag", Command::Branch); 
     c->addPar (Command::String,false,"Name of flag to toggle");
     modelCommands.append(c);
 
-    c = new Command ("toggleFrameIncludeChildren",Command::Branch); 
+    c = new Command ("toggleFrameIncludeChildren", Command::Branch); 
     modelCommands.append(c);
 
-    c = new Command ("toggleScroll",Command::Branch); 
+    c = new Command ("toggleScroll", Command::Branch); 
     modelCommands.append(c);
 
-    c = new Command ("toggleTarget",Command::Branch); 
+    c = new Command ("toggleTarget", Command::Branch); 
     modelCommands.append(c);
 
-    c = new Command ("toggleTask",Command::Branch); 
+    c = new Command ("toggleTask", Command::Branch); 
     modelCommands.append(c);
 
-    c = new Command ("undo",Command::Any); 
+    c = new Command ("undo", Command::Any); 
     modelCommands.append(c);
 
-    c = new Command ("unscroll",Command::Branch); 
+    c = new Command ("unscroll", Command::Branch); 
     modelCommands.append(c);
 
-    c = new Command ("unscrollChildren",Command::Branch); 
+    c = new Command ("unscrollChildren", Command::Branch); 
     modelCommands.append(c);
 
-    c = new Command ("unselectAll",Command::Any); 
+    c = new Command ("unselectAll", Command::Any); 
     modelCommands.append(c);
 
-    c = new Command ("unsetFlag",Command::Branch); 
+    c = new Command ("unsetFlag", Command::Branch); 
     c->addPar (Command::String,false,"Name of flag to unset");
     modelCommands.append(c);
 
