@@ -53,7 +53,7 @@ QDBusVariant AdaptorVym::listCommands ()
     return QDBusVariant (list.join(",") );
 }
 
-QDBusVariant AdaptorVym::currentModel ()
+QDBusVariant AdaptorVym::currentMapIndex ()
 {
-    return QDBusVariant (mainWindow->currentModelNumber() );
+    return QDBusVariant (mainWindow->currentMapIndex() );
 }

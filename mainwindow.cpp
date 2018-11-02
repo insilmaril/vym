@@ -3123,7 +3123,7 @@ uint  Main::currentModelID() const
 	return 0;    
 }
 
-uint  Main::currentModelNumber() const  // FIXME-1 used? Note: tab index != model index
+uint  Main::currentMapIndex() const 
 {
     return tabWidget->currentIndex();
 }
