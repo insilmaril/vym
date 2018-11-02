@@ -2886,7 +2886,9 @@ void Main::setupContextMenus()
     floatimageContextMenu->addAction(actionCut);
 
     floatimageContextMenu->addSeparator();  
-    floatimageContextMenu->addAction ( actionFormatHideLinkUnselected );
+    floatimageContextMenu->addAction (actionGrowSelectionSize);
+    floatimageContextMenu->addAction (actionShrinkSelectionSize);
+    floatimageContextMenu->addAction (actionFormatHideLinkUnselected );
 
     // Context menu for canvas
     canvasContextMenu =new QMenu (this);
