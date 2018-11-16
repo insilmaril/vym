@@ -7,6 +7,7 @@
 #include "command.h"
 #include "file.h"
 #include "macros.h"
+
 #include "mainwindow.h"
 #include "options.h"
 #include "settings.h"
@@ -28,8 +29,13 @@ ScriptEditor::ScriptEditor (QWidget *parent):QWidget( parent )
     ui.setupUi (this);
 
     codeEditor = new CodeEditor (this);
-    ui.fileEditor->hide();
-    ui.verticalLayout_5->addWidget (codeEditor);
+    ui.fileVerticalLayout->insertWidget (0, codeEditor);
+
+    macroEditor = new CodeEditor (this);
+    ui.macroVerticalLayout->insertWidget (0, macroEditor);
+
+    slideEditor = new CodeEditor (this);
+    ui.slideVerticalLayout->insertWidget (0, slideEditor);
 
     connect ( ui.slideSaveButton,  SIGNAL (clicked() ), this, SLOT (saveSlide() ));
     connect ( ui.slideRunButton,   SIGNAL (clicked() ), this, SLOT (runSlide() ));
@@ -49,9 +55,17 @@ ScriptEditor::ScriptEditor (QWidget *parent):QWidget( parent )
     font.setFamily("Courier");
     font.setFixedPitch(true);
     font.setPointSize(12);
-    ui.slideEditor->setFont(font);
-    ui.macroEditor->setFont(font);
+    slideEditor->setFont(font);
+    macroEditor->setFont(font);
     codeEditor->setFont(font);
+
+    // Define tab width
+    const int tabStop = 4;  // 4 characters
+    QFontMetrics metrics(font);
+    int w = tabStop * metrics.width(' ');
+    codeEditor->setTabStopWidth(w);
+    slideEditor->setTabStopWidth(w);
+    macroEditor->setTabStopWidth(w);
 
     ui.modeTabWidget->setTabText(0,tr("Slide","Mode in scriptEditor"));
     ui.modeTabWidget->setTabText(1,tr("Macro","Mode in scriptEditor"));
@@ -61,8 +75,8 @@ ScriptEditor::ScriptEditor (QWidget *parent):QWidget( parent )
 
     reloadMacros();
 
-    highlighterMacro = new Highlighter(ui.macroEditor->document());
-    highlighterSlide = new Highlighter(ui.slideEditor->document());
+    highlighterMacro = new Highlighter(macroEditor->document());
+    highlighterSlide = new Highlighter(slideEditor->document());
     highlighterFile = new Highlighter(codeEditor->document());
     QStringList list;
     foreach (Command *c, modelCommands)
@@ -100,7 +114,7 @@ void ScriptEditor::saveSlide()
 	QMessageBox::warning(0,tr("Warning"),tr("Couldn't find slide to save script into slide!"));
 	return;
     }
-    si->setInScript(ui.slideEditor->toPlainText());
+    si->setInScript(slideEditor->toPlainText());
 }
 
 void ScriptEditor::setSlideScript(uint model_id, uint slide_id,const QString &s)
@@ -108,17 +122,17 @@ void ScriptEditor::setSlideScript(uint model_id, uint slide_id,const QString &s)
     vymModelID=model_id;
     slideID=slide_id;
     mode=Slide;
-    ui.slideEditor->setText(s);
+    slideEditor->setPlainText(s);
 }
 
 void ScriptEditor::runMacro()
 {
-    emit runScript (ui.macroEditor->toPlainText() );
+    emit runScript (macroEditor->toPlainText() );
 }
 
 void ScriptEditor::runSlide()
 {
-    emit runScript (ui.slideEditor->toPlainText() );
+    emit runScript (slideEditor->toPlainText() );
 }
 
 void ScriptEditor::runScript()
@@ -131,7 +145,7 @@ void ScriptEditor::reloadMacros()
     QString m = macros.get();
     if ( !m.isEmpty() ) 
     {
-        ui.macroEditor->setText (m);
+        macroEditor->setPlainText (m);
         ui.macrofileLabel->setText( macros.getPath() );
     } else
     {
@@ -142,7 +156,7 @@ void ScriptEditor::reloadMacros()
 }
 void ScriptEditor::saveMacros()
 {
-    if (saveStringToDisk(macros.getPath(), ui.macroEditor->toPlainText()) )
+    if (saveStringToDisk(macros.getPath(), macroEditor->toPlainText()) )
         mainWindow->statusMessage( tr("Macros saved to %1").arg(macros.getPath()) );
     else
     {

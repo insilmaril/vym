@@ -39,6 +39,8 @@ signals:
     
 private:
     Ui::ScriptEditor ui;
+    CodeEditor *slideEditor;
+    CodeEditor *macroEditor;
     CodeEditor *codeEditor;
     QString filename;
     Highlighter *highlighterMacro;
