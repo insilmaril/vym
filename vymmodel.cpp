@@ -6097,7 +6097,7 @@ SlideItem* VymModel::addSlide()
     if (si && seli)
     {
 	QString inScript;
-        if (!loadStringFromDisk(macroPath + "slideeditor-snapshot.vys", inScript) )
+        if (!loadStringFromDisk(macroPath + "/slideeditor-snapshot.vys", inScript) )
         {
             qWarning()<<"VymModel::addSlide couldn't load template for taking snapshot";
             return NULL;
