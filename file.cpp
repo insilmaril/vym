@@ -291,8 +291,12 @@ ErrorCode zipDir ( QDir zipInputDir, QString zipName)
     if (!zipProc->waitForStarted() )
     {
         // zip could not be started
+
         QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
-                               QObject::tr("Couldn't start zip to compress data."));
+            QObject::tr("Couldn't start %1 tool to compress data!\n"
+                "The map could not be saved, please check if "
+                "backup file is available or export as XML file!").arg("Windows zip") +
+            "\n\nziptoolpath: " + zipToolPath + "\nargs: " + args.join(" ") );
         err=Aborted;
     } else
     {
@@ -327,7 +331,10 @@ ErrorCode zipDir ( QDir zipInputDir, QString zipName)
     {
         // zip could not be started
         QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
-                               QObject::tr("Couldn't start zip to compress data."));
+            QObject::tr("Couldn't start %1 tool to compress data!\n"
+                "The map could not be saved, please check if "
+                "backup file is available or export as XML file!").arg("zip") +
+            "\n\nziptoolpath: " + zipToolPath + "\nargs: " + args.join(" ") );
         err=Aborted;
     } else
     {
