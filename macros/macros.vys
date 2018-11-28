@@ -65,14 +65,30 @@ function macro_f9()
     statusMessage("Task sleeping until 15:00");
 }
 
-// Macro F10: switch off task attributes and replace with green hook
+// Macro F10: toggle high prio task
 function macro_f10()
 { 
+	// Assuming 3 states, which are cycled:
+	// 0 - nothing set
+	// 1 - high prio task with arrows
+	// 2 - done task without arrows, but green hook
     map = vym.currentMap();
-    map.clearFlags();
-    map.setFlag("hook-green");
-    map.colorBranch("#0000ff");
-    if (map.hasTask() ) { map.toggleTask() }
+    if (map.hasTask() ) {
+		// Switch to state 2 
+	    map.toggleTask();
+        map.unsetFlag("2arrow-up");
+		map.unsetFlag("stopsign");
+		map.setFlag("hook-green");
+    } else {	  
+		if (map.hasActiveFlag("hook-green")) {
+			// Switch to state 0
+			map.unsetFlag("hook-green");
+		} else {
+			// Switch to state 1
+    	    map.setFlag("2arrow-up");
+			map.toggleTask();
+		}
+    }
 }
 
 // Macro F11: Toggle frame to include children
@@ -137,14 +153,48 @@ function macro_shift_f9()
 {
 }
 
-// Macro Shift + F10:
+// Macro Shift + F10: switch off task attributes and replace with green hook
 function macro_shift_f10()
 {
+    map = vym.currentMap();
+    map.clearFlags();
+    map.setFlag("hook-green");
+    map.colorBranch("#0000ff");
+    if (map.hasTask() ) { map.toggleTask() }
 }
 
 // Macro Shift + F11:
 function macro_shift_f11()
 {
+	map     = vym.currentMap();
+	lines   = vym.loadFile("/home/uwe/.mutt/eb-aliases").split('\n');
+
+	map.initIterator("foobar");
+
+	while (map.nextIterator("foobar") ) {
+		heading = map.getHeadingPlainText();
+
+		// Search for "@alias" at beginning of heading
+		if (heading.search(/^@\w/) == 0) {
+			alias_map = heading.replace(/@/,"");
+
+			for(var i = 0;i < lines.length;i++){
+				if (lines[i].search(/^alias/) == 0) {
+					if (lines[i].search(alias_map) == 6) {
+						name = lines[i].replace(/^.+?\"/, "");
+						name = name.replace(/\".+/, "");
+
+						email = lines[i].replace(/^.+?</, "");
+						email = email.replace(/>.*/, "");
+
+						map.setHeadingPlainText(name);
+					}
+				}
+			}
+		} else {
+			print ("No alias found");
+        }
+	}
 }
 
 // Macro Shift + F12: Strip URLs from confluence and generate readable heading
