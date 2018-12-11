@@ -1,5 +1,13 @@
 // vim:syntax=javascript
 
+// Helper function to toggle frame
+function toggle_frame(map)
+{
+    if (map.getFrameType() == "NoFrame" ) {
+        map.setFrameType ("RoundedRectangle");
+	} else
+		map.setFrameType ("NoFrame");
+}
 // Macro F1: Color subtree red
 function macro_f1()
 {
@@ -98,39 +106,57 @@ function macro_f11()
     map.toggleFrameIncludeChildren();
 }
 
-// Macro F12: Cycle frame types
+// Macro F12: Toggle frame
 function macro_f12()
 {
     map = vym.currentMap();
-    if (map.getFrameType() == "NoFrame" ) 
-        map.setFrameType ("RoundedRectangle");
-    else
-        map.setFrameType ("NoFrame");
+	toggle_frame ( map );
 }
 
-// Macro Shift + F1:
+
+// Macro Shift + F1: Frame background light red
 function macro_shift_f1()
 {
+    map = vym.currentMap();
+    toggle_frame ( map );
+	map.setFrameBrushColor("#ffb3b4");
+	statusMessage("Background light red");
 }
 
-// Macro Shift + F2:
+// Macro Shift + F2: Frame background light green
 function macro_shift_f2()
 {
+    map = vym.currentMap();
+    toggle_frame ( map );
+	map.setFrameBrushColor("#bdffd6");
+	statusMessage("Background light green");
 }
 
-// Macro Shift + F3:
+// Macro Shift + F3: Frame background light yellow
 function macro_shift_f3()
 {
+    map = vym.currentMap();
+    toggle_frame ( map );
+	map.setFrameBrushColor("#efefb3");
+	statusMessage("Background light yellow");
 }
 
-// Macro Shift + F4:
+// Macro Shift + F4: Frame background light blue
 function macro_shift_f4()
 {
+    map = vym.currentMap();
+    toggle_frame ( map );
+	map.setFrameBrushColor("#e2e6ff");
+	statusMessage("Background light blue");
 }
 
-// Macro Shift + F5:
+// Macro Shift + F5: Frame background light grey
 function macro_shift_f5()
 {
+    map = vym.currentMap();
+    toggle_frame ( map );
+	map.setFrameBrushColor("#d6d6d6");
+	statusMessage("Background light grey");
 }
 
 // Macro Shift + F6:
@@ -169,6 +195,11 @@ function macro_shift_f11()
 	map     = vym.currentMap();
 	lines   = vym.loadFile("/home/uwe/.mutt/eb-aliases").split('\n');
 
+
+	if (map.getHeadingPlainText() == "parts") {
+		map.setHeadingPlainText("Participants");
+	}
+
 	map.initIterator("foobar");
 
 	while (map.nextIterator("foobar") ) {
@@ -205,6 +236,14 @@ function macro_shift_f12()
     m1 = vym.currentMap();
 
     org = m1.getURL();
+
+    if (org.length == 0) {
+		// No URL yet
+		org = m1.getHeadingPlainText();
+		print ("No URL yet");
+		print ("org: " + org);
+		m1.setURL(org);
+	}
     print ("Original:");
     print (org);
 
