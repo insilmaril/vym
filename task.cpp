@@ -309,12 +309,22 @@ QString Task::saveToDir()
 	sleepAttr = attribut ("date_sleep", date_sleep.toString (Qt::ISODate) );
     else
 	sleepAttr = attribut ("date_sleep", "2018-01-01T00:00:00");
+
+    // Experimental: Also output priority based on arrow flags for external sorting
+    QString prioAttr;
+    if (branch)
+    {
+        if (branch->hasActiveStandardFlag("2arrow-up")) prioAttr = attribut ("prio", "2");
+        if (branch->hasActiveStandardFlag("arrow-up"))  prioAttr = attribut ("prio", "1");
+    }
+
     return singleElement ("task",
 	attribut ("status", getStatusString() ) +
 	attribut ("awake",  getAwakeString() ) +
 	attribut ("date_creation", date_creation.toString (Qt::ISODate) ) +
 	attribut ("date_modified", date_modified.toString (Qt::ISODate) ) +
-	sleepAttr
+	sleepAttr +
+        prioAttr
      );
 }
 
