@@ -1914,6 +1914,9 @@ void VymModel::loadNote (const QString &fn)
             VymNote vn;
             vn.setAutoText(n);
             setNote (vn);
+            emitDataChanged ( selbi);
+            emitUpdateQueries ();
+            reposition();
         }
     } else
         qWarning ("VymModel::loadNote no branch selected");
