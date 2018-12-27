@@ -57,7 +57,7 @@ AboutDialog::AboutDialog( QWidget *parent)
     "    <li>Chinese (simplified): Moligaloo</li>"
     "    <li>Chinese (traditional): Wei-Lun Chao </li>"
     "    <li>Croatian: Damir Brašnić </li>"
-    "    <li>Czech: Pavel Fric</li>"
+    "    <li>Czech: Vít Pelčák, Pavel Fric</li>"
     "    <li>French: Marc Sert, Philippe Caillaud and Claude </li>"
     "    <li>Greek: Yannis Kaskamanidis</li>"
     "    <li>Interlingua: Giovanni Sora</li>"
