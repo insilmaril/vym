@@ -2,15 +2,11 @@
 
 #include <QFileDialog>
 #include <QMessageBox>
-#include <QTextStream>
 
 #include "file.h"
-#include "options.h"
 #include "settings.h"
-#include "warningdialog.h"
 
 
-extern Options options;
 extern QDir vymBaseDir;
 extern Settings settings;
 extern bool debug;

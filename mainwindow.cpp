@@ -13,6 +13,7 @@
 
 #include <QColorDialog>
 #include <QDockWidget>
+#include <QFileDialog>
 #include <QFontDialog>
 #include <QInputDialog>
 #include <QMenuBar>
@@ -25,8 +26,6 @@
 #include "branchitem.h"
 #include "command.h"
 #include "downloadagent.h"
-#include "exportoofiledialog.h"
-#include "exports.h"
 #include "file.h"
 #include "findresultwidget.h"
 #include "findresultmodel.h"
@@ -45,6 +44,7 @@
 #include "scriptoutput.h"
 #include "settings.h"
 #include "shortcuts.h"
+#include "showtextdialog.h"
 #include "noteeditor.h"
 #include "task.h"
 #include "taskeditor.h"
@@ -3399,7 +3399,7 @@ void Main::fileLoad(const LoadMode &lmode)
     filter+="Freemind map (*.mm);;";
     filter+="XML (*.xml);;";
     filter+="All (* *.*)";
-    QStringList fns=QFileDialog::getOpenFileNames( 
+    QStringList fns = QFileDialog::getOpenFileNames( 
 	    this,
 	    caption,
 	    lastMapDir.path(), 
@@ -3750,6 +3750,7 @@ void Main::fileExportASCIITasks()
     if (m) m->exportASCII(true);
 }
 
+#include "export-csv.h"
 void Main::fileExportCSV()  //FIXME-3 not scriptable yet
 {
     VymModel *m=currentModel();
@@ -3769,6 +3770,7 @@ void Main::fileExportCSV()  //FIXME-3 not scriptable yet
     }
 }
 
+#include "export-latex.h"
 void Main::fileExportLaTeX()
 {
     VymModel *m=currentModel();
@@ -3787,6 +3789,7 @@ void Main::fileExportOrgMode()
     if (m) m->exportOrgMode();
 }
 
+#include "export-taskjuggler.h"
 void Main::fileExportTaskjuggler()  //FIXME-3 not scriptable yet
 {
     ExportTaskjuggler ex;
@@ -3807,6 +3810,8 @@ void Main::fileExportTaskjuggler()  //FIXME-3 not scriptable yet
     }
 }
 
+#include "export-impress.h"
+#include "exportoofiledialog.h"
 void Main::fileExportImpress()	
 {
     ExportOOFileDialog fd;

@@ -82,7 +82,16 @@ HEADERS	+= \
     editxlinkdialog.h \
     exportoofiledialog.h \
     exporthtmldialog.h\
-    exports.h \
+    export-ao.h \
+    export-ascii.h \
+    export-base.h \
+    export-csv.h \
+    export-html.h \
+    export-impress.h \
+    export-latex.h \
+    export-markdown.h \
+    export-orgmode.h \
+    export-taskjuggler.h \
     extrainfodialog.h \
     file.h \
     findwidget.h \
@@ -175,9 +184,18 @@ SOURCES	+= \
     dockeditor.cpp \
     downloadagent.cpp \
     editxlinkdialog.cpp \
-    exportoofiledialog.cpp \
-    exports.cpp \
     exporthtmldialog.cpp \
+    exportoofiledialog.cpp \
+    export-ao.cpp \
+    export-ascii.cpp \
+    export-base.cpp \
+    export-csv.cpp \
+    export-html.cpp \
+    export-impress.cpp \
+    export-latex.cpp \
+    export-markdown.cpp \
+    export-orgmode.cpp \
+    export-taskjuggler.cpp \
     extrainfodialog.cpp \
     file.cpp \
     findwidget.cpp \
