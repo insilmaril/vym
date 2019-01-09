@@ -16,9 +16,10 @@ end.parse!
 @testdir = options[:testdir]
 @testmap = ARGV[0]
 
-$tests_passed = 0
-$tests_failed = 0
-$tests_total  = 0
+$tests_passed    = 0
+$tests_failed    = 0
+$tests_warnings  = 0
+$tests_total     = 0
 
 def waitkey
   puts "Press return to continue..."
@@ -33,6 +34,19 @@ def expect (comment, v_real, v_exp)
   else  
     puts "Failed: #{comment}. Expected '#{v_exp}', but got '#{v_real}'"
     $tests_failed += 1
+    waitkey
+  end  
+  $tests_total += 1
+end    
+
+def expect_warning_only (comment, v_real, v_exp)
+  if v_exp == v_real
+    puts "    Ok: #{comment}"
+    $tests_passed += 1
+    # waitkey
+  else  
+    puts "Warning: #{comment}. Expected '#{v_exp}', but got '#{v_real}'"
+    $tests_warnings += 1
     waitkey
   end  
   $tests_total += 1
@@ -73,6 +87,7 @@ end
 def summary
   puts "\nTests done  : #{$tests_total}"
   puts "Tests passed: #{$tests_passed}"
+  puts "Warnings:     #{$tests_warnings}"
   puts "Tests failed: #{$tests_failed}"
 end
 
@@ -100,8 +115,8 @@ end
 #######################
 def test_vym (vym)
   heading "Mainwindow checks:"
-  version = "2.6.216"
-  expect "Version is #{version}", vym.version, version
+  version = "2.6.220"
+  expect_warning_only "Version is #{version}", vym.version, version
 
   expect "Loading map '#{@testmap}'", vym.loadMap(@testmap), true
 
