@@ -22,13 +22,19 @@ QString Macros::get()
     if ( !f.open( QIODevice::ReadOnly ) )
     {
         QObject::tr("Warning"),
-                QObject::tr("Couldn't find a macro at  %1.\n").arg(fn)+
+                QObject::tr("Couldn't find a macros at  %1.\n").arg(fn)+
                 QObject::tr("Please use Settings->")+QObject::tr("Set directory for vym macros");
         return QString();
     }
 
     QTextStream ts( &f );
-    QString macro= ts.readAll();
+    QString macros = ts.readAll();
 
-   return macro;
+    return macros;
+}
+
+QString Macros::help()
+{
+    QRegExp re("^//.*Macro.*F[0-9]{1,2}");
+    return get().split("\n").filter(re).replaceInStrings("// ", "").join("\n");
 }

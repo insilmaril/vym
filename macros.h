@@ -7,5 +7,6 @@ class Macros {
 public:
     QString getPath ();
     QString get();
+    QString help();
 };
 #endif

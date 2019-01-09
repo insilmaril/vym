@@ -335,6 +335,7 @@ private slots:
     void helpDoc();
     void helpDemo();
     void helpShortcuts();
+    void helpMacros();
     void debugInfo();
     void helpAbout();
     void helpAboutQT();

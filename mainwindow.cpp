@@ -2754,6 +2754,10 @@ void Main::setupHelpActions()
     helpMenu->addAction(a);
     connect( a, SIGNAL( triggered() ), this, SLOT( helpShortcuts() ) );
 
+    a = new QAction(  tr( "Show keyboard macros","Help action" ), this );
+    helpMenu->addAction(a);
+    connect( a, SIGNAL( triggered() ), this, SLOT( helpMacros() ) );
+
     a = new QAction( tr("Debug info","Option to show debugging info") , this);  
     helpMenu->addAction(a);
     connect( a, SIGNAL( triggered() ), this, SLOT( debugInfo() ) );
@@ -6041,6 +6045,14 @@ void Main::helpShortcuts()
     ShowTextDialog dia;
     dia.useFixedFont (true);
     dia.setText( switchboard.getASCII() );
+    dia.exec();
+}
+
+void Main::helpMacros()
+{
+    ShowTextDialog dia;
+    dia.useFixedFont (true);
+    dia.setText( macros.help() );
     dia.exec();
 }
 
