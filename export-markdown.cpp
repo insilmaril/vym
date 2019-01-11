@@ -22,8 +22,8 @@ void ExportMarkdown::doExport()
         mainWindow->statusMessage(QString(QObject::tr("Export failed.")));
         return;
     }
-    QTextStream ts( &file );
-    ts.setCodec("UTF-8");
+
+    QString out;
 
     // Main loop over all branches
     QString s;
@@ -45,7 +45,7 @@ void ExportMarkdown::doExport()
         if (cur->getType() == TreeItem::Branch || cur->getType() == TreeItem::MapCenter)
         {
             // Insert newline after previous list
-            if ( cur->depth() < lastDepth ) ts << "\n";
+            if ( cur->depth() < lastDepth ) out += "\n";
 
             // Make indentstring
             curIndent = "";
@@ -65,28 +65,28 @@ void ExportMarkdown::doExport()
                 switch (cur->depth())
                 {
                 case 0:
-                    ts << underline (curHeading, QString("="));
-                    ts << "\n";
+                    out += underline (curHeading, QString("="));
+                    out += "\n";
                     break;
                 case 1:
-                    ts << "\n";
-                    ts << (underline (curHeading, QString("-") ) );
-                    ts << "\n";
+                    out += "\n";
+                    out += (underline (curHeading, QString("-") ) );
+                    out += "\n";
                     break;
                 case 2:
-                    ts << "\n";
-                    ts << (curIndent + "### " + curHeading);
-                    ts << "\n";
+                    out += "\n";
+                    out += (curIndent + "### " + curHeading);
+                    out += "\n";
                     dashIndent="  ";
                     break;
                 case 3:
-                    ts << (curIndent + "- " + curHeading);
-                    ts << "\n";
+                    out += (curIndent + "- " + curHeading);
+                    out += "\n";
                     dashIndent="  ";
                     break;
                 default:
-                    ts << (curIndent + "- " + curHeading);
-                    ts << "\n";
+                    out += (curIndent + "- " + curHeading);
+                    out += "\n";
                     dashIndent="  ";
                     break;
                 }
@@ -99,7 +99,7 @@ void ExportMarkdown::doExport()
 
                 // If necessary, write vymlink
                 if (!cur->getVymLink().isEmpty())
-                    ts << (curIndent + dashIndent + cur->getVymLink()) +" (vym mindmap)\n";
+                    out += (curIndent + dashIndent + cur->getVymLink()) +" (vym mindmap)\n";
 
                 // If necessary, write note
                 if (!cur->isNoteEmpty())
@@ -107,7 +107,7 @@ void ExportMarkdown::doExport()
                     // curIndent +="  | ";
                     // Only indent for bullet points
                     if (cur->depth() > 2) curIndent +="  ";
-                    ts << '\n' +  cur->getNoteASCII(curIndent, 80) ;
+                    out += '\n' +  cur->getNoteASCII(curIndent, 80) ;
                 }
                 lastDepth = cur->depth();
             }
@@ -117,15 +117,21 @@ void ExportMarkdown::doExport()
 
     if (listTasks)
     {
-        ts << "\n\nTasks\n-----\n\n";
+        out += "\n\nTasks\n-----\n\n";
 
 
         foreach (QString t, tasks)
         {
-            ts << " - " << t << "\n";
+            out += " - " + t + "\n";
         }
     }
+    QTextStream ts( &file );
+    ts.setCodec("UTF-8");
+    ts << out;
     file.close();
+
+    QClipboard *clipboard = QGuiApplication::clipboard();
+    clipboard->setText(out);
 
     QString listTasksString = listTasks ? "true" : "false";
     completeExport( QString("\"%1\",%2").arg(filePath).arg(listTasksString) );

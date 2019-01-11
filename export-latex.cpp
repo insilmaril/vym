@@ -56,8 +56,6 @@ void ExportLaTeX::doExport()
         mainWindow->statusMessage(QString(QObject::tr("Export failed.")));
         return;
     }
-    QTextStream ts( &file );
-    ts.setCodec("UTF-8");
 
     // Read default section names
     QStringList sectionNames;
@@ -72,6 +70,8 @@ void ExportLaTeX::doExport()
         sectionNames.replace(i,settings.value(
                                  QString("/export/latex/sectionName-%1").arg(i),sectionNames.at(i)).toString() );
 
+    QString out;
+
     // Main loop over all branches
     QString s;
     BranchItem *cur=NULL;
@@ -84,26 +84,29 @@ void ExportLaTeX::doExport()
             int d=cur->depth();
             s=escapeLaTeX (cur->getHeadingPlain() );
             if ( sectionNames.at(d).isEmpty() || d>=sectionNames.count() )
-                ts << s << endl;
+                out += s + "\n";
             else
-                ts << endl
-                   << "\\"
-                   << sectionNames.at(d)
-                   << "{"
-                   << s
-                   << "}"
-                   << endl;
+                out += "\n";
+                out += "\\" + sectionNames.at(d) + "{" + s + "}";
+                out += "\n";
 
             // If necessary, write note
             if (!cur->isNoteEmpty()) {
-                ts << (cur->getNoteASCII());
-                ts << endl;
+                out += (cur->getNoteASCII());
+                out += "\n";
             }
         }
         model->nextBranch(cur,prev);
     }
     
+    QTextStream ts( &file );
+    ts.setCodec("UTF-8");
+    ts << out;
     file.close();
+
+    QClipboard *clipboard = QGuiApplication::clipboard();
+    clipboard->setText(out);
+    
     completeExport();
 }
 

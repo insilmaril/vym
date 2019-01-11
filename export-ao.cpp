@@ -31,8 +31,7 @@ void ExportAO::doExport()
     settings.setLocalValue ( model->getFilePath(), "/export/last/command","exportAO");
     settings.setLocalValue ( model->getFilePath(), "/export/last/description","A&O report");
 
-    QTextStream ts( &file );
-    ts.setCodec("UTF-8");
+    QString out;
 
     // Main loop over all branches
     QString s;
@@ -79,14 +78,14 @@ void ExportAO::doExport()
                 case 0: break;  // Mapcenter (Ignored)
                 case 1: break;  // Mainbranch "Archive" (Ignored)
                 case 2: // Title: "Current week number..."
-                    ts << "\n";
-                    ts << underline ( cur->getHeadingPlain(), QString("=") );
-                    ts << "\n";
+                    out += "\n";
+                    out += underline ( cur->getHeadingPlain(), QString("=") );
+                    out += "\n";
                     break;
                 case 3: // Headings: "Achievement", "Bonus", "Objective", ...
-                    ts << "\n";
-                    ts << underline ( cur->getHeadingPlain(), "-");
-                    ts << "\n";
+                    out += "\n";
+                    out += underline ( cur->getHeadingPlain(), "-");
+                    out += "\n";
                     break;
                 default:    // depth 4 and higher are the items we need to know
                     Task *task=cur->getTask();
@@ -125,18 +124,18 @@ void ExportAO::doExport()
                     for (int j=0; j<i; j++) line += " ";
                     line += " "  + statusString + "\n";
 
-                    ts << line;
+                    out += line;
 
                     // If necessary, write URL
                     if (!cur->getURL().isEmpty())
-                        ts << noColString << indent(cur->depth()-4, false) + cur->getURL() + "\n";
+                        out += noColString + indent(cur->depth()-4, false) + cur->getURL() + "\n";
 
                     // If necessary, write note
                     if (!cur->isNoteEmpty())
                     {
-                        curIndent = noColString + indent(cur->depth()-4,false) + "| ";
+                        curIndent = noColString + indent(cur->depth() - 4, false) + "| ";
                         s=cur->getNoteASCII( curIndent, 80);
-                        ts << s + "\n";
+                        out += s + "\n";
                     }
                     break;
                 }
@@ -144,7 +143,15 @@ void ExportAO::doExport()
         }
         model->nextBranch(cur,prev);
     }
+
+    QTextStream ts( &file );
+    ts.setCodec("UTF-8");
+    ts << out;
     file.close();
+
+    QClipboard *clipboard = QGuiApplication::clipboard();
+    clipboard->setText(out);
+
     completeExport();
 }
 

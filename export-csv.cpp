@@ -22,11 +22,11 @@ void ExportCSV::doExport()
         mainWindow->statusMessage(QString(QObject::tr("Export failed.")));
         return;
     }
-    QTextStream ts( &file );
-    ts.setCodec("UTF-8");
+
+    QString out;
 
     // Write header
-    ts << "\"Note\""  <<endl;
+    out += "\"Note\"\n";
 
     // Main loop over all branches
     QString s;
@@ -44,20 +44,27 @@ void ExportCSV::doExport()
             {
                 s =cur->getNoteASCII();
                 s=s.replace ("\n","\n"+curIndent);
-                ts << ("\""+s+"\",");
+                out += ("\""+s+"\",");
             } else
-                ts <<"\"\",";
+                out +="\"\",";
 
             // Make indentstring
             for (i=0;i<cur->depth();i++) curIndent+= "\"\",";
 
             // Write heading
-            ts << curIndent << "\"" << cur->getHeadingPlain()<<"\""<<endl;
+            out += curIndent + "\"" + cur->getHeadingPlain() + "\"\n";
         }
 
         model->nextBranch(cur,prev);
         curIndent="";
     }
+    QTextStream ts( &file );
+    ts.setCodec("UTF-8");
+    ts << out;
     file.close();
+
+    QClipboard *clipboard = QGuiApplication::clipboard();
+    clipboard->setText(out);
+    
     completeExport();
 }
