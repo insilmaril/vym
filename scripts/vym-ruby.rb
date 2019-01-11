@@ -70,6 +70,12 @@ class Vym
     end  
   end
 
+  def currentMapX ()    # Overloads method from scripting.h, which would return QObject
+    n = @main.currentMapIndex.first
+
+    return map(n)
+  end
+
   def show_methods
     puts "Main methods:"
     @main[@main.default_iface].methods.each do |k,v|
