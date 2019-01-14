@@ -2762,12 +2762,12 @@ void Main::setupHelpActions()
     helpMenu->addAction(a);
     connect( a, SIGNAL( triggered() ), this, SLOT( debugInfo() ) );
 
-    a = new QAction( tr( "About VYM","Help action" ), this);
-    connect( a, SIGNAL( triggered() ), this, SLOT( helpAbout() ) );
-    helpMenu->addAction (a);
-
     a = new QAction( tr( "About QT","Help action" ), this);
     connect( a, SIGNAL( triggered() ), this, SLOT( helpAboutQT() ) );
+    helpMenu->addAction (a);
+
+    a = new QAction( tr( "About VYM","Help action" ), this);
+    connect( a, SIGNAL( triggered() ), this, SLOT( helpAbout() ) );
     helpMenu->addAction (a);
 }
 
