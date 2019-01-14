@@ -189,7 +189,7 @@ function macro_shift_f10()
     if (map.hasTask() ) { map.toggleTask() }
 }
 
-// Macro Shift + F11:
+// Macro Shift + F11: Replace "@..." by mutt aliases
 function macro_shift_f11()
 {
 	map     = vym.currentMap();
