@@ -3,16 +3,18 @@
 require File.expand_path("../vym-ruby", __FILE__) 
 require 'tempfile'
 require 'mail'
+require 'pp'
 
-mail_in = Tempfile.new("mail")
+mail_in = ""
+ARGF.each_line do |line|
+  mail_in << line 
+end
+
 begin
-  mail_in.write(ARGF.read)
-  mail_in.rewind
   out = Tempfile.new("temp")
   begin
-    mail = Mail.read(mail_in.path)
-
-    puts "is multipart: #{mail.multipart?}"
+    mail = Mail.read_from_string(Mail::Utilities.binary_unsafe_to_crlf(mail_in))
+    puts "Mail is multipart: #{mail.multipart?}"
 
     # Write header
     out << "<html><body>"
@@ -29,7 +31,7 @@ begin
       puts mail.parts.first.decoded
       out << mail.parts.first.decoded
     else
-      out << mail.decoded
+      out <<  mail.body.raw_source.gsub("\n", "<br/>")
     end
 
     out << "</body></html>"
@@ -65,7 +67,4 @@ begin
     out.unlink
   end
 
-ensure
-  mail_in.close
-  mail_in.unlink
 end
