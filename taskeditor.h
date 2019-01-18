@@ -37,6 +37,8 @@ public slots:
     void sort();
 
 private slots:
+    void headerContextMenu();
+    void updateColumnLayout();
     void selectionChanged (const QItemSelection & selected, const QItemSelection & );
     void toggleFilterMap ();
     void toggleFilterActive ();

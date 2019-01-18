@@ -359,7 +359,6 @@ Main::Main(QWidget* parent, Qt::WindowFlags f) : QMainWindow(parent,f)
     if (!QDBusConnection::sessionBus().registerObject ("/vym",this))
 	qWarning ("MainWindow: Couldn't register DBUS object!");
 #endif    
-
 }
 
 Main::~Main()

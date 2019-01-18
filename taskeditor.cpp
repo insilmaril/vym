@@ -126,10 +126,6 @@ TaskEditor::TaskEditor(QWidget *)
     view->setSortingEnabled(true);
     view->horizontalHeader()->setSortIndicator (0,Qt::AscendingOrder);
 
-    // Experimental, don't show all columns
-    view->setColumnHidden(2, true);
-    view->setColumnHidden(3, true);
-    view->setColumnHidden(4, true);
 
     blockExternalSelect=false;
 
@@ -160,23 +156,19 @@ TaskEditor::TaskEditor(QWidget *)
     setFilterFlags2();
     setFilterFlags3();
 
-    // Initialize column widths and visibility
-    QString s;
-    for (int i = 0; i < 6; i++)
-    {
-	s = QString("/taskeditor/column/%1/width").arg(i);
-	if (settings.contains (s) )
-	    view->setColumnWidth (i, settings.value(s, 100).toInt() );
-
-	s = QString("/taskeditor/column/%1/hidden").arg(i);
-        view->setColumnHidden (i, settings.value(s, false).toBool() );
-    }
-
     // Initialize display of parents of a task
     bool ok;
     int i=settings.value ("/taskeditor/showParentsLevel", 0).toInt(&ok);
     if (ok) taskModel->setShowParentsLevel(i);
 
+    view->horizontalHeader()->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(view->horizontalHeader(),
+            SIGNAL(customContextMenuRequested(QPoint)),
+            SLOT(headerContextMenu()));
+
+    // Hack: For whatever reason TableView needs to be available before columns
+    //       can be hidden.
+    QTimer::singleShot(1500, this,  SLOT( updateColumnLayout()));
 }
 
 TaskEditor::~TaskEditor()
@@ -188,11 +180,13 @@ TaskEditor::~TaskEditor()
     settings.setValue ("/taskeditor/filterFlags2",actionToggleFilterFlags2->isChecked());
     settings.setValue ("/taskeditor/filterFlags3",actionToggleFilterFlags3->isChecked());
     settings.setValue ("/taskeditor/showParentsLevel",taskModel->getShowParentsLevel() );
+    /*
     for (int i=0; i<7; i++)
     {
 	settings.setValue (QString("/taskeditor/column/%1/width").arg(i),view->columnWidth(i) );
 	settings.setValue (QString("/taskeditor/column/%1/hidden").arg(i),view->isColumnHidden(i) );
     }
+    */
 }
 
 void TaskEditor::setMapName (const QString &n)
@@ -283,6 +277,24 @@ void TaskEditor::clearSelection()
     view->selectionModel()->clearSelection();
 }
 
+void TaskEditor::headerContextMenu()
+{
+    qDebug() << "TE::headerContextMenu()";   // FIXME-2
+}
+
+void TaskEditor::updateColumnLayout()
+{
+    // Update column widths and visibility
+    QString s;
+    for (int i = 0; i < 6; i++)
+    {
+	s = QString("/taskeditor/column/%1/").arg(i);
+        view->setColumnWidth  (i, settings.value(s + "width", 60).toInt() );
+        view->setColumnHidden (i, settings.value(s + "hidden", false).toBool() );
+    }
+}
+
+
 void TaskEditor::selectionChanged ( const QItemSelection & selected, const QItemSelection & )
 {// FIXME-3 what, if multiple selection in MapEditor?
     // Avoid segfault on quit, when selected is empty
@@ -318,7 +330,6 @@ void TaskEditor::sort()
     QHeaderView *hv=view->horizontalHeader();
     view->sortByColumn( hv->sortIndicatorSection(), hv->sortIndicatorOrder() );
     filterActiveModel->invalidate();	
-
 }
 
 void TaskEditor::toggleFilterMap ()
