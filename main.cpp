@@ -132,6 +132,7 @@ void msgHandler (QtMsgType type, const QMessageLogContext &context, const QStrin
     case QtFatalMsg:
         fprintf(stderr, "Fatal: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
         fatalCount++;
+        break;
     default:
         fprintf(stderr, "Info: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
     }
