@@ -309,11 +309,11 @@ language.path = $${DATADIR}/vym/lang
 INSTALLS += language
 
 support.files = styles/ scripts/ icons/ flags/ macros/ exports/ demos/
-support.files += LICENSE.txt
 support.path = $${DATADIR}/vym
 INSTALLS += support 
 
 # doc.files = doc/vym.pdf
+# doc.files += LICENSE.txt
 # doc.path = $${DOCDIR}
 # INSTALLS += doc
 # DEFINES += VYM_DOCDIR=\\\"$${DOCDIR}\\\"

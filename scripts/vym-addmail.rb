@@ -3,7 +3,6 @@
 require File.expand_path("../vym-ruby", __FILE__) 
 require 'tempfile'
 require 'mail'
-require 'pp'
 
 mail_in = ""
 ARGF.each_line do |line|
@@ -42,8 +41,10 @@ begin
     vym = vym_mgr.find('production') 
 
     if !vym
-      puts "Couldn't find instance name \"#{instance_name}\", please start one:"
-      puts "vym -l -n \"#{instance-name}\" -t test/default.vym"
+      puts "Couldn't find instance named \"production\", please start one:"
+      puts "vym -l -n production -t test/default.vym"
+
+      puts "Currently running vym instances: #{vym_mgr.show_running}"
       exit
     end
 

@@ -117,7 +117,7 @@ void Selection::test()
     if (modelWrapper) modelWrapper->setHeadingPlainText("huhu!");
 }
 
-bool Selection::setModel(VymModelWrapper *mw)
+void Selection::setModel(VymModelWrapper *mw)
 {
     qDebug() << "Selection::setModel called: " << mw; // TODO debug
     modelWrapper = mw;

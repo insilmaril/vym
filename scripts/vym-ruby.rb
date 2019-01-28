@@ -1,4 +1,5 @@
 require 'dbus'
+require 'pp'
 
 $debug = false
 
@@ -157,18 +158,24 @@ class VymManager
 
   def find (name)
     list = running
-    #puts "Running vyms: #{list.length}"
+    puts "Number of running vyms: #{list.length}"
     if list.length == 0
       return nil
     end
 
     for i in (0...list.length)
+      puts "i: #{i}"
       vym_service = @dbus.service(list.at(i))
       vym_service.introspect
       vym_main_obj = vym_service.object("vym");
-      vym_main_obj.introspect
+
+      pp vym_main_obj
+
+      #vym_main_obj.introspect
 
       vym_main_obj.default_iface = "org.insilmaril.vym.main.adaptor"
+
+      puts vym_main_obj.getInstanceName
 
       if vym_main_obj.getInstanceName[0] == name 
         puts "VymManager: Found instance named '#{name}': #{list.at(i)}" if $debug

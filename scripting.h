@@ -51,7 +51,7 @@ public:
 
 public slots:
     void test();
-    bool setModel(VymModelWrapper* mw);
+    void setModel(VymModelWrapper* mw);
 
 private:
     VymModelWrapper* modelWrapper;
