@@ -86,10 +86,11 @@ void ExportLaTeX::doExport()
             if ( sectionNames.at(d).isEmpty() || d>=sectionNames.count() )
                 out += s + "\n";
             else
+            {
                 out += "\n";
                 out += "\\" + sectionNames.at(d) + "{" + s + "}";
                 out += "\n";
-
+            }
             // If necessary, write note
             if (!cur->isNoteEmpty()) {
                 out += (cur->getNoteASCII());
