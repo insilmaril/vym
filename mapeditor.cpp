@@ -1107,12 +1107,12 @@ void MapEditor::editHeadingFinished()
     setState (Neutral);
     //lineEdit->releaseKeyboard();
     lineEdit->clearFocus();
-    QString s=lineEdit->text();
+    QString s = lineEdit->text();
     s.replace (QRegExp ("\\n")," ");	// Don't paste newline chars
     model->setHeadingPlainText (s);
     model->setSelectionBlocked(false);
     delete (lineEdit);
-    lineEdit=NULL;
+    lineEdit = NULL;
 
     animateScrollBars();
 
@@ -1210,12 +1210,18 @@ void MapEditor::keyReleaseEvent(QKeyEvent* e)
 
 void MapEditor::mousePressEvent(QMouseEvent* e)	
 {
-    // Ignore right clicks or wile editing heading
-    if (e->button() == Qt::RightButton || model->isSelectionBlocked() )
+    // Ignore right clicks 
+    if (e->button() == Qt::RightButton )
     {
 	e->ignore();
 	QGraphicsView::mousePressEvent(e);
 	return;
+    }
+    
+    // Stop editing heading
+    if (model->isSelectionBlocked() )
+    {
+        editHeadingFinished();
     }
 
     // Check if we need to reset zoomFactor
@@ -1227,12 +1233,12 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
     }
 
     QPointF p = mapToScene(e->pos());
-    TreeItem *ti=findMapItem (p, NULL);
-    LinkableMapObj* lmo=NULL;
-    if (ti) lmo=((MapItem*)ti)->getLMO();
+    TreeItem *ti = findMapItem (p, NULL);
+    LinkableMapObj* lmo = NULL;
+    if (ti) lmo = ((MapItem*)ti)->getLMO();
 
     QString sysFlagName;
-    if (lmo) sysFlagName=((BranchObj*)lmo)->getSystemFlagName(p);
+    if (lmo) sysFlagName = ((BranchObj*)lmo)->getSystemFlagName(p);
     
     /*
     qDebug() << "ME::mouse pressed\n";
