@@ -103,7 +103,7 @@ bool parseVYMHandler::startElement  ( const QString&, const QString&,
     } else if ( eName == "slide" && state == StateMap )
     {
         state=StateMapSlide;
-        if (!  contentFilter && SlideContent)  
+        if (!  (contentFilter & SlideContent))  
         {   
             // Ignore slides during paste
             lastSlide=model->addSlide();
