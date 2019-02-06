@@ -356,10 +356,8 @@ bool parseVYMHandler::endElement  ( const QString&, const QString&, const QStrin
             // Empty branches may not be scrolled 
             // (happens if bookmarks are imported)
             if (lastBranch->isScrolled() && lastBranch->branchCount()==0) 
-            {
                 lastBranch->unScroll();
-                model->emitDataChanged (lastBranch);
-            }
+            model->emitDataChanged (lastBranch);
             lastBranch=(BranchItem*)(lastBranch->parent());
             lastBranch->setLastSelectedBranch (0);  
             break;
