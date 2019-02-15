@@ -275,23 +275,10 @@ ErrorCode zipDir ( QDir zipInputDir, QString zipName)
     zipProc->setWorkingDirectory (QDir::toNativeSeparators(zipInputDir.path() + "\\") );    
     args << "a" << zipName << "-tzip" << "-scsUTF-8"  << "*";
     zipProc->start(zipToolPath, args);
- 
-    if (!zipProc->waitForStarted())
-    {
-        QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
-            QObject::tr("Couldn't start tool to decompress data."));
-        err=Aborted;
-
-    }
-    while(zipProc->state()!=QProcess::NotRunning){
-        zipProc->waitForReadyRead();
-        result = zipProc->readAll();
-    }
-    
+     
     if (!zipProc->waitForStarted() )
     {
         // zip could not be started
-
         QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
             QObject::tr("Couldn't start %1 tool to compress data!\n"
                 "The map could not be saved, please check if "
@@ -411,7 +398,7 @@ File::ErrorCode unzipDir ( QDir zipOutputDir, QString zipName)
     zipProc->setWorkingDirectory (QDir::toNativeSeparators(zipOutputDir.path() + "\\") );
     args << "-o" + zipOutputDir.path() << "x" << zipName.toUtf8() << "-scsUTF-8";
     zipProc->start(zipToolPath, args);
-
+/*
     if (!zipProc->waitForStarted())
     {
         QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
@@ -421,10 +408,11 @@ File::ErrorCode unzipDir ( QDir zipOutputDir, QString zipName)
 
     while(zipProc->state()!=QProcess::NotRunning){
         zipProc->waitForReadyRead();
-        result = zipProc->readAll();
+        //result = zipProc->readAll();
         //qDebug() << result << flush;
     }
     //qDebug() << zipProc->getStdout()<<flush;
+*/
 #else
     zipProc->setWorkingDirectory (QDir::toNativeSeparators(zipOutputDir.path()));
     args << "-o";   // overwrite existing files!
@@ -437,10 +425,9 @@ File::ErrorCode unzipDir ( QDir zipOutputDir, QString zipName)
     if (!zipProc->waitForStarted() )
     {
         QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
-                               QObject::tr("Couldn't start %1 to decompress data.").arg(zipToolPath));
+            QObject::tr("Couldn't start %1 tool to decompress data!\n").arg("Windows zip") +
+            "\n\nziptoolpath: " + zipToolPath + "\nargs: " + args.join(" ") );
         err=Aborted;
-
-
     } else
     {
         zipProc->waitForFinished();
