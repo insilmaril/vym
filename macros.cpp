@@ -11,7 +11,7 @@ extern QString macroPath;
 
 QString Macros::getPath ()
 {
-    return macroPath + "/macros.vys";
+    return QFile (":/macros.vys").fileName();
 }
 
 QString Macros::get()

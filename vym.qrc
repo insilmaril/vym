@@ -149,4 +149,5 @@
     <file alias="vym-16x16.png">icons/vym-16x16.png</file>
     <file alias="vym-editor.png">icons/vym-editor.png</file>
     <file alias="vym.png">icons/vym.png</file>
+    <file alias="macros.vys">macros/macros.vys</file>
   </qresource></RCC>
