@@ -7,6 +7,7 @@
 #include "vymmodel.h"
 
 extern Main *mainWindow;
+extern QString editorFocusStyle;
 
 ///////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////
@@ -47,6 +48,8 @@ void TreeEditor::init()
     a->setShortcutContext (Qt::WidgetShortcut);
     addAction (a);
     connect( a, SIGNAL( triggered() ), mainWindow, SLOT( editMoveDown() ) );
+
+    setStyleSheet( "QTreeView:focus {" + editorFocusStyle + "}");
 }
 
 TreeEditor::~TreeEditor()

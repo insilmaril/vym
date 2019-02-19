@@ -12,6 +12,8 @@
 extern Main *mainWindow;
 extern SlideEditor *slideEditor;
 
+extern QString editorFocusStyle;
+
 SlideEditor::SlideEditor(VymModel *m)
 {
     vymModel=m;
@@ -24,6 +26,8 @@ SlideEditor::SlideEditor(VymModel *m)
     view->setModel (slideModel);
     
     slideModel->setSelectionModel ( view->selectionModel() );
+
+    view->setStyleSheet( "QTreeView:focus {" + editorFocusStyle + "}");
 
     // Create ControlWidget
     slideControl= new SlideControlWidget (this);

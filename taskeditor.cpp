@@ -21,6 +21,8 @@ extern Settings settings;
 extern QMenu* taskContextMenu;
 extern TaskModel* taskModel;
 
+extern QString editorFocusStyle;
+
 TaskEditor::TaskEditor(QWidget *)
 {
     // Creat Table view
@@ -166,6 +168,8 @@ TaskEditor::TaskEditor(QWidget *)
             SIGNAL(customContextMenuRequested(QPoint)),
             SLOT(headerContextMenu()));
 
+    view->setStyleSheet( "QTableView:focus {" + editorFocusStyle + "}");
+
     // Hack: For whatever reason TableView needs to be available before columns
     //       can be hidden.
     QTimer::singleShot(1500, this,  SLOT( updateColumnLayout()));
@@ -191,7 +195,7 @@ TaskEditor::~TaskEditor()
 
 void TaskEditor::setMapName (const QString &n)
 {
-    currentMapName=n;
+    currentMapName = n;
     setFilterMap();
 }
 
@@ -313,8 +317,10 @@ void TaskEditor::selectionChanged ( const QItemSelection & selected, const QItem
 	    if (m!=mainWindow->currentModel() )
 		mainWindow->gotoModel (m);
 	    view->setStyleSheet( 
-	    QString ("selection-color: %1;" 
-		     "selection-background-color: %2;").arg(bi->getHeadingColor().name() ).arg(m->getSelectionColor().name() ) );
+                "QTableView {selection-background-color: " + m->getSelectionColor().name() + 
+                          "; selection-color:" + bi->getHeadingColor().name() + "}" +
+                "QTableView:focus {" + editorFocusStyle  + "}" 
+            );
 	    view->scrollTo (selected.indexes().first() );   
 	}
     }

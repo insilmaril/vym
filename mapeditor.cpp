@@ -34,6 +34,8 @@ extern Settings settings;
 
 extern QTextStream vout;
 
+extern QString editorFocusStyle;
+
 ///////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////
 MapEditor::MapEditor( VymModel *vm)	
@@ -53,6 +55,8 @@ MapEditor::MapEditor( VymModel *vm)
 
     setScene (mapScene);
 
+    setStyleSheet( "QGraphicsView:focus {" + editorFocusStyle + "}" );
+    
     // Create bitmap cursors, platform dependant
     HandOpenCursor=QCursor (QPixmap(":/cursorhandopen.png"),1,1);	
     PickColorCursor=QCursor ( QPixmap(":/cursorcolorpicker.png"), 5,27 ); 

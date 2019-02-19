@@ -110,6 +110,8 @@ int warningCount=0;
 int criticalCount=0;
 int fatalCount=0;
 
+QString editorFocusStyle = QString(" border-color: #3daee9; border-style:outset; border-width:3px; color:black;");
+
 #include <QScriptEngine>
 QScriptValue scriptPrint( QScriptContext * ctx, QScriptEngine * eng );
 
@@ -337,7 +339,7 @@ int main(int argc, char* argv[])
 #endif
     iconPath  = vymBaseDir.path()+"/icons/";
     flagsPath = vymBaseDir.path()+"/flags/";
-    macroPath = settings.value ("/macros/macroDir", vymBaseDir.path() + "/macros").toString();
+    macroPath = settings.value (QFile(":/macros.vys").fileName(), vymBaseDir.path() + "/macros").toString();
     
     // Some directories
     QDir useDir;
