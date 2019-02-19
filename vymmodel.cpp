@@ -2646,7 +2646,7 @@ void VymModel::paste()
         while (i <= clipboardItemCount)
         {
             fn = QString("%1/%2-%3.xml").arg(clipboardDir).arg(clipboardFile).arg(i);
-            if (! File::Success == loadMap (fn, ImportAdd, VymMap, SlideContent) )
+            if ( File::Success != loadMap (fn, ImportAdd, VymMap, SlideContent) )
                 qWarning() << "Loading clipboard failed: " << fn ;
 
             i++;
