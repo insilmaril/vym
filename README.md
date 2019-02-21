@@ -1,4 +1,4 @@
-###VYM - View Your Mind (c) 2004-2017 by Uwe Drechsel###
+###VYM - View Your Mind (c) 2004-2019 by Uwe Drechsel###
 
 Documentation
 -------------
@@ -55,21 +55,6 @@ Installation
     qmake
     make
     make install
-
-* Testing (without installing!)
-
-    You can also run vym virtually in your webbrowser: vym is available
-    as appliance in SUSE Studio. SUSE Studio is a very easy way to
-    create appliances, which are customized Linux operating systems.
-
-    All you need is to quickly create a free account and search for
-    "vym" by user "insilmaril" in the gallery:
-
-	http://susestudio.com
-
-    The appliance can be downloaded as installable iso image, or run in
-    the testdrive - in your webbrowser! That's a bit slow, but gives you
-    an idea without having to install anything at all on your system.
 
 
 Questions and feedback
