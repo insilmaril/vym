@@ -43,6 +43,7 @@ using namespace std;
 
 QString vymName;
 QString vymVersion;
+QString vymCodeQuality;
 QString vymHome;
 QString vymBuildDate;
 QString vymCodeName;
@@ -148,6 +149,7 @@ int main(int argc, char* argv[])
     vymVersion=__VYM_VERSION;
     vymBuildDate=__VYM_BUILD_DATE;
     vymCodeName=__VYM_CODENAME;
+    vymCodeQuality = __VYM_CODE_QUALITY;
     vymHome=__VYM_HOME;
 
     // Install our own handler for messages

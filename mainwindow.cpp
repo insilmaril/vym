@@ -81,6 +81,7 @@ extern FlagRow *systemFlagsMaster;
 extern QString vymName;
 extern QString vymVersion;
 extern QString vymPlatform;
+extern QString vymCodeQuality;
 extern QString vymBuildDate;
 extern QString localeName;
 extern QString macroPath;
@@ -6159,8 +6160,9 @@ void Main::checkReleaseNotes()
         {
             QUrl releaseNotesUrl(
                 //QString("http://localhost/release-notes.php?vymVersion=%1") /
-                QString("http://www.insilmaril.de/vym/release-notes.php?vymVersion=%1")
+                QString("http://www.insilmaril.de/vym/release-notes.php?vymVersion=%1&codeQuality=%2")
                 .arg(vymVersion)
+                .arg(vymCodeQuality)
             );
             DownloadAgent *agent = new DownloadAgent(releaseNotesUrl);
             connect (agent, SIGNAL( downloadFinished()), this, SLOT(downloadReleaseNotesFinished()));
@@ -6303,8 +6305,9 @@ void Main::downloadUpdatesFinishedInt()
 void Main::downloadUpdates(bool userTriggered)
 {
     QUrl updatesUrl(
-        QString("http://www.insilmaril.de/vym/updates.php?vymVersion=%1")
+        QString("http://www.insilmaril.de/vym/updates.php?vymVersion=%1&codeQuality=%2")
         .arg(vymVersion)
+        .arg(vymCodeQuality)
     );
     DownloadAgent *agent = new DownloadAgent(updatesUrl);
     if (userTriggered)
