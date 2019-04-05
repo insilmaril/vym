@@ -61,6 +61,7 @@ public slots:
     QString getNotePlainText();
     QString getNoteXML();
     QString getSelectionString();
+    int  getTaskPriorityDelta();
     QString getTaskSleep();
     int getTaskSleepDays();
     QString getURL();
@@ -137,6 +138,7 @@ public slots:
     void setFrameType( const QString &type);
     void setScale( qreal x, qreal y );
     void setSelectionColor( const QString &color);
+    void setTaskPriorityDelta( const int &n);
     bool setTaskSleep( const QString &s);
     void setURL( const QString &s);
     void setVymLink( const QString &s );

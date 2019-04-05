@@ -377,6 +377,12 @@ public:
     /*! Set task to sleep for number of days or until a given date*/
     bool setTaskSleep(const QString &s);
 
+    /*! Set manual delta for priority of task */
+    void setTaskPriorityDelta(const int &n);
+
+    /*! Get manual delta for priority of task */
+    int getTaskPriorityDelta();
+
     /*! count tasks in this model */
     int taskCount();
 

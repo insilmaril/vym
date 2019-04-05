@@ -597,6 +597,9 @@ void Main::setupAPI()
     c = new Command ("getSelectionString", Command::TreeItem);
     modelCommands.append(c);
 
+    c = new Command ("getTaskPriorityDelta", Command::Branch); 
+    modelCommands.append(c);
+
     c = new Command ("getTaskSleep", Command::Branch);
     modelCommands.append(c);
 
@@ -754,6 +757,10 @@ void Main::setupAPI()
 
     c = new Command ("setFlag", Command::TreeItem); 
     c->addPar (Command::String,false,"Name of flag");
+    modelCommands.append(c);
+
+    c = new Command ("setTaskPriorityDelta", Command::Branch); 
+    c->addPar (Command::String,false,"Manually add value to priority of task");
     modelCommands.append(c);
 
     c = new Command ("setTaskSleep", Command::Branch); 

@@ -2568,6 +2568,29 @@ bool VymModel::setTaskSleep(const QString &s)   // FIXME-2 doc missing
     return ok;
 }
 
+void VymModel::setTaskPriorityDelta(const int &n)   // FIXME-2 doc missing
+{
+    BranchItem *selbi = getSelectedBranch();
+    if (selbi)
+    {
+	Task *task = selbi->getTask();
+	if (task ) 
+        {
+            task->setPriorityDelta (n);
+            emitDataChanged (selbi);
+        }
+    }
+}
+
+int VymModel::getTaskPriorityDelta()   // FIXME-2 doc missing
+{
+    BranchItem *selbi = getSelectedBranch();
+    if (selbi)
+    {
+	Task *task = selbi->getTask();
+	if (task ) return task->getPriorityDelta ();
+    }
+}
 int VymModel::taskCount()
 {
     return taskModel->count (this);

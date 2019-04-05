@@ -34,6 +34,7 @@ private slots:
     void incImgVerChanged (int);
     void incImgHorChanged (int);
     void childrenFreePositioningChanged (int);
+    void taskPriorityDeltaChanged (int);
 //  void addAttributeClicked();
 //  void deleteAttributeClicked();
 

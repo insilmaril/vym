@@ -305,14 +305,19 @@ void TaskModel::recalcPriorities()
 	if (bi->hasActiveStandardFlag ("stopsign") ) p-=800;
 
 	// Age
-	p-=t->getAgeModified();
-	p-=t->getAgeCreation() * 1.0 / 365 * 80; // After a year, this is as important as "red"
+	p -= t->getAgeModified();
+	p -= t->getAgeCreation() * 1.0 / 365 * 80; // After a year, this is as important as "red"
 
         // Position in subtree
         p += bi->num();
 
+
+        // Priority delta (set menually)
+        p -= t->getPriorityDelta();
+
+        // Set priority finally
 	t->setPriority (p);
-	if (p<minPrio) minPrio=p;
+	if (p < minPrio) minPrio = p;
     }
     // Normalize, so that most important task has prio 1
     foreach (Task *t,tasks)

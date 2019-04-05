@@ -47,6 +47,8 @@ public:
     qint64 getSecsSleep();
     QDateTime getSleep();
     QString getName();
+    void setPriorityDelta( const int &n);
+    int getPriorityDelta();
     void setBranch (BranchItem *bi);
     BranchItem* getBranch();
     QString getMapName();
@@ -57,6 +59,7 @@ private:
     Status status; 
     Awake awake;
     int prio;
+    int prio_delta;
     BranchItem *branch;
     QString mapName;
     QDateTime date_creation;

@@ -13,7 +13,8 @@ Task::Task(TaskModel *tm)
     status = NotStarted;
     awake  = Task::WideAwake;
     branch = NULL;
-    prio   = 'X';
+    prio   = 0;
+    prio_delta = 0;
     model  = tm;
     date_creation = QDateTime::currentDateTime();
 }
@@ -275,6 +276,16 @@ QDateTime Task::getSleep()
     return date_sleep;
 }
 
+void Task::setPriorityDelta(const int &n)
+{
+    prio_delta = n;
+}
+
+int Task::getPriorityDelta()
+{
+    return prio_delta;
+}
+
 void Task::setBranch (BranchItem *bi)
 {
     branch  = bi;
@@ -318,11 +329,15 @@ QString Task::saveToDir()
         if (branch->hasActiveStandardFlag("arrow-up"))  prioAttr = attribut ("prio", "1");
     }
 
+    QString prioDeltaAttr;
+    if (prio_delta != 0)
+        prioDeltaAttr = attribut ("prio_delta", QString("%1").arg(prio_delta));
     return singleElement ("task",
 	attribut ("status", getStatusString() ) +
 	attribut ("awake",  getAwakeString() ) +
 	attribut ("date_creation", date_creation.toString (Qt::ISODate) ) +
 	attribut ("date_modified", date_modified.toString (Qt::ISODate) ) +
+        prioDeltaAttr +
 	sleepAttr +
         prioAttr
      );

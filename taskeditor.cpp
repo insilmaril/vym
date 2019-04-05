@@ -284,6 +284,7 @@ void TaskEditor::clearSelection()
 void TaskEditor::headerContextMenu()
 {
     qDebug() << "TE::headerContextMenu()";   // FIXME-2
+    updateColumnLayout();
 }
 
 void TaskEditor::updateColumnLayout()
@@ -304,17 +305,17 @@ void TaskEditor::selectionChanged ( const QItemSelection & selected, const QItem
     // Avoid segfault on quit, when selected is empty
     if (selected.indexes().isEmpty() ) return;
 
-    QItemSelection sel0=filterActiveModel->mapSelectionToSource (selected);
-    QModelIndex ix=sel0.indexes().first();
-    Task *t=taskModel->getTask (ix);
+    QItemSelection sel0 = filterActiveModel->mapSelectionToSource (selected);
+    QModelIndex ix = sel0.indexes().first();
+    Task *t = taskModel->getTask (ix);
     if (t) 
     {
-	BranchItem *bi=t->getBranch();
+	BranchItem *bi = t->getBranch();
 	if (bi) 
 	{
-	    VymModel *m=bi->getModel();
+	    VymModel *m = bi->getModel();
 	    if (!blockExternalSelect) m->select (bi);
-	    if (m!=mainWindow->currentModel() )
+	    if (m != mainWindow->currentModel() )
 		mainWindow->gotoModel (m);
 	    view->setStyleSheet( 
                 "QTableView {selection-background-color: " + m->getSelectionColor().name() + 
@@ -333,9 +334,10 @@ void TaskEditor::contextMenuEvent ( QContextMenuEvent * e )
 
 void TaskEditor::sort()
 {
-    QHeaderView *hv=view->horizontalHeader();
+    QHeaderView *hv = view->horizontalHeader();
     view->sortByColumn( hv->sortIndicatorSection(), hv->sortIndicatorOrder() );
     filterActiveModel->invalidate();	
+    updateColumnLayout();   //FIXME-2 sortByColumn seems to obsolete layout :-(
 }
 
 void TaskEditor::toggleFilterMap ()

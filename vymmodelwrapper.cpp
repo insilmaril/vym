@@ -420,6 +420,11 @@ QString VymModelWrapper::getSelectionString()
     return setResult( model->getSelectString() );
 }
 
+int VymModelWrapper::getTaskPriorityDelta()
+{
+    return model->getTaskPriorityDelta();
+}
+
 QString VymModelWrapper::getTaskSleep()
 {
     QString r;
@@ -928,6 +933,11 @@ void VymModelWrapper::setSelectionColor( const QString &color)
         logError( context(), QScriptContext::SyntaxError, QString( "Could not set color to %1").arg(color) );
     else
         model->setSelectionColor( col );
+}
+
+void VymModelWrapper::setTaskPriorityDelta( const int &n)
+{
+    model->setTaskPriorityDelta( n );
 }
 
 bool VymModelWrapper::setTaskSleep(const QString &s)

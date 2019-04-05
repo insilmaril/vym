@@ -151,6 +151,14 @@ void BranchPropertyEditor::setItem (TreeItem *ti)
             else
                 ui.childrenFreePositioning->setCheckState( Qt::Unchecked);
 
+            // Task
+            Task *task = branchItem->getTask();
+            if (task)
+            {
+                ui.taskPrioDelta->setEnabled( true );
+                ui.taskPrioDelta->setValue( task->getPriorityDelta() );
+            } else
+                ui.taskPrioDelta->setEnabled( false );
 
             /*
         // Attributes
@@ -291,6 +299,11 @@ void BranchPropertyEditor::childrenFreePositioningChanged (int  i)
     }
 }
 
+void BranchPropertyEditor::taskPriorityDeltaChanged (int  n)
+{
+    if (model) model->setTaskPriorityDelta (n);
+}
+
 void BranchPropertyEditor::closeEvent( QCloseEvent* ce )
 {
     ce->accept();   // can be reopened with show()
@@ -364,6 +377,11 @@ void BranchPropertyEditor::connectSignals()
         ui.childrenFreePositioning, SIGNAL (stateChanged( int)),
         this, SLOT (childrenFreePositioningChanged (int)));
 
+    // Task
+    connect (
+        ui.taskPrioDelta, SIGNAL (valueChanged( int)),
+        this, SLOT (taskPriorityDeltaChanged (int)));
+   
 /*
     // Attributes   
     connect ( 

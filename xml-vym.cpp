@@ -972,6 +972,10 @@ bool parseVYMHandler::readTaskAttr (const QXmlAttributes& a)
             if (!lastTask->setDateSleep( a.value( "date_sleep" ) ) )
                 return false;
         }
+        if (!a.value( "prio_delta").isEmpty() ) 
+        {
+            lastTask->setPriorityDelta( a.value( "prio_delta" ).toInt() ); 
+        }
     }
     return true;
 }
