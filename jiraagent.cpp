@@ -315,11 +315,13 @@ void JiraAgent::setModelJiraData (VymModel *model, BranchItem *bi, const QString
     }
 
     // Scroll log branch
-    if (!logBranch->isScrolled()) 
+    model->select(logBranch);
+    logBranch = model->getSelectedBranch();
+    
+    if (logBranch && !logBranch->isScrolled()) 
     {
-        model->select(logBranch);
         model->toggleScroll();
-    }
+    } 
 
     // Selected previous objects
     model->select(oldSelection);
