@@ -932,7 +932,7 @@ Bitte prüfen Sie, ob Sie das wirklich erlauben wollen!</translation>
         <location filename="../lockedfiledialog.ui" line="123"/>
         <location filename="../lockedfiledialog.cpp" line="6"/>
         <source>Open readonly</source>
-        <translation type="unfinished">Nur zum Lesen öffnen</translation>
+        <translation>Nur zum Lesen öffnen</translation>
     </message>
 </context>
 <context>
