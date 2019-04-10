@@ -3825,10 +3825,18 @@ ItemList VymModel::getTargets()
     BranchItem *prev=NULL;
     nextBranch(cur,prev);
 
+    QString s;
+
     while (cur) 
     {
 	if (cur->hasActiveSystemFlag("system-target"))
-            targets[cur->getID()] = (cur->getHeading()).getTextASCII();
+        {
+            s = cur->getHeading().getTextASCII();
+            s.replace(QRegularExpression("\n+"), " "); 
+            s.replace(QRegularExpression("\\s+"), " "); 
+            s.replace(QRegularExpression("^\\s+"), ""); 
+            targets[cur->getID()] = s;
+        }
 	nextBranch(cur,prev);
     }
     return targets; 
