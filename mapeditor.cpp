@@ -1113,6 +1113,7 @@ void MapEditor::editHeadingFinished()
     lineEdit->clearFocus();
     QString s = lineEdit->text();
     s.replace (QRegExp ("\\n")," ");	// Don't paste newline chars
+    if (s.length() == 0) s = " ";       // Don't allow empty lines, which would screw up drawing
     model->setHeadingPlainText (s);
     model->setSelectionBlocked(false);
     delete (lineEdit);
