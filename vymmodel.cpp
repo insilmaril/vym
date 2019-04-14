@@ -2590,7 +2590,9 @@ int VymModel::getTaskPriorityDelta()   // FIXME-2 doc missing
 	Task *task = selbi->getTask();
 	if (task ) return task->getPriorityDelta ();
     }
+    return 0;
 }
+
 int VymModel::taskCount()
 {
     return taskModel->count (this);
