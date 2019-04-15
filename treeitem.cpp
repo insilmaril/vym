@@ -75,6 +75,7 @@ void TreeItem::init()
     target = false;
 
     heading.clear();
+    heading.setText(" ");
     note.setText("");
 
     hidden = false;
