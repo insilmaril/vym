@@ -99,18 +99,14 @@ function macro_f10()
     }
 }
 
-// Macro F11: Toggle frame to include children
+// Macro F11: 
 function macro_f11()
 {
-    map = vym.currentMap();
-    map.toggleFrameIncludeChildren();
 }
 
-// Macro F12: Toggle frame
+// Macro F12: 
 function macro_f12()
 {
-    map = vym.currentMap();
-	toggle_frame ( map );
 }
 
 
@@ -169,9 +165,11 @@ function macro_shift_f7()
 {
 }
 
-// Macro Shift + F8:
+// Macro Shift + F8: Toggle frame to include children
 function macro_shift_f8()
 {
+    map = vym.currentMap();
+    map.toggleFrameIncludeChildren();
 }
 
 // Macro Shift + F9:
