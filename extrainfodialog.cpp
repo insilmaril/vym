@@ -12,6 +12,11 @@ void ExtraInfoDialog::setMapName(const QString &s)
     ui.mapNameLE->setText (s);
 }
 
+void ExtraInfoDialog::setFileLocation(const QString &s)
+{
+    ui.fileLocationLE->setText (s);
+}
+
 void ExtraInfoDialog::setMapTitle(const QString &s)
 {
     ui.mapTitleLE->setText (s);

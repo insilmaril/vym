@@ -4386,6 +4386,7 @@ void Main::editMapProperties()
 
     ExtraInfoDialog dia;
     dia.setMapName  ( m->getFileName() );
+    dia.setFileLocation  ( m->getFilePath() );
     dia.setMapTitle ( m->getTitle() );
     dia.setAuthor   ( m->getAuthor() );
     dia.setComment  ( m->getComment() );
@@ -4416,7 +4417,6 @@ void Main::editMapProperties()
     stats += QString ("%1 %2\n").arg (taskModel->count(m),6).arg(tr("tasks in map","Info about map") );
     stats += QString ("%1 %2\n").arg (n,6).arg(tr("notes","Info about map") );
     stats += QString ("%1 %2\n").arg (f,6).arg(tr("images","Info about map") );
-    stats += QString ("%1 %2\n").arg (m->taskCount(),6 ).arg(tr("tasks","Info about map") );
     stats += QString ("%1 %2\n").arg (m->slideCount(),6 ).arg(tr("slides","Info about map") );
     stats += QString ("%1 %2\n").arg (xl/2,6).arg(tr("xLinks","Info about map") );
     dia.setStats (stats);

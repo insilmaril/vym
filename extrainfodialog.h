@@ -22,6 +22,7 @@ public:
 
 public slots:
     virtual void setMapName( const QString & s );
+    virtual void setFileLocation( const QString & s );
     virtual void setMapTitle( const QString & s );
     virtual void setComment( const QString & s );
     virtual void setAuthor( const QString & s );
