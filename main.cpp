@@ -87,7 +87,6 @@ QDir vymInstallDir;
 #endif
 QString iconPath;		// Pointing to icons used for toolbars
 QString flagsPath;		// Pointing to flags
-QString macroPath;              // Pointing to macros
 
 bool debug;             // global debugging flag
 bool testmode;			// Used to disable saving of autosave setting
@@ -341,7 +340,6 @@ int main(int argc, char* argv[])
 #endif
     iconPath  = vymBaseDir.path()+"/icons/";
     flagsPath = vymBaseDir.path()+"/flags/";
-    macroPath = settings.value (QFile(":/macros.vys").fileName(), vymBaseDir.path() + "/macros").toString();
     
     // Some directories
     QDir useDir;

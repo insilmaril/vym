@@ -7,11 +7,10 @@
 
 extern Settings settings;
 extern QDir vymBaseDir;
-extern QString macroPath;
 
 QString Macros::getPath ()
 {
-    return QFile (":/macros.vys").fileName();
+    return settings.value("/macros/path", vymBaseDir.path() + "/macros/macros.vys").toString();
 }
 
 QString Macros::get()
@@ -22,8 +21,8 @@ QString Macros::get()
     if ( !f.open( QIODevice::ReadOnly ) )
     {
         QObject::tr("Warning"),
-                QObject::tr("Couldn't find a macros at  %1.\n").arg(fn)+
-                QObject::tr("Please use Settings->")+QObject::tr("Set directory for vym macros");
+                QObject::tr("Couldn't find macros at  %1.\n").arg(fn)+
+                QObject::tr("Please use Settings->") + QObject::tr("Set directory for vym macros");
         return QString();
     }
 

@@ -269,7 +269,7 @@ public slots:
     bool settingsPDF();
     bool settingsURL();
     void settingsZipTool();
-    void settingsMacroDir();
+    void settingsMacroPath();
     void settingsUndoLevels();
 
 public:

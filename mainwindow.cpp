@@ -84,7 +84,6 @@ extern QString vymPlatform;
 extern QString vymCodeQuality;
 extern QString vymBuildDate;
 extern QString localeName;
-extern QString macroPath;
 extern bool debug;
 extern bool testmode;
 extern QTextStream vout;
@@ -2607,7 +2606,7 @@ void Main::setupSettingsActions()
     settingsMenu->addAction (a);
 
     a = new QAction( tr( "Set path for macros","Settings action")+"...", this);
-    connect( a, SIGNAL( triggered() ), this, SLOT( settingsMacroDir() ) );
+    connect( a, SIGNAL( triggered() ), this, SLOT( settingsMacroPath() ) );
     settingsMenu->addAction (a);
 
     a = new QAction( tr( "Set number of undo levels","Settings action")+"...", this);
@@ -5131,18 +5130,25 @@ void Main::settingsZipTool()
     }
 }
 
-void Main::settingsMacroDir()
+void Main::settingsMacroPath()
 {
-    QDir defdir(vymBaseDir.path() + "/macros");
-    if (!defdir.exists())
-	defdir = vymBaseDir;
-    QDir dir = QFileDialog::getExistingDirectory (
-	this,
-	tr ("Directory with vym macros:"), 
-	settings.value ("/macros/macroDir", defdir.path()).toString()
-    );
-    if (dir.exists())
-	settings.setValue ("/macros/macroDir", dir.absolutePath());
+    QString macroPath = settings.value("/macros/path", vymBaseDir.path() + "/macros/macros.vys").toString() ;
+
+    QStringList filters;
+    filters <<"VYM script files (*.vys)";
+    QFileDialog fd;
+    fd.setDirectory ( dirname(macroPath) );
+    fd.selectFile   ( basename(macroPath) );
+    fd.setFileMode (QFileDialog::ExistingFile);
+    fd.setNameFilters (filters);
+    fd.setWindowTitle (vymName+ " - " +tr("Load vym script"));
+    fd.setAcceptMode (QFileDialog::AcceptOpen);
+
+    QString fn;
+    if ( fd.exec() == QDialog::Accepted )
+    {
+	settings.setValue ("/macros/path", fd.selectedFiles().first());
+    }
 }
 
 void Main::settingsUndoLevels()	    
