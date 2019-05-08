@@ -5471,7 +5471,7 @@ bool VymModel::initIterator(const QString &iname, bool deepLevelsFirst )
             selIterPrev.insert  (iname, prev->getUuid() );
             selIterStart.insert (iname, selbis.first()->getUuid() );
             selIterActive.insert(iname, false );
-            qDebug() << "Created iterator " << iname;
+            // qDebug() << "Created iterator " << iname;
             return true;
 	}
     }
