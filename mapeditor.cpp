@@ -1494,7 +1494,11 @@ void MapEditor::mouseMoveEvent(QMouseEvent* e)
 	movingVec.setY(-p.y() + movingObj_offset.y() );
 	horizontalScrollBar()->setSliderPosition((int)( movingCont_start.x()+movingVec.x() ));
 	verticalScrollBar()->setSliderPosition((int)( movingCont_start.y()+movingVec.y() ) );
-	scrollBarPosAnimation.stop();	// Avoid flickering
+	// Avoid flickering
+	scrollBarPosAnimation.stop();
+	viewCenterAnimation.stop();
+	rotationAnimation.stop();
+	//zoomAnimation.stop();
     }
 }
 
