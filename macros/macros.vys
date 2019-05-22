@@ -155,9 +155,11 @@ function macro_shift_f5()
 	statusMessage("Background light grey");
 }
 
-// Macro Shift + F6:
+// Macro Shift + F6: Toggle frame to include children
 function macro_shift_f6()
 {
+    map = vym.currentMap();
+    map.toggleFrameIncludeChildren();
 }
 
 // Macro Shift + F7:
@@ -165,11 +167,9 @@ function macro_shift_f7()
 {
 }
 
-// Macro Shift + F8: Toggle frame to include children
+// Macro Shift + F8:
 function macro_shift_f8()
 {
-    map = vym.currentMap();
-    map.toggleFrameIncludeChildren();
 }
 
 // Macro Shift + F9:
