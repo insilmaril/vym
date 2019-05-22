@@ -71,7 +71,7 @@ QVariant TaskModel::data(const QModelIndex &index, int role) const
         else if (index.column() == 2)
             return t->getAgeCreation();
         else if (index.column() == 3)
-            return t->getAgeModified();
+            return t->getAgeModification();
         else if (index.column() == 4)
             return t->getDaysSleep();
         else if (index.column() == 5)
@@ -305,7 +305,7 @@ void TaskModel::recalcPriorities()
 	if (bi->hasActiveStandardFlag ("stopsign") ) p-=800;
 
 	// Age
-	p -= t->getAgeModified();
+	p -= t->getAgeModification();
 	p -= t->getAgeCreation() * 1.0 / 365 * 80; // After a year, this is as important as "red"
 
         // Position in subtree

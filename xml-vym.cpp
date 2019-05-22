@@ -966,7 +966,7 @@ bool parseVYMHandler::readTaskAttr (const QXmlAttributes& a)
         if (!a.value( "date_creation").isEmpty() ) 
             lastTask->setDateCreation ( a.value( "date_creation" ) );
         if (!a.value( "date_modified").isEmpty() ) 
-            lastTask->setDateModified( a.value( "date_modified" ) );
+            lastTask->setDateModification( a.value( "date_modification" ) );
         if (!a.value( "date_sleep").isEmpty() ) 
         {
             if (!lastTask->setDateSleep( a.value( "date_sleep" ) ) )

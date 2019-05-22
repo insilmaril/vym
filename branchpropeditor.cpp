@@ -157,8 +157,26 @@ void BranchPropertyEditor::setItem (TreeItem *ti)
             {
                 ui.taskPrioDelta->setEnabled( true );
                 ui.taskPrioDelta->setValue( task->getPriorityDelta() );
+                ui.lineEditDateCreation->setText(
+                    task->getDateCreation().toString() + " - " + 
+                    QString(tr("%1 days ago","task related times")).arg(task->getAgeCreation()));
+                QDateTime m = task->getDateModification();
+                if (m.isValid() )
+                {
+                    ui.lineEditDateModification->setText(
+                        m.toString() + " - " + 
+                        QString(tr("%1 days ago","task related times")).arg(task->getAgeModification()));
+                } else
+                {
+                    ui.lineEditDateModification->setText("");
+                }
             } else
+            {
                 ui.taskPrioDelta->setEnabled( false );
+                ui.taskPrioDelta->setValue( 0 );
+                ui.lineEditDateCreation->setText("");
+                ui.lineEditDateModification->setText("");
+            }
 
             /*
         // Attributes

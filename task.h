@@ -34,10 +34,12 @@ public:
     void setPriority(int  p);
     int getPriority();
     int getAgeCreation();
-    int getAgeModified();
+    int getAgeModification();
     void setDateCreation (const QString &s);
-    void setDateModified ();
-    void setDateModified (const QString &s);
+    QDateTime getDateCreation ();
+    void setDateModification();
+    void setDateModification(const QString &s);
+    QDateTime getDateModification ();
     bool setDaysSleep    (qint64 n);
     bool setHoursSleep   (qint64 n);
     bool setSecsSleep    (qint64 n);
@@ -63,7 +65,7 @@ private:
     BranchItem *branch;
     QString mapName;
     QDateTime date_creation;
-    QDateTime date_modified;
+    QDateTime date_modification;
     QDateTime date_sleep;
 };
 

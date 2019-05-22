@@ -2442,7 +2442,7 @@ bool VymModel::cycleTaskStatus(bool reverse)
 		QString ("cycleTask()"),
 		QString ("Toggle task of %1").arg(getObjectName (selbi)) );
 	    task->cycleStatus(reverse);
-	    task->setDateModified();
+	    task->setDateModification();
 	    
 	    // make sure task is still visible
 	    taskEditor->select (task);
@@ -2550,7 +2550,7 @@ bool VymModel::setTaskSleep(const QString &s)   // FIXME-2 doc missing
             if (ok)
             {
                 QString newsleep = task->getSleep().toString(Qt::ISODate);
-                task->setDateModified();
+                task->setDateModification();
                 selbi->updateTaskFlag(); // If tasks changes awake mode, then flag needs to change
                 saveState (
                     selbi,

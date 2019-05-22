@@ -150,4 +150,8 @@
     <file alias="vym-editor.png">icons/vym-editor.png</file>
     <file alias="vym.png">icons/vym.png</file>
     <file alias="macros.vys">macros/macros.vys</file>
+    <file alias="taskfilter-currentmap.png">icons/taskfilter-currentmap.png</file>
+    <file alias="taskfilter-activetask.png">icons/taskfilter-activetask.png</file>
+    <file alias="taskfilter-newtask.png">icons/taskfilter-newtask.png</file>
+
   </qresource></RCC>

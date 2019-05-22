@@ -187,10 +187,10 @@ int Task::getAgeCreation()
     return date_creation.daysTo (QDateTime::currentDateTime() );
 }
 
-int Task::getAgeModified()
+int Task::getAgeModification()
 {
-    if (date_modified.isValid() )
-	return date_modified.daysTo (QDateTime::currentDateTime() );
+    if (date_modification.isValid() )
+	return date_modification.daysTo (QDateTime::currentDateTime() );
     else
 	return getAgeCreation();
 }
@@ -200,15 +200,24 @@ void Task::setDateCreation (const QString &s)
     date_creation = QDateTime().fromString (s,Qt::ISODate);
 }
 
-
-void Task::setDateModified()
+QDateTime Task::getDateCreation ()
 {
-    date_modified = QDateTime::currentDateTime();
+    return date_creation;
 }
 
-void Task::setDateModified(const QString &s)
+void Task::setDateModification()
 {
-    date_modified = QDateTime().fromString (s,Qt::ISODate);
+    date_modification = QDateTime::currentDateTime();
+}
+
+void Task::setDateModification(const QString &s)
+{
+    date_modification = QDateTime().fromString (s,Qt::ISODate);
+}
+
+QDateTime Task::getDateModification ()
+{
+    return date_modification;
 }
 
 bool Task::setDaysSleep(qint64 n) 
@@ -336,7 +345,7 @@ QString Task::saveToDir()
 	attribut ("status", getStatusString() ) +
 	attribut ("awake",  getAwakeString() ) +
 	attribut ("date_creation", date_creation.toString (Qt::ISODate) ) +
-	attribut ("date_modified", date_modified.toString (Qt::ISODate) ) +
+	attribut ("date_modification", date_modification.toString (Qt::ISODate) ) +
         prioDeltaAttr +
 	sleepAttr +
         prioAttr
