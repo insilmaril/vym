@@ -36,8 +36,8 @@ TaskEditor::TaskEditor(QWidget *)
 
     // Original icon from KDE: /usr/share/icons/oxygen/16x16/actions/view-filter.png
 
-    QIcon icon = QIcon (":/view-filter.png");
-    QAction *a = new QAction(icon,  tr( "Current map","TaskEditor" ),this );
+    QIcon icon = QIcon (":/taskfilter-currentmap.png");
+    QAction *a = new QAction(icon, "", this); //tr( "Current map","TaskEditor" ),this );
     a->setToolTip(tr("Show only tasks from current map","Filters in task Editor"));
     a->setCheckable(true);
     a->setChecked  (settings.value("/taskeditor/filterMap", false).toBool());
@@ -45,7 +45,8 @@ TaskEditor::TaskEditor(QWidget *)
     connect( a, SIGNAL( triggered() ), this, SLOT(toggleFilterMap() ) );
     actionToggleFilterMap = a;
 
-    a = new QAction(icon,  tr( "Active tasks","TaskEditor" ),this );
+    icon = QIcon (":/taskfilter-activetask.png");
+    a = new QAction(icon, "",  this); //tr( "Active tasks","TaskEditor" ),this );
     a->setToolTip(tr("Show only active tasks","Filters in task Editor"));
     a->setCheckable(true);
     a->setChecked  (settings.value("/taskeditor/filterActive", false).toBool());
@@ -53,7 +54,8 @@ TaskEditor::TaskEditor(QWidget *)
     connect( a, SIGNAL( triggered() ), this, SLOT(toggleFilterActive() ) );
     actionToggleFilterActive = a;
 
-    a = new QAction(icon,  tr( "New tasks","TaskEditor" ),this );
+    icon = QIcon (":/taskfilter-newtask.png");
+    a = new QAction(icon, "", this); // tr( "New tasks","TaskEditor" ),this );
     a->setToolTip(tr("Show only new tasks","Filters in task Editor"));
     a->setCheckable(true);
     a->setChecked  (settings.value("/taskeditor/filterNew", false).toBool());
