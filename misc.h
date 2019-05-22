@@ -35,4 +35,8 @@ QPointF point (const QString &s, bool &ok);
 QString pointToString (const QPointF &p);
 
 void centerDialog(QDialog *dia);
+
+bool versionLowerThanVym(const QString &);
+bool versionLowerOrEqualThanVym(const QString &);
+bool versionLowerOrEqual(const QString &, const QString &);
 #endif

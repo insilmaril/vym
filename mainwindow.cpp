@@ -50,7 +50,6 @@
 #include "taskeditor.h"
 #include "taskmodel.h"
 #include "treeeditor.h"
-#include "version.h"
 #include "warningdialog.h"
 #include "xlinkitem.h"
 
@@ -6143,7 +6142,7 @@ void Main::downloadReleaseNotesFinished()
                 dia.exec();
 
                 // Don't load the release notes automatically again
-                settings.setValue("/downloads/releaseNotes/shownVersion", __VYM_VERSION);
+                settings.setValue("/downloads/releaseNotes/shownVersion", vymVersion);
             } 
         }
     } else

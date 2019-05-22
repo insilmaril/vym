@@ -4,7 +4,7 @@
 #include <QMessageBox>
 
 #include "branchitem.h"
-#include "version.h"
+#include "misc.h"
 #include "vymmodel.h"
 
 extern Settings settings;

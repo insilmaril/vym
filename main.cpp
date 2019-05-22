@@ -144,12 +144,13 @@ int main(int argc, char* argv[])
 {
     QApplication app(argc,argv);
 
-    vymName=__VYM_NAME;
-    vymVersion=__VYM_VERSION;
-    vymBuildDate=__VYM_BUILD_DATE;
-    vymCodeName=__VYM_CODENAME;
+    // Define some constants shared in various places
+    vymName        = __VYM_NAME;
+    vymVersion     = __VYM_VERSION;
+    vymBuildDate   = __VYM_BUILD_DATE;
+    vymCodeName    = __VYM_CODENAME;
     vymCodeQuality = __VYM_CODE_QUALITY;
-    vymHome=__VYM_HOME;
+    vymHome        = __VYM_HOME;
 
     // Install our own handler for messages
     qInstallMessageHandler(msgHandler);

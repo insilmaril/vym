@@ -14,7 +14,6 @@
 #include "slideitem.h"
 #include "task.h"
 #include "taskmodel.h"
-#include "version.h"
 #include "xlinkitem.h"
 
 extern Main *mainWindow;
