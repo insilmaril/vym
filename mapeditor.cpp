@@ -1223,18 +1223,26 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
 	return;
     }
     
-    // Stop editing heading
-    if (model->isSelectionBlocked() )
-    {
-        editHeadingFinished();
-    }
-
-    // Check if we need to reset zoomFactor
+    // Check if we need to reset zoomFactor for middle button + Ctrl
     if (e->button() == Qt::MidButton && e->modifiers() & Qt::ControlModifier )
     {
 	setZoomFactorTarget (1);
 	setAngleTarget (0);
 	return;
+    }
+
+    // Allow middle button for pasting
+    if (e->button() == Qt::MiddleButton)
+    {
+	e->ignore();
+	QGraphicsView::mousePressEvent(e);
+        return;
+    }
+
+    // Stop editing heading
+    if (model->isSelectionBlocked() )
+    {
+        editHeadingFinished();
     }
 
     QPointF p = mapToScene(e->pos());
