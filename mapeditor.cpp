@@ -1239,16 +1239,25 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
         return;
     }
 
-    // Stop editing heading
-    if (model->isSelectionBlocked() )
-    {
-        editHeadingFinished();
-    }
-
     QPointF p = mapToScene(e->pos());
     TreeItem *ti = findMapItem (p, NULL);
     LinkableMapObj* lmo = NULL;
     if (ti) lmo = ((MapItem*)ti)->getLMO();
+
+    // Stop editing heading
+    if (model->isSelectionBlocked() )
+    {
+        if (ti && ti->isBranchLikeType() && ti == model->getSelectedItem() )
+        {
+            // return event to LineEdit to allow selecting in LineEdit
+            e->ignore();
+            QGraphicsView::mousePressEvent(e);
+            return;
+        }
+        else
+            // Stop editing in LineEdit
+            editHeadingFinished();
+    }
 
     QString sysFlagName;
     if (lmo) sysFlagName = ((BranchObj*)lmo)->getSystemFlagName(p);
