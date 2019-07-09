@@ -42,16 +42,16 @@ void ExportASCII::doExport()
     {
         if (cur->getType()==TreeItem::Branch || cur->getType()==TreeItem::MapCenter)
         {
-            // Insert newline after previous list
-            if ( cur->depth() < lastDepth ) out +=  "\n";
-
-            // Make indentstring
-            curIndent="";
-            for (i=1;i<cur->depth()-1;i++) curIndent+= indentPerDepth;
-
             if (!cur->hasHiddenExportParent() )
             {
                 //qDebug() << "ExportASCII::  "<<curIndent.toStdString()<<cur->getHeadingPlain().toStdString();
+
+                // Insert newline after previous list
+                if ( cur->depth() < lastDepth ) out +=  "\n";
+
+                // Make indentstring
+                curIndent="";
+                for (i=1;i<cur->depth()-1;i++) curIndent += indentPerDepth;
 
                 dashIndent="";
                 switch (cur->depth())
@@ -64,12 +64,6 @@ void ExportASCII::doExport()
                     out +=  "\n";
                     out +=  (underline (getSectionString(cur) + cur->getHeadingPlain(), QString("-") ) );
                     out +=  "\n";
-                    break;
-                case 2:
-                    out +=  "\n";
-                    out +=  (curIndent + "* " + cur->getHeadingPlain());
-                    out +=  "\n";
-                    dashIndent="  ";
                     break;
                 case 3:
                     out +=  (curIndent + "- " + cur->getHeadingPlain());
