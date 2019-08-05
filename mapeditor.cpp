@@ -1231,14 +1231,6 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
 	return;
     }
 
-    // Allow middle button for pasting
-    if (e->button() == Qt::MiddleButton)
-    {
-	e->ignore();
-	QGraphicsView::mousePressEvent(e);
-        return;
-    }
-
     QPointF p = mapToScene(e->pos());
     TreeItem *ti = findMapItem (p, NULL);
     LinkableMapObj* lmo = NULL;
