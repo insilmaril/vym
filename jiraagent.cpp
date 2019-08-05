@@ -248,6 +248,7 @@ void JiraAgent::setModelJiraData (VymModel *model, BranchItem *bi, const QString
     solvedStates << "Verification Done";
     solvedStates << "Resolved";
     solvedStates << "Closed";
+    solvedStates << "Done";
 
     QString idName = ticketID;
 
