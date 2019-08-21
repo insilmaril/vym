@@ -415,11 +415,11 @@ void BranchPropertyEditor::connectSignals()
 void BranchPropertyEditor::disconnectSignals()
 {
     // Frame 
-    disconnect ( ui.frameTypeCombo, 0,0,0);
     disconnect ( ui.framePenColorButton, 0,0,0);
     disconnect ( ui.framePaddingSpinBox, 0,0,0);
     disconnect ( ui.frameWidthSpinBox, 0,0,0);
     disconnect ( ui.frameBrushColorButton, 0,0,0);
+    disconnect ( ui.frameTypeCombo, 0,0,0);
     disconnect ( ui.includeChildrenCheckBox, 0,0,0);
 
     // Link 
@@ -430,6 +430,9 @@ void BranchPropertyEditor::disconnectSignals()
     disconnect ( ui.incImgHor, 0,0,0);
     disconnect ( ui.childrenFreePositioning, 0,0,0);
 
+    // Task
+    disconnect (ui.taskPrioDelta, 0, 0, 0);
+    
     // Attributes
     /*
     disconnect ( ui.addAttributeButton, 0,0,0);
