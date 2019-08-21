@@ -4,7 +4,7 @@ require 'jira-ruby'
 require 'optparse'
 require 'parseconfig'
 
-config = ParseConfig.new('/home/uwe/.eb-login')
+config = ParseConfig.new('/home/uwe/.mylogin')
 
 options = {
   :username     => config['username'],
