@@ -82,20 +82,21 @@ function macro_f10()
 	// 2 - done task without arrows, but green hook
     map = vym.currentMap();
     if (map.hasTask() ) {
-		// Switch to state 2 
-	    map.toggleTask();
+        // Switch to state 2 
+        map.toggleTask();
         map.unsetFlag("2arrow-up");
-		map.unsetFlag("stopsign");
-		map.setFlag("hook-green");
+        map.unsetFlag("stopsign");
+        map.setFlag("hook-green");
+        map.colorBranch("#0000ff");
     } else {	  
-		if (map.hasActiveFlag("hook-green")) {
-			// Switch to state 0
-			map.unsetFlag("hook-green");
-		} else {
-			// Switch to state 1
-    	    map.setFlag("2arrow-up");
-			map.toggleTask();
-		}
+        if (map.hasActiveFlag("hook-green")) {
+            // Switch to state 0
+            map.unsetFlag("hook-green");
+        } else {
+            // Switch to state 1
+            map.setFlag("2arrow-up");
+            map.toggleTask();
+        }
     }
 }
 
@@ -175,16 +176,12 @@ function macro_shift_f8()
 // Macro Shift + F9:
 function macro_shift_f9()
 {
+	map.colorBranch("#0000ff");
 }
 
-// Macro Shift + F10: switch off task attributes and replace with green hook
+// Macro Shift + F10: 
 function macro_shift_f10()
 {
-    map = vym.currentMap();
-    map.clearFlags();
-    map.setFlag("hook-green");
-    map.colorBranch("#0000ff");
-    if (map.hasTask() ) { map.toggleTask() }
 }
 
 // Macro Shift + F11: Replace "@..." by mutt aliases
