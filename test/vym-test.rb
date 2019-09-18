@@ -95,6 +95,7 @@ vym_mgr = VymManager.new
 #vym_mgr.show_running
 
 vym = vym_mgr.find(instance_name)
+
 if !vym
   puts "Couldn't find instance name \"#{instance_name}\", please start one:"
   puts "vym -l -n \"#{instance-name}\" -t test/default.vym"
@@ -115,7 +116,7 @@ end
 #######################
 def test_vym (vym)
   heading "Mainwindow checks:"
-  version = "2.6.220"
+  version = "2.7.501"
   expect_warning_only "Version is #{version}", vym.version, version
 
   expect "Loading map '#{@testmap}'", vym.loadMap(@testmap), true

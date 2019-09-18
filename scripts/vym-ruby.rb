@@ -8,7 +8,7 @@ class Vym
     @dbus = DBus::SessionBus.instance
     @service = @dbus.service(name)
     @service.introspect
-    @main = @service.object('vym')
+    @main = @service.object('/vym')
     @main.introspect
     @main.default_iface = "org.insilmaril.vym.main.adaptor"
 
@@ -60,7 +60,7 @@ class Vym
   end
 
   def map (n)
-    map = @service.object("vymmodel_#{n}")
+    map = @service.object("/vymmodel_#{n}")
     map.introspect
     map.default_iface = "org.insilmaril.vym.model.adaptor"
 
@@ -158,31 +158,26 @@ class VymManager
 
   def find (name)
     list = running
-    puts "Number of running vyms: #{list.length}"
     if list.length == 0
       return nil
     end
 
     for i in (0...list.length)
-      puts "i: #{i}"
       vym_service = @dbus.service(list.at(i))
-      vym_service.introspect
-      vym_main_obj = vym_service.object("vym");
 
-      pp vym_main_obj
+      vym_main_obj = vym_service.object("/vym");
 
-      #vym_main_obj.introspect
+      vym_main_obj.introspect
 
       vym_main_obj.default_iface = "org.insilmaril.vym.main.adaptor"
-
-      puts vym_main_obj.getInstanceName
 
       if vym_main_obj.getInstanceName[0] == name 
         puts "VymManager: Found instance named '#{name}': #{list.at(i)}" if $debug
         return Vym.new list.at(i)
-      end  
+     end  
     end
-    #raise "Could not find instance named \"test\""
+
+    raise "Could not find instance named \"test\""
     return nil
   end
 end
