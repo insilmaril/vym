@@ -302,7 +302,9 @@ void TaskModel::recalcPriorities()
 	if (c == QColor ("#ff0000") ) p -= 80;
 
 	// Flags
-	if (bi->hasActiveStandardFlag ("stopsign") ) p-=800;
+	if (bi->hasActiveStandardFlag ("stopsign") )  p-=  450;
+	if (bi->hasActiveStandardFlag ("2arrow-up") ) p-= 1000;
+	if (bi->hasActiveStandardFlag ("arrow-up") )  p-=  500;
 
 	// Age
 	p -= t->getAgeModification();
