@@ -156,11 +156,13 @@ function macro_shift_f5()
 	statusMessage("Background light grey");
 }
 
-// Macro Shift + F6: Toggle frame to include children
+// Macro Shift + F6: Frame background purple
 function macro_shift_f6()
 {
     map = vym.currentMap();
-    map.toggleFrameIncludeChildren();
+    toggle_frame ( map );
+	map.setFrameBrushColor("#ffaaff");
+	statusMessage("Background purple");
 }
 
 // Macro Shift + F7:
@@ -173,15 +175,18 @@ function macro_shift_f8()
 {
 }
 
-// Macro Shift + F9:
+// Macro Shift + F9: Toggle frame
 function macro_shift_f9()
 {
-	map.colorBranch("#0000ff");
+	map = vym.currentMap();
+    toggle_frame( map );
 }
 
-// Macro Shift + F10: 
+// Macro Shift + F10: Toggle frame to include children
 function macro_shift_f10()
-{
+{   
+	map = vym.currentMap();
+    map.toggleFrameIncludeChildren();
 }
 
 // Macro Shift + F11: Replace "@..." by mutt aliases
