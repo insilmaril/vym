@@ -303,8 +303,8 @@ void TaskModel::recalcPriorities()
 
 	// Flags
 	if (bi->hasActiveStandardFlag ("stopsign") )  p-=  450;
-	if (bi->hasActiveStandardFlag ("2arrow-up") ) p-= 1000;
-	if (bi->hasActiveStandardFlag ("arrow-up") )  p-=  500;
+	if (bi->hasActiveStandardFlag ("arrow-up") )  p-=  750;
+	if (bi->hasActiveStandardFlag ("2arrow-up") ) p-= 1500;
 
 	// Age
 	p -= t->getAgeModification();
