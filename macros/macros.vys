@@ -57,12 +57,9 @@ function macro_f7()
     map.colorSubtree ("#0000ff");
 }
 
-// Macro F8: Set task to sleep until 18:00
+// Macro F8: 
 function macro_f8()
 {
-    map = vym.currentMap();
-    map.setTaskSleep("18:00");
-    statusMessage("Task sleeping until 18:00");
 }
 
 // Macro F9: Set task to sleep until 15:00
@@ -73,9 +70,25 @@ function macro_f9()
     statusMessage("Task sleeping until 15:00");
 }
 
-// Macro F10: toggle high prio task
+// Macro F10: Set task to sleep until 18:00
 function macro_f10()
-{ 
+{
+    map = vym.currentMap();
+    map.setTaskSleep("18:00");
+    statusMessage("Task sleeping until 18:00");
+}
+
+// Macro F11: Set task to sleep until next day
+function macro_f11()
+{
+    map = vym.currentMap();
+    map.setTaskSleep("1");
+    statusMessage("Task sleeping until tomorrow");
+}
+
+// Macro F12: toggle high prio task
+function macro_f12()
+{
 	// Assuming 3 states, which are cycled:
 	// 0 - nothing set
 	// 1 - high prio task with arrows
@@ -98,16 +111,6 @@ function macro_f10()
             map.toggleTask();
         }
     }
-}
-
-// Macro F11: 
-function macro_f11()
-{
-}
-
-// Macro F12: 
-function macro_f12()
-{
 }
 
 
