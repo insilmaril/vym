@@ -268,6 +268,15 @@ bool VymModelWrapper::exportMap( )
         if (argumentCount() == 3 && argument(2).toString() == "listTasks")
             listTasks = true;
         model->exportASCII (listTasks, filename, false);
+    } else if ( format == "Confluence" )
+    {
+        if (argumentCount() < 3 )
+        {
+            logError( context(), QScriptContext::SyntaxError, "Path missing in Confluence export" );
+            return setResult( r );
+        }   
+        QString path = argument(2).toString();
+        model->exportConfluence (path, filename, false);
     } else if ( format == "CSV" )
     {
         model->exportCSV (filename, false);

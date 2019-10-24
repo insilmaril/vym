@@ -81,11 +81,13 @@ HEADERS	+= \
     downloadagent.h \
     editxlinkdialog.h \
     exportoofiledialog.h \
-    exporthtmldialog.h\
+    export-html-dialog.h\
+    export-confluence-dialog.h\
     export-ao.h \
     export-ascii.h \
     export-base.h \
     export-csv.h \
+    export-confluence.h \
     export-html.h \
     export-impress.h \
     export-latex.h \
@@ -184,11 +186,13 @@ SOURCES	+= \
     dockeditor.cpp \
     downloadagent.cpp \
     editxlinkdialog.cpp \
-    exporthtmldialog.cpp \
+    export-html-dialog.cpp \
+    export-confluence-dialog.cpp \
     exportoofiledialog.cpp \
     export-ao.cpp \
     export-ascii.cpp \
     export-base.cpp \
+    export-confluence.cpp \
     export-csv.cpp \
     export-html.cpp \
     export-impress.cpp \
@@ -273,7 +277,8 @@ SOURCES	+= \
 FORMS = \
     attributewidget.ui \
     branchpropeditor.ui \
-    exporthtmldialog.ui \
+    export-html-dialog.ui \
+    export-confluence-dialog.ui \
     extrainfodialog.ui \
     editxlinkdialog.ui \
     historywindow.ui \

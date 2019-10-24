@@ -559,7 +559,7 @@ void Main::setupAPI()
     modelCommands.append(c);
 
     c = new Command ("exportMap", Command::Any);  
-    c->addPar (Command::String,false,"Format (AO, ASCII, CSV, HTML, Image, Impress, Last, LaTeX, Markdown, OrgMode, PDF, SVG, XML)");
+    c->addPar (Command::String,false,"Format (AO, ASCII, CONFLUENCE, CSV, HTML, Image, Impress, Last, LaTeX, Markdown, OrgMode, PDF, SVG, XML)");
     modelCommands.append(c);
 
     c = new Command ("getDestPath", Command::Any);
@@ -1055,6 +1055,10 @@ void Main::setupFileActions()
 
     a = new QAction(  tr("Webpage (HTML)...","File export menu"),this );
     connect( a, SIGNAL( triggered() ), this, SLOT( fileExportHTML() ) );
+    fileExportMenu->addAction(a);
+
+    a = new QAction(  tr("Confluence (HTML)...","File export menu") + tr("(still experimental)"),this );
+    connect( a, SIGNAL( triggered() ), this, SLOT( fileExportConfluence() ) );
     fileExportMenu->addAction(a);
 
     a = new QAction( tr("Text (ASCII)...","File export menu"), this);
@@ -3717,6 +3721,12 @@ void Main::fileExportHTML()
 {
     VymModel *m=currentModel();
     if (m) m->exportHTML();
+}
+
+void Main::fileExportConfluence() 
+{
+    VymModel *m = currentModel();
+    if (m) m->exportConfluence();
 }
 
 void Main::fileExportImage()	

@@ -126,6 +126,7 @@ private slots:
     void fileImportDir();
     void fileExportXML();
     void fileExportHTML();
+    void fileExportConfluence();
     void fileExportImage();
     void fileExportPDF();
     void fileExportSVG();

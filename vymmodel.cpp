@@ -25,6 +25,7 @@
 #include "editxlinkdialog.h"
 #include "export-ao.h"
 #include "export-ascii.h"
+#include "export-confluence.h"
 #include "export-csv.h"
 #include "export-html.h"
 #include "export-impress.h"
@@ -4659,9 +4660,19 @@ void VymModel::exportHTML (const QString &dpath, const QString &fpath,bool useDi
 
     if (!dpath.isEmpty()) ex.setDirPath (dpath);
     if (!fpath.isEmpty()) ex.setFilePath (fpath);
-    setExportMode(true);
+    
     ex.doExport(useDialog);
-    setExportMode(false);
+}
+
+void VymModel::exportConfluence (const QString &dpath, const QString &fpath,bool useDialog)
+{
+    ExportConfluence ex (this);
+    ex.setLastCommand( settings.localValue(filePath,"/export/last/command","").toString() );
+
+    if (!dpath.isEmpty()) ex.setDirPath (dpath);
+    if (!fpath.isEmpty()) ex.setFilePath (fpath);
+    
+    ex.doExport(useDialog);
 }
 
 void VymModel::exportImpress(const QString &fn, const QString &cf) 

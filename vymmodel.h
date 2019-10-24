@@ -573,6 +573,8 @@ public:
 
     /*! Export as HTML to directory */
     void exportHTML(const QString &dir="", const QString &fname="", bool useDialog=true);    
+    /*! Export as HTML to Confluence*/
+    void exportConfluence(const QString &dir="", const QString &fname="", bool useDialog=true);    
 
     /*! Export as OpenOfficeOrg presentation */
     void exportImpress (const QString &,const QString &);	
