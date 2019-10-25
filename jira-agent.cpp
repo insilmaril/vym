@@ -1,4 +1,4 @@
-#include "jiraagent.h"
+#include "jira-agent.h"
 
 #include "branchitem.h"
 #include "mainwindow.h"

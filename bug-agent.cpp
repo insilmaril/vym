@@ -1,4 +1,4 @@
-#include "bugagent.h"
+#include "bug-agent.h"
 
 #include "branchitem.h"
 #include "mainwindow.h"

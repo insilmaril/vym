@@ -75,10 +75,10 @@ HEADERS	+= \
     branchitem.h \
     branchobj.h \
     branchpropeditor.h\
-    bugagent.h \
+    bug-agent.h \
     command.h \
     dockeditor.h \
-    downloadagent.h \
+    download-agent.h \
     editxlinkdialog.h \
     exportoofiledialog.h \
     export-html-dialog.h\
@@ -116,7 +116,7 @@ HEADERS	+= \
     imageitem.h \
     imageobj.h \
     imports.h \
-    jiraagent.h \
+    jira-agent.h \
     lineeditdialog.h \
     linkablemapobj.h \
     lockedfiledialog.h \
@@ -181,10 +181,10 @@ SOURCES	+= \
     branchitem.cpp \
     branchobj.cpp \
     branchpropeditor.cpp \
-    bugagent.cpp \
+    bug-agent.cpp \
     command.cpp \
     dockeditor.cpp \
-    downloadagent.cpp \
+    download-agent.cpp \
     editxlinkdialog.cpp \
     export-html-dialog.cpp \
     export-confluence-dialog.cpp \
@@ -222,7 +222,7 @@ SOURCES	+= \
     imageitem.cpp \
     imageobj.cpp \
     imports.cpp \
-    jiraagent.cpp \
+    jira-agent.cpp \
     lineeditdialog.cpp \
     linkablemapobj.cpp \
     lockedfiledialog.cpp \

@@ -25,7 +25,7 @@
 #include "branchpropeditor.h"
 #include "branchitem.h"
 #include "command.h"
-#include "downloadagent.h"
+#include "download-agent.h"
 #include "file.h"
 #include "findresultwidget.h"
 #include "findresultmodel.h"
