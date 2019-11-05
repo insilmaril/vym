@@ -25,6 +25,7 @@
 #include "branchpropeditor.h"
 #include "branchitem.h"
 #include "command.h"
+#include "confluence-agent.h"
 #include "download-agent.h"
 #include "file.h"
 #include "findresultwidget.h"
@@ -5947,11 +5948,17 @@ void Main::standardFlagChanged()
 
 void Main::testFunction1()
 {
-    scriptEditor->runScript();
+    VymModel  *m  = currentModel();
+    if (m)
+    {
+        ConfluenceAgent *ca = new ConfluenceAgent (m);
+        ca->test();
+    }
 }
 
 void Main::testFunction2()
 {
+    scriptEditor->runScript();
 }
 
 void Main::toggleWinter()

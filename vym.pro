@@ -77,6 +77,7 @@ HEADERS	+= \
     branchpropeditor.h\
     bug-agent.h \
     command.h \
+    confluence-agent.h \
     dockeditor.h \
     download-agent.h \
     editxlinkdialog.h \
@@ -183,6 +184,7 @@ SOURCES	+= \
     branchpropeditor.cpp \
     bug-agent.cpp \
     command.cpp \
+    confluence-agent.cpp \
     dockeditor.cpp \
     download-agent.cpp \
     editxlinkdialog.cpp \
