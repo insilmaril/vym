@@ -409,13 +409,13 @@ Main::~Main()
 
 void Main::loadCmdLine()
 {
-    QStringList flist=options.getFileList();
-    QStringList::Iterator it=flist.begin();
+    QStringList flist = options.getFileList();
+    QStringList::Iterator it = flist.begin();
 
     initProgressCounter (flist.count());
-    while (it !=flist.end() )
+    while (it != flist.end() )
     {
-	FileType type=getMapType (*it);
+	FileType type = getMapType (*it);
 	fileLoad (*it, NewMap,type);
 	*it++;
     }	

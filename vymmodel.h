@@ -162,6 +162,9 @@ public:
     void importDir(const QString&);
     void importDir();
 
+private:    
+    bool removeVymLock();
+public:	
     bool tryVymLock();
     bool renameMap( const QString &newPath); //! Rename map and change lockfile
     void setReadOnly( bool b );

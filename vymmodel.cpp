@@ -60,6 +60,9 @@
 
 extern bool debug;
 extern bool testmode;
+extern bool recoveryMode;  
+extern QStringList ignoredLockedFiles;
+
 extern Main *mainWindow;
 
 extern Settings settings;
@@ -1011,6 +1014,22 @@ void VymModel::importDir()
     }	
 }
 
+bool VymModel::removeVymLock()
+{
+    if (vymLock.removeLock() )
+    {
+        mainWindow->statusMessage (tr("Removed lockfile for %1").arg(mapName));
+        setReadOnly(false);
+        return true;
+    } else
+    {
+        QMessageBox::warning(0,
+                 tr("Warning"),
+                 tr("Couldn't remove lockfile for %1").arg(mapName));
+        return false;
+    }
+}
+
 bool VymModel::tryVymLock()
 {
     // Defaults for author and host in vymLock
@@ -1028,27 +1047,26 @@ bool VymModel::tryVymLock()
     {
         if (debug) qDebug() << "VymModel::tryLock failed!";
         setReadOnly( true );
-        if (vymLock.getState() == VymLock::lockedByOther)
+        if (vymLock.getState() == VymLock::lockedByOther )
         {
-            LockedFileDialog dia;
-            QString a = vymLock.getAuthor();
-            QString h = vymLock.getHost();
-            QString s = QString( tr("Map seems to be already opened in another vym instance!\n\n "
-                   "Map is locked by \"%1\" on \"%2\"\n\n"
-                   "Please only delete the lockfile, if you are sure nobody else is currently working on this map." )) .arg(a).arg(h);
-            dia.setText( s );
-            dia.setWindowTitle(tr("Warning: Map already opended","VymModel"));
-            if (dia.execDialog() == LockedFileDialog::DeleteLockfile)
+            if (recoveryMode)
             {
-                if (vymLock.removeLock() )
-                {
-                    mainWindow->statusMessage (tr("Removed lockfile for %1").arg(mapName));
-                    setReadOnly(false);
-                    return true;
-                } else
-                    QMessageBox::warning(0,
-                             tr("Warning"),
-                             tr("Couldn't remove lockfile for %1").arg(mapName));
+                ignoredLockedFiles << filePath;
+                return removeVymLock();
+            } else
+            {
+                LockedFileDialog dia;
+                QString a = vymLock.getAuthor();
+                QString h = vymLock.getHost();
+                QString s = QString( tr("Map seems to be already opened in another vym instance!\n\n "
+                       "Map is locked by \"%1\" on \"%2\"\n\n"
+                       "Please only delete the lockfile, if you are sure nobody else is currently working on this map." )) .arg(a).arg(h);
+                dia.setText( s );
+                dia.setWindowTitle(tr("Warning: Map already opended","VymModel"));
+                if (dia.execDialog() == LockedFileDialog::DeleteLockfile)
+                {  
+                    return removeVymLock();
+                }
             }
         } else if (vymLock.getState() == VymLock::notWritable)
         {
