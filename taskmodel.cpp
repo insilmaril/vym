@@ -95,6 +95,8 @@ QVariant TaskModel::data(const QModelIndex &index, int role) const
     }
     else // role != Qt::DisplayRole
     {
+        if (role == Qt::EditRole && index.column() == 1) // DeltaPrio
+            return t->getPriorityDelta();
 	if (role == Qt::ForegroundRole && bi ) 
 	    return bi->getHeadingColor();
 	if (role == Qt::BackgroundRole && bi ) 
@@ -172,12 +174,32 @@ bool TaskModel::removeRows(int position, int rows, const QModelIndex &index)
     return true;
 }
 
-bool TaskModel::setData(const QModelIndex &index, Task* t, int role)
+bool TaskModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
+    qDebug() << "Trying Editing task... 2";
     if (index.isValid() && role == Qt::EditRole) 
     {
         int row = index.row();
 
+        qDebug() << "Editing task... 2";
+        //tasks.replace(row, );
+        emit(dataChanged(index, index));
+
+        return true;
+    }
+
+    return false;
+}
+
+/*
+bool TaskModel::setData(const QModelIndex &index, Task* t, int role)
+{
+    qDebug() << "Trying Editing task...";
+    if (index.isValid() && role == Qt::EditRole) 
+    {
+        int row = index.row();
+
+        qDebug() << "Editing task...";
         tasks.replace(row, t);
         emit(dataChanged(index, index));
 
@@ -186,6 +208,7 @@ bool TaskModel::setData(const QModelIndex &index, Task* t, int role)
 
     return false;
 }
+*/
 
 void TaskModel::emitDataChanged (Task* t)
 {
