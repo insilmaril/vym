@@ -186,13 +186,12 @@ TaskEditor::~TaskEditor()
     settings.setValue ("/taskeditor/filterFlags2",actionToggleFilterFlags2->isChecked());
     settings.setValue ("/taskeditor/filterFlags3",actionToggleFilterFlags3->isChecked());
     settings.setValue ("/taskeditor/showParentsLevel",taskModel->getShowParentsLevel() );
-    /*
+    
     for (int i=0; i<7; i++)
     {
 	settings.setValue (QString("/taskeditor/column/%1/width").arg(i),view->columnWidth(i) );
 	settings.setValue (QString("/taskeditor/column/%1/hidden").arg(i),view->isColumnHidden(i) );
     }
-    */
 }
 
 void TaskEditor::setMapName (const QString &n)
