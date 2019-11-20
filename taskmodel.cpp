@@ -67,14 +67,16 @@ QVariant TaskModel::data(const QModelIndex &index, int role) const
         if (index.column() == 0)
             return t->getPriority();
         else if (index.column() == 1)
-            return t->getStatusString() + " - " +t->getAwakeString();
+            return t->getPriorityDelta();
         else if (index.column() == 2)
-            return t->getAgeCreation();
+            return t->getStatusString() + " - " +t->getAwakeString();
         else if (index.column() == 3)
-            return t->getAgeModification();
+            return t->getAgeCreation();
         else if (index.column() == 4)
-            return t->getDaysSleep();
+            return t->getAgeModification();
         else if (index.column() == 5)
+            return t->getDaysSleep();
+        else if (index.column() == 6)
         {
             QString s = bi->getModel()->getMapName();
             if (s.isEmpty() )
@@ -82,12 +84,12 @@ QVariant TaskModel::data(const QModelIndex &index, int role) const
             else
                 return bi->getModel()->getMapName();
         }
-        else if (index.column() == 6)
+        else if (index.column() == 7)
         {
             BranchItem *bi = tasks.at(index.row())->getBranch();
             return bi->getHeadingPlainWithParents( showParentsLevel );
         }
-    } else if (role == Qt::DecorationRole && index.column() == 1)
+    } else if (role == Qt::DecorationRole && index.column() == 2)
     {
         return QIcon(":/flag-" + t->getIconString() + ".png");
     }
@@ -126,16 +128,18 @@ QVariant TaskModel::headerData(int section, Qt::Orientation orientation, int rol
             case 0:
                 return tr("Prio","TaskEditor");
             case 1:
-                return tr("Status","TaskEditor");
+                return tr("Delta","TaskEditor");
             case 2:
+                return tr("Status","TaskEditor");
+            case3:
                 return tr("Age total","TaskEditor");
-            case 3:
-                return tr("Age mod.","TaskEditor");
             case 4:
-                return tr("Sleep","TaskEditor");
+                return tr("Age mod.","TaskEditor");
             case 5:
-                return tr("Map","TaskEditor");
+                return tr("Sleep","TaskEditor");
             case 6:
+                return tr("Map","TaskEditor");
+            case 7:
                 return tr("Task","TaskEditor");
             default:
                 return QVariant();
