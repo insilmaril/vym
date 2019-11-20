@@ -28,7 +28,7 @@ QModelIndex TaskModel::indexRowEnd (Task* t)
     if (n<0)
 	return QModelIndex();
     else    
-	return createIndex (n,6,t);
+	return createIndex (n, 7, t);
 }
 
 Task* TaskModel::getTask (const QModelIndex &ix) const
@@ -48,7 +48,7 @@ int TaskModel::rowCount(const QModelIndex &parent) const
 int TaskModel::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    return 7;
+    return 8;
 }
 
 QVariant TaskModel::data(const QModelIndex &index, int role) const
@@ -131,7 +131,7 @@ QVariant TaskModel::headerData(int section, Qt::Orientation orientation, int rol
                 return tr("Delta","TaskEditor");
             case 2:
                 return tr("Status","TaskEditor");
-            case3:
+            case 3:
                 return tr("Age total","TaskEditor");
             case 4:
                 return tr("Age mod.","TaskEditor");

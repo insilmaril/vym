@@ -187,7 +187,7 @@ TaskEditor::~TaskEditor()
     settings.setValue ("/taskeditor/filterFlags3",actionToggleFilterFlags3->isChecked());
     settings.setValue ("/taskeditor/showParentsLevel",taskModel->getShowParentsLevel() );
     
-    for (int i=0; i<7; i++)
+    for (int i=0; i<=7; i++)
     {
 	settings.setValue (QString("/taskeditor/column/%1/width").arg(i),view->columnWidth(i) );
 	settings.setValue (QString("/taskeditor/column/%1/hidden").arg(i),view->isColumnHidden(i) );
@@ -292,7 +292,7 @@ void TaskEditor::updateColumnLayout()
 {
     // Update column widths and visibility
     QString s;
-    for (int i = 0; i < 6; i++)
+    for (int i = 0; i <= 7; i++)
     {
 	s = QString("/taskeditor/column/%1/").arg(i);
         view->setColumnWidth  (i, settings.value(s + "width", 60).toInt() );
