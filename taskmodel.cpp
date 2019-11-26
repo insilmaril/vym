@@ -28,7 +28,7 @@ QModelIndex TaskModel::indexRowEnd (Task* t)
     if (n<0)
 	return QModelIndex();
     else    
-	return createIndex (n,6,t);
+	return createIndex (n, 7, t);
 }
 
 Task* TaskModel::getTask (const QModelIndex &ix) const
@@ -48,7 +48,7 @@ int TaskModel::rowCount(const QModelIndex &parent) const
 int TaskModel::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    return 7;
+    return 8;
 }
 
 QVariant TaskModel::data(const QModelIndex &index, int role) const
@@ -95,6 +95,8 @@ QVariant TaskModel::data(const QModelIndex &index, int role) const
     }
     else // role != Qt::DisplayRole
     {
+        if (role == Qt::EditRole && index.column() == 1) // DeltaPrio
+            return t->getPriorityDelta();
 	if (role == Qt::ForegroundRole && bi ) 
 	    return bi->getHeadingColor();
 	if (role == Qt::BackgroundRole && bi ) 
@@ -125,24 +127,15 @@ QVariant TaskModel::headerData(int section, Qt::Orientation orientation, int rol
 
     if (orientation == Qt::Horizontal) {
         switch (section) {
-            case 0:
-                return tr("Prio","TaskEditor");
-            case 1:
-                return tr("Delta","TaskEditor");
-            case 2:
-                return tr("Status","TaskEditor");
-            case3:
-                return tr("Age total","TaskEditor");
-            case 4:
-                return tr("Age mod.","TaskEditor");
-            case 5:
-                return tr("Sleep","TaskEditor");
-            case 6:
-                return tr("Map","TaskEditor");
-            case 7:
-                return tr("Task","TaskEditor");
-            default:
-                return QVariant();
+            case 0: return tr("Prio","TaskEditor");
+            case 1: return tr("Delta","TaskEditor");
+            case 2: return tr("Status","TaskEditor");
+            case 3: return tr("Age total","TaskEditor");
+            case 4: return tr("Age mod.","TaskEditor");
+            case 5: return tr("Sleep","TaskEditor");
+            case 6: return tr("Map","TaskEditor");
+            case 7: return tr("Task","TaskEditor"); 
+            default: return QVariant();
         }
     }
     return QVariant();
@@ -172,12 +165,37 @@ bool TaskModel::removeRows(int position, int rows, const QModelIndex &index)
     return true;
 }
 
+bool TaskModel::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+    if (index.isValid() && role == Qt::EditRole) 
+    {
+        Task *t = tasks.at(index.row() );
+        if (!t)
+        {
+            qWarning() << "TaskModel::setData  no task found";
+            return false;
+        }
+
+        if (index.column() == 1)
+        {
+            t->setPriorityDelta(value.toInt() );
+            emit(dataChanged(index, index));
+            return true;
+        }
+    }
+
+    return false;
+}
+
+/*
 bool TaskModel::setData(const QModelIndex &index, Task* t, int role)
 {
+    qDebug() << "Trying Editing task...";
     if (index.isValid() && role == Qt::EditRole) 
     {
         int row = index.row();
 
+        qDebug() << "Editing task...";
         tasks.replace(row, t);
         emit(dataChanged(index, index));
 
@@ -186,6 +204,7 @@ bool TaskModel::setData(const QModelIndex &index, Task* t, int role)
 
     return false;
 }
+*/
 
 void TaskModel::emitDataChanged (Task* t)
 {
@@ -307,8 +326,8 @@ void TaskModel::recalcPriorities()
 
 	// Flags
 	if (bi->hasActiveStandardFlag ("stopsign") )  p-=  450;
-	if (bi->hasActiveStandardFlag ("arrow-up") )  p-=  750;
-	if (bi->hasActiveStandardFlag ("2arrow-up") ) p-= 1500;
+	if (bi->hasActiveStandardFlag ("2arrow-up") ) p-= 1000;
+	if (bi->hasActiveStandardFlag ("arrow-up") )  p-=  500;
 
 	// Age
 	p -= t->getAgeModification();

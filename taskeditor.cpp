@@ -121,7 +121,7 @@ TaskEditor::TaskEditor(QWidget *)
     view->setSelectionBehavior(QAbstractItemView::SelectRows);
     view->horizontalHeader()->setStretchLastSection(true);
     view->verticalHeader()->hide();
-    view->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    //view->setEditTriggers(QAbstractItemView::NoEditTriggers); // FIXME-0 remove for edits
 
     filterActiveModel = new TaskFilterModel;
     filterActiveModel->setSourceModel(taskModel);
@@ -172,9 +172,7 @@ TaskEditor::TaskEditor(QWidget *)
 
     view->setStyleSheet( "QTableView:focus {" + editorFocusStyle + "}");
 
-    // Hack: For whatever reason TableView needs to be available before columns
-    //       can be hidden.
-    QTimer::singleShot(1500, this,  SLOT( updateColumnLayout()));
+    updateColumnLayout();
 }
 
 TaskEditor::~TaskEditor()
@@ -189,8 +187,8 @@ TaskEditor::~TaskEditor()
     
     for (int i=0; i<7; i++)
     {
-	settings.setValue (QString("/taskeditor/column/%1/width").arg(i),view->columnWidth(i) );
-	settings.setValue (QString("/taskeditor/column/%1/hidden").arg(i),view->isColumnHidden(i) );
+	settings.setValue (QString("/taskeditor/column/%1/width").arg(i), view->columnWidth(i) );
+	settings.setValue (QString("/taskeditor/column/%1/hidden").arg(i), view->isColumnHidden(i) );
     }
 }
 
@@ -285,21 +283,19 @@ void TaskEditor::clearSelection()
 void TaskEditor::headerContextMenu()
 {
     qDebug() << "TE::headerContextMenu()";   // FIXME-2
-    updateColumnLayout();
 }
 
 void TaskEditor::updateColumnLayout()
 {
     // Update column widths and visibility
     QString s;
-    for (int i = 0; i < 6; i++)
+    for (int i = 0; i < 7; i++)
     {
 	s = QString("/taskeditor/column/%1/").arg(i);
-        view->setColumnWidth  (i, settings.value(s + "width", 60).toInt() );
+        view->setColumnWidth  (i, settings.value(s + "width", 20).toInt() );
         view->setColumnHidden (i, settings.value(s + "hidden", false).toBool() );
     }
 }
-
 
 void TaskEditor::selectionChanged ( const QItemSelection & selected, const QItemSelection & )
 {// FIXME-3 what, if multiple selection in MapEditor?
@@ -331,14 +327,21 @@ void TaskEditor::selectionChanged ( const QItemSelection & selected, const QItem
 void TaskEditor::contextMenuEvent ( QContextMenuEvent * e )
 {
     taskContextMenu->popup (e->globalPos() );
+    setFilterMap();
+    setFilterActive();
+    setFilterNew();
+    setFilterFlags1();
+    setFilterFlags2();
+    setFilterFlags3();
 }
 
 void TaskEditor::sort()
 {
     QHeaderView *hv = view->horizontalHeader();
     view->sortByColumn( hv->sortIndicatorSection(), hv->sortIndicatorOrder() );
-    filterActiveModel->invalidate();	
-    updateColumnLayout();   //FIXME-2 sortByColumn seems to obsolete layout :-(
+    
+    // Without this last col is not resized, but view does not filter for new map:	
+    filterActiveModel->invalidate();  
 }
 
 void TaskEditor::toggleFilterMap ()
