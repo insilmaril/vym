@@ -179,32 +179,13 @@ bool TaskModel::setData(const QModelIndex &index, const QVariant &value, int rol
         if (index.column() == 1)
         {
             t->setPriorityDelta(value.toInt() );
-            emit(dataChanged(index, index));
+            emit(dataChanged(index, index));    // FIXME-0 still need to update filtered view !
             return true;
         }
     }
 
     return false;
 }
-
-/*
-bool TaskModel::setData(const QModelIndex &index, Task* t, int role)
-{
-    qDebug() << "Trying Editing task...";
-    if (index.isValid() && role == Qt::EditRole) 
-    {
-        int row = index.row();
-
-        qDebug() << "Editing task...";
-        tasks.replace(row, t);
-        emit(dataChanged(index, index));
-
-        return true;
-    }
-
-    return false;
-}
-*/
 
 void TaskModel::emitDataChanged (Task* t)
 {

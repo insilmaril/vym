@@ -28,13 +28,11 @@ public:
     void setFilterFlags1 ();
     void setFilterFlags2 ();
     void setFilterFlags3 ();
+    void updateFilters();
     bool select (Task *task);
     void clearSelection ();
     void showSelection ();
     void contextMenuEvent ( QContextMenuEvent * e );
-
-public slots:
-    void sort();
 
 private slots:
     void headerContextMenu();

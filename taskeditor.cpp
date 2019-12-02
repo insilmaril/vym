@@ -128,8 +128,11 @@ TaskEditor::TaskEditor(QWidget *)
 
     view->setModel (filterActiveModel);
     view->setSortingEnabled(true);
-    view->horizontalHeader()->setSortIndicator (0,Qt::AscendingOrder);
 
+    QHeaderView *hv = view->horizontalHeader();
+    hv->setSortIndicator (0,Qt::AscendingOrder);
+    view->sortByColumn( hv->sortIndicatorSection(), hv->sortIndicatorOrder() );
+    
 
     blockExternalSelect=false;
 
@@ -137,9 +140,6 @@ TaskEditor::TaskEditor(QWidget *)
 	view->selectionModel(),SIGNAL (selectionChanged (QItemSelection,QItemSelection)),
 	this, SLOT (selectionChanged (QItemSelection,QItemSelection)));
     
-    // layout changes trigger resorting
-    connect( taskModel, SIGNAL( layoutChanged() ), this, SLOT(sort() ) );
-
     // Enable wordwrap when data changes
     if (settings.value ("/taskeditor/wordWrap", true).toBool())
     {
@@ -195,6 +195,7 @@ TaskEditor::~TaskEditor()
 void TaskEditor::setMapName (const QString &n)
 {
     currentMapName = n;
+
     setFilterMap();
 }
 
@@ -209,7 +210,7 @@ void TaskEditor::setFilterMap ()
         filterActiveModel->setMapFilter(currentMapName);
     else
         filterActiveModel->setMapFilter(QString() );
-    sort();
+    updateFilters();
 }
 
 bool TaskEditor::isUsedFilterActive()
@@ -220,31 +221,37 @@ bool TaskEditor::isUsedFilterActive()
 void TaskEditor::setFilterActive () 
 {
     filterActiveModel->setFilter (actionToggleFilterActive->isChecked() );   
-    sort();	
+    updateFilters();
 }
 
 void TaskEditor::setFilterNew ()
 {
     filterActiveModel->setFilterNew (actionToggleFilterNew->isChecked() );
-    sort();
+    updateFilters();
 }
 
 void TaskEditor::setFilterFlags1 () 
 {
     filterActiveModel->setFilterFlags1 (actionToggleFilterFlags1->isChecked() );
-    sort();
+    updateFilters();
 }
 
 void TaskEditor::setFilterFlags2 ()
 {
     filterActiveModel->setFilterFlags2(actionToggleFilterFlags2->isChecked() );
-    sort();
+    updateFilters();
 }
 
 void TaskEditor::setFilterFlags3 ()
 {
     filterActiveModel->setFilterFlags3 (actionToggleFilterFlags3->isChecked() );
-    sort();
+    updateFilters();
+}
+
+void TaskEditor::updateFilters()
+{
+    filterActiveModel->invalidate();  
+    filterActiveModel->invalidate();  // ugly, but calling twice updates rows as expected
 }
 
 void TaskEditor::showSelection()
@@ -282,7 +289,12 @@ void TaskEditor::clearSelection()
 
 void TaskEditor::headerContextMenu()
 {
-    qDebug() << "TE::headerContextMenu()";   // FIXME-2
+    //qDebug() << "TE::headerContextMenu()";   
+    // Trying to workaround https://bugreports.qt.io/browse/QTBUG-52307
+    //view->horizontalHeader()->setStretchLastSection(true);
+    //view->resizeColumnsToContents();
+    //updateGeometry();
+    //show();
 }
 
 void TaskEditor::updateColumnLayout()
@@ -326,22 +338,18 @@ void TaskEditor::selectionChanged ( const QItemSelection & selected, const QItem
 
 void TaskEditor::contextMenuEvent ( QContextMenuEvent * e )
 {
+    /* FIXME-2 testing only 
     taskContextMenu->popup (e->globalPos() );
-    setFilterMap();
+    // sort();  // sorting causes columns to be resized :)
+    filterActiveModel->invalidate();  // also  causes columns to be resized :)     
+    return;
+    //setFilterMap(); // testing: with this last col is resized, without it is not resized
     setFilterActive();
     setFilterNew();
     setFilterFlags1();
     setFilterFlags2();
     setFilterFlags3();
-}
-
-void TaskEditor::sort()
-{
-    QHeaderView *hv = view->horizontalHeader();
-    view->sortByColumn( hv->sortIndicatorSection(), hv->sortIndicatorOrder() );
-    
-    // Without this last col is not resized, but view does not filter for new map:	
-    filterActiveModel->invalidate();  
+    */
 }
 
 void TaskEditor::toggleFilterMap ()
