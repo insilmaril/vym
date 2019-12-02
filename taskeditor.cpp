@@ -342,18 +342,7 @@ void TaskEditor::selectionChanged ( const QItemSelection & selected, const QItem
 
 void TaskEditor::contextMenuEvent ( QContextMenuEvent * e )
 {
-    /* FIXME-2 testing only 
     taskContextMenu->popup (e->globalPos() );
-    // sort();  // sorting causes columns to be resized :)
-    filterActiveModel->invalidate();  // also  causes columns to be resized :)     
-    return;
-    //setFilterMap(); // testing: with this last col is resized, without it is not resized
-    setFilterActive();
-    setFilterNew();
-    setFilterFlags1();
-    setFilterFlags2();
-    setFilterFlags3();
-    */
 }
 
 void TaskEditor::toggleFilterMap ()
