@@ -133,6 +133,10 @@ TaskEditor::TaskEditor(QWidget *)
     hv->setSortIndicator (0,Qt::AscendingOrder);
     view->sortByColumn( hv->sortIndicatorSection(), hv->sortIndicatorOrder() );
     
+    view->setSelectionMode(QAbstractItemView::ExtendedSelection);
+    view->setDragEnabled(true);
+    view->setAcceptDrops(true);
+    view->setDropIndicatorShown(true);
 
     blockExternalSelect=false;
 

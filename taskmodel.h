@@ -6,6 +6,7 @@
 
 #include "task.h"
 
+
 class BranchItem;
 class VymModel;
 
@@ -15,9 +16,10 @@ class TaskModel : public QAbstractTableModel
     
 public:
     TaskModel(QObject *parent=0);
-    QModelIndex index (Task* t);
+    QModelIndex index (Task* t) const;
     QModelIndex indexRowEnd (Task* t);
     Task* getTask (const QModelIndex &ix) const;
+    Task* getTask (const int i);
     int rowCount(const QModelIndex &parent) const;
     int columnCount(const QModelIndex &parent) const;
     QVariant data(const QModelIndex &index, int role) const;
@@ -37,6 +39,13 @@ public:
 
     void setShowParentsLevel (uint i);
     uint getShowParentsLevel ();
+
+    // Drag and drop support
+    Qt::DropActions supportedDropActions() const;
+    QStringList mimeTypes() const;
+    QMimeData * mimeData(const QModelIndexList &indexes) const;
+    bool dropMimeData(const QMimeData *data, Qt::DropAction action, 
+        int row, int column, const QModelIndex &parent);
 
 private:
     QList <Task*> tasks;
