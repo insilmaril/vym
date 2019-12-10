@@ -83,7 +83,12 @@ QVariant TaskModel::data(const QModelIndex &index, int role) const
         else if (index.column() == 4)
             return t->getAgeModification();
         else if (index.column() == 5)
-            return t->getDaysSleep();
+        {
+            if (t->getDaysSleep() > 0)
+                return t->getDaysSleep();
+            else
+                return "-";
+        }    
         else if (index.column() == 6)
         {
             QString s = bi->getModel()->getMapName();
