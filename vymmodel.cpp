@@ -228,10 +228,15 @@ void VymModel::init ()
 void VymModel::makeTmpDirectories()
 {
     // Create unique temporary directories
-    tmpMapDir = tmpVymDir+QString("/model-%1").arg(modelID);
-    histPath = tmpMapDir+"/history";
+    tmpMapDir = tmpVymDir + QString("/model-%1").arg(modelID);
+    histPath  = tmpMapDir + "/history";
     QDir d;
     d.mkdir (tmpMapDir);
+}
+
+QString VymModel::tmpDirPath()
+{
+    return tmpMapDir;
 }
 
 MapEditor* VymModel::getMapEditor() 
@@ -517,7 +522,7 @@ File::ErrorCode VymModel::loadMap (
 
     // Create temporary directory for packing
     bool ok;
-    QString tmpZipDir = makeTmpDir (ok,"vym-pack");
+    QString tmpZipDir = makeTmpDir (ok, tmpDirPath(), "unzip");
     if (!ok)
     {
 	QMessageBox::critical( 0, tr( "Critical Load Error" ),
@@ -530,7 +535,7 @@ File::ErrorCode VymModel::loadMap (
     else
     {
         // Try to unzip file
-        err = unzipDir (tmpZipDir,fname);
+        err = unzipDir (tmpZipDir, fname);
     }
     QString xmlfile;
     if (err == File::NoZip)
@@ -750,7 +755,7 @@ File::ErrorCode VymModel::save (const SaveMode &savemode)
     {
 	// Create temporary directory for packing
 	bool ok;
-	tmpZipDir=makeTmpDir (ok,"vym-zip");
+        tmpZipDir = makeTmpDir (ok, tmpDirPath(), "zip");
 	if (!ok)
 	{
 	    QMessageBox::critical( 0, tr( "Critical Save Error" ),

@@ -58,6 +58,7 @@ public:
     void clear();
     void init();
     void makeTmpDirectories();	    //!< create temporary directories e.g. for history
+    QString tmpDirPath();           //!< Return path to temporary directory
 
     MapEditor* getMapEditor();		
     uint getModelID();			//! Return unique ID of model
