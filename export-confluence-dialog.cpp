@@ -27,7 +27,8 @@ ExportConfluenceDialog::ExportConfluenceDialog(QWidget* parent) : QDialog(parent
     connect(ui.taskFlagsCheckBox, SIGNAL(toggled(bool)), this, SLOT(taskFlagsCheckBoxPressed(bool)));
     connect(ui.userFlagsCheckBox, SIGNAL(toggled(bool)), this, SLOT(userFlagsCheckBoxPressed(bool)));
     connect(ui.textColorCheckBox, SIGNAL(toggled(bool)), this, SLOT(textcolorCheckBoxPressed(bool)));
-    connect(ui.lineEditParentPage, SIGNAL(textChanged(const QString&)), this, SLOT(parentPageChanged()));
+    connect(ui.lineEditPageURL, SIGNAL(textChanged(const QString&)), this, SLOT(pageURLChanged()));
+    connect(ui.lineEditPageTitle, SIGNAL(textChanged(const QString&)), this, SLOT(pageTitleChanged()));
     connect(ui.saveSettingsInMapCheckBox, SIGNAL(toggled(bool)), this, SLOT(saveSettingsInMapCheckBoxPressed(bool)));
     connect(ui.lineEditPostScript, SIGNAL(textChanged(const QString&)), this, SLOT(postscriptChanged()));
     connect(ui.browsePostExportButton, SIGNAL(pressed()), this, SLOT(browsePostExportButtonPressed()));
@@ -35,8 +36,8 @@ ExportConfluenceDialog::ExportConfluenceDialog(QWidget* parent) : QDialog(parent
 
 void ExportConfluenceDialog::readSettings()
 {
-    parentPage = settings.localValue (filepath, "/export/confluence/parentPage", "Enter URL of parent page").toString();
-    ui.lineEditParentPage->setText( parentPage);
+    pageURL = settings.localValue (filepath, "/export/confluence/pageURL", "Enter URL of page").toString();
+    ui.lineEditPageURL->setText( pageURL);
     
     pageTitle = settings.localValue (filepath, "/export/confluence/pageTitle", "New page created on " + QDateTime::currentDateTime().toString()).toString();
     ui.lineEditPageTitle->setText( pageTitle );
@@ -80,9 +81,9 @@ void ExportConfluenceDialog::readSettings()
     }
 }
 
-void ExportConfluenceDialog::setParentPage (const QString &s)
+void ExportConfluenceDialog::setPageURL (const QString &s)
 {
-    parentPage = s;
+    pageURL = s;
 }
 
 void ExportConfluenceDialog::setPageTitle (const QString &s)
@@ -90,14 +91,16 @@ void ExportConfluenceDialog::setPageTitle (const QString &s)
     pageTitle = s;
 }
 
-void ExportConfluenceDialog::parentPageChanged()    // FIXME-0
+void ExportConfluenceDialog::pageURLChanged()   
 {
     settingsChanged = true;
+    pageURL = ui.lineEditPageURL->text();
 }
 
-void ExportConfluenceDialog::PageTitleChanged() // FIXME-0
+void ExportConfluenceDialog::pageTitleChanged() 
 {
     settingsChanged = true;
+    pageTitle = ui.lineEditPageTitle->text();
 }
 
 void ExportConfluenceDialog::imageCheckBoxPressed(bool b)
@@ -196,16 +199,18 @@ void ExportConfluenceDialog::saveSettings ()
     else    
     {
 	settings.setLocalValue (filepath, "/export/confluence/saveSettingsInMap", "yes");
-        settings.setLocalValue (filepath, "/export/confluence/postscript", postscript);
-        settings.setLocalValue (filepath, "/export/confluence/includeMapImage", includeMapImage);
-        settings.setLocalValue (filepath, "/export/confluence/includeImages", includeImages);
-        settings.setLocalValue (filepath, "/export/confluence/useTOC", useTOC);
-        settings.setLocalValue (filepath, "/export/confluence/useNumbering", useNumbering);
-        settings.setLocalValue (filepath, "/export/confluence/useTaskFlags", useTaskFlags);
-        settings.setLocalValue (filepath, "/export/confluence/useUserFlags", useUserFlags);
-        settings.setLocalValue (filepath, "/export/confluence/useTextColor", useTextColor);
+//        settings.setLocalValue (filepath, "/export/confluence/postscript", postscript);
+//        settings.setLocalValue (filepath, "/export/confluence/includeMapImage", includeMapImage);
+//        settings.setLocalValue (filepath, "/export/confluence/includeImages", includeImages);
+//        settings.setLocalValue (filepath, "/export/confluence/useTOC", useTOC);
+//        settings.setLocalValue (filepath, "/export/confluence/useNumbering", useNumbering);
+//        settings.setLocalValue (filepath, "/export/confluence/useTaskFlags", useTaskFlags);
+//        settings.setLocalValue (filepath, "/export/confluence/useUserFlags", useUserFlags);
+//        settings.setLocalValue (filepath, "/export/confluence/useTextColor", useTextColor);
         settings.setValue ("/export/confluence/showWarnings", showWarnings);
         settings.setValue ("/export/confluence/showOutput", showOutput);
+        settings.setValue ("/export/confluence/pageURL", pageURL);
+        settings.setValue ("/export/confluence/pageTitle", pageTitle);
     }
 }
 
@@ -219,9 +224,9 @@ void ExportConfluenceDialog::setMapName(const QString &s)
     mapname = s;
 }
 
-QString ExportConfluenceDialog::getParentPage()
+QString ExportConfluenceDialog::getPageURL()
 {
-    return parentPage;
+    return pageURL;
 }
 
 QString ExportConfluenceDialog::getPageTitle()

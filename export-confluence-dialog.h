@@ -17,17 +17,17 @@ class ExportConfluenceDialog:public QDialog
 public:
     ExportConfluenceDialog(QWidget* parent = 0);
 
-    virtual QString getParentPage();
+    virtual QString getPageURL();
     virtual QString getPageTitle();
     virtual bool warnings();
     virtual bool hasChanged();
 
 public slots:
     virtual void readSettings();
-    virtual void setParentPage(const QString&);
+    virtual void setPageURL(const QString&);
     virtual void setPageTitle(const QString&);
-    virtual void parentPageChanged();
-    virtual void PageTitleChanged();
+    virtual void pageURLChanged();
+    virtual void pageTitleChanged();
     virtual void imageCheckBoxPressed( bool b );
     virtual void includeImagesCheckBoxPressed( bool b );
     virtual void TOCCheckBoxPressed( bool b );
@@ -59,7 +59,7 @@ protected:
     QString css_dst;
     bool showWarnings;
     bool showOutput;
-    QString parentPage;
+    QString pageURL;
     QString pageTitle;
     QString filepath;
     bool settingsChanged;
