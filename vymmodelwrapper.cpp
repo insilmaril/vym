@@ -996,6 +996,7 @@ void VymModelWrapper::setXLinkWidth( int w )
 
 void VymModelWrapper::sleep( int n)
 {
+    // sleep is not avail on windows VCEE, workaround could be using this->thread()->wait(x ms) 
     sleep( n );
 }
 
