@@ -38,8 +38,7 @@ ExportBase::ExportBase(VymModel *m)
 
 ExportBase::~ExportBase()
 {
-    // Cleanup tmpdir
-    removeDir (tmpDir);
+    // Cleanup tmpdir: No longer required, part of general tmp dir of vym instance now
 
     // Remember current directory
     lastExportDir = QDir(dirPath);
@@ -50,14 +49,25 @@ void ExportBase::init()
     indentPerDepth = "  ";
     exportName     = "unnamed";
     lastCommand    = "";
-    bool ok;
-    tmpDir.setPath (makeTmpDir(ok,"vym-export"));
-    if (!tmpDir.exists() || !ok)
-        QMessageBox::critical( 0, QObject::tr( "Error" ),
-                               QObject::tr("Couldn't access temporary directory\n"));
     cancelFlag = false;
     defaultDirPath = lastExportDir.absolutePath();
     dirPath = defaultDirPath;
+}
+
+void ExportBase::setupTmpDir()
+{
+    bool ok;
+    tmpDir.setPath (
+        makeTmpDir(ok, 
+        model->tmpDirPath(), 
+        QString("export-%2").arg(exportName)));
+    qDebug() << tmpDir.exists();
+    qDebug() << ok;
+    if (!tmpDir.exists() || !ok)
+        QMessageBox::critical( 0, QObject::tr( "Error" ),
+                               QObject::tr("Couldn't access temporary directory\n"));
+    else
+        qDebug() << "tmpDirPath = " << tmpDir;
 }
 
 void ExportBase::setDirPath (const QString &s)
