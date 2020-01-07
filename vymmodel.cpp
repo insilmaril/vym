@@ -278,27 +278,27 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix, bool w
     switch (linkstyle)
     {
 	case LinkableMapObj::Line: 
-	    ls="StyleLine";
+	    ls = "StyleLine";
 	    break;
 	case LinkableMapObj::Parabel:
-	    ls="StyleParabel";
+	    ls = "StyleParabel";
 	    break;
 	case LinkableMapObj::PolyLine:	
-	    ls="StylePolyLine";
+	    ls = "StylePolyLine";
 	    break;
 	default:
-	    ls="StylePolyParabel";
+	    ls = "StylePolyParabel";
 	    break;
     }	
 
-    QString s="<?xml version=\"1.0\" encoding=\"utf-8\"?><!DOCTYPE vymmap>\n";
-    QString colhint="";
-    if (linkcolorhint==LinkableMapObj::HeadingColor) 
-	colhint=xml.attribut("linkColorHint","HeadingColor");
+    QString s = "<?xml version=\"1.0\" encoding=\"utf-8\"?><!DOCTYPE vymmap>\n";
+    QString colhint = "";
+    if (linkcolorhint == LinkableMapObj::HeadingColor) 
+	colhint = xml.attribut("linkColorHint","HeadingColor");
 
-    QString mapAttr=xml.attribut("version",vymVersion);
+    QString mapAttr = xml.attribut("version",vymVersion);
     if (!saveSel)
-	mapAttr+= xml.attribut("author",author) +
+	mapAttr += xml.attribut("author",author) +
 		  xml.attribut("title",title) +
 		  xml.attribut("comment",comment) +
 		  xml.attribut("date",getDate()) +
@@ -316,7 +316,7 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix, bool w
 		  xml.attribut("mapZoomFactor", QString().setNum(mapEditor->getZoomFactorTarget()) ) +
 		  xml.attribut("mapRotationAngle", QString().setNum(mapEditor->getAngleTarget()) ) +
 		  colhint; 
-    s+=xml.beginElement("vymmap",mapAttr); 
+    s += xml.beginElement("vymmap",mapAttr); 
     xml.incIndent();
 
     // Find the used flags while traversing the tree	
@@ -330,14 +330,14 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix, bool w
     if (!saveSel)
     {
 	// Save all mapcenters as complete map, if saveSel not set
-	s+=saveTreeToDir(tmpdir,prefix,offset,tmpLinks);
+	s += saveTreeToDir(tmpdir,prefix,offset,tmpLinks);
 
 	// Save local settings
-	s+=settings.getDataXML (destPath);
+	s += settings.getDataXML (destPath);
 
 	// Save selection
 	if (getSelectedItem() && !saveSel ) 
-	    s+=xml.valueElement("select",getSelectString());
+	    s += xml.valueElement("select", getSelectString());
 
     } else
     {
@@ -345,15 +345,15 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix, bool w
 	{
 	    case TreeItem::Branch:
 		// Save Subtree
-		s+=((BranchItem*)saveSel)->saveToDir(tmpdir,prefix,offset,tmpLinks);
+		s += ((BranchItem*)saveSel)->saveToDir(tmpdir, prefix, offset, tmpLinks);
 		break;
 	    case TreeItem::MapCenter:
 		// Save Subtree
-		s+=((BranchItem*)saveSel)->saveToDir(tmpdir,prefix,offset,tmpLinks);
+		s += ((BranchItem*)saveSel)->saveToDir(tmpdir, prefix, offset, tmpLinks);
 		break;
 	    case TreeItem::Image:
 		// Save Image
-		s+=((ImageItem*)saveSel)->saveToDir(tmpdir,prefix);
+		s += ((ImageItem*)saveSel)->saveToDir(tmpdir, prefix);
 		break;
 	    default: 
 		// other types shouldn't be safed directly...
@@ -362,16 +362,16 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix, bool w
     }
 
     // Save XLinks
-    for (int i=0; i<tmpLinks.count();++i)
-	s+=tmpLinks.at(i)->saveToDir();
+    for (int i = 0; i < tmpLinks.count(); ++i)
+	s += tmpLinks.at(i)->saveToDir();
 
     // Save slides  
-    s+=slideModel->saveToDir();	
+    s += slideModel->saveToDir();	
 
     xml.decIndent();
-    s+=xml.endElement("vymmap");
+    s += xml.endElement("vymmap");
 
-    if (writeflags) standardFlagsMaster->saveToDir (tmpdir+"/flags/","",writeflags);
+    if (writeflags) standardFlagsMaster->saveToDir (tmpdir + "/flags/", "", writeflags);
     return s;
 }
 
