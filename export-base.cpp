@@ -61,13 +61,11 @@ void ExportBase::setupTmpDir()
         makeTmpDir(ok, 
         model->tmpDirPath(), 
         QString("export-%2").arg(exportName)));
-    qDebug() << tmpDir.exists();
-    qDebug() << ok;
     if (!tmpDir.exists() || !ok)
-        QMessageBox::critical( 0, QObject::tr( "Error" ),
-                               QObject::tr("Couldn't access temporary directory\n"));
-    else
-        qDebug() << "tmpDirPath = " << tmpDir;
+        QMessageBox::critical( 
+            0, 
+            QObject::tr( "Error" ),
+            QObject::tr("Couldn't access temporary directory\n"));
 }
 
 void ExportBase::setDirPath (const QString &s)
