@@ -233,15 +233,15 @@ void Settings::setLocalValue (const QString &fpath, const QString &key, QVariant
 QString Settings::getDataXML (const QString &fpath)
 {
     QString s;
-    int i=0;
-    while (i<pathlist.count())
+    int i = 0;
+    while (i < pathlist.count())
     {
-	if (pathlist.at(i)==fpath)
+	if (pathlist.at(i) == fpath)
 	    if (!valuelist.at(i).isNull())
-        s += valueElement (
-            "setting",
-            getCDATA( valuelist.at(i).toString() ),
-            attribut ("key",keylist.at(i))
+                s += indent() + valueElement (
+                    "setting",
+                    getCDATA( valuelist.at(i).toString() ),
+                    attribut ("key", keylist.at(i))
 		);
         i++;
     }
