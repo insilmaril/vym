@@ -3,6 +3,7 @@
 
 #include "ui_export-confluence-dialog.h"
 
+#include <QButtonGroup>
 #include <QDir>
 
 /*! \brief Dialog to export a map as HTML document
@@ -21,11 +22,13 @@ public:
     virtual QString getPageTitle();
     virtual bool warnings();
     virtual bool hasChanged();
+    virtual bool createNewPage();
 
 public slots:
     virtual void readSettings();
     virtual void setPageURL(const QString&);
     virtual void setPageTitle(const QString&);
+    virtual void pageButtonPressed(bool);
     virtual void pageURLChanged();
     virtual void pageTitleChanged();
     virtual void imageCheckBoxPressed( bool b );
@@ -38,8 +41,6 @@ public slots:
     virtual void saveSettingsInMapCheckBoxPressed( bool b );
     virtual void warningsCheckBoxPressed( bool b );
     virtual void outputCheckBoxPressed( bool b );
-    virtual void postscriptChanged();
-    virtual void browsePostExportButtonPressed();
     virtual void saveSettings ();
     virtual void setFilePath( const QString & s );
     virtual void setMapName( const QString & s );
@@ -52,9 +53,9 @@ public:
     bool useTaskFlags;
     bool useUserFlags;
     bool useTextColor;
-    QString postscript;
     bool css_copy;
 protected:
+    QButtonGroup *buttonGroup;
     QString css_src;
     QString css_dst;
     bool showWarnings;

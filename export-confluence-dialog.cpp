@@ -19,6 +19,18 @@ ExportConfluenceDialog::ExportConfluenceDialog(QWidget* parent) : QDialog(parent
     filepath = "";
     settingsChanged = false;
 
+    // Create button group
+    buttonGroup = new QButtonGroup (this);
+    //buttonGroup->addButton( ui.createPageButton );
+    //buttonGroup->addButton( ui.updatePageButton );
+
+    ui.updatePageButton->setChecked (true);
+    pageButtonPressed (0);
+
+    //connect(buttonGroup, SIGNAL(buttonPressed(int)), this, SLOT(pageButtonPressed(int)));
+    connect(ui.createPageButton, SIGNAL(clicked(bool)), this, SLOT(pageButtonPressed(bool)));
+    connect(ui.updatePageButton, SIGNAL(clicked(bool)), this, SLOT(pageButtonPressed(bool)));
+    
     // signals and slots connections
     connect(ui.imageCheckBox, SIGNAL(toggled(bool)), this, SLOT(imageCheckBoxPressed(bool)));
     connect(ui.includeImagesCheckBox, SIGNAL(toggled(bool)), this, SLOT(includeImagesCheckBoxPressed(bool)));
@@ -30,8 +42,6 @@ ExportConfluenceDialog::ExportConfluenceDialog(QWidget* parent) : QDialog(parent
     connect(ui.lineEditPageURL, SIGNAL(textChanged(const QString&)), this, SLOT(pageURLChanged()));
     connect(ui.lineEditPageTitle, SIGNAL(textChanged(const QString&)), this, SLOT(pageTitleChanged()));
     connect(ui.saveSettingsInMapCheckBox, SIGNAL(toggled(bool)), this, SLOT(saveSettingsInMapCheckBoxPressed(bool)));
-    connect(ui.lineEditPostScript, SIGNAL(textChanged(const QString&)), this, SLOT(postscriptChanged()));
-    connect(ui.browsePostExportButton, SIGNAL(pressed()), this, SLOT(browsePostExportButtonPressed()));
 }   
 
 void ExportConfluenceDialog::readSettings()
@@ -66,22 +76,6 @@ void ExportConfluenceDialog::readSettings()
     */
     saveSettingsInMap = settings.localValue (filepath, "/export/confluence/saveSettingsInMap", "no").toBool();
     ui.saveSettingsInMapCheckBox->setChecked(saveSettingsInMap);
-
-    /*
-    postscript = settings.localValue
-	(filepath, "/export/confluence/postscript", "").toString();
-    ui.lineEditPostScript->setText (postscript);    
-
-    if (!postscript.isEmpty())
-    {
-	QMessageBox::warning( 0, tr( "Warning" ), tr(
-	"The settings saved in the map "
-	"would like to run script:\n\n"
-	"%1\n\n"
-	"Please check, if you really\n"
-	"want to allow this in your system!").arg(postscript));
-    }
-    */
 }
 
 void ExportConfluenceDialog::setPageURL (const QString &s)
@@ -92,6 +86,19 @@ void ExportConfluenceDialog::setPageURL (const QString &s)
 void ExportConfluenceDialog::setPageTitle (const QString &s)
 {
     pageTitle = s;
+}
+
+void ExportConfluenceDialog::pageButtonPressed(bool)   
+{
+    if (ui.createPageButton->isChecked() )
+    {
+        ui.pageURLLabel->setText("URL of parent page");
+        ui.pageTitleLabel->setText("Page title (required)"); 
+    } else
+    {
+        ui.pageURLLabel->setText("URL of existing page");
+        ui.pageTitleLabel->setText("Page title (optional)");
+    }
 }
 
 void ExportConfluenceDialog::pageURLChanged()   
@@ -167,31 +174,6 @@ void ExportConfluenceDialog::outputCheckBoxPressed(bool b)
     settingsChanged = true;
 }
 
-void ExportConfluenceDialog::postscriptChanged()
-{
-    postscript = ui.lineEditPostScript->text();
-    settingsChanged = true;
-}
-
-void ExportConfluenceDialog::browsePostExportButtonPressed()
-{
-    QFileDialog fd( this);
-    fd.setModal (true);
-    fd.setNameFilter ("Scripts (*.sh *.pl *.py *.php)");
-    fd.setDirectory (QDir::current());
-    fd.show();
-
-    if ( fd.exec() == QDialog::Accepted )
-    {
-	if (!fd.selectedFiles().isEmpty())
-	{
-	    postscript = fd.selectedFiles().first();
-	    ui.lineEditPostScript->setText (postscript );
-	    settingsChanged = true;
-       } 
-    }
-}
-
 void ExportConfluenceDialog::saveSettings ()
 {
     // Save options to settings file 
@@ -202,7 +184,6 @@ void ExportConfluenceDialog::saveSettings ()
     else    
     {
 	settings.setLocalValue (filepath, "/export/confluence/saveSettingsInMap", "yes");
-//        settings.setLocalValue (filepath, "/export/confluence/postscript", postscript);
 //        settings.setLocalValue (filepath, "/export/confluence/includeMapImage", includeMapImage);
 //        settings.setLocalValue (filepath, "/export/confluence/includeImages", includeImages);
 //        settings.setLocalValue (filepath, "/export/confluence/useTOC", useTOC);
@@ -244,5 +225,11 @@ bool ExportConfluenceDialog::hasChanged()
 {
     return settingsChanged;
 }
+
+bool ExportConfluenceDialog::createNewPage()
+{
+    return ui.createPageButton->isChecked();
+}
+
 
 

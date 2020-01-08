@@ -20,12 +20,17 @@ public:
     ~ConfluenceAgent();
     void test();
     bool getPageDetails(const QString &url);
+private:
+    bool uploadContent(const QString &url, const QString &title, const QString &fpath, const bool &newPage);
+public:
     bool updatePage(const QString &url, const QString &title, const QString &fpath);
+    bool createPage(const QString &url, const QString &title, const QString &fpath);
     void waitForResult();
     bool success();
+    QString getResult();
 
 public slots:
-    virtual void pageDetailsReceived(int exitCode, QProcess::ExitStatus exitStatus);
+    virtual bool pageDetailsReceived(int exitCode, QProcess::ExitStatus exitStatus);
     virtual void timeout();
 
 private:
@@ -34,6 +39,7 @@ private:
     VymProcess *vymProcess;
     QTimer *killTimer;
     bool succ;
+    QString result;
 };
 #endif
 

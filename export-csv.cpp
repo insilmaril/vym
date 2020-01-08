@@ -67,5 +67,7 @@ void ExportCSV::doExport()
     clipboard->setText(out);
     
     destination = filePath;
+
+    success = true;
     completeExport();
 }

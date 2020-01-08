@@ -60,6 +60,7 @@ protected:
     QString filter;
     bool listTasks;         // Append task list
     bool cancelFlag;
+    bool success;
 };
 
 

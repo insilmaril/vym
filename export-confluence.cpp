@@ -344,33 +344,53 @@ void ExportConfluence::doExport(bool useDialog)
 
     // First check if page already exists
     ConfluenceAgent *ca_details = new ConfluenceAgent (model);
-    ConfluenceAgent *ca_content= new ConfluenceAgent (model);
+    ConfluenceAgent *ca_content = new ConfluenceAgent (model);
 
     mainWindow->statusMessage(QObject::tr("Trying to read Confluence page...","Confluence export"));
     if (ca_details->getPageDetails( dia.getPageURL() ) )
     {
         ca_details->waitForResult();
+
         if (ca_details->success() ) 
         {
-            mainWindow->statusMessage(QObject::tr("Confluence page exists. Starting to update...","Confluence export"));
-
-            ca_content->updatePage( dia.getPageURL(), dia.getPageTitle(), filePath);
-            ca_content->waitForResult();
-            if (ca_content->success() ) 
-            {   
-                mainWindow->statusMessage(QObject::tr("Confluence page has been updated","Confluence export"));
+            // Page is existing already
+            if (dia.createNewPage() )
+            {
+                qDebug() << "Wanted to create new page, but page already exists. Aborted";
             } else
             {
-                mainWindow->statusMessage(QObject::tr("Failed to update Confluence page","Confluence export"));
+                qDebug() << "Starting to update existing page...";
+                ca_content->updatePage( dia.getPageURL(), dia.getPageTitle(), filePath);
+                ca_content->waitForResult();
+                if (ca_content->success() ) 
+                {
+                    qDebug() << "Page updated.";
+                    success = true;
+                } else
+                {
+                    qDebug() << "Page not updated.";
+                }
+            } 
+        } else
+        {
+            // Page not existing yet
+            if (dia.createNewPage() )
+            {
+                qDebug() << "Starting to create new page...";
+                ca_content->createPage( dia.getPageURL(), dia.getPageTitle(), filePath);
+                ca_content->waitForResult();
+                if (ca_content->success() ) 
+                {
+                    qDebug() << "Page created.";
+                    success = true;
+                } else
+                {
+                    qDebug() << "Page not created.";
+                }
             }
         }
-        else
-        {
-            mainWindow->statusMessage(QObject::tr("Confluence page does not exist. Creating new one...","Confluence export"));
-            qDebug() << "Confluence page does not exist. Creating new one...";
-        }
     }
-        
+
     delete (ca_details);
     delete (ca_content);
 

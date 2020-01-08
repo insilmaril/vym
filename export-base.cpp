@@ -51,6 +51,7 @@ void ExportBase::init()
     exportName     = "unnamed";
     lastCommand    = "";
     cancelFlag = false;
+    success    = false;
     defaultDirPath = lastExportDir.absolutePath();
     dirPath = defaultDirPath;
 }
@@ -209,7 +210,10 @@ void ExportBase::completeExport(QMap <QString, QString> args)
     // Trigger saving of export command if it has changed
     if (model && (lastCommand != command) ) model->setChanged();
 
-    mainWindow->statusMessage(QString("Exported as %1 to %2").arg(exportName).arg(destination));
+    if (success)
+        mainWindow->statusMessage(QString("Exported as %1 to %2").arg(exportName).arg(destination));
+    else
+        mainWindow->statusMessage(QString("Failed to export as %1 to %2").arg(exportName).arg(destination));
 }
 
 void ExportBase::completeExport()

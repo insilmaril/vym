@@ -425,6 +425,8 @@ void ExportHTML::doExport(bool useDialog)
 
     destination = filePath;
 
+    success = true;
+
     QMap <QString, QString> args;
     args["filePath"] = filePath;
     args["dirPath"]  = dirPath;

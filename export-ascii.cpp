@@ -131,6 +131,8 @@ void ExportASCII::doExport()
     QMap <QString, QString> args;
     args["filePath"]  = filePath;
     args["listTasks"] = listTasksString;
+
+    success = true;
     completeExport( args );
 }
 

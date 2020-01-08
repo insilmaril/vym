@@ -144,6 +144,8 @@ void ExportOO::exportPresentation()
 
     destination = filePath;
 
+    success = true;
+
     QMap <QString, QString> args;
     args["filePath"]  = filePath;
     args["configFile"] = configFile;

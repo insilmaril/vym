@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>629</width>
-    <height>558</height>
+    <height>532</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -27,6 +27,24 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
+    <layout class="QHBoxLayout" name="pageButtons">
+     <item>
+      <widget class="QRadioButton" name="createPageButton">
+       <property name="text">
+        <string>Create new page</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="updatePageButton">
+       <property name="text">
+        <string>Update existing page</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
     <layout class="QHBoxLayout">
      <property name="spacing">
       <number>6</number>
@@ -44,7 +62,7 @@
       <number>0</number>
      </property>
      <item>
-      <widget class="QLabel" name="textLabel1">
+      <widget class="QLabel" name="pageURLLabel">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
          <horstretch>0</horstretch>
@@ -58,7 +76,7 @@
         </size>
        </property>
        <property name="text">
-        <string>Page URL  (parent page URL for new page):</string>
+        <string notr="true">Page URL:</string>
        </property>
       </widget>
      </item>
@@ -81,9 +99,9 @@
     </widget>
    </item>
    <item>
-    <widget class="QLabel" name="label">
+    <widget class="QLabel" name="pageTitleLabel">
      <property name="text">
-      <string>Confluence page title:</string>
+      <string notr="true">Page title:</string>
      </property>
     </widget>
    </item>
@@ -91,7 +109,7 @@
     <widget class="QLineEdit" name="lineEditPageTitle"/>
    </item>
    <item>
-    <widget class="QGroupBox" name="groupBox">
+    <widget class="QGroupBox" name="optionsGroupBox">
      <property name="enabled">
       <bool>false</bool>
      </property>
@@ -104,7 +122,7 @@
      <property name="minimumSize">
       <size>
        <width>0</width>
-       <height>600</height>
+       <height>300</height>
       </size>
      </property>
      <property name="maximumSize">
@@ -126,6 +144,9 @@
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">
+       <property name="sizeConstraint">
+        <enum>QLayout::SetMinimumSize</enum>
+       </property>
        <item>
         <widget class="QCheckBox" name="imageCheckBox">
          <property name="enabled">
@@ -214,83 +235,20 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="groupBox_2">
-     <property name="enabled">
-      <bool>false</bool>
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
      </property>
-     <property name="minimumSize">
+     <property name="sizeHint" stdset="0">
       <size>
-       <width>0</width>
-       <height>70</height>
+       <width>20</width>
+       <height>40</height>
       </size>
      </property>
-     <property name="title">
-      <string>Scripts</string>
-     </property>
-     <widget class="QWidget" name="layoutWidget2">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>20</y>
-        <width>523</width>
-        <height>36</height>
-       </rect>
-      </property>
-      <layout class="QHBoxLayout" name="horizontalLayout">
-       <item>
-        <widget class="QLabel" name="textLabel2_2">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>125</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="frameShape">
-          <enum>QFrame::NoFrame</enum>
-         </property>
-         <property name="text">
-          <string>After Export:</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLineEdit" name="lineEditPostScript">
-         <property name="minimumSize">
-          <size>
-           <width>300</width>
-           <height>0</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="browsePostExportButton">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="text">
-          <string>Browse</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </widget>
+    </spacer>
    </item>
    <item>
-    <layout class="QHBoxLayout">
+    <layout class="QHBoxLayout" name="bottomButtons">
      <item>
       <spacer>
        <property name="orientation">

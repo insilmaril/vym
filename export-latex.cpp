@@ -108,6 +108,8 @@ void ExportLaTeX::doExport()
     QClipboard *clipboard = QGuiApplication::clipboard();
     clipboard->setText(out);
     
+    success = true;
+
     destination = filePath;
     completeExport();
 }

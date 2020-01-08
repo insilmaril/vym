@@ -78,15 +78,21 @@ bool ConfluenceAgent::getPageDetails(const QString &url)
     return true;
 }
 
-bool ConfluenceAgent::updatePage(const QString &url, const QString &title, const QString &fpath)
+bool ConfluenceAgent::uploadContent(const QString &url, const QString &title, const QString &fpath, const bool &newPage)
 {
     QStringList args;
 
-    args << "-u";
+    if (newPage)
+        args << "-c";
+    else
+        args << "-u";
     args << url;
     args << "-f";
     args << fpath;
+    args << "-t";
+    args << title;
 
+    qDebug() << "Calling confluence.rb:  " << args.join(" ");   // FIXME-0
     vymProcess = new VymProcess;
 
     connect (vymProcess, SIGNAL (finished(int, QProcess::ExitStatus) ), 
@@ -101,6 +107,16 @@ bool ConfluenceAgent::updatePage(const QString &url, const QString &title, const
     } 
 
     return true;
+}
+
+bool ConfluenceAgent::updatePage(const QString &url, const QString &title, const QString &fpath)
+{
+    return uploadContent (url, title, fpath, false);
+}
+
+bool ConfluenceAgent::createPage(const QString &url, const QString &title, const QString &fpath)
+{
+    return uploadContent (url, title, fpath, true);
 }
 
 void ConfluenceAgent::waitForResult()   
@@ -122,11 +138,18 @@ bool ConfluenceAgent::success()
     return succ;
 }
 
-void ConfluenceAgent::pageDetailsReceived(int exitCode, QProcess::ExitStatus exitStatus)
+QString ConfluenceAgent::getResult()
+{
+    return result;
+}
+
+
+bool ConfluenceAgent::pageDetailsReceived(int exitCode, QProcess::ExitStatus exitStatus)
 {
     if (exitStatus == QProcess::NormalExit)
     {
-	QString result = vymProcess->getStdout();
+	result = vymProcess->getStdout();
+        qDebug() << result; // FIXME-0
 
 	QString err = vymProcess->getErrout();
 	if (!err.isEmpty())
@@ -134,12 +157,7 @@ void ConfluenceAgent::pageDetailsReceived(int exitCode, QProcess::ExitStatus exi
 	    qWarning() << "ConfluenceAgent process error: \n" << err;
         } else 
         {
-            if (result.startsWith("Error"))
-                qWarning() << "ConfluenceAgent; script returned: \n" << result;
-            else
-            {
-                succ = true;
-            }
+            if (!result.startsWith("Error")) succ = true;
         }
             
     } else	

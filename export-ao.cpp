@@ -154,6 +154,8 @@ void ExportAO::doExport()
 
     destination = filePath;
 
+    success = true;
+
     completeExport();
 }
 
