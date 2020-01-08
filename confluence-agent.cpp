@@ -92,7 +92,7 @@ bool ConfluenceAgent::uploadContent(const QString &url, const QString &title, co
     args << "-t";
     args << title;
 
-    // qDebug() << "Calling confluence.rb:  " << args.join(" ");  
+    if (debug)  qDebug() << "ConfluenceAgent: confluence.rb:  " << args.join(" ");  
     vymProcess = new VymProcess;
 
     connect (vymProcess, SIGNAL (finished(int, QProcess::ExitStatus) ), 
@@ -144,7 +144,7 @@ QString ConfluenceAgent::getResult()
 }
 
 
-bool ConfluenceAgent::pageDetailsReceived(int exitCode, QProcess::ExitStatus exitStatus)
+bool ConfluenceAgent::pageDetailsReceived(int exitCode, QProcess::ExitStatus exitStatus)    // FIXME-0  return value???   // FIXME-0  name correct? used by all functions...
 {
     if (exitStatus == QProcess::NormalExit)
     {

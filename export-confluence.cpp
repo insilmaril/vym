@@ -95,32 +95,13 @@ QString ExportConfluence::getBranchText(BranchItem *current)
         // URL
         if (!url.isEmpty())
         {
-            s += QString ("<a href=\"%1\">%2<img src=\"flags/flag-url.png\" alt=\"%3\"></a>")
+            s += QString ("<a href=\"%1\">%2</a>")
                     .arg(url)
-                    .arg(number + taskFlags + heading + userFlags)
-                    .arg(QObject::tr("Flag: url","Alt tag in HTML export"));
+                    .arg(number + taskFlags + heading + userFlags);
 
             QRectF fbox = current->getBBoxURLFlag ();
-            if (vis)
-                imageMap += QString("  <area shape='rect' coords='%1,%2,%3,%4' href='%5' alt='%6'>\n")
-                        .arg(fbox.left()   - offset.x())
-                        .arg(fbox.top()    - offset.y())
-                        .arg(fbox.right()  - offset.x())
-                        .arg(fbox.bottom() - offset.y())
-                        .arg(url)
-                        .arg(QObject::tr("External link: %1","Alt tag in HTML export").arg(heading));
         } else
             s += number + taskFlags + heading + userFlags;
-
-        // Create imagemap
-        if (vis && dia.includeMapImage)
-            imageMap += QString("  <area shape='rect' coords='%1,%2,%3,%4' href='#%5' alt='%6'>\n")
-                    .arg(hr.left()   - offset.x())
-                    .arg(hr.top()    - offset.y())
-                    .arg(hr.right()  - offset.x())
-                    .arg(hr.bottom() - offset.y())
-                    .arg(id)
-                    .arg(heading);
 
         // Include images experimental
         if (dia.includeImages)
@@ -337,9 +318,6 @@ void ExportConfluence::doExport(bool useDialog)
     // Main loop over all mapcenters
     ts << buildList(model->getRootItem()) << "\n";
 
-    // Imagemap
-    //ts << "<map name='imagemap'>\n" + imageMap + "</map>\n";
-
     file.close();
 
     // First check if page already exists
@@ -368,7 +346,8 @@ void ExportConfluence::doExport(bool useDialog)
                     success = true;
                 } else
                 {
-                    qDebug() << "Page not updated.";
+                    qDebug() << "Page not updated:";
+                    qDebug() << ca_content->getResult();
                 }
             } 
         } else
