@@ -92,7 +92,7 @@ bool ConfluenceAgent::uploadContent(const QString &url, const QString &title, co
     args << "-t";
     args << title;
 
-    qDebug() << "Calling confluence.rb:  " << args.join(" ");   // FIXME-0
+    // qDebug() << "Calling confluence.rb:  " << args.join(" ");  
     vymProcess = new VymProcess;
 
     connect (vymProcess, SIGNAL (finished(int, QProcess::ExitStatus) ), 
@@ -149,7 +149,6 @@ bool ConfluenceAgent::pageDetailsReceived(int exitCode, QProcess::ExitStatus exi
     if (exitStatus == QProcess::NormalExit)
     {
 	result = vymProcess->getStdout();
-        qDebug() << result; // FIXME-0
 
 	QString err = vymProcess->getErrout();
 	if (!err.isEmpty())
@@ -167,11 +166,8 @@ bool ConfluenceAgent::pageDetailsReceived(int exitCode, QProcess::ExitStatus exi
 
 void ConfluenceAgent::timeout()
 {
-    // FIXME-0 needed?  undoUpdateMessage();
-
     qWarning() << "ConfluenceAgent timeout!";
     delete (vymProcess);
     vymProcess = NULL;
-
 }
     
