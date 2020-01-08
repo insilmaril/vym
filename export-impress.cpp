@@ -142,7 +142,12 @@ void ExportOO::exportPresentation()
     // zip tmpdir to destination
     zipDir (tmpDir,filePath);
 
-    completeExport(QString("\"%1\", \"%2\"").arg(filePath).arg(configFile) );
+    destination = filePath;
+
+    QMap <QString, QString> args;
+    args["filePath"]  = filePath;
+    args["configFile"] = configFile;
+    completeExport( args );
 }
 
 bool ExportOO::setConfigFile (const QString &cf)

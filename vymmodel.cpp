@@ -4596,7 +4596,10 @@ void VymModel::exportXML (QString dpath, QString fpath, bool useDialog)
 
     setExportMode (false);
 
-    ex.completeExport( QString("\"%1\",\"%2\"").arg(fpath).arg(dpath) );
+    QMap <QString, QString> args;
+    args["filePath"] = filePath;
+    args["dirPath"]  = dpath;
+    ex.completeExport( args );
 }
 
 void VymModel::exportAO (QString fname,bool askName)
@@ -4687,14 +4690,13 @@ void VymModel::exportHTML (const QString &dpath, const QString &fpath,bool useDi
     ex.doExport(useDialog);
 }
 
-void VymModel::exportConfluence (const QString &dpath, const QString &fpath,bool useDialog)
+void VymModel::exportConfluence (const QString &pageURL, const QString &pageTitle, bool useDialog)
 {
     ExportConfluence ex (this);
-    ex.setLastCommand( settings.localValue(filePath,"/export/last/command","").toString() );
+    ex.setPageURL (pageURL);
+    ex.setPageTitle (pageTitle);
+    ex.setLastCommand( settings.localValue(filePath, "/export/last/command","").toString() );
 
-    if (!dpath.isEmpty()) ex.setDirPath (dpath);
-    if (!fpath.isEmpty()) ex.setFilePath (fpath);
-    
     ex.doExport(useDialog);
 }
 
@@ -4718,12 +4720,11 @@ void VymModel::exportImpress(const QString &fn, const QString &cf)
     }
 }
 
-bool VymModel::exportLastAvailable(QString &description, QString &command, QString &path, QString &configFile)
+bool VymModel::exportLastAvailable(QString &description, QString &command, QString &dest)
 {
     command     = settings.localValue(filePath,"/export/last/command","").toString();
     description = settings.localValue(filePath,"/export/last/description","").toString();
-    path        = settings.localValue(filePath,"/export/last/exportPath","").toString();
-    configFile  = settings.localValue(filePath,"/export/last/configFile","").toString();
+    dest        = settings.localValue(filePath,"/export/last/destination","").toString();
     if (!command.isEmpty() && command.contains("exportMap")) 
 	return true;
     else
@@ -4732,12 +4733,12 @@ bool VymModel::exportLastAvailable(QString &description, QString &command, QStri
 
 void VymModel::exportLast()
 {
-    QString desc, command, path, configFile;  //FIXME-3 better integrate configFile into command
-    if (exportLastAvailable(desc, command, path, configFile) )
+    QString desc, command, dest;  //FIXME-3 better integrate configFile into command
+    if (exportLastAvailable(desc, command, dest) )
     {
         execute (command);
-        /*
-	if (!configFile.isEmpty() && command=="exportImpress")
+        /*  
+	if (!configFile.isEmpty() && command=="exportImpress")  // FIXME-1 check exportLast for Impress
 	    execute (QString ("%1 (\"%2\",\"%3\")").arg(command).arg(path).arg(configFile) );
 	else    
 	    execute (QString ("%1 (\"%2\")").arg(command).arg(path) );

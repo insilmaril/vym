@@ -4,6 +4,7 @@
 
 #include <QDebug>
 #include <QFileDialog>
+#include <QHash>
 #include <QMessageBox>
 
 #include "branchitem.h"
@@ -177,23 +178,44 @@ void ExportBase::setLastCommand( const QString &s)
     lastCommand = s;
 }
 
-void ExportBase::completeExport(QString args) 
+void ExportBase::completeExport(QMap <QString, QString> args) 
 {
     QString command;
+    QMapIterator <QString, QString> i(args);
+
     if (args.isEmpty()) 
+    {
         // Add at least filepath as argument. exportName is added anyway
         command = QString("vym.currentMap().exportMap(\"%1\",\"%2\")").arg(exportName).arg(filePath);
-    else
-        command = QString("vym.currentMap().exportMap(\"%1\",%2)").arg(exportName).arg(args);
+        settings.setLocalValue ( model->getFilePath(), "/export/last/destination", filePath);
+    } else
+    {
+        QStringList list;
+        i.toBack();
+        while (i.hasPrevious() ) 
+        {
+            i.previous();
+            list << "\""  + i.value() + "\""; 
 
-    settings.setLocalValue ( model->getFilePath(), "/export/last/exportPath", filePath);
+            settings.setLocalValue ( model->getFilePath(), "/export/" + exportName.toLower() + "/" + i.key(), i.value() );
+        }
+        command = QString("vym.currentMap().exportMap(\"%1\",%2)").arg(exportName).arg(list.join(","));
+    }
+
     settings.setLocalValue ( model->getFilePath(), "/export/last/command", command);
     settings.setLocalValue ( model->getFilePath(), "/export/last/description", exportName);
+    settings.setLocalValue ( model->getFilePath(), "/export/last/destination", destination);
 
     // Trigger saving of export command if it has changed
     if (model && (lastCommand != command) ) model->setChanged();
 
-    mainWindow->statusMessage(QString("Exported as %1: %2").arg(exportName).arg(filePath));
+    mainWindow->statusMessage(QString("Exported as %1 to %2").arg(exportName).arg(destination));
+}
+
+void ExportBase::completeExport()
+{
+    QMap <QString, QString> args;
+    completeExport (args);
 }
 
 QString ExportBase::getSectionString(TreeItem *start)

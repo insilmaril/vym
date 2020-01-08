@@ -3,10 +3,6 @@
 #include <iostream>
 #include <typeinfo>
 
-#ifndef Q_OS_WIN
-#include <unistd.h>
-#endif
-
 #if defined(VYM_DBUS)
 #include "adaptorvym.h"
 #endif
@@ -3976,10 +3972,10 @@ bool Main::openURL(const QString &url)
 {
     if (url.isEmpty()) return false;
 
-    QString browser=settings.value("/system/readerURL" ).toString();
+    QString browser = settings.value("/system/readerURL" ).toString();
     QStringList args;
-    args<<url;
-    if (!QProcess::startDetached(browser,args,QDir::currentPath(),browserPID))
+    args << url;
+    if (!QProcess::startDetached(browser, args, QDir::currentPath(),browserPID))
     {
         // try to set path to browser
         QMessageBox::warning(0, 
@@ -4023,7 +4019,7 @@ void Main::openTabs(QStringList urls)
                 "newTab" << 
                 u <<
                 "false";
-            if (!QProcess::startDetached ("qdbus",args))
+            if (!QProcess::startDetached ("qdbus",args))    // FIXME-1 use DBUS directly
             {
                 QMessageBox::warning(0, 
                     tr("Warning"),
@@ -4040,14 +4036,6 @@ void Main::openTabs(QStringList urls)
     foreach (QString u, urls) 
     {
         openURL(u);
-
-        // Now give the browser some time before opening the next tab
-#if defined(Q_OS_WIN32)
-        // There's no sleep in VCEE, replace it with Qt's QThread::wait().
-        this->thread()->wait(1000);
-#else
-        sleep (1);	
-#endif
     }
 }
 
@@ -5608,16 +5596,16 @@ void Main::updateActions()
 	    actionFormatLinkColorHint->setChecked(false);
 
 	// Export last
-	QString s, t, u, v;
-	if (m && m->exportLastAvailable(s,t,u, v) )
+	QString desc, com, dest;
+	if (m && m->exportLastAvailable(desc, com, dest) )
 	    actionFileExportLast->setEnabled (true);
 	else
 	{
 	    actionFileExportLast->setEnabled (false);
-	    t=u="";
-	    s=" - ";
+	    com = dest = "";
+	    desc  = " - ";
 	}	
-	actionFileExportLast->setText( tr( "Export in last used format (%1) to: %2","status tip" ).arg(s).arg(u));
+	actionFileExportLast->setText( tr( "Export in last used format (%1) to: %2","status tip" ).arg(desc).arg(dest));
 
 	TreeItem *selti=m->getSelectedItem();
 	BranchItem *selbi=m->getSelectedBranch();
@@ -5867,17 +5855,16 @@ QVariant Main::runScript (const QString &script)
     {
         qDebug() << "MainWindow::runScript finished:";
         qDebug() << "   hasException: " << scriptEngine.hasUncaughtException();
-        /*
-        if (scriptEngine.hasUncaughtException() )
-        {
-            qDebug() << "      exception: "<< scriptEngine.uncaughtException();
-        }
-        */
         qDebug() << "         result: " << result.toString();   // not used so far...
         qDebug() << "     lastResult: " << scriptEngine.globalObject().property("lastResult").toVariant();
+        qDebug() << "     script: " << script;
     }
 
     if (scriptEngine.hasUncaughtException()) {
+        // Warnings, in case that output window is not visible...
+        statusMessage("Script execution failed");
+        qWarning() << "Script execution failed";
+
         int line = scriptEngine.uncaughtExceptionLineNumber();
         scriptOutput->append( QString("uncaught exception at line %1: %2").arg(line).arg(result.toString()));
     } else

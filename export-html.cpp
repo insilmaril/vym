@@ -423,7 +423,12 @@ void ExportHTML::doExport(bool useDialog)
         p.runScript (dia.postscript,dirPath + "/" + filePath);  
     }
 
-    completeExport( QString("\"%1\",\"%2\"").arg(filePath).arg(dirPath));
+    destination = filePath;
+
+    QMap <QString, QString> args;
+    args["filePath"] = filePath;
+    args["dirPath"]  = dirPath;
+    completeExport( args );
 
     dia.saveSettings();
     model->setExportMode (false);

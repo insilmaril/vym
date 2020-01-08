@@ -10,6 +10,8 @@ public:
     ExportConfluence();
     ExportConfluence(VymModel *m);
     virtual void init();
+    void setPageURL(const QString &u);
+    void setPageTitle(const QString &t);
     virtual QString createTOC();
     virtual void doExport(bool useDialog=true);
 private:
@@ -18,6 +20,9 @@ private:
     QString imageMap;
     QString cssSrc;
     QString cssDst;
+
+    QString pageURL;
+    QString pageTitle;
 
     bool frameURLs;
 

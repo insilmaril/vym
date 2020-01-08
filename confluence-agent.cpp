@@ -2,6 +2,7 @@
 
 #include "branchitem.h"
 #include "mainwindow.h"
+#include "misc.h"
 #include "vymmodel.h"
 
 
@@ -11,31 +12,27 @@ extern bool debug;
 
 ConfluenceAgent::ConfluenceAgent (VymModel *m)
 {
-    p = NULL;
     killTimer = NULL;
 
     modelID = m->getModelID();
 
-    //qDebug()<<"Constr. ConfluenceAgent for "<<branchID;
+    //qDebug() << "Constr. ConfluenceAgent for " << branchID;
 
     confluenceScript = vymBaseDir.path() + "/scripts/confluence.rb";
-
-    p = new VymProcess;
-
-    connect (p, SIGNAL (finished(int, QProcess::ExitStatus) ), 
-	this, SLOT (processFinished(int, QProcess::ExitStatus) ));
-
 
     killTimer = new QTimer(this); 
     killTimer->setInterval(10000); 
     killTimer->setSingleShot(true); 
 
+    vymProcess = NULL;  // Only one process may be active at any time in this agent
+
     QObject::connect(killTimer, SIGNAL(timeout()), this, SLOT(timeout()));
+
+    succ = false;
 }
 
 ConfluenceAgent::~ConfluenceAgent ()
 {
-    if (p) delete p;
     if (killTimer) delete killTimer;
 }
 
@@ -45,9 +42,11 @@ void ConfluenceAgent::test()
 
     args << "-h";
 
-    p->start (confluenceScript, args);
+    qWarning() << "ConfluenceAgent::test() called";
 
-    if (!p->waitForStarted())
+    vymProcess->start (confluenceScript, args);
+
+    if (!vymProcess->waitForStarted())
     {
 	qWarning() << "ConfluenceAgent::test()  couldn't start " << confluenceScript;
 	return; 
@@ -56,37 +55,105 @@ void ConfluenceAgent::test()
     killTimer->start();
 }
 
-void ConfluenceAgent::processFinished(int exitCode, QProcess::ExitStatus exitStatus)
+bool ConfluenceAgent::getPageDetails(const QString &url)
+{
+    QStringList args;
+
+    args << "-d";
+    args << url;
+
+    vymProcess = new VymProcess;
+
+    connect (vymProcess, SIGNAL (finished(int, QProcess::ExitStatus) ), 
+	this, SLOT (pageDetailsReceived(int, QProcess::ExitStatus) ));
+
+    vymProcess->start (confluenceScript, args);
+
+    if (!vymProcess->waitForStarted())
+    {
+	qWarning() << "ConfluenceAgent::test()  couldn't start " << confluenceScript;
+	return false; 
+    } 
+
+    return true;
+}
+
+bool ConfluenceAgent::updatePage(const QString &url, const QString &title, const QString &fpath)
+{
+    QStringList args;
+
+    args << "-u";
+    args << url;
+    args << "-f";
+    args << fpath;
+
+    vymProcess = new VymProcess;
+
+    connect (vymProcess, SIGNAL (finished(int, QProcess::ExitStatus) ), 
+	this, SLOT (pageDetailsReceived(int, QProcess::ExitStatus) ));
+
+    vymProcess->start (confluenceScript, args);
+
+    if (!vymProcess->waitForStarted())
+    {
+	qWarning() << "ConfluenceAgent::test()  couldn't start " << confluenceScript;
+	return false; 
+    } 
+
+    return true;
+}
+
+void ConfluenceAgent::waitForResult()   
+{
+    if (!vymProcess) 
+    {
+        qWarning() << "ConfluenceAgent: No running vymProces";
+        return;
+    }
+    if (!vymProcess->waitForFinished( 10000 ) )
+    {
+        qWarning() << "ConfluenceAgent: Timeout.";
+        return;
+    }
+}
+
+bool ConfluenceAgent::success()
+{
+    return succ;
+}
+
+void ConfluenceAgent::pageDetailsReceived(int exitCode, QProcess::ExitStatus exitStatus)
 {
     if (exitStatus == QProcess::NormalExit)
     {
-	QString result = p->getStdout();
-        qDebug() << "Result:\n" << result; // FIXME-0 process JSON
+	QString result = vymProcess->getStdout();
 
-	QString err = p->getErrout();
+	QString err = vymProcess->getErrout();
 	if (!err.isEmpty())
         {
-	    qWarning() << "ConfluenceAgent Error: \n" << err;
-        } //else 
-            // FIXME-0 process received data
+	    qWarning() << "ConfluenceAgent process error: \n" << err;
+        } else 
+        {
+            if (result.startsWith("Error"))
+                qWarning() << "ConfluenceAgent; script returned: \n" << result;
+            else
+            {
+                succ = true;
+            }
+        }
+            
     } else	
 	qWarning() << "ConfluenceAgent: Process finished with exitCode=" << exitCode;
-    deleteLater();
+    vymProcess = NULL;
 }
 
 void ConfluenceAgent::timeout()
 {
     // FIXME-0 needed?  undoUpdateMessage();
+
+    qWarning() << "ConfluenceAgent timeout!";
+    delete (vymProcess);
+    vymProcess = NULL;
+
 }
     
-void ConfluenceAgent::processData()
-{
-    // Find model from which we had been started
-    VymModel *model = mainWindow->getModel (modelID);
-    if (model)
-    {
-	// and find branch which triggered this mission
-	BranchItem *missionBI = (BranchItem*)(model->findID (branchID));	    
-    }
-}
-

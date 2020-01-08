@@ -42,6 +42,7 @@ void ExportConfluenceDialog::readSettings()
     pageTitle = settings.localValue (filepath, "/export/confluence/pageTitle", "New page created on " + QDateTime::currentDateTime().toString()).toString();
     ui.lineEditPageTitle->setText( pageTitle );
 
+    /*  FIXME-0 cleanup the copied HTML parameters
     includeMapImage = settings.localValue (filepath, "/export/confluence/includeMapImage", "true").toBool();
     ui.imageCheckBox->setChecked(includeMapImage);
 	
@@ -62,10 +63,11 @@ void ExportConfluenceDialog::readSettings()
 	
     useTextColor = settings.localValue (filepath, "/export/confluence/useTextColor", "no").toBool();
     ui.textColorCheckBox->setChecked(useTextColor);
-    
+    */
     saveSettingsInMap = settings.localValue (filepath, "/export/confluence/saveSettingsInMap", "no").toBool();
     ui.saveSettingsInMapCheckBox->setChecked(saveSettingsInMap);
 
+    /*
     postscript = settings.localValue
 	(filepath, "/export/confluence/postscript", "").toString();
     ui.lineEditPostScript->setText (postscript);    
@@ -79,6 +81,7 @@ void ExportConfluenceDialog::readSettings()
 	"Please check, if you really\n"
 	"want to allow this in your system!").arg(postscript));
     }
+    */
 }
 
 void ExportConfluenceDialog::setPageURL (const QString &s)
@@ -209,8 +212,6 @@ void ExportConfluenceDialog::saveSettings ()
 //        settings.setLocalValue (filepath, "/export/confluence/useTextColor", useTextColor);
         settings.setValue ("/export/confluence/showWarnings", showWarnings);
         settings.setValue ("/export/confluence/showOutput", showOutput);
-        settings.setValue ("/export/confluence/pageURL", pageURL);
-        settings.setValue ("/export/confluence/pageTitle", pageTitle);
     }
 }
 

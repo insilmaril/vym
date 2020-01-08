@@ -66,5 +66,6 @@ void ExportCSV::doExport()
     QClipboard *clipboard = QGuiApplication::clipboard();
     clipboard->setText(out);
     
+    destination = filePath;
     completeExport();
 }

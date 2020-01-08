@@ -587,8 +587,7 @@ public:
     bool exportLastAvailable(
 	QString &description, 
 	QString &command, 
-	QString &configFile,
-	QString &path);
+	QString &dest);
 
     /*! Export in recently used format (saved in map)*/
     void exportLast();

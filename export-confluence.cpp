@@ -2,14 +2,17 @@
 
 #include <QMessageBox>
 
+#include "confluence-agent.h"
 #include "branchobj.h"
 #include "mainwindow.h"
+#include "settings.h"
 #include "warningdialog.h"
 
 extern QString flagsPath;
 extern Main *mainWindow;
 extern QString vymVersion;
 extern QString vymHome;
+extern Settings settings;
 
 ExportConfluence::ExportConfluence():ExportBase()
 {
@@ -26,6 +29,19 @@ void ExportConfluence::init()
     exportName = "Confluence";
     extension  = ".html";
     frameURLs  = true;
+
+    pageURL    = "";
+    pageTitle  = "";
+
+}
+
+void ExportConfluence::setPageURL(const QString &u)
+{
+    pageURL = u;
+}
+void ExportConfluence::setPageTitle(const QString &t)
+{
+    pageTitle = t;
 }
 
 QString ExportConfluence::getBranchText(BranchItem *current)
@@ -267,9 +283,16 @@ QString ExportConfluence::createTOC()
 
 void ExportConfluence::doExport(bool useDialog) 
 {
+    // Initialize tmp directory below tmp dir of map vym itself
+    setupTmpDir();
+
+    filePath = tmpDir.path() + "/export.html";
+
     // Setup dialog and read settings
     dia.setMapName (model->getMapName());
-    dia.setFilePath (model->getFilePath()); //FIXME-0 check...
+    dia.setFilePath (model->getFilePath()); 
+    dia.setPageURL( pageURL );
+    dia.setPageTitle( pageTitle );
     dia.readSettings();
 
     if (useDialog)
@@ -278,11 +301,7 @@ void ExportConfluence::doExport(bool useDialog)
         model->setChanged();
     }
 
-    filePath = getFilePath();
-
     // Open file for writing
-    qDebug() << "Writing to: " << filePath;
-
     QFile file (filePath);
     if ( !file.open( QIODevice::WriteOnly ) )
     {
@@ -321,30 +340,46 @@ void ExportConfluence::doExport(bool useDialog)
     // Imagemap
     //ts << "<map name='imagemap'>\n" + imageMap + "</map>\n";
 
-    // Write footer
-    //
-    /*
-    ts << "<hr/>\n";
-    ts << "<table class=\"vym-footer\">   \n\
-        <tr> \n\
-        <td class=\"vym-footerL\">" + filePath + "</td> \n\
-            <td class=\"vym-footerC\">" + model->getDate() + "</td> \n\
-            <td class=\"vym-footerR\"> <a href='" + vymHome + "'>vym " + vymVersion + "</a></td> \n\
-            </tr> \n \
-            </table>\n";
-            ts << "</body></html>";
-            */
     file.close();
 
-    /*
-    if (!dia.postscript.isEmpty())
-    {
-        VymProcess p;
-        p.runScript (dia.postscript,dirPath + "/" + filePath);  
-    }
-    */
+    // First check if page already exists
+    ConfluenceAgent *ca_details = new ConfluenceAgent (model);
+    ConfluenceAgent *ca_content= new ConfluenceAgent (model);
 
-    completeExport( QString("\"%1\",\"%2\"").arg(filePath).arg(dirPath));
+    mainWindow->statusMessage(QObject::tr("Trying to read Confluence page...","Confluence export"));
+    if (ca_details->getPageDetails( dia.getPageURL() ) )
+    {
+        ca_details->waitForResult();
+        if (ca_details->success() ) 
+        {
+            mainWindow->statusMessage(QObject::tr("Confluence page exists. Starting to update...","Confluence export"));
+
+            ca_content->updatePage( dia.getPageURL(), dia.getPageTitle(), filePath);
+            ca_content->waitForResult();
+            if (ca_content->success() ) 
+            {   
+                mainWindow->statusMessage(QObject::tr("Confluence page has been updated","Confluence export"));
+            } else
+            {
+                mainWindow->statusMessage(QObject::tr("Failed to update Confluence page","Confluence export"));
+            }
+        }
+        else
+        {
+            mainWindow->statusMessage(QObject::tr("Confluence page does not exist. Creating new one...","Confluence export"));
+            qDebug() << "Confluence page does not exist. Creating new one...";
+        }
+    }
+        
+    delete (ca_details);
+    delete (ca_content);
+
+    destination = dia.getPageURL();
+
+    QMap <QString, QString> args;
+    args["pageURL"]   = destination;
+    args["pageTitle"] = dia.getPageTitle();
+    completeExport( args );
 
     dia.saveSettings();
     model->setExportMode (false);

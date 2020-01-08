@@ -50,6 +50,7 @@ void ExportOrgMode::doExport()
     }
     file.close();
 
+    destination = filePath;
     completeExport();
 }
 

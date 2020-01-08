@@ -19,20 +19,21 @@ public:
     ConfluenceAgent (VymModel *m);
     ~ConfluenceAgent();
     void test();
+    bool getPageDetails(const QString &url);
+    bool updatePage(const QString &url, const QString &title, const QString &fpath);
+    void waitForResult();
+    bool success();
 
 public slots:
-    virtual void processFinished(int exitCode, QProcess::ExitStatus exitStatus);
+    virtual void pageDetailsReceived(int exitCode, QProcess::ExitStatus exitStatus);
     virtual void timeout();
 
 private:
-    void processData ();
-
-private:
-    uint branchID;
     uint modelID;
     QString confluenceScript;
-    VymProcess *p;
+    VymProcess *vymProcess;
     QTimer *killTimer;
+    bool succ;
 };
 #endif
 
