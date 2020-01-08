@@ -85,11 +85,14 @@ QDir lastExportDir;
 #if defined(Q_OS_WIN32)
 QDir vymInstallDir;
 #endif
-QString iconPath;		// Pointing to icons used for toolbars
-QString flagsPath;		// Pointing to flags
+QString iconPath;               // Pointing to icons used for toolbars
+QString flagsPath;              // Pointing to flags
 
-bool debug;             // global debugging flag
-bool testmode;			// Used to disable saving of autosave setting
+bool debug;                     // global debugging flag
+bool testmode;		        // Used to disable saving of autosave setting
+bool recoveryMode = false;      // Activated via command line switch and deactivated after initial loading of files
+QStringList ignoredLockedFiles;
+
 FlagRow *systemFlagsMaster; 
 FlagRow *standardFlagsMaster;	
 
@@ -104,11 +107,12 @@ QList <Command*> vymCommands;
 Options options;
 ImageIO imageIO;
 
-int statusbarTime=10000;
+int statusbarTime = 10000;
 
-int warningCount=0;
-int criticalCount=0;
-int fatalCount=0;
+int warningCount  = 0;
+int criticalCount = 0;
+int fatalCount    = 0;
+
 
 QString editorFocusStyle = QString(" border-color: #3daee9; border-style:outset; border-width:3px; color:black;");
 
@@ -170,6 +174,7 @@ int main(int argc, char* argv[])
     options.add ("name", Option::String, "n", "name");
     options.add ("quit", Option::Switch, "q", "quit");
     options.add ("run", Option::String, "R", "run");
+    options.add ("recover", Option::Switch, "recover", "recover");
     options.add ("restore", Option::Switch, "r", "restore");
     options.add ("shortcuts", Option::Switch, "s", "shortcuts");
     options.add ("shortcutsLaTeX", Option::Switch, "sl", "shortcutsLaTeX");
@@ -195,6 +200,7 @@ int main(int argc, char* argv[])
                 "-q           quit        Quit immediatly after start for benchmarking\n"
                 "-R  FILE     run         Run script\n"
                 "-r           restore     Restore last session\n"
+                "--recover    recover     Delete lockfiles during initial loading of files\n"
                 "-s           shortcuts   Show Keyboard shortcuts on start\n"
                 "--sl         LaTeX       Show Keyboard shortcuts in LaTeX format on start\n"
                 "-t           testmode    Test mode, e.g. no autosave and changing of its setting\n"
@@ -484,14 +490,24 @@ int main(int argc, char* argv[])
 
     if (options.isOn("shortcuts")) switchboard.printASCII();    //FIXME-3 global switchboard and exit after listing
 
-    m.loadCmdLine();
+    if (options.isOn ("recover"))
+        recoveryMode = true;
 
-    // For whatever reason tableView is not sorted initially
-    taskEditor->sort();
+    m.loadCmdLine();
 
     // Restore last session
     if (options.isOn ("restore"))
         m.fileRestoreSession();
+
+    // By now all files should have been loaded
+    // Reset the restore flag and display message if needed
+    if (ignoredLockedFiles.count() > 0 )
+    {
+        QString msg (QObject::tr("Existing lockfiles have been ignored for the maps listed below. Please check, if the maps might be openend in another instance of vym.\n\n"));
+        QMessageBox::warning(0, QObject::tr("Warning"), msg + ignoredLockedFiles.join("\n"));
+    }
+    recoveryMode = false;
+    ignoredLockedFiles.clear();
 
     // Load script
     if (options.isOn ("load"))

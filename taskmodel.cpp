@@ -13,7 +13,7 @@ TaskModel::TaskModel(QObject *parent)
     showParentsLevel = 0;
 }
 
-QModelIndex TaskModel::index (Task* t)
+QModelIndex TaskModel::index (Task* t) const
 {
     int n=tasks.indexOf (t);
     if (n<0)
@@ -35,6 +35,14 @@ Task* TaskModel::getTask (const QModelIndex &ix) const
 {
     if (ix.isValid() )
 	return tasks.at (ix.row() );
+    else
+	return NULL;
+}
+
+Task* TaskModel::getTask (const int i) 
+{
+    if (i >= 0 && i < count() )
+	return getTask ( createIndex (i, 0) );
     else
 	return NULL;
 }
@@ -75,7 +83,12 @@ QVariant TaskModel::data(const QModelIndex &index, int role) const
         else if (index.column() == 4)
             return t->getAgeModification();
         else if (index.column() == 5)
-            return t->getDaysSleep();
+        {
+            if (t->getDaysSleep() > 0)
+                return t->getDaysSleep();
+            else
+                return "-";
+        }    
         else if (index.column() == 6)
         {
             QString s = bi->getModel()->getMapName();
@@ -127,24 +140,15 @@ QVariant TaskModel::headerData(int section, Qt::Orientation orientation, int rol
 
     if (orientation == Qt::Horizontal) {
         switch (section) {
-            case 0:
-                return tr("Prio","TaskEditor");
-            case 1:
-                return tr("Delta","TaskEditor");
-            case 2:
-                return tr("Status","TaskEditor");
-            case 3:
-                return tr("Age total","TaskEditor");
-            case 4:
-                return tr("Age mod.","TaskEditor");
-            case 5:
-                return tr("Sleep","TaskEditor");
-            case 6:
-                return tr("Map","TaskEditor");
-            case 7:
-                return tr("Task","TaskEditor");
-            default:
-                return QVariant();
+            case 0: return tr("Prio","TaskEditor");
+            case 1: return tr("Delta","TaskEditor");
+            case 2: return tr("Status","TaskEditor");
+            case 3: return tr("Age total","TaskEditor");
+            case 4: return tr("Age mod.","TaskEditor");
+            case 5: return tr("Sleep","TaskEditor");
+            case 6: return tr("Map","TaskEditor");
+            case 7: return tr("Task","TaskEditor"); 
+            default: return QVariant();
         }
     }
     return QVariant();
@@ -176,39 +180,26 @@ bool TaskModel::removeRows(int position, int rows, const QModelIndex &index)
 
 bool TaskModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-    qDebug() << "Trying Editing task... 2";
-    if (index.isValid() && role == Qt::EditRole) 
-    {
-        int row = index.row();
-
-        qDebug() << "Editing task... 2";
-        //tasks.replace(row, );
-        emit(dataChanged(index, index));
-
-        return true;
-    }
-
-    return false;
-}
-
-/*
-bool TaskModel::setData(const QModelIndex &index, Task* t, int role)
-{
     qDebug() << "Trying Editing task...";
     if (index.isValid() && role == Qt::EditRole) 
     {
-        int row = index.row();
+        Task *t = tasks.at(index.row() );
+        if (!t)
+        {
+            qWarning() << "TaskModel::setData  no task found";
+            return false;
+        }
 
-        qDebug() << "Editing task...";
-        tasks.replace(row, t);
-        emit(dataChanged(index, index));
-
-        return true;
+        if (index.column() == 1)
+        {
+            t->setPriorityDelta(value.toInt() );
+            emit(dataChanged(index, index));    // FIXME-0 still need to update filtered view !
+            return true;
+        }
     }
 
     return false;
 }
-*/
 
 void TaskModel::emitDataChanged (Task* t)
 {
@@ -231,7 +222,7 @@ Qt::ItemFlags TaskModel::flags(const QModelIndex &index) const
     if (!index.isValid())
         return Qt::ItemIsEnabled;
 
-    return QAbstractTableModel::flags(index) | Qt::ItemIsEditable;
+    return QAbstractTableModel::flags(index) | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled |Qt::ItemIsEditable;
 }
 
 int TaskModel::count (VymModel *model)
@@ -367,4 +358,79 @@ uint TaskModel::getShowParentsLevel()
 {
     return showParentsLevel;
 }
+
+Qt::DropActions TaskModel::supportedDropActions() const
+{
+    return Qt::MoveAction; 
+}
+
+QStringList TaskModel::mimeTypes() const
+{
+    QStringList types;
+    types << "application/vnd.text.list";
+    return types;
+}
+
+QMimeData *TaskModel::mimeData(const QModelIndexList &indexes) const
+{
+    QMimeData *mimeData = new QMimeData();
+    QByteArray encodedData;
+
+    QDataStream stream(&encodedData, QIODevice::WriteOnly);
+
+    if (indexes.count() > 0 && indexes.first().isValid() )
+    {
+        Task* task = getTask ( indexes.first() );
+
+        // Field 0: Heading
+        QString text = task->getBranch()->getHeadingPlain();
+        stream << text;
+
+        // Field 1: task row
+        stream << QString::number( index(task).row() );
+        
+        // Field 2: Branch ID   // FIXME-0 not needed anylonger
+        stream << QString::number( task->getBranch()->getID() );
+    }
+
+
+    mimeData->setData("application/vnd.text.list", encodedData);
+    return mimeData;
+}
+
+bool TaskModel::dropMimeData(const QMimeData *data,
+ Qt::DropAction action, int row, int column, const QModelIndex &parent)
+ {
+     if (action == Qt::IgnoreAction)
+         return true;
+
+     if (!data->hasFormat("application/vnd.text.list"))
+         return false;
+
+     if (column > 0)
+         return false;
+
+     QByteArray encodedData = data->data("application/vnd.text.list");
+     QDataStream stream(&encodedData, QIODevice::ReadOnly);
+     QStringList newItems;
+     int rows = 0;
+
+     while (!stream.atEnd()) {
+         QString text;
+         stream >> text;
+         newItems << text;
+         ++rows;
+     }
+
+     Task *dst = getTask( parent );
+     Task *src = getTask( newItems[1].toInt() ); 
+
+     // qDebug() << "Dropping: " <<  src->getBranch()->getHeadingPlain() << " on " << dst->getBranch()->getHeadingPlain();
+
+    int delta_p = dst->getPriority() - src->getPriority();
+
+    src->setPriorityDelta( src->getPriorityDelta() - delta_p + 1 );
+    BranchItem *bi = src->getBranch();
+    bi->getModel()->emitDataChanged(bi);
+ }
 

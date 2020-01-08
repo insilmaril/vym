@@ -106,12 +106,15 @@ bool reallyWriteDirectory(const QString &dir)
     return true;
 }
 
-QString makeTmpDir (bool &ok, QString prefix)   //FIXME-3 use QTemporaryDir
+QString makeTmpDir (bool &ok, const QString &dirPath, const QString &prefix)   //FIXME-3 use QTemporaryDir
 {
-    bool b;
-    QString path=makeUniqueDir (b,QDir::tempPath()+"/"+prefix+"-XXXXXX");
-    ok=b;
+    QString path = makeUniqueDir (ok, dirPath + "/" + prefix + "-XXXXXX");
     return path;
+}
+
+QString makeTmpDir (bool &ok, const QString &prefix)   
+{
+    return makeTmpDir (ok, QDir::tempPath(), prefix);
 }
 
 bool isInTmpDir(QString fn)
@@ -121,32 +124,32 @@ bool isInTmpDir(QString fn)
     return fn.left(l)==temp;
 }
 
-QString makeUniqueDir (bool &ok,QString s)
+QString makeUniqueDir (bool &ok, QString s)
 {
-    ok=true;
+    ok = true;
 
     QString r;
 
 #if defined(Q_OS_WIN32)
-    r=mkdtemp (s);
+    r = mkdtemp (s);
 #else
     // On Linux and friends use cstdlib
     
     // Convert QString to string 
-    ok=true;
+    ok = true;
     char *p;
-    int bytes=s.length();
-    p=(char*) malloc (bytes+1);
+    int bytes = s.length();
+    p = (char*) malloc (bytes + 1);
     int i;
-    for (i=0;i<bytes;i++)
-	p[i]=s.at(i).unicode();
-    p[bytes]=0;	
+    for (i = 0; i < bytes; i++)
+	p[i] = s.at(i).unicode();
+    p[bytes] = 0;	
 
-    r=mkdtemp (p);
+    r = mkdtemp (p);
     free (p);
 #endif
 
-    if (r.isEmpty()) ok=false;
+    if (r.isEmpty()) ok = false;
     return r;
 }
 

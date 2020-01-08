@@ -4,6 +4,7 @@
 
 #include <QDebug>
 #include <QFileDialog>
+#include <QHash>
 #include <QMessageBox>
 
 #include "branchitem.h"
@@ -32,14 +33,13 @@ ExportBase::ExportBase()
 
 ExportBase::ExportBase(VymModel *m)
 {
-    model=m;
+    model = m;
     init();
 }
 
 ExportBase::~ExportBase()
 {
-    // Cleanup tmpdir
-    removeDir (tmpDir);
+    // Cleanup tmpdir: No longer required, part of general tmp dir of vym instance now
 
     // Remember current directory
     lastExportDir = QDir(dirPath);
@@ -50,20 +50,30 @@ void ExportBase::init()
     indentPerDepth = "  ";
     exportName     = "unnamed";
     lastCommand    = "";
-    bool ok;
-    tmpDir.setPath (makeTmpDir(ok,"vym-export"));
-    if (!tmpDir.exists() || !ok)
-        QMessageBox::critical( 0, QObject::tr( "Error" ),
-                               QObject::tr("Couldn't access temporary directory\n"));
     cancelFlag = false;
+    success    = false;
     defaultDirPath = lastExportDir.absolutePath();
     dirPath = defaultDirPath;
+}
+
+void ExportBase::setupTmpDir()
+{
+    bool ok;
+    tmpDir.setPath (
+        makeTmpDir(ok, 
+        model->tmpDirPath(), 
+        QString("export-%2").arg(exportName)));
+    if (!tmpDir.exists() || !ok)
+        QMessageBox::critical( 
+            0, 
+            QObject::tr( "Error" ),
+            QObject::tr("Couldn't access temporary directory\n"));
 }
 
 void ExportBase::setDirPath (const QString &s)
 {
     if (!s.isEmpty())
-        dirPath=s;
+        dirPath = s;
     // Otherwise lastExportDir is used, which defaults to current dir
 }
 
@@ -76,10 +86,10 @@ void ExportBase::setFilePath (const QString &s)
 {
     if(!s.isEmpty())
     {
-        filePath=s;
-        if (!filePath.contains("/"))
+        filePath = s;
+        if (!filePath.startsWith("/"))
             // Absolute path
-            filePath=lastExportDir.absolutePath() + "/" + filePath;
+            filePath = lastExportDir.absolutePath() + "/" + filePath;
     }
 }
 
@@ -93,13 +103,13 @@ QString ExportBase::getFilePath ()
 
 QString ExportBase::getMapName ()
 {
-    QString fn=basename(filePath);
+    QString fn = basename(filePath);
     return fn.left(fn.lastIndexOf("."));
 }
 
 void ExportBase::setModel(VymModel *m)
 {
-    model=m;
+    model = m;
 }
 
 void ExportBase::setWindowTitle (const QString &s)
@@ -119,7 +129,7 @@ QString ExportBase::getName ()
 
 void ExportBase::addFilter(const QString &s)
 {
-    filter=s;
+    filter = s;
 }
 
 void ExportBase::setListTasks(bool b)
@@ -146,14 +156,14 @@ bool ExportBase::execDialog()
             dia.setCaption(QObject::tr("Warning: Overwriting file"));
             dia.setText(QObject::tr("Exporting to %1 will overwrite the existing file:\n%2").arg(exportName).arg(fn));
             dia.setShowAgainName("/exports/overwrite/" + exportName);
-            if (!(dia.exec()==QDialog::Accepted))
+            if (!(dia.exec() == QDialog::Accepted))
             {
-                cancelFlag=true;
+                cancelFlag = true;
                 return false;
             }
         }
-        dirPath=fn.left(fn.lastIndexOf ("/"));
-        filePath=fn;
+        dirPath  = fn.left(fn.lastIndexOf ("/"));
+        filePath = fn;
         return true;
     }
     return false;
@@ -169,36 +179,60 @@ void ExportBase::setLastCommand( const QString &s)
     lastCommand = s;
 }
 
-void ExportBase::completeExport(QString args) 
+void ExportBase::completeExport(QMap <QString, QString> args) 
 {
     QString command;
+    QMapIterator <QString, QString> i(args);
+
     if (args.isEmpty()) 
+    {
         // Add at least filepath as argument. exportName is added anyway
         command = QString("vym.currentMap().exportMap(\"%1\",\"%2\")").arg(exportName).arg(filePath);
-    else
-        command = QString("vym.currentMap().exportMap(\"%1\",%2)").arg(exportName).arg(args);
+        settings.setLocalValue ( model->getFilePath(), "/export/last/destination", filePath);
+    } else
+    {
+        QStringList list;
+        i.toBack();
+        while (i.hasPrevious() ) 
+        {
+            i.previous();
+            list << "\""  + i.value() + "\""; 
 
-    settings.setLocalValue ( model->getFilePath(), "/export/last/exportPath", filePath);
+            settings.setLocalValue ( model->getFilePath(), "/export/" + exportName.toLower() + "/" + i.key(), i.value() );
+        }
+        command = QString("vym.currentMap().exportMap(\"%1\",%2)").arg(exportName).arg(list.join(","));
+    }
+
     settings.setLocalValue ( model->getFilePath(), "/export/last/command", command);
     settings.setLocalValue ( model->getFilePath(), "/export/last/description", exportName);
+    settings.setLocalValue ( model->getFilePath(), "/export/last/destination", destination);
 
     // Trigger saving of export command if it has changed
     if (model && (lastCommand != command) ) model->setChanged();
 
-    mainWindow->statusMessage(QString("Exported as %1: %2").arg(exportName).arg(filePath));
+    if (success)
+        mainWindow->statusMessage(QString("Exported as %1 to %2").arg(exportName).arg(destination));
+    else
+        mainWindow->statusMessage(QString("Failed to export as %1 to %2").arg(exportName).arg(destination));
+}
+
+void ExportBase::completeExport()
+{
+    QMap <QString, QString> args;
+    completeExport (args);
 }
 
 QString ExportBase::getSectionString(TreeItem *start)
 {
     // Make prefix like "2.5.3" for "bo:2,bo:5,bo:3"
     QString r;
-    TreeItem *ti=start;
+    TreeItem *ti = start;
     int depth=ti->depth();
     while (depth>0)
     {
-        r=QString("%1").arg(1+ti->num(),0,10)+"." + r;
-        ti=ti->parent();
-        depth=ti->depth();
+        r  = QString("%1").arg(1 + ti->num(),0,10) + "." + r;
+        ti = ti->parent();
+        depth = ti->depth();
     }
     if (r.isEmpty())
         return r;

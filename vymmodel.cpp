@@ -20,11 +20,12 @@
 
 #include "attributeitem.h"
 #include "branchitem.h"
-#include "bugagent.h"
-#include "downloadagent.h"
+#include "bug-agent.h"
+#include "download-agent.h"
 #include "editxlinkdialog.h"
 #include "export-ao.h"
 #include "export-ascii.h"
+#include "export-confluence.h"
 #include "export-csv.h"
 #include "export-html.h"
 #include "export-impress.h"
@@ -33,7 +34,7 @@
 #include "export-orgmode.h"
 #include "file.h"
 #include "findresultmodel.h"
-#include "jiraagent.h"
+#include "jira-agent.h"
 #include "lockedfiledialog.h"
 #include "mainwindow.h"
 #include "misc.h"
@@ -59,6 +60,9 @@
 
 extern bool debug;
 extern bool testmode;
+extern bool recoveryMode;  
+extern QStringList ignoredLockedFiles;
+
 extern Main *mainWindow;
 
 extern Settings settings;
@@ -224,10 +228,15 @@ void VymModel::init ()
 void VymModel::makeTmpDirectories()
 {
     // Create unique temporary directories
-    tmpMapDir = tmpVymDir+QString("/model-%1").arg(modelID);
-    histPath = tmpMapDir+"/history";
+    tmpMapDir = tmpVymDir + QString("/model-%1").arg(modelID);
+    histPath  = tmpMapDir + "/history";
     QDir d;
     d.mkdir (tmpMapDir);
+}
+
+QString VymModel::tmpDirPath()
+{
+    return tmpMapDir;
 }
 
 MapEditor* VymModel::getMapEditor() 
@@ -269,27 +278,27 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix, bool w
     switch (linkstyle)
     {
 	case LinkableMapObj::Line: 
-	    ls="StyleLine";
+	    ls = "StyleLine";
 	    break;
 	case LinkableMapObj::Parabel:
-	    ls="StyleParabel";
+	    ls = "StyleParabel";
 	    break;
 	case LinkableMapObj::PolyLine:	
-	    ls="StylePolyLine";
+	    ls = "StylePolyLine";
 	    break;
 	default:
-	    ls="StylePolyParabel";
+	    ls = "StylePolyParabel";
 	    break;
     }	
 
-    QString s="<?xml version=\"1.0\" encoding=\"utf-8\"?><!DOCTYPE vymmap>\n";
-    QString colhint="";
-    if (linkcolorhint==LinkableMapObj::HeadingColor) 
-	colhint=xml.attribut("linkColorHint","HeadingColor");
+    QString s = "<?xml version=\"1.0\" encoding=\"utf-8\"?><!DOCTYPE vymmap>\n";
+    QString colhint = "";
+    if (linkcolorhint == LinkableMapObj::HeadingColor) 
+	colhint = xml.attribut("linkColorHint","HeadingColor");
 
-    QString mapAttr=xml.attribut("version",vymVersion);
+    QString mapAttr = xml.attribut("version",vymVersion);
     if (!saveSel)
-	mapAttr+= xml.attribut("author",author) +
+	mapAttr += xml.attribut("author",author) +
 		  xml.attribut("title",title) +
 		  xml.attribut("comment",comment) +
 		  xml.attribut("date",getDate()) +
@@ -307,7 +316,7 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix, bool w
 		  xml.attribut("mapZoomFactor", QString().setNum(mapEditor->getZoomFactorTarget()) ) +
 		  xml.attribut("mapRotationAngle", QString().setNum(mapEditor->getAngleTarget()) ) +
 		  colhint; 
-    s+=xml.beginElement("vymmap",mapAttr); 
+    s += xml.beginElement("vymmap",mapAttr); 
     xml.incIndent();
 
     // Find the used flags while traversing the tree	
@@ -321,14 +330,14 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix, bool w
     if (!saveSel)
     {
 	// Save all mapcenters as complete map, if saveSel not set
-	s+=saveTreeToDir(tmpdir,prefix,offset,tmpLinks);
+	s += saveTreeToDir(tmpdir,prefix,offset,tmpLinks);
 
 	// Save local settings
-	s+=settings.getDataXML (destPath);
+	s += settings.getDataXML (destPath);
 
 	// Save selection
 	if (getSelectedItem() && !saveSel ) 
-	    s+=xml.valueElement("select",getSelectString());
+	    s += xml.valueElement("select", getSelectString());
 
     } else
     {
@@ -336,15 +345,15 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix, bool w
 	{
 	    case TreeItem::Branch:
 		// Save Subtree
-		s+=((BranchItem*)saveSel)->saveToDir(tmpdir,prefix,offset,tmpLinks);
+		s += ((BranchItem*)saveSel)->saveToDir(tmpdir, prefix, offset, tmpLinks);
 		break;
 	    case TreeItem::MapCenter:
 		// Save Subtree
-		s+=((BranchItem*)saveSel)->saveToDir(tmpdir,prefix,offset,tmpLinks);
+		s += ((BranchItem*)saveSel)->saveToDir(tmpdir, prefix, offset, tmpLinks);
 		break;
 	    case TreeItem::Image:
 		// Save Image
-		s+=((ImageItem*)saveSel)->saveToDir(tmpdir,prefix);
+		s += ((ImageItem*)saveSel)->saveToDir(tmpdir, prefix);
 		break;
 	    default: 
 		// other types shouldn't be safed directly...
@@ -353,16 +362,16 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix, bool w
     }
 
     // Save XLinks
-    for (int i=0; i<tmpLinks.count();++i)
-	s+=tmpLinks.at(i)->saveToDir();
+    for (int i = 0; i < tmpLinks.count(); ++i)
+	s += tmpLinks.at(i)->saveToDir();
 
     // Save slides  
-    s+=slideModel->saveToDir();	
+    s += slideModel->saveToDir();	
 
     xml.decIndent();
-    s+=xml.endElement("vymmap");
+    s += xml.endElement("vymmap");
 
-    if (writeflags) standardFlagsMaster->saveToDir (tmpdir+"/flags/","",writeflags);
+    if (writeflags) standardFlagsMaster->saveToDir (tmpdir + "/flags/", "", writeflags);
     return s;
 }
 
@@ -513,7 +522,7 @@ File::ErrorCode VymModel::loadMap (
 
     // Create temporary directory for packing
     bool ok;
-    QString tmpZipDir = makeTmpDir (ok,"vym-pack");
+    QString tmpZipDir = makeTmpDir (ok, tmpDirPath(), "unzip");
     if (!ok)
     {
 	QMessageBox::critical( 0, tr( "Critical Load Error" ),
@@ -526,7 +535,7 @@ File::ErrorCode VymModel::loadMap (
     else
     {
         // Try to unzip file
-        err = unzipDir (tmpZipDir,fname);
+        err = unzipDir (tmpZipDir, fname);
     }
     QString xmlfile;
     if (err == File::NoZip)
@@ -746,7 +755,7 @@ File::ErrorCode VymModel::save (const SaveMode &savemode)
     {
 	// Create temporary directory for packing
 	bool ok;
-	tmpZipDir=makeTmpDir (ok,"vym-zip");
+        tmpZipDir = makeTmpDir (ok, tmpDirPath(), "zip");
 	if (!ok)
 	{
 	    QMessageBox::critical( 0, tr( "Critical Save Error" ),
@@ -1010,6 +1019,22 @@ void VymModel::importDir()
     }	
 }
 
+bool VymModel::removeVymLock()
+{
+    if (vymLock.removeLock() )
+    {
+        mainWindow->statusMessage (tr("Removed lockfile for %1").arg(mapName));
+        setReadOnly(false);
+        return true;
+    } else
+    {
+        QMessageBox::warning(0,
+                 tr("Warning"),
+                 tr("Couldn't remove lockfile for %1").arg(mapName));
+        return false;
+    }
+}
+
 bool VymModel::tryVymLock()
 {
     // Defaults for author and host in vymLock
@@ -1027,27 +1052,26 @@ bool VymModel::tryVymLock()
     {
         if (debug) qDebug() << "VymModel::tryLock failed!";
         setReadOnly( true );
-        if (vymLock.getState() == VymLock::lockedByOther)
+        if (vymLock.getState() == VymLock::lockedByOther )
         {
-            LockedFileDialog dia;
-            QString a = vymLock.getAuthor();
-            QString h = vymLock.getHost();
-            QString s = QString( tr("Map seems to be already opened in another vym instance!\n\n "
-                   "Map is locked by \"%1\" on \"%2\"\n\n"
-                   "Please only delete the lockfile, if you are sure nobody else is currently working on this map." )) .arg(a).arg(h);
-            dia.setText( s );
-            dia.setWindowTitle(tr("Warning: Map already opended","VymModel"));
-            if (dia.execDialog() == LockedFileDialog::DeleteLockfile)
+            if (recoveryMode)
             {
-                if (vymLock.removeLock() )
-                {
-                    mainWindow->statusMessage (tr("Removed lockfile for %1").arg(mapName));
-                    setReadOnly(false);
-                    return true;
-                } else
-                    QMessageBox::warning(0,
-                             tr("Warning"),
-                             tr("Couldn't remove lockfile for %1").arg(mapName));
+                ignoredLockedFiles << filePath;
+                return removeVymLock();
+            } else
+            {
+                LockedFileDialog dia;
+                QString a = vymLock.getAuthor();
+                QString h = vymLock.getHost();
+                QString s = QString( tr("Map seems to be already opened in another vym instance!\n\n "
+                       "Map is locked by \"%1\" on \"%2\"\n\n"
+                       "Please only delete the lockfile, if you are sure nobody else is currently working on this map." )) .arg(a).arg(h);
+                dia.setText( s );
+                dia.setWindowTitle(tr("Warning: Map already opended","VymModel"));
+                if (dia.execDialog() == LockedFileDialog::DeleteLockfile)
+                {  
+                    return removeVymLock();
+                }
             }
         } else if (vymLock.getState() == VymLock::notWritable)
         {
@@ -4572,7 +4596,10 @@ void VymModel::exportXML (QString dpath, QString fpath, bool useDialog)
 
     setExportMode (false);
 
-    ex.completeExport( QString("\"%1\",\"%2\"").arg(fpath).arg(dpath) );
+    QMap <QString, QString> args;
+    args["filePath"] = filePath;
+    args["dirPath"]  = dpath;
+    ex.completeExport( args );
 }
 
 void VymModel::exportAO (QString fname,bool askName)
@@ -4659,9 +4686,18 @@ void VymModel::exportHTML (const QString &dpath, const QString &fpath,bool useDi
 
     if (!dpath.isEmpty()) ex.setDirPath (dpath);
     if (!fpath.isEmpty()) ex.setFilePath (fpath);
-    setExportMode(true);
+    
     ex.doExport(useDialog);
-    setExportMode(false);
+}
+
+void VymModel::exportConfluence (const QString &pageURL, const QString &pageTitle, bool useDialog)
+{
+    ExportConfluence ex (this);
+    ex.setPageURL (pageURL);
+    ex.setPageTitle (pageTitle);
+    ex.setLastCommand( settings.localValue(filePath, "/export/last/command","").toString() );
+
+    ex.doExport(useDialog);
 }
 
 void VymModel::exportImpress(const QString &fn, const QString &cf) 
@@ -4684,12 +4720,11 @@ void VymModel::exportImpress(const QString &fn, const QString &cf)
     }
 }
 
-bool VymModel::exportLastAvailable(QString &description, QString &command, QString &path, QString &configFile)
+bool VymModel::exportLastAvailable(QString &description, QString &command, QString &dest)
 {
     command     = settings.localValue(filePath,"/export/last/command","").toString();
     description = settings.localValue(filePath,"/export/last/description","").toString();
-    path        = settings.localValue(filePath,"/export/last/exportPath","").toString();
-    configFile  = settings.localValue(filePath,"/export/last/configFile","").toString();
+    dest        = settings.localValue(filePath,"/export/last/destination","").toString();
     if (!command.isEmpty() && command.contains("exportMap")) 
 	return true;
     else
@@ -4698,12 +4733,12 @@ bool VymModel::exportLastAvailable(QString &description, QString &command, QStri
 
 void VymModel::exportLast()
 {
-    QString desc, command, path, configFile;  //FIXME-3 better integrate configFile into command
-    if (exportLastAvailable(desc, command, path, configFile) )
+    QString desc, command, dest;  //FIXME-3 better integrate configFile into command
+    if (exportLastAvailable(desc, command, dest) )
     {
         execute (command);
-        /*
-	if (!configFile.isEmpty() && command=="exportImpress")
+        /*  
+	if (!configFile.isEmpty() && command=="exportImpress")  // FIXME-1 check exportLast for Impress
 	    execute (QString ("%1 (\"%2\",\"%3\")").arg(command).arg(path).arg(configFile) );
 	else    
 	    execute (QString ("%1 (\"%2\")").arg(command).arg(path) );

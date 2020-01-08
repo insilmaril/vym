@@ -125,7 +125,15 @@ void ExportASCII::doExport()
     clipboard->setText(out);
     
     QString listTasksString = listTasks ? "true" : "false";
-    completeExport( QString("\"%1\",%2").arg(filePath).arg(listTasksString) );
+
+    destination = filePath;
+
+    QMap <QString, QString> args;
+    args["filePath"]  = filePath;
+    args["listTasks"] = listTasksString;
+
+    success = true;
+    completeExport( args );
 }
 
 QString ExportASCII::underline (const QString &text, const QString &line)

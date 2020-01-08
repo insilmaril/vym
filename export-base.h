@@ -1,8 +1,9 @@
 #ifndef EXPORT_BASE_H
 #define EXPORT_BASE_H
 
-#include <qdir.h>
-#include <qstring.h>
+#include <QDir>
+#include <QMap>
+#include <QString>
 #include <iostream>
 
 #include "settings.h"
@@ -21,6 +22,7 @@ public:
     ExportBase(VymModel *m);
     virtual ~ExportBase();
     virtual void init();
+    virtual void setupTmpDir();
     virtual void setDirPath (const QString&);
     virtual QString getDirPath();
     virtual void setFilePath (const QString&);
@@ -35,7 +37,8 @@ public:
     virtual bool execDialog();
     virtual bool canceled();
     void setLastCommand( const QString& );
-    void completeExport(QString args="");  //! set lastExport and send status message
+    void completeExport(QMap <QString, QString> args);  //! set lastExport and send status message
+    void completeExport();
 
 protected:  
     VymModel *model;
@@ -45,6 +48,7 @@ protected:
 
     QString indent (const int &n, bool useBullet);
     QDir tmpDir;
+    QString destination;    // Can be the filePath or URL. Used for display in "ExportLast"
     QString dirPath;        // Path to dir  e.g. /tmp/vym-export/
     QString defaultDirPath; // Default path
     QString filePath;       // Path to file e.g. /tmp/vym-export/export.html
@@ -56,6 +60,7 @@ protected:
     QString filter;
     bool listTasks;         // Append task list
     bool cancelFlag;
+    bool success;
 };
 
 

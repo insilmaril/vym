@@ -75,17 +75,20 @@ HEADERS	+= \
     branchitem.h \
     branchobj.h \
     branchpropeditor.h\
-    bugagent.h \
+    bug-agent.h \
     command.h \
+    confluence-agent.h \
     dockeditor.h \
-    downloadagent.h \
+    download-agent.h \
     editxlinkdialog.h \
     exportoofiledialog.h \
-    exporthtmldialog.h\
+    export-html-dialog.h\
+    export-confluence-dialog.h\
     export-ao.h \
     export-ascii.h \
     export-base.h \
     export-csv.h \
+    export-confluence.h \
     export-html.h \
     export-impress.h \
     export-latex.h \
@@ -114,7 +117,7 @@ HEADERS	+= \
     imageitem.h \
     imageobj.h \
     imports.h \
-    jiraagent.h \
+    jira-agent.h \
     lineeditdialog.h \
     linkablemapobj.h \
     lockedfiledialog.h \
@@ -179,16 +182,19 @@ SOURCES	+= \
     branchitem.cpp \
     branchobj.cpp \
     branchpropeditor.cpp \
-    bugagent.cpp \
+    bug-agent.cpp \
     command.cpp \
+    confluence-agent.cpp \
     dockeditor.cpp \
-    downloadagent.cpp \
+    download-agent.cpp \
     editxlinkdialog.cpp \
-    exporthtmldialog.cpp \
+    export-html-dialog.cpp \
+    export-confluence-dialog.cpp \
     exportoofiledialog.cpp \
     export-ao.cpp \
     export-ascii.cpp \
     export-base.cpp \
+    export-confluence.cpp \
     export-csv.cpp \
     export-html.cpp \
     export-impress.cpp \
@@ -218,7 +224,7 @@ SOURCES	+= \
     imageitem.cpp \
     imageobj.cpp \
     imports.cpp \
-    jiraagent.cpp \
+    jira-agent.cpp \
     lineeditdialog.cpp \
     linkablemapobj.cpp \
     lockedfiledialog.cpp \
@@ -273,7 +279,8 @@ SOURCES	+= \
 FORMS = \
     attributewidget.ui \
     branchpropeditor.ui \
-    exporthtmldialog.ui \
+    export-html-dialog.ui \
+    export-confluence-dialog.ui \
     extrainfodialog.ui \
     editxlinkdialog.ui \
     historywindow.ui \

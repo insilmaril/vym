@@ -58,6 +58,7 @@ public:
     void clear();
     void init();
     void makeTmpDirectories();	    //!< create temporary directories e.g. for history
+    QString tmpDirPath();           //!< Return path to temporary directory
 
     MapEditor* getMapEditor();		
     uint getModelID();			//! Return unique ID of model
@@ -162,6 +163,9 @@ public:
     void importDir(const QString&);
     void importDir();
 
+private:    
+    bool removeVymLock();
+public:	
     bool tryVymLock();
     bool renameMap( const QString &newPath); //! Rename map and change lockfile
     void setReadOnly( bool b );
@@ -573,6 +577,8 @@ public:
 
     /*! Export as HTML to directory */
     void exportHTML(const QString &dir="", const QString &fname="", bool useDialog=true);    
+    /*! Export as HTML to Confluence*/
+    void exportConfluence(const QString &dir="", const QString &fname="", bool useDialog=true);    
 
     /*! Export as OpenOfficeOrg presentation */
     void exportImpress (const QString &,const QString &);	
@@ -581,8 +587,7 @@ public:
     bool exportLastAvailable(
 	QString &description, 
 	QString &command, 
-	QString &configFile,
-	QString &path);
+	QString &dest);
 
     /*! Export in recently used format (saved in map)*/
     void exportLast();

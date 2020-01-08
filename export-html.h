@@ -2,7 +2,7 @@
 #define EXPORT_HTML_H
 
 #include "export-base.h"
-#include "exporthtmldialog.h"
+#include "export-html-dialog.h"
 
 class ExportHTML:public ExportBase
 {

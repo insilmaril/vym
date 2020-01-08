@@ -265,9 +265,26 @@ bool VymModelWrapper::exportMap( )
     } else if ( format == "ASCII" ) 
     {
         bool listTasks = false;
-        if (argumentCount() == 3 && argument(2).toString() == "listTasks")
+        if (argumentCount() == 3 && argument(2).toString() == "true")
             listTasks = true;
         model->exportASCII (listTasks, filename, false);
+
+    } else if ( format == "Confluence" )  
+    {
+        if (argumentCount() < 2 )
+        {
+            logError( context(), QScriptContext::SyntaxError, "Page URL and title missing in Confluence export" );
+            return setResult( r );
+        }   
+        if (argumentCount() == 2 )
+        {
+            logError( context(), QScriptContext::SyntaxError, "Page title missing in Confluence export" );
+            return setResult( r );
+        }   
+        QString url = argument(2).toString();
+        QString title = argument(3).toString();
+        model->exportConfluence (url, title, false);
+
     } else if ( format == "CSV" )
     {
         model->exportCSV (filename, false);
@@ -987,6 +1004,7 @@ void VymModelWrapper::setXLinkWidth( int w )
 
 void VymModelWrapper::sleep( int n)
 {
+    // sleep is not avail on windows VCEE, workaround could be using this->thread()->wait(x ms) 
     sleep( n );
 }
 

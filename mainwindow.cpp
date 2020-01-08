@@ -3,10 +3,6 @@
 #include <iostream>
 #include <typeinfo>
 
-#ifndef Q_OS_WIN
-#include <unistd.h>
-#endif
-
 #if defined(VYM_DBUS)
 #include "adaptorvym.h"
 #endif
@@ -25,7 +21,8 @@
 #include "branchpropeditor.h"
 #include "branchitem.h"
 #include "command.h"
-#include "downloadagent.h"
+#include "confluence-agent.h"
+#include "download-agent.h"
 #include "file.h"
 #include "findresultwidget.h"
 #include "findresultmodel.h"
@@ -408,13 +405,13 @@ Main::~Main()
 
 void Main::loadCmdLine()
 {
-    QStringList flist=options.getFileList();
-    QStringList::Iterator it=flist.begin();
+    QStringList flist = options.getFileList();
+    QStringList::Iterator it = flist.begin();
 
     initProgressCounter (flist.count());
-    while (it !=flist.end() )
+    while (it != flist.end() )
     {
-	FileType type=getMapType (*it);
+	FileType type = getMapType (*it);
 	fileLoad (*it, NewMap,type);
 	*it++;
     }	
@@ -559,7 +556,7 @@ void Main::setupAPI()
     modelCommands.append(c);
 
     c = new Command ("exportMap", Command::Any);  
-    c->addPar (Command::String,false,"Format (AO, ASCII, CSV, HTML, Image, Impress, Last, LaTeX, Markdown, OrgMode, PDF, SVG, XML)");
+    c->addPar (Command::String,false,"Format (AO, ASCII, CONFLUENCE, CSV, HTML, Image, Impress, Last, LaTeX, Markdown, OrgMode, PDF, SVG, XML)");
     modelCommands.append(c);
 
     c = new Command ("getDestPath", Command::Any);
@@ -1055,6 +1052,10 @@ void Main::setupFileActions()
 
     a = new QAction(  tr("Webpage (HTML)...","File export menu"),this );
     connect( a, SIGNAL( triggered() ), this, SLOT( fileExportHTML() ) );
+    fileExportMenu->addAction(a);
+
+    a = new QAction(  tr("Confluence (HTML)...","File export menu") + tr("(still experimental)"),this );
+    connect( a, SIGNAL( triggered() ), this, SLOT( fileExportConfluence() ) );
     fileExportMenu->addAction(a);
 
     a = new QAction( tr("Text (ASCII)...","File export menu"), this);
@@ -3719,6 +3720,12 @@ void Main::fileExportHTML()
     if (m) m->exportHTML();
 }
 
+void Main::fileExportConfluence() 
+{
+    VymModel *m = currentModel();
+    if (m) m->exportConfluence();
+}
+
 void Main::fileExportImage()	
 {
     VymModel *m=currentModel();
@@ -3965,10 +3972,10 @@ bool Main::openURL(const QString &url)
 {
     if (url.isEmpty()) return false;
 
-    QString browser=settings.value("/system/readerURL" ).toString();
+    QString browser = settings.value("/system/readerURL" ).toString();
     QStringList args;
-    args<<url;
-    if (!QProcess::startDetached(browser,args,QDir::currentPath(),browserPID))
+    args << url;
+    if (!QProcess::startDetached(browser, args, QDir::currentPath(),browserPID))
     {
         // try to set path to browser
         QMessageBox::warning(0, 
@@ -4012,7 +4019,7 @@ void Main::openTabs(QStringList urls)
                 "newTab" << 
                 u <<
                 "false";
-            if (!QProcess::startDetached ("qdbus",args))
+            if (!QProcess::startDetached ("qdbus",args))    // FIXME-1 use DBUS directly
             {
                 QMessageBox::warning(0, 
                     tr("Warning"),
@@ -4029,14 +4036,6 @@ void Main::openTabs(QStringList urls)
     foreach (QString u, urls) 
     {
         openURL(u);
-
-        // Now give the browser some time before opening the next tab
-#if defined(Q_OS_WIN32)
-        // There's no sleep in VCEE, replace it with Qt's QThread::wait().
-        this->thread()->wait(1000);
-#else
-        sleep (1);	
-#endif
     }
 }
 
@@ -5597,16 +5596,16 @@ void Main::updateActions()
 	    actionFormatLinkColorHint->setChecked(false);
 
 	// Export last
-	QString s, t, u, v;
-	if (m && m->exportLastAvailable(s,t,u, v) )
+	QString desc, com, dest;
+	if (m && m->exportLastAvailable(desc, com, dest) )
 	    actionFileExportLast->setEnabled (true);
 	else
 	{
 	    actionFileExportLast->setEnabled (false);
-	    t=u="";
-	    s=" - ";
+	    com = dest = "";
+	    desc  = " - ";
 	}	
-	actionFileExportLast->setText( tr( "Export in last used format (%1) to: %2","status tip" ).arg(s).arg(u));
+	actionFileExportLast->setText( tr( "Export in last used format (%1) to: %2","status tip" ).arg(desc).arg(dest));
 
 	TreeItem *selti=m->getSelectedItem();
 	BranchItem *selbi=m->getSelectedBranch();
@@ -5856,17 +5855,16 @@ QVariant Main::runScript (const QString &script)
     {
         qDebug() << "MainWindow::runScript finished:";
         qDebug() << "   hasException: " << scriptEngine.hasUncaughtException();
-        /*
-        if (scriptEngine.hasUncaughtException() )
-        {
-            qDebug() << "      exception: "<< scriptEngine.uncaughtException();
-        }
-        */
         qDebug() << "         result: " << result.toString();   // not used so far...
         qDebug() << "     lastResult: " << scriptEngine.globalObject().property("lastResult").toVariant();
+        qDebug() << "     script: " << script;
     }
 
     if (scriptEngine.hasUncaughtException()) {
+        // Warnings, in case that output window is not visible...
+        statusMessage("Script execution failed");
+        qWarning() << "Script execution failed";
+
         int line = scriptEngine.uncaughtExceptionLineNumber();
         scriptOutput->append( QString("uncaught exception at line %1: %2").arg(line).arg(result.toString()));
     } else
@@ -5937,11 +5935,17 @@ void Main::standardFlagChanged()
 
 void Main::testFunction1()
 {
-    scriptEditor->runScript();
+    VymModel  *m  = currentModel();
+    if (m)
+    {
+        ConfluenceAgent *ca = new ConfluenceAgent (m);
+        ca->test();
+    }
 }
 
 void Main::testFunction2()
 {
+    scriptEditor->runScript();
 }
 
 void Main::toggleWinter()

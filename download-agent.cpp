@@ -20,7 +20,7 @@ QT_END_NAMESPACE
 
 QT_USE_NAMESPACE
 
-#include "downloadagent.h"
+#include "download-agent.h"
 #include "mainwindow.h"
 #include "settings.h"
 #include "vymmodel.h"

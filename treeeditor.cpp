@@ -49,6 +49,16 @@ void TreeEditor::init()
     addAction (a);
     connect( a, SIGNAL( triggered() ), mainWindow, SLOT( editMoveDown() ) );
 
+    // Clone actions defined in MainWindow
+    foreach (QAction* qa, mainWindow->mapEditorActions)
+    {
+        a = new QAction( this );
+        a->setShortcut( qa->shortcut() );
+        a->setShortcutContext( qa->shortcutContext() );
+        connect( a, SIGNAL( triggered() ), qa, SLOT( trigger() ) );
+        addAction(a);
+    }
+
     setStyleSheet( "QTreeView:focus {" + editorFocusStyle + "}");
 }
 

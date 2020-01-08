@@ -293,5 +293,4 @@ bool versionLowerOrEqual (const QString &v, const QString &vstatic)
     if (vs3 > v3) return true;
     if (vs3 < v3) return false;
     return true;    
-
 }

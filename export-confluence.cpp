@@ -1,34 +1,50 @@
-#include "export-html.h"
+#include "export-confluence.h"
 
 #include <QMessageBox>
 
+#include "confluence-agent.h"
 #include "branchobj.h"
 #include "mainwindow.h"
+#include "settings.h"
 #include "warningdialog.h"
 
 extern QString flagsPath;
 extern Main *mainWindow;
 extern QString vymVersion;
 extern QString vymHome;
+extern Settings settings;
 
-ExportHTML::ExportHTML():ExportBase()
+ExportConfluence::ExportConfluence():ExportBase()
 {
     init();
 }
 
-ExportHTML::ExportHTML(VymModel *m):ExportBase(m)
+ExportConfluence::ExportConfluence(VymModel *m):ExportBase(m)
 {
     init();
 }
 
-void ExportHTML::init()
+void ExportConfluence::init()
 {
-    exportName="HTML";
-    extension=".html";
-    frameURLs=true;
+    exportName = "Confluence";
+    extension  = ".html";
+    frameURLs  = true;
+
+    pageURL    = "";
+    pageTitle  = "";
+
 }
 
-QString ExportHTML::getBranchText(BranchItem *current)
+void ExportConfluence::setPageURL(const QString &u)
+{
+    pageURL = u;
+}
+void ExportConfluence::setPageTitle(const QString &t)
+{
+    pageTitle = t;
+}
+
+QString ExportConfluence::getBranchText(BranchItem *current)
 {
     if (current)
     {
@@ -44,10 +60,7 @@ QString ExportHTML::getBranchText(BranchItem *current)
         QString id = model->getSelectString(current);
         if (dia.useTextColor)
             col = QString("style='color:%1'").arg(current->getHeadingColor().name());
-        QString s = QString("<span class='vym-branch-%1' %2 id='%3'>")
-                .arg(current->depth())
-                .arg(col)
-                .arg(id);
+        QString s;
         QString url = current->getURL();
         QString heading = quotemeta(current->getHeadingPlain());
 
@@ -77,7 +90,7 @@ QString ExportHTML::getBranchText(BranchItem *current)
 
         // Numbering
         QString number;
-        if (dia.useNumbering) number = getSectionString(current) + " ";
+        //if (dia.useNumbering) number = getSectionString(current) + " ";
         
         // URL
         if (!url.isEmpty())
@@ -98,8 +111,6 @@ QString ExportHTML::getBranchText(BranchItem *current)
                         .arg(QObject::tr("External link: %1","Alt tag in HTML export").arg(heading));
         } else
             s += number + taskFlags + heading + userFlags;
-
-        s += "</span>";
 
         // Create imagemap
         if (vis && dia.includeMapImage)
@@ -175,7 +186,7 @@ QString ExportHTML::getBranchText(BranchItem *current)
     return QString();
 }
 
-QString ExportHTML::buildList (BranchItem *current)
+QString ExportConfluence::buildList (BranchItem *current)
 {
     QString r;
 
@@ -202,8 +213,8 @@ QString ExportHTML::buildList (BranchItem *current)
     case 1:
         sectionBegin = "";
         sectionEnd   = "";
-        itemBegin    = "<h2>";
-        itemEnd      = "</h2>";
+        itemBegin    = "<h3>";
+        itemEnd      = "</h3>";
         break;
     default:
         sectionBegin = "<ul " + QString("class=\"vym-list-ul-%1\"").arg(current->depth() + 1)  +">";
@@ -238,7 +249,7 @@ QString ExportHTML::buildList (BranchItem *current)
     return r;
 }
 
-QString ExportHTML::createTOC()
+QString ExportConfluence::createTOC()
 {
     QString toc;
     QString number;
@@ -270,90 +281,24 @@ QString ExportHTML::createTOC()
     return toc;
 }
 
-void ExportHTML::doExport(bool useDialog) 
+void ExportConfluence::doExport(bool useDialog) 
 {
+    // Initialize tmp directory below tmp dir of map vym itself
+    setupTmpDir();
+
+    filePath = tmpDir.path() + "/export.html";
+
     // Setup dialog and read settings
     dia.setMapName (model->getMapName());
-    dia.setFilePath (model->getFilePath());
+    dia.setFilePath (model->getFilePath()); 
+    dia.setPageURL( pageURL );
+    dia.setPageTitle( pageTitle );
     dia.readSettings();
-
-    if (dirPath != defaultDirPath)
-        dia.setDirectory(dirPath);
 
     if (useDialog)
     {
         if (dia.exec() != QDialog::Accepted) return;
         model->setChanged();
-    }
-
-    // Check, if warnings should be used before overwriting
-    // the output directory
-    if (dia.getDir().exists() && dia.getDir().count()>0)
-    {
-        WarningDialog warn;
-        warn.showCancelButton (true);
-        warn.setText(QString(
-                         "The directory %1 is not empty.\n"
-                         "Do you risk to overwrite some of its contents?").arg(dia.getDir().absolutePath() ));
-        warn.setCaption("Warning: Directory not empty");
-        warn.setShowAgainName("mainwindow/export-XML-overwrite-dir");
-
-        if (warn.exec()!=QDialog::Accepted)
-        {
-            mainWindow->statusMessage(QString(QObject::tr("Export aborted.")));
-            return;
-        }
-    }
-
-    dirPath=dia.getDir().absolutePath();
-    filePath=getFilePath();
-    
-    // Copy CSS file
-    if (dia.css_copy)
-    {
-        cssSrc=dia.getCssSrc();
-        cssDst=dirPath + "/" + basename(dia.getCssDst());
-        if (cssSrc.isEmpty() )
-        {
-            QMessageBox::critical( 0,
-                                   QObject:: tr( "Critical" ),
-                                   QObject::tr("Could not find stylesheet %1").arg(cssSrc));
-            return;
-        }
-        QFile src(cssSrc);
-        QFile dst(cssDst);
-        if (dst.exists() ) dst.remove();
-
-        if (!src.copy(cssDst))
-        {
-            QMessageBox::critical (0,
-                                   QObject::tr( "Error","ExportHTML" ),
-                                   QObject::tr("Could not copy\n%1 to\n%2","ExportHTML").arg(cssSrc).arg(cssDst));
-            return;
-        }
-    }
-
-    // Copy flags
-    QDir flagsDst(dia.getDir().absolutePath() + "/flags");
-    if (!flagsDst.exists())
-    {
-        if (!dia.getDir().mkdir("flags"))
-        {
-            QMessageBox::critical( 0,
-                                   QObject::tr( "Critical" ),
-                                   QObject::tr("Trying to create directory for flags:") + "\n\n" +
-                                   QObject::tr("Could not create %1").arg(flagsDst.absolutePath()));
-            return;
-        }
-    }
-
-    QDir flagsSrc(flagsPath);   // FIXME-3 don't use flagsPath as source anymore, but copy required flags directly from memory
-    if (!copyDir(flagsSrc, flagsDst, true))
-    {
-        QMessageBox::critical( 0,
-                               QObject::tr( "Critical" ),
-                               QObject::tr("Could not copy %1 to %2").arg(flagsSrc.absolutePath()).arg(flagsDst.absolutePath()));
-        return;
     }
 
     // Open file for writing
@@ -373,20 +318,9 @@ void ExportHTML::doExport(bool useDialog)
     // Hide stuff during export
     model->setExportMode (true);
 
-    // Write header
-    ts << "<html>";
-    ts << "\n<meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\"> ";
-    ts << "\n<meta name=\"generator=\" content=\" vym - view your mind - " + vymVersion + " - " + vymHome + "\">";
-    ts << "\n<meta name=\"author\" content=\"" + quotemeta(model->getAuthor()) + "\"> ";
-    ts << "\n<meta name=\"description\" content=\"" + quotemeta(model->getComment()) + "\"> ";
-    ts << "\n<link rel='stylesheet' id='css.stylesheet' href='" << basename(cssDst) << "' />\n";
-    QString title=model->getTitle();
-    if (title.isEmpty()) title=model->getMapName();
-    ts << "\n<head><title>" + quotemeta(title) + "</title></head>";
-    ts << "\n<body>\n";
-
     // Include image
     // (be careful: this resets Export mode, so call before exporting branches)
+    /*
     if (dia.includeMapImage)
     {
         QString mapName = getMapName();
@@ -395,41 +329,76 @@ void ExportHTML::doExport(bool useDialog)
         ts << " usemap='#imagemap'></center>\n";
         offset = model->exportImage (dirPath + "/" + mapName + ".png", false, "PNG");
     }
+    */
 
     // Include table of contents
-    if (dia.useTOC) ts << createTOC();
+    //if (dia.useTOC) ts << createTOC();
 
     // Main loop over all mapcenters
     ts << buildList(model->getRootItem()) << "\n";
 
     // Imagemap
-    ts << "<map name='imagemap'>\n" + imageMap + "</map>\n";
+    //ts << "<map name='imagemap'>\n" + imageMap + "</map>\n";
 
-    // Write footer
-    ts << "<hr/>\n";
-    ts << "<table class=\"vym-footer\">   \n\
-        <tr> \n\
-        <td class=\"vym-footerL\">" + filePath + "</td> \n\
-            <td class=\"vym-footerC\">" + model->getDate() + "</td> \n\
-            <td class=\"vym-footerR\"> <a href='" + vymHome + "'>vym " + vymVersion + "</a></td> \n\
-            </tr> \n \
-            </table>\n";
-            ts << "</body></html>";
     file.close();
 
-    if (!dia.postscript.isEmpty())
+    // First check if page already exists
+    ConfluenceAgent *ca_details = new ConfluenceAgent (model);
+    ConfluenceAgent *ca_content = new ConfluenceAgent (model);
+
+    mainWindow->statusMessage(QObject::tr("Trying to read Confluence page...","Confluence export"));
+    if (ca_details->getPageDetails( dia.getPageURL() ) )
     {
-        VymProcess p;
-        p.runScript (dia.postscript,dirPath + "/" + filePath);  
+        ca_details->waitForResult();
+
+        if (ca_details->success() ) 
+        {
+            // Page is existing already
+            if (dia.createNewPage() )
+            {
+                qDebug() << "Wanted to create new page, but page already exists. Aborted";
+            } else
+            {
+                qDebug() << "Starting to update existing page...";
+                ca_content->updatePage( dia.getPageURL(), dia.getPageTitle(), filePath);
+                ca_content->waitForResult();
+                if (ca_content->success() ) 
+                {
+                    qDebug() << "Page updated.";
+                    success = true;
+                } else
+                {
+                    qDebug() << "Page not updated.";
+                }
+            } 
+        } else
+        {
+            // Page not existing yet
+            if (dia.createNewPage() )
+            {
+                qDebug() << "Starting to create new page...";
+                ca_content->createPage( dia.getPageURL(), dia.getPageTitle(), filePath);
+                ca_content->waitForResult();
+                if (ca_content->success() ) 
+                {
+                    qDebug() << "Page created.";
+                    success = true;
+                } else
+                {
+                    qDebug() << "Page not created.";
+                }
+            }
+        }
     }
 
-    destination = filePath;
+    delete (ca_details);
+    delete (ca_content);
 
-    success = true;
+    destination = dia.getPageURL();
 
     QMap <QString, QString> args;
-    args["filePath"] = filePath;
-    args["dirPath"]  = dirPath;
+    args["pageURL"]   = destination;
+    args["pageTitle"] = dia.getPageTitle();
     completeExport( args );
 
     dia.saveSettings();

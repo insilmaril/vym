@@ -269,62 +269,38 @@ void VymView::collapseOneLevel()
 
 void VymView::collapseUnselected()
 {
-    BranchItem *cur  = NULL;
-    BranchItem *prev = NULL;
     QModelIndex pix;
 
     // Find level to collapse
-    TreeItem *selti = model->getSelectedItem();
-    if (!selti) return;
+    BranchItem *selbi = model->getSelectedBranch();
+    if (!selbi) return;
 
-    int level = selti->depth();
+    int level = selbi->depth();
+
+    QList <BranchItem*> itemPath;
+
+    BranchItem *cur  = selbi;
+    BranchItem *prev = NULL;
+
+    while (cur->parentBranch())
+    {
+        itemPath << cur;
+        cur = cur->parentBranch();
+    }
+    
+    cur = NULL;
 
     // collapse all to level
     model->nextBranch(cur, prev);
-    //bool b=false;
     while (cur) 
     {
 	pix = model->index (cur);
-	if (treeEditor->isExpanded(pix) &&  level <= cur->depth())
+	if (treeEditor->isExpanded(pix) &&  itemPath.indexOf(cur) < 0 )
 	{
 	    treeEditor->setExpanded(pix, false);
 	}
 	model->nextBranch(cur, prev);
     }
-
-/* FIXME-3 "collapse more" unimplemented yet
-    if (b) return;
-
-    // If we didn't collapse anything so far collapse more
-    qDebug() << "VM::collapse more";
-    cur  = NULL;
-    prev = NULL;
-
-    // Find level to collapse
-    model->nextBranch(cur, prev);
-    while (cur) 
-    {
-	pix = model->index (cur);
-	d   = cur->depth();
-	if (treeEditor->isExpanded(pix) && d > level && )
-	    level = d;
-	model->nextBranch(cur, prev);	
-    }
-
-    // collapse all to level
-    model->nextBranch(cur,prev);
-    bool b = false;
-    while (cur) 
-    {
-	pix = model->index (cur);
-	if (treeEditor->isExpanded(pix) &&  level <= cur->depth())
-	{
-	    treeEditor->setExpanded(pix, false);
-	    b = true;
-	}
-	model->nextBranch(cur, prev);	
-    }
-*/
 }
 
 void VymView::showSelection()

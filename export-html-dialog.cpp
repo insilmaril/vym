@@ -1,4 +1,4 @@
-#include "exporthtmldialog.h"	
+#include "export-html-dialog.h"	
 
 #include <QFileDialog>
 #include <QMessageBox>

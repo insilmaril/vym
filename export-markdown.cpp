@@ -134,7 +134,15 @@ void ExportMarkdown::doExport()
     clipboard->setText(out);
 
     QString listTasksString = listTasks ? "true" : "false";
-    completeExport( QString("\"%1\",%2").arg(filePath).arg(listTasksString) );
+
+    destination = filePath;
+
+    success = true;
+
+    QMap <QString, QString> args;
+    args["filePath"]  = filePath;
+    args["listTasks"] = listTasksString;
+    completeExport( args );
 }
 
 QString ExportMarkdown::underline (const QString &text, const QString &line)
