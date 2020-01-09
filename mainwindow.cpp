@@ -1024,7 +1024,7 @@ void Main::setupFileActions()
 
     if (settings.value( "/mainwindow/showTestMenu",false).toBool()) 
     {
-        a = new QAction( QPixmap(), tr("Firefox Bookmarks","Import filters"),this);
+        a = new QAction( QPixmap(), tr("Firefox Bookmarks","Import filters") + " (test)",this);
         connect( a, SIGNAL( triggered() ), this, SLOT( fileImportFirefoxBookmarks() ) );
         fileImportMenu->addAction(a);
     }
@@ -1037,7 +1037,7 @@ void Main::setupFileActions()
     connect( a, SIGNAL( triggered() ), this, SLOT( fileImportMM() ) );
     fileImportMenu->addAction(a);
 
-    a = new QAction( tr( "Import Dir%1","Import Filters").arg("..." + tr("(still experimental)") ), this);
+    a = new QAction( tr( "Import Dir...","Import Filters") + " " + tr("(still experimental)"), this);
     connect( a, SIGNAL( triggered() ), this, SLOT( fileImportDir() ) );
     fileImportMenu->addAction(a);
 
@@ -1054,7 +1054,7 @@ void Main::setupFileActions()
     connect( a, SIGNAL( triggered() ), this, SLOT( fileExportHTML() ) );
     fileExportMenu->addAction(a);
 
-    a = new QAction(  tr("Confluence (HTML)...","File export menu") + tr("(still experimental)"),this );
+    a = new QAction(  tr("Confluence (HTML)...","File export menu") + " " + " " + tr("(still experimental)"),this );
     connect( a, SIGNAL( triggered() ), this, SLOT( fileExportConfluence() ) );
     fileExportMenu->addAction(a);
 
@@ -1062,11 +1062,11 @@ void Main::setupFileActions()
     connect( a, SIGNAL( triggered() ), this, SLOT( fileExportASCII() ) );
     fileExportMenu->addAction(a);
 
-    a = new QAction( tr("Text (Markdown)...","File export menu") + " (ASCII)... "  + tr("(still experimental)"), this);
+    a = new QAction( tr("Text (Markdown)...","File export menu") + " " +  tr("(still experimental)"), this);
     connect( a, SIGNAL( triggered() ), this, SLOT( fileExportMarkdown() ) );
     fileExportMenu->addAction(a);
 
-    a = new QAction( tr("Text with tasks","File export menu") + " (ASCII)... "  + tr("(still experimental)"), this);
+    a = new QAction( tr("Text with tasks","File export menu") + " "  + tr("(still experimental)"), this);
     connect( a, SIGNAL( triggered() ), this, SLOT( fileExportASCIITasks() ) );
     fileExportMenu->addAction(a);
 
@@ -1094,7 +1094,7 @@ void Main::setupFileActions()
     connect( a, SIGNAL( triggered() ), this, SLOT( fileExportXML() ) );
     fileExportMenu->addAction(a);
 
-    a = new QAction( tr("Spreadsheet") + " (CSV)... " + tr("(still experimental)"), this);
+    a = new QAction( tr("CSV...") + " " + tr("(still experimental)"), this);
     connect( a, SIGNAL( triggered() ), this, SLOT( fileExportCSV() ) );
     fileExportMenu->addAction(a);
 
@@ -1229,7 +1229,7 @@ void Main::setupEditActions()
     actionDeleteAlt=a;
 
     // Shortcut to add attribute
-    a= new QAction(tr( "Add attribute" ), this);
+    a= new QAction(tr( "Add attribute" ) + " (test)", this);
     if (settings.value( "/mainwindow/showTestMenu",false).toBool() )
     {
 	//a->setShortcut ( Qt::Key_Q);	
@@ -1918,7 +1918,7 @@ void Main::setupSelectActions()
     connect( a, SIGNAL( triggered() ), this, SLOT( editOpenFindResultWidget() ) );
     actionListFiles.append(a);
 
-    a = new QAction( tr( "Find duplicate URLs","Edit menu"), this);
+    a = new QAction( tr( "Find duplicate URLs","Edit menu") + " (test)", this);
     a->setShortcut (Qt::SHIFT + Qt::Key_F);	
     switchboard.addSwitch ("mapFindDuplicates", shortcutScope, a, tag);
     if (settings.value( "/mainwindow/showTestMenu",false).toBool() ) 
@@ -2854,7 +2854,7 @@ void Main::setupContextMenus()
 	branchLinksContextMenu->addAction ( actionGetBugzillaData );
 	branchLinksContextMenu->addAction ( actionGetBugzillaDataSubtree );
 	if (settings.value( "/mainwindow/showTestMenu",false).toBool() )
-	    branchLinksContextMenu->addAction ( actionFATE2URL );
+	    branchLinksContextMenu->addAction ( actionFATE2URL );   // FIXME-1 remove FATE?
 	branchLinksContextMenu->addSeparator();	
 	branchLinksContextMenu->addAction ( actionOpenVymLink );
 	branchLinksContextMenu->addAction ( actionOpenVymLinkBackground );
