@@ -16,7 +16,7 @@ class ConfluenceAgent:public QObject
     Q_OBJECT
 
 public:	
-    ConfluenceAgent (VymModel *m);
+    ConfluenceAgent ();
     ~ConfluenceAgent();
     void test();
     bool getPageDetails(const QString &url);
@@ -25,16 +25,16 @@ private:
 public:
     bool updatePage(const QString &url, const QString &title, const QString &fpath);
     bool createPage(const QString &url, const QString &title, const QString &fpath);
+    bool getUsers(const QString &name);
     void waitForResult();
     bool success();
     QString getResult();
 
 public slots:
-    virtual bool pageDetailsReceived(int exitCode, QProcess::ExitStatus exitStatus);
+    virtual bool dataReceived(int exitCode, QProcess::ExitStatus exitStatus);
     virtual void timeout();
 
 private:
-    uint modelID;
     QString confluenceScript;
     VymProcess *vymProcess;
     QTimer *killTimer;

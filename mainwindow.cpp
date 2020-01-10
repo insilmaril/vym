@@ -47,6 +47,7 @@
 #include "taskeditor.h"
 #include "taskmodel.h"
 #include "treeeditor.h"
+#include "userdialog.h"
 #include "warningdialog.h"
 #include "xlinkitem.h"
 
@@ -5938,8 +5939,13 @@ void Main::testFunction1()
     VymModel  *m  = currentModel();
     if (m)
     {
-        ConfluenceAgent *ca = new ConfluenceAgent (m);
-        ca->test();
+        UserDialog dia;
+        dia.exec();
+        if (dia.result() > 0 )
+        {
+            m->setHeading(dia.selectedUser());
+            m->setURL( QString("<ac:link> <ri:user ri:userkey=\"%1\"/></ac:link>").arg(dia.selectedUserKey() ));
+        }
     }
 }
 

@@ -62,6 +62,7 @@ QString ExportConfluence::getBranchText(BranchItem *current)
             col = QString("style='color:%1'").arg(current->getHeadingColor().name());
         QString s;
         QString url = current->getURL();
+
         QString heading = quotemeta(current->getHeadingPlain());
 
         // Task flags
@@ -95,11 +96,12 @@ QString ExportConfluence::getBranchText(BranchItem *current)
         // URL
         if (!url.isEmpty())
         {
-            s += QString ("<a href=\"%1\">%2</a>")
+            if (url.contains("ri:userkey") )
+                s += url;
+            else
+                s += QString ("<a href=\"%1\">%2</a>")
                     .arg(url)
                     .arg(number + taskFlags + heading + userFlags);
-
-            QRectF fbox = current->getBBoxURLFlag ();
         } else
             s += number + taskFlags + heading + userFlags;
 
@@ -321,8 +323,8 @@ void ExportConfluence::doExport(bool useDialog)
     file.close();
 
     // First check if page already exists
-    ConfluenceAgent *ca_details = new ConfluenceAgent (model);
-    ConfluenceAgent *ca_content = new ConfluenceAgent (model);
+    ConfluenceAgent *ca_details = new ConfluenceAgent ();
+    ConfluenceAgent *ca_content = new ConfluenceAgent ();
 
     mainWindow->statusMessage(QObject::tr("Trying to read Confluence page...","Confluence export"));
     if (ca_details->getPageDetails( dia.getPageURL() ) )

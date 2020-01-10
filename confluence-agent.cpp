@@ -10,13 +10,9 @@ extern Main *mainWindow;
 extern QDir vymBaseDir;
 extern bool debug;
 
-ConfluenceAgent::ConfluenceAgent (VymModel *m)
+ConfluenceAgent::ConfluenceAgent ()
 {
     killTimer = NULL;
-
-    modelID = m->getModelID();
-
-    //qDebug() << "Constr. ConfluenceAgent for " << branchID;
 
     confluenceScript = vymBaseDir.path() + "/scripts/confluence.rb";
 
@@ -65,7 +61,7 @@ bool ConfluenceAgent::getPageDetails(const QString &url)
     vymProcess = new VymProcess;
 
     connect (vymProcess, SIGNAL (finished(int, QProcess::ExitStatus) ), 
-	this, SLOT (pageDetailsReceived(int, QProcess::ExitStatus) ));
+	this, SLOT (dataReceived(int, QProcess::ExitStatus) ));
 
     vymProcess->start (confluenceScript, args);
 
@@ -96,7 +92,7 @@ bool ConfluenceAgent::uploadContent(const QString &url, const QString &title, co
     vymProcess = new VymProcess;
 
     connect (vymProcess, SIGNAL (finished(int, QProcess::ExitStatus) ), 
-	this, SLOT (pageDetailsReceived(int, QProcess::ExitStatus) ));
+	this, SLOT (dataReceived(int, QProcess::ExitStatus) ));
 
     vymProcess->start (confluenceScript, args);
 
@@ -117,6 +113,30 @@ bool ConfluenceAgent::updatePage(const QString &url, const QString &title, const
 bool ConfluenceAgent::createPage(const QString &url, const QString &title, const QString &fpath)
 {
     return uploadContent (url, title, fpath, true);
+}
+
+bool ConfluenceAgent::getUsers(const QString &name)
+{
+    QStringList args;   // FIXME-0 refactor so that args are passed to one function starting the process
+
+    args << "-s";
+    args << name;
+
+    if (debug)  qDebug() << "ConfluenceAgent: confluence.rb:  " << args.join(" ");  
+    vymProcess = new VymProcess;
+
+    connect (vymProcess, SIGNAL (finished(int, QProcess::ExitStatus) ), 
+	this, SLOT (dataReceived(int, QProcess::ExitStatus) ));
+
+    vymProcess->start (confluenceScript, args);
+
+    if (!vymProcess->waitForStarted())
+    {
+	qWarning() << "ConfluenceAgent::test()  couldn't start " << confluenceScript;
+	return false; 
+    } 
+
+    return true;
 }
 
 void ConfluenceAgent::waitForResult()   
@@ -144,7 +164,7 @@ QString ConfluenceAgent::getResult()
 }
 
 
-bool ConfluenceAgent::pageDetailsReceived(int exitCode, QProcess::ExitStatus exitStatus)    // FIXME-0  return value???   // FIXME-0  name correct? used by all functions...
+bool ConfluenceAgent::dataReceived(int exitCode, QProcess::ExitStatus exitStatus)    // FIXME-0  return value???   // FIXME-0  name correct? used by all functions...
 {
     if (exitStatus == QProcess::NormalExit)
     {
@@ -167,7 +187,7 @@ bool ConfluenceAgent::pageDetailsReceived(int exitCode, QProcess::ExitStatus exi
 void ConfluenceAgent::timeout()
 {
     qWarning() << "ConfluenceAgent timeout!";
-    delete (vymProcess);
+    // delete (vymProcess);  // FIXME-0  crashes...
     vymProcess = NULL;
 }
     

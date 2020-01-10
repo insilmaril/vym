@@ -149,6 +149,7 @@ HEADERS	+= \
     treeitem.h \
     treemodel.h \
     texteditor.h \
+    userdialog.h \
     version.h \
     vymlock.h \
     vymmodel.h \
@@ -257,6 +258,7 @@ SOURCES	+= \
     treeeditor.cpp \
     treeitem.cpp \
     treemodel.cpp \
+    userdialog.cpp \
     version.cpp \
     vymlock.cpp \
     vymmodel.cpp \
@@ -288,6 +290,7 @@ FORMS = \
     lockedfiledialog.ui \
     scripteditor.ui \
     showtextdialog.ui \
+    userdialog.ui \
     warningdialog.ui 
 
 isEmpty( PREFIX ) {
