@@ -304,7 +304,8 @@ ErrorCode zipDir ( QDir zipInputDir, QString zipName)
             {
                 QMessageBox::critical( 0, QObject::tr( "Error" ),
                                        QString("Called %1\nExit code:  %2").arg(zipToolPath).arg(zipProc->exitCode() ) +
-                                       "\n" + zipProc->getErrout() );
+                                       "\nErr: " + zipProc->getErrout() +
+                                       "\nStd: " + zipProc->getStdOut() );
                 err = Aborted;
             } else if (zipProc->exitCode() == 1)
             {
