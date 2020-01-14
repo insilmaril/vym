@@ -1,7 +1,7 @@
 #ifndef EXPORTHTMLDIALOG_H
 #define EXPORTHTMLDIALOG_H
 
-#include "ui_exporthtmldialog.h"
+#include "ui_export-html-dialog.h"
 
 #include <QDir>
 
