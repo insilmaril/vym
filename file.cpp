@@ -300,12 +300,21 @@ ErrorCode zipDir ( QDir zipInputDir, QString zipName)
             err=Aborted;
         } else
         {
-            if (zipProc->exitCode()>0)
+            if (zipProc->exitCode() > 1)
             {
-                QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
-                                       QString("zip exit code:  %1").arg(zipProc->exitCode() )+
+                QMessageBox::critical( 0, QObject::tr( "Error" ),
+                                       QString("Called %1\nExit code:  %2").arg(zipToolPath).arg(zipProc->exitCode() ) +
                                        "\n" + zipProc->getErrout() );
-                err=Aborted;
+                err = Aborted;
+            } else if (zipProc->exitCode() == 1)
+            {
+                // Non fatal according to internet, but for example
+                // some file was locked and could not be compressed
+                QMessageBox::warning( 0, QObject::tr( "Warning" ),
+                                       QString("Called %1\nExit code:  %2").arg(zipToolPath).arg(zipProc->exitCode() ) +
+                                       "\n" + zipProc->getErrout() + 
+                    "Please check the saved map, e.g. by opening in another tab.\n" + 
+                    "Workaround if save failed: Export as xml");
             }
         }
     }
@@ -335,7 +344,7 @@ ErrorCode zipDir ( QDir zipInputDir, QString zipName)
             QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
                                    QObject::tr("zip didn't exit normally")+
                                    "\n" + zipProc->getErrout());
-            err=Aborted;
+            err = Aborted;
         } else
         {
             if (zipProc->exitCode()>0)
