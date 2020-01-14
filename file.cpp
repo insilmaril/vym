@@ -300,22 +300,35 @@ ErrorCode zipDir ( QDir zipInputDir, QString zipName)
             err=Aborted;
         } else
         {
+            /*
+            QMessageBox::information( 0, QObject::tr( "Debug" ),
+                               "Called:" + zipToolPath + "\n" +
+                               "Args: "  + args.join(" ") + "\n" +
+                               "Exit: "  + zipProc->exitCode() + "\n" +
+                               "Err: " + zipProc->getErrout()  + "\n" +
+                               "Std: " + zipProc->getStdout() );
+            */
             if (zipProc->exitCode() > 1)
             {
                 QMessageBox::critical( 0, QObject::tr( "Error" ),
-                                       QString("Called %1\nExit code:  %2").arg(zipToolPath).arg(zipProc->exitCode() ) +
-                                       "\nErr: " + zipProc->getErrout() +
-                                       "\nStd: " + zipProc->getStdOut() );
+                                   "Called:" + zipToolPath + "\n" +
+                                   "Args: "  + args.join(" ") + "\n" +
+                                   "Exit: "  + zipProc->exitCode() + "\n" +
+                                   "Err: " + zipProc->getErrout()  + "\n" +
+                                   "Std: " + zipProc->getStdout() );
                 err = Aborted;
             } else if (zipProc->exitCode() == 1)
             {
                 // Non fatal according to internet, but for example
                 // some file was locked and could not be compressed
-                QMessageBox::warning( 0, QObject::tr( "Warning" ),
-                                       QString("Called %1\nExit code:  %2").arg(zipToolPath).arg(zipProc->exitCode() ) +
-                                       "\n" + zipProc->getErrout() + 
-                    "Please check the saved map, e.g. by opening in another tab.\n" + 
-                    "Workaround if save failed: Export as xml");
+                QMessageBox::warning( 0, QObject::tr( "Error" ),
+                                   "Called:" + zipToolPath + "\n" +
+                                   "Args: "  + args.join(" ") + "\n" +
+                                   "Exit: "  + zipProc->exitCode() + "\n" +
+                                   "Err: " + zipProc->getErrout()  + "\n" +
+                                   "Std: " + zipProc->getStdout() + "\n"
+                        "Please check the saved map, e.g. by opening in another tab.\n" +
+                        "Workaround if save failed: Export as xml");
             }
         }
     }
@@ -452,20 +465,36 @@ File::ErrorCode unzipDir ( QDir zipOutputDir, QString zipName)
             err=Aborted;
         } else
         {
-            if (zipProc->exitCode()>0)
+            /*
+            QMessageBox::information( 0, QObject::tr( "Debug" ),
+                               "Called:" + zipToolPath + "\n" +
+                               "Args: "  + args.join(" ") + "\n" +
+                               "Exit: "  + zipProc->exitCode() + "\n" +
+                               "Err: " + zipProc->getErrout()  + "\n" +
+                               "Std: " + zipProc->getStdout() );
+            */
+            if (zipProc->exitCode() > 1)
             {
-                if (zipProc->exitCode()==9)
-                    // no zipped file, but maybe .xml or old version? Try again.
-                    err=NoZip;
-                else
-                {
-                    QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
-                                           QString("%1 exit code:  %2").arg(zipToolPath).arg(zipProc->exitCode() ) +
-                                           zipProc->getErrout() );
-                    err=Aborted;
-                }
+                QMessageBox::critical( 0, QObject::tr( "Error" ),
+                                   "Called:" + zipToolPath + "\n" +
+                                   "Args: "  + args.join(" ") + "\n" +
+                                   "Exit: "  + zipProc->exitCode() + "\n" +
+                                   "Err: " + zipProc->getErrout()  + "\n" +
+                                   "Std: " + zipProc->getStdout() );
+                err = Aborted;
+            } else if (zipProc->exitCode() == 1)
+            {
+                // Non fatal according to internet, but for example
+                // some file was locked and could not be compressed
+                QMessageBox::warning( 0, QObject::tr( "Error" ),
+                                   "Called:" + zipToolPath + "\n" +
+                                   "Args: "  + args.join(" ") + "\n" +
+                                   "Exit: "  + zipProc->exitCode() + "\n" +
+                                   "Err: " + zipProc->getErrout()  + "\n" +
+                                   "Std: " + zipProc->getStdout() + "\n" );
             }
         }
+
     }
     return err;
 }
