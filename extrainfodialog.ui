@@ -56,6 +56,9 @@
    </item>
    <item>
     <widget class="QLineEdit" name="fileLocationLE">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
      <property name="autoFillBackground">
       <bool>false</bool>
      </property>
