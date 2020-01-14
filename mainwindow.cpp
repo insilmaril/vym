@@ -6086,10 +6086,12 @@ void Main::helpMacros()
 void Main::debugInfo()  
 {
     QString s;
-    s = QString ("Platform: %1\n").arg(vymPlatform);
+    s = QString ("vym version: %1\n").arg(vymVersion);
+    s += QString ("Platform: %1\n").arg(vymPlatform);
     s += QString ("localeName: %1\nPath: %2\n")
         .arg(localeName)
         .arg(vymBaseDir.path() + "/lang");
+    s += QString("zipToolPath: %1\n").arg(zipToolPath);
     s += QString("vymBaseDir: %1\n").arg(vymBaseDir.path());
     s += QString("currentPath: %1\n").arg(QDir::currentPath());
     s += QString("appDirPath: %1\n").arg(QCoreApplication::applicationDirPath());

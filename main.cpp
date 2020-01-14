@@ -340,9 +340,11 @@ int main(int argc, char* argv[])
     vymPlatform = QSysInfo::prettyProductName();
 
 #if defined(Q_OS_MACX)
+    zipToolPath = "zip/unzip (system)";
 #elif defined(Q_OS_WIN32)
     zipToolPath = settings.value("/system/zipToolPath", "c:\\Program Files\\7-Zip\\7z.exe").toString();
 #elif defined(Q_OS_LINUX)
+    zipToolPath = "zip/unzip (system)";
 #else
 #endif
     iconPath  = vymBaseDir.path()+"/icons/";
