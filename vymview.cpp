@@ -279,7 +279,9 @@ void VymView::collapseUnselected()
 
     QList <BranchItem*> itemPath;
 
-    BranchItem *cur  = selbi;
+    // Do not include selected branch, 
+    // this one also should be collapsed later
+    BranchItem *cur  = selbi->parentBranch();
     BranchItem *prev = NULL;
 
     while (cur->parentBranch())
