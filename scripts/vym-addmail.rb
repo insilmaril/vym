@@ -27,10 +27,12 @@ begin
 
     if mail.multipart? then
       puts "Warning: multipart mail detected. Only using first part."
-      puts mail.parts.first.decoded
+      # puts mail.parts.first.decoded
       out << mail.parts.first.decoded
     else
-      out <<  mail.body.raw_source.gsub("\n", "<br/>")
+      #out <<  mail.body.raw_source.gsub("\n", "<br/>")
+      out <<  mail.decoded
+      #puts out
     end
 
     out << "</body></html>"
@@ -38,6 +40,7 @@ begin
     out.rewind
 
     vym_mgr = VymManager.new
+    vym_mgr.show_running
     vym = vym_mgr.find('production') 
 
     if !vym
@@ -50,9 +53,11 @@ begin
 
     # Before doing anything, make sure there is a return value available
     # Otherwise the script might block     // FIXME-1
-    version = vym.version
+    #version = vym.version
 
-    map = vym.currentMapX();
+#    map = vym.currentMap()
+    map = vym.map(1)
+    
     #map = vym.map(6)
     #map.select "mc:0,b0:0,bo:0"
 
