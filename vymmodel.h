@@ -32,7 +32,7 @@ class VymView;
 
 class QGraphicsScene;
 
-typedef QMap<uint,QString> ItemList ;
+typedef QMap <uint,QStringList> ItemList;
 
 class VymModel :  public TreeModel {
     Q_OBJECT
@@ -508,6 +508,7 @@ signals:
 
 public:
     void toggleTarget();
+    ItemList getLinkedMaps();
     ItemList getTargets();
 
     void toggleStandardFlag (const QString &name, FlagRow *master=NULL);

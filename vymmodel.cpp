@@ -3840,15 +3840,47 @@ void VymModel::toggleTarget()
     }
 }
 
+ItemList VymModel::getLinkedMaps()	
+{
+    ItemList targets;
+    
+    //rmodel->setSearchString (s);
+
+    BranchItem *cur  = NULL;
+    BranchItem *prev = NULL;
+    nextBranch(cur, prev);
+
+    QString s;
+
+    while (cur) 
+    {
+	if (cur->hasActiveSystemFlag("system-target") && !cur->getVymLink().isEmpty())
+        {
+            s = cur->getHeading().getTextASCII();
+            s.replace(QRegularExpression("\n+"), " "); 
+            s.replace(QRegularExpression("\\s+"), " "); 
+            s.replace(QRegularExpression("^\\s+"), ""); 
+
+            QStringList sl;
+            sl << s;
+            sl << cur->getVymLink();
+
+            targets[cur->getID()] = sl;
+        }
+	nextBranch(cur, prev);
+    }
+    return targets; 
+}
+
 ItemList VymModel::getTargets()	
 {
     ItemList targets;
     
     //rmodel->setSearchString (s);
 
-    BranchItem *cur=NULL;
-    BranchItem *prev=NULL;
-    nextBranch(cur,prev);
+    BranchItem *cur  = NULL;
+    BranchItem *prev = NULL;
+    nextBranch(cur, prev);
 
     QString s;
 
@@ -3860,7 +3892,11 @@ ItemList VymModel::getTargets()
             s.replace(QRegularExpression("\n+"), " "); 
             s.replace(QRegularExpression("\\s+"), " "); 
             s.replace(QRegularExpression("^\\s+"), ""); 
-            targets[cur->getID()] = s;
+            
+            QStringList sl;
+            sl << s;
+
+            targets[cur->getID()] = sl;
         }
 	nextBranch(cur,prev);
     }

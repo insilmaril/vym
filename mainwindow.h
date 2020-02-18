@@ -223,6 +223,12 @@ private slots:
     void editEditXLink (QAction *);
 
 private slots:    
+    bool initLinkedMapsMenu( VymModel *model, QMenu *menu);
+
+public slots:
+    void editGoToLinkedMap();
+
+private slots:    
     void editToggleTarget();
     bool initTargetsMenu( VymModel *model, QMenu *menu);
     void editGoToTarget();

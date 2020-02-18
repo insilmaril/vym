@@ -1875,6 +1875,14 @@ void Main::setupSelectActions()
     actionListBranches.append (a);
     actionMoveToTarget=a;
 
+    a = new QAction( QPixmap(":/flag-vymlink.png"), tr( "Goto linked map...","Edit menu"), this);
+    a->setShortcut (Qt::Key_G + Qt::SHIFT);		
+    selectMenu->addAction(a);
+    switchboard.addSwitch ("gotoLinkedMap", shortcutScope, a, tag);
+    connect( a, SIGNAL( triggered() ), this, SLOT( editGoToLinkedMap() ) );
+    actionListBranches.append (a);
+    actionMoveToTarget=a;
+
     a = new QAction( QPixmap(":/selectprevious.png"), tr( "Select previous","Edit menu"), this);
     a->setShortcut (Qt::CTRL+ Qt::Key_O );	
     a->setShortcutContext (Qt::WidgetShortcut);
@@ -4707,6 +4715,65 @@ void Main::editFollowXLink(QAction *a)
 	m->followXLink(branchXLinksContextMenuFollow->actions().indexOf(a));
 }
 
+bool Main::initLinkedMapsMenu( VymModel *model, QMenu *menu)    // FIXME-0 build Map of branch names and paths of linked vym maps
+{
+    if (model)
+    {
+        ItemList targets = model->getLinkedMaps();
+
+        menu->clear();
+
+        QStringList targetNames;
+        QList <uint> targetIDs;
+
+        // Build QStringList with all names of targets
+        QMap <uint,QStringList>::const_iterator i;
+        i = targets.constBegin();
+        while (i != targets.constEnd()) 
+        {
+            targetNames.append( i.value().first() );
+            targetIDs.append( i.key() );
+            ++i;
+        }
+
+        // Sort list of names
+        targetNames.sort( Qt::CaseInsensitive );
+
+        // Build menu based on sorted names
+        while ( !targetNames.isEmpty() )
+        {
+            // Find target by value
+            i = targets.constBegin();
+            while (i != targets.constEnd()) 
+            {
+                if ( i.value().first() == targetNames.first() ) break;
+                ++i;
+            }
+
+            menu->addAction( targetNames.first() )->setData( i.value().last() );
+            targetNames.removeFirst();
+            targets.remove( i.key() );
+        }
+        return true;
+    }
+    return false;
+}
+
+void Main::editGoToLinkedMap()  
+{
+    VymModel *model = currentModel();
+    if (initLinkedMapsMenu( model, targetsContextMenu ) )
+    {
+	QAction *a = targetsContextMenu->exec (QCursor::pos());
+	if (a) 
+        {
+            QStringList sl;
+            sl << a->data().toString();
+            openVymLinks (sl);
+        }
+    }
+}
+
 void Main::editToggleTarget()  
 {
     VymModel *m=currentModel();
@@ -4725,11 +4792,11 @@ bool Main::initTargetsMenu( VymModel *model, QMenu *menu)
         QList <uint> targetIDs;
 
         // Build QStringList with all names of targets
-        QMap<uint,QString>::const_iterator i;
+        QMap <uint, QStringList>::const_iterator i;
         i = targets.constBegin();
         while (i != targets.constEnd()) 
         {
-            targetNames.append( i.value() );
+            targetNames.append( i.value().first() );
             targetIDs.append( i.key() );
             ++i;
         }
@@ -4744,7 +4811,7 @@ bool Main::initTargetsMenu( VymModel *model, QMenu *menu)
             i = targets.constBegin();
             while (i != targets.constEnd()) 
             {
-                if ( i.value() == targetNames.first() ) break;
+                if ( i.value().first() == targetNames.first() ) break;
                 ++i;
             }
 
