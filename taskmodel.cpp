@@ -200,7 +200,7 @@ bool TaskModel::setData(const QModelIndex &index, const QVariant &value, int rol
         {
             BranchItem *bi = t->getBranch();
             VymModel *m = bi->getModel();
-            m->setHeadingPlainText("Foobar");
+            m->setHeadingPlainText(value.toString(), bi);
             emit(dataChanged(index, index));
             return true;
         }
