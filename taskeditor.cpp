@@ -94,16 +94,20 @@ TaskEditor::TaskEditor(QWidget *)
     actionToggleFilterFlags3 = a;
 
     // Forward Enter and Return to MapEditor
+    // 
+    
     a = new QAction(icon, tr( "Edit heading","TaskEditor" ), this);
     a->setShortcut ( Qt::Key_Return);		
-    a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
+    a->setShortcutContext (Qt::WidgetShortcut);
     addAction (a);
     connect( a, SIGNAL( triggered() ), mainWindow, SLOT( editHeading() ) );
+    connect( a, SIGNAL( triggered() ), this, SLOT( enterPressed() ) );
     a = new QAction( tr( "Edit heading","TaskEditor" ), this);
     a->setShortcut ( Qt::Key_Enter);			
-    a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
+    a->setShortcutContext (Qt::WidgetShortcut);
     addAction (a);
     connect( a, SIGNAL( triggered() ), mainWindow, SLOT( editHeading() ) );
+    connect( a, SIGNAL( triggered() ), this, SLOT( enterPressed() ) );
 
     // Clone actions defined in MainWindow
     foreach (QAction* qa, mainWindow->taskEditorActions)
@@ -121,10 +125,11 @@ TaskEditor::TaskEditor(QWidget *)
     view->setSelectionBehavior(QAbstractItemView::SelectRows);
     view->horizontalHeader()->setStretchLastSection(true);
     view->verticalHeader()->hide();
-    //view->setEditTriggers(QAbstractItemView::NoEditTriggers); // FIXME-0 remove for edits
+    //view->setEditTriggers(QAbstractItemView::NoEditTriggers); 
 
     filterActiveModel = new TaskFilterModel;
     filterActiveModel->setSourceModel(taskModel);
+    filterActiveModel->setDynamicSortFilter(true);
 
     view->setModel (filterActiveModel);
     view->setSortingEnabled(true);

@@ -180,7 +180,6 @@ bool TaskModel::removeRows(int position, int rows, const QModelIndex &index)
 
 bool TaskModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-    qDebug() << "Trying Editing task...";
     if (index.isValid() && role == Qt::EditRole) 
     {
         Task *t = tasks.at(index.row() );
@@ -190,10 +189,19 @@ bool TaskModel::setData(const QModelIndex &index, const QVariant &value, int rol
             return false;
         }
 
-        if (index.column() == 1)
+        if (index.column() == 1)    // set Delta Priority
         {
             t->setPriorityDelta(value.toInt() );
-            emit(dataChanged(index, index));    // FIXME-0 still need to update filtered view !
+            recalcPriorities();
+            emit(dataChanged(index, index));
+            return true;
+        }
+        if (index.column() == 7)    // set Heading
+        {
+            BranchItem *bi = t->getBranch();
+            VymModel *m = bi->getModel();
+            m->setHeadingPlainText("Foobar");
+            emit(dataChanged(index, index));
             return true;
         }
     }
