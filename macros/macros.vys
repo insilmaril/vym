@@ -119,8 +119,8 @@ function macro_shift_f1()
 {
     map = vym.currentMap();
     toggle_frame ( map );
-	map.setFrameBrushColor("#ffb3b4");
-	statusMessage("Background light red");
+    map.setFrameBrushColor("#ffb3b4");
+    statusMessage("Background light red");
 }
 
 // Macro Shift + F2: Frame background light green
@@ -128,8 +128,8 @@ function macro_shift_f2()
 {
     map = vym.currentMap();
     toggle_frame ( map );
-	map.setFrameBrushColor("#bdffd6");
-	statusMessage("Background light green");
+    map.setFrameBrushColor("#bdffd6");
+    statusMessage("Background light green");
 }
 
 // Macro Shift + F3: Frame background light yellow
@@ -137,8 +137,8 @@ function macro_shift_f3()
 {
     map = vym.currentMap();
     toggle_frame ( map );
-	map.setFrameBrushColor("#efefb3");
-	statusMessage("Background light yellow");
+    map.setFrameBrushColor("#efefb3");
+    statusMessage("Background light yellow");
 }
 
 // Macro Shift + F4: Frame background light blue
@@ -146,8 +146,8 @@ function macro_shift_f4()
 {
     map = vym.currentMap();
     toggle_frame ( map );
-	map.setFrameBrushColor("#e2e6ff");
-	statusMessage("Background light blue");
+    map.setFrameBrushColor("#e2e6ff");
+    statusMessage("Background light blue");
 }
 
 // Macro Shift + F5: Frame background light grey
@@ -155,8 +155,8 @@ function macro_shift_f5()
 {
     map = vym.currentMap();
     toggle_frame ( map );
-	map.setFrameBrushColor("#d6d6d6");
-	statusMessage("Background light grey");
+    map.setFrameBrushColor("#d6d6d6");
+    statusMessage("Background light grey");
 }
 
 // Macro Shift + F6: Frame background purple
@@ -164,18 +164,26 @@ function macro_shift_f6()
 {
     map = vym.currentMap();
     toggle_frame ( map );
-	map.setFrameBrushColor("#ffaaff");
-	statusMessage("Background purple");
+    map.setFrameBrushColor("#ffaaff");
+    statusMessage("Background purple");
 }
 
-// Macro Shift + F7:
+// Macro Shift + F7: Frame background white
 function macro_shift_f7()
 {
+    map = vym.currentMap();
+    toggle_frame ( map );
+    map.setFrameBrushColor("#ffffff");
+    statusMessage("Background white");
 }
 
-// Macro Shift + F8:
+// Macro Shift + F8: Frame background black
 function macro_shift_f8()
 {
+    map = vym.currentMap();
+    toggle_frame ( map );
+    map.setFrameBrushColor("#000000");
+    statusMessage("Background black");
 }
 
 // Macro Shift + F9: Toggle frame
