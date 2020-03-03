@@ -93,22 +93,6 @@ TaskEditor::TaskEditor(QWidget *)
     connect( a, SIGNAL( triggered() ), this, SLOT(toggleFilterFlags3() ) );
     actionToggleFilterFlags3 = a;
 
-    // Forward Enter and Return to MapEditor
-    // 
-    
-    a = new QAction(icon, tr( "Edit heading","TaskEditor" ), this);
-    a->setShortcut ( Qt::Key_Return);		
-    a->setShortcutContext (Qt::WidgetShortcut);
-    addAction (a);
-    connect( a, SIGNAL( triggered() ), mainWindow, SLOT( editHeading() ) );
-    connect( a, SIGNAL( triggered() ), this, SLOT( enterPressed() ) );
-    a = new QAction( tr( "Edit heading","TaskEditor" ), this);
-    a->setShortcut ( Qt::Key_Enter);			
-    a->setShortcutContext (Qt::WidgetShortcut);
-    addAction (a);
-    connect( a, SIGNAL( triggered() ), mainWindow, SLOT( editHeading() ) );
-    connect( a, SIGNAL( triggered() ), this, SLOT( enterPressed() ) );
-
     // Clone actions defined in MainWindow
     foreach (QAction* qa, mainWindow->taskEditorActions)
     {
@@ -133,6 +117,7 @@ TaskEditor::TaskEditor(QWidget *)
 
     view->setModel (filterActiveModel);
     view->setSortingEnabled(true);
+    view->setIconSize(QSize( 64,64 ));
 
     QHeaderView *hv = view->horizontalHeader();
     hv->setSortIndicator (0,Qt::AscendingOrder);
@@ -171,7 +156,7 @@ TaskEditor::TaskEditor(QWidget *)
 
     // Initialize display of parents of a task
     bool ok;
-    int i=settings.value ("/taskeditor/showParentsLevel", 0).toInt(&ok);
+    int i = settings.value ("/taskeditor/showParentsLevel", 0).toInt(&ok);
     if (ok) taskModel->setShowParentsLevel(i);
 
     view->horizontalHeader()->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -194,9 +179,9 @@ TaskEditor::~TaskEditor()
     settings.setValue ("/taskeditor/filterFlags3",actionToggleFilterFlags3->isChecked());
     settings.setValue ("/taskeditor/showParentsLevel",taskModel->getShowParentsLevel() );
     
-    for (int i=0; i<=7; i++)
+    for (int i = 0; i <= 8; i++)
     {
-	settings.setValue (QString("/taskeditor/column/%1/width").arg(i), view->columnWidth(i) );
+	settings.setValue (QString("/taskeditor/column/%1/width").arg(i),  view->columnWidth(i) );
 	settings.setValue (QString("/taskeditor/column/%1/hidden").arg(i), view->isColumnHidden(i) );
     }
 }
@@ -310,7 +295,7 @@ void TaskEditor::updateColumnLayout()
 {
     // Update column widths and visibility
     QString s;
-    for (int i = 0; i < 7; i++)
+    for (int i = 0; i < 8; i++)
     {
 	s = QString("/taskeditor/column/%1/").arg(i);
         view->setColumnWidth  (i, settings.value(s + "width", 20).toInt() );
