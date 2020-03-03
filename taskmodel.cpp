@@ -28,7 +28,7 @@ QModelIndex TaskModel::indexRowEnd (Task* t)
     if (n<0)
 	return QModelIndex();
     else    
-	return createIndex (n, 7, t);
+	return createIndex (n, 8, t);
 }
 
 Task* TaskModel::getTask (const QModelIndex &ix) const
@@ -56,7 +56,7 @@ int TaskModel::rowCount(const QModelIndex &parent) const
 int TaskModel::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    return 8;
+    return 9;
 }
 
 QVariant TaskModel::data(const QModelIndex &index, int role) const
@@ -97,7 +97,7 @@ QVariant TaskModel::data(const QModelIndex &index, int role) const
             else
                 return bi->getModel()->getMapName();
         }
-        else if (index.column() == 7)
+        else if (index.column() == 8)
         {
             BranchItem *bi = tasks.at(index.row())->getBranch();
             return bi->getHeadingPlainWithParents( showParentsLevel );
@@ -105,6 +105,27 @@ QVariant TaskModel::data(const QModelIndex &index, int role) const
     } else if (role == Qt::DecorationRole && index.column() == 2)
     {
         return QIcon(":/flag-" + t->getIconString() + ".png");
+    } else if (role == Qt::DecorationRole && index.column() == 7)
+    {
+        BranchItem *bi = t->getBranch();
+	if (bi->hasActiveStandardFlag ("stopsign") )
+        {
+            if (bi->hasActiveStandardFlag ("2arrow-up") ) 
+                return QIcon(":/flag-stopsign-2arrow-up.png");
+            else 
+                if (bi->hasActiveStandardFlag ("arrow-up") ) 
+                    return QIcon(":/flag-stopsign-arrow-up.png");
+                else
+                    return QIcon(":/flag-stopsign.png");
+        } else
+        {
+            if (bi->hasActiveStandardFlag ("2arrow-up") ) 
+                return QIcon(":/flag-2arrow-up.png");
+            else 
+                if (bi->hasActiveStandardFlag ("arrow-up") )
+                    return QIcon(":/flag-arrow-up.png");
+        }
+        return QIcon();
     }
     else // role != Qt::DisplayRole
     {
@@ -147,7 +168,8 @@ QVariant TaskModel::headerData(int section, Qt::Orientation orientation, int rol
             case 4: return tr("Age mod.","TaskEditor");
             case 5: return tr("Sleep","TaskEditor");
             case 6: return tr("Map","TaskEditor");
-            case 7: return tr("Task","TaskEditor"); 
+            case 7: return tr("Flags","TaskEditor"); 
+            case 8: return tr("Task","TaskEditor"); 
             default: return QVariant();
         }
     }
@@ -196,11 +218,11 @@ bool TaskModel::setData(const QModelIndex &index, const QVariant &value, int rol
             emit(dataChanged(index, index));
             return true;
         }
-        if (index.column() == 7)    // set Heading
+        if (index.column() == 8)    // set Heading
         {
             BranchItem *bi = t->getBranch();
             VymModel *m = bi->getModel();
-            m->setHeadingPlainText("Foobar");
+            m->setHeadingPlainText(value.toString(), bi);
             emit(dataChanged(index, index));
             return true;
         }

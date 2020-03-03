@@ -25,6 +25,8 @@
     <file alias="flag-smiley-omb.png">flags/flag-smiley-omb.png</file>
     <file alias="flag-smiley-sad.png">flags/flag-smiley-sad.png</file>
     <file alias="flag-stopsign.png">flags/flag-stopsign.png</file>
+    <file alias="flag-stopsign-2arrow-up.png">flags/flag-stopsign-2arrow-up.png</file>
+    <file alias="flag-stopsign-arrow-up.png">flags/flag-stopsign-arrow-up.png</file>
     <file alias="flag-target.png">flags/flag-target.png</file>
     <file alias="flag-task-finished.png">flags/flag-task-finished.png</file>
     <file alias="flag-task-new-morning.png">flags/flag-task-new-morning.png</file>

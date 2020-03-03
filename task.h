@@ -1,9 +1,9 @@
 #ifndef TASK_H
 #define TASK_H
 
+#include <QDateTime>
 #include <QString>
 
-#include <QDateTime>
 #include "xmlobj.h"
 
 class BranchItem;
