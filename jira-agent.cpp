@@ -32,12 +32,12 @@ JiraAgent::JiraAgent (BranchItem *bi,const QString &u)
 
     QStringList args;
 
-    if (url.contains("/browse/")) 
+    if (url.contains("/browse/") || url.contains("servicedesk")) 
     {
         // Extract ID from URL first:
 
 	missionType = SingleTicket;
-	QRegExp rx("browse/(.*)$");
+	QRegExp rx("/(.*)$");
         rx.setMinimal(true);
 	if (rx.indexIn(url) != -1)
 	{

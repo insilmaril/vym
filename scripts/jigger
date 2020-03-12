@@ -31,7 +31,7 @@ ARGV.each do |id|
   # This should be removed. Used to switch between various Jira systems 
   if id.downcase.include?("prosolution") || id.downcase.include?("aracr")
     options[:site] = config['jira_intern']
-  elsif id.include?("albatros") || (id.include? "EBACQ") 
+  elsif id.include?("albatros") || (id.include? "EBACQ") || (id.include? "HAPSD")
     options[:site] = config['jira_servicedesk']
   else
     options[:site] = config['jira_extern']
