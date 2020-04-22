@@ -7,8 +7,8 @@ require 'parseconfig'
 config = ParseConfig.new('/home/uwe/.mylogin')
 
 options = {
-  :username     => config['username'],
-  :password     => config['password'],
+  :username     => config['default']['username'],
+  :password     => config['default']['password'],
   :site         => 'https://issue.YOURDOMAIN-XYZ.XYZ/', # Adapt this to your need 
   :context_path => '',
   :ssl_verify_mode =>OpenSSL::SSL::VERIFY_NONE,
@@ -30,11 +30,11 @@ ARGV.each do |id|
 
   # This should be removed. Used to switch between various Jira systems 
   if id.downcase.include?("prosolution") || id.downcase.include?("aracr")
-    options[:site] = config['jira_intern']
+    options[:site] = config['default']['jira_intern']
   elsif id.include?("albatros") || (id.include? "EBACQ") || (id.include? "HAPSD")
-    options[:site] = config['jira_servicedesk']
+    options[:site] = config['default']['jira_servicedesk']
   else
-    options[:site] = config['jira_extern']
+    options[:site] = config['default']['jira_extern']
   end
 
   if options[:debug]

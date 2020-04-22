@@ -37,18 +37,14 @@ JiraAgent::JiraAgent (BranchItem *bi,const QString &u)
         // Extract ID from URL first:
 
 	missionType = SingleTicket;
-	QRegExp rx("/(.*)$");
-        rx.setMinimal(true);
-	if (rx.indexIn(url) != -1)
-	{
-	    ticketID = rx.cap(1);
-	    args << ticketID;
-	} else
+        ticketID = url.section('/', -1, -1);
+	if (ticketID.isEmpty())
 	{
 	    qWarning() << "JiraAgent: No ticketID found in: " << url;
 	    delete (this);
 	    return;
 	}
+        args << ticketID;
 
     } else if (u.contains("fixme-filter"))   // FIXME-4 not supported yet for jira
     {
@@ -77,6 +73,8 @@ JiraAgent::JiraAgent (BranchItem *bi,const QString &u)
 
     connect (p, SIGNAL (finished(int, QProcess::ExitStatus) ), 
 	this, SLOT (processFinished(int, QProcess::ExitStatus) ));
+
+    qDebug() << "JA:  " << ticketScript << "  args: " << args;
 
     p->start (ticketScript, args);
     if (!p->waitForStarted())
