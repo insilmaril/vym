@@ -409,6 +409,7 @@ private:
     QToolBar *modModesToolbar;
     QToolBar *referencesToolbar;
     QToolBar *standardFlagsToolbar;
+    QToolBar *userFlagsToolbar;
 
     QAction* actionFileNew;
     QAction* actionFileNewCopy;

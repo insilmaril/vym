@@ -95,6 +95,7 @@ QStringList ignoredLockedFiles;
 
 FlagRow *systemFlagsMaster; 
 FlagRow *standardFlagsMaster;	
+FlagRow *userFlagsMaster;	
 
 Switchboard switchboard;
 
@@ -411,10 +412,12 @@ int main(int argc, char* argv[])
     app.installTranslator( &vymTranslator );
 
     // Initializing the master rows of flags
-    systemFlagsMaster=new FlagRow;
+    systemFlagsMaster = new FlagRow;
     systemFlagsMaster->setName ("systemFlagsMaster");
-    standardFlagsMaster=new FlagRow;
+    standardFlagsMaster = new FlagRow;
     standardFlagsMaster->setName ("standardFlagsMaster");
+    userFlagsMaster = new FlagRow;
+    userFlagsMaster->setName ("userFlagsMaster");
 
     // Initialize editors
     noteEditor = new NoteEditor("noteeditor");

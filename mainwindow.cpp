@@ -74,6 +74,7 @@ extern QString clipboardFile;
 extern uint  clipboardItemCount;
 extern int statusbarTime;
 extern FlagRow *standardFlagsMaster;	
+extern FlagRow *userFlagsMaster;	
 extern FlagRow *systemFlagsMaster;
 extern QString vymName;
 extern QString vymVersion;
@@ -2335,6 +2336,15 @@ void Main::setupFlagActions()
 
     addToolBarBreak();
 
+    // Create user flags
+    userFlagsToolbar = addToolBar (tr ("User Flags toolbar","user Flags Toolbar"));
+    userFlagsToolbar->setObjectName ("userFlagsTB");
+    userFlagsMaster->setToolBar (userFlagsToolbar);
+
+    // Add entry now, to avoid chicken and egg problem and position toolbar 
+    // after all others:
+    toolbarsMenu->addAction (userFlagsToolbar->toggleViewAction() );
+    
     // Create Standard Flags
     standardFlagsToolbar=addToolBar (tr ("Standard Flags toolbar","Standard Flag Toolbar"));
     standardFlagsToolbar->setObjectName ("standardFlagTB");
