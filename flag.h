@@ -37,7 +37,7 @@ public:
     QPixmap getPixmap();
     void setAction (QAction *a);
     QAction* getAction ();
-    void setUsed (bool);    //FIXME-3 needed?
+    void setUsed (bool);    
     bool isUsed();
     void saveToDir (const QString&, const QString&);
     
