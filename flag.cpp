@@ -31,41 +31,41 @@ Flag::~Flag()
 
 void Flag::init ()
 {
-    action=NULL;
-    name="undefined";
-    visible=true;
+    action  = NULL;
+    name    = "undefined";
+    visible = true;
     unsetGroup();
 
-    state=false;
-    used=false;
+    state   = false;
+    used    = false;
 }
 
 void Flag::copy (Flag* other)
 {
-    action=other->action;
-    name=other->name;
-    group=other->group;
-    tooltip=other->tooltip;
-    state=other->state;
-    used=other->used;
-    pixmap=other->pixmap;
+    action  = other->action;
+    name    = other->name;
+    group   = other->group;
+    tooltip = other->tooltip;
+    state   = other->state;
+    used    = other->used;
+    pixmap  = other->pixmap;
 }
 
 
 void Flag::load (const QString &fn)
 {
     if (!pixmap.load(fn))
-	qDebug()<<"Flag::load ("<<fn<<") failed.";
+	qDebug() << "Flag::load (" << fn << ") failed.";
 }
 
 void Flag::load (const QPixmap &pm)
 {
-    pixmap=pm;
+    pixmap = pm;
 }
 
 void Flag::setName(const QString &n)
 {
-    name=n;
+    name = n;
 }
 
 const QString Flag::getName()
@@ -75,7 +75,7 @@ const QString Flag::getName()
 
 void Flag::setVisible (bool b)
 {
-    visible=b;
+    visible = b;
 }
 
 bool Flag::isVisible ()
@@ -85,7 +85,7 @@ bool Flag::isVisible ()
 
 void Flag::setGroup (const QString &n)
 {
-    group=n;
+    group = n;
 }
 
 const QString Flag::getGroup()
@@ -100,7 +100,7 @@ void Flag::unsetGroup()
 
 void Flag::setToolTip(const QString &n)
 {
-    tooltip=n;
+    tooltip = n;
 }
 
 const QString Flag::getToolTip()
@@ -125,7 +125,7 @@ QAction* Flag::getAction ()
 
 void Flag::setUsed (bool b)
 {
-    used=b;
+    used = b;
 }
 
 bool Flag::isUsed()
@@ -135,8 +135,8 @@ bool Flag::isUsed()
 
 void Flag::saveToDir (const QString &tmpdir, const QString &prefix)
 {
-    QString fn=tmpdir + prefix + name + ".png";
-    pixmap.save (fn,"PNG");
+    QString fn = tmpdir + prefix + name + ".png";
+    pixmap.save (fn, "PNG");
 }
 
 
