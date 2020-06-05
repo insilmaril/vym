@@ -377,38 +377,38 @@ void BranchObj::updateData()
         return;
     }
     QString s = treeItem->getHeadingText();
-    if ( s!=heading->text()) heading->setText (s);
+    if ( s != heading->text()) heading->setText (s);
 
-    QStringList TIactiveFlags=treeItem->activeStandardFlagNames();
+    QStringList TIactiveFlags = treeItem->activeStandardFlagNames();
 
     // Add missing standard flags active in TreeItem
-    for (int i=0;i<=TIactiveFlags.size()-1;i++)
+    for (int i = 0; i<= TIactiveFlags.size() - 1; i++)
     {
         if (!standardFlagRowObj->isActive (TIactiveFlags.at(i) ))
         {
-            Flag *f=standardFlagsMaster->getFlag(TIactiveFlags.at(i));
+            Flag *f = standardFlagsMaster->getFlag(TIactiveFlags.at(i));
             if (f) standardFlagRowObj->activate (f);
         }
     }
     // Remove standard flags no longer active in TreeItem
-    QStringList BOactiveFlags=standardFlagRowObj->activeFlagNames();
-    for (int i=0;i<BOactiveFlags.size();++i)
+    QStringList BOactiveFlags = standardFlagRowObj->activeFlagNames();
+    for (int i = 0; i< BOactiveFlags.size(); ++i)
         if (!TIactiveFlags.contains (BOactiveFlags.at(i)))
             standardFlagRowObj->deactivate (BOactiveFlags.at(i));
 
     // Add missing system flags active in TreeItem
-    TIactiveFlags=treeItem->activeSystemFlagNames();
-    for (int i=0;i<TIactiveFlags.size();++i)
+    TIactiveFlags = treeItem->activeSystemFlagNames();
+    for (int i = 0;i < TIactiveFlags.size(); ++i)
     {
         if (!systemFlagRowObj->isActive (TIactiveFlags.at(i) ))
         {
-            Flag *f=systemFlagsMaster->getFlag(TIactiveFlags.at(i));
+            Flag *f = systemFlagsMaster->getFlag(TIactiveFlags.at(i));
             if (f) systemFlagRowObj->activate (f);
         }
     }
     // Remove system flags no longer active in TreeItem
-    BOactiveFlags=systemFlagRowObj->activeFlagNames();
-    for (int i=0;i<BOactiveFlags.size();++i)
+    BOactiveFlags = systemFlagRowObj->activeFlagNames();
+    for (int i = 0;i < BOactiveFlags.size(); ++i)
     {
         if (!TIactiveFlags.contains (BOactiveFlags.at(i)))
             systemFlagRowObj->deactivate (BOactiveFlags.at(i));
