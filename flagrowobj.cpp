@@ -24,8 +24,8 @@ FlagRowObj::FlagRowObj(QGraphicsItem *parent):MapObj(parent)
 FlagRowObj::~FlagRowObj()
 {
     //qDebug() << "Destr FlagRowObj";
-    while (!flag.isEmpty())
-	delete (flag.takeFirst() );
+    while (!flags.isEmpty())
+	delete (flags.takeFirst() );
 }
 
 void FlagRowObj::init ()
@@ -36,19 +36,19 @@ void FlagRowObj::init ()
 void FlagRowObj::copy (FlagRowObj* other)
 {
     MapObj::copy(other);
-    flag.clear();
-    for (int i=0; i<flag.size(); ++i)
-	addFlag (flag.at(i));
+    flags.clear();
+    for (int i=0; i<flags.size(); ++i)
+	addFlag (flags.at(i));
 }
 
 void FlagRowObj::move(double x, double y)
 {
     MapObj::move(x,y);
     qreal dx=0;
-    for (int i=0; i<flag.size(); ++i)
+    for (int i=0; i<flags.size(); ++i)
     {
-	flag.at(i)->move(x+dx,y);
-	dx+=QSizeF(flag.at(i)->getSize() ).width();
+	flags.at(i)->move(x+dx,y);
+	dx+=QSizeF(flags.at(i)->getSize() ).width();
     }
 }
 
@@ -59,15 +59,15 @@ void FlagRowObj::moveBy(double x, double y)
 
 void FlagRowObj::setZValue (double z)
 {
-    for (int i=0; i<flag.size(); ++i)
-	flag.at(i)->setZValue (z);
+    for (int i=0; i<flags.size(); ++i)
+	flags.at(i)->setZValue (z);
 }
 
 void FlagRowObj::setVisibility (bool v)
 {
     MapObj::setVisibility(v);
-    for (int i=0; i<flag.size(); ++i)
-	flag.at(i)->setVisibility (v);
+    for (int i=0; i<flags.size(); ++i)
+	flags.at(i)->setVisibility (v);
 }
 
 FlagObj* FlagRowObj::addFlag (FlagObj *fo)
@@ -75,7 +75,7 @@ FlagObj* FlagRowObj::addFlag (FlagObj *fo)
     FlagObj *newfo=new FlagObj (parentItem() );
     newfo->copy (fo);	// create a deep copy of fo
     newfo->move (absPos.x() + bbox.width(), absPos.y() );
-    flag.append(newfo);
+    flags.append(newfo);
     calcBBoxSize();
     positionBBox();
     return newfo;
@@ -84,8 +84,8 @@ FlagObj* FlagRowObj::addFlag (FlagObj *fo)
 QStringList FlagRowObj::activeFlagNames()
 {
     QStringList list;
-    for (int i=0; i<flag.size(); ++i)
-	list.append (flag.at(i)->getName());
+    for (int i=0; i<flags.size(); ++i)
+	list.append (flags.at(i)->getName());
     return list;
 }
 
@@ -99,9 +99,9 @@ void FlagRowObj::calcBBoxSize()
 {
     QSizeF size(0,0);
     QSizeF boxsize(0,0);
-    for (int i=0; i<flag.size(); ++i)
+    for (int i=0; i<flags.size(); ++i)
     {
-	size=flag.at(i)->getSize();
+	size=flags.at(i)->getSize();
 	// add widths
 	boxsize.setWidth(boxsize.width() + size.width() );
 	// maximize height
@@ -115,8 +115,8 @@ void FlagRowObj::calcBBoxSize()
 QString FlagRowObj::getFlagName (const QPointF &p)
 {
     if (!isInBox (p,clickPoly.boundingRect() )) return "";
-    for (int i=0; i<flag.size(); ++i)
-	if (isInBox (p,flag.at(i)->getClickPoly().boundingRect() )) return flag.at(i)->getName();
+    for (int i=0; i<flags.size(); ++i)
+	if (isInBox (p,flags.at(i)->getClickPoly().boundingRect() )) return flags.at(i)->getName();
     return "";	
 }
 
@@ -150,7 +150,7 @@ void FlagRowObj::deactivate (const QString &foname)
     FlagObj *fo=findFlag (foname);
     if (fo) 
     {
-	flag.removeAll(fo);
+	flags.removeAll(fo);
 	delete (fo);
     }	
     calcBBoxSize();
@@ -164,8 +164,8 @@ void FlagRowObj::setShowFlags (bool b)
 
 FlagObj* FlagRowObj::findFlag (const QString &name)
 {
-    for (int i=0; i<flag.size(); ++i)
-	if (flag.at(i)->getName()==name) return flag.at(i);
+    for (int i=0; i<flags.size(); ++i)
+	if (flags.at(i)->getName()==name) return flags.at(i);
     return NULL;
 }
 

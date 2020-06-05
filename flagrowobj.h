@@ -35,7 +35,7 @@ public:
     void setShowFlags (bool);
     FlagObj* findFlag (const QString&);
 private:    
-    QList <FlagObj*> flag; 
+    QList <FlagObj*> flags; 
     bool showFlags;			    // FloatObjects want to hide their flags
 };
 #endif

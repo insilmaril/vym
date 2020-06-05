@@ -65,14 +65,14 @@ bool FlagRow::toggle (const QString &name, FlagRow *masterRow)
 	// Deactivate group
 	if (!masterRow) return false;
 
-	Flag *flag=masterRow->getFlag (name);
+	Flag *flag = masterRow->getFlag (name);
 	if (!flag) return false;
-	QString mygroup=flag->getGroup();
+	QString mygroup = flag->getGroup();
 
-	for (int i=0;i<activeNames.size();++i)
+	for (int i = 0; i < activeNames.size(); ++i)
 	{
-	    flag=masterRow->getFlag (activeNames.at(i) );
-	    if (name!=activeNames.at(i) && !mygroup.isEmpty() && mygroup==flag->getGroup())
+	    flag = masterRow->getFlag (activeNames.at(i) );
+	    if (name != activeNames.at(i) && !mygroup.isEmpty() && mygroup == flag->getGroup())
 		deactivate (activeNames.at(i));
 	}
 	return true;
@@ -94,7 +94,7 @@ bool FlagRow::activate (const QString &name)
     }
 
     // Check, if flag exists after all...
-    Flag *flag=masterRow->getFlag (name);
+    Flag *flag = masterRow->getFlag (name);
     if (!flag)
     {
 	qWarning()<<"FlagRow::activate - flag "<<name<<" does not exist here!";
