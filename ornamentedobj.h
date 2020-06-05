@@ -62,9 +62,9 @@ public:
     virtual QRectF getBBoxFlag (const QString &name);
 
 protected:
-    HeadingObj *heading;	// Heading
-    FlagRowObj *systemFlags;	    // System Flags
-    FlagRowObj *standardFlags;	    // Standard Flags
+    HeadingObj *heading;	    // Heading
+    FlagRowObj *systemFlagRowObj;   // System Flags
+    FlagRowObj *standardFlagRowObj; // Standard Flags
     FrameObj *frame;		// frame around object
     QRectF ornamentsBBox;	// bbox of flags and heading
 };

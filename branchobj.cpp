@@ -160,8 +160,8 @@ void BranchObj::setVisibility(bool v, int toDepth)
     {
         frame->setVisibility(v);
         heading->setVisibility(v);
-        systemFlags->setVisibility(v);
-        standardFlags->setVisibility(v);
+        systemFlagRowObj->setVisibility(v);
+        standardFlagRowObj->setVisibility(v);
         LinkableMapObj::setVisibility (v);
         int i;
         for (i=0; i<treeItem->imageCount(); ++i)
@@ -251,10 +251,10 @@ void BranchObj::calcBBoxSize()
     QSizeF heading_r=heading->getSize();
     qreal heading_w=(qreal) heading_r.width() ;
     qreal heading_h=(qreal) heading_r.height() ;
-    QSizeF sysflags_r=systemFlags->getSize();
+    QSizeF sysflags_r=systemFlagRowObj->getSize();
     qreal sysflags_h=sysflags_r.height();
     qreal sysflags_w=sysflags_r.width();
-    QSizeF stanflags_r=standardFlags->getSize();
+    QSizeF stanflags_r=standardFlagRowObj->getSize();
     qreal stanflags_h=stanflags_r.height();
     qreal stanflags_w=stanflags_r.width();
     qreal w;
@@ -384,34 +384,34 @@ void BranchObj::updateData()
     // Add missing standard flags active in TreeItem
     for (int i=0;i<=TIactiveFlags.size()-1;i++)
     {
-        if (!standardFlags->isActive (TIactiveFlags.at(i) ))
+        if (!standardFlagRowObj->isActive (TIactiveFlags.at(i) ))
         {
             Flag *f=standardFlagsMaster->getFlag(TIactiveFlags.at(i));
-            if (f) standardFlags->activate (f);
+            if (f) standardFlagRowObj->activate (f);
         }
     }
     // Remove standard flags no longer active in TreeItem
-    QStringList BOactiveFlags=standardFlags->activeFlagNames();
+    QStringList BOactiveFlags=standardFlagRowObj->activeFlagNames();
     for (int i=0;i<BOactiveFlags.size();++i)
         if (!TIactiveFlags.contains (BOactiveFlags.at(i)))
-            standardFlags->deactivate (BOactiveFlags.at(i));
+            standardFlagRowObj->deactivate (BOactiveFlags.at(i));
 
     // Add missing system flags active in TreeItem
     TIactiveFlags=treeItem->activeSystemFlagNames();
     for (int i=0;i<TIactiveFlags.size();++i)
     {
-        if (!systemFlags->isActive (TIactiveFlags.at(i) ))
+        if (!systemFlagRowObj->isActive (TIactiveFlags.at(i) ))
         {
             Flag *f=systemFlagsMaster->getFlag(TIactiveFlags.at(i));
-            if (f) systemFlags->activate (f);
+            if (f) systemFlagRowObj->activate (f);
         }
     }
     // Remove system flags no longer active in TreeItem
-    BOactiveFlags=systemFlags->activeFlagNames();
+    BOactiveFlags=systemFlagRowObj->activeFlagNames();
     for (int i=0;i<BOactiveFlags.size();++i)
     {
         if (!TIactiveFlags.contains (BOactiveFlags.at(i)))
-            systemFlags->deactivate (BOactiveFlags.at(i));
+            systemFlagRowObj->deactivate (BOactiveFlags.at(i));
     }
     calcBBoxSize();
 }

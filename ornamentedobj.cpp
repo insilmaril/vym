@@ -21,8 +21,8 @@ OrnamentedObj::OrnamentedObj(QGraphicsItem *parent,TreeItem *ti) :LinkableMapObj
 OrnamentedObj::~OrnamentedObj()
 {
     delete heading;
-    delete systemFlags;
-    delete standardFlags;
+    delete systemFlagRowObj;
+    delete standardFlagRowObj;
     delete frame;
 }
 
@@ -33,8 +33,8 @@ void OrnamentedObj::init ()
     heading->setTreeItem (treeItem);
     heading->move (absPos.x(), absPos.y());
 
-    systemFlags=new FlagRowObj(this);
-    standardFlags=new FlagRowObj(this);
+    systemFlagRowObj=new FlagRowObj(this);
+    standardFlagRowObj=new FlagRowObj(this);
 
     frame = new FrameObj (this);
     frame->setTreeItem (treeItem);
@@ -48,8 +48,8 @@ void OrnamentedObj::copy (OrnamentedObj* other)
     heading->copy(other->heading);
     setColor   (other->heading->getColor());	
 
-    systemFlags->copy (other->systemFlags);
-    standardFlags->copy (other->standardFlags);
+    systemFlagRowObj->copy (other->systemFlagRowObj);
+    standardFlagRowObj->copy (other->standardFlagRowObj);
 
     ornamentsBBox=other->ornamentsBBox;
 }
@@ -199,17 +199,17 @@ void OrnamentedObj::positionContents()
     // vertical align heading to bottom
     heading->setZValue (dZ_TEXT);
     heading->setTransformOriginPoint (
-	QPointF ( ox + systemFlags->getBBox().width(),
+	QPointF ( ox + systemFlagRowObj->getBBox().width(),
 		  oy + ornamentsBBox.height() - heading->getHeight() 
 		) );
-    heading->move (ox + x + systemFlags->getBBox().width(),
+    heading->move (ox + x + systemFlagRowObj->getBBox().width(),
 		   oy + y + ornamentsBBox.height() - heading->getHeight() 
 		    );
     // Flags
-    systemFlags-> move (ox +x , oy + y );
-    systemFlags->setZValue (dZ_ICON);
-    standardFlags->move (ox +x + heading->getWidth() + systemFlags->getBBox().width() , oy + y );
-    standardFlags->setZValue (dZ_ICON);
+    systemFlagRowObj-> move (ox +x , oy + y );
+    systemFlagRowObj->setZValue (dZ_ICON);
+    standardFlagRowObj->move (ox +x + heading->getWidth() + systemFlagRowObj->getBBox().width() , oy + y );
+    standardFlagRowObj->setZValue (dZ_ICON);
 
     ornamentsBBox.moveTopLeft ( QPointF (ox+x,oy+y));
     clickPoly=QPolygonF (ornamentsBBox);
@@ -264,8 +264,8 @@ void OrnamentedObj::moveBy (double x, double y)
 {
     MapObj::moveBy (x,y);
     frame->moveBy (x,y);
-    systemFlags->moveBy (x,y);
-    standardFlags->moveBy (x,y);
+    systemFlagRowObj->moveBy (x,y);
+    standardFlagRowObj->moveBy (x,y);
     heading->moveBy (x,y);
     updateLinkGeometry();
     requestReposition();
@@ -291,9 +291,9 @@ void OrnamentedObj::move2RelPos(QPointF p)
     move2RelPos (p.x(), p.y());
 }
 
-void OrnamentedObj::activateStandardFlag(Flag *flag)
+void OrnamentedObj::activateStandardFlag(Flag *flag)    // FIXME-0 never called from somewhere?!?
 {
-    standardFlags->activate(flag);
+    standardFlagRowObj->activate(flag);
     calcBBoxSize();
     positionBBox();
     move (absPos.x(), absPos.y() );
@@ -302,7 +302,7 @@ void OrnamentedObj::activateStandardFlag(Flag *flag)
 
 void OrnamentedObj::deactivateStandardFlag(const QString &name)
 {
-    standardFlags->deactivate(name);
+    standardFlagRowObj->deactivate(name);
     calcBBoxSize();
     positionBBox();
     move (absPos.x(),absPos.y() );
@@ -312,14 +312,14 @@ void OrnamentedObj::deactivateStandardFlag(const QString &name)
 
 QString OrnamentedObj::getSystemFlagName(const QPointF &p) 
 {
-    return systemFlags->getFlagName(p);	
+    return systemFlagRowObj->getFlagName(p);	
 }
 
 QRectF OrnamentedObj::getBBoxFlag (const QString &s)
 {
-    FlagObj *fo=systemFlags->findFlag (s);
+    FlagObj *fo=systemFlagRowObj->findFlag (s);
     if (fo) return fo->getBBox();
-    fo=standardFlags->findFlag (s);
+    fo=standardFlagRowObj->findFlag (s);
     if (fo) return fo->getBBox();
     return QRectF();
 }

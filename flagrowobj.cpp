@@ -30,49 +30,49 @@ FlagRowObj::~FlagRowObj()
 
 void FlagRowObj::init ()
 {
-    showFlags=true;
+    showFlags = true;
 }
 
 void FlagRowObj::copy (FlagRowObj* other)
 {
     MapObj::copy(other);
     flags.clear();
-    for (int i=0; i<flags.size(); ++i)
+    for (int i = 0; i < flags.size(); ++i)
 	addFlag (flags.at(i));
 }
 
 void FlagRowObj::move(double x, double y)
 {
     MapObj::move(x,y);
-    qreal dx=0;
-    for (int i=0; i<flags.size(); ++i)
+    qreal dx = 0;
+    for (int i = 0; i < flags.size(); ++i)
     {
 	flags.at(i)->move(x+dx,y);
-	dx+=QSizeF(flags.at(i)->getSize() ).width();
+	dx += QSizeF(flags.at(i)->getSize() ).width();
     }
 }
 
 void FlagRowObj::moveBy(double x, double y)
 {
-    move (x+absPos.x(),y+absPos.y() );
+    move (x + absPos.x(), y + absPos.y() );
 }
 
 void FlagRowObj::setZValue (double z)
 {
-    for (int i=0; i<flags.size(); ++i)
+    for (int i = 0; i < flags.size(); ++i)
 	flags.at(i)->setZValue (z);
 }
 
 void FlagRowObj::setVisibility (bool v)
 {
     MapObj::setVisibility(v);
-    for (int i=0; i<flags.size(); ++i)
+    for (int i = 0; i < flags.size(); ++i)
 	flags.at(i)->setVisibility (v);
 }
 
 FlagObj* FlagRowObj::addFlag (FlagObj *fo)
 {
-    FlagObj *newfo=new FlagObj (parentItem() );
+    FlagObj *newfo = new FlagObj (parentItem() );
     newfo->copy (fo);	// create a deep copy of fo
     newfo->move (absPos.x() + bbox.width(), absPos.y() );
     flags.append(newfo);
@@ -84,7 +84,7 @@ FlagObj* FlagRowObj::addFlag (FlagObj *fo)
 QStringList FlagRowObj::activeFlagNames()
 {
     QStringList list;
-    for (int i=0; i<flags.size(); ++i)
+    for (int i = 0; i < flags.size(); ++i)
 	list.append (flags.at(i)->getName());
     return list;
 }
@@ -92,37 +92,37 @@ QStringList FlagRowObj::activeFlagNames()
 void FlagRowObj::positionBBox()
 {
     bbox.moveTopLeft(absPos );
-    clickPoly=QPolygonF (bbox);
+    clickPoly = QPolygonF (bbox);
 }
 
 void FlagRowObj::calcBBoxSize()
 {
     QSizeF size(0,0);
     QSizeF boxsize(0,0);
-    for (int i=0; i<flags.size(); ++i)
+    for (int i = 0; i < flags.size(); ++i)
     {
-	size=flags.at(i)->getSize();
+	size = flags.at(i)->getSize();
 	// add widths
 	boxsize.setWidth(boxsize.width() + size.width() );
 	// maximize height
 	if (size.height() > boxsize.height() ) 
-	    boxsize.setHeight(size.height() );
+	    boxsize.setHeight( size.height() );
     }
     bbox.setSize (boxsize);
-    clickPoly=QPolygonF (bbox);
+    clickPoly = QPolygonF (bbox);
 }
 
 QString FlagRowObj::getFlagName (const QPointF &p)
 {
-    if (!isInBox (p,clickPoly.boundingRect() )) return "";
-    for (int i=0; i<flags.size(); ++i)
-	if (isInBox (p,flags.at(i)->getClickPoly().boundingRect() )) return flags.at(i)->getName();
+    if (!isInBox (p, clickPoly.boundingRect() )) return "";
+    for (int i = 0; i < flags.size(); ++i)
+	if (isInBox (p, flags.at(i)->getClickPoly().boundingRect() )) return flags.at(i)->getName();
     return "";	
 }
 
 bool FlagRowObj::isActive (const QString &foname)
 {
-    FlagObj *fo=findFlag (foname);
+    FlagObj *fo = findFlag (foname);
     if (fo) 
 	return true;
     else
@@ -133,7 +133,7 @@ void FlagRowObj::activate (Flag *flag)
 {
     if (flag) 
     {
-	FlagObj *fo=addFlag (new FlagObj (this));
+	FlagObj *fo = addFlag (new FlagObj (this));
 	fo->load (flag->getPixmap() );
 	fo->setName (flag->getName() );
 	fo->activate();
@@ -147,7 +147,7 @@ void FlagRowObj::activate (Flag *flag)
 
 void FlagRowObj::deactivate (const QString &foname)
 {
-    FlagObj *fo=findFlag (foname);
+    FlagObj *fo = findFlag (foname);
     if (fo) 
     {
 	flags.removeAll(fo);
@@ -159,13 +159,13 @@ void FlagRowObj::deactivate (const QString &foname)
 
 void FlagRowObj::setShowFlags (bool b)
 {
-    showFlags=b;
+    showFlags = b;
 }
 
 FlagObj* FlagRowObj::findFlag (const QString &name)
 {
-    for (int i=0; i<flags.size(); ++i)
-	if (flags.at(i)->getName()==name) return flags.at(i);
+    for (int i = 0; i < flags.size(); ++i)
+	if (flags.at(i)->getName() == name) return flags.at(i);
     return NULL;
 }
 

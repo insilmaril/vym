@@ -19,7 +19,7 @@ FloatImageObj::FloatImageObj (QGraphicsItem * parent,TreeItem *ti):FloatObj(pare
     useRelPos=true;
 
     //Hide flags
-    systemFlags->setShowFlags(false);
+    systemFlagRowObj->setShowFlags(false);
 
 //    setLinkStyle (LinkableMapObj::Parabel);
 }
