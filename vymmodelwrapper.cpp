@@ -1020,7 +1020,7 @@ void VymModelWrapper::sortChildren()
 
 void VymModelWrapper::toggleFlag(const QString &s)
 {
-    model->toggleStandardFlag( s );
+    model->toggleFlag( s );
 }
 
 void VymModelWrapper::toggleFrameIncludeChildren()

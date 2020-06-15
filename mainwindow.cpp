@@ -933,6 +933,10 @@ void Main::setupAPI()
     c->addPar (Command::String,false,"Name of flag to unset");
     modelCommands.append(c);
 
+    c = new Command ("toggleFlag", Command::Branch); 
+    c->addPar (Command::String,false,"Name of flag to toggle");
+    modelCommands.append(c);
+
     //
     // Below are the commands for vym itself:
     //
