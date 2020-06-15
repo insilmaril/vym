@@ -27,7 +27,7 @@ public:
 	
 	To activate a flag it will be copied from masterRow to current row.
     */	
-    bool toggle (const QString&, FlagRow *masterRow=NULL);
+    bool toggle (const QString&, FlagRow *masterRow = NULL, bool useGroups = true);
     bool activate(const QString&);
     bool deactivate(const QString&);
     bool deactivateGroup(const QString&);

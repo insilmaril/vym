@@ -21,7 +21,7 @@ FlagRow::~FlagRow()
 
 void FlagRow::addFlag (Flag *flag)
 {
-    Flag *f=new Flag;
+    Flag *f = new Flag;
 ;
     f->copy (flag);
     flags.append (f);
@@ -30,10 +30,10 @@ void FlagRow::addFlag (Flag *flag)
 
 Flag* FlagRow::getFlag (const QString &name)
 {
-    int i=0;
-    while (i<=flags.size()-1)
+    int i = 0;
+    while (i <= flags.size() - 1)
     {
-	if (flags.at(i)->getName()==name)
+	if (flags.at(i)->getName() == name)
 	    return flags.at(i);
 	i++;	
     }
@@ -49,12 +49,12 @@ QStringList FlagRow::activeFlagNames()
 bool FlagRow::isActive (const QString &name)	
 {
     QString n;
-    foreach (n,activeNames)
-	if (n==name) return true;
+    foreach (n, activeNames)
+	if (n == name) return true;
     return false;   
 }
 
-bool FlagRow::toggle (const QString &name, FlagRow *masterRow)
+bool FlagRow::toggle (const QString &name, FlagRow *masterRow, bool useGroups)
 {
     if (isActive(name) )
 	return deactivate (name);
@@ -62,9 +62,9 @@ bool FlagRow::toggle (const QString &name, FlagRow *masterRow)
     {
 	if (!activate (name) ) return false;    
 
-	// Deactivate group
-	if (!masterRow) return false;
+	if (!masterRow || !useGroups) return false;
 
+	// Deactivate group 
 	Flag *flag = masterRow->getFlag (name);
 	if (!flag) return false;
 	QString mygroup = flag->getGroup();
