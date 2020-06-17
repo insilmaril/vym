@@ -56,8 +56,6 @@ public:
     virtual void move2RelPos (QPointF);	    // move relativly to parent^
     virtual void move2RelPos (double,double);
 
-    virtual void activateStandardFlag(Flag *flag);
-    virtual void deactivateStandardFlag(const QString &name);
     virtual QString getSystemFlagName (const QPointF &p);
     virtual QRectF getBBoxFlag (const QString &name);
 

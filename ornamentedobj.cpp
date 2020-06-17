@@ -291,25 +291,6 @@ void OrnamentedObj::move2RelPos(QPointF p)
     move2RelPos (p.x(), p.y());
 }
 
-void OrnamentedObj::activateStandardFlag(Flag *flag)    // FIXME-0 never called from somewhere?!?
-{
-    standardFlagRowObj->activate(flag);
-    calcBBoxSize();
-    positionBBox();
-    move (absPos.x(), absPos.y() );
-    forceReposition();
-}
-
-void OrnamentedObj::deactivateStandardFlag(const QString &name)
-{
-    standardFlagRowObj->deactivate(name);
-    calcBBoxSize();
-    positionBBox();
-    move (absPos.x(),absPos.y() );
-    forceReposition();
-}
-
-
 QString OrnamentedObj::getSystemFlagName(const QPointF &p) 
 {
     return systemFlagRowObj->getFlagName(p);	
