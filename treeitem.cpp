@@ -15,6 +15,7 @@ using namespace std;
 extern uint itemLastID;
 extern FlagRow* standardFlagsMaster;
 extern FlagRow* systemFlagsMaster;
+extern FlagRow* userFlagsMaster;
 
 extern QTextStream vout;
 
@@ -84,6 +85,7 @@ void TreeItem::init()
     backgroundColor = Qt::transparent;
 
     standardFlags.setMasterRow (standardFlagsMaster);
+    userFlags.setMasterRow (userFlagsMaster);
     systemFlags.setMasterRow (systemFlagsMaster);
 }
 
@@ -559,9 +561,12 @@ void TreeItem::deactivateAllStandardFlags ()
     model->emitDataChanged(this);
 }
 
-void TreeItem::toggleStandardFlag(const QString &name, FlagRow *master)
+void TreeItem::toggleFlag(const QString &name,  bool useGroups) 
 {
-    standardFlags.toggle (name,master);
+    if (standardFlagsMaster->getFlag (name))
+        standardFlags.toggle (name, useGroups);
+    else
+        userFlags.toggle (name, useGroups);
 }
 
 void TreeItem::toggleSystemFlag(const QString &name, FlagRow *master)
@@ -580,14 +585,14 @@ bool TreeItem::hasActiveSystemFlag (const QString &name)
     return systemFlags.isActive (name);
 }
 
-QStringList TreeItem::activeStandardFlagNames ()
+QStringList TreeItem::activeStandardFlagNames () // FIXME-0 rename to activeFlagNames
 {
-    return standardFlags.activeFlagNames();
+    return standardFlags.activeFlagNames() + userFlags.activeFlagNames();
 }
 
-FlagRow* TreeItem::getStandardFlagRow()
+FlagRow* TreeItem::getStandardFlagRow() // FIXME-0 rename to getFlagRow
 {
-    return &standardFlags;
+    return &standardFlags;              // and rename here, too   (or even remove?)
 }
 
 QStringList TreeItem::activeSystemFlagNames ()

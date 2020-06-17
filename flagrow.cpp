@@ -54,7 +54,7 @@ bool FlagRow::isActive (const QString &name)
     return false;   
 }
 
-bool FlagRow::toggle (const QString &name, FlagRow *masterRow, bool useGroups)
+bool FlagRow::toggle (const QString &name, bool useGroups)
 {
     if (isActive(name) )
 	return deactivate (name);
@@ -64,7 +64,7 @@ bool FlagRow::toggle (const QString &name, FlagRow *masterRow, bool useGroups)
 
 	if (!masterRow || !useGroups) return false;
 
-	// Deactivate group 
+	// Deactivate all other active flags group except "name"
 	Flag *flag = masterRow->getFlag (name);
 	if (!flag) return false;
 	QString mygroup = flag->getGroup();
@@ -83,13 +83,13 @@ bool FlagRow::activate (const QString &name)
 {
     if (isActive (name)) 
     {
-	if (debug) qWarning ()<<QString("FlagRow::activate - %1 is already active").arg(name);
+	if (debug) qWarning () << QString("FlagRow::activate - %1 is already active").arg(name);
 	return false;
     }
 
     if (!masterRow)
     {
-	qWarning()<<"FlagRow::activate - no masterRow to activate "<<name;
+	qWarning() << "FlagRow::activate - no masterRow to activate " << name;
 	return false;
     }
 
@@ -97,7 +97,7 @@ bool FlagRow::activate (const QString &name)
     Flag *flag = masterRow->getFlag (name);
     if (!flag)
     {
-	qWarning()<<"FlagRow::activate - flag "<<name<<" does not exist here!";
+	qWarning() << "FlagRow::activate - flag " << name << " does not exist here!";
 	return false;
     }
 

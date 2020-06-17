@@ -511,7 +511,7 @@ public:
     ItemList getLinkedMaps();
     ItemList getTargets();
 
-    void toggleStandardFlag (const QString &name, FlagRow *master=NULL);
+    void toggleFlag (const QString &name, bool useGroups = true);
     void clearFlags();
     void addFloatImage(const QImage &img);
 

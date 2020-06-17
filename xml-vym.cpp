@@ -160,6 +160,15 @@ bool parseVYMHandler::startElement  ( const QString&, const QString&,
         (state == StateMapCenter || state==StateBranch)) 
     {
         state=StateStandardFlag;
+    } else if ( eName == "userflag" && state == StateInit) 
+    {
+        state = StateUserFlagDef;
+        return (readUserFlagAttr(atts));
+    } else if ( 
+        eName == "userflag" && 
+        (state == StateMapCenter || state == StateBranch )) 
+    {
+        state=StateUserFlag;
     } else if ( eName == "heading" && (state == StateMapCenter||state==StateBranch || state == StateInit))
     {
         if (state == StateInit)
@@ -976,6 +985,14 @@ bool parseVYMHandler::readTaskAttr (const QXmlAttributes& a)
             lastTask->setPriorityDelta( a.value( "prio_delta" ).toInt() ); 
         }
     }
+    return true;
+}
+
+bool parseVYMHandler::readUserFlagAttr (const QXmlAttributes& a)
+{
+    // FIXME-0 cont here to *define* the user flags
+    if (!a.value( "name").isEmpty() ) 
+        lastTask->setStatus (a.value( "status" ) );
     return true;
 }
 

@@ -27,7 +27,7 @@ public:
 	
 	To activate a flag it will be copied from masterRow to current row.
     */	
-    bool toggle (const QString&, FlagRow *masterRow = NULL, bool useGroups = true);
+    bool toggle (const QString&, bool useGroups = true);
     bool activate(const QString&);
     bool deactivate(const QString&);
     bool deactivateGroup(const QString&);
@@ -43,8 +43,8 @@ public:
 private:    
     QToolBar *toolBar;
     FlagRow *masterRow;
-    QList <Flag*> flags; 
-    QStringList activeNames;	//! Lists all names of currently active flags
+    QList <Flag*> flags;        //! Used in master row to define flags
+    QStringList activeNames;	//! Used in treeitems: Lists all names of currently active flags
     QString rowName;		//! Name of this collection of flags
 };
 #endif

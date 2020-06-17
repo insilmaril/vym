@@ -3903,35 +3903,27 @@ ItemList VymModel::getTargets()
     return targets; 
 }
 
-void VymModel::toggleStandardFlag (const QString &name, FlagRow *master)
+void VymModel::toggleFlag (const QString &name, bool useGroups)  
 {
-    BranchItem *bi=getSelectedBranch();
+    BranchItem *bi = getSelectedBranch();
+
     if (bi) 
     {
 	QString u,r;
-	if (bi->hasActiveStandardFlag(name))
-	{
-	    r="unsetFlag";
-	    u="setFlag";
-	}   
-	else
-	{
-	    u="unsetFlag";
-	    r="setFlag";
-	}   
+        r = u = "toggleFlag";
 	saveState(
 	    bi,
 	    QString("%1 (\"%2\")").arg(u).arg(name), 
 	    bi,
 	    QString("%1 (\"%2\")").arg(r).arg(name),
-	    QString("Toggling standard flag \"%1\" of %2").arg(name).arg(getObjectName(bi)));
-	    bi->toggleStandardFlag (name, master);
+	    QString("Toggling flag \"%1\" of %2").arg(name).arg(getObjectName(bi)));
+	    bi->toggleFlag (name, useGroups);
 	emitDataChanged (bi);
 	reposition();
     }
 }
 
-void VymModel::clearFlags()
+void VymModel::clearFlags() // FIXME-0 both user and standard flags
 {
     BranchItem *selbi = getSelectedBranch();
     if (selbi) 

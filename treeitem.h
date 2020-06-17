@@ -131,6 +131,8 @@ public:
 protected:
     FlagRow standardFlags;
     FlagRow systemFlags;
+    FlagRow userFlags;
+
 public:	
     virtual void activateStandardFlag(const QString &flag);
     virtual void deactivateStandardFlag(const QString &flag);
@@ -140,8 +142,8 @@ public:
 	If master is not NULL,, only one Flag from FlagRow master may 
 	be active simultanously, the others get deactivated.
     */	
-    virtual void toggleStandardFlag(const QString &flag, FlagRow *master=NULL);
-    virtual void toggleSystemFlag  (const QString &flag, FlagRow *master=NULL);
+    virtual void toggleFlag(const QString &flag, bool useGroups = true);
+    virtual void toggleSystemFlag  (const QString &flag, FlagRow *master = NULL);
     virtual bool hasActiveStandardFlag (const QString &flag);
     virtual bool hasActiveSystemFlag   (const QString &flag);
     virtual QStringList activeStandardFlagNames();

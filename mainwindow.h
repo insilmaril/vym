@@ -72,7 +72,7 @@ private:
     void setupWindowActions();
     void setupFlag(
 	Flag *flag, 
-	QToolBar *tb, 
+        Flag::FlagType type,
 	const QString &name, 
 	const QString &tooltip,
 	const QKeySequence &ks=0
@@ -331,7 +331,9 @@ private slots:
     void nextSlide();
     void previousSlide();
 
+    void flagChanged();
     void standardFlagChanged();
+    void userFlagChanged();
 
     void testFunction1();
     void testFunction2();
