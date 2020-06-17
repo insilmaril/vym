@@ -5751,7 +5751,7 @@ void Main::updateActions()
 		    }
 		}
 		//Standard Flags
-		standardFlagsMaster->updateToolBar (selbi->activeStandardFlagNames() );
+		standardFlagsMaster->updateToolBar (selbi->activeFlagNames() );
 
 		// System Flags
 		actionToggleScroll->setEnabled (true);

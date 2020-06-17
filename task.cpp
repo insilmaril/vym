@@ -334,8 +334,8 @@ QString Task::saveToDir()
     QString prioAttr;
     if (branch)
     {
-        if (branch->hasActiveStandardFlag("2arrow-up")) prioAttr = attribut ("prio", "2");
-        if (branch->hasActiveStandardFlag("arrow-up"))  prioAttr = attribut ("prio", "1");
+        if (branch->hasActiveFlag("2arrow-up")) prioAttr = attribut ("prio", "2");
+        if (branch->hasActiveFlag("arrow-up"))  prioAttr = attribut ("prio", "1");
     }
 
     QString prioDeltaAttr;

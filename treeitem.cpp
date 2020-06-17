@@ -575,7 +575,7 @@ void TreeItem::toggleSystemFlag(const QString &name, FlagRow *master)
     model->emitDataChanged(this);
 }
 
-bool TreeItem::hasActiveStandardFlag (const QString &name)
+bool TreeItem::hasActiveFlag (const QString &name)
 {
     return standardFlags.isActive (name);
 }
@@ -585,14 +585,9 @@ bool TreeItem::hasActiveSystemFlag (const QString &name)
     return systemFlags.isActive (name);
 }
 
-QStringList TreeItem::activeStandardFlagNames () // FIXME-0 rename to activeFlagNames
+QStringList TreeItem::activeFlagNames () 
 {
     return standardFlags.activeFlagNames() + userFlags.activeFlagNames();
-}
-
-FlagRow* TreeItem::getStandardFlagRow() // FIXME-0 rename to getFlagRow
-{
-    return &standardFlags;              // and rename here, too   (or even remove?)
 }
 
 QStringList TreeItem::activeSystemFlagNames ()

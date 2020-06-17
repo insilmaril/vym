@@ -69,7 +69,7 @@ QString ExportHTML::getBranchText(BranchItem *current)
         QString userFlags;
         if (dia.useUserFlags)
         {
-            foreach (QString flag, current->activeStandardFlagNames())
+            foreach (QString flag, current->activeFlagNames())
                 userFlags += QString("<img src=\"flags/flag-%1.png\" alt=\"%2\">")
                     .arg(flag)
                     .arg(QObject::tr("Flag: %1","Alt tag in HTML export").arg(flag));

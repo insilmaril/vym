@@ -512,7 +512,7 @@ bool VymModelWrapper::hasActiveFlag( const QString &flag)
 {
     bool r = false;
     BranchItem *selbi = getSelectedBranch();
-    if (selbi) r = selbi->hasActiveStandardFlag( flag );
+    if (selbi) r = selbi->hasActiveFlag( flag );
     return setResult( r );
 }
 

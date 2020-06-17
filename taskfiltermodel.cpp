@@ -59,22 +59,22 @@ bool TaskFilterModel::filterAcceptsRow(int sourceRow,
     // Filter arrow flags
     if (filterFlags1 && filterFlags2)
     {
-        if ( taskModel->getTask(ix)->getBranch()->hasActiveStandardFlag("arrow-up") ||
-             taskModel->getTask(ix)->getBranch()->hasActiveStandardFlag("2arrow-up") )
+        if ( taskModel->getTask(ix)->getBranch()->hasActiveFlag("arrow-up") ||
+             taskModel->getTask(ix)->getBranch()->hasActiveFlag("2arrow-up") )
             return true;
         else
             return false;
     }
 
-    if (filterFlags1 && !taskModel->getTask(ix)->getBranch()->hasActiveStandardFlag("arrow-up") )
+    if (filterFlags1 && !taskModel->getTask(ix)->getBranch()->hasActiveFlag("arrow-up") )
         return false;
 
-    if (filterFlags2 && !taskModel->getTask(ix)->getBranch()->hasActiveStandardFlag("2arrow-up") )
+    if (filterFlags2 && !taskModel->getTask(ix)->getBranch()->hasActiveFlag("2arrow-up") )
         return false;
 
     // Filter flags: Flags, which have neither arrow-up nor 2arrow-up  
-    if (filterFlags3 && (taskModel->getTask(ix)->getBranch()->hasActiveStandardFlag("arrow-up") 
-                     ||  taskModel->getTask(ix)->getBranch()->hasActiveStandardFlag("2arrow-up") ) )
+    if (filterFlags3 && (taskModel->getTask(ix)->getBranch()->hasActiveFlag("arrow-up") 
+                     ||  taskModel->getTask(ix)->getBranch()->hasActiveFlag("2arrow-up") ) )
         return false;
     return true;
 }

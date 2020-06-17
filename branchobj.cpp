@@ -381,7 +381,7 @@ void BranchObj::updateData()
     QString s = treeItem->getHeadingText();
     if ( s != heading->text()) heading->setText (s);
 
-    QStringList TIactiveFlags = treeItem->activeStandardFlagNames();
+    QStringList TIactiveFlags = treeItem->activeFlagNames();
 
     // Add missing standard flags active in TreeItem    
     for (int i = 0; i<= TIactiveFlags.size() - 1; i++)

@@ -108,21 +108,21 @@ QVariant TaskModel::data(const QModelIndex &index, int role) const
     } else if (role == Qt::DecorationRole && index.column() == 7)
     {
         BranchItem *bi = t->getBranch();
-	if (bi->hasActiveStandardFlag ("stopsign") )
+	if (bi->hasActiveFlag ("stopsign") )
         {
-            if (bi->hasActiveStandardFlag ("2arrow-up") ) 
+            if (bi->hasActiveFlag ("2arrow-up") ) 
                 return QIcon(":/flag-stopsign-2arrow-up.png");
             else 
-                if (bi->hasActiveStandardFlag ("arrow-up") ) 
+                if (bi->hasActiveFlag ("arrow-up") ) 
                     return QIcon(":/flag-stopsign-arrow-up.png");
                 else
                     return QIcon(":/flag-stopsign.png");
         } else
         {
-            if (bi->hasActiveStandardFlag ("2arrow-up") ) 
+            if (bi->hasActiveFlag ("2arrow-up") ) 
                 return QIcon(":/flag-2arrow-up.png");
             else 
-                if (bi->hasActiveStandardFlag ("arrow-up") )
+                if (bi->hasActiveFlag ("arrow-up") )
                     return QIcon(":/flag-arrow-up.png");
         }
         return QIcon();
@@ -350,9 +350,9 @@ void TaskModel::recalcPriorities()
 	if (c == QColor ("#ff0000") ) p -= 80;
 
 	// Flags
-	if (bi->hasActiveStandardFlag ("stopsign") )  p-=  450;
-	if (bi->hasActiveStandardFlag ("2arrow-up") ) p-= 1000;
-	if (bi->hasActiveStandardFlag ("arrow-up") )  p-=  500;
+	if (bi->hasActiveFlag ("stopsign") )  p-=  450;
+	if (bi->hasActiveFlag ("2arrow-up") ) p-= 1000;
+	if (bi->hasActiveFlag ("arrow-up") )  p-=  500;
 
 	// Age
 	p -= t->getAgeModification();

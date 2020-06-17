@@ -106,11 +106,11 @@ void ExportAO::doExport()
                         }
                     } else
                     {
-                        if (cur->hasActiveStandardFlag ("hook-green") )
+                        if (cur->hasActiveFlag ("hook-green") )
                             statusString="[DONE]";
-                        else if (cur->hasActiveStandardFlag ("wip"))
+                        else if (cur->hasActiveFlag ("wip"))
                             statusString="[WIP]";
-                        else if (cur->hasActiveStandardFlag ("cross-red"))
+                        else if (cur->hasActiveFlag ("cross-red"))
                             statusString="[NOT STARTED]";
                     }
 

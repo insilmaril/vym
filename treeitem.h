@@ -144,10 +144,9 @@ public:
     */	
     virtual void toggleFlag(const QString &flag, bool useGroups = true);
     virtual void toggleSystemFlag  (const QString &flag, FlagRow *master = NULL);
-    virtual bool hasActiveStandardFlag (const QString &flag);
+    virtual bool hasActiveFlag (const QString &flag);
     virtual bool hasActiveSystemFlag   (const QString &flag);
-    virtual QStringList activeStandardFlagNames();
-    virtual FlagRow* getStandardFlagRow ();
+    virtual QStringList activeFlagNames();
 
     virtual QStringList activeSystemFlagNames();
 
