@@ -332,8 +332,6 @@ private slots:
     void previousSlide();
 
     void flagChanged();
-    void standardFlagChanged();
-    void userFlagChanged();
 
     void testFunction1();
     void testFunction2();

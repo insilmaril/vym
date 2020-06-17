@@ -4740,7 +4740,7 @@ void Main::editFollowXLink(QAction *a)
 	m->followXLink(branchXLinksContextMenuFollow->actions().indexOf(a));
 }
 
-bool Main::initLinkedMapsMenu( VymModel *model, QMenu *menu)    // FIXME-0 build Map of branch names and paths of linked vym maps
+bool Main::initLinkedMapsMenu( VymModel *model, QMenu *menu)   
 {
     if (model)
     {
@@ -6023,36 +6023,6 @@ void Main::flagChanged()
         updateActions();
     }
 }
-
-void Main::standardFlagChanged()    // FIXME-0 replaced by flagChanged
-{
-    MapEditor *me = currentMapEditor();
-    VymModel  *m  = currentModel();
-    if (me && m && me->getState() != MapEditor::EditingHeading) 
-    {
-        m->toggleFlag(
-            sender()->objectName(), 
-//            standardFlagsMaster,
-            actionSettingsUseFlagGroups->isChecked() );
-        updateActions();
-    }
-}
-
-void Main::userFlagChanged()    // FIXME-0 replaced by flagCHanged
-{
-    MapEditor *me = currentMapEditor();
-    VymModel  *m  = currentModel();
-    if (me && m && me->getState() != MapEditor::EditingHeading) 
-    {
-        m->toggleFlag(
-            sender()->objectName(), 
-//            userFlagsMaster,
-            actionSettingsUseFlagGroups->isChecked() );
-        updateActions();
-    }
-}
-
-
 
 void Main::testFunction1()
 {
