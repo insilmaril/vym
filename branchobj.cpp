@@ -10,6 +10,7 @@
 #include "misc.h"
 
 extern FlagRow *standardFlagsMaster;
+extern FlagRow *userFlagsMaster;
 extern FlagRow *systemFlagsMaster;
 extern bool debug;
 
@@ -375,19 +376,28 @@ void BranchObj::updateData()
     {
         qWarning ("BranchObj::udpateHeading treeItem==NULL");
         return;
+
     }
     QString s = treeItem->getHeadingText();
     if ( s != heading->text()) heading->setText (s);
 
     QStringList TIactiveFlags = treeItem->activeStandardFlagNames();
 
-    // Add missing standard flags active in TreeItem
+    // Add missing standard flags active in TreeItem    
     for (int i = 0; i<= TIactiveFlags.size() - 1; i++)
     {
         if (!standardFlagRowObj->isActive (TIactiveFlags.at(i) ))
         {
             Flag *f = standardFlagsMaster->getFlag(TIactiveFlags.at(i));
-            if (f) standardFlagRowObj->activate (f);
+            if (f) 
+                // Standard flag
+                standardFlagRowObj->activate (f);
+            else
+            {
+                // User flag
+                f = userFlagsMaster->getFlag(TIactiveFlags.at(i));
+                if (f) standardFlagRowObj->activate (f);
+            }
         }
     }
     // Remove standard flags no longer active in TreeItem

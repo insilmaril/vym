@@ -38,6 +38,8 @@ void Flag::init ()
 
     state   = false;
     used    = false;
+    type    = UndefinedFlag;
+
 }
 
 void Flag::copy (Flag* other)
@@ -49,6 +51,7 @@ void Flag::copy (Flag* other)
     state   = other->state;
     used    = other->used;
     pixmap  = other->pixmap;
+    type    = other->type;
 }
 
 
@@ -131,6 +134,16 @@ void Flag::setUsed (bool b)
 bool Flag::isUsed()
 {
     return used;
+}
+
+Flag::FlagType Flag::getType()
+{
+    return type;
+}
+
+void Flag::setType(Flag::FlagType t)
+{
+    type = t;
 }
 
 void Flag::saveToDir (const QString &tmpdir, const QString &prefix)

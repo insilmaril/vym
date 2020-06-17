@@ -17,6 +17,8 @@
 /////////////////////////////////////////////////////////////////////////////
 class Flag:public XMLObj {
 public:
+    enum FlagType {SystemFlag, StandardFlag, UserFlag, UndefinedFlag};
+
     Flag ();
     Flag (const QString &fname);
     Flag (Flag*);
@@ -39,6 +41,8 @@ public:
     QAction* getAction ();
     void setUsed (bool);    
     bool isUsed();
+    FlagType getType();
+    void setType (FlagType t);
     void saveToDir (const QString&, const QString&);
     
 protected:  
@@ -49,8 +53,11 @@ protected:
     QAction *action;
     bool state;
     bool used;
+    FlagType type;
+
 private:
     QPixmap pixmap;
+    
 };
 
 #endif
