@@ -2348,6 +2348,9 @@ void Main::setupFlagActions()
     flag = new Flag("0-tmp/darktable.png"); //FIXME-0 test
     setupFlag (flag, Flag::UserFlag, "userflag-darktable", "userflag text darktable");
 
+    flag = new Flag("0-tmp/amarok.svg"); //FIXME-0 test
+    setupFlag (flag, Flag::UserFlag, "userflag-kontact", "userflag text kontact");
+
     toolbarsMenu->addAction (userFlagsToolbar->toggleViewAction() );
     
     // Create Standard Flags
