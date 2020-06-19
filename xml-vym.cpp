@@ -160,7 +160,7 @@ bool parseVYMHandler::startElement  ( const QString&, const QString&,
         (state == StateMapCenter || state==StateBranch)) 
     {
         state=StateStandardFlag;
-    } else if ( eName == "userflag" && state == StateInit) 
+    } else if ( eName == "userflag" && state == StateMap) 
     {
         state = StateUserFlagDef;
         return (readUserFlagAttr(atts));
@@ -990,9 +990,27 @@ bool parseVYMHandler::readTaskAttr (const QXmlAttributes& a)
 
 bool parseVYMHandler::readUserFlagAttr (const QXmlAttributes& a)
 {
-    // FIXME-0 cont here to *define* the user flags
+    QString name;
+    QString path;
+    QString tooltip;
+    QString group;
+
     if (!a.value( "name").isEmpty() ) 
-        lastTask->setStatus (a.value( "status" ) );
+        name = a.value("name");
+    if (!a.value( "path").isEmpty() ) 
+        path = a.value("path");
+    if (!a.value( "tooltip").isEmpty() ) 
+        tooltip = a.value("tooltip");
+    if (!a.value( "group").isEmpty() ) 
+        group =  a.value("group");
+
+    qDebug() << "userflag name: " << name;  // FIXME-0 testing
+    qDebug() << "userflag path: " << path;
+    qDebug() << "userflag tooltip: " << tooltip;
+    qDebug() << "userflag group: " << group;
+
+    mainWindow->setupFlag ( path, Flag::UserFlag, name, tooltip); 
+
     return true;
 }
 

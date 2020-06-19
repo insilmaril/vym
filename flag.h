@@ -17,7 +17,7 @@
 /////////////////////////////////////////////////////////////////////////////
 class Flag:public XMLObj {
 public:
-    enum FlagType {SystemFlag, StandardFlag, UserFlag, UndefinedFlag};
+    enum FlagType {SystemFlag, StandardFlag, UserFlag, FreemindFlag, UndefinedFlag};
 
     Flag ();
     Flag (const QString &fname);

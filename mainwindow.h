@@ -70,14 +70,19 @@ private:
     void setupViewActions();
     void setupModeActions();
     void setupWindowActions();
+    void setupFlagActions();
+
+public:
     void setupFlag(
-	Flag *flag, 
+	const QString &path, 
         Flag::FlagType type,
 	const QString &name, 
 	const QString &tooltip,
-	const QKeySequence &ks=0
+        const QString &group = "",
+	const QKeySequence &ks = 0
 	);
-    void setupFlagActions();
+
+private:
     void setupNetworkActions();
     void setupSettingsActions();
     void setupTestActions();
