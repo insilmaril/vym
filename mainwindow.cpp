@@ -2664,6 +2664,7 @@ void Main::setupFlag (const QString &path,
     Flag *flag = new Flag(path);
     flag->setName(name);
     flag->setToolTip (tooltip);
+    flag->setType (type);
     if (!group.isEmpty()) 
         flag->setGroup(group);
 

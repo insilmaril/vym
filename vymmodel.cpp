@@ -72,6 +72,7 @@ extern NoteEditor *noteEditor;
 extern TaskEditor *taskEditor;
 extern ScriptEditor *scriptEditor;
 extern FlagRow *standardFlagsMaster;
+extern FlagRow *userFlagsMaster;
 
 extern Options options;
 
@@ -372,6 +373,7 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix, bool w
     s += xml.endElement("vymmap");
 
     if (writeflags) standardFlagsMaster->saveToDir (tmpdir + "/flags/", "", writeflags);
+    if (writeflags) userFlagsMaster->saveToDir     (tmpdir + "/flags/", "", writeflags);
     return s;
 }
 

@@ -157,21 +157,34 @@ QString FlagRow::saveToDir (const QString &tmpdir,const QString &prefix, bool wr
     if (!toolBar)
     {
 	if (!activeNames.isEmpty())
-	for (int i=0; i < activeNames.size(); ++i)
+	for (int i = 0; i < activeNames.size(); ++i)
 	{
+            Flag *flag = masterRow->getFlag(activeNames.at(i) );
+
 	    // save flag to xml, if flag is set 
-	    s += valueElement("standardflag",activeNames.at(i));
+            if (flag->getType() == Flag::UserFlag) 
+                s += valueElement("userflag",activeNames.at(i));
+            else
+                s += valueElement("standardflag",activeNames.at(i));
 
 	    // and tell parentRow, that this flag is used   
-	    masterRow->getFlag(activeNames.at(i))->setUsed(true);
+	    flag->setUsed(true);
 	}   
     } else
 	// Save icons to dir, if verbose is set (xml export)
 	// and I am a master
-	// and this flag is really used somewhere
+	// and this standardflag is really used somewhere.
+        // Userflags are written anyway (if master flagrow)
 	if (writeflags)
 	    for (int i = 0; i < flags.size(); ++i)
-		if (flags.at(i)->isUsed()) flags.at(i)->saveToDir (tmpdir,prefix);
+            {
+                qDebug() << "Flag: " << flags.at(i)->getName() << flags.at(i)->getType();
+                if (flags.at(i)->getType() == Flag::UserFlag) 
+                    flags.at(i)->saveToDir (tmpdir, prefix);
+                else
+                    if (flags.at(i)->isUsed()) 
+                        flags.at(i)->saveToDir (tmpdir, prefix);
+            }
     return s;	    
 }
 

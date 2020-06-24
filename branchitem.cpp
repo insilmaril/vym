@@ -157,6 +157,7 @@ QString BranchItem::saveToDir (const QString &tmpdir,const QString &prefix, cons
 
     // save names of flags set
     s += standardFlags.saveToDir(tmpdir, prefix, 0);
+    s +=     userFlags.saveToDir(tmpdir, prefix, 0);
     
     // Save Images
     for (int i = 0; i < imageCount(); ++i)
