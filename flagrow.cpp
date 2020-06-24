@@ -157,10 +157,10 @@ QString FlagRow::saveToDir (const QString &tmpdir,const QString &prefix, bool wr
     if (!toolBar)
     {
 	if (!activeNames.isEmpty())
-	for (int i=0; i<activeNames.size(); ++i)
+	for (int i=0; i < activeNames.size(); ++i)
 	{
 	    // save flag to xml, if flag is set 
-	    s+=valueElement("standardflag",activeNames.at(i));
+	    s += valueElement("standardflag",activeNames.at(i));
 
 	    // and tell parentRow, that this flag is used   
 	    masterRow->getFlag(activeNames.at(i))->setUsed(true);
@@ -170,36 +170,36 @@ QString FlagRow::saveToDir (const QString &tmpdir,const QString &prefix, bool wr
 	// and I am a master
 	// and this flag is really used somewhere
 	if (writeflags)
-	    for (int i=0; i<flags.size(); ++i)
+	    for (int i = 0; i < flags.size(); ++i)
 		if (flags.at(i)->isUsed()) flags.at(i)->saveToDir (tmpdir,prefix);
     return s;	    
 }
 
 void FlagRow::setName (const QString &n)
 {
-    rowName=n;
+    rowName = n;
 }
 
 void FlagRow::setToolBar (QToolBar *tb)
 {
-    toolBar=tb;
+    toolBar = tb;
 }
 
 void FlagRow::setMasterRow (FlagRow *row)
 {
-    masterRow=row; 
+    masterRow = row; 
 }
 
 void FlagRow::updateToolBar (const QStringList &activeNames)
 {
     if (toolBar )
     {
-	for (int i=0;i<flags.size();++i)
+	for (int i = 0;i < flags.size();++i)
 	    flags.at(i)->getAction()->setChecked (false);
-	for (int i=0;i<flags.size();++i)
+	for (int i = 0;i < flags.size();++i)
 	{
-	    int n=activeNames.indexOf (flags.at(i)->getName());
-	    if (n>=0)
+	    int n = activeNames.indexOf (flags.at(i)->getName());
+	    if (n >= 0)
 		flags.at(i)->getAction()->setChecked (true);	
 	}
     }
