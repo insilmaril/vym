@@ -89,51 +89,51 @@ QString BranchItem::saveToDir (const QString &tmpdir,const QString &prefix, cons
     if (hidden) return QString();
 
     // Save uuid 
-    QString idAttr=attribut("uuid",uuid.toString());
+    QString idAttr = attribut("uuid", uuid.toString());
 
-    QString s,a;
+    QString s, a;
 
     // Update of note is usually done while unselecting a branch
     
     QString scrolledAttr;
     if (scrolled) 
-	scrolledAttr=attribut ("scrolled","yes");
+	scrolledAttr = attribut ("scrolled","yes");
     else
-	scrolledAttr="";
+	scrolledAttr = "";
 
     // save area, if not scrolled   // not needed if HTML is rewritten...
 				    // also we could check if _any_ of parents is scrolled
     QString areaAttr;
     if (mo && parentItem->isBranchLikeType() && !((BranchItem*)parentItem)->isScrolled() )
     {
-	qreal x=mo->getAbsPos().x();
-	qreal y=mo->getAbsPos().y();
-	areaAttr=
-	    attribut("x1",QString().setNum(x-offset.x())) +
-	    attribut("y1",QString().setNum(y-offset.y())) +
-	    attribut("x2",QString().setNum(x+mo->width()-offset.x())) +
-	    attribut("y2",QString().setNum(y+mo->height()-offset.y()));
+	qreal x  = mo->getAbsPos().x();
+	qreal y  = mo->getAbsPos().y();
+	areaAttr =
+	    attribut("x1", QString().setNum(x - offset.x())) +
+	    attribut("y1", QString().setNum(y - offset.y())) +
+	    attribut("x2", QString().setNum(x + mo->width()  - offset.x())) +
+	    attribut("y2", QString().setNum(y + mo->height() - offset.y()));
 
     } else
-	areaAttr="";
+	areaAttr = "";
     
     QString elementName;
-    if (parentItem==rootItem)
-        elementName="mapcenter";
+    if (parentItem == rootItem)
+        elementName = "mapcenter";
     else
-        elementName="branch";
+        elementName = "branch";
 
     // Free positioning of children
     QString layoutAttr;
     if (childrenLayout == BranchItem::FreePositioning)
-        layoutAttr += attribut ("childrenFreePos","true");
+        layoutAttr += attribut ("childrenFreePos", "true");
 
     // Save rotation
     QString rotAttr;
-    if (mo && mo->getRotation() !=0 )
-	rotAttr=attribut ("rotation",QString().setNum (mo->getRotation() ) );
+    if (mo && mo->getRotation() != 0 )
+	rotAttr = attribut ("rotation", QString().setNum (mo->getRotation() ) );
 
-    s=beginElement (elementName
+    s = beginElement (elementName
 	+ getMapAttr()
 	+ getGeneralAttr()
 	+ scrolledAttr 
@@ -151,43 +151,43 @@ QString BranchItem::saveToDir (const QString &tmpdir,const QString &prefix, cons
     if (mo)
     {
         // Avoid saving NoFrame for objects other than MapCenter
-        if (depth() == 0  || ((OrnamentedObj*)mo)->getFrame()->getFrameType()!=FrameObj::NoFrame)
-            s+=((OrnamentedObj*)mo)->getFrame()->saveToDir ();
+        if (depth() == 0  || ((OrnamentedObj*)mo)->getFrame()->getFrameType() != FrameObj::NoFrame)
+            s += ((OrnamentedObj*)mo)->getFrame()->saveToDir ();
     }
 
     // save names of flags set
-    s+=standardFlags.saveToDir(tmpdir,prefix,0);
+    s += standardFlags.saveToDir(tmpdir, prefix, 0);
     
     // Save Images
-    for (int i=0; i<imageCount(); ++i)
-	s+=getImageNum(i)->saveToDir (tmpdir,prefix);
+    for (int i = 0; i < imageCount(); ++i)
+	s += getImageNum(i)->saveToDir (tmpdir, prefix);
 
     // save attributes
-    for (int i=0; i<attributeCount(); ++i)
-	s+=getAttributeNum(i)->getDataXML();
+    for (int i = 0; i < attributeCount(); ++i)
+	s += getAttributeNum(i)->getDataXML();
 
     // save note
     if (!note.isEmpty() )
-	s+=note.saveToDir();
+	s += note.saveToDir();
     
     // save task
     if (task)
-	s+=task->saveToDir();
+	s += task->saveToDir();
 
     // Save branches
-    int i=0;
-    TreeItem *ti=getBranchNum(i);
+    int i = 0;
+    TreeItem *ti = getBranchNum(i);
     while (ti)
     {
-	s+=getBranchNum(i)->saveToDir(tmpdir,prefix,offset,tmpLinks);
+	s += getBranchNum(i)->saveToDir(tmpdir, prefix, offset, tmpLinks);
 	i++;
-	ti=getBranchNum(i);
+	ti = getBranchNum(i);
     }	
 
     // Mark Links for save
-    for (int i=0; i<xlinkCount(); ++i)
+    for (int i = 0; i < xlinkCount(); ++i)
     {
-	Link *l=getXLinkItemNum (i)->getLink();
+	Link *l = getXLinkItemNum (i)->getLink();
 	if (l && !tmpLinks.contains (l)) tmpLinks.append (l);
     }
     decIndent();
