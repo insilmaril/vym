@@ -323,6 +323,8 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix, bool w
     // Find the used flags while traversing the tree	
     standardFlagsMaster->resetUsedCounter();
     
+    // Definitions of user flags need to be written before the trees
+    s += userFlagsMaster->saveDef();
 
     // Temporary list of links
     QList <Link*> tmpLinks;
@@ -372,8 +374,9 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix, bool w
     xml.decIndent();
     s += xml.endElement("vymmap");
 
-    if (writeflags) standardFlagsMaster->saveToDir (tmpdir + "/flags/", "", writeflags);
-    if (writeflags) userFlagsMaster->saveToDir     (tmpdir + "/flags/", "", writeflags);
+    // Write images of used standard flags for use in exports
+    if (writeflags) standardFlagsMaster->saveDataToDir (tmpdir + "/flags/", "");    // FIXME-0 check for errors during write
+
     return s;
 }
 

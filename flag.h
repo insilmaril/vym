@@ -29,6 +29,7 @@ public:
     void load (const QPixmap&);
     void setName (const QString&);
     const QString getName ();
+    const QString getPath();
     void setVisible (bool b);
     bool isVisible ();
     void setGroup (const QString&);
@@ -43,7 +44,9 @@ public:
     bool isUsed();
     FlagType getType();
     void setType (FlagType t);
-    void saveToDir (const QString&, const QString&);
+    QString  saveDef();
+    bool  saveDataToDir (const QString&, const QString&);
+    QString  saveState();
     
 protected:  
     QString name;
@@ -57,6 +60,7 @@ protected:
 
 private:
     QPixmap pixmap;
+    QString path;
     
 };
 

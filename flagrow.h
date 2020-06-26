@@ -34,7 +34,9 @@ public:
     void deactivateAll();
     void setEnabled (bool);
     void resetUsedCounter();
-    QString saveToDir (const QString &,const QString &,bool);
+    QString saveDef();
+    bool saveDataToDir (const QString &,const QString &);
+    QString saveState();
     void setName (const QString&);	    // prefix for exporting flags to dir
     void setToolBar   (QToolBar *tb);
     void setMasterRow (FlagRow *row);

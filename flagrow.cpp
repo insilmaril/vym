@@ -149,42 +149,55 @@ void FlagRow::resetUsedCounter()
 	flags.at(i)->setUsed (false);
 }
 
-QString FlagRow::saveToDir (const QString &tmpdir,const QString &prefix, bool writeflags) 
+QString FlagRow::saveDef()
 {
-    // Build xml string
+    // For the masterrow of userflags: Write definitions of flags
+
+    QString s;
+
+    qDebug() << "FR::saveDef Writing userflags def"<<flags.size(); 
+
+    for (int i = 0; i < flags.size(); ++i)
+        s += QString("<userflag name=\"%1\" path=\"%2\"/>\n").arg(flags.at(i)->getName()).arg(flags.at(i)->getPath());
+
+    return s;
+}
+
+bool FlagRow::saveDataToDir (const QString &tmpdir, const QString &prefix)
+{
+    bool r = true;
+    
+    // Save icons to dir, if verbose is set (xml export)
+    // and I am a master
+    // and this standardflag is really used somewhere.
+    // Userflags are written anyway (if master flagrow)
+    
+    for (int i = 0; i < flags.size(); ++i)
+    {
+        qDebug() << "FR::saveDataToDir Flag: " << flags.at(i)->getName() << flags.at(i)->getType();
+        if (!flags.at(i)->saveDataToDir (tmpdir, prefix))
+            r = false;
+        qDebug() << "done.";
+    }
+
+    return r;	    
+}
+
+QString FlagRow::saveState ()
+{
     QString s;
     
-    if (!toolBar)
-    {
-	if (!activeNames.isEmpty())
-	for (int i = 0; i < activeNames.size(); ++i)
-	{
+    if (!activeNames.isEmpty())
+        for (int i = 0; i < activeNames.size(); ++i)
+        {
             Flag *flag = masterRow->getFlag(activeNames.at(i) );
 
-	    // save flag to xml, if flag is set 
-            if (flag->getType() == Flag::UserFlag) 
-                s += valueElement("userflag",activeNames.at(i));
-            else
-                s += valueElement("standardflag",activeNames.at(i));
+            // save flag to xml, if flag is set 
+            s += flag->saveState();
 
-	    // and tell parentRow, that this flag is used   
-	    flag->setUsed(true);
-	}   
-    } else
-	// Save icons to dir, if verbose is set (xml export)
-	// and I am a master
-	// and this standardflag is really used somewhere.
-        // Userflags are written anyway (if master flagrow)
-	if (writeflags)
-	    for (int i = 0; i < flags.size(); ++i)
-            {
-                qDebug() << "Flag: " << flags.at(i)->getName() << flags.at(i)->getType();
-                if (flags.at(i)->getType() == Flag::UserFlag) 
-                    flags.at(i)->saveToDir (tmpdir, prefix);
-                else
-                    if (flags.at(i)->isUsed()) 
-                        flags.at(i)->saveToDir (tmpdir, prefix);
-            }
+            // and tell parentRow, that this flag is used   
+            flag->setUsed(true);
+        }   
     return s;	    
 }
 

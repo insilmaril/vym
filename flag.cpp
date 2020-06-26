@@ -52,6 +52,7 @@ void Flag::copy (Flag* other)
     used    = other->used;
     pixmap  = other->pixmap;
     type    = other->type;
+    path    = other->path;
 }
 
 
@@ -59,6 +60,8 @@ void Flag::load (const QString &fn)
 {
     if (!pixmap.load(fn))
 	qDebug() << "Flag::load (" << fn << ") failed.";
+    else
+        path = fn;
 }
 
 void Flag::load (const QPixmap &pm)
@@ -74,6 +77,11 @@ void Flag::setName(const QString &n)
 const QString Flag::getName()
 {
     return name;
+}
+
+const QString Flag::getPath()
+{
+    return path;
 }
 
 void Flag::setVisible (bool b)
@@ -146,10 +154,26 @@ void Flag::setType(Flag::FlagType t)
     type = t;
 }
 
-void Flag::saveToDir (const QString &tmpdir, const QString &prefix)
+QString Flag::saveDef()
+{
+    if (type == Flag::UserFlag) 
+        return valueElement ("userflag", attribut("name", name) + attribut("path", path));
+    else
+        return QString();
+}
+
+bool Flag::saveDataToDir (const QString &tmpdir, const QString &prefix)
 {
     QString fn = tmpdir + prefix + name + ".png";
-    pixmap.save (fn, "PNG");
+    return pixmap.save (fn, "PNG");
+}
+
+QString Flag::saveState()
+{
+    if (type == Flag::UserFlag) 
+        return valueElement ("userflag", name);
+    else
+        return valueElement ("standardflag", name);
 }
 
 

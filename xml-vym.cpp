@@ -60,14 +60,14 @@ bool parseVYMHandler::startElement  ( const QString&, const QString&,
     if ( state == StateInit && (eName == "vymmap")  ) 
     {
         state = StateMap;
-        branchesTotal=0;        
-        branchesCounter=0;
+        branchesTotal   = 0;        
+        branchesCounter = 0;
 
-        if (loadMode==NewMap )
+        if (loadMode == NewMap )
         {
             // Create mapCenter
             model->clear();
-            lastBranch=NULL;
+            lastBranch = NULL;
 
             readMapAttr (atts);
         }   
@@ -90,7 +90,7 @@ bool parseVYMHandler::startElement  ( const QString&, const QString&,
 
     } else if ( eName == "select" && state == StateMap ) 
     {
-        state=StateMapSelect;
+        state = StateMapSelect;
     } else if ( eName == "setting" && state == StateMap ) 
     {
         state=StateMapSetting;
@@ -168,7 +168,7 @@ bool parseVYMHandler::startElement  ( const QString&, const QString&,
         eName == "userflag" && 
         (state == StateMapCenter || state == StateBranch )) 
     {
-        state=StateUserFlag;
+        state = StateUserFlag;
     } else if ( eName == "heading" && (state == StateMapCenter||state==StateBranch || state == StateInit))
     {
         if (state == StateInit)
@@ -180,7 +180,7 @@ bool parseVYMHandler::startElement  ( const QString&, const QString&,
         }
         if (!lastBranch) return false;
 
-        state=StateHeading;
+        state = StateHeading;
         htmldata.clear();
         vymtext.clear();
         if (!atts.value( "fonthint").isEmpty() )
@@ -420,8 +420,8 @@ bool parseVYMHandler::characters   ( const QString& ch)
 {
 //    qDebug()<< "xml-vym: characters "<<ch<<"  state="<<state;
 
-    QString ch_org=quotemeta (ch);
-    QString ch_simplified=ch.simplified();
+    QString ch_org = quotemeta (ch);
+    QString ch_simplified = ch.simplified();
     //if ( ch_simplified.isEmpty() ) return true;
 
     switch ( state ) 
@@ -441,6 +441,10 @@ bool parseVYMHandler::characters   ( const QString& ch)
         case StateBranch: break;
         case StateStandardFlag: 
             lastBranch->activateStandardFlag(ch_simplified); 
+            break;
+        case StateUserFlag: 
+            qDebug() << "xml chars: " << ch_simplified;
+            lastBranch->toggleFlag(ch_simplified);
             break;
         case StateImage: break;
         case StateVymNote: 
