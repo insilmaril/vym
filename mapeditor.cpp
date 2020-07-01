@@ -40,7 +40,7 @@ extern QString editorFocusStyle;
 ///////////////////////////////////////////////////////////////////////
 MapEditor::MapEditor( VymModel *vm)	
 {
-    //qDebug() << "Constructor ME "<<this;
+    // qDebug() << "Constructor ME " << this;
 
     QString shortcutScope = tr("Map Editor","Shortcut scope");
     mapScene= new QGraphicsScene(NULL);

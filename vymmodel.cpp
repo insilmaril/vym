@@ -101,7 +101,7 @@ uint VymModel::idLast=0;    // make instance
 
 VymModel::VymModel()
 {
-    //qDebug()<< "Const VymModel";
+    // qDebug()<< "Const VymModel" << this;
     init();
     rootItem->setModel (this);
     wrapper = new VymModelWrapper(this);

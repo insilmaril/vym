@@ -3280,6 +3280,7 @@ VymView* Main::view(const int i)
 
 MapEditor* Main::currentMapEditor() const
 {
+    qDebug() << "Main::currentME   i = "<<tabWidget->currentIndex();
     if ( tabWidget->currentWidget())
         return  currentView()->getMapEditor();
     return NULL;    
@@ -3365,27 +3366,37 @@ void Main::editorChanged()
 
 void Main::fileNew()
 {
-    VymModel *vm=new VymModel;
+    VymModel *vm;
+    VymView *vv;
 
-    /////////////////////////////////////
-//  new ModelTest(vm, this);	
-    /////////////////////////////////////
+    QString default_path = settings.value("/system/defaultMap/path", vymBaseDir.path() +"/demos/default.vym").toString();
 
-    VymView *vv=new VymView (vm);
+    if (File::Success != fileLoad (default_path, NewMap, VymMap) )   
+    {
+        QMessageBox::critical( 0, tr( "Critical Error" ), tr("Couldn't load default map:\n\n%1\n\nvym will create empty map now.","Mainwindow: Failed to load default map").arg(default_path));
 
-    tabWidget->addTab (vv,tr("unnamed","MainWindow: name for new and empty file"));
-    tabWidget->setCurrentIndex (tabWidget->count() );
-    vv->initFocus();
+        vm = new VymModel;
+        vv = new VymView (vm);
 
-    // Create MapCenter for empty map
-    vm->addMapCenter(false);
-    vm->makeDefault();
+        tabWidget->addTab (vv, tr("unnamed", "MainWindow: name for new and empty file"));
+        vv->initFocus();
+        
+        // Switch to new tab
+        tabWidget->setCurrentIndex (tabWidget->count() -1);
+        
+        vm = currentModel();
 
-    // For the very first map we do not have flagrows yet...
-    vm->select("mc:");
+        // Create MapCenter for empty map
+        vm->addMapCenter(false);
+        vm->makeDefault();
 
-    // Switch to new tab
-    tabWidget->setCurrentIndex (tabWidget->count() -1);
+        // For the very first map we do not have flagrows yet...
+        vm->select("mc:");
+    } else
+    {
+        vm = currentModel();
+        vm->makeDefault();
+    }
 }
 
 void Main::fileNewCopy() 
@@ -3406,20 +3417,20 @@ void Main::fileNewCopy()
 
 File::ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode, const FileType &ftype) 
 {
-    File::ErrorCode err=File::Success;
+    File::ErrorCode err = File::Success;
 
     // fn is usually the archive, mapfile the file after uncompressing
     QString mapfile;
 
     // Make fn absolute (needed for unzip)
-    fn=QDir (fn).absolutePath();
+    fn = QDir (fn).absolutePath();
 
     VymModel *vm;
 
-    if (lmode==NewMap)
+    if (lmode == NewMap)
     {
 	// Check, if map is already loaded
-	int i=0;
+	int i = 0;
 	while (i<=tabWidget->count() -1)
 	{
 	    if ( view(i)->getModel()->getFilePath() == fn)
@@ -3453,7 +3464,7 @@ File::ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode, const FileType
     }
 
 
-    // Try to load map
+    // Try to load map  // FIXME-0 Check in context of default maps
     if ( !fn.isEmpty() )
     {
 	vm = currentModel();
@@ -3486,8 +3497,10 @@ File::ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode, const FileType
             VymModel *vm = currentMapEditor()->getModel();
 	    switch( mb.exec() ) 
 	    {
-		case QMessageBox::Yes:
+		case QMessageBox::Yes:  // FIXME-0 check in context of new default map
 		    // Create new map
+                    qDebug() << "fileLoad  vm=" << vm;
+                    qDebug() << "fileLoad  me=" << currentMapEditor();
                     vm->setFilePath(fn);
                     updateTabName( vm );
 		    statusBar()->showMessage( "Created " + fn , statusbarTime );
@@ -3628,7 +3641,7 @@ void Main::fileLoadRecent()
     }
 }
 
-void Main::addRecentMap (const QString &fileName)
+void Main::addRecentMap (const QString &fileName)   // FIXME-0 ignore path of default map here
 {
 
     QStringList files = settings.value("/mainwindow/recentFileList").toStringList();
