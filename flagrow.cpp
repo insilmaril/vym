@@ -155,8 +155,6 @@ QString FlagRow::saveDef()
 
     QString s;
 
-    qDebug() << "FR::saveDef Writing userflags def"<<flags.size(); 
-
     for (int i = 0; i < flags.size(); ++i)
         s += QString("<userflag name=\"%1\" path=\"%2\"/>\n").arg(flags.at(i)->getName()).arg(flags.at(i)->getPath());
 
@@ -173,12 +171,8 @@ bool FlagRow::saveDataToDir (const QString &tmpdir, const QString &prefix)
     // Userflags are written anyway (if master flagrow)
     
     for (int i = 0; i < flags.size(); ++i)
-    {
-        qDebug() << "FR::saveDataToDir Flag: " << flags.at(i)->getName() << flags.at(i)->getType();
         if (!flags.at(i)->saveDataToDir (tmpdir, prefix))
             r = false;
-        qDebug() << "done.";
-    }
 
     return r;	    
 }

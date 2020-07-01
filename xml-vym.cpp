@@ -443,7 +443,6 @@ bool parseVYMHandler::characters   ( const QString& ch)
             lastBranch->activateStandardFlag(ch_simplified); 
             break;
         case StateUserFlag: 
-            qDebug() << "xml chars: " << ch_simplified;
             lastBranch->toggleFlag(ch_simplified);
             break;
         case StateImage: break;
