@@ -1007,11 +1007,6 @@ bool parseVYMHandler::readUserFlagAttr (const QXmlAttributes& a)
     if (!a.value( "group").isEmpty() ) 
         group =  a.value("group");
 
-    qDebug() << "userflag name: " << name;  // FIXME-0 testing
-    qDebug() << "userflag path: " << path;
-    qDebug() << "userflag tooltip: " << tooltip;
-    qDebug() << "userflag group: " << group;
-
     mainWindow->setupFlag ( path, Flag::UserFlag, name, tooltip); 
 
     return true;
