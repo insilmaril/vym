@@ -117,7 +117,7 @@ bool ConfluenceAgent::createPage(const QString &url, const QString &title, const
 
 bool ConfluenceAgent::getUsers(const QString &name)
 {
-    QStringList args;   // FIXME-0 refactor so that args are passed to one function starting the process
+    QStringList args;   // FIXME-1 refactor so that args are passed to one function starting the process
 
     args << "-s";
     args << name;
@@ -164,7 +164,7 @@ QString ConfluenceAgent::getResult()
 }
 
 
-bool ConfluenceAgent::dataReceived(int exitCode, QProcess::ExitStatus exitStatus)    // FIXME-0  return value???   // FIXME-0  name correct? used by all functions...
+bool ConfluenceAgent::dataReceived(int exitCode, QProcess::ExitStatus exitStatus)    // FIXME-1  return value???   // FIXME-1  name correct? used by all functions...
 {
     if (exitStatus == QProcess::NormalExit)
     {
@@ -187,7 +187,7 @@ bool ConfluenceAgent::dataReceived(int exitCode, QProcess::ExitStatus exitStatus
 void ConfluenceAgent::timeout()
 {
     qWarning() << "ConfluenceAgent timeout!";
-    // delete (vymProcess);  // FIXME-0  crashes...
+    // delete (vymProcess);  // FIXME-1  crashes...
     vymProcess = NULL;
 }
     
