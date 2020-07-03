@@ -48,22 +48,27 @@ QString ExportConfluence::getBranchText(BranchItem *current)
 {
     if (current)
     {
-        bool vis = false;
         QRectF hr;
         LinkableMapObj *lmo = current->getLMO();
         if (lmo)
         {
             hr = ((BranchObj*)lmo)->getBBoxHeading();
-            vis = lmo->isVisibleObj();
         }
-        QString col;
         QString id = model->getSelectString(current);
+        QString heading = quotemeta(current->getHeadingPlain());
+
+        qDebug() << current->getHeadingPlain() << dia.useTextColor;
+
         if (dia.useTextColor)
-            col = QString("style='color:%1'").arg(current->getHeadingColor().name());
+        {
+            QColor c = current->getHeadingColor();
+            QString cs = QString("rgb(%1,%2,%3);").arg(c.red()).arg(c.green()).arg(c.blue());
+            heading = QString("<span style='color: %1'>%2</span>").arg(cs).arg(heading); 
+        }
+
         QString s;
         QString url = current->getURL();
 
-        QString heading = quotemeta(current->getHeadingPlain());
 
         // Task flags
         QString taskFlags;
@@ -109,7 +114,7 @@ QString ExportConfluence::getBranchText(BranchItem *current)
         } else
             s += number + taskFlags + heading + userFlags;
 
-        // Include images // FIXME-3 not possible
+        // Include images // FIXME-3 not implemented yet
         /*
         if (dia.includeImages)
         {
@@ -163,13 +168,15 @@ QString ExportConfluence::getBranchText(BranchItem *current)
             }
             else
             {
-                n = current->getNoteASCII().replace ("<","&lt;").replace (">","&gt;");
-                n.replace("\n","<br />");
+                n = current->getNoteASCII();
                 n.replace("&", "&amp;");
+                n.replace ("<","&lt;");
+                n.replace (">","&gt;");
+                n.replace("\n","<br />");
                 if (current->getNote().getFontHint()=="fixed")
                     n = "<pre>" + n + "</pre>";
             } 
-            s += "\n<table class=\"vym-note\"><tr>n<td>\n" + n + "\n</td></tr></table>\n";
+            s += "\n<table class=\"vym-note\"><tr><td>\n" + n + "\n</td></tr></table>\n";
         }
         return s;
     }
@@ -343,12 +350,12 @@ void ExportConfluence::doExport(bool useDialog)
             // Page with URL is existing already
             if (dia.createNewPage() )
             {
-                qDebug() << "Starting to create new page...";
+                qDebug() << "Starting to create new page...";// FIXME-2 Improve messages here and below...
                 ca_content->createPage( dia.getPageURL(), dia.getPageTitle(), filePath);
                 ca_content->waitForResult();
                 if (ca_content->success() ) 
                 {
-                    qDebug() << "Page created.";
+                    qDebug() << "Page created.";    
                     success = true;
                 } else
                 {

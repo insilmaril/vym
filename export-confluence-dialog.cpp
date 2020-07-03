@@ -71,9 +71,10 @@ void ExportConfluenceDialog::readSettings()
     useUserFlags = settings.localValue (filepath, "/export/confluence/useUserFlags", "true").toBool();
     ui.userFlagsCheckBox->setChecked(useUserFlags);
 	
+    */
     useTextColor = settings.localValue (filepath, "/export/confluence/useTextColor", "no").toBool();
     ui.textColorCheckBox->setChecked(useTextColor);
-    */
+
     saveSettingsInMap = settings.localValue (filepath, "/export/confluence/saveSettingsInMap", "no").toBool();
     ui.saveSettingsInMapCheckBox->setChecked(saveSettingsInMap);
 }
@@ -190,9 +191,11 @@ void ExportConfluenceDialog::saveSettings ()
 //        settings.setLocalValue (filepath, "/export/confluence/useNumbering", useNumbering);
 //        settings.setLocalValue (filepath, "/export/confluence/useTaskFlags", useTaskFlags);
 //        settings.setLocalValue (filepath, "/export/confluence/useUserFlags", useUserFlags);
-//        settings.setLocalValue (filepath, "/export/confluence/useTextColor", useTextColor);
+        settings.setLocalValue (filepath, "/export/confluence/useTextColor", useTextColor);
         settings.setValue ("/export/confluence/showWarnings", showWarnings);
         settings.setValue ("/export/confluence/showOutput", showOutput);
+        settings.setValue ("/export/confluence/pageURL", pageURL);
+        settings.setValue ("/export/confluence/pageTitle", pageTitle);
     }
 }
 
