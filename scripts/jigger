@@ -44,7 +44,13 @@ ARGV.each do |id|
   client = JIRA::Client.new(options)
   
   # Query ticket and display info
-  t = client.Issue.find(id)
+  
+  begin
+    t = client.Issue.find(id)
+  rescue
+    fail "Could not find JIRA ticket #{id}. Also check your credentials!"
+  end
+
   puts "#{id}:short_desc:\"#{t.summary}\""
   puts "#{id}:type:\"#{t.issuetype.name}\""
   puts "#{id}:priority:\"#{t.priority.name}\""
