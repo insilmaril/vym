@@ -3280,7 +3280,6 @@ VymView* Main::view(const int i)
 
 MapEditor* Main::currentMapEditor() const
 {
-    qDebug() << "Main::currentME   i = "<<tabWidget->currentIndex();
     if ( tabWidget->currentWidget())
         return  currentView()->getMapEditor();
     return NULL;    
@@ -3338,9 +3337,16 @@ int Main::modelCount()
 
 void Main::updateTabName( VymModel *vm)
 {
+    if (!vm)
+    {
+        qWarning() << "Main::updateTabName   vm == NULL";
+        return;
+    }
+
     for (int i = 0; i < tabWidget->count(); i++)
         if ( view(i)->getModel() == vm )
         {
+            if ( vm->isDefault() )
             if ( vm->isReadOnly() )
                 tabWidget->setTabText( i, vm->getFileName() + " " + tr("(readonly)") );
             else
@@ -3369,9 +3375,13 @@ void Main::fileNew()
     VymModel *vm;
     VymView *vv;
 
-    QString default_path = settings.value("/system/defaultMap/path", vymBaseDir.path() +"/demos/default.vym").toString();
+    QString default_path = settings.value(
+            "/system/defaultMap/path", 
+            vymBaseDir.path() +"/demos/default.vym").toString();
 
-    if (File::Success != fileLoad (default_path, NewMap, VymMap) )   
+    default_path = "/usr/share/vym/demos/math.vym"; //FIXME-0 testing
+
+    if (File::Success != fileLoad (default_path, DefaultMap, VymMap) )   
     {
         QMessageBox::critical( 0, tr( "Critical Error" ), tr("Couldn't load default map:\n\n%1\n\nvym will create empty map now.","Mainwindow: Failed to load default map").arg(default_path));
 
@@ -3391,11 +3401,10 @@ void Main::fileNew()
         vm->makeDefault();
 
         // For the very first map we do not have flagrows yet...
-        vm->select("mc:");
+        vm->select("mc:");  // FIXME-0   check - still needed?
     } else
     {
         vm = currentModel();
-        vm->makeDefault();
     }
 }
 
@@ -3464,72 +3473,109 @@ File::ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode, const FileType
     }
 
 
-    // Try to load map  // FIXME-0 Check in context of default maps
+    // Try to load map  
     if ( !fn.isEmpty() )
     {
-	vm = currentModel();
-	// Check first, if mapeditor exists
-	// If it is not default AND we want a new map, 
-	// create a new mapeditor in a new tab
-	if ( lmode==NewMap && (!vm || !vm->isDefault() )  )
-	{
-	    vm=new VymModel;
-	    VymView *vv=new VymView (vm);
+	// Find out, if we need to create a new map model
 
-	    tabWidget->addTab (vv,fn);
-	    vv->initFocus();
-	}
+	vm = currentModel();
+
+        bool createModel;
+
+	if ( lmode == NewMap || lmode == DefaultMap)
+	{
+            if (vm && vm->isDefault() )
+            {
+                // There is a map model already and it still the default map, use it.
+                createModel = false;
+            } else
+                // Create new model 
+                createModel = true;
+        } else if (lmode == ImportAdd || lmode == ImportReplace)
+        {
+            if (!vm)
+            {
+                QMessageBox::warning(0,
+                     "Warning",
+                     "Trying to import into non existing map");
+                return File::Aborted;
+            } else
+                createModel = false;
+        } else
+            createModel = true;
 	
+        if (createModel)
+        {
+            vm = new VymModel;
+            VymView *vv = new VymView (vm);
+
+            tabWidget->addTab (vv, fn);
+            vv->initFocus();
+        }
+
 	// Check, if file exists (important for creating new files
 	// from command line
 	if (!QFile(fn).exists() )
 	{
-	    QMessageBox mb( vymName,
-		tr("This map does not exist:\n  %1\nDo you want to create a new one?").arg(fn),
-		QMessageBox::Question,
-		QMessageBox::Yes ,
-		QMessageBox::Cancel | QMessageBox::Default,
-		QMessageBox::NoButton );
+            if (lmode == DefaultMap) return File::Aborted;
 
-	    mb.setButtonText( QMessageBox::Yes, tr("Create"));
-	    mb.setButtonText( QMessageBox::No, tr("Cancel"));
+            if (lmode == NewMap)
+            {
+                QMessageBox mb( vymName,
+                    tr("This map does not exist:\n  %1\nDo you want to create a new one?").arg(fn),
+                    QMessageBox::Question,
+                    QMessageBox::Yes ,
+                    QMessageBox::Cancel | QMessageBox::Default,
+                    QMessageBox::NoButton );
 
-            VymModel *vm = currentMapEditor()->getModel();
-	    switch( mb.exec() ) 
-	    {
-		case QMessageBox::Yes:  // FIXME-0 check in context of new default map
-		    // Create new map
-                    qDebug() << "fileLoad  vm=" << vm;
-                    qDebug() << "fileLoad  me=" << currentMapEditor();
-                    vm->setFilePath(fn);
-                    updateTabName( vm );
-		    statusBar()->showMessage( "Created " + fn , statusbarTime );
-		    return File::Success;
-			
-		case QMessageBox::Cancel:
-		    // don't create new map
-		    statusBar()->showMessage( "Loading " + fn + " failed!", statusbarTime );
-		    int cur=tabWidget->currentIndex();
-		    tabWidget->setCurrentIndex (tabWidget->count()-1);
-		    fileCloseMap();
-		    tabWidget->setCurrentIndex (cur);
-		    return File::Aborted;
-	    }
+                mb.setButtonText( QMessageBox::Yes, tr("Create"));
+                mb.setButtonText( QMessageBox::No, tr("Cancel"));
+
+                vm = currentMapEditor()->getModel();
+                switch( mb.exec() ) 
+                {
+                    case QMessageBox::Yes:  
+                        // Create new map
+                        vm->setFilePath(fn);
+                        updateTabName( vm );
+                        statusBar()->showMessage( "Created " + fn , statusbarTime );
+                        return File::Success;
+                            
+                    case QMessageBox::Cancel:
+                        // don't create new map
+                        statusBar()->showMessage( "Loading " + fn + " failed!", statusbarTime );
+                        int cur = tabWidget->currentIndex();
+                        tabWidget->setCurrentIndex (tabWidget->count() - 1);
+                        fileCloseMap();
+                        tabWidget->setCurrentIndex (cur);
+                        return File::Aborted;
+                } 
+
+                // ImportAdd or ImportReplace
+                qWarning() << QString("Warning:  Could not import %1 into %2").arg(fn).arg(vm->getFilePath());
+                return File::Aborted;
+            }
 	}   
 
 	if (err!=File::Aborted)
 	{
-	    // Save existing filename in case  we import
-	    QString fn_org = vm->getFilePath();
+            // Save existing filename in case  we import
+            QString fn_org = vm->getFilePath();
+
+            if (lmode != DefaultMap)
+            {
+
+                vm->setFilePath (fn);
+                vm->saveStateBeforeLoad (lmode, fn);
+
+                progressDialog.setLabelText (tr("Loading: %1","Progress dialog while loading maps").arg(fn));
+            }
 
 	    // Finally load map into mapEditor
-	    progressDialog.setLabelText (tr("Loading: %1","Progress dialog while loading maps").arg(fn));
-	    vm->setFilePath (fn);
-	    vm->saveStateBeforeLoad (lmode,fn);
-	    err = vm->loadMap(fn,lmode,ftype);
+	    err = vm->loadMap(fn, lmode, ftype);
 
 	    // Restore old (maybe empty) filepath, if this is an import
-	    if (lmode != NewMap)
+	    if (lmode == ImportAdd || lmode == ImportReplace)
 		vm->setFilePath (fn_org);
 	}   
 
@@ -3545,10 +3591,15 @@ File::ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode, const FileType
                 vm->setFilePath (fn);
                 updateTabName( vm );
                 actionFilePrint->setEnabled (true);
-            }	
+                addRecentMap( fn );
+            } else if (lmode == DefaultMap)
+            {
+                // FIXME-0 How to handle lockfile?
+                vm->makeDefault();
+                updateTabName();
+            }
 	    editorChanged();
 	    vm->emitShowSelection();
-            addRecentMap( fn );
 	    statusBar()->showMessage( "Loaded " + fn, statusbarTime );
 	}   
     }
@@ -3562,13 +3613,16 @@ void Main::fileLoad(const LoadMode &lmode)
     switch (lmode)
     {
 	case NewMap:
-	    caption=vymName+ " - " +tr("Load vym map");
+	    caption = vymName+ " - " +tr("Load vym map");
 	    break;
+        case DefaultMap:
+            // Not used directly
+            return;
 	case ImportAdd:
-	    caption=vymName+ " - " +tr("Import: Add vym map to selection");
+	    caption = vymName+ " - " +tr("Import: Add vym map to selection");
 	    break;
 	case ImportReplace:
-	    caption=vymName+ " - " +tr("Import: Replace selection with vym map");
+	    caption = vymName+ " - " +tr("Import: Replace selection with vym map");
 	    break;
     }
 
@@ -3788,7 +3842,7 @@ void Main::fileSaveAs()
     fileSaveAs (CompleteMap);
 }
 
-void Main::fileImportFirefoxBookmarks()
+void Main::fileImportFirefoxBookmarks() // FIXME-2 remove or adapt
 {
     QFileDialog fd;
     fd.setDirectory (vymBaseDir.homePath()+"/.mozilla/firefox");

@@ -5,12 +5,12 @@
 
 namespace File
 {
-    enum ErrorCode {Success,Aborted,NoZip};
+    enum ErrorCode {Success, Aborted, NoZip};
 }
 
-enum LoadMode {NewMap,ImportAdd,ImportReplace};
-enum SaveMode {PartOfMap,CompleteMap,UndoCommand};
-enum FileType {VymMap, FreemindMap,UnknownMap};
+enum LoadMode {NewMap, DefaultMap, ImportAdd, ImportReplace};
+enum SaveMode {PartOfMap, CompleteMap, UndoCommand};
+enum FileType {VymMap, FreemindMap, UnknownMap};
 
 /////////////////////////////////////////////////////////////////////////////
 QString convertToRel (const QString &,const QString &);
