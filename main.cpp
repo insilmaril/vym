@@ -99,7 +99,11 @@ FlagRow *standardFlagsMaster;
 Switchboard switchboard;
 
 Settings settings ("InSilmaril","vym"); // Organization, Application name
-QString zipToolPath;    // Platform dependant zip tool
+
+bool zipToolAvailable   = false;
+bool unzipToolAvailable = false;
+QString zipToolPath;            // Platform dependant zip tool
+QString unzipToolPath;          // For windows same as zipToolPath 
 
 QList <Command*> modelCommands;
 QList <Command*> vymCommands;
@@ -339,13 +343,11 @@ int main(int argc, char* argv[])
     // Platform specific settings
     vymPlatform = QSysInfo::prettyProductName();
 
-#if defined(Q_OS_MACX)
-    zipToolPath = "zip/unzip (system)";
-#elif defined(Q_OS_WIN32)
+#if defined(Q_OS_WIN32)
     zipToolPath = settings.value("/system/zipToolPath", "c:\\Program Files\\7-Zip\\7z.exe").toString();
-#elif defined(Q_OS_LINUX)
-    zipToolPath = "zip/unzip (system)";
 #else
+    zipToolPath = "/usr/bin/zip";
+    unzipToolPath = "/usr/bin/unzip";
 #endif
     iconPath  = vymBaseDir.path()+"/icons/";
     flagsPath = vymBaseDir.path()+"/flags/";
@@ -431,25 +433,34 @@ int main(int argc, char* argv[])
     bugzillaClientAvailable = fi.exists();
 
     // Initialize mainwindow
+    // Note: mainWindow pointer is set in constructor  // FIXME-3 check this...
 #if defined(Q_OS_WIN32)
     Main m(0, Qt::Window | Qt::MSWindowsOwnDC);
 #else
     Main m;
 #endif
 
-    // Check for zip tools (at least on windows...)
-#if defined(Q_OS_WIN32)
-    QFile zipTool(zipToolPath);
-    if (!zipTool.exists() )
+    // Check for zip tools 
+    checkZipTool();
+    checkUnzipTool();
+
+    if (!zipToolAvailable || !unzipToolAvailable)
     {
+#if defined(Q_OS_WIN32)
         QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
                                QObject::tr("Couldn't find tool to unzip data. "
                                            "Please download and install 7z and set "
                                            "path in Settings menu:\n ") +
                                            "http://www.7-zip.org/");
-         m.settingsZipTool();
-    }
+#else
+        QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
+                               QObject::tr("Couldn't find tool to zip/unzip data. "
+                                           "Please install on your platform and set"
+                                           "path in Settings menu:\n ") +
+                                           "http://www.7-zip.org/");
 #endif
+        m.settingsZipTool();
+    }
 
     m.setWindowIcon (QPixmap (":/vym.png"));
     m.fileNew();

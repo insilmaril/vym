@@ -167,7 +167,8 @@ HEADERS	+= \
     xml-vym.h \
     xml-freemind.h \
     xmlobj.h\
-    xsltproc.h 
+    xsltproc.h \
+    zip-settings-dialog.h
 
 SOURCES	+= \
     aboutdialog.cpp \
@@ -277,6 +278,7 @@ SOURCES	+= \
     xml-freemind.cpp \
     xmlobj.cpp \
     xsltproc.cpp \
+    zip-settings-dialog.cpp
 
 FORMS = \
     attributewidget.ui \
@@ -291,7 +293,8 @@ FORMS = \
     scripteditor.ui \
     showtextdialog.ui \
     userdialog.ui \
-    warningdialog.ui 
+    warningdialog.ui \
+    zip-settings-dialog.ui
 
 isEmpty( PREFIX ) {
     PREFIX = /usr/local
@@ -318,7 +321,14 @@ language.files = lang/*.qm
 language.path = $${DATADIR}/vym/lang
 INSTALLS += language
 
-support.files = styles/ scripts/ icons/ flags/ macros/ exports/ demos/
+support.files = demos \
+    exports/  \
+    flags/ \
+    icons/ \
+    macros/ \
+    scripts/ \
+    styles/ 
+
 support.path = $${DATADIR}/vym
 INSTALLS += support 
 
