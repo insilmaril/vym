@@ -23,11 +23,20 @@ ZipSettingsDialog::ZipSettingsDialog(QWidget *parent) : QDialog(parent)
         "VYM - " + tr("zip settings", "dialog window title"));
 
     connect (ui.zipToolPathLE, SIGNAL(textChanged(const QString&)), this, SLOT(zipToolPathChanged()));
-    connect (ui.unzipToolPathLE, SIGNAL(textChanged(const QString&)), this, SLOT(unzipToolPathChanged()));
-
     connect (ui.zipToolButton, SIGNAL(clicked()), this, SLOT(zipToolButtonPressed()));
-    connect (ui.unzipToolButton, SIGNAL(clicked()), this, SLOT(unzipToolButtonPressed()));
     connect (ui.closeButton, SIGNAL(clicked()), this, SLOT(accept()));
+
+#if defined(Q_OS_WIN32)
+    ui.zipToolLabel->setText(tr("Path to 7z.exe","zip tool settings dialog"));
+
+    ui.unzipToolPathLE->hide();
+    ui.unzipToolButton->hide();
+    ui.unzipToolStatusLabel->hide();
+    ui.unzipToolLabel->hide();
+#else
+    connect (ui.unzipToolPathLE, SIGNAL(textChanged(const QString&)), this, SLOT(unzipToolPathChanged()));
+    connect (ui.unzipToolButton, SIGNAL(clicked()), this, SLOT(unzipToolButtonPressed()));
+#endif
 
 }
 
