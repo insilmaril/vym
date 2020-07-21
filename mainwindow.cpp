@@ -3376,11 +3376,9 @@ void Main::fileNew()
     VymModel *vm;
     VymView *vv;
 
-    QString default_path = settings.value(
+    QString default_path = settings.value(  //FIXME-1 Still needs settings dialog
             "/system/defaultMap/path", 
             vymBaseDir.path() +"/demos/default.vym").toString();
-
-    default_path = "/usr/share/vym/demos/math.vym"; //FIXME-0 testing. Still needs setting
 
     if (File::Success != fileLoad (default_path, DefaultMap, VymMap) )   
     {
