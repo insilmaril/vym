@@ -444,23 +444,26 @@ int main(int argc, char* argv[])
     checkZipTool();
     checkUnzipTool();
 
-    if (!zipToolAvailable || !unzipToolAvailable)
-    {
 #if defined(Q_OS_WIN32)
+    if (!zipToolAvailable)
+    {
         QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
                                QObject::tr("Couldn't find tool to unzip data. "
                                            "Please download and install 7z and set "
-                                           "path in Settings menu:\n ") +
+                                           "path in Settings menu:\n ","zip tool missing on Win platform") +
                                            "http://www.7-zip.org/");
+        m.settingsZipTool();
+    }
 #else
+    if (!zipToolAvailable || !unzipToolAvailable)
+    {
         QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
                                QObject::tr("Couldn't find tool to zip/unzip data. "
                                            "Please install on your platform and set"
-                                           "path in Settings menu:\n ") +
-                                           "http://www.7-zip.org/");
-#endif
+                                           "path in Settings menu:\n ","zip tool missing on Linux/Mac platform"));
         m.settingsZipTool();
     }
+#endif
 
     m.setWindowIcon (QPixmap (":/vym.png"));
     m.fileNew();
