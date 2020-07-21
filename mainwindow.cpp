@@ -3380,7 +3380,7 @@ void Main::fileNew()
             "/system/defaultMap/path", 
             vymBaseDir.path() +"/demos/default.vym").toString();
 
-    default_path = "/usr/share/vym/demos/math.vym"; //FIXME-0 testing
+    default_path = "/usr/share/vym/demos/math.vym"; //FIXME-0 testing. Still needs setting
 
     if (File::Success != fileLoad (default_path, DefaultMap, VymMap) )   
     {
@@ -3597,7 +3597,7 @@ File::ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode, const FileType
             {
                 // FIXME-0 How to handle lockfile?
                 vm->makeDefault();
-                updateTabName();
+                updateTabName(vm);
             }
 	    editorChanged();
 	    vm->emitShowSelection();
@@ -3606,7 +3606,6 @@ File::ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode, const FileType
     }
     return err;
 }
-
 
 void Main::fileLoad(const LoadMode &lmode)
 {
