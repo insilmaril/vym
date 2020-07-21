@@ -6,20 +6,21 @@ require 'parseconfig'
 
 config = ParseConfig.new('/home/uwe/.mylogin')
 
-options = {
+jira_options = {
   :username     => config['default']['username'],
   :password     => config['default']['password'],
   :site         => 'https://issue.YOURDOMAIN-XYZ.XYZ/', # Adapt this to your need 
   :context_path => '',
   :ssl_verify_mode =>OpenSSL::SSL::VERIFY_NONE,
-  :read_timeout => 120,
   :auth_type    => :basic
 }
+
+script_options = {}
 
 OptionParser.new do |opts|
   opts.banner = "Usage: #{$0} [options]"
 
-  opts.on('-d', '--debug', 'Debug mode') { |s| options[:debug] = true }
+  opts.on('-d', '--debug', 'Debug mode') { |s| script_options[:debug] = true }
   opts.on('-h', '--help', 'Display help') do 
     puts opts
     exit
@@ -30,21 +31,27 @@ ARGV.each do |id|
 
   # This should be removed. Used to switch between various Jira systems 
   if id.downcase.include?("prosolution") || id.downcase.include?("aracr")
-    options[:site] = config['default']['jira_intern']
+    jira_options[:site] = config['default']['jira_intern']
   elsif id.include?("albatros") || (id.include? "EBACQ") || (id.include? "HAPSD")
-    options[:site] = config['default']['jira_servicedesk']
+    jira_options[:site] = config['default']['jira_servicedesk']
   else
-    options[:site] = config['default']['jira_extern']
+    jira_options[:site] = config['default']['jira_extern']
   end
 
-  if options[:debug]
-    puts "Debug: Site = #{options[:site]}"
+  if script_options[:debug]
+    puts "Debug: Site = #{jira_options[:site]}"
   end
 
-  client = JIRA::Client.new(options)
+  client = JIRA::Client.new(jira_options)
   
   # Query ticket and display info
-  t = client.Issue.find(id)
+  
+  begin
+    t = client.Issue.find(id)
+  rescue
+    fail "Could not find JIRA ticket #{id}. Also check your credentials!"
+  end
+
   puts "#{id}:short_desc:\"#{t.summary}\""
   puts "#{id}:type:\"#{t.issuetype.name}\""
   puts "#{id}:priority:\"#{t.priority.name}\""
@@ -60,5 +67,5 @@ ARGV.each do |id|
   s = ""
   s = t.assignee.emailAddress if ! t.assignee.nil? 
   puts "#{id}:assignee:\"#{s}\""
-  puts "#{id}:url:\"#{options[:site]}browse/#{id}\""
+  puts "#{id}:url:\"#{jira_options[:site]}browse/#{id}\""
 end

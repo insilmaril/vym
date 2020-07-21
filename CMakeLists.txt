@@ -17,7 +17,7 @@ endif( UNIX AND NOT APPLE )
 
 option( NO_DBUS "Build vym without dbus support" ${NO_DBUS_DEFAULT} )
 
-find_package ( Qt4 REQUIRED )
+find_package ( Qt5 REQUIRED )
 include ( ${QT_USE_FILE} )
 add_definitions( ${QT_DEFINITIONS} )
 

@@ -50,6 +50,7 @@
 #include "userdialog.h"
 #include "warningdialog.h"
 #include "xlinkitem.h"
+#include "zip-settings-dialog.h"
 
 QPrinter *printer = NULL; 
 
@@ -5386,33 +5387,8 @@ bool Main::settingsURL()
 void Main::settingsZipTool()
 {
     // Default zip tool is 7z on windows, zip/unzip elsewhere
-    bool ok = false;
-
-#if defined(Q_OS_WIN32)
-    QString filter;
-    filter = "Windows executable (*.exe);;";
-
-    QString fn = QFileDialog::getOpenFileName( 
-        this,
-        vymName + " - " + tr("Set application to zip/unzip files") + ":", 
-        zipToolPath,
-        filter);
-
-    if (!fn.isEmpty() ) ok = true;
-
-#else
-
-    QString fn = QInputDialog::getText(
-                this,
-                vymName, tr("Set application to zip/unzip files")+":", QLineEdit::Normal,
-                zipToolPath, &ok);
-#endif
-
-    if (ok)
-    {
-        zipToolPath = fn;
-        settings.setValue ("/system/zipToolPath", zipToolPath);
-    }
+    ZipSettingsDialog dia;
+    dia.exec();
 }
 
 void Main::settingsMacroPath()

@@ -785,7 +785,7 @@ File::ErrorCode VymModel::save (const SaveMode &savemode)
             saveFile=saveToDir (fileDir, "", true, QPointF(), NULL);
         else
             saveFile=saveToDir (fileDir, mapName + "-", true, QPointF(), NULL);
-    mapChanged=false;
+        mapChanged=false;
 	mapUnsaved=false;
 	autosaveTimer->stop();
     }

@@ -58,6 +58,9 @@ bool ConfluenceAgent::getPageDetails(const QString &url)
     args << "-d";
     args << url;
 
+    if (debug) 
+        qDebug().noquote() << QString("ConfluenceAgent::getPageDetails\n%1 %2").arg(confluenceScript).arg(args.join(" "));
+
     vymProcess = new VymProcess;
 
     connect (vymProcess, SIGNAL (finished(int, QProcess::ExitStatus) ), 
@@ -67,7 +70,7 @@ bool ConfluenceAgent::getPageDetails(const QString &url)
 
     if (!vymProcess->waitForStarted())
     {
-	qWarning() << "ConfluenceAgent::test()  couldn't start " << confluenceScript;
+	qWarning() << "ConfluenceAgent::getPageDetails  couldn't start " << confluenceScript;
 	return false; 
     } 
 
@@ -85,10 +88,16 @@ bool ConfluenceAgent::uploadContent(const QString &url, const QString &title, co
     args << url;
     args << "-f";
     args << fpath;
-    args << "-t";
-    args << title;
+    if (!title.isEmpty())
+    {
+        args << "-t";
+        args << title;
+    }
 
-    if (debug)  qDebug() << "ConfluenceAgent: confluence.rb:  " << args.join(" ");  
+        qDebug().noquote() << QString("ConfluenceAgent::uploadContent\n%1 %2").arg(confluenceScript).arg(args.join(" "));
+
+    if (debug)  qDebug() << "  newPage: " << newPage;  
+
     vymProcess = new VymProcess;
 
     connect (vymProcess, SIGNAL (finished(int, QProcess::ExitStatus) ), 
@@ -98,7 +107,7 @@ bool ConfluenceAgent::uploadContent(const QString &url, const QString &title, co
 
     if (!vymProcess->waitForStarted())
     {
-	qWarning() << "ConfluenceAgent::test()  couldn't start " << confluenceScript;
+	qWarning() << "ConfluenceAgent::uploadContent  couldn't start " << confluenceScript;
 	return false; 
     } 
 
@@ -122,7 +131,9 @@ bool ConfluenceAgent::getUsers(const QString &name)
     args << "-s";
     args << name;
 
-    if (debug)  qDebug() << "ConfluenceAgent: confluence.rb:  " << args.join(" ");  
+    if (debug)  
+        qDebug().noquote() << QString("ConfluenceAgent::getUsers\n%1 %2").arg(confluenceScript).arg(args.join(" "));
+
     vymProcess = new VymProcess;
 
     connect (vymProcess, SIGNAL (finished(int, QProcess::ExitStatus) ), 
@@ -132,7 +143,7 @@ bool ConfluenceAgent::getUsers(const QString &name)
 
     if (!vymProcess->waitForStarted())
     {
-	qWarning() << "ConfluenceAgent::test()  couldn't start " << confluenceScript;
+	qWarning() << "ConfluenceAgent::getUsers  couldn't start " << confluenceScript;
 	return false; 
     } 
 

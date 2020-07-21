@@ -22,6 +22,9 @@
 using namespace File;
 
 extern QString zipToolPath;
+extern QString unzipToolPath;
+extern bool zipToolAvailable;
+extern bool unzipToolAvailable;
 
 QString convertToRel (const QString &src, const QString &dst)
 {
@@ -242,6 +245,22 @@ void makeSubDirs (const QString &s)
     d.mkdir ("flags");	
 }
 
+bool checkZipTool()
+{
+    QFile tool(zipToolPath);
+
+    zipToolAvailable = tool.exists();
+    return zipToolAvailable;
+}
+
+bool checkUnzipTool()
+{
+    QFile tool(unzipToolPath);
+
+    unzipToolAvailable = tool.exists();
+    return unzipToolAvailable;
+}
+
 ErrorCode zipDir ( QDir zipInputDir, QString zipName)
 {
     zipName = QDir::toNativeSeparators(zipName);
@@ -259,7 +278,7 @@ ErrorCode zipDir ( QDir zipInputDir, QString zipName)
         int n = 0;
         while (!file.rename (newName) && n < 5)
         {
-            newName = newName + QString().setNum(n);
+            newName = newName + QString().setNum(n);    // FIXME-2    will not count
             n++;
         }
         if (n >= 5)
@@ -335,11 +354,11 @@ ErrorCode zipDir ( QDir zipInputDir, QString zipName)
     // qDebug() <<"Output: " << zipProc->getStdout()<<flush;   
 #else
     zipProc->setWorkingDirectory (QDir::toNativeSeparators(zipInputDir.path() ));  
-    args <<"-r";
-    args <<zipName;
-    args <<".";
+    args << "-r";
+    args << zipName;
+    args << ".";
 
-    zipProc->start ("zip",args);
+    zipProc->start (zipToolPath, args);
     if (!zipProc->waitForStarted() )
     {
         // zip could not be started
@@ -348,12 +367,12 @@ ErrorCode zipDir ( QDir zipInputDir, QString zipName)
                 "The map could not be saved, please check if "
                 "backup file is available or export as XML file!").arg("zip") +
             "\n\nziptoolpath: " + zipToolPath + "\nargs: " + args.join(" ") );
-        err=Aborted;
+        err = Aborted;
     } else
     {
         // zip could be started
         zipProc->waitForFinished();
-        if (zipProc->exitStatus()!=QProcess::NormalExit )
+        if (zipProc->exitStatus() != QProcess::NormalExit )
         {
             QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
                                    QObject::tr("zip didn't exit normally")+
@@ -361,7 +380,7 @@ ErrorCode zipDir ( QDir zipInputDir, QString zipName)
             err = Aborted;
         } else
         {
-            if (zipProc->exitCode()>0)
+            if (zipProc->exitCode() > 0)
             {
                 QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
                                        QString("zip exit code:  %1").arg(zipProc->exitCode() )+
@@ -446,14 +465,14 @@ File::ErrorCode unzipDir ( QDir zipOutputDir, QString zipName)
     args << "-d";
     args << zipOutputDir.path();
 
-    zipProc->start ("unzip",args);
+    zipProc->start (unzipToolPath, args);
 #endif
     if (!zipProc->waitForStarted() )
     {
         QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
             QObject::tr("Couldn't start %1 tool to decompress data!\n").arg("Windows zip") +
             "\n\nziptoolpath: " + zipToolPath + "\nargs: " + args.join(" ") );
-        err=Aborted;
+        err = Aborted;
     } else
     {
         zipProc->waitForFinished();

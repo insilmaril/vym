@@ -111,7 +111,7 @@
    <item>
     <widget class="QGroupBox" name="optionsGroupBox">
      <property name="enabled">
-      <bool>false</bool>
+      <bool>true</bool>
      </property>
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
@@ -185,6 +185,9 @@
        </item>
        <item>
         <widget class="QCheckBox" name="taskFlagsCheckBox">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="text">
           <string>Task flags</string>
          </property>
@@ -192,6 +195,9 @@
        </item>
        <item>
         <widget class="QCheckBox" name="userFlagsCheckBox">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="text">
           <string>General flags</string>
          </property>
@@ -199,6 +205,9 @@
        </item>
        <item>
         <widget class="QCheckBox" name="numberingCheckBox">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="text">
           <string>Number sections</string>
          </property>

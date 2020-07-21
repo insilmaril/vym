@@ -48,25 +48,31 @@ QString ExportConfluence::getBranchText(BranchItem *current)
 {
     if (current)
     {
-        bool vis = false;
         QRectF hr;
         LinkableMapObj *lmo = current->getLMO();
         if (lmo)
         {
             hr = ((BranchObj*)lmo)->getBBoxHeading();
-            vis = lmo->isVisibleObj();
         }
-        QString col;
         QString id = model->getSelectString(current);
+        QString heading = quotemeta(current->getHeadingPlain());
+
+        qDebug() << current->getHeadingPlain() << dia.useTextColor;
+
         if (dia.useTextColor)
-            col = QString("style='color:%1'").arg(current->getHeadingColor().name());
+        {
+            QColor c = current->getHeadingColor();
+            QString cs = QString("rgb(%1,%2,%3);").arg(c.red()).arg(c.green()).arg(c.blue());
+            heading = QString("<span style='color: %1'>%2</span>").arg(cs).arg(heading); 
+        }
+
         QString s;
         QString url = current->getURL();
 
-        QString heading = quotemeta(current->getHeadingPlain());
 
         // Task flags
         QString taskFlags;
+        /*
         if (dia.useTaskFlags)
         {
             Task *task = current->getTask();
@@ -78,9 +84,11 @@ QString ExportConfluence::getBranchText(BranchItem *current)
                     .arg(QObject::tr("Flag: %1","Alt tag in HTML export").arg(taskName));
             }
         }
+        */
 
         // User flags
         QString userFlags;
+        /*
         if (dia.useUserFlags)
         {
             foreach (QString flag, current->activeFlagNames())
@@ -88,6 +96,7 @@ QString ExportConfluence::getBranchText(BranchItem *current)
                     .arg(flag)
                     .arg(QObject::tr("Flag: %1","Alt tag in HTML export").arg(flag));
         }
+        */
 
         // Numbering
         QString number;
@@ -105,7 +114,8 @@ QString ExportConfluence::getBranchText(BranchItem *current)
         } else
             s += number + taskFlags + heading + userFlags;
 
-        // Include images experimental
+        // Include images // FIXME-3 not implemented yet
+        /*
         if (dia.includeImages)
         {
             int imageCount = current->imageCount();
@@ -116,11 +126,12 @@ QString ExportConfluence::getBranchText(BranchItem *current)
                 image = current->getImageNum(i);
                 imagePath =  "image-" + image->getUuid().toString() + ".png";
                 image->save( dirPath + "/" + imagePath, "PNG");
-                s += "</br><img src=\"" + imagePath;
+                s += "<br /><img src=\"" + imagePath;
                 s += "\" alt=\"" + QObject::tr("Image: %1","Alt tag in HTML export").arg(image->getOriginalFilename());
-                s += "\"></br>";
+                s += "\"><br />";
             }
         }
+        */
 
         // Include note
         if (!current->isNoteEmpty())
@@ -157,12 +168,15 @@ QString ExportConfluence::getBranchText(BranchItem *current)
             }
             else
             {
-                n = current->getNoteASCII().replace ("<","&lt;").replace (">","&gt;");
-                n.replace("\n","<br/>");
+                n = current->getNoteASCII();
+                n.replace("&", "&amp;");
+                n.replace ("<","&lt;");
+                n.replace (">","&gt;");
+                n.replace("\n","<br />");
                 if (current->getNote().getFontHint()=="fixed")
                     n = "<pre>" + n + "</pre>";
             } 
-            s += "\n<table class=\"vym-note\"><tr><td class=\"vym-note-flag\">\n<td>\n" + n + "\n</td></tr></table>\n";
+            s += "\n<table class=\"vym-note\"><tr><td>\n" + n + "\n</td></tr></table>\n";
         }
         return s;
     }
@@ -251,7 +265,7 @@ QString ExportConfluence::createTOC()
         {
             if (dia.useNumbering) number = getSectionString(cur);
             toc += QString("<div class=\"vym-toc-branch-%1\">").arg(cur->depth());
-            toc += QString("<a href=\"#%1\"> %2 %3</a></br>\n")
+            toc += QString("<a href=\"#%1\"> %2 %3</a><br />\n")
                     .arg(model->getSelectString(cur))
                     .arg(number)
                     .arg(quotemeta( cur->getHeadingPlain() ));
@@ -333,10 +347,21 @@ void ExportConfluence::doExport(bool useDialog)
 
         if (ca_details->success() ) 
         {
-            // Page is existing already
+            // Page with URL is existing already
             if (dia.createNewPage() )
             {
-                qDebug() << "Wanted to create new page, but page already exists. Aborted";
+                qDebug() << "Starting to create new page...";// FIXME-2 Improve messages here and below...
+                ca_content->createPage( dia.getPageURL(), dia.getPageTitle(), filePath);
+                ca_content->waitForResult();
+                if (ca_content->success() ) 
+                {
+                    qDebug() << "Page created.";    
+                    success = true;
+                } else
+                {
+                    qDebug() << "Page not created.";
+                    success = false;
+                }
             } else
             {
                 qDebug() << "Starting to update existing page...";
@@ -350,25 +375,17 @@ void ExportConfluence::doExport(bool useDialog)
                 {
                     qDebug() << "Page not updated:";
                     qDebug() << ca_content->getResult();
+                    success = false;
                 }
             } 
         } else
         {
-            // Page not existing yet
+            // Page not existing 
+            success = false;
             if (dia.createNewPage() )
-            {
-                qDebug() << "Starting to create new page...";
-                ca_content->createPage( dia.getPageURL(), dia.getPageTitle(), filePath);
-                ca_content->waitForResult();
-                if (ca_content->success() ) 
-                {
-                    qDebug() << "Page created.";
-                    success = true;
-                } else
-                {
-                    qDebug() << "Page not created.";
-                }
-            }
+                qDebug() << "Parent page not existing: " << dia.getPageURL();
+             else
+                qDebug() << "Page not existing, cannot update it: " << dia.getPageURL();
         }
     }
 
