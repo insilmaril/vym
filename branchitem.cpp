@@ -138,8 +138,8 @@ QString BranchItem::saveToDir (const QString &tmpdir,const QString &prefix, cons
 	+ getGeneralAttr()
 	+ scrolledAttr 
 	+ getIncludeImageAttr() 
-    + rotAttr
-    + layoutAttr
+        + rotAttr
+        + layoutAttr
 	+ idAttr
 	);
     incIndent();

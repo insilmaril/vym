@@ -153,10 +153,15 @@ QString FlagRow::saveDef()
 {
     // For the masterrow of userflags: Write definitions of flags
 
-    QString s;
+    QString s = "\n";
 
     for (int i = 0; i < flags.size(); ++i)
-        s += QString("<userflag name=\"%1\" path=\"%2\"/>\n").arg(flags.at(i)->getName()).arg(flags.at(i)->getPath());
+    {   
+        QStringList attributes;
+        attributes << attribut("name", flags.at(i)->getName());
+        attributes << attribut("path", flags.at(i)->getPath());
+        s += singleElement("userflag", attributes);
+    }
 
     return s;
 }
