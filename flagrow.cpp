@@ -19,13 +19,14 @@ FlagRow::~FlagRow()
     //qDebug()<< "Destr FlagRow";
 }
 
-void FlagRow::addFlag (Flag *flag)
+Flag* FlagRow::addFlag (Flag *flag)
 {
     Flag *f = new Flag;
 ;
     f->copy (flag);
     flags.append (f);
     activeNames.append (flag->getName());
+    return f;
 }
 
 Flag* FlagRow::getFlag (const QString &name)
@@ -156,12 +157,7 @@ QString FlagRow::saveDef()
     QString s = "\n";
 
     for (int i = 0; i < flags.size(); ++i)
-    {   
-        QStringList attributes;
-        attributes << attribut("name", flags.at(i)->getName());
-        attributes << attribut("path", flags.at(i)->getPath());
-        s += singleElement("userflag", attributes);
-    }
+        s += flags.at(i)->saveDef();
 
     return s;
 }

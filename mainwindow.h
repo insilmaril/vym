@@ -73,7 +73,7 @@ private:
     void setupFlagActions();
 
 public:
-    void setupFlag(
+    Flag* setupFlag(
 	const QString &path, 
         Flag::FlagType type,
 	const QString &name, 

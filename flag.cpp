@@ -40,6 +40,7 @@ void Flag::init ()
     used    = false;
     type    = UndefinedFlag;
 
+    uuid = QUuid::createUuid();
 }
 
 void Flag::copy (Flag* other)
@@ -53,6 +54,7 @@ void Flag::copy (Flag* other)
     pixmap  = other->pixmap;
     type    = other->type;
     path    = other->path;
+    uuid    = other->uuid;  
 }
 
 
@@ -154,11 +156,23 @@ void Flag::setType(Flag::FlagType t)
     type = t;
 }
 
+void Flag::setUuid(const QString &id)
+{
+    uuid = QUuid(id);
+}
+
+QUuid Flag::getUuid() { return uuid; }
+
 QString Flag::saveDef()
 {
     if (type == Flag::UserFlag) 
-        return valueElement ("userflag", attribut("name", name) + attribut("path", path));
-    else
+    {
+        QStringList attributes;
+        attributes << attribut("name", name);
+        attributes << attribut("path", path);
+        attributes << attribut("uuid", uuid.toString());
+        return singleElement("userflag", attributes);
+    } else
         return QString();
 }
 

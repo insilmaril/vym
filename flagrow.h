@@ -18,7 +18,7 @@ class FlagRow:public XMLObj {
 public:
     FlagRow ();
     ~FlagRow ();
-    void addFlag (Flag *flag);
+    Flag* addFlag (Flag *flag);
     Flag *getFlag (const QString &name);
     QStringList  activeFlagNames();
     bool isActive(const QString &name);

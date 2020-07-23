@@ -4,6 +4,7 @@
 
 #include <QAction>
 #include <QPixmap>
+#include <QUuid>
 
 #include "xmlobj.h"
 
@@ -44,6 +45,8 @@ public:
     bool isUsed();
     FlagType getType();
     void setType (FlagType t);
+    void setUuid(const QString &id);
+    QUuid getUuid();
     QString  saveDef();
     bool  saveDataToDir (const QString&, const QString&);
     QString  saveState();
@@ -57,6 +60,7 @@ protected:
     bool state;
     bool used;
     FlagType type;
+    QUuid uuid;
 
 private:
     QPixmap pixmap;

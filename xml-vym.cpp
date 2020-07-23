@@ -7,6 +7,7 @@
 
 #include "attributeitem.h"
 #include "branchitem.h"
+#include "flag.h"
 #include "misc.h"
 #include "settings.h"
 #include "linkablemapobj.h"
@@ -996,7 +997,6 @@ bool parseVYMHandler::readUserFlagAttr (const QXmlAttributes& a)
     QString name;
     QString path;
     QString tooltip;
-    QString group;
 
     if (!a.value( "name").isEmpty() ) 
         name = a.value("name");
@@ -1004,10 +1004,13 @@ bool parseVYMHandler::readUserFlagAttr (const QXmlAttributes& a)
         path = a.value("path");
     if (!a.value( "tooltip").isEmpty() ) 
         tooltip = a.value("tooltip");
-    if (!a.value( "group").isEmpty() ) 
-        group =  a.value("group");
 
-    mainWindow->setupFlag ( path, Flag::UserFlag, name, tooltip); 
+    Flag* flag = mainWindow->setupFlag ( path, Flag::UserFlag, name, tooltip); 
+
+    if (!a.value( "uuid").isEmpty() ) 
+        flag->setUuid(a.value("uuid"));
+    if (!a.value( "group").isEmpty() ) 
+        flag->setGroup( a.value("group"));
 
     return true;
 }

@@ -2655,7 +2655,7 @@ void Main::setupFlagActions()
             tr("Sweet","Freemind flag"));
 }
 
-void Main::setupFlag (const QString &path,
+Flag* Main::setupFlag (const QString &path,
         Flag::FlagType type, 
         const QString &name, 
         const QString &tooltip, 
@@ -2666,8 +2666,8 @@ void Main::setupFlag (const QString &path,
     flag->setName(name);
     flag->setToolTip (tooltip);
     flag->setType (type);
-    if (!group.isEmpty()) 
-        flag->setGroup(group);
+
+    if (!group.isEmpty()) flag->setGroup(group);
 
     QAction *a;
 
@@ -2675,7 +2675,7 @@ void Main::setupFlag (const QString &path,
     {
         // SystemFlag
         systemFlagsMaster->addFlag (flag);
-        return;
+        return flag;
     }
 
     // StandardFlag or user flag
@@ -2710,13 +2710,14 @@ void Main::setupFlag (const QString &path,
     {
         standardFlagsToolbar->addAction (a);
         connect (a, SIGNAL( triggered() ), this, SLOT( flagChanged() ) );
-        standardFlagsMaster->addFlag (flag);
+        flag = standardFlagsMaster->addFlag (flag);
     } else if (type == Flag::UserFlag)
     {
         userFlagsToolbar->addAction (a);
         connect (a, SIGNAL( triggered() ), this, SLOT( flagChanged() ) );
-        userFlagsMaster->addFlag (flag);
+        flag = userFlagsMaster->addFlag (flag);
     }
+    return flag;
 }
 
 // Network Actions
