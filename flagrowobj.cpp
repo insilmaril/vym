@@ -185,20 +185,6 @@ void FlagRowObj::activateFlag (Flag *flag)
     }
 }
 
-void FlagRowObj::deactivateFlagByName (const QString &foname)// FIXME-0 is already obsolete: no FLO by name, only uuid and that's done in updateData
-{
-    /*
-    FlagObj *fo = findFlagObj (foname);
-    if (fo) 
-    {
-	flagobjs.removeAll(fo);
-	delete (fo);
-    }	
-    calcBBoxSize();
-    positionBBox();
-*/
-}
-
 void FlagRowObj::setShowFlags (bool b)
 {
     showFlags = b;

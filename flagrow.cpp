@@ -310,15 +310,16 @@ void FlagRow::setMasterRow (FlagRow *row)
     masterRow = row; 
 }
 
-void FlagRow::updateToolBar (const QStringList &activeNames)
+void FlagRow::updateToolBar (QList <QUuid> activeUids)
 {
     if (toolBar )
     {
 	for (int i = 0;i < flags.size();++i)
 	    flags.at(i)->getAction()->setChecked (false);
+
 	for (int i = 0;i < flags.size();++i)
 	{
-	    int n = activeNames.indexOf (flags.at(i)->getName());
+	    int n = activeUids.indexOf (flags.at(i)->getUuid());
 	    if (n >= 0)
 		flags.at(i)->getAction()->setChecked (true);	
 	}

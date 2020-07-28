@@ -32,7 +32,6 @@ public:
     bool isFlagActiveByName(const QString&);
     bool isFlagActive(const QUuid&);
     void activateFlag (Flag *flag);
-    void deactivateFlagByName(const QString&);
     void setShowFlags (bool);
     FlagObj* findFlagObj (const QString&);
     FlagObj* findFlagObj (const QUuid&);

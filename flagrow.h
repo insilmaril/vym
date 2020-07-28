@@ -47,7 +47,7 @@ public:
     void setName (const QString&);	    // prefix for exporting flags to dir
     void setToolBar   (QToolBar *tb);
     void setMasterRow (FlagRow *row);
-    void updateToolBar(const QStringList &activeNames);
+    void updateToolBar(QList <QUuid> activeUids);
 
 private:    
     QToolBar *toolBar;

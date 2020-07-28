@@ -387,19 +387,7 @@ void BranchObj::updateData()
     QList <QUuid> TIactiveFlagUids = treeItem->activeFlagUids();
     standardFlagRowObj->updateActiveFlagObjs( standardFlagsMaster, TIactiveFlagUids);
 
-    // Add missing standard flags active in TreeItem    
-    /*
-    for (int i = 0; i<= TIactiveFlagNames.size() - 1; i++)
-    {
-        if (!standardFlagRowObj->isFlagActiveByName (TIactiveFlagNames.at(i) ))
-        {
-            Flag *f = standardFlagsMaster->findFlag(TIactiveFlagNames.at(i));
-            if (f) 
-                // Standard flag
-                standardFlagRowObj->activateFlag (f);
-        }
-    }
-    */
+    // Add missing standard flags active in TreeItem: done    
 
     // Add missing user flags active in TreeItem    
     /*
@@ -415,13 +403,9 @@ void BranchObj::updateData()
         }
     }
     */
-    // Remove standard flags no longer active in TreeItem  FIXME-0
-    /*
-    QStringList BOactiveFlags = standardFlagRowObj->activeFlagNames();
-    for (int i = 0; i< BOactiveFlags.size(); ++i)
-        if (!TIactiveFlagNames.contains (BOactiveFlags.at(i)))
-            standardFlagRowObj->deactivateFlag (BOactiveFlags.at(i));
-*/
+    
+    // Remove standard flags no longer active in TreeItem: done
+    
     // Add missing system flags active in TreeItem   FIXME-0
     /*
     TIactiveFlagNames = treeItem->activeSystemFlagNames();
