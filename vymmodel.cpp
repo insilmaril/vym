@@ -3908,23 +3908,30 @@ ItemList VymModel::getTargets()
     return targets; 
 }
 
-void VymModel::toggleFlag (const QString &name, bool useGroups)  
+void VymModel::toggleFlag (const QString &uid, bool useGroups)  
 {
     BranchItem *bi = getSelectedBranch();
 
     if (bi) 
     {
-	QString u,r;
-        r = u = "toggleFlag";
-	saveState(
-	    bi,
-	    QString("%1 (\"%2\")").arg(u).arg(name), 
-	    bi,
-	    QString("%1 (\"%2\")").arg(r).arg(name),
-	    QString("Toggling flag \"%1\" of %2").arg(name).arg(getObjectName(bi)));
-	    bi->toggleFlag (name, useGroups);
-	emitDataChanged (bi);
-	reposition();
+        qDebug () << "VM::toggleFlag looking for flag  " << uid;
+        Flag *f = bi->toggleFlag (uid, useGroups);
+        qDebug () << "VM::toggleFlag  finished toggling " << uid  << "flag: " << f;
+
+        if (f)
+        {
+            QString u = "toggleFlag";
+            QString name = f->getName();
+            saveState(
+                bi,
+                QString("%1 (\"%2\")").arg(u).arg(name),
+                bi,
+                QString("%1 (\"%2\")").arg(u).arg(name),
+                QString("Toggling flag \"%1\" of %2").arg(name).arg(getObjectName(bi)));
+            emitDataChanged (bi);
+            reposition();
+        } else
+            qWarning() << "VymModel::toggleFlag failed for flag " << uid;
     }
 }
 

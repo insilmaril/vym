@@ -41,6 +41,7 @@ public:
     bool readSettingAttr (const QXmlAttributes&);
     bool readSlideAttr   (const QXmlAttributes&);
     bool readTaskAttr    (const QXmlAttributes&);
+    bool readUserFlagDefAttr(const QXmlAttributes&);
     bool readUserFlagAttr(const QXmlAttributes&);
 
 private:

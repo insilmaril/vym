@@ -56,7 +56,7 @@ public:
     virtual void move2RelPos (QPointF);	    // move relativly to parent^
     virtual void move2RelPos (double,double);
 
-    virtual QString getSystemFlagName (const QPointF &p);
+    virtual QString findSystemFlagNameByPos (const QPointF &p);
     virtual QRectF getBBoxFlag (const QString &name);
 
 protected:

@@ -253,7 +253,7 @@ bool BranchItem::toggleScroll()
     if (scrolled)
     {
 	scrolled=false;
-	systemFlags.deactivate("system-scrolledright");
+	systemFlags.deactivate(QString("system-scrolledright"));
 	if (branchCounter>0)
 	    for (int i=0;i<branchCounter;++i)
 	    {
@@ -263,7 +263,7 @@ bool BranchItem::toggleScroll()
     } else
     {
 	scrolled=true;
-	systemFlags.activate("system-scrolledright");
+	systemFlags.activate(QString("system-scrolledright"));
 	if (branchCounter>0)
 	    for (int i=0;i<branchCounter;++i)
 	    {
@@ -310,7 +310,7 @@ bool BranchItem::tmpUnscroll(BranchItem *start)
     if (start !=this && scrolled)
     {
 	tmpUnscrolled=true;
-	systemFlags.activate("system-tmpUnscrolledRight");
+	systemFlags.activate(QString("system-tmpUnscrolledRight"));
 	toggleScroll();
 	model->emitDataChanged (this); 
 	result=true;
@@ -330,7 +330,7 @@ bool BranchItem::resetTmpUnscroll()
     if (tmpUnscrolled)
     {
 	tmpUnscrolled = false;
-	systemFlags.deactivate("system-tmpUnscrolledRight");
+	systemFlags.deactivate(QString("system-tmpUnscrolledRight"));
 	toggleScroll();
 	model->emitDataChanged (this);
 	result = true;

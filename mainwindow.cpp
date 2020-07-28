@@ -2283,47 +2283,56 @@ void Main::setupModeActions()
 // Flag Actions
 void Main::setupFlagActions()
 {
+    Flag *flag;
+    
     // Create System Flags
 
     // Tasks
     // Origin: ./share/icons/oxygen/48x48/status/task-reject.png
-    setupFlag ( ":/flag-task-new.png", 
+    flag = setupFlag ( ":/flag-task-new.png", 
             Flag::SystemFlag,
             "system-task-new",
-            tr("Note","SystemFlag"), 
-            "system-tasks");
-    setupFlag ( ":/flag-task-new-morning.png", 
+            tr("Note","SystemFlag") );
+    flag->setGroup("system-tasks");
+
+    flag = setupFlag ( ":/flag-task-new-morning.png", 
             Flag::SystemFlag,
             "system-task-new-morning",
-            tr("Note","SystemFlag"), 
-            "system-tasks");
-    setupFlag ( ":/flag-task-new-sleeping.png", 
+            tr("Note","SystemFlag"));
+    flag->setGroup("system-tasks");
+
+    flag = setupFlag ( ":/flag-task-new-sleeping.png", 
             Flag::SystemFlag,
             "system-task-new-sleeping",
-            tr("Note","SystemFlag"), 
-            "system-tasks");
+            tr("Note","SystemFlag"));
+    flag->setGroup("system-tasks");
+
     // Origin: ./share/icons/oxygen/48x48/status/task-reject.png
-    setupFlag ( ":/flag-task-wip.png", 
+    flag = setupFlag ( ":/flag-task-wip.png", 
             Flag::SystemFlag,
             "system-task-wip",
-            tr("Note","SystemFlag"), 
-            "system-tasks");
-    setupFlag ( ":/flag-task-wip-morning.png", 
+            tr("Note","SystemFlag"));
+    flag->setGroup("system-tasks");
+
+    flag = setupFlag ( ":/flag-task-wip-morning.png", 
             Flag::SystemFlag,
             "system-task-wip-morning",
-            tr("Note","SystemFlag"), 
-            "system-tasks");
-    setupFlag ( ":/flag-task-wip-sleeping.png", 
+            tr("Note","SystemFlag"));
+    flag->setGroup("system-tasks");
+
+    flag = setupFlag ( ":/flag-task-wip-sleeping.png", 
             Flag::SystemFlag,
             "system-task-wip-sleeping",
-            tr("Note","SystemFlag"), 
-            "system-tasks");
+            tr("Note","SystemFlag"));
+    flag->setGroup("system-tasks");
+
     // Origin: ./share/icons/oxygen/48x48/status/task-complete.png
-    setupFlag ( ":/flag-task-finished.png", 
+    flag = setupFlag ( ":/flag-task-finished.png", 
             Flag::SystemFlag,
             "system-task-wip-finished",
-            tr("Note","SystemFlag"), 
-            "system-tasks");
+            tr("Note","SystemFlag")); 
+    flag->setGroup("system-tasks");
+
 
     setupFlag ( ":/flag-note.png", 
             Flag::SystemFlag,
@@ -2388,278 +2397,293 @@ void Main::setupFlagActions()
     // after all others:
     toolbarsMenu->addAction (standardFlagsToolbar->toggleViewAction() );
 
-    setupFlag ( ":/flag-stopsign.png", 
+    flag = setupFlag ( ":/flag-stopsign.png", 
             Flag::StandardFlag,
             "stopsign", 
             tr("This won't work!","Standardflag"),
-            "",
-            Qt::Key_1);
+            QUuid(),
+            Qt::Key_1);  
 
-    setupFlag ( ":/flag-hook-green.png", 
+    flag = setupFlag ( ":/flag-hook-green.png", 
             Flag::StandardFlag,
             "hook-green", 
             tr("Status - ok,done","Standardflag"),
-            "standard-status",
+            QUuid(),
             Qt::Key_2);
+    flag->setGroup("standard-status");
 
-    setupFlag ( ":/flag-wip.png", 
+    flag = setupFlag ( ":/flag-wip.png", 
             Flag::StandardFlag,
             "wip",
             tr("Status - work in progress","Standardflag"),
-            "standard-status",
+            QUuid(),
             Qt::Key_3);
+    flag->setGroup("standard-status");
 
-    setupFlag ( ":/flag-cross-red.png", 
+    flag = setupFlag ( ":/flag-cross-red.png", 
             Flag::StandardFlag,
             "cross-red",
             tr("Status - missing, not started","Standardflag"),
-            "standard-status",
+            QUuid(),
             Qt::Key_4);
+    flag->setGroup("standard-status");
 
-    setupFlag ( ":/flag-exclamationmark.png", 
+    flag = setupFlag ( ":/flag-exclamationmark.png", 
             Flag::StandardFlag,
             "exclamationmark",
             tr("Take care!","Standardflag"),
-            "standard-mark",
+            QUuid(),
             Qt::Key_Exclam);
+    flag->setGroup("standard-mark");
 
-    setupFlag ( ":/flag-questionmark.png", 
+    flag = setupFlag ( ":/flag-questionmark.png", 
             Flag::StandardFlag,
             "questionmark",
             tr("Really?","Standardflag"),
-            "standard-mark",
+            QUuid(),
             Qt::Key_Question);
+    flag->setGroup("standard-mark");
 
-    setupFlag ( ":/flag-smiley-good.png", 
+    flag = setupFlag ( ":/flag-smiley-good.png", 
             Flag::StandardFlag,
             "smiley-good",
             tr("Good","Standardflag"),
-            "standard-smiley",
+            QUuid(),
             Qt::Key_ParenRight);
+    flag->setGroup("standard-smiley");
 
-    setupFlag ( ":/flag-smiley-sad.png", 
+    flag = setupFlag ( ":/flag-smiley-sad.png", 
             Flag::StandardFlag,
             "smiley-sad",
             tr("Bad","Standardflag"),
-            "standard-smiley",
+            QUuid(),
             Qt::Key_ParenLeft);
+    flag->setGroup("standard-smiley");
 
     // Original omg.png (in KDE emoticons)
-    setupFlag ( ":/flag-smiley-omb.png", 
+    flag = setupFlag ( ":/flag-smiley-omb.png", 
             Flag::StandardFlag,
             "smiley-omb",
             tr("Oh no!","Standardflag"),
-            "standard-smiley");
+            QUuid());
+    flag->setGroup("standard-smiley");
 
-    setupFlag ( ":/flag-clock.png", 
+    flag = setupFlag ( ":/flag-clock.png", 
             Flag::StandardFlag,
             "clock",
             tr("Time critical","Standardflag"));
 
-    setupFlag ( ":/flag-phone.png", 
+    flag = setupFlag ( ":/flag-phone.png", 
             Flag::StandardFlag,
             "phone",
             tr("Call...","Standardflag"));
 
-    setupFlag ( ":/flag-lamp.png", 
+    flag = setupFlag ( ":/flag-lamp.png", 
             Flag::StandardFlag,
             "lamp",
             tr("Idea!","Standardflag"),
-            "",
+            QUuid(),
             Qt::Key_Asterisk);
 
-    setupFlag ( ":/flag-arrow-up.png", 
+    flag = setupFlag ( ":/flag-arrow-up.png", 
             Flag::StandardFlag,
             "arrow-up",
             tr("Important","Standardflag"),
-            "standard-arrow",
+            QUuid(),
             Qt::SHIFT + Qt::Key_PageUp);
+    flag->setGroup("standard-arrow");
 
-    setupFlag ( ":/flag-arrow-down.png", 
+    flag = setupFlag ( ":/flag-arrow-down.png", 
             Flag::StandardFlag,
             "arrow-down",
             tr("Unimportant","Standardflag"),
-            "standard-arrow",
+            QUuid(),
             Qt::SHIFT + Qt::Key_PageDown);
+    flag->setGroup("standard-arrow");
 
-    setupFlag ( ":/flag-2arrow-up.png", 
+    flag = setupFlag ( ":/flag-2arrow-up.png", 
             Flag::StandardFlag,
             "2arrow-up",
             tr("Very important!","Standardflag"),
-            "standard-arrow",
+            QUuid(),
             Qt::SHIFT + Qt::CTRL + Qt::Key_PageUp);
+    flag->setGroup("standard-arrow");
 
-    setupFlag ( ":/flag-2arrow-down.png", 
+    flag = setupFlag ( ":/flag-2arrow-down.png", 
             Flag::StandardFlag,
             "2arrow-down",
             tr("Very unimportant!","Standardflag"),
-            "standard-arrow",
+            QUuid(),
             Qt::SHIFT + Qt::CTRL + Qt::Key_PageDown);
+    flag->setGroup("standard-arrow");
 
-    setupFlag ( ":/flag-thumb-up.png", 
+    flag = setupFlag ( ":/flag-thumb-up.png", 
             Flag::StandardFlag,
             "thumb-up",
             tr("I like this","Standardflag"));
 
-    setupFlag ( ":/flag-thumb-down.png", 
+    flag = setupFlag ( ":/flag-thumb-down.png", 
             Flag::StandardFlag,
             "thumb-down",
             tr("I do not like this","Standardflag"));
 
-    setupFlag ( ":/flag-rose.png", 
+    flag = setupFlag ( ":/flag-rose.png", 
             Flag::StandardFlag,
             "rose",
             tr("Rose","Standardflag"));
 
-    setupFlag ( ":/flag-heart.png", 
+    flag = setupFlag ( ":/flag-heart.png", 
             Flag::StandardFlag,
             "heart",
             tr("I just love...","Standardflag"));
 
-    setupFlag ( ":/flag-present.png", 
+    flag = setupFlag ( ":/flag-present.png", 
             Flag::StandardFlag,
             "present",
             tr("Surprise!","Standardflag"));
 
-    setupFlag ( ":/flag-flash.png", 
+    flag = setupFlag ( ":/flag-flash.png", 
             Flag::StandardFlag,
             "flash",
             tr("Dangerous","Standardflag"));
 
-    setupFlag ( ":/flag-info.png", 
+    flag = setupFlag ( ":/flag-info.png", 
             Flag::StandardFlag,
             "info",
             tr("Info","Standardflag"),
-            "",
+            QUuid(),
             Qt::Key_I);
 
     // Original khelpcenter.png
-    setupFlag ( ":/flag-lifebelt.png", 
+    flag = setupFlag ( ":/flag-lifebelt.png", 
             Flag::StandardFlag,
             "lifebelt",
             tr("This will help","Standardflag"));
 
     // Freemind flags
-    setupFlag ( ":/freemind/warning.png",
+    /* FIXME-0 disabled for testing
+    flag = setupFlag ( ":/freemind/warning.png",
             Flag::FreemindFlag,
             "freemind-warning",
             tr("Important","Freemind flag"));
 
     for (int i=1; i<8; i++)
     {
-        setupFlag ( QString(":/freemind/priority-%1.png").arg(i),
+        flag = setupFlag ( QString(":/freemind/priority-%1.png").arg(i),
                 Flag::FreemindFlag,
                 QString("freemind-priority-%1").arg(i),
-                tr("Important","Freemind flag"),
-                "freemind-priority");
+                tr("Important","Freemind flag"));
+        flag->setGroup("freemind-priority");
+        
     }
 
-    setupFlag ( ":/freemind/back.png",
+    flag = setupFlag ( ":/freemind/back.png",
             Flag::FreemindFlag,
             "freemind-back",
             tr("Back","Freemind flag"));
 
-    setupFlag ( ":/freemind/forward.png",
+    flag = setupFlag ( ":/freemind/forward.png",
             Flag::FreemindFlag,
             "freemind-forward",
             tr("Forward","Freemind flag"));
 
-    setupFlag ( ":/freemind/attach.png",
+    flag = setupFlag ( ":/freemind/attach.png",
             Flag::FreemindFlag,
             "freemind-attach",
             tr("Look here","Freemind flag"));
 
-    setupFlag ( ":/freemind/clanbomber.png",
+    flag = setupFlag ( ":/freemind/clanbomber.png",
             Flag::FreemindFlag,
             "freemind-clanbomber",
             tr("Dangerous","Freemind flag"));
 
-    setupFlag ( ":/freemind/desktopnew.png",
+    flag = setupFlag ( ":/freemind/desktopnew.png",
             Flag::FreemindFlag,
             "freemind-desktopnew",
             tr("Don't forget","Freemind flag"));
 
-    setupFlag ( ":/freemind/flag.png",
+    flag = setupFlag ( ":/freemind/flag.png",
             Flag::FreemindFlag,
             "freemind-flag",
             tr("Flag","Freemind flag"));
 
-    setupFlag ( ":/freemind/gohome.png",
+    flag = setupFlag ( ":/freemind/gohome.png",
             Flag::FreemindFlag,
             "freemind-gohome",
             tr("Home","Freemind flag"));
 
-    setupFlag ( ":/freemind/kaddressbook.png",
+    flag = setupFlag ( ":/freemind/kaddressbook.png",
             Flag::FreemindFlag,
             "freemind-kaddressbook",
             tr("Telephone","Freemind flag"));
 
-    setupFlag ( ":/freemind/knotify.png",
+    flag = setupFlag ( ":/freemind/knotify.png",
             Flag::FreemindFlag,
             "freemind-knotify",
             tr("Music","Freemind flag"));
 
-    setupFlag ( ":/freemind/korn.png",
+    flag = setupFlag ( ":/freemind/korn.png",
             Flag::FreemindFlag,
             "freemind-korn",
             tr("Mailbox","Freemind flag"));
 
-    setupFlag ( ":/freemind/mail.png",
+    flag = setupFlag ( ":/freemind/mail.png",
             Flag::FreemindFlag,
             "freemind-mail",
             tr("Mail","Freemind flag"));
 
-    setupFlag ( ":/freemind/password.png",
+    flag = setupFlag ( ":/freemind/password.png",
             Flag::FreemindFlag,
             "freemind-password",
             tr("Password","Freemind flag"));
 
-    setupFlag ( ":/freemind/pencil.png",
+    flag = setupFlag ( ":/freemind/pencil.png",
             Flag::FreemindFlag,
             "freemind-pencil",
             tr("To be improved","Freemind flag"));
 
-    setupFlag ( ":/freemind/stop.png",
+    flag = setupFlag ( ":/freemind/stop.png",
             Flag::FreemindFlag,
             "freemind-stop",
             tr("Stop","Freemind flag"));
 
-    setupFlag ( ":/freemind/wizard.png",
+    flag = setupFlag ( ":/freemind/wizard.png",
             Flag::FreemindFlag,
             "freemind-wizard",
             tr("Magic","Freemind flag"));
 
-    setupFlag ( ":/freemind/xmag.png",
+    flag = setupFlag ( ":/freemind/xmag.png",
             Flag::FreemindFlag,
             "freemind-xmag",
             tr("To be discussed","Freemind flag"));
 
-    setupFlag ( ":/freemind/bell.png",
+    flag = setupFlag ( ":/freemind/bell.png",
             Flag::FreemindFlag,
             "freemind-bell",
             tr("Reminder","Freemind flag"));
 
-    setupFlag ( ":/freemind/bookmark.png",
+    flag = setupFlag ( ":/freemind/bookmark.png",
             Flag::FreemindFlag,
             "freemind-bookmark",
             tr("Excellent","Freemind flag"));
 
-    setupFlag ( ":/freemind/penguin.png",
+    flag = setupFlag ( ":/freemind/penguin.png",
             Flag::FreemindFlag,
             "freemind-penguin",
             tr("Linux","Freemind flag"));
 
-    setupFlag ( ":/freemind/licq.png",
+    flag = setupFlag ( ":/freemind/licq.png",
             Flag::FreemindFlag,
             "freemind-licq",
             tr("Sweet","Freemind flag"));
+    */
 }
 
 Flag* Main::setupFlag (const QString &path,
         Flag::FlagType type, 
         const QString &name, 
         const QString &tooltip, 
-        const QString &group,
+        const QUuid &uid,
         const QKeySequence &keyseq)
 {
     Flag *flag = new Flag(path);
@@ -2667,7 +2691,8 @@ Flag* Main::setupFlag (const QString &path,
     flag->setToolTip (tooltip);
     flag->setType (type);
 
-    if (!group.isEmpty()) flag->setGroup(group);
+    // User flags read from file already have a Uuid - use it
+    if (!uid.isNull()) flag->setUuid(uid);
 
     QAction *a;
 
@@ -2680,10 +2705,10 @@ Flag* Main::setupFlag (const QString &path,
 
     // StandardFlag or user flag
 
-    a = new QAction (flag->getPixmap(), name, this);
+    a = new QAction (flag->getPixmap(), flag->getUuid().toString(), this);
     flag->setAction (a);
     a->setCheckable( true );
-    a->setObjectName( name );
+    a->setObjectName( flag->getUuid().toString() );
     a->setToolTip( tooltip );
     if (keyseq != 0)
     {
@@ -6181,6 +6206,8 @@ void Main::previousSlide()
 
 void Main::flagChanged() 
 {
+    qDebug() << "Main::flagChanged  " << sender()->objectName();
+
     MapEditor *me = currentMapEditor();
     VymModel  *m  = currentModel();
     if (me && m && me->getState() != MapEditor::EditingHeading) 

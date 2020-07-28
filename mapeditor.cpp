@@ -1149,7 +1149,7 @@ void MapEditor::contextMenuEvent ( QContextMenuEvent * e )
 	// Context Menu 
 	if (lmo && selbi )
 	{
-	    QString foname = ((BranchObj*)lmo)->getSystemFlagName(p);
+	    QString foname = ((BranchObj*)lmo)->findSystemFlagNameByPos(p);
 	    if (foname.startsWith ("system-task")) 
 		taskContextMenu->popup (e->globalPos() );
 	    else	
@@ -1252,7 +1252,7 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
     }
 
     QString sysFlagName;
-    if (lmo) sysFlagName = ((BranchObj*)lmo)->getSystemFlagName(p);
+    if (lmo) sysFlagName = ((BranchObj*)lmo)->findSystemFlagNameByPos(p);
     
     /*
     qDebug() << "ME::mouse pressed\n";
@@ -1877,7 +1877,7 @@ void MapEditor::mouseDoubleClickEvent(QMouseEvent* e)
 	    if (selbi)
 	    {
 		lmo=((MapItem*)ti)->getLMO();
-		QString foname=((BranchObj*)lmo)->getSystemFlagName(p);
+		QString foname=((BranchObj*)lmo)->findSystemFlagNameByPos(p);
 		if (!foname.isEmpty()) return;	// Don't edit heading when double clicking system flag
 
 	    }

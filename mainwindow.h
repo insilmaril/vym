@@ -78,8 +78,8 @@ public:
         Flag::FlagType type,
 	const QString &name, 
 	const QString &tooltip,
-        const QString &group = "",
-	const QKeySequence &ks = 0
+        const QUuid &uid = QUuid(),
+        const QKeySequence &ks = 0
 	);
 
 private:

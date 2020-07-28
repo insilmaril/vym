@@ -161,15 +161,16 @@ bool parseVYMHandler::startElement  ( const QString&, const QString&,
         (state == StateMapCenter || state==StateBranch)) 
     {
         state=StateStandardFlag;
-    } else if ( eName == "userflag" && state == StateMap) 
+    } else if ( eName == "userflagdef" && state == StateMap) 
     {
         state = StateUserFlagDef;
-        return (readUserFlagAttr(atts));
+        return (readUserFlagDefAttr(atts));
     } else if ( 
         eName == "userflag" && 
         (state == StateMapCenter || state == StateBranch )) 
     {
         state = StateUserFlag;
+        return (readUserFlagAttr(atts));
     } else if ( eName == "heading" && (state == StateMapCenter||state==StateBranch || state == StateInit))
     {
         if (state == StateInit)
@@ -442,9 +443,6 @@ bool parseVYMHandler::characters   ( const QString& ch)
         case StateBranch: break;
         case StateStandardFlag: 
             lastBranch->activateStandardFlag(ch_simplified); 
-            break;
-        case StateUserFlag: 
-            lastBranch->toggleFlag(ch_simplified);
             break;
         case StateImage: break;
         case StateVymNote: 
@@ -992,11 +990,13 @@ bool parseVYMHandler::readTaskAttr (const QXmlAttributes& a)
     return true;
 }
 
-bool parseVYMHandler::readUserFlagAttr (const QXmlAttributes& a)
+bool parseVYMHandler::readUserFlagDefAttr (const QXmlAttributes& a)
 {
     QString name;
     QString path;
     QString tooltip;
+    QUuid uid;
+    qDebug() << "xml-vym  uid="<<uid.toString();
 
     if (!a.value( "name").isEmpty() ) 
         name = a.value("name");
@@ -1004,14 +1004,29 @@ bool parseVYMHandler::readUserFlagAttr (const QXmlAttributes& a)
         path = a.value("path");
     if (!a.value( "tooltip").isEmpty() ) 
         tooltip = a.value("tooltip");
-
-    Flag* flag = mainWindow->setupFlag ( path, Flag::UserFlag, name, tooltip); 
-
     if (!a.value( "uuid").isEmpty() ) 
-        flag->setUuid(a.value("uuid"));
+        uid = QUuid(a.value("uuid"));
+
+    Flag* flag = mainWindow->setupFlag ( path, Flag::UserFlag, name, tooltip, uid); 
+
     if (!a.value( "group").isEmpty() ) 
         flag->setGroup( a.value("group"));
 
     return true;
 }
 
+bool parseVYMHandler::readUserFlagAttr (const QXmlAttributes& a)
+{
+    QString name;
+    QString uuid;
+
+    if (!a.value( "name").isEmpty() ) 
+        name = a.value("name");
+    if (!a.value( "uuid").isEmpty() ) 
+        uuid = a.value("uuid");
+
+    qDebug() << "toggle flag: " << uuid;
+    lastBranch->toggleFlag(QUuid(uuid));
+
+    return true;
+}

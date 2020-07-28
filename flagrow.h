@@ -1,6 +1,7 @@
 #ifndef FLAGROW_H
 #define FLAGROW_H
 
+#include <QList>
 #include <QStringList>
 #include <QToolBar>
 
@@ -19,17 +20,23 @@ public:
     FlagRow ();
     ~FlagRow ();
     Flag* addFlag (Flag *flag);
-    Flag *getFlag (const QString &name);
-    QStringList  activeFlagNames();
+    Flag *findFlag (const QString &name);
+    Flag *findFlag (const QUuid &uid);
+    const QStringList  activeFlagNames();
+    const QList <QUuid> activeFlagUids();
     bool isActive(const QString &name);
+    bool isActive(const QUuid &uuid);
 
     /*! \brief Toggle a Flag 
 	
 	To activate a flag it will be copied from masterRow to current row.
     */	
     bool toggle (const QString&, bool useGroups = true);
+    bool toggle (const QUuid&, bool useGroups = true);
     bool activate(const QString&);
+    bool activate(const QUuid&);
     bool deactivate(const QString&);
+    bool deactivate(const QUuid&);
     bool deactivateGroup(const QString&);
     void deactivateAll();
     void setEnabled (bool);
@@ -47,6 +54,7 @@ private:
     FlagRow *masterRow;
     QList <Flag*> flags;        //! Used in master row to define flags
     QStringList activeNames;	//! Used in treeitems: Lists all names of currently active flags
+    QList <QUuid> activeUids;	//! Used in treeitems: Lists all uids of currently active flags
     QString rowName;		//! Name of this collection of flags
 };
 #endif

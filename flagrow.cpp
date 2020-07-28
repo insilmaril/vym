@@ -19,7 +19,7 @@ FlagRow::~FlagRow()
     //qDebug()<< "Destr FlagRow";
 }
 
-Flag* FlagRow::addFlag (Flag *flag)
+Flag* FlagRow::addFlag (Flag *flag) // FIXME-0 switch to Uuids instead of names
 {
     Flag *f = new Flag;
 ;
@@ -29,7 +29,7 @@ Flag* FlagRow::addFlag (Flag *flag)
     return f;
 }
 
-Flag* FlagRow::getFlag (const QString &name)
+Flag* FlagRow::findFlag (const QString &name)  //FIXME-0 obsolete??
 {
     int i = 0;
     while (i <= flags.size() - 1)
@@ -41,9 +41,27 @@ Flag* FlagRow::getFlag (const QString &name)
     return NULL;
 }
 
-QStringList FlagRow::activeFlagNames()
+Flag* FlagRow::findFlag (const QUuid &uid)
+{
+    int i = 0;
+    while (i <= flags.size() - 1)
+    {
+	if (flags.at(i)->getUuid() == uid)
+	    return flags.at(i);
+	i++;	
+    }
+    return NULL;
+}
+
+const QStringList FlagRow::activeFlagNames()
 {
     return activeNames;
+}
+
+const QList <QUuid> FlagRow::activeFlagUids()
+{
+    qDebug() << "FR::activeFlagUids  " << activeUids << this;
+    return activeUids;
 }
 
 
@@ -55,8 +73,17 @@ bool FlagRow::isActive (const QString &name)
     return false;   
 }
 
-bool FlagRow::toggle (const QString &name, bool useGroups)
+bool FlagRow::isActive (const QUuid &uid)	
 {
+    QUuid i;
+    foreach (i, activeUids)
+	if (i == uid) return true;
+    return false;   
+}
+
+bool FlagRow::toggle (const QString &name, bool useGroups)  // FIXME-0 obsolete soon
+{
+    qDebug() << "FRO::toggle  by name " << name  << "active: " << isActive(name);
     if (isActive(name) )
 	return deactivate (name);
     else
@@ -66,13 +93,13 @@ bool FlagRow::toggle (const QString &name, bool useGroups)
 	if (!masterRow || !useGroups) return false;
 
 	// Deactivate all other active flags group except "name"
-	Flag *flag = masterRow->getFlag (name);
+	Flag *flag = masterRow->findFlag (name);
 	if (!flag) return false;
 	QString mygroup = flag->getGroup();
 
 	for (int i = 0; i < activeNames.size(); ++i)
 	{
-	    flag = masterRow->getFlag (activeNames.at(i) );
+	    flag = masterRow->findFlag (activeNames.at(i) );
 	    if (name != activeNames.at(i) && !mygroup.isEmpty() && mygroup == flag->getGroup())
 		deactivate (activeNames.at(i));
 	}
@@ -80,8 +107,36 @@ bool FlagRow::toggle (const QString &name, bool useGroups)
     }
 }
 
-bool FlagRow::activate (const QString &name)
+bool FlagRow::toggle (const QUuid &uid, bool useGroups) // FIXME-0 return value not used
 {
+    qDebug() << "FR::toggle  by uid " << uid.toString();
+    if (isActive(uid) )
+	return deactivate (uid);
+    else
+    {
+	if (!activate (uid) ) return false;    
+
+	if (!masterRow || !useGroups) return false;
+
+	// Deactivate all other active flags group except "name"
+        qDebug() << "FR::toggle  now getting to groups:";
+	Flag *flag = masterRow->findFlag (uid);
+	if (!flag) return false;
+	QString mygroup = flag->getGroup();
+
+	for (int i = 0; i < activeUids.size(); ++i)
+	{
+	    flag = masterRow->findFlag (activeUids.at(i) );
+	    if (uid != activeUids.at(i) && !mygroup.isEmpty() && mygroup == flag->getGroup())
+		deactivate (activeUids.at(i));
+	}
+	return true;
+    }
+}
+
+bool FlagRow::activate (const QString &name)    // FIXME-0 obsolete
+{
+    qDebug() << "FR::activate name " << name  << "active: " << isActive(name);
     if (isActive (name)) 
     {
 	if (debug) qWarning () << QString("FlagRow::activate - %1 is already active").arg(name);
@@ -95,7 +150,7 @@ bool FlagRow::activate (const QString &name)
     }
 
     // Check, if flag exists after all...
-    Flag *flag = masterRow->getFlag (name);
+    Flag *flag = masterRow->findFlag (name);
     if (!flag)
     {
 	qWarning() << "FlagRow::activate - flag " << name << " does not exist here!";
@@ -106,10 +161,41 @@ bool FlagRow::activate (const QString &name)
     return true;
 }
 
-
-bool FlagRow::deactivate (const QString &name)
+bool FlagRow::activate (const QUuid &uid)
 {
-    int n=activeNames.indexOf (name);
+    qDebug() << "FR::activate uuid " << uid.toString();
+    if (isActive (uid)) 
+    {
+	if (debug) 
+            qWarning () << QString("FlagRow::activate - %1 is already active").arg(uid.toString());
+	return true;
+    }
+
+    if (!masterRow)
+    {
+	qWarning() << "FlagRow::activate - no masterRow to activate " << uid.toString();
+	return false;
+    }
+
+    // Check, if flag exists after all...
+    qDebug() << "FR::activate   looking in masterRow for flag " << uid;
+    Flag *flag = masterRow->findFlag (uid);
+    if (!flag)
+    {
+	qWarning() << "FlagRow::activate - flag " << uid.toString() << " does not exist here!";
+	return false;
+    }
+
+    activeUids.append (uid);
+    qDebug() << "FR::activate   added " << uid << " to " << this;
+
+    return true;
+}
+
+
+bool FlagRow::deactivate (const QString &name) // FIXME-0 obsolete
+{
+    int n = activeNames.indexOf (name);
     if (n>=0)
     {
 	activeNames.removeAt(n);
@@ -120,6 +206,19 @@ bool FlagRow::deactivate (const QString &name)
     return false;
 }
 
+bool FlagRow::deactivate (const QUuid &uid)
+{
+    int n = activeUids.indexOf (uid);
+    if (n >= 0)
+    {
+	activeUids.removeAt(n);
+	return true;
+    }
+    if (debug) 
+	qWarning ()<<QString("FlagRow::deactivate - %1 is not active").arg(uid.toString());
+    return true;
+}
+
 bool FlagRow::deactivateGroup (const QString &gname) 
 {
     if (!masterRow) return false;
@@ -127,7 +226,7 @@ bool FlagRow::deactivateGroup (const QString &gname)
 
     foreach (QString s, activeNames )
     {
-	Flag *flag=masterRow->getFlag (s);
+	Flag *flag=masterRow->findFlag (s);
 	if (flag && gname == flag->getGroup())
 	    deactivate (s);
     }
@@ -185,7 +284,7 @@ QString FlagRow::saveState ()
     if (!activeNames.isEmpty())
         for (int i = 0; i < activeNames.size(); ++i)
         {
-            Flag *flag = masterRow->getFlag(activeNames.at(i) );
+            Flag *flag = masterRow->findFlag(activeNames.at(i) );
 
             // save flag to xml, if flag is set 
             s += flag->saveState();

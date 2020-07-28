@@ -142,11 +142,13 @@ public:
 	If master is not NULL,, only one Flag from FlagRow master may 
 	be active simultanously, the others get deactivated.
     */	
-    virtual void toggleFlag(const QString &flag, bool useGroups = true);
+    //virtual void toggleFlag(const QString &name, bool useGroups = true);
+    Flag* toggleFlag(const QUuid &uid, bool useGroups = true);
     virtual void toggleSystemFlag  (const QString &flag, FlagRow *master = NULL);
     virtual bool hasActiveFlag (const QString &flag);
     virtual bool hasActiveSystemFlag   (const QString &flag);
     virtual QStringList activeFlagNames();
+    QList <QUuid>  activeFlagUids();
 
     virtual QStringList activeSystemFlagNames();
 

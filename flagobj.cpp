@@ -24,16 +24,17 @@ void FlagObj::init ()
 
     icon=new ImageObj (parentItem());
     icon->setPos (absPos.x(), absPos.y() );
-    state=false;
+    state=false;    // FIXME-1 required?   FO is removed completely, when deactivate in FRO!
     avis=true;
 }
 
 void FlagObj::copy (FlagObj* other)
 {
     MapObj::copy(other);
-    name=other->name;
-    state=other->state;
-    avis=other->avis;
+    name  = other->name;
+    uid   = other->uid;
+    state = other->state;
+    avis  = other->avis;
     icon->copy(other->icon);
     setVisibility (other->isVisibleObj() );
 }
@@ -86,6 +87,16 @@ void FlagObj::setName(const QString &n)
 const QString FlagObj::getName()
 {
     return name;
+}
+
+void FlagObj::setUuid(const QUuid &id)
+{
+    uid = id;
+}
+
+const QUuid FlagObj::getUuid()
+{
+    return uid;
 }
 
 void FlagObj::setAlwaysVisible(bool b)

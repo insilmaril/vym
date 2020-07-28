@@ -25,17 +25,20 @@ public:
     virtual void setZValue (double z);
     virtual void setVisibility(bool);
     virtual FlagObj* addFlag (FlagObj *fo);	    // make deep copy of FlagObj
+    void updateActiveFlagObjs (FlagRow *masterRow, const QList <QUuid> &);
     virtual QStringList activeFlagNames();
     virtual void positionBBox();
     virtual void calcBBoxSize();
-    virtual QString getFlagName (const QPointF &p); // Find flag by position
-    bool isActive(const QString&);
-    void activate (Flag *flag);
-    void deactivate(const QString&);
+    bool isFlagActiveByName(const QString&);
+    bool isFlagActive(const QUuid&);
+    void activateFlag (Flag *flag);
+    void deactivateFlagByName(const QString&);
     void setShowFlags (bool);
-    FlagObj* findFlag (const QString&);
+    FlagObj* findFlagObj (const QString&);
+    FlagObj* findFlagObj (const QUuid&);
+    virtual QString findFlagNameByPos (const QPointF &p); // Find flag by position
 private:    
-    QList <FlagObj*> flags; 
+    QList <FlagObj*> flagobjs; 
     bool showFlags;			    // FloatObjects want to hide their flags
 };
 #endif

@@ -45,7 +45,7 @@ public:
     bool isUsed();
     FlagType getType();
     void setType (FlagType t);
-    void setUuid(const QString &id);
+    void setUuid(const QUuid &id);
     QUuid getUuid();
     QString  saveDef();
     bool  saveDataToDir (const QString&, const QString&);

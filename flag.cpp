@@ -156,9 +156,9 @@ void Flag::setType(Flag::FlagType t)
     type = t;
 }
 
-void Flag::setUuid(const QString &id)
+void Flag::setUuid(const QUuid &id)
 {
-    uuid = QUuid(id);
+    uuid = id;
 }
 
 QUuid Flag::getUuid() { return uuid; }
@@ -171,7 +171,7 @@ QString Flag::saveDef()
         attributes << attribut("name", name);
         attributes << attribut("path", path);
         attributes << attribut("uuid", uuid.toString());
-        return singleElement("userflag", attributes);
+        return singleElement("userflagdef", attributes);
     } else
         return QString();
 }
@@ -185,7 +185,7 @@ bool Flag::saveDataToDir (const QString &tmpdir, const QString &prefix)
 QString Flag::saveState()
 {
     if (type == Flag::UserFlag) 
-        return valueElement ("userflag", name);
+        return singleElement ("userflag", attribut("name", name) + attribut("uuid", uuid.toString()));
     else
         return valueElement ("standardflag", name);
 }

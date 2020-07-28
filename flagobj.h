@@ -4,6 +4,7 @@
 
 #include <QAction>
 #include <QPixmap>
+#include <QUuid>
 
 #include "flag.h"
 #include "mapobj.h"
@@ -29,7 +30,9 @@ public:
     void load (const QString&);
     void load (const QPixmap&);
     void setName (const QString&);
-    const QString getName ();
+    const QString getName ();   // FIXME-0 should become obsolete, only uuid
+    void setUuid(const QUuid &uid);
+    const QUuid getUuid();
     QPixmap getPixmap();
     void setAction(QAction*);
     void setAlwaysVisible (bool b);
@@ -42,6 +45,7 @@ public:
     
 protected:  
     QString name;
+    QUuid uid;
     bool state;
     bool avis;
     virtual void positionBBox();
