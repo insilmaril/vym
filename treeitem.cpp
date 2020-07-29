@@ -560,6 +560,7 @@ void TreeItem::deactivateStandardFlag (const QString &name)
 void TreeItem::deactivateAllStandardFlags ()
 {
     standardFlags.deactivateAll ();
+    userFlags.deactivateAll ();
     model->emitDataChanged(this);
 }
 

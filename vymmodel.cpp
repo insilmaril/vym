@@ -3933,7 +3933,7 @@ void VymModel::toggleFlag (const QString &uid, bool useGroups)
     }
 }
 
-void VymModel::clearFlags() // FIXME-0 both user and standard flags
+void VymModel::clearFlags() 
 {
     BranchItem *selbi = getSelectedBranch();
     if (selbi) 

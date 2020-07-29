@@ -2561,7 +2561,6 @@ void Main::setupFlagActions()
             tr("This will help","Standardflag"));
 
     // Freemind flags
-    /* FIXME-0 freemind flags disabled for testing
     flag = setupFlag ( ":/freemind/warning.png",
             Flag::FreemindFlag,
             "freemind-warning",
@@ -2676,7 +2675,6 @@ void Main::setupFlagActions()
             Flag::FreemindFlag,
             "freemind-licq",
             tr("Sweet","Freemind flag"));
-    */
 }
 
 Flag* Main::setupFlag (const QString &path,
