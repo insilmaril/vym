@@ -5942,8 +5942,9 @@ void Main::updateActions()
 			}   
 		    }
 		}
-		//Standard Flags
-		standardFlagsMaster->updateToolBar (selbi->activeFlagUids() ); // FIXME-0  what about user flags?
+		//Standard and user flags
+		standardFlagsMaster->updateToolBar (selbi->activeFlagUids() ); 
+		userFlagsMaster->updateToolBar (selbi->activeFlagUids() ); 
 
 		// System Flags
 		actionToggleScroll->setEnabled (true);
