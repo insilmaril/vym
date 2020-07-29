@@ -54,7 +54,6 @@ Flag* FlagRow::findFlag (const QUuid &uid)
 
 const QStringList FlagRow::activeFlagNames()
 {
-    // return activeNames; FIXME-0
     return QStringList();
 }
 
@@ -210,13 +209,12 @@ bool FlagRow::deactivateGroup (const QString &gname)
     if (!masterRow) return false;
     if (gname.isEmpty()) return false;
 
-    /* FIXME-0 foreach (QString s, activeNames )
+    foreach (QUuid uid, activeUids)
     {
-	Flag *flag=masterRow->findFlag (s);
+	Flag *flag = masterRow->findFlag (uid);
 	if (flag && gname == flag->getGroup())
-	    deactivate (s);
+	    deactivate (flag->getUuid() );
     }
-    */
     return true;
 }
 

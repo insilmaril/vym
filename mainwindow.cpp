@@ -2329,7 +2329,7 @@ void Main::setupFlagActions()
     // Origin: ./share/icons/oxygen/48x48/status/task-complete.png
     flag = setupFlag ( ":/flag-task-finished.png", 
             Flag::SystemFlag,
-            "system-task-wip-finished",
+            "system-task-finished",
             tr("Note","SystemFlag")); 
     flag->setGroup("system-tasks");
 
@@ -2561,7 +2561,7 @@ void Main::setupFlagActions()
             tr("This will help","Standardflag"));
 
     // Freemind flags
-    /* FIXME-0 disabled for testing
+    /* FIXME-0 freemind flags disabled for testing
     flag = setupFlag ( ":/freemind/warning.png",
             Flag::FreemindFlag,
             "freemind-warning",
@@ -2699,8 +2699,7 @@ Flag* Main::setupFlag (const QString &path,
     if (type == Flag::SystemFlag)
     {
         // SystemFlag
-        systemFlagsMaster->addFlag (flag);
-        return flag;
+        return systemFlagsMaster->addFlag (flag);
     }
 
     // StandardFlag or user flag
@@ -6206,8 +6205,6 @@ void Main::previousSlide()
 
 void Main::flagChanged() 
 {
-    qDebug() << "Main::flagChanged  " << sender()->objectName();
-
     MapEditor *me = currentMapEditor();
     VymModel  *m  = currentModel();
     if (me && m && me->getState() != MapEditor::EditingHeading) 
