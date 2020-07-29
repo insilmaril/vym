@@ -18,7 +18,6 @@ public:
     FlagRowObj ();
     FlagRowObj (QGraphicsItem*);
     ~FlagRowObj ();
-    virtual void init ();
     virtual void copy (FlagRowObj*);
     virtual void move   (double,double);
     virtual void moveBy (double,double);
@@ -32,7 +31,6 @@ public:
     bool isFlagActiveByName(const QString&);
     bool isFlagActive(const QUuid&);
     void activateFlag (Flag *flag);
-    void setShowFlags (bool);
     FlagObj* findFlagObj (const QString&);
     FlagObj* findFlagObj (const QUuid&);
     virtual QString findFlagNameByPos (const QPointF &p); // Find flag by position

@@ -18,9 +18,6 @@ FloatImageObj::FloatImageObj (QGraphicsItem * parent,TreeItem *ti):FloatObj(pare
     clickPoly=bbox;
     useRelPos=true;
 
-    //Hide flags
-    systemFlagRowObj->setShowFlags(false);
-
 //    setLinkStyle (LinkableMapObj::Parabel);
 }
 

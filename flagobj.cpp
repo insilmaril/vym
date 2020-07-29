@@ -24,7 +24,6 @@ void FlagObj::init ()
 
     icon=new ImageObj (parentItem());
     icon->setPos (absPos.x(), absPos.y() );
-    state=false;    // FIXME-1 required?   FO is removed completely, when deactivate in FRO!
     avis=true;
 }
 
@@ -33,7 +32,6 @@ void FlagObj::copy (FlagObj* other)
     MapObj::copy(other);
     name  = other->name;
     uid   = other->uid;
-    state = other->state;
     avis  = other->avis;
     icon->copy(other->icon);
     setVisibility (other->isVisibleObj() );
@@ -59,7 +57,7 @@ void FlagObj::setZValue (double z)
 void FlagObj::setVisibility (bool v)
 {
     MapObj::setVisibility(v);
-    if (v && state)
+    if (v) 
 	icon->setVisibility(true);
     else
 	icon->setVisibility(false);
@@ -109,41 +107,6 @@ bool FlagObj::isAlwaysVisible()
     return avis;
 }
 
-bool FlagObj::isActive()
-{
-    return state;
-}
-
-void FlagObj::toggle()
-{
-    if (state)
-	deactivate();
-    else
-	activate();
-}
-
-void FlagObj::activate()
-{
-    state=true;
-    // only show icon, if flag itself is visible 
-    if (visible) 
-    {
-	icon->setVisibility (true);
-	calcBBoxSize();
-    }	
-}
-
-void FlagObj::deactivate()
-{
-    state=false;
-    // if flag itself is invisible we don't need to call 
-    if (visible) 
-    {
-	icon->setVisibility (false);
-	calcBBoxSize();
-    }	
-}
-
 void FlagObj::saveToDir (const QString &tmpdir, const QString &prefix)
 {
     QString fn=tmpdir + prefix + name + ".png";
@@ -158,7 +121,7 @@ void FlagObj::positionBBox()
 
 void FlagObj::calcBBoxSize()
 {
-    if (visible && state)
+    if (visible)
 	bbox.setSize (	QSizeF(
 	    icon->boundingRect().width(), 
 	    icon->boundingRect().height() ) );

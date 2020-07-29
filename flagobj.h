@@ -37,16 +37,11 @@ public:
     void setAction(QAction*);
     void setAlwaysVisible (bool b);
     bool isAlwaysVisible ();
-    bool isActive();
-    void toggle();
-    void activate();
-    void deactivate();
     void saveToDir (const QString&, const QString&);
     
 protected:  
     QString name;
     QUuid uid;
-    bool state;
     bool avis;
     virtual void positionBBox();
     virtual void calcBBoxSize();

@@ -12,13 +12,11 @@
 FlagRowObj::FlagRowObj()
 {
 //    qDebug() << "Const FlagRowObj ()";
-    init ();
 }
 
 FlagRowObj::FlagRowObj(QGraphicsItem *parent):MapObj(parent) 
 {
 //    qDebug() << "Const FlagRowObj (p)";
-    init ();
 }
 
 FlagRowObj::~FlagRowObj()
@@ -26,11 +24,6 @@ FlagRowObj::~FlagRowObj()
     //qDebug() << "Destr FlagRowObj";
     while (!flagobjs.isEmpty())
 	delete (flagobjs.takeFirst() );
-}
-
-void FlagRowObj::init ()
-{
-    showFlags = true;
 }
 
 void FlagRowObj::copy (FlagRowObj* other)
@@ -188,18 +181,9 @@ void FlagRowObj::activateFlag (Flag *flag)
 	fo->load (flag->getPixmap() );
 	fo->setName (flag->getName() );
         fo->setUuid (flag->getUuid() );
-	fo->activate();
-	if (showFlags)	// FIXME-1 necessary? only called from FIO::init
-	    fo->setVisibility (visible);
-	else
-	    fo->setVisibility (false);
+
 	calcBBoxSize();
     }
-}
-
-void FlagRowObj::setShowFlags (bool b)
-{
-    showFlags = b;
 }
 
 FlagObj* FlagRowObj::findFlagObj(const QString &name)

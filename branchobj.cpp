@@ -385,25 +385,6 @@ void BranchObj::updateVisuals()
     QList <QUuid> TIactiveFlagUids = treeItem->activeFlagUids();
     standardFlagRowObj->updateActiveFlagObjs( TIactiveFlagUids, standardFlagsMaster, userFlagsMaster);
 
-
-    // Update  user flags active in TreeItem    // FIXME-0 cont here!
-    //TIactiveFlagUids = treeItem->activeSystemFlagUids();
-    //systemFlagRowObj->updateActiveFlagObjs( systemFlagsMaster, TIactiveFlagUids);
-
-    /*
-    for (int i = 0; i<= TIactiveFlagUids.size() - 1; i++)
-    {
-        if (!standardFlagRowObj->isFlagActiveByUid (TIactiveFlagUids.at(i) )) 
-            // broken arch:  flagrowobj and flagrow and also branchobj and above need to 
-            // deal with flags by name and flags by Uuid.  BAD
-        {
-            // User flag   
-            Flag *f = userFlagsMaster->findFlag(TIactiveFlagUids.at(i));
-            if (f) standardFlagRowObj->activateFlag (f);
-        }
-    }
-    */
-    
     // Add missing system flags active in TreeItem
     TIactiveFlagUids = treeItem->activeSystemFlagUids();
     systemFlagRowObj->updateActiveFlagObjs(TIactiveFlagUids, systemFlagsMaster);
