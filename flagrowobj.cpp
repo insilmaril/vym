@@ -85,7 +85,7 @@ void FlagRowObj::updateActiveFlagObjs (const QList <QUuid> activeFlagUids, FlagR
     // Add missing active flags
     for (int i = 0; i<= activeFlagUids.size() - 1; i++)
     {
-        if (!isFlagActive(activeFlagUids.at(i) ))  //FIXME-0 cont here - do we really need standardFlagsRow AND userFlagsRow?
+        if (!isFlagActive(activeFlagUids.at(i) ))  
         {
             Flag *f = masterRowMain->findFlag(activeFlagUids.at(i));
             if (f) 
@@ -153,15 +153,6 @@ void FlagRowObj::calcBBoxSize()
     }
     bbox.setSize (boxsize);
     clickPoly = QPolygonF (bbox);
-}
-
-bool FlagRowObj::isFlagActiveByName (const QString &foname) // FIXME-0 should become obsolete: no FLO by name, only uuid
-{
-    FlagObj *fo = findFlagObj (foname);
-    if (fo) 
-	return true;
-    else
-	return false;
 }
 
 bool FlagRowObj::isFlagActive(const QUuid &uid)

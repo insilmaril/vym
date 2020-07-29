@@ -28,7 +28,6 @@ public:
     virtual QStringList activeFlagNames();
     virtual void positionBBox();
     virtual void calcBBoxSize();
-    bool isFlagActiveByName(const QString&);
     bool isFlagActive(const QUuid&);
     void activateFlag (Flag *flag);
     FlagObj* findFlagObj (const QString&);
