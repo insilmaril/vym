@@ -85,14 +85,12 @@ bool FlagRow::isActive (const QUuid &uid)
 
 void FlagRow::toggle (const QString &name, bool useGroups)  
 {
-    qDebug() << "FR::toggle  by name " << name;
     Flag *f = findFlag(name);
     toggle (f->getUuid(), useGroups);
 }
 
 void FlagRow::toggle (const QUuid &uid, bool useGroups) 
 {
-    qDebug() << "FR::toggle  by uid " << uid.toString();
     if (isActive(uid) )
     {
 	deactivate (uid);
@@ -103,7 +101,6 @@ void FlagRow::toggle (const QUuid &uid, bool useGroups)
 	if (!masterRow || !useGroups) return;
 
 	// Deactivate all other active flags group except "name"
-        qDebug() << "FR::toggle  now getting to groups:";
 	Flag *flag = masterRow->findFlag (uid);
 	if (!flag) return;
 
@@ -120,7 +117,6 @@ void FlagRow::toggle (const QUuid &uid, bool useGroups)
 
 bool FlagRow::activate (const QString &name)    
 {
-    qDebug() << "FR::activate name " << name  << "active: " << isActive(name);
     foreach (Flag *f, flags)
         qDebug() << "  " << f->getUuid() << f->getName();
 
@@ -145,13 +141,11 @@ bool FlagRow::activate (const QString &name)
     }
 
     activeUids.append (flag->getUuid());
-    qDebug() << "FR::activate by name ("<<name<<") added " << flag->getUuid() << " to " << masterRow->getName();
     return true;
 }
 
 bool FlagRow::activate (const QUuid &uid)
 {
-    qDebug() << "FR::activate uuid " << uid.toString();
     if (isActive (uid)) 
     {
 	if (debug) 
@@ -166,7 +160,6 @@ bool FlagRow::activate (const QUuid &uid)
     }
 
     // Check, if flag exists after all...
-    qDebug() << "FR::activate   looking in masterRow for flag " << uid;
     Flag *flag = masterRow->findFlag (uid);
     if (!flag)
     {
@@ -175,7 +168,6 @@ bool FlagRow::activate (const QUuid &uid)
     }
 
     activeUids.append (uid);
-    qDebug() << "FR::activate   added " << uid << " to " << this;
 
     return true;
 }
@@ -183,7 +175,6 @@ bool FlagRow::activate (const QUuid &uid)
 
 bool FlagRow::deactivate (const QString &name) 
 {
-    qDebug() << "FR::deactivate name " << name  << "active: " << isActive(name);
     foreach (Flag *f, flags)
         qDebug() << "  " << f->getUuid() << f->getName();
 

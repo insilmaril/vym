@@ -3914,9 +3914,7 @@ void VymModel::toggleFlag (const QString &uid, bool useGroups)
 
     if (bi) 
     {
-        qDebug () << "VM::toggleFlag looking for flag  " << uid;
-        Flag *f = bi->toggleFlag (uid, useGroups);  // FIXME-0 check usage of return value
-        qDebug () << "VM::toggleFlag  finished toggling " << uid  << "flag: " << f;
+        Flag *f = bi->toggleFlag (uid, useGroups);  
 
         if (f)
         {

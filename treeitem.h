@@ -147,7 +147,6 @@ public:
     virtual void toggleSystemFlag  (const QString &flag, FlagRow *master = NULL);
     virtual bool hasActiveFlag (const QString &flag);
     virtual bool hasActiveSystemFlag   (const QString &flag);
-    virtual QStringList activeFlagNames();
     QList <QUuid>  activeFlagUids();
 
     virtual QList <QUuid> activeSystemFlagUids();

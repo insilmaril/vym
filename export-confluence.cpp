@@ -91,7 +91,7 @@ QString ExportConfluence::getBranchText(BranchItem *current)
         /*
         if (dia.useUserFlags)
         {
-            foreach (QString flag, current->activeFlagNames())
+            foreach (QString flag, current->activeFlagNames())          // better don't use activeFlagNames, won't work for userflags
                 userFlags += QString("<img src=\"flags/flag-%1.png\" alt=\"%2\">")
                     .arg(flag)
                     .arg(QObject::tr("Flag: %1","Alt tag in HTML export").arg(flag));

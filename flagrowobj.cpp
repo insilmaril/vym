@@ -76,10 +76,6 @@ FlagObj* FlagRowObj::addFlag (FlagObj *fo)
 
 void FlagRowObj::updateActiveFlagObjs (const QList <QUuid> activeFlagUids, FlagRow *masterRowMain,  FlagRow *masterRowOptional )
 {
-    qDebug() << "FRO::updateActiveFOs   " << activeFlagUids.size() 
-        << "masterRowMain: " << masterRowMain->getName() 
-        << "masterRowOptional: " << masterRowOptional;
-    
     bool changed = false;
 
     // Add missing active flags
@@ -90,7 +86,6 @@ void FlagRowObj::updateActiveFlagObjs (const QList <QUuid> activeFlagUids, FlagR
             Flag *f = masterRowMain->findFlag(activeFlagUids.at(i));
             if (f) 
             {
-                qDebug() << "activating flag for main row: " << f->getName();
                 activateFlag (f);
                 changed = true;
             }
@@ -99,7 +94,6 @@ void FlagRowObj::updateActiveFlagObjs (const QList <QUuid> activeFlagUids, FlagR
                 f = masterRowOptional->findFlag(activeFlagUids.at(i));
                 if (f) 
                 {
-                    qDebug() << "activating flag for optional row: " << f->getName();
                     activateFlag (f);
                     changed = true;
                 }
@@ -111,7 +105,6 @@ void FlagRowObj::updateActiveFlagObjs (const QList <QUuid> activeFlagUids, FlagR
     foreach (FlagObj* fo, flagobjs)
         if (!activeFlagUids.contains (fo->getUuid() ))
         {
-            qDebug() << "  removing: " << fo->getUuid();
             flagobjs.removeAll (fo);
             delete (fo);
             changed = true;

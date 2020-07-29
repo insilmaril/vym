@@ -563,22 +563,11 @@ void TreeItem::deactivateAllStandardFlags ()
     model->emitDataChanged(this);
 }
 
-/*
-void TreeItem::toggleFlag(const QString &name,  bool useGroups)  //FIXME-0 check again - needed?
-{
-    if (standardFlagsMaster->findFlag (name))
-        standardFlags.toggle (name, useGroups);
-    else
-        userFlags.toggle (name, useGroups);
-}
-*/
-
 Flag* TreeItem::toggleFlag(const QUuid &uid,  bool useGroups) 
 {
     Flag *f = standardFlagsMaster->findFlag (uid);
     if (f)
     {
-        qDebug() << "TI::toggleFlag: found standard flag " << uid;
         standardFlags.toggle (uid, useGroups);
         return f;
     } else 
@@ -586,7 +575,6 @@ Flag* TreeItem::toggleFlag(const QUuid &uid,  bool useGroups)
         f = userFlagsMaster->findFlag(uid);
         if (f)
         {
-            qDebug() << "TI::toggleFlag: found user flag " << uid;
             userFlags.toggle (uid, useGroups);
             return f;
         } 
@@ -611,12 +599,7 @@ bool TreeItem::hasActiveSystemFlag (const QString &name)
     return systemFlags.isActive (name);
 }
 
-QStringList TreeItem::activeFlagNames () // FIXME-0 required still?
-{
-    return standardFlags.activeFlagNames() + userFlags.activeFlagNames();   // FIXME-0 names for user flags required?
-}
-
-QList <QUuid> TreeItem::activeFlagUids ()   // FIXME-0 standardFlags still required? Merged anyway here...
+QList <QUuid> TreeItem::activeFlagUids ()  
 {
     return standardFlags.activeFlagUids() + userFlags.activeFlagUids();
 }

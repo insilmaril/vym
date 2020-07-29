@@ -67,12 +67,14 @@ QString ExportHTML::getBranchText(BranchItem *current)
 
         // User flags
         QString userFlags;
-        if (dia.useUserFlags)
+        if (dia.useUserFlags)   // FIXME-1  Store both standard and user flags in export and use below
         {
+            /*
             foreach (QString flag, current->activeFlagNames())
                 userFlags += QString("<img src=\"flags/flag-%1.png\" alt=\"%2\">")
                     .arg(flag)
                     .arg(QObject::tr("Flag: %1","Alt tag in HTML export").arg(flag));
+            */
         }
 
         // Numbering
