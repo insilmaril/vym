@@ -996,7 +996,6 @@ bool parseVYMHandler::readUserFlagDefAttr (const QXmlAttributes& a)
     QString path;
     QString tooltip;
     QUuid uid;
-    qDebug() << "xml-vym  uid="<<uid.toString();
 
     if (!a.value( "name").isEmpty() ) 
         name = a.value("name");
@@ -1006,6 +1005,8 @@ bool parseVYMHandler::readUserFlagDefAttr (const QXmlAttributes& a)
         tooltip = a.value("tooltip");
     if (!a.value( "uuid").isEmpty() ) 
         uid = QUuid(a.value("uuid"));
+
+    qDebug() << "xml-vym::readUserFlagAttr  uid="<<uid.toString()<< "name=" << name;
 
     Flag* flag = mainWindow->setupFlag ( path, Flag::UserFlag, name, tooltip, uid); 
 

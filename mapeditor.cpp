@@ -2131,7 +2131,7 @@ void MapEditor::updateData (const QModelIndex &sel)
     if (ti && ti->isBranchLikeType())
     {
 	BranchObj *bo=(BranchObj*) ( ((MapItem*)ti)->getLMO());
-	bo->updateData();
+	bo->updateVisuals();
     }
 
     if (winter)

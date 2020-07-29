@@ -31,8 +31,8 @@ public:
 	
 	To activate a flag it will be copied from masterRow to current row.
     */	
-    bool toggle (const QString&, bool useGroups = true);
-    bool toggle (const QUuid&, bool useGroups = true);
+    void toggle (const QString&, bool useGroups = true);
+    void toggle (const QUuid&, bool useGroups = true);
     bool activate(const QString&);
     bool activate(const QUuid&);
     bool deactivate(const QString&);
@@ -45,6 +45,7 @@ public:
     bool saveDataToDir (const QString &,const QString &);
     QString saveState();
     void setName (const QString&);	    // prefix for exporting flags to dir
+    QString getName();                      // Used for debugging only
     void setToolBar   (QToolBar *tb);
     void setMasterRow (FlagRow *row);
     void updateToolBar(QList <QUuid> activeUids);
@@ -53,7 +54,6 @@ private:
     QToolBar *toolBar;
     FlagRow *masterRow;
     QList <Flag*> flags;        //! Used in master row to define flags
-    QStringList activeNames;	//! Used in treeitems: Lists all names of currently active flags
     QList <QUuid> activeUids;	//! Used in treeitems: Lists all uids of currently active flags
     QString rowName;		//! Name of this collection of flags
 };

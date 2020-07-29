@@ -83,7 +83,7 @@ FlagObj* FlagRowObj::addFlag (FlagObj *fo)
 
 void FlagRowObj::updateActiveFlagObjs(FlagRow *masterRow, const QList <QUuid> &activeFlagUids)
 {
-    qDebug() << "FRO::updateActiveFOs   " << activeFlagUids.size() << "masterRow: " << masterRow;
+    qDebug() << "FRO::updateActiveFOs   " << activeFlagUids.size() << "masterRow: " << masterRow->getName();
     
     bool changed = false;
 

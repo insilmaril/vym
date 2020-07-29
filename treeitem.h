@@ -150,7 +150,7 @@ public:
     virtual QStringList activeFlagNames();
     QList <QUuid>  activeFlagUids();
 
-    virtual QStringList activeSystemFlagNames();
+    virtual QList <QUuid> activeSystemFlagUids();
 
     virtual bool canMoveDown();
     virtual bool canMoveUp();

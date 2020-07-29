@@ -9,8 +9,8 @@ extern bool debug;
 /////////////////////////////////////////////////////////////////
 FlagRow::FlagRow()
 {
-    toolBar=NULL;
-    masterRow=NULL;
+    toolBar   = NULL;
+    masterRow = NULL;
 //    qDebug()<< "Const FlagRow ()";
 }
 
@@ -19,17 +19,16 @@ FlagRow::~FlagRow()
     //qDebug()<< "Destr FlagRow";
 }
 
-Flag* FlagRow::addFlag (Flag *flag) // FIXME-0 switch to Uuids instead of names
+Flag* FlagRow::addFlag (Flag *flag) 
 {
     Flag *f = new Flag;
 ;
     f->copy (flag);
     flags.append (f);
-    activeNames.append (flag->getName());
     return f;
 }
 
-Flag* FlagRow::findFlag (const QString &name)  //FIXME-0 obsolete??
+Flag* FlagRow::findFlag (const QString &name)  
 {
     int i = 0;
     while (i <= flags.size() - 1)
@@ -55,22 +54,26 @@ Flag* FlagRow::findFlag (const QUuid &uid)
 
 const QStringList FlagRow::activeFlagNames()
 {
-    return activeNames;
+    // return activeNames; FIXME-0
+    return QStringList();
 }
 
 const QList <QUuid> FlagRow::activeFlagUids()
 {
-    qDebug() << "FR::activeFlagUids  " << activeUids << this;
     return activeUids;
 }
 
 
-bool FlagRow::isActive (const QString &name)	
+bool FlagRow::isActive (const QString &name)
 {
-    QString n;
-    foreach (n, activeNames)
-	if (n == name) return true;
-    return false;   
+    Flag *f = masterRow->findFlag(name);
+    if (!f)
+    {
+        qWarning() << "FlagRow::isActive couldn't find flag named " << name;
+        return false;
+    }
+
+    return isActive(f->getUuid());
 }
 
 bool FlagRow::isActive (const QUuid &uid)	
@@ -81,47 +84,30 @@ bool FlagRow::isActive (const QUuid &uid)
     return false;   
 }
 
-bool FlagRow::toggle (const QString &name, bool useGroups)  // FIXME-0 obsolete soon
+void FlagRow::toggle (const QString &name, bool useGroups)  
 {
-    qDebug() << "FRO::toggle  by name " << name  << "active: " << isActive(name);
-    if (isActive(name) )
-	return deactivate (name);
-    else
-    {
-	if (!activate (name) ) return false;    
-
-	if (!masterRow || !useGroups) return false;
-
-	// Deactivate all other active flags group except "name"
-	Flag *flag = masterRow->findFlag (name);
-	if (!flag) return false;
-	QString mygroup = flag->getGroup();
-
-	for (int i = 0; i < activeNames.size(); ++i)
-	{
-	    flag = masterRow->findFlag (activeNames.at(i) );
-	    if (name != activeNames.at(i) && !mygroup.isEmpty() && mygroup == flag->getGroup())
-		deactivate (activeNames.at(i));
-	}
-	return true;
-    }
+    qDebug() << "FR::toggle  by name " << name;
+    Flag *f = findFlag(name);
+    toggle (f->getUuid(), useGroups);
 }
 
-bool FlagRow::toggle (const QUuid &uid, bool useGroups) // FIXME-0 return value not used
+void FlagRow::toggle (const QUuid &uid, bool useGroups) 
 {
     qDebug() << "FR::toggle  by uid " << uid.toString();
     if (isActive(uid) )
-	return deactivate (uid);
-    else
     {
-	if (!activate (uid) ) return false;    
+	deactivate (uid);
+    } else
+    {
+	if (!activate (uid) ) return;    
 
-	if (!masterRow || !useGroups) return false;
+	if (!masterRow || !useGroups) return;
 
 	// Deactivate all other active flags group except "name"
         qDebug() << "FR::toggle  now getting to groups:";
 	Flag *flag = masterRow->findFlag (uid);
-	if (!flag) return false;
+	if (!flag) return;
+
 	QString mygroup = flag->getGroup();
 
 	for (int i = 0; i < activeUids.size(); ++i)
@@ -130,13 +116,15 @@ bool FlagRow::toggle (const QUuid &uid, bool useGroups) // FIXME-0 return value 
 	    if (uid != activeUids.at(i) && !mygroup.isEmpty() && mygroup == flag->getGroup())
 		deactivate (activeUids.at(i));
 	}
-	return true;
     }
 }
 
-bool FlagRow::activate (const QString &name)    // FIXME-0 obsolete
+bool FlagRow::activate (const QString &name)    
 {
     qDebug() << "FR::activate name " << name  << "active: " << isActive(name);
+    foreach (Flag *f, flags)
+        qDebug() << "  " << f->getUuid() << f->getName();
+
     if (isActive (name)) 
     {
 	if (debug) qWarning () << QString("FlagRow::activate - %1 is already active").arg(name);
@@ -157,7 +145,8 @@ bool FlagRow::activate (const QString &name)    // FIXME-0 obsolete
 	return false;
     }
 
-    activeNames.append (name);
+    activeUids.append (flag->getUuid());
+    qDebug() << "FR::activate by name ("<<name<<") added " << flag->getUuid() << " to " << masterRow->getName();
     return true;
 }
 
@@ -193,17 +182,14 @@ bool FlagRow::activate (const QUuid &uid)
 }
 
 
-bool FlagRow::deactivate (const QString &name) // FIXME-0 obsolete
+bool FlagRow::deactivate (const QString &name) 
 {
-    int n = activeNames.indexOf (name);
-    if (n>=0)
-    {
-	activeNames.removeAt(n);
-	return true;
-    }
-    if (debug) 
-	qWarning ()<<QString("FlagRow::deactivate - %1 is not active").arg(name);
-    return false;
+    qDebug() << "FR::deactivate name " << name  << "active: " << isActive(name);
+    foreach (Flag *f, flags)
+        qDebug() << "  " << f->getUuid() << f->getName();
+
+    Flag *flag = masterRow->findFlag (name);
+    return deactivate (flag->getUuid());
 }
 
 bool FlagRow::deactivate (const QUuid &uid)
@@ -224,18 +210,19 @@ bool FlagRow::deactivateGroup (const QString &gname)
     if (!masterRow) return false;
     if (gname.isEmpty()) return false;
 
-    foreach (QString s, activeNames )
+    /* FIXME-0 foreach (QString s, activeNames )
     {
 	Flag *flag=masterRow->findFlag (s);
 	if (flag && gname == flag->getGroup())
 	    deactivate (s);
     }
+    */
     return true;
 }
 
 void FlagRow::deactivateAll ()
 {
-    if (!toolBar) activeNames.clear();
+    if (!toolBar) activeUids.clear();
 }
 
 void FlagRow::setEnabled (bool b)
@@ -281,10 +268,10 @@ QString FlagRow::saveState ()
 {
     QString s;
     
-    if (!activeNames.isEmpty())
-        for (int i = 0; i < activeNames.size(); ++i)
+    if (!activeUids.isEmpty())
+        for (int i = 0; i < activeUids.size(); ++i)
         {
-            Flag *flag = masterRow->findFlag(activeNames.at(i) );
+            Flag *flag = masterRow->findFlag(activeUids.at(i) );
 
             // save flag to xml, if flag is set 
             s += flag->saveState();
@@ -299,6 +286,8 @@ void FlagRow::setName (const QString &n)
 {
     rowName = n;
 }
+
+QString FlagRow::getName () { return rowName; }
 
 void FlagRow::setToolBar (QToolBar *tb)
 {

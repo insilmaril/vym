@@ -508,19 +508,21 @@ void TreeItem::clearNote()
 void TreeItem::setNote(const VymText &vt)
 {
     note = vt;
-    if (!note.isEmpty() && !systemFlags.isActive (QString("system-note")))
-	systemFlags.activate (QString("system-note"));
-    if (note.isEmpty() && systemFlags.isActive (QString("system-note")))
-	systemFlags.deactivate (QString("system-note"));
+
+    if (note.isEmpty()) 
+    {
+        if (systemFlags.isActive (QString("system-note")))
+	    systemFlags.deactivate (QString("system-note"));
+    } else
+    {
+        if (!systemFlags.isActive (QString("system-note")))
+            systemFlags.activate (QString("system-note"));
+    }
 }
 
 void TreeItem::setNote(const VymNote &vn)
 {
-    note = vn;
-    if (!note.isEmpty() && !systemFlags.isActive (QString("system-note")))
-        systemFlags.activate (QString("system-note"));
-    if (note.isEmpty() && systemFlags.isActive (QString("system-note")))
-        systemFlags.deactivate (QString("system-note"));
+    setNote ((VymText) vn);
 }
 
 bool TreeItem::hasEmptyNote()
@@ -609,7 +611,7 @@ bool TreeItem::hasActiveSystemFlag (const QString &name)
     return systemFlags.isActive (name);
 }
 
-QStringList TreeItem::activeFlagNames () 
+QStringList TreeItem::activeFlagNames () // FIXME-0 required still?
 {
     return standardFlags.activeFlagNames() + userFlags.activeFlagNames();   // FIXME-0 names for user flags required?
 }
@@ -619,9 +621,9 @@ QList <QUuid> TreeItem::activeFlagUids ()   // FIXME-0 standardFlags still requi
     return standardFlags.activeFlagUids() + userFlags.activeFlagUids();
 }
 
-QStringList TreeItem::activeSystemFlagNames ()
+QList <QUuid> TreeItem::activeSystemFlagUids()
 {
-    return systemFlags.activeFlagNames();
+    return systemFlags.activeFlagUids();
 }
 
 bool TreeItem::canMoveDown()

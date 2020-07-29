@@ -569,7 +569,7 @@ BranchObj* BranchItem::createMapObj(QGraphicsScene *scene)
 
     if (!getHeading().isEmpty() ) 
     {
-	newbo->updateData();	
+	newbo->updateVisuals();	
         newbo->setColor (heading.getColor());
     }	
 	

@@ -37,7 +37,7 @@ public:
     virtual void calcBBoxSize();
     virtual void setDockPos();
     
-    virtual void updateData();	//! Update represantatio of heading, flags, etc.
+    virtual void updateVisuals();	//! Update represantatio of heading, flags, etc.
 
 public:	
     virtual void setDefAttr (BranchModification, bool keepFrame=false);	// set default attributes (frame, font, size, ...)
