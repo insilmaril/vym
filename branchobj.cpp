@@ -383,18 +383,21 @@ void BranchObj::updateVisuals()
 
     // Update standard flags active in TreeItem
     QList <QUuid> TIactiveFlagUids = treeItem->activeFlagUids();
-    standardFlagRowObj->updateActiveFlagObjs( standardFlagsMaster, TIactiveFlagUids);
+    standardFlagRowObj->updateActiveFlagObjs( TIactiveFlagUids, standardFlagsMaster, userFlagsMaster);
 
 
-    // Add missing user flags active in TreeItem    
+    // Update  user flags active in TreeItem    // FIXME-0 cont here!
+    //TIactiveFlagUids = treeItem->activeSystemFlagUids();
+    //systemFlagRowObj->updateActiveFlagObjs( systemFlagsMaster, TIactiveFlagUids);
+
     /*
     for (int i = 0; i<= TIactiveFlagUids.size() - 1; i++)
     {
-        if (!standardFlagRowObj->isFlagActiveByUid (TIactiveFlagUids.at(i) )) //FIXME-0 see below
+        if (!standardFlagRowObj->isFlagActiveByUid (TIactiveFlagUids.at(i) )) 
             // broken arch:  flagrowobj and flagrow and also branchobj and above need to 
             // deal with flags by name and flags by Uuid.  BAD
         {
-            // User flag   // FIXME-0   cleanup loop and also add to remove loop
+            // User flag   
             Flag *f = userFlagsMaster->findFlag(TIactiveFlagUids.at(i));
             if (f) standardFlagRowObj->activateFlag (f);
         }
@@ -403,17 +406,8 @@ void BranchObj::updateVisuals()
     
     // Add missing system flags active in TreeItem
     TIactiveFlagUids = treeItem->activeSystemFlagUids();
-    systemFlagRowObj->updateActiveFlagObjs( systemFlagsMaster, TIactiveFlagUids);
+    systemFlagRowObj->updateActiveFlagObjs(TIactiveFlagUids, systemFlagsMaster);
     
-    // Remove system flags no longer active in TreeItem   // FIXME-0
-    /*
-    BOactiveFlags = systemFlagRowObj->activeFlagNames();
-    for (int i = 0;i < BOactiveFlags.size(); ++i)
-    {
-        if (!TIactiveFlagNames.contains (BOactiveFlags.at(i)))
-            systemFlagRowObj->deactivate (BOactiveFlags.at(i));
-    }
-    */
     calcBBoxSize();
 }
 

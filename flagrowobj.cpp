@@ -81,9 +81,11 @@ FlagObj* FlagRowObj::addFlag (FlagObj *fo)
     return newfo;
 }
 
-void FlagRowObj::updateActiveFlagObjs(FlagRow *masterRow, const QList <QUuid> &activeFlagUids)
+void FlagRowObj::updateActiveFlagObjs (const QList <QUuid> activeFlagUids, FlagRow *masterRowMain,  FlagRow *masterRowOptional )
 {
-    qDebug() << "FRO::updateActiveFOs   " << activeFlagUids.size() << "masterRow: " << masterRow->getName();
+    qDebug() << "FRO::updateActiveFOs   " << activeFlagUids.size() 
+        << "masterRowMain: " << masterRowMain->getName() 
+        << "masterRowOptional: " << masterRowOptional;
     
     bool changed = false;
 
@@ -92,17 +94,27 @@ void FlagRowObj::updateActiveFlagObjs(FlagRow *masterRow, const QList <QUuid> &a
     {
         if (!isFlagActive(activeFlagUids.at(i) ))  //FIXME-0 cont here - do we really need standardFlagsRow AND userFlagsRow?
         {
-            Flag *f = masterRow->findFlag(activeFlagUids.at(i));
+            Flag *f = masterRowMain->findFlag(activeFlagUids.at(i));
             if (f) 
             {
-                qDebug() << "activating flag " << f->getName();
+                qDebug() << "activating flag for main row: " << f->getName();
                 activateFlag (f);
                 changed = true;
+            }
+            if (masterRowOptional)
+            {
+                f = masterRowOptional->findFlag(activeFlagUids.at(i));
+                if (f) 
+                {
+                    qDebug() << "activating flag for optional row: " << f->getName();
+                    activateFlag (f);
+                    changed = true;
+                }
             }
         }
     }
 
-    // Remove standard flags no longer active in TreeItem  
+    // Remove flags no longer active in TreeItem  
     foreach (FlagObj* fo, flagobjs)
         if (!activeFlagUids.contains (fo->getUuid() ))
         {

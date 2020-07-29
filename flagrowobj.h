@@ -25,7 +25,7 @@ public:
     virtual void setZValue (double z);
     virtual void setVisibility(bool);
     virtual FlagObj* addFlag (FlagObj *fo);	    // make deep copy of FlagObj
-    void updateActiveFlagObjs (FlagRow *masterRow, const QList <QUuid> &);
+    void updateActiveFlagObjs (const QList <QUuid>, FlagRow *masterRowMain,  FlagRow *masterRowOptional = NULL);
     virtual QStringList activeFlagNames();
     virtual void positionBBox();
     virtual void calcBBoxSize();
