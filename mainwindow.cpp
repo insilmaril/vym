@@ -430,16 +430,16 @@ void Main::statusMessage(const QString &s)
 }
 
 void Main::setProgressMaximum (int max)	{
-    if (progressCounter==0)
+    if (progressCounter == 0)
     {
 	// Init range only on first time, when progressCounter still 0
 	// Normalize range to 1000
-	progressDialog.setRange (0,1000);
+	progressDialog.setRange (0, 1000);
 	progressDialog.setValue (1);
     }
     progressCounter++;	// Another map is loaded
 
-    progressMax=max*1000;
+    progressMax = max * 1000;
     QApplication::processEvents();
 }
 
@@ -464,7 +464,7 @@ void Main::addProgressValue (float v)
 
 void Main::initProgressCounter(uint n)
 {
-    progressCounterTotal=n;
+    progressCounterTotal = n;
 }
 
 void Main::removeProgressCounter()
@@ -2794,6 +2794,10 @@ void Main::setupSettingsActions()
     connect( a, SIGNAL( triggered() ), this, SLOT( settingsMacroPath() ) );
     settingsMenu->addAction (a);
 
+    a = new QAction( tr( "Set path for default path","Settings action")+"...", this);
+    connect( a, SIGNAL( triggered() ), this, SLOT( settingsDefaultMapPath() ) );
+    settingsMenu->addAction (a);
+
     a = new QAction( tr( "Set number of undo levels","Settings action")+"...", this);
     connect( a, SIGNAL( triggered() ), this, SLOT( settingsUndoLevels() ) );
     settingsMenu->addAction (a);
@@ -3399,13 +3403,18 @@ void Main::fileNew()
     VymModel *vm;
     VymView *vv;
 
-    QString default_path = settings.value(  //FIXME-1 Still needs settings dialog
+    QString default_path = settings.value(  
             "/system/defaultMap/path", 
             vymBaseDir.path() +"/demos/default.vym").toString();
 
+    // Don't show counter while loading default map
+    removeProgressCounter();
+
     if (File::Success != fileLoad (default_path, DefaultMap, VymMap) )   
     {
-        QMessageBox::critical( 0, tr( "Critical Error" ), tr("Couldn't load default map:\n\n%1\n\nvym will create empty map now.","Mainwindow: Failed to load default map").arg(default_path));
+        QMessageBox::critical( 0, 
+                tr( "Critical Error" ), 
+                tr("Couldn't load default map:\n\n%1\n\nvym will create an empty map now.","Mainwindow: Failed to load default map").arg(default_path));
 
         vm = new VymModel;
         vv = new VymView (vm);
@@ -3423,7 +3432,7 @@ void Main::fileNew()
         vm->makeDefault();
 
         // For the very first map we do not have flagrows yet...
-        vm->select("mc:");  // FIXME-0   check - still needed?
+        vm->select("mc:");  
     } else
     {
         vm = currentModel();
@@ -3539,7 +3548,11 @@ File::ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode, const FileType
 	// from command line
 	if (!QFile(fn).exists() )
 	{
-            if (lmode == DefaultMap) return File::Aborted;
+            if (lmode == DefaultMap) 
+            {
+                fileCloseMap();
+                return File::Aborted;
+            }
 
             if (lmode == NewMap)
             {
@@ -3616,7 +3629,7 @@ File::ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode, const FileType
                 addRecentMap( fn );
             } else if (lmode == DefaultMap)
             {
-                // FIXME-0 How to handle lockfile?
+                // FIXME-0 How to handle lockfile for default map?
                 vm->makeDefault();
                 updateTabName(vm);
             }
@@ -5429,6 +5442,27 @@ void Main::settingsMacroPath()
     if ( fd.exec() == QDialog::Accepted )
     {
 	settings.setValue ("/macros/path", fd.selectedFiles().first());
+    }
+}
+
+void Main::settingsDefaultMapPath()
+{
+    QString defaultPath = settings.value("/system/defaultMap/path", vymBaseDir.path() + "/demos/default.vym").toString() ;
+
+    QStringList filters;
+    filters <<"VYM defaults map (*.vym)";
+    QFileDialog fd;
+    fd.setDirectory ( dirname(defaultPath) );
+    fd.selectFile   ( basename(defaultPath) );
+    fd.setFileMode (QFileDialog::ExistingFile);
+    fd.setNameFilters (filters);
+    fd.setWindowTitle (vymName+ " - " +tr("Load vym default map"));
+    fd.setAcceptMode (QFileDialog::AcceptOpen);
+
+    QString fn;
+    if ( fd.exec() == QDialog::Accepted )
+    {
+	settings.setValue ("/system/defaultMap/path", fd.selectedFiles().first());
     }
 }
 

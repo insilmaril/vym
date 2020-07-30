@@ -375,7 +375,7 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix, bool w
     s += xml.endElement("vymmap");
 
     // Write images of used standard flags for use in exports
-    if (writeflags) standardFlagsMaster->saveDataToDir (tmpdir + "/flags/", "");    // FIXME-0 check for errors during write
+    if (writeflags) standardFlagsMaster->saveDataToDir (tmpdir + "/flags/", "");    // FIXME-1 check for errors during write
 
     return s;
 }

@@ -282,6 +282,7 @@ public slots:
     bool settingsURL();
     void settingsZipTool();
     void settingsMacroPath();
+    void settingsDefaultMapPath();
     void settingsUndoLevels();
 
 public:

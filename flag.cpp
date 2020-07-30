@@ -176,7 +176,7 @@ QString Flag::saveDef()
         return QString();
 }
 
-bool Flag::saveDataToDir (const QString &tmpdir, const QString &prefix)
+bool Flag::saveDataToDir (const QString &tmpdir, const QString &prefix) // FIXME-0 save to "flags/standard/" or "flags/user/"
 {
     QString fn = tmpdir + prefix + name + ".png";
     return pixmap.save (fn, "PNG");
