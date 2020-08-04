@@ -3375,11 +3375,16 @@ void Main::updateTabName( VymModel *vm)
         if ( view(i)->getModel() == vm )
         {
             if ( vm->isDefault() )
-            if ( vm->isReadOnly() )
-                tabWidget->setTabText( i, vm->getFileName() + " " + tr("(readonly)") );
-            else
-                tabWidget->setTabText( i, vm->getFileName() );
-            break;
+            {
+                tabWidget->setTabText( i, tr("unnamed","Name for empty and unnamed default map"));
+            } else
+            {
+                if ( vm->isReadOnly() )
+                    tabWidget->setTabText( i, vm->getFileName() + " " + tr("(readonly)") );
+                else
+                    tabWidget->setTabText( i, vm->getFileName() );
+            }
+            return;
         }
 }
 
@@ -3416,11 +3421,13 @@ void Main::fileNew()
                 tr( "Critical Error" ), 
                 tr("Couldn't load default map:\n\n%1\n\nvym will create an empty map now.","Mainwindow: Failed to load default map").arg(default_path));
 
+        /* FIXME-0  obsolete
         vm = new VymModel;
         vv = new VymView (vm);
 
         tabWidget->addTab (vv, tr("unnamed", "MainWindow: name for new and empty file"));
         vv->initFocus();
+        */
         
         // Switch to new tab
         tabWidget->setCurrentIndex (tabWidget->count() -1);
@@ -3433,6 +3440,9 @@ void Main::fileNew()
 
         // For the very first map we do not have flagrows yet...
         vm->select("mc:");  
+
+        // Set name to "unnamed"
+        updateTabName(vm);
     } else
     {
         vm = currentModel();
@@ -3503,6 +3513,7 @@ File::ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode, const FileType
 	}
     }
 
+    bool createModel;
 
     // Try to load map  
     if ( !fn.isEmpty() )
@@ -3511,16 +3522,16 @@ File::ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode, const FileType
 
 	vm = currentModel();
 
-        bool createModel;
-
-	if ( lmode == NewMap || lmode == DefaultMap)
+	if ( lmode == NewMap )
 	{
             if (vm && vm->isDefault() )
             {
                 // There is a map model already and it still the default map, use it.
                 createModel = false;
             } else
-                // Create new model 
+                createModel = true;
+        } else if (lmode == DefaultMap)
+        {
                 createModel = true;
         } else if (lmode == ImportAdd || lmode == ImportReplace)
         {
@@ -3550,7 +3561,7 @@ File::ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode, const FileType
 	{
             if (lmode == DefaultMap) 
             {
-                fileCloseMap();
+                //fileCloseMap();
                 return File::Aborted;
             }
 
@@ -3617,7 +3628,12 @@ File::ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode, const FileType
 	// Finally check for errors and go home
 	if (err == File::Aborted) 
 	{
-	    if (lmode == NewMap) fileCloseMap();
+            qDebug() << "fileLoad  lmode: " << lmode;   // FIXME-0
+	    if (lmode == NewMap) 
+            {
+                qDebug() << "Closing...";
+                fileCloseMap();
+            }
 	    statusBar()->showMessage( "Could not load " + fn, statusbarTime );
 	} else 
 	{
