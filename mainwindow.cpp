@@ -3421,14 +3421,6 @@ void Main::fileNew()
                 tr( "Critical Error" ), 
                 tr("Couldn't load default map:\n\n%1\n\nvym will create an empty map now.","Mainwindow: Failed to load default map").arg(default_path));
 
-        /* FIXME-0  obsolete
-        vm = new VymModel;
-        vv = new VymView (vm);
-
-        tabWidget->addTab (vv, tr("unnamed", "MainWindow: name for new and empty file"));
-        vv->initFocus();
-        */
-        
         // Switch to new tab
         tabWidget->setCurrentIndex (tabWidget->count() -1);
         
@@ -3819,6 +3811,15 @@ void Main::fileSaveAs(const SaveMode& savemode)
             // Check for existing file
             if (QFile (fn).exists())
             {
+                // Check if the existing file is writable 
+                if (!QFileInfo(fn).isWritable())
+                {
+                    QMessageBox::critical( 0, 
+                            tr( "Critical Error" ), 
+                            tr("Couldn't save %1,\nbecause file exists and cannot be changed.").arg(fn));
+                    return;
+                }
+
                 QMessageBox mb( vymName,
                                 tr("The file %1\nexists already. Do you want to").arg(fn),
                                 QMessageBox::Warning,
