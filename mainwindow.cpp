@@ -3620,12 +3620,7 @@ File::ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode, const FileType
 	// Finally check for errors and go home
 	if (err == File::Aborted) 
 	{
-            qDebug() << "fileLoad  lmode: " << lmode;   // FIXME-0
-	    if (lmode == NewMap) 
-            {
-                qDebug() << "Closing...";
-                fileCloseMap();
-            }
+	    if (lmode == NewMap) fileCloseMap();
 	    statusBar()->showMessage( "Could not load " + fn, statusbarTime );
 	} else 
 	{
