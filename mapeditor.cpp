@@ -253,8 +253,8 @@ void MapEditor::setScrollBarPosTarget (QRectF rect)
     if (!sceneRect().contains (rect) )
 	setSceneRect(sceneRect().united (rect));
 
-    int xmargin=0;
-    int ymargin=0;
+    int xmargin = settings.value ("/mapeditor/scrollToMarginX/", 80).toInt(); 
+    int ymargin = settings.value ("/mapeditor/scrollToMarginX/", 80).toInt(); 
 
     // Prepare scrolling
     qreal width = viewport()->width();
