@@ -1081,8 +1081,6 @@ bool VymModel::tryVymLock()
         } else if (vymLock.getState() == VymLock::notWritable)
         {
             WarningDialog dia;
-            QString a = vymLock.getAuthor();
-            QString h = vymLock.getHost();
             QString s = QString( tr("Cannot create lockfile of map! "
                         "It will be opened in readonly mode.\n\n" ));
             dia.setText( s );

@@ -1025,6 +1025,10 @@ void Main::setupFileActions()
     fileMenu->addAction(a);
     connect( a, SIGNAL( triggered() ), this, SLOT( fileSaveAs() ) );
 
+    a = new QAction( tr( "Save as default map","File menu" ), this);
+    fileMenu->addAction(a);
+    connect( a, SIGNAL( triggered() ), this, SLOT( fileSaveAsDefault() ) );
+
     fileMenu->addSeparator();
 
     fileImportMenu = fileMenu->addMenu (tr("Import","File menu"));
@@ -3406,7 +3410,6 @@ void Main::editorChanged()
 void Main::fileNew()
 {
     VymModel *vm;
-    VymView *vv;
 
     QString default_path = settings.value(  
             "/system/defaultMap/path", 
@@ -3553,7 +3556,6 @@ File::ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode, const FileType
 	{
             if (lmode == DefaultMap) 
             {
-                //fileCloseMap();
                 return File::Aborted;
             }
 
@@ -3886,6 +3888,26 @@ void Main::fileSaveAs(const SaveMode& savemode)
 void Main::fileSaveAs()
 {
     fileSaveAs (CompleteMap);
+}
+
+void Main::fileSaveAsDefault()
+{
+    QString defaultPath = settings.value("/system/defaultMap/path", vymBaseDir.path() + "/demos/default.vym").toString() ;
+
+    // Check if the existing file is writable 
+    if (!QFileInfo(defaultPath).isWritable())
+    {
+        settingsDefaultMapPath();
+    }
+
+    WarningDialog dia;
+    QString s = QString( tr("Do you want to overwrite the default map?\n\n%1").arg(defaultPath));
+
+    dia.setText( s );
+    dia.setWindowTitle(tr("Warning","Overwrite default map?"));
+    dia.showCancelButton( true );
+    //dia.setShowAgainName("/mainwindow/mapIsLocked");
+    dia.exec();
 }
 
 void Main::fileImportFirefoxBookmarks() // FIXME-2 remove or adapt

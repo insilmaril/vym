@@ -125,6 +125,7 @@ public slots:
 private slots:	
     void fileSaveAs();
     void fileSaveAs(const SaveMode &);
+    void fileSaveAsDefault();
     void fileImportFirefoxBookmarks();
     void fileImportFreemind();
     void fileImportMM();

@@ -51,7 +51,7 @@ MapEditor::MapEditor( VymModel *vm)
 
     model=vm;
     model->registerEditor(this);
-    model->makeDefault();   // No changes in model so far
+    // FIXME-0 really required to call from ME?   model->makeDefault();   // No changes in model so far
 
     setScene (mapScene);
 
