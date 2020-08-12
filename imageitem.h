@@ -1,6 +1,7 @@
 #ifndef IMAGEITEM_H
 #define IMAGEITEM_H
 
+#include <QGraphicsSvgItem>
 #include <QList>
 #include <QPixmap>
 #include <QVariant>
@@ -29,13 +30,14 @@ protected:
 public:	
     virtual ImageType getImageType();
 
-    virtual void load (const QImage &img);
+//    virtual void load (const QImage &img);
     virtual bool load (const QString &fname);
     virtual FloatImageObj* createMapObj();	    //! Create classic object in GraphicsView
 protected:  
     qreal scaleX;
     qreal scaleY;
-    QImage  originalImage;
+    QImage *originalImage;
+    QGraphicsSvgItem *originalSvg;
     QString originalFilename;
     int zValue;
 

@@ -162,7 +162,7 @@ void FlagRowObj::activateFlag (Flag *flag)
     if (flag) 
     {
 	FlagObj *fo = addFlag (new FlagObj (this));
-	fo->load (flag->getPixmap() );
+	fo->load (flag->getPixmap() );  // FIXME-0  svg???
 	fo->setName (flag->getName() );
         fo->setUuid (flag->getUuid() );
 

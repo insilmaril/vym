@@ -23,7 +23,7 @@ FloatImageObj::FloatImageObj (QGraphicsItem * parent,TreeItem *ti):FloatObj(pare
 
 FloatImageObj::~FloatImageObj ()
 {
-//  qDebug() << "Destr FloatImageObj "<<this<<"";
+    //qDebug() << "Destr FloatImageObj "<<this<<"";
     delete(icon);
 }
 

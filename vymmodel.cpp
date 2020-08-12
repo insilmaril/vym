@@ -878,8 +878,11 @@ void VymModel::loadImage (BranchItem *dst,const QString &fn)
 
                     reposition();
                 } else
-                    // FIXME-4 loadFIO error handling
+                {
                     qWarning () << "vymmodel: Failed to load " + s;
+                    deleteItem (ii);
+                }
+                    
             }
 
         }
@@ -3947,8 +3950,9 @@ void VymModel::clearFlags()
     }
 }
 
-void VymModel::addFloatImage (const QImage &img) 
+void VymModel::addFloatImage (const QImage &img) // FIXME-0 needed? never called...
 {
+    /*
     BranchItem *selbi=getSelectedBranch();
     if (selbi)
     {
@@ -3960,6 +3964,7 @@ void VymModel::addFloatImage (const QImage &img)
 	saveState (ii,"remove ()", selbi,QString("paste(%1)").arg(curStep),"Pasting dropped image");
 	reposition();
     }
+    */
 }
 
 
