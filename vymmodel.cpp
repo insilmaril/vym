@@ -831,15 +831,19 @@ File::ErrorCode VymModel::save (const SaveMode &savemode)
 
 void VymModel::loadImage (BranchItem *dst,const QString &fn)
 {
-    if (!dst) dst=getSelectedBranch();
+    if (!dst) dst = getSelectedBranch();
     if (dst)
     {
-        QString filter=QString (tr("Images") + " (*.png *.bmp *.xbm *.jpg *.png *.xpm *.gif *.pnm *.svg);;"+tr("All","Filedialog") +" (*.*)");
+        QString filter = QString (
+                tr("Images") + 
+                " (*.png *.bmp *.xbm *.jpg *.png *.xpm *.gif *.pnm *.svg);;" + 
+                tr("All", "Filedialog") +
+                " (*.*)");
         QStringList fns;
         if (fn.isEmpty() )
-            fns=QFileDialog::getOpenFileNames(
+            fns = QFileDialog::getOpenFileNames(
                         NULL,
-                        vymName+" - " + tr("Load image"),
+                        vymName + " - " + tr("Load image"),
                         lastImageDir.path(),
                         filter);
         else
@@ -849,10 +853,10 @@ void VymModel::loadImage (BranchItem *dst,const QString &fn)
         {
             lastImageDir.setPath(fns.first().left(fns.first().lastIndexOf ("/")) );
             QString s;
-            for (int j=0; j<fns.count(); j++)
+            for (int j = 0; j < fns.count(); j++)
             {
-                s=fns.at(j);
-                ImageItem *ii=createImage(dst);
+                s = fns.at(j);
+                ImageItem *ii = createImage(dst);
                 if (ii && ii->load (s) )
                 {
                     saveState(
@@ -863,7 +867,7 @@ void VymModel::loadImage (BranchItem *dst,const QString &fn)
                                 QString("Add image %1 to %2").arg(s).arg(getObjectName(dst))
                                 );
                     // Find nice position
-                    FloatImageObj *fio=(FloatImageObj*)(ii->getMO() );
+                    FloatImageObj *fio = (FloatImageObj*)(ii->getMO() );
                     if (fio)
                         fio->move2RelPos (0,0);
 
@@ -875,7 +879,7 @@ void VymModel::loadImage (BranchItem *dst,const QString &fn)
                     reposition();
                 } else
                     // FIXME-4 loadFIO error handling
-                    qWarning ()<<"Failed to load "+s;
+                    qWarning () << "vymmodel: Failed to load " + s;
             }
 
         }
@@ -2879,15 +2883,15 @@ ImageItem* VymModel::createImage(BranchItem *dst)
         QList<QVariant> cData;
         cData << tr("Image","Default name for new image") << "undef";
 
-        ImageItem *newii=new ImageItem(cData) ;
+        ImageItem *newii = new ImageItem(cData) ;
         //newii->setHeading (QApplication::translate("Heading of new image in map", "new image"));
 
         emit (layoutAboutToBeChanged() );
 
-        parix=index(dst);
+        parix = index(dst);
         if (!parix.isValid()) qDebug() << "VM::createII invalid index\n";
-        n=dst->getRowNumAppend(newii);
-        beginInsertRows (parix,n,n);
+        n = dst->getRowNumAppend(newii);
+        beginInsertRows (parix, n, n);
         dst->appendChild (newii);
         endInsertRows ();
 
@@ -2896,7 +2900,7 @@ ImageItem* VymModel::createImage(BranchItem *dst)
         // save scroll state. If scrolled, automatically select
         // new branch in order to tmp unscroll parent...
         newii->createMapObj();
-        latestAddedItem=newii;
+        latestAddedItem = newii;
         reposition();
         return newii;
     }
