@@ -186,18 +186,18 @@ function macro_shift_f8()
     statusMessage("Background black");
 }
 
-// Macro Shift + F9: Toggle frame
+// Macro Shift + F9: Toggle frame to include children
 function macro_shift_f9()
-{
-	map = vym.currentMap();
-    toggle_frame( map );
-}
-
-// Macro Shift + F10: Toggle frame to include children
-function macro_shift_f10()
 {   
 	map = vym.currentMap();
     map.toggleFrameIncludeChildren();
+}
+
+
+// Macro Shift + F10: 
+function macro_shift_f10()
+{
+	map = vym.currentMap();
 }
 
 // Macro Shift + F11: Replace "@..." by mutt aliases
