@@ -14,7 +14,7 @@ bool isImage (const QString &fname);
 class ImageItem: public MapItem
 {
 public:
-    enum ImageType {Undefined,Pixmap,SVG};
+    enum ImageType {Undefined, Pixmap, SVG};
 
 public:
     ImageItem();
@@ -49,9 +49,7 @@ public:
     virtual QString getOriginalFilename();
     virtual bool save (const QString &fn, const QString &format);
     virtual QString saveToDir(const QString &,const QString&);
-
 };
-
 
 #endif
 

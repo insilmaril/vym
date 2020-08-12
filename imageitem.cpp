@@ -34,13 +34,13 @@ ImageItem::~ImageItem()
 void ImageItem::init()
 {
     setType (Image);
-    imageType=Undefined;
-    hideLinkUnselected=true;
-    originalFilename="no original name available";
-    zValue=dZ_FLOATIMG;
-    scaleX=1;
-    scaleY=1;
-    posMode=Relative;
+    imageType = Undefined;
+    hideLinkUnselected = true;
+    originalFilename = "no original name available";
+    zValue = dZ_FLOATIMG;
+    scaleX = 1;
+    scaleY = 1;
+    posMode = Relative;
 }
 
 void ImageItem::clear()
@@ -54,7 +54,7 @@ ImageItem::ImageType ImageItem::getImageType()
 
 void ImageItem::load(const QImage &img)
 {
-    originalImage=img;
+    originalImage = img;
     if (mo) ((FloatImageObj*)mo)->load (originalImage);
 }
 
@@ -73,8 +73,8 @@ bool ImageItem::load(const QString &fname)
 
 FloatImageObj* ImageItem::createMapObj()
 {
-    FloatImageObj *fio=new FloatImageObj ( ((MapItem*)parentItem)->getMO(),this);
-    mo=fio;
+    FloatImageObj *fio = new FloatImageObj ( ((MapItem*)parentItem)->getMO(),this);
+    mo = fio;
     if (((BranchItem*)parentItem)->isScrolled() || !((MapItem*)parentItem)->getMO()->isVisibleObj() )
 	    fio->setVisibility (false);
     initLMO();	// set rel/abs position in mapitem
@@ -86,10 +86,10 @@ FloatImageObj* ImageItem::createMapObj()
 
 void ImageItem::setScale (qreal sx, qreal sy)
 {
-    scaleX=sx;
-    scaleY=sy;
-    int w=originalImage.width()*scaleX;
-    int h=originalImage.height()*scaleY;
+    scaleX = sx;
+    scaleY = sy;
+    int w = originalImage.width()*scaleX;
+    int h = originalImage.height()*scaleY;
     if (mo) ((FloatImageObj*)mo)->load (originalImage.scaled (w,h));
 }
 
@@ -105,17 +105,17 @@ qreal ImageItem::getScaleY ()
 
 void ImageItem::setZValue(int z)
 {
-    zValue=z;
+    zValue = z;
     if (mo) ((FloatImageObj*)mo)->setZValue(z);
 }
 
 void ImageItem::setOriginalFilename(const QString & fn)
 {
-    originalFilename=fn;
+    originalFilename = fn;
 
     // Set short name. Search from behind:
-    int i=originalFilename.lastIndexOf("/");
-    if (i>=0) originalFilename=originalFilename.remove (0,i+1);
+    int i = originalFilename.lastIndexOf("/");
+    if (i >= 0) originalFilename=originalFilename.remove (0, i + 1);
     setHeadingPlainText (originalFilename);
 }
 
@@ -126,7 +126,7 @@ QString ImageItem::getOriginalFilename()
 
 bool ImageItem::save(const QString &fn, const QString &format)
 {
-    return originalImage.save (fn,qPrintable (format)); 
+    return originalImage.save (fn, qPrintable (format)); 
 }
 
 QString ImageItem::saveToDir (const QString &tmpdir,const QString &prefix) 
@@ -134,32 +134,32 @@ QString ImageItem::saveToDir (const QString &tmpdir,const QString &prefix)
     if (hidden) return "";
 
     // Save uuid 
-    QString idAttr=attribut("uuid",uuid.toString());
+    QString idAttr = attribut("uuid", uuid.toString());
 
-    QString zAttr=attribut ("zValue",QString().setNum(zValue));
+    QString zAttr = attribut ("zValue", QString().setNum(zValue));
     QString url;
 
-    ulong n=reinterpret_cast <ulong> (this);
+    ulong n = reinterpret_cast <ulong> (this);
 
-    url="images/"+prefix+"image-" + QString().number(n,10) + ".png" ;
+    url = "images/" + prefix + "image-" + QString().number(n,10) + ".png" ;
 
     // And really save the image
-    originalImage.save (tmpdir +"/"+ url, "PNG");
+    originalImage.save (tmpdir + "/" + url, "PNG");
  
-    QString nameAttr=attribut ("originalName",originalFilename);
+    QString nameAttr = attribut ("originalName",originalFilename);
 
-    QString scaleAttr=
-	attribut ("scaleX",QString().setNum(scaleX))+
+    QString scaleAttr =
+	attribut ("scaleX",QString().setNum(scaleX)) +
 	attribut ("scaleY",QString().setNum(scaleY));
 
     return singleElement ("floatimage",  
 	getMapAttr() 
-	+getGeneralAttr()
-	+zAttr  
-	+attribut ("href",QString ("file:")+url)
-	+nameAttr
-	+scaleAttr
-        +idAttr
+	+ getGeneralAttr()
+	+ zAttr  
+	+ attribut ("href", QString ("file:") + url)
+	+ nameAttr
+	+ scaleAttr
+        + idAttr
     );	
 }
 
