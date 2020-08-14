@@ -15,9 +15,6 @@ bool isImage (const QString &fname);
 class ImageItem: public MapItem
 {
 public:
-    enum ImageType {Undefined, Pixmap, SVG};
-
-public:
     ImageItem();
     ImageItem(const QList<QVariant> &data, TreeItem *parent = 0);
 
@@ -26,11 +23,10 @@ public:
 protected:  
     void init();
     void clear();
-    ImageType imageType;
+    ImageObj::ImageType imageType;
 public:	
-    virtual ImageType getImageType();
+    virtual ImageObj::ImageType getImageType();
 
-//    virtual void load (const QImage &img);
     virtual bool load (const QString &fname);
     virtual FloatImageObj* createMapObj();	    //! Create classic object in GraphicsView
 protected:  

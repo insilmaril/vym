@@ -866,10 +866,19 @@ void VymModel::loadImage (BranchItem *dst,const QString &fn)
                                 QString ("loadImage (\"%1\")").arg(s ),
                                 QString("Add image %1 to %2").arg(s).arg(getObjectName(dst))
                                 );
-                    // Find nice position
+                    // Find nice position for new image, take childPos  
                     FloatImageObj *fio = (FloatImageObj*)(ii->getMO() );
                     if (fio)
-                        fio->move2RelPos (0,0);
+                    {
+                        LinkableMapObj *parLMO = dst->getLMO();
+
+                        if (parLMO)
+                        {
+                            fio->move (parLMO->getChildRefPos() );
+                            fio->setRelPos();
+
+                        }
+                    }
 
                     // On default include image // FIXME-4 check, if we change default settings...
                     select(dst);
@@ -3948,23 +3957,6 @@ void VymModel::clearFlags()
         emitDataChanged(selbi);
         setChanged();
     }
-}
-
-void VymModel::addFloatImage (const QImage &img) // FIXME-0 needed? never called...
-{
-    /*
-    BranchItem *selbi=getSelectedBranch();
-    if (selbi)
-    {
-	ImageItem *ii=createImage (selbi);
-	ii->load(img);
-	ii->setOriginalFilename("No original filename (image added by dropevent)"); 
-	QString s=getSelectString(selbi);
-	saveState (PartOfMap, s, "nop ()", s, "copy ()","Copy dropped image to clipboard",ii  );
-	saveState (ii,"remove ()", selbi,QString("paste(%1)").arg(curStep),"Pasting dropped image");
-	reposition();
-    }
-    */
 }
 
 

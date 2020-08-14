@@ -17,7 +17,7 @@ public:
     virtual void setZValue (const int&);
     virtual int z();
 
-    virtual void load (const QImage &);
+    virtual void load (const QImage *);
     virtual void setParObj (QGraphicsItem*);
     virtual void setVisibility(bool);	    // set vis. for w
     virtual void moveCenter (double x,double y);
@@ -29,7 +29,7 @@ public:
     virtual void calcBBoxSizeWithChildren();	// calc size of  BBox including children recursivly
 
 protected:
-    ImageObj *icon;
+    ImageObj *imageObj;
 };
 
 #endif

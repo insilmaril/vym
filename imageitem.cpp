@@ -16,7 +16,7 @@ bool isImage (const QString &fname)
 
 ImageItem::ImageItem()
 {
-    //qDebug()<<"Constr ImageItem";
+    qDebug()<<"Constr ImageItem";
     init();
 }
 
@@ -37,7 +37,7 @@ void ImageItem::init()
 {
     setType (Image);
     hideLinkUnselected = true;
-    imageType = Undefined;
+    imageType = ImageObj::Undefined;
     originalSvg   = NULL;
     originalImage = NULL;
     originalFilename = "no original name available";
@@ -53,27 +53,23 @@ void ImageItem::clear()
     // not used here currently
 }
 
-ImageItem::ImageType ImageItem::getImageType()
+ImageObj::ImageType ImageItem::getImageType()
 {
     return imageType;
 }
 
-/*
-void ImageItem::load(const QImage &img)  // FIXME-0 used?
-{
-    originalImage = img;
-    if (mo) ((FloatImageObj*)mo)->load (originalImage);
-}
-*/
-
 bool ImageItem::load(const QString &fname) // FIXME-1 what if there is already an image with different type loaded?
 {
+    FloatImageObj *fio = (FloatImageObj*)mo;
+
     if (fname.toLower().endsWith(".svg"))
     {   
         // Load svg
-        originalSvg = new (QGraphicsSvgItem);
+        originalSvg = new (QGraphicsSvgItem);   // FIXME-0 maybe only load svg data into ImageObj?
         
         //FIXME-0 cont here...
+        
+        // set ImageType
 
     } else
     {   
@@ -81,13 +77,19 @@ bool ImageItem::load(const QString &fname) // FIXME-1 what if there is already a
         originalImage = new (QImage);
 
         bool ok = originalImage->load (fname);   
-        if (mo && ok)
+        if (fio && ok)
         {
             setOriginalFilename (fname);
             setHeadingPlainText (originalFilename);
-// FIXME-0 not implemented            ((FloatImageObj*)mo)->loadImage (originalImage);
-        }	else
+            fio->load (originalImage);
+
+            imageType = ImageObj::Pixmap;
+        } else
+        {
             qWarning() << "ImageItem::load failed for " << fname;
+            delete originalImage;
+            originalImage = NULL;
+        }
         return ok;	
     }
 }
@@ -111,7 +113,8 @@ void ImageItem::setScale (qreal sx, qreal sy)   // FIXME-0 adapt to svg
     scaleY = sy;
     int w = originalImage->width()*scaleX;
     int h = originalImage->height()*scaleY;
-    if (mo) ((FloatImageObj*)mo)->load (originalImage->scaled (w,h));
+    QImage img = originalImage->scaled (w,h);
+    if (mo) ((FloatImageObj*)mo)->load (&img);
 }
 
 qreal ImageItem::getScaleX ()

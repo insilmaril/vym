@@ -513,7 +513,6 @@ public:
 
     void toggleFlag (const QString &name, bool useGroups = true);
     void clearFlags();
-    void addFloatImage(const QImage &img);
 
     void colorBranch(QColor);
     void colorSubtree(QColor,BranchItem *bi=NULL);

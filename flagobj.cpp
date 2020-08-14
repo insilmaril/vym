@@ -20,11 +20,12 @@ FlagObj::~FlagObj()
 
 void FlagObj::init ()
 {
-    name="undefined";
+    name = "undefined";
 
-    icon=new ImageObj (parentItem());
+    // FIXME-0 org:   icon = new ImageObj (parentItem());
+    icon = new ImageObj (parentItem() );
     icon->setPos (absPos.x(), absPos.y() );
-    avis=true;
+    avis = true;
 }
 
 void FlagObj::copy (FlagObj* other)
@@ -79,7 +80,7 @@ void FlagObj::load (const QPixmap &pm)
 
 void FlagObj::setName(const QString &n)
 {
-    name=n;
+    name = n;
 }
 
 const QString FlagObj::getName()
@@ -110,7 +111,7 @@ bool FlagObj::isAlwaysVisible()
 void FlagObj::saveToDir (const QString &tmpdir, const QString &prefix)
 {
     QString fn=tmpdir + prefix + name + ".png";
-    icon->save (fn,"PNG");
+    icon->save (fn, "PNG");
 }
 
 void FlagObj::positionBBox()
@@ -126,7 +127,7 @@ void FlagObj::calcBBoxSize()
 	    icon->boundingRect().width(), 
 	    icon->boundingRect().height() ) );
     else
-	bbox.setSize (QSizeF(0,0));
-    clickPoly= QPolygonF (bbox); 
+	bbox.setSize (QSizeF(0, 0));
+    clickPoly = QPolygonF (bbox); 
 }
 
