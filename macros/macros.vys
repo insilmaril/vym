@@ -57,9 +57,11 @@ function macro_f7()
     map.colorSubtree ("#0000ff");
 }
 
-// Macro F8: 
+// Macro F8: color subtree black
 function macro_f8()
 {
+    map = vym.currentMap();
+    map.colorSubtree ("#000000");
 }
 
 // Macro F9: Set task to sleep until 15:00
