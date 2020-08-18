@@ -35,7 +35,6 @@ private:
     uint branchID;
     uint modelID;
     QString url;
-    QString ticketID;
     QString ticketScript;
     QStringList result;
     VymProcess *p;

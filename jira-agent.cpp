@@ -13,6 +13,8 @@ extern bool debug;
 
 JiraAgent::JiraAgent (BranchItem *bi,const QString &u)
 {
+    //qDebug()<<"Constr. JiraAgent for "<<branchID;
+
     p = NULL;
     killTimer = NULL;
 
@@ -26,7 +28,8 @@ JiraAgent::JiraAgent (BranchItem *bi,const QString &u)
     VymModel *model = bi->getModel();
     modelID = model->getModelID();
 
-    //qDebug()<<"Constr. JiraAgent for "<<branchID;
+    QString ticketID;
+
 
     url = u;
 
@@ -74,7 +77,7 @@ JiraAgent::JiraAgent (BranchItem *bi,const QString &u)
     connect (p, SIGNAL (finished(int, QProcess::ExitStatus) ), 
 	this, SLOT (processFinished(int, QProcess::ExitStatus) ));
 
-    qDebug() << "JA:  " << ticketScript << "  args: " << args;
+    if (debug) qDebug() << "JiraAgent:  " << ticketScript << "  args: " << args;
 
     p->start (ticketScript, args);
     if (!p->waitForStarted())
@@ -145,7 +148,7 @@ void JiraAgent::processJiraData()
 	    ticket_prio.clear();
 	    ticket_status.clear();
 
-	    QStringList tickets; 
+	    QStringList ticketIDs; 
 	    foreach (QString line,result)
 	    {
 		if (debug) qDebug() << "JiraAgent::processJiraData  line=" << line;
@@ -153,12 +156,11 @@ void JiraAgent::processJiraData()
 		{
 		    if (re.cap(2) == "short_desc") 
 		    {
-			tickets.append(re.cap(1));
+			ticketIDs.append(re.cap(1));
 			ticket_desc[re.cap(1)] = re.cap(3).replace("\\\"","\"");
 		    }	
                     else if (re.cap(2) == "type") 
 		    {
-			tickets.append(re.cap(1));
 			ticket_type[re.cap(1)] = re.cap(3).replace("\\\"","\"");
 		    }	
 		    else if (re.cap(2) == "priority") 
@@ -203,13 +205,13 @@ void JiraAgent::processJiraData()
 	    else if (missionType == SingleTicket)
 	    {
 		// Only single ticket changed
-		QString b = tickets.first();
-		setModelJiraData (model, missionBI, b);
+		QString t = ticketIDs.first();
+		setModelJiraData (model, missionBI, t);
 	    } else
 	    {
 		// Process results of query
 		BranchItem *newbi;
-		foreach (QString b,tickets)
+		foreach (QString b,ticketIDs)
 		{
 		    //qDeticket ()<<" -> "<<b<<" "<<ticket_desc[b];
 		    newbi = model->addNewBranch(missionBI);    
@@ -226,11 +228,11 @@ void JiraAgent::processJiraData()
 	qWarning () << "JiraAgent: Couldn't find model #" << modelID;
 }
 
-void JiraAgent::setModelJiraData (VymModel *model, BranchItem *bi, const QString &bugID)
+void JiraAgent::setModelJiraData (VymModel *model, BranchItem *bi, const QString &ticketID)
 {
     if (debug)
     {
-        qDebug() << "JiraAgent::setModelJiraData for " << bugID;
+        qDebug() << "JiraAgent::setModelJiraData for ticketID: " << ticketID;
     }
 
     QStringList solvedStates;

@@ -27,7 +27,8 @@ OptionParser.new do |opts|
   end
 end.parse!
 
-ARGV.each do |id| 
+ARGV.each do |arg| 
+  id = arg.sub(/(\w)\s(\d)/, "\\1-\\2")
 
   # This should be removed. Used to switch between various Jira systems 
   if id.downcase.include?("prosolution") || id.downcase.include?("aracr")
@@ -42,6 +43,7 @@ ARGV.each do |id|
     puts "Debug: Site = #{jira_options[:site]}"
   end
 
+  
   client = JIRA::Client.new(jira_options)
   
   # Query ticket and display info
