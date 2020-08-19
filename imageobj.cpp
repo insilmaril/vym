@@ -130,12 +130,12 @@ void ImageObj::paint (QPainter *painter, const QStyleOptionGraphicsItem
 
 void ImageObj::save(const QString &fn, const char *format)
 {
-    qDebug() << "IO::save " << fn;
+    qDebug() << "IO::save " << imageType << fn;
     switch (imageType)
     {
         case ImageObj::SVG:
             if (svgItem)
-                qDebug() << "II::save svg"; // FIXME-0 not implemented FIXME-0 and not called
+                qDebug() << "II::save svg - not implemented"; // FIXME-0 not implemented FIXME-0 and not called
             break;
         case ImageObj::Pixmap:
             qDebug() << "II::save image";

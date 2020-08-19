@@ -119,12 +119,15 @@ FloatImageObj* ImageItem::createMapObj()
     return fio;
 }
 
-void ImageItem::setScale (qreal sx, qreal sy)   // FIXME-0 adapt to svg
+void ImageItem::setScale (qreal sx, qreal sy)   // FIXME-0 adapt to svg 
 {
+    // FIXME-0 rework ImageItem and ImageObj, so that image data is stored in ImageObj 
+    // and when QImage is scaled, a copy of the original one is kept for saving
+    // to avoid data loss
     scaleX = sx;
     scaleY = sy;
-    int w = originalImage->width()*scaleX;
-    int h = originalImage->height()*scaleY;
+    int w = originalImage->width()  * scaleX;
+    int h = originalImage->height() * scaleY;
     QImage img = originalImage->scaled (w,h);
     if (mo) ((FloatImageObj*)mo)->load (&img);
 }
@@ -160,8 +163,9 @@ QString ImageItem::getOriginalFilename()
     return originalFilename;
 }
 
-bool ImageItem::save(const QString &fn, const QString &format)  
+bool ImageItem::saveImage(const QString &fn, const QString &format)  
 {
+    // This is used when exporting maps or saving selection
     return originalImage->save (fn, qPrintable (format));
 }
 
@@ -175,20 +179,22 @@ QString ImageItem::saveToDir (const QString &tmpdir,const QString &prefix)
     QString zAttr = attribut ("zValue", QString().setNum(zValue));
     QString url;
 
+    // Create unique string for filename based on memory address
     ulong n = reinterpret_cast <ulong> (this);
 
-    url = "images/" + prefix + "image-" + QString().number(n,10) + ".png" ;
+    url = "images/" + prefix + "image-" + QString().number(n, 10) + ".png" ;
 
     // And really save the image
     switch (imageType)
     {
         case ImageObj::SVG:
-            if (originalSvg)
-                qDebug() << "II::saveToDir   svg not implemented yet"; // FIXME-0
+            qDebug() << "II::saveToDir svg not implemented yet"; // FIXME-0
+            //if (originalSvg)
                 //originalSvg->save (tmpdir + "/" + url, "PNG");
             break;
         case ImageObj::Pixmap:
-            if (originalImage)
+            qDebug() << "II::saveToDir pm   orgImg = " << originalImage; // FIXME-0 testing
+            if (originalImage)  // FIXME-0  data should be in ImageObj, not QPixmap
                 originalImage->save (tmpdir + "/" + url, "PNG");
             break;
         default:

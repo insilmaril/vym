@@ -45,7 +45,7 @@ public:
     virtual void setZValue(int z);
     virtual void setOriginalFilename(const QString &);
     virtual QString getOriginalFilename();
-    virtual bool save (const QString &fn, const QString &format);
+    virtual bool saveImage (const QString &fn, const QString &format);
     virtual QString saveToDir(const QString &,const QString&);
 };
 

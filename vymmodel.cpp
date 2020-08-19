@@ -942,7 +942,7 @@ void VymModel::saveImage (ImageItem *ii, QString format, QString fn)
             if (format.isEmpty() ) format=imageIO.guessType(fn);
             if (format.isEmpty())
                 QMessageBox::critical (0,tr("Critical Error"),tr("Unsupported format in %1").arg(fn));
-            else if (!ii->save (fn, format) )
+            else if (!ii->saveImage (fn, format) )
                 QMessageBox::critical (0,tr("Critical Error"),tr("Couldn't save %1").arg(fn));
         }
     }

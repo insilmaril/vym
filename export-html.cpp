@@ -123,7 +123,7 @@ QString ExportHTML::getBranchText(BranchItem *current)
             {
                 image = current->getImageNum(i);
                 imagePath =  "image-" + image->getUuid().toString() + ".png";
-                image->save( dirPath + "/" + imagePath, "PNG");
+                image->saveImage( dirPath + "/" + imagePath, "PNG");
                 s += "</br><img src=\"" + imagePath;
                 s += "\" alt=\"" + QObject::tr("Image: %1","Alt tag in HTML export").arg(image->getOriginalFilename());
                 s += "\"></br>";
