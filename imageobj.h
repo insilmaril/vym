@@ -21,6 +21,9 @@ public:
     ImageObj( QGraphicsItem*);
     ~ImageObj();
     void copy (ImageObj*);
+    void setPos(const QPointF &pos);
+    void setPos(const qreal &x, const qreal &y);
+    void setZValue(qreal z);
     void setVisibility(bool);
     virtual QRectF boundingRect() const;
     virtual void paint(QPainter*, const QStyleOptionGraphicsItem*, QWidget*);
@@ -28,10 +31,10 @@ public:
     bool load (const QString &);
     bool load (const QPixmap &);
 
-private:
+protected:
      ImageObj::ImageType imageType;
 
-     QGraphicsSvgItem svgItem;
+     QGraphicsSvgItem *svgItem;
      QGraphicsPixmapItem pixmapItem;
 };
 #endif

@@ -24,7 +24,7 @@ void FlagObj::init ()
 
     // FIXME-0 org:   icon = new ImageObj (parentItem());
     icon = new ImageObj (parentItem() );
-    icon->setPos (absPos.x(), absPos.y() );
+    icon->setPos (QPointF(absPos.x(), absPos.y()) );
     avis = true;
 }
 
@@ -41,7 +41,7 @@ void FlagObj::copy (FlagObj* other)
 void FlagObj::move(double x, double y)
 {
     MapObj::move(x,y);
-    icon->setPos(x,y);
+    icon->setPos(QPointF(x,y));
     positionBBox();
 }
 

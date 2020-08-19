@@ -65,22 +65,30 @@ bool ImageItem::load(const QString &fname) // FIXME-1 what if there is already a
     if (fname.toLower().endsWith(".svg"))
     {   
         // Load svg
-        originalSvg = new (QGraphicsSvgItem);   // FIXME-0 maybe only load svg data into ImageObj?
+        // originalSvg = new (QGraphicsSvgItem);   // FIXME-0 maybe only load svg data into ImageObj?
+        
         
         //FIXME-0 cont here...
-        
-        // set ImageType
+        fio->loadSvg(fname); // testing only
+
+        /*
+        if (fio->load(fname))
+        {
+            imageType = ImageObj::SVG;
+
+        } else
+            return false;
+        */
 
     } else
     {   
-        // Load pixmap
+        // Load pixmap  // FIXME-1 originalImage should be within ImageObj, not ImageItem
+        // FIXME-1 Check: Is pixmap loaded into II, IO or FIO by filenmae after all?
         originalImage = new (QImage);
 
         bool ok = originalImage->load (fname);   
         if (fio && ok)
         {
-            setOriginalFilename (fname);
-            setHeadingPlainText (originalFilename);
             fio->load (originalImage);
 
             imageType = ImageObj::Pixmap;
@@ -89,9 +97,13 @@ bool ImageItem::load(const QString &fname) // FIXME-1 what if there is already a
             qWarning() << "ImageItem::load failed for " << fname;
             delete originalImage;
             originalImage = NULL;
+            return false;
         }
-        return ok;	
     }
+    setOriginalFilename (fname);
+    setHeadingPlainText (originalFilename);
+
+    return true;	
 }
 
 FloatImageObj* ImageItem::createMapObj()
@@ -148,12 +160,12 @@ QString ImageItem::getOriginalFilename()
     return originalFilename;
 }
 
-bool ImageItem::save(const QString &fn, const QString &format)  // FIXME-0 adapt to svg
+bool ImageItem::save(const QString &fn, const QString &format)  
 {
-    return originalImage->save (fn, qPrintable (format)); 
+    return originalImage->save (fn, qPrintable (format));
 }
 
-QString ImageItem::saveToDir (const QString &tmpdir,const QString &prefix) // FIXME-0 adapt to svg
+QString ImageItem::saveToDir (const QString &tmpdir,const QString &prefix) 
 {
     if (hidden) return "";
 
@@ -168,7 +180,20 @@ QString ImageItem::saveToDir (const QString &tmpdir,const QString &prefix) // FI
     url = "images/" + prefix + "image-" + QString().number(n,10) + ".png" ;
 
     // And really save the image
-    originalImage->save (tmpdir + "/" + url, "PNG");
+    switch (imageType)
+    {
+        case ImageObj::SVG:
+            if (originalSvg)
+                qDebug() << "II::saveToDir   svg not implemented yet"; // FIXME-0
+                //originalSvg->save (tmpdir + "/" + url, "PNG");
+            break;
+        case ImageObj::Pixmap:
+            if (originalImage)
+                originalImage->save (tmpdir + "/" + url, "PNG");
+            break;
+        default:
+            break;
+    }
  
     QString nameAttr = attribut ("originalName",originalFilename);
 

@@ -18,6 +18,7 @@ public:
     virtual int z();
 
     virtual void load (const QImage *);
+    void loadSvg(const QString &fname);
     virtual void setParObj (QGraphicsItem*);
     virtual void setVisibility(bool);	    // set vis. for w
     virtual void moveCenter (double x,double y);

@@ -11,7 +11,6 @@ ImageObj::ImageObj( QGraphicsItem *parent) : QGraphicsItem (parent )
     // qDebug() << "Const ImageObj (scene)";
 
     //FIXME-0 setShapeMode (QGraphicsPixmapItem::BoundingRectShape);
-    setZValue(dZ_FLOATIMG);	
     hide();
 
     imageType = ImageObj::Undefined;
@@ -24,57 +23,144 @@ ImageObj::~ImageObj()
 
 void ImageObj::copy(ImageObj* other)
 {
-    qDebug() << "ImgObj::copy called...";    // FIXME-0 testing
     prepareGeometryChange();
-    setVisibility (other->isVisible() );
     // FIXME-0 setPixmap (other->QGraphicsPixmapItem::pixmap());	
+    qDebug() << "IO::copy    types: this = " << imageType  << "other = " << other->imageType;
+    switch (other->imageType)
+    {
+        case ImageObj::SVG:
+            qDebug() << "ImgObj::copy called svg...";    // FIXME-0 testing
+            svgItem = new QGraphicsSvgItem(other->svgItem);
+            svgItem->setZValue(other->zValue());	
+            break;
+        case ImageObj::Pixmap:
+            qDebug() << "ImgObj::copy called pm...";    // FIXME-0 testing
+            pixmapItem.setPixmap (other->pixmapItem.pixmap());
+            pixmapItem.setParentItem (other->parentItem());
+            pixmapItem.setZValue(dZ_FLOATIMG);	
+            pixmapItem.setZValue(other->zValue());	
+            break;
+        default: 
+            qDebug() << "ImgObj::copy other->imageType undefined";    // FIXME-0 testing
+            break;
+    }
     setPos (other->pos());
+    setVisibility (other->isVisible() );
 }
 
-void ImageObj::setVisibility (bool v)   // FIXME-0 add pixmap, svg
-{
-    if (v)
-        show();
-    else
-        hide();
-}
-
-QRectF ImageObj::boundingRect() const // FIXME-0 add svg
+void ImageObj::setPos(const QPointF &pos)
 {
     switch (imageType)
     {
+        case ImageObj::SVG:
+            svgItem->setPos(pos);
+            break;
+        case ImageObj::Pixmap:
+            pixmapItem.setPos(pos);
+            break;
+        default: 
+            break;
+    }
+}
+
+void ImageObj::setPos(const qreal &x, const qreal &y)
+{
+    setPos (QPointF (x, y));
+}
+
+void ImageObj::setZValue (qreal z)
+{
+    switch (imageType)
+    {
+        case ImageObj::SVG:
+            svgItem->setZValue(z);
+            break;
+        case ImageObj::Pixmap:
+            pixmapItem.setZValue(z);
+            break;
+        default: 
+            break;
+    }
+}
+    
+
+void ImageObj::setVisibility (bool v)   // FIXME-0 add pixmap, svg
+{
+    switch (imageType)
+    {
+        case ImageObj::SVG:
+            v ? svgItem->show() : svgItem->hide();
+            break;
+        case ImageObj::Pixmap:
+            v ? pixmapItem.show() : pixmapItem.hide();
+            break;
+        default: 
+            break;
+    }
+}
+
+QRectF ImageObj::boundingRect() const 
+{
+    switch (imageType)
+    {
+        case ImageObj::SVG:
+            return svgItem->boundingRect();
         case ImageObj::Pixmap:
             return pixmapItem.boundingRect();
-        break;
         default: 
-        break;
+            break;
     }
 }
 
 void ImageObj::paint (QPainter *painter, const QStyleOptionGraphicsItem
-*sogi, QWidget *widget)  
+*sogi, QWidget *widget)     // FIXME-4 not used?!
 {
     switch (imageType)
     {
+        case ImageObj::SVG:
+            svgItem->paint(painter, sogi, widget);
+            break;
         case ImageObj::Pixmap:
             pixmapItem.paint(painter, sogi, widget);
-        break;
+            break;
         default: 
-        break;
+            break;
     }
 }
 
 void ImageObj::save(const QString &fn, const char *format)
 {
-    //FIXME-0 pixmapItem().save (fn,format,100);
+    qDebug() << "IO::save " << fn;
+    switch (imageType)
+    {
+        case ImageObj::SVG:
+            if (svgItem)
+                qDebug() << "II::save svg"; // FIXME-0 not implemented FIXME-0 and not called
+            break;
+        case ImageObj::Pixmap:
+            qDebug() << "II::save image";
+            pixmapItem.pixmap().save (fn, format, 100);
+            break;
+        default:
+            break;
+    }
 }
 
 bool ImageObj::load (const QString &fn) // FIXME-0 allow also svg
 {
-    // FIXME-0  add svg
-
-    if (true)
+    if (fn.toLower().endsWith(".svg"))
     {
+        qDebug() << "ImageObj::load svg " << fn;
+
+        svgItem = new QGraphicsSvgItem(fn);
+        imageType = ImageObj::SVG;
+        scene()->addItem (svgItem);
+
+        return true;
+    } else
+    {
+        qDebug() << "ImageObj::load pixmap" << fn;
+
         QPixmap pm;
         if (pm.load (fn))
         {
@@ -92,11 +178,13 @@ bool ImageObj::load (const QString &fn) // FIXME-0 allow also svg
 
 bool ImageObj::load (const QPixmap &pm)
 {
+    qDebug() << "IO::load pm";
     prepareGeometryChange();
 
     imageType = ImageObj::Pixmap;
     
     pixmapItem.setPixmap(pm);
+    pixmapItem.setParentItem(parentItem() );
     return true;
 }
 

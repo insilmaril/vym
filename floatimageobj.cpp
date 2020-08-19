@@ -61,16 +61,27 @@ void FloatImageObj::load (const QImage *image)
     positionBBox();
 }
 
+void FloatImageObj::loadSvg (const QString &fname) // FIXME-0 testing, add filename or svg as parameter
+{
+    imageObj->load(fname);
+    bbox.setSize ( QSizeF(
+        imageObj->boundingRect().width(), 
+        imageObj->boundingRect().height()));
+
+    clickPoly = bbox;
+    positionBBox();
+}
+
 void FloatImageObj::setParObj (QGraphicsItem *p)
 {
     setParentItem (p);
     imageObj->setParentItem (p);
     parObj = (LinkableMapObj*)p;
 /*
-    qDebug()<<"FIO::setParentItem";
-    qDebug()<<"  this="<<this;
-    qDebug()<<"  imageObj="<<imageObj;
 */
+    qDebug()<<"FIO::setParentItem";
+    qDebug()<<"     this = "<<this;
+    qDebug()<<"  imageObj=" << imageObj;
 }
 
 void FloatImageObj::setVisibility(bool v)
