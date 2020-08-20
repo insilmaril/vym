@@ -58,7 +58,7 @@ void Flag::copy (Flag* other)
 }
 
 
-void Flag::load (const QString &fn)
+void Flag::load (const QString &fn) // FIXME-0   svg??
 {
     if (!pixmap.load(fn))
 	qDebug() << "Flag::load (" << fn << ") failed.";

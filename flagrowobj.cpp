@@ -26,14 +26,6 @@ FlagRowObj::~FlagRowObj()
 	delete (flagobjs.takeFirst() );
 }
 
-void FlagRowObj::copy (FlagRowObj* other)
-{
-    MapObj::copy(other);
-    flagobjs.clear();
-    for (int i = 0; i < flagobjs.size(); ++i)
-	addFlag (flagobjs.at(i));
-}
-
 void FlagRowObj::move(double x, double y)
 {
     MapObj::move(x,y);
@@ -52,6 +44,7 @@ void FlagRowObj::moveBy(double x, double y)
 
 void FlagRowObj::setZValue (double z)
 {
+    QGraphicsItem::setZValue(z);
     for (int i = 0; i < flagobjs.size(); ++i)
 	flagobjs.at(i)->setZValue (z);
 }
@@ -61,17 +54,6 @@ void FlagRowObj::setVisibility (bool v)
     MapObj::setVisibility(v);
     for (int i = 0; i < flagobjs.size(); ++i)
 	flagobjs.at(i)->setVisibility (v);
-}
-
-FlagObj* FlagRowObj::addFlag (FlagObj *fo)
-{
-    FlagObj *newfo = new FlagObj (parentItem() );
-    newfo->copy (fo);	// create a deep copy of fo
-    newfo->move (absPos.x() + bbox.width(), absPos.y() );
-    flagobjs.append(newfo);
-    calcBBoxSize();
-    positionBBox();
-    return newfo;
 }
 
 void FlagRowObj::updateActiveFlagObjs (const QList <QUuid> activeFlagUids, FlagRow *masterRowMain,  FlagRow *masterRowOptional )
@@ -161,12 +143,15 @@ void FlagRowObj::activateFlag (Flag *flag)
 {
     if (flag) 
     {
-	FlagObj *fo = addFlag (new FlagObj (this));
+	FlagObj *fo = new FlagObj (this);
 	fo->load (flag->getPixmap() );  // FIXME-0  svg???
 	fo->setName (flag->getName() );
         fo->setUuid (flag->getUuid() );
-
-	calcBBoxSize();
+        fo->setZValue(QGraphicsItem::zValue());
+        fo->move (absPos.x() + bbox.width(), absPos.y() );
+        flagobjs.append(fo);
+        calcBBoxSize();
+        positionBBox();
     }
 }
 

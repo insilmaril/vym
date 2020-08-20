@@ -7,13 +7,13 @@
 /////////////////////////////////////////////////////////////////
 FlagObj::FlagObj(QGraphicsItem *parent):MapObj(parent) 
 {
-//  qDebug() << "Const FlagObj  this="<<this<<"  scene="<<s;
+    //qDebug() << "Const FlagObj  this=" << this;
     init ();
 }
 
 FlagObj::~FlagObj()
 {
-//   qDebug() << "Destr FlagObj  this="<<this <<"  " <<name;
+    //qDebug() << "Destr FlagObj  this=" << this << "  " << name;
     if (icon) delete (icon);
 }
 

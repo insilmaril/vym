@@ -29,8 +29,10 @@ ImageObj::~ImageObj()
             if (svgItem) delete (svgItem);
             break;
         case ImageObj::Pixmap:
+            if (pixmapItem) delete (pixmapItem);
             break;
         case ImageObj::ModifiedPixmap:  
+            if (pixmapItem) delete (pixmapItem);
             if (originalPixmap) delete (originalPixmap);
             break;
         default: 
@@ -196,12 +198,10 @@ void ImageObj::paint (QPainter *painter, const QStyleOptionGraphicsItem
     }
 }
 
-bool ImageObj::load (const QString &fn) // FIXME-0 allow also svg
+bool ImageObj::load (const QString &fn) 
 {
     if (fn.toLower().endsWith(".svg"))
     {
-        qDebug() << "ImageObj::load svg " << fn;
-
         svgItem = new QGraphicsSvgItem(fn);
         imageType = ImageObj::SVG;
         scene()->addItem (svgItem);
@@ -209,8 +209,6 @@ bool ImageObj::load (const QString &fn) // FIXME-0 allow also svg
         return true;
     } else
     {
-        qDebug() << "ImageObj::load pixmap" << fn;
-
         QPixmap pm;
         if (pm.load (fn))
         {
@@ -231,7 +229,6 @@ bool ImageObj::load (const QString &fn) // FIXME-0 allow also svg
 
 bool ImageObj::load (const QPixmap &pm)
 {
-    qDebug() << "IO::load pm";
     prepareGeometryChange();
 
     imageType = ImageObj::Pixmap;

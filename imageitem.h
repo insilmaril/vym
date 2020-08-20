@@ -23,10 +23,7 @@ public:
 protected:  
     void init();
     void clear();
-    ImageObj::ImageType imageType;                  // FIXME-1 still required here?
 public:	
-    virtual ImageObj::ImageType getImageType();     // FIXME-1 still required here?
-
     virtual bool load (const QString &fname);
     virtual FloatImageObj* createMapObj();	    //! Create classic object in GraphicsView
 protected:  

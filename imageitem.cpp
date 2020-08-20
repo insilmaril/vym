@@ -35,7 +35,6 @@ void ImageItem::init()
 {
     setType (Image);
     hideLinkUnselected = true;
-    imageType = ImageObj::Undefined;
     originalFilename = "no original name available";
     zValue = dZ_FLOATIMG;
     posMode = Relative;
@@ -47,56 +46,11 @@ void ImageItem::clear()
     // not used here currently
 }
 
-ImageObj::ImageType ImageItem::getImageType()
-{
-    return imageType;
-}
-
 bool ImageItem::load(const QString &fname) // FIXME-1 what if there is already an image with different type loaded?
 {
     FloatImageObj *fio = (FloatImageObj*)mo;
     if (!fio->load(fname) ) return false;
 
-    /*
-    if (fname.toLower().endsWith(".svg"))
-    {   
-        // Load svg
-        // originalSvg = new (QGraphicsSvgItem);   // FIXME-0 maybe only load svg data into ImageObj?
-        
-        
-        //FIXME-0 cont here...
-        fio->loadSvg(fname); // testing only
-
-        *
-        if (fio->load(fname))
-        {
-            imageType = ImageObj::SVG;
-
-        } else
-            return false;
-        *
-
-    } else
-    {   
-        // Load pixmap  // FIXME-1 originalImage should be within ImageObj, not ImageItem
-        // FIXME-1 Check: Is pixmap loaded into II, IO or FIO by filenmae after all?
-        originalImage = new (QImage);
-
-        bool ok = originalImage->load (fname);   
-        if (fio && ok)
-        {
-            fio->load (originalImage);
-
-            imageType = ImageObj::Pixmap;
-        } else
-        {
-            qWarning() << "ImageItem::load failed for " << fname;
-            delete originalImage;
-            originalImage = NULL;
-            return false;
-        }
-    }
-    */
     setOriginalFilename (fname);
     setHeadingPlainText (originalFilename);
 

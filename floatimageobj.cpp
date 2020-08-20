@@ -135,7 +135,6 @@ void FloatImageObj::move (QPointF p)
 void FloatImageObj::positionBBox()
 {
     clickPoly = QPolygonF(bbox);
-    // FIXME-1   still needed?    setZValue (dZ_FLOATIMG);
 }
 
 void FloatImageObj::calcBBoxSize()
