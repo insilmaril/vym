@@ -237,7 +237,7 @@ QString FlagRow::saveDef()
     return s;
 }
 
-bool FlagRow::saveDataToDir (const QString &tmpdir, const QString &prefix)
+bool FlagRow::saveDataToDir (const QString &tmpdir, const QString &prefix)  // FIXME-1 only save flags, if used or default map
 {
     bool r = true;
     

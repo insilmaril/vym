@@ -136,7 +136,7 @@ public slots:
     void setFramePadding( int padding);
     void setFramePenColor( const QString &color);
     void setFrameType( const QString &type);
-    void setScale( qreal x, qreal y );
+    void setScaleFactor( qreal f);
     void setSelectionColor( const QString &color);
     void setTaskPriorityDelta( const int &n);
     bool setTaskSleep( const QString &s);

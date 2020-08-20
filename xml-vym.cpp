@@ -761,21 +761,28 @@ bool parseVYMHandler::readImageAttr (const QXmlAttributes& a)
         }           
     }        
     
-    // Scale image        
-    x=y=1;
+    // Scale image 
+    // scaleX and scaleY are no longer used since 2.7.509 and replaced by scaleFactor
+    x = y = 1;
     if (!a.value( "scaleX").isEmpty() ) 
     {
-        x=a.value("scaleX").toFloat (&okx);
+        x = a.value("scaleX").toFloat (&okx);
         if (!okx ) return false;  
     }        
     
     if (!a.value( "scaleY").isEmpty() ) 
     {
-        y=a.value("scaleY").toFloat (&oky);
+        x = a.value("scaleY").toFloat (&oky);
         if (!oky ) return false;  
     }        
-    if (x!=1 || y!=1)
-        lastImage->setScale (x,y);
+
+    if (!a.value( "scaleFactor").isEmpty() ) 
+    {
+        x = a.value("scaleFactor").toFloat (&okx);
+        if (!okx ) return false;  
+    }        
+
+    if (x != 1 ) lastImage->setScaleFactor (x);
     
     if (!readOOAttr(a)) return false;
 

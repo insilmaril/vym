@@ -16,7 +16,7 @@
 class ImageObj: public QGraphicsItem
 {
 public:
-    enum ImageType {Undefined, Pixmap, SVG};
+    enum ImageType {Undefined, Pixmap, ModifiedPixmap, SVG};
 
     ImageObj( QGraphicsItem*);
     ~ImageObj();
@@ -25,16 +25,21 @@ public:
     void setPos(const qreal &x, const qreal &y);
     void setZValue(qreal z);
     void setVisibility(bool);
+    void setScaleFactor( qreal f);
+    qreal getScaleFactor();
     virtual QRectF boundingRect() const;
     virtual void paint(QPainter*, const QStyleOptionGraphicsItem*, QWidget*);
-    void save (const QString &, const char *);
     bool load (const QString &);
     bool load (const QPixmap &);
+    bool save (const QString &);
 
 protected:
      ImageObj::ImageType imageType;
 
-     QGraphicsSvgItem *svgItem;
-     QGraphicsPixmapItem pixmapItem;
+     QGraphicsSvgItem *svgItem;          
+     QGraphicsPixmapItem *pixmapItem;   
+     QPixmap *originalPixmap;   
+
+     qreal scaleFactor;
 };
 #endif

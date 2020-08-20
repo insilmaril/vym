@@ -28,8 +28,6 @@ ImageItem::ImageItem (const QList<QVariant> &data, TreeItem *parent):MapItem (da
 ImageItem::~ImageItem()
 {
     //qDebug()<<"Destr ImageItem";
-    if (originalSvg) delete originalSvg;
-    if (originalImage) delete originalImage;
     if (mo) delete mo;
 }
 
@@ -38,12 +36,8 @@ void ImageItem::init()
     setType (Image);
     hideLinkUnselected = true;
     imageType = ImageObj::Undefined;
-    originalSvg   = NULL;
-    originalImage = NULL;
     originalFilename = "no original name available";
     zValue = dZ_FLOATIMG;
-    scaleX = 1;
-    scaleY = 1;
     posMode = Relative;
 }
 
@@ -61,7 +55,9 @@ ImageObj::ImageType ImageItem::getImageType()
 bool ImageItem::load(const QString &fname) // FIXME-1 what if there is already an image with different type loaded?
 {
     FloatImageObj *fio = (FloatImageObj*)mo;
+    if (!fio->load(fname) ) return false;
 
+    /*
     if (fname.toLower().endsWith(".svg"))
     {   
         // Load svg
@@ -71,14 +67,14 @@ bool ImageItem::load(const QString &fname) // FIXME-1 what if there is already a
         //FIXME-0 cont here...
         fio->loadSvg(fname); // testing only
 
-        /*
+        *
         if (fio->load(fname))
         {
             imageType = ImageObj::SVG;
 
         } else
             return false;
-        */
+        *
 
     } else
     {   
@@ -100,6 +96,7 @@ bool ImageItem::load(const QString &fname) // FIXME-1 what if there is already a
             return false;
         }
     }
+    */
     setOriginalFilename (fname);
     setHeadingPlainText (originalFilename);
 
@@ -119,27 +116,14 @@ FloatImageObj* ImageItem::createMapObj()
     return fio;
 }
 
-void ImageItem::setScale (qreal sx, qreal sy)   // FIXME-0 adapt to svg 
+void ImageItem::setScaleFactor (qreal f)
 {
-    // FIXME-0 rework ImageItem and ImageObj, so that image data is stored in ImageObj 
-    // and when QImage is scaled, a copy of the original one is kept for saving
-    // to avoid data loss
-    scaleX = sx;
-    scaleY = sy;
-    int w = originalImage->width()  * scaleX;
-    int h = originalImage->height() * scaleY;
-    QImage img = originalImage->scaled (w,h);
-    if (mo) ((FloatImageObj*)mo)->load (&img);
+    if (mo) ((FloatImageObj*)mo)->setScaleFactor(f);
 }
 
-qreal ImageItem::getScaleX ()
+qreal ImageItem::getScaleFactor ()
 {
-    return scaleX;
-}
-
-qreal ImageItem::getScaleY ()
-{
-    return scaleY;
+    if (mo) return ((FloatImageObj*)mo)->getScaleFactor();
 }
 
 void ImageItem::setZValue(int z)
@@ -166,7 +150,8 @@ QString ImageItem::getOriginalFilename()
 bool ImageItem::saveImage(const QString &fn, const QString &format)  
 {
     // This is used when exporting maps or saving selection
-    return originalImage->save (fn, qPrintable (format));
+    FloatImageObj *fio = (FloatImageObj*)mo;
+    return fio->save (fn);  // FIXME-0 what about format?
 }
 
 QString ImageItem::saveToDir (const QString &tmpdir,const QString &prefix) 
@@ -185,27 +170,13 @@ QString ImageItem::saveToDir (const QString &tmpdir,const QString &prefix)
     url = "images/" + prefix + "image-" + QString().number(n, 10) + ".png" ;
 
     // And really save the image
-    switch (imageType)
-    {
-        case ImageObj::SVG:
-            qDebug() << "II::saveToDir svg not implemented yet"; // FIXME-0
-            //if (originalSvg)
-                //originalSvg->save (tmpdir + "/" + url, "PNG");
-            break;
-        case ImageObj::Pixmap:
-            qDebug() << "II::saveToDir pm   orgImg = " << originalImage; // FIXME-0 testing
-            if (originalImage)  // FIXME-0  data should be in ImageObj, not QPixmap
-                originalImage->save (tmpdir + "/" + url, "PNG");
-            break;
-        default:
-            break;
-    }
- 
+    FloatImageObj *fio = (FloatImageObj*)mo;
+    fio->save (tmpdir + "/" + url);
+
     QString nameAttr = attribut ("originalName",originalFilename);
 
     QString scaleAttr =
-	attribut ("scaleX",QString().setNum(scaleX)) +
-	attribut ("scaleY",QString().setNum(scaleY));
+	attribut ("scaleFactor", QString().setNum(fio->getScaleFactor()));
 
     return singleElement ("floatimage",  
 	getMapAttr() 

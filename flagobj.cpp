@@ -110,8 +110,8 @@ bool FlagObj::isAlwaysVisible()
 
 void FlagObj::saveToDir (const QString &tmpdir, const QString &prefix)
 {
-    QString fn=tmpdir + prefix + name + ".png";
-    icon->save (fn, "PNG");
+    QString fn=tmpdir + prefix + name;
+    icon->save (fn);
 }
 
 void FlagObj::positionBBox()

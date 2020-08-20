@@ -23,25 +23,19 @@ public:
 protected:  
     void init();
     void clear();
-    ImageObj::ImageType imageType;
+    ImageObj::ImageType imageType;                  // FIXME-1 still required here?
 public:	
-    virtual ImageObj::ImageType getImageType();
+    virtual ImageObj::ImageType getImageType();     // FIXME-1 still required here?
 
     virtual bool load (const QString &fname);
     virtual FloatImageObj* createMapObj();	    //! Create classic object in GraphicsView
 protected:  
-    qreal scaleX;
-    qreal scaleY;
-    QImage *originalImage;
-    QGraphicsSvgItem *originalSvg;
     QString originalFilename;
     int zValue;
 
 public:	
-    virtual qreal getScaleX();
-    virtual qreal getScaleY();
-    virtual void setScale (qreal,qreal);
-
+    void setScaleFactor(qreal);
+    qreal getScaleFactor();
     virtual void setZValue(int z);
     virtual void setOriginalFilename(const QString &);
     virtual QString getOriginalFilename();

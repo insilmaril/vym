@@ -17,10 +17,13 @@ public:
     virtual void setZValue (const int&);
     virtual int z();
 
-    virtual void load (const QImage *);
-    void loadSvg(const QString &fname);
-    virtual void setParObj (QGraphicsItem*);
-    virtual void setVisibility(bool);	    // set vis. for w
+    bool load (const QImage *);
+    bool load(const QString &fname);
+    bool save(const QString &fname);
+    void setParObj (QGraphicsItem*);
+    void setVisibility(bool);	    // set vis. for w
+    void setScaleFactor( qreal f);
+    qreal getScaleFactor();
     virtual void moveCenter (double x,double y);
     virtual void move (double x,double y);
     virtual void move (QPointF);

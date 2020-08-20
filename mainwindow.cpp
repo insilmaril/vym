@@ -857,9 +857,8 @@ void Main::setupAPI()
     c->addPar (Command::String,false,"Note of branch");
     modelCommands.append(c);
 
-    c = new Command ("setScale", Command::Image); 
-    c->addPar (Command::Double,false,"Scale image x");
-    c->addPar (Command::Double,false,"Scale image y");
+    c = new Command ("setScaleFactor", Command::Image); 
+    c->addPar (Command::Double, false, "Scale image by factor f");
     modelCommands.append(c);
 
     c = new Command ("setSelectionColor", Command::Any); 

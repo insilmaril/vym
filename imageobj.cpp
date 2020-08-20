@@ -14,11 +14,29 @@ ImageObj::ImageObj( QGraphicsItem *parent) : QGraphicsItem (parent )
     hide();
 
     imageType = ImageObj::Undefined;
+    svgItem        = NULL;
+    pixmapItem     = NULL;
+    originalPixmap = NULL;
+    scaleFactor    = 1;
 }
 
 ImageObj::~ImageObj()
 {
- //  qDebug() << "Destr ImageObj";
+    //qDebug() << "Destr ImageObj  imageType = " << imageType ;
+    switch (imageType)
+    {
+        case ImageObj::SVG:
+            if (svgItem) delete (svgItem);
+            break;
+        case ImageObj::Pixmap:
+            break;
+        case ImageObj::ModifiedPixmap:  
+            if (originalPixmap) delete (originalPixmap);
+            break;
+        default: 
+            qDebug() << "ImgObj::copy other->imageType undefined";    
+            break;
+    }
 }
 
 void ImageObj::copy(ImageObj* other)
@@ -29,23 +47,27 @@ void ImageObj::copy(ImageObj* other)
     switch (other->imageType)
     {
         case ImageObj::SVG:
-            qDebug() << "ImgObj::copy called svg...";    // FIXME-0 testing
+            qDebug() << "ImgObj::copy called svg...";    // FIXME-1 check
             svgItem = new QGraphicsSvgItem(other->svgItem);
-            svgItem->setZValue(other->zValue());	
             break;
         case ImageObj::Pixmap:
-            qDebug() << "ImgObj::copy called pm...";    // FIXME-0 testing
-            pixmapItem.setPixmap (other->pixmapItem.pixmap());
-            pixmapItem.setParentItem (other->parentItem());
-            pixmapItem.setZValue(dZ_FLOATIMG);	
-            pixmapItem.setZValue(other->zValue());	
+            qDebug() << "ImgObj::copy called pm...";    // FIXME-1 check
+            pixmapItem->setPixmap (other->pixmapItem->pixmap());
+            pixmapItem->setParentItem (other->parentItem());
+            break;
+        case ImageObj::ModifiedPixmap:
+            qDebug() << "ImgObj::copy called mpm...";    // FIXME-0 implement copy
+            pixmapItem->setPixmap (other->pixmapItem->pixmap());
+            pixmapItem->setParentItem (other->parentItem());
             break;
         default: 
-            qDebug() << "ImgObj::copy other->imageType undefined";    // FIXME-0 testing
+            qWarning() << "ImgObj::copy other->imageType undefined";   
+            return;
             break;
     }
     setPos (other->pos());
     setVisibility (other->isVisible() );
+    setZValue(other->zValue());	
 }
 
 void ImageObj::setPos(const QPointF &pos)
@@ -56,7 +78,10 @@ void ImageObj::setPos(const QPointF &pos)
             svgItem->setPos(pos);
             break;
         case ImageObj::Pixmap:
-            pixmapItem.setPos(pos);
+            pixmapItem->setPos(pos);
+            break;
+        case ImageObj::ModifiedPixmap:
+            pixmapItem->setPos(pos);
             break;
         default: 
             break;
@@ -76,7 +101,8 @@ void ImageObj::setZValue (qreal z)
             svgItem->setZValue(z);
             break;
         case ImageObj::Pixmap:
-            pixmapItem.setZValue(z);
+        case ImageObj::ModifiedPixmap:
+            pixmapItem->setZValue(z);
             break;
         default: 
             break;
@@ -92,11 +118,50 @@ void ImageObj::setVisibility (bool v)   // FIXME-0 add pixmap, svg
             v ? svgItem->show() : svgItem->hide();
             break;
         case ImageObj::Pixmap:
-            v ? pixmapItem.show() : pixmapItem.hide();
+        case ImageObj::ModifiedPixmap:
+            v ? pixmapItem->show() : pixmapItem->hide();
             break;
         default: 
             break;
     }
+}
+
+void  ImageObj::setScaleFactor(qreal f) 
+{
+    scaleFactor = f;
+    switch (imageType)
+    {
+        case ImageObj::SVG:// FIXME-0 not implemented
+            break;
+        case ImageObj::Pixmap: 
+            if (f != 1 )
+            {
+                // create ModifiedPixmap
+                originalPixmap = new QPixmap (pixmapItem->pixmap());
+                imageType = ModifiedPixmap;
+
+                setScaleFactor (f);
+            }
+            break;
+        case ImageObj::ModifiedPixmap:  
+            if (!originalPixmap)
+            {
+                qWarning() << "ImageObj::setScaleFactor   no originalPixmap!";
+                return;
+            }
+            pixmapItem->setPixmap(
+                    originalPixmap->scaled( 
+                        originalPixmap->width() * f, 
+                        originalPixmap->height() * f));
+            break;
+        default: 
+            break;
+    }
+}
+
+qreal  ImageObj::getScaleFactor()
+{
+    return scaleFactor;
 }
 
 QRectF ImageObj::boundingRect() const 
@@ -106,7 +171,9 @@ QRectF ImageObj::boundingRect() const
         case ImageObj::SVG:
             return svgItem->boundingRect();
         case ImageObj::Pixmap:
-            return pixmapItem.boundingRect();
+            return pixmapItem->boundingRect();
+        case ImageObj::ModifiedPixmap:
+            return pixmapItem->boundingRect();
         default: 
             break;
     }
@@ -115,33 +182,16 @@ QRectF ImageObj::boundingRect() const
 void ImageObj::paint (QPainter *painter, const QStyleOptionGraphicsItem
 *sogi, QWidget *widget)     // FIXME-4 not used?!
 {
+    qDebug() << "IO::paint";
     switch (imageType)
     {
         case ImageObj::SVG:
             svgItem->paint(painter, sogi, widget);
             break;
         case ImageObj::Pixmap:
-            pixmapItem.paint(painter, sogi, widget);
+            pixmapItem->paint(painter, sogi, widget);
             break;
         default: 
-            break;
-    }
-}
-
-void ImageObj::save(const QString &fn, const char *format)
-{
-    qDebug() << "IO::save " << imageType << fn;
-    switch (imageType)
-    {
-        case ImageObj::SVG:
-            if (svgItem)
-                qDebug() << "II::save svg - not implemented"; // FIXME-0 not implemented FIXME-0 and not called
-            break;
-        case ImageObj::Pixmap:
-            qDebug() << "II::save image";
-            pixmapItem.pixmap().save (fn, format, 100);
-            break;
-        default:
             break;
     }
 }
@@ -165,7 +215,10 @@ bool ImageObj::load (const QString &fn) // FIXME-0 allow also svg
         if (pm.load (fn))
         {
             prepareGeometryChange();
-            pixmapItem.setPixmap (pm);
+
+            pixmapItem = new QGraphicsPixmapItem (this);    // FIXME-1 existing pmi? 
+            pixmapItem->setPixmap (pm);
+            pixmapItem->setParentItem(parentItem() );
 
             imageType = ImageObj::Pixmap;
 
@@ -183,8 +236,31 @@ bool ImageObj::load (const QPixmap &pm)
 
     imageType = ImageObj::Pixmap;
     
-    pixmapItem.setPixmap(pm);
-    pixmapItem.setParentItem(parentItem() );
+    pixmapItem = new QGraphicsPixmapItem (this);    // FIXME-1 existing pmi? 
+    pixmapItem->setPixmap(pm);
+    pixmapItem->setParentItem(parentItem() );
     return true;
+}
+
+bool ImageObj::save(const QString &fn)  // FIXME-0 evtl. add ".png" to name
+{
+    switch (imageType)
+    {
+        case ImageObj::SVG:
+            if (svgItem)
+                qDebug() << "II::save svg - not implemented"; // FIXME-0 not implemented 
+            return false;
+            break;
+        case ImageObj::Pixmap:
+            qDebug() << "II::save pixmap";
+            return pixmapItem->pixmap().save (fn, "PNG", 100);
+            break;
+        case ImageObj::ModifiedPixmap:
+            qDebug() << "II::save modified pixmap";
+            return originalPixmap->save (fn, "PNG", 100);
+            break;
+        default:
+            break;
+    }
 }
 

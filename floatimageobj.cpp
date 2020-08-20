@@ -48,9 +48,9 @@ int FloatImageObj::z ()
     return qRound (imageObj->zValue());
 }
 
-void FloatImageObj::load (const QImage *image)
+bool FloatImageObj::load (const QImage *image)
 {
-    imageObj->load(QPixmap::fromImage(*image));
+    if (!imageObj->load(QPixmap::fromImage(*image)) ) return false;
 
     if (!imageObj->parentItem() ) imageObj->setParentItem(this);  // Add to scene initially
     bbox.setSize ( QSizeF(
@@ -61,15 +61,22 @@ void FloatImageObj::load (const QImage *image)
     positionBBox();
 }
 
-void FloatImageObj::loadSvg (const QString &fname) // FIXME-0 testing, add filename or svg as parameter
+bool FloatImageObj::load (const QString &fname) // FIXME-0 testing, add filename or svg as parameter
 {
-    imageObj->load(fname);
+    if (!imageObj->load(fname) ) return false;
+
     bbox.setSize ( QSizeF(
         imageObj->boundingRect().width(), 
         imageObj->boundingRect().height()));
 
     clickPoly = bbox;
     positionBBox();
+    return true;
+}
+
+bool FloatImageObj::save (const QString &fname) 
+{
+    return imageObj->save(fname); 
 }
 
 void FloatImageObj::setParObj (QGraphicsItem *p)
@@ -78,10 +85,10 @@ void FloatImageObj::setParObj (QGraphicsItem *p)
     imageObj->setParentItem (p);
     parObj = (LinkableMapObj*)p;
 /*
-*/
     qDebug()<<"FIO::setParentItem";
     qDebug()<<"     this = "<<this;
     qDebug()<<"  imageObj=" << imageObj;
+*/
 }
 
 void FloatImageObj::setVisibility(bool v)
@@ -91,6 +98,20 @@ void FloatImageObj::setVisibility(bool v)
 	imageObj->setVisibility(true);
     else
 	imageObj->setVisibility(false);
+}
+
+void  FloatImageObj::setScaleFactor(qreal f) 
+{
+    imageObj->setScaleFactor(f);
+    bbox.setSize ( QSizeF(
+        imageObj->boundingRect().width(), 
+        imageObj->boundingRect().height()));
+    positionBBox();
+}
+
+qreal  FloatImageObj::getScaleFactor()
+{
+    return imageObj->getScaleFactor();
 }
 
 void FloatImageObj::moveCenter (double x, double y)
@@ -113,8 +134,8 @@ void FloatImageObj::move (QPointF p)
 
 void FloatImageObj::positionBBox()
 {
-    clickPoly=QPolygonF(bbox);
-    setZValue (dZ_FLOATIMG);
+    clickPoly = QPolygonF(bbox);
+    // FIXME-1   still needed?    setZValue (dZ_FLOATIMG);
 }
 
 void FloatImageObj::calcBBoxSize()

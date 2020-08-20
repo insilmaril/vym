@@ -938,9 +938,9 @@ void VymModelWrapper::setFrameType( const QString &type)
     model->setFrameType( type );
 }
 
-void VymModelWrapper::setScale( qreal x, qreal y)
+void VymModelWrapper::setScaleFactor( qreal f)
 {
-    model->setScale( x, y);
+    model->setScaleFactor(f);
 }
 
 void VymModelWrapper::setSelectionColor( const QString &color)

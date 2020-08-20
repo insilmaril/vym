@@ -492,7 +492,7 @@ public:
     bool unscrollBranch(BranchItem *);
     void toggleScroll();
     void unscrollChildren();
-    void setScale (qreal,qreal);
+    void setScaleFactor (qreal);
     void growSelectionSize();
     void shrinkSelectionSize();
     void resetSelectionSize();

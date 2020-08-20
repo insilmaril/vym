@@ -3774,19 +3774,18 @@ void VymModel::unscrollChildren()
     }	
 }
 
-void VymModel::setScale(qreal xn, qreal yn) 
+void VymModel::setScaleFactor(qreal f) 
 {
-    ImageItem *selii=getSelectedImage();
+    ImageItem *selii = getSelectedImage();
     if (selii)
     {
-	qreal sx=selii->getScaleX();
-	qreal sy=selii->getScaleY();
-	selii->setScale (xn,yn);
+	qreal f_old = selii->getScaleFactor();
+	selii->setScaleFactor (f);
 	saveState ( 
 	    selii,
-	    QString ("setScale(%1,%2)").arg(sx).arg(sy),
+	    QString ("setScaleFactor(%1)").arg(f_old),
 	    selii,
-	    QString ("setScale(%1,%2)").arg(xn).arg(yn),
+	    QString ("setScaleFactor(%1)").arg(f),
 	    QString ("Scale %1").arg(getObjectName(selii))
 	);  
 	reposition();
@@ -3798,29 +3797,27 @@ void VymModel::growSelectionSize()  //FIXME-3 Also for heading in BranchItem?
     ImageItem *selii=getSelectedImage();
     if (selii)
     {
-	qreal f=0.05;
-	qreal sx=selii->getScaleX();
-	qreal sy=selii->getScaleY();
-	setScale (sx+f,sy+f);
+	qreal f = 0.05;
+	qreal sx = selii->getScaleFactor();
+	setScaleFactor (sx + f);
     }	
 }
 
 void VymModel::shrinkSelectionSize() 
 {
-    ImageItem *selii=getSelectedImage();
+    ImageItem *selii = getSelectedImage();
     if (selii)
     {
-	qreal f=0.05;
-	qreal sx=selii->getScaleX();
-	qreal sy=selii->getScaleY();
-	setScale (sx-f,sy-f);
+	qreal f = 0.05;
+	qreal sx = selii->getScaleFactor();
+	setScaleFactor (sx - f);
     }	
 }
 
 void VymModel::resetSelectionSize() 
 {
-    ImageItem *selii=getSelectedImage();
-    if (selii) setScale (1,1);
+    ImageItem *selii = getSelectedImage();
+    if (selii) setScaleFactor (1);
 }
 
 void VymModel::emitExpandAll()	
