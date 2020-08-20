@@ -140,8 +140,8 @@ public:
     BranchItem* getBranchAbove(BranchItem *bi);		//! get branch above bi (in TreeView) 
     BranchItem* getBranchDirectBelow(BranchItem *bi);	//! bet branch direct below bi (in TreeView)
     BranchItem* getBranchBelow(BranchItem *bi);		//! bet branch below bi (in TreeView)
-    BranchItem* getLeftBranch(BranchItem *bi);		//! bet branch left of bi (in TreeView)
-    BranchItem* getRightBranch(BranchItem *bi);		//! bet branch right of bi (in TreeView)
+    BranchItem* getLeftBranch(TreeItem *ti);		//! bet branch left of bi (in TreeView)
+    BranchItem* getRightBranch(TreeItem *ti);		//! bet branch right of bi (in TreeView)
 
 public slots:
     void cursorUp();

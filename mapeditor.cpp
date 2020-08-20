@@ -940,70 +940,80 @@ BranchItem* MapEditor::getBranchBelow (BranchItem *selbi)
     return NULL;
 }
 
-BranchItem* MapEditor::getLeftBranch (BranchItem *bi)  
+BranchItem* MapEditor::getLeftBranch (TreeItem *ti)  
 {
-    if (bi)
+    if (!ti) return NULL;
+
+    if (ti->isBranchLikeType() )
     {
-	if (bi->depth()==0)
+        BranchItem *bi = (BranchItem*) ti;
+	if (bi->depth() == 0)
 	{ 
 	    // Special case: use alternative selection index
-	    BranchItem *newbi=bi->getLastSelectedBranchAlt();  
+	    BranchItem *newbi = bi->getLastSelectedBranchAlt();  
 	    if (!newbi)
 	    {
 		BranchObj *bo;
 		// Try to find a mainbranch left of center
-		for (int i=0; i<bi->branchCount(); i++)
+		for (int i = 0; i < bi->branchCount(); i++)
 		{
-		    newbi=bi->getBranchNum(i);
-		    bo=newbi->getBranchObj();
-		    if (bo && bo->getOrientation()==LinkableMapObj::LeftOfCenter)
+		    newbi = bi->getBranchNum(i);
+		    bo = newbi->getBranchObj();
+		    if (bo && bo->getOrientation() == LinkableMapObj::LeftOfCenter)
 			break;
 		}
 	    }
 	    return newbi;
 	}
-	if (bi->getBranchObj()->getOrientation()==LinkableMapObj::RightOfCenter)    
+	if (bi->getBranchObj()->getOrientation() == LinkableMapObj::RightOfCenter)    
 	    // right of center
 	    return (BranchItem*)(bi->parent());
 	else
 	    // left of center
-	    if (bi->getType()== TreeItem::Branch )
+	    if (bi->getType() == TreeItem::Branch )
 		return bi->getLastSelectedBranch();
     }
-    return NULL;
+
+    if (ti->parent() && ti->parent()->isBranchLikeType() )
+        return (BranchItem*)(ti->parent());
 }
 
-BranchItem* MapEditor::getRightBranch(BranchItem *bi)
+BranchItem* MapEditor::getRightBranch(TreeItem *ti)
 {
-    if (bi)
+    if (!ti) return NULL;
+
+    if (ti->isBranchLikeType() )
     {
-	if (bi->depth()==0)
+        BranchItem *bi = (BranchItem*) ti;
+	if (bi->depth() == 0)
 	{
 	    // Special case: use alternative selection index
-	    BranchItem *newbi=bi->getLastSelectedBranch();  
+	    BranchItem *newbi = bi->getLastSelectedBranch();  
 	    if (!newbi)
 	    {
 		BranchObj *bo;
 		// Try to find a mainbranch right of center
-		for (int i=0; i<bi->branchCount(); i++)
+		for (int i = 0; i < bi->branchCount(); i++)
 		{
-		    newbi=bi->getBranchNum(i);
-		    bo=newbi->getBranchObj();
-		    if (bo && bo->getOrientation()==LinkableMapObj::RightOfCenter)
-                        qDebug()<<"BI found right: "<<newbi->getHeadingPlain();
+		    newbi = bi->getBranchNum(i);
+		    bo = newbi->getBranchObj();
+		    if (bo && bo->getOrientation() == LinkableMapObj::RightOfCenter)
+                        qDebug() << "BI found right: " << newbi->getHeadingPlain();
 		}
 	    }
 	    return newbi;
 	}
-	if (bi->getBranchObj()->getOrientation()==LinkableMapObj::LeftOfCenter)	
+	if (bi->getBranchObj()->getOrientation() == LinkableMapObj::LeftOfCenter)	
 	    // left of center
 	    return (BranchItem*)(bi->parent());
 	else
 	    // right of center
-	    if (bi->getType()== TreeItem::Branch )
+	    if (bi->getType() == TreeItem::Branch )
 		return (BranchItem*)bi->getLastSelectedBranch();
     }
-    return NULL;
+
+    if (ti->parent() && ti->parent()->isBranchLikeType() )
+        return (BranchItem*)(ti->parent());
 }
 
 
@@ -1027,14 +1037,28 @@ void MapEditor::cursorDown()
 
 void MapEditor::cursorLeft()
 {
-    BranchItem *bi=getLeftBranch (model->getSelectedBranch());
-    if (bi) model->select (bi);
+    TreeItem *ti = model->getSelectedItem();
+    BranchItem *bi = getLeftBranch (ti);
+    if (bi) 
+        model->select (bi);
+    else
+    {
+        ImageItem *ii = ti->getFirstImage();
+        if (ii) model->select(ii);
+    }
 }
 
 void MapEditor::cursorRight()	
 {
-    BranchItem *bi=getRightBranch (model->getSelectedBranch());
-    if (bi) model->select (bi);
+    TreeItem *ti = model->getSelectedItem();
+    BranchItem *bi = getRightBranch (ti);
+    if (bi) 
+        model->select (bi);
+    else
+    {
+        ImageItem *ii = ti->getFirstImage();
+        if (ii) model->select(ii);
+    }
 }
 
 void MapEditor::cursorFirst()	
