@@ -2894,6 +2894,28 @@ Do you want to reload that map with the new file?</source>
         <comment>Window caption</comment>
         <translation>Επεξεργαστής ιδιοτήτων</translation>
     </message>
+    <message>
+        <source>Task</source>
+        <translation type="unfinished">Εργασία</translation>
+    </message>
+    <message>
+        <source>Delta priority</source>
+        <extracomment>Manual delta added to priority of task in branch prop editor</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Created:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Modified:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 days ago</source>
+        <comment>task related times</comment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>DownloadAgent</name>
@@ -2940,6 +2962,65 @@ Do you want to reload that map with the new file?</source>
     <message>
         <source>Close</source>
         <translation>Κλείσιμο</translation>
+    </message>
+</context>
+<context>
+    <name>ExportConfluenceDialog</name>
+    <message>
+        <source>Export Confluence</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create new page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Update existing page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Options</source>
+        <translation type="unfinished">Επιλογές</translation>
+    </message>
+    <message>
+        <source>Image of map</source>
+        <translation type="unfinished">Εικόνα διαγράμματος</translation>
+    </message>
+    <message>
+        <source>Include images</source>
+        <translation type="unfinished">Συμπερίληψη εικόνων</translation>
+    </message>
+    <message>
+        <source>Table of contents</source>
+        <translation type="unfinished">Πίνακας περιεχομένων</translation>
+    </message>
+    <message>
+        <source>Task flags</source>
+        <translation type="unfinished">Σημαίες εργασιών</translation>
+    </message>
+    <message>
+        <source>General flags</source>
+        <translation type="unfinished">Γενικές σημαίες</translation>
+    </message>
+    <message>
+        <source>Number sections</source>
+        <translation type="unfinished">Τομείς αριθμών</translation>
+    </message>
+    <message>
+        <source>Colored headings in text</source>
+        <translation type="unfinished">Χρωματιστές κεφαλίδες στο κείμενο</translation>
+    </message>
+    <message>
+        <source>Save settings in map</source>
+        <translation type="unfinished">Αποθήκευση ρυθμίσεων διαγράμματος</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Άκυρο</translation>
+    </message>
+    <message>
+        <source>Export</source>
+        <translation type="unfinished">Εξαγωγή</translation>
     </message>
 </context>
 <context>
@@ -3078,6 +3159,10 @@ want to allow this in your system!</source>
         <source>Close</source>
         <translation>Κλείσιμο</translation>
     </message>
+    <message>
+        <source>File location:</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>FindWidget</name>
@@ -3092,7 +3177,12 @@ want to allow this in your system!</source>
     <message>
         <source>Heading Editor</source>
         <comment>Window caption</comment>
-        <translation>Επεξεργαστής κεφαλίδας</translation>
+        <translation type="vanished">Επεξεργαστής κεφαλίδας</translation>
+    </message>
+    <message>
+        <source>Note Editor</source>
+        <comment>Name of editor shown as window title</comment>
+        <translation type="unfinished">Επεξεργαστής σημειώσεων</translation>
     </message>
 </context>
 <context>
@@ -3119,7 +3209,7 @@ want to allow this in your system!</source>
     </message>
     <message>
         <source>Close</source>
-        <translation>Κλείσιμο</translation>
+        <translation type="vanished">Κλείσιμο</translation>
     </message>
     <message>
         <source>Action</source>
@@ -3185,15 +3275,15 @@ want to allow this in your system!</source>
     </message>
     <message>
         <source>Note Editor</source>
-        <translation>Επεξεργαστής σημειώσεων</translation>
+        <translation type="vanished">Επεξεργαστής σημειώσεων</translation>
     </message>
     <message>
         <source>Heading Editor</source>
-        <translation>Επεξεργαστής κεφαλίδας</translation>
+        <translation type="vanished">Επεξεργαστής κεφαλίδας</translation>
     </message>
     <message>
         <source>Script Editor</source>
-        <translation>Επεξεργαστής σεναρίων</translation>
+        <translation type="vanished">Επεξεργαστής σεναρίων</translation>
     </message>
     <message>
         <source>Search results list</source>
@@ -3293,7 +3383,7 @@ want to allow this in your system!</source>
     <message>
         <source>Import Dir%1</source>
         <comment>Import Filters</comment>
-        <translation>Εισαγωγή Dir%1</translation>
+        <translation type="vanished">Εισαγωγή Dir%1</translation>
     </message>
     <message>
         <source>(still experimental)</source>
@@ -3330,7 +3420,7 @@ want to allow this in your system!</source>
     </message>
     <message>
         <source>Spreadsheet</source>
-        <translation>Φύλλο δεδομένων</translation>
+        <translation type="vanished">Φύλλο δεδομένων</translation>
     </message>
     <message>
         <source>Properties</source>
@@ -3687,7 +3777,7 @@ want to allow this in your system!</source>
     <message>
         <source>Add   ...</source>
         <comment>Edit menu</comment>
-        <translation>Προσθήκη...</translation>
+        <translation type="vanished">Προσθήκη...</translation>
     </message>
     <message>
         <source>Property window</source>
@@ -4631,7 +4721,7 @@ exists already. Do you want to</source>
     <message>
         <source>Enter sleep time (number of days or date YYYY-MM-DD or DD.MM[.YYYY]</source>
         <comment>task sleep time dialog</comment>
-        <translation>Καταχωρίστε χρόνο ύπνου (αριθμό ημερών ή ημερομηνία YYYY-MM-DD ή DD.MM[.YYYY]</translation>
+        <translation type="vanished">Καταχωρίστε χρόνο ύπνου (αριθμό ημερών ή ημερομηνία YYYY-MM-DD ή DD.MM[.YYYY]</translation>
     </message>
     <message>
         <source>Couldn&apos;t set sleep time to %1.
@@ -4650,11 +4740,11 @@ exists already. Do you want to</source>
     </message>
     <message>
         <source>Set application to zip/unzip files</source>
-        <translation>Ορισμός εφαρμογής για συμπίεση/αποσυμπίεση αρχείων</translation>
+        <translation type="vanished">Ορισμός εφαρμογής για συμπίεση/αποσυμπίεση αρχείων</translation>
     </message>
     <message>
         <source>Directory with vym macros:</source>
-        <translation>Φάκελος με μακροεντολές VYM:</translation>
+        <translation type="vanished">Φάκελος με μακροεντολές VYM:</translation>
     </message>
     <message>
         <source>Number of undo/redo levels:</source>
@@ -4822,11 +4912,6 @@ because of existing lockfile:
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>tasks</source>
-        <comment>Info about map</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>slides</source>
         <comment>Info about map</comment>
         <translation type="unfinished"></translation>
@@ -4834,6 +4919,92 @@ because of existing lockfile:
     <message>
         <source>xLinks</source>
         <comment>Info about map</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Script output window</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Import Dir...</source>
+        <comment>Import Filters</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Confluence (HTML)...</source>
+        <comment>File export menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Text (Markdown)...</source>
+        <comment>File export menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>CSV...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Jira handling</source>
+        <comment>Shortcuts</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create URL to Jira</source>
+        <comment>Edit menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Get data from Jira for subtree</source>
+        <comment>Edit menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add image...</source>
+        <comment>Edit menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Goto linked map...</source>
+        <comment>Edit menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Toggle Presentation mode</source>
+        <comment>View action</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>(still experimental</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Script output window</source>
+        <comment>View action</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show keyboard macros</source>
+        <comment>Help action</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enter sleep time (number of days, hours with &apos;h&apos; or date YYYY-MM-DD or DD.MM[.YYYY]</source>
+        <comment>task sleep time dialog</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>tasks total</source>
+        <comment>Info about map</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>tasks in map</source>
+        <comment>Info about map</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Load vym script</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4860,7 +5031,12 @@ because of existing lockfile:
     <message>
         <source>Note Editor</source>
         <comment>Window caption</comment>
-        <translation>Επεξεργαστής σημειώσεων</translation>
+        <translation type="vanished">Επεξεργαστής σημειώσεων</translation>
+    </message>
+    <message>
+        <source>Note Editor</source>
+        <comment>Name of editor shown as window title</comment>
+        <translation type="unfinished">Επεξεργαστής σημειώσεων</translation>
     </message>
 </context>
 <context>
@@ -4919,12 +5095,12 @@ because of existing lockfile:
     <message>
         <source>Exporting the %1 bookmarks will overwrite
 your existing bookmarks file.</source>
-        <translation>Η εξαγωγή των σελιδοδεικτών %1 θα αντικαταστήσει
+        <translation type="vanished">Η εξαγωγή των σελιδοδεικτών %1 θα αντικαταστήσει
 το υπάρχον αρχείο με τους σελιδοδείκτες.</translation>
     </message>
     <message>
         <source>Warning: Overwriting %1 bookmarks</source>
-        <translation>Προειδοποίηση: θα γινει αντικατάσταση των σελιδοδεικτών %1</translation>
+        <translation type="vanished">Προειδοποίηση: θα γινει αντικατάσταση των σελιδοδεικτών %1</translation>
     </message>
     <message>
         <source>Warning</source>
@@ -4933,7 +5109,7 @@ your existing bookmarks file.</source>
     <message>
         <source>Couldn&apos;t find script %1
 to notifiy Browsers of changed bookmarks.</source>
-        <translation>Αδυναμία εύρεσης σεναρίου %1
+        <translation type="vanished">Αδυναμία εύρεσης σεναρίου %1
 για γνωστοποίηση των περιηγητών σχετικά με τις αλλαγές των σελιδοδεικτών.</translation>
     </message>
     <message>
@@ -5042,11 +5218,11 @@ Do you risk to overwrite its contents?</source>
     </message>
     <message>
         <source>Couldn&apos;t start tool to decompress data.</source>
-        <translation>Αδυναμία εκτέλεσης εφαρμογής για την αποσυμπίεση των δεδομένων.</translation>
+        <translation type="vanished">Αδυναμία εκτέλεσης εφαρμογής για την αποσυμπίεση των δεδομένων.</translation>
     </message>
     <message>
         <source>Couldn&apos;t start zip to compress data.</source>
-        <translation>Αδυναμία εκκίνησης εφαρμογής για τη συμπίεση των δεδομένων.</translation>
+        <translation type="vanished">Αδυναμία εκκίνησης εφαρμογής για τη συμπίεση των δεδομένων.</translation>
     </message>
     <message>
         <source>zip didn&apos;t exit normally</source>
@@ -5074,16 +5250,16 @@ Do you risk to overwrite its contents?</source>
     </message>
     <message>
         <source>Couldn&apos;t start unzip to decompress data.</source>
-        <translation>Αδυναμία εκκίνησης εφαρμογής για την αποσυμπίεση των δεδομένων.</translation>
+        <translation type="vanished">Αδυναμία εκκίνησης εφαρμογής για την αποσυμπίεση των δεδομένων.</translation>
     </message>
     <message>
         <source>unzip didn&apos;t exit normally</source>
-        <translation>Η εφαρμογή αποσυμπίεσης δεν έκλεισε κανονικά</translation>
+        <translation type="vanished">Η εφαρμογή αποσυμπίεσης δεν έκλεισε κανονικά</translation>
     </message>
     <message>
         <source>Couldn&apos;t find a macro at  %1.
 </source>
-        <translation>Αδυναμία εύρεσης μακροεντολης στο %1.</translation>
+        <translation type="vanished">Αδυναμία εύρεσης μακροεντολης στο %1.</translation>
     </message>
     <message>
         <source>Please use Settings-&gt;</source>
@@ -5096,17 +5272,17 @@ Do you risk to overwrite its contents?</source>
     <message>
         <source>Couldn&apos;t find tool to unzip data. Please download and install 7z and set path in Settings menu:
  </source>
-        <translation>Αδυναμία εύρεσης εφαρμογής για αποσυμπίεση δεδομένων. Παρακαλώ, κάντε λήψη και εγκαταστήστε την εφαρμογή 7z και ορίστε τη διαδρομή στο μενού των ρυθμίσεων:</translation>
+        <translation type="vanished">Αδυναμία εύρεσης εφαρμογής για αποσυμπίεση δεδομένων. Παρακαλώ, κάντε λήψη και εγκαταστήστε την εφαρμογή 7z και ορίστε τη διαδρομή στο μενού των ρυθμίσεων:</translation>
     </message>
     <message>
         <source>Couldn&apos;t open &quot;%1&quot;
 %2.</source>
-        <translation>Αδυναμία ανοίγματος &quot;%1&quot;
+        <translation type="vanished">Αδυναμία ανοίγματος &quot;%1&quot;
 %2.</translation>
     </message>
     <message>
         <source>Couldn&apos;t save &quot;%1&quot;</source>
-        <translation>Αδυναμία αποθήκευσης &quot;%1&quot;</translation>
+        <translation type="vanished">Αδυναμία αποθήκευσης &quot;%1&quot;</translation>
     </message>
     <message>
         <source>No Bugzilla client found.  For openSUSE you can install by (running as root):
@@ -5143,6 +5319,114 @@ and install the perl module for Bugzilla access using YaST</source>
         <source>%1 didn&apos;t exit normally</source>
         <translation>Η εφαρμογή %1 δεν έκλεισε κανονικα</translation>
     </message>
+    <message>
+        <source>Trying to read Confluence page...</source>
+        <comment>Confluence export</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Flag: %1</source>
+        <comment>Alt tag in HTML export</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Flag: url</source>
+        <comment>Alt tag in HTML export</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>External link: %1</source>
+        <comment>Alt tag in HTML export</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Image: %1</source>
+        <comment>Alt tag in HTML export</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Image of map: %1.vym</source>
+        <comment>Alt tag in HTML export</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export as Markdown</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Could not export as Markdown to %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t start tool to compress data!
+The map could not be saved, please check if backup file is available or export as XML file!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t start %1 tool to decompress data!
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t find macros at  %1.
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t find tool to unzip data. Please download and install 7z and set path in Settings menu:
+ </source>
+        <comment>zip tool missing on Win platform</comment>
+        <translation type="unfinished">Αδυναμία εύρεσης εφαρμογής για αποσυμπίεση δεδομένων. Παρακαλώ, κάντε λήψη και εγκαταστήστε την εφαρμογή 7z και ορίστε τη διαδρομή στο μενού των ρυθμίσεων:</translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t find tool to zip/unzip data. Please install on your platform and setpath in Settings menu:
+ </source>
+        <comment>zip tool missing on Linux/Mac platform</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Existing lockfiles have been ignored for the maps listed below. Please check, if the maps might be openend in another instance of vym.
+
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t open &quot;%1&quot;
+.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t read macros from &quot;%1&quot;
+.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t write macros to &quot;%1&quot;
+.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t read script from &quot;%1&quot;
+.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t write script to &quot;%1&quot;
+.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No Jira client found.  For openSUSE you install by (running as root):
+
+</source>
+        <comment>VymModel, how to install Bugzilla client module</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Warning: Couldn&apos;t find Jira client</source>
+        <comment>VymModel</comment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ScriptEditor</name>
@@ -5152,7 +5436,7 @@ and install the perl module for Bugzilla access using YaST</source>
     </message>
     <message>
         <source>Tab 1</source>
-        <translation>Καρτέλα 1</translation>
+        <translation type="vanished">Καρτέλα 1</translation>
     </message>
     <message>
         <source>Save to selected slide</source>
@@ -5164,11 +5448,11 @@ and install the perl module for Bugzilla access using YaST</source>
     </message>
     <message>
         <source>Tab 2</source>
-        <translation>Καρτέλα 2</translation>
+        <translation type="vanished">Καρτέλα 2</translation>
     </message>
     <message>
         <source>Current key:</source>
-        <translation>Τρέχον κλειδί:</translation>
+        <translation type="vanished">Τρέχον κλειδί:</translation>
     </message>
     <message>
         <source>Load</source>
@@ -5191,7 +5475,7 @@ and install the perl module for Bugzilla access using YaST</source>
     <message>
         <source>Save</source>
         <comment>ScriptEditor</comment>
-        <translation>Αποθήκευση</translation>
+        <translation type="vanished">Αποθήκευση</translation>
     </message>
     <message>
         <source>Warning</source>
@@ -5232,12 +5516,58 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <source>Error</source>
-        <translation>Σφάλμα</translation>
+        <translation type="vanished">Σφάλμα</translation>
     </message>
     <message>
         <source>Couldn&apos;t open %1.
 </source>
-        <translation>Αδυναμία ανοίγματος του %1.</translation>
+        <translation type="vanished">Αδυναμία ανοίγματος του %1.</translation>
+    </message>
+    <message>
+        <source>Slide tab</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Macro tab</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>filenameLabel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Reload</source>
+        <translation type="unfinished">Επαναφόρτωση</translation>
+    </message>
+    <message>
+        <source>File tab</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>scriptfileLabel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save as</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Script</source>
+        <comment>Mode in scriptEditor</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No script selected</source>
+        <comment>scriptname in scriptEditor</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Macros saved to %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Script saved to %1</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -5256,22 +5586,47 @@ Do you want to overwrite it?</source>
     <message>
         <source>Current map</source>
         <comment>TaskEditor</comment>
-        <translation>Τρέχον διάγραμμα</translation>
+        <translation type="vanished">Τρέχον διάγραμμα</translation>
     </message>
     <message>
         <source>Active tasks</source>
         <comment>TaskEditor</comment>
-        <translation>Ενεργές εργασίες</translation>
+        <translation type="vanished">Ενεργές εργασίες</translation>
     </message>
     <message>
         <source>New tasks</source>
         <comment>TaskEditor</comment>
-        <translation>Νέες εργασίες</translation>
+        <translation type="vanished">Νέες εργασίες</translation>
     </message>
     <message>
         <source>Edit heading</source>
         <comment>TaskEditor</comment>
-        <translation>Επεξεργασία κεφαλίδας</translation>
+        <translation type="vanished">Επεξεργασία κεφαλίδας</translation>
+    </message>
+    <message>
+        <source>Show only tasks from current map</source>
+        <comment>Filters in task Editor</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show only active tasks</source>
+        <comment>Filters in task Editor</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show only new tasks</source>
+        <comment>Filters in task Editor</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show only tasks marked with this arrow-up flag</source>
+        <comment>Filters in task Editor</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show only tasks marked without any arrow-up flag</source>
+        <comment>Filters in task Editor</comment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -5311,6 +5666,16 @@ Do you want to overwrite it?</source>
         <comment>TaskEditor</comment>
         <translation>Εργασία</translation>
     </message>
+    <message>
+        <source>Delta</source>
+        <comment>TaskEditor</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Flags</source>
+        <comment>TaskEditor</comment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>TextEditor</name>
@@ -5322,7 +5687,7 @@ Do you want to overwrite it?</source>
     <message>
         <source>Text Editor</source>
         <comment>Text Editor Window caption</comment>
-        <translation>Επεξεργαστής κειμένου</translation>
+        <translation type="vanished">Επεξεργαστής κειμένου</translation>
     </message>
     <message>
         <source>No filename available for this note.</source>
@@ -5521,6 +5886,26 @@ Do you want to overwrite it?</source>
         <comment>TextEditor</comment>
         <translation>Εκτύπωση</translation>
     </message>
+    <message>
+        <source>Set empty editor background color</source>
+        <comment>TextEditor</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set filled editor background color</source>
+        <comment>TextEditor</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set inactive editor background color</source>
+        <comment>TextEditor</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set default font color</source>
+        <comment>TextEditor</comment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>TreeEditor</name>
@@ -5533,6 +5918,18 @@ Do you want to overwrite it?</source>
         <source>Select lower object</source>
         <comment>Tree Editor</comment>
         <translation>Επιλογή αντικειμένου που βρίσκεται χαμηλότερα</translation>
+    </message>
+</context>
+<context>
+    <name>UserDialog</name>
+    <message>
+        <source>Dialog</source>
+        <translation type="unfinished">Παράθυρο</translation>
+    </message>
+    <message>
+        <source>Find Confluence user</source>
+        <comment>dialog window title</comment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -5705,7 +6102,7 @@ Do you want to reload that map with the new file?</source>
     <message>
         <source>Redo failed:
 %1</source>
-        <translation>Η ακύρωση αναίρεσης απέτυχε:
+        <translation type="vanished">Η ακύρωση αναίρεσης απέτυχε:
 %1</translation>
     </message>
     <message>
@@ -5735,7 +6132,7 @@ Do you want to reload that map with the new file?</source>
     <message>
         <source>Script aborted:
 %1</source>
-        <translation>Το σενάριο αποβλήθηκε:
+        <translation type="vanished">Το σενάριο αποβλήθηκε:
 %1</translation>
     </message>
     <message>
@@ -5810,6 +6207,11 @@ Please only delete the lockfile, if you are sure nobody else is currently workin
         <source>Couldn&apos;t remove lockfile for %1</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Contacting Jira...</source>
+        <comment>VymModel</comment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>VymProcess</name>
@@ -5864,6 +6266,64 @@ Please only delete the lockfile, if you are sure nobody else is currently workin
     <message>
         <source>Show this message again</source>
         <translation>Δείξε αυτό το μήνυμα πάλι</translation>
+    </message>
+    <message>
+        <source>Warning</source>
+        <comment>Warning dialog default window name</comment>
+        <translation type="unfinished">Προειδοποίηση</translation>
+    </message>
+</context>
+<context>
+    <name>ZipSettingsDialog</name>
+    <message>
+        <source>zip settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>zip tool:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Choose</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Status</source>
+        <translation type="unfinished">Κατάσταση</translation>
+    </message>
+    <message>
+        <source>unzip tool:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation type="unfinished">Κλείσιμο</translation>
+    </message>
+    <message>
+        <source>zip settings</source>
+        <comment>dialog window title</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Path to 7z.exe</source>
+        <comment>zip tool settings dialog</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set path to 7z to zip/unzip files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set path to zip files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set path to unzip files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Status: %1</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>
