@@ -237,8 +237,8 @@ Main::Main(QWidget* parent, Qt::WindowFlags f) : QMainWindow(parent,f)
     setupSettingsActions();
     setupContextMenus();
     setupMacros();
-    setupToolbars();
     setupFlagActions();
+    setupToolbars();
 
     // Dock widgets ///////////////////////////////////////////////
     QDockWidget *dw;
@@ -309,14 +309,14 @@ Main::Main(QWidget* parent, Qt::WindowFlags f) : QMainWindow(parent,f)
 
     connect( scriptEditor, SIGNAL( runScript ( QString ) ),  this, SLOT( runScript ( QString ) ) );
 
-    // Switch back  to MapEditor using Esc 
+    // Switch back  to MapEditor using Esc  or end presentation mode
     QAction* a = new QAction(this);
     a->setShortcut (Qt::Key_Escape);
     a->setShortcutContext (Qt::ApplicationShortcut);
     a->setCheckable(false);
     a->setEnabled (true);
     addAction(a);
-    connect (a , SIGNAL (triggered() ), this, SLOT (setFocusMapEditor()));
+    connect (a , SIGNAL (triggered() ), this, SLOT (escapePressed()));
     
     // Create TaskEditor after setting up above actions, allow cloning 
     taskEditor = new TaskEditor ();
@@ -351,6 +351,8 @@ Main::Main(QWidget* parent, Qt::WindowFlags f) : QMainWindow(parent,f)
     //settings.setValue( "mainwindow/showTestMenu", true);
     updateGeometry();
 
+    presentationMode = false;
+
 #if defined(VYM_DBUS)
     // Announce myself on DBUS
     new AdaptorVym (this);    // Created and not deleted as documented in Qt
@@ -362,6 +364,8 @@ Main::Main(QWidget* parent, Qt::WindowFlags f) : QMainWindow(parent,f)
 Main::~Main()
 {
     // qDebug()<<"Destr Mainwindow"<<flush;
+
+    if (presentationMode) togglePresentationMode();
 
     // Save Settings
 
@@ -2066,6 +2070,15 @@ void Main::setupViewActions()
     viewMenu->addSeparator();	
 
     QAction *a;
+
+    a = new QAction( tr( "Toggle Presentation mode","View action" ) + " " + tr("(still experimental"), this);
+    //a->setShortcut(Qt::Key_Plus);
+    viewMenu->addAction (a);
+    //switchboard.addSwitch ("mapZoomIn", shortcutScope, a, tag);
+    connect( a, SIGNAL( triggered() ), this, SLOT(togglePresentationMode() ) );
+
+    viewMenu->addSeparator();	
+
     a = new QAction( QPixmap(":/viewmag+.png"), tr( "Zoom in","View action" ), this);
     a->setShortcut(Qt::Key_Plus);
     viewMenu->addAction (a);
@@ -2724,6 +2737,7 @@ void Main::setupTestActions()
     connect( a, SIGNAL( triggered() ), this, SLOT( testFunction1() ) );
 
     a = new QAction( "Test function 2" , this);
+    //a->setShortcut (Qt::ALT + Qt::Key_T); 
     testMenu->addAction(a);
     connect( a, SIGNAL( triggered() ), this, SLOT( testFunction2() ) );
 
@@ -3112,6 +3126,17 @@ void Main::setupToolbars()
     referencesToolbar->hide();
     editorsToolbar->hide();
 
+    // Initialize toolbarStates for presentation mode // FIXME-0 use map for initial setup, too
+    toolbarStates[fileToolbar] = true;
+    toolbarStates[clipboardToolbar] = true;
+    toolbarStates[editActionsToolbar] = true;
+    toolbarStates[selectionToolbar] = false;
+    toolbarStates[colorsToolbar] = true;
+    toolbarStates[zoomToolbar] = true;
+    toolbarStates[modModesToolbar] = false;
+    toolbarStates[referencesToolbar] = false;
+    toolbarStates[editorsToolbar] = false;  
+    toolbarStates[standardFlagsToolbar] = true;  
 }
 
 VymView* Main::currentView() const
@@ -5994,7 +6019,8 @@ void Main::testFunction1()
 
 void Main::testFunction2()
 {
-    scriptEditor->runScript();
+    // scriptEditor->runScript();
+    togglePresentationMode();
 }
 
 void Main::toggleWinter()
@@ -6138,6 +6164,7 @@ void Main::debugInfo()
     s += QString("vymBaseDir: %1\n").arg(vymBaseDir.path());
     s += QString("currentPath: %1\n").arg(QDir::currentPath());
     s += QString("appDirPath: %1\n").arg(QCoreApplication::applicationDirPath());
+    s += QString("vym settings path: %1\n").arg(settings.fileName() );
     QMessageBox mb;
     mb.setText(s);
     mb.exec();
@@ -6412,5 +6439,37 @@ void Main::checkUpdates()
             QMessageBox::warning(0,  tr("Warning"), tr("Please allow vym to check for updates!"));
             if (downloadsEnabled(userTriggered)) checkUpdates();
         }
+    }
+}
+
+void Main::escapePressed()
+{
+    if (presentationMode)
+        togglePresentationMode();
+    else
+        setFocusMapEditor();
+}
+
+void Main::togglePresentationMode()
+{
+    QMap <QToolBar*, bool>::const_iterator i = toolbarStates.constBegin();
+    if (!presentationMode)
+    {
+
+        presentationMode = true;
+        while (i != toolbarStates.constEnd()) {
+            toolbarStates[i.key()] = i.key()->isVisible();
+            i.key()->hide();
+            ++i;
+        }
+        menuBar()->hide();
+    } else
+    {
+        presentationMode = false;
+        while (i != toolbarStates.constEnd()) {
+            i.key()->setVisible(i.value() );
+            ++i;
+        }
+        menuBar()->show();
     }
 }

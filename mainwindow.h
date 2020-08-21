@@ -357,6 +357,8 @@ public slots:
     void downloadUpdatesFinishedInt();
     void downloadUpdates(bool userTriggered);
     void checkUpdates();
+    void escapePressed();
+    void togglePresentationMode();
 
 private:
     QString shortcutScope;          //! For listing shortcuts
@@ -409,6 +411,9 @@ private:
     QToolBar *modModesToolbar;
     QToolBar *referencesToolbar;
     QToolBar *standardFlagsToolbar;
+
+    bool presentationMode;
+    QMap <QToolBar*, bool> toolbarStates;   // Save visibilty of toolbars during presentation mode
 
     QAction* actionFileNew;
     QAction* actionFileNewCopy;

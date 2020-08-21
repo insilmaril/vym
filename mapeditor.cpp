@@ -2156,6 +2156,11 @@ void MapEditor::updateData (const QModelIndex &sel)
     }
 }
 
+void MapEditor::togglePresentationMode()
+{
+    mainWindow->togglePresentationMode();
+}
+
 void MapEditor::setSelectionColor (QColor col)
 {
     selectionColor=col;
