@@ -32,6 +32,7 @@ public:
     bool load (const QString &);
     bool load (const QPixmap &);
     bool save (const QString &);
+    QString getExtension();
 
 protected:
      ImageObj::ImageType imageType;

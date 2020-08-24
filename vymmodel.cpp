@@ -898,7 +898,7 @@ void VymModel::loadImage (BranchItem *dst,const QString &fn)
     }
 }
 
-void VymModel::saveImage (ImageItem *ii, QString format, QString fn)                                                    
+void VymModel::saveImage (ImageItem *ii, QString fn)                                                    
 {
     if (!ii) ii = getSelectedImage();
     if (ii)
@@ -939,10 +939,7 @@ void VymModel::saveImage (ImageItem *ii, QString format, QString fn)
                         break;
                 }
             }
-            if (format.isEmpty() ) format=imageIO.guessType(fn);
-            if (format.isEmpty())
-                QMessageBox::critical (0,tr("Critical Error"),tr("Unsupported format in %1").arg(fn));
-            else if (!ii->saveImage (fn, format) )
+            if (!ii->saveImage (fn) )
                 QMessageBox::critical (0,tr("Critical Error"),tr("Couldn't save %1").arg(fn));
         }
     }

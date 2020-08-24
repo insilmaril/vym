@@ -245,15 +245,15 @@ bool ImageObj::save(const QString &fn)  // FIXME-0 evtl. add ".png" to name
     {
         case ImageObj::SVG:
             if (svgItem)
-                qDebug() << "II::save svg - not implemented"; // FIXME-0 not implemented 
+                qDebug() << "IO::save svg - not implemented " << fn; // FIXME-0 not implemented 
             return false;
             break;
         case ImageObj::Pixmap:
-            qDebug() << "II::save pixmap";
+            qDebug() << "IO::save pixmap " << fn;
             return pixmapItem->pixmap().save (fn, "PNG", 100);
             break;
         case ImageObj::ModifiedPixmap:
-            qDebug() << "II::save modified pixmap";
+            qDebug() << "IO::save modified pixmap " << fn;
             return originalPixmap->save (fn, "PNG", 100);
             break;
         default:
@@ -261,3 +261,20 @@ bool ImageObj::save(const QString &fn)  // FIXME-0 evtl. add ".png" to name
     }
 }
 
+QString ImageObj::getExtension()
+{
+    QString s;
+    switch (imageType)
+    {
+        case ImageObj::SVG:
+            s = ".svg";
+            break;
+        case ImageObj::Pixmap:
+        case ImageObj::ModifiedPixmap:
+            s = ".png";
+            break;
+        default:
+            break;
+    }
+    return s;
+}

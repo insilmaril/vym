@@ -20,6 +20,7 @@ public:
     bool load (const QImage *);
     bool load(const QString &fname);
     bool save(const QString &fname);
+    QString getExtension();
     void setParObj (QGraphicsItem*);
     void setVisibility(bool);	    // set vis. for w
     void setScaleFactor( qreal f);

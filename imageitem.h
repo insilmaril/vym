@@ -33,11 +33,12 @@ protected:
 public:	
     void setScaleFactor(qreal);
     qreal getScaleFactor();
-    virtual void setZValue(int z);
-    virtual void setOriginalFilename(const QString &);
-    virtual QString getOriginalFilename();
-    virtual bool saveImage (const QString &fn, const QString &format);
-    virtual QString saveToDir(const QString &,const QString&);
+    void setZValue(int z);
+    void setOriginalFilename(const QString &);
+    QString getOriginalFilename();
+    QString getUniqueFilename();
+    bool saveImage (const QString &fn);
+    QString saveToDir(const QString &,const QString&);
 };
 
 #endif

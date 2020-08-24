@@ -155,7 +155,7 @@ public:
 
 public:	
     void loadImage (BranchItem *dst=NULL, const QString &fn="");
-    void saveImage (ImageItem *ii=NULL, QString format="", QString fn="");
+    void saveImage (ImageItem *ii=NULL, QString fn="");
 
 private:    
     void importDirInt(BranchItem *,QDir);

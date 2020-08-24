@@ -101,7 +101,13 @@ QString ImageItem::getOriginalFilename()
     return originalFilename;
 }
 
-bool ImageItem::saveImage(const QString &fn, const QString &format)  
+QString ImageItem::getUniqueFilename()
+{
+    FloatImageObj *fio = (FloatImageObj*)mo;
+    return "image-" + getUuid().toString() + fio->getExtension();
+}
+
+bool ImageItem::saveImage(const QString &fn)
 {
     // This is used when exporting maps or saving selection
     FloatImageObj *fio = (FloatImageObj*)mo;
@@ -121,13 +127,15 @@ QString ImageItem::saveToDir (const QString &tmpdir,const QString &prefix)
     // Create unique string for filename based on memory address
     ulong n = reinterpret_cast <ulong> (this);
 
-    url = "images/" + prefix + "image-" + QString().number(n, 10) + ".png" ;
+
+    FloatImageObj *fio = (FloatImageObj*)mo;
+    
+    url = "images/" + prefix + "image-" + QString().number(n, 10) + fio->getExtension();
 
     // And really save the image
-    FloatImageObj *fio = (FloatImageObj*)mo;
     fio->save (tmpdir + "/" + url);
 
-    QString nameAttr = attribut ("originalName",originalFilename);
+    QString nameAttr = attribut ("originalName", originalFilename);
 
     QString scaleAttr =
 	attribut ("scaleFactor", QString().setNum(fio->getScaleFactor()));

@@ -79,6 +79,11 @@ bool FloatImageObj::save (const QString &fname)
     return imageObj->save(fname); 
 }
 
+QString FloatImageObj::getExtension()
+{
+    return imageObj->getExtension();
+}
+
 void FloatImageObj::setParObj (QGraphicsItem *p)
 {
     setParentItem (p);
