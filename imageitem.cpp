@@ -111,7 +111,7 @@ bool ImageItem::saveImage(const QString &fn)
 {
     // This is used when exporting maps or saving selection
     FloatImageObj *fio = (FloatImageObj*)mo;
-    return fio->save (fn);  // FIXME-0 what about format?
+    return fio->save (fn); 
 }
 
 QString ImageItem::saveToDir (const QString &tmpdir,const QString &prefix) 

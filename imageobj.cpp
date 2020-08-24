@@ -10,7 +10,7 @@ ImageObj::ImageObj( QGraphicsItem *parent) : QGraphicsItem (parent )
 {
     // qDebug() << "Const ImageObj (scene)";
 
-    //FIXME-0 setShapeMode (QGraphicsPixmapItem::BoundingRectShape);
+    //FIXME-1 needed? setShapeMode (QGraphicsPixmapItem::BoundingRectShape);
     hide();
 
     imageType = ImageObj::Undefined;

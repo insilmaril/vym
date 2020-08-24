@@ -61,7 +61,7 @@ bool FloatImageObj::load (const QImage *image)
     positionBBox();
 }
 
-bool FloatImageObj::load (const QString &fname) // FIXME-0 testing, add filename or svg as parameter
+bool FloatImageObj::load (const QString &fname) 
 {
     if (!imageObj->load(fname) ) return false;
 
