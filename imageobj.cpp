@@ -2,6 +2,9 @@
 #include "mapobj.h"
 
 #include <QDebug>
+#include <QPainter>
+#include <QStyleOptionGraphicsItem>
+#include <QSvgGenerator>
 
 /////////////////////////////////////////////////////////////////
 // ImageObj	
@@ -133,7 +136,8 @@ void  ImageObj::setScaleFactor(qreal f)
     scaleFactor = f;
     switch (imageType)
     {
-        case ImageObj::SVG:// FIXME-0 not implemented
+        case ImageObj::SVG:
+            svgItem->setScale (f);
             break;
         case ImageObj::Pixmap: 
             if (f != 1 )
@@ -166,12 +170,15 @@ qreal  ImageObj::getScaleFactor()
     return scaleFactor;
 }
 
-QRectF ImageObj::boundingRect() const 
+QRectF ImageObj::boundingRect() const   // FIXME-0 not always correct for svg
 {
     switch (imageType)
     {
         case ImageObj::SVG:
-            return svgItem->boundingRect();
+            //qDebug() << "IO::boundingRect svg " << svgItem->boundingRect();
+            return QRectF(0, 0, 
+                    svgItem->boundingRect().width() * scaleFactor, 
+                    svgItem->boundingRect().height() * scaleFactor);
         case ImageObj::Pixmap:
             return pixmapItem->boundingRect();
         case ImageObj::ModifiedPixmap:
@@ -239,21 +246,34 @@ bool ImageObj::load (const QPixmap &pm)
     return true;
 }
 
-bool ImageObj::save(const QString &fn)  // FIXME-0 evtl. add ".png" to name
+bool ImageObj::save(const QString &fn) 
 {
     switch (imageType)
     {
         case ImageObj::SVG:
             if (svgItem)
-                qDebug() << "IO::save svg - not implemented " << fn; // FIXME-0 not implemented 
-            return false;
+            {
+                //qDebug() << "IO::save svg" << fn; 
+                QSvgGenerator generator;
+                generator.setFileName(fn);
+                generator.setSize(QSize(200, 200)); // FIXME-0 set meta information
+                generator.setViewBox(QRect(0, 0, 200, 200));
+               // generator.setTitle(originalFileName);
+                generator.setDescription("An SVG drawing created by vym - view your mind");
+                QStyleOptionGraphicsItem qsogi;
+                QPainter painter;
+                painter.begin(&generator);
+                svgItem->paint(&painter, &qsogi, NULL);
+                painter.end();
+            }
+            return true;
             break;
         case ImageObj::Pixmap:
-            qDebug() << "IO::save pixmap " << fn;
+            //qDebug() << "IO::save pixmap " << fn;
             return pixmapItem->pixmap().save (fn, "PNG", 100);
             break;
         case ImageObj::ModifiedPixmap:
-            qDebug() << "IO::save modified pixmap " << fn;
+            //qDebug() << "IO::save modified pixmap " << fn;
             return originalPixmap->save (fn, "PNG", 100);
             break;
         default:
