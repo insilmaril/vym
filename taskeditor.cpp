@@ -294,13 +294,53 @@ void TaskEditor::headerContextMenu()
 void TaskEditor::updateColumnLayout()
 {
     // Update column widths and visibility
-    QString s;
-    for (int i = 0; i < 8; i++)
-    {
-	s = QString("/taskeditor/column/%1/").arg(i);
-        view->setColumnWidth  (i, settings.value(s + "width", 20).toInt() );
-        view->setColumnHidden (i, settings.value(s + "hidden", false).toBool() );
-    }
+
+    QString s = "/taskeditor/column/%1/";
+    
+    // Priority
+    int i = 0;
+    view->setColumnWidth  (i, settings.value(s.arg(i) + "width", 80).toInt() );
+    view->setColumnHidden (i, settings.value(s.arg(i) + "hidden", false).toBool() );
+    
+    // Delta
+    i = 1;
+    view->setColumnWidth  (i, settings.value(s.arg(i) + "width", 50).toInt() );
+    view->setColumnHidden (i, settings.value(s.arg(i) + "hidden", false).toBool() );
+    
+    // Status
+    i = 2;
+    view->setColumnWidth  (i, settings.value(s.arg(i) + "width", 50).toInt() );
+    view->setColumnHidden (i, settings.value(s.arg(i) + "hidden", false).toBool() );
+    
+    // Age total
+    i = 3;
+    view->setColumnWidth  (i, settings.value(s.arg(i) + "width", 50).toInt() );
+    view->setColumnHidden (i, settings.value(s.arg(i) + "hidden", true).toBool() );
+    
+    // Age mod
+    i = 4;
+    view->setColumnWidth  (i, settings.value(s.arg(i) + "width", 50).toInt() );
+    view->setColumnHidden (i, settings.value(s.arg(i) + "hidden", true).toBool() );
+    
+    // Sleep
+    i = 5;
+    view->setColumnWidth  (i, settings.value(s.arg(i) + "width", 80).toInt() );
+    view->setColumnHidden (i, settings.value(s.arg(i) + "hidden", false).toBool() );
+    
+    // Map
+    i = 6;
+    view->setColumnWidth  (i, settings.value(s.arg(i) + "width", 100).toInt() );
+    view->setColumnHidden (i, settings.value(s.arg(i) + "hidden", false).toBool() );
+    
+    // Flags
+    i = 7;
+    view->setColumnWidth  (i, settings.value(s.arg(i) + "width", 80).toInt() );
+    view->setColumnHidden (i, settings.value(s.arg(i) + "hidden", false).toBool() );
+    
+    // Taskname
+    i = 8;
+    view->setColumnWidth  (i, settings.value(s.arg(i) + "width", 80).toInt() );
+    view->setColumnHidden (i, settings.value(s.arg(i) + "hidden", false).toBool() );
 }
 
 void TaskEditor::selectionChanged ( const QItemSelection & selected, const QItemSelection & )

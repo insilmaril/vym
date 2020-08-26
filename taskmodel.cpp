@@ -77,7 +77,7 @@ QVariant TaskModel::data(const QModelIndex &index, int role) const
         else if (index.column() == 1)
             return t->getPriorityDelta();
         else if (index.column() == 2)
-            return t->getStatusString() + " - " +t->getAwakeString();
+            return QString();  //return t->getStatusString() + " - " +t->getAwakeString();
         else if (index.column() == 3)
             return t->getAgeCreation();
         else if (index.column() == 4)
