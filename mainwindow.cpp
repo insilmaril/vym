@@ -1,6 +1,8 @@
 #include "mainwindow.h"
 
 #include <iostream>
+using namespace std;
+
 #include <typeinfo>
 
 #if defined(VYM_DBUS)
@@ -5881,6 +5883,7 @@ bool Main::autoSelectNewBranch()
 QScriptValue scriptPrint( QScriptContext * context, QScriptEngine *)
 {
     scriptOutput->append( context->argument(0).toString() );
+    cout << context->argument(0).toString().toStdString() << endl;
     return QScriptValue();
 }
 

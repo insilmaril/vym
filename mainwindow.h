@@ -7,6 +7,7 @@
 #include <QScriptContext>
 #include <QScriptEngine>
 #include <QScriptValue>
+#include <QTextStream>
 
 #include "branchpropeditor.h"
 #include "extrainfodialog.h"
