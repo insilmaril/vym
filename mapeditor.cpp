@@ -2120,11 +2120,11 @@ void MapEditor::updateSelection(QItemSelection nsel,QItemSelection dsel)
 
 
     // Reposition polygons 
-    for (int i=0; i < itemsSelected.count();++i)
+    for (int i = 0; i < itemsSelected.count(); ++i)
     {
 	MapObj *mo = itemsSelected.at(i)->getMO();
-	sp=selPathList.at(i);
-	sp->setPath (mo->getClickPath() );
+	sp = selPathList.at(i);
+	sp->setPath (mo->getSelectionPath() );
 	sp->setPen (selectionColor);	
 	sp->setBrush (selectionColor);	
 	sp->setParentItem (mo); 

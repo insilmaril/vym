@@ -6,14 +6,14 @@
 #include "xmlobj.h"
 
 #define dZ_BBOX         0   // testing
-#define dZ_DEPTH      100
+#define dZ_SELBOX       5
 #define dZ_FRAME_LOW   10	
 #define dZ_LINK        20
 #define dZ_XLINK       40
-#define dZ_SELBOX      60
 #define dZ_FLOATIMG    70
 #define dZ_ICON        80
 #define dZ_TEXT        90
+#define dZ_DEPTH      100
 #define  Z_INIT      9999
 #define  Z_LINEEDIT 10000 
 
@@ -50,7 +50,7 @@ public:
     virtual QRectF getBBox();			//! returns bounding box
     virtual ConvexPolygon getBoundingPolygon();	//! return bounding convex polygon
     virtual QPolygonF getClickPoly();		//! returns polygon to click
-    virtual QPainterPath getClickPath();	//! returns path to click
+    virtual QPainterPath getSelectionPath();	//! returns path for selection
     virtual bool isInClickBox (const QPointF &p);   //! Checks if p is in clickBox
     virtual QSizeF getSize();			//! returns size of bounding box
 

@@ -256,9 +256,7 @@ bool ImageObj::save(const QString &fn)
                 //qDebug() << "IO::save svg" << fn; 
                 QSvgGenerator generator;
                 generator.setFileName(fn);
-                generator.setSize(QSize(200, 200)); // FIXME-0 set meta information
-                generator.setViewBox(QRect(0, 0, 200, 200));
-               // generator.setTitle(originalFileName);
+                // generator.setTitle(originalFileName);
                 generator.setDescription("An SVG drawing created by vym - view your mind");
                 QStyleOptionGraphicsItem qsogi;
                 QPainter painter;

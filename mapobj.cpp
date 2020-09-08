@@ -123,15 +123,16 @@ QPolygonF MapObj::getClickPoly()
     return clickPoly;
 }
 
-QPainterPath MapObj::getClickPath()
+QPainterPath MapObj::getSelectionPath()
 {
+    qreal d = 3;    // Thickness of selection "border"
     QPainterPath p;
-    QRectF br=clickPoly.boundingRect();
-    p.moveTo (br.topLeft() );
-    p.lineTo (br.topRight() );
-    p.lineTo (br.bottomRight() );
-    p.lineTo (br.bottomLeft() );
-    p.lineTo (br.topLeft() );
+    QRectF br = clickPoly.boundingRect();
+    p.moveTo (br.topLeft() + QPointF(-d, -d) );
+    p.lineTo (br.topRight() + QPointF(d, -d) );
+    p.lineTo (br.bottomRight() + QPointF(d, d) );
+    p.lineTo (br.bottomLeft() + QPointF(-d, d) );
+    p.lineTo (br.topLeft() + QPointF(-d, -d) );
     return p;
 }
 
