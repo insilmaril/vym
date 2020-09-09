@@ -144,7 +144,7 @@ void FlagRowObj::activateFlag (Flag *flag)
     if (flag) 
     {
 	FlagObj *fo = new FlagObj (this);
-	fo->load (flag->getPixmap() );  // FIXME-0  svg???
+	fo->load (flag->getImageObj() );  // FIXME-0  svg???
 	fo->setName (flag->getName() );
         fo->setUuid (flag->getUuid() );
         fo->setZValue(QGraphicsItem::zValue());

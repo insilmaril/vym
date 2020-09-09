@@ -18,8 +18,10 @@ class ImageObj: public QGraphicsItem
 public:
     enum ImageType {Undefined, Pixmap, ModifiedPixmap, SVG};
 
+    ImageObj();
     ImageObj( QGraphicsItem*);
     ~ImageObj();
+    void init();
     void copy (ImageObj*);
     void setPos(const QPointF &pos);
     void setPos(const qreal &x, const qreal &y);
@@ -33,6 +35,8 @@ public:
     bool load (const QPixmap &);
     bool save (const QString &);
     QString getExtension();
+    ImageType getType();
+    QIcon getIcon();
 
 protected:
      ImageObj::ImageType imageType;

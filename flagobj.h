@@ -28,7 +28,7 @@ public:
     virtual void setZValue (double z);
     virtual void setVisibility(bool);
     void load (const QString&);
-    void load (const QPixmap&);
+    void load (ImageObj* io);
     void setName (const QString&);
     const QString getName ();   // FIXME-0 should become obsolete, only uuid
     void setUuid(const QUuid &uid);
@@ -46,7 +46,7 @@ protected:
     virtual void positionBBox();
     virtual void calcBBoxSize();
 private:
-    ImageObj* icon;
+    ImageObj* imageObj;
 };
 
 #endif

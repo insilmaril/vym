@@ -2705,7 +2705,8 @@ Flag* Main::setupFlag (const QString &path,
 
     // StandardFlag or user flag
 
-    a = new QAction (flag->getPixmap(), flag->getUuid().toString(), this);
+    //a = new QAction (flag->getPixmap(), flag->getUuid().toString(), this);
+    a = new QAction (flag->getImageObj()->getIcon(), flag->getUuid().toString(), this);     // FIXME-0 add imageObj instead of pixmap
     flag->setAction (a);
     a->setCheckable( true );
     a->setObjectName( flag->getUuid().toString() );

@@ -14,7 +14,7 @@ FlagObj::FlagObj(QGraphicsItem *parent):MapObj(parent)
 FlagObj::~FlagObj()
 {
     //qDebug() << "Destr FlagObj  this=" << this << "  " << name;
-    if (icon) delete (icon);
+    if (imageObj) delete (imageObj);
 }
 
 
@@ -22,9 +22,9 @@ void FlagObj::init ()
 {
     name = "undefined";
 
-    // FIXME-0 org:   icon = new ImageObj (parentItem());
-    icon = new ImageObj (parentItem() );
-    icon->setPos (QPointF(absPos.x(), absPos.y()) );
+    // FIXME-0 org:   imageObj = new ImageObj (parentItem());
+    imageObj = new ImageObj (parentItem() );
+    imageObj->setPos (QPointF(absPos.x(), absPos.y()) );
     avis = true;
 }
 
@@ -34,14 +34,14 @@ void FlagObj::copy (FlagObj* other)
     name  = other->name;
     uid   = other->uid;
     avis  = other->avis;
-    icon->copy(other->icon);
+    imageObj->copy(other->imageObj);
     setVisibility (other->isVisibleObj() );
 }
 
 void FlagObj::move(double x, double y)
 {
     MapObj::move(x,y);
-    icon->setPos(QPointF(x,y));
+    imageObj->setPos(QPointF(x,y));
     positionBBox();
 }
 
@@ -52,28 +52,28 @@ void FlagObj::moveBy(double x, double y)
 
 void FlagObj::setZValue (double z)
 {
-    icon->setZValue (z);
+    imageObj->setZValue (z);
 }
 
 void FlagObj::setVisibility (bool v)
 {
     MapObj::setVisibility(v);
     if (v) 
-	icon->setVisibility(true);
+	imageObj->setVisibility(true);
     else
-	icon->setVisibility(false);
+	imageObj->setVisibility(false);
 }
 
 void FlagObj::load (const QString &fn)
 {
-    icon->load(fn);
+    imageObj->load(fn);
     calcBBoxSize();
     positionBBox();
 }
 
-void FlagObj::load (const QPixmap &pm)
+void FlagObj::load (ImageObj* io)
 {
-    icon->load(pm);
+    imageObj->copy(io);   // Creates deep copy of pixmap or svg!
     calcBBoxSize();
     positionBBox();
 }
@@ -111,7 +111,7 @@ bool FlagObj::isAlwaysVisible()
 void FlagObj::saveToDir (const QString &tmpdir, const QString &prefix)
 {
     QString fn=tmpdir + prefix + name;
-    icon->save (fn);
+    imageObj->save (fn);
 }
 
 void FlagObj::positionBBox()
@@ -124,8 +124,8 @@ void FlagObj::calcBBoxSize()
 {
     if (visible)
 	bbox.setSize (	QSizeF(
-	    icon->boundingRect().width(), 
-	    icon->boundingRect().height() ) );
+	    imageObj->boundingRect().width(), 
+	    imageObj->boundingRect().height() ) );
     else
 	bbox.setSize (QSizeF(0, 0));
     clickPoly = QPolygonF (bbox); 

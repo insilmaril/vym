@@ -26,6 +26,7 @@ Flag::Flag (Flag* io)
 Flag::~Flag()
 {
    //qDebug() << "Destr Flag  this="<<this <<"  " << qPrintable(name);
+   if (image) delete image;
 }
 
 
@@ -36,11 +37,14 @@ void Flag::init ()
     visible = true;
     unsetGroup();
 
+    image = NULL;
+
     state   = false;
     used    = false;
     type    = UndefinedFlag;
 
     uuid = QUuid::createUuid();
+
 }
 
 void Flag::copy (Flag* other)
@@ -51,7 +55,7 @@ void Flag::copy (Flag* other)
     tooltip = other->tooltip;
     state   = other->state;
     used    = other->used;
-    pixmap  = other->pixmap;
+    image   = other->image;
     type    = other->type;
     path    = other->path;
     uuid    = other->uuid;  
@@ -60,15 +64,21 @@ void Flag::copy (Flag* other)
 
 void Flag::load (const QString &fn) // FIXME-0   svg??
 {
-    if (!pixmap.load(fn))
+    qDebug() << "Flag::load fn=" << fn;
+    if (!image) image = new ImageObj();
+
+    if (!image->load(fn))
 	qDebug() << "Flag::load (" << fn << ") failed.";
     else
         path = fn;
 }
 
-void Flag::load (const QPixmap &pm)
+void Flag::load (const QPixmap &pm) // FIXME-0 needed?
 {
-    pixmap = pm;
+    qDebug() << "Flag::load pm";
+    if (!image) image = new ImageObj();
+
+    image->load(pm);
 }
 
 void Flag::setName(const QString &n)
@@ -121,9 +131,12 @@ const QString Flag::getToolTip()
     return tooltip;
 }
 
-QPixmap Flag::getPixmap()
+ImageObj* Flag::getImageObj()
 {
-    return pixmap;
+    if (image) 
+        return image;
+    else
+        return NULL;
 }
 
 void Flag::setAction (QAction *a)
@@ -178,8 +191,12 @@ QString Flag::saveDef()
 
 bool Flag::saveDataToDir (const QString &tmpdir, const QString &prefix) // FIXME-0 save to "flags/standard/" or "flags/user/"
 {
-    QString fn = tmpdir + prefix + name + ".png";
-    return pixmap.save (fn, "PNG");
+    if (image)
+    {
+        QString fn = tmpdir + prefix + name + ".png";
+        return image->save (fn);
+    }
+    return true;    // Nothing to save here
 }
 
 QString Flag::saveState()

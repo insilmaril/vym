@@ -3,9 +3,9 @@
 
 
 #include <QAction>
-#include <QPixmap>
 #include <QUuid>
 
+#include "imageobj.h"
 #include "xmlobj.h"
 
 /*! \brief One flag belonging to a FlagRow.
@@ -38,7 +38,7 @@ public:
     void unsetGroup ();
     void setToolTip(const QString&);
     const QString getToolTip();
-    QPixmap getPixmap();
+    ImageObj*  getImageObj();
     void setAction (QAction *a);
     QAction* getAction ();
     void setUsed (bool);    
@@ -63,7 +63,7 @@ protected:
     QUuid uuid;
 
 private:
-    QPixmap pixmap;
+    ImageObj *image;
     QString path;
     
 };

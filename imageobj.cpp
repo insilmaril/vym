@@ -9,18 +9,14 @@
 /////////////////////////////////////////////////////////////////
 // ImageObj	
 /////////////////////////////////////////////////////////////////
+ImageObj::ImageObj()
+{
+    init();
+}
+
 ImageObj::ImageObj( QGraphicsItem *parent) : QGraphicsItem (parent )
 {
-    // qDebug() << "Const ImageObj (scene)";
-
-    //FIXME-1 needed? setShapeMode (QGraphicsPixmapItem::BoundingRectShape);
-    hide();
-
-    imageType = ImageObj::Undefined;
-    svgItem        = NULL;
-    pixmapItem     = NULL;
-    originalPixmap = NULL;
-    scaleFactor    = 1;
+    init();
 }
 
 ImageObj::~ImageObj()
@@ -44,6 +40,20 @@ ImageObj::~ImageObj()
     }
 }
 
+void ImageObj::init()
+{
+    // qDebug() << "Const ImageObj (scene)";
+
+    //FIXME-1 needed? setShapeMode (QGraphicsPixmapItem::BoundingRectShape);
+    hide();
+
+    imageType = ImageObj::Undefined;
+    svgItem        = NULL;
+    pixmapItem     = NULL;
+    originalPixmap = NULL;
+    scaleFactor    = 1;
+}
+
 void ImageObj::copy(ImageObj* other)
 {
     prepareGeometryChange();
@@ -52,18 +62,22 @@ void ImageObj::copy(ImageObj* other)
     switch (other->imageType)
     {
         case ImageObj::SVG:
-            qDebug() << "ImgObj::copy called svg...";    // FIXME-1 check
+            qDebug() << "ImgObj::copy other is svg...";    // FIXME-0 check: no deep copy? other is used as parent???
             svgItem = new QGraphicsSvgItem(other->svgItem);
+            imageType = ImageObj::SVG;
             break;
         case ImageObj::Pixmap:
-            qDebug() << "ImgObj::copy called pm...";    // FIXME-1 check
+            qDebug() << "ImgObj::copy other is pm...";    // FIXME-1 check
+            pixmapItem = new QGraphicsPixmapItem();
             pixmapItem->setPixmap (other->pixmapItem->pixmap());
             pixmapItem->setParentItem (other->parentItem());
+            imageType = ImageObj::Pixmap;
             break;
         case ImageObj::ModifiedPixmap:
-            qDebug() << "ImgObj::copy called mpm...";    // FIXME-0 implement copy
+            qDebug() << "ImgObj::copy other is modified pm...";    // FIXME-0 implement copy
             pixmapItem->setPixmap (other->pixmapItem->pixmap());
             pixmapItem->setParentItem (other->parentItem());
+            imageType = ImageObj::Pixmap;
             break;
         default: 
             qWarning() << "ImgObj::copy other->imageType undefined";   
@@ -211,7 +225,7 @@ bool ImageObj::load (const QString &fn)
     {
         svgItem = new QGraphicsSvgItem(fn);
         imageType = ImageObj::SVG;
-        scene()->addItem (svgItem);
+        if (scene() ) scene()->addItem (svgItem);
 
         return true;
     } else
@@ -296,3 +310,17 @@ QString ImageObj::getExtension()
     }
     return s;
 }
+
+ImageObj::ImageType ImageObj::getType()
+{
+    return imageType;
+}
+
+QIcon ImageObj::getIcon()
+{
+    if (imageType == Pixmap)
+        return QIcon(pixmapItem->pixmap() );
+    return QIcon(); // FIXME-0  create icon for svg
+}
+
+// FIXME-1 is originalPixmap used after all?
