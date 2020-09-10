@@ -63,15 +63,13 @@ public:
 
 protected:  
     QRectF bbox;		    // bounding box of MO itself
-    QPolygonF clickPoly;		    // area where mouseclicks are found
+    QPolygonF clickPoly;	    // area where mouseclicks are found
     QPointF absPos;		    // Position on canvas
     bool visible;
 
     qreal angle;		    //! Rotation angle
 
     TreeItem *treeItem;		    //! Crossrefence to treemodel
-
-    QGraphicsPolygonItem *boundingPolygon;	//FIXME-3 testing only
 };
 
 #endif

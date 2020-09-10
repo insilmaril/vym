@@ -26,7 +26,6 @@ void MapObj::init ()
 {
     absPos=QPointF(0,0);
     visible=true;
-    boundingPolygon=NULL;
 }
 
 void MapObj::copy(MapObj* other)
@@ -114,7 +113,7 @@ QRectF MapObj::getBBox()
 ConvexPolygon MapObj::getBoundingPolygon()
 {
     QPolygonF p;
-    p<<bbox.topLeft()<<bbox.topRight()<<bbox.bottomRight()<<bbox.bottomLeft();
+    p << bbox.topLeft() << bbox.topRight() << bbox.bottomRight() << bbox.bottomLeft();
     return p;
 }
 

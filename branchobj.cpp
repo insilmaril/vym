@@ -621,17 +621,14 @@ ConvexPolygon BranchObj::getBoundingPolygon()
 {
     if (treeItem->branchCount()==0 || treeItem->depth()==0)
     {
-        if (boundingPolygon)
-            boundingPolygon->setPolygon (MapObj::getBoundingPolygon() );
         return MapObj::getBoundingPolygon();
     }
 
     QPolygonF p;
-    p<<bboxTotal.topLeft();
-    p<<bboxTotal.topRight();
-    p<<bboxTotal.bottomRight();
-    p<<bboxTotal.bottomLeft();
-    if (boundingPolygon) boundingPolygon->setPolygon (p );
+    p << bboxTotal.topLeft();
+    p << bboxTotal.topRight();
+    p << bboxTotal.bottomRight();
+    p << bboxTotal.bottomLeft();
     return p;
 }
 
