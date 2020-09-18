@@ -11,28 +11,45 @@
 /////////////////////////////////////////////////////////////////
 ImageObj::ImageObj()
 {
+    qDebug() << "Const ImageObj ()  this=" << this;
     init();
 }
 
 ImageObj::ImageObj( QGraphicsItem *parent) : QGraphicsItem (parent )
 {
+    qDebug() << "Const ImageObj  this=" << this << "  parent= " << parent ;
     init();
 }
 
 ImageObj::~ImageObj()
 {
-    //qDebug() << "Destr ImageObj  imageType = " << imageType ;
+    qDebug() << "Destr ImageObj  this=" << this << "  imageType = " << imageType ;
     switch (imageType)
     {
         case ImageObj::SVG:
             if (svgItem) delete (svgItem);
             break;
         case ImageObj::Pixmap:
-            if (pixmapItem) delete (pixmapItem);
+            if (pixmapItem) 
+            {
+                // FIXME-1 testing
+                delete (pixmapItem);
+                qDebug() << "  destr IO  deleting pixmapItem";
+            }
             break;
         case ImageObj::ModifiedPixmap:  
-            if (pixmapItem) delete (pixmapItem);
-            if (originalPixmap) delete (originalPixmap);
+            if (pixmapItem) 
+            {
+                // FIXME-1 testing
+                delete (pixmapItem);
+                qDebug() << "  destr IO  deleting pixmapItem";
+            }
+            if (originalPixmap) 
+            {
+                // FIXME-1 testing
+                delete (originalPixmap);
+                qDebug() << "  destr IO  deleting originalPixmap";
+            }
             break;
         default: 
             qDebug() << "ImgObj::copy other->imageType undefined";    
@@ -58,25 +75,35 @@ void ImageObj::copy(ImageObj* other)
 {
     prepareGeometryChange();
     // FIXME-0 setPixmap (other->QGraphicsPixmapItem::pixmap());	
-    qDebug() << "IO::copy    types: this = " << imageType  << "other = " << other->imageType;
+    qDebug() << "ImgObj::copy    this=" << this << "  other=" << other << "  type this=  " << imageType  << "type other= " << other->imageType;
+    if (imageType != ImageObj::Undefined)
+        qWarning() << "ImageObj::copy into existing image of type " << imageType;
+
     switch (other->imageType)
     {
         case ImageObj::SVG:
-            qDebug() << "ImgObj::copy other is svg...";    // FIXME-0 check: no deep copy? other is used as parent???
+            qDebug() << "ImgObj::copy other is svg...";    // FIXME-0 check: no deep copy?
             svgItem = new QGraphicsSvgItem(other->svgItem);
+            svgItem->setParentItem (parentItem());
+            svgItem->setVisible( isVisible());
             imageType = ImageObj::SVG;
             break;
         case ImageObj::Pixmap:
             qDebug() << "ImgObj::copy other is pm...";    // FIXME-1 check
+            qDebug() << "   a) pixmapItem = " << pixmapItem;
             pixmapItem = new QGraphicsPixmapItem();
+            qDebug() << "   b) pixmapItem = " << pixmapItem;
             pixmapItem->setPixmap (other->pixmapItem->pixmap());
-            pixmapItem->setParentItem (other->parentItem());
+            pixmapItem->setParentItem (parentItem() );
+            pixmapItem->setVisible( isVisible());
             imageType = ImageObj::Pixmap;
             break;
         case ImageObj::ModifiedPixmap:
             qDebug() << "ImgObj::copy other is modified pm...";    // FIXME-0 implement copy
+            // create new pixmap?
             pixmapItem->setPixmap (other->pixmapItem->pixmap());
-            pixmapItem->setParentItem (other->parentItem());
+            pixmapItem->setParentItem (parentItem());
+            pixmapItem->setVisible( isVisible());
             imageType = ImageObj::Pixmap;
             break;
         default: 
@@ -84,13 +111,19 @@ void ImageObj::copy(ImageObj* other)
             return;
             break;
     }
-    setPos (other->pos());
-    setVisibility (other->isVisible() );
-    setZValue(other->zValue());	
+    //setPos (other->pos());
+    //setZValue(other->zValue());	
 }
 
 void ImageObj::setPos(const QPointF &pos)
 {
+    qDebug() << "IO::setPos  this=" << this << "  pos=" << pos << "  type=" << imageType << " parent=" << parentItem();
+    if (!parentItem() ) // FIXME-0 testing
+    {
+        setVisibility(false);
+        return;
+    }
+
     switch (imageType)
     {
         case ImageObj::SVG:
@@ -129,8 +162,10 @@ void ImageObj::setZValue (qreal z)
 }
     
 
-void ImageObj::setVisibility (bool v)   // FIXME-0 add pixmap, svg
+void ImageObj::setVisibility (bool v)   
 {
+    qDebug() << "ImgObj::setVis type = " <<imageType << "   vis=" << v << "  this" << this << " pm=" <<pixmapItem << " svgItem=" << svgItem;
+    //setVisible(v);   // FIXME-00     This creates 2nd flag!
     switch (imageType)
     {
         case ImageObj::SVG:
@@ -203,15 +238,15 @@ QRectF ImageObj::boundingRect() const   // FIXME-0 not always correct for svg
 }
 
 void ImageObj::paint (QPainter *painter, const QStyleOptionGraphicsItem
-*sogi, QWidget *widget)     // FIXME-4 not used?!
+*sogi, QWidget *widget)     // FIXME-1 modPixmap not used?
 {
-    qDebug() << "IO::paint";
     switch (imageType)
     {
         case ImageObj::SVG:
             svgItem->paint(painter, sogi, widget);
             break;
         case ImageObj::Pixmap:
+            qDebug() << "IO::paint pm this=" << this  << "  pmitem=" << pixmapItem;
             pixmapItem->paint(painter, sogi, widget);
             break;
         default: 
@@ -221,6 +256,9 @@ void ImageObj::paint (QPainter *painter, const QStyleOptionGraphicsItem
 
 bool ImageObj::load (const QString &fn) 
 {
+    if (imageType != ImageObj::Undefined)
+        qWarning() << "ImageObj::load (" << fn << ") into existing image of type " << imageType;
+
     if (fn.toLower().endsWith(".svg"))
     {
         svgItem = new QGraphicsSvgItem(fn);
@@ -239,6 +277,7 @@ bool ImageObj::load (const QString &fn)
             pixmapItem->setPixmap (pm);
             pixmapItem->setParentItem(parentItem() );
 
+            qDebug() << "IO::load  fn=" << fn << "  pm=" << pixmapItem << "  this=" << this;  // FIXME-1 debug
             imageType = ImageObj::Pixmap;
 
             return true;
@@ -250,6 +289,9 @@ bool ImageObj::load (const QString &fn)
 
 bool ImageObj::load (const QPixmap &pm)
 {
+    if (imageType != ImageObj::Undefined)
+        qWarning() << "ImageObj::load (pm) into existing image of type " << imageType;
+
     prepareGeometryChange();
 
     imageType = ImageObj::Pixmap;
@@ -257,6 +299,7 @@ bool ImageObj::load (const QPixmap &pm)
     pixmapItem = new QGraphicsPixmapItem (this);    // FIXME-1 existing pmi? 
     pixmapItem->setPixmap(pm);
     pixmapItem->setParentItem(parentItem() );
+    qDebug() << "IO::load  pm this=" << this << "  pm =" << pixmapItem;  // FIXME-1 debug
     return true;
 }
 
@@ -324,3 +367,4 @@ QIcon ImageObj::getIcon()
 }
 
 // FIXME-1 is originalPixmap used after all?
+// FIXME-1 Solved: Activating 1 userflag creates 3 objects in scene: FlagObj, ImageObj, QGraphicsItem in ImgObj

@@ -3,6 +3,8 @@
 #include "flagrow.h"
 
 extern bool debug;
+extern QString tmpVymDir;
+
 
 /////////////////////////////////////////////////////////////////
 // FlagRow
@@ -11,21 +13,27 @@ FlagRow::FlagRow()
 {
     toolBar   = NULL;
     masterRow = NULL;
-//    qDebug()<< "Const FlagRow ()";
+    qDebug()<< "Const FlagRow ()";
 }
 
 FlagRow::~FlagRow()
 {
-    //qDebug()<< "Destr FlagRow";
+    qDebug()<< "Destr FlagRow    toolBar=" << toolBar  << "   masterRow=" << masterRow;
 }
 
-Flag* FlagRow::addFlag (Flag *flag) 
+Flag* FlagRow::createFlag(const QString &path)
 {
-    Flag *f = new Flag;
-;
-    f->copy (flag);
-    flags.append (f);
-    return f;
+    Flag *flag = new Flag;
+    flag->load(path);
+    flags.append (flag);
+    return flag;
+}
+
+void FlagRow::publishFlag(Flag *flag)
+{
+    QString path = tmpVymDir + "/" + flag->getUuid().toString() + "-" + flag->getName();
+    qDebug() << "FR::publishFlag  " << flag->getName() << " at " << path;
+
 }
 
 Flag* FlagRow::findFlag (const QString &name)  
@@ -239,12 +247,14 @@ QString FlagRow::saveDef()
 
 bool FlagRow::saveDataToDir (const QString &tmpdir, const QString &prefix)  // FIXME-1 only save flags, if used or default map
 {
-    bool r = true;
+    qDebug() << "FR::saveDataToDir " << tmpdir << " prefix=" << prefix;
+
+    bool r = true;  // FIXME-1  unused value in FR::saveDataToDir
     
     // Save icons to dir, if verbose is set (xml export)
     // and I am a master
     // and this standardflag is really used somewhere.
-    // Userflags are written anyway (if master flagrow)
+    // Userflags are written anyway (if master flagrow)         // FIXME really?
     
     for (int i = 0; i < flags.size(); ++i)
         if (!flags.at(i)->saveDataToDir (tmpdir, prefix))
@@ -280,6 +290,7 @@ QString FlagRow::getName () { return rowName; }
 
 void FlagRow::setToolBar (QToolBar *tb)
 {
+    qDebug() << "FR::setToolbar  tb=" << tb;
     toolBar = tb;
 }
 

@@ -26,7 +26,7 @@ public:
     ~Flag ();
     virtual void init ();
     virtual void copy (Flag*);
-    void load (const QString&);
+    bool load (const QString&);
     void load (const QPixmap&);
     void setName (const QString&);
     const QString getName ();
@@ -50,6 +50,7 @@ public:
     QString  saveDef();
     bool  saveDataToDir (const QString&, const QString&);
     QString  saveState();
+    bool vtest(bool v);
     
 protected:  
     QString name;

@@ -19,7 +19,8 @@ class FlagRow:public XMLObj {
 public:
     FlagRow ();
     ~FlagRow ();
-    Flag* addFlag (Flag *flag);
+    Flag* createFlag (const QString &path);
+    void publishFlag(Flag *flag);
     Flag *findFlag (const QString &name);
     Flag *findFlag (const QUuid &uid);
     const QStringList  activeFlagNames();

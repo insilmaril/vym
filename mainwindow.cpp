@@ -396,11 +396,15 @@ Main::~Main()
 	settings.setValue( "/system/version", vymVersion );
 	settings.setValue( "/system/builddate", vymBuildDate );
     }
-    //
+    
     // call the destructors
     delete noteEditorDW;
     delete historyWindow;
     delete branchPropertyEditor;
+
+    delete standardFlagsMaster;
+    delete userFlagsMaster;
+    delete systemFlagsMaster;
 
     // Remove temporary directory
     removeDir (QDir(tmpVymDir));
@@ -2415,6 +2419,7 @@ void Main::setupFlagActions()
             Qt::Key_2);
     flag->setGroup("standard-status");
 
+    /*  FIXME-0 testing
     flag = setupFlag ( ":/flag-wip.png", 
             Flag::StandardFlag,
             "wip",
@@ -2678,6 +2683,7 @@ void Main::setupFlagActions()
             Flag::FreemindFlag,
             "freemind-licq",
             tr("Sweet","Freemind flag"));
+    */
 }
 
 Flag* Main::setupFlag (const QString &path,
@@ -2687,26 +2693,48 @@ Flag* Main::setupFlag (const QString &path,
         const QUuid &uid,
         const QKeySequence &keyseq)
 {
-    Flag *flag = new Flag(path);
+    Flag *flag;
+
+    // Create flag in toolbar
+    switch (type)
+    {
+        case Flag::FreemindFlag:    // FIXME-00 check: does the flag show up in toolbar? no call to addFlag...
+            // Hide freemind flags per default
+            // Maybe introduce dedicate toolbar later,
+            // so for now switch to standard flag
+            //flag->setVisible(false);
+            //type = Flag::StandardFlag;
+            break;
+        case Flag::StandardFlag:
+            //standardFlagsToolbar->addAction (a);
+            //connect (a, SIGNAL( triggered() ), this, SLOT( flagChanged() ) );
+            flag = standardFlagsMaster->createFlag (path);
+            break;
+        case Flag::UserFlag:
+            //userFlagsToolbar->addAction (a);
+            //connect (a, SIGNAL( triggered() ), this, SLOT( flagChanged() ) );
+            flag = userFlagsMaster->createFlag (path);
+            
+            // User flags read from file already have a Uuid - use it
+            if (!uid.isNull()) flag->setUuid(uid);
+            break;
+        case Flag::SystemFlag:
+            flag = systemFlagsMaster->createFlag (path);
+            break;
+        default:
+            qWarning() << "Unknown flag type in MainWindow::setupFlag";
+    }
+
     flag->setName(name);
     flag->setToolTip (tooltip);
     flag->setType (type);
 
-    // User flags read from file already have a Uuid - use it
-    if (!uid.isNull()) flag->setUuid(uid);
-
-    QAction *a;
-
-    if (type == Flag::SystemFlag)
-    {
-        // SystemFlag
-        return systemFlagsMaster->addFlag (flag);
-    }
+    if (type == Flag::SystemFlag) return flag;
 
     // StandardFlag or user flag
 
-    //a = new QAction (flag->getPixmap(), flag->getUuid().toString(), this);
-    a = new QAction (flag->getImageObj()->getIcon(), flag->getUuid().toString(), this);     // FIXME-0 add imageObj instead of pixmap
+    QAction *a;
+    a = new QAction (flag->getImageObj()->getIcon(), flag->getUuid().toString(), this);
     flag->setAction (a);
     a->setCheckable( true );
     a->setObjectName( flag->getUuid().toString() );
@@ -2721,28 +2749,33 @@ Flag* Main::setupFlag (const QString &path,
         taskEditorActions.append( a );
     }
 
-    if (type == Flag::FreemindFlag)
+    switch (type) 
     {
-        // Hide freemind flags per default
-        // Maybe introduce dedicate toolbar later,
-        // so for now switch to standard flag
-        flag->setVisible(false);
-        type = Flag::StandardFlag;
+        case Flag::FreemindFlag:    // FIXME-0 check: does the flag show up in toolbar? no call to addFlag...
+            // Hide freemind flags per default
+            // Maybe introduce dedicate toolbar later,
+            // so for now switch to standard flag
+            flag->setVisible(false);
+            type = Flag::StandardFlag;
+            break;
+        case Flag::StandardFlag:
+            standardFlagsToolbar->addAction (a);
+            connect (a, SIGNAL( triggered() ), this, SLOT( flagChanged() ) );
+            //flag = standardFlagsMaster->addFlag (flag);
+            break;
+        case Flag::UserFlag:
+            userFlagsToolbar->addAction (a);
+            connect (a, SIGNAL( triggered() ), this, SLOT( flagChanged() ) );
+            //flag = userFlagsMaster->addFlag (flag);
+
+            userFlagsMaster->publishFlag(flag);    // FIXME-1 experimenting try to get rid of Flag::coyp...
+            break;
+        default:
+            qWarning() << "Unknown flag type in MainWindow::setupFlag";
     }
 
     a->setVisible (flag->isVisible());
 
-    if (type == Flag::StandardFlag)
-    {
-        standardFlagsToolbar->addAction (a);
-        connect (a, SIGNAL( triggered() ), this, SLOT( flagChanged() ) );
-        flag = standardFlagsMaster->addFlag (flag);
-    } else if (type == Flag::UserFlag)
-    {
-        userFlagsToolbar->addAction (a);
-        connect (a, SIGNAL( triggered() ), this, SLOT( flagChanged() ) );
-        flag = userFlagsMaster->addFlag (flag);
-    }
     return flag;
 }
 
@@ -4284,7 +4317,7 @@ bool Main::openURL(const QString &url)
     return true;
 }
 
-void Main::openTabs(QStringList urls)
+void Main::openTabs(QStringList urls)   // FIXME-2 remove dbus and rely on system to handle URLs
 {
     if (urls.isEmpty()) return;
     	
@@ -4315,7 +4348,7 @@ void Main::openTabs(QStringList urls)
                 "newTab" << 
                 u <<
                 "false";
-            if (!QProcess::startDetached ("qdbus",args))    // FIXME-1 use DBUS directly
+            if (!QProcess::startDetached ("qdbus",args))    // FIXME-3 use DBUS directly
             {
                 QMessageBox::warning(0, 
                     tr("Warning"),

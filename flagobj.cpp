@@ -7,13 +7,13 @@
 /////////////////////////////////////////////////////////////////
 FlagObj::FlagObj(QGraphicsItem *parent):MapObj(parent) 
 {
-    //qDebug() << "Const FlagObj  this=" << this;
+    qDebug() << "Const FlagObj  this=" << this;
     init ();
 }
 
 FlagObj::~FlagObj()
 {
-    //qDebug() << "Destr FlagObj  this=" << this << "  " << name;
+    qDebug() << "Destr FlagObj  this=" << this << "  " << name;
     if (imageObj) delete (imageObj);
 }
 
@@ -24,12 +24,13 @@ void FlagObj::init ()
 
     // FIXME-0 org:   imageObj = new ImageObj (parentItem());
     imageObj = new ImageObj (parentItem() );
-    imageObj->setPos (QPointF(absPos.x(), absPos.y()) );
+    imageObj->setPos (QPointF(absPos.x(), absPos.y()) );    // FIXME-1 needed?
     avis = true;
 }
 
 void FlagObj::copy (FlagObj* other)
 {
+    qDebug() << "FO::copy " << other->name;
     MapObj::copy(other);
     name  = other->name;
     uid   = other->uid;
@@ -41,7 +42,7 @@ void FlagObj::copy (FlagObj* other)
 void FlagObj::move(double x, double y)
 {
     MapObj::move(x,y);
-    imageObj->setPos(QPointF(x,y));
+    imageObj->setPos(QPointF(x,y)); // FIXME-1 needed?
     positionBBox();
 }
 
@@ -64,7 +65,7 @@ void FlagObj::setVisibility (bool v)
 	imageObj->setVisibility(false);
 }
 
-void FlagObj::load (const QString &fn)
+void FlagObj::load (const QString &fn)  // FIXME-1 still required after switch to ImageObj?
 {
     imageObj->load(fn);
     calcBBoxSize();
@@ -73,7 +74,12 @@ void FlagObj::load (const QString &fn)
 
 void FlagObj::load (ImageObj* io)
 {
+    prepareGeometryChange();
+
+    qDebug() << "FO::load  (IO)        io->scene=" << io->scene() << "this->scene="  << scene() << "imageObj=" << imageObj;
     imageObj->copy(io);   // Creates deep copy of pixmap or svg!
+    imageObj->setVisibility(visible); 
+    qDebug() << "FO::load  now:  imageObj->scene=" << imageObj->scene() << "this->scene="  << scene();
     calcBBoxSize();
     positionBBox();
 }
@@ -108,7 +114,7 @@ bool FlagObj::isAlwaysVisible()
     return avis;
 }
 
-void FlagObj::saveToDir (const QString &tmpdir, const QString &prefix)
+void FlagObj::saveToDir (const QString &tmpdir, const QString &prefix)  // FIXME-1 needed?  image is saved in Flag!
 {
     QString fn=tmpdir + prefix + name;
     imageObj->save (fn);

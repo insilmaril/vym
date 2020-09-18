@@ -68,6 +68,10 @@ Main *mainWindow;		// used in BranchObj::select()
 FindWidget *findWidget;
 FindResultWidget *findResultWidget;
 
+FlagRow *systemFlagsMaster; 
+FlagRow *standardFlagsMaster;	
+FlagRow *userFlagsMaster;	
+
 Macros macros;
 
 uint itemLastID=0;		// Unique ID for all items in all models
@@ -92,10 +96,6 @@ bool debug;                     // global debugging flag
 bool testmode;		        // Used to disable saving of autosave setting
 bool recoveryMode = false;      // Activated via command line switch and deactivated after initial loading of files
 QStringList ignoredLockedFiles;
-
-FlagRow *systemFlagsMaster; 
-FlagRow *standardFlagsMaster;	
-FlagRow *userFlagsMaster;	
 
 Switchboard switchboard;
 

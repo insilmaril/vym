@@ -7,25 +7,27 @@
 /////////////////////////////////////////////////////////////////
 Flag::Flag()
 {
-    //qDebug() << "Const Flag ()";
+    qDebug() << "Const Flag ()";
     init ();
 }
 
 Flag::Flag(const QString &fname)
 {
+    qDebug() << "Const Flag (fname)" << fname;
     init ();
-    load (fname);
+    if (!load (fname))
+        qWarning() << "Flag::Flag  Failed to load " << fname;
 }
 
 Flag::Flag (Flag* io)
 {
-    //qDebug() << "Const Flag (Flag);
+    qDebug() << "Const Flag (Flag)";
     copy (io);
 }
 
 Flag::~Flag()
 {
-   //qDebug() << "Destr Flag  this="<<this <<"  " << qPrintable(name);
+   qDebug() << "Destr Flag  this="<<this <<"  " << qPrintable(name) << "  image=" << image;
    if (image) delete image;
 }
 
@@ -47,8 +49,9 @@ void Flag::init ()
 
 }
 
-void Flag::copy (Flag* other)
+void Flag::copy (Flag* other)   //FIXME-0 how to create deep copy of esp. SVG item???
 {
+    qDebug() << "Flag::copy   other=" << other->name; // FIXME-1 
     action  = other->action;
     name    = other->name;
     group   = other->group;
@@ -61,19 +64,25 @@ void Flag::copy (Flag* other)
     uuid    = other->uuid;  
 }
 
-
-void Flag::load (const QString &fn) // FIXME-0   svg??
+#include <QRandomGenerator>         // FIXME-1 testing only
+bool Flag::load (const QString &fn) // FIXME-0   svg??
 {
-    qDebug() << "Flag::load fn=" << fn;
+    QPointF pos =QPointF( 
+            QRandomGenerator::global()->generateDouble() * 200,
+            QRandomGenerator::global()->generateDouble() * 200);
+    qDebug() << "Flag::load fn=" << fn << "  pos=" << pos << " image= " << image;
     if (!image) image = new ImageObj();
 
-    if (!image->load(fn))
-	qDebug() << "Flag::load (" << fn << ") failed.";
-    else
-        path = fn;
+    if (!image->load(fn)) return false;
+
+    path = fn;
+    image->setVisible (false);   // FIXME-00  usually false, testing
+    image->setPos(pos);
+
+    return true;
 }
 
-void Flag::load (const QPixmap &pm) // FIXME-0 needed?
+void Flag::load (const QPixmap &pm) // FIXME-0 still needed?
 {
     qDebug() << "Flag::load pm";
     if (!image) image = new ImageObj();
@@ -141,7 +150,7 @@ ImageObj* Flag::getImageObj()
 
 void Flag::setAction (QAction *a)
 {
-    action=a;
+    action = a;
 }
 
 QAction* Flag::getAction ()
@@ -189,7 +198,7 @@ QString Flag::saveDef()
         return QString();
 }
 
-bool Flag::saveDataToDir (const QString &tmpdir, const QString &prefix) // FIXME-0 save to "flags/standard/" or "flags/user/"
+bool Flag::saveDataToDir (const QString &tmpdir, const QString &prefix) // FIXME-1 save to "flags/standard/" or "flags/user/"
 {
     if (image)
     {
@@ -207,4 +216,9 @@ QString Flag::saveState()
         return valueElement ("standardflag", name);
 }
 
+bool Flag::vtest(bool v)  // FIXME-1 testing
+{
+    qDebug() << "Flag::vtest  v=" << v;
+    return v;
+}
 
