@@ -31,6 +31,7 @@ public:
     qreal getScaleFactor();
     virtual QRectF boundingRect() const;
     virtual void paint(QPainter*, const QStyleOptionGraphicsItem*, QWidget*);
+    bool publish (const QString &path);
     bool load (const QString &);
     bool load (const QPixmap &);
     bool save (const QString &);
@@ -42,6 +43,8 @@ protected:
      ImageObj::ImageType imageType;
 
      QGraphicsSvgItem *svgItem;          
+     QString svgPath;
+
      QGraphicsPixmapItem *pixmapItem;   
      QPixmap *originalPixmap;   
 

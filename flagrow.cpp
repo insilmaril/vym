@@ -31,9 +31,11 @@ Flag* FlagRow::createFlag(const QString &path)
 
 void FlagRow::publishFlag(Flag *flag)
 {
-    QString path = tmpVymDir + "/" + flag->getUuid().toString() + "-" + flag->getName();
+    QString path = tmpVymDir;
     qDebug() << "FR::publishFlag  " << flag->getName() << " at " << path;
-
+    ImageObj *image = flag->getImageObj();
+    if( !image->publish(path + "/" + flag->getUuid().toString() + "-" + flag->getName() + image->getExtension())) // FIXME-1 check, if separator converted automagically on windows);
+        qDebug() << "FR::publishFlag failed for " << flag->getName();
 }
 
 Flag* FlagRow::findFlag (const QString &name)  

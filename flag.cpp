@@ -198,14 +198,15 @@ QString Flag::saveDef()
         return QString();
 }
 
-bool Flag::saveDataToDir (const QString &tmpdir, const QString &prefix) // FIXME-1 save to "flags/standard/" or "flags/user/"
+bool Flag::saveDataToDir (const QString &tmpdir, const QString &prefix) // FIXME-1 save to "flags/standard/" or "flags/user/"? using prefix?
 {
+    qDebug() << "Flag::saveDataToDir  " << name << " to " << tmpdir << "  image=" << image;
     if (image)
     {
-        QString fn = tmpdir + prefix + name + ".png";
-        return image->save (fn);
+        path = tmpdir + "/" + prefix + uuid.toString() + "-" + name + image->getExtension();    // FIXME-1 check, if separator converted automagically on windows
+        return image->save (path);
     }
-    return true;    // Nothing to save here
+    return true;    // Nothing to save here FIXME-1  really return true?
 }
 
 QString Flag::saveState()

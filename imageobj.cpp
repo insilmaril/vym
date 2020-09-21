@@ -83,10 +83,14 @@ void ImageObj::copy(ImageObj* other)
     {
         case ImageObj::SVG:
             qDebug() << "ImgObj::copy other is svg...";    // FIXME-0 check: no deep copy?
-            svgItem = new QGraphicsSvgItem(other->svgItem);
-            svgItem->setParentItem (parentItem());
-            svgItem->setVisible( isVisible());
-            imageType = ImageObj::SVG;
+            if (!other->svgPath.isEmpty())
+            {
+                qWarning() << "ImgObj::copy svg: path is " << other->svgPath;
+                load(other->svgPath);
+                svgItem->setVisible( isVisible());
+                imageType = ImageObj::SVG;
+            } else 
+                qWarning() << "ImgObj::copy svg: no svgPath available.";
             break;
         case ImageObj::Pixmap:
             qDebug() << "ImgObj::copy other is pm...";    // FIXME-1 check
@@ -254,8 +258,16 @@ void ImageObj::paint (QPainter *painter, const QStyleOptionGraphicsItem
     }
 }
 
+bool ImageObj::publish(const QString &fn)
+{
+    qDebug() << "IO::publish " << fn;
+    save(fn);
+    svgPath = fn;
+}
+
 bool ImageObj::load (const QString &fn) 
 {
+    qDebug() << "IO::load "  << fn;
     if (imageType != ImageObj::Undefined)
         qWarning() << "ImageObj::load (" << fn << ") into existing image of type " << imageType;
 
@@ -305,6 +317,7 @@ bool ImageObj::load (const QPixmap &pm)
 
 bool ImageObj::save(const QString &fn) 
 {
+    qDebug() << "ImgObj::save "  << fn;     // FIXME-1
     switch (imageType)
     {
         case ImageObj::SVG:
