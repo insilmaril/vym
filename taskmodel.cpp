@@ -431,6 +431,8 @@ QMimeData *TaskModel::mimeData(const QModelIndexList &indexes) const
 bool TaskModel::dropMimeData(const QMimeData *data,
  Qt::DropAction action, int row, int column, const QModelIndex &parent)
  {
+     Q_UNUSED(row);
+
      if (action == Qt::IgnoreAction)
          return true;
 
@@ -462,5 +464,6 @@ bool TaskModel::dropMimeData(const QMimeData *data,
     src->setPriorityDelta( src->getPriorityDelta() - delta_p + 1 );
     BranchItem *bi = src->getBranch();
     bi->getModel()->emitDataChanged(bi);
+    return true;
  }
 
