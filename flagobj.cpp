@@ -20,8 +20,6 @@ FlagObj::~FlagObj()
 
 void FlagObj::init ()
 {
-    name = "undefined";
-
     // FIXME-0 org:   imageObj = new ImageObj (parentItem());
     imageObj = new ImageObj (parentItem() );
     //imageObj->setPos (QPointF(absPos.x(), absPos.y()) );    // FIXME-1 needed?
@@ -31,7 +29,6 @@ void FlagObj::init ()
 void FlagObj::copy (FlagObj* other)
 {
     MapObj::copy(other);
-    name  = other->name;
     uid   = other->uid;
     avis  = other->avis;
     imageObj->copy(other->imageObj);
@@ -83,16 +80,6 @@ void FlagObj::load (ImageObj* io)
     positionBBox();
 }
 
-void FlagObj::setName(const QString &n)
-{
-    name = n;
-}
-
-const QString FlagObj::getName()    // FIXME-0 should become obsolete, only uuid
-{
-    return name;
-}
-
 void FlagObj::setUuid(const QUuid &id)
 {
     uid = id;
@@ -111,12 +98,6 @@ void FlagObj::setAlwaysVisible(bool b)
 bool FlagObj::isAlwaysVisible()
 {
     return avis;
-}
-
-void FlagObj::saveToDir (const QString &tmpdir, const QString &prefix)  // FIXME-1 needed?  image is saved in Flag!
-{
-    QString fn=tmpdir + prefix + name;
-    imageObj->save (fn);
 }
 
 void FlagObj::positionBBox()

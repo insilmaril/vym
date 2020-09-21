@@ -98,7 +98,7 @@ void Flag::setName(const QString &n)
     if (name.contains("/") )
         name = basename(name);
 
-    name.replace(" ", "_");
+    name = name.section('.', 0, 0);
 }
 
 const QString Flag::getName()

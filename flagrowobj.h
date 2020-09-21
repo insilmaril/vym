@@ -23,7 +23,6 @@ public:
     virtual void setZValue (double z);
     virtual void setVisibility(bool);
     void updateActiveFlagObjs (const QList <QUuid>, FlagRow *masterRowMain,  FlagRow *masterRowOptional = NULL);
-    virtual QStringList activeFlagNames();
     virtual void positionBBox();
     virtual void calcBBoxSize();
     bool isFlagActive(const QUuid&);

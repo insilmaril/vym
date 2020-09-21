@@ -32,6 +32,7 @@ public:
     virtual QRectF boundingRect() const;
     virtual void paint(QPainter*, const QStyleOptionGraphicsItem*, QWidget*);
     bool shareCashed (const QString &path);
+    QString getCashPath();
     bool load (const QString &);
     bool load (const QPixmap &);
     bool save (const QString &);

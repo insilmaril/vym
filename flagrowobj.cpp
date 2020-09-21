@@ -101,14 +101,6 @@ void FlagRowObj::updateActiveFlagObjs (const QList <QUuid> activeFlagUids, FlagR
     }
 }
 
-QStringList FlagRowObj::activeFlagNames()
-{
-    QStringList list;
-    for (int i = 0; i < flagobjs.size(); ++i)
-	list.append (flagobjs.at(i)->getName());
-    return list;
-}
-
 void FlagRowObj::positionBBox()
 {
     bbox.moveTopLeft(absPos );
@@ -148,7 +140,6 @@ void FlagRowObj::activateFlag (Flag *flag)
     {
 	FlagObj *fo = new FlagObj (this);
 	fo->load (flag->getImageObj() );  // FIXME-0  svg???
-	fo->setName (flag->getName() );
         fo->setUuid (flag->getUuid() );
         fo->setZValue(QGraphicsItem::zValue());
         fo->move (absPos.x() + bbox.width(), absPos.y() );
@@ -158,10 +149,12 @@ void FlagRowObj::activateFlag (Flag *flag)
     }
 }
 
-FlagObj* FlagRowObj::findFlagObj(const QString &name)
+FlagObj* FlagRowObj::findFlagObj(const QString &name)   // FIXME-1 
 {
+    /*
     for (int i = 0; i < flagobjs.size(); ++i)
 	if (flagobjs.at(i)->getName() == name) return flagobjs.at(i);
+        */
     return NULL;
 }
 
@@ -172,11 +165,13 @@ FlagObj* FlagRowObj::findFlagObj(const QUuid &uid)
     return NULL;
 }
 
-QString FlagRowObj::findFlagNameByPos (const QPointF &p)
+QString FlagRowObj::findFlagNameByPos (const QPointF &p)    // FIXME-0 switch to uuid
 {
+    /*
     if (!isInBox (p, clickPoly.boundingRect() )) return "";
     for (int i = 0; i < flagobjs.size(); ++i)
 	if (isInBox (p, flagobjs.at(i)->getClickPoly().boundingRect() )) return flagobjs.at(i)->getName();
+        */
     return "";	
 }
 

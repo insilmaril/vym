@@ -127,7 +127,6 @@ QString ImageItem::saveToDir (const QString &tmpdir,const QString &prefix)
     // Create unique string for filename based on memory address
     ulong n = reinterpret_cast <ulong> (this);
 
-
     FloatImageObj *fio = (FloatImageObj*)mo;
     
     url = "images/" + prefix + "image-" + QString().number(n, 10) + fio->getExtension();

@@ -2714,6 +2714,8 @@ Flag* Main::setupFlag (const QString &path,
             //userFlagsToolbar->addAction (a);
             //connect (a, SIGNAL( triggered() ), this, SLOT( flagChanged() ) );
             flag = userFlagsMaster->createFlag (path);
+
+            userFlagsMaster->shareCashed(flag);    // FIXME-1 experimenting try to get rid of Flag::coyp...
             
             // User flags read from file already have a Uuid - use it
             if (!uid.isNull()) flag->setUuid(uid);
@@ -2737,7 +2739,17 @@ Flag* Main::setupFlag (const QString &path,
     // StandardFlag or user flag
 
     QAction *a;
-    a = new QAction (flag->getImageObj()->getIcon(), flag->getUuid().toString(), this);
+
+    // Set icon for action
+    ImageObj *image = flag->getImageObj();
+    if (image->getType() == ImageObj::SVG)
+    {
+        qDebug() << "Setting up svg: " << image->getCashPath() << flag->getName();
+        a = new QAction (QPixmap(image->getCashPath()), flag->getUuid().toString(), this);
+    }
+    else
+        a = new QAction (image->getIcon(), flag->getUuid().toString(), this);
+
     flag->setAction (a);
     a->setCheckable( true );
     a->setObjectName( flag->getUuid().toString() );
@@ -2774,8 +2786,6 @@ Flag* Main::setupFlag (const QString &path,
             userFlagsToolbar->addAction (a);
             connect (a, SIGNAL( triggered() ), this, SLOT( flagChanged() ) );
             //flag = userFlagsMaster->addFlag (flag);
-
-            userFlagsMaster->shareCashed(flag);    // FIXME-1 experimenting try to get rid of Flag::coyp...
             break;
         default:
             qWarning() << "Unknown flag type in MainWindow::setupFlag";

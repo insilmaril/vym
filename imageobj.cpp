@@ -260,6 +260,11 @@ bool ImageObj::shareCashed(const QString &fn)
     svgPath = fn;
 }
 
+QString ImageObj::getCashPath()
+{
+    return svgPath;
+}
+
 bool ImageObj::load (const QString &fn) 
 {
     qDebug() << "IO::load "  << fn;

@@ -29,18 +29,14 @@ public:
     virtual void setVisibility(bool);
     void load (const QString&);
     void load (ImageObj* io);
-    void setName (const QString&);
-    const QString getName ();   // FIXME-0 should become obsolete, only uuid
     void setUuid(const QUuid &uid);
     const QUuid getUuid();
     QPixmap getPixmap();
     void setAction(QAction*);
     void setAlwaysVisible (bool b);
     bool isAlwaysVisible ();
-    void saveToDir (const QString&, const QString&);
     
 protected:  
-    QString name;
     QUuid uid;
     bool avis;
     virtual void positionBBox();

@@ -298,10 +298,12 @@ QString OrnamentedObj::findSystemFlagNameByPos(const QPointF &p)
 
 QRectF OrnamentedObj::getBBoxFlag (const QString &s)    // FIXME-1 Better use UUid instead of name 
 {
+    /*
     FlagObj *fo = systemFlagRowObj->findFlagObj (s);
     if (fo) return fo->getBBox();
     fo = standardFlagRowObj->findFlagObj (s);
     if (fo) return fo->getBBox();
+    */
     return QRectF();
 }
 
