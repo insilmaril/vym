@@ -13,12 +13,12 @@ FlagRow::FlagRow()
 {
     toolBar   = NULL;
     masterRow = NULL;
-    qDebug()<< "Const FlagRow ()";
+    //qDebug()<< "Const FlagRow ()";
 }
 
 FlagRow::~FlagRow()
 {
-    qDebug()<< "Destr FlagRow    toolBar=" << toolBar  << "   masterRow=" << masterRow;
+    //qDebug()<< "Destr FlagRow    toolBar=" << toolBar  << "   masterRow=" << masterRow;
 }
 
 Flag* FlagRow::createFlag(const QString &path)
@@ -29,13 +29,13 @@ Flag* FlagRow::createFlag(const QString &path)
     return flag;
 }
 
-void FlagRow::publishFlag(Flag *flag)
+void FlagRow::shareCashed(Flag *flag)
 {
     QString path = tmpVymDir;
-    qDebug() << "FR::publishFlag  " << flag->getName() << " at " << path;
+    qDebug() << "FR:shareCached " << flag->getName() << " at " << path;
     ImageObj *image = flag->getImageObj();
-    if( !image->publish(path + "/" + flag->getUuid().toString() + "-" + flag->getName() + image->getExtension())) // FIXME-1 check, if separator converted automagically on windows);
-        qDebug() << "FR::publishFlag failed for " << flag->getName();
+    if( !image->shareCashed(path + "/" + flag->getUuid().toString() + "-" + flag->getName() + image->getExtension())) // FIXME-1 check, if separator converted automagically on windows);
+        qDebug() << "FR::shareCashed failed for " << flag->getName();
 }
 
 Flag* FlagRow::findFlag (const QString &name)  
@@ -235,21 +235,21 @@ void FlagRow::resetUsedCounter()
 	flags.at(i)->setUsed (false);
 }
 
-QString FlagRow::saveDef()
+QString FlagRow::saveDef(const QString &dirPath)
 {
     // For the masterrow of userflags: Write definitions of flags
 
     QString s = "\n";
 
     for (int i = 0; i < flags.size(); ++i)
-        s += flags.at(i)->saveDef();
+        s += flags.at(i)->saveDef(dirPath);
 
     return s;
 }
 
-bool FlagRow::saveDataToDir (const QString &tmpdir, const QString &prefix)  // FIXME-1 only save flags, if used or default map
+bool FlagRow::saveDataToDir (const QString &tmpdir)  // FIXME-1 only save flags, if used or default map
 {
-    qDebug() << "FR::saveDataToDir " << tmpdir << " prefix=" << prefix;
+    qDebug() << "FR::saveDataToDir " << tmpdir;
 
     bool r = true;  // FIXME-1  unused value in FR::saveDataToDir
     
@@ -259,7 +259,7 @@ bool FlagRow::saveDataToDir (const QString &tmpdir, const QString &prefix)  // F
     // Userflags are written anyway (if master flagrow)         // FIXME really?
     
     for (int i = 0; i < flags.size(); ++i)
-        if (!flags.at(i)->saveDataToDir (tmpdir, prefix))
+        if (!flags.at(i)->saveDataToDir (tmpdir))
             r = false;
 
     return r;	    

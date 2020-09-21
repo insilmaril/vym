@@ -323,8 +323,15 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix, bool w
     // Find the used flags while traversing the tree	
     standardFlagsMaster->resetUsedCounter();
     
-    // Definitions of user flags need to be written before the trees
-    s += userFlagsMaster->saveDef();
+    // Write images and definitions of of used user flags 
+    if (writeflags) 
+    {
+        // Definitions 
+        s += userFlagsMaster->saveDef(tmpdir + "/flags/");
+    
+        standardFlagsMaster->saveDataToDir (tmpdir + "/flags/");
+        userFlagsMaster->saveDataToDir (tmpdir + "/flags/");    
+    }
 
     // Temporary list of links
     QList <Link*> tmpLinks;
@@ -373,9 +380,6 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix, bool w
 
     xml.decIndent();
     s += xml.endElement("vymmap");
-
-    // Write images of used standard flags for use in exports
-    if (writeflags) standardFlagsMaster->saveDataToDir (tmpdir + "/flags/", "");    // FIXME-1 check for errors during write
 
     return s;
 }
@@ -666,7 +670,7 @@ File::ErrorCode VymModel::loadMap (
     removeDir (QDir(tmpZipDir));
 
     // Restore original zip state
-    zipped = zipped_org;
+    // FIXME-1 testing zipped = zipped_org;
 
     updateActions();
     
@@ -690,14 +694,14 @@ File::ErrorCode VymModel::save (const SaveMode &savemode)
     QString mapFileName;
     QString safeFilePath;
 
-    File::ErrorCode err=File::Success;
+    File::ErrorCode err = File::Success;
 
     if (zipped)
 	// save as .xml
-	mapFileName=mapName+".xml";
+	mapFileName = mapName + ".xml";
     else
 	// use name given by user, even if he chooses .doc
-	mapFileName=fileName;
+	mapFileName = fileName;
 
     // Look, if we should zip the data:
     if (!zipped)
@@ -712,7 +716,7 @@ File::ErrorCode VymModel::save (const SaveMode &savemode)
 	    QMessageBox::No ,
 	    QMessageBox::Cancel | QMessageBox::Escape);
 	mb.setButtonText( QMessageBox::Yes, tr("compressed (vym default)") );
-	mb.setButtonText( QMessageBox::No, tr("uncompressed") );
+	mb.setButtonText( QMessageBox::No, tr("uncompressed, potentially overwrite existing data") );
 	mb.setButtonText( QMessageBox::Cancel, tr("Cancel"));
 	switch( mb.exec() ) 
 	{
@@ -2680,7 +2684,7 @@ void VymModel::copy()
         foreach (TreeItem *ti, itemList)
         {
             fn = QString("%1/%2-%3.xml").arg(clipboardDir).arg(clipboardFile).arg(i);
-            QString content = saveToDir (clipboardDir, clipboardFile, true, QPointF(), ti);
+            QString content = saveToDir (clipboardDir, clipboardFile, false, QPointF(), ti);
             if (!saveStringToDisk(fn, content))
                 qWarning () << "ME::saveStringToDisk failed: " << fn;
             else
@@ -5518,6 +5522,8 @@ QColor VymModel::getSelectionColor()
 
 bool VymModel::initIterator(const QString &iname, bool deepLevelsFirst )
 {
+    Q_UNUSED (deepLevelsFirst);
+
     // Remove existing iterators first
     selIterCur.remove (iname);
     selIterPrev.remove (iname);

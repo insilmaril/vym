@@ -726,7 +726,7 @@ bool parseVYMHandler::readNoteAttr (const QXmlAttributes& a)
 
 bool parseVYMHandler::readImageAttr (const QXmlAttributes& a)
 {
-    lastMI=lastImage;
+    lastMI = lastImage;
     
     if (!readOOAttr(a)) return false;  
 
@@ -736,25 +736,25 @@ bool parseVYMHandler::readImageAttr (const QXmlAttributes& a)
         if (!lastImage->load (parseHREF(a.value ("href") ) ))
         {
             QMessageBox::warning( 0, "Warning: " ,
-                "Couldn't load image\n"+parseHREF(a.value ("href") ));
-            lastImage=NULL;
+                "Couldn't load image\n" + parseHREF(a.value ("href") ));
+            lastImage = NULL;
             return true;
         }
         
     }        
     if (!a.value( "zPlane").isEmpty() ) 
         lastImage->setZValue (a.value("zPlane").toInt ());
-    float x,y;
-    bool okx,oky;
+    float x, y;
+    bool okx, oky;
     if (!a.value( "relPosX").isEmpty() ) 
     {
         if (!a.value( "relPosY").isEmpty() ) 
         {
             // read relPos
-            x=a.value("relPosX").toFloat (&okx);
-            y=a.value("relPosY").toFloat (&oky);
+            x = a.value("relPosX").toFloat (&okx);
+            y = a.value("relPosY").toFloat (&oky);
             if (okx && oky) 
-                lastImage->setRelPos (QPointF (x,y) );
+                lastImage->setRelPos (QPointF (x, y) );
             else
                 // Couldn't read relPos
                 return false;  
@@ -1006,14 +1006,28 @@ bool parseVYMHandler::readUserFlagDefAttr (const QXmlAttributes& a)
 
     if (!a.value( "name").isEmpty() ) 
         name = a.value("name");
-    if (!a.value( "path").isEmpty() ) 
+    if (!a.value( "path").isEmpty() )   // FIXME-0 obsolete
+    {
         path = a.value("path");
+        qDebug() << "flag.path detected for "  << name <<" " << path;
+    }
     if (!a.value( "tooltip").isEmpty() ) 
         tooltip = a.value("tooltip");
     if (!a.value( "uuid").isEmpty() ) 
         uid = QUuid(a.value("uuid"));
 
-    Flag* flag = mainWindow->setupFlag ( path, Flag::UserFlag, name, tooltip, uid); 
+    Flag *flag;
+
+    if (!a.value( "href").isEmpty() ) 
+    {
+        // Setup flag with image
+
+        flag = mainWindow->setupFlag ( parseHREF(a.value("href")), Flag::UserFlag, name, tooltip, uid); 
+    } else
+    {
+        qWarning() << "readUserFlagDefAttr:  Couldn't read href of flag " << a.value("name");
+        return false;
+    }
 
     if (!a.value( "group").isEmpty() ) 
         flag->setGroup( a.value("group"));

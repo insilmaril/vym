@@ -1,5 +1,7 @@
 #include "flag.h"
 
+#include "file.h"
+
 #include <QDebug>
 
 /////////////////////////////////////////////////////////////////
@@ -7,13 +9,13 @@
 /////////////////////////////////////////////////////////////////
 Flag::Flag()
 {
-    qDebug() << "Const Flag ()";
+    //qDebug() << "Const Flag ()";
     init ();
 }
 
 Flag::Flag(const QString &fname)
 {
-    qDebug() << "Const Flag (fname)" << fname;
+    //qDebug() << "Const Flag (fname)" << fname;
     init ();
     if (!load (fname))
         qWarning() << "Flag::Flag  Failed to load " << fname;
@@ -27,7 +29,7 @@ Flag::Flag (Flag* io)
 
 Flag::~Flag()
 {
-   qDebug() << "Destr Flag  this="<<this <<"  " << qPrintable(name) << "  image=" << image;
+   //qDebug() << "Destr Flag  this="<<this <<"  " << qPrintable(name) << "  image=" << image;
    if (image) delete image;
 }
 
@@ -45,7 +47,7 @@ void Flag::init ()
     used    = false;
     type    = UndefinedFlag;
 
-    uuid = QUuid::createUuid();
+    uuid = QUuid::createUuid(); // FIXME-1 used? and: is path used?
 
 }
 
@@ -93,6 +95,10 @@ void Flag::load (const QPixmap &pm) // FIXME-0 still needed?
 void Flag::setName(const QString &n)
 {
     name = n;
+    if (name.contains("/") )
+        name = basename(name);
+
+    name.replace(" ", "_");
 }
 
 const QString Flag::getName()
@@ -185,25 +191,30 @@ void Flag::setUuid(const QUuid &id)
 
 QUuid Flag::getUuid() { return uuid; }
 
-QString Flag::saveDef()
+QString Flag::saveDef(const QString &dirPath) 
 {
     if (type == Flag::UserFlag) 
     {
+        // Create unique string for filename based on memory address
+        ulong n = reinterpret_cast <ulong> (this);
+
+        QString url = "flags/" + uuid.toString() + "-" + name + image->getExtension();
         QStringList attributes;
         attributes << attribut("name", name);
-        attributes << attribut("path", path);
+        //attributes << attribut("path", dirPath + uuid.toString() + "-" + name + image->getExtension() );    // FIXME-0 needed?
+	attributes << attribut ("href", QString ("file:%1").arg(url));
         attributes << attribut("uuid", uuid.toString());
         return singleElement("userflagdef", attributes);
     } else
         return QString();
 }
 
-bool Flag::saveDataToDir (const QString &tmpdir, const QString &prefix) // FIXME-1 save to "flags/standard/" or "flags/user/"? using prefix?
+bool Flag::saveDataToDir (const QString &dirPath) // FIXME-1 save to "flags/standard/" or "flags/user/"? using prefix?
 {
-    qDebug() << "Flag::saveDataToDir  " << name << " to " << tmpdir << "  image=" << image;
+    qDebug() << "Flag::saveDataToDir  " << name << " to " << dirPath << "  image=" << image;
     if (image)
     {
-        path = tmpdir + "/" + prefix + uuid.toString() + "-" + name + image->getExtension();    // FIXME-1 check, if separator converted automagically on windows
+        path = dirPath + "/" + uuid.toString() + "-" + name + image->getExtension();    // FIXME-1 check, if separator converted automagically on windows
         return image->save (path);
     }
     return true;    // Nothing to save here FIXME-1  really return true?

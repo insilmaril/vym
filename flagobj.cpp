@@ -7,13 +7,13 @@
 /////////////////////////////////////////////////////////////////
 FlagObj::FlagObj(QGraphicsItem *parent):MapObj(parent) 
 {
-    qDebug() << "Const FlagObj  this=" << this;
+    //qDebug() << "Const FlagObj  this=" << this;
     init ();
 }
 
 FlagObj::~FlagObj()
 {
-    qDebug() << "Destr FlagObj  this=" << this << "  " << name;
+    //qDebug() << "Destr FlagObj  this=" << this << "  " << name;
     if (imageObj) delete (imageObj);
 }
 
@@ -24,13 +24,12 @@ void FlagObj::init ()
 
     // FIXME-0 org:   imageObj = new ImageObj (parentItem());
     imageObj = new ImageObj (parentItem() );
-    imageObj->setPos (QPointF(absPos.x(), absPos.y()) );    // FIXME-1 needed?
+    //imageObj->setPos (QPointF(absPos.x(), absPos.y()) );    // FIXME-1 needed?
     avis = true;
 }
 
 void FlagObj::copy (FlagObj* other)
 {
-    qDebug() << "FO::copy " << other->name;
     MapObj::copy(other);
     name  = other->name;
     uid   = other->uid;
@@ -76,10 +75,10 @@ void FlagObj::load (ImageObj* io)
 {
     prepareGeometryChange();
 
-    qDebug() << "FO::load  (IO)        io->scene=" << io->scene() << "this->scene="  << scene() << "imageObj=" << imageObj;
+    qDebug() << "FO::load  (IO)        io->scene=" << io->scene() << "this->scene="  << scene() << "imageObj=" << imageObj; // FIXME-1 testing
+    
     imageObj->copy(io);   // Creates deep copy of pixmap or svg!
     imageObj->setVisibility(visible); 
-    qDebug() << "FO::load  now:  imageObj->scene=" << imageObj->scene() << "this->scene="  << scene();
     calcBBoxSize();
     positionBBox();
 }
@@ -89,7 +88,7 @@ void FlagObj::setName(const QString &n)
     name = n;
 }
 
-const QString FlagObj::getName()
+const QString FlagObj::getName()    // FIXME-0 should become obsolete, only uuid
 {
     return name;
 }

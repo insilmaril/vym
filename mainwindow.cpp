@@ -2693,7 +2693,7 @@ Flag* Main::setupFlag (const QString &path,
         const QUuid &uid,
         const QKeySequence &keyseq)
 {
-    Flag *flag;
+    Flag *flag = NULL;
 
     // Create flag in toolbar
     switch (type)
@@ -2723,7 +2723,10 @@ Flag* Main::setupFlag (const QString &path,
             break;
         default:
             qWarning() << "Unknown flag type in MainWindow::setupFlag";
+            break;
     }
+
+    if (!flag) return flag;
 
     flag->setName(name);
     flag->setToolTip (tooltip);
@@ -2738,7 +2741,11 @@ Flag* Main::setupFlag (const QString &path,
     flag->setAction (a);
     a->setCheckable( true );
     a->setObjectName( flag->getUuid().toString() );
-    a->setToolTip( tooltip );
+    if (tooltip.isEmpty())
+        a->setToolTip( flag->getName());    // Stripped name
+    else
+        a->setToolTip( tooltip );
+
     if (keyseq != 0)
     {
         a->setShortcut (keyseq);
@@ -2768,7 +2775,7 @@ Flag* Main::setupFlag (const QString &path,
             connect (a, SIGNAL( triggered() ), this, SLOT( flagChanged() ) );
             //flag = userFlagsMaster->addFlag (flag);
 
-            userFlagsMaster->publishFlag(flag);    // FIXME-1 experimenting try to get rid of Flag::coyp...
+            userFlagsMaster->shareCashed(flag);    // FIXME-1 experimenting try to get rid of Flag::coyp...
             break;
         default:
             qWarning() << "Unknown flag type in MainWindow::setupFlag";
@@ -6319,6 +6326,48 @@ void Main::flagChanged()
 void Main::testFunction1()
 {
     VymModel  *m  = currentModel();
+
+    if(m)
+    {
+        QFileDialog fd;
+        //fd.setDirectory (vymBaseDir.path() + "/demos");
+        QStringList filters;
+        /* FIXME-1 remove
+        filters << tr("Images"); 
+        filters << "*.png";
+        filters << "*.bmp";
+        filters << "*.xbm";
+        filters << "*.jpg";
+        filters << "*.png";
+        filters << "*.xpm";
+        filters << "*.gif";
+        filters << "*.pnm";
+        filters << "*.svg";
+        */
+        filters << tr("Images") + " (*.png *.bmp *.xbm *.jpg *.png *.xpm *.gif *.pnm *.svg)"; 
+        filters << tr("All", "Filedialog") + " (*.*)";
+        fd.setFileMode (QFileDialog::ExistingFiles);
+        fd.setNameFilters (filters);
+        fd.setWindowTitle (vymName+ " - " +"Load user flag");
+        fd.setAcceptMode (QFileDialog::AcceptOpen);
+
+        QString fn;
+        if ( fd.exec() == QDialog::Accepted )
+        {
+            lastMapDir=fd.directory().path();
+            QStringList flist = fd.selectedFiles();
+            QStringList::Iterator it = flist.begin();
+            initProgressCounter( flist.count());
+            while( it != flist.end() )
+            {
+                fn = *it;
+                setupFlag (*it, Flag::UserFlag, *it, "");
+                ++it;
+            }
+        }
+    }
+
+    /*
     if (m)
     {
         UserDialog dia;
@@ -6329,6 +6378,7 @@ void Main::testFunction1()
             m->setURL( QString("<ac:link> <ri:user ri:userkey=\"%1\"/></ac:link>").arg(dia.selectedUserKey() ));
         }
     }
+    */
 }
 
 void Main::testFunction2()

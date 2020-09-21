@@ -20,7 +20,7 @@ public:
     FlagRow ();
     ~FlagRow ();
     Flag* createFlag (const QString &path);
-    void publishFlag(Flag *flag);
+    void shareCashed(Flag *flag);
     Flag *findFlag (const QString &name);
     Flag *findFlag (const QUuid &uid);
     const QStringList  activeFlagNames();
@@ -42,8 +42,8 @@ public:
     void deactivateAll();
     void setEnabled (bool);
     void resetUsedCounter();
-    QString saveDef();
-    bool saveDataToDir (const QString &,const QString &);
+    QString saveDef(const QString &dirPath);
+    bool saveDataToDir (const QString &);
     QString saveState();
     void setName (const QString&);	    // prefix for exporting flags to dir
     QString getName();                      // Used for debugging only

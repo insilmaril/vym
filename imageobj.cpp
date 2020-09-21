@@ -11,19 +11,19 @@
 /////////////////////////////////////////////////////////////////
 ImageObj::ImageObj()
 {
-    qDebug() << "Const ImageObj ()  this=" << this;
+    //qDebug() << "Const ImageObj ()  this=" << this;
     init();
 }
 
 ImageObj::ImageObj( QGraphicsItem *parent) : QGraphicsItem (parent )
 {
-    qDebug() << "Const ImageObj  this=" << this << "  parent= " << parent ;
+    //qDebug() << "Const ImageObj  this=" << this << "  parent= " << parent ;
     init();
 }
 
 ImageObj::~ImageObj()
 {
-    qDebug() << "Destr ImageObj  this=" << this << "  imageType = " << imageType ;
+    //qDebug() << "Destr ImageObj  this=" << this << "  imageType = " << imageType ;
     switch (imageType)
     {
         case ImageObj::SVG:
@@ -71,7 +71,7 @@ void ImageObj::init()
     scaleFactor    = 1;
 }
 
-void ImageObj::copy(ImageObj* other)
+void ImageObj::copy(ImageObj* other)    // FIXME-1 check copying of FloatImagObj...
 {
     prepareGeometryChange();
     // FIXME-0 setPixmap (other->QGraphicsPixmapItem::pixmap());	
@@ -94,9 +94,7 @@ void ImageObj::copy(ImageObj* other)
             break;
         case ImageObj::Pixmap:
             qDebug() << "ImgObj::copy other is pm...";    // FIXME-1 check
-            qDebug() << "   a) pixmapItem = " << pixmapItem;
             pixmapItem = new QGraphicsPixmapItem();
-            qDebug() << "   b) pixmapItem = " << pixmapItem;
             pixmapItem->setPixmap (other->pixmapItem->pixmap());
             pixmapItem->setParentItem (parentItem() );
             pixmapItem->setVisible( isVisible());
@@ -115,13 +113,12 @@ void ImageObj::copy(ImageObj* other)
             return;
             break;
     }
-    //setPos (other->pos());
+    //setPos (other->pos());        // FIXME-1 remove...
     //setZValue(other->zValue());	
 }
 
 void ImageObj::setPos(const QPointF &pos)
 {
-    qDebug() << "IO::setPos  this=" << this << "  pos=" << pos << "  type=" << imageType << " parent=" << parentItem();
     if (!parentItem() ) // FIXME-0 testing
     {
         setVisibility(false);
@@ -168,8 +165,6 @@ void ImageObj::setZValue (qreal z)
 
 void ImageObj::setVisibility (bool v)   
 {
-    qDebug() << "ImgObj::setVis type = " <<imageType << "   vis=" << v << "  this" << this << " pm=" <<pixmapItem << " svgItem=" << svgItem;
-    //setVisible(v);   // FIXME-00     This creates 2nd flag!
     switch (imageType)
     {
         case ImageObj::SVG:
@@ -258,9 +253,9 @@ void ImageObj::paint (QPainter *painter, const QStyleOptionGraphicsItem
     }
 }
 
-bool ImageObj::publish(const QString &fn)
+bool ImageObj::shareCashed(const QString &fn)
 {
-    qDebug() << "IO::publish " << fn;
+    qDebug() << "IO::shareCashed " << fn;
     save(fn);
     svgPath = fn;
 }

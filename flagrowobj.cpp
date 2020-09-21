@@ -144,7 +144,6 @@ bool FlagRowObj::isFlagActive(const QUuid &uid)
 void FlagRowObj::activateFlag (Flag *flag)	
 {
     qDebug() << "FRO::activateFlag  " << flag->getName()  << "  flag=" << flag << "  io=" << flag->getImageObj();
-    qDebug() << "FRO::   flag vis = " << flag->isVisible();
     if (flag) 
     {
 	FlagObj *fo = new FlagObj (this);
@@ -156,8 +155,6 @@ void FlagRowObj::activateFlag (Flag *flag)
         flagobjs.append(fo);
         calcBBoxSize();
         positionBBox();
-
-        flag->getImageObj()->setPos (200,200);  // FIXME-0 testing
     }
 }
 
