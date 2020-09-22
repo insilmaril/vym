@@ -21,7 +21,6 @@ public:
     ~FlagRow ();
     Flag* createFlag (const QString &path);
     void shareCashed(Flag *flag);
-    Flag *findFlag (const QString &name);
     Flag *findFlag (const QUuid &uid);
     const QStringList  activeFlagNames();
     const QList <QUuid> activeFlagUids();

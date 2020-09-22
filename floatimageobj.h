@@ -17,7 +17,6 @@ public:
     virtual void setZValue (const int&);
     virtual int z();
 
-    bool load (const QImage *);
     bool load(const QString &fname);
     bool save(const QString &fname);
     QString getExtension();

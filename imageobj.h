@@ -34,7 +34,6 @@ public:
     bool shareCashed (const QString &path);
     QString getCashPath();
     bool load (const QString &);
-    bool load (const QPixmap &);
     bool save (const QString &);
     QString getExtension();
     ImageType getType();

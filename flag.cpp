@@ -41,7 +41,7 @@ void Flag::init ()
     used    = false;
     type    = UndefinedFlag;
 
-    uuid = QUuid::createUuid(); // FIXME-1 used? and: is path used?
+    uuid = QUuid::createUuid();
 }
 
 bool Flag::load (const QString &fn) 

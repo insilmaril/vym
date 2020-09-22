@@ -59,8 +59,6 @@ ImageObj::~ImageObj()
 void ImageObj::init()
 {
     // qDebug() << "Const ImageObj (scene)";
-
-    //FIXME-1 needed? setShapeMode (QGraphicsPixmapItem::BoundingRectShape);
     hide();
 
     imageType = ImageObj::Undefined;
@@ -229,6 +227,7 @@ QRectF ImageObj::boundingRect() const
         default: 
             break;
     }
+    return QRectF();
 }
 
 void ImageObj::paint (QPainter *painter, const QStyleOptionGraphicsItem
@@ -298,22 +297,6 @@ bool ImageObj::load (const QString &fn)
     return false;
 }
 
-bool ImageObj::load (const QPixmap &pm)
-{
-    if (imageType != ImageObj::Undefined)
-        qWarning() << "ImageObj::load (pm) into existing image of type " << imageType;
-
-    prepareGeometryChange();
-
-    imageType = ImageObj::Pixmap;
-    
-    pixmapItem = new QGraphicsPixmapItem (this);    // FIXME-1 existing pmi? 
-    pixmapItem->setPixmap(pm);
-    pixmapItem->setParentItem(parentItem() );
-    qDebug() << "IO::load  pm this=" << this << "  pm =" << pixmapItem;  // FIXME-1 debug
-    return true;
-}
-
 bool ImageObj::save(const QString &fn) 
 {
     qDebug() << "ImgObj::save "  << fn;     // FIXME-1
@@ -346,6 +329,7 @@ bool ImageObj::save(const QString &fn)
         default:
             break;
     }
+    return false;
 }
 
 QString ImageObj::getExtension()

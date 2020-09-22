@@ -48,19 +48,6 @@ int FloatImageObj::z ()
     return qRound (imageObj->zValue());
 }
 
-bool FloatImageObj::load (const QImage *image)
-{
-    if (!imageObj->load(QPixmap::fromImage(*image)) ) return false;
-
-    if (!imageObj->parentItem() ) imageObj->setParentItem(this);  // Add to scene initially
-    bbox.setSize ( QSizeF(
-        imageObj->boundingRect().width(), 
-        imageObj->boundingRect().height()));
-
-    clickPoly = bbox;
-    positionBBox();
-}
-
 bool FloatImageObj::load (const QString &fname) 
 {
     if (!imageObj->load(fname) ) return false;
