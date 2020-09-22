@@ -372,10 +372,19 @@ ImageObj::ImageType ImageObj::getType()
 
 QIcon ImageObj::getIcon()
 {
-    if (imageType == Pixmap)
-        return QIcon(pixmapItem->pixmap() );
-    return QIcon(); // FIXME-0  create icon for svg
+    switch (imageType)
+    {
+        case ImageObj::SVG:
+            return QPixmap(getCashPath());
+            break;
+        case ImageObj::Pixmap:
+        case ImageObj::ModifiedPixmap:
+            return QIcon(pixmapItem->pixmap() );
+            break;
+        default:
+            break;
+    }
+    return QIcon(); 
 }
 
 // FIXME-1 is originalPixmap used after all?
-// FIXME-1 Solved: Activating 1 userflag creates 3 objects in scene: FlagObj, ImageObj, QGraphicsItem in ImgObj

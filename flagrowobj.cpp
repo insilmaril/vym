@@ -135,11 +135,10 @@ bool FlagRowObj::isFlagActive(const QUuid &uid)
 
 void FlagRowObj::activateFlag (Flag *flag)	
 {
-    qDebug() << "FRO::activateFlag  " << flag->getName()  << "  flag=" << flag << "  io=" << flag->getImageObj();
     if (flag) 
     {
 	FlagObj *fo = new FlagObj (this);
-	fo->load (flag->getImageObj() );  // FIXME-0  svg???
+	fo->loadImage (flag->getImageObj() );
         fo->setUuid (flag->getUuid() );
         fo->setZValue(QGraphicsItem::zValue());
         fo->move (absPos.x() + bbox.width(), absPos.y() );
@@ -165,7 +164,7 @@ FlagObj* FlagRowObj::findFlagObj(const QUuid &uid)
     return NULL;
 }
 
-QUuid FlagRowObj::findFlagUidByPos (const QPointF &p)    // FIXME-0 switch to uuid
+QUuid FlagRowObj::findFlagUidByPos (const QPointF &p)
 {
     if (!isInBox (p, clickPoly.boundingRect() )) return QUuid();
     for (int i = 0; i < flagobjs.size(); ++i)

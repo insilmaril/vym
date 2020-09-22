@@ -1173,14 +1173,19 @@ void MapEditor::contextMenuEvent ( QContextMenuEvent * e )
 	// Context Menu 
 	if (lmo && selbi )
 	{
-            /*
-	    QString foname = ((BranchObj*)lmo)->findSystemFlagNameByPos(p);// FIXME-0 change to uid
-	    if (foname.startsWith ("system-task")) 
+	    QString sysFlagName;
+            QUuid uid = ((BranchObj*)lmo)->findSystemFlagUidByPos(p);
+            if (!uid.isNull())
+            {
+                Flag *flag = systemFlagsMaster->findFlag(uid);
+                if (flag) sysFlagName = flag->getName();
+            }
+
+	    if (sysFlagName.startsWith ("system-task")) 
 		taskContextMenu->popup (e->globalPos() );
 	    else	
 		// Context Menu on branch or mapcenter
 		branchContextMenu->popup(e->globalPos() );
-            */
 	} else
 	{
 	    if (model->getSelectedImage() )

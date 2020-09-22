@@ -27,8 +27,7 @@ public:
     virtual void moveBy (double x,double y);    // move to relative Position
     virtual void setZValue (double z);
     virtual void setVisibility(bool);
-    void load (const QString&);
-    void load (ImageObj* io);
+    void loadImage (ImageObj* io);
     void setUuid(const QUuid &uid);
     const QUuid getUuid();
     QPixmap getPixmap();

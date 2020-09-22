@@ -2763,7 +2763,7 @@ Flag* Main::setupFlag (const QString &path,
 
     switch (type) 
     {
-        case Flag::FreemindFlag:    // FIXME-0 check: does the flag show up in toolbar? no call to addFlag...
+        case Flag::FreemindFlag:    
             // Hide freemind flags per default
             // Maybe introduce dedicate toolbar later,
             // so for now switch to standard flag
@@ -2773,12 +2773,10 @@ Flag* Main::setupFlag (const QString &path,
         case Flag::StandardFlag:
             standardFlagsToolbar->addAction (a);
             connect (a, SIGNAL( triggered() ), this, SLOT( flagChanged() ) );
-            //flag = standardFlagsMaster->addFlag (flag);
             break;
         case Flag::UserFlag:
             userFlagsToolbar->addAction (a);
             connect (a, SIGNAL( triggered() ), this, SLOT( flagChanged() ) );
-            //flag = userFlagsMaster->addFlag (flag);
             break;
         default:
             qWarning() << "Unknown flag type in MainWindow::setupFlag";

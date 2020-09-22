@@ -60,14 +60,7 @@ void FlagObj::setVisibility (bool v)
 	imageObj->setVisibility(false);
 }
 
-void FlagObj::load (const QString &fn)  // FIXME-1 still required after switch to ImageObj?
-{
-    imageObj->load(fn);
-    calcBBoxSize();
-    positionBBox();
-}
-
-void FlagObj::load (ImageObj* io)
+void FlagObj::loadImage (ImageObj* io)
 {
     prepareGeometryChange();
 
