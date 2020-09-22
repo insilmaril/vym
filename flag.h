@@ -25,7 +25,6 @@ public:
     ~Flag ();
     virtual void init ();
     bool load (const QString&);
-    void load (const QPixmap&);
     void setName (const QString&);
     const QString getName ();
     const QString getPath();

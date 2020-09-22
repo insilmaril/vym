@@ -44,30 +44,17 @@ void Flag::init ()
     uuid = QUuid::createUuid(); // FIXME-1 used? and: is path used?
 }
 
-#include <QRandomGenerator>         // FIXME-1 testing only
-bool Flag::load (const QString &fn) // FIXME-0   svg??
+bool Flag::load (const QString &fn) 
 {
-    QPointF pos =QPointF( 
-            QRandomGenerator::global()->generateDouble() * 200,
-            QRandomGenerator::global()->generateDouble() * 200);
-    qDebug() << "Flag::load fn=" << fn << "  pos=" << pos << " image= " << image;
     if (!image) image = new ImageObj();
 
     if (!image->load(fn)) return false;
 
     path = fn;
-    image->setVisible (false);   // FIXME-00  usually false, testing
-    image->setPos(pos);
+    //image->setVisible (false);   // FIXME-00  usually false, testing
+    //image->setPos(pos);
 
     return true;
-}
-
-void Flag::load (const QPixmap &pm) // FIXME-0 still needed?
-{
-    qDebug() << "Flag::load pm";
-    if (!image) image = new ImageObj();
-
-    image->load(pm);
 }
 
 void Flag::setName(const QString &n)
