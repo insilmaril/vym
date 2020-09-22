@@ -29,7 +29,7 @@ public:
     void activateFlag (Flag *flag);
     FlagObj* findFlagObj (const QString&);
     FlagObj* findFlagObj (const QUuid&);
-    virtual QString findFlagNameByPos (const QPointF &p); // Find flag by position
+    virtual QUuid findFlagUidByPos (const QPointF &p); // Find flag by position
 private:    
     QList <FlagObj*> flagobjs; 
     bool showFlags;			    // FloatObjects want to hide their flags

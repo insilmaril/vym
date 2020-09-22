@@ -36,6 +36,8 @@ extern QTextStream vout;
 
 extern QString editorFocusStyle;
 
+extern FlagRow *systemFlagsMaster;
+
 ///////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////
 MapEditor::MapEditor( VymModel *vm)	
@@ -976,6 +978,7 @@ BranchItem* MapEditor::getLeftBranch (TreeItem *ti)
 
     if (ti->parent() && ti->parent()->isBranchLikeType() )
         return (BranchItem*)(ti->parent());
+    return NULL;
 }
 
 BranchItem* MapEditor::getRightBranch(TreeItem *ti)
@@ -1014,9 +1017,9 @@ BranchItem* MapEditor::getRightBranch(TreeItem *ti)
 
     if (ti->parent() && ti->parent()->isBranchLikeType() )
         return (BranchItem*)(ti->parent());
+
+    return NULL;
 }
-
-
 
 void MapEditor::cursorUp()
 {
@@ -1027,7 +1030,6 @@ void MapEditor::cursorUp()
 }
 
 void MapEditor::cursorDown()	
-
 {
     if (state == MapEditor::EditingHeading) return;
 
@@ -1070,7 +1072,6 @@ void MapEditor::cursorLast()
 {
     model->selectLastBranch();
 }
-
 
 void MapEditor::editHeading()
 {
@@ -1153,7 +1154,6 @@ void MapEditor::editHeadingFinished()
 	autoLayout();
 }
 
-
 void MapEditor::contextMenuEvent ( QContextMenuEvent * e )
 {
     // Lineedits are already closed by preceding
@@ -1173,12 +1173,14 @@ void MapEditor::contextMenuEvent ( QContextMenuEvent * e )
 	// Context Menu 
 	if (lmo && selbi )
 	{
-	    QString foname = ((BranchObj*)lmo)->findSystemFlagNameByPos(p);
+            /*
+	    QString foname = ((BranchObj*)lmo)->findSystemFlagNameByPos(p);// FIXME-0 change to uid
 	    if (foname.startsWith ("system-task")) 
 		taskContextMenu->popup (e->globalPos() );
 	    else	
 		// Context Menu on branch or mapcenter
 		branchContextMenu->popup(e->globalPos() );
+            */
 	} else
 	{
 	    if (model->getSelectedImage() )
@@ -1276,14 +1278,23 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
     }
 
     QString sysFlagName;
-    if (lmo) sysFlagName = ((BranchObj*)lmo)->findSystemFlagNameByPos(p);
-    
+    QUuid uid;
+    if (lmo)
+    {
+        uid = ((BranchObj*)lmo)->findSystemFlagUidByPos(p);
+        if (!uid.isNull())
+        {
+            Flag *flag = systemFlagsMaster->findFlag(uid);
+            if (flag) sysFlagName = flag->getName();
+        }
+    }
+
     /*
     qDebug() << "ME::mouse pressed\n";
-    qDebug() << "  lmo="<<lmo;
-    qDebug() << "   ti="<<ti;
-    if (ti) qDebug() << "   ti="<<ti->getHeading();
-    qDebug() << " flag="<<sysFlagName;
+    qDebug() << "  lmo=" << lmo;
+    qDebug() << "   ti=" << ti;
+    //if (ti) qDebug() << "   ti="<<ti->getHeading();
+    qDebug() << " flag=" << sysFlagName;
     */
     
     // Check PickColor modifier (before selecting object!) 
@@ -1300,7 +1311,7 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
     }	
 
     // Check vymlink  modifier (before selecting object!) 
-    if (ti && sysFlagName=="system-vymLink")
+    if (ti && sysFlagName == "system-vymLink")
     {
         model->select(ti);
         if (e->modifiers() & Qt::ControlModifier)
@@ -1331,7 +1342,7 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
 		else	
 		    mainWindow->editOpenURL();
 	    }	
-	    else if (sysFlagName=="system-vymLink")
+	    else if (sysFlagName == "system-vymLink")
 	    {
 		if (e->modifiers() & Qt::ControlModifier)
 		    mainWindow->editOpenVymLink(true);
@@ -1339,9 +1350,9 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
 		    mainWindow->editOpenVymLink(false);
 		// tabWidget may change, better return now
 		// before segfaulting...
-	    } else if (sysFlagName=="system-note")	
+	    } else if (sysFlagName == "system-note")	
 		mainWindow->windowToggleNoteEditor();
-	    else if (sysFlagName=="hideInExport")	    
+	    else if (sysFlagName == "hideInExport")	    
 		model->toggleHideExport();
 	    else if (sysFlagName.startsWith("system-task-") )
 		model->cycleTaskStatus();
@@ -1901,7 +1912,7 @@ void MapEditor::mouseDoubleClickEvent(QMouseEvent* e)
 	    if (selbi)
 	    {
 		lmo=((MapItem*)ti)->getLMO();
-		QString foname=((BranchObj*)lmo)->findSystemFlagNameByPos(p);
+		QString foname=((BranchObj*)lmo)->findSystemFlagUidByPos(p).toString(); // FIXME-00 cont here
 		if (!foname.isEmpty()) return;	// Don't edit heading when double clicking system flag
 
 	    }
@@ -2071,6 +2082,8 @@ MapEditor::EditorState MapEditor::getState()
 
 void MapEditor::updateSelection(QItemSelection nsel,QItemSelection dsel)	
 {
+    Q_UNUSED (nsel);
+
     QList <MapItem*> itemsSelected;
     QList <MapItem*> itemsDeselected;
 

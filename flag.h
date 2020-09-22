@@ -22,10 +22,8 @@ public:
 
     Flag ();
     Flag (const QString &fname);
-    Flag (Flag*);
     ~Flag ();
     virtual void init ();
-    virtual void copy (Flag*);
     bool load (const QString&);
     void load (const QPixmap&);
     void setName (const QString&);

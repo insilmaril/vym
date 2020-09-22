@@ -291,9 +291,9 @@ void OrnamentedObj::move2RelPos(QPointF p)
     move2RelPos (p.x(), p.y());
 }
 
-QString OrnamentedObj::findSystemFlagNameByPos(const QPointF &p) 
+QUuid OrnamentedObj::findSystemFlagUidByPos(const QPointF &p) 
 {
-    return systemFlagRowObj->findFlagNameByPos(p);	
+    return systemFlagRowObj->findFlagUidByPos(p);	
 }
 
 QRectF OrnamentedObj::getBBoxFlag (const QString &s)    // FIXME-1 Better use UUid instead of name 

@@ -21,12 +21,6 @@ Flag::Flag(const QString &fname)
         qWarning() << "Flag::Flag  Failed to load " << fname;
 }
 
-Flag::Flag (Flag* io)
-{
-    qDebug() << "Const Flag (Flag)";
-    copy (io);
-}
-
 Flag::~Flag()
 {
    //qDebug() << "Destr Flag  this="<<this <<"  " << qPrintable(name) << "  image=" << image;
@@ -48,22 +42,6 @@ void Flag::init ()
     type    = UndefinedFlag;
 
     uuid = QUuid::createUuid(); // FIXME-1 used? and: is path used?
-
-}
-
-void Flag::copy (Flag* other)   //FIXME-0 how to create deep copy of esp. SVG item???
-{
-    qDebug() << "Flag::copy   other=" << other->name; // FIXME-1 
-    action  = other->action;
-    name    = other->name;
-    group   = other->group;
-    tooltip = other->tooltip;
-    state   = other->state;
-    used    = other->used;
-    image   = other->image;
-    type    = other->type;
-    path    = other->path;
-    uuid    = other->uuid;  
 }
 
 #include <QRandomGenerator>         // FIXME-1 testing only

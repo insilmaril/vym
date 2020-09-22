@@ -38,7 +38,7 @@ void FlagRow::shareCashed(Flag *flag)
         qDebug() << "FR::shareCashed failed for " << flag->getName();
 }
 
-Flag* FlagRow::findFlag (const QString &name)  
+Flag* FlagRow::findFlag (const QString &name)  // FIXME-1 still needed? use uid...
 {
     int i = 0;
     while (i <= flags.size() - 1)

@@ -2419,7 +2419,6 @@ void Main::setupFlagActions()
             Qt::Key_2);
     flag->setGroup("standard-status");
 
-    /*  FIXME-0 testing
     flag = setupFlag ( ":/flag-wip.png", 
             Flag::StandardFlag,
             "wip",
@@ -2683,7 +2682,6 @@ void Main::setupFlagActions()
             Flag::FreemindFlag,
             "freemind-licq",
             tr("Sweet","Freemind flag"));
-    */
 }
 
 Flag* Main::setupFlag (const QString &path,
@@ -2700,10 +2698,11 @@ Flag* Main::setupFlag (const QString &path,
     {
         case Flag::FreemindFlag:    // FIXME-00 check: does the flag show up in toolbar? no call to addFlag...
             // Hide freemind flags per default
-            // Maybe introduce dedicate toolbar later,
+            // Maybe introduce dedicated toolbar later,
             // so for now switch to standard flag
             //flag->setVisible(false);
             //type = Flag::StandardFlag;
+            flag = standardFlagsMaster->createFlag (path);
             break;
         case Flag::StandardFlag:
             //standardFlagsToolbar->addAction (a);

@@ -165,13 +165,11 @@ FlagObj* FlagRowObj::findFlagObj(const QUuid &uid)
     return NULL;
 }
 
-QString FlagRowObj::findFlagNameByPos (const QPointF &p)    // FIXME-0 switch to uuid
+QUuid FlagRowObj::findFlagUidByPos (const QPointF &p)    // FIXME-0 switch to uuid
 {
-    /*
-    if (!isInBox (p, clickPoly.boundingRect() )) return "";
+    if (!isInBox (p, clickPoly.boundingRect() )) return QUuid();
     for (int i = 0; i < flagobjs.size(); ++i)
-	if (isInBox (p, flagobjs.at(i)->getClickPoly().boundingRect() )) return flagobjs.at(i)->getName();
-        */
-    return "";	
+	if (isInBox (p, flagobjs.at(i)->getClickPoly().boundingRect() )) return flagobjs.at(i)->getUuid();
+    return QUuid();	
 }
 
