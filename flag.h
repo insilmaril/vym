@@ -44,7 +44,7 @@ public:
     void setType (FlagType t);
     void setUuid(const QUuid &id);
     QUuid getUuid();
-    QString  saveDef(const QString &);
+    QString  getDefinition();
     bool  saveDataToDir (const QString&);
     QString  saveState();
     bool vtest(bool v);

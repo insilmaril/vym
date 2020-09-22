@@ -242,7 +242,7 @@ QString FlagRow::saveDef(const QString &dirPath)
     QString s = "\n";
 
     for (int i = 0; i < flags.size(); ++i)
-        s += flags.at(i)->saveDef(dirPath);
+        s += flags.at(i)->getDefinition();
 
     return s;
 }

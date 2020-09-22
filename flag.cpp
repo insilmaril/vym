@@ -51,8 +51,6 @@ bool Flag::load (const QString &fn)
     if (!image->load(fn)) return false;
 
     path = fn;
-    //image->setVisible (false);   // FIXME-00  usually false, testing
-    //image->setPos(pos);
 
     return true;
 }
@@ -156,17 +154,13 @@ void Flag::setUuid(const QUuid &id)
 
 QUuid Flag::getUuid() { return uuid; }
 
-QString Flag::saveDef(const QString &dirPath) 
+QString Flag::getDefinition()
 {
     if (type == Flag::UserFlag) 
     {
-        // Create unique string for filename based on memory address
-        ulong n = reinterpret_cast <ulong> (this);
-
         QString url = "flags/" + uuid.toString() + "-" + name + image->getExtension();
         QStringList attributes;
         attributes << attribut("name", name);
-        //attributes << attribut("path", dirPath + uuid.toString() + "-" + name + image->getExtension() );    // FIXME-0 needed?
 	attributes << attribut ("href", QString ("file:%1").arg(url));
         attributes << attribut("uuid", uuid.toString());
         return singleElement("userflagdef", attributes);

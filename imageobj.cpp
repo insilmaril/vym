@@ -23,7 +23,7 @@ ImageObj::ImageObj( QGraphicsItem *parent) : QGraphicsItem (parent )
 
 ImageObj::~ImageObj()
 {
-    //qDebug() << "Destr ImageObj  this=" << this << "  imageType = " << imageType ;
+    qDebug() << "Destr ImageObj  this=" << this << "  imageType = " << imageType ;
     switch (imageType)
     {
         case ImageObj::SVG:
@@ -74,7 +74,6 @@ void ImageObj::init()
 void ImageObj::copy(ImageObj* other)    // FIXME-1 check copying of FloatImagObj...
 {
     prepareGeometryChange();
-    // FIXME-0 setPixmap (other->QGraphicsPixmapItem::pixmap());	
     qDebug() << "ImgObj::copy    this=" << this << "  other=" << other << "  type this=  " << imageType  << "type other= " << other->imageType;
     if (imageType != ImageObj::Undefined)
         qWarning() << "ImageObj::copy into existing image of type " << imageType;
@@ -82,10 +81,8 @@ void ImageObj::copy(ImageObj* other)    // FIXME-1 check copying of FloatImagObj
     switch (other->imageType)
     {
         case ImageObj::SVG:
-            qDebug() << "ImgObj::copy other is svg...";    // FIXME-0 check: no deep copy?
             if (!other->svgPath.isEmpty())
             {
-                qWarning() << "ImgObj::copy svg: path is " << other->svgPath;
                 load(other->svgPath);
                 svgItem->setVisible( isVisible());
                 imageType = ImageObj::SVG;
@@ -113,8 +110,6 @@ void ImageObj::copy(ImageObj* other)    // FIXME-1 check copying of FloatImagObj
             return;
             break;
     }
-    //setPos (other->pos());        // FIXME-1 remove...
-    //setZValue(other->zValue());	
 }
 
 void ImageObj::setPos(const QPointF &pos)
@@ -218,12 +213,11 @@ qreal  ImageObj::getScaleFactor()
     return scaleFactor;
 }
 
-QRectF ImageObj::boundingRect() const   // FIXME-0 not always correct for svg
+QRectF ImageObj::boundingRect() const   
 {
     switch (imageType)
     {
         case ImageObj::SVG:
-            //qDebug() << "IO::boundingRect svg " << svgItem->boundingRect();
             return QRectF(0, 0, 
                     svgItem->boundingRect().width() * scaleFactor, 
                     svgItem->boundingRect().height() * scaleFactor);
@@ -255,9 +249,13 @@ void ImageObj::paint (QPainter *painter, const QStyleOptionGraphicsItem
 
 bool ImageObj::shareCashed(const QString &fn)
 {
-    qDebug() << "IO::shareCashed " << fn;
-    save(fn);
-    svgPath = fn;
+    if (save(fn))
+    {
+        svgPath = fn;
+        return true;
+    }
+    
+    return false;
 }
 
 QString ImageObj::getCashPath()

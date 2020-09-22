@@ -136,14 +136,14 @@ QRectF MapItem::getBBoxURLFlag ()
 	qWarning()<<"MapItem::getBBoxURLFlag found more than one system-url*";
 	return QRectF ();
     }	
-    return getBBoxFlag (list.first());
+    return getBBoxSystemFlag (list.first());
 }
 
-QRectF MapItem::getBBoxFlag (const QString &fname)
+QRectF MapItem::getBBoxSystemFlag (const QString &fname)
 {
     LinkableMapObj *lmo=getLMO();
     if (lmo)
-	return ((OrnamentedObj*)lmo)->getBBoxFlag (fname);
+	return ((OrnamentedObj*)lmo)->getBBoxSystemFlag (fname);
     else    
 	return QRectF ();
 }

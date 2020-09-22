@@ -1006,11 +1006,6 @@ bool parseVYMHandler::readUserFlagDefAttr (const QXmlAttributes& a)
 
     if (!a.value( "name").isEmpty() ) 
         name = a.value("name");
-    if (!a.value( "path").isEmpty() )   // FIXME-0 obsolete
-    {
-        path = a.value("path");
-        qDebug() << "flag.path detected for "  << name <<" " << path;
-    }
     if (!a.value( "tooltip").isEmpty() ) 
         tooltip = a.value("tooltip");
     if (!a.value( "uuid").isEmpty() ) 
@@ -1021,7 +1016,6 @@ bool parseVYMHandler::readUserFlagDefAttr (const QXmlAttributes& a)
     if (!a.value( "href").isEmpty() ) 
     {
         // Setup flag with image
-
         flag = mainWindow->setupFlag ( parseHREF(a.value("href")), Flag::UserFlag, name, tooltip, uid); 
     } else
     {

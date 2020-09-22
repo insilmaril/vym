@@ -2696,25 +2696,19 @@ Flag* Main::setupFlag (const QString &path,
     // Create flag in toolbar
     switch (type)
     {
-        case Flag::FreemindFlag:    // FIXME-00 check: does the flag show up in toolbar? no call to addFlag...
+        case Flag::FreemindFlag:    
             // Hide freemind flags per default
             // Maybe introduce dedicated toolbar later,
             // so for now switch to standard flag
-            //flag->setVisible(false);
-            //type = Flag::StandardFlag;
             flag = standardFlagsMaster->createFlag (path);
             break;
         case Flag::StandardFlag:
-            //standardFlagsToolbar->addAction (a);
-            //connect (a, SIGNAL( triggered() ), this, SLOT( flagChanged() ) );
             flag = standardFlagsMaster->createFlag (path);
             break;
         case Flag::UserFlag:
-            //userFlagsToolbar->addAction (a);
-            //connect (a, SIGNAL( triggered() ), this, SLOT( flagChanged() ) );
             flag = userFlagsMaster->createFlag (path);
 
-            userFlagsMaster->shareCashed(flag);    // FIXME-1 experimenting try to get rid of Flag::coyp...
+            userFlagsMaster->shareCashed(flag);  
             
             // User flags read from file already have a Uuid - use it
             if (!uid.isNull()) flag->setUuid(uid);

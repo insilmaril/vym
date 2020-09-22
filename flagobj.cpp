@@ -20,14 +20,13 @@ FlagObj::~FlagObj()
 
 void FlagObj::init ()
 {
-    // FIXME-0 org:   imageObj = new ImageObj (parentItem());
     imageObj = new ImageObj (parentItem() );
-    //imageObj->setPos (QPointF(absPos.x(), absPos.y()) );    // FIXME-1 needed?
     avis = true;
 }
 
-void FlagObj::copy (FlagObj* other)
+void FlagObj::copy (FlagObj* other)  // FIXME-1 needed?
 {
+    qDebug() << "FlagObj::copy";
     MapObj::copy(other);
     uid   = other->uid;
     avis  = other->avis;

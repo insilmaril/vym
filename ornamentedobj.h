@@ -57,7 +57,7 @@ public:
     virtual void move2RelPos (double,double);
 
     virtual QUuid findSystemFlagUidByPos (const QPointF &p);
-    virtual QRectF getBBoxFlag (const QString &name);
+    virtual QRectF getBBoxSystemFlag (const QString &name);
 
 protected:
     HeadingObj *heading;	    // Heading
