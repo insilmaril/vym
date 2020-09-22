@@ -1916,9 +1916,14 @@ void MapEditor::mouseDoubleClickEvent(QMouseEvent* e)
 	    BranchItem* selbi=model->getSelectedBranch();
 	    if (selbi)
 	    {
-		lmo=((MapItem*)ti)->getLMO();
-		QString foname=((BranchObj*)lmo)->findSystemFlagUidByPos(p).toString(); // FIXME-00 cont here
-		if (!foname.isEmpty()) return;	// Don't edit heading when double clicking system flag
+		lmo = ((MapItem*)ti)->getLMO();
+                if (lmo)
+                {
+                    QUuid uid = ((BranchObj*)lmo)->findSystemFlagUidByPos(p);
+                    
+                    // Don't edit heading when double clicking system flag:
+                    if (!uid.isNull()) return;	
+                }
 
 	    }
 	    e->accept();

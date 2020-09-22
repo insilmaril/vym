@@ -2735,13 +2735,7 @@ Flag* Main::setupFlag (const QString &path,
 
     // Set icon for action
     ImageObj *image = flag->getImageObj();
-    if (image->getType() == ImageObj::SVG)
-    {
-        qDebug() << "Setting up svg: " << image->getCashPath() << flag->getName();
-        a = new QAction (QPixmap(image->getCashPath()), flag->getUuid().toString(), this);
-    }
-    else
-        a = new QAction (image->getIcon(), flag->getUuid().toString(), this);
+    a = new QAction (image->getIcon(), flag->getUuid().toString(), this);
 
     flag->setAction (a);
     a->setCheckable( true );

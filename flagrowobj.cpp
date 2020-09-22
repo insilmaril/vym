@@ -68,7 +68,6 @@ void FlagRowObj::updateActiveFlagObjs (const QList <QUuid> activeFlagUids, FlagR
             Flag *f = masterRowMain->findFlag(activeFlagUids.at(i));
             if (f) 
             {
-                qDebug() << "FRO::activating main" << i << f<< f->getName();
                 activateFlag (f);
                 changed = true;
             }
@@ -77,7 +76,6 @@ void FlagRowObj::updateActiveFlagObjs (const QList <QUuid> activeFlagUids, FlagR
                 f = masterRowOptional->findFlag(activeFlagUids.at(i));
                 if (f) 
                 {
-                    qDebug() << "FRO::activating opt" << i << f;
                     activateFlag (f);
                     changed = true;
                 }
@@ -89,7 +87,7 @@ void FlagRowObj::updateActiveFlagObjs (const QList <QUuid> activeFlagUids, FlagR
     foreach (FlagObj* fo, flagobjs)
         if (!activeFlagUids.contains (fo->getUuid() ))
         {
-            qDebug() << "FRO::removing " << fo << "count: " << flagobjs.removeAll (fo);
+            flagobjs.removeAll(fo);
             delete (fo);
             changed = true;
         }

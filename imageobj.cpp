@@ -23,7 +23,7 @@ ImageObj::ImageObj( QGraphicsItem *parent) : QGraphicsItem (parent )
 
 ImageObj::~ImageObj()
 {
-    qDebug() << "Destr ImageObj  this=" << this << "  imageType = " << imageType ;
+    //qDebug() << "Destr ImageObj  this=" << this << "  imageType = " << imageType ;
     switch (imageType)
     {
         case ImageObj::SVG:
@@ -32,9 +32,8 @@ ImageObj::~ImageObj()
         case ImageObj::Pixmap:
             if (pixmapItem) 
             {
-                // FIXME-1 testing
                 delete (pixmapItem);
-                qDebug() << "  destr IO  deleting pixmapItem";
+                //qDebug() << "  destr IO  deleting pixmapItem";
             }
             break;
         case ImageObj::ModifiedPixmap:  
@@ -114,6 +113,8 @@ void ImageObj::copy(ImageObj* other)    // FIXME-1 check copying of FloatImagObj
 
 void ImageObj::setPos(const QPointF &pos)
 {
+    /*
+    */
     if (!parentItem() ) // FIXME-0 testing
     {
         setVisibility(false);
