@@ -50,6 +50,18 @@ Flag* FlagRow::findFlag (const QUuid &uid)
     return NULL;
 }
 
+Flag* FlagRow::findFlag (const QString &name)
+{
+    int i = 0;
+    while (i <= flags.size() - 1)
+    {
+	if (flags.at(i)->getName() == name)
+	    return flags.at(i);
+	i++;	
+    }
+    return NULL;
+}
+
 const QStringList FlagRow::activeFlagNames()
 {
     return QStringList();
@@ -60,10 +72,9 @@ const QList <QUuid> FlagRow::activeFlagUids()
     return activeUids;
 }
 
-
 bool FlagRow::isActive (const QString &name)
 {
-    Flag *f = masterRow->findFlag(name);
+    Flag *f = masterRow->findFlag(name);    
     if (!f)
     {
         qWarning() << "FlagRow::isActive couldn't find flag named " << name;
@@ -235,7 +246,7 @@ QString FlagRow::saveDef(const QString &dirPath)
     return s;
 }
 
-bool FlagRow::saveDataToDir (const QString &tmpdir)  // FIXME-1 only save flags, if used or default map
+bool FlagRow::saveDataToDir (const QString &tmpdir)  // FIXME-0 only save flags, if used or default map
 {
     qDebug() << "FR::saveDataToDir " << tmpdir;
 

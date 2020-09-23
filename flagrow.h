@@ -22,6 +22,7 @@ public:
     Flag* createFlag (const QString &path);
     void shareCashed(Flag *flag);
     Flag *findFlag (const QUuid &uid);
+    Flag *findFlag (const QString &name);
     const QStringList  activeFlagNames();
     const QList <QUuid> activeFlagUids();
     bool isActive(const QString &name);
@@ -29,7 +30,7 @@ public:
 
     /*! \brief Toggle a Flag 
 	
-	To activate a flag it will be copied from masterRow to current row.
+	To activate a flag its uid will be copied from masterRow to activeUids in current row.
     */	
     void toggle (const QString&, bool useGroups = true);
     void toggle (const QUuid&, bool useGroups = true);

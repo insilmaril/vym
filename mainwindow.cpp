@@ -2702,7 +2702,7 @@ Flag* Main::setupFlag (const QString &path,
             // so for now switch to standard flag
             flag = standardFlagsMaster->createFlag (path);
             break;
-        case Flag::StandardFlag:
+        case Flag::StandardFlag:    // FIXME-0 prefix standard flag with standard-
             flag = standardFlagsMaster->createFlag (path);
             break;
         case Flag::UserFlag:
