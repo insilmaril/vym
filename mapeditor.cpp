@@ -1304,11 +1304,11 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
     
     // Check PickColor modifier (before selecting object!) 
     if (ti && (e->modifiers() & Qt::ShiftModifier) &&
-	mainWindow->getModMode()==Main::ModModeColor)
+	mainWindow->getModMode() == Main::ModModeColor)
     {
 	setState (PickingColor);
 	mainWindow->setCurrentColor (ti->getHeadingColor() );
-	if ((e->modifiers() & Qt::ShiftModifier) && (e->modifiers() & Qt::ControlModifier) )
+	if (e->modifiers() & Qt::ControlModifier) 
 	    model->colorBranch(ti->getHeadingColor());
 	else    
 	    model->colorSubtree(ti->getHeadingColor());
