@@ -17,6 +17,7 @@
 
 class FlagRow:public XMLObj {
 public:
+    enum WriteMode {NoFlags, UsedFlags, AllFlags};
     FlagRow ();
     ~FlagRow ();
     Flag* createFlag (const QString &path);
@@ -42,11 +43,12 @@ public:
     void deactivateAll();
     void setEnabled (bool);
     void resetUsedCounter();
-    QString saveDef(const QString &dirPath);
-    bool saveDataToDir (const QString &);
+    QString saveDef(const QString &dirPath, WriteMode mode);
+    bool saveDataToDir (const QString &, WriteMode mode);
     QString saveState();
     void setName (const QString&);	    // prefix for exporting flags to dir
     QString getName();                      // Used for debugging only
+    void setPrefix (const QString &prefix);
     void setToolBar   (QToolBar *tb);
     void setMasterRow (FlagRow *row);
     void updateToolBar(QList <QUuid> activeUids);
@@ -57,6 +59,7 @@ private:
     QList <Flag*> flags;        //! Used in master row to define flags
     QList <QUuid> activeUids;	//! Used in treeitems: Lists all uids of currently active flags
     QString rowName;		//! Name of this collection of flags
+    QString prefix;             //! Prefix for saving data: user/ or standard/
 };
 #endif
 

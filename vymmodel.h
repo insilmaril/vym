@@ -108,7 +108,7 @@ public:
 	The structure of the map itself is returned as QString and passed back to Main, 
 	where saveToDir is called initially
     */	
-    QString saveToDir (const QString &tmpdir, const QString &prefix, bool writeflags, const QPointF &offset, TreeItem *saveSel);
+    QString saveToDir (const QString &tmpdir, const QString &prefix, FlagRow::WriteMode flagMode, const QPointF &offset, TreeItem *saveSel);
 
     /*! Save all data in tree*/
     QString saveTreeToDir (const QString&,const QString&,const QPointF&,QList <Link*> &tmpLinks);// Save data recursivly to tempdir

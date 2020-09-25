@@ -416,10 +416,14 @@ int main(int argc, char* argv[])
     // Initializing the master rows of flags
     systemFlagsMaster = new FlagRow;
     systemFlagsMaster->setName ("systemFlagsMaster");
+
     standardFlagsMaster = new FlagRow;
     standardFlagsMaster->setName ("standardFlagsMaster");
+    standardFlagsMaster->setPrefix ("standard/");
+
     userFlagsMaster = new FlagRow;
     userFlagsMaster->setName ("userFlagsMaster");
+    userFlagsMaster->setPrefix ("user/");
 
     // Initialize editors
     noteEditor = new NoteEditor("noteeditor");

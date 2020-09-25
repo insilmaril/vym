@@ -263,7 +263,7 @@ void VymModel::updateActions()
 
 
 
-QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix, bool writeflags, const QPointF &offset, TreeItem *saveSel)
+QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix, FlagRow::WriteMode flagMode, const QPointF &offset, TreeItem *saveSel)
 {
     // tmpdir	    temporary directory to which data will be written
     // prefix	    mapname, which will be appended to images etc.
@@ -271,6 +271,8 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix, bool w
     // writeflags   Only write flags for "real" save of map, not undo
     // offset	    offset of bbox of whole map in scene. 
     //		    Needed for XML export
+
+    qDebug() << "VM::saveToDir   tmpdir="<<tmpdir << "  prefix=" << prefix;
 
     XMLObj xml;
 
@@ -292,17 +294,17 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix, bool w
 	    break;
     }	
 
-    QString s = "<?xml version=\"1.0\" encoding=\"utf-8\"?><!DOCTYPE vymmap>\n";
+    QString header = "<?xml version=\"1.0\" encoding=\"utf-8\"?><!DOCTYPE vymmap>\n";
     QString colhint = "";
     if (linkcolorhint == LinkableMapObj::HeadingColor) 
 	colhint = xml.attribut("linkColorHint","HeadingColor");
 
     QString mapAttr = xml.attribut("version",vymVersion);
     if (!saveSel)
-	mapAttr += xml.attribut("author",author) +
-		  xml.attribut("title",title) +
-		  xml.attribut("comment",comment) +
-		  xml.attribut("date",getDate()) +
+	mapAttr += xml.attribut("author", author) +
+		  xml.attribut("title", title) +
+		  xml.attribut("comment", comment) +
+		  xml.attribut("date", getDate()) +
 		  xml.attribut("branchCount", QString().number(branchCount())) +
 		  xml.attribut("backgroundColor", mapEditor->getScene()->backgroundBrush().color().name() ) +
 		  xml.attribut("defaultFont", defaultFont.toString() ) +
@@ -317,37 +319,29 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix, bool w
 		  xml.attribut("mapZoomFactor", QString().setNum(mapEditor->getZoomFactorTarget()) ) +
 		  xml.attribut("mapRotationAngle", QString().setNum(mapEditor->getAngleTarget()) ) +
 		  colhint; 
-    s += xml.beginElement("vymmap",mapAttr); 
+    header += xml.beginElement("vymmap", mapAttr); 
     xml.incIndent();
 
     // Find the used flags while traversing the tree	
     standardFlagsMaster->resetUsedCounter();
+    userFlagsMaster->resetUsedCounter();
     
-    // Write images and definitions of of used user flags 
-    if (writeflags) 
-    {
-        // Definitions 
-        s += userFlagsMaster->saveDef(tmpdir + "/flags/");
-    
-        standardFlagsMaster->saveDataToDir (tmpdir + "/flags/");
-        userFlagsMaster->saveDataToDir (tmpdir + "/flags/");    
-    }
-
     // Temporary list of links
     QList <Link*> tmpLinks;
 
+    QString tree;
     // Build xml recursivly
     if (!saveSel)
     {
 	// Save all mapcenters as complete map, if saveSel not set
-	s += saveTreeToDir(tmpdir,prefix,offset,tmpLinks);
+	tree += saveTreeToDir(tmpdir,prefix,offset,tmpLinks);
 
 	// Save local settings
-	s += settings.getDataXML (destPath);
+	tree += settings.getDataXML (destPath);
 
 	// Save selection
 	if (getSelectedItem() && !saveSel ) 
-	    s += xml.valueElement("select", getSelectString());
+	    tree += xml.valueElement("select", getSelectString());
 
     } else
     {
@@ -355,15 +349,15 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix, bool w
 	{
 	    case TreeItem::Branch:
 		// Save Subtree
-		s += ((BranchItem*)saveSel)->saveToDir(tmpdir, prefix, offset, tmpLinks);
+		tree += ((BranchItem*)saveSel)->saveToDir(tmpdir, prefix, offset, tmpLinks);
 		break;
 	    case TreeItem::MapCenter:
 		// Save Subtree
-		s += ((BranchItem*)saveSel)->saveToDir(tmpdir, prefix, offset, tmpLinks);
+		tree += ((BranchItem*)saveSel)->saveToDir(tmpdir, prefix, offset, tmpLinks);
 		break;
 	    case TreeItem::Image:
 		// Save Image
-		s += ((ImageItem*)saveSel)->saveToDir(tmpdir, prefix);
+		tree += ((ImageItem*)saveSel)->saveToDir(tmpdir, prefix);
 		break;
 	    default: 
 		// other types shouldn't be safed directly...
@@ -371,17 +365,31 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix, bool w
 	}
     }
 
+    QString flags;
+
+    // Write images and definitions of of used user flags 
+    if (flagMode != FlagRow::NoFlags) 
+    {
+        // First find out, which flags are used
+        // Definitions 
+        flags += userFlagsMaster->saveDef(tmpdir + "flags/user/", flagMode);
+
+        userFlagsMaster->saveDataToDir (tmpdir + "flags/user/", flagMode);    
+        standardFlagsMaster->saveDataToDir (tmpdir + "flags/standard/", flagMode);
+    }
+
+    QString footer;
     // Save XLinks
     for (int i = 0; i < tmpLinks.count(); ++i)
-	s += tmpLinks.at(i)->saveToDir();
+	footer += tmpLinks.at(i)->saveToDir();
 
     // Save slides  
-    s += slideModel->saveToDir();	
+    footer += slideModel->saveToDir();	
 
     xml.decIndent();
-    s += xml.endElement("vymmap");
+    footer += xml.endElement("vymmap");
 
-    return s;
+    return header + flags + tree + footer;
 }
 
 QString VymModel::saveTreeToDir (const QString &tmpdir,const QString &prefix, const QPointF &offset, QList <Link*> &tmpLinks)
@@ -518,8 +526,6 @@ File::ErrorCode VymModel::loadMap (
 		   "Unknown FileType in VymModel::load()");
 	return File::Aborted;	
     }
-
-    bool zipped_org = zipped;
 
     if (lmode == NewMap)
     {
@@ -780,17 +786,17 @@ File::ErrorCode VymModel::save (const SaveMode &savemode)
     makeSubDirs (fileDir);
 
     QString saveFile;
-    if (savemode==CompleteMap || selModel->selection().isEmpty())
+    if (savemode == CompleteMap || selModel->selection().isEmpty())
     {
 	// Save complete map
         if (zipped)
             // Use defined name for map within zipfile to avoid problems
             //with zip library and umlauts (see #98)
-            saveFile=saveToDir (fileDir, "", true, QPointF(), NULL);
+            saveFile=saveToDir (fileDir, "", FlagRow::UsedFlags, QPointF(), NULL);
         else
-            saveFile=saveToDir (fileDir, mapName + "-", true, QPointF(), NULL);
-        mapChanged=false;
-	mapUnsaved=false;
+            saveFile=saveToDir (fileDir, mapName + "-", FlagRow::UsedFlags, QPointF(), NULL);
+        mapChanged = false;
+	mapUnsaved = false;
 	autosaveTimer->stop();
     }
     else    
@@ -799,7 +805,7 @@ File::ErrorCode VymModel::save (const SaveMode &savemode)
     if (selectionType() == TreeItem::Image)
 	    saveImage();
 	else	
-        saveFile = saveToDir (fileDir, mapName + "-", true, QPointF(), getSelectedBranch());
+        saveFile = saveToDir (fileDir, mapName + "-", FlagRow::UsedFlags, QPointF(), getSelectedBranch());
 	// TODO take care of multiselections
     }	
 
@@ -819,7 +825,7 @@ File::ErrorCode VymModel::save (const SaveMode &savemode)
     if (zipped)
     {
 	// zip
-	if (err==File::Success) err=zipDir (tmpZipDir,destPath);
+	if (err == File::Success) err = zipDir (tmpZipDir, destPath);
 
 	// Delete tmpDir
 	removeDir (QDir(tmpZipDir));
@@ -1185,8 +1191,8 @@ void VymModel::fileChanged()
             if (vymLock.tryLock() ) setReadOnly( false );
         } else
         {
-            // FIXME-5 fileChanged(): Check, if somebody else removed/replaced lockfile
-            // Here a unique vym ID would be needed to be checked
+            // We could check, if somebody else removed/replaced lockfile
+            // (A unique vym ID would be needed)
             
             QDateTime tmod = QFileInfo (filePath).lastModified();
             if (tmod > fileChangedTime)
@@ -1504,11 +1510,11 @@ void VymModel::saveState(
     // Save depending on how much needs to be saved 
     QList <Link*> tmpLinks;
     if (saveSel)
-	dataXML=saveToDir (histDir,mapName+"-",false, QPointF (),saveSel);
+	dataXML = saveToDir (histDir, mapName + "-", FlagRow::NoFlags, QPointF (), saveSel);
 	
-    QString undoCommand=undoCom;
-    QString redoCommand=redoCom;
-    if (savemode==PartOfMap )
+    QString undoCommand = undoCom;
+    QString redoCommand = redoCom;
+    if (savemode == PartOfMap )
     {
 	undoCommand.replace ("PATH",bakMapPath);
 	redoCommand.replace ("PATH",bakMapPath);
@@ -2684,7 +2690,7 @@ void VymModel::copy()
         foreach (TreeItem *ti, itemList)
         {
             fn = QString("%1/%2-%3.xml").arg(clipboardDir).arg(clipboardFile).arg(i);
-            QString content = saveToDir (clipboardDir, clipboardFile, false, QPointF(), ti);
+            QString content = saveToDir (clipboardDir, clipboardFile, FlagRow::NoFlags, QPointF(), ti);
             if (!saveStringToDisk(fn, content))
                 qWarning () << "ME::saveStringToDisk failed: " << fn;
             else
@@ -2747,7 +2753,7 @@ void VymModel::cut()
             if (ti)
             {
                 fn = QString("%1/%2-%3.xml").arg(clipboardDir).arg(clipboardFile).arg(i);
-                QString content = saveToDir (clipboardDir, clipboardFile, true, QPointF(), ti);
+                QString content = saveToDir (clipboardDir, clipboardFile, FlagRow::NoFlags, QPointF(), ti);
                 if (!saveStringToDisk(fn, content))
                     qWarning () << "ME::saveStringToDisk failed: " << fn;
                 else
@@ -3474,7 +3480,7 @@ void VymModel::deleteSelection(bool copyToClipboard)
                 if (copyToClipboard)
                 {
                     fn = QString("%1/%2-%3.xml").arg(clipboardDir).arg(clipboardFile).arg(clipboardItemCount + 1);
-                    QString content = saveToDir (clipboardDir, clipboardFile, true, QPointF(), ti);
+                    QString content = saveToDir (clipboardDir, clipboardFile, FlagRow::NoFlags, QPointF(), ti);
                     if (!saveStringToDisk(fn, content))
                         qWarning () << "ME::saveStringToDisk failed: " << fn;
                     else
@@ -3509,7 +3515,7 @@ void VymModel::deleteSelection(bool copyToClipboard)
                         if (copyToClipboard)
                         {
                             fn = QString("%1/%2-%3.xml").arg(clipboardDir).arg(clipboardFile).arg(clipboardItemCount + 1);
-                            QString content = saveToDir (clipboardDir, clipboardFile, true, QPointF(), ti);
+                            QString content = saveToDir (clipboardDir, clipboardFile, FlagRow::NoFlags, QPointF(), ti);
                             if (!saveStringToDisk(fn, content))
                                 qWarning () << "ME::saveStringToDisk failed: " << fn;
                             else
@@ -4608,7 +4614,7 @@ void VymModel::exportXML (QString dpath, QString fpath, bool useDialog)
     mapUnsaved = munsaved;
 
     // write to directory   //FIXME-3 check totalBBox here...
-    QString saveFile=saveToDir (dpath , mname + "-", true, offset, NULL); 
+    QString saveFile = saveToDir (dpath , mname + "-", FlagRow::NoFlags, offset, NULL); 
     QFile file;
 
     file.setFileName (fpath);

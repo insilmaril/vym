@@ -2262,21 +2262,31 @@ void Main::setupModeActions()
     QAction *a;
     actionGroupModModes=new QActionGroup ( this);
     actionGroupModModes->setExclusive (true);
-    a= new QAction( QPixmap(":/modecolor.png"), tr( "Use modifier to color branches","Mode modifier" ), actionGroupModModes);
+
+    a= new QAction( QPixmap(":/modecolor.png"), tr( "Use modifier to pick color from another branch","Mode modifier" ), actionGroupModModes);
     a->setShortcut (Qt::Key_J);
     addAction(a);
     switchboard.addSwitch ("mapModModeColor", shortcutScope, a, tag);
     a->setCheckable(true);
     a->setChecked(true);
     actionListFiles.append (a);
-    actionModModeColor=a;
+    actionModModeColor = a;
 
-    a->setShortcut( Qt::Key_K); 
+    a= new QAction( QPixmap(":/modecopy.png"), tr( "Use modifier to copy branches","Mode modifier" ), actionGroupModModes);
+    //a->setShortcut( Qt::Key_K); 
     addAction(a);
     switchboard.addSwitch ("mapModModeCopy", shortcutScope, a, tag);
     a->setCheckable(true);
     actionListFiles.append (a);
-    actionModModeCopy=a;
+    actionModModeCopy = a;
+
+    a= new QAction( QPixmap(":/modecopy.png"), tr( "Use modifier to move branches without linking","Mode modifier" ), actionGroupModModes);
+    a->setShortcut( Qt::Key_K + Qt::SHIFT); 
+    addAction(a);
+    switchboard.addSwitch ("mapModModeMoveWithoutLinking", shortcutScope, a, tag);
+    a->setCheckable(true);
+    actionListFiles.append (a);
+    actionModModeMoveWithoutLinking = a;
 
     a= new QAction(QPixmap(":/modelink.png"), tr( "Use modifier to draw xLinks","Mode modifier" ), actionGroupModModes );
     a->setShortcut (Qt::Key_L);
@@ -6183,6 +6193,7 @@ Main::ModMode Main::getModMode()
     if (actionModModeColor->isChecked()) return ModModeColor;
     if (actionModModeCopy->isChecked()) return ModModeCopy;
     if (actionModModeXLink->isChecked()) return ModModeXLink;
+    if (actionModModeMoveWithoutLinking->isChecked()) return ModModeMoveWithoutLinking;
     return ModModeNone;
 }
 
@@ -6325,20 +6336,7 @@ void Main::testFunction1()
     if(m)
     {
         QFileDialog fd;
-        //fd.setDirectory (vymBaseDir.path() + "/demos");
         QStringList filters;
-        /* FIXME-1 remove
-        filters << tr("Images"); 
-        filters << "*.png";
-        filters << "*.bmp";
-        filters << "*.xbm";
-        filters << "*.jpg";
-        filters << "*.png";
-        filters << "*.xpm";
-        filters << "*.gif";
-        filters << "*.pnm";
-        filters << "*.svg";
-        */
         filters << tr("Images") + " (*.png *.bmp *.xbm *.jpg *.png *.xpm *.gif *.pnm *.svg)"; 
         filters << tr("All", "Filedialog") + " (*.*)";
         fd.setFileMode (QFileDialog::ExistingFiles);

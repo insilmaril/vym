@@ -23,12 +23,13 @@ class Main : public QMainWindow
     Q_OBJECT
 
 public:
-    /*! Modifier modes are used when CTRL together with a mouse button is pressed */
+    /*! Modifier modes are used when SHIFT together with a mouse button is pressed */
     enum ModMode {
-	ModModeNone,	//!< Unused
-	ModModeColor,	//!< Pick color from object
-	ModModeCopy,	//!< Copy object
-	ModModeXLink	//!< Create a XLink (XLinkObj) from selected object
+	ModModeNone,	            //!< Unused
+	ModModeColor,	            //!< Pick color from object
+	ModModeCopy,                //!< Copy object
+	ModModeXLink,	            //!< Create a XLink (XLinkObj) from selected object
+	ModModeMoveWithoutLinking   //!< Create a XLink (XLinkObj) from selected object
 	};
 
     Main(QWidget* parent=0, Qt::WindowFlags f=0);
@@ -528,6 +529,7 @@ private:
     QAction *actionModModeColor;
     QAction *actionModModeXLink;
     QAction *actionModModeCopy;
+    QAction *actionModModeMoveWithoutLinking;
 
     QAction *actionToggleHideMode;
 

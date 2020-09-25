@@ -111,14 +111,6 @@ void ImageObj::copy(ImageObj* other)    // FIXME-1 check copying of FloatImagObj
 
 void ImageObj::setPos(const QPointF &pos)
 {
-    /*
-    */
-    if (!parentItem() ) // FIXME-0 testing
-    {
-        setVisibility(false);
-        return;
-    }
-
     switch (imageType)
     {
         case ImageObj::SVG:
@@ -287,7 +279,7 @@ bool ImageObj::load (const QString &fn)
             pixmapItem->setPixmap (pm);
             pixmapItem->setParentItem(parentItem() );
 
-            qDebug() << "IO::load  fn=" << fn << "  pm=" << pixmapItem << "  this=" << this;  // FIXME-1 debug
+            qDebug() << "IO::load  fn=" << fn << "  pm=" << pixmapItem << "  this=" << this;  
             imageType = ImageObj::Pixmap;
 
             return true;
@@ -299,7 +291,7 @@ bool ImageObj::load (const QString &fn)
 
 bool ImageObj::save(const QString &fn) 
 {
-    qDebug() << "ImgObj::save "  << fn;     // FIXME-1
+    qDebug() << "ImgObj::save "  << fn;  
     switch (imageType)
     {
         case ImageObj::SVG:

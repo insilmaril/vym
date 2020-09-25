@@ -243,6 +243,8 @@ void makeSubDirs (const QString &s)
     d.mkdir(s);
     d.mkdir ("images");	
     d.mkdir ("flags");	
+    d.mkdir ("flags/user");	
+    d.mkdir ("flags/standard");	
 }
 
 bool checkZipTool()

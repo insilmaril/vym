@@ -154,11 +154,11 @@ void Flag::setUuid(const QUuid &id)
 
 QUuid Flag::getUuid() { return uuid; }
 
-QString Flag::getDefinition()
+QString Flag::getDefinition(const QString &prefix)
 {
     if (type == Flag::UserFlag) 
     {
-        QString url = "flags/" + uuid.toString() + "-" + name + image->getExtension();
+        QString url = "flags/" + prefix + uuid.toString() + "-" + name + image->getExtension();
         QStringList attributes;
         attributes << attribut("name", name);
 	attributes << attribut ("href", QString ("file:%1").arg(url));

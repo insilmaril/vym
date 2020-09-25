@@ -1424,7 +1424,7 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
 	    movingObj_offset.setY( p.y() - lmo->y() );	
 	    movingObj_orgPos.setX (lmo->x() );
 	    movingObj_orgPos.setY (lmo->y() );
-	    if (ti->depth()>0)
+	    if (ti->depth() > 0)
 	    {
 		lmo->setRelPos();   
 		movingObj_orgRelPos=lmo->getRelPos();
@@ -1432,7 +1432,7 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
 
 	    // If modMode==copy, then we want to "move" the _new_ object around
 	    // then we need the offset from p to the _old_ selection, because of tmp
-	    if (mainWindow->getModMode()==Main::ModModeCopy &&
+	    if (mainWindow->getModMode() == Main::ModModeCopy &&
 		e->modifiers() & Qt::ShiftModifier)
 	    {
 		if (selbi)
@@ -1444,7 +1444,12 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
 		    model->reposition();
 		}
 	    } else
-		setState (MovingObject);
+                if (mainWindow->getModMode() == Main::ModModeMoveWithoutLinking &&
+                    e->modifiers() & Qt::ShiftModifier)
+                {
+                    setState (MovingObjectWithoutLinking);
+                } else
+                    setState (MovingObject);
 
 	    movingObj=model->getSelectedLMO();	
 	} else
@@ -1507,7 +1512,11 @@ void MapEditor::mouseMoveEvent(QMouseEvent* e)
 	mosel=((MapItem*)seli)->getMO();
 
     // Move the selected MapObj
-    if ( mosel && (state==MovingObject || state==CopyingObject || state==EditingLink)) 
+    if ( mosel && 
+            (state == MovingObject  || 
+             state == MovingObjectWithoutLinking || 
+             state == CopyingObject || 
+             state == EditingLink)) 
     {	
 	int margin=50;
 
@@ -1557,26 +1566,26 @@ void MapEditor::moveObject ()
 	panningTimer->start(50);
 
     QPointF p = mapToScene(pointerPos);
-    TreeItem *seli=model->getSelectedItem();
-    LinkableMapObj* lmosel=NULL;    
+    TreeItem *seli = model->getSelectedItem();
+    LinkableMapObj* lmosel = NULL;    
     if (seli)
-	lmosel=((MapItem*)seli)->getLMO();
+	lmosel = ((MapItem*)seli)->getLMO();
 
-    objectMoved=true;
+    objectMoved = true;
     // reset cursor if we are moving and don't copy
     if (mainWindow->getModMode()!=Main::ModModeCopy)
 	setCursor (Qt::ArrowCursor);
 
     // Check if we could link 
-    TreeItem *ti=findMapItem (p, seli);
-    BranchItem *dsti=NULL;
-    LinkableMapObj* dst=NULL;
-    if (ti && ti!=seli && ti->isBranchLikeType())
+    TreeItem *ti = findMapItem (p, seli);
+    BranchItem *dsti = NULL;
+    LinkableMapObj* dst = NULL;
+    if (ti && ti != seli && ti->isBranchLikeType())
     {
-	dsti=(BranchItem*)ti;
-	dst=dsti->getLMO(); 
+	dsti = (BranchItem*)ti;
+	dst = dsti->getLMO(); 
     } else
-	dsti=NULL;
+	dsti = NULL;
     
     if (lmosel)
     {
@@ -1590,7 +1599,7 @@ void MapEditor::moveObject ()
 
 	    // Relink float to new mapcenter or branch, if shift is pressed 
 	    // Only relink, if selection really has a new parent
-	    if ( pointerMod==Qt::ShiftModifier && dsti &&  dsti != seli->parent()  )
+	    if ( pointerMod == Qt::ShiftModifier && dsti &&  dsti != seli->parent()  )
 	    {
 		// Also save the move which was done so far
 		QString pold=qpointFToString(movingObj_orgRelPos);
@@ -1611,8 +1620,8 @@ void MapEditor::moveObject ()
 	    if (seli->depth()==0)	
 	    {
 		// Move mapcenter
-		lmosel->move   (p-movingObj_offset);	
-		if (pointerMod==Qt::ShiftModifier) 
+		lmosel->move   (p -movingObj_offset);	
+		if (pointerMod == Qt::ShiftModifier) 
 		{
 		    // Move only mapcenter, leave its children where they are
 		    QPointF v;
@@ -1650,14 +1659,14 @@ void MapEditor::moveObject ()
 	    // Maybe we can relink temporary?
 	    if (dsti)
 	    {
-		if (pointerMod==Qt::ControlModifier)
+		if (pointerMod == Qt::ControlModifier)
 		{
 		    // Special case: CTRL to link below dst
-		    lmosel->setParObjTmp (dst,p,+1);
+		    lmosel->setParObjTmp (dst, p, +1);
 		} else if (pointerMod==Qt::ShiftModifier)
-		    lmosel->setParObjTmp (dst,p,-1);
+		    lmosel->setParObjTmp (dst, p, -1);
 		else
-		    lmosel->setParObjTmp (dst,p,0);
+		    lmosel->setParObjTmp (dst, p, 0);
 	    } else  
 		lmosel->unsetParObjTmp();
 
@@ -1670,14 +1679,14 @@ void MapEditor::moveObject ()
             // In winter mode shake snow from heading
             if (winter) model->emitDataChanged(seli);
 	} // Moving branchLikeType 
-    } // End of lmosel!=NULL
-    else if (seli && seli->getType()==TreeItem::XLink)
+    } // End of lmosel != NULL
+    else if (seli && seli->getType() == TreeItem::XLink)
     {
 	// Move XLink control point
-	MapObj* mosel=((MapItem*)seli)->getMO();
+	MapObj* mosel = ((MapItem*)seli)->getMO();
 	if (mosel) 
 	{
-	    mosel->move( p-movingObj_offset );	// FIXME-3 Missing savestate 
+	    mosel->move( p - movingObj_offset );	// FIXME-3 Missing savestate 
             model->setChanged();
 	    model->emitSelectionChanged();
 	}
@@ -1803,7 +1812,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent* e)
 	    // For Redo we may need to save original selection
 	    QString preSelStr=model->getSelectString(seli);
 
-	    if (dsti && objectMoved)
+	    if (dsti && objectMoved && state != MovingObjectWithoutLinking)
 	    {
 		// We have a destination, relink to that
 		BranchObj* selbo=model->getSelectedBranchObj();
@@ -2067,22 +2076,41 @@ void MapEditor::setState (EditorState s)
 	qWarning ()<<"MapEditor::setState  switching directly from "<<state<<" to "<<s;
     state=s;
     /* if (debug)
+    */
     {
         QString s;
         switch (state)
         {
-        case Neutral: s="Neutral";break;
-        case EditingHeading: s="EditingHeading";break;
-        case EditingLink: s="EditingLink";break;
-        case MovingObject: s="MovingObject";break;
-        case MovingView: s="MovingView";break;
-        case PickingColor: s="PickingColor";break;
-        case CopyingObject: s="CopyingObject";break;
-        case DrawingLink: s="DrawingLink";break;
+        case Neutral: 
+            s = "Neutral";
+            break;
+        case EditingHeading: 
+            s = "EditingHeading";
+            break;
+        case EditingLink: 
+            s = "EditingLink";
+            break;
+        case MovingObject: 
+            s = "MovingObject";
+            break;
+        case MovingObjectWithoutLinking: 
+            s = "MovingObjectWithoutLinking";
+            break;
+        case MovingView: 
+            s = "MovingView";
+            break;
+        case PickingColor: 
+            s = "PickingColor";
+            break;
+        case CopyingObject: 
+            s = "CopyingObject";
+            break;
+        case DrawingLink: 
+            s = "DrawingLink";
+            break;
         }
-        qDebug()<<"MapEditor: State "<<s<< " of "<<model->getMapName();
+        qDebug() << "MapEditor: State " << s << " of " << model->getMapName();
     }
-    */
 }
 
 MapEditor::EditorState MapEditor::getState()

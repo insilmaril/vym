@@ -234,19 +234,19 @@ void FlagRow::resetUsedCounter()
 	flags.at(i)->setUsed (false);
 }
 
-QString FlagRow::saveDef(const QString &dirPath)
+QString FlagRow::saveDef(const QString &dirPath, WriteMode mode)
 {
     // For the masterrow of userflags: Write definitions of flags
 
     QString s = "\n";
 
     for (int i = 0; i < flags.size(); ++i)
-        s += flags.at(i)->getDefinition();
+        s += flags.at(i)->getDefinition(prefix);
 
     return s;
 }
 
-bool FlagRow::saveDataToDir (const QString &tmpdir)  // FIXME-0 only save flags, if used or default map
+bool FlagRow::saveDataToDir (const QString &tmpdir, WriteMode mode)  // FIXME-0 only save flags, if used or default map
 {
     qDebug() << "FR::saveDataToDir " << tmpdir;
 
@@ -258,8 +258,9 @@ bool FlagRow::saveDataToDir (const QString &tmpdir)  // FIXME-0 only save flags,
     // Userflags are written anyway (if master flagrow)         // FIXME really?
     
     for (int i = 0; i < flags.size(); ++i)
-        if (!flags.at(i)->saveDataToDir (tmpdir))
-            r = false;
+        if ( (mode == AllFlags) || (mode == UsedFlags && flags.at(i)->isUsed() ))
+            if (!flags.at(i)->saveDataToDir (tmpdir))
+                r = false;
 
     return r;	    
 }
@@ -277,6 +278,7 @@ QString FlagRow::saveState ()
             s += flag->saveState();
 
             // and tell parentRow, that this flag is used   
+            qDebug() << "FR::saveState " << rowName << " saving " << flag->getName() << activeUids.at(i).toString() << "currently used: " << flag->isUsed();
             flag->setUsed(true);
         }   
     return s;	    
@@ -285,6 +287,11 @@ QString FlagRow::saveState ()
 void FlagRow::setName (const QString &n)
 {
     rowName = n;
+}
+
+void FlagRow::setPrefix (const QString &p)
+{
+    prefix = p;
 }
 
 QString FlagRow::getName () { return rowName; }

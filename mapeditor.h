@@ -28,6 +28,7 @@ public:
 	EditingHeading,
 	EditingLink,
 	MovingObject,
+	MovingObjectWithoutLinking,
 	MovingView,
 	PickingColor,
 	CopyingObject,
