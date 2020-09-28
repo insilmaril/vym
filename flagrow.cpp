@@ -148,6 +148,15 @@ bool FlagRow::activate (const QString &name)
 	return false;
     }
 
+    // Some flags might be hidden, if inactive
+    if (!flag->isVisible() ) 
+    {
+        flag->setVisible(true);
+        QAction *action = flag->getAction();
+        if (action) action->setVisible(true);
+    }
+
+
     activeUids.append (flag->getUuid());
     return true;
 }

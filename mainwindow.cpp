@@ -2773,6 +2773,8 @@ Flag* Main::setupFlag (const QString &path,
             // so for now switch to standard flag
             flag->setVisible(false);
             type = Flag::StandardFlag;
+            standardFlagsToolbar->addAction (a);
+            connect (a, SIGNAL( triggered() ), this, SLOT( flagChanged() ) );
             break;
         case Flag::StandardFlag:
             standardFlagsToolbar->addAction (a);
