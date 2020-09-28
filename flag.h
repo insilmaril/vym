@@ -47,7 +47,6 @@ public:
     QString  getDefinition(const QString &prefix);
     void  saveDataToDir (const QString&);
     QString  saveState();
-    bool vtest(bool v);
     
 protected:  
     QString name;

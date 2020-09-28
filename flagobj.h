@@ -22,7 +22,6 @@ public:
     FlagObj (QGraphicsItem *);
     ~FlagObj ();
     virtual void init ();
-    virtual void copy (FlagObj*);
     virtual void move (double x,double y);      // move to absolute Position
     virtual void moveBy (double x,double y);    // move to relative Position
     virtual void setZValue (double z);

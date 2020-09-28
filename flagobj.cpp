@@ -24,16 +24,6 @@ void FlagObj::init ()
     avis = true;
 }
 
-void FlagObj::copy (FlagObj* other)  // FIXME-1 needed?
-{
-    qDebug() << "FlagObj::copy";
-    MapObj::copy(other);
-    uid   = other->uid;
-    avis  = other->avis;
-    imageObj->copy(other->imageObj);
-    setVisibility (other->isVisibleObj() );
-}
-
 void FlagObj::move(double x, double y)
 {
     MapObj::move(x,y);

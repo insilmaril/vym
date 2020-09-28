@@ -420,7 +420,7 @@ QMimeData *TaskModel::mimeData(const QModelIndexList &indexes) const
         stream << QString::number( index(task).row() );
         
         // Field 2: Branch ID   // FIXME-1 not needed anylonger
-        stream << QString::number( task->getBranch()->getID() );
+        // stream << QString::number( task->getBranch()->getID() );
     }
 
 

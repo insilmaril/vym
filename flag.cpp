@@ -186,9 +186,3 @@ QString Flag::saveState()
         return valueElement ("standardflag", name);
 }
 
-bool Flag::vtest(bool v)  // FIXME-1 testing
-{
-    qDebug() << "Flag::vtest  v=" << v;
-    return v;
-}
-
