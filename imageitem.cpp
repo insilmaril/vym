@@ -46,7 +46,7 @@ void ImageItem::clear()
     // not used here currently
 }
 
-bool ImageItem::load(const QString &fname) // FIXME-1 what if there is already an image with different type loaded?
+bool ImageItem::load(const QString &fname) 
 {
     FloatImageObj *fio = (FloatImageObj*)mo;
     if (!fio->load(fname) ) return false;

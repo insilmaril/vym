@@ -242,7 +242,10 @@ bool ImageObj::load (const QString &fn)
 {
     //qDebug() << "IO::load "  << fn;
     if (imageType != ImageObj::Undefined)
+    {
         qWarning() << "ImageObj::load (" << fn << ") into existing image of type " << imageType;
+        return false;
+    }
 
     if (fn.toLower().endsWith(".svg"))
     {

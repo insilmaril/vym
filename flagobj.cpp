@@ -27,7 +27,7 @@ void FlagObj::init ()
 void FlagObj::move(double x, double y)
 {
     MapObj::move(x,y);
-    imageObj->setPos(QPointF(x,y)); // FIXME-1 needed?
+    imageObj->setPos(QPointF(x,y)); 
     positionBBox();
 }
 
