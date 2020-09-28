@@ -45,7 +45,7 @@ public:
     void setUuid(const QUuid &id);
     QUuid getUuid();
     QString  getDefinition(const QString &prefix);
-    bool  saveDataToDir (const QString&);
+    void  saveDataToDir (const QString&);
     QString  saveState();
     bool vtest(bool v);
     

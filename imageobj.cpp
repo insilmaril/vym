@@ -30,25 +30,11 @@ ImageObj::~ImageObj()
             if (svgItem) delete (svgItem);
             break;
         case ImageObj::Pixmap:
-            if (pixmapItem) 
-            {
-                delete (pixmapItem);
-                //qDebug() << "  destr IO  deleting pixmapItem";
-            }
+            if (pixmapItem) delete (pixmapItem);
             break;
         case ImageObj::ModifiedPixmap:  
-            if (pixmapItem) 
-            {
-                // FIXME-1 testing
-                delete (pixmapItem);
-                qDebug() << "  destr IO  deleting pixmapItem";
-            }
-            if (originalPixmap) 
-            {
-                // FIXME-1 testing
-                delete (originalPixmap);
-                qDebug() << "  destr IO  deleting originalPixmap";
-            }
+            if (pixmapItem) delete (pixmapItem);
+            if (originalPixmap) delete (originalPixmap);
             break;
         default: 
             qDebug() << "ImgObj::copy other->imageType undefined";    
@@ -68,10 +54,9 @@ void ImageObj::init()
     scaleFactor    = 1;
 }
 
-void ImageObj::copy(ImageObj* other)    // FIXME-1 check copying of FloatImagObj...
+void ImageObj::copy(ImageObj* other)    
 {
     prepareGeometryChange();
-    qDebug() << "ImgObj::copy    this=" << this << "  other=" << other << "  type this=  " << imageType  << "type other= " << other->imageType;
     if (imageType != ImageObj::Undefined)
         qWarning() << "ImageObj::copy into existing image of type " << imageType;
 
@@ -87,7 +72,6 @@ void ImageObj::copy(ImageObj* other)    // FIXME-1 check copying of FloatImagObj
                 qWarning() << "ImgObj::copy svg: no svgPath available.";
             break;
         case ImageObj::Pixmap:
-            qDebug() << "ImgObj::copy other is pm...";    // FIXME-1 check
             pixmapItem = new QGraphicsPixmapItem();
             pixmapItem->setPixmap (other->pixmapItem->pixmap());
             pixmapItem->setParentItem (parentItem() );
@@ -95,7 +79,6 @@ void ImageObj::copy(ImageObj* other)    // FIXME-1 check copying of FloatImagObj
             imageType = ImageObj::Pixmap;
             break;
         case ImageObj::ModifiedPixmap:
-            qDebug() << "ImgObj::copy other is modified pm...";    // FIXME-0 implement copy
             // create new pixmap?
             pixmapItem->setPixmap (other->pixmapItem->pixmap());
             pixmapItem->setParentItem (parentItem());
@@ -257,7 +240,7 @@ QString ImageObj::getCashPath()
 
 bool ImageObj::load (const QString &fn) 
 {
-    qDebug() << "IO::load "  << fn;
+    //qDebug() << "IO::load "  << fn;
     if (imageType != ImageObj::Undefined)
         qWarning() << "ImageObj::load (" << fn << ") into existing image of type " << imageType;
 
@@ -278,8 +261,6 @@ bool ImageObj::load (const QString &fn)
             pixmapItem = new QGraphicsPixmapItem (this);    // FIXME-1 existing pmi? 
             pixmapItem->setPixmap (pm);
             pixmapItem->setParentItem(parentItem() );
-
-            qDebug() << "IO::load  fn=" << fn << "  pm=" << pixmapItem << "  this=" << this;  
             imageType = ImageObj::Pixmap;
 
             return true;
@@ -291,7 +272,6 @@ bool ImageObj::load (const QString &fn)
 
 bool ImageObj::save(const QString &fn) 
 {
-    qDebug() << "ImgObj::save "  << fn;  
     switch (imageType)
     {
         case ImageObj::SVG:

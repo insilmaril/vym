@@ -275,8 +275,6 @@ void VymView::collapseUnselected()
     BranchItem *selbi = model->getSelectedBranch();
     if (!selbi) return;
 
-    int level = selbi->depth();
-
     QList <BranchItem*> itemPath;
 
     // Do not include selected branch, 

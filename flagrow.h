@@ -43,8 +43,8 @@ public:
     void deactivateAll();
     void setEnabled (bool);
     void resetUsedCounter();
-    QString saveDef(const QString &dirPath, WriteMode mode);
-    bool saveDataToDir (const QString &, WriteMode mode);
+    QString saveDef();
+    void saveDataToDir (const QString &, WriteMode mode);
     QString saveState();
     void setName (const QString&);	    // prefix for exporting flags to dir
     QString getName();                      // Used for debugging only

@@ -32,7 +32,6 @@ Flag* FlagRow::createFlag(const QString &path)
 void FlagRow::shareCashed(Flag *flag)
 {
     QString path = tmpVymDir;
-    qDebug() << "FR:shareCached " << flag->getName() << " at " << path;
     ImageObj *image = flag->getImageObj();
     if( !image->shareCashed(path + "/" + flag->getUuid().toString() + "-" + flag->getName() + image->getExtension())) // FIXME-1 check, if separator converted automagically on windows);
         qDebug() << "FR::shareCashed failed for " << flag->getName();
@@ -234,7 +233,7 @@ void FlagRow::resetUsedCounter()
 	flags.at(i)->setUsed (false);
 }
 
-QString FlagRow::saveDef(const QString &dirPath, WriteMode mode)
+QString FlagRow::saveDef()
 {
     // For the masterrow of userflags: Write definitions of flags
 
@@ -246,23 +245,16 @@ QString FlagRow::saveDef(const QString &dirPath, WriteMode mode)
     return s;
 }
 
-bool FlagRow::saveDataToDir (const QString &tmpdir, WriteMode mode)  // FIXME-0 only save flags, if used or default map
+void FlagRow::saveDataToDir (const QString &tmpdir, WriteMode mode)  
 {
-    qDebug() << "FR::saveDataToDir " << tmpdir;
-
-    bool r = true;  // FIXME-1  unused value in FR::saveDataToDir
-    
     // Save icons to dir, if verbose is set (xml export)
     // and I am a master
     // and this standardflag is really used somewhere.
-    // Userflags are written anyway (if master flagrow)         // FIXME really?
+    // Userflags are written anyway (if master flagrow)       
     
     for (int i = 0; i < flags.size(); ++i)
         if ( (mode == AllFlags) || (mode == UsedFlags && flags.at(i)->isUsed() ))
-            if (!flags.at(i)->saveDataToDir (tmpdir))
-                r = false;
-
-    return r;	    
+            flags.at(i)->saveDataToDir (tmpdir);
 }
 
 QString FlagRow::saveState ()
@@ -298,7 +290,6 @@ QString FlagRow::getName () { return rowName; }
 
 void FlagRow::setToolBar (QToolBar *tb)
 {
-    qDebug() << "FR::setToolbar  tb=" << tb;
     toolBar = tb;
 }
 

@@ -64,8 +64,6 @@ void FlagObj::loadImage (ImageObj* io)
 {
     prepareGeometryChange();
 
-    qDebug() << "FO::load  (IO)        io->scene=" << io->scene() << "this->scene="  << scene() << "imageObj=" << imageObj; // FIXME-1 testing
-    
     imageObj->copy(io);   // Creates deep copy of pixmap or svg!
     imageObj->setVisibility(visible); 
     calcBBoxSize();

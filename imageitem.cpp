@@ -78,6 +78,7 @@ void ImageItem::setScaleFactor (qreal f)
 qreal ImageItem::getScaleFactor ()
 {
     if (mo) return ((FloatImageObj*)mo)->getScaleFactor();
+    return 1;
 }
 
 void ImageItem::setZValue(int z)

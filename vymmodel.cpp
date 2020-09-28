@@ -372,7 +372,7 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix, FlagRo
     {
         // First find out, which flags are used
         // Definitions 
-        flags += userFlagsMaster->saveDef(tmpdir + "flags/user/", flagMode);
+        flags += userFlagsMaster->saveDef();
 
         userFlagsMaster->saveDataToDir (tmpdir + "flags/user/", flagMode);    
         standardFlagsMaster->saveDataToDir (tmpdir + "flags/standard/", flagMode);
@@ -545,22 +545,20 @@ File::ErrorCode VymModel::loadMap (
 	return File::Aborted; 
     }
 
+    QString xmlfile;
     if (fname.right(4) == ".xml" || fname.right(3) == ".mm")
-        err = File::NoZip;
-    else
     {
+        zipped = false;
+	xmlfile = fname;
+    } else
+    {
+        zipped = true;
         // Try to unzip file
         err = unzipDir (tmpZipDir, fname);
     }
-    QString xmlfile;
-    if (err == File::NoZip)
+
+    if (zipped)
     {
-	xmlfile = fname;
-	zipped = false;
-    } else
-    {
-	zipped = true;
-	
 	// Look for mapname.xml
 	xmlfile = fname.left(fname.lastIndexOf(".", -1, Qt::CaseSensitive));
 	xmlfile = xmlfile.section( '/', -1 );
