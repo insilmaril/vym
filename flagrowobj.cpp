@@ -146,15 +146,6 @@ void FlagRowObj::activateFlag (Flag *flag)
     }
 }
 
-FlagObj* FlagRowObj::findFlagObj(const QString &name)   // FIXME-1 
-{
-    /*
-    for (int i = 0; i < flagobjs.size(); ++i)
-	if (flagobjs.at(i)->getName() == name) return flagobjs.at(i);
-        */
-    return NULL;
-}
-
 FlagObj* FlagRowObj::findFlagObj(const QUuid &uid)
 {
     for (int i = 0; i < flagobjs.size(); ++i)

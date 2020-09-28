@@ -27,7 +27,6 @@ public:
     virtual void calcBBoxSize();
     bool isFlagActive(const QUuid&);
     void activateFlag (Flag *flag);
-    FlagObj* findFlagObj (const QString&);
     FlagObj* findFlagObj (const QUuid&);
     virtual QUuid findFlagUidByPos (const QPointF &p); // Find flag by position
 private:    
