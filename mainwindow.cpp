@@ -2263,7 +2263,16 @@ void Main::setupModeActions()
     actionGroupModModes=new QActionGroup ( this);
     actionGroupModModes->setExclusive (true);
 
-    a= new QAction( QPixmap(":/modecolor.png"), tr( "Use modifier to pick color from another branch","Mode modifier" ), actionGroupModModes);
+    a= new QAction( QIcon("icons/mode-point.svg"), tr( "Use modifier to select and reorder objects","Mode modifier" ), actionGroupModModes);
+    //a->setShortcut (Qt::Key_J);
+    addAction(a);
+    switchboard.addSwitch ("mapModModePoint", shortcutScope, a, tag);
+    a->setCheckable(true);
+    a->setChecked(true);
+    actionListFiles.append (a);
+    actionModModePoint  = a;
+
+    a= new QAction( QPixmap(":/mode-color.png"), tr( "Use modifier to pick color from another branch","Mode modifier" ), actionGroupModModes);
     a->setShortcut (Qt::Key_J);
     addAction(a);
     switchboard.addSwitch ("mapModModeColor", shortcutScope, a, tag);
@@ -2272,7 +2281,7 @@ void Main::setupModeActions()
     actionListFiles.append (a);
     actionModModeColor = a;
 
-    a= new QAction( QPixmap(":/modecopy.png"), tr( "Use modifier to copy branches","Mode modifier" ), actionGroupModModes);
+    a= new QAction( QPixmap(":/mode-copy.png"), tr( "Use modifier to copy branches","Mode modifier" ), actionGroupModModes);
     //a->setShortcut( Qt::Key_K); 
     addAction(a);
     switchboard.addSwitch ("mapModModeCopy", shortcutScope, a, tag);
@@ -2280,21 +2289,29 @@ void Main::setupModeActions()
     actionListFiles.append (a);
     actionModModeCopy = a;
 
-    a= new QAction( QPixmap(":/modecopy.png"), tr( "Use modifier to move branches without linking","Mode modifier" ), actionGroupModModes);
-    a->setShortcut( Qt::Key_K + Qt::SHIFT); 
-    addAction(a);
-    switchboard.addSwitch ("mapModModeMoveWithoutLinking", shortcutScope, a, tag);
-    a->setCheckable(true);
-    actionListFiles.append (a);
-    actionModModeMoveWithoutLinking = a;
-
-    a= new QAction(QPixmap(":/modelink.png"), tr( "Use modifier to draw xLinks","Mode modifier" ), actionGroupModModes );
+    a= new QAction(QPixmap(":/mode-xlink.png"), tr( "Use modifier to draw xLinks","Mode modifier" ), actionGroupModModes );
     a->setShortcut (Qt::Key_L);
     addAction(a);
     switchboard.addSwitch ("mapModModeXLink", shortcutScope, a, tag);
     a->setCheckable(true);
     actionListFiles.append (a);
     actionModModeXLink=a;
+
+    a= new QAction( QPixmap(":/mode-move-object.svg"), tr( "Use modifier to move branches without linking","Mode modifier" ), actionGroupModModes);
+    a->setShortcut( Qt::Key_K + Qt::SHIFT); 
+    addAction(a);
+    switchboard.addSwitch ("mapModModeMoveObject", shortcutScope, a, tag);
+    a->setCheckable(true);
+    actionListFiles.append (a);
+    actionModModeMoveObject = a;
+
+    a= new QAction( QPixmap(":/mode-move-view.svg"), tr( "Use modifier to move view","Mode modifier" ), actionGroupModModes);
+    //a->setShortcut( Qt::Key_K + Qt::SHIFT); 
+    addAction(a);
+    switchboard.addSwitch ("mapModModeMoveView", shortcutScope, a, tag);
+    a->setCheckable(true);
+    actionListFiles.append (a);
+    actionModModeMoveView = a;
 }
 
 // Flag Actions
@@ -3316,9 +3333,12 @@ void Main::setupToolbars()
     // Modifier modes
     modModesToolbar = addToolBar( tr ("Modifier modes toolbar","Modifier Toolbar name") );
     modModesToolbar->setObjectName ("modesTB");
+    modModesToolbar->addAction(actionModModePoint);
     modModesToolbar->addAction(actionModModeColor);
     modModesToolbar->addAction(actionModModeCopy);
     modModesToolbar->addAction(actionModModeXLink);
+    modModesToolbar->addAction(actionModModeMoveObject);
+    modModesToolbar->addAction(actionModModeMoveView);
     
     // Add all toolbars to View menu
     toolbarsMenu->addAction (fileToolbar->toggleViewAction() );
@@ -6192,11 +6212,13 @@ void Main::updateActions()
 
 Main::ModMode Main::getModMode()
 {
+    if (actionModModePoint->isChecked()) return ModModePoint;
     if (actionModModeColor->isChecked()) return ModModeColor;
     if (actionModModeCopy->isChecked()) return ModModeCopy;
     if (actionModModeXLink->isChecked()) return ModModeXLink;
-    if (actionModModeMoveWithoutLinking->isChecked()) return ModModeMoveWithoutLinking;
-    return ModModeNone;
+    if (actionModModeMoveObject->isChecked()) return ModModeMoveObject;
+    if (actionModModeMoveView->isChecked()) return ModModeMoveView;
+    return ModModeUndefined;
 }
 
 bool Main::autoEditNewBranch()

@@ -113,9 +113,12 @@
     <file alias="linestyle-dashdotdot.png">icons/linestyle-dashdotdot.png</file>
     <file alias="linestyle-dot.png">icons/linestyle-dot.png</file>
     <file alias="linestyle-solid.png">icons/linestyle-solid.png</file>
-    <file alias="modecolor.png">icons/modecolor.png</file>
-    <file alias="modecopy.png">icons/modecopy.png</file>
-    <file alias="modelink.png">icons/modelink.png</file>
+    <file alias="mode-point.svg">icons/mode-point.svg</file>
+    <file alias="mode-color.png">icons/mode-color.png</file>
+    <file alias="mode-copy.png">icons/mode-copy.png</file>
+    <file alias="mode-xlink.png">icons/mode-xlink.png</file>
+    <file alias="mode-move-object.svg">icons/mode-move-object.svg</file>
+    <file alias="mode-move-view.svg">icons/mode-move-view.svg</file>
     <file alias="newbranch.png">icons/newbranch.png</file>
     <file alias="newmapcenter.png">icons/newmapcenter.png</file>
     <file alias="redo.png">icons/redo.png</file>

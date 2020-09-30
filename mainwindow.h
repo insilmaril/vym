@@ -25,11 +25,13 @@ class Main : public QMainWindow
 public:
     /*! Modifier modes are used when SHIFT together with a mouse button is pressed */
     enum ModMode {
-	ModModeNone,	            //!< Unused
+	ModModeUndefined,	    //!< Unused
+	ModModePoint,	            //!< Regular mode: Point and relink items
 	ModModeColor,	            //!< Pick color from object
 	ModModeCopy,                //!< Copy object
 	ModModeXLink,	            //!< Create a XLink (XLinkObj) from selected object
-	ModModeMoveWithoutLinking   //!< Create a XLink (XLinkObj) from selected object
+	ModModeMoveObject,          //!< Move object without linking
+        ModModeMoveView             //!< Move view without changing
 	};
 
     Main(QWidget* parent=0, Qt::WindowFlags f=0);
@@ -526,10 +528,12 @@ private:
     QAction *actionCenterOn;
 
     QActionGroup *actionGroupModModes;
+    QAction *actionModModePoint;
     QAction *actionModModeColor;
-    QAction *actionModModeXLink;
     QAction *actionModModeCopy;
-    QAction *actionModModeMoveWithoutLinking;
+    QAction *actionModModeXLink;
+    QAction *actionModModeMoveObject;
+    QAction *actionModModeMoveView;
 
     QAction *actionToggleHideMode;
 

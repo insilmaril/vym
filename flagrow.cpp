@@ -279,7 +279,6 @@ QString FlagRow::saveState ()
             s += flag->saveState();
 
             // and tell parentRow, that this flag is used   
-            qDebug() << "FR::saveState " << rowName << " saving " << flag->getName() << activeUids.at(i).toString() << "currently used: " << flag->isUsed();
             flag->setUsed(true);
         }   
     return s;	    
