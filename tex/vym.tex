@@ -1327,27 +1327,23 @@ heading and border of the branch frame adapt to the floating image, see
 below: \maximage{images/includeImages.png}
 
 \subsection{Modifier Modes} 
-Modifiers are for example the \key{Shift}- the \key{Ctrl}- ot the
-\key{Alt}-keys. When pressed while applying mouse actions, they will
-cause \vym to use a "modified" version of the action which usually would
-be done. 
-
-%\key{Ctrl} or \key{Alt}is pressed while releasing the branch, it will be
-%added above/below the target, not as child of the target.
-
-Without a modifier key pressed, the first mouse click on a branch just selects
-it. For the behaviour of the \key{Shift} modifier there are several
-options, which can be set from the modifier toolbar:
+The modifier mode can be selected in the toolbar
 \begin{center}
     \includegraphics[width=3cm]{images/modmodes.png}
 \end{center}
-The default mode is to copy the colour from the clicked branch to the
-already selected branch. The figure above shows the toolbar with the
-default modifier selected. If press both \key{Shift}~$+$~\key{Ctrl} only
-the selected branch will change color, instead of the whole subtree.
-
-The second modifier lets you create links between branches called {\em
-xLinks}.  They will be explained in the next section \ref{xlinks}.
+The selected mode influences mouse behaviour when the \key{Shift}-modifier is
+used:
+\begin{itemize}
+    \item Pointer: This is the default and is used to select branches
+        and relink them to others
+    \item Color: Pick and copy color from another branch
+    \item XLink: Draw a connecting XLink between two branches. See also
+        \ref{xlinks}
+    \item Move object: Move object, but without relinking to another
+        branch. Useful to position one object within another bigger one
+    \item Move view: Move the currently visible view, without moving
+        objects
+\end{itemize}
 
 \subsection{Hide links of unselected objects} \label{hidelink}
 Sometimes it would be useful to position a branch freely, just like a

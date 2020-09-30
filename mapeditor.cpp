@@ -1343,18 +1343,12 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
     }
     
     // Select the clicked object, if not moving without linking
-    if (ti_found && 
-            (e->modifiers() & Qt::ShiftModifier ) && 
-            mainWindow->getModMode() == Main::ModModeMoveObject)
+    if (ti_found && (e->modifiers() & Qt::ShiftModifier ) )
     {
-
-    } else
-    {
-        if (ti_found && e->modifiers() & Qt::ControlModifier)
+        if (mainWindow->getModMode() == Main::ModModePoint)
             model->selectToggle (ti_found);
-        else
-            model->select (ti_found);
-    }
+    } else
+        model->select (ti_found);
 
     e->accept();
 
@@ -2085,11 +2079,10 @@ void MapEditor::dropEvent(QDropEvent *event)
 
 void MapEditor::setState (EditorState s)
 {
-    if (state!=Neutral && s!=Neutral)
-	qWarning ()<<"MapEditor::setState  switching directly from "<<state<<" to "<<s;
-    state=s;
+    if (state != Neutral && s != Neutral)
+	qWarning () << "MapEditor::setState  switching directly from " << state << " to " << s;
+    state = s;
     /* if (debug)
-    */
     {
         QString s;
         switch (state)
@@ -2121,6 +2114,7 @@ void MapEditor::setState (EditorState s)
         }
         qDebug() << "MapEditor: State " << s << " of " << model->getMapName();
     }
+    */
 }
 
 MapEditor::EditorState MapEditor::getState()
