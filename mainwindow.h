@@ -28,7 +28,6 @@ public:
 	ModModeUndefined,	    //!< Unused
 	ModModePoint,	            //!< Regular mode: Point and relink items
 	ModModeColor,	            //!< Pick color from object
-	ModModeCopy,                //!< Copy object
 	ModModeXLink,	            //!< Create a XLink (XLinkObj) from selected object
 	ModModeMoveObject,          //!< Move object without linking
         ModModeMoveView             //!< Move view without changing

@@ -62,7 +62,6 @@ MapEditor::MapEditor( VymModel *vm)
     // Create bitmap cursors, platform dependant
     HandOpenCursor=QCursor (QPixmap(":/cursorhandopen.png"),1,1);	
     PickColorCursor=QCursor ( QPixmap(":/cursorcolorpicker.png"), 5,27 ); 
-    CopyCursor=QCursor ( QPixmap(":/cursorcopy.png"), 1,1 ); 
     XLinkCursor=QCursor ( QPixmap(":/cursorxlink.png"), 1,7 ); 
 
     editingBO=NULL;
@@ -1224,9 +1223,6 @@ void MapEditor::keyPressEvent(QKeyEvent* e)
 	    case Main::ModModeColor: 
 		setCursor (PickColorCursor);
 		break;
-	    case Main::ModModeCopy: 
-		setCursor (CopyCursor);
-		break;
 	    case Main::ModModeXLink: 
 		setCursor (XLinkCursor);
 		break;
@@ -1447,7 +1443,7 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
 	// Left Button	    Move Branches
 	if (e->button() == Qt::LeftButton )
 	{
-	    // No system flag clicked, take care of moving copymodes or simply moving
+	    // No system flag clicked, take care of moving modes or simply moving
 	    movingObj_offset.setX( p.x() - lmo_found->x() );	
 	    movingObj_offset.setY( p.y() - lmo_found->y() );	
 	    movingObj_orgPos.setX (lmo_found->x() );
@@ -1458,26 +1454,12 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
 		movingObj_orgRelPos = lmo_found->getRelPos();
 	    }
 
-	    // If modMode==copy, then we want to "move" the _new_ object around
-	    // then we need the offset from p to the _old_ selection, because of tmp
-	    if (mainWindow->getModMode() == Main::ModModeCopy &&
-		e->modifiers() & Qt::ShiftModifier)
-	    {
-		if (selbi)
-		{
-		    setState (CopyingObject);
-		    model->copy();
-		    model->paste();
-		    model->select (selbi->getLastBranch());
-		    model->reposition();
-		}
-	    } else
-                if (mainWindow->getModMode() == Main::ModModeMoveObject &&
-                    e->modifiers() & Qt::ShiftModifier)
-                {
-                    setState (MovingObjectWithoutLinking);  // FIXME-1
-                } else
-                    setState (MovingObject);
+            if (mainWindow->getModMode() == Main::ModModeMoveObject &&
+                e->modifiers() & Qt::ShiftModifier)
+            {
+                setState (MovingObjectWithoutLinking);  // FIXME-1
+            } else
+                setState (MovingObject);
 
 	    movingObj = model->getSelectedLMO();	
 	} else
@@ -1562,7 +1544,6 @@ void MapEditor::mouseMoveEvent(QMouseEvent* e)
     if ( mosel && 
             (state == MovingObject  || 
              state == MovingObjectWithoutLinking || 
-             state == CopyingObject || 
              state == EditingLink)) 
     {	
 	int margin = 50;
@@ -1604,9 +1585,9 @@ void MapEditor::moveObject ()
 	lmosel = ((MapItem*)seli)->getLMO();
 
     objectMoved = true;
+    
     // reset cursor if we are moving and don't copy
-    if (mainWindow->getModMode()!=Main::ModModeCopy)
-	setCursor (Qt::ArrowCursor);
+    //setCursor (Qt::ArrowCursor);    // FIXME-1 needed after removing modModeCopy
 
     // Check if we could link 
     TreeItem *ti_found = findMapItem (p, seli);
@@ -1691,7 +1672,6 @@ void MapEditor::moveObject ()
 	    // Maybe we can relink temporary?
 	    if (bi_dst && state != MovingObjectWithoutLinking)
 	    {
-                qDebug() << "ME:: relink tmp";
 		if (pointerMod == Qt::ControlModifier)
 		{
 		    // Special case: CTRL to link below dst
@@ -2134,9 +2114,6 @@ void MapEditor::setState (EditorState s)
             break;
         case PickingColor: 
             s = "PickingColor";
-            break;
-        case CopyingObject: 
-            s = "CopyingObject";
             break;
         case DrawingLink: 
             s = "DrawingLink";

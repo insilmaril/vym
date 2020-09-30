@@ -2281,14 +2281,6 @@ void Main::setupModeActions()
     actionListFiles.append (a);
     actionModModeColor = a;
 
-    a= new QAction( QPixmap(":/mode-copy.png"), tr( "Use modifier to copy branches","Mode modifier" ), actionGroupModModes);
-    //a->setShortcut( Qt::Key_K); 
-    addAction(a);
-    switchboard.addSwitch ("mapModModeCopy", shortcutScope, a, tag);
-    a->setCheckable(true);
-    actionListFiles.append (a);
-    actionModModeCopy = a;
-
     a= new QAction(QPixmap(":/mode-xlink.png"), tr( "Use modifier to draw xLinks","Mode modifier" ), actionGroupModModes );
     a->setShortcut (Qt::Key_L);
     addAction(a);
@@ -3335,7 +3327,6 @@ void Main::setupToolbars()
     modModesToolbar->setObjectName ("modesTB");
     modModesToolbar->addAction(actionModModePoint);
     modModesToolbar->addAction(actionModModeColor);
-    modModesToolbar->addAction(actionModModeCopy);
     modModesToolbar->addAction(actionModModeXLink);
     modModesToolbar->addAction(actionModModeMoveObject);
     modModesToolbar->addAction(actionModModeMoveView);
@@ -6214,7 +6205,6 @@ Main::ModMode Main::getModMode()
 {
     if (actionModModePoint->isChecked()) return ModModePoint;
     if (actionModModeColor->isChecked()) return ModModeColor;
-    if (actionModModeCopy->isChecked()) return ModModeCopy;
     if (actionModModeXLink->isChecked()) return ModModeXLink;
     if (actionModModeMoveObject->isChecked()) return ModModeMoveObject;
     if (actionModModeMoveView->isChecked()) return ModModeMoveView;

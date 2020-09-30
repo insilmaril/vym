@@ -115,7 +115,6 @@
     <file alias="linestyle-solid.png">icons/linestyle-solid.png</file>
     <file alias="mode-point.svg">icons/mode-point.svg</file>
     <file alias="mode-color.png">icons/mode-color.png</file>
-    <file alias="mode-copy.png">icons/mode-copy.png</file>
     <file alias="mode-xlink.png">icons/mode-xlink.png</file>
     <file alias="mode-move-object.svg">icons/mode-move-object.svg</file>
     <file alias="mode-move-view.svg">icons/mode-move-view.svg</file>
