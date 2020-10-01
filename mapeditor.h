@@ -31,7 +31,6 @@ public:
 	MovingObjectWithoutLinking,
 	MovingView,
 	PickingColor,
-	CopyingObject,
 	DrawingLink
     };
 
