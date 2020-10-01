@@ -33,8 +33,8 @@ public:
 	
 	To activate a flag its uid will be copied from masterRow to activeUids in current row.
     */	
-    void toggle (const QString&, bool useGroups = true);
-    void toggle (const QUuid&, bool useGroups = true);
+    bool toggle (const QString&, bool useGroups = true);
+    bool toggle (const QUuid&, bool useGroups = true);
     bool activate(const QString&);
     bool activate(const QUuid&);
     bool deactivate(const QString&);

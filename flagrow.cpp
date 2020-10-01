@@ -39,6 +39,13 @@ void FlagRow::shareCashed(Flag *flag)
 
 Flag* FlagRow::findFlag (const QUuid &uid)
 {
+    // Must only be called for masterRow itself!
+    if (masterRow)
+    {
+        qWarning() << "FlagRow::findFlag called for !masterRow";
+        return NULL;
+    }
+
     int i = 0;
     while (i <= flags.size() - 1)
     {
@@ -51,6 +58,13 @@ Flag* FlagRow::findFlag (const QUuid &uid)
 
 Flag* FlagRow::findFlag (const QString &name)
 {
+    // Must only be called for masterRow itself!
+    if (masterRow)
+    {
+        qWarning() << "FlagRow::findFlag called for !masterRow";
+        return NULL;
+    }
+
     int i = 0;
     while (i <= flags.size() - 1)
     {
@@ -58,6 +72,7 @@ Flag* FlagRow::findFlag (const QString &name)
 	    return flags.at(i);
 	i++;	
     }
+    qDebug() << "FR::findFlag failed for name " << name;
     return NULL;
 }
 
@@ -91,26 +106,47 @@ bool FlagRow::isActive (const QUuid &uid)
     return false;   
 }
 
-void FlagRow::toggle (const QString &name, bool useGroups)  
+bool FlagRow::toggle (const QString &name, bool useGroups)  
 {
-    Flag *f = findFlag(name);
-    toggle (f->getUuid(), useGroups);
+    // First get UID from mastRow
+    if (!masterRow)
+    {
+        qWarning() << "FlagRow::toggle name " << name << " no masterRow";
+        return false;
+    }
+
+    Flag *flag = masterRow->findFlag(name);
+    if (!flag)
+    {
+        qWarning() << "FlagRow::toggle name " << name <<" masterRow has no such flag";
+        return false;
+    }
+
+    return toggle(flag->getUuid() );
 }
 
-void FlagRow::toggle (const QUuid &uid, bool useGroups) 
+bool FlagRow::toggle (const QUuid &uid, bool useGroups) 
 {
     if (isActive(uid) )
     {
-	deactivate (uid);
+	return deactivate (uid);
     } else
     {
-	if (!activate (uid) ) return;    
+	if (!activate (uid) ) return false;    
 
-	if (!masterRow || !useGroups) return;
+        // From here on we have been able to activate the flag
+
+	if (!useGroups) return true;
+
+        if (!masterRow)
+        {
+            qWarning() << "FlagRow::toggle no masterRow defined for UID " <<uid.toString();
+            return true;
+        }
 
 	// Deactivate all other active flags group except "name"
 	Flag *flag = masterRow->findFlag (uid);
-	if (!flag) return;
+	if (!flag) return true;
 
 	QString mygroup = flag->getGroup();
 
@@ -121,18 +157,13 @@ void FlagRow::toggle (const QUuid &uid, bool useGroups)
 		deactivate (activeUids.at(i));
 	}
     }
+    return true;
 }
 
 bool FlagRow::activate (const QString &name)    
 {
     foreach (Flag *f, flags)
         qDebug() << "  " << f->getUuid() << f->getName();
-
-    if (isActive (name)) 
-    {
-	if (debug) qWarning () << QString("FlagRow::activate - %1 is already active").arg(name);
-	return false;
-    }
 
     if (!masterRow)
     {
