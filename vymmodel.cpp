@@ -844,7 +844,7 @@ void VymModel::loadImage (BranchItem *dst,const QString &fn)
     {
         QString filter = QString (
                 tr("Images") + 
-                " (*.png *.bmp *.xbm *.jpg *.png *.xpm *.gif *.pnm *.svg);;" + 
+                " (*.png *.bmp *.xbm *.jpg *.png *.xpm *.gif *.pnm *.svg *.svgz);;" + 
                 tr("All", "Filedialog") +
                 " (*.*)");
         QStringList fns;

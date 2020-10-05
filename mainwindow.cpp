@@ -6351,7 +6351,7 @@ void Main::testFunction1()
     {
         QFileDialog fd;
         QStringList filters;
-        filters << tr("Images") + " (*.png *.bmp *.xbm *.jpg *.png *.xpm *.gif *.pnm *.svg)"; 
+        filters << tr("Images") + " (*.png *.bmp *.xbm *.jpg *.png *.xpm *.gif *.pnm *.svg *.svgz)"; 
         filters << tr("All", "Filedialog") + " (*.*)";
         fd.setFileMode (QFileDialog::ExistingFiles);
         fd.setNameFilters (filters);

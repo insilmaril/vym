@@ -60,7 +60,7 @@ MapEditor::MapEditor( VymModel *vm)
     setStyleSheet( "QGraphicsView:focus {" + editorFocusStyle + "}" );
     
     // Create bitmap cursors, platform dependant
-    HandOpenCursor=QCursor (QPixmap(":/cursorhandopen.png"),1,1);	
+    HandOpenCursor=QCursor (QPixmap(":/cursorhandopen.png"),1,1);// FIXME-1 not needed any longer
     PickColorCursor=QCursor ( QPixmap(":/cursorcolorpicker.png"), 5,27 ); 
     XLinkCursor=QCursor ( QPixmap(":/cursorxlink.png"), 1,7 ); 
 
@@ -1218,13 +1218,22 @@ void MapEditor::keyPressEvent(QKeyEvent* e)
 
     if (e->modifiers() & Qt::ShiftModifier)
     {
-	switch (mainWindow->getModMode())   // FIXME-1 extend to new modmodes
+	switch (mainWindow->getModMode())   
 	{
+	    case Main::ModModePoint: 
+		setCursor (Qt::ArrowCursor);
+		break;
 	    case Main::ModModeColor: 
 		setCursor (PickColorCursor);
 		break;
 	    case Main::ModModeXLink: 
 		setCursor (XLinkCursor);
+		break;
+	    case Main::ModModeMoveObject: 
+                setCursor(Qt::PointingHandCursor);
+		break;
+	    case Main::ModModeMoveView: 
+                setCursor(Qt::OpenHandCursor);
 		break;
 	    default :
 		setCursor (Qt::ArrowCursor);
