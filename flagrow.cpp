@@ -1,24 +1,27 @@
 #include <QDebug>
 
 #include "flagrow.h"
+#include "mainwindow.h"
 
 extern bool debug;
 extern QString tmpVymDir;
+extern Main *mainWindow;
 
 
 /////////////////////////////////////////////////////////////////
-// FlagRow
+// FlagRowFactory
 /////////////////////////////////////////////////////////////////
 FlagRow::FlagRow()
 {
-    toolBar   = NULL;
+    toolbar   = NULL;
     masterRow = NULL;
+    configureAction = NULL;
     //qDebug()<< "Const FlagRow ()";
 }
 
 FlagRow::~FlagRow()
 {
-    //qDebug()<< "Destr FlagRow    toolBar=" << toolBar  << "   masterRow=" << masterRow;
+    //qDebug()<< "Destr FlagRow    toolbar=" << toolbar  << "   masterRow=" << masterRow;
 }
 
 Flag* FlagRow::createFlag(const QString &path)
@@ -26,7 +29,30 @@ Flag* FlagRow::createFlag(const QString &path)
     Flag *flag = new Flag;
     flag->load(path);
     flags.append (flag);
+
     return flag;
+}
+
+void FlagRow::createConfigureAction()
+{
+    if (!toolbar) return;
+
+    QAction *a = new QAction(QIcon("icons/new/configure-plus.svg"), QString("add flag")); // FIXME-1 add svg to git and fix path here
+    a->setCheckable( false );
+    a->connect (a, SIGNAL( triggered() ), mainWindow, SLOT( addUserFlag() ) );
+
+    toolbar->addAction (a);
+    configureAction = a;
+}
+
+void FlagRow::addActionToToolbar(QAction *a)
+{
+    if (!toolbar || !a) return;
+
+    if (configureAction)
+        toolbar->insertAction(configureAction, a);
+    else
+        toolbar->addAction(a);
 }
 
 void FlagRow::shareCashed(Flag *flag)
@@ -75,6 +101,92 @@ Flag* FlagRow::findFlag (const QString &name)
     qDebug() << "FR::findFlag failed for name " << name;
     return NULL;
 }
+
+void FlagRow::resetUsedCounter()
+{
+    for (int i = 0; i < flags.size(); ++i)
+	flags.at(i)->setUsed (false);
+}
+
+QString FlagRow::saveDef()
+{
+    // For the masterrow of userflags: Write definitions of flags
+
+    QString s = "\n";
+
+    for (int i = 0; i < flags.size(); ++i)
+        s += flags.at(i)->getDefinition(prefix);
+
+    return s;
+}
+
+void FlagRow::saveDataToDir (const QString &tmpdir, WriteMode mode)  
+{
+    // Save icons to dir, if verbose is set (xml export)
+    // and I am a master
+    // and this standardflag is really used somewhere.
+    // Userflags are written anyway (if master flagrow)       
+    
+    for (int i = 0; i < flags.size(); ++i)
+        if ( (mode == AllFlags) || (mode == UsedFlags && flags.at(i)->isUsed() ))
+            flags.at(i)->saveDataToDir (tmpdir);
+}
+
+void FlagRow::setName (const QString &n)
+{
+    rowName = n;
+}
+
+void FlagRow::setPrefix (const QString &p)
+{
+    prefix = p;
+}
+
+QString FlagRow::getName () { return rowName; }
+
+void FlagRow::setToolBar (QToolBar *tb)
+{
+    toolbar = tb;
+}
+
+void FlagRow::setMasterRow (FlagRow *row)
+{
+    masterRow = row; 
+}
+
+void FlagRow::updateToolBar (QList <QUuid> activeUids)
+{
+    if (toolbar )
+    {
+	for (int i = 0;i < flags.size();++i)
+	    flags.at(i)->getAction()->setChecked (false);
+
+	for (int i = 0;i < flags.size();++i)
+	{
+	    int n = activeUids.indexOf (flags.at(i)->getUuid());
+	    if (n >= 0)
+		flags.at(i)->getAction()->setChecked (true);	
+	}
+    }
+}
+
+
+/////////////////////////////////////////////////////////////////
+// FlagRow
+/////////////////////////////////////////////////////////////////
+/*
+FlagRow::FlagRow()
+{
+    toolbar   = NULL;
+    masterRow = NULL;
+    //qDebug()<< "Const FlagRow ()";
+}
+
+FlagRow::~FlagRow()
+{
+    //qDebug()<< "Destr FlagRow    toolbar=" << toolbar  << "   masterRow=" << masterRow;
+}
+*/
 
 const QStringList FlagRow::activeFlagNames()
 {
@@ -259,42 +371,12 @@ bool FlagRow::deactivateGroup (const QString &gname)
 
 void FlagRow::deactivateAll ()
 {
-    if (!toolBar) activeUids.clear();
+    if (!toolbar) activeUids.clear();
 }
 
 void FlagRow::setEnabled (bool b)
 {
-    toolBar->setEnabled (b);
-}
-
-void FlagRow::resetUsedCounter()
-{
-    for (int i=0; i<flags.size(); ++i)
-	flags.at(i)->setUsed (false);
-}
-
-QString FlagRow::saveDef()
-{
-    // For the masterrow of userflags: Write definitions of flags
-
-    QString s = "\n";
-
-    for (int i = 0; i < flags.size(); ++i)
-        s += flags.at(i)->getDefinition(prefix);
-
-    return s;
-}
-
-void FlagRow::saveDataToDir (const QString &tmpdir, WriteMode mode)  
-{
-    // Save icons to dir, if verbose is set (xml export)
-    // and I am a master
-    // and this standardflag is really used somewhere.
-    // Userflags are written anyway (if master flagrow)       
-    
-    for (int i = 0; i < flags.size(); ++i)
-        if ( (mode == AllFlags) || (mode == UsedFlags && flags.at(i)->isUsed() ))
-            flags.at(i)->saveDataToDir (tmpdir);
+    toolbar->setEnabled (b);
 }
 
 QString FlagRow::saveState ()
@@ -314,43 +396,4 @@ QString FlagRow::saveState ()
         }   
     return s;	    
 }
-
-void FlagRow::setName (const QString &n)
-{
-    rowName = n;
-}
-
-void FlagRow::setPrefix (const QString &p)
-{
-    prefix = p;
-}
-
-QString FlagRow::getName () { return rowName; }
-
-void FlagRow::setToolBar (QToolBar *tb)
-{
-    toolBar = tb;
-}
-
-void FlagRow::setMasterRow (FlagRow *row)
-{
-    masterRow = row; 
-}
-
-void FlagRow::updateToolBar (QList <QUuid> activeUids)
-{
-    if (toolBar )
-    {
-	for (int i = 0;i < flags.size();++i)
-	    flags.at(i)->getAction()->setChecked (false);
-
-	for (int i = 0;i < flags.size();++i)
-	{
-	    int n = activeUids.indexOf (flags.at(i)->getUuid());
-	    if (n >= 0)
-		flags.at(i)->getAction()->setChecked (true);	
-	}
-    }
-}
-
 

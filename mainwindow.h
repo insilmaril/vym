@@ -74,6 +74,9 @@ private:
     void setupWindowActions();
     void setupFlagActions();
 
+public slots:
+    void addUserFlag();
+
 public:
     Flag* setupFlag(
 	const QString &path, 

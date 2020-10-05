@@ -2306,7 +2306,38 @@ void Main::setupModeActions()
     actionModModeMoveView = a;
 }
 
-// Flag Actions
+void Main::addUserFlag()
+{
+    VymModel  *m  = currentModel();
+
+    if(m)
+    {
+        QFileDialog fd;
+        QStringList filters;
+        filters << tr("Images") + " (*.png *.bmp *.xbm *.jpg *.png *.xpm *.gif *.pnm *.svg *.svgz)"; 
+        filters << tr("All", "Filedialog") + " (*.*)";
+        fd.setFileMode (QFileDialog::ExistingFiles);
+        fd.setNameFilters (filters);
+        fd.setWindowTitle (vymName+ " - " +"Load user flag");
+        fd.setAcceptMode (QFileDialog::AcceptOpen);
+
+        QString fn;
+        if ( fd.exec() == QDialog::Accepted )
+        {
+            lastMapDir = fd.directory().path();
+            QStringList flist = fd.selectedFiles();
+            QStringList::Iterator it = flist.begin();
+            initProgressCounter( flist.count());
+            while( it != flist.end() )
+            {
+                fn = *it;
+                setupFlag (*it, Flag::UserFlag, *it, "");
+                ++it;
+            }
+        }
+    }
+}
+
 void Main::setupFlagActions()
 {
     Flag *flag;
@@ -2411,7 +2442,7 @@ void Main::setupFlagActions()
     userFlagsToolbar = addToolBar (tr ("User Flags toolbar","user Flags Toolbar"));
     userFlagsToolbar->setObjectName ("userFlagsTB");
     userFlagsMaster->setToolBar (userFlagsToolbar);
-
+    userFlagsMaster->createConfigureAction();
     toolbarsMenu->addAction (userFlagsToolbar->toggleViewAction() );
     
     // Create Standard Flags
@@ -2782,15 +2813,17 @@ Flag* Main::setupFlag (const QString &path,
             // so for now switch to standard flag
             flag->setVisible(false);
             type = Flag::StandardFlag;
-            standardFlagsToolbar->addAction (a);
+            standardFlagsMaster->addActionToToolbar(a);
+
             connect (a, SIGNAL( triggered() ), this, SLOT( flagChanged() ) );
             break;
         case Flag::StandardFlag:
-            standardFlagsToolbar->addAction (a);
+            standardFlagsMaster->addActionToToolbar(a);
             connect (a, SIGNAL( triggered() ), this, SLOT( flagChanged() ) );
             break;
         case Flag::UserFlag:
-            userFlagsToolbar->addAction (a);
+            userFlagsMaster->addActionToToolbar(a);
+            
             connect (a, SIGNAL( triggered() ), this, SLOT( flagChanged() ) );
             break;
         default:
@@ -6345,36 +6378,7 @@ void Main::flagChanged()
 
 void Main::testFunction1()
 {
-    VymModel  *m  = currentModel();
-
-    if(m)
-    {
-        QFileDialog fd;
-        QStringList filters;
-        filters << tr("Images") + " (*.png *.bmp *.xbm *.jpg *.png *.xpm *.gif *.pnm *.svg *.svgz)"; 
-        filters << tr("All", "Filedialog") + " (*.*)";
-        fd.setFileMode (QFileDialog::ExistingFiles);
-        fd.setNameFilters (filters);
-        fd.setWindowTitle (vymName+ " - " +"Load user flag");
-        fd.setAcceptMode (QFileDialog::AcceptOpen);
-
-        QString fn;
-        if ( fd.exec() == QDialog::Accepted )
-        {
-            lastMapDir=fd.directory().path();
-            QStringList flist = fd.selectedFiles();
-            QStringList::Iterator it = flist.begin();
-            initProgressCounter( flist.count());
-            while( it != flist.end() )
-            {
-                fn = *it;
-                setupFlag (*it, Flag::UserFlag, *it, "");
-                ++it;
-            }
-        }
-    }
-
-    /*
+    VymModel *m = currentModel();
     if (m)
     {
         UserDialog dia;
@@ -6385,7 +6389,6 @@ void Main::testFunction1()
             m->setURL( QString("<ac:link> <ri:user ri:userkey=\"%1\"/></ac:link>").arg(dia.selectedUserKey() ));
         }
     }
-    */
 }
 
 void Main::testFunction2()

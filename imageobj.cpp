@@ -222,7 +222,8 @@ void ImageObj::paint (QPainter *painter, const QStyleOptionGraphicsItem
     }
 }
 
-bool ImageObj::shareCashed(const QString &fn)
+bool ImageObj::shareCashed(const QString &fn)   // FIXME-1   copy original svg file - Qt only support tinySVG
+    // For shareing maybe use flag already during load? Avoid race conditions...
 {
     if (save(fn))
     {

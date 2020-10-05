@@ -272,8 +272,6 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix, FlagRo
     // offset	    offset of bbox of whole map in scene. 
     //		    Needed for XML export
 
-    qDebug() << "VM::saveToDir   tmpdir="<<tmpdir << "  prefix=" << prefix;
-
     XMLObj xml;
 
     // Save Header
