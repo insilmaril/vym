@@ -5942,6 +5942,7 @@ void Main::updateActions()
         {
             // Disable toolbars
             standardFlagsMaster->setEnabled (false);
+            userFlagsMaster->setEnabled (false);
 
             // Disable map related actions
             foreach (QAction *a, restrictedMapActions)
@@ -5954,6 +5955,7 @@ void Main::updateActions()
             
             // Enable toolbars
             standardFlagsMaster->setEnabled (true);
+            userFlagsMaster->setEnabled (true);
 
             // Enable map related actions
             foreach (QAction *a, restrictedMapActions)
@@ -6186,6 +6188,7 @@ void Main::updateActions()
 		    actionListBranches.at(i)->setEnabled(false);
 
 		standardFlagsMaster->setEnabled (false);
+		userFlagsMaster->setEnabled (false);
 
 		actionOpenURL->setEnabled (false);
 		actionOpenVymLink->setEnabled (false);
@@ -6231,6 +6234,7 @@ void Main::updateActions()
 
         // Disable toolbars
         standardFlagsMaster->setEnabled (false);
+        userFlagsMaster->setEnabled (false);
     }
 }
 
