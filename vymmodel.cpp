@@ -4923,9 +4923,11 @@ void VymModel::unsetContextPos()
 
 void VymModel::updateNoteFlag()
 {
-    TreeItem *selti=getSelectedItem();
+    TreeItem *selti = getSelectedItem();
     if (selti)
     {
+        bool updateLayout = false;
+
         if (!mapChanged)
         {
             setChanged();
@@ -4933,11 +4935,13 @@ void VymModel::updateNoteFlag()
         }
 
         if (noteEditor->isEmpty())
-            selti->clearNote();
+            updateLayout = selti->clearNote();
         else
-            selti->setNote(noteEditor->getNote());
+            updateLayout = selti->setNote(noteEditor->getNote());
+
         emitDataChanged(selti);
-        reposition();
+
+        if (updateLayout) reposition();
     }
 }
 

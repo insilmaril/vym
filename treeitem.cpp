@@ -498,30 +498,31 @@ bool TreeItem::isNoteEmpty()
     return note.isEmpty();
 }
 
-void TreeItem::clearNote()
+bool TreeItem::clearNote()
 {
     note.clear();
-    systemFlags.deactivate (QString("system-note"));
+    return systemFlags.deactivate (QString("system-note"));
 }
 
-void TreeItem::setNote(const VymText &vt)
+bool TreeItem::setNote(const VymText &vt)
 {
     note = vt;
 
     if (note.isEmpty()) 
     {
         if (systemFlags.isActive (QString("system-note")))
-	    systemFlags.deactivate (QString("system-note"));
+	    return systemFlags.deactivate (QString("system-note"));
     } else
     {
         if (!systemFlags.isActive (QString("system-note")))
-            systemFlags.activate (QString("system-note"));
+            return systemFlags.activate (QString("system-note"));
     }
+    return false;  // No need to update flag and reposition later
 }
 
-void TreeItem::setNote(const VymNote &vn)
+bool TreeItem::setNote(const VymNote &vn)
 {
-    setNote ((VymText) vn);
+    return setNote ((VymText) vn);
 }
 
 bool TreeItem::hasEmptyNote()

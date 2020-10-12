@@ -119,10 +119,10 @@ protected:
     VymNote note;
 public:	
     bool isNoteEmpty();
-    virtual void clearNote();
+    virtual bool clearNote();
     virtual bool hasEmptyNote();
-    virtual void setNote(const VymText &vt); //FIXME-3 setNote is called for every select or so???
-    virtual void setNote(const VymNote &vn);
+    virtual bool setNote(const VymText &vt); //FIXME-3 setNote is called for every select or so???
+    virtual bool setNote(const VymNote &vn);
 
     virtual VymNote getNote();
     virtual QString getNoteASCII(const QString &indent, const int &width); // returns note  (ASCII)

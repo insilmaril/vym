@@ -240,6 +240,8 @@ bool FlagRow::toggle (const QString &name, bool useGroups)
 
 bool FlagRow::toggle (const QUuid &uid, bool useGroups) 
 {
+    // returns true, if flag really is changed
+
     if (isActive(uid) )
     {
 	return deactivate (uid);
@@ -349,11 +351,12 @@ bool FlagRow::deactivate (const QUuid &uid)
     if (n >= 0)
     {
 	activeUids.removeAt(n);
+        // Returns true, if flag is changed
 	return true;
     }
     if (debug) 
 	qWarning ()<<QString("FlagRow::deactivate - %1 is not active").arg(uid.toString());
-    return true;
+    return false;
 }
 
 bool FlagRow::deactivateGroup (const QString &gname) 
