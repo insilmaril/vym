@@ -29,7 +29,7 @@ public:
     Flag *findFlag (const QString &name);
     void setEnabled (bool);
     void resetUsedCounter();
-    QString saveDef();
+    QString saveDef(WriteMode mode);
     void saveDataToDir (const QString &, WriteMode mode);
     void setName (const QString&);	    // prefix for exporting flags to dir
     QString getName();                      // Used for debugging only

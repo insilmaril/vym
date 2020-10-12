@@ -370,7 +370,7 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix, FlagRo
     {
         // First find out, which flags are used
         // Definitions 
-        flags += userFlagsMaster->saveDef();
+        flags += userFlagsMaster->saveDef(flagMode);
 
         userFlagsMaster->saveDataToDir (tmpdir + "flags/user/", flagMode);    
         standardFlagsMaster->saveDataToDir (tmpdir + "flags/standard/", flagMode);

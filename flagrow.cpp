@@ -37,7 +37,7 @@ void FlagRow::createConfigureAction()
 {
     if (!toolbar) return;
 
-    QAction *a = new QAction(QIcon("icons/new/configure-plus.svg"), QString("add flag")); // FIXME-1 add svg to git and fix path here
+    QAction *a = new QAction(QIcon("icons/configure-plus.svg"), QString("add flag")); 
     a->setCheckable( false );
     a->connect (a, SIGNAL( triggered() ), mainWindow, SLOT( addUserFlag() ) );
 
@@ -108,14 +108,15 @@ void FlagRow::resetUsedCounter()
 	flags.at(i)->setUsed (false);
 }
 
-QString FlagRow::saveDef()
+QString FlagRow::saveDef(WriteMode mode)
 {
     // For the masterrow of userflags: Write definitions of flags
 
     QString s = "\n";
 
     for (int i = 0; i < flags.size(); ++i)
-        s += flags.at(i)->getDefinition(prefix);
+        if ( (mode == AllFlags) || (mode == UsedFlags && flags.at(i)->isUsed() ))
+            s += flags.at(i)->getDefinition(prefix);
 
     return s;
 }
