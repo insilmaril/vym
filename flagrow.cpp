@@ -277,9 +277,6 @@ bool FlagRow::toggle (const QUuid &uid, bool useGroups)
 
 bool FlagRow::activate (const QString &name)    
 {
-    foreach (Flag *f, flags)
-        qDebug() << "  " << f->getUuid() << f->getName();
-
     if (!masterRow)
     {
 	qWarning() << "FlagRow::activate - no masterRow to activate " << name;
@@ -294,10 +291,10 @@ bool FlagRow::activate (const QString &name)
 	return false;
     }
 
-    // Some flags might be hidden, if inactive
+    // Some flags might be hidden, if inactive  // FIXME-1 review when refactoring FR
     if (!flag->isVisible() ) 
     {
-        flag->setVisible(true);
+        // FIXME-1 testing flag->setVisible(true);
         QAction *action = flag->getAction();
         if (action) action->setVisible(true);
     }
@@ -329,6 +326,7 @@ bool FlagRow::activate (const QUuid &uid)
 	qWarning() << "FlagRow::activate - flag " << uid.toString() << " does not exist here!";
 	return false;
     }
+    qDebug() << "FR::activate  " << flag->getName();    // FIXME-1 not called???
 
     activeUids.append (uid);
 

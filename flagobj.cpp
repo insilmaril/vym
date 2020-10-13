@@ -55,7 +55,7 @@ void FlagObj::loadImage (ImageObj* io)
     prepareGeometryChange();
 
     imageObj->copy(io);   // Creates deep copy of pixmap or svg!
-    imageObj->setVisibility(visible); 
+    //imageObj->setVisibility(visible);     // FIXME-1 not needed, done later in FRO ?!
     calcBBoxSize();
     positionBBox();
 }

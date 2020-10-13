@@ -219,7 +219,7 @@ void BranchItem::updateTaskFlag()
     systemFlags.deactivateGroup ("system-tasks");
     if (task)
     {
-	QString s="system-" + task->getIconString();
+	QString s = "system-" + task->getIconString();
 	systemFlags.activate (s);
 	model->emitDataChanged(this);
     } 
@@ -247,28 +247,28 @@ void BranchItem::unScroll()
 bool BranchItem::toggleScroll()	
 {
     // MapCenters are not scrollable
-    if (depth()==0) return false;
+    if (depth() == 0) return false;
 
     BranchObj *bo;
     if (scrolled)
     {
-	scrolled=false;
-	systemFlags.deactivate(QString("system-scrolledright"));
-	if (branchCounter>0)
-	    for (int i=0;i<branchCounter;++i)
+	scrolled = false;
+	systemFlags.deactivate( QString("system-scrolledright") );
+	if (branchCounter > 0)
+	    for (int i = 0; i < branchCounter; ++i)
 	    {
-		bo=(BranchObj*)(getBranchNum(i)->getMO());
-		if (bo) bo->setVisibility(true);
+		bo = (BranchObj*)(getBranchNum(i)->getMO());
+		if (bo) bo->setVisibility(true);    // Recursively!
 	    }
     } else
     {
-	scrolled=true;
-	systemFlags.activate(QString("system-scrolledright"));
-	if (branchCounter>0)
-	    for (int i=0;i<branchCounter;++i)
+	scrolled = true;
+	systemFlags.activate( QString("system-scrolledright") );
+	if (branchCounter > 0)
+	    for (int i = 0; i < branchCounter; ++i)
 	    {
-		bo=(BranchObj*)(getBranchNum(i)->getMO());
-		if (bo) bo->setVisibility(false);
+		bo = (BranchObj*)(getBranchNum(i)->getMO());
+		if (bo) bo->setVisibility(false);   // Recursively!
 	    }
     }
     return true;

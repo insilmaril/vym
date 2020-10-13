@@ -57,6 +57,7 @@ bool parseVYMHandler::startElement  ( const QString&, const QString&,
             //<<"       line="<<QXmlDefaultHandler::lineNumber();
         <<"contentFilter="<<contentFilter;
     */        
+
     stateStack.append (state);        
     if ( state == StateInit && (eName == "vymmap")  ) 
     {
@@ -352,7 +353,9 @@ bool parseVYMHandler::startElement  ( const QString&, const QString&,
 
 bool parseVYMHandler::endElement  ( const QString&, const QString&, const QString &eName)
 {
-    //qDebug()<< "endElement </" <<eName <<">  state=" <<state ;
+    QString h;
+    lastBranch? h = lastBranch->getHeadingPlain(): h = "";
+    //qDebug()<< "endElement </" <<eName <<">  state=" <<state << " lastBranch=" << h;
 
     switch ( state ) 
     {
@@ -367,8 +370,9 @@ bool parseVYMHandler::endElement  ( const QString&, const QString&, const QStrin
             // (happens if bookmarks are imported)
             if (lastBranch->isScrolled() && lastBranch->branchCount()==0) 
                 lastBranch->unScroll();
-            model->emitDataChanged (lastBranch);
-            lastBranch=(BranchItem*)(lastBranch->parent());
+
+            model->emitDataChanged (lastBranch);  // FIXME-1 really needed? already emitted before, e.g. during setting of flags
+            lastBranch = (BranchItem*)(lastBranch->parent());
             lastBranch->setLastSelectedBranch (0);  
             break;
         case StateTask:
@@ -420,11 +424,10 @@ bool parseVYMHandler::endElement  ( const QString&, const QString&, const QStrin
 
 bool parseVYMHandler::characters   ( const QString& ch)
 {
-//    qDebug()<< "xml-vym: characters "<<ch<<"  state="<<state;
+    //qDebug()<< "xml-vym: characters " << ch << "  state=" << state;
 
     QString ch_org = quotemeta (ch);
     QString ch_simplified = ch.simplified();
-    //if ( ch_simplified.isEmpty() ) return true;
 
     switch ( state ) 
     {
@@ -559,7 +562,6 @@ bool parseVYMHandler::readBranchAttr (const QXmlAttributes& a)
 
     if (!a.value( "scrolled").isEmpty() )
         lastBranch->toggleScroll(); 
-        // (interesting for import of KDE bookmarks)
 
     if (!a.value( "incImgV").isEmpty() ) 
     {        
@@ -577,6 +579,7 @@ bool parseVYMHandler::readBranchAttr (const QXmlAttributes& a)
     }        
     if (a.value("childrenFreePos")=="true")
         lastBranch->setChildrenLayout(BranchItem::FreePositioning);
+
     return true;    
 }
 

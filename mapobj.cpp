@@ -163,7 +163,7 @@ bool MapObj::isVisibleObj()
 
 void MapObj::setVisibility(bool v)
 {
-    visible=v;
+    visible = v;
 }
 
 void MapObj::positionBBox() {}

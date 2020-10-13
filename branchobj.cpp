@@ -156,7 +156,7 @@ void BranchObj::unsetParObjTmp()
 
 void BranchObj::setVisibility(bool v, int toDepth) 
 {
-    BranchItem *bi=(BranchItem*)treeItem;
+    BranchItem *bi = (BranchItem*)treeItem;
     if (bi->depth() <= toDepth)
     {
         frame->setVisibility(v);
@@ -165,17 +165,17 @@ void BranchObj::setVisibility(bool v, int toDepth)
         standardFlagRowObj->setVisibility(v);
         LinkableMapObj::setVisibility (v);
         int i;
-        for (i=0; i<treeItem->imageCount(); ++i)
+        for (i = 0; i < treeItem->imageCount(); ++i)
             treeItem->getImageObjNum(i)->setVisibility (v);
-        for (i=0; i<treeItem->xlinkCount(); ++i)
+        for (i = 0; i < treeItem->xlinkCount(); ++i)
             treeItem->getXLinkObjNum(i)->setVisibility ();
 
         // Only change children, if I am not scrolled
         if (! bi->isScrolled() && (bi->depth() < toDepth))
         {
             // Now go recursivly through all children
-            for (i=0; i<treeItem->branchCount(); ++i)
-                treeItem->getBranchObjNum(i)->setVisibility (v,toDepth);
+            for (i = 0; i < treeItem->branchCount(); ++i)
+                treeItem->getBranchObjNum(i)->setVisibility (v, toDepth);
         }
     }
 }   
@@ -376,7 +376,6 @@ void BranchObj::updateVisuals()
     {
         qWarning ("BranchObj::udpateHeading treeItem==NULL");
         return;
-
     }
     QString s = treeItem->getHeadingText();
     if ( s != heading->text()) heading->setText (s);

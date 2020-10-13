@@ -3218,7 +3218,7 @@ BranchItem* VymModel::addNewBranch(BranchItem *bi, int pos)
                     QString ("addBranch (%1)").arg(pos),
                     QString ("Add new branch to %1").arg(getObjectName(bi)));	
 
-            reposition();
+            reposition();   // FIXME-1 reposition already called in addNewBranchInt above
             latestAddedItem = newbi;
             // In Network mode, the client needs to know where the new branch is,
             // so we have to pass on this information via saveState.
