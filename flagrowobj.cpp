@@ -140,6 +140,7 @@ void FlagRowObj::activateFlag (Flag *flag)
         fo->setUuid (flag->getUuid() );
         fo->setZValue(QGraphicsItem::zValue());
         fo->move (absPos.x() + bbox.width(), absPos.y() );
+        fo->setVisibility( visible );
         flagobjs.append(fo);
         calcBBoxSize();
         positionBBox();
