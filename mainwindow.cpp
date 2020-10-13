@@ -5913,6 +5913,7 @@ void Main::updateDockWidgetTitles( VymModel *model)
 
         noteEditor->setEditorTitle(s);
         noteEditorDW->setWindowTitle (noteEditor->getEditorTitle() );
+        branchPropertyEditor->setModel(model);
     }
 }
 
