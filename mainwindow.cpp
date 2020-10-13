@@ -2263,7 +2263,7 @@ void Main::setupModeActions()
     actionGroupModModes=new QActionGroup ( this);
     actionGroupModModes->setExclusive (true);
 
-    a= new QAction( QIcon("icons/mode-point.svg"), tr( "Use modifier to select and reorder objects","Mode modifier" ), actionGroupModModes);
+    a= new QAction( QIcon(":/mode-select.svg"), tr( "Use modifier to select and reorder objects","Mode modifier" ), actionGroupModModes);
     //a->setShortcut (Qt::Key_J);
     addAction(a);
     switchboard.addSwitch ("mapModModePoint", shortcutScope, a, tag);

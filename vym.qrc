@@ -113,7 +113,7 @@
     <file alias="linestyle-dashdotdot.png">icons/linestyle-dashdotdot.png</file>
     <file alias="linestyle-dot.png">icons/linestyle-dot.png</file>
     <file alias="linestyle-solid.png">icons/linestyle-solid.png</file>
-    <file alias="mode-point.svg">icons/mode-point.svg</file>
+    <file alias="mode-select.svg">icons/mode-select.svg</file>
     <file alias="mode-color.png">icons/mode-color.png</file>
     <file alias="mode-xlink.png">icons/mode-xlink.png</file>
     <file alias="mode-move-object.svg">icons/mode-move-object.svg</file>
