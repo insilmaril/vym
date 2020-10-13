@@ -188,6 +188,7 @@ void VymView::changeSelection (const QItemSelection &newsel, const QItemSelectio
     mainWindow->changeSelection (model,newsel,desel);	
     mainWindow->updateDockWidgetTitles( model );
     mapEditor->updateSelection (newsel,desel);
+    
     showSelection();
 }
 

@@ -160,15 +160,29 @@ void BranchPropertyEditor::setItem (TreeItem *ti)
                 ui.lineEditDateCreation->setText(
                     task->getDateCreation().toString() + " - " + 
                     QString(tr("%1 days ago","task related times")).arg(task->getAgeCreation()));
-                QDateTime m = task->getDateModification();
-                if (m.isValid() )
+                QDateTime dt = task->getDateModification();
+                if (dt.isValid() )
                 {
                     ui.lineEditDateModification->setText(
-                        m.toString() + " - " + 
+                        dt.toString() + " - " + 
                         QString(tr("%1 days ago","task related times")).arg(task->getAgeModification()));
                 } else
                 {
                     ui.lineEditDateModification->setText("");
+                }
+
+                dt = task->getSleep();
+                if (dt.isValid() )
+                {
+                    QString s;
+                    qint64 daysSleep = task->getDaysSleep();
+                    daysSleep >= 0 ? 
+                        s = QString(dt.toString() + " - " + tr("sleeping %1 days","task related times")).arg(daysSleep) :
+                        s = QString(tr("Task is awake","task related times"));
+                    ui.lineEditSleep->setText(s);
+                } else
+                {
+                    ui.lineEditSleep->setText("");
                 }
             } else
             {
@@ -176,6 +190,7 @@ void BranchPropertyEditor::setItem (TreeItem *ti)
                 ui.taskPrioDelta->setValue( 0 );
                 ui.lineEditDateCreation->setText("");
                 ui.lineEditDateModification->setText("");
+                ui.lineEditSleep->setText("");
             }
 
             /*

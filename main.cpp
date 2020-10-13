@@ -63,6 +63,8 @@ ScriptEditor  *scriptEditor;
 ScriptOutput  *scriptOutput;
 HeadingEditor *headingEditor;	    
 NoteEditor    *noteEditor;	// used in Constr. of LinkableMapObj
+BranchPropertyEditor * branchPropertyEditor;
+
 // initialized in mainwindow
 Main *mainWindow;		// used in BranchObj::select()		
 FindWidget *findWidget;
@@ -429,6 +431,7 @@ int main(int argc, char* argv[])
     noteEditor = new NoteEditor("noteeditor");
     noteEditor->setWindowIcon (QPixmap (":/vym-editor.png"));
     headingEditor = new HeadingEditor("headingeditor");
+    branchPropertyEditor = new BranchPropertyEditor;
 
     // Check if there is a JiraClient       // FIXME-3 check for ruby
     QFileInfo fi(vymBaseDir.path() + "/scripts/jigger");   

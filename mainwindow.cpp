@@ -62,6 +62,7 @@ QPrinter *printer = NULL;
 
 extern NoteEditor    *noteEditor;
 extern HeadingEditor *headingEditor;
+extern BranchPropertyEditor * branchPropertyEditor;
 extern ScriptEditor  *scriptEditor;
 extern ScriptOutput  *scriptOutput;
 extern Main *mainWindow;
@@ -400,7 +401,7 @@ Main::~Main()
     // call the destructors
     delete noteEditorDW;
     delete historyWindow;
-    delete branchPropertyEditor;
+    delete branchPropertyEditorDW;
 
     delete standardFlagsMaster;
     delete userFlagsMaster;
@@ -5861,6 +5862,7 @@ void Main::setFocusMapEditor()
 
 void Main::changeSelection (VymModel *model, const QItemSelection &newsel, const QItemSelection &)
 {
+    // Setting the model implicitely also sets treeItem and updates content
     branchPropertyEditor->setModel (model ); 
 
     if (model && model == currentModel() )

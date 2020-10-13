@@ -386,8 +386,7 @@ private:
     QDockWidget *headingEditorDW;
     QDockWidget *noteEditorDW;
     QDockWidget *scriptEditorDW;
-
-    BranchPropertyEditor *branchPropertyEditor;
+    QDockWidget *branchPropertyEditorDW;
 
 public:
     QList <QAction*> mapEditorActions;      //! allows mapEditor to clone actions and shortcuts
