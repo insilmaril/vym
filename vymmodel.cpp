@@ -2509,7 +2509,7 @@ bool VymModel::setTaskSleep(const QString &s)   // FIXME-2 doc missing
 	Task *task = selbi->getTask();
 	if (task ) 
 	{
-            QString oldsleep = task->getSleep().toString(Qt::ISODate);
+            QDateTime oldSleep = task->getSleep();
             
             // Parse the string, which could be days, hours or one of several time formats
 
@@ -2595,15 +2595,21 @@ bool VymModel::setTaskSleep(const QString &s)   // FIXME-2 doc missing
 
             if (ok)
             {
-                QString newsleep = task->getSleep().toString(Qt::ISODate);
+                QString oldSleepString;
+                if (oldSleep.isValid())
+                    oldSleepString = oldSleep.toString(Qt::ISODate);
+                else
+                    oldSleepString = "1970-01-26T00:00:00"; // Some date long ago
+
+                QString newSleepString = task->getSleep().toString(Qt::ISODate);
                 task->setDateModification();
                 selbi->updateTaskFlag(); // If tasks changes awake mode, then flag needs to change
                 saveState (
                     selbi,
-                    QString("setTaskSleep (%1)").arg(oldsleep),
+                    QString("setTaskSleep (\"%1\")").arg(oldSleepString),
                     selbi,
-                    QString("setTaskSleep (%1)").arg(newsleep),
-                    QString("setTaskSleep (%1)").arg(newsleep) );
+                    QString("setTaskSleep (\"%1\")").arg(newSleepString),
+                    QString("setTaskSleep (\"%1\")").arg(newSleepString) );
                 emitDataChanged (selbi);
                 reposition();
             }
