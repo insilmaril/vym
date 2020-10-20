@@ -2774,26 +2774,26 @@ bool VymModel::moveUp(BranchItem *bi)
 {
     if (readonly) return false;
 
-    bool oldState=blockSaveState;
-    blockSaveState=true;
-    bool result=false;
+    bool oldState = blockSaveState;
+    blockSaveState = true;
+    bool result = false;
     if (bi && bi->canMoveUp()) 
-	result=relinkBranch (bi,(BranchItem*)bi->parent(),bi->num()-1,false);
-    blockSaveState=oldState;
+	result=relinkBranch (bi, (BranchItem*)bi->parent(), bi->num() - 1, false);
+    blockSaveState = oldState;
     return result;
 }
 
 void VymModel::moveUp()	
 {
-    BranchItem *selbi=getSelectedBranch();
+    BranchItem *selbi = getSelectedBranch();
     if (selbi)
     {
-	QString oldsel=getSelectString(selbi);
+	QString oldsel = getSelectString(selbi);
 	if (moveUp (selbi))
 	{
 	    saveState (
-		getSelectString(selbi),"moveDown ()",
-		oldsel,"moveUp ()",
+		getSelectString(selbi), "moveDown ()",
+		oldsel, "moveUp ()",
 		QString("Move up %1").arg(getObjectName(selbi)));
 	    select (selbi);		
 	}
@@ -2804,26 +2804,26 @@ bool VymModel::moveDown(BranchItem *bi)
 {
     if (readonly) return false;
 
-    bool oldState=blockSaveState;
-    blockSaveState=true;
-    bool result=false;
+    bool oldState = blockSaveState;
+    blockSaveState = true;
+    bool result = false;
     if (bi && bi->canMoveDown()) 
-	result=relinkBranch (bi,(BranchItem*)bi->parent(),bi->num()+1,false);
-    blockSaveState=oldState;
+	result=relinkBranch (bi, (BranchItem*)bi->parent(), bi->num() + 1, false);
+    blockSaveState = oldState;
     return result;
 }
 
 void VymModel::moveDown()   
 {
-    BranchItem *selbi=getSelectedBranch();
+    BranchItem *selbi = getSelectedBranch();
     if (selbi)
     {
-	QString oldsel=getSelectString(selbi);
+	QString oldsel = getSelectString(selbi);
 	if ( moveDown(selbi))
 	{
 	    saveState (
 		getSelectString(selbi),"moveUp ()",
-		oldsel,"moveDown ()",
+		oldsel, "moveDown ()",
 		QString("Move down %1").arg(getObjectName(selbi)));
 	    select (selbi);
 	}
@@ -2859,18 +2859,18 @@ void VymModel::detach()
 
 void VymModel::sortChildren(bool inverse) 
 {
-    BranchItem* selbi=getSelectedBranch();
+    BranchItem* selbi = getSelectedBranch();
     if (selbi)
     {
-	if(selbi->branchCount()>1)
+	if(selbi->branchCount() > 1)
 	{
 	    if (!inverse)
 		saveStateChangingPart(
-		    selbi,selbi, "sortChildren ()",
+		    selbi, selbi, "sortChildren ()",
 		    QString("Sort children of %1").arg(getObjectName(selbi)));
 	    else	    
 		saveStateChangingPart(
-		    selbi,selbi, "sortChildren (false)",
+		    selbi, selbi, "sortChildren (false)",
 		    QString("Inverse sort children of %1").arg(getObjectName(selbi)));
 
 	    selbi->sortChildren(inverse);
