@@ -3283,38 +3283,38 @@ bool VymModel::relinkBranch (
 	if (updateSelection) unselectAll();
  
 	// Do we need to update frame type?
-	bool keepFrame=true;
+	bool keepFrame = true;
 	 
 	// Save old position for savestate
-	QString preSelStr=getSelectString (branch);
-	QString preNum=QString::number (branch->num(),10);
-	QString preParStr=getSelectString (branch->parent());
+	QString preSelStr = getSelectString (branch);
+	QString preNum = QString::number (branch->num(), 10);
+	QString preParStr = getSelectString (branch->parent());
 
 	emit (layoutAboutToBeChanged() );
-	BranchItem *branchpi=(BranchItem*)branch->parent();
+	BranchItem *branchpi = (BranchItem*)branch->parent();
 	// Remove at current position
-	int n=branch->childNum();
+	int n = branch->childNum();
 
-	beginRemoveRows (index(branchpi),n,n);
+	beginRemoveRows (index(branchpi), n, n);
 	branchpi->removeChild (n);
 	endRemoveRows();
 
-	if (pos<0 ||pos>dst->branchCount() ) pos=dst->branchCount();
+	if (pos<0 ||pos > dst->branchCount() ) pos = dst->branchCount();
 
 	// Append as last branch to dst
-	if (dst->branchCount()==0)
-	    n=0;
+	if (dst->branchCount() == 0)
+	    n = 0;
 	else	
-	    n=dst->getFirstBranch()->childNumber(); 
-	beginInsertRows (index(dst),n+pos,n+pos);
-	dst->insertBranch (pos,branch);
+	    n = dst->getFirstBranch()->childNumber(); 
+	beginInsertRows (index(dst), n + pos, n + pos);
+	dst->insertBranch (pos, branch);
 	endInsertRows();
 
 	// Correct type if necessesary
-	if ( branch->getType()==TreeItem::MapCenter && branch->depth() >0 ) 
+	if ( branch->getType() == TreeItem::MapCenter && branch->depth() > 0 ) 
 	{
 	    branch->setType(TreeItem::Branch);
-	    keepFrame=false;
+	    keepFrame = false;
 	}
 
 	// reset parObj, fonts, frame, etc in related LMO or other view-objects
@@ -3324,25 +3324,25 @@ bool VymModel::relinkBranch (
 	reposition();	// both for moveUp/Down and relinking
 
 	// Savestate
-	QString postSelStr=getSelectString(branch);
-	QString postNum=QString::number (branch->num(),10);
+	QString postSelStr = getSelectString(branch);
+	QString postNum = QString::number (branch->num(), 10);
 
 	QPointF savePos;
-	LinkableMapObj *lmosel=branch->getLMO();
+	LinkableMapObj *lmosel = branch->getLMO();
 	if (lmosel) savePos=lmosel->getAbsPos();
 
 	if (!blockSaveState)
 	{   // Don't build strings when moving up/down
-	    QString undoCom="relinkTo (\""+ 
-		preParStr+ "\"," + preNum  +"," + 
-		QString ("%1,%2").arg(orgPos.x()).arg(orgPos.y())+ ")";
+	    QString undoCom = "relinkTo (\"" + 
+		preParStr + "\"," + preNum  + "," + 
+		QString ("%1,%2").arg(orgPos.x()).arg(orgPos.y()) + ")";
 
-	    QString redoCom="relinkTo (\""+ 
+	    QString redoCom = "relinkTo (\"" + 
 		getSelectString (dst)  + "\"," + postNum + "," +
 		QString ("%1,%2").arg(savePos.x()).arg(savePos.y())+ ")";
 
 	    saveState (
-		postSelStr,undoCom,
+		postSelStr, undoCom,
 		preSelStr, redoCom,
 		QString("Relink %1 to %2").arg(getObjectName(branch)).arg(getObjectName(dst)) );
 	}
