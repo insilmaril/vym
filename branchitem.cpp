@@ -340,7 +340,7 @@ bool BranchItem::resetTmpUnscroll()
 
 void BranchItem::sortChildren(bool inverse) //FIXME-4 optimize by not using moveUp/Down
 {
-    int childCount=branchCounter; 
+    int childCount = branchCounter; 
     int curChildIndex;
     bool madeChanges = false;
     do
@@ -348,8 +348,8 @@ void BranchItem::sortChildren(bool inverse) //FIXME-4 optimize by not using move
 	madeChanges = false;
 	for(curChildIndex = 1; curChildIndex < childCount; curChildIndex++)
 	{
-	    BranchItem* curChild =getBranchNum(curChildIndex);
-	    BranchItem* prevChild=getBranchNum(curChildIndex-1);
+	    BranchItem* curChild  = getBranchNum(curChildIndex);
+	    BranchItem* prevChild = getBranchNum(curChildIndex - 1);
 	    if (inverse)
 	    {
         if (prevChild->getHeadingPlain().compare(curChild->getHeadingPlain(), Qt::CaseInsensitive) < 0)
