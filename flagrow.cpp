@@ -326,7 +326,6 @@ bool FlagRow::activate (const QUuid &uid)
 	qWarning() << "FlagRow::activate - flag " << uid.toString() << " does not exist here!";
 	return false;
     }
-    qDebug() << "FR::activate  " << flag->getName();    // FIXME-1 not called???
 
     activeUids.append (uid);
 
