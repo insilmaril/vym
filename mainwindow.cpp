@@ -106,6 +106,7 @@ QMenu* canvasContextMenu;
 QMenu* floatimageContextMenu;
 QMenu* targetsContextMenu;
 QMenu* taskContextMenu;
+QMenu* userflagsContextMenu;
 QMenu* fileLastMapsMenu;
 QMenu* fileImportMenu;
 QMenu* fileExportMenu;
@@ -401,7 +402,9 @@ Main::~Main()
     // call the destructors
     delete noteEditorDW;
     delete historyWindow;
-    delete branchPropertyEditorDW;
+    qDebug() << "closing ok 0";
+    delete branchPropertyEditorDW;  // FIXME-0 causing segfault?
+    qDebug() << "closing ok 1";
 
     delete standardFlagsMaster;
     delete userFlagsMaster;
@@ -1967,7 +1970,7 @@ void Main::setupFormatActions()
     actionFormatColor=a;
 
     a= new QAction( QPixmap(":/formatcolorpicker.png"), tr( "Pic&k color","Edit menu" ), this);
-    a->setShortcut (Qt::CTRL + Qt::Key_K );
+    //a->setShortcut (Qt::CTRL + Qt::Key_K );
     formatMenu->addAction(a);
     switchboard.addSwitch ("mapFormatColorPicker", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( formatPickColor() ) );
@@ -2265,7 +2268,7 @@ void Main::setupModeActions()
     actionGroupModModes->setExclusive (true);
 
     a= new QAction( QIcon(":/mode-select.svg"), tr( "Use modifier to select and reorder objects","Mode modifier" ), actionGroupModModes);
-    //a->setShortcut (Qt::Key_J);
+    a->setShortcut (Qt::Key_J);
     addAction(a);
     switchboard.addSwitch ("mapModModePoint", shortcutScope, a, tag);
     a->setCheckable(true);
@@ -2274,11 +2277,10 @@ void Main::setupModeActions()
     actionModModePoint  = a;
 
     a= new QAction( QPixmap(":/mode-color.png"), tr( "Use modifier to pick color from another branch","Mode modifier" ), actionGroupModModes);
-    a->setShortcut (Qt::Key_J);
+    a->setShortcut (Qt::Key_K);
     addAction(a);
     switchboard.addSwitch ("mapModModeColor", shortcutScope, a, tag);
     a->setCheckable(true);
-    a->setChecked(true);
     actionListFiles.append (a);
     actionModModeColor = a;
 
@@ -2291,7 +2293,7 @@ void Main::setupModeActions()
     actionModModeXLink=a;
 
     a= new QAction( QPixmap(":/mode-move-object.svg"), tr( "Use modifier to move branches without linking","Mode modifier" ), actionGroupModModes);
-    a->setShortcut( Qt::Key_K + Qt::SHIFT); 
+    a->setShortcut( Qt::Key_Odiaeresis ); 
     addAction(a);
     switchboard.addSwitch ("mapModModeMoveObject", shortcutScope, a, tag);
     a->setCheckable(true);
@@ -2299,7 +2301,7 @@ void Main::setupModeActions()
     actionModModeMoveObject = a;
 
     a= new QAction( QPixmap(":/mode-move-view.svg"), tr( "Use modifier to move view","Mode modifier" ), actionGroupModModes);
-    //a->setShortcut( Qt::Key_K + Qt::SHIFT); 
+    a->setShortcut( Qt::Key_Adiaeresis ); 
     addAction(a);
     switchboard.addSwitch ("mapModModeMoveView", shortcutScope, a, tag);
     a->setCheckable(true);
@@ -3209,6 +3211,9 @@ void Main::setupContextMenus()
     //if (settings.value( "/mainwindow/showTestMenu",false).toBool() )
     //    canvasContextMenu->addAction( actionFormatBackImage );  //FIXME-3 makes vym too slow: postponed for later version 
 
+    // Context menu for userflags
+    userflagsContextMenu =new QMenu (this);
+    userflagsContextMenu->addAction (actionAddMapCenter);   // FIXME-0 testing only
 
     // Menu for last opened files
     // Create actions
@@ -6388,6 +6393,9 @@ void Main::testFunction1()
     VymModel *m = currentModel();
     if (m)
     {
+        
+
+        /*
         UserDialog dia;
         dia.exec();
         if (dia.result() > 0 )
@@ -6395,6 +6403,7 @@ void Main::testFunction1()
             m->setHeading(dia.selectedUser());
             m->setURL( QString("<ac:link> <ri:user ri:userkey=\"%1\"/></ac:link>").arg(dia.selectedUserKey() ));
         }
+        */
     }
 }
 
