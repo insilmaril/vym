@@ -2276,7 +2276,7 @@ void Main::setupModeActions()
     actionListFiles.append (a);
     actionModModePoint  = a;
 
-    a= new QAction( QPixmap(":/mode-color.png"), tr( "Use modifier to pick color from another branch","Mode modifier" ), actionGroupModModes);
+    a= new QAction( QPixmap(":/mode-color.png"), tr( "Format painter: pick color from another branch and apply","Mode modifier" ), actionGroupModModes);
     a->setShortcut (Qt::Key_K);
     addAction(a);
     switchboard.addSwitch ("mapModModeColor", shortcutScope, a, tag);
