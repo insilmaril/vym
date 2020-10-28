@@ -62,8 +62,6 @@ void ImageObj::init()
 
 void ImageObj::copy(ImageObj* other)    
 {
-    qDebug() << "ImageObj::copy started. ";
-
     prepareGeometryChange();
     if (imageType != ImageObj::Undefined)
         qWarning() << "ImageObj::copy into existing image of type " << imageType;
@@ -74,7 +72,6 @@ void ImageObj::copy(ImageObj* other)
         case ImageObj::ClonedSVG:
             if (!other->svgCashPath.isEmpty())
             {
-                qDebug() << "ImageObj::copy  clone " << other->svgCashPath;
                 load(other->svgCashPath, true);
             } else 
                 qWarning() << "ImgObj::copy svg: no svgCashPath available.";
@@ -265,7 +262,6 @@ bool ImageObj::load (const QString &fn, bool createClone)
 
     if (fn.toLower().endsWith(".svg"))
     {
-        qDebug() << "IO::load "  << fn; // FIXME-0 testing
         svgItem = new QGraphicsSvgItem(fn);
         if (scene() ) scene()->addItem (svgItem);
 
@@ -273,7 +269,6 @@ bool ImageObj::load (const QString &fn, bool createClone)
         {
             imageType = ImageObj::ClonedSVG;
             svgCashPath = fn;
-            qDebug() << "ImageObj::load cloned " << fn;
         } else
         {
             imageType = ImageObj::SVG;
@@ -282,7 +277,6 @@ bool ImageObj::load (const QString &fn, bool createClone)
             QFile svgFile (fn);
             ulong n = reinterpret_cast <ulong> (this);
             QString newPath = cashDir.path() + "/" + QString().number(n, 10) + "-" + basename(fn);
-            qDebug() << "ImageObj::load (" << fn << ") copy to " << newPath;
             if (!svgFile.copy (newPath))
             {
                 qWarning() << "ImageObj::load (" << fn << ") could not be copied to " << newPath;
@@ -291,8 +285,6 @@ bool ImageObj::load (const QString &fn, bool createClone)
             svgCashPath = newPath;
         }
 
-
-        qDebug() << "IO::load "  << fn << " done. svgCashPath= " << svgCashPath; // FIXME-0 testing
         return true;
     } else
     {
@@ -315,14 +307,12 @@ bool ImageObj::load (const QString &fn, bool createClone)
 
 bool ImageObj::save(const QString &fn) 
 {
-    qDebug() << "IO::save svg        fn=" << fn << "  type=" << imageType; 
     switch (imageType)
     {
         case ImageObj::SVG:
         case ImageObj::ClonedSVG:
             if (svgItem)
             {
-                qDebug() << "IO::save svg  cashPath=" << svgCashPath; 
                 QFile svgFile(svgCashPath);
                 if(!svgFile.copy(fn))
                 {
