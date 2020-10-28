@@ -78,8 +78,8 @@ Macros macros;
 
 uint itemLastID=0;		// Unique ID for all items in all models
 
-QString tmpVymDir;		// All temp files go there, created in mainwindow
-
+QDir tmpVymDir;	         	// All temp files go there, created in mainwindow
+QDir cashDir;                   // tmp dir with cashed svg files in tmpVymDir
 QString clipboardDir;		// Clipboard used in all mapEditors
 QString clipboardFile;		// Clipboard used in all mapEditors
 uint clipboardItemCount;        // Number of items in clipboard
@@ -431,7 +431,7 @@ int main(int argc, char* argv[])
     noteEditor = new NoteEditor("noteeditor");
     noteEditor->setWindowIcon (QPixmap (":/vym-editor.png"));
     headingEditor = new HeadingEditor("headingeditor");
-    branchPropertyEditor = new BranchPropertyEditor;
+    branchPropertyEditor = new BranchPropertyEditor();
 
     // Check if there is a JiraClient       // FIXME-3 check for ruby
     QFileInfo fi(vymBaseDir.path() + "/scripts/jigger");   

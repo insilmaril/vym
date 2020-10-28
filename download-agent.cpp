@@ -28,7 +28,7 @@ QT_USE_NAMESPACE
 extern Main *mainWindow;
 extern QString vymVersion;
 extern QString vymPlatform;
-extern QString tmpVymDir;
+extern QDir tmpVymDir;
 extern Settings settings;
 extern bool debug;
 
@@ -196,7 +196,7 @@ void DownloadAgent::requestFinished(QNetworkReply *reply)
         }
 
         QByteArray data = reply->readAll();
-        QTemporaryFile tmpFile(tmpVymDir + "/download-XXXXXX");
+        QTemporaryFile tmpFile(tmpVymDir.path() + "/download-XXXXXX");
         tmpFile.setAutoRemove(false);   // tmpFile is within tmpDir, removed automatically later
 
         if (!tmpFile.open() )

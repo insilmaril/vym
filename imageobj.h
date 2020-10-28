@@ -16,7 +16,7 @@
 class ImageObj: public QGraphicsItem
 {
 public:
-    enum ImageType {Undefined, Pixmap, ModifiedPixmap, SVG};
+    enum ImageType {Undefined, Pixmap, ModifiedPixmap, SVG, ClonedSVG};
 
     ImageObj();
     ImageObj( QGraphicsItem*);
@@ -33,7 +33,7 @@ public:
     virtual void paint(QPainter*, const QStyleOptionGraphicsItem*, QWidget*);
     bool shareCashed (const QString &path);
     QString getCashPath();
-    bool load (const QString &);
+    bool load (const QString &, bool createClone = false);
     bool save (const QString &);
     QString getExtension();
     ImageType getType();
@@ -43,7 +43,7 @@ protected:
      ImageObj::ImageType imageType;
 
      QGraphicsSvgItem *svgItem;          
-     QString svgPath;
+     QString svgCashPath;
 
      QGraphicsPixmapItem *pixmapItem;   
      QPixmap *originalPixmap;   

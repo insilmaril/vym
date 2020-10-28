@@ -66,7 +66,7 @@ extern QStringList ignoredLockedFiles;
 extern Main *mainWindow;
 
 extern Settings settings;
-extern QString tmpVymDir;
+extern QDir tmpVymDir;
 
 extern NoteEditor *noteEditor;
 extern TaskEditor *taskEditor;
@@ -229,15 +229,15 @@ void VymModel::init ()
 void VymModel::makeTmpDirectories()
 {
     // Create unique temporary directories
-    tmpMapDir = tmpVymDir + QString("/model-%1").arg(modelID);
-    histPath  = tmpMapDir + "/history";
+    tmpMapDirPath = tmpVymDir.path() + QString("/model-%1").arg(modelID);
+    histPath  = tmpMapDirPath + "/history";
     QDir d;
-    d.mkdir (tmpMapDir);
+    d.mkdir (tmpMapDirPath);
 }
 
 QString VymModel::tmpDirPath()
 {
-    return tmpMapDir;
+    return tmpMapDirPath;
 }
 
 MapEditor* VymModel::getMapEditor() 
@@ -1291,7 +1291,7 @@ void VymModel::redo()
     */ 
 
     // Find out current undo directory
-    QString bakMapDir(QString(tmpMapDir+"/undo-%1").arg(curStep));
+    QString bakMapDir(QString(tmpMapDirPath+"/undo-%1").arg(curStep));
 
     if (debug)
     {
@@ -1365,7 +1365,7 @@ void VymModel::undo()
     */
 
     // Find out current undo directory
-    QString bakMapDir(QString(tmpMapDir+"/undo-%1").arg(curStep));
+    QString bakMapDir(QString(tmpMapDirPath+"/undo-%1").arg(curStep));
 
     // select  object before undo
     if (!undoSelection.isEmpty() && !select (undoSelection))
@@ -1458,7 +1458,7 @@ void VymModel::gotoHistoryStep (int i)
 QString VymModel::getHistoryPath()
 {
     QString histName(QString("history-%1").arg(curStep));
-    return (tmpMapDir+"/"+histName);
+    return (tmpMapDirPath+"/"+histName);
 }
 
 void VymModel::resetHistory()

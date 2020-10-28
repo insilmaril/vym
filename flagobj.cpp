@@ -7,8 +7,8 @@
 /////////////////////////////////////////////////////////////////
 FlagObj::FlagObj(QGraphicsItem *parent):MapObj(parent) 
 {
-    //qDebug() << "Const FlagObj  this=" << this;
     init ();
+    qDebug() << "Const FlagObj  this=" << this << "  type=" << imageObj->getType();
 }
 
 FlagObj::~FlagObj()
@@ -52,6 +52,7 @@ void FlagObj::setVisibility (bool v)
 
 void FlagObj::loadImage (ImageObj* io)
 {
+    qDebug() << "FO::loadImage *io  this= " << this << "  type=" << imageObj->getType();
     prepareGeometryChange();
 
     imageObj->copy(io);   // Creates deep copy of pixmap or svg!

@@ -17,7 +17,6 @@
 
 
 extern Main *mainWindow;
-extern QString tmpVymDir;
 extern QString clipboardDir;
 extern QString clipboardFile;
 extern uint clipboardItemCount;

@@ -96,7 +96,7 @@ private:
     QString mapName;		// fileName without ".vym"
 				// example
 
-    QString tmpMapDir;		// tmp directory with undo history
+    QString tmpMapDirPath;	// tmp directory with undo history
 
     QTimer *autosaveTimer;
     QTimer *fileChangedTimer;

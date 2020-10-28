@@ -70,7 +70,8 @@ extern FindResultWidget *findResultWidget;
 extern TaskEditor *taskEditor;
 extern TaskModel *taskModel;
 extern Macros macros;
-extern QString tmpVymDir;
+extern QDir tmpVymDir;
+extern QDir cashDir;
 extern QString clipboardDir;
 extern QString clipboardFile;
 extern uint  clipboardItemCount;
@@ -152,25 +153,35 @@ Main::Main(QWidget* parent, Qt::WindowFlags f) : QMainWindow(parent,f)
 
     // Create unique temporary directory
     bool ok;
-    tmpVymDir=makeTmpDir (ok,"vym");
+    QString tmpVymDirPath = makeTmpDir (ok, "vym");
     if (!ok)
     {
 	qWarning ("Mainwindow: Could not create temporary directory, failed to start vym");
 	exit (1);
+
     }
-    if (debug) qDebug ()<<"tmpDir="<<tmpVymDir;
+    if (debug) qDebug () << "tmpVymDirPath = " << tmpVymDirPath;
+    tmpVymDir.setPath(tmpVymDirPath);
 
     // Create direcctory for clipboard
-    clipboardDir  = tmpVymDir+"/clipboard";
+    clipboardDir  = tmpVymDirPath + "/clipboard";
     clipboardFile = "clipboard";
     QDir d(clipboardDir);
     d.mkdir (clipboardDir);
     makeSubDirs (clipboardDir);
     clipboardItemCount = 0;
 
+    // Create directory for cashed files, e.g. svg images
+    if (! tmpVymDir.mkdir("cash"))
+    {
+	qWarning ("Mainwindow: Could not create cash directory, failed to start vym");
+	exit (1);
+    }
+    cashDir = QDir (tmpVymDirPath + "/cash");
+
     // Remember PID of our friendly webbrowser
-    browserPID=new qint64;
-    *browserPID=0;
+    browserPID = new qint64;
+    *browserPID = 0;
 
     // Define commands in API (used globally)
     setupAPI();
@@ -179,14 +190,14 @@ Main::Main(QWidget* parent, Qt::WindowFlags f) : QMainWindow(parent,f)
     QString p,s;
 
 	// application to open URLs
-	p="/system/readerURL";
+	p = "/system/readerURL";
 	#if defined(Q_OS_WIN)
 	    // Assume that system has been set up so that
 	    // Explorer automagically opens up the URL
 	    // in the user's preferred browser.
-	    s=settings.value (p,"explorer").toString();
+	    s = settings.value (p,"explorer").toString();
 	#elif defined(Q_OS_MACX)
-	    s=settings.value (p,"/usr/bin/open").toString();
+	    s = settings.value (p,"/usr/bin/open").toString();
 	#else
 	    s=settings.value (p,"xdg-open").toString();
 	#endif
@@ -417,7 +428,7 @@ Main::~Main()
     delete systemFlagsMaster;
 
     // Remove temporary directory
-    removeDir (QDir(tmpVymDir));
+    removeDir (tmpVymDir);
 }
 
 void Main::loadCmdLine()
@@ -6555,6 +6566,7 @@ void Main::debugInfo()
     s += QString ("localeName: %1\nPath: %2\n")
         .arg(localeName)
         .arg(vymBaseDir.path() + "/lang");
+    s += QString("tmpVymDir: %1\n").arg(tmpVymDir.path() );
     s += QString("zipToolPath: %1\n").arg(zipToolPath);
     s += QString("vymBaseDir: %1\n").arg(vymBaseDir.path());
     s += QString("currentPath: %1\n").arg(QDir::currentPath());

@@ -1,10 +1,15 @@
 #include "imageobj.h"
+
+#include "file.h"
 #include "mapobj.h"
 
 #include <QDebug>
+#include <QDir>
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>
 #include <QSvgGenerator>
+
+extern QDir cashDir;
 
 /////////////////////////////////////////////////////////////////
 // ImageObj	
@@ -27,6 +32,7 @@ ImageObj::~ImageObj()
     switch (imageType)
     {
         case ImageObj::SVG:
+        case ImageObj::ClonedSVG:
             if (svgItem) delete (svgItem);
             break;
         case ImageObj::Pixmap:
@@ -37,7 +43,7 @@ ImageObj::~ImageObj()
             if (originalPixmap) delete (originalPixmap);
             break;
         default: 
-            qDebug() << "ImgObj::copy other->imageType undefined";    
+            qDebug() << "Destr ImgObj: imageType undefined";    
             break;
     }
 }
@@ -56,6 +62,8 @@ void ImageObj::init()
 
 void ImageObj::copy(ImageObj* other)    
 {
+    qDebug() << "ImageObj::copy started. ";
+
     prepareGeometryChange();
     if (imageType != ImageObj::Undefined)
         qWarning() << "ImageObj::copy into existing image of type " << imageType;
@@ -63,13 +71,15 @@ void ImageObj::copy(ImageObj* other)
     switch (other->imageType)
     {
         case ImageObj::SVG:
-            if (!other->svgPath.isEmpty())
+        case ImageObj::ClonedSVG:
+            if (!other->svgCashPath.isEmpty())
             {
-                load(other->svgPath);
-                svgItem->setVisible( isVisible());
-                imageType = ImageObj::SVG;
+                qDebug() << "ImageObj::copy  clone " << other->svgCashPath;
+                load(other->svgCashPath, true);
             } else 
-                qWarning() << "ImgObj::copy svg: no svgPath available.";
+                qWarning() << "ImgObj::copy svg: no svgCashPath available.";
+
+            svgItem->setVisible( isVisible());
             break;
         case ImageObj::Pixmap:
             pixmapItem = new QGraphicsPixmapItem();
@@ -97,6 +107,7 @@ void ImageObj::setPos(const QPointF &pos)
     switch (imageType)
     {
         case ImageObj::SVG:
+        case ImageObj::ClonedSVG:
             svgItem->setPos(pos);
             break;
         case ImageObj::Pixmap:
@@ -120,6 +131,7 @@ void ImageObj::setZValue (qreal z)
     switch (imageType)
     {
         case ImageObj::SVG:
+        case ImageObj::ClonedSVG:
             svgItem->setZValue(z);
             break;
         case ImageObj::Pixmap:
@@ -137,6 +149,7 @@ void ImageObj::setVisibility (bool v)
     switch (imageType)
     {
         case ImageObj::SVG:
+        case ImageObj::ClonedSVG:
             v ? svgItem->show() : svgItem->hide();
             break;
         case ImageObj::Pixmap:
@@ -154,6 +167,7 @@ void  ImageObj::setScaleFactor(qreal f)
     switch (imageType)
     {
         case ImageObj::SVG:
+        case ImageObj::ClonedSVG:
             svgItem->setScale (f);
             break;
         case ImageObj::Pixmap: 
@@ -192,6 +206,7 @@ QRectF ImageObj::boundingRect() const
     switch (imageType)
     {
         case ImageObj::SVG:
+        case ImageObj::ClonedSVG:
             return QRectF(0, 0, 
                     svgItem->boundingRect().width() * scaleFactor, 
                     svgItem->boundingRect().height() * scaleFactor);
@@ -211,6 +226,7 @@ void ImageObj::paint (QPainter *painter, const QStyleOptionGraphicsItem
     switch (imageType)
     {
         case ImageObj::SVG:
+        case ImageObj::ClonedSVG:
             svgItem->paint(painter, sogi, widget);
             break;
         case ImageObj::Pixmap:
@@ -227,7 +243,7 @@ bool ImageObj::shareCashed(const QString &fn)   // FIXME-1   copy original svg f
 {
     if (save(fn))
     {
-        svgPath = fn;
+        // svgCashPath = fn;  // FIXME-0
         return true;
     }
     
@@ -236,12 +252,11 @@ bool ImageObj::shareCashed(const QString &fn)   // FIXME-1   copy original svg f
 
 QString ImageObj::getCashPath()
 {
-    return svgPath;
+    return svgCashPath;
 }
 
-bool ImageObj::load (const QString &fn) 
+bool ImageObj::load (const QString &fn, bool createClone) 
 {
-    //qDebug() << "IO::load "  << fn;
     if (imageType != ImageObj::Undefined)
     {
         qWarning() << "ImageObj::load (" << fn << ") into existing image of type " << imageType;
@@ -250,10 +265,34 @@ bool ImageObj::load (const QString &fn)
 
     if (fn.toLower().endsWith(".svg"))
     {
+        qDebug() << "IO::load "  << fn; // FIXME-0 testing
         svgItem = new QGraphicsSvgItem(fn);
-        imageType = ImageObj::SVG;
         if (scene() ) scene()->addItem (svgItem);
 
+        if (createClone)
+        {
+            imageType = ImageObj::ClonedSVG;
+            svgCashPath = fn;
+            qDebug() << "ImageObj::load cloned " << fn;
+        } else
+        {
+            imageType = ImageObj::SVG;
+
+            // Copy original file to cash
+            QFile svgFile (fn);
+            ulong n = reinterpret_cast <ulong> (this);
+            QString newPath = cashDir.path() + "/" + QString().number(n, 10) + "-" + basename(fn);
+            qDebug() << "ImageObj::load (" << fn << ") copy to " << newPath;
+            if (!svgFile.copy (newPath))
+            {
+                qWarning() << "ImageObj::load (" << fn << ") could not be copied to " << newPath;
+            }
+
+            svgCashPath = newPath;
+        }
+
+
+        qDebug() << "IO::load "  << fn << " done. svgCashPath= " << svgCashPath; // FIXME-0 testing
         return true;
     } else
     {
@@ -276,12 +315,24 @@ bool ImageObj::load (const QString &fn)
 
 bool ImageObj::save(const QString &fn) 
 {
+    qDebug() << "IO::save svg        fn=" << fn << "  type=" << imageType; 
     switch (imageType)
     {
         case ImageObj::SVG:
+        case ImageObj::ClonedSVG:
             if (svgItem)
             {
-                //qDebug() << "IO::save svg" << fn; 
+                qDebug() << "IO::save svg  cashPath=" << svgCashPath; 
+                QFile svgFile(svgCashPath);
+                if(!svgFile.copy(fn))
+                {
+                    qWarning() << "ImageObj::save  failed to copy " << svgCashPath << " to " << fn;
+                    return false;
+                }
+
+                /*   
+                 *   Old code to write svg, but Qt cannot write linearGradients correctly
+                 *
                 QSvgGenerator generator;
                 generator.setFileName(fn);
                 // generator.setTitle(originalFileName);
@@ -291,6 +342,7 @@ bool ImageObj::save(const QString &fn)
                 painter.begin(&generator);
                 svgItem->paint(&painter, &qsogi, NULL);
                 painter.end();
+                */
             }
             return true;
             break;
@@ -314,6 +366,7 @@ QString ImageObj::getExtension()
     switch (imageType)
     {
         case ImageObj::SVG:
+        case ImageObj::ClonedSVG:
             s = ".svg";
             break;
         case ImageObj::Pixmap:
@@ -336,7 +389,8 @@ QIcon ImageObj::getIcon()
     switch (imageType)
     {
         case ImageObj::SVG:
-            return QPixmap(getCashPath());
+        case ImageObj::ClonedSVG:
+            return QPixmap(getCashPath());  // FIXME-0 use svgCashPath
             break;
         case ImageObj::Pixmap:
         case ImageObj::ModifiedPixmap:
