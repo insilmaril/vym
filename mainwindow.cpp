@@ -250,15 +250,23 @@ Main::Main(QWidget* parent, Qt::WindowFlags f) : QMainWindow(parent,f)
     dw->setObjectName ("NoteEditor");
     dw->setWindowTitle(noteEditor->getEditorTitle() );
     dw->hide();
-    noteEditorDW=dw;
-    addDockWidget (Qt::LeftDockWidgetArea,dw);
+    noteEditorDW = dw;
+    addDockWidget (Qt::LeftDockWidgetArea, dw);
+
+    dw = new QDockWidget ();
+    dw->setWidget (branchPropertyEditor);
+    dw->setObjectName ("BranchPropertyEditor");
+    //dw->setWindowTitle(noteEditor->getEditorTitle() );  //FIXME-1 check title...
+    dw->hide();
+    branchPropertyEditorDW = dw;
+    addDockWidget (Qt::LeftDockWidgetArea, dw);
 
     dw = new QDockWidget ();
     dw->setWidget (headingEditor);
     dw->setObjectName ("HeadingEditor");
     dw->setWindowTitle(headingEditor->getEditorTitle() );
     dw->hide();
-    headingEditorDW=dw;
+    headingEditorDW = dw;
     addDockWidget (Qt::BottomDockWidgetArea,dw);
 
     findResultWidget=new FindResultWidget ();
@@ -402,9 +410,7 @@ Main::~Main()
     // call the destructors
     delete noteEditorDW;
     delete historyWindow;
-    qDebug() << "closing ok 0";
-    delete branchPropertyEditorDW;  // FIXME-0 causing segfault?
-    qDebug() << "closing ok 1";
+    delete branchPropertyEditorDW;  
 
     delete standardFlagsMaster;
     delete userFlagsMaster;
