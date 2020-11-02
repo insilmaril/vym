@@ -2775,7 +2775,6 @@ Flag* Main::setupFlag (const QString &path,
             break;
         case Flag::StandardFlag:    
             flag = standardFlagsMaster->createFlag (path);
-            qDebug() << "Main::setupFlag standeard " << path;
 
             standardFlagsMaster->shareCashed(flag);  
             break;
