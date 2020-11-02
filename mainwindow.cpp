@@ -2474,14 +2474,15 @@ void Main::setupFlagActions()
     // after all others:
     toolbarsMenu->addAction (standardFlagsToolbar->toggleViewAction() );
 
-    flag = setupFlag ( ":/flag-stopsign.png", 
+    flag = setupFlag ( ":/flag-stopsign.svg", 
             Flag::StandardFlag,
             "stopsign", 
             tr("This won't work!","Standardflag"),
             QUuid(),
             Qt::Key_1);  
 
-    flag = setupFlag ( ":/flag-hook-green.png", 
+    flag = setupFlag ( ":/flag-hook-green.svg", 
+    //flag = setupFlag ( "flags/standard/dialog-ok-apply.svg",
             Flag::StandardFlag,
             "hook-green", 
             tr("Status - ok,done","Standardflag"),
@@ -2489,7 +2490,7 @@ void Main::setupFlagActions()
             Qt::Key_2);
     flag->setGroup("standard-status");
 
-    flag = setupFlag ( ":/flag-wip.png", 
+    flag = setupFlag ( ":/flag-wip.svg", 
             Flag::StandardFlag,
             "wip",
             tr("Status - work in progress","Standardflag"),
@@ -2497,7 +2498,7 @@ void Main::setupFlagActions()
             Qt::Key_3);
     flag->setGroup("standard-status");
 
-    flag = setupFlag ( ":/flag-cross-red.png", 
+    flag = setupFlag ( ":/flag-cross-red.svg", 
             Flag::StandardFlag,
             "cross-red",
             tr("Status - missing, not started","Standardflag"),
@@ -2505,7 +2506,7 @@ void Main::setupFlagActions()
             Qt::Key_4);
     flag->setGroup("standard-status");
 
-    flag = setupFlag ( ":/flag-exclamationmark.png", 
+    flag = setupFlag ( ":/flag-exclamation-mark.svg", 
             Flag::StandardFlag,
             "exclamationmark",
             tr("Take care!","Standardflag"),
@@ -2513,7 +2514,7 @@ void Main::setupFlagActions()
             Qt::Key_Exclam);
     flag->setGroup("standard-mark");
 
-    flag = setupFlag ( ":/flag-questionmark.png", 
+    flag = setupFlag ( ":/flag-question-mark.svg", 
             Flag::StandardFlag,
             "questionmark",
             tr("Really?","Standardflag"),
@@ -2774,6 +2775,9 @@ Flag* Main::setupFlag (const QString &path,
             break;
         case Flag::StandardFlag:    
             flag = standardFlagsMaster->createFlag (path);
+            qDebug() << "Main::setupFlag standeard " << path;
+
+            standardFlagsMaster->shareCashed(flag);  
             break;
         case Flag::UserFlag:
             flag = userFlagsMaster->createFlag (path);
@@ -2841,7 +2845,7 @@ Flag* Main::setupFlag (const QString &path,
             standardFlagsMaster->addActionToToolbar(a);
             connect (a, SIGNAL( triggered() ), this, SLOT( flagChanged() ) );
             break;
-        case Flag::UserFlag:
+        case Flag::UserFlag:    // FIXME-1 join with standardFlag above
             userFlagsMaster->addActionToToolbar(a);
             
             connect (a, SIGNAL( triggered() ), this, SLOT( flagChanged() ) );
