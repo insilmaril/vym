@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   viewBox="0 0 47.999999 47.999999"
+   version="1.1"
+   id="svg34"
+   width="48"
+   height="48">
+  <metadata
+     id="metadata38">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs12">
+    <linearGradient
+       id="a"
+       x1="118.30738"
+       x2="482.57711"
+       y1="263.64055"
+       y2="582.97722"
+       gradientTransform="matrix(0.11054535,0,0,0.10716801,-11.054132,-22.713934)"
+       gradientUnits="userSpaceOnUse">
+      <stop
+         stop-color="#fff"
+         offset="0"
+         id="stop2" />
+      <stop
+         stop-color="#fff"
+         stop-opacity="0"
+         offset="1"
+         id="stop4" />
+    </linearGradient>
+    <linearGradient
+       id="b"
+       x1="74.607258"
+       x2="510.59619"
+       y1="224.9666"
+       y2="599.82393"
+       gradientTransform="scale(0.97671648,1.0238386)"
+       gradientUnits="userSpaceOnUse">
+      <stop
+         stop-color="#f00"
+         offset="0"
+         id="stop7" />
+      <stop
+         stop-color="#9d0000"
+         stop-opacity=".929"
+         offset="1"
+         id="stop9" />
+    </linearGradient>
+  </defs>
+  <path
+     d="m 47.390516,26.444182 a 21.43239,22.466403 0 1 0 -42.8647776,0 21.43239,22.466403 0 1 0 42.8647776,0 z"
+     fill="#00002f"
+     fill-opacity="0.2"
+     fill-rule="evenodd"
+     id="path14"
+     style="display:none;stroke-width:0.108844" />
+  <g
+     fill-rule="evenodd"
+     id="g30"
+     transform="matrix(0.10884358,0,0,0.10884358,-11.054132,-22.713934)"
+     style="display:inline">
+    <path
+       d="m 521.12,430.29 a 196.91,206.41 0 1 0 -393.82,0 196.91,206.41 0 1 0 393.82,0 z"
+       fill="url(#b)"
+       id="path16"
+       style="fill:url(#b)" />
+    <path
+       d="m 508.62,430.29 a 184.42,193.31 0 1 0 -368.83,0 184.42,193.31 0 1 0 368.83,0 z"
+       fill="#f20000"
+       id="path18" />
+    <path
+       d="m 488.32,430.29 a 164.12,172.03 0 1 0 -328.23,0 164.12,172.03 0 1 0 328.23,0 z"
+       fill="#ffffff"
+       id="path20" />
+    <path
+       d="m 456.17,430.29 a 131.97,138.34 0 1 0 -263.94,0 131.97,138.34 0 1 0 263.94,0 z"
+       fill="#f20000"
+       id="path22" />
+    <path
+       d="m 431.33,430.29 a 107.125,112.29524 0 1 0 -214.25,0 107.125,112.29524 0 1 0 214.25,0 z"
+       fill="#ffffff"
+       id="path24" />
+    <path
+       d="m 394.42,430.29 a 70.215,73.602048 0 1 0 -140.43,0 70.215,73.602048 0 1 0 140.43,0 z"
+       fill="#f20000"
+       id="path26" />
+    <path
+       d="m 367.55,430.29 a 43.349,45.44 0 1 0 -86.698,0 43.349,45.44 0 1 0 86.698,0 z"
+       fill="#ffffff"
+       id="path28" />
+  </g>
+  <path
+     d="M 9.9679179,36.116023 C 22.3652,40.144433 25.367106,28.995912 24.367924,23.597922 23.369434,18.200261 28.746916,9.5592786 38.76793,11.079822 31.865395,3.1401183 19.789962,2.2948386 11.849824,9.1973724 3.9096816,16.099362 3.0653841,28.175338 9.9676994,36.115479 l -6.46e-5,6.15e-4 z"
+     fill="url(#a)"
+     stroke-width="0"
+     id="path32"
+     style="display:inline;fill:url(#a)" />
+</svg>

@@ -1884,7 +1884,7 @@ void Main::setupSelectActions()
     QString tag = tr("Selections","Shortcuts");
     QMenu *selectMenu = menuBar()->addMenu( tr("Select","Select menu") );
     QAction *a;
-    a = new QAction( QPixmap(":/flag-target.png"), tr( "Toggle target...","Edit menu"), this);
+    a = new QAction( QPixmap(":/flag-target.svg"), tr( "Toggle target...","Edit menu"), this);
     a->setShortcut (Qt::SHIFT + Qt::Key_T );		
     a->setCheckable(true);
     selectMenu->addAction(a);
@@ -1893,7 +1893,7 @@ void Main::setupSelectActions()
     actionListBranches.append (a);
     actionToggleTarget=a;
 
-    a = new QAction( QPixmap(":/flag-target.png"), tr( "Goto target...","Edit menu"), this);
+    a = new QAction( QPixmap(":/flag-target.svg"), tr( "Goto target...","Edit menu"), this);
     a->setShortcut (Qt::Key_G );		
     selectMenu->addAction(a);
     switchboard.addSwitch ("mapGotoTarget", shortcutScope, a, tag);
@@ -1901,7 +1901,7 @@ void Main::setupSelectActions()
     actionListBranches.append (a);
     actionGoToTarget=a;
 
-    a = new QAction( QPixmap(":/flag-target.png"), tr( "Move to target...","Edit menu"), this);
+    a = new QAction( QPixmap(":/flag-target.svg"), tr( "Move to target...","Edit menu"), this);
     a->setShortcut (Qt::Key_M );		
     selectMenu->addAction(a);
     switchboard.addSwitch ("mapMoveToTarget", shortcutScope, a, tag);
@@ -2431,7 +2431,7 @@ void Main::setupFlagActions()
             "system-url-bugzilla-novell-closed",
             tr("URL to Bugzilla","SystemFlag")); 
 
-    setupFlag ( ":/flag-target.png", 
+    setupFlag ( ":/flag-target.svg", 
             Flag::SystemFlag,
             "system-target",
             tr("Map target","SystemFlag")); 
