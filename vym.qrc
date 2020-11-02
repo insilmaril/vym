@@ -14,7 +14,7 @@
     <file alias="flag-info.svg">flags/standard/help-about.svg</file>
     <file alias="flag-lamp.png">flags/flag-lamp.png</file>
     <file alias="flag-lifebelt.png">flags/flag-lifebelt.png</file>
-    <file alias="flag-no-arrow-up.png">flags/flag-no-arrow-up.png</file>
+    <file alias="flag-no-arrow-up.png">flags/system/no-arrow-up.png</file>
     <file alias="flag-note.png">flags/flag-note.png</file>
     <file alias="flag-phone.png">flags/flag-phone.png</file>
     <file alias="flag-present.png">flags/flag-present.png</file>
@@ -26,8 +26,8 @@
     <file alias="flag-face-surprise.svg">flags/standard/face-surprise.svg</file>
     <file alias="flag-face-sad.svg">flags/standard/face-sad.svg</file>
     <file alias="flag-stopsign.svg">flags/standard/Dialog-STOP.svg</file>
-    <file alias="flag-stopsign-2arrow-up.png">flags/flag-stopsign-2arrow-up.png</file>
-    <file alias="flag-stopsign-arrow-up.png">flags/flag-stopsign-arrow-up.png</file>
+    <file alias="flag-stopsign-2arrow-up.png">flags/system/stopsign-2arrow-up.png</file>
+    <file alias="flag-stopsign-arrow-up.png">flags/system/stopsign-arrow-up.png</file>
     <file alias="flag-target.svg">flags/system/target.svg</file>
     <file alias="flag-task-finished.png">flags/flag-task-finished.png</file>
     <file alias="flag-task-new-morning.png">flags/flag-task-new-morning.png</file>
