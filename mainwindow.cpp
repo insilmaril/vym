@@ -2522,29 +2522,35 @@ void Main::setupFlagActions()
             Qt::Key_Question);
     flag->setGroup("standard-mark");
 
-    flag = setupFlag ( ":/flag-smiley-good.png", 
+    flag = setupFlag ( ":/flag-face-smile.svg", 
             Flag::StandardFlag,
             "smiley-good",
             tr("Good","Standardflag"),
             QUuid(),
             Qt::Key_ParenRight);
-    flag->setGroup("standard-smiley");
+    flag->setGroup("standard-faces");
 
-    flag = setupFlag ( ":/flag-smiley-sad.png", 
+    flag = setupFlag ( ":/flag-face-sad.svg", 
             Flag::StandardFlag,
             "smiley-sad",
             tr("Bad","Standardflag"),
             QUuid(),
             Qt::Key_ParenLeft);
-    flag->setGroup("standard-smiley");
+    flag->setGroup("standard-faces");
 
-    // Original omg.png (in KDE emoticons)
-    flag = setupFlag ( ":/flag-smiley-omb.png", 
+    flag = setupFlag ( ":/flag-face-plain.svg", 
+            Flag::StandardFlag,
+            "smiley-plain",
+            tr("Hm...","Standardflag"),
+            QUuid());
+    flag->setGroup("standard-faces");
+
+    flag = setupFlag ( ":/flag-face-surprise.svg", 
             Flag::StandardFlag,
             "smiley-omb",
             tr("Oh no!","Standardflag"),
             QUuid());
-    flag->setGroup("standard-smiley");
+    flag->setGroup("standard-faces");
 
     flag = setupFlag ( ":/flag-clock.png", 
             Flag::StandardFlag,
@@ -3155,7 +3161,7 @@ void Main::setupContextMenus()
 	branchLinksContextMenu->addAction ( actionHeading2URL );
 	branchLinksContextMenu->addAction ( actionGetJiraData );
 	branchLinksContextMenu->addAction ( actionGetJiraDataSubtree );
-	branchLinksContextMenu->addAction ( actionBugzilla2URL );
+	branchLinksContextMenu->addAction ( actionBugzilla2URL );   // FIXME-2 remove all bugzilla icons and functions
 	branchLinksContextMenu->addAction ( actionGetBugzillaData );
 	branchLinksContextMenu->addAction ( actionGetBugzillaDataSubtree );
 	if (settings.value( "/mainwindow/showTestMenu",false).toBool() )

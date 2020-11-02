@@ -21,9 +21,10 @@
     <file alias="flag-question-mark.svg">flags/standard/question-mark.svg</file>
     <file alias="flag-rose.png">flags/flag-rose.png</file>
     <file alias="flag-scrolled-right.png">flags/flag-scrolled-right.png</file>
-    <file alias="flag-smiley-good.png">flags/flag-smiley-good.png</file>
-    <file alias="flag-smiley-omb.png">flags/flag-smiley-omb.png</file>
-    <file alias="flag-smiley-sad.png">flags/flag-smiley-sad.png</file>
+    <file alias="flag-face-smile.svg">flags/standard/face-smile.svg</file>
+    <file alias="flag-face-plain.svg">flags/standard/face-plain.svg</file>
+    <file alias="flag-face-surprise.svg">flags/standard/face-surprise.svg</file>
+    <file alias="flag-face-sad.svg">flags/standard/face-sad.svg</file>
     <file alias="flag-stopsign.svg">flags/standard/Dialog-STOP.svg</file>
     <file alias="flag-stopsign-2arrow-up.png">flags/flag-stopsign-2arrow-up.png</file>
     <file alias="flag-stopsign-arrow-up.png">flags/flag-stopsign-arrow-up.png</file>
