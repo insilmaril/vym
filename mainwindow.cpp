@@ -1486,7 +1486,7 @@ void Main::setupEditActions()
     actionExpandOneLevel=a;
 
     tag = tr("References Context menu","Shortcuts");
-    a = new QAction( QPixmap(":/flag-url.png"), tr( "Open URL","Edit menu" ), this);
+    a = new QAction( QPixmap(":/flag-url.svg"), tr( "Open URL","Edit menu" ), this);
     a->setShortcut (Qt::SHIFT + Qt::Key_U );
     switchboard.addSwitch ("mapOpenUrl", shortcutScope, a, tag);
     addAction(a);
@@ -1526,7 +1526,7 @@ void Main::setupEditActions()
     actionListBranches.append(a);
     actionGetURLsFromNote=a;
 
-    a = new QAction(QPixmap(":/flag-urlnew.png"), tr( "Edit URL...","Edit menu"), this);
+    a = new QAction(QPixmap(":/flag-urlnew.png"), tr( "Edit URL...","Edit menu"), this);    // FIXME-1
     a->setShortcut ( Qt::Key_U );
     a->setShortcutContext (Qt::WindowShortcut);
     switchboard.addSwitch ("mapEditURL", shortcutScope, a, tag);
@@ -2416,17 +2416,17 @@ void Main::setupFlagActions()
             "system-note",
             tr("Note","SystemFlag") ); 
 
-    setupFlag ( ":/flag-url.png", 
+    setupFlag ( ":/flag-url.svg", 
             Flag::SystemFlag,
             "system-url",
             tr("URL","SystemFlag") );
 
-    setupFlag ( ":/flag-url-bugzilla-novell.png", 
+    setupFlag ( ":/flag-url-bugzilla-novell.png",   // FIXME-1 remove
             Flag::SystemFlag,
             "system-url-bugzilla-novell",
             tr("URL to Bugzilla","SystemFlag"));
 
-    setupFlag ( ":/flag-url-bugzilla-novell-closed.png", 
+    setupFlag ( ":/flag-url-bugzilla-novell-closed.png",    // FIXME-1 remove
             Flag::SystemFlag,
             "system-url-bugzilla-novell-closed",
             tr("URL to Bugzilla","SystemFlag")); 

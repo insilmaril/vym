@@ -43,7 +43,7 @@
     <file alias="flag-url-16x16.png">flags/flag-url-16x16.png</file>
     <file alias="flag-url-bugzilla-novell-closed.png">flags/flag-url-bugzilla-novell-closed.png</file>
     <file alias="flag-url-bugzilla-novell.png">flags/flag-url-bugzilla-novell.png</file>
-    <file alias="flag-url.png">flags/flag-url.png</file>
+    <file alias="flag-url.svg">flags/system/applications-internet.svg</file>
     <file alias="flag-urlnew.png">flags/flag-urlnew.png</file>
     <file alias="flag-vymlink.png">flags/flag-vymlink.png</file>
     <file alias="flag-vymlinknew.png">flags/flag-vymlinknew.png</file>
