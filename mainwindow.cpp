@@ -2631,7 +2631,7 @@ void Main::setupFlagActions()
             "flash",
             tr("Dangerous","Standardflag"));
 
-    flag = setupFlag ( ":/flag-info.png", 
+    flag = setupFlag ( ":/flag-info.svg", 
             Flag::StandardFlag,
             "info",
             tr("Info","Standardflag"),

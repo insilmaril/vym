@@ -11,7 +11,7 @@
     <file alias="flag-heart.png">flags/flag-heart.png</file>
     <file alias="flag-hideexport.png">flags/flag-hideexport.png</file>
     <file alias="flag-hook-green.svg">flags/standard/dialog-ok-apply.svg</file>
-    <file alias="flag-info.png">flags/flag-info.png</file>
+    <file alias="flag-info.svg">flags/standard/help-about.svg</file>
     <file alias="flag-lamp.png">flags/flag-lamp.png</file>
     <file alias="flag-lifebelt.png">flags/flag-lifebelt.png</file>
     <file alias="flag-no-arrow-up.png">flags/flag-no-arrow-up.png</file>
