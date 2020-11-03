@@ -40,7 +40,6 @@
     <file alias="flag-thumb-down.png">flags/flag-thumb-down.png</file>
     <file alias="flag-thumb-up.png">flags/flag-thumb-up.png</file>
     <file alias="flag-tmpUnscrolled-right.png">flags/flag-tmpUnscrolled-right.png</file>
-    <file alias="flag-url-16x16.png">flags/flag-url-16x16.png</file>
     <file alias="flag-url-bugzilla-novell-closed.png">flags/flag-url-bugzilla-novell-closed.png</file>
     <file alias="flag-url-bugzilla-novell.png">flags/flag-url-bugzilla-novell.png</file>
     <file alias="flag-url.svg">flags/system/applications-internet.svg</file>
