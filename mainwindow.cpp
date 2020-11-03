@@ -2616,7 +2616,7 @@ void Main::setupFlagActions()
             "rose",
             tr("Rose","Standardflag"));
 
-    flag = setupFlag ( ":/flag-heart.png", 
+    flag = setupFlag ( ":/flag-heart.svg", 
             Flag::StandardFlag,
             "heart",
             tr("I just love...","Standardflag"));

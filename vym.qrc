@@ -8,7 +8,7 @@
     <file alias="flag-cross-red.svg">flags/standard/edit-delete.svg</file>
     <file alias="flag-exclamation-mark.svg">flags/standard/exclamation-mark.svg</file>
     <file alias="flag-flash.png">flags/flag-flash.png</file>
-    <file alias="flag-heart.png">flags/flag-heart.png</file>
+    <file alias="flag-heart.svg">flags/standard/emblem-favorite.svg</file>
     <file alias="flag-hideexport.png">flags/flag-hideexport.png</file>
     <file alias="flag-hook-green.svg">flags/standard/dialog-ok-apply.svg</file>
     <file alias="flag-info.svg">flags/standard/help-about.svg</file>
