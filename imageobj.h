@@ -27,6 +27,7 @@ public:
     void setPos(const qreal &x, const qreal &y);
     void setZValue(qreal z);
     void setVisibility(bool);
+    void setWidth(qreal w);
     void setScaleFactor( qreal f);
     qreal getScaleFactor();
     virtual QRectF boundingRect() const;

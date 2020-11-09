@@ -97,6 +97,7 @@ void ImageObj::copy(ImageObj* other)
             return;
             break;
     }
+    setScaleFactor (other->scaleFactor);
 }
 
 void ImageObj::setPos(const QPointF &pos)
@@ -158,7 +159,14 @@ void ImageObj::setVisibility (bool v)
     }
 }
 
-void  ImageObj::setScaleFactor(qreal f) 
+void ImageObj::setWidth(qreal w)  
+{
+    if (boundingRect().width() == 0) return;
+
+    setScaleFactor ( w / boundingRect().width());
+}
+
+void ImageObj::setScaleFactor(qreal f) 
 {
     scaleFactor = f;
     switch (imageType)
