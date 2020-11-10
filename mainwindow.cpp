@@ -2522,6 +2522,25 @@ void Main::setupFlagActions()
             Qt::Key_Question);
     flag->setGroup("standard-mark");
 
+    flag = setupFlag ( ":/flag-info.svg", 
+            Flag::StandardFlag,
+            "info",
+            tr("Info","Standardflag"),
+            QUuid(),
+            Qt::Key_I);
+
+    flag = setupFlag ( ":/flag-lamp.svg", 
+            Flag::StandardFlag,
+            "lamp",
+            tr("Idea!","Standardflag"),
+            QUuid(),
+            Qt::Key_Asterisk);
+
+    flag = setupFlag ( ":/flag-heart.svg", 
+            Flag::StandardFlag,
+            "heart",
+            tr("I just love...","Standardflag"));
+
     flag = setupFlag ( ":/flag-face-smile.svg", 
             Flag::StandardFlag,
             "smiley-good",
@@ -2552,22 +2571,10 @@ void Main::setupFlagActions()
             QUuid());
     flag->setGroup("standard-faces");
 
-    flag = setupFlag ( ":/flag-clock.png", 
+    flag = setupFlag ( ":/flag-flash.png", 
             Flag::StandardFlag,
-            "clock",
-            tr("Time critical","Standardflag"));
-
-    flag = setupFlag ( ":/flag-phone.png", 
-            Flag::StandardFlag,
-            "phone",
-            tr("Call...","Standardflag"));
-
-    flag = setupFlag ( ":/flag-lamp.png", 
-            Flag::StandardFlag,
-            "lamp",
-            tr("Idea!","Standardflag"),
-            QUuid(),
-            Qt::Key_Asterisk);
+            "flash",
+            tr("Dangerous","Standardflag"));
 
     flag = setupFlag ( ":/flag-arrow-up.png", 
             Flag::StandardFlag,
@@ -2611,38 +2618,31 @@ void Main::setupFlagActions()
             "thumb-down",
             tr("I do not like this","Standardflag"));
 
-    flag = setupFlag ( ":/flag-rose.png", 
+    flag = setupFlag ( ":/flag-phone.png", 
             Flag::StandardFlag,
-            "rose",
-            tr("Rose","Standardflag"));
+            "phone",
+            tr("Call...","Standardflag"));
 
-    flag = setupFlag ( ":/flag-heart.svg", 
+    flag = setupFlag ( ":/flag-clock.png", 
             Flag::StandardFlag,
-            "heart",
-            tr("I just love...","Standardflag"));
-
-    flag = setupFlag ( ":/flag-present.png", 
-            Flag::StandardFlag,
-            "present",
-            tr("Surprise!","Standardflag"));
-
-    flag = setupFlag ( ":/flag-flash.png", 
-            Flag::StandardFlag,
-            "flash",
-            tr("Dangerous","Standardflag"));
-
-    flag = setupFlag ( ":/flag-info.svg", 
-            Flag::StandardFlag,
-            "info",
-            tr("Info","Standardflag"),
-            QUuid(),
-            Qt::Key_I);
+            "clock",
+            tr("Time critical","Standardflag"));
 
     // Original khelpcenter.png
     flag = setupFlag ( ":/flag-lifebelt.png", 
             Flag::StandardFlag,
             "lifebelt",
             tr("This will help","Standardflag"));
+
+    flag = setupFlag ( ":/flag-present.png", 
+            Flag::StandardFlag,
+            "present",
+            tr("Surprise!","Standardflag"));
+
+    flag = setupFlag ( ":/flag-rose.png", 
+            Flag::StandardFlag,
+            "rose",
+            tr("Rose","Standardflag"));
 
     // Freemind flags
     flag = setupFlag ( ":/freemind/warning.png",
