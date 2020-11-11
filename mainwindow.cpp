@@ -2317,7 +2317,7 @@ void Main::setupModeActions()
     actionListFiles.append (a);
     actionModModeMoveObject = a;
 
-    a= new QAction( QPixmap(":/mode-move-view.svg"), tr( "Use modifier to move view","Mode modifier" ), actionGroupModModes);
+    a= new QAction( QPixmap(":/mode-move-view.svg"), tr( "Use modifier to move view without selecting","Mode modifier" ), actionGroupModModes);
     a->setShortcut( Qt::Key_Adiaeresis ); 
     addAction(a);
     switchboard.addSwitch ("mapModModeMoveView", shortcutScope, a, tag);
@@ -2576,7 +2576,7 @@ void Main::setupFlagActions()
             "flash",
             tr("Dangerous","Standardflag"));
 
-    flag = setupFlag ( ":/flag-arrow-up.png", 
+    flag = setupFlag ( ":/flag-arrow-up.svg", 
             Flag::StandardFlag,
             "arrow-up",
             tr("Important","Standardflag"),
