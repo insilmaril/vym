@@ -2,8 +2,8 @@
   <qresource>
     <file alias="flag-2arrow-down.png">flags/flag-2arrow-down.png</file>
     <file alias="flag-2arrow-up.png">flags/flag-2arrow-up.png</file>
-    <file alias="flag-arrow-down.png">flags/flag-arrow-down.png</file>
-    <file alias="flag-arrow-up.png">flags/flag-arrow-up.png</file>
+    <file alias="flag-arrow-down.svg">flags/standard/arrow-down-blue.svg</file>
+    <file alias="flag-arrow-up.svg">flags/standard/arrow-up-blue.svg</file>
     <file alias="flag-clock.png">flags/flag-clock.png</file>
     <file alias="flag-cross-red.svg">flags/standard/edit-delete.svg</file>
     <file alias="flag-exclamation-mark.svg">flags/standard/dialog-warning.svg</file>
