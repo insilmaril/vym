@@ -2571,7 +2571,7 @@ void Main::setupFlagActions()
             QUuid());
     flag->setGroup("standard-faces");
 
-    flag = setupFlag ( ":/flag-flash.png", 
+    flag = setupFlag ( ":/flag-flash.svg", 
             Flag::StandardFlag,
             "flash",
             tr("Dangerous","Standardflag"));
