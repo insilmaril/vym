@@ -1,7 +1,7 @@
 <!DOCTYPE RCC><RCC version="1.0">
   <qresource>
     <file alias="flag-2arrow-down.png">flags/flag-2arrow-down.png</file>
-    <file alias="flag-2arrow-up.png">flags/flag-2arrow-up.png</file>
+    <file alias="flag-2arrow-up.svg">flags/standard/2arrow-up-blue.svg</file>
     <file alias="flag-arrow-down.svg">flags/standard/arrow-down-blue.svg</file>
     <file alias="flag-arrow-up.svg">flags/standard/arrow-up-blue.svg</file>
     <file alias="flag-clock.png">flags/flag-clock.png</file>
