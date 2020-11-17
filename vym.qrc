@@ -30,9 +30,9 @@
     <file alias="flag-stopsign-arrow-up.png">flags/system/stopsign-arrow-up.png</file>
     <file alias="flag-target.svg">flags/system/target.svg</file>
     <file alias="flag-task-finished.png">flags/flag-task-finished.png</file>
-    <file alias="flag-task-new-morning.png">flags/flag-task-new-morning.png</file>
-    <file alias="flag-task-new-sleeping.png">flags/flag-task-new-sleeping.png</file>
-    <file alias="flag-task-new.png">flags/flag-task-new.png</file>
+    <file alias="flag-task-new-morning.svg">flags/system/task-new-morning.svg</file>
+    <file alias="flag-task-new-sleeping.svg">flags/system/task-new-sleeping.svg</file>
+    <file alias="flag-task-new.svg">flags/system/task-new.svg</file>
     <file alias="flag-task-wip-morning.png">flags/flag-task-wip-morning.png</file>
     <file alias="flag-task-wip-sleeping.png">flags/flag-task-wip-sleeping.png</file>
     <file alias="flag-task-wip.png">flags/flag-task-wip.png</file>

@@ -11,6 +11,14 @@ TaskModel::TaskModel(QObject *parent)
     : QAbstractTableModel(parent)
 {
     showParentsLevel = 0;
+
+    QSize size = QSize(22, 22);
+    arrow_up_icon = QIcon(QPixmap(":/flag-arrow-up.svg").scaled(size, Qt::KeepAspectRatio));
+    arrow2_up_icon = QIcon(QPixmap(":/flag-2arrow-up.svg").scaled(size, Qt::KeepAspectRatio));
+
+    task_new_icon = QIcon(QPixmap(":/flag-task-new.svg").scaled(size, Qt::KeepAspectRatio));
+    task_new_morning_icon = QIcon(QPixmap(":/flag-task-new-morning.svg").scaled(size, Qt::KeepAspectRatio));
+    task_new_sleeping_icon = QIcon(QPixmap(":/flag-task-new-sleeping.svg").scaled(size, Qt::KeepAspectRatio));
 }
 
 QModelIndex TaskModel::index (Task* t) const
@@ -104,7 +112,15 @@ QVariant TaskModel::data(const QModelIndex &index, int role) const
         }
     } else if (role == Qt::DecorationRole && index.column() == 2)
     {
-        return QIcon(":/flag-" + t->getIconString() + ".png");
+        QString s = t->getIconString(); // FIXME-2 workaround until all task icons are svg
+        if (s == "task-new") 
+            return task_new_icon;
+        else if (s == "task-new-morning") 
+            return task_new_morning_icon;
+        else if (s == "task-new-sleeping") 
+            return task_new_sleeping_icon;
+        else
+            return QIcon(":/flag-" + t->getIconString() + ".png");
     } else if (role == Qt::DecorationRole && index.column() == 7)
     {
         BranchItem *bi = t->getBranch();
@@ -116,14 +132,14 @@ QVariant TaskModel::data(const QModelIndex &index, int role) const
                 if (bi->hasActiveFlag ("arrow-up") ) 
                     return QIcon(":/flag-stopsign-arrow-up.png");
                 else
-                    return QIcon(":/flag-stopsign.png");
+                    return QIcon(":/flag-stopsign.png");    // FIXME-2
         } else
         {
             if (bi->hasActiveFlag ("2arrow-up") ) 
-                return QIcon(":/flag-2arrow-up.png");
+                return arrow2_up_icon;
             else 
                 if (bi->hasActiveFlag ("arrow-up") )
-                    return QIcon(":/flag-arrow-up.png");
+                    return arrow_up_icon;
         }
         return QIcon();
     }

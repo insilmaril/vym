@@ -2366,19 +2366,19 @@ void Main::setupFlagActions()
 
     // Tasks
     // Origin: ./share/icons/oxygen/48x48/status/task-reject.png
-    flag = setupFlag ( ":/flag-task-new.png", 
+    flag = setupFlag ( ":/flag-task-new.svg", 
             Flag::SystemFlag,
             "system-task-new",
             tr("Note","SystemFlag") );
     flag->setGroup("system-tasks");
 
-    flag = setupFlag ( ":/flag-task-new-morning.png", 
+    flag = setupFlag ( ":/flag-task-new-morning.svg", 
             Flag::SystemFlag,
             "system-task-new-morning",
             tr("Note","SystemFlag"));
     flag->setGroup("system-tasks");
 
-    flag = setupFlag ( ":/flag-task-new-sleeping.png", 
+    flag = setupFlag ( ":/flag-task-new-sleeping.svg", 
             Flag::SystemFlag,
             "system-task-new-sleeping",
             tr("Note","SystemFlag"));
