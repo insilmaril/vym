@@ -19,6 +19,10 @@ TaskModel::TaskModel(QObject *parent)
     task_new_icon = QIcon(QPixmap(":/flag-task-new.svg").scaled(size, Qt::KeepAspectRatio));
     task_new_morning_icon = QIcon(QPixmap(":/flag-task-new-morning.svg").scaled(size, Qt::KeepAspectRatio));
     task_new_sleeping_icon = QIcon(QPixmap(":/flag-task-new-sleeping.svg").scaled(size, Qt::KeepAspectRatio));
+
+    task_wip_icon = QIcon(QPixmap(":/flag-task-wip.svg").scaled(size, Qt::KeepAspectRatio));
+    task_wip_morning_icon = QIcon(QPixmap(":/flag-task-wip-morning.svg").scaled(size, Qt::KeepAspectRatio));
+    task_wip_sleeping_icon = QIcon(QPixmap(":/flag-task-wip-sleeping.svg").scaled(size, Qt::KeepAspectRatio));
 }
 
 QModelIndex TaskModel::index (Task* t) const
@@ -119,6 +123,12 @@ QVariant TaskModel::data(const QModelIndex &index, int role) const
             return task_new_morning_icon;
         else if (s == "task-new-sleeping") 
             return task_new_sleeping_icon;
+        else if (s == "task-wip") 
+            return task_wip_icon;
+        else if (s == "task-wip-sleeping") 
+            return task_wip_sleeping_icon;
+        else if (s == "task-wip-morning") 
+            return task_wip_morning_icon;
         else
             return QIcon(":/flag-" + t->getIconString() + ".png");
     } else if (role == Qt::DecorationRole && index.column() == 7)

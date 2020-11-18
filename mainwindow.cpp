@@ -2385,19 +2385,19 @@ void Main::setupFlagActions()
     flag->setGroup("system-tasks");
 
     // Origin: ./share/icons/oxygen/48x48/status/task-reject.png
-    flag = setupFlag ( ":/flag-task-wip.png", 
+    flag = setupFlag ( ":/flag-task-wip.svg", 
             Flag::SystemFlag,
             "system-task-wip",
             tr("Note","SystemFlag"));
     flag->setGroup("system-tasks");
 
-    flag = setupFlag ( ":/flag-task-wip-morning.png", 
+    flag = setupFlag ( ":/flag-task-wip-morning.svg", 
             Flag::SystemFlag,
             "system-task-wip-morning",
             tr("Note","SystemFlag"));
     flag->setGroup("system-tasks");
 
-    flag = setupFlag ( ":/flag-task-wip-sleeping.png", 
+    flag = setupFlag ( ":/flag-task-wip-sleeping.svg", 
             Flag::SystemFlag,
             "system-task-wip-sleeping",
             tr("Note","SystemFlag"));
