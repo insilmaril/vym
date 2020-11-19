@@ -1493,7 +1493,7 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
 	else    
 	{ // No MapObj found, we are on the scene itself
 	    // Left Button	    move Pos of sceneView
-	    if (e->button() == Qt::LeftButton )
+	    if (e->button() == Qt::LeftButton || e->button() == Qt::MiddleButton )
 	    {
                 startMovingView(e);
                 return;
@@ -1512,7 +1512,7 @@ void MapEditor::mouseMoveEvent(QMouseEvent* e)
             arg(qpointFToString(e->pos())));
 
     // Move sceneView 
-    if (state == MovingView && e->buttons() == Qt::LeftButton ) 
+    if (state == MovingView && (e->buttons() == Qt::LeftButton || e->buttons() == Qt::MiddleButton ) )
     {
 	QPointF p = e->globalPos();
 	movingVec.setX(-p.x() + movingObj_offset.x() );
