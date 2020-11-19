@@ -47,6 +47,7 @@
     <file alias="flag-vymlink.png">flags/flag-vymlink.png</file>
     <file alias="flag-vymlinknew.png">flags/flag-vymlinknew.png</file>
     <file alias="flag-wip.svg">flags/standard/edit-undo.svg</file>
+    
     <file alias="freemind/attach.png">flags/freemind/attach.png</file>
     <file alias="freemind/back.png">flags/freemind/back.png</file>
     <file alias="freemind/bell.png">flags/freemind/bell.png</file>
@@ -77,12 +78,14 @@
     <file alias="freemind/warning.png">flags/freemind/warning.png</file>
     <file alias="freemind/wizard.png">flags/freemind/wizard.png</file>
     <file alias="freemind/xmag.png">flags/freemind/xmag.png</file>
+
     <file alias="cursorcolorpicker.png">icons/cursorcolorpicker.png</file>
     <file alias="cursorcolorpicker16.png">icons/cursorcolorpicker16.png</file>
     <file alias="cursorcopy.png">icons/cursorcopy.png</file>
     <file alias="cursorhandopen.png">icons/cursorhandopen.png</file>
     <file alias="cursorhandopen16.png">icons/cursorhandopen16.png</file>
     <file alias="cursorxlink.png">icons/cursorxlink.png</file>
+
     <file alias="down.png">icons/down.png</file>
     <file alias="editcopy.png">icons/editcopy.png</file>
     <file alias="editcut.png">icons/editcut.png</file>
@@ -117,7 +120,7 @@
     <file alias="mode-color.png">icons/mode-color.png</file>
     <file alias="mode-xlink.png">icons/mode-xlink.png</file>
     <file alias="mode-move-object.svg">icons/mode-move-object.svg</file>
-    <file alias="mode-move-view.svg">icons/mode-move-view.svg</file>
+    <file alias="mode-move-view.png">icons/modifiers/cursorhandopen.png</file>
     <file alias="newbranch.png">icons/newbranch.png</file>
     <file alias="newmapcenter.png">icons/newmapcenter.png</file>
     <file alias="redo.png">icons/redo.png</file>

@@ -1232,7 +1232,7 @@ void MapEditor::keyPressEvent(QKeyEvent* e)
                 setCursor(Qt::PointingHandCursor);
 		break;
 	    case Main::ModModeMoveView: 
-                setCursor(Qt::OpenHandCursor);
+                setCursor(QPixmap(":/mode-move-view.png"));
 		break;
 	    default :
 		setCursor (Qt::ArrowCursor);
