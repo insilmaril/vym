@@ -58,8 +58,14 @@ private:
     QIcon task_new_morning_icon;
     QIcon task_new_sleeping_icon;
     QIcon task_wip_icon;
+
     QIcon task_wip_morning_icon;
     QIcon task_wip_sleeping_icon;
+    QIcon task_finished_icon;
+
+    QIcon taskfilter_stopsign_icon;
+    QIcon taskfilter_stopsign_arrow_up_icon;
+    QIcon taskfilter_stopsign_2arrow_up_icon;
  };
 
 #endif

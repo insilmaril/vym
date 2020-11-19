@@ -13,6 +13,8 @@ TaskModel::TaskModel(QObject *parent)
     showParentsLevel = 0;
 
     QSize size = QSize(22, 22);
+    QSize size2 = QSize(44, 22);
+
     arrow_up_icon = QIcon(QPixmap(":/flag-arrow-up.svg").scaled(size, Qt::KeepAspectRatio));
     arrow2_up_icon = QIcon(QPixmap(":/flag-2arrow-up.svg").scaled(size, Qt::KeepAspectRatio));
 
@@ -23,6 +25,12 @@ TaskModel::TaskModel(QObject *parent)
     task_wip_icon = QIcon(QPixmap(":/flag-task-wip.svg").scaled(size, Qt::KeepAspectRatio));
     task_wip_morning_icon = QIcon(QPixmap(":/flag-task-wip-morning.svg").scaled(size, Qt::KeepAspectRatio));
     task_wip_sleeping_icon = QIcon(QPixmap(":/flag-task-wip-sleeping.svg").scaled(size, Qt::KeepAspectRatio));
+
+    task_finished_icon = QIcon(QPixmap(":/flag-task-finished.svg").scaled(size, Qt::KeepAspectRatio));
+
+    taskfilter_stopsign_icon = QIcon(QPixmap(":/flag-stopsign.svg").scaled(size, Qt::KeepAspectRatio));
+    taskfilter_stopsign_arrow_up_icon = QIcon(QPixmap(":/flag-stopsign-arrow-up.png").scaled(size2, Qt::KeepAspectRatio));
+    taskfilter_stopsign_2arrow_up_icon = QIcon(QPixmap(":/flag-stopsign-2arrow-up.png").scaled(size2, Qt::KeepAspectRatio));
 }
 
 QModelIndex TaskModel::index (Task* t) const
@@ -129,20 +137,25 @@ QVariant TaskModel::data(const QModelIndex &index, int role) const
             return task_wip_sleeping_icon;
         else if (s == "task-wip-morning") 
             return task_wip_morning_icon;
+        else if (s == "task-finished") 
+            return task_finished_icon;
         else
-            return QIcon(":/flag-" + t->getIconString() + ".png");
+        { 
+            qWarning() << "Unknown task type in TaskModel::data: " << s;
+            return QVariant();
+        }
     } else if (role == Qt::DecorationRole && index.column() == 7)
     {
         BranchItem *bi = t->getBranch();
 	if (bi->hasActiveFlag ("stopsign") )
         {
             if (bi->hasActiveFlag ("2arrow-up") ) 
-                return QIcon(":/flag-stopsign-2arrow-up.png");
+                return taskfilter_stopsign_2arrow_up_icon;
             else 
                 if (bi->hasActiveFlag ("arrow-up") ) 
-                    return QIcon(":/flag-stopsign-arrow-up.png");
+                    return taskfilter_stopsign_arrow_up_icon;
                 else
-                    return QIcon(":/flag-stopsign.png");    // FIXME-2
+                    return taskfilter_stopsign_icon; 
         } else
         {
             if (bi->hasActiveFlag ("2arrow-up") ) 

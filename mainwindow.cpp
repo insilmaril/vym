@@ -2404,7 +2404,7 @@ void Main::setupFlagActions()
     flag->setGroup("system-tasks");
 
     // Origin: ./share/icons/oxygen/48x48/status/task-complete.png
-    flag = setupFlag ( ":/flag-task-finished.png", 
+    flag = setupFlag ( ":/flag-task-finished.svg", 
             Flag::SystemFlag,
             "system-task-finished",
             tr("Note","SystemFlag")); 
