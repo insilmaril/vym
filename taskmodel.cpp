@@ -16,7 +16,7 @@ TaskModel::TaskModel(QObject *parent)
     QSize size2 = QSize(44, 22);
 
     arrow_up_icon = QIcon(QPixmap(":/flag-arrow-up.svg").scaled(size, Qt::KeepAspectRatio));
-    arrow2_up_icon = QIcon(QPixmap(":/flag-2arrow-up.svg").scaled(size, Qt::KeepAspectRatio));
+    arrow_2up_icon = QIcon(QPixmap(":/flag-arrow-2up.svg").scaled(size, Qt::KeepAspectRatio));
 
     task_new_icon = QIcon(QPixmap(":/flag-task-new.svg").scaled(size, Qt::KeepAspectRatio));
     task_new_morning_icon = QIcon(QPixmap(":/flag-task-new-morning.svg").scaled(size, Qt::KeepAspectRatio));
@@ -30,7 +30,7 @@ TaskModel::TaskModel(QObject *parent)
 
     taskfilter_stopsign_icon = QIcon(QPixmap(":/flag-stopsign.svg").scaled(size, Qt::KeepAspectRatio));
     taskfilter_stopsign_arrow_up_icon = QIcon(QPixmap(":/flag-stopsign-arrow-up.png").scaled(size2, Qt::KeepAspectRatio));
-    taskfilter_stopsign_2arrow_up_icon = QIcon(QPixmap(":/flag-stopsign-2arrow-up.png").scaled(size2, Qt::KeepAspectRatio));
+    taskfilter_stopsign_arrow_2up_icon = QIcon(QPixmap(":/flag-stopsign-arrow-2up.png").scaled(size2, Qt::KeepAspectRatio));
 }
 
 QModelIndex TaskModel::index (Task* t) const
@@ -150,7 +150,7 @@ QVariant TaskModel::data(const QModelIndex &index, int role) const
 	if (bi->hasActiveFlag ("stopsign") )
         {
             if (bi->hasActiveFlag ("2arrow-up") ) 
-                return taskfilter_stopsign_2arrow_up_icon;
+                return taskfilter_stopsign_arrow_2up_icon;
             else 
                 if (bi->hasActiveFlag ("arrow-up") ) 
                     return taskfilter_stopsign_arrow_up_icon;
@@ -159,7 +159,7 @@ QVariant TaskModel::data(const QModelIndex &index, int role) const
         } else
         {
             if (bi->hasActiveFlag ("2arrow-up") ) 
-                return arrow2_up_icon;
+                return arrow_2up_icon;
             else 
                 if (bi->hasActiveFlag ("arrow-up") )
                     return arrow_up_icon;
@@ -390,7 +390,7 @@ void TaskModel::recalcPriorities()
 
 	// Flags
 	if (bi->hasActiveFlag ("stopsign") )  p-=  450;
-	if (bi->hasActiveFlag ("2arrow-up") ) p-= 1000;
+	if (bi->hasActiveFlag ("arrow-2up") ) p-= 1000;
 	if (bi->hasActiveFlag ("arrow-up") )  p-=  500;
 
 	// Age

@@ -2592,7 +2592,7 @@ void Main::setupFlagActions()
             Qt::SHIFT + Qt::Key_PageDown);
     flag->setGroup("standard-arrow");
 
-    flag = setupFlag ( ":/flag-2arrow-up.svg", 
+    flag = setupFlag ( ":/flag-arrow-2up.svg", 
             Flag::StandardFlag,
             "2arrow-up",
             tr("Very important!","Standardflag"),
@@ -2600,7 +2600,7 @@ void Main::setupFlagActions()
             Qt::SHIFT + Qt::CTRL + Qt::Key_PageUp);
     flag->setGroup("standard-arrow");
 
-    flag = setupFlag ( ":/flag-2arrow-down.svg", 
+    flag = setupFlag ( ":/flag-arrow-2down.svg", 
             Flag::StandardFlag,
             "2arrow-down",
             tr("Very unimportant!","Standardflag"),

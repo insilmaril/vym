@@ -1,7 +1,7 @@
 <!DOCTYPE RCC><RCC version="1.0">
   <qresource>
-    <file alias="flag-2arrow-down.svg">flags/standard/2arrow-down-blue.svg</file>
-    <file alias="flag-2arrow-up.svg">flags/standard/2arrow-up-blue.svg</file>
+    <file alias="flag-arrow-2down.svg">flags/standard/arrow-2down-blue.svg</file>
+    <file alias="flag-arrow-2up.svg">flags/standard/arrow-2up-blue.svg</file>
     <file alias="flag-arrow-down.svg">flags/standard/arrow-down-blue.svg</file>
     <file alias="flag-arrow-up.svg">flags/standard/arrow-up-blue.svg</file>
     <file alias="flag-clock.png">flags/flag-clock.png</file>
@@ -26,7 +26,7 @@
     <file alias="flag-face-surprise.svg">flags/standard/face-surprise.svg</file>
     <file alias="flag-face-sad.svg">flags/standard/face-sad.svg</file>
     <file alias="flag-stopsign.svg">flags/standard/Dialog-STOP.svg</file>
-    <file alias="flag-stopsign-2arrow-up.png">flags/system/stopsign-2arrow-up.png</file>
+    <file alias="flag-stopsign-arrow-2up.png">flags/system/stopsign-arrow-2up.png</file>
     <file alias="flag-stopsign-arrow-up.png">flags/system/stopsign-arrow-up.png</file>
     <file alias="flag-target.svg">flags/system/target.svg</file>
     <file alias="flag-task-finished.svg">flags/system/task-finished.svg</file>

@@ -53,7 +53,7 @@ private:
     uint showParentsLevel;
 
     QIcon arrow_up_icon;
-    QIcon arrow2_up_icon;
+    QIcon arrow_2up_icon;
     QIcon task_new_icon;
     QIcon task_new_morning_icon;
     QIcon task_new_sleeping_icon;
@@ -65,7 +65,7 @@ private:
 
     QIcon taskfilter_stopsign_icon;
     QIcon taskfilter_stopsign_arrow_up_icon;
-    QIcon taskfilter_stopsign_2arrow_up_icon;
+    QIcon taskfilter_stopsign_arrow_2up_icon;
  };
 
 #endif
