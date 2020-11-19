@@ -484,7 +484,8 @@ QString TreeItem::getVymLink ()
 
 void TreeItem::toggleTarget ()
 {
-    target = systemFlags.toggle (QString("system-target"));
+    systemFlags.toggle (QString("system-target"));
+    target = systemFlags.isActive(QString("system-target"));
     model->emitDataChanged(this);	// FIXME-4 better call from VM?
 }
 
