@@ -2618,6 +2618,12 @@ void Main::setupFlagActions()
             "thumb-down",
             tr("I do not like this","Standardflag"));
 
+    // Original khelpcenter.png
+    flag = setupFlag ( ":/flag-lifebelt.png", 
+            Flag::StandardFlag,
+            "lifebelt",
+            tr("This will help","Standardflag"));
+
     flag = setupFlag ( ":/flag-phone.png", 
             Flag::StandardFlag,
             "phone",
@@ -2627,12 +2633,6 @@ void Main::setupFlagActions()
             Flag::StandardFlag,
             "clock",
             tr("Time critical","Standardflag"));
-
-    // Original khelpcenter.png
-    flag = setupFlag ( ":/flag-lifebelt.png", 
-            Flag::StandardFlag,
-            "lifebelt",
-            tr("This will help","Standardflag"));
 
     flag = setupFlag ( ":/flag-present.png", 
             Flag::StandardFlag,
@@ -2774,16 +2774,17 @@ Flag* Main::setupFlag (const QString &path,
     switch (type)
     {
         case Flag::FreemindFlag:    
-            // Hide freemind flags per default
             // Maybe introduce dedicated toolbar later,
             // so for now switch to standard flag
             flag = standardFlagsMaster->createFlag (path);
             break;
+
         case Flag::StandardFlag:    
             flag = standardFlagsMaster->createFlag (path);
 
             standardFlagsMaster->shareCashed(flag);  
             break;
+
         case Flag::UserFlag:
             flag = userFlagsMaster->createFlag (path);
 
@@ -2792,9 +2793,11 @@ Flag* Main::setupFlag (const QString &path,
             // User flags read from file already have a Uuid - use it
             if (!uid.isNull()) flag->setUuid(uid);
             break;
+
         case Flag::SystemFlag:
             flag = systemFlagsMaster->createFlag (path);
             break;
+
         default:
             qWarning() << "Unknown flag type in MainWindow::setupFlag";
             break;
@@ -2847,6 +2850,9 @@ Flag* Main::setupFlag (const QString &path,
             connect (a, SIGNAL( triggered() ), this, SLOT( flagChanged() ) );
             break;
         case Flag::StandardFlag:
+            // Hide some old flags, if not used
+            if (name == "present" || name == "rose" || name == "phone" || name == "clock")
+                flag->setVisible(false);
             standardFlagsMaster->addActionToToolbar(a);
             connect (a, SIGNAL( triggered() ), this, SLOT( flagChanged() ) );
             break;
