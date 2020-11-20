@@ -79,12 +79,12 @@
     <file alias="freemind/wizard.png">flags/freemind/wizard.png</file>
     <file alias="freemind/xmag.png">flags/freemind/xmag.png</file>
 
-    <file alias="cursorcolorpicker.png">icons/cursorcolorpicker.png</file>
-    <file alias="cursorcolorpicker16.png">icons/cursorcolorpicker16.png</file>
-    <file alias="cursorcopy.png">icons/cursorcopy.png</file>
-    <file alias="cursorhandopen.png">icons/cursorhandopen.png</file>
-    <file alias="cursorhandopen16.png">icons/cursorhandopen16.png</file>
-    <file alias="cursorxlink.png">icons/cursorxlink.png</file>
+    <file alias="cursorcolorpicker.png">icons/cursors/cursorcolorpicker.png</file>
+    <file alias="cursorcolorpicker16.png">icons/cursors/cursorcolorpicker16.png</file>
+    <file alias="cursorcopy.png">icons/cursors/cursorcopy.png</file>
+    <file alias="cursorhandopen.png">icons/cursors/cursorhandopen.png</file>
+    <file alias="cursorhandopen16.png">icons/cursors/cursorhandopen16.png</file>
+    <file alias="cursorxlink.png">icons/cursors/cursorxlink.png</file>
 
     <file alias="down.png">icons/down.png</file>
     <file alias="editcopy.png">icons/editcopy.png</file>
@@ -116,10 +116,10 @@
     <file alias="linestyle-dashdotdot.png">icons/linestyle-dashdotdot.png</file>
     <file alias="linestyle-dot.png">icons/linestyle-dot.png</file>
     <file alias="linestyle-solid.png">icons/linestyle-solid.png</file>
-    <file alias="mode-select.svg">icons/mode-select.svg</file>
-    <file alias="mode-color.png">icons/mode-color.png</file>
-    <file alias="mode-xlink.png">icons/mode-xlink.png</file>
-    <file alias="mode-move-object.svg">icons/mode-move-object.svg</file>
+    <file alias="mode-select.svg">icons/modifiers/mode-select.svg</file>
+    <file alias="mode-color.png">icons/modifiers/mode-color.png</file>
+    <file alias="mode-xlink.png">icons/modifiers/mode-xlink.png</file>
+    <file alias="mode-move-object.svg">icons/modifiers/mode-move-object.svg</file>
     <file alias="mode-move-view.png">icons/modifiers/cursorhandopen.png</file>
     <file alias="newbranch.png">icons/newbranch.png</file>
     <file alias="newmapcenter.png">icons/newmapcenter.png</file>
