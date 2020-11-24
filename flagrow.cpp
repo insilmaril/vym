@@ -37,7 +37,7 @@ void FlagRow::createConfigureAction()
 {
     if (!toolbar) return;
 
-    QAction *a = new QAction(QIcon("/home/uwe/vym/branches/userflags/icons/configure-plus.svg"), QString("add flag")); // FIXME-1 add to resources and fix path
+    QAction *a = new QAction(QIcon(":/configure-plus.svg"), QString("add flag")); // FIXME-1 add to resources and fix path
     a->setCheckable( false );
     a->connect (a, SIGNAL( triggered() ), mainWindow, SLOT( addUserFlag() ) );
 
