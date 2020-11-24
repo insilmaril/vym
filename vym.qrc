@@ -81,7 +81,6 @@
 
     <file alias="cursorcolorpicker.png">icons/cursors/cursorcolorpicker.png</file>
     <file alias="cursorcolorpicker16.png">icons/cursors/cursorcolorpicker16.png</file>
-    <file alias="cursorcopy.png">icons/cursors/cursorcopy.png</file>
     <file alias="cursorhandopen.png">icons/cursors/cursorhandopen.png</file>
     <file alias="cursorhandopen16.png">icons/cursors/cursorhandopen16.png</file>
     <file alias="cursorxlink.png">icons/cursors/cursorxlink.png</file>
