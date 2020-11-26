@@ -4021,22 +4021,84 @@ void Main::fileSaveAs()
 
 void Main::fileSaveAsDefault()
 {
-    QString defaultPath = settings.value("/system/defaultMap/path", vymBaseDir.path() + "/demos/default.vym").toString() ;
-
-    // Check if the existing file is writable 
-    if (!QFileInfo(defaultPath).isWritable())
+    if (currentMapEditor())
     {
-        settingsDefaultMapPath();
+        QString defaultPath = settings.value(
+                "/system/defaultMap/path", 
+                vymBaseDir.path() + "/demos/default.vym").toString() ;
+
+        QString fn = QFileDialog::getSaveFileName (
+                    this,
+                    tr("Save map as new default map"),
+                    defaultPath,
+                    "VYM map (*.vym)",
+                    NULL,
+                    QFileDialog::DontConfirmOverwrite);
+
+        if (!fn.isEmpty() )
+        {
+            // Check for existing file
+            if (QFile (fn).exists())
+            {
+                // Check if the existing file is writable 
+                if (!QFileInfo(fn).isWritable())
+                {
+                    QMessageBox::critical(0,
+                         tr("Warning"),
+                         tr("You have no permissions to write to ") + fn);
+                    return;
+                }
+
+                // Confirm overwrite of existing file
+                QMessageBox mb( vymName,
+                    tr("The file %1\nexists already. Do you want to").arg(fn),
+                    QMessageBox::Warning,
+                    QMessageBox::Yes | QMessageBox::Default,
+                    QMessageBox::Cancel | QMessageBox::Escape,
+                    QMessageBox::NoButton);
+                mb.setButtonText( QMessageBox::Yes, tr("Overwrite as new default map") );
+                mb.setButtonText( QMessageBox::Cancel, tr("Cancel"));
+                switch( mb.exec() )
+                {
+                case QMessageBox::Yes:
+                    // save
+                    break;
+                case QMessageBox::Cancel:
+                    // do nothing
+                    return;
+                    break;
+                }
+            } 
+
+            // Save now as new default
+            VymModel *m = currentModel();
+            QString fn_org = m->getFilePath(); // Restore fn later, if savemode != CompleteMap
+            // Check for existing lockfile
+            QFile lockFile( fn + ".lock" );
+            if (lockFile.exists() )
+            {
+                QMessageBox::critical( 
+                    0, 
+                    tr( "Critical Error" ), 
+                    tr("Couldn't save %1,\nbecause of existing lockfile:\n\n%2").arg(fn).arg( lockFile.fileName()  ));
+                return;
+            }
+
+            if ( !m->renameMap( fn ) )
+            {
+                QMessageBox::critical( 0, tr( "Critical Error" ), tr("Couldn't save %1").arg( fn ));
+                return;
+            }
+
+            fileSave(m, CompleteMap);
+            
+            // Set name of tab
+            updateTabName( m );
+
+            // Set new default path
+            settings.setValue ("/system/defaultMap/path", fn);
+        }
     }
-
-    WarningDialog dia;
-    QString s = QString( tr("Do you want to overwrite the default map?\n\n%1").arg(defaultPath));
-
-    dia.setText( s );
-    dia.setWindowTitle(tr("Warning","Overwrite default map?"));
-    dia.showCancelButton( true );
-    //dia.setShowAgainName("/mainwindow/mapIsLocked");
-    dia.exec();
 }
 
 void Main::fileImportFirefoxBookmarks() // FIXME-2 remove or adapt
@@ -5613,13 +5675,13 @@ void Main::settingsDefaultMapPath()
     QString defaultPath = settings.value("/system/defaultMap/path", vymBaseDir.path() + "/demos/default.vym").toString() ;
 
     QStringList filters;
-    filters <<"VYM defaults map (*.vym)";
+    filters << "VYM defaults map (*.vym)";
     QFileDialog fd;
     fd.setDirectory ( dirname(defaultPath) );
     fd.selectFile   ( basename(defaultPath) );
     fd.setFileMode (QFileDialog::ExistingFile);
     fd.setNameFilters (filters);
-    fd.setWindowTitle (vymName+ " - " +tr("Load vym default map"));
+    fd.setWindowTitle (vymName + " - " + tr("Set vym default map to be loaded on startup"));
     fd.setAcceptMode (QFileDialog::AcceptOpen);
 
     QString fn;
