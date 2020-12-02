@@ -3928,13 +3928,53 @@ ItemList VymModel::getTargets()
     return targets; 
 }
 
-void VymModel::toggleFlag (const QString &uid, bool useGroups)  
+void VymModel::toggleFlagByUid (const QUuid &uid, bool useGroups)  
 {
+    qDebug() << "VM::toggleFlagByUid" << uid.toString();
+
     BranchItem *bi = getSelectedBranch();
 
     if (bi) 
     {
-        Flag *f = bi->toggleFlag (uid, useGroups);  
+        Flag *f = bi->toggleFlagByUid (uid, useGroups);  
+
+        if (f)
+        {
+            QString u = "toggleFlag";
+            QString name = f->getName();  // FIXME-0 we are toggling by UID...
+            saveState(
+                bi,
+                QString("%1 (\"%2\")").arg(u).arg(name),
+                bi,
+                QString("%1 (\"%2\")").arg(u).arg(name),
+                QString("Toggling flag \"%1\" of %2").arg(name).arg(getObjectName(bi)));
+            emitDataChanged (bi);
+            reposition();
+        } else
+            qWarning() << "VymModel::toggleFlag failed for flag " << uid;
+    }
+}
+
+void VymModel::toggleFlagByName (const QString &name, bool useGroups)  
+{
+    qDebug() << "VM::toggleFlagByName " << name;
+    /*
+    BranchItem *bi = getSelectedBranch();
+
+    if (bi) 
+    {
+        Flag *f = standardFlagsMaster->findFlag (uid);
+        if (!f)
+        {
+            f = userFlagsMaster->findFlag (uid);
+            if (!f)
+            {
+                qWarning() << "VymModel::toggleFlag failed for flag named " << name;
+                return;
+            }
+        }
+
+        f = bi->toggleFlagByName (uid, useGroups);  
 
         if (f)
         {
@@ -3951,6 +3991,7 @@ void VymModel::toggleFlag (const QString &uid, bool useGroups)
         } else
             qWarning() << "VymModel::toggleFlag failed for flag " << uid;
     }
+    */
 }
 
 void VymModel::clearFlags() 

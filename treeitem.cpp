@@ -565,7 +565,7 @@ void TreeItem::deactivateAllStandardFlags ()
     model->emitDataChanged(this);
 }
 
-Flag* TreeItem::toggleFlag(const QUuid &uid,  bool useGroups) 
+Flag* TreeItem::toggleFlagByUid(const QUuid &uid,  bool useGroups) 
 {
     Flag *f = standardFlagsMaster->findFlag (uid);
     if (f)

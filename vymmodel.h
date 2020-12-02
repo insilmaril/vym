@@ -511,7 +511,8 @@ public:
     ItemList getLinkedMaps();
     ItemList getTargets();
 
-    void toggleFlag (const QString &name, bool useGroups = true);
+    void toggleFlagByName (const QString &name, bool useGroups = true);
+    void toggleFlagByUid  (const QUuid &uid, bool useGroups = true);
     void clearFlags();
 
     void colorBranch(QColor);

@@ -925,7 +925,11 @@ void Main::setupAPI()
     c->addPar (Command::Bool,true,"Sort children of branch in revers order if set");
     modelCommands.append(c);
 
-    c = new Command ("toggleFlag", Command::Branch); 
+    c = new Command ("toggleFlagByUid", Command::Branch); 
+    c->addPar (Command::String,false,"Uid of flag to toggle");
+    modelCommands.append(c);
+
+    c = new Command ("toggleFlagByName", Command::Branch); 
     c->addPar (Command::String,false,"Name of flag to toggle");
     modelCommands.append(c);
 
@@ -6466,8 +6470,8 @@ void Main::flagChanged()
     VymModel  *m  = currentModel();
     if (me && m && me->getState() != MapEditor::EditingHeading) 
     {
-        m->toggleFlag(
-            sender()->objectName(), 
+        m->toggleFlagByUid(
+            QUuid(sender()->objectName()), 
             actionSettingsUseFlagGroups->isChecked() );
         updateActions();
     }

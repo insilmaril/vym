@@ -150,7 +150,8 @@ public slots:
     void sleep( int n);
     void sortChildren( bool b);
     void sortChildren();
-    void toggleFlag( const QString &s );
+    void toggleFlagByUid( const QString &s );
+    void toggleFlagByName( const QString &s );
     void toggleFrameIncludeChildren();
     void toggleScroll();
     void toggleTarget();

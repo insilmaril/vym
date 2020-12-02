@@ -1042,7 +1042,7 @@ bool parseVYMHandler::readUserFlagAttr (const QXmlAttributes& a)
     if (!a.value( "uuid").isEmpty() ) 
         uuid = a.value("uuid");
 
-    lastBranch->toggleFlag(QUuid(uuid));
+    lastBranch->toggleFlagByUid(QUuid(uuid));
 
     return true;
 }

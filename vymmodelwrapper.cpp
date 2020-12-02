@@ -1018,9 +1018,14 @@ void VymModelWrapper::sortChildren()
     sortChildren( false );
 }
 
-void VymModelWrapper::toggleFlag(const QString &s)
+void VymModelWrapper::toggleFlagByUid(const QString &s)
 {
-    model->toggleFlag( s );
+    model->toggleFlagByUid( QUuid(s) );
+}
+
+void VymModelWrapper::toggleFlagByName(const QString &s)
+{
+    model->toggleFlagByName( s );
 }
 
 void VymModelWrapper::toggleFrameIncludeChildren()
