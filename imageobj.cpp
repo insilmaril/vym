@@ -226,8 +226,10 @@ QRectF ImageObj::boundingRect() const
 }
 
 void ImageObj::paint (QPainter *painter, const QStyleOptionGraphicsItem
-*sogi, QWidget *widget)     // FIXME-1 modPixmap not used?
+*sogi, QWidget *widget)     
 {
+    // Not really called, but required because paint is pure virtual in QGraphicsItem
+    
     switch (imageType)
     {
         case ImageObj::SVG:
@@ -235,7 +237,7 @@ void ImageObj::paint (QPainter *painter, const QStyleOptionGraphicsItem
             svgItem->paint(painter, sogi, widget);
             break;
         case ImageObj::Pixmap:
-            qDebug() << "IO::paint pm this=" << this  << "  pmitem=" << pixmapItem;
+        case ImageObj::ModifiedPixmap:
             pixmapItem->paint(painter, sogi, widget);
             break;
         default: 
@@ -384,5 +386,3 @@ QIcon ImageObj::getIcon()
     }
     return QIcon(); 
 }
-
-// FIXME-1 is originalPixmap used after all?
