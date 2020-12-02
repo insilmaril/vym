@@ -52,7 +52,7 @@ bool Flag::load (const QString &fn)
 
     if (fn.contains("svg"))
     {
-        image->setWidth(32);    // FIXME-2 testing: scale svg for flags
+        image->setWidth(32);    // FIXME-3 scale svg of flags
     }
 
     path = fn;
@@ -178,7 +178,7 @@ void Flag::saveDataToDir (const QString &dirPath)
     //qDebug() << "Flag::saveDataToDir  " << name << " to " << dirPath << "  image=" << image;
     if (image)
     {
-        path = dirPath + "/" + uuid.toString() + "-" + name + image->getExtension();    // FIXME-1 check, if separator converted automagically on windows
+        path = dirPath + "/" + uuid.toString() + "-" + name + image->getExtension();    // FIXME-1 check, if separator converted automagically on windows (working userflags in windows?)
         image->save (path);
     }
 }

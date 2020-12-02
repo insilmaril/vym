@@ -36,7 +36,7 @@ void FlagRow::createConfigureAction()
 {
     if (!toolbar) return;
 
-    QAction *a = new QAction(QIcon(":/configure-plus.svg"), QString("add flag")); // FIXME-1 add to resources and fix path
+    QAction *a = new QAction(QIcon(":/configure-plus.svg"), QString("add flag")); 
     a->setCheckable( false );
     a->connect (a, SIGNAL( triggered() ), mainWindow, SLOT( addUserFlag() ) );
 
@@ -282,10 +282,9 @@ bool FlagRow::activate (const QString &name)
 	return false;
     }
 
-    // Some flags might be hidden, if inactive  // FIXME-1 review when refactoring FR
+    // Some flags might be hidden, if inactive  
     if (!flag->isVisible() ) 
     {
-        // FIXME-1 testing flag->setVisible(true);
         QAction *action = flag->getAction();
         if (action) action->setVisible(true);
     }
