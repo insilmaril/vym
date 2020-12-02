@@ -371,7 +371,7 @@ bool parseVYMHandler::endElement  ( const QString&, const QString&, const QStrin
             if (lastBranch->isScrolled() && lastBranch->branchCount()==0) 
                 lastBranch->unScroll();
 
-            model->emitDataChanged (lastBranch);  // FIXME-1 really needed? already emitted before, e.g. during setting of flags
+            model->emitDataChanged (lastBranch);  
             lastBranch = (BranchItem*)(lastBranch->parent());
             lastBranch->setLastSelectedBranch (0);  
             break;

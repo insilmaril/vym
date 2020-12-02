@@ -571,18 +571,20 @@ Flag* TreeItem::toggleFlagByUid(const QUuid &uid,  bool useGroups)
     if (f)
     {
         standardFlags.toggle (uid, useGroups);
-        return f;
     } else 
     {
         f = userFlagsMaster->findFlag(uid);
         if (f)
         {
             userFlags.toggle (uid, useGroups);
-            return f;
-        } 
+        } else
+        {
+            qWarning() << "TI::toggleFlag failed for flag " << uid;
+            return NULL;
+        }
     }
-    qWarning() << "TI::toggleFlag failed for flag " << uid;
-    return NULL;
+
+    return f;
 }
 
 void TreeItem::toggleSystemFlag(const QString &name, FlagRow *master)
