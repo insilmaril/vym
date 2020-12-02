@@ -1668,7 +1668,7 @@ void Main::setupEditActions()
     actionToggleHideExport=a;
 
     tag = tr("Tasks","Shortcuts");
-    a = new QAction(QPixmap(":/flag-task.png"), tr( "Toggle task","Edit menu" ), this);
+    a = new QAction(QPixmap(":/taskeditor.png"), tr( "Toggle task","Edit menu" ), this);
     a->setShortcut (Qt::Key_W + Qt::SHIFT);
     a->setShortcutContext (Qt::WindowShortcut);
     a->setCheckable(true);
