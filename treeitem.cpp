@@ -549,20 +549,20 @@ QString TreeItem::getNoteASCII()
 void TreeItem::activateStandardFlag (const QString &name)
 {
     standardFlags.activate (name);
-    model->emitDataChanged(this);
+//    model->emitDataChanged(this);
 }
 
 void TreeItem::deactivateStandardFlag (const QString &name)
 {
     standardFlags.deactivate (name);
-    model->emitDataChanged(this);
+//    model->emitDataChanged(this);
 }
 
 void TreeItem::deactivateAllStandardFlags ()
 {
     standardFlags.deactivateAll ();
     userFlags.deactivateAll ();
-    model->emitDataChanged(this);
+//    model->emitDataChanged(this);
 }
 
 Flag* TreeItem::toggleFlagByUid(const QUuid &uid,  bool useGroups) 
