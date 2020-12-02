@@ -107,7 +107,6 @@ QMenu* canvasContextMenu;
 QMenu* floatimageContextMenu;
 QMenu* targetsContextMenu;
 QMenu* taskContextMenu;
-QMenu* userflagsContextMenu;
 QMenu* fileLastMapsMenu;
 QMenu* fileImportMenu;
 QMenu* fileExportMenu;
@@ -3242,10 +3241,6 @@ void Main::setupContextMenus()
     canvasContextMenu->addAction(actionFormatBackColor);
     //if (settings.value( "/mainwindow/showTestMenu",false).toBool() )
     //    canvasContextMenu->addAction( actionFormatBackImage );  //FIXME-3 makes vym too slow: postponed for later version 
-
-    // Context menu for userflags
-    userflagsContextMenu =new QMenu (this);
-    userflagsContextMenu->addAction (actionAddMapCenter);   // FIXME-0 testing only
 
     // Menu for last opened files
     // Create actions
