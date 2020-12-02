@@ -92,7 +92,6 @@ extern bool testmode;
 extern QTextStream vout;
 extern QStringList jiraPrefixList;
 extern bool jiraClientAvailable;
-extern bool bugzillaClientAvailable;
 extern Switchboard switchboard;
 
 
@@ -1582,36 +1581,6 @@ void Main::setupEditActions()
     actionListBranches.append(a);
     actionGetJiraDataSubtree=a;
 
-    tag = tr("Bugzilla handling","Shortcuts");
-    a = new QAction(tr( "Create URL to SUSE Bugzilla","Edit menu" ), this);
-    a->setEnabled (false);
-    actionListBranches.append(a);
-    a->setShortcut ( Qt::Key_B );
-    a->setShortcutContext (Qt::WindowShortcut);
-    switchboard.addSwitch ("mapUseHeadingForURL", shortcutScope, a, tag);
-    addAction(a);
-    connect( a, SIGNAL( triggered() ), this, SLOT( editBugzilla2URL() ) );
-    actionListBranches.append(a);
-    actionBugzilla2URL=a;
-
-    a = new QAction(tr( "Get data from SUSE Bugzilla","Edit menu" ) + " (experimental)", this);
-    a->setShortcut ( Qt::Key_B + Qt::SHIFT);
-    a->setShortcutContext (Qt::WindowShortcut);
-    switchboard.addSwitch ("mapUpdateFromBugzilla", shortcutScope, a, tag);
-    addAction(a);
-    connect( a, SIGNAL( triggered() ), this, SLOT( getBugzillaData() ) );
-    actionListBranches.append(a);
-    actionGetBugzillaData=a;
-
-    a = new QAction(tr( "Get data from SUSE Bugzilla for subtree","Edit menu" ) + " (experimental)", this);
-    a->setShortcut ( Qt::Key_B + Qt::CTRL);
-    a->setShortcutContext (Qt::WindowShortcut);
-    switchboard.addSwitch ("mapUpdateSubTreeFromBugzilla", shortcutScope, a, tag);
-    addAction(a);
-    connect( a, SIGNAL( triggered() ), this, SLOT( getBugzillaDataSubtree() ) );
-    actionListBranches.append(a);
-    actionGetBugzillaDataSubtree=a;
-
     tag = tr("SUSE Fate tool handling","Shortcuts");
     a = new QAction(tr( "Create URL to SUSE FATE tool","Edit menu" ), this);
     a->setEnabled (false);
@@ -1674,7 +1643,7 @@ void Main::setupEditActions()
     actionToggleHideExport=a;
 
     tag = tr("Tasks","Shortcuts");
-    a = new QAction(QPixmap(":/flag-task.png"), tr( "Toggle task","Edit menu" ), this);
+    a = new QAction(QPixmap(":/taskeditor.png"), tr( "Toggle task","Edit menu" ), this);
     a->setShortcut (Qt::Key_W + Qt::SHIFT);
     a->setShortcutContext (Qt::WindowShortcut);
     a->setCheckable(true);
@@ -2439,16 +2408,6 @@ void Main::setupFlagActions()
             "system-url",
             tr("URL","SystemFlag") );
 
-    setupFlag ( ":/flag-url-bugzilla-novell.png",   // FIXME-1 remove
-            Flag::SystemFlag,
-            "system-url-bugzilla-novell",
-            tr("URL to Bugzilla","SystemFlag"));
-
-    setupFlag ( ":/flag-url-bugzilla-novell-closed.png",    // FIXME-1 remove
-            Flag::SystemFlag,
-            "system-url-bugzilla-novell-closed",
-            tr("URL to Bugzilla","SystemFlag")); 
-
     setupFlag ( ":/flag-target.svg", 
             Flag::SystemFlag,
             "system-target",
@@ -3182,9 +3141,6 @@ void Main::setupContextMenus()
 	branchLinksContextMenu->addAction ( actionHeading2URL );
 	branchLinksContextMenu->addAction ( actionGetJiraData );
 	branchLinksContextMenu->addAction ( actionGetJiraDataSubtree );
-	branchLinksContextMenu->addAction ( actionBugzilla2URL );   // FIXME-2 remove all bugzilla icons and functions
-	branchLinksContextMenu->addAction ( actionGetBugzillaData );
-	branchLinksContextMenu->addAction ( actionGetBugzillaDataSubtree );
 	if (settings.value( "/mainwindow/showTestMenu",false).toBool() )
 	    branchLinksContextMenu->addAction ( actionFATE2URL );   // FIXME-1 remove FATE?
 	branchLinksContextMenu->addSeparator();	
@@ -4661,24 +4617,6 @@ void Main::getJiraDataSubtree()
 {
     VymModel *m=currentModel();
     if (m) m->getJiraData(true);
-}
-
-void Main::getBugzillaData()
-{
-    VymModel *m=currentModel();
-    if (m) m->getBugzillaData(false);
-}
-
-void Main::editBugzilla2URL()
-{
-    VymModel *m=currentModel();
-    if (m) m->editBugzilla2URL();
-}
-
-void Main::getBugzillaDataSubtree()
-{
-    VymModel *m=currentModel();
-    if (m) m->getBugzillaData(true);
 }
 
 void Main::editFATE2URL()
@@ -6236,22 +6174,16 @@ void Main::updateActions()
 		else	
 		    actionToggleScroll->setChecked(false);
 
-		actionGetJiraDataSubtree->setEnabled (bugzillaClientAvailable);
-		actionGetBugzillaDataSubtree->setEnabled (bugzillaClientAvailable);
-
 		if ( selti->getURL().isEmpty() )
 		{
 		    actionOpenURL->setEnabled (false);
 		    actionOpenURLTab->setEnabled (false);
 		    actionGetJiraData->setEnabled (false);
-		    actionGetBugzillaData->setEnabled (false);
 		}   
 		else	
 		{
 		    actionOpenURL->setEnabled (true);
 		    actionOpenURLTab->setEnabled (true);
-		    actionGetBugzillaData->setEnabled (
-			selti->getURL().contains("bugzilla") && bugzillaClientAvailable);
 		    
                     bool ok = false;
                     QString u = selti->getURL();

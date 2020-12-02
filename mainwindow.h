@@ -182,9 +182,6 @@ private slots:
     void editHeading2URL();
     void getJiraData();
     void getJiraDataSubtree();
-    void editBugzilla2URL();
-    void getBugzillaData();
-    void getBugzillaDataSubtree();
     void editFATE2URL();
     void openVymLinks(const QStringList &, bool background=false);
     void editVymLink();
@@ -461,9 +458,6 @@ private:
     QAction* actionHeading2URL;
     QAction* actionGetJiraData;
     QAction* actionGetJiraDataSubtree;
-    QAction* actionBugzilla2URL;
-    QAction* actionGetBugzillaData;
-    QAction* actionGetBugzillaDataSubtree;
     QAction* actionFATE2URL;
     QAction *actionOpenVymLink;
     QAction *actionOpenVymLinkBackground;

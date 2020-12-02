@@ -667,14 +667,6 @@ lines for the rest of the map are always painted "thin".
     \begin{center}
 	\includegraphics[width=0.5cm]{images/flag-url.png}
     \end{center}
-    A special type of URLs are those pointing to Novell Bugzilla, they have
-    the Bugzilla bug instead of the globe:
-    \begin{center}
-	\includegraphics[width=0.5cm]{images/flag-url-bugzilla-novell.png}
-    \end{center}
-    \vym even can get data from Novell Bugzilla, for details see
-    \ref{bugzilla}.
-
 
     \item \vym maps, viewed in \vym itself. References are called
     a {\em vymlinks} and marked with the \vym flag:
@@ -713,10 +705,6 @@ browser\footnote{
 will be launched.
 For more information on working with bookmarks and webbrowsers see
 section \ref{bookmarks}.
-
-If support for Bugzilla is enabled (see \ref{bugzilla}), all Bugzilla
-references in a subtree can be updated automatically e.g. by pressing
-\key{CTRL-B}.
 
 \subsubsection{How to create a vymlink}
 Creation is possible both from the "URLs and vymlinks" toolbar or from
@@ -1418,24 +1406,6 @@ choose {\em Add \ra Add Map (Insert)}. For the import you can choose
 between {\em Add Map (Insert)} and {\em Add Map (Replace)}: The imported
 data will be added after the selected branch.
 
-\subsection{Connecting \vym with Bugzilla}  \label{bugzilla}
-\vym can get data from SUSE Bugzilla, if you install an
-additional package. Make sure you have the ruby programming language and
-rubygems installed and get bicho\footnote{
-    \href{http://rubygems.org/gems/bicho}{http://rubygems.org/gems/bicho} }:
-\begin{verbatim}
-  gem install bicho
-\end{verbatim}
-
-Once you have the {\tt bicho} installed, you can just
-enter a bug\ ID into a heading and press \key{B}: \vym will create the
-URL from the ID and try to get the heading directly from Bugzilla.
-
-Also drag and drop of a URL from your webbrowser into \vym will trigger
-retrieving the data.  You can can also update a subtree of Bugzilla URLs
-by pressing \key{Ctrl+B}.
-
-
 \section{\vym on Mac OS X}
 %FIXME-3 Currently not yet supported on Mac OS X in 1.13.x
 
@@ -1724,14 +1694,10 @@ everything else fails you can contact the author Uwe Drechsel at
 
 
 
-\subsection{How to report bugs}
-Though Sourceforge has its own bugreporting system, I'd rather prefer if
-you contact me directly (see \ref{author}) or even better: You can file
-a bugreport in Bugzilla, the bugtracking system of openSUSE:
-\begin{center}
-\href{http://en.opensuse.org/Submit_a_bug}{http://en.opensuse.org/Submit\_a\_bug}
-\end{center}
-I build \vym regulary for openSUSE, so you may report it against a
+\subsection{How to report bugs}     %FIXME-0
+Please file bugs and issues in github.
+
+I build \vym regulary for openSUSE and Windows, so you may report it against a
 recent version there, even if you  use another Operating System.
 Please don't forget to tell me what you are using:
 \begin{itemize}

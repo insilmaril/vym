@@ -75,7 +75,6 @@ HEADERS	+= \
     branchitem.h \
     branchobj.h \
     branchpropeditor.h\
-    bug-agent.h \
     command.h \
     confluence-agent.h \
     dockeditor.h \
@@ -184,7 +183,6 @@ SOURCES	+= \
     branchitem.cpp \
     branchobj.cpp \
     branchpropeditor.cpp \
-    bug-agent.cpp \
     command.cpp \
     confluence-agent.cpp \
     dockeditor.cpp \
