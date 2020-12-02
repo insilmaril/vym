@@ -3940,13 +3940,13 @@ void VymModel::toggleFlagByUid (const QUuid &uid, bool useGroups)
 
         if (f)
         {
-            QString u = "toggleFlag";
+            QString u = "toggleFlagByUid";
             QString name = f->getName();  // FIXME-0 we are toggling by UID...
             saveState(
                 bi,
-                QString("%1 (\"%2\")").arg(u).arg(name),
+                QString("%1 (\"%2\")").arg(u).arg(uid.toString()),
                 bi,
-                QString("%1 (\"%2\")").arg(u).arg(name),
+                QString("%1 (\"%2\")").arg(u).arg(uid.toString()),
                 QString("Toggling flag \"%1\" of %2").arg(name).arg(getObjectName(bi)));
             emitDataChanged (bi);
             reposition();
