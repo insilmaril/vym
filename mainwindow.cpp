@@ -2780,14 +2780,10 @@ Flag* Main::setupFlag (const QString &path,
 
         case Flag::StandardFlag:    
             flag = standardFlagsMaster->createFlag (path);
-
-            standardFlagsMaster->shareCashed(flag);  
             break;
 
         case Flag::UserFlag:
             flag = userFlagsMaster->createFlag (path);
-
-            userFlagsMaster->shareCashed(flag);  
             
             // User flags read from file already have a Uuid - use it
             if (!uid.isNull()) flag->setUuid(uid);

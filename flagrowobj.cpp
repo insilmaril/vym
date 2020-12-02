@@ -136,7 +136,11 @@ void FlagRowObj::activateFlag (Flag *flag)
     if (flag) 
     {
 	FlagObj *fo = new FlagObj (this);
+
+        // Loading an imageObj  will *copy* it 
+        // and thus read the flag from cash
 	fo->loadImage (flag->getImageObj() );
+
         fo->setUuid (flag->getUuid() );
         fo->setZValue(QGraphicsItem::zValue());
         fo->move (absPos.x() + bbox.width(), absPos.y() );

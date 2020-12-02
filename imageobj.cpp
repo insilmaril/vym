@@ -243,25 +243,10 @@ void ImageObj::paint (QPainter *painter, const QStyleOptionGraphicsItem
     }
 }
 
-bool ImageObj::shareCashed(const QString &fn)   // FIXME-1   copy original svg file - Qt only support tinySVG
-    // For shareing maybe use flag already during load? Avoid race conditions...
-{
-    if (save(fn))
-    {
-        // svgCashPath = fn;  // FIXME-0
-        return true;
-    }
-    
-    return false;
-}
-
-QString ImageObj::getCashPath()
-{
-    return svgCashPath;
-}
-
 bool ImageObj::load (const QString &fn, bool createClone) 
 {
+    // createClone == true, if called via copy()
+    
     if (imageType != ImageObj::Undefined)
     {
         qWarning() << "ImageObj::load (" << fn << ") into existing image of type " << imageType;
@@ -388,7 +373,7 @@ QIcon ImageObj::getIcon()
     {
         case ImageObj::SVG:
         case ImageObj::ClonedSVG:
-            return QPixmap(getCashPath());  // FIXME-0 use svgCashPath
+            return QPixmap(svgCashPath);
             break;
         case ImageObj::Pixmap:
         case ImageObj::ModifiedPixmap:

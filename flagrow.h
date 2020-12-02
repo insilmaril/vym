@@ -24,7 +24,6 @@ public:
     Flag* createFlag (const QString &path);
     void createConfigureAction ();
     void addActionToToolbar(QAction *a);
-    void shareCashed(Flag *flag);
     Flag *findFlag (const QUuid &uid);
     Flag *findFlag (const QString &name);
     void setEnabled (bool);

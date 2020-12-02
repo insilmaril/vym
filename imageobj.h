@@ -32,8 +32,6 @@ public:
     qreal getScaleFactor();
     virtual QRectF boundingRect() const;
     virtual void paint(QPainter*, const QStyleOptionGraphicsItem*, QWidget*);
-    bool shareCashed (const QString &path);
-    QString getCashPath();
     bool load (const QString &, bool createClone = false);
     bool save (const QString &);
     QString getExtension();

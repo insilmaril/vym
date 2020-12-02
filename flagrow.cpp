@@ -4,7 +4,6 @@
 #include "mainwindow.h"
 
 extern bool debug;
-extern QDir tmpVymDir;  // FIXME-0 move to imageobj...
 extern Main *mainWindow;
 
 
@@ -53,14 +52,6 @@ void FlagRow::addActionToToolbar(QAction *a)
         toolbar->insertAction(configureAction, a);
     else
         toolbar->addAction(a);
-}
-
-void FlagRow::shareCashed(Flag *flag) // FIXME-0 refactor: share on image level, at least for svg
-{
-    QString path = tmpVymDir.path();
-    ImageObj *image = flag->getImageObj();
-    if( !image->shareCashed(path + "/" + flag->getUuid().toString() + "-" + flag->getName() + image->getExtension())) // FIXME-1 check, if separator converted automagically on windows);
-        qDebug() << "FR::shareCashed failed for " << flag->getName();
 }
 
 Flag* FlagRow::findFlag (const QUuid &uid)

@@ -125,14 +125,14 @@ QString ImageItem::saveToDir (const QString &tmpdir,const QString &prefix)
     QString zAttr = attribut ("zValue", QString().setNum(zValue));
     QString url;
 
-    // Create unique string for filename based on memory address    // FIXME-0 review with ImageObj: svgs will be just copied!
+    // Create unique string for filename based on memory address
     ulong n = reinterpret_cast <ulong> (this);
 
     FloatImageObj *fio = (FloatImageObj*)mo;
     
     url = "images/" + prefix + "image-" + QString().number(n, 10) + fio->getExtension();
 
-    // And really save the image
+    // And really save the image  (svgs will be copied from cash!)
     fio->save (tmpdir + "/" + url);
 
     QString nameAttr = attribut ("originalName", originalFilename);
