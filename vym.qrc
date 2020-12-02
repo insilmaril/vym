@@ -36,7 +36,6 @@
     <file alias="flag-task-wip-morning.svg">flags/system/task-wip-morning.svg</file>
     <file alias="flag-task-wip-sleeping.svg">flags/system/task-wip-sleeping.svg</file>
     <file alias="flag-task-wip.svg">flags/system/task-wip.svg</file>
-    <file alias="flag-task.png">flags/flag-task.png</file>
     <file alias="flag-thumb-down.png">flags/flag-thumb-down.png</file>
     <file alias="flag-thumb-up.png">flags/flag-thumb-up.png</file>
     <file alias="flag-tmpUnscrolled-right.png">flags/flag-tmpUnscrolled-right.png</file>
