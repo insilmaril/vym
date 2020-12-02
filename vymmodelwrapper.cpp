@@ -803,7 +803,7 @@ bool VymModelWrapper::selectLatestAdded()
 void VymModelWrapper::setFlagByName(const QString &s)
 {
     BranchItem *selbi = getSelectedBranch();
-    if (selbi) selbi->activateStandardFlag( s );    // FIXME-0 "byName"  / named user flag?
+    if (selbi) selbi->activateStandardFlag( s );    // FIXME-2 "byName"  / named user flag?
 }
 
 void VymModelWrapper::setHeadingPlainText( const QString &text)// FIXME-2  what about RT?
@@ -1078,6 +1078,6 @@ void VymModelWrapper::unselectAll()
 void VymModelWrapper::unsetFlagByName(const QString &s)
 {
     BranchItem *selbi = getSelectedBranch();
-    if (selbi) selbi->deactivateStandardFlag( s );// FIXME-0 "byName" / and userflag?
+    if (selbi) selbi->deactivateStandardFlag( s );// FIXME-2 "byName" / and userflag?
 }
 
