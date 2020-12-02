@@ -102,7 +102,13 @@ XMLObj::~XMLObj()
 // returns <s at />
 QString XMLObj::singleElement(QString s, QString at)
 {
-    return indent() + "<" + s +" " + at +" " + "/>";
+    return indent() + "<" + s +" " + at + " />";
+}
+
+// returns <s at at at at ... />
+QString XMLObj::singleElement(QString s, QStringList attributes)
+{
+    return indent() + "<" + s +" " + attributes.join(" ") + " />";
 }
 
 // returns <s>

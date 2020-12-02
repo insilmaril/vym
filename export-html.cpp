@@ -67,12 +67,14 @@ QString ExportHTML::getBranchText(BranchItem *current)
 
         // User flags
         QString userFlags;
-        if (dia.useUserFlags)
+        if (dia.useUserFlags)   // FIXME-1  Store both standard and user flags in export and use below
         {
-            foreach (QString flag, current->activeStandardFlagNames())
+            /*
+            foreach (QString flag, current->activeFlagNames())
                 userFlags += QString("<img src=\"flags/flag-%1.png\" alt=\"%2\">")
                     .arg(flag)
                     .arg(QObject::tr("Flag: %1","Alt tag in HTML export").arg(flag));
+            */
         }
 
         // Numbering
@@ -116,13 +118,13 @@ QString ExportHTML::getBranchText(BranchItem *current)
         {
             int imageCount = current->imageCount();
             ImageItem *image; 
-            QString imagePath;
+            QString imageName;
             for (int i=0; i< imageCount; i++)
             {
                 image = current->getImageNum(i);
-                imagePath =  "image-" + image->getUuid().toString() + ".png";
-                image->save( dirPath + "/" + imagePath, "PNG");
-                s += "</br><img src=\"" + imagePath;
+                imageName =  image->getUniqueFilename();
+                image->saveImage( dirPath + "/" + imageName);
+                s += "</br><img src=\"" + imageName;
                 s += "\" alt=\"" + QObject::tr("Image: %1","Alt tag in HTML export").arg(image->getOriginalFilename());
                 s += "\"></br>";
             }

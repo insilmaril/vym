@@ -41,6 +41,8 @@ public:
     bool readSettingAttr (const QXmlAttributes&);
     bool readSlideAttr   (const QXmlAttributes&);
     bool readTaskAttr    (const QXmlAttributes&);
+    bool readUserFlagDefAttr(const QXmlAttributes&);
+    bool readUserFlagAttr(const QXmlAttributes&);
 
 private:
     enum State 
@@ -57,7 +59,9 @@ private:
         StateHtmlNote,		    // Obsolete >= 1.13.6
         StateHtml,
         StateFrame,
-        StateStandardFlag,
+        StateStandardFlag,          // New in 2.7.509
+        StateUserFlagDef,           // New in 2.7.509
+        StateUserFlag,
         StateNote,		    // Obsolete >= 1.4.6
         StateImage,
         StateHeading,

@@ -512,7 +512,7 @@ bool VymModelWrapper::hasActiveFlag( const QString &flag)
 {
     bool r = false;
     BranchItem *selbi = getSelectedBranch();
-    if (selbi) r = selbi->hasActiveStandardFlag( flag );
+    if (selbi) r = selbi->hasActiveFlag( flag );
     return setResult( r );
 }
 
@@ -684,9 +684,9 @@ void VymModelWrapper::removeSlide(int n)
         logError( context(), QScriptContext::RangeError, QString("Slide '%1' not available.").arg(n) );
 }
 
-void VymModelWrapper::saveImage( const QString &filename, const QString &format)
+void VymModelWrapper::saveImage( const QString &filename)
 {
-    model->saveImage( NULL, format, filename);
+    model->saveImage( NULL, filename);
 }
 
 void VymModelWrapper::saveNote( const QString &filename)
@@ -800,10 +800,10 @@ bool VymModelWrapper::selectLatestAdded()
     return setResult( r );
 }
 
-void VymModelWrapper::setFlag(const QString &s)
+void VymModelWrapper::setFlagByName(const QString &s)
 {
     BranchItem *selbi = getSelectedBranch();
-    if (selbi) selbi->activateStandardFlag( s );
+    if (selbi) selbi->activateStandardFlag( s );    // FIXME-2 "byName"  / named user flag?
 }
 
 void VymModelWrapper::setHeadingPlainText( const QString &text)// FIXME-2  what about RT?
@@ -938,9 +938,9 @@ void VymModelWrapper::setFrameType( const QString &type)
     model->setFrameType( type );
 }
 
-void VymModelWrapper::setScale( qreal x, qreal y)
+void VymModelWrapper::setScaleFactor( qreal f)
 {
-    model->setScale( x, y);
+    model->setScaleFactor(f);
 }
 
 void VymModelWrapper::setSelectionColor( const QString &color)
@@ -1018,9 +1018,14 @@ void VymModelWrapper::sortChildren()
     sortChildren( false );
 }
 
-void VymModelWrapper::toggleFlag(const QString &s)
+void VymModelWrapper::toggleFlagByUid(const QString &s)
 {
-    model->toggleStandardFlag( s );
+    model->toggleFlagByUid( QUuid(s) );
+}
+
+void VymModelWrapper::toggleFlagByName(const QString &s)
+{
+    model->toggleFlagByName( s );
 }
 
 void VymModelWrapper::toggleFrameIncludeChildren()
@@ -1070,9 +1075,9 @@ void VymModelWrapper::unselectAll()
     model->unselectAll();
 }
 
-void VymModelWrapper::unsetFlag(const QString &s)
+void VymModelWrapper::unsetFlagByName(const QString &s)
 {
     BranchItem *selbi = getSelectedBranch();
-    if (selbi) selbi->deactivateStandardFlag( s );
+    if (selbi) selbi->deactivateStandardFlag( s );// FIXME-2 "byName" / and userflag?
 }
 

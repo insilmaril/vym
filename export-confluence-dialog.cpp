@@ -52,7 +52,7 @@ void ExportConfluenceDialog::readSettings()
     pageTitle = settings.localValue (filepath, "/export/confluence/pageTitle", "New page created on " + QDateTime::currentDateTime().toString()).toString();
     ui.lineEditPageTitle->setText( pageTitle );
 
-    /*  FIXME-0 cleanup the copied HTML parameters
+    /*  FIXME-3 cleanup the copied HTML parameters
     includeMapImage = settings.localValue (filepath, "/export/confluence/includeMapImage", "true").toBool();
     ui.imageCheckBox->setChecked(includeMapImage);
 	

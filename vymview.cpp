@@ -84,15 +84,15 @@ VymView::VymView(VymModel *m)
     // Connect data changed signals 
     connect (
 	model, SIGNAL (dataChanged(const QModelIndex &, const QModelIndex &)), 
-	mapEditor,SLOT (updateData(const QModelIndex &) ) );
+	mapEditor, SLOT (updateData(const QModelIndex &) ) );
 
     connect (
 	model, SIGNAL (dataChanged(const QModelIndex &, const QModelIndex &)), 
-	this, SLOT (updateDockWidgetTitles() ) );
+	this, SLOT (updateDockWidgetTitles() ) );// FIXME-2 connect directly to MainWindow and rename method (also updates selection in BPE)
 
     connect (
 	model, SIGNAL (updateQueries (VymModel*)), 
-	mainWindow,SLOT (updateQueries(VymModel*) ) );
+	mainWindow, SLOT (updateQueries(VymModel*) ) );
 
     connect (
 	model, SIGNAL (noteChanged(QModelIndex) ),
@@ -188,10 +188,11 @@ void VymView::changeSelection (const QItemSelection &newsel, const QItemSelectio
     mainWindow->changeSelection (model,newsel,desel);	
     mainWindow->updateDockWidgetTitles( model );
     mapEditor->updateSelection (newsel,desel);
+    
     showSelection();
 }
 
-void VymView::updateDockWidgetTitles()
+void VymView::updateDockWidgetTitles()  
 {
     mainWindow->updateDockWidgetTitles( model );
 }
@@ -274,8 +275,6 @@ void VymView::collapseUnselected()
     // Find level to collapse
     BranchItem *selbi = model->getSelectedBranch();
     if (!selbi) return;
-
-    int level = selbi->depth();
 
     QList <BranchItem*> itemPath;
 

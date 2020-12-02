@@ -1,5 +1,7 @@
 #include "flag.h"
 
+#include "file.h"
+
 #include <QDebug>
 
 /////////////////////////////////////////////////////////////////
@@ -13,59 +15,58 @@ Flag::Flag()
 
 Flag::Flag(const QString &fname)
 {
+    //qDebug() << "Const Flag (fname)" << fname;
     init ();
-    load (fname);
-}
-
-Flag::Flag (Flag* io)
-{
-    //qDebug() << "Const Flag (Flag);
-    copy (io);
+    if (!load (fname))
+        qWarning() << "Flag::Flag  Failed to load " << fname;
 }
 
 Flag::~Flag()
 {
-   //qDebug() << "Destr Flag  this="<<this <<"  " << qPrintable(name);
+   //qDebug() << "Destr Flag  this="<<this <<"  " << qPrintable(name) << "  image=" << image;
+   if (image) delete image;
 }
 
 
 void Flag::init ()
 {
-    action=NULL;
-    name="undefined";
-    visible=true;
+    action  = NULL;
+    name    = "undefined";
+    visible = true;
     unsetGroup();
 
-    state=false;
-    used=false;
+    image = NULL;
+
+    state   = false;
+    used    = false;
+    type    = UndefinedFlag;
+
+    uuid = QUuid::createUuid();
 }
 
-void Flag::copy (Flag* other)
+bool Flag::load (const QString &fn) 
 {
-    action=other->action;
-    name=other->name;
-    group=other->group;
-    tooltip=other->tooltip;
-    state=other->state;
-    used=other->used;
-    pixmap=other->pixmap;
-}
+    if (!image) image = new ImageObj();
 
+    if (!image->load(fn)) return false;
 
-void Flag::load (const QString &fn)
-{
-    if (!pixmap.load(fn))
-	qDebug()<<"Flag::load ("<<fn<<") failed.";
-}
+    if (fn.contains("svg"))
+    {
+        image->setWidth(32);    // FIXME-3 scale svg of flags
+    }
 
-void Flag::load (const QPixmap &pm)
-{
-    pixmap=pm;
+    path = fn;
+
+    return true;
 }
 
 void Flag::setName(const QString &n)
 {
-    name=n;
+    name = n;
+    if (name.contains("/") )
+        name = basename(name);
+
+    name = name.section('.', 0, 0);
 }
 
 const QString Flag::getName()
@@ -73,9 +74,14 @@ const QString Flag::getName()
     return name;
 }
 
+const QString Flag::getPath()
+{
+    return path;
+}
+
 void Flag::setVisible (bool b)
 {
-    visible=b;
+    visible = b;
 }
 
 bool Flag::isVisible ()
@@ -85,7 +91,7 @@ bool Flag::isVisible ()
 
 void Flag::setGroup (const QString &n)
 {
-    group=n;
+    group = n;
 }
 
 const QString Flag::getGroup()
@@ -100,7 +106,7 @@ void Flag::unsetGroup()
 
 void Flag::setToolTip(const QString &n)
 {
-    tooltip=n;
+    tooltip = n;
 }
 
 const QString Flag::getToolTip()
@@ -108,14 +114,17 @@ const QString Flag::getToolTip()
     return tooltip;
 }
 
-QPixmap Flag::getPixmap()
+ImageObj* Flag::getImageObj()
 {
-    return pixmap;
+    if (image) 
+        return image;
+    else
+        return NULL;
 }
 
 void Flag::setAction (QAction *a)
 {
-    action=a;
+    action = a;
 }
 
 QAction* Flag::getAction ()
@@ -125,7 +134,7 @@ QAction* Flag::getAction ()
 
 void Flag::setUsed (bool b)
 {
-    used=b;
+    used = b;
 }
 
 bool Flag::isUsed()
@@ -133,10 +142,52 @@ bool Flag::isUsed()
     return used;
 }
 
-void Flag::saveToDir (const QString &tmpdir, const QString &prefix)
+Flag::FlagType Flag::getType()
 {
-    QString fn=tmpdir + prefix + name + ".png";
-    pixmap.save (fn,"PNG");
+    return type;
 }
 
+void Flag::setType(Flag::FlagType t)
+{
+    type = t;
+}
+
+void Flag::setUuid(const QUuid &id)
+{
+    uuid = id;
+}
+
+QUuid Flag::getUuid() { return uuid; }
+
+QString Flag::getDefinition(const QString &prefix)
+{
+    if (type == Flag::UserFlag) 
+    {
+        QString url = "flags/" + prefix + uuid.toString() + "-" + name + image->getExtension();
+        QStringList attributes;
+        attributes << attribut("name", name);
+	attributes << attribut ("href", QString ("file:%1").arg(url));
+        attributes << attribut("uuid", uuid.toString());
+        return singleElement("userflagdef", attributes);
+    } else
+        return QString();
+}
+
+void Flag::saveDataToDir (const QString &dirPath) 
+{
+    //qDebug() << "Flag::saveDataToDir  " << name << " to " << dirPath << "  image=" << image;
+    if (image)
+    {
+        path = dirPath + "/" + uuid.toString() + "-" + name + image->getExtension();    // FIXME-1 check, if separator converted automagically on windows (working userflags in windows?)
+        image->save (path);
+    }
+}
+
+QString Flag::saveState()
+{
+    if (type == Flag::UserFlag) 
+        return singleElement ("userflag", attribut("name", name) + attribut("uuid", uuid.toString()));
+    else
+        return valueElement ("standardflag", name);
+}
 

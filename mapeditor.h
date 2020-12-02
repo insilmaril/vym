@@ -28,9 +28,9 @@ public:
 	EditingHeading,
 	EditingLink,
 	MovingObject,
+	MovingObjectWithoutLinking,
 	MovingView,
 	PickingColor,
-	CopyingObject,
 	DrawingLink
     };
 
@@ -140,8 +140,8 @@ public:
     BranchItem* getBranchAbove(BranchItem *bi);		//! get branch above bi (in TreeView) 
     BranchItem* getBranchDirectBelow(BranchItem *bi);	//! bet branch direct below bi (in TreeView)
     BranchItem* getBranchBelow(BranchItem *bi);		//! bet branch below bi (in TreeView)
-    BranchItem* getLeftBranch(BranchItem *bi);		//! bet branch left of bi (in TreeView)
-    BranchItem* getRightBranch(BranchItem *bi);		//! bet branch right of bi (in TreeView)
+    BranchItem* getLeftBranch(TreeItem *ti);		//! bet branch left of bi (in TreeView)
+    BranchItem* getRightBranch(TreeItem *ti);		//! bet branch right of bi (in TreeView)
 
 public slots:
     void cursorUp();
@@ -155,18 +155,19 @@ public slots:
 private:
     QLineEdit *lineEdit;
 
-protected:
-    virtual void contextMenuEvent ( QContextMenuEvent *e );
-    virtual void keyPressEvent(QKeyEvent*);
-    virtual void keyReleaseEvent(QKeyEvent*);
-    virtual void mousePressEvent(QMouseEvent*);
-    virtual void mouseMoveEvent(QMouseEvent*);
+private:
+    void contextMenuEvent ( QContextMenuEvent *e );
+    void keyPressEvent(QKeyEvent*);
+    void keyReleaseEvent(QKeyEvent*);
+    void startMovingView(QMouseEvent*);
+    void mousePressEvent(QMouseEvent*);
+    void mouseMoveEvent(QMouseEvent*);
     void moveObject ();
-    virtual void mouseReleaseEvent(QMouseEvent*);
-    virtual void mouseDoubleClickEvent(QMouseEvent*);
-    virtual void wheelEvent(QWheelEvent*);
-    virtual void focusOutEvent (QFocusEvent*);
-    virtual void resizeEvent( QResizeEvent * );
+    void mouseReleaseEvent(QMouseEvent*);
+    void mouseDoubleClickEvent(QMouseEvent*);
+    void wheelEvent(QWheelEvent*);
+    void focusOutEvent (QFocusEvent*);
+    void resizeEvent( QResizeEvent * );
 
     void dragEnterEvent (QDragEnterEvent *);
     void dragMoveEvent (QDragMoveEvent *);

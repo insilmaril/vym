@@ -2,6 +2,7 @@
 #define XMLOBJ_H
 
 class QString;
+class QStringList;
 
 QString quotemeta( const QString& );  
 QString unquotemeta( const QString& );	
@@ -17,6 +18,7 @@ public:
     XMLObj();
     virtual ~XMLObj();
     QString singleElement(QString,QString);	    // name,attr
+    QString singleElement(QString,QStringList);	    // name,attributes
     QString beginElement(QString,QString);	    // name,attr
     QString beginElement(QString);		    // name
     QString endElement  (QString);		    // name

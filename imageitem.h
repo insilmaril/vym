@@ -1,6 +1,7 @@
 #ifndef IMAGEITEM_H
 #define IMAGEITEM_H
 
+#include <QGraphicsSvgItem>
 #include <QList>
 #include <QPixmap>
 #include <QVariant>
@@ -14,9 +15,6 @@ bool isImage (const QString &fname);
 class ImageItem: public MapItem
 {
 public:
-    enum ImageType {Undefined,Pixmap,SVG};
-
-public:
     ImageItem();
     ImageItem(const QList<QVariant> &data, TreeItem *parent = 0);
 
@@ -25,33 +23,23 @@ public:
 protected:  
     void init();
     void clear();
-    ImageType imageType;
 public:	
-    virtual ImageType getImageType();
-
-    virtual void load (const QImage &img);
     virtual bool load (const QString &fname);
     virtual FloatImageObj* createMapObj();	    //! Create classic object in GraphicsView
 protected:  
-    qreal scaleX;
-    qreal scaleY;
-    QImage  originalImage;
     QString originalFilename;
     int zValue;
 
 public:	
-    virtual qreal getScaleX();
-    virtual qreal getScaleY();
-    virtual void setScale (qreal,qreal);
-
-    virtual void setZValue(int z);
-    virtual void setOriginalFilename(const QString &);
-    virtual QString getOriginalFilename();
-    virtual bool save (const QString &fn, const QString &format);
-    virtual QString saveToDir(const QString &,const QString&);
-
+    void setScaleFactor(qreal);
+    qreal getScaleFactor();
+    void setZValue(int z);
+    void setOriginalFilename(const QString &);
+    QString getOriginalFilename();
+    QString getUniqueFilename();
+    bool saveImage (const QString &fn);
+    QString saveToDir(const QString &,const QString&);
 };
-
 
 #endif
 

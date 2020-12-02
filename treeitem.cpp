@@ -15,6 +15,7 @@ using namespace std;
 extern uint itemLastID;
 extern FlagRow* standardFlagsMaster;
 extern FlagRow* systemFlagsMaster;
+extern FlagRow* userFlagsMaster;
 
 extern QTextStream vout;
 
@@ -84,6 +85,7 @@ void TreeItem::init()
     backgroundColor = Qt::transparent;
 
     standardFlags.setMasterRow (standardFlagsMaster);
+    userFlags.setMasterRow (userFlagsMaster);
     systemFlags.setMasterRow (systemFlagsMaster);
 }
 
@@ -422,22 +424,22 @@ void TreeItem::setURL (const QString &u)
     {
 	if (url.contains ("bugzilla.novell.com"))
 	{
-	    systemFlags.activate ("system-url-bugzilla-novell");
-	    if (systemFlags.isActive ("system-url"))
-		systemFlags.deactivate ("system-url");
+	    systemFlags.activate (QString("system-url-bugzilla-novell"));
+	    if (systemFlags.isActive (QString("system-url")))
+		systemFlags.deactivate (QString("system-url"));
 	} else
 	{
-	    systemFlags.activate ("system-url");
-	    if (systemFlags.isActive ("system-url-bugzilla-novell"))
-		systemFlags.deactivate ("system-url-bugzilla-novell");
+	    systemFlags.activate (QString("system-url"));
+	    if (systemFlags.isActive (QString("system-url-bugzilla-novell")))
+		systemFlags.deactivate (QString("system-url-bugzilla-novell"));
 	}
     }
     else
     {
-	if (systemFlags.isActive ("system-url"))
-	    systemFlags.deactivate ("system-url");
-	if (systemFlags.isActive ("system-url-bugzilla-novell"))
-	    systemFlags.deactivate ("system-url-bugzilla-novell");
+	if (systemFlags.isActive (QString("system-url")))
+	    systemFlags.deactivate (QString("system-url"));
+	if (systemFlags.isActive (QString("system-url-bugzilla-novell")))
+	    systemFlags.deactivate (QString("system-url-bugzilla-novell"));
     }
 }
 
@@ -466,12 +468,12 @@ void TreeItem::setVymLink (const QString &vl)
             QString p=dirname(model->getDestPath());
             vymLink = convertToAbs( p, vl);
         }
-        systemFlags.activate("system-vymLink");
+        systemFlags.activate(QString("system-vymLink"));
     }
     else
     {
         vymLink.clear();
-        systemFlags.deactivate("system-vymLink");
+        systemFlags.deactivate(QString("system-vymLink"));
     }
 }
 
@@ -482,8 +484,8 @@ QString TreeItem::getVymLink ()
 
 void TreeItem::toggleTarget ()
 {
-    systemFlags.toggle ("system-target");
-    target= systemFlags.isActive("system-target");
+    systemFlags.toggle (QString("system-target"));
+    target = systemFlags.isActive(QString("system-target"));
     model->emitDataChanged(this);	// FIXME-4 better call from VM?
 }
 
@@ -497,28 +499,31 @@ bool TreeItem::isNoteEmpty()
     return note.isEmpty();
 }
 
-void TreeItem::clearNote()
+bool TreeItem::clearNote()
 {
     note.clear();
-    systemFlags.deactivate ("system-note");
+    return systemFlags.deactivate (QString("system-note"));
 }
 
-void TreeItem::setNote(const VymText &vt)
+bool TreeItem::setNote(const VymText &vt)
 {
     note = vt;
-    if (!note.isEmpty() && !systemFlags.isActive ("system-note"))
-	systemFlags.activate ("system-note");
-    if (note.isEmpty() && systemFlags.isActive ("system-note"))
-	systemFlags.deactivate ("system-note");
+
+    if (note.isEmpty()) 
+    {
+        if (systemFlags.isActive (QString("system-note")))
+	    return systemFlags.deactivate (QString("system-note"));
+    } else
+    {
+        if (!systemFlags.isActive (QString("system-note")))
+            return systemFlags.activate (QString("system-note"));
+    }
+    return false;  // No need to update flag and reposition later
 }
 
-void TreeItem::setNote(const VymNote &vn)
+bool TreeItem::setNote(const VymNote &vn)
 {
-    note = vn;
-    if (!note.isEmpty() && !systemFlags.isActive ("system-note"))
-    systemFlags.activate ("system-note");
-    if (note.isEmpty() && systemFlags.isActive ("system-note"))
-    systemFlags.deactivate ("system-note");
+    return setNote ((VymText) vn);
 }
 
 bool TreeItem::hasEmptyNote()
@@ -544,24 +549,42 @@ QString TreeItem::getNoteASCII()
 void TreeItem::activateStandardFlag (const QString &name)
 {
     standardFlags.activate (name);
-    model->emitDataChanged(this);
+//    model->emitDataChanged(this);
 }
 
 void TreeItem::deactivateStandardFlag (const QString &name)
 {
     standardFlags.deactivate (name);
-    model->emitDataChanged(this);
+//    model->emitDataChanged(this);
 }
 
 void TreeItem::deactivateAllStandardFlags ()
 {
     standardFlags.deactivateAll ();
-    model->emitDataChanged(this);
+    userFlags.deactivateAll ();
+//    model->emitDataChanged(this);
 }
 
-void TreeItem::toggleStandardFlag(const QString &name, FlagRow *master)
+Flag* TreeItem::toggleFlagByUid(const QUuid &uid,  bool useGroups) 
 {
-    standardFlags.toggle (name,master);
+    Flag *f = standardFlagsMaster->findFlag (uid);
+    if (f)
+    {
+        standardFlags.toggle (uid, useGroups);
+    } else 
+    {
+        f = userFlagsMaster->findFlag(uid);
+        if (f)
+        {
+            userFlags.toggle (uid, useGroups);
+        } else
+        {
+            qWarning() << "TI::toggleFlag failed for flag " << uid;
+            return NULL;
+        }
+    }
+
+    return f;
 }
 
 void TreeItem::toggleSystemFlag(const QString &name, FlagRow *master)
@@ -570,7 +593,7 @@ void TreeItem::toggleSystemFlag(const QString &name, FlagRow *master)
     model->emitDataChanged(this);
 }
 
-bool TreeItem::hasActiveStandardFlag (const QString &name)
+bool TreeItem::hasActiveFlag (const QString &name)
 {
     return standardFlags.isActive (name);
 }
@@ -580,19 +603,14 @@ bool TreeItem::hasActiveSystemFlag (const QString &name)
     return systemFlags.isActive (name);
 }
 
-QStringList TreeItem::activeStandardFlagNames ()
+QList <QUuid> TreeItem::activeFlagUids ()  
 {
-    return standardFlags.activeFlagNames();
+    return standardFlags.activeFlagUids() + userFlags.activeFlagUids();
 }
 
-FlagRow* TreeItem::getStandardFlagRow()
+QList <QUuid> TreeItem::activeSystemFlagUids()
 {
-    return &standardFlags;
-}
-
-QStringList TreeItem::activeSystemFlagNames ()
-{
-    return systemFlags.activeFlagNames();
+    return systemFlags.activeFlagUids();
 }
 
 bool TreeItem::canMoveDown()
@@ -809,9 +827,9 @@ void TreeItem::setHideInExport(bool b)
     {
 	hideExport=b;
 	if (b)
-	    systemFlags.activate("system-hideInExport");
+	    systemFlags.activate(QString("system-hideInExport"));
 	else	
-	    systemFlags.deactivate("system-hideInExport");
+	    systemFlags.deactivate(QString("system-hideInExport"));
     }
 }   
 

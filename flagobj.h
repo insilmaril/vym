@@ -4,6 +4,7 @@
 
 #include <QAction>
 #include <QPixmap>
+#include <QUuid>
 
 #include "flag.h"
 #include "mapobj.h"
@@ -21,33 +22,25 @@ public:
     FlagObj (QGraphicsItem *);
     ~FlagObj ();
     virtual void init ();
-    virtual void copy (FlagObj*);
     virtual void move (double x,double y);      // move to absolute Position
     virtual void moveBy (double x,double y);    // move to relative Position
     virtual void setZValue (double z);
     virtual void setVisibility(bool);
-    void load (const QString&);
-    void load (const QPixmap&);
-    void setName (const QString&);
-    const QString getName ();
+    void loadImage (ImageObj* io);
+    void setUuid(const QUuid &uid);
+    const QUuid getUuid();
     QPixmap getPixmap();
     void setAction(QAction*);
     void setAlwaysVisible (bool b);
     bool isAlwaysVisible ();
-    bool isActive();
-    void toggle();
-    void activate();
-    void deactivate();
-    void saveToDir (const QString&, const QString&);
     
 protected:  
-    QString name;
-    bool state;
+    QUuid uid;
     bool avis;
     virtual void positionBBox();
     virtual void calcBBoxSize();
 private:
-    ImageObj* icon;
+    ImageObj* imageObj;
 };
 
 #endif

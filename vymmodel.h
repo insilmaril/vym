@@ -96,7 +96,7 @@ private:
     QString mapName;		// fileName without ".vym"
 				// example
 
-    QString tmpMapDir;		// tmp directory with undo history
+    QString tmpMapDirPath;	// tmp directory with undo history
 
     QTimer *autosaveTimer;
     QTimer *fileChangedTimer;
@@ -108,7 +108,7 @@ public:
 	The structure of the map itself is returned as QString and passed back to Main, 
 	where saveToDir is called initially
     */	
-    QString saveToDir (const QString &tmpdir, const QString &prefix, bool writeflags, const QPointF &offset, TreeItem *saveSel);
+    QString saveToDir (const QString &tmpdir, const QString &prefix, FlagRow::WriteMode flagMode, const QPointF &offset, TreeItem *saveSel);
 
     /*! Save all data in tree*/
     QString saveTreeToDir (const QString&,const QString&,const QPointF&,QList <Link*> &tmpLinks);// Save data recursivly to tempdir
@@ -155,7 +155,7 @@ public:
 
 public:	
     void loadImage (BranchItem *dst=NULL, const QString &fn="");
-    void saveImage (ImageItem *ii=NULL, QString format="", QString fn="");
+    void saveImage (ImageItem *ii=NULL, QString fn="");
 
 private:    
     void importDirInt(BranchItem *,QDir);
@@ -492,7 +492,7 @@ public:
     bool unscrollBranch(BranchItem *);
     void toggleScroll();
     void unscrollChildren();
-    void setScale (qreal,qreal);
+    void setScaleFactor (qreal);
     void growSelectionSize();
     void shrinkSelectionSize();
     void resetSelectionSize();
@@ -511,9 +511,9 @@ public:
     ItemList getLinkedMaps();
     ItemList getTargets();
 
-    void toggleStandardFlag (const QString &name, FlagRow *master=NULL);
+    void toggleFlagByName (const QString &name, bool useGroups = true);
+    void toggleFlagByUid  (const QUuid &uid, bool useGroups = true);
     void clearFlags();
-    void addFloatImage(const QImage &img);
 
     void colorBranch(QColor);
     void colorSubtree(QColor,BranchItem *bi=NULL);

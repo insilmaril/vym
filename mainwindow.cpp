@@ -64,6 +64,7 @@ QPrinter *printer = NULL;
 
 extern NoteEditor    *noteEditor;
 extern HeadingEditor *headingEditor;
+extern BranchPropertyEditor * branchPropertyEditor;
 extern ScriptEditor  *scriptEditor;
 extern ScriptOutput  *scriptOutput;
 extern Main *mainWindow;
@@ -71,12 +72,14 @@ extern FindResultWidget *findResultWidget;
 extern TaskEditor *taskEditor;
 extern TaskModel *taskModel;
 extern Macros macros;
-extern QString tmpVymDir;
+extern QDir tmpVymDir;
+extern QDir cashDir;
 extern QString clipboardDir;
 extern QString clipboardFile;
 extern uint  clipboardItemCount;
 extern int statusbarTime;
 extern FlagRow *standardFlagsMaster;	
+extern FlagRow *userFlagsMaster;	
 extern FlagRow *systemFlagsMaster;
 extern QString vymName;
 extern QString vymVersion;
@@ -151,25 +154,35 @@ Main::Main(QWidget* parent, Qt::WindowFlags f) : QMainWindow(parent,f)
 
     // Create unique temporary directory
     bool ok;
-    tmpVymDir=makeTmpDir (ok,"vym");
+    QString tmpVymDirPath = makeTmpDir (ok, "vym");
     if (!ok)
     {
 	qWarning ("Mainwindow: Could not create temporary directory, failed to start vym");
 	exit (1);
+
     }
-    if (debug) qDebug ()<<"tmpDir="<<tmpVymDir;
+    if (debug) qDebug () << "tmpVymDirPath = " << tmpVymDirPath;
+    tmpVymDir.setPath(tmpVymDirPath);
 
     // Create direcctory for clipboard
-    clipboardDir  = tmpVymDir+"/clipboard";
+    clipboardDir  = tmpVymDirPath + "/clipboard";
     clipboardFile = "clipboard";
     QDir d(clipboardDir);
     d.mkdir (clipboardDir);
     makeSubDirs (clipboardDir);
     clipboardItemCount = 0;
 
+    // Create directory for cashed files, e.g. svg images
+    if (! tmpVymDir.mkdir("cash"))
+    {
+	qWarning ("Mainwindow: Could not create cash directory, failed to start vym");
+	exit (1);
+    }
+    cashDir = QDir (tmpVymDirPath + "/cash");
+
     // Remember PID of our friendly webbrowser
-    browserPID=new qint64;
-    *browserPID=0;
+    browserPID = new qint64;
+    *browserPID = 0;
 
     // Define commands in API (used globally)
     setupAPI();
@@ -178,14 +191,14 @@ Main::Main(QWidget* parent, Qt::WindowFlags f) : QMainWindow(parent,f)
     QString p,s;
 
 	// application to open URLs
-	p="/system/readerURL";
+	p = "/system/readerURL";
 	#if defined(Q_OS_WIN)
 	    // Assume that system has been set up so that
 	    // Explorer automagically opens up the URL
 	    // in the user's preferred browser.
-	    s=settings.value (p,"explorer").toString();
+	    s = settings.value (p,"explorer").toString();
 	#elif defined(Q_OS_MACX)
-	    s=settings.value (p,"/usr/bin/open").toString();
+	    s = settings.value (p,"/usr/bin/open").toString();
 	#else
 	    s=settings.value (p,"xdg-open").toString();
 	#endif
@@ -249,15 +262,23 @@ Main::Main(QWidget* parent, Qt::WindowFlags f) : QMainWindow(parent,f)
     dw->setObjectName ("NoteEditor");
     dw->setWindowTitle(noteEditor->getEditorTitle() );
     dw->hide();
-    noteEditorDW=dw;
-    addDockWidget (Qt::LeftDockWidgetArea,dw);
+    noteEditorDW = dw;
+    addDockWidget (Qt::LeftDockWidgetArea, dw);
+
+    dw = new QDockWidget ();
+    dw->setWidget (branchPropertyEditor);
+    dw->setObjectName ("BranchPropertyEditor");
+    //dw->setWindowTitle(noteEditor->getEditorTitle() );  //FIXME-1 check title...
+    dw->hide();
+    branchPropertyEditorDW = dw;
+    addDockWidget (Qt::LeftDockWidgetArea, dw);
 
     dw = new QDockWidget ();
     dw->setWidget (headingEditor);
     dw->setObjectName ("HeadingEditor");
     dw->setWindowTitle(headingEditor->getEditorTitle() );
     dw->hide();
-    headingEditorDW=dw;
+    headingEditorDW = dw;
     addDockWidget (Qt::BottomDockWidgetArea,dw);
 
     findResultWidget=new FindResultWidget ();
@@ -401,14 +422,18 @@ Main::~Main()
 	settings.setValue( "/system/version", vymVersion );
 	settings.setValue( "/system/builddate", vymBuildDate );
     }
-    //
+    
     // call the destructors
     delete noteEditorDW;
     delete historyWindow;
-    delete branchPropertyEditor;
+    delete branchPropertyEditorDW;  
+
+    delete standardFlagsMaster;
+    delete userFlagsMaster;
+    delete systemFlagsMaster;
 
     // Remove temporary directory
-    removeDir (QDir(tmpVymDir));
+    removeDir (tmpVymDir);
 }
 
 void Main::loadCmdLine()
@@ -435,16 +460,16 @@ void Main::statusMessage(const QString &s)
 }
 
 void Main::setProgressMaximum (int max)	{
-    if (progressCounter==0)
+    if (progressCounter == 0)
     {
 	// Init range only on first time, when progressCounter still 0
 	// Normalize range to 1000
-	progressDialog.setRange (0,1000);
+	progressDialog.setRange (0, 1000);
 	progressDialog.setValue (1);
     }
     progressCounter++;	// Another map is loaded
 
-    progressMax=max*1000;
+    progressMax = max * 1000;
     QApplication::processEvents();
 }
 
@@ -469,7 +494,7 @@ void Main::addProgressValue (float v)
 
 void Main::initProgressCounter(uint n)
 {
-    progressCounterTotal=n;
+    progressCounterTotal = n;
 }
 
 void Main::removeProgressCounter()
@@ -758,7 +783,7 @@ void Main::setupAPI()
     c = new Command ("selectParent", Command::Branch); 
     modelCommands.append(c);
 
-    c = new Command ("setFlag", Command::TreeItem); 
+    c = new Command ("setFlagByName", Command::TreeItem); 
     c->addPar (Command::String,false,"Name of flag");
     modelCommands.append(c);
 
@@ -862,9 +887,8 @@ void Main::setupAPI()
     c->addPar (Command::String,false,"Note of branch");
     modelCommands.append(c);
 
-    c = new Command ("setScale", Command::Image); 
-    c->addPar (Command::Double,false,"Scale image x");
-    c->addPar (Command::Double,false,"Scale image y");
+    c = new Command ("setScaleFactor", Command::Image); 
+    c->addPar (Command::Double, false, "Scale image by factor f");
     modelCommands.append(c);
 
     c = new Command ("setSelectionColor", Command::Any); 
@@ -907,7 +931,11 @@ void Main::setupAPI()
     c->addPar (Command::Bool,true,"Sort children of branch in revers order if set");
     modelCommands.append(c);
 
-    c = new Command ("toggleFlag", Command::Branch); 
+    c = new Command ("toggleFlagByUid", Command::Branch); 
+    c->addPar (Command::String,false,"Uid of flag to toggle");
+    modelCommands.append(c);
+
+    c = new Command ("toggleFlagByName", Command::Branch); 
     c->addPar (Command::String,false,"Name of flag to toggle");
     modelCommands.append(c);
 
@@ -935,8 +963,12 @@ void Main::setupAPI()
     c = new Command ("unselectAll", Command::Any); 
     modelCommands.append(c);
 
-    c = new Command ("unsetFlag", Command::Branch); 
+    c = new Command ("unsetFlagByName", Command::Branch); 
     c->addPar (Command::String,false,"Name of flag to unset");
+    modelCommands.append(c);
+
+    c = new Command ("toggleFlag", Command::Branch); 
+    c->addPar (Command::String,false,"Name of flag to toggle");
     modelCommands.append(c);
 
     //
@@ -1025,6 +1057,10 @@ void Main::setupFileActions()
     a = new QAction( QPixmap(":/filesaveas.png"), tr( "Save &As...","File menu" ), this);
     fileMenu->addAction(a);
     connect( a, SIGNAL( triggered() ), this, SLOT( fileSaveAs() ) );
+
+    a = new QAction( tr( "Save as default map","File menu" ), this);
+    fileMenu->addAction(a);
+    connect( a, SIGNAL( triggered() ), this, SLOT( fileSaveAsDefault() ) );
 
     fileMenu->addSeparator();
 
@@ -1459,7 +1495,7 @@ void Main::setupEditActions()
     actionExpandOneLevel=a;
 
     tag = tr("References Context menu","Shortcuts");
-    a = new QAction( QPixmap(":/flag-url.png"), tr( "Open URL","Edit menu" ), this);
+    a = new QAction( QPixmap(":/flag-url.svg"), tr( "Open URL","Edit menu" ), this);
     a->setShortcut (Qt::SHIFT + Qt::Key_U );
     switchboard.addSwitch ("mapOpenUrl", shortcutScope, a, tag);
     addAction(a);
@@ -1499,7 +1535,7 @@ void Main::setupEditActions()
     actionListBranches.append(a);
     actionGetURLsFromNote=a;
 
-    a = new QAction(QPixmap(":/flag-urlnew.png"), tr( "Edit URL...","Edit menu"), this);
+    a = new QAction(QPixmap(":/flag-urlnew.png"), tr( "Edit URL...","Edit menu"), this);    // FIXME-1
     a->setShortcut ( Qt::Key_U );
     a->setShortcutContext (Qt::WindowShortcut);
     switchboard.addSwitch ("mapEditURL", shortcutScope, a, tag);
@@ -1857,7 +1893,7 @@ void Main::setupSelectActions()
     QString tag = tr("Selections","Shortcuts");
     QMenu *selectMenu = menuBar()->addMenu( tr("Select","Select menu") );
     QAction *a;
-    a = new QAction( QPixmap(":/flag-target.png"), tr( "Toggle target...","Edit menu"), this);
+    a = new QAction( QPixmap(":/flag-target.svg"), tr( "Toggle target...","Edit menu"), this);
     a->setShortcut (Qt::SHIFT + Qt::Key_T );		
     a->setCheckable(true);
     selectMenu->addAction(a);
@@ -1866,7 +1902,7 @@ void Main::setupSelectActions()
     actionListBranches.append (a);
     actionToggleTarget=a;
 
-    a = new QAction( QPixmap(":/flag-target.png"), tr( "Goto target...","Edit menu"), this);
+    a = new QAction( QPixmap(":/flag-target.svg"), tr( "Goto target...","Edit menu"), this);
     a->setShortcut (Qt::Key_G );		
     selectMenu->addAction(a);
     switchboard.addSwitch ("mapGotoTarget", shortcutScope, a, tag);
@@ -1874,7 +1910,7 @@ void Main::setupSelectActions()
     actionListBranches.append (a);
     actionGoToTarget=a;
 
-    a = new QAction( QPixmap(":/flag-target.png"), tr( "Move to target...","Edit menu"), this);
+    a = new QAction( QPixmap(":/flag-target.svg"), tr( "Move to target...","Edit menu"), this);
     a->setShortcut (Qt::Key_M );		
     selectMenu->addAction(a);
     switchboard.addSwitch ("mapMoveToTarget", shortcutScope, a, tag);
@@ -1960,7 +1996,7 @@ void Main::setupFormatActions()
     actionFormatColor=a;
 
     a= new QAction( QPixmap(":/formatcolorpicker.png"), tr( "Pic&k color","Edit menu" ), this);
-    a->setShortcut (Qt::CTRL + Qt::Key_K );
+    //a->setShortcut (Qt::CTRL + Qt::Key_K );
     formatMenu->addAction(a);
     switchboard.addSwitch ("mapFormatColorPicker", shortcutScope, a, tag);
     connect( a, SIGNAL( triggered() ), this, SLOT( formatPickColor() ) );
@@ -2265,92 +2301,188 @@ void Main::setupModeActions()
     QAction *a;
     actionGroupModModes=new QActionGroup ( this);
     actionGroupModModes->setExclusive (true);
-    a= new QAction( QPixmap(":/modecolor.png"), tr( "Use modifier to color branches","Mode modifier" ), actionGroupModModes);
+
+    a= new QAction( QIcon(":/mode-select.svg"), tr( "Use modifier to select and reorder objects","Mode modifier" ), actionGroupModModes);
     a->setShortcut (Qt::Key_J);
     addAction(a);
-    switchboard.addSwitch ("mapModModeColor", shortcutScope, a, tag);
+    switchboard.addSwitch ("mapModModePoint", shortcutScope, a, tag);
     a->setCheckable(true);
     a->setChecked(true);
     actionListFiles.append (a);
-    actionModModeColor=a;
+    actionModModePoint  = a;
 
-    a->setShortcut( Qt::Key_K); 
+    a= new QAction( QPixmap(":/mode-color.png"), tr( "Format painter: pick color from another branch and apply","Mode modifier" ), actionGroupModModes);
+    a->setShortcut (Qt::Key_K);
     addAction(a);
-    switchboard.addSwitch ("mapModModeCopy", shortcutScope, a, tag);
+    switchboard.addSwitch ("mapModModeColor", shortcutScope, a, tag);
     a->setCheckable(true);
     actionListFiles.append (a);
-    actionModModeCopy=a;
+    actionModModeColor = a;
 
-    a= new QAction(QPixmap(":/modelink.png"), tr( "Use modifier to draw xLinks","Mode modifier" ), actionGroupModModes );
+    a= new QAction(QPixmap(":/mode-xlink.png"), tr( "Use modifier to draw xLinks","Mode modifier" ), actionGroupModModes );
     a->setShortcut (Qt::Key_L);
     addAction(a);
     switchboard.addSwitch ("mapModModeXLink", shortcutScope, a, tag);
     a->setCheckable(true);
     actionListFiles.append (a);
     actionModModeXLink=a;
+
+    a= new QAction( QPixmap(":/mode-move-object.svg"), tr( "Use modifier to move branches without linking","Mode modifier" ), actionGroupModModes);
+    a->setShortcut( Qt::Key_Odiaeresis ); 
+    addAction(a);
+    switchboard.addSwitch ("mapModModeMoveObject", shortcutScope, a, tag);
+    a->setCheckable(true);
+    actionListFiles.append (a);
+    actionModModeMoveObject = a;
+
+    a= new QAction( QPixmap(":/mode-move-view.png"), tr( "Use modifier to move view without selecting","Mode modifier" ), actionGroupModModes);
+    a->setShortcut( Qt::Key_Adiaeresis ); 
+    addAction(a);
+    switchboard.addSwitch ("mapModModeMoveView", shortcutScope, a, tag);
+    a->setCheckable(true);
+    actionListFiles.append (a);
+    actionModModeMoveView = a;
 }
 
-// Flag Actions
+void Main::addUserFlag()
+{
+    VymModel  *m  = currentModel();
+
+    if(m)
+    {
+        QFileDialog fd;
+        QStringList filters;
+        filters << tr("Images") + " (*.png *.bmp *.xbm *.jpg *.png *.xpm *.gif *.pnm *.svg *.svgz)"; 
+        filters << tr("All", "Filedialog") + " (*.*)";
+        fd.setFileMode (QFileDialog::ExistingFiles);
+        fd.setNameFilters (filters);
+        fd.setWindowTitle (vymName+ " - " +"Load user flag");
+        fd.setAcceptMode (QFileDialog::AcceptOpen);
+
+        QString fn;
+        if ( fd.exec() == QDialog::Accepted )
+        {
+            lastMapDir = fd.directory().path();
+            QStringList flist = fd.selectedFiles();
+            QStringList::Iterator it = flist.begin();
+            initProgressCounter( flist.count());
+            while( it != flist.end() )
+            {
+                fn = *it;
+                setupFlag (*it, Flag::UserFlag, *it, "");
+                ++it;
+            }
+        }
+    }
+}
+
 void Main::setupFlagActions()
 {
-    // Create System Flags
     Flag *flag;
+    
+    // Create System Flags
 
     // Tasks
     // Origin: ./share/icons/oxygen/48x48/status/task-reject.png
-    flag=new Flag(":/flag-task-new.png");
+    flag = setupFlag ( ":/flag-task-new.svg", 
+            Flag::SystemFlag,
+            "system-task-new",
+            tr("Note","SystemFlag") );
     flag->setGroup("system-tasks");
-    setupFlag (flag,NULL,"system-task-new",tr("Note","SystemFlag"));
-    flag=new Flag(":/flag-task-new-morning.png");
+
+    flag = setupFlag ( ":/flag-task-new-morning.svg", 
+            Flag::SystemFlag,
+            "system-task-new-morning",
+            tr("Note","SystemFlag"));
     flag->setGroup("system-tasks");
-    setupFlag (flag,NULL,"system-task-new-morning",tr("Note","SystemFlag"));
-    flag=new Flag(":/flag-task-new-sleeping.png");
+
+    flag = setupFlag ( ":/flag-task-new-sleeping.svg", 
+            Flag::SystemFlag,
+            "system-task-new-sleeping",
+            tr("Note","SystemFlag"));
     flag->setGroup("system-tasks");
-    setupFlag (flag,NULL,"system-task-new-sleeping",tr("Note","SystemFlag"));
+
     // Origin: ./share/icons/oxygen/48x48/status/task-reject.png
-    flag=new Flag(":/flag-task-wip.png");
+    flag = setupFlag ( ":/flag-task-wip.svg", 
+            Flag::SystemFlag,
+            "system-task-wip",
+            tr("Note","SystemFlag"));
     flag->setGroup("system-tasks");
-    setupFlag (flag,NULL,"system-task-wip",tr("Note","SystemFlag"));
-    flag=new Flag(":/flag-task-wip-morning.png");
+
+    flag = setupFlag ( ":/flag-task-wip-morning.svg", 
+            Flag::SystemFlag,
+            "system-task-wip-morning",
+            tr("Note","SystemFlag"));
     flag->setGroup("system-tasks");
-    setupFlag (flag,NULL,"system-task-wip-morning",tr("Note","SystemFlag"));
-    flag=new Flag(":/flag-task-wip-sleeping.png");
+
+    flag = setupFlag ( ":/flag-task-wip-sleeping.svg", 
+            Flag::SystemFlag,
+            "system-task-wip-sleeping",
+            tr("Note","SystemFlag"));
     flag->setGroup("system-tasks");
-    setupFlag (flag,NULL,"system-task-wip-sleeping",tr("Note","SystemFlag"));
+
     // Origin: ./share/icons/oxygen/48x48/status/task-complete.png
-    flag=new Flag(":/flag-task-finished.png");
+    flag = setupFlag ( ":/flag-task-finished.svg", 
+            Flag::SystemFlag,
+            "system-task-finished",
+            tr("Note","SystemFlag")); 
     flag->setGroup("system-tasks");
-    setupFlag (flag,NULL,"system-task-finished",tr("Note","SystemFlag"));
 
-    flag=new Flag(":/flag-note.png");
-    setupFlag (flag,NULL,"system-note",tr("Note","SystemFlag"));
 
-    flag=new Flag(":/flag-url.png");
-    setupFlag (flag,NULL,"system-url",tr("URL to Document ","SystemFlag"));
+    setupFlag ( ":/flag-note.png", 
+            Flag::SystemFlag,
+            "system-note",
+            tr("Note","SystemFlag") ); 
 
-    flag=new Flag(":/flag-url-bugzilla-novell.png");
-    setupFlag (flag,NULL,"system-url-bugzilla-novell",tr("URL to Bugzilla ","SystemFlag"));
+    setupFlag ( ":/flag-url.svg", 
+            Flag::SystemFlag,
+            "system-url",
+            tr("URL","SystemFlag") );
 
-    flag=new Flag(":/flag-url-bugzilla-novell-closed.png");
-    setupFlag (flag,NULL,"system-url-bugzilla-novell-closed",tr("URL to Bugzilla ","SystemFlag"));
+    setupFlag ( ":/flag-url-bugzilla-novell.png",   // FIXME-1 remove
+            Flag::SystemFlag,
+            "system-url-bugzilla-novell",
+            tr("URL to Bugzilla","SystemFlag"));
 
-    flag=new Flag(":/flag-target.png");
-    setupFlag (flag,NULL,"system-target",tr("Map target","SystemFlag"));
+    setupFlag ( ":/flag-url-bugzilla-novell-closed.png",    // FIXME-1 remove
+            Flag::SystemFlag,
+            "system-url-bugzilla-novell-closed",
+            tr("URL to Bugzilla","SystemFlag")); 
 
-    flag=new Flag(":/flag-vymlink.png");
-    setupFlag (flag,NULL,"system-vymLink",tr("Link to another vym map","SystemFlag"));
+    setupFlag ( ":/flag-target.svg", 
+            Flag::SystemFlag,
+            "system-target",
+            tr("Map target","SystemFlag")); 
 
-    flag=new Flag(":/flag-scrolled-right.png");
-    setupFlag (flag,NULL,"system-scrolledright",tr("subtree is scrolled","SystemFlag"));
+    setupFlag ( ":/flag-vymlink.png", 
+            Flag::SystemFlag,
+            "system-vymLink",
+            tr("Link to another vym map","SystemFlag")); 
 
-    flag=new Flag(":/flag-tmpUnscrolled-right.png");
-    setupFlag (flag,NULL,"system-tmpUnscrolledRight",tr("subtree is temporary scrolled","SystemFlag"));
+    setupFlag ( ":/flag-scrolled-right.png", 
+            Flag::SystemFlag,
+            "system-scrolledright",
+            tr("subtree is scrolled","SystemFlag")); 
 
-    flag=new Flag(":/flag-hideexport.png");
-    setupFlag (flag,NULL,"system-hideInExport",tr("Hide object in exported maps","SystemFlag"));
+    setupFlag ( ":/flag-tmpUnscrolled-right.png", 
+            Flag::SystemFlag,
+            "system-tmpUnscrolledRight",
+            tr("subtree is temporary scrolled","SystemFlag")); 
+
+    setupFlag ( ":/flag-hideexport",
+            Flag::SystemFlag,
+            "system-hideInExport",
+            tr("Hide object in exported maps","SystemFlag")); 
 
     addToolBarBreak();
 
+    // Create user flags
+    userFlagsToolbar = addToolBar (tr ("User Flags toolbar","user Flags Toolbar"));
+    userFlagsToolbar->setObjectName ("userFlagsTB");
+    userFlagsMaster->setToolBar (userFlagsToolbar);
+    userFlagsMaster->createConfigureAction();
+    toolbarsMenu->addAction (userFlagsToolbar->toggleViewAction() );
+    
     // Create Standard Flags
     standardFlagsToolbar=addToolBar (tr ("Standard Flags toolbar","Standard Flag Toolbar"));
     standardFlagsToolbar->setObjectName ("standardFlagTB");
@@ -2360,226 +2492,396 @@ void Main::setupFlagActions()
     // after all others:
     toolbarsMenu->addAction (standardFlagsToolbar->toggleViewAction() );
 
-    flag=new Flag(":/flag-stopsign.png");
-    setupFlag (flag,standardFlagsToolbar,"stopsign",tr("This won't work!","Standardflag"),Qt::Key_1);
-    flag->unsetGroup();
+    flag = setupFlag ( ":/flag-stopsign.svg", 
+            Flag::StandardFlag,
+            "stopsign", 
+            tr("This won't work!","Standardflag"),
+            QUuid(),
+            Qt::Key_1);  
 
-    flag=new Flag(":/flag-hook-green.png");
+    flag = setupFlag ( ":/flag-hook-green.svg", 
+    //flag = setupFlag ( "flags/standard/dialog-ok-apply.svg",
+            Flag::StandardFlag,
+            "hook-green", 
+            tr("Status - ok,done","Standardflag"),
+            QUuid(),
+            Qt::Key_2);
     flag->setGroup("standard-status");
-    setupFlag (flag,standardFlagsToolbar,"hook-green",tr("Status - ok,done","Standardflag"),Qt::Key_2);
 
-    flag=new Flag(":/flag-wip.png");
+    flag = setupFlag ( ":/flag-wip.svg", 
+            Flag::StandardFlag,
+            "wip",
+            tr("Status - work in progress","Standardflag"),
+            QUuid(),
+            Qt::Key_3);
     flag->setGroup("standard-status");
-    setupFlag (flag,standardFlagsToolbar,"wip",tr("Status - work in progress","Standardflag"),Qt::Key_3);
 
-    flag=new Flag(":/flag-cross-red.png");
+    flag = setupFlag ( ":/flag-cross-red.svg", 
+            Flag::StandardFlag,
+            "cross-red",
+            tr("Status - missing, not started","Standardflag"),
+            QUuid(),
+            Qt::Key_4);
     flag->setGroup("standard-status");
-    setupFlag (flag,standardFlagsToolbar,"cross-red",tr("Status - missing, not started","Standardflag"),Qt::Key_4);
 
-    flag=new Flag(":/flag-exclamationmark.png");
+    flag = setupFlag ( ":/flag-exclamation-mark.svg", 
+            Flag::StandardFlag,
+            "exclamationmark",
+            tr("Take care!","Standardflag"),
+            QUuid(),
+            Qt::Key_Exclam);
     flag->setGroup("standard-mark");
-    setupFlag (flag,standardFlagsToolbar,"exclamationmark",tr("Take care!","Standardflag"),Qt::Key_Exclam);
 
-    flag=new Flag(":/flag-questionmark.png");
+    flag = setupFlag ( ":/flag-question-mark.svg", 
+            Flag::StandardFlag,
+            "questionmark",
+            tr("Really?","Standardflag"),
+            QUuid(),
+            Qt::Key_Question);
     flag->setGroup("standard-mark");
-    setupFlag (flag,standardFlagsToolbar,"questionmark",tr("Really?","Standardflag"),Qt::Key_Question);
 
-    flag=new Flag(":/flag-smiley-good.png");
-    flag->setGroup("standard-smiley");
-    setupFlag (flag,standardFlagsToolbar,"smiley-good",tr("Good","Standardflag"),Qt::Key_ParenRight);
+    flag = setupFlag ( ":/flag-info.svg", 
+            Flag::StandardFlag,
+            "info",
+            tr("Info","Standardflag"),
+            QUuid(),
+            Qt::Key_I);
 
-    flag=new Flag(":/flag-smiley-sad.png");
-    flag->setGroup("standard-smiley");
-    setupFlag (flag,standardFlagsToolbar,"smiley-sad",tr("Bad","Standardflag"),Qt::Key_ParenLeft);
+    flag = setupFlag ( ":/flag-lamp.svg", 
+            Flag::StandardFlag,
+            "lamp",
+            tr("Idea!","Standardflag"),
+            QUuid(),
+            Qt::Key_Asterisk);
 
-    flag=new Flag(":/flag-smiley-omb.png");
-    flag->setGroup("standard-smiley");
-    setupFlag (flag,standardFlagsToolbar,"smiley-omb",tr("Oh no!","Standardflag"));
-    // Original omg.png (in KDE emoticons)
-    flag->unsetGroup();
+    flag = setupFlag ( ":/flag-heart.svg", 
+            Flag::StandardFlag,
+            "heart",
+            tr("I just love...","Standardflag"));
 
-    flag=new Flag(":/flag-clock.png");
-    setupFlag (flag,standardFlagsToolbar,"clock",tr("Time critical","Standardflag"));
+    flag = setupFlag ( ":/flag-face-smile.svg", 
+            Flag::StandardFlag,
+            "smiley-good",
+            tr("Good","Standardflag"),
+            QUuid(),
+            Qt::Key_ParenRight);
+    flag->setGroup("standard-faces");
 
-    flag=new Flag(":/flag-phone.png");
-    setupFlag (flag,standardFlagsToolbar,"phone",tr("Call...","Standardflag"));
+    flag = setupFlag ( ":/flag-face-sad.svg", 
+            Flag::StandardFlag,
+            "smiley-sad",
+            tr("Bad","Standardflag"),
+            QUuid(),
+            Qt::Key_ParenLeft);
+    flag->setGroup("standard-faces");
 
-    flag=new Flag(":/flag-lamp.png");
-    setupFlag (flag,standardFlagsToolbar,"lamp",tr("Idea!","Standardflag"),Qt::Key_Asterisk);
+    flag = setupFlag ( ":/flag-face-plain.svg", 
+            Flag::StandardFlag,
+            "smiley-plain",
+            tr("Hm...","Standardflag"),
+            QUuid());
+    flag->setGroup("standard-faces");
 
-    flag=new Flag(":/flag-arrow-up.png");
+    flag = setupFlag ( ":/flag-face-surprise.svg", 
+            Flag::StandardFlag,
+            "smiley-omb",
+            tr("Oh no!","Standardflag"),
+            QUuid());
+    flag->setGroup("standard-faces");
+
+    flag = setupFlag ( ":/flag-flash.svg", 
+            Flag::StandardFlag,
+            "flash",
+            tr("Dangerous","Standardflag"));
+
+    flag = setupFlag ( ":/flag-arrow-up.svg", 
+            Flag::StandardFlag,
+            "arrow-up",
+            tr("Important","Standardflag"),
+            QUuid(),
+            Qt::SHIFT + Qt::Key_PageUp);
     flag->setGroup("standard-arrow");
-    setupFlag (flag,standardFlagsToolbar,"arrow-up",tr("Important","Standardflag"),Qt::SHIFT + Qt::Key_PageUp);
 
-    flag=new Flag(":/flag-arrow-down.png");
+    flag = setupFlag ( ":/flag-arrow-down.svg", 
+            Flag::StandardFlag,
+            "arrow-down",
+            tr("Unimportant","Standardflag"),
+            QUuid(),
+            Qt::SHIFT + Qt::Key_PageDown);
     flag->setGroup("standard-arrow");
-    setupFlag (flag,standardFlagsToolbar,"arrow-down",tr("Unimportant","Standardflag"),Qt::SHIFT + Qt::Key_PageDown);
 
-    flag=new Flag(":/flag-2arrow-up.png");
+    flag = setupFlag ( ":/flag-arrow-2up.svg", 
+            Flag::StandardFlag,
+            "2arrow-up",
+            tr("Very important!","Standardflag"),
+            QUuid(),
+            Qt::SHIFT + Qt::CTRL + Qt::Key_PageUp);
     flag->setGroup("standard-arrow");
-    setupFlag (flag,standardFlagsToolbar,"2arrow-up",tr("Very important!","Standardflag"),Qt::SHIFT + +Qt::CTRL + Qt::Key_PageUp);
 
-    flag=new Flag(":/flag-2arrow-down.png");
+    flag = setupFlag ( ":/flag-arrow-2down.svg", 
+            Flag::StandardFlag,
+            "2arrow-down",
+            tr("Very unimportant!","Standardflag"),
+            QUuid(),
+            Qt::SHIFT + Qt::CTRL + Qt::Key_PageDown);
     flag->setGroup("standard-arrow");
-    setupFlag (flag,standardFlagsToolbar,"2arrow-down",tr("Very unimportant!","Standardflag"),Qt::SHIFT + Qt::CTRL + Qt::Key_PageDown);
-    flag->unsetGroup();
 
-    flag=new Flag(":/flag-thumb-up.png");
-    flag->setGroup("standard-thumb");
-    setupFlag (flag,standardFlagsToolbar,"thumb-up",tr("I like this","Standardflag"));
+    flag = setupFlag ( ":/flag-thumb-up.png", 
+            Flag::StandardFlag,
+            "thumb-up",
+            tr("I like this","Standardflag"));
 
-    flag=new Flag(":/flag-thumb-down.png");
-    flag->setGroup("standard-thumb");
-    setupFlag (flag,standardFlagsToolbar,"thumb-down",tr("I do not like this","Standardflag"));
-    flag->unsetGroup();
-
-    flag=new Flag(":/flag-rose.png");
-    setupFlag (flag,standardFlagsToolbar,"rose",tr("Rose","Standardflag"));
-
-    flag=new Flag(":/flag-heart.png");
-    setupFlag (flag,standardFlagsToolbar,"heart",tr("I just love...","Standardflag"));
-
-    flag=new Flag(":/flag-present.png");
-    setupFlag (flag,standardFlagsToolbar,"present",tr("Surprise!","Standardflag"));
-
-    flag=new Flag(":/flag-flash.png");
-    setupFlag (flag,standardFlagsToolbar,"flash",tr("Dangerous","Standardflag"));
-
-    // Original: xsldbg_output.png
-    flag=new Flag(":/flag-info.png");
-    setupFlag (flag,standardFlagsToolbar,"info",tr("Info","Standardflag"),Qt::Key_I);
+    flag = setupFlag ( ":/flag-thumb-down.png", 
+            Flag::StandardFlag,
+            "thumb-down",
+            tr("I do not like this","Standardflag"));
 
     // Original khelpcenter.png
-    flag=new Flag(":/flag-lifebelt.png");
-    setupFlag (flag,standardFlagsToolbar,"lifebelt",tr("This will help","Standardflag"));
+    flag = setupFlag ( ":/flag-lifebelt.png", 
+            Flag::StandardFlag,
+            "lifebelt",
+            tr("This will help","Standardflag"));
+
+    flag = setupFlag ( ":/flag-phone.png", 
+            Flag::StandardFlag,
+            "phone",
+            tr("Call...","Standardflag"));
+
+    flag = setupFlag ( ":/flag-clock.png", 
+            Flag::StandardFlag,
+            "clock",
+            tr("Time critical","Standardflag"));
+
+    flag = setupFlag ( ":/flag-present.png", 
+            Flag::StandardFlag,
+            "present",
+            tr("Surprise!","Standardflag"));
+
+    flag = setupFlag ( ":/flag-rose.png", 
+            Flag::StandardFlag,
+            "rose",
+            tr("Rose","Standardflag"));
 
     // Freemind flags
-    flag=new Flag(":/freemind/warning.png");
-    flag->setVisible(false);
-    setupFlag (flag,standardFlagsToolbar,  "freemind-warning",tr("Important","Freemind-Flag"));
+    flag = setupFlag ( ":/freemind/warning.png",
+            Flag::FreemindFlag,
+            "freemind-warning",
+            tr("Important","Freemind flag"));
 
     for (int i=1; i<8; i++)
     {
-	flag=new Flag(QString(":/freemind/priority-%1.png").arg(i));
-	flag->setVisible(false);
-	flag->setGroup ("Freemind-priority");
-	setupFlag (flag,standardFlagsToolbar, QString("freemind-priority-%1").arg(i),tr("Priority","Freemind-Flag"));
+        flag = setupFlag ( QString(":/freemind/priority-%1.png").arg(i),
+                Flag::FreemindFlag,
+                QString("freemind-priority-%1").arg(i),
+                tr("Important","Freemind flag"));
+        flag->setGroup("freemind-priority");
+        
     }
 
-    flag=new Flag(":/freemind/back.png");
-    flag->setVisible(false);
-    setupFlag (flag,standardFlagsToolbar,"freemind-back",tr("Back","Freemind-Flag"));
+    flag = setupFlag ( ":/freemind/back.png",
+            Flag::FreemindFlag,
+            "freemind-back",
+            tr("Back","Freemind flag"));
 
-    flag=new Flag(":/freemind/forward.png");
-    flag->setVisible(false);
-    setupFlag (flag,standardFlagsToolbar,"freemind-forward",tr("forward","Freemind-Flag"));
+    flag = setupFlag ( ":/freemind/forward.png",
+            Flag::FreemindFlag,
+            "freemind-forward",
+            tr("Forward","Freemind flag"));
 
-    flag=new Flag(":/freemind/attach.png");
-    flag->setVisible(false);
-    setupFlag (flag,standardFlagsToolbar,"freemind-attach",tr("Look here","Freemind-Flag"));
+    flag = setupFlag ( ":/freemind/attach.png",
+            Flag::FreemindFlag,
+            "freemind-attach",
+            tr("Look here","Freemind flag"));
 
-    flag=new Flag(":/freemind/clanbomber.png");
-    flag->setVisible(false);
-    setupFlag (flag,standardFlagsToolbar,"freemind-clanbomber",tr("Dangerous","Freemind-Flag"));
+    flag = setupFlag ( ":/freemind/clanbomber.png",
+            Flag::FreemindFlag,
+            "freemind-clanbomber",
+            tr("Dangerous","Freemind flag"));
 
-    flag=new Flag(":/freemind/desktopnew.png");
-    flag->setVisible(false);
-    setupFlag (flag,standardFlagsToolbar,"freemind-desktopnew",tr("Don't flagrget","Freemind-Flag"));
+    flag = setupFlag ( ":/freemind/desktopnew.png",
+            Flag::FreemindFlag,
+            "freemind-desktopnew",
+            tr("Don't forget","Freemind flag"));
 
-    flag=new Flag(":/freemind/flag.png");
-    flag->setVisible(false);
-    setupFlag (flag,standardFlagsToolbar,"freemind-flag",tr("Flag","Freemind-Flag"));
+    flag = setupFlag ( ":/freemind/flag.png",
+            Flag::FreemindFlag,
+            "freemind-flag",
+            tr("Flag","Freemind flag"));
 
+    flag = setupFlag ( ":/freemind/gohome.png",
+            Flag::FreemindFlag,
+            "freemind-gohome",
+            tr("Home","Freemind flag"));
 
-    flag=new Flag(":/freemind/gohome.png");
-    flag->setVisible(false);
-    setupFlag (flag,standardFlagsToolbar,"freemind-gohome",tr("Home","Freemind-Flag"));
+    flag = setupFlag ( ":/freemind/kaddressbook.png",
+            Flag::FreemindFlag,
+            "freemind-kaddressbook",
+            tr("Telephone","Freemind flag"));
 
-    flag=new Flag(":/freemind/kaddressbook.png");
-    flag->setVisible(false);
-    setupFlag (flag,standardFlagsToolbar,"freemind-kaddressbook",tr("Telephone","Freemind-Flag"));
+    flag = setupFlag ( ":/freemind/knotify.png",
+            Flag::FreemindFlag,
+            "freemind-knotify",
+            tr("Music","Freemind flag"));
 
-    flag=new Flag(":/freemind/knotify.png");
-    flag->setVisible(false);
-    setupFlag (flag,standardFlagsToolbar,"freemind-knotify",tr("Music","Freemind-Flag"));
+    flag = setupFlag ( ":/freemind/korn.png",
+            Flag::FreemindFlag,
+            "freemind-korn",
+            tr("Mailbox","Freemind flag"));
 
-    flag=new Flag(":/freemind/korn.png");
-    flag->setVisible(false);
-    setupFlag (flag,standardFlagsToolbar,"freemind-korn",tr("Mailbox","Freemind-Flag"));
+    flag = setupFlag ( ":/freemind/mail.png",
+            Flag::FreemindFlag,
+            "freemind-mail",
+            tr("Mail","Freemind flag"));
 
-    flag=new Flag(":/freemind/mail.png");
-    flag->setVisible(false);
-    setupFlag (flag,standardFlagsToolbar,"freemind-mail",tr("Maix","Freemind-Flag"));
+    flag = setupFlag ( ":/freemind/password.png",
+            Flag::FreemindFlag,
+            "freemind-password",
+            tr("Password","Freemind flag"));
 
-    flag=new Flag(":/freemind/password.png");
-    flag->setVisible(false);
-    setupFlag (flag,standardFlagsToolbar,"freemind-password",tr("Password","Freemind-Flag"));
+    flag = setupFlag ( ":/freemind/pencil.png",
+            Flag::FreemindFlag,
+            "freemind-pencil",
+            tr("To be improved","Freemind flag"));
 
-    flag=new Flag(":/freemind/pencil.png");
-    flag->setVisible(false);
-    setupFlag (flag,standardFlagsToolbar,"freemind-pencil",tr("To be improved","Freemind-Flag"));
+    flag = setupFlag ( ":/freemind/stop.png",
+            Flag::FreemindFlag,
+            "freemind-stop",
+            tr("Stop","Freemind flag"));
 
-    flag=new Flag(":/freemind/stop.png");
-    flag->setVisible(false);
-    setupFlag (flag,standardFlagsToolbar,"freemind-stop",tr("Stop","Freemind-Flag"));
+    flag = setupFlag ( ":/freemind/wizard.png",
+            Flag::FreemindFlag,
+            "freemind-wizard",
+            tr("Magic","Freemind flag"));
 
-    flag=new Flag(":/freemind/wizard.png");
-    flag->setVisible(false);
-    setupFlag (flag,standardFlagsToolbar,"freemind-wizard",tr("Magic","Freemind-Flag"));
+    flag = setupFlag ( ":/freemind/xmag.png",
+            Flag::FreemindFlag,
+            "freemind-xmag",
+            tr("To be discussed","Freemind flag"));
 
-    flag=new Flag(":/freemind/xmag.png");
-    flag->setVisible(false);
-    setupFlag (flag,standardFlagsToolbar,"freemind-xmag",tr("To be discussed","Freemind-Flag"));
+    flag = setupFlag ( ":/freemind/bell.png",
+            Flag::FreemindFlag,
+            "freemind-bell",
+            tr("Reminder","Freemind flag"));
 
-    flag=new Flag(":/freemind/bell.png");
-    flag->setVisible(false);
-    setupFlag (flag,standardFlagsToolbar,"freemind-bell",tr("Reminder","Freemind-Flag"));
+    flag = setupFlag ( ":/freemind/bookmark.png",
+            Flag::FreemindFlag,
+            "freemind-bookmark",
+            tr("Excellent","Freemind flag"));
 
-    flag=new Flag(":/freemind/bookmark.png");
-    flag->setVisible(false);
-    setupFlag (flag,standardFlagsToolbar,"freemind-bookmark",tr("Excellent","Freemind-Flag"));
+    flag = setupFlag ( ":/freemind/penguin.png",
+            Flag::FreemindFlag,
+            "freemind-penguin",
+            tr("Linux","Freemind flag"));
 
-    flag= new Flag(":/freemind/penguin.png");
-    flag->setVisible(false);
-    setupFlag (flag,standardFlagsToolbar,"freemind-penguin",tr("Linux","Freemind-Flag"));
-
-    flag=new Flag (":/freemind/licq.png");
-    flag->setVisible(false);
-    setupFlag (flag,standardFlagsToolbar,"freemind-licq",tr("Sweet","Freemind-Flag"));
+    flag = setupFlag ( ":/freemind/licq.png",
+            Flag::FreemindFlag,
+            "freemind-licq",
+            tr("Sweet","Freemind flag"));
 }
 
-void Main::setupFlag (Flag *flag, QToolBar *tb, const QString &name, const QString &tooltip, const QKeySequence &keyseq)
+Flag* Main::setupFlag (const QString &path,
+        Flag::FlagType type, 
+        const QString &name, 
+        const QString &tooltip, 
+        const QUuid &uid,
+        const QKeySequence &keyseq)
 {
+    Flag *flag = NULL;
+
+    // Create flag in toolbar
+    switch (type)
+    {
+        case Flag::FreemindFlag:    
+            // Maybe introduce dedicated toolbar later,
+            // so for now switch to standard flag
+            flag = standardFlagsMaster->createFlag (path);
+            break;
+
+        case Flag::StandardFlag:    
+            flag = standardFlagsMaster->createFlag (path);
+            break;
+
+        case Flag::UserFlag:
+            flag = userFlagsMaster->createFlag (path);
+            
+            // User flags read from file already have a Uuid - use it
+            if (!uid.isNull()) flag->setUuid(uid);
+            break;
+
+        case Flag::SystemFlag:
+            flag = systemFlagsMaster->createFlag (path);
+            break;
+
+        default:
+            qWarning() << "Unknown flag type in MainWindow::setupFlag";
+            break;
+    }
+
+    if (!flag) return flag;
+
     flag->setName(name);
     flag->setToolTip (tooltip);
+    flag->setType (type);
+
+    if (type == Flag::SystemFlag) return flag;
+
+    // StandardFlag or user flag
+
     QAction *a;
-    if (tb)
-    {
-        a=new QAction (flag->getPixmap(),name,this);
-        // StandardFlag
-        flag->setAction (a);
-        a->setVisible (flag->isVisible());
-        a->setCheckable(true);
-        a->setObjectName(name);
-        a->setToolTip(tooltip);
-        if (keyseq != 0)
-        {
-            a->setShortcut (keyseq);
-            a->setShortcutContext (Qt::WidgetShortcut);
 
-            // Allow mapEditors to actually trigger this action
-            mapEditorActions.append( a );
-            taskEditorActions.append( a );
-        }
+    // Set icon for action
+    ImageObj *image = flag->getImageObj();
+    a = new QAction (image->getIcon(), flag->getUuid().toString(), this);
 
-        tb->addAction(a);
-        connect (a, SIGNAL( triggered() ), this, SLOT( standardFlagChanged() ) );
-        standardFlagsMaster->addFlag (flag);
-    } else
+    flag->setAction (a);
+    a->setCheckable( true );
+    a->setObjectName( flag->getUuid().toString() );
+    if (tooltip.isEmpty())
+        a->setToolTip( flag->getName());    // Stripped name
+    else
+        a->setToolTip( tooltip );
+
+    if (keyseq != 0)
     {
-        // SystemFlag
-        systemFlagsMaster->addFlag (flag);
+        a->setShortcut (keyseq);
+        a->setShortcutContext (Qt::WidgetShortcut);
+
+        // Allow mapEditors to actually trigger this action
+        mapEditorActions.append( a );
+        taskEditorActions.append( a );
     }
+
+    switch (type) 
+    {
+        case Flag::FreemindFlag:    
+            // Hide freemind flags per default
+            // Maybe introduce dedicate toolbar later,
+            // so for now switch to standard flag
+            flag->setVisible(false);
+            type = Flag::StandardFlag;
+            standardFlagsMaster->addActionToToolbar(a);
+
+            connect (a, SIGNAL( triggered() ), this, SLOT( flagChanged() ) );
+            break;
+        case Flag::StandardFlag:
+            // Hide some old flags, if not used
+            if (name == "present" || name == "rose" || name == "phone" || name == "clock")
+                flag->setVisible(false);
+            standardFlagsMaster->addActionToToolbar(a);
+            connect (a, SIGNAL( triggered() ), this, SLOT( flagChanged() ) );
+            break;
+        case Flag::UserFlag:    // FIXME-1 join with standardFlag above
+            userFlagsMaster->addActionToToolbar(a);
+            
+            connect (a, SIGNAL( triggered() ), this, SLOT( flagChanged() ) );
+            break;
+        default:
+            qWarning() << "Unknown flag type in MainWindow::setupFlag";
+    }
+
+    a->setVisible (flag->isVisible());
+
+    return flag;
 }
 
 // Network Actions
@@ -2632,6 +2934,10 @@ void Main::setupSettingsActions()
 
     a = new QAction( tr( "Set path for macros","Settings action")+"...", this);
     connect( a, SIGNAL( triggered() ), this, SLOT( settingsMacroPath() ) );
+    settingsMenu->addAction (a);
+
+    a = new QAction( tr( "Set path for default path","Settings action")+"...", this);
+    connect( a, SIGNAL( triggered() ), this, SLOT( settingsDefaultMapPath() ) );
     settingsMenu->addAction (a);
 
     a = new QAction( tr( "Set number of undo levels","Settings action")+"...", this);
@@ -2876,7 +3182,7 @@ void Main::setupContextMenus()
 	branchLinksContextMenu->addAction ( actionHeading2URL );
 	branchLinksContextMenu->addAction ( actionGetJiraData );
 	branchLinksContextMenu->addAction ( actionGetJiraDataSubtree );
-	branchLinksContextMenu->addAction ( actionBugzilla2URL );
+	branchLinksContextMenu->addAction ( actionBugzilla2URL );   // FIXME-2 remove all bugzilla icons and functions
 	branchLinksContextMenu->addAction ( actionGetBugzillaData );
 	branchLinksContextMenu->addAction ( actionGetBugzillaDataSubtree );
 	if (settings.value( "/mainwindow/showTestMenu",false).toBool() )
@@ -2951,7 +3257,6 @@ void Main::setupContextMenus()
     canvasContextMenu->addAction(actionFormatBackColor);
     //if (settings.value( "/mainwindow/showTestMenu",false).toBool() )
     //    canvasContextMenu->addAction( actionFormatBackImage );  //FIXME-3 makes vym too slow: postponed for later version 
-
 
     // Menu for last opened files
     // Create actions
@@ -3102,9 +3407,11 @@ void Main::setupToolbars()
     // Modifier modes
     modModesToolbar = addToolBar( tr ("Modifier modes toolbar","Modifier Toolbar name") );
     modModesToolbar->setObjectName ("modesTB");
+    modModesToolbar->addAction(actionModModePoint);
     modModesToolbar->addAction(actionModModeColor);
-    modModesToolbar->addAction(actionModModeCopy);
     modModesToolbar->addAction(actionModModeXLink);
+    modModesToolbar->addAction(actionModModeMoveObject);
+    modModesToolbar->addAction(actionModModeMoveView);
     
     // Add all toolbars to View menu
     toolbarsMenu->addAction (fileToolbar->toggleViewAction() );
@@ -3213,14 +3520,26 @@ int Main::modelCount()
 
 void Main::updateTabName( VymModel *vm)
 {
+    if (!vm)
+    {
+        qWarning() << "Main::updateTabName   vm == NULL";
+        return;
+    }
+
     for (int i = 0; i < tabWidget->count(); i++)
         if ( view(i)->getModel() == vm )
         {
-            if ( vm->isReadOnly() )
-                tabWidget->setTabText( i, vm->getFileName() + " " + tr("(readonly)") );
-            else
-                tabWidget->setTabText( i, vm->getFileName() );
-            break;
+            if ( vm->isDefault() )
+            {
+                tabWidget->setTabText( i, tr("unnamed","Name for empty and unnamed default map"));
+            } else
+            {
+                if ( vm->isReadOnly() )
+                    tabWidget->setTabText( i, vm->getFileName() + " " + tr("(readonly)") );
+                else
+                    tabWidget->setTabText( i, vm->getFileName() );
+            }
+            return;
         }
 }
 
@@ -3241,27 +3560,39 @@ void Main::editorChanged()
 
 void Main::fileNew()
 {
-    VymModel *vm=new VymModel;
+    VymModel *vm;
 
-    /////////////////////////////////////
-//  new ModelTest(vm, this);	
-    /////////////////////////////////////
+    QString default_path = settings.value(  
+            "/system/defaultMap/path", 
+            vymBaseDir.path() +"/demos/default.vym").toString();
 
-    VymView *vv=new VymView (vm);
+    // Don't show counter while loading default map
+    removeProgressCounter();
 
-    tabWidget->addTab (vv,tr("unnamed","MainWindow: name for new and empty file"));
-    tabWidget->setCurrentIndex (tabWidget->count() );
-    vv->initFocus();
+    if (File::Success != fileLoad (default_path, DefaultMap, VymMap) )   
+    {
+        QMessageBox::critical( 0, 
+                tr( "Critical Error" ), 
+                tr("Couldn't load default map:\n\n%1\n\nvym will create an empty map now.","Mainwindow: Failed to load default map").arg(default_path));
 
-    // Create MapCenter for empty map
-    vm->addMapCenter(false);
-    vm->makeDefault();
+        // Switch to new tab
+        tabWidget->setCurrentIndex (tabWidget->count() -1);
+        
+        vm = currentModel();
 
-    // For the very first map we do not have flagrows yet...
-    vm->select("mc:");
+        // Create MapCenter for empty map
+        vm->addMapCenter(false);
+        vm->makeDefault();
 
-    // Switch to new tab
-    tabWidget->setCurrentIndex (tabWidget->count() -1);
+        // For the very first map we do not have flagrows yet...
+        vm->select("mc:");  
+
+        // Set name to "unnamed"
+        updateTabName(vm);
+    } else
+    {
+        vm = currentModel();
+    }
 }
 
 void Main::fileNewCopy() 
@@ -3282,20 +3613,20 @@ void Main::fileNewCopy()
 
 File::ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode, const FileType &ftype) 
 {
-    File::ErrorCode err=File::Success;
+    File::ErrorCode err = File::Success;
 
     // fn is usually the archive, mapfile the file after uncompressing
     QString mapfile;
 
     // Make fn absolute (needed for unzip)
-    fn=QDir (fn).absolutePath();
+    fn = QDir (fn).absolutePath();
 
     VymModel *vm;
 
-    if (lmode==NewMap)
+    if (lmode == NewMap)
     {
 	// Check, if map is already loaded
-	int i=0;
+	int i = 0;
 	while (i<=tabWidget->count() -1)
 	{
 	    if ( view(i)->getModel()->getFilePath() == fn)
@@ -3328,71 +3659,114 @@ File::ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode, const FileType
 	}
     }
 
+    bool createModel;
 
-    // Try to load map
+    // Try to load map  
     if ( !fn.isEmpty() )
     {
-	vm = currentModel();
-	// Check first, if mapeditor exists
-	// If it is not default AND we want a new map, 
-	// create a new mapeditor in a new tab
-	if ( lmode==NewMap && (!vm || !vm->isDefault() )  )
-	{
-	    vm=new VymModel;
-	    VymView *vv=new VymView (vm);
+	// Find out, if we need to create a new map model
 
-	    tabWidget->addTab (vv,fn);
-	    vv->initFocus();
-	}
+	vm = currentModel();
+
+	if ( lmode == NewMap )
+	{
+            if (vm && vm->isDefault() )
+            {
+                // There is a map model already and it still the default map, use it.
+                createModel = false;
+            } else
+                createModel = true;
+        } else if (lmode == DefaultMap)
+        {
+                createModel = true;
+        } else if (lmode == ImportAdd || lmode == ImportReplace)
+        {
+            if (!vm)
+            {
+                QMessageBox::warning(0,
+                     "Warning",
+                     "Trying to import into non existing map");
+                return File::Aborted;
+            } else
+                createModel = false;
+        } else
+            createModel = true;
 	
+        if (createModel)
+        {
+            vm = new VymModel;
+            VymView *vv = new VymView (vm);
+
+            tabWidget->addTab (vv, fn);
+            vv->initFocus();
+        }
+
 	// Check, if file exists (important for creating new files
 	// from command line
 	if (!QFile(fn).exists() )
 	{
-	    QMessageBox mb( vymName,
-		tr("This map does not exist:\n  %1\nDo you want to create a new one?").arg(fn),
-		QMessageBox::Question,
-		QMessageBox::Yes ,
-		QMessageBox::Cancel | QMessageBox::Default,
-		QMessageBox::NoButton );
+            if (lmode == DefaultMap) 
+            {
+                return File::Aborted;
+            }
 
-	    mb.setButtonText( QMessageBox::Yes, tr("Create"));
-	    mb.setButtonText( QMessageBox::No, tr("Cancel"));
+            if (lmode == NewMap)
+            {
+                QMessageBox mb( vymName,
+                    tr("This map does not exist:\n  %1\nDo you want to create a new one?").arg(fn),
+                    QMessageBox::Question,
+                    QMessageBox::Yes ,
+                    QMessageBox::Cancel | QMessageBox::Default,
+                    QMessageBox::NoButton );
 
-            VymModel *vm = currentMapEditor()->getModel();
-	    switch( mb.exec() ) 
-	    {
-		case QMessageBox::Yes:
-		    // Create new map
-                    vm->setFilePath(fn);
-                    updateTabName( vm );
-		    statusBar()->showMessage( "Created " + fn , statusbarTime );
-		    return File::Success;
-			
-		case QMessageBox::Cancel:
-		    // don't create new map
-		    statusBar()->showMessage( "Loading " + fn + " failed!", statusbarTime );
-		    int cur=tabWidget->currentIndex();
-		    tabWidget->setCurrentIndex (tabWidget->count()-1);
-		    fileCloseMap();
-		    tabWidget->setCurrentIndex (cur);
-		    return File::Aborted;
-	    }
+                mb.setButtonText( QMessageBox::Yes, tr("Create"));
+                mb.setButtonText( QMessageBox::No, tr("Cancel"));
+
+                vm = currentMapEditor()->getModel();
+                switch( mb.exec() ) 
+                {
+                    case QMessageBox::Yes:  
+                        // Create new map
+                        vm->setFilePath(fn);
+                        updateTabName( vm );
+                        statusBar()->showMessage( "Created " + fn , statusbarTime );
+                        return File::Success;
+                            
+                    case QMessageBox::Cancel:
+                        // don't create new map
+                        statusBar()->showMessage( "Loading " + fn + " failed!", statusbarTime );
+                        int cur = tabWidget->currentIndex();
+                        tabWidget->setCurrentIndex (tabWidget->count() - 1);
+                        fileCloseMap();
+                        tabWidget->setCurrentIndex (cur);
+                        return File::Aborted;
+                } 
+
+                // ImportAdd or ImportReplace
+                qWarning() << QString("Warning:  Could not import %1 into %2").arg(fn).arg(vm->getFilePath());
+                return File::Aborted;
+            }
 	}   
 
 	if (err!=File::Aborted)
 	{
-	    // Save existing filename in case  we import
-	    QString fn_org = vm->getFilePath();
+            // Save existing filename in case  we import
+            QString fn_org = vm->getFilePath();
+
+            if (lmode != DefaultMap)
+            {
+
+                vm->setFilePath (fn);
+                vm->saveStateBeforeLoad (lmode, fn);
+
+                progressDialog.setLabelText (tr("Loading: %1","Progress dialog while loading maps").arg(fn));
+            }
 
 	    // Finally load map into mapEditor
-	    progressDialog.setLabelText (tr("Loading: %1","Progress dialog while loading maps").arg(fn));
-	    vm->setFilePath (fn);
-	    vm->saveStateBeforeLoad (lmode,fn);
-	    err = vm->loadMap(fn,lmode,ftype);
+	    err = vm->loadMap(fn, lmode, ftype);
 
 	    // Restore old (maybe empty) filepath, if this is an import
-	    if (lmode != NewMap)
+	    if (lmode == ImportAdd || lmode == ImportReplace)
 		vm->setFilePath (fn_org);
 	}   
 
@@ -3408,16 +3782,20 @@ File::ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode, const FileType
                 vm->setFilePath (fn);
                 updateTabName( vm );
                 actionFilePrint->setEnabled (true);
-            }	
+                addRecentMap( fn );
+            } else if (lmode == DefaultMap)
+            {
+                // FIXME-0 How to handle lockfile for default map?
+                vm->makeDefault();
+                updateTabName(vm);
+            }
 	    editorChanged();
 	    vm->emitShowSelection();
-            addRecentMap( fn );
 	    statusBar()->showMessage( "Loaded " + fn, statusbarTime );
 	}   
     }
     return err;
 }
-
 
 void Main::fileLoad(const LoadMode &lmode)
 {
@@ -3425,13 +3803,16 @@ void Main::fileLoad(const LoadMode &lmode)
     switch (lmode)
     {
 	case NewMap:
-	    caption=vymName+ " - " +tr("Load vym map");
+	    caption = vymName+ " - " +tr("Load vym map");
 	    break;
+        case DefaultMap:
+            // Not used directly
+            return;
 	case ImportAdd:
-	    caption=vymName+ " - " +tr("Import: Add vym map to selection");
+	    caption = vymName+ " - " +tr("Import: Add vym map to selection");
 	    break;
 	case ImportReplace:
-	    caption=vymName+ " - " +tr("Import: Replace selection with vym map");
+	    caption = vymName+ " - " +tr("Import: Replace selection with vym map");
 	    break;
     }
 
@@ -3504,7 +3885,7 @@ void Main::fileLoadRecent()
     }
 }
 
-void Main::addRecentMap (const QString &fileName)
+void Main::addRecentMap (const QString &fileName)   // FIXME-0 ignore path of default map here
 {
 
     QStringList files = settings.value("/mainwindow/recentFileList").toStringList();
@@ -3578,6 +3959,15 @@ void Main::fileSaveAs(const SaveMode& savemode)
             // Check for existing file
             if (QFile (fn).exists())
             {
+                // Check if the existing file is writable 
+                if (!QFileInfo(fn).isWritable())
+                {
+                    QMessageBox::critical( 0, 
+                            tr( "Critical Error" ), 
+                            tr("Couldn't save %1,\nbecause file exists and cannot be changed.").arg(fn));
+                    return;
+                }
+
                 QMessageBox mb( vymName,
                                 tr("The file %1\nexists already. Do you want to").arg(fn),
                                 QMessageBox::Warning,
@@ -3651,7 +4041,89 @@ void Main::fileSaveAs()
     fileSaveAs (CompleteMap);
 }
 
-void Main::fileImportFirefoxBookmarks()
+void Main::fileSaveAsDefault()
+{
+    if (currentMapEditor())
+    {
+        QString defaultPath = settings.value(
+                "/system/defaultMap/path", 
+                vymBaseDir.path() + "/demos/default.vym").toString() ;
+
+        QString fn = QFileDialog::getSaveFileName (
+                    this,
+                    tr("Save map as new default map"),
+                    defaultPath,
+                    "VYM map (*.vym)",
+                    NULL,
+                    QFileDialog::DontConfirmOverwrite);
+
+        if (!fn.isEmpty() )
+        {
+            // Check for existing file
+            if (QFile (fn).exists())
+            {
+                // Check if the existing file is writable 
+                if (!QFileInfo(fn).isWritable())
+                {
+                    QMessageBox::critical(0,
+                         tr("Warning"),
+                         tr("You have no permissions to write to ") + fn);
+                    return;
+                }
+
+                // Confirm overwrite of existing file
+                QMessageBox mb( vymName,
+                    tr("The file %1\nexists already. Do you want to").arg(fn),
+                    QMessageBox::Warning,
+                    QMessageBox::Yes | QMessageBox::Default,
+                    QMessageBox::Cancel | QMessageBox::Escape,
+                    QMessageBox::NoButton);
+                mb.setButtonText( QMessageBox::Yes, tr("Overwrite as new default map") );
+                mb.setButtonText( QMessageBox::Cancel, tr("Cancel"));
+                switch( mb.exec() )
+                {
+                case QMessageBox::Yes:
+                    // save
+                    break;
+                case QMessageBox::Cancel:
+                    // do nothing
+                    return;
+                    break;
+                }
+            } 
+
+            // Save now as new default
+            VymModel *m = currentModel();
+            QString fn_org = m->getFilePath(); // Restore fn later, if savemode != CompleteMap
+            // Check for existing lockfile
+            QFile lockFile( fn + ".lock" );
+            if (lockFile.exists() )
+            {
+                QMessageBox::critical( 
+                    0, 
+                    tr( "Critical Error" ), 
+                    tr("Couldn't save %1,\nbecause of existing lockfile:\n\n%2").arg(fn).arg( lockFile.fileName()  ));
+                return;
+            }
+
+            if ( !m->renameMap( fn ) )
+            {
+                QMessageBox::critical( 0, tr( "Critical Error" ), tr("Couldn't save %1").arg( fn ));
+                return;
+            }
+
+            fileSave(m, CompleteMap);
+            
+            // Set name of tab
+            updateTabName( m );
+
+            // Set new default path
+            settings.setValue ("/system/defaultMap/path", fn);
+        }
+    }
+}
+
+void Main::fileImportFirefoxBookmarks() // FIXME-2 remove or adapt
 {
     QFileDialog fd;
     fd.setDirectory (vymBaseDir.homePath()+"/.mozilla/firefox");
@@ -4025,7 +4497,7 @@ bool Main::openURL(const QString &url)
     return true;
 }
 
-void Main::openTabs(QStringList urls)
+void Main::openTabs(QStringList urls)   // FIXME-2 remove dbus and rely on system to handle URLs
 {
     if (urls.isEmpty()) return;
     	
@@ -4056,7 +4528,7 @@ void Main::openTabs(QStringList urls)
                 "newTab" << 
                 u <<
                 "false";
-            if (!QProcess::startDetached ("qdbus",args))    // FIXME-1 use DBUS directly
+            if (!QProcess::startDetached ("qdbus",args))    // FIXME-3 use DBUS directly
             {
                 QMessageBox::warning(0, 
                     tr("Warning"),
@@ -4743,7 +5215,7 @@ void Main::editFollowXLink(QAction *a)
 	m->followXLink(branchXLinksContextMenuFollow->actions().indexOf(a));
 }
 
-bool Main::initLinkedMapsMenu( VymModel *model, QMenu *menu)    // FIXME-0 build Map of branch names and paths of linked vym maps
+bool Main::initLinkedMapsMenu( VymModel *model, QMenu *menu)   
 {
     if (model)
     {
@@ -5220,6 +5692,27 @@ void Main::settingsMacroPath()
     }
 }
 
+void Main::settingsDefaultMapPath()
+{
+    QString defaultPath = settings.value("/system/defaultMap/path", vymBaseDir.path() + "/demos/default.vym").toString() ;
+
+    QStringList filters;
+    filters << "VYM defaults map (*.vym)";
+    QFileDialog fd;
+    fd.setDirectory ( dirname(defaultPath) );
+    fd.selectFile   ( basename(defaultPath) );
+    fd.setFileMode (QFileDialog::ExistingFile);
+    fd.setNameFilters (filters);
+    fd.setWindowTitle (vymName + " - " + tr("Set vym default map to be loaded on startup"));
+    fd.setAcceptMode (QFileDialog::AcceptOpen);
+
+    QString fn;
+    if ( fd.exec() == QDialog::Accepted )
+    {
+	settings.setValue ("/system/defaultMap/path", fd.selectedFiles().first());
+    }
+}
+
 void Main::settingsUndoLevels()	    
 {
     bool ok;
@@ -5490,6 +5983,7 @@ void Main::setFocusMapEditor()
 
 void Main::changeSelection (VymModel *model, const QItemSelection &newsel, const QItemSelection &)
 {
+    // Setting the model implicitely also sets treeItem and updates content
     branchPropertyEditor->setModel (model ); 
 
     if (model && model == currentModel() )
@@ -5540,6 +6034,7 @@ void Main::updateDockWidgetTitles( VymModel *model)
 
         noteEditor->setEditorTitle(s);
         noteEditorDW->setWindowTitle (noteEditor->getEditorTitle() );
+        branchPropertyEditor->setModel(model);
     }
 }
 
@@ -5571,6 +6066,7 @@ void Main::updateActions()
         {
             // Disable toolbars
             standardFlagsMaster->setEnabled (false);
+            userFlagsMaster->setEnabled (false);
 
             // Disable map related actions
             foreach (QAction *a, restrictedMapActions)
@@ -5583,6 +6079,7 @@ void Main::updateActions()
             
             // Enable toolbars
             standardFlagsMaster->setEnabled (true);
+            userFlagsMaster->setEnabled (true);
 
             // Enable map related actions
             foreach (QAction *a, restrictedMapActions)
@@ -5728,8 +6225,9 @@ void Main::updateActions()
 			}   
 		    }
 		}
-		//Standard Flags
-		standardFlagsMaster->updateToolBar (selbi->activeStandardFlagNames() );
+		//Standard and user flags
+		standardFlagsMaster->updateToolBar (selbi->activeFlagUids() ); 
+		userFlagsMaster->updateToolBar (selbi->activeFlagUids() ); 
 
 		// System Flags
 		actionToggleScroll->setEnabled (true);
@@ -5814,6 +6312,7 @@ void Main::updateActions()
 		    actionListBranches.at(i)->setEnabled(false);
 
 		standardFlagsMaster->setEnabled (false);
+		userFlagsMaster->setEnabled (false);
 
 		actionOpenURL->setEnabled (false);
 		actionOpenVymLink->setEnabled (false);
@@ -5859,15 +6358,18 @@ void Main::updateActions()
 
         // Disable toolbars
         standardFlagsMaster->setEnabled (false);
+        userFlagsMaster->setEnabled (false);
     }
 }
 
 Main::ModMode Main::getModMode()
 {
+    if (actionModModePoint->isChecked()) return ModModePoint;
     if (actionModModeColor->isChecked()) return ModModeColor;
-    if (actionModModeCopy->isChecked()) return ModModeCopy;
     if (actionModModeXLink->isChecked()) return ModModeXLink;
-    return ModModeNone;
+    if (actionModModeMoveObject->isChecked()) return ModModeMoveObject;
+    if (actionModModeMoveView->isChecked()) return ModModeMoveView;
+    return ModModeUndefined;
 }
 
 bool Main::autoEditNewBranch()
@@ -5990,26 +6492,27 @@ void Main::previousSlide()
     if (cv) cv->previousSlide();
 }
 
-void Main::standardFlagChanged()
+void Main::flagChanged() 
 {
     MapEditor *me = currentMapEditor();
     VymModel  *m  = currentModel();
     if (me && m && me->getState() != MapEditor::EditingHeading) 
     {
-        if ( actionSettingsUseFlagGroups->isChecked() )
-            m->toggleStandardFlag(sender()->objectName(),standardFlagsMaster);
-        else
-            m->toggleStandardFlag(sender()->objectName());
+        m->toggleFlagByUid(
+            QUuid(sender()->objectName()), 
+            actionSettingsUseFlagGroups->isChecked() );
         updateActions();
     }
 }
 
-
 void Main::testFunction1()
 {
-    VymModel  *m  = currentModel();
+    VymModel *m = currentModel();
     if (m)
     {
+        
+
+        /*
         UserDialog dia;
         dia.exec();
         if (dia.result() > 0 )
@@ -6017,6 +6520,7 @@ void Main::testFunction1()
             m->setHeading(dia.selectedUser());
             m->setURL( QString("<ac:link> <ri:user ri:userkey=\"%1\"/></ac:link>").arg(dia.selectedUserKey() ));
         }
+        */
     }
 }
 
@@ -6163,6 +6667,7 @@ void Main::debugInfo()
     s += QString ("localeName: %1\nPath: %2\n")
         .arg(localeName)
         .arg(vymBaseDir.path() + "/lang");
+    s += QString("tmpVymDir: %1\n").arg(tmpVymDir.path() );
     s += QString("zipToolPath: %1\n").arg(zipToolPath);
     s += QString("vymBaseDir: %1\n").arg(vymBaseDir.path());
     s += QString("currentPath: %1\n").arg(QDir::currentPath());

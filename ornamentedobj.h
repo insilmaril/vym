@@ -56,15 +56,13 @@ public:
     virtual void move2RelPos (QPointF);	    // move relativly to parent^
     virtual void move2RelPos (double,double);
 
-    virtual void activateStandardFlag(Flag *flag);
-    virtual void deactivateStandardFlag(const QString &name);
-    virtual QString getSystemFlagName (const QPointF &p);
-    virtual QRectF getBBoxFlag (const QString &name);
+    virtual QUuid findSystemFlagUidByPos (const QPointF &p);
+    virtual QRectF getBBoxSystemFlag (const QString &name);
 
 protected:
-    HeadingObj *heading;	// Heading
-    FlagRowObj *systemFlags;	    // System Flags
-    FlagRowObj *standardFlags;	    // Standard Flags
+    HeadingObj *heading;	    // Heading
+    FlagRowObj *systemFlagRowObj;   // System Flags
+    FlagRowObj *standardFlagRowObj; // Standard Flags
     FrameObj *frame;		// frame around object
     QRectF ornamentsBBox;	// bbox of flags and heading
 };

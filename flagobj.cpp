@@ -7,41 +7,27 @@
 /////////////////////////////////////////////////////////////////
 FlagObj::FlagObj(QGraphicsItem *parent):MapObj(parent) 
 {
-//  qDebug() << "Const FlagObj  this="<<this<<"  scene="<<s;
+    //qDebug() << "Const FlagObj  this=" << this;
     init ();
 }
 
 FlagObj::~FlagObj()
 {
-//   qDebug() << "Destr FlagObj  this="<<this <<"  " <<name;
-    if (icon) delete (icon);
+    //qDebug() << "Destr FlagObj  this=" << this << "  " << name;
+    if (imageObj) delete (imageObj);
 }
 
 
 void FlagObj::init ()
 {
-    name="undefined";
-
-    icon=new ImageObj (parentItem());
-    icon->setPos (absPos.x(), absPos.y() );
-    state=false;
-    avis=true;
-}
-
-void FlagObj::copy (FlagObj* other)
-{
-    MapObj::copy(other);
-    name=other->name;
-    state=other->state;
-    avis=other->avis;
-    icon->copy(other->icon);
-    setVisibility (other->isVisibleObj() );
+    imageObj = new ImageObj (parentItem() );
+    avis = true;
 }
 
 void FlagObj::move(double x, double y)
 {
     MapObj::move(x,y);
-    icon->setPos(x,y);
+    imageObj->setPos(QPointF(x,y)); 
     positionBBox();
 }
 
@@ -52,40 +38,35 @@ void FlagObj::moveBy(double x, double y)
 
 void FlagObj::setZValue (double z)
 {
-    icon->setZValue (z);
+    imageObj->setZValue (z);
 }
 
 void FlagObj::setVisibility (bool v)
 {
     MapObj::setVisibility(v);
-    if (v && state)
-	icon->setVisibility(true);
+    if (v) 
+	imageObj->setVisibility(true);
     else
-	icon->setVisibility(false);
+	imageObj->setVisibility(false);
 }
 
-void FlagObj::load (const QString &fn)
+void FlagObj::loadImage (ImageObj* io)
 {
-    icon->load(fn);
+    prepareGeometryChange();
+
+    imageObj->copy(io);   // Creates deep copy of pixmap or svg!
     calcBBoxSize();
     positionBBox();
 }
 
-void FlagObj::load (const QPixmap &pm)
+void FlagObj::setUuid(const QUuid &id)
 {
-    icon->load(pm);
-    calcBBoxSize();
-    positionBBox();
+    uid = id;
 }
 
-void FlagObj::setName(const QString &n)
+const QUuid FlagObj::getUuid()
 {
-    name=n;
-}
-
-const QString FlagObj::getName()
-{
-    return name;
+    return uid;
 }
 
 void FlagObj::setAlwaysVisible(bool b)
@@ -98,47 +79,6 @@ bool FlagObj::isAlwaysVisible()
     return avis;
 }
 
-bool FlagObj::isActive()
-{
-    return state;
-}
-
-void FlagObj::toggle()
-{
-    if (state)
-	deactivate();
-    else
-	activate();
-}
-
-void FlagObj::activate()
-{
-    state=true;
-    // only show icon, if flag itself is visible 
-    if (visible) 
-    {
-	icon->setVisibility (true);
-	calcBBoxSize();
-    }	
-}
-
-void FlagObj::deactivate()
-{
-    state=false;
-    // if flag itself is invisible we don't need to call 
-    if (visible) 
-    {
-	icon->setVisibility (false);
-	calcBBoxSize();
-    }	
-}
-
-void FlagObj::saveToDir (const QString &tmpdir, const QString &prefix)
-{
-    QString fn=tmpdir + prefix + name + ".png";
-    icon->save (fn,"PNG");
-}
-
 void FlagObj::positionBBox()
 {
     bbox.moveTopLeft (absPos );
@@ -147,12 +87,12 @@ void FlagObj::positionBBox()
 
 void FlagObj::calcBBoxSize()
 {
-    if (visible && state)
+    if (visible)
 	bbox.setSize (	QSizeF(
-	    icon->boundingRect().width(), 
-	    icon->boundingRect().height() ) );
+	    imageObj->boundingRect().width(), 
+	    imageObj->boundingRect().height() ) );
     else
-	bbox.setSize (QSizeF(0,0));
-    clickPoly= QPolygonF (bbox); 
+	bbox.setSize (QSizeF(0, 0));
+    clickPoly = QPolygonF (bbox); 
 }
 

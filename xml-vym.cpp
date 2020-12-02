@@ -7,6 +7,7 @@
 
 #include "attributeitem.h"
 #include "branchitem.h"
+#include "flag.h"
 #include "misc.h"
 #include "settings.h"
 #include "linkablemapobj.h"
@@ -56,18 +57,19 @@ bool parseVYMHandler::startElement  ( const QString&, const QString&,
             //<<"       line="<<QXmlDefaultHandler::lineNumber();
         <<"contentFilter="<<contentFilter;
     */        
+
     stateStack.append (state);        
     if ( state == StateInit && (eName == "vymmap")  ) 
     {
         state = StateMap;
-        branchesTotal=0;        
-        branchesCounter=0;
+        branchesTotal   = 0;        
+        branchesCounter = 0;
 
-        if (loadMode==NewMap )
+        if (loadMode == NewMap )
         {
             // Create mapCenter
             model->clear();
-            lastBranch=NULL;
+            lastBranch = NULL;
 
             readMapAttr (atts);
         }   
@@ -90,7 +92,7 @@ bool parseVYMHandler::startElement  ( const QString&, const QString&,
 
     } else if ( eName == "select" && state == StateMap ) 
     {
-        state=StateMapSelect;
+        state = StateMapSelect;
     } else if ( eName == "setting" && state == StateMap ) 
     {
         state=StateMapSetting;
@@ -160,6 +162,16 @@ bool parseVYMHandler::startElement  ( const QString&, const QString&,
         (state == StateMapCenter || state==StateBranch)) 
     {
         state=StateStandardFlag;
+    } else if ( eName == "userflagdef" && state == StateMap) 
+    {
+        state = StateUserFlagDef;
+        return (readUserFlagDefAttr(atts));
+    } else if ( 
+        eName == "userflag" && 
+        (state == StateMapCenter || state == StateBranch )) 
+    {
+        state = StateUserFlag;
+        return (readUserFlagAttr(atts));
     } else if ( eName == "heading" && (state == StateMapCenter||state==StateBranch || state == StateInit))
     {
         if (state == StateInit)
@@ -171,7 +183,7 @@ bool parseVYMHandler::startElement  ( const QString&, const QString&,
         }
         if (!lastBranch) return false;
 
-        state=StateHeading;
+        state = StateHeading;
         htmldata.clear();
         vymtext.clear();
         if (!atts.value( "fonthint").isEmpty() )
@@ -341,7 +353,9 @@ bool parseVYMHandler::startElement  ( const QString&, const QString&,
 
 bool parseVYMHandler::endElement  ( const QString&, const QString&, const QString &eName)
 {
-    //qDebug()<< "endElement </" <<eName <<">  state=" <<state ;
+    QString h;
+    lastBranch? h = lastBranch->getHeadingPlain(): h = "";
+    //qDebug()<< "endElement </" <<eName <<">  state=" <<state << " lastBranch=" << h;
 
     switch ( state ) 
     {
@@ -356,8 +370,9 @@ bool parseVYMHandler::endElement  ( const QString&, const QString&, const QStrin
             // (happens if bookmarks are imported)
             if (lastBranch->isScrolled() && lastBranch->branchCount()==0) 
                 lastBranch->unScroll();
-            model->emitDataChanged (lastBranch);
-            lastBranch=(BranchItem*)(lastBranch->parent());
+
+            model->emitDataChanged (lastBranch);  
+            lastBranch = (BranchItem*)(lastBranch->parent());
             lastBranch->setLastSelectedBranch (0);  
             break;
         case StateTask:
@@ -409,11 +424,10 @@ bool parseVYMHandler::endElement  ( const QString&, const QString&, const QStrin
 
 bool parseVYMHandler::characters   ( const QString& ch)
 {
-//    qDebug()<< "xml-vym: characters "<<ch<<"  state="<<state;
+    //qDebug()<< "xml-vym: characters " << ch << "  state=" << state;
 
-    QString ch_org=quotemeta (ch);
-    QString ch_simplified=ch.simplified();
-    //if ( ch_simplified.isEmpty() ) return true;
+    QString ch_org = quotemeta (ch);
+    QString ch_simplified = ch.simplified();
 
     switch ( state ) 
     {
@@ -548,7 +562,6 @@ bool parseVYMHandler::readBranchAttr (const QXmlAttributes& a)
 
     if (!a.value( "scrolled").isEmpty() )
         lastBranch->toggleScroll(); 
-        // (interesting for import of KDE bookmarks)
 
     if (!a.value( "incImgV").isEmpty() ) 
     {        
@@ -566,6 +579,7 @@ bool parseVYMHandler::readBranchAttr (const QXmlAttributes& a)
     }        
     if (a.value("childrenFreePos")=="true")
         lastBranch->setChildrenLayout(BranchItem::FreePositioning);
+
     return true;    
 }
 
@@ -715,7 +729,7 @@ bool parseVYMHandler::readNoteAttr (const QXmlAttributes& a)
 
 bool parseVYMHandler::readImageAttr (const QXmlAttributes& a)
 {
-    lastMI=lastImage;
+    lastMI = lastImage;
     
     if (!readOOAttr(a)) return false;  
 
@@ -725,46 +739,53 @@ bool parseVYMHandler::readImageAttr (const QXmlAttributes& a)
         if (!lastImage->load (parseHREF(a.value ("href") ) ))
         {
             QMessageBox::warning( 0, "Warning: " ,
-                "Couldn't load image\n"+parseHREF(a.value ("href") ));
-            lastImage=NULL;
+                "Couldn't load image\n" + parseHREF(a.value ("href") ));
+            lastImage = NULL;
             return true;
         }
         
     }        
     if (!a.value( "zPlane").isEmpty() ) 
         lastImage->setZValue (a.value("zPlane").toInt ());
-    float x,y;
-    bool okx,oky;
+    float x, y;
+    bool okx, oky;
     if (!a.value( "relPosX").isEmpty() ) 
     {
         if (!a.value( "relPosY").isEmpty() ) 
         {
             // read relPos
-            x=a.value("relPosX").toFloat (&okx);
-            y=a.value("relPosY").toFloat (&oky);
+            x = a.value("relPosX").toFloat (&okx);
+            y = a.value("relPosY").toFloat (&oky);
             if (okx && oky) 
-                lastImage->setRelPos (QPointF (x,y) );
+                lastImage->setRelPos (QPointF (x, y) );
             else
                 // Couldn't read relPos
                 return false;  
         }           
     }        
     
-    // Scale image        
-    x=y=1;
+    // Scale image 
+    // scaleX and scaleY are no longer used since 2.7.509 and replaced by scaleFactor
+    x = y = 1;
     if (!a.value( "scaleX").isEmpty() ) 
     {
-        x=a.value("scaleX").toFloat (&okx);
+        x = a.value("scaleX").toFloat (&okx);
         if (!okx ) return false;  
     }        
     
     if (!a.value( "scaleY").isEmpty() ) 
     {
-        y=a.value("scaleY").toFloat (&oky);
+        x = a.value("scaleY").toFloat (&oky);
         if (!oky ) return false;  
     }        
-    if (x!=1 || y!=1)
-        lastImage->setScale (x,y);
+
+    if (!a.value( "scaleFactor").isEmpty() ) 
+    {
+        x = a.value("scaleFactor").toFloat (&okx);
+        if (!okx ) return false;  
+    }        
+
+    if (x != 1 ) lastImage->setScaleFactor (x);
     
     if (!readOOAttr(a)) return false;
 
@@ -979,3 +1000,49 @@ bool parseVYMHandler::readTaskAttr (const QXmlAttributes& a)
     return true;
 }
 
+bool parseVYMHandler::readUserFlagDefAttr (const QXmlAttributes& a)
+{
+    QString name;
+    QString path;
+    QString tooltip;
+    QUuid uid;
+
+    if (!a.value( "name").isEmpty() ) 
+        name = a.value("name");
+    if (!a.value( "tooltip").isEmpty() ) 
+        tooltip = a.value("tooltip");
+    if (!a.value( "uuid").isEmpty() ) 
+        uid = QUuid(a.value("uuid"));
+
+    Flag *flag;
+
+    if (!a.value( "href").isEmpty() ) 
+    {
+        // Setup flag with image
+        flag = mainWindow->setupFlag ( parseHREF(a.value("href")), Flag::UserFlag, name, tooltip, uid); 
+    } else
+    {
+        qWarning() << "readUserFlagDefAttr:  Couldn't read href of flag " << a.value("name");
+        return false;
+    }
+
+    if (!a.value( "group").isEmpty() ) 
+        flag->setGroup( a.value("group"));
+
+    return true;
+}
+
+bool parseVYMHandler::readUserFlagAttr (const QXmlAttributes& a)
+{
+    QString name;
+    QString uuid;
+
+    if (!a.value( "name").isEmpty() ) 
+        name = a.value("name");
+    if (!a.value( "uuid").isEmpty() ) 
+        uuid = a.value("uuid");
+
+    lastBranch->toggleFlagByUid(QUuid(uuid));
+
+    return true;
+}

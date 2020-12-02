@@ -101,7 +101,7 @@ public slots:
     void removeChildren();
     void removeKeepChildren();
     void removeSlide(int n);
-    void saveImage( const QString &filename, const QString &format); 
+    void saveImage( const QString &filename);
     void saveNote( const QString &filename); 
     void scroll();
     bool select( const QString &s );
@@ -113,7 +113,7 @@ public slots:
     bool selectLastImage();
     bool selectParent();
     bool selectLatestAdded();
-    void setFlag( const QString &s);
+    void setFlagByName( const QString &s);
     void setHeadingPlainText( const QString &s );
     void setHideExport( bool b);
     void setHideLinkUnselected( bool b);
@@ -136,7 +136,7 @@ public slots:
     void setFramePadding( int padding);
     void setFramePenColor( const QString &color);
     void setFrameType( const QString &type);
-    void setScale( qreal x, qreal y );
+    void setScaleFactor( qreal f);
     void setSelectionColor( const QString &color);
     void setTaskPriorityDelta( const int &n);
     bool setTaskSleep( const QString &s);
@@ -150,7 +150,8 @@ public slots:
     void sleep( int n);
     void sortChildren( bool b);
     void sortChildren();
-    void toggleFlag( const QString &s );
+    void toggleFlagByUid( const QString &s );
+    void toggleFlagByName( const QString &s );
     void toggleFrameIncludeChildren();
     void toggleScroll();
     void toggleTarget();
@@ -159,7 +160,7 @@ public slots:
     bool unscroll();
     void unscrollChildren();
     void unselectAll();
-    void unsetFlag( const QString &s);
+    void unsetFlagByName( const QString &s);
 
 private:
     VymModel *model;

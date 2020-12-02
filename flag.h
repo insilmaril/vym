@@ -3,8 +3,9 @@
 
 
 #include <QAction>
-#include <QPixmap>
+#include <QUuid>
 
+#include "imageobj.h"
 #include "xmlobj.h"
 
 /*! \brief One flag belonging to a FlagRow.
@@ -17,16 +18,16 @@
 /////////////////////////////////////////////////////////////////////////////
 class Flag:public XMLObj {
 public:
+    enum FlagType {SystemFlag, StandardFlag, UserFlag, FreemindFlag, UndefinedFlag};
+
     Flag ();
     Flag (const QString &fname);
-    Flag (Flag*);
     ~Flag ();
     virtual void init ();
-    virtual void copy (Flag*);
-    void load (const QString&);
-    void load (const QPixmap&);
+    bool load (const QString&);
     void setName (const QString&);
     const QString getName ();
+    const QString getPath();
     void setVisible (bool b);
     bool isVisible ();
     void setGroup (const QString&);
@@ -34,12 +35,18 @@ public:
     void unsetGroup ();
     void setToolTip(const QString&);
     const QString getToolTip();
-    QPixmap getPixmap();
+    ImageObj*  getImageObj();
     void setAction (QAction *a);
     QAction* getAction ();
-    void setUsed (bool);    //FIXME-3 needed?
+    void setUsed (bool);    
     bool isUsed();
-    void saveToDir (const QString&, const QString&);
+    FlagType getType();
+    void setType (FlagType t);
+    void setUuid(const QUuid &id);
+    QUuid getUuid();
+    QString  getDefinition(const QString &prefix);
+    void  saveDataToDir (const QString&);
+    QString  saveState();
     
 protected:  
     QString name;
@@ -49,8 +56,13 @@ protected:
     QAction *action;
     bool state;
     bool used;
+    FlagType type;
+    QUuid uuid;
+
 private:
-    QPixmap pixmap;
+    ImageObj *image;
+    QString path;
+    
 };
 
 #endif

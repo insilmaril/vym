@@ -119,10 +119,10 @@ protected:
     VymNote note;
 public:	
     bool isNoteEmpty();
-    virtual void clearNote();
+    virtual bool clearNote();
     virtual bool hasEmptyNote();
-    virtual void setNote(const VymText &vt); //FIXME-3 setNote is called for every select or so???
-    virtual void setNote(const VymNote &vn);
+    virtual bool setNote(const VymText &vt); //FIXME-3 setNote is called for every select or so???
+    virtual bool setNote(const VymNote &vn);
 
     virtual VymNote getNote();
     virtual QString getNoteASCII(const QString &indent, const int &width); // returns note  (ASCII)
@@ -131,6 +131,8 @@ public:
 protected:
     FlagRow standardFlags;
     FlagRow systemFlags;
+    FlagRow userFlags;
+
 public:	
     virtual void activateStandardFlag(const QString &flag);
     virtual void deactivateStandardFlag(const QString &flag);
@@ -140,14 +142,14 @@ public:
 	If master is not NULL,, only one Flag from FlagRow master may 
 	be active simultanously, the others get deactivated.
     */	
-    virtual void toggleStandardFlag(const QString &flag, FlagRow *master=NULL);
-    virtual void toggleSystemFlag  (const QString &flag, FlagRow *master=NULL);
-    virtual bool hasActiveStandardFlag (const QString &flag);
+    //virtual void toggleFlag(const QString &name, bool useGroups = true);
+    Flag* toggleFlagByUid(const QUuid &uid, bool useGroups = true);
+    virtual void toggleSystemFlag  (const QString &flag, FlagRow *master = NULL);
+    virtual bool hasActiveFlag (const QString &flag);
     virtual bool hasActiveSystemFlag   (const QString &flag);
-    virtual QStringList activeStandardFlagNames();
-    virtual FlagRow* getStandardFlagRow ();
+    QList <QUuid>  activeFlagUids();
 
-    virtual QStringList activeSystemFlagNames();
+    virtual QList <QUuid> activeSystemFlagUids();
 
     virtual bool canMoveDown();
     virtual bool canMoveUp();

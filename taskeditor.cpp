@@ -63,7 +63,7 @@ TaskEditor::TaskEditor(QWidget *)
     connect( a, SIGNAL( triggered() ), this, SLOT(toggleFilterNew() ) );
     actionToggleFilterNew = a;
 
-    icon = QIcon (":/flag-arrow-up.png");
+    icon = QIcon (":/flag-arrow-up.svg");
     a = new QAction(icon, "", this);
     a->setToolTip(tr("Show only tasks marked with this arrow-up flag","Filters in task Editor"));
     a->setCheckable(true);
@@ -73,7 +73,7 @@ TaskEditor::TaskEditor(QWidget *)
     connect( a, SIGNAL( triggered() ), this, SLOT(toggleFilterFlags1() ) );
     actionToggleFilterFlags1 = a;
 
-    icon = QIcon (":/flag-2arrow-up.png");
+    icon = QIcon (":/flag-arrow-2up.svg");
     a = new QAction(icon,  "", this);
     a->setToolTip(tr("Show only tasks marked with this arrow-up flag","Filters in task Editor"));
     a->setCheckable(true);

@@ -341,7 +341,7 @@
         </layout>
        </item>
        <item>
-        <widget class="QLabel" name="label_2">
+        <widget class="QLabel" name="label_creation">
          <property name="text">
           <string>Created:</string>
          </property>
@@ -358,7 +358,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="label_3">
+        <widget class="QLabel" name="label_modified">
          <property name="text">
           <string>Modified:</string>
          </property>
@@ -375,22 +375,16 @@
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="label_4">
+        <widget class="QLabel" name="label_sleep">
          <property name="text">
           <string>Sleep:</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="lineEditDateSleep">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
+        <widget class="QLineEdit" name="lineEditSleep">
          <property name="styleSheet">
           <string notr="true">background-color: rgb(239, 240, 241);</string>
-         </property>
-         <property name="readOnly">
-          <bool>true</bool>
          </property>
         </widget>
        </item>

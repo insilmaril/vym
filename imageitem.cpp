@@ -16,7 +16,7 @@ bool isImage (const QString &fname)
 
 ImageItem::ImageItem()
 {
-    //qDebug()<<"Constr ImageItem";
+    qDebug()<<"Constr ImageItem";
     init();
 }
 
@@ -34,47 +34,33 @@ ImageItem::~ImageItem()
 void ImageItem::init()
 {
     setType (Image);
-    imageType=Undefined;
-    hideLinkUnselected=true;
-    originalFilename="no original name available";
-    zValue=dZ_FLOATIMG;
-    scaleX=1;
-    scaleY=1;
-    posMode=Relative;
+    hideLinkUnselected = true;
+    originalFilename = "no original name available";
+    zValue = dZ_FLOATIMG;
+    posMode = Relative;
 }
 
-void ImageItem::clear()
+void ImageItem::clear() 
 {
+    // pure virtual in parent treeitem
+    // not used here currently
 }
 
-ImageItem::ImageType ImageItem::getImageType()
+bool ImageItem::load(const QString &fname) 
 {
-    return imageType;
-}
+    FloatImageObj *fio = (FloatImageObj*)mo;
+    if (!fio->load(fname) ) return false;
 
-void ImageItem::load(const QImage &img)
-{
-    originalImage=img;
-    if (mo) ((FloatImageObj*)mo)->load (originalImage);
-}
+    setOriginalFilename (fname);
+    setHeadingPlainText (originalFilename);
 
-bool ImageItem::load(const QString &fname)
-{
-    bool ok = originalImage.load (fname);   
-    if (mo && ok)
-    {
-	setOriginalFilename (fname);
-        setHeadingPlainText (originalFilename);
-	((FloatImageObj*)mo)->load (originalImage);
-    }	else
-	qWarning() << "ImageItem::load failed for " << fname;
-    return ok;	
+    return true;	
 }
 
 FloatImageObj* ImageItem::createMapObj()
 {
-    FloatImageObj *fio=new FloatImageObj ( ((MapItem*)parentItem)->getMO(),this);
-    mo=fio;
+    FloatImageObj *fio = new FloatImageObj ( ((MapItem*)parentItem)->getMO(),this);
+    mo = fio;
     if (((BranchItem*)parentItem)->isScrolled() || !((MapItem*)parentItem)->getMO()->isVisibleObj() )
 	    fio->setVisibility (false);
     initLMO();	// set rel/abs position in mapitem
@@ -84,38 +70,30 @@ FloatImageObj* ImageItem::createMapObj()
     return fio;
 }
 
-void ImageItem::setScale (qreal sx, qreal sy)
+void ImageItem::setScaleFactor (qreal f)
 {
-    scaleX=sx;
-    scaleY=sy;
-    int w=originalImage.width()*scaleX;
-    int h=originalImage.height()*scaleY;
-    if (mo) ((FloatImageObj*)mo)->load (originalImage.scaled (w,h));
+    if (mo) ((FloatImageObj*)mo)->setScaleFactor(f);
 }
 
-qreal ImageItem::getScaleX ()
+qreal ImageItem::getScaleFactor ()
 {
-    return scaleX;
-}
-
-qreal ImageItem::getScaleY ()
-{
-    return scaleY;
+    if (mo) return ((FloatImageObj*)mo)->getScaleFactor();
+    return 1;
 }
 
 void ImageItem::setZValue(int z)
 {
-    zValue=z;
+    zValue = z;
     if (mo) ((FloatImageObj*)mo)->setZValue(z);
 }
 
 void ImageItem::setOriginalFilename(const QString & fn)
 {
-    originalFilename=fn;
+    originalFilename = fn;
 
     // Set short name. Search from behind:
-    int i=originalFilename.lastIndexOf("/");
-    if (i>=0) originalFilename=originalFilename.remove (0,i+1);
+    int i = originalFilename.lastIndexOf("/");
+    if (i >= 0) originalFilename=originalFilename.remove (0, i + 1);
     setHeadingPlainText (originalFilename);
 }
 
@@ -124,9 +102,17 @@ QString ImageItem::getOriginalFilename()
     return originalFilename;
 }
 
-bool ImageItem::save(const QString &fn, const QString &format)
+QString ImageItem::getUniqueFilename()
 {
-    return originalImage.save (fn,qPrintable (format)); 
+    FloatImageObj *fio = (FloatImageObj*)mo;
+    return "image-" + getUuid().toString() + fio->getExtension();
+}
+
+bool ImageItem::saveImage(const QString &fn)
+{
+    // This is used when exporting maps or saving selection
+    FloatImageObj *fio = (FloatImageObj*)mo;
+    return fio->save (fn); 
 }
 
 QString ImageItem::saveToDir (const QString &tmpdir,const QString &prefix) 
@@ -134,32 +120,34 @@ QString ImageItem::saveToDir (const QString &tmpdir,const QString &prefix)
     if (hidden) return "";
 
     // Save uuid 
-    QString idAttr=attribut("uuid",uuid.toString());
+    QString idAttr = attribut("uuid", uuid.toString());
 
-    QString zAttr=attribut ("zValue",QString().setNum(zValue));
+    QString zAttr = attribut ("zValue", QString().setNum(zValue));
     QString url;
 
-    ulong n=reinterpret_cast <ulong> (this);
+    // Create unique string for filename based on memory address
+    ulong n = reinterpret_cast <ulong> (this);
 
-    url="images/"+prefix+"image-" + QString().number(n,10) + ".png" ;
+    FloatImageObj *fio = (FloatImageObj*)mo;
+    
+    url = "images/" + prefix + "image-" + QString().number(n, 10) + fio->getExtension();
 
-    // And really save the image
-    originalImage.save (tmpdir +"/"+ url, "PNG");
- 
-    QString nameAttr=attribut ("originalName",originalFilename);
+    // And really save the image  (svgs will be copied from cash!)
+    fio->save (tmpdir + "/" + url);
 
-    QString scaleAttr=
-	attribut ("scaleX",QString().setNum(scaleX))+
-	attribut ("scaleY",QString().setNum(scaleY));
+    QString nameAttr = attribut ("originalName", originalFilename);
+
+    QString scaleAttr =
+	attribut ("scaleFactor", QString().setNum(fio->getScaleFactor()));
 
     return singleElement ("floatimage",  
 	getMapAttr() 
-	+getGeneralAttr()
-	+zAttr  
-	+attribut ("href",QString ("file:")+url)
-	+nameAttr
-	+scaleAttr
-        +idAttr
+	+ getGeneralAttr()
+	+ zAttr  
+	+ attribut ("href", QString ("file:") + url)
+	+ nameAttr
+	+ scaleAttr
+        + idAttr
     );	
 }
 

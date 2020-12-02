@@ -18,24 +18,19 @@ public:
     FlagRowObj ();
     FlagRowObj (QGraphicsItem*);
     ~FlagRowObj ();
-    virtual void init ();
-    virtual void copy (FlagRowObj*);
     virtual void move   (double,double);
     virtual void moveBy (double,double);
     virtual void setZValue (double z);
     virtual void setVisibility(bool);
-    virtual FlagObj* addFlag (FlagObj *fo);	    // make deep copy of FlagObj
-    virtual QStringList activeFlagNames();
+    void updateActiveFlagObjs (const QList <QUuid>, FlagRow *masterRowMain,  FlagRow *masterRowOptional = NULL);
     virtual void positionBBox();
     virtual void calcBBoxSize();
-    virtual QString getFlagName (const QPointF &p); // Find flag by position
-    bool isActive(const QString&);
-    void activate (Flag *flag);
-    void deactivate(const QString&);
-    void setShowFlags (bool);
-    FlagObj* findFlag (const QString&);
+    bool isFlagActive(const QUuid&);
+    void activateFlag (Flag *flag);
+    FlagObj* findFlagObj (const QUuid&);
+    virtual QUuid findFlagUidByPos (const QPointF &p); // Find flag by position
 private:    
-    QList <FlagObj*> flag; 
+    QList <FlagObj*> flagobjs; 
     bool showFlags;			    // FloatObjects want to hide their flags
 };
 #endif

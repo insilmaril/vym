@@ -116,7 +116,7 @@ end
 #######################
 def test_vym (vym)
   heading "Mainwindow checks:"
-  version = "2.7.501"
+  version = "2.7.514"
   expect_warning_only "Version is #{version}", vym.version, version
 
   expect "Loading map '#{@testmap}'", vym.loadMap(@testmap), true
@@ -160,7 +160,7 @@ def test_export (vym)
   #HTML
   exportname = "export-html"
   htmlpath = "#{@testdir}/#{exportname}.html"
-  flagpath = "#{@testdir}/flags/flag-stopsign.png"
+  flagpath = "#{@testdir}/flags/standard/Dialog-STOP.svg"
   pngpath = "#{@testdir}/#{exportname}.png"
   csspath = "#{@testdir}/vym.css"
   map.exportMap("HTML", htmlpath, @testdir)
@@ -458,14 +458,14 @@ def test_flags (vym)
   
   def set_flags (map, flags)
     flags.each do |f|
-      map.setFlag( f )
+      map.setFlagByName( f )
       expect "Flag set: #{f}", map.hasActiveFlag( f ), true
     end
   end
   
   def unset_flags (map, flags)
     flags.each do |f|
-      map.unsetFlag( f )
+      map.unsetFlagByName( f )
       expect "Flag unset: #{f}", map.hasActiveFlag( f ), false
     end
   end
@@ -511,10 +511,14 @@ def test_flags (vym)
   expect "clearFlags cleared exclamationmark", map.hasActiveFlag( "exclamationmark" ), false
   expect "clearFlags cleared smiley-good", map.hasActiveFlag( "smiley-good" ), false
   
-  map.toggleFlag "lifebelt"
-  expect "toggleFlag: flag activated", map.hasActiveFlag("lifebelt"), true
-  map.toggleFlag "lifebelt"
-  expect "toggleFlag: flag deactivated", map.hasActiveFlag("lifebelt"), false
+  # Toggling flags
+  a = ["stopsign", "lifebelt"]
+  a.each do |flag|
+    map.toggleFlagByName flag
+    expect "toggleFlag: flag #{flag} activated", map.hasActiveFlag(flag), true
+    map.toggleFlagByName "lifebelt"
+    expect "toggleFlag: flag #{flag} deactivated", map.hasActiveFlag(flag), false
+  end
 end
 
 #######################

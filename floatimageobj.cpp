@@ -11,29 +11,26 @@
 
 FloatImageObj::FloatImageObj (QGraphicsItem * parent,TreeItem *ti):FloatObj(parent,ti)
 {
-    //qDebug() << "Const FloatImageObj this="<<this<<"  ti="<<ti;
-    icon=new ImageObj (parent);
-    icon->setPos (absPos.x(), absPos.y() );
-    icon->setVisibility (true);
-    clickPoly=bbox;
-    useRelPos=true;
-
-    //Hide flags
-    systemFlags->setShowFlags(false);
+    // qDebug() << "Const FloatImageObj this=" << this << "  ti=" << ti;
+    imageObj = new ImageObj (parent);
+    imageObj->setPos (absPos.x(), absPos.y() );
+    imageObj->setVisibility (true);
+    clickPoly = bbox;
+    useRelPos = true;
 
 //    setLinkStyle (LinkableMapObj::Parabel);
 }
 
 FloatImageObj::~FloatImageObj ()
 {
-//  qDebug() << "Destr FloatImageObj "<<this<<"";
-    delete(icon);
+    //qDebug() << "Destr FloatImageObj "<<this<<"";
+    delete(imageObj);
 }
 
 void FloatImageObj::copy (FloatImageObj* other)
 {		    
     FloatObj::copy (other);
-    icon->copy (other->icon);
+    imageObj->copy (other->imageObj);
     positionBBox();
 }
 
@@ -41,36 +38,48 @@ void FloatImageObj::setZValue (const int &i)
 {
 
 //    qDebug()<<"FIO::setZValue z="<<i;
-//    qDebug()<<"  icon="<<icon;
+//    qDebug()<<"  imageObj="<<imageObj;
 //    qDebug()<<"  this="<<this;	 
-    icon->setZValue (i);
+    imageObj->setZValue (i);
 }
 
 int FloatImageObj::z ()
 {
-    return qRound (icon->zValue());
+    return qRound (imageObj->zValue());
 }
 
-void FloatImageObj::load (const QImage &img)
+bool FloatImageObj::load (const QString &fname) 
 {
-    icon->load(QPixmap::fromImage(img));
-    if (!icon->parentItem() ) icon->setParentItem(this);  // Add to scene initially
+    if (!imageObj->load(fname) ) return false;
+
     bbox.setSize ( QSizeF(
-            icon->boundingRect().width(), 
-            icon->boundingRect().height()));
-    clickPoly=bbox;
+        imageObj->boundingRect().width(), 
+        imageObj->boundingRect().height()));
+
+    clickPoly = bbox;
     positionBBox();
+    return true;
+}
+
+bool FloatImageObj::save (const QString &fname) 
+{
+    return imageObj->save(fname); 
+}
+
+QString FloatImageObj::getExtension()
+{
+    return imageObj->getExtension();
 }
 
 void FloatImageObj::setParObj (QGraphicsItem *p)
 {
     setParentItem (p);
-    icon->setParentItem (p);
-    parObj=(LinkableMapObj*)p;
+    imageObj->setParentItem (p);
+    parObj = (LinkableMapObj*)p;
 /*
     qDebug()<<"FIO::setParentItem";
-    qDebug()<<"  this="<<this;
-    qDebug()<<"  icon="<<icon;
+    qDebug()<<"     this = "<<this;
+    qDebug()<<"  imageObj=" << imageObj;
 */
 }
 
@@ -78,21 +87,35 @@ void FloatImageObj::setVisibility(bool v)
 {
     OrnamentedObj::setVisibility(v);
     if (v)
-	icon->setVisibility(true);
+	imageObj->setVisibility(true);
     else
-	icon->setVisibility(false);
+	imageObj->setVisibility(false);
+}
+
+void  FloatImageObj::setScaleFactor(qreal f) 
+{
+    imageObj->setScaleFactor(f);
+    bbox.setSize ( QSizeF(
+        imageObj->boundingRect().width(), 
+        imageObj->boundingRect().height()));
+    positionBBox();
+}
+
+qreal  FloatImageObj::getScaleFactor()
+{
+    return imageObj->getScaleFactor();
 }
 
 void FloatImageObj::moveCenter (double x, double y)
 {
     FloatObj::moveCenter(x, y);
-    icon->setPos(bbox.topLeft() );
+    imageObj->setPos(bbox.topLeft() );
 }
 
 void FloatImageObj::move (double x, double y)
 {
     FloatObj::move(x,y);
-    icon->setPos (x,y); 
+    imageObj->setPos (x,y); 
     positionBBox();
 }
 
@@ -103,8 +126,7 @@ void FloatImageObj::move (QPointF p)
 
 void FloatImageObj::positionBBox()
 {
-    clickPoly=QPolygonF(bbox);
-    setZValue (dZ_FLOATIMG);
+    clickPoly = QPolygonF(bbox);
 }
 
 void FloatImageObj::calcBBoxSize()

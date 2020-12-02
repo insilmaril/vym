@@ -23,8 +23,6 @@ int UserDialog::exec()
 {
     int result = QDialog::exec();
 
-    // Interactive implementation...    // FIXME-0   needed really?
-    
     return result;
 }
 

@@ -24,12 +24,14 @@ class Main : public QMainWindow
     Q_OBJECT
 
 public:
-    /*! Modifier modes are used when CTRL together with a mouse button is pressed */
+    /*! Modifier modes are used when SHIFT together with a mouse button is pressed */
     enum ModMode {
-	ModModeNone,	//!< Unused
-	ModModeColor,	//!< Pick color from object
-	ModModeCopy,	//!< Copy object
-	ModModeXLink	//!< Create a XLink (XLinkObj) from selected object
+	ModModeUndefined,	    //!< Unused
+	ModModePoint,	            //!< Regular mode: Point and relink items
+	ModModeColor,	            //!< Pick color from object
+	ModModeXLink,	            //!< Create a XLink (XLinkObj) from selected object
+	ModModeMoveObject,          //!< Move object without linking
+        ModModeMoveView             //!< Move view without changing
 	};
 
     Main(QWidget* parent=0, Qt::WindowFlags f=0);
@@ -71,14 +73,22 @@ private:
     void setupViewActions();
     void setupModeActions();
     void setupWindowActions();
-    void setupFlag(
-	Flag *flag, 
-	QToolBar *tb, 
+    void setupFlagActions();
+
+public slots:
+    void addUserFlag();
+
+public:
+    Flag* setupFlag(
+	const QString &path, 
+        Flag::FlagType type,
 	const QString &name, 
 	const QString &tooltip,
-	const QKeySequence &ks=0
+        const QUuid &uid = QUuid(),
+        const QKeySequence &ks = 0
 	);
-    void setupFlagActions();
+
+private:
     void setupNetworkActions();
     void setupSettingsActions();
     void setupTestActions();
@@ -121,6 +131,7 @@ public slots:
 private slots:	
     void fileSaveAs();
     void fileSaveAs(const SaveMode &);
+    void fileSaveAsDefault();
     void fileImportFirefoxBookmarks();
     void fileImportFreemind();
     void fileImportMM();
@@ -278,6 +289,7 @@ public slots:
     bool settingsURL();
     void settingsZipTool();
     void settingsMacroPath();
+    void settingsDefaultMapPath();
     void settingsUndoLevels();
 
 public:
@@ -332,7 +344,7 @@ private slots:
     void nextSlide();
     void previousSlide();
 
-    void standardFlagChanged();
+    void flagChanged();
 
     void testFunction1();
     void testFunction2();
@@ -377,8 +389,7 @@ private:
     QDockWidget *headingEditorDW;
     QDockWidget *noteEditorDW;
     QDockWidget *scriptEditorDW;
-
-    BranchPropertyEditor *branchPropertyEditor;
+    QDockWidget *branchPropertyEditorDW;
 
 public:
     QList <QAction*> mapEditorActions;      //! allows mapEditor to clone actions and shortcuts
@@ -412,6 +423,7 @@ private:
     QToolBar *modModesToolbar;
     QToolBar *referencesToolbar;
     QToolBar *standardFlagsToolbar;
+    QToolBar *userFlagsToolbar;
 
     bool presentationMode;
     QMap <QToolBar*, bool> toolbarStates;   // Save visibilty of toolbars during presentation mode
@@ -523,9 +535,12 @@ private:
     QAction *actionCenterOn;
 
     QActionGroup *actionGroupModModes;
+    QAction *actionModModePoint;
     QAction *actionModModeColor;
-    QAction *actionModModeXLink;
     QAction *actionModModeCopy;
+    QAction *actionModModeXLink;
+    QAction *actionModModeMoveObject;
+    QAction *actionModModeMoveView;
 
     QAction *actionToggleHideMode;
 

@@ -89,57 +89,57 @@ QString BranchItem::saveToDir (const QString &tmpdir,const QString &prefix, cons
     if (hidden) return QString();
 
     // Save uuid 
-    QString idAttr=attribut("uuid",uuid.toString());
+    QString idAttr = attribut("uuid", uuid.toString());
 
-    QString s,a;
+    QString s, a;
 
     // Update of note is usually done while unselecting a branch
     
     QString scrolledAttr;
     if (scrolled) 
-	scrolledAttr=attribut ("scrolled","yes");
+	scrolledAttr = attribut ("scrolled","yes");
     else
-	scrolledAttr="";
+	scrolledAttr = "";
 
     // save area, if not scrolled   // not needed if HTML is rewritten...
 				    // also we could check if _any_ of parents is scrolled
     QString areaAttr;
     if (mo && parentItem->isBranchLikeType() && !((BranchItem*)parentItem)->isScrolled() )
     {
-	qreal x=mo->getAbsPos().x();
-	qreal y=mo->getAbsPos().y();
-	areaAttr=
-	    attribut("x1",QString().setNum(x-offset.x())) +
-	    attribut("y1",QString().setNum(y-offset.y())) +
-	    attribut("x2",QString().setNum(x+mo->width()-offset.x())) +
-	    attribut("y2",QString().setNum(y+mo->height()-offset.y()));
+	qreal x  = mo->getAbsPos().x();
+	qreal y  = mo->getAbsPos().y();
+	areaAttr =
+	    attribut("x1", QString().setNum(x - offset.x())) +
+	    attribut("y1", QString().setNum(y - offset.y())) +
+	    attribut("x2", QString().setNum(x + mo->width()  - offset.x())) +
+	    attribut("y2", QString().setNum(y + mo->height() - offset.y()));
 
     } else
-	areaAttr="";
+	areaAttr = "";
     
     QString elementName;
-    if (parentItem==rootItem)
-        elementName="mapcenter";
+    if (parentItem == rootItem)
+        elementName = "mapcenter";
     else
-        elementName="branch";
+        elementName = "branch";
 
     // Free positioning of children
     QString layoutAttr;
     if (childrenLayout == BranchItem::FreePositioning)
-        layoutAttr += attribut ("childrenFreePos","true");
+        layoutAttr += attribut ("childrenFreePos", "true");
 
     // Save rotation
     QString rotAttr;
-    if (mo && mo->getRotation() !=0 )
-	rotAttr=attribut ("rotation",QString().setNum (mo->getRotation() ) );
+    if (mo && mo->getRotation() != 0 )
+	rotAttr = attribut ("rotation", QString().setNum (mo->getRotation() ) );
 
-    s=beginElement (elementName
+    s = beginElement (elementName
 	+ getMapAttr()
 	+ getGeneralAttr()
 	+ scrolledAttr 
 	+ getIncludeImageAttr() 
-    + rotAttr
-    + layoutAttr
+        + rotAttr
+        + layoutAttr
 	+ idAttr
 	);
     incIndent();
@@ -151,43 +151,44 @@ QString BranchItem::saveToDir (const QString &tmpdir,const QString &prefix, cons
     if (mo)
     {
         // Avoid saving NoFrame for objects other than MapCenter
-        if (depth() == 0  || ((OrnamentedObj*)mo)->getFrame()->getFrameType()!=FrameObj::NoFrame)
-            s+=((OrnamentedObj*)mo)->getFrame()->saveToDir ();
+        if (depth() == 0  || ((OrnamentedObj*)mo)->getFrame()->getFrameType() != FrameObj::NoFrame)
+            s += ((OrnamentedObj*)mo)->getFrame()->saveToDir ();
     }
 
     // save names of flags set
-    s+=standardFlags.saveToDir(tmpdir,prefix,0);
+    s += standardFlags.saveState();
+    s +=     userFlags.saveState();
     
     // Save Images
-    for (int i=0; i<imageCount(); ++i)
-	s+=getImageNum(i)->saveToDir (tmpdir,prefix);
+    for (int i = 0; i < imageCount(); ++i)
+	s += getImageNum(i)->saveToDir (tmpdir, prefix);
 
     // save attributes
-    for (int i=0; i<attributeCount(); ++i)
-	s+=getAttributeNum(i)->getDataXML();
+    for (int i = 0; i < attributeCount(); ++i)
+	s += getAttributeNum(i)->getDataXML();
 
     // save note
     if (!note.isEmpty() )
-	s+=note.saveToDir();
+	s += note.saveToDir();
     
     // save task
     if (task)
-	s+=task->saveToDir();
+	s += task->saveToDir();
 
     // Save branches
-    int i=0;
-    TreeItem *ti=getBranchNum(i);
+    int i = 0;
+    TreeItem *ti = getBranchNum(i);
     while (ti)
     {
-	s+=getBranchNum(i)->saveToDir(tmpdir,prefix,offset,tmpLinks);
+	s += getBranchNum(i)->saveToDir(tmpdir, prefix, offset, tmpLinks);
 	i++;
-	ti=getBranchNum(i);
+	ti = getBranchNum(i);
     }	
 
     // Mark Links for save
-    for (int i=0; i<xlinkCount(); ++i)
+    for (int i = 0; i < xlinkCount(); ++i)
     {
-	Link *l=getXLinkItemNum (i)->getLink();
+	Link *l = getXLinkItemNum (i)->getLink();
 	if (l && !tmpLinks.contains (l)) tmpLinks.append (l);
     }
     decIndent();
@@ -218,7 +219,7 @@ void BranchItem::updateTaskFlag()
     systemFlags.deactivateGroup ("system-tasks");
     if (task)
     {
-	QString s="system-" + task->getIconString();
+	QString s = "system-" + task->getIconString();
 	systemFlags.activate (s);
 	model->emitDataChanged(this);
     } 
@@ -246,28 +247,28 @@ void BranchItem::unScroll()
 bool BranchItem::toggleScroll()	
 {
     // MapCenters are not scrollable
-    if (depth()==0) return false;
+    if (depth() == 0) return false;
 
     BranchObj *bo;
     if (scrolled)
     {
-	scrolled=false;
-	systemFlags.deactivate("system-scrolledright");
-	if (branchCounter>0)
-	    for (int i=0;i<branchCounter;++i)
+	scrolled = false;
+	systemFlags.deactivate( QString("system-scrolledright") );
+	if (branchCounter > 0)
+	    for (int i = 0; i < branchCounter; ++i)
 	    {
-		bo=(BranchObj*)(getBranchNum(i)->getMO());
-		if (bo) bo->setVisibility(true);
+		bo = (BranchObj*)(getBranchNum(i)->getMO());
+		if (bo) bo->setVisibility(true);    // Recursively!
 	    }
     } else
     {
-	scrolled=true;
-	systemFlags.activate("system-scrolledright");
-	if (branchCounter>0)
-	    for (int i=0;i<branchCounter;++i)
+	scrolled = true;
+	systemFlags.activate( QString("system-scrolledright") );
+	if (branchCounter > 0)
+	    for (int i = 0; i < branchCounter; ++i)
 	    {
-		bo=(BranchObj*)(getBranchNum(i)->getMO());
-		if (bo) bo->setVisibility(false);
+		bo = (BranchObj*)(getBranchNum(i)->getMO());
+		if (bo) bo->setVisibility(false);   // Recursively!
 	    }
     }
     return true;
@@ -309,7 +310,7 @@ bool BranchItem::tmpUnscroll(BranchItem *start)
     if (start !=this && scrolled)
     {
 	tmpUnscrolled=true;
-	systemFlags.activate("system-tmpUnscrolledRight");
+	systemFlags.activate(QString("system-tmpUnscrolledRight"));
 	toggleScroll();
 	model->emitDataChanged (this); 
 	result=true;
@@ -329,7 +330,7 @@ bool BranchItem::resetTmpUnscroll()
     if (tmpUnscrolled)
     {
 	tmpUnscrolled = false;
-	systemFlags.deactivate("system-tmpUnscrolledRight");
+	systemFlags.deactivate(QString("system-tmpUnscrolledRight"));
 	toggleScroll();
 	model->emitDataChanged (this);
 	result = true;
@@ -339,7 +340,7 @@ bool BranchItem::resetTmpUnscroll()
 
 void BranchItem::sortChildren(bool inverse) //FIXME-4 optimize by not using moveUp/Down
 {
-    int childCount=branchCounter; 
+    int childCount = branchCounter; 
     int curChildIndex;
     bool madeChanges = false;
     do
@@ -347,8 +348,8 @@ void BranchItem::sortChildren(bool inverse) //FIXME-4 optimize by not using move
 	madeChanges = false;
 	for(curChildIndex = 1; curChildIndex < childCount; curChildIndex++)
 	{
-	    BranchItem* curChild =getBranchNum(curChildIndex);
-	    BranchItem* prevChild=getBranchNum(curChildIndex-1);
+	    BranchItem* curChild  = getBranchNum(curChildIndex);
+	    BranchItem* prevChild = getBranchNum(curChildIndex - 1);
 	    if (inverse)
 	    {
         if (prevChild->getHeadingPlain().compare(curChild->getHeadingPlain(), Qt::CaseInsensitive) < 0)
@@ -568,7 +569,7 @@ BranchObj* BranchItem::createMapObj(QGraphicsScene *scene)
 
     if (!getHeading().isEmpty() ) 
     {
-	newbo->updateData();	
+	newbo->updateVisuals();	
         newbo->setColor (heading.getColor());
     }	
 	

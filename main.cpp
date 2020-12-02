@@ -63,17 +63,23 @@ ScriptEditor  *scriptEditor;
 ScriptOutput  *scriptOutput;
 HeadingEditor *headingEditor;	    
 NoteEditor    *noteEditor;	// used in Constr. of LinkableMapObj
+BranchPropertyEditor * branchPropertyEditor;
+
 // initialized in mainwindow
 Main *mainWindow;		// used in BranchObj::select()		
 FindWidget *findWidget;
 FindResultWidget *findResultWidget;
 
+FlagRow *systemFlagsMaster; 
+FlagRow *standardFlagsMaster;	
+FlagRow *userFlagsMaster;	
+
 Macros macros;
 
 uint itemLastID=0;		// Unique ID for all items in all models
 
-QString tmpVymDir;		// All temp files go there, created in mainwindow
-
+QDir tmpVymDir;	         	// All temp files go there, created in mainwindow
+QDir cashDir;                   // tmp dir with cashed svg files in tmpVymDir
 QString clipboardDir;		// Clipboard used in all mapEditors
 QString clipboardFile;		// Clipboard used in all mapEditors
 uint clipboardItemCount;        // Number of items in clipboard
@@ -92,9 +98,6 @@ bool debug;                     // global debugging flag
 bool testmode;		        // Used to disable saving of autosave setting
 bool recoveryMode = false;      // Activated via command line switch and deactivated after initial loading of files
 QStringList ignoredLockedFiles;
-
-FlagRow *systemFlagsMaster; 
-FlagRow *standardFlagsMaster;	
 
 Switchboard switchboard;
 
@@ -413,22 +416,29 @@ int main(int argc, char* argv[])
     app.installTranslator( &vymTranslator );
 
     // Initializing the master rows of flags
-    systemFlagsMaster=new FlagRow;
+    systemFlagsMaster = new FlagRow;
     systemFlagsMaster->setName ("systemFlagsMaster");
-    standardFlagsMaster=new FlagRow;
+
+    standardFlagsMaster = new FlagRow;
     standardFlagsMaster->setName ("standardFlagsMaster");
+    standardFlagsMaster->setPrefix ("standard/");
+
+    userFlagsMaster = new FlagRow;
+    userFlagsMaster->setName ("userFlagsMaster");
+    userFlagsMaster->setPrefix ("user/");
 
     // Initialize editors
     noteEditor = new NoteEditor("noteeditor");
     noteEditor->setWindowIcon (QPixmap (":/vym-editor.png"));
     headingEditor = new HeadingEditor("headingeditor");
+    branchPropertyEditor = new BranchPropertyEditor();
 
-    // Check if there is a JiraClient       // FIXME-4 check for ruby
+    // Check if there is a JiraClient       // FIXME-3 check for ruby
     QFileInfo fi(vymBaseDir.path() + "/scripts/jigger");   
     jiraClientAvailable = fi.exists();
     jiraPrefixList = settings.value("/system/jiraPrefixList").toStringList();   // FIXME-2 currently not used
 
-    // Check if there is a BugzillaClient   // FIXME-4 check for ruby
+    // Check if there is a BugzillaClient   // FIXME-3 check for ruby
     fi.setFile( vymBaseDir.path() + "/scripts/bugger");   
     bugzillaClientAvailable = fi.exists();
 

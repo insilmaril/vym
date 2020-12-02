@@ -10,6 +10,7 @@
 #include "misc.h"
 
 extern FlagRow *standardFlagsMaster;
+extern FlagRow *userFlagsMaster;
 extern FlagRow *systemFlagsMaster;
 extern bool debug;
 
@@ -155,26 +156,26 @@ void BranchObj::unsetParObjTmp()
 
 void BranchObj::setVisibility(bool v, int toDepth) 
 {
-    BranchItem *bi=(BranchItem*)treeItem;
+    BranchItem *bi = (BranchItem*)treeItem;
     if (bi->depth() <= toDepth)
     {
         frame->setVisibility(v);
         heading->setVisibility(v);
-        systemFlags->setVisibility(v);
-        standardFlags->setVisibility(v);
+        systemFlagRowObj->setVisibility(v);
+        standardFlagRowObj->setVisibility(v);
         LinkableMapObj::setVisibility (v);
         int i;
-        for (i=0; i<treeItem->imageCount(); ++i)
+        for (i = 0; i < treeItem->imageCount(); ++i)
             treeItem->getImageObjNum(i)->setVisibility (v);
-        for (i=0; i<treeItem->xlinkCount(); ++i)
+        for (i = 0; i < treeItem->xlinkCount(); ++i)
             treeItem->getXLinkObjNum(i)->setVisibility ();
 
         // Only change children, if I am not scrolled
         if (! bi->isScrolled() && (bi->depth() < toDepth))
         {
             // Now go recursivly through all children
-            for (i=0; i<treeItem->branchCount(); ++i)
-                treeItem->getBranchObjNum(i)->setVisibility (v,toDepth);
+            for (i = 0; i < treeItem->branchCount(); ++i)
+                treeItem->getBranchObjNum(i)->setVisibility (v, toDepth);
         }
     }
 }   
@@ -251,10 +252,10 @@ void BranchObj::calcBBoxSize()
     QSizeF heading_r=heading->getSize();
     qreal heading_w=(qreal) heading_r.width() ;
     qreal heading_h=(qreal) heading_r.height() ;
-    QSizeF sysflags_r=systemFlags->getSize();
+    QSizeF sysflags_r=systemFlagRowObj->getSize();
     qreal sysflags_h=sysflags_r.height();
     qreal sysflags_w=sysflags_r.width();
-    QSizeF stanflags_r=standardFlags->getSize();
+    QSizeF stanflags_r=standardFlagRowObj->getSize();
     qreal stanflags_h=stanflags_r.height();
     qreal stanflags_w=stanflags_r.width();
     qreal w;
@@ -369,7 +370,7 @@ void BranchObj::setDockPos()
     }
 }
 
-void BranchObj::updateData()
+void BranchObj::updateVisuals()
 {
     if (!treeItem)
     {
@@ -377,42 +378,16 @@ void BranchObj::updateData()
         return;
     }
     QString s = treeItem->getHeadingText();
-    if ( s!=heading->text()) heading->setText (s);
+    if ( s != heading->text()) heading->setText (s);
 
-    QStringList TIactiveFlags=treeItem->activeStandardFlagNames();
-
-    // Add missing standard flags active in TreeItem
-    for (int i=0;i<=TIactiveFlags.size()-1;i++)
-    {
-        if (!standardFlags->isActive (TIactiveFlags.at(i) ))
-        {
-            Flag *f=standardFlagsMaster->getFlag(TIactiveFlags.at(i));
-            if (f) standardFlags->activate (f);
-        }
-    }
-    // Remove standard flags no longer active in TreeItem
-    QStringList BOactiveFlags=standardFlags->activeFlagNames();
-    for (int i=0;i<BOactiveFlags.size();++i)
-        if (!TIactiveFlags.contains (BOactiveFlags.at(i)))
-            standardFlags->deactivate (BOactiveFlags.at(i));
+    // Update standard flags active in TreeItem
+    QList <QUuid> TIactiveFlagUids = treeItem->activeFlagUids();
+    standardFlagRowObj->updateActiveFlagObjs( TIactiveFlagUids, standardFlagsMaster, userFlagsMaster);
 
     // Add missing system flags active in TreeItem
-    TIactiveFlags=treeItem->activeSystemFlagNames();
-    for (int i=0;i<TIactiveFlags.size();++i)
-    {
-        if (!systemFlags->isActive (TIactiveFlags.at(i) ))
-        {
-            Flag *f=systemFlagsMaster->getFlag(TIactiveFlags.at(i));
-            if (f) systemFlags->activate (f);
-        }
-    }
-    // Remove system flags no longer active in TreeItem
-    BOactiveFlags=systemFlags->activeFlagNames();
-    for (int i=0;i<BOactiveFlags.size();++i)
-    {
-        if (!TIactiveFlags.contains (BOactiveFlags.at(i)))
-            systemFlags->deactivate (BOactiveFlags.at(i));
-    }
+    TIactiveFlagUids = treeItem->activeSystemFlagUids();
+    systemFlagRowObj->updateActiveFlagObjs(TIactiveFlagUids, systemFlagsMaster);
+    
     calcBBoxSize();
 }
 
@@ -645,17 +620,14 @@ ConvexPolygon BranchObj::getBoundingPolygon()
 {
     if (treeItem->branchCount()==0 || treeItem->depth()==0)
     {
-        if (boundingPolygon)
-            boundingPolygon->setPolygon (MapObj::getBoundingPolygon() );
         return MapObj::getBoundingPolygon();
     }
 
     QPolygonF p;
-    p<<bboxTotal.topLeft();
-    p<<bboxTotal.topRight();
-    p<<bboxTotal.bottomRight();
-    p<<bboxTotal.bottomLeft();
-    if (boundingPolygon) boundingPolygon->setPolygon (p );
+    p << bboxTotal.topLeft();
+    p << bboxTotal.topRight();
+    p << bboxTotal.bottomRight();
+    p << bboxTotal.bottomLeft();
     return p;
 }
 

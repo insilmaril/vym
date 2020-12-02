@@ -11,6 +11,26 @@ TaskModel::TaskModel(QObject *parent)
     : QAbstractTableModel(parent)
 {
     showParentsLevel = 0;
+
+    QSize size = QSize(22, 22);
+    QSize size2 = QSize(44, 22);
+
+    arrow_up_icon = QIcon(QPixmap(":/flag-arrow-up.svg").scaled(size, Qt::KeepAspectRatio));
+    arrow_2up_icon = QIcon(QPixmap(":/flag-arrow-2up.svg").scaled(size, Qt::KeepAspectRatio));
+
+    task_new_icon = QIcon(QPixmap(":/flag-task-new.svg").scaled(size, Qt::KeepAspectRatio));
+    task_new_morning_icon = QIcon(QPixmap(":/flag-task-new-morning.svg").scaled(size, Qt::KeepAspectRatio));
+    task_new_sleeping_icon = QIcon(QPixmap(":/flag-task-new-sleeping.svg").scaled(size, Qt::KeepAspectRatio));
+
+    task_wip_icon = QIcon(QPixmap(":/flag-task-wip.svg").scaled(size, Qt::KeepAspectRatio));
+    task_wip_morning_icon = QIcon(QPixmap(":/flag-task-wip-morning.svg").scaled(size, Qt::KeepAspectRatio));
+    task_wip_sleeping_icon = QIcon(QPixmap(":/flag-task-wip-sleeping.svg").scaled(size, Qt::KeepAspectRatio));
+
+    task_finished_icon = QIcon(QPixmap(":/flag-task-finished.svg").scaled(size, Qt::KeepAspectRatio));
+
+    taskfilter_stopsign_icon = QIcon(QPixmap(":/flag-stopsign.svg").scaled(size, Qt::KeepAspectRatio));
+    taskfilter_stopsign_arrow_up_icon = QIcon(QPixmap(":/flag-stopsign-arrow-up.png").scaled(size2, Qt::KeepAspectRatio));
+    taskfilter_stopsign_arrow_2up_icon = QIcon(QPixmap(":/flag-stopsign-arrow-2up.png").scaled(size2, Qt::KeepAspectRatio));
 }
 
 QModelIndex TaskModel::index (Task* t) const
@@ -104,26 +124,45 @@ QVariant TaskModel::data(const QModelIndex &index, int role) const
         }
     } else if (role == Qt::DecorationRole && index.column() == 2)
     {
-        return QIcon(":/flag-" + t->getIconString() + ".png");
+        QString s = t->getIconString(); // FIXME-2 workaround until all task icons are svg
+        if (s == "task-new") 
+            return task_new_icon;
+        else if (s == "task-new-morning") 
+            return task_new_morning_icon;
+        else if (s == "task-new-sleeping") 
+            return task_new_sleeping_icon;
+        else if (s == "task-wip") 
+            return task_wip_icon;
+        else if (s == "task-wip-sleeping") 
+            return task_wip_sleeping_icon;
+        else if (s == "task-wip-morning") 
+            return task_wip_morning_icon;
+        else if (s == "task-finished") 
+            return task_finished_icon;
+        else
+        { 
+            qWarning() << "Unknown task type in TaskModel::data: " << s;
+            return QVariant();
+        }
     } else if (role == Qt::DecorationRole && index.column() == 7)
     {
         BranchItem *bi = t->getBranch();
-	if (bi->hasActiveStandardFlag ("stopsign") )
+	if (bi->hasActiveFlag ("stopsign") )
         {
-            if (bi->hasActiveStandardFlag ("2arrow-up") ) 
-                return QIcon(":/flag-stopsign-2arrow-up.png");
+            if (bi->hasActiveFlag ("2arrow-up") ) 
+                return taskfilter_stopsign_arrow_2up_icon;
             else 
-                if (bi->hasActiveStandardFlag ("arrow-up") ) 
-                    return QIcon(":/flag-stopsign-arrow-up.png");
+                if (bi->hasActiveFlag ("arrow-up") ) 
+                    return taskfilter_stopsign_arrow_up_icon;
                 else
-                    return QIcon(":/flag-stopsign.png");
+                    return taskfilter_stopsign_icon; 
         } else
         {
-            if (bi->hasActiveStandardFlag ("2arrow-up") ) 
-                return QIcon(":/flag-2arrow-up.png");
+            if (bi->hasActiveFlag ("2arrow-up") ) 
+                return arrow_2up_icon;
             else 
-                if (bi->hasActiveStandardFlag ("arrow-up") )
-                    return QIcon(":/flag-arrow-up.png");
+                if (bi->hasActiveFlag ("arrow-up") )
+                    return arrow_up_icon;
         }
         return QIcon();
     }
@@ -350,9 +389,9 @@ void TaskModel::recalcPriorities()
 	if (c == QColor ("#ff0000") ) p -= 80;
 
 	// Flags
-	if (bi->hasActiveStandardFlag ("stopsign") )  p-=  450;
-	if (bi->hasActiveStandardFlag ("2arrow-up") ) p-= 1000;
-	if (bi->hasActiveStandardFlag ("arrow-up") )  p-=  500;
+	if (bi->hasActiveFlag ("stopsign") )  p-=  450;
+	if (bi->hasActiveFlag ("2arrow-up") ) p-= 1000;
+	if (bi->hasActiveFlag ("arrow-up") )  p-=  500;
 
 	// Age
 	p -= t->getAgeModification();
@@ -419,8 +458,8 @@ QMimeData *TaskModel::mimeData(const QModelIndexList &indexes) const
         // Field 1: task row
         stream << QString::number( index(task).row() );
         
-        // Field 2: Branch ID   // FIXME-0 not needed anylonger
-        stream << QString::number( task->getBranch()->getID() );
+        // Field 2: Branch ID   // FIXME-1 not needed anylonger
+        // stream << QString::number( task->getBranch()->getID() );
     }
 
 
@@ -431,6 +470,8 @@ QMimeData *TaskModel::mimeData(const QModelIndexList &indexes) const
 bool TaskModel::dropMimeData(const QMimeData *data,
  Qt::DropAction action, int row, int column, const QModelIndex &parent)
  {
+     Q_UNUSED(row);
+
      if (action == Qt::IgnoreAction)
          return true;
 
@@ -462,5 +503,6 @@ bool TaskModel::dropMimeData(const QMimeData *data,
     src->setPriorityDelta( src->getPriorityDelta() - delta_p + 1 );
     BranchItem *bi = src->getBranch();
     bi->getModel()->emitDataChanged(bi);
+    return true;
  }
 

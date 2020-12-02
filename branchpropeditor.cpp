@@ -160,27 +160,29 @@ void BranchPropertyEditor::setItem (TreeItem *ti)
                 ui.lineEditDateCreation->setText(
                     task->getDateCreation().toString() + " - " + 
                     QString(tr("%1 days ago","task related times")).arg(task->getAgeCreation()));
-
-                QDateTime mod = task->getDateModification();
-                if (mod.isValid() )
+                QDateTime dt = task->getDateModification();
+                if (dt.isValid() )
                 {
                     ui.lineEditDateModification->setText(
-                        mod.toString() + " - " + 
+                        dt.toString() + " - " + 
                         QString(tr("%1 days ago","task related times")).arg(task->getAgeModification()));
                 } else
                 {
                     ui.lineEditDateModification->setText("");
                 }
 
-                QDateTime sleep = task->getSleep();
-                if (sleep.isValid() )
+                dt = task->getSleep();
+                if (dt.isValid() )
                 {
-                    ui.lineEditDateSleep->setText(
-                        sleep.toString() + " - " + 
-                        QString(tr("%1 days","task related times")).arg(task->getDaysSleep()));
+                    QString s;
+                    qint64 daysSleep = task->getDaysSleep();
+                    daysSleep >= 0 ? 
+                        s = QString(dt.toString() + " - " + tr("sleeping %1 days","task related times")).arg(daysSleep) :
+                        s = QString(tr("Task is awake","task related times"));
+                    ui.lineEditSleep->setText(s);
                 } else
                 {
-                    ui.lineEditDateSleep->setText("");
+                    ui.lineEditSleep->setText("");
                 }
             } else
             {
@@ -188,7 +190,7 @@ void BranchPropertyEditor::setItem (TreeItem *ti)
                 ui.taskPrioDelta->setValue( 0 );
                 ui.lineEditDateCreation->setText("");
                 ui.lineEditDateModification->setText("");
-                ui.lineEditDateSleep->setText("");
+                ui.lineEditSleep->setText("");
             }
 
             /*

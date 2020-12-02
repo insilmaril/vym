@@ -26,7 +26,6 @@ void MapObj::init ()
 {
     absPos=QPointF(0,0);
     visible=true;
-    boundingPolygon=NULL;
 }
 
 void MapObj::copy(MapObj* other)
@@ -114,7 +113,7 @@ QRectF MapObj::getBBox()
 ConvexPolygon MapObj::getBoundingPolygon()
 {
     QPolygonF p;
-    p<<bbox.topLeft()<<bbox.topRight()<<bbox.bottomRight()<<bbox.bottomLeft();
+    p << bbox.topLeft() << bbox.topRight() << bbox.bottomRight() << bbox.bottomLeft();
     return p;
 }
 
@@ -123,15 +122,16 @@ QPolygonF MapObj::getClickPoly()
     return clickPoly;
 }
 
-QPainterPath MapObj::getClickPath()
+QPainterPath MapObj::getSelectionPath()
 {
+    qreal d = 3;    // Thickness of selection "border"
     QPainterPath p;
-    QRectF br=clickPoly.boundingRect();
-    p.moveTo (br.topLeft() );
-    p.lineTo (br.topRight() );
-    p.lineTo (br.bottomRight() );
-    p.lineTo (br.bottomLeft() );
-    p.lineTo (br.topLeft() );
+    QRectF br = clickPoly.boundingRect();
+    p.moveTo (br.topLeft() + QPointF(-d, -d) );
+    p.lineTo (br.topRight() + QPointF(d, -d) );
+    p.lineTo (br.bottomRight() + QPointF(d, d) );
+    p.lineTo (br.bottomLeft() + QPointF(-d, d) );
+    p.lineTo (br.topLeft() + QPointF(-d, -d) );
     return p;
 }
 
@@ -163,7 +163,7 @@ bool MapObj::isVisibleObj()
 
 void MapObj::setVisibility(bool v)
 {
-    visible=v;
+    visible = v;
 }
 
 void MapObj::positionBBox() {}
