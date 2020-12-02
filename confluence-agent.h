@@ -20,6 +20,7 @@ public:
     ~ConfluenceAgent();
     void test();
     bool getPageDetails(const QString &url);
+    bool getPageDetailsNative(const QString &url);
 private:
     bool uploadContent(const QString &url, const QString &title, const QString &fpath, const bool &newPage);
 public:

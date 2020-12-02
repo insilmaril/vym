@@ -55,7 +55,6 @@ QTextStream vout(stdout);        // vymout - Testing for now. Flush after writin
 
 QStringList jiraPrefixList;     // List containing URLs of Jira systems
 bool jiraClientAvailable;	// collabzone specific currently
-bool bugzillaClientAvailable;	// openSUSE specific currently
 
 TaskModel     *taskModel;
 TaskEditor    *taskEditor;
@@ -437,10 +436,6 @@ int main(int argc, char* argv[])
     QFileInfo fi(vymBaseDir.path() + "/scripts/jigger");   
     jiraClientAvailable = fi.exists();
     jiraPrefixList = settings.value("/system/jiraPrefixList").toStringList();   // FIXME-2 currently not used
-
-    // Check if there is a BugzillaClient   // FIXME-3 check for ruby
-    fi.setFile( vymBaseDir.path() + "/scripts/bugger");   
-    bugzillaClientAvailable = fi.exists();
 
     // Initialize mainwindow
     // Note: mainWindow pointer is set in constructor  // FIXME-3 check this...

@@ -20,7 +20,6 @@
 
 #include "attributeitem.h"
 #include "branchitem.h"
-#include "bug-agent.h"
 #include "download-agent.h"
 #include "editxlinkdialog.h"
 #include "export-ao.h"
@@ -93,7 +92,6 @@ extern QDir lastMapDir;
 extern QDir lastExportDir;
 
 extern bool jiraClientAvailable;
-extern bool bugzillaClientAvailable;
 
 extern Settings settings;
 
@@ -2162,8 +2160,6 @@ void VymModel::setURL(QString url)
 	    QString ("setURL (\"%1\")").arg(url),
 	    QString ("set URL of %1 to %2").arg(getObjectName(selti)).arg(url)
 	);
-	if (url.contains("bugzilla.novell.com/"))
-	    getBugzillaData(false);
 	emitDataChanged (selti);
 	reposition();
     }
@@ -4164,65 +4160,6 @@ void VymModel::getJiraData(bool subtree)	    // FIXME-2 update error message, ch
                 mainWindow->statusMessage (tr("Contacting Jira...", "VymModel"));
 	    } 
 
-	    if (subtree) 
-		nextBranch (cur, prev, true, selbi);
-	    else
-		cur = NULL;
-	}   
-    }
-}   
-
-void VymModel::editBugzilla2URL()   
-{
-    TreeItem *selti=getSelectedItem();
-    if (selti)
-    {	    
-    QString h=selti->getHeadingPlain();
-	QRegExp rx("(\\d+)");
-	if (rx.indexIn(h) !=-1)
-	    setURL ("https://bugzilla.novell.com/show_bug.cgi?id="+rx.cap(1) );
-    }
-}   
-
-void VymModel::getBugzillaData(bool subtree)	    // FIXME-2 no longer reference perl
-{
-    if (!bugzillaClientAvailable)
-    {
-	WarningDialog dia;
-	dia.setText(
-	    QObject::tr("No Bugzilla client found. "
-	    " For openSUSE you can install by (running as root):\n\n","VymModel, how to install Bugzilla client module")+
-	    "  zypper ar http://download.opensuse.org/repositories/openSUSE:/Tools/openSUSE_XX.Y/ openSUSE:Tools_XX.Y\n"+
-	    "  zypper in perl-SUSE-BugzillaClient\n\n"+
-	    "  and replace XX.Y with your version of openSUSE, e.g. 11.4\n\n"+
-	    QObject::tr("Alternatively you can also add the repository\n"
-	    "and install the perl module for Bugzilla access using YaST","VymModel, how to install Bugzilla client module")
-	);
-	dia.setWindowTitle(QObject::tr("Warning: Couldn't find Bugzilla client","VymModel"));
-	dia.setShowAgainName("/BugzillaClient/missing");
-	dia.exec();
-	return;
-    }
-    
-    BranchItem *selbi = getSelectedBranch();
-    if (selbi)
-    {	    
-	QString url;
-	BranchItem *prev = NULL;
-	BranchItem *cur  = NULL;
-        nextBranch (cur, prev, true, selbi);
-	while (cur) 
-	{
-	    url = cur->getURL();
-	    if (!url.isEmpty())
-	    {
-		// Don't run query again if we are in update mode
-		if (!subtree || ! url.contains("buglist.cgi") )
-		{
-		    new BugAgent (cur,url);
-		    mainWindow->statusMessage (tr("Contacting Bugzilla...", "VymModel"));
-		}
-	    }
 	    if (subtree) 
 		nextBranch (cur, prev, true, selbi);
 	    else

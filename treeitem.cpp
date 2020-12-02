@@ -421,26 +421,9 @@ void TreeItem::setURL (const QString &u)
 {
     url = u;
     if (!url.isEmpty())
-    {
-	if (url.contains ("bugzilla.novell.com"))
-	{
-	    systemFlags.activate (QString("system-url-bugzilla-novell"));
-	    if (systemFlags.isActive (QString("system-url")))
-		systemFlags.deactivate (QString("system-url"));
-	} else
-	{
-	    systemFlags.activate (QString("system-url"));
-	    if (systemFlags.isActive (QString("system-url-bugzilla-novell")))
-		systemFlags.deactivate (QString("system-url-bugzilla-novell"));
-	}
-    }
+        systemFlags.activate (QString("system-url"));
     else
-    {
-	if (systemFlags.isActive (QString("system-url")))
-	    systemFlags.deactivate (QString("system-url"));
-	if (systemFlags.isActive (QString("system-url-bugzilla-novell")))
-	    systemFlags.deactivate (QString("system-url-bugzilla-novell"));
-    }
+        systemFlags.deactivate (QString("system-url"));
 }
 
 QString TreeItem::getURL ()
