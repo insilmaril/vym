@@ -113,7 +113,7 @@ public slots:
     bool selectLastImage();
     bool selectParent();
     bool selectLatestAdded();
-    void setFlag( const QString &s);
+    void setFlagByName( const QString &s);
     void setHeadingPlainText( const QString &s );
     void setHideExport( bool b);
     void setHideLinkUnselected( bool b);
@@ -160,7 +160,7 @@ public slots:
     bool unscroll();
     void unscrollChildren();
     void unselectAll();
-    void unsetFlag( const QString &s);
+    void unsetFlagByName( const QString &s);
 
 private:
     VymModel *model;

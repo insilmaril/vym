@@ -777,7 +777,7 @@ void Main::setupAPI()
     c = new Command ("selectParent", Command::Branch); 
     modelCommands.append(c);
 
-    c = new Command ("setFlag", Command::TreeItem); 
+    c = new Command ("setFlagByName", Command::TreeItem); 
     c->addPar (Command::String,false,"Name of flag");
     modelCommands.append(c);
 
@@ -957,7 +957,7 @@ void Main::setupAPI()
     c = new Command ("unselectAll", Command::Any); 
     modelCommands.append(c);
 
-    c = new Command ("unsetFlag", Command::Branch); 
+    c = new Command ("unsetFlagByName", Command::Branch); 
     c->addPar (Command::String,false,"Name of flag to unset");
     modelCommands.append(c);
 

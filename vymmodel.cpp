@@ -3930,8 +3930,6 @@ ItemList VymModel::getTargets()
 
 void VymModel::toggleFlagByUid (const QUuid &uid, bool useGroups)  
 {
-    qDebug() << "VM::toggleFlagByUid" << uid.toString();
-
     BranchItem *bi = getSelectedBranch();
 
     if (bi) 
@@ -3941,7 +3939,7 @@ void VymModel::toggleFlagByUid (const QUuid &uid, bool useGroups)
         if (f)
         {
             QString u = "toggleFlagByUid";
-            QString name = f->getName();  // FIXME-0 we are toggling by UID...
+            QString name = f->getName();  
             saveState(
                 bi,
                 QString("%1 (\"%2\")").arg(u).arg(uid.toString()),
@@ -3951,22 +3949,22 @@ void VymModel::toggleFlagByUid (const QUuid &uid, bool useGroups)
             emitDataChanged (bi);
             reposition();
         } else
-            qWarning() << "VymModel::toggleFlag failed for flag " << uid;
+            qWarning() << "VymModel::toggleFlag failed for flag with uid " << uid;
     }
 }
 
 void VymModel::toggleFlagByName (const QString &name, bool useGroups)  
 {
     qDebug() << "VM::toggleFlagByName " << name;
-    /*
+    
     BranchItem *bi = getSelectedBranch();
 
     if (bi) 
     {
-        Flag *f = standardFlagsMaster->findFlag (uid);
+        Flag *f = standardFlagsMaster->findFlag (name);
         if (!f)
         {
-            f = userFlagsMaster->findFlag (uid);
+            f = userFlagsMaster->findFlag (name);
             if (!f)
             {
                 qWarning() << "VymModel::toggleFlag failed for flag named " << name;
@@ -3974,7 +3972,9 @@ void VymModel::toggleFlagByName (const QString &name, bool useGroups)
             }
         }
 
-        f = bi->toggleFlagByName (uid, useGroups);  
+        QUuid uid = f->getUuid();
+
+        f = bi->toggleFlagByUid (uid, useGroups);  
 
         if (f)
         {
@@ -3989,9 +3989,8 @@ void VymModel::toggleFlagByName (const QString &name, bool useGroups)
             emitDataChanged (bi);
             reposition();
         } else
-            qWarning() << "VymModel::toggleFlag failed for flag " << uid;
+            qWarning() << "VymModel::toggleFlag failed for flag named " << name << " with uid " << uid;
     }
-    */
 }
 
 void VymModel::clearFlags() 
