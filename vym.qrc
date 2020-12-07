@@ -4,7 +4,7 @@
     <file alias="flag-arrow-2up.svg">flags/standard/arrow-2up-blue.svg</file>
     <file alias="flag-arrow-down.svg">flags/standard/arrow-down-blue.svg</file>
     <file alias="flag-arrow-up.svg">flags/standard/arrow-up-blue.svg</file>
-    <file alias="flag-clock.png">flags/flag-clock.png</file>
+    <file alias="flag-clock.svg">flags/standard/kalarm.svg</file>
     <file alias="flag-cross-red.svg">flags/standard/edit-delete.svg</file>
     <file alias="flag-exclamation-mark.svg">flags/standard/dialog-warning.svg</file>
     <file alias="flag-flash.svg">flags/standard/flash.svg</file>
@@ -16,7 +16,7 @@
     <file alias="flag-lifebelt.png">flags/flag-lifebelt.png</file>
     <file alias="flag-no-arrow-up.png">flags/system/no-arrow-up.png</file>
     <file alias="flag-note.png">flags/flag-note.png</file>
-    <file alias="flag-phone.png">flags/flag-phone.png</file>
+    <file alias="flag-phone.svg">flags/standard/internet-telephony.svg</file>
     <file alias="flag-present.png">flags/flag-present.png</file>
     <file alias="flag-question-mark.svg">flags/standard/question-mark.svg</file>
     <file alias="flag-rose.png">flags/flag-rose.png</file>

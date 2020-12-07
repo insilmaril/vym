@@ -2601,12 +2601,12 @@ void Main::setupFlagActions()
             "lifebelt",
             tr("This will help","Standardflag"));
 
-    flag = setupFlag ( ":/flag-phone.png", 
+    flag = setupFlag ( ":/flag-phone.svg", 
             Flag::StandardFlag,
             "phone",
             tr("Call...","Standardflag"));
 
-    flag = setupFlag ( ":/flag-clock.png", 
+    flag = setupFlag ( ":/flag-clock.svg", 
             Flag::StandardFlag,
             "clock",
             tr("Time critical","Standardflag"));
