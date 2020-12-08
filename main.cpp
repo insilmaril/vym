@@ -55,6 +55,7 @@ QTextStream vout(stdout);        // vymout - Testing for now. Flush after writin
 
 QStringList jiraPrefixList;     // List containing URLs of Jira systems
 bool jiraClientAvailable;	// collabzone specific currently
+bool confluenceAgentAvailable; // native Confluence support via REST API, also credentials required in settings
 
 TaskModel     *taskModel;
 TaskEditor    *taskEditor;
@@ -435,7 +436,16 @@ int main(int argc, char* argv[])
     // Check if there is a JiraClient       // FIXME-3 check for ruby
     QFileInfo fi(vymBaseDir.path() + "/scripts/jigger");   
     jiraClientAvailable = fi.exists();
-    jiraPrefixList = settings.value("/system/jiraPrefixList").toStringList();   // FIXME-2 currently not used
+    jiraPrefixList = settings.value("/system/jiraPrefixList").toStringList();   // FIXME-3 currently not used
+
+    // Check if there is a (native) Confluence agent
+    if (!settings.value("/confluence/url","").toString().isEmpty() &&
+        !settings.value("/confluence/username","").toString().isEmpty() &&
+        !settings.value("/confluence/password","").toString().isEmpty() )
+        confluenceAgentAvailable = true;
+    else
+        confluenceAgentAvailable = false;
+
 
     // Initialize mainwindow
     // Note: mainWindow pointer is set in constructor  // FIXME-3 check this...

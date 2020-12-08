@@ -9,7 +9,6 @@
 #include "vymtext.h"
 #include "xlink.h"
 
-
 ///////////////////////////////////////////////////////////////////////////
 VymModelWrapper::VymModelWrapper(VymModel *m)
 {
@@ -804,6 +803,11 @@ void VymModelWrapper::setFlagByName(const QString &s)
 {
     BranchItem *selbi = getSelectedBranch();
     if (selbi) selbi->activateStandardFlag( s );    // FIXME-2 "byName"  / named user flag?
+}
+
+void VymModelWrapper::setHeadingConfluencePageName()
+{
+    model->setHeadingConfluencePageName();
 }
 
 void VymModelWrapper::setHeadingPlainText( const QString &text)// FIXME-2  what about RT?

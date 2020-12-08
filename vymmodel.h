@@ -523,6 +523,7 @@ public:
     void note2URLs();			    // get URLs from note
     void editHeading2URL();		    // copy heading to URL
     void getJiraData(bool subtree);	    // get data from Jira
+    void setHeadingConfluencePageName();    // get page details from Confluence
     void editFATE2URL();		    // create URL to FATE
     void setVymLink (const QString &);	// Set vymLink for selection
     void deleteVymLink();		    // delete link to another map

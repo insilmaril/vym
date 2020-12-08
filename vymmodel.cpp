@@ -20,6 +20,7 @@
 
 #include "attributeitem.h"
 #include "branchitem.h"
+#include "confluence-agent.h"
 #include "download-agent.h"
 #include "editxlinkdialog.h"
 #include "export-ao.h"
@@ -1871,7 +1872,7 @@ void VymModel::setHeading(const VymText &vt, BranchItem *bi)
     Heading h_new;
     h_new = vt;
     QString s = vt.getTextASCII();
-    if (!bi) bi=getSelectedBranch();
+    if (!bi) bi = getSelectedBranch();
     if (bi)
     {
         h_old = bi->getHeading();
@@ -2147,20 +2148,33 @@ void VymModel::findReset()
 
 void VymModel::setURL(QString url) 
 {
-    TreeItem *selti = getSelectedItem();
-    if (selti->getURL() == url) return;
-    if (selti)
+    BranchItem *selbi = getSelectedBranch();
+    if (selbi->getURL() == url) return;
+    if (selbi)
     {
-	QString oldurl = selti->getURL();
-	selti->setURL (url);
+        // Check for Confluence 
+        QString confluenceURL = settings.value("/confluence/url","").toString();
+        if (!confluenceURL.isEmpty() && url.contains(confluenceURL))
+        {
+            qDebug() << "VM check Confluence";
+            if (!settings.value("/confluence/username","").toString().isEmpty() &&
+                !settings.value("/confluence/password","").toString().isEmpty())
+            {
+                ConfluenceAgent * ca_details = new ConfluenceAgent (selbi);
+                ca_details->getPageDetailsNative(url);
+            }
+        }
+
+	QString oldurl = selbi->getURL();
+	selbi->setURL (url);
 	saveState (
-	    selti,
+	    selbi,
 	    QString ("setURL (\"%1\")").arg(oldurl),
-	    selti,
+	    selbi,
 	    QString ("setURL (\"%1\")").arg(url),
-	    QString ("set URL of %1 to %2").arg(getObjectName(selti)).arg(url)
+	    QString ("set URL of %1 to %2").arg(getObjectName(selbi)).arg(url)
 	);
-	emitDataChanged (selti);
+	emitDataChanged (selbi);
 	reposition();
     }
 }   
@@ -4167,6 +4181,19 @@ void VymModel::getJiraData(bool subtree)	    // FIXME-2 update error message, ch
 	}   
     }
 }   
+
+void VymModel::setHeadingConfluencePageName()
+{
+    BranchItem *selbi = getSelectedBranch();
+    if (selbi)
+    {
+        if (!selbi->getURL().isEmpty())
+        {
+            ConfluenceAgent * ca_details = new ConfluenceAgent (selbi);
+            ca_details->getPageDetailsNative(selbi->getURL() );
+        }
+    }
+}
 
 void VymModel::editFATE2URL()
 {

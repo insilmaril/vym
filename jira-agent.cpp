@@ -30,7 +30,6 @@ JiraAgent::JiraAgent (BranchItem *bi,const QString &u)
 
     QString ticketID;
 
-
     url = u;
 
     QStringList args;

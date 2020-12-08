@@ -5,14 +5,34 @@
 #include "misc.h"
 #include "vymmodel.h"
 
-
 extern Main *mainWindow;
+extern QSettings settings;
 extern QDir vymBaseDir;
 extern bool debug;
 
 ConfluenceAgent::ConfluenceAgent ()
+{ 
+    init();
+}
+
+ConfluenceAgent::ConfluenceAgent(BranchItem *bi)
 {
-    killTimer = NULL;
+    init();
+    if (!bi)
+    {
+	qWarning ("Const ConfluenceAgent: bi == nullptr");
+	delete (this);
+	return;
+    }
+
+    branchID = bi->getID();
+    VymModel *model = bi->getModel();
+    modelID = model->getModelID();
+}
+
+void ConfluenceAgent::init()
+{
+    killTimer = nullptr;
 
     confluenceScript = vymBaseDir.path() + "/scripts/confluence.rb";
 
@@ -20,11 +40,18 @@ ConfluenceAgent::ConfluenceAgent ()
     killTimer->setInterval(10000); 
     killTimer->setSingleShot(true); 
 
-    vymProcess = NULL;  // Only one process may be active at any time in this agent
+    vymProcess = nullptr;  // Only one process may be active at any time in this agent
 
     QObject::connect(killTimer, SIGNAL(timeout()), this, SLOT(timeout()));
 
     succ = false;
+
+    // Read credentials // FIXME-2 dialog to set credentials, if not saved before
+    username = settings.value("/confluence/username","user_johnDoe").toString();
+    password = settings.value("/confluence/password","pass_johnDoe").toString();
+    baseURL = settings.value("/confluence/url","baseURL").toString();
+
+    apiURL = baseURL + "/rest/api";
 }
 
 ConfluenceAgent::~ConfluenceAgent ()
@@ -73,6 +100,24 @@ bool ConfluenceAgent::getPageDetails(const QString &url)
 	qWarning() << "ConfluenceAgent::getPageDetails  couldn't start " << confluenceScript;
 	return false; 
     } 
+
+    return true;
+}
+
+bool ConfluenceAgent::getPageDetailsNative(const QString &u)
+{
+    QUrl url (u);
+    if (!url.isValid()) {
+        qWarning() << "ConfluenceAgent: Invalid URL: " << u;
+        return false;
+    }
+
+    pageURL = u;
+
+    // schedule the request
+    startGetPageSourceRequest(url);
+
+    killTimer->start();
 
     return true;
 }
@@ -192,13 +237,195 @@ bool ConfluenceAgent::dataReceived(int exitCode, QProcess::ExitStatus exitStatus
             
     } else	
 	qWarning() << "ConfluenceAgent: Process finished with exitCode=" << exitCode;
-    vymProcess = NULL;
+    vymProcess = nullptr;
 }
 
 void ConfluenceAgent::timeout()
 {
-    qWarning() << "ConfluenceAgent timeout!";
-    // delete (vymProcess);  // FIXME-1  crashes...
-    vymProcess = NULL;
+    qWarning() << "ConfluenceAgent timeout!!";
+    if (vymProcess)
+    {
+        // delete (vymProcess);  // FIXME-2  crashes in ConfluenceAgent -  deleteLater()?
+        vymProcess = nullptr;
+    }
+
+    if (reply)
+    {
+        reply->abort();
+        reply->deleteLater();
+        reply = nullptr;
+    }
+
+
 }
     
+void ConfluenceAgent::startGetPageSourceRequest(QUrl requestedURL)
+{
+    if (!requestedURL.toString().startsWith("http"))
+        requestedURL.setPath("https://" + requestedURL.path() );
+
+    QUrl url = requestedURL;
+    httpRequestAborted = false;
+
+    QNetworkRequest request = QNetworkRequest(url);
+    
+    // Basic authentication in header
+    QString concatenated = username + ":" + password;
+    QByteArray data = concatenated.toLocal8Bit().toBase64();
+    QString headerData = "Basic " + data;
+    request.setRawHeader("Authorization", headerData.toLocal8Bit());
+
+    if (debug) qDebug() << "CA::startGetPageSourceRequest=" << request.url().toString();
+
+    reply = qnam.get(request);
+
+    disconnect();
+    connect(reply, &QNetworkReply::finished, this, &ConfluenceAgent::pageSourceReceived);
+}
+
+void ConfluenceAgent::startGetPageDetailsRequest(QString query)
+{
+    if (debug) qDebug() << "CA::startGetPageDetailsRequest" << query;
+
+    httpRequestAborted = false;
+
+    // Authentication in URL  (only SSL!)
+    // maybe switch to token later:
+    // https://developer.atlassian.com/cloud/confluence/basic-auth-for-rest-apis/
+    QString concatenated = username + ":" + password;
+
+    query = "https://" + concatenated + "@" + apiURL + query;
+
+    QNetworkRequest request = QNetworkRequest(QUrl(query));
+    
+    reply = qnam.get(request);
+
+    disconnect();
+
+    connect(reply, &QNetworkReply::finished, this, &ConfluenceAgent::pageDetailsReceived);
+}
+
+void ConfluenceAgent::pageSourceReceived()
+{
+    if (debug) qDebug() << "CA::pageSourceReceived";
+
+    QString r = reply->readAll();
+
+    // Check for page id
+    QRegExp rx("\\sname=\"ajs-page-id\"\\scontent=\"(\\d*)\"");
+    rx.setMinimal(true);
+
+    if (rx.indexIn(r, 0) != -1) 
+    {
+        pageID = rx.cap(1);
+    } else
+    {
+        qWarning() << "ConfluenceAgent: Couldn't find page";
+        // FIXME-0 fail!
+    }
+
+    // Check for space key
+    rx.setPattern("meta\\s*id=\"confluence-space-key\"\\s* name=\"confluence-space-key\"\\s*content=\"(.*)\"");
+    if (rx.indexIn(r, 0) != -1) 
+    {
+        spaceKey = rx.cap(1);
+    } else
+    {
+        qWarning() << "ConfluenceAgent: Couldn't find space key";
+        // FIXME-0 fail!
+    }
+
+    if (httpRequestAborted) {
+        qWarning() << "ConfluenceAgent::pageSoureReveived aborted";
+        reply->deleteLater();
+        reply = nullptr;
+        return;
+    }
+
+    if (reply->error()) {
+        qWarning() << "ConfluenceAgent::pageSoureReveived reply error";
+        reply->deleteLater();
+        reply = nullptr;
+        return;
+    }
+
+    const QVariant redirectionTarget = reply->attribute(QNetworkRequest::RedirectionTargetAttribute);
+
+    startGetPageDetailsRequest( "/content/" + pageID + "?expand=metadata.labels,version");
+}
+
+void ConfluenceAgent::pageDetailsReceived()
+{
+    if (debug) qDebug() << "CA::pageDetailsReceived";
+
+    if (httpRequestAborted) {
+        qWarning() << "ConfluenceAgent::pageDetailsReveived aborted error";
+        reply->deleteLater();
+        reply = nullptr;
+        return;
+    }
+
+    if (reply->error()) {
+        qWarning() << "ConfluenceAgent::pageDetailsReveived reply error";
+        qDebug() << reply->error();
+        reply->deleteLater();
+        reply = nullptr;
+        return;
+    }
+
+    //const QVariant redirectionTarget = reply->attribute(QNetworkRequest::RedirectionTargetAttribute);
+
+    /*
+    details.version = r['version']['number']
+    details.labels = r['metadata']['labels']['results']
+    */
+
+    QJsonDocument jsdoc;
+    jsdoc = QJsonDocument::fromJson(reply->readAll());
+    
+    QJsonObject jsobj = jsdoc.object();
+
+    /*
+    QJsonArray jsarr = jsobj[“feeds”].toArray();
+    foreach (const QJsonValue &value, jsarr) {
+        QJsonObject jsob = value.toObject();
+        qDebug() << jsob[“entry_id”].toInt();
+        qDebug() << jsob[“field1”].toString();
+        qDebug() << jsob[“created_at”].toString();
+    */
+
+    VymModel *model = mainWindow->getModel (modelID);
+    if (model)
+    {
+        BranchItem *bi = (BranchItem*)(model->findID (branchID));	    
+
+	if (bi)
+	{
+            QString h = spaceKey + ": " + jsobj["title"].toString();
+            model->setHeading(h, bi);
+        } else
+            qWarning() << "CA::pageDetailsReceived couldn't find branch " << branchID;
+    }
+    else
+        qWarning() << "CA::pageDetailsReceived couldn't find model " << modelID;
+
+
+    reply->deleteLater();
+    reply = nullptr;
+}
+
+#ifndef QT_NO_SSL   //FIXME-2 make sure to use SSL!!!
+void ConfluenceAgent::sslErrors(QNetworkReply *, const QList<QSslError> &errors)
+{
+    QString errorString;
+    foreach (const QSslError &error, errors) {
+        if (!errorString.isEmpty())
+            errorString += '\n';
+        errorString += error.errorString();
+    }
+
+    reply->ignoreSslErrors();
+    qWarning() << "One or more SSL errors has occurred: " << errorString;
+    qWarning() << "Errors ignored.";
+}
+#endif

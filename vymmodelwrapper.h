@@ -114,6 +114,7 @@ public slots:
     bool selectParent();
     bool selectLatestAdded();
     void setFlagByName( const QString &s);
+    void setHeadingConfluencePageName();
     void setHeadingPlainText( const QString &s );
     void setHideExport( bool b);
     void setHideLinkUnselected( bool b);

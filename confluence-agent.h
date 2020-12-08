@@ -3,6 +3,7 @@
 
 #include <QHash>
 #include <QObject>
+#include <QNetworkAccessManager>
 #include <QTimer>
 
 #include "heading.h"
@@ -17,7 +18,9 @@ class ConfluenceAgent:public QObject
 
 public:	
     ConfluenceAgent ();
+    ConfluenceAgent (BranchItem* bi);
     ~ConfluenceAgent();
+    void init();
     void test();
     bool getPageDetails(const QString &url);
     bool getPageDetailsNative(const QString &url);
@@ -41,6 +44,36 @@ private:
     QTimer *killTimer;
     bool succ;
     QString result;
+
+// REST access related, new
+public:
+    void startGetPageSourceRequest(QUrl requestedUrl);
+    void startGetPageDetailsRequest(QString query);
+
+private slots:
+    void pageSourceReceived();
+    void pageDetailsReceived();
+#ifndef QT_NO_SSL
+    void sslErrors(QNetworkReply *, const QList<QSslError> &errors);
+#endif
+
+private:
+    QNetworkAccessManager qnam;
+    QNetworkReply *reply;
+    bool httpRequestAborted;
+
+    QString username;
+    QString password;
+
+    uint branchID;
+    uint modelID;
+
+    QString baseURL;
+    QString apiURL;
+
+    QString pageURL;
+    QString pageID;
+    QString spaceKey;
 };
 #endif
 

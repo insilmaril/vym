@@ -10,6 +10,7 @@
 
 extern Main *mainWindow;
 extern QString vymVersion;
+extern bool confluenceAgentAvailable;
 
 ///////////////////////////////////////////////////////////////////////////
 void logError(QScriptContext *context, QScriptContext::Error error, const QString &text)
@@ -52,6 +53,11 @@ VymWrapper::VymWrapper()
 void VymWrapper::clearConsole()
 {
     mainWindow->clearScriptOutput();
+}
+
+bool VymWrapper::isConfluenceAgentAvailable()
+{
+    return confluenceAgentAvailable;
 }
 
 QObject* VymWrapper::currentMap()   

@@ -273,9 +273,14 @@ function macro_shift_f11()
 // Macro Shift + F12: Strip URLs from confluence and generate readable heading
 function macro_shift_f12()
 {
-
     vym.clearConsole();
     m1 = vym.currentMap();
+
+    if (vym.isConfluenceAgentAvailable() ) {
+        m1.setHeadingConfluencePageName();
+        statusMessage("Contacting Confluence...");
+        return;
+    } 
 
     org = m1.getURL();
 

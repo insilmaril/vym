@@ -818,6 +818,9 @@ void Main::setupAPI()
     c->addPar (Command::Int,false,"Width of frame borderline");
     modelCommands.append(c);
 
+    c = new Command ("setHeadingConfluencePageName", Command::Branch);
+    modelCommands.append(c);
+
     c = new Command ("setHeadingPlainText", Command::TreeItem); 
     c->addPar (Command::String,false,"New heading");
     modelCommands.append(c);
@@ -1580,6 +1583,15 @@ void Main::setupEditActions()
     connect( a, SIGNAL( triggered() ), this, SLOT( getJiraDataSubtree() ) );
     actionListBranches.append(a);
     actionGetJiraDataSubtree=a;
+
+    a = new QAction(tr( "Get page name from Confluence","Edit menu" ) + " (experimental)", this);
+//    a->setShortcut ( Qt::Key_J + Qt::CTRL);
+//    a->setShortcutContext (Qt::WindowShortcut);
+//    switchboard.addSwitch ("mapUpdateSubTreeFromJira", shortcutScope, a, tag);
+    addAction(a);
+    connect( a, SIGNAL( triggered() ), this, SLOT( setHeadingConfluencePageName() ) );
+    actionListBranches.append(a);
+    actionGetConfluencePageName = a;
 
     tag = tr("SUSE Fate tool handling","Shortcuts");
     a = new QAction(tr( "Create URL to SUSE FATE tool","Edit menu" ), this);
@@ -3141,6 +3153,7 @@ void Main::setupContextMenus()
 	branchLinksContextMenu->addAction ( actionHeading2URL );
 	branchLinksContextMenu->addAction ( actionGetJiraData );
 	branchLinksContextMenu->addAction ( actionGetJiraDataSubtree );
+	branchLinksContextMenu->addAction ( actionGetConfluencePageName );
 	if (settings.value( "/mainwindow/showTestMenu",false).toBool() )
 	    branchLinksContextMenu->addAction ( actionFATE2URL );   // FIXME-1 remove FATE?
 	branchLinksContextMenu->addSeparator();	
@@ -4617,6 +4630,12 @@ void Main::getJiraDataSubtree()
 {
     VymModel *m=currentModel();
     if (m) m->getJiraData(true);
+}
+
+void Main::setHeadingConfluencePageName()
+{
+    VymModel *m = currentModel();
+    if (m) m->setHeadingConfluencePageName();
 }
 
 void Main::editFATE2URL()
@@ -6179,6 +6198,7 @@ void Main::updateActions()
 		    actionOpenURL->setEnabled (false);
 		    actionOpenURLTab->setEnabled (false);
 		    actionGetJiraData->setEnabled (false);
+		    actionGetConfluencePageName->setEnabled (false);
 		}   
 		else	
 		{
@@ -6196,6 +6216,10 @@ void Main::updateActions()
                         }
                     }
                     actionGetJiraData->setEnabled ( ok && jiraClientAvailable);
+                    if ( u.contains(settings.value("/confluence/url", "").toString() ))
+                        actionGetConfluencePageName->setEnabled ( true );
+                    else
+                        actionGetConfluencePageName->setEnabled ( false );
 		}
 		if ( selti->getVymLink().isEmpty() )
 		{
@@ -6440,11 +6464,9 @@ void Main::flagChanged()
 void Main::testFunction1()
 {
     VymModel *m = currentModel();
-    if (m)
+    if (m) m->setHeadingConfluencePageName();
+/*
     {
-        
-
-        /*
         UserDialog dia;
         dia.exec();
         if (dia.result() > 0 )
@@ -6452,8 +6474,8 @@ void Main::testFunction1()
             m->setHeading(dia.selectedUser());
             m->setURL( QString("<ac:link> <ri:user ri:userkey=\"%1\"/></ac:link>").arg(dia.selectedUserKey() ));
         }
-        */
     }
+        */
 }
 
 void Main::testFunction2()

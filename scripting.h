@@ -33,6 +33,7 @@ public:
 
 public slots:
     void clearConsole();
+    bool isConfluenceAgentAvailable();
     QObject* currentMap();
     bool loadMap( const QString &filename);
     int mapCount();
