@@ -65,7 +65,7 @@ QString ExportHTML::getBranchText(BranchItem *current)
             }
         }
 
-        // User flags
+        // Standard and user flags
         QString userFlags;
         if (dia.useUserFlags)   // FIXME-1  Store both standard and user flags in export and use below
         {

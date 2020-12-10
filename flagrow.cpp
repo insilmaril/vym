@@ -54,7 +54,7 @@ void FlagRow::addActionToToolbar(QAction *a)
         toolbar->addAction(a);
 }
 
-Flag* FlagRow::findFlag (const QUuid &uid)
+Flag* FlagRow::findFlag (const QUuid &uid)  // FIXME-2 rename to byUID
 {
     // Must only be called for masterRow itself!
     if (masterRow)
@@ -73,7 +73,7 @@ Flag* FlagRow::findFlag (const QUuid &uid)
     return NULL;
 }
 
-Flag* FlagRow::findFlag (const QString &name)
+Flag* FlagRow::findFlag (const QString &name)// FIXME-2 rename to byName
 {
     // Must only be called for masterRow itself!
     if (masterRow)

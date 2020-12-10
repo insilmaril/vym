@@ -124,7 +124,7 @@ void FlagRowObj::calcBBoxSize()
 
 bool FlagRowObj::isFlagActive(const QUuid &uid)
 {
-    FlagObj *fo = findFlagObj (uid);
+    FlagObj *fo = findFlagObjByUid (uid);
     if (fo) 
 	return true;
     else
@@ -151,7 +151,7 @@ void FlagRowObj::activateFlag (Flag *flag)
     }
 }
 
-FlagObj* FlagRowObj::findFlagObj(const QUuid &uid)
+FlagObj* FlagRowObj::findFlagObjByUid(const QUuid &uid)
 {
     for (int i = 0; i < flagobjs.size(); ++i)
 	if (flagobjs.at(i)->getUuid() == uid) return flagobjs.at(i);

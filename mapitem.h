@@ -57,7 +57,6 @@ public:
     virtual QString getMapAttr();   //! Get attributes for saving as XML
 
     virtual QRectF getBBoxURLFlag();//! get bbox of url flag
-    virtual QRectF getBBoxSystemFlag   (const QString &fname);    //! get bbox of flag
     virtual void setRotation (const qreal &a);
 
 

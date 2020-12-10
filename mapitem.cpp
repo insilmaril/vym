@@ -5,6 +5,8 @@
 
 #include <QDebug>
 
+extern FlagRow *systemFlagsMaster;
+
 MapItem::MapItem()
 {
     init();
@@ -130,22 +132,22 @@ QString MapItem::getMapAttr ()
 
 QRectF MapItem::getBBoxURLFlag ()
 {
-    QStringList list=systemFlags.activeFlagNames().filter ("system-url");
-    if (list.count()>1)
+    QString s = "system-url";
+    QStringList list = systemFlags.activeFlagNames().filter (s);
+    if (list.count() > 1)
     {
 	qWarning()<<"MapItem::getBBoxURLFlag found more than one system-url*";
 	return QRectF ();
     }	
-    return getBBoxSystemFlag (list.first());
-}
 
-QRectF MapItem::getBBoxSystemFlag (const QString &fname)
-{
-    LinkableMapObj *lmo=getLMO();
-    if (lmo)
-	return ((OrnamentedObj*)lmo)->getBBoxSystemFlag (fname);
-    else    
-	return QRectF ();
+    Flag *f = systemFlagsMaster->findFlag(s);
+    if (f) 
+    {
+        QUuid u = f->getUuid();
+        LinkableMapObj *lmo = getLMO();
+        if (lmo) return ((OrnamentedObj*)lmo)->getBBoxSystemFlagByUid (u);
+    }
+    return QRectF ();
 }
 
 void MapItem::setRotation(const qreal &a)
