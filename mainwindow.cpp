@@ -373,8 +373,6 @@ Main::Main(QWidget* parent, Qt::WindowFlags f) : QMainWindow(parent,f)
     //settings.setValue( "mainwindow/showTestMenu", true);
     updateGeometry();
 
-    presentationMode = false;
-
 #if defined(VYM_DBUS)
     // Announce myself on DBUS
     new AdaptorVym (this);    // Created and not deleted as documented in Qt
@@ -386,8 +384,6 @@ Main::Main(QWidget* parent, Qt::WindowFlags f) : QMainWindow(parent,f)
 Main::~Main()
 {
     // qDebug()<<"Destr Mainwindow"<<flush;
-
-    if (presentationMode) togglePresentationMode();
 
     // Save Settings
 
@@ -2090,7 +2086,7 @@ void Main::setupViewActions()
 
     QAction *a;
 
-    a = new QAction( tr( "Toggle Presentation mode","View action" ) + " " + tr("(still experimental"), this);
+    a = new QAction( tr( "Toggle Presentation mode","View action" ) + " " + tr("(still experimental)"), this);
     //a->setShortcut(Qt::Key_Plus);
     viewMenu->addAction (a);
     //switchboard.addSwitch ("mapZoomIn", shortcutScope, a, tag);
@@ -2452,7 +2448,6 @@ void Main::setupFlagActions()
     userFlagsToolbar->setObjectName ("userFlagsTB");
     userFlagsMaster->setToolBar (userFlagsToolbar);
     userFlagsMaster->createConfigureAction();
-    toolbarsMenu->addAction (userFlagsToolbar->toggleViewAction() );
     
     // Create Standard Flags
     standardFlagsToolbar=addToolBar (tr ("Standard Flags toolbar","Standard Flag Toolbar"));
@@ -2461,8 +2456,6 @@ void Main::setupFlagActions()
 
     // Add entry now, to avoid chicken and egg problem and position toolbar 
     // after all others:
-    toolbarsMenu->addAction (standardFlagsToolbar->toggleViewAction() );
-
     flag = setupFlag ( ":/flag-stopsign.svg", 
             Flag::StandardFlag,
             "stopsign", 
@@ -3392,19 +3385,11 @@ void Main::setupToolbars()
     toolbarsMenu->addAction (modModesToolbar->toggleViewAction() );
     toolbarsMenu->addAction (referencesToolbar->toggleViewAction() );
     toolbarsMenu->addAction (editorsToolbar->toggleViewAction() );
+    toolbarsMenu->addAction (userFlagsToolbar->toggleViewAction() );
+    toolbarsMenu->addAction (standardFlagsToolbar->toggleViewAction() );
 
-    // Default visibility to not overload new users
-    fileToolbar->show();
-    clipboardToolbar->show();
-    editActionsToolbar->show();
-    selectionToolbar->hide();
-    colorsToolbar->show();
-    zoomToolbar->show();
-    modModesToolbar->hide();
-    referencesToolbar->hide();
-    editorsToolbar->hide();
 
-    // Initialize toolbarStates for presentation mode // FIXME-0 use map for initial setup, too
+    // Initialize toolbarStates for presentation mode 
     toolbarStates[fileToolbar] = true;
     toolbarStates[clipboardToolbar] = true;
     toolbarStates[editActionsToolbar] = true;
@@ -3415,6 +3400,12 @@ void Main::setupToolbars()
     toolbarStates[referencesToolbar] = false;
     toolbarStates[editorsToolbar] = false;  
     toolbarStates[standardFlagsToolbar] = true;  
+    toolbarStates[userFlagsToolbar] = true;  
+
+    // Initialize toolbar visibilities and switch off presentation mode
+    presentationMode = true;
+    togglePresentationMode();
+
 }
 
 VymView* Main::currentView() const
