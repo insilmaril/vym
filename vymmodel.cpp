@@ -641,7 +641,7 @@ File::ErrorCode VymModel::loadMap (
 	    reposition();   // to generate bbox sizes
 	    emitSelectionChanged();
 
-	    if (lmode == NewMap)
+	    if (lmode == NewMap)    // no lockfile for default map!
 	    {
 		mapDefault = false;
 		mapChanged = false;

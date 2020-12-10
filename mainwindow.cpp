@@ -3745,7 +3745,6 @@ File::ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode, const FileType
                 addRecentMap( fn );
             } else if (lmode == DefaultMap)
             {
-                // FIXME-0 How to handle lockfile for default map?
                 vm->makeDefault();
                 updateTabName(vm);
             }
@@ -3845,7 +3844,7 @@ void Main::fileLoadRecent()
     }
 }
 
-void Main::addRecentMap (const QString &fileName)   // FIXME-0 ignore path of default map here
+void Main::addRecentMap (const QString &fileName) 
 {
 
     QStringList files = settings.value("/mainwindow/recentFileList").toStringList();

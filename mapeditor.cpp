@@ -52,14 +52,13 @@ MapEditor::MapEditor( VymModel *vm)
 
     model=vm;
     model->registerEditor(this);
-    // FIXME-0 really required to call from ME?   model->makeDefault();   // No changes in model so far
 
     setScene (mapScene);
 
     setStyleSheet( "QGraphicsView:focus {" + editorFocusStyle + "}" );
     
     // Create bitmap cursors, platform dependant
-    HandOpenCursor=QCursor (QPixmap(":/cursorhandopen.png"),1,1);// FIXME-1 not needed any longer
+    HandOpenCursor=QCursor (QPixmap(":/cursorhandopen.png"),1,1);
     PickColorCursor=QCursor ( QPixmap(":/cursorcolorpicker.png"), 5,27 ); 
     XLinkCursor=QCursor ( QPixmap(":/cursorxlink.png"), 1,7 ); 
 
