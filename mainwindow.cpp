@@ -1532,7 +1532,7 @@ void Main::setupEditActions()
     actionListBranches.append(a);
     actionGetURLsFromNote=a;
 
-    a = new QAction(QPixmap(":/flag-urlnew.png"), tr( "Edit URL...","Edit menu"), this);    // FIXME-1
+    a = new QAction(QPixmap(":/flag-urlnew.svg"), tr( "Edit URL...","Edit menu"), this);    // FIXME-1
     a->setShortcut ( Qt::Key_U );
     a->setShortcutContext (Qt::WindowShortcut);
     switchboard.addSwitch ("mapEditURL", shortcutScope, a, tag);
