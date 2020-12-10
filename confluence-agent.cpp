@@ -320,8 +320,10 @@ void ConfluenceAgent::pageSourceReceived()
         pageID = rx.cap(1);
     } else
     {
-        qWarning() << "ConfluenceAgent: Couldn't find page";
-        // FIXME-0 fail!
+        qWarning() << "ConfluenceAgent::pageSourceReveived Couldn't find page ID";
+        reply->deleteLater();
+        reply = nullptr;
+        return;
     }
 
     // Check for space key
@@ -331,8 +333,10 @@ void ConfluenceAgent::pageSourceReceived()
         spaceKey = rx.cap(1);
     } else
     {
-        qWarning() << "ConfluenceAgent: Couldn't find space key";
-        // FIXME-0 fail!
+        qWarning() << "ConfluenceAgent::pageSourceReveived Couldn't find page space key";
+        reply->deleteLater();
+        reply = nullptr;
+        return;
     }
 
     if (httpRequestAborted) {
