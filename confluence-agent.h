@@ -35,7 +35,7 @@ public:
     QString getResult();
 
 public slots:
-    virtual bool dataReceived(int exitCode, QProcess::ExitStatus exitStatus);
+    virtual void dataReceived(int exitCode, QProcess::ExitStatus exitStatus);
     virtual void timeout();
 
 private:
