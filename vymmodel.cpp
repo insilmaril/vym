@@ -4195,24 +4195,6 @@ void VymModel::setHeadingConfluencePageName()
     }
 }
 
-void VymModel::editFATE2URL()
-{
-    TreeItem *selti=getSelectedItem();
-    if (selti)
-    {	    
-    QString url= "http://keeper.suse.de:8080/webfate/match/id?value=ID"+selti->getHeadingPlain();
-	saveState(
-	    selti,
-	    "setURL (\""+selti->getURL()+"\")",
-	    selti,
-	    "setURL (\""+url+"\")",
-	    QString("Use heading of %1 as link to FATE").arg(getObjectName(selti))
-	);  
-	selti->setURL (url);
-	// FIXME-4 updateActions();
-    }
-}   
-
 void VymModel::setVymLink (const QString &s)	//FIXME-4 fail, if s does not exist
 {
     BranchItem *bi=getSelectedBranch();

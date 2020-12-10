@@ -1458,7 +1458,7 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
             if (mainWindow->getModMode() == Main::ModModeMoveObject &&
                 e->modifiers() & Qt::ShiftModifier)
             {
-                setState (MovingObjectWithoutLinking);  // FIXME-1
+                setState (MovingObjectWithoutLinking);  
             } else
                 setState (MovingObject);
 
@@ -1561,8 +1561,8 @@ void MapEditor::mouseMoveEvent(QMouseEvent* e)
 	else if ( e->x() <= width() && e->x() > width()-margin )
 	    vPan.setX(e->x() - width() + margin );
 
-	pointerPos = e->pos();  // FIXME-1 needed?
-	pointerMod = e->modifiers();    // FIXME-1 needed?
+	pointerPos = e->pos();
+	pointerMod = e->modifiers();
 	moveObject ();
     } // selection && moving_obj
 	
@@ -1588,7 +1588,6 @@ void MapEditor::moveObject ()
     objectMoved = true;
     
     // reset cursor if we are moving and don't copy
-    //setCursor (Qt::ArrowCursor);    // FIXME-1 needed after removing modModeCopy
 
     // Check if we could link 
     TreeItem *ti_found = findMapItem (p, seli);

@@ -183,7 +183,6 @@ private slots:
     void getJiraData();
     void getJiraDataSubtree();
     void setHeadingConfluencePageName();
-    void editFATE2URL();
     void openVymLinks(const QStringList &, bool background=false);
     void editVymLink();
     void editOpenMultipleVymLinks();
@@ -460,7 +459,6 @@ private:
     QAction* actionGetJiraData;
     QAction* actionGetJiraDataSubtree;
     QAction* actionGetConfluencePageName;
-    QAction* actionFATE2URL;
     QAction *actionOpenVymLink;
     QAction *actionOpenVymLinkBackground;
     QAction *actionOpenMultipleVymLinks;

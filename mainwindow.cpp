@@ -1588,15 +1588,6 @@ void Main::setupEditActions()
     actionListBranches.append(a);
     actionGetConfluencePageName = a;
 
-    tag = tr("SUSE Fate tool handling","Shortcuts");
-    a = new QAction(tr( "Create URL to SUSE FATE tool","Edit menu" ), this);
-    a->setEnabled (false);
-    switchboard.addSwitch ("mapFate2URL", shortcutScope, a, tag);
-    actionListBranches.append(a);
-    connect( a, SIGNAL( triggered() ), this, SLOT( editFATE2URL() ) );
-    actionListBranches.append(a);
-    actionFATE2URL=a;
-
     tag = tr("vymlinks - linking maps","Shortcuts");
     a = new QAction(QPixmap(":/flag-vymlink.png"), tr( "Open linked map","Edit menu" ), this);
     a->setShortcut ( Qt::SHIFT + Qt::Key_V );
@@ -3146,8 +3137,6 @@ void Main::setupContextMenus()
 	branchLinksContextMenu->addAction ( actionGetJiraData );
 	branchLinksContextMenu->addAction ( actionGetJiraDataSubtree );
 	branchLinksContextMenu->addAction ( actionGetConfluencePageName );
-	if (settings.value( "/mainwindow/showTestMenu",false).toBool() )
-	    branchLinksContextMenu->addAction ( actionFATE2URL );   // FIXME-1 remove FATE?
 	branchLinksContextMenu->addSeparator();	
 	branchLinksContextMenu->addAction ( actionOpenVymLink );
 	branchLinksContextMenu->addAction ( actionOpenVymLinkBackground );
@@ -4625,12 +4614,6 @@ void Main::setHeadingConfluencePageName()
 {
     VymModel *m = currentModel();
     if (m) m->setHeadingConfluencePageName();
-}
-
-void Main::editFATE2URL()
-{
-    VymModel *m=currentModel();
-    if (m) m->editFATE2URL();
 }
 
 void Main::editHeading()
@@ -6453,8 +6436,6 @@ void Main::flagChanged()
 void Main::testFunction1()
 {
     VymModel *m = currentModel();
-    if (m) m->setHeadingConfluencePageName();
-/*
     {
         UserDialog dia;
         dia.exec();
@@ -6464,7 +6445,6 @@ void Main::testFunction1()
             m->setURL( QString("<ac:link> <ri:user ri:userkey=\"%1\"/></ac:link>").arg(dia.selectedUserKey() ));
         }
     }
-        */
 }
 
 void Main::testFunction2()
