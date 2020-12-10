@@ -2144,7 +2144,7 @@ void Main::setupViewActions()
     viewMenu->addSeparator();	
 
     //a=noteEditorDW->toggleViewAction();
-    a = new QAction(QPixmap(":/flag-note.png"), tr( "Note editor","View action" ),this);
+    a = new QAction(QPixmap(":/flag-note.svg"), tr( "Note editor","View action" ),this);
     a->setShortcut ( Qt::Key_N );
     a->setShortcutContext (Qt::WidgetShortcut);
     a->setCheckable(true);
@@ -2405,7 +2405,7 @@ void Main::setupFlagActions()
     flag->setGroup("system-tasks");
 
 
-    setupFlag ( ":/flag-note.png", 
+    setupFlag ( ":/flag-note.svg", 
             Flag::SystemFlag,
             "system-note",
             tr("Note","SystemFlag") ); 
@@ -2600,7 +2600,7 @@ void Main::setupFlagActions()
             tr("I do not like this","Standardflag"));
 
     // Original khelpcenter.png
-    flag = setupFlag ( ":/flag-lifebelt.png", 
+    flag = setupFlag ( ":/flag-lifebelt.svg", 
             Flag::StandardFlag,
             "lifebelt",
             tr("This will help","Standardflag"));

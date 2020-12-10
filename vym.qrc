@@ -13,9 +13,9 @@
     <file alias="flag-hook-green.svg">flags/standard/dialog-ok-apply.svg</file>
     <file alias="flag-info.svg">flags/standard/help-about.svg</file>
     <file alias="flag-lamp.svg">flags/standard/Dialog-information_on.svg</file>
-    <file alias="flag-lifebelt.png">flags/flag-lifebelt.png</file>
+    <file alias="flag-lifebelt.svg">flags/standard/help-contextual.svg</file>
     <file alias="flag-no-arrow-up.png">flags/system/no-arrow-up.png</file>
-    <file alias="flag-note.png">flags/flag-note.png</file>
+    <file alias="flag-note.svg">flags/system/klipper.svg</file>
     <file alias="flag-phone.svg">flags/standard/internet-telephony.svg</file>
     <file alias="flag-present.png">flags/flag-present.png</file>
     <file alias="flag-question-mark.svg">flags/standard/question-mark.svg</file>
