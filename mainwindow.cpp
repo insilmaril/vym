@@ -267,7 +267,6 @@ Main::Main(QWidget* parent, Qt::WindowFlags f) : QMainWindow(parent,f)
     dw = new QDockWidget ();
     dw->setWidget (branchPropertyEditor);
     dw->setObjectName ("BranchPropertyEditor");
-    //dw->setWindowTitle(noteEditor->getEditorTitle() );  //FIXME-1 check title...
     dw->hide();
     branchPropertyEditorDW = dw;
     addDockWidget (Qt::LeftDockWidgetArea, dw);
