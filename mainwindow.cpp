@@ -2100,7 +2100,7 @@ void Main::setupViewActions()
     actionListFiles.append (a);
     actionZoomOut=a;
 
-    a = new QAction( QPixmap(":/rotate-ccw.png"), tr( "Rotate counterclockwise","View action" ), this);
+    a = new QAction( QPixmap(":/transform-rotate-ccw.svg"), tr( "Rotate counterclockwise","View action" ), this);
     a->setShortcut( Qt::SHIFT + Qt::Key_R);
     viewMenu->addAction (a);
     switchboard.addSwitch ("mapRotateCounterClockwise", shortcutScope, a, tag);
@@ -2108,7 +2108,7 @@ void Main::setupViewActions()
     actionListFiles.append (a);
     actionRotateCounterClockwise=a;
 
-    a = new QAction( QPixmap(":/rotate-cw.png"), tr( "Rotate rclockwise","View action" ), this);
+    a = new QAction( QPixmap(":/transform-rotate-cw.svg"), tr( "Rotate rclockwise","View action" ), this);
     a->setShortcut(Qt::Key_R);
     viewMenu->addAction (a);
     switchboard.addSwitch ("mapRotateClockwise", shortcutScope, a, tag);

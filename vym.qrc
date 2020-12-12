@@ -120,8 +120,8 @@
     <file alias="newbranch.png">icons/newbranch.png</file>
     <file alias="newmapcenter.png">icons/newmapcenter.png</file>
     <file alias="redo.png">icons/redo.png</file>
-    <file alias="rotate-ccw.png">icons/rotate-ccw.png</file>
-    <file alias="rotate-cw.png">icons/rotate-cw.png</file>
+    <file alias="transform-rotate-ccw.svg">icons/transform-rotate-ccw.svg</file>
+    <file alias="transform-rotate-cw.svg">icons/transform-rotate-cw.svg</file>
     <file alias="scripteditor.png">icons/scripteditor.png</file>
     <file alias="selectnext.png">icons/selectnext.png</file>
     <file alias="selectprevious.png">icons/selectprevious.png</file>
