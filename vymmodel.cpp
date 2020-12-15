@@ -1899,6 +1899,10 @@ void VymModel::setHeadingPlainText(const QString &s, BranchItem *bi)
         vt.setPlainText(s);
         if (bi->getHeading() == vt) return;
         setHeading (vt, bi);
+
+        // Set URL 
+        if ((s.startsWith("http://") || s.startsWith("https://") ) && bi->getURL().isEmpty())
+            setURL (s);
     }
 }
 
@@ -4184,6 +4188,9 @@ void VymModel::setHeadingConfluencePageName()
         {
             if (confluenceAgentAvailable)
             {
+                if (!url.contains(settings.value("/confluence/url", "").toString()))
+                    return;
+
                 if (confluencePassword.isEmpty() )
                 {
                     // Get password and abort, if dialog canceled
