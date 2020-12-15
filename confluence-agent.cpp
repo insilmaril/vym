@@ -9,6 +9,7 @@ extern Main *mainWindow;
 extern QSettings settings;
 extern QDir vymBaseDir;
 extern bool debug;
+extern QString confluencePassword;
 
 ConfluenceAgent::ConfluenceAgent ()
 { 
@@ -48,7 +49,7 @@ void ConfluenceAgent::init()
 
     // Read credentials // FIXME-2 dialog to set credentials, if not saved before
     username = settings.value("/confluence/username","user_johnDoe").toString();
-    password = settings.value("/confluence/password","pass_johnDoe").toString();
+    password = confluencePassword;
     baseURL = settings.value("/confluence/url","baseURL").toString();
 
     apiURL = baseURL + "/rest/api";

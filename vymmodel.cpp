@@ -93,6 +93,8 @@ extern QDir lastMapDir;
 extern QDir lastExportDir;
 
 extern bool jiraClientAvailable;
+extern bool confluenceAgentAvailable;
+extern QString confluencePassword;
 
 extern Settings settings;
 
@@ -2152,19 +2154,6 @@ void VymModel::setURL(QString url)
     if (selbi->getURL() == url) return;
     if (selbi)
     {
-        // Check for Confluence 
-        QString confluenceURL = settings.value("/confluence/url","").toString();
-        if (!confluenceURL.isEmpty() && url.contains(confluenceURL))
-        {
-            qDebug() << "VM check Confluence";
-            if (!settings.value("/confluence/username","").toString().isEmpty() &&
-                !settings.value("/confluence/password","").toString().isEmpty())
-            {
-                ConfluenceAgent * ca_details = new ConfluenceAgent (selbi);
-                ca_details->getPageDetailsNative(url);
-            }
-        }
-
 	QString oldurl = selbi->getURL();
 	selbi->setURL (url);
 	saveState (
@@ -2176,6 +2165,9 @@ void VymModel::setURL(QString url)
 	);
 	emitDataChanged (selbi);
 	reposition();
+        
+        // Check for Confluence 
+        setHeadingConfluencePageName();
     }
 }   
 
@@ -4187,10 +4179,20 @@ void VymModel::setHeadingConfluencePageName()
     BranchItem *selbi = getSelectedBranch();
     if (selbi)
     {
-        if (!selbi->getURL().isEmpty())
+        QString url = selbi->getURL();
+        if (!url.isEmpty())
         {
-            ConfluenceAgent * ca_details = new ConfluenceAgent (selbi);
-            ca_details->getPageDetailsNative(selbi->getURL() );
+            if (confluenceAgentAvailable)
+            {
+                if (confluencePassword.isEmpty() )
+                {
+                    // Get password and abort, if dialog canceled
+                    if (! mainWindow->settingsConfluence() ) return;
+                } 
+
+                ConfluenceAgent * ca_details = new ConfluenceAgent (selbi);
+                ca_details->getPageDetailsNative(url);
+            }
         }
     }
 }

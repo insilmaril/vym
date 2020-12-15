@@ -24,6 +24,7 @@ using namespace std;
 #include "branchitem.h"
 #include "command.h"
 #include "confluence-agent.h"
+#include "credentials.h"
 #include "download-agent.h"
 #include "file.h"
 #include "findresultwidget.h"
@@ -92,6 +93,8 @@ extern bool testmode;
 extern QTextStream vout;
 extern QStringList jiraPrefixList;
 extern bool jiraClientAvailable;
+extern bool confluenceAgentAvailable;
+extern QString confluencePassword;
 extern Switchboard switchboard;
 
 
@@ -2868,33 +2871,37 @@ void Main::setupSettingsActions()
     settingsMenu->addAction (a);
     actionSettingsToggleDownloads = a;
 
-    a = new QAction( tr( "Set author for new maps","Settings action"), this);
+    a = new QAction( tr( "Set author for new maps","Settings action") + "...", this);
     connect( a, SIGNAL( triggered() ), this, SLOT( settingsDefaultMapAuthor() ) );
     settingsMenu->addAction (a);
 
     settingsMenu->addSeparator();
 
-    a = new QAction( tr( "Set application to open pdf files","Settings action"), this);
+    a = new QAction( tr( "Set application to open pdf files", "Settings action") + "...", this);
     connect( a, SIGNAL( triggered() ), this, SLOT( settingsPDF() ) );
     settingsMenu->addAction (a);
 
-    a = new QAction( tr( "Set application to open external links","Settings action"), this);
+    a = new QAction( tr( "Set application to open external links", "Settings action") + "...", this);
     connect( a, SIGNAL( triggered() ), this, SLOT( settingsURL() ) );
     settingsMenu->addAction (a);
 
-    a = new QAction( tr( "Set application to zip/unzip files","Settings action"), this);
+    a = new QAction( tr( "Set application to zip/unzip files", "Settings action") + "...", this);
     connect( a, SIGNAL( triggered() ), this, SLOT( settingsZipTool() ) );
     settingsMenu->addAction (a);
 
-    a = new QAction( tr( "Set path for macros","Settings action")+"...", this);
+    a = new QAction( tr( "Confluence Credentials", "Settings action") + "...", this);
+    connect( a, SIGNAL( triggered() ), this, SLOT( settingsConfluence() ) );
+    settingsMenu->addAction (a);
+
+    a = new QAction( tr( "Set path for macros","Settings action") + "...", this);
     connect( a, SIGNAL( triggered() ), this, SLOT( settingsMacroPath() ) );
     settingsMenu->addAction (a);
 
-    a = new QAction( tr( "Set path for default path","Settings action")+"...", this);
+    a = new QAction( tr( "Set path for default path","Settings action") + "...", this);
     connect( a, SIGNAL( triggered() ), this, SLOT( settingsDefaultMapPath() ) );
     settingsMenu->addAction (a);
 
-    a = new QAction( tr( "Set number of undo levels","Settings action")+"...", this);
+    a = new QAction( tr( "Set number of undo levels","Settings action") + "...", this);
     connect( a, SIGNAL( triggered() ), this, SLOT( settingsUndoLevels() ) );
     settingsMenu->addAction (a);
 
@@ -2906,7 +2913,7 @@ void Main::setupSettingsActions()
     settingsMenu->addAction (a);
     actionSettingsToggleAutosave=a;
 
-    a = new QAction( tr( "Autosave time","Settings action")+"...", this);
+    a = new QAction( tr( "Autosave time","Settings action") + "...", this);
     connect( a, SIGNAL( triggered() ), this, SLOT( settingsAutosaveTime() ) );
     settingsMenu->addAction (a);
     actionSettingsAutosaveTime=a;
@@ -5729,6 +5736,35 @@ void Main::settingsToggleDownloads()
     downloadsEnabled(true);
 }
 
+bool Main::settingsConfluence()
+{
+    CredentialsDialog dia;
+    dia.setURL(settings.value("/confluence/url", "Confluence base URL").toString());
+    dia.setUser(settings.value("/confluence/username", "Confluence username").toString());
+    dia.setSavePassword(settings.value("/confluence/savePassword", false).toBool());
+    if (!confluencePassword.isEmpty())
+        dia.setPassword(confluencePassword);
+
+    dia.exec();
+
+    if (dia.result() > 0 )
+    {
+        settings.setValue("/confluence/url", dia.getURL() );
+        settings.setValue("/confluence/username", dia.getUser());
+        settings.setValue("/confluence/savePassword", dia.savePassword());
+        if (dia.savePassword())
+            settings.setValue("/confluence/password", dia.getPassword());
+        else
+            settings.setValue("/confluence/password", "");
+
+        confluencePassword = dia.getPassword();
+        confluenceAgentAvailable = true;
+    } else
+        confluenceAgentAvailable = false;
+
+    return confluenceAgentAvailable;
+}
+
 void Main::windowToggleNoteEditor()
 {
     if (noteEditor->parentWidget()->isVisible() )
@@ -6449,8 +6485,8 @@ void Main::testFunction1()
 
 void Main::testFunction2()
 {
-    // scriptEditor->runScript();
     togglePresentationMode();
+    // scriptEditor->runScript();
 }
 
 void Main::toggleWinter()

@@ -302,6 +302,7 @@ public slots:
     void settingsToggleWriteBackupFile();
     void settingsToggleAnimation();
     void settingsToggleDownloads();
+    bool settingsConfluence();
 
     void windowToggleNoteEditor();
     void windowToggleTreeEditor();

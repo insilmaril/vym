@@ -56,6 +56,7 @@ QTextStream vout(stdout);        // vymout - Testing for now. Flush after writin
 QStringList jiraPrefixList;     // List containing URLs of Jira systems
 bool jiraClientAvailable;	// collabzone specific currently
 bool confluenceAgentAvailable; // native Confluence support via REST API, also credentials required in settings
+QString confluencePassword;     // password is only on request written to settings
 
 TaskModel     *taskModel;
 TaskEditor    *taskEditor;
@@ -440,11 +441,11 @@ int main(int argc, char* argv[])
 
     // Check if there is a (native) Confluence agent
     if (!settings.value("/confluence/url","").toString().isEmpty() &&
-        !settings.value("/confluence/username","").toString().isEmpty() &&
-        !settings.value("/confluence/password","").toString().isEmpty() )
+        !settings.value("/confluence/username","").toString().isEmpty() )
         confluenceAgentAvailable = true;
     else
         confluenceAgentAvailable = false;
+    confluencePassword = settings.value("/confluence/password","").toString();
 
 
     // Initialize mainwindow

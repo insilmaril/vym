@@ -77,6 +77,7 @@ HEADERS	+= \
     branchpropeditor.h\
     command.h \
     confluence-agent.h \
+    credentials.h \
     dockeditor.h \
     download-agent.h \
     editxlinkdialog.h \
@@ -185,6 +186,7 @@ SOURCES	+= \
     branchpropeditor.cpp \
     command.cpp \
     confluence-agent.cpp \
+    credentials.cpp \
     dockeditor.cpp \
     download-agent.cpp \
     editxlinkdialog.cpp \
@@ -281,6 +283,7 @@ SOURCES	+= \
 FORMS = \
     attributewidget.ui \
     branchpropeditor.ui \
+    credentials.ui \
     export-html-dialog.ui \
     export-confluence-dialog.ui \
     extrainfodialog.ui \
