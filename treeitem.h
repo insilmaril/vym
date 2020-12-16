@@ -155,11 +155,11 @@ public:
     virtual bool canMoveUp();
 
 protected:
-    uint id;
+    ulong itemID;
     QUuid uuid;
 
 public:
-    virtual uint getID ();
+    virtual ulong getID();
     virtual void setUuid (const QString &id);
     virtual QUuid getUuid();
 

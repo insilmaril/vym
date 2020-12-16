@@ -58,7 +58,7 @@ void TreeItem::init()
 
     // Assign ID  
     itemLastID++;
-    id = itemLastID;
+    itemID = itemLastID;
     uuid = QUuid::createUuid();
 
     branchOffset = 0;
@@ -630,9 +630,9 @@ bool TreeItem::canMoveUp()
     }
 }
 
-uint TreeItem::getID()
+ulong TreeItem::getID()
 {
-    return id;
+    return itemID;
 }
 
 void TreeItem::setUuid(const QString &id)

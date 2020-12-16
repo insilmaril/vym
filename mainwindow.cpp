@@ -127,7 +127,7 @@ extern QDir vymInstallDir;
 #endif
 extern QString zipToolPath;
 
-Main::Main(QWidget* parent, Qt::WindowFlags f) : QMainWindow(parent,f)
+Main::Main(QWidget* parent) : QMainWindow(parent)
 {
     mainWindow = this;
 
@@ -2332,7 +2332,7 @@ void Main::addUserFlag()
         QString fn;
         if ( fd.exec() == QDialog::Accepted )
         {
-            lastMapDir = fd.directory().path();
+            lastMapDir = fd.directory();
             QStringList flist = fd.selectedFiles();
             QStringList::Iterator it = flist.begin();
             initProgressCounter( flist.count());
@@ -4119,7 +4119,7 @@ void Main::fileImportFreemind()
     QString fn;
     if ( fd.exec() == QDialog::Accepted )
     {
-	lastMapDir=fd.directory().path();
+    lastMapDir = fd.directory();
 	QStringList flist = fd.selectedFiles();
 	QStringList::Iterator it = flist.begin();
 	while( it != flist.end() ) 
@@ -5937,7 +5937,7 @@ void Main::selectInNoteEditor(QString s,int i)
 {
     // TreeItem is already selected at this time, therefor
     // the note is already in the editor
-    noteEditor->findText (s,0,i);
+    noteEditor->findText (s, QTextDocument::FindFlags(), i);
 }
 
 void Main::setFocusMapEditor()
@@ -6588,7 +6588,7 @@ void Main::helpDemo()
     QString fn;
     if ( fd.exec() == QDialog::Accepted )
     {
-        lastMapDir=fd.directory().path();
+        lastMapDir=fd.directory();
         QStringList flist = fd.selectedFiles();
         QStringList::Iterator it = flist.begin();
         initProgressCounter( flist.count());

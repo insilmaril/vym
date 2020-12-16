@@ -77,7 +77,8 @@ FlagRow *userFlagsMaster;
 
 Macros macros;
 
-uint itemLastID=0;		// Unique ID for all items in all models
+ulong itemLastID = 0;		// Unique ID for all items in all models
+ulong imageLastID = 0;      // Unique ID for cashing images, also flags not in tree
 
 QDir tmpVymDir;	         	// All temp files go there, created in mainwindow
 QDir cashDir;                   // tmp dir with cashed svg files in tmpVymDir
@@ -450,11 +451,11 @@ int main(int argc, char* argv[])
 
     // Initialize mainwindow
     // Note: mainWindow pointer is set in constructor  // FIXME-3 check this...
-#if defined(Q_OS_WIN32)
-    Main m(0, Qt::Window | Qt::MSWindowsOwnDC);
-#else
+// #if defined(Q_OS_WIN32)   //FIXME-0 check
+    //Main m(0, Qt::Window | Qt::MSWindowsOwnDC);
+// #else
     Main m;
-#endif
+// #endif
 
     // Check for zip tools 
     checkZipTool();

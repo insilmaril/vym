@@ -2556,7 +2556,7 @@ bool VymModel::setTaskSleep(const QString &s)   // FIXME-2 doc missing
                                 QDateTime d;
                                 if (pos >= 0)
                                 {
-                                    d = QDateTime (QDate(list.at(3).toInt(), list.at(2).toInt(), list.at(1).toInt()) );
+                                    d = QDate(list.at(3).toInt(), list.at(2).toInt(), list.at(1).toInt()).startOfDay();
                                     ok = task->setDateSleep (d); // German format, e.g. 24.12.2012
                                 } else
                                 {
@@ -2568,11 +2568,11 @@ bool VymModel::setTaskSleep(const QString &s)   // FIXME-2 doc missing
                                         int month = list.at(2).toInt();
                                         int day = list.at(1).toInt();
                                         int year = QDate::currentDate().year();
-                                        d = QDateTime ( QDate(year, month, day) );
+                                        d = QDate(year, month, day).startOfDay();
                                         if (QDateTime::currentDateTime().daysTo(d) < 0)
                                         {
                                             year++;
-                                            d = QDateTime( QDate(year, month, day) );
+                                            d = QDate(year, month, day).startOfDay();
                                         }
                                         ok = task->setDateSleep (d); // Short German format, e.g. 24.12.
                                     } else
@@ -4439,7 +4439,7 @@ QPointF VymModel::exportImage(QString fname, bool askName, QString format)
     {
         if (! ex.execDialog() ) return offset;
         fname = ex.getFilePath();
-        lastImageDir = dirname(fname);
+        lastImageDir = QDir(fname);
     }
 
     setExportMode (true);
@@ -4487,15 +4487,15 @@ void VymModel::exportPDF (QString fname, bool askName)
     QPrinter pdfPrinter(QPrinter::HighResolution);
     pdfPrinter.setOutputFormat(QPrinter::PdfFormat);
     pdfPrinter.setOutputFileName(fname);
-    pdfPrinter.setPageSize(QPrinter::A3);
+    pdfPrinter.setPageSize(QPageSize(QPageSize::A3));
 
     QRectF bbox=mapEditor->getTotalBBox();
     if (bbox.width()>bbox.height())
 	// recommend landscape
-	pdfPrinter.setOrientation (QPrinter::Landscape);
+    pdfPrinter.setPageOrientation (QPageLayout::Landscape);
     else    
 	// recommend portrait
-	pdfPrinter.setOrientation (QPrinter::Portrait);
+    pdfPrinter.setPageOrientation (QPageLayout::Portrait);
 
     QPainter *pdfPainter = new QPainter(&pdfPrinter);
     getScene()->render(pdfPainter);
@@ -4534,7 +4534,7 @@ QPointF VymModel::exportSVG (QString fname, bool askName)
     {
         if (! ex.execDialog() ) return offset;
         fname = ex.getFilePath();
-        lastImageDir = dirname(fname);
+        lastImageDir = QDir(fname);
     }
 
     setExportMode (true);
@@ -4572,7 +4572,7 @@ void VymModel::exportXML (QString dpath, QString fpath, bool useDialog)
 	QStringList filters;
 	filters << "XML data (*.xml)";
 	fd.setNameFilters (filters);
-	fd.setConfirmOverwrite (false);
+    fd.setOption(QFileDialog::DontConfirmOverwrite, true);
 	fd.setAcceptMode (QFileDialog::AcceptSave);
 
 	QString fn;

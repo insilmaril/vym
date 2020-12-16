@@ -48,7 +48,7 @@ QVariant FindResultModel::data(const QModelIndex &index, int role) const
 Qt::ItemFlags FindResultModel::flags(const QModelIndex &index) const
 {
     if (!index.isValid())
-        return 0;
+        return Qt::NoItemFlags;
 
     return Qt::ItemIsEditable | Qt::ItemIsEnabled | Qt::ItemIsSelectable;
 }

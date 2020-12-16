@@ -125,12 +125,9 @@ QString ImageItem::saveToDir (const QString &tmpdir,const QString &prefix)
     QString zAttr = attribut ("zValue", QString().setNum(zValue));
     QString url;
 
-    // Create unique string for filename based on memory address
-    ulong n = reinterpret_cast <ulong> (this);
-
     FloatImageObj *fio = (FloatImageObj*)mo;
     
-    url = "images/" + prefix + "image-" + QString().number(n, 10) + fio->getExtension();
+    url = "images/" + prefix + "image-" + QString().number(itemID) + fio->getExtension();
 
     // And really save the image  (svgs will be copied from cash!)
     fio->save (tmpdir + "/" + url);
@@ -147,7 +144,7 @@ QString ImageItem::saveToDir (const QString &tmpdir,const QString &prefix)
 	+ attribut ("href", QString ("file:") + url)
 	+ nameAttr
 	+ scaleAttr
-        + idAttr
+    + idAttr
     );	
 }
 

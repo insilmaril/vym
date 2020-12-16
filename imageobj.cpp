@@ -10,6 +10,7 @@
 #include <QSvgGenerator>
 
 extern QDir cashDir;
+extern ulong imageLastID;
 
 /////////////////////////////////////////////////////////////////
 // ImageObj	
@@ -52,6 +53,10 @@ void ImageObj::init()
 {
     // qDebug() << "Const ImageObj (scene)";
     hide();
+
+    // Assign ID
+    imageLastID++;
+    imageID = imageLastID;
 
     imageType = ImageObj::Undefined;
     svgItem        = NULL;
@@ -270,8 +275,7 @@ bool ImageObj::load (const QString &fn, bool createClone)
 
             // Copy original file to cash
             QFile svgFile (fn);
-            ulong n = reinterpret_cast <ulong> (this);
-            QString newPath = cashDir.path() + "/" + QString().number(n, 10) + "-" + basename(fn);
+            QString newPath = cashDir.path() + "/" + QString().number(imageID) + "-" + basename(fn);
             if (!svgFile.copy (newPath))
             {
                 qWarning() << "ImageObj::load (" << fn << ") could not be copied to " << newPath;

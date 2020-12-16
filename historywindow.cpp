@@ -113,17 +113,17 @@ void HistoryWindow::update(SimpleSettings &set)
     
     // Generated the "now" row
     QColor c(255,200,120);
-    for (i=0;i<=2;i++)
+    for (i=0; i <= 2; i++)
     {
-	if (i!=1)
+    if (i != 1)
 	{
-	    item=new QTableWidgetItem("");
-	    item->setBackgroundColor (c);
+        item = new QTableWidgetItem("");
+        item->setBackground(QBrush(c));
 	    ui.historyTable->setItem(undosAvail, i, item);
 	}
     }
-    item=new QTableWidgetItem(" - " +tr("Current state","Current bar in history hwindow")+ " - ");
-    item->setBackgroundColor (c);
+    item = new QTableWidgetItem(" - " +tr("Current state","Current bar in history hwindow")+ " - ");
+    item->setBackground (QBrush(c));
     ui.historyTable->setItem(undosAvail, 1, item);
 
     // Show "now" row

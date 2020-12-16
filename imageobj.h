@@ -48,5 +48,7 @@ protected:
      QPixmap *originalPixmap;   
 
      qreal scaleFactor;
+
+     ulong imageID;
 };
 #endif

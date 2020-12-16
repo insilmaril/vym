@@ -34,7 +34,7 @@ public:
         ModModeMoveView             //!< Move view without changing
 	};
 
-    Main(QWidget* parent=0, Qt::WindowFlags f=0);
+    Main(QWidget* parent=0);
     ~Main();
     void loadCmdLine();
 
