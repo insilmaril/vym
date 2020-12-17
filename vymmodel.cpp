@@ -2560,7 +2560,8 @@ bool VymModel::setTaskSleep(const QString &s)   // FIXME-2 doc missing
                                 QDateTime d;
                                 if (pos >= 0)
                                 {
-                                    d = QDate(list.at(3).toInt(), list.at(2).toInt(), list.at(1).toInt()).startOfDay();
+                                    d = QDateTime (QDate(list.at(3).toInt(), list.at(2).toInt(), list.at(1).toInt()));
+                                    // d = QDate(list.at(3).toInt(), list.at(2).toInt(), list.at(1).toInt()).startOfDay();
                                     ok = task->setDateSleep (d); // German format, e.g. 24.12.2012
                                 } else
                                 {
@@ -2572,11 +2573,13 @@ bool VymModel::setTaskSleep(const QString &s)   // FIXME-2 doc missing
                                         int month = list.at(2).toInt();
                                         int day = list.at(1).toInt();
                                         int year = QDate::currentDate().year();
-                                        d = QDate(year, month, day).startOfDay();
+                                        d = QDateTime(QDate(year, month, day));
+                                        //d = QDate(year, month, day).startOfDay();
                                         if (QDateTime::currentDateTime().daysTo(d) < 0)
                                         {
                                             year++;
-                                            d = QDate(year, month, day).startOfDay();
+                                            d = QDateTime(QDate(year, month, day));
+                                            //d = QDate(year, month, day).startOfDay();
                                         }
                                         ok = task->setDateSleep (d); // Short German format, e.g. 24.12.
                                     } else

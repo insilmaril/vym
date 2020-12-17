@@ -111,7 +111,8 @@ void DownloadAgent::doDownload(const QUrl &url)
             idCookie.setDomain("www.insilmaril.de");
             idCookie.setName("vymID");
             idCookie.setValue(idCookieValue);
-            idCookie.setExpirationDate( QDate(2099,1,1).startOfDay() );
+            idCookie.setExpirationDate( QDateTime(QDate(2099,1,1) ));
+            //idCookie.setExpirationDate( QDate(2099,1,1).startOfDay() );   // In Qt 5.14
             agent.cookieJar()->insertCookie(idCookie);
 
             QNetworkCookie platformCookie;
@@ -119,7 +120,8 @@ void DownloadAgent::doDownload(const QUrl &url)
             platformCookie.setDomain("www.insilmaril.de");
             platformCookie.setName("vymPlatform");
             platformCookie.setValue( QVariant(vymPlatform).toByteArray() );
-            platformCookie.setExpirationDate( QDate(2099,1,1).startOfDay() );
+            platformCookie.setExpirationDate( QDateTime(QDate(2099,1,1) ));
+            //platformCookie.setExpirationDate( QDate(2099,1,1).startOfDay() );// In Qt 5.14
             agent.cookieJar()->insertCookie(platformCookie);
         }
     }
