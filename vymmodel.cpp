@@ -480,7 +480,7 @@ bool VymModel::parseVymText (const QString &s)
         blockSaveState=blockSaveStateOrg;
         if ( ok )
         {
-            emitNoteChanged( bi );
+//            emitNoteChanged( bi );  // FIXME-0 check: what if heading is changed???
             emitDataChanged( bi );
             reposition();   // to generate bbox sizes
         } else
@@ -1914,9 +1914,34 @@ Heading VymModel::getHeading()
     return Heading();
 }
 
+void VymModel::updateNote() // FIXME-0 No undo in history! Add history steps combining the lastest changes...
+{
+    TreeItem *selti = getSelectedItem();
+    if (selti)
+    {
+        bool updateLayout = false;
+
+        if (!mapChanged)
+        {
+            setChanged();
+            updateActions();
+        }
+
+        if (noteEditor->isEmpty())
+            updateLayout = selti->clearNote();
+        else
+            updateLayout = selti->setNote(noteEditor->getNote());
+
+        emitDataChanged(selti);
+
+        if (updateLayout) reposition();
+    }
+}
+
 void VymModel::setNote(const  VymNote &vn)
 {
-    TreeItem *selti=getSelectedItem();
+    qDebug() << "VM::setNote" << vn.getTextASCII().left(25); 
+    TreeItem *selti = getSelectedItem();
     if (selti) 
     {
         VymNote n_old;
@@ -4925,30 +4950,6 @@ void VymModel::unsetContextPos()
     hasContextPos=false;
 }
 
-void VymModel::updateNoteFlag()
-{
-    TreeItem *selti = getSelectedItem();
-    if (selti)
-    {
-        bool updateLayout = false;
-
-        if (!mapChanged)
-        {
-            setChanged();
-            updateActions();
-        }
-
-        if (noteEditor->isEmpty())
-            updateLayout = selti->clearNote();
-        else
-            updateLayout = selti->setNote(noteEditor->getNote());
-
-        emitDataChanged(selti);
-
-        if (updateLayout) reposition();
-    }
-}
-
 void VymModel::reposition() //FIXME-4 VM should have no need to reposition, but the views...
 {
     if (blockReposition) return;
@@ -5869,8 +5870,10 @@ void VymModel::emitShowSelection()
 
 void VymModel::emitNoteChanged (TreeItem *ti)
 {
-    QModelIndex ix=index(ti);
-    emit (noteChanged (ix) );
+    qDebug() << "VM::emitNoteChanged"; // FIXME-0 
+    QModelIndex ix = index(ti);
+    emit (noteChanged (ix) ); // FIXME-0 switch to ti?
+    mainWindow->updateNoteEditor (ti);
 }
 
 void VymModel::emitDataChanged (TreeItem *ti)    

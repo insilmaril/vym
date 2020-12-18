@@ -325,7 +325,7 @@ Main::Main(QWidget* parent) : QMainWindow(parent)
     connect (dw, SIGNAL (visibilityChanged(bool ) ), this, SLOT (updateActions()));
 
     // Connect NoteEditor, so that we can update flags if text changes
-    connect (noteEditor, SIGNAL (textHasChanged() ), this, SLOT (updateNoteFlag()));
+    connect (noteEditor, SIGNAL (textHasChanged() ), this, SLOT (updateNote()));
     connect (noteEditor, SIGNAL (windowClosed() ), this, SLOT (updateActions()));
 
     // Connect heading editor
@@ -3500,13 +3500,15 @@ void Main::updateTabName( VymModel *vm)
 
 void Main::editorChanged()
 {
-    VymModel *vm=currentModel();
+    VymModel *vm = currentModel();
     if (vm) 
     {	
-	updateNoteEditor (vm->getSelectedIndex() );
+        TreeItem *ti = vm->getSelectedItem();
+	updateNoteEditor (ti);
+	updateHeadingEditor (ti);
 	updateQueries (vm);
-
 	taskEditor->setMapName (vm->getMapName() );
+        updateDockWidgetTitles( vm);
     }	
 
     // Update actions to in menus and toolbars according to editor
@@ -5910,27 +5912,21 @@ void Main::updateHeading()
     if (m) m->setHeading (headingEditor->getVymText() );
 }
 
-void Main::updateNoteFlag() 
+void Main::updateNote() 
 {
     // this slot is connected to noteEditor::textHasChanged()
-    VymModel *m=currentModel();
-    if (m) m->updateNoteFlag();
+    VymModel *m = currentModel();
+    if (m) m->updateNote();
 }
 
-void Main::updateNoteEditor(QModelIndex index ) //FIXME-4 maybe change to TreeItem as parameter?
+void Main::updateNoteEditor(TreeItem *ti)
 {
-    if (index.isValid() )
-    {
-        TreeItem *ti=((VymModel*) QObject::sender())->getItem(index);
-        /*
-    qDebug()<< "Main::updateNoteEditor model="<<sender()
-        << "  item="<<ti->getHeading()<<" ("<<ti<<")";
-    qDebug()<< "RT="<<ti->getNote().isRichText();
-    */
-        if (ti)
-            noteEditor->setNote (ti->getNote() );
-        updateDockWidgetTitles( ti->getModel());
-    }
+    if (ti) noteEditor->setNote (ti->getNote() );
+}
+
+void Main::updateHeadingEditor(TreeItem *ti)
+{
+    if (ti) headingEditor->setVymText (ti->getHeading() );
 }
 
 void Main::selectInNoteEditor(QString s,int i)
@@ -5948,7 +5944,7 @@ void Main::setFocusMapEditor()
 
 void Main::changeSelection (VymModel *model, const QItemSelection &newsel, const QItemSelection &)
 {
-    // Setting the model implicitely also sets treeItem and updates content
+    // Setting the model implicitely also sets treeItem and updates content in BPE
     branchPropertyEditor->setModel (model ); 
 
     if (model && model == currentModel() )

@@ -325,6 +325,7 @@ public:
     void setHeading(const VymText &vt, BranchItem *bi=NULL);	    //!< Set heading of item
     void setHeadingPlainText(const QString &s, BranchItem *bi=NULL);	//!< Set heading of item
     Heading getHeading();		        //!< Get heading of item
+    void updateNote();	        	//!< Signal origination in TextEditor
     void setNote(const VymNote &vn);    //!< Set note text
     VymNote getNote();			        //!< Get note text
     bool hasRichTextNote();             //!< Check type of vymText used
@@ -624,7 +625,6 @@ public:
     void setContextPos (QPointF);	//!< local position during context menu
     void unsetContextPos ();		//!< forget local position after context menu
 
-    void updateNoteFlag();		//!< Signal origination in TextEditor
     void reposition();			//!< Call reposition for all MCOs
     void setHideTmpMode (TreeItem::HideTmpMode mode);	
 
