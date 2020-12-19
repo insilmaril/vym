@@ -1916,6 +1916,15 @@ Heading VymModel::getHeading()
 
 void VymModel::updateNote() // FIXME-0 No undo in history! Add history steps combining the lastest changes...
 {
+    // Ideas:
+    // - check how changes in headingEditor are handled (though undo/redo not really working there!)
+    // - Trigger reposition only, if noteflag has changed (empty editor to used editor or vice versa)
+    // - If note has changed in history on same branchitem, maybe only new content in last step with current editor content
+    // - Alternatively: Completely manage redo steps in TextEditor, which would lead to
+    //   way less communication and comparisons of text
+    //   - Initialize new text
+    //   - send text changed only when state changes (full/empty)
+    //   - VymModel diffs initial and final state when selecting TreeItems
     TreeItem *selti = getSelectedItem();
     if (selti)
     {
