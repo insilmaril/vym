@@ -321,7 +321,7 @@ public slots:
     void windowToggleSmoothPixmap();
     void clearScriptOutput();
     void updateHeading();
-    void updateNote();
+    void updateNoteFlag();
     void updateNoteEditor (TreeItem *ti);
     void updateHeadingEditor (TreeItem *ti);
     void selectInNoteEditor (QString s, int i);

@@ -246,6 +246,7 @@ QString TextEditor::getFilenameHint()
 
 QString TextEditor::getText()
 {
+    qDebug() << "TE::getText "<<editorName;
     if (e->toPlainText().isEmpty()) return QString();
 
     if (actionFormatRichText->isChecked())
@@ -256,6 +257,7 @@ QString TextEditor::getText()
 
 VymText TextEditor::getVymText()
 {
+    qDebug() << "TE::getVymText " << editorName;
     VymText vt;
 
     if (actionFormatRichText->isChecked())
@@ -703,16 +705,19 @@ bool TextEditor::eventFilter( QObject *obj, QEvent *ev)
 
 void TextEditor::editorChanged()
 {
+    qDebug() << "TE::editorChanged old state = " << state << editorName;
     if (isEmpty())
-        state=emptyEditor;
+        state = emptyEditor;
     else
-        state=filledEditor;
+        state = filledEditor;
 
-    if (state==emptyEditor)
+    if (state == emptyEditor)
         setState (emptyEditor);
     else
         setState (filledEditor);
-    if (!blockChangedSignal) emit (textHasChanged() );
+    qDebug() << "                  new state = " << state << editorName;
+    qDebug() << "                blockSignal = " << blockChangedSignal;
+    if (!blockChangedSignal) emit (stateHasChanged() );
 }
 
 void TextEditor::setRichText(const QString &t)
@@ -752,6 +757,7 @@ void TextEditor::setTextAuto(const QString &t)
 
 void TextEditor::setVymText( const VymText &vt)
 {
+    qDebug() << "TE::setVymText " << vt.getTextASCII().left(20) << editorName;
     if (vt.isRichText())
         setRichText(vt.getText());
     else
@@ -932,7 +938,7 @@ void TextEditor::toggleFonthint()
         e->setCurrentFont (fixedFont);
         setFont (fixedFont);
     }
-    emit( textHasChanged() );
+    emit( textHasChanged() );       // FIXME-0 really needed? or stateHasChanged?
 }
 
 void TextEditor::setRichTextMode(bool b)

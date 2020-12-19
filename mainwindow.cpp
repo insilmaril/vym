@@ -325,7 +325,7 @@ Main::Main(QWidget* parent) : QMainWindow(parent)
     connect (dw, SIGNAL (visibilityChanged(bool ) ), this, SLOT (updateActions()));
 
     // Connect NoteEditor, so that we can update flags if text changes
-    connect (noteEditor, SIGNAL (textHasChanged() ), this, SLOT (updateNote()));
+    connect (noteEditor, SIGNAL (stateHasChanged() ), this, SLOT (updateNoteFlag()));
     connect (noteEditor, SIGNAL (windowClosed() ), this, SLOT (updateActions()));
 
     // Connect heading editor
@@ -5912,15 +5912,20 @@ void Main::updateHeading()
     if (m) m->setHeading (headingEditor->getVymText() );
 }
 
-void Main::updateNote() 
+void Main::updateNoteFlag() 
 {
-    // this slot is connected to noteEditor::textHasChanged()
+    qDebug() << "Main::updateNoteFlag()    (stateHasChanged)";
+    // this slot is connected to noteEditor::stateHasChanged()
     VymModel *m = currentModel();
-    if (m) m->updateNote();
+    if (m) m->updateNoteFlag();
 }
 
 void Main::updateNoteEditor(TreeItem *ti)
 {
+    if (ti)
+        qDebug() << "Main::updateNoteEditor of " << ti->getHeadingPlain();
+    else
+        qDebug() << "Main::updateNoteEditor of null";
     if (ti) noteEditor->setNote (ti->getNote() );
 }
 

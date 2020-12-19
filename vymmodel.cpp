@@ -1914,7 +1914,7 @@ Heading VymModel::getHeading()
     return Heading();
 }
 
-void VymModel::updateNote() // FIXME-0 No undo in history! Add history steps combining the lastest changes...
+void VymModel::updateNoteFlag() // FIXME-0 No undo in history! Add history steps combining the lastest changes...
 {
     // Ideas:
     // - check how changes in headingEditor are handled (though undo/redo not really working there!)

@@ -59,6 +59,7 @@ public slots:
 
 signals:
     void textHasChanged();
+    void stateHasChanged();
     void windowClosed();
     void fontFamilyHasChanged();
     void fontSizeHasChanged();
