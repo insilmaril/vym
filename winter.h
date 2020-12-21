@@ -12,15 +12,19 @@ class QGraphicsScene;
 class SnowFlake:public QGraphicsItem
 {
 public:
-    SnowFlake(QGraphicsScene *scene);
+    enum SnowType {Smilla, Disc};
+
+    SnowFlake(QGraphicsScene *scene, SnowType type);
     ~SnowFlake();
     QRectF boundingRect() const;
     void paint(QPainter*, const QStyleOptionGraphicsItem*, QWidget*);
     void animate();
     void blow(const QPointF &v);
 private:
+    SnowType type;
     int size;
     QList <QGraphicsLineItem*> lines;
+    QGraphicsEllipseItem *disc;
     QPointF dv;
     QPointF dblow;
     qreal da;
@@ -47,9 +51,10 @@ private:
     QTimer *snowTimer;
     QList <QRectF> obstacles;
 
+    SnowFlake::SnowType type;
     int maxFalling;
     int maxUnfreeze;
-    //QGraphicsLineItem *test;
+    QGraphicsRectItem *test;
 
     QRectF viewRect;
 };

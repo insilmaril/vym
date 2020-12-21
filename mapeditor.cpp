@@ -13,6 +13,7 @@
 #include "misc.h"
 #include "shortcuts.h"
 #include "warningdialog.h"
+#include "winter.h"
 #include "xlinkitem.h"
 
 
@@ -180,6 +181,12 @@ MapEditor::MapEditor( VymModel *vm)
 MapEditor::~MapEditor()
 {
     //qDebug ()<<"Destr MapEditor this="<<this;
+
+    if (winter)
+    {
+        delete winter;
+        winter = NULL;
+    }
 }
 
 VymModel* MapEditor::getModel()
@@ -362,8 +369,8 @@ qreal MapEditor::getZoomFactor()
 
 void MapEditor::setAngleTarget (const qreal &at)
 {
-    angleTarget=at;
-    if (rotationAnimation.state()==QAbstractAnimation::Running)
+    angleTarget = at;
+    if (rotationAnimation.state() == QAbstractAnimation::Running)
 	rotationAnimation.stop();
     if (settings.value ("/animation/use/",true).toBool() )
     {
@@ -386,8 +393,9 @@ qreal MapEditor::getAngleTarget()
 
 void MapEditor::setAngle(const qreal &a)
 {
-    angle=a;
+    angle = a;
     updateMatrix();
+    if (winter) winter->updateView();
 }
 
 qreal MapEditor::getAngle()
@@ -789,20 +797,19 @@ void MapEditor::testFunction2()
     autoLayout();
 }
 
-#include "winter.h"
 void MapEditor::toggleWinter()
 {
     if (winter)
     {
         delete winter;
-        winter=NULL;
+        winter = NULL;
     } else
     {
-        winter=new Winter (this);
+        winter = new Winter (this);
         QList <QRectF> obstacles;
         BranchObj *bo;
-        BranchItem *cur=NULL;
-        BranchItem *prev=NULL;
+        BranchItem *cur = NULL;
+        BranchItem *prev = NULL;
         model->nextBranch(cur,prev);
         while (cur) 
         {

@@ -5520,13 +5520,13 @@ void Main::viewZoomOut()
     if (me) me->setZoomFactorTarget (me->getZoomFactorTarget()*0.85);
 }
 
-void Main::viewRotateCounterClockwise()
+void Main::viewRotateCounterClockwise()  // FIXME-2 move to ME
 {
     MapEditor *me=currentMapEditor();
     if (me) me->setAngleTarget (me->getAngleTarget()-10);
 }
 
-void Main::viewRotateClockwise()
+void Main::viewRotateClockwise()  // FIXME-2 move to ME
 {
     MapEditor *me=currentMapEditor();
     if (me) me->setAngleTarget (me->getAngleTarget()+10);
