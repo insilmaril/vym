@@ -54,7 +54,7 @@ private:
     SnowFlake::SnowType type;
     int maxFalling;
     int maxUnfreeze;
-    QGraphicsRectItem *test;
+    //QGraphicsRectItem *test;
 
     QRectF viewRect;
 };
