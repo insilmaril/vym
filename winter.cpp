@@ -1,11 +1,12 @@
 #include "winter.h"
 
-#include "misc.h"
-
 #include <QDebug>
 #include <QGraphicsScene>
 #include <QGraphicsView>
 #include <QPen>
+
+#include "mapobj.h" 
+#include "misc.h"
 
 SnowFlake::SnowFlake(QGraphicsScene *scene, SnowType t)
 {
@@ -40,6 +41,7 @@ SnowFlake::SnowFlake(QGraphicsScene *scene, SnowType t)
                     l->setZValue(1000);
                     l->setPen(p);
                     l->setParentItem(this);
+                    l->setZValue(Z_SNOW);
                 }
                 da = qrand()%20 / 10.0 - 1;
             }
@@ -49,6 +51,7 @@ SnowFlake::SnowFlake(QGraphicsScene *scene, SnowType t)
             disc = scene->addEllipse(0, 0, size, size, p);
             disc->setParentItem(this);
             disc->setBrush(Qt::white);
+            disc->setZValue(Z_SNOW);
             break;
         default:
             break;
