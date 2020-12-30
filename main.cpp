@@ -233,7 +233,7 @@ int main(int argc, char* argv[])
     }
     
     // Update some configurations, which were moved in 2.4.0
-    // This code should be removed later, e.g. in 2.6.0...      // FIXME-2
+    // This settings related code should be removed later, e.g. in 2.6.0...      // FIXME-2
     QStringList settingsChanged;
     settingsChanged  << "readerURL"
                      << "readerPDF"
