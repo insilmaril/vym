@@ -322,6 +322,7 @@ public slots:
     void clearScriptOutput();
     void updateHeading();
     void updateNoteFlag();
+    void updateNoteText(const VymText &vt);
     void updateNoteEditor (TreeItem *ti);
     void updateHeadingEditor (TreeItem *ti);
     void selectInNoteEditor (QString s, int i);

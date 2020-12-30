@@ -325,6 +325,8 @@ Main::Main(QWidget* parent) : QMainWindow(parent)
     connect (dw, SIGNAL (visibilityChanged(bool ) ), this, SLOT (updateActions()));
 
     // Connect NoteEditor, so that we can update flags if text changes
+
+    connect (noteEditor, SIGNAL (textHasChanged(const VymText &) ), this, SLOT (updateNoteText(const VymText &)));
     connect (noteEditor, SIGNAL (stateHasChanged() ), this, SLOT (updateNoteFlag()));
     connect (noteEditor, SIGNAL (windowClosed() ), this, SLOT (updateActions()));
 
@@ -5920,6 +5922,14 @@ void Main::updateNoteFlag()
     if (m) m->updateNoteFlag();
 }
 
+void Main::updateNoteText(const VymText &vt) 
+{
+    qDebug() << "Main::updateNoteText()    (stateHasChanged)";  // FIXME-0 cont here
+    // this slot is connected to noteEditor::textHasChanged()
+     VymModel *m = currentModel();
+    if (m) m->updateNoteText(vt);
+}
+
 void Main::updateNoteEditor(TreeItem *ti)
 {
     if (ti)
@@ -5949,7 +5959,10 @@ void Main::setFocusMapEditor()
 
 void Main::changeSelection (VymModel *model, const QItemSelection &newsel, const QItemSelection &)
 {
-    // Setting the model implicitely also sets treeItem and updates content in BPE
+    qDebug () << "Main::changeSelection";
+
+    // Setting the model in BPE implicitely 
+    // also sets treeItem and updates content in BPE
     branchPropertyEditor->setModel (model ); 
 
     if (model && model == currentModel() )

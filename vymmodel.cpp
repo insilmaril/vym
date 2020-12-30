@@ -1914,7 +1914,7 @@ Heading VymModel::getHeading()
     return Heading();
 }
 
-void VymModel::updateNoteFlag() // FIXME-0 No undo in history! Add history steps combining the lastest changes...
+void VymModel::updateNoteText(const VymText &vt) // FIXME-0 No undo in history! Add history steps combining the lastest changes...
 {
     // Ideas:
     // - check how changes in headingEditor are handled (though undo/redo not really working there!)
@@ -1925,25 +1925,64 @@ void VymModel::updateNoteFlag() // FIXME-0 No undo in history! Add history steps
     //   - Initialize new text
     //   - send text changed only when state changes (full/empty)
     //   - VymModel diffs initial and final state when selecting TreeItems
+    //
+    // Ideas 2:
+    //   * ...
+
+    qDebug() << "VM::updateNoteText() ";  
+
+    bool editorStateChanged = false;    // FIXME-0 cont here
+
     TreeItem *selti = getSelectedItem();
     if (selti)
     {
-        bool updateLayout = false;
-
-        if (!mapChanged)
+        VymText note_old = selti->getNote();
+        VymText note_new = vt;
+        if ( note_new.getText() == note_old.getText() )
+            qDebug() << "  Text unchanged!";
+        else
         {
+            qDebug() << "  Text changed!";
+            qDebug() << "  old: " << note_old.getText();
+            qDebug() << "  new: " << note_new.getText();
+
+            if ((note_new.isEmpty() && ! note_old.isEmpty() ) ||
+               (!note_new.isEmpty() &&   note_old.isEmpty() ) )
+                editorStateChanged = true;
+
+            VymNote vn;
+            vn.copy(vt);
+            // FIXME-0 saveState missing!
+            // FIXME-0 maybe use VM::setNote, but don't update NE!
+            selti->setNote( vn );
+        }
+
+        if (!mapChanged)    // FIXME-0 needed? only text changed, no actions impact...
+                            // also: issn't setChanged called in saveState implicitely?
+        {                   
             setChanged();
             updateActions();
         }
 
-        if (noteEditor->isEmpty())
-            updateLayout = selti->clearNote();
-        else
-            updateLayout = selti->setNote(noteEditor->getNote());
+        emitDataChanged(selti); // FIXME-0 needed?
 
-        emitDataChanged(selti);
+        if (editorStateChanged) reposition();// FIXME-0 needed?  only if state changed?
+    }
+}
 
-        if (updateLayout) reposition();
+void VymModel::updateNoteFlag() // FIXME-0 Does not set/unset flag !!!   cont here
+{
+    qDebug() << "VM::updateNoteFlag() "; 
+    setNote(noteEditor->getNote() );
+    reposition();
+
+    return;
+
+    TreeItem *selti = getSelectedItem();
+    if (selti)
+    {
+        emitDataChanged(selti); // FIXME-0 needed? only, if relevant for reposition below...
+        reposition();
     }
 }
 
@@ -4961,6 +5000,7 @@ void VymModel::unsetContextPos()
 
 void VymModel::reposition() //FIXME-4 VM should have no need to reposition, but the views...
 {
+    qDebug() << "VM::reposition";; // FIXME-0 testing
     if (blockReposition) return;
 
     BranchObj *bo;
@@ -5637,6 +5677,8 @@ void VymModel::setHideTmpMode (TreeItem::HideTmpMode mode)
 
 void VymModel::updateSelection(QItemSelection newsel,QItemSelection dsel)	
 {
+    qDebug() << "VM::updateSelection"  << dsel.indexes().count() << newsel.indexes().count();
+
     QModelIndex ix;
     MapItem *mi;
     BranchItem *bi;

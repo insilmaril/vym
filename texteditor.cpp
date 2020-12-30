@@ -705,19 +705,24 @@ bool TextEditor::eventFilter( QObject *obj, QEvent *ev)
 
 void TextEditor::editorChanged()
 {
-    qDebug() << "TE::editorChanged old state = " << state << editorName;
+    EditorState oldState = state;
     if (isEmpty())
         state = emptyEditor;
     else
         state = filledEditor;
 
+    qDebug() << "TE::editorChanged old = " << oldState << " new = " << state << editorName;
+    qDebug() << "          blockSignal = " << blockChangedSignal;
+
+    if (!blockChangedSignal) emit (textHasChanged(getVymText() ) );
+
+    if (state == oldState) return;
+
     if (state == emptyEditor)
         setState (emptyEditor);
     else
         setState (filledEditor);
-    qDebug() << "                  new state = " << state << editorName;
-    qDebug() << "                blockSignal = " << blockChangedSignal;
-    if (!blockChangedSignal) emit (stateHasChanged() );
+    // FIXME-0 testing if (!blockChangedSignal) emit (stateHasChanged() );
 }
 
 void TextEditor::setRichText(const QString &t)
@@ -938,7 +943,7 @@ void TextEditor::toggleFonthint()
         e->setCurrentFont (fixedFont);
         setFont (fixedFont);
     }
-    emit( textHasChanged() );       // FIXME-0 really needed? or stateHasChanged?
+    emit( textHasChanged(getVymText() ) );       // FIXME-0 really needed? or stateHasChanged?
 }
 
 void TextEditor::setRichTextMode(bool b)
@@ -955,7 +960,7 @@ void TextEditor::setRichTextMode(bool b)
         actionFormatRichText->setChecked(false);
     }
     updateActions();
-    emit( textHasChanged() );
+    emit( textHasChanged(getVymText()) );  // FIXME-0 really needed?
 }
 
 void TextEditor::toggleRichText()

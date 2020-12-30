@@ -58,7 +58,7 @@ public slots:
     void reset();
 
 signals:
-    void textHasChanged();
+    void textHasChanged(const VymText &vt);
     void stateHasChanged();
     void windowClosed();
     void fontFamilyHasChanged();
