@@ -321,7 +321,6 @@ public slots:
     void windowToggleSmoothPixmap();
     void clearScriptOutput();
     void updateHeading();
-    void updateNoteFlag();
     void updateNoteText(const VymText &vt);
     void updateNoteEditor (TreeItem *ti);
     void updateHeadingEditor (TreeItem *ti);

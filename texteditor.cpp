@@ -711,9 +711,6 @@ void TextEditor::editorChanged()
     else
         state = filledEditor;
 
-    qDebug() << "TE::editorChanged old = " << oldState << " new = " << state << editorName;
-    qDebug() << "          blockSignal = " << blockChangedSignal;
-
     if (!blockChangedSignal) emit (textHasChanged(getVymText() ) );
 
     if (state == oldState) return;
@@ -722,7 +719,6 @@ void TextEditor::editorChanged()
         setState (emptyEditor);
     else
         setState (filledEditor);
-    // FIXME-0 testing if (!blockChangedSignal) emit (stateHasChanged() );
 }
 
 void TextEditor::setRichText(const QString &t)
@@ -760,7 +756,7 @@ void TextEditor::setTextAuto(const QString &t)
         setPlainText( t );
 }
 
-void TextEditor::setVymText( const VymText &vt)
+void TextEditor::setVymText( const VymText &vt) // FIXME-0 set correct state of TE  (also in setRichText and setPlainText!  )
 {
     qDebug() << "TE::setVymText " << vt.getTextASCII().left(20) << editorName;
     if (vt.isRichText())

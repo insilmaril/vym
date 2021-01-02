@@ -59,7 +59,6 @@ public slots:
 
 signals:
     void textHasChanged(const VymText &vt);
-    void stateHasChanged();
     void windowClosed();
     void fontFamilyHasChanged();
     void fontSizeHasChanged();

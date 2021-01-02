@@ -327,7 +327,6 @@ Main::Main(QWidget* parent) : QMainWindow(parent)
     // Connect NoteEditor, so that we can update flags if text changes
 
     connect (noteEditor, SIGNAL (textHasChanged(const VymText &) ), this, SLOT (updateNoteText(const VymText &)));
-    connect (noteEditor, SIGNAL (stateHasChanged() ), this, SLOT (updateNoteFlag()));
     connect (noteEditor, SIGNAL (windowClosed() ), this, SLOT (updateActions()));
 
     // Connect heading editor
@@ -5912,14 +5911,6 @@ void Main::updateHeading()
 {
     VymModel *m=currentModel();
     if (m) m->setHeading (headingEditor->getVymText() );
-}
-
-void Main::updateNoteFlag() 
-{
-    qDebug() << "Main::updateNoteFlag()    (stateHasChanged)";
-    // this slot is connected to noteEditor::stateHasChanged()
-    VymModel *m = currentModel();
-    if (m) m->updateNoteFlag();
 }
 
 void Main::updateNoteText(const VymText &vt) 

@@ -1931,20 +1931,16 @@ void VymModel::updateNoteText(const VymText &vt) // FIXME-0 No undo in history! 
 
     qDebug() << "VM::updateNoteText() ";  
 
-    bool editorStateChanged = false;    // FIXME-0 cont here
+    bool editorStateChanged = false;
 
     TreeItem *selti = getSelectedItem();
     if (selti)
     {
         VymText note_old = selti->getNote();
         VymText note_new = vt;
-        if ( note_new.getText() == note_old.getText() )
-            qDebug() << "  Text unchanged!";
-        else
+        if ( note_new.getText() != note_old.getText() )
         {
             qDebug() << "  Text changed!";
-            qDebug() << "  old: " << note_old.getText();
-            qDebug() << "  new: " << note_new.getText();
 
             if ((note_new.isEmpty() && ! note_old.isEmpty() ) ||
                (!note_new.isEmpty() &&   note_old.isEmpty() ) )
@@ -1953,7 +1949,7 @@ void VymModel::updateNoteText(const VymText &vt) // FIXME-0 No undo in history! 
             VymNote vn;
             vn.copy(vt);
             // FIXME-0 saveState missing!
-            // FIXME-0 maybe use VM::setNote, but don't update NE!
+            //         maybe use VM::setNote, but don't update NE!
             selti->setNote( vn );
         }
 
@@ -1966,23 +1962,8 @@ void VymModel::updateNoteText(const VymText &vt) // FIXME-0 No undo in history! 
 
         emitDataChanged(selti); // FIXME-0 needed?
 
-        if (editorStateChanged) reposition();// FIXME-0 needed?  only if state changed?
-    }
-}
-
-void VymModel::updateNoteFlag() // FIXME-0 Does not set/unset flag !!!   cont here
-{
-    qDebug() << "VM::updateNoteFlag() "; 
-    setNote(noteEditor->getNote() );
-    reposition();
-
-    return;
-
-    TreeItem *selti = getSelectedItem();
-    if (selti)
-    {
-        emitDataChanged(selti); // FIXME-0 needed? only, if relevant for reposition below...
-        reposition();
+        // Only update flag, if state has changed
+        if (editorStateChanged) reposition();
     }
 }
 

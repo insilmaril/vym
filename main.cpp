@@ -450,8 +450,7 @@ int main(int argc, char* argv[])
 
 
     // Initialize mainwindow
-    // Note: mainWindow pointer is set in constructor  // FIXME-3 check this...
-// #if defined(Q_OS_WIN32)   //FIXME-0 check on Windows
+// #if defined(Q_OS_WIN32)   //FIXME-1 check on Windows
     //Main m(0, Qt::Window | Qt::MSWindowsOwnDC);
 // #else
     Main m;

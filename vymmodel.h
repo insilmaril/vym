@@ -326,7 +326,6 @@ public:
     void setHeadingPlainText(const QString &s, BranchItem *bi=NULL);	//!< Set heading of item
     Heading getHeading();		        //!< Get heading of item
     void updateNoteText(const VymText &);	//!< Signal emmited in NoteEditor via MainWindow
-    void updateNoteFlag();	        	//!< Signal emmited in NoteEditor via MainWindow
     void setNote(const VymNote &vn);    //!< Set note text
     VymNote getNote();			        //!< Get note text
     bool hasRichTextNote();             //!< Check type of vymText used
