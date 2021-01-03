@@ -19,7 +19,7 @@ public:
     bool readSettings(const QString &);
     void writeSettings(const QString &);
     QString value (const QString &key, const QString &def=QString());
-    int readNumValue (const QString &, const int &def=0);
+    int numValue (const QString &, const int &def=0);
     void setValue (const QString &,const QString &);
 private:    
     QStringList keylist;

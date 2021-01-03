@@ -1156,7 +1156,7 @@ void VymModel::autosave()
     QDateTime now=QDateTime().currentDateTime();
 
     // Disable autosave, while we have gone back in history
-    int redosAvail=undoSet.readNumValue (QString("/history/redosAvail"));
+    int redosAvail=undoSet.numValue (QString("/history/redosAvail"));
     if (redosAvail>0) return;
 
     // Also disable autosave for new map without filename
@@ -1241,9 +1241,9 @@ void VymModel::setChanged()
 {
     if (!mapChanged)
 	autosaveTimer->start(settings.value("/system/autosave/ms/",30000).toInt());
-    mapChanged=true;
-    mapDefault=false;
-    mapUnsaved=true;
+    mapChanged = true;
+    mapDefault = false;
+    mapUnsaved = true;
     findReset();
     updateActions();
 }
@@ -1337,7 +1337,7 @@ void VymModel::redo()
 
 bool VymModel::isRedoAvailable()
 {
-    if (undoSet.readNumValue("/history/redosAvail",0)>0)
+    if (undoSet.numValue("/history/redosAvail",0)>0)
 	return true;
     return false;
 }
@@ -1425,7 +1425,7 @@ void VymModel::undo()
 
 bool VymModel::isUndoAvailable()
 {
-    if (undoSet.readNumValue("/history/undosAvail",0)>0)
+    if (undoSet.numValue("/history/undosAvail",0)>0)
 	return true;
     return false;
 }
@@ -1433,8 +1433,8 @@ bool VymModel::isUndoAvailable()
 void VymModel::gotoHistoryStep (int i)
 {
     // Restore variables
-    int undosAvail=undoSet.readNumValue (QString("/history/undosAvail"));
-    int redosAvail=undoSet.readNumValue (QString("/history/redosAvail"));
+    int undosAvail=undoSet.numValue (QString("/history/undosAvail"));
+    int redosAvail=undoSet.numValue (QString("/history/redosAvail"));
 
     if (i<0) i=undosAvail+redosAvail;
 
@@ -1492,12 +1492,12 @@ void VymModel::saveState(
     if (debug) qDebug() << "VM::saveState() for  "<<mapName;
     
     // Find out current undo directory
-    if (undosAvail<stepsTotal) undosAvail++;
+    if (undosAvail < stepsTotal) undosAvail++;
     curStep++;
-    if (curStep>stepsTotal) curStep=1;
+    if (curStep > stepsTotal) curStep = 1;
     
-    QString histDir=getHistoryPath();
-    QString bakMapPath=histDir+"/map.xml";
+    QString histDir = getHistoryPath();
+    QString bakMapPath = histDir + "/map.xml";
 
     // Create histDir if not available
     QDir d(histDir);
@@ -1523,41 +1523,40 @@ void VymModel::saveState(
 
     // We would have to save all actions in a tree, to keep track of 
     // possible redos after a action. Possible, but we are too lazy: forget about redos.
-    redosAvail=0;
+    redosAvail = 0;
 
     // Write the current state to disk
-    undoSet.setValue ("/history/undosAvail",QString::number(undosAvail));
-    undoSet.setValue ("/history/redosAvail",QString::number(redosAvail));
-    undoSet.setValue ("/history/curStep",QString::number(curStep));
-    undoSet.setValue (QString("/history/step-%1/undoCommand").arg(curStep),undoCommand);
-    undoSet.setValue (QString("/history/step-%1/undoSelection").arg(curStep),undoSelection);
-    undoSet.setValue (QString("/history/step-%1/redoCommand").arg(curStep),redoCommand);
-    undoSet.setValue (QString("/history/step-%1/redoSelection").arg(curStep),redoSelection);
-    undoSet.setValue (QString("/history/step-%1/comment").arg(curStep),comment);
-    undoSet.setValue (QString("/history/version"),vymVersion);
+    undoSet.setValue ("/history/undosAvail", QString::number(undosAvail));
+    undoSet.setValue ("/history/redosAvail", QString::number(redosAvail));
+    undoSet.setValue ("/history/curStep", QString::number(curStep));
+    undoSet.setValue (QString("/history/step-%1/undoCommand").arg(curStep), undoCommand);
+    undoSet.setValue (QString("/history/step-%1/undoSelection").arg(curStep), undoSelection);
+    undoSet.setValue (QString("/history/step-%1/redoCommand").arg(curStep), redoCommand);
+    undoSet.setValue (QString("/history/step-%1/redoSelection").arg(curStep), redoSelection);
+    undoSet.setValue (QString("/history/step-%1/comment").arg(curStep), comment);
+    undoSet.setValue (QString("/history/version"), vymVersion);
     undoSet.writeSettings(histPath);
 
     if (debug)
     {
         //qDebug() << "          into="<< histPath;
         qDebug() << "    stepsTotal="<<stepsTotal<<
-        ", undosAvail="<<undosAvail<<
-        ", redosAvail="<<redosAvail<<
+        ", undosAvail=" << undosAvail <<
+        ", redosAvail=" << redosAvail <<
         ", curStep="<<curStep;
         qDebug() << "    ---------------------------";
-        qDebug() << "    comment="<<comment;
-        qDebug() << "    undoCom="<<undoCommand;
-        qDebug() << "    undoSel="<<undoSelection;
-        qDebug() << "    redoCom="<<redoCommand;
-        qDebug() << "    redoSel="<<redoSelection;
-        if (saveSel) qDebug() << "    saveSel="<<qPrintable (getSelectString(saveSel));
+        qDebug() << "    comment=" << comment;
+        qDebug() << "    undoCom=" << undoCommand;
+        qDebug() << "    undoSel=" << undoSelection;
+        qDebug() << "    redoCom=" << redoCommand;
+        qDebug() << "    redoSel=" << redoSelection;
+        if (saveSel) qDebug() << "    saveSel=" << qPrintable (getSelectString(saveSel));
         qDebug() << "    ---------------------------";
     }
 
     mainWindow->updateHistory (undoSet);
 
     setChanged();
-    updateActions();
 }
 
 
@@ -1941,6 +1940,7 @@ void VymModel::updateNoteText(const VymText &vt) // FIXME-0 No undo in history! 
         if ( note_new.getText() != note_old.getText() )
         {
             qDebug() << "  Text changed!";
+            qDebug() << undoSet.value("/history/curStep");
 
             if ((note_new.isEmpty() && ! note_old.isEmpty() ) ||
                (!note_new.isEmpty() &&   note_old.isEmpty() ) )
@@ -1948,16 +1948,9 @@ void VymModel::updateNoteText(const VymText &vt) // FIXME-0 No undo in history! 
 
             VymNote vn;
             vn.copy(vt);
-            // FIXME-0 saveState missing!
+            // FIXME-0 saveState missing!  (also calls setChanged!)
             //         maybe use VM::setNote, but don't update NE!
             selti->setNote( vn );
-        }
-
-        if (!mapChanged)    // FIXME-0 needed? only text changed, no actions impact...
-                            // also: issn't setChanged called in saveState implicitely?
-        {                   
-            setChanged();
-            updateActions();
         }
 
         emitDataChanged(selti); // FIXME-0 needed?
@@ -5658,8 +5651,6 @@ void VymModel::setHideTmpMode (TreeItem::HideTmpMode mode)
 
 void VymModel::updateSelection(QItemSelection newsel,QItemSelection dsel)	
 {
-    qDebug() << "VM::updateSelection"  << dsel.indexes().count() << newsel.indexes().count();
-
     QModelIndex ix;
     MapItem *mi;
     BranchItem *bi;

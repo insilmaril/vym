@@ -79,10 +79,10 @@ void HistoryWindow::updateRow(int row, int step, SimpleSettings &set)
 
 void HistoryWindow::update(SimpleSettings &set)
 {
-    int undosAvail=set.readNumValue("/history/undosAvail",0);
-    int redosAvail=set.readNumValue("/history/redosAvail",0);
-    int stepsTotal=set.readNumValue("/history/stepsTotal",1000);
-    int curStep=set.readNumValue ("/history/curStep");
+    int undosAvail=set.numValue("/history/undosAvail",0);
+    int redosAvail=set.numValue("/history/redosAvail",0);
+    int stepsTotal=set.numValue("/history/stepsTotal",1000);
+    int curStep=set.numValue ("/history/curStep");
     int i;
     int s=curStep;
     int r=undosAvail-1;
