@@ -1425,12 +1425,12 @@ void VymModel::undo()
 
     blockSaveState = blockSaveStateOrg;
 /* testing only
-*/
     qDebug() << "VymModel::undo() end\n";
     qDebug() << "    undosAvail="<<undosAvail;
     qDebug() << "    redosAvail="<<redosAvail;
     qDebug() << "       curStep="<<curStep;
     qDebug() << "    ---------------------------";
+*/
 
     undoSet.setValue ("/history/undosAvail",QString::number(undosAvail));
     undoSet.setValue ("/history/redosAvail",QString::number(redosAvail));
@@ -1518,7 +1518,6 @@ void VymModel::saveState(
             redoSelection == lastRedoSelection() &&
             lastRedoCommand().startsWith("parseVymText ('<vymnote") ) 
     {   
-        qDebug() << "VM::saveState replacing last edit of vymNote";
         undoCommand = undoSet.value (QString("/history/step-%1/undoCommand").arg(curStep), undoCommand);
     } else
     {
@@ -1943,35 +1942,17 @@ Heading VymModel::getHeading()
     return Heading();
 }
 
-void VymModel::updateNoteText(const VymText &vt) // FIXME-0 No undo in history! Add history steps combining the lastest changes...
+void VymModel::updateNoteText(const VymText &vt) 
 {
-    // Ideas:
-    // - check how changes in headingEditor are handled (though undo/redo not really working there!)
-    // - Trigger reposition only, if noteflag has changed (empty editor to used editor or vice versa)
-    // - If note has changed in history on same branchitem, maybe only new content in last step with current editor content
-    // - Alternatively: Completely manage redo steps in TextEditor, which would lead to
-    //   way less communication and comparisons of text
-    //   - Initialize new text
-    //   - send text changed only when state changes (full/empty)
-    //   - VymModel diffs initial and final state when selecting TreeItems
-    //
-    // Ideas 2:
-    //   * ...
-
-    qDebug() << "VM::updateNoteText() ";  
-
     bool editorStateChanged = false;
 
     TreeItem *selti = getSelectedItem();
     if (selti)
     {
-        // FIXME-0 needs to be VymNote instead of VymText   cont here...
         VymNote note_old = selti->getNote();
         VymNote note_new(vt);
         if ( note_new.getText() != note_old.getText() )
         {
-            qDebug() << "  Text changed!";
-
             if ((note_new.isEmpty() && ! note_old.isEmpty() ) ||
                (!note_new.isEmpty() &&   note_old.isEmpty() ) )
                 editorStateChanged = true;
@@ -1989,7 +1970,8 @@ void VymModel::updateNoteText(const VymText &vt) // FIXME-0 No undo in history! 
             selti->setNote( vn );
         }
 
-        emitDataChanged(selti); // FIXME-0 needed?
+        // Update also flags after changes in NoteEditor
+        emitDataChanged(selti); 
 
         // Only update flag, if state has changed
         if (editorStateChanged) reposition();
@@ -5928,9 +5910,8 @@ void VymModel::emitShowSelection()
 
 void VymModel::emitNoteChanged (TreeItem *ti)
 {
-    qDebug() << "VM::emitNoteChanged"; // FIXME-0 
     QModelIndex ix = index(ti);
-    emit (noteChanged (ix) ); // FIXME-0 switch to ti?
+    emit (noteChanged (ix) ); 
     mainWindow->updateNoteEditor (ti);
 }
 

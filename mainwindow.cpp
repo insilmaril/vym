@@ -5922,10 +5922,6 @@ void Main::updateNoteText(const VymText &vt)
 
 void Main::updateNoteEditor(TreeItem *ti)
 {
-    if (ti)
-        qDebug() << "Main::updateNoteEditor of " << ti->getHeadingPlain();
-    else
-        qDebug() << "Main::updateNoteEditor of null";
     if (ti) noteEditor->setNote (ti->getNote() );
 }
 

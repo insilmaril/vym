@@ -246,7 +246,6 @@ QString TextEditor::getFilenameHint()
 
 QString TextEditor::getText()
 {
-    qDebug() << "TE::getText "<<editorName;
     if (e->toPlainText().isEmpty()) return QString();
 
     if (actionFormatRichText->isChecked())
@@ -257,7 +256,6 @@ QString TextEditor::getText()
 
 VymText TextEditor::getVymText()
 {
-    qDebug() << "TE::getVymText " << editorName;
     VymText vt;
 
     if (actionFormatRichText->isChecked())
@@ -715,10 +713,7 @@ void TextEditor::editorChanged()
 
     if (state == oldState) return;
 
-    if (state == emptyEditor)
-        setState (emptyEditor);
-    else
-        setState (filledEditor);
+    updateState();
 }
 
 void TextEditor::setRichText(const QString &t)
@@ -730,21 +725,23 @@ void TextEditor::setRichText(const QString &t)
     e->setHtml(t);
     actionFormatRichText->setChecked (true);
 
+    updateState();
     updateActions();
     blockChangedSignal=false;
 }
 
 void TextEditor::setPlainText(const QString &t)
 {
-    blockChangedSignal=true;
+    blockChangedSignal = true;
     e->setReadOnly(false);
     reset();
 
     e->setPlainText(t);
     actionFormatRichText->setChecked (false);
 
+    updateState();
     updateActions();
-    blockChangedSignal=false;
+    blockChangedSignal = false;
 }
 
 
@@ -756,9 +753,8 @@ void TextEditor::setTextAuto(const QString &t)
         setPlainText( t );
 }
 
-void TextEditor::setVymText( const VymText &vt) // FIXME-0 set correct state of TE  (also in setRichText and setPlainText!  )
+void TextEditor::setVymText( const VymText &vt) 
 {
-    qDebug() << "TE::setVymText " << vt.getTextASCII().left(20) << editorName;
     if (vt.isRichText())
         setRichText(vt.getText());
     else
@@ -939,7 +935,7 @@ void TextEditor::toggleFonthint()
         e->setCurrentFont (fixedFont);
         setFont (fixedFont);
     }
-    emit( textHasChanged(getVymText() ) );       // FIXME-0 really needed? or stateHasChanged?
+    emit( textHasChanged(getVymText() ) );    
 }
 
 void TextEditor::setRichTextMode(bool b)
@@ -956,7 +952,7 @@ void TextEditor::setRichTextMode(bool b)
         actionFormatRichText->setChecked(false);
     }
     updateActions();
-    emit( textHasChanged(getVymText()) );  // FIXME-0 really needed?
+    emit( textHasChanged(getVymText()) ); 
 }
 
 void TextEditor::toggleRichText()
@@ -1163,7 +1159,6 @@ void TextEditor::updateActions()
 
 void TextEditor::setState (EditorState s)
 {
-    
     QPalette p = palette();
     QColor c;
     switch (s)
@@ -1175,6 +1170,14 @@ void TextEditor::setState (EditorState s)
     p.setColor(QPalette::Active, static_cast<QPalette::ColorRole>(9), c);
     p.setColor(QPalette::Inactive, static_cast<QPalette::ColorRole>(9), c);
     e->setPalette(p);
+}
+
+void TextEditor::updateState()
+{
+    if (isEmpty())
+        setState (emptyEditor);
+    else
+        setState (filledEditor);
 }
 
 void TextEditor::setEmptyEditorColor()
