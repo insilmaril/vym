@@ -98,7 +98,7 @@ QString SimpleSettings::value (const QString &key, const QString &def)
     return def;
 }
 
-int SimpleSettings::readNumValue (const QString &key, const int &def)
+int SimpleSettings::numValue (const QString &key, const int &def)
 {
     QStringList::Iterator itk=keylist.begin();
     QStringList::Iterator itv=valuelist.begin();

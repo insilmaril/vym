@@ -67,53 +67,53 @@ void HistoryWindow::updateRow(int row, int step, SimpleSettings &set)
 {
     QTableWidgetItem *item;
 
-    item= new QTableWidgetItem(set.value(QString("/history/step-%1/redoCommand").arg(step)));
+    item = new QTableWidgetItem(set.value(QString("/history/step-%1/redoCommand").arg(step)));
     ui.historyTable->setItem(row, 0, item);
 
-    item= new QTableWidgetItem(set.value(QString("/history/step-%1/comment").arg(step)));
+    item = new QTableWidgetItem(set.value(QString("/history/step-%1/comment").arg(step)));
     ui.historyTable->setItem(row, 1, item);
 
-    item=new QTableWidgetItem(set.value(QString("/history/step-%1/undoCommand").arg(step)));
+    item =new QTableWidgetItem(set.value(QString("/history/step-%1/undoCommand").arg(step)));
     ui.historyTable->setItem(row, 2, item);
 }
 
 void HistoryWindow::update(SimpleSettings &set)
 {
-    int undosAvail=set.readNumValue("/history/undosAvail",0);
-    int redosAvail=set.readNumValue("/history/redosAvail",0);
-    int stepsTotal=set.readNumValue("/history/stepsTotal",1000);
-    int curStep=set.readNumValue ("/history/curStep");
+    int undosAvail = set.numValue("/history/undosAvail", 0);
+    int redosAvail = set.numValue("/history/redosAvail", 0);
+    int stepsTotal = set.numValue("/history/stepsTotal", 1000);
+    int curStep = set.numValue ("/history/curStep");
     int i;
-    int s=curStep;
-    int r=undosAvail-1;
+    int s = curStep;
+    int r = undosAvail - 1;
     QTableWidgetItem *item;
 
     // Update number of rows
-    ui.historyTable->setRowCount (undosAvail + redosAvail +1);
+    ui.historyTable->setRowCount (undosAvail + redosAvail + 1);
 
     // Update buttons
-    if (undosAvail<1)
+    if (undosAvail < 1)
 	ui.undoButton->setEnabled (false);
     else    
 	ui.undoButton->setEnabled (true);
 
-    if (redosAvail<1)
+    if (redosAvail < 1)
 	ui.redoButton->setEnabled (false);
     else    
 	ui.redoButton->setEnabled (true);
 
     // Update undos in table
-    for (i=undosAvail; i>0; i--)
+    for (i = undosAvail; i > 0; i--)
     {
-	updateRow (r,s,set);
+	updateRow (r, s, set);
 	r--;
 	s--;
-	if (s<1) s=stepsTotal;
+	if (s < 1) s = stepsTotal;
     }
     
     // Generated the "now" row
-    QColor c(255,200,120);
-    for (i=0; i <= 2; i++)
+    QColor c(255, 200, 120);
+    for (i = 0; i <= 2; i++)
     {
     if (i != 1)
 	{
@@ -122,7 +122,7 @@ void HistoryWindow::update(SimpleSettings &set)
 	    ui.historyTable->setItem(undosAvail, i, item);
 	}
     }
-    item = new QTableWidgetItem(" - " +tr("Current state","Current bar in history hwindow")+ " - ");
+    item = new QTableWidgetItem(" - " + tr("Current state", "Current bar in history hwindow")+ " - ");
     item->setBackground (QBrush(c));
     ui.historyTable->setItem(undosAvail, 1, item);
 
@@ -130,16 +130,16 @@ void HistoryWindow::update(SimpleSettings &set)
     ui.historyTable->scrollToItem (item);
 
     // Update Redos in table
-    s=curStep;
-    s++; if (s>stepsTotal) s=1;
-    for (i=1;i<= redosAvail; i++)
+    s = curStep;
+    s++; if (s > stepsTotal) s = 1;
+    for (i = 1; i <= redosAvail; i++)
     {
-	updateRow (undosAvail+i,s,set);
-	s++; if (s>stepsTotal) s=1;
+	updateRow (undosAvail + i, s, set);
+	s++; if (s > stepsTotal) s = 1;
     }
 
     // Delete the rest
-    for (i=undosAvail+redosAvail+1;i<= stepsTotal; i++)
+    for (i = undosAvail + redosAvail + 1; i <= stepsTotal; i++)
 	clearRow (i);
 
     //ui.historyTable->resizeColumnsToContents();

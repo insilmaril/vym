@@ -221,7 +221,7 @@ void BranchItem::updateTaskFlag()
     {
 	QString s = "system-" + task->getIconString();
 	systemFlags.activate (s);
-	model->emitDataChanged(this);
+	model->emitDataChanged(this);   // FIXME-2 needed?
     } 
     // else: During initialization the task is not yet attached to branch, 
     // so ignore it for now

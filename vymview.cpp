@@ -94,10 +94,11 @@ VymView::VymView(VymModel *m)
 	model, SIGNAL (updateQueries (VymModel*)), 
 	mainWindow, SLOT (updateQueries(VymModel*) ) );
 
+    /*
     connect (
 	model, SIGNAL (noteChanged(QModelIndex) ),
-	mainWindow, SLOT (updateNoteEditor (QModelIndex) ) );
-	
+	mainWindow, SLOT (updateNoteEditor (QModelIndex) ) );   // FIXME-2 changed, review!
+*/	
     connect (
 	model, SIGNAL (expandAll() ),
 	this, SLOT (expandAll () ) );

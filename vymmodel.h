@@ -212,6 +212,9 @@ public:
 
     void redo();			//!< Redo last action
     bool isRedoAvailable();		//!< True, if redo is available
+    QString lastRedoSelection();        
+    QString lastRedoCommand();
+
     void undo();			//!< Undo last action
     bool isUndoAvailable();		//!< True, if undo is available
     void gotoHistoryStep (int);		//!< Goto a specifig step in history
@@ -325,6 +328,7 @@ public:
     void setHeading(const VymText &vt, BranchItem *bi=NULL);	    //!< Set heading of item
     void setHeadingPlainText(const QString &s, BranchItem *bi=NULL);	//!< Set heading of item
     Heading getHeading();		        //!< Get heading of item
+    void updateNoteText(const VymText &);	//!< Signal emmited in NoteEditor via MainWindow
     void setNote(const VymNote &vn);    //!< Set note text
     VymNote getNote();			        //!< Get note text
     bool hasRichTextNote();             //!< Check type of vymText used
@@ -624,7 +628,6 @@ public:
     void setContextPos (QPointF);	//!< local position during context menu
     void unsetContextPos ();		//!< forget local position after context menu
 
-    void updateNoteFlag();		//!< Signal origination in TextEditor
     void reposition();			//!< Call reposition for all MCOs
     void setHideTmpMode (TreeItem::HideTmpMode mode);	
 

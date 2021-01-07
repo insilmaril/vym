@@ -298,7 +298,7 @@ QUuid OrnamentedObj::findSystemFlagUidByPos(const QPointF &p)
 
 QRectF OrnamentedObj::getBBoxSystemFlagByUid (const QUuid &u)
 {
-    FlagObj *fo = systemFlagRowObj->findFlagObjByUid (u);    // FIXME-0 findFlagObj expects UUid, not name
+    FlagObj *fo = systemFlagRowObj->findFlagObjByUid (u);    // FIXME-1 findFlagObj expects UUid, not name
     if (fo) return fo->getBBox();
 
     return QRectF();

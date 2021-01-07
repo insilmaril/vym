@@ -321,8 +321,9 @@ public slots:
     void windowToggleSmoothPixmap();
     void clearScriptOutput();
     void updateHeading();
-    void updateNoteFlag();
-    void updateNoteEditor (QModelIndex index);
+    void updateNoteText(const VymText &vt);
+    void updateNoteEditor (TreeItem *ti);
+    void updateHeadingEditor (TreeItem *ti);
     void selectInNoteEditor (QString s, int i);
     void setFocusMapEditor();
     void changeSelection (VymModel *model,const QItemSelection &newSel, const QItemSelection &delSel);

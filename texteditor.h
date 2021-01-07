@@ -9,7 +9,7 @@ class QComboBox;
 
 #include "vymtext.h"
 
-enum EditorState {inactiveEditor,emptyEditor,filledEditor};
+enum EditorState {inactiveEditor, emptyEditor, filledEditor};
 
 class TextEditor : public QMainWindow
 {    Q_OBJECT
@@ -58,7 +58,7 @@ public slots:
     void reset();
 
 signals:
-    void textHasChanged();
+    void textHasChanged(const VymText &vt);
     void windowClosed();
     void fontFamilyHasChanged();
     void fontSizeHasChanged();
@@ -90,6 +90,7 @@ private slots:
     void verticalAlignmentChanged(QTextCharFormat::VerticalAlignment);
     void updateActions();
     void setState (EditorState);
+    void updateState();
     void setEmptyEditorColor();
     void setInactiveEditorColor();
     void setFilledEditorColor();

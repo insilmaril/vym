@@ -233,7 +233,7 @@ int main(int argc, char* argv[])
     }
     
     // Update some configurations, which were moved in 2.4.0
-    // This code should be removed later, e.g. in 2.6.0...      // FIXME-2
+    // This settings related code should be removed later, e.g. in 2.6.0...      // FIXME-2
     QStringList settingsChanged;
     settingsChanged  << "readerURL"
                      << "readerPDF"
@@ -450,8 +450,7 @@ int main(int argc, char* argv[])
 
 
     // Initialize mainwindow
-    // Note: mainWindow pointer is set in constructor  // FIXME-3 check this...
-// #if defined(Q_OS_WIN32)   //FIXME-0 check
+// #if defined(Q_OS_WIN32)   //FIXME-1 check on Windows
     //Main m(0, Qt::Window | Qt::MSWindowsOwnDC);
 // #else
     Main m;

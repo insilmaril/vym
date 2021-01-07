@@ -9,6 +9,8 @@
 class VymNote:public VymText
 {
 public:
+    VymNote();
+    VymNote(const VymText &vt);
     void operator= (const VymText &other);
     QString saveToDir();
 };
