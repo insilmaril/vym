@@ -5915,9 +5915,8 @@ void Main::updateHeading()
 
 void Main::updateNoteText(const VymText &vt) 
 {
-    qDebug() << "Main::updateNoteText()    (stateHasChanged)";  // FIXME-0 cont here
     // this slot is connected to noteEditor::textHasChanged()
-     VymModel *m = currentModel();
+    VymModel *m = currentModel();
     if (m) m->updateNoteText(vt);
 }
 
@@ -5950,8 +5949,6 @@ void Main::setFocusMapEditor()
 
 void Main::changeSelection (VymModel *model, const QItemSelection &newsel, const QItemSelection &)
 {
-    qDebug () << "Main::changeSelection";
-
     // Setting the model in BPE implicitely 
     // also sets treeItem and updates content in BPE
     branchPropertyEditor->setModel (model ); 
@@ -5967,7 +5964,7 @@ void Main::changeSelection (VymModel *model, const QItemSelection &newsel, const
             if (!ti->hasEmptyNote() )
                 noteEditor->setNote(ti->getNote() );
             else
-                noteEditor->setNote(VymNote() );
+                noteEditor->reset();    // FIXME-0 check, previously: setNote(VymNote() );
             // Show URL and link in statusbar
             QString status;
             QString s = ti->getURL();

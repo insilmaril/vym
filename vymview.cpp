@@ -88,7 +88,7 @@ VymView::VymView(VymModel *m)
 
     connect (
 	model, SIGNAL (dataChanged(const QModelIndex &, const QModelIndex &)), 
-	this, SLOT (updateDockWidgetTitles() ) );// FIXME-0 connect directly to MainWindow and rename method (also updates selection in BPE)
+	this, SLOT (updateDockWidgetTitles() ) );// FIXME-2 connect directly to MainWindow and rename method (also updates selection in BPE)
 
     connect (
 	model, SIGNAL (updateQueries (VymModel*)), 
@@ -97,7 +97,7 @@ VymView::VymView(VymModel *m)
     /*
     connect (
 	model, SIGNAL (noteChanged(QModelIndex) ),
-	mainWindow, SLOT (updateNoteEditor (QModelIndex) ) );   // FIXME-0 changed, review!
+	mainWindow, SLOT (updateNoteEditor (QModelIndex) ) );   // FIXME-2 changed, review!
 */	
     connect (
 	model, SIGNAL (expandAll() ),

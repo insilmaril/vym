@@ -13,6 +13,7 @@ VymText::VymText()
 {
     clear();
 }
+
 VymText::VymText(const VymText &other)
 {
     clear();

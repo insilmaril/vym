@@ -212,6 +212,9 @@ public:
 
     void redo();			//!< Redo last action
     bool isRedoAvailable();		//!< True, if redo is available
+    QString lastRedoSelection();        
+    QString lastRedoCommand();
+
     void undo();			//!< Undo last action
     bool isUndoAvailable();		//!< True, if undo is available
     void gotoHistoryStep (int);		//!< Goto a specifig step in history

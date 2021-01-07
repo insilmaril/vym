@@ -480,6 +480,7 @@ bool VymModel::parseVymText (const QString &s)
         blockSaveState=blockSaveStateOrg;
         if ( ok )
         {
+            if (s.startsWith("<vymnote")) emitNoteChanged( bi );
 //            emitNoteChanged( bi );  // FIXME-0 check: what if heading is changed???
             emitDataChanged( bi );
             reposition();   // to generate bbox sizes
@@ -1337,9 +1338,26 @@ void VymModel::redo()
 
 bool VymModel::isRedoAvailable()
 {
-    if (undoSet.numValue("/history/redosAvail",0)>0)
+    if (undoSet.numValue("/history/redosAvail", 0) > 0)
 	return true;
-    return false;
+    else
+        return false;
+}
+
+QString VymModel::lastRedoSelection()
+{
+    if (isUndoAvailable() )
+        return undoSet.value(QString("/history/step-%1/redoSelection").arg(curStep));
+    else
+        return QString();
+}
+
+QString VymModel::lastRedoCommand()
+{
+    if (isUndoAvailable() )
+        return undoSet.value(QString("/history/step-%1/redoCommand").arg(curStep));
+    else
+        return QString();
 }
 
 void VymModel::undo()	
@@ -1407,12 +1425,12 @@ void VymModel::undo()
 
     blockSaveState = blockSaveStateOrg;
 /* testing only
+*/
     qDebug() << "VymModel::undo() end\n";
     qDebug() << "    undosAvail="<<undosAvail;
     qDebug() << "    redosAvail="<<redosAvail;
     qDebug() << "       curStep="<<curStep;
     qDebug() << "    ---------------------------";
-*/
 
     undoSet.setValue ("/history/undosAvail",QString::number(undosAvail));
     undoSet.setValue ("/history/redosAvail",QString::number(redosAvail));
@@ -1425,7 +1443,7 @@ void VymModel::undo()
 
 bool VymModel::isUndoAvailable()
 {
-    if (undoSet.numValue("/history/undosAvail",0)>0)
+    if (undoSet.numValue("/history/undosAvail", 0) > 0) // FIXME-2  or just curStep >0 ?
 	return true;
     return false;
 }
@@ -1489,12 +1507,26 @@ void VymModel::saveState(
 
     if (blockSaveState) return;
 
-    if (debug) qDebug() << "VM::saveState() for  "<<mapName;
+    if (debug) qDebug() << "VM::saveState() for map " << mapName;
     
-    // Find out current undo directory
-    if (undosAvail < stepsTotal) undosAvail++;
-    curStep++;
-    if (curStep > stepsTotal) curStep = 1;
+    QString undoCommand = undoCom;
+    QString redoCommand = redoCom;
+    
+    // Increase undo steps, but check for repeated actions
+    // like editing a vymNote - then do not increase but replace last command
+    if (curStep > 0  && 
+            redoSelection == lastRedoSelection() &&
+            lastRedoCommand().startsWith("parseVymText ('<vymnote") ) 
+    {   
+        qDebug() << "VM::saveState replacing last edit of vymNote";
+        undoCommand = undoSet.value (QString("/history/step-%1/undoCommand").arg(curStep), undoCommand);
+    } else
+    {
+        if (undosAvail < stepsTotal) undosAvail++;
+
+        curStep++;
+        if (curStep > stepsTotal) curStep = 1;
+    }
     
     QString histDir = getHistoryPath();
     QString bakMapPath = histDir + "/map.xml";
@@ -1509,8 +1541,6 @@ void VymModel::saveState(
     if (saveSel)
 	dataXML = saveToDir (histDir, mapName + "-", FlagRow::NoFlags, QPointF (), saveSel);
 	
-    QString undoCommand = undoCom;
-    QString redoCommand = redoCom;
     if (savemode == PartOfMap )
     {
 	undoCommand.replace ("PATH",bakMapPath);
@@ -1935,12 +1965,12 @@ void VymModel::updateNoteText(const VymText &vt) // FIXME-0 No undo in history! 
     TreeItem *selti = getSelectedItem();
     if (selti)
     {
-        VymText note_old = selti->getNote();
-        VymText note_new = vt;
+        // FIXME-0 needs to be VymNote instead of VymText   cont here...
+        VymNote note_old = selti->getNote();
+        VymNote note_new(vt);
         if ( note_new.getText() != note_old.getText() )
         {
             qDebug() << "  Text changed!";
-            qDebug() << undoSet.value("/history/curStep");
 
             if ((note_new.isEmpty() && ! note_old.isEmpty() ) ||
                (!note_new.isEmpty() &&   note_old.isEmpty() ) )
@@ -1948,8 +1978,14 @@ void VymModel::updateNoteText(const VymText &vt) // FIXME-0 No undo in history! 
 
             VymNote vn;
             vn.copy(vt);
-            // FIXME-0 saveState missing!  (also calls setChanged!)
-            //         maybe use VM::setNote, but don't update NE!
+            
+            saveState(
+                selti,
+                "parseVymText ('" + note_old.saveToDir() + "')",
+                selti,
+                "parseVymText ('" + note_new.saveToDir() + "')",
+                QString("Set note of %1 to \"%2\"").arg(getObjectName(selti)).arg(note_new.getTextASCII().left(20) ) );
+
             selti->setNote( vn );
         }
 
@@ -3984,7 +4020,7 @@ ItemList VymModel::getTargets()
     return targets; 
 }
 
-void VymModel::toggleFlagByUid (const QUuid &uid, bool useGroups)  
+void VymModel::toggleFlagByUid (const QUuid &uid, bool useGroups)  // FIXME-2  saveState not correct when toggling flags in groups (previous flags not saved!)
 {
     BranchItem *bi = getSelectedBranch();
 
@@ -4974,7 +5010,6 @@ void VymModel::unsetContextPos()
 
 void VymModel::reposition() //FIXME-4 VM should have no need to reposition, but the views...
 {
-    qDebug() << "VM::reposition";; // FIXME-0 testing
     if (blockReposition) return;
 
     BranchObj *bo;
