@@ -139,7 +139,7 @@ void TextEditor::init (const QString &scope)
 
 bool TextEditor::isEmpty()
 {
-    if (e->toPlainText().length()>0)
+    if (e->toPlainText().length() > 0)
 	return false;
     else
 	return true;

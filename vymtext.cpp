@@ -249,7 +249,14 @@ QString VymText::getFilenameHint() const
 
 bool VymText::isEmpty ()
 {
-    return text.isEmpty();
+    if (!isRichText() )
+        return text.isEmpty();
+    else
+    {
+        QTextDocument td;
+        td.setHtml(text);
+        return td.isEmpty();
+    }
 }
 
 void VymText::setColor(QColor col)
