@@ -330,7 +330,7 @@ Main::Main(QWidget* parent) : QMainWindow(parent)
     connect (noteEditor, SIGNAL (windowClosed() ), this, SLOT (updateActions()));
 
     // Connect heading editor
-    connect (headingEditor, SIGNAL (textHasChanged() ), this, SLOT (updateHeading()));
+    //connect (headingEditor, SIGNAL (textHasChanged() ), this, SLOT (updateHeading()));  // FIXME-0 no such signal
 
     connect( scriptEditor, SIGNAL( runScript ( QString ) ),  this, SLOT( runScript ( QString ) ) );
 
@@ -5960,7 +5960,8 @@ void Main::changeSelection (VymModel *model, const QItemSelection &newsel, const
             if (!ti->hasEmptyNote() )
                 noteEditor->setNote(ti->getNote() );
             else
-                noteEditor->reset();    // FIXME-0 check, previously: setNote(VymNote() );
+                noteEditor->reset();
+            
             // Show URL and link in statusbar
             QString status;
             QString s = ti->getURL();
