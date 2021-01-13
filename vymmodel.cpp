@@ -1360,7 +1360,7 @@ QString VymModel::lastRedoCommand()
         return QString();
 }
 
-void VymModel::undo()	
+void VymModel::undo()	    // FIXME-0 fails for parsVymText of richText note
 {
     // Can we undo at all?
     if (undosAvail < 1) return;
