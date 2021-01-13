@@ -1360,6 +1360,16 @@ QString VymModel::lastRedoCommand()
         return QString();
 }
 
+QVariant VymModel::repeatLastCommand()
+{
+    QString command = "m = vym.currentMap();";
+    if (isUndoAvailable() )
+        command += "m." + undoSet.value(QString("/history/step-%1/redoCommand").arg(curStep)) + ";";
+    else
+        return false;
+    return execute(command);
+}
+
 void VymModel::undo()	    // FIXME-0 fails for parsVymText of richText note
 {
     // Can we undo at all?

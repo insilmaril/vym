@@ -135,7 +135,7 @@ TaskEditor::TaskEditor(QWidget *)
 	this, SLOT (selectionChanged (QItemSelection,QItemSelection)));
     
     // Enable wordwrap when data changes
-    if (settings.value ("/taskeditor/wordWrap", true).toBool())
+    if (settings.value ("/taskeditor/wordWrap", true).toBool()) // FIXME-2 not working or only sometimes?
     {
         connect ( 
             taskModel, SIGNAL( dataChanged( QModelIndex, QModelIndex)),
