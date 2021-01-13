@@ -683,6 +683,11 @@ void VymModelWrapper::removeSlide(int n)
         logError( context(), QScriptContext::RangeError, QString("Slide '%1' not available.").arg(n) );
 }
 
+QVariant VymModelWrapper::repeatLastCommand()
+{
+    return model->repeatLastCommand();
+}
+
 void VymModelWrapper::saveImage( const QString &filename)
 {
     model->saveImage( NULL, filename);

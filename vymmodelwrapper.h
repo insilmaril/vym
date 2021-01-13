@@ -101,6 +101,7 @@ public slots:
     void removeChildren();
     void removeKeepChildren();
     void removeSlide(int n);
+    QVariant repeatLastCommand();
     void saveImage( const QString &filename);
     void saveNote( const QString &filename); 
     void scroll();

@@ -214,6 +214,7 @@ public:
     bool isRedoAvailable();		//!< True, if redo is available
     QString lastRedoSelection();        
     QString lastRedoCommand();
+    QVariant repeatLastCommand();       //!< Repeat last command on current selection
 
     void undo();			//!< Undo last action
     bool isUndoAvailable();		//!< True, if undo is available

@@ -740,6 +740,9 @@ void Main::setupAPI()
     c->addPar (Command::Int,false,"Index of slide to remove");
     modelCommands.append(c);
 
+    c = new Command ("repeatLastCommand", Command::Any);          
+    modelCommands.append(c);
+
     c = new Command ("saveImage", Command::Image); 
     c->addPar (Command::String,false,"Filename of image to save");
     c->addPar (Command::String,false,"Format of image to save");
@@ -6471,6 +6474,16 @@ void Main::flagChanged()
 void Main::testFunction1()
 {
     VymModel *m = currentModel();
+    if (m)
+    {
+        m->repeatLastCommand();
+    }
+}
+
+void Main::testFunction2()
+{
+    VymModel *m = currentModel();
+    if (m)
     {
         UserDialog dia;
         dia.exec();
@@ -6480,12 +6493,6 @@ void Main::testFunction1()
             m->setURL( QString("<ac:link> <ri:user ri:userkey=\"%1\"/></ac:link>").arg(dia.selectedUserKey() ));
         }
     }
-}
-
-void Main::testFunction2()
-{
-    togglePresentationMode();
-    // scriptEditor->runScript();
 }
 
 void Main::toggleWinter()
