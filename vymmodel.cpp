@@ -708,12 +708,12 @@ File::ErrorCode VymModel::save (const SaveMode &savemode)
 	mapFileName = fileName;
 
     // Look, if we should zip the data:
-    if (!zipped)
+    if (!zipped)    // FIXME-2 sometimes map is marked unzipped for no visible reason
     {
 	QMessageBox mb( vymName,
 	    tr("The map %1\ndid not use the compressed "
 	    "vym file format.\nWriting it uncompressed will also write images \n"
-	    "and flags and thus may overwrite files in the "
+	    "and flags and thus may overwrite files into the "
 	    "given directory\n\nDo you want to write the map").arg(filePath),
 	    QMessageBox::Warning,
 	    QMessageBox::Yes | QMessageBox::Default,
