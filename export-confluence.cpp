@@ -57,8 +57,6 @@ QString ExportConfluence::getBranchText(BranchItem *current)
         QString id = model->getSelectString(current);
         QString heading = quotemeta(current->getHeadingPlain());
 
-        qDebug() << current->getHeadingPlain() << dia.useTextColor;
-
         if (dia.useTextColor)
         {
             QColor c = current->getHeadingColor();
