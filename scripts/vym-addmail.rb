@@ -65,7 +65,7 @@ begin
     map.selectLatestAdded
 
     date = mail.date.to_s.gsub!(/T.*$/,"")
-    map.setHeadingPlainText("Email #{date}: #{mail.subject}")
+    map.setHeadingPlainText("#{date} Email: #{mail.subject}")
     map.loadNote(out.path)
     map.colorBranch("#0000ff")
   ensure

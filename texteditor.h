@@ -55,7 +55,7 @@ public slots:
     void setVymText(const VymText &vt);
     void setInactive();		    // Nothing can be entered
     void editCopyAll();
-    void reset();
+    void clear();
 
 signals:
     void textHasChanged(const VymText &vt);

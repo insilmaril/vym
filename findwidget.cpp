@@ -49,7 +49,7 @@ FindWidget::FindWidget(QWidget *)
     addAction (a);
 
     filterNotesButton = new QPushButton;
-    filterNotesButton->setIcon (QPixmap(":/flag-note.png"));
+    filterNotesButton->setIcon (QPixmap(":/flag-note.svg"));
     filterNotesButton->setCheckable(true);
     filterNotesButton->setChecked(true);
     connect ( filterNotesButton, SIGNAL( clicked() ), this, SLOT( nextPressed() ) );

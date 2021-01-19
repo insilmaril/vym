@@ -5963,7 +5963,7 @@ void Main::changeSelection (VymModel *model, const QItemSelection &newsel, const
             if (!ti->hasEmptyNote() )
                 noteEditor->setNote(ti->getNote() );
             else
-                noteEditor->reset();
+                noteEditor->clear();    // Also sets empty state
             
             // Show URL and link in statusbar
             QString status;
