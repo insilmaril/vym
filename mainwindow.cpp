@@ -4457,55 +4457,13 @@ bool Main::openURL(const QString &url)
     return true;
 }
 
-void Main::openTabs(QStringList urls)   // FIXME-2 remove dbus and rely on system to handle URLs
+void Main::openTabs(QStringList urls)
 {
     if (urls.isEmpty()) return;
     	
-    QStringList args;
-    QString browser=settings.value("/system/readerURL" ).toString();
-#if defined(VYM_DBUS)
-    if ( browser.contains("konqueror") && 
-            (browserPID==0 || !QDBusConnection::sessionBus().interface()->registeredServiceNames().value().contains (QString("org.kde.konqueror-%1").arg(*browserPID)))
-       )	 
-    {
-        // Start a new browser, if there is not one running already or
-        // if a previously started konqueror is gone.
-        if (debug) qDebug() <<"Main::openTabs no konqueror with PID "<<*browserPID<<" found";
-        openURL(urls.takeFirst());
-        if (debug) qDebug() << "Main::openTabs Started konqueror, new PID is "<<*browserPID;
-    }
-
-    if (browser.contains("konqueror"))
-    {
-        foreach (QString u, urls) 
-        {
-            // Open new browser
-            // Try to open new tab in existing konqueror started previously by vym
-            args.clear();
-
-            args<< QString("org.kde.konqueror-%1").arg(*browserPID)<<
-                "/konqueror/MainWindow_1"<<
-                "newTab" << 
-                u <<
-                "false";
-            if (!QProcess::startDetached ("qdbus",args))    // FIXME-3 use DBUS directly
-            {
-                QMessageBox::warning(0, 
-                    tr("Warning"),
-                    tr("Couldn't start %1 to open a new tab in %2.").arg("qdbus").arg("konqueror"));
-                return;
-            }
-        }
-        return;	
-    } 
-#endif
-    //
     // Other browser, e.g. xdg-open
     // Just open all urls and leave it to the system to cope with it
-    foreach (QString u, urls) 
-    {
-        openURL(u);
-    }
+    foreach (QString u, urls) openURL(u);
 }
 
 
