@@ -362,7 +362,7 @@ void TextEditor::setupFileActions()
     actionFilePrint=a;
     
     a = new QAction( QPixmap( ":/edittrash.png"), tr( "&Delete All" ), this);
-    connect( a, SIGNAL( triggered() ), this, SLOT( reset() ) );
+    connect( a, SIGNAL( triggered() ), this, SLOT( clear() ) );
     fileMenu->addAction (a);
     tb->addAction (a);
     actionFileDeleteAll=a;
@@ -720,7 +720,7 @@ void TextEditor::setRichText(const QString &t)
 {
     blockChangedSignal=true;
     e->setReadOnly(false);
-    reset();
+    clear();
 
     e->setHtml(t);
     actionFormatRichText->setChecked (true);
@@ -734,7 +734,7 @@ void TextEditor::setPlainText(const QString &t)
 {
     blockChangedSignal = true;
     e->setReadOnly(false);
-    reset();
+    clear();
 
     e->setPlainText(t);
     actionFormatRichText->setChecked (false);
@@ -763,8 +763,8 @@ void TextEditor::setVymText( const VymText &vt)
 
 void TextEditor::setInactive()
 {
-    state=inactiveEditor;
-    e->setPlainText("");
+    e->clear();
+    state = inactiveEditor;
     setState (inactiveEditor);
     e->setReadOnly (true);
 
@@ -777,10 +777,10 @@ void TextEditor::editCopyAll()
     e->copy();
 }
 
-void TextEditor::reset()
+void TextEditor::clear()
 {
-    e->selectAll();
-    e->textCursor().deleteChar();
+    e->clear();   
+    setState(emptyEditor);
     e->setTextColor( colorFont );
 }
 

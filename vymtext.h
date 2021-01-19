@@ -35,7 +35,7 @@ public:
     QString getFontHint () const;
     void setFilenameHint (const QString&);
     QString getFilenameHint () const;
-    bool isEmpty();
+    bool isEmpty() const;
     void setColor(QColor color);
     QColor getColor();
     QString getAttributes();

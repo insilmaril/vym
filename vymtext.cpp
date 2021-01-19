@@ -247,7 +247,7 @@ QString VymText::getFilenameHint() const
     return filenamehint;
 }
 
-bool VymText::isEmpty ()
+bool VymText::isEmpty () const
 {
     if (!isRichText() )
         return text.isEmpty();
