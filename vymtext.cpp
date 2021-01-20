@@ -285,5 +285,9 @@ QString VymText::getAttributes()
 
 QString VymText::saveToDir ()
 {
-    return getCDATA( text );
+    if (textmode == RichText)
+        // Remove linebreaks, which would confuse script parser 
+        return getCDATA( text.remove("\n"));
+    else
+        return getCDATA( text );
 }

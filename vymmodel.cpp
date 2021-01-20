@@ -1370,7 +1370,7 @@ QVariant VymModel::repeatLastCommand()
     return execute(command);
 }
 
-void VymModel::undo()	    // FIXME-0 fails for parsVymText of richText note
+void VymModel::undo()	    // FIXME-0 fails for parsVymText of plainText note due to linebreaks
 {
     // Can we undo at all?
     if (undosAvail < 1) return;
@@ -1972,9 +1972,9 @@ void VymModel::updateNoteText(const VymText &vt)
             
             saveState(
                 selti,
-                "parseVymText ('" + note_old.saveToDir() + "')",
+                "parseVymText (\"" + quoteQuotes(note_old.saveToDir()) + "\")",
                 selti,
-                "parseVymText ('" + note_new.saveToDir() + "')",
+                "parseVymText (\""  + quoteQuotes(note_new.saveToDir()) + "\")",
                 QString("Set note of %1 to \"%2\"").arg(getObjectName(selti)).arg(note_new.getTextASCII().left(20) ) );
 
             selti->setNote( vn );
@@ -2000,9 +2000,9 @@ void VymModel::setNote(const  VymNote &vn)
         n_new = vn;
         saveState(
             selti,
-            "parseVymText ('" + n_old.saveToDir() + "')",
+            "parseVymText (\"" + quoteQuotes(n_old.saveToDir()) + "\")",
             selti,
-            "parseVymText ('" + n_new.saveToDir() + "')",
+            "parseVymText (\"" + quoteQuotes(n_new.saveToDir()) + "\")",
             QString("Set note of %1 to \"%2\"").arg(getObjectName(selti)).arg(n_new.getTextASCII().left(20) ) );
         selti->setNote( n_new );
         emitNoteChanged( selti );
