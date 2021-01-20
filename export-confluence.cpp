@@ -55,7 +55,7 @@ QString ExportConfluence::getBranchText(BranchItem *current)
             hr = ((BranchObj*)lmo)->getBBoxHeading();
         }
         QString id = model->getSelectString(current);
-        QString heading = quotemeta(current->getHeadingPlain());
+        QString heading = quoteMeta(current->getHeadingPlain());
 
         qDebug() << current->getHeadingPlain() << dia.useTextColor;
 
@@ -268,7 +268,7 @@ QString ExportConfluence::createTOC()
             toc += QString("<a href=\"#%1\"> %2 %3</a><br />\n")
                     .arg(model->getSelectString(cur))
                     .arg(number)
-                    .arg(quotemeta( cur->getHeadingPlain() ));
+                    .arg(quoteMeta( cur->getHeadingPlain() ));
             toc += "</div>";
         }
         model->nextBranch(cur,prev);

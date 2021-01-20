@@ -4,8 +4,8 @@
 #include <QStringList>
 
 
-// returns masked "<" ">" "&"
-QString quotemeta(const QString &s)
+// returns masked '<' '>' '&'  '"'
+QString quoteMeta(const QString &s)
 {
     QString r = s;
     QRegExp  rx("&(?!amp;)");
@@ -19,7 +19,7 @@ QString quotemeta(const QString &s)
     return r;
 }
 
-QString unquotemeta(const QString &s)
+QString unquoteMeta(const QString &s)
 {
     QString r = s;
     QRegExp  rx("&amp;)");
@@ -132,7 +132,7 @@ QString XMLObj::endElement(QString s)
 // returns  at="val"
 QString XMLObj::attribut(QString at, QString val)
 {
-    return " " + at + "=\"" + quotemeta(val) + "\"";  
+    return " " + at + "=\"" + quoteMeta(val) + "\"";  
 }
 
 // returns <s> val </s>

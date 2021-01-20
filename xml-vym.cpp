@@ -426,7 +426,7 @@ bool parseVYMHandler::characters   ( const QString& ch)
 {
     //qDebug()<< "xml-vym: characters " << ch << "  state=" << state;
 
-    QString ch_org = quotemeta (ch);
+    QString ch_org = quoteMeta (ch);
     QString ch_simplified = ch.simplified();
 
     switch ( state ) 
@@ -963,13 +963,13 @@ bool parseVYMHandler::readSlideAttr (const QXmlAttributes& a)
         }
         if (!a.value( "inScript").isEmpty() ) 
         {
-            lastSlide->setInScript( unquotemeta( a.value( "inScript") ) );
+            lastSlide->setInScript( unquoteMeta( a.value( "inScript") ) );
         } else
-            lastSlide->setInScript( unquotemeta( scriptlines.join(";\n") ) );
+            lastSlide->setInScript( unquoteMeta( scriptlines.join(";\n") ) );
 
         if (!a.value( "outScript").isEmpty() ) 
         {
-            lastSlide->setOutScript( unquotemeta( a.value( "outScript") ) );
+            lastSlide->setOutScript( unquoteMeta( a.value( "outScript") ) );
         }
     }
     return true;

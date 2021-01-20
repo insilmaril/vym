@@ -4,8 +4,8 @@
 class QString;
 class QStringList;
 
-QString quotemeta( const QString& );  
-QString unquotemeta( const QString& );	
+QString quoteMeta( const QString& );  
+QString unquoteMeta( const QString& );	
 QString quoteQuotes( const QString & );
 QString unquoteQuotes( const QString & );
 QString quoteUmlaut( const QString& );	
