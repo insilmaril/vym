@@ -142,10 +142,11 @@ QString BranchItem::saveToDir (const QString &tmpdir,const QString &prefix, cons
         + layoutAttr
 	+ idAttr
 	);
+
     incIndent();
 
     // save heading
-    s += heading.saveToDir();
+    s += indent() + heading.saveToDir();
 
     // Save frame  // not saved if there is no MO
     if (mo)
@@ -156,24 +157,26 @@ QString BranchItem::saveToDir (const QString &tmpdir,const QString &prefix, cons
     }
 
     // save names of flags set
-    s += standardFlags.saveState();
-    s +=     userFlags.saveState();
+    if (!standardFlags.isEmpty() ) 
+        s += indent() + standardFlags.saveState();
+    if (!userFlags.isEmpty() ) 
+        s += indent() + userFlags.saveState();
     
     // Save Images
     for (int i = 0; i < imageCount(); ++i)
-	s += getImageNum(i)->saveToDir (tmpdir, prefix);
+	s += indent() + getImageNum(i)->saveToDir (tmpdir, prefix);
 
     // save attributes
     for (int i = 0; i < attributeCount(); ++i)
-	s += getAttributeNum(i)->getDataXML();
+	s += indent() + getAttributeNum(i)->getDataXML();
 
     // save note
     if (!note.isEmpty() )
-	s += note.saveToDir();
+	s += indent() + note.saveToDir();
     
     // save task
     if (task)
-	s += task->saveToDir();
+	s += indent() + task->saveToDir();
 
     // Save branches
     int i = 0;

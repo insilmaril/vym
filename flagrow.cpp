@@ -210,6 +210,14 @@ bool FlagRow::isActive (const QUuid &uid)
     return false;   
 }
 
+bool FlagRow::isEmpty()
+{
+    if (activeUids.count() == 0 )
+        return true;
+    else
+        return false;
+}
+
 bool FlagRow::toggle (const QString &name, bool useGroups)  
 {
     // First get UID from mastRow
