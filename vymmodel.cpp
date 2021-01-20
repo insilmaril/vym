@@ -11,6 +11,9 @@
 #define sleep Sleep
 #endif
 
+#include <iostream> 
+using namespace std;
+
 #include <QColorDialog>
 #include <QFileDialog>
 #include <QMessageBox>
@@ -456,6 +459,9 @@ QString VymModel::getDestPath()
 
 bool VymModel::parseVymText (const QString &s)
 {
+    qDebug() << "VM::parseVymText"; // FIXME-0  Problem: '''' style=" font-family:'DejaVu Sans Mono'
+    cout << qPrintable(s) << endl;
+
     bool ok = false;
     BranchItem *bi = getSelectedBranch();
     if (bi)
@@ -1298,15 +1304,17 @@ void VymModel::redo()
     if (debug)
     {
 	qDebug() << "VymModel::redo() begin\n";
-	qDebug() << "    undosAvail="<<undosAvail;
-	qDebug() << "    redosAvail="<<redosAvail;
-	qDebug() << "       curStep="<<curStep;
+	qDebug() << "    undosAvail=" << undosAvail;
+	qDebug() << "    redosAvail=" << redosAvail;
+	qDebug() << "       curStep=" << curStep;
 	qDebug() << "    ---------------------------";
-	qDebug() << "    comment="<<comment;
-	qDebug() << "    undoCom="<<undoCommand;
-	qDebug() << "    undoSel="<<undoSelection;
-	qDebug() << "    redoCom="<<redoCommand;
-	qDebug() << "    redoSel="<<redoSelection;
+	qDebug() << "    comment=" << comment;
+	qDebug() << "    undoSel=" << undoSelection;
+	qDebug() << "    redoSel=" << redoSelection;
+	qDebug() << "    undoCom:";
+        cout << qPrintable(undoCommand);
+	qDebug() << "    redoCom=";
+        cout << qPrintable(redoCommand);
 	qDebug() << "    ---------------------------";
     }
 
@@ -1406,16 +1414,18 @@ void VymModel::undo()	    // FIXME-0 fails for parsVymText of plainText note due
     if (debug)
     {
 	qDebug() << "VymModel::undo() begin\n";
-	qDebug() << "    undosAvail="<<undosAvail;
-	qDebug() << "    redosAvail="<<redosAvail;
-	qDebug() << "       curStep="<<curStep;
-	qDebug() << "    ---------------------------";
-	qDebug() << "    comment="<<comment;
-	qDebug() << "    undoCom="<<undoCommand;
-	qDebug() << "    undoSel="<<undoSelection;
-	qDebug() << "    redoCom="<<redoCommand;
-	qDebug() << "    redoSel="<<redoSelection;
-	qDebug() << "    ---------------------------";
+	qDebug() << "    undosAvail=" << undosAvail;
+	qDebug() << "    redosAvail=" << redosAvail;
+	qDebug() << "       curStep=" << curStep;
+	cout << "    ---------------------------" << endl;
+	qDebug() << "    comment=" << comment;
+	qDebug() << "    undoSel=" << undoSelection;
+	qDebug() << "    redoSel=" << redoSelection;
+	cout  << "    undoCom:" << endl;
+        cout << qPrintable(undoCommand) << endl;
+	cout  << "    redoCom:" << endl;
+        cout << qPrintable(redoCommand) << endl;
+	cout << "    ---------------------------" << endl;
     }	
 
     // select  object before undo
@@ -1579,18 +1589,24 @@ void VymModel::saveState(
     if (debug)
     {
         //qDebug() << "          into="<< histPath;
-        qDebug() << "    stepsTotal="<<stepsTotal<<
+        qDebug() << "    stepsTotal=" << stepsTotal <<
         ", undosAvail=" << undosAvail <<
         ", redosAvail=" << redosAvail <<
-        ", curStep="<<curStep;
-        qDebug() << "    ---------------------------";
+        ", curStep=" << curStep;
+	cout << "    ---------------------------" << endl;
         qDebug() << "    comment=" << comment;
-        qDebug() << "    undoCom=" << undoCommand;
         qDebug() << "    undoSel=" << undoSelection;
-        qDebug() << "    redoCom=" << redoCommand;
         qDebug() << "    redoSel=" << redoSelection;
         if (saveSel) qDebug() << "    saveSel=" << qPrintable (getSelectString(saveSel));
-        qDebug() << "    ---------------------------";
+        cout << "    undoCom:" << endl; 
+        cout << qPrintable(undoCommand) << endl;
+        cout << "    undoCom saved:" << endl; 
+        cout << qPrintable( undoSet.value (QString("/history/step-%1/undoCommand").arg(curStep))) << endl;
+        cout << "    redoCom:" << endl; 
+        cout << qPrintable(redoCommand) << endl;
+	cout << "    ---------------------------" << endl;
+
+        
     }
 
     mainWindow->updateHistory (undoSet);

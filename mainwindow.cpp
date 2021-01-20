@@ -6388,6 +6388,12 @@ QVariant Main::runScript (const QString &script)
     QScriptValue val3 = scriptEngine.newQObject( &selection );
     scriptEngine.globalObject().setProperty("selection", val3);
 
+    if (debug)
+    {
+        cout << "MainWindow::runScript starting to execute:" << endl;
+        cout << qPrintable(script) << endl;
+    }
+
     // Run script
     QScriptValue result = scriptEngine.evaluate(script);
 
@@ -6397,7 +6403,6 @@ QVariant Main::runScript (const QString &script)
         qDebug() << "   hasException: " << scriptEngine.hasUncaughtException();
         qDebug() << "         result: " << result.toString();   // not used so far...
         qDebug() << "     lastResult: " << scriptEngine.globalObject().property("lastResult").toVariant();
-        qDebug() << "     script: " << script;
     }
 
     if (scriptEngine.hasUncaughtException()) {
