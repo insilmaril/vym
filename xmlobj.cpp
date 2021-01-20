@@ -73,25 +73,25 @@ QString quoteUmlaut(const QString &s)
 
 QString getCDATA(const QString &s)
 {
-    // Do we need to use CDATA after all?
+    // Check, if we need to use CDATA after all
     if (s.contains("<") || s.contains(">") || s.contains("\"") || s.contains("&") )
     {
         QStringList list = s.split("]]>");
         int i = s.indexOf("]]>");
         if ( i >= 0 )
             // split up and calculate recursively
-            return getCDATA(s.left(i+2)) + getCDATA(s.right(s.length() - i - 2));
+            return getCDATA(s.left(i + 2)) + getCDATA(s.right(s.length() - i - 2));
         else
             return "<![CDATA[" + s + "]]>";
     } else
         return s;
 }
 
-int XMLObj::curIndent=0;	// make instance of curIndent
+int XMLObj::curIndent = 0;	// make instance of curIndent
 
 XMLObj::XMLObj()
 {
-    indentWidth=4;
+    indentWidth = 4;
 }
 
 XMLObj::~XMLObj()
