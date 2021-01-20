@@ -36,38 +36,26 @@ QString unquoteMeta(const QString &s)
 QString quoteQuotes(const QString &s)
 {
     QString r = s;
+
     QRegExp  rx( "\"");
     r.replace ( rx,"\\\"");
+
+    rx.setPattern( "\n");
+    r.replace ( rx,"\\n");
+
     return r;
 }
 
 QString unquoteQuotes(const QString &s)
 {
     QString r = s;
+
     QRegExp  rx("\\\\\"");
     r.replace ( rx,"\"");
-    return r;
-}
 
-QString quoteUmlaut(const QString &s)
-{
-    QString r=s;
-    QRegExp rx( "ü");
-    r.replace ( rx,"&uuml;");
-    rx.setPattern( "Ü");
-    r.replace ( rx,"&Uuml;");
-    rx.setPattern( "ö");
-    r.replace ( rx,"&ouml;");
-    rx.setPattern( "Ö");
-    r.replace ( rx,"&Ouml;");
-    rx.setPattern( "ä");
-    r.replace ( rx,"&auml;");
-    rx.setPattern( "Ö");
-    r.replace ( rx,"&Auml;");
-    rx.setPattern( "ß");
-    r.replace ( rx,"&szlig;");
-    rx.setPattern( "€");
-    r.replace ( rx,"&euro;");
+    rx.setPattern("\\\\n");
+    r.replace ( rx,"\n");
+
     return r;
 }
 
@@ -138,13 +126,13 @@ QString XMLObj::attribut(QString at, QString val)
 // returns <s> val </s>
 QString XMLObj::valueElement(QString el, QString val)
 {
-    return indent() + "<" + el + ">" + val + "</" +el + ">";
+    return indent() + "<" + el + ">" + val + "</" + el + ">";
 }
 
 // returns <s at> val </s>
 QString XMLObj::valueElement(QString el, QString val, QString at)
 {
-    return "<" + el + " " + at + ">" + val + "</" +el + ">";
+    return "<" + el + " " + at + ">" + val + "</" + el + ">";
 }
 
 void XMLObj::incIndent()
@@ -155,7 +143,7 @@ void XMLObj::incIndent()
 void XMLObj::decIndent()
 {
     curIndent--;
-    if (curIndent<0) curIndent=0;
+    if (curIndent < 0) curIndent = 0;
 }   
 
 QString XMLObj::indent()
@@ -164,7 +152,7 @@ QString XMLObj::indent()
     int i;
     for (i=0; i < curIndent * indentWidth; i++)
     {
-        s= s + " ";
+        s += " ";
     }
     return s;
 }   
