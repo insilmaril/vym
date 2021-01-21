@@ -16,6 +16,8 @@ QString quoteMeta(const QString &s)
     r.replace ( rx,"&lt;");
     rx.setPattern( "\"");
     r.replace ( rx,"&quot;");
+    rx.setPattern( "\n");
+    r.replace ( rx,"\\n");
     return r;
 }
 
@@ -30,6 +32,8 @@ QString unquoteMeta(const QString &s)
     r.replace ( rx,"<");
     rx.setPattern( "&quot;");
     r.replace ( rx,"\"");
+    rx.setPattern("\\\\n");
+    r.replace ( rx,"\n");
     return r;
 }
 
@@ -90,13 +94,13 @@ XMLObj::~XMLObj()
 // returns <s at />
 QString XMLObj::singleElement(QString s, QString at)
 {
-    return indent() + "<" + s +" " + at + " />";
+    return "<" + s +" " + at + " />";
 }
 
 // returns <s at at at at ... />
 QString XMLObj::singleElement(QString s, QStringList attributes)
 {
-    return indent() + "<" + s +" " + attributes.join(" ") + " />";
+    return "<" + s +" " + attributes.join(" ") + " />";
 }
 
 // returns <s>
@@ -120,7 +124,7 @@ QString XMLObj::endElement(QString s)
 // returns  at="val"
 QString XMLObj::attribut(QString at, QString val)
 {
-    return " " + at + "=\"" + quoteMeta(val) + "\"";  
+    return " " + at + "=\"" + quoteMeta(val) + "\"";  // FIXME-0  check for saving!
 }
 
 // returns <s> val </s>

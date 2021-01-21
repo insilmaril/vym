@@ -203,6 +203,9 @@ bool parseVYMHandler::startElement  ( const QString&, const QString&,
             lastBranch->setHeadingColor(col );
             vymtext.setColor(col);
         }        
+        if (!atts.value( "text").isEmpty() )
+            vymtext.setText(unquoteQuotes(atts.value("text")));
+        
     } else if ( eName == "task" && (state == StateMapCenter||state==StateBranch)) 
     {
         state=StateTask;
@@ -230,7 +233,7 @@ bool parseVYMHandler::startElement  ( const QString&, const QString&,
             lastBranch = model->getSelectedBranch();
             if (version.isEmpty() ) version = "0.0.0";
         }
-        state=StateVymNote;
+        state = StateVymNote;
         htmldata.clear();
         vymtext.clear();
         if (!atts.value( "fonthint").isEmpty() ) 
@@ -242,6 +245,9 @@ bool parseVYMHandler::startElement  ( const QString&, const QString&,
             else
                 vymtext.setRichText(false);
         }
+        if (!atts.value( "text").isEmpty() )
+            vymtext.setText(unquoteQuotes(atts.value("text")));
+
     } else if ( eName == "floatimage" &&
                 (state == StateMapCenter ||state==StateBranch)) 
     {
@@ -318,11 +324,11 @@ bool parseVYMHandler::startElement  ( const QString&, const QString&,
         readBranchAttr (atts);
     } else if ( eName == "html" && 
         (state == StateHtmlNote || state == StateVymNote) ) 
-    {
-        state=StateHtml;
-        htmldata="<"+eName;
+    {   // Only for backward compatibility
+        state = StateHtml;
+        htmldata = "<" + eName;
         readHtmlAttr(atts);
-        htmldata+=">";
+        htmldata += ">";
     } else if ( eName == "attribute" && 
         (state == StateBranch || state == StateMapCenter ) ) 
     {
@@ -342,10 +348,11 @@ bool parseVYMHandler::startElement  ( const QString&, const QString&,
             
     } else if ( state == StateHtml ) 
     {
+        // Only for backward compatibility
         // accept all while in html mode,
-        htmldata+="<"+eName;
+        htmldata += "<" + eName;
         readHtmlAttr(atts);
-        htmldata+=">";
+        htmldata += ">";
     } else
         return false;   // Error
     return true;
@@ -382,7 +389,14 @@ bool parseVYMHandler::endElement  ( const QString&, const QString&, const QStrin
                 // versions before 2.5.0 didn't use CDATA to save richtext
                 vymtext.setAutoText(htmldata);
             else
-                vymtext.setText (htmldata);
+            {
+                // Versions 2.5.0 to 2.7.518  had HTML data encoded as CDATA
+                // Later versions use the <vymnote  text="...">  attribute,
+                // which is set already in begin element
+                // If both htmldata and vymtext are already available, use the vymtext
+                if (vymtext.isEmpty() ) 
+                    vymtext.setText (htmldata);
+            }
             lastBranch->setHeading (vymtext);
             break;
         case StateHtmlNote: // Richtext note, needed anyway for backward compatibility
@@ -407,18 +421,25 @@ bool parseVYMHandler::endElement  ( const QString&, const QString&, const QStrin
                 // versions before 2.5.0 didn't use CDATA to save richtext
                 vymtext.setAutoText(htmldata);
             else
-                vymtext.setText (htmldata);
+            {
+                // Versions 2.5.0 to 2.7.518  had HTML data encoded as CDATA
+                // Later versions use the <vymnote  text="...">  attribute,
+                // which is set already in begin element
+                // If both htmldata and vymtext are already available, use the vymtext
+                if (vymtext.isEmpty() ) 
+                    vymtext.setText (htmldata);
+            }
             lastBranch->setNote (vymtext);  
             break;
         case StateHtml:
-            htmldata+="</"+eName+">";
+            htmldata += "</" + eName + ">";
             if (eName=="html")
                 htmldata.replace ("<br></br>","<br />");
             break;
         default:
             break;
     }  
-    state=stateStack.takeLast();    
+    state = stateStack.takeLast();    
     return true;
 }
 
@@ -471,7 +492,7 @@ QString parseVYMHandler::errorString()
     return "the document is not in the VYM file format";
 }
 
-bool parseVYMHandler::readMapAttr (const QXmlAttributes& a)        
+bool parseVYMHandler::readMapAttr (const QXmlAttributes& a)   // FIXME-2 Check attritbutes here, should be quoted?      
 {
     QColor col;
     if (!a.value( "author").isEmpty() )  
@@ -789,7 +810,7 @@ bool parseVYMHandler::readImageAttr (const QXmlAttributes& a)
     
     if (!readOOAttr(a)) return false;
 
-    if (!a.value ("originalName").isEmpty() )
+    if (!a.value ("originalName").isEmpty() )   //FIXME-2 quoteQuotes?
     {
         lastImage->setOriginalFilename (a.value("originalName"));
     }

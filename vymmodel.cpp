@@ -1536,7 +1536,7 @@ void VymModel::saveState(
     // like editing a vymNote - then do not increase but replace last command
     if (curStep > 0  && 
             redoSelection == lastRedoSelection() &&
-            lastRedoCommand().startsWith("parseVymText ('<vymnote") ) 
+            lastRedoCommand().startsWith("parseVymText (\"<vymnote") ) 
     {   
         undoCommand = undoSet.value (QString("/history/step-%1/undoCommand").arg(curStep), undoCommand);
     } else
@@ -2006,7 +2006,6 @@ void VymModel::updateNoteText(const VymText &vt)
 
 void VymModel::setNote(const  VymNote &vn)
 {
-    qDebug() << "VM::setNote" << vn.getTextASCII().left(25); 
     TreeItem *selti = getSelectedItem();
     if (selti) 
     {

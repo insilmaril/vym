@@ -21,6 +21,6 @@ void VymNote::operator= (const VymText &other)
 
 QString VymNote::saveToDir ()
 {
-    return valueElement ("vymnote", VymText::saveToDir(), getAttributes() );
+    return singleElement ("vymnote", getAttributes() );
 }
 
