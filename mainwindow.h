@@ -320,7 +320,7 @@ public slots:
     bool hasSmoothPixmapTransform();
     void windowToggleSmoothPixmap();
     void clearScriptOutput();
-    void updateHeading();
+    void updateHeading(const VymText &vt);
     void updateNoteText(const VymText &vt);
     void updateNoteEditor (TreeItem *ti);
     void updateHeadingEditor (TreeItem *ti);

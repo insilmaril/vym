@@ -329,7 +329,7 @@ Main::Main(QWidget* parent) : QMainWindow(parent)
     connect (noteEditor, SIGNAL (windowClosed() ), this, SLOT (updateActions()));
 
     // Connect heading editor
-    //connect (headingEditor, SIGNAL (textHasChanged() ), this, SLOT (updateHeading()));  // FIXME-0 no such signal
+    connect (headingEditor, SIGNAL (textHasChanged(const VymText &) ), this, SLOT (updateHeading(const VymText &)));
 
     connect( scriptEditor, SIGNAL( runScript ( QString ) ),  this, SLOT( runScript ( QString ) ) );
 
@@ -5868,10 +5868,10 @@ void Main::updateHistory(SimpleSettings &undoSet)
     historyWindow->update (undoSet);
 }
 
-void Main::updateHeading()
+void Main::updateHeading(const VymText &vt) 
 {
-    VymModel *m=currentModel();
-    if (m) m->setHeading (headingEditor->getVymText() );
+    VymModel *m = currentModel();
+    if (m) m->setHeading (vt);
 }
 
 void Main::updateNoteText(const VymText &vt) 
