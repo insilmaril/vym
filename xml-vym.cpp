@@ -390,7 +390,7 @@ bool parseVYMHandler::endElement  ( const QString&, const QString&, const QStrin
                 vymtext.setAutoText(htmldata);
             else
             {
-                // Versions 2.5.0 to 2.7.518  had HTML data encoded as CDATA
+                // Versions 2.5.0 to 2.7.554  had HTML data encoded as CDATA
                 // Later versions use the <vymnote  text="...">  attribute,
                 // which is set already in begin element
                 // If both htmldata and vymtext are already available, use the vymtext
@@ -422,7 +422,7 @@ bool parseVYMHandler::endElement  ( const QString&, const QString&, const QStrin
                 vymtext.setAutoText(htmldata);
             else
             {
-                // Versions 2.5.0 to 2.7.518  had HTML data encoded as CDATA
+                // Versions 2.5.0 to 2.7.554  had HTML data encoded as CDATA
                 // Later versions use the <vymnote  text="...">  attribute,
                 // which is set already in begin element
                 // If both htmldata and vymtext are already available, use the vymtext
