@@ -254,7 +254,6 @@ Main::Main(QWidget* parent) : QMainWindow(parent)
     setupSettingsActions();
     setupContextMenus();
     setupMacros();
-    setupFlagActions();
     setupToolbars();
 
     // Dock widgets ///////////////////////////////////////////////
@@ -2440,17 +2439,17 @@ void Main::setupFlagActions()
 
     addToolBarBreak();
 
+    // Create Standard Flags
+    standardFlagsToolbar=addToolBar (tr ("Standard Flags toolbar","Standard Flag Toolbar"));
+    standardFlagsToolbar->setObjectName ("standardFlagTB");
+    standardFlagsMaster->setToolBar (standardFlagsToolbar);
+
     // Create user flags
     userFlagsToolbar = addToolBar (tr ("User Flags toolbar","user Flags Toolbar"));
     userFlagsToolbar->setObjectName ("userFlagsTB");
     userFlagsMaster->setToolBar (userFlagsToolbar);
     userFlagsMaster->createConfigureAction();
     
-    // Create Standard Flags
-    standardFlagsToolbar=addToolBar (tr ("Standard Flags toolbar","Standard Flag Toolbar"));
-    standardFlagsToolbar->setObjectName ("standardFlagTB");
-    standardFlagsMaster->setToolBar (standardFlagsToolbar);
-
     // Add entry now, to avoid chicken and egg problem and position toolbar 
     // after all others:
     flag = setupFlag ( ":/flag-stopsign.svg", 
@@ -3374,6 +3373,9 @@ void Main::setupToolbars()
     modModesToolbar->addAction(actionModModeMoveObject);
     modModesToolbar->addAction(actionModModeMoveView);
     
+    // Flag toolbars 
+    setupFlagActions();
+    
     // Add all toolbars to View menu
     toolbarsMenu->addAction (fileToolbar->toggleViewAction() );
     toolbarsMenu->addAction (clipboardToolbar->toggleViewAction() );
@@ -3386,8 +3388,7 @@ void Main::setupToolbars()
     toolbarsMenu->addAction (editorsToolbar->toggleViewAction() );
     toolbarsMenu->addAction (userFlagsToolbar->toggleViewAction() );
     toolbarsMenu->addAction (standardFlagsToolbar->toggleViewAction() );
-
-
+    
     // Initialize toolbarStates for presentation mode 
     toolbarStates[fileToolbar] = true;
     toolbarStates[clipboardToolbar] = true;
@@ -3404,7 +3405,6 @@ void Main::setupToolbars()
     // Initialize toolbar visibilities and switch off presentation mode
     presentationMode = true;
     togglePresentationMode();
-
 }
 
 VymView* Main::currentView() const
