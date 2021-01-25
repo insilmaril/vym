@@ -347,8 +347,6 @@ public:
             QString s,
             Qt::CaseSensitivity cs = Qt::CaseInsensitive,
             bool searchNotes = true);
-    BranchItem* findText(QString s,Qt::CaseSensitivity cs); // Find object, also in note
-    void findReset();			    // Reset Search
 private:
     QString findString;
 

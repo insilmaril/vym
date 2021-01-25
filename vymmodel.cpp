@@ -177,9 +177,6 @@ void VymModel::init ()
     connect(taskAlarmTimer, SIGNAL(timeout()), this, SLOT(updateTasksAlarm()));
     taskAlarmTimer->start(3000);
     
-    // find routine
-    findReset();
-
     // animations   // FIXME-4 switch to new animation system 
     animationUse    = settings.value ("/animation/use",false).toBool();    // FIXME-4 add options to control _what_ is animated
     animationTicks  = settings.value("/animation/ticks",20).toInt();
@@ -481,7 +478,6 @@ bool VymModel::parseVymText (const QString &s)
         if ( ok )
         {
             if (s.startsWith("<vymnote")) emitNoteChanged( bi );
-//            emitNoteChanged( bi );  // FIXME-0 check: what if heading is changed???
             emitDataChanged( bi );
             reposition();   // to generate bbox sizes
         } else
@@ -1245,7 +1241,6 @@ void VymModel::setChanged()
     mapChanged = true;
     mapDefault = false;
     mapUnsaved = true;
-    findReset();
     updateActions();
 }
 
@@ -2162,69 +2157,6 @@ bool  VymModel::findAll (FindResultModel *rmodel, QString s, Qt::CaseSensitivity
 	nextBranch(cur, prev);
     }
     return hit;
-}
-
-BranchItem* VymModel::findText (QString s,Qt::CaseSensitivity cs)     // FIXME-2 used at all?
-{
-    if (!s.isEmpty() && s!=findString)
-    {
-	findReset();
-	findString=s;
-    }
-
-    QTextDocument::FindFlags flags=0;
-    if (cs==Qt::CaseSensitive) flags=QTextDocument::FindCaseSensitively;
-
-    if (!findCurrent) 
-    {	// Nothing found or new find process
-	if (EOFind)
-	    // nothing found, start again
-	    EOFind=false;
-	findCurrent=NULL;   
-	findPrevious=NULL;  
-	nextBranch (findCurrent,findPrevious);
-    }	
-    bool searching=true;
-    bool foundNote=false;
-    while (searching && !EOFind)
-    {
-	if (findCurrent)
-	{
-	    // Searching in Note
-        if (findCurrent->getNoteASCII().contains(findString,cs))
-	    {
-		select (findCurrent);
-		if (noteEditor->findText(findString,flags)) 
-		{
-		    searching=false;
-		    foundNote=true;
-		}   
-	    }
-	    // Searching in Heading
-        if (searching && findCurrent->getHeading().getTextASCII().contains (findString,cs) )
-	    {
-		select(findCurrent);
-		searching=false;
-	    }
-	}   
-	if (!foundNote)
-	{
-	    nextBranch(findCurrent,findPrevious);
-	    if (!findCurrent) EOFind=true;
-	}
-    }	
-    if (!searching)
-	return getSelectedBranch();
-    else
-	return NULL;
-}
-
-void VymModel::findReset()
-{   // Necessary if text to find changes during a find process
-    findString.clear();
-    findCurrent=NULL;
-    findPrevious=NULL;
-    EOFind=false;
 }
 
 void VymModel::setURL(QString url) 
@@ -3308,7 +3240,6 @@ BranchItem* VymModel::addNewBranch(BranchItem *bi, int pos)
                     QString ("addBranch (%1)").arg(pos),
                     QString ("Add new branch to %1").arg(getObjectName(bi)));	
 
-            reposition();   // FIXME-1 reposition already called in addNewBranchInt above
             latestAddedItem = newbi;
             // In Network mode, the client needs to know where the new branch is,
             // so we have to pass on this information via saveState.
