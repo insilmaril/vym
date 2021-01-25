@@ -448,13 +448,7 @@ int main(int argc, char* argv[])
         confluenceAgentAvailable = false;
     confluencePassword = settings.value("/confluence/password","").toString();
 
-
-    // Initialize mainwindow
-// #if defined(Q_OS_WIN32)   //FIXME-1 check on Windows
-    //Main m(0, Qt::Window | Qt::MSWindowsOwnDC);
-// #else
     Main m;
-// #endif
 
     // Check for zip tools 
     checkZipTool();
