@@ -212,7 +212,6 @@ void Winter::setObstacles(QList <QRectF> obslist)
 
 void Winter::animate()
 {
-    updateView();   // FIXME-0 needed?
     //test->setRect(QRectF(viewRect.topLeft(), viewRect.bottomRight())); 
 
     QPointF p;
