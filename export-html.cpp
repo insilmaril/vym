@@ -67,7 +67,7 @@ QString ExportHTML::getBranchText(BranchItem *current)
 
         // Standard and user flags
         QString userFlags;
-        if (dia.useUserFlags)   // FIXME-1  Store both standard and user flags in export and use below
+        if (dia.useUserFlags)   // FIXME-2  Store both standard and user flags in export and use below
         {
             /*
             foreach (QString flag, current->activeFlagNames())

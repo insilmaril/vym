@@ -292,7 +292,7 @@ bool ImageObj::load (const QString &fn, bool createClone)
         {
             prepareGeometryChange();
 
-            pixmapItem = new QGraphicsPixmapItem (this);    // FIXME-1 existing pmi? 
+            pixmapItem = new QGraphicsPixmapItem (this);    // FIXME-2 existing pmi? 
             pixmapItem->setPixmap (pm);
             pixmapItem->setParentItem(parentItem() );
             imageType = ImageObj::Pixmap;

@@ -224,40 +224,17 @@ int main(int argc, char* argv[])
 
     if (options.isOn ("version"))
     {
-        cout << "VYM - View Your Mind (c) 2004-"<< QDate::currentDate().year()<<" Uwe Drechsel "  << endl
-             <<"   Version: "<<__VYM_VERSION <<endl
-            <<"Build date: "<<__VYM_BUILD_DATE << endl
-           <<"  "<<__VYM_CODENAME<<endl;
+        cout << "VYM - View Your Mind (c) 2004-" << QDate::currentDate().year() << " Uwe Drechsel "  << endl
+             << "   Version: " <<__VYM_VERSION << endl
+             << "Build date: " <<__VYM_BUILD_DATE << endl
+             << "  " << __VYM_CODENAME << endl;
 
         return 0;
     }
     
-    // Update some configurations, which were moved in 2.4.0
-    // This settings related code should be removed later, e.g. in 2.6.0...      // FIXME-2
-    QStringList settingsChanged;
-    settingsChanged  << "readerURL"
-                     << "readerPDF"
-                     << "autosave/use"
-                     << "autosave/ms"
-                     << "writeBackupFile"
-                     << "printerName"
-                     << "printerFormat"
-                     << "printerFileName";
-    foreach (QString s, settingsChanged)
-    {
-        if (settings.contains("/mainwindow/" + s))
-        {
-            settings.setValue("/system/" + s, settings.value("/mainwindow/" + s));
-            settings.remove  ("/mainwindow/" + s);
-        }
-    }
-
-    if (settings.contains( "/mainwindow/readerURL") )
-        settings.setValue( "/system/readerURL", settings.value( "/mainwindow/readerURL"));
-
     taskModel = new TaskModel();
 
-    debug=options.isOn ("debug");
+    debug = options.isOn ("debug");
     //debug=true;
     testmode=options.isOn ("testmode");
 
