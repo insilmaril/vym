@@ -708,7 +708,7 @@ File::ErrorCode VymModel::save (const SaveMode &savemode)
 	mapFileName = fileName;
 
     // Look, if we should zip the data:
-    if (!zipped)    // FIXME-2 sometimes map is marked unzipped for no visible reason
+    if (!zipped)    // FIXME-1 sometimes map is marked unzipped for no visible reason
     {
 	QMessageBox mb( vymName,
 	    tr("The map %1\ndid not use the compressed "
@@ -1453,7 +1453,7 @@ void VymModel::undo()
 
 bool VymModel::isUndoAvailable()
 {
-    if (undoSet.numValue("/history/undosAvail", 0) > 0) // FIXME-2  or just curStep >0 ?
+    if (undoSet.numValue("/history/undosAvail", 0) > 0) 
 	return true;
     return false;
 }
