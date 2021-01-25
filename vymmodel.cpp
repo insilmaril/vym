@@ -459,7 +459,7 @@ QString VymModel::getDestPath()
 
 bool VymModel::parseVymText (const QString &s)
 {
-    qDebug() << "VM::parseVymText"; // FIXME-0  Problem: '''' style=" font-family:'DejaVu Sans Mono'
+    qDebug() << "VM::parseVymText"; // FIXME-0  testing
     cout << qPrintable(s) << endl;
 
     bool ok = false;
@@ -487,7 +487,6 @@ bool VymModel::parseVymText (const QString &s)
         if ( ok )
         {
             if (s.startsWith("<vymnote")) emitNoteChanged( bi );
-//            emitNoteChanged( bi );  // FIXME-0 check: what if heading is changed???
             emitDataChanged( bi );
             reposition();   // to generate bbox sizes
         } else
