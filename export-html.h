@@ -23,6 +23,8 @@ private:
 
     QPointF offset;
 
+    QSet <QUuid> activeFlags;
+
     ExportHTMLDialog dia;
 };  
 

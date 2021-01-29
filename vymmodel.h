@@ -103,6 +103,7 @@ private:
     QDateTime fileChangedTime;
 
 public:
+    void resetUsedFlags();      //! Before exports or saving, reset the flags
     /*! This function saves all information of the map to disc.
 	saveToDir also calls the functions for all BranchObj and other objects in the map.
 	The structure of the map itself is returned as QString and passed back to Main, 

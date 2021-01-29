@@ -11,6 +11,9 @@ extern Main *mainWindow;
 extern QString vymVersion;
 extern QString vymHome;
 
+extern FlagRow* standardFlagsMaster;
+extern FlagRow* userFlagsMaster;
+
 ExportHTML::ExportHTML():ExportBase()
 {
     init();
@@ -66,15 +69,21 @@ QString ExportHTML::getBranchText(BranchItem *current)
         }
 
         // Standard and user flags
-        QString userFlags;
-        if (dia.useUserFlags)   // FIXME-2  Store both standard and user flags in export and use below
+        QString flags;
+        if (dia.useUserFlags)
         {
-            /*
-            foreach (QString flag, current->activeFlagNames())
-                userFlags += QString("<img src=\"flags/flag-%1.png\" alt=\"%2\">")
-                    .arg(flag)
-                    .arg(QObject::tr("Flag: %1","Alt tag in HTML export").arg(flag));
-            */
+            Flag *f; 
+            foreach (QUuid uid, current->activeFlagUids())
+            {
+                activeFlags << uid;
+
+                f = standardFlagsMaster->findFlag(uid);
+                if (!f) f = userFlagsMaster->findFlag(uid);
+
+                if (f) flags += QString("<img width=\"32px\" alt=\"%1\" src=\"flags/%2\">")
+                    .arg(QObject::tr("Flag: %1","Alt tag in HTML export").arg(f->getName()))
+                    .arg( uid.toString() + f->getImageObj()->getExtension() );
+            }
         }
 
         // Numbering
@@ -86,7 +95,7 @@ QString ExportHTML::getBranchText(BranchItem *current)
         {
             s += QString ("<a href=\"%1\">%2<img src=\"flags/flag-url.png\" alt=\"%3\"></a>")
                     .arg(url)
-                    .arg(number + taskFlags + heading + userFlags)
+                    .arg(number + taskFlags + heading + flags)
                     .arg(QObject::tr("Flag: url","Alt tag in HTML export"));
 
             QRectF fbox = current->getBBoxURLFlag ();
@@ -99,7 +108,7 @@ QString ExportHTML::getBranchText(BranchItem *current)
                         .arg(url)
                         .arg(QObject::tr("External link: %1","Alt tag in HTML export").arg(heading));
         } else
-            s += number + taskFlags + heading + userFlags;
+            s += number + taskFlags + heading + flags;
 
         s += "</span>";
 
@@ -335,29 +344,6 @@ void ExportHTML::doExport(bool useDialog)
         }
     }
 
-    // Copy flags
-    QDir flagsDst(dia.getDir().absolutePath() + "/flags");
-    if (!flagsDst.exists())
-    {
-        if (!dia.getDir().mkdir("flags"))
-        {
-            QMessageBox::critical( 0,
-                                   QObject::tr( "Critical" ),
-                                   QObject::tr("Trying to create directory for flags:") + "\n\n" +
-                                   QObject::tr("Could not create %1").arg(flagsDst.absolutePath()));
-            return;
-        }
-    }
-
-    QDir flagsSrc(flagsPath);   // FIXME-3 don't use flagsPath as source anymore, but copy required flags directly from memory
-    if (!copyDir(flagsSrc, flagsDst, true))
-    {
-        QMessageBox::critical( 0,
-                               QObject::tr( "Critical" ),
-                               QObject::tr("Could not copy %1 to %2").arg(flagsSrc.absolutePath()).arg(flagsDst.absolutePath()));
-        return;
-    }
-
     // Open file for writing
     QFile file (filePath);
     if ( !file.open( QIODevice::WriteOnly ) )
@@ -401,6 +387,9 @@ void ExportHTML::doExport(bool useDialog)
     // Include table of contents
     if (dia.useTOC) ts << createTOC();
 
+    // reset flags
+    model->resetUsedFlags();
+
     // Main loop over all mapcenters
     ts << buildList(model->getRootItem()) << "\n";
 
@@ -418,6 +407,33 @@ void ExportHTML::doExport(bool useDialog)
             </table>\n";
             ts << "</body></html>";
     file.close();
+
+    QString flagsBasePath = dia.getDir().absolutePath() + "/flags";
+    QDir d(flagsBasePath);
+    if (!d.exists())
+    {
+        if (!dia.getDir().mkdir("flags"))
+        {
+            QMessageBox::critical( 0,
+                                   QObject::tr( "Critical" ),
+                                   QObject::tr("Trying to create directory for flags:") + "\n\n" +
+                                   QObject::tr("Could not create %1").arg(flagsBasePath));
+            return;
+        }
+    }
+    Flag *f;
+    foreach (QUuid uid, activeFlags)
+    {
+        f = standardFlagsMaster->findFlag(uid);
+        if (!f)
+            f = userFlagsMaster->findFlag(uid);
+
+        if (f) 
+        {
+            ImageObj *io = f->getImageObj();
+            if (io) io->save(flagsBasePath + "/" + uid.toString() + io->getExtension()); 
+        }
+    }
 
     if (!dia.postscript.isEmpty())
     {

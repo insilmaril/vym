@@ -548,6 +548,13 @@ void TreeItem::deactivateAllStandardFlags ()
 //    model->emitDataChanged(this);
 }
 
+Flag* TreeItem::findFlagByUid(const QUuid &uid)
+{
+    Flag *f = standardFlagsMaster->findFlag (uid);
+    if (!f) f = userFlagsMaster->findFlag(uid);
+    return f;
+}
+
 Flag* TreeItem::toggleFlagByUid(const QUuid &uid,  bool useGroups) 
 {
     Flag *f = standardFlagsMaster->findFlag (uid);

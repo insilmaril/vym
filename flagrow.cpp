@@ -382,7 +382,10 @@ QString FlagRow::saveState ()
             // save flag to xml, if flag is set 
             s += flag->saveState();
 
-            // and tell parentRow, that this flag is used   
+            // and tell parentRow, that this flag is used  
+            //
+            // FIXME-3 used flag IDs should be saved for each vymmodel to avoid problems 
+            // in parallel saving of maps 
             flag->setUsed(true);
         }   
     return s;	    

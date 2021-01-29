@@ -259,7 +259,11 @@ void VymModel::updateActions()
     mainWindow->updateActions();
 }
 
-
+void VymModel::resetUsedFlags()
+{
+    standardFlagsMaster->resetUsedCounter();
+    userFlagsMaster->resetUsedCounter();
+}
 
 QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix, FlagRow::WriteMode flagMode, const QPointF &offset, TreeItem *saveSel)
 {
@@ -319,8 +323,7 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix, FlagRo
     xml.incIndent();
 
     // Find the used flags while traversing the tree	
-    standardFlagsMaster->resetUsedCounter();
-    userFlagsMaster->resetUsedCounter();
+    resetUsedFlags();
     
     // Temporary list of links
     QList <Link*> tmpLinks;

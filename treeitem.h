@@ -138,6 +138,8 @@ public:
     virtual void deactivateStandardFlag(const QString &flag);
     virtual void deactivateAllStandardFlags();
 
+    Flag* findFlagByUid(const QUuid &uid);
+
     /*! \brief Toggle a Flag 
 	If master is not NULL,, only one Flag from FlagRow master may 
 	be active simultanously, the others get deactivated.

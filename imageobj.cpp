@@ -313,34 +313,18 @@ bool ImageObj::save(const QString &fn)
             if (svgItem)
             {
                 QFile svgFile(svgCashPath);
-                if(!svgFile.copy(fn))
+                if(!QFile(fn).exists() && !svgFile.copy(fn))
                 {
                     qWarning() << "ImageObj::save  failed to copy " << svgCashPath << " to " << fn;
                     return false;
                 }
-
-                /*   
-                 *   Old code to write svg, but Qt cannot write linearGradients correctly
-                 *
-                QSvgGenerator generator;
-                generator.setFileName(fn);
-                // generator.setTitle(originalFileName);
-                generator.setDescription("An SVG drawing created by vym - view your mind");
-                QStyleOptionGraphicsItem qsogi;
-                QPainter painter;
-                painter.begin(&generator);
-                svgItem->paint(&painter, &qsogi, NULL);
-                painter.end();
-                */
             }
             return true;
             break;
         case ImageObj::Pixmap:
-            //qDebug() << "IO::save pixmap " << fn;
             return pixmapItem->pixmap().save (fn, "PNG", 100);
             break;
         case ImageObj::ModifiedPixmap:
-            //qDebug() << "IO::save modified pixmap " << fn;
             return originalPixmap->save (fn, "PNG", 100);
             break;
         default:
