@@ -60,7 +60,7 @@ bool ImportFirefoxBookmarks::transform()
 	    lines += stream.readLine(); // line of text excluding '\n'
 	file.close();
     }
-    // TODO Generate vym from broken bookmarks above...
+    // FIXME-4 Generate vym from broken Firefox bookmarks above...
 
     return true;
 }

@@ -4083,16 +4083,16 @@ void Main::fileSaveAsDefault()
     }
 }
 
-void Main::fileImportFirefoxBookmarks() // FIXME-2 remove or adapt
+void Main::fileImportFirefoxBookmarks() // FIXME-4 remove or adapt
 {
     QFileDialog fd;
-    fd.setDirectory (vymBaseDir.homePath()+"/.mozilla/firefox");
+    fd.setDirectory (vymBaseDir.homePath() + "/.mozilla/firefox");
     fd.setFileMode (QFileDialog::ExistingFiles);
     QStringList filters;
-    filters<<"Firefox "+tr("Bookmarks")+" (*.html)";
+    filters<<"Firefox " + tr("Bookmarks") + " (*.html)";
     fd.setNameFilters(filters);
     fd.setAcceptMode (QFileDialog::AcceptOpen);
-    fd.setWindowTitle(tr("Import")+" "+"Firefox "+tr("Bookmarks"));
+    fd.setWindowTitle(tr("Import") + " " + "Firefox " + tr("Bookmarks"));
 
     if ( fd.exec() == QDialog::Accepted )
     {
@@ -4103,7 +4103,7 @@ void Main::fileImportFirefoxBookmarks() // FIXME-2 remove or adapt
 	{
 	    im.setFile (*it);
 	    if (im.transform() && 
-		File::Aborted!=fileLoad (im.getTransformedFile(),NewMap,FreemindMap) && 
+		File::Aborted != fileLoad (im.getTransformedFile(), NewMap, FreemindMap) && 
 		currentMapEditor() )
 		currentMapEditor()->getModel()->setFilePath ("");
 	    ++it;

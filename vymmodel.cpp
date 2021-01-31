@@ -4788,7 +4788,7 @@ void VymModel::exportLast()
     {
         execute (command);
         /*  
-	if (!configFile.isEmpty() && command=="exportImpress")  // FIXME-1 check exportLast for Impress
+	if (!configFile.isEmpty() && command=="exportImpress")  // FIXME-2 check exportLast for Impress
 	    execute (QString ("%1 (\"%2\",\"%3\")").arg(command).arg(path).arg(configFile) );
 	else    
 	    execute (QString ("%1 (\"%2\")").arg(command).arg(path) );
