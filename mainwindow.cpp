@@ -3260,7 +3260,7 @@ void Main::setupMacros()
     macroActions[1]->setShortcut ( Qt::Key_F2 );
     macroActions[2]->setShortcut ( Qt::Key_F3 );
     macroActions[3]->setShortcut ( Qt::Key_F4 );
-    macroActions[5]->setShortcut ( Qt::Key_F5 );
+    macroActions[4]->setShortcut ( Qt::Key_F5 );
     macroActions[5]->setShortcut ( Qt::Key_F6 );
     macroActions[6]->setShortcut ( Qt::Key_F7 );
     macroActions[7]->setShortcut ( Qt::Key_F8 );
