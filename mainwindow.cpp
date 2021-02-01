@@ -1538,7 +1538,7 @@ void Main::setupEditActions()
     actionListBranches.append(a);
     actionGetURLsFromNote=a;
 
-    a = new QAction(QPixmap(":/flag-urlnew.svg"), tr( "Edit URL...","Edit menu"), this);    // FIXME-2 Update icon
+    a = new QAction(QPixmap(":/flag-urlnew.svg"), tr( "Edit URL...","Edit menu"), this);
     a->setShortcut ( Qt::Key_U );
     a->setShortcutContext (Qt::WindowShortcut);
     switchboard.addSwitch ("mapEditURL", shortcutScope, a, tag);
@@ -5997,10 +5997,10 @@ void Main::updateActions()
             foreach (QAction *a, restrictedMapActions)
                 a->setEnabled( false );
 
-            // FIXME-2 updateactions: Disable import/export map functions (and probably more) if no map available
-            // FIXME-2 updateactions: refactor actionListFiles: probably not needed, wrong actions there atm
+            // FIXME-3 updateactions: Disable import/export map functions (and probably more) if no map available
+            // FIXME-3 updateactions: refactor actionListFiles: probably not needed, wrong actions there atm
         } else
-        {   // not readonly     // FIXME-2 updateactions: maybe only required in testing, as mode should not change
+        {   // not readonly     
             
             // Enable toolbars
             standardFlagsMaster->setEnabled (true);

@@ -5432,7 +5432,7 @@ void VymModel::readData ()
 	    qDebug() << "VymModel::readData  command="<<qPrintable (t);
 	//bool noErr;
 	//QString errMsg;
-	// parseAtom (t,noErr,errMsg);    //FIXME-2 needs rework using scripts
+	// parseAtom (t,noErr,errMsg);    //FIXME-4 needs rework using scripts
 
     }
     return;
