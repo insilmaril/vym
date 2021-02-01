@@ -529,13 +529,13 @@ QString TreeItem::getNoteASCII()
     return note.getTextASCII();
 }
 
-void TreeItem::activateStandardFlag (const QString &name)
+void TreeItem::activateStandardFlagByName (const QString &name)
 {
     standardFlags.activate (name);
 //    model->emitDataChanged(this);
 }
 
-void TreeItem::deactivateStandardFlag (const QString &name)
+void TreeItem::deactivateStandardFlagByName (const QString &name)
 {
     standardFlags.deactivate (name);
 //    model->emitDataChanged(this);
@@ -550,20 +550,20 @@ void TreeItem::deactivateAllStandardFlags ()
 
 Flag* TreeItem::findFlagByUid(const QUuid &uid)
 {
-    Flag *f = standardFlagsMaster->findFlag (uid);
-    if (!f) f = userFlagsMaster->findFlag(uid);
+    Flag *f = standardFlagsMaster->findFlagByUid (uid);
+    if (!f) f = userFlagsMaster->findFlagByUid(uid);
     return f;
 }
 
 Flag* TreeItem::toggleFlagByUid(const QUuid &uid,  bool useGroups) 
 {
-    Flag *f = standardFlagsMaster->findFlag (uid);
+    Flag *f = standardFlagsMaster->findFlagByUid (uid);
     if (f)
     {
         standardFlags.toggle (uid, useGroups);
     } else 
     {
-        f = userFlagsMaster->findFlag(uid);
+        f = userFlagsMaster->findFlagByUid(uid);
         if (f)
         {
             userFlags.toggle (uid, useGroups);

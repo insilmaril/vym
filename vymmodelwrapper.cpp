@@ -807,7 +807,7 @@ bool VymModelWrapper::selectLatestAdded()
 void VymModelWrapper::setFlagByName(const QString &s)
 {
     BranchItem *selbi = getSelectedBranch();
-    if (selbi) selbi->activateStandardFlag( s );    // FIXME-2 "byName"  / named user flag?
+    if (selbi) selbi->activateStandardFlagByName( s );
 }
 
 void VymModelWrapper::setHeadingConfluencePageName()
@@ -988,7 +988,7 @@ void VymModelWrapper::setXLinkColor( const QString &color)
     if ( !col.isValid() )
         logError( context(), QScriptContext::SyntaxError, QString( "Could not set color to %1").arg(color) );
     else
-        model->setXLinkColor( color);     // FIXME-2 try to use QColor here...
+        model->setXLinkColor( color);     // FIXME-3 try to use QColor here...
 }
 
 void VymModelWrapper::setXLinkStyle( const QString &style)
@@ -1087,6 +1087,6 @@ void VymModelWrapper::unselectAll()
 void VymModelWrapper::unsetFlagByName(const QString &s)
 {
     BranchItem *selbi = getSelectedBranch();
-    if (selbi) selbi->deactivateStandardFlag( s );// FIXME-2 "byName" / and userflag?
+    if (selbi) selbi->deactivateStandardFlagByName( s );
 }
 

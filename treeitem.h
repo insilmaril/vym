@@ -134,8 +134,8 @@ protected:
     FlagRow userFlags;
 
 public:	
-    virtual void activateStandardFlag(const QString &flag);
-    virtual void deactivateStandardFlag(const QString &flag);
+    virtual void activateStandardFlagByName(const QString &flag);
+    virtual void deactivateStandardFlagByName(const QString &flag);
     virtual void deactivateAllStandardFlags();
 
     Flag* findFlagByUid(const QUuid &uid);

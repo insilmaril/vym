@@ -77,8 +77,8 @@ QString ExportHTML::getBranchText(BranchItem *current)
             {
                 activeFlags << uid;
 
-                f = standardFlagsMaster->findFlag(uid);
-                if (!f) f = userFlagsMaster->findFlag(uid);
+                f = standardFlagsMaster->findFlagByUid(uid);
+                if (!f) f = userFlagsMaster->findFlagByUid(uid);
 
                 if (f) flags += QString("<img width=\"32px\" alt=\"%1\" src=\"flags/%2\">")
                     .arg(QObject::tr("Flag: %1","Alt tag in HTML export").arg(f->getName()))
@@ -424,9 +424,9 @@ void ExportHTML::doExport(bool useDialog)
     Flag *f;
     foreach (QUuid uid, activeFlags)
     {
-        f = standardFlagsMaster->findFlag(uid);
+        f = standardFlagsMaster->findFlagByUid(uid);
         if (!f)
-            f = userFlagsMaster->findFlag(uid);
+            f = userFlagsMaster->findFlagByUid(uid);
 
         if (f) 
         {

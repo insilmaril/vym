@@ -1181,7 +1181,7 @@ void MapEditor::contextMenuEvent ( QContextMenuEvent * e )
             QUuid uid = ((BranchObj*)lmo)->findSystemFlagUidByPos(p);
             if (!uid.isNull())
             {
-                Flag *flag = systemFlagsMaster->findFlag(uid);
+                Flag *flag = systemFlagsMaster->findFlagByUid(uid);
                 if (flag) sysFlagName = flag->getName();
             }
 
@@ -1311,7 +1311,7 @@ void MapEditor::mousePressEvent(QMouseEvent* e)
         uid = ((BranchObj*)lmo_found)->findSystemFlagUidByPos(p);
         if (!uid.isNull())
         {
-            Flag *flag = systemFlagsMaster->findFlag(uid);
+            Flag *flag = systemFlagsMaster->findFlagByUid(uid);
             if (flag) sysFlagName = flag->getName();
         }
     }

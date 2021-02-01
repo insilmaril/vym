@@ -140,7 +140,7 @@ QRectF MapItem::getBBoxURLFlag ()
 	return QRectF ();
     }	
 
-    Flag *f = systemFlagsMaster->findFlag(s);
+    Flag *f = systemFlagsMaster->findFlagByName(s);
     if (f) 
     {
         QUuid u = f->getUuid();

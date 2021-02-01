@@ -445,7 +445,7 @@ bool parseVYMHandler::characters   ( const QString& ch)
             break;
         case StateBranch: break;
         case StateStandardFlag: 
-            lastBranch->activateStandardFlag(ch_simplified); 
+            lastBranch->activateStandardFlagByName(ch_simplified); 
             break;
         case StateImage: break;
         case StateVymNote: 

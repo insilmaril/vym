@@ -166,7 +166,7 @@ bool parseFreemindHandler::startElement  ( const QString&, const QString&,
 	    else 
 		qWarning()<<"parseFreemindHandler: Unknown icon found: "<<f;
 
-	    lastBranch->activateStandardFlag (v);
+	    lastBranch->activateStandardFlagByName (v);
 	}
     } else if ( eName == "arrowlink" && state == StateNode) 
     {

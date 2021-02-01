@@ -3982,16 +3982,15 @@ void VymModel::toggleFlagByUid (const QUuid &uid, bool useGroups)  // FIXME-2  s
 
 void VymModel::toggleFlagByName (const QString &name, bool useGroups)  
 {
-    qDebug() << "VM::toggleFlagByName " << name;
-    
+    // Toggling by name only used from vymmodelwrapper for scripting  // FIXME-4 maybe rework
     BranchItem *bi = getSelectedBranch();
 
     if (bi) 
     {
-        Flag *f = standardFlagsMaster->findFlag (name);
+        Flag *f = standardFlagsMaster->findFlagByName (name);
         if (!f)
         {
-            f = userFlagsMaster->findFlag (name);
+            f = userFlagsMaster->findFlagByName (name);
             if (!f)
             {
                 qWarning() << "VymModel::toggleFlag failed for flag named " << name;

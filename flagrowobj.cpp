@@ -65,7 +65,7 @@ void FlagRowObj::updateActiveFlagObjs (const QList <QUuid> activeFlagUids, FlagR
     {
         if (!isFlagActive(activeFlagUids.at(i) ))  
         {
-            Flag *f = masterRowMain->findFlag(activeFlagUids.at(i));
+            Flag *f = masterRowMain->findFlagByUid(activeFlagUids.at(i));
             if (f) 
             {
                 activateFlag (f);
@@ -73,7 +73,7 @@ void FlagRowObj::updateActiveFlagObjs (const QList <QUuid> activeFlagUids, FlagR
             }
             if (masterRowOptional)
             {
-                f = masterRowOptional->findFlag(activeFlagUids.at(i));
+                f = masterRowOptional->findFlagByUid(activeFlagUids.at(i));
                 if (f) 
                 {
                     activateFlag (f);

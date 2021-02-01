@@ -24,8 +24,8 @@ public:
     Flag* createFlag (const QString &path);
     void createConfigureAction ();
     void addActionToToolbar(QAction *a);
-    Flag *findFlag (const QUuid &uid);
-    Flag *findFlag (const QString &name);
+    Flag *findFlagByUid (const QUuid &uid);
+    Flag *findFlagByName (const QString &name);
     void setEnabled (bool);
     void resetUsedCounter();
     QString saveDef(WriteMode mode);
