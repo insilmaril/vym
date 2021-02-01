@@ -2516,7 +2516,7 @@ bool VymModel::cycleTaskStatus(bool reverse)
     return false;
 }
 
-bool VymModel::setTaskSleep(const QString &s)   // FIXME-2 doc missing
+bool VymModel::setTaskSleep(const QString &s)
 {
     bool ok = false;
     BranchItem *selbi = getSelectedBranch();
@@ -2647,7 +2647,7 @@ bool VymModel::setTaskSleep(const QString &s)   // FIXME-2 doc missing
     return ok;
 }
 
-void VymModel::setTaskPriorityDelta(const int &n)   // FIXME-2 doc missing
+void VymModel::setTaskPriorityDelta(const int &n)
 {
     BranchItem *selbi = getSelectedBranch();
     if (selbi)
@@ -2661,7 +2661,7 @@ void VymModel::setTaskPriorityDelta(const int &n)   // FIXME-2 doc missing
     }
 }
 
-int VymModel::getTaskPriorityDelta()   // FIXME-2 doc missing
+int VymModel::getTaskPriorityDelta()
 {
     BranchItem *selbi = getSelectedBranch();
     if (selbi)
