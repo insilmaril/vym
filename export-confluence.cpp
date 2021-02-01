@@ -348,7 +348,7 @@ void ExportConfluence::doExport(bool useDialog)
             // Page with URL is existing already
             if (dia.createNewPage() )
             {
-                qDebug() << "Starting to create new page...";// FIXME-2 Improve messages here and below...
+                qDebug() << "Starting to create new page...";// FIXME-3 Improve messages here and below...
                 ca_content->createPage( dia.getPageURL(), dia.getPageTitle(), filePath);
                 ca_content->waitForResult();
                 if (ca_content->success() ) 
