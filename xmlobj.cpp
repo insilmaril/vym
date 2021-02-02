@@ -124,7 +124,7 @@ QString XMLObj::endElement(QString s)
 // returns  at="val"
 QString XMLObj::attribut(QString at, QString val)
 {
-    return " " + at + "=\"" + quoteMeta(val) + "\"";  // FIXME-0  check for saving!
+    return " " + at + "=\"" + quoteMeta(val) + "\"";
 }
 
 // returns <s> val </s>

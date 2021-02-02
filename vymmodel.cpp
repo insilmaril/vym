@@ -459,9 +459,6 @@ QString VymModel::getDestPath()
 
 bool VymModel::parseVymText (const QString &s)
 {
-    qDebug() << "VM::parseVymText"; // FIXME-0  testing
-    cout << qPrintable(s) << endl;
-
     bool ok = false;
     BranchItem *bi = getSelectedBranch();
     if (bi)
@@ -1377,7 +1374,7 @@ QVariant VymModel::repeatLastCommand()
     return execute(command);
 }
 
-void VymModel::undo()	    // FIXME-0 fails for parsVymText of plainText note due to linebreaks
+void VymModel::undo()
 {
     // Can we undo at all?
     if (undosAvail < 1) return;
