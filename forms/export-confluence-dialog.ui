@@ -297,8 +297,8 @@
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <includes>
-  <include location="local">xsltproc.h</include>
-  <include location="local">vymprocess.h</include>
+     <include location="local">src/xsltproc.h</include>
+     <include location="local">src/vymprocess.h</include>
  </includes>
  <resources/>
  <connections>

@@ -260,8 +260,8 @@
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <includes>
-  <include location="local">xlinkitem.h</include>
-  <include location="local">linkablemapobj.h</include>
+     <include location="local">src/xlinkitem.h</include>
+     <include location="local">src/linkablemapobj.h</include>
  </includes>
  <resources/>
  <connections>
