@@ -78,6 +78,7 @@ bool parseVYMHandler::startElement  ( const QString&, const QString&,
         {
             version = atts.value("version");
             if (!versionLowerOrEqualThanVym( version ))
+            {
                 QMessageBox::warning( 0, QObject::tr("Warning: Version Problem") , 
                    QObject::tr("<h3>Map is newer than VYM</h3>"
                    "<p>The map you are just trying to load was "
@@ -85,7 +86,18 @@ bool parseVYMHandler::startElement  ( const QString&, const QString&,
                    "The version of this vym is %2. " 
                    "If you run into problems after pressing "
                    "the ok-button below, updating vym should help.</p>").arg(version).arg(vymVersion));
-            else       
+
+                if (versionLowerOrEqual(vymVersion, "2.7.554"))
+                {
+                    // File format change in 2.7.555
+                    // might cause data loss, if read with old vym and saved again
+                    // Therefor warn and disable autosave
+                    QMessageBox::warning( 0, QObject::tr("Warning: Disabling autosave") , 
+                       QObject::tr("<h3>Autosave will be disabled</h3>"
+                           "<p>Please check contents of map before saving!</p>"));
+                    mainWindow->setAutosave(false);
+                }
+            } else       
                 model->setVersion(version);
 
         }

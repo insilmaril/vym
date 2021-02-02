@@ -1147,10 +1147,11 @@ bool VymModel::isReadOnly()
 
 void VymModel::autosave()
 {
-    if (filePath=="") 
+    // Check if autosave is disabled globally
+    if (!mainWindow->useAutosave()) 
     {
-	if (debug)
-	    qDebug() << "VymModel::autosave rejected due to missing filePath\n";
+	qWarning() << QString("VymModel::autosave disabled globally!  Current map: %1").arg(filePath);
+        return;
     }
 
     QDateTime now=QDateTime().currentDateTime();
@@ -1160,8 +1161,11 @@ void VymModel::autosave()
     if (redosAvail>0) return;
 
     // Also disable autosave for new map without filename
-    if (filePath.isEmpty()) return;
-
+    if (filePath.isEmpty()) 
+    {
+	if (debug) qWarning() << "VymModel::autosave rejected due to missing filePath\n";
+        return;
+    }
 
     if (mapUnsaved 
 	&& mapChanged 
