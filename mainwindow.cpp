@@ -2830,7 +2830,7 @@ Flag* Main::setupFlag (const QString &path,
             standardFlagsMaster->addActionToToolbar(a);
             connect (a, SIGNAL( triggered() ), this, SLOT( flagChanged() ) );
             break;
-        case Flag::UserFlag:    // FIXME-2 join with standardFlag above
+        case Flag::UserFlag:
             userFlagsMaster->addActionToToolbar(a);
             
             connect (a, SIGNAL( triggered() ), this, SLOT( flagChanged() ) );
