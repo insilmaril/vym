@@ -281,21 +281,21 @@ SOURCES	+= \
     zip-settings-dialog.cpp
 
 FORMS = \
-    attributewidget.ui \
-    branchpropeditor.ui \
-    credentials.ui \
-    export-html-dialog.ui \
-    export-confluence-dialog.ui \
-    extrainfodialog.ui \
-    editxlinkdialog.ui \
-    historywindow.ui \
-    lineeditdialog.ui \
-    lockedfiledialog.ui \
-    scripteditor.ui \
-    showtextdialog.ui \
-    userdialog.ui \
-    warningdialog.ui \
-    zip-settings-dialog.ui
+    forms/attributewidget.ui \
+    forms/branchpropeditor.ui \
+    forms/credentials.ui \
+    forms/export-html-dialog.ui \
+    forms/export-confluence-dialog.ui \
+    forms/extrainfodialog.ui \
+    forms/editxlinkdialog.ui \
+    forms/historywindow.ui \
+    forms/lineeditdialog.ui \
+    forms/lockedfiledialog.ui \
+    forms/scripteditor.ui \
+    forms/showtextdialog.ui \
+    forms/userdialog.ui \
+    forms/warningdialog.ui \
+    forms/zip-settings-dialog.ui
 
 isEmpty( PREFIX ) {
     PREFIX = /usr/local
