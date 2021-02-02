@@ -7,7 +7,7 @@
 #define __VYM_CODENAME "Codename: development version, not for production!"
 //#define __VYM_CODE_QUALITY "production"
 #define __VYM_CODE_QUALITY "development"
-#define __VYM_BUILD_DATE "2021-01-31"
+#define __VYM_BUILD_DATE "2021-02-01"
 #define __VYM_HOME "http://www.insilmaril.de/vym"
 
 #endif
