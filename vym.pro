@@ -21,13 +21,13 @@ unix:!macx:isEmpty(NO_DBUS) {
     message("Compiling with DBUS")
     DEFINES += VYM_DBUS
     QT      += dbus 
-    HEADERS += adaptormodel.h adaptorvym.h 
-    SOURCES += adaptormodel.cpp adaptorvym.cpp 
+    HEADERS += src/adaptormodel.h src/adaptorvym.h 
+    SOURCES += src/adaptormodel.cpp src/adaptorvym.cpp 
 }
 
 win32 {
-    HEADERS += mkdtemp.h
-    SOURCES += mkdtemp.cpp
+    HEADERS += src/mkdtemp.h
+    SOURCES += src/mkdtemp.cpp
     RC_FILE = vym.rc
     # Manifest embedding was suggested by Qt docs somewhere...
     win32: CONFIG += embed_manifest_exe
@@ -62,240 +62,240 @@ ICON =icons/vym.icns
 
 
 HEADERS	+= \
-    aboutdialog.h \
-    codeeditor.h \
-    taskfiltermodel.h \
-    animpoint.h \
-    arrowobj.h \
-    attribute.h \
-    attributeitem.h \
-#   attributedelegate.h\
-#   attributedialog.h \
-#   attributewidget.h \
-    branchitem.h \
-    branchobj.h \
-    branchpropeditor.h\
-    command.h \
-    confluence-agent.h \
-    credentials.h \
-    dockeditor.h \
-    download-agent.h \
-    editxlinkdialog.h \
-    exportoofiledialog.h \
-    export-html-dialog.h\
-    export-confluence-dialog.h\
-    export-ao.h \
-    export-ascii.h \
-    export-base.h \
-    export-csv.h \
-    export-confluence.h \
-    export-html.h \
-    export-impress.h \
-    export-latex.h \
-    export-markdown.h \
-    export-orgmode.h \
-    export-taskjuggler.h \
-    extrainfodialog.h \
-    file.h \
-    findwidget.h \
-    findresultwidget.h \
-    findresultitem.h \
-    findresultmodel.h \
-    flag.h \
-    flagobj.h \
-    flagrowobj.h \
-    flagrow.h \
-    floatimageobj.h \
-    floatobj.h \
-    frameobj.h \
-    geometry.h \
-    heading.h \
-    headingeditor.h \
-    headingobj.h \
-    highlighter.h \
-    historywindow.h \
-    imageitem.h \
-    imageobj.h \
-    imports.h \
-    jira-agent.h \
-    lineeditdialog.h \
-    linkablemapobj.h \
-    lockedfiledialog.h \
-    macros.h \
-    mainwindow.h \
-    mapeditor.h \
-    mapitem.h \
-    mapobj.h \
-    misc.h \
-    mysortfilterproxymodel.h \
-    noteeditor.h \
-    options.h \
-    ornamentedobj.h \
-    scripteditor.h\
-    scripting.h \
-    scriptoutput.h \
-    settings.h \
-    shortcuts.h\
-    showtextdialog.h\
-    slidecontrolwidget.h\
-    slideeditor.h\
-    slideitem.h\
-    slidemodel.h\
-    task.h\
-    taskeditor.h\
-    taskmodel.h\
-    treedelegate.h \
-    treeeditor.h \
-    treeitem.h \
-    treemodel.h \
-    texteditor.h \
-    userdialog.h \
-    version.h \
-    vymlock.h \
-    vymmodel.h \
-    vymmodelwrapper.h \
-    vymnote.h \
-    vymprocess.h \
-    vymtext.h \
-    vymview.h \
-    winter.h \
-    warningdialog.h \
-    xlink.h \
-    xlinkitem.h \
-    xlinkobj.h \
-    xml-base.h \
-    xml-vym.h \
-    xml-freemind.h \
-    xmlobj.h\
-    xsltproc.h \
-    zip-settings-dialog.h
+    src/aboutdialog.h \
+    src/codeeditor.h \
+    src/taskfiltermodel.h \
+    src/animpoint.h \
+    src/arrowobj.h \
+    src/attribute.h \
+    src/attributeitem.h \
+#   src/attributedelegate.h\
+#   src/attributedialog.h \
+#   src/attributewidget.h \
+    src/branchitem.h \
+    src/branchobj.h \
+    src/branchpropeditor.h\
+    src/command.h \
+    src/confluence-agent.h \
+    src/credentials.h \
+    src/dockeditor.h \
+    src/download-agent.h \
+    src/editxlinkdialog.h \
+    src/exportoofiledialog.h \
+    src/export-html-dialog.h\
+    src/export-confluence-dialog.h\
+    src/export-ao.h \
+    src/export-ascii.h \
+    src/export-base.h \
+    src/export-csv.h \
+    src/export-confluence.h \
+    src/export-html.h \
+    src/export-impress.h \
+    src/export-latex.h \
+    src/export-markdown.h \
+    src/export-orgmode.h \
+    src/export-taskjuggler.h \
+    src/extrainfodialog.h \
+    src/file.h \
+    src/findwidget.h \
+    src/findresultwidget.h \
+    src/findresultitem.h \
+    src/findresultmodel.h \
+    src/flag.h \
+    src/flagobj.h \
+    src/flagrowobj.h \
+    src/flagrow.h \
+    src/floatimageobj.h \
+    src/floatobj.h \
+    src/frameobj.h \
+    src/geometry.h \
+    src/heading.h \
+    src/headingeditor.h \
+    src/headingobj.h \
+    src/highlighter.h \
+    src/historywindow.h \
+    src/imageitem.h \
+    src/imageobj.h \
+    src/imports.h \
+    src/jira-agent.h \
+    src/lineeditdialog.h \
+    src/linkablemapobj.h \
+    src/lockedfiledialog.h \
+    src/macros.h \
+    src/mainwindow.h \
+    src/mapeditor.h \
+    src/mapitem.h \
+    src/mapobj.h \
+    src/misc.h \
+    src/mysortfilterproxymodel.h \
+    src/noteeditor.h \
+    src/options.h \
+    src/ornamentedobj.h \
+    src/scripteditor.h\
+    src/scripting.h \
+    src/scriptoutput.h \
+    src/settings.h \
+    src/shortcuts.h\
+    src/showtextdialog.h\
+    src/slidecontrolwidget.h\
+    src/slideeditor.h\
+    src/slideitem.h\
+    src/slidemodel.h\
+    src/task.h\
+    src/taskeditor.h\
+    src/taskmodel.h\
+    src/treedelegate.h \
+    src/treeeditor.h \
+    src/treeitem.h \
+    src/treemodel.h \
+    src/texteditor.h \
+    src/userdialog.h \
+    src/version.h \
+    src/vymlock.h \
+    src/vymmodel.h \
+    src/vymmodelwrapper.h \
+    src/vymnote.h \
+    src/vymprocess.h \
+    src/vymtext.h \
+    src/vymview.h \
+    src/winter.h \
+    src/warningdialog.h \
+    src/xlink.h \
+    src/xlinkitem.h \
+    src/xlinkobj.h \
+    src/xml-base.h \
+    src/xml-vym.h \
+    src/xml-freemind.h \
+    src/xmlobj.h\
+    src/xsltproc.h \
+    src/zip-settings-dialog.h
 
 SOURCES	+= \
-    aboutdialog.cpp \
-    codeeditor.cpp \
-    taskfiltermodel.cpp \
-    animpoint.cpp \
-    arrowobj.cpp \
-    attribute.cpp \
-    attributeitem.cpp \
-#   attributedelegate.cpp \
-#   attributedialog.cpp \
-#   attributewidget.cpp \
-    branchitem.cpp \
-    branchobj.cpp \
-    branchpropeditor.cpp \
-    command.cpp \
-    confluence-agent.cpp \
-    credentials.cpp \
-    dockeditor.cpp \
-    download-agent.cpp \
-    editxlinkdialog.cpp \
-    export-html-dialog.cpp \
-    export-confluence-dialog.cpp \
-    exportoofiledialog.cpp \
-    export-ao.cpp \
-    export-ascii.cpp \
-    export-base.cpp \
-    export-confluence.cpp \
-    export-csv.cpp \
-    export-html.cpp \
-    export-impress.cpp \
-    export-latex.cpp \
-    export-markdown.cpp \
-    export-orgmode.cpp \
-    export-taskjuggler.cpp \
-    extrainfodialog.cpp \
-    file.cpp \
-    findwidget.cpp \
-    findresultwidget.cpp \
-    findresultitem.cpp \
-    findresultmodel.cpp \
-    flag.cpp \
-    flagobj.cpp \
-    flagrow.cpp \
-    flagrowobj.cpp \
-    floatimageobj.cpp \
-    floatobj.cpp \
-    frameobj.cpp \
-    geometry.cpp \
-    heading.cpp \
-    headingeditor.cpp \
-    headingobj.cpp \
-    highlighter.cpp \
-    historywindow.cpp \
-    imageitem.cpp \
-    imageobj.cpp \
-    imports.cpp \
-    jira-agent.cpp \
-    lineeditdialog.cpp \
-    linkablemapobj.cpp \
-    lockedfiledialog.cpp \
-    macros.cpp \
-    main.cpp \
-    mainwindow.cpp \
-    mapeditor.cpp \
-    mapitem.cpp \
-    mapobj.cpp \
-    misc.cpp \
-    mysortfilterproxymodel.cpp \
-    noteeditor.cpp \
-    options.cpp \
-    ornamentedobj.cpp \
-    scripteditor.cpp \
-    scripting.cpp \
-    scriptoutput.cpp \
-    settings.cpp \
-    shortcuts.cpp\
-    showtextdialog.cpp \
-    slidecontrolwidget.cpp \
-    slideeditor.cpp \
-    slideitem.cpp \
-    slidemodel.cpp \
-    task.cpp \
-    taskeditor.cpp \
-    taskmodel.cpp \
-    texteditor.cpp \
-    treedelegate.cpp \
-    treeeditor.cpp \
-    treeitem.cpp \
-    treemodel.cpp \
-    userdialog.cpp \
-    version.cpp \
-    vymlock.cpp \
-    vymmodel.cpp \
-    vymmodelwrapper.cpp \
-    vymnote.cpp \
-    vymprocess.cpp \
-    vymtext.cpp \
-    vymview.cpp \
-    warningdialog.cpp \
-    winter.cpp \
-    xlink.cpp \
-    xlinkitem.cpp \
-    xlinkobj.cpp \
-    xml-base.cpp \
-    xml-vym.cpp \
-    xml-freemind.cpp \
-    xmlobj.cpp \
-    xsltproc.cpp \
-    zip-settings-dialog.cpp
+    src/aboutdialog.cpp \
+    src/codeeditor.cpp \
+    src/taskfiltermodel.cpp \
+    src/animpoint.cpp \
+    src/arrowobj.cpp \
+    src/attribute.cpp \
+    src/attributeitem.cpp \
+#   src/attributedelegate.cpp \
+#   src/attributedialog.cpp \
+#   src/attributewidget.cpp \
+    src/branchitem.cpp \
+    src/branchobj.cpp \
+    src/branchpropeditor.cpp \
+    src/command.cpp \
+    src/confluence-agent.cpp \
+    src/credentials.cpp \
+    src/dockeditor.cpp \
+    src/download-agent.cpp \
+    src/editxlinkdialog.cpp \
+    src/export-html-dialog.cpp \
+    src/export-confluence-dialog.cpp \
+    src/exportoofiledialog.cpp \
+    src/export-ao.cpp \
+    src/export-ascii.cpp \
+    src/export-base.cpp \
+    src/export-confluence.cpp \
+    src/export-csv.cpp \
+    src/export-html.cpp \
+    src/export-impress.cpp \
+    src/export-latex.cpp \
+    src/export-markdown.cpp \
+    src/export-orgmode.cpp \
+    src/export-taskjuggler.cpp \
+    src/extrainfodialog.cpp \
+    src/file.cpp \
+    src/findwidget.cpp \
+    src/findresultwidget.cpp \
+    src/findresultitem.cpp \
+    src/findresultmodel.cpp \
+    src/flag.cpp \
+    src/flagobj.cpp \
+    src/flagrow.cpp \
+    src/flagrowobj.cpp \
+    src/floatimageobj.cpp \
+    src/floatobj.cpp \
+    src/frameobj.cpp \
+    src/geometry.cpp \
+    src/heading.cpp \
+    src/headingeditor.cpp \
+    src/headingobj.cpp \
+    src/highlighter.cpp \
+    src/historywindow.cpp \
+    src/imageitem.cpp \
+    src/imageobj.cpp \
+    src/imports.cpp \
+    src/jira-agent.cpp \
+    src/lineeditdialog.cpp \
+    src/linkablemapobj.cpp \
+    src/lockedfiledialog.cpp \
+    src/macros.cpp \
+    src/main.cpp \
+    src/mainwindow.cpp \
+    src/mapeditor.cpp \
+    src/mapitem.cpp \
+    src/mapobj.cpp \
+    src/misc.cpp \
+    src/mysortfilterproxymodel.cpp \
+    src/noteeditor.cpp \
+    src/options.cpp \
+    src/ornamentedobj.cpp \
+    src/scripteditor.cpp \
+    src/scripting.cpp \
+    src/scriptoutput.cpp \
+    src/settings.cpp \
+    src/shortcuts.cpp\
+    src/showtextdialog.cpp \
+    src/slidecontrolwidget.cpp \
+    src/slideeditor.cpp \
+    src/slideitem.cpp \
+    src/slidemodel.cpp \
+    src/task.cpp \
+    src/taskeditor.cpp \
+    src/taskmodel.cpp \
+    src/texteditor.cpp \
+    src/treedelegate.cpp \
+    src/treeeditor.cpp \
+    src/treeitem.cpp \
+    src/treemodel.cpp \
+    src/userdialog.cpp \
+    src/version.cpp \
+    src/vymlock.cpp \
+    src/vymmodel.cpp \
+    src/vymmodelwrapper.cpp \
+    src/vymnote.cpp \
+    src/vymprocess.cpp \
+    src/vymtext.cpp \
+    src/vymview.cpp \
+    src/warningdialog.cpp \
+    src/winter.cpp \
+    src//xlink.cpp \
+    src/xlinkitem.cpp \
+    src/xlinkobj.cpp \
+    src/xml-base.cpp \
+    src/xml-vym.cpp \
+    src/xml-freemind.cpp \
+    src/xmlobj.cpp \
+    src/xsltproc.cpp \
+    src/zip-settings-dialog.cpp
 
 FORMS = \
-    attributewidget.ui \
-    branchpropeditor.ui \
-    credentials.ui \
-    export-html-dialog.ui \
-    export-confluence-dialog.ui \
-    extrainfodialog.ui \
-    editxlinkdialog.ui \
-    historywindow.ui \
-    lineeditdialog.ui \
-    lockedfiledialog.ui \
-    scripteditor.ui \
-    showtextdialog.ui \
-    userdialog.ui \
-    warningdialog.ui \
-    zip-settings-dialog.ui
+    forms/attributewidget.ui \
+    forms/branchpropeditor.ui \
+    forms/credentials.ui \
+    forms/export-html-dialog.ui \
+    forms/export-confluence-dialog.ui \
+    forms/extrainfodialog.ui \
+    forms/editxlinkdialog.ui \
+    forms/historywindow.ui \
+    forms/lineeditdialog.ui \
+    forms/lockedfiledialog.ui \
+    forms/scripteditor.ui \
+    forms/showtextdialog.ui \
+    forms/userdialog.ui \
+    forms/warningdialog.ui \
+    forms/zip-settings-dialog.ui
 
 isEmpty( PREFIX ) {
     PREFIX = /usr/local

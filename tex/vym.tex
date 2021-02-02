@@ -57,7 +57,7 @@
 \title{
     \includegraphics[width=8cm]{images/vym-logo-new.png} \\ 
     VYM  -- View Your Mind \\ 
-    {\small Version 2.7.0} \\ 
+    {\small Version 2.7.520} \\ 
     {\b Usermanual }
 \author{\textcopyright Uwe Drechsel  }
 }
@@ -257,30 +257,22 @@ explained in \ref{noteeditor}
 Here is a list of the available satellite windows, the {\em dockable}
 feature is explained in next section \ref{dockable}:
 \begin{itemize}
-    \item 
-    Branch Property Window (see section \ref{propwindow})
-    \item 
-    \includegraphics[width=0.5cm]{../icons/find.png}
-    Find window to search for text (dockable)
-    \item 
-    \includegraphics[width=0.5cm]{../icons/headingeditor.png}
-    Heading editor (dockable, features are the same as in the
-    noteeditor, see section \ref {noteeditor})
-    \item 
-    \includegraphics[width=0.5cm]{../icons/history.png}
-    Historywindow (see section \ref{historywindow})
-    \item 
-    \includegraphics[width=0.5cm]{../flags/flag-note.png}
-    Noteeditor (dockable, see section \ref {noteeditor})
-    \item 
-    \includegraphics[width=0.5cm]{../icons/scripteditor.png}
-    Scripteditor (dockable, see section \ref {scripteditor})
-    \item 
-    \includegraphics[width=0.5cm]{../icons/slideeditor.png}
-    Slideeditor (dockable, see section \ref {slideeditor})
-    \item 
-    \includegraphics[width=0.5cm]{../icons/taskeditor.png}
-    Taskeditor (dockable, see section \ref {taskeditor})
+    \item Branch Property Window (see section \ref{propwindow})
+    \item \includegraphics[width=0.5cm]{../icons/find.png}
+        Find window to search for text (dockable)
+    \item \includegraphics[width=0.5cm]{../icons/headingeditor.png}
+        Heading editor (dockable, features are the same as in the
+        noteeditor, see section \ref {noteeditor})
+    \item \includegraphics[width=0.5cm]{../icons/history.png}
+        Historywindow (see section \ref{historywindow})
+    \item \includegraphics[width=0.5cm]{images/flags/system/note.png}
+        Noteeditor (dockable, see section \ref {noteeditor})
+    \item \includegraphics[width=0.5cm]{../icons/scripteditor.png}
+        Scripteditor (dockable, see section \ref {scripteditor})
+    \item \includegraphics[width=0.5cm]{../icons/slideeditor.png}
+        Slideeditor (dockable, see section \ref {slideeditor})
+    \item \includegraphics[width=0.5cm]{../icons/taskeditor.png}
+        Taskeditor (dockable, see section \ref {taskeditor})
 \end{itemize}
 
 \subsection{Dockable windows} \label{dockable}
@@ -566,11 +558,18 @@ always reflect the flags set in the selected branch. So, to remove a
 flag from a branch, select the branch and then click the highlighted
 flag on the toolbar.
 
-At present \vym uses two kinds of flags: {\em System Flags} and {\em
-Standard Flags}. The standard flags are those shown in the toolbar.
-System flags are set by \vym to indicate e.g. that there is additional
-information in a note (more on this in \ref{noteeditor}). Later versions
-of \vym may have another kind of flags, which may be edited by the user.
+\vym uses three kinds of flags: 
+\begin{itemize}
+    \item {\em System Flags}
+        are set by \vym to indicate e.g. that there is additional
+        information in a note (more on this in \ref{noteeditor}) or 
+        that there is a task associated (see the \ref{taskeditor})
+    \item {\em Standard Flags}
+    \item {\em User Flags} 
+\end{itemize}
+Standard flags can be toggled by clicking in the toolbar
+    \maximage{images/default-flags.png}
+User flags are similar, but can be added to their own toolbar when clicking the edit icon
 
 \subsubsection*{Images}
 The easiest way to add an image to a branch is by dragging it e.g. from a
@@ -852,118 +851,132 @@ The taskeditor is visible on the left side in the image below.
     \includegraphics[width=13cm]{images/taskeditor.png}
 \end{center}
 
+The default columns in the taskeditor list are:
+\begin{itemize}
+    \item Delta: This value can be manually added to the priority to change the automated priorization
+    \item Status: Shows the state and if the task is currently sleeping
+%    \item Age total: Days, since the task has been created
+%    \item Age modified: Days, since the task has been changed
+%    \item Sleep: Days, which will pass until task will wake up 
+%    \item Position of tasks branch in its subtree (higher priority if further up)
+    \item Flags: Lists flags, which affect the priority (see above)
+    \item The name of task (identical to heading of branch in the map)    
+\end{itemize}
+Priorities can be adjusted manually in the taskeditor, either by entering a
+delta value or by dragging the task to a new position (more on priorities below).
+
+
 \subsection{Creating tasks}
 To create a task press \key{Shift + W}. The branch will get an
 additional flag and its name will be visible in the taskeditor.
 
-A task can have three different states:
+A task can have different states:
 \begin{itemize}
-    \item Not started \includegraphics[width=0.5cm]{../flags/flag-task-new.png}
-    \item Work in progress
-    \includegraphics[width=0.5cm]{../flags/flag-task-wip.png}
-    \item Finished
-    \includegraphics[width=0.5cm]{../flags/flag-task-finished.png}
+    \item New task or just awakened task \includegraphics[width=0.5cm]{images/flags/system/task-new.png}
+    \item Not started \includegraphics[width=0.5cm]{images/flags/system/task-not-started.png}
+    \item Work in progress \includegraphics[width=0.5cm]{images/flags/system/task-wip.png}
+    \item Finished \includegraphics[width=0.5cm]{images/flags/system/task-finished.png}
 \end{itemize}
 You can cycle these states by pressing \key{W}. 
 
-\subsection{Sleeping tasks for later reminders}
+\subsection{Reminders - let a task sleep for a while}
 A task may be set to \lq sleep\rq, which can be used to get a reminder
 after a certain amount of time. The flag will change to one of these:
 \begin{itemize}
     \item Not started - sleeping
-    \includegraphics[width=0.5cm]{../flags/flag-task-new-sleeping.png}
+    \includegraphics[width=0.5cm]{images/flags/system/task-new-sleeping.png}
     \item Work in progress - sleeping
-    \includegraphics[width=0.5cm]{../flags/flag-task-wip-sleeping.png}
+    \includegraphics[width=0.5cm]{images/flags/system/task-wip-sleeping.png}
 \end{itemize}
-You can set the amount of days a task should sleep by right clicking on the task flag in the
+You can set the sleep time of a task should right clicking on the task flag in the
 mapeditor or the task in the taskeditor. \lq Reset sleep\rq will wake up
-a currently sleeping task. These tasks will get a  new flag and status
-in the taskeditor:
-\begin{itemize}
-    \item Not started -
-    morning\includegraphics[width=0.5cm]{../flags/flag-task-new-morning.png}
-    \item Work in progress - morning
-    \includegraphics[width=0.5cm]{../flags/flag-task-wip-morning.png}
-    \item New tasks - only show new freshly \lq woken up\rq tasks
-    \item Various filters for priorty flags
-    \includegraphics[width=0.5cm]{../flags/flag-arrow-up.png}
-    \includegraphics[width=0.5cm]{../flags/flag-2arrow-up.png}
-    \includegraphics[width=0.5cm]{../flags/flag-no-arrow-up.png}
-    \ldots
-\end{itemize}
-Additionally these poor tasks, which have just been woken up, will get a
-way higher priority, so that they pop up on top of your list in the
-taskeditor, see next section.
+a currently sleeping task. 
 
-\paragraph{Letting a task sleep}
-If you press \key{Shift-Q}, a dialog window will pop up and lets you
-enter the sleep time. Currently the following formats are alloed:
-\begin{itemize}
-    \item \lq 12\rq -- sleep for 12 days
-    \item \lq 34s\rq -- sleep for 34 seconds
-    \item \lq 2h\rq -- sleep for 2 hours
-    \item \lq 24.12.\rq -- sleep until December 24 this year
-    \item \lq 24.12.2038\ -- sleep until December 24 in 2038
-        \item \lq 21:34\rq -- sleep until 21:34, or 9:34 pm
-    \item \lq 2038-12-24T21:34\rq -- sleep until December 24 in 2038, 9:34 pm
-\end{itemize}
+Alternatively you can press \key{Shift-Q} and manually enter the sleep time, here are some examples:
+
+\begin{center}
+    \begin{tabular}{|c|p{11cm}|} \hline
+        {\bf Input }   & {\bf Sleep} \\ \hline
+        1       & 1 day, postpone until tomorrow morning\\
+        365     & 365 days \\
+        1w      & 1 week \\
+        3h      & 3 hours \\
+        10s     & 10 seconds \\
+        18:00   & Postpone until 6pm \\
+        24.12.2024  & Postpone until Dec 24 in 2024 \\
+        2024-12-24  & Postpone until Dec 24 in 2024 \\ 
+        2038-12-24T21:34 &  Postpone until December 24 in 2038, 9:34 pm (ISO format)  \\ \hline
+    \end{tabular}
+\end{center}
+
+%These tasks will get a  new flag and status
+%in the taskeditor:
+%\begin{itemize}
+%    \item Not started - morning  %\includegraphics[width=0.5cm]{../flags/flag-task-new-morning.png}
+%    \item Work in progress - morning % \includegraphics[width=0.5cm]{../flags/flag-task-wip-morning.png}
+%    \item New tasks - only show new freshly \lq woken up\rq tasks
+%    \item Various filters for priorty flags
+%    \includegraphics[width=0.5cm]{../flags/flag-arrow-up.png}
+%    \includegraphics[width=0.5cm]{../flags/flag-2arrow-up.png}
+%    \includegraphics[width=0.5cm]{../flags/flag-no-arrow-up.png}
+%    \ldots
+%\end{itemize}
 
 \subsection{Priority of tasks}
 The tasks visible in the taskeditor are ordered by their {\em
-priorities}, listed on the left side of the editor. The lower(!) the
-priority, the more important is a task.
+priorities}, listed on the left side of the editor. The lower the
+priority number, the more important is a task: The most important task always has priority~1.
 
 There are several principles that influence the priority of a task:
 \begin{itemize}
     \item
-    Old tasks tend to bubble up: If you have a task named \lq water the
-    flowers\rq\ and you have postponed it since 187 days, better delete
-    the task. And create a new task to dump the remains of the flowers.
+        Old tasks tend to bubble up, meaning theyget a higher priority over
+        time. Rationale: If you have a task named \lq water the flowers\rq\ and
+        you have postponed it now for 187 days, better delete the task. (And
+        create a new task to dump the remains of the flowers.)
 
     \item
-    Colors in the map: If you use the Function keys to assigne the
-    colors red, amber, green, etc. the tasks will get a different
-    priority accordingly
+        Colors in the map: If you use the Function keys to assign the
+        colors red, amber, green, etc. the tasks will get a different
+        priority accordingly
 
     \item
-    The stopsign flag
-    \includegraphics[width=0.5cm]{../flags/flag-stopsign.png} 
-    will increase the priority. Use it for your shipstoppers\ldots
+        The stopsign flag
+        \includegraphics[width=0.5cm]{images/flags/stopsign.png} 
+        will increase the priority. Use it for your shipstoppers\ldots
 
     \item
-    Sleeping tasks and finished tasks will tend to fall to the bottom of
-    your task list.
+        The arrow up flags also move tasks up in the list 
+        %FIXME add flag
 
     \item
-    The freshly woken up \lq morning tasks\rq\ will tend to pop up right
-    at the top, so that they cannot be missed. Remove the \lq
-    morning\rq\
-    state by pressing \key{W} once.
+        Sleeping tasks and finished tasks will tend to fall to the bottom of
+        your task list.
+
+    \item
+        The freshly woken up \lq morning tasks\rq\ will tend to pop up right
+        at the top, so that they cannot be missed. Remove the \lq
+        morning\rq\ state by pressing \key{W} once.
 \end{itemize}
 
-The priorities are calculated based on the next visible columns:
-\begin{itemize}
-    \item Status: Shows the state and if the task is currently sleeping
-    \item Age total: Days, since the task has been created
-    \item Age modified: Days, since the task has been changed
-    \item Sleep: Days, which will pass until task will wake up 
-    \item Position of tasks branch in its subtree (higher priority if
-        further up)
-\end{itemize}
-Note that the priorities cannot be set manually, but e.g. you can reset
-the \lq Age modified\rq\ by pressing \key{W} three times to cycle
-through the states. Also the priorites are maintained for all currently
-opened maps, so if the top priority in your current map is a sleeping
-2034, then there is another open map, which certainly has a priority~1
-task.
-
-\subsection{Keeping the overview}
-The taskeditor has filters:
-\begin{itemize}
-    \item Current map: Show only tasks from  current active map
-    \item Active tasks: Show only the tasks, which are neither finished
-    nor sleeping
-\end{itemize}
+\subsection{Filter tasks - keeping the overview}
+The taskeditor has filters:  %FIXME add flag icons
+\begin{center}
+    \begin{tabular}{|c|p{11cm}|} \hline
+        {\bf Icon} &   {\bf Filter }   \\ \hline
+        \includegraphics[width=0.4cm]{../icons/taskfilter-currentmap.png} &
+             Current map only, hide tasks from other maps \\
+        \includegraphics[width=0.4cm]{../icons/taskfilter-activetask.png} &
+            Active tasks only, hide finished nor sleeping \\
+        \includegraphics[width=0.5cm]{../icons/taskfilter-newtask.png} &
+             New tasks only \\
+        \includegraphics[width=0.4cm]{images/flags/arrow-up.png}
+        \includegraphics[width=0.4cm]{images/flags/arrow2-up.png} &
+            Tasks with \lq arrow up\rq flags only        \\
+        \includegraphics[width=0.4cm]{../flags/system/no-arrow-up.png} &
+            Only tasks without \lq arrow up\rq flags \\ \hline
+    \end{tabular}
+\end{center}
 
 
 \section{Slideeditor - presentations}\label{slideeditor}
