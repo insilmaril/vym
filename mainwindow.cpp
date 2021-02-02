@@ -324,13 +324,11 @@ Main::Main(QWidget* parent) : QMainWindow(parent)
     connect (dw, SIGNAL (visibilityChanged(bool ) ), this, SLOT (updateActions()));
 
     // Connect NoteEditor, so that we can update flags if text changes
-
     connect (noteEditor, SIGNAL (textHasChanged(const VymText &) ), this, SLOT (updateNoteText(const VymText &)));
     connect (noteEditor, SIGNAL (windowClosed() ), this, SLOT (updateActions()));
 
     // Connect heading editor
     connect (headingEditor, SIGNAL (textHasChanged(const VymText &) ), this, SLOT (updateHeading(const VymText &)));
-
     connect( scriptEditor, SIGNAL( runScript ( QString ) ),  this, SLOT( runScript ( QString ) ) );
 
     // Switch back  to MapEditor using Esc  or end presentation mode
@@ -2275,7 +2273,7 @@ void Main::setupModeActions()
     actionGroupModModes=new QActionGroup ( this);
     actionGroupModModes->setExclusive (true);
 
-    a= new QAction( QIcon(":/mode-select.svg"), tr( "Use modifier to select and reorder objects","Mode modifier" ), actionGroupModModes);
+    a= new QAction( QIcon(":/mode-select.svg"), tr( "Use Shift modifier key to select and reorder objects","Mode modifier" ), actionGroupModModes);
     a->setShortcut (Qt::Key_J);
     addAction(a);
     switchboard.addSwitch ("mapModModePoint", shortcutScope, a, tag);
@@ -2284,7 +2282,7 @@ void Main::setupModeActions()
     actionListFiles.append (a);
     actionModModePoint  = a;
 
-    a= new QAction( QPixmap(":/mode-color.png"), tr( "Format painter: pick color from another branch and apply","Mode modifier" ), actionGroupModModes);
+    a= new QAction( QPixmap(":/mode-color.png"), tr( "Use Shift modifer key to pick color from another branch and apply","Mode modifier" ), actionGroupModModes);
     a->setShortcut (Qt::Key_K);
     addAction(a);
     switchboard.addSwitch ("mapModModeColor", shortcutScope, a, tag);
@@ -2292,7 +2290,7 @@ void Main::setupModeActions()
     actionListFiles.append (a);
     actionModModeColor = a;
 
-    a= new QAction(QPixmap(":/mode-xlink.png"), tr( "Use modifier to draw xLinks","Mode modifier" ), actionGroupModModes );
+    a= new QAction(QPixmap(":/mode-xlink.png"), tr( "Use Shift modifier key to draw xLinks","Mode modifier" ), actionGroupModModes );
     a->setShortcut (Qt::Key_L);
     addAction(a);
     switchboard.addSwitch ("mapModModeXLink", shortcutScope, a, tag);
@@ -2300,7 +2298,7 @@ void Main::setupModeActions()
     actionListFiles.append (a);
     actionModModeXLink=a;
 
-    a= new QAction( QPixmap(":/mode-move-object.svg"), tr( "Use modifier to move branches without linking","Mode modifier" ), actionGroupModModes);
+    a= new QAction( QPixmap(":/mode-move-object.svg"), tr( "Use Shift modifier key to move branches without linking","Mode modifier" ), actionGroupModModes);
     a->setShortcut( Qt::Key_Odiaeresis ); 
     addAction(a);
     switchboard.addSwitch ("mapModModeMoveObject", shortcutScope, a, tag);
@@ -2308,7 +2306,7 @@ void Main::setupModeActions()
     actionListFiles.append (a);
     actionModModeMoveObject = a;
 
-    a= new QAction( QPixmap(":/mode-move-view.png"), tr( "Use modifier to move view without selecting","Mode modifier" ), actionGroupModModes);
+    a= new QAction( QPixmap(":/mode-move-view.png"), tr( "Use Shift modifier key to move view without selecting","Mode modifier" ), actionGroupModModes);
     a->setShortcut( Qt::Key_Adiaeresis ); 
     addAction(a);
     switchboard.addSwitch ("mapModModeMoveView", shortcutScope, a, tag);
