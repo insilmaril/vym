@@ -3,14 +3,14 @@
 
 #include "export-base.h"
 
-class ExportLaTeX:public ExportBase
-{
-public:
+class ExportLaTeX : public ExportBase {
+  public:
     ExportLaTeX();
-    QString escapeLaTeX (const QString &s);
+    QString escapeLaTeX(const QString &s);
     virtual void doExport();
-private:
-    QHash <QString,QString> esc;
-};  
+
+  private:
+    QHash<QString, QString> esc;
+};
 
 #endif

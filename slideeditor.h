@@ -1,4 +1,4 @@
-#ifndef SLIDEEDITOR_H 
+#ifndef SLIDEEDITOR_H
 #define SLIDEEDITOR_H
 
 #include <QItemSelection>
@@ -9,14 +9,13 @@ class QTreeView;
 class SlideControlWidget;
 class VymModel;
 
-class SlideEditor: public QWidget
-{
+class SlideEditor : public QWidget {
     Q_OBJECT
 
-public:
-    SlideEditor (VymModel *);
+  public:
+    SlideEditor(VymModel *);
 
-public slots:	
+  public slots:
     void previousSlide();
     void nextSlide();
     void addSlide();
@@ -24,9 +23,9 @@ public slots:
     void deleteSlide();
     void moveSlideUp();
     void moveSlideDown();
-    void updateSelection(QItemSelection ,QItemSelection);
+    void updateSelection(QItemSelection, QItemSelection);
 
-private:
+  private:
     VymModel *vymModel;
     SlideModel *slideModel;
     QTreeView *view;
@@ -34,4 +33,3 @@ private:
 };
 
 #endif
-

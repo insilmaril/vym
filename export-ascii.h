@@ -3,12 +3,11 @@
 
 #include "export-base.h"
 
-class ExportASCII:public ExportBase
-{
-public:
+class ExportASCII : public ExportBase {
+  public:
     ExportASCII();
     virtual void doExport();
-    virtual QString underline (const QString &text, const QString &line);
+    virtual QString underline(const QString &text, const QString &line);
 };
 
 #endif

@@ -3,15 +3,15 @@
 
 #include "export-base.h"
 
-class ExportOO:public ExportBase
-{
-public:
+class ExportOO : public ExportBase {
+  public:
     ExportOO();
     ~ExportOO();
     void exportPresentation();
-    bool setConfigFile (const QString &);
-private:
-    QString buildList (TreeItem *);
+    bool setConfigFile(const QString &);
+
+  private:
+    QString buildList(TreeItem *);
     bool useSections;
     QString configFile;
     QString configDir;

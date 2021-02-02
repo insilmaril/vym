@@ -1,21 +1,18 @@
 #include "attributewidget.h"
 
-AttributeWidget::AttributeWidget (QWidget *parent):QWidget (parent)
+AttributeWidget::AttributeWidget(QWidget *parent) : QWidget(parent)
 {
-    ui.setupUi (this);
-    //ui.keyComboBox->setEditable (true);
-    ui.valueComboBox->setEditable (true);
+    ui.setupUi(this);
+    // ui.keyComboBox->setEditable (true);
+    ui.valueComboBox->setEditable(true);
 }
 
-void AttributeWidget::setTable(AttributeTable *at)
-{
-    table=at;
-}
+void AttributeWidget::setTable(AttributeTable *at) { table = at; }
 
-void AttributeWidget::setKey (const QString &k)
+void AttributeWidget::setKey(const QString &k)
 {
-    key=k;
-    ui.keyComboBox->insertItem (ui.keyComboBox->count(), key);
+    key = k;
+    ui.keyComboBox->insertItem(ui.keyComboBox->count(), key);
 }
 
 void AttributeWidget::setValues(const QStringList &vl)
@@ -30,10 +27,6 @@ void AttributeWidget::setValue (const QString &v)
 }
 */
 
-void AttributeWidget::keyTextChanged(const QString &t)
-{
-}
+void AttributeWidget::keyTextChanged(const QString &t) {}
 
-void AttributeWidget::valueTextChanged(const QString &t)
-{
-}
+void AttributeWidget::valueTextChanged(const QString &t) {}

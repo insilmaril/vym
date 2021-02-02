@@ -1,52 +1,50 @@
 #include "export-orgmode.h"
 
-#include <QMessageBox>
 #include "mainwindow.h"
+#include <QMessageBox>
 
 extern Main *mainWindow;
 
-ExportOrgMode::ExportOrgMode() 
+ExportOrgMode::ExportOrgMode()
 {
-    exportName="OrgMode";
-    filter="org-mode (*.org);;All (* *.*)";
+    exportName = "OrgMode";
+    filter = "org-mode (*.org);;All (* *.*)";
 }
 
-void ExportOrgMode::doExport() 
+void ExportOrgMode::doExport()
 {
     // Exports a map to an org-mode file.
     // This file needs to be read
     // by EMACS into an org mode buffer
-    QFile file (filePath);
-    if ( !file.open( QIODevice::WriteOnly ) )
-    {
-        QMessageBox::critical (0, QObject::tr("Critical Export Error"), QObject::tr("Could not export as OrgMode to %1").arg(filePath));
+    QFile file(filePath);
+    if (!file.open(QIODevice::WriteOnly)) {
+        QMessageBox::critical(
+            0, QObject::tr("Critical Export Error"),
+            QObject::tr("Could not export as OrgMode to %1").arg(filePath));
         mainWindow->statusMessage(QString(QObject::tr("Export failed.")));
         return;
     }
-    QTextStream ts( &file );
+    QTextStream ts(&file);
     ts.setCodec("UTF-8");
 
     // Main loop over all branches
     QString s;
     int i;
-    BranchItem *cur=NULL;
-    BranchItem *prev=NULL;
-    model->nextBranch(cur,prev);
-    while (cur)
-    {
-        if (!cur->hasHiddenExportParent() )
-        {
-            for(i=0;i<=cur->depth();i++)
+    BranchItem *cur = NULL;
+    BranchItem *prev = NULL;
+    model->nextBranch(cur, prev);
+    while (cur) {
+        if (!cur->hasHiddenExportParent()) {
+            for (i = 0; i <= cur->depth(); i++)
                 ts << ("*");
-            ts << (" " + cur->getHeadingPlain()+ "\n");
+            ts << (" " + cur->getHeadingPlain() + "\n");
             // If necessary, write note
-            if (!cur->isNoteEmpty())
-            {
+            if (!cur->isNoteEmpty()) {
                 ts << (cur->getNoteASCII());
                 ts << ("\n");
             }
         }
-        model->nextBranch(cur,prev);
+        model->nextBranch(cur, prev);
     }
     file.close();
 
@@ -55,4 +53,3 @@ void ExportOrgMode::doExport()
     destination = filePath;
     completeExport();
 }
-

@@ -9,46 +9,46 @@
 #include "settings.h"
 #include "vymmodel.h"
 
-
 /*! \brief Base class for all exports
-*/
+ */
 
 ///////////////////////////////////////////////////////////////////////
 
-class ExportBase
-{
-public:
+class ExportBase {
+  public:
     ExportBase();
     ExportBase(VymModel *m);
     virtual ~ExportBase();
     virtual void init();
     virtual void setupTmpDir();
-    virtual void setDirPath (const QString&);
+    virtual void setDirPath(const QString &);
     virtual QString getDirPath();
-    virtual void setFilePath (const QString&);
-    virtual QString getFilePath ();
-    virtual QString getMapName ();
-    virtual void setModel (VymModel *m);
-    virtual void setWindowTitle (const QString &);
-    virtual void setName( const QString &);
+    virtual void setFilePath(const QString &);
+    virtual QString getFilePath();
+    virtual QString getMapName();
+    virtual void setModel(VymModel *m);
+    virtual void setWindowTitle(const QString &);
+    virtual void setName(const QString &);
     virtual QString getName();
-    virtual void addFilter (const QString &);
-    virtual void setListTasks( bool b);
+    virtual void addFilter(const QString &);
+    virtual void setListTasks(bool b);
     virtual bool execDialog();
     virtual bool canceled();
-    void setLastCommand( const QString& );
-    void completeExport(QMap <QString, QString> args);  //! set lastExport and send status message
+    void setLastCommand(const QString &);
+    void completeExport(
+        QMap<QString, QString> args); //! set lastExport and send status message
     void completeExport();
 
-protected:  
+  protected:
     VymModel *model;
     QString exportName;
     QString lastCommand;
-    virtual QString getSectionString (TreeItem*);
+    virtual QString getSectionString(TreeItem *);
 
-    QString indent (const int &n, bool useBullet);
+    QString indent(const int &n, bool useBullet);
     QDir tmpDir;
-    QString destination;    // Can be the filePath or URL. Used for display in "ExportLast"
+    QString destination;    // Can be the filePath or URL. Used for display in
+                            // "ExportLast"
     QString dirPath;        // Path to dir  e.g. /tmp/vym-export/
     QString defaultDirPath; // Default path
     QString filePath;       // Path to file e.g. /tmp/vym-export/export.html
@@ -58,10 +58,9 @@ protected:
     QStringList bulletPoints;
     QString caption;
     QString filter;
-    bool listTasks;         // Append task list
+    bool listTasks; // Append task list
     bool cancelFlag;
     bool success;
 };
-
 
 #endif

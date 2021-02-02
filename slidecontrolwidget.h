@@ -1,4 +1,4 @@
-#ifndef SLIDECONTROLWIDGET_H 
+#ifndef SLIDECONTROLWIDGET_H
 #define SLIDECONTROLWIDGET_H
 
 #include <QWidget>
@@ -6,14 +6,13 @@
 class QAction;
 class QPushButton;
 
-class SlideControlWidget: public QWidget
-{
+class SlideControlWidget : public QWidget {
     Q_OBJECT
 
-public:
-    SlideControlWidget (QWidget *parent=NULL);
+  public:
+    SlideControlWidget(QWidget *parent = NULL);
 
-public slots:	
+  public slots:
     void previousPressed();
     void snapshotPressed();
     void nextPressed();
@@ -22,7 +21,7 @@ public slots:
     void deletePressed();
     void editPressed();
 
-signals:
+  signals:
     void hideFindWidget();
     void takeSnapshot();
     void deleteButtonPressed();
@@ -32,7 +31,7 @@ signals:
     void upButtonPressed();
     void downButtonPressed();
 
-protected:
+  protected:
     QPushButton *previousButton;
     QPushButton *snapshotButton;
     QPushButton *editButton;
@@ -43,4 +42,3 @@ protected:
 };
 
 #endif
-

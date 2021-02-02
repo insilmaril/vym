@@ -1,20 +1,16 @@
 #include "heading.h"
 #include "misc.h"
 
-#include <QRegExp>
 #include <QDebug>
+#include <QRegExp>
 
 /////////////////////////////////////////////////////////////////
 // Heading
 /////////////////////////////////////////////////////////////////
 
-void Heading::operator =(const VymText &other)
-{
-    copy (other);
-}
+void Heading::operator=(const VymText &other) { copy(other); }
 
-QString Heading::saveToDir ()
+QString Heading::saveToDir()
 {
-    return valueElement ("heading", VymText::saveToDir(), getAttributes() );
+    return valueElement("heading", VymText::saveToDir(), getAttributes());
 }
-

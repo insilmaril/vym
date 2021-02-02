@@ -3,8 +3,8 @@
 #include <QFileInfo>
 #include <QList>
 #include <QNetworkAccessManager>
-#include <QNetworkRequest>
 #include <QNetworkReply>
+#include <QNetworkRequest>
 #include <QSslError>
 #include <QStringList>
 #include <QTemporaryFile>
@@ -21,34 +21,33 @@ QT_USE_NAMESPACE
 
 class VymModel;
 
-class DownloadAgent: public QObject
-{
+class DownloadAgent : public QObject {
     Q_OBJECT
     QNetworkAccessManager agent;
     QList<QNetworkReply *> currentDownloads;
 
-public:
+  public:
     DownloadAgent(const QUrl &u);
     ~DownloadAgent();
-    QString getDestination ();
-    void setFinishedAction (VymModel *m, const QString &script);
+    QString getDestination();
+    void setFinishedAction(VymModel *m, const QString &script);
     QString getFinishedScript();
     uint getFinishedScriptModelID();
     void setUserAgent(const QString &s);
-    bool  isSuccess();
+    bool isSuccess();
     QString getResultMessage();
     void doDownload(const QUrl &url);
     bool saveToDisk(const QString &filename, const QByteArray &data);
 
-public slots:
+  public slots:
     void execute();
     void requestFinished(QNetworkReply *reply);
     void sslErrors(const QList<QSslError> &errors);
 
-signals:
+  signals:
     void downloadFinished();
 
-private:
+  private:
     QString tmpFilePath;
     QByteArray userAgent;
     QUrl url;
@@ -59,4 +58,3 @@ private:
     QString finishedScript;
     uint finishedScriptModelID;
 };
-

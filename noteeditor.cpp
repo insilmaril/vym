@@ -2,15 +2,15 @@
 
 #include <QMenuBar>
 
-#include "vymnote.h"
 #include "settings.h"
- 
+#include "vymnote.h"
+
 extern Settings settings;
 extern QString vymName;
 
-NoteEditor::NoteEditor(QString scope):TextEditor()
+NoteEditor::NoteEditor(QString scope) : TextEditor()
 {
-    editorName = tr("Note Editor","Name of editor shown as window title");
+    editorName = tr("Note Editor", "Name of editor shown as window title");
     setWindowTitle("");
 
     menuBar()->show();
@@ -24,23 +24,22 @@ NoteEditor::~NoteEditor() {}
 VymNote NoteEditor::getNote()
 {
     VymNote note;
-    if (actionFormatRichText->isChecked() )
-        note.setRichText( getText());
+    if (actionFormatRichText->isChecked())
+        note.setRichText(getText());
     else
-        note.setPlainText( getText());
-    note.setFontHint (getFontHint() );
-    note.setFilenameHint (getFilenameHint () );
+        note.setPlainText(getText());
+    note.setFontHint(getFontHint());
+    note.setFilenameHint(getFilenameHint());
     return note;
 }
 
-void NoteEditor::setNote (const VymNote &note)  
+void NoteEditor::setNote(const VymNote &note)
 {
-    if (note.isRichText ())
+    if (note.isRichText())
         setRichText(note.getText());
-    else
-    {
+    else {
         setPlainText(note.getText());
-        setFontHint (note.getFontHint() );
+        setFontHint(note.getFontHint());
     }
-    setFilenameHint (note.getFilenameHint() );
+    setFilenameHint(note.getFilenameHint());
 }

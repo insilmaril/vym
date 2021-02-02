@@ -1,4 +1,4 @@
-#ifndef FINDRESULTWIDGET_H 
+#ifndef FINDRESULTWIDGET_H
 #define FINDRESULTWIDGET_H
 
 #include <QItemSelection>
@@ -13,35 +13,34 @@ class QTreeView;
 class QPushButton;
 class FindWidget;
 
-class FindResultWidget: public QWidget
-{
+class FindResultWidget : public QWidget {
     Q_OBJECT
 
-public:
-    FindResultWidget (QWidget *parent=NULL);
-    FindResultModel* getResultModel();
-    void addItem (TreeItem *ti);
-    void addItem (const QString &s);
+  public:
+    FindResultWidget(QWidget *parent = NULL);
+    FindResultModel *getResultModel();
+    void addItem(TreeItem *ti);
+    void addItem(const QString &s);
     QString getFindText();
 
-public slots:
+  public slots:
     void popup();
     void cancelPressed();
-    void nextButtonPressed (QString, bool);
-    void updateSelection(QItemSelection ,QItemSelection);
-    void setStatus (FindWidget::Status st);
+    void nextButtonPressed(QString, bool);
+    void updateSelection(QItemSelection, QItemSelection);
+    void setStatus(FindWidget::Status st);
 
-signals:
+  signals:
     void hideFindResultWidget();
-    void noteSelected (QString, int );
-    void findPressed (QString, bool);
+    void noteSelected(QString, int);
+    void findPressed(QString, bool);
 
-public:
+  public:
     FindWidget *findWidget;
-private:
+
+  private:
     FindResultModel *resultsModel;
     QTreeView *view;
 };
 
 #endif
-

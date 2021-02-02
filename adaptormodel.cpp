@@ -11,66 +11,60 @@
 extern QString vymInstanceName;
 extern Main *mainWindow;
 
-extern QList <Command*> modelCommands;
+extern QList<Command *> modelCommands;
 
-AdaptorModel::AdaptorModel(QObject *obj)
-         : QDBusAbstractAdaptor(obj)
+AdaptorModel::AdaptorModel(QObject *obj) : QDBusAbstractAdaptor(obj)
 {
-    model=static_cast <VymModel*> (obj);
-    setAutoRelaySignals (true);
+    model = static_cast<VymModel *>(obj);
+    setAutoRelaySignals(true);
 }
 
-void AdaptorModel::setModel(VymModel *vm)
-{
-    model=vm;
-}
+void AdaptorModel::setModel(VymModel *vm) { model = vm; }
 
-QString AdaptorModel::caption()
-{
-    return m_caption;
-}
+QString AdaptorModel::caption() { return m_caption; }
 
-void AdaptorModel::setCaption (const QString &newCaption)
+void AdaptorModel::setCaption(const QString &newCaption)
 {
-    m_caption=newCaption;
+    m_caption = newCaption;
 }
 
 QDBusVariant AdaptorModel::getCurrentModelID()
 {
-    return QDBusVariant (mainWindow->currentModelID());
+    return QDBusVariant(mainWindow->currentModelID());
 }
 
 QDBusVariant AdaptorModel::branchCount()
 {
-    BranchItem *selbi=model->getSelectedBranch();
-    if (selbi) 
-	return QDBusVariant (selbi->branchCount() );
-    else	
-	return QDBusVariant (-1 );
+    BranchItem *selbi = model->getSelectedBranch();
+    if (selbi)
+        return QDBusVariant(selbi->branchCount());
+    else
+        return QDBusVariant(-1);
 }
 
-QDBusVariant AdaptorModel::execute (const QString &s)
+QDBusVariant AdaptorModel::execute(const QString &s)
 {
-    return QDBusVariant (model->execute (s));
+    return QDBusVariant(model->execute(s));
 }
 
 QDBusVariant AdaptorModel::errorLevel()
 {
-    return QDBusVariant ();  // model->parser.errorLevel() );     // FIXME-4 really still needed? parser no longer used.
+    return QDBusVariant(); // model->parser.errorLevel() );     // FIXME-4
+                           // really still needed? parser no longer used.
 }
 
 QDBusVariant AdaptorModel::errorDescription()
 {
-    return QDBusVariant (); // model->parser.errorDescription() );// FIXME-4 really still needed? parser no longer used.
+    return QDBusVariant(); // model->parser.errorDescription() );// FIXME-4
+                           // really still needed? parser no longer used.
 }
 
-QDBusVariant AdaptorModel::listCommands ()
+QDBusVariant AdaptorModel::listCommands()
 {
     QStringList list;
 
-    foreach(Command *command, modelCommands)
+    foreach (Command *command, modelCommands)
         list << command->getName();
 
-    return QDBusVariant (list.join(",") );
+    return QDBusVariant(list.join(","));
 }
-

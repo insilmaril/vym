@@ -3,11 +3,10 @@
 
 #include "export-base.h"
 
-class ExportOrgMode:public ExportBase
-{
-public:
+class ExportOrgMode : public ExportBase {
+  public:
     ExportOrgMode();
     virtual void doExport();
-};  
+};
 
 #endif

@@ -1,4 +1,4 @@
-#ifndef VYMVIEW_H 
+#ifndef VYMVIEW_H
 #define VYMVIEW_H
 
 #include <QItemSelectionModel>
@@ -12,45 +12,43 @@ class SlideEditor;
 class TreeEditor;
 class QTreeView;
 
-class VymView:public QMainWindow
-{
+class VymView : public QMainWindow {
     Q_OBJECT
-public:
+  public:
     VymView(VymModel *model);
     ~VymView();
     void readSettings();
-    VymModel* getModel();
-    MapEditor* getMapEditor();
+    VymModel *getModel();
+    MapEditor *getMapEditor();
     bool treeEditorIsVisible();
     bool slideEditorIsVisible();
     void initFocus();
     void nextSlide();
     void previousSlide();
 
-public slots:
-    void changeSelection (const QItemSelection &newSel, const QItemSelection &delSel);
+  public slots:
+    void changeSelection(const QItemSelection &newSel,
+                         const QItemSelection &delSel);
     void updateDockWidgetTitles();
-    void expandAll ();
-    void expandOneLevel ();
-    void collapseOneLevel ();
+    void expandAll();
+    void expandOneLevel();
+    void collapseOneLevel();
     void collapseUnselected();
-    void showSelection ();
+    void showSelection();
     void toggleTreeEditor();
     void toggleSlideEditor();
     void setFocusMapEditor();
 
-private:
+  private:
     VymModel *model;
     TreeEditor *treeEditor;
     DockEditor *treeEditorDE;
     SlideEditor *slideEditor;
-    DockEditor  *slideEditorDE;
+    DockEditor *slideEditorDE;
 
     MapEditor *mapEditor;
-    //DockEditor *mapEditorDE;
+    // DockEditor *mapEditorDE;
     QItemSelectionModel *selModel;
 };
 
-
 #endif
-

@@ -17,46 +17,44 @@ class VymModel;
 class XLinkItem;
 class XLinkObj;
 
+class Link : public XMLObj {
+  public:
+    enum XLinkState { undefinedXLink, initXLink, activeXLink, deleteXLink };
+    enum LinkType { Linear, Bezier };
 
-class Link:public XMLObj
-{
-public:
-    enum XLinkState {undefinedXLink,initXLink,activeXLink,deleteXLink};	
-    enum LinkType {Linear, Bezier};
-
-    Link (VymModel *m);
+    Link(VymModel *m);
     virtual ~Link();
-    virtual void init ();
-    VymModel* getModel();
-    void setBeginBranch (BranchItem*);
-    BranchItem* getBeginBranch();
-    void setEndBranch   (BranchItem*);
+    virtual void init();
+    VymModel *getModel();
+    void setBeginBranch(BranchItem *);
+    BranchItem *getBeginBranch();
+    void setEndBranch(BranchItem *);
     void setEndPoint(QPointF);
-    BranchItem* getEndBranch();
-    void setBeginLinkItem (XLinkItem*);
-    XLinkItem* getBeginLinkItem();
-    void setEndLinkItem (XLinkItem*);
-    XLinkItem* getEndLinkItem ();
-    XLinkItem* getOtherEnd (XLinkItem*);
-    void setPen (const QPen &p);
+    BranchItem *getEndBranch();
+    void setBeginLinkItem(XLinkItem *);
+    XLinkItem *getBeginLinkItem();
+    void setEndLinkItem(XLinkItem *);
+    XLinkItem *getEndLinkItem();
+    XLinkItem *getOtherEnd(XLinkItem *);
+    void setPen(const QPen &p);
     QPen getPen();
-    void setLinkType (const QString &s);
-    void setStyleBegin( const QString &s);
-    QString  getStyleBeginString();
-    void setStyleEnd( const QString &s);
-    QString  getStyleEndString();
-    bool activate ();		
-    void deactivate ();		
+    void setLinkType(const QString &s);
+    void setStyleBegin(const QString &s);
+    QString getStyleBeginString();
+    void setStyleEnd(const QString &s);
+    QString getStyleEndString();
+    bool activate();
+    void deactivate();
     XLinkState getState();
-    void removeXLinkItem (XLinkItem *xli);
+    void removeXLinkItem(XLinkItem *xli);
     void updateLink();
-    QString saveToDir ();
-    XLinkObj* getXLinkObj();
-    XLinkObj* createMapObj();
-    MapObj* getMO();
+    QString saveToDir();
+    XLinkObj *getXLinkObj();
+    XLinkObj *createMapObj();
+    MapObj *getMO();
 
-private:
-    XLinkState xLinkState;  // init during drawing or active
+  private:
+    XLinkState xLinkState; // init during drawing or active
     LinkType type;
     QPen pen;
 
@@ -69,6 +67,4 @@ private:
     XLinkItem *endLinkItem;
 };
 
-
 #endif
-

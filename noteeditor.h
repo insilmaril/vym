@@ -1,6 +1,5 @@
-#ifndef NOTEEDITOR_H 
+#ifndef NOTEEDITOR_H
 #define NOTEEDITOR_H
-
 
 #include "texteditor.h"
 
@@ -8,7 +7,7 @@ class VymNote;
 
 class NoteEditor : public TextEditor {
     Q_OBJECT
-public:
+  public:
     NoteEditor(QString scope);
     ~NoteEditor();
 

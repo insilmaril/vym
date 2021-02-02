@@ -1,6 +1,6 @@
 #include "scriptoutput.h"
 
-ScriptOutput::ScriptOutput(QWidget *parent):QWidget( parent )
+ScriptOutput::ScriptOutput(QWidget *parent) : QWidget(parent)
 {
     editor = new QTextEdit(this);
     layout = new QVBoxLayout;
@@ -14,22 +14,10 @@ ScriptOutput::~ScriptOutput()
     delete editor;
 }
 
-void ScriptOutput::clear()
-{
-    editor->clear();
-}
+void ScriptOutput::clear() { editor->clear(); }
 
-void ScriptOutput::setText(const QString &text)
-{
-    editor->setText(text);
-}
+void ScriptOutput::setText(const QString &text) { editor->setText(text); }
 
-QString ScriptOutput::text()
-{
-    return editor->toPlainText();
-}
+QString ScriptOutput::text() { return editor->toPlainText(); }
 
-void ScriptOutput::append(const QString &text)
-{
-    editor->append(text);
-}
+void ScriptOutput::append(const QString &text) { editor->append(text); }

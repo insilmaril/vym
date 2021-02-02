@@ -12,32 +12,34 @@ extern QString unzipToolPath;
 extern bool zipToolAvailable;
 extern bool unzipToolAvailable;
 
-
 ZipSettingsDialog::ZipSettingsDialog(QWidget *parent) : QDialog(parent)
 {
 
     ui.setupUi(this);
     init();
 
-    QDialog::setWindowTitle(
-        "VYM - " + tr("zip settings", "dialog window title"));
+    QDialog::setWindowTitle("VYM - " +
+                            tr("zip settings", "dialog window title"));
 
-    connect (ui.zipToolPathLE, SIGNAL(textChanged(const QString&)), this, SLOT(zipToolPathChanged()));
-    connect (ui.zipToolButton, SIGNAL(clicked()), this, SLOT(zipToolButtonPressed()));
-    connect (ui.closeButton, SIGNAL(clicked()), this, SLOT(accept()));
+    connect(ui.zipToolPathLE, SIGNAL(textChanged(const QString &)), this,
+            SLOT(zipToolPathChanged()));
+    connect(ui.zipToolButton, SIGNAL(clicked()), this,
+            SLOT(zipToolButtonPressed()));
+    connect(ui.closeButton, SIGNAL(clicked()), this, SLOT(accept()));
 
 #if defined(Q_OS_WIN32)
-    ui.zipToolLabel->setText(tr("Path to 7z.exe","zip tool settings dialog"));
+    ui.zipToolLabel->setText(tr("Path to 7z.exe", "zip tool settings dialog"));
 
     ui.unzipToolPathLE->hide();
     ui.unzipToolButton->hide();
     ui.unzipToolStatusLabel->hide();
     ui.unzipToolLabel->hide();
 #else
-    connect (ui.unzipToolPathLE, SIGNAL(textChanged(const QString&)), this, SLOT(unzipToolPathChanged()));
-    connect (ui.unzipToolButton, SIGNAL(clicked()), this, SLOT(unzipToolButtonPressed()));
+    connect(ui.unzipToolPathLE, SIGNAL(textChanged(const QString &)), this,
+            SLOT(unzipToolPathChanged()));
+    connect(ui.unzipToolButton, SIGNAL(clicked()), this,
+            SLOT(unzipToolButtonPressed()));
 #endif
-
 }
 
 void ZipSettingsDialog::zipToolPathChanged()
@@ -66,13 +68,9 @@ void ZipSettingsDialog::zipToolButtonPressed()
 #endif
 
     QString fn = QFileDialog::getOpenFileName(
-        this,
-        vymName + " - " + text + ":",
-        zipToolPath,
-        filter);
+        this, vymName + " - " + text + ":", zipToolPath, filter);
 
-    if (!fn.isEmpty() ) 
-    {
+    if (!fn.isEmpty()) {
         zipToolPath = fn;
         ui.zipToolPathLE->setText(fn);
         updateCheckResults();
@@ -93,13 +91,9 @@ void ZipSettingsDialog::unzipToolButtonPressed()
 #endif
 
     QString fn = QFileDialog::getOpenFileName(
-        this,
-        vymName + " - " + text + ":",
-        zipToolPath,
-        filter);
+        this, vymName + " - " + text + ":", zipToolPath, filter);
 
-    if (!fn.isEmpty() ) 
-    {
+    if (!fn.isEmpty()) {
         unzipToolPath = fn;
         ui.unzipToolPathLE->setText(fn);
         updateCheckResults();
@@ -122,12 +116,12 @@ void ZipSettingsDialog::updateCheckResults()
         zipStatus = QString(tr("Status: %1").arg("ok"));
     else
         zipStatus = QString(tr("Status: %1").arg("not ok"));
-    ui.zipToolStatusLabel->setText( zipStatus );
+    ui.zipToolStatusLabel->setText(zipStatus);
 
     QString unzipStatus;
     if (unzipToolAvailable)
         unzipStatus = QString(tr("Status: %1").arg("ok"));
     else
         unzipStatus = QString(tr("Status: %1").arg("not ok"));
-    ui.unzipToolStatusLabel->setText( unzipStatus );
+    ui.unzipToolStatusLabel->setText(unzipStatus);
 }

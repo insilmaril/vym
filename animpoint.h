@@ -3,28 +3,27 @@
 
 #include <QPointF>
 
-class AnimPoint: public QPointF
-{
-public:
+class AnimPoint : public QPointF {
+  public:
     AnimPoint();
-    void operator= ( const AnimPoint & );
-    void operator= ( const QPointF & );
-    bool operator== ( const QPointF & );
-    bool operator== ( AnimPoint  );
+    void operator=(const AnimPoint &);
+    void operator=(const QPointF &);
+    bool operator==(const QPointF &);
+    bool operator==(AnimPoint);
     void init();
     void copy(AnimPoint other);
-    void setStart (const QPointF &);
+    void setStart(const QPointF &);
     QPointF getStart();
-    void setDest (const QPointF &);
+    void setDest(const QPointF &);
     QPointF getDest();
-    void setTicks (const uint &t);
+    void setTicks(const uint &t);
     uint getTicks();
     void setAnimated(bool);
-    bool isAnimated ();
+    bool isAnimated();
     bool animate();
     void stop();
 
-private:
+  private:
     void initVector();
 
     QPointF startPos;
@@ -33,7 +32,6 @@ private:
     qreal n;
     uint animTicks;
     bool animated;
-
 };
 
 #endif

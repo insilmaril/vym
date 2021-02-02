@@ -5,13 +5,11 @@
 
 /*! \brief The text note belonging to one OrnamentedObj */
 
-
-class VymNote:public VymText
-{
-public:
+class VymNote : public VymText {
+  public:
     VymNote();
     VymNote(const VymText &vt);
-    void operator= (const VymText &other);
+    void operator=(const VymText &other);
     QString saveToDir();
 };
 #endif

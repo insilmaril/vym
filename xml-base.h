@@ -1,7 +1,6 @@
 #ifndef XML_BASE
 #define XML_BASE
 
-
 //#include <QString>
 #include <QXmlAttributes>
 
@@ -11,40 +10,41 @@ class VymModel;
 
 /*! \brief Base class for parsing maps from XML documents */
 
-class parseBaseHandler  : public QXmlDefaultHandler
-{
-public:
+class parseBaseHandler : public QXmlDefaultHandler {
+  public:
     parseBaseHandler();
     ~parseBaseHandler();
     QString errorProtocol();
     QString parseHREF(QString);
-    virtual bool startElement ( const QString&, const QString&,
-                        const QString& eName, const QXmlAttributes& atts )=0; 
-    virtual bool   endElement ( const QString&, const QString&, const QString& )=0; 
-    virtual bool characters   ( const QString&)=0;
+    virtual bool startElement(const QString &, const QString &,
+                              const QString &eName,
+                              const QXmlAttributes &atts) = 0;
+    virtual bool endElement(const QString &, const QString &,
+                            const QString &) = 0;
+    virtual bool characters(const QString &) = 0;
 
-    virtual QString errorString()=0;
-    bool fatalError( const QXmlParseException&);
-    void setModel (VymModel *);
-    void setTmpDir (QString);
-    void setInputFile ( const QString &);
-    void setInputString ( const QString &);
-    void setLoadMode (const LoadMode &,int p=-1);
-    bool readHtmlAttr    (const QXmlAttributes&);
+    virtual QString errorString() = 0;
+    bool fatalError(const QXmlParseException &);
+    void setModel(VymModel *);
+    void setTmpDir(QString);
+    void setInputFile(const QString &);
+    void setInputString(const QString &);
+    void setLoadMode(const LoadMode &, int p = -1);
+    bool readHtmlAttr(const QXmlAttributes &);
 
-protected:
-    QString     errorProt;
+  protected:
+    QString errorProt;
 
     LoadMode loadMode;
     int insertPos;
 
     bool isVymPart;
-    int branchDepth; 
+    int branchDepth;
     VymModel *model;
-    QString tmpDir; 
+    QString tmpDir;
     QString inputFile;
     QString inputString;
     QString htmldata;
     QString version;
-}; 
+};
 #endif

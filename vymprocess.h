@@ -4,22 +4,21 @@
 #include <QProcess>
 #include <QString>
 
-class VymProcess:public QProcess
-{
+class VymProcess : public QProcess {
     Q_OBJECT
-public:
-    VymProcess ();
-    ~VymProcess ();
+  public:
+    VymProcess();
+    ~VymProcess();
     void clear();
-    void runScript( QString spath, QString fpath );
+    void runScript(QString spath, QString fpath);
     QString getErrout();
     QString getStdout();
 
-public slots:
+  public slots:
     virtual void readProcErrout();
     virtual void readProcStdout();
 
-private:
+  private:
     QString errOut;
     QString stdOut;
 };

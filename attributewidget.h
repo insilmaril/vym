@@ -7,20 +7,19 @@
 
 #include <QWidget>
 
-class AttributeWidget: public QWidget
-{
+class AttributeWidget : public QWidget {
     Q_OBJECT
-public:
-    AttributeWidget (QWidget *parent=0);
-    void setTable (AttributeTable *at=0);
-    void setKey (const QString &k);
-    void setValues (const QStringList &vl);
+  public:
+    AttributeWidget(QWidget *parent = 0);
+    void setTable(AttributeTable *at = 0);
+    void setKey(const QString &k);
+    void setValues(const QStringList &vl);
 
-public slots:
+  public slots:
     virtual void keyTextChanged(const QString &t);
     virtual void valueTextChanged(const QString &t);
 
-private:
+  private:
     Ui::AttributeWidget ui;
     AttributeTable *table;
     QString key;

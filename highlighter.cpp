@@ -23,13 +23,11 @@
 
 // highlighting rules have been adapted by Uwe Drechsel to match vym syntax
 
-
 #include <QtGui>
 
 #include "highlighter.h"
 
-Highlighter::Highlighter(QTextDocument *parent)	
-    : QSyntaxHighlighter(parent)
+Highlighter::Highlighter(QTextDocument *parent) : QSyntaxHighlighter(parent)
 {
     HighlightingRule rule;
 
@@ -63,14 +61,13 @@ Highlighter::Highlighter(QTextDocument *parent)
     highlightingRules.append(rule);
 
     QStringList valuePatterns;
-    valuePatterns << "\\btrue\\b" << "\\bfalse\\b";
+    valuePatterns << "\\btrue\\b"
+                  << "\\bfalse\\b";
     foreach (QString pattern, valuePatterns) {
         rule.pattern = QRegExp(pattern);
         rule.format = quotationFormat;
         highlightingRules.append(rule);
     }
-
-
 
     // Funtions
     /*
@@ -80,10 +77,9 @@ Highlighter::Highlighter(QTextDocument *parent)
     rule.format = functionFormat;
     highlightingRules.append(rule);
     */
-
 }
 
-void Highlighter::addKeywords (const QStringList &list)
+void Highlighter::addKeywords(const QStringList &list)
 {
     HighlightingRule rule;
     foreach (QString pattern, list) {
@@ -116,12 +112,13 @@ void Highlighter::highlightBlock(const QString &text)
         if (endIndex == -1) {
             setCurrentBlockState(1);
             commentLength = text.length() - startIndex;
-        } else {
-            commentLength = endIndex - startIndex
-                            + commentEndExpression.matchedLength();
+        }
+        else {
+            commentLength =
+                endIndex - startIndex + commentEndExpression.matchedLength();
         }
         setFormat(startIndex, commentLength, multiLineCommentFormat);
-        startIndex = text.indexOf(commentStartExpression,
-                                                startIndex + commentLength);
+        startIndex =
+            text.indexOf(commentStartExpression, startIndex + commentLength);
     }
 }

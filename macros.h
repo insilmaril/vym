@@ -4,8 +4,8 @@
 #include <QString>
 
 class Macros {
-public:
-    QString getPath ();
+  public:
+    QString getPath();
     QString get();
     QString help();
 };

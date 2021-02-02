@@ -6,31 +6,23 @@
 #include <QDebug>
 #include <QItemSelectionModel>
 
-
-SlideModel::SlideModel( VymModel *vm)
-    : QAbstractItemModel(NULL)
+SlideModel::SlideModel(VymModel *vm) : QAbstractItemModel(NULL)
 {
     QVector<QVariant> rootData;
     rootData << "Slide";
-    rootItem = new SlideItem(rootData, NULL,this);
-    vymModel=vm;
+    rootItem = new SlideItem(rootData, NULL, this);
+    vymModel = vm;
 }
 
-SlideModel::~SlideModel()
-{
-    delete rootItem;
-}
+SlideModel::~SlideModel() { delete rootItem; }
 
 void SlideModel::clear()
 {
-    if (rootItem->childCount()>0)
-	removeRows (0,rowCount (QModelIndex ()));
+    if (rootItem->childCount() > 0)
+        removeRows(0, rowCount(QModelIndex()));
 }
 
-VymModel* SlideModel::getVymModel()
-{
-    return vymModel;
-}
+VymModel *SlideModel::getVymModel() { return vymModel; }
 
 int SlideModel::columnCount(const QModelIndex & /* parent */) const
 {
@@ -59,7 +51,7 @@ Qt::ItemFlags SlideModel::flags(const QModelIndex &index) const
 }
 
 QVariant SlideModel::headerData(int section, Qt::Orientation orientation,
-                               int role) const
+                                int role) const
 {
     if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
         return rootItem->data(section);
@@ -67,16 +59,16 @@ QVariant SlideModel::headerData(int section, Qt::Orientation orientation,
     return QVariant();
 }
 
-QModelIndex SlideModel::index (SlideItem *fri)
+QModelIndex SlideModel::index(SlideItem *fri)
 {
     if (!fri || !fri->parent())
-	return QModelIndex();
-    else    
-	return createIndex (fri->row(),0,fri);
+        return QModelIndex();
+    else
+        return createIndex(fri->row(), 0, fri);
 }
 
-
-QModelIndex SlideModel::index(int row, int column, const QModelIndex &parent) const
+QModelIndex SlideModel::index(int row, int column,
+                              const QModelIndex &parent) const
 {
     if (parent.isValid() && parent.column() != 0)
         return QModelIndex();
@@ -90,7 +82,8 @@ QModelIndex SlideModel::index(int row, int column, const QModelIndex &parent) co
         return QModelIndex();
 }
 
-bool SlideModel::insertColumns(int position, int columns, const QModelIndex &parent)
+bool SlideModel::insertColumns(int position, int columns,
+                               const QModelIndex &parent)
 {
     bool success;
 
@@ -107,7 +100,8 @@ bool SlideModel::insertRows(int position, int rows, const QModelIndex &parent)
     bool success;
 
     beginInsertRows(parent, position, position + rows - 1);
-    success = parentItem->insertChildren(position, rows, rootItem->columnCount());
+    success =
+        parentItem->insertChildren(position, rows, rootItem->columnCount());
     endInsertRows();
 
     return success;
@@ -127,7 +121,8 @@ QModelIndex SlideModel::parent(const QModelIndex &index) const
     return createIndex(parentItem->childNumber(), 0, parentItem);
 }
 
-bool SlideModel::removeColumns(int position, int columns, const QModelIndex &parent)
+bool SlideModel::removeColumns(int position, int columns,
+                               const QModelIndex &parent)
 {
     bool success;
 
@@ -153,10 +148,7 @@ bool SlideModel::removeRows(int position, int rows, const QModelIndex &parent)
     return success;
 }
 
-int SlideModel::count()
-{
-    return rootItem->childCount();
-}
+int SlideModel::count() { return rootItem->childCount(); }
 
 int SlideModel::rowCount(const QModelIndex &parent) const
 {
@@ -166,7 +158,7 @@ int SlideModel::rowCount(const QModelIndex &parent) const
 }
 
 bool SlideModel::setData(const QModelIndex &index, const QVariant &value,
-                        int role)
+                         int role)
 {
     if (role != Qt::EditRole)
         return false;
@@ -181,7 +173,7 @@ bool SlideModel::setData(const QModelIndex &index, const QVariant &value,
 }
 
 bool SlideModel::setHeaderData(int section, Qt::Orientation orientation,
-                              const QVariant &value, int role)
+                               const QVariant &value, int role)
 {
     if (role != Qt::EditRole || orientation != Qt::Horizontal)
         return false;
@@ -194,148 +186,129 @@ bool SlideModel::setHeaderData(int section, Qt::Orientation orientation,
     return result;
 }
 
-SlideItem*  SlideModel::addSlide(SlideItem *dst, int n)
+SlideItem *SlideModel::addSlide(SlideItem *dst, int n)
 {
-    SlideItem *si=NULL;
-    if (!dst) dst=rootItem;
+    SlideItem *si = NULL;
+    if (!dst)
+        dst = rootItem;
 
-    emit (layoutAboutToBeChanged() );
+    emit(layoutAboutToBeChanged());
 
-    QModelIndex parix=index (dst);
-    if (n<0) n=dst->childCount();
-    beginInsertRows (parix,n,n);
-    if (rootItem->insertChildren (n,1,0) )
-    {
-	QModelIndex ix=index(n,0,QModelIndex());
-	si=getItem(ix);
+    QModelIndex parix = index(dst);
+    if (n < 0)
+        n = dst->childCount();
+    beginInsertRows(parix, n, n);
+    if (rootItem->insertChildren(n, 1, 0)) {
+        QModelIndex ix = index(n, 0, QModelIndex());
+        si = getItem(ix);
     }
-    endInsertRows ();
-    emit (layoutChanged() );
-    	
+    endInsertRows();
+    emit(layoutChanged());
+
     return si;
 }
 
 void SlideModel::deleteSlide(SlideItem *si)
 {
-    QModelIndex ix=index(si);
-    if (ix.isValid())
-    {
-	QModelIndex px=ix.parent();
-	int n=si->childNumber();
-	removeRows (n,1,px);
+    QModelIndex ix = index(si);
+    if (ix.isValid()) {
+        QModelIndex px = ix.parent();
+        int n = si->childNumber();
+        removeRows(n, 1, px);
     }
 }
 
-bool SlideModel::relinkSlide(
-    SlideItem *si,
-    SlideItem *dst,
-    int pos)
+bool SlideModel::relinkSlide(SlideItem *si, SlideItem *dst, int pos)
 {
-   if (si && dst)
-   {
-	emit (layoutAboutToBeChanged() );
-	SlideItem *pi=si->parent();
+    if (si && dst) {
+        emit(layoutAboutToBeChanged());
+        SlideItem *pi = si->parent();
 
-	// Remove at current position
-	int n=si->childNumber();
+        // Remove at current position
+        int n = si->childNumber();
 
-	beginRemoveRows (index(pi),n,n);
-	pi->removeItem (n);
-	endRemoveRows();
+        beginRemoveRows(index(pi), n, n);
+        pi->removeItem(n);
+        endRemoveRows();
 
-	if (pos<0 ||pos>dst->childCount() ) pos=dst->childCount();
-    
-	// Insert at new position
-	beginInsertRows (index(dst),pos,pos);
-	dst->insertItem (pos, si);
-	endInsertRows();
+        if (pos < 0 || pos > dst->childCount())
+            pos = dst->childCount();
 
-	emit (layoutChanged() );
+        // Insert at new position
+        beginInsertRows(index(dst), pos, pos);
+        dst->insertItem(pos, si);
+        endInsertRows();
 
-	selModel->select (index (si),QItemSelectionModel::ClearAndSelect  );
+        emit(layoutChanged());
 
-	return true;
+        selModel->select(index(si), QItemSelectionModel::ClearAndSelect);
+
+        return true;
     }
     return false;
 }
 
-SlideItem* SlideModel::getItem (const QModelIndex &index) const
+SlideItem *SlideModel::getItem(const QModelIndex &index) const
 {
     if (index.isValid()) {
-        SlideItem *item = static_cast<SlideItem*>(index.internalPointer());
-        if (item) return item;
+        SlideItem *item = static_cast<SlideItem *>(index.internalPointer());
+        if (item)
+            return item;
     }
     return rootItem;
 }
 
-SlideItem* SlideModel::getSlide (int n)
+SlideItem *SlideModel::getSlide(int n)
 {
-    if (n>=count() || n<0) return NULL;
-    return getItem (index (n, 0, QModelIndex() ));
+    if (n >= count() || n < 0)
+        return NULL;
+    return getItem(index(n, 0, QModelIndex()));
 }
 
-SlideItem* SlideModel::findSlideID (uint n)
+SlideItem *SlideModel::findSlideID(uint n)
 {
-    for (int i=0; i<rootItem->childCount(); i++)
-	if (rootItem->child(i)->getID()==n)
-	    return rootItem->child(i);
-    return NULL;	    
+    for (int i = 0; i < rootItem->childCount(); i++)
+        if (rootItem->child(i)->getID() == n)
+            return rootItem->child(i);
+    return NULL;
 }
 
 QString SlideModel::saveToDir()
 {
     QString s;
-    for (int i=0; i<rootItem->childCount(); i++)
-	s+=rootItem->child(i)->saveToDir();
+    for (int i = 0; i < rootItem->childCount(); i++)
+        s += rootItem->child(i)->saveToDir();
     return s;
 }
 
-void SlideModel::setSearchString( const QString &s)
-{
-    searchString=s;
-}
+void SlideModel::setSearchString(const QString &s) { searchString = s; }
 
-QString SlideModel::getSearchString()
-{
-    return searchString;
-}
+QString SlideModel::getSearchString() { return searchString; }
 
-void SlideModel::setSearchFlags( QTextDocument::FindFlags f)
-{
-    searchFlags=f;
-}
+void SlideModel::setSearchFlags(QTextDocument::FindFlags f) { searchFlags = f; }
 
-QTextDocument::FindFlags SlideModel::getSearchFlags()
-{
-    return searchFlags;
-}
+QTextDocument::FindFlags SlideModel::getSearchFlags() { return searchFlags; }
 
-void SlideModel::setSelectionModel(QItemSelectionModel *sm)
-{
-    selModel=sm;
-}
+void SlideModel::setSelectionModel(QItemSelectionModel *sm) { selModel = sm; }
 
-QItemSelectionModel* SlideModel::getSelectionModel()
-{
-    return selModel;
-}
+QItemSelectionModel *SlideModel::getSelectionModel() { return selModel; }
 
 QModelIndex SlideModel::getSelectedIndex()
 {
-    if (!selModel)
-    {
-	qDebug ()<<"SlideModel: No selection model!";
-	return QModelIndex();
+    if (!selModel) {
+        qDebug() << "SlideModel: No selection model!";
+        return QModelIndex();
     }
-    QModelIndexList list=selModel->selectedIndexes();
-    if (!list.isEmpty() ) return list.first();
-    return QModelIndex();	
+    QModelIndexList list = selModel->selectedIndexes();
+    if (!list.isEmpty())
+        return list.first();
+    return QModelIndex();
 }
 
-SlideItem* SlideModel::getSelectedItem ()
+SlideItem *SlideModel::getSelectedItem()
 {
-    QModelIndex ix=getSelectedIndex();
-    if (ix.isValid() ) return getItem (ix);
+    QModelIndex ix = getSelectedIndex();
+    if (ix.isValid())
+        return getItem(ix);
     return NULL;
 }
-

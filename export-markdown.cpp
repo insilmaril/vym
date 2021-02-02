@@ -1,12 +1,12 @@
 #include "export-markdown.h"
 
-#include <QMessageBox>
 #include "mainwindow.h"
+#include <QMessageBox>
 
 extern QString vymName;
 extern Main *mainWindow;
 
-ExportMarkdown::ExportMarkdown() 
+ExportMarkdown::ExportMarkdown()
 {
     exportName = "Markdown";
     filter = "TXT (*.txt);;All (* *.*)";
@@ -15,10 +15,11 @@ ExportMarkdown::ExportMarkdown()
 
 void ExportMarkdown::doExport()
 {
-    QFile file (filePath);
-    if ( !file.open( QIODevice::WriteOnly ) )
-    {
-        QMessageBox::critical (0, QObject::tr("Critical Export Error"), QObject::tr("Could not export as Markdown to %1").arg(filePath));
+    QFile file(filePath);
+    if (!file.open(QIODevice::WriteOnly)) {
+        QMessageBox::critical(
+            0, QObject::tr("Critical Export Error"),
+            QObject::tr("Could not export as Markdown to %1").arg(filePath));
         mainWindow->statusMessage(QString(QObject::tr("Export failed.")));
         return;
     }
@@ -30,7 +31,7 @@ void ExportMarkdown::doExport()
     QString curIndent;
     QString dashIndent;
     int i;
-    BranchItem *cur  = NULL;
+    BranchItem *cur = NULL;
     BranchItem *prev = NULL;
 
     QString curHeading;
@@ -39,17 +40,18 @@ void ExportMarkdown::doExport()
 
     QStringList tasks;
 
-    model->nextBranch (cur, prev);
-    while (cur)
-    {
-        if (cur->getType() == TreeItem::Branch || cur->getType() == TreeItem::MapCenter)
-        {
+    model->nextBranch(cur, prev);
+    while (cur) {
+        if (cur->getType() == TreeItem::Branch ||
+            cur->getType() == TreeItem::MapCenter) {
             // Insert newline after previous list
-            if ( cur->depth() < lastDepth ) out += "\n";
+            if (cur->depth() < lastDepth)
+                out += "\n";
 
             // Make indentstring
             curIndent = "";
-            for (i = 1; i < cur->depth() - 1; i++) curIndent += indentPerDepth;
+            for (i = 1; i < cur->depth() - 1; i++)
+                curIndent += indentPerDepth;
 
             curHeading = cur->getHeadingText();
 
@@ -57,75 +59,73 @@ void ExportMarkdown::doExport()
             if (!cur->getURL().isEmpty())
                 curHeading = "[" + curHeading + "](" + cur->getURL() + ")";
 
-            if (!cur->hasHiddenExportParent() )
-            {
-                //qDebug() << "ExportMarkdown::  "<<curIndent.toStdString()<<cur->curHeading.toStdString();
+            if (!cur->hasHiddenExportParent()) {
+                // qDebug() << "ExportMarkdown::
+                // "<<curIndent.toStdString()<<cur->curHeading.toStdString();
 
                 dashIndent = "";
-                switch (cur->depth())
-                {
+                switch (cur->depth()) {
                 case 0:
-                    out += underline (curHeading, QString("="));
+                    out += underline(curHeading, QString("="));
                     out += "\n";
                     break;
                 case 1:
                     out += "\n";
-                    out += (underline (curHeading, QString("-") ) );
+                    out += (underline(curHeading, QString("-")));
                     out += "\n";
                     break;
                 case 2:
                     out += "\n";
                     out += (curIndent + "### " + curHeading);
                     out += "\n";
-                    dashIndent="  ";
+                    dashIndent = "  ";
                     break;
                 case 3:
                     out += (curIndent + "- " + curHeading);
                     out += "\n";
-                    dashIndent="  ";
+                    dashIndent = "  ";
                     break;
                 default:
                     out += (curIndent + "- " + curHeading);
                     out += "\n";
-                    dashIndent="  ";
+                    dashIndent = "  ";
                     break;
                 }
 
                 // If there is a task, save it for potential later display
-                if (listTasks && cur->getTask() )
-                {
-                    tasks.append( QString("[%1]: %2").arg(cur->getTask()->getStatusString()).arg(curHeading ) );
+                if (listTasks && cur->getTask()) {
+                    tasks.append(QString("[%1]: %2")
+                                     .arg(cur->getTask()->getStatusString())
+                                     .arg(curHeading));
                 }
 
                 // If necessary, write vymlink
                 if (!cur->getVymLink().isEmpty())
-                    out += (curIndent + dashIndent + cur->getVymLink()) +" (vym mindmap)\n";
+                    out += (curIndent + dashIndent + cur->getVymLink()) +
+                           " (vym mindmap)\n";
 
                 // If necessary, write note
-                if (!cur->isNoteEmpty())
-                {
+                if (!cur->isNoteEmpty()) {
                     // curIndent +="  | ";
                     // Only indent for bullet points
-                    if (cur->depth() > 2) curIndent +="  ";
-                    out += '\n' +  cur->getNoteASCII(curIndent, 80) ;
+                    if (cur->depth() > 2)
+                        curIndent += "  ";
+                    out += '\n' + cur->getNoteASCII(curIndent, 80);
                 }
                 lastDepth = cur->depth();
             }
         }
-        model->nextBranch(cur,prev);
+        model->nextBranch(cur, prev);
     }
 
-    if (listTasks)
-    {
+    if (listTasks) {
         out += "\n\nTasks\n-----\n\n";
 
-
-        foreach (QString t, tasks)
-        {
+        foreach (QString t, tasks) {
             out += " - " + t + "\n";
         }
     }
-    QTextStream ts( &file );
+    QTextStream ts(&file);
     ts.setCodec("UTF-8");
     ts << out;
     file.close();
@@ -139,16 +139,16 @@ void ExportMarkdown::doExport()
 
     success = true;
 
-    QMap <QString, QString> args;
-    args["filePath"]  = filePath;
+    QMap<QString, QString> args;
+    args["filePath"] = filePath;
     args["listTasks"] = listTasksString;
-    completeExport( args );
+    completeExport(args);
 }
 
-QString ExportMarkdown::underline (const QString &text, const QString &line)
+QString ExportMarkdown::underline(const QString &text, const QString &line)
 {
-    QString r=text + "\n";
-    for (int j=0;j<text.length();j++) r+=line;
+    QString r = text + "\n";
+    for (int j = 0; j < text.length(); j++)
+        r += line;
     return r;
 }
-

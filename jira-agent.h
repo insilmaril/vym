@@ -11,26 +11,26 @@
 class BranchItem;
 class VymModel;
 
-class JiraAgent:public QObject
-{
+class JiraAgent : public QObject {
     Q_OBJECT
 
-enum MissionType {SingleTicket, Query};
+    enum MissionType { SingleTicket, Query };
 
-public:	
-    JiraAgent (BranchItem *bi,const QString &ticket);
+  public:
+    JiraAgent(BranchItem *bi, const QString &ticket);
     ~JiraAgent();
 
-public slots:
+  public slots:
     virtual void processFinished(int exitCode, QProcess::ExitStatus exitStatus);
     virtual void timeout();
 
-protected:
-    virtual void processJiraData ();
-    virtual void setModelJiraData (VymModel *model, BranchItem *bi, const QString &ticketID);
-    virtual void undoUpdateMessage( BranchItem *bi = NULL);
+  protected:
+    virtual void processJiraData();
+    virtual void setModelJiraData(VymModel *model, BranchItem *bi,
+                                  const QString &ticketID);
+    virtual void undoUpdateMessage(BranchItem *bi = NULL);
 
-private:
+  private:
     MissionType missionType;
     uint branchID;
     uint modelID;
@@ -41,17 +41,15 @@ private:
     Heading oldHeading;
     QTimer *killTimer;
 
-    QHash <QString, QString> ticket_desc;
-    QHash <QString, QString> ticket_type;
-    QHash <QString, QString> ticket_prio;
-    QHash <QString, QString> ticket_status;
-    QHash <QString, QString> ticket_resolution;
-    QHash <QString, QString> ticket_updated;
-    QHash <QString, QString> ticket_created;
-    QHash <QString, QString> ticket_assignee;
-    QHash <QString, QString> ticket_reporter;
-    QHash <QString, QString> ticket_url;
-
+    QHash<QString, QString> ticket_desc;
+    QHash<QString, QString> ticket_type;
+    QHash<QString, QString> ticket_prio;
+    QHash<QString, QString> ticket_status;
+    QHash<QString, QString> ticket_resolution;
+    QHash<QString, QString> ticket_updated;
+    QHash<QString, QString> ticket_created;
+    QHash<QString, QString> ticket_assignee;
+    QHash<QString, QString> ticket_reporter;
+    QHash<QString, QString> ticket_url;
 };
 #endif
-

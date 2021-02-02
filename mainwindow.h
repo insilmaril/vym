@@ -11,60 +11,61 @@
 
 #include "branchpropeditor.h"
 #include "extrainfodialog.h"
-#include "flag.h"
 #include "file.h"
+#include "flag.h"
 #include "historywindow.h"
 #include "mapeditor.h"
 #include "scripting.h"
 #include "texteditor.h"
 #include "vymview.h"
 
-class Main : public QMainWindow 
-{
+class Main : public QMainWindow {
     Q_OBJECT
 
-public:
-    /*! Modifier modes are used when SHIFT together with a mouse button is pressed */
+  public:
+    /*! Modifier modes are used when SHIFT together with a mouse button is
+     * pressed */
     enum ModMode {
-	ModModeUndefined,	    //!< Unused
-	ModModePoint,	            //!< Regular mode: Point and relink items
-	ModModeColor,	            //!< Pick color from object
-	ModModeXLink,	            //!< Create a XLink (XLinkObj) from selected object
-	ModModeMoveObject,          //!< Move object without linking
-        ModModeMoveView             //!< Move view without changing
-	};
+        ModModeUndefined,  //!< Unused
+        ModModePoint,      //!< Regular mode: Point and relink items
+        ModModeColor,      //!< Pick color from object
+        ModModeXLink,      //!< Create a XLink (XLinkObj) from selected object
+        ModModeMoveObject, //!< Move object without linking
+        ModModeMoveView    //!< Move view without changing
+    };
 
-    Main(QWidget* parent=0);
+    Main(QWidget *parent = 0);
     ~Main();
     void loadCmdLine();
 
-private:
+  private:
     QProgressDialog progressDialog;
     int progressMax;
     int progressCounter;
     int progressCounterTotal;
-public:	
-    void statusMessage (const QString &);
-    void setProgressMaximum (int max);
-    void addProgressValue (float v);
-    void initProgressCounter(uint n=1);
+
+  public:
+    void statusMessage(const QString &);
+    void setProgressMaximum(int max);
+    void addProgressValue(float v);
+    void initProgressCounter(uint n = 1);
     void removeProgressCounter();
 
-public slots:
+  public slots:
     void fileNew();
     void fileNewCopy();
 
-protected:
-    void closeEvent( QCloseEvent* );
+  protected:
+    void closeEvent(QCloseEvent *);
 
-public:
-    QPrinter* setupPrinter();
+  public:
+    QPrinter *setupPrinter();
 
-private:
+  private:
     void setupAPI();
 
     /*! Helper method to clone actions later in MapEditor */
-    void cloneActionMapEditor( QAction *a, QKeySequence ks);
+    void cloneActionMapEditor(QAction *a, QKeySequence ks);
 
     void setupFileActions();
     void setupEditActions();
@@ -75,20 +76,15 @@ private:
     void setupWindowActions();
     void setupFlagActions();
 
-public slots:
+  public slots:
     void addUserFlag();
 
-public:
-    Flag* setupFlag(
-	const QString &path, 
-        Flag::FlagType type,
-	const QString &name, 
-	const QString &tooltip,
-        const QUuid &uid = QUuid(),
-        const QKeySequence &ks = 0
-	);
+  public:
+    Flag *setupFlag(const QString &path, Flag::FlagType type,
+                    const QString &name, const QString &tooltip,
+                    const QUuid &uid = QUuid(), const QKeySequence &ks = 0);
 
-private:
+  private:
     void setupNetworkActions();
     void setupSettingsActions();
     void setupTestActions();
@@ -97,38 +93,38 @@ private:
     void setupRecentMapsMenu();
     void setupMacros();
     void setupToolbars();
-    VymView* currentView() const;
-    VymView* view(const int i);
+    VymView *currentView() const;
+    VymView *view(const int i);
 
-public:	
-    MapEditor* currentMapEditor() const;
-    VymModel* currentModel() const;
+  public:
+    MapEditor *currentMapEditor() const;
+    VymModel *currentModel() const;
     uint currentModelID() const;
     uint currentMapIndex() const;
-    VymModel* getModel(uint);
-    void gotoModel (VymModel *m);
+    VymModel *getModel(uint);
+    void gotoModel(VymModel *m);
     int modelCount();
     void updateTabName(VymModel *vm);
-    
-private slots:
+
+  private slots:
     void editorChanged();
 
-public slots:    
-    File::ErrorCode fileLoad(QString ,const LoadMode &, const FileType &ftype);
+  public slots:
+    File::ErrorCode fileLoad(QString, const LoadMode &, const FileType &ftype);
     void fileLoad(const LoadMode &);
-private slots:
+  private slots:
     void fileLoad();
     void fileSaveSession();
-public slots:    
+  public slots:
     void fileRestoreSession();
-private slots:    
+  private slots:
     void fileLoadRecent();
-    void addRecentMap (const QString &);
-    void fileSave(VymModel*, const SaveMode & );
+    void addRecentMap(const QString &);
+    void fileSave(VymModel *, const SaveMode &);
     void fileSave();
-public slots:	
-    void fileSave(VymModel*);	// autosave from MapEditor
-private slots:	
+  public slots:
+    void fileSave(VymModel *); // autosave from MapEditor
+  private slots:
     void fileSaveAs();
     void fileSaveAs(const SaveMode &);
     void fileSaveAsDefault();
@@ -152,29 +148,30 @@ private slots:
     void fileExportTaskjuggler();
     void fileExportImpress();
     void fileExportLast();
-    bool fileCloseMap(int i = -1);  // Optionally pass number of tab
+    bool fileCloseMap(int i = -1); // Optionally pass number of tab
     void filePrint();
     bool fileExitVYM();
 
-public slots:
-    void editUndo();	
-    void editRedo();	
-    void gotoHistoryStep (int);
-private slots:	
-    void editCopy();	
-    void editPaste();	
-    void editCut(); 
+  public slots:
+    void editUndo();
+    void editRedo();
+    void gotoHistoryStep(int);
+  private slots:
+    void editCopy();
+    void editPaste();
+    void editCut();
 
-public slots:    
-    void updateQueries (VymModel*);
-private:
+  public slots:
+    void updateQueries(VymModel *);
+
+  private:
     bool openURL(const QString &url);
     void openTabs(QStringList);
-public slots:
+  public slots:
     void editOpenURL();
     void editOpenURLTab();
-private slots:
-    void editOpenMultipleVisURLTabs(bool ignoreScrolled=true);
+  private slots:
+    void editOpenMultipleVisURLTabs(bool ignoreScrolled = true);
     void editOpenMultipleURLTabs();
     void editNote2URLs();
     void editURL();
@@ -183,15 +180,15 @@ private slots:
     void getJiraData();
     void getJiraDataSubtree();
     void setHeadingConfluencePageName();
-    void openVymLinks(const QStringList &, bool background=false);
+    void openVymLinks(const QStringList &, bool background = false);
     void editVymLink();
     void editOpenMultipleVymLinks();
-public slots:
+  public slots:
     void editHeading();
     void editHeadingFinished(VymModel *m);
-    void editOpenVymLink(bool background=false);
+    void editOpenVymLink(bool background = false);
     void editOpenVymLinkBackground();
-private slots:
+  private slots:
     void editDeleteVymLink();
     void editToggleHideExport();
     void editToggleTask();
@@ -199,9 +196,9 @@ private slots:
     void editTaskSleepN();
     void editAddTimestamp();
     void editMapProperties();
-    void editMoveUp();	
-    void editMoveDown();    
-    void editDetach();	
+    void editMoveUp();
+    void editMoveDown();
+    void editDetach();
     void editSortChildren();
     void editSortBackChildren();
     void editToggleScroll();
@@ -227,19 +224,19 @@ private slots:
     void editDeleteSelection();
     void editLoadImage();
     void editSaveImage();
-    void popupFollowXLink ();
-    void editFollowXLink (QAction *);
-    void editEditXLink (QAction *);
+    void popupFollowXLink();
+    void editFollowXLink(QAction *);
+    void editEditXLink(QAction *);
 
-private slots:    
-    bool initLinkedMapsMenu( VymModel *model, QMenu *menu);
+  private slots:
+    bool initLinkedMapsMenu(VymModel *model, QMenu *menu);
 
-public slots:
+  public slots:
     void editGoToLinkedMap();
 
-private slots:    
+  private slots:
     void editToggleTarget();
-    bool initTargetsMenu( VymModel *model, QMenu *menu);
+    bool initTargetsMenu(VymModel *model, QMenu *menu);
     void editGoToTarget();
     void editMoveToTarget();
     void editSelectPrevious();
@@ -249,12 +246,12 @@ private slots:
     void editFindNext(QString s, bool searchNotesFlag);
     void editFindDuplicateURLs();
 
-public slots:
+  public slots:
     void formatPickColor();
     QColor getCurrentColor();
     void setCurrentColor(QColor);
 
-private slots:    
+  private slots:
     void formatSelectColor();
     void formatColorBranch();
     void formatColorSubtree();
@@ -270,7 +267,7 @@ private slots:
     void formatToggleLinkColorHint();
     void formatHideLinkUnselected();
 
-public slots:
+  public slots:
     void viewZoomReset();
     void viewZoomIn();
     void viewZoomOut();
@@ -278,7 +275,7 @@ public slots:
     void viewRotateClockwise();
     void viewCenter();
 
-public slots:
+  public slots:
     void networkStartServer();
     void networkConnect();
     void downloadFinished();
@@ -289,11 +286,11 @@ public slots:
     void settingsDefaultMapPath();
     void settingsUndoLevels();
 
-public:
+  public:
     bool useAutosave();
-    void setAutosave( bool b);
+    void setAutosave(bool b);
 
-public slots:
+  public slots:
     void settingsAutosaveTime();
     void settingsDefaultMapAuthor();
     void settingsShowParentsLevelTasks();
@@ -322,11 +319,12 @@ public slots:
     void clearScriptOutput();
     void updateHeading(const VymText &vt);
     void updateNoteText(const VymText &vt);
-    void updateNoteEditor (TreeItem *ti);
-    void updateHeadingEditor (TreeItem *ti);
-    void selectInNoteEditor (QString s, int i);
+    void updateNoteEditor(TreeItem *ti);
+    void updateHeadingEditor(TreeItem *ti);
+    void selectInNoteEditor(QString s, int i);
     void setFocusMapEditor();
-    void changeSelection (VymModel *model,const QItemSelection &newSel, const QItemSelection &delSel);
+    void changeSelection(VymModel *model, const QItemSelection &newSel,
+                         const QItemSelection &delSel);
     void updateDockWidgetTitles(VymModel *model);
 
     void updateActions();
@@ -334,10 +332,10 @@ public slots:
     bool autoEditNewBranch();
     bool autoSelectNewBranch();
     QVariant runScript(const QString &);
-    QObject* getCurrentModelWrapper();
-    bool gotoWindow (const int &n);
+    QObject *getCurrentModelWrapper();
+    bool gotoWindow(const int &n);
 
-private slots:
+  private slots:
     void windowNextEditor();
     void windowPreviousEditor();
     void nextSlide();
@@ -359,10 +357,10 @@ private slots:
     void helpAbout();
     void helpAboutQT();
 
-    void callMacro ();
+    void callMacro();
     void downloadReleaseNotesFinished();
 
-public slots:
+  public slots:
     void checkReleaseNotes();
     bool downloadsEnabled(bool userTriggered = false);
     void downloadUpdatesFinished(bool userTriggered = false);
@@ -372,8 +370,8 @@ public slots:
     void escapePressed();
     void togglePresentationMode();
 
-private:
-    QString shortcutScope;          //! For listing shortcuts
+  private:
+    QString shortcutScope; //! For listing shortcuts
     QTabWidget *tabWidget;
     qint64 *browserPID;
 
@@ -390,15 +388,21 @@ private:
     QDockWidget *scriptEditorDW;
     QDockWidget *branchPropertyEditorDW;
 
-public:
-    QList <QAction*> mapEditorActions;      //! allows mapEditor to clone actions and shortcuts
-    QList <QAction*> taskEditorActions;     //! allows taskEditor to clone actions and shortcuts
-private:
-    QList <QAction*> restrictedMapActions;  //! Actions reqire map and write access
-    QList <QAction*> unrestrictedMapActions;//! Actions require map, but work also in readonly, e.g. print, copy
-    QList <QAction*> actionListFiles;       //! File related actions, e.g. load, save, restore session
-    QList <QAction*> actionListBranches;
-    QList <QAction*> actionListItems;
+  public:
+    QList<QAction *>
+        mapEditorActions; //! allows mapEditor to clone actions and shortcuts
+    QList<QAction *>
+        taskEditorActions; //! allows taskEditor to clone actions and shortcuts
+  private:
+    QList<QAction *>
+        restrictedMapActions; //! Actions reqire map and write access
+    QList<QAction *>
+        unrestrictedMapActions;       //! Actions require map, but work also in
+                                      //! readonly, e.g. print, copy
+    QList<QAction *> actionListFiles; //! File related actions, e.g. load, save,
+                                      //! restore session
+    QList<QAction *> actionListBranches;
+    QList<QAction *> actionListItems;
 
     QColor currentColor;
 
@@ -425,18 +429,19 @@ private:
     QToolBar *userFlagsToolbar;
 
     bool presentationMode;
-    QMap <QToolBar*, bool> toolbarStates;   // Save visibilty of toolbars during presentation mode
+    QMap<QToolBar *, bool>
+        toolbarStates; // Save visibilty of toolbars during presentation mode
 
-    QAction* actionFileNew;
-    QAction* actionFileNewCopy;
-    QAction* actionFileOpen;
-    QAction* actionFileRestoreSession;
-    QAction* actionFileSave;
-    QAction* actionFilePrint;
-    QAction* actionMapProperties;
-    QAction* actionFileExportLast;
-    QAction* actionUndo;
-    QAction* actionRedo;
+    QAction *actionFileNew;
+    QAction *actionFileNewCopy;
+    QAction *actionFileOpen;
+    QAction *actionFileRestoreSession;
+    QAction *actionFileSave;
+    QAction *actionFilePrint;
+    QAction *actionMapProperties;
+    QAction *actionFileExportLast;
+    QAction *actionUndo;
+    QAction *actionRedo;
     QAction *actionCopy;
     QAction *actionCut;
     QAction *actionPaste;
@@ -450,17 +455,17 @@ private:
     QAction *actionExpandOneLevel;
     QAction *actionCollapseOneLevel;
     QAction *actionCollapseUnselected;
-    QAction* actionOpenURL;
-    QAction* actionOpenURLTab;
-    QAction* actionOpenMultipleVisURLTabs;
-    QAction* actionOpenMultipleURLTabs;
-    QAction* actionGetURLsFromNote;
-    QAction* actionURLNew;
-    QAction* actionLocalURL;
-    QAction* actionHeading2URL;
-    QAction* actionGetJiraData;
-    QAction* actionGetJiraDataSubtree;
-    QAction* actionGetConfluencePageName;
+    QAction *actionOpenURL;
+    QAction *actionOpenURLTab;
+    QAction *actionOpenMultipleVisURLTabs;
+    QAction *actionOpenMultipleURLTabs;
+    QAction *actionGetURLsFromNote;
+    QAction *actionURLNew;
+    QAction *actionLocalURL;
+    QAction *actionHeading2URL;
+    QAction *actionGetJiraData;
+    QAction *actionGetJiraDataSubtree;
+    QAction *actionGetConfluencePageName;
     QAction *actionOpenVymLink;
     QAction *actionOpenVymLinkBackground;
     QAction *actionOpenMultipleVymLinks;
@@ -485,10 +490,11 @@ private:
     QAction *actionDelete;
     QAction *actionDeleteAlt;
     QAction *actionAddAttribute;
-public:
+
+  public:
     QAction *actionAddMapCenter;
 
-private:    
+  private:
     QAction *actionAddBranch;
     QAction *actionAddBranchBefore;
     QAction *actionAddBranchAbove;
@@ -562,22 +568,21 @@ private:
     QAction *actionViewTogglePropertyEditor;
     QAction *actionViewToggleAntiAlias;
     QAction *actionViewToggleSmoothPixmapTransform;
-    QAction* actionViewCenter;
+    QAction *actionViewCenter;
 
-    QAction* actionSettingsAutoEditNewBranch;
-    QAction* actionSettingsAutoSelectNewBranch;
-    QAction* actionSettingsAutoSelectText;
-    QAction* actionSettingsUseFlagGroups;
-    QAction* actionSettingsUseHideExport;
-    QAction* actionSettingsToggleAutosave;
-    QAction* actionSettingsAutosaveTime;
-    QAction* actionSettingsShowParentsLevelTasks;
-    QAction* actionSettingsShowParentsLevelFindResults;
-    QAction* actionSettingsToggleAutoLayout;
-    QAction* actionSettingsWriteBackupFile;
-    QAction* actionSettingsToggleDownloads;
-    QAction* actionSettingsUseAnimation;
+    QAction *actionSettingsAutoEditNewBranch;
+    QAction *actionSettingsAutoSelectNewBranch;
+    QAction *actionSettingsAutoSelectText;
+    QAction *actionSettingsUseFlagGroups;
+    QAction *actionSettingsUseHideExport;
+    QAction *actionSettingsToggleAutosave;
+    QAction *actionSettingsAutosaveTime;
+    QAction *actionSettingsShowParentsLevelTasks;
+    QAction *actionSettingsShowParentsLevelFindResults;
+    QAction *actionSettingsToggleAutoLayout;
+    QAction *actionSettingsWriteBackupFile;
+    QAction *actionSettingsToggleDownloads;
+    QAction *actionSettingsUseAnimation;
 };
 
 #endif
-

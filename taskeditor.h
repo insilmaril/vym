@@ -1,8 +1,8 @@
-#ifndef TASKEDITOR_H 
+#ifndef TASKEDITOR_H
 #define TASKEDITOR_H
 
-#include <QWidget>
 #include <QTableView>
+#include <QWidget>
 
 #include "taskfiltermodel.h"
 
@@ -12,40 +12,40 @@ class Task;
 class TaskModel;
 class QSortFilterProxyModel;
 
-class TaskEditor : public QWidget
-{
+class TaskEditor : public QWidget {
     Q_OBJECT
 
-public:
-    TaskEditor (QWidget *parent=NULL);
-    ~TaskEditor ();
-    void setMapName (const QString &);
-    bool isUsedFilterMap ();
-    void setFilterMap  ();
-    bool isUsedFilterActive ();
-    void setFilterActive ();
-    void setFilterNew ();
-    void setFilterFlags1 ();
-    void setFilterFlags2 ();
-    void setFilterFlags3 ();
+  public:
+    TaskEditor(QWidget *parent = NULL);
+    ~TaskEditor();
+    void setMapName(const QString &);
+    bool isUsedFilterMap();
+    void setFilterMap();
+    bool isUsedFilterActive();
+    void setFilterActive();
+    void setFilterNew();
+    void setFilterFlags1();
+    void setFilterFlags2();
+    void setFilterFlags3();
     void updateFilters();
-    bool select (Task *task);
-    void clearSelection ();
-    void showSelection ();
-    void contextMenuEvent ( QContextMenuEvent * e );
+    bool select(Task *task);
+    void clearSelection();
+    void showSelection();
+    void contextMenuEvent(QContextMenuEvent *e);
 
-private slots:
+  private slots:
     void headerContextMenu();
     void updateColumnLayout();
-    void selectionChanged (const QItemSelection & selected, const QItemSelection & );
-    void toggleFilterMap ();
-    void toggleFilterActive ();
-    void toggleFilterNew ();
-    void toggleFilterFlags1 ();
-    void toggleFilterFlags2 ();
-    void toggleFilterFlags3 ();
+    void selectionChanged(const QItemSelection &selected,
+                          const QItemSelection &);
+    void toggleFilterMap();
+    void toggleFilterActive();
+    void toggleFilterNew();
+    void toggleFilterFlags1();
+    void toggleFilterFlags2();
+    void toggleFilterFlags3();
 
-private:
+  private:
     QTableView *view;
     TaskFilterModel *filterActiveModel;
     QString currentMapName;
@@ -59,4 +59,3 @@ private:
 };
 
 #endif
-

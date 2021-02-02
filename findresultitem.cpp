@@ -4,43 +4,37 @@
 #include "treeitem.h"
 #include "vymmodel.h"
 
-FindResultItem::FindResultItem(const QVector<QVariant> &data, FindResultItem *parent)
+FindResultItem::FindResultItem(const QVector<QVariant> &data,
+                               FindResultItem *parent)
 {
     parentItem = parent;
     itemData = data;
-    orgID=-1;
-    orgIndex=-1;
-    orgModel=NULL;
-    if (data.isEmpty()) itemData.append(QVariant("empty"));
+    orgID = -1;
+    orgIndex = -1;
+    orgModel = NULL;
+    if (data.isEmpty())
+        itemData.append(QVariant("empty"));
 }
 
-FindResultItem::~FindResultItem()
-{
-    qDeleteAll(childItems);
-}
+FindResultItem::~FindResultItem() { qDeleteAll(childItems); }
 
 FindResultItem *FindResultItem::child(int number)
 {
     return childItems.value(number);
 }
 
-int FindResultItem::childCount() const
-{
-    return childItems.count();
-}
+int FindResultItem::childCount() const { return childItems.count(); }
 
 int FindResultItem::childNumber() const
 {
     if (parentItem)
-        return parentItem->childItems.indexOf(const_cast<FindResultItem*>(this));
+        return parentItem->childItems.indexOf(
+            const_cast<FindResultItem *>(this));
 
     return 0;
 }
 
-int FindResultItem::columnCount() const
-{
-    return itemData.count();
-}
+int FindResultItem::columnCount() const { return itemData.count(); }
 
 QVariant FindResultItem::data(int column) const
 {
@@ -50,7 +44,8 @@ QVariant FindResultItem::data(int column) const
 int FindResultItem::row() const
 {
     if (parentItem)
-        return parentItem->childItems.indexOf(const_cast<FindResultItem*>(this));
+        return parentItem->childItems.indexOf(
+            const_cast<FindResultItem *>(this));
 
     return 0;
 }
@@ -83,10 +78,7 @@ bool FindResultItem::insertColumns(int position, int columns)
     return true;
 }
 
-FindResultItem *FindResultItem::parent()
-{
-    return parentItem;
-}
+FindResultItem *FindResultItem::parent() { return parentItem; }
 
 bool FindResultItem::removeChildren(int position, int count)
 {
@@ -122,29 +114,16 @@ bool FindResultItem::setData(int column, const QVariant &value)
     return true;
 }
 
-void FindResultItem::setOriginal (TreeItem *ti)
+void FindResultItem::setOriginal(TreeItem *ti)
 {
-    orgModel=ti->getModel();
-    orgID=ti->getID();
+    orgModel = ti->getModel();
+    orgID = ti->getID();
 }
 
-int FindResultItem::getOriginalID()
-{
-    return orgID;
-}
+int FindResultItem::getOriginalID() { return orgID; }
 
-void FindResultItem::setOriginalIndex(int i)
-{
-    orgIndex=i;
-}
+void FindResultItem::setOriginalIndex(int i) { orgIndex = i; }
 
-int FindResultItem::getOriginalIndex()
-{
-    return orgIndex;
-}
+int FindResultItem::getOriginalIndex() { return orgIndex; }
 
-VymModel* FindResultItem::getOrgModel()
-{
-    return orgModel;
-}
-
+VymModel *FindResultItem::getOrgModel() { return orgModel; }

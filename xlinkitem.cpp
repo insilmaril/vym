@@ -1,5 +1,5 @@
-#include <QGraphicsScene>
 #include "xlinkitem.h"
+#include <QGraphicsScene>
 
 #include "branchitem.h"
 #include "linkablemapobj.h"
@@ -10,83 +10,72 @@
 // XLinkItem
 /////////////////////////////////////////////////////////////////
 
-XLinkItem::XLinkItem (const QList<QVariant> &data, TreeItem *parent):MapItem (data,parent)
+XLinkItem::XLinkItem(const QList<QVariant> &data, TreeItem *parent)
+    : MapItem(data, parent)
 
 {
-    //qDebug() << "Const XLinkItem () "<<this;
+    // qDebug() << "Const XLinkItem () "<<this;
     init();
 }
 
-XLinkItem::~XLinkItem ()
+XLinkItem::~XLinkItem()
 {
- //   qDebug() << "Destr XLinkItem begin "<<this<<"  pI="<<parentItem<<"  link="<<link;
-    if (link)
-    {
-	XLinkItem *xli=link->getOtherEnd (this);
-	if (xli) model->deleteLater (xli->getID());
-	model->deleteLink (link);
-    }	
-//    qDebug() << "Destr XLinkItem end";
+    //   qDebug() << "Destr XLinkItem begin "<<this<<"  pI="<<parentItem<<"
+    //   link="<<link;
+    if (link) {
+        XLinkItem *xli = link->getOtherEnd(this);
+        if (xli)
+            model->deleteLater(xli->getID());
+        model->deleteLink(link);
+    }
+    //    qDebug() << "Destr XLinkItem end";
 }
 
-
-void XLinkItem::init () 
+void XLinkItem::init()
 {
-    setType (XLink);
-    link=NULL;
+    setType(XLink);
+    link = NULL;
 }
 
-void XLinkItem::clear() 
-{
-}
+void XLinkItem::clear() {}
 
-void XLinkItem::setLink (Link *l)
-{
-    link=l;
-}
+void XLinkItem::setLink(Link *l) { link = l; }
 
-Link* XLinkItem::getLink ()
-{
-    return link;
-}
+Link *XLinkItem::getLink() { return link; }
 
 void XLinkItem::updateXLink()
 {
     if (link)
-	link->updateLink();
+        link->updateLink();
 }
 
-MapObj* XLinkItem::getMO()
+MapObj *XLinkItem::getMO()
 {
     if (link)
-	return link->getMO();
-    return NULL;	
+        return link->getMO();
+    return NULL;
 }
 
 void XLinkItem::setSelection()
 {
-    if (link)
-    {
-	XLinkObj* xlo=(XLinkObj*)getMO();
-	if (xlo) 
-	{
-	    if (parentItem==link->getBeginBranch() )
-		xlo->setSelection(XLinkObj::C0);
-	    else if (parentItem==link->getEndBranch() )
-		xlo->setSelection(XLinkObj::C1);
-	}
+    if (link) {
+        XLinkObj *xlo = (XLinkObj *)getMO();
+        if (xlo) {
+            if (parentItem == link->getBeginBranch())
+                xlo->setSelection(XLinkObj::C0);
+            else if (parentItem == link->getEndBranch())
+                xlo->setSelection(XLinkObj::C1);
+        }
     }
 }
 
-BranchItem* XLinkItem::getPartnerBranch()
+BranchItem *XLinkItem::getPartnerBranch()
 {
-    if (link && link->getBeginBranch() && link->getEndBranch())
-    {
-	if (parentItem==link->getBeginBranch())
-	    return link->getEndBranch();
-	else	
-	    return link->getBeginBranch();
+    if (link && link->getBeginBranch() && link->getEndBranch()) {
+        if (parentItem == link->getBeginBranch())
+            return link->getEndBranch();
+        else
+            return link->getBeginBranch();
     }
     return NULL;
 }
-

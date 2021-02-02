@@ -13,82 +13,81 @@ extern QString editorFocusStyle;
 ///////////////////////////////////////////////////////////////////////
 TreeEditor::TreeEditor(VymModel *m)
 {
-    model=m;
-    if (model) setModel(model);
+    model = m;
+    if (model)
+        setModel(model);
     init();
 }
 
 void TreeEditor::init()
 {
-    setSelectionMode (QAbstractItemView::ExtendedSelection);
+    setSelectionMode(QAbstractItemView::ExtendedSelection);
     header()->hide();
 
     QAction *a;
     // Shortcuts for navigating with cursor:
-    a = new QAction(tr( "Select upper object","Tree Editor" ), this);
-    a->setShortcut (Qt::Key_Up );
-    a->setShortcutContext (Qt::WidgetShortcut);
-    addAction (a);
-    connect( a, SIGNAL( triggered() ), this, SLOT( cursorUp() ) );
+    a = new QAction(tr("Select upper object", "Tree Editor"), this);
+    a->setShortcut(Qt::Key_Up);
+    a->setShortcutContext(Qt::WidgetShortcut);
+    addAction(a);
+    connect(a, SIGNAL(triggered()), this, SLOT(cursorUp()));
 
-    a = new QAction( tr( "Select lower object","Tree Editor" ),this);
-    a->setShortcut ( Qt::Key_Down );
-    a->setShortcutContext (Qt::WidgetShortcut);
-    addAction (a);
-    connect( a, SIGNAL( triggered() ), this, SLOT( cursorDown() ) );
+    a = new QAction(tr("Select lower object", "Tree Editor"), this);
+    a->setShortcut(Qt::Key_Down);
+    a->setShortcutContext(Qt::WidgetShortcut);
+    addAction(a);
+    connect(a, SIGNAL(triggered()), this, SLOT(cursorDown()));
 
-    a = new QAction( this);
-    a->setShortcut ( Qt::Key_PageUp);
-    a->setShortcutContext (Qt::WidgetShortcut);
-    addAction (a);
-    connect( a, SIGNAL( triggered() ), mainWindow, SLOT( editMoveUp() ) );
+    a = new QAction(this);
+    a->setShortcut(Qt::Key_PageUp);
+    a->setShortcutContext(Qt::WidgetShortcut);
+    addAction(a);
+    connect(a, SIGNAL(triggered()), mainWindow, SLOT(editMoveUp()));
 
-    a = new QAction( this);
-    a->setShortcut ( Qt::Key_PageDown );
-    a->setShortcutContext (Qt::WidgetShortcut);
-    addAction (a);
-    connect( a, SIGNAL( triggered() ), mainWindow, SLOT( editMoveDown() ) );
+    a = new QAction(this);
+    a->setShortcut(Qt::Key_PageDown);
+    a->setShortcutContext(Qt::WidgetShortcut);
+    addAction(a);
+    connect(a, SIGNAL(triggered()), mainWindow, SLOT(editMoveDown()));
 
     // Clone actions defined in MainWindow
-    foreach (QAction* qa, mainWindow->mapEditorActions)
-    {
-        a = new QAction( this );
-        a->setShortcut( qa->shortcut() );
-        a->setShortcutContext( qa->shortcutContext() );
-        connect( a, SIGNAL( triggered() ), qa, SLOT( trigger() ) );
+    foreach (QAction *qa, mainWindow->mapEditorActions) {
+        a = new QAction(this);
+        a->setShortcut(qa->shortcut());
+        a->setShortcutContext(qa->shortcutContext());
+        connect(a, SIGNAL(triggered()), qa, SLOT(trigger()));
         addAction(a);
     }
 
-    setStyleSheet( "QTreeView:focus {" + editorFocusStyle + "}");
+    setStyleSheet("QTreeView:focus {" + editorFocusStyle + "}");
 }
 
 TreeEditor::~TreeEditor()
 {
-    //qDebug()<<"Destructor TreeEditor for "<<model->getMapName();
+    // qDebug()<<"Destructor TreeEditor for "<<model->getMapName();
 }
 
 QModelIndex TreeEditor::getSelectedIndex()
 {
-    QModelIndexList list=selectionModel()->selectedIndexes();
-    if (list.isEmpty() )
-	return QModelIndex();
+    QModelIndexList list = selectionModel()->selectedIndexes();
+    if (list.isEmpty())
+        return QModelIndex();
     else
-	return list.first();
+        return list.first();
 }
 
 void TreeEditor::cursorUp()
 {
-    QModelIndex ix=getSelectedIndex();
-    ix=indexAbove (ix);
+    QModelIndex ix = getSelectedIndex();
+    ix = indexAbove(ix);
     if (ix.isValid())
-	model->select (ix );
+        model->select(ix);
 }
 
 void TreeEditor::cursorDown()
 {
-    QModelIndex ix=getSelectedIndex();
-    ix=indexBelow (ix);
+    QModelIndex ix = getSelectedIndex();
+    ix = indexBelow(ix);
     if (ix.isValid())
-	model->select (ix );
+        model->select(ix);
 }
-

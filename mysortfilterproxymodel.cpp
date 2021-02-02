@@ -25,13 +25,14 @@ void MySortFilterProxyModel::setFilterMaximumDate(const QDate &date)
 }
 */
 
-bool MySortFilterProxyModel::filterAcceptsRow(int sourceRow,	// FIXME-3 find a way to show _all_ rows which match, independent of parent
-        const QModelIndex &sourceParent) const
+bool MySortFilterProxyModel::filterAcceptsRow(
+    int sourceRow, // FIXME-3 find a way to show _all_ rows which match,
+                   // independent of parent
+    const QModelIndex &sourceParent) const
 {
     QModelIndex index0 = sourceModel()->index(sourceRow, 0, sourceParent);
     QModelIndex index1 = sourceModel()->index(sourceRow, 1, sourceParent);
 
-    return (sourceModel()->data(index0).toString().contains(filterRegExp())
-            || sourceModel()->data(index1).toString().contains(filterRegExp()));
+    return (sourceModel()->data(index0).toString().contains(filterRegExp()) ||
+            sourceModel()->data(index1).toString().contains(filterRegExp()));
 }
-

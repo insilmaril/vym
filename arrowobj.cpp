@@ -8,102 +8,71 @@
 // ArrowObj
 /////////////////////////////////////////////////////////////////
 
-ArrowObj::ArrowObj (MapObj* parent):MapObj(parent)
-{
-    init();
-}
+ArrowObj::ArrowObj(MapObj *parent) : MapObj(parent) { init(); }
 
-ArrowObj::~ArrowObj ()
+ArrowObj::~ArrowObj()
 {
     delete arrowBegin;
     delete arrowEnd;
     delete line;
 }
 
-void ArrowObj::init () 
+void ArrowObj::init()
 {
     QPen pen;
 
-    pen.setStyle (Qt::SolidLine);
-    arrowBegin=scene()->addPolygon (QPolygonF(), pen );	
-    arrowBegin->setZValue (dZ_XLINK);
-    arrowEnd=scene()->addPolygon (QPolygonF(), pen );	
-    arrowEnd->setZValue (dZ_XLINK);
+    pen.setStyle(Qt::SolidLine);
+    arrowBegin = scene()->addPolygon(QPolygonF(), pen);
+    arrowBegin->setZValue(dZ_XLINK);
+    arrowEnd = scene()->addPolygon(QPolygonF(), pen);
+    arrowEnd->setZValue(dZ_XLINK);
 
-    line=scene()->addLine ( QLineF(), pen );	
-    line->setZValue (dZ_XLINK);
+    line = scene()->addLine(QLineF(), pen);
+    line->setZValue(dZ_XLINK);
 
-    arrowSize=4;
-    useFixedLength=false;
-    setStyleBegin (None);
-    setStyleEnd   (HeadFull);
+    arrowSize = 4;
+    useFixedLength = false;
+    setStyleBegin(None);
+    setStyleEnd(HeadFull);
 }
 
-void ArrowObj::setPen (QPen p)
+void ArrowObj::setPen(QPen p)
 {
     pen = p;
-    line->setPen( pen);
+    line->setPen(pen);
 
     // end shall have same style as xlink
     QPen pen_solid = pen;
-    pen_solid.setStyle (Qt::SolidLine);
-    arrowBegin->setPen( pen_solid );
-    arrowEnd->setPen( pen_solid );
+    pen_solid.setStyle(Qt::SolidLine);
+    arrowBegin->setPen(pen_solid);
+    arrowEnd->setPen(pen_solid);
 
-    setStyleBegin( styleBegin );
-    setStyleEnd( styleEnd );
+    setStyleBegin(styleBegin);
+    setStyleEnd(styleEnd);
 }
 
-QPen ArrowObj::getPen()
-{
-    return pen;
-}
+QPen ArrowObj::getPen() { return pen; }
 
-void ArrowObj::setArrowSize(qreal r)
-{
-    arrowSize = r;
-}
+void ArrowObj::setArrowSize(qreal r) { arrowSize = r; }
 
-qreal ArrowObj::getArrowSize()
-{
-    return arrowSize;
-}
+qreal ArrowObj::getArrowSize() { return arrowSize; }
 
-void ArrowObj::setUseFixedLength( bool b)
-{
-    useFixedLength = b;
-}
+void ArrowObj::setUseFixedLength(bool b) { useFixedLength = b; }
 
-bool ArrowObj::getUseFixedLength()
-{
-    return useFixedLength;
-}
+bool ArrowObj::getUseFixedLength() { return useFixedLength; }
 
-void ArrowObj::setFixedLength(int i)
-{
-    fixedLength = i;
-}
+void ArrowObj::setFixedLength(int i) { fixedLength = i; }
 
-int ArrowObj::getFixedLength()
-{
-    return fixedLength;
-}
+int ArrowObj::getFixedLength() { return fixedLength; }
 
-void ArrowObj::show()
-{
-    setVisibility( true );
-}
+void ArrowObj::show() { setVisibility(true); }
 
-void ArrowObj::hide()
-{
-    setVisibility( false );
-}
+void ArrowObj::hide() { setVisibility(false); }
 
-void ArrowObj::setVisibility (bool b)
+void ArrowObj::setVisibility(bool b)
 {
-    MapObj::setVisibility (b);
-    if (b)
-    {
+    MapObj::setVisibility(b);
+    if (b) {
         if (styleEnd != None)
             arrowEnd->show();
         else
@@ -113,106 +82,99 @@ void ArrowObj::setVisibility (bool b)
         else
             line->show();
     }
-    else
-    {
-	arrowEnd->hide();
-	line->hide();
+    else {
+        arrowEnd->hide();
+        line->hide();
     }
 }
 
-void ArrowObj::setEndPoint (QPointF p)
+void ArrowObj::setEndPoint(QPointF p)
 {
     endPoint = p;
 
-    line->setLine(absPos.x(),absPos.y(), p.x(), p.y());
+    line->setLine(absPos.x(), absPos.y(), p.x(), p.y());
     arrowEnd->setPos(absPos);
 
-    qreal a = getAngle( endPoint - absPos );
-    arrowEnd->setRotation( -a / 6.28 * 360);
-    arrowEnd->setPos( endPoint );
+    qreal a = getAngle(endPoint - absPos);
+    arrowEnd->setRotation(-a / 6.28 * 360);
+    arrowEnd->setPos(endPoint);
 }
 
-QPointF ArrowObj::getEndPoint ()
-{
-    return endPoint;
-}
+QPointF ArrowObj::getEndPoint() { return endPoint; }
 
-void ArrowObj::setStyleBegin (const QString &s) 
+void ArrowObj::setStyleBegin(const QString &s)
 {
-    if (s=="HeadFull")
-        setStyleBegin( ArrowObj::HeadFull );
+    if (s == "HeadFull")
+        setStyleBegin(ArrowObj::HeadFull);
     else
-        setStyleBegin( ArrowObj::None );
+        setStyleBegin(ArrowObj::None);
 }
 
-void ArrowObj::setStyleBegin (OrnamentStyle os) 
+void ArrowObj::setStyleBegin(OrnamentStyle os)
 {
     styleBegin = os;
-    switch (styleBegin) 
-    {
-        case HeadFull:
-            arrowEnd->setPolygon( getArrowHead() );
-            arrowBegin->setBrush( pen.color() ); 
-            break;
-        case Foot: break;
-        case None: 
-            arrowBegin->setPolygon( QPolygonF() );
-            break;
+    switch (styleBegin) {
+    case HeadFull:
+        arrowEnd->setPolygon(getArrowHead());
+        arrowBegin->setBrush(pen.color());
+        break;
+    case Foot:
+        break;
+    case None:
+        arrowBegin->setPolygon(QPolygonF());
+        break;
     }
 }
 
-ArrowObj::OrnamentStyle ArrowObj::getStyleBegin()
-{
-    return styleBegin;
-}
+ArrowObj::OrnamentStyle ArrowObj::getStyleBegin() { return styleBegin; }
 
-void ArrowObj::setStyleEnd (const QString &s) 
+void ArrowObj::setStyleEnd(const QString &s)
 {
-    if (s=="HeadFull")
-        setStyleEnd( ArrowObj::HeadFull );
+    if (s == "HeadFull")
+        setStyleEnd(ArrowObj::HeadFull);
     else
-        setStyleEnd( ArrowObj::None );
+        setStyleEnd(ArrowObj::None);
 }
 
-void ArrowObj::setStyleEnd (OrnamentStyle os)
+void ArrowObj::setStyleEnd(OrnamentStyle os)
 {
     styleEnd = os;
-    switch (styleEnd) 
-    {
-        case HeadFull:
-            arrowEnd->setPolygon( getArrowHead() );
-            arrowEnd->setBrush( pen.color() ); 
-            break;
-        case Foot: break;
-        case None: 
-            arrowEnd->setPolygon( QPolygonF() );
-            break;
+    switch (styleEnd) {
+    case HeadFull:
+        arrowEnd->setPolygon(getArrowHead());
+        arrowEnd->setBrush(pen.color());
+        break;
+    case Foot:
+        break;
+    case None:
+        arrowEnd->setPolygon(QPolygonF());
+        break;
     }
 }
 
 QPolygonF ArrowObj::getArrowHead()
 {
-    QPointF a,b,c;
+    QPointF a, b, c;
     QPolygonF pa;
-    b = a + QPointF( -arrowSize *2, -arrowSize);
-    c = a + QPointF( -arrowSize *2, +arrowSize);
+    b = a + QPointF(-arrowSize * 2, -arrowSize);
+    c = a + QPointF(-arrowSize * 2, +arrowSize);
     pa << a << b << c;
     return pa;
 }
 
-ArrowObj::OrnamentStyle ArrowObj::getStyleEnd()
-{
-    return styleEnd;
-}
+ArrowObj::OrnamentStyle ArrowObj::getStyleEnd() { return styleEnd; }
 
 QString ArrowObj::styleToString(const OrnamentStyle &os)
 {
-    switch (os)
-    {
-        case HeadFull: return "HeadFull"; break;
-        case None: return "None"; break;
-        default: qWarning()<<"ArrowObj::styleToString unknown style "<<os;
+    switch (os) {
+    case HeadFull:
+        return "HeadFull";
+        break;
+    case None:
+        return "None";
+        break;
+    default:
+        qWarning() << "ArrowObj::styleToString unknown style " << os;
     }
     return "Unknown";
 }
-

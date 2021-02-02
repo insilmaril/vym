@@ -6,24 +6,23 @@
 
 class MainWindow;
 
-class AdaptorVym: public QDBusAbstractAdaptor
-{
+class AdaptorVym : public QDBusAbstractAdaptor {
     Q_OBJECT
     Q_CLASSINFO("D-Bus Interface", "org.insilmaril.vym.main.adaptor")
 
-public:
-    AdaptorVym (QObject *obj);
+  public:
+    AdaptorVym(QObject *obj);
 
-public slots: // METHODS
-    QDBusVariant modelCount ();
-    void gotoModel (const int &n);
+  public slots: // METHODS
+    QDBusVariant modelCount();
+    void gotoModel(const int &n);
     QDBusVariant getInstanceName();
     QDBusVariant getVersion();
-    QDBusVariant execute ( const QString &s);
+    QDBusVariant execute(const QString &s);
     QDBusVariant listCommands();
     QDBusVariant currentMapIndex();
 
-Q_SIGNALS: // SIGNALS
+  Q_SIGNALS: // SIGNALS
     void crashed();
 };
 

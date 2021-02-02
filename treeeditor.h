@@ -8,22 +8,20 @@ class VymModel;
 /*! \brief TreeView widget in vym to display and edit a map, based on
  * QTreeView */
 
-
-class TreeEditor : public QTreeView {	
+class TreeEditor : public QTreeView {
     Q_OBJECT
 
-public:
-    TreeEditor(VymModel *m=NULL);
+  public:
+    TreeEditor(VymModel *m = NULL);
     ~TreeEditor();
     void init();
     QModelIndex getSelectedIndex();
-private slots:
+  private slots:
     void cursorUp();
     void cursorDown();
 
-private:
+  private:
     VymModel *model;
 };
 
 #endif
-

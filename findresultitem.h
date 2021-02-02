@@ -8,9 +8,8 @@
 class TreeItem;
 class VymModel;
 
-class FindResultItem
-{
-public:
+class FindResultItem {
+  public:
     FindResultItem(const QVector<QVariant> &data, FindResultItem *parent = 0);
     ~FindResultItem();
 
@@ -26,14 +25,14 @@ public:
     bool removeColumns(int position, int columns);
     int childNumber() const;
     bool setData(int column, const QVariant &value);
-    void setOriginal (TreeItem *ti);
+    void setOriginal(TreeItem *ti);
     int getOriginalID();
     void setOriginalIndex(int i);
-    int getOriginalIndex ();
-    VymModel* getOrgModel();
+    int getOriginalIndex();
+    VymModel *getOrgModel();
 
-private:
-    QList<FindResultItem*> childItems;
+  private:
+    QList<FindResultItem *> childItems;
     QVector<QVariant> itemData;
     FindResultItem *parentItem;
 

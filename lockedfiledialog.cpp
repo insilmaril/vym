@@ -1,6 +1,6 @@
 #include "lockedfiledialog.h"
 
-LockedFileDialog::LockedFileDialog(QWidget* parent):QDialog (parent)
+LockedFileDialog::LockedFileDialog(QWidget *parent) : QDialog(parent)
 {
     ui.setupUi(this);
     ui.openReadonlyButton->setText(tr("Open readonly"));
@@ -16,13 +16,9 @@ LockedFileDialog::Result LockedFileDialog::execDialog()
         return DeleteLockfile;
 }
 
-
-void LockedFileDialog::setText (const QString &s)
-{
-    ui.warningTE->setText(s);
-}
+void LockedFileDialog::setText(const QString &s) { ui.warningTE->setText(s); }
 
 void LockedFileDialog::setCaption(const QString &s)
 {
-    QDialog::setWindowTitle("VYM - "+s);
+    QDialog::setWindowTitle("VYM - " + s);
 }

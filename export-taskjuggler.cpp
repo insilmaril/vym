@@ -4,14 +4,14 @@
 
 extern QDir vymBaseDir;
 
-void ExportTaskjuggler::doExport() 
+void ExportTaskjuggler::doExport()
 {
-    model->exportXML("",tmpDir.path(),false);
+    model->exportXML("", tmpDir.path(), false);
 
     XSLTProc p;
-    p.setInputFile (tmpDir.path()+"/"+model->getMapName()+".xml");
-    p.setOutputFile (filePath);
-    p.setXSLFile (vymBaseDir.path()+"/styles/vym2taskjuggler.xsl");
+    p.setInputFile(tmpDir.path() + "/" + model->getMapName() + ".xml");
+    p.setOutputFile(filePath);
+    p.setXSLFile(vymBaseDir.path() + "/styles/vym2taskjuggler.xsl");
     p.process();
 
     success = true;
@@ -19,4 +19,3 @@ void ExportTaskjuggler::doExport()
     destination = filePath;
     completeExport();
 }
-

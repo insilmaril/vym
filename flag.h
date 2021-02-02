@@ -1,7 +1,6 @@
 #ifndef FLAG_H
 #define FLAG_H
 
-
 #include <QAction>
 #include <QUuid>
 
@@ -14,41 +13,46 @@
     flags.
 */
 
-
 /////////////////////////////////////////////////////////////////////////////
-class Flag:public XMLObj {
-public:
-    enum FlagType {SystemFlag, StandardFlag, UserFlag, FreemindFlag, UndefinedFlag};
+class Flag : public XMLObj {
+  public:
+    enum FlagType {
+        SystemFlag,
+        StandardFlag,
+        UserFlag,
+        FreemindFlag,
+        UndefinedFlag
+    };
 
-    Flag ();
-    Flag (const QString &fname);
-    ~Flag ();
-    virtual void init ();
-    bool load (const QString&);
-    void setName (const QString&);
-    const QString getName ();
+    Flag();
+    Flag(const QString &fname);
+    ~Flag();
+    virtual void init();
+    bool load(const QString &);
+    void setName(const QString &);
+    const QString getName();
     const QString getPath();
-    void setVisible (bool b);
-    bool isVisible ();
-    void setGroup (const QString&);
+    void setVisible(bool b);
+    bool isVisible();
+    void setGroup(const QString &);
     const QString getGroup();
-    void unsetGroup ();
-    void setToolTip(const QString&);
+    void unsetGroup();
+    void setToolTip(const QString &);
     const QString getToolTip();
-    ImageObj*  getImageObj();
-    void setAction (QAction *a);
-    QAction* getAction ();
-    void setUsed (bool);    
+    ImageObj *getImageObj();
+    void setAction(QAction *a);
+    QAction *getAction();
+    void setUsed(bool);
     bool isUsed();
     FlagType getType();
-    void setType (FlagType t);
+    void setType(FlagType t);
     void setUuid(const QUuid &id);
     QUuid getUuid();
-    QString  getDefinition(const QString &prefix);
-    void  saveDataToDir (const QString&);
-    QString  saveState();
-    
-protected:  
+    QString getDefinition(const QString &prefix);
+    void saveDataToDir(const QString &);
+    QString saveState();
+
+  protected:
     QString name;
     bool visible;
     QString group;
@@ -59,10 +63,9 @@ protected:
     FlagType type;
     QUuid uuid;
 
-private:
+  private:
     ImageObj *image;
     QString path;
-    
 };
 
 #endif

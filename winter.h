@@ -1,60 +1,60 @@
 #ifndef WINTER_H
 #define WINTER_H
 
-#include <QObject>
 #include <QGraphicsItem>
-#include <QTimer>
+#include <QObject>
 #include <QRectF>
+#include <QTimer>
 
 class QGraphicsView;
 class QGraphicsScene;
 
-class SnowFlake:public QGraphicsItem
-{
-public:
-    enum SnowType {Smilla, Disc};
+class SnowFlake : public QGraphicsItem {
+  public:
+    enum SnowType { Smilla, Disc };
 
     SnowFlake(QGraphicsScene *scene, SnowType type);
     ~SnowFlake();
     QRectF boundingRect() const;
-    void paint(QPainter*, const QStyleOptionGraphicsItem*, QWidget*);
+    void paint(QPainter *, const QStyleOptionGraphicsItem *, QWidget *);
     void animate();
     void blow(const QPointF &v);
-private:
+
+  private:
     SnowType type;
     int size;
-    QList <QGraphicsLineItem*> lines;
+    QList<QGraphicsLineItem *> lines;
     QGraphicsEllipseItem *disc;
     QPointF dv;
     QPointF dblow;
     qreal da;
 };
 
-class Winter:public QObject {
+class Winter : public QObject {
     Q_OBJECT
-public:
+  public:
     Winter(QGraphicsView *view);
     ~Winter();
     void updateView();
-    void setObstacles(QList <QRectF> obslist);
+    void setObstacles(QList<QRectF> obslist);
 
-public slots:
+  public slots:
     void animate();
     void makeSnow();
 
-private:
+  private:
     QGraphicsView *view;
-    QList <SnowFlake*> fallingSnow;
-    QList <SnowFlake*> frozenSnow;
+    QList<SnowFlake *> fallingSnow;
+    QList<SnowFlake *> frozenSnow;
     int maxFlakes;
     QTimer *animTimer;
     QTimer *snowTimer;
-    QList <QRectF> obstacles;
+    QList<QRectF> obstacles;
 
     SnowFlake::SnowType type;
     int maxFalling;
     int maxUnfreeze;
-    //QGraphicsRectItem *test;
+    // QGraphicsRectItem *test;
 
     QRectF viewRect;
 };

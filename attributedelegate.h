@@ -3,34 +3,35 @@
 #define ATTRIBUTEDELEGATE_H
 
 #include <QItemDelegate>
+#include <QLineEdit>
 #include <QModelIndex>
 #include <QObject>
 #include <QSize>
 #include <QSpinBox>
-#include <QLineEdit>
 
 #include "attribute.h"
 
-class AttributeDelegate : public QItemDelegate
-{
+class AttributeDelegate : public QItemDelegate {
     Q_OBJECT
 
-enum EditorType {Undefined,SpinBox,LineEdit,ComboBox};
+    enum EditorType { Undefined, SpinBox, LineEdit, ComboBox };
 
-public:
+  public:
     AttributeDelegate(QObject *parent = 0);
 
     QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option,
                           const QModelIndex &index) const;
 
-    void setEditorData(QWidget *editor, const QModelIndex &index) const ;
+    void setEditorData(QWidget *editor, const QModelIndex &index) const;
     void setModelData(QWidget *editor, QAbstractItemModel *model,
-                      const QModelIndex &index) const ;
+                      const QModelIndex &index) const;
 
     void updateEditorGeometry(QWidget *editor,
-    const QStyleOptionViewItem &option, const QModelIndex &index) const;
+                              const QStyleOptionViewItem &option,
+                              const QModelIndex &index) const;
     void setAttributeTable(AttributeTable *table);
-private:
+
+  private:
     AttributeTable *attributeTable;
 };
 

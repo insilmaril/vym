@@ -14,10 +14,9 @@ class UserDialog : public QDialog {
     QString selectedUser();
     QString selectedUserKey();
 
-
   public slots:
     void lineEditChanged();
-    void itemSelected(QListWidgetItem*);
+    void itemSelected(QListWidgetItem *);
 
   private:
     void init();

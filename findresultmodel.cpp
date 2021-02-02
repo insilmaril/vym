@@ -7,24 +7,21 @@
 
 extern Settings settings;
 
-FindResultModel::FindResultModel( QObject *parent)
-    : QAbstractItemModel(parent)
+FindResultModel::FindResultModel(QObject *parent) : QAbstractItemModel(parent)
 {
     QVector<QVariant> rootData;
     rootData << "Heading";
     rootItem = new FindResultItem(rootData);
-    showParentsLevel = settings.value("/satellite/findResults/showParentsLevel", 1).toInt();
+    showParentsLevel =
+        settings.value("/satellite/findResults/showParentsLevel", 1).toInt();
 }
 
-FindResultModel::~FindResultModel()
-{
-    delete rootItem;
-}
+FindResultModel::~FindResultModel() { delete rootItem; }
 
 void FindResultModel::clear()
 {
-    if (rootItem->childCount()>0)
-	removeRows (0,rowCount (QModelIndex ()));
+    if (rootItem->childCount() > 0)
+        removeRows(0, rowCount(QModelIndex()));
 }
 
 int FindResultModel::columnCount(const QModelIndex & /* parent */) const
@@ -54,7 +51,7 @@ Qt::ItemFlags FindResultModel::flags(const QModelIndex &index) const
 }
 
 QVariant FindResultModel::headerData(int section, Qt::Orientation orientation,
-                               int role) const
+                                     int role) const
 {
     if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
         return rootItem->data(section);
@@ -62,16 +59,16 @@ QVariant FindResultModel::headerData(int section, Qt::Orientation orientation,
     return QVariant();
 }
 
-QModelIndex FindResultModel::index (FindResultItem *fri)
+QModelIndex FindResultModel::index(FindResultItem *fri)
 {
     if (!fri->parent())
-	return QModelIndex();
-    else    
-	return createIndex (fri->row(),0,fri);
+        return QModelIndex();
+    else
+        return createIndex(fri->row(), 0, fri);
 }
 
-
-QModelIndex FindResultModel::index(int row, int column, const QModelIndex &parent) const
+QModelIndex FindResultModel::index(int row, int column,
+                                   const QModelIndex &parent) const
 {
     if (parent.isValid() && parent.column() != 0)
         return QModelIndex();
@@ -85,7 +82,8 @@ QModelIndex FindResultModel::index(int row, int column, const QModelIndex &paren
         return QModelIndex();
 }
 
-bool FindResultModel::insertColumns(int position, int columns, const QModelIndex &parent)
+bool FindResultModel::insertColumns(int position, int columns,
+                                    const QModelIndex &parent)
 {
     bool success;
 
@@ -96,13 +94,15 @@ bool FindResultModel::insertColumns(int position, int columns, const QModelIndex
     return success;
 }
 
-bool FindResultModel::insertRows(int position, int rows, const QModelIndex &parent)
+bool FindResultModel::insertRows(int position, int rows,
+                                 const QModelIndex &parent)
 {
     FindResultItem *parentItem = getItem(parent);
     bool success;
 
     beginInsertRows(parent, position, position + rows - 1);
-    success = parentItem->insertChildren(position, rows, rootItem->columnCount());
+    success =
+        parentItem->insertChildren(position, rows, rootItem->columnCount());
     endInsertRows();
 
     return success;
@@ -122,7 +122,8 @@ QModelIndex FindResultModel::parent(const QModelIndex &index) const
     return createIndex(parentItem->childNumber(), 0, parentItem);
 }
 
-bool FindResultModel::removeColumns(int position, int columns, const QModelIndex &parent)
+bool FindResultModel::removeColumns(int position, int columns,
+                                    const QModelIndex &parent)
 {
     bool success;
 
@@ -136,7 +137,8 @@ bool FindResultModel::removeColumns(int position, int columns, const QModelIndex
     return success;
 }
 
-bool FindResultModel::removeRows(int position, int rows, const QModelIndex &parent)
+bool FindResultModel::removeRows(int position, int rows,
+                                 const QModelIndex &parent)
 {
     FindResultItem *parentItem = getItem(parent);
     bool success = true;
@@ -156,7 +158,7 @@ int FindResultModel::rowCount(const QModelIndex &parent) const
 }
 
 bool FindResultModel::setData(const QModelIndex &index, const QVariant &value,
-                        int role)
+                              int role)
 {
     if (role != Qt::EditRole)
         return false;
@@ -171,7 +173,7 @@ bool FindResultModel::setData(const QModelIndex &index, const QVariant &value,
 }
 
 bool FindResultModel::setHeaderData(int section, Qt::Orientation orientation,
-                              const QVariant &value, int role)
+                                    const QVariant &value, int role)
 {
     if (role != Qt::EditRole || orientation != Qt::Horizontal)
         return false;
@@ -184,81 +186,75 @@ bool FindResultModel::setHeaderData(int section, Qt::Orientation orientation,
     return result;
 }
 
-FindResultItem* FindResultModel::getItem(const QModelIndex &index) const
+FindResultItem *FindResultModel::getItem(const QModelIndex &index) const
 {
     if (index.isValid()) {
-        FindResultItem *item = static_cast<FindResultItem*>(index.internalPointer());
-        if (item) return item;
+        FindResultItem *item =
+            static_cast<FindResultItem *>(index.internalPointer());
+        if (item)
+            return item;
     }
     return rootItem;
 }
 
-FindResultItem*  FindResultModel::addItem (TreeItem *ti)
+FindResultItem *FindResultModel::addItem(TreeItem *ti)
 {
-    FindResultItem *ni=NULL;
-    if (ti)
-    {
-	QModelIndex parix (index (rootItem));
-	
-	emit (layoutAboutToBeChanged() );
+    FindResultItem *ni = NULL;
+    if (ti) {
+        QModelIndex parix(index(rootItem));
 
-	int n=rowCount (parix);
-	beginInsertRows (parix,n,n);
-	if (rootItem->insertChildren (n,1,0) )
-        {
-            QString h=ti->getHeadingPlainWithParents( showParentsLevel );
-            QModelIndex ix=index(n,0,QModelIndex());
-            setData (ix,QVariant(h),Qt::EditRole);
-            ni=getItem(ix);
-            ni->setOriginal (ti);
+        emit(layoutAboutToBeChanged());
+
+        int n = rowCount(parix);
+        beginInsertRows(parix, n, n);
+        if (rootItem->insertChildren(n, 1, 0)) {
+            QString h = ti->getHeadingPlainWithParents(showParentsLevel);
+            QModelIndex ix = index(n, 0, QModelIndex());
+            setData(ix, QVariant(h), Qt::EditRole);
+            ni = getItem(ix);
+            ni->setOriginal(ti);
         }
-	endInsertRows ();
+        endInsertRows();
 
-	emit (layoutChanged() );
+        emit(layoutChanged());
     }
     return ni;
 }
 
-FindResultItem*  FindResultModel::addSubItem (FindResultItem *parent,const QString &s, TreeItem *pi, int i)
+FindResultItem *FindResultModel::addSubItem(FindResultItem *parent,
+                                            const QString &s, TreeItem *pi,
+                                            int i)
 {
-    FindResultItem *ni=NULL;
-    if (pi && parent)
-    {
-	QModelIndex parix ( index (parent));
-	
-	emit (layoutAboutToBeChanged() );
+    FindResultItem *ni = NULL;
+    if (pi && parent) {
+        QModelIndex parix(index(parent));
 
-	int n=rowCount (parix);
-	beginInsertRows (parix,n,n);
+        emit(layoutAboutToBeChanged());
 
-	QModelIndex ix;
-	if (parent->insertChildren (n,1,0))
-	{
-	    ix=index(n,0,parix);
-	    setData (ix,QVariant(s),Qt::EditRole);
-	    ni=getItem(ix);
-	    ni->setOriginal (pi);
-	    ni->setOriginalIndex (i);
-	}
-	endInsertRows ();
-	emit (layoutChanged() );
+        int n = rowCount(parix);
+        beginInsertRows(parix, n, n);
+
+        QModelIndex ix;
+        if (parent->insertChildren(n, 1, 0)) {
+            ix = index(n, 0, parix);
+            setData(ix, QVariant(s), Qt::EditRole);
+            ni = getItem(ix);
+            ni->setOriginal(pi);
+            ni->setOriginalIndex(i);
+        }
+        endInsertRows();
+        emit(layoutChanged());
     }
     return ni;
 }
 
-void FindResultModel::setSearchString( const QString &s)
-{
-    searchString=s;
-}
+void FindResultModel::setSearchString(const QString &s) { searchString = s; }
 
-QString FindResultModel::getSearchString()
-{
-    return searchString;
-}
+QString FindResultModel::getSearchString() { return searchString; }
 
-void FindResultModel::setSearchFlags( QTextDocument::FindFlags f)
+void FindResultModel::setSearchFlags(QTextDocument::FindFlags f)
 {
-    searchFlags=f;
+    searchFlags = f;
 }
 
 QTextDocument::FindFlags FindResultModel::getSearchFlags()
@@ -272,8 +268,4 @@ void FindResultModel::setShowParentsLevel(uint i)
     settings.setValue("/findResults/showParentsLevel", showParentsLevel);
 }
 
-uint FindResultModel::getShowParentsLevel()
-{
-    return showParentsLevel;
-}
-
+uint FindResultModel::getShowParentsLevel() { return showParentsLevel; }

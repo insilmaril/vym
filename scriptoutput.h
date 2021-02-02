@@ -4,10 +4,9 @@
 #include <QTextEdit>
 #include <QVBoxLayout>
 
-class ScriptOutput:public QWidget
-{
+class ScriptOutput : public QWidget {
     Q_OBJECT
-public:
+  public:
     ScriptOutput(QWidget *parent);
     ~ScriptOutput();
     void clear();
@@ -15,7 +14,7 @@ public:
     QString text();
     void append(const QString &text);
 
-private:
+  private:
     QTextEdit *editor;
     QVBoxLayout *layout;
 };

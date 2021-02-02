@@ -6,18 +6,18 @@
 
 #include "showtextdialog.h"
 
-class XSLTProc
-{
-public:
+class XSLTProc {
+  public:
     XSLTProc();
     ~XSLTProc();
     void addStringParam(const QString &, const QString &);
-    void setOutputFile (const QString &);
-    void setXSLFile    (const QString &);
-    void setInputFile  (const QString &);
-    void addOutput (const QString &);
+    void setOutputFile(const QString &);
+    void setXSLFile(const QString &);
+    void setInputFile(const QString &);
+    void addOutput(const QString &);
     void process();
-private:
+
+  private:
     QStringList stringParamKey;
     QStringList stringParamVal;
     QString outputFile;

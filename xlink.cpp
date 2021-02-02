@@ -14,133 +14,116 @@ class VymModel;
 // Link
 /////////////////////////////////////////////////////////////////
 
-Link::Link (VymModel *m)
+Link::Link(VymModel *m)
 {
-    //qDebug() << "Const Link () this="<<this;
-    model=m;
+    // qDebug() << "Const Link () this="<<this;
+    model = m;
     init();
 }
 
-Link::~Link ()
+Link::~Link()
 {
-//    qDebug()<<"* Destr Link begin this="<<this<<"  bLI="<<beginLinkItem<<"  eLI="<<endLinkItem;
+    //    qDebug()<<"* Destr Link begin this="<<this<<"  bLI="<<beginLinkItem<<"
+    //    eLI="<<endLinkItem;
     deactivate();
-//    qDebug()<<"* Destr Link end   this="<<this;
+    //    qDebug()<<"* Destr Link end   this="<<this;
 }
 
-void Link::init () 
+void Link::init()
 {
-    xlo=NULL;
-    beginBranch=NULL;
-    endBranch=NULL;
-    beginLinkItem=NULL;
-    endLinkItem=NULL;
-    xLinkState=Link::undefinedXLink;
+    xlo = NULL;
+    beginBranch = NULL;
+    endBranch = NULL;
+    beginLinkItem = NULL;
+    endLinkItem = NULL;
+    xLinkState = Link::undefinedXLink;
 
-    type=Bezier;
-    pen=model->getMapDefXLinkPen();
+    type = Bezier;
+    pen = model->getMapDefXLinkPen();
 }
 
-VymModel* Link::getModel()
+VymModel *Link::getModel() { return model; }
+
+void Link::setBeginBranch(BranchItem *bi)
 {
-    return model;
+    if (bi) {
+        xLinkState = initXLink;
+        beginBranch = bi;
+    }
 }
 
-void Link::setBeginBranch (BranchItem *bi)
+BranchItem *Link::getBeginBranch() { return beginBranch; }
+
+void Link::setEndBranch(BranchItem *bi)
 {
-    if (bi) 
-    {
-	xLinkState=initXLink;
-	beginBranch=bi;
-    }	
+    if (bi) {
+        endBranch = bi;
+        if (xlo)
+            xlo->initC1();
+    }
 }
 
-BranchItem* Link::getBeginBranch ()
-{
-    return beginBranch;
-}
+BranchItem *Link::getEndBranch() { return endBranch; }
 
-void Link::setEndBranch (BranchItem *bi)
-{
-    if (bi) 
-    {
-	endBranch=bi;
-        if (xlo) xlo->initC1();
-    }	    
-}
-
-BranchItem* Link::getEndBranch()
-{
-    return endBranch;
-}
-
-void Link::setEndPoint (QPointF p)
+void Link::setEndPoint(QPointF p)
 {
     // Used only while creating the link, without endBranch
-    if (xlo) xlo->setEnd (p);
+    if (xlo)
+        xlo->setEnd(p);
 }
 
-void Link::setBeginLinkItem (XLinkItem *li)
+void Link::setBeginLinkItem(XLinkItem *li)
 {
-    if (li) 
-    {
-	xLinkState=initXLink;
-	beginLinkItem=li;
-    }	
+    if (li) {
+        xLinkState = initXLink;
+        beginLinkItem = li;
+    }
 }
 
-XLinkItem* Link::getBeginLinkItem ()
+XLinkItem *Link::getBeginLinkItem() { return beginLinkItem; }
+
+void Link::setEndLinkItem(XLinkItem *li)
 {
-    return beginLinkItem;
+    if (li) {
+        xLinkState = initXLink;
+        endLinkItem = li;
+    }
 }
 
-void Link::setEndLinkItem (XLinkItem *li)
-{
-    if (li) 
-    {
-	xLinkState=initXLink;
-	endLinkItem=li;
-    }	    
-}
+XLinkItem *Link::getEndLinkItem() { return endLinkItem; }
 
-XLinkItem* Link::getEndLinkItem()
+XLinkItem *Link::getOtherEnd(XLinkItem *xli)
 {
-    return endLinkItem;
-}
-
-XLinkItem* Link::getOtherEnd (XLinkItem *xli)
-{
-    if (xli==beginLinkItem) return endLinkItem;
-    if (xli==endLinkItem) return beginLinkItem;
+    if (xli == beginLinkItem)
+        return endLinkItem;
+    if (xli == endLinkItem)
+        return beginLinkItem;
     return NULL;
 }
 
-void Link::setPen (const QPen &p)
+void Link::setPen(const QPen &p)
 {
     pen = p;
-    if (xlo) xlo->updateXLink();
+    if (xlo)
+        xlo->updateXLink();
 }
 
-QPen Link::getPen ()
-{
-    return pen;
-}
+QPen Link::getPen() { return pen; }
 
-void Link::setLinkType (const QString &s)
+void Link::setLinkType(const QString &s)
 {
-    if (s=="Linear")
-	type=Linear;
-    else if (s=="Bezier")	
-	type=Bezier;
+    if (s == "Linear")
+        type = Linear;
+    else if (s == "Bezier")
+        type = Bezier;
     else
-	qWarning()<<"Link::setLinkType  Unknown type: "<<s;
+        qWarning() << "Link::setLinkType  Unknown type: " << s;
 }
 
-void Link::setStyleBegin (const QString &s)
+void Link::setStyleBegin(const QString &s)
 {
-    if (xlo) 
-    {
-        xlo->setStyleBegin( s );
+    if (xlo) {
+        xlo->setStyleBegin(s);
         xlo->updateXLink();
     }
 }
@@ -148,16 +131,15 @@ void Link::setStyleBegin (const QString &s)
 QString Link::getStyleBeginString()
 {
     if (xlo)
-        return ArrowObj::styleToString( xlo->getStyleBegin() );
-    else 
+        return ArrowObj::styleToString(xlo->getStyleBegin());
+    else
         return QString();
 }
 
-void Link::setStyleEnd (const QString &s)
+void Link::setStyleEnd(const QString &s)
 {
-    if (xlo) 
-    {
-        xlo->setStyleEnd( s );
+    if (xlo) {
+        xlo->setStyleEnd(s);
         xlo->updateXLink();
     }
 }
@@ -165,122 +147,118 @@ void Link::setStyleEnd (const QString &s)
 QString Link::getStyleEndString()
 {
     if (xlo)
-        return ArrowObj::styleToString( xlo->getStyleEnd() );
-    else 
+        return ArrowObj::styleToString(xlo->getStyleEnd());
+    else
         return QString();
 }
 
-bool Link::activate ()	
+bool Link::activate()
 {
-    if (beginBranch && endBranch)
-    {
-	if ( beginBranch == endBranch) return false;
-	xLinkState = activeXLink;
-	model->updateActions();
-	return true;
-    } else
-	return false;
+    if (beginBranch && endBranch) {
+        if (beginBranch == endBranch)
+            return false;
+        xLinkState = activeXLink;
+        model->updateActions();
+        return true;
+    }
+    else
+        return false;
 }
 
-void Link::deactivate ()    
+void Link::deactivate()
 {
     // Remove pointers from XLinkItem to Link and
     // delete XLinkObj
 
-//    qDebug()<<"Link::deactivate ******************************";
-    xLinkState=deleteXLink;
-    if (beginLinkItem) beginLinkItem->setLink (NULL);
-    if (endLinkItem) endLinkItem->setLink (NULL);
-    if (xlo)
-    {
-	delete (xlo);  
-	xlo=NULL;
+    //    qDebug()<<"Link::deactivate ******************************";
+    xLinkState = deleteXLink;
+    if (beginLinkItem)
+        beginLinkItem->setLink(NULL);
+    if (endLinkItem)
+        endLinkItem->setLink(NULL);
+    if (xlo) {
+        delete (xlo);
+        xlo = NULL;
     }
 }
 
-Link::XLinkState Link::getState()
-{
-    return xLinkState;
-}
+Link::XLinkState Link::getState() { return xLinkState; }
 
-void Link::removeXLinkItem (XLinkItem *xli)
+void Link::removeXLinkItem(XLinkItem *xli)
 {
     // Only mark _one_ end for removal here!
-    if (xli==beginLinkItem) beginLinkItem=NULL;
-    if (xli==endLinkItem) endLinkItem=NULL;
-    xLinkState=deleteXLink;
+    if (xli == beginLinkItem)
+        beginLinkItem = NULL;
+    if (xli == endLinkItem)
+        endLinkItem = NULL;
+    xLinkState = deleteXLink;
 }
 
 void Link::updateLink()
 {
-    if(xlo ) xlo->updateXLink();
+    if (xlo)
+        xlo->updateXLink();
 }
 
-QString Link::saveToDir ()
+QString Link::saveToDir()
 {
-//    qDebug()<<"Link::saveToDir  this="<<this<<" beginBranch="<<beginBranch<<"  endBranch="<<endBranch<<"  state="<<xLinkState;
-    QString s="";
-    if (beginBranch && endBranch && xLinkState==activeXLink)
-    {
-	if (beginBranch==endBranch )
-	    qWarning ("Link::saveToDir  ignored, because beginBranch==endBranch, ");
-	else
-	{
-	    QString colAttr=attribut ("color",pen.color().name());
-	    QString widAttr=attribut ("width",QString().setNum(pen.width(),10));
-	    QString styAttr=attribut ("penstyle",penStyleToString (pen.style()));
-	    QString ctrlAttr;
-	    QString typeAttr;
-	    switch (type)
-	    {
-		case Linear: 
-		    typeAttr=attribut("type","Linear"); 
-		    break;
-		case Bezier: 
-		    typeAttr=attribut("type","Bezier"); 
-		    if (xlo)
-		    {
-			ctrlAttr +=attribut ("c0",pointToString (xlo->getC0() ) );
-			ctrlAttr +=attribut ("c1",pointToString (xlo->getC1() ) );
-		    }
-		    break;
-	    }
-	    QString begSelAttr=attribut ("beginID",model->getSelectString(beginBranch));
-	    QString endSelAttr=attribut ("endID",  model->getSelectString(endBranch));
-            QString styleAttr;
-            if (xlo)
-            {
-                styleAttr = QString(" styleBegin=\"%1\"").arg( ArrowObj::styleToString( xlo->getStyleBegin() ));
-                styleAttr+= QString(" styleEnd=\"%1\""  ).arg( ArrowObj::styleToString( xlo->getStyleEnd() ));
+    //    qDebug()<<"Link::saveToDir  this="<<this<<"
+    //    beginBranch="<<beginBranch<<"  endBranch="<<endBranch<<"
+    //    state="<<xLinkState;
+    QString s = "";
+    if (beginBranch && endBranch && xLinkState == activeXLink) {
+        if (beginBranch == endBranch)
+            qWarning(
+                "Link::saveToDir  ignored, because beginBranch==endBranch, ");
+        else {
+            QString colAttr = attribut("color", pen.color().name());
+            QString widAttr =
+                attribut("width", QString().setNum(pen.width(), 10));
+            QString styAttr =
+                attribut("penstyle", penStyleToString(pen.style()));
+            QString ctrlAttr;
+            QString typeAttr;
+            switch (type) {
+            case Linear:
+                typeAttr = attribut("type", "Linear");
+                break;
+            case Bezier:
+                typeAttr = attribut("type", "Bezier");
+                if (xlo) {
+                    ctrlAttr += attribut("c0", pointToString(xlo->getC0()));
+                    ctrlAttr += attribut("c1", pointToString(xlo->getC1()));
+                }
+                break;
             }
-	    s=singleElement ("xlink", 
-		colAttr 
-		+widAttr 
-		+styAttr 
-		+typeAttr 
-		+ctrlAttr
-		+begSelAttr 
-		+endSelAttr
-                +styleAttr);
-	}
+            QString begSelAttr =
+                attribut("beginID", model->getSelectString(beginBranch));
+            QString endSelAttr =
+                attribut("endID", model->getSelectString(endBranch));
+            QString styleAttr;
+            if (xlo) {
+                styleAttr =
+                    QString(" styleBegin=\"%1\"")
+                        .arg(ArrowObj::styleToString(xlo->getStyleBegin()));
+                styleAttr +=
+                    QString(" styleEnd=\"%1\"")
+                        .arg(ArrowObj::styleToString(xlo->getStyleEnd()));
+            }
+            s = singleElement("xlink", colAttr + widAttr + styAttr + typeAttr +
+                                           ctrlAttr + begSelAttr + endSelAttr +
+                                           styleAttr);
+        }
     }
     return s;
 }
 
-XLinkObj* Link::getXLinkObj()
-{
-    return xlo;
-}
+XLinkObj *Link::getXLinkObj() { return xlo; }
 
-XLinkObj* Link::createMapObj()  
+XLinkObj *Link::createMapObj()
 {
-    if (!xlo) xlo=new XLinkObj (beginBranch->getLMO(),this);  
+    if (!xlo)
+        xlo = new XLinkObj(beginBranch->getLMO(), this);
     xlo->setVisibility();
     return xlo;
 }
 
-MapObj* Link::getMO()
-{
-    return xlo;
-}
-
+MapObj *Link::getMO() { return xlo; }

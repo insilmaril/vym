@@ -5,21 +5,20 @@
 #include <QSortFilterProxyModel>
 
 //! [0]
-class MySortFilterProxyModel : public QSortFilterProxyModel
-{
+class MySortFilterProxyModel : public QSortFilterProxyModel {
     Q_OBJECT
 
-public:
+  public:
     MySortFilterProxyModel(QObject *parent = 0);
-/*
+    /*
 
-    QDate filterMinimumDate() const { return minDate; }
-    void setFilterMinimumDate(const QDate &date);
+        QDate filterMinimumDate() const { return minDate; }
+        void setFilterMinimumDate(const QDate &date);
 
-    QDate filterMaximumDate() const { return maxDate; }
-    void setFilterMaximumDate(const QDate &date);
-protected:
-*/
+        QDate filterMaximumDate() const { return maxDate; }
+        void setFilterMaximumDate(const QDate &date);
+    protected:
+    */
     bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const;
     /*
     bool lessThan(const QModelIndex &left, const QModelIndex &right) const;

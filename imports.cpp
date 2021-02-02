@@ -1,8 +1,8 @@
-#include "file.h"
 #include "imports.h"
+#include "file.h"
 #include "linkablemapobj.h"
-#include "misc.h"
 #include "mainwindow.h"
+#include "misc.h"
 #include "xsltproc.h"
 
 #include <QMessageBox>
@@ -13,52 +13,39 @@ extern QDir vymBaseDir;
 ImportBase::ImportBase()
 {
     bool ok;
-    tmpDir.setPath (makeTmpDir(ok,"vym-import"));
+    tmpDir.setPath(makeTmpDir(ok, "vym-import"));
     if (!tmpDir.exists() || !ok)
-	QMessageBox::critical( 0, QObject::tr( "Error" ),
-		       QObject::tr("Couldn't access temporary directory\n"));
+        QMessageBox::critical(
+            0, QObject::tr("Error"),
+            QObject::tr("Couldn't access temporary directory\n"));
 }
-
 
 ImportBase::~ImportBase()
 {
     // Remove tmpdir
-    removeDir (tmpDir);
+    removeDir(tmpDir);
 }
 
-void ImportBase::setDir(const QString &p)
-{
-    inputDir=p;
-}
+void ImportBase::setDir(const QString &p) { inputDir = p; }
 
-void ImportBase::setFile (const QString &p)
-{
-    inputFile=p;
-}
+void ImportBase::setFile(const QString &p) { inputFile = p; }
 
-bool ImportBase::transform()
-{
-    return true;
-}
+bool ImportBase::transform() { return true; }
 
-QString ImportBase::getTransformedFile()
-{
-    return transformedFile;
-}
+QString ImportBase::getTransformedFile() { return transformedFile; }
 
 /////////////////////////////////////////////////
 bool ImportFirefoxBookmarks::transform()
 {
-    transformedFile=tmpDir.path()+"/bookmarks.xml";
+    transformedFile = tmpDir.path() + "/bookmarks.xml";
 
     QStringList lines;
-    QFile file( inputFile );
-    if ( file.open( QIODevice::ReadOnly ) ) 
-    {
-	QTextStream stream( &file );
-	while ( !stream.atEnd() ) 
-	    lines += stream.readLine(); // line of text excluding '\n'
-	file.close();
+    QFile file(inputFile);
+    if (file.open(QIODevice::ReadOnly)) {
+        QTextStream stream(&file);
+        while (!stream.atEnd())
+            lines += stream.readLine(); // line of text excluding '\n'
+        file.close();
     }
     // FIXME-4 Generate vym from broken Firefox bookmarks above...
 
@@ -68,25 +55,25 @@ bool ImportFirefoxBookmarks::transform()
 /////////////////////////////////////////////////
 bool ImportMM::transform()
 {
-    // try to unzip 
-    if (File::Success==unzipDir (tmpDir, inputFile))
-    {
-	
-	// Set short name, too. Search from behind:
-	transformedFile=inputFile;
-	int i=transformedFile.lastIndexOf ("/");
-	if (i>=0) transformedFile=transformedFile.remove (0,i+1);
-	transformedFile.replace(".mmap",".xml");
-	transformedFile=tmpDir.path()+"/"+transformedFile;
+    // try to unzip
+    if (File::Success == unzipDir(tmpDir, inputFile)) {
 
-	XSLTProc p;
-	p.setInputFile (tmpDir.path()+"/Document.xml");
-	p.setOutputFile (transformedFile);
-	p.setXSLFile (vymBaseDir.path()+"/styles/mmap2vym.xsl");
-	p.process();
+        // Set short name, too. Search from behind:
+        transformedFile = inputFile;
+        int i = transformedFile.lastIndexOf("/");
+        if (i >= 0)
+            transformedFile = transformedFile.remove(0, i + 1);
+        transformedFile.replace(".mmap", ".xml");
+        transformedFile = tmpDir.path() + "/" + transformedFile;
 
-	return true;
-    } else
-	return false;
-    
+        XSLTProc p;
+        p.setInputFile(tmpDir.path() + "/Document.xml");
+        p.setOutputFile(transformedFile);
+        p.setXSLFile(vymBaseDir.path() + "/styles/mmap2vym.xsl");
+        p.process();
+
+        return true;
+    }
+    else
+        return false;
 }

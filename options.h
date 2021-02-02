@@ -4,18 +4,17 @@
 #include <QStringList>
 
 /*! \brief A single option which is listed in Options */
-class Option
-{
-public:
+class Option {
+  public:
     /*! Types of options */
-    enum Type  {
-	Switch,	//!< No paramater
-	String	//!< Parameter is a string
+    enum Type {
+        Switch, //!< No paramater
+        String  //!< Parameter is a string
     };
 
     Option();
     Option(const QString &, const Type &, const QString &, const QString &);
-    void set (const QString &, const Type &, const QString &, const QString &);
+    void set(const QString &, const Type &, const QString &, const QString &);
     QString getName();
     QString getShort();
     QString getLong();
@@ -24,7 +23,8 @@ public:
     QString getArg();
     void setActive();
     bool isActive();
-private:
+
+  private:
     QString name;
     Type type;
     QString sName;
@@ -33,28 +33,27 @@ private:
     bool active;
 };
 
-
 /*! \brief Simple class to deal with command line options */
 
-class Options
-{
-public:
+class Options {
+  public:
     Options();
     int parse();
-    void add (Option );
-    void add (const QString &,const Option::Type &, const QString &, const QString&);
-    void setHelpText(const QString&);
+    void add(Option);
+    void add(const QString &, const Option::Type &, const QString &,
+             const QString &);
+    void setHelpText(const QString &);
     QString getHelpText();
     QString getProgramName();
     QStringList getFileList();
-    bool isOn (const QString &);
-    QString getArg (const QString &);
+    bool isOn(const QString &);
+    QString getArg(const QString &);
 
-private:
+  private:
     QString progname;
     QString helptext;
     QStringList filelist;
-    QList <Option> optlist;
+    QList<Option> optlist;
 };
 
 #endif

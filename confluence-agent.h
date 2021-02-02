@@ -2,8 +2,8 @@
 #define CONFLUENCEAGENT_H
 
 #include <QHash>
-#include <QObject>
 #include <QNetworkAccessManager>
+#include <QObject>
 #include <QTimer>
 
 #include "heading.h"
@@ -12,52 +12,56 @@
 class BranchItem;
 class VymModel;
 
-class ConfluenceAgent:public QObject
-{
+class ConfluenceAgent : public QObject {
     Q_OBJECT
 
-public:	
-    ConfluenceAgent ();
-    ConfluenceAgent (BranchItem* bi);
+  public:
+    ConfluenceAgent();
+    ConfluenceAgent(BranchItem *bi);
     ~ConfluenceAgent();
     void init();
     void test();
     bool getPageDetails(const QString &url);
     bool getPageDetailsNative(const QString &url);
-private:
-    bool uploadContent(const QString &url, const QString &title, const QString &fpath, const bool &newPage);
-public:
-    bool updatePage(const QString &url, const QString &title, const QString &fpath);
-    bool createPage(const QString &url, const QString &title, const QString &fpath);
+
+  private:
+    bool uploadContent(const QString &url, const QString &title,
+                       const QString &fpath, const bool &newPage);
+
+  public:
+    bool updatePage(const QString &url, const QString &title,
+                    const QString &fpath);
+    bool createPage(const QString &url, const QString &title,
+                    const QString &fpath);
     bool getUsers(const QString &name);
     void waitForResult();
     bool success();
     QString getResult();
 
-public slots:
+  public slots:
     virtual void dataReceived(int exitCode, QProcess::ExitStatus exitStatus);
     virtual void timeout();
 
-private:
+  private:
     QString confluenceScript;
     VymProcess *vymProcess;
     QTimer *killTimer;
     bool succ;
     QString result;
 
-// REST access related, new
-public:
+    // REST access related, new
+  public:
     void startGetPageSourceRequest(QUrl requestedUrl);
     void startGetPageDetailsRequest(QString query);
 
-private slots:
+  private slots:
     void pageSourceReceived();
     void pageDetailsReceived();
 #ifndef QT_NO_SSL
     void sslErrors(QNetworkReply *, const QList<QSslError> &errors);
 #endif
 
-private:
+  private:
     QNetworkAccessManager qnam;
     QNetworkReply *reply;
     bool httpRequestAborted;
@@ -76,4 +80,3 @@ private:
     QString spaceKey;
 };
 #endif
-

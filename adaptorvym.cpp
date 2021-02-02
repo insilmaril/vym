@@ -10,50 +10,43 @@ extern QString vymInstanceName;
 extern QString vymVersion;
 extern Main *mainWindow;
 
-extern QList <Command*> vymCommands;
+extern QList<Command *> vymCommands;
 
-AdaptorVym::AdaptorVym(QObject *obj)
-         : QDBusAbstractAdaptor(obj)
+AdaptorVym::AdaptorVym(QObject *obj) : QDBusAbstractAdaptor(obj)
 {
-    setAutoRelaySignals (true);
+    setAutoRelaySignals(true);
 }
 
 QDBusVariant AdaptorVym::modelCount()
 {
-    return QDBusVariant (mainWindow->modelCount() );
+    return QDBusVariant(mainWindow->modelCount());
 }
 
-void AdaptorVym::gotoModel(const int &n)
-{
-    mainWindow->gotoWindow (n);
-}
+void AdaptorVym::gotoModel(const int &n) { mainWindow->gotoWindow(n); }
 
 QDBusVariant AdaptorVym::getInstanceName()
 {
-    return QDBusVariant (vymInstanceName);
+    return QDBusVariant(vymInstanceName);
 }
 
-QDBusVariant AdaptorVym::getVersion()
-{
-    return QDBusVariant (vymVersion);
-}
+QDBusVariant AdaptorVym::getVersion() { return QDBusVariant(vymVersion); }
 
 QDBusVariant AdaptorVym::execute(const QString &s)
 {
-    return QDBusVariant (mainWindow->runScript( s ) );
+    return QDBusVariant(mainWindow->runScript(s));
 }
 
-QDBusVariant AdaptorVym::listCommands ()
+QDBusVariant AdaptorVym::listCommands()
 {
     QStringList list;
 
-    foreach(Command *command, vymCommands)
+    foreach (Command *command, vymCommands)
         list << command->getName();
 
-    return QDBusVariant (list.join(",") );
+    return QDBusVariant(list.join(","));
 }
 
-QDBusVariant AdaptorVym::currentMapIndex ()
+QDBusVariant AdaptorVym::currentMapIndex()
 {
-    return QDBusVariant (mainWindow->currentMapIndex() );
+    return QDBusVariant(mainWindow->currentMapIndex());
 }

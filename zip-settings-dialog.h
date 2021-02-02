@@ -9,7 +9,6 @@ class ZipSettingsDialog : public QDialog {
   public:
     ZipSettingsDialog(QWidget *parent = 0);
 
-
   public slots:
     void zipToolPathChanged();
     void unzipToolPathChanged();
@@ -23,4 +22,4 @@ class ZipSettingsDialog : public QDialog {
     void updateCheckResults();
 };
 
-#endif 
+#endif

@@ -9,12 +9,11 @@
 class FindResultItem;
 class TreeItem;
 
-class FindResultModel : public QAbstractItemModel
-{
+class FindResultModel : public QAbstractItemModel {
     Q_OBJECT
 
-public:
-    FindResultModel( QObject *parent = 0);
+  public:
+    FindResultModel(QObject *parent = 0);
     ~FindResultModel();
     void clear();
 
@@ -22,7 +21,7 @@ public:
     QVariant headerData(int section, Qt::Orientation orientation,
                         int role = Qt::DisplayRole) const;
 
-    QModelIndex index (FindResultItem *fri);
+    QModelIndex index(FindResultItem *fri);
     QModelIndex index(int row, int column,
                       const QModelIndex &parent = QModelIndex()) const;
     QModelIndex parent(const QModelIndex &index) const;
@@ -45,19 +44,20 @@ public:
     bool removeRows(int position, int rows,
                     const QModelIndex &parent = QModelIndex());
 
-    FindResultItem* getItem(const QModelIndex &index) const;
+    FindResultItem *getItem(const QModelIndex &index) const;
 
-    FindResultItem* addItem (TreeItem *ti);
-    FindResultItem* addSubItem (FindResultItem *parent,const QString &s, TreeItem *pi, int i);
+    FindResultItem *addItem(TreeItem *ti);
+    FindResultItem *addSubItem(FindResultItem *parent, const QString &s,
+                               TreeItem *pi, int i);
 
-    void setSearchString( const QString &s);
+    void setSearchString(const QString &s);
     QString getSearchString();
-    void setSearchFlags( QTextDocument::FindFlags f);
+    void setSearchFlags(QTextDocument::FindFlags f);
     QTextDocument::FindFlags getSearchFlags();
     void setShowParentsLevel(uint i);
     uint getShowParentsLevel();
 
-private:
+  private:
     uint showParentsLevel;
 
     FindResultItem *rootItem;

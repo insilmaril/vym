@@ -19,7 +19,6 @@ class CredentialsDialog : public QDialog {
 
   private:
     Ui::CredentialsDialog ui;
-
 };
 
 #endif // CREDENTIALS_H

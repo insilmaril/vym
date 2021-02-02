@@ -3,19 +3,18 @@
 
 extern bool debug;
 
-class VymLock
-{
-public:
-    enum LockState {undefined, lockedByMyself, lockedByOther, notWritable};
+class VymLock {
+  public:
+    enum LockState { undefined, lockedByMyself, lockedByOther, notWritable };
     VymLock();
-    VymLock( const QString &fn );
+    VymLock(const QString &fn);
     ~VymLock();
     void init();
     bool tryLock();
     LockState getState();
     bool removeLock();
     bool releaseLock();
-    bool rename( const QString &newMapPath);
+    bool rename(const QString &newMapPath);
     void setAuthor(const QString &s);
     QString getAuthor();
     void setHost(const QString &s);
@@ -23,7 +22,7 @@ public:
     void setMapPath(const QString &s);
     QString getMapPath();
 
-private:
+  private:
     QWidget *parent;
     QString author;
     QString host;

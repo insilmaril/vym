@@ -2,21 +2,16 @@
 
 #include <QDebug>
 
-#include <qregexp.h>
-#include "settings.h"
 #include "file.h"
+#include "settings.h"
+#include <qregexp.h>
 
 /////////////////////////////////////////////////////////////////
 // SimpleSettings
 /////////////////////////////////////////////////////////////////
-SimpleSettings::SimpleSettings()
-{
-    clear();	     
-}
+SimpleSettings::SimpleSettings() { clear(); }
 
-SimpleSettings::~SimpleSettings()
-{
-}
+SimpleSettings::~SimpleSettings() {}
 
 void SimpleSettings::clear()
 {
@@ -24,43 +19,40 @@ void SimpleSettings::clear()
     valuelist.clear();
 }
 
-bool SimpleSettings::readSettings (const QString &path)
+bool SimpleSettings::readSettings(const QString &path)
 {
     QString s;
-    if (!loadStringFromDisk(path,s)) 
-    {
-	qWarning ()<<"SimpleSettings::readSettings() Couldn't read "+path;
-	return false;
-    }	
+    if (!loadStringFromDisk(path, s)) {
+        qWarning() << "SimpleSettings::readSettings() Couldn't read " + path;
+        return false;
+    }
     QStringList lines;
-    lines=s.split (QRegExp("\n"));
+    lines = s.split(QRegExp("\n"));
     int i;
-    QStringList::Iterator it=lines.begin();
-    while (it !=lines.end() )
-    {
-	i=(*it).indexOf("=",0);
-	keylist.append((*it).left(i));
-	valuelist.append((*it).right((*it).length()-i-1));
-	it++;
+    QStringList::Iterator it = lines.begin();
+    while (it != lines.end()) {
+        i = (*it).indexOf("=", 0);
+        keylist.append((*it).left(i));
+        valuelist.append((*it).right((*it).length() - i - 1));
+        it++;
     }
     return true;
 }
 
-void SimpleSettings::writeSettings (const QString &path)
+void SimpleSettings::writeSettings(const QString &path)
 {
     QString s;
-    QStringList::Iterator itk=keylist.begin();
-    QStringList::Iterator itv=valuelist.begin();
+    QStringList::Iterator itk = keylist.begin();
+    QStringList::Iterator itv = valuelist.begin();
 
     // First search for value in settings saved in map
-    while (itk !=keylist.end() )
-    {
-	s+=*itk+"="+*itv+"\n";
-	itk++;
-	itv++;
+    while (itk != keylist.end()) {
+        s += *itk + "=" + *itv + "\n";
+        itk++;
+        itv++;
     }
-    if (!saveStringToDisk(path,s)) 
-	qWarning ()<<"SimpleSettings::writeSettings() Couldn't write "+path;
+    if (!saveStringToDisk(path, s))
+        qWarning() << "SimpleSettings::writeSettings() Couldn't write " + path;
 }
 
 /*
@@ -72,103 +64,90 @@ QString SimpleSettings::readValue (const QString &key)
     // First search for value in settings saved in map
     while (itk !=keylist.end() )
     {
-	if (*itk == key)
-	    return *itv;
-	itk++;
-	itv++;
+    if (*itk == key)
+        return *itv;
+    itk++;
+    itv++;
     }
     qWarning ("SimpleSettings::readValue()  Couldn't find key "+key);
     return "";
 }
 */
 
-QString SimpleSettings::value (const QString &key, const QString &def)
+QString SimpleSettings::value(const QString &key, const QString &def)
 {
-    QStringList::Iterator itk=keylist.begin();
-    QStringList::Iterator itv=valuelist.begin();
+    QStringList::Iterator itk = keylist.begin();
+    QStringList::Iterator itv = valuelist.begin();
 
     // First search for value in settings saved in map
-    while (itk !=keylist.end() )
-    {
-	if (*itk == key)
-	    return *itv;
-	itk++;
-	itv++;
+    while (itk != keylist.end()) {
+        if (*itk == key)
+            return *itv;
+        itk++;
+        itv++;
     }
     return def;
 }
 
-int SimpleSettings::numValue (const QString &key, const int &def)
+int SimpleSettings::numValue(const QString &key, const int &def)
 {
-    QStringList::Iterator itk=keylist.begin();
-    QStringList::Iterator itv=valuelist.begin();
+    QStringList::Iterator itk = keylist.begin();
+    QStringList::Iterator itv = valuelist.begin();
 
     // First search for value in settings saved in map
-    while (itk !=keylist.end() )
-    {
-	if (*itk == key)
-	{
-	    bool ok;
-	    int i=(*itv).toInt(&ok,10);
-	    if (ok)
-		return i;
-	    else
-		return def;
-	}   
-	itk++;
-	itv++;
+    while (itk != keylist.end()) {
+        if (*itk == key) {
+            bool ok;
+            int i = (*itv).toInt(&ok, 10);
+            if (ok)
+                return i;
+            else
+                return def;
+        }
+        itk++;
+        itv++;
     }
     return def;
 }
 
-void SimpleSettings::setValue (const QString &key, const QString &value)
+void SimpleSettings::setValue(const QString &key, const QString &value)
 {
-    QStringList::Iterator itk=keylist.begin();
-    QStringList::Iterator itv=valuelist.begin();
+    QStringList::Iterator itk = keylist.begin();
+    QStringList::Iterator itv = valuelist.begin();
 
-    if (!key.isEmpty() )
-    {
-	// Search for existing Value first
-	while (itk !=keylist.end() )
-	{
-	    if (*itk == key)
-	    {
-		if (!value.isEmpty())
-		    *itv=value;
-		else
-		    *itv="";
-		*itv=value;
-		return;
-	    }
-	    itk++;
-	    itv++;
-	}
-	
-	// If no Value exists, append a new one
-	keylist.append (key);
-	valuelist.append (value);
+    if (!key.isEmpty()) {
+        // Search for existing Value first
+        while (itk != keylist.end()) {
+            if (*itk == key) {
+                if (!value.isEmpty())
+                    *itv = value;
+                else
+                    *itv = "";
+                *itv = value;
+                return;
+            }
+            itk++;
+            itv++;
+        }
+
+        // If no Value exists, append a new one
+        keylist.append(key);
+        valuelist.append(value);
     }
 }
-
-
 
 /////////////////////////////////////////////////////////////////
 // Settings
 /////////////////////////////////////////////////////////////////
-Settings::Settings()
+Settings::Settings() { clear(); }
+
+Settings::Settings(const QString &organization, const QString &application)
+    : QSettings(organization, application)
 {
-    clear();	     
+    clear();
 }
 
-Settings::Settings(const QString & organization, const QString & application )
-    :QSettings (organization, application)
-{
-    clear();	     
-}
-
-Settings::~Settings()
-{
-}
+Settings::~Settings() {}
 
 void Settings::clear()
 {
@@ -179,72 +158,66 @@ void Settings::clear()
 
 void Settings::clearLocal(const QString &fpath, const QString &key)
 {
-    int i=0;
-    while (i<pathlist.count() )
-    {
-	if (fpath == pathlist.at(i) && keylist.at(i).startsWith (key))
-	{
+    int i = 0;
+    while (i < pathlist.count()) {
+        if (fpath == pathlist.at(i) && keylist.at(i).startsWith(key)) {
             pathlist.removeAt(i);
             keylist.removeAt(i);
             valuelist.removeAt(i);
-	}   else
+        }
+        else
             i++;
     }
 }
 
-QVariant Settings::localValue ( const QString &fpath, const QString & key, QVariant def) 
+QVariant Settings::localValue(const QString &fpath, const QString &key,
+                              QVariant def)
 {
     // First search for value in settings saved in map
-    int i=0;
-    while (i<pathlist.count() )
-    {
+    int i = 0;
+    while (i < pathlist.count()) {
         if (pathlist.at(i) == fpath && keylist.at(i) == key)
-	    return valuelist.at(i);
+            return valuelist.at(i);
         i++;
     }
 
     // Fall back to global vym settings
-    return value (key,def);
-}   
+    return value(key, def);
+}
 
-void Settings::setLocalValue (const QString &fpath, const QString &key, QVariant value)
+void Settings::setLocalValue(const QString &fpath, const QString &key,
+                             QVariant value)
 {
-    if (!fpath.isEmpty() && !key.isEmpty() && !value.isNull() )
-    {
-	// Search for existing Value first
-        int i=0;
-	while (i<pathlist.count())
-	{
-            if (pathlist.at(i) == fpath && keylist.at(i) == key)
-	    {
-                valuelist[i]=value;
-		return;
-	    }
+    if (!fpath.isEmpty() && !key.isEmpty() && !value.isNull()) {
+        // Search for existing Value first
+        int i = 0;
+        while (i < pathlist.count()) {
+            if (pathlist.at(i) == fpath && keylist.at(i) == key) {
+                valuelist[i] = value;
+                return;
+            }
             i++;
-	}
-	
-	// If no Value exists, append a new one
-	pathlist.append (fpath);
-	keylist.append (key);
-	valuelist.append (value);   
+        }
+
+        // If no Value exists, append a new one
+        pathlist.append(fpath);
+        keylist.append(key);
+        valuelist.append(value);
     }
 }
 
-QString Settings::getDataXML (const QString &fpath)
+QString Settings::getDataXML(const QString &fpath)
 {
     QString s;
     int i = 0;
-    while (i < pathlist.count())
-    {
-	if (pathlist.at(i) == fpath)
-	    if (!valuelist.at(i).isNull())
-                s += indent() + valueElement (
-                    "setting",
-                    getCDATA( valuelist.at(i).toString() ),
-                    attribut ("key", keylist.at(i))
-		);
+    while (i < pathlist.count()) {
+        if (pathlist.at(i) == fpath)
+            if (!valuelist.at(i).isNull())
+                s += indent() +
+                     valueElement("setting",
+                                  getCDATA(valuelist.at(i).toString()),
+                                  attribut("key", keylist.at(i)));
         i++;
     }
     return s;
 }
-

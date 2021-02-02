@@ -13,21 +13,20 @@ class SlideItem;
 class TreeItem;
 class VymModel;
 
-class SlideModel : public QAbstractItemModel, XMLObj
-{
+class SlideModel : public QAbstractItemModel, XMLObj {
     Q_OBJECT
 
-public:
-    SlideModel( VymModel *vm);
+  public:
+    SlideModel(VymModel *vm);
     ~SlideModel();
     void clear();
-    
-    VymModel* getVymModel();
+
+    VymModel *getVymModel();
     QVariant data(const QModelIndex &index, int role) const;
     QVariant headerData(int section, Qt::Orientation orientation,
                         int role = Qt::DisplayRole) const;
 
-    QModelIndex index (SlideItem *fri);
+    QModelIndex index(SlideItem *fri);
     QModelIndex index(int row, int column,
                       const QModelIndex &parent = QModelIndex()) const;
     QModelIndex parent(const QModelIndex &index) const;
@@ -51,31 +50,32 @@ public:
     bool removeRows(int position, int rows,
                     const QModelIndex &parent = QModelIndex());
 
-    SlideItem* addSlide ( SlideItem *dst=NULL, int n=-1);
-    void deleteSlide (SlideItem *si);
-    bool relinkSlide (SlideItem *si, SlideItem *dst, int pos);
+    SlideItem *addSlide(SlideItem *dst = NULL, int n = -1);
+    void deleteSlide(SlideItem *si);
+    bool relinkSlide(SlideItem *si, SlideItem *dst, int pos);
 
-    SlideItem* getItem (const QModelIndex &index) const;
-    SlideItem* getSlide (int n); 
-    SlideItem* findSlideID (uint n);
-    QString saveToDir ();
+    SlideItem *getItem(const QModelIndex &index) const;
+    SlideItem *getSlide(int n);
+    SlideItem *findSlideID(uint n);
+    QString saveToDir();
 
-    void setSearchString( const QString &s);
+    void setSearchString(const QString &s);
     QString getSearchString();
-    void setSearchFlags( QTextDocument::FindFlags f);
+    void setSearchFlags(QTextDocument::FindFlags f);
     QTextDocument::FindFlags getSearchFlags();
 
-// Selection related
-public:
+    // Selection related
+  public:
     void setSelectionModel(QItemSelectionModel *);
-    QItemSelectionModel* getSelectionModel();
+    QItemSelectionModel *getSelectionModel();
     QModelIndex getSelectedIndex();
-    SlideItem* getSelectedItem();
-private:
-    QItemSelectionModel *selModel;
-    VymModel *vymModel;	// needed for saveToDir
+    SlideItem *getSelectedItem();
 
-private:
+  private:
+    QItemSelectionModel *selModel;
+    VymModel *vymModel; // needed for saveToDir
+
+  private:
     SlideItem *rootItem;
 
     QString searchString;

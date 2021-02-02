@@ -5,18 +5,16 @@
 #include <sys/time.h>
 
 extern "C" {
-pid_t getpid (void);
+pid_t getpid(void);
 }
 #else
 #include <windows.h>
 #define getpid GetCurrentProcessId
-#include <time.h>
 #include <direct.h>
+#include <time.h>
 #endif
 
-
-QString
-mkdtemp(QString tmpl)
+QString mkdtemp(QString tmpl)
 {
     static const char letters[] =
         "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -25,8 +23,7 @@ mkdtemp(QString tmpl)
 
     const unsigned int ATTEMPTS_MIN = (62 * 62 * 62);
 
-    if (tmpl.length() < 6 || !tmpl.endsWith("XXXXXX"))
-    {
+    if (tmpl.length() < 6 || !tmpl.endsWith("XXXXXX")) {
         return QString();
     }
 
@@ -35,8 +32,7 @@ mkdtemp(QString tmpl)
     value += (random_time_bits ^ getpid());
 
     unsigned int count;
-    for (count = 0; count < ATTEMPTS_MIN; value += 7777, ++count)
-    {
+    for (count = 0; count < ATTEMPTS_MIN; value += 7777, ++count) {
         uint64_t v = value;
         QString XXXXXX;
         XXXXXX.append(letters[v % 62]);
@@ -51,11 +47,11 @@ mkdtemp(QString tmpl)
         v /= 62;
         XXXXXX.append(letters[v % 62]);
 
-        tmpl.replace(tmpl.length()-6,6,XXXXXX);
+        tmpl.replace(tmpl.length() - 6, 6, XXXXXX);
         QDir dir;
         if (dir.exists(tmpl))
             continue;
-        if (dir.mkpath(tmpl)){
+        if (dir.mkpath(tmpl)) {
             return tmpl;
         }
     }

@@ -3,10 +3,9 @@
 
 #include "ui_branchpropeditor.h"
 
-#include <QDialog>
 #include <QCloseEvent>
+#include <QDialog>
 #include <QtGui>
-
 
 //#include "attributedelegate.h"
 #include "branchobj.h"
@@ -14,40 +13,39 @@
 class QAbstractItemModel;
 class VymModel;
 
-class BranchPropertyEditor:public QDialog
-{
+class BranchPropertyEditor : public QDialog {
     Q_OBJECT
-public:
-    BranchPropertyEditor (QWidget *parent=0);
-    ~BranchPropertyEditor ();
-    void setItem (TreeItem *);
-    void setModel (VymModel *);
+  public:
+    BranchPropertyEditor(QWidget *parent = 0);
+    ~BranchPropertyEditor();
+    void setItem(TreeItem *);
+    void setModel(VymModel *);
 
-private slots:
-    void frameTypeChanged (int);
-    void framePenColorClicked ();
-    void frameBrushColorClicked ();
+  private slots:
+    void frameTypeChanged(int);
+    void framePenColorClicked();
+    void frameBrushColorClicked();
     void framePaddingChanged(int);
     void frameBorderWidthChanged(int);
     void frameIncludeChildrenChanged(int);
-    void linkHideUnselectedChanged (int);
-    void incImgVerChanged (int);
-    void incImgHorChanged (int);
-    void childrenFreePositioningChanged (int);
-    void taskPriorityDeltaChanged (int);
-//  void addAttributeClicked();
-//  void deleteAttributeClicked();
+    void linkHideUnselectedChanged(int);
+    void incImgVerChanged(int);
+    void incImgHorChanged(int);
+    void childrenFreePositioningChanged(int);
+    void taskPriorityDeltaChanged(int);
+    //  void addAttributeClicked();
+    //  void deleteAttributeClicked();
 
-signals:
+  signals:
     void windowClosed();
-    
-protected:
-    void closeEvent( QCloseEvent* );
 
-private:
+  protected:
+    void closeEvent(QCloseEvent *);
+
+  private:
     void connectSignals();
     void disconnectSignals();
-    
+
     Ui::BranchPropertyEditor ui;
 
     BranchObj *branchObj;
@@ -57,9 +55,9 @@ private:
     QColor penColor;
     QColor brushColor;
 
-//  QAbstractItemModel *attributeModel;
+    //  QAbstractItemModel *attributeModel;
 
-//  AttributeDelegate delegate;
+    //  AttributeDelegate delegate;
 };
 
-#endif // 
+#endif //

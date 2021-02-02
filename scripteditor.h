@@ -1,29 +1,29 @@
 #ifndef SCRIPTEDITOR_H
 #define SCRIPTEDITOR_H
 
-#include "ui_scripteditor.h"
 #include "codeeditor.h"
 #include "highlighter.h"
+#include "ui_scripteditor.h"
 
 class VymModel;
 
-class ScriptEditor:public QWidget
-{
+class ScriptEditor : public QWidget {
     Q_OBJECT
 
-public:
-    enum Mode {Slide,File};
-private:
+  public:
+    enum Mode { Slide, File };
+
+  private:
     Mode mode;
     uint vymModelID;
     uint slideID;
 
-public:
-    ScriptEditor (QWidget *parent = 0);
+  public:
+    ScriptEditor(QWidget *parent = 0);
     QString getScriptFile();
     void setSlideScript(uint vymModelID, uint slideID, const QString &);
 
-public slots:
+  public slots:
     void runMacro();
     void runSlide();
     void runScript();
@@ -34,10 +34,10 @@ public slots:
     void saveScript();
     void saveScriptAs();
 
-signals:
-    void runScript (QString);
-    
-private:
+  signals:
+    void runScript(QString);
+
+  private:
     Ui::ScriptEditor ui;
     CodeEditor *slideEditor;
     CodeEditor *macroEditor;
@@ -48,5 +48,4 @@ private:
     Highlighter *highlighterFile;
 };
 
-
-#endif 
+#endif

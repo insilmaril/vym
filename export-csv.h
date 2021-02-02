@@ -3,9 +3,8 @@
 
 #include "export-base.h"
 
-class ExportCSV:public ExportBase
-{
-public:
+class ExportCSV : public ExportBase {
+  public:
     ExportCSV();
     void doExport();
 };

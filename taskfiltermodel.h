@@ -3,18 +3,19 @@
 
 #include <QSortFilterProxyModel>
 
-class TaskFilterModel:public QSortFilterProxyModel
-{
-public:
-    void setFilter (bool b);
-    void setFilterNew (bool b);
-    void setMapFilter (const QString &s);
-    void setFilterFlags1 (bool b);
-    void setFilterFlags2 (bool b);
-    void setFilterFlags3 (bool b);
-protected:    
+class TaskFilterModel : public QSortFilterProxyModel {
+  public:
+    void setFilter(bool b);
+    void setFilterNew(bool b);
+    void setMapFilter(const QString &s);
+    void setFilterFlags1(bool b);
+    void setFilterFlags2(bool b);
+    void setFilterFlags3(bool b);
+
+  protected:
     bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const;
-private:
+
+  private:
     bool useFilter;
     QString mapFilter;
     bool filterNew;

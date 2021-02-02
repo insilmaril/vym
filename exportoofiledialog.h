@@ -8,30 +8,29 @@
 
 /*! \brief Dialog to select output file and format for Open Office documents
 
-This is an overloaded QFileDialog, which allows to select templates by setting a type.
+This is an overloaded QFileDialog, which allows to select templates by setting a
+type.
 */
 
-class ExportOOFileDialog:public QFileDialog
-{
+class ExportOOFileDialog : public QFileDialog {
     Q_OBJECT
-public:
+  public:
     ExportOOFileDialog();
 
-    ExportOOFileDialog (QWidget * parent , const  QString &caption=QString());
+    ExportOOFileDialog(QWidget *parent, const QString &caption = QString());
     bool foundConfig();
     QString selectedConfig();
     void show();
-     
-private slots:
-    void  newConfigPath (const QString&f);
 
-private:
+  private slots:
+    void newConfigPath(const QString &f);
+
+  private:
     void init();
     void addFilter(const QString &);
-    void scanExportConfigs(QDir );
+    void scanExportConfigs(QDir);
     QStringList configPaths;
     QStringList filters;
     QString lastFilter;
-    
 };
 #endif

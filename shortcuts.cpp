@@ -9,12 +9,9 @@ using namespace std;
 /////////////////////////////////////////////////////////////////
 // KeySwitch
 /////////////////////////////////////////////////////////////////
-KeySwitch::KeySwitch (
-        const QString &kIdentifier,
-        const QString &kName,
-        const QString &kGroup,
-        const QString &kTag,
-        const QKeySequence &kseq)
+KeySwitch::KeySwitch(const QString &kIdentifier, const QString &kName,
+                     const QString &kGroup, const QString &kTag,
+                     const QKeySequence &kseq)
 {
     identifier = kIdentifier;
     name = kName;
@@ -26,45 +23,45 @@ KeySwitch::KeySwitch (
 /////////////////////////////////////////////////////////////////
 // Switchboard
 /////////////////////////////////////////////////////////////////
-Switchboard::Switchboard ()
-{
-}
+Switchboard::Switchboard() {}
 
-void Switchboard::addGroup( QString gIdentifier, QString gName)
+void Switchboard::addGroup(QString gIdentifier, QString gName)
 {
-    if (groups.contains(gIdentifier))
-    {
-        qDebug() << "Warning switchboard: Shortcut group " << gIdentifier << " already exists";
+    if (groups.contains(gIdentifier)) {
+        qDebug() << "Warning switchboard: Shortcut group " << gIdentifier
+                 << " already exists";
         return;
     }
-    groups.insert(gIdentifier, gName); 
+    groups.insert(gIdentifier, gName);
 }
 
-void Switchboard::addSwitch( QString identifier, QString scope, QAction *action, QString tag)
+void Switchboard::addSwitch(QString identifier, QString scope, QAction *action,
+                            QString tag)
 {
-    if (!switches.contains(identifier))
-    {
-        KeySwitch ksw(identifier, action->text(), scope, tag, action->shortcut());
+    if (!switches.contains(identifier)) {
+        KeySwitch ksw(identifier, action->text(), scope, tag,
+                      action->shortcut());
         switches.insert(scope, ksw);
-    } else
-        qDebug() << "Warning switchboard::addSwitch warning: Existing idenifier " << identifier;
+    }
+    else
+        qDebug()
+            << "Warning switchboard::addSwitch warning: Existing idenifier "
+            << identifier;
 }
 
-QString Switchboard::getASCII()  
+QString Switchboard::getASCII()
 {
     QString s;
     QString g;
-    foreach (g, switches.uniqueKeys())
-    {
-        s += "Scope " + g +":\n";
-        QList <KeySwitch> values=switches.values(g);
-        for (int i=0; i<values.size(); ++i)
-        {
-            QString desc=values.at(i).name;
-            QString   sc=values.at(i).keySequence.toString();
-            desc=desc.remove('&');
-            desc=desc.remove("...");
-            s += QString(" %1: %2\n").arg(sc,12).arg(desc);
+    foreach (g, switches.uniqueKeys()) {
+        s += "Scope " + g + ":\n";
+        QList<KeySwitch> values = switches.values(g);
+        for (int i = 0; i < values.size(); ++i) {
+            QString desc = values.at(i).name;
+            QString sc = values.at(i).keySequence.toString();
+            desc = desc.remove('&');
+            desc = desc.remove("...");
+            s += QString(" %1: %2\n").arg(sc, 12).arg(desc);
         }
         s += "\n";
     }
@@ -87,27 +84,23 @@ QString Switchboard::getASCII()
     return s;
 }
 
-void Switchboard::printASCII ()	
-{
-    cout <<qPrintable(getASCII() );
-}
+void Switchboard::printASCII() { cout << qPrintable(getASCII()); }
 
-void Switchboard::printLaTeX ()	
+void Switchboard::printLaTeX()
 {
     QString g;
-    foreach (g,actions.uniqueKeys())
-    {
-        cout <<"Group: "<<qPrintable(g)<<"\\\\ \\hline"<<endl;
-        QList <QAction*> values=actions.values(g);
-        for (int i=0;i<values.size();++i)
-            if (!values.at(i)->shortcut().toString().isEmpty())
-            {
-                QString desc=values.at(i)->text();
-                QString   sc=values.at(i)->shortcut().toString();
-                desc=desc.remove('&');
-                desc=desc.remove("...");
-                cout << qPrintable( QString(" %1& %2").arg(sc,12).arg(desc) )<<endl;
+    foreach (g, actions.uniqueKeys()) {
+        cout << "Group: " << qPrintable(g) << "\\\\ \\hline" << endl;
+        QList<QAction *> values = actions.values(g);
+        for (int i = 0; i < values.size(); ++i)
+            if (!values.at(i)->shortcut().toString().isEmpty()) {
+                QString desc = values.at(i)->text();
+                QString sc = values.at(i)->shortcut().toString();
+                desc = desc.remove('&');
+                desc = desc.remove("...");
+                cout << qPrintable(QString(" %1& %2").arg(sc, 12).arg(desc))
+                     << endl;
             }
-        cout <<endl;
+        cout << endl;
     }
 }

@@ -9,14 +9,13 @@
 /*! \brief Dialog to export a map as HTML document
 
 This is an overloaded QDialog with various settings needed to call
-convert the vym.xml to a HTML document. 
+convert the vym.xml to a HTML document.
 */
 
-class ExportConfluenceDialog:public QDialog
-{
+class ExportConfluenceDialog : public QDialog {
     Q_OBJECT
-public:
-    ExportConfluenceDialog(QWidget* parent = 0);
+  public:
+    ExportConfluenceDialog(QWidget *parent = 0);
 
     virtual QString getPageURL();
     virtual QString getPageTitle();
@@ -24,28 +23,28 @@ public:
     virtual bool hasChanged();
     virtual bool createNewPage();
 
-public slots:
+  public slots:
     virtual void readSettings();
-    virtual void setPageURL(const QString&);
-    virtual void setPageTitle(const QString&);
+    virtual void setPageURL(const QString &);
+    virtual void setPageTitle(const QString &);
     virtual void pageButtonPressed(bool);
     virtual void pageURLChanged();
     virtual void pageTitleChanged();
-    virtual void imageCheckBoxPressed( bool b );
-    virtual void includeImagesCheckBoxPressed( bool b );
-    virtual void TOCCheckBoxPressed( bool b );
-    virtual void numberingCheckBoxPressed( bool b );
-    virtual void taskFlagsCheckBoxPressed( bool b );
-    virtual void userFlagsCheckBoxPressed( bool b );
-    virtual void textcolorCheckBoxPressed( bool b );
-    virtual void saveSettingsInMapCheckBoxPressed( bool b );
-    virtual void warningsCheckBoxPressed( bool b );
-    virtual void outputCheckBoxPressed( bool b );
-    virtual void saveSettings ();
-    virtual void setFilePath( const QString & s );
-    virtual void setMapName( const QString & s );
+    virtual void imageCheckBoxPressed(bool b);
+    virtual void includeImagesCheckBoxPressed(bool b);
+    virtual void TOCCheckBoxPressed(bool b);
+    virtual void numberingCheckBoxPressed(bool b);
+    virtual void taskFlagsCheckBoxPressed(bool b);
+    virtual void userFlagsCheckBoxPressed(bool b);
+    virtual void textcolorCheckBoxPressed(bool b);
+    virtual void saveSettingsInMapCheckBoxPressed(bool b);
+    virtual void warningsCheckBoxPressed(bool b);
+    virtual void outputCheckBoxPressed(bool b);
+    virtual void saveSettings();
+    virtual void setFilePath(const QString &s);
+    virtual void setMapName(const QString &s);
 
-public:
+  public:
     bool includeMapImage;
     bool includeImages;
     bool useTOC;
@@ -54,7 +53,8 @@ public:
     bool useUserFlags;
     bool useTextColor;
     bool css_copy;
-protected:
+
+  protected:
     QButtonGroup *buttonGroup;
     QString css_src;
     QString css_dst;
@@ -67,10 +67,9 @@ protected:
     QString mapname;
     bool saveSettingsInMap;
 
-private:
+  private:
     Ui::ExportConfluenceDialog ui;
     void init();
-
 };
 
 #endif // ExportConfluenceDialog_H

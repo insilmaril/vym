@@ -31,20 +31,18 @@
 
 class QTextDocument;
 
-class Highlighter : public QSyntaxHighlighter
-{
+class Highlighter : public QSyntaxHighlighter {
     Q_OBJECT
 
-public:
+  public:
     Highlighter(QTextDocument *parent = 0);
-    void addKeywords (const QStringList &sl);
+    void addKeywords(const QStringList &sl);
 
-protected:
+  protected:
     void highlightBlock(const QString &text);
 
-private:
-    struct HighlightingRule
-    {
+  private:
+    struct HighlightingRule {
         QRegExp pattern;
         QTextCharFormat format;
     };

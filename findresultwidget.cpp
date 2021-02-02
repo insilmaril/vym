@@ -1,7 +1,7 @@
 #include "findresultwidget.h"
 
-#include <QVBoxLayout>
 #include <QTreeView>
+#include <QVBoxLayout>
 
 #include "findresultitem.h"
 #include "findresultmodel.h"
@@ -10,76 +10,72 @@
 FindResultWidget::FindResultWidget(QWidget *)
 {
     // Create results model
-    resultsModel=new FindResultModel;
+    resultsModel = new FindResultModel;
 
     // Create TreeView
-    view = new QTreeView (this);
-    view->setModel (resultsModel);
+    view = new QTreeView(this);
+    view->setModel(resultsModel);
 
     // Create FindWidget
-    findWidget = new FindWidget (this);
-    connect (
-	findWidget, SIGNAL (nextButtonPressed (QString, bool) ),
-	this, SLOT (nextButtonPressed (QString, bool) ) );
+    findWidget = new FindWidget(this);
+    connect(findWidget, SIGNAL(nextButtonPressed(QString, bool)), this,
+            SLOT(nextButtonPressed(QString, bool)));
 
-
-    QVBoxLayout* mainLayout = new QVBoxLayout;
+    QVBoxLayout *mainLayout = new QVBoxLayout;
 
     mainLayout->addWidget(view);
     mainLayout->addWidget(findWidget);
 
-    setLayout (mainLayout);
+    setLayout(mainLayout);
 
     // Selection
-    connect (view->selectionModel(),SIGNAL (selectionChanged (QItemSelection,QItemSelection)),
-	this, SLOT (updateSelection (QItemSelection,QItemSelection)));
+    connect(view->selectionModel(),
+            SIGNAL(selectionChanged(QItemSelection, QItemSelection)), this,
+            SLOT(updateSelection(QItemSelection, QItemSelection)));
 
-    connect (resultsModel, SIGNAL(layoutChanged() ), view, SLOT (expandAll() ));
+    connect(resultsModel, SIGNAL(layoutChanged()), view, SLOT(expandAll()));
 }
 
-void FindResultWidget::addItem (TreeItem *ti)
+void FindResultWidget::addItem(TreeItem *ti)
 {
-    if (ti)
-    {
-	QModelIndex index = view->selectionModel()->currentIndex();
-	//QAbstractItemModel *resultsModel = view->model();
-	
-	if (!resultsModel->insertRow(index.row()+1, index.parent()))
-	    return;
+    if (ti) {
+        QModelIndex index = view->selectionModel()->currentIndex();
+        // QAbstractItemModel *resultsModel = view->model();
 
-	for (int column = 0; column < resultsModel->columnCount(index.parent()); ++column) {
-	    QModelIndex child = resultsModel->index(index.row()+1, column, index.parent());
-        resultsModel->setData(child, QVariant(ti->getHeadingPlain()), Qt::EditRole);
-	    resultsModel->getItem(child)->setOriginal (ti);
-	}
+        if (!resultsModel->insertRow(index.row() + 1, index.parent()))
+            return;
+
+        for (int column = 0; column < resultsModel->columnCount(index.parent());
+             ++column) {
+            QModelIndex child =
+                resultsModel->index(index.row() + 1, column, index.parent());
+            resultsModel->setData(child, QVariant(ti->getHeadingPlain()),
+                                  Qt::EditRole);
+            resultsModel->getItem(child)->setOriginal(ti);
+        }
     }
 }
 
-void FindResultWidget::addItem (const QString &s)
+void FindResultWidget::addItem(const QString &s)
 {
-    if (!s.isEmpty())
-    {
-	QModelIndex index = view->selectionModel()->currentIndex();
-	
-	if (!resultsModel->insertRow(index.row()+1, index.parent()))
-	    return;
+    if (!s.isEmpty()) {
+        QModelIndex index = view->selectionModel()->currentIndex();
 
-	for (int column = 0; column < resultsModel->columnCount(index.parent()); ++column) {
-	    QModelIndex child = resultsModel->index(index.row()+1, column, index.parent());
-	    resultsModel->setData(child, QVariant(s), Qt::EditRole);
-	}
+        if (!resultsModel->insertRow(index.row() + 1, index.parent()))
+            return;
+
+        for (int column = 0; column < resultsModel->columnCount(index.parent());
+             ++column) {
+            QModelIndex child =
+                resultsModel->index(index.row() + 1, column, index.parent());
+            resultsModel->setData(child, QVariant(s), Qt::EditRole);
+        }
     }
 }
 
-QString FindResultWidget::getFindText()
-{
-    return findWidget->getFindText();
-}
+QString FindResultWidget::getFindText() { return findWidget->getFindText(); }
 
-FindResultModel* FindResultWidget::getResultModel()
-{
-    return resultsModel;
-}
+FindResultModel *FindResultWidget::getResultModel() { return resultsModel; }
 
 void FindResultWidget::popup()
 {
@@ -88,38 +84,32 @@ void FindResultWidget::popup()
     findWidget->setFocus();
 }
 
-void FindResultWidget::cancelPressed()
-{
-    emit (hideFindResultWidget() );
-}
+void FindResultWidget::cancelPressed() { emit(hideFindResultWidget()); }
 
 void FindResultWidget::nextButtonPressed(QString s, bool searchNotesFlag)
 {
-    emit (findPressed(s, searchNotesFlag) );
+    emit(findPressed(s, searchNotesFlag));
 }
 
-void FindResultWidget::updateSelection(QItemSelection newsel,QItemSelection)
+void FindResultWidget::updateSelection(QItemSelection newsel, QItemSelection)
 {
     QModelIndex ix;
-    foreach (ix,newsel.indexes() )
-    {
-	FindResultItem *fri= static_cast<FindResultItem*>(ix.internalPointer());
-	if (fri->getOrgModel() && fri->getOriginalID()>0)
-	{
-	    TreeItem *ti=fri->getOrgModel()->findID(fri->getOriginalID() );
-	    if (ti)
-	    {
-		fri->getOrgModel()->select (ti);
-		int i=fri->getOriginalIndex();
-		if (i>=0) emit (noteSelected (resultsModel->getSearchString(),i));
-	    }	
-	}
+    foreach (ix, newsel.indexes()) {
+        FindResultItem *fri =
+            static_cast<FindResultItem *>(ix.internalPointer());
+        if (fri->getOrgModel() && fri->getOriginalID() > 0) {
+            TreeItem *ti = fri->getOrgModel()->findID(fri->getOriginalID());
+            if (ti) {
+                fri->getOrgModel()->select(ti);
+                int i = fri->getOriginalIndex();
+                if (i >= 0)
+                    emit(noteSelected(resultsModel->getSearchString(), i));
+            }
+        }
     }
 }
 
-void FindResultWidget::setStatus (FindWidget::Status st)
+void FindResultWidget::setStatus(FindWidget::Status st)
 {
-    findWidget->setStatus (st);
+    findWidget->setStatus(st);
 }
-
-

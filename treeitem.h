@@ -2,8 +2,8 @@
 #define TREEITEM_H
 
 #include <QColor>
-#include <QUuid>
 #include <QList>
+#include <QUuid>
 #include <QVariant>
 
 #include "flagrow.h"
@@ -22,29 +22,28 @@ class VymModel;
 class XLinkItem;
 class XLinkObj;
 
-class TreeItem:public XMLObj
-{
-public:
-    enum Type {Undefined,MapCenter,Branch,Image,Attribute,XLink};
-    enum HideTmpMode {HideNone, HideExport};
+class TreeItem : public XMLObj {
+  public:
+    enum Type { Undefined, MapCenter, Branch, Image, Attribute, XLink };
+    enum HideTmpMode { HideNone, HideExport };
 
     TreeItem();
     TreeItem(const QList<QVariant> &data, TreeItem *parent = 0);
     virtual ~TreeItem();
     void init();
-    virtual void clear()=0;
+    virtual void clear() = 0;
 
     // General housekeeping
-    virtual void setModel (VymModel *m);
-    virtual VymModel* getModel();
-
+    virtual void setModel(VymModel *m);
+    virtual VymModel *getModel();
 
     /*! Return number of item, as it would be after it would have been appended.
-	This is used to notify view about layout changes before model is modified. */
-    virtual int getRowNumAppend (TreeItem *child);
+    This is used to notify view about layout changes before model is modified.
+  */
+    virtual int getRowNumAppend(TreeItem *child);
 
-    virtual void appendChild (TreeItem *child);
-    virtual void removeChild (int row);
+    virtual void appendChild(TreeItem *child);
+    virtual void removeChild(int row);
 
     virtual TreeItem *child(int row);
     virtual int childCount() const;
@@ -56,161 +55,174 @@ public:
     virtual int attributeCount() const;
 
     virtual int row() const;
-    virtual int depth() ;
+    virtual int depth();
     virtual TreeItem *parent();
-    virtual bool isChildOf (TreeItem *ti);
+    virtual bool isChildOf(TreeItem *ti);
 
-    /*! Return number of item in parent by type, 
-	e.g. first branch has number 0           */
-    virtual int childNum();		//! Return number of item in list of all children
-    virtual int num();			//! Return number of item by type
-    virtual int num (TreeItem *item);	//! Return number of item by type
+    /*! Return number of item in parent by type,
+    e.g. first branch has number 0           */
+    virtual int childNum(); //! Return number of item in list of all children
+    virtual int num();      //! Return number of item by type
+    virtual int num(TreeItem *item); //! Return number of item by type
 
-protected:
+  protected:
     Type type;
-public:	
-    virtual void setType (const Type t);
-    virtual Type getType ();
+
+  public:
+    virtual void setType(const Type t);
+    virtual Type getType();
     virtual bool isBranchLikeType() const;
-    virtual QString getTypeName ();
+    virtual QString getTypeName();
 
-// Accessing data
-    virtual QVariant data (int column) const;
+    // Accessing data
+    virtual QVariant data(int column) const;
 
-
-protected:
+  protected:
     Heading heading;
     QColor backgroundColor;
-public:	
-    virtual void setHeading (const VymText &vt);
-    virtual void setHeadingPlainText (const QString &s);
+
+  public:
+    virtual void setHeading(const VymText &vt);
+    virtual void setHeadingPlainText(const QString &s);
     virtual Heading getHeading() const;
     virtual QString getHeadingText();
-    virtual std::string getHeadingStd() const;	//! convenience function used for debugging
-    virtual QString getHeadingPlain() const;	//! Some views or methods can't cope with RichText
-    virtual QString getHeadingPlainWithParents(uint numberOfParents); //! Show also some of the parents
+    virtual std::string
+    getHeadingStd() const; //! convenience function used for debugging
+    virtual QString
+    getHeadingPlain() const; //! Some views or methods can't cope with RichText
+    virtual QString getHeadingPlainWithParents(
+        uint numberOfParents); //! Show also some of the parents
     virtual QString getHeadingDepth();
-    virtual void setHeadingColor(QColor color);	//! Set color of heading. In BranchItem overloaded to update QGraphicsView
-    virtual QColor getHeadingColor();		//! Returns color of heading
-    virtual void setBackgroundColor(QColor color);//! Set color of frame brush, if LMO exists for item
-    virtual QColor getBackgroundColor();	//! Returns color of frame brush, if LMO exists for item
+    virtual void
+    setHeadingColor(QColor color);    //! Set color of heading. In BranchItem
+                                      //! overloaded to update QGraphicsView
+    virtual QColor getHeadingColor(); //! Returns color of heading
+    virtual void setBackgroundColor(
+        QColor color); //! Set color of frame brush, if LMO exists for item
+    virtual QColor getBackgroundColor(); //! Returns color of frame brush, if
+                                         //! LMO exists for item
 
-
-protected:
+  protected:
     QString url;
-public:
-    void setURL (const QString &url);		//! Set URL
-    QString getURL ();				//! Get URL
 
+  public:
+    void setURL(const QString &url); //! Set URL
+    QString getURL();                //! Get URL
 
-protected:
+  protected:
     QString vymLink;
-public:
-    void setVymLink (const QString &url);	    //! Set URL
-    QString getVymLink ();			    //! Get URL
 
-protected:
+  public:
+    void setVymLink(const QString &url); //! Set URL
+    QString getVymLink();                //! Get URL
+
+  protected:
     bool target;
-public:    
-    void toggleTarget();			//! Toggle target status
-    bool isTarget();				//! Returns true if item is is a target
 
-protected:
+  public:
+    void toggleTarget(); //! Toggle target status
+    bool isTarget();     //! Returns true if item is is a target
+
+  protected:
     VymNote note;
-public:	
+
+  public:
     bool isNoteEmpty();
     virtual bool clearNote();
     virtual bool hasEmptyNote();
-    virtual bool setNote(const VymText &vt); //FIXME-3 setNote is called for every select or so???
+    virtual bool setNote(const VymText &vt); // FIXME-3 setNote is called for
+                                             // every select or so???
     virtual bool setNote(const VymNote &vn);
 
     virtual VymNote getNote();
-    virtual QString getNoteASCII(const QString &indent, const int &width); // returns note  (ASCII)
-    virtual QString getNoteASCII();	    // returns note (ASCII)
+    virtual QString getNoteASCII(const QString &indent,
+                                 const int &width); // returns note  (ASCII)
+    virtual QString getNoteASCII();                 // returns note (ASCII)
 
-protected:
+  protected:
     FlagRow standardFlags;
     FlagRow systemFlags;
     FlagRow userFlags;
 
-public:	
+  public:
     virtual void activateStandardFlagByName(const QString &flag);
     virtual void deactivateStandardFlagByName(const QString &flag);
     virtual void deactivateAllStandardFlags();
 
-    Flag* findFlagByUid(const QUuid &uid);
+    Flag *findFlagByUid(const QUuid &uid);
 
-    /*! \brief Toggle a Flag 
-	If master is not NULL,, only one Flag from FlagRow master may 
-	be active simultanously, the others get deactivated.
-    */	
-    //virtual void toggleFlag(const QString &name, bool useGroups = true);
-    Flag* toggleFlagByUid(const QUuid &uid, bool useGroups = true);
-    virtual void toggleSystemFlag  (const QString &flag, FlagRow *master = NULL);
-    virtual bool hasActiveFlag (const QString &flag);
-    virtual bool hasActiveSystemFlag   (const QString &flag);
-    QList <QUuid>  activeFlagUids();
+    /*! \brief Toggle a Flag
+    If master is not NULL,, only one Flag from FlagRow master may
+    be active simultanously, the others get deactivated.
+    */
+    // virtual void toggleFlag(const QString &name, bool useGroups = true);
+    Flag *toggleFlagByUid(const QUuid &uid, bool useGroups = true);
+    virtual void toggleSystemFlag(const QString &flag, FlagRow *master = NULL);
+    virtual bool hasActiveFlag(const QString &flag);
+    virtual bool hasActiveSystemFlag(const QString &flag);
+    QList<QUuid> activeFlagUids();
 
-    virtual QList <QUuid> activeSystemFlagUids();
+    virtual QList<QUuid> activeSystemFlagUids();
 
     virtual bool canMoveDown();
     virtual bool canMoveUp();
 
-protected:
+  protected:
     ulong itemID;
     QUuid uuid;
 
-public:
+  public:
     virtual ulong getID();
-    virtual void setUuid (const QString &id);
+    virtual void setUuid(const QString &id);
     virtual QUuid getUuid();
 
     // Navigation and selection
-    virtual TreeItem* getChildNum(const int &n);
-    virtual BranchItem* getFirstBranch();
-    virtual BranchItem* getLastBranch();
-    virtual ImageItem* getFirstImage();
-    virtual ImageItem* getLastImage();
+    virtual TreeItem *getChildNum(const int &n);
+    virtual BranchItem *getFirstBranch();
+    virtual BranchItem *getLastBranch();
+    virtual ImageItem *getFirstImage();
+    virtual ImageItem *getLastImage();
 
     /*! Get next branch after current branch. Return NULL if there is no
-	next branch */
-    virtual BranchItem* getNextBranch(BranchItem* currentBranch);
+    next branch */
+    virtual BranchItem *getNextBranch(BranchItem *currentBranch);
 
-    virtual BranchItem* getBranchNum(const int &n);
-    virtual BranchObj* getBranchObjNum(const int &n);
+    virtual BranchItem *getBranchNum(const int &n);
+    virtual BranchObj *getBranchObjNum(const int &n);
 
-    virtual ImageItem* getImageNum(const int &n);
-    virtual FloatImageObj* getImageObjNum(const int &n);
+    virtual ImageItem *getImageNum(const int &n);
+    virtual FloatImageObj *getImageObjNum(const int &n);
 
-    virtual AttributeItem* getAttributeNum(const int &n);
+    virtual AttributeItem *getAttributeNum(const int &n);
 
-    virtual XLinkItem* getXLinkItemNum(const int &n);
-    virtual XLinkObj* getXLinkObjNum(const int &n);
+    virtual XLinkItem *getXLinkItemNum(const int &n);
+    virtual XLinkObj *getXLinkObjNum(const int &n);
 
-protected:
-    bool hideExport;			    //! Hide this item in export
-    bool hidden;			    //! Hidden in export if true
-public:
-    virtual void setHideTmp (HideTmpMode);
-    virtual bool hasHiddenExportParent ();
-    virtual void setHideInExport(bool);	    // set export of object (and children)
+  protected:
+    bool hideExport; //! Hide this item in export
+    bool hidden;     //! Hidden in export if true
+  public:
+    virtual void setHideTmp(HideTmpMode);
+    virtual bool hasHiddenExportParent();
+    virtual void setHideInExport(bool); // set export of object (and children)
     virtual bool hideInExport();
-    virtual bool isHidden ();	    
-    virtual void updateVisibility();	    //! Sets visibility in LinkableMapObj, if existing
+    virtual bool isHidden();
+    virtual void
+    updateVisibility(); //! Sets visibility in LinkableMapObj, if existing
 
     virtual QString getGeneralAttr();
-    
-protected:
+
+  protected:
     VymModel *model;
 
-    QList<TreeItem*> childItems;
+    QList<TreeItem *> childItems;
     QList<QVariant> itemData;
     TreeItem *parentItem;
 
-    /*!  Set rootItem (does not change, needed for some quick checks 
-	 e.g. if some branch is mapCenter and isChildOf  */
+    /*!  Set rootItem (does not change, needed for some quick checks
+     e.g. if some branch is mapCenter and isChildOf  */
     TreeItem *rootItem;
- 
+
     int branchOffset;
     int branchCounter;
     int imageOffset;
