@@ -71,8 +71,8 @@ extern QDir tmpVymDir;
 extern NoteEditor *noteEditor;
 extern TaskEditor *taskEditor;
 extern ScriptEditor *scriptEditor;
-extern FlagRow *standardFlagsMaster;
-extern FlagRow *userFlagsMaster;
+extern FlagRowMaster *standardFlagsMaster;
+extern FlagRowMaster *userFlagsMaster;
 
 extern Options options;
 
@@ -261,7 +261,7 @@ void VymModel::resetUsedFlags()
 }
 
 QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix,
-                            FlagRow::WriteMode flagMode, const QPointF &offset,
+                            FlagRowMaster::WriteMode flagMode, const QPointF &offset,
                             TreeItem *saveSel)
 {
     // tmpdir	    temporary directory to which data will be written
@@ -369,7 +369,7 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix,
     QString flags;
 
     // Write images and definitions of of used user flags
-    if (flagMode != FlagRow::NoFlags) {
+    if (flagMode != FlagRowMaster::NoFlags) {
         // First find out, which flags are used
         // Definitions
         flags += userFlagsMaster->saveDef(flagMode);
@@ -770,9 +770,9 @@ File::ErrorCode VymModel::save(const SaveMode &savemode)
             // Use defined name for map within zipfile to avoid problems
             // with zip library and umlauts (see #98)
             saveFile =
-                saveToDir(fileDir, "", FlagRow::UsedFlags, QPointF(), NULL);
+                saveToDir(fileDir, "", FlagRowMaster::UsedFlags, QPointF(), NULL);
         else
-            saveFile = saveToDir(fileDir, mapName + "-", FlagRow::UsedFlags,
+            saveFile = saveToDir(fileDir, mapName + "-", FlagRowMaster::UsedFlags,
                                  QPointF(), NULL);
         mapChanged = false;
         mapUnsaved = false;
@@ -783,7 +783,7 @@ File::ErrorCode VymModel::save(const SaveMode &savemode)
         if (selectionType() == TreeItem::Image)
             saveImage();
         else
-            saveFile = saveToDir(fileDir, mapName + "-", FlagRow::UsedFlags,
+            saveFile = saveToDir(fileDir, mapName + "-", FlagRowMaster::UsedFlags,
                                  QPointF(), getSelectedBranch());
         // TODO take care of multiselections
     }
@@ -1535,7 +1535,7 @@ void VymModel::saveState(const SaveMode &savemode, const QString &undoSelection,
     // Save depending on how much needs to be saved
     QList<Link *> tmpLinks;
     if (saveSel)
-        dataXML = saveToDir(histDir, mapName + "-", FlagRow::NoFlags, QPointF(),
+        dataXML = saveToDir(histDir, mapName + "-", FlagRowMaster::NoFlags, QPointF(),
                             saveSel);
 
     if (savemode == PartOfMap) {
@@ -2644,7 +2644,7 @@ void VymModel::copy()
                      .arg(clipboardFile)
                      .arg(i);
             QString content = saveToDir(clipboardDir, clipboardFile,
-                                        FlagRow::NoFlags, QPointF(), ti);
+                                        FlagRowMaster::NoFlags, QPointF(), ti);
             if (!saveStringToDisk(fn, content))
                 qWarning() << "ME::saveStringToDisk failed: " << fn;
             else
@@ -2706,7 +2706,7 @@ void VymModel::cut()
                          .arg(clipboardFile)
                          .arg(i);
                 QString content = saveToDir(clipboardDir, clipboardFile,
-                                            FlagRow::NoFlags, QPointF(), ti);
+                                            FlagRowMaster::NoFlags, QPointF(), ti);
                 if (!saveStringToDisk(fn, content))
                     qWarning() << "ME::saveStringToDisk failed: " << fn;
                 else {
@@ -3413,7 +3413,7 @@ void VymModel::deleteSelection(bool copyToClipboard)
                              .arg(clipboardFile)
                              .arg(clipboardItemCount + 1);
                     QString content =
-                        saveToDir(clipboardDir, clipboardFile, FlagRow::NoFlags,
+                        saveToDir(clipboardDir, clipboardFile, FlagRowMaster::NoFlags,
                                   QPointF(), ti);
                     if (!saveStringToDisk(fn, content))
                         qWarning() << "ME::saveStringToDisk failed: " << fn;
@@ -3450,7 +3450,7 @@ void VymModel::deleteSelection(bool copyToClipboard)
                                      .arg(clipboardItemCount + 1);
                             QString content =
                                 saveToDir(clipboardDir, clipboardFile,
-                                          FlagRow::NoFlags, QPointF(), ti);
+                                          FlagRowMaster::NoFlags, QPointF(), ti);
                             if (!saveStringToDisk(fn, content))
                                 qWarning()
                                     << "ME::saveStringToDisk failed: " << fn;
@@ -4472,7 +4472,7 @@ void VymModel::exportXML(QString dpath, QString fpath, bool useDialog)
 
     // write to directory   //FIXME-3 check totalBBox here...
     QString saveFile =
-        saveToDir(dpath, mname + "-", FlagRow::NoFlags, offset, NULL);
+        saveToDir(dpath, mname + "-", FlagRowMaster::NoFlags, offset, NULL);
     QFile file;
 
     file.setFileName(fpath);

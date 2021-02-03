@@ -11,8 +11,8 @@ extern Main *mainWindow;
 extern QString vymVersion;
 extern QString vymHome;
 
-extern FlagRow *standardFlagsMaster;
-extern FlagRow *userFlagsMaster;
+extern FlagRowMaster *standardFlagsMaster;
+extern FlagRowMaster *userFlagsMaster;
 
 ExportHTML::ExportHTML() : ExportBase() { init(); }
 

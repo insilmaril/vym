@@ -5,49 +5,14 @@
 #include <QStringList>
 #include <QToolBar>
 
-#include "flag.h"
+#include "flagrowmaster.h"
 #include "xmlobj.h"
 
-/*! \brief A set of flags (Flag).
-
-   A toolbar can be created from the flags in this row.
-   The data needed for represention in a vym map
-   is stored in FlagRowObj.
- */
-
-class FlagRow : public XMLObj {
-    // FlagRowFactory
+class FlagRow 
+{
   public:
-    enum WriteMode { NoFlags, UsedFlags, AllFlags };
-    FlagRow();
-    ~FlagRow();
-    Flag *createFlag(const QString &path);
-    void createConfigureAction();
-    void addActionToToolbar(QAction *a);
-    Flag *findFlagByUid(const QUuid &uid);
-    Flag *findFlagByName(const QString &name);
-    void setEnabled(bool);
-    void resetUsedCounter();
-    QString saveDef(WriteMode mode);
-    void saveDataToDir(const QString &, WriteMode mode);
-    void setName(const QString &); // prefix for exporting flags to dir
-    QString getName();             // Used for debugging only
-    void setPrefix(const QString &prefix);
-    void setToolBar(QToolBar *tb);
-    void setMasterRow(FlagRow *row);
-    void updateToolBar(QList<QUuid> activeUids);
-
-  private:
-    QToolBar *toolbar;
-    QList<Flag *> flags;      //! Used in master row to define flags
-    QString rowName;          //! Name of this collection of flags
-    QString prefix;           //! Prefix for saving data: user/ or standard/
-    QAction *configureAction; //! Action to trigger loading new user flags
-
-    // FlagRow
-  public:
-    // FlagRow ();
-    //~FlagRow ();
+    FlagRow ();
+    ~FlagRow ();
     const QStringList activeFlagNames();
     const QList<QUuid> activeFlagUids();
     bool isActive(const QString &name);
@@ -66,9 +31,10 @@ class FlagRow : public XMLObj {
     bool deactivateGroup(const QString &);
     void deactivateAll();
     QString saveState();
+    void setMasterRow(FlagRowMaster *row);
 
   private:
-    FlagRow *masterRow;
+    FlagRowMaster *masterRow;
     QList<QUuid> activeUids; //! Used in treeitems: Lists all uids of currently
                              //! active flags
 };
