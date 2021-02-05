@@ -329,7 +329,6 @@ class Main : public QMainWindow {
 
     void updateActions();
     ModMode getModMode();
-    bool autoEditNewBranch();
     bool autoSelectNewBranch();
     QVariant runScript(const QString &);
     QObject *getCurrentModelWrapper();
@@ -570,7 +569,6 @@ class Main : public QMainWindow {
     QAction *actionViewToggleSmoothPixmapTransform;
     QAction *actionViewCenter;
 
-    QAction *actionSettingsAutoEditNewBranch;
     QAction *actionSettingsAutoSelectNewBranch;
     QAction *actionSettingsAutoSelectText;
     QAction *actionSettingsUseFlagGroups;

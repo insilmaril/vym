@@ -423,8 +423,6 @@ Main::~Main()
         }
         settings.setValue("/mapeditor/editmode/autoSelectText",
                           actionSettingsAutoSelectText->isChecked());
-        settings.setValue("/mapeditor/editmode/autoEditNewBranch",
-                          actionSettingsAutoEditNewBranch->isChecked());
         settings.setValue("/mapeditor/editmode/useFlagGroups",
                           actionSettingsUseFlagGroups->isChecked());
         settings.setValue("/export/useHideExport",
@@ -2921,13 +2919,6 @@ void Main::setupSettingsActions()
 
     settingsMenu->addSeparator();
 
-    a = new QAction(tr("Edit branch after adding it", "Settings action"), this);
-    a->setCheckable(true);
-    a->setChecked(
-        settings.value("/mapeditor/editmode/autoEditNewBranch", true).toBool());
-    settingsMenu->addAction(a);
-    actionSettingsAutoEditNewBranch = a;
-
     a = new QAction(tr("Select branch after adding it", "Settings action"),
                     this);
     a->setCheckable(true);
@@ -4939,17 +4930,14 @@ void Main::editNewBranch()
         if (!bi)
             return;
 
-        if (actionSettingsAutoEditNewBranch->isChecked() &&
-            !actionSettingsAutoSelectNewBranch->isChecked())
+        if (!actionSettingsAutoSelectNewBranch->isChecked())
             prevSelection = m->getSelectString();
         else
             prevSelection = QString();
 
-        if (actionSettingsAutoSelectNewBranch->isChecked() ||
-            actionSettingsAutoEditNewBranch->isChecked()) {
+        if (actionSettingsAutoSelectNewBranch->isChecked()) {
             m->select(bi);
-            if (actionSettingsAutoEditNewBranch->isChecked())
-                currentMapEditor()->editHeading();
+            currentMapEditor()->editHeading();
         }
     }
 }
@@ -4965,11 +4953,10 @@ void Main::editNewBranchBefore()
         else
             return;
 
-        if (actionSettingsAutoEditNewBranch->isChecked()) {
-            if (!actionSettingsAutoSelectNewBranch->isChecked())
-                prevSelection = m->getSelectString(bi);
-            currentMapEditor()->editHeading();
-        }
+        if (!actionSettingsAutoSelectNewBranch->isChecked())
+            prevSelection = m->getSelectString(bi);
+
+        currentMapEditor()->editHeading();
     }
 }
 
@@ -4986,11 +4973,10 @@ void Main::editNewBranchAbove()
             else
                 return;
 
-            if (actionSettingsAutoEditNewBranch->isChecked()) {
-                if (!actionSettingsAutoSelectNewBranch->isChecked())
-                    prevSelection = m->getSelectString(bi);
-                currentMapEditor()->editHeading();
-            }
+            if (!actionSettingsAutoSelectNewBranch->isChecked())
+                prevSelection = m->getSelectString(bi);
+
+            currentMapEditor()->editHeading();
         }
     }
 }
@@ -5008,11 +4994,10 @@ void Main::editNewBranchBelow()
             else
                 return;
 
-            if (actionSettingsAutoEditNewBranch->isChecked()) {
-                if (!actionSettingsAutoSelectNewBranch->isChecked())
-                    prevSelection = m->getSelectString(bi);
-                currentMapEditor()->editHeading();
-            }
+            if (!actionSettingsAutoSelectNewBranch->isChecked())
+                prevSelection = m->getSelectString(bi);
+
+            currentMapEditor()->editHeading();
         }
     }
 }
@@ -6262,11 +6247,6 @@ Main::ModMode Main::getModMode()
     if (actionModModeMoveView->isChecked())
         return ModModeMoveView;
     return ModModeUndefined;
-}
-
-bool Main::autoEditNewBranch()
-{
-    return actionSettingsAutoEditNewBranch->isChecked();
 }
 
 bool Main::autoSelectNewBranch()
