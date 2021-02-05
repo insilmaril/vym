@@ -7,163 +7,18 @@ extern bool debug;
 extern Main *mainWindow;
 
 /////////////////////////////////////////////////////////////////
-// FlagRowFactory
-/////////////////////////////////////////////////////////////////
-FlagRow::FlagRow()
-{
-    toolbar = NULL;
-    masterRow = NULL;
-    configureAction = NULL;
-    // qDebug()<< "Const FlagRow ()";
-}
-
-FlagRow::~FlagRow()
-{
-    // qDebug()<< "Destr FlagRow    toolbar=" << toolbar  << "   masterRow=" <<
-    // masterRow;
-}
-
-Flag *FlagRow::createFlag(const QString &path)
-{
-    Flag *flag = new Flag;
-    flag->load(path);
-    flags.append(flag);
-
-    return flag;
-}
-
-void FlagRow::createConfigureAction()
-{
-    if (!toolbar)
-        return;
-
-    QAction *a =
-        new QAction(QIcon(":/configure-plus.svg"), QString("add flag"));
-    a->setCheckable(false);
-    a->connect(a, SIGNAL(triggered()), mainWindow, SLOT(addUserFlag()));
-
-    toolbar->addAction(a);
-    configureAction = a;
-}
-
-void FlagRow::addActionToToolbar(QAction *a)
-{
-    if (!toolbar || !a)
-        return;
-
-    if (configureAction)
-        toolbar->insertAction(configureAction, a);
-    else
-        toolbar->addAction(a);
-}
-
-Flag *FlagRow::findFlagByUid(const QUuid &uid)
-{
-    // Must only be called for masterRow itself!
-    if (masterRow) {
-        qWarning() << "FlagRow::findFlagByUid called for !masterRow";
-        return NULL;
-    }
-
-    int i = 0;
-    while (i <= flags.size() - 1) {
-        if (flags.at(i)->getUuid() == uid)
-            return flags.at(i);
-        i++;
-    }
-    return NULL;
-}
-
-Flag *FlagRow::findFlagByName(const QString &name)
-{
-    // Must only be called for masterRow itself!
-    if (masterRow) {
-        qWarning() << "FlagRow::findFlagByName called for !masterRow";
-        return NULL;
-    }
-
-    int i = 0;
-    while (i <= flags.size() - 1) {
-        if (flags.at(i)->getName() == name)
-            return flags.at(i);
-        i++;
-    }
-    qDebug() << "FR::findFlagByName failed for name " << name;
-    return NULL;
-}
-
-void FlagRow::resetUsedCounter()
-{
-    for (int i = 0; i < flags.size(); ++i)
-        flags.at(i)->setUsed(false);
-}
-
-QString FlagRow::saveDef(WriteMode mode)
-{
-    // For the masterrow of userflags: Write definitions of flags
-
-    QString s = "\n";
-
-    for (int i = 0; i < flags.size(); ++i)
-        if ((mode == AllFlags) || (mode == UsedFlags && flags.at(i)->isUsed()))
-            s += flags.at(i)->getDefinition(prefix);
-
-    return s;
-}
-
-void FlagRow::saveDataToDir(const QString &tmpdir, WriteMode mode)
-{
-    // Save icons to dir, if verbose is set (xml export)
-    // and I am a master
-    // and this standardflag is really used somewhere.
-    // Userflags are written anyway (if master flagrow)
-
-    for (int i = 0; i < flags.size(); ++i)
-        if ((mode == AllFlags) || (mode == UsedFlags && flags.at(i)->isUsed()))
-            flags.at(i)->saveDataToDir(tmpdir);
-}
-
-void FlagRow::setName(const QString &n) { rowName = n; }
-
-void FlagRow::setPrefix(const QString &p) { prefix = p; }
-
-QString FlagRow::getName() { return rowName; }
-
-void FlagRow::setToolBar(QToolBar *tb) { toolbar = tb; }
-
-void FlagRow::setMasterRow(FlagRow *row) { masterRow = row; }
-
-void FlagRow::updateToolBar(QList<QUuid> activeUids)
-{
-    if (toolbar) {
-        for (int i = 0; i < flags.size(); ++i)
-            flags.at(i)->getAction()->setChecked(false);
-
-        for (int i = 0; i < flags.size(); ++i) {
-            int n = activeUids.indexOf(flags.at(i)->getUuid());
-            if (n >= 0)
-                flags.at(i)->getAction()->setChecked(true);
-        }
-    }
-}
-
-/////////////////////////////////////////////////////////////////
 // FlagRow
 /////////////////////////////////////////////////////////////////
-/*
 FlagRow::FlagRow()
 {
-    toolbar   = NULL;
-    masterRow = NULL;
     //qDebug()<< "Const FlagRow ()";
+    masterRow = NULL;
 }
 
 FlagRow::~FlagRow()
 {
-    //qDebug()<< "Destr FlagRow    toolbar=" << toolbar  << "   masterRow=" <<
-masterRow;
+    //qDebug()<< "Destr FlagRow   masterRow=" << masterRow;
 }
-*/
 
 const QStringList FlagRow::activeFlagNames() { return QStringList(); }
 
@@ -302,9 +157,6 @@ bool FlagRow::activate(const QUuid &uid)
 
 bool FlagRow::deactivate(const QString &name)
 {
-    foreach (Flag *f, flags)
-        qDebug() << "  " << f->getUuid() << f->getName();
-
     Flag *flag = masterRow->findFlagByName(name);
     return deactivate(flag->getUuid());
 }
@@ -340,11 +192,8 @@ bool FlagRow::deactivateGroup(const QString &gname)
 
 void FlagRow::deactivateAll()
 {
-    if (!toolbar)
-        activeUids.clear();
+    activeUids.clear();
 }
-
-void FlagRow::setEnabled(bool b) { toolbar->setEnabled(b); }
 
 QString FlagRow::saveState()
 {
@@ -365,3 +214,6 @@ QString FlagRow::saveState()
         }
     return s;
 }
+
+void FlagRow::setMasterRow(FlagRowMaster *row) { masterRow = row; }
+

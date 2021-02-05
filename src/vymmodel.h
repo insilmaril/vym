@@ -110,7 +110,7 @@ class VymModel : public TreeModel {
     back to Main, where saveToDir is called initially
     */
     QString saveToDir(const QString &tmpdir, const QString &prefix,
-                      FlagRow::WriteMode flagMode, const QPointF &offset,
+                      FlagRowMaster::WriteMode flagMode, const QPointF &offset,
                       TreeItem *saveSel);
 
     /*! Save all data in tree*/

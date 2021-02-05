@@ -72,9 +72,9 @@ Main *mainWindow; // used in BranchObj::select()
 FindWidget *findWidget;
 FindResultWidget *findResultWidget;
 
-FlagRow *systemFlagsMaster;
-FlagRow *standardFlagsMaster;
-FlagRow *userFlagsMaster;
+FlagRowMaster *systemFlagsMaster;
+FlagRowMaster *standardFlagsMaster;
+FlagRowMaster *userFlagsMaster;
 
 Macros macros;
 
@@ -407,14 +407,14 @@ int main(int argc, char *argv[])
     app.installTranslator(&vymTranslator);
 
     // Initializing the master rows of flags
-    systemFlagsMaster = new FlagRow;
+    systemFlagsMaster = new FlagRowMaster;
     systemFlagsMaster->setName("systemFlagsMaster");
 
-    standardFlagsMaster = new FlagRow;
+    standardFlagsMaster = new FlagRowMaster;
     standardFlagsMaster->setName("standardFlagsMaster");
     standardFlagsMaster->setPrefix("standard/");
 
-    userFlagsMaster = new FlagRow;
+    userFlagsMaster = new FlagRowMaster;
     userFlagsMaster->setName("userFlagsMaster");
     userFlagsMaster->setPrefix("user/");
 

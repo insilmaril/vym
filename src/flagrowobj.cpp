@@ -56,8 +56,8 @@ void FlagRowObj::setVisibility(bool v)
 }
 
 void FlagRowObj::updateActiveFlagObjs(const QList<QUuid> activeFlagUids,
-                                      FlagRow *masterRowMain,
-                                      FlagRow *masterRowOptional)
+                                      FlagRowMaster *masterRowMain,
+                                      FlagRowMaster *masterRowOptional)
 {
     bool changed = false;
 

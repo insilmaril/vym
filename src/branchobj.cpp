@@ -9,9 +9,9 @@
 #include "mapeditor.h"
 #include "misc.h"
 
-extern FlagRow *standardFlagsMaster;
-extern FlagRow *userFlagsMaster;
-extern FlagRow *systemFlagsMaster;
+extern FlagRowMaster *standardFlagsMaster;
+extern FlagRowMaster *userFlagsMaster;
+extern FlagRowMaster *systemFlagsMaster;
 extern bool debug;
 
 /////////////////////////////////////////////////////////////////

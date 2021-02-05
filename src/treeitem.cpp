@@ -13,9 +13,9 @@
 using namespace std;
 
 extern uint itemLastID;
-extern FlagRow *standardFlagsMaster;
-extern FlagRow *systemFlagsMaster;
-extern FlagRow *userFlagsMaster;
+extern FlagRowMaster *standardFlagsMaster;
+extern FlagRowMaster *systemFlagsMaster;
+extern FlagRowMaster *userFlagsMaster;
 
 extern QTextStream vout;
 

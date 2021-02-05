@@ -105,6 +105,7 @@ HEADERS	+= \
     src/flagobj.h \
     src/flagrowobj.h \
     src/flagrow.h \
+    src/flagrowmaster.h \
     src/floatimageobj.h \
     src/floatobj.h \
     src/frameobj.h \
@@ -213,6 +214,7 @@ SOURCES	+= \
     src/flag.cpp \
     src/flagobj.cpp \
     src/flagrow.cpp \
+    src/flagrowmaster.cpp \
     src/flagrowobj.cpp \
     src/floatimageobj.cpp \
     src/floatobj.cpp \

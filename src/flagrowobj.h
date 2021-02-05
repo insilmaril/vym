@@ -22,8 +22,8 @@ class FlagRowObj : public MapObj {
     virtual void moveBy(double, double);
     virtual void setZValue(double z);
     virtual void setVisibility(bool);
-    void updateActiveFlagObjs(const QList<QUuid>, FlagRow *masterRowMain,
-                              FlagRow *masterRowOptional = NULL);
+    void updateActiveFlagObjs(const QList<QUuid>, FlagRowMaster *masterRowMain,
+                              FlagRowMaster *masterRowOptional = NULL);
     virtual void positionBBox();
     virtual void calcBBoxSize();
     bool isFlagActive(const QUuid &);

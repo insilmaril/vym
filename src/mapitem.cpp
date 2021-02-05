@@ -5,7 +5,7 @@
 
 #include <QDebug>
 
-extern FlagRow *systemFlagsMaster;
+extern FlagRowMaster *systemFlagsMaster;
 
 MapItem::MapItem() { init(); }
 
