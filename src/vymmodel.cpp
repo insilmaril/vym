@@ -1117,7 +1117,6 @@ bool VymModel::isReadOnly() { return readonly; }
 
 void VymModel::autosave()
 {
-    qDebug() << "VM::autosave";
     // Check if autosave is disabled due to testmode
     if (testmode)
     {
