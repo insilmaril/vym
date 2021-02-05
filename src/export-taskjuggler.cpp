@@ -16,6 +16,6 @@ void ExportTaskjuggler::doExport()
 
     success = true;
 
-    destination = filePath;
+    displayedDestination = filePath;
     completeExport();
 }

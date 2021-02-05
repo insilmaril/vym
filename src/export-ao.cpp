@@ -11,7 +11,7 @@ ExportAO::ExportAO()
 {
     exportName = "AO";
     filter = "TXT (*.txt);;All (* *.*)";
-    caption = vymName + " -" + QObject::tr("Export as ASCII") + " " +
+    caption = vymName + " -" + QObject::tr("Export as AO report") + " " +
               QObject::tr("(still experimental)");
     indentPerDepth = "   ";
     bulletPoints.clear();
@@ -155,7 +155,7 @@ void ExportAO::doExport()
     QClipboard *clipboard = QGuiApplication::clipboard();
     clipboard->setText(out);
 
-    destination = filePath;
+    displayedDestination = filePath;
 
     success = true;
 

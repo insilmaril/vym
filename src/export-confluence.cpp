@@ -376,11 +376,11 @@ void ExportConfluence::doExport(bool useDialog)
     delete (ca_details);
     delete (ca_content);
 
-    destination = dia.getPageURL();
+    displayedDestination = dia.getPageURL();
 
-    QMap<QString, QString> args;
-    args["pageURL"] = destination;
-    args["pageTitle"] = dia.getPageTitle();
+    QStringList args;
+    args <<  displayedDestination;
+    args <<  dia.getPageTitle();
     completeExport(args);
 
     dia.saveSettings();

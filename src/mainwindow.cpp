@@ -4191,7 +4191,7 @@ void Main::fileExportASCIITasks()
 {
     VymModel *m = currentModel();
     if (m)
-        m->exportASCII(true);
+        m->exportASCII("", true);
 }
 
 #include "export-csv.h"

@@ -26,6 +26,7 @@ bool isInTmpDir(QString fn);
 QString makeUniqueDir(bool &ok, QString);
 void removeDir(QDir);
 bool copyDir(QDir src, QDir dst, const bool &override = false);
+bool subDirsExist();
 void makeSubDirs(const QString &);
 
 bool checkZipTool();

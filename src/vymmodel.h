@@ -556,24 +556,25 @@ class VymModel : public TreeModel {
     /*! Save as SVG  . Returns offset to upper left corner of image */
     QPointF exportSVG(QString fname = "", bool askForName = true);
 
-    /*! Export as XTML to directory */
-    void exportXML(QString dir = "", QString fname = "", bool useDialog = true);
+    /*! Export as XML to directory */
+    void exportXML(QString fname = "", QString dir = "", bool useDialog = true);
 
     /*! Export as A&O report text to file */
     void exportAO(QString fname = "", bool askForName = true);
 
     /*! Export as ASCII text to file */
-    void exportASCII(bool listTasks = false, const QString &fname = "",
+    void exportASCII(const QString &fname = "", bool listTasks = false,
                      bool askForName = true);
 
     /*! Export as CSV text to file */
     void exportCSV(const QString &fname = "", bool askForName = true);
 
     /*! Export as HTML to directory */
-    void exportHTML(const QString &dir = "", const QString &fname = "",
+    void exportHTML(const QString &fname = "", const QString &dir = "", 
                     bool useDialog = true);
+
     /*! Export as HTML to Confluence*/
-    void exportConfluence(const QString &dir = "", const QString &fname = "",
+    void exportConfluence(const QString &pageURL = "", const QString &pageDialog = "", 
                           bool useDialog = true);
 
     /*! Export as OpenOfficeOrg presentation */
@@ -587,7 +588,7 @@ class VymModel : public TreeModel {
     void exportLast();
 
     /*! Export as LaTeX */
-    void exportLaTeX(const QString &dir = "", bool useDialog = true);
+    void exportLaTeX(const QString &fname = "", bool useDialog = true);
 
     /*! Export as Markdown */
     void exportMarkdown(const QString &fname = "", bool useDialog = true);

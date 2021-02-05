@@ -108,6 +108,6 @@ void ExportLaTeX::doExport()
 
     success = true;
 
-    destination = filePath;
+    displayedDestination = filePath;
     completeExport();
 }

@@ -128,14 +128,11 @@ void ExportASCII::doExport()
 
     QString listTasksString = listTasks ? "true" : "false";
 
-    destination = filePath;
+    displayedDestination = filePath;
 
-    QMap<QString, QString> args;
-    args["filePath"] = filePath;
-    args["listTasks"] = listTasksString;
 
     success = true;
-    completeExport(args);
+    completeExport(QStringList(listTasksString));
 }
 
 QString ExportASCII::underline(const QString &text, const QString &line)

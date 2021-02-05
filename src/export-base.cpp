@@ -142,33 +142,25 @@ bool ExportBase::canceled() { return cancelFlag; }
 
 void ExportBase::setLastCommand(const QString &s) { lastCommand = s; }
 
-void ExportBase::completeExport(QMap<QString, QString> args)
+void ExportBase::completeExport(QStringList args)
 {
     QString command;
-    QMapIterator<QString, QString> i(args);
 
     if (args.isEmpty()) {
         // Add at least filepath as argument. exportName is added anyway
         command = QString("vym.currentMap().exportMap(\"%1\",\"%2\")")
                       .arg(exportName)
                       .arg(filePath);
-        settings.setLocalValue(model->getFilePath(), "/export/last/destination",
-                               filePath);
     }
     else {
-        QStringList list;
-        i.toBack();
-        while (i.hasPrevious()) {
-            i.previous();
-            list << "\"" + i.value() + "\"";
-
-            settings.setLocalValue(
-                model->getFilePath(),
-                "/export/" + exportName.toLower() + "/" + i.key(), i.value());
-        }
-        command = QString("vym.currentMap().exportMap(\"%1\",%2)")
+        command = QString("vym.currentMap().exportMap(\"%1\", \"%2\"")
                       .arg(exportName)
-                      .arg(list.join(","));
+                      .arg(filePath);
+
+        foreach (QString arg, args)
+            command += QString(", \"%1\"").arg(arg);
+
+        command += ")";
     }
 
     settings.setLocalValue(model->getFilePath(), "/export/last/command",
@@ -176,25 +168,24 @@ void ExportBase::completeExport(QMap<QString, QString> args)
     settings.setLocalValue(model->getFilePath(), "/export/last/description",
                            exportName);
     settings.setLocalValue(model->getFilePath(), "/export/last/destination",
-                           destination);
+                           displayedDestination);
 
     // Trigger saving of export command if it has changed
-    if (model && (lastCommand != command))
+    if (model && (lastCommand != command))  //FIXME-2 lastCommand really needed?
         model->setChanged();
 
     if (success)
         mainWindow->statusMessage(
-            QString("Exported as %1 to %2").arg(exportName).arg(destination));
+            QString("Exported as %1 to %2").arg(exportName).arg(displayedDestination));
     else
         mainWindow->statusMessage(QString("Failed to export as %1 to %2")
                                       .arg(exportName)
-                                      .arg(destination));
+                                      .arg(displayedDestination));
 }
 
 void ExportBase::completeExport()
 {
-    QMap<QString, QString> args;
-    completeExport(args);
+    completeExport(QStringList());
 }
 
 QString ExportBase::getSectionString(TreeItem *start)

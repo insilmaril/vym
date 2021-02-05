@@ -263,7 +263,7 @@ bool VymModelWrapper::exportMap()
         bool listTasks = false;
         if (argumentCount() == 3 && argument(2).toString() == "true")
             listTasks = true;
-        model->exportASCII(listTasks, filename, false);
+        model->exportASCII(filename, listTasks, false);
     }
     else if (format == "Confluence") {
         if (argumentCount() < 2) {
@@ -289,8 +289,8 @@ bool VymModelWrapper::exportMap()
                      "Path missing in HTML export");
             return setResult(r);
         }
-        QString path = argument(2).toString();
-        model->exportHTML(path, filename, false);
+        QString dpath = argument(2).toString();
+        model->exportHTML(filename, dpath, false);
     }
     else if (format == "Image") {
         QString imgFormat;
@@ -337,7 +337,7 @@ bool VymModelWrapper::exportMap()
         model->exportPDF(filename, false);
     }
     else if (format == "SVG") {
-        model->exportPDF(filename, false);
+        model->exportSVG(filename, false);
     }
     else if (format == "XML") {
         if (argumentCount() < 3) {
@@ -345,8 +345,8 @@ bool VymModelWrapper::exportMap()
                      "path missing in export to Impress");
             return setResult(r);
         }
-        QString path = argument(2).toString();
-        model->exportXML(path, filename, false);
+        QString dpath = argument(2).toString();
+        model->exportXML(filename, dpath, false);
     }
     else {
         logError(context(), QScriptContext::SyntaxError,

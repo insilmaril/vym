@@ -36,7 +36,7 @@ class ExportBase {
     virtual bool canceled();
     void setLastCommand(const QString &);
     void completeExport(
-        QMap<QString, QString> args); //! set lastExport and send status message
+        QStringList args); //! set lastExport and send status message
     void completeExport();
 
   protected:
@@ -47,8 +47,8 @@ class ExportBase {
 
     QString indent(const int &n, bool useBullet);
     QDir tmpDir;
-    QString destination;    // Can be the filePath or URL. Used for display in
-                            // "ExportLast"
+    QString displayedDestination;    
+        // Can be the filePath or URL. Used for display in  "ExportLast"
     QString dirPath;        // Path to dir  e.g. /tmp/vym-export/
     QString defaultDirPath; // Default path
     QString filePath;       // Path to file e.g. /tmp/vym-export/export.html

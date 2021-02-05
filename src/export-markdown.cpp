@@ -135,14 +135,11 @@ void ExportMarkdown::doExport()
 
     QString listTasksString = listTasks ? "true" : "false";
 
-    destination = filePath;
+    displayedDestination = filePath;
 
     success = true;
 
-    QMap<QString, QString> args;
-    args["filePath"] = filePath;
-    args["listTasks"] = listTasksString;
-    completeExport(args);
+    completeExport(QStringList(listTasksString));
 }
 
 QString ExportMarkdown::underline(const QString &text, const QString &line)

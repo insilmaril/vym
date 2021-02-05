@@ -323,7 +323,7 @@ void ExportHTML::doExport(bool useDialog)
     // Copy CSS file
     if (dia.css_copy) {
         cssSrc = dia.getCssSrc();
-        cssDst = dirPath + "/" + basename(dia.getCssDst());
+        cssDst = dirPath + "/" + basename(cssSrc);
         if (cssSrc.isEmpty()) {
             QMessageBox::critical(
                 0, QObject::tr("Critical"),
@@ -451,14 +451,11 @@ void ExportHTML::doExport(bool useDialog)
         p.runScript(dia.postscript, dirPath + "/" + filePath);
     }
 
-    destination = filePath;
+    displayedDestination = filePath;
 
     success = true;
 
-    QMap<QString, QString> args;
-    args["filePath"] = filePath;
-    args["dirPath"] = dirPath;
-    completeExport(args);
+    completeExport(QStringList(dirPath));
 
     dia.saveSettings();
     model->setExportMode(false);

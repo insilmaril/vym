@@ -2,6 +2,7 @@
 
 require "#{ENV['PWD']}/scripts/vym-ruby"
 require 'date'
+require 'fileutils'
 require 'optparse'
 
 instance_name = 'test'
@@ -116,7 +117,7 @@ end
 #######################
 def test_vym (vym)
   heading "Mainwindow checks:"
-  version = "2.7.514"
+  version = "2.7.556"
   expect_warning_only "Version is #{version}", vym.version, version
 
   expect "Loading map '#{@testmap}'", vym.loadMap(@testmap), true
@@ -158,28 +159,37 @@ def test_export (vym)
   map = init_map( vym )
 
   #HTML
-  exportname = "export-html"
-  htmlpath = "#{@testdir}/#{exportname}.html"
-  flagpath = "#{@testdir}/flags/standard/Dialog-STOP.svg"
-  pngpath = "#{@testdir}/#{exportname}.png"
-  csspath = "#{@testdir}/vym.css"
-  map.exportMap("HTML", htmlpath, @testdir)
+  exportdir = "#{@testdir}/export-html"
+  Dir.mkdir(exportdir)
+  htmlpath = "#{exportdir}/output.html"
+  flagdir  = "#{exportdir}/flags"
+  pngpath = "#{exportdir}/output.png"
+  csspath = "#{exportdir}/vym.css"
+  map.exportMap("HTML", htmlpath, exportdir)
   expect "exportHTML: HTML file exists", File.exists?(htmlpath), true
   expect "exportHTML: HTML image exists", File.exists?(pngpath), true
-  expect "exportHTML: HTML flags exists", File.exists?(flagpath), true
+  expect "exportHTML: HTML flags dir exists", Dir.exists?(flagdir), true
+  if Dir.exists?(flagdir)
+    expect "exportHTML: HTML flags dir not empty", Dir.empty?(flagdir), false
+  end
   expect "exportHTML: HTML CSS exists", File.exists?(csspath), true
   File.delete(htmlpath)
-  File.delete(flagpath)
+  FileUtils.rm_r(flagdir)
   File.delete(pngpath)
   File.delete(csspath)
   map.exportMap("Last")
   expect "exportLast: HTML #{htmlpath} file exists", File.exists?(htmlpath), true
   expect "exportLast: HTML image exists", File.exists?(pngpath), true
-  expect "exportLast: HTML flags exists", File.exists?(flagpath), true
+  expect "exportHTML: HTML flags dir exists", Dir.exists?(flagdir), true
+  if Dir.exists?(flagdir)
+    expect "exportHTML: HTML flags dir not empty", Dir.empty?(flagdir), false
+  end
   expect "exportLast: HTML CSS exists", File.exists?(csspath), true
 
   #AO
-  filepath = "#{@testdir}/export-ao.txt"
+  exportdir = "#{@testdir}/export-ao"
+  Dir.mkdir(exportdir)
+  filepath = "#{exportdir}/output.txt"
   map.exportMap("AO", filepath)
   expect "exportAO:    AO file exists", File.exists?(filepath), true
   File.delete(filepath)
@@ -187,7 +197,9 @@ def test_export (vym)
   expect "exportLast:  AO file exists", File.exists?(filepath), true
 
   #ASCII
-  filepath = "#{@testdir}/export-ascii.txt"
+  exportdir = "#{@testdir}/export-ascii"
+  Dir.mkdir(exportdir)
+  filepath = "#{exportdir}/output.txt"
   map.exportMap("ASCII", filepath, false)
   expect "exportASCII: ASCII file exists", File.exists?(filepath), true
   File.delete(filepath)
@@ -195,7 +207,9 @@ def test_export (vym)
   expect "exportLast:  ASCII file exists", File.exists?(filepath), true
 
   #CSV
-  filepath = "#{@testdir}/export-csv.txt"
+  exportdir = "#{@testdir}/export-csv"
+  Dir.mkdir(exportdir)
+  filepath = "#{exportdir}/output.csv"
   map.exportMap("CSV", filepath)
   expect "exportCSV:    CSV file exists", File.exists?(filepath), true
   File.delete(filepath)
@@ -203,7 +217,9 @@ def test_export (vym)
   expect "exportLast:  CSV file exists", File.exists?(filepath), true
 
   #Image
-  filepath = "#{@testdir}/export-image.png"
+  exportdir = "#{@testdir}/export-image"
+  Dir.mkdir(exportdir)
+  filepath = "#{exportdir}/output.png"
   map.exportMap("Image", filepath,"PNG")
   expect "exportImage: PNG file exists", File.exists?(filepath), true
   File.delete(filepath)
@@ -211,7 +227,9 @@ def test_export (vym)
   expect "exportLast:  PNG file exists", File.exists?(filepath), true
 
   #LaTeX
-  filepath = "#{@testdir}/export-LaTeX.tex"
+  exportdir = "#{@testdir}/export-latex"
+  Dir.mkdir(exportdir)
+  filepath = "#{exportdir}/output.tex"
   map.exportMap("LaTeX", filepath)
   expect "exportLaTeX:  LaTeX file exists", File.exists?(filepath), true
   File.delete(filepath)
@@ -219,7 +237,9 @@ def test_export (vym)
   expect "exportLast:   LaTeX file exists", File.exists?(filepath), true
 
   #Markdown
-  filepath = "#{@testdir}/export-markdown.org"
+  exportdir = "#{@testdir}/export-markdown"
+  Dir.mkdir(exportdir)
+  filepath = "#{exportdir}/output.md"
   map.exportMap("Markdown", filepath)
   expect "exportMarkdown:  Markdown file exists", File.exists?(filepath), true
   File.delete(filepath)
@@ -227,7 +247,9 @@ def test_export (vym)
   expect "exportLast:     Markdown file exists", File.exists?(filepath), true
 
   #OrgMode
-  filepath = "#{@testdir}/export-orgmode.org"
+  exportdir = "#{@testdir}/export-orgmode"
+  Dir.mkdir(exportdir)
+  filepath = "#{exportdir}/output.org"
   map.exportMap("OrgMode", filepath)
   expect "exportOrgMode:  OrgMode file exists", File.exists?(filepath), true
   File.delete(filepath)
@@ -235,7 +257,9 @@ def test_export (vym)
   expect "exportLast:     OrgMode file exists", File.exists?(filepath), true
 
   #PDF
-  filepath = "#{@testdir}/export-pdf.pdf"
+  exportdir = "#{@testdir}/export-pdf"
+  Dir.mkdir(exportdir)
+  filepath = "#{exportdir}/output.pdf"
   map.exportMap("PDF", filepath)
   expect "exportPDF:  PDF file exists", File.exists?(filepath), true
   File.delete(filepath)
@@ -243,7 +267,9 @@ def test_export (vym)
   expect "exportLast: PDF file exists", File.exists?(filepath), true
 
   #SVG
-  filepath = "#{@testdir}/export-svg.svg"
+  exportdir = "#{@testdir}/export-svg"
+  Dir.mkdir(exportdir)
+  filepath = "#{exportdir}/output.svg"
   map.exportMap("SVG", filepath)
   expect "exportSVG:  SVG file exists", File.exists?(filepath), true
   File.delete(filepath)
@@ -251,7 +277,9 @@ def test_export (vym)
   expect "exportLast: SVG file exists", File.exists?(filepath), true
 
   #XML
-  filepath = "#{@testdir}/export-xml.xml"
+  exportdir = "#{@testdir}/export-xml"
+  Dir.mkdir(exportdir)
+  filepath = "#{exportdir}/output.xml"
   map.exportMap("XML", filepath, @testdir)
   expect "exportXML: XML file exists", File.exists?(filepath), true
   File.delete(filepath)
@@ -259,7 +287,6 @@ def test_export (vym)
   expect "exportLast: XML file exists", File.exists?(filepath), true
 
   #OpenOffice Impress //FIXME-2
-  #KDE4 Bookmarks //FIXME-2
   #Taskjuggler //FIXME-3
 end
 
@@ -511,12 +538,15 @@ def test_flags (vym)
   expect "clearFlags cleared exclamationmark", map.hasActiveFlag( "exclamationmark" ), false
   expect "clearFlags cleared smiley-good", map.hasActiveFlag( "smiley-good" ), false
   
+
   # Toggling flags
   a = ["stopsign", "lifebelt"]
   a.each do |flag|
+    puts "Flag is now: #{flag}"
     map.toggleFlagByName flag
     expect "toggleFlag: flag #{flag} activated", map.hasActiveFlag(flag), true
-    map.toggleFlagByName "lifebelt"
+
+    map.toggleFlagByName flag
     expect "toggleFlag: flag #{flag} deactivated", map.hasActiveFlag(flag), false
   end
 end

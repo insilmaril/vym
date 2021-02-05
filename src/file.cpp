@@ -232,6 +232,19 @@ bool copyDir(QDir src, QDir dst, const bool &override)
     return true;
 }
 
+bool subDirsExist()
+{
+    QStringList dirList;
+    dirList << "images";
+    dirList << "flags";
+    dirList << "flags/user";
+    dirList << "flags/standard";
+    foreach (QString d, dirList)
+        if (QDir(d).exists() ) return true;
+
+    return false;
+}
+
 void makeSubDirs(const QString &s)
 {
     QDir d(s);

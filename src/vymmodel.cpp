@@ -813,6 +813,7 @@ File::ErrorCode VymModel::save(const SaveMode &savemode)
     }
 
     updateActions();
+
     fileChangedTime = QFileInfo(destPath).lastModified();
     return err;
 }
@@ -1116,6 +1117,16 @@ bool VymModel::isReadOnly() { return readonly; }
 
 void VymModel::autosave()
 {
+    qDebug() << "VM::autosave";
+    // Check if autosave is disabled due to testmode
+    if (testmode)
+    {
+        qWarning()
+            << QString("VymModel::autosave disabled in testmode!  Current map: %1")
+                   .arg(filePath);
+        return;
+    }
+
     // Check if autosave is disabled globally
     if (!mainWindow->useAutosave()) {
         qWarning()
@@ -1940,7 +1951,6 @@ void VymModel::updateNoteText(const VymText &vt)
 
 void VymModel::setNote(const VymNote &vn)
 {
-    qDebug() << "VM::setNote" << vn.getTextASCII().left(25);
     TreeItem *selti = getSelectedItem();
     if (selti) {
         VymNote n_old;
@@ -3848,7 +3858,7 @@ void VymModel::toggleFlagByUid(
 void VymModel::toggleFlagByName(const QString &name, bool useGroups)
 {
     // Toggling by name only used from vymmodelwrapper for scripting  // FIXME-4
-    // maybe rework
+    // maybe rework?
     BranchItem *bi = getSelectedBranch();
 
     if (bi) {
@@ -4390,8 +4400,6 @@ QPointF VymModel::exportSVG(QString fname, bool askName)
     ex.setFilePath(fname);
     ex.setWindowTitle(tr("Export map as SVG"));
     ex.addFilter("SVG (*.svg);;All (* *.*)");
-    ex.setLastCommand(
-        settings.localValue(filePath, "/export/last/command", "").toString());
 
     if (askName) {
         if (!ex.execDialog())
@@ -4418,7 +4426,7 @@ QPointF VymModel::exportSVG(QString fname, bool askName)
     return offset;
 }
 
-void VymModel::exportXML(QString dpath, QString fpath, bool useDialog)
+void VymModel::exportXML(QString fpath, QString dpath, bool useDialog)
 {
     ExportBase ex;
     ex.setName("XML");
@@ -4431,7 +4439,6 @@ void VymModel::exportXML(QString dpath, QString fpath, bool useDialog)
     if (useDialog) {
         QFileDialog fd;
         fd.setWindowTitle(vymName + " - " + tr("Export XML to directory"));
-        fd.setFileMode(QFileDialog::DirectoryOnly);
         QStringList filters;
         filters << "XML data (*.xml)";
         fd.setNameFilters(filters);
@@ -4492,10 +4499,7 @@ void VymModel::exportXML(QString dpath, QString fpath, bool useDialog)
 
     setExportMode(false);
 
-    QMap<QString, QString> args;
-    args["filePath"] = filePath;
-    args["dirPath"] = dpath;
-    ex.completeExport(args);
+    ex.completeExport(QStringList(dpath));
 }
 
 void VymModel::exportAO(QString fname, bool askName)
@@ -4521,7 +4525,7 @@ void VymModel::exportAO(QString fname, bool askName)
     }
 }
 
-void VymModel::exportASCII(bool listTasks, const QString &fname, bool askName)
+void VymModel::exportASCII(const QString &fname, bool listTasks, bool askName)
 {
     ExportASCII ex;
     ex.setModel(this);
@@ -4573,7 +4577,7 @@ void VymModel::exportCSV(const QString &fname, bool askName)
     }
 }
 
-void VymModel::exportHTML(const QString &dpath, const QString &fpath,
+void VymModel::exportHTML(const QString &fpath, const QString &dpath,
                           bool useDialog)
 {
     ExportHTML ex(this);
@@ -4910,9 +4914,10 @@ void VymModel::toggleMapLinkColorHint()
     }
 }
 
-void VymModel::selectMapBackgroundImage() // FIXME-3 for using background image:
-                                          // view.setCacheMode(QGraphicsView::CacheBackground);
-                                          // Also this belongs into ME
+void VymModel::
+    selectMapBackgroundImage() // FIXME-3 for using background image:
+                               // view.setCacheMode(QGraphicsView::CacheBackground);
+                               // Also this belongs into ME
 {
     QStringList filters;
     filters << tr("Images") +

@@ -139,14 +139,11 @@ void ExportOO::exportPresentation()
     // zip tmpdir to destination
     zipDir(tmpDir, filePath);
 
-    destination = filePath;
+    displayedDestination = filePath;
 
     success = true;
 
-    QMap<QString, QString> args;
-    args["filePath"] = filePath;
-    args["configFile"] = configFile;
-    completeExport(args);
+    completeExport(QStringList(configFile));
 }
 
 bool ExportOO::setConfigFile(const QString &cf)
