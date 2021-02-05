@@ -100,7 +100,7 @@ class Main : public QMainWindow {
     MapEditor *currentMapEditor() const;
     VymModel *currentModel() const;
     uint currentModelID() const;
-    uint currentMapIndex() const;
+    int currentMapIndex() const;
     VymModel *getModel(uint);
     void gotoModel(VymModel *m);
     int modelCount();

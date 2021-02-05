@@ -82,6 +82,12 @@ void VymWrapper::selectMap(uint n)
                  QString("Map '%1' not available.").arg(n));
     }
 }
+
+int VymWrapper::currentMapIndex()
+{
+    return mainWindow->currentMapIndex();
+}
+
 void VymWrapper::toggleTreeEditor() { mainWindow->windowToggleTreeEditor(); }
 
 QString VymWrapper::loadFile(

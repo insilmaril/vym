@@ -1005,6 +1005,9 @@ void Main::setupAPI()
     c = new Command("currentMap", Command::Any);
     vymCommands.append(c);
 
+    c = new Command("currentMapIndex", Command::Any);
+    vymCommands.append(c);
+
     c = new Command("loadMap", Command::Any);
     c->addPar(Command::String, false, "Path to map");
     vymCommands.append(c);
@@ -3419,7 +3422,7 @@ uint Main::currentModelID() const
         return 0;
 }
 
-uint Main::currentMapIndex() const { return tabWidget->currentIndex(); }
+int Main::currentMapIndex() const { return tabWidget->currentIndex(); }
 
 VymModel *Main::currentModel() const
 {

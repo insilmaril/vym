@@ -37,6 +37,7 @@ class VymWrapper : public VymScriptContext {
     bool loadMap(const QString &filename);
     int mapCount();
     void selectMap(uint n);
+    int currentMapIndex();
     void toggleTreeEditor();
     QString loadFile(const QString &filename);
     void saveFile(const QString &filename, const QString &s);
