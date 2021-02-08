@@ -4935,13 +4935,9 @@ void Main::editNewBranch()
 
         if (!actionSettingsAutoSelectNewBranch->isChecked())
             prevSelection = m->getSelectString();
-        else
-            prevSelection = QString();
 
-        if (actionSettingsAutoSelectNewBranch->isChecked()) {
-            m->select(bi);
-            currentMapEditor()->editHeading();
-        }
+        m->select(bi);
+        currentMapEditor()->editHeading();
     }
 }
 
@@ -4949,15 +4945,15 @@ void Main::editNewBranchBefore()
 {
     VymModel *m = currentModel();
     if (m) {
+        if (!actionSettingsAutoSelectNewBranch->isChecked())
+            prevSelection = m->getSelectString();
+
         BranchItem *bi = m->addNewBranchBefore();
 
         if (bi)
             m->select(bi);
         else
             return;
-
-        if (!actionSettingsAutoSelectNewBranch->isChecked())
-            prevSelection = m->getSelectString(bi);
 
         currentMapEditor()->editHeading();
     }
@@ -4967,6 +4963,9 @@ void Main::editNewBranchAbove()
 {
     VymModel *m = currentModel();
     if (m) {
+        if (!actionSettingsAutoSelectNewBranch->isChecked())
+            prevSelection = m->getSelectString();
+
         BranchItem *selbi = m->getSelectedBranch();
         if (selbi) {
             BranchItem *bi = m->addNewBranch(selbi, -3);
@@ -4975,9 +4974,6 @@ void Main::editNewBranchAbove()
                 m->select(bi);
             else
                 return;
-
-            if (!actionSettingsAutoSelectNewBranch->isChecked())
-                prevSelection = m->getSelectString(bi);
 
             currentMapEditor()->editHeading();
         }
