@@ -2916,6 +2916,48 @@ Do you want to reload that map with the new file?</source>
         <comment>task related times</comment>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Sleep:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>sleeping %1 days</source>
+        <comment>task related times</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Task is awake</source>
+        <comment>task related times</comment>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>CredentialsDialog</name>
+    <message>
+        <source>Dialog</source>
+        <translation type="unfinished">Παράθυρο</translation>
+    </message>
+    <message>
+        <source>URL:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Username:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Password:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save password</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Credentials dialog</source>
+        <comment>dialog window title</comment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>DownloadAgent</name>
@@ -3182,7 +3224,12 @@ want to allow this in your system!</source>
     <message>
         <source>Note Editor</source>
         <comment>Name of editor shown as window title</comment>
-        <translation type="unfinished">Επεξεργαστής σημειώσεων</translation>
+        <translation type="obsolete">Επεξεργαστής σημειώσεων</translation>
+    </message>
+    <message>
+        <source>Heading Editor</source>
+        <comment>Name of editor shown as window title</comment>
+        <translation type="unfinished">Επεξεργαστής κεφαλίδας</translation>
     </message>
 </context>
 <context>
@@ -3627,32 +3674,32 @@ want to allow this in your system!</source>
     <message>
         <source>Bugzilla handling</source>
         <comment>Shortcuts</comment>
-        <translation>Χειρισμός Bugzilla</translation>
+        <translation type="vanished">Χειρισμός Bugzilla</translation>
     </message>
     <message>
         <source>Create URL to SUSE Bugzilla</source>
         <comment>Edit menu</comment>
-        <translation>Δημιουργία URL για το SUSE Bugzilla</translation>
+        <translation type="vanished">Δημιουργία URL για το SUSE Bugzilla</translation>
     </message>
     <message>
         <source>Get data from SUSE Bugzilla</source>
         <comment>Edit menu</comment>
-        <translation>Λήψη δεδομένων από το SUSE Bugzilla</translation>
+        <translation type="vanished">Λήψη δεδομένων από το SUSE Bugzilla</translation>
     </message>
     <message>
         <source>Get data from SUSE Bugzilla for subtree</source>
         <comment>Edit menu</comment>
-        <translation>Λήψη δεδομένων από το SUSE Bugzilla για το υπο-δέντρο</translation>
+        <translation type="vanished">Λήψη δεδομένων από το SUSE Bugzilla για το υπο-δέντρο</translation>
     </message>
     <message>
         <source>SUSE Fate tool handling</source>
         <comment>Shortcuts</comment>
-        <translation>Εργαλείο χειρισμού SUSE</translation>
+        <translation type="vanished">Εργαλείο χειρισμού SUSE</translation>
     </message>
     <message>
         <source>Create URL to SUSE FATE tool</source>
         <comment>Edit menu</comment>
-        <translation>Δημιουργία URL προς το εργαλείο χειρισμού SUSE</translation>
+        <translation type="vanished">Δημιουργία URL προς το εργαλείο χειρισμού SUSE</translation>
     </message>
     <message>
         <source>vymlinks - linking maps</source>
@@ -4032,12 +4079,12 @@ want to allow this in your system!</source>
     <message>
         <source>Use modifier to color branches</source>
         <comment>Mode modifier</comment>
-        <translation>Χρήση μετατροπέα για χρωματισμό κλάδων</translation>
+        <translation type="vanished">Χρήση μετατροπέα για χρωματισμό κλάδων</translation>
     </message>
     <message>
         <source>Use modifier to draw xLinks</source>
         <comment>Mode modifier</comment>
-        <translation>Χρήση μετατροπέα για σχεδιασμό xLinks</translation>
+        <translation type="vanished">Χρήση μετατροπέα για σχεδιασμό xLinks</translation>
     </message>
     <message>
         <source>Note</source>
@@ -4047,12 +4094,12 @@ want to allow this in your system!</source>
     <message>
         <source>URL to Document </source>
         <comment>SystemFlag</comment>
-        <translation>URL προς έγγραφο</translation>
+        <translation type="vanished">URL προς έγγραφο</translation>
     </message>
     <message>
         <source>URL to Bugzilla </source>
         <comment>SystemFlag</comment>
-        <translation>URL για το Bugzilla</translation>
+        <translation type="vanished">URL για το Bugzilla</translation>
     </message>
     <message>
         <source>Map target</source>
@@ -4207,112 +4254,112 @@ want to allow this in your system!</source>
     <message>
         <source>Important</source>
         <comment>Freemind-Flag</comment>
-        <translation>Σημαντικό</translation>
+        <translation type="vanished">Σημαντικό</translation>
     </message>
     <message>
         <source>Priority</source>
         <comment>Freemind-Flag</comment>
-        <translation>Προτεραιότητα</translation>
+        <translation type="vanished">Προτεραιότητα</translation>
     </message>
     <message>
         <source>Back</source>
         <comment>Freemind-Flag</comment>
-        <translation>Πίσω</translation>
+        <translation type="vanished">Πίσω</translation>
     </message>
     <message>
         <source>forward</source>
         <comment>Freemind-Flag</comment>
-        <translation>Εμπρός</translation>
+        <translation type="vanished">Εμπρός</translation>
     </message>
     <message>
         <source>Look here</source>
         <comment>Freemind-Flag</comment>
-        <translation>Δείτε εδώ</translation>
+        <translation type="vanished">Δείτε εδώ</translation>
     </message>
     <message>
         <source>Dangerous</source>
         <comment>Freemind-Flag</comment>
-        <translation>Επικίνδυνο</translation>
+        <translation type="vanished">Επικίνδυνο</translation>
     </message>
     <message>
         <source>Don&apos;t flagrget</source>
         <comment>Freemind-Flag</comment>
-        <translation>Στόχος χωρίς σημαία</translation>
+        <translation type="vanished">Στόχος χωρίς σημαία</translation>
     </message>
     <message>
         <source>Flag</source>
         <comment>Freemind-Flag</comment>
-        <translation>Σημαία</translation>
+        <translation type="vanished">Σημαία</translation>
     </message>
     <message>
         <source>Home</source>
         <comment>Freemind-Flag</comment>
-        <translation>Αρχική</translation>
+        <translation type="vanished">Αρχική</translation>
     </message>
     <message>
         <source>Telephone</source>
         <comment>Freemind-Flag</comment>
-        <translation>Τηλέφωνο</translation>
+        <translation type="vanished">Τηλέφωνο</translation>
     </message>
     <message>
         <source>Music</source>
         <comment>Freemind-Flag</comment>
-        <translation>Μουσική</translation>
+        <translation type="vanished">Μουσική</translation>
     </message>
     <message>
         <source>Mailbox</source>
         <comment>Freemind-Flag</comment>
-        <translation>Γραμματοκιβώτιο</translation>
+        <translation type="vanished">Γραμματοκιβώτιο</translation>
     </message>
     <message>
         <source>Maix</source>
         <comment>Freemind-Flag</comment>
-        <translation>Maix</translation>
+        <translation type="vanished">Maix</translation>
     </message>
     <message>
         <source>Password</source>
         <comment>Freemind-Flag</comment>
-        <translation>Κωδικός πρόσβασης</translation>
+        <translation type="vanished">Κωδικός πρόσβασης</translation>
     </message>
     <message>
         <source>To be improved</source>
         <comment>Freemind-Flag</comment>
-        <translation>Να βελτιωθεί</translation>
+        <translation type="vanished">Να βελτιωθεί</translation>
     </message>
     <message>
         <source>Stop</source>
         <comment>Freemind-Flag</comment>
-        <translation>Σταμάτημα</translation>
+        <translation type="vanished">Σταμάτημα</translation>
     </message>
     <message>
         <source>Magic</source>
         <comment>Freemind-Flag</comment>
-        <translation>Μαγικό</translation>
+        <translation type="vanished">Μαγικό</translation>
     </message>
     <message>
         <source>To be discussed</source>
         <comment>Freemind-Flag</comment>
-        <translation>Να συζητηθεί</translation>
+        <translation type="vanished">Να συζητηθεί</translation>
     </message>
     <message>
         <source>Reminder</source>
         <comment>Freemind-Flag</comment>
-        <translation>Υπενθύμιση</translation>
+        <translation type="vanished">Υπενθύμιση</translation>
     </message>
     <message>
         <source>Excellent</source>
         <comment>Freemind-Flag</comment>
-        <translation>Εξαιρετικό</translation>
+        <translation type="vanished">Εξαιρετικό</translation>
     </message>
     <message>
         <source>Linux</source>
         <comment>Freemind-Flag</comment>
-        <translation>Linux</translation>
+        <translation type="vanished">Linux</translation>
     </message>
     <message>
         <source>Sweet</source>
         <comment>Freemind-Flag</comment>
-        <translation>Γλυκό</translation>
+        <translation type="vanished">Γλυκό</translation>
     </message>
     <message>
         <source>Settings</source>
@@ -4366,7 +4413,7 @@ want to allow this in your system!</source>
     <message>
         <source>Edit branch after adding it</source>
         <comment>Settings action</comment>
-        <translation>Επεξεργασία κλάδου μετά την εισαγωγή του</translation>
+        <translation type="vanished">Επεξεργασία κλάδου μετά την εισαγωγή του</translation>
     </message>
     <message>
         <source>Select branch after adding it</source>
@@ -4539,7 +4586,7 @@ want to allow this in your system!</source>
     <message>
         <source>unnamed</source>
         <comment>MainWindow: name for new and empty file</comment>
-        <translation>χωρίς όνομα</translation>
+        <translation type="vanished">χωρίς όνομα</translation>
     </message>
     <message>
         <source>The map %1
@@ -4671,7 +4718,7 @@ exists already. Do you want to</source>
     </message>
     <message>
         <source>Couldn&apos;t start %1 to open a new tab in %2.</source>
-        <translation>Αδυναμία έναρξης %1 για άνοιγμα νέας καρτέλας %2.</translation>
+        <translation type="vanished">Αδυναμία έναρξης %1 για άνοιγμα νέας καρτέλας %2.</translation>
     </message>
     <message>
         <source>Enter URL:</source>
@@ -4945,17 +4992,7 @@ because of existing lockfile:
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Jira handling</source>
-        <comment>Shortcuts</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Create URL to Jira</source>
-        <comment>Edit menu</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Get data from Jira for subtree</source>
         <comment>Edit menu</comment>
         <translation type="unfinished"></translation>
     </message>
@@ -4972,10 +5009,6 @@ because of existing lockfile:
     <message>
         <source>Toggle Presentation mode</source>
         <comment>View action</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>(still experimental</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -5005,6 +5038,220 @@ because of existing lockfile:
     </message>
     <message>
         <source>Load vym script</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save as default map</source>
+        <comment>File menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Get page name from Confluence</source>
+        <comment>Edit menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use Shift modifier key to select and reorder objects</source>
+        <comment>Mode modifier</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use Shift modifer key to pick color from another branch and apply</source>
+        <comment>Mode modifier</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use Shift modifier key to draw xLinks</source>
+        <comment>Mode modifier</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use Shift modifier key to move branches without linking</source>
+        <comment>Mode modifier</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use Shift modifier key to move view without selecting</source>
+        <comment>Mode modifier</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Images</source>
+        <translation type="unfinished">Εικόνες</translation>
+    </message>
+    <message>
+        <source>All</source>
+        <comment>Filedialog</comment>
+        <translation type="unfinished">Όλα</translation>
+    </message>
+    <message>
+        <source>URL</source>
+        <comment>SystemFlag</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>User Flags toolbar</source>
+        <comment>user Flags Toolbar</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hm...</source>
+        <comment>Standardflag</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Important</source>
+        <comment>Freemind flag</comment>
+        <translation type="unfinished">Σημαντικό</translation>
+    </message>
+    <message>
+        <source>Back</source>
+        <comment>Freemind flag</comment>
+        <translation type="unfinished">Πίσω</translation>
+    </message>
+    <message>
+        <source>Forward</source>
+        <comment>Freemind flag</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Look here</source>
+        <comment>Freemind flag</comment>
+        <translation type="unfinished">Δείτε εδώ</translation>
+    </message>
+    <message>
+        <source>Dangerous</source>
+        <comment>Freemind flag</comment>
+        <translation type="unfinished">Επικίνδυνο</translation>
+    </message>
+    <message>
+        <source>Don&apos;t forget</source>
+        <comment>Freemind flag</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Flag</source>
+        <comment>Freemind flag</comment>
+        <translation type="unfinished">Σημαία</translation>
+    </message>
+    <message>
+        <source>Home</source>
+        <comment>Freemind flag</comment>
+        <translation type="unfinished">Αρχική</translation>
+    </message>
+    <message>
+        <source>Telephone</source>
+        <comment>Freemind flag</comment>
+        <translation type="unfinished">Τηλέφωνο</translation>
+    </message>
+    <message>
+        <source>Music</source>
+        <comment>Freemind flag</comment>
+        <translation type="unfinished">Μουσική</translation>
+    </message>
+    <message>
+        <source>Mailbox</source>
+        <comment>Freemind flag</comment>
+        <translation type="unfinished">Γραμματοκιβώτιο</translation>
+    </message>
+    <message>
+        <source>Mail</source>
+        <comment>Freemind flag</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Password</source>
+        <comment>Freemind flag</comment>
+        <translation type="unfinished">Κωδικός πρόσβασης</translation>
+    </message>
+    <message>
+        <source>To be improved</source>
+        <comment>Freemind flag</comment>
+        <translation type="unfinished">Να βελτιωθεί</translation>
+    </message>
+    <message>
+        <source>Stop</source>
+        <comment>Freemind flag</comment>
+        <translation type="unfinished">Σταμάτημα</translation>
+    </message>
+    <message>
+        <source>Magic</source>
+        <comment>Freemind flag</comment>
+        <translation type="unfinished">Μαγικό</translation>
+    </message>
+    <message>
+        <source>To be discussed</source>
+        <comment>Freemind flag</comment>
+        <translation type="unfinished">Να συζητηθεί</translation>
+    </message>
+    <message>
+        <source>Reminder</source>
+        <comment>Freemind flag</comment>
+        <translation type="unfinished">Υπενθύμιση</translation>
+    </message>
+    <message>
+        <source>Excellent</source>
+        <comment>Freemind flag</comment>
+        <translation type="unfinished">Εξαιρετικό</translation>
+    </message>
+    <message>
+        <source>Linux</source>
+        <comment>Freemind flag</comment>
+        <translation type="unfinished">Linux</translation>
+    </message>
+    <message>
+        <source>Sweet</source>
+        <comment>Freemind flag</comment>
+        <translation type="unfinished">Γλυκό</translation>
+    </message>
+    <message>
+        <source>Confluence Credentials</source>
+        <comment>Settings action</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set path for default path</source>
+        <comment>Settings action</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>unnamed</source>
+        <comment>Name for empty and unnamed default map</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t load default map:
+
+%1
+
+vym will create an empty map now.</source>
+        <comment>Mainwindow: Failed to load default map</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t save %1,
+because file exists and cannot be changed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save map as new default map</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You have no permissions to write to </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Overwrite as new default map</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set vym default map to be loaded on startup</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Get data from JIRA for subtree</source>
+        <comment>Edit menu</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5153,7 +5400,7 @@ to notifiy Browsers of changed bookmarks.</source>
     </message>
     <message>
         <source>Could not copy %1 to %2</source>
-        <translation>Αδυναμία αντιγραφής του %1 στο %2</translation>
+        <translation type="vanished">Αδυναμία αντιγραφής του %1 στο %2</translation>
     </message>
     <message>
         <source>Trying to save HTML file:</source>
@@ -5289,19 +5536,19 @@ Do you risk to overwrite its contents?</source>
 
 </source>
         <comment>VymModel, how to install Bugzilla client module</comment>
-        <translation>Δεν βρέθηκε πελάτης Bugzilla. Για το openSUSE μπορείτε να κάνετε εγκατάσταση με (εκτέλεση ως διαχειριστής):</translation>
+        <translation type="vanished">Δεν βρέθηκε πελάτης Bugzilla. Για το openSUSE μπορείτε να κάνετε εγκατάσταση με (εκτέλεση ως διαχειριστής):</translation>
     </message>
     <message>
         <source>Alternatively you can also add the repository
 and install the perl module for Bugzilla access using YaST</source>
         <comment>VymModel, how to install Bugzilla client module</comment>
-        <translation>Εναλλακτικά, μπορείτε να προσθέσετε το αποθετήριο
+        <translation type="vanished">Εναλλακτικά, μπορείτε να προσθέσετε το αποθετήριο
 και να εγκαταστήσετε το άρθρωμα perl για πρόσβαση στο Bugzilla χρησιμοποιώντας το YaST</translation>
     </message>
     <message>
         <source>Warning: Couldn&apos;t find Bugzilla client</source>
         <comment>VymModel</comment>
-        <translation>Προειδοποίηση: δεν βρέθηκε πελάτης Bugzilla</translation>
+        <translation type="vanished">Προειδοποίηση: δεν βρέθηκε πελάτης Bugzilla</translation>
     </message>
     <message>
         <source>Warning: Version Problem</source>
@@ -5335,17 +5582,7 @@ and install the perl module for Bugzilla access using YaST</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>External link: %1</source>
-        <comment>Alt tag in HTML export</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Image: %1</source>
-        <comment>Alt tag in HTML export</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Image of map: %1.vym</source>
         <comment>Alt tag in HTML export</comment>
         <translation type="unfinished"></translation>
     </message>
@@ -5355,11 +5592,6 @@ and install the perl module for Bugzilla access using YaST</source>
     </message>
     <message>
         <source>Could not export as Markdown to %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Couldn&apos;t start tool to compress data!
-The map could not be saved, please check if backup file is available or export as XML file!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -5416,15 +5648,24 @@ The map could not be saved, please check if backup file is available or export a
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>No Jira client found.  For openSUSE you install by (running as root):
-
-</source>
-        <comment>VymModel, how to install Bugzilla client module</comment>
+        <source>Export as AO report</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Warning: Couldn&apos;t find Jira client</source>
-        <comment>VymModel</comment>
+        <source>Couldn&apos;t start %1 tool to compress data!
+The map could not be saved, please check if backup file is available or export as XML file!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;h3&gt;Autosave will be disabled&lt;/h3&gt;&lt;p&gt;Please check contents of map before saving!&lt;/p&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>JIRA client not found.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Disabling autosave</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5524,28 +5765,8 @@ Do you want to overwrite it?</source>
         <translation type="vanished">Αδυναμία ανοίγματος του %1.</translation>
     </message>
     <message>
-        <source>Slide tab</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Macro tab</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>filenameLabel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Reload</source>
         <translation type="unfinished">Επαναφόρτωση</translation>
-    </message>
-    <message>
-        <source>File tab</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>scriptfileLabel</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Save as</source>
@@ -5981,7 +6202,7 @@ Writing it uncompressed will also write images
 and flags and thus may overwrite files in the given directory
 
 Do you want to write the map</source>
-        <translation>Το διάγραμμα %1
+        <translation type="vanished">Το διάγραμμα %1
 δεν χρησιμοποίησε τη συμπιεσμένη μορφή αρχείου του VYM.
 Κάνοντας εγγραφή ενώ δεν είναι συμπιεσμένο το διάγραμμα,
 θα εγγραφούν εικόνες και σημαίες και έτσι υπάρχει περίπτωση
@@ -5995,7 +6216,7 @@ Do you want to write the map</source>
     </message>
     <message>
         <source>uncompressed</source>
-        <translation>Μη συμπιεσμένο</translation>
+        <translation type="vanished">Μη συμπιεσμένο</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -6059,7 +6280,7 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <source>Unsupported format in %1</source>
-        <translation>Μη υποστηριζόμενη μορφή στο %1</translation>
+        <translation type="vanished">Μη υποστηριζόμενη μορφή στο %1</translation>
     </message>
     <message>
         <source>Couldn&apos;t save %1</source>
@@ -6127,7 +6348,7 @@ Do you want to reload that map with the new file?</source>
     <message>
         <source>Contacting Bugzilla...</source>
         <comment>VymModel</comment>
-        <translation>Επικοινωνια με Bugzilla...</translation>
+        <translation type="vanished">Επικοινωνια με Bugzilla...</translation>
     </message>
     <message>
         <source>Script aborted:
@@ -6210,6 +6431,23 @@ Please only delete the lockfile, if you are sure nobody else is currently workin
     <message>
         <source>Contacting Jira...</source>
         <comment>VymModel</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The map %1
+did not use the compressed vym file format.
+Writing it uncompressed will also write images 
+and flags and thus may overwrite files into the given directory
+
+Do you want to write the map</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>uncompressed, potentially overwrite existing data</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>JIRA client not found</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

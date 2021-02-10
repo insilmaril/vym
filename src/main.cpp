@@ -318,6 +318,8 @@ int main(int argc, char *argv[])
         vymInstallDir.setPath(basePath);
         vymBaseDir.setPath(basePath);
 #else
+        qDebug() << "Main: " << TARGETPATH;
+
         vymBaseDir.setPath("/usr/share/vym");
         if (!vymBaseDir.exists()) {
             vymBaseDir.setPath("/usr/local/share/vym");

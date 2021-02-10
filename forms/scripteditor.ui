@@ -28,15 +28,18 @@
        <height>1000000</height>
       </size>
      </property>
+     <property name="accessibleName">
+      <string notr="true"/>
+     </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="slideTab">
       <property name="accessibleDescription">
        <string/>
       </property>
       <attribute name="title">
-       <string>Slide tab</string>
+       <string notr="true">Slide tab</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_4">
        <item>
@@ -87,7 +90,7 @@
        <bool>true</bool>
       </property>
       <attribute name="title">
-       <string>Macro tab</string>
+       <string notr="true">Macro tab</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
@@ -117,7 +120,7 @@
            <item>
             <widget class="QLabel" name="macrofileLabel">
              <property name="text">
-              <string>filenameLabel</string>
+              <string notr="true">filenameLabel</string>
              </property>
             </widget>
            </item>
@@ -143,7 +146,7 @@
      </widget>
      <widget class="QWidget" name="fileTab">
       <attribute name="title">
-       <string>File tab</string>
+       <string notr="true">File tab</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
@@ -172,8 +175,11 @@
            </item>
            <item>
             <widget class="QLabel" name="scriptfileLabel">
+             <property name="accessibleName">
+              <string notr="true"/>
+             </property>
              <property name="text">
-              <string>scriptfileLabel</string>
+              <string notr="true">scriptfileLabel</string>
              </property>
             </widget>
            </item>

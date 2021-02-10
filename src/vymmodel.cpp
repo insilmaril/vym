@@ -3998,20 +3998,9 @@ void VymModel::getJiraData(bool subtree) // FIXME-2 update error message, check
     if (!jiraClientAvailable) {
         WarningDialog dia;
         dia.setText(
-            QObject::tr("No Jira client found. "
-                        " For openSUSE you install by (running as root):\n\n",
-                        "VymModel, how to install Bugzilla client module") +
-            "  zypper ar "
-            "http://download.opensuse.org/repositories/openSUSE:/Tools/"
-            "openSUSE_XX.Y/ openSUSE:Tools_XX.Y\n" +
-            "  zypper in perl-SUSE-BugzillaClient\n\n" +
-            "  and replace XX.Y with your version of openSUSE, e.g. 11.4\n\n" +
-            QObject::tr(
-                "Alternatively you can also add the repository\n"
-                "and install the perl module for Bugzilla access using YaST",
-                "VymModel, how to install Bugzilla client module"));
+            QObject::tr("JIRA client not found."));
         dia.setWindowTitle(
-            QObject::tr("Warning: Couldn't find Jira client", "VymModel"));
+            tr("Warning") + ": " + tr("JIRA client not found"));
         dia.setShowAgainName("/JiraClient/missing");
         dia.exec();
         return;

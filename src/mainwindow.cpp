@@ -1617,7 +1617,7 @@ void Main::setupEditActions()
     actionListBranches.append(a);
     actionHeading2URL = a;
 
-    tag = tr("Jira handling", "Shortcuts");
+    tag = "JIRA";
     a = new QAction(tr("Create URL to Jira", "Edit menu") + " (experimental)",
                     this);
     a->setShortcut(Qt::Key_J + Qt::SHIFT);
@@ -1628,7 +1628,7 @@ void Main::setupEditActions()
     actionListBranches.append(a);
     actionGetJiraData = a;
 
-    a = new QAction(tr("Get data from Jira for subtree", "Edit menu") +
+    a = new QAction(tr("Get data from JIRA for subtree", "Edit menu") +
                         " (experimental)",
                     this);
     a->setShortcut(Qt::Key_J + Qt::CTRL);

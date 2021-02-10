@@ -100,15 +100,13 @@ QString ExportHTML::getBranchText(BranchItem *current)
             QRectF fbox = current->getBBoxURLFlag();
             if (vis)
                 imageMap += QString("  <area shape='rect' coords='%1,%2,%3,%4' "
-                                    "href='%5' alt='%6'>\n")
+                                    "href='%5' alt='External link: %6'>\n")
                                 .arg(fbox.left() - offset.x())
                                 .arg(fbox.top() - offset.y())
                                 .arg(fbox.right() - offset.x())
                                 .arg(fbox.bottom() - offset.y())
                                 .arg(url)
-                                .arg(QObject::tr("External link: %1",
-                                                 "Alt tag in HTML export")
-                                         .arg(heading));
+                                .arg(heading);
         }
         else
             s += number + taskFlags + heading + flags;
@@ -385,8 +383,7 @@ void ExportHTML::doExport(bool useDialog)
         QString mapName = getMapName();
         ts << "<center><img src=\"" << mapName << ".png\"";
         ts << "alt=\""
-           << QObject::tr("Image of map: %1.vym", "Alt tag in HTML export")
-                  .arg(mapName)
+           << QString("Image of map: %1.vym").arg(mapName)
            << "\"";
         ts << " usemap='#imagemap'></center>\n";
         offset =

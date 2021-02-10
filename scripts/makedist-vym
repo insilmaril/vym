@@ -8,8 +8,7 @@ if [ ! -f $CONFIG ]; then
     echo in you current directory:
     echo
     echo 'VERSION=x.y.z   #use desired version'
-    echo 'BRANCH="master" #or e.g. "maintained-release"'
-    echo 'REMOTE="sf"     #depending on your git configuration'
+    echo 'BRANCH="develop" #or e.g. "maintained-release"'
     exit
 else    
     . $CONFIG
@@ -71,7 +70,8 @@ if [ $DO_CHECKOUT = 1 ]; then
     cd $OLDDIR
     echo Removing $SRCDIR...
     rm -rf $SRCDIR
-    git clone -b $BRANCH git://git.code.sf.net/p/vym/code vym
+#    git clone -b $BRANCH git://git.code.sf.net/p/vym/code src
+    git clone -b $BRANCH git@github.com:insilmaril/vym.git vym
 fi	
 
 #VERSION=$(grep __VYM_VERSION $SRCDIR/version.h |  sed -e 's/^.*\"\(.*\)\"$/\1/g')

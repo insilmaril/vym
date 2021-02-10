@@ -90,7 +90,7 @@ bool parseVYMHandler::startElement(const QString &, const QString &,
                     // might cause data loss, if read with old vym and saved
                     // again Therefor warn and disable autosave
                     QMessageBox::warning(
-                        0, QObject::tr("Warning: Disabling autosave"),
+                        0, QObject::tr("Warning")  + ": " + QObject::tr("Disabling autosave"),
                         QObject::tr("<h3>Autosave will be disabled</h3>"
                                     "<p>Please check contents of map before "
                                     "saving!</p>"));
