@@ -294,29 +294,7 @@ int main(int argc, char *argv[])
         vymBaseDir.cdUp();
         vymBaseDir.cd("Resources");
 #elif defined(Q_OS_WIN32)
-        QString basePath;
-
-        wchar_t wbuf[512];
-        if (GetModuleFileName(NULL, wbuf, 512)) {
-            QString mfn(QString::fromWCharArray(wbuf));
-            mfn.replace('\\', '/');
-            int i = mfn.lastIndexOf('/');
-            if (i < 0) {
-                QMessageBox::critical(0, "Error", "Couldn't setup vymBasePath");
-                return 0;
-            }
-            if (mfn.right(mfn.length() - i - 1) != "vym.exe") {
-                QMessageBox::critical(0, "Error",
-                                      "vym executable not known as vym.exe");
-                return 0;
-            }
-            basePath = mfn.left(i);
-        }
-        if (basePath.isEmpty())
-            basePath = vymBaseDir.currentPath();
-
-        vymInstallDir.setPath(basePath);
-        vymBaseDir.setPath(basePath);
+        vymBaseDir.setPath(QDir::currentPath());
 #else
         vymBaseDir.setPath(VYMBASEDIR);
 #endif
