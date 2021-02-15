@@ -1626,7 +1626,7 @@ void Main::setupEditActions()
     addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(getJiraData()));
     actionListBranches.append(a);
-    actionGetJiraData = a;
+    actionGetJiraData = a;      // FIXME-2 used???
 
     a = new QAction(tr("Get data from JIRA for subtree", "Edit menu") +
                         " (experimental)",
