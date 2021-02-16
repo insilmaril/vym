@@ -28,8 +28,8 @@ using namespace std;
 #include <sys/types.h> // To retrieve PID for use in DBUS
 #endif
 
-#if defined(Q_OS_WIN32)
-#define WIN32_LEAN_AND_MEAN
+#if defined(Q_OS_WINDOWS)  // FIXME-2 still required?
+#define _LEAN_AND_MEAN // FIXME-2 required?
 #include <windows.h>
 #define getpid GetCurrentProcessId
 #else
@@ -91,7 +91,7 @@ QDir vymBaseDir; // Containing all styles, scripts, images, ...
 QDir lastImageDir;
 QDir lastMapDir;
 QDir lastExportDir;
-#if defined(Q_OS_WIN32)
+#if defined(Q_OS_WINDOWS)
 QDir vymInstallDir;
 #endif
 QString iconPath;  // Pointing to icons used for toolbars
@@ -293,7 +293,7 @@ int main(int argc, char *argv[])
         vymBaseDir = QCoreApplication::applicationDirPath();
         vymBaseDir.cdUp();
         vymBaseDir.cd("Resources");
-#elif defined(Q_OS_WIN32)
+#elif defined(Q_OS_WINDOWS)
         vymBaseDir.setPath(QDir::currentPath());
 #else
         vymBaseDir.setPath(VYMBASEDIR);
@@ -303,11 +303,9 @@ int main(int argc, char *argv[])
     // Platform specific settings
     vymPlatform = QSysInfo::prettyProductName();
 
-#if defined(Q_OS_WIN32)
-    zipToolPath =
-        settings
-            .value("/system/zipToolPath", "c:\\Program Files\\7-Zip\\7z.exe")
-            .toString();
+#if defined(Q_OS_WINDOWS)
+    // Only Windows 10 has tar. Older windows versions not supported.
+    zipToolPath = "tar";
 #else
     zipToolPath = "/usr/bin/zip";
     unzipToolPath = "/usr/bin/unzip";
@@ -417,15 +415,12 @@ int main(int argc, char *argv[])
     checkZipTool();
     checkUnzipTool();
 
-#if defined(Q_OS_WIN32)
-    if (!zipToolAvailable) {
+#if defined(Q_OS_WINDOWS)
+    if (!zipToolAvailable || QOperatingSystemVersion::current() < QOperatingSystemVersion::Windows10) {
         QMessageBox::critical(
             0, QObject::tr("Critical Error"),
-            QObject::tr("Couldn't find tool to unzip data. "
-                        "Please download and install 7z and set "
-                        "path in Settings menu:\n ",
-                        "zip tool missing on Win platform") +
-                "http://www.7-zip.org/");
+            QObject::tr("Couldn't find tool to unzip data,"
+                        "or your Windows version is older than Windows 10."));
         m.settingsZipTool();
     }
 #else

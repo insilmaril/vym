@@ -5,7 +5,7 @@
 #include <QtDBus/QDBusConnection>
 #endif
 
-#ifndef Q_OS_WIN
+#ifndef Q_OS_WINDOWS
 #include <unistd.h>
 #else
 #define sleep Sleep
@@ -54,7 +54,7 @@
 #include "xml-vym.h"
 #include "xmlobj.h"
 
-#ifdef Q_OS_WIN
+#ifdef Q_OS_WINDOWS
 #include <windows.h>
 #endif
 

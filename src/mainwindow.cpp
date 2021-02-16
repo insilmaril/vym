@@ -5518,9 +5518,9 @@ bool Main::settingsURL()
     return ok;
 }
 
-void Main::settingsZipTool()
+void Main::settingsZipTool()  // FIXME-2 no longer required
 {
-    // Default zip tool is 7z on windows, zip/unzip elsewhere
+    // Default zip tool is tar on Windows 10, zip/unzip elsewhere
     ZipSettingsDialog dia;
     dia.exec();
 }

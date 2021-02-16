@@ -2,6 +2,7 @@
 #include <QDir>
 #include <QLabel>
 #include <QMessageBox>
+#include <QOperatingSystemVersion>
 #include <QPixmap>
 #include <QTextStream>
 #include <cstdlib>
@@ -10,7 +11,7 @@
 #include "file.h"
 #include "vymprocess.h"
 
-#if defined(Q_OS_WIN32)
+#if defined(Q_OS_WINDOWS)
 #include "mkdtemp.h"
 #include <windows.h>
 #endif
@@ -126,7 +127,7 @@ QString makeUniqueDir(bool &ok, QString s)
 
     QString r;
 
-#if defined(Q_OS_WIN32)
+#if defined(Q_OS_WINDOWS)
     r = mkdtemp(s);
 #else
     // On Linux and friends use cstdlib
@@ -257,17 +258,30 @@ void makeSubDirs(const QString &s)
 
 bool checkZipTool()
 {
+    zipToolAvailable = false;
+#if defined(Q_OS_WINDOWS)
+    if (QOperatingSystemVersion::current() >= QOperatingSystemVersion::Windows10)
+        zipToolAvailable = true;
+#else
+
     QFile tool(zipToolPath);
 
     zipToolAvailable = tool.exists();
+#endif
     return zipToolAvailable;
 }
 
 bool checkUnzipTool()
 {
+    unzipToolAvailable = false;
+#if defined(Q_OS_WINDOWS)
+    if (QOperatingSystemVersion::current() >= QOperatingSystemVersion::Windows10)
+        zipToolAvailable = true;
+#else
     QFile tool(unzipToolPath);
 
     unzipToolAvailable = tool.exists();
+#endif
     return unzipToolAvailable;
 }
 
@@ -302,12 +316,12 @@ ErrorCode zipDir(QDir zipInputDir, QString zipName)
     VymProcess *zipProc = new VymProcess();
     QStringList args;
 
-#if defined(Q_OS_WIN32)
+#if defined(Q_OS_WINDOWS)
     zipProc->setWorkingDirectory(
         QDir::toNativeSeparators(zipInputDir.path() + "\\"));
-    args << "a" << zipName << "-tzip"
-         << "-scsUTF-8"
-         << "*";
+
+    args << "-a" << "-c" << "--format" << "zip" << "-f" << zipName << "*";
+
     zipProc->start(zipToolPath, args);
 
     if (!zipProc->waitForStarted()) {
@@ -464,27 +478,11 @@ File::ErrorCode unzipDir(QDir zipOutputDir, QString zipName)
     VymProcess *zipProc = new VymProcess();
     QStringList args;
 
-#if defined(Q_OS_WIN32)
+#if defined(Q_OS_WINDOWS)
     zipProc->setWorkingDirectory(
         QDir::toNativeSeparators(zipOutputDir.path() + "\\"));
-    args << "-o" + zipOutputDir.path() << "x" << zipName.toUtf8()
-         << "-scsUTF-8";
+    args << "-x" << "-f" << zipName.toUtf8() << "-C" << zipOutputDir.path();
     zipProc->start(zipToolPath, args);
-/*
-    if (!zipProc->waitForStarted())
-    {
-        QMessageBox::critical( 0, QObject::tr( "Critical Error" ),
-                               QObject::tr("Couldn't start tool to decompress
-   data.")); err=Aborted;
-    }
-
-    while(zipProc->state()!=QProcess::NotRunning){
-        zipProc->waitForReadyRead();
-        //result = zipProc->readAll();
-        //qDebug() << result << flush;
-    }
-    //qDebug() << zipProc->getStdout()<<flush;
-*/
 #else
     zipProc->setWorkingDirectory(QDir::toNativeSeparators(zipOutputDir.path()));
     args << "-o"; // overwrite existing files!
