@@ -7,12 +7,11 @@ Documentation
 * PDF
 
     The complete documentation of vym is available as PDF document in
-    english and spanish. (The spanish version is not really up to date,
-    translators are welcome). It can be accessed directly from vym via
-    the help section It also can be downloaded from the vym site at
-    Sourceforge:
+    English, French and Spanish. (Only the English version is really up
+    to date, translators are welcome). PDFs can be accessed directly from
+    vym via the help section. They also can be downloaded from github at
 
-	https://sourceforge.net/projects/vym/
+        https://github.com/insilmaril/vym/tree/develop/doc
 
 * Screencasts
 
@@ -35,6 +34,14 @@ Open Build Service project of Uwe Drechsel (aka insilmaril):
 
     http://download.opensuse.org/repositories/home%3A//insilmaril/
 
+
+Source code
+-----------
+
+The source code was hosted on Sourceforge for 16 years. Starting in
+2021 the development is done in github:
+
+    https://github.com/insilmaril/vym
 
 
 Installation
@@ -61,9 +68,11 @@ Installation
 Questions and feedback
 ----------------------
 
-Please direct questions to the mailinglist first: 
+Please direct support questions to the mailinglist first: 
 
     vym-forum@lists.sourceforge.net
 
+Bugs and feature requests will be taken care of in 
 
+    https://github.com/insilmaril/vym/issues
 
