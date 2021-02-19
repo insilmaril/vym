@@ -24,7 +24,7 @@ QString makeTmpDir(bool &ok, const QString &dirPath, const QString &prefix);
 QString makeTmpDir(bool &ok, const QString &prefix);
 bool isInTmpDir(QString fn);
 QString makeUniqueDir(bool &ok, QString);
-void removeDir(QDir);
+bool removeDir(QDir);
 bool copyDir(QDir src, QDir dst, const bool &override = false);
 bool subDirsExist();
 void makeSubDirs(const QString &);
