@@ -109,6 +109,7 @@ bool ConfluenceAgent::getPageDetails(const QString &url)
 
 bool ConfluenceAgent::getPageDetailsNative(const QString &u)
 {
+    qDebug() << "CA::getPageDetailsNative for " << u; // FIXME-2 testing
     QUrl url(u);
     if (!url.isValid()) {
         qWarning() << "ConfluenceAgent: Invalid URL: " << u;

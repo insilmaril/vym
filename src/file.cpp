@@ -191,7 +191,7 @@ void removeDir(QDir d)
     QString dirName = d.dirName();
     d.cdUp();
     if (!d.rmdir(dirName))
-        qWarning() << "removeDir(" + dirName + ") failed!";
+        qWarning() << "removeDir(" + dirName + ") failed!";  //FIXME-2 Check on windows
 }
 
 bool copyDir(QDir src, QDir dst, const bool &override)

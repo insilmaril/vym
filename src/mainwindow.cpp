@@ -16,6 +16,7 @@ using namespace std;
 #include <QInputDialog>
 #include <QMenuBar>
 #include <QScriptEngine>
+#include <QSslSocket>
 #include <QStatusBar>
 #include <QTextStream>
 
@@ -6534,24 +6535,32 @@ void Main::helpMacros()
     dia.exec();
 }
 
+#include <QSslSocket>
 void Main::debugInfo()
 {
     QString s;
-    s = QString("vym version: %1\n").arg(vymVersion);
-    s += QString("Platform: %1\n").arg(vymPlatform);
-    s += QString("localeName: %1\nPath: %2\n")
-             .arg(localeName)
-             .arg(vymBaseDir.path() + "/lang");
-    s += QString("tmpVymDir: %1\n").arg(tmpVymDir.path());
+    s =  QString("vym version: %1 - %2\n")
+            .arg(vymVersion)
+            .arg(vymBuildDate);
+    s += QString("   Platform: %1\n").arg(vymPlatform);
+    s += QString(" localeName: %1\n").arg(localeName);
+    s += QString("  tmpVymDir: %1\n").arg(tmpVymDir.path());
     s += QString("zipToolPath: %1\n").arg(zipToolPath);
-    s += QString("vymBaseDir: %1\n").arg(vymBaseDir.path());
+    s += QString(" vymBaseDir: %1\n").arg(vymBaseDir.path());
     s += QString("currentPath: %1\n").arg(QDir::currentPath());
-    s +=
-        QString("appDirPath: %1\n").arg(QCoreApplication::applicationDirPath());
-    s += QString("vym settings path: %1\n").arg(settings.fileName());
-    QMessageBox mb;
-    mb.setText(s);
-    mb.exec();
+    s += QString(" appDirPath: %1\n")
+            .arg(QCoreApplication::applicationDirPath());
+    s += QString("   Settings: %1\n").arg(settings.fileName());
+    s += " SSL status: ";
+    QSslSocket::supportsSsl() ? s += "supported\n" : s += "not supported\n";
+    s += "     SSL Qt: " + QSslSocket::sslLibraryBuildVersionString() + "\n";
+    s += "    SSL lib: " + QSslSocket::sslLibraryVersionString() + "\n";
+
+    ShowTextDialog dia;
+    dia.useFixedFont(true);
+    dia.setText(s);
+    dia.setMinimumWidth(900);
+    dia.exec();
 }
 
 void Main::helpAbout()
