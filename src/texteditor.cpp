@@ -486,7 +486,7 @@ void TextEditor::setupFormatActions()
 
     a = new QAction(QPixmap(":/text_bold.png"), tr("&Bold"), this);
     a->setShortcut(Qt::CTRL + Qt::Key_B);
-    a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+//    a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     switchboard.addSwitch("textToggleBold", shortcutScope, a, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(textBold()));
     formatToolBar->addAction(a);
@@ -496,7 +496,7 @@ void TextEditor::setupFormatActions()
 
     a = new QAction(QPixmap(":/text_italic.png"), tr("&Italic"), this);
     a->setShortcut(Qt::CTRL + Qt::Key_I);
-    a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+//    a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     switchboard.addSwitch("textToggleItalic", shortcutScope, a, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(textItalic()));
     formatToolBar->addAction(a);
@@ -506,7 +506,7 @@ void TextEditor::setupFormatActions()
 
     a = new QAction(QPixmap(":/text_under.png"), tr("&Underline"), this);
     a->setShortcut(Qt::CTRL + Qt::Key_U);
-    a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+//    a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     switchboard.addSwitch("textToggleUnderline", shortcutScope, a, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(textUnderline()));
     formatToolBar->addAction(a);
@@ -520,7 +520,7 @@ void TextEditor::setupFormatActions()
     actGrp2->setExclusive(true);
     a = new QAction(QPixmap(":/text_sub.png"), tr("Subs&cript"), actGrp2);
     a->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_B);
-    a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+//    a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     a->setCheckable(true);
     formatToolBar->addAction(a);
     formatMenu->addAction(a);
@@ -530,7 +530,7 @@ void TextEditor::setupFormatActions()
 
     a = new QAction(QPixmap(":/text_super.png"), tr("Su&perscript"), actGrp2);
     a->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_P);
-    a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+//    a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     a->setCheckable(true);
     formatToolBar->addAction(a);
     formatMenu->addAction(a);
