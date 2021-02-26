@@ -19,6 +19,7 @@ class TreeEditor : public QTreeView {
   private slots:
     void cursorUp();
     void cursorDown();
+    void startEdit();
 
   private:
     VymModel *model;

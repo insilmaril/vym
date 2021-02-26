@@ -254,6 +254,15 @@ void VymModel::updateActions()
     mainWindow->updateActions();
 }
 
+bool VymModel::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+    if (role != Qt::EditRole)
+        return false;
+
+    setHeadingPlainText(value.toString());
+
+    return true;
+}
 void VymModel::resetUsedFlags()
 {
     standardFlagsMaster->resetUsedCounter();

@@ -50,6 +50,12 @@ void TreeEditor::init()
     addAction(a);
     connect(a, SIGNAL(triggered()), mainWindow, SLOT(editMoveDown()));
 
+    a = new QAction(this);
+    a->setShortcut(Qt::Key_Return);
+    a->setShortcutContext(Qt::WidgetShortcut);
+    addAction(a);
+    connect(a, SIGNAL(triggered()), this, SLOT(startEdit()));
+
     // Clone actions defined in MainWindow
     foreach (QAction *qa, mainWindow->mapEditorActions) {
         a = new QAction(this);
@@ -90,4 +96,12 @@ void TreeEditor::cursorDown()
     ix = indexBelow(ix);
     if (ix.isValid())
         model->select(ix);
+}
+
+void TreeEditor::startEdit()
+{
+
+    QModelIndex ix = getSelectedIndex();
+    if (ix.isValid())
+        edit(ix);
 }

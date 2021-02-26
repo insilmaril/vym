@@ -2,8 +2,8 @@
 #define VERSION_H
 
 #define __VYM_NAME "VYM"
-#define __VYM_VERSION "2.7.561"
-#define __VYM_BUILD_DATE "2021-02-22"
+#define __VYM_VERSION "2.7.562"
+#define __VYM_BUILD_DATE "2021-02-26"
 #define __VYM_CODE_QUALITY "development"
 //#define __VYM_CODE_QUALITY "production"
 //#define __VYM_CODENAME "Codename: Production release"

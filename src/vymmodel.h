@@ -74,6 +74,8 @@ class VymModel : public TreeModel {
                                 //!< update graphicsview
     void updateActions();       //!< Update buttons in mainwindow
 
+    bool setData(const QModelIndex &index, const QVariant &value, int role) override;
+
     ////////////////////////////////////////////
     // Load/save
     ////////////////////////////////////////////
