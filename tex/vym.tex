@@ -57,8 +57,8 @@
 \title{
     \includegraphics[width=8cm]{images/vym-logo-new.png} \\ 
     VYM  -- View Your Mind \\ 
-    {\small Version 2.7.560} \\ 
-    {\b Usermanual }
+    {\small Version 2.7.563} \\ 
+    { Usermanual }
 \author{\textcopyright Uwe Drechsel  }
 }
 
@@ -205,6 +205,11 @@ map} the tasks that will be required to deliver a project.
 %TODO
 
 \subsection{Internet Ressources} 
+There are a few tutorial vides on youtube:
+\begin{itemize}
+    \item Youtube: 
+        \href{https://www.youtube.com/c/ViewYourMind}{https://www.youtube.com/c/ViewYourMind}
+\end{itemize}
 A good starting point to learn more about Mindmaps in general is Wikipedia:
 \begin{itemize}
     \item English: 
@@ -1019,6 +1024,7 @@ menu. The (currently) available action are:
     \includegraphics[width=0.5cm]{../icons/down.png}
     Move current slide down in slidedeck
 \end{itemize}
+In the \em{View}-menu or it's toolbar you can also toggle the presentation mode to hide most of the toolbars and buttons
 
 
 \section{Hello world - vym and other applications}
@@ -1331,19 +1337,18 @@ The modifier mode can be selected in the toolbar
 \begin{center}
     \includegraphics[width=3cm]{images/modmodes.png}
 \end{center}
+or also using the adjacent keys \key{L}, \key{K} and \key{L}.
 The selected mode influences mouse behaviour when the \key{Shift}-modifier is
 used:
 \begin{itemize}
-    \item Pointer: This is the default and is used to select branches
-        and relink them to others
-    \item Format: Pick from another branch and apply to currently
+    \item Multiple selection: Press Shift and click to select multiple objects
+    \item Colorpicker: Pick from another branch and apply to currently
         selected branch
     \item XLink: Draw a connecting XLink between two branches. See also
         \ref{xlinks}
-    \item Move object: Move object, but without relinking to another
-        branch. Useful to position one object within another bigger one
-    \item Move view: Move the currently visible view, without moving
-        objects
+    \item Move object: Move an object, but when releasing it over another one, do not relink.
+        (Useful for positioning branches in other branches for presentations.)
+    \item Move view: Only move view without selecting an object
 \end{itemize}
 
 \subsection{Hide links of unselected objects} \label{hidelink}
