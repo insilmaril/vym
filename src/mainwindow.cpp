@@ -2163,15 +2163,15 @@ void Main::setupViewActions()
 
     QAction *a;
 
-    a = new QAction(tr("Toggle Presentation mode", "View action") + " " +
-                        tr("(still experimental)"),
-                    this);
+    a = new QAction(QPixmap(":view-video-projector.png"), 
+            tr("Toggle Presentation mode", "View action") + " " +
+            tr("(still experimental)"),
+            this);
     // a->setShortcut(Qt::Key_Plus);
     viewMenu->addAction(a);
-    // switchboard.addSwitch ("mapZoomIn", shortcutScope, a, tag);
+    switchboard.addSwitch ("presentationMode", shortcutScope, a, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(togglePresentationMode()));
-
-    viewMenu->addSeparator();
+    actionTogglePresentationMode = a;
 
     a = new QAction(QPixmap(":/viewmag+.png"), tr("Zoom in", "View action"),
                     this);
@@ -3333,8 +3333,9 @@ void Main::setupToolbars()
     colorsToolbar->addAction(actionFormatColorSubtree);
 
     // Zoom
-    zoomToolbar = addToolBar(tr("Zoom toolbar", "View Toolbar name"));
+    zoomToolbar = addToolBar(tr("View toolbar", "View Toolbar name"));
     zoomToolbar->setObjectName("viewTB");
+    zoomToolbar->addAction(actionTogglePresentationMode);
     zoomToolbar->addAction(actionZoomIn);
     zoomToolbar->addAction(actionZoomOut);
     zoomToolbar->addAction(actionZoomReset);

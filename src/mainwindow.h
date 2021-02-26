@@ -472,6 +472,7 @@ class Main : public QMainWindow {
     QAction *actionDeleteVymLink;
     QAction *actionAddTimestamp;
     QAction *actionToggleTask;
+    QAction *actionTogglePresentationMode;
     QAction *actionCycleTaskStatus;
     QAction *actionTaskSleep0;
     QAction *actionTaskSleepN;

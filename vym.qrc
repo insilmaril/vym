@@ -142,7 +142,8 @@
     <file alias="text_under.png">icons/text_under.png</file>
     <file alias="treeeditor.png">icons/treeeditor.png</file>
     <file alias="undo.png">icons/undo.png</file>
-    <file alias="up.png">icons/up.png</file>
+    <file alias="view-video-projector.png">icons/video-projector.png</file>
+    <file alias="view-filter.png">icons/view-filter.png</file>
     <file alias="view-filter.png">icons/view-filter.png</file>
     <file alias="viewmag+.png">icons/viewmag+.png</file>
     <file alias="viewmag-.png">icons/viewmag-.png</file>
