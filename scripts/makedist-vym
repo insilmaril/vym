@@ -42,12 +42,12 @@ if [ "$INPUT" = "n" ]; then
 fi	
 echo
 
-read -n 1 -p "Create Documentation? [y]" INPUT
-DO_DOCS=1
-if [ "$INPUT" = "n" ]; then
-    DO_DOCS=0
-fi	
-echo
+#read -n 1 -p "Create Documentation? [y]" INPUT
+#DO_DOCS=1
+#if [ "$INPUT" = "n" ]; then
+#    DO_DOCS=0
+#fi	
+#echo
 
 read -n 1 -p "Create Tarball? [y]" INPUT
 DO_TARBALL=1
@@ -81,19 +81,19 @@ echo "Setting version from sources: $VERSION"
 echo
 
 # create documentation
-if [ $DO_DOCS = 1 ] ; then
-    cp -ra $SRCDIR/tex $TMPDIR
-    cp -ra $SRCDIR/icons $TMPDIR
-    cp -ra $SRCDIR/flags $TMPDIR
-    cd $TMPDIR/tex
-    for i in {1..3} ; do
-	pdflatex vym.tex
-	pdflatex vym_es.tex
-	pdflatex vym_fr.tex
-	sleep 1
-    done	
-    cd $OLDDIR
-fi
+#if [ $DO_DOCS = 1 ] ; then
+#    cp -ra $SRCDIR/tex $TMPDIR
+#    cp -ra $SRCDIR/icons $TMPDIR
+#    cp -ra $SRCDIR/flags $TMPDIR
+#    cd $TMPDIR/tex
+#    for i in {1..3} ; do
+#	pdflatex vym.tex
+#	pdflatex vym_es.tex
+#	pdflatex vym_fr.tex
+#	sleep 1
+#    done	
+#    cd $OLDDIR
+#fi
 
 cd $OLDDIR
 
