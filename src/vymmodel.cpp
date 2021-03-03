@@ -3771,7 +3771,7 @@ void VymModel::toggleTarget()
     if (selbi) {
         selbi->toggleTarget();
         reposition();
-        saveState(selbi, "toggleTarget()", selbi, "toggleTarget",
+        saveState(selbi, "toggleTarget()", selbi, "toggleTarget()",
                   "Toggle target");
     }
 }
