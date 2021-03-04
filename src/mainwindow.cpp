@@ -3517,12 +3517,9 @@ void Main::fileNew()
                                  "Mainwindow: Failed to load default map")
                                   .arg(default_path));
 
-        // Switch to new tab
-        tabWidget->setCurrentIndex(tabWidget->count() - 1);
-
         vm = currentModel();
 
-        // Create MapCenter for empty map
+        // Create MapCenter for empty map  
         vm->addMapCenter(false);
         vm->makeDefault();
 
@@ -3535,6 +3532,9 @@ void Main::fileNew()
     else {
         vm = currentModel();
     }
+    
+    // Switch to new tab    
+    tabWidget->setCurrentIndex(tabWidget->count() - 1);
 }
 
 void Main::fileNewCopy()
