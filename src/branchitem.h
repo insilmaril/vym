@@ -45,6 +45,7 @@ class BranchItem : public MapItem {
     Task *task;
 
   public:
+    virtual void scroll();
     virtual void unScroll();
     virtual bool toggleScroll(); // scroll or unscroll
     virtual bool isScrolled();   // returns scroll state

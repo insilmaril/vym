@@ -63,18 +63,17 @@ ICON =icons/vym.icns
 
 HEADERS	+= \
     src/aboutdialog.h \
-    src/codeeditor.h \
-    src/taskfiltermodel.h \
     src/animpoint.h \
     src/arrowobj.h \
     src/attribute.h \
     src/attributeitem.h \
-#   src/attributedelegate.h\
-#   src/attributedialog.h \
-#   src/attributewidget.h \
+#    src/attributedelegate.h\
+#    src/attributedialog.h \
+#    src/attributewidget.h \
     src/branchitem.h \
     src/branchobj.h \
     src/branchpropeditor.h\
+    src/codeeditor.h \
     src/command.h \
     src/confluence-agent.h \
     src/credentials.h \
@@ -144,6 +143,7 @@ HEADERS	+= \
     src/slidemodel.h\
     src/task.h\
     src/taskeditor.h\
+    src/taskfiltermodel.h \
     src/taskmodel.h\
     src/treedelegate.h \
     src/treeeditor.h \
@@ -173,18 +173,17 @@ HEADERS	+= \
 
 SOURCES	+= \
     src/aboutdialog.cpp \
-    src/codeeditor.cpp \
-    src/taskfiltermodel.cpp \
     src/animpoint.cpp \
     src/arrowobj.cpp \
     src/attribute.cpp \
     src/attributeitem.cpp \
-#   src/attributedelegate.cpp \
-#   src/attributedialog.cpp \
-#   src/attributewidget.cpp \
+#    src/attributedelegate.cpp \
+#    src/attributedialog.cpp \
+#    src/attributewidget.cpp \
     src/branchitem.cpp \
     src/branchobj.cpp \
     src/branchpropeditor.cpp \
+    src/codeeditor.cpp \
     src/command.cpp \
     src/confluence-agent.cpp \
     src/credentials.cpp \
@@ -255,6 +254,7 @@ SOURCES	+= \
     src/slidemodel.cpp \
     src/task.cpp \
     src/taskeditor.cpp \
+    src/taskfiltermodel.cpp \
     src/taskmodel.cpp \
     src/texteditor.cpp \
     src/treedelegate.cpp \

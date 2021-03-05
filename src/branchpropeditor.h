@@ -7,10 +7,11 @@
 #include <QDialog>
 #include <QtGui>
 
-//#include "attributedelegate.h"
+// #include "attributedelegate.h"
 #include "branchobj.h"
 
 class QAbstractItemModel;
+
 class VymModel;
 
 class BranchPropertyEditor : public QDialog {
@@ -33,8 +34,8 @@ class BranchPropertyEditor : public QDialog {
     void incImgHorChanged(int);
     void childrenFreePositioningChanged(int);
     void taskPriorityDeltaChanged(int);
-    //  void addAttributeClicked();
-    //  void deleteAttributeClicked();
+    void addAttributeClicked();
+    void deleteAttributeClicked();
 
   signals:
     void windowClosed();
@@ -55,9 +56,9 @@ class BranchPropertyEditor : public QDialog {
     QColor penColor;
     QColor brushColor;
 
-    //  QAbstractItemModel *attributeModel;
+    QAbstractItemModel *attributeModel;
 
-    //  AttributeDelegate delegate;
+    //AttributeDelegate attributeDelegate;
 };
 
 #endif //

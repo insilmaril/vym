@@ -112,7 +112,7 @@ VymModel::~VymModel()
 {
     // out << "Destr VymModel begin this="<<this<<"  "<<mapName<<flush;
     mapEditor = NULL;
-    blockReposition = true;
+    repositionBlocked = true;
     autosaveTimer->stop();
     fileChangedTimer->stop();
     stopAllAnimation();
@@ -167,8 +167,8 @@ void VymModel::init()
     filePath = "";
     fileName = tr("unnamed");
     mapName = fileName;
-    blockReposition = false;
-    blockSaveState = false;
+    repositionBlocked = false;
+    saveStateBlocked = false;
 
     autosaveTimer = new QTimer(this);
     connect(autosaveTimer, SIGNAL(timeout()), this, SLOT(autosave()));
@@ -246,7 +246,7 @@ MapEditor *VymModel::getMapEditor() { return mapEditor; }
 
 VymModelWrapper *VymModel::getWrapper() { return wrapper; }
 
-bool VymModel::isRepositionBlocked() { return blockReposition; }
+bool VymModel::isRepositionBlocked() { return repositionBlocked; }
 
 void VymModel::updateActions()
 {
@@ -457,9 +457,9 @@ bool VymModel::parseVymText(const QString &s)
     if (bi) {
         parseBaseHandler *handler = new parseVYMHandler;
 
-        bool blockSaveStateOrg = blockSaveState;
-        blockReposition = true;
-        blockSaveState = true;
+        bool saveStateBlockedOrg = saveStateBlocked;
+        repositionBlocked = true;
+        saveStateBlocked = true;
         QXmlInputSource source;
         source.setData(s);
         QXmlSimpleReader reader;
@@ -471,8 +471,8 @@ bool VymModel::parseVymText(const QString &s)
         handler->setLoadMode(ImportReplace, 0);
 
         ok = reader.parse(source);
-        blockReposition = false;
-        blockSaveState = blockSaveStateOrg;
+        repositionBlocked = false;
+        saveStateBlocked = saveStateBlockedOrg;
         if (ok) {
             if (s.startsWith("<vymnote"))
                 emitNoteChanged(bi);
@@ -596,9 +596,9 @@ File::ErrorCode VymModel::loadMap(QString fname, const LoadMode &lmode,
         err = File::Aborted;
     }
     else {
-        bool blockSaveStateOrg = blockSaveState;
-        blockReposition = true;
-        blockSaveState = true;
+        bool saveStateBlockedOrg = saveStateBlocked;
+        repositionBlocked = true;
+        saveStateBlocked = true;
         mapEditor->setViewportUpdateMode(QGraphicsView::NoViewportUpdate);
         QXmlInputSource source(&file);
         QXmlSimpleReader reader;
@@ -623,8 +623,8 @@ File::ErrorCode VymModel::loadMap(QString fname, const LoadMode &lmode,
         bool ok = reader.parse(source);
 
         // Aftermath
-        blockReposition = false;
-        blockSaveState = blockSaveStateOrg;
+        repositionBlocked = false;
+        saveStateBlocked = saveStateBlockedOrg;
         mapEditor->setViewportUpdateMode(QGraphicsView::MinimalViewportUpdate);
         file.close();
         if (ok) {
@@ -932,8 +932,8 @@ void VymModel::saveImage(ImageItem *ii, QString fn)
 
 void VymModel::importDirInt(BranchItem *dst, QDir d)
 {
-    bool oldSaveState = blockSaveState;
-    blockSaveState = true;
+    bool oldSaveState = saveStateBlocked;
+    saveStateBlocked = true;
     BranchItem *bi = dst;
     if (bi) {
         int beginDepth = bi->depth();
@@ -980,7 +980,7 @@ void VymModel::importDirInt(BranchItem *dst, QDir d)
         if (dst->branchCount() > 1 && dst->depth() - beginDepth > 2)
             dst->toggleScroll();
     }
-    blockSaveState = oldSaveState;
+    saveStateBlocked = oldSaveState;
 }
 
 void VymModel::importDir(const QString &s)
@@ -1212,6 +1212,17 @@ void VymModel::fileChanged()
     }
 }
 
+void VymModel::blockReposition()
+{
+    repositionBlocked = true;
+}
+
+void VymModel::unblockReposition()
+{
+    repositionBlocked = false;
+    reposition();
+}
+
 bool VymModel::isDefault() { return mapDefault; }
 
 void VymModel::makeDefault()
@@ -1258,8 +1269,8 @@ void VymModel::redo()
     if (redosAvail < 1)
         return;
 
-    bool blockSaveStateOrg = blockSaveState;
-    blockSaveState = true;
+    bool saveStateBlockedOrg = saveStateBlocked;
+    saveStateBlocked = true;
 
     redosAvail--;
 
@@ -1312,7 +1323,7 @@ void VymModel::redo()
     QString redoScript =
         QString("model = vym.currentMap(); model.%1").arg(redoCommand);
     errMsg = QVariant(execute(redoScript)).toString();
-    blockSaveState = blockSaveStateOrg;
+    saveStateBlocked = saveStateBlockedOrg;
 
     undoSet.setValue("/history/undosAvail", QString::number(undosAvail));
     undoSet.setValue("/history/redosAvail", QString::number(redosAvail));
@@ -1378,8 +1389,8 @@ void VymModel::undo()
 
     mainWindow->statusMessage(tr("Autosave disabled during undo."));
 
-    bool blockSaveStateOrg = blockSaveState;
-    blockSaveState = true;
+    bool saveStateBlockedOrg = saveStateBlocked;
+    saveStateBlocked = true;
 
     QString undoCommand =
         undoSet.value(QString("/history/step-%1/undoCommand").arg(curStep));
@@ -1440,7 +1451,7 @@ void VymModel::undo()
 
     redosAvail++;
 
-    blockSaveState = blockSaveStateOrg;
+    saveStateBlocked = saveStateBlockedOrg;
     /* testing only
         qDebug() << "VymModel::undo() end\n";
         qDebug() << "    undosAvail="<<undosAvail;
@@ -1518,7 +1529,7 @@ void VymModel::saveState(const SaveMode &savemode, const QString &undoSelection,
 
     // Main saveState
 
-    if (blockSaveState)
+    if (saveStateBlocked)
         return;
 
     if (debug)
@@ -2743,13 +2754,13 @@ bool VymModel::moveUp(BranchItem *bi)
     if (readonly)
         return false;
 
-    bool oldState = blockSaveState;
-    blockSaveState = true;
+    bool oldState = saveStateBlocked;
+    saveStateBlocked = true;
     bool result = false;
     if (bi && bi->canMoveUp())
         result =
             relinkBranch(bi, (BranchItem *)bi->parent(), bi->num() - 1, false);
-    blockSaveState = oldState;
+    saveStateBlocked = oldState;
     return result;
 }
 
@@ -2772,13 +2783,13 @@ bool VymModel::moveDown(BranchItem *bi)
     if (readonly)
         return false;
 
-    bool oldState = blockSaveState;
-    blockSaveState = true;
+    bool oldState = saveStateBlocked;
+    saveStateBlocked = true;
     bool result = false;
     if (bi && bi->canMoveDown())
         result =
             relinkBranch(bi, (BranchItem *)bi->parent(), bi->num() + 1, false);
-    blockSaveState = oldState;
+    saveStateBlocked = oldState;
     return result;
 }
 
@@ -3015,7 +3026,7 @@ QString VymModel::getXLinkStyleEnd()
         return QString();
 }
 
-AttributeItem *VymModel::addAttribute() // Experimental, savestate missing
+AttributeItem *VymModel::addAttribute() // FIXME-3 Experimental, savestate missing
 
 {
     BranchItem *selbi = getSelectedBranch();
@@ -3047,9 +3058,10 @@ AttributeItem *VymModel::addAttribute(BranchItem *dst, AttributeItem *ai)
 
         emit(layoutChanged());
 
+        // FIXME-3 experimental - instead of AI key/val only add flag?
         ai->createMapObj(mapEditor->getScene());
         reposition();
-        return ai;
+        return ai;  // FIXME-2 Check if ai is used or deleted - deep copy here?
     }
     return NULL;
 }
@@ -3287,7 +3299,7 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int pos,
         if (lmosel)
             savePos = lmosel->getAbsPos();
 
-        if (!blockSaveState) { // Don't build strings when moving up/down
+        if (!saveStateBlocked) { // Don't build strings when moving up/down
             QString undoCom =
                 "relinkTo (\"" + preParStr + "\"," + preNum + "," +
                 QString("%1,%2").arg(orgPos.x()).arg(orgPos.y()) + ")";
@@ -3518,8 +3530,8 @@ void VymModel::deleteKeepChildren(bool saveStateFlag)
 
         QString sel = getSelectString(selbi);
         unselectAll();
-        bool oldSaveState = blockSaveState;
-        blockSaveState = true;
+        bool oldSaveState = saveStateBlocked;
+        saveStateBlocked = true;
         int pos = selbi->num();
         BranchItem *bi = selbi->getFirstBranch();
         while (bi) {
@@ -3536,7 +3548,7 @@ void VymModel::deleteKeepChildren(bool saveStateFlag)
             bo->move2RelPos(p);
             reposition();
         }
-        blockSaveState = oldSaveState;
+        saveStateBlocked = oldSaveState;
     }
 }
 
@@ -4778,7 +4790,7 @@ void VymModel::unsetContextPos()
 void VymModel::reposition() // FIXME-4 VM should have no need to reposition, but
                             // the views...
 {
-    if (blockReposition)
+    if (repositionBlocked)
         return;
 
     BranchObj *bo;
@@ -5642,7 +5654,7 @@ void VymModel::appendSelection() // FIXME-4 history unable to cope with multiple
 
 void VymModel::emitShowSelection()
 {
-    if (!blockReposition)
+    if (!repositionBlocked)
         emit(showSelection());
 }
 
@@ -5658,7 +5670,7 @@ void VymModel::emitDataChanged(TreeItem *ti)
     QModelIndex ix = index(ti);
     emit(dataChanged(ix, ix));
     emitSelectionChanged();
-    if (!blockReposition) {
+    if (!repositionBlocked) {
         if (ti->isBranchLikeType() && ((BranchItem *)ti)->getTask()) {
             taskModel->emitDataChanged(((BranchItem *)ti)->getTask());
             taskModel->recalcPriorities();
@@ -5669,7 +5681,7 @@ void VymModel::emitDataChanged(TreeItem *ti)
 void VymModel::emitUpdateQueries()
 {
     // Used to tell MainWindow to update query results
-    if (blockReposition)
+    if (repositionBlocked)
         return;
     emit(updateQueries(this));
 }

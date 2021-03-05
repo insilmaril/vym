@@ -1,8 +1,12 @@
 #include "imports.h"
+
+#include "attributeitem.h"
+#include "branchitem.h"
 #include "file.h"
 #include "linkablemapobj.h"
 #include "mainwindow.h"
 #include "misc.h"
+#include "vymmodel.h"
 #include "xsltproc.h"
 
 #include <QMessageBox>
@@ -12,18 +16,30 @@ extern QDir vymBaseDir;
 
 ImportBase::ImportBase()
 {
-    bool ok;
-    tmpDir.setPath(makeTmpDir(ok, "vym-import"));
-    if (!tmpDir.exists() || !ok)
-        QMessageBox::critical(
-            0, QObject::tr("Error"),
-            QObject::tr("Couldn't access temporary directory\n"));
+    model = NULL;
+    init();
+}
+
+ImportBase::ImportBase(VymModel *m)
+{
+    model = m;
+    init();
 }
 
 ImportBase::~ImportBase()
 {
     // Remove tmpdir
     removeDir(tmpDir);
+}
+
+void ImportBase::init() 
+{
+    bool ok;
+    tmpDir.setPath(makeTmpDir(ok, "vym-import"));
+    if (!tmpDir.exists() || !ok)
+        QMessageBox::critical(
+            0, QObject::tr("Error"),
+            QObject::tr("Couldn't access temporary directory\n"));
 }
 
 void ImportBase::setDir(const QString &p) { inputDir = p; }
@@ -35,23 +51,106 @@ bool ImportBase::transform() { return true; }
 QString ImportBase::getTransformedFile() { return transformedFile; }
 
 /////////////////////////////////////////////////
-bool ImportFirefoxBookmarks::transform()
+ImportFirefoxBookmarks::ImportFirefoxBookmarks(VymModel *m) : ImportBase(m) 
 {
-    transformedFile = tmpDir.path() + "/bookmarks.xml";
-
-    QStringList lines;
-    QFile file(inputFile);
-    if (file.open(QIODevice::ReadOnly)) {
-        QTextStream stream(&file);
-        while (!stream.atEnd())
-            lines += stream.readLine(); // line of text excluding '\n'
-        file.close();
-    }
-    // FIXME-4 Generate vym from broken Firefox bookmarks above...
-
-    return true;
+    totalBookmarks = currentBookmarks = 0;
 }
 
+bool ImportFirefoxBookmarks::transform()
+{
+    QStringList lines;
+    QFile file(inputFile);
+
+    if (file.open(QIODevice::ReadOnly)) {
+        QJsonDocument jsdoc = QJsonDocument::fromJson(file.readAll());
+        file.close();
+
+        QJsonObject jsobj = jsdoc.object();
+
+        QJsonArray jsarr = jsobj["children"].toArray();
+        foreach (const QJsonValue &value, jsarr) {
+            parseJson (value, ParseMode::countBookmarks);
+        }
+
+        qDebug() << "Bookmarks found: " << totalBookmarks;
+        qDebug() << "Starting to extend map...";
+
+        model->blockReposition();
+        foreach (const QJsonValue &value, jsarr) {
+            parseJson (value, ParseMode::buildMap);
+        }
+        model->unblockReposition();
+    }
+
+    return false;
+}
+
+bool ImportFirefoxBookmarks::parseJson(QJsonValue jsval, ParseMode mode, BranchItem *selbi)
+{
+    if (!selbi) {
+        selbi = model->getSelectedBranch();
+        if (!selbi) {
+            qWarning() << "ImportFirefoxBookmarks: No branch selected!";
+            return false;
+        }
+    }
+
+    QJsonObject jsobj = jsval.toObject();
+    /*
+    qDebug() << " root: " << jsobj["root"].toString();
+    qDebug() << " type: " << jsobj["type"].toString();
+    qDebug() << "title: " << jsobj["title"].toString();
+    qDebug() << "  uri: " << jsobj["uri"].toString();
+    */
+
+    if (mode == countBookmarks) {
+        if (jsobj.contains("uri") && jsobj["uri"].isString())
+            totalBookmarks++;
+    } else {
+        selbi = model->addNewBranch(selbi);
+        selbi->setHeadingPlainText(jsobj["title"].toString());
+
+        if (jsobj.contains("uri") && jsobj["uri"].isString()) {
+            currentBookmarks++;
+            qDebug() << QString("%2/%1 done.").arg(totalBookmarks).arg(currentBookmarks);
+            selbi->setURL(jsobj["uri"].toString());
+
+            QList<QVariant> cData;
+            cData << "new attribute"
+                  << "undef";
+            AttributeItem *ai;
+
+            foreach (QString key, jsobj.keys())
+            {
+                ai = new AttributeItem(cData);  // FIXME-2 remove cdata  
+                ai->setKey(key);
+                if (jsobj[key].isString())
+                    ai->setValue(jsobj[key].toString());
+                else if (jsobj[key].isDouble())
+                    ai->setValue(QString::number(jsobj[key].toDouble()));
+                else {
+                    qDebug() << "FF import, unknown key type: " << jsobj[key].type();
+                    ai->setValue("?");
+                }
+
+                model->addAttribute(selbi, ai); // FIXME-2 deep copy?
+            }
+        }
+
+        model->emitDataChanged(selbi); // FIXME-2 required, but can reposition in between be blocked?
+    }
+
+    if (jsobj.contains("children") && jsobj["children"].isArray()) {
+
+        QJsonArray jsarr = jsobj["children"].toArray();
+        foreach (const QJsonValue &val, jsarr) {
+            parseJson (val, mode, selbi);
+        }
+
+        if (selbi->depth() > 2) selbi->scroll();
+    } 
+}
+   
 /////////////////////////////////////////////////
 bool ImportMM::transform()
 {

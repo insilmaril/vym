@@ -1098,14 +1098,12 @@ void Main::setupFileActions()
 
     fileImportMenu = fileMenu->addMenu(tr("Import", "File menu"));
 
-    if (settings.value("/mainwindow/showTestMenu", false).toBool()) {
-        a = new QAction(QPixmap(),
-                        tr("Firefox Bookmarks", "Import filters") + " (test)",
-                        this);
-        connect(a, SIGNAL(triggered()), this,
-                SLOT(fileImportFirefoxBookmarks()));
-        fileImportMenu->addAction(a);
-    }
+    a = new QAction(QPixmap(),
+                    tr("Firefox Bookmarks", "Import filters") + " (experimental)",
+                    this);
+    connect(a, SIGNAL(triggered()), this,
+            SLOT(fileImportFirefoxBookmarks()));
+    fileImportMenu->addAction(a);
 
     a = new QAction("Freemind...", this);
     connect(a, SIGNAL(triggered()), this, SLOT(fileImportFreemind()));
@@ -4039,27 +4037,26 @@ void Main::fileSaveAsDefault()
 
 void Main::fileImportFirefoxBookmarks() // FIXME-4 remove or adapt
 {
-    QFileDialog fd;
-    fd.setDirectory(vymBaseDir.homePath() + "/.mozilla/firefox");
-    fd.setFileMode(QFileDialog::ExistingFiles);
-    QStringList filters;
-    filters << "Firefox " + tr("Bookmarks") + " (*.html)";
-    fd.setNameFilters(filters);
-    fd.setAcceptMode(QFileDialog::AcceptOpen);
-    fd.setWindowTitle(tr("Import") + " " + "Firefox " + tr("Bookmarks"));
+    VymModel *m = currentModel();
+    if (m) {
+        QFileDialog fd;
+        fd.setDirectory(vymBaseDir.homePath() + "/.mozilla/firefox");
+        fd.setFileMode(QFileDialog::ExistingFiles);
+        QStringList filters;
+        filters << "Firefox " + tr("Bookmarks") + " (*.json)";
+        fd.setNameFilters(filters);
+        fd.setAcceptMode(QFileDialog::AcceptOpen);
+        fd.setWindowTitle(tr("Import") + " " + "Firefox " + tr("Bookmarks"));
 
-    if (fd.exec() == QDialog::Accepted) {
-        ImportFirefoxBookmarks im;
-        QStringList flist = fd.selectedFiles();
-        QStringList::Iterator it = flist.begin();
-        while (it != flist.end()) {
-            im.setFile(*it);
-            if (im.transform() &&
-                File::Aborted !=
-                    fileLoad(im.getTransformedFile(), NewMap, FreemindMap) &&
-                currentMapEditor())
-                currentMapEditor()->getModel()->setFilePath("");
-            ++it;
+        if (fd.exec() == QDialog::Accepted) {
+            ImportFirefoxBookmarks im(m);
+            QStringList flist = fd.selectedFiles();
+            QStringList::Iterator it = flist.begin();
+            while (it != flist.end()) {
+                im.setFile(*it);
+                im.transform(); 
+                ++it;
+            }
         }
     }
 }

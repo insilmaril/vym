@@ -70,19 +70,6 @@ QString AttributeItem::getKey()
 
 void AttributeItem::setValue(const QString &v)
 {
-    /*
-        if (!table)
-        {
-        qWarning (QString ("AttributeItem::setValue (%1)  No table
-       defined!").arg(v)); return;
-        }
-        if (!definition)
-        {
-        qWarning (QString ("AttributeItem::setValue (%1)  No attribute
-       defined!").arg(v)); return;
-        }
-        definition->setValue (v);
-    */
     value = v;
     createHeading();
 }
@@ -186,7 +173,7 @@ QString AttributeItem::getDataXML()
     return singleElement("attribute", a);
 }
 
-void AttributeItem::createHeading()
+void AttributeItem::createHeading() // FIXME-3 Visible in TreeEditor, should not go to MapEditor
 {
     setHeadingPlainText(
         QString("K: %1 | V: %2").arg(key).arg(value.toString()));

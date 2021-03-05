@@ -205,9 +205,11 @@ class VymModel : public TreeModel {
                             //!< clipboard
     int redosAvail;         //!< Available number of redo steps
     int undosAvail;         //!< Available number of undo steps
-    bool blockReposition;   //!< block while load or undo
-    bool blockSaveState;    //!< block while load or undo
+    bool repositionBlocked; //!< block while load or undo
+    bool saveStateBlocked;  //!< block saving current state
   public:
+    void blockReposition();   //! Block reposition while bigger changes, e.g. an import
+    void unblockReposition(); //! Unblock reposition and do repositon
     bool isDefault();   //!< true, if map is still the empty default map
     void makeDefault(); //!< Reset changelog, declare this as default map
     bool hasChanged();  //!< true, if something has changed and is not saved yet

@@ -360,8 +360,9 @@ bool parseVYMHandler::startElement(const QString &, const QString &,
             if (!atts.value("key").isEmpty())
                 ai->setKey(atts.value("key"));
             if (!atts.value("value").isEmpty())
-                ai->setKey(atts.value("value"));
+                ai->setValue(atts.value("value"));
         }
+        model->addAttribute(lastBranch, ai);
     }
     else if (state == StateHtml) {
         // accept all while in html mode,

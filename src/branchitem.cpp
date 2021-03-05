@@ -227,6 +227,13 @@ void BranchItem::setTask(Task *t)
 
 Task *BranchItem::getTask() { return task; }
 
+void BranchItem::scroll()
+{
+    if (tmpUnscrolled)
+        resetTmpUnscroll();
+    if (!scrolled)
+        toggleScroll();
+}
 void BranchItem::unScroll()
 {
     if (tmpUnscrolled)

@@ -2,6 +2,7 @@
 
 #include <QColorDialog>
 
+#include "attributeitem.h"
 #include "branchitem.h"
 #include "frameobj.h"
 #include "settings.h"
@@ -35,14 +36,18 @@ BranchPropertyEditor::BranchPropertyEditor(QWidget *parent)
     if (!settings.value("/mainwindow/showTestMenu", false).toBool())
         ui.tabWidget->widget(3)->hide();
 
-    /* Create Model and View to hold attributes
-    attributeModel = new QStandardItemModel (1,3,this);
-    attributeModel->setHeaderData(0, Qt::Horizontal, tr("Name","Branchprop
-    window: Attribute name")); attributeModel->setHeaderData(1, Qt::Horizontal,
-    tr("Value","Branchprop window: Attribute value"));
-    attributeModel->setHeaderData(2, Qt::Horizontal, tr("Type","Branchprop
-    window: Attribute type")); ui.attributeTableView->setModel (attributeModel);
-    */
+    //Create Model and View to hold attributes
+    attributeModel = new QStandardItemModel (1, 3, this);
+    attributeModel->setHeaderData(0, 
+            Qt::Horizontal, 
+            tr("Name","Branchprop window: Attribute name")); 
+    attributeModel->setHeaderData(1, 
+            Qt::Horizontal,
+            tr("Value","Branchprop window: Attribute value"));
+    attributeModel->setHeaderData(2, 
+            Qt::Horizontal, 
+            tr("Type","Branchprop window: Attribute type")); 
+    ui.attributeTableView->setModel (attributeModel);
 
     // Load Settings
     resize(
@@ -64,10 +69,17 @@ BranchPropertyEditor::~BranchPropertyEditor()
     settings.setValue("/satellite/propertywindow/geometry/size", size());
     settings.setValue("/satellite/propertywindow/geometry/pos", pos());
     settings.setValue("/satellite/propertywindow/showWithMain", isVisible());
+
+    delete (attributeModel);
 }
 
 void BranchPropertyEditor::setItem(TreeItem *ti)
 {
+    if (!ti) {
+        qWarning() << "BPE::setItem ti==NULL";
+        return;
+    }
+
     disconnectSignals();
     if (!ti)
         ui.tabWidget->setEnabled(false);
@@ -202,33 +214,32 @@ void BranchPropertyEditor::setItem(TreeItem *ti)
                 ui.lineEditSleep->setText("");
             }
 
-            /*
         // Attributes
-        attributeModel->removeRows(0, attributeModel->rowCount(),
-        QModelIndex());
+        attributeModel->removeRows(0, attributeModel->rowCount(), QModelIndex());
 
-        // some samples for attribute testing
-        QStringList attrTypes=mapEditor->attributeTable()->getTypes();
-        for (int i=0; i<attrTypes.count()-1;i++)
+        for (int i = 0; i < branchItem->attributeCount(); i++)
         {
-        attributeModel->insertRow (i,QModelIndex ());
-        attributeModel->setData(attributeModel->index(i, 0, QModelIndex()),
-        QString ("Name %1").arg(i));
-        attributeModel->setData(attributeModel->index(i, 1, QModelIndex()), i);
-        attributeModel->setData(attributeModel->index(i, 2, QModelIndex()),
-        attrTypes.at(i));
+            AttributeItem *ai = branchItem->getAttributeNum(i);
+            if (ai) {
+                attributeModel->insertRow (i, QModelIndex ());
+                attributeModel->setData(attributeModel->index(i, 0, QModelIndex()),
+                    ai->getKey());
+                attributeModel->setData(attributeModel->index(i, 1, QModelIndex()),
+                    ai->getValue().toString());
+                attributeModel->setData(attributeModel->index(i, 2, QModelIndex()),
+                    ai->getTypeString());
+            }
         }
-
 
         ui.attributeTableView->resizeColumnsToContents();
 
         // Initialize Delegate
-        delegate.setAttributeTable (mapEditor->attributeTable());
-        ui.attributeTableView->setItemDelegate (&delegate);
-    */
+        //attributeDelegate.setAttributeTable (mapEditor->attributeTable());
+        //ui.attributeTableView->setItemDelegate (&attributeDelegate);
 
-            // Finally activate signals
-            connectSignals();
+        // Finally activate signals
+        connectSignals();
+
         } // BranchItem
     }
     else if (ti->getType() == TreeItem::Attribute) {
@@ -358,9 +369,11 @@ void BranchPropertyEditor::closeEvent(QCloseEvent *ce)
     return;
 }
 
-/*
 void BranchPropertyEditor::addAttributeClicked()
 {
+    qDebug() << "BranchPropEditor::addAttribute";
+
+/*
     // Add empty line for adding attributes
     attributeModel->insertRow (attributeModel->rowCount (),QModelIndex ());
     attributeModel->setData(attributeModel->index(attributeModel->rowCount()-1,
@@ -381,14 +394,14 @@ void BranchPropertyEditor::addAttributeClicked()
 
     ui.attributeTableView->edit
 (attributeModel->index(attributeModel->rowCount()-1,1, QModelIndex() ));
+*/
 
 }
 
 void BranchPropertyEditor::deleteAttributeClicked()
 {
-    //qDebug() << "BPW::delete";
+    qDebug() << "BranchPropEditor::deleteAttribute";
 }
-*/
 
 void BranchPropertyEditor::connectSignals()
 {
@@ -418,19 +431,17 @@ void BranchPropertyEditor::connectSignals()
     connect(ui.childrenFreePositioning, SIGNAL(stateChanged(int)), this,
             SLOT(childrenFreePositioningChanged(int)));
 
-    // Task
+    // Tasks
     connect(ui.taskPrioDelta, SIGNAL(valueChanged(int)), this,
             SLOT(taskPriorityDeltaChanged(int)));
 
-    /*
-        // Attributes
-        connect (
+    // Attributes
+    connect (
         ui.addAttributeButton, SIGNAL (clicked()),
         this, SLOT (addAttributeClicked()));
-        connect (
+    connect (
         ui.deleteAttributeButton, SIGNAL (clicked()),
         this, SLOT (deleteAttributeClicked()));
-    */
 }
 
 void BranchPropertyEditor::disconnectSignals()
@@ -455,8 +466,6 @@ void BranchPropertyEditor::disconnectSignals()
     disconnect(ui.taskPrioDelta, 0, 0, 0);
 
     // Attributes
-    /*
-    disconnect ( ui.addAttributeButton, 0,0,0);
-    disconnect ( ui.deleteAttributeButton, 0,0,0);
-    */
+    disconnect (ui.addAttributeButton, 0, 0, 0);
+    disconnect (ui.deleteAttributeButton, 0, 0, 0);
 }

@@ -141,37 +141,6 @@ MapEditor::MapEditor(VymModel *vm)
 
     setState(Neutral);
 
-    // Attributes   //TODO  testing only...
-    QString k;
-    AttributeDef *ad;
-    attrTable = new AttributeTable();
-    k = "A - StringList";
-    ad = attrTable->addKey(k, StringList);
-    if (ad) {
-        QStringList sl;
-        sl << "val 1"
-           << "val 2"
-           << "val 3";
-        ad->setValue(QVariant(sl));
-    }
-    // attrTable->addValue ("Key A","P 1");
-    // attrTable->addValue ("Key A","P 2");
-    // attrTable->addValue ("Key A","P 3");
-    // attrTable->addValue ("Key A","P 4");
-    k = "B - FreeString";
-    ad = attrTable->addKey(k, FreeString);
-    if (ad) {
-        // attrTable->addValue ("Key B","w1");
-        // attrTable->addValue ("Key B","w2");
-    }
-    k = "C - UniqueString";
-    ad = attrTable->addKey(k, UniqueString);
-    if (ad) {
-        // attrTable->addKey ("Key Prio");
-        // attrTable->addValue ("Key Prio","Prio 1");
-        // attrTable->addValue ("Key Prio","Prio 2");
-    }
-
     winter = NULL;
 }
 
@@ -739,7 +708,7 @@ TreeItem *MapEditor::findMapItem(QPointF p, TreeItem *exclude)
     return NULL;
 }
 
-AttributeTable *MapEditor::attributeTable() { return attrTable; }
+AttributeTable *MapEditor::attributeTable() { return attrTable; }   // FIXME-2 remove
 
 void MapEditor::testFunction1() {}
 
