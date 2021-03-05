@@ -4035,7 +4035,7 @@ void Main::fileSaveAsDefault()
     }
 }
 
-void Main::fileImportFirefoxBookmarks() // FIXME-4 remove or adapt
+void Main::fileImportFirefoxBookmarks() 
 {
     VymModel *m = currentModel();
     if (m) {
@@ -4049,6 +4049,7 @@ void Main::fileImportFirefoxBookmarks() // FIXME-4 remove or adapt
         fd.setWindowTitle(tr("Import") + " " + "Firefox " + tr("Bookmarks"));
 
         if (fd.exec() == QDialog::Accepted) {
+            qApp->processEvents(); // close QFileDialog
             ImportFirefoxBookmarks im(m);
             QStringList flist = fd.selectedFiles();
             QStringList::Iterator it = flist.begin();

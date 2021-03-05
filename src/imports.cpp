@@ -96,12 +96,6 @@ bool ImportFirefoxBookmarks::parseJson(QJsonValue jsval, ParseMode mode, BranchI
     }
 
     QJsonObject jsobj = jsval.toObject();
-    /*
-    qDebug() << " root: " << jsobj["root"].toString();
-    qDebug() << " type: " << jsobj["type"].toString();
-    qDebug() << "title: " << jsobj["title"].toString();
-    qDebug() << "  uri: " << jsobj["uri"].toString();
-    */
 
     if (mode == countBookmarks) {
         if (jsobj.contains("uri") && jsobj["uri"].isString())
@@ -127,7 +121,7 @@ bool ImportFirefoxBookmarks::parseJson(QJsonValue jsval, ParseMode mode, BranchI
                 if (jsobj[key].isString())
                     ai->setValue(jsobj[key].toString());
                 else if (jsobj[key].isDouble())
-                    ai->setValue(QString::number(jsobj[key].toDouble()));
+                    ai->setValue(QString::number(qint64(jsobj[key].toDouble())));
                 else {
                     qDebug() << "FF import, unknown key type: " << jsobj[key].type();
                     ai->setValue("?");
@@ -149,6 +143,7 @@ bool ImportFirefoxBookmarks::parseJson(QJsonValue jsval, ParseMode mode, BranchI
 
         if (selbi->depth() > 2) selbi->scroll();
     } 
+    return true;
 }
    
 /////////////////////////////////////////////////
