@@ -75,10 +75,7 @@ BranchPropertyEditor::~BranchPropertyEditor()
 
 void BranchPropertyEditor::setItem(TreeItem *ti)
 {
-    if (!ti) {
-        qWarning() << "BPE::setItem ti==NULL";
-        return;
-    }
+    if (!ti) return;
 
     disconnectSignals();
     if (!ti)

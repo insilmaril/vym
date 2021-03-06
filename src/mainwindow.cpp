@@ -4037,16 +4037,31 @@ void Main::fileSaveAsDefault()
 
 void Main::fileImportFirefoxBookmarks() 
 {
+    // Import into new map
+    fileNew();
+
     VymModel *m = currentModel();
     if (m) {
+        // Try to select first mapcenter of default map
+        if (!m->select("mc:0")) return;
+
+        m->setHeadingPlainText("Firefox");
+
+        // Try to add one branch and select it
+        if (!m->addNewBranch()) return;
+
+        m->selectLatestAdded();
+        m->setHeadingPlainText("Bookmarks");
+
+        // Open file dialog
         QFileDialog fd;
-        fd.setDirectory(vymBaseDir.homePath() + "/.mozilla/firefox");
+        fd.setDirectory(vymBaseDir.homePath());
         fd.setFileMode(QFileDialog::ExistingFiles);
         QStringList filters;
-        filters << "Firefox " + tr("Bookmarks") + " (*.json)";
+        filters << tr("Firefox Bookmarks") + " (*.json)";
         fd.setNameFilters(filters);
         fd.setAcceptMode(QFileDialog::AcceptOpen);
-        fd.setWindowTitle(tr("Import") + " " + "Firefox " + tr("Bookmarks"));
+        fd.setWindowTitle(tr("Import Firefox Bookmarks into new map"));
 
         if (fd.exec() == QDialog::Accepted) {
             qApp->processEvents(); // close QFileDialog
