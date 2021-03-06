@@ -3058,9 +3058,9 @@ AttributeItem *VymModel::addAttribute(BranchItem *dst, AttributeItem *ai)
 
         emit(layoutChanged());
 
-        // FIXME-3 experimental - instead of AI key/val only add flag?
-        ai->createMapObj(mapEditor->getScene());
-        reposition();
+        // FIXME-2 experimental - instead of AI key/val only add flag?
+        // ai->createMapObj(mapEditor->getScene());
+        //reposition();
         return ai;  // FIXME-2 Check if ai is used or deleted - deep copy here?
     }
     return NULL;

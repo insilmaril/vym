@@ -25,46 +25,14 @@ void AttributeItem::get(QString &k, QString &v, Type &t)
     t = attrType;
 }
 
-void AttributeItem::setKey(const QString &k)
+void AttributeItem::setKey(const QString &k) // FIXME-2 Check if key aready exists here
 {
-    /*
-        if (!table)
-        {
-        qWarning (QString("AttributeItem::setKey (%1)  No table
-       defined!\n").arg(k).ascii()); return;
-        }
-
-        if (!definition)
-        {
-        definition=table->getDef(k);
-        if (!definition)
-        {
-            table->addKey (k,t);
-            return;
-        }
-        }
-        qWarning (QString("AttributeItem::setKey (%1)  attribute already
-       defined!\n").arg(k).ascii());
-        */
     key = k;
     createHeading();
 }
 
 QString AttributeItem::getKey()
 {
-    /*
-        if (!table)
-        {
-        qWarning ("AttributeItem::getKey ()  No table defined!");
-        return QString();
-        }
-        if (!definition)
-        {
-        qWarning ("AttributeItem::getKey ()  No attribute defined!");
-        return QString ();
-        }
-        return definition->getKey();
-        */
     return key;
 }
 
@@ -76,74 +44,21 @@ void AttributeItem::setValue(const QString &v)
 
 QVariant AttributeItem::getValue()
 {
-    /*
-        if (!table)
-        {
-        qWarning ("AttributeItem::getValue  No table defined!");
-        return QString();
-        }
-        if (!definition)
-        {
-        qWarning ("AttributeItem::getValue  No attribute defined!");
-        return QString();
-        }
-        QVariant v= definition->getValue();
-        return v;
-        */
     return value;
 }
 
 void AttributeItem::setType(const Type &t)
 {
-    /*
-        if (!table)
-        {
-        qWarning ("AttributeItem::setType  No table defined!");
-        return;
-        }
-        if (!definition)
-        {
-        qWarning ("Attribute::setType  No attribute defined!");
-        return;
-        }
-        definition->setType (t);
-    */
     attrType = t;
 }
 
 AttributeItem::Type AttributeItem::getAttributeType()
 {
-    /*
-        if (!table)
-        {
-        qWarning ("AttributeItem::getType  No table defined!");
-        return Undefined;
-        }
-        if (!definition)
-        {
-        qWarning ("AttributeItem::getType  No attribute defined!");
-        return Undefined;
-        }
-        return definition->getType();
-    */
     return attrType;
 }
 
 QString AttributeItem::getTypeString()
 {
-    /*
-        if (!table)
-        {
-        qWarning ("AttributeItem::getTypeString  No table defined!");
-        return "Undefined";
-        }
-        if (!definition)
-        {
-        qWarning ("Attribute::getTypeString  No AttributeItem defined!");
-        return "Undefined";
-        }
-        return definition->getTypeString();
-    */
     switch (attrType) {
     case IntList:
         return "IntList";
@@ -176,5 +91,5 @@ QString AttributeItem::getDataXML()
 void AttributeItem::createHeading() // FIXME-3 Visible in TreeEditor, should not go to MapEditor
 {
     setHeadingPlainText(
-        QString("K: %1 | V: %2").arg(key).arg(value.toString()));
+        QString("[Attr] %1: %2").arg(key).arg(value.toString()));
 }
