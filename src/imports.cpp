@@ -77,12 +77,11 @@ bool ImportFirefoxBookmarks::transform()
             parseJson (value, ParseMode::countBookmarks);
         }
 
-        qDebug() << "Bookmarks found: " << totalBookmarks;
-        qDebug() << "Starting to extend map...";
-
         progressDialog.setRange(0, totalBookmarks);
         progressDialog.setValue(1);
+        progressDialog.setWindowModality(Qt::WindowModal);
         progressDialog.show();
+        QApplication::processEvents();
 
         model->blockReposition();
         foreach (const QJsonValue &value, jsarr) {
@@ -116,7 +115,6 @@ bool ImportFirefoxBookmarks::parseJson(QJsonValue jsval, ParseMode mode, BranchI
         if (jsobj.contains("uri") && jsobj["uri"].isString()) {
             currentBookmarks++;
             progressDialog.setValue(currentBookmarks);
-            QApplication::processEvents();
             selbi->setURL(jsobj["uri"].toString());
 
             QList<QVariant> cData;
@@ -134,7 +132,7 @@ bool ImportFirefoxBookmarks::parseJson(QJsonValue jsval, ParseMode mode, BranchI
                     ai->setValue(QString::number(qint64(jsobj[key].toDouble())));
                 else {
                     // Ignore only the "postdata: null" field for now
-                    if (key != "postdata")
+                    if (key != "postData")
                     {
                         qDebug() << "FF import, unknown key type: " << jsobj[key].type();
                         qDebug() << "FF bookmark: " << key << jsobj[key].toString();
