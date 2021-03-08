@@ -2,8 +2,9 @@
 #define IMPORTS_H
 
 #include <iostream>
-#include <qdir.h>
-#include <qstring.h>
+#include <QDir>
+#include <QProgressDialog>
+#include <QString>
 
 #include "settings.h"
 
@@ -38,6 +39,7 @@ class ImportFirefoxBookmarks : public ImportBase {
     ImportFirefoxBookmarks(VymModel *m);
     bool transform();
   private:
+    QProgressDialog progressDialog;
     bool parseJson(QJsonValue jsval, ParseMode mode, BranchItem *selbi = NULL);  
 
     uint totalBookmarks;

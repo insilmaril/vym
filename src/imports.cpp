@@ -61,6 +61,11 @@ bool ImportFirefoxBookmarks::transform()
     QStringList lines;
     QFile file(inputFile);
 
+    progressDialog.setAutoReset(false);
+    progressDialog.setAutoClose(false);
+    progressDialog.setMinimumWidth(600);
+    progressDialog.setCancelButton(NULL);
+
     if (file.open(QIODevice::ReadOnly)) {
         QJsonDocument jsdoc = QJsonDocument::fromJson(file.readAll());
         file.close();
@@ -74,6 +79,10 @@ bool ImportFirefoxBookmarks::transform()
 
         qDebug() << "Bookmarks found: " << totalBookmarks;
         qDebug() << "Starting to extend map...";
+
+        progressDialog.setRange(0, totalBookmarks);
+        progressDialog.setValue(1);
+        progressDialog.show();
 
         model->blockReposition();
         foreach (const QJsonValue &value, jsarr) {
@@ -106,7 +115,8 @@ bool ImportFirefoxBookmarks::parseJson(QJsonValue jsval, ParseMode mode, BranchI
 
         if (jsobj.contains("uri") && jsobj["uri"].isString()) {
             currentBookmarks++;
-            qDebug() << QString("%2/%1 done.").arg(totalBookmarks).arg(currentBookmarks);
+            progressDialog.setValue(currentBookmarks);
+            QApplication::processEvents();
             selbi->setURL(jsobj["uri"].toString());
 
             QList<QVariant> cData;
@@ -123,8 +133,13 @@ bool ImportFirefoxBookmarks::parseJson(QJsonValue jsval, ParseMode mode, BranchI
                 else if (jsobj[key].isDouble())
                     ai->setValue(QString::number(qint64(jsobj[key].toDouble())));
                 else {
-                    qDebug() << "FF import, unknown key type: " << jsobj[key].type();
-                    ai->setValue("?");
+                    // Ignore only the "postdata: null" field for now
+                    if (key != "postdata")
+                    {
+                        qDebug() << "FF import, unknown key type: " << jsobj[key].type();
+                        qDebug() << "FF bookmark: " << key << jsobj[key].toString();
+                        ai->setValue("?");
+                    }
                 }
 
                 model->addAttribute(selbi, ai); // FIXME-2 deep copy?
