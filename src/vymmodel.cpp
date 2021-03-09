@@ -526,6 +526,8 @@ File::ErrorCode VymModel::loadMap(QString fname, const LoadMode &lmode,
         selModel->clearSelection();
     }
 
+    bool zipped_org = zipped;
+
     // Create temporary directory for packing
     bool ok;
     QString tmpZipDir = makeTmpDir(ok, tmpDirPath(), "unzip");
@@ -538,11 +540,13 @@ File::ErrorCode VymModel::loadMap(QString fname, const LoadMode &lmode,
 
     QString xmlfile;
     if (fname.right(4) == ".xml" || fname.right(3) == ".mm") {
-        zipped = false;
         xmlfile = fname;
+        zipped = false;
+
+        if (lmode == NewMap || lmode == DefaultMap)
+            zipped_org = false;
     }
     else {
-        zipped = true;
         // Try to unzip file
         err = unzipDir(tmpZipDir, fname);
     }
@@ -662,7 +666,7 @@ File::ErrorCode VymModel::loadMap(QString fname, const LoadMode &lmode,
     removeDir(QDir(tmpZipDir));
 
     // Restore original zip state
-    // FIXME-1 testing zipped = zipped_org;
+    zipped = zipped_org;
 
     updateActions();
 
@@ -697,8 +701,7 @@ File::ErrorCode VymModel::save(const SaveMode &savemode)
         mapFileName = fileName;
 
     // Look, if we should zip the data:
-    if (!zipped) // FIXME-1 sometimes map is marked unzipped for no visible
-                 // reason
+    if (!zipped)
     {
         QMessageBox mb(vymName,
                        tr("The map %1\ndid not use the compressed "
