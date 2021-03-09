@@ -84,18 +84,6 @@ bool parseVYMHandler::startElement(const QString &, const QString &,
                         "the ok-button below, updating vym should help.</p>")
                         .arg(version)
                         .arg(vymVersion));
-
-                if (versionLowerOrEqual(vymVersion, "2.7.554")) {
-                    // File format change in 2.7.555
-                    // might cause data loss, if read with old vym and saved
-                    // again Therefor warn and disable autosave
-                    QMessageBox::warning(
-                        0, QObject::tr("Warning")  + ": " + QObject::tr("Disabling autosave"),
-                        QObject::tr("<h3>Autosave will be disabled</h3>"
-                                    "<p>Please check contents of map before "
-                                    "saving!</p>"));
-                    mainWindow->setAutosave(false);
-                }
             }
             else
                 model->setVersion(version);
