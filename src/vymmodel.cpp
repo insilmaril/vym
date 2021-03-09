@@ -263,7 +263,8 @@ bool VymModel::setData(const QModelIndex &index, const QVariant &value, int role
 
     return true;
 }
-void VymModel::resetUsedFlags()
+
+void VymModel::resetUsedFlags() // FIXME-2 removed in last change???
 {
     standardFlagsMaster->resetUsedCounter();
     userFlagsMaster->resetUsedCounter();
@@ -1297,10 +1298,12 @@ void VymModel::redo()
         qDebug() << "       curStep=" << curStep;
         qDebug() << "    ---------------------------";
         qDebug() << "    comment=" << comment;
-        qDebug() << "    undoCom=" << undoCommand;
         qDebug() << "    undoSel=" << undoSelection;
-        qDebug() << "    redoCom=" << redoCommand;
         qDebug() << "    redoSel=" << redoSelection;
+        qDebug() << "    undoCom:";
+        cout << qPrintable(undoCommand);
+        qDebug() << "    redoCom=";
+        cout << qPrintable(redoCommand);
         qDebug() << "    ---------------------------";
     }
 
@@ -1414,13 +1417,15 @@ void VymModel::undo()
         qDebug() << "    undosAvail=" << undosAvail;
         qDebug() << "    redosAvail=" << redosAvail;
         qDebug() << "       curStep=" << curStep;
-        qDebug() << "    ---------------------------";
+        cout << "    ---------------------------" << endl;
         qDebug() << "    comment=" << comment;
-        qDebug() << "    undoCom=" << undoCommand;
         qDebug() << "    undoSel=" << undoSelection;
-        qDebug() << "    redoCom=" << redoCommand;
         qDebug() << "    redoSel=" << redoSelection;
-        qDebug() << "    ---------------------------";
+        cout << "    undoCom:" << endl;
+        cout << qPrintable(undoCommand) << endl;
+        cout << "    redoCom:" << endl;
+        cout << qPrintable(redoCommand) << endl;
+        cout << "    ---------------------------" << endl;
     }
 
     // select  object before undo
@@ -1592,15 +1597,21 @@ void VymModel::saveState(const SaveMode &savemode, const QString &undoSelection,
         qDebug() << "    stepsTotal=" << stepsTotal
                  << ", undosAvail=" << undosAvail
                  << ", redosAvail=" << redosAvail << ", curStep=" << curStep;
-        qDebug() << "    ---------------------------";
+        cout << "    ---------------------------" << endl;
         qDebug() << "    comment=" << comment;
-        qDebug() << "    undoCom=" << undoCommand;
         qDebug() << "    undoSel=" << undoSelection;
-        qDebug() << "    redoCom=" << redoCommand;
         qDebug() << "    redoSel=" << redoSelection;
         if (saveSel)
             qDebug() << "    saveSel=" << qPrintable(getSelectString(saveSel));
-        qDebug() << "    ---------------------------";
+        cout << "    undoCom:" << endl;
+        cout << qPrintable(undoCommand) << endl;
+        cout << "    undoCom saved:" << endl;
+        cout << qPrintable(undoSet.value(
+                    QString("/history/step-%1/undoCommand").arg(curStep)))
+             << endl;
+        cout << "    redoCom:" << endl;
+        cout << qPrintable(redoCommand) << endl;
+        cout << "    ---------------------------" << endl;
     }
 
     mainWindow->updateHistory(undoSet);
@@ -2456,7 +2467,7 @@ bool VymModel::cycleTaskStatus(bool reverse)
     return false;
 }
 
-bool VymModel::setTaskSleep(const QString &s)
+bool VymModel::setTaskSleep(const QString &s)   // FIXME-2 branch needs reselect to become awake again
 {
     bool ok = false;
     BranchItem *selbi = getSelectedBranch();

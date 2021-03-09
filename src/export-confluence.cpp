@@ -40,7 +40,9 @@ QString ExportConfluence::getBranchText(BranchItem *current)
             hr = ((BranchObj *)lmo)->getBBoxHeading();
         }
         QString id = model->getSelectString(current);
-        QString heading = quotemeta(current->getHeadingPlain());
+        QString heading = quoteMeta(current->getHeadingPlain());
+
+        qDebug() << current->getHeadingPlain() << dia.useTextColor; // FIXME-2 testing
 
         if (dia.useTextColor) {
             QColor c = current->getHeadingColor();
@@ -251,7 +253,7 @@ QString ExportConfluence::createTOC()
             toc += QString("<a href=\"#%1\"> %2 %3</a><br />\n")
                        .arg(model->getSelectString(cur))
                        .arg(number)
-                       .arg(quotemeta(cur->getHeadingPlain()));
+                       .arg(quoteMeta(cur->getHeadingPlain()));
             toc += "</div>";
         }
         model->nextBranch(cur, prev);
@@ -331,7 +333,7 @@ void ExportConfluence::doExport(bool useDialog)
         if (ca_details->success()) {
             // Page with URL is existing already
             if (dia.createNewPage()) {
-                qDebug() << "Starting to create new page..."; // FIXME-3 Improve
+                qDebug() << "Starting to create new page..."; // FIXME-2 Improve
                                                               // messages here
                                                               // and below...
                 ca_content->createPage(dia.getPageURL(), dia.getPageTitle(),

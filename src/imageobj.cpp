@@ -279,13 +279,7 @@ bool ImageObj::load(const QString &fn, bool createClone)
         if (pm.load(fn)) {
             prepareGeometryChange();
 
-            if (pixmapItem) {
-                qWarning()
-                    << "ImageObj::load  trying to overload existing pixmapItem";
-                return false;
-            }
-
-            pixmapItem = new QGraphicsPixmapItem(this);
+            pixmapItem = new QGraphicsPixmapItem(this); // FIXME-1 existing pmi?
             pixmapItem->setPixmap(pm);
             pixmapItem->setParentItem(parentItem());
             imageType = ImageObj::Pixmap;
@@ -304,7 +298,7 @@ bool ImageObj::save(const QString &fn)
     case ImageObj::ClonedSVG:
         if (svgItem) {
             QFile svgFile(svgCashPath);
-            if (!QFile(fn).exists() && !svgFile.copy(fn)) {
+            if (!QFile(fn).exists() && !svgFile.copy(fn)) { // FIXME-1 remove check for existing fn?
                 qWarning() << "ImageObj::save  failed to copy " << svgCashPath
                            << " to " << fn;
                 return false;

@@ -8,6 +8,7 @@
 #include "vymmodel.h"
 #include "vymtext.h"
 #include "xlink.h"
+#include "xmlobj.h" // include quoteQuotes
 
 ///////////////////////////////////////////////////////////////////////////
 VymModelWrapper::VymModelWrapper(VymModel *m) { model = m; }
@@ -605,7 +606,7 @@ void VymModelWrapper::note2URLs() { model->note2URLs(); }
 
 bool VymModelWrapper::parseVymText(const QString &text)
 {
-    return setResult(model->parseVymText(text));
+    return setResult(model->parseVymText(unquoteQuotes(text))); //FIXME-2 check
 }
 
 void VymModelWrapper::paste() { model->paste(); }

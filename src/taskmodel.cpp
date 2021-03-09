@@ -134,7 +134,8 @@ QVariant TaskModel::data(const QModelIndex &index, int role) const
         }
     }
     else if (role == Qt::DecorationRole && index.column() == 2) {
-        QString s = t->getIconString();
+        QString s = t->getIconString(); // FIXME-2 workaround until all task
+                                        // icons are svg
         if (s == "task-new")
             return task_new_icon;
         else if (s == "task-new-morning")
@@ -479,6 +480,9 @@ QMimeData *TaskModel::mimeData(const QModelIndexList &indexes) const
 
         // Field 1: task row
         stream << QString::number(index(task).row());
+
+        // Field 2: Branch ID   // FIXME-1 not needed anylonger
+        // stream << QString::number( task->getBranch()->getID() );
     }
 
     mimeData->setData("application/vnd.text.list", encodedData);

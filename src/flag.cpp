@@ -134,7 +134,9 @@ void Flag::saveDataToDir(const QString &dirPath)
     // image=" << image;
     if (image) {
         path = dirPath + "/" + uuid.toString() + "-" + name +
-               image->getExtension();
+               image->getExtension(); // FIXME-1 check, if separator converted
+                                      // automagically on windows (working
+                                      // userflags in windows?)
         image->save(path);
     }
 }
