@@ -448,7 +448,8 @@ bool XLinkObj::isInClickBox(const QPointF &p)
         if (!b && curSelection != Unselected && clickPath.intersects(r))
             b = true;
         break;
-    case OnlyBegin || OnlyEnd:
+    case OnlyBegin:
+    case OnlyEnd:
         // not selected, only partially visible
         if (poly->boundingRect().contains(p))
             b = true;
