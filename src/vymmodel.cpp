@@ -264,7 +264,7 @@ bool VymModel::setData(const QModelIndex &index, const QVariant &value, int role
     return true;
 }
 
-void VymModel::resetUsedFlags() // FIXME-2 removed in last change???
+void VymModel::resetUsedFlags()
 {
     standardFlagsMaster->resetUsedCounter();
     userFlagsMaster->resetUsedCounter();
