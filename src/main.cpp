@@ -25,7 +25,6 @@ using namespace std;
 #include "warningdialog.h"
 
 #if defined(VYM_DBUS)
-#include <sys/types.h> // To retrieve PID for use in DBUS
 #include <QtDBus/QDBusConnection>
 #include <QtDBus/QDBusError>
 #endif
@@ -238,9 +237,7 @@ int main(int argc, char *argv[])
     
     testmode = options.isOn("testmode");
 
-    QString pidString = QString("%1").arg(getpid());
-    if (debug)
-        qDebug() << "vym PID=" << pidString;
+    QString pidString = QString::number(QCoreApplication::applicationPid());
 
 #if defined(VYM_DBUS)
     // Register for DBUS
