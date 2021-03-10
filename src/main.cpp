@@ -26,17 +26,6 @@ using namespace std;
 
 #if defined(VYM_DBUS)
 #include <sys/types.h> // To retrieve PID for use in DBUS
-#endif
-
-#if defined(Q_OS_WINDOWS)  // FIXME-2 still required?
-#define _LEAN_AND_MEAN // FIXME-2 required?
-#include <windows.h>
-#define getpid GetCurrentProcessId
-#else
-#include <unistd.h>
-#endif
-
-#if defined(VYM_DBUS)
 #include <QtDBus/QDBusConnection>
 #include <QtDBus/QDBusError>
 #endif

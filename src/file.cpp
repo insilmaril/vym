@@ -160,49 +160,7 @@ bool removeDir(QDir d)
         return false;
     }
 
-    // Traverse directories
-    d.setFilter(QDir::Dirs | QDir::Hidden | QDir::NoSymLinks);
-    QFileInfoList dirEntries = d.entryInfoList();
-    QFileInfo fi;
-
-    for (int i = 0; i < dirEntries.size(); ++i) {
-        fi = dirEntries.at(i);
-        if (fi.fileName() != "." && fi.fileName() != "..") {
-            if (!d.cd(fi.fileName()))
-            {
-                qWarning() << "removeDir() cannot find the sub directory " +
-                                  fi.fileName();
-                return false;
-            }
-            else {
-                // Recursively remove subdirs
-                if (!removeDir(d)) return false;
-                d.cdUp();
-            }
-        }
-    }
-
-    // Traverse files
-    d.setFilter(QDir::Files | QDir::Hidden | QDir::NoSymLinks);
-    dirEntries = d.entryInfoList();
-
-    for (int i = 0; i < dirEntries.size(); ++i) {
-        fi = dirEntries.at(i);
-        if (!QFile(fi.filePath()).remove()) {
-            qWarning() << "removeDir() cannot remove the file" +
-                              fi.fileName();
-            return false;
-        }
-    }
-
-    QString dirName = d.dirName();
-    d.cdUp();
-    if (!d.rmdir(dirName)) {
-        qWarning() << "removeDir(" + dirName + ") failed!";  //FIXME-2 Check on windows
-        return false;
-    }
-
-    return true;
+    return d.removeRecursively();
 }
 
 bool copyDir(QDir src, QDir dst, const bool &override)
