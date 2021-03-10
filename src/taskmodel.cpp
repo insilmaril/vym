@@ -480,9 +480,6 @@ QMimeData *TaskModel::mimeData(const QModelIndexList &indexes) const
 
         // Field 1: task row
         stream << QString::number(index(task).row());
-
-        // Field 2: Branch ID   // FIXME-1 not needed anylonger
-        // stream << QString::number( task->getBranch()->getID() );
     }
 
     mimeData->setData("application/vnd.text.list", encodedData);
