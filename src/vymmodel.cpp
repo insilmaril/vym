@@ -1538,7 +1538,7 @@ void VymModel::saveState(const SaveMode &savemode, const QString &undoSelection,
     // Increase undo steps, but check for repeated actions
     // like editing a vymNote - then do not increase but replace last command
     if (curStep > 0 && redoSelection == lastRedoSelection() &&
-        lastRedoCommand().startsWith("parseVymText ('<vymnote")) {
+        lastRedoCommand().startsWith("parseVymText (\"<vymnote")) {
         undoCommand = undoSet.value(
             QString("/history/step-%1/undoCommand").arg(curStep), undoCommand);
     }
@@ -1953,8 +1953,8 @@ void VymModel::updateNoteText(const VymText &vt)
             VymNote vn;
             vn.copy(vt);
 
-            saveState(selti, "parseVymText ('" + note_old.saveToDir() + "')",
-                      selti, "parseVymText ('" + note_new.saveToDir() + "')",
+            saveState(selti, "parseVymText (\"" + quoteQuotes(note_old.saveToDir()) + "\")",
+                      selti, "parseVymText (\"" + quoteQuotes(note_new.saveToDir()) + "\")",
                       QString("Set note of %1 to \"%2\"")
                           .arg(getObjectName(selti))
                           .arg(note_new.getTextASCII().left(20)));
@@ -1979,8 +1979,8 @@ void VymModel::setNote(const VymNote &vn)
         VymNote n_new;
         n_old = selti->getNote();
         n_new = vn;
-        saveState(selti, "parseVymText ('" + n_old.saveToDir() + "')", selti,
-                  "parseVymText ('" + n_new.saveToDir() + "')",
+        saveState(selti, "parseVymText (\"" + quoteQuotes(n_old.saveToDir()) + "\")", selti,
+                  "parseVymText (\"" + n_new.saveToDir() + "\")",
                   QString("Set note of %1 to \"%2\"")
                       .arg(getObjectName(selti))
                       .arg(n_new.getTextASCII().left(20)));
