@@ -1593,7 +1593,7 @@ void Main::setupEditActions()
     actionGetURLsFromNote = a;
 
     a = new QAction(QPixmap(":/flag-urlnew.svg"),
-                    tr("Edit URL...", "Edit menu"), this); // FIXME-1
+                    tr("Edit URL...", "Edit menu"), this);
     a->setShortcut(Qt::Key_U);
     a->setShortcutContext(Qt::WindowShortcut);
     switchboard.addSwitch("mapEditURL", shortcutScope, a, tag);
@@ -2804,9 +2804,8 @@ Flag *Main::setupFlag(const QString &path, Flag::FlagType type,
         standardFlagsMaster->addActionToToolbar(a);
         connect(a, SIGNAL(triggered()), this, SLOT(flagChanged()));
         break;
-    case Flag::UserFlag: // FIXME-1 join with standardFlag above
+    case Flag::UserFlag:
         userFlagsMaster->addActionToToolbar(a);
-
         connect(a, SIGNAL(triggered()), this, SLOT(flagChanged()));
         break;
     default:

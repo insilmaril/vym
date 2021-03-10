@@ -130,13 +130,9 @@ QString Flag::getDefinition(const QString &prefix)
 
 void Flag::saveDataToDir(const QString &dirPath)
 {
-    // qDebug() << "Flag::saveDataToDir  " << name << " to " << dirPath << "
-    // image=" << image;
     if (image) {
         path = dirPath + "/" + uuid.toString() + "-" + name +
-               image->getExtension(); // FIXME-1 check, if separator converted
-                                      // automagically on windows (working
-                                      // userflags in windows?)
+               image->getExtension();
         image->save(path);
     }
 }
