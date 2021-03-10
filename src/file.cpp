@@ -103,7 +103,7 @@ bool reallyWriteDirectory(const QString &dir)
 }
 
 QString makeTmpDir(bool &ok, const QString &dirPath,
-                   const QString &prefix) // FIXME-3 use QTemporaryDir
+                   const QString &prefix)
 {
     QString path = makeUniqueDir(ok, dirPath + "/" + prefix + "-XXXXXX");
     return path;
@@ -121,7 +121,7 @@ bool isInTmpDir(QString fn)
     return fn.left(l) == temp;
 }
 
-QString makeUniqueDir(bool &ok, QString s)
+QString makeUniqueDir(bool &ok, QString s) // FIXME-3 use QTemporaryDir
 {
     ok = true;
 
