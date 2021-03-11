@@ -255,7 +255,7 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
     setupSettingsActions();
     setupContextMenus();
     setupMacros();
-    setupFlagActions();   // FIXME-2 still needed?
+    setupFlagActions();
     setupToolbars();
 
     // Dock widgets ///////////////////////////////////////////////
@@ -1630,7 +1630,7 @@ void Main::setupEditActions()
     addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(getJiraData()));
     actionListBranches.append(a);
-    actionGetJiraData = a;      // FIXME-2 used???
+    actionGetJiraData = a;
 
     a = new QAction(tr("Get data from JIRA for subtree", "Edit menu") +
                         " (experimental)",
@@ -4034,7 +4034,7 @@ void Main::fileSaveAsDefault()
     }
 }
 
-void Main::fileImportFirefoxBookmarks() // FIXME-2 remove or adapt
+void Main::fileImportFirefoxBookmarks()
 {
     QFileDialog fd;
     fd.setDirectory(vymBaseDir.homePath() + "/.mozilla/firefox");
@@ -5436,14 +5436,14 @@ void Main::viewZoomOut()
         me->setZoomFactorTarget(me->getZoomFactorTarget() * 0.85);
 }
 
-void Main::viewRotateCounterClockwise() // FIXME-2 move to ME
+void Main::viewRotateCounterClockwise() // FIXME-3 move to ME
 {
     MapEditor *me = currentMapEditor();
     if (me)
         me->setAngleTarget(me->getAngleTarget() - 10);
 }
 
-void Main::viewRotateClockwise() // FIXME-2 move to ME
+void Main::viewRotateClockwise() // FIXME-3 move to ME
 {
     MapEditor *me = currentMapEditor();
     if (me)
@@ -5517,7 +5517,7 @@ bool Main::settingsURL()
     return ok;
 }
 
-void Main::settingsZipTool()  // FIXME-2 no longer required
+void Main::settingsZipTool()
 {
     // Default zip tool is tar on Windows 10, zip/unzip elsewhere
     ZipSettingsDialog dia;
@@ -5954,13 +5954,11 @@ void Main::updateActions()
             foreach (QAction *a, restrictedMapActions)
                 a->setEnabled(false);
 
-            // FIXME-2 updateactions: Disable import/export map functions (and
-            // probably more) if no map available
-            // FIXME-2 updateactions: refactor actionListFiles: probably not
-            // needed, wrong actions there atm
+            // FIXME-2 updateactions: Disable import/export map functions (and probably more) if no map available
+            // FIXME-2 updateactions: refactor actionListFiles: probably not  needed, wrong actions there atm
         }
-        else { // not readonly     // FIXME-2 updateactions: maybe only required
-               // in testing, as mode should not change
+        else { // not readonly     
+               // FIXME-2 updateactions: maybe only required in testing, as mode should not change
 
             // Enable toolbars
             standardFlagsMaster->setEnabled(true);

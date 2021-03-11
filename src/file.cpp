@@ -266,11 +266,12 @@ ErrorCode zipDir(QDir zipInputDir, QString zipName)
     QFile file(zipName);
     if (file.exists()) {
         symLinkTarget = file.symLinkTarget();
-        newName = zipName + ".tmp";
+        QString zipNameTmp = zipName + ".tmp";
+        newName = zipNameTmp;
         int n = 0;
         while (!file.rename(newName) && n < 5) {
             newName =
-                newName + QString().setNum(n); // FIXME-2    will not count
+                zipNameTmp + QString().setNum(n);
             n++;
         }
         if (n >= 5) {
@@ -299,6 +300,7 @@ ErrorCode zipDir(QDir zipInputDir, QString zipName)
             0, QObject::tr("Critical Error"),
             QObject::tr("Couldn't start %1 tool to compress data!\n"
                         "The map could not be saved, please check if "
+
                         "backup file is available or export as XML file!")
                     .arg("Windows zip") +
                 "\n\nziptoolpath: " + zipToolPath +

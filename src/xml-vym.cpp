@@ -510,9 +510,7 @@ QString parseVYMHandler::errorString()
     return "the document is not in the VYM file format";
 }
 
-bool parseVYMHandler::readMapAttr(
-    const QXmlAttributes
-        &a) // FIXME-2 Check attritbutes here, should be quoted?
+bool parseVYMHandler::readMapAttr( const QXmlAttributes &a)
 {
     QColor col;
     if (!a.value("author").isEmpty())
