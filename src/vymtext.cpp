@@ -251,4 +251,4 @@ QStringList VymText::getAttributes()
     return ret;
 }
 
-QString VymText::saveToDir() { return ""; } // FIXME-2 make virtual
+QString VymText::saveToDir() { return ""; }
