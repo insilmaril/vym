@@ -606,7 +606,7 @@ void VymModelWrapper::note2URLs() { model->note2URLs(); }
 
 bool VymModelWrapper::parseVymText(const QString &text)
 {
-    return setResult(model->parseVymText(unquoteQuotes(text))); //FIXME-2 check
+    return setResult(model->parseVymText(unquoteQuotes(text)));
 }
 
 void VymModelWrapper::paste() { model->paste(); }
