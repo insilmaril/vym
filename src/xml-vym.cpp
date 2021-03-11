@@ -807,7 +807,7 @@ bool parseVYMHandler::readImageAttr(const QXmlAttributes &a)
     if (!readOOAttr(a))
         return false;
 
-    if (!a.value("originalName").isEmpty()) // FIXME-2 quoteQuotes?
+    if (!a.value("originalName").isEmpty())
     {
         lastImage->setOriginalFilename(a.value("originalName"));
     }

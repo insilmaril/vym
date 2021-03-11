@@ -48,7 +48,7 @@ void VymText::copy(const VymText &other)
 void VymText::clear()
 {
     text = "";
-    fonthint = ""; // FIXME-2 check
+    fonthint = "";
     filenamehint = "";
     textmode = AutoText;
     color = Qt::black;
@@ -204,8 +204,7 @@ QString VymText::getTextASCII(QString indent,
 
 void VymText::setFontHint(const QString &s)
 {
-    if (s == "undef") // FIXME-2 check    ...or ""?
-        return;
+    if (s == "undef") return;
 
     // only for backward compatibility (pre 1.5 )
     fonthint = s;
