@@ -29,10 +29,12 @@ site:
 
 https://sourceforge.net/projects/vym/
 
-The latest binaries for Linux (currently mainly openSUSE) are found in the
+The latest development drops can be found in the Files/Development folder there.
+
+The latest binaries for Linux (currently mainly openSUSE) are built and available in the
 Open Build Service project of Uwe Drechsel (aka insilmaril):
 
-https://download.opensuse.org/repositories/home%3A//insilmaril/
+https://software.opensuse.org//download.html?project=home%3Ainsilmaril&package=vym
 
 
 Source code
