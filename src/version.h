@@ -7,7 +7,7 @@
 #define __VYM_CODE_QUALITY "development"
 //#define __VYM_CODE_QUALITY "production"
 //#define __VYM_CODENAME "Codename: Production release"
-#define __VYM_CODENAME "Codename: development version, not for production!"
+#define __VYM_CODENAME "2.8.0-beta-1"
 #define __VYM_HOME "http://www.insilmaril.de/vym"
 
 #endif
