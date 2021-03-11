@@ -21,7 +21,7 @@ QString ExtraInfoDialog::getMapTitle() { return ui.mapTitleLE->text(); }
 
 void ExtraInfoDialog::setComment(const QString &s) { ui.commentTE->setText(s); }
 
-QString ExtraInfoDialog::getComment() { return ui.commentTE->toHtml(); }
+QString ExtraInfoDialog::getComment() { return ui.commentTE->toPlainText(); }
 
 void ExtraInfoDialog::setAuthor(const QString &s) { ui.authorLE->setText(s); }
 

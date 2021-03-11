@@ -518,7 +518,7 @@ bool parseVYMHandler::readMapAttr( const QXmlAttributes &a)
     if (!a.value("title").isEmpty())
         model->setTitle(a.value("title"));
     if (!a.value("comment").isEmpty())
-        model->setComment(a.value("comment"));
+        model->setComment(unquoteMeta(a.value("comment")));
     if (!a.value("branchCount").isEmpty()) {
         branchesTotal = a.value("branchCount").toInt();
         if (branchesTotal > 10) {
