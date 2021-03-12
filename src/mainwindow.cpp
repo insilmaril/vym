@@ -5896,7 +5896,7 @@ void Main::changeSelection(VymModel *model, const QItemSelection &newsel,
                 taskEditor->clearSelection();
         }
         else
-            noteEditor->setInactive();
+            noteEditor->setInactive();  // FIXME-2 sometimes NE is inactive and can't be activated
 
         updateActions();
     }
