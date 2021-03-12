@@ -160,8 +160,12 @@ bool ImportFirefoxBookmarks::parseJson(QJsonValue jsval, ParseMode mode, BranchI
             parseJson (val, mode, selbi);
         }
 
-        if (selbi->depth() > 2) selbi->scroll();
+        if (selbi->depth() > 2) {
+            selbi->scroll();
+            model->emitDataChanged(selbi); // FIXME-2 required, but can reposition in between be blocked?
+        }
     } 
+
     return true;
 }
    

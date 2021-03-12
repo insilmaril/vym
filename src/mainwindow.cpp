@@ -4033,10 +4033,11 @@ void Main::fileSaveAsDefault()
 
 void Main::fileImportFirefoxBookmarks()
 {
-    // Import into new map
-    fileNew();
-
     VymModel *m = currentModel();
+    if (!m->isDefault())
+        // Import into new map
+        fileNew();
+
     if (m) {
         // Try to select first mapcenter of default map
         if (!m->select("mc:0")) return;
