@@ -263,6 +263,7 @@ bool VymModel::setData(const QModelIndex &index, const QVariant &value, int role
 
     return true;
 }
+
 void VymModel::resetUsedFlags()
 {
     standardFlagsMaster->resetUsedCounter();
@@ -525,6 +526,8 @@ File::ErrorCode VymModel::loadMap(QString fname, const LoadMode &lmode,
         selModel->clearSelection();
     }
 
+    bool zipped_org = zipped;
+
     // Create temporary directory for packing
     bool ok;
     QString tmpZipDir = makeTmpDir(ok, tmpDirPath(), "unzip");
@@ -537,11 +540,13 @@ File::ErrorCode VymModel::loadMap(QString fname, const LoadMode &lmode,
 
     QString xmlfile;
     if (fname.right(4) == ".xml" || fname.right(3) == ".mm") {
-        zipped = false;
         xmlfile = fname;
+        zipped = false;
+
+        if (lmode == NewMap || lmode == DefaultMap)
+            zipped_org = false;
     }
     else {
-        zipped = true;
         // Try to unzip file
         err = unzipDir(tmpZipDir, fname);
     }
@@ -661,7 +666,7 @@ File::ErrorCode VymModel::loadMap(QString fname, const LoadMode &lmode,
     removeDir(QDir(tmpZipDir));
 
     // Restore original zip state
-    // FIXME-1 testing zipped = zipped_org;
+    zipped = zipped_org;
 
     updateActions();
 
@@ -696,8 +701,7 @@ File::ErrorCode VymModel::save(const SaveMode &savemode)
         mapFileName = fileName;
 
     // Look, if we should zip the data:
-    if (!zipped) // FIXME-1 sometimes map is marked unzipped for no visible
-                 // reason
+    if (!zipped)
     {
         QMessageBox mb(vymName,
                        tr("The map %1\ndid not use the compressed "
@@ -1308,10 +1312,12 @@ void VymModel::redo()
         qDebug() << "       curStep=" << curStep;
         qDebug() << "    ---------------------------";
         qDebug() << "    comment=" << comment;
-        qDebug() << "    undoCom=" << undoCommand;
         qDebug() << "    undoSel=" << undoSelection;
-        qDebug() << "    redoCom=" << redoCommand;
         qDebug() << "    redoSel=" << redoSelection;
+        qDebug() << "    undoCom:";
+        cout << qPrintable(undoCommand);
+        qDebug() << "    redoCom=";
+        cout << qPrintable(redoCommand);
         qDebug() << "    ---------------------------";
     }
 
@@ -1425,13 +1431,15 @@ void VymModel::undo()
         qDebug() << "    undosAvail=" << undosAvail;
         qDebug() << "    redosAvail=" << redosAvail;
         qDebug() << "       curStep=" << curStep;
-        qDebug() << "    ---------------------------";
+        cout << "    ---------------------------" << endl;
         qDebug() << "    comment=" << comment;
-        qDebug() << "    undoCom=" << undoCommand;
         qDebug() << "    undoSel=" << undoSelection;
-        qDebug() << "    redoCom=" << redoCommand;
         qDebug() << "    redoSel=" << redoSelection;
-        qDebug() << "    ---------------------------";
+        cout << "    undoCom:" << endl;
+        cout << qPrintable(undoCommand) << endl;
+        cout << "    redoCom:" << endl;
+        cout << qPrintable(redoCommand) << endl;
+        cout << "    ---------------------------" << endl;
     }
 
     // select  object before undo
@@ -1541,7 +1549,7 @@ void VymModel::saveState(const SaveMode &savemode, const QString &undoSelection,
     // Increase undo steps, but check for repeated actions
     // like editing a vymNote - then do not increase but replace last command
     if (curStep > 0 && redoSelection == lastRedoSelection() &&
-        lastRedoCommand().startsWith("parseVymText ('<vymnote")) {
+        lastRedoCommand().startsWith("parseVymText (\"<vymnote")) {
         undoCommand = undoSet.value(
             QString("/history/step-%1/undoCommand").arg(curStep), undoCommand);
     }
@@ -1603,15 +1611,21 @@ void VymModel::saveState(const SaveMode &savemode, const QString &undoSelection,
         qDebug() << "    stepsTotal=" << stepsTotal
                  << ", undosAvail=" << undosAvail
                  << ", redosAvail=" << redosAvail << ", curStep=" << curStep;
-        qDebug() << "    ---------------------------";
+        cout << "    ---------------------------" << endl;
         qDebug() << "    comment=" << comment;
-        qDebug() << "    undoCom=" << undoCommand;
         qDebug() << "    undoSel=" << undoSelection;
-        qDebug() << "    redoCom=" << redoCommand;
         qDebug() << "    redoSel=" << redoSelection;
         if (saveSel)
             qDebug() << "    saveSel=" << qPrintable(getSelectString(saveSel));
-        qDebug() << "    ---------------------------";
+        cout << "    undoCom:" << endl;
+        cout << qPrintable(undoCommand) << endl;
+        cout << "    undoCom saved:" << endl;
+        cout << qPrintable(undoSet.value(
+                    QString("/history/step-%1/undoCommand").arg(curStep)))
+             << endl;
+        cout << "    redoCom:" << endl;
+        cout << qPrintable(redoCommand) << endl;
+        cout << "    ---------------------------" << endl;
     }
 
     mainWindow->updateHistory(undoSet);
@@ -1950,8 +1964,8 @@ void VymModel::updateNoteText(const VymText &vt)
             VymNote vn;
             vn.copy(vt);
 
-            saveState(selti, "parseVymText ('" + note_old.saveToDir() + "')",
-                      selti, "parseVymText ('" + note_new.saveToDir() + "')",
+            saveState(selti, "parseVymText (\"" + quoteQuotes(note_old.saveToDir()) + "\")",
+                      selti, "parseVymText (\"" + quoteQuotes(note_new.saveToDir()) + "\")",
                       QString("Set note of %1 to \"%2\"")
                           .arg(getObjectName(selti))
                           .arg(note_new.getTextASCII().left(20)));
@@ -1976,8 +1990,8 @@ void VymModel::setNote(const VymNote &vn)
         VymNote n_new;
         n_old = selti->getNote();
         n_new = vn;
-        saveState(selti, "parseVymText ('" + n_old.saveToDir() + "')", selti,
-                  "parseVymText ('" + n_new.saveToDir() + "')",
+        saveState(selti, "parseVymText (\"" + quoteQuotes(n_old.saveToDir()) + "\")", selti,
+                  "parseVymText (\"" + n_new.saveToDir() + "\")",
                   QString("Set note of %1 to \"%2\"")
                       .arg(getObjectName(selti))
                       .arg(n_new.getTextASCII().left(20)));
@@ -2467,7 +2481,7 @@ bool VymModel::cycleTaskStatus(bool reverse)
     return false;
 }
 
-bool VymModel::setTaskSleep(const QString &s)
+bool VymModel::setTaskSleep(const QString &s)   // FIXME-2 branch needs reselect to become awake again
 {
     bool ok = false;
     BranchItem *selbi = getSelectedBranch();

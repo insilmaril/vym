@@ -65,6 +65,9 @@ bool ImportFirefoxBookmarks::transform()
     progressDialog.setAutoClose(false);
     progressDialog.setMinimumWidth(600);
     progressDialog.setCancelButton(NULL);
+    progressDialog.setWindowTitle(QObject::tr("Import Firefox bookmarks","Import dialog"));
+    progressDialog.setLabelText(
+        QObject::tr("Loading bookmarks:", "Progress dialog while importing bookmarks"));
 
     if (file.open(QIODevice::ReadOnly)) {
         QJsonDocument jsdoc = QJsonDocument::fromJson(file.readAll());
@@ -88,6 +91,9 @@ bool ImportFirefoxBookmarks::transform()
             parseJson (value, ParseMode::buildMap);
         }
         model->unblockReposition();
+
+        mainWindow->statusMessage(
+                QObject::tr("Imported %1 bookmarks", "Import dialog").arg(totalBookmarks));
     }
 
     return false;
@@ -154,7 +160,7 @@ bool ImportFirefoxBookmarks::parseJson(QJsonValue jsval, ParseMode mode, BranchI
             parseJson (val, mode, selbi);
         }
 
-        if (selbi->depth() > 2) selbi->scroll();    // FIXME-2 reposition?
+        if (selbi->depth() > 2) selbi->scroll();
     } 
     return true;
 }

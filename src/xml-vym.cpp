@@ -84,18 +84,6 @@ bool parseVYMHandler::startElement(const QString &, const QString &,
                         "the ok-button below, updating vym should help.</p>")
                         .arg(version)
                         .arg(vymVersion));
-
-                if (versionLowerOrEqual(vymVersion, "2.7.554")) {
-                    // File format change in 2.7.555
-                    // might cause data loss, if read with old vym and saved
-                    // again Therefor warn and disable autosave
-                    QMessageBox::warning(
-                        0, QObject::tr("Warning")  + ": " + QObject::tr("Disabling autosave"),
-                        QObject::tr("<h3>Autosave will be disabled</h3>"
-                                    "<p>Please check contents of map before "
-                                    "saving!</p>"));
-                    mainWindow->setAutosave(false);
-                }
             }
             else
                 model->setVersion(version);
@@ -206,6 +194,8 @@ bool parseVYMHandler::startElement(const QString &, const QString &,
             lastBranch->setHeadingColor(col);
             vymtext.setColor(col);
         }
+        if (!atts.value("text").isEmpty())
+            vymtext.setText(unquoteQuotes(atts.value("text")));
     }
     else if (eName == "task" &&
              (state == StateMapCenter || state == StateBranch)) {
@@ -254,6 +244,8 @@ bool parseVYMHandler::startElement(const QString &, const QString &,
             else
                 vymtext.setRichText(false);
         }
+        if (!atts.value("text").isEmpty())
+            vymtext.setText(unquoteQuotes(atts.value("text")));
     }
     else if (eName == "floatimage" &&
              (state == StateMapCenter || state == StateBranch)) {
@@ -341,7 +333,8 @@ bool parseVYMHandler::startElement(const QString &, const QString &,
         readBranchAttr(atts);
     }
     else if (eName == "html" &&
-             (state == StateHtmlNote || state == StateVymNote)) {
+             (state == StateHtmlNote ||
+              state == StateVymNote)) { // Only for backward compatibility
         state = StateHtml;
         htmldata = "<" + eName;
         readHtmlAttr(atts);
@@ -365,6 +358,7 @@ bool parseVYMHandler::startElement(const QString &, const QString &,
         model->addAttribute(lastBranch, ai);
     }
     else if (state == StateHtml) {
+        // Only for backward compatibility
         // accept all while in html mode,
         htmldata += "<" + eName;
         readHtmlAttr(atts);
@@ -407,8 +401,15 @@ bool parseVYMHandler::endElement(const QString &, const QString &,
             htmldata.contains("<html>"))
             // versions before 2.5.0 didn't use CDATA to save richtext
             vymtext.setAutoText(htmldata);
-        else
-            vymtext.setText(htmldata);
+        else {
+            // Versions 2.5.0 to 2.7.562  had HTML data encoded as CDATA
+            // Later versions use the <vymnote  text="...">  attribute,
+            // which is set already in begin element
+            // If both htmldata and vymtext are already available, use the
+            // vymtext
+            if (vymtext.isEmpty())
+                vymtext.setText(htmldata);
+        }
         lastBranch->setHeading(vymtext);
         break;
     case StateHtmlNote: // Richtext note, needed anyway for backward
@@ -434,8 +435,15 @@ bool parseVYMHandler::endElement(const QString &, const QString &,
             htmldata.contains("<html>"))
             // versions before 2.5.0 didn't use CDATA to save richtext
             vymtext.setAutoText(htmldata);
-        else
-            vymtext.setText(htmldata);
+        else {
+            // Versions 2.5.0 to 2.7.562  had HTML data encoded as CDATA
+            // Later versions use the <vymnote  text="...">  attribute,
+            // which is set already in begin element
+            // If both htmldata and vymtext are already available, use the
+            // vymtext
+            if (vymtext.isEmpty())
+                vymtext.setText(htmldata);
+        }
         lastBranch->setNote(vymtext);
         break;
     case StateHtml:
@@ -454,7 +462,7 @@ bool parseVYMHandler::characters(const QString &ch)
 {
     // qDebug()<< "xml-vym: characters " << ch << "  state=" << state;
 
-    QString ch_org = quotemeta(ch);
+    QString ch_org = quoteMeta(ch);
     QString ch_simplified = ch.simplified();
 
     switch (state) {
@@ -503,7 +511,7 @@ QString parseVYMHandler::errorString()
     return "the document is not in the VYM file format";
 }
 
-bool parseVYMHandler::readMapAttr(const QXmlAttributes &a)
+bool parseVYMHandler::readMapAttr( const QXmlAttributes &a)
 {
     QColor col;
     if (!a.value("author").isEmpty())
@@ -511,7 +519,7 @@ bool parseVYMHandler::readMapAttr(const QXmlAttributes &a)
     if (!a.value("title").isEmpty())
         model->setTitle(a.value("title"));
     if (!a.value("comment").isEmpty())
-        model->setComment(a.value("comment"));
+        model->setComment(unquoteMeta(a.value("comment")));
     if (!a.value("branchCount").isEmpty()) {
         branchesTotal = a.value("branchCount").toInt();
         if (branchesTotal > 10) {
@@ -800,7 +808,8 @@ bool parseVYMHandler::readImageAttr(const QXmlAttributes &a)
     if (!readOOAttr(a))
         return false;
 
-    if (!a.value("originalName").isEmpty()) {
+    if (!a.value("originalName").isEmpty())
+    {
         lastImage->setOriginalFilename(a.value("originalName"));
     }
     return true;
@@ -964,13 +973,13 @@ bool parseVYMHandler::readSlideAttr(const QXmlAttributes &a)
                 QString("centerOnID(\"%1\")").arg(ti->getUuid().toString()));
         }
         if (!a.value("inScript").isEmpty()) {
-            lastSlide->setInScript(unquotemeta(a.value("inScript")));
+            lastSlide->setInScript(unquoteMeta(a.value("inScript")));
         }
         else
-            lastSlide->setInScript(unquotemeta(scriptlines.join(";\n")));
+            lastSlide->setInScript(unquoteMeta(scriptlines.join(";\n")));
 
         if (!a.value("outScript").isEmpty()) {
-            lastSlide->setOutScript(unquotemeta(a.value("outScript")));
+            lastSlide->setOutScript(unquoteMeta(a.value("outScript")));
         }
     }
     return true;

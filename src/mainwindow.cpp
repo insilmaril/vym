@@ -255,6 +255,7 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
     setupSettingsActions();
     setupContextMenus();
     setupMacros();
+    setupFlagActions();
     setupToolbars();
 
     // Dock widgets ///////////////////////////////////////////////
@@ -323,6 +324,7 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
     connect(dw, SIGNAL(visibilityChanged(bool)), this, SLOT(updateActions()));
 
     // Connect NoteEditor, so that we can update flags if text changes
+
     connect(noteEditor, SIGNAL(textHasChanged(const VymText &)), this,
             SLOT(updateNoteText(const VymText &)));
     connect(noteEditor, SIGNAL(windowClosed()), this, SLOT(updateActions()));
@@ -330,6 +332,7 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
     // Connect heading editor
     connect(headingEditor, SIGNAL(textHasChanged(const VymText &)), this,
             SLOT(updateHeading(const VymText &)));
+
     connect(scriptEditor, SIGNAL(runScript(QString)), this,
             SLOT(runScript(QString)));
 
@@ -1098,8 +1101,7 @@ void Main::setupFileActions()
 
     fileImportMenu = fileMenu->addMenu(tr("Import", "File menu"));
 
-    a = new QAction(QPixmap(),
-                    tr("Firefox Bookmarks", "Import filters") + " (experimental)",
+    a = new QAction( tr("Firefox Bookmarks", "Import filters") + " (experimental)",
                     this);
     connect(a, SIGNAL(triggered()), this,
             SLOT(fileImportFirefoxBookmarks()));
@@ -1114,7 +1116,7 @@ void Main::setupFileActions()
     fileImportMenu->addAction(a);
 
     a = new QAction(tr("Import Dir...", "Import Filters") + " " +
-                        tr("(still experimental)"),
+                        tr("(experimental)"),
                     this);
     connect(a, SIGNAL(triggered()), this, SLOT(fileImportDir()));
     fileImportMenu->addAction(a);
@@ -1625,7 +1627,7 @@ void Main::setupEditActions()
     addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(getJiraData()));
     actionListBranches.append(a);
-    actionGetJiraData = a;      // FIXME-2 used???
+    actionGetJiraData = a;
 
     a = new QAction(tr("Get data from JIRA for subtree", "Edit menu") +
                         " (experimental)",
@@ -2371,10 +2373,10 @@ void Main::setupModeActions()
     actionGroupModModes = new QActionGroup(this);
     actionGroupModModes->setExclusive(true);
 
-    a = new QAction(QIcon(":/mode-select.svg"),
-                    tr("Use Shift modifier key to select and reorder objects",
-                       "Mode modifier"),
-                    actionGroupModModes);
+    a = new QAction(
+        QIcon(":/mode-select.svg"),
+        tr("Use modifier to select and reorder objects", "Mode modifier"),
+        actionGroupModModes);
     a->setShortcut(Qt::Key_J);
     addAction(a);
     switchboard.addSwitch("mapModModePoint", shortcutScope, a, tag);
@@ -2385,7 +2387,7 @@ void Main::setupModeActions()
 
     a = new QAction(
         QPixmap(":/mode-color.png"),
-        tr("Use Shift modifer key to pick color from another branch and apply",
+        tr("Format painter: pick color from another branch and apply",
            "Mode modifier"),
         actionGroupModModes);
     a->setShortcut(Qt::Key_K);
@@ -2395,10 +2397,9 @@ void Main::setupModeActions()
     actionListFiles.append(a);
     actionModModeColor = a;
 
-    a = new QAction(
-        QPixmap(":/mode-xlink.png"),
-        tr("Use Shift modifier key to draw xLinks", "Mode modifier"),
-        actionGroupModModes);
+    a = new QAction(QPixmap(":/mode-xlink.png"),
+                    tr("Use modifier to draw xLinks", "Mode modifier"),
+                    actionGroupModModes);
     a->setShortcut(Qt::Key_L);
     addAction(a);
     switchboard.addSwitch("mapModModeXLink", shortcutScope, a, tag);
@@ -2408,8 +2409,7 @@ void Main::setupModeActions()
 
     a = new QAction(
         QPixmap(":/mode-move-object.svg"),
-        tr("Use Shift modifier key to move branches without linking",
-           "Mode modifier"),
+        tr("Use modifier to move branches without linking", "Mode modifier"),
         actionGroupModModes);
     a->setShortcut(Qt::Key_Odiaeresis);
     addAction(a);
@@ -2418,10 +2418,10 @@ void Main::setupModeActions()
     actionListFiles.append(a);
     actionModModeMoveObject = a;
 
-    a = new QAction(QPixmap(":/mode-move-view.png"),
-                    tr("Use Shift modifier key to move view without selecting",
-                       "Mode modifier"),
-                    actionGroupModModes);
+    a = new QAction(
+        QPixmap(":/mode-move-view.png"),
+        tr("Use modifier to move view without selecting", "Mode modifier"),
+        actionGroupModModes);
     a->setShortcut(Qt::Key_Adiaeresis);
     addAction(a);
     switchboard.addSwitch("mapModModeMoveView", shortcutScope, a, tag);
@@ -2522,18 +2522,18 @@ void Main::setupFlagActions()
 
     addToolBarBreak();
 
-    // Create Standard Flags
-    standardFlagsToolbar =
-        addToolBar(tr("Standard Flags toolbar", "Standard Flag Toolbar"));
-    standardFlagsToolbar->setObjectName("standardFlagTB");
-    standardFlagsMaster->setToolBar(standardFlagsToolbar);
-
     // Create user flags
     userFlagsToolbar =
         addToolBar(tr("User Flags toolbar", "user Flags Toolbar"));
     userFlagsToolbar->setObjectName("userFlagsTB");
     userFlagsMaster->setToolBar(userFlagsToolbar);
     userFlagsMaster->createConfigureAction();
+
+    // Create Standard Flags
+    standardFlagsToolbar =
+        addToolBar(tr("Standard Flags toolbar", "Standard Flag Toolbar"));
+    standardFlagsToolbar->setObjectName("standardFlagTB");
+    standardFlagsMaster->setToolBar(standardFlagsToolbar);
 
     // Add entry now, to avoid chicken and egg problem and position toolbar
     // after all others:
@@ -2803,7 +2803,6 @@ Flag *Main::setupFlag(const QString &path, Flag::FlagType type,
         break;
     case Flag::UserFlag:
         userFlagsMaster->addActionToToolbar(a);
-
         connect(a, SIGNAL(triggered()), this, SLOT(flagChanged()));
         break;
     default:
@@ -3361,9 +3360,6 @@ void Main::setupToolbars()
     modModesToolbar->addAction(actionModModeXLink);
     modModesToolbar->addAction(actionModModeMoveObject);
     modModesToolbar->addAction(actionModModeMoveView);
-
-    // Flag toolbars
-    setupFlagActions();
 
     // Add all toolbars to View menu
     toolbarsMenu->addAction(fileToolbar->toggleViewAction());
@@ -4035,7 +4031,7 @@ void Main::fileSaveAsDefault()
     }
 }
 
-void Main::fileImportFirefoxBookmarks() 
+void Main::fileImportFirefoxBookmarks()
 {
     // Import into new map
     fileNew();
@@ -5452,14 +5448,14 @@ void Main::viewZoomOut()
         me->setZoomFactorTarget(me->getZoomFactorTarget() * 0.85);
 }
 
-void Main::viewRotateCounterClockwise() // FIXME-2 move to ME
+void Main::viewRotateCounterClockwise() // FIXME-3 move to ME
 {
     MapEditor *me = currentMapEditor();
     if (me)
         me->setAngleTarget(me->getAngleTarget() - 10);
 }
 
-void Main::viewRotateClockwise() // FIXME-2 move to ME
+void Main::viewRotateClockwise() // FIXME-3 move to ME
 {
     MapEditor *me = currentMapEditor();
     if (me)
@@ -5533,7 +5529,7 @@ bool Main::settingsURL()
     return ok;
 }
 
-void Main::settingsZipTool()  // FIXME-2 no longer required
+void Main::settingsZipTool()
 {
     // Default zip tool is tar on Windows 10, zip/unzip elsewhere
     ZipSettingsDialog dia;
@@ -5929,6 +5925,8 @@ void Main::updateDockWidgetTitles(VymModel *model)
         noteEditor->setEditorTitle(s);
         noteEditorDW->setWindowTitle(noteEditor->getEditorTitle());
         branchPropertyEditor->setModel(model);
+
+        if (bi) headingEditor->setVymText(bi->getHeading());
     }
 }
 
@@ -5968,12 +5966,11 @@ void Main::updateActions()
             foreach (QAction *a, restrictedMapActions)
                 a->setEnabled(false);
 
-            // FIXME-3 updateactions: Disable import/export map functions (and
-            // probably more) if no map available
-            // FIXME-3 updateactions: refactor actionListFiles: probably not
-            // needed, wrong actions there atm
+            // FIXME-2 updateactions: Disable import/export map functions (and probably more) if no map available
+            // FIXME-2 updateactions: refactor actionListFiles: probably not  needed, wrong actions there atm
         }
-        else { // not readonly
+        else { // not readonly     
+               // FIXME-2 updateactions: maybe only required in testing, as mode should not change
 
             // Enable toolbars
             standardFlagsMaster->setEnabled(true);
@@ -6311,6 +6308,11 @@ QVariant Main::runScript(const QString &script)
     QScriptValue val3 = scriptEngine.newQObject(&selection);
     scriptEngine.globalObject().setProperty("selection", val3);
 
+    if (debug) {
+        cout << "MainWindow::runScript starting to execute:" << endl;
+        cout << qPrintable(script) << endl;
+    }
+
     // Run script
     QScriptValue result = scriptEngine.evaluate(script);
 
@@ -6322,7 +6324,6 @@ QVariant Main::runScript(const QString &script)
         qDebug()
             << "     lastResult: "
             << scriptEngine.globalObject().property("lastResult").toVariant();
-        qDebug() << "     script: " << script;
     }
 
     if (scriptEngine.hasUncaughtException()) {

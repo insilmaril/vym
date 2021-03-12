@@ -26,11 +26,8 @@ int CodeEditor::lineNumberAreaWidth()
         ++digits;
     }
 
-    // FIXME-3 avail. in Qt 5.11:  int space = 3 +
-    // fontMetrics().horizontalAdvance(QLatin1Char('9')) * digits; Check Qt
-    // version in openSUSE before changing...
-    int space =
-        3 + (4 + fontMetrics().boundingRect(QString("9")).width()) * digits;
+    int space = 3 + fontMetrics().horizontalAdvance(QLatin1Char('9')) * digits;
+    // FIXME-2 pre-Qt 5.11 code:  int space = 3 + (4 + fontMetrics().boundingRect(QString("9")).width()) * digits;
     ;
 
     return space;

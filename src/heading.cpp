@@ -12,5 +12,5 @@ void Heading::operator=(const VymText &other) { copy(other); }
 
 QString Heading::saveToDir()
 {
-    return valueElement("heading", VymText::saveToDir(), getAttributes());
+    return singleElement("heading", getAttributes());
 }

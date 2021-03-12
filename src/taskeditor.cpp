@@ -142,7 +142,7 @@ TaskEditor::TaskEditor(QWidget *)
 
     // Enable wordwrap when data changes
     if (settings.value("/taskeditor/wordWrap", true)
-            .toBool()) // FIXME-2 not working or only sometimes?
+            .toBool()) // FIXME-3 not working or only sometimes?
     {
         connect(taskModel, SIGNAL(dataChanged(QModelIndex, QModelIndex)), view,
                 SLOT(resizeRowsToContents()));

@@ -103,7 +103,7 @@ bool reallyWriteDirectory(const QString &dir)
 }
 
 QString makeTmpDir(bool &ok, const QString &dirPath,
-                   const QString &prefix) // FIXME-3 use QTemporaryDir
+                   const QString &prefix)
 {
     QString path = makeUniqueDir(ok, dirPath + "/" + prefix + "-XXXXXX");
     return path;
@@ -121,7 +121,7 @@ bool isInTmpDir(QString fn)
     return fn.left(l) == temp;
 }
 
-QString makeUniqueDir(bool &ok, QString s)
+QString makeUniqueDir(bool &ok, QString s) // FIXME-3 use QTemporaryDir
 {
     ok = true;
 
@@ -160,49 +160,7 @@ bool removeDir(QDir d)
         return false;
     }
 
-    // Traverse directories
-    d.setFilter(QDir::Dirs | QDir::Hidden | QDir::NoSymLinks);
-    QFileInfoList dirEntries = d.entryInfoList();
-    QFileInfo fi;
-
-    for (int i = 0; i < dirEntries.size(); ++i) {
-        fi = dirEntries.at(i);
-        if (fi.fileName() != "." && fi.fileName() != "..") {
-            if (!d.cd(fi.fileName()))
-            {
-                qWarning() << "removeDir() cannot find the sub directory " +
-                                  fi.fileName();
-                return false;
-            }
-            else {
-                // Recursively remove subdirs
-                if (!removeDir(d)) return false;
-                d.cdUp();
-            }
-        }
-    }
-
-    // Traverse files
-    d.setFilter(QDir::Files | QDir::Hidden | QDir::NoSymLinks);
-    dirEntries = d.entryInfoList();
-
-    for (int i = 0; i < dirEntries.size(); ++i) {
-        fi = dirEntries.at(i);
-        if (!QFile(fi.filePath()).remove()) {
-            qWarning() << "removeDir() cannot remove the file" +
-                              fi.fileName();
-            return false;
-        }
-    }
-
-    QString dirName = d.dirName();
-    d.cdUp();
-    if (!d.rmdir(dirName)) {
-        qWarning() << "removeDir(" + dirName + ") failed!";  //FIXME-2 Check on windows
-        return false;
-    }
-
-    return true;
+    return d.removeRecursively();
 }
 
 bool copyDir(QDir src, QDir dst, const bool &override)
@@ -308,11 +266,12 @@ ErrorCode zipDir(QDir zipInputDir, QString zipName)
     QFile file(zipName);
     if (file.exists()) {
         symLinkTarget = file.symLinkTarget();
-        newName = zipName + ".tmp";
+        QString zipNameTmp = zipName + ".tmp";
+        newName = zipNameTmp;
         int n = 0;
         while (!file.rename(newName) && n < 5) {
             newName =
-                newName + QString().setNum(n); // FIXME-2    will not count
+                zipNameTmp + QString().setNum(n);
             n++;
         }
         if (n >= 5) {
@@ -341,6 +300,7 @@ ErrorCode zipDir(QDir zipInputDir, QString zipName)
             0, QObject::tr("Critical Error"),
             QObject::tr("Couldn't start %1 tool to compress data!\n"
                         "The map could not be saved, please check if "
+
                         "backup file is available or export as XML file!")
                     .arg("Windows zip") +
                 "\n\nziptoolpath: " + zipToolPath +

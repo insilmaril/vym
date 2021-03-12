@@ -279,12 +279,9 @@ bool ImageObj::load(const QString &fn, bool createClone)
         if (pm.load(fn)) {
             prepareGeometryChange();
 
-            if (pixmapItem) {
-                qWarning()
-                    << "ImageObj::load  trying to overload existing pixmapItem";
-                return false;
-            }
-
+            if (pixmapItem)
+                qWarning() << "ImageObj::load " << fn
+                           << "pixmapIteam already exists";
             pixmapItem = new QGraphicsPixmapItem(this);
             pixmapItem->setPixmap(pm);
             pixmapItem->setParentItem(parentItem());

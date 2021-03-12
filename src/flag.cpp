@@ -130,8 +130,6 @@ QString Flag::getDefinition(const QString &prefix)
 
 void Flag::saveDataToDir(const QString &dirPath)
 {
-    // qDebug() << "Flag::saveDataToDir  " << name << " to " << dirPath << "
-    // image=" << image;
     if (image) {
         path = dirPath + "/" + uuid.toString() + "-" + name +
                image->getExtension();

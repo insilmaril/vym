@@ -44,8 +44,7 @@ void ConfluenceAgent::init()
 
     succ = false;
 
-    // Read credentials // FIXME-2 dialog to set credentials, if not saved
-    // before
+    // Read credentials 
     username =
         settings.value("/confluence/username", "user_johnDoe").toString();
     password = confluencePassword;
@@ -109,7 +108,6 @@ bool ConfluenceAgent::getPageDetails(const QString &url)
 
 bool ConfluenceAgent::getPageDetailsNative(const QString &u)
 {
-    qDebug() << "CA::getPageDetailsNative for " << u; // FIXME-2 testing
     QUrl url(u);
     if (!url.isValid()) {
         qWarning() << "ConfluenceAgent: Invalid URL: " << u;
@@ -431,7 +429,7 @@ void ConfluenceAgent::pageDetailsReceived()
     reply = nullptr;
 }
 
-#ifndef QT_NO_SSL // FIXME-2 make sure to use SSL!!!
+#ifndef QT_NO_SSL
 void ConfluenceAgent::sslErrors(QNetworkReply *, const QList<QSslError> &errors)
 {
     QString errorString;

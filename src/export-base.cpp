@@ -171,7 +171,7 @@ void ExportBase::completeExport(QStringList args)
                            displayedDestination);
 
     // Trigger saving of export command if it has changed
-    if (model && (lastCommand != command))  //FIXME-2 lastCommand really needed?
+    if (model && (lastCommand != command))
         model->setChanged();
 
     if (success)

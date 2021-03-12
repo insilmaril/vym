@@ -26,6 +26,7 @@ unix:!macx:isEmpty(NO_DBUS) {
 }
 
 win32 {
+    message("Compiling with win32")
     HEADERS += src/mkdtemp.h
     SOURCES += src/mkdtemp.cpp
     RC_FILE = vym.rc

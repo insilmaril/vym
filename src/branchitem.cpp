@@ -142,6 +142,10 @@ QString BranchItem::saveToDir(const QString &tmpdir, const QString &prefix,
     // save heading
     s += heading.saveToDir();
 
+    // save note
+    if (!note.isEmpty())
+        s += note.saveToDir();
+
     // Save frame  // not saved if there is no MO
     if (mo) {
         // Avoid saving NoFrame for objects other than MapCenter
@@ -161,10 +165,6 @@ QString BranchItem::saveToDir(const QString &tmpdir, const QString &prefix,
     // save attributes
     for (int i = 0; i < attributeCount(); ++i)
         s += getAttributeNum(i)->getDataXML();
-
-    // save note
-    if (!note.isEmpty())
-        s += note.saveToDir();
 
     // save task
     if (task)

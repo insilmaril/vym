@@ -45,7 +45,7 @@ QString ExportHTML::getBranchText(BranchItem *current)
                         .arg(col)
                         .arg(id);
         QString url = current->getURL();
-        QString heading = quotemeta(current->getHeadingPlain());
+        QString heading = quoteMeta(current->getHeadingPlain());
 
         // Task flags
         QString taskFlags;
@@ -272,7 +272,7 @@ QString ExportHTML::createTOC()
             toc += QString("<a href=\"#%1\"> %2 %3</a></br>\n")
                        .arg(model->getSelectString(cur))
                        .arg(number)
-                       .arg(quotemeta(cur->getHeadingPlain()));
+                       .arg(quoteMeta(cur->getHeadingPlain()));
             toc += "</div>";
         }
         model->nextBranch(cur, prev);
@@ -365,16 +365,16 @@ void ExportHTML::doExport(bool useDialog)
           "charset=UTF-8\"> ";
     ts << "\n<meta name=\"generator=\" content=\" vym - view your mind - " +
               vymVersion + " - " + vymHome + "\">";
-    ts << "\n<meta name=\"author\" content=\"" + quotemeta(model->getAuthor()) +
+    ts << "\n<meta name=\"author\" content=\"" + quoteMeta(model->getAuthor()) +
               "\"> ";
     ts << "\n<meta name=\"description\" content=\"" +
-              quotemeta(model->getComment()) + "\"> ";
+              quoteMeta(model->getComment()) + "\"> ";
     ts << "\n<link rel='stylesheet' id='css.stylesheet' href='"
        << basename(cssDst) << "' />\n";
     QString title = model->getTitle();
     if (title.isEmpty())
         title = model->getMapName();
-    ts << "\n<head><title>" + quotemeta(title) + "</title></head>";
+    ts << "\n<head><title>" + quoteMeta(title) + "</title></head>";
     ts << "\n<body>\n";
 
     // Include image

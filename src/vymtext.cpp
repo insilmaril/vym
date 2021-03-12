@@ -48,7 +48,7 @@ void VymText::copy(const VymText &other)
 void VymText::clear()
 {
     text = "";
-    fonthint = "undef";
+    fonthint = "";
     filenamehint = "";
     textmode = AutoText;
     color = Qt::black;
@@ -204,6 +204,8 @@ QString VymText::getTextASCII(QString indent,
 
 void VymText::setFontHint(const QString &s)
 {
+    if (s == "undef") return;
+
     // only for backward compatibility (pre 1.5 )
     fonthint = s;
 }
@@ -233,17 +235,19 @@ void VymText::setColor(QColor col) { color = col; }
 
 QColor VymText::getColor() { return color; }
 
-QString VymText::getAttributes()
+QStringList VymText::getAttributes()
 {
-    QString ret;
+    QStringList ret;
     if (textmode == RichText)
-        ret += attribut("textMode", "richText");
+        ret << attribut("textMode", "richText");
     else {
-        ret += attribut("textMode", "plainText");
-        ret += " " + attribut("fonthint", fonthint);
+        ret << attribut("textMode", "plainText");
+        if (!fonthint.isEmpty())
+            ret << attribut("fonthint", fonthint);
     }
-    ret += " " + attribut("textColor", color.name());
+    ret << attribut("textColor", color.name());
+    ret << attribut("text", quoteQuotes(text));
     return ret;
 }
 
-QString VymText::saveToDir() { return getCDATA(text); }
+QString VymText::saveToDir() { return ""; }
