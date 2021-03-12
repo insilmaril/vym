@@ -254,7 +254,7 @@ void VymModel::updateActions()
     mainWindow->updateActions();
 }
 
-bool VymModel::setData(const QModelIndex &index, const QVariant &value, int role)
+bool VymModel::setData(const QModelIndex &, const QVariant &value, int role)
 {
     if (role != Qt::EditRole)
         return false;
