@@ -748,12 +748,7 @@ void TextEditor::setVymText(const VymText &vt)
 
 void TextEditor::setInactive()
 {
-    e->clear();
-    state = inactiveEditor;
     setState(inactiveEditor);
-    e->setReadOnly(true);
-
-    updateActions();
 }
 
 void TextEditor::editCopyAll()
@@ -1081,10 +1076,8 @@ void TextEditor::verticalAlignmentChanged(QTextCharFormat::VerticalAlignment a)
 void TextEditor::updateActions()
 {
     bool b;
-    if (state == inactiveEditor)
-        b = false;
-    else
-        b = true;
+    b = (state == inactiveEditor) ? false : true;
+
     actionFileLoad->setEnabled(b);
     actionFileSave->setEnabled(b);
     actionFileSaveAs->setEnabled(b);
@@ -1131,23 +1124,31 @@ void TextEditor::updateActions()
     }
 }
 
-void TextEditor::setState(EditorState s)
+void TextEditor::setState(EditorState s) // FIXME-3 called 12x when reselecting once in ME
+                                         // 5 alone for HeadingEditor
 {
+    //qDebug() << "TE::setState" << s << editorName;
     QPalette p = palette();
     QColor c;
-    switch (s) {
+    state = s;
+    switch (state) {
     case emptyEditor:
         c = colorEmptyEditor;
+        e->setReadOnly(false);
         break;
     case filledEditor:
         c = colorFilledEditor;
+        e->setReadOnly(false);
         break;
     case inactiveEditor:
         c = colorInactiveEditor;
+        e->setReadOnly(true);
     }
     p.setColor(QPalette::Active, static_cast<QPalette::ColorRole>(9), c);
     p.setColor(QPalette::Inactive, static_cast<QPalette::ColorRole>(9), c);
     e->setPalette(p);
+
+    updateActions();
 }
 
 void TextEditor::updateState()

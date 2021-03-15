@@ -5862,11 +5862,19 @@ void Main::changeSelection(VymModel *model, const QItemSelection &newsel,
     branchPropertyEditor->setModel(model);
 
     if (model && model == currentModel()) {
-        TreeItem *ti;
-        if (!newsel.indexes().isEmpty()) {
-            ti = model->getItem(newsel.indexes().first());
+        int selectedCount = model->getSelectionModel()->selectedIndexes().count();
+
+        if (selectedCount == 0 || selectedCount > 1) {
+            noteEditor->setInactive();
+            headingEditor->setInactive();
+            taskEditor->clearSelection();
+
+        } else {
+            TreeItem *ti = model->getItem(model->getSelectionModel()->selectedIndexes().first());
+            if (!ti) return;
 
             // Update note editor
+
             if (!ti->hasEmptyNote())
                 noteEditor->setNote(ti->getNote());
             else
@@ -5895,11 +5903,9 @@ void Main::changeSelection(VymModel *model, const QItemSelection &newsel,
             else
                 taskEditor->clearSelection();
         }
-        else
-            noteEditor->setInactive();  // FIXME-2 sometimes NE is inactive and can't be activated
-
-        updateActions();
     }
+
+    updateActions();
 }
 
 void Main::updateDockWidgetTitles(VymModel *model)
