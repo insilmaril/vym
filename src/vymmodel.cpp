@@ -1431,7 +1431,7 @@ void VymModel::undo()
         cout << "    ---------------------------" << endl;
     }
 
-    // select  object before undo
+    // select  object before undo   // FIXME-0 double select, see above
     if (!undoSelection.isEmpty())
         select(undoSelection);
 
@@ -1535,21 +1535,25 @@ void VymModel::saveState(const SaveMode &savemode, const QString &undoSelection,
     QString undoCommand = undoCom;
     QString redoCommand = redoCom;
 
+
     // Increase undo steps, but check for repeated actions
     // like editing a vymNote - then do not increase but replace last command
+    /*
+    QRegExp re ("parseVymText.*\\(.*vymnote");
     if (curStep > 0 && redoSelection == lastRedoSelection() &&
-        lastRedoCommand().startsWith("parseVymText (\"<vymnote")) {
+        lastRedoCommand().contains(re)) {
         undoCommand = undoSet.value(
             QString("/history/step-%1/undoCommand").arg(curStep), undoCommand);
     }
     else {
+    */
         if (undosAvail < stepsTotal)
             undosAvail++;
 
         curStep++;
         if (curStep > stepsTotal)
             curStep = 1;
-    }
+    //}
 
     QString histDir = getHistoryPath();
     QString bakMapPath = histDir + "/map.xml";
@@ -1608,10 +1612,6 @@ void VymModel::saveState(const SaveMode &savemode, const QString &undoSelection,
             qDebug() << "    saveSel=" << qPrintable(getSelectString(saveSel));
         cout << "    undoCom:" << endl;
         cout << qPrintable(undoCommand) << endl;
-        cout << "    undoCom saved:" << endl;
-        cout << qPrintable(undoSet.value(
-                    QString("/history/step-%1/undoCommand").arg(curStep)))
-             << endl;
         cout << "    redoCom:" << endl;
         cout << qPrintable(redoCommand) << endl;
         cout << "    ---------------------------" << endl;
@@ -1898,8 +1898,8 @@ void VymModel::setHeading(const VymText &vt, BranchItem *bi)
         h_old = bi->getHeading();
         if (h_old == h_new)
             return;
-        saveState(bi, "parseVymText ('" + h_old.saveToDir() + "')", bi,
-                  "parseVymText ('" + h_new.saveToDir() + "')",
+        saveState(bi, "parseVymText (\"" + quoteQuotes(h_old.saveToDir()) + "\")", bi,
+                  "parseVymText (\"" + quoteQuotes(h_new.saveToDir()) + "\")",
                   QString("Set heading of %1 to \"%2\"")
                       .arg(getObjectName(bi))
                       .arg(s));
@@ -1973,6 +1973,7 @@ void VymModel::updateNoteText(const VymText &vt)
 
 void VymModel::setNote(const VymNote &vn)
 {
+    qDebug() << "VM::setNote   vn=" << vn.getTextASCII();
     TreeItem *selti = getSelectedItem();
     if (selti) {
         VymNote n_old;
@@ -1980,10 +1981,10 @@ void VymModel::setNote(const VymNote &vn)
         n_old = selti->getNote();
         n_new = vn;
         saveState(selti, "parseVymText (\"" + quoteQuotes(n_old.saveToDir()) + "\")", selti,
-                  "parseVymText (\"" + n_new.saveToDir() + "\")",
+                  "parseVymText (\"" + quoteQuotes(n_new.saveToDir()) + "\")",
                   QString("Set note of %1 to \"%2\"")
                       .arg(getObjectName(selti))
-                      .arg(n_new.getTextASCII().left(20)));
+                      .arg(n_new.getTextASCII().left(40)));
         selti->setNote(n_new);
         emitNoteChanged(selti);
         emitDataChanged(selti);
@@ -3951,6 +3952,7 @@ void VymModel::colorSubtree(QColor c, BranchItem *b)
         selbis.append(b);
     else
         selbis = getSelectedBranches();
+
     foreach (BranchItem *bi, selbis) {
         saveStateChangingPart(bi, bi,
                               QString("colorSubtree (\"%1\")").arg(c.name()),
@@ -5672,6 +5674,8 @@ void VymModel::emitDataChanged(TreeItem *ti)
     QModelIndex ix = index(ti);
     emit(dataChanged(ix, ix));
     emitSelectionChanged();
+
+    // Update taskmodel and recalc priorities there
     if (!blockReposition) {
         if (ti->isBranchLikeType() && ((BranchItem *)ti)->getTask()) {
             taskModel->emitDataChanged(((BranchItem *)ti)->getTask());

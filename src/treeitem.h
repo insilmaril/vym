@@ -84,7 +84,7 @@ class TreeItem : public XMLObj {
   public:
     virtual void setHeading(const VymText &vt);
     virtual void setHeadingPlainText(const QString &s);
-    virtual Heading getHeading() const;
+    Heading getHeading() const;
     virtual QString getHeadingText();
     virtual std::string
     getHeadingStd() const; //! convenience function used for debugging

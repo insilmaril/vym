@@ -64,6 +64,7 @@ TextEditor::TextEditor()
 
     // Various states
     blockChangedSignal = false;
+    blockTextUpdate = false;
     setInactive();
 
     editorName = "Text editor";
@@ -151,9 +152,7 @@ bool TextEditor::isEmpty()
 
 void TextEditor::setEditorTitle(const QString &s)
 {
-    QString h;
-    s.isEmpty() ? h = editorName : h = editorName + ": " + s;
-    editorTitle = h;
+    editorTitle = (s.isEmpty()) ? editorName : editorName + ": " + s;
     setWindowTitle(editorTitle);
 }
 
@@ -693,8 +692,11 @@ void TextEditor::editorChanged()
     else
         state = filledEditor;
 
-    if (!blockChangedSignal)
-        emit(textHasChanged(getVymText()));
+    if (!blockChangedSignal) {
+        blockTextUpdate = true;
+        emit(textHasChanged(getVymText())); // FIXME-0 needed?
+        blockTextUpdate = false;
+    }
 
     if (state == oldState)
         return;
@@ -740,6 +742,13 @@ void TextEditor::setTextAuto(const QString &t)
 
 void TextEditor::setVymText(const VymText &vt)
 {
+    // While a note is being edited, we are sending textHasChanged
+    // Then we don't want to update the text additionally from outside,
+    // as this would position cursor at beginning of text
+    if (blockTextUpdate) return;
+
+    if (vt.getText() == getText()) return;
+
     if (vt.isRichText())
         setRichText(vt.getText());
     else
@@ -759,9 +768,14 @@ void TextEditor::editCopyAll()
 
 void TextEditor::clear()
 {
+    bool blockChangedOrg = blockChangedSignal;
+
+    blockChangedSignal = true;
     e->clear();
     setState(emptyEditor);
     e->setTextColor(colorFont);
+
+    blockChangedSignal = blockChangedOrg;
 }
 
 void TextEditor::textSaveAs()
@@ -906,7 +920,7 @@ void TextEditor::toggleFonthint()
         e->setCurrentFont(fixedFont);
         setFont(fixedFont);
     }
-    emit(textHasChanged(getVymText()));
+    emit(textHasChanged(getVymText())); // FIXME-0 needed?
 }
 
 void TextEditor::setRichTextMode(bool b)
@@ -922,7 +936,7 @@ void TextEditor::setRichTextMode(bool b)
         actionFormatRichText->setChecked(false);
     }
     updateActions();
-    emit(textHasChanged(getVymText()));
+    emit(textHasChanged(getVymText())); // FIXME-0 needed?
 }
 
 void TextEditor::toggleRichText()

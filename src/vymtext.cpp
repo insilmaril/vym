@@ -235,7 +235,7 @@ void VymText::setColor(QColor col) { color = col; }
 
 QColor VymText::getColor() { return color; }
 
-QStringList VymText::getAttributes()
+QStringList VymText::getAttributes() const
 {
     QStringList ret;
     if (textmode == RichText)

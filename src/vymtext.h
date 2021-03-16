@@ -36,7 +36,7 @@ class VymText : public XMLObj {
     bool isEmpty() const;
     void setColor(QColor color);
     QColor getColor();
-    QStringList getAttributes();
+    QStringList getAttributes() const;
     QString saveToDir(); // Needs to be overloaded!
 
   protected:

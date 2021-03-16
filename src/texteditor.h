@@ -110,6 +110,7 @@ class TextEditor : public QMainWindow {
     QBrush inactivePaper; // depending on the state
     EditorState state;
     bool blockChangedSignal;
+    bool blockTextUpdate;       // Set *while* textHasChanged is still being emitted
 
     QColor colorEmptyEditor;
     QColor colorFilledEditor;

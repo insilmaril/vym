@@ -5891,6 +5891,7 @@ void Main::changeSelection(VymModel *model, const QItemSelection &newsel,
             if (!status.isEmpty())
                 statusMessage(status);
 
+            // Update text in HeadingEditor
             headingEditor->setVymText(ti->getHeading());
 
             // Select in TaskEditor, if necessary
@@ -5913,14 +5914,16 @@ void Main::updateDockWidgetTitles(VymModel *model)
     QString s;
     if (model && !model->isRepositionBlocked()) {
         BranchItem *bi = model->getSelectedBranch();
-        if (bi)
+        if (bi) {
             s = bi->getHeadingPlain();
+            noteEditor->setVymText(bi->getNote());
+            VymText vt = bi->getHeading();
+            headingEditor->setVymText(vt);
+        }
 
         noteEditor->setEditorTitle(s);
         noteEditorDW->setWindowTitle(noteEditor->getEditorTitle());
         branchPropertyEditor->setModel(model);
-
-        if (bi) headingEditor->setVymText(bi->getHeading());
     }
 }
 
