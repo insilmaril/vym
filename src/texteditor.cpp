@@ -64,6 +64,7 @@ TextEditor::TextEditor()
 
     // Various states
     blockChangedSignal = false;
+    blockTextUpdate = false;
     setInactive();
 
     editorName = "Text editor";
@@ -151,9 +152,7 @@ bool TextEditor::isEmpty()
 
 void TextEditor::setEditorTitle(const QString &s)
 {
-    QString h;
-    s.isEmpty() ? h = editorName : h = editorName + ": " + s;
-    editorTitle = h;
+    editorTitle = (s.isEmpty()) ? editorName : editorName + ": " + s;
     setWindowTitle(editorTitle);
 }
 
@@ -693,8 +692,11 @@ void TextEditor::editorChanged()
     else
         state = filledEditor;
 
-    if (!blockChangedSignal)
-        emit(textHasChanged(getVymText()));
+    if (!blockChangedSignal) {
+        blockTextUpdate = true;
+        emit(textHasChanged(getVymText())); // FIXME-0 needed?
+        blockTextUpdate = false;
+    }
 
     if (state == oldState)
         return;
@@ -740,6 +742,13 @@ void TextEditor::setTextAuto(const QString &t)
 
 void TextEditor::setVymText(const VymText &vt)
 {
+    // While a note is being edited, we are sending textHasChanged
+    // Then we don't want to update the text additionally from outside,
+    // as this would position cursor at beginning of text
+    if (blockTextUpdate) return;
+
+    if (vt.getText() == getText()) return;
+
     if (vt.isRichText())
         setRichText(vt.getText());
     else
@@ -748,12 +757,7 @@ void TextEditor::setVymText(const VymText &vt)
 
 void TextEditor::setInactive()
 {
-    e->clear();
-    state = inactiveEditor;
     setState(inactiveEditor);
-    e->setReadOnly(true);
-
-    updateActions();
 }
 
 void TextEditor::editCopyAll()
@@ -764,9 +768,14 @@ void TextEditor::editCopyAll()
 
 void TextEditor::clear()
 {
+    bool blockChangedOrg = blockChangedSignal;
+
+    blockChangedSignal = true;
     e->clear();
     setState(emptyEditor);
     e->setTextColor(colorFont);
+
+    blockChangedSignal = blockChangedOrg;
 }
 
 void TextEditor::textSaveAs()
@@ -911,7 +920,7 @@ void TextEditor::toggleFonthint()
         e->setCurrentFont(fixedFont);
         setFont(fixedFont);
     }
-    emit(textHasChanged(getVymText()));
+    emit(textHasChanged(getVymText())); // FIXME-0 needed?
 }
 
 void TextEditor::setRichTextMode(bool b)
@@ -927,7 +936,7 @@ void TextEditor::setRichTextMode(bool b)
         actionFormatRichText->setChecked(false);
     }
     updateActions();
-    emit(textHasChanged(getVymText()));
+    emit(textHasChanged(getVymText())); // FIXME-0 needed?
 }
 
 void TextEditor::toggleRichText()
@@ -1081,10 +1090,8 @@ void TextEditor::verticalAlignmentChanged(QTextCharFormat::VerticalAlignment a)
 void TextEditor::updateActions()
 {
     bool b;
-    if (state == inactiveEditor)
-        b = false;
-    else
-        b = true;
+    b = (state == inactiveEditor) ? false : true;
+
     actionFileLoad->setEnabled(b);
     actionFileSave->setEnabled(b);
     actionFileSaveAs->setEnabled(b);
@@ -1131,23 +1138,31 @@ void TextEditor::updateActions()
     }
 }
 
-void TextEditor::setState(EditorState s)
+void TextEditor::setState(EditorState s) // FIXME-3 called 12x when reselecting once in ME
+                                         // 5 alone for HeadingEditor
 {
+    //qDebug() << "TE::setState" << s << editorName;
     QPalette p = palette();
     QColor c;
-    switch (s) {
+    state = s;
+    switch (state) {
     case emptyEditor:
         c = colorEmptyEditor;
+        e->setReadOnly(false);
         break;
     case filledEditor:
         c = colorFilledEditor;
+        e->setReadOnly(false);
         break;
     case inactiveEditor:
         c = colorInactiveEditor;
+        e->setReadOnly(true);
     }
     p.setColor(QPalette::Active, static_cast<QPalette::ColorRole>(9), c);
     p.setColor(QPalette::Inactive, static_cast<QPalette::ColorRole>(9), c);
     e->setPalette(p);
+
+    updateActions();
 }
 
 void TextEditor::updateState()

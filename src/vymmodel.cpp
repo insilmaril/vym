@@ -27,6 +27,7 @@
 #include "export-ascii.h"
 #include "export-confluence.h"
 #include "export-csv.h"
+#include "export-firefox.h"
 #include "export-html.h"
 #include "export-impress.h"
 #include "export-latex.h"
@@ -254,7 +255,7 @@ void VymModel::updateActions()
     mainWindow->updateActions();
 }
 
-bool VymModel::setData(const QModelIndex &index, const QVariant &value, int role)
+bool VymModel::setData(const QModelIndex &, const QVariant &value, int role)
 {
     if (role != Qt::EditRole)
         return false;
@@ -1442,7 +1443,7 @@ void VymModel::undo()
         cout << "    ---------------------------" << endl;
     }
 
-    // select  object before undo
+    // select  object before undo   // FIXME-0 double select, see above
     if (!undoSelection.isEmpty())
         select(undoSelection);
 
@@ -1546,21 +1547,25 @@ void VymModel::saveState(const SaveMode &savemode, const QString &undoSelection,
     QString undoCommand = undoCom;
     QString redoCommand = redoCom;
 
+
     // Increase undo steps, but check for repeated actions
     // like editing a vymNote - then do not increase but replace last command
+    /*
+    QRegExp re ("parseVymText.*\\(.*vymnote");
     if (curStep > 0 && redoSelection == lastRedoSelection() &&
-        lastRedoCommand().startsWith("parseVymText (\"<vymnote")) {
+        lastRedoCommand().contains(re)) {
         undoCommand = undoSet.value(
             QString("/history/step-%1/undoCommand").arg(curStep), undoCommand);
     }
     else {
+    */
         if (undosAvail < stepsTotal)
             undosAvail++;
 
         curStep++;
         if (curStep > stepsTotal)
             curStep = 1;
-    }
+    //}
 
     QString histDir = getHistoryPath();
     QString bakMapPath = histDir + "/map.xml";
@@ -1619,10 +1624,6 @@ void VymModel::saveState(const SaveMode &savemode, const QString &undoSelection,
             qDebug() << "    saveSel=" << qPrintable(getSelectString(saveSel));
         cout << "    undoCom:" << endl;
         cout << qPrintable(undoCommand) << endl;
-        cout << "    undoCom saved:" << endl;
-        cout << qPrintable(undoSet.value(
-                    QString("/history/step-%1/undoCommand").arg(curStep)))
-             << endl;
         cout << "    redoCom:" << endl;
         cout << qPrintable(redoCommand) << endl;
         cout << "    ---------------------------" << endl;
@@ -1909,8 +1910,8 @@ void VymModel::setHeading(const VymText &vt, BranchItem *bi)
         h_old = bi->getHeading();
         if (h_old == h_new)
             return;
-        saveState(bi, "parseVymText ('" + h_old.saveToDir() + "')", bi,
-                  "parseVymText ('" + h_new.saveToDir() + "')",
+        saveState(bi, "parseVymText (\"" + quoteQuotes(h_old.saveToDir()) + "\")", bi,
+                  "parseVymText (\"" + quoteQuotes(h_new.saveToDir()) + "\")",
                   QString("Set heading of %1 to \"%2\"")
                       .arg(getObjectName(bi))
                       .arg(s));
@@ -1984,6 +1985,7 @@ void VymModel::updateNoteText(const VymText &vt)
 
 void VymModel::setNote(const VymNote &vn)
 {
+    qDebug() << "VM::setNote   vn=" << vn.getTextASCII();
     TreeItem *selti = getSelectedItem();
     if (selti) {
         VymNote n_old;
@@ -1991,10 +1993,10 @@ void VymModel::setNote(const VymNote &vn)
         n_old = selti->getNote();
         n_new = vn;
         saveState(selti, "parseVymText (\"" + quoteQuotes(n_old.saveToDir()) + "\")", selti,
-                  "parseVymText (\"" + n_new.saveToDir() + "\")",
+                  "parseVymText (\"" + quoteQuotes(n_new.saveToDir()) + "\")",
                   QString("Set note of %1 to \"%2\"")
                       .arg(getObjectName(selti))
-                      .arg(n_new.getTextASCII().left(20)));
+                      .arg(n_new.getTextASCII().left(40)));
         selti->setNote(n_new);
         emitNoteChanged(selti);
         emitDataChanged(selti);
@@ -3963,6 +3965,7 @@ void VymModel::colorSubtree(QColor c, BranchItem *b)
         selbis.append(b);
     else
         selbis = getSelectedBranches();
+
     foreach (BranchItem *bi, selbis) {
         saveStateChangingPart(bi, bi,
                               QString("colorSubtree (\"%1\")").arg(c.name()),
@@ -4586,7 +4589,34 @@ void VymModel::exportCSV(const QString &fname, bool askName)
         ex.setFilePath(fname);
 
     if (askName) {
-        ex.addFilter("CSV (*.csb);;All (* *.*)");
+        ex.addFilter("CSV (*.csv);;All (* *.*)");
+        ex.setDirPath(lastExportDir.absolutePath());
+        ex.setWindowTitle(vymName + " -" + tr("Export as csv") + " " +
+                          tr("(still experimental)"));
+        ex.execDialog();
+    }
+
+    if (!ex.canceled()) {
+        setExportMode(true);
+        ex.doExport();
+        setExportMode(false);
+    }
+}
+
+void VymModel::exportFirefoxBookmarks(const QString &fname, bool askName)
+{
+    ExportFirefox ex;
+    ex.setModel(this);
+    ex.setLastCommand(
+        settings.localValue(filePath, "/export/last/command", "").toString());
+
+    if (fname == "")
+        ex.setFilePath(mapName + ".csv");
+    else
+        ex.setFilePath(fname);
+
+    if (askName) {
+        ex.addFilter("JSON (*.json);;All (* *.*)");
         ex.setDirPath(lastExportDir.absolutePath());
         ex.setWindowTitle(vymName + " -" + tr("Export as csv") + " " +
                           tr("(still experimental)"));
@@ -5685,6 +5715,7 @@ void VymModel::emitDataChanged(TreeItem *ti)
     emit(dataChanged(ix, ix));
     emitSelectionChanged();
     if (!repositionBlocked) {
+        // Update taskmodel and recalc priorities there
         if (ti->isBranchLikeType() && ((BranchItem *)ti)->getTask()) {
             taskModel->emitDataChanged(((BranchItem *)ti)->getTask());
             taskModel->recalcPriorities();

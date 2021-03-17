@@ -1101,11 +1101,13 @@ void Main::setupFileActions()
 
     fileImportMenu = fileMenu->addMenu(tr("Import", "File menu"));
 
-    a = new QAction( tr("Firefox Bookmarks", "Import filters") + " (experimental)",
+    a = new QAction( tr("Firefox Bookmarks", "Import filters") + " (testing only)",
                     this);
     connect(a, SIGNAL(triggered()), this,
             SLOT(fileImportFirefoxBookmarks()));
-    fileImportMenu->addAction(a);
+    if (settings.value("/mainwindow/showTestMenu", false).toBool()) {
+        fileImportMenu->addAction(a);
+    }
 
     a = new QAction("Freemind...", this);
     connect(a, SIGNAL(triggered()), this, SLOT(fileImportFreemind()));
@@ -1140,6 +1142,14 @@ void Main::setupFileActions()
                     this);
     connect(a, SIGNAL(triggered()), this, SLOT(fileExportConfluence()));
     fileExportMenu->addAction(a);
+
+    a = new QAction( tr("Firefox Bookmarks", "File export menu") + " (testing only)",
+                    this);
+    connect(a, SIGNAL(triggered()), this,
+            SLOT(fileExportFirefoxBookmarks()));
+    if (settings.value("/mainwindow/showTestMenu", false).toBool()) {
+        fileExportMenu->addAction(a);
+    }
 
     a = new QAction(tr("Text (ASCII)...", "File export menu"), this);
     connect(a, SIGNAL(triggered()), this, SLOT(fileExportASCII()));
@@ -4137,48 +4147,6 @@ void Main::fileImportDir()
         m->importDir();
 }
 
-void Main::fileExportXML()
-{
-    VymModel *m = currentModel();
-    if (m)
-        m->exportXML();
-}
-
-void Main::fileExportHTML()
-{
-    VymModel *m = currentModel();
-    if (m)
-        m->exportHTML();
-}
-
-void Main::fileExportConfluence()
-{
-    VymModel *m = currentModel();
-    if (m)
-        m->exportConfluence();
-}
-
-void Main::fileExportImage()
-{
-    VymModel *m = currentModel();
-    if (m)
-        m->exportImage();
-}
-
-void Main::fileExportPDF()
-{
-    VymModel *m = currentModel();
-    if (m)
-        m->exportPDF();
-}
-
-void Main::fileExportSVG()
-{
-    VymModel *m = currentModel();
-    if (m)
-        m->exportSVG();
-}
-
 void Main::fileExportAO()
 {
     VymModel *m = currentModel();
@@ -4200,6 +4168,13 @@ void Main::fileExportASCIITasks()
         m->exportASCII("", true);
 }
 
+void Main::fileExportConfluence()
+{
+    VymModel *m = currentModel();
+    if (m)
+        m->exportConfluence();
+}
+
 #include "export-csv.h"
 void Main::fileExportCSV() // FIXME-3 not scriptable yet
 {
@@ -4219,46 +4194,25 @@ void Main::fileExportCSV() // FIXME-3 not scriptable yet
     }
 }
 
-#include "export-latex.h"
-void Main::fileExportLaTeX()
+void Main::fileExportFirefoxBookmarks()
 {
     VymModel *m = currentModel();
     if (m)
-        m->exportLaTeX();
+        m->exportFirefoxBookmarks();
 }
 
-void Main::fileExportMarkdown()
+void Main::fileExportHTML()
 {
     VymModel *m = currentModel();
     if (m)
-        m->exportMarkdown();
+        m->exportHTML();
 }
 
-void Main::fileExportOrgMode()
+void Main::fileExportImage()
 {
     VymModel *m = currentModel();
     if (m)
-        m->exportOrgMode();
-}
-
-#include "export-taskjuggler.h"
-void Main::fileExportTaskjuggler() // FIXME-3 not scriptable yet
-{
-    ExportTaskjuggler ex;
-    VymModel *m = currentModel();
-    if (m) {
-        ex.setModel(m);
-        ex.setWindowTitle(vymName + " - " + tr("Export to") + " Taskjuggler" +
-                          tr("(still experimental)"));
-        ex.setDirPath(lastImageDir.absolutePath());
-        ex.addFilter("Taskjuggler (*.tjp)");
-
-        if (ex.execDialog()) {
-            m->setExportMode(true);
-            ex.doExport();
-            m->setExportMode(false);
-        }
-    }
+        m->exportImage();
 }
 
 #include "export-impress.h"
@@ -4290,6 +4244,69 @@ void Main::fileExportImpress()
             0, tr("Warning"),
             tr("Couldn't find configuration for export to LibreOffice\n"));
     }
+}
+
+#include "export-latex.h"
+void Main::fileExportLaTeX()
+{
+    VymModel *m = currentModel();
+    if (m)
+        m->exportLaTeX();
+}
+
+void Main::fileExportMarkdown()
+{
+    VymModel *m = currentModel();
+    if (m)
+        m->exportMarkdown();
+}
+
+void Main::fileExportOrgMode()
+{
+    VymModel *m = currentModel();
+    if (m)
+        m->exportOrgMode();
+}
+
+void Main::fileExportPDF()
+{
+    VymModel *m = currentModel();
+    if (m)
+        m->exportPDF();
+}
+
+void Main::fileExportSVG()
+{
+    VymModel *m = currentModel();
+    if (m)
+        m->exportSVG();
+}
+
+#include "export-taskjuggler.h"
+void Main::fileExportTaskjuggler() // FIXME-3 not scriptable yet
+{
+    ExportTaskjuggler ex;
+    VymModel *m = currentModel();
+    if (m) {
+        ex.setModel(m);
+        ex.setWindowTitle(vymName + " - " + tr("Export to") + " Taskjuggler" +
+                          tr("(still experimental)"));
+        ex.setDirPath(lastImageDir.absolutePath());
+        ex.addFilter("Taskjuggler (*.tjp)");
+
+        if (ex.execDialog()) {
+            m->setExportMode(true);
+            ex.doExport();
+            m->setExportMode(false);
+        }
+    }
+}
+
+void Main::fileExportXML()
+{
+    VymModel *m = currentModel();
+    if (m)
+        m->exportXML();
 }
 
 void Main::fileExportLast()
@@ -5875,11 +5892,19 @@ void Main::changeSelection(VymModel *model, const QItemSelection &newsel,
     branchPropertyEditor->setModel(model);
 
     if (model && model == currentModel()) {
-        TreeItem *ti;
-        if (!newsel.indexes().isEmpty()) {
-            ti = model->getItem(newsel.indexes().first());
+        int selectedCount = model->getSelectionModel()->selectedIndexes().count();
+
+        if (selectedCount == 0 || selectedCount > 1) {
+            noteEditor->setInactive();
+            headingEditor->setInactive();
+            taskEditor->clearSelection();
+
+        } else {
+            TreeItem *ti = model->getItem(model->getSelectionModel()->selectedIndexes().first());
+            if (!ti) return;
 
             // Update note editor
+
             if (!ti->hasEmptyNote())
                 noteEditor->setNote(ti->getNote());
             else
@@ -5896,6 +5921,7 @@ void Main::changeSelection(VymModel *model, const QItemSelection &newsel,
             if (!status.isEmpty())
                 statusMessage(status);
 
+            // Update text in HeadingEditor
             headingEditor->setVymText(ti->getHeading());
 
             // Select in TaskEditor, if necessary
@@ -5908,11 +5934,9 @@ void Main::changeSelection(VymModel *model, const QItemSelection &newsel,
             else
                 taskEditor->clearSelection();
         }
-        else
-            noteEditor->setInactive();
-
-        updateActions();
     }
+
+    updateActions();
 }
 
 void Main::updateDockWidgetTitles(VymModel *model)
@@ -5920,14 +5944,16 @@ void Main::updateDockWidgetTitles(VymModel *model)
     QString s;
     if (model && !model->isRepositionBlocked()) {
         BranchItem *bi = model->getSelectedBranch();
-        if (bi)
+        if (bi) {
             s = bi->getHeadingPlain();
+            noteEditor->setVymText(bi->getNote());
+            VymText vt = bi->getHeading();
+            headingEditor->setVymText(vt);
+        }
 
         noteEditor->setEditorTitle(s);
         noteEditorDW->setWindowTitle(noteEditor->getEditorTitle());
         branchPropertyEditor->setModel(model);
-
-        if (bi) headingEditor->setVymText(bi->getHeading());
     }
 }
 

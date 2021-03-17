@@ -574,6 +574,9 @@ class VymModel : public TreeModel {
     /*! Export as CSV text to file */
     void exportCSV(const QString &fname = "", bool askForName = true);
 
+    /*! Export as Firefox bookmarks to JSON file */
+    void exportFirefoxBookmarks(const QString &fname = "", bool askForName = true);
+
     /*! Export as HTML to directory */
     void exportHTML(const QString &fname = "", const QString &dir = "", 
                     bool useDialog = true);

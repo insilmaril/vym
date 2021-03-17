@@ -89,6 +89,7 @@ HEADERS	+= \
     src/export-base.h \
     src/export-csv.h \
     src/export-confluence.h \
+    src/export-firefox.h \
     src/export-html.h \
     src/export-impress.h \
     src/export-latex.h \
@@ -199,6 +200,7 @@ SOURCES	+= \
     src/export-base.cpp \
     src/export-confluence.cpp \
     src/export-csv.cpp \
+    src/export-firefox.cpp \
     src/export-html.cpp \
     src/export-impress.cpp \
     src/export-latex.cpp \

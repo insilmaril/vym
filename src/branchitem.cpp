@@ -214,6 +214,7 @@ void BranchItem::updateTaskFlag()
     if (task) {
         QString s = "system-" + task->getIconString();
         systemFlags.activate(s);
+        model->emitDataChanged(this);
     }
     // else: During initialization the task is not yet attached to branch,
     // so ignore it for now
