@@ -7,6 +7,7 @@ AttributeItem::AttributeItem(const QList<QVariant> &data, TreeItem *parent)
 {
     TreeItem::setType(Attribute);
     internal = false;
+    attrType = Undefined;
 }
 
 AttributeItem::~AttributeItem() {}
@@ -15,17 +16,18 @@ void AttributeItem::set(const QString &k, const QString &v, const Type &)
 {
     key = k;
     value = QVariant(v);
+    attrType = String;
     createHeading();
 }
 
-void AttributeItem::get(QString &k, QString &v, Type &t)
+void AttributeItem::get(QString &k, QString &v, Type &t) // FIXME-0  really?
 {
     k = key;
     v = value.toString();
     t = attrType;
 }
 
-void AttributeItem::setKey(const QString &k) // FIXME-2 Check if key aready exists here
+void AttributeItem::setKey(const QString &k) // FIXME-2 Check if key aready exists in branch?
 {
     key = k;
     createHeading();
@@ -39,6 +41,21 @@ QString AttributeItem::getKey()
 void AttributeItem::setValue(const QString &v)
 {
     value = v;
+    attrType = String;
+    createHeading();
+}
+
+void AttributeItem::setValue(const qlonglong &n)
+{
+    value = n;
+    attrType = Integer;
+    createHeading();
+}
+
+void AttributeItem::setValue(const QDateTime &dt)
+{
+    value = dt;
+    attrType = DateTime;
     createHeading();
 }
 
@@ -47,7 +64,7 @@ QVariant AttributeItem::getValue()
     return value;
 }
 
-void AttributeItem::setType(const Type &t)
+void AttributeItem::setAttributeType(const Type &t)
 {
     attrType = t;
 }
@@ -57,34 +74,30 @@ AttributeItem::Type AttributeItem::getAttributeType()
     return attrType;
 }
 
-QString AttributeItem::getTypeString()
+QString AttributeItem::getAttributeTypeString()
 {
     switch (attrType) {
-    case IntList:
-        return "IntList";
-    case FreeInt:
-        return "FreeInt";
-    case StringList:
-        return "StringList";
-    case FreeString:
-        return "FreeString";
-    case UniqueString:
-        return "UniqueString";
-    default:
-        return "Undefined";
+        case Integer:
+            return "Integer";
+        case String:
+            return "String";
+        case DateTime:
+            return "DateTime";
+        case Undefined:
+            return "Undefined";
+        }
     }
-}
 
-void AttributeItem::setInternal(bool b) { internal = b; }
+    void AttributeItem::setInternal(bool b) { internal = b; }
 
-bool AttributeItem::isInternal() { return internal; }
+    bool AttributeItem::isInternal() { return internal; }
 
 QString AttributeItem::getDataXML()
 {
     QString a;
     a = attribut("key", getKey());
     a += attribut("value", getValue().toString());
-    a += attribut("type", getTypeString());
+    a += attribut("type", getAttributeTypeString());
     return singleElement("attribute", a);
 }
 

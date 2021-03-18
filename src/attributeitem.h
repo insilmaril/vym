@@ -14,11 +14,9 @@ class AttributeItem : public BranchItem {
   public:
     enum Type {
         Undefined,   //!< Undefined type
-        IntList,     //!< Integer
-        FreeInt,     //!< Integer
-        StringList,  //!< List of strings
-        FreeString,  //!< String
-        UniqueString //!< String which is unique in a map, e.g. for IDs
+        Integer,     //!< Integer
+        DateTime,    //!< DateTime
+        String       //!< String
     };
 
     AttributeItem(const QList<QVariant> &data, TreeItem *parent = 0);
@@ -28,11 +26,14 @@ class AttributeItem : public BranchItem {
     void setKey(const QString &k);
     QString getKey();
     void setValue(const QString &v);
+    void setValue(const qlonglong &n);
+    void setValue(const QDateTime &dt);
     QVariant getValue();
+    QDateTime getValueDateTime();
     using BranchItem::setType;
-    virtual void setType(const Type &t);
+    virtual void setAttributeType(const Type &t);
     AttributeItem::Type getAttributeType();
-    QString getTypeString();
+    QString getAttributeTypeString();
     void setInternal(bool b);
     bool isInternal();
     QString getDataXML();

@@ -3051,9 +3051,9 @@ AttributeItem *VymModel::addAttribute() // FIXME-3 Experimental, savestate missi
         cData << "new attribute"
               << "undef";
         AttributeItem *a = new AttributeItem(cData);
-        a->setType(AttributeItem::FreeString);
+        a->setAttributeType(AttributeItem::String);
         a->setKey("Foo Attrib");
-        a->setValue("Att val");
+        a->setValue(QString("Att val"));
 
         if (addAttribute(selbi, a))
             return a;

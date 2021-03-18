@@ -224,7 +224,7 @@ void BranchPropertyEditor::setItem(TreeItem *ti)
                 attributeModel->setData(attributeModel->index(i, 1, QModelIndex()),
                     ai->getValue().toString());
                 attributeModel->setData(attributeModel->index(i, 2, QModelIndex()),
-                    ai->getTypeString());
+                    ai->getAttributeTypeString());
             }
         }
 

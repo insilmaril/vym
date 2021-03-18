@@ -1,7 +1,9 @@
-#include "mainwindow.h"
 #include <QMessageBox>
 
 #include "export-firefox.h"
+
+#include "attributeitem.h"
+#include "mainwindow.h"
 
 extern QString vymName;
 extern Main *mainWindow;
@@ -15,16 +17,36 @@ ExportFirefox::ExportFirefox()
 
 QJsonObject ExportFirefox::buildList(BranchItem *bi)
 {
-    qDebug() << "FF build list bi = " << bi;
-    QJsonObject jobj;
-    
     // Loop over children branches
+    QJsonObject jsobj;
     QJsonArray jarray;
 
-    for (int i = 0; i < bi->branchCount(); i++)
-        jarray.append(buildList(bi->getBranchNum(i)));
+    if (bi->branchCount() > 0 ) {
+        for (int i = 0; i < bi->branchCount(); i++)
+            jarray.append(buildList(bi->getBranchNum(i)));
 
-    jsobj["foo"] = "bar";
+        jsobj["children"] = jarray;
+    }
+
+    QString key;
+    AttributeItem *ai;
+    for (int i = 0; i < bi->attributeCount(); i++) {
+        ai =bi->getAttributeNum(i);
+        key = ai->getKey();
+        if (key == "postData")
+            jsobj[key] = QJsonValue::Null; 
+        else if (ai->getAttributeType() == AttributeItem::DateTime) 
+            jsobj[key] = QJsonValue(ai->getValue().toDateTime().toMSecsSinceEpoch() * 1000);
+        else if (ai->getAttributeType() == AttributeItem::String)
+            jsobj[key] = ai->getValue().toString();
+        else if (ai->getAttributeType() == AttributeItem::Integer) 
+        {
+            jsobj[key] = QJsonValue(ai->getValue().toInt());
+        }
+        else // FIXME-0 happens during export, but shouldn't
+            qWarning() << "ExportFirefox  Unknown attribute type in " << bi->getHeadingPlain() << "Key: " << key;
+    }
+
     return jsobj;
 }
 
@@ -39,35 +61,28 @@ void ExportFirefox::doExport()
         return;
     }
 
-    QString out;   // FIXME-0  needed?
-
     // Select bookmark main branch
     model->select("mc:0,bo:0");
 
     BranchItem *bi = model->getSelectedBranch();
     if (!bi) return;
 
-    // Loop over all branches below "Bookmarks"
-    QString s;
-    QJsonObject jobj;
+    // Loop over all branches
+    QJsonObject jsobj;
     QJsonArray jarray;
 
-    qDebug() << "XP FF a";
+    /*
     for (int i = 0; i < bi->branchCount(); i++)
         jarray.append(buildList(bi->getBranchNum(i)));
-    qDebug() << "XP FF b";
 
-    jobj["root"] = jarray;
+    jsobj["children"] = jarray;
+    */
+    jsobj = buildList(bi);
 
-    qDebug() << "XP FF c";
-    file.write(QJsonDocument(jobj).toJson());
+    file.write(QJsonDocument(jsobj).toJson());
     file.close();
 
-    qDebug() << "XP FF d";
-    //QClipboard *clipboard = QGuiApplication::clipboard();
-    //clipboard->setText(out);
-
-    //displayedDestination = filePath;
+    displayedDestination = filePath;
 
     success = true;
     completeExport();

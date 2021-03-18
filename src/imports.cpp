@@ -87,9 +87,14 @@ bool ImportFirefoxBookmarks::transform()
         QApplication::processEvents();
 
         model->blockReposition();
+        /*
         foreach (const QJsonValue &value, jsarr) {
             parseJson (value, ParseMode::buildMap);
         }
+        */
+        parseJson (jsobj, ParseMode::buildMap);
+        // FIXME-0 read key/values of root item in json
+        
         model->unblockReposition();
 
         mainWindow->statusMessage(
@@ -112,9 +117,11 @@ bool ImportFirefoxBookmarks::parseJson(QJsonValue jsval, ParseMode mode, BranchI
     QJsonObject jsobj = jsval.toObject();
 
     if (mode == countBookmarks) {
+        // Count bookmarks 
         if (jsobj.contains("uri") && jsobj["uri"].isString())
             totalBookmarks++;
     } else {
+        // Build map
         selbi = model->addNewBranch(selbi);
         selbi->setHeadingPlainText(jsobj["title"].toString());
 
@@ -122,28 +129,38 @@ bool ImportFirefoxBookmarks::parseJson(QJsonValue jsval, ParseMode mode, BranchI
             currentBookmarks++;
             progressDialog.setValue(currentBookmarks);
             selbi->setURL(jsobj["uri"].toString());
+        }
 
-            QList<QVariant> cData;
-            cData << "new attribute"
-                  << "undef";
-            AttributeItem *ai;
+        QList<QVariant> cData;
+        cData << "new attribute"
+              << "undef";
+        AttributeItem *ai;
 
-            foreach (QString key, jsobj.keys())
-            {
+        foreach (QString key, jsobj.keys())
+        {
+            if (key != "children") {
                 ai = new AttributeItem(cData);  // FIXME-2 remove cdata  
                 ai->setKey(key);
-                if (jsobj[key].isString())
+                // Integer types: dateAdded, id, index, lastModified, typeCode
+                // Special: postData
+                if (key == "dateAdded" || key == "lastModified") {
+                    qlonglong l = jsobj[key].toVariant().toLongLong();
+                    QDateTime dt;
+                    dt.setMSecsSinceEpoch(l / 1000);
+                    ai->setValue(dt);
+                    ai->setAttributeType(AttributeItem::DateTime);
+                } else if (key == "id" || key == "index" || 
+                        key == "lastModified" || key == "typeCode" ) {
+                    ai->setValue(jsobj[key].toInt());
+                } else if (key == "postData") 
+                    ai->setValue(QString("null"));
+                else if (jsobj[key].isString()) 
                     ai->setValue(jsobj[key].toString());
-                else if (jsobj[key].isDouble())
-                    ai->setValue(QString::number(qint64(jsobj[key].toDouble())));
                 else {
-                    // Ignore only the "postdata: null" field for now
-                    if (key != "postData")
-                    {
-                        qDebug() << "FF import, unknown key type: " << jsobj[key].type();
-                        qDebug() << "FF bookmark: " << key << jsobj[key].toString();
-                        ai->setValue("?");
-                    }
+                // Ignore only the "postdata: null" field for now
+                    qDebug() << "Firefox import, unknown key type: " << jsobj[key].type();
+                    qDebug() << "                Firefox bookmark: " << key << jsobj[key].toString();
+                    ai->setValue(QString("unknown type."));
                 }
 
                 model->addAttribute(selbi, ai); // FIXME-2 deep copy?
@@ -151,7 +168,7 @@ bool ImportFirefoxBookmarks::parseJson(QJsonValue jsval, ParseMode mode, BranchI
         }
 
         model->emitDataChanged(selbi); // FIXME-2 required, but can reposition in between be blocked?
-    }
+    } // build bookmakrs
 
     if (jsobj.contains("children") && jsobj["children"].isArray()) {
 

@@ -348,12 +348,28 @@ bool parseVYMHandler::startElement(const QString &, const QString &,
               << "undef";
         AttributeItem *ai = new AttributeItem(cData);
         if (ai) {
-            if (!atts.value("type").isEmpty())
-                ai->setKey(atts.value("type"));
             if (!atts.value("key").isEmpty())
                 ai->setKey(atts.value("key"));
-            if (!atts.value("value").isEmpty())
-                ai->setValue(atts.value("value"));
+
+            QString type = atts.value("type");
+            QString val = atts.value("value");
+            if (!type.isEmpty()) {
+                if (type == "Integer")
+                    ai->setValue(val.toInt());
+                else if (type == "String")
+                    ai->setValue(val);
+                else if (type == "Undefined") {
+                    ai->setValue(val);
+                    ai->setAttributeType(AttributeItem::Undefined);
+                    qWarning() << "Found attribute type 'Undefined'";
+                } else if (type == "DateTime") {
+                    ai->setValue(QDateTime::fromString(val, Qt::ISODate));
+                } else
+                    qWarning() << "Found unknown attribute type: " << type;
+            } else {
+                if (!atts.value("value").isEmpty())
+                    ai->setValue(atts.value("value")); 
+            }
         }
         model->addAttribute(lastBranch, ai);
     }

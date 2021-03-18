@@ -4044,9 +4044,15 @@ void Main::fileSaveAsDefault()
 void Main::fileImportFirefoxBookmarks()
 {
     VymModel *m = currentModel();
-    if (!m->isDefault())
-        // Import into new map
+    if (!m) {
         fileNew();
+        m = currentModel();
+        if (!m) return;
+    } else {
+        if (!m->isDefault())
+            // Import into new map
+            fileNew();
+    }
 
     if (m) {
         // Try to select first mapcenter of default map
@@ -4055,10 +4061,12 @@ void Main::fileImportFirefoxBookmarks()
         m->setHeadingPlainText("Firefox");
 
         // Try to add one branch and select it
+        /*
         if (!m->addNewBranch()) return;
 
         m->selectLatestAdded();
         m->setHeadingPlainText("Bookmarks");
+        */
 
         // Open file dialog
         QFileDialog fd;
