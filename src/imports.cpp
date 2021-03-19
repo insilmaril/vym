@@ -87,13 +87,8 @@ bool ImportFirefoxBookmarks::transform()
         QApplication::processEvents();
 
         model->blockReposition();
-        /*
-        foreach (const QJsonValue &value, jsarr) {
-            parseJson (value, ParseMode::buildMap);
-        }
-        */
+
         parseJson (jsobj, ParseMode::buildMap);
-        // FIXME-0 read key/values of root item in json
         
         model->unblockReposition();
 

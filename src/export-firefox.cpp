@@ -33,6 +33,16 @@ QJsonObject ExportFirefox::buildList(BranchItem *bi)
     for (int i = 0; i < bi->attributeCount(); i++) {
         ai =bi->getAttributeNum(i);
         key = ai->getKey();
+
+        // Rewrite some values, which maybe have been modified in map
+        if (key == "index")
+            ai->setValue(bi->num());
+        else if (key == "uri" && !bi->getURL().isEmpty())
+            ai->setValue(bi->getURL());
+        else if (key == "title" && !bi->getHeadingPlain().isEmpty())
+            ai->setValue(bi->getHeadingPlain());
+
+        // Export values
         if (key == "postData")
             jsobj[key] = QJsonValue::Null; 
         else if (ai->getAttributeType() == AttributeItem::DateTime) 
@@ -43,7 +53,7 @@ QJsonObject ExportFirefox::buildList(BranchItem *bi)
         {
             jsobj[key] = QJsonValue(ai->getValue().toInt());
         }
-        else // FIXME-0 happens during export, but shouldn't
+        else
             qWarning() << "ExportFirefox  Unknown attribute type in " << bi->getHeadingPlain() << "Key: " << key;
     }
 
