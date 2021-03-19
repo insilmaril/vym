@@ -433,12 +433,18 @@ void BranchPropertyEditor::connectSignals()
             SLOT(taskPriorityDeltaChanged(int)));
 
     // Attributes
+    // For the time being hide above buttons, not used
+    /*
     connect (
         ui.addAttributeButton, SIGNAL (clicked()),
         this, SLOT (addAttributeClicked()));
     connect (
         ui.deleteAttributeButton, SIGNAL (clicked()),
         this, SLOT (deleteAttributeClicked()));
+
+    */
+    ui.addAttributeButton->hide();
+    ui.deleteAttributeButton->hide();
 }
 
 void BranchPropertyEditor::disconnectSignals()

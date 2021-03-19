@@ -1101,13 +1101,12 @@ void Main::setupFileActions()
 
     fileImportMenu = fileMenu->addMenu(tr("Import", "File menu"));
 
-    a = new QAction( tr("Firefox Bookmarks", "Import filters") + " (testing only)",
+    a = new QAction( tr("Firefox Bookmarks", "Import filters") + 
+                        tr("(experimental)"),
                     this);
     connect(a, SIGNAL(triggered()), this,
             SLOT(fileImportFirefoxBookmarks()));
-    if (settings.value("/mainwindow/showTestMenu", false).toBool()) {
-        fileImportMenu->addAction(a);
-    }
+    fileImportMenu->addAction(a);
 
     a = new QAction("Freemind...", this);
     connect(a, SIGNAL(triggered()), this, SLOT(fileImportFreemind()));
@@ -1118,7 +1117,7 @@ void Main::setupFileActions()
     fileImportMenu->addAction(a);
 
     a = new QAction(tr("Import Dir...", "Import Filters") + " " +
-                        tr("(experimental)"),
+                        tr("(still experimental)"),
                     this);
     connect(a, SIGNAL(triggered()), this, SLOT(fileImportDir()));
     fileImportMenu->addAction(a);
@@ -1143,13 +1142,12 @@ void Main::setupFileActions()
     connect(a, SIGNAL(triggered()), this, SLOT(fileExportConfluence()));
     fileExportMenu->addAction(a);
 
-    a = new QAction( tr("Firefox Bookmarks", "File export menu") + " (testing only)",
+    a = new QAction( tr("Firefox Bookmarks", "File export menu") + 
+                        tr("(still experimental)"),
                     this);
     connect(a, SIGNAL(triggered()), this,
             SLOT(fileExportFirefoxBookmarks()));
-    if (settings.value("/mainwindow/showTestMenu", false).toBool()) {
-        fileExportMenu->addAction(a);
-    }
+    fileExportMenu->addAction(a);
 
     a = new QAction(tr("Text (ASCII)...", "File export menu"), this);
     connect(a, SIGNAL(triggered()), this, SLOT(fileExportASCII()));
