@@ -164,6 +164,8 @@ bool ExportOO::setConfigFile(const QString &cf)
     // set paths
     templateDir = configDir + "/" + set.value("Template");
 
+    setupTmpDir();
+
     QDir d(templateDir);
     if (!d.exists()) {
         QMessageBox::critical(0, QObject::tr("Critical Export Error"),
