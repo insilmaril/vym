@@ -133,6 +133,7 @@ TaskEditor::TaskEditor(QWidget *)
     view->setDragEnabled(true);
     view->setAcceptDrops(true);
     view->setDropIndicatorShown(true);
+    view->setAutoScroll(false);
 
     blockExternalSelect = false;
 
@@ -366,9 +367,11 @@ void TaskEditor::updateColumnLayout()
 
 void TaskEditor::selectionChanged(const QItemSelection &selected,
                                   const QItemSelection &)
-{ // FIXME-3 what, if multiple selection in MapEditor?
-    // Avoid segfault on quit, when selected is empty
+{
+    // FIXME-3 what, if multiple selection in MapEditor?
+
     if (selected.indexes().isEmpty())
+        // Avoid segfault on quit, when selected is empty
         return;
 
     QItemSelection sel0 = filterActiveModel->mapSelectionToSource(selected);
