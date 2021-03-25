@@ -791,7 +791,7 @@ void VymModelWrapper::setHeadingConfluencePageName()
 }
 
 void VymModelWrapper::setHeadingPlainText(
-    const QString &text) // FIXME-2  what about RT?
+    const QString &text) // FIXME-3  what about RT?
 {
     model->setHeadingPlainText(text);
 }

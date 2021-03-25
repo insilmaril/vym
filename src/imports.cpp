@@ -134,7 +134,7 @@ bool ImportFirefoxBookmarks::parseJson(QJsonValue jsval, ParseMode mode, BranchI
         foreach (QString key, jsobj.keys())
         {
             if (key != "children") {
-                ai = new AttributeItem(cData);  // FIXME-2 remove cdata  
+                ai = new AttributeItem(cData);  // FIXME-3 remove cdata  
                 ai->setKey(key);
                 // Integer types: dateAdded, id, index, lastModified, typeCode
                 // Special: postData
@@ -158,7 +158,7 @@ bool ImportFirefoxBookmarks::parseJson(QJsonValue jsval, ParseMode mode, BranchI
                     ai->setValue(QString("unknown type."));
                 }
 
-                model->addAttribute(selbi, ai); // FIXME-2 deep copy?
+                model->addAttribute(selbi, ai); // FIXME-3 deep copy?
             }
         }
 

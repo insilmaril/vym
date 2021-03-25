@@ -1131,16 +1131,19 @@ void Main::setupFileActions()
     cloneActionMapEditor(a, Qt::ALT + Qt::Key_E);
     fileExportMenu->addAction(a);
     actionFileExportLast = a;
+    actionListFiles.append(a);
 
     a = new QAction(tr("Webpage (HTML)...", "File export menu"), this);
     connect(a, SIGNAL(triggered()), this, SLOT(fileExportHTML()));
     fileExportMenu->addAction(a);
+    actionListFiles.append(a);
 
     a = new QAction(tr("Confluence (HTML)...", "File export menu") + " " + " " +
                         tr("(still experimental)"),
                     this);
     connect(a, SIGNAL(triggered()), this, SLOT(fileExportConfluence()));
     fileExportMenu->addAction(a);
+    actionListFiles.append(a);
 
     a = new QAction( tr("Firefox Bookmarks", "File export menu") + 
                         tr("(still experimental)"),
@@ -1148,62 +1151,76 @@ void Main::setupFileActions()
     connect(a, SIGNAL(triggered()), this,
             SLOT(fileExportFirefoxBookmarks()));
     fileExportMenu->addAction(a);
+    actionListFiles.append(a);
 
     a = new QAction(tr("Text (ASCII)...", "File export menu"), this);
     connect(a, SIGNAL(triggered()), this, SLOT(fileExportASCII()));
     fileExportMenu->addAction(a);
+    actionListFiles.append(a);
 
     a = new QAction(tr("Text (Markdown)...", "File export menu") + " " +
                         tr("(still experimental)"),
                     this);
     connect(a, SIGNAL(triggered()), this, SLOT(fileExportMarkdown()));
     fileExportMenu->addAction(a);
+    actionListFiles.append(a);
 
     a = new QAction(tr("Text with tasks", "File export menu") + " " +
                         tr("(still experimental)"),
                     this);
     connect(a, SIGNAL(triggered()), this, SLOT(fileExportASCIITasks()));
     fileExportMenu->addAction(a);
+    actionListFiles.append(a);
 
     a = new QAction(tr("Text (A&O report)...", "Export format"), this);
     connect(a, SIGNAL(triggered()), this, SLOT(fileExportAO()));
     fileExportMenu->addAction(a);
+    actionListFiles.append(a);
 
     a = new QAction(tr("Image%1", "File export menu").arg("..."), this);
     connect(a, SIGNAL(triggered()), this, SLOT(fileExportImage()));
     fileExportMenu->addAction(a);
+    actionListFiles.append(a);
 
     a = new QAction(tr("PDF%1", "File export menu").arg("..."), this);
     connect(a, SIGNAL(triggered()), this, SLOT(fileExportPDF()));
     fileExportMenu->addAction(a);
+    actionListFiles.append(a);
 
     a = new QAction(tr("SVG%1", "File export menu").arg("..."), this);
     connect(a, SIGNAL(triggered()), this, SLOT(fileExportSVG()));
     fileExportMenu->addAction(a);
+    actionListFiles.append(a);
 
     a = new QAction("LibreOffice...", this);
     connect(a, SIGNAL(triggered()), this, SLOT(fileExportImpress()));
     fileExportMenu->addAction(a);
+    actionListFiles.append(a);
 
     a = new QAction("XML...", this);
     connect(a, SIGNAL(triggered()), this, SLOT(fileExportXML()));
     fileExportMenu->addAction(a);
+    actionListFiles.append(a);
 
     a = new QAction(tr("CSV...") + " " + tr("(still experimental)"), this);
     connect(a, SIGNAL(triggered()), this, SLOT(fileExportCSV()));
     fileExportMenu->addAction(a);
+    actionListFiles.append(a);
 
     a = new QAction("Taskjuggler... " + tr("(still experimental)"), this);
     connect(a, SIGNAL(triggered()), this, SLOT(fileExportTaskjuggler()));
     fileExportMenu->addAction(a);
+    actionListFiles.append(a);
 
     a = new QAction("OrgMode... " + tr("(still experimental)"), this);
     connect(a, SIGNAL(triggered()), this, SLOT(fileExportOrgMode()));
     fileExportMenu->addAction(a);
+    actionListFiles.append(a);
 
     a = new QAction("LaTeX... " + tr("(still experimental)"), this);
     connect(a, SIGNAL(triggered()), this, SLOT(fileExportLaTeX()));
     fileExportMenu->addAction(a);
+    actionListFiles.append(a);
 
     fileMenu->addSeparator();
 
@@ -3846,8 +3863,7 @@ void Main::fileSave(VymModel *m, const SaveMode &savemode)
     if (m->getFilePath().isEmpty()) {
         // We have  no filepath yet,
         // call fileSaveAs() now, this will call fileSave()
-        // again.
-        // First switch to editor
+        // again.  First switch to editor
         fileSaveAs(savemode);
         return; // avoid saving twice...
     }
@@ -5999,11 +6015,8 @@ void Main::updateActions()
             foreach (QAction *a, restrictedMapActions)
                 a->setEnabled(false);
 
-            // FIXME-2 updateactions: Disable import/export map functions (and probably more) if no map available
-            // FIXME-2 updateactions: refactor actionListFiles: probably not  needed, wrong actions there atm
         }
         else { // not readonly     
-               // FIXME-2 updateactions: maybe only required in testing, as mode should not change
 
             // Enable toolbars
             standardFlagsMaster->setEnabled(true);

@@ -694,7 +694,7 @@ void TextEditor::editorChanged()
 
     if (!blockChangedSignal) {
         blockTextUpdate = true;
-        emit(textHasChanged(getVymText())); // FIXME-0 needed?
+        emit(textHasChanged(getVymText()));
         blockTextUpdate = false;
     }
 
@@ -920,7 +920,7 @@ void TextEditor::toggleFonthint()
         e->setCurrentFont(fixedFont);
         setFont(fixedFont);
     }
-    emit(textHasChanged(getVymText())); // FIXME-0 needed?
+    emit(textHasChanged(getVymText()));
 }
 
 void TextEditor::setRichTextMode(bool b)
@@ -936,7 +936,7 @@ void TextEditor::setRichTextMode(bool b)
         actionFormatRichText->setChecked(false);
     }
     updateActions();
-    emit(textHasChanged(getVymText())); // FIXME-0 needed?
+    emit(textHasChanged(getVymText()));
 }
 
 void TextEditor::toggleRichText()

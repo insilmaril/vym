@@ -708,8 +708,6 @@ TreeItem *MapEditor::findMapItem(QPointF p, TreeItem *exclude)
     return NULL;
 }
 
-AttributeTable *MapEditor::attributeTable() { return attrTable; }   // FIXME-2 remove
-
 void MapEditor::testFunction1() {}
 
 void MapEditor::testFunction2() { autoLayout(); }

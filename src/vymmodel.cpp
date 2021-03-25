@@ -1443,7 +1443,7 @@ void VymModel::undo()
         cout << "    ---------------------------" << endl;
     }
 
-    // select  object before undo   // FIXME-0 double select, see above
+    // select  object before undo   // FIXME-2 double select, see above
     if (!undoSelection.isEmpty())
         select(undoSelection);
 
@@ -1985,7 +1985,6 @@ void VymModel::updateNoteText(const VymText &vt)
 
 void VymModel::setNote(const VymNote &vn)
 {
-    qDebug() << "VM::setNote   vn=" << vn.getTextASCII();
     TreeItem *selti = getSelectedItem();
     if (selti) {
         VymNote n_old;
@@ -2483,7 +2482,7 @@ bool VymModel::cycleTaskStatus(bool reverse)
     return false;
 }
 
-bool VymModel::setTaskSleep(const QString &s)   // FIXME-2 branch needs reselect to become awake again
+bool VymModel::setTaskSleep(const QString &s)
 {
     bool ok = false;
     BranchItem *selbi = getSelectedBranch();
@@ -3074,10 +3073,7 @@ AttributeItem *VymModel::addAttribute(BranchItem *dst, AttributeItem *ai)
 
         emit(layoutChanged());
 
-        // FIXME-2 experimental - instead of AI key/val only add flag?
-        // ai->createMapObj(mapEditor->getScene());
-        //reposition();
-        return ai;  // FIXME-2 Check if ai is used or deleted - deep copy here?
+        return ai;  // FIXME-3 Check if ai is used or deleted - deep copy here?
     }
     return NULL;
 }
@@ -3866,8 +3862,9 @@ ItemList VymModel::getTargets()
 
 void VymModel::toggleFlagByUid(
     const QUuid &uid,
-    bool useGroups) // FIXME-2  saveState not correct when toggling flags in
-                    // groups (previous flags not saved!)
+    bool useGroups) 
+    // FIXME-2  saveState not correct when toggling flags in groups
+    // (previous flags not saved!)
 {
     BranchItem *bi = getSelectedBranch();
 
@@ -4703,12 +4700,6 @@ void VymModel::exportLast()
         dest; // FIXME-3 better integrate configFile into command
     if (exportLastAvailable(desc, command, dest)) {
         execute(command);
-        /*
-    if (!configFile.isEmpty() && command=="exportImpress")  // FIXME-2 check
-    exportLast for Impress execute (QString ("%1
-    (\"%2\",\"%3\")").arg(command).arg(path).arg(configFile) ); else execute
-    (QString ("%1 (\"%2\")").arg(command).arg(path) );
-        */
     }
 }
 

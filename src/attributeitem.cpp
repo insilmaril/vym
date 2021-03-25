@@ -20,14 +20,15 @@ void AttributeItem::set(const QString &k, const QString &v, const Type &)
     createHeading();
 }
 
-void AttributeItem::get(QString &k, QString &v, Type &t) // FIXME-0  really?
+void AttributeItem::get(QString &k, QString &v, Type &t) // FIXME-3  Better use return tuple
+    // https://stackoverflow.com/questions/321068/returning-multiple-values-from-a-c-function
 {
     k = key;
     v = value.toString();
     t = attrType;
 }
 
-void AttributeItem::setKey(const QString &k) // FIXME-2 Check if key aready exists in branch?
+void AttributeItem::setKey(const QString &k) // FIXME-3 Check if key aready exists in branch?
 {
     key = k;
     createHeading();

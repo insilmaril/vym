@@ -132,7 +132,6 @@ class MapEditor : public QGraphicsView {
                           TreeItem *exclude); //! find item in map at position
                                               //! p. Ignore item exclude
 
-    AttributeTable *attributeTable(); // FIXME-3 Not used, testing only
     void toggleWinter();
 
     BranchItem *getBranchDirectAbove(
