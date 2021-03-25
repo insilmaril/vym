@@ -851,8 +851,9 @@ def test_notes (vym)
   map.saveNote(filepath)
   expect "Save note to file. Check if it contains 'textMode=\"plainText\"'", IO.read(filepath).include?("textMode=\"plainText\""), true
   expect "Save note to file. Check if it contains 'not bold'", IO.read(filepath).include?("not bold"), true
-  expect "Save note to file. Check if it contains '<b>' element", IO.read(filepath).include?("<b>"), true
-  expect "Save note to file. Check if it contains '<![CDATA['", IO.read(filepath).include?("<![CDATA["), true
+  expect "Save note to file. Check new format: no longer contains '<b>' element", IO.read(filepath).include?("<b>"), false
+  expect "Save note to file. Check new format: no longer contains '<![CDATA['", IO.read(filepath).include?("<![CDATA["), false
+  expect "Save note to file. Check new format: contains 'text=\"Plaintext'", IO.read(filepath).include?("text=\"Plaintext"), true
   
   # Delete note
   map.setNotePlainText("")
@@ -896,8 +897,9 @@ def test_notes (vym)
   map.saveNote(filepath)
   expect "Save note to file. Check if it contains 'textMode=\"richText\"'", IO.read(filepath).include?("textMode=\"richText\""), true
   expect "Save note to file. Check if it contains 'bold'", IO.read(filepath).include?("bold"), true
-  expect "Save note to file. Check if it contains '<b>' element", IO.read(filepath).include?("<b>"), true
-  expect "Save note to file. Check if it contains '<![CDATA['", IO.read(filepath).include?("<![CDATA["), true
+  expect "Save note to file. Check new format: no longer contains '<b>' element", IO.read(filepath).include?("<b>"), false
+  expect "Save note to file. Check new format: no longer contains '<![CDATA['", IO.read(filepath).include?("<![CDATA["), false
+  expect "Save note to file. Check new format: contains 'text=\"&lt;'", IO.read(filepath).include?("text=\"&lt;"), true
   
   # Delete note
   map.setNotePlainText("")
