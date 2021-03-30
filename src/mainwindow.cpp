@@ -6262,15 +6262,17 @@ void Main::updateActions()
                 actionShrinkSelectionSize->setEnabled(true);
                 actionResetSelectionSize->setEnabled(true);
             } // Image
-        }     // TreeItem
+        } // TreeItem
+        else
+        {
+            actionToggleHideExport->setEnabled(false);
+        }
 
         // Check (at least for some) multiple selection //FIXME-4
         QList<TreeItem *> selItems = m->getSelectedItems();
         if (selItems.count() > 0) {
             actionDelete->setEnabled(true);
             actionDeleteAlt->setEnabled(true);
-            actionToggleHideExport->setEnabled(true);
-            actionToggleHideExport->setChecked(false);
         }
 
         QList<BranchItem *> selbis = m->getSelectedBranches();
