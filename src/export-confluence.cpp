@@ -128,11 +128,6 @@ QString ExportConfluence::getBranchText(BranchItem *current)
                 n = note.getText();
                 QRegExp re("<p.*>");
                 re.setMinimal(true);
-                if (current->getNote().getFontHint() == "fixed")
-                    n.replace(re, "<p class=\"vym-fixed-note-paragraph\">");
-                else
-                    n.replace(re, "<p class=\"vym-note-paragraph\">");
-
                 re.setPattern("</?html>");
                 n.replace(re, "");
 
@@ -148,18 +143,25 @@ QString ExportConfluence::getBranchText(BranchItem *current)
                 re.setPattern("<style.*>.*</style>");
                 n.replace(re, "");
 
-                // re.setPattern("<!DOCTYPE.*>");
-                // n.replace(re,"");
+                re.setPattern("<!DOCTYPE.*>");
+                n.replace(re,"");
+
+                re.setPattern("&(?!\\w*;)");
+                n.replace(re, "&amp;");
             }
             else {
                 n = current->getNoteASCII();
                 n.replace("&", "&amp;");
                 n.replace("<", "&lt;");
                 n.replace(">", "&gt;");
-                n.replace("\n", "<br />");
                 if (current->getNote().getFontHint() == "fixed")
                     n = "<pre>" + n + "</pre>";
+                else {
+                    n = "<p>" + n + "</p>";
+                    n.replace("\n", "</p><p>");
+                }
             }
+
             s += "\n<table class=\"vym-note\"><tr><td>\n" + n +
                  "\n</td></tr></table>\n";
         }
@@ -324,7 +326,9 @@ void ExportConfluence::doExport(bool useDialog)
     ConfluenceAgent *ca_content = new ConfluenceAgent();
 
     mainWindow->statusMessage(
-        QObject::tr("Trying to read Confluence page...", "Confluence export"));
+        QObject::tr("Trying to read Confluence page details...", "Confluence export"));
+    qApp->processEvents();
+
     if (ca_details->getPageDetails(dia.getPageURL())) {
         ca_details->waitForResult();
 
@@ -346,6 +350,10 @@ void ExportConfluence::doExport(bool useDialog)
             }
             else {
                 if (debug) qDebug() << "Starting to update existing page...";
+                mainWindow->statusMessage(
+                    QObject::tr("Trying to update Confluence page...", "Confluence export"));
+                qApp->processEvents();
+
                 ca_content->updatePage(dia.getPageURL(), dia.getPageTitle(),
                                        filePath);
                 ca_content->waitForResult();
@@ -355,8 +363,8 @@ void ExportConfluence::doExport(bool useDialog)
                 }
                 else {
                     if (debug) {
-                        qDebug() << "Page not updated:";
-                        qDebug() << ca_content->getResult();
+                        qWarning() << "Page not updated:";
+                        qWarning() << ca_content->getResult();
                     }
                     success = false;
                 }
