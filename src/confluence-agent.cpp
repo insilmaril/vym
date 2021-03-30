@@ -34,7 +34,7 @@ void ConfluenceAgent::init()
     confluenceScript = vymBaseDir.path() + "/scripts/confluence.rb";
 
     killTimer = new QTimer(this);
-    killTimer->setInterval(10000);
+    killTimer->setInterval(15000);
     killTimer->setSingleShot(true);
 
     vymProcess =
@@ -141,12 +141,13 @@ bool ConfluenceAgent::uploadContent(const QString &url, const QString &title,
         args << title;
     }
 
-    qDebug().noquote() << QString("ConfluenceAgent::uploadContent\n%1 %2")
-                              .arg(confluenceScript)
-                              .arg(args.join(" "));
+    if (debug) {
+        qDebug().noquote() << QString("ConfluenceAgent::uploadContent\n%1 %2")
+                                  .arg(confluenceScript)
+                                  .arg(args.join(" "));
 
-    if (debug)
         qDebug() << "  newPage: " << newPage;
+    }
 
     vymProcess = new VymProcess;
 
