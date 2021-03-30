@@ -11,6 +11,7 @@ extern QString iconPath; // FIXME-4 embed vym logo as ressource?
 extern QString vymVersion;
 extern QString vymBuildDate;
 extern QString vymCodeName;
+extern QString vymCodeQuality;
 
 AboutDialog::AboutDialog(QWidget *parent) : QDialog(parent)
 {
@@ -33,7 +34,8 @@ AboutDialog::AboutDialog(QWidget *parent) : QDialog(parent)
             vymVersion + " - " + vymBuildDate +
             "</p>"
             "<p align=\"center\"> " +
-            vymCodeName +
+            vymCodeName + " " +
+            vymCodeQuality +
             "</p>"
             "<ul>"
             "<li> Contact</li>"

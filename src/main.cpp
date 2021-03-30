@@ -31,10 +31,10 @@ using namespace std;
 
 QString vymName;
 QString vymVersion;
-QString vymCodeQuality;
 QString vymHome;
 QString vymBuildDate;
 QString vymCodeName;
+QString vymCodeQuality;
 QString vymInstanceName;
 QString vymPlatform;
 QString localeName;
