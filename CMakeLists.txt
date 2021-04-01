@@ -156,6 +156,7 @@ IF(WIN32)
         src/mkdtemp.cpp
         vym.rc
     )
+    ADD_COMPILE_DEFINITIONS(_USE_MATH_DEFINES)
 ENDIF()
 
 IF(DBus1_FOUND)
