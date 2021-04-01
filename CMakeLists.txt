@@ -2,7 +2,33 @@ CMAKE_MINIMUM_REQUIRED(VERSION 3.12)
 
 PROJECT(ViewYourMind)
 
-FIND_PACKAGE(Qt5 COMPONENTS LinguistTools Network PrintSupport Script Svg Widgets Xml REQUIRED)
+SET(QtComponents
+    LinguistTools
+    Network
+    PrintSupport
+    Script
+    Svg
+    Widgets
+    Xml
+)
+
+SET(QtLibraries
+    Qt5::Network
+    Qt5::PrintSupport
+    Qt5::Script
+    Qt5::Svg
+    Qt5::Widgets
+    Qt5::Xml
+)
+
+FIND_PACKAGE(DBus1)
+
+IF(DBus1_FOUND)
+    LIST(APPEND QtComponents DBus)
+    LIST(APPEND QtLibraries Qt5::DBus)
+ENDIF()
+
+FIND_PACKAGE(Qt5 COMPONENTS ${QtComponents} REQUIRED)
 SET(CMAKE_AUTOMOC ON)
 SET(CMAKE_AUTORCC ON)
 SET(CMAKE_AUTOUIC ON)
@@ -125,6 +151,21 @@ SET(VymSources
     src/zip-settings-dialog.cpp
 )
 
+IF(WIN32)
+    LIST(APPEND VymSources
+        src/mkdtemp.cpp
+        vym.rc
+    )
+ENDIF()
+
+IF(DBus1_FOUND)
+    LIST(APPEND VymSources
+        src/adaptormodel.cpp
+        src/adaptorvym.cpp
+    )
+    ADD_COMPILE_DEFINITIONS(VYM_DBUS)
+ENDIF()
+
 SET(VymTranslationSources
     lang/vym.de_DE.ts
     lang/vym.el.ts
@@ -154,7 +195,7 @@ ENDIF()
 ADD_COMPILE_DEFINITIONS(VYMBASEDIR="${DATADIR}")
 
 ADD_EXECUTABLE(vym ${VymSources} vym.qrc ${VymTranslations})
-TARGET_LINK_LIBRARIES(vym Qt5::Network Qt5::PrintSupport Qt5::Script Qt5::Svg Qt5::Widgets Qt5::Xml)
+TARGET_LINK_LIBRARIES(vym ${QtLibraries})
 
 INSTALL(TARGETS vym DESTINATION bin)
 INSTALL(DIRECTORY demos DESTINATION ${DATADIR})
