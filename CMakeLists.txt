@@ -1,8 +1,8 @@
-CMAKE_MINIMUM_REQUIRED( VERSION 3.12 )
+CMAKE_MINIMUM_REQUIRED(VERSION 3.12)
 
 PROJECT(ViewYourMind)
 
-FIND_PACKAGE(Qt5 COMPONENTS Network PrintSupport Script Svg Widgets Xml REQUIRED)
+FIND_PACKAGE(Qt5 COMPONENTS LinguistTools Network PrintSupport Script Svg Widgets Xml REQUIRED)
 SET(CMAKE_AUTOMOC ON)
 SET(CMAKE_AUTORCC ON)
 SET(CMAKE_AUTOUIC ON)
@@ -125,11 +125,44 @@ SET(VymSources
     src/zip-settings-dialog.cpp
 )
 
+SET(VymTranslationSources
+    lang/vym.de_DE.ts
+    lang/vym.el.ts
+    lang/vym.en.ts
+    lang/vym.es.ts
+    lang/vym.fr.ts
+    lang/vym.hr_HR.ts
+    lang/vym.ia.ts
+    lang/vym.it.ts
+    lang/vym.ja.ts
+    lang/vym.pt_BR.ts
+    lang/vym.ru.ts
+    lang/vym.sv.ts
+    lang/vym.zh_CN.ts
+    lang/vym.zh_TW.ts
+    lang/vym.cs_CZ.ts
+)
+
+FILE(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/lang")
+SET_SOURCE_FILES_PROPERTIES(${VymTranslationSources} PROPERTIES OUTPUT_LOCATION lang)
+QT5_ADD_TRANSLATION(VymTranslations ${VymTranslationSources})
+
 IF(NOT DATADIR)
     SET(DATADIR "${CMAKE_INSTALL_PREFIX}")
 ENDIF()
 
 ADD_COMPILE_DEFINITIONS(VYMBASEDIR="${DATADIR}")
 
-ADD_EXECUTABLE(vym ${VymSources} vym.qrc)
+ADD_EXECUTABLE(vym ${VymSources} vym.qrc ${VymTranslations})
 TARGET_LINK_LIBRARIES(vym Qt5::Network Qt5::PrintSupport Qt5::Script Qt5::Svg Qt5::Widgets Qt5::Xml)
+
+INSTALL(TARGETS vym DESTINATION bin)
+INSTALL(DIRECTORY demos DESTINATION ${DATADIR})
+INSTALL(DIRECTORY doc DESTINATION ${DATADIR} FILES_MATCHING PATTERN "*.pdf")
+INSTALL(DIRECTORY exports DESTINATION ${DATADIR})
+INSTALL(DIRECTORY flags DESTINATION ${DATADIR})
+INSTALL(DIRECTORY icons DESTINATION ${DATADIR})
+INSTALL(DIRECTORY "${CMAKE_BINARY_DIR}/lang" DESTINATION ${DATADIR})
+INSTALL(DIRECTORY macros DESTINATION ${DATADIR})
+INSTALL(DIRECTORY scripts DESTINATION ${DATADIR})
+INSTALL(DIRECTORY styles DESTINATION ${DATADIR})
