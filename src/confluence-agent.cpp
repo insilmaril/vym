@@ -6,7 +6,7 @@
 #include "vymmodel.h"
 
 extern Main *mainWindow;
-extern QSettings settings;
+extern Settings settings;
 extern QDir vymBaseDir;
 extern bool debug;
 extern QString confluencePassword;

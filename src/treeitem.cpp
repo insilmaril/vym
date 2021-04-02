@@ -12,7 +12,7 @@
 
 using namespace std;
 
-extern uint itemLastID;
+extern ulong itemLastID;
 extern FlagRowMaster *standardFlagsMaster;
 extern FlagRowMaster *systemFlagsMaster;
 extern FlagRowMaster *userFlagsMaster;
