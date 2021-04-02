@@ -119,7 +119,7 @@ AboutDialog::AboutDialog(QWidget *parent) : QDialog(parent)
             "  </ul>"
             "<li> General"
             "  <ul>"
-            "    <li>CMake setup by Costantino Giuliodori and Patrick "
+            "    <li>CMake setup by Daniel Rossberg, Costantino Giuliodori and Patrick "
             "Spendrin</li>"
             "    <li>All the guys at Trolltech (now Qt) for starting Qt </li>"
             "    <li>All the guys at SUSE Linux for openSUSE Linux and support,"
