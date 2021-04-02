@@ -11,7 +11,7 @@ class QGraphicsScene;
 
 class SnowFlake : public QGraphicsItem {
   public:
-    enum SnowType { Smilla, Disc };
+    enum SnowType { Smilla, Disc, Egg };
 
     SnowFlake(QGraphicsScene *scene, SnowType type);
     ~SnowFlake();

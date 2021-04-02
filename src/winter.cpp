@@ -17,40 +17,47 @@ SnowFlake::SnowFlake(QGraphicsScene *scene, SnowType t)
     dv = QPointF(qrand() % 10 / 10.0 - 0.5, qrand() % 10 / 10.0 + 1);
 
     switch (type) {
-    case Smilla: {
-        int s4 = size / 4;
-        int s3 = size / 3;
-        int s6 = size / 6;
+        case Smilla: {
+            int s4 = size / 4;
+            int s3 = size / 3;
+            int s6 = size / 6;
 
-        for (int a = 0; a < 6; a++) {
-            lines.append(scene->addLine(0, -s6, 0, -size));
-            lines.last()->setRotation(a * 60);
+            for (int a = 0; a < 6; a++) {
+                lines.append(scene->addLine(0, -s6, 0, -size));
+                lines.last()->setRotation(a * 60);
 
-            lines.append(scene->addLine(-s4, -size + s6, 0, -size + s3));
-            lines.last()->setRotation(a * 60);
+                lines.append(scene->addLine(-s4, -size + s6, 0, -size + s3));
+                lines.last()->setRotation(a * 60);
 
-            lines.append(scene->addLine(s4, -size + s6, 0, -size + s3));
-            lines.last()->setRotation(a * 60);
+                lines.append(scene->addLine(s4, -size + s6, 0, -size + s3));
+                lines.last()->setRotation(a * 60);
+            }
+
+            foreach (QGraphicsLineItem *l, lines) {
+                l->setZValue(1000);
+                l->setPen(p);
+                l->setParentItem(this);
+                l->setZValue(Z_SNOW);
+            }
+            da = qrand() % 20 / 10.0 - 1;
         }
-
-        foreach (QGraphicsLineItem *l, lines) {
-            l->setZValue(1000);
-            l->setPen(p);
-            l->setParentItem(this);
-            l->setZValue(Z_SNOW);
-        }
-        da = qrand() % 20 / 10.0 - 1;
-    }
-        setRotation(qrand() % 60);
-        break;
-    case Disc:
-        disc = scene->addEllipse(0, 0, size, size, p);
-        disc->setParentItem(this);
-        disc->setBrush(Qt::white);
-        disc->setZValue(Z_SNOW);
-        break;
-    default:
-        break;
+            setRotation(qrand() % 60);
+            break;
+        case Disc:
+            disc = scene->addEllipse(0, 0, size, size, p);
+            disc->setParentItem(this);
+            disc->setBrush(Qt::white);
+            disc->setZValue(Z_SNOW);
+            break;
+        case Egg:
+            disc = scene->addEllipse(0, 0, size, size * 1.5, p);
+            disc->setParentItem(this);
+            disc->setBrush(QColor( 
+                qrand() % 100 + 150, qrand() % 100 + 150, qrand() % 100 + 150, 255));
+            disc->setZValue(Z_SNOW);
+            break;
+        default:
+            break;
     }
 }
 
@@ -58,15 +65,18 @@ SnowFlake::~SnowFlake()
 {
     // qDebug()<<"Destr. SnowFlake";
     switch (type) {
-    case (Smilla):
-        while (lines.isEmpty())
-            delete lines.takeFirst();
-        break;
-    case Disc:
-        delete disc;
-        break;
-    default:
-        break;
+        case (Smilla):
+            while (lines.isEmpty())
+                delete lines.takeFirst();
+            break;
+        case Egg:
+            delete disc;
+            break;
+        case Disc:
+            delete disc;
+            break;
+        default:
+            break;
     }
 }
 
@@ -102,19 +112,24 @@ Winter::Winter(QGraphicsView *v)
             QPen(Qt::blue) );
     */
 
-    type = SnowFlake::Disc;
+    type = SnowFlake::Egg;
 
     switch (type) {
-    case SnowFlake::Smilla:
-        maxFlakes = 1500;
-        maxFalling = 140;
-        maxUnfreeze = 50;
-        break;
-    default:
-        maxFlakes = 6500;
-        maxFalling = 850;
-        maxUnfreeze = 50;
-        break;
+        case SnowFlake::Smilla:
+            maxFlakes = 1500;
+            maxFalling = 140;
+            maxUnfreeze = 50;
+            break;
+        case SnowFlake::Egg:
+            maxFlakes = 500;
+            maxFalling = 150;
+            maxUnfreeze = 50;
+            break;
+        default:
+            maxFlakes = 6500;
+            maxFalling = 850;
+            maxUnfreeze = 50;
+            break;
     }
 
     makeSnow();
