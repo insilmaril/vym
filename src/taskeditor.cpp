@@ -73,8 +73,7 @@ TaskEditor::TaskEditor(QWidget *)
                      "Filters in task Editor"));
     a->setCheckable(true);
     a->setChecked(settings.value("/taskeditor/filterFlags1", false).toBool());
-    if (settings.value("/mainwindow/showTestMenu", false).toBool())
-        tb->addAction(a);
+    tb->addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(toggleFilterFlags1()));
     actionToggleFilterFlags1 = a;
 
@@ -84,8 +83,7 @@ TaskEditor::TaskEditor(QWidget *)
                      "Filters in task Editor"));
     a->setCheckable(true);
     a->setChecked(settings.value("/taskeditor/filterFlags2", false).toBool());
-    if (settings.value("/mainwindow/showTestMenu", false).toBool())
-        tb->addAction(a);
+    tb->addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(toggleFilterFlags2()));
     actionToggleFilterFlags2 = a;
 
@@ -95,8 +93,7 @@ TaskEditor::TaskEditor(QWidget *)
                      "Filters in task Editor"));
     a->setCheckable(true);
     a->setChecked(settings.value("/taskeditor/filterFlags3", false).toBool());
-    if (settings.value("/mainwindow/showTestMenu", false).toBool())
-        tb->addAction(a);
+    tb->addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(toggleFilterFlags3()));
     actionToggleFilterFlags3 = a;
 
