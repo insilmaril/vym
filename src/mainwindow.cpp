@@ -1254,6 +1254,18 @@ void Main::setupFileActions()
     switchboard.addSwitch("fileExit", shortcutScope, a, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(fileExitVYM()));
     fileMenu->addAction(a);
+
+    a = new QAction("Toggle winter mode", this);
+    a->setShortcut(Qt::CTRL + Qt::Key_Asterisk);
+    a->setShortcutContext(Qt::WidgetShortcut);
+
+    if (settings.value("/mainwindow/showTestMenu", false).toBool()) {
+        addAction(a);
+        mapEditorActions.append(a);
+        switchboard.addSwitch("mapWinterMode", shortcutScope, a, tag);
+    }
+    connect(a, SIGNAL(triggered()), this, SLOT(toggleWinter()));
+    actionToggleWinter = a;
 }
 
 // Edit Actions
@@ -1345,12 +1357,11 @@ void Main::setupEditActions()
     // Shortcut to add attribute
     a = new QAction(tr("Add attribute") + " (test)", this);
     if (settings.value("/mainwindow/showTestMenu", false).toBool()) {
-        // a->setShortcut ( Qt::Key_Q);
         a->setShortcutContext(Qt::WindowShortcut);
         switchboard.addSwitch("mapAddAttribute", shortcutScope, a, tag);
+        connect(a, SIGNAL(triggered()), this, SLOT(editAddAttribute()));
+        editMenu->addAction(a);
     }
-    connect(a, SIGNAL(triggered()), this, SLOT(editAddAttribute()));
-    editMenu->addAction(a);
     actionAddAttribute = a;
 
     // Shortcut to add mapcenter
@@ -3032,12 +3043,7 @@ void Main::setupTestActions()
     connect(a, SIGNAL(triggered()), this, SLOT(toggleHideExport()));
     actionToggleHideMode = a;
 
-    a = new QAction("Toggle winter mode", this);
-    a->setShortcut(Qt::ALT + Qt::Key_Asterisk);
-    testMenu->addAction(a);
-    switchboard.addSwitch("mapWinterMode", shortcutScope, a, tag);
-    connect(a, SIGNAL(triggered()), this, SLOT(toggleWinter()));
-    actionToggleWinter = a;
+    testMenu->addAction(actionToggleWinter);
 }
 
 // Help Actions

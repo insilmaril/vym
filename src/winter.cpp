@@ -132,15 +132,15 @@ Winter::Winter(QGraphicsView *v)
             break;
     }
 
-    makeSnow();
-
     animTimer = new QTimer;
     connect(animTimer, SIGNAL(timeout()), this, SLOT(animate()));
     animTimer->start(50);
 
     snowTimer = new QTimer;
     connect(snowTimer, SIGNAL(timeout()), this, SLOT(makeSnow()));
-    snowTimer->start(1000);
+    //snowTimer->setSingleShot(true);
+
+    makeSnow();
 }
 
 Winter::~Winter()
@@ -278,4 +278,5 @@ void Winter::makeSnow()
             }
         }
     }
+    snowTimer->start(2000);
 }

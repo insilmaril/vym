@@ -131,7 +131,6 @@ class MapEditor : public QGraphicsView {
     TreeItem *findMapItem(QPointF p,
                           TreeItem *exclude); //! find item in map at position
                                               //! p. Ignore item exclude
-
     void toggleWinter();
 
     BranchItem *getBranchDirectAbove(
