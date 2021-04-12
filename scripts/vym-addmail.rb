@@ -55,11 +55,14 @@ begin
     # Otherwise the script might block     // FIXME-1
     #version = vym.version
 
-#    map = vym.currentMap()
-    map = vym.map(1)
-    
-    #map = vym.map(6)
-    #map.select "mc:0,b0:0,bo:0"
+    puts "Found #{vym.mapCount} maps"
+
+    n = vym.currentMapIndex()
+    puts "Current map: #{n}"
+
+    map = vym.map(n)
+    #pp map
+    puts "Map title: #{map.getMapTitle}" 
 
     map.addBranch()
     map.selectLatestAdded
