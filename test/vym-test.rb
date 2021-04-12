@@ -5,22 +5,6 @@ require 'date'
 require 'fileutils'
 require 'optparse'
 
-instance_name = 'test'
-
-options = {}
-OptionParser.new do |opts|
-  opts.banner = "Usage: vym-test.rb [options]"
-
-  opts.on('-d', '--directory  NAME', 'Directory name') { |s| options[:testdir] = s }
-end.parse!
-
-@testdir = options[:testdir]
-@testmap = ARGV[0]
-
-$tests_passed    = 0
-$tests_failed    = 0
-$tests_warnings  = 0
-$tests_total     = 0
 
 def waitkey
   puts "Press return to continue..."
@@ -82,7 +66,7 @@ def init_map( vym )
 
   #n = vym.mapCount.to_i
   #vym.loadMap (@testmap)
-  return vym.map ( 1 )
+  return vym.map (1)
 end
 
 def summary
@@ -92,32 +76,10 @@ def summary
   puts "Tests failed: #{$tests_failed}"
 end
 
-vym_mgr = VymManager.new
-#vym_mgr.show_running
-
-vym = vym_mgr.find(instance_name)
-
-if !vym
-  puts "Couldn't find instance name \"#{instance_name}\", please start one:"
-  puts "vym -l -n \"#{instance-name}\" -t test/default.vym"
-  exit
-end
-
-#######################
-@center_0="mc:0"
-@center_1="mc:1"
-@main_a="mc:0,bo:0"
-  @branch_a=@main_a+",bo:0"
-  @branch_b=@main_a+",bo:1"
-  @branch_c=@main_a+",bo:2"
-@main_b="mc:0,bo:1"
-
-@n_centers=2
-
 #######################
 def test_vym (vym)
   heading "Mainwindow checks:"
-  version = "2.7.556"
+  version = "2.8.0"
   expect_warning_only "Version is #{version}", vym.version, version
 
   expect "Loading map '#{@testmap}'", vym.loadMap(@testmap), true
@@ -922,27 +884,6 @@ def test_bugfixes (vym)
 end
 
 #######################
-test_vym(vym)
-test_basics(vym)
-test_export(vym)
-test_extrainfo(vym)
-test_adding_branches(vym)
-test_adding_maps(vym)
-test_scrolling(vym)
-test_moving_parts(vym)
-test_modify_branches(vym)
-test_flags(vym)
-test_delete_parts(vym)
-test_copy_paste(vym)
-test_references(vym)
-test_history(vym)
-test_xlinks(vym)
-test_tasks(vym)
-test_notes(vym)
-test_headings(vym)
-test_bugfixes(vym)
-summary
-
 =begin
 # Untested commands:
 #
@@ -999,3 +940,68 @@ toggleFrameIncludeChildren
 toggleTarget
 toggleTask
 =end
+
+
+begin
+  options = {}
+  OptionParser.new do |opts|
+    opts.banner = "Usage: vym-test.rb [options]"
+
+    opts.on('-d', '--directory  NAME', 'Directory name') { |s| options[:testdir] = s }
+  end.parse!
+
+  @testdir = options[:testdir]
+  @testmap = ARGV[0]
+
+  $tests_passed    = 0
+  $tests_failed    = 0
+  $tests_warnings  = 0
+  $tests_total     = 0
+
+  #######################
+  @center_0="mc:0"
+  @center_1="mc:1"
+  @main_a="mc:0,bo:0"
+    @branch_a=@main_a+",bo:0"
+    @branch_b=@main_a+",bo:1"
+    @branch_c=@main_a+",bo:2"
+  @main_b="mc:0,bo:1"
+
+  @n_centers=2
+
+  instance_name = 'test'
+
+  vym_mgr = VymManager.new
+  #vym_mgr.show_running
+
+  vym = vym_mgr.find(instance_name)
+
+  if !vym
+    puts "Couldn't find instance name \"#{instance_name}\", please start one:"
+    puts "vym -l -n \"#{instance-name}\" -t test/default.vym"
+    exit
+  end
+
+  test_vym(vym)
+  test_basics(vym)
+  test_export(vym)
+  test_extrainfo(vym)
+  test_adding_branches(vym)
+  test_adding_maps(vym)
+  test_scrolling(vym)
+  test_moving_parts(vym)
+  test_modify_branches(vym)
+  test_flags(vym)
+  test_delete_parts(vym)
+  test_copy_paste(vym)
+  test_references(vym)
+  test_history(vym)
+  test_xlinks(vym)
+  test_tasks(vym)
+  test_notes(vym)
+  test_headings(vym)
+  test_bugfixes(vym)
+  summary
+
+end
+

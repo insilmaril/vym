@@ -55,7 +55,7 @@ class Vym
     @main.modelCount[0]
   end
 
-  def currentModel
+  def currentModelIndex
     @main.currentModel
   end
 
@@ -64,7 +64,7 @@ class Vym
     map.introspect
     map.default_iface = "org.insilmaril.vym.model.adaptor"
 
-    if modelCount > 0 && n>=0
+    if modelCount > 0 && n >= 0
       return VymMap.new(map, n )
     else
       raise "Error: Map #{n} not accessible in #{@instance}!"
