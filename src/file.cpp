@@ -74,9 +74,9 @@ extern QString vymName;
 bool reallyWriteDirectory(const QString &dir)
 {
     QStringList eList = QDir(dir).entryList();
-    if (eList.first() == ".")
+    if (!eList.isEmpty() && (eList.first() == "."))
         eList.pop_front(); // remove "."
-    if (eList.first() == "..")
+    if (!eList.isEmpty() && (eList.first() == ".."))
         eList.pop_front(); // remove "."
     if (!eList.isEmpty()) {
         QMessageBox mb(vymName,
