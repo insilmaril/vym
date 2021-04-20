@@ -24,7 +24,6 @@ class AdaptorModel : public QDBusAbstractAdaptor {
     void setCaption(const QString &newCaption);
 
   public slots: // METHODS
-    QDBusVariant getCurrentModelID();
     QDBusVariant branchCount();
     QDBusVariant execute(const QString &s);
     QDBusVariant errorLevel();

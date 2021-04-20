@@ -14,13 +14,13 @@ class AdaptorVym : public QDBusAbstractAdaptor {
     AdaptorVym(QObject *obj);
 
   public slots: // METHODS
-    QDBusVariant modelCount();
-    void gotoModel(const int &n);
+    QDBusVariant mapCount();
+    void gotoMapID(const uint &id);
     QDBusVariant getInstanceName();
     QDBusVariant getVersion();
     QDBusVariant execute(const QString &s);
     QDBusVariant listCommands();
-    QDBusVariant currentMapIndex();
+    QDBusVariant currentMapID();
 
   Q_SIGNALS: // SIGNALS
     void crashed();

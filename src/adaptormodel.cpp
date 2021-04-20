@@ -28,11 +28,6 @@ void AdaptorModel::setCaption(const QString &newCaption)
     m_caption = newCaption;
 }
 
-QDBusVariant AdaptorModel::getCurrentModelID()
-{
-    return QDBusVariant(mainWindow->currentModelID());
-}
-
 QDBusVariant AdaptorModel::branchCount()
 {
     BranchItem *selbi = model->getSelectedBranch();

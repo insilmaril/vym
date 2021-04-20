@@ -39,13 +39,16 @@ begin
 
     out.rewind
 
+    #name = "production"
+    name = "test"
+
     vym_mgr = VymManager.new
     vym_mgr.show_running
-    vym = vym_mgr.find('production') 
+    vym = vym_mgr.find(name)
 
     if !vym
-      puts "Couldn't find instance named \"production\", please start one:"
-      puts "vym -l -n production -t test/default.vym"
+      puts "Couldn't find instance named \"#{name}\", please start one:"
+      puts "vym -l -n #{name} -t test/default.vym"
 
       puts "Currently running vym instances: #{vym_mgr.show_running}"
       exit
@@ -57,12 +60,15 @@ begin
 
     puts "Found #{vym.mapCount} maps"
 
-    n = vym.currentMapIndex()
-    puts "Current map: #{n}"
+    #puts vym.show_methods
 
-    map = vym.map(n)
-    #pp map
-    puts "Map title: #{map.getMapTitle}" 
+    n = vym.currentMapID()
+    puts "ID of current map: #{n}"
+
+    map = vym.map (n)
+    puts "Map title: #{map.getMapTitle}"
+    puts "Map path:  #{map.getDestPath}"
+    puts "Map name:  #{map.getFileName}"
 
     map.addBranch()
     map.selectLatestAdded

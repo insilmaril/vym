@@ -17,12 +17,12 @@ AdaptorVym::AdaptorVym(QObject *obj) : QDBusAbstractAdaptor(obj)
     setAutoRelaySignals(true);
 }
 
-QDBusVariant AdaptorVym::modelCount()
+QDBusVariant AdaptorVym::mapCount()
 {
     return QDBusVariant(mainWindow->modelCount());
 }
 
-void AdaptorVym::gotoModel(const int &n) { mainWindow->gotoWindow(n); }
+void AdaptorVym::gotoMapID(const uint &id) { mainWindow->gotoModelID(id); }
 
 QDBusVariant AdaptorVym::getInstanceName()
 {
@@ -46,7 +46,7 @@ QDBusVariant AdaptorVym::listCommands()
     return QDBusVariant(list.join(","));
 }
 
-QDBusVariant AdaptorVym::currentMapIndex()
+QDBusVariant AdaptorVym::currentMapID()
 {
-    return QDBusVariant(mainWindow->currentMapIndex());
+    return QDBusVariant(mainWindow->currentMapID());
 }

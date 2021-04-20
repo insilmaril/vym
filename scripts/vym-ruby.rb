@@ -51,47 +51,32 @@ class Vym
     end # Creating vym commands
   end
 
-  def modelCount
-    @main.modelCount[0]
+  def mapCount
+    @main.mapCount[0]
   end
 
-  def currentModelIndex
-    @main.currentModel
+  def currentMapID
+    return @main.currentMapID[0]
   end
 
   def map (n)
+    #puts "def map:  @service.object(\"/vymmodel_#{n}\")"
     map = @service.object("/vymmodel_#{n}")
     map.introspect
     map.default_iface = "org.insilmaril.vym.model.adaptor"
 
-    if modelCount > 0 && n >= 0
+    if mapCount() > 0 && n >= 0
       return VymMap.new(map, n )
     else
       raise "Error: Map #{n} not accessible in #{@instance}!"
     end  
   end
 
-  def currentMapX ()    # Overloads method from scripting.h, which would return QObject
-    n = @main.currentMapIndex.first
-
-    return map(n)
-  end
-
   def show_methods
     puts "Main methods:"
     @main[@main.default_iface].methods.each do |k,v|
-      puts "  #{k}"
+      puts " - #{k}"
     end
-    if modelCount > 0
-      @model= @service.object 'vymmodel_1'
-      @model.default_iface = "org.insilmaril.vym.model.adaptor"
-      puts "Model methods:"
-      @model[@model.default_iface].methods.each do |k,v|
-        puts "  #{k}"
-      end
-    else
-      puts "No model!"
-    end  
   end
 end
 
@@ -101,7 +86,7 @@ class VymMap
     @map = map
     
     # Getting commands for model via DBUS
-    #if modelCount > 0
+    #if mapCount() > 0
       # m = model(1)
       s = @map.listCommands
       puts "VymMap::initialize Retrieving commands via dbus..." if $debug

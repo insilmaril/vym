@@ -610,6 +610,9 @@ void Main::setupAPI()
     c = new Command("getFileDir", Command::Any);
     modelCommands.append(c);
 
+    c = new Command("getFileName", Command::Any);
+    modelCommands.append(c);
+
     c = new Command("getFrameType", Command::Branch);
     modelCommands.append(c);
 
@@ -3440,7 +3443,7 @@ MapEditor *Main::currentMapEditor() const
     return NULL;
 }
 
-uint Main::currentModelID() const
+uint Main::currentMapID() const
 {
     VymModel *m = currentModel();
     if (m)
@@ -3479,6 +3482,18 @@ void Main::gotoModel(VymModel *m)
             tabWidget->setCurrentIndex(i);
             return;
         }
+}
+
+void Main::gotoModelID(uint id)
+{
+    VymModel *vm;
+    for (int i = 0; i < tabWidget->count(); i++) {
+        vm = view(i)->getModel();
+        if (vm && vm->getModelID() == id) {
+            tabWidget->setCurrentIndex(i);
+            return;
+        }
+    }
 }
 
 int Main::modelCount() { return tabWidget->count(); }

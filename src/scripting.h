@@ -22,6 +22,7 @@ class VymScriptContext : public QObject, protected QScriptable {
     QString setResult(const QString &r);
     bool setResult(bool r);
     int setResult(int r);
+    uint setResult(uint r);
 };
 
 ///////////////////////////////////////////////////////////////////////////
@@ -37,7 +38,7 @@ class VymWrapper : public VymScriptContext {
     bool loadMap(const QString &filename);
     int mapCount();
     void selectMap(uint n);
-    int currentMapIndex();
+    uint currentMapID();
     void toggleTreeEditor();
     QString loadFile(const QString &filename);
     void saveFile(const QString &filename, const QString &s);

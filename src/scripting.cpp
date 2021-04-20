@@ -43,6 +43,12 @@ int VymScriptContext::setResult(int r)
     return r;
 }
 
+uint VymScriptContext::setResult(uint r)
+{
+    context()->engine()->globalObject().setProperty("lastResult", r);
+    return r;
+}
+
 ///////////////////////////////////////////////////////////////////////////
 VymWrapper::VymWrapper() {}
 
@@ -83,9 +89,10 @@ void VymWrapper::selectMap(uint n)
     }
 }
 
-int VymWrapper::currentMapIndex()
+uint VymWrapper::currentMapID()
 {
-    return mainWindow->currentMapIndex();
+    uint id = mainWindow->currentMapID();
+    return setResult(id);
 }
 
 void VymWrapper::toggleTreeEditor() { mainWindow->windowToggleTreeEditor(); }
