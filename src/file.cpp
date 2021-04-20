@@ -71,19 +71,23 @@ QString basename(const QString &path) { return path.section('/', -1); }
 QString dirname(const QString &path) { return path.section('/', 0, -2); }
 
 extern QString vymName;
-bool reallyWriteDirectory(const QString &dir)
+bool confirmDirectoryOverwrite(const QDir &dir)
 {
-    QStringList eList = QDir(dir).entryList();
-    if (eList.first() == ".")
-        eList.pop_front(); // remove "."
-    if (eList.first() == "..")
-        eList.pop_front(); // remove "."
+    if (!dir.exists()) {
+        qWarning() << "Directory does not exist: " << dir.path();
+        return false;
+    }
+
+    QStringList eList = dir.entryList();
+    while (eList.first() == "." || eList.first() == "..")
+        eList.pop_front(); // remove "." and ".."
+
     if (!eList.isEmpty()) {
         QMessageBox mb(vymName,
                        QObject::tr("The directory %1 is not empty.\nDo you "
                                    "risk to overwrite its contents?",
                                    "write directory")
-                           .arg(dir),
+                           .arg(dir.path()),
                        QMessageBox::Warning, QMessageBox::Yes,
                        QMessageBox::Cancel | QMessageBox::Default,
                        QMessageBox::NoButton);

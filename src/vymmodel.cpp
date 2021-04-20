@@ -4467,16 +4467,16 @@ void VymModel::exportXML(QString fpath, QString dpath, bool useDialog)
         fd.setNameFilters(filters);
         fd.setOption(QFileDialog::DontConfirmOverwrite, true);
         fd.setAcceptMode(QFileDialog::AcceptSave);
+        fd.selectFile(mapName + ".xml");
 
         QString fn;
         if (fd.exec() != QDialog::Accepted || fd.selectedFiles().isEmpty())
             return;
 
-        dpath = fd.selectedFiles().first();
-        // dpath = dpath.left(dpath.lastIndexOf("/"));
-        fpath = dpath + "/" + mapName + ".xml";
+        fpath = fd.selectedFiles().first();
+        dpath = fpath.left(fpath.lastIndexOf("/"));
 
-        if (!reallyWriteDirectory(dpath))
+        if (!confirmDirectoryOverwrite(QDir(dpath)))
             return;
     }
     ex.setFilePath(fpath);

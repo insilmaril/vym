@@ -18,7 +18,7 @@ QString basename(const QString &);
 QString dirname(const QString &);
 
 QString browseDirectory(QWidget *parent = NULL, const QString &caption = "");
-bool reallyWriteDirectory(const QString &dir);
+bool confirmDirectoryOverwrite(const QDir &dir);
 
 QString makeTmpDir(bool &ok, const QString &dirPath, const QString &prefix);
 QString makeTmpDir(bool &ok, const QString &prefix);
