@@ -39,8 +39,8 @@ begin
 
     out.rewind
 
-    #name = "production"
-    name = "test"
+    name = "production"
+    #name = "test"
 
     vym_mgr = VymManager.new
     vym_mgr.show_running
