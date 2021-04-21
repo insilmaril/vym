@@ -16,6 +16,10 @@ class TreeEditor : public QTreeView {
     ~TreeEditor();
     void init();
     QModelIndex getSelectedIndex();
+
+  protected:
+    virtual void contextMenuEvent(QContextMenuEvent *e);
+
   private slots:
     void cursorUp();
     void cursorDown();
