@@ -79,7 +79,7 @@ bool confirmDirectoryOverwrite(const QDir &dir)
     }
 
     QStringList eList = dir.entryList();
-    while (eList.first() == "." || eList.first() == "..")
+    while (!eList.isEmpty() && (eList.first() == "." || eList.first() == ".."))
         eList.pop_front(); // remove "." and ".."
 
     if (!eList.isEmpty()) {
