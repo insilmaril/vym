@@ -1,6 +1,7 @@
 #include "treeeditor.h"
 
 #include <QAction>
+#include <QMenu>
 #include <QRegExp>
 
 #include "mainwindow.h"
@@ -8,6 +9,10 @@
 
 extern Main *mainWindow;
 extern QString editorFocusStyle;
+
+extern QMenu *branchContextMenu;
+extern QMenu *canvasContextMenu;
+extern QMenu *floatimageContextMenu;
 
 ///////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////
@@ -80,6 +85,19 @@ QModelIndex TreeEditor::getSelectedIndex()
         return QModelIndex();
     else
         return list.first();
+}
+
+void TreeEditor::contextMenuEvent(QContextMenuEvent *e) {
+    if (model->getSelectedBranch())
+        branchContextMenu->popup(e->globalPos());
+    else if (model->getSelectedImage())
+        floatimageContextMenu->popup(e->globalPos());
+    else if (model->getSelectedXLink())
+        model->editXLink();
+    else
+        canvasContextMenu->exec(e->globalPos());
+
+    e->accept();
 }
 
 void TreeEditor::cursorUp()
