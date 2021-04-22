@@ -3585,9 +3585,8 @@ void Main::fileNewCopy()
         srcModel->copy();
         fileNew();
         VymModel *dstModel = view(tabWidget->count() - 1)->getModel();
-        if (dstModel->select("mc:0"))
-            dstModel->loadMap(clipboardDir + "/" + clipboardFile,
-                              ImportReplace);
+        if (dstModel && dstModel->select("mc:0"))
+            dstModel->paste();
         else
             qWarning() << "Main::fileNewCopy couldn't select mapcenter";
     }
