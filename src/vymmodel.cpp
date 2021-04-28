@@ -111,7 +111,7 @@ VymModel::VymModel()
 
 VymModel::~VymModel()
 {
-    // out << "Destr VymModel begin this="<<this<<"  "<<mapName<<flush;
+    // qDebug() << "Destr VymModel begin this="<<this<<"  "<<mapName<<flush;
     mapEditor = NULL;
     repositionBlocked = true;
     autosaveTimer->stop();

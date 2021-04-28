@@ -2,6 +2,7 @@
 
 #include "attributeitem.h"
 #include "branchobj.h"
+#include "container.h"
 #include "task.h"
 #include "taskmodel.h"
 #include "vymmodel.h"
@@ -15,7 +16,7 @@ extern TaskModel *taskModel;
 BranchItem::BranchItem(const QList<QVariant> &data, TreeItem *parent)
     : MapItem(data, parent)
 {
-    // qDebug()<< "Constr. BranchItem this="<<this;
+    qDebug() << "Constr. BranchItem this=" << this;
 
     // Set type if parent is known yet
     // if not, type is set in insertBranch or TreeItem::appendChild
@@ -36,15 +37,23 @@ BranchItem::BranchItem(const QList<QVariant> &data, TreeItem *parent)
     lastSelectedBranchNumAlt = 0;
 
     task = NULL;
+
+    branchContainer = NULL; 
 }
 
 BranchItem::~BranchItem()
 {
-    // qDebug()<< "Destr. BranchItem  this="<<this<<"  "<<getHeading();
+    qDebug() << "Destr. BranchItem  this=" << this << "  " << getHeadingPlain();
     if (mo) {
         delete mo;
         mo = NULL;
     }
+
+    if (branchContainer) {
+        delete branchContainer;
+        branchContainer = NULL;
+    }
+
     clear();
 }
 
@@ -514,6 +523,28 @@ BranchObj *BranchItem::getBranchObj() { return (BranchObj *)mo; }
 
 BranchObj *BranchItem::createMapObj(QGraphicsScene *scene)
 {
+    // FIXME-0 testing containers for new layout
+    qDebug() << "BI::createMO for BI= " << this << "d=" << depth();
+    branchContainer = new Container (NULL, this);
+    branchContainer->setName("branch");
+    scene->addItem (branchContainer);
+
+    headingContainer = new Container (NULL, this);
+    headingContainer->setName("heading");
+    headingContainer->setBrush(QColor(Qt::gray));
+    scene->addItem (headingContainer);
+    
+    childrenContainer = new Container (NULL, this);
+    childrenContainer->setName("children");
+    childrenContainer->setBrush(QColor(Qt::green));
+    scene->addItem (childrenContainer);
+    
+    branchContainer->addContainer(headingContainer);
+    branchContainer->addContainer(childrenContainer);
+
+    branchContainer->setBrush(QColor(Qt::blue));
+    branchContainer->reposition();
+
     BranchObj *newbo;
 
     if (parentItem == rootItem) {

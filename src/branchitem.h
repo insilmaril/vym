@@ -6,6 +6,7 @@
 
 #include <QList>
 
+class Container;
 class QString;
 class QGraphicsScene;
 class BranchObj;
@@ -43,6 +44,10 @@ class BranchItem : public MapItem {
 
   private:
     Task *task;
+
+    Container *branchContainer;
+    Container *headingContainer;
+    Container *childrenContainer;
 
   public:
     virtual void scroll();
