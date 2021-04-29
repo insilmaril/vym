@@ -521,12 +521,29 @@ void BranchItem::updateStyles(const bool &keepFrame)
 
 BranchObj *BranchItem::getBranchObj() { return (BranchObj *)mo; }
 
+void BranchItem::repositionContainers()
+{
+    branchContainer->reposition();
+}
+
+void BranchItem::addContainer(BranchItem *bi)
+{
+    // FIXME-0 add container of bi to childrenContainer
+    childrenContainer->addContainer(bi->getContainer());
+}
+
+Container*  BranchItem::getContainer()
+{
+    return branchContainer;
+}
+
 BranchObj *BranchItem::createMapObj(QGraphicsScene *scene)
 {
     // FIXME-0 testing containers for new layout
     qDebug() << "BI::createMO for BI= " << this << "d=" << depth();
     branchContainer = new Container (NULL, this);
     branchContainer->setName("branch");
+    branchContainer->setBrush(QColor(Qt::blue));
     scene->addItem (branchContainer);
 
     headingContainer = new Container (NULL, this);
@@ -537,14 +554,17 @@ BranchObj *BranchItem::createMapObj(QGraphicsScene *scene)
     childrenContainer = new Container (NULL, this);
     childrenContainer->setName("children");
     childrenContainer->setBrush(QColor(Qt::green));
+    childrenContainer->setContentType(Container::Containers);
     scene->addItem (childrenContainer);
     
     branchContainer->addContainer(headingContainer);
     branchContainer->addContainer(childrenContainer);
+    branchContainer->setLayoutType(Container::Horizontal);
 
-    branchContainer->setBrush(QColor(Qt::blue));
     branchContainer->reposition();
 
+    ////////
+        
     BranchObj *newbo;
 
     if (parentItem == rootItem) {

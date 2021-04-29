@@ -77,7 +77,6 @@ HEADERS	+= \
     src/codeeditor.h \
     src/command.h \
     src/container.h \
-    src/container.h \
     src/confluence-agent.h \
     src/credentials.h \
     src/dockeditor.h \
