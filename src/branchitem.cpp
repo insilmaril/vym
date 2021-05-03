@@ -544,6 +544,8 @@ BranchObj *BranchItem::createMapObj(QGraphicsScene *scene)
     branchContainer = new Container (NULL, this);
     branchContainer->setName("branch");
     branchContainer->setBrush(QColor(Qt::blue));
+    branchContainer->setContentType(Container::Containers);
+    branchContainer->setLayoutType(Container::Horizontal);
     scene->addItem (branchContainer);
 
     headingContainer = new Container (NULL, this);
@@ -555,11 +557,11 @@ BranchObj *BranchItem::createMapObj(QGraphicsScene *scene)
     childrenContainer->setName("children");
     childrenContainer->setBrush(QColor(Qt::green));
     childrenContainer->setContentType(Container::Containers);
+    childrenContainer->setLayoutType(Container::Vertical);
     scene->addItem (childrenContainer);
     
     branchContainer->addContainer(headingContainer);
     branchContainer->addContainer(childrenContainer);
-    branchContainer->setLayoutType(Container::Horizontal);
 
     branchContainer->reposition();
 

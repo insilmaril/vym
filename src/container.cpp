@@ -6,7 +6,7 @@
 
 Container::Container(QGraphicsItem *parent, TreeItem *ti) : QGraphicsRectItem(parent)
 {
-    qDebug() << "Const Container (this,ti)=(" << this << "," << ti << ")";
+    qDebug() << "Const Container thisu = " << this << "  branchitem = " << ti;
     treeItem = ti;
     init();
 }
@@ -74,50 +74,76 @@ void Container::addContainer(Container *c)
 
 void Container::reposition()
 {
-    qDebug() << "Container::reposition of " << name;
+    qDebug() << "Container::reposition of " << name << this;
 
     QRectF r = rect();
 
     // a) calc sizes of subcontainers based on their layouts
     
-    /*
     foreach (Container *c, childrenList) {
         // FIXME-0 don't call, if c has no children, otherwise sizes become 0
-        if (c->contType == Containers)
+        if (c->contType == Containers) {
             c->reposition();
+        }
     }
-    */
 
     // b) align subcontainers within their parents
 
     // c) Align my own containers
-    layout = Horizontal;    // FIXME-0 hardcoded...
-    switch (layout) {
-        case Horizontal: {
-                qreal y = 0;
-                // Calc max height
-                foreach (Container *c, childrenList) {
-                    qreal h = c->rect().height();
-                    y = (y < h) ? h : y;
-                }
 
-                qreal x = 0;
-                // Position children
-                foreach (Container *c, childrenList) {
-                    c->setPos (x, (y - c->rect().height() ) / 2);
-                    x += c->rect().width();
+    if (childrenList.length() > 0) {
+        switch (layout) {
+            case Horizontal: {
+                    qreal max_h = 0;
+                    qreal max_w = 0;
+                    // Calc max height and width
+                    foreach (Container *c, childrenList) {
+                        qreal h = c->rect().height();
+                        max_h = (max_h < h) ? h : max_h;
+                        max_w += c->rect().width();
+                    }
 
-                    qreal h = c->rect().height();
-                    y = (y < h) ? h : y;
+                    qreal x = 0;
+                    // Position children
+                    foreach (Container *c, childrenList) {
+                        c->setPos (x, (max_h - c->rect().height() ) / 2);
+                        x += c->rect().width();
+                    }
+                    r.setWidth(max_w);
+                    r.setHeight(max_h);
                 }
-                r.setWidth(x);
-                r.setHeight(y);
-            }
-            setRect(r);
-            qDebug() << "Setting rect of " << name << this << " to " << r;
-            break;
-        default:
-            break;
+                setRect(r);
+                qDebug() << "Horizontal layout - Setting rect of " << name << this << " to " << r;
+                break;
+            case Vertical: {
+                    qreal max_h = 0;
+                    qreal max_w = 0;
+                    // Calc height and max width
+                    foreach (Container *c, childrenList) {
+                        qreal w = c->rect().width();
+                        max_w = (max_w < w) ? w : max_w;
+                        max_h += c->rect().height();
+                    }
+
+                    qreal y = 0;
+                    // Position children
+                    foreach (Container *c, childrenList) {
+                        // align centered: 
+                        // c->setPos ( (max_w - c->rect().width() ) / 2, y);
+
+                        // Align to left
+                        c->setPos (0, y);
+                        y += c->rect().height();
+                    }
+                    r.setWidth(max_w);
+                    r.setHeight(max_h);
+                }
+                setRect(r);
+                qDebug() << "Vertical layout - Setting rect of " << name << this << " to " << r;
+                break;
+            default:
+                break;
+        }
     }
 }
 
