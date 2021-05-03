@@ -20,7 +20,8 @@ Container::~Container()
 
         // FIXME-0 check if there still is a link to a TreeItem
         // then this needs to be unlinked first
-        delete c;
+        if (c->contType != Containers) 
+            delete c;
     }
 }
 
