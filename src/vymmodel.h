@@ -753,6 +753,7 @@ class VymModel : public TreeModel {
     ////////////////////////////////////////////
   private:
     TreeItem *latestAddedItem; // latest added object, reset on setChanged()
+    QUuid lastToggledUuid;     // Latest toggled object 
     QList<uint> selectionHistory;
     int currentSelection;
     bool keepSelectionHistory; // If set, selection doesn't change history
@@ -781,13 +782,14 @@ class VymModel : public TreeModel {
     bool canSelectNext();
     bool selectNext();
     void resetSelectionHistory();
-    void appendSelection();
+    void appendSelectionToHistory();
     void emitShowSelection(); //!< Show selection in all views
 
   signals:
     void showSelection();
 
   public:
+    TreeItem *lastToggledItem();
     bool selectFirstBranch();
     bool selectFirstChildBranch();
     bool selectLastBranch();
