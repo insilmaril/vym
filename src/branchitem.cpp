@@ -548,12 +548,12 @@ BranchObj *BranchItem::createMapObj(QGraphicsScene *scene)
     branchContainer->setLayoutType(Container::Horizontal);
     scene->addItem (branchContainer);
 
-    headingContainer = new Container (NULL, this);
+    headingContainer = new Container ();
     headingContainer->setName("heading");
     headingContainer->setBrush(QColor(Qt::gray));
     scene->addItem (headingContainer);
     
-    childrenContainer = new Container (NULL, this);
+    childrenContainer = new Container ();
     childrenContainer->setName("children");
     childrenContainer->setBrush(QColor(Qt::green));
     childrenContainer->setContentType(Container::Containers);

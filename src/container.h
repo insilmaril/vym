@@ -25,6 +25,8 @@ class Container : public QGraphicsRectItem {
     virtual void setTreeItem(TreeItem *);
     virtual TreeItem *getTreeItem() const;
 
+    int subContainerCount();
+
     void addContainer(Container *c);
 
     void reposition();
