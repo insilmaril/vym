@@ -43,7 +43,7 @@ BranchItem::BranchItem(const QList<QVariant> &data, TreeItem *parent)
 
 BranchItem::~BranchItem()
 {
-    qDebug() << "Destr. BranchItem  this=" << this << "  " << getHeadingPlain();
+    qDebug() << "Destr. BranchItem begin: this=" << this << "  " << getHeadingPlain();
     if (mo) {
         delete mo;
         mo = NULL;
@@ -51,10 +51,12 @@ BranchItem::~BranchItem()
 
     if (branchContainer) {
         delete branchContainer;
-        branchContainer = NULL;
+        delete headingContainer;
+        delete childrenContainer;
     }
 
     clear();
+    qDebug() << "Destr. BranchItem end:   this=" << this << "  " << getHeadingPlain();
 }
 
 void BranchItem::clear()
@@ -553,6 +555,9 @@ BranchObj *BranchItem::createMapObj(QGraphicsScene *scene)
     headingContainer->setBrush(QColor(Qt::gray));
     scene->addItem (headingContainer);
     
+    HeadingObj* ho = new HeadingObj(headingContainer);
+    ho->setText("Foobar");
+
     childrenContainer = new Container ();
     childrenContainer->setName("children");
     childrenContainer->setBrush(QColor(Qt::green));

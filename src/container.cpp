@@ -23,8 +23,8 @@ Container::~Container()
 
         // FIXME-0 check if there still is a link to a TreeItem
         // then this needs to be unlinked first
-        if (c->contType != Containers) 
-            delete c;   // FIXME-0 children container is not deleted at all, needs tob done in BranchItem?!!!
+        //if (c->contType != Containers) 
+        //    delete c;   // FIXME-0 children container is not deleted at all, needs tob done in BranchItem?!!!
     }
 }
 

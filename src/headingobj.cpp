@@ -11,13 +11,13 @@ extern bool debug;
 /////////////////////////////////////////////////////////////////
 HeadingObj::HeadingObj(QGraphicsItem *parent) : MapObj(parent)
 {
-    // qDebug() << "Const HeadingObj (s) ";
+    qDebug() << "Const HeadingObj (s) ";
     init();
 }
 
 HeadingObj::~HeadingObj()
 {
-    //  qDebug() << "Destr. HeadingObj "<<heading;
+    qDebug() << "Destr. HeadingObj " << heading;
     while (!textline.isEmpty())
         delete textline.takeFirst();
 }

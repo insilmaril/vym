@@ -42,13 +42,13 @@ TreeItem::TreeItem(const QList<QVariant> &data, TreeItem *parent)
 
 TreeItem::~TreeItem()
 {
-    // qDebug()<<"Destr TreeItem this="<<this<<"
-    // childcount="<<childItems.count();
+    qDebug() << "Destr TreeItem begin: this=" << this << getHeadingPlain();
     TreeItem *ti;
     while (!childItems.isEmpty()) {
         ti = childItems.takeFirst();
         delete ti;
     }
+    qDebug() << "Destr TreeItem end:   this=" << this << getHeadingPlain();
 }
 
 void TreeItem::init()
