@@ -24,6 +24,7 @@ class TaskEditor : public QWidget {
     bool isUsedFilterActive();
     void setFilterActive();
     void setFilterNew();
+    void setFilterBlocker();
     void setFilterFlags1();
     void setFilterFlags2();
     void setFilterFlags3();
@@ -41,6 +42,7 @@ class TaskEditor : public QWidget {
     void toggleFilterMap();
     void toggleFilterActive();
     void toggleFilterNew();
+    void toggleFilterBlocker();
     void toggleFilterFlags1();
     void toggleFilterFlags2();
     void toggleFilterFlags3();
@@ -52,6 +54,7 @@ class TaskEditor : public QWidget {
     QAction *actionToggleFilterMap;
     QAction *actionToggleFilterActive;
     QAction *actionToggleFilterNew;
+    QAction *actionToggleFilterBlocker;
     QAction *actionToggleFilterFlags1;
     QAction *actionToggleFilterFlags2;
     QAction *actionToggleFilterFlags3;

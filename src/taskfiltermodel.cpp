@@ -13,6 +13,8 @@ void TaskFilterModel::setMapFilter(const QString &s) { mapFilter = s; }
 
 void TaskFilterModel::setFilterNew(bool b) { filterNew = b; }
 
+void TaskFilterModel::setFilterBlocker(bool b) { filterBlocker = b; }
+
 void TaskFilterModel::setFilterFlags1(bool b) { filterFlags1 = b; }
 
 void TaskFilterModel::setFilterFlags2(bool b) { filterFlags2 = b; }
@@ -33,6 +35,10 @@ bool TaskFilterModel::filterAcceptsRow(int sourceRow,
 
     // Filter new tasks
     if (filterNew && taskModel->getTask(ix)->getAwake() != Task::Morning)
+        return false;
+
+    // Filter blocker tasks (stopsign)
+    if (filterBlocker && !taskModel->getTask(ix)->getBranch()->hasActiveFlag("stopsign") ) 
         return false;
 
     // Filter active tasks

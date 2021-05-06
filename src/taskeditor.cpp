@@ -67,6 +67,15 @@ TaskEditor::TaskEditor(QWidget *)
     connect(a, SIGNAL(triggered()), this, SLOT(toggleFilterNew()));
     actionToggleFilterNew = a;
 
+    icon = QIcon(":/flag-stopsign.svg");
+    a = new QAction(icon, "", this); // tr( "New tasks","TaskEditor" ),this );
+    a->setToolTip(tr("Show only blocker tasks", "Filters in task Editor"));
+    a->setCheckable(true);
+    a->setChecked(settings.value("/taskeditor/filterBlocker", false).toBool());
+    tb->addAction(a);
+    connect(a, SIGNAL(triggered()), this, SLOT(toggleFilterBlocker()));
+    actionToggleFilterBlocker = a;
+
     icon = QIcon(":/flag-arrow-up.svg");
     a = new QAction(icon, "", this);
     a->setToolTip(tr("Show only tasks marked with this arrow-up flag",
@@ -152,6 +161,7 @@ TaskEditor::TaskEditor(QWidget *)
     setFilterMap();
     setFilterActive();
     setFilterNew();
+    setFilterBlocker();
     setFilterFlags1();
     setFilterFlags2();
     setFilterFlags3();
@@ -180,6 +190,8 @@ TaskEditor::~TaskEditor()
                       actionToggleFilterActive->isChecked());
     settings.setValue("/taskeditor/filterNew",
                       actionToggleFilterNew->isChecked());
+    settings.setValue("/taskeditor/filterBlocker",
+                      actionToggleFilterBlocker->isChecked());
     settings.setValue("/taskeditor/filterFlags1",
                       actionToggleFilterFlags1->isChecked());
     settings.setValue("/taskeditor/filterFlags2",
@@ -232,6 +244,12 @@ void TaskEditor::setFilterActive()
 void TaskEditor::setFilterNew()
 {
     filterActiveModel->setFilterNew(actionToggleFilterNew->isChecked());
+    updateFilters();
+}
+
+void TaskEditor::setFilterBlocker()
+{
+    filterActiveModel->setFilterBlocker(actionToggleFilterBlocker->isChecked());
     updateFilters();
 }
 
@@ -401,6 +419,7 @@ void TaskEditor::toggleFilterMap() { setFilterMap(); }
 
 void TaskEditor::toggleFilterActive() { setFilterActive(); }
 void TaskEditor::toggleFilterNew() { setFilterNew(); }
+void TaskEditor::toggleFilterBlocker() { setFilterBlocker(); }
 
 void TaskEditor::toggleFilterFlags1() { setFilterFlags1(); }
 void TaskEditor::toggleFilterFlags2() { setFilterFlags2(); }
