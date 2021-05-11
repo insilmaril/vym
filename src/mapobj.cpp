@@ -9,7 +9,7 @@
 /////////////////////////////////////////////////////////////////
 MapObj::MapObj(QGraphicsItem *parent, TreeItem *ti) : QGraphicsItem(parent)
 {
-    // qDebug() << "Const MapObj (this,ti)=("<<this<<","<<ti<<")";
+    //qDebug() << "Const MapObj (this,ti)=(" << this << "," << ti << ")";
     treeItem = ti;
     init();
 }

@@ -4,6 +4,7 @@
 
 #include "attributeitem.h"
 #include "branchitem.h"
+#include "container.h"
 #include "geometry.h"
 #include "mainwindow.h"
 #include "mapeditor.h"
@@ -21,7 +22,8 @@ extern bool debug;
 BranchObj::BranchObj(QGraphicsItem *parent, TreeItem *ti)
     : OrnamentedObj(parent, ti)
 {
-    // qDebug ()<< "Const BranchObj  (s,ti) ti="<<ti;
+    qDebug() << "Const BranchObj  (s,ti) this = " << this << " ti=" << ti << ti->depth();
+    
     treeItem = ti;
     BranchItem *pi = (BranchItem *)(ti->parent());
     if (pi && pi != ti->getModel()->getRootItem())
@@ -33,7 +35,13 @@ BranchObj::BranchObj(QGraphicsItem *parent, TreeItem *ti)
 
 BranchObj::~BranchObj()
 {
-    // qDebug()<< "Destr BranchObj  of "<<this;
+    qDebug()<< "Destr BranchObj  of "<<this;
+
+    if (branchContainer) {
+        delete branchContainer;
+        delete headingContainer;
+        delete childrenContainer;
+    }
 
     // If I'm animated, I need to un-animate myself first
     if (anim.isAnimated()) {
@@ -41,7 +49,7 @@ BranchObj::~BranchObj()
         VymModel *model = treeItem->getModel();
         model->stopAnimation(this);
     }
-
+ 
     clear();
 }
 
@@ -585,6 +593,65 @@ void BranchObj::unsetAllRepositionRequests()
     repositionRequest = false;
     for (int i = 0; i < treeItem->branchCount(); ++i)
         treeItem->getBranchObjNum(i)->unsetAllRepositionRequests();
+}
+
+void BranchObj::createContainers()
+{
+    // FIXME-0 testing containers for new layout
+
+    if (!treeItem) return;
+
+    qDebug() << "ok 0 scene = " << scene();
+    if (scene() ) {
+        branchContainer = new Container (NULL, treeItem);
+        branchContainer->setName("branch");
+        branchContainer->setBrush(QColor(Qt::blue));
+        branchContainer->setContentType(Container::Containers);
+        branchContainer->setLayoutType(Container::Horizontal);
+        scene()->addItem (branchContainer);
+
+        qDebug() << "ok 1";
+        headingContainer = new Container ();
+        headingContainer->setName("heading");
+        headingContainer->setBrush(QColor(Qt::gray));
+        scene()->addItem (headingContainer);
+        
+        headingObj = new HeadingObj(headingContainer);
+        headingObj->setText("Foobar");
+
+        qDebug() << "ok 2";
+        childrenContainer = new Container ();
+        childrenContainer->setName("children");
+        childrenContainer->setBrush(QColor(Qt::green));
+        childrenContainer->setContentType(Container::Containers);
+        childrenContainer->setLayoutType(Container::Vertical);
+        scene()->addItem (childrenContainer);
+        
+        branchContainer->addContainer(headingContainer);
+        branchContainer->addContainer(childrenContainer);
+
+        branchContainer->reposition();
+    }
+    qDebug() << "ok 3";
+    ////////
+        
+}
+
+void BranchObj::repositionContainers()
+{
+    qDebug() << "BO::repositionContainers  this = " << this << "branchContainer = " << branchContainer;
+    branchContainer->reposition();
+}
+
+void BranchObj::addContainer(BranchObj *bo)
+{
+    // FIXME-0 add container of bi to childrenContainer
+    childrenContainer->addContainer(bo->getContainer());
+}
+
+Container* BranchObj::getContainer()
+{
+    return branchContainer;
 }
 
 QRectF BranchObj::getTotalBBox() { return bboxTotal; }

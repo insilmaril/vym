@@ -6,6 +6,8 @@
 #include "ornamentedobj.h"
 #include "xlinkobj.h"
 
+class Container;
+
 /*! \brief A branch visible in the map */
 
 /////////////////////////////////////////////////////////////////////////////
@@ -51,7 +53,12 @@ class BranchObj : public OrnamentedObj {
     virtual void reposition();
     virtual void unsetAllRepositionRequests();
 
-    virtual QRectF getTotalBBox(); // return size of BBox including children
+    void createContainers();        // Create containers and sub objects
+    void repositionContainers();
+    void addContainer(BranchObj *bo);
+    Container* getContainer();
+
+    virtual QRectF getTotalBBox();  // return size of BBox including children
     virtual ConvexPolygon getBoundingPolygon();
     virtual void calcBBoxSizeWithChildren(); // calc size of  BBox including
                                              // children recursivly
@@ -62,6 +69,13 @@ class BranchObj : public OrnamentedObj {
 
   protected:
     AnimPoint anim;
+
+  private:
+    // FIXME-0 testing
+    Container *branchContainer;
+    Container *headingContainer;
+    Container *childrenContainer;
+    HeadingObj *headingObj;
 };
 
 #endif

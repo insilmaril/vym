@@ -6,7 +6,6 @@
 
 #include <QList>
 
-class Container;
 class QString;
 class QGraphicsScene;
 class BranchObj;
@@ -44,10 +43,6 @@ class BranchItem : public MapItem {
 
   private:
     Task *task;
-
-    Container *branchContainer;
-    Container *headingContainer;
-    Container *childrenContainer;
 
   public:
     virtual void scroll();
@@ -107,9 +102,6 @@ class BranchItem : public MapItem {
                      false); //! update related fonts, parObjects, links, ...
     virtual BranchObj *getBranchObj();
 
-    void repositionContainers();
-    void addContainer(BranchItem *bi);
-    Container* getContainer();
     virtual BranchObj *createMapObj(
         QGraphicsScene *scene); //! Create classic object in GraphicsView
 };

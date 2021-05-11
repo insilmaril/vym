@@ -2,7 +2,6 @@
 
 #include "attributeitem.h"
 #include "branchobj.h"
-#include "container.h"
 #include "task.h"
 #include "taskmodel.h"
 #include "vymmodel.h"
@@ -37,8 +36,6 @@ BranchItem::BranchItem(const QList<QVariant> &data, TreeItem *parent)
     lastSelectedBranchNumAlt = 0;
 
     task = NULL;
-
-    branchContainer = NULL; 
 }
 
 BranchItem::~BranchItem()
@@ -47,12 +44,6 @@ BranchItem::~BranchItem()
     if (mo) {
         delete mo;
         mo = NULL;
-    }
-
-    if (branchContainer) {
-        delete branchContainer;
-        delete headingContainer;
-        delete childrenContainer;
     }
 
     clear();
@@ -523,64 +514,22 @@ void BranchItem::updateStyles(const bool &keepFrame)
 
 BranchObj *BranchItem::getBranchObj() { return (BranchObj *)mo; }
 
-void BranchItem::repositionContainers()
-{
-    branchContainer->reposition();
-}
-
-void BranchItem::addContainer(BranchItem *bi)
-{
-    // FIXME-0 add container of bi to childrenContainer
-    childrenContainer->addContainer(bi->getContainer());
-}
-
-Container*  BranchItem::getContainer()
-{
-    return branchContainer;
-}
-
 BranchObj *BranchItem::createMapObj(QGraphicsScene *scene)
 {
-    // FIXME-0 testing containers for new layout
-    qDebug() << "BI::createMO for BI= " << this << "d=" << depth();
-    branchContainer = new Container (NULL, this);
-    branchContainer->setName("branch");
-    branchContainer->setBrush(QColor(Qt::blue));
-    branchContainer->setContentType(Container::Containers);
-    branchContainer->setLayoutType(Container::Horizontal);
-    scene->addItem (branchContainer);
-
-    headingContainer = new Container ();
-    headingContainer->setName("heading");
-    headingContainer->setBrush(QColor(Qt::gray));
-    scene->addItem (headingContainer);
-    
-    HeadingObj* ho = new HeadingObj(headingContainer);
-    ho->setText("Foobar");
-
-    childrenContainer = new Container ();
-    childrenContainer->setName("children");
-    childrenContainer->setBrush(QColor(Qt::green));
-    childrenContainer->setContentType(Container::Containers);
-    childrenContainer->setLayoutType(Container::Vertical);
-    scene->addItem (childrenContainer);
-    
-    branchContainer->addContainer(headingContainer);
-    branchContainer->addContainer(childrenContainer);
-
-    branchContainer->reposition();
-
-    ////////
-        
+    qDebug() << "BI::createMO  scene = " << scene;
     BranchObj *newbo;
 
     if (parentItem == rootItem) {
+        qDebug() << "BI::createMO  MapCenter a!";
         newbo = new BranchObj(NULL, this);
         mo = newbo;
         scene->addItem(newbo);
+        newbo->createContainers();
+        qDebug() << "BI::createMO  MapCenter b!";
     }
     else {
         newbo = new BranchObj(((MapItem *)parentItem)->getMO(), this);
+        newbo->createContainers();
         mo = newbo;
         // Set visibility depending on parents
         if (parentItem != rootItem &&

@@ -6,9 +6,10 @@
 
 Container::Container(QGraphicsItem *parent, TreeItem *ti) : QGraphicsRectItem(parent)
 {
-    qDebug() << "* Const Container this = " << this << "  branchitem = " << ti;
+    qDebug() << "* Const Container begin this = " << this << "  branchitem = " << ti;
     treeItem = ti;
     init();
+    qDebug() << "* Const Container end   this = " << this;
 }
 
 Container::~Container()
