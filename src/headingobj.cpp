@@ -17,7 +17,7 @@ HeadingObj::HeadingObj(QGraphicsItem *parent) : MapObj(parent)
 
 HeadingObj::~HeadingObj()
 {
-    qDebug() << "Destr. HeadingObj " << heading;
+    qDebug() << "Destr. HeadingObj " << this << heading;
     while (!textline.isEmpty())
         delete textline.takeFirst();
 }

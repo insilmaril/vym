@@ -1,6 +1,5 @@
 #include <QDebug>
 
-#include "branchobj.h"
 
 #include "attributeitem.h"
 #include "branchitem.h"
@@ -368,9 +367,14 @@ void BranchObj::updateVisuals()
         qWarning("BranchObj::udpateHeading treeItem==NULL");
         return;
     }
+
+    // Update heading
     QString s = treeItem->getHeadingText();
     if (s != heading->text())
         heading->setText(s);
+
+    // Update heading in container
+    headingObj->setText(s);
 
     // Update standard flags active in TreeItem
     QList<QUuid> TIactiveFlagUids = treeItem->activeFlagUids();
@@ -597,11 +601,8 @@ void BranchObj::unsetAllRepositionRequests()
 
 void BranchObj::createContainers()
 {
-    // FIXME-0 testing containers for new layout
-
     if (!treeItem) return;
 
-    qDebug() << "ok 0 scene = " << scene();
     if (scene() ) {
         branchContainer = new Container (NULL, treeItem);
         branchContainer->setName("branch");
@@ -610,16 +611,14 @@ void BranchObj::createContainers()
         branchContainer->setLayoutType(Container::Horizontal);
         scene()->addItem (branchContainer);
 
-        qDebug() << "ok 1";
         headingContainer = new Container ();
         headingContainer->setName("heading");
         headingContainer->setBrush(QColor(Qt::gray));
         scene()->addItem (headingContainer);
         
         headingObj = new HeadingObj(headingContainer);
-        headingObj->setText("Foobar");
+        headingContainer->setContent(headingObj);
 
-        qDebug() << "ok 2";
         childrenContainer = new Container ();
         childrenContainer->setName("children");
         childrenContainer->setBrush(QColor(Qt::green));
@@ -632,9 +631,6 @@ void BranchObj::createContainers()
 
         branchContainer->reposition();
     }
-    qDebug() << "ok 3";
-    ////////
-        
 }
 
 void BranchObj::repositionContainers()

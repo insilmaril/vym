@@ -3,11 +3,12 @@
 
 #include <QGraphicsRectItem>
 
+class MapObj;
 class TreeItem;
 
 class Container : public QGraphicsRectItem {
   public:
-    enum ContentType {Undefined, MapObj, Containers};
+    enum ContentType {Undefined, MapObject, Containers};
     enum LayoutType {Horizontal, Vertical};
     enum HorizontalAlignment {Top, Middle, Bottom};
     enum VerticalAlignment  {Left, Center, Right};
@@ -18,7 +19,8 @@ class Container : public QGraphicsRectItem {
     virtual void copy(Container *);
 
     void setContentType(const ContentType &ctype);
-    ContentType contentType();
+    ContentType getContentType();
+    void setContent(MapObj* mapObj);
 
     void setLayoutType(const LayoutType &ltype);
 
@@ -34,16 +36,16 @@ class Container : public QGraphicsRectItem {
     void setName(const QString &n);
     QString getName();
 
-  protected:
-    ContentType contType;
+  private:
+    ContentType contentType;
+    MapObj *contentObj; //! Content object, e.g. HeadingObj or FlagRowObj
+    TreeItem *treeItem; //! Crossreference to "parent" TreeItem 
 
-    TreeItem *treeItem; //! Crossrefence to treemodel 
     QString name;
 
     QList <Container*> childrenList;
 
     LayoutType layout;
-
 };
 
 #endif

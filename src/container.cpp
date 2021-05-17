@@ -2,6 +2,7 @@
 
 #include "container.h"
 
+#include "mapobj.h"
 #include "treeitem.h"
 
 Container::Container(QGraphicsItem *parent, TreeItem *ti) : QGraphicsRectItem(parent)
@@ -31,7 +32,8 @@ Container::~Container()
 
 void Container::init()
 {
-    contType = Undefined;
+    contentType = Undefined;
+    contentObj = nullptr;
 
     layout = Horizontal;
 
@@ -41,7 +43,6 @@ void Container::init()
     qreal h = qrand() % 200 + 20;
     setRect(QRectF(p.x(), p.y(), w, h));
     show();
-
 }
 
 void Container::copy(Container *other)  // FIXME-0 not implemented
@@ -51,12 +52,18 @@ void Container::copy(Container *other)  // FIXME-0 not implemented
 
 void Container::setContentType(const ContentType &ctype)
 {
-    contType = ctype;
+    contentType = ctype;
 }
 
-Container::ContentType Container::contentType()
+Container::ContentType Container::getContentType()
 {
-    return contType;
+    return contentType;
+}
+
+void Container::setContent(MapObj *mapObj)
+{
+    contentObj = mapObj;
+    contentType = MapObject;
 }
 
 void Container::setLayoutType(const LayoutType &ltype)
@@ -90,17 +97,22 @@ void Container::reposition()
 
     // a) calc sizes of subcontainers based on their layouts
     
-    if (contType == Containers  ) {
+    if (contentType == Containers  ) {
         if (subContainerCount() == 0) {
             r.setWidth(10); // FIXME-0 testing only
             r.setHeight(10);
             setRect(r);
         }
+    } else if (contentType == MapObject) {
+        r.setWidth(contentObj->getBBox().width());
+        r.setHeight(contentObj->getBBox().height());
+        setRect(r);
+        qDebug() << "  Setting r=" << r;
     }
 
     foreach (Container *c, childrenList) {
         // FIXME-0 don't call, if c has no children, otherwise sizes become 0
-        if (c->contType == Containers) {
+        if (c->contentType == Containers || c->contentType == MapObject) {
             c->reposition();
         }
     }
