@@ -57,6 +57,9 @@ class TextEditor : public QMainWindow {
     void editCopyAll();
     void clear();
 
+  protected slots:
+    void deleteAll();
+
   signals:
     void textHasChanged(const VymText &vt);
     void windowClosed();
