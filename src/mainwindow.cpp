@@ -2009,7 +2009,7 @@ void Main::setupSelectActions()
     switchboard.addSwitch("gotoLinkedMap", shortcutScope, a, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(editGoToLinkedMap()));
     actionListBranches.append(a);
-    actionMoveToTarget = a;
+    actionGoToTargetLinkedMap = a;
 
     a = new QAction(QPixmap(":/selectprevious.png"),
                     tr("Select previous", "Edit menu"), this);
@@ -5260,27 +5260,41 @@ void Main::editMoveToTarget()
     if (initTargetsMenu(model, targetsContextMenu)) {
         QAction *a = targetsContextMenu->exec(QCursor::pos());
         if (a) {
-            TreeItem *ti = model->findID(a->data().toUInt());
+            TreeItem *dsti = model->findID(a->data().toUInt());
+            /*
             BranchItem *selbi = model->getSelectedBranch();
             if (!selbi)
                 return;
+            */
 
-            if (ti && ti->isBranchLikeType() && selbi) {
-                BranchItem *pi = selbi->parentBranch();
-                // If branch below exists, select that one
-                // Makes it easier to quickly resort using the MoveTo function
-                BranchItem *below = pi->getBranchNum(selbi->num() + 1);
-                LinkableMapObj *lmo = selbi->getLMO();
-                QPointF orgPos;
-                if (lmo)
-                    orgPos = lmo->getAbsPos();
+            QList<TreeItem *> itemList = model->getSelectedItems();
+            if (itemList.count() < 1) return;
 
-                if (model->relinkBranch(selbi, (BranchItem *)ti, -1, true,
-                                        orgPos)) {
-                    if (below)
-                        model->select(below);
-                    else if (pi)
-                        model->select(pi);
+            if (dsti && dsti->isBranchLikeType() ) {
+                BranchItem *selbi;
+                BranchItem *pi;
+                foreach (TreeItem *ti, itemList) {
+                    if (ti->isBranchLikeType() )
+                    {
+                        selbi = (BranchItem*)ti;
+                        pi = selbi->parentBranch();
+                        
+                        // If branch below exists, select that one
+                        // Makes it easier to quickly resort using the MoveTo function
+                        BranchItem *below = pi->getBranchNum(selbi->num() + 1);
+                        LinkableMapObj *lmo = selbi->getLMO();
+                        QPointF orgPos;
+                        if (lmo)
+                            orgPos = lmo->getAbsPos();
+
+                        if (model->relinkBranch(selbi, (BranchItem *)dsti, -1, true,
+                                                orgPos)) {
+                            if (below)
+                                model->select(below);
+                            else if (pi)
+                                model->select(pi);
+                        }
+                    }
                 }
             }
         }
@@ -6025,6 +6039,11 @@ void Main::updateActions()
 
     VymModel *m = currentModel();
     if (m) {
+        QList<TreeItem *> seltis = m->getSelectedItems();
+        QList<BranchItem *> selbis = m->getSelectedBranches();
+        TreeItem *selti = m->getSelectedItem();
+        BranchItem *selbi = m->getSelectedBranch();  // FIXME-0 still needed with selbis?
+
         // readonly mode
         if (m->isReadOnly()) {
             // Disable toolbars
@@ -6138,10 +6157,10 @@ void Main::updateActions()
                 .arg(desc)
                 .arg(dest));
 
-        TreeItem *selti = m->getSelectedItem();
-        BranchItem *selbi = m->getSelectedBranch();
 
-        if (selti) { // Tree Item selected
+        if (seltis.count() > 0) { // Tree Item selected
+            selti = seltis.first(); // FIXME-2 at least start with first TreeItem
+
             actionToggleTarget->setChecked(selti->isTarget());
             actionDelete->setEnabled(true);
             actionDeleteAlt->setEnabled(true);
@@ -6153,7 +6172,9 @@ void Main::updateActions()
                 actionFormatHideLinkUnselected->setEnabled(true);
             }
 
-            if (selbi) { // Branch Item selected
+            if (selbis.count() > 0) { // Branch Item selected
+                selbi = selbis.first(); // FIXME-2 start at least with first selbi
+
                 for (int i = 0; i < actionListBranches.size(); ++i)
                     actionListBranches.at(i)->setEnabled(true);
 
@@ -6236,7 +6257,7 @@ void Main::updateActions()
                 if (!selbi->canMoveDown())
                     actionMoveDown->setEnabled(false);
 
-                if (selbi->branchCount() < 2) {
+                if (selbi->branchCount() < 2) { 
                     actionSortChildren->setEnabled(false);
                     actionSortBackChildren->setEnabled(false);
                 }
@@ -6295,7 +6316,6 @@ void Main::updateActions()
             actionDeleteAlt->setEnabled(true);
         }
 
-        QList<BranchItem *> selbis = m->getSelectedBranches();
         if (selbis.count() > 0)
             actionFormatColorBranch->setEnabled(true);
     }

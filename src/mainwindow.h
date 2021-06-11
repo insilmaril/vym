@@ -513,6 +513,7 @@ class Main : public QMainWindow {
     QAction *actionResetSelectionSize;
 
     QAction *actionToggleTarget;
+    QAction *actionGoToTargetLinkedMap;
     QAction *actionGoToTarget;
     QAction *actionMoveToTarget;
     QAction *actionSelectPrevious;
