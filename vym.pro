@@ -315,13 +315,13 @@ isEmpty( DATADIR ) {
     DATADIR = $${PREFIX}
 }
 
-message( "Installation directory (PREFIX): $$PREFIX" )
-
-
 target.path = $${BINDIR}
 INSTALLS += target
 
-DEFINES += "VYMBASEDIR='\"$${DATADIR}\"'"
+DEFINES += "VYMBASEDIR='\"$${DATADIR}/vym\"'"
+
+message( "PREFIX Dir: $$PREFIX" )
+message( "vymBaseDir: $$VYMBASEDIR" )
 
 language.files = lang/*.qm
 language.path = $${DATADIR}/vym/lang
