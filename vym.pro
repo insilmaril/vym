@@ -316,6 +316,7 @@ isEmpty( DATADIR ) {
 }
 
 message( "Installation directory (PREFIX): $$PREFIX" )
+message( "Data directory (DATADIR): $$DATADIR" )
 
 
 target.path = $${BINDIR}
