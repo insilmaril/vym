@@ -7,6 +7,7 @@ class TaskFilterModel : public QSortFilterProxyModel {
   public:
     void setFilter(bool b);
     void setFilterNew(bool b);
+    void setFilterBlocker(bool b);
     void setMapFilter(const QString &s);
     void setFilterFlags1(bool b);
     void setFilterFlags2(bool b);
@@ -19,6 +20,7 @@ class TaskFilterModel : public QSortFilterProxyModel {
     bool useFilter;
     QString mapFilter;
     bool filterNew;
+    bool filterBlocker;
     bool filterFlags1;
     bool filterFlags2;
     bool filterFlags3;

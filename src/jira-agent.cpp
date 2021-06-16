@@ -239,7 +239,7 @@ void JiraAgent::setModelJiraData(VymModel *model, BranchItem *bi,
 
     QString idName = ticketID;
 
-    if (solvedStates.contains(ticket_status[ticketID])) {
+    if (solvedStates.contains(ticket_resolution[ticketID])) {
         idName = "(" + idName + ")";
         model->colorSubtree(Qt::blue, bi);
     }

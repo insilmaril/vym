@@ -2009,7 +2009,7 @@ void Main::setupSelectActions()
     switchboard.addSwitch("gotoLinkedMap", shortcutScope, a, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(editGoToLinkedMap()));
     actionListBranches.append(a);
-    actionMoveToTarget = a;
+    actionGoToTargetLinkedMap = a;
 
     a = new QAction(QPixmap(":/selectprevious.png"),
                     tr("Select previous", "Edit menu"), this);
@@ -5260,27 +5260,41 @@ void Main::editMoveToTarget()
     if (initTargetsMenu(model, targetsContextMenu)) {
         QAction *a = targetsContextMenu->exec(QCursor::pos());
         if (a) {
-            TreeItem *ti = model->findID(a->data().toUInt());
+            TreeItem *dsti = model->findID(a->data().toUInt());
+            /*
             BranchItem *selbi = model->getSelectedBranch();
             if (!selbi)
                 return;
+            */
 
-            if (ti && ti->isBranchLikeType() && selbi) {
-                BranchItem *pi = selbi->parentBranch();
-                // If branch below exists, select that one
-                // Makes it easier to quickly resort using the MoveTo function
-                BranchItem *below = pi->getBranchNum(selbi->num() + 1);
-                LinkableMapObj *lmo = selbi->getLMO();
-                QPointF orgPos;
-                if (lmo)
-                    orgPos = lmo->getAbsPos();
+            QList<TreeItem *> itemList = model->getSelectedItems();
+            if (itemList.count() < 1) return;
 
-                if (model->relinkBranch(selbi, (BranchItem *)ti, -1, true,
-                                        orgPos)) {
-                    if (below)
-                        model->select(below);
-                    else if (pi)
-                        model->select(pi);
+            if (dsti && dsti->isBranchLikeType() ) {
+                BranchItem *selbi;
+                BranchItem *pi;
+                foreach (TreeItem *ti, itemList) {
+                    if (ti->isBranchLikeType() )
+                    {
+                        selbi = (BranchItem*)ti;
+                        pi = selbi->parentBranch();
+                        
+                        // If branch below exists, select that one
+                        // Makes it easier to quickly resort using the MoveTo function
+                        BranchItem *below = pi->getBranchNum(selbi->num() + 1);
+                        LinkableMapObj *lmo = selbi->getLMO();
+                        QPointF orgPos;
+                        if (lmo)
+                            orgPos = lmo->getAbsPos();
+
+                        if (model->relinkBranch(selbi, (BranchItem *)dsti, -1, true,
+                                                orgPos)) {
+                            if (below)
+                                model->select(below);
+                            else if (pi)
+                                model->select(pi);
+                        }
+                    }
                 }
             }
         }
@@ -6025,6 +6039,14 @@ void Main::updateActions()
 
     VymModel *m = currentModel();
     if (m) {
+        QList<TreeItem *> seltis = m->getSelectedItems();
+        QList<BranchItem *> selbis = m->getSelectedBranches();
+        TreeItem *selti;
+        selti = (seltis.count() == 1) ? seltis.first() : nullptr;
+
+        BranchItem *selbi;
+        selbi = (selbis.count() == 1) ? selbis.first() : nullptr;
+
         // readonly mode
         if (m->isReadOnly()) {
             // Disable toolbars
@@ -6138,33 +6160,34 @@ void Main::updateActions()
                 .arg(desc)
                 .arg(dest));
 
-        TreeItem *selti = m->getSelectedItem();
-        BranchItem *selbi = m->getSelectedBranch();
 
-        if (selti) { // Tree Item selected
-            actionToggleTarget->setChecked(selti->isTarget());
+        if (seltis.count() > 0) { // Tree Item selected
+            if (selti) actionToggleTarget->setChecked(selti->isTarget());
             actionDelete->setEnabled(true);
             actionDeleteAlt->setEnabled(true);
             actionDeleteChildren->setEnabled(true);
 
-            if (selbi || selti->getType() == TreeItem::Image) {
+            if (selti && selti->getType() == TreeItem::Image) {
                 actionFormatHideLinkUnselected->setChecked(
                     ((MapItem *)selti)->getHideLinkUnselected());
                 actionFormatHideLinkUnselected->setEnabled(true);
             }
 
-            if (selbi) { // Branch Item selected
+            if (selbis.count() > 0) { // Branch Item selected
                 for (int i = 0; i < actionListBranches.size(); ++i)
                     actionListBranches.at(i)->setEnabled(true);
 
                 actionHeading2URL->setEnabled(true);
 
                 // Note
-                actionGetURLsFromNote->setEnabled(!selbi->getNote().isEmpty());
+                if (selbi) actionGetURLsFromNote->setEnabled(!selbi->getNote().isEmpty());
 
                 // Take care of xlinks
                 // FIXME-4 similar code in mapeditor mousePressEvent
-                int b = selbi->xlinkCount();
+                bool b = false;
+                if (selbi && selbi->xlinkCount() > 0)
+                    b = true;
+
                 branchXLinksContextMenuEdit->setEnabled(b);
                 branchXLinksContextMenuFollow->setEnabled(b);
                 branchXLinksContextMenuEdit->clear();
@@ -6184,17 +6207,22 @@ void Main::updateActions()
                     }
                 }
                 // Standard and user flags
-                standardFlagsMaster->updateToolBar(selbi->activeFlagUids());
-                userFlagsMaster->updateToolBar(selbi->activeFlagUids());
+                if (selbi)
+                {
+                    standardFlagsMaster->updateToolBar(selbi->activeFlagUids());
+                    userFlagsMaster->updateToolBar(selbi->activeFlagUids());
+                }
 
                 // System Flags
                 actionToggleScroll->setEnabled(true);
-                if (selbi->isScrolled())
+                if (selbi && selbi->isScrolled())
                     actionToggleScroll->setChecked(true);
                 else
                     actionToggleScroll->setChecked(false);
 
-                if (selti->getURL().isEmpty()) {
+                QString url;
+                if (selti) url = selti->getURL();
+                if (url.isEmpty()) {
                     actionOpenURL->setEnabled(false);
                     actionOpenURLTab->setEnabled(false);
                     actionGetJiraData->setEnabled(false);
@@ -6205,21 +6233,20 @@ void Main::updateActions()
                     actionOpenURLTab->setEnabled(true);
 
                     bool ok = false;
-                    QString u = selti->getURL();
                     foreach (QString prefix, jiraPrefixList) {
-                        if (u.contains(prefix)) {
+                        if (url.contains(prefix)) {
                             ok = true;
                             break;
                         }
                     }
                     actionGetJiraData->setEnabled(ok && jiraClientAvailable);
-                    if (u.contains(
+                    if (url.contains(
                             settings.value("/confluence/url", "").toString()))
                         actionGetConfluencePageName->setEnabled(true);
                     else
                         actionGetConfluencePageName->setEnabled(false);
                 }
-                if (selti->getVymLink().isEmpty()) {
+                if (selti && selti->getVymLink().isEmpty()) {
                     actionOpenVymLink->setEnabled(false);
                     actionOpenVymLinkBackground->setEnabled(false);
                     actionDeleteVymLink->setEnabled(false);
@@ -6230,25 +6257,32 @@ void Main::updateActions()
                     actionDeleteVymLink->setEnabled(true);
                 }
 
-                if (!selbi->canMoveUp())
+                if ((selbi && !selbi->canMoveUp()) || selbis.count() > 1)
                     actionMoveUp->setEnabled(false);
 
-                if (!selbi->canMoveDown())
+                if ((selbi && !selbi->canMoveDown()) || selbis.count() > 1)
                     actionMoveDown->setEnabled(false);
 
-                if (selbi->branchCount() < 2) {
+                if ((selbi && selbi->branchCount() < 2)  || selbis.count() > 1) { 
                     actionSortChildren->setEnabled(false);
                     actionSortBackChildren->setEnabled(false);
                 }
 
-                actionToggleHideExport->setEnabled(true);
-                actionToggleHideExport->setChecked(selbi->hideInExport());
+                if (selbi) {
+                    actionToggleHideExport->setEnabled(true);
+                    actionToggleHideExport->setChecked(selbi->hideInExport());
 
-                actionToggleTask->setEnabled(true);
-                if (!selbi->getTask())
-                    actionToggleTask->setChecked(false);
-                else
-                    actionToggleTask->setChecked(true);
+                    actionToggleTask->setEnabled(true);
+                    if (!selbi->getTask())
+                        actionToggleTask->setChecked(false);
+                    else
+                        actionToggleTask->setChecked(true);
+                } else
+                {
+                    actionToggleHideExport->setEnabled(false);
+                    actionToggleTask->setEnabled(false);
+                }
+
 
                 if (clipboardItemCount > 0)
                     actionPaste->setEnabled(true);
@@ -6258,7 +6292,7 @@ void Main::updateActions()
                 actionToggleTarget->setEnabled(true);
             } // end of BranchItem
 
-            if (selti->getType() == TreeItem::Image) {
+            if (selti && selti->getType() == TreeItem::Image) {
                 for (int i = 0; i < actionListBranches.size(); ++i)
                     actionListBranches.at(i)->setEnabled(false);
 
@@ -6289,13 +6323,11 @@ void Main::updateActions()
         }
 
         // Check (at least for some) multiple selection //FIXME-4
-        QList<TreeItem *> selItems = m->getSelectedItems();
-        if (selItems.count() > 0) {
+        if (seltis.count() > 0) {
             actionDelete->setEnabled(true);
             actionDeleteAlt->setEnabled(true);
         }
 
-        QList<BranchItem *> selbis = m->getSelectedBranches();
         if (selbis.count() > 0)
             actionFormatColorBranch->setEnabled(true);
     }

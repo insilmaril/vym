@@ -78,11 +78,23 @@ MapEditor::MapEditor(VymModel *vm)
     connect(a, SIGNAL(triggered()), this, SLOT(cursorUp()));
     addAction(a);
 
+    a = new QAction("Add upper branch to selection", this);
+    a->setShortcut(Qt::Key_Up + Qt::SHIFT);
+    a->setShortcutContext(Qt::WidgetShortcut);
+    addAction(a);
+    connect(a, SIGNAL(triggered()), this, SLOT(cursorUpToggleSelection()));
+
     a = new QAction("Select lower branch", this);
     a->setShortcut(Qt::Key_Down);
     a->setShortcutContext(Qt::WidgetShortcut);
     addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(cursorDown()));
+
+    a = new QAction("Add lower branch to selection", this);
+    a->setShortcut(Qt::Key_Down + Qt::SHIFT);
+    a->setShortcutContext(Qt::WidgetShortcut);
+    addAction(a);
+    connect(a, SIGNAL(triggered()), this, SLOT(cursorDownToggleSelection()));
 
     a = new QAction("Select left branch", this);
     a->setShortcut(Qt::Key_Left);
@@ -929,9 +941,51 @@ void MapEditor::cursorUp()
     if (state == MapEditor::EditingHeading)
         return;
 
-    BranchItem *bi = model->getSelectedBranch();
-    if (bi)
-        model->select(getBranchAbove(bi));
+    BranchItem *selbi = model->getSelectedBranch();
+    BranchItem *bi;
+    if (selbi) {
+        // Exactly one branch is currently selected
+        bi = getBranchAbove(selbi);
+        if (bi) {
+            model->select(bi);
+        } 
+    } else {
+        // Nothing selected or already multiple selections
+        TreeItem *ti = model->lastToggledItem();
+        if (ti && ti->isBranchLikeType()) {
+            bi = getBranchAbove( (BranchItem*)ti);
+            if (bi) 
+                model->select(bi);
+        }
+    }
+}
+
+void MapEditor::cursorUpToggleSelection()
+{
+    if (state == MapEditor::EditingHeading)
+        return;
+
+    BranchItem *selbi = model->getSelectedBranch();
+    BranchItem *bi;
+
+    if (selbi) {
+        // Exactly one branch is currently selected
+        bi = getBranchAbove(selbi);
+        if (bi) model->selectToggle(bi);
+    } else {
+        // Nothing selected or already multiple selections
+        TreeItem *ti = model->lastToggledItem();
+        if (ti && ti->isBranchLikeType()) {
+            if (lastToggleDirection == toggleUp)
+                bi = getBranchAbove( (BranchItem*)ti);
+            else
+                bi = (BranchItem*)ti;
+
+            if (bi) 
+                model->selectToggle(bi);
+        }
+    }
+    lastToggleDirection = toggleUp;
 }
 
 void MapEditor::cursorDown()
@@ -939,14 +993,63 @@ void MapEditor::cursorDown()
     if (state == MapEditor::EditingHeading)
         return;
 
-    BranchItem *bi = model->getSelectedBranch();
-    if (bi)
-        model->select(getBranchBelow(bi));
+    BranchItem *selbi = model->getSelectedBranch();
+    BranchItem *bi;
+    if (selbi) {
+        // Exactly one branch is currently selected
+        bi = getBranchBelow(selbi);
+        if (bi) {
+            model->select(bi);
+        } 
+    } else {
+        // Nothing selected or already multiple selections
+        TreeItem *ti = model->lastToggledItem();
+        if (ti && ti->isBranchLikeType()) {
+            bi = getBranchBelow( (BranchItem*)ti);
+
+            if (bi) 
+                model->select(bi);
+        }
+    }
+}
+
+void MapEditor::cursorDownToggleSelection()
+{
+    if (state == MapEditor::EditingHeading)
+        return;
+
+    BranchItem *selbi = model->getSelectedBranch();
+    BranchItem *bi;
+    if (selbi) {
+        // Exactly one branch is currently selected
+        bi = getBranchBelow(selbi);
+        if (bi) {
+            model->selectToggle(bi);
+        } 
+    } else {
+        // Nothing selected or already multiple selections
+        TreeItem *ti = model->lastToggledItem();
+        if (ti && ti->isBranchLikeType()) {
+            if (lastToggleDirection == toggleDown)
+                bi = getBranchBelow( (BranchItem*)ti);
+            else
+                bi = (BranchItem*)ti;
+
+            if (bi) 
+                model->selectToggle(bi);
+        }
+    }
+    lastToggleDirection = toggleDown;
 }
 
 void MapEditor::cursorLeft()
 {
     TreeItem *ti = model->getSelectedItem();
+    if (!ti) {
+        ti = model->lastToggledItem();
+        if (!ti) return;
+    }
+
     BranchItem *bi = getLeftBranch(ti);
     if (bi)
         model->select(bi);
@@ -960,6 +1063,11 @@ void MapEditor::cursorLeft()
 void MapEditor::cursorRight()
 {
     TreeItem *ti = model->getSelectedItem();
+    if (!ti) {
+        ti = model->lastToggledItem();
+        if (!ti) return;
+    }
+
     BranchItem *bi = getRightBranch(ti);
     if (bi)
         model->select(bi);
@@ -1240,8 +1348,10 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
 
     // Select the clicked object, if not moving without linking
     if (ti_found && (e->modifiers() & Qt::ShiftModifier)) {
-        if (mainWindow->getModMode() == Main::ModModePoint)
+        if (mainWindow->getModMode() == Main::ModModePoint) {
             model->selectToggle(ti_found);
+            lastToggleDirection = toggleUndefined;
+        }
     }
     else
         model->select(ti_found);

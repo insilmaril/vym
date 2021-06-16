@@ -5577,8 +5577,9 @@ bool VymModel::selectToggle(TreeItem *ti)
 {
     if (ti) {
         selModel->select(index(ti), QItemSelectionModel::Toggle);
-        // appendSelection();	// FIXME-4 selection history not implemented yet
+        // appendSelectionToHistory();	// FIXME-4 selection history not implemented yet
         // for multiselections
+        lastToggledUuid = ti->getUuid();
         return true;
     }
     return false;
@@ -5601,7 +5602,7 @@ bool VymModel::select(const QModelIndex &index)
                 reposition();
         }
         selModel->select(index, QItemSelectionModel::ClearAndSelect);
-        appendSelection();
+        appendSelectionToHistory();
         return true;
     }
     return false;
@@ -5680,11 +5681,11 @@ void VymModel::resetSelectionHistory()
     selectionHistory.clear();
     currentSelection = -1;
     keepSelectionHistory = false;
-    appendSelection();
+    appendSelectionToHistory();
 }
 
-void VymModel::appendSelection() // FIXME-4 history unable to cope with multiple
-                                 // selections
+void VymModel::appendSelectionToHistory() // FIXME-4 history unable to cope with multiple
+                                          // selections
 {
     uint id = 0;
     TreeItem *ti = getSelectedItem();
@@ -5702,6 +5703,11 @@ void VymModel::emitShowSelection()
 {
     if (!repositionBlocked)
         emit(showSelection());
+}
+
+TreeItem* VymModel::lastToggledItem()
+{
+    return findUuid(lastToggledUuid);
 }
 
 void VymModel::emitNoteChanged(TreeItem *ti)

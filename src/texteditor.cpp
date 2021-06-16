@@ -345,7 +345,7 @@ void TextEditor::setupFileActions()
     actionFilePrint = a;
 
     a = new QAction(QPixmap(":/edittrash.png"), tr("&Delete All"), this);
-    connect(a, SIGNAL(triggered()), this, SLOT(clear()));
+    connect(a, SIGNAL(triggered()), this, SLOT(deleteAll()));
     fileMenu->addAction(a);
     tb->addAction(a);
     actionFileDeleteAll = a;
@@ -776,6 +776,11 @@ void TextEditor::clear()
     e->setTextColor(colorFont);
 
     blockChangedSignal = blockChangedOrg;
+}
+
+void TextEditor::deleteAll()
+{
+    e->clear();
 }
 
 void TextEditor::textSaveAs()
