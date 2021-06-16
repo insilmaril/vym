@@ -255,8 +255,8 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
     setupSettingsActions();
     setupContextMenus();
     setupMacros();
-    setupFlagActions();
     setupToolbars();
+    setupFlagActions();
 
     // Dock widgets ///////////////////////////////////////////////
     QDockWidget *dw;
@@ -2561,19 +2561,6 @@ void Main::setupFlagActions()
 
     addToolBarBreak();
 
-    // Create user flags
-    userFlagsToolbar =
-        addToolBar(tr("User Flags toolbar", "user Flags Toolbar"));
-    userFlagsToolbar->setObjectName("userFlagsTB");
-    userFlagsMaster->setToolBar(userFlagsToolbar);
-    userFlagsMaster->createConfigureAction();
-
-    // Create Standard Flags
-    standardFlagsToolbar =
-        addToolBar(tr("Standard Flags toolbar", "Standard Flag Toolbar"));
-    standardFlagsToolbar->setObjectName("standardFlagTB");
-    standardFlagsMaster->setToolBar(standardFlagsToolbar);
-
     // Add entry now, to avoid chicken and egg problem and position toolbar
     // after all others:
     flag =
@@ -3394,7 +3381,20 @@ void Main::setupToolbars()
     modModesToolbar->addAction(actionModModeXLink);
     modModesToolbar->addAction(actionModModeMoveObject);
     modModesToolbar->addAction(actionModModeMoveView);
-
+    
+    // Create flag toolbars (initialized later in setupFlagActions() )
+    addToolBarBreak();
+    standardFlagsToolbar =
+        addToolBar(tr("Standard Flags toolbar", "Standard Flag Toolbar"));
+    standardFlagsToolbar->setObjectName("standardFlagTB");
+    standardFlagsMaster->setToolBar(standardFlagsToolbar);
+    
+    userFlagsToolbar =
+        addToolBar(tr("User Flags toolbar", "user Flags Toolbar"));
+    userFlagsToolbar->setObjectName("userFlagsTB");
+    userFlagsMaster->setToolBar(userFlagsToolbar);
+    userFlagsMaster->createConfigureAction();
+    
     // Add all toolbars to View menu
     toolbarsMenu->addAction(fileToolbar->toggleViewAction());
     toolbarsMenu->addAction(clipboardToolbar->toggleViewAction());
