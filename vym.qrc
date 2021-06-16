@@ -145,7 +145,6 @@
     <file alias="undo.png">icons/undo.png</file>
     <file alias="view-video-projector.png">icons/video-projector.png</file>
     <file alias="view-filter.png">icons/view-filter.png</file>
-    <file alias="view-filter.png">icons/view-filter.png</file>
     <file alias="viewmag+.png">icons/viewmag+.png</file>
     <file alias="viewmag-.png">icons/viewmag-.png</file>
     <file alias="viewmag-reset.png">icons/viewmag-reset.png</file>
