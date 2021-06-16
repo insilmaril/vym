@@ -43,7 +43,7 @@ TaskEditor::TaskEditor(QWidget *)
     a->setToolTip(
         tr("Show only tasks from current map", "Filters in task Editor"));
     a->setCheckable(true);
-    a->setChecked(settings.value("/taskeditor/filterMap", false).toBool());
+    a->setChecked(settings.value("/taskeditor/filterMap", true).toBool());
     tb->addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(toggleFilterMap()));
     actionToggleFilterMap = a;
@@ -53,7 +53,7 @@ TaskEditor::TaskEditor(QWidget *)
                                      // );
     a->setToolTip(tr("Show only active tasks", "Filters in task Editor"));
     a->setCheckable(true);
-    a->setChecked(settings.value("/taskeditor/filterActive", false).toBool());
+    a->setChecked(settings.value("/taskeditor/filterActive", true).toBool());
     tb->addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(toggleFilterActive()));
     actionToggleFilterActive = a;
@@ -359,13 +359,13 @@ void TaskEditor::updateColumnLayout()
     i = 5;
     view->setColumnWidth(i, settings.value(s.arg(i) + "width", 80).toInt());
     view->setColumnHidden(i,
-                          settings.value(s.arg(i) + "hidden", false).toBool());
+                          settings.value(s.arg(i) + "hidden", true).toBool());
 
     // Map
     i = 6;
     view->setColumnWidth(i, settings.value(s.arg(i) + "width", 100).toInt());
     view->setColumnHidden(i,
-                          settings.value(s.arg(i) + "hidden", false).toBool());
+                          settings.value(s.arg(i) + "hidden", true).toBool());
 
     // Flags
     i = 7;
