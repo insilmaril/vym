@@ -21,6 +21,9 @@ SET(QtLibraries
     Qt5::Xml
 )
 
+# On Linux DBUS is used for IPC with vym
+# On openSUSE install it using:  zypper install dbus-1-devel
+
 FIND_PACKAGE(DBus1)
 
 IF(DBus1_FOUND)
