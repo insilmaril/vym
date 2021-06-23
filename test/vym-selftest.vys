@@ -1,0 +1,45 @@
+// vym selftest script
+
+vym.clearConsole();
+m1 = vym.currentMap();
+
+tests_total  = 0;
+tests_passed = 0;
+tests_failed = 0;
+
+// Function to compare and log values
+function expect(comment, v_real, v_expected) {
+	tests_total = tests_total +1;
+    if (v_real == v_expected) {
+        print ("PASS: " + comment);
+		tests_passed = tests_passed +1;
+    } else {
+        print ("FAIL: '" + comment + "' - Expected " + v_expected + ", but got " + v_real);
+		tests_failed = tests_failed +1;
+    }
+}
+
+// Summary
+function summary()
+{
+	print ("Tests total: " + tests_total);
+	print ("Tests passed: " + tests_passed);
+	print ("Tests failed: " + tests_failed);
+}
+center_0 = "mc:0";
+center_1 = "mc:1";
+main_a = "mc:0,bo:0";
+  branch_a = main_a + ",bo:0";
+  branch_b = main_a + ",bo:1";
+  branch_c = main_a + ",bo:2";
+main_b = "mc:0,bo:1"
+
+n_centers = 2
+
+
+// Testing the test function
+expect ("1 should equal 3", 1, 3);
+expect ("2 should equal 2", 2, 2);
+
+
+summary();

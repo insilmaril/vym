@@ -2,24 +2,9 @@
 
 require "#{ENV['PWD']}/scripts/vym-ruby"
 require 'date'
+require 'fileutils'
 require 'optparse'
 
-instance_name = 'test'
-
-options = {}
-OptionParser.new do |opts|
-  opts.banner = "Usage: vym-test.rb [options]"
-
-  opts.on('-d', '--directory  NAME', 'Directory name') { |s| options[:testdir] = s }
-end.parse!
-
-@testdir = options[:testdir]
-@testmap = ARGV[0]
-
-$tests_passed    = 0
-$tests_failed    = 0
-$tests_warnings  = 0
-$tests_total     = 0
 
 def waitkey
   puts "Press return to continue..."
@@ -81,7 +66,7 @@ def init_map( vym )
 
   #n = vym.mapCount.to_i
   #vym.loadMap (@testmap)
-  return vym.map ( 1 )
+  return vym.map (1)
 end
 
 def summary
@@ -91,31 +76,10 @@ def summary
   puts "Tests failed: #{$tests_failed}"
 end
 
-vym_mgr = VymManager.new
-#vym_mgr.show_running
-
-vym = vym_mgr.find(instance_name)
-if !vym
-  puts "Couldn't find instance name \"#{instance_name}\", please start one:"
-  puts "vym -l -n \"#{instance-name}\" -t test/default.vym"
-  exit
-end
-
-#######################
-@center_0="mc:0"
-@center_1="mc:1"
-@main_a="mc:0,bo:0"
-  @branch_a=@main_a+",bo:0"
-  @branch_b=@main_a+",bo:1"
-  @branch_c=@main_a+",bo:2"
-@main_b="mc:0,bo:1"
-
-@n_centers=2
-
 #######################
 def test_vym (vym)
   heading "Mainwindow checks:"
-  version = "2.6.220"
+  version = "2.8.0"
   expect_warning_only "Version is #{version}", vym.version, version
 
   expect "Loading map '#{@testmap}'", vym.loadMap(@testmap), true
@@ -157,28 +121,37 @@ def test_export (vym)
   map = init_map( vym )
 
   #HTML
-  exportname = "export-html"
-  htmlpath = "#{@testdir}/#{exportname}.html"
-  flagpath = "#{@testdir}/flags/flag-stopsign.png"
-  pngpath = "#{@testdir}/#{exportname}.png"
-  csspath = "#{@testdir}/vym.css"
-  map.exportMap("HTML", htmlpath, @testdir)
+  exportdir = "#{@testdir}/export-html"
+  Dir.mkdir(exportdir)
+  htmlpath = "#{exportdir}/output.html"
+  flagdir  = "#{exportdir}/flags"
+  pngpath = "#{exportdir}/output.png"
+  csspath = "#{exportdir}/vym.css"
+  map.exportMap("HTML", htmlpath, exportdir)
   expect "exportHTML: HTML file exists", File.exists?(htmlpath), true
   expect "exportHTML: HTML image exists", File.exists?(pngpath), true
-  expect "exportHTML: HTML flags exists", File.exists?(flagpath), true
+  expect "exportHTML: HTML flags dir exists", Dir.exists?(flagdir), true
+  if Dir.exists?(flagdir)
+    expect "exportHTML: HTML flags dir not empty", Dir.empty?(flagdir), false
+  end
   expect "exportHTML: HTML CSS exists", File.exists?(csspath), true
   File.delete(htmlpath)
-  File.delete(flagpath)
+  FileUtils.rm_r(flagdir)
   File.delete(pngpath)
   File.delete(csspath)
   map.exportMap("Last")
   expect "exportLast: HTML #{htmlpath} file exists", File.exists?(htmlpath), true
   expect "exportLast: HTML image exists", File.exists?(pngpath), true
-  expect "exportLast: HTML flags exists", File.exists?(flagpath), true
+  expect "exportHTML: HTML flags dir exists", Dir.exists?(flagdir), true
+  if Dir.exists?(flagdir)
+    expect "exportHTML: HTML flags dir not empty", Dir.empty?(flagdir), false
+  end
   expect "exportLast: HTML CSS exists", File.exists?(csspath), true
 
   #AO
-  filepath = "#{@testdir}/export-ao.txt"
+  exportdir = "#{@testdir}/export-ao"
+  Dir.mkdir(exportdir)
+  filepath = "#{exportdir}/output.txt"
   map.exportMap("AO", filepath)
   expect "exportAO:    AO file exists", File.exists?(filepath), true
   File.delete(filepath)
@@ -186,7 +159,9 @@ def test_export (vym)
   expect "exportLast:  AO file exists", File.exists?(filepath), true
 
   #ASCII
-  filepath = "#{@testdir}/export-ascii.txt"
+  exportdir = "#{@testdir}/export-ascii"
+  Dir.mkdir(exportdir)
+  filepath = "#{exportdir}/output.txt"
   map.exportMap("ASCII", filepath, false)
   expect "exportASCII: ASCII file exists", File.exists?(filepath), true
   File.delete(filepath)
@@ -194,7 +169,9 @@ def test_export (vym)
   expect "exportLast:  ASCII file exists", File.exists?(filepath), true
 
   #CSV
-  filepath = "#{@testdir}/export-csv.txt"
+  exportdir = "#{@testdir}/export-csv"
+  Dir.mkdir(exportdir)
+  filepath = "#{exportdir}/output.csv"
   map.exportMap("CSV", filepath)
   expect "exportCSV:    CSV file exists", File.exists?(filepath), true
   File.delete(filepath)
@@ -202,7 +179,9 @@ def test_export (vym)
   expect "exportLast:  CSV file exists", File.exists?(filepath), true
 
   #Image
-  filepath = "#{@testdir}/export-image.png"
+  exportdir = "#{@testdir}/export-image"
+  Dir.mkdir(exportdir)
+  filepath = "#{exportdir}/output.png"
   map.exportMap("Image", filepath,"PNG")
   expect "exportImage: PNG file exists", File.exists?(filepath), true
   File.delete(filepath)
@@ -210,7 +189,9 @@ def test_export (vym)
   expect "exportLast:  PNG file exists", File.exists?(filepath), true
 
   #LaTeX
-  filepath = "#{@testdir}/export-LaTeX.tex"
+  exportdir = "#{@testdir}/export-latex"
+  Dir.mkdir(exportdir)
+  filepath = "#{exportdir}/output.tex"
   map.exportMap("LaTeX", filepath)
   expect "exportLaTeX:  LaTeX file exists", File.exists?(filepath), true
   File.delete(filepath)
@@ -218,7 +199,9 @@ def test_export (vym)
   expect "exportLast:   LaTeX file exists", File.exists?(filepath), true
 
   #Markdown
-  filepath = "#{@testdir}/export-markdown.org"
+  exportdir = "#{@testdir}/export-markdown"
+  Dir.mkdir(exportdir)
+  filepath = "#{exportdir}/output.md"
   map.exportMap("Markdown", filepath)
   expect "exportMarkdown:  Markdown file exists", File.exists?(filepath), true
   File.delete(filepath)
@@ -226,7 +209,9 @@ def test_export (vym)
   expect "exportLast:     Markdown file exists", File.exists?(filepath), true
 
   #OrgMode
-  filepath = "#{@testdir}/export-orgmode.org"
+  exportdir = "#{@testdir}/export-orgmode"
+  Dir.mkdir(exportdir)
+  filepath = "#{exportdir}/output.org"
   map.exportMap("OrgMode", filepath)
   expect "exportOrgMode:  OrgMode file exists", File.exists?(filepath), true
   File.delete(filepath)
@@ -234,7 +219,9 @@ def test_export (vym)
   expect "exportLast:     OrgMode file exists", File.exists?(filepath), true
 
   #PDF
-  filepath = "#{@testdir}/export-pdf.pdf"
+  exportdir = "#{@testdir}/export-pdf"
+  Dir.mkdir(exportdir)
+  filepath = "#{exportdir}/output.pdf"
   map.exportMap("PDF", filepath)
   expect "exportPDF:  PDF file exists", File.exists?(filepath), true
   File.delete(filepath)
@@ -242,7 +229,9 @@ def test_export (vym)
   expect "exportLast: PDF file exists", File.exists?(filepath), true
 
   #SVG
-  filepath = "#{@testdir}/export-svg.svg"
+  exportdir = "#{@testdir}/export-svg"
+  Dir.mkdir(exportdir)
+  filepath = "#{exportdir}/output.svg"
   map.exportMap("SVG", filepath)
   expect "exportSVG:  SVG file exists", File.exists?(filepath), true
   File.delete(filepath)
@@ -250,7 +239,9 @@ def test_export (vym)
   expect "exportLast: SVG file exists", File.exists?(filepath), true
 
   #XML
-  filepath = "#{@testdir}/export-xml.xml"
+  exportdir = "#{@testdir}/export-xml"
+  Dir.mkdir(exportdir)
+  filepath = "#{exportdir}/output.xml"
   map.exportMap("XML", filepath, @testdir)
   expect "exportXML: XML file exists", File.exists?(filepath), true
   File.delete(filepath)
@@ -258,7 +249,6 @@ def test_export (vym)
   expect "exportLast: XML file exists", File.exists?(filepath), true
 
   #OpenOffice Impress //FIXME-2
-  #KDE4 Bookmarks //FIXME-2
   #Taskjuggler //FIXME-3
 end
 
@@ -457,14 +447,14 @@ def test_flags (vym)
   
   def set_flags (map, flags)
     flags.each do |f|
-      map.setFlag( f )
+      map.setFlagByName( f )
       expect "Flag set: #{f}", map.hasActiveFlag( f ), true
     end
   end
   
   def unset_flags (map, flags)
     flags.each do |f|
-      map.unsetFlag( f )
+      map.unsetFlagByName( f )
       expect "Flag unset: #{f}", map.hasActiveFlag( f ), false
     end
   end
@@ -510,10 +500,17 @@ def test_flags (vym)
   expect "clearFlags cleared exclamationmark", map.hasActiveFlag( "exclamationmark" ), false
   expect "clearFlags cleared smiley-good", map.hasActiveFlag( "smiley-good" ), false
   
-  map.toggleFlag "lifebelt"
-  expect "toggleFlag: flag activated", map.hasActiveFlag("lifebelt"), true
-  map.toggleFlag "lifebelt"
-  expect "toggleFlag: flag deactivated", map.hasActiveFlag("lifebelt"), false
+
+  # Toggling flags
+  a = ["stopsign", "lifebelt"]
+  a.each do |flag|
+    puts "Flag is now: #{flag}"
+    map.toggleFlagByName flag
+    expect "toggleFlag: flag #{flag} activated", map.hasActiveFlag(flag), true
+
+    map.toggleFlagByName flag
+    expect "toggleFlag: flag #{flag} deactivated", map.hasActiveFlag(flag), false
+  end
 end
 
 #######################
@@ -816,8 +813,9 @@ def test_notes (vym)
   map.saveNote(filepath)
   expect "Save note to file. Check if it contains 'textMode=\"plainText\"'", IO.read(filepath).include?("textMode=\"plainText\""), true
   expect "Save note to file. Check if it contains 'not bold'", IO.read(filepath).include?("not bold"), true
-  expect "Save note to file. Check if it contains '<b>' element", IO.read(filepath).include?("<b>"), true
-  expect "Save note to file. Check if it contains '<![CDATA['", IO.read(filepath).include?("<![CDATA["), true
+  expect "Save note to file. Check new format: no longer contains '<b>' element", IO.read(filepath).include?("<b>"), false
+  expect "Save note to file. Check new format: no longer contains '<![CDATA['", IO.read(filepath).include?("<![CDATA["), false
+  expect "Save note to file. Check new format: contains 'text=\"Plaintext'", IO.read(filepath).include?("text=\"Plaintext"), true
   
   # Delete note
   map.setNotePlainText("")
@@ -861,8 +859,9 @@ def test_notes (vym)
   map.saveNote(filepath)
   expect "Save note to file. Check if it contains 'textMode=\"richText\"'", IO.read(filepath).include?("textMode=\"richText\""), true
   expect "Save note to file. Check if it contains 'bold'", IO.read(filepath).include?("bold"), true
-  expect "Save note to file. Check if it contains '<b>' element", IO.read(filepath).include?("<b>"), true
-  expect "Save note to file. Check if it contains '<![CDATA['", IO.read(filepath).include?("<![CDATA["), true
+  expect "Save note to file. Check new format: no longer contains '<b>' element", IO.read(filepath).include?("<b>"), false
+  expect "Save note to file. Check new format: no longer contains '<![CDATA['", IO.read(filepath).include?("<![CDATA["), false
+  expect "Save note to file. Check new format: contains 'text=\"&lt;'", IO.read(filepath).include?("text=\"&lt;"), true
   
   # Delete note
   map.setNotePlainText("")
@@ -885,27 +884,6 @@ def test_bugfixes (vym)
 end
 
 #######################
-test_vym(vym)
-test_basics(vym)
-test_export(vym)
-test_extrainfo(vym)
-test_adding_branches(vym)
-test_adding_maps(vym)
-test_scrolling(vym)
-test_moving_parts(vym)
-test_modify_branches(vym)
-test_flags(vym)
-test_delete_parts(vym)
-test_copy_paste(vym)
-test_references(vym)
-test_history(vym)
-test_xlinks(vym)
-test_tasks(vym)
-test_notes(vym)
-test_headings(vym)
-test_bugfixes(vym)
-summary
-
 =begin
 # Untested commands:
 #
@@ -962,3 +940,68 @@ toggleFrameIncludeChildren
 toggleTarget
 toggleTask
 =end
+
+
+begin
+  options = {}
+  OptionParser.new do |opts|
+    opts.banner = "Usage: vym-test.rb [options]"
+
+    opts.on('-d', '--directory  NAME', 'Directory name') { |s| options[:testdir] = s }
+  end.parse!
+
+  @testdir = options[:testdir]
+  @testmap = ARGV[0]
+
+  $tests_passed    = 0
+  $tests_failed    = 0
+  $tests_warnings  = 0
+  $tests_total     = 0
+
+  #######################
+  @center_0="mc:0"
+  @center_1="mc:1"
+  @main_a="mc:0,bo:0"
+    @branch_a=@main_a+",bo:0"
+    @branch_b=@main_a+",bo:1"
+    @branch_c=@main_a+",bo:2"
+  @main_b="mc:0,bo:1"
+
+  @n_centers=2
+
+  instance_name = 'test'
+
+  vym_mgr = VymManager.new
+  #vym_mgr.show_running
+
+  vym = vym_mgr.find(instance_name)
+
+  if !vym
+    puts "Couldn't find instance name \"#{instance_name}\", please start one:"
+    puts "vym -l -n \"#{instance-name}\" -t test/default.vym"
+    exit
+  end
+
+  test_vym(vym)
+  test_basics(vym)
+  test_export(vym)
+  test_extrainfo(vym)
+  test_adding_branches(vym)
+  test_adding_maps(vym)
+  test_scrolling(vym)
+  test_moving_parts(vym)
+  test_modify_branches(vym)
+  test_flags(vym)
+  test_delete_parts(vym)
+  test_copy_paste(vym)
+  test_references(vym)
+  test_history(vym)
+  test_xlinks(vym)
+  test_tasks(vym)
+  test_notes(vym)
+  test_headings(vym)
+  test_bugfixes(vym)
+  summary
+
+end
+

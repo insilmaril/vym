@@ -8,8 +8,7 @@ if [ ! -f $CONFIG ]; then
     echo in you current directory:
     echo
     echo 'VERSION=x.y.z   #use desired version'
-    echo 'BRANCH="master" #or e.g. "maintained-release"'
-    echo 'REMOTE="sf"     #depending on your git configuration'
+    echo 'BRANCH="develop" #or e.g. "maintained-release"'
     exit
 else    
     . $CONFIG
@@ -43,12 +42,12 @@ if [ "$INPUT" = "n" ]; then
 fi	
 echo
 
-read -n 1 -p "Create Documentation? [y]" INPUT
-DO_DOCS=1
-if [ "$INPUT" = "n" ]; then
-    DO_DOCS=0
-fi	
-echo
+#read -n 1 -p "Create Documentation? [y]" INPUT
+#DO_DOCS=1
+#if [ "$INPUT" = "n" ]; then
+#    DO_DOCS=0
+#fi	
+#echo
 
 read -n 1 -p "Create Tarball? [y]" INPUT
 DO_TARBALL=1
@@ -71,7 +70,8 @@ if [ $DO_CHECKOUT = 1 ]; then
     cd $OLDDIR
     echo Removing $SRCDIR...
     rm -rf $SRCDIR
-    git clone -b $BRANCH git://git.code.sf.net/p/vym/code vym
+#    git clone -b $BRANCH git://git.code.sf.net/p/vym/code src
+    git clone -b $BRANCH git@github.com:insilmaril/vym.git vym
 fi	
 
 #VERSION=$(grep __VYM_VERSION $SRCDIR/version.h |  sed -e 's/^.*\"\(.*\)\"$/\1/g')
@@ -81,19 +81,19 @@ echo "Setting version from sources: $VERSION"
 echo
 
 # create documentation
-if [ $DO_DOCS = 1 ] ; then
-    cp -ra $SRCDIR/tex $TMPDIR
-    cp -ra $SRCDIR/icons $TMPDIR
-    cp -ra $SRCDIR/flags $TMPDIR
-    cd $TMPDIR/tex
-    for i in {1..3} ; do
-	pdflatex vym.tex
-	pdflatex vym_es.tex
-	pdflatex vym_fr.tex
-	sleep 1
-    done	
-    cd $OLDDIR
-fi
+#if [ $DO_DOCS = 1 ] ; then
+#    cp -ra $SRCDIR/tex $TMPDIR
+#    cp -ra $SRCDIR/icons $TMPDIR
+#    cp -ra $SRCDIR/flags $TMPDIR
+#    cd $TMPDIR/tex
+#    for i in {1..3} ; do
+#	pdflatex vym.tex
+#	pdflatex vym_es.tex
+#	pdflatex vym_fr.tex
+#	sleep 1
+#    done	
+#    cd $OLDDIR
+#fi
 
 cd $OLDDIR
 

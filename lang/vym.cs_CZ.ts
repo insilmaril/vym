@@ -153,6 +153,70 @@
         <comment>Window caption</comment>
         <translation>Editor vlastností</translation>
     </message>
+    <message>
+        <source>Task</source>
+        <translation type="unfinished">Úkol</translation>
+    </message>
+    <message>
+        <source>Delta priority</source>
+        <extracomment>Manual delta added to priority of task in branch prop editor</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Created:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Modified:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 days ago</source>
+        <comment>task related times</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sleep:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>sleeping %1 days</source>
+        <comment>task related times</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Task is awake</source>
+        <comment>task related times</comment>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>CredentialsDialog</name>
+    <message>
+        <source>Dialog</source>
+        <translation type="unfinished">Dialog</translation>
+    </message>
+    <message>
+        <source>URL:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Username:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Password:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save password</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Credentials dialog</source>
+        <comment>dialog window title</comment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>DownloadAgent</name>
@@ -199,6 +263,65 @@
     <message>
         <source>Use as default:</source>
         <translation>Použít jako výchozí:</translation>
+    </message>
+</context>
+<context>
+    <name>ExportConfluenceDialog</name>
+    <message>
+        <source>Export Confluence</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create new page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Update existing page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Options</source>
+        <translation type="unfinished">Volby</translation>
+    </message>
+    <message>
+        <source>Image of map</source>
+        <translation type="unfinished">Obrázek mapy</translation>
+    </message>
+    <message>
+        <source>Include images</source>
+        <translation type="unfinished">Zahrnout obrázky</translation>
+    </message>
+    <message>
+        <source>Table of contents</source>
+        <translation type="unfinished">Obsah</translation>
+    </message>
+    <message>
+        <source>Task flags</source>
+        <translation type="unfinished">Příznaky úkolů</translation>
+    </message>
+    <message>
+        <source>General flags</source>
+        <translation type="unfinished">Obecné příznaky</translation>
+    </message>
+    <message>
+        <source>Number sections</source>
+        <translation type="unfinished">Číslovat oddíly</translation>
+    </message>
+    <message>
+        <source>Colored headings in text</source>
+        <translation type="unfinished">Barevné popisy v textu</translation>
+    </message>
+    <message>
+        <source>Save settings in map</source>
+        <translation type="unfinished">Uložit nastavení do mapy</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Zrušit</translation>
+    </message>
+    <message>
+        <source>Export</source>
+        <translation type="unfinished">Exportovat</translation>
     </message>
 </context>
 <context>
@@ -336,6 +459,10 @@ ve svém systému povolit!</translation>
         <source>Author:</source>
         <translation>Autor:</translation>
     </message>
+    <message>
+        <source>File location:</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>FindWidget</name>
@@ -365,7 +492,17 @@ ve svém systému povolit!</translation>
     <message>
         <source>Heading Editor</source>
         <comment>Window caption</comment>
-        <translation>Editor popisů</translation>
+        <translation type="vanished">Editor popisů</translation>
+    </message>
+    <message>
+        <source>Note Editor</source>
+        <comment>Name of editor shown as window title</comment>
+        <translation type="obsolete">Editor poznámek</translation>
+    </message>
+    <message>
+        <source>Heading Editor</source>
+        <comment>Name of editor shown as window title</comment>
+        <translation type="unfinished">Editor popisů</translation>
     </message>
 </context>
 <context>
@@ -384,7 +521,7 @@ ve svém systému povolit!</translation>
     </message>
     <message>
         <source>Close</source>
-        <translation>Zavřít</translation>
+        <translation type="vanished">Zavřít</translation>
     </message>
     <message>
         <source>Comment</source>
@@ -545,7 +682,7 @@ ve svém systému povolit!</translation>
     </message>
     <message>
         <source>Directory with vym macros:</source>
-        <translation>Adresář s makry VYMu:</translation>
+        <translation type="vanished">Adresář s makry VYMu:</translation>
     </message>
     <message>
         <source>Add branch (insert)</source>
@@ -942,7 +1079,7 @@ ale ještě nebyla uložena. Chcete </translation>
     <message>
         <source>Dangerous</source>
         <comment>Freemind-Flag</comment>
-        <translation>Nebezpečné</translation>
+        <translation type="vanished">Nebezpečné</translation>
     </message>
     <message>
         <source>Download and show release notes</source>
@@ -996,7 +1133,7 @@ ale ještě nebyla uložena. Chcete </translation>
     <message>
         <source>Use modifier to draw xLinks</source>
         <comment>Mode modifier</comment>
-        <translation>Použít upravovač pro založení xLinks</translation>
+        <translation type="vanished">Použít upravovač pro založení xLinks</translation>
     </message>
     <message>
         <source>Get data from Novell Bugzilla</source>
@@ -1004,7 +1141,7 @@ ale ještě nebyla uložena. Chcete </translation>
     </message>
     <message>
         <source>Note Editor</source>
-        <translation>Editor poznámek</translation>
+        <translation type="vanished">Editor poznámek</translation>
     </message>
     <message>
         <source>Standard Flags toolbar</source>
@@ -1016,7 +1153,7 @@ ale ještě nebyla uložena. Chcete </translation>
     </message>
     <message>
         <source>Images</source>
-        <translation type="vanished">Obrázky</translation>
+        <translation>Obrázky</translation>
     </message>
     <message>
         <source>Import</source>
@@ -1315,7 +1452,7 @@ Chcete jej přepsat?</translation>
     </message>
     <message>
         <source>Spreadsheet</source>
-        <translation>Tabulkový dokument</translation>
+        <translation type="vanished">Tabulkový dokument</translation>
     </message>
     <message>
         <source>Unscroll children</source>
@@ -1436,11 +1573,11 @@ Chcete jej přepsat?</translation>
     <message>
         <source>Edit branch after adding it</source>
         <comment>Settings action</comment>
-        <translation>Upravit větev po jejím přidání (znovu ji popsat)</translation>
+        <translation type="vanished">Upravit větev po jejím přidání (znovu ji popsat)</translation>
     </message>
     <message>
         <source>Set application to zip/unzip files</source>
-        <translation>Nastavit program pro rozbalení/zabalení souborů</translation>
+        <translation type="vanished">Nastavit program pro rozbalení/zabalení souborů</translation>
     </message>
     <message>
         <source>Excellent</source>
@@ -1678,7 +1815,7 @@ Chcete </translation>
     </message>
     <message>
         <source>Couldn&apos;t start %1 to open a new tab in %2.</source>
-        <translation>Nepodařilo se spustit %1 pro otevření nové karty v %2.</translation>
+        <translation type="vanished">Nepodařilo se spustit %1 pro otevření nové karty v %2.</translation>
     </message>
     <message>
         <source>Map Editors</source>
@@ -1799,7 +1936,7 @@ Chcete </translation>
     <message>
         <source>Use modifier to color branches</source>
         <comment>Mode modifier</comment>
-        <translation>Použít upravovač k obarvení větví</translation>
+        <translation type="vanished">Použít upravovač k obarvení větví</translation>
     </message>
     <message>
         <source>Find...</source>
@@ -1807,7 +1944,7 @@ Chcete </translation>
     </message>
     <message>
         <source>Script Editor</source>
-        <translation>Editor skriptů</translation>
+        <translation type="vanished">Editor skriptů</translation>
     </message>
     <message>
         <source>KDE 4 Bookmarks</source>
@@ -2009,7 +2146,7 @@ Chcete </translation>
     <message>
         <source>Important</source>
         <comment>Freemind-Flag</comment>
-        <translation>Důležité</translation>
+        <translation type="vanished">Důležité</translation>
     </message>
     <message>
         <source>E&amp;xit</source>
@@ -2022,7 +2159,7 @@ Chcete </translation>
     </message>
     <message>
         <source>Heading Editor</source>
-        <translation>Editor popisů</translation>
+        <translation type="vanished">Editor popisů</translation>
     </message>
     <message>
         <source>Rotate rclockwise</source>
@@ -2081,7 +2218,7 @@ Chcete </translation>
     <message>
         <source>Import Dir%1</source>
         <comment>Import Filters</comment>
-        <translation>Importovat adresář %1</translation>
+        <translation type="vanished">Importovat adresář %1</translation>
     </message>
     <message>
         <source>Webpage (HTML)...</source>
@@ -2191,7 +2328,7 @@ Chcete </translation>
     <message>
         <source>References Context menu</source>
         <comment>Shortcuts</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Klávesové zkratky</translation>
     </message>
     <message>
         <source>Open all URLs in subtree (including scrolled branches)</source>
@@ -2216,32 +2353,32 @@ Chcete </translation>
     <message>
         <source>Bugzilla handling</source>
         <comment>Shortcuts</comment>
-        <translation>Zacházení s Bugzillou</translation>
+        <translation type="vanished">Zacházení s Bugzillou</translation>
     </message>
     <message>
         <source>Create URL to SUSE Bugzilla</source>
         <comment>Edit menu</comment>
-        <translation>Vytvořit adresu (URL) pro Bugzillu SUSE</translation>
+        <translation type="vanished">Vytvořit adresu (URL) pro Bugzillu SUSE</translation>
     </message>
     <message>
         <source>Get data from SUSE Bugzilla</source>
         <comment>Edit menu</comment>
-        <translation>Získat data z Bugzilly SUSE</translation>
+        <translation type="vanished">Získat data z Bugzilly SUSE</translation>
     </message>
     <message>
         <source>Get data from SUSE Bugzilla for subtree</source>
         <comment>Edit menu</comment>
-        <translation>Získat data z Bugzilly SUSE pro podstrom</translation>
+        <translation type="vanished">Získat data z Bugzilly SUSE pro podstrom</translation>
     </message>
     <message>
         <source>SUSE Fate tool handling</source>
         <comment>Shortcuts</comment>
-        <translation>Zacházení s nástrojem SUSE Fate</translation>
+        <translation type="vanished">Zacházení s nástrojem SUSE Fate</translation>
     </message>
     <message>
         <source>Create URL to SUSE FATE tool</source>
         <comment>Edit menu</comment>
-        <translation>Vytvořit nástroj (URL) pro SUSE Fate</translation>
+        <translation type="vanished">Vytvořit nástroj (URL) pro SUSE Fate</translation>
     </message>
     <message>
         <source>vymlinks - linking maps</source>
@@ -2331,7 +2468,7 @@ Chcete </translation>
     <message>
         <source>Add   ...</source>
         <comment>Edit menu</comment>
-        <translation>Přidat...</translation>
+        <translation type="vanished">Přidat...</translation>
     </message>
     <message>
         <source>Property window</source>
@@ -2501,12 +2638,12 @@ Chcete </translation>
     <message>
         <source>URL to Document </source>
         <comment>SystemFlag</comment>
-        <translation>Adresa (URL) k dokumentu</translation>
+        <translation type="vanished">Adresa (URL) k dokumentu</translation>
     </message>
     <message>
         <source>URL to Bugzilla </source>
         <comment>SystemFlag</comment>
-        <translation>Adresa (URL) k Bugzille</translation>
+        <translation type="vanished">Adresa (URL) k Bugzille</translation>
     </message>
     <message>
         <source>Map target</source>
@@ -2656,102 +2793,102 @@ Chcete </translation>
     <message>
         <source>Priority</source>
         <comment>Freemind-Flag</comment>
-        <translation>Priorita</translation>
+        <translation type="vanished">Priorita</translation>
     </message>
     <message>
         <source>Back</source>
         <comment>Freemind-Flag</comment>
-        <translation>Zpět</translation>
+        <translation type="vanished">Zpět</translation>
     </message>
     <message>
         <source>forward</source>
         <comment>Freemind-Flag</comment>
-        <translation>Vpřed</translation>
+        <translation type="vanished">Vpřed</translation>
     </message>
     <message>
         <source>Look here</source>
         <comment>Freemind-Flag</comment>
-        <translation type="unfinished">Podívat se sem</translation>
+        <translation type="obsolete">Podívat se sem</translation>
     </message>
     <message>
         <source>Don&apos;t flagrget</source>
         <comment>Freemind-Flag</comment>
-        <translation type="unfinished">Ne flagrget</translation>
+        <translation type="obsolete">Ne flagrget</translation>
     </message>
     <message>
         <source>Flag</source>
         <comment>Freemind-Flag</comment>
-        <translation>Příznak</translation>
+        <translation type="vanished">Příznak</translation>
     </message>
     <message>
         <source>Home</source>
         <comment>Freemind-Flag</comment>
-        <translation>Domov</translation>
+        <translation type="vanished">Domov</translation>
     </message>
     <message>
         <source>Telephone</source>
         <comment>Freemind-Flag</comment>
-        <translation>Telefon</translation>
+        <translation type="vanished">Telefon</translation>
     </message>
     <message>
         <source>Music</source>
         <comment>Freemind-Flag</comment>
-        <translation>Hudba</translation>
+        <translation type="vanished">Hudba</translation>
     </message>
     <message>
         <source>Mailbox</source>
         <comment>Freemind-Flag</comment>
-        <translation>Poštovní schránka</translation>
+        <translation type="vanished">Poštovní schránka</translation>
     </message>
     <message>
         <source>Maix</source>
         <comment>Freemind-Flag</comment>
-        <translation type="unfinished">Poštovní schránka</translation>
+        <translation type="obsolete">Poštovní schránka</translation>
     </message>
     <message>
         <source>Password</source>
         <comment>Freemind-Flag</comment>
-        <translation>Heslo</translation>
+        <translation type="vanished">Heslo</translation>
     </message>
     <message>
         <source>To be improved</source>
         <comment>Freemind-Flag</comment>
-        <translation>Ke zlepšení</translation>
+        <translation type="vanished">Ke zlepšení</translation>
     </message>
     <message>
         <source>Stop</source>
         <comment>Freemind-Flag</comment>
-        <translation>Zastavit</translation>
+        <translation type="vanished">Zastavit</translation>
     </message>
     <message>
         <source>Magic</source>
         <comment>Freemind-Flag</comment>
-        <translation>Kouzlo</translation>
+        <translation type="vanished">Kouzlo</translation>
     </message>
     <message>
         <source>To be discussed</source>
         <comment>Freemind-Flag</comment>
-        <translation>K probrání</translation>
+        <translation type="vanished">K probrání</translation>
     </message>
     <message>
         <source>Reminder</source>
         <comment>Freemind-Flag</comment>
-        <translation>Připomínka</translation>
+        <translation type="vanished">Připomínka</translation>
     </message>
     <message>
         <source>Excellent</source>
         <comment>Freemind-Flag</comment>
-        <translation>Vynikající</translation>
+        <translation type="vanished">Vynikající</translation>
     </message>
     <message>
         <source>Linux</source>
         <comment>Freemind-Flag</comment>
-        <translation>Linux</translation>
+        <translation type="vanished">Linux</translation>
     </message>
     <message>
         <source>Sweet</source>
         <comment>Freemind-Flag</comment>
-        <translation>Milé</translation>
+        <translation type="vanished">Milé</translation>
     </message>
     <message>
         <source>Check for release notes and updates</source>
@@ -2854,11 +2991,6 @@ Chcete </translation>
         <translation type="unfinished">Nástrojový pruh pro režimy upravovače</translation>
     </message>
     <message>
-        <source>unnamed</source>
-        <comment>MainWindow: name for new and empty file</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Loading: %1</source>
         <comment>Progress dialog while loading maps</comment>
         <translation type="unfinished">Nahrává se %1</translation>
@@ -2891,7 +3023,7 @@ Chcete </translation>
     <message>
         <source>Enter sleep time (number of days or date YYYY-MM-DD or DD.MM[.YYYY]</source>
         <comment>task sleep time dialog</comment>
-        <translation type="unfinished">Zadat čas spánku (počet dní nebo datum RRRR-MM-DD nebo DD.MM[.RRRR]</translation>
+        <translation type="obsolete">Zadat čas spánku (počet dní nebo datum RRRR-MM-DD nebo DD.MM[.RRRR]</translation>
     </message>
     <message>
         <source>%1 items on map
@@ -2918,7 +3050,7 @@ Chcete </translation>
     <message>
         <source>tasks</source>
         <comment>Info about map</comment>
-        <translation type="unfinished">Úkoly</translation>
+        <translation type="obsolete">Úkoly</translation>
     </message>
     <message>
         <source>slides</source>
@@ -2958,6 +3090,288 @@ Chcete </translation>
         <source>Checking for updates...</source>
         <comment>MainWindow</comment>
         <translation>Zjišťuji dostupnost aktualizací...</translation>
+    </message>
+    <message>
+        <source>Script output window</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Import Dir...</source>
+        <comment>Import Filters</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Confluence (HTML)...</source>
+        <comment>File export menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Text (Markdown)...</source>
+        <comment>File export menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>CSV...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create URL to Jira</source>
+        <comment>Edit menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add image...</source>
+        <comment>Edit menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Goto linked map...</source>
+        <comment>Edit menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Toggle Presentation mode</source>
+        <comment>View action</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Script output window</source>
+        <comment>View action</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show keyboard macros</source>
+        <comment>Help action</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enter sleep time (number of days, hours with &apos;h&apos; or date YYYY-MM-DD or DD.MM[.YYYY]</source>
+        <comment>task sleep time dialog</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>tasks total</source>
+        <comment>Info about map</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>tasks in map</source>
+        <comment>Info about map</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Load vym script</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save as default map</source>
+        <comment>File menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Get page name from Confluence</source>
+        <comment>Edit menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use Shift modifier key to select and reorder objects</source>
+        <comment>Mode modifier</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use Shift modifer key to pick color from another branch and apply</source>
+        <comment>Mode modifier</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use Shift modifier key to draw xLinks</source>
+        <comment>Mode modifier</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use Shift modifier key to move branches without linking</source>
+        <comment>Mode modifier</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use Shift modifier key to move view without selecting</source>
+        <comment>Mode modifier</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>All</source>
+        <comment>Filedialog</comment>
+        <translation type="unfinished">Vše</translation>
+    </message>
+    <message>
+        <source>URL</source>
+        <comment>SystemFlag</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>User Flags toolbar</source>
+        <comment>user Flags Toolbar</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hm...</source>
+        <comment>Standardflag</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Important</source>
+        <comment>Freemind flag</comment>
+        <translation type="unfinished">Důležité</translation>
+    </message>
+    <message>
+        <source>Back</source>
+        <comment>Freemind flag</comment>
+        <translation type="unfinished">Zpět</translation>
+    </message>
+    <message>
+        <source>Forward</source>
+        <comment>Freemind flag</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Look here</source>
+        <comment>Freemind flag</comment>
+        <translation type="unfinished">Podívat se sem</translation>
+    </message>
+    <message>
+        <source>Dangerous</source>
+        <comment>Freemind flag</comment>
+        <translation type="unfinished">Nebezpečné</translation>
+    </message>
+    <message>
+        <source>Don&apos;t forget</source>
+        <comment>Freemind flag</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Flag</source>
+        <comment>Freemind flag</comment>
+        <translation type="unfinished">Příznak</translation>
+    </message>
+    <message>
+        <source>Home</source>
+        <comment>Freemind flag</comment>
+        <translation type="unfinished">Domov</translation>
+    </message>
+    <message>
+        <source>Telephone</source>
+        <comment>Freemind flag</comment>
+        <translation type="unfinished">Telefon</translation>
+    </message>
+    <message>
+        <source>Music</source>
+        <comment>Freemind flag</comment>
+        <translation type="unfinished">Hudba</translation>
+    </message>
+    <message>
+        <source>Mailbox</source>
+        <comment>Freemind flag</comment>
+        <translation type="unfinished">Poštovní schránka</translation>
+    </message>
+    <message>
+        <source>Mail</source>
+        <comment>Freemind flag</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Password</source>
+        <comment>Freemind flag</comment>
+        <translation type="unfinished">Heslo</translation>
+    </message>
+    <message>
+        <source>To be improved</source>
+        <comment>Freemind flag</comment>
+        <translation type="unfinished">Ke zlepšení</translation>
+    </message>
+    <message>
+        <source>Stop</source>
+        <comment>Freemind flag</comment>
+        <translation type="unfinished">Zastavit</translation>
+    </message>
+    <message>
+        <source>Magic</source>
+        <comment>Freemind flag</comment>
+        <translation type="unfinished">Kouzlo</translation>
+    </message>
+    <message>
+        <source>To be discussed</source>
+        <comment>Freemind flag</comment>
+        <translation type="unfinished">K probrání</translation>
+    </message>
+    <message>
+        <source>Reminder</source>
+        <comment>Freemind flag</comment>
+        <translation type="unfinished">Připomínka</translation>
+    </message>
+    <message>
+        <source>Excellent</source>
+        <comment>Freemind flag</comment>
+        <translation type="unfinished">Vynikající</translation>
+    </message>
+    <message>
+        <source>Linux</source>
+        <comment>Freemind flag</comment>
+        <translation type="unfinished">Linux</translation>
+    </message>
+    <message>
+        <source>Sweet</source>
+        <comment>Freemind flag</comment>
+        <translation type="unfinished">Milé</translation>
+    </message>
+    <message>
+        <source>Confluence Credentials</source>
+        <comment>Settings action</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set path for default path</source>
+        <comment>Settings action</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>unnamed</source>
+        <comment>Name for empty and unnamed default map</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t load default map:
+
+%1
+
+vym will create an empty map now.</source>
+        <comment>Mainwindow: Failed to load default map</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t save %1,
+because file exists and cannot be changed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save map as new default map</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You have no permissions to write to </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Overwrite as new default map</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set vym default map to be loaded on startup</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Get data from JIRA for subtree</source>
+        <comment>Edit menu</comment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3003,7 +3417,12 @@ Chcete </translation>
     <message>
         <source>Note Editor</source>
         <comment>Window caption</comment>
-        <translation>Editor poznámek</translation>
+        <translation type="vanished">Editor poznámek</translation>
+    </message>
+    <message>
+        <source>Note Editor</source>
+        <comment>Name of editor shown as window title</comment>
+        <translation type="unfinished">Editor poznámek</translation>
     </message>
 </context>
 <context>
@@ -3046,12 +3465,12 @@ Chcete </translation>
     <message>
         <source>Couldn&apos;t find a macro at  %1.
 </source>
-        <translation>Nepodařilo se najít makro v %1.
+        <translation type="vanished">Nepodařilo se najít makro v %1.
 </translation>
     </message>
     <message>
         <source>Warning: Overwriting %1 bookmarks</source>
-        <translation>Varování: Přepisuje se %1 záložek</translation>
+        <translation type="vanished">Varování: Přepisuje se %1 záložek</translation>
     </message>
     <message>
         <source>Couldn&apos;t rename output to target of old symbolic link %1</source>
@@ -3068,7 +3487,7 @@ Chcete </translation>
     <message>
         <source>Exporting the %1 bookmarks will overwrite
 your existing bookmarks file.</source>
-        <translation>Export %1 záložek přepíše váš
+        <translation type="vanished">Export %1 záložek přepíše váš
 stávající soubor se záložkami.</translation>
     </message>
     <message>
@@ -3089,12 +3508,12 @@ stávající soubor se záložkami.</translation>
     </message>
     <message>
         <source>Could not copy %1 to %2</source>
-        <translation>Nepodařilo se zkopírovat %1 do %2</translation>
+        <translation type="vanished">Nepodařilo se zkopírovat %1 do %2</translation>
     </message>
     <message>
         <source>Couldn&apos;t find script %1
 to notifiy Browsers of changed bookmarks.</source>
-        <translation>Nepodařilo se nalézt skript %1,
+        <translation type="vanished">Nepodařilo se nalézt skript %1,
 který je nutný pro oznámení prohlížečům,
 že záložky byly změněny.</translation>
     </message>
@@ -3110,7 +3529,7 @@ který je nutný pro oznámení prohlížečům,
     </message>
     <message>
         <source>unzip didn&apos;t exit normally</source>
-        <translation>Unzip nebyl ukončen správně</translation>
+        <translation type="vanished">Unzip nebyl ukončen správně</translation>
     </message>
     <message>
         <source>Couldn&apos;t link from %1 to target of old symbolic link %2</source>
@@ -3151,7 +3570,7 @@ který je nutný pro oznámení prohlížečům,
     <message>
         <source>Couldn&apos;t find tool to unzip data. Please download and install 7z and set path in Settings menu:
  </source>
-        <translation>Nepodařilo se najít nástroj na rozbalení dat. Prosím, ztáhněte a nainstalujte 7z a nastavte v nabídce Nastavení cestu:
+        <translation type="vanished">Nepodařilo se najít nástroj na rozbalení dat. Prosím, ztáhněte a nainstalujte 7z a nastavte v nabídce Nastavení cestu:
 .</translation>
     </message>
     <message>
@@ -3170,7 +3589,7 @@ který je nutný pro oznámení prohlížečům,
     </message>
     <message>
         <source>Couldn&apos;t start tool to decompress data.</source>
-        <translation>Nepodařilo se spustit nástroj pro rozbalení dat.</translation>
+        <translation type="vanished">Nepodařilo se spustit nástroj pro rozbalení dat.</translation>
     </message>
     <message>
         <source>Warning: Couldn&apos;t find Bugzilla client</source>
@@ -3208,7 +3627,7 @@ Odvážíte se přepsat jeho obsah?</translation>
     </message>
     <message>
         <source>Couldn&apos;t save &quot;%1&quot;</source>
-        <translation>Nepodařilo se uložit &quot;%1&quot;</translation>
+        <translation type="vanished">Nepodařilo se uložit &quot;%1&quot;</translation>
     </message>
     <message>
         <source>Trying to create directory for flags:</source>
@@ -3224,7 +3643,7 @@ Odvážíte se přepsat jeho obsah?</translation>
     </message>
     <message>
         <source>Couldn&apos;t start zip to compress data.</source>
-        <translation>Nepodařilo se spustit zipovací program, takže data nemohla být zabalena (zkomprimována).</translation>
+        <translation type="vanished">Nepodařilo se spustit zipovací program, takže data nemohla být zabalena (zkomprimována).</translation>
     </message>
     <message>
         <source>Warning: Overwriting file</source>
@@ -3251,7 +3670,7 @@ nainstalovat perlovský modul pro přístup k Bugzille</translation>
     <message>
         <source>Couldn&apos;t open &quot;%1&quot;
 %2.</source>
-        <translation>Nepodařilo se otevřít &quot;%1&quot;
+        <translation type="vanished">Nepodařilo se otevřít &quot;%1&quot;
 %2.</translation>
     </message>
     <message>
@@ -3278,7 +3697,7 @@ nainstalovat perlovský modul pro přístup k Bugzille</translation>
     </message>
     <message>
         <source>Couldn&apos;t start unzip to decompress data.</source>
-        <translation>Nepodařilo se spustit unzip, aby data mohla být rozbalena (dekomprimována).</translation>
+        <translation type="vanished">Nepodařilo se spustit unzip, aby data mohla být rozbalena (dekomprimována).</translation>
     </message>
     <message>
         <source>Could not read %1</source>
@@ -3327,7 +3746,7 @@ Risknete přepsat jeho obsah?</translation>
 
 </source>
         <comment>VymModel, how to install Bugzilla client module</comment>
-        <translation>Nebyl nalezen žádný klient Bugzilly. Pro openSUSE můžete instalovat s (jako správce):
+        <translation type="vanished">Nebyl nalezen žádný klient Bugzilly. Pro openSUSE můžete instalovat s (jako správce):
 
 </translation>
     </message>
@@ -3335,13 +3754,116 @@ Risknete přepsat jeho obsah?</translation>
         <source>Alternatively you can also add the repository
 and install the perl module for Bugzilla access using YaST</source>
         <comment>VymModel, how to install Bugzilla client module</comment>
-        <translation>Případně můžete přidat repozitář a nainstalovat 
+        <translation type="vanished">Případně můžete přidat repozitář a nainstalovat 
 modul perlu pro přístup k Bugzille pomocí YaSTu</translation>
     </message>
     <message>
         <source>Warning: Couldn&apos;t find Bugzilla client</source>
         <comment>VymModel</comment>
-        <translation>Varování: Nepodařilo se nalézt klienta pro Bugzillu</translation>
+        <translation type="vanished">Varování: Nepodařilo se nalézt klienta pro Bugzillu</translation>
+    </message>
+    <message>
+        <source>Trying to read Confluence page...</source>
+        <comment>Confluence export</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Flag: %1</source>
+        <comment>Alt tag in HTML export</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Flag: url</source>
+        <comment>Alt tag in HTML export</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Image: %1</source>
+        <comment>Alt tag in HTML export</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export as Markdown</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Could not export as Markdown to %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t start %1 tool to decompress data!
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t find macros at  %1.
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t find tool to unzip data. Please download and install 7z and set path in Settings menu:
+ </source>
+        <comment>zip tool missing on Win platform</comment>
+        <translation type="unfinished">Nepodařilo se najít nástroj na rozbalení dat. Prosím, ztáhněte a nainstalujte 7z a nastavte v nabídce Nastavení cestu:
+.</translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t find tool to zip/unzip data. Please install on your platform and setpath in Settings menu:
+ </source>
+        <comment>zip tool missing on Linux/Mac platform</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Existing lockfiles have been ignored for the maps listed below. Please check, if the maps might be openend in another instance of vym.
+
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t open &quot;%1&quot;
+.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t read macros from &quot;%1&quot;
+.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t write macros to &quot;%1&quot;
+.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t read script from &quot;%1&quot;
+.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t write script to &quot;%1&quot;
+.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export as AO report</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t start %1 tool to compress data!
+The map could not be saved, please check if backup file is available or export as XML file!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;h3&gt;Autosave will be disabled&lt;/h3&gt;&lt;p&gt;Please check contents of map before saving!&lt;/p&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>JIRA client not found.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Disabling autosave</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3365,11 +3887,11 @@ modul perlu pro přístup k Bugzille pomocí YaSTu</translation>
     <message>
         <source>Couldn&apos;t open %1.
 </source>
-        <translation>Nepodařilo se otevřít %1.</translation>
+        <translation type="vanished">Nepodařilo se otevřít %1.</translation>
     </message>
     <message>
         <source>Error</source>
-        <translation>Chyba</translation>
+        <translation type="vanished">Chyba</translation>
     </message>
     <message>
         <source>Macro</source>
@@ -3381,20 +3903,20 @@ modul perlu pro přístup k Bugzille pomocí YaSTu</translation>
     </message>
     <message>
         <source>Tab 1</source>
-        <translation>Karta 1</translation>
+        <translation type="vanished">Karta 1</translation>
     </message>
     <message>
         <source>Tab 2</source>
-        <translation>Karta 2</translation>
+        <translation type="vanished">Karta 2</translation>
     </message>
     <message>
         <source>Current key:</source>
-        <translation>Nynější klávesa:</translation>
+        <translation type="vanished">Nynější klávesa:</translation>
     </message>
     <message>
         <source>Save</source>
         <comment>ScriptEditor</comment>
-        <translation>Uložit</translation>
+        <translation type="vanished">Uložit</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -3454,6 +3976,32 @@ Do you want to overwrite it?</source>
 již existuje.
 Chcete jej přepsat?</translation>
     </message>
+    <message>
+        <source>Reload</source>
+        <translation type="unfinished">Nahrát znovu</translation>
+    </message>
+    <message>
+        <source>Save as</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Script</source>
+        <comment>Mode in scriptEditor</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No script selected</source>
+        <comment>scriptname in scriptEditor</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Macros saved to %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Script saved to %1</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ShowTextDialog</name>
@@ -3487,22 +4035,47 @@ Chcete jej přepsat?</translation>
     <message>
         <source>Current map</source>
         <comment>TaskEditor</comment>
-        <translation>Současná mapa</translation>
+        <translation type="vanished">Současná mapa</translation>
     </message>
     <message>
         <source>Active tasks</source>
         <comment>TaskEditor</comment>
-        <translation>Aktivní úkoly</translation>
+        <translation type="vanished">Aktivní úkoly</translation>
     </message>
     <message>
         <source>New tasks</source>
         <comment>TaskEditor</comment>
-        <translation>Nové úkoly</translation>
+        <translation type="vanished">Nové úkoly</translation>
     </message>
     <message>
         <source>Edit heading</source>
         <comment>TaskEditor</comment>
-        <translation>Upravit popis větve</translation>
+        <translation type="vanished">Upravit popis větve</translation>
+    </message>
+    <message>
+        <source>Show only tasks from current map</source>
+        <comment>Filters in task Editor</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show only active tasks</source>
+        <comment>Filters in task Editor</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show only new tasks</source>
+        <comment>Filters in task Editor</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show only tasks marked with this arrow-up flag</source>
+        <comment>Filters in task Editor</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show only tasks marked without any arrow-up flag</source>
+        <comment>Filters in task Editor</comment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3569,6 +4142,16 @@ Chcete jej přepsat?</translation>
         <source>Task</source>
         <comment>TaskEditor</comment>
         <translation>Úkol</translation>
+    </message>
+    <message>
+        <source>Delta</source>
+        <comment>TaskEditor</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Flags</source>
+        <comment>TaskEditor</comment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3782,7 +4365,7 @@ Chcete jej přepsat?</translation>
     <message>
         <source>Text Editor</source>
         <comment>Text Editor Window caption</comment>
-        <translation>Textový editor</translation>
+        <translation type="vanished">Textový editor</translation>
     </message>
     <message>
         <source>No filename available for this note.</source>
@@ -3823,6 +4406,26 @@ Chcete jej přepsat?</translation>
         <comment>TextEditor</comment>
         <translation>Tisk</translation>
     </message>
+    <message>
+        <source>Set empty editor background color</source>
+        <comment>TextEditor</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set filled editor background color</source>
+        <comment>TextEditor</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set inactive editor background color</source>
+        <comment>TextEditor</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set default font color</source>
+        <comment>TextEditor</comment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>TreeEditor</name>
@@ -3846,6 +4449,18 @@ Chcete jej přepsat?</translation>
     </message>
 </context>
 <context>
+    <name>UserDialog</name>
+    <message>
+        <source>Dialog</source>
+        <translation type="unfinished">Dialog</translation>
+    </message>
+    <message>
+        <source>Find Confluence user</source>
+        <comment>dialog window title</comment>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>VymModel</name>
     <message>
         <source>All</source>
@@ -3861,7 +4476,7 @@ Chcete jej přepsat?</translation>
     </message>
     <message>
         <source>uncompressed</source>
-        <translation>ponechat nezkomprimovanou</translation>
+        <translation type="vanished">ponechat nezkomprimovanou</translation>
     </message>
     <message>
         <source>Image</source>
@@ -3891,7 +4506,7 @@ Chcete jej přepsat?</translation>
     </message>
     <message>
         <source>Unsupported format in %1</source>
-        <translation>Nepodporovaný formát v %1</translation>
+        <translation type="vanished">Nepodporovaný formát v %1</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -3985,13 +4600,13 @@ se nepodařilo přejmenovat před uložením</translation>
     <message>
         <source>Script aborted:
 %1</source>
-        <translation>Skript zrušen:
+        <translation type="vanished">Skript zrušen:
 %1</translation>
     </message>
     <message>
         <source>Redo failed:
 %1</source>
-        <translation>Návrat o krok vpřed (Znovu) se nezdařil:
+        <translation type="vanished">Návrat o krok vpřed (Znovu) se nezdařil:
 %1</translation>
     </message>
     <message>
@@ -4041,7 +4656,7 @@ Writing it uncompressed will also write images
 and flags and thus may overwrite files in the given directory
 
 Do you want to write the map</source>
-        <translation>Mapa %1
+        <translation type="vanished">Mapa %1
 byla uložena, aniž by byla zkomprimována (zabalena do menšího souboru),
 takže není v obvyklém formátu používaném programem vym.
 Bude-li uložena nezkomprimovaná, budou uloženy i obrázky a příznaky,
@@ -4150,7 +4765,7 @@ se nepodařilo odstranit před uložením</translation>
     <message>
         <source>Contacting Bugzilla...</source>
         <comment>VymModel</comment>
-        <translation>Připojuji se k Bugzille...</translation>
+        <translation type="vanished">Připojuji se k Bugzille...</translation>
     </message>
     <message>
         <source>Map seems to be already opened in another vym instance!
@@ -4171,6 +4786,28 @@ Pokud si jste jisti, že na mapě nikdo jiný již nepracuje, prosím, pouze sma
     <message>
         <source>Couldn&apos;t remove lockfile for %1</source>
         <translation>Soubor zámku nelze odstranit %1</translation>
+    </message>
+    <message>
+        <source>Contacting Jira...</source>
+        <comment>VymModel</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The map %1
+did not use the compressed vym file format.
+Writing it uncompressed will also write images 
+and flags and thus may overwrite files into the given directory
+
+Do you want to write the map</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>uncompressed, potentially overwrite existing data</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>JIRA client not found</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4234,6 +4871,64 @@ Pokud si jste jisti, že na mapě nikdo jiný již nepracuje, prosím, pouze sma
     <message>
         <source>showAgainBox</source>
         <translation>BoxUkázatZnovu</translation>
+    </message>
+    <message>
+        <source>Warning</source>
+        <comment>Warning dialog default window name</comment>
+        <translation type="unfinished">Varování</translation>
+    </message>
+</context>
+<context>
+    <name>ZipSettingsDialog</name>
+    <message>
+        <source>zip settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>zip tool:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Choose</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Status</source>
+        <translation type="unfinished">Stav</translation>
+    </message>
+    <message>
+        <source>unzip tool:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation type="unfinished">Zavřít</translation>
+    </message>
+    <message>
+        <source>zip settings</source>
+        <comment>dialog window title</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Path to 7z.exe</source>
+        <comment>zip tool settings dialog</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set path to 7z to zip/unzip files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set path to zip files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set path to unzip files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Status: %1</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>

@@ -27,22 +27,28 @@ begin
 
     if mail.multipart? then
       puts "Warning: multipart mail detected. Only using first part."
-      puts mail.parts.first.decoded
+      # puts mail.parts.first.decoded
       out << mail.parts.first.decoded
     else
-      out <<  mail.body.raw_source.gsub("\n", "<br/>")
+      #out <<  mail.body.raw_source.gsub("\n", "<br/>")
+      out <<  mail.decoded
+      #puts out
     end
 
     out << "</body></html>"
 
     out.rewind
 
+    name = "production"
+    #name = "test"
+
     vym_mgr = VymManager.new
-    vym = vym_mgr.find('production') 
+    vym_mgr.show_running
+    vym = vym_mgr.find(name)
 
     if !vym
-      puts "Couldn't find instance named \"production\", please start one:"
-      puts "vym -l -n production -t test/default.vym"
+      puts "Couldn't find instance named \"#{name}\", please start one:"
+      puts "vym -l -n #{name} -t test/default.vym"
 
       puts "Currently running vym instances: #{vym_mgr.show_running}"
       exit
@@ -50,17 +56,25 @@ begin
 
     # Before doing anything, make sure there is a return value available
     # Otherwise the script might block     // FIXME-1
-    version = vym.version
+    #version = vym.version
 
-    map = vym.currentMapX();
-    #map = vym.map(6)
-    #map.select "mc:0,b0:0,bo:0"
+    puts "Found #{vym.mapCount} maps"
+
+    #puts vym.show_methods
+
+    n = vym.currentMapID()
+    puts "ID of current map: #{n}"
+
+    map = vym.map (n)
+    puts "Map title: #{map.getMapTitle}"
+    puts "Map path:  #{map.getDestPath}"
+    puts "Map name:  #{map.getFileName}"
 
     map.addBranch()
     map.selectLatestAdded
 
     date = mail.date.to_s.gsub!(/T.*$/,"")
-    map.setHeadingPlainText("Email #{date}: #{mail.subject}")
+    map.setHeadingPlainText("#{date} Email: #{mail.subject}")
     map.loadNote(out.path)
     map.colorBranch("#0000ff")
   ensure
