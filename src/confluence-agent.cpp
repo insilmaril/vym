@@ -341,8 +341,9 @@ void ConfluenceAgent::pageSourceReceived()
         spaceKey = rx.cap(1);
     }
     else {
-        qWarning() << "ConfluenceAgent::pageSourceReveived Couldn't find page "
-                      "space key";
+        qWarning() << "ConfluenceAgent::pageSourceReveived Couldn't find "
+                      "space key in response";
+        qWarning() << r;
         reply->deleteLater();
         reply = nullptr;
         return;
