@@ -7,9 +7,11 @@
 #include "mainwindow.h"
 #include "settings.h"
 #include "warningdialog.h"
+#include "xmlobj.h"
 
 extern QString flagsPath;
 extern Main *mainWindow;
+extern QString vymName;
 extern QString vymVersion;
 extern QString vymHome;
 extern Settings settings;
@@ -92,13 +94,23 @@ QString ExportConfluence::getBranchText(BranchItem *current)
         // URL
         if (!url.isEmpty()) {
             if (url.contains("ri:userkey"))
-                s += url;
-            else
-                s += QString("<a href=\"%1\">%2</a>")
-                         .arg(url)
-                         .arg(number + taskFlags + heading + userFlags);
-        }
-        else
+                s += url; 
+            else {
+                if (url.contains(settings.value("/confluence/url",
+                                                   "---undefined---").toString()) && url.contains("&")) {
+
+                // Fix ampersands in URL to Confluence itself
+                qDebug() << "Found " << url; // FIXME-0 testing
+                url = quoteMeta(url);
+            } 
+
+            qDebug() << "URL now" << url; // FIXME-0 testing
+            qDebug() << settings.value("/confluence/url", "---").toString();
+            s += QString("<a href=\"%1\">%2</a>")
+                     .arg(url)
+                     .arg(number + taskFlags + heading + userFlags);
+            }
+        } else
             s += number + taskFlags + heading + userFlags;
 
         // Include images // FIXME-3 not implemented yet
@@ -198,6 +210,12 @@ QString ExportConfluence::buildList(BranchItem *current)
         sectionEnd = "";
         itemBegin = "<h3>";
         itemEnd = "</h3>";
+        break;
+    case 2:
+        sectionBegin = "";
+        sectionEnd = "";
+        itemBegin = "<h4>";
+        itemEnd = "</h4>";
         break;
     default:
         sectionBegin =
@@ -318,6 +336,10 @@ void ExportConfluence::doExport(bool useDialog)
 
     // Main loop over all mapcenters
     ts << buildList(model->getRootItem()) << "\n";
+
+    ts << "<p style=\"text-align: center;\"> <sub> <em>Page created with ";
+    ts << "<a href=\"https://sourceforge.net/projects/vym/\">" << vymName << " " << vymVersion<< "</a>";
+    ts << "</em> </sub> </p>";
 
     file.close();
 

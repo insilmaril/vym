@@ -358,6 +358,7 @@ void ConfluenceAgent::pageSourceReceived()
 
     if (reply->error()) {
         qWarning() << "ConfluenceAgent::pageSoureReveived reply error";
+        qWarning() << "Error: " << reply->error();
         reply->deleteLater();
         reply = nullptr;
         return;
