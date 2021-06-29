@@ -62,7 +62,7 @@
       <number>0</number>
      </property>
      <item>
-      <widget class="QLabel" name="pageURLLabel">
+      <widget class="QLabel" name="URLLabel">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
          <horstretch>0</horstretch>
@@ -83,7 +83,7 @@
     </layout>
    </item>
    <item>
-    <widget class="QLineEdit" name="lineEditPageURL">
+    <widget class="QLineEdit" name="lineEditURL">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
        <horstretch>0</horstretch>
@@ -297,8 +297,8 @@
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <includes>
-     <include location="local">src/xsltproc.h</include>
-     <include location="local">src/vymprocess.h</include>
+  <include location="local">src/xsltproc.h</include>
+  <include location="local">src/vymprocess.h</include>
  </includes>
  <resources/>
  <connections>

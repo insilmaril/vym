@@ -266,20 +266,43 @@ bool VymModelWrapper::exportMap()
             listTasks = true;
         model->exportASCII(filename, listTasks, false);
     }
-    else if (format == "Confluence") {
-        if (argumentCount() < 2) {
+    else if (format == "ConfluenceNewPage") {
+        // 0: General export format
+        // 1: URL of parent page
+        // 2: page title (optional)
+        if (argumentCount() == 1) {
             logError(context(), QScriptContext::SyntaxError,
-                     "Page URL and title missing in Confluence export");
+                     "URL of parent page missing in Confluence export");
+            return setResult(r);
+        }
+
+        QString url = argument(2).toString();
+        QString title;
+        if (argumentCount() == 3 ) {
+            title = argument(3).toString();
+        }
+
+        model->exportConfluence(true, url, title, false);
+    }
+    else if (format == "ConfluenceUpdatePage") {
+        // 0: General export format
+        // 1: URL of new page
+        // 2: page title (mandatory)
+        if (argumentCount() == 1) {
+            logError(context(), QScriptContext::SyntaxError,
+                     "URL of new page missing in Confluence export");
             return setResult(r);
         }
         if (argumentCount() == 2) {
             logError(context(), QScriptContext::SyntaxError,
-                     "Page title missing in Confluence export");
+                     "Title of new page missing in Confluence export");
             return setResult(r);
         }
+
         QString url = argument(2).toString();
         QString title = argument(3).toString();
-        model->exportConfluence(url, title, false);
+
+        model->exportConfluence(false, url, title, false);
     }
     else if (format == "CSV") {
         model->exportCSV(filename, false);
