@@ -4917,6 +4917,10 @@ void VymModel::setMapDefLinkColor(QColor col)
     while (cur) {
         bo = (BranchObj *)(cur->getLMO());
         bo->setLinkColor();
+
+        for (int i = 0; i < cur->imageCount(); ++i)
+            cur->getImageNum(i)->getLMO()->setLinkColor();
+
         nextBranch(cur, prev);
     }
     updateActions();
@@ -4932,6 +4936,10 @@ void VymModel::setMapLinkColorHintInt()
     while (cur) {
         bo = (BranchObj *)(cur->getLMO());
         bo->setLinkColor();
+
+        for (int i = 0; i < cur->imageCount(); ++i)
+            cur->getImageNum(i)->getLMO()->setLinkColor();
+
         nextBranch(cur, prev);
     }
 }
@@ -4955,6 +4963,10 @@ void VymModel::toggleMapLinkColorHint()
     while (cur) {
         bo = (BranchObj *)(cur->getLMO());
         bo->setLinkColor();
+
+        for (int i = 0; i < cur->imageCount(); ++i)
+            cur->getImageNum(i)->getLMO()->setLinkColor();
+
         nextBranch(cur, prev);
     }
 }
