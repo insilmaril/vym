@@ -2653,7 +2653,7 @@ void VymModel::updateTasksAlarm(bool force)
     }
 }
 
-BranchItem *VymModel::addTimestamp() // FIXME-4 new function, localize
+BranchItem *VymModel::addTimestamp()
 {
     BranchItem *selbi = addNewBranch();
     if (selbi) {

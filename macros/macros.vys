@@ -227,10 +227,14 @@ function macro_shift_f9()
     map.toggleFrameIncludeChildren();
 }
 
-// Macro Shift + F10: 
+// Macro Shift + F10: Move current branch to parent. Useful for timestamps
 function macro_shift_f10()
 {   
     map = vym.currentMap();
+	map.cut();
+	map.selectParent();
+	map.paste();
+	map.selectLastChildBranch();
 }
 
 // Macro Shift + F11: Replace "@..." by mutt aliases
