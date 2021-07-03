@@ -16,13 +16,18 @@ class ConfluenceAgent : public QObject {
     Q_OBJECT
 
   public:
+    enum JobType {Undefined, CopyPagenameToHeading};
+
     ConfluenceAgent();
     ConfluenceAgent(BranchItem *bi);
     ~ConfluenceAgent();
     void init();
+    void setJobType(JobType jt);
+    void startJob();
+    void finishJob();
+    void setPageURL(QString u);
     void test();
     bool getPageDetails(const QString &url);
-    bool getPageDetailsNative(const QString &url);
 
   private:
     bool uploadContent(const QString &url, const QString &title,
@@ -48,11 +53,15 @@ class ConfluenceAgent : public QObject {
     QTimer *killTimer;
     bool succ;
     QString result;
+    JobType jobType;
 
     // REST access related, new
   public:
     void startGetPageSourceRequest(QUrl requestedUrl);
     void startGetPageDetailsRequest(QString query);
+
+  private:  
+    bool getPageSource();
 
   private slots:
     void pageSourceReceived();

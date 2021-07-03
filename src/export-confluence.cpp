@@ -403,6 +403,7 @@ void ExportConfluence::doExport(bool useDialog)
         }
         else {
             // Page with URL does not exist, abort
+            // neither as parent of new page or to update existing page
             success = false;
             if (createNewPage)
                 qWarning() << "Parent page not existing: " << url;

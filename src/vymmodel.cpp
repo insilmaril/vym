@@ -4103,8 +4103,10 @@ void VymModel::setHeadingConfluencePageName()
                         return;
                 }
 
-                ConfluenceAgent *ca_details = new ConfluenceAgent(selbi);
-                ca_details->getPageDetailsNative(url);
+                ConfluenceAgent *ca_setHeading = new ConfluenceAgent(selbi);
+                ca_setHeading->setPageURL(url);
+                ca_setHeading->setJobType(ConfluenceAgent::CopyPagenameToHeading);
+                ca_setHeading->startJob();
             }
         }
     }
