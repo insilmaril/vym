@@ -522,5 +522,6 @@ bool TaskModel::dropMimeData(const QMimeData *data, Qt::DropAction action,
     src->setPriorityDelta(src->getPriorityDelta() - delta_p + 1);
     BranchItem *bi = src->getBranch();
     bi->getModel()->emitDataChanged(bi);
+    bi->getModel()->setChanged();
     return true;
 }
