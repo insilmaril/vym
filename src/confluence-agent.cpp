@@ -147,7 +147,7 @@ bool ConfluenceAgent::getPageDetails(const QString &url)
 
 bool ConfluenceAgent::getPageSource()
 {
-    qDebug() << "CA::getPageSource of " << pageURL; // FIXME-0 testing
+    qDebug() << "CA::getPageSource of " << pageURL; // FIXME-2 testing
     if (!QUrl(pageURL).isValid()) {
         qWarning() << "ConfluenceAgent: Invalid URL: " << pageURL;
         return false;
@@ -320,7 +320,7 @@ void ConfluenceAgent::startGetPageSourceRequest(QUrl requestedURL)
 
     reply = qnam.get(request);
 
-    disconnect(reply);   // FIXME-0  this also disconnects killTimer !!!
+    disconnect(reply);
     connect(reply, &QNetworkReply::finished, this,
             &ConfluenceAgent::pageSourceReceived);
 }
