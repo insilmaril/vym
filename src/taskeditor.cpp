@@ -147,6 +147,9 @@ TaskEditor::TaskEditor(QWidget *)
             SIGNAL(selectionChanged(QItemSelection, QItemSelection)), this,
             SLOT(selectionChanged(QItemSelection, QItemSelection)));
 
+    connect(view, SIGNAL(clicked(QModelIndex)),
+            this, SLOT(cellClicked(QModelIndex)));
+
     // Enable wordwrap when data changes
     if (settings.value("/taskeditor/wordWrap", true)
             .toBool()) // FIXME-3 not working or only sometimes?
@@ -308,6 +311,15 @@ bool TaskEditor::select(Task *task)
 }
 
 void TaskEditor::clearSelection() { view->selectionModel()->clearSelection(); }
+
+void TaskEditor::cellClicked(QModelIndex ix)
+{
+    if (ix.isValid() && ix.column() == 2) {
+        Task *task = taskModel->getTask(ix);
+        if (task)
+            task->cycleStatus();
+    }
+}
 
 void TaskEditor::headerContextMenu()
 {
