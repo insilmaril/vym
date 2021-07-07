@@ -312,13 +312,11 @@ bool TaskEditor::select(Task *task)
 
 void TaskEditor::clearSelection() { view->selectionModel()->clearSelection(); }
 
-void TaskEditor::cellClicked(QModelIndex ix)
+void TaskEditor::cellClicked(QModelIndex ix_unmapped)
 {
-    if (ix.isValid() && ix.column() == 2) {
-        Task *task = taskModel->getTask(ix);
-        if (task)
-            task->cycleStatus();
-    }
+    QModelIndex ix = filterActiveModel->mapToSource(ix_unmapped);
+    if (ix.isValid() && ix.column() == 2) 
+        taskModel->getTask(ix)->getBranch()->getModel()->cycleTaskStatus();
 }
 
 void TaskEditor::headerContextMenu()
