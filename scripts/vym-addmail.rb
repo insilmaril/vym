@@ -25,14 +25,23 @@ begin
     out << "Date: #{mail.date.to_s}\n"
     out << "</pre>"
 
+    text = ""
     if mail.multipart? then
       puts "Warning: multipart mail detected. Only using first part."
-      # puts mail.parts.first.decoded
-      out << mail.parts.first.decoded
+      text = mail.parts.first.decoded
     else
       #out <<  mail.body.raw_source.gsub("\n", "<br/>")
-      out <<  mail.decoded
-      #puts out
+      text = mail.decoded
+    end
+
+    if text.include?("<html")
+      out << text
+    else
+      out << "<p>"
+      text.gsub!("\r\n\r\n", "</p><p>")
+      text.gsub!("\r\n", "")
+      out << text
+      out << "</p>"
     end
 
     out << "</body></html>"
