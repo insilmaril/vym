@@ -2,6 +2,7 @@
 #define CONFLUENCEAGENT_H
 
 #include <QHash>
+#include <QJsonObject>
 #include <QNetworkAccessManager>
 #include <QObject>
 #include <QTimer>
@@ -16,17 +17,28 @@ class ConfluenceAgent : public QObject {
     Q_OBJECT
 
   public:
-    enum JobType {Undefined, CopyPagenameToHeading};
+    enum JobType {Undefined, CopyPagenameToHeading, NewPage, UpdatePage};
 
     ConfluenceAgent();
     ConfluenceAgent(BranchItem *bi);
     ~ConfluenceAgent();
     void init();
     void setJobType(JobType jt);
-    void startJob();
-    void finishJob();
-    void setPageURL(QString u);
+    void setBranch(BranchItem *bi);
+    void setModelID(uint id);
+    void setPageURL(const QString &u);
+    void setNewPageTitle(const QString &t);
+    void setUploadFilePath(const QString &fp);
     void test();
+
+    void startJob();
+
+private:
+    void continueJob();
+    void finishJob();
+    void unknownStepWarning();
+
+public:
     bool getPageDetails(const QString &url);
 
   private:
@@ -54,18 +66,21 @@ class ConfluenceAgent : public QObject {
     bool succ;
     QString result;
     JobType jobType;
+    int jobStep;
+    bool abortJob;  // Flag to abort during initialization of job
 
     // REST access related, new
-  public:
+  private:  
     void startGetPageSourceRequest(QUrl requestedUrl);
     void startGetPageDetailsRequest(QString query);
+    void startUploadContentRequest();
 
-  private:  
     bool getPageSource();
 
   private slots:
     void pageSourceReceived();
     void pageDetailsReceived();
+    void contentUploaded();
 #ifndef QT_NO_SSL
     void sslErrors(QNetworkReply *, const QList<QSslError> &errors);
 #endif
@@ -73,6 +88,7 @@ class ConfluenceAgent : public QObject {
   private:
     QNetworkAccessManager qnam;
     QNetworkReply *reply;
+    QJsonObject jsobj;
     bool httpRequestAborted;
 
     QString username;
@@ -87,5 +103,7 @@ class ConfluenceAgent : public QObject {
     QString pageURL;
     QString pageID;
     QString spaceKey;
+    QString newPageTitle;
+    QString uploadFilePath;
 };
 #endif

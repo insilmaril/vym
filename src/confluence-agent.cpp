@@ -28,9 +28,7 @@ ConfluenceAgent::ConfluenceAgent(BranchItem *bi)
 
     init();
 
-    branchID = bi->getID();
-    VymModel *model = bi->getModel();
-    modelID = model->getModelID();
+    setBranch(bi);
 }
 
 ConfluenceAgent::~ConfluenceAgent()
@@ -43,8 +41,12 @@ ConfluenceAgent::~ConfluenceAgent()
 void ConfluenceAgent::init()
 {
     jobType = Undefined;
+    jobStep = -1;
+    abortJob = false;
 
     killTimer = nullptr;
+
+    modelID = 0;    // invalid ID
 
     confluenceScript = vymBaseDir.path() + "/scripts/confluence.rb";
 
@@ -73,29 +75,36 @@ void ConfluenceAgent::setJobType(JobType jt)
     jobType = jt;
 }
 
-void ConfluenceAgent::startJob()
+void ConfluenceAgent::setBranch(BranchItem *bi)
 {
-    switch(jobType) {
-        case CopyPagenameToHeading:
-            qDebug() << "CA::startJob " << jobType << pageURL;
-            getPageSource();
-            break;
-        default:
-            qDebug() << "ConfluenceAgent::startJob   unknown jobType " << jobType;
+    if (!bi) {
+        qWarning() << "ConfluenceAgent::setBranch  bi == nullptr";
+        abortJob = true;
+    } else {
+        branchID = bi->getID();
+        VymModel *model = bi->getModel();
+        modelID = model->getModelID();
     }
 }
 
-void ConfluenceAgent::finishJob()
+void ConfluenceAgent::setModelID(uint id)
 {
-    if (reply)
-        reply->deleteLater();
-
-    deleteLater();
+    modelID = id;
 }
 
-void ConfluenceAgent::setPageURL(QString u)
+void ConfluenceAgent::setPageURL(const QString &u)
 {
     pageURL = u;
+}
+
+void ConfluenceAgent::setNewPageTitle(const QString &t)
+{
+    newPageTitle = t;
+}
+
+void ConfluenceAgent::setUploadFilePath(const QString &fp)
+{
+    uploadFilePath = fp;
 }
 
 void ConfluenceAgent::test()
@@ -115,6 +124,110 @@ void ConfluenceAgent::test()
     }
 
     killTimer->start();
+}
+
+void ConfluenceAgent::startJob()
+{
+    if (jobStep > 0) {
+        unknownStepWarning();
+        finishJob();
+    } else {
+        jobStep = 0;
+        continueJob();
+    }
+}
+
+void ConfluenceAgent::continueJob()
+{
+    if (abortJob) {
+        finishJob();
+        return;
+    }
+
+    jobStep++;
+
+    VymModel *model;
+
+    switch(jobType) {
+        case CopyPagenameToHeading:
+            switch(jobStep) {
+                case 1:
+                    getPageSource();
+                    break;
+                case 2:
+                    qDebug() << "CA::contJob " << jobType << pageURL;
+                    startGetPageDetailsRequest("/content/" + pageID +
+                                               "?expand=metadata.labels,version");
+                    break;
+                case 3:
+                    model = mainWindow->getModel(modelID);
+                    if (model) {
+                        BranchItem *bi = (BranchItem *)(model->findID(branchID));
+
+                        if (bi) {
+                            QString h = spaceKey + ": " + jsobj["title"].toString();
+                            model->setHeading(h, bi);
+                        }
+                        else
+                            qWarning() << "CA::continueJob couldn't find branch "
+                                       << branchID;
+                    }
+                    else
+                        qWarning() << "CA::continueJob couldn't find model " << modelID;
+                    break;
+                default:
+                    unknownStepWarning();
+                    break;
+            };
+        case NewPage:
+            qDebug() << "CA::continueJob NewPage: step " << jobStep;
+            switch(jobStep) {
+                case 1:
+                    if (pageURL.isEmpty()) {
+                        qDebug() << "CA::contJob NewPage: pageURL is empty";
+                        finishJob();
+                        return;
+                    }
+                    if (newPageTitle.isEmpty()) {
+                        qDebug() << "CA::contJob NewPage: newPageTitle is empty";
+                        finishJob();
+                        return;
+                    }
+
+                    // Check if parent page with url already exists
+                    getPageSource();
+                    break;
+                case 2:
+                    // Create new page with parent url
+                    startGetPageDetailsRequest("/content/" + pageID +
+                                               "?expand=metadata.labels,version");
+                    break;
+                case 3:
+                    startUploadContentRequest();
+                    break;
+                default:
+                    unknownStepWarning();
+            };
+
+            break;
+        default:
+            qDebug() << "ConfluenceAgent::startJob   unknown jobType " << jobType;
+    }
+}
+
+void ConfluenceAgent::finishJob()
+{
+    if (reply)
+        reply->deleteLater();
+
+    deleteLater();
+}
+
+void ConfluenceAgent::unknownStepWarning()
+{
+    qWarning() << "CA::contJob  unknow step in jobType = " 
+        << jobType 
+        << "jobStep = " << jobStep;
 }
 
 bool ConfluenceAgent::getPageDetails(const QString &url)
@@ -351,6 +464,34 @@ void ConfluenceAgent::startGetPageDetailsRequest(QString query)
             &ConfluenceAgent::pageDetailsReceived);
 }
 
+void ConfluenceAgent::startUploadContentRequest()
+{
+    qDebug() << "CA::startUploadContentRequest";
+
+    /*
+    httpRequestAborted = false;
+
+    // Authentication in URL  (only SSL!)
+    // maybe switch to token later:
+    // https://developer.atlassian.com/cloud/confluence/basic-auth-for-rest-apis/
+    QString concatenated = username + ":" + password;
+
+    query = "https://" + concatenated + "@" + apiURL + query;
+
+    QNetworkRequest request = QNetworkRequest(QUrl(query));
+
+    reply = qnam.get(request);
+
+    // Disconnect reply
+    disconnect(reply);
+
+    */
+    killTimer->start();
+
+    connect(reply, &QNetworkReply::finished, this,
+            &ConfluenceAgent::contentUploaded);
+}
+
 void ConfluenceAgent::pageSourceReceived()
 {
     qDebug() << "CA::pageSourceReceived";
@@ -404,8 +545,7 @@ void ConfluenceAgent::pageSourceReceived()
     const QVariant redirectionTarget =
         reply->attribute(QNetworkRequest::RedirectionTargetAttribute);
 
-    startGetPageDetailsRequest("/content/" + pageID +
-                               "?expand=metadata.labels,version");
+    continueJob();
 }
 
 void ConfluenceAgent::pageDetailsReceived()
@@ -438,7 +578,7 @@ void ConfluenceAgent::pageDetailsReceived()
     QJsonDocument jsdoc;
     jsdoc = QJsonDocument::fromJson(reply->readAll());
 
-    QJsonObject jsobj = jsdoc.object();
+    jsobj = jsdoc.object();
 
     /*
     QJsonArray jsarr = jsobj[“feeds”].toArray();
@@ -449,22 +589,12 @@ void ConfluenceAgent::pageDetailsReceived()
         qDebug() << jsob[“created_at”].toString();
     */
 
-    VymModel *model = mainWindow->getModel(modelID);
-    if (model) {
-        BranchItem *bi = (BranchItem *)(model->findID(branchID));
+    continueJob();
+}
 
-        if (bi) {
-            QString h = spaceKey + ": " + jsobj["title"].toString();
-            model->setHeading(h, bi);
-        }
-        else
-            qWarning() << "CA::pageDetailsReceived couldn't find branch "
-                       << branchID;
-    }
-    else
-        qWarning() << "CA::pageDetailsReceived couldn't find model " << modelID;
-
-    finishJob();
+void ConfluenceAgent::contentUploaded()
+{
+    qDebug() << "CA::contentUploaded";
 }
 
 #ifndef QT_NO_SSL

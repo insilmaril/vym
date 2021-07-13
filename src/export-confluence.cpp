@@ -36,7 +36,7 @@ void ExportConfluence::setCreateNewPage(bool b) {createNewPage = b; }
 
 void ExportConfluence::setURL(const QString &u) { url = u; }
 
-void ExportConfluence::setPageTitle(const QString &t) { pageTitle = t; }
+void ExportConfluence::setPageTitle(const QString &t) { pageTitle = t;}
 
 QString ExportConfluence::getBranchText(BranchItem *current)
 {
@@ -105,12 +105,9 @@ QString ExportConfluence::getBranchText(BranchItem *current)
                                                    "---undefined---").toString()) && url.contains("&")) {
 
                 // Fix ampersands in URL to Confluence itself
-                qDebug() << "Found " << url; // FIXME-0 testing
                 url = quoteMeta(url);
             } 
 
-            qDebug() << "URL now" << url; // FIXME-0 testing
-            qDebug() << settings.value("/confluence/url", "---").toString();
             s += QString("<a href=\"%1\">%2</a>")
                      .arg(url)
                      .arg(number + taskFlags + heading + userFlags);
@@ -351,70 +348,87 @@ void ExportConfluence::doExport(bool useDialog)
 
     file.close();
 
-    // First check if page already exists
-    ConfluenceAgent *ca_details = new ConfluenceAgent();
-    ConfluenceAgent *ca_content = new ConfluenceAgent();
+    // Create Confluence agent
+    ConfluenceAgent *agent = new ConfluenceAgent();
+    if (createNewPage)
+        agent->setJobType(ConfluenceAgent::NewPage);
+    else
+        agent->setJobType(ConfluenceAgent::UpdatePage);
+    agent->setPageURL(url);
+    agent->setNewPageTitle(pageTitle);
+    agent->setUploadFilePath(filePath);
+    agent->setModelID(model->getModelID());
+    agent->startJob();
 
-    mainWindow->statusMessage(
-        QObject::tr("Trying to read Confluence page details...", "Confluence export"));
-    qApp->processEvents();
 
-    if (ca_details->getPageDetails(url)) {
-        ca_details->waitForResult();
+    // Old stuff below, replace with native Confluence agent
+    if (false)
+    {
+        // First check if page already exists
+        ConfluenceAgent *ca_details = new ConfluenceAgent();
+        ConfluenceAgent *ca_content = new ConfluenceAgent();
 
-        if (ca_details->success()) {
-            // Page with URL is existing already
-            if (createNewPage) {
-                // URL exists and is parent page
-                if(debug) qDebug() << "Starting to create new page..."; 
-                ca_content->createPage(url, pageTitle,
-                                       filePath);
-                ca_content->waitForResult();
-                if (ca_content->success()) {
-                    if (debug) qDebug() << "Page created.";
-                    success = true;
-                }
-                else {
-                    if (debug) qDebug() << "Page not created.";
-                    success = false;
-                }
-            } else {
-                // URL exists and is update page
-                if (debug) qDebug() << "Starting to update existing page...";
-                mainWindow->statusMessage(
-                    QObject::tr("Trying to update Confluence page...", "Confluence export"));
-                qApp->processEvents();
+        mainWindow->statusMessage(
+            QObject::tr("Trying to read Confluence page details...", "Confluence export"));
+        qApp->processEvents();
 
-                ca_content->updatePage(url, pageTitle,
-                                       filePath);
-                ca_content->waitForResult();
-                if (ca_content->success()) {
-                    if (debug) qDebug() << "Page updated.";
-                    success = true;
-                }
-                else {
-                    if (debug) {
-                        qWarning() << "Page not updated:";
-                        qWarning() << ca_content->getResult();
+        if (ca_details->getPageDetails(url)) {
+            ca_details->waitForResult();
+
+            if (ca_details->success()) {
+                // Page with URL is existing already
+                if (createNewPage) {
+                    // URL exists and is parent page
+                    if(debug) qDebug() << "Starting to create new page..."; 
+                    ca_content->createPage(url, pageTitle,
+                                           filePath);
+                    ca_content->waitForResult();
+                    if (ca_content->success()) {
+                        if (debug) qDebug() << "Page created.";
+                        success = true;
                     }
-                    success = false;
+                    else {
+                        if (debug) qDebug() << "Page not created.";
+                        success = false;
+                    }
+                } else {
+                    // URL exists and is update page
+                    if (debug) qDebug() << "Starting to update existing page...";
+                    mainWindow->statusMessage(
+                        QObject::tr("Trying to update Confluence page...", "Confluence export"));
+                    qApp->processEvents();
+
+                    ca_content->updatePage(url, pageTitle,
+                                           filePath);
+                    ca_content->waitForResult();
+                    if (ca_content->success()) {
+                        if (debug) qDebug() << "Page updated.";
+                        success = true;
+                    }
+                    else {
+                        if (debug) {
+                            qWarning() << "Page not updated:";
+                            qWarning() << ca_content->getResult();
+                        }
+                        success = false;
+                    }
                 }
             }
+            else {
+                // Page with URL does not exist, abort
+                // neither as parent of new page or to update existing page
+                success = false;
+                if (createNewPage)
+                    qWarning() << "Parent page not existing: " << url;
+                else
+                    qWarning() << "Page not existing, cannot update it: "
+                               << url;
+            }
         }
-        else {
-            // Page with URL does not exist, abort
-            // neither as parent of new page or to update existing page
-            success = false;
-            if (createNewPage)
-                qWarning() << "Parent page not existing: " << url;
-            else
-                qWarning() << "Page not existing, cannot update it: "
-                           << url;
-        }
-    }
 
-    delete (ca_details);
-    delete (ca_content);
+        delete (ca_details);
+        delete (ca_content);
+    } // Old code
 
     displayedDestination = url;
 
