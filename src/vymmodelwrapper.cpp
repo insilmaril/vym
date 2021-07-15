@@ -380,6 +380,17 @@ bool VymModelWrapper::exportMap()
     return setResult(true);
 }
 
+int VymModelWrapper::getBranchIndex()
+{
+    int r;
+    BranchItem *selbi = getSelectedBranch();
+    if (selbi) {
+        r = selbi->num();
+    } else
+        r = -1;
+    return setResult(r);
+}
+
 QString VymModelWrapper::getDestPath()
 {
     QString r = model->getDestPath();

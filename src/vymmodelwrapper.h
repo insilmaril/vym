@@ -48,6 +48,7 @@ class VymModelWrapper : public VymScriptContext {
     void cut();
     void cycleTask();
     bool exportMap();
+    int getBranchIndex();
     QString getDestPath();
     QString getFileDir();
     QString getFileName();
