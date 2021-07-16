@@ -361,7 +361,8 @@ void ExportConfluence::doExport(bool useDialog)
     agent->startJob();
 
 
-    // Old stuff below, replace with native Confluence agent
+    // Old stuff below, replace with native Confluence agent  // FIXME-0
+    /*
     if (false)
     {
         // First check if page already exists
@@ -429,6 +430,7 @@ void ExportConfluence::doExport(bool useDialog)
         delete (ca_details);
         delete (ca_content);
     } // Old code
+    */
 
     displayedDestination = url;
 

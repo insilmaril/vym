@@ -38,9 +38,6 @@ private:
     void finishJob();
     void unknownStepWarning();
 
-public:
-    bool getPageDetails(const QString &url);
-
   private:
     bool uploadContent(const QString &url, const QString &title,
                        const QString &fpath, const bool &newPage);
@@ -75,19 +72,16 @@ public:
     void startGetPageDetailsRequest(QString query);
     void startUploadContentRequest();
 
-    bool getPageSource();
-
   private slots:
-    void pageSourceReceived();
-    void pageDetailsReceived();
-    void contentUploaded();
+    void pageSourceReceived(QNetworkReply *reply);
+    void pageDetailsReceived(QNetworkReply *reply);
+    void contentUploaded(QNetworkReply *reply);
 #ifndef QT_NO_SSL
     void sslErrors(QNetworkReply *, const QList<QSslError> &errors);
 #endif
 
   private:
-    QNetworkAccessManager qnam;
-    QNetworkReply *reply;
+    QNetworkAccessManager *networkManager;
     QJsonObject jsobj;
     bool httpRequestAborted;
 

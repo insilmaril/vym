@@ -46,6 +46,8 @@ void ConfluenceAgent::init()
 
     killTimer = nullptr;
 
+    networkManager = new QNetworkAccessManager(this);
+
     modelID = 0;    // invalid ID
 
     confluenceScript = vymBaseDir.path() + "/scripts/confluence.rb";
@@ -54,7 +56,7 @@ void ConfluenceAgent::init()
     killTimer->setInterval(15000);
     killTimer->setSingleShot(true);
 
-    vymProcess =
+    vymProcess = // FIXME-0 not needed soon
         nullptr; // Only one process may be active at any time in this agent
 
     QObject::connect(killTimer, SIGNAL(timeout()), this, SLOT(timeout()));
@@ -148,14 +150,15 @@ void ConfluenceAgent::continueJob()
 
     VymModel *model;
 
+    qDebug() << "CA::contJob " << jobType << " Step: " << jobStep;
+
     switch(jobType) {
         case CopyPagenameToHeading:
             switch(jobStep) {
                 case 1:
-                    getPageSource();
+                    startGetPageSourceRequest(pageURL);
                     break;
                 case 2:
-                    qDebug() << "CA::contJob " << jobType << pageURL;
                     startGetPageDetailsRequest("/content/" + pageID +
                                                "?expand=metadata.labels,version");
                     break;
@@ -179,6 +182,7 @@ void ConfluenceAgent::continueJob()
                     unknownStepWarning();
                     break;
             };
+            break;
         case NewPage:
             qDebug() << "CA::continueJob NewPage: step " << jobStep;
             switch(jobStep) {
@@ -195,7 +199,7 @@ void ConfluenceAgent::continueJob()
                     }
 
                     // Check if parent page with url already exists
-                    getPageSource();
+                    startGetPageSourceRequest(pageURL);
                     break;
                 case 2:
                     // Create new page with parent url
@@ -217,9 +221,6 @@ void ConfluenceAgent::continueJob()
 
 void ConfluenceAgent::finishJob()
 {
-    if (reply)
-        reply->deleteLater();
-
     deleteLater();
 }
 
@@ -228,48 +229,6 @@ void ConfluenceAgent::unknownStepWarning()
     qWarning() << "CA::contJob  unknow step in jobType = " 
         << jobType 
         << "jobStep = " << jobStep;
-}
-
-bool ConfluenceAgent::getPageDetails(const QString &url)
-{
-    QStringList args;
-
-    args << "-d";
-    args << url;
-
-    if (debug)
-        qDebug().noquote() << QString("ConfluenceAgent::getPageDetails\n%1 %2")
-                                  .arg(confluenceScript)
-                                  .arg(args.join(" "));
-
-    vymProcess = new VymProcess;
-
-    connect(vymProcess, SIGNAL(finished(int, QProcess::ExitStatus)), this,
-            SLOT(dataReceived(int, QProcess::ExitStatus)));
-
-    vymProcess->start(confluenceScript, args);
-
-    if (!vymProcess->waitForStarted()) {
-        qWarning() << "ConfluenceAgent::getPageDetails  couldn't start "
-                   << confluenceScript;
-        return false;
-    }
-
-    return true;
-}
-
-bool ConfluenceAgent::getPageSource()
-{
-    qDebug() << "CA::getPageSource of " << pageURL; // FIXME-2 testing
-    if (!QUrl(pageURL).isValid()) {
-        qWarning() << "ConfluenceAgent: Invalid URL: " << pageURL;
-        return false;
-    }
-
-    // schedule the request
-    startGetPageSourceRequest(pageURL);
-
-    return true;
 }
 
 bool ConfluenceAgent::uploadContent(const QString &url, const QString &title,
@@ -396,17 +355,6 @@ void ConfluenceAgent::dataReceived(
 void ConfluenceAgent::timeout()
 {
     qWarning() << "ConfluenceAgent timeout!!   jobType = " << jobType;
-    if (vymProcess) {
-        // delete (vymProcess);  // FIXME-3  crashes in ConfluenceAgent -
-        // deleteLater()?
-        vymProcess = nullptr;
-    }
-
-    if (reply) {
-        reply->abort();
-        reply->deleteLater();
-        reply = nullptr;
-    }
 }
 
 void ConfluenceAgent::startGetPageSourceRequest(QUrl requestedURL)
@@ -426,16 +374,16 @@ void ConfluenceAgent::startGetPageSourceRequest(QUrl requestedURL)
     request.setRawHeader("Authorization", headerData.toLocal8Bit());
 
     if (debug)
-        qDebug() << "CA::startGetPageSourceRequest="
-                 << request.url().toString();
+    {
+        qDebug() << "CA::startGetPageSourceRequest:" + request.url().toString();
+    }
 
     killTimer->start();
 
-    reply = qnam.get(request);
+    connect(networkManager, &QNetworkAccessManager::finished,
+        this, &ConfluenceAgent::pageSourceReceived);
 
-    disconnect(reply);
-    connect(reply, &QNetworkReply::finished, this,
-            &ConfluenceAgent::pageSourceReceived);
+    networkManager->get(request);
 }
 
 void ConfluenceAgent::startGetPageDetailsRequest(QString query)
@@ -453,50 +401,57 @@ void ConfluenceAgent::startGetPageDetailsRequest(QString query)
 
     QNetworkRequest request = QNetworkRequest(QUrl(query));
 
-    reply = qnam.get(request);
-
-    // Disconnect reply
-    disconnect(reply);
+    connect(networkManager, &QNetworkAccessManager::finished,
+        this, &ConfluenceAgent::pageDetailsReceived);
 
     killTimer->start();
 
-    connect(reply, &QNetworkReply::finished, this,
-            &ConfluenceAgent::pageDetailsReceived);
+    networkManager->get(request);
 }
 
 void ConfluenceAgent::startUploadContentRequest()
 {
     qDebug() << "CA::startUploadContentRequest";
 
-    /*
     httpRequestAborted = false;
 
-    // Authentication in URL  (only SSL!)
-    // maybe switch to token later:
-    // https://developer.atlassian.com/cloud/confluence/basic-auth-for-rest-apis/
     QString concatenated = username + ":" + password;
 
-    query = "https://" + concatenated + "@" + apiURL + query;
+    QString url = "https://" + concatenated + "@" + apiURL + "/content";
 
-    QNetworkRequest request = QNetworkRequest(QUrl(query));
+    // FIXME-0 add JSON payload, see confluence script
 
-    reply = qnam.get(request);
+    QNetworkRequest request = QNetworkRequest(QUrl(url));
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 
-    // Disconnect reply
-    disconnect(reply);
+    // https://stackoverflow.com/questions/2599423/how-can-i-post-data-to-a-url-using-qnetworkaccessmanager
 
-    */
+    QUrlQuery query;
+    query.addQueryItem( "type", "page");
+    query.addQueryItem( "title", newPageTitle); // FIXME-0 always?
+    /*
+          "ancestors":[{"id":details.id}],
+          "space":{"key":details.space_key},
+          "body":{"storage": {"value":page_content, "representation":"storage"}}
+*/
+    QByteArray postData = query.toString(QUrl::FullyEncoded).toUtf8();
+
+    connect(networkManager, &QNetworkAccessManager::finished,
+        this, &ConfluenceAgent::contentUploaded);
+
     killTimer->start();
 
-    connect(reply, &QNetworkReply::finished, this,
-            &ConfluenceAgent::contentUploaded);
+    networkManager->post(request, postData);
 }
 
-void ConfluenceAgent::pageSourceReceived()
+void ConfluenceAgent::pageSourceReceived(QNetworkReply *reply)
 {
     qDebug() << "CA::pageSourceReceived";
 
     killTimer->stop();
+
+    disconnect(networkManager, &QNetworkAccessManager::finished,
+        this, &ConfluenceAgent::pageSourceReceived);
 
     QString r = reply->readAll();
 
@@ -510,8 +465,6 @@ void ConfluenceAgent::pageSourceReceived()
     else {
         qWarning()
             << "ConfluenceAgent::pageSourceReveived Couldn't find page ID";
-        reply->deleteLater();
-        reply = nullptr;
         return;
     }
 
@@ -548,11 +501,14 @@ void ConfluenceAgent::pageSourceReceived()
     continueJob();
 }
 
-void ConfluenceAgent::pageDetailsReceived()
+void ConfluenceAgent::pageDetailsReceived(QNetworkReply *reply)
 {
     qDebug() << "CA::pageDetailsReceived";
 
     killTimer->stop();
+
+    disconnect(networkManager, &QNetworkAccessManager::finished,
+        this, &ConfluenceAgent::pageDetailsReceived);
 
     if (httpRequestAborted) {
         qWarning() << "ConfluenceAgent::pageDetailsReveived aborted error";
@@ -567,38 +523,21 @@ void ConfluenceAgent::pageDetailsReceived()
         return;
     }
 
-    // const QVariant redirectionTarget =
-    // reply->attribute(QNetworkRequest::RedirectionTargetAttribute);
-
-    /*
-    details.version = r['version']['number']
-    details.labels = r['metadata']['labels']['results']
-    */
-
     QJsonDocument jsdoc;
     jsdoc = QJsonDocument::fromJson(reply->readAll());
 
     jsobj = jsdoc.object();
 
-    /*
-    QJsonArray jsarr = jsobj[“feeds”].toArray();
-    foreach (const QJsonValue &value, jsarr) {
-        QJsonObject jsob = value.toObject();
-        qDebug() << jsob[“entry_id”].toInt();
-        qDebug() << jsob[“field1”].toString();
-        qDebug() << jsob[“created_at”].toString();
-    */
-
     continueJob();
 }
 
-void ConfluenceAgent::contentUploaded()
+void ConfluenceAgent::contentUploaded(QNetworkReply *reply)
 {
     qDebug() << "CA::contentUploaded";
 }
 
 #ifndef QT_NO_SSL
-void ConfluenceAgent::sslErrors(QNetworkReply *, const QList<QSslError> &errors)
+void ConfluenceAgent::sslErrors(QNetworkReply *reply, const QList<QSslError> &errors)
 {
     QString errorString;
     foreach (const QSslError &error, errors) {
