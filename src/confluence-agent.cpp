@@ -209,6 +209,10 @@ void ConfluenceAgent::continueJob()
                 case 3:
                     startUploadContentRequest();
                     break;
+                case 4:
+                    qDebug() << "CA::finished  Created page with ID: " << jsobj["id"].toString();
+                    finishJob();
+                    break;
                 default:
                     unknownStepWarning();
             };
@@ -229,59 +233,6 @@ void ConfluenceAgent::unknownStepWarning()
     qWarning() << "CA::contJob  unknow step in jobType = " 
         << jobType 
         << "jobStep = " << jobStep;
-}
-
-bool ConfluenceAgent::uploadContent(const QString &url, const QString &title,
-                                    const QString &fpath, const bool &newPage)
-{
-    QStringList args;
-
-    if (newPage)
-        args << "-c";
-    else
-        args << "-u";
-    args << url;
-    args << "-f";
-    args << fpath;
-    if (!title.isEmpty()) {
-        args << "-t";
-        args << title;
-    }
-
-    if (debug) {
-        qDebug().noquote() << QString("ConfluenceAgent::uploadContent\n%1 %2")
-                                  .arg(confluenceScript)
-                                  .arg(args.join(" "));
-
-        qDebug() << "  newPage: " << newPage;
-    }
-
-    vymProcess = new VymProcess;
-
-    connect(vymProcess, SIGNAL(finished(int, QProcess::ExitStatus)), this,
-            SLOT(dataReceived(int, QProcess::ExitStatus)));
-
-    vymProcess->start(confluenceScript, args);
-
-    if (!vymProcess->waitForStarted()) {
-        qWarning() << "ConfluenceAgent::uploadContent  couldn't start "
-                   << confluenceScript;
-        return false;
-    }
-
-    return true;
-}
-
-bool ConfluenceAgent::updatePage(const QString &url, const QString &title,
-                                 const QString &fpath)
-{
-    return uploadContent(url, title, fpath, false);
-}
-
-bool ConfluenceAgent::createPage(const QString &url, const QString &title,
-                                 const QString &fpath)
-{
-    return uploadContent(url, title, fpath, true);
 }
 
 bool ConfluenceAgent::getUsers(const QString &name)
@@ -329,7 +280,7 @@ bool ConfluenceAgent::success() { return succ; }
 
 QString ConfluenceAgent::getResult() { return result; }
 
-void ConfluenceAgent::dataReceived(
+void ConfluenceAgent::dataReceived( // FIXME-0 remove, obsolete!
     int exitCode,
     QProcess::ExitStatus exitStatus) // FIXME-3  return value???   // FIXME-3
                                      // name correct? used by all functions...
@@ -425,23 +376,43 @@ void ConfluenceAgent::startUploadContentRequest()
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 
     // https://stackoverflow.com/questions/2599423/how-can-i-post-data-to-a-url-using-qnetworkaccessmanager
+    // https://stackoverflow.com/questions/60107604/how-to-send-a-post-request-in-qt-with-the-json-body
 
-    QUrlQuery query;
-    query.addQueryItem( "type", "page");
-    query.addQueryItem( "title", newPageTitle); // FIXME-0 always?
-    /*
-          "ancestors":[{"id":details.id}],
-          "space":{"key":details.space_key},
-          "body":{"storage": {"value":page_content, "representation":"storage"}}
-*/
-    QByteArray postData = query.toString(QUrl::FullyEncoded).toUtf8();
+    //QByteArray postData = query.toString(QUrl::FullyEncoded).toUtf8();
+
+    QJsonObject payload;
+    payload["type"] = "page";
+    payload["title"] = newPageTitle;
+
+    // Build array with ID of parent page
+    QJsonObject ancestorsID;
+    ancestorsID["id"] = pageID;
+    QJsonArray ancestorsArray;
+    ancestorsArray.append(ancestorsID);
+    payload["ancestors"] = ancestorsArray;
+
+    // Build object with space key
+    QJsonObject skey;
+    skey["key"] = spaceKey;
+    payload["space"] = skey;
+
+    // Build body
+    QJsonObject storageObj 
+    {
+        {"value", "body foobar"},       // FIXME-0 insert content of tmp exportfile
+        {"representation", "storage"}
+    };
+    payload["body"] = storageObj;
+
+    QJsonDocument doc(payload);
+    QByteArray data = doc.toJson();
 
     connect(networkManager, &QNetworkAccessManager::finished,
         this, &ConfluenceAgent::contentUploaded);
 
     killTimer->start();
 
-    networkManager->post(request, postData);
+    networkManager->post(request, data);
 }
 
 void ConfluenceAgent::pageSourceReceived(QNetworkReply *reply)
@@ -534,6 +505,29 @@ void ConfluenceAgent::pageDetailsReceived(QNetworkReply *reply)
 void ConfluenceAgent::contentUploaded(QNetworkReply *reply)
 {
     qDebug() << "CA::contentUploaded";
+
+    killTimer->stop();
+
+    disconnect(networkManager, &QNetworkAccessManager::finished,
+        this, &ConfluenceAgent::pageDetailsReceived);
+
+    if (httpRequestAborted) {
+        qWarning() << "ConfluenceAgent::pageDetailsReveived aborted error";
+        finishJob();
+        return;
+    }
+
+    if (reply->error()) {
+        qWarning() << "ConfluenceAgent::pageDetailsReveived reply error";
+        qDebug() << reply->error();
+        finishJob();
+        return;
+    }
+
+    QJsonDocument jsdoc;
+    jsdoc = QJsonDocument::fromJson(reply->readAll());
+    jsobj = jsdoc.object();
+    continueJob();
 }
 
 #ifndef QT_NO_SSL

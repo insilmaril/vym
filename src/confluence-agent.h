@@ -38,15 +38,7 @@ private:
     void finishJob();
     void unknownStepWarning();
 
-  private:
-    bool uploadContent(const QString &url, const QString &title,
-                       const QString &fpath, const bool &newPage);
-
   public:
-    bool updatePage(const QString &url, const QString &title,
-                    const QString &fpath);
-    bool createPage(const QString &url, const QString &title,
-                    const QString &fpath);
     bool getUsers(const QString &name);
     void waitForResult();
     bool success();
