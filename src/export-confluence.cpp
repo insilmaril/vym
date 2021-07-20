@@ -368,14 +368,9 @@ void ExportConfluence::doExport(bool useDialog)
     args <<  pageTitle;
 
     // Prepare human readable info in tooltip of LastExport:
-    QString dst = QString("Title: %1").arg(pageTitle);
-    /*
-    if (createNewPage)
-        dst += QString("  Parent: %1").arg(url.section('/', -1);
-    else
-        dst += QString("  Page: %1").arg(url.section('/', -1);
-    */
-    displayedDestination = dst;
+    displayedDestination = (createNewPage) ? 
+        QString("Title: %1").arg(pageTitle) : 
+        QString("URL: %1").arg(url);
 
     completeExport(args);
 

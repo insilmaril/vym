@@ -28,7 +28,7 @@ class ExportConfluenceDialog : public QDialog {
     virtual void readSettings();
     virtual void setURL(const QString &);
     virtual void setPageTitle(const QString &);
-    virtual void pageButtonPressed(bool);
+    virtual void pageButtonPressed();
     virtual void URLChanged();
     virtual void pageTitleChanged();
     virtual void imageCheckBoxPressed(bool b);

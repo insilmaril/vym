@@ -184,8 +184,8 @@ void ConfluenceAgent::continueJob()
                     break;
             };
             break;
+
         case NewPage:
-            qDebug() << "CA::continueJob NewPage: step " << jobStep;
             switch(jobStep) {
                 case 1:
                     if (pageURL.isEmpty()) {
@@ -199,19 +199,49 @@ void ConfluenceAgent::continueJob()
                         return;
                     }
 
-                    // Check if parent page with url already exists
+                    // Check if parent page with url already exists and get pageID, spaceKey
                     startGetPageSourceRequest(pageURL);
                     break;
                 case 2:
                     // Create new page with parent url
+                    startCreatePageRequest();
+                    break;
+                case 3:
+                    qDebug() << "CA::finished  Created page with ID: " << jsobj["id"].toString();
+                    finishJob();
+                    break;
+                default:
+                    unknownStepWarning();
+            };
+
+            break;
+
+        case UpdatePage:
+            switch(jobStep) {
+                case 1:
+                    if (pageURL.isEmpty()) {
+                        qDebug() << "CA::contJob UpdatePage: pageURL is empty";
+                        finishJob();
+                        return;
+                    }
+
+                    // Check if page with url already exists and get pageID, spaceKey
+                    qDebug() << "starting update for " << pageURL;
+                    startGetPageSourceRequest(pageURL);
+                    break;
+                case 2:
+                    // Get title, which is required by Confluence to update a page
                     startGetPageDetailsRequest("/content/" + pageID +
                                                "?expand=metadata.labels,version");
                     break;
                 case 3:
-                    startUploadContentRequest();
+                    // Update page with parent url
+                    if (newPageTitle.isEmpty())
+                            newPageTitle = jsobj["title"].toString();
+                    startUpdatePageRequest();
                     break;
                 case 4:
-                    qDebug() << "CA::finished  Created page with ID: " << jsobj["id"].toString();
+                    qDebug() << "CA::finished  Updated page with ID: " << jsobj["id"].toString();
                     finishJob();
                     break;
                 default:
@@ -327,7 +357,7 @@ void ConfluenceAgent::startGetPageSourceRequest(QUrl requestedURL)
 
     if (debug)
     {
-        qDebug() << "CA::startGetPageSourceRequest:" + request.url().toString();
+        qDebug() << "CA::startGetPageSourceRequest: url = " + request.url().toString();
     }
 
     killTimer->start();
@@ -361,9 +391,9 @@ void ConfluenceAgent::startGetPageDetailsRequest(QString query)
     networkManager->get(request);
 }
 
-void ConfluenceAgent::startUploadContentRequest()
+void ConfluenceAgent::startCreatePageRequest()
 {
-    qDebug() << "CA::startUploadContentRequest";
+    qDebug() << "CA::startCreatePageRequest";
 
     httpRequestAborted = false;
 
@@ -371,15 +401,8 @@ void ConfluenceAgent::startUploadContentRequest()
 
     QString url = "https://" + concatenated + "@" + apiURL + "/content";
 
-    // FIXME-0 add JSON payload, see confluence script
-
     QNetworkRequest request = QNetworkRequest(QUrl(url));
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
-
-    // https://stackoverflow.com/questions/2599423/how-can-i-post-data-to-a-url-using-qnetworkaccessmanager
-    // https://stackoverflow.com/questions/60107604/how-to-send-a-post-request-in-qt-with-the-json-body
-
-    //QByteArray postData = query.toString(QUrl::FullyEncoded).toUtf8();
 
     QJsonObject payload;
     payload["type"] = "page";
@@ -426,18 +449,94 @@ void ConfluenceAgent::startUploadContentRequest()
     networkManager->post(request, data);
 }
 
+void ConfluenceAgent::startUpdatePageRequest()
+{
+    qDebug() << "CA::startUpdatePageRequest";
+
+    httpRequestAborted = false;
+
+    QString concatenated = username + ":" + password;
+
+    QString url = "https://" + concatenated + "@" + apiURL + "/content" + "/" + pageID;
+
+    QNetworkRequest request = QNetworkRequest(QUrl(url));
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+
+    QJsonObject payload;
+    payload["id"] = pageID;
+    payload["type"] = "page";
+    payload["title"] = newPageTitle;
+
+    // Build version object
+    QJsonObject newVersionObj;
+    QJsonObject oldVersionObj = jsobj["version"].toObject();
+
+    newVersionObj["number"] = oldVersionObj["number"].toInt() + 1;
+    payload["version"] = newVersionObj;
+
+    qDebug() << "oldversion: " << oldVersionObj["number"];
+    qDebug() << "newversion: " << newVersionObj;
+
+    // Build object with space key
+    QJsonObject skey;
+    skey["key"] = spaceKey;
+    payload["space"] = skey;
+
+    // Build body
+    QString body;
+    if (!loadStringFromDisk(uploadFilePath, body))
+    {
+        qWarning() << "ConfluenceAgent: Couldn't read file to upload:" << uploadFilePath;
+        finishJob();
+        return;
+    }
+
+    QJsonObject innerStorageObj
+    {
+        {"value", body},
+        {"representation", "storage"}
+    };
+    QJsonObject outerStorageObj;
+    outerStorageObj["storage"] = innerStorageObj;
+    payload["body"] = outerStorageObj;
+
+    QJsonDocument doc(payload);
+    QByteArray data = doc.toJson();
+
+    connect(networkManager, &QNetworkAccessManager::finished,
+        this, &ConfluenceAgent::contentUploaded);
+
+    killTimer->start();
+
+    qDebug() << "Request: " << url;
+    qDebug() << "Data: " << payload;
+    networkManager->put(request, data);
+}
+
 void ConfluenceAgent::pageSourceReceived(QNetworkReply *reply)
 {
     qDebug() << "CA::pageSourceReceived";
 
     killTimer->stop();
 
-    disconnect(networkManager, &QNetworkAccessManager::finished,
-        this, &ConfluenceAgent::pageSourceReceived);
+    networkManager->disconnect();
 
     QString r = reply->readAll();
 
-    // Check for page id
+    if (httpRequestAborted) {
+        qWarning() << "ConfluenceAgent::pageSourceReveived aborted";
+        finishJob();
+        return;
+    }
+
+    if (reply->error()) {
+        qWarning() << "ConfluenceAgent::pageSourceReveived reply error";
+        qWarning() << "Error: " << reply->error();
+        finishJob();
+        return;
+    }
+
+    // Find pageID
     QRegExp rx("\\sname=\"ajs-page-id\"\\scontent=\"(\\d*)\"");
     rx.setMinimal(true);
 
@@ -447,10 +546,11 @@ void ConfluenceAgent::pageSourceReceived(QNetworkReply *reply)
     else {
         qWarning()
             << "ConfluenceAgent::pageSourceReveived Couldn't find page ID";
+        qDebug() << r;
         return;
     }
 
-    // Check for space key
+    // Find spaceKey 
     rx.setPattern("meta\\s*id=\"confluence-space-key\"\\s* "
                   "name=\"confluence-space-key\"\\s*content=\"(.*)\"");
     if (rx.indexIn(r, 0) != -1) {
@@ -460,19 +560,6 @@ void ConfluenceAgent::pageSourceReceived(QNetworkReply *reply)
         qWarning() << "ConfluenceAgent::pageSourceReveived Couldn't find "
                       "space key in response";
         qWarning() << r;
-        finishJob();
-        return;
-    }
-
-    if (httpRequestAborted) {
-        qWarning() << "ConfluenceAgent::pageSourceReveived aborted";
-        finishJob();
-        return;
-    }
-
-    if (reply->error()) {
-        qWarning() << "ConfluenceAgent::pageSoureReveived reply error";
-        qWarning() << "Error: " << reply->error();
         finishJob();
         return;
     }
@@ -489,8 +576,7 @@ void ConfluenceAgent::pageDetailsReceived(QNetworkReply *reply)
 
     killTimer->stop();
 
-    disconnect(networkManager, &QNetworkAccessManager::finished,
-        this, &ConfluenceAgent::pageDetailsReceived);
+    networkManager->disconnect();
 
     if (httpRequestAborted) {
         qWarning() << "ConfluenceAgent::pageDetailsReveived aborted error";
@@ -519,18 +605,19 @@ void ConfluenceAgent::contentUploaded(QNetworkReply *reply)
 
     killTimer->stop();
 
-    disconnect(networkManager, &QNetworkAccessManager::finished,
-        this, &ConfluenceAgent::pageDetailsReceived);
+    networkManager->disconnect();
 
     if (httpRequestAborted) {
-        qWarning() << "ConfluenceAgent::pageDetailsReveived aborted error";
+        qWarning() << "ConfluenceAgent::contentUploaded aborted";
         finishJob();
         return;
     }
 
     if (reply->error()) {
-        qWarning() << "ConfluenceAgent::pageDetailsReveived reply error";
+        qWarning() << "ConfluenceAgent::contentUploaded reply error";
         qDebug() << reply->error();
+        qDebug() << reply->errorString();
+        qDebug() << reply->readAll();
         finishJob();
         return;
     }

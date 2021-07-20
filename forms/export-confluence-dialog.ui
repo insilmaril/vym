@@ -33,12 +33,18 @@
        <property name="text">
         <string>Create new page</string>
        </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
       </widget>
      </item>
      <item>
       <widget class="QRadioButton" name="updatePageButton">
        <property name="text">
         <string>Update existing page</string>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
        </property>
       </widget>
      </item>

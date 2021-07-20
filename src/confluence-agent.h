@@ -62,7 +62,8 @@ private:
   private:  
     void startGetPageSourceRequest(QUrl requestedUrl);
     void startGetPageDetailsRequest(QString query);
-    void startUploadContentRequest();
+    void startCreatePageRequest();
+    void startUpdatePageRequest();
 
   private slots:
     void pageSourceReceived(QNetworkReply *reply);
