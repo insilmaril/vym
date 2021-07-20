@@ -17,12 +17,12 @@ class ExportConfluenceDialog : public QDialog {
   public:
     ExportConfluenceDialog(QWidget *parent = 0);
 
+    void setCreateNewPage(bool b);
     bool getCreateNewPage();
     virtual QString getURL();
     virtual QString getPageTitle();
     virtual bool warnings();
     virtual bool hasChanged();
-    virtual bool createNewPage();
 
   public slots:
     virtual void readSettings();

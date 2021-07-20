@@ -67,6 +67,10 @@ void ExportConfluenceDialog::readSettings()
                     .toString();
     ui.lineEditPageTitle->setText(pageTitle);
 
+    ui.createPageButton->setChecked(
+        settings
+            .localValue(filepath, "/export/confluence/createNewPage", true).toBool());
+
     /*  FIXME-3 cleanup the copied HTML parameters
     includeMapImage = settings.localValue (filepath,
     "/export/confluence/includeMapImage", "true").toBool();
@@ -220,12 +224,15 @@ void ExportConfluenceDialog::saveSettings()
         settings.setValue("/export/confluence/createNewPage", ui.createPageButton->isChecked());
         settings.setValue("/export/confluence/url", url);
         settings.setValue("/export/confluence/pageTitle", pageTitle);
+        settings.setValue("/export/confluence/createNewPage", ui.createPageButton->isChecked());
     }
 }
 
 void ExportConfluenceDialog::setFilePath(const QString &s) { filepath = s; }
 
 void ExportConfluenceDialog::setMapName(const QString &s) { mapname = s; }
+
+void ExportConfluenceDialog::setCreateNewPage(bool b) { ui.createPageButton->setChecked(b); }
 
 bool ExportConfluenceDialog::getCreateNewPage() { return ui.createPageButton->isChecked(); }
 
@@ -236,8 +243,3 @@ QString ExportConfluenceDialog::getPageTitle() { return pageTitle; }
 bool ExportConfluenceDialog::warnings() { return showWarnings; }
 
 bool ExportConfluenceDialog::hasChanged() { return settingsChanged; }
-
-bool ExportConfluenceDialog::createNewPage()
-{
-    return ui.createPageButton->isChecked();
-}

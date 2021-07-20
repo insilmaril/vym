@@ -1,6 +1,7 @@
 #include "confluence-agent.h"
 
 #include "branchitem.h"
+#include "file.h"
 #include "mainwindow.h"
 #include "misc.h"
 #include "vymmodel.h"
@@ -397,12 +398,22 @@ void ConfluenceAgent::startUploadContentRequest()
     payload["space"] = skey;
 
     // Build body
-    QJsonObject storageObj 
+    QString body;
+    if (!loadStringFromDisk(uploadFilePath, body))
     {
-        {"value", "body foobar"},       // FIXME-0 insert content of tmp exportfile
+        qWarning() << "ConfluenceAgent: Couldn't read file to upload:" << uploadFilePath;
+        finishJob();
+        return;
+    }
+
+    QJsonObject innerStorageObj
+    {
+        {"value", body},
         {"representation", "storage"}
     };
-    payload["body"] = storageObj;
+    QJsonObject outerStorageObj;
+    outerStorageObj["storage"] = innerStorageObj;
+    payload["body"] = outerStorageObj;
 
     QJsonDocument doc(payload);
     QByteArray data = doc.toJson();
