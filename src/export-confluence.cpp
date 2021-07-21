@@ -360,19 +360,20 @@ void ExportConfluence::doExport(bool useDialog)
     agent->setModelID(model->getModelID());
     agent->startJob();
 
-    displayedDestination = url;
-
     QStringList args;
-    createNewPage ? exportName = "ConfluenceNewPage" : exportName = "ConfluenceUpdatePage";
-    args <<  displayedDestination;
-    args <<  pageTitle;
+    exportName = (createNewPage) ? "ConfluenceNewPage" : "ConfluenceUpdatePage";
+    args <<  url;
+    if (!pageTitle.isEmpty()) 
+        args <<  pageTitle;
 
+    completeExport(args);
+    qDebug() << "args: " << args;
+    
     // Prepare human readable info in tooltip of LastExport:
     displayedDestination = (createNewPage) ? 
         QString("Title: %1").arg(pageTitle) : 
         QString("URL: %1").arg(url);
 
-    completeExport(args);
 
     dia.saveSettings();
     model->setExportMode(false);

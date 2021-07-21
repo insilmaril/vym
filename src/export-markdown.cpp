@@ -140,6 +140,9 @@ void ExportMarkdown::doExport()
     success = true;
 
     completeExport(QStringList(listTasksString));
+    QStringList args;
+    args << filePath;
+    args << listTasksString;
 }
 
 QString ExportMarkdown::underline(const QString &text, const QString &line)

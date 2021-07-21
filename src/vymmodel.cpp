@@ -4524,7 +4524,10 @@ void VymModel::exportXML(QString fpath, QString dpath, bool useDialog)
 
     setExportMode(false);
 
-    ex.completeExport(QStringList(dpath));
+    QStringList args;
+    args << fpath;
+    args << dpath;
+    ex.completeExport(args);
 }
 
 void VymModel::exportAO(QString fname, bool askName)
@@ -4691,6 +4694,10 @@ bool VymModel::exportLastAvailable(QString &description, QString &command,
                       .toString();
     dest = settings.localValue(filePath, "/export/last/destination", "")
                .toString();
+    qDebug() << "VM::exportLastAvail"; 
+    qDebug() << "   desc = " << description; 
+    qDebug() << "   dest = " << dest; 
+    qDebug() << "   cmd = " << command; 
     if (!command.isEmpty() && command.contains("exportMap"))
         return true;
     else

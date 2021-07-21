@@ -452,7 +452,10 @@ void ExportHTML::doExport(bool useDialog)
 
     success = true;
 
-    completeExport(QStringList(dirPath));
+    QStringList args;
+    args << filePath;
+    args << dirPath;
+    completeExport(args);
 
     dia.saveSettings();
     model->setExportMode(false);

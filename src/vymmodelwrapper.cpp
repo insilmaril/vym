@@ -284,21 +284,19 @@ bool VymModelWrapper::exportMap()
     }
     else if (format == "ConfluenceUpdatePage") {
         // 0: General export format
-        // 1: URL of new page
+        // 1: URL of  page to be updated
         // 2: page title (optional)
         if (argumentCount() == 1) {
             logError(context(), QScriptContext::SyntaxError,
                      "URL of new page missing in Confluence export");
             return setResult(r);
         }
-        if (argumentCount() == 2) {
-            logError(context(), QScriptContext::SyntaxError,
-                     "Title of new page missing in Confluence export");
-            return setResult(r);
-        }
-
         QString url = argument(1).toString();
-        QString title = argument(2).toString();
+
+        QString title;
+        if (argumentCount() == 2) {
+            title = argument(2).toString();
+        }
 
         model->exportConfluence(false, url, title, false);
     }
