@@ -294,6 +294,7 @@ begin
       fail "Error: The request  failed with the response seen above:"
     end
     r = JSON.parse(json)
+    pp r
 
     puts "#{r['result'].size} users found:" if $options[:verbose]
 

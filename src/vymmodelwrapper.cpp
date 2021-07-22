@@ -293,8 +293,8 @@ bool VymModelWrapper::exportMap()
         }
         QString url = argument(1).toString();
 
-        QString title;
-        if (argumentCount() == 2) {
+        QString title = "";
+        if (argumentCount() == 3) {
             title = argument(2).toString();
         }
 

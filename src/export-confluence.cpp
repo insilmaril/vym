@@ -98,7 +98,7 @@ QString ExportConfluence::getBranchText(BranchItem *current)
 
         // URL
         if (!url.isEmpty()) {
-            if (url.contains("ri:userkey"))
+            if (url.contains("ri:userkey")  || url.contains("<ac:image"))
                 s += url; 
             else {
                 if (url.contains(settings.value("/confluence/url",
@@ -367,7 +367,6 @@ void ExportConfluence::doExport(bool useDialog)
         args <<  pageTitle;
 
     completeExport(args);
-    qDebug() << "args: " << args;
     
     // Prepare human readable info in tooltip of LastExport:
     displayedDestination = (createNewPage) ? 

@@ -160,8 +160,7 @@ void ConfluenceAgent::continueJob()
                     startGetPageSourceRequest(pageURL);
                     break;
                 case 2:
-                    startGetPageDetailsRequest("/content/" + pageID +
-                                               "?expand=metadata.labels,version");
+                    startGetPageDetailsRequest();
                     break;
                 case 3:
                     model = mainWindow->getModel(modelID);
@@ -226,13 +225,11 @@ void ConfluenceAgent::continueJob()
                     }
 
                     // Check if page with url already exists and get pageID, spaceKey
-                    qDebug() << "starting update for " << pageURL;
                     startGetPageSourceRequest(pageURL);
                     break;
                 case 2:
                     // Get title, which is required by Confluence to update a page
-                    startGetPageDetailsRequest("/content/" + pageID +
-                                               "?expand=metadata.labels,version");
+                    startGetPageDetailsRequest();
                     break;
                 case 3:
                     // Update page with parent url
@@ -249,8 +246,36 @@ void ConfluenceAgent::continueJob()
             };
 
             break;
+        case UserInfo:
+            switch(jobStep) {
+                case 1:
+                    qDebug() << "CA:: begin getting UserInfo";
+                    startGetUserInfoRequest();
+                    break;
+                case 2: {
+                        QJsonArray array = jsobj["results"].toArray();
+                        QJsonObject userObj;
+                        QJsonObject u;
+                        for (int i = 0; i < array.size(); ++i) {
+                            userObj = array[i].toObject();
+                            qDebug() << userObj["title"].toString();
+                            qDebug() << userObj["url"].toString();  // URL: baseURL + url
+
+                            u = userObj["user"].toObject();
+                            qDebug() << u["userKey"].toString();
+                            qDebug() << u["username"].toString();
+                        }
+                    }
+                    break;
+                case 3:
+                    finishJob();
+                    break;
+                default:
+                    unknownStepWarning();
+            }
+            break;
         default:
-            qDebug() << "ConfluenceAgent::startJob   unknown jobType " << jobType;
+            qDebug() << "ConfluenceAgent::continueJob   unknown jobType " << jobType;
     }
 }
 
@@ -266,13 +291,18 @@ void ConfluenceAgent::unknownStepWarning()
         << "jobStep = " << jobStep;
 }
 
-bool ConfluenceAgent::getUsers(const QString &name)
+bool ConfluenceAgent::getUsers(const QString &usrQuery)
 {
+    userQuery = usrQuery;   // FIXME-0 Check input: Allow only alphanumerical
+    setJobType(UserInfo);
+    startJob();
+    return true;    // FIXME-0 not necessary to return value
+
     QStringList args; // FIXME-3 refactor so that args are passed to one
                       // function starting the process
 
     args << "-s";
-    args << name;
+    args << usrQuery;
 
     if (debug)
         qDebug().noquote() << QString("ConfluenceAgent::getUsers\n%1 %2")
@@ -307,9 +337,9 @@ void ConfluenceAgent::waitForResult()
     }
 }
 
-bool ConfluenceAgent::success() { return succ; }
+bool ConfluenceAgent::success() { return succ; } // FIXME-0 remove, obsolete!
 
-QString ConfluenceAgent::getResult() { return result; }
+QString ConfluenceAgent::getResult() { return result; } // FIXME-0 remove, obsolete!
 
 void ConfluenceAgent::dataReceived( // FIXME-0 remove, obsolete!
     int exitCode,
@@ -341,6 +371,7 @@ void ConfluenceAgent::timeout()
 
 void ConfluenceAgent::startGetPageSourceRequest(QUrl requestedURL)
 {
+    qDebug() << "CA::startGetPageSourceRequest " << requestedURL;
     if (!requestedURL.toString().startsWith("http"))
         requestedURL.setPath("https://" + requestedURL.path());
 
@@ -368,9 +399,9 @@ void ConfluenceAgent::startGetPageSourceRequest(QUrl requestedURL)
     networkManager->get(request);
 }
 
-void ConfluenceAgent::startGetPageDetailsRequest(QString query)
+void ConfluenceAgent::startGetPageDetailsRequest()
 {
-    qDebug() << "CA::startGetPageDetailsRequest" << query;
+    qDebug() << "CA::startGetPageDetailsRequest" << pageID;
 
     httpRequestAborted = false;
 
@@ -379,7 +410,10 @@ void ConfluenceAgent::startGetPageDetailsRequest(QString query)
     // https://developer.atlassian.com/cloud/confluence/basic-auth-for-rest-apis/
     QString concatenated = username + ":" + password;
 
-    query = "https://" + concatenated + "@" + apiURL + query;
+    QString query = "https://" 
+        + concatenated 
+        + "@" + apiURL 
+        + "/content/" + pageID + "?expand=metadata.labels,version";
 
     QNetworkRequest request = QNetworkRequest(QUrl(query));
 
@@ -474,9 +508,6 @@ void ConfluenceAgent::startUpdatePageRequest()
     newVersionObj["number"] = oldVersionObj["number"].toInt() + 1;
     payload["version"] = newVersionObj;
 
-    qDebug() << "oldversion: " << oldVersionObj["number"];
-    qDebug() << "newversion: " << newVersionObj;
-
     // Build object with space key
     QJsonObject skey;
     skey["key"] = spaceKey;
@@ -508,9 +539,39 @@ void ConfluenceAgent::startUpdatePageRequest()
 
     killTimer->start();
 
-    qDebug() << "Request: " << url;
-    qDebug() << "Data: " << payload;
     networkManager->put(request, data);
+}
+
+void ConfluenceAgent::startGetUserInfoRequest()
+{
+    qDebug() << "CA::startGetInfoRequest for " << userQuery;
+
+    httpRequestAborted = false;
+
+    QString concatenated = username + ":" + password;
+
+    QString query = "https://" + apiURL
+    //    + concatenated 
+    //    + "@" + apiURL 
+        + "/search?cql=user.fullname~" + userQuery;
+    qDebug() << query;
+
+    networkManager->disconnect();
+
+    QNetworkRequest request = QNetworkRequest(QUrl(query));
+//    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+//
+    // Basic authentication in header
+    QByteArray data = concatenated.toLocal8Bit().toBase64();
+    QString headerData = "Basic " + data;
+    request.setRawHeader("Authorization", headerData.toLocal8Bit());
+
+    connect(networkManager, &QNetworkAccessManager::finished,
+        this, &ConfluenceAgent::userInfoReceived);
+
+    killTimer->start();
+
+    networkManager->get(request);
 }
 
 void ConfluenceAgent::pageSourceReceived(QNetworkReply *reply)
@@ -624,6 +685,36 @@ void ConfluenceAgent::contentUploaded(QNetworkReply *reply)
 
     QJsonDocument jsdoc;
     jsdoc = QJsonDocument::fromJson(reply->readAll());
+    jsobj = jsdoc.object();
+    continueJob();
+}
+
+void ConfluenceAgent::userInfoReceived(QNetworkReply *reply)
+{
+    qDebug() << "CA::UserInfopageReceived";
+
+    killTimer->stop();
+
+    networkManager->disconnect();
+
+    QString r = reply->readAll();
+
+    if (httpRequestAborted) {
+        qWarning() << "ConfluenceAgent::UserInfoReveived aborted";
+        finishJob();
+        return;
+    }
+
+    if (reply->error()) {
+        qWarning() << "ConfluenceAgent::UserInfoReveived reply error";
+        qWarning() << "Error: " << reply->error();
+        qWarning() << "reply: " << r;
+        finishJob();
+        return;
+    }
+
+    QJsonDocument jsdoc;
+    jsdoc = QJsonDocument::fromJson(r.toUtf8());
     jsobj = jsdoc.object();
     continueJob();
 }

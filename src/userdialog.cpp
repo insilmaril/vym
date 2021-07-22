@@ -49,9 +49,9 @@ QString UserDialog::selectedUserKey()
 void UserDialog::lineEditChanged()
 {
     if (ui.lineEdit->text().length() > 3) {
-        ConfluenceAgent ca;
-        ca.getUsers(ui.lineEdit->text());
-        ca.waitForResult();
+        ConfluenceAgent *agent = new ConfluenceAgent;
+        agent->getUsers(ui.lineEdit->text());
+        /*
         QString results = ca.getResult();
 
         QStringList list = results.split("\n");
@@ -75,6 +75,7 @@ void UserDialog::lineEditChanged()
                                     ui.userList);
             }
         }
+        */
     }
 }
 

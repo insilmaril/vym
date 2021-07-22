@@ -4694,10 +4694,6 @@ bool VymModel::exportLastAvailable(QString &description, QString &command,
                       .toString();
     dest = settings.localValue(filePath, "/export/last/destination", "")
                .toString();
-    qDebug() << "VM::exportLastAvail"; 
-    qDebug() << "   desc = " << description; 
-    qDebug() << "   dest = " << dest; 
-    qDebug() << "   cmd = " << command; 
     if (!command.isEmpty() && command.contains("exportMap"))
         return true;
     else
@@ -4709,6 +4705,7 @@ void VymModel::exportLast()
     QString desc, command,
         dest; // FIXME-3 better integrate configFile into command
     if (exportLastAvailable(desc, command, dest)) {
+        qDebug() << "VM::exportLast:  cmd=" << command;
         execute(command);
     }
 }
