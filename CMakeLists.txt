@@ -139,7 +139,7 @@ SET(VymSources
     src/treeeditor.cpp
     src/treeitem.cpp
     src/treemodel.cpp
-    src/userdialog.cpp
+    src/confluence-userdialog.cpp
     src/version.cpp
     src/vymlock.cpp
     src/vymmodel.cpp

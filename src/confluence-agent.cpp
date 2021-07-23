@@ -17,11 +17,13 @@ ConfluenceUser::ConfluenceUser() {};
 void ConfluenceUser::setTitle(const QString &s) {title = s;}
 void ConfluenceUser::setUrl(const QString &s) {url = s;}
 void ConfluenceUser::setUserName(const QString &s) {userName = s;}
+void ConfluenceUser::setDisplayName(const QString &s) {displayName = s;}
 void ConfluenceUser::setUserKey(const QString &s) {userKey = s;}
 
 QString ConfluenceUser::getTitle() {return title;}
 QString ConfluenceUser::getUrl() {return url;}
 QString ConfluenceUser::getUserName() {return userName;}
+QString ConfluenceUser::getDisplayName() {return displayName;}
 QString ConfluenceUser::getUserKey() {return userKey;}
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -274,11 +276,13 @@ void ConfluenceAgent::continueJob()
                         for (int i = 0; i < array.size(); ++i) {
                             userObj = array[i].toObject();
                             qDebug() << userObj["title"].toString();
+                            qDebug() << userObj;
 
                             u = userObj["user"].toObject();
                             user.setTitle( userObj["title"].toString());
                             user.setUserKey( u["userKey"].toString());
                             user.setUserName( u["username"].toString());
+                            user.setDisplayName( u["displayName"].toString());
                             userList << user;
                         }
                         qDebug() << "Emitting signal...";

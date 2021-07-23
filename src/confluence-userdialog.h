@@ -1,18 +1,18 @@
-#ifndef USERDIALOG_H
-#define USERDIALOG_H
+#ifndef CONFLUENCEUSERDIALOG_H
+#define CONFLUENCEUSERDIALOG_H
 
-#include "ui_userdialog.h"
+#include "ui_confluence-userdialog.h"
 
 #include <QStringList>
 
 class ConfluenceUser;
 class ConfluenceAgent;
 
-class UserDialog : public QDialog {
+class ConfluenceUserDialog : public QDialog {
     Q_OBJECT
 
   public:
-    UserDialog(QWidget *parent = 0);
+    ConfluenceUserDialog(QWidget *parent = 0);
     int exec();
     ConfluenceUser getSelectedUser();
 
@@ -23,7 +23,7 @@ class UserDialog : public QDialog {
 
   private:
     void init();
-    Ui::UserDialog ui;
+    Ui::ConfluenceUserDialog ui;
 
     QList <ConfluenceUser> userList;
     int currentRow;

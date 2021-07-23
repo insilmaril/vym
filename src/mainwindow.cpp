@@ -25,6 +25,7 @@ using namespace std;
 #include "branchpropeditor.h"
 #include "command.h"
 #include "confluence-agent.h"
+#include "confluence-userdialog.h"
 #include "credentials.h"
 #include "download-agent.h"
 #include "file.h"
@@ -50,7 +51,6 @@ using namespace std;
 #include "taskeditor.h"
 #include "taskmodel.h"
 #include "treeeditor.h"
-#include "userdialog.h"
 #include "vymprocess.h"
 #include "warningdialog.h"
 #include "xlinkitem.h"
@@ -6510,11 +6510,11 @@ void Main::testFunction2()
 {
     VymModel *m = currentModel();
     if (m) {
-        UserDialog dia;
+        ConfluenceUserDialog dia;
         dia.exec();
         if (dia.result() > 0) {
             ConfluenceUser user = dia.getSelectedUser();
-            m->setHeading(user.getTitle());
+            m->setHeading(user.getDisplayName());
             m->setURL(
                 QString("<ac:link> <ri:user ri:userkey=\"%1\"/></ac:link>")
                     .arg(user.getUserKey()));

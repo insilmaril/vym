@@ -22,6 +22,8 @@ class ConfluenceUser {
     QString getUrl();
     void setUserName(const QString &s);
     QString getUserName();
+    void setDisplayName(const QString &s);
+    QString getDisplayName();
     void setUserKey(const QString &s);
     QString getUserKey();
 
@@ -30,6 +32,7 @@ class ConfluenceUser {
     QString url;
     QString userName;
     QString userKey;
+    QString displayName;
 };
 
 //////////////////////////////////////////////////////////////////////////

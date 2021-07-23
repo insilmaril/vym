@@ -1,10 +1,10 @@
-#include "userdialog.h"
+#include "confluence-userdialog.h"
 
 #include <QRegExp>
 
 #include "confluence-agent.h"
 
-UserDialog::UserDialog(QWidget *parent) : QDialog(parent)
+ConfluenceUserDialog::ConfluenceUserDialog(QWidget *parent) : QDialog(parent)
 {
     ui.setupUi(this);
     QDialog::setWindowTitle("VYM - " +
@@ -21,14 +21,14 @@ UserDialog::UserDialog(QWidget *parent) : QDialog(parent)
     currentRow = -1;
 }
 
-int UserDialog::exec()
+int ConfluenceUserDialog::exec()
 {
     int result = QDialog::exec();
 
     return result;
 }
 
-ConfluenceUser UserDialog::getSelectedUser()
+ConfluenceUser ConfluenceUserDialog::getSelectedUser()
 {
     if (userList.length() > 0 && currentRow < userList.length() &&
         currentRow > -1)
@@ -37,11 +37,11 @@ ConfluenceUser UserDialog::getSelectedUser()
         return ConfluenceUser();
 }
 
-void UserDialog::lineEditChanged()
+void ConfluenceUserDialog::lineEditChanged()
 {
     if (ui.lineEdit->text().length() > 3) {
         ConfluenceAgent *agent = new ConfluenceAgent;
-        bool b = connect(agent, &ConfluenceAgent::foundUsers, this, &UserDialog::updateResultsList);
+        bool b = connect(agent, &ConfluenceAgent::foundUsers, this, &ConfluenceUserDialog::updateResultsList);
         qDebug() << "Connected:  " << b;
         qDebug() << "agent: " << agent;
 
@@ -74,22 +74,22 @@ void UserDialog::lineEditChanged()
     }
 }
 
-void UserDialog::itemSelected(QListWidgetItem *item)
+void ConfluenceUserDialog::itemSelected(QListWidgetItem *item)
 {
     currentRow = ui.userList->row(item);
     accept();
 }
 
-void UserDialog::updateResultsList(QList <ConfluenceUser> results)
+void ConfluenceUserDialog::updateResultsList(QList <ConfluenceUser> results)
 {
-    qDebug() << "UserDialog: Results received";
+    qDebug() << "ConfluenceUserDialog: Results received";
     ui.userList->clear();
     userList.clear();
     currentRow = -1;
 
     foreach (ConfluenceUser u, results) {
-        qDebug() << u.getTitle() << u.getUserName(); 
+        qDebug() << u.getTitle() << u.getDisplayName() << u.getUserName(); 
         userList << u;
-        new QListWidgetItem(u.getTitle() + " (" + u.getUserName() + ")", ui.userList);
+        new QListWidgetItem(u.getDisplayName() + " (" + u.getUserName() + ")", ui.userList);
     }
 }
