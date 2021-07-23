@@ -28,28 +28,23 @@ int UserDialog::exec()
     return result;
 }
 
-QString UserDialog::selectedUser()
+ConfluenceUser UserDialog::getSelectedUser()
 {
-    if (userNameList.length() > 0 && currentRow < userNameList.length() &&
+    if (userList.length() > 0 && currentRow < userList.length() &&
         currentRow > -1)
-        return userNameList.at(currentRow);
+        return userList.at(currentRow);
     else
-        return QString();
-}
-
-QString UserDialog::selectedUserKey()
-{
-    if (userNameList.length() > 0 && currentRow < userNameList.length() &&
-        currentRow > -1)
-        return userKeyList.at(currentRow);
-    else
-        return QString();
+        return ConfluenceUser();
 }
 
 void UserDialog::lineEditChanged()
 {
     if (ui.lineEdit->text().length() > 3) {
         ConfluenceAgent *agent = new ConfluenceAgent;
+        bool b = connect(agent, &ConfluenceAgent::foundUsers, this, &UserDialog::updateResultsList);
+        qDebug() << "Connected:  " << b;
+        qDebug() << "agent: " << agent;
+
         agent->getUsers(ui.lineEdit->text());
         /*
         QString results = ca.getResult();
@@ -83,4 +78,18 @@ void UserDialog::itemSelected(QListWidgetItem *item)
 {
     currentRow = ui.userList->row(item);
     accept();
+}
+
+void UserDialog::updateResultsList(QList <ConfluenceUser> results)
+{
+    qDebug() << "UserDialog: Results received";
+    ui.userList->clear();
+    userList.clear();
+    currentRow = -1;
+
+    foreach (ConfluenceUser u, results) {
+        qDebug() << u.getTitle() << u.getUserName(); 
+        userList << u;
+        new QListWidgetItem(u.getTitle() + " (" + u.getUserName() + ")", ui.userList);
+    }
 }

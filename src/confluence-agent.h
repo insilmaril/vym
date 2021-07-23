@@ -13,6 +13,27 @@
 class BranchItem;
 class VymModel;
 
+class ConfluenceUser {
+  public:
+    ConfluenceUser();
+    void setTitle(const QString &s);
+    QString getTitle();
+    void setUrl(const QString &s);
+    QString getUrl();
+    void setUserName(const QString &s);
+    QString getUserName();
+    void setUserKey(const QString &s);
+    QString getUserKey();
+
+  private:
+    QString title;
+    QString url;
+    QString userName;
+    QString userKey;
+};
+
+//////////////////////////////////////////////////////////////////////////
+
 class ConfluenceAgent : public QObject {
     Q_OBJECT
 
@@ -33,10 +54,13 @@ class ConfluenceAgent : public QObject {
 
     void startJob();
 
-private:
+  private:
     void continueJob();
     void finishJob();
     void unknownStepWarning();
+
+  signals:
+    void foundUsers(QList <ConfluenceUser>);
 
   public:
     bool getUsers(const QString &name);
@@ -102,5 +126,8 @@ private:
     // Page details received from Confluence
     QString pageID;
     QString spaceKey;
+
+    // User info received from Confluence
+    QList <ConfluenceUser> userList;
 };
 #endif

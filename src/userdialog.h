@@ -5,27 +5,27 @@
 
 #include <QStringList>
 
+class ConfluenceUser;
+class ConfluenceAgent;
+
 class UserDialog : public QDialog {
     Q_OBJECT
 
   public:
     UserDialog(QWidget *parent = 0);
     int exec();
-    QString selectedUser();
-    QString selectedUserKey();
+    ConfluenceUser getSelectedUser();
 
   public slots:
     void lineEditChanged();
     void itemSelected(QListWidgetItem *);
+    void updateResultsList(QList <ConfluenceUser>);
 
   private:
     void init();
     Ui::UserDialog ui;
 
-    QStringList userNameList;
-    QStringList userLoginList;
-    QStringList userKeyList;
-
+    QList <ConfluenceUser> userList;
     int currentRow;
 };
 

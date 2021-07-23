@@ -6513,10 +6513,11 @@ void Main::testFunction2()
         UserDialog dia;
         dia.exec();
         if (dia.result() > 0) {
-            m->setHeading(dia.selectedUser());
+            ConfluenceUser user = dia.getSelectedUser();
+            m->setHeading(user.getTitle());
             m->setURL(
                 QString("<ac:link> <ri:user ri:userkey=\"%1\"/></ac:link>")
-                    .arg(dia.selectedUserKey()));
+                    .arg(user.getUserKey()));
         }
     }
 }

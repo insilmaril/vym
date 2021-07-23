@@ -12,6 +12,19 @@ extern QDir vymBaseDir;
 extern bool debug;
 extern QString confluencePassword;
 
+ConfluenceUser::ConfluenceUser() {};
+
+void ConfluenceUser::setTitle(const QString &s) {title = s;}
+void ConfluenceUser::setUrl(const QString &s) {url = s;}
+void ConfluenceUser::setUserName(const QString &s) {userName = s;}
+void ConfluenceUser::setUserKey(const QString &s) {userKey = s;}
+
+QString ConfluenceUser::getTitle() {return title;}
+QString ConfluenceUser::getUrl() {return url;}
+QString ConfluenceUser::getUserName() {return userName;}
+QString ConfluenceUser::getUserKey() {return userKey;}
+
+////////////////////////////////////////////////////////////////////////////////
 ConfluenceAgent::ConfluenceAgent() { 
     qDebug() << "Constr. ConfluenceAgent";
     init(); 
@@ -256,15 +269,20 @@ void ConfluenceAgent::continueJob()
                         QJsonArray array = jsobj["results"].toArray();
                         QJsonObject userObj;
                         QJsonObject u;
+                        ConfluenceUser user;
+                        userList.clear();
                         for (int i = 0; i < array.size(); ++i) {
                             userObj = array[i].toObject();
                             qDebug() << userObj["title"].toString();
-                            qDebug() << userObj["url"].toString();  // URL: baseURL + url
 
                             u = userObj["user"].toObject();
-                            qDebug() << u["userKey"].toString();
-                            qDebug() << u["username"].toString();
+                            user.setTitle( userObj["title"].toString());
+                            user.setUserKey( u["userKey"].toString());
+                            user.setUserName( u["username"].toString());
+                            userList << user;
                         }
+                        qDebug() << "Emitting signal...";
+                        emit (foundUsers(userList));
                     }
                     break;
                 case 3:
