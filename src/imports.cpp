@@ -134,7 +134,7 @@ bool ImportFirefoxBookmarks::parseJson(QJsonValue jsval, ParseMode mode, BranchI
         foreach (QString key, jsobj.keys())
         {
             if (key != "children") {
-                ai = new AttributeItem(cData);  // FIXME-3 remove cdata  
+                ai = new AttributeItem(cData);  // FIXME-1 remove cdata  
                 ai->setKey(key);
                 // Integer types: dateAdded, id, index, lastModified, typeCode
                 // Special: postData
@@ -153,12 +153,12 @@ bool ImportFirefoxBookmarks::parseJson(QJsonValue jsval, ParseMode mode, BranchI
                     ai->setValue(jsobj[key].toString());
                 else {
                 // Ignore only the "postdata: null" field for now
-                    qDebug() << "Firefox import, unknown key type: " << jsobj[key].type();
+                    qWarning() << "Firefox import, unknown key type: " << jsobj[key].type();
                     qDebug() << "                Firefox bookmark: " << key << jsobj[key].toString();
                     ai->setValue(QString("unknown type."));
                 }
 
-                model->addAttribute(selbi, ai); // FIXME-3 deep copy?
+                model->setAttribute(selbi, ai); // FIXME-3 deep copy?
             }
         }
 

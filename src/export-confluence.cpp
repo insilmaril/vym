@@ -97,7 +97,7 @@ QString ExportConfluence::getBranchText(BranchItem *current)
         // if (dia.useNumbering) number = getSectionString(current) + " ";
 
         // URL
-        if (!url.isEmpty()) {
+        if (!url.isEmpty()) {   // FIXME-0   If username avail in attributes, create special link
             if (url.contains("ri:userkey")  || url.contains("<ac:image"))
                 s += url; 
             else {

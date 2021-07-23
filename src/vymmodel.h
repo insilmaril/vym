@@ -423,8 +423,8 @@ class VymModel : public TreeModel {
     QString getXLinkStyleBegin();
     QString getXLinkStyleEnd();
 
-    AttributeItem *addAttribute();
-    AttributeItem *addAttribute(BranchItem *dst, AttributeItem *);
+    AttributeItem *setAttribute();
+    AttributeItem *setAttribute(BranchItem *dst, AttributeItem *);
 
     /*! \brief Add new mapcenter
 

@@ -12,6 +12,13 @@ AttributeItem::AttributeItem(const QList<QVariant> &data, TreeItem *parent)
 
 AttributeItem::~AttributeItem() {}
 
+void AttributeItem::copy(AttributeItem *other)
+{
+    key = other->key;
+    value = other->value;
+    attrType = other->attrType;
+}
+
 void AttributeItem::set(const QString &k, const QString &v, const Type &)
 {
     key = k;

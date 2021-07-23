@@ -21,6 +21,7 @@ class AttributeItem : public BranchItem {
 
     AttributeItem(const QList<QVariant> &data, TreeItem *parent = 0);
     virtual ~AttributeItem();
+    void copy(AttributeItem *other);
     void set(const QString &k, const QString &v, const Type &t);
     void get(QString &k, QString &v, Type &t);
     void setKey(const QString &k);

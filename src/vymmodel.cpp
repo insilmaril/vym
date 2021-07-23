@@ -3041,39 +3041,57 @@ QString VymModel::getXLinkStyleEnd()
         return QString();
 }
 
-AttributeItem *VymModel::addAttribute() // FIXME-3 Experimental, savestate missing
+AttributeItem *VymModel::setAttribute() // FIXME-3 Experimental, savestate missing
 
 {
     BranchItem *selbi = getSelectedBranch();
     if (selbi) {
-        QList<QVariant> cData;
+        QList<QVariant> cData;  // FIXME-1 remove cdata
         cData << "new attribute"
               << "undef";
-        AttributeItem *a = new AttributeItem(cData);
-        a->setAttributeType(AttributeItem::String);
-        a->setKey("Foo Attrib");
-        a->setValue(QString("Att val"));
+        AttributeItem *ai = new AttributeItem(cData);
+        ai->setAttributeType(AttributeItem::String);
+        ai->setKey("Foo Attrib");
+        ai->setValue(QString("Att val"));
 
-        if (addAttribute(selbi, a))
-            return a;
+        return setAttribute(selbi, ai);
     }
-    return NULL;
+    return nullptr;
 }
 
-AttributeItem *VymModel::addAttribute(BranchItem *dst, AttributeItem *ai)
+AttributeItem *VymModel::setAttribute(BranchItem *dst, AttributeItem *ai_new)
 {
     if (dst) {
+
+        // Check if there is already an attribute with same key
+        AttributeItem *ai;
+        for (int i = 0; i < dst->attributeCount(); i++) {
+            ai = dst->getAttributeNum(i);
+            if (ai->getKey() == ai_new->getKey()) 
+            {
+                // Key exists, overwrite value
+                ai->copy(ai_new);
+
+                // Delete original attribute, this is basically a move...
+                delete ai_new;
+                emitDataChanged(dst);
+                return ai;
+            }
+        }
+
+        // Create new attribute
         emit(layoutAboutToBeChanged());
 
         QModelIndex parix = index(dst);
-        int n = dst->getRowNumAppend(ai);
+        int n = dst->getRowNumAppend(ai_new);
         beginInsertRows(parix, n, n);
-        dst->appendChild(ai);
+        dst->appendChild(ai_new);
         endInsertRows();
 
         emit(layoutChanged());
 
-        return ai;  // FIXME-3 Check if ai is used or deleted - deep copy here?
+        emitDataChanged(dst);
+        return ai_new;  // FIXME-3 Check if ai is used or deleted - deep copy here?
     }
     return NULL;
 }

@@ -15,26 +15,26 @@ extern QString confluencePassword;
 ConfluenceUser::ConfluenceUser() {};
 
 void ConfluenceUser::setTitle(const QString &s) {title = s;}
-void ConfluenceUser::setUrl(const QString &s) {url = s;}
+void ConfluenceUser::setURL(const QString &s) {url = s;}
 void ConfluenceUser::setUserName(const QString &s) {userName = s;}
 void ConfluenceUser::setDisplayName(const QString &s) {displayName = s;}
 void ConfluenceUser::setUserKey(const QString &s) {userKey = s;}
 
 QString ConfluenceUser::getTitle() {return title;}
-QString ConfluenceUser::getUrl() {return url;}
+QString ConfluenceUser::getURL() {return url;}
 QString ConfluenceUser::getUserName() {return userName;}
 QString ConfluenceUser::getDisplayName() {return displayName;}
 QString ConfluenceUser::getUserKey() {return userKey;}
 
 ////////////////////////////////////////////////////////////////////////////////
 ConfluenceAgent::ConfluenceAgent() { 
-    qDebug() << "Constr. ConfluenceAgent";
+    //qDebug() << "Constr. ConfluenceAgent";
     init(); 
 }
 
 ConfluenceAgent::ConfluenceAgent(BranchItem *bi)
 {
-    qDebug() << "Constr. ConfluenceAgent selbi = " << bi;
+    //qDebug() << "Constr. ConfluenceAgent selbi = " << bi;
 
     if (!bi) {
         qWarning("Const ConfluenceAgent: bi == nullptr");
@@ -49,7 +49,7 @@ ConfluenceAgent::ConfluenceAgent(BranchItem *bi)
 
 ConfluenceAgent::~ConfluenceAgent()
 {
-    qDebug() << "CA::Destr.";
+    //qDebug() << "Destr ConfluenceAgent.";
     if (killTimer)
         delete killTimer;
 }
@@ -72,12 +72,7 @@ void ConfluenceAgent::init()
     killTimer->setInterval(15000);
     killTimer->setSingleShot(true);
 
-    vymProcess = // FIXME-0 not needed soon
-        nullptr; // Only one process may be active at any time in this agent
-
     QObject::connect(killTimer, SIGNAL(timeout()), this, SLOT(timeout()));
-
-    succ = false;
 
     // Read credentials 
     username =
@@ -125,25 +120,6 @@ void ConfluenceAgent::setUploadFilePath(const QString &fp)
     uploadFilePath = fp;
 }
 
-void ConfluenceAgent::test()
-{
-    QStringList args;
-
-    args << "-h";
-
-    qWarning() << "ConfluenceAgent::test() called";
-
-    vymProcess->start(confluenceScript, args);
-
-    if (!vymProcess->waitForStarted()) {
-        qWarning() << "ConfluenceAgent::test()  couldn't start "
-                   << confluenceScript;
-        return;
-    }
-
-    killTimer->start();
-}
-
 void ConfluenceAgent::startJob()
 {
     if (jobStep > 0) {
@@ -166,7 +142,7 @@ void ConfluenceAgent::continueJob()
 
     VymModel *model;
 
-    qDebug() << "CA::contJob " << jobType << " Step: " << jobStep;
+    //qDebug() << "CA::contJob " << jobType << " Step: " << jobStep;
 
     switch(jobType) {
         case CopyPagenameToHeading:
@@ -203,12 +179,12 @@ void ConfluenceAgent::continueJob()
             switch(jobStep) {
                 case 1:
                     if (pageURL.isEmpty()) {
-                        qDebug() << "CA::contJob NewPage: pageURL is empty";
+                        qWarning() << "CA::contJob NewPage: pageURL is empty";
                         finishJob();
                         return;
                     }
                     if (newPageTitle.isEmpty()) {
-                        qDebug() << "CA::contJob NewPage: newPageTitle is empty";
+                        qWarning() << "CA::contJob NewPage: newPageTitle is empty";
                         finishJob();
                         return;
                     }
@@ -221,7 +197,7 @@ void ConfluenceAgent::continueJob()
                     startCreatePageRequest();
                     break;
                 case 3:
-                    qDebug() << "CA::finished  Created page with ID: " << jsobj["id"].toString();
+                    //qDebug() << "CA::finished  Created page with ID: " << jsobj["id"].toString();
                     finishJob();
                     break;
                 default:
@@ -234,7 +210,7 @@ void ConfluenceAgent::continueJob()
             switch(jobStep) {
                 case 1:
                     if (pageURL.isEmpty()) {
-                        qDebug() << "CA::contJob UpdatePage: pageURL is empty";
+                        qWarning() << "CA::contJob UpdatePage: pageURL is empty";
                         finishJob();
                         return;
                     }
@@ -253,7 +229,7 @@ void ConfluenceAgent::continueJob()
                     startUpdatePageRequest();
                     break;
                 case 4:
-                    qDebug() << "CA::finished  Updated page with ID: " << jsobj["id"].toString();
+                    //qDebug() << "CA::finished  Updated page with ID: " << jsobj["id"].toString();
                     finishJob();
                     break;
                 default:
@@ -264,7 +240,7 @@ void ConfluenceAgent::continueJob()
         case UserInfo:
             switch(jobStep) {
                 case 1:
-                    qDebug() << "CA:: begin getting UserInfo";
+                    // qDebug() << "CA:: begin getting UserInfo";
                     startGetUserInfoRequest();
                     break;
                 case 2: {
@@ -275,29 +251,25 @@ void ConfluenceAgent::continueJob()
                         userList.clear();
                         for (int i = 0; i < array.size(); ++i) {
                             userObj = array[i].toObject();
-                            qDebug() << userObj["title"].toString();
-                            qDebug() << userObj;
 
                             u = userObj["user"].toObject();
                             user.setTitle( userObj["title"].toString());
+                            user.setURL( "https://" + apiURL + "/" + userObj["url"].toString());
                             user.setUserKey( u["userKey"].toString());
                             user.setUserName( u["username"].toString());
                             user.setDisplayName( u["displayName"].toString());
                             userList << user;
                         }
-                        qDebug() << "Emitting signal...";
                         emit (foundUsers(userList));
+                        finishJob();
                     }
-                    break;
-                case 3:
-                    finishJob();
                     break;
                 default:
                     unknownStepWarning();
             }
             break;
         default:
-            qDebug() << "ConfluenceAgent::continueJob   unknown jobType " << jobType;
+            qWarning() << "ConfluenceAgent::continueJob   unknown jobType " << jobType;
     }
 }
 
@@ -313,77 +285,17 @@ void ConfluenceAgent::unknownStepWarning()
         << "jobStep = " << jobStep;
 }
 
-bool ConfluenceAgent::getUsers(const QString &usrQuery)
+void ConfluenceAgent::getUsers(const QString &usrQuery)
 {
-    userQuery = usrQuery;   // FIXME-0 Check input: Allow only alphanumerical
+    userQuery = usrQuery;
+    if (usrQuery.contains(QRegExp("\\W+"))) {
+        qWarning() << "ConfluenceAgent::getUsers  Forbidden characters in " << usrQuery;
+        return;
+    }
+    qDebug() << "QUery: " << usrQuery;
+
     setJobType(UserInfo);
     startJob();
-    return true;    // FIXME-0 not necessary to return value
-
-    QStringList args; // FIXME-3 refactor so that args are passed to one
-                      // function starting the process
-
-    args << "-s";
-    args << usrQuery;
-
-    if (debug)
-        qDebug().noquote() << QString("ConfluenceAgent::getUsers\n%1 %2")
-                                  .arg(confluenceScript)
-                                  .arg(args.join(" "));
-
-    vymProcess = new VymProcess;
-
-    connect(vymProcess, SIGNAL(finished(int, QProcess::ExitStatus)), this,
-            SLOT(dataReceived(int, QProcess::ExitStatus)));
-
-    vymProcess->start(confluenceScript, args);
-
-    if (!vymProcess->waitForStarted()) {
-        qWarning() << "ConfluenceAgent::getUsers  couldn't start "
-                   << confluenceScript;
-        return false;
-    }
-
-    return true;
-}
-
-void ConfluenceAgent::waitForResult()
-{
-    if (!vymProcess) {
-        qWarning() << "ConfluenceAgent: No running vymProces";
-        return;
-    }
-    if (!vymProcess->waitForFinished(10000)) {
-        qWarning() << "ConfluenceAgent: Timeout.";
-        return;
-    }
-}
-
-bool ConfluenceAgent::success() { return succ; } // FIXME-0 remove, obsolete!
-
-QString ConfluenceAgent::getResult() { return result; } // FIXME-0 remove, obsolete!
-
-void ConfluenceAgent::dataReceived( // FIXME-0 remove, obsolete!
-    int exitCode,
-    QProcess::ExitStatus exitStatus) // FIXME-3  return value???   // FIXME-3
-                                     // name correct? used by all functions...
-{
-    if (exitStatus == QProcess::NormalExit) {
-        result = vymProcess->getStdout();
-
-        QString err = vymProcess->getErrout();
-        if (!err.isEmpty()) {
-            qWarning() << "ConfluenceAgent process error: \n" << err;
-        }
-        else {
-            if (!result.startsWith("Error"))
-                succ = true;
-        }
-    }
-    else
-        qWarning() << "ConfluenceAgent: Process finished with exitCode="
-                   << exitCode;
-    vymProcess = nullptr;
 }
 
 void ConfluenceAgent::timeout()
@@ -393,7 +305,7 @@ void ConfluenceAgent::timeout()
 
 void ConfluenceAgent::startGetPageSourceRequest(QUrl requestedURL)
 {
-    qDebug() << "CA::startGetPageSourceRequest " << requestedURL;
+    //qDebug() << "CA::startGetPageSourceRequest " << requestedURL;
     if (!requestedURL.toString().startsWith("http"))
         requestedURL.setPath("https://" + requestedURL.path());
 
@@ -423,7 +335,7 @@ void ConfluenceAgent::startGetPageSourceRequest(QUrl requestedURL)
 
 void ConfluenceAgent::startGetPageDetailsRequest()
 {
-    qDebug() << "CA::startGetPageDetailsRequest" << pageID;
+    //qDebug() << "CA::startGetPageDetailsRequest" << pageID;
 
     httpRequestAborted = false;
 
@@ -449,7 +361,7 @@ void ConfluenceAgent::startGetPageDetailsRequest()
 
 void ConfluenceAgent::startCreatePageRequest()
 {
-    qDebug() << "CA::startCreatePageRequest";
+    // qDebug() << "CA::startCreatePageRequest";
 
     httpRequestAborted = false;
 
@@ -507,7 +419,7 @@ void ConfluenceAgent::startCreatePageRequest()
 
 void ConfluenceAgent::startUpdatePageRequest()
 {
-    qDebug() << "CA::startUpdatePageRequest";
+    // qDebug() << "CA::startUpdatePageRequest";
 
     httpRequestAborted = false;
 
@@ -566,7 +478,7 @@ void ConfluenceAgent::startUpdatePageRequest()
 
 void ConfluenceAgent::startGetUserInfoRequest()
 {
-    qDebug() << "CA::startGetInfoRequest for " << userQuery;
+    // qDebug() << "CA::startGetInfoRequest for " << userQuery;
 
     httpRequestAborted = false;
 
@@ -576,7 +488,7 @@ void ConfluenceAgent::startGetUserInfoRequest()
     //    + concatenated 
     //    + "@" + apiURL 
         + "/search?cql=user.fullname~" + userQuery;
-    qDebug() << query;
+    // qDebug() << query;
 
     networkManager->disconnect();
 
@@ -598,7 +510,7 @@ void ConfluenceAgent::startGetUserInfoRequest()
 
 void ConfluenceAgent::pageSourceReceived(QNetworkReply *reply)
 {
-    qDebug() << "CA::pageSourceReceived";
+    //qDebug() << "CA::pageSourceReceived";
 
     killTimer->stop();
 
@@ -629,7 +541,7 @@ void ConfluenceAgent::pageSourceReceived(QNetworkReply *reply)
     else {
         qWarning()
             << "ConfluenceAgent::pageSourceReveived Couldn't find page ID";
-        qDebug() << r;
+        qWarning() << r;
         return;
     }
 
@@ -655,7 +567,7 @@ void ConfluenceAgent::pageSourceReceived(QNetworkReply *reply)
 
 void ConfluenceAgent::pageDetailsReceived(QNetworkReply *reply)
 {
-    qDebug() << "CA::pageDetailsReceived";
+    // qDebug() << "CA::pageDetailsReceived";
 
     killTimer->stop();
 
@@ -669,7 +581,7 @@ void ConfluenceAgent::pageDetailsReceived(QNetworkReply *reply)
 
     if (reply->error()) {
         qWarning() << "ConfluenceAgent::pageDetailsReveived reply error";
-        qDebug() << reply->error();
+        qWarning() << reply->error();
         finishJob();
         return;
     }
@@ -684,7 +596,7 @@ void ConfluenceAgent::pageDetailsReceived(QNetworkReply *reply)
 
 void ConfluenceAgent::contentUploaded(QNetworkReply *reply)
 {
-    qDebug() << "CA::contentUploaded";
+    //qDebug() << "CA::contentUploaded";
 
     killTimer->stop();
 
@@ -698,9 +610,9 @@ void ConfluenceAgent::contentUploaded(QNetworkReply *reply)
 
     if (reply->error()) {
         qWarning() << "ConfluenceAgent::contentUploaded reply error";
-        qDebug() << reply->error();
-        qDebug() << reply->errorString();
-        qDebug() << reply->readAll();
+        qWarning() << reply->error();
+        qWarning() << reply->errorString();
+        qWarning() << reply->readAll();
         finishJob();
         return;
     }
@@ -713,7 +625,7 @@ void ConfluenceAgent::contentUploaded(QNetworkReply *reply)
 
 void ConfluenceAgent::userInfoReceived(QNetworkReply *reply)
 {
-    qDebug() << "CA::UserInfopageReceived";
+    //qDebug() << "CA::UserInfopageReceived";
 
     killTimer->stop();
 

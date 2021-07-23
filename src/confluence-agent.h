@@ -17,14 +17,15 @@ class ConfluenceUser {
   public:
     ConfluenceUser();
     void setTitle(const QString &s);
-    QString getTitle();
-    void setUrl(const QString &s);
-    QString getUrl();
+    void setURL(const QString &s);
     void setUserName(const QString &s);
-    QString getUserName();
     void setDisplayName(const QString &s);
-    QString getDisplayName();
     void setUserKey(const QString &s);
+
+    QString getTitle();
+    QString getURL();
+    QString getUserName();
+    QString getDisplayName();
     QString getUserKey();
 
   private:
@@ -66,21 +67,14 @@ class ConfluenceAgent : public QObject {
     void foundUsers(QList <ConfluenceUser>);
 
   public:
-    bool getUsers(const QString &name);
-    void waitForResult();
-    bool success();
-    QString getResult();
+    void getUsers(const QString &name);
 
   public slots:
-    virtual void dataReceived(int exitCode, QProcess::ExitStatus exitStatus);
     virtual void timeout();
 
   private:
     QString confluenceScript;
-    VymProcess *vymProcess;
     QTimer *killTimer;
-    bool succ;
-    QString result;
     JobType jobType;
     int jobStep;
     bool abortJob;  // Flag to abort during initialization of job

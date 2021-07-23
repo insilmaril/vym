@@ -371,7 +371,7 @@ bool parseVYMHandler::startElement(const QString &, const QString &,
                     ai->setValue(atts.value("value")); 
             }
         }
-        model->addAttribute(lastBranch, ai);
+        model->setAttribute(lastBranch, ai);
     }
     else if (state == StateHtml) {
         // Only for backward compatibility

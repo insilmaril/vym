@@ -21,6 +21,7 @@ using namespace std;
 #include <QTextStream>
 
 #include "aboutdialog.h"
+#include "attributeitem.h"
 #include "branchitem.h"
 #include "branchpropeditor.h"
 #include "command.h"
@@ -4979,7 +4980,7 @@ void Main::editAddAttribute()
     VymModel *m = currentModel();
     if (m) {
 
-        m->addAttribute();
+        m->setAttribute();
     }
 }
 
@@ -6510,14 +6511,37 @@ void Main::testFunction2()
 {
     VymModel *m = currentModel();
     if (m) {
-        ConfluenceUserDialog dia;
-        dia.exec();
-        if (dia.result() > 0) {
-            ConfluenceUser user = dia.getSelectedUser();
-            m->setHeading(user.getDisplayName());
-            m->setURL(
-                QString("<ac:link> <ri:user ri:userkey=\"%1\"/></ac:link>")
-                    .arg(user.getUserKey()));
+        BranchItem *selbi = m->getSelectedBranch();
+        if (selbi) {
+            ConfluenceUserDialog dia;
+            dia.exec();
+            if (dia.result() > 0) {
+                ConfluenceUser user = dia.getSelectedUser();
+                m->setHeading(user.getDisplayName());
+                m->setURL(
+                    QString("<ac:link> <ri:user ri:userkey=\"%1\"/></ac:link>")
+                        .arg(user.getUserKey()));
+
+                QList<QVariant> cData;
+                cData << "new attribute"
+                      << "undef";
+                AttributeItem *ai;
+
+                ai = new AttributeItem(cData);  // FIXME-1 remove cdata  
+                ai->setKey("ConfluenceUser.displayName");
+                ai->setValue(user.getDisplayName());
+                m->setAttribute(selbi, ai);
+
+                ai = new AttributeItem(cData);  // FIXME-1 remove cdata  
+                ai->setKey("ConfluenceUser.userKey");
+                ai->setValue(user.getUserKey());
+                m->setAttribute(selbi, ai);
+
+                ai = new AttributeItem(cData);  // FIXME-1 remove cdata  
+                ai->setKey("ConfluenceUser.url");
+                ai->setValue(user.getURL());
+                m->setAttribute(selbi, ai);
+            }
         }
     }
 }
