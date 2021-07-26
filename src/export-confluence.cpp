@@ -2,6 +2,7 @@
 
 #include <QMessageBox>
 
+#include "attributeitem.h"
 #include "branchobj.h"
 #include "confluence-agent.h"
 #include "mainwindow.h"
@@ -61,7 +62,6 @@ QString ExportConfluence::getBranchText(BranchItem *current)
         }
 
         QString s;
-        QString url = current->getURL();
 
         // Task flags
         QString taskFlags;
@@ -97,23 +97,31 @@ QString ExportConfluence::getBranchText(BranchItem *current)
         // if (dia.useNumbering) number = getSectionString(current) + " ";
 
         // URL
-        if (!url.isEmpty()) {   // FIXME-0   If username avail in attributes, create special link
-            if (url.contains("ri:userkey")  || url.contains("<ac:image"))
-                s += url; 
-            else {
+        //     <ac:link>
+        //<ri:user ri:userkey="55df23264acf166a014b54c57792009b"/>
+        //</ac:link> </span>
+        QString url;
+        AttributeItem *ai = current->getAttributeByKey("ConfluenceUser.userKey");
+        if (ai) {
+            url = ai->getKey();
+            s += QString(" <ac:link> <ri:user ri:userkey=\"%1\"/></ac:link>").arg(ai->getValue().toString());
+        } else {
+            url = current->getURL();
+
+            if (!url.isEmpty()) {
                 if (url.contains(settings.value("/confluence/url",
-                                                   "---undefined---").toString()) && url.contains("&")) {
+                       "---undefined---").toString()) && url.contains("&")) {
 
-                // Fix ampersands in URL to Confluence itself
-                url = quoteMeta(url);
-            } 
+                    // Fix ampersands in URL to Confluence itself
+                    url = quoteMeta(url);
+                } 
 
-            s += QString("<a href=\"%1\">%2</a>")
-                     .arg(url)
-                     .arg(number + taskFlags + heading + userFlags);
-            }
-        } else
-            s += number + taskFlags + heading + userFlags;
+                s += QString("<a href=\"%1\">%2</a>")
+                         .arg(url)
+                         .arg(number + taskFlags + heading + userFlags);
+            } else
+                s += number + taskFlags + heading + userFlags;
+        }
 
         // Include images // FIXME-3 not implemented yet
         /*

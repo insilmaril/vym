@@ -254,7 +254,8 @@ void ConfluenceAgent::continueJob()
 
                             u = userObj["user"].toObject();
                             user.setTitle( userObj["title"].toString());
-                            user.setURL( "https://" + apiURL + "/" + userObj["url"].toString());
+                            user.setURL( "https://" + baseURL + "/"
+                                    + "display/~" + u["username"].toString());
                             user.setUserKey( u["userKey"].toString());
                             user.setUserName( u["username"].toString());
                             user.setDisplayName( u["displayName"].toString());
@@ -292,7 +293,6 @@ void ConfluenceAgent::getUsers(const QString &usrQuery)
         qWarning() << "ConfluenceAgent::getUsers  Forbidden characters in " << usrQuery;
         return;
     }
-    qDebug() << "QUery: " << usrQuery;
 
     setJobType(UserInfo);
     startJob();

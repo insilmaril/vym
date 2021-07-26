@@ -6538,9 +6538,15 @@ void Main::testFunction2()
                 m->setAttribute(selbi, ai);
 
                 ai = new AttributeItem(cData);  // FIXME-1 remove cdata  
+                ai->setKey("ConfluenceUser.userName");
+                ai->setValue(user.getUserName());
+                m->setAttribute(selbi, ai);
+
+                ai = new AttributeItem(cData);  // FIXME-1 remove cdata  
                 ai->setKey("ConfluenceUser.url");
                 ai->setValue(user.getURL());
                 m->setAttribute(selbi, ai);
+                m->setURL(user.getURL(), false);
             }
         }
     }
