@@ -200,6 +200,7 @@ class Main : public QMainWindow {
     void editMapProperties();
     void editMoveUp();
     void editMoveDown();
+    void editMoveDownDiagonally();
     void editDetach();
     void editSortChildren();
     void editSortBackChildren();
