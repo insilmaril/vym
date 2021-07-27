@@ -4704,6 +4704,7 @@ void VymModel::exportLast()
     QString desc, command,
         dest; // FIXME-3 better integrate configFile into command
     if (exportLastAvailable(desc, command, dest)) {
+        //qDebug() << "VM::exportLast: " << command;
         execute(command);
     }
 }
