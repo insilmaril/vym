@@ -70,7 +70,7 @@ ScriptEditor::ScriptEditor(QWidget *parent) : QWidget(parent)
     ui.modeTabWidget->setTabText(1, tr("Macro", "Mode in scriptEditor"));
     ui.modeTabWidget->setTabText(2, tr("Script", "Mode in scriptEditor"));
 
-    ui.scriptfileLabel->setText(
+    ui.scriptPathLineEdit->setText(
         tr("No script selected", "scriptname in scriptEditor"));
 
     reloadMacros();
@@ -135,7 +135,7 @@ void ScriptEditor::reloadMacros()
     QString m = macros.get();
     if (!m.isEmpty()) {
         macroEditor->setPlainText(m);
-        ui.macrofileLabel->setText(macros.getPath());
+        ui.macroPathLineEdit->setText(macros.getPath());
     }
     else {
         QString error(QObject::tr("Error"));
@@ -171,7 +171,7 @@ bool ScriptEditor::loadScript(QString fn)
         QString s;
         if (loadStringFromDisk(filename, s)) {
             codeEditor->setPlainText(s);
-            ui.scriptfileLabel->setText(filename);
+            ui.scriptPathLineEdit->setText(filename);
             lastMapDir.setPath(filename.left(filename.lastIndexOf("/")));
             return true;
         }
@@ -225,7 +225,7 @@ void ScriptEditor::saveScriptAs()
             case QMessageBox::Yes:
                 // save
                 filename = fn;
-                ui.scriptfileLabel->setText(filename);
+                ui.scriptPathLineEdit->setText(filename);
                 lastMapDir.setPath(filename.left(filename.lastIndexOf("/")));
                 saveScript();
                 return;
