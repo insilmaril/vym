@@ -6522,27 +6522,24 @@ void Main::testFunction2()
                     QString("<ac:link> <ri:user ri:userkey=\"%1\"/></ac:link>")
                         .arg(user.getUserKey()));
 
-                QList<QVariant> cData;
-                cData << "new attribute"
-                      << "undef";
                 AttributeItem *ai;
 
-                ai = new AttributeItem(cData);  // FIXME-1 remove cdata  
+                ai = new AttributeItem();
                 ai->setKey("ConfluenceUser.displayName");
                 ai->setValue(user.getDisplayName());
                 m->setAttribute(selbi, ai);
 
-                ai = new AttributeItem(cData);  // FIXME-1 remove cdata  
+                ai = new AttributeItem();
                 ai->setKey("ConfluenceUser.userKey");
                 ai->setValue(user.getUserKey());
                 m->setAttribute(selbi, ai);
 
-                ai = new AttributeItem(cData);  // FIXME-1 remove cdata  
+                ai = new AttributeItem();
                 ai->setKey("ConfluenceUser.userName");
                 ai->setValue(user.getUserName());
                 m->setAttribute(selbi, ai);
 
-                ai = new AttributeItem(cData);  // FIXME-1 remove cdata  
+                ai = new AttributeItem();
                 ai->setKey("ConfluenceUser.url");
                 ai->setValue(user.getURL());
                 m->setAttribute(selbi, ai);

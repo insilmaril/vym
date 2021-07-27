@@ -346,7 +346,7 @@ class VymModel : public TreeModel {
     QString findString;
 
   public:
-    void setURL(QString url);
+    void setURL(QString url, bool updateFromCloud = true);
     QString getURL(); // returns URL of selection or ""
     QStringList getURLs(bool ignoreScrolled = true); // returns URLs of subtree
 

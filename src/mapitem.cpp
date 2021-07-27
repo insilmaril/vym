@@ -7,11 +7,10 @@
 
 extern FlagRowMaster *systemFlagsMaster;
 
-MapItem::MapItem() { init(); }
-
-MapItem::MapItem(const QList<QVariant> &data, TreeItem *parent)
-    : TreeItem(data, parent)
+MapItem::MapItem(TreeItem *parent)
+    : TreeItem(parent)
 {
+    // qDebug() << "Constr. MapItem(" << parent << ")";
     init();
 }
 

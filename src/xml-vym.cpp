@@ -343,10 +343,7 @@ bool parseVYMHandler::startElement(const QString &, const QString &,
     else if (eName == "attribute" &&
              (state == StateBranch || state == StateMapCenter)) {
         state = StateAttribute;
-        QList<QVariant> cData;
-        cData << "new attribute"
-              << "undef";
-        AttributeItem *ai = new AttributeItem(cData);
+        AttributeItem *ai = new AttributeItem(lastBranch);
         if (ai) {
             if (!atts.value("key").isEmpty())
                 ai->setKey(atts.value("key"));

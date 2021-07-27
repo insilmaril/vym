@@ -2100,6 +2100,7 @@ void MapEditor::updateSelection(QItemSelection nsel, QItemSelection dsel)
 
     QItemSelection sel = model->getSelectionModel()->selection();
 
+    LinkableMapObj *lmo;
     // Add new selected objects
     foreach (QModelIndex ix, sel.indexes()) {
         MapItem *mi = static_cast<MapItem *>(ix.internalPointer());
@@ -2107,7 +2108,9 @@ void MapEditor::updateSelection(QItemSelection nsel, QItemSelection dsel)
             mi->getType() == TreeItem::XLink)
             if (!itemsSelected.contains(mi))
                 itemsSelected.append(mi);
-        mi->getLMO()->updateVisibility();
+        lmo = mi->getLMO();
+        if (lmo)
+            mi->getLMO()->updateVisibility();
     }
 
     // Delete objects meanwhile removed from selection
@@ -2117,7 +2120,9 @@ void MapEditor::updateSelection(QItemSelection nsel, QItemSelection dsel)
             mi->getType() == TreeItem::XLink)
             if (!itemsDeselected.contains(mi))
                 itemsDeselected.append(mi);
-        mi->getLMO()->updateVisibility();
+        lmo = mi->getLMO(); // FIXME-2 xlink does return nullptr
+        if (lmo)
+            mi->getLMO()->updateVisibility();
     }
 
     // Trim list of selection paths

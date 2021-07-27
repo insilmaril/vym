@@ -2155,7 +2155,7 @@ bool VymModel::findAll(FindResultModel *rmodel, QString s,
     return hit;
 }
 
-void VymModel::setURL(QString url)
+void VymModel::setURL(QString url, bool updateFromCloud)
 {
     BranchItem *selbi = getSelectedBranch();
     if (selbi->getURL() == url)
@@ -2170,8 +2170,9 @@ void VymModel::setURL(QString url)
         emitDataChanged(selbi);
         reposition();
 
-        // Check for Confluence
-        setHeadingConfluencePageName();
+        if (updateFromCloud)
+            // Check for Confluence
+            setHeadingConfluencePageName();
     }
 }
 
@@ -2891,10 +2892,7 @@ ImageItem *VymModel::createImage(BranchItem *dst)
         QModelIndex parix;
         int n;
 
-        QList<QVariant> cData;
-        cData << tr("Image", "Default name for new image") << "undef";
-
-        ImageItem *newii = new ImageItem(cData);
+        ImageItem *newii = new ImageItem();
         // newii->setHeading (QApplication::translate("Heading of new image in
         // map", "new image"));
 
@@ -2948,11 +2946,7 @@ bool VymModel::createLink(Link *link)
     QModelIndex parix;
     int n;
 
-    QList<QVariant> cData;
-
-    cData << "new Link begin"
-          << "undef";
-    XLinkItem *newli = new XLinkItem(cData);
+    XLinkItem *newli = new XLinkItem();
     newli->setLink(link);
     link->setBeginLinkItem(newli);
 
@@ -2964,10 +2958,7 @@ bool VymModel::createLink(Link *link)
     begin->appendChild(newli);
     endInsertRows();
 
-    cData.clear();
-    cData << "new Link end"
-          << "undef";
-    newli = new XLinkItem(cData);
+    newli = new XLinkItem();
     newli->setLink(link);
     link->setEndLinkItem(newli);
 
@@ -3046,10 +3037,7 @@ AttributeItem *VymModel::setAttribute() // FIXME-3 Experimental, savestate missi
 {
     BranchItem *selbi = getSelectedBranch();
     if (selbi) {
-        QList<QVariant> cData;  // FIXME-1 remove cdata
-        cData << "new attribute"
-              << "undef";
-        AttributeItem *ai = new AttributeItem(cData);
+        AttributeItem *ai = new AttributeItem();
         ai->setAttributeType(AttributeItem::String);
         ai->setKey("Foo Attrib");
         ai->setValue(QString("Att val"));
@@ -3137,10 +3125,7 @@ BranchItem *VymModel::addMapCenter(QPointF absPos)
     // Create TreeItem
     QModelIndex parix = index(rootItem);
 
-    QList<QVariant> cData;
-    cData << "VM:addMapCenter"
-          << "undef";
-    BranchItem *newbi = new BranchItem(cData, rootItem);
+    BranchItem *newbi = new BranchItem(rootItem);
     newbi->setHeadingPlainText(tr("New map", "New map"));
     int n = rootItem->getRowNumAppend(newbi);
 
@@ -3170,13 +3155,9 @@ BranchItem *VymModel::addNewBranchInt(BranchItem *dst, int pos)
     // 0..n	insert in children of parent at pos
 
     // Create TreeItem
-    QList<QVariant> cData;
-    cData << ""
-          << "undef";
-
     BranchItem *parbi = dst;
     int n;
-    BranchItem *newbi = new BranchItem(cData);
+    BranchItem *newbi = new BranchItem();
 
     emit(layoutAboutToBeChanged());
 
@@ -4723,7 +4704,6 @@ void VymModel::exportLast()
     QString desc, command,
         dest; // FIXME-3 better integrate configFile into command
     if (exportLastAvailable(desc, command, dest)) {
-        qDebug() << "VM::exportLast:  cmd=" << command;
         execute(command);
     }
 }

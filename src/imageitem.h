@@ -15,7 +15,6 @@ bool isImage(const QString &fname);
 class ImageItem : public MapItem {
   public:
     ImageItem();
-    ImageItem(const QList<QVariant> &data, TreeItem *parent = 0);
 
     virtual ~ImageItem();
 

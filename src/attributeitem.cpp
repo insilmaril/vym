@@ -1,16 +1,21 @@
 #include "attributeitem.h"
 
+#include <QDebug>
+
 extern bool debug;
 
-AttributeItem::AttributeItem(const QList<QVariant> &data, TreeItem *parent)
-    : BranchItem(data, parent)
+AttributeItem::AttributeItem(TreeItem *parent)
+    : BranchItem(parent)
 {
+    //qDebug() << "Constr. AttrItem (parent)";
     TreeItem::setType(Attribute);
     internal = false;
     attrType = Undefined;
 }
 
-AttributeItem::~AttributeItem() {}
+AttributeItem::~AttributeItem() {
+    //qDebug() << "Destr. AttrItem";
+}
 
 void AttributeItem::copy(AttributeItem *other)
 {

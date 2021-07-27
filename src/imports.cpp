@@ -126,15 +126,12 @@ bool ImportFirefoxBookmarks::parseJson(QJsonValue jsval, ParseMode mode, BranchI
             selbi->setURL(jsobj["uri"].toString());
         }
 
-        QList<QVariant> cData;
-        cData << "new attribute"
-              << "undef";
         AttributeItem *ai;
 
         foreach (QString key, jsobj.keys())
         {
             if (key != "children") {
-                ai = new AttributeItem(cData);  // FIXME-1 remove cdata  
+                ai = new AttributeItem();
                 ai->setKey(key);
                 // Integer types: dateAdded, id, index, lastModified, typeCode
                 // Special: postData
