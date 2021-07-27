@@ -1466,6 +1466,20 @@ void Main::setupEditActions()
     connect(a, SIGNAL(triggered()), this, SLOT(editMoveDown()));
     actionMoveDown = a;
 
+    a = new QAction(QPixmap(), tr("Move branch diagonally down", "Edit menu"),
+                    this);
+    a->setShortcut(Qt::CTRL + Qt::Key_PageDown);
+    a->setShortcutContext(Qt::WidgetShortcut);
+    // a->setEnabled (false);
+    mapEditorActions.append(a);
+    taskEditorActions.append(a);
+    restrictedMapActions.append(a);
+    actionListBranches.append(a);
+    editMenu->addAction(a);
+    switchboard.addSwitch("mapEditMoveBranchDownDiagonally", shortcutScope, a, tag);
+    connect(a, SIGNAL(triggered()), this, SLOT(editMoveDownDiagonally()));
+    actionMoveDown = a;
+
     a = new QAction(QPixmap(), tr("&Detach", "Context menu"), this);
     a->setStatusTip(tr("Detach branch and use as mapcenter", "Context menu"));
     a->setShortcut(Qt::Key_D + Qt::SHIFT);
@@ -4889,6 +4903,14 @@ void Main::editMoveDown()
     VymModel *m = currentModel();
     if (me && m && me->getState() != MapEditor::EditingHeading)
         m->moveDown();
+}
+
+void Main::editMoveDownDiagonally()
+{
+    MapEditor *me = currentMapEditor();
+    VymModel *m = currentModel();
+    if (me && m && me->getState() != MapEditor::EditingHeading)
+        m->moveDownDiagonally();
 }
 
 void Main::editDetach()

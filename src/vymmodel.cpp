@@ -2823,6 +2823,19 @@ void VymModel::moveDown()
     }
 }
 
+void VymModel::moveDownDiagonally()
+{
+    BranchItem *selbi = getSelectedBranch();
+    if (selbi) {
+        BranchItem *parent = selbi->parentBranch();
+        if (parent == rootItem) return;
+        BranchItem *parentParent = parent->parentBranch();
+        int n = parent->num();
+
+        relinkBranch(selbi, parentParent, n + 1);
+     }
+}
+
 void VymModel::detach()
 {
     BranchItem *selbi = getSelectedBranch();
