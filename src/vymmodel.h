@@ -346,7 +346,7 @@ class VymModel : public TreeModel {
     QString findString;
 
   public:
-    void setURL(QString url);
+    void setURL(QString url, bool updateFromCloud = true);
     QString getURL(); // returns URL of selection or ""
     QStringList getURLs(bool ignoreScrolled = true); // returns URLs of subtree
 
@@ -423,8 +423,8 @@ class VymModel : public TreeModel {
     QString getXLinkStyleBegin();
     QString getXLinkStyleEnd();
 
-    AttributeItem *addAttribute();
-    AttributeItem *addAttribute(BranchItem *dst, AttributeItem *);
+    AttributeItem *setAttribute();
+    AttributeItem *setAttribute(BranchItem *dst, AttributeItem *);
 
     /*! \brief Add new mapcenter
 
@@ -583,7 +583,7 @@ class VymModel : public TreeModel {
 
     /*! Export as HTML to Confluence*/
     void exportConfluence(bool createPage = true, const QString &pageURL = "", 
-                    const QString &pageDialog = "", 
+                    const QString &pageTitle = "", 
                     bool useDialog = true);
 
     /*! Export as OpenOfficeOrg presentation */

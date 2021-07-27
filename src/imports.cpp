@@ -126,15 +126,12 @@ bool ImportFirefoxBookmarks::parseJson(QJsonValue jsval, ParseMode mode, BranchI
             selbi->setURL(jsobj["uri"].toString());
         }
 
-        QList<QVariant> cData;
-        cData << "new attribute"
-              << "undef";
         AttributeItem *ai;
 
         foreach (QString key, jsobj.keys())
         {
             if (key != "children") {
-                ai = new AttributeItem(cData);  // FIXME-3 remove cdata  
+                ai = new AttributeItem();
                 ai->setKey(key);
                 // Integer types: dateAdded, id, index, lastModified, typeCode
                 // Special: postData
@@ -153,12 +150,12 @@ bool ImportFirefoxBookmarks::parseJson(QJsonValue jsval, ParseMode mode, BranchI
                     ai->setValue(jsobj[key].toString());
                 else {
                 // Ignore only the "postdata: null" field for now
-                    qDebug() << "Firefox import, unknown key type: " << jsobj[key].type();
+                    qWarning() << "Firefox import, unknown key type: " << jsobj[key].type();
                     qDebug() << "                Firefox bookmark: " << key << jsobj[key].toString();
                     ai->setValue(QString("unknown type."));
                 }
 
-                model->addAttribute(selbi, ai); // FIXME-3 deep copy?
+                model->setAttribute(selbi, ai); // FIXME-3 deep copy?
             }
         }
 

@@ -143,7 +143,10 @@ void ExportOO::exportPresentation()
 
     success = true;
 
-    completeExport(QStringList(configFile));
+    QStringList args;
+    args << filePath;
+    args << configFile;
+    completeExport(args);
 }
 
 bool ExportOO::setConfigFile(const QString &cf)

@@ -12,10 +12,10 @@ extern TaskModel *taskModel;
 
 //#include <QDir>
 
-BranchItem::BranchItem(const QList<QVariant> &data, TreeItem *parent)
-    : MapItem(data, parent)
+BranchItem::BranchItem(TreeItem *parent)
+    : MapItem(parent)
 {
-    // qDebug()<< "Constr. BranchItem this="<<this;
+    //qDebug()<< "Constr. BranchItem this=" << this << "parent:" << parent;
 
     // Set type if parent is known yet
     // if not, type is set in insertBranch or TreeItem::appendChild

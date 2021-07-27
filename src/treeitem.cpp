@@ -19,21 +19,11 @@ extern FlagRowMaster *userFlagsMaster;
 
 extern QTextStream vout;
 
-TreeItem::TreeItem()
+TreeItem::TreeItem(TreeItem *parent)
 {
-    // qDebug() << "Constr. TI  this="<<this;
-    init();
-    itemData.clear();
-    rootItem = this;
-    parentItem = NULL;
-}
-
-TreeItem::TreeItem(const QList<QVariant> &data, TreeItem *parent)
-{
-    // qDebug() << "Constructor TreeItem this="<<this<<"  parent="<<parent;
+    // qDebug() << "Constructor TreeItem this=" << this << "  parent=" << parent;
     init();
     parentItem = parent;
-    itemData = data;
 
     rootItem = this;
     if (parentItem)
@@ -80,6 +70,9 @@ void TreeItem::init()
 
     hidden = false;
     hideExport = false;
+
+    itemData.clear();
+    itemData << "";
 
     backgroundColor = Qt::transparent;
 
@@ -272,7 +265,7 @@ int TreeItem::num(TreeItem *item)
 void TreeItem::setType(const Type t)
 {
     type = t;
-    itemData[1] = getTypeName();
+    //itemData[1] = getTypeName();    // FIXME-1 not used so far, no 2nd column in TreeEditor
 }
 
 TreeItem::Type TreeItem::getType()
@@ -286,26 +279,27 @@ bool TreeItem::isBranchLikeType() const
 {
     if (type == Branch || type == MapCenter)
         return true;
-    return false;
+    else
+        return false;
 }
 
 QString TreeItem::getTypeName()
 {
     switch (type) {
-    case Undefined:
-        return QString("Undefined");
-    case MapCenter:
-        return QString("MapCenter");
-    case Branch:
-        return QString("Branch");
-    case Image:
-        return QString("Image");
-    case Attribute:
-        return QString("Attribute");
-    case XLink:
-        return QString("XLink");
-    default:
-        return QString("TreeItem::getTypeName no typename defined?!");
+        case Undefined:
+            return QString("Undefined");
+        case MapCenter:
+            return QString("MapCenter");
+        case Branch:
+            return QString("Branch");
+        case Image:
+            return QString("Image");
+        case Attribute:
+            return QString("Attribute");
+        case XLink:
+            return QString("XLink");
+        default:
+            return QString("TreeItem::getTypeName no typename defined?!");
     }
 }
 
@@ -675,6 +669,16 @@ AttributeItem *TreeItem::getAttributeNum(const int &n)
         return (AttributeItem *)getChildNum(attributeOffset + n);
     else
         return NULL;
+}
+
+AttributeItem *TreeItem::getAttributeByKey(const QString &k)
+{
+    AttributeItem *ai;
+    for (int i = 0; i < attributeCount(); i++) {
+        ai = getAttributeNum(i);
+        if (ai->getKey() == k) return ai;
+    }
+    return nullptr;
 }
 
 XLinkItem *TreeItem::getXLinkItemNum(const int &n)

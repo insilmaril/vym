@@ -19,15 +19,12 @@ ExportConfluenceDialog::ExportConfluenceDialog(QWidget *parent)
     filepath = "";
     settingsChanged = false;
 
-    ui.createPageButton->setChecked( ui.createPageButton->isChecked());
-    pageButtonPressed(0);
-
     // connect(buttonGroup, SIGNAL(buttonPressed(int)), this,
     // SLOT(pageButtonPressed(int)));
     connect(ui.createPageButton, SIGNAL(clicked(bool)), this,
-            SLOT(pageButtonPressed(bool)));
+            SLOT(pageButtonPressed()));
     connect(ui.updatePageButton, SIGNAL(clicked(bool)), this,
-            SLOT(pageButtonPressed(bool)));
+            SLOT(pageButtonPressed()));
 
     // signals and slots connections
     connect(ui.imageCheckBox, SIGNAL(toggled(bool)), this,
@@ -66,6 +63,14 @@ void ExportConfluenceDialog::readSettings()
                                     QDateTime::currentDateTime().toString())
                     .toString();
     ui.lineEditPageTitle->setText(pageTitle);
+
+    ui.createPageButton->setChecked(
+        settings
+            .localValue(filepath, "/export/confluence/createNewPage", true).toBool());
+
+    ui.updatePageButton->setChecked(!
+        settings
+            .localValue(filepath, "/export/confluence/createNewPage", true).toBool());
 
     /*  FIXME-3 cleanup the copied HTML parameters
     includeMapImage = settings.localValue (filepath,
@@ -108,7 +113,7 @@ void ExportConfluenceDialog::setURL(const QString &u) { url = u; }
 
 void ExportConfluenceDialog::setPageTitle(const QString &s) { pageTitle = s; }
 
-void ExportConfluenceDialog::pageButtonPressed(bool)
+void ExportConfluenceDialog::pageButtonPressed()
 {
     if (ui.createPageButton->isChecked()) {
         ui.URLLabel->setText("URL of parent page");
@@ -217,15 +222,17 @@ void ExportConfluenceDialog::saveSettings()
                                useTextColor);
         settings.setValue("/export/confluence/showWarnings", showWarnings);
         settings.setValue("/export/confluence/showOutput", showOutput);
-        settings.setValue("/export/confluence/createNewPage", ui.createPageButton->isChecked());
-        settings.setValue("/export/confluence/url", url);
-        settings.setValue("/export/confluence/pageTitle", pageTitle);
+        settings.setLocalValue(filepath, "/export/confluence/url", url);
+        settings.setLocalValue(filepath, "/export/confluence/pageTitle", pageTitle);
+        settings.setLocalValue(filepath, "/export/confluence/createNewPage", ui.createPageButton->isChecked());
     }
 }
 
 void ExportConfluenceDialog::setFilePath(const QString &s) { filepath = s; }
 
 void ExportConfluenceDialog::setMapName(const QString &s) { mapname = s; }
+
+void ExportConfluenceDialog::setCreateNewPage(bool b) { ui.createPageButton->setChecked(b); }
 
 bool ExportConfluenceDialog::getCreateNewPage() { return ui.createPageButton->isChecked(); }
 
@@ -236,8 +243,3 @@ QString ExportConfluenceDialog::getPageTitle() { return pageTitle; }
 bool ExportConfluenceDialog::warnings() { return showWarnings; }
 
 bool ExportConfluenceDialog::hasChanged() { return settingsChanged; }
-
-bool ExportConfluenceDialog::createNewPage()
-{
-    return ui.createPageButton->isChecked();
-}

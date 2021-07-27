@@ -16,7 +16,7 @@ class BranchItem : public MapItem {
   public:
     enum LayoutHint { AutoPositioning, FreePositioning };
 
-    BranchItem(const QList<QVariant> &data, TreeItem *parent = 0);
+    BranchItem(TreeItem *parent = nullptr);
     virtual ~BranchItem();
     virtual void clear();
     virtual void copy(BranchItem *item);

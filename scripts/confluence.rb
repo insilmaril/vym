@@ -233,7 +233,7 @@ begin
       fail "Error: No content file for upload provided"
     end
 
-    # Find ID and space key
+    # Find ID and space key and title, which is mandatory also for page updates
     details = get_details( $options.update_url)
     details.title = $options.page_title if !$options.page_title.empty?
     puts details.to_s if $options['verbose']
@@ -252,6 +252,17 @@ begin
           "version":{"number":details.version + 1},
           "body":{"storage": {"value":page_content, "representation":"storage"}}
       }
+
+    ###########
+    puts "Payload:"
+    pp payload
+
+
+    puts "url:"
+    pp url
+
+    puts "More, eg. verbose log:"
+    ###########
 
     RestClient.log = STDOUT if $options['verbose']
 
@@ -283,6 +294,7 @@ begin
       fail "Error: The request  failed with the response seen above:"
     end
     r = JSON.parse(json)
+    pp r
 
     puts "#{r['result'].size} users found:" if $options[:verbose]
 

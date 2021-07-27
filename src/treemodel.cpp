@@ -11,9 +11,9 @@ TreeModel::TreeModel(QObject *parent) : QAbstractItemModel(parent)
 {
     // qDebug()<<"Constr TreeModel  this="<<this;
     QList<QVariant> rootData;
-    rootData << "Heading"
-             << "Type";
-    rootItem = new BranchItem(rootData);
+    rootData << "Heading";
+    // rootData << "Type";
+    rootItem = new BranchItem();
 }
 
 TreeModel::~TreeModel()

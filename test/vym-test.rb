@@ -32,7 +32,6 @@ def expect_warning_only (comment, v_real, v_exp)
   else  
     puts "Warning: #{comment}. Expected '#{v_exp}', but got '#{v_real}'"
     $tests_warnings += 1
-    waitkey
   end  
   $tests_total += 1
 end    

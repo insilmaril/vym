@@ -153,9 +153,10 @@ void ExportBase::completeExport(QStringList args)
                       .arg(filePath);
     }
     else {
-        command = QString("vym.currentMap().exportMap(\"%1\", \"%2\"")
-                      .arg(exportName)
-                      .arg(filePath);
+        // Only add exportName as default, rest of arguments need to be passed
+        // (Cloud exports ahve no filename...)
+        command = QString("vym.currentMap().exportMap(\"%1\"")
+                      .arg(exportName);
 
         foreach (QString arg, args)
             command += QString(", \"%1\"").arg(arg);

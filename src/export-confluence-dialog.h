@@ -17,18 +17,18 @@ class ExportConfluenceDialog : public QDialog {
   public:
     ExportConfluenceDialog(QWidget *parent = 0);
 
+    void setCreateNewPage(bool b);
     bool getCreateNewPage();
     virtual QString getURL();
     virtual QString getPageTitle();
     virtual bool warnings();
     virtual bool hasChanged();
-    virtual bool createNewPage();
 
   public slots:
     virtual void readSettings();
     virtual void setURL(const QString &);
     virtual void setPageTitle(const QString &);
-    virtual void pageButtonPressed(bool);
+    virtual void pageButtonPressed();
     virtual void URLChanged();
     virtual void pageTitleChanged();
     virtual void imageCheckBoxPressed(bool b);

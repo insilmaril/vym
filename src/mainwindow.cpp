@@ -21,10 +21,12 @@ using namespace std;
 #include <QTextStream>
 
 #include "aboutdialog.h"
+#include "attributeitem.h"
 #include "branchitem.h"
 #include "branchpropeditor.h"
 #include "command.h"
 #include "confluence-agent.h"
+#include "confluence-userdialog.h"
 #include "credentials.h"
 #include "download-agent.h"
 #include "file.h"
@@ -50,7 +52,6 @@ using namespace std;
 #include "taskeditor.h"
 #include "taskmodel.h"
 #include "treeeditor.h"
-#include "userdialog.h"
 #include "vymprocess.h"
 #include "warningdialog.h"
 #include "xlinkitem.h"
@@ -4979,7 +4980,7 @@ void Main::editAddAttribute()
     VymModel *m = currentModel();
     if (m) {
 
-        m->addAttribute();
+        m->setAttribute();
     }
 }
 
@@ -6510,13 +6511,40 @@ void Main::testFunction2()
 {
     VymModel *m = currentModel();
     if (m) {
-        UserDialog dia;
-        dia.exec();
-        if (dia.result() > 0) {
-            m->setHeading(dia.selectedUser());
-            m->setURL(
-                QString("<ac:link> <ri:user ri:userkey=\"%1\"/></ac:link>")
-                    .arg(dia.selectedUserKey()));
+        BranchItem *selbi = m->getSelectedBranch();
+        if (selbi) {
+            ConfluenceUserDialog dia;
+            dia.exec();
+            if (dia.result() > 0) {
+                ConfluenceUser user = dia.getSelectedUser();
+                m->setHeading(user.getDisplayName());
+                m->setURL(
+                    QString("<ac:link> <ri:user ri:userkey=\"%1\"/></ac:link>")
+                        .arg(user.getUserKey()));
+
+                AttributeItem *ai;
+
+                ai = new AttributeItem();
+                ai->setKey("ConfluenceUser.displayName");
+                ai->setValue(user.getDisplayName());
+                m->setAttribute(selbi, ai);
+
+                ai = new AttributeItem();
+                ai->setKey("ConfluenceUser.userKey");
+                ai->setValue(user.getUserKey());
+                m->setAttribute(selbi, ai);
+
+                ai = new AttributeItem();
+                ai->setKey("ConfluenceUser.userName");
+                ai->setValue(user.getUserName());
+                m->setAttribute(selbi, ai);
+
+                ai = new AttributeItem();
+                ai->setKey("ConfluenceUser.url");
+                ai->setValue(user.getURL());
+                m->setAttribute(selbi, ai);
+                m->setURL(user.getURL(), false);
+            }
         }
     }
 }
