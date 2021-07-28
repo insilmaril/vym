@@ -7,10 +7,10 @@
 #include "vymmodel.h"
 
 extern Main *mainWindow;
-extern Settings settings;
 extern QDir vymBaseDir;
-extern bool debug;
 extern QString confluencePassword;
+extern Settings settings;
+extern bool debug;
 
 ConfluenceUser::ConfluenceUser() {};
 
@@ -65,8 +65,6 @@ void ConfluenceAgent::init()
     networkManager = new QNetworkAccessManager(this);
 
     modelID = 0;    // invalid ID
-
-    confluenceScript = vymBaseDir.path() + "/scripts/confluence.rb";
 
     killTimer = new QTimer(this);
     killTimer->setInterval(15000);
@@ -296,11 +294,6 @@ void ConfluenceAgent::getUsers(const QString &usrQuery)
 
     setJobType(UserInfo);
     startJob();
-}
-
-void ConfluenceAgent::timeout()
-{
-    qWarning() << "ConfluenceAgent timeout!!   jobType = " << jobType;
 }
 
 void ConfluenceAgent::startGetPageSourceRequest(QUrl requestedURL)
@@ -653,6 +646,11 @@ void ConfluenceAgent::userInfoReceived(QNetworkReply *reply)
     continueJob();
 }
 
+void ConfluenceAgent::timeout()
+{
+    qWarning() << "ConfluenceAgent timeout!!   jobType = " << jobType;
+}
+
 #ifndef QT_NO_SSL
 void ConfluenceAgent::sslErrors(QNetworkReply *reply, const QList<QSslError> &errors)
 {
@@ -664,7 +662,7 @@ void ConfluenceAgent::sslErrors(QNetworkReply *reply, const QList<QSslError> &er
     }
 
     reply->ignoreSslErrors();
-    qWarning() << "One or more SSL errors has occurred: " << errorString;
+    qWarning() << "ConfluenceAgent: One or more SSL errors has occurred: " << errorString;
     qWarning() << "Errors ignored.";
 }
 #endif
