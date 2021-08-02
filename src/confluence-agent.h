@@ -8,33 +8,12 @@
 #include <QTimer>
 
 #include "heading.h"
+#include "confluence-user.h"
 #include "vymprocess.h"
 
 class BranchItem;
+class ConfluenceUser;
 class VymModel;
-
-class ConfluenceUser {
-  public:
-    ConfluenceUser();
-    void setTitle(const QString &s);
-    void setURL(const QString &s);
-    void setUserName(const QString &s);
-    void setDisplayName(const QString &s);
-    void setUserKey(const QString &s);
-
-    QString getTitle();
-    QString getURL();
-    QString getUserName();
-    QString getDisplayName();
-    QString getUserKey();
-
-  private:
-    QString title;
-    QString url;
-    QString userName;
-    QString userKey;
-    QString displayName;
-};
 
 //////////////////////////////////////////////////////////////////////////
 

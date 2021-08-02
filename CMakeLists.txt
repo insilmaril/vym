@@ -63,6 +63,7 @@ SET(VymSources
     src/codeeditor.cpp
     src/command.cpp
     src/confluence-agent.cpp
+    src/confluence-user.cpp
     src/credentials.cpp
     src/dockeditor.cpp
     src/download-agent.cpp

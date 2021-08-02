@@ -1,6 +1,7 @@
 #include "confluence-agent.h"
 
 #include "branchitem.h"
+#include "confluence-user.h"
 #include "file.h"
 #include "mainwindow.h"
 #include "misc.h"
@@ -11,20 +12,6 @@ extern Settings settings;
 extern QDir vymBaseDir;
 extern bool debug;
 extern QString confluencePassword;
-
-ConfluenceUser::ConfluenceUser() {};
-
-void ConfluenceUser::setTitle(const QString &s) {title = s;}
-void ConfluenceUser::setURL(const QString &s) {url = s;}
-void ConfluenceUser::setUserName(const QString &s) {userName = s;}
-void ConfluenceUser::setDisplayName(const QString &s) {displayName = s;}
-void ConfluenceUser::setUserKey(const QString &s) {userKey = s;}
-
-QString ConfluenceUser::getTitle() {return title;}
-QString ConfluenceUser::getURL() {return url;}
-QString ConfluenceUser::getUserName() {return userName;}
-QString ConfluenceUser::getDisplayName() {return displayName;}
-QString ConfluenceUser::getUserKey() {return userKey;}
 
 ////////////////////////////////////////////////////////////////////////////////
 ConfluenceAgent::ConfluenceAgent() { 
