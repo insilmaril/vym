@@ -14,7 +14,7 @@ void ExportTaskjuggler::doExport()
     p.setXSLFile(vymBaseDir.path() + "/styles/vym2taskjuggler.xsl");
     p.process();
 
-    success = true;
+    result = ExportBase::Success;
 
     displayedDestination = filePath;
     completeExport();

@@ -176,6 +176,9 @@ void ConfluenceAgent::continueJob()
                         return;
                     }
 
+                    mainWindow->statusMessage(
+                        QString("Starting to create Confluence page %1").arg(pageURL));
+
                     // Check if parent page with url already exists and get pageID, spaceKey
                     startGetPageSourceRequest(pageURL);
                     break;
@@ -185,6 +188,8 @@ void ConfluenceAgent::continueJob()
                     break;
                 case 3:
                     //qDebug() << "CA::finished  Created page with ID: " << jsobj["id"].toString();
+                    mainWindow->statusMessage(
+                        QString("Created Confluence page %1").arg(pageURL));
                     finishJob();
                     break;
                 default:
@@ -202,6 +207,9 @@ void ConfluenceAgent::continueJob()
                         return;
                     }
 
+                    mainWindow->statusMessage(
+                        QString("Starting to update Confluence page %1").arg(pageURL));
+                    //
                     // Check if page with url already exists and get pageID, spaceKey
                     startGetPageSourceRequest(pageURL);
                     break;
@@ -217,6 +225,8 @@ void ConfluenceAgent::continueJob()
                     break;
                 case 4:
                     //qDebug() << "CA::finished  Updated page with ID: " << jsobj["id"].toString();
+                    mainWindow->statusMessage(
+                        QString("Updated Confluence page %1").arg(pageURL));
                     finishJob();
                     break;
                 default:
