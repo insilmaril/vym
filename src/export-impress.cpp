@@ -141,9 +141,12 @@ void ExportOO::exportPresentation()
 
     displayedDestination = filePath;
 
-    success = true;
+    result = ExportBase::Success;
 
-    completeExport(QStringList(configFile));
+    QStringList args;
+    args << filePath;
+    args << configFile;
+    completeExport(args);
 }
 
 bool ExportOO::setConfigFile(const QString &cf)

@@ -2155,7 +2155,7 @@ bool VymModel::findAll(FindResultModel *rmodel, QString s,
     return hit;
 }
 
-void VymModel::setURL(QString url)
+void VymModel::setURL(QString url, bool updateFromCloud)
 {
     BranchItem *selbi = getSelectedBranch();
     if (selbi->getURL() == url)
@@ -2170,8 +2170,9 @@ void VymModel::setURL(QString url)
         emitDataChanged(selbi);
         reposition();
 
-        // Check for Confluence
-        setHeadingConfluencePageName();
+        if (updateFromCloud)
+            // Check for Confluence
+            setHeadingConfluencePageName();
     }
 }
 
@@ -2822,6 +2823,19 @@ void VymModel::moveDown()
     }
 }
 
+void VymModel::moveDownDiagonally()
+{
+    BranchItem *selbi = getSelectedBranch();
+    if (selbi) {
+        BranchItem *parent = selbi->parentBranch();
+        if (parent == rootItem) return;
+        BranchItem *parentParent = parent->parentBranch();
+        int n = parent->num();
+
+        relinkBranch(selbi, parentParent, n + 1, true);
+     }
+}
+
 void VymModel::detach()
 {
     BranchItem *selbi = getSelectedBranch();
@@ -2891,10 +2905,7 @@ ImageItem *VymModel::createImage(BranchItem *dst)
         QModelIndex parix;
         int n;
 
-        QList<QVariant> cData;
-        cData << tr("Image", "Default name for new image") << "undef";
-
-        ImageItem *newii = new ImageItem(cData);
+        ImageItem *newii = new ImageItem();
         // newii->setHeading (QApplication::translate("Heading of new image in
         // map", "new image"));
 
@@ -2948,11 +2959,7 @@ bool VymModel::createLink(Link *link)
     QModelIndex parix;
     int n;
 
-    QList<QVariant> cData;
-
-    cData << "new Link begin"
-          << "undef";
-    XLinkItem *newli = new XLinkItem(cData);
+    XLinkItem *newli = new XLinkItem();
     newli->setLink(link);
     link->setBeginLinkItem(newli);
 
@@ -2964,10 +2971,7 @@ bool VymModel::createLink(Link *link)
     begin->appendChild(newli);
     endInsertRows();
 
-    cData.clear();
-    cData << "new Link end"
-          << "undef";
-    newli = new XLinkItem(cData);
+    newli = new XLinkItem();
     newli->setLink(link);
     link->setEndLinkItem(newli);
 
@@ -3041,39 +3045,54 @@ QString VymModel::getXLinkStyleEnd()
         return QString();
 }
 
-AttributeItem *VymModel::addAttribute() // FIXME-3 Experimental, savestate missing
+AttributeItem *VymModel::setAttribute() // FIXME-3 Experimental, savestate missing
 
 {
     BranchItem *selbi = getSelectedBranch();
     if (selbi) {
-        QList<QVariant> cData;
-        cData << "new attribute"
-              << "undef";
-        AttributeItem *a = new AttributeItem(cData);
-        a->setAttributeType(AttributeItem::String);
-        a->setKey("Foo Attrib");
-        a->setValue(QString("Att val"));
+        AttributeItem *ai = new AttributeItem();
+        ai->setAttributeType(AttributeItem::String);
+        ai->setKey("Foo Attrib");
+        ai->setValue(QString("Att val"));
 
-        if (addAttribute(selbi, a))
-            return a;
+        return setAttribute(selbi, ai);
     }
-    return NULL;
+    return nullptr;
 }
 
-AttributeItem *VymModel::addAttribute(BranchItem *dst, AttributeItem *ai)
+AttributeItem *VymModel::setAttribute(BranchItem *dst, AttributeItem *ai_new)
 {
     if (dst) {
+
+        // Check if there is already an attribute with same key
+        AttributeItem *ai;
+        for (int i = 0; i < dst->attributeCount(); i++) {
+            ai = dst->getAttributeNum(i);
+            if (ai->getKey() == ai_new->getKey()) 
+            {
+                // Key exists, overwrite value
+                ai->copy(ai_new);
+
+                // Delete original attribute, this is basically a move...
+                delete ai_new;
+                emitDataChanged(dst);
+                return ai;
+            }
+        }
+
+        // Create new attribute
         emit(layoutAboutToBeChanged());
 
         QModelIndex parix = index(dst);
-        int n = dst->getRowNumAppend(ai);
+        int n = dst->getRowNumAppend(ai_new);
         beginInsertRows(parix, n, n);
-        dst->appendChild(ai);
+        dst->appendChild(ai_new);
         endInsertRows();
 
         emit(layoutChanged());
 
-        return ai;  // FIXME-3 Check if ai is used or deleted - deep copy here?
+        emitDataChanged(dst);
+        return ai_new;  // FIXME-3 Check if ai is used or deleted - deep copy here?
     }
     return NULL;
 }
@@ -3119,10 +3138,7 @@ BranchItem *VymModel::addMapCenter(QPointF absPos)
     // Create TreeItem
     QModelIndex parix = index(rootItem);
 
-    QList<QVariant> cData;
-    cData << "VM:addMapCenter"
-          << "undef";
-    BranchItem *newbi = new BranchItem(cData, rootItem);
+    BranchItem *newbi = new BranchItem(rootItem);
     newbi->setHeadingPlainText(tr("New map", "New map"));
     int n = rootItem->getRowNumAppend(newbi);
 
@@ -3152,13 +3168,9 @@ BranchItem *VymModel::addNewBranchInt(BranchItem *dst, int pos)
     // 0..n	insert in children of parent at pos
 
     // Create TreeItem
-    QList<QVariant> cData;
-    cData << ""
-          << "undef";
-
     BranchItem *parbi = dst;
     int n;
-    BranchItem *newbi = new BranchItem(cData);
+    BranchItem *newbi = new BranchItem();
 
     emit(layoutAboutToBeChanged());
 
@@ -4528,7 +4540,10 @@ void VymModel::exportXML(QString fpath, QString dpath, bool useDialog)
 
     setExportMode(false);
 
-    ex.completeExport(QStringList(dpath));
+    QStringList args;
+    args << fpath;
+    args << dpath;
+    ex.completeExport(args);
 }
 
 void VymModel::exportAO(QString fname, bool askName)
@@ -4706,6 +4721,7 @@ void VymModel::exportLast()
     QString desc, command,
         dest; // FIXME-3 better integrate configFile into command
     if (exportLastAvailable(desc, command, dest)) {
+        //qDebug() << "VM::exportLast: " << command;
         execute(command);
     }
 }

@@ -68,6 +68,6 @@ void ExportCSV::doExport()
 
     displayedDestination = filePath;
 
-    success = true;
+    result = ExportBase::Success;
     completeExport();
 }

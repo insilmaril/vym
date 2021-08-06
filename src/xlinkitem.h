@@ -17,7 +17,7 @@ class XLinkItem : public MapItem {
   public:
     enum XLinkState { undefinedXLink, initXLink, activeXLink, deleteXLink };
 
-    XLinkItem(const QList<QVariant> &data, TreeItem *parent = NULL);
+    XLinkItem(TreeItem *parent = NULL);
     ~XLinkItem();
     void init();
     void clear();

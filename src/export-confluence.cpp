@@ -2,6 +2,7 @@
 
 #include <QMessageBox>
 
+#include "attributeitem.h"
 #include "branchobj.h"
 #include "confluence-agent.h"
 #include "mainwindow.h"
@@ -36,7 +37,7 @@ void ExportConfluence::setCreateNewPage(bool b) {createNewPage = b; }
 
 void ExportConfluence::setURL(const QString &u) { url = u; }
 
-void ExportConfluence::setPageTitle(const QString &t) { pageTitle = t; }
+void ExportConfluence::setPageTitle(const QString &t) { pageTitle = t;}
 
 QString ExportConfluence::getBranchText(BranchItem *current)
 {
@@ -61,7 +62,6 @@ QString ExportConfluence::getBranchText(BranchItem *current)
         }
 
         QString s;
-        QString url = current->getURL();
 
         // Task flags
         QString taskFlags;
@@ -97,26 +97,31 @@ QString ExportConfluence::getBranchText(BranchItem *current)
         // if (dia.useNumbering) number = getSectionString(current) + " ";
 
         // URL
-        if (!url.isEmpty()) {
-            if (url.contains("ri:userkey"))
-                s += url; 
-            else {
+        //     <ac:link>
+        //<ri:user ri:userkey="55df23264acf166a014b54c57792009b"/>
+        //</ac:link> </span>
+        QString url;
+        AttributeItem *ai = current->getAttributeByKey("ConfluenceUser.userKey");
+        if (ai) {
+            url = ai->getKey();
+            s += QString(" <ac:link> <ri:user ri:userkey=\"%1\"/></ac:link>").arg(ai->getValue().toString());
+        } else {
+            url = current->getURL();
+
+            if (!url.isEmpty()) {
                 if (url.contains(settings.value("/confluence/url",
-                                                   "---undefined---").toString()) && url.contains("&")) {
+                       "---undefined---").toString()) && url.contains("&")) {
 
-                // Fix ampersands in URL to Confluence itself
-                qDebug() << "Found " << url; // FIXME-0 testing
-                url = quoteMeta(url);
-            } 
+                    // Fix ampersands in URL to Confluence itself
+                    url = quoteMeta(url);
+                } 
 
-            qDebug() << "URL now" << url; // FIXME-0 testing
-            qDebug() << settings.value("/confluence/url", "---").toString();
-            s += QString("<a href=\"%1\">%2</a>")
-                     .arg(url)
-                     .arg(number + taskFlags + heading + userFlags);
-            }
-        } else
-            s += number + taskFlags + heading + userFlags;
+                s += QString("<a href=\"%1\">%2</a>")
+                         .arg(url)
+                         .arg(number + taskFlags + heading + userFlags);
+            } else
+                s += number + taskFlags + heading + userFlags;
+        }
 
         // Include images // FIXME-3 not implemented yet
         /*
@@ -316,7 +321,6 @@ void ExportConfluence::doExport(bool useDialog)
             0, QObject::tr("Critical Export Error"),
             QObject::tr("Trying to save HTML file:") + "\n\n" +
                 QObject::tr("Could not write %1").arg(filePath));
-        mainWindow->statusMessage(QString(QObject::tr("Export failed.")));
         return;
     }
     QTextStream ts(&file);
@@ -351,78 +355,33 @@ void ExportConfluence::doExport(bool useDialog)
 
     file.close();
 
-    // First check if page already exists
-    ConfluenceAgent *ca_details = new ConfluenceAgent();
-    ConfluenceAgent *ca_content = new ConfluenceAgent();
-
-    mainWindow->statusMessage(
-        QObject::tr("Trying to read Confluence page details...", "Confluence export"));
-    qApp->processEvents();
-
-    if (ca_details->getPageDetails(url)) {
-        ca_details->waitForResult();
-
-        if (ca_details->success()) {
-            // Page with URL is existing already
-            if (createNewPage) {
-                // URL exists and is parent page
-                if(debug) qDebug() << "Starting to create new page..."; 
-                ca_content->createPage(url, pageTitle,
-                                       filePath);
-                ca_content->waitForResult();
-                if (ca_content->success()) {
-                    if (debug) qDebug() << "Page created.";
-                    success = true;
-                }
-                else {
-                    if (debug) qDebug() << "Page not created.";
-                    success = false;
-                }
-            } else {
-                // URL exists and is update page
-                if (debug) qDebug() << "Starting to update existing page...";
-                mainWindow->statusMessage(
-                    QObject::tr("Trying to update Confluence page...", "Confluence export"));
-                qApp->processEvents();
-
-                ca_content->updatePage(url, pageTitle,
-                                       filePath);
-                ca_content->waitForResult();
-                if (ca_content->success()) {
-                    if (debug) qDebug() << "Page updated.";
-                    success = true;
-                }
-                else {
-                    if (debug) {
-                        qWarning() << "Page not updated:";
-                        qWarning() << ca_content->getResult();
-                    }
-                    success = false;
-                }
-            }
-        }
-        else {
-            // Page with URL does not exist, abort
-            // neither as parent of new page or to update existing page
-            success = false;
-            if (createNewPage)
-                qWarning() << "Parent page not existing: " << url;
-            else
-                qWarning() << "Page not existing, cannot update it: "
-                           << url;
-        }
-    }
-
-    delete (ca_details);
-    delete (ca_content);
-
-    displayedDestination = url;
+    // Create Confluence agent
+    ConfluenceAgent *agent = new ConfluenceAgent();
+    if (createNewPage)
+        agent->setJobType(ConfluenceAgent::NewPage);
+    else
+        agent->setJobType(ConfluenceAgent::UpdatePage);
+    agent->setPageURL(url);
+    agent->setNewPageTitle(pageTitle);
+    agent->setUploadFilePath(filePath);
+    agent->setModelID(model->getModelID());
+    agent->startJob();
 
     QStringList args;
-    createNewPage ? exportName = "ConfluenceNewPage" : exportName = "ConfluenceUpdatePage";
-    args <<  displayedDestination;
-    args <<  pageTitle;
+    exportName = (createNewPage) ? "ConfluenceNewPage" : "ConfluenceUpdatePage";
+    args <<  url;
+    if (!pageTitle.isEmpty()) 
+        args <<  pageTitle;
+
+    result = ExportBase::Ongoing;
+
     completeExport(args);
+    
+    // Prepare human readable info in tooltip of LastExport:
+    displayedDestination = (createNewPage) ? 
+        QString("Title: %1").arg(pageTitle) : 
+        QString("URL: %1").arg(url);
+
 
     dia.saveSettings();
     model->setExportMode(false);

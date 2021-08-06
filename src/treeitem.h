@@ -27,8 +27,7 @@ class TreeItem : public XMLObj {
     enum Type { Undefined, MapCenter, Branch, Image, Attribute, XLink };
     enum HideTmpMode { HideNone, HideExport };
 
-    TreeItem();
-    TreeItem(const QList<QVariant> &data, TreeItem *parent = 0);
+    TreeItem(TreeItem *parent = nullptr);
     virtual ~TreeItem();
     void init();
     virtual void clear() = 0;
@@ -194,6 +193,7 @@ class TreeItem : public XMLObj {
     virtual FloatImageObj *getImageObjNum(const int &n);
 
     virtual AttributeItem *getAttributeNum(const int &n);
+    virtual AttributeItem *getAttributeByKey(const QString &k);
 
     virtual XLinkItem *getXLinkItemNum(const int &n);
     virtual XLinkObj *getXLinkObjNum(const int &n);
@@ -216,7 +216,7 @@ class TreeItem : public XMLObj {
     VymModel *model;
 
     QList<TreeItem *> childItems;
-    QList<QVariant> itemData;
+    QList<QVariant> itemData;   // Heading for TreeEditor in first column
     TreeItem *parentItem;
 
     /*!  Set rootItem (does not change, needed for some quick checks

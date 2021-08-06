@@ -343,10 +343,7 @@ bool parseVYMHandler::startElement(const QString &, const QString &,
     else if (eName == "attribute" &&
              (state == StateBranch || state == StateMapCenter)) {
         state = StateAttribute;
-        QList<QVariant> cData;
-        cData << "new attribute"
-              << "undef";
-        AttributeItem *ai = new AttributeItem(cData);
+        AttributeItem *ai = new AttributeItem(lastBranch);
         if (ai) {
             if (!atts.value("key").isEmpty())
                 ai->setKey(atts.value("key"));
@@ -371,7 +368,7 @@ bool parseVYMHandler::startElement(const QString &, const QString &,
                     ai->setValue(atts.value("value")); 
             }
         }
-        model->addAttribute(lastBranch, ai);
+        model->setAttribute(lastBranch, ai);
     }
     else if (state == StateHtml) {
         // Only for backward compatibility

@@ -21,10 +21,13 @@ using namespace std;
 #include <QTextStream>
 
 #include "aboutdialog.h"
+#include "attributeitem.h"
 #include "branchitem.h"
 #include "branchpropeditor.h"
 #include "command.h"
 #include "confluence-agent.h"
+#include "confluence-user.h"
+#include "confluence-userdialog.h"
 #include "credentials.h"
 #include "download-agent.h"
 #include "file.h"
@@ -50,7 +53,6 @@ using namespace std;
 #include "taskeditor.h"
 #include "taskmodel.h"
 #include "treeeditor.h"
-#include "userdialog.h"
 #include "vymprocess.h"
 #include "warningdialog.h"
 #include "xlinkitem.h"
@@ -1463,6 +1465,20 @@ void Main::setupEditActions()
     editMenu->addAction(a);
     switchboard.addSwitch("mapEditMoveBranchDown", shortcutScope, a, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(editMoveDown()));
+    actionMoveDown = a;
+
+    a = new QAction(QPixmap(), tr("Move branch diagonally down", "Edit menu"),
+                    this);
+    a->setShortcut(Qt::CTRL + Qt::Key_PageDown);
+    a->setShortcutContext(Qt::WidgetShortcut);
+    // a->setEnabled (false);
+    mapEditorActions.append(a);
+    taskEditorActions.append(a);
+    restrictedMapActions.append(a);
+    actionListBranches.append(a);
+    editMenu->addAction(a);
+    switchboard.addSwitch("mapEditMoveBranchDownDiagonally", shortcutScope, a, tag);
+    connect(a, SIGNAL(triggered()), this, SLOT(editMoveDownDiagonally()));
     actionMoveDown = a;
 
     a = new QAction(QPixmap(), tr("&Detach", "Context menu"), this);
@@ -4890,6 +4906,14 @@ void Main::editMoveDown()
         m->moveDown();
 }
 
+void Main::editMoveDownDiagonally()
+{
+    MapEditor *me = currentMapEditor();
+    VymModel *m = currentModel();
+    if (me && m && me->getState() != MapEditor::EditingHeading)
+        m->moveDownDiagonally();
+}
+
 void Main::editDetach()
 {
     VymModel *m = currentModel();
@@ -4979,7 +5003,7 @@ void Main::editAddAttribute()
     VymModel *m = currentModel();
     if (m) {
 
-        m->addAttribute();
+        m->setAttribute();
     }
 }
 
@@ -6510,13 +6534,40 @@ void Main::testFunction2()
 {
     VymModel *m = currentModel();
     if (m) {
-        UserDialog dia;
-        dia.exec();
-        if (dia.result() > 0) {
-            m->setHeading(dia.selectedUser());
-            m->setURL(
-                QString("<ac:link> <ri:user ri:userkey=\"%1\"/></ac:link>")
-                    .arg(dia.selectedUserKey()));
+        BranchItem *selbi = m->getSelectedBranch();
+        if (selbi) {
+            ConfluenceUserDialog dia;
+            dia.exec();
+            if (dia.result() > 0) {
+                ConfluenceUser user = dia.getSelectedUser();
+                m->setHeading(user.getDisplayName());
+                m->setURL(
+                    QString("<ac:link> <ri:user ri:userkey=\"%1\"/></ac:link>")
+                        .arg(user.getUserKey()));
+
+                AttributeItem *ai;
+
+                ai = new AttributeItem();
+                ai->setKey("ConfluenceUser.displayName");
+                ai->setValue(user.getDisplayName());
+                m->setAttribute(selbi, ai);
+
+                ai = new AttributeItem();
+                ai->setKey("ConfluenceUser.userKey");
+                ai->setValue(user.getUserKey());
+                m->setAttribute(selbi, ai);
+
+                ai = new AttributeItem();
+                ai->setKey("ConfluenceUser.userName");
+                ai->setValue(user.getUserName());
+                m->setAttribute(selbi, ai);
+
+                ai = new AttributeItem();
+                ai->setKey("ConfluenceUser.url");
+                ai->setValue(user.getURL());
+                m->setAttribute(selbi, ai);
+                m->setURL(user.getURL(), false);
+            }
         }
     }
 }

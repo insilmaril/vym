@@ -78,6 +78,8 @@ HEADERS	+= \
     src/command.h \
     src/container.h \
     src/confluence-agent.h \
+    src/confluence-user.h \
+    src/confluence-userdialog.h \
     src/credentials.h \
     src/dockeditor.h \
     src/download-agent.h \
@@ -153,7 +155,6 @@ HEADERS	+= \
     src/treeitem.h \
     src/treemodel.h \
     src/texteditor.h \
-    src/userdialog.h \
     src/version.h \
     src/vymlock.h \
     src/vymmodel.h \
@@ -190,6 +191,7 @@ SOURCES	+= \
     src/command.cpp \
     src/confluence-agent.cpp \
     src/container.cpp \
+    src/confluence-user.cpp \
     src/credentials.cpp \
     src/dockeditor.cpp \
     src/download-agent.cpp \
@@ -266,7 +268,7 @@ SOURCES	+= \
     src/treeeditor.cpp \
     src/treeitem.cpp \
     src/treemodel.cpp \
-    src/userdialog.cpp \
+    src/confluence-userdialog.cpp \
     src/version.cpp \
     src/vymlock.cpp \
     src/vymmodel.cpp \
@@ -300,7 +302,7 @@ FORMS = \
     forms/lockedfiledialog.ui \
     forms/scripteditor.ui \
     forms/showtextdialog.ui \
-    forms/userdialog.ui \
+    forms/confluence-userdialog.ui \
     forms/warningdialog.ui \
     forms/zip-settings-dialog.ui
 
