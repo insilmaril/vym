@@ -582,8 +582,9 @@ class VymModel : public TreeModel {
                     bool useDialog = true);
 
     /*! Export as HTML to Confluence*/
-    void exportConfluence(const QString &pageURL = "", const QString &pageDialog = "", 
-                          bool useDialog = true);
+    void exportConfluence(bool createPage = true, const QString &pageURL = "", 
+                    const QString &pageDialog = "", 
+                    bool useDialog = true);
 
     /*! Export as OpenOfficeOrg presentation */
     void exportImpress(const QString &, const QString &);

@@ -123,6 +123,8 @@
     <file alias="redo.png">icons/redo.png</file>
     <file alias="transform-rotate-ccw.svg">icons/transform-rotate-ccw.svg</file>
     <file alias="transform-rotate-cw.svg">icons/transform-rotate-cw.svg</file>
+    <file alias="script-reload.svg">icons/script-reload.svg</file>
+    <file alias="script-run.svg">icons/script-run.svg</file>
     <file alias="scripteditor.png">icons/scripteditor.png</file>
     <file alias="selectnext.png">icons/selectnext.png</file>
     <file alias="selectprevious.png">icons/selectprevious.png</file>
@@ -144,7 +146,6 @@
     <file alias="treeeditor.png">icons/treeeditor.png</file>
     <file alias="undo.png">icons/undo.png</file>
     <file alias="view-video-projector.png">icons/video-projector.png</file>
-    <file alias="view-filter.png">icons/view-filter.png</file>
     <file alias="view-filter.png">icons/view-filter.png</file>
     <file alias="viewmag+.png">icons/viewmag+.png</file>
     <file alias="viewmag-.png">icons/viewmag-.png</file>

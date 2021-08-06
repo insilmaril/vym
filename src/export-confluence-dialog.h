@@ -17,7 +17,8 @@ class ExportConfluenceDialog : public QDialog {
   public:
     ExportConfluenceDialog(QWidget *parent = 0);
 
-    virtual QString getPageURL();
+    bool getCreateNewPage();
+    virtual QString getURL();
     virtual QString getPageTitle();
     virtual bool warnings();
     virtual bool hasChanged();
@@ -25,10 +26,10 @@ class ExportConfluenceDialog : public QDialog {
 
   public slots:
     virtual void readSettings();
-    virtual void setPageURL(const QString &);
+    virtual void setURL(const QString &);
     virtual void setPageTitle(const QString &);
     virtual void pageButtonPressed(bool);
-    virtual void pageURLChanged();
+    virtual void URLChanged();
     virtual void pageTitleChanged();
     virtual void imageCheckBoxPressed(bool b);
     virtual void includeImagesCheckBoxPressed(bool b);
@@ -60,7 +61,7 @@ class ExportConfluenceDialog : public QDialog {
     QString css_dst;
     bool showWarnings;
     bool showOutput;
-    QString pageURL;
+    QString url;
     QString pageTitle;
     QString filepath;
     bool settingsChanged;

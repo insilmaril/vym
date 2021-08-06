@@ -43,7 +43,7 @@ TaskEditor::TaskEditor(QWidget *)
     a->setToolTip(
         tr("Show only tasks from current map", "Filters in task Editor"));
     a->setCheckable(true);
-    a->setChecked(settings.value("/taskeditor/filterMap", false).toBool());
+    a->setChecked(settings.value("/taskeditor/filterMap", true).toBool());
     tb->addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(toggleFilterMap()));
     actionToggleFilterMap = a;
@@ -53,7 +53,7 @@ TaskEditor::TaskEditor(QWidget *)
                                      // );
     a->setToolTip(tr("Show only active tasks", "Filters in task Editor"));
     a->setCheckable(true);
-    a->setChecked(settings.value("/taskeditor/filterActive", false).toBool());
+    a->setChecked(settings.value("/taskeditor/filterActive", true).toBool());
     tb->addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(toggleFilterActive()));
     actionToggleFilterActive = a;
@@ -146,6 +146,9 @@ TaskEditor::TaskEditor(QWidget *)
     connect(view->selectionModel(),
             SIGNAL(selectionChanged(QItemSelection, QItemSelection)), this,
             SLOT(selectionChanged(QItemSelection, QItemSelection)));
+
+    connect(view, SIGNAL(clicked(QModelIndex)),
+            this, SLOT(cellClicked(QModelIndex)));
 
     // Enable wordwrap when data changes
     if (settings.value("/taskeditor/wordWrap", true)
@@ -309,6 +312,13 @@ bool TaskEditor::select(Task *task)
 
 void TaskEditor::clearSelection() { view->selectionModel()->clearSelection(); }
 
+void TaskEditor::cellClicked(QModelIndex ix_unmapped)
+{
+    QModelIndex ix = filterActiveModel->mapToSource(ix_unmapped);
+    if (ix.isValid() && ix.column() == 2) 
+        taskModel->getTask(ix)->getBranch()->getModel()->cycleTaskStatus();
+}
+
 void TaskEditor::headerContextMenu()
 {
     // qDebug() << "TE::headerContextMenu()";
@@ -359,13 +369,13 @@ void TaskEditor::updateColumnLayout()
     i = 5;
     view->setColumnWidth(i, settings.value(s.arg(i) + "width", 80).toInt());
     view->setColumnHidden(i,
-                          settings.value(s.arg(i) + "hidden", false).toBool());
+                          settings.value(s.arg(i) + "hidden", true).toBool());
 
     // Map
     i = 6;
     view->setColumnWidth(i, settings.value(s.arg(i) + "width", 100).toInt());
     view->setColumnHidden(i,
-                          settings.value(s.arg(i) + "hidden", false).toBool());
+                          settings.value(s.arg(i) + "hidden", true).toBool());
 
     // Flags
     i = 7;

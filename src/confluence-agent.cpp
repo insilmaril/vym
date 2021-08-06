@@ -11,24 +11,39 @@ extern QDir vymBaseDir;
 extern bool debug;
 extern QString confluencePassword;
 
-ConfluenceAgent::ConfluenceAgent() { init(); }
+ConfluenceAgent::ConfluenceAgent() { 
+    qDebug() << "Constr. ConfluenceAgent";
+    init(); 
+}
 
 ConfluenceAgent::ConfluenceAgent(BranchItem *bi)
 {
-    init();
+    qDebug() << "Constr. ConfluenceAgent selbi = " << bi;
+
     if (!bi) {
         qWarning("Const ConfluenceAgent: bi == nullptr");
-        delete (this);
+        // This will leave the agent hanging around undeleted...
         return;
     }
+
+    init();
 
     branchID = bi->getID();
     VymModel *model = bi->getModel();
     modelID = model->getModelID();
 }
 
+ConfluenceAgent::~ConfluenceAgent()
+{
+    qDebug() << "CA::Destr.";
+    if (killTimer)
+        delete killTimer;
+}
+
 void ConfluenceAgent::init()
 {
+    jobType = Undefined;
+
     killTimer = nullptr;
 
     confluenceScript = vymBaseDir.path() + "/scripts/confluence.rb";
@@ -53,10 +68,34 @@ void ConfluenceAgent::init()
     apiURL = baseURL + "/rest/api";
 }
 
-ConfluenceAgent::~ConfluenceAgent()
+void ConfluenceAgent::setJobType(JobType jt)
 {
-    if (killTimer)
-        delete killTimer;
+    jobType = jt;
+}
+
+void ConfluenceAgent::startJob()
+{
+    switch(jobType) {
+        case CopyPagenameToHeading:
+            qDebug() << "CA::startJob " << jobType << pageURL;
+            getPageSource();
+            break;
+        default:
+            qDebug() << "ConfluenceAgent::startJob   unknown jobType " << jobType;
+    }
+}
+
+void ConfluenceAgent::finishJob()
+{
+    if (reply)
+        reply->deleteLater();
+
+    deleteLater();
+}
+
+void ConfluenceAgent::setPageURL(QString u)
+{
+    pageURL = u;
 }
 
 void ConfluenceAgent::test()
@@ -106,20 +145,16 @@ bool ConfluenceAgent::getPageDetails(const QString &url)
     return true;
 }
 
-bool ConfluenceAgent::getPageDetailsNative(const QString &u)
+bool ConfluenceAgent::getPageSource()
 {
-    QUrl url(u);
-    if (!url.isValid()) {
-        qWarning() << "ConfluenceAgent: Invalid URL: " << u;
+    qDebug() << "CA::getPageSource of " << pageURL; // FIXME-2 testing
+    if (!QUrl(pageURL).isValid()) {
+        qWarning() << "ConfluenceAgent: Invalid URL: " << pageURL;
         return false;
     }
 
-    pageURL = u;
-
     // schedule the request
-    startGetPageSourceRequest(url);
-
-    killTimer->start();
+    startGetPageSourceRequest(pageURL);
 
     return true;
 }
@@ -247,7 +282,7 @@ void ConfluenceAgent::dataReceived(
 
 void ConfluenceAgent::timeout()
 {
-    qWarning() << "ConfluenceAgent timeout!!";
+    qWarning() << "ConfluenceAgent timeout!!   jobType = " << jobType;
     if (vymProcess) {
         // delete (vymProcess);  // FIXME-3  crashes in ConfluenceAgent -
         // deleteLater()?
@@ -281,17 +316,18 @@ void ConfluenceAgent::startGetPageSourceRequest(QUrl requestedURL)
         qDebug() << "CA::startGetPageSourceRequest="
                  << request.url().toString();
 
+    killTimer->start();
+
     reply = qnam.get(request);
 
-    disconnect();
+    disconnect(reply);
     connect(reply, &QNetworkReply::finished, this,
             &ConfluenceAgent::pageSourceReceived);
 }
 
 void ConfluenceAgent::startGetPageDetailsRequest(QString query)
 {
-    if (debug)
-        qDebug() << "CA::startGetPageDetailsRequest" << query;
+    qDebug() << "CA::startGetPageDetailsRequest" << query;
 
     httpRequestAborted = false;
 
@@ -306,7 +342,10 @@ void ConfluenceAgent::startGetPageDetailsRequest(QString query)
 
     reply = qnam.get(request);
 
-    disconnect();
+    // Disconnect reply
+    disconnect(reply);
+
+    killTimer->start();
 
     connect(reply, &QNetworkReply::finished, this,
             &ConfluenceAgent::pageDetailsReceived);
@@ -314,8 +353,9 @@ void ConfluenceAgent::startGetPageDetailsRequest(QString query)
 
 void ConfluenceAgent::pageSourceReceived()
 {
-    if (debug)
-        qDebug() << "CA::pageSourceReceived";
+    qDebug() << "CA::pageSourceReceived";
+
+    killTimer->stop();
 
     QString r = reply->readAll();
 
@@ -341,24 +381,23 @@ void ConfluenceAgent::pageSourceReceived()
         spaceKey = rx.cap(1);
     }
     else {
-        qWarning() << "ConfluenceAgent::pageSourceReveived Couldn't find page "
-                      "space key";
-        reply->deleteLater();
-        reply = nullptr;
+        qWarning() << "ConfluenceAgent::pageSourceReveived Couldn't find "
+                      "space key in response";
+        qWarning() << r;
+        finishJob();
         return;
     }
 
     if (httpRequestAborted) {
-        qWarning() << "ConfluenceAgent::pageSoureReveived aborted";
-        reply->deleteLater();
-        reply = nullptr;
+        qWarning() << "ConfluenceAgent::pageSourceReveived aborted";
+        finishJob();
         return;
     }
 
     if (reply->error()) {
         qWarning() << "ConfluenceAgent::pageSoureReveived reply error";
-        reply->deleteLater();
-        reply = nullptr;
+        qWarning() << "Error: " << reply->error();
+        finishJob();
         return;
     }
 
@@ -371,21 +410,20 @@ void ConfluenceAgent::pageSourceReceived()
 
 void ConfluenceAgent::pageDetailsReceived()
 {
-    if (debug)
-        qDebug() << "CA::pageDetailsReceived";
+    qDebug() << "CA::pageDetailsReceived";
+
+    killTimer->stop();
 
     if (httpRequestAborted) {
         qWarning() << "ConfluenceAgent::pageDetailsReveived aborted error";
-        reply->deleteLater();
-        reply = nullptr;
+        finishJob();
         return;
     }
 
     if (reply->error()) {
         qWarning() << "ConfluenceAgent::pageDetailsReveived reply error";
         qDebug() << reply->error();
-        reply->deleteLater();
-        reply = nullptr;
+        finishJob();
         return;
     }
 
@@ -426,8 +464,7 @@ void ConfluenceAgent::pageDetailsReceived()
     else
         qWarning() << "CA::pageDetailsReceived couldn't find model " << modelID;
 
-    reply->deleteLater();
-    reply = nullptr;
+    finishJob();
 }
 
 #ifndef QT_NO_SSL

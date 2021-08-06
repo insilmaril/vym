@@ -261,8 +261,17 @@ void LinkableMapObj::setLinkColor()
     // Overloaded in BranchObj and children
     // here only set default color
     VymModel *model = treeItem->getModel();
-    if (model)
-        setLinkColor(model->getMapDefLinkColor());
+    if (!model)
+        return;
+
+    if (model->getMapLinkColorHint() == HeadingColor) {
+        if (treeItem->isBranchLikeType() )
+            LinkableMapObj::setLinkColor(treeItem->getHeading().getColor());
+        else
+            // For images use color of parent heading
+            LinkableMapObj::setLinkColor(treeItem->parent()->getHeading().getColor());
+    } else
+        LinkableMapObj::setLinkColor(model->getMapDefLinkColor());
 }
 
 void LinkableMapObj::setLinkColor(QColor col)

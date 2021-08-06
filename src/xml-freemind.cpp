@@ -262,7 +262,7 @@ bool parseFreemindHandler::endElement(const QString &, const QString &,
 
 bool parseFreemindHandler::characters(const QString &ch)
 {
-    // qDebug() << "characters \""<<qPrintable(ch)<<"\"  state="<<state;
+    //qDebug() << "characters \""<<qPrintable(ch)<<"\"  state="<<state;
 
     QString ch_org = quoteMeta(ch);
     QString ch_simplified = ch.simplified();
@@ -293,6 +293,8 @@ bool parseFreemindHandler::characters(const QString &ch)
         break;
     case StateHtml:
         htmldata += ch_org;
+        break;
+    case StateUnknown:
         break;
     default:
         return false;

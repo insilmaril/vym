@@ -305,28 +305,29 @@ FORMS = \
     forms/zip-settings-dialog.ui
 
 isEmpty( PREFIX ) {
-    PREFIX = /usr/share/vym
+    PREFIX = /usr/share
     count( INSTALLDIR, 1 ) {
 	PREFIX = $${INSTALLDIR}
     }
 }
 isEmpty( BINDIR ) {
-    BINDIR = $${PREFIX}/bin
+    BINDIR = /usr/bin
 }
 isEmpty( DATADIR ) {
-    DATADIR = $${PREFIX}
+    DATADIR = $${PREFIX}/vym
 }
 
 target.path = $${BINDIR}
 INSTALLS += target
 
-DEFINES += "VYMBASEDIR='\"$${DATADIR}/vym\"'"
+DEFINES += "VYMBASEDIR='\"$${DATADIR}\"'"
 
 message( "PREFIX Dir: $$PREFIX" )
-message( "vymBaseDir: $$VYMBASEDIR" )
+message( "DATADIR: $$DATADIR" )
+message( "DEFINES: $$DEFINES" )
 
 language.files = lang/*.qm
-language.path = $${DATADIR}/vym/lang
+language.path = $${DATADIR}/lang
 INSTALLS += language
 
 support.files = demos \
@@ -337,7 +338,7 @@ support.files = demos \
     scripts/ \
     styles/ 
 
-support.path = $${DATADIR}/vym
+support.path = $${DATADIR}
 INSTALLS += support 
 
 # doc.files = doc/vym.pdf

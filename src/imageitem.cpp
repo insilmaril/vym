@@ -72,6 +72,7 @@ FloatImageObj *ImageItem::createMapObj()
     fio->setZValue(zValue);
     fio->setRelPos(pos);
     fio->updateVisibility();
+    fio->setLinkColor();
     return fio;
 }
 

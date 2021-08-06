@@ -2653,7 +2653,7 @@ void VymModel::updateTasksAlarm(bool force)
     }
 }
 
-BranchItem *VymModel::addTimestamp() // FIXME-4 new function, localize
+BranchItem *VymModel::addTimestamp()
 {
     BranchItem *selbi = addNewBranch();
     if (selbi) {
@@ -4107,8 +4107,10 @@ void VymModel::setHeadingConfluencePageName()
                         return;
                 }
 
-                ConfluenceAgent *ca_details = new ConfluenceAgent(selbi);
-                ca_details->getPageDetailsNative(url);
+                ConfluenceAgent *ca_setHeading = new ConfluenceAgent(selbi);
+                ca_setHeading->setPageURL(url);
+                ca_setHeading->setJobType(ConfluenceAgent::CopyPagenameToHeading);
+                ca_setHeading->startJob();
             }
         }
     }
@@ -4646,11 +4648,12 @@ void VymModel::exportHTML(const QString &fpath, const QString &dpath,
     ex.doExport(useDialog);
 }
 
-void VymModel::exportConfluence(const QString &pageURL,
+void VymModel::exportConfluence(bool createPage, const QString &pageURL,
                                 const QString &pageTitle, bool useDialog)
 {
     ExportConfluence ex(this);
-    ex.setPageURL(pageURL);
+    ex.setCreateNewPage(createPage);
+    ex.setURL(pageURL);
     ex.setPageTitle(pageTitle);
     ex.setLastCommand(
         settings.localValue(filePath, "/export/last/command", "").toString());
@@ -4927,6 +4930,10 @@ void VymModel::setMapDefLinkColor(QColor col)
     while (cur) {
         bo = (BranchObj *)(cur->getLMO());
         bo->setLinkColor();
+
+        for (int i = 0; i < cur->imageCount(); ++i)
+            cur->getImageNum(i)->getLMO()->setLinkColor();
+
         nextBranch(cur, prev);
     }
     updateActions();
@@ -4942,6 +4949,10 @@ void VymModel::setMapLinkColorHintInt()
     while (cur) {
         bo = (BranchObj *)(cur->getLMO());
         bo->setLinkColor();
+
+        for (int i = 0; i < cur->imageCount(); ++i)
+            cur->getImageNum(i)->getLMO()->setLinkColor();
+
         nextBranch(cur, prev);
     }
 }
@@ -4965,6 +4976,10 @@ void VymModel::toggleMapLinkColorHint()
     while (cur) {
         bo = (BranchObj *)(cur->getLMO());
         bo->setLinkColor();
+
+        for (int i = 0; i < cur->imageCount(); ++i)
+            cur->getImageNum(i)->getLMO()->setLinkColor();
+
         nextBranch(cur, prev);
     }
 }

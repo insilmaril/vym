@@ -7,9 +7,11 @@
 #include "mainwindow.h"
 #include "settings.h"
 #include "warningdialog.h"
+#include "xmlobj.h"
 
 extern QString flagsPath;
 extern Main *mainWindow;
+extern QString vymName;
 extern QString vymVersion;
 extern QString vymHome;
 extern Settings settings;
@@ -20,15 +22,20 @@ ExportConfluence::ExportConfluence(VymModel *m) : ExportBase(m) { init(); }
 
 void ExportConfluence::init()
 {
-    exportName = "Confluence";
+    createNewPage = true;
+    exportName = "ConfluenceNewPage";
+
     extension = ".html";
     frameURLs = true;
 
-    pageURL = "";
+    url = "";
     pageTitle = "";
 }
 
-void ExportConfluence::setPageURL(const QString &u) { pageURL = u; }
+void ExportConfluence::setCreateNewPage(bool b) {createNewPage = b; }
+
+void ExportConfluence::setURL(const QString &u) { url = u; }
+
 void ExportConfluence::setPageTitle(const QString &t) { pageTitle = t; }
 
 QString ExportConfluence::getBranchText(BranchItem *current)
@@ -92,13 +99,23 @@ QString ExportConfluence::getBranchText(BranchItem *current)
         // URL
         if (!url.isEmpty()) {
             if (url.contains("ri:userkey"))
-                s += url;
-            else
-                s += QString("<a href=\"%1\">%2</a>")
-                         .arg(url)
-                         .arg(number + taskFlags + heading + userFlags);
-        }
-        else
+                s += url; 
+            else {
+                if (url.contains(settings.value("/confluence/url",
+                                                   "---undefined---").toString()) && url.contains("&")) {
+
+                // Fix ampersands in URL to Confluence itself
+                qDebug() << "Found " << url; // FIXME-0 testing
+                url = quoteMeta(url);
+            } 
+
+            qDebug() << "URL now" << url; // FIXME-0 testing
+            qDebug() << settings.value("/confluence/url", "---").toString();
+            s += QString("<a href=\"%1\">%2</a>")
+                     .arg(url)
+                     .arg(number + taskFlags + heading + userFlags);
+            }
+        } else
             s += number + taskFlags + heading + userFlags;
 
         // Include images // FIXME-3 not implemented yet
@@ -199,6 +216,12 @@ QString ExportConfluence::buildList(BranchItem *current)
         itemBegin = "<h3>";
         itemEnd = "</h3>";
         break;
+    case 2:
+        sectionBegin = "";
+        sectionEnd = "";
+        itemBegin = "<h4>";
+        itemEnd = "</h4>";
+        break;
     default:
         sectionBegin =
             "<ul " +
@@ -273,7 +296,7 @@ void ExportConfluence::doExport(bool useDialog)
     // Setup dialog and read settings
     dia.setMapName(model->getMapName());
     dia.setFilePath(model->getFilePath());
-    dia.setPageURL(pageURL);
+    dia.setURL(url);
     dia.setPageTitle(pageTitle);
     dia.readSettings();
 
@@ -281,6 +304,9 @@ void ExportConfluence::doExport(bool useDialog)
         if (dia.exec() != QDialog::Accepted)
             return;
         model->setChanged();
+        url = dia.getURL();
+        createNewPage = dia.getCreateNewPage();
+        pageTitle = dia.getPageTitle();
     }
 
     // Open file for writing
@@ -319,6 +345,10 @@ void ExportConfluence::doExport(bool useDialog)
     // Main loop over all mapcenters
     ts << buildList(model->getRootItem()) << "\n";
 
+    ts << "<p style=\"text-align: center;\"> <sub> <em>Page created with ";
+    ts << "<a href=\"https://sourceforge.net/projects/vym/\">" << vymName << " " << vymVersion<< "</a>";
+    ts << "</em> </sub> </p>";
+
     file.close();
 
     // First check if page already exists
@@ -329,14 +359,15 @@ void ExportConfluence::doExport(bool useDialog)
         QObject::tr("Trying to read Confluence page details...", "Confluence export"));
     qApp->processEvents();
 
-    if (ca_details->getPageDetails(dia.getPageURL())) {
+    if (ca_details->getPageDetails(url)) {
         ca_details->waitForResult();
 
         if (ca_details->success()) {
             // Page with URL is existing already
-            if (dia.createNewPage()) {
+            if (createNewPage) {
+                // URL exists and is parent page
                 if(debug) qDebug() << "Starting to create new page..."; 
-                ca_content->createPage(dia.getPageURL(), dia.getPageTitle(),
+                ca_content->createPage(url, pageTitle,
                                        filePath);
                 ca_content->waitForResult();
                 if (ca_content->success()) {
@@ -347,14 +378,14 @@ void ExportConfluence::doExport(bool useDialog)
                     if (debug) qDebug() << "Page not created.";
                     success = false;
                 }
-            }
-            else {
+            } else {
+                // URL exists and is update page
                 if (debug) qDebug() << "Starting to update existing page...";
                 mainWindow->statusMessage(
                     QObject::tr("Trying to update Confluence page...", "Confluence export"));
                 qApp->processEvents();
 
-                ca_content->updatePage(dia.getPageURL(), dia.getPageTitle(),
+                ca_content->updatePage(url, pageTitle,
                                        filePath);
                 ca_content->waitForResult();
                 if (ca_content->success()) {
@@ -371,24 +402,26 @@ void ExportConfluence::doExport(bool useDialog)
             }
         }
         else {
-            // Page not existing
+            // Page with URL does not exist, abort
+            // neither as parent of new page or to update existing page
             success = false;
-            if (dia.createNewPage())
-                qWarning() << "Parent page not existing: " << dia.getPageURL();
+            if (createNewPage)
+                qWarning() << "Parent page not existing: " << url;
             else
                 qWarning() << "Page not existing, cannot update it: "
-                           << dia.getPageURL();
+                           << url;
         }
     }
 
     delete (ca_details);
     delete (ca_content);
 
-    displayedDestination = dia.getPageURL();
+    displayedDestination = url;
 
     QStringList args;
+    createNewPage ? exportName = "ConfluenceNewPage" : exportName = "ConfluenceUpdatePage";
     args <<  displayedDestination;
-    args <<  dia.getPageTitle();
+    args <<  pageTitle;
     completeExport(args);
 
     dia.saveSettings();

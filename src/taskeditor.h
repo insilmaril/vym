@@ -35,6 +35,7 @@ class TaskEditor : public QWidget {
     void contextMenuEvent(QContextMenuEvent *e);
 
   private slots:
+    void cellClicked(QModelIndex);
     void headerContextMenu();
     void updateColumnLayout();
     void selectionChanged(const QItemSelection &selected,

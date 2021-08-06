@@ -21,6 +21,9 @@ SET(QtLibraries
     Qt5::Xml
 )
 
+# On Linux DBUS is used for IPC with vym
+# On openSUSE install it using:  zypper install dbus-1-devel
+
 FIND_PACKAGE(DBus1)
 
 IF(DBus1_FOUND)
@@ -198,10 +201,10 @@ SET_SOURCE_FILES_PROPERTIES(${VymTranslationSources} PROPERTIES OUTPUT_LOCATION 
 QT5_ADD_TRANSLATION(VymTranslations ${VymTranslationSources})
 
 IF(NOT DATADIR)
-    SET(DATADIR "${CMAKE_INSTALL_PREFIX}")
+    SET(DATADIR "${CMAKE_INSTALL_PREFIX}/vym")
 ENDIF()
 
-ADD_COMPILE_DEFINITIONS(VYMBASEDIR="${DATADIR}/vym")
+ADD_COMPILE_DEFINITIONS(VYMBASEDIR="${DATADIR}")
 
 ADD_EXECUTABLE(vym ${VymSources} vym.qrc ${VymTranslations})
 TARGET_LINK_LIBRARIES(vym ${QtLibraries})

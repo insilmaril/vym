@@ -2107,6 +2107,7 @@ void MapEditor::updateSelection(QItemSelection nsel, QItemSelection dsel)
             mi->getType() == TreeItem::XLink)
             if (!itemsSelected.contains(mi))
                 itemsSelected.append(mi);
+        mi->getLMO()->updateVisibility();
     }
 
     // Delete objects meanwhile removed from selection
@@ -2116,6 +2117,7 @@ void MapEditor::updateSelection(QItemSelection nsel, QItemSelection dsel)
             mi->getType() == TreeItem::XLink)
             if (!itemsDeselected.contains(mi))
                 itemsDeselected.append(mi);
+        mi->getLMO()->updateVisibility();
     }
 
     // Trim list of selection paths
