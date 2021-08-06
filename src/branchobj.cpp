@@ -34,7 +34,7 @@ BranchObj::BranchObj(QGraphicsItem *parent, TreeItem *ti)
 
 BranchObj::~BranchObj()
 {
-    qDebug()<< "Destr BranchObj  of "<<this;
+    qDebug()<< "Destr BranchObj  of " << this;
 
     if (branchContainer) {
         delete branchContainer;

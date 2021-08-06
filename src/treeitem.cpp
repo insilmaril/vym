@@ -38,7 +38,6 @@ TreeItem::~TreeItem()
         ti = childItems.takeFirst();
         delete ti;
     }
-    qDebug() << "Destr TreeItem end:   this=" << this << getHeadingPlain();
 }
 
 void TreeItem::init()

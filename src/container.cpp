@@ -10,14 +10,13 @@ Container::Container(QGraphicsItem *parent, TreeItem *ti) : QGraphicsRectItem(pa
     qDebug() << "* Const Container begin this = " << this << "  branchitem = " << ti;
     treeItem = ti;
     init();
-    qDebug() << "* Const Container end   this = " << this;
 }
 
 Container::~Container()
 {
     QString h;
     if (treeItem) h = treeItem->getHeadingPlain();
-    qDebug() << "* Destr Container " << this << name << h;
+    qDebug() << "* Destr Container " << name << h << this;
 
     foreach (Container *c, childrenList) {
         // Avoid that QGraphicsScene deletes children
@@ -25,6 +24,11 @@ Container::~Container()
 
         // FIXME-0 check if there still is a link to a TreeItem
         // then this needs to be unlinked first
+        if (treeItem) {
+            qDebug() << "   * Unlinking treeItem = " << treeItem;
+            
+        }
+
         //if (c->contType != Containers) 
         //    delete c;   // FIXME-0 children container is not deleted at all, needs tob done in BranchItem?!!!
     }
@@ -112,6 +116,7 @@ void Container::reposition()
 
     foreach (Container *c, childrenList) {
         // FIXME-0 don't call, if c has no children, otherwise sizes become 0
+        qDebug() << "  Repositioning container " << c;
         if (c->contentType == Containers || c->contentType == MapObject) {
             c->reposition();
         }
@@ -177,9 +182,12 @@ void Container::reposition()
     }
 }
 
-void Container::setName(const QString &n) { name = n; }
+void Container::setName(const QString &n) {
+    // qDebug() << "Container::setName = " <<n;    // FIXME-1 testing
+    name = n;
+}
 
-QString Container::getName() { return name; }
-
-
-
+QString Container::getName() {
+    // qDebug() << "Container::getName = " << name;// FIXME-1 testing
+    return name;
+}
