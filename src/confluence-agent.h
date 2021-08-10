@@ -7,12 +7,9 @@
 #include <QObject>
 #include <QTimer>
 
-#include "heading.h"
 #include "confluence-user.h"
-#include "vymprocess.h"
 
 class BranchItem;
-class ConfluenceUser;
 class VymModel;
 
 //////////////////////////////////////////////////////////////////////////
