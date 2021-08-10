@@ -48,7 +48,7 @@ void ExportBase::init()
     exportName = "unnamed";
     lastCommand = "";
     cancelFlag = false;
-    success = false;
+    result = Undefined;
     defaultDirPath = lastExportDir.absolutePath();
     dirPath = defaultDirPath;
 }
@@ -175,13 +175,21 @@ void ExportBase::completeExport(QStringList args)
     if (model && (lastCommand != command))
         model->setChanged();
 
-    if (success)
-        mainWindow->statusMessage(
-            QString("Exported as %1 to %2").arg(exportName).arg(displayedDestination));
-    else
-        mainWindow->statusMessage(QString("Failed to export as %1 to %2")
+    switch (result) {
+        case Success:
+            mainWindow->statusMessage(
+                QString("Exported as %1 to %2").arg(exportName).arg(displayedDestination));
+            break;
+        case Failed:
+            mainWindow->statusMessage(QString("Failed to export as %1 to %2")
                                       .arg(exportName)
                                       .arg(displayedDestination));
+            break;
+        case Ongoing:
+            break;
+        default:
+            qWarning() << "Export base: undefined export result for " << exportName;
+        }
 }
 
 void ExportBase::completeExport()

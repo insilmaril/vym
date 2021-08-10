@@ -321,7 +321,6 @@ void ExportConfluence::doExport(bool useDialog)
             0, QObject::tr("Critical Export Error"),
             QObject::tr("Trying to save HTML file:") + "\n\n" +
                 QObject::tr("Could not write %1").arg(filePath));
-        mainWindow->statusMessage(QString(QObject::tr("Export failed.")));
         return;
     }
     QTextStream ts(&file);
@@ -373,6 +372,8 @@ void ExportConfluence::doExport(bool useDialog)
     args <<  url;
     if (!pageTitle.isEmpty()) 
         args <<  pageTitle;
+
+    result = ExportBase::Ongoing;
 
     completeExport(args);
     

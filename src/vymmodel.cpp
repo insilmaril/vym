@@ -2832,7 +2832,7 @@ void VymModel::moveDownDiagonally()
         BranchItem *parentParent = parent->parentBranch();
         int n = parent->num();
 
-        relinkBranch(selbi, parentParent, n + 1);
+        relinkBranch(selbi, parentParent, n + 1, true);
      }
 }
 

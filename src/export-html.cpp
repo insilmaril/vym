@@ -450,7 +450,7 @@ void ExportHTML::doExport(bool useDialog)
 
     displayedDestination = filePath;
 
-    success = true;
+    result = ExportBase::Success;
 
     QStringList args;
     args << filePath;

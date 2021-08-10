@@ -26,6 +26,7 @@ using namespace std;
 #include "branchpropeditor.h"
 #include "command.h"
 #include "confluence-agent.h"
+#include "confluence-user.h"
 #include "confluence-userdialog.h"
 #include "credentials.h"
 #include "download-agent.h"

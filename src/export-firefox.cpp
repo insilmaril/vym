@@ -94,6 +94,6 @@ void ExportFirefox::doExport()
 
     displayedDestination = filePath;
 
-    success = true;
+    result = ExportBase::Success;
     completeExport();
 }

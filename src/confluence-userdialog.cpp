@@ -3,6 +3,7 @@
 #include <QRegExp>
 
 #include "confluence-agent.h"
+#include "confluence-user.h"
 
 ConfluenceUserDialog::ConfluenceUserDialog(QWidget *parent) : QDialog(parent)
 {

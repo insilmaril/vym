@@ -48,7 +48,7 @@ void ExportOrgMode::doExport()
     }
     file.close();
 
-    success = true;
+    result = ExportBase::Success;
 
     displayedDestination = filePath;
     completeExport();
