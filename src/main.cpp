@@ -41,11 +41,12 @@ QString localeName;
 
 QTextStream vout(stdout); // vymout - Testing for now. Flush after writing...
 
-QStringList jiraPrefixList;    // List containing URLs of Jira systems
-bool jiraClientAvailable;      // collabzone specific currently
-bool confluenceAgentAvailable; // native Confluence support via REST API, also
-                               // credentials required in settings
-QString confluencePassword; // password is only on request written to settings
+// Accessing JIRA and Confluence is done using agents
+// Credentials may be stored in settings
+QString jiraPassword;       // passwords are only on request written to settings
+bool jiraAgentAvailable;
+bool confluenceAgentAvailable;
+QString confluencePassword; // passwords are only on request written to settings
 
 TaskModel *taskModel;
 TaskEditor *taskEditor;
@@ -381,19 +382,20 @@ int main(int argc, char *argv[])
     headingEditor = new HeadingEditor("headingeditor");
     branchPropertyEditor = new BranchPropertyEditor();
 
-    // Check if there is a JiraClient       // FIXME-3 check for ruby
-    QFileInfo fi(vymBaseDir.path() + "/scripts/jigger");
-    jiraClientAvailable = fi.exists();
-    jiraPrefixList = settings.value("/system/jiraPrefixList")
-                         .toStringList(); // FIXME-3 currently not used
-
-    // Check if there is a (native) Confluence agent
+    // Check if there is a Confluence agent
     if (!settings.value("/confluence/url", "").toString().isEmpty() &&
         !settings.value("/confluence/username", "").toString().isEmpty())
         confluenceAgentAvailable = true;
     else
         confluenceAgentAvailable = false;
     confluencePassword = settings.value("/confluence/password", "").toString();
+
+    // Check if there is a Jira agent
+    if ( !settings.value("/jira/username", "").toString().isEmpty())
+        jiraAgentAvailable = true;
+    else
+        jiraAgentAvailable = false;
+    jiraPassword = settings.value("/jira/password", "").toString();
 
     Main m;
 

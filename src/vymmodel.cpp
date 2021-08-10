@@ -66,7 +66,6 @@ extern QStringList ignoredLockedFiles;
 
 extern Main *mainWindow;
 
-extern Settings settings;
 extern QDir tmpVymDir;
 
 extern NoteEditor *noteEditor;
@@ -93,11 +92,12 @@ extern QDir lastImageDir;
 extern QDir lastMapDir;
 extern QDir lastExportDir;
 
-extern bool jiraClientAvailable;
+extern bool jiraAgentAvailable;
 extern bool confluenceAgentAvailable;
 extern QString confluencePassword;
 
 extern Settings settings;
+extern QTextStream vout;
 
 uint VymModel::idLast = 0; // make instance
 
@@ -4039,10 +4039,10 @@ void VymModel::editHeading2URL()
         setURL(selti->getHeadingPlain());
 }
 
-void VymModel::getJiraData(bool subtree) // FIXME-2 update error message, check
+void VymModel::getJiraData(bool subtree) // FIXME-0 update error message, check
                                          // if jiraClientAvail is set correctly
 {
-    if (!jiraClientAvailable) {
+    if (!jiraAgentAvailable) {
         WarningDialog dia;
         dia.setText(
             QObject::tr("JIRA client not found."));
@@ -4060,35 +4060,23 @@ void VymModel::getJiraData(bool subtree) // FIXME-2 update error message, check
         BranchItem *cur = NULL;
         nextBranch(cur, prev, true, selbi);
         while (cur) {
-            url = cur->getURL();
+            QString heading = cur->getHeadingPlain();
 
-            if (url.isEmpty()) {
-                QString heading = cur->getHeadingPlain();
-                if (heading.left(4) == "http") {
-                    // Set URL from heading
-                    cur->setURL(heading);
-                    url = heading;
-                }
-                else {
-                    // Heading could contain a JIRA ID, call jigger using that
-                    // Afterwards jiraagent could update URL, if successfully
-                    // retrieved data But only do that, if heading looks like a
-                    // JIRA ID and without URL yet also only do if there are no
-                    // children and no whitespaces (created in log info later)
-                    if (cur->branchCount() == 0) {
-                        if (heading.contains(QRegExp("\\w[-|\\s](\\d+)"))) {
-                            new JiraAgent(cur, heading);
-                            mainWindow->statusMessage(
-                                tr("Contacting Jira...", "VymModel"));
-                        }
-                    }
-                }
+            // Create agent
+            JiraAgent *agent = new JiraAgent;
+            agent->setJobType(JiraAgent::GetTicketInfo);
+            if (!agent->setBranch(cur) || !agent->setTicket(heading)) {
+                // Abort
+                delete agent;
+                return;
             }
 
-            if (!url.isEmpty()) {
-                new JiraAgent(cur, url);
-                mainWindow->statusMessage(tr("Contacting Jira...", "VymModel"));
-            }
+            connect(agent, &JiraAgent::jiraTicketReady, this, &VymModel::updateJiraData);
+
+            // Start contacting JIRA in background
+            agent->startJob();
+            mainWindow->statusMessage(tr("Contacting Jira...", "VymModel"));
+
 
             if (subtree)
                 nextBranch(cur, prev, true, selbi);
@@ -4098,13 +4086,21 @@ void VymModel::getJiraData(bool subtree) // FIXME-2 update error message, check
     }
 }
 
+void VymModel::updateJiraData(QJsonObject jsobj)
+{
+    QJsonDocument jsdoc = QJsonDocument (jsobj);
+    qDebug() << "VM::updateJiraData";
+    vout << jsdoc.toJson(QJsonDocument::Indented) << endl;
+}
+
+
 void VymModel::setHeadingConfluencePageName()
 {
     BranchItem *selbi = getSelectedBranch();
     if (selbi) {
         QString url = selbi->getURL();
         if (!url.isEmpty()) {
-            if (confluenceAgentAvailable) {
+            if (confluenceAgentAvailable) { // FIXME-0 check
                 if (!url.contains(
                         settings.value("/confluence/url", "").toString()))
                     return;

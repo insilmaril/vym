@@ -63,6 +63,7 @@ SET(VymSources
     src/codeeditor.cpp
     src/command.cpp
     src/confluence-agent.cpp
+    src/confluence-userdialog.cpp
     src/credentials.cpp
     src/dockeditor.cpp
     src/download-agent.cpp
@@ -139,7 +140,6 @@ SET(VymSources
     src/treeeditor.cpp
     src/treeitem.cpp
     src/treemodel.cpp
-    src/confluence-userdialog.cpp
     src/version.cpp
     src/vymlock.cpp
     src/vymmodel.cpp

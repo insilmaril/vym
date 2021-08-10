@@ -31,6 +31,7 @@ class XLinkItem;
 class VymView;
 
 class QGraphicsScene;
+class QJsonObject;
 
 typedef QMap<uint, QStringList> ItemList;
 
@@ -522,6 +523,11 @@ class VymModel : public TreeModel {
     void note2URLs();                    // get URLs from note
     void editHeading2URL();              // copy heading to URL
     void getJiraData(bool subtree);      // get data from Jira
+
+  public slots:
+    void updateJiraData(QJsonObject);
+
+  public:
     void setHeadingConfluencePageName(); // get page details from Confluence
     void setVymLink(const QString &);    // Set vymLink for selection
     void deleteVymLink();                // delete link to another map

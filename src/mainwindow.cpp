@@ -93,8 +93,7 @@ extern QString localeName;
 extern bool debug;
 extern bool testmode;
 extern QTextStream vout;
-extern QStringList jiraPrefixList;
-extern bool jiraClientAvailable;
+extern bool jiraAgentAvailable;
 extern bool confluenceAgentAvailable;
 extern QString confluencePassword;
 extern Switchboard switchboard;
@@ -6255,20 +6254,11 @@ void Main::updateActions()
                     actionOpenURL->setEnabled(true);
                     actionOpenURLTab->setEnabled(true);
 
-                    bool ok = false;
-                    foreach (QString prefix, jiraPrefixList) {
-                        if (url.contains(prefix)) {
-                            ok = true;
-                            break;
-                        }
-                    }
-                    actionGetJiraData->setEnabled(ok && jiraClientAvailable);
-                    if (url.contains(
-                            settings.value("/confluence/url", "").toString()))
-                        actionGetConfluencePageName->setEnabled(true);
-                    else
-                        actionGetConfluencePageName->setEnabled(false);
+                    // FIXME-1  actions for Confluence and JIRA are currently not used
+                    // Check in attributes, if this branch is related to JIRA
+                    // Check in attributes, if this branch is related to Confluence
                 }
+
                 if (selti && selti->getVymLink().isEmpty()) {
                     actionOpenVymLink->setEnabled(false);
                     actionOpenVymLinkBackground->setEnabled(false);
