@@ -83,6 +83,7 @@
     <file alias="configure-plus.svg">icons/configure-plus.svg</file>
 
     <file alias="down.png">icons/down.png</file>
+    <file alias="down-diagonal.png">icons/down-diagonal.png</file>
     <file alias="up.png">icons/up.png</file>
     <file alias="editcopy.png">icons/editcopy.png</file>
     <file alias="editcut.png">icons/editcut.png</file>

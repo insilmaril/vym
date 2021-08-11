@@ -449,6 +449,7 @@ class Main : public QMainWindow {
     QAction *actionPaste;
     QAction *actionMoveUp;
     QAction *actionMoveDown;
+    QAction *actionMoveDownDiagonal;
     QAction *actionDetach;
     QAction *actionSortChildren;
     QAction *actionSortBackChildren;

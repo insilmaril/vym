@@ -1467,7 +1467,7 @@ void Main::setupEditActions()
     connect(a, SIGNAL(triggered()), this, SLOT(editMoveDown()));
     actionMoveDown = a;
 
-    a = new QAction(QPixmap(), tr("Move branch diagonally down", "Edit menu"),
+    a = new QAction(QPixmap(":down-diagonal.png"), tr("Move branch diagonally down", "Edit menu"),
                     this);
     a->setShortcut(Qt::CTRL + Qt::Key_PageDown);
     a->setShortcutContext(Qt::WidgetShortcut);
@@ -1479,7 +1479,7 @@ void Main::setupEditActions()
     editMenu->addAction(a);
     switchboard.addSwitch("mapEditMoveBranchDownDiagonally", shortcutScope, a, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(editMoveDownDiagonally()));
-    actionMoveDown = a;
+    actionMoveDownDiagonal = a;
 
     a = new QAction(QPixmap(), tr("&Detach", "Context menu"), this);
     a->setStatusTip(tr("Detach branch and use as mapcenter", "Context menu"));
@@ -6285,7 +6285,7 @@ void Main::updateActions()
                     actionMoveUp->setEnabled(false);
 
                 if ((selbi && !selbi->canMoveDown()) || selbis.count() > 1)
-                    actionMoveDown->setEnabled(false);
+                    actionMoveDown->setEnabled(false);  // FIXME-0 add check for moveDiagonalDown
 
                 if ((selbi && selbi->branchCount() < 2)  || selbis.count() > 1) { 
                     actionSortChildren->setEnabled(false);
