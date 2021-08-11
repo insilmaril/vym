@@ -1443,7 +1443,6 @@ void Main::setupEditActions()
                     this);
     a->setShortcut(Qt::Key_PageUp);
     a->setShortcutContext(Qt::WidgetShortcut);
-    // a->setEnabled (false);
     mapEditorActions.append(a);
     taskEditorActions.append(a);
     restrictedMapActions.append(a);
@@ -1457,7 +1456,6 @@ void Main::setupEditActions()
                     this);
     a->setShortcut(Qt::Key_PageDown);
     a->setShortcutContext(Qt::WidgetShortcut);
-    // a->setEnabled (false);
     mapEditorActions.append(a);
     taskEditorActions.append(a);
     restrictedMapActions.append(a);
@@ -1471,7 +1469,6 @@ void Main::setupEditActions()
                     this);
     a->setShortcut(Qt::CTRL + Qt::Key_PageDown);
     a->setShortcutContext(Qt::WidgetShortcut);
-    // a->setEnabled (false);
     mapEditorActions.append(a);
     taskEditorActions.append(a);
     restrictedMapActions.append(a);
