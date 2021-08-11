@@ -2155,19 +2155,20 @@ bool VymModel::findAll(FindResultModel *rmodel, QString s,
     return hit;
 }
 
-void VymModel::setURL(QString url, bool updateFromCloud)
+void VymModel::setURL(QString url, bool updateFromCloud, BranchItem *bi)
 {
-    BranchItem *selbi = getSelectedBranch();
-    if (selbi->getURL() == url)
+    if (!bi) bi = getSelectedBranch();
+    if (bi->getURL() == url)
         return;
-    if (selbi) {
-        QString oldurl = selbi->getURL();
-        selbi->setURL(url);
+
+    if (bi) {
+        QString oldurl = bi->getURL();
+        bi->setURL(url);
         saveState(
-            selbi, QString("setURL (\"%1\")").arg(oldurl), selbi,
+            bi, QString("setURL (\"%1\")").arg(oldurl), bi,
             QString("setURL (\"%1\")").arg(url),
-            QString("set URL of %1 to %2").arg(getObjectName(selbi)).arg(url));
-        emitDataChanged(selbi);
+            QString("set URL of %1 to %2").arg(getObjectName(bi)).arg(url));
+        emitDataChanged(bi);
         reposition();
 
         if (updateFromCloud)
@@ -4054,6 +4055,8 @@ void VymModel::getJiraData(bool subtree) // FIXME-0 update error message, check
     }
 
     BranchItem *selbi = getSelectedBranch();
+    QRegExp re("(\\w+[-|\\s]\\d+)");
+
     if (selbi) {
         QString url;
         BranchItem *prev = NULL;
@@ -4062,20 +4065,24 @@ void VymModel::getJiraData(bool subtree) // FIXME-0 update error message, check
         while (cur) {
             QString heading = cur->getHeadingPlain();
 
-            // Create agent
-            JiraAgent *agent = new JiraAgent;
-            agent->setJobType(JiraAgent::GetTicketInfo);
-            if (!agent->setBranch(cur) || !agent->setTicket(heading)) {
-                // Abort
-                delete agent;
-                return;
+            if (re.indexIn(heading) >= 0) {
+                // Create agent
+                JiraAgent *agent = new JiraAgent;
+                agent->setJobType(JiraAgent::GetTicketInfo);
+                if (!agent->setBranch(cur) || !agent->setTicket(heading)) {
+                    // Abort
+                    delete agent;
+                    return;
+                }
+
+                setURL(agent->getURL(), false, cur);
+
+                connect(agent, &JiraAgent::jiraTicketReady, this, &VymModel::updateJiraData);
+
+                // Start contacting JIRA in background
+                agent->startJob();
+                mainWindow->statusMessage(tr("Contacting Jira...", "VymModel"));
             }
-
-            connect(agent, &JiraAgent::jiraTicketReady, this, &VymModel::updateJiraData);
-
-            // Start contacting JIRA in background
-            agent->startJob();
-            mainWindow->statusMessage(tr("Contacting Jira...", "VymModel"));
 
 
             if (subtree)
@@ -4089,8 +4096,37 @@ void VymModel::getJiraData(bool subtree) // FIXME-0 update error message, check
 void VymModel::updateJiraData(QJsonObject jsobj)
 {
     QJsonDocument jsdoc = QJsonDocument (jsobj);
-    qDebug() << "VM::updateJiraData";
+    QString key = jsobj["key"].toString();
+    QJsonObject fields = jsobj["fields"].toObject();
+
+    QJsonObject assigneeObj = fields["assignee"].toObject();
+    QString assignee = assigneeObj["emailAddress"].toString();
+
+    QString summary = fields["summary"].toString();
+
+    QJsonArray componentsArray = fields["components"].toArray();
+    QJsonObject compObj;
+    QString components;
+    for (int i = 0; i < componentsArray.size(); ++i) {
+        compObj = componentsArray[i].toObject();
+        components += compObj["name"].toString();
+    }
+
+    int branchID = jsobj["vymBranchID"].toInt();
+
+    BranchItem *bi = (BranchItem*)findID(branchID);
+    if (bi) {
+        setHeadingPlainText(key + ": " + summary, bi);
+    }
+
     vout << jsdoc.toJson(QJsonDocument::Indented) << endl;
+    /*
+    vout << "       Key: " + key << endl;
+    vout << "      Desc: " + summary << endl;
+    vout << "  Assignee: " + assignee << endl;
+    vout << "Components: " + components << endl;
+    */
+
 }
 
 

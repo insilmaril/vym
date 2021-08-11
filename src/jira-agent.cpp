@@ -14,43 +14,14 @@ extern bool debug;
 
 JiraAgent::JiraAgent()
 {
-    qDebug ()<< "Constr. JiraAgent";
+    //qDebug ()<< "Constr. JiraAgent";
 
     init();
-
-    /* FIXME-0 old stuff, remove
-    ticketScript = vymBaseDir.path() + "/scripts/jigger";
-
-    p = new VymProcess;
-
-    connect(p, SIGNAL(finished(int, QProcess::ExitStatus)), this,
-            SLOT(processFinished(int, QProcess::ExitStatus)));
-
-    p->start(ticketScript, args);
-    if (!p->waitForStarted()) {
-        qWarning() << "JiraAgent::getJiraData couldn't start " << ticketScript;
-        return;
-    }
-
-    // Visual hint that we are doing something  // FIXME-4 show spinner instead?
-    if (missionType == SingleTicket) {
-        oldHeading = bi->getHeading();
-        model->setHeadingPlainText("Updating: " + bi->getHeadingPlain(),
-                                   bi); // FIXME-4 translation needed?
-    }
-
-    killTimer = new QTimer(this);
-    killTimer->setInterval(10000);
-    killTimer->setSingleShot(true);
-
-    QObject::connect(killTimer, SIGNAL(timeout()), this, SLOT(timeout()));
-    killTimer->start();
-    */
 }
 
 JiraAgent::~JiraAgent()
 {
-    qDebug() << "Destr. JiraAgent";
+    //qDebug() << "Destr. JiraAgent";
 
     if (killTimer)
         delete killTimer;
@@ -80,7 +51,7 @@ void JiraAgent::init()
     password = jiraPassword;
 
     // Set API rest point. baseURL later on depends on different JIRA system
-    apiURL = baseURL + "/rest/api/2";
+    apiURL = "/rest/api/2";
 }
 
 void JiraAgent::setJobType(JobType jt)
@@ -104,8 +75,6 @@ bool JiraAgent::setBranch(BranchItem *bi)
 
 bool JiraAgent::setTicket(const QString &id)
 {
-    // FIXME-0 Decide, which JIRA to use, based on ticketID
-
     // Find ID part in parameter:
     QRegExp re("(\\w+[-|\\s]\\d+)");
     if (re.indexIn(id) < 0) {
@@ -117,57 +86,27 @@ bool JiraAgent::setTicket(const QString &id)
     ticketID = re.cap(1);
     ticketID.replace(" ", "-");
 
-    // FIXME-0 For now hardcoded JIRA server:
-    baseURL = "https://jira.elektrobit.com";
-
-    qDebug() << "JiraAgent::setTicket ticketID: " << ticketID << "baseURL: " << baseURL;
-
     settings.beginGroup("jira");
-    qDebug() << settings.childKeys();
 
     int size = settings.beginReadArray("servers");
-    qDebug() << "size" << size;
     for (int i = 0; i < size; ++i) {
         settings.setArrayIndex(i);
-        qDebug() << settings.value("baseURL","-").toString();
+        foreach (QString p, settings.value("pattern").toString().split(",")) {
+            if (ticketID.contains(p)) {
+                baseURL = settings.value("baseURL","-").toString();
+                break;
+            }
+        }
     }
     settings.endArray();
-
     settings.endGroup();
-    //abortJob = true;
+
     return true;
-
-    
-    
-    // FIXME-0 old code below
-    /*
-    if (id.contains("/browse/") || id.contains("servicedesk")) {
-        // Extract ID from URL first:
-
-        ticketID = id.section('/', -1, -1);
-        if (ticketID.isEmpty()) {
-            qWarning() << "JiraAgent: No ticketID found in: " << id;
-            abortJob = true;
-            return;
-        }
-        //args << ticketID;
-    }
-    else {
-        // Try to pass string or ID directly
-        if (id.length() > 35) {
-            // For security limit length
-            qWarning() << "JiraAgent: URL too long, aborting!";
-            return;
-        }
-
-        //args << url;
-        ticketID = id;
-    }
-    */
 }
 
 QString JiraAgent::getURL()
 {
+    return baseURL + "/browse/" + ticketID;
 }
 
 void JiraAgent::startJob()
@@ -192,7 +131,7 @@ void JiraAgent::continueJob()
 
     VymModel *model;
 
-    qDebug() << "JA::contJob " << jobType << " Step: " << jobStep << "TicketID: " << ticketID;
+    // qDebug() << "JA::contJob " << jobType << " Step: " << jobStep << "TicketID: " << ticketID;
 
     switch(jobType) {
         case GetTicketInfo:
@@ -204,6 +143,11 @@ void JiraAgent::continueJob()
                     break;
                 case 2: {
                     QJsonDocument jsdoc = QJsonDocument (jsobj);
+
+                    // Insert references to original branch and model
+                    // DIXME-0 not needed jsobj["vymModelID"] = QString::number(modelID);
+                    jsobj["vymBranchID"] = QJsonValue(branchID);
+                    
                     emit (jiraTicketReady(QJsonObject(jsobj)));
                     finishJob();
                     }
@@ -232,11 +176,8 @@ void JiraAgent::unknownStepWarning()
 
 void JiraAgent::startGetTicketRequest()
 {
-    qDebug() << "JA::startGetTicketRequest " << ticketID;
-
-   //FIXME-0  QUrl url = requestedURL;
     QUrl url = QUrl(baseURL + apiURL + "/issue/" + ticketID);
-    qDebug() << "  url=" << url;
+
     httpRequestAborted = false;
 
     QNetworkRequest request = QNetworkRequest(url);
@@ -262,7 +203,7 @@ void JiraAgent::startGetTicketRequest()
 
 void JiraAgent::ticketReceived(QNetworkReply *reply)
 {
-    qDebug() << "JA::ticketReceived";
+    // qDebug() << "JA::ticketReceived";
 
     killTimer->stop();
 
@@ -290,130 +231,9 @@ void JiraAgent::ticketReceived(QNetworkReply *reply)
     continueJob();
 }
 
-void JiraAgent::timeout() { undoUpdateMessage(); }
-
-void JiraAgent::setModelJiraData(VymModel *model, BranchItem *bi,
-                                 const QString &ticketID)
+void JiraAgent::timeout() 
 {
-    if (debug) {
-        qDebug() << "JiraAgent::setModelJiraData for ticketID: " << ticketID;
-    }
-
-    QStringList solvedStates;
-    /*
-    solvedStates << "Open";
-    solvedStates << "To Do";
-    solvedStates << "In Analysis";
-    solvedStates << "Prepared";
-    solvedStates << "Implemented";
-    solvedStates << "In Overall Integration";
-    solvedStates << "Overall Integration Done";
-    */
-    solvedStates << "Verification Done";
-    solvedStates << "Resolved";
-    solvedStates << "Closed";
-    solvedStates << "Done";
-
-    QString idName = ticketID;
-
-    if (solvedStates.contains(ticket_resolution[ticketID])) {
-        idName = "(" + idName + ")";
-        model->colorSubtree(Qt::blue, bi);
-    }
-
-    model->setHeadingPlainText(idName + " - " + ticket_desc[ticketID], bi);
-
-    // Save current selections  // FIXME-4 No multiselection yet (cleanup IDs vs
-    // UUIDs in treeitem)
-    QString oldSelection = model->getSelectString();
-
-    // Try to find subbranch named "JIRA log"
-
-    BranchItem *logBranch;
-    bool logBranchAvailable = false;
-    for (int n = 0; n < bi->branchCount(); n++) {
-        logBranch = bi->getBranchNum(n);
-        if (logBranch->getHeadingPlain() == "JIRA log") {
-            model->select(logBranch);
-            logBranchAvailable = true;
-            break;
-        }
-    }
-    if (!logBranchAvailable) {
-        logBranch = model->addNewBranch(bi, -2);
-        model->setHeadingPlainText("JIRA log", logBranch);
-        model->select(logBranch);
-    }
-
-    BranchItem *timestampBranch = model->addTimestamp();
-    BranchItem *infoBranch;
-
-    model->select(timestampBranch);
-    infoBranch = model->addNewBranch();
-    if (infoBranch)
-        model->setHeadingPlainText("Prio: " + ticket_prio[ticketID],
-                                   infoBranch);
-
-    infoBranch = model->addNewBranch();
-    if (infoBranch)
-        model->setHeadingPlainText("Type: " + ticket_type[ticketID],
-                                   infoBranch);
-
-    infoBranch = model->addNewBranch();
-    if (infoBranch)
-        model->setHeadingPlainText("Status: " + ticket_status[ticketID],
-                                   infoBranch);
-
-    infoBranch = model->addNewBranch();
-    if (infoBranch)
-        model->setHeadingPlainText("Resolution: " + ticket_resolution[ticketID],
-                                   infoBranch);
-
-    infoBranch = model->addNewBranch();
-    if (infoBranch)
-        model->setHeadingPlainText("Assignee: " + ticket_assignee[ticketID],
-                                   infoBranch);
-
-    infoBranch = model->addNewBranch();
-    if (infoBranch)
-        model->setHeadingPlainText("Created: " + ticket_created[ticketID],
-                                   infoBranch);
-
-    infoBranch = model->addNewBranch();
-    if (infoBranch)
-        model->setHeadingPlainText("Updated: " + ticket_updated[ticketID],
-                                   infoBranch);
-
-    if (bi->getURL().isEmpty()) {
-        model->select(bi);
-        model->setURL(ticket_url[ticketID]);
-    }
-
-    // Scroll log branch
-    model->select(logBranch);
-    logBranch = model->getSelectedBranch();
-
-    if (logBranch && !logBranch->isScrolled()) {
-        model->toggleScroll();
-    }
-
-    // Selected previous objects
-    model->select(oldSelection);
-}
-
-void JiraAgent::undoUpdateMessage(BranchItem *bi)
-{
-    VymModel *model = mainWindow->getModel(modelID);
-    if (model) {
-        if (!bi)
-            bi = (BranchItem *)(model->findID(branchID));
-        if (bi) {
-            model->setHeading(oldHeading, bi);
-        }
-        else
-            qWarning()
-                << "JiraAgent::undoUpdateMessage couldn't find branch item!";
-    }
+    qWarning() << "JiraAgent timeout!!   jobType = " << jobType;
 }
 
 #ifndef QT_NO_SSL
