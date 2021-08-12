@@ -8,7 +8,7 @@ ARGV.each do |id|
     puts "#{id}:short_desc:\"#{bug.summary}\""
     puts "#{id}:priority:\"#{bug.priority}\""
     puts "#{id}:severity:\"#{bug.severity}\""
-    puts "#{id}:deltats:\"#{bug.delta_ts}\""
+#    puts "#{id}:deltats:\"#{bug.delta_ts}\""
     puts "#{id}:bug_status:\"#{bug.status}\""
     puts "#{id}:whiteboard:\"#{bug.whiteboard}\""
   end  

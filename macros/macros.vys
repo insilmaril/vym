@@ -57,12 +57,11 @@ function macro_f7()
     map.colorSubtree ("#0000ff");
 }
 
-// Macro F8: Set task to sleep until 18:00
+// Macro F8: Repeat last command
 function macro_f8()
 {
     map = vym.currentMap();
-    map.setTaskSleep("18:00");
-    statusMessage("Task sleeping until 18:00");
+    map.repeatLastCommand();
 }
 
 // Macro F9: Set task to sleep until 15:00
@@ -73,44 +72,47 @@ function macro_f9()
     statusMessage("Task sleeping until 15:00");
 }
 
-// Macro F10: toggle high prio task
+// Macro F10: Set task to sleep until 18:00
 function macro_f10()
-{ 
+{
+    map = vym.currentMap();
+    map.setTaskSleep("18:00");
+    statusMessage("Task sleeping until 18:00");
+}
+
+// Macro F11: Set task to sleep until next day
+function macro_f11()
+{
+    map = vym.currentMap();
+    map.setTaskSleep("1");
+    statusMessage("Task sleeping until tomorrow");
+}
+
+// Macro F12: toggle high prio task
+function macro_f12()
+{
 	// Assuming 3 states, which are cycled:
 	// 0 - nothing set
 	// 1 - high prio task with arrows
 	// 2 - done task without arrows, but green hook
     map = vym.currentMap();
     if (map.hasTask() ) {
-		// Switch to state 2 
-	    map.toggleTask();
-        map.unsetFlag("2arrow-up");
-		map.unsetFlag("stopsign");
-		map.setFlag("hook-green");
+        // Switch to state 2 
+        map.toggleTask();
+        map.unsetFlagByName("2arrow-up");
+        map.unsetFlagByName("stopsign");
+        map.setFlagByName("hook-green");
+        map.colorBranch("#0000ff");
     } else {	  
-		if (map.hasActiveFlag("hook-green")) {
-			// Switch to state 0
-			map.unsetFlag("hook-green");
-		} else {
-			// Switch to state 1
-    	    map.setFlag("2arrow-up");
-			map.toggleTask();
-		}
+        if (map.hasActiveFlag("hook-green")) {
+            // Switch to state 0
+            map.unsetFlagByName("hook-green");
+        } else {
+            // Switch to state 1
+            map.setFlagByName("2arrow-up");
+            map.toggleTask();
+        }
     }
-}
-
-// Macro F11: Toggle frame to include children
-function macro_f11()
-{
-    map = vym.currentMap();
-    map.toggleFrameIncludeChildren();
-}
-
-// Macro F12: Toggle frame
-function macro_f12()
-{
-    map = vym.currentMap();
-	toggle_frame ( map );
 }
 
 
@@ -118,75 +120,117 @@ function macro_f12()
 function macro_shift_f1()
 {
     map = vym.currentMap();
+    status = "Background off";
+    if (map.getFrameType() == "NoFrame") {
+        status = "Background light red";
+    }
     toggle_frame ( map );
-	map.setFrameBrushColor("#ffb3b4");
-	statusMessage("Background light red");
+    map.setFrameBrushColor("#ffb3b4");
+    statusMessage(status);
 }
 
 // Macro Shift + F2: Frame background light green
 function macro_shift_f2()
 {
     map = vym.currentMap();
+    status = "Background off";
+    if (map.getFrameType() == "NoFrame") {
+        status = "Background light green";
+    }
     toggle_frame ( map );
-	map.setFrameBrushColor("#bdffd6");
-	statusMessage("Background light green");
+    map.setFrameBrushColor("#bdffd6");
+    statusMessage(status);
 }
 
 // Macro Shift + F3: Frame background light yellow
 function macro_shift_f3()
 {
     map = vym.currentMap();
+    status = "Background off";
+    if (map.getFrameType() == "NoFrame") {
+        status = "Background light yellow";
+    }
     toggle_frame ( map );
-	map.setFrameBrushColor("#efefb3");
-	statusMessage("Background light yellow");
+    map.setFrameBrushColor("#efefb3");
+    statusMessage(status);
 }
 
 // Macro Shift + F4: Frame background light blue
 function macro_shift_f4()
 {
     map = vym.currentMap();
+    status = "Background off";
+    if (map.getFrameType() == "NoFrame") {
+        status = "Background light blue";
+    }
     toggle_frame ( map );
-	map.setFrameBrushColor("#e2e6ff");
-	statusMessage("Background light blue");
+    map.setFrameBrushColor("#e2e6ff");
+    statusMessage(status);
 }
 
 // Macro Shift + F5: Frame background light grey
 function macro_shift_f5()
 {
     map = vym.currentMap();
+    status = "Background off";
+    if (map.getFrameType() == "NoFrame") {
+        status = "Background light grey";
+    }
     toggle_frame ( map );
-	map.setFrameBrushColor("#d6d6d6");
-	statusMessage("Background light grey");
+    map.setFrameBrushColor("#d6d6d6");
+    statusMessage(status);
 }
 
-// Macro Shift + F6:
+// Macro Shift + F6: Frame background purple
 function macro_shift_f6()
 {
+    map = vym.currentMap();
+    status = "Background off";
+    if (map.getFrameType() == "NoFrame") {
+        status = "Background purple";
+    }
+    toggle_frame ( map );
+    map.setFrameBrushColor("#ffaaff");
+    statusMessage(status);
 }
 
-// Macro Shift + F7:
+// Macro Shift + F7: Frame background white
 function macro_shift_f7()
 {
+    map = vym.currentMap();
+    status = "Background off";
+    if (map.getFrameType() == "NoFrame") {
+        status = "Background white";
+    }
+    toggle_frame ( map );
+    map.setFrameBrushColor("#ffffff");
+    statusMessage(status);
 }
 
-// Macro Shift + F8:
+// Macro Shift + F8: Frame background black
 function macro_shift_f8()
 {
+    map = vym.currentMap();
+    status = "Background off";
+    if (map.getFrameType() == "NoFrame") {
+        status = "Background black";
+    }
+    toggle_frame ( map );
+    map.setFrameBrushColor("#000000");
+    statusMessage(status);
 }
 
-// Macro Shift + F9:
+// Macro Shift + F9: Toggle frame to include children
 function macro_shift_f9()
 {
+    map = vym.currentMap();
+    map.toggleFrameIncludeChildren();
 }
 
-// Macro Shift + F10: switch off task attributes and replace with green hook
+// Macro Shift + F10: 
 function macro_shift_f10()
-{
+{   
     map = vym.currentMap();
-    map.clearFlags();
-    map.setFlag("hook-green");
-    map.colorBranch("#0000ff");
-    if (map.hasTask() ) { map.toggleTask() }
 }
 
 // Macro Shift + F11: Replace "@..." by mutt aliases
@@ -231,9 +275,14 @@ function macro_shift_f11()
 // Macro Shift + F12: Strip URLs from confluence and generate readable heading
 function macro_shift_f12()
 {
-
     vym.clearConsole();
     m1 = vym.currentMap();
+
+    if (vym.isConfluenceAgentAvailable() ) {
+        m1.setHeadingConfluencePageName();
+        statusMessage("Contacting Confluence...");
+        return;
+    } 
 
     org = m1.getURL();
 
