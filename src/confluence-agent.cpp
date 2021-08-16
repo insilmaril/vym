@@ -13,7 +13,17 @@ extern QString confluencePassword;
 extern Settings settings;
 extern bool debug;
 
-////////////////////////////////////////////////////////////////////////////////
+bool ConfluenceAgent::available() 
+{ 
+    if ( !settings.value("/confluence/username", "").toString().isEmpty())
+        return false;
+
+    if ( !settings.value("/confluence/url", "").toString().isEmpty())
+        return false;
+
+    return true;
+}
+
 ConfluenceAgent::ConfluenceAgent() { 
     //qDebug() << "Constr. ConfluenceAgent";
     init(); 
@@ -59,13 +69,19 @@ void ConfluenceAgent::init()
 
     QObject::connect(killTimer, SIGNAL(timeout()), this, SLOT(timeout()));
 
+    apiURL = baseURL + "/rest/api";
+    baseURL = settings.value("/confluence/url", "baseURL").toString();
+    
     // Read credentials 
     username =
         settings.value("/confluence/username", "user_johnDoe").toString();
-    password = confluencePassword;
-    baseURL = settings.value("/confluence/url", "baseURL").toString();
+    password = settings.value("/confluence/password", confluencePassword).toString();
 
-    apiURL = baseURL + "/rest/api";
+    if (password.isEmpty()) {
+        // Set global password
+        if (!mainWindow->settingsConfluence()) 
+            abortJob = true;
+    }
 }
 
 void ConfluenceAgent::setJobType(JobType jt)

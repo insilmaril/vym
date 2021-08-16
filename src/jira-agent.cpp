@@ -10,7 +10,18 @@ extern Main *mainWindow;
 extern QDir vymBaseDir;
 extern QString jiraPassword;
 extern Settings settings;
+extern QTextStream vout;
 extern bool debug;
+
+bool JiraAgent::available()
+{
+    if ( settings.value("/jira/username", "").toString().isEmpty())
+        return false;
+    if ( settings.value("/jira/servers/size", 0) < 1)
+        return false;
+
+    return true;
+}
 
 JiraAgent::JiraAgent()
 {
@@ -48,7 +59,7 @@ void JiraAgent::init()
     // Read credentials    
     username =
         settings.value("/jira/username", "user_johnDoe").toString();
-    password = jiraPassword;
+    password = settings.value("/jira/password", jiraPassword).toString();
 
     // Set API rest point. baseURL later on depends on different JIRA system
     apiURL = "/rest/api/2";
@@ -220,7 +231,7 @@ void JiraAgent::ticketReceived(QNetworkReply *reply)
     if (reply->error()) {
         qWarning() << "JiraAgent::ticketRReveived reply error";
         qWarning() << "Error: " << reply->error();
-        qWarning() << "reply: " << r;
+        vout << "reply: " << endl << r << endl;
         finishJob();
         return;
     }

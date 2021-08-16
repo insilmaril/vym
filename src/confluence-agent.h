@@ -20,6 +20,8 @@ class ConfluenceAgent : public QObject {
   public:
     enum JobType {Undefined, CopyPagenameToHeading, NewPage, UpdatePage, UserInfo};
 
+    static bool available();
+
     ConfluenceAgent();
     ConfluenceAgent(BranchItem *bi);
     ~ConfluenceAgent();

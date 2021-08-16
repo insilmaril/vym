@@ -42,11 +42,9 @@ QString localeName;
 QTextStream vout(stdout); // vymout - Testing for now. Flush after writing...
 
 // Accessing JIRA and Confluence is done using agents
-// Credentials may be stored in settings
-QString jiraPassword;       // passwords are only on request written to settings
-bool jiraAgentAvailable;
-bool confluenceAgentAvailable;
-QString confluencePassword; // passwords are only on request written to settings
+// Credentials may be stored in settings, but only on request
+QString jiraPassword;
+QString confluencePassword;
 
 TaskModel *taskModel;
 TaskEditor *taskEditor;
@@ -381,21 +379,6 @@ int main(int argc, char *argv[])
     noteEditor->setWindowIcon(QPixmap(":/vym-editor.png"));
     headingEditor = new HeadingEditor("headingeditor");
     branchPropertyEditor = new BranchPropertyEditor();
-
-    // Check if there is a Confluence agent
-    if (!settings.value("/confluence/url", "").toString().isEmpty() &&
-        !settings.value("/confluence/username", "").toString().isEmpty())
-        confluenceAgentAvailable = true;
-    else
-        confluenceAgentAvailable = false;
-    confluencePassword = settings.value("/confluence/password", "").toString();
-
-    // Check if there is a Jira agent
-    if ( !settings.value("/jira/username", "").toString().isEmpty())
-        jiraAgentAvailable = true;
-    else
-        jiraAgentAvailable = false;
-    jiraPassword = settings.value("/jira/password", "").toString();
 
     Main m;
 

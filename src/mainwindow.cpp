@@ -94,9 +94,8 @@ extern QString localeName;
 extern bool debug;
 extern bool testmode;
 extern QTextStream vout;
-extern bool jiraAgentAvailable;
-extern bool confluenceAgentAvailable;
 extern QString confluencePassword;
+extern QString jiraPassword;
 extern Switchboard switchboard;
 
 extern QList<Command *> modelCommands;
@@ -2915,6 +2914,11 @@ void Main::setupSettingsActions()
     a = new QAction(tr("Confluence Credentials", "Settings action") + "...",
                     this);
     connect(a, SIGNAL(triggered()), this, SLOT(settingsConfluence()));
+    settingsMenu->addAction(a);
+
+    a = new QAction(tr("JIRA Credentials", "Settings action") + "...",
+                    this);
+    connect(a, SIGNAL(triggered()), this, SLOT(settingsJIRA()));
     settingsMenu->addAction(a);
 
     a = new QAction(tr("Set path for macros", "Settings action") + "...", this);
@@ -5784,18 +5788,44 @@ bool Main::settingsConfluence()
         settings.setValue("/confluence/url", dia.getURL());
         settings.setValue("/confluence/username", dia.getUser());
         settings.setValue("/confluence/savePassword", dia.savePassword());
+        confluencePassword = dia.getPassword();
         if (dia.savePassword())
-            settings.setValue("/confluence/password", dia.getPassword());
+            settings.setValue("/confluence/password", confluencePassword);
         else
             settings.setValue("/confluence/password", "");
 
-        confluencePassword = dia.getPassword();
-        confluenceAgentAvailable = true;
+        return true;
     }
-    else
-        confluenceAgentAvailable = false;
+    return false;
+}
 
-    return confluenceAgentAvailable;
+bool Main::settingsJIRA()
+{
+    CredentialsDialog dia;
+    dia.setURL(
+        settings.value("/confluence/url", "Confluence base URL").toString());
+    dia.setUser(settings.value("/jira/username", "JIRA  username")
+                    .toString());
+    dia.setSavePassword(
+        settings.value("/jira/savePassword", false).toBool());
+    if (!jiraPassword.isEmpty())
+        dia.setPassword(jiraPassword);
+
+    dia.exec();
+
+    if (dia.result() > 0) {
+        settings.setValue("/jira/url", dia.getURL());
+        settings.setValue("/jira/username", dia.getUser());
+        settings.setValue("/jira/savePassword", dia.savePassword());
+        jiraPassword = dia.getPassword();
+        if (dia.savePassword())
+            settings.setValue("/jira/password", jiraPassword);
+        else
+            settings.setValue("/jira/password", "");
+
+        return true;
+    }
+    return false;
 }
 
 void Main::windowToggleNoteEditor()

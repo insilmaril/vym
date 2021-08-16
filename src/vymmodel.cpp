@@ -92,8 +92,6 @@ extern QDir lastImageDir;
 extern QDir lastMapDir;
 extern QDir lastExportDir;
 
-extern bool jiraAgentAvailable;
-extern bool confluenceAgentAvailable;
 extern QString confluencePassword;
 
 extern Settings settings;
@@ -4043,15 +4041,16 @@ void VymModel::editHeading2URL()
 void VymModel::getJiraData(bool subtree) // FIXME-0 update error message, check
                                          // if jiraClientAvail is set correctly
 {
-    if (!jiraAgentAvailable) {
+    if (!JiraAgent::available()) {
         WarningDialog dia;
-        dia.setText(
-            QObject::tr("JIRA client not found."));
-        dia.setWindowTitle(
-            tr("Warning") + ": " + tr("JIRA client not found"));
-        dia.setShowAgainName("/JiraClient/missing");
+        QString w = QObject::tr("JIRA agent not setup.");
+        dia.setText(w);
+        dia.setWindowTitle( tr("Warning") + ": " + w);
+        dia.setShowAgainName("/JiraAgent/notdefined");
         dia.exec();
-        return;
+
+        if (!mainWindow->settingsJIRA())
+            return;
     }
 
     BranchItem *selbi = getSelectedBranch();
@@ -4119,8 +4118,8 @@ void VymModel::updateJiraData(QJsonObject jsobj)
         setHeadingPlainText(key + ": " + summary, bi);
     }
 
-    vout << jsdoc.toJson(QJsonDocument::Indented) << endl;
     /*
+    vout << jsdoc.toJson(QJsonDocument::Indented) << endl;
     vout << "       Key: " + key << endl;
     vout << "      Desc: " + summary << endl;
     vout << "  Assignee: " + assignee << endl;
@@ -4136,22 +4135,26 @@ void VymModel::setHeadingConfluencePageName()
     if (selbi) {
         QString url = selbi->getURL();
         if (!url.isEmpty()) {
-            if (confluenceAgentAvailable) { // FIXME-0 check
-                if (!url.contains(
-                        settings.value("/confluence/url", "").toString()))
+            if (!ConfluenceAgent::available()) {
+                WarningDialog dia;
+                QString w = QObject::tr("Confluence agent not setup.");
+                dia.setText(w);
+                dia.setWindowTitle( tr("Warning") + ": " + w);
+                dia.setShowAgainName("/ConfluenceAgent/notdefined");
+                dia.exec();
+
+                if (!mainWindow->settingsConfluence())
                     return;
-
-                if (confluencePassword.isEmpty()) {
-                    // Get password and abort, if dialog canceled
-                    if (!mainWindow->settingsConfluence())
-                        return;
-                }
-
-                ConfluenceAgent *ca_setHeading = new ConfluenceAgent(selbi);
-                ca_setHeading->setPageURL(url);
-                ca_setHeading->setJobType(ConfluenceAgent::CopyPagenameToHeading);
-                ca_setHeading->startJob();
             }
+
+            if (!url.contains(
+                    settings.value("/confluence/url", "").toString()))
+                return;
+
+            ConfluenceAgent *ca_setHeading = new ConfluenceAgent(selbi);
+            ca_setHeading->setPageURL(url);
+            ca_setHeading->setJobType(ConfluenceAgent::CopyPagenameToHeading);
+            ca_setHeading->startJob();
         }
     }
 }

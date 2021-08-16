@@ -17,6 +17,8 @@ class JiraAgent : public QObject {
   public:
     enum JobType {Undefined, GetTicketInfo};
 
+    static bool available();
+
     JiraAgent();
     ~JiraAgent();
 
