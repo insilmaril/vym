@@ -7,7 +7,8 @@ if [ ! -f $CONFIG ]; then
     echo Please set the following variables in $CONFIG
     echo in you current directory:
     echo
-    echo 'VERSION=x.y.z   #use desired version'
+    echo 'VERSION=x.y.z   # override version from src/version.h'
+    echo 'Tag=vx.y.z   # If given, checkout this version instead of HEAD'
     echo 'BRANCH="develop" #or e.g. "maintained-release"'
     exit
 else    
@@ -19,28 +20,38 @@ OLDDIR=$(pwd)
 SRCDIR=$OLDDIR/vym
 TMPDIR=$OLDDIR/tmp
 
+if [ -z "$TAG" ]; then
+    TAG="not provided"
+fi
+
+if [ -z "$VERSION" ]; then
+    VERSION="not provided"
+fi
+
 echo "Getting sources for: vym"  
 echo "             Branch: $BRANCH"
-echo "             Branch: $VERSION"
+echo "            Version: $VERSION"
+echo "                Tag: $TAG"
 echo "  Working directory: $OLDDIR"
 echo 
 
 
 if [ -d $TMPDIR ]; then
-    read -n 1 -p "$TMPDIR exists: Remove it first? [y]" INPUT
-    if [ ! "$INPUT" = "n" ]; then
+#    read -n 1 -p "$TMPDIR exists: Remove it first? [y]" INPUT
+#    if [ ! "$INPUT" = "n" ]; then
+        echo Removing $TMPDIR...
 	rm -rf $TMPDIR
-    fi	
+#    fi	
 fi
-echo
+#echo
 mkdir $TMPDIR
 
-read -n 1 -p "Pull from git repository ? [y]" INPUT
 DO_CHECKOUT=1
-if [ "$INPUT" = "n" ]; then
-    DO_CHECKOUT=0
-fi	
-echo
+#read -n 1 -p "Pull from git repository ? [y]" INPUT
+#if [ "$INPUT" = "n" ]; then
+#    DO_CHECKOUT=0
+#fi	
+#echo
 
 #read -n 1 -p "Create Documentation? [y]" INPUT
 #DO_DOCS=1
@@ -49,36 +60,44 @@ echo
 #fi	
 #echo
 
-read -n 1 -p "Create Tarball? [y]" INPUT
 DO_TARBALL=1
-if [ "$INPUT" = "n" ]; then
-    DO_TARBALL=0
-fi	
-echo
+#read -n 1 -p "Create Tarball? [y]" INPUT
+#if [ "$INPUT" = "n" ]; then
+#    DO_TARBALL=0
+#fi	
+#echo
 
-echo -n "Remove unpacked sources after creating tarball? [y]"
-#echo "(do this before  \"osc addremove\")"
-read -n 1 INPUT
 DO_REMOVE=1
-if [ "$INPUT" = "n" ]; then
-    DO_REMOVE=0
-fi	
-echo
+#echo -n "Remove unpacked sources after creating tarball? [y]"
+#echo "(do this before  \"osc addremove\")"
+#read -n 1 INPUT
+#if [ "$INPUT" = "n" ]; then
+#    DO_REMOVE=0
+#fi	
+#echo
 
 # get data from repository
 if [ $DO_CHECKOUT = 1 ]; then
     cd $OLDDIR
     echo Removing $SRCDIR...
     rm -rf $SRCDIR
-#    git clone -b $BRANCH git://git.code.sf.net/p/vym/code src
-    git clone -b $BRANCH git@github.com:insilmaril/vym.git vym
+    if [ "$TAG" != "not provided" ]; then
+        echo "Cloning '$TAG' from $REPOSITORY"
+        git clone --quiet --depth 1 -b $TAG $REPOSITORY vym
+    else
+        echo Cloning head of $BRANCH from $REPOSITORY
+        git clone --quiet --depth 1 -b $BRANCH $REPOSITORY vym
+    fi
 fi	
 
-#VERSION=$(grep __VYM_VERSION $SRCDIR/version.h |  sed -e 's/^.*\"\(.*\)\"$/\1/g')
-TARBALLSRC=vym-$VERSION
-echo
-echo "Setting version from sources: $VERSION"
-echo
+srcVersion=$(grep __VYM_VERSION $SRCDIR/src/version.h |  sed -e 's/^.*\"\(.*\)\"$/\1/g')
+vymDirName=vym-$srcVersion
+if [ "$VERSION" != "not provided" ]; then
+    echo "Warning: Overriding version from sources '$srcVersion' with '$VERSION' from config"
+    vymDirName=vym-$VERSION
+else
+    echo "Using version '$srcVersion' from sources"
+fi
 
 # create documentation
 #if [ $DO_DOCS = 1 ] ; then
@@ -99,18 +118,19 @@ cd $OLDDIR
 
 # create tarball
 if [ $DO_TARBALL = 1 ]; then
-    if [ -d $TARBALLSRC ] ;  then
-	rm -rf $TARBALLSRC
+    tarballName=$vymDirName.tar.bz2
+    echo "Creating $tarballName..."
+    if [ -d $tarballName ] ;  then
+	rm -rf $tarballName
     fi
-    cp -ra $SRCDIR $TARBALLSRC
+    cp -ra $SRCDIR $vymDirName
 
-    # Copy doc
-    mkdir -p $TARBALLSRC/doc
-    cp $TMPDIR/tex/*.pdf $TARBALLSRC/doc
+    rm -rf vymDirName/.git
 
-    rm -rf $TARBALLSRC/.git
-    tar cvjf vym-$VERSION.tar.bz2 $TARBALLSRC
+    tar cjf $tarballName $vymDirName
+
     if [ $DO_REMOVE = 1 ]; then
-	rm -rf $TARBALLSRC
+        echo Removing $vymDirName...
+	rm -rf $vymDirName
     fi
 fi
