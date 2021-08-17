@@ -1,8 +1,8 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 3.12)
+cmake_minimum_required(VERSION 3.12)
 
-PROJECT(ViewYourMind)
+project(ViewYourMind)
 
-SET(QtComponents
+set(QtComponents
     LinguistTools
     Network
     PrintSupport
@@ -12,7 +12,7 @@ SET(QtComponents
     Xml
 )
 
-SET(QtLibraries
+set(QtLibraries
     Qt5::Network
     Qt5::PrintSupport
     Qt5::Script
@@ -25,7 +25,7 @@ SET(QtLibraries
 # On openSUSE install it using:  zypper install dbus-1-devel
 
 if (UNIX)
-    FIND_PACKAGE(DBus1)
+    find_package(DBus1)
 
     if(DBus1_FOUND)
         LIST(APPEND QtComponents DBus)
@@ -33,24 +33,24 @@ if (UNIX)
     endif()
 endif()
 
-FIND_PACKAGE(Qt5 COMPONENTS ${QtComponents} REQUIRED)
-SET(CMAKE_AUTOMOC ON)
-SET(CMAKE_AUTORCC ON)
-SET(CMAKE_AUTOUIC ON)
-LIST(APPEND CMAKE_AUTOUIC_SEARCH_PATHS "${CMAKE_SOURCE_DIR}/forms")
+find_package(Qt5 COMPONENTS ${QtComponents} REQUIRED)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+set(CMAKE_AUTOUIC ON)
+list(APPEND CMAKE_AUTOUIC_SEARCH_PATHS "${CMAKE_SOURCE_DIR}/forms")
 
-GET_TARGET_PROPERTY(QtLibraryType Qt5::Widgets TYPE)
+get_target_property(QtLibraryType Qt5::Widgets TYPE)
 
-IF(QtLibraryType STREQUAL STATIC_LIBRARY)
-    MESSAGE(STATUS "Static Qt linkage")
-    LIST(APPEND QtLibraries Qt5::QSvgPlugin)
-ENDIF()
+if(QtLibraryType STREQUAL STATIC_LIBRARY)
+    message(STATUS "Static Qt linkage")
+    list(APPEND QtLibraries Qt5::QSvgPlugin)
+endif()
 
-INCLUDE_DIRECTORIES(
+include_directories(
     ${CMAKE_SOURCE_DIR}
 )
 
-SET(VymSources
+set(VymSources
     src/aboutdialog.cpp
     src/animpoint.cpp
     src/arrowobj.cpp
@@ -164,23 +164,23 @@ SET(VymSources
     src/zip-settings-dialog.cpp
 )
 
-IF(WIN32)
-    LIST(APPEND VymSources
+if(WIN32)
+    list(APPEND VymSources
         src/mkdtemp.cpp
         vym.rc
     )
     ADD_COMPILE_DEFINITIONS(_USE_MATH_DEFINES)
-ENDIF()
+endif()
 
-IF(DBus1_FOUND)
-    LIST(APPEND VymSources
+if(DBus1_FOUND)
+    list(APPEND VymSources
         src/adaptormodel.cpp
         src/adaptorvym.cpp
     )
     ADD_COMPILE_DEFINITIONS(VYM_DBUS)
-ENDIF()
+endif()
 
-SET(VymTranslationSources
+set(VymTranslationSources
     lang/vym.de_DE.ts
     lang/vym.el.ts
     lang/vym.en.ts
@@ -198,28 +198,28 @@ SET(VymTranslationSources
     lang/vym.cs_CZ.ts
 )
 
-FILE(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/lang")
-SET_SOURCE_FILES_PROPERTIES(${VymTranslationSources} PROPERTIES OUTPUT_LOCATION lang)
+file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/lang")
+set_source_files_properties(${VymTranslationSources} PROPERTIES OUTPUT_LOCATION lang)
 QT5_ADD_TRANSLATION(VymTranslations ${VymTranslationSources})
 
 ADD_COMPILE_DEFINITIONS(VYMBASEDIR="${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATAROOTDIR}")
 
-ADD_EXECUTABLE(vym ${VymSources} vym.qrc ${VymTranslations})
-TARGET_LINK_LIBRARIES(vym ${QtLibraries})
+add_executable(vym ${VymSources} vym.qrc ${VymTranslations})
+target_link_libraries(vym ${QtLibraries})
 
-IF(WIN32)
-    SET_TARGET_PROPERTIES(vym PROPERTIES WIN32_EXECUTABLE TRUE)
-    INSTALL(TARGETS vym DESTINATION "${CMAKE_INSTALL_PREFIX}")
-ELSE()
-    INSTALL(TARGETS vym DESTINATION bin)
-ENDIF()
+if(WIN32)
+    set_target_properties(vym PROPERTIES WIN32_EXECUTABLE TRUE)
+    install(TARGETS vym DESTINATION "${CMAKE_INSTALL_PREFIX}")
+else()
+    install(TARGETS vym DESTINATION bin)
+endif()
 
-INSTALL(DIRECTORY demos TYPE DATA)
-INSTALL(DIRECTORY doc TYPE DOC FILES_MATCHING PATTERN "*.pdf")
-INSTALL(FILES doc/vym.1.gz TYPE MAN)
-INSTALL(FILES README.md LICENSE.txt TYPE DOC)
-INSTALL(DIRECTORY exports flags icons macros lang scripts styles TYPE DATA)
+install(DIRECTORY demos TYPE DATA)
+install(DIRECTORY doc TYPE DOC FILES_MATCHING PATTERN "*.pdf")
+install(FILES doc/vym.1.gz TYPE MAN)
+install(FILES README.md LICENSE.txt TYPE DOC)
+install(DIRECTORY exports flags icons macros lang scripts styles TYPE DATA)
 
 if(UNIX)
-    INSTALL(FILES icons/vym.png DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/48x48/apps)
+    install(FILES icons/vym.png DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/48x48/apps)
 endif()
