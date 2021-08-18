@@ -8,12 +8,11 @@ class JiraSettingsDialog : public QDialog {
 
   public:
     JiraSettingsDialog(QWidget *parent = 0);
-    void setUser(const QString &u);
-    QString getUser();
-    void setPassword(const QString &p);
-    QString getPassword();
-    void setSavePassword(const bool &b);
-    bool savePassword();
+
+  public slots:
+    void addServer();
+    void deleteServer();
+    void updateSettings();
 
   private:
     Ui::JiraSettingsDialog ui;

@@ -5800,30 +5800,15 @@ bool Main::settingsConfluence()
     return false;
 }
 
-bool Main::settingsJIRA()   // FIXME-0 Create new dialog using QTableWidget 
+bool Main::settingsJIRA()
 {
     JiraSettingsDialog dia;
-    dia.setUser(settings.value("/jira/username", "JIRA  username")
-                    .toString());
-    dia.setSavePassword(
-        settings.value("/jira/savePassword", false).toBool());
-    if (!jiraPassword.isEmpty())
-        dia.setPassword(jiraPassword);
-
     dia.exec();
 
-    if (dia.result() > 0) {
-        settings.setValue("/jira/username", dia.getUser());
-        settings.setValue("/jira/savePassword", dia.savePassword());
-        jiraPassword = dia.getPassword();
-        if (dia.savePassword())
-            settings.setValue("/jira/password", jiraPassword);
-        else
-            settings.setValue("/jira/password", "");
-
+    if (dia.result() > 0)
         return true;
-    }
-    return false;
+    else
+        return false;
 }
 
 void Main::windowToggleNoteEditor()

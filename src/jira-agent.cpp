@@ -5,6 +5,7 @@
 #include "vymmodel.h"
 
 #include <QHash>
+#include <QMessageBox>
 
 extern Main *mainWindow;
 extern QDir vymBaseDir;
@@ -229,6 +230,11 @@ void JiraAgent::ticketReceived(QNetworkReply *reply)
     }
 
     if (reply->error()) {
+        if (reply->error() == QNetworkReply::AuthenticationRequiredError)
+            QMessageBox::warning(
+                nullptr, tr("Warning"),
+                tr("Authentication problem when contacting JIRA"));
+
         qWarning() << "JiraAgent::ticketRReveived reply error";
         qWarning() << "Error: " << reply->error();
         vout << "reply: " << endl << r << endl;
