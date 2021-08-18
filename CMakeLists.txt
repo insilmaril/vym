@@ -108,6 +108,7 @@ SET(VymSources
     src/imageobj.cpp
     src/imports.cpp
     src/jira-agent.cpp
+    src/jira-settings-dialog.cpp
     src/lineeditdialog.cpp
     src/linkablemapobj.cpp
     src/lockedfiledialog.cpp

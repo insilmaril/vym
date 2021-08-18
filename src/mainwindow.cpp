@@ -37,6 +37,7 @@ using namespace std;
 #include "headingeditor.h"
 #include "historywindow.h"
 #include "imports.h"
+#include "jira-settings-dialog.h"
 #include "lineeditdialog.h"
 #include "macros.h"
 #include "mapeditor.h"
@@ -5799,11 +5800,9 @@ bool Main::settingsConfluence()
     return false;
 }
 
-bool Main::settingsJIRA()
+bool Main::settingsJIRA()   // FIXME-0 Create new dialog using QTableWidget 
 {
-    CredentialsDialog dia;
-    dia.setURL(
-        settings.value("/confluence/url", "Confluence base URL").toString());
+    JiraSettingsDialog dia;
     dia.setUser(settings.value("/jira/username", "JIRA  username")
                     .toString());
     dia.setSavePassword(
@@ -5814,7 +5813,6 @@ bool Main::settingsJIRA()
     dia.exec();
 
     if (dia.result() > 0) {
-        settings.setValue("/jira/url", dia.getURL());
         settings.setValue("/jira/username", dia.getUser());
         settings.setValue("/jira/savePassword", dia.savePassword());
         jiraPassword = dia.getPassword();
