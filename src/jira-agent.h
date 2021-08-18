@@ -58,7 +58,6 @@ class JiraAgent : public QObject {
     // Network handling
     QNetworkAccessManager *networkManager;
     QJsonObject jsobj;
-    bool httpRequestAborted;
 
     // Settings: Credentials to access JIRA
     QString username;

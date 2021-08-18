@@ -52,6 +52,7 @@ class ConfluenceAgent : public QObject {
     void startCreatePageRequest();
     void startUpdatePageRequest();
     void startGetUserInfoRequest();
+    bool requestSuccessful(QNetworkReply *reply, const QString &requestDesc);
 
   private slots:
     void pageSourceReceived(QNetworkReply *reply);
@@ -74,7 +75,6 @@ class ConfluenceAgent : public QObject {
     // Network handling
     QNetworkAccessManager *networkManager;
     QJsonObject jsobj;
-    bool httpRequestAborted;
 
     // Settings: Credentials to access Confluence
     QString username;

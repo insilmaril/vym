@@ -190,8 +190,6 @@ void JiraAgent::startGetTicketRequest()
 {
     QUrl url = QUrl(baseURL + apiURL + "/issue/" + ticketID);
 
-    httpRequestAborted = false;
-
     QNetworkRequest request = QNetworkRequest(url);
 
     // Basic authentication in header
@@ -222,12 +220,6 @@ void JiraAgent::ticketReceived(QNetworkReply *reply)
     networkManager->disconnect();
 
     QString r = reply->readAll();
-
-    if (httpRequestAborted) {
-        qWarning() << "JiraAgent::ticketReveived aborted";
-        finishJob();
-        return;
-    }
 
     if (reply->error()) {
         if (reply->error() == QNetworkReply::AuthenticationRequiredError)

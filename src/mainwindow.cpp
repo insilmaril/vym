@@ -379,8 +379,6 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
 
     restoreState(settings.value("/mainwindow/state", 0).toByteArray());
 
-    // Enable testmenu
-    // settings.setValue( "mainwindow/showTestMenu", true);
     updateGeometry();
 
 #if defined(VYM_DBUS)
