@@ -37,6 +37,7 @@ using namespace std;
 #include "headingeditor.h"
 #include "historywindow.h"
 #include "imports.h"
+#include "jira-settings-dialog.h"
 #include "lineeditdialog.h"
 #include "macros.h"
 #include "mapeditor.h"
@@ -94,10 +95,8 @@ extern QString localeName;
 extern bool debug;
 extern bool testmode;
 extern QTextStream vout;
-extern QStringList jiraPrefixList;
-extern bool jiraClientAvailable;
-extern bool confluenceAgentAvailable;
 extern QString confluencePassword;
+extern QString jiraPassword;
 extern Switchboard switchboard;
 
 extern QList<Command *> modelCommands;
@@ -380,8 +379,6 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
 
     restoreState(settings.value("/mainwindow/state", 0).toByteArray());
 
-    // Enable testmenu
-    // settings.setValue( "mainwindow/showTestMenu", true);
     updateGeometry();
 
 #if defined(VYM_DBUS)
@@ -2913,6 +2910,11 @@ void Main::setupSettingsActions()
     a = new QAction(tr("Confluence Credentials", "Settings action") + "...",
                     this);
     connect(a, SIGNAL(triggered()), this, SLOT(settingsConfluence()));
+    settingsMenu->addAction(a);
+
+    a = new QAction(tr("JIRA Credentials", "Settings action") + "...",
+                    this);
+    connect(a, SIGNAL(triggered()), this, SLOT(settingsJIRA()));
     settingsMenu->addAction(a);
 
     a = new QAction(tr("Set path for macros", "Settings action") + "...", this);
@@ -5782,18 +5784,26 @@ bool Main::settingsConfluence()
         settings.setValue("/confluence/url", dia.getURL());
         settings.setValue("/confluence/username", dia.getUser());
         settings.setValue("/confluence/savePassword", dia.savePassword());
+        confluencePassword = dia.getPassword();
         if (dia.savePassword())
-            settings.setValue("/confluence/password", dia.getPassword());
+            settings.setValue("/confluence/password", confluencePassword);
         else
             settings.setValue("/confluence/password", "");
 
-        confluencePassword = dia.getPassword();
-        confluenceAgentAvailable = true;
+        return true;
     }
-    else
-        confluenceAgentAvailable = false;
+    return false;
+}
 
-    return confluenceAgentAvailable;
+bool Main::settingsJIRA()
+{
+    JiraSettingsDialog dia;
+    dia.exec();
+
+    if (dia.result() > 0)
+        return true;
+    else
+        return false;
 }
 
 void Main::windowToggleNoteEditor()
@@ -6253,20 +6263,11 @@ void Main::updateActions()
                     actionOpenURL->setEnabled(true);
                     actionOpenURLTab->setEnabled(true);
 
-                    bool ok = false;
-                    foreach (QString prefix, jiraPrefixList) {
-                        if (url.contains(prefix)) {
-                            ok = true;
-                            break;
-                        }
-                    }
-                    actionGetJiraData->setEnabled(ok && jiraClientAvailable);
-                    if (url.contains(
-                            settings.value("/confluence/url", "").toString()))
-                        actionGetConfluencePageName->setEnabled(true);
-                    else
-                        actionGetConfluencePageName->setEnabled(false);
+                    // FIXME-1  actions for Confluence and JIRA are currently not used
+                    // Check in attributes, if this branch is related to JIRA
+                    // Check in attributes, if this branch is related to Confluence
                 }
+
                 if (selti && selti->getVymLink().isEmpty()) {
                     actionOpenVymLink->setEnabled(false);
                     actionOpenVymLinkBackground->setEnabled(false);

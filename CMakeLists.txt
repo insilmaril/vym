@@ -65,6 +65,7 @@ set(VymSources
     src/codeeditor.cpp
     src/command.cpp
     src/confluence-agent.cpp
+    src/confluence-userdialog.cpp
     src/confluence-user.cpp
     src/credentials.cpp
     src/dockeditor.cpp
@@ -109,6 +110,7 @@ set(VymSources
     src/imageobj.cpp
     src/imports.cpp
     src/jira-agent.cpp
+    src/jira-settings-dialog.cpp
     src/lineeditdialog.cpp
     src/linkablemapobj.cpp
     src/lockedfiledialog.cpp
@@ -142,7 +144,6 @@ set(VymSources
     src/treeeditor.cpp
     src/treeitem.cpp
     src/treemodel.cpp
-    src/confluence-userdialog.cpp
     src/version.cpp
     src/vymlock.cpp
     src/vymmodel.cpp

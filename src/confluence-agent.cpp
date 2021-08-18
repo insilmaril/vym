@@ -1,5 +1,7 @@
 #include "confluence-agent.h"
 
+#include <QMessageBox>
+
 #include "branchitem.h"
 #include "confluence-user.h"
 #include "file.h"
@@ -8,12 +10,22 @@
 #include "vymmodel.h"
 
 extern Main *mainWindow;
-extern Settings settings;
 extern QDir vymBaseDir;
-extern bool debug;
 extern QString confluencePassword;
+extern Settings settings;
+extern bool debug;
 
-////////////////////////////////////////////////////////////////////////////////
+bool ConfluenceAgent::available() 
+{ 
+    if ( !settings.value("/confluence/username", "").toString().isEmpty())
+        return false;
+
+    if ( !settings.value("/confluence/url", "").toString().isEmpty())
+        return false;
+
+    return true;
+}
+
 ConfluenceAgent::ConfluenceAgent() { 
     //qDebug() << "Constr. ConfluenceAgent";
     init(); 
@@ -53,21 +65,25 @@ void ConfluenceAgent::init()
 
     modelID = 0;    // invalid ID
 
-    confluenceScript = vymBaseDir.path() + "/scripts/confluence.rb";
-
     killTimer = new QTimer(this);
     killTimer->setInterval(15000);
     killTimer->setSingleShot(true);
 
     QObject::connect(killTimer, SIGNAL(timeout()), this, SLOT(timeout()));
 
+    apiURL = baseURL + "/rest/api";
+    baseURL = settings.value("/confluence/url", "baseURL").toString();
+    
     // Read credentials 
     username =
         settings.value("/confluence/username", "user_johnDoe").toString();
-    password = confluencePassword;
-    baseURL = settings.value("/confluence/url", "baseURL").toString();
+    password = settings.value("/confluence/password", confluencePassword).toString();
 
-    apiURL = baseURL + "/rest/api";
+    if (password.isEmpty()) {
+        // Set global password
+        if (!mainWindow->settingsConfluence()) 
+            abortJob = true;
+    }
 }
 
 void ConfluenceAgent::setJobType(JobType jt)
@@ -295,11 +311,6 @@ void ConfluenceAgent::getUsers(const QString &usrQuery)
     startJob();
 }
 
-void ConfluenceAgent::timeout()
-{
-    qWarning() << "ConfluenceAgent timeout!!   jobType = " << jobType;
-}
-
 void ConfluenceAgent::startGetPageSourceRequest(QUrl requestedURL)
 {
     //qDebug() << "CA::startGetPageSourceRequest " << requestedURL;
@@ -307,7 +318,6 @@ void ConfluenceAgent::startGetPageSourceRequest(QUrl requestedURL)
         requestedURL.setPath("https://" + requestedURL.path());
 
     QUrl url = requestedURL;
-    httpRequestAborted = false;
 
     QNetworkRequest request = QNetworkRequest(url);
 
@@ -334,8 +344,6 @@ void ConfluenceAgent::startGetPageDetailsRequest()
 {
     //qDebug() << "CA::startGetPageDetailsRequest" << pageID;
 
-    httpRequestAborted = false;
-
     // Authentication in URL  (only SSL!)
     // maybe switch to token later:
     // https://developer.atlassian.com/cloud/confluence/basic-auth-for-rest-apis/
@@ -343,7 +351,7 @@ void ConfluenceAgent::startGetPageDetailsRequest()
 
     QString query = "https://" 
         + concatenated 
-        + "@" + apiURL 
+        + "@" + baseURL + apiURL 
         + "/content/" + pageID + "?expand=metadata.labels,version";
 
     QNetworkRequest request = QNetworkRequest(QUrl(query));
@@ -360,11 +368,9 @@ void ConfluenceAgent::startCreatePageRequest()
 {
     // qDebug() << "CA::startCreatePageRequest";
 
-    httpRequestAborted = false;
-
     QString concatenated = username + ":" + password;
 
-    QString url = "https://" + concatenated + "@" + apiURL + "/content";
+    QString url = "https://" + concatenated + "@" + baseURL + apiURL + "/content";
 
     QNetworkRequest request = QNetworkRequest(QUrl(url));
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
@@ -416,13 +422,11 @@ void ConfluenceAgent::startCreatePageRequest()
 
 void ConfluenceAgent::startUpdatePageRequest()
 {
-    // qDebug() << "CA::startUpdatePageRequest";
-
-    httpRequestAborted = false;
+    //qDebug() << "CA::startUpdatePageRequest";
 
     QString concatenated = username + ":" + password;
 
-    QString url = "https://" + concatenated + "@" + apiURL + "/content" + "/" + pageID;
+    QString url = "https://" + concatenated + "@" + baseURL + apiURL + "/content" + "/" + pageID;
 
     QNetworkRequest request = QNetworkRequest(QUrl(url));
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
@@ -477,11 +481,9 @@ void ConfluenceAgent::startGetUserInfoRequest()
 {
     // qDebug() << "CA::startGetInfoRequest for " << userQuery;
 
-    httpRequestAborted = false;
-
     QString concatenated = username + ":" + password;
 
-    QString query = "https://" + apiURL
+    QString query = "https://" + baseURL + apiURL
     //    + concatenated 
     //    + "@" + apiURL 
         + "/search?cql=user.fullname~" + userQuery;
@@ -505,28 +507,37 @@ void ConfluenceAgent::startGetUserInfoRequest()
     networkManager->get(request);
 }
 
+bool ConfluenceAgent::requestSuccessful(QNetworkReply *reply, const QString &requestDesc)
+{
+    if (reply->error()) {
+        if (reply->error() == QNetworkReply::AuthenticationRequiredError)
+            QMessageBox::warning(
+                nullptr, tr("Warning"),
+                tr("Authentication problem when contacting Confluence\n\n") + 
+                "Step: " + requestDesc);
+
+        qWarning() << QString("QNetworkReply error when trying: %1").arg(requestDesc);
+        qWarning() << reply->error();
+        qWarning() << reply->errorString();
+        qWarning() << reply->readAll();
+        finishJob();
+        return false;
+    } else
+        return true;
+}
+
 void ConfluenceAgent::pageSourceReceived(QNetworkReply *reply)
 {
-    //qDebug() << "CA::pageSourceReceived";
+    qDebug() << "CA::pageSourceReceived";
 
     killTimer->stop();
 
     networkManager->disconnect();
 
+    if (!requestSuccessful(reply, "Receive page source"))
+        return;
+
     QString r = reply->readAll();
-
-    if (httpRequestAborted) {
-        qWarning() << "ConfluenceAgent::pageSourceReveived aborted";
-        finishJob();
-        return;
-    }
-
-    if (reply->error()) {
-        qWarning() << "ConfluenceAgent::pageSourceReveived reply error";
-        qWarning() << "Error: " << reply->error();
-        finishJob();
-        return;
-    }
 
     // Find pageID
     QRegExp rx("\\sname=\"ajs-page-id\"\\scontent=\"(\\d*)\"");
@@ -564,24 +575,14 @@ void ConfluenceAgent::pageSourceReceived(QNetworkReply *reply)
 
 void ConfluenceAgent::pageDetailsReceived(QNetworkReply *reply)
 {
-    // qDebug() << "CA::pageDetailsReceived";
+    qDebug() << "CA::pageDetailsReceived";
 
     killTimer->stop();
 
     networkManager->disconnect();
 
-    if (httpRequestAborted) {
-        qWarning() << "ConfluenceAgent::pageDetailsReveived aborted error";
-        finishJob();
+    if (!requestSuccessful(reply, "Receive page details"))
         return;
-    }
-
-    if (reply->error()) {
-        qWarning() << "ConfluenceAgent::pageDetailsReveived reply error";
-        qWarning() << reply->error();
-        finishJob();
-        return;
-    }
 
     QJsonDocument jsdoc;
     jsdoc = QJsonDocument::fromJson(reply->readAll());
@@ -593,26 +594,14 @@ void ConfluenceAgent::pageDetailsReceived(QNetworkReply *reply)
 
 void ConfluenceAgent::contentUploaded(QNetworkReply *reply)
 {
-    //qDebug() << "CA::contentUploaded";
+    qDebug() << "CA::contentUploaded";
 
     killTimer->stop();
 
     networkManager->disconnect();
 
-    if (httpRequestAborted) {
-        qWarning() << "ConfluenceAgent::contentUploaded aborted";
-        finishJob();
+    if (!requestSuccessful(reply, "upload content"))
         return;
-    }
-
-    if (reply->error()) {
-        qWarning() << "ConfluenceAgent::contentUploaded reply error";
-        qWarning() << reply->error();
-        qWarning() << reply->errorString();
-        qWarning() << reply->readAll();
-        finishJob();
-        return;
-    }
 
     QJsonDocument jsdoc;
     jsdoc = QJsonDocument::fromJson(reply->readAll());
@@ -628,26 +617,20 @@ void ConfluenceAgent::userInfoReceived(QNetworkReply *reply)
 
     networkManager->disconnect();
 
+    if (!requestSuccessful(reply, "Receive user info"))
+        return;
+
     QString r = reply->readAll();
-
-    if (httpRequestAborted) {
-        qWarning() << "ConfluenceAgent::UserInfoReveived aborted";
-        finishJob();
-        return;
-    }
-
-    if (reply->error()) {
-        qWarning() << "ConfluenceAgent::UserInfoReveived reply error";
-        qWarning() << "Error: " << reply->error();
-        qWarning() << "reply: " << r;
-        finishJob();
-        return;
-    }
 
     QJsonDocument jsdoc;
     jsdoc = QJsonDocument::fromJson(r.toUtf8());
     jsobj = jsdoc.object();
     continueJob();
+}
+
+void ConfluenceAgent::timeout()
+{
+    qWarning() << "ConfluenceAgent timeout!!   jobType = " << jobType;
 }
 
 #ifndef QT_NO_SSL
@@ -661,7 +644,7 @@ void ConfluenceAgent::sslErrors(QNetworkReply *reply, const QList<QSslError> &er
     }
 
     reply->ignoreSslErrors();
-    qWarning() << "One or more SSL errors has occurred: " << errorString;
+    qWarning() << "ConfluenceAgent: One or more SSL errors has occurred: " << errorString;
     qWarning() << "Errors ignored.";
 }
 #endif

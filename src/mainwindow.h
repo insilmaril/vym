@@ -303,6 +303,7 @@ class Main : public QMainWindow {
     void settingsToggleAnimation();
     void settingsToggleDownloads();
     bool settingsConfluence();
+    bool settingsJIRA();
 
     void windowToggleNoteEditor();
     void windowToggleTreeEditor();
