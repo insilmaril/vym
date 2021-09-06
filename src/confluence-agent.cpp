@@ -528,7 +528,7 @@ bool ConfluenceAgent::requestSuccessful(QNetworkReply *reply, const QString &req
 
 void ConfluenceAgent::pageSourceReceived(QNetworkReply *reply)
 {
-    qDebug() << "CA::pageSourceReceived";
+    // qDebug() << "CA::pageSourceReceived";
 
     killTimer->stop();
 
@@ -575,7 +575,7 @@ void ConfluenceAgent::pageSourceReceived(QNetworkReply *reply)
 
 void ConfluenceAgent::pageDetailsReceived(QNetworkReply *reply)
 {
-    qDebug() << "CA::pageDetailsReceived";
+    // qDebug() << "CA::pageDetailsReceived";
 
     killTimer->stop();
 

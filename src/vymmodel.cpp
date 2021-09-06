@@ -4129,27 +4129,14 @@ void VymModel::updateJiraData(QJsonObject jsobj)
 }
 
 
-void VymModel::setHeadingConfluencePageName()
+void VymModel::setHeadingConfluencePageName()   // FIXME-0 always asks for Confluence credentials when adding any URL
 {
     BranchItem *selbi = getSelectedBranch();
     if (selbi) {
         QString url = selbi->getURL();
-        if (!url.isEmpty()) {
-            if (!ConfluenceAgent::available()) {
-                WarningDialog dia;
-                QString w = QObject::tr("Confluence agent not setup.");
-                dia.setText(w);
-                dia.setWindowTitle( tr("Warning") + ": " + w);
-                dia.setShowAgainName("/ConfluenceAgent/notdefined");
-                dia.exec();
-
-                if (!mainWindow->settingsConfluence())
-                    return;
-            }
-
-            if (!url.contains(
-                    settings.value("/confluence/url", "").toString()))
-                return;
+        if (!url.isEmpty() && 
+                settings.contains("/confluence/url") &&
+                url.contains(settings.value("confluence/url").toString())) {
 
             ConfluenceAgent *ca_setHeading = new ConfluenceAgent(selbi);
             ca_setHeading->setPageURL(url);
