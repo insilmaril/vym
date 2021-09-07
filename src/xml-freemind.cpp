@@ -215,10 +215,9 @@ bool parseFreemindHandler::endElement(const QString &, const QString &,
                                       const QString &eName)
 {
     /* Testing
-    qDebug() << "endElement </" <<qPrintable(eName)
-    <<">  state=" <<state
-    <<"  stateStack="<<stateStack.last()
-    ;
+    qDebug() << "endElement </" << qPrintable(eName)
+        << ">  state=" << state
+        << "  stateStack=" << stateStack.last();
     */
     switch (state) {
     case StateMap:
@@ -235,7 +234,7 @@ bool parseFreemindHandler::endElement(const QString &, const QString &,
     case StateNode:
         model->emitDataChanged(lastBranch);
         lastBranch = (BranchItem *)lastBranch->parent();
-        lastBranch->setLastSelectedBranch(0);
+        if (lastBranch) lastBranch->setLastSelectedBranch(0);
         break;
     case StateRichContent:
         if (!htmldata.isEmpty()) {
