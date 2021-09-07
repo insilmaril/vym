@@ -179,7 +179,6 @@ class Main : public QMainWindow {
     void editURL();
     void editLocalURL();
     void editHeading2URL();
-    void getJiraData();
     void getJiraDataSubtree();
     void setHeadingConfluencePageName();
     void openVymLinks(const QStringList &, bool background = false);
@@ -467,7 +466,6 @@ class Main : public QMainWindow {
     QAction *actionURLNew;
     QAction *actionLocalURL;
     QAction *actionHeading2URL;
-    QAction *actionGetJiraData;
     QAction *actionGetJiraDataSubtree;
     QAction *actionGetConfluencePageName;
     QAction *actionOpenVymLink;

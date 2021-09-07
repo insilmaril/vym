@@ -1668,20 +1668,10 @@ void Main::setupEditActions()
     actionHeading2URL = a;
 
     tag = "JIRA";
-    a = new QAction(tr("Create URL to Jira", "Edit menu") + " (experimental)",
-                    this);
-    a->setShortcut(Qt::Key_J + Qt::SHIFT);
-    a->setShortcutContext(Qt::WindowShortcut);
-    switchboard.addSwitch("mapUpdateFromJira", shortcutScope, a, tag);
-    addAction(a);
-    connect(a, SIGNAL(triggered()), this, SLOT(getJiraData()));
-    actionListBranches.append(a);
-    actionGetJiraData = a;
-
     a = new QAction(tr("Get data from JIRA for subtree", "Edit menu") +
                         " (experimental)",
                     this);
-    a->setShortcut(Qt::Key_J + Qt::CTRL);
+    a->setShortcut(Qt::Key_J + Qt::SHIFT);
     a->setShortcutContext(Qt::WindowShortcut);
     switchboard.addSwitch("mapUpdateSubTreeFromJira", shortcutScope, a, tag);
     addAction(a);
@@ -3167,7 +3157,6 @@ void Main::setupContextMenus()
     branchLinksContextMenu->addAction(actionLocalURL);
     branchLinksContextMenu->addAction(actionGetURLsFromNote);
     branchLinksContextMenu->addAction(actionHeading2URL);
-    branchLinksContextMenu->addAction(actionGetJiraData);
     branchLinksContextMenu->addAction(actionGetJiraDataSubtree);
     branchLinksContextMenu->addAction(actionGetConfluencePageName);
     branchLinksContextMenu->addSeparator();
@@ -4614,13 +4603,6 @@ void Main::editHeading2URL()
     VymModel *m = currentModel();
     if (m)
         m->editHeading2URL();
-}
-
-void Main::getJiraData()
-{
-    VymModel *m = currentModel();
-    if (m)
-        m->getJiraData(false);
 }
 
 void Main::getJiraDataSubtree()
@@ -6256,7 +6238,6 @@ void Main::updateActions()
                 if (url.isEmpty()) {
                     actionOpenURL->setEnabled(false);
                     actionOpenURLTab->setEnabled(false);
-                    actionGetJiraData->setEnabled(false);
                     actionGetConfluencePageName->setEnabled(false);
                 }
                 else {
