@@ -342,7 +342,7 @@ void ConfluenceAgent::startGetPageSourceRequest(QUrl requestedURL)
 
 void ConfluenceAgent::startGetPageDetailsRequest()
 {
-    //qDebug() << "CA::startGetPageDetailsRequest" << pageID;
+    if (debug) qDebug() << "CA::startGetPageDetailsRequest" << pageID;
 
     // Authentication in URL  (only SSL!)
     // maybe switch to token later:
@@ -422,7 +422,7 @@ void ConfluenceAgent::startCreatePageRequest()
 
 void ConfluenceAgent::startUpdatePageRequest()
 {
-    //qDebug() << "CA::startUpdatePageRequest";
+    if (debug) qDebug() << "CA::startUpdatePageRequest";
 
     QString concatenated = username + ":" + password;
 
@@ -479,7 +479,7 @@ void ConfluenceAgent::startUpdatePageRequest()
 
 void ConfluenceAgent::startGetUserInfoRequest()
 {
-    // qDebug() << "CA::startGetInfoRequest for " << userQuery;
+    if (debug) qDebug() << "CA::startGetInfoRequest for " << userQuery;
 
     QString concatenated = username + ":" + password;
 
@@ -510,16 +510,26 @@ void ConfluenceAgent::startGetUserInfoRequest()
 bool ConfluenceAgent::requestSuccessful(QNetworkReply *reply, const QString &requestDesc)
 {
     if (reply->error()) {
+        QString stepDesc =QString("Step: Trying to %1").arg(requestDesc);
+        QString readAll = reply->readAll();
         if (reply->error() == QNetworkReply::AuthenticationRequiredError)
             QMessageBox::warning(
-                nullptr, tr("Warning"),
-                tr("Authentication problem when contacting Confluence\n\n") + 
-                "Step: " + requestDesc);
+                nullptr, tr("Warning") + ": " +
+                tr("Authentication problem when contacting Confluence"), 
+                stepDesc);
+        else {
+            QMessageBox::warning(
+                nullptr, 
+                tr("Warning") + ": " + QString("QNetworkReply error when trying to %1").arg(requestDesc),
+                reply->error() + "\n\n" + readAll
+                );
+        }
 
-        qWarning() << QString("QNetworkReply error when trying: %1").arg(requestDesc);
+        // Additionally print full error on console
         qWarning() << reply->error();
         qWarning() << reply->errorString();
-        qWarning() << reply->readAll();
+        qWarning() << readAll;
+
         finishJob();
         return false;
     } else
@@ -528,13 +538,13 @@ bool ConfluenceAgent::requestSuccessful(QNetworkReply *reply, const QString &req
 
 void ConfluenceAgent::pageSourceReceived(QNetworkReply *reply)
 {
-    // qDebug() << "CA::pageSourceReceived";
+    if (debug) qDebug() << "CA::pageSourceReceived";
 
     killTimer->stop();
 
     networkManager->disconnect();
 
-    if (!requestSuccessful(reply, "Receive page source"))
+    if (!requestSuccessful(reply, "receive page source"))
         return;
 
     QString r = reply->readAll();
@@ -575,13 +585,13 @@ void ConfluenceAgent::pageSourceReceived(QNetworkReply *reply)
 
 void ConfluenceAgent::pageDetailsReceived(QNetworkReply *reply)
 {
-    // qDebug() << "CA::pageDetailsReceived";
+    if (debug) qDebug() << "CA::pageDetailsReceived";
 
     killTimer->stop();
 
     networkManager->disconnect();
 
-    if (!requestSuccessful(reply, "Receive page details"))
+    if (!requestSuccessful(reply, "receive page details"))
         return;
 
     QJsonDocument jsdoc;
@@ -594,7 +604,7 @@ void ConfluenceAgent::pageDetailsReceived(QNetworkReply *reply)
 
 void ConfluenceAgent::contentUploaded(QNetworkReply *reply)
 {
-    qDebug() << "CA::contentUploaded";
+    if (debug) qDebug() << "CA::contentUploaded";
 
     killTimer->stop();
 
@@ -611,13 +621,13 @@ void ConfluenceAgent::contentUploaded(QNetworkReply *reply)
 
 void ConfluenceAgent::userInfoReceived(QNetworkReply *reply)
 {
-    //qDebug() << "CA::UserInfopageReceived";
+    if (debug) qDebug() << "CA::UserInfopageReceived";
 
     killTimer->stop();
 
     networkManager->disconnect();
 
-    if (!requestSuccessful(reply, "Receive user info"))
+    if (!requestSuccessful(reply, "receive user info"))
         return;
 
     QString r = reply->readAll();

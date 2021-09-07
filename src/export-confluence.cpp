@@ -50,6 +50,9 @@ QString ExportConfluence::getBranchText(BranchItem *current)
         QString id = model->getSelectString(current);
         QString heading = quoteMeta(current->getHeadingPlain());
 
+        // Long headings are will have linebreaks by default
+        heading = heading.replace("\\n", " ");
+
         if (dia.useTextColor) {
             QColor c = current->getHeadingColor();
             QString cs = QString("rgb(%1,%2,%3);")
@@ -100,6 +103,8 @@ QString ExportConfluence::getBranchText(BranchItem *current)
         //     <ac:link>
         //<ri:user ri:userkey="55df23264acf166a014b54c57792009b"/>
         //</ac:link> </span>
+        
+        // For URLs check, if there is already a Confluence user in an attribute
         QString url;
         AttributeItem *ai = current->getAttributeByKey("ConfluenceUser.userKey");
         if (ai) {

@@ -98,15 +98,18 @@ void ExportConfluenceDialog::readSettings()
 
     */
     useTextColor =
-        settings.localValue(filepath, "/export/confluence/useTextColor", "no")
+        settings.localValue(filepath, "/export/confluence/useTextColor", false)
             .toBool();
     ui.textColorCheckBox->setChecked(useTextColor);
 
     saveSettingsInMap =
         settings
-            .localValue(filepath, "/export/confluence/saveSettingsInMap", "no")
+            .localValue(filepath, "/export/confluence/saveSettingsInMap", true)
             .toBool();
     ui.saveSettingsInMapCheckBox->setChecked(saveSettingsInMap);
+
+
+    pageButtonPressed();
 }
 
 void ExportConfluenceDialog::setURL(const QString &u) { url = u; }
