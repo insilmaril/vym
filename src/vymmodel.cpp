@@ -4101,6 +4101,15 @@ void VymModel::updateJiraData(QJsonObject jsobj)
     QJsonObject assigneeObj = fields["assignee"].toObject();
     QString assignee = assigneeObj["emailAddress"].toString();
 
+    QJsonObject reporterObj = fields["reporter"].toObject();
+    QString reporter  = reporterObj["emailAddress"].toString();
+
+    QJsonObject resolutionObj = fields["resolution"].toObject();
+    QString resolution  = resolutionObj["name"].toString();
+
+    QJsonObject statusObj = fields["status"].toObject();
+    QString status  = statusObj["name"].toString();
+
     QString summary = fields["summary"].toString();
 
     QJsonArray componentsArray = fields["components"].toArray();
@@ -4113,17 +4122,32 @@ void VymModel::updateJiraData(QJsonObject jsobj)
 
     int branchID = jsobj["vymBranchID"].toInt();
 
+    QStringList solvedStates;
+    solvedStates << "Verification Done";
+    solvedStates << "Resolved";
+    solvedStates << "Closed";
+
+    QString keyName = key;
     BranchItem *bi = (BranchItem*)findID(branchID);
     if (bi) {
-        setHeadingPlainText(key + ": " + summary, bi);
+        if (solvedStates.contains(status))    {
+            keyName = "(" + keyName + ")";
+            colorSubtree (Qt::blue, bi);
+        }
+
+        setHeadingPlainText(keyName + ": " + summary, bi);
+        
     }
 
-    /*
+    /* Pretty print JIRA ticket
     vout << jsdoc.toJson(QJsonDocument::Indented) << endl;
     vout << "       Key: " + key << endl;
     vout << "      Desc: " + summary << endl;
     vout << "  Assignee: " + assignee << endl;
     vout << "Components: " + components << endl;
+    vout << "  Reporter: " + reporter << endl;
+    vout << "Resolution: " + resolution << endl;
+    vout << "    Status: " + status << endl;
     */
 
 }
