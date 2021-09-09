@@ -1475,7 +1475,7 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
             if (ti_found->getType() == TreeItem::XLink) {
                 XLinkObj *xlo = (XLinkObj *)((MapItem *)ti_found)->getMO();
                 if (xlo) {
-                    setState(EditingLink);
+                    setState(DrawingXLink);
                     int i = xlo->ctrlPointInClickBox(p);
                     if (i >= 0)
                         xlo->setSelection(i);
@@ -1540,7 +1540,7 @@ void MapEditor::mouseMoveEvent(QMouseEvent *e)
     // Move the selected MapObj
     if (mosel &&
         (state == MovingObject || state == MovingObjectWithoutLinking ||
-         state == EditingLink)) {
+         state == DrawingXLink)) {
         int margin = 50;
 
         // Check if we have to scroll
