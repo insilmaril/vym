@@ -4706,12 +4706,12 @@ void VymModel::exportHTML(const QString &fpath, const QString &dpath,
 }
 
 void VymModel::exportConfluence(bool createPage, const QString &pageURL,
-                                const QString &pageTitle, bool useDialog)
+                                const QString &pageName, bool useDialog)
 {
     ExportConfluence ex(this);
     ex.setCreateNewPage(createPage);
     ex.setURL(pageURL);
-    ex.setPageTitle(pageTitle);
+    ex.setPageName(pageName);
     ex.setLastCommand(
         settings.localValue(filePath, "/export/last/command", "").toString());
 

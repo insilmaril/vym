@@ -113,9 +113,9 @@ void ConfluenceAgent::setPageURL(const QString &u)
     pageURL = u;
 }
 
-void ConfluenceAgent::setNewPageTitle(const QString &t)
+void ConfluenceAgent::setNewPageName(const QString &t)
 {
-    newPageTitle = t;
+    newPageName = t;
 }
 
 void ConfluenceAgent::setUploadFilePath(const QString &fp)
@@ -186,8 +186,8 @@ void ConfluenceAgent::continueJob()
                         finishJob();
                         return;
                     }
-                    if (newPageTitle.isEmpty()) {
-                        qWarning() << "CA::contJob NewPage: newPageTitle is empty";
+                    if (newPageName.isEmpty()) {
+                        qWarning() << "CA::contJob NewPage: newPageName is empty";
                         finishJob();
                         return;
                     }
@@ -235,8 +235,8 @@ void ConfluenceAgent::continueJob()
                     break;
                 case 3:
                     // Update page with parent url
-                    if (newPageTitle.isEmpty())
-                            newPageTitle = jsobj["title"].toString();
+                    if (newPageName.isEmpty())
+                            newPageName = jsobj["title"].toString();
                     startUpdatePageRequest();
                     break;
                 case 4:
@@ -377,7 +377,7 @@ void ConfluenceAgent::startCreatePageRequest()
 
     QJsonObject payload;
     payload["type"] = "page";
-    payload["title"] = newPageTitle;
+    payload["title"] = newPageName;
 
     // Build array with ID of parent page
     QJsonObject ancestorsID;
@@ -434,7 +434,7 @@ void ConfluenceAgent::startUpdatePageRequest()
     QJsonObject payload;
     payload["id"] = pageID;
     payload["type"] = "page";
-    payload["title"] = newPageTitle;
+    payload["title"] = newPageName;
 
     // Build version object
     QJsonObject newVersionObj;

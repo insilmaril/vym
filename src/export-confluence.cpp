@@ -30,14 +30,14 @@ void ExportConfluence::init()
     frameURLs = true;
 
     url = "";
-    pageTitle = "";
+    pageName = "";
 }
 
 void ExportConfluence::setCreateNewPage(bool b) {createNewPage = b; }
 
 void ExportConfluence::setURL(const QString &u) { url = u; }
 
-void ExportConfluence::setPageTitle(const QString &t) { pageTitle = t;}
+void ExportConfluence::setPageName(const QString &t) { pageName = t;}
 
 QString ExportConfluence::getBranchText(BranchItem *current)
 {
@@ -307,7 +307,11 @@ void ExportConfluence::doExport(bool useDialog)
     dia.setMapName(model->getMapName());
     dia.setFilePath(model->getFilePath());
     dia.setURL(url);
-    dia.setPageTitle(pageTitle);
+    dia.setPageName(pageName);
+    BranchItem *bi = (BranchItem*)(model->findBySelectString("mc0"));
+    if (bi)
+        dia.setPageNameHint(bi->getHeadingPlain());
+
     dia.readSettings();
 
     if (useDialog) {
@@ -316,7 +320,7 @@ void ExportConfluence::doExport(bool useDialog)
         model->setChanged();
         url = dia.getURL();
         createNewPage = dia.getCreateNewPage();
-        pageTitle = dia.getPageTitle();
+        pageName = dia.getPageName();
     }
 
     // Open file for writing
@@ -367,7 +371,7 @@ void ExportConfluence::doExport(bool useDialog)
     else
         agent->setJobType(ConfluenceAgent::UpdatePage);
     agent->setPageURL(url);
-    agent->setNewPageTitle(pageTitle);
+    agent->setNewPageName(pageName);
     agent->setUploadFilePath(filePath);
     agent->setModelID(model->getModelID());
     agent->startJob();
@@ -375,8 +379,8 @@ void ExportConfluence::doExport(bool useDialog)
     QStringList args;
     exportName = (createNewPage) ? "ConfluenceNewPage" : "ConfluenceUpdatePage";
     args <<  url;
-    if (!pageTitle.isEmpty()) 
-        args <<  pageTitle;
+    if (!pageName.isEmpty()) 
+        args <<  pageName;
 
     result = ExportBase::Ongoing;
 
@@ -384,7 +388,7 @@ void ExportConfluence::doExport(bool useDialog)
     
     // Prepare human readable info in tooltip of LastExport:
     displayedDestination = (createNewPage) ? 
-        QString("Title: %1").arg(pageTitle) : 
+        QString("Title: %1").arg(pageName) : 
         QString("URL: %1").arg(url);
 
 

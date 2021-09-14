@@ -30,7 +30,7 @@ class ConfluenceAgent : public QObject {
     void setBranch(BranchItem *bi);
     void setModelID(uint id);
     void setPageURL(const QString &u);
-    void setNewPageTitle(const QString &t);
+    void setNewPageName(const QString &t);
     void setUploadFilePath(const QString &fp);
 
     void startJob();
@@ -90,7 +90,7 @@ class ConfluenceAgent : public QObject {
 
     // Parameters
     QString pageURL;
-    QString newPageTitle;
+    QString newPageName;
     QString uploadFilePath;
     QString userQuery;
 

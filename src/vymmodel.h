@@ -590,7 +590,7 @@ class VymModel : public TreeModel {
 
     /*! Export as HTML to Confluence*/
     void exportConfluence(bool createPage = true, const QString &pageURL = "", 
-                    const QString &pageTitle = "", 
+                    const QString &pageName = "", 
                     bool useDialog = true);
 
     /*! Export as OpenOfficeOrg presentation */

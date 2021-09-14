@@ -11,7 +11,7 @@ class ExportConfluence : public ExportBase {
     virtual void init();
     void setCreateNewPage(bool);
     void setURL(const QString &u);
-    void setPageTitle(const QString &t);
+    void setPageName(const QString &t);
     virtual QString createTOC();
     virtual void doExport(bool useDialog = true);
 
@@ -24,7 +24,7 @@ class ExportConfluence : public ExportBase {
 
     bool createNewPage;
     QString url;
-    QString pageTitle;
+    QString pageName;
 
     bool frameURLs;
 
