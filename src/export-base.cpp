@@ -168,7 +168,7 @@ void ExportBase::completeExport(QStringList args)
                            command);
     settings.setLocalValue(model->getFilePath(), "/export/last/description",
                            exportName);
-    settings.setLocalValue(model->getFilePath(), "/export/last/destination",
+    settings.setLocalValue(model->getFilePath(), "/export/last/displayedDestination",
                            displayedDestination);
 
     // Trigger saving of export command if it has changed

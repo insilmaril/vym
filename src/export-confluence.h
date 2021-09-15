@@ -19,14 +19,10 @@ class ExportConfluence : public ExportBase {
     QString getBranchText(BranchItem *);
     QString buildList(BranchItem *);
     QString imageMap;
-    QString cssSrc;
-    QString cssDst;
 
     bool createNewPage;
     QString url;
     QString pageName;
-
-    bool frameURLs;
 
     QPointF offset;
 

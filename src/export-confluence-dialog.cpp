@@ -66,7 +66,7 @@ void ExportConfluenceDialog::readSettings()
     ui.lineEditURL->setText(url);
 
     pageName = settings
-                    .localValue(filepath, "/export/confluence/pagename",
+                    .localValue(filepath, "/export/confluence/pageName",
                                 "New page created on " +
                                     QDateTime::currentDateTime().toString())
                     .toString();
@@ -105,6 +105,10 @@ void ExportConfluenceDialog::readSettings()
     ui.userFlagsCheckBox->setChecked(useUserFlags);
 
     */
+    mapCenterToPageName =
+        settings.localValue(filepath, "/export/confluence/mapCenterToPageName", true)
+            .toBool();
+    ui.mapCenterToPageNameCheckBox->setChecked(mapCenterToPageName);
     useTextColor =
         settings.localValue(filepath, "/export/confluence/useTextColor", false)
             .toBool();
@@ -238,12 +242,12 @@ void ExportConfluenceDialog::saveSettings()
         //        "/export/confluence/useTaskFlags", useTaskFlags);
         //        settings.setLocalValue (filepath,
         //        "/export/confluence/useUserFlags", useUserFlags);
-        settings.setLocalValue(filepath, "/export/confluence/useTextColor",
-                               useTextColor);
         settings.setValue("/export/confluence/showWarnings", showWarnings);
         settings.setValue("/export/confluence/showOutput", showOutput);
+        settings.setLocalValue(filepath, "/export/confluence/mapCenterToPageName", mapCenterToPageName);
+        settings.setLocalValue(filepath, "/export/confluence/useTextColor", useTextColor);
         settings.setLocalValue(filepath, "/export/confluence/url", url);
-        settings.setLocalValue(filepath, "/export/confluence/pagename", pageName);
+        settings.setLocalValue(filepath, "/export/confluence/pageName", pageName);
         settings.setLocalValue(filepath, "/export/confluence/createNewPage", ui.createPageButton->isChecked());
     }
 }

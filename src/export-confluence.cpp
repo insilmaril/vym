@@ -27,7 +27,6 @@ void ExportConfluence::init()
     exportName = "ConfluenceNewPage";
 
     extension = ".html";
-    frameURLs = true;
 
     url = "";
     pageName = "";
@@ -245,10 +244,13 @@ QString ExportConfluence::buildList(BranchItem *current)
     if (bi && !bi->hasHiddenExportParent() && !bi->isHidden()) {
         r += ind + sectionBegin;
         while (bi) {
-            if (!bi->hasHiddenExportParent() && !bi->isHidden()) {
-                visChilds++;
-                r += ind + itemBegin;
-                r += getBranchText(bi);
+            if (!bi->hasHiddenExportParent() && !bi->isHidden() ) {
+                    visChilds++;
+                    r += ind + itemBegin;
+                    
+                // Check if first mapcenter is already usded for pageName
+                if ( !(bi == model->getRootItem()->getFirstBranch() && dia.mapCenterToPageName))  
+                    r += getBranchText(bi);
 
                 if (itemBegin.startsWith("<h"))
                     r += itemEnd + buildList(bi);
@@ -384,13 +386,10 @@ void ExportConfluence::doExport(bool useDialog)
 
     result = ExportBase::Ongoing;
 
-    completeExport(args);
-    
     // Prepare human readable info in tooltip of LastExport:
-    displayedDestination = (createNewPage) ? 
-        QString("Title: %1").arg(pageName) : 
-        QString("URL: %1").arg(url);
+    displayedDestination = QString("Page: %1 - %2").arg(pageName).arg(url); 
 
+    completeExport(args);
 
     dia.saveSettings();
     model->setExportMode(false);
