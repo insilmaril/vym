@@ -254,6 +254,7 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
     setupModeActions();
     setupNetworkActions();
     setupSettingsActions();
+    setupConnectActions();
     setupContextMenus();
     setupMacros();
     setupToolbars();
@@ -1668,8 +1669,7 @@ void Main::setupEditActions()
     actionHeading2URL = a;
 
     tag = "JIRA";
-    a = new QAction(tr("Get data from JIRA for subtree", "Edit menu") +
-                        " (experimental)",
+    a = new QAction(tr("Get data from JIRA for subtree", "Edit menu"),
                     this);
     a->setShortcut(Qt::Key_J + Qt::SHIFT);
     a->setShortcutContext(Qt::WindowShortcut);
@@ -1679,8 +1679,7 @@ void Main::setupEditActions()
     actionListBranches.append(a);
     actionGetJiraDataSubtree = a;
 
-    a = new QAction(tr("Get page name from Confluence", "Edit menu") +
-                        " (experimental)",
+    a = new QAction(tr("Get page name from Confluence", "Edit menu"),
                     this);
     //    a->setShortcut ( Qt::Key_J + Qt::CTRL);
     //    a->setShortcutContext (Qt::WindowShortcut);
@@ -2401,6 +2400,30 @@ void Main::setupViewActions()
     connect(a, SIGNAL(triggered()), this, SLOT(previousSlide()));
 }
 
+// Connect Actions
+void Main::setupConnectActions()
+{
+    QMenu *connectMenu = menuBar()->addMenu(tr("&Connect"));
+    QString tag = tr("Connect", "Shortcuts");
+
+    QAction *a;
+
+    a = new QAction( tr("Get Confluence user data", "Connect action"), this);
+    a->setShortcut(Qt::SHIFT + Qt::Key_C);
+    connectMenu->addAction(a);
+    switchboard.addSwitch ("confluenceUser", shortcutScope, a, tag);
+    connect(a, SIGNAL(triggered()), this, SLOT(getConfluenceUser()));
+    actionConnectGetConfluenceUser = a;
+
+    connectMenu->addAction(actionGetJiraDataSubtree);
+    connectMenu->addAction(actionGetConfluencePageName);
+
+    connectMenu->addSeparator();
+
+    connectMenu->addAction(actionSettingsJIRA);
+    connectMenu->addAction(actionSettingsConfluence);
+}
+
 // Mode Actions
 void Main::setupModeActions()
 {
@@ -2914,11 +2937,13 @@ void Main::setupSettingsActions()
                     this);
     connect(a, SIGNAL(triggered()), this, SLOT(settingsConfluence()));
     settingsMenu->addAction(a);
+    actionSettingsConfluence = a;
 
     a = new QAction(tr("JIRA Credentials", "Settings action") + "...",
                     this);
     connect(a, SIGNAL(triggered()), this, SLOT(settingsJIRA()));
     settingsMenu->addAction(a);
+    actionSettingsJIRA = a;
 
     a = new QAction(tr("Set path for macros", "Settings action") + "...", this);
     connect(a, SIGNAL(triggered()), this, SLOT(settingsMacroPath()));
@@ -4630,6 +4655,55 @@ void Main::setHeadingConfluencePageName()
     VymModel *m = currentModel();
     if (m)
         m->setHeadingConfluencePageName();
+}
+
+void Main::getConfluenceUser()
+{
+    VymModel *m = currentModel();
+    if (m) {
+        BranchItem *selbi = m->getSelectedBranch();
+        if (selbi) {
+            ConfluenceUserDialog dia;
+            dia.exec();
+            if (dia.result() > 0) {
+                BranchItem *bi = m->addNewBranch();
+                if (!bi) return;
+                if (!m->select(bi)) return;
+                selbi = m->getSelectedBranch();
+
+                ConfluenceUser user = dia.getSelectedUser();
+                m->setHeading(user.getDisplayName());
+                m->setURL(
+                    QString("<ac:link> <ri:user ri:userkey=\"%1\"/></ac:link>")
+                        .arg(user.getUserKey()));
+
+                AttributeItem *ai;
+
+                ai = new AttributeItem();
+                ai->setKey("ConfluenceUser.displayName");
+                ai->setValue(user.getDisplayName());
+                m->setAttribute(selbi, ai);
+
+                ai = new AttributeItem();
+                ai->setKey("ConfluenceUser.userKey");
+                ai->setValue(user.getUserKey());
+                m->setAttribute(selbi, ai);
+
+                ai = new AttributeItem();
+                ai->setKey("ConfluenceUser.userName");
+                ai->setValue(user.getUserName());
+                m->setAttribute(selbi, ai);
+
+                ai = new AttributeItem();
+                ai->setKey("ConfluenceUser.url");
+                ai->setValue(user.getURL());
+                m->setAttribute(selbi, ai);
+                m->setURL(user.getURL(), false);
+
+                m->selectParent();
+            }
+        }
+    }
 }
 
 void Main::editHeading()
@@ -6526,41 +6600,6 @@ void Main::testFunction2()
 {
     VymModel *m = currentModel();
     if (m) {
-        BranchItem *selbi = m->getSelectedBranch();
-        if (selbi) {
-            ConfluenceUserDialog dia;
-            dia.exec();
-            if (dia.result() > 0) {
-                ConfluenceUser user = dia.getSelectedUser();
-                m->setHeading(user.getDisplayName());
-                m->setURL(
-                    QString("<ac:link> <ri:user ri:userkey=\"%1\"/></ac:link>")
-                        .arg(user.getUserKey()));
-
-                AttributeItem *ai;
-
-                ai = new AttributeItem();
-                ai->setKey("ConfluenceUser.displayName");
-                ai->setValue(user.getDisplayName());
-                m->setAttribute(selbi, ai);
-
-                ai = new AttributeItem();
-                ai->setKey("ConfluenceUser.userKey");
-                ai->setValue(user.getUserKey());
-                m->setAttribute(selbi, ai);
-
-                ai = new AttributeItem();
-                ai->setKey("ConfluenceUser.userName");
-                ai->setValue(user.getUserName());
-                m->setAttribute(selbi, ai);
-
-                ai = new AttributeItem();
-                ai->setKey("ConfluenceUser.url");
-                ai->setValue(user.getURL());
-                m->setAttribute(selbi, ai);
-                m->setURL(user.getURL(), false);
-            }
-        }
     }
 }
 

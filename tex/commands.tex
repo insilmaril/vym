@@ -83,6 +83,11 @@
 
 \item branchCount\\
 \begin{tabular}{rl}
+  Selection: & Any\\
+\end{tabular}
+
+\item centerCount\\
+\begin{tabular}{rl}
   Selection: & BranchLike\\
 \end{tabular}
 
@@ -137,124 +142,11 @@
        Optional: &  yes\\
 \end{tabular}
 
-\item delete\\
-\begin{tabular}{rl}
-  Selection: & TreeItem\\
-\end{tabular}
-
-\item deleteChildren\\
-\begin{tabular}{rl}
-  Selection: & Branch\\
-\end{tabular}
-
-\item deleteKeepChildren\\
-\begin{tabular}{rl}
-  Selection: & Branch\\
-\end{tabular}
-
-\item deleteSlide\\
+\item exportMap\\
 \begin{tabular}{rl}
   Selection: & Any\\
    Parameter: &  0:\\
-        Comment: & Index of slide to delete\\
-           Type: & Int\\
-       Optional: &  No\\
-\end{tabular}
-
-\item exportAO\\
-\begin{tabular}{rl}
-  Selection: & Any\\
-   Parameter: &  0:\\
-        Comment: & Filename for export\\
-           Type: & String\\
-       Optional: &  No\\
-\end{tabular}
-
-\item exportASCII\\
-\begin{tabular}{rl}
-  Selection: & Any\\
-   Parameter: &  0:\\
-        Comment: & Filename for export\\
-           Type: & String\\
-       Optional: &  No\\
-\end{tabular}
-
-\item exportHTML\\
-\begin{tabular}{rl}
-  Selection: & Any\\
-   Parameter: &  0:\\
-        Comment: & Filename for export\\
-           Type: & String\\
-       Optional: &  No\\
-\end{tabular}
-
-\item exportImage\\
-\begin{tabular}{rl}
-  Selection: & Any\\
-   Parameter: &  0:\\
-        Comment: & Filename for export\\
-           Type: & String\\
-       Optional: &  No\\
-   Parameter: &  1:\\
-        Comment: & Image format\\
-           Type: & String\\
-       Optional: &  yes\\
-\end{tabular}
-
-\item exportLaTeX\\
-\begin{tabular}{rl}
-  Selection: & Any\\
-   Parameter: &  0:\\
-        Comment: & Filename for export\\
-           Type: & String\\
-       Optional: &  No\\
-\end{tabular}
-
-\item exportImpress\\
-\begin{tabular}{rl}
-  Selection: & Any\\
-   Parameter: &  0:\\
-        Comment: & Filename for export\\
-           Type: & String\\
-       Optional: &  No\\
-   Parameter: &  1:\\
-        Comment: & Configuration file for export\\
-           Type: & String\\
-       Optional: &  No\\
-\end{tabular}
-
-\item exportPDF\\
-\begin{tabular}{rl}
-  Selection: & Any\\
-   Parameter: &  0:\\
-        Comment: & Filename for export\\
-           Type: & String\\
-       Optional: &  No\\
-\end{tabular}
-
-\item exportPDF\\
-\begin{tabular}{rl}
-  Selection: & Any\\
-   Parameter: &  0:\\
-        Comment: & Filename for export\\
-           Type: & String\\
-       Optional: &  No\\
-\end{tabular}
-
-\item exportSVG\\
-\begin{tabular}{rl}
-  Selection: & Any\\
-   Parameter: &  0:\\
-        Comment: & Filename for export\\
-           Type: & String\\
-       Optional: &  No\\
-\end{tabular}
-
-\item exportXML\\
-\begin{tabular}{rl}
-  Selection: & Any\\
-   Parameter: &  0:\\
-        Comment: & Filename for export\\
+        Comment: & Format (AO, ASCII, CONFLUENCE, CSV, HTML, Image, Impress, Last, LaTeX, Markdown, OrgMode, PDF, SVG, XML)\\
            Type: & String\\
        Optional: &  No\\
 \end{tabular}
@@ -269,19 +161,69 @@
   Selection: & Any\\
 \end{tabular}
 
+\item getFileName\\
+\begin{tabular}{rl}
+  Selection: & Any\\
+\end{tabular}
+
 \item getFrameType\\
 \begin{tabular}{rl}
   Selection: & Branch\\
 \end{tabular}
 
-\item getHeading\\
+\item getHeadingPlainText\\
 \begin{tabular}{rl}
   Selection: & TreeItem\\
 \end{tabular}
 
-\item getSelectString\\
+\item getHeadingXML\\
 \begin{tabular}{rl}
   Selection: & TreeItem\\
+\end{tabular}
+
+\item getMapAuthor\\
+\begin{tabular}{rl}
+  Selection: & Any\\
+\end{tabular}
+
+\item getMapComment\\
+\begin{tabular}{rl}
+  Selection: & Any\\
+\end{tabular}
+
+\item getMapTitle\\
+\begin{tabular}{rl}
+  Selection: & Any\\
+\end{tabular}
+
+\item getNotePlainText\\
+\begin{tabular}{rl}
+  Selection: & TreeItem\\
+\end{tabular}
+
+\item getNoteXML\\
+\begin{tabular}{rl}
+  Selection: & TreeItem\\
+\end{tabular}
+
+\item getSelectionString\\
+\begin{tabular}{rl}
+  Selection: & TreeItem\\
+\end{tabular}
+
+\item getTaskPriorityDelta\\
+\begin{tabular}{rl}
+  Selection: & Branch\\
+\end{tabular}
+
+\item getTaskSleep\\
+\begin{tabular}{rl}
+  Selection: & Branch\\
+\end{tabular}
+
+\item getTaskSleepDays\\
+\begin{tabular}{rl}
+  Selection: & Branch\\
 \end{tabular}
 
 \item getURL\\
@@ -296,17 +238,27 @@
 
 \item getXLinkColor\\
 \begin{tabular}{rl}
-  Selection: & XLinkItem\\
+  Selection: & XLink\\
 \end{tabular}
 
 \item getXLinkWidth\\
 \begin{tabular}{rl}
-  Selection: & XLinkItem\\
+  Selection: & XLink\\
 \end{tabular}
 
 \item getXLinkPenStyle\\
 \begin{tabular}{rl}
-  Selection: & XLinkItem\\
+  Selection: & XLink\\
+\end{tabular}
+
+\item getXLinkStyleBegin\\
+\begin{tabular}{rl}
+  Selection: & XLink\\
+\end{tabular}
+
+\item getXLinkStyleEnd\\
+\begin{tabular}{rl}
+  Selection: & XLink\\
 \end{tabular}
 
 \item hasActiveFlag\\
@@ -316,6 +268,21 @@
         Comment: & Name of flag\\
            Type: & String\\
        Optional: &  No\\
+\end{tabular}
+
+\item hasNote\\
+\begin{tabular}{rl}
+  Selection: & Branch\\
+\end{tabular}
+
+\item hasRichTextNote\\
+\begin{tabular}{rl}
+  Selection: & Branch\\
+\end{tabular}
+
+\item hasTask\\
+\begin{tabular}{rl}
+  Selection: & Branch\\
 \end{tabular}
 
 \item importDir\\
@@ -406,6 +373,15 @@
   Selection: & Branch\\
 \end{tabular}
 
+\item parseVymText\\
+\begin{tabular}{rl}
+  Selection: & Branch\\
+   Parameter: &  0:\\
+        Comment: & parse XML of VymText, e.g for Heading or VymNote\\
+           Type: & String\\
+       Optional: &  No\\
+\end{tabular}
+
 \item paste\\
 \begin{tabular}{rl}
   Selection: & Branch\\
@@ -435,6 +411,35 @@
         Comment: & Position y\\
            Type: & Double\\
        Optional: &  yes\\
+\end{tabular}
+
+\item remove\\
+\begin{tabular}{rl}
+  Selection: & TreeItem\\
+\end{tabular}
+
+\item removeChildren\\
+\begin{tabular}{rl}
+  Selection: & Branch\\
+\end{tabular}
+
+\item removeKeepChildren\\
+\begin{tabular}{rl}
+  Selection: & Branch\\
+\end{tabular}
+
+\item removeSlide\\
+\begin{tabular}{rl}
+  Selection: & Any\\
+   Parameter: &  0:\\
+        Comment: & Index of slide to remove\\
+           Type: & Int\\
+       Optional: &  No\\
+\end{tabular}
+
+\item repeatLastCommand\\
+\begin{tabular}{rl}
+  Selection: & Any\\
 \end{tabular}
 
 \item saveImage\\
@@ -473,6 +478,16 @@
        Optional: &  No\\
 \end{tabular}
 
+\item selectFirstBranch\\
+\begin{tabular}{rl}
+  Selection: & Branch\\
+\end{tabular}
+
+\item selectFirstChildBranch\\
+\begin{tabular}{rl}
+  Selection: & Branch\\
+\end{tabular}
+
 \item selectID\\
 \begin{tabular}{rl}
   Selection: & Any\\
@@ -487,6 +502,11 @@
   Selection: & Branch\\
 \end{tabular}
 
+\item selectLastChildBranch\\
+\begin{tabular}{rl}
+  Selection: & Branch\\
+\end{tabular}
+
 \item selectLastImage\\
 \begin{tabular}{rl}
   Selection: & Branch\\
@@ -497,11 +517,25 @@
   Selection: & Any\\
 \end{tabular}
 
-\item setFlag\\
+\item selectParent\\
+\begin{tabular}{rl}
+  Selection: & Branch\\
+\end{tabular}
+
+\item setFlagByName\\
 \begin{tabular}{rl}
   Selection: & TreeItem\\
    Parameter: &  0:\\
         Comment: & Name of flag\\
+           Type: & String\\
+       Optional: &  No\\
+\end{tabular}
+
+\item setTaskPriorityDelta\\
+\begin{tabular}{rl}
+  Selection: & Branch\\
+   Parameter: &  0:\\
+        Comment: & Manually add value to priority of task\\
            Type: & String\\
        Optional: &  No\\
 \end{tabular}
@@ -511,7 +545,7 @@
   Selection: & Branch\\
    Parameter: &  0:\\
         Comment: & Days to sleep\\
-           Type: & Int\\
+           Type: & String\\
        Optional: &  No\\
 \end{tabular}
 
@@ -569,7 +603,12 @@
        Optional: &  No\\
 \end{tabular}
 
-\item setHeading\\
+\item setHeadingConfluencePageName\\
+\begin{tabular}{rl}
+  Selection: & Branch\\
+\end{tabular}
+
+\item setHeadingPlainText\\
 \begin{tabular}{rl}
   Selection: & TreeItem\\
    Parameter: &  0:\\
@@ -641,6 +680,15 @@
        Optional: &  No\\
 \end{tabular}
 
+\item setMapBackgroundColor\\
+\begin{tabular}{rl}
+  Selection: & Any\\
+   Parameter: &  0:\\
+        Comment: & Color of map background\\
+           Type: & Color\\
+       Optional: &  No\\
+\end{tabular}
+
 \item setMapComment\\
 \begin{tabular}{rl}
   Selection: & Any\\
@@ -650,12 +698,12 @@
        Optional: &  No\\
 \end{tabular}
 
-\item setMapBackgroundColor\\
+\item setMapTitle\\
 \begin{tabular}{rl}
   Selection: & Any\\
    Parameter: &  0:\\
-        Comment: & Color of map background\\
-           Type: & Color\\
+        Comment: & \\
+           Type: & String\\
        Optional: &  No\\
 \end{tabular}
 
@@ -686,6 +734,15 @@
        Optional: &  No\\
 \end{tabular}
 
+\item setMapTitle\\
+\begin{tabular}{rl}
+  Selection: & Any\\
+   Parameter: &  0:\\
+        Comment: & \\
+           Type: & String\\
+       Optional: &  No\\
+\end{tabular}
+
 \item setMapZoom\\
 \begin{tabular}{rl}
   Selection: & Any\\
@@ -695,7 +752,7 @@
        Optional: &  No\\
 \end{tabular}
 
-\item setNote\\
+\item setNotePlainText\\
 \begin{tabular}{rl}
   Selection: & Branch\\
    Parameter: &  0:\\
@@ -704,15 +761,11 @@
        Optional: &  No\\
 \end{tabular}
 
-\item setScale\\
+\item setScaleFactor\\
 \begin{tabular}{rl}
   Selection: & Image\\
    Parameter: &  0:\\
-        Comment: & Scale image x\\
-           Type: & Double\\
-       Optional: &  No\\
-   Parameter: &  1:\\
-        Comment: & Scale image y\\
+        Comment: & Scale image by factor f\\
            Type: & Double\\
        Optional: &  No\\
 \end{tabular}
@@ -744,6 +797,51 @@
        Optional: &  No\\
 \end{tabular}
 
+\item setXLinkColor\\
+\begin{tabular}{rl}
+  Selection: & XLink\\
+   Parameter: &  0:\\
+        Comment: & Color of xlink\\
+           Type: & String\\
+       Optional: &  No\\
+\end{tabular}
+
+\item setXLinkStyle\\
+\begin{tabular}{rl}
+  Selection: & XLink\\
+   Parameter: &  0:\\
+        Comment: & Style of xlink\\
+           Type: & String\\
+       Optional: &  No\\
+\end{tabular}
+
+\item setXLinkStyleBegin\\
+\begin{tabular}{rl}
+  Selection: & XLink\\
+   Parameter: &  0:\\
+        Comment: & Style of xlink begin\\
+           Type: & String\\
+       Optional: &  No\\
+\end{tabular}
+
+\item setXLinkStyleEnd\\
+\begin{tabular}{rl}
+  Selection: & XLink\\
+   Parameter: &  0:\\
+        Comment: & Style of xlink end\\
+           Type: & String\\
+       Optional: &  No\\
+\end{tabular}
+
+\item setXLinkWidth\\
+\begin{tabular}{rl}
+  Selection: & XLink\\
+   Parameter: &  0:\\
+        Comment: & Width of xlink\\
+           Type: & Int\\
+       Optional: &  No\\
+\end{tabular}
+
 \item sleep\\
 \begin{tabular}{rl}
   Selection: & Any\\
@@ -762,7 +860,16 @@
        Optional: &  yes\\
 \end{tabular}
 
-\item toggleFlag\\
+\item toggleFlagByUid\\
+\begin{tabular}{rl}
+  Selection: & Branch\\
+   Parameter: &  0:\\
+        Comment: & Uid of flag to toggle\\
+           Type: & String\\
+       Optional: &  No\\
+\end{tabular}
+
+\item toggleFlagByName\\
 \begin{tabular}{rl}
   Selection: & Branch\\
    Parameter: &  0:\\
@@ -806,12 +913,74 @@
   Selection: & Branch\\
 \end{tabular}
 
-\item unsetFlag\\
+\item unselectAll\\
+\begin{tabular}{rl}
+  Selection: & Any\\
+\end{tabular}
+
+\item unsetFlagByName\\
 \begin{tabular}{rl}
   Selection: & Branch\\
    Parameter: &  0:\\
         Comment: & Name of flag to unset\\
            Type: & String\\
        Optional: &  No\\
+\end{tabular}
+
+\item toggleFlag\\
+\begin{tabular}{rl}
+  Selection: & Branch\\
+   Parameter: &  0:\\
+        Comment: & Name of flag to toggle\\
+           Type: & String\\
+       Optional: &  No\\
+\end{tabular}
+
+\item clearConsole\\
+\begin{tabular}{rl}
+  Selection: & Any\\
+\end{tabular}
+
+\item currentMap\\
+\begin{tabular}{rl}
+  Selection: & Any\\
+\end{tabular}
+
+\item currentMapIndex\\
+\begin{tabular}{rl}
+  Selection: & Any\\
+\end{tabular}
+
+\item loadMap\\
+\begin{tabular}{rl}
+  Selection: & Any\\
+   Parameter: &  0:\\
+        Comment: & Path to map\\
+           Type: & String\\
+       Optional: &  No\\
+\end{tabular}
+
+\item mapCount\\
+\begin{tabular}{rl}
+  Selection: & Any\\
+\end{tabular}
+
+\item selectMap\\
+\begin{tabular}{rl}
+  Selection: & Any\\
+   Parameter: &  0:\\
+        Comment: & Index of map\\
+           Type: & Int\\
+       Optional: &  No\\
+\end{tabular}
+
+\item toggleTreeEditor\\
+\begin{tabular}{rl}
+  Selection: & Any\\
+\end{tabular}
+
+\item version\\
+\begin{tabular}{rl}
+  Selection: & Any\\
 \end{tabular}
 

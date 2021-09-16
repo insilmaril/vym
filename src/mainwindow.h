@@ -72,6 +72,7 @@ class Main : public QMainWindow {
     void setupSelectActions();
     void setupFormatActions();
     void setupViewActions();
+    void setupConnectActions();
     void setupModeActions();
     void setupWindowActions();
     void setupFlagActions();
@@ -181,6 +182,7 @@ class Main : public QMainWindow {
     void editHeading2URL();
     void getJiraDataSubtree();
     void setHeadingConfluencePageName();
+    void getConfluenceUser();
     void openVymLinks(const QStringList &, bool background = false);
     void editVymLink();
     void editOpenMultipleVymLinks();
@@ -574,6 +576,7 @@ class Main : public QMainWindow {
     QAction *actionViewToggleSmoothPixmapTransform;
     QAction *actionViewCenter;
 
+    QAction *actionConnectGetConfluenceUser;
     QAction *actionSettingsAutoSelectNewBranch;
     QAction *actionSettingsAutoSelectText;
     QAction *actionSettingsUseFlagGroups;
@@ -586,6 +589,8 @@ class Main : public QMainWindow {
     QAction *actionSettingsWriteBackupFile;
     QAction *actionSettingsToggleDownloads;
     QAction *actionSettingsUseAnimation;
+    QAction *actionSettingsJIRA;
+    QAction *actionSettingsConfluence;
 };
 
 #endif

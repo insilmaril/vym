@@ -209,7 +209,7 @@ int main(int argc, char *argv[])
         "--recover    recover     Delete lockfiles during initial loading of "
         "files\n"
         "-s           shortcuts   Show Keyboard shortcuts on start\n"
-        "--sl         LaTeX       Show Keyboard shortcuts in LaTeX format on "
+        "--cl         LaTeX       Show Keyboard shortcuts in LaTeX format on "
         "start\n"
         "-t           testmode    Test mode, e.g. no autosave and changing of "
         "its setting\n"

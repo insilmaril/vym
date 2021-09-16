@@ -4753,7 +4753,6 @@ bool VymModel::exportLastAvailable(QString &description, QString &command,
                       .toString();
     dest = settings.localValue(filePath, "/export/last/displayedDestination", "")
                .toString();
-    qDebug() << "VM::Dest:" << dest;
     if (!command.isEmpty() && command.contains("exportMap"))
         return true;
     else

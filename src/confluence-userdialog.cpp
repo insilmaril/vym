@@ -1,5 +1,6 @@
 #include "confluence-userdialog.h"
 
+#include <QKeyEvent>
 #include <QRegExp>
 
 #include "confluence-agent.h"
@@ -20,6 +21,16 @@ ConfluenceUserDialog::ConfluenceUserDialog(QWidget *parent) : QDialog(parent)
             SLOT(itemSelected(QListWidgetItem *)));
 
     currentRow = -1;
+}
+
+void ConfluenceUserDialog::keyPressEvent(QKeyEvent *e)
+{
+    if (ui.lineEdit->hasFocus() && e->key() == Qt::Key_Down) 
+    {
+        ui.userList->setCurrentRow(0, QItemSelectionModel::Select);
+        ui.userList->setFocus();
+    }
+    QDialog::keyPressEvent(e);
 }
 
 int ConfluenceUserDialog::exec()
