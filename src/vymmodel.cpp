@@ -3877,25 +3877,34 @@ void VymModel::toggleFlagByUid(
     // FIXME-2  saveState not correct when toggling flags in groups
     // (previous flags not saved!)
 {
-    BranchItem *bi = getSelectedBranch();
+    QStringList itemList = getSelectedUUIDs();
 
-    if (bi) {
-        Flag *f = bi->toggleFlagByUid(uid, useGroups);
+    if (itemList.count() > 0) {
+        QString fn;
+        TreeItem *ti;
+        BranchItem *bi;
+        Flag *f;
+        foreach (QString id, itemList) {
+            ti = findUuid(QUuid(id));
+            if (ti && ti->isBranchLikeType()) {
+                    bi = (BranchItem*)ti;
+                Flag *f = bi->toggleFlagByUid(uid, useGroups);
 
-        if (f) {
-            QString u = "toggleFlagByUid";
-            QString name = f->getName();
-            saveState(bi, QString("%1 (\"%2\")").arg(u).arg(uid.toString()), bi,
-                      QString("%1 (\"%2\")").arg(u).arg(uid.toString()),
-                      QString("Toggling flag \"%1\" of %2")
-                          .arg(name)
-                          .arg(getObjectName(bi)));
-            emitDataChanged(bi);
-            reposition();
+                if (f) {
+                    QString u = "toggleFlagByUid";
+                    QString name = f->getName();
+                    saveState(bi, QString("%1 (\"%2\")").arg(u).arg(uid.toString()), bi,
+                              QString("%1 (\"%2\")").arg(u).arg(uid.toString()),
+                              QString("Toggling flag \"%1\" of %2")
+                                  .arg(name)
+                                  .arg(getObjectName(bi)));
+                    emitDataChanged(bi);
+                } else
+                    qWarning() << "VymModel::toggleFlag failed for flag with uid "
+                               << uid;
+            }
         }
-        else
-            qWarning() << "VymModel::toggleFlag failed for flag with uid "
-                       << uid;
+        reposition();
     }
 }
 
@@ -5650,6 +5659,12 @@ bool VymModel::selectToggle(TreeItem *ti)
         return true;
     }
     return false;
+}
+
+bool VymModel::selectToggle(const QString &selectString)
+{
+    TreeItem *ti = findBySelectString(selectString);
+    return selectToggle(ti);
 }
 
 bool VymModel::select(TreeItem *ti)

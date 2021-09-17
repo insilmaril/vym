@@ -114,6 +114,7 @@ class VymModelWrapper : public VymScriptContext {
     bool selectLastImage();
     bool selectParent();
     bool selectLatestAdded();
+    bool selectToggle(const QString &selectString);
     void setFlagByName(const QString &s);
     void setHeadingConfluencePageName();
     void setHeadingPlainText(const QString &s);

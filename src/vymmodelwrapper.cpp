@@ -808,6 +808,15 @@ bool VymModelWrapper::selectLatestAdded()
     return setResult(r);
 }
 
+bool VymModelWrapper::selectToggle(const QString &selectString)
+{
+    bool r = model->selectToggle(selectString);
+    if (!r)
+        logError(context(), QScriptContext::UnknownError,
+                 "Couldn't toggle item with select string " + selectString);
+    return setResult(r);
+}
+
 void VymModelWrapper::setFlagByName(const QString &s)
 {
     BranchItem *selbi = getSelectedBranch();
