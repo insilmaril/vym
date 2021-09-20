@@ -37,6 +37,7 @@ using namespace std;
 #include "headingeditor.h"
 #include "historywindow.h"
 #include "imports.h"
+#include "jira-agent.h"
 #include "jira-settings-dialog.h"
 #include "lineeditdialog.h"
 #include "macros.h"
@@ -1147,6 +1148,7 @@ void Main::setupFileActions()
     connect(a, SIGNAL(triggered()), this, SLOT(fileExportConfluence()));
     fileExportMenu->addAction(a);
     actionListFiles.append(a);
+    actionFileExportConfluence = a;
 
     a = new QAction( tr("Firefox Bookmarks", "File export menu") + 
                         tr("(still experimental)"),
@@ -6145,6 +6147,23 @@ void Main::updateActions()
     actionViewToggleScriptEditor->setChecked(
         scriptEditor->parentWidget()->isVisible());
 
+    if (JiraAgent::available())
+        actionGetJiraDataSubtree->setEnabled(true);
+    else
+        actionGetJiraDataSubtree->setEnabled(false);
+
+    if (ConfluenceAgent::available())
+    {
+        actionGetConfluencePageName->setEnabled(true);
+        actionConnectGetConfluenceUser->setEnabled(true);
+        actionFileExportConfluence->setEnabled(true);
+    } else
+    {
+        actionGetConfluencePageName->setEnabled(false);
+        actionConnectGetConfluenceUser->setEnabled(false);
+        actionFileExportConfluence->setEnabled(false);
+    }
+
     VymView *vv = currentView();
     if (vv) {
         actionViewToggleTreeEditor->setChecked(vv->treeEditorIsVisible());
@@ -6348,6 +6367,10 @@ void Main::updateActions()
                 else {
                     actionOpenURL->setEnabled(true);
                     actionOpenURLTab->setEnabled(true);
+                    if (ConfluenceAgent::available())
+                        actionGetConfluencePageName->setEnabled(true);
+                    else
+                        actionGetConfluencePageName->setEnabled(false);
 
                     // FIXME-1  actions for Confluence and JIRA are currently not used
                     // Check in attributes, if this branch is related to JIRA

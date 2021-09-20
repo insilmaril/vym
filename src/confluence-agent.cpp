@@ -20,10 +20,10 @@ bool ConfluenceAgent::available()
 { 
     if (!QSslSocket::supportsSsl())
         return false;
-    if ( !settings.value("/confluence/username", "").toString().isEmpty())
+    if ( settings.value("/confluence/username", "").toString().isEmpty())
         return false;
 
-    if ( !settings.value("/confluence/url", "").toString().isEmpty())
+    if ( settings.value("/confluence/url", "").toString().isEmpty())
         return false;
 
     return true;

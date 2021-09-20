@@ -444,6 +444,7 @@ class Main : public QMainWindow {
     QAction *actionFilePrint;
     QAction *actionMapProperties;
     QAction *actionFileExportLast;
+    QAction *actionFileExportConfluence;
     QAction *actionUndo;
     QAction *actionRedo;
     QAction *actionCopy;
