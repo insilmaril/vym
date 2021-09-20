@@ -1,6 +1,7 @@
 #include "confluence-agent.h"
 
 #include <QMessageBox>
+#include <QSslSocket>
 
 #include "branchitem.h"
 #include "confluence-user.h"
@@ -17,6 +18,8 @@ extern bool debug;
 
 bool ConfluenceAgent::available() 
 { 
+    if (!QSslSocket::supportsSsl())
+        return false;
     if ( !settings.value("/confluence/username", "").toString().isEmpty())
         return false;
 

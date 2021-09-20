@@ -5837,6 +5837,15 @@ void Main::settingsToggleDownloads() { downloadsEnabled(true); }
 
 bool Main::settingsConfluence()
 {
+    if (!QSslSocket::supportsSsl())
+    {
+        QMessageBox::warning(
+            0, tr("Warning"),
+            tr("No SSL support available for this build of vym"));
+        debugInfo();
+        return false;
+    }
+
     CredentialsDialog dia;
     dia.setURL(
         settings.value("/confluence/url", "Confluence base URL").toString());
@@ -5866,6 +5875,15 @@ bool Main::settingsConfluence()
 
 bool Main::settingsJIRA()
 {
+    if (!QSslSocket::supportsSsl())
+    {
+        QMessageBox::warning(
+            0, tr("Warning"),
+            tr("No SSL support available for this build of vym"));
+        debugInfo();
+        return false;
+    }
+
     JiraSettingsDialog dia;
     dia.exec();
 
