@@ -21,7 +21,7 @@ bool JiraAgent::available()
         return false;
     if ( settings.value("/jira/username", "").toString().isEmpty())
         return false;
-    if ( settings.value("/jira/servers/size", 0) < 1)
+    if ( settings.value("/jira/servers/size", 0).toInt() < 1)
         return false;
 
     return true;
@@ -144,8 +144,6 @@ void JiraAgent::continueJob()
 
     jobStep++;
 
-    VymModel *model;
-
     // qDebug() << "JA::contJob " << jobType << " Step: " << jobStep << "TicketID: " << ticketID;
 
     switch(jobType) {
@@ -232,7 +230,7 @@ void JiraAgent::ticketReceived(QNetworkReply *reply)
 
         qWarning() << "JiraAgent::ticketRReveived reply error";
         qWarning() << "Error: " << reply->error();
-        vout << "reply: " << endl << r << endl;
+        vout << "reply: " << Qt::endl << r << Qt::endl;
         finishJob();
         return;
     }

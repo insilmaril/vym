@@ -1678,7 +1678,7 @@ void Main::setupEditActions()
     switchboard.addSwitch("mapUpdateSubTreeFromJira", shortcutScope, a, tag);
     addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(getJiraDataSubtree()));
-    actionListBranches.append(a);
+    //actionListBranches.append(a);
     actionGetJiraDataSubtree = a;
 
     a = new QAction(tr("Get page name from Confluence", "Edit menu"),
