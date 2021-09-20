@@ -17,7 +17,7 @@ ConfluenceUserDialog::ConfluenceUserDialog(QWidget *parent) : QDialog(parent)
 
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
-    connect(ui.userList, SIGNAL(itemPressed(QListWidgetItem *)), this,
+    connect(ui.userListWidget, SIGNAL(itemPressed(QListWidgetItem *)), this,
             SLOT(itemSelected(QListWidgetItem *)));
 
     currentRow = -1;
@@ -27,8 +27,8 @@ void ConfluenceUserDialog::keyPressEvent(QKeyEvent *e)
 {
     if (ui.lineEdit->hasFocus() && e->key() == Qt::Key_Down) 
     {
-        ui.userList->setCurrentRow(0, QItemSelectionModel::Select);
-        ui.userList->setFocus();
+        ui.userListWidget->setCurrentRow(0, QItemSelectionModel::Select);
+        ui.userListWidget->setFocus();
     }
     QDialog::keyPressEvent(e);
 }
@@ -42,9 +42,9 @@ int ConfluenceUserDialog::exec()
 
 ConfluenceUser ConfluenceUserDialog::getSelectedUser()
 {
-    if (userList.length() > 0 && currentRow < userList.length() &&
-        currentRow > -1)
-        return userList.at(currentRow);
+    if (ui.userListWidget->count() > 0 && ui.userListWidget->currentRow() < ui.userListWidget->count() &&
+        ui.userListWidget->currentRow() > -1)
+        return userList.at(ui.userListWidget->currentRow());
     else
         return ConfluenceUser();
 }
@@ -61,19 +61,19 @@ void ConfluenceUserDialog::lineEditChanged()
 
 void ConfluenceUserDialog::itemSelected(QListWidgetItem *item)
 {
-    currentRow = ui.userList->row(item);
+    currentRow = ui.userListWidget->row(item);
     accept();
 }
 
 void ConfluenceUserDialog::updateResultsList(QList <ConfluenceUser> results)
 {
-    ui.userList->clear();
+    ui.userListWidget->clear();
     userList.clear();
     currentRow = -1;
 
     foreach (ConfluenceUser u, results) {
-        // qDebug() << u.getTitle() << u.getDisplayName() << u.getUserName(); 
+        //qDebug() << u.getTitle() << u.getDisplayName() << u.getUserName(); 
         userList << u;
-        new QListWidgetItem(u.getDisplayName() + " (" + u.getUserName() + ")", ui.userList);
+        new QListWidgetItem(u.getDisplayName() + " (" + u.getUserName() + ")", ui.userListWidget);
     }
 }
