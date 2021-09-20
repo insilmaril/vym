@@ -1678,7 +1678,6 @@ void Main::setupEditActions()
     switchboard.addSwitch("mapUpdateSubTreeFromJira", shortcutScope, a, tag);
     addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(getJiraDataSubtree()));
-    //actionListBranches.append(a);
     actionGetJiraDataSubtree = a;
 
     a = new QAction(tr("Get page name from Confluence", "Edit menu"),
@@ -2417,8 +2416,8 @@ void Main::setupConnectActions()
     connect(a, SIGNAL(triggered()), this, SLOT(getConfluenceUser()));
     actionConnectGetConfluenceUser = a;
 
-    connectMenu->addAction(actionGetJiraDataSubtree);
     connectMenu->addAction(actionGetConfluencePageName);
+    connectMenu->addAction(actionGetJiraDataSubtree);
 
     connectMenu->addSeparator();
 
@@ -4674,10 +4673,6 @@ void Main::getConfluenceUser()
                 selbi = m->getSelectedBranch();
 
                 ConfluenceUser user = dia.getSelectedUser();
-                m->setHeading(user.getDisplayName());
-                m->setURL(
-                    QString("<ac:link> <ri:user ri:userkey=\"%1\"/></ac:link>")
-                        .arg(user.getUserKey()));
 
                 AttributeItem *ai;
 
@@ -4700,7 +4695,9 @@ void Main::getConfluenceUser()
                 ai->setKey("ConfluenceUser.url");
                 ai->setValue(user.getURL());
                 m->setAttribute(selbi, ai);
+
                 m->setURL(user.getURL(), false);
+                m->setHeading(user.getDisplayName());
 
                 m->selectParent();
             }

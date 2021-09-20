@@ -18,7 +18,7 @@
     <widget class="QLineEdit" name="lineEdit"/>
    </item>
    <item>
-    <widget class="QListWidget" name="userList"/>
+    <widget class="QListWidget" name="userListWidget"/>
    </item>
    <item>
     <widget class="QDialogButtonBox" name="buttonBox">
