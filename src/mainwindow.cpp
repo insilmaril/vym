@@ -6854,6 +6854,7 @@ void Main::downloadReleaseNotesFinished()
         }
     }
     else {
+        statusMessage("Downloading release notes failed.");
         if (debug) {
             qDebug() << "Main::downloadReleaseNotesFinished ";
             qDebug() << "  result: failed";
