@@ -364,6 +364,12 @@ class Main : public QMainWindow {
     void callMacro();
     void downloadReleaseNotesFinished();
 
+  private:
+    bool checkUpdatesAfterReleaseNotes;
+
+  public:
+    void checkReleaseNotesAndUpdates();
+
   public slots:
     void checkReleaseNotes();
     bool downloadsEnabled(bool userTriggered = false);

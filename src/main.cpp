@@ -436,11 +436,8 @@ int main(int argc, char *argv[])
         m.show();
     }
 
-    // Show release notes, if not already done
-    m.checkReleaseNotes();
-
-    // Check for updates
-    m.checkUpdates();
+    // Show release notes and afterwards updates
+    m.checkReleaseNotesAndUpdates();
 
     if (options.isOn("shortcuts"))
         switchboard
