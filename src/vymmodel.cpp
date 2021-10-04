@@ -4145,7 +4145,23 @@ void VymModel::updateJiraData(QJsonObject jsobj)
         }
 
         setHeadingPlainText(keyName + ": " + summary, bi);
-        
+
+        AttributeItem *ai;
+
+        ai = new AttributeItem("JIRA.assignee", assignee);
+        setAttribute(bi, ai);
+
+        ai = new AttributeItem("JIRA.reporter", reporter);
+        setAttribute(bi, ai);
+
+        ai = new AttributeItem("JIRA.resolution", resolution);
+        setAttribute(bi, ai);
+
+        ai = new AttributeItem("JIRA.status", status);
+        setAttribute(bi, ai);
+
+        ai = new AttributeItem("JIRA.components", components);
+        setAttribute(bi, ai);
     }
 
     /* Pretty print JIRA ticket

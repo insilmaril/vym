@@ -13,6 +13,16 @@ AttributeItem::AttributeItem(TreeItem *parent)
     attrType = Undefined;
 }
 
+AttributeItem::AttributeItem(const QString &k, const QString &v, TreeItem *parent)
+    : BranchItem(parent)
+{
+    //qDebug() << "Constr. AttrItem (k, v, parent)";
+    TreeItem::setType(Attribute);
+    internal = false;
+
+    set(k, v);
+}
+
 AttributeItem::~AttributeItem() {
     //qDebug() << "Destr. AttrItem";
 }
@@ -24,7 +34,7 @@ void AttributeItem::copy(AttributeItem *other)
     attrType = other->attrType;
 }
 
-void AttributeItem::set(const QString &k, const QString &v, const Type &)
+void AttributeItem::set(const QString &k, const QString &v)
 {
     key = k;
     value = QVariant(v);
