@@ -20,9 +20,10 @@ class AttributeItem : public BranchItem {
     };
 
     AttributeItem(TreeItem *parent = nullptr);
+    AttributeItem(const QString &k, const QString &v, TreeItem *parent = nullptr);
     virtual ~AttributeItem();
     void copy(AttributeItem *other);
-    void set(const QString &k, const QString &v, const Type &t);
+    void set(const QString &k, const QString &v);
     void get(QString &k, QString &v, Type &t);
     void setKey(const QString &k);
     QString getKey();

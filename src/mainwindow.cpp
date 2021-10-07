@@ -383,6 +383,11 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
 
     updateGeometry();
 
+    // After startup, schedule looking for updates AFTER
+    // release notes have been downloaded
+    // (avoid race condition with simultanously receiving cookies)
+    checkUpdatesAfterReleaseNotes = true;
+
 #if defined(VYM_DBUS)
     // Announce myself on DBUS
     new AdaptorVym(this); // Created and not deleted as documented in Qt
@@ -6854,6 +6859,7 @@ void Main::downloadReleaseNotesFinished()
         }
     }
     else {
+        statusMessage("Downloading release notes failed.");
         if (debug) {
             qDebug() << "Main::downloadReleaseNotesFinished ";
             qDebug() << "  result: failed";
@@ -6861,9 +6867,24 @@ void Main::downloadReleaseNotesFinished()
         }
     }
     agent->deleteLater();
+
+    if (checkUpdatesAfterReleaseNotes)
+    {
+        // After startup we want to check also for updates, but only after
+        // releasenotes are there (and we have a cookie already)
+        checkUpdatesAfterReleaseNotes = false;
+        checkUpdates();
+    }
 }
 
-void Main::checkReleaseNotes()
+void Main::checkReleaseNotesAndUpdates ()
+{
+    // Called once after startup
+    // checkUpdatesAfterReleaseNotes is already true then
+    checkReleaseNotes();
+}
+
+void Main::checkReleaseNotes ()
 {
     bool userTriggered;
     if (qobject_cast<QAction *>(sender()))
@@ -6877,6 +6898,7 @@ void Main::checkReleaseNotes()
                 settings.value("/downloads/releaseNotes/shownVersion", "0.0.1")
                     .toString())) {
             QUrl releaseNotesUrl(
+                // Local URL for testing only
                 // QString("http://localhost/release-notes.php?vymVersion=%1") /
                 QString("http://www.insilmaril.de/vym/"
                         "release-notes.php?vymVersion=%1&codeQuality=%2")
