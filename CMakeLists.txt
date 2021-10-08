@@ -33,6 +33,23 @@ if (UNIX)
     endif()
 endif()
 
+if(WIN32)
+    set(OPENSSL_ROOT_DIR "C:/OpenSSL-Win64")
+    find_package(OpenSSL REQUIRED)
+
+    if( OPENSSL_FOUND )
+        include_directories(${OPENSSL_INCLUDE_DIRS})
+        link_directories(${OPENSSL_LIBRARIES})
+        message(STATUS "Using OpenSSL version: ${OPENSSL_VERSION}")
+    else()
+        message(STATUS "No openSSL found?!")
+        # Error; with REQUIRED, pkg_search_module() will throw an error by it's own
+    endif()
+
+    #target_link_libraries(${YOUR_TARGET_HERE} ${OPENSSL_LIBRARIES})
+    #target_link_libraries(project_name /path/of/libssl.so /path/of/libcrypto.so)
+ endif()
+
 find_package(Qt5 COMPONENTS ${QtComponents} REQUIRED)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
