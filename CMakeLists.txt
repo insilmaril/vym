@@ -67,8 +67,8 @@ include_directories(
     ${CMAKE_SOURCE_DIR}
 )
 
+# Source files
 file(GLOB_RECURSE VymSources RELATIVE ${CMAKE_SOURCE_DIR} "src/*.cpp")
-message(STATUS "${VymSources}")
 
 if(WIN32)
     list(APPEND VymSources
@@ -78,32 +78,16 @@ if(WIN32)
     ADD_COMPILE_DEFINITIONS(_USE_MATH_DEFINES)
 endif()
 
+
+
 if(DBus1_FOUND)
-    list(APPEND VymSources
-        src/adaptormodel.cpp
-        src/adaptorvym.cpp
-    )
+    # list(APPEND VymSources src/adaptormodel.cpp src/adaptorvym.cpp)
     ADD_COMPILE_DEFINITIONS(VYM_DBUS)
 endif()
 
-set(VymTranslationSources
-    lang/vym.de_DE.ts
-    lang/vym.el.ts
-    lang/vym.en.ts
-    lang/vym.es.ts
-    lang/vym.fr.ts
-    lang/vym.hr_HR.ts
-    lang/vym.ia.ts
-    lang/vym.it.ts
-    lang/vym.ja.ts
-    lang/vym.pt_BR.ts
-    lang/vym.ru.ts
-    lang/vym.sv.ts
-    lang/vym.zh_CN.ts
-    lang/vym.zh_TW.ts
-    lang/vym.cs_CZ.ts
-)
+# Translations
 
+file(GLOB_RECURSE VymTranslationSources RELATIVE ${CMAKE_SOURCE_DIR} "lang/*.ts")
 file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/lang")
 set_source_files_properties(${VymTranslationSources} PROPERTIES OUTPUT_LOCATION lang)
 QT5_ADD_TRANSLATION(VymTranslations ${VymTranslationSources})
