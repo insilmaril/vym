@@ -4669,15 +4669,15 @@ void Main::getConfluenceUser()
     if (m) {
         BranchItem *selbi = m->getSelectedBranch();
         if (selbi) {
-            ConfluenceUserDialog dia;
-            dia.exec();
-            if (dia.result() > 0) {
+            ConfluenceUserDialog *dia = new ConfluenceUserDialog;
+            centerDialog(dia);
+            if (dia->exec() > 0) {
                 BranchItem *bi = m->addNewBranch();
                 if (!bi) return;
                 if (!m->select(bi)) return;
                 selbi = m->getSelectedBranch();
 
-                ConfluenceUser user = dia.getSelectedUser();
+                ConfluenceUser user = dia->getSelectedUser();
 
                 AttributeItem *ai;
 
@@ -4706,6 +4706,10 @@ void Main::getConfluenceUser()
 
                 m->selectParent();
             }
+            dia->clearFocus();
+            delete dia;
+            m->getMapEditor()->activateWindow();
+            m->getMapEditor()->setFocus();
         }
     }
 }

@@ -29,13 +29,17 @@ void ConfluenceUserDialog::keyPressEvent(QKeyEvent *e)
     {
         ui.userListWidget->setCurrentRow(0, QItemSelectionModel::Select);
         ui.userListWidget->setFocus();
-    }
-    QDialog::keyPressEvent(e);
+    } else if (e->key() == Qt::Key_Return || e->key() == Qt::Key_Enter)
+        accept();
+    else
+        QDialog::keyPressEvent(e);
 }
 
 int ConfluenceUserDialog::exec()
 {
     int result = QDialog::exec();
+
+    if (userList.length() == 0) result = QDialog::Rejected;
 
     return result;
 }
