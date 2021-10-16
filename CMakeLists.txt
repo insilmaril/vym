@@ -81,7 +81,8 @@ endif()
 
 
 if(DBus1_FOUND)
-    # list(APPEND VymSources src/adaptormodel.cpp src/adaptorvym.cpp)
+    list(APPEND VymSources src/dbus/adaptormodel.cpp src/dbus/adaptorvym.cpp)
+    include_directories(${CMAKE_SOURCE_DIR}/src/dbus ${CMAKE_SOURCE_DIR}/src)
     ADD_COMPILE_DEFINITIONS(VYM_DBUS)
 endif()
 
