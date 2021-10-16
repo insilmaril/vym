@@ -68,7 +68,7 @@ include_directories(
 )
 
 # Source files
-file(GLOB_RECURSE VymSources RELATIVE ${CMAKE_SOURCE_DIR} "src/*.cpp")
+file(GLOB VymSources RELATIVE ${CMAKE_SOURCE_DIR} "src/*.cpp")
 
 if(WIN32)
     list(APPEND VymSources
