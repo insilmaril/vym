@@ -1470,7 +1470,20 @@ void Main::setupEditActions()
     connect(a, SIGNAL(triggered()), this, SLOT(editMoveDown()));
     actionMoveDown = a;
 
-    a = new QAction(QPixmap(":down-diagonal.png"), tr("Move branch diagonally down", "Edit menu"),
+    a = new QAction(QPixmap(":up-diagonal-right.png"), tr("Move branch diagonally up", "Edit menu"),
+                    this);
+    a->setShortcut(Qt::CTRL + Qt::Key_PageUp);
+    a->setShortcutContext(Qt::WidgetShortcut);
+    mapEditorActions.append(a);
+    taskEditorActions.append(a);
+    restrictedMapActions.append(a);
+    actionListBranches.append(a);
+    editMenu->addAction(a);
+    switchboard.addSwitch("mapEditMoveBranchUpDiagonally", shortcutScope, a, tag);
+    connect(a, SIGNAL(triggered()), this, SLOT(editMoveUpDiagonally()));
+    actionMoveUpDiagonally = a;
+
+    a = new QAction(QPixmap(":down-diagonal-left.png"), tr("Move branch diagonally down", "Edit menu"),
                     this);
     a->setShortcut(Qt::CTRL + Qt::Key_PageDown);
     a->setShortcutContext(Qt::WidgetShortcut);
@@ -1481,7 +1494,7 @@ void Main::setupEditActions()
     editMenu->addAction(a);
     switchboard.addSwitch("mapEditMoveBranchDownDiagonally", shortcutScope, a, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(editMoveDownDiagonally()));
-    actionMoveDownDiagonal = a;
+    actionMoveDownDiagonally = a;
 
     a = new QAction(QPixmap(), tr("&Detach", "Context menu"), this);
     a->setStatusTip(tr("Detach branch and use as mapcenter", "Context menu"));
@@ -3365,6 +3378,8 @@ void Main::setupToolbars()
     editActionsToolbar->addAction(actionAddBranch);
     editActionsToolbar->addAction(actionMoveUp);
     editActionsToolbar->addAction(actionMoveDown);
+    editActionsToolbar->addAction(actionMoveDownDiagonally);
+    editActionsToolbar->addAction(actionMoveUpDiagonally);
     editActionsToolbar->addAction(actionSortChildren);
     editActionsToolbar->addAction(actionSortBackChildren);
     editActionsToolbar->addAction(actionToggleScroll);
@@ -4990,6 +5005,14 @@ void Main::editMoveDownDiagonally()
         m->moveDownDiagonally();
 }
 
+void Main::editMoveUpDiagonally()
+{
+    MapEditor *me = currentMapEditor();
+    VymModel *m = currentModel();
+    if (me && m && me->getState() != MapEditor::EditingHeading)
+        m->moveUpDiagonally();
+}
+
 void Main::editDetach()
 {
     VymModel *m = currentModel();
@@ -6398,7 +6421,24 @@ void Main::updateActions()
                     actionMoveUp->setEnabled(false);
 
                 if ((selbi && !selbi->canMoveDown()) || selbis.count() > 1)
-                    actionMoveDown->setEnabled(false);  // FIXME-0 add check for moveDiagonalDown
+                    actionMoveDown->setEnabled(false);
+
+                if ((selbi && !selbi->canMoveUp()) || selbis.count() > 1)
+                    actionMoveUpDiagonally->setEnabled(false);  // FIXME-0 add check for moveDiagonalUp
+
+                if ((selbi && selbi->depth() == 0) || selbis.count() > 1)
+                    actionMoveDownDiagonally->setEnabled(false);
+
+                if (selbi && selbi->getLMO()->getOrientation() == LinkableMapObj::LeftOfCenter)
+                {
+                    actionMoveDownDiagonally->setIcon(QPixmap(":down-diagonal-right.png"));
+                    actionMoveUpDiagonally->setIcon(QPixmap(":up-diagonal-left.png"));
+                }
+                else
+                {
+                    actionMoveDownDiagonally->setIcon(QPixmap(":down-diagonal-left.png"));
+                    actionMoveUpDiagonally->setIcon(QPixmap(":up-diagonal-right.png"));
+                }
 
                 if ((selbi && selbi->branchCount() < 2)  || selbis.count() > 1) { 
                     actionSortChildren->setEnabled(false);

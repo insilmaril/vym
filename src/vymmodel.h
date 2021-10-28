@@ -407,6 +407,7 @@ class VymModel : public TreeModel {
     void moveUp();                 //!< Move branch up with saving state
     bool moveDown(BranchItem *bi); //!< Move branch down without saving state
     void moveDown();               //!< Move branch down
+    void moveUpDiagonally();       //!< Move branch up diagonally: Branchs becomes child of branch above
     void moveDownDiagonally();     //!< Move branch down diagonally: Branchs becomes sibling of parent
     void detach();                 //!< Detach branch and use as new mapcenter
     void sortChildren(bool inverse = false); //!< Sort children lexically

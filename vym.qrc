@@ -82,9 +82,12 @@
 
     <file alias="configure-plus.svg">icons/configure-plus.svg</file>
 
-    <file alias="down.png">icons/down.png</file>
-    <file alias="down-diagonal.png">icons/down-diagonal.png</file>
     <file alias="up.png">icons/up.png</file>
+    <file alias="down.png">icons/down.png</file>
+    <file alias="up-diagonal-left.png">icons/up-diagonal-left.png</file>
+    <file alias="up-diagonal-right.png">icons/up-diagonal-right.png</file>
+    <file alias="down-diagonal-left.png">icons/down-diagonal-left.png</file>
+    <file alias="down-diagonal-right.png">icons/down-diagonal-right.png</file>
     <file alias="editcopy.png">icons/editcopy.png</file>
     <file alias="editcut.png">icons/editcut.png</file>
     <file alias="editpaste.png">icons/editpaste.png</file>

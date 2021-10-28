@@ -201,6 +201,7 @@ class Main : public QMainWindow {
     void editMapProperties();
     void editMoveUp();
     void editMoveDown();
+    void editMoveUpDiagonally();
     void editMoveDownDiagonally();
     void editDetach();
     void editSortChildren();
@@ -458,7 +459,8 @@ class Main : public QMainWindow {
     QAction *actionPaste;
     QAction *actionMoveUp;
     QAction *actionMoveDown;
-    QAction *actionMoveDownDiagonal;
+    QAction *actionMoveDownDiagonally;
+    QAction *actionMoveUpDiagonally;
     QAction *actionDetach;
     QAction *actionSortChildren;
     QAction *actionSortBackChildren;
