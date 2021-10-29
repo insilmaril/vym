@@ -3570,17 +3570,11 @@ void Main::updateTabName(VymModel *vm)
 
     for (int i = 0; i < tabWidget->count(); i++)
         if (view(i)->getModel() == vm) {
-            if (vm->isDefault()) {
-                tabWidget->setTabText(
-                    i, tr("unnamed", "Name for empty and unnamed default map"));
-            }
-            else {
-                if (vm->isReadOnly())
-                    tabWidget->setTabText(i, vm->getFileName() + " " +
-                                                 tr("(readonly)"));
-                else
-                    tabWidget->setTabText(i, vm->getFileName());
-            }
+            if (vm->isReadOnly())
+                tabWidget->setTabText(i, vm->getFileName() + " " +
+                                             tr("(readonly)"));
+            else
+                tabWidget->setTabText(i, vm->getFileName());
             return;
         }
 }
