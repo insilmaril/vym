@@ -106,14 +106,15 @@ QString AttributeItem::getAttributeTypeString()
             return "String";
         case DateTime:
             return "DateTime";
-        case Undefined:
-            return "Undefined";
-        }
+        default:
+            break;
     }
+    return "Undefined";
+}
 
-    void AttributeItem::setInternal(bool b) { internal = b; }
+void AttributeItem::setInternal(bool b) { internal = b; }
 
-    bool AttributeItem::isInternal() { return internal; }
+bool AttributeItem::isInternal() { return internal; }
 
 QString AttributeItem::getDataXML()
 {
