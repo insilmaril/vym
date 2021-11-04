@@ -207,27 +207,24 @@ QString ExportConfluence::buildList(BranchItem *current)
 
     QString ind = "\n" + indent(current->depth() + 1, false);
 
-    QString sectionBegin;
-    QString sectionEnd;
+    QString sectionBegin = "";
+    QString sectionEnd   = "" ;
     QString itemBegin;
     QString itemEnd;
 
+    QString expandBegin;
+    QString expandEnd;
+
     switch (current->depth() + 1) {
     case 0:
-        sectionBegin = "";
-        sectionEnd = "";
         itemBegin = "<h1>";
         itemEnd = "</h1>";
         break;
     case 1:
-        sectionBegin = "";
-        sectionEnd = "";
         itemBegin = "<h3>";
         itemEnd = "</h3>";
         break;
     case 2:
-        sectionBegin = "";
-        sectionEnd = "";
         itemBegin = "<h4>";
         itemEnd = "</h4>";
         break;
@@ -244,18 +241,44 @@ QString ExportConfluence::buildList(BranchItem *current)
     if (bi && !bi->hasHiddenExportParent() && !bi->isHidden()) {
         r += ind + sectionBegin;
         while (bi) {
+            if ( bi && bi->isScrolled())
+            {
+                expandBegin = "\n" + ind;
+                expandBegin += QString("<ac:structured-macro ac:macro-id=\"%1\" ac:name=\"expand\" ac:schema-version=\"1\">").arg(bi->getUuid().toString()) ;
+                expandBegin += "<ac:rich-text-body>";
+                expandEnd = "\n" + ind + "</ac:rich-text-body>";
+                expandEnd += "</ac:structured-macro>";
+            } else
+            {
+                expandBegin = "";
+                expandEnd   = "";
+            }
+
             if (!bi->hasHiddenExportParent() && !bi->isHidden() ) {
-                    visChilds++;
-                    r += ind + itemBegin;
+                visChilds++;
+                r += ind;
+                r += itemBegin;
                     
                 // Check if first mapcenter is already usded for pageName
                 if ( !(bi == model->getRootItem()->getFirstBranch() && dia.mapCenterToPageName))  
                     r += getBranchText(bi);
 
                 if (itemBegin.startsWith("<h"))
-                    r += itemEnd + buildList(bi);
+                {
+                    // Current item is heading
+                    r += itemEnd;
+                    r += expandBegin;
+                    r += buildList(bi);
+                    r += expandEnd;
+                }
                 else
-                    r += buildList(bi) + itemEnd;
+                {
+                    // Current item is list item
+                    r += expandBegin;
+                    r += buildList(bi);
+                    r += expandEnd;
+                    r += itemEnd;
+                }
             }
             i++;
             bi = current->getBranchNum(i);
