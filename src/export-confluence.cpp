@@ -238,9 +238,9 @@ QString ExportConfluence::buildList(BranchItem *current)
         break;
     }
 
-    if (bi && !bi->hasHiddenExportParent() && !bi->isHidden()) {
-        r += ind + sectionBegin;
-        while (bi) {
+    while (bi) {
+        if (bi && !bi->hasHiddenExportParent() && !bi->isHidden()) {
+            r += ind + sectionBegin;
             if ( bi && bi->isScrolled())
             {
                 expandBegin = "\n" + ind;
@@ -280,10 +280,10 @@ QString ExportConfluence::buildList(BranchItem *current)
                     r += itemEnd;
                 }
             }
-            i++;
-            bi = current->getBranchNum(i);
+            r += ind + sectionEnd;
         }
-        r += ind + sectionEnd;
+        i++;
+        bi = current->getBranchNum(i);
     }
 
     return r;
