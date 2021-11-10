@@ -521,12 +521,12 @@ BranchObj *BranchItem::createMapObj(QGraphicsScene *scene)
     BranchObj *newbo;
 
     if (parentItem == rootItem) {
-        qDebug() << "BI::createMO  MapCenter a!";
+        qDebug() << "BI::createMO  MapCenter a)";
         newbo = new BranchObj(NULL, this);
         mo = newbo;
         scene->addItem(newbo);
         newbo->createContainers();
-        qDebug() << "BI::createMO  MapCenter b!";
+        qDebug() << "BI::createMO  MapCenter b)";
     }
     else {
         newbo = new BranchObj(((MapItem *)parentItem)->getMO(), this);

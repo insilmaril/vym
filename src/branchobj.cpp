@@ -605,6 +605,8 @@ void BranchObj::createContainers()
         
         headingObj = new HeadingObj(headingContainer);
         headingContainer->setContent(headingObj);
+        qDebug() << "- Created HeadingObj: " << headingObj << " with parent " << headingObj->parentItem() << " should be container " << headingContainer;
+        qDebug() << "- headingContainer.childItems.count = " << headingContainer->childItems().count();
 
         childrenContainer = new Container ();
         childrenContainer->setName("children");
