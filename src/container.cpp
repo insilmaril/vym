@@ -12,12 +12,13 @@ Container::Container(QGraphicsItem *parent, TreeItem *ti) : QGraphicsRectItem(pa
     init();
 }
 
-Container::~Container()
+Container::~Container() // FIXME-0  not working yet
 {
     QString h;
     if (treeItem) h = treeItem->getHeadingPlain();
     qDebug() << "* Destr Container begin " << name << h << this;
 
+    /*
     foreach (Container *c, childrenList) {
         // Avoid that QGraphicsScene deletes children
         c->setParentItem(NULL);
@@ -32,7 +33,8 @@ Container::~Container()
         //if (c->contType != Containers) 
         //    delete c;   // FIXME-0 children container is not deleted at all, needs tob done in BranchItem?!!!
     }
-    qDebug() << "* Destr Container end " << name << h << this;
+    */
+    qDebug() << "* Destr Container end   " << name << h << this;
 }
 
 void Container::init()
@@ -80,62 +82,67 @@ void Container::setTreeItem(TreeItem *ti) { treeItem = ti; }
 
 TreeItem *Container::getTreeItem() const { return treeItem; }
 
-int  Container::subContainerCount()
-{
-    return childrenList.count();
-}
-
 void Container::addContainer(Container *c)
 {
     qDebug() << "Adding container " << c->getName() << c << " to " << name << this;
     c->setParentItem(this);
-    childrenList.append(c);
 
     // adjust dimensions of container depending on children
 }
 
 void Container::reposition()
 {
-    qDebug() << "Container::reposition of " << name << this;
+    qDebug() << "Container::reposition of container " << name << this;
 
     QRectF r = rect();
 
     // a) calc sizes of subcontainers based on their layouts
     
     if (contentType == Containers  ) {
-        if (subContainerCount() == 0) {
+        qDebug() << " * Content type: Container" << contentType;
+        if (childItems().count() == 0) {
+            qDebug() << " * Setting r to minimal size";
             r.setWidth(10); // FIXME-0 Minimum size for testing only
             r.setHeight(10);
             setRect(r);
-            qDebug() << "  * Setting r to minimal size";
         }
     } else if (contentType == MapObject) {
+
+        qDebug() << " * Content type: MapObj" << contentType;
         r.setWidth(contentObj->getBBox().width());
         r.setHeight(contentObj->getBBox().height());
         setRect(r);
-        qDebug() << "  * Setting r=" << r;
+        qDebug() << " * Setting r=" << r;
+        return;
+    } else {
+        qWarning() << " * Content type: Unknown";
     }
 
-    foreach (Container *c, childrenList) {
+    Container *c;
+    foreach (QGraphicsItem *child, childItems()) {
         // FIXME-0 don't call, if c has no children, otherwise sizes become 0
-        qDebug() << "  Repositioning container " << c;
+        c = (Container*) child;
         if (c->contentType == Containers || c->contentType == MapObject) {
+            qDebug() << " * Repositioning childItem " << child << " of type " << c->contentType;
             c->reposition();
-        }
+        } else
+            qDebug() << " * MapObj, skipping Repositioning childItem due to type " << contentType;
+
     }
 
     // b) align subcontainers within their parents
 
     // c) Align my own containers
 
-    if (childrenList.count() == 0) return;
+    if (childItems().count() == 0) return;  // FIXME-0   never will be 0...
 
     switch (layout) {
         case Horizontal: {
                 qreal max_h = 0;
                 qreal max_w = 0;
                 // Calc max height and width
-                foreach (Container *c, childrenList) {
+                foreach (QGraphicsItem *child, childItems()) {
+                    c = (Container*) child;
                     qreal h = c->rect().height();
                     max_h = (max_h < h) ? h : max_h;
                     max_w += c->rect().width();
@@ -143,7 +150,8 @@ void Container::reposition()
 
                 qreal x = 0;
                 // Position children
-                foreach (Container *c, childrenList) {
+                foreach (QGraphicsItem *child, childItems()) {
+                    c = (Container*) child;
                     c->setPos (x, (max_h - c->rect().height() ) / 2);
                     x += c->rect().width();
                 }
@@ -151,13 +159,14 @@ void Container::reposition()
                 r.setHeight(max_h);
             }
             setRect(r);
-            qDebug() << "Horizontal layout - Setting rect of " << name << this << " to " << r;
+            qDebug() << " * Horizontal layout - Setting rect of " << name << this << " to " << r;
             break;
         case Vertical: {
                 qreal max_h = 0;
                 qreal max_w = 0;
                 // Calc height and max width
-                foreach (Container *c, childrenList) {
+                foreach (QGraphicsItem *child, childItems()) {
+                    c = (Container*) child;
                     qreal w = c->rect().width();
                     max_w = (max_w < w) ? w : max_w;
                     max_h += c->rect().height();
@@ -165,7 +174,8 @@ void Container::reposition()
 
                 qreal y = 0;
                 // Position children
-                foreach (Container *c, childrenList) {
+                foreach (QGraphicsItem *child, childItems()) {
+                    c = (Container*) child;
                     // align centered: 
                     // c->setPos ( (max_w - c->rect().width() ) / 2, y);
 
@@ -177,7 +187,7 @@ void Container::reposition()
                 r.setHeight(max_h);
             }
             setRect(r);
-            qDebug() << "Vertical layout - Setting rect of " << name << this << " to " << r;
+            qDebug() << " * Vertical layout - Setting rect of " << name << this << " to " << r;
             break;
         default:
             break;

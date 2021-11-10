@@ -15,7 +15,7 @@ extern bool debug;
 LinkableMapObj::LinkableMapObj(QGraphicsItem *parent, TreeItem *ti)
     : MapObj(parent, ti)
 {
-    qDebug() << "Const LinkableMapObj this=" << this; // << "  ti=" << ti <<"
+    // qDebug() << "Const LinkableMapObj this=" << this; // << "  ti=" << ti <<"
     // treeItem="<<treeItem;
     parObj = (LinkableMapObj *)
         parent; // FIXME-4 try to get rid of parObj and use parentItem() instead
