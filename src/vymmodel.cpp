@@ -377,7 +377,7 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix,
 
     QString flags;
 
-    // Write images and definitions of of used user flags
+    // Write images and definitions of used user flags
     if (flagMode != FlagRowMaster::NoFlags) {
         // First find out, which flags are used
         // Definitions
