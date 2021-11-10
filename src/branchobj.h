@@ -20,7 +20,6 @@ class BranchObj : public OrnamentedObj {
     ~BranchObj();
     virtual void init();
     virtual void copy(BranchObj *);
-    void clear();
 
     virtual void setParObjTmp(LinkableMapObj *, QPointF,
                               int); // Only for moving Obj around

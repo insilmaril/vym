@@ -37,19 +37,22 @@ BranchObj::~BranchObj()
     qDebug()<< "Destr BranchObj  of " << this;
 
     if (branchContainer) {
+        qDebug() << "  ok 1";
         delete branchContainer;
+        /* // Called implicitly when deleting branchContainer:
         delete headingContainer;
         delete childrenContainer;
+        */
     }
 
+    qDebug()<< "Destr BranchObj 1 of " << this;
     // If I'm animated, I need to un-animate myself first
     if (anim.isAnimated()) {
         anim.setAnimated(false);
         VymModel *model = treeItem->getModel();
         model->stopAnimation(this);
     }
- 
-    clear();
+    qDebug()<< "Destr BranchObj 2 of " << this;
 }
 
 void BranchObj::init()
@@ -66,8 +69,6 @@ void BranchObj::copy(BranchObj *other)
 
     positionBBox();
 }
-
-void BranchObj::clear() {}
 
 void BranchObj::setParObjTmp(LinkableMapObj *dst, QPointF m, int off)
 {
@@ -616,12 +617,13 @@ void BranchObj::createContainers()
         branchContainer->addContainer(childrenContainer);
 
         branchContainer->reposition();
-    }
+    } else
+        qWarning() << "BO::createContainers - no scene!"; // FIXME-1 testing
 }
 
 void BranchObj::repositionContainers()
 {
-    qDebug() << "BO::repositionContainers  this = " << this << "branchContainer = " << branchContainer;
+    qDebug() << "BO::repositionContainers  this = " << ((BranchItem*)treeItem)->getHeadingPlain() << this << "branchContainer = " << branchContainer;
     branchContainer->reposition();
 }
 
