@@ -1,6 +1,7 @@
 #ifndef BRANCHITEM_H
 #define BRANCHITEM_H
 
+#include "container.h"
 #include "mapitem.h"
 #include "task.h"
 
@@ -104,6 +105,9 @@ class BranchItem : public MapItem {
 
     virtual BranchObj *createMapObj(
         QGraphicsScene *scene); //! Create classic object in GraphicsView
+
+  private:
+    Container *container;
 };
 
 #endif

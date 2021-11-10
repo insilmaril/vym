@@ -35,7 +35,9 @@ BranchItem::BranchItem(TreeItem *parent)
     lastSelectedBranchNum = 0;
     lastSelectedBranchNumAlt = 0;
 
-    task = NULL;
+    task = nullptr;
+
+    container = nullptr;
 }
 
 BranchItem::~BranchItem()
@@ -45,7 +47,12 @@ BranchItem::~BranchItem()
         delete mo;  // FIXME-0 This will probably crash, if subtree of MapObjs is already deleted in first call to Destr of a BranchObj
         mo = NULL;
     }
-    qDebug() << "Destr. BranchItem mid.";
+    qDebug() << "Destr. BranchItem mid.:";
+
+    if (container) {
+        delete container;
+        container = nullptr;
+    }
 
     clear();
     qDebug() << "Destr. BranchItem end:   this=" << this << "  " << getHeadingPlain();
@@ -525,12 +532,12 @@ BranchObj *BranchItem::createMapObj(QGraphicsScene *scene)
         newbo = new BranchObj(NULL, this);
         mo = newbo;
         scene->addItem(newbo);
-        newbo->createContainers();
+        container = newbo->createContainer();
         qDebug() << "BI::createMO  MapCenter b)";
     }
     else {
         newbo = new BranchObj(((MapItem *)parentItem)->getMO(), this);
-        newbo->createContainers();
+        container = newbo->createContainer();
         mo = newbo;
         // Set visibility depending on parents
         if (parentItem != rootItem &&

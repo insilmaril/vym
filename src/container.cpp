@@ -33,8 +33,8 @@ Container::~Container() // FIXME-0  not working yet
         //if (c->contType != Containers) 
         //    delete c;   // FIXME-0 children container is not deleted at all, needs tob done in BranchItem?!!!
     }
-    */
     qDebug() << "* Destr Container end   " << name << h << this;
+    */
 }
 
 void Container::init()

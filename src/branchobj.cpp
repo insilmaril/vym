@@ -36,23 +36,12 @@ BranchObj::~BranchObj()
 {
     qDebug()<< "Destr BranchObj  of " << this;
 
-    if (branchContainer) {
-        qDebug() << "  ok 1";
-        delete branchContainer;
-        /* // Called implicitly when deleting branchContainer:
-        delete headingContainer;
-        delete childrenContainer;
-        */
-    }
-
-    qDebug()<< "Destr BranchObj 1 of " << this;
     // If I'm animated, I need to un-animate myself first
     if (anim.isAnimated()) {
         anim.setAnimated(false);
         VymModel *model = treeItem->getModel();
         model->stopAnimation(this);
     }
-    qDebug()<< "Destr BranchObj 2 of " << this;
 }
 
 void BranchObj::init()
@@ -586,41 +575,44 @@ void BranchObj::unsetAllRepositionRequests()
         treeItem->getBranchObjNum(i)->unsetAllRepositionRequests();
 }
 
-void BranchObj::createContainers()
+Container* BranchObj::createContainer()  // FIXME-1 all container methods should go somewhere else, e.g. Container class
 {
-    if (!treeItem) return;
+    if (!treeItem) return nullptr;
 
-    if (scene() ) {
-        branchContainer = new Container (NULL, treeItem);
-        branchContainer->setName("branch");
-        branchContainer->setBrush(QColor(Qt::blue));
-        branchContainer->setContentType(Container::Containers);
-        branchContainer->setLayoutType(Container::Horizontal);
-        scene()->addItem (branchContainer);
-
-        headingContainer = new Container ();
-        headingContainer->setName("heading");
-        headingContainer->setBrush(QColor(Qt::gray));
-        scene()->addItem (headingContainer);
-        
-        headingObj = new HeadingObj(headingContainer);
-        headingContainer->setContent(headingObj);
-        qDebug() << "- Created HeadingObj: " << headingObj << " with parent " << headingObj->parentItem() << " should be container " << headingContainer;
-        qDebug() << "- headingContainer.childItems.count = " << headingContainer->childItems().count();
-
-        childrenContainer = new Container ();
-        childrenContainer->setName("children");
-        childrenContainer->setBrush(QColor(Qt::green));
-        childrenContainer->setContentType(Container::Containers);
-        childrenContainer->setLayoutType(Container::Vertical);
-        scene()->addItem (childrenContainer);
-        
-        branchContainer->addContainer(headingContainer);
-        branchContainer->addContainer(childrenContainer);
-
-        branchContainer->reposition();
-    } else
+    if (!scene() )  {
         qWarning() << "BO::createContainers - no scene!"; // FIXME-1 testing
+        return nullptr;
+    }
+
+    branchContainer = new Container (NULL, treeItem);
+    branchContainer->setName("branch");
+    branchContainer->setBrush(QColor(Qt::blue));
+    branchContainer->setContentType(Container::Containers);
+    branchContainer->setLayoutType(Container::Horizontal);
+    scene()->addItem (branchContainer);
+
+    headingContainer = new Container ();
+    headingContainer->setName("heading");
+    headingContainer->setBrush(QColor(Qt::gray));
+    scene()->addItem (headingContainer);
+    
+    headingObj = new HeadingObj(headingContainer);
+    headingContainer->setContent(headingObj);
+    qDebug() << "- Created HeadingObj: " << headingObj << " with parent " << headingObj->parentItem() << " should be container " << headingContainer;
+    qDebug() << "- headingContainer.childItems.count = " << headingContainer->childItems().count();
+
+    childrenContainer = new Container ();
+    childrenContainer->setName("children");
+    childrenContainer->setBrush(QColor(Qt::green));
+    childrenContainer->setContentType(Container::Containers);
+    childrenContainer->setLayoutType(Container::Vertical);
+    scene()->addItem (childrenContainer);
+    
+    branchContainer->addContainer(headingContainer);
+    branchContainer->addContainer(childrenContainer);
+
+    branchContainer->reposition();
+    return branchContainer;
 }
 
 void BranchObj::repositionContainers()

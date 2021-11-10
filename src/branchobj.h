@@ -51,7 +51,7 @@ class BranchObj : public OrnamentedObj {
     virtual void reposition();
     virtual void unsetAllRepositionRequests();
 
-    void createContainers();        // Create containers and sub objects
+    Container* createContainer();        // Create container and sub objects
     void repositionContainers();
     void addContainer(BranchObj *bo);
     Container* getContainer();
