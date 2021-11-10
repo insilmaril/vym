@@ -37,6 +37,8 @@ using namespace std;
 #include "headingeditor.h"
 #include "historywindow.h"
 #include "imports.h"
+#include "jira-agent.h"
+#include "jira-settings-dialog.h"
 #include "lineeditdialog.h"
 #include "macros.h"
 #include "mapeditor.h"
@@ -94,10 +96,8 @@ extern QString localeName;
 extern bool debug;
 extern bool testmode;
 extern QTextStream vout;
-extern QStringList jiraPrefixList;
-extern bool jiraClientAvailable;
-extern bool confluenceAgentAvailable;
 extern QString confluencePassword;
+extern QString jiraPassword;
 extern Switchboard switchboard;
 
 extern QList<Command *> modelCommands;
@@ -255,6 +255,7 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
     setupModeActions();
     setupNetworkActions();
     setupSettingsActions();
+    setupConnectActions();
     setupContextMenus();
     setupMacros();
     setupToolbars();
@@ -380,9 +381,12 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
 
     restoreState(settings.value("/mainwindow/state", 0).toByteArray());
 
-    // Enable testmenu
-    // settings.setValue( "mainwindow/showTestMenu", true);
     updateGeometry();
+
+    // After startup, schedule looking for updates AFTER
+    // release notes have been downloaded
+    // (avoid race condition with simultanously receiving cookies)
+    checkUpdatesAfterReleaseNotes = true;
 
 #if defined(VYM_DBUS)
     // Announce myself on DBUS
@@ -1149,6 +1153,7 @@ void Main::setupFileActions()
     connect(a, SIGNAL(triggered()), this, SLOT(fileExportConfluence()));
     fileExportMenu->addAction(a);
     actionListFiles.append(a);
+    actionFileExportConfluence = a;
 
     a = new QAction( tr("Firefox Bookmarks", "File export menu") + 
                         tr("(still experimental)"),
@@ -1443,7 +1448,6 @@ void Main::setupEditActions()
                     this);
     a->setShortcut(Qt::Key_PageUp);
     a->setShortcutContext(Qt::WidgetShortcut);
-    // a->setEnabled (false);
     mapEditorActions.append(a);
     taskEditorActions.append(a);
     restrictedMapActions.append(a);
@@ -1457,7 +1461,6 @@ void Main::setupEditActions()
                     this);
     a->setShortcut(Qt::Key_PageDown);
     a->setShortcutContext(Qt::WidgetShortcut);
-    // a->setEnabled (false);
     mapEditorActions.append(a);
     taskEditorActions.append(a);
     restrictedMapActions.append(a);
@@ -1467,11 +1470,23 @@ void Main::setupEditActions()
     connect(a, SIGNAL(triggered()), this, SLOT(editMoveDown()));
     actionMoveDown = a;
 
-    a = new QAction(QPixmap(), tr("Move branch diagonally down", "Edit menu"),
+    a = new QAction(QPixmap(":up-diagonal-right.png"), tr("Move branch diagonally up", "Edit menu"),
+                    this);
+    a->setShortcut(Qt::CTRL + Qt::Key_PageUp);
+    a->setShortcutContext(Qt::WidgetShortcut);
+    mapEditorActions.append(a);
+    taskEditorActions.append(a);
+    restrictedMapActions.append(a);
+    actionListBranches.append(a);
+    editMenu->addAction(a);
+    switchboard.addSwitch("mapEditMoveBranchUpDiagonally", shortcutScope, a, tag);
+    connect(a, SIGNAL(triggered()), this, SLOT(editMoveUpDiagonally()));
+    actionMoveUpDiagonally = a;
+
+    a = new QAction(QPixmap(":down-diagonal-left.png"), tr("Move branch diagonally down", "Edit menu"),
                     this);
     a->setShortcut(Qt::CTRL + Qt::Key_PageDown);
     a->setShortcutContext(Qt::WidgetShortcut);
-    // a->setEnabled (false);
     mapEditorActions.append(a);
     taskEditorActions.append(a);
     restrictedMapActions.append(a);
@@ -1479,7 +1494,7 @@ void Main::setupEditActions()
     editMenu->addAction(a);
     switchboard.addSwitch("mapEditMoveBranchDownDiagonally", shortcutScope, a, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(editMoveDownDiagonally()));
-    actionMoveDown = a;
+    actionMoveDownDiagonally = a;
 
     a = new QAction(QPixmap(), tr("&Detach", "Context menu"), this);
     a->setStatusTip(tr("Detach branch and use as mapcenter", "Context menu"));
@@ -1674,29 +1689,16 @@ void Main::setupEditActions()
     actionHeading2URL = a;
 
     tag = "JIRA";
-    a = new QAction(tr("Create URL to Jira", "Edit menu") + " (experimental)",
+    a = new QAction(tr("Get data from JIRA for subtree", "Edit menu"),
                     this);
     a->setShortcut(Qt::Key_J + Qt::SHIFT);
-    a->setShortcutContext(Qt::WindowShortcut);
-    switchboard.addSwitch("mapUpdateFromJira", shortcutScope, a, tag);
-    addAction(a);
-    connect(a, SIGNAL(triggered()), this, SLOT(getJiraData()));
-    actionListBranches.append(a);
-    actionGetJiraData = a;
-
-    a = new QAction(tr("Get data from JIRA for subtree", "Edit menu") +
-                        " (experimental)",
-                    this);
-    a->setShortcut(Qt::Key_J + Qt::CTRL);
     a->setShortcutContext(Qt::WindowShortcut);
     switchboard.addSwitch("mapUpdateSubTreeFromJira", shortcutScope, a, tag);
     addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(getJiraDataSubtree()));
-    actionListBranches.append(a);
     actionGetJiraDataSubtree = a;
 
-    a = new QAction(tr("Get page name from Confluence", "Edit menu") +
-                        " (experimental)",
+    a = new QAction(tr("Get page name from Confluence", "Edit menu"),
                     this);
     //    a->setShortcut ( Qt::Key_J + Qt::CTRL);
     //    a->setShortcutContext (Qt::WindowShortcut);
@@ -2417,6 +2419,30 @@ void Main::setupViewActions()
     connect(a, SIGNAL(triggered()), this, SLOT(previousSlide()));
 }
 
+// Connect Actions
+void Main::setupConnectActions()
+{
+    QMenu *connectMenu = menuBar()->addMenu(tr("&Connect"));
+    QString tag = tr("Connect", "Shortcuts");
+
+    QAction *a;
+
+    a = new QAction( tr("Get Confluence user data", "Connect action"), this);
+    a->setShortcut(Qt::SHIFT + Qt::Key_C);
+    connectMenu->addAction(a);
+    switchboard.addSwitch ("confluenceUser", shortcutScope, a, tag);
+    connect(a, SIGNAL(triggered()), this, SLOT(getConfluenceUser()));
+    actionConnectGetConfluenceUser = a;
+
+    connectMenu->addAction(actionGetConfluencePageName);
+    connectMenu->addAction(actionGetJiraDataSubtree);
+
+    connectMenu->addSeparator();
+
+    connectMenu->addAction(actionSettingsJIRA);
+    connectMenu->addAction(actionSettingsConfluence);
+}
+
 // Mode Actions
 void Main::setupModeActions()
 {
@@ -2461,6 +2487,19 @@ void Main::setupModeActions()
     a->setCheckable(true);
     actionListFiles.append(a);
     actionModModeXLink = a;
+
+    // FIXME-0 new, check
+    /*
+    a = new QAction(QPixmap(":/mode-xlink.png"),
+                    tr("Use modifier to draw xLinks", "Mode modifier"),
+                    actionGroupModModes);
+    a->setShortcut(Qt::SHIFT + Qt::Key_L);
+    addAction(a);
+    switchboard.addSwitch("createXLink", shortcutScope, a, tag);
+    // actionListFiles.append(a);
+    connect(a, SIGNAL(triggered()), this, SLOT(createXLink()));
+    actionCreateXLink = a;
+    */
 
     a = new QAction(
         QPixmap(":/mode-move-object.svg"),
@@ -2917,6 +2956,13 @@ void Main::setupSettingsActions()
                     this);
     connect(a, SIGNAL(triggered()), this, SLOT(settingsConfluence()));
     settingsMenu->addAction(a);
+    actionSettingsConfluence = a;
+
+    a = new QAction(tr("JIRA Credentials", "Settings action") + "...",
+                    this);
+    connect(a, SIGNAL(triggered()), this, SLOT(settingsJIRA()));
+    settingsMenu->addAction(a);
+    actionSettingsJIRA = a;
 
     a = new QAction(tr("Set path for macros", "Settings action") + "...", this);
     connect(a, SIGNAL(triggered()), this, SLOT(settingsMacroPath()));
@@ -3168,7 +3214,6 @@ void Main::setupContextMenus()
     branchLinksContextMenu->addAction(actionLocalURL);
     branchLinksContextMenu->addAction(actionGetURLsFromNote);
     branchLinksContextMenu->addAction(actionHeading2URL);
-    branchLinksContextMenu->addAction(actionGetJiraData);
     branchLinksContextMenu->addAction(actionGetJiraDataSubtree);
     branchLinksContextMenu->addAction(actionGetConfluencePageName);
     branchLinksContextMenu->addSeparator();
@@ -3333,6 +3378,8 @@ void Main::setupToolbars()
     editActionsToolbar->addAction(actionAddBranch);
     editActionsToolbar->addAction(actionMoveUp);
     editActionsToolbar->addAction(actionMoveDown);
+    editActionsToolbar->addAction(actionMoveDownDiagonally);
+    editActionsToolbar->addAction(actionMoveUpDiagonally);
     editActionsToolbar->addAction(actionSortChildren);
     editActionsToolbar->addAction(actionSortBackChildren);
     editActionsToolbar->addAction(actionToggleScroll);
@@ -3523,17 +3570,11 @@ void Main::updateTabName(VymModel *vm)
 
     for (int i = 0; i < tabWidget->count(); i++)
         if (view(i)->getModel() == vm) {
-            if (vm->isDefault()) {
-                tabWidget->setTabText(
-                    i, tr("unnamed", "Name for empty and unnamed default map"));
-            }
-            else {
-                if (vm->isReadOnly())
-                    tabWidget->setTabText(i, vm->getFileName() + " " +
-                                                 tr("(readonly)"));
-                else
-                    tabWidget->setTabText(i, vm->getFileName());
-            }
+            if (vm->isReadOnly())
+                tabWidget->setTabText(i, vm->getFileName() + " " +
+                                             tr("(readonly)"));
+            else
+                tabWidget->setTabText(i, vm->getFileName());
             return;
         }
 }
@@ -4617,13 +4658,6 @@ void Main::editHeading2URL()
         m->editHeading2URL();
 }
 
-void Main::getJiraData()
-{
-    VymModel *m = currentModel();
-    if (m)
-        m->getJiraData(false);
-}
-
 void Main::getJiraDataSubtree()
 {
     VymModel *m = currentModel();
@@ -4636,6 +4670,57 @@ void Main::setHeadingConfluencePageName()
     VymModel *m = currentModel();
     if (m)
         m->setHeadingConfluencePageName();
+}
+
+void Main::getConfluenceUser()
+{
+    VymModel *m = currentModel();
+    if (m) {
+        BranchItem *selbi = m->getSelectedBranch();
+        if (selbi) {
+            ConfluenceUserDialog *dia = new ConfluenceUserDialog;
+            centerDialog(dia);
+            if (dia->exec() > 0) {
+                BranchItem *bi = m->addNewBranch();
+                if (!bi) return;
+                if (!m->select(bi)) return;
+                selbi = m->getSelectedBranch();
+
+                ConfluenceUser user = dia->getSelectedUser();
+
+                AttributeItem *ai;
+
+                ai = new AttributeItem();
+                ai->setKey("ConfluenceUser.displayName");
+                ai->setValue(user.getDisplayName());
+                m->setAttribute(selbi, ai);
+
+                ai = new AttributeItem();
+                ai->setKey("ConfluenceUser.userKey");
+                ai->setValue(user.getUserKey());
+                m->setAttribute(selbi, ai);
+
+                ai = new AttributeItem();
+                ai->setKey("ConfluenceUser.userName");
+                ai->setValue(user.getUserName());
+                m->setAttribute(selbi, ai);
+
+                ai = new AttributeItem();
+                ai->setKey("ConfluenceUser.url");
+                ai->setValue(user.getURL());
+                m->setAttribute(selbi, ai);
+
+                m->setURL(user.getURL(), false);
+                m->setHeading(user.getDisplayName());
+
+                m->selectParent();
+            }
+            dia->clearFocus();
+            delete dia;
+            m->getMapEditor()->activateWindow();
+            m->getMapEditor()->setFocus();
+        }
+    }
 }
 
 void Main::editHeading()
@@ -4912,6 +4997,14 @@ void Main::editMoveDownDiagonally()
     VymModel *m = currentModel();
     if (me && m && me->getState() != MapEditor::EditingHeading)
         m->moveDownDiagonally();
+}
+
+void Main::editMoveUpDiagonally()
+{
+    MapEditor *me = currentMapEditor();
+    VymModel *m = currentModel();
+    if (me && m && me->getState() != MapEditor::EditingHeading)
+        m->moveUpDiagonally();
 }
 
 void Main::editDetach()
@@ -5769,6 +5862,15 @@ void Main::settingsToggleDownloads() { downloadsEnabled(true); }
 
 bool Main::settingsConfluence()
 {
+    if (!QSslSocket::supportsSsl())
+    {
+        QMessageBox::warning(
+            0, tr("Warning"),
+            tr("No SSL support available for this build of vym"));
+        debugInfo();
+        return false;
+    }
+
     CredentialsDialog dia;
     dia.setURL(
         settings.value("/confluence/url", "Confluence base URL").toString());
@@ -5785,18 +5887,35 @@ bool Main::settingsConfluence()
         settings.setValue("/confluence/url", dia.getURL());
         settings.setValue("/confluence/username", dia.getUser());
         settings.setValue("/confluence/savePassword", dia.savePassword());
+        confluencePassword = dia.getPassword();
         if (dia.savePassword())
-            settings.setValue("/confluence/password", dia.getPassword());
+            settings.setValue("/confluence/password", confluencePassword);
         else
             settings.setValue("/confluence/password", "");
 
-        confluencePassword = dia.getPassword();
-        confluenceAgentAvailable = true;
+        return true;
     }
-    else
-        confluenceAgentAvailable = false;
+    return false;
+}
 
-    return confluenceAgentAvailable;
+bool Main::settingsJIRA()
+{
+    if (!QSslSocket::supportsSsl())
+    {
+        QMessageBox::warning(
+            0, tr("Warning"),
+            tr("No SSL support available for this build of vym"));
+        debugInfo();
+        return false;
+    }
+
+    JiraSettingsDialog dia;
+    dia.exec();
+
+    if (dia.result() > 0)
+        return true;
+    else
+        return false;
 }
 
 void Main::windowToggleNoteEditor()
@@ -6051,6 +6170,23 @@ void Main::updateActions()
     actionViewToggleScriptEditor->setChecked(
         scriptEditor->parentWidget()->isVisible());
 
+    if (JiraAgent::available())
+        actionGetJiraDataSubtree->setEnabled(true);
+    else
+        actionGetJiraDataSubtree->setEnabled(false);
+
+    if (ConfluenceAgent::available())
+    {
+        actionGetConfluencePageName->setEnabled(true);
+        actionConnectGetConfluenceUser->setEnabled(true);
+        actionFileExportConfluence->setEnabled(true);
+    } else
+    {
+        actionGetConfluencePageName->setEnabled(false);
+        actionConnectGetConfluenceUser->setEnabled(false);
+        actionFileExportConfluence->setEnabled(false);
+    }
+
     VymView *vv = currentView();
     if (vv) {
         actionViewToggleTreeEditor->setChecked(vv->treeEditorIsVisible());
@@ -6249,27 +6385,21 @@ void Main::updateActions()
                 if (url.isEmpty()) {
                     actionOpenURL->setEnabled(false);
                     actionOpenURLTab->setEnabled(false);
-                    actionGetJiraData->setEnabled(false);
                     actionGetConfluencePageName->setEnabled(false);
                 }
                 else {
                     actionOpenURL->setEnabled(true);
                     actionOpenURLTab->setEnabled(true);
-
-                    bool ok = false;
-                    foreach (QString prefix, jiraPrefixList) {
-                        if (url.contains(prefix)) {
-                            ok = true;
-                            break;
-                        }
-                    }
-                    actionGetJiraData->setEnabled(ok && jiraClientAvailable);
-                    if (url.contains(
-                            settings.value("/confluence/url", "").toString()))
+                    if (ConfluenceAgent::available())
                         actionGetConfluencePageName->setEnabled(true);
                     else
                         actionGetConfluencePageName->setEnabled(false);
+
+                    // FIXME-1  actions for Confluence and JIRA are currently not used
+                    // Check in attributes, if this branch is related to JIRA
+                    // Check in attributes, if this branch is related to Confluence
                 }
+
                 if (selti && selti->getVymLink().isEmpty()) {
                     actionOpenVymLink->setEnabled(false);
                     actionOpenVymLinkBackground->setEnabled(false);
@@ -6286,6 +6416,23 @@ void Main::updateActions()
 
                 if ((selbi && !selbi->canMoveDown()) || selbis.count() > 1)
                     actionMoveDown->setEnabled(false);
+
+                if ((selbi && !selbi->canMoveUp()) || selbis.count() > 1)
+                    actionMoveUpDiagonally->setEnabled(false);  // FIXME-0 add check for moveDiagonalUp
+
+                if ((selbi && selbi->depth() == 0) || selbis.count() > 1)
+                    actionMoveDownDiagonally->setEnabled(false);
+
+                if (selbi && selbi->getLMO()->getOrientation() == LinkableMapObj::LeftOfCenter)
+                {
+                    actionMoveDownDiagonally->setIcon(QPixmap(":down-diagonal-right.png"));
+                    actionMoveUpDiagonally->setIcon(QPixmap(":up-diagonal-left.png"));
+                }
+                else
+                {
+                    actionMoveDownDiagonally->setIcon(QPixmap(":down-diagonal-left.png"));
+                    actionMoveUpDiagonally->setIcon(QPixmap(":up-diagonal-right.png"));
+                }
 
                 if ((selbi && selbi->branchCount() < 2)  || selbis.count() > 1) { 
                     actionSortChildren->setEnabled(false);
@@ -6534,41 +6681,6 @@ void Main::testFunction2()
 {
     VymModel *m = currentModel();
     if (m) {
-        BranchItem *selbi = m->getSelectedBranch();
-        if (selbi) {
-            ConfluenceUserDialog dia;
-            dia.exec();
-            if (dia.result() > 0) {
-                ConfluenceUser user = dia.getSelectedUser();
-                m->setHeading(user.getDisplayName());
-                m->setURL(
-                    QString("<ac:link> <ri:user ri:userkey=\"%1\"/></ac:link>")
-                        .arg(user.getUserKey()));
-
-                AttributeItem *ai;
-
-                ai = new AttributeItem();
-                ai->setKey("ConfluenceUser.displayName");
-                ai->setValue(user.getDisplayName());
-                m->setAttribute(selbi, ai);
-
-                ai = new AttributeItem();
-                ai->setKey("ConfluenceUser.userKey");
-                ai->setValue(user.getUserKey());
-                m->setAttribute(selbi, ai);
-
-                ai = new AttributeItem();
-                ai->setKey("ConfluenceUser.userName");
-                ai->setValue(user.getUserName());
-                m->setAttribute(selbi, ai);
-
-                ai = new AttributeItem();
-                ai->setKey("ConfluenceUser.url");
-                ai->setValue(user.getURL());
-                m->setAttribute(selbi, ai);
-                m->setURL(user.getURL(), false);
-            }
-        }
     }
 }
 
@@ -6785,6 +6897,7 @@ void Main::downloadReleaseNotesFinished()
         }
     }
     else {
+        statusMessage("Downloading release notes failed.");
         if (debug) {
             qDebug() << "Main::downloadReleaseNotesFinished ";
             qDebug() << "  result: failed";
@@ -6792,9 +6905,24 @@ void Main::downloadReleaseNotesFinished()
         }
     }
     agent->deleteLater();
+
+    if (checkUpdatesAfterReleaseNotes)
+    {
+        // After startup we want to check also for updates, but only after
+        // releasenotes are there (and we have a cookie already)
+        checkUpdatesAfterReleaseNotes = false;
+        checkUpdates();
+    }
 }
 
-void Main::checkReleaseNotes()
+void Main::checkReleaseNotesAndUpdates ()
+{
+    // Called once after startup
+    // checkUpdatesAfterReleaseNotes is already true then
+    checkReleaseNotes();
+}
+
+void Main::checkReleaseNotes ()
 {
     bool userTriggered;
     if (qobject_cast<QAction *>(sender()))
@@ -6808,6 +6936,7 @@ void Main::checkReleaseNotes()
                 settings.value("/downloads/releaseNotes/shownVersion", "0.0.1")
                     .toString())) {
             QUrl releaseNotesUrl(
+                // Local URL for testing only
                 // QString("http://localhost/release-notes.php?vymVersion=%1") /
                 QString("http://www.insilmaril.de/vym/"
                         "release-notes.php?vymVersion=%1&codeQuality=%2")

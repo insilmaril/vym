@@ -3,12 +3,17 @@
 
 #include "xml-base.h"
 
+#include "vymnote.h"
+
 class BranchItem;
 class VymModel;
 
 /*! \brief Parsing Freemind maps from XML documents */
 
 class parseFreemindHandler : public parseBaseHandler {
+  private:
+    bool nodeLikeState();
+
   public:
     bool startDocument();
     QString parseHREF(QString);
@@ -28,6 +33,8 @@ class parseFreemindHandler : public parseBaseHandler {
         StateAttributeName,
         StateAttributeValue,
         StateMap,
+        StateCenter,
+        StateMainNode,
         StateNode,
         StateProperties,
         StateMapStyles,
@@ -47,6 +54,7 @@ class parseFreemindHandler : public parseBaseHandler {
 
     State state;
     QList<State> stateStack;
+    VymText vymtext;
     BranchItem *lastBranch;
     BranchItem *mapCenter;
     BranchItem *mainBranchLeft;

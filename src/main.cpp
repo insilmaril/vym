@@ -41,11 +41,10 @@ QString localeName;
 
 QTextStream vout(stdout); // vymout - Testing for now. Flush after writing...
 
-QStringList jiraPrefixList;    // List containing URLs of Jira systems
-bool jiraClientAvailable;      // collabzone specific currently
-bool confluenceAgentAvailable; // native Confluence support via REST API, also
-                               // credentials required in settings
-QString confluencePassword; // password is only on request written to settings
+// Accessing JIRA and Confluence is done using agents
+// Credentials may be stored in settings, but only on request
+QString jiraPassword;
+QString confluencePassword;
 
 TaskModel *taskModel;
 TaskEditor *taskEditor;
@@ -210,7 +209,7 @@ int main(int argc, char *argv[])
         "--recover    recover     Delete lockfiles during initial loading of "
         "files\n"
         "-s           shortcuts   Show Keyboard shortcuts on start\n"
-        "--sl         LaTeX       Show Keyboard shortcuts in LaTeX format on "
+        "--cl         LaTeX       Show Keyboard shortcuts in LaTeX format on "
         "start\n"
         "-t           testmode    Test mode, e.g. no autosave and changing of "
         "its setting\n"
@@ -381,20 +380,6 @@ int main(int argc, char *argv[])
     headingEditor = new HeadingEditor("headingeditor");
     branchPropertyEditor = new BranchPropertyEditor();
 
-    // Check if there is a JiraClient       // FIXME-3 check for ruby
-    QFileInfo fi(vymBaseDir.path() + "/scripts/jigger");
-    jiraClientAvailable = fi.exists();
-    jiraPrefixList = settings.value("/system/jiraPrefixList")
-                         .toStringList(); // FIXME-3 currently not used
-
-    // Check if there is a (native) Confluence agent
-    if (!settings.value("/confluence/url", "").toString().isEmpty() &&
-        !settings.value("/confluence/username", "").toString().isEmpty())
-        confluenceAgentAvailable = true;
-    else
-        confluenceAgentAvailable = false;
-    confluencePassword = settings.value("/confluence/password", "").toString();
-
     Main m;
 
     // Check for zip tools
@@ -451,11 +436,8 @@ int main(int argc, char *argv[])
         m.show();
     }
 
-    // Show release notes, if not already done
-    m.checkReleaseNotes();
-
-    // Check for updates
-    m.checkUpdates();
+    // Show release notes and afterwards updates
+    m.checkReleaseNotesAndUpdates();
 
     if (options.isOn("shortcuts"))
         switchboard

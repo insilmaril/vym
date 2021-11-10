@@ -31,6 +31,7 @@ class XLinkItem;
 class VymView;
 
 class QGraphicsScene;
+class QJsonObject;
 
 typedef QMap<uint, QStringList> ItemList;
 
@@ -346,7 +347,7 @@ class VymModel : public TreeModel {
     QString findString;
 
   public:
-    void setURL(QString url, bool updateFromCloud = true);
+    void setURL(QString url, bool updateFromCloud = true, BranchItem *bi = nullptr);
     QString getURL(); // returns URL of selection or ""
     QStringList getURLs(bool ignoreScrolled = true); // returns URLs of subtree
 
@@ -406,6 +407,7 @@ class VymModel : public TreeModel {
     void moveUp();                 //!< Move branch up with saving state
     bool moveDown(BranchItem *bi); //!< Move branch down without saving state
     void moveDown();               //!< Move branch down
+    void moveUpDiagonally();       //!< Move branch up diagonally: Branchs becomes child of branch above
     void moveDownDiagonally();     //!< Move branch down diagonally: Branchs becomes sibling of parent
     void detach();                 //!< Detach branch and use as new mapcenter
     void sortChildren(bool inverse = false); //!< Sort children lexically
@@ -521,7 +523,12 @@ class VymModel : public TreeModel {
 
     void note2URLs();                    // get URLs from note
     void editHeading2URL();              // copy heading to URL
-    void getJiraData(bool subtree);      // get data from Jira
+    void getJiraData(bool subtree = true);      // get data from Jira
+
+  public slots:
+    void updateJiraData(QJsonObject);
+
+  public:
     void setHeadingConfluencePageName(); // get page details from Confluence
     void setVymLink(const QString &);    // Set vymLink for selection
     void deleteVymLink();                // delete link to another map
@@ -584,7 +591,7 @@ class VymModel : public TreeModel {
 
     /*! Export as HTML to Confluence*/
     void exportConfluence(bool createPage = true, const QString &pageURL = "", 
-                    const QString &pageTitle = "", 
+                    const QString &pageName = "", 
                     bool useDialog = true);
 
     /*! Export as OpenOfficeOrg presentation */
@@ -774,6 +781,7 @@ class VymModel : public TreeModel {
     bool selectID(const QString &);        //! select by unique ID (QUuid)
     bool select(LinkableMapObj *lmo);      //! Select by pointer to LMO
     bool selectToggle(TreeItem *ti);       //! Toggle select state
+    bool selectToggle(const QString &selectString); //! Overloaded function to toggle select state
     bool select(TreeItem *ti);             //! Select by pointer to TreeItem
     bool select(const QModelIndex &index); //! Select by ModelIndex
     void unselectAll();

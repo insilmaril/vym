@@ -66,7 +66,6 @@ extern QStringList ignoredLockedFiles;
 
 extern Main *mainWindow;
 
-extern Settings settings;
 extern QDir tmpVymDir;
 
 extern NoteEditor *noteEditor;
@@ -93,11 +92,10 @@ extern QDir lastImageDir;
 extern QDir lastMapDir;
 extern QDir lastExportDir;
 
-extern bool jiraClientAvailable;
-extern bool confluenceAgentAvailable;
 extern QString confluencePassword;
 
 extern Settings settings;
+extern QTextStream vout;
 
 uint VymModel::idLast = 0; // make instance
 
@@ -2155,19 +2153,20 @@ bool VymModel::findAll(FindResultModel *rmodel, QString s,
     return hit;
 }
 
-void VymModel::setURL(QString url, bool updateFromCloud)
+void VymModel::setURL(QString url, bool updateFromCloud, BranchItem *bi)
 {
-    BranchItem *selbi = getSelectedBranch();
-    if (selbi->getURL() == url)
+    if (!bi) bi = getSelectedBranch();
+    if (bi->getURL() == url)
         return;
-    if (selbi) {
-        QString oldurl = selbi->getURL();
-        selbi->setURL(url);
+
+    if (bi) {
+        QString oldurl = bi->getURL();
+        bi->setURL(url);
         saveState(
-            selbi, QString("setURL (\"%1\")").arg(oldurl), selbi,
+            bi, QString("setURL (\"%1\")").arg(oldurl), bi,
             QString("setURL (\"%1\")").arg(url),
-            QString("set URL of %1 to %2").arg(getObjectName(selbi)).arg(url));
-        emitDataChanged(selbi);
+            QString("set URL of %1 to %2").arg(getObjectName(bi)).arg(url));
+        emitDataChanged(bi);
         reposition();
 
         if (updateFromCloud)
@@ -2821,6 +2820,23 @@ void VymModel::moveDown()
             select(selbi);
         }
     }
+}
+
+void VymModel::moveUpDiagonally()
+{
+    BranchItem *selbi = getSelectedBranch();
+    if (selbi) {
+        BranchItem *parent = selbi->parentBranch();
+        if (parent == rootItem) return;
+
+        int n = selbi->num();
+        if (n == 0) return;
+
+        BranchItem *dst = parent->getBranchNum(n-1);
+        if (!dst) return;
+
+        relinkBranch(selbi, dst, dst->branchCount() + 1, true);
+     }
 }
 
 void VymModel::moveDownDiagonally()
@@ -3882,25 +3898,34 @@ void VymModel::toggleFlagByUid(
     // FIXME-2  saveState not correct when toggling flags in groups
     // (previous flags not saved!)
 {
-    BranchItem *bi = getSelectedBranch();
+    QStringList itemList = getSelectedUUIDs();
 
-    if (bi) {
-        Flag *f = bi->toggleFlagByUid(uid, useGroups);
+    if (itemList.count() > 0) {
+        QString fn;
+        TreeItem *ti;
+        BranchItem *bi;
+        Flag *f;
+        foreach (QString id, itemList) {
+            ti = findUuid(QUuid(id));
+            if (ti && ti->isBranchLikeType()) {
+                    bi = (BranchItem*)ti;
+                Flag *f = bi->toggleFlagByUid(uid, useGroups);
 
-        if (f) {
-            QString u = "toggleFlagByUid";
-            QString name = f->getName();
-            saveState(bi, QString("%1 (\"%2\")").arg(u).arg(uid.toString()), bi,
-                      QString("%1 (\"%2\")").arg(u).arg(uid.toString()),
-                      QString("Toggling flag \"%1\" of %2")
-                          .arg(name)
-                          .arg(getObjectName(bi)));
-            emitDataChanged(bi);
-            reposition();
+                if (f) {
+                    QString u = "toggleFlagByUid";
+                    QString name = f->getName();
+                    saveState(bi, QString("%1 (\"%2\")").arg(u).arg(uid.toString()), bi,
+                              QString("%1 (\"%2\")").arg(u).arg(uid.toString()),
+                              QString("Toggling flag \"%1\" of %2")
+                                  .arg(name)
+                                  .arg(getObjectName(bi)));
+                    emitDataChanged(bi);
+                } else
+                    qWarning() << "VymModel::toggleFlag failed for flag with uid "
+                               << uid;
+            }
         }
-        else
-            qWarning() << "VymModel::toggleFlag failed for flag with uid "
-                       << uid;
+        reposition();
     }
 }
 
@@ -4043,56 +4068,51 @@ void VymModel::editHeading2URL()
         setURL(selti->getHeadingPlain());
 }
 
-void VymModel::getJiraData(bool subtree) // FIXME-2 update error message, check
+void VymModel::getJiraData(bool subtree) // FIXME-0 update error message, check
                                          // if jiraClientAvail is set correctly
 {
-    if (!jiraClientAvailable) {
+    if (!JiraAgent::available()) {
         WarningDialog dia;
-        dia.setText(
-            QObject::tr("JIRA client not found."));
-        dia.setWindowTitle(
-            tr("Warning") + ": " + tr("JIRA client not found"));
-        dia.setShowAgainName("/JiraClient/missing");
+        QString w = QObject::tr("JIRA agent not setup.");
+        dia.setText(w);
+        dia.setWindowTitle( tr("Warning") + ": " + w);
+        dia.setShowAgainName("/JiraAgent/notdefined");
         dia.exec();
-        return;
+
+        if (!mainWindow->settingsJIRA())
+            return;
     }
 
     BranchItem *selbi = getSelectedBranch();
+    QRegExp re("(\\w+[-|\\s]\\d+)");
+
     if (selbi) {
         QString url;
         BranchItem *prev = NULL;
         BranchItem *cur = NULL;
         nextBranch(cur, prev, true, selbi);
         while (cur) {
-            url = cur->getURL();
+            QString heading = cur->getHeadingPlain();
 
-            if (url.isEmpty()) {
-                QString heading = cur->getHeadingPlain();
-                if (heading.left(4) == "http") {
-                    // Set URL from heading
-                    cur->setURL(heading);
-                    url = heading;
+            if (re.indexIn(heading) >= 0) {
+                // Create agent
+                JiraAgent *agent = new JiraAgent;
+                agent->setJobType(JiraAgent::GetTicketInfo);
+                if (!agent->setBranch(cur) || !agent->setTicket(heading)) {
+                    // Abort
+                    delete agent;
+                    return;
                 }
-                else {
-                    // Heading could contain a JIRA ID, call jigger using that
-                    // Afterwards jiraagent could update URL, if successfully
-                    // retrieved data But only do that, if heading looks like a
-                    // JIRA ID and without URL yet also only do if there are no
-                    // children and no whitespaces (created in log info later)
-                    if (cur->branchCount() == 0) {
-                        if (heading.contains(QRegExp("\\w[-|\\s](\\d+)"))) {
-                            new JiraAgent(cur, heading);
-                            mainWindow->statusMessage(
-                                tr("Contacting Jira...", "VymModel"));
-                        }
-                    }
-                }
-            }
 
-            if (!url.isEmpty()) {
-                new JiraAgent(cur, url);
+                setURL(agent->getURL(), false, cur);
+
+                connect(agent, &JiraAgent::jiraTicketReady, this, &VymModel::updateJiraData);
+
+                // Start contacting JIRA in background
+                agent->startJob();
                 mainWindow->statusMessage(tr("Contacting Jira...", "VymModel"));
             }
+
 
             if (subtree)
                 nextBranch(cur, prev, true, selbi);
@@ -4102,28 +4122,96 @@ void VymModel::getJiraData(bool subtree) // FIXME-2 update error message, check
     }
 }
 
-void VymModel::setHeadingConfluencePageName()
+void VymModel::updateJiraData(QJsonObject jsobj)
+{
+    QJsonDocument jsdoc = QJsonDocument (jsobj);
+    QString key = jsobj["key"].toString();
+    QJsonObject fields = jsobj["fields"].toObject();
+
+    QJsonObject assigneeObj = fields["assignee"].toObject();
+    QString assignee = assigneeObj["emailAddress"].toString();
+
+    QJsonObject reporterObj = fields["reporter"].toObject();
+    QString reporter  = reporterObj["emailAddress"].toString();
+
+    QJsonObject resolutionObj = fields["resolution"].toObject();
+    QString resolution  = resolutionObj["name"].toString();
+
+    QJsonObject statusObj = fields["status"].toObject();
+    QString status  = statusObj["name"].toString();
+
+    QString summary = fields["summary"].toString();
+
+    QJsonArray componentsArray = fields["components"].toArray();
+    QJsonObject compObj;
+    QString components;
+    for (int i = 0; i < componentsArray.size(); ++i) {
+        compObj = componentsArray[i].toObject();
+        components += compObj["name"].toString();
+    }
+
+    int branchID = jsobj["vymBranchID"].toInt();
+
+    QStringList solvedStates;
+    solvedStates << "Verification Done";
+    solvedStates << "Resolved";
+    solvedStates << "Closed";
+
+    QString keyName = key;
+    BranchItem *bi = (BranchItem*)findID(branchID);
+    if (bi) {
+        if (solvedStates.contains(status))    {
+            keyName = "(" + keyName + ")";
+            colorSubtree (Qt::blue, bi);
+        }
+
+        setHeadingPlainText(keyName + ": " + summary, bi);
+
+        AttributeItem *ai;
+
+        ai = new AttributeItem("JIRA.assignee", assignee);
+        setAttribute(bi, ai);
+
+        ai = new AttributeItem("JIRA.reporter", reporter);
+        setAttribute(bi, ai);
+
+        ai = new AttributeItem("JIRA.resolution", resolution);
+        setAttribute(bi, ai);
+
+        ai = new AttributeItem("JIRA.status", status);
+        setAttribute(bi, ai);
+
+        ai = new AttributeItem("JIRA.components", components);
+        setAttribute(bi, ai);
+    }
+
+    /* Pretty print JIRA ticket
+    vout << jsdoc.toJson(QJsonDocument::Indented) << endl;
+    vout << "       Key: " + key << endl;
+    vout << "      Desc: " + summary << endl;
+    vout << "  Assignee: " + assignee << endl;
+    vout << "Components: " + components << endl;
+    vout << "  Reporter: " + reporter << endl;
+    vout << "Resolution: " + resolution << endl;
+    vout << "    Status: " + status << endl;
+    */
+
+}
+
+
+void VymModel::setHeadingConfluencePageName()   // FIXME-0 always asks for Confluence credentials when adding any URL
 {
     BranchItem *selbi = getSelectedBranch();
     if (selbi) {
         QString url = selbi->getURL();
-        if (!url.isEmpty()) {
-            if (confluenceAgentAvailable) {
-                if (!url.contains(
-                        settings.value("/confluence/url", "").toString()))
-                    return;
+        if (!url.isEmpty() && 
+                settings.contains("/confluence/url") &&
+                url.contains(settings.value("confluence/url").toString())) {
 
-                if (confluencePassword.isEmpty()) {
-                    // Get password and abort, if dialog canceled
-                    if (!mainWindow->settingsConfluence())
-                        return;
-                }
-
-                ConfluenceAgent *ca_setHeading = new ConfluenceAgent(selbi);
-                ca_setHeading->setPageURL(url);
-                ca_setHeading->setJobType(ConfluenceAgent::CopyPagenameToHeading);
-                ca_setHeading->startJob();
-            }
+            ConfluenceAgent *ca_setHeading = new ConfluenceAgent(selbi);
+            ca_setHeading->setPageURL(url);
+            ca_setHeading->setJobType(ConfluenceAgent::CopyPagenameToHeading);
+            ca_setHeading->startJob();
         }
     }
 }
@@ -4664,12 +4752,12 @@ void VymModel::exportHTML(const QString &fpath, const QString &dpath,
 }
 
 void VymModel::exportConfluence(bool createPage, const QString &pageURL,
-                                const QString &pageTitle, bool useDialog)
+                                const QString &pageName, bool useDialog)
 {
     ExportConfluence ex(this);
     ex.setCreateNewPage(createPage);
     ex.setURL(pageURL);
-    ex.setPageTitle(pageTitle);
+    ex.setPageName(pageName);
     ex.setLastCommand(
         settings.localValue(filePath, "/export/last/command", "").toString());
 
@@ -4706,9 +4794,10 @@ bool VymModel::exportLastAvailable(QString &description, QString &command,
 {
     command =
         settings.localValue(filePath, "/export/last/command", "").toString();
+
     description = settings.localValue(filePath, "/export/last/description", "")
                       .toString();
-    dest = settings.localValue(filePath, "/export/last/destination", "")
+    dest = settings.localValue(filePath, "/export/last/displayedDestination", "")
                .toString();
     if (!command.isEmpty() && command.contains("exportMap"))
         return true;
@@ -5614,6 +5703,12 @@ bool VymModel::selectToggle(TreeItem *ti)
         return true;
     }
     return false;
+}
+
+bool VymModel::selectToggle(const QString &selectString)
+{
+    TreeItem *ti = findBySelectString(selectString);
+    return selectToggle(ti);
 }
 
 bool VymModel::select(TreeItem *ti)

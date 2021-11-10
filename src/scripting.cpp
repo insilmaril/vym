@@ -1,6 +1,7 @@
 #include "scripting.h"
 
 #include "branchitem.h"
+#include "confluence-agent.h"
 #include "imageitem.h"
 #include "mainwindow.h"
 #include "misc.h"
@@ -10,7 +11,6 @@
 
 extern Main *mainWindow;
 extern QString vymVersion;
-extern bool confluenceAgentAvailable;
 
 ///////////////////////////////////////////////////////////////////////////
 void logError(QScriptContext *context, QScriptContext::Error error,
@@ -56,7 +56,7 @@ void VymWrapper::clearConsole() { mainWindow->clearScriptOutput(); }
 
 bool VymWrapper::isConfluenceAgentAvailable()
 {
-    return confluenceAgentAvailable;
+    return ConfluenceAgent::available();
 }
 
 QObject *VymWrapper::currentMap()

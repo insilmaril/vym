@@ -28,6 +28,8 @@ TaskEditor::TaskEditor(QWidget *)
     // Creat Table view
     view = new QTableView;
 
+    setMinimumWidth(350);
+
     QVBoxLayout *mainLayout = new QVBoxLayout;
 
     QToolBar *tb = new QToolBar("TaskEditor filters");

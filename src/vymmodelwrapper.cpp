@@ -278,9 +278,9 @@ bool VymModelWrapper::exportMap()
         }
 
         QString url = argument(2).toString();
-        QString title = argument(3).toString();
+        QString pageName = argument(3).toString();
 
-        model->exportConfluence(true, url, title, false);
+        model->exportConfluence(true, url, pageName, false);
     }
     else if (format == "ConfluenceUpdatePage") {
         // 0: General export format
@@ -805,6 +805,15 @@ bool VymModelWrapper::selectLatestAdded()
     if (!r)
         logError(context(), QScriptContext::UnknownError,
                  "Couldn't select latest added item");
+    return setResult(r);
+}
+
+bool VymModelWrapper::selectToggle(const QString &selectString)
+{
+    bool r = model->selectToggle(selectString);
+    if (!r)
+        logError(context(), QScriptContext::UnknownError,
+                 "Couldn't toggle item with select string " + selectString);
     return setResult(r);
 }
 

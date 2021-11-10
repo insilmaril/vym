@@ -48,12 +48,12 @@ bool parseVYMHandler::startElement(const QString &, const QString &,
 {
     QColor col;
     /* Testing
-    qDebug()<< "startElement: <"<< eName
-            << ">     state="<<state
-            << "  laststate="<<stateStack.last()
-            << "   loadMode="<<loadMode
-            //<<"       line="<<QXmlDefaultHandler::lineNumber();
-        <<"contentFilter="<<contentFilter;
+    qDebug() << "startElement: <" << eName
+             << ">     state=" << state
+             << "  laststate=" << stateStack.last()
+             << "   loadMode=" << loadMode
+            //<<"       line=" << QXmlDefaultHandler::lineNumber();
+             << "contentFilter=" << contentFilter;
     */
 
     stateStack.append(state);
@@ -385,10 +385,11 @@ bool parseVYMHandler::startElement(const QString &, const QString &,
 bool parseVYMHandler::endElement(const QString &, const QString &,
                                  const QString &eName)
 {
+    /* Testing
     QString h;
     lastBranch ? h = lastBranch->getHeadingPlain() : h = "";
-    // qDebug()<< "endElement </" <<eName <<">  state=" <<state << "
-    // lastBranch=" << h;
+    qDebug() << "endElement </" << eName << ">  state=" << state << " lastBranch=" << h;
+    */
 
     switch (state) {
     case StateMap:

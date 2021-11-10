@@ -27,17 +27,16 @@ void ExportConfluence::init()
     exportName = "ConfluenceNewPage";
 
     extension = ".html";
-    frameURLs = true;
 
     url = "";
-    pageTitle = "";
+    pageName = "";
 }
 
 void ExportConfluence::setCreateNewPage(bool b) {createNewPage = b; }
 
 void ExportConfluence::setURL(const QString &u) { url = u; }
 
-void ExportConfluence::setPageTitle(const QString &t) { pageTitle = t;}
+void ExportConfluence::setPageName(const QString &t) { pageName = t;}
 
 QString ExportConfluence::getBranchText(BranchItem *current)
 {
@@ -49,6 +48,9 @@ QString ExportConfluence::getBranchText(BranchItem *current)
         }
         QString id = model->getSelectString(current);
         QString heading = quoteMeta(current->getHeadingPlain());
+
+        // Long headings are will have linebreaks by default
+        heading = heading.replace("\\n", " ");
 
         if (dia.useTextColor) {
             QColor c = current->getHeadingColor();
@@ -100,6 +102,8 @@ QString ExportConfluence::getBranchText(BranchItem *current)
         //     <ac:link>
         //<ri:user ri:userkey="55df23264acf166a014b54c57792009b"/>
         //</ac:link> </span>
+        
+        // For URLs check, if there is already a Confluence user in an attribute
         QString url;
         AttributeItem *ai = current->getAttributeByKey("ConfluenceUser.userKey");
         if (ai) {
@@ -203,27 +207,24 @@ QString ExportConfluence::buildList(BranchItem *current)
 
     QString ind = "\n" + indent(current->depth() + 1, false);
 
-    QString sectionBegin;
-    QString sectionEnd;
+    QString sectionBegin = "";
+    QString sectionEnd   = "" ;
     QString itemBegin;
     QString itemEnd;
 
+    QString expandBegin;
+    QString expandEnd;
+
     switch (current->depth() + 1) {
     case 0:
-        sectionBegin = "";
-        sectionEnd = "";
         itemBegin = "<h1>";
         itemEnd = "</h1>";
         break;
     case 1:
-        sectionBegin = "";
-        sectionEnd = "";
         itemBegin = "<h3>";
         itemEnd = "</h3>";
         break;
     case 2:
-        sectionBegin = "";
-        sectionEnd = "";
         itemBegin = "<h4>";
         itemEnd = "</h4>";
         break;
@@ -237,23 +238,52 @@ QString ExportConfluence::buildList(BranchItem *current)
         break;
     }
 
-    if (bi && !bi->hasHiddenExportParent() && !bi->isHidden()) {
-        r += ind + sectionBegin;
-        while (bi) {
-            if (!bi->hasHiddenExportParent() && !bi->isHidden()) {
+    while (bi) {
+        if (bi && !bi->hasHiddenExportParent() && !bi->isHidden()) {
+            r += ind + sectionBegin;
+            if ( bi && bi->isScrolled())
+            {
+                expandBegin = "\n" + ind;
+                expandBegin += QString("<ac:structured-macro ac:macro-id=\"%1\" ac:name=\"expand\" ac:schema-version=\"1\">").arg(bi->getUuid().toString()) ;
+                expandBegin += "<ac:rich-text-body>";
+                expandEnd = "\n" + ind + "</ac:rich-text-body>";
+                expandEnd += "</ac:structured-macro>";
+            } else
+            {
+                expandBegin = "";
+                expandEnd   = "";
+            }
+
+            if (!bi->hasHiddenExportParent() && !bi->isHidden() ) {
                 visChilds++;
-                r += ind + itemBegin;
-                r += getBranchText(bi);
+                r += ind;
+                r += itemBegin;
+                    
+                // Check if first mapcenter is already usded for pageName
+                if ( !(bi == model->getRootItem()->getFirstBranch() && dia.mapCenterToPageName))  
+                    r += getBranchText(bi);
 
                 if (itemBegin.startsWith("<h"))
-                    r += itemEnd + buildList(bi);
+                {
+                    // Current item is heading
+                    r += itemEnd;
+                    r += expandBegin;
+                    r += buildList(bi);
+                    r += expandEnd;
+                }
                 else
-                    r += buildList(bi) + itemEnd;
+                {
+                    // Current item is list item
+                    r += expandBegin;
+                    r += buildList(bi);
+                    r += expandEnd;
+                    r += itemEnd;
+                }
             }
-            i++;
-            bi = current->getBranchNum(i);
+            r += ind + sectionEnd;
         }
-        r += ind + sectionEnd;
+        i++;
+        bi = current->getBranchNum(i);
     }
 
     return r;
@@ -302,7 +332,11 @@ void ExportConfluence::doExport(bool useDialog)
     dia.setMapName(model->getMapName());
     dia.setFilePath(model->getFilePath());
     dia.setURL(url);
-    dia.setPageTitle(pageTitle);
+    dia.setPageName(pageName);
+    BranchItem *bi = (BranchItem*)(model->findBySelectString("mc0"));
+    if (bi)
+        dia.setPageNameHint(bi->getHeadingPlain());
+
     dia.readSettings();
 
     if (useDialog) {
@@ -311,7 +345,7 @@ void ExportConfluence::doExport(bool useDialog)
         model->setChanged();
         url = dia.getURL();
         createNewPage = dia.getCreateNewPage();
-        pageTitle = dia.getPageTitle();
+        pageName = dia.getPageName();
     }
 
     // Open file for writing
@@ -362,7 +396,7 @@ void ExportConfluence::doExport(bool useDialog)
     else
         agent->setJobType(ConfluenceAgent::UpdatePage);
     agent->setPageURL(url);
-    agent->setNewPageTitle(pageTitle);
+    agent->setNewPageName(pageName);
     agent->setUploadFilePath(filePath);
     agent->setModelID(model->getModelID());
     agent->startJob();
@@ -370,18 +404,15 @@ void ExportConfluence::doExport(bool useDialog)
     QStringList args;
     exportName = (createNewPage) ? "ConfluenceNewPage" : "ConfluenceUpdatePage";
     args <<  url;
-    if (!pageTitle.isEmpty()) 
-        args <<  pageTitle;
+    if (!pageName.isEmpty()) 
+        args <<  pageName;
 
     result = ExportBase::Ongoing;
 
-    completeExport(args);
-    
     // Prepare human readable info in tooltip of LastExport:
-    displayedDestination = (createNewPage) ? 
-        QString("Title: %1").arg(pageTitle) : 
-        QString("URL: %1").arg(url);
+    displayedDestination = QString("Page: %1 - %2").arg(pageName).arg(url); 
 
+    completeExport(args);
 
     dia.saveSettings();
     model->setExportMode(false);

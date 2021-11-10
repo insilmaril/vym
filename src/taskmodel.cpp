@@ -388,7 +388,7 @@ void TaskModel::recalcPriorities()
         case Task::WideAwake:
             break;
         case Task::Sleeping:
-            p += 1000 + t->getDaysSleep();
+            //p += 1000 + t->getDaysSleep();
             break;
         }
 

@@ -72,6 +72,7 @@ class Main : public QMainWindow {
     void setupSelectActions();
     void setupFormatActions();
     void setupViewActions();
+    void setupConnectActions();
     void setupModeActions();
     void setupWindowActions();
     void setupFlagActions();
@@ -179,9 +180,9 @@ class Main : public QMainWindow {
     void editURL();
     void editLocalURL();
     void editHeading2URL();
-    void getJiraData();
     void getJiraDataSubtree();
     void setHeadingConfluencePageName();
+    void getConfluenceUser();
     void openVymLinks(const QStringList &, bool background = false);
     void editVymLink();
     void editOpenMultipleVymLinks();
@@ -200,6 +201,7 @@ class Main : public QMainWindow {
     void editMapProperties();
     void editMoveUp();
     void editMoveDown();
+    void editMoveUpDiagonally();
     void editMoveDownDiagonally();
     void editDetach();
     void editSortChildren();
@@ -303,6 +305,7 @@ class Main : public QMainWindow {
     void settingsToggleAnimation();
     void settingsToggleDownloads();
     bool settingsConfluence();
+    bool settingsJIRA();
 
     void windowToggleNoteEditor();
     void windowToggleTreeEditor();
@@ -361,6 +364,12 @@ class Main : public QMainWindow {
 
     void callMacro();
     void downloadReleaseNotesFinished();
+
+  private:
+    bool checkUpdatesAfterReleaseNotes;
+
+  public:
+    void checkReleaseNotesAndUpdates();
 
   public slots:
     void checkReleaseNotes();
@@ -442,6 +451,7 @@ class Main : public QMainWindow {
     QAction *actionFilePrint;
     QAction *actionMapProperties;
     QAction *actionFileExportLast;
+    QAction *actionFileExportConfluence;
     QAction *actionUndo;
     QAction *actionRedo;
     QAction *actionCopy;
@@ -449,6 +459,8 @@ class Main : public QMainWindow {
     QAction *actionPaste;
     QAction *actionMoveUp;
     QAction *actionMoveDown;
+    QAction *actionMoveDownDiagonally;
+    QAction *actionMoveUpDiagonally;
     QAction *actionDetach;
     QAction *actionSortChildren;
     QAction *actionSortBackChildren;
@@ -465,7 +477,6 @@ class Main : public QMainWindow {
     QAction *actionURLNew;
     QAction *actionLocalURL;
     QAction *actionHeading2URL;
-    QAction *actionGetJiraData;
     QAction *actionGetJiraDataSubtree;
     QAction *actionGetConfluencePageName;
     QAction *actionOpenVymLink;
@@ -574,6 +585,7 @@ class Main : public QMainWindow {
     QAction *actionViewToggleSmoothPixmapTransform;
     QAction *actionViewCenter;
 
+    QAction *actionConnectGetConfluenceUser;
     QAction *actionSettingsAutoSelectNewBranch;
     QAction *actionSettingsAutoSelectText;
     QAction *actionSettingsUseFlagGroups;
@@ -586,6 +598,8 @@ class Main : public QMainWindow {
     QAction *actionSettingsWriteBackupFile;
     QAction *actionSettingsToggleDownloads;
     QAction *actionSettingsUseAnimation;
+    QAction *actionSettingsJIRA;
+    QAction *actionSettingsConfluence;
 };
 
 #endif

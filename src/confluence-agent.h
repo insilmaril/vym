@@ -7,12 +7,9 @@
 #include <QObject>
 #include <QTimer>
 
-#include "heading.h"
 #include "confluence-user.h"
-#include "vymprocess.h"
 
 class BranchItem;
-class ConfluenceUser;
 class VymModel;
 
 //////////////////////////////////////////////////////////////////////////
@@ -23,6 +20,8 @@ class ConfluenceAgent : public QObject {
   public:
     enum JobType {Undefined, CopyPagenameToHeading, NewPage, UpdatePage, UserInfo};
 
+    static bool available();
+
     ConfluenceAgent();
     ConfluenceAgent(BranchItem *bi);
     ~ConfluenceAgent();
@@ -31,9 +30,8 @@ class ConfluenceAgent : public QObject {
     void setBranch(BranchItem *bi);
     void setModelID(uint id);
     void setPageURL(const QString &u);
-    void setNewPageTitle(const QString &t);
+    void setNewPageName(const QString &t);
     void setUploadFilePath(const QString &fp);
-    void test();
 
     void startJob();
 
@@ -46,40 +44,37 @@ class ConfluenceAgent : public QObject {
     void foundUsers(QList <ConfluenceUser>);
 
   public:
-    void getUsers(const QString &name);
+    void getUsers(const QString &name); //! Convenience function to get user data
 
-  public slots:
-    virtual void timeout();
-
-  private:
-    QString confluenceScript;
-    QTimer *killTimer;
-    JobType jobType;
-    int jobStep;
-    bool abortJob;  // Flag to abort during initialization of job
-
-    // REST access related, new
   private:  
     void startGetPageSourceRequest(QUrl requestedUrl);
     void startGetPageDetailsRequest();
     void startCreatePageRequest();
     void startUpdatePageRequest();
     void startGetUserInfoRequest();
+    bool requestSuccessful(QNetworkReply *reply, const QString &requestDesc);
 
   private slots:
     void pageSourceReceived(QNetworkReply *reply);
     void pageDetailsReceived(QNetworkReply *reply);
     void contentUploaded(QNetworkReply *reply);
     void userInfoReceived(QNetworkReply *reply);
+    void timeout();
+
 #ifndef QT_NO_SSL
     void sslErrors(QNetworkReply *, const QList<QSslError> &errors);
 #endif
 
   private:
+    // Job related 
+    QTimer *killTimer;
+    JobType jobType;
+    int jobStep;
+    bool abortJob;  // Flag to abort during initialization of job
+
     // Network handling
     QNetworkAccessManager *networkManager;
     QJsonObject jsobj;
-    bool httpRequestAborted;
 
     // Settings: Credentials to access Confluence
     QString username;
@@ -95,7 +90,7 @@ class ConfluenceAgent : public QObject {
 
     // Parameters
     QString pageURL;
-    QString newPageTitle;
+    QString newPageName;
     QString uploadFilePath;
     QString userQuery;
 
