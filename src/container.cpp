@@ -16,7 +16,7 @@ Container::~Container()
 {
     QString h;
     if (treeItem) h = treeItem->getHeadingPlain();
-    qDebug() << "* Destr Container " << name << h << this;
+    qDebug() << "* Destr Container begin " << name << h << this;
 
     foreach (Container *c, childrenList) {
         // Avoid that QGraphicsScene deletes children
@@ -32,6 +32,7 @@ Container::~Container()
         //if (c->contType != Containers) 
         //    delete c;   // FIXME-0 children container is not deleted at all, needs tob done in BranchItem?!!!
     }
+    qDebug() << "* Destr Container end " << name << h << this;
 }
 
 void Container::init()
@@ -103,15 +104,16 @@ void Container::reposition()
     
     if (contentType == Containers  ) {
         if (subContainerCount() == 0) {
-            r.setWidth(10); // FIXME-0 testing only
+            r.setWidth(10); // FIXME-0 Minimum size for testing only
             r.setHeight(10);
             setRect(r);
+            qDebug() << "  * Setting r to minimal size";
         }
     } else if (contentType == MapObject) {
         r.setWidth(contentObj->getBBox().width());
         r.setHeight(contentObj->getBBox().height());
         setRect(r);
-        qDebug() << "  Setting r=" << r;
+        qDebug() << "  * Setting r=" << r;
     }
 
     foreach (Container *c, childrenList) {

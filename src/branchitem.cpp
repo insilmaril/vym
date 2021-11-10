@@ -42,9 +42,10 @@ BranchItem::~BranchItem()
 {
     qDebug() << "Destr. BranchItem begin: this=" << this << "  " << getHeadingPlain();
     if (mo) {
-        delete mo;
+        delete mo;  // FIXME-0 This will probably crash, if subtree of MapObjs is already deleted in first call to Destr of a BranchObj
         mo = NULL;
     }
+    qDebug() << "Destr. BranchItem mid.";
 
     clear();
     qDebug() << "Destr. BranchItem end:   this=" << this << "  " << getHeadingPlain();

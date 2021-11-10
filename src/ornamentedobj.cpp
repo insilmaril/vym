@@ -14,7 +14,7 @@ extern bool debug;
 OrnamentedObj::OrnamentedObj(QGraphicsItem *parent, TreeItem *ti)
     : LinkableMapObj(parent, ti)
 {
-    qDebug() << "Const OrnamentedObj (s,ti) ti=" << ti;
+    // qDebug() << "Const OrnamentedObj (s,ti) ti=" << ti;
     treeItem = ti;
     init();
 }
