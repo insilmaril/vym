@@ -1502,7 +1502,7 @@ void MapEditor::mouseMoveEvent(QMouseEvent *e)
     // Show mouse position for debugging in statusBar
     if (debug && e->modifiers() & Qt::ControlModifier)
         mainWindow->statusMessage(
-            QString("ME::mousePressEvent  Scene: %1  widget: %2")
+            QString("ME::mouseMoveEvent  Scene: %1  view: %2")
                 .arg(qpointFToString(mapToScene(e->pos())))
                 .arg(qpointFToString(e->pos())));
 
