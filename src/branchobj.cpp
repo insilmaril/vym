@@ -584,7 +584,7 @@ Container* BranchObj::createContainer()  // FIXME-1 all container methods should
         return nullptr;
     }
 
-    branchContainer = new Container (NULL, treeItem);
+    branchContainer = new Container (nullptr, treeItem);
     branchContainer->setName("branch");
     branchContainer->setBrush(QColor(Qt::blue));
     branchContainer->setContentType(Container::Containers);

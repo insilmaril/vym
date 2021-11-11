@@ -2,6 +2,7 @@
 
 #include "container.h"
 
+#include "branchitem.h"
 #include "mapobj.h"
 #include "treeitem.h"
 
@@ -12,29 +13,19 @@ Container::Container(QGraphicsItem *parent, TreeItem *ti) : QGraphicsRectItem(pa
     init();
 }
 
-Container::~Container() // FIXME-0  not working yet
+Container::~Container()
 {
     QString h;
     if (treeItem) h = treeItem->getHeadingPlain();
-    qDebug() << "* Destr Container begin " << name << h << this;
+    qDebug() << "* Destr Container" << name << h << this;
 
-    /*
-    foreach (Container *c, childrenList) {
-        // Avoid that QGraphicsScene deletes children
-        c->setParentItem(NULL);
-
-        // FIXME-0 check if there still is a link to a TreeItem
-        // then this needs to be unlinked first
-        if (treeItem) {
-            qDebug() << "   * Unlinking treeItem = " << treeItem;
-            
-        }
-
-        //if (c->contType != Containers) 
-        //    delete c;   // FIXME-0 children container is not deleted at all, needs tob done in BranchItem?!!!
+    if (treeItem)
+    {
+        // Unlink containers in my own subtree from related treeItems
+        // That results in deleting all containers in subtree first 
+        // and later deleting subtree of treeItems
+        ((BranchItem*)treeItem)->unlinkBranchContainer();
     }
-    qDebug() << "* Destr Container end   " << name << h << this;
-    */
 }
 
 void Container::init()

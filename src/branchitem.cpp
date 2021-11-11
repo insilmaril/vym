@@ -37,31 +37,38 @@ BranchItem::BranchItem(TreeItem *parent)
 
     task = nullptr;
 
-    container = nullptr;
+    branchContainer = nullptr;
 }
 
 BranchItem::~BranchItem()
 {
-    qDebug() << "Destr. BranchItem begin: this=" << this << "  " << getHeadingPlain();
+    qDebug() << "Destr. BranchItem: this=" << this << "  " << getHeadingPlain();
     if (mo) {
-        delete mo;  // FIXME-0 This will probably crash, if subtree of MapObjs is already deleted in first call to Destr of a BranchObj
+        delete mo;
         mo = NULL;
     }
-    qDebug() << "Destr. BranchItem mid.:";
 
-    if (container) {
-        delete container;
-        container = nullptr;
+    if (branchContainer) {
+        // This deletes only the first container
+        // All containers in children will unlink their branchContainer pointers
+        delete branchContainer;
+        branchContainer = nullptr;
     }
 
     clear();
-    qDebug() << "Destr. BranchItem end:   this=" << this << "  " << getHeadingPlain();
 }
 
 void BranchItem::clear()
 {
     if (task)
         taskModel->deleteTask(task);
+}
+
+void BranchItem::unlinkBranchContainer()
+{
+    // Called from destructor of containers, to 
+    // avoid double deletion 
+    branchContainer = nullptr;
 }
 
 void BranchItem::copy(BranchItem *other) // TODO lacks most of data...
@@ -532,12 +539,12 @@ BranchObj *BranchItem::createMapObj(QGraphicsScene *scene)
         newbo = new BranchObj(NULL, this);
         mo = newbo;
         scene->addItem(newbo);
-        container = newbo->createContainer();
+        branchContainer = newbo->createContainer();
         qDebug() << "BI::createMO  MapCenter b)";
     }
     else {
         newbo = new BranchObj(((MapItem *)parentItem)->getMO(), this);
-        container = newbo->createContainer();
+        branchContainer = newbo->createContainer();
         mo = newbo;
         // Set visibility depending on parents
         if (parentItem != rootItem &&

@@ -107,7 +107,10 @@ class BranchItem : public MapItem {
         QGraphicsScene *scene); //! Create classic object in GraphicsView
 
   private:
-    Container *container;
+    Container *branchContainer;
+
+  public:
+    void unlinkBranchContainer();
 };
 
 #endif
