@@ -112,7 +112,7 @@ void Container::reposition()
     Container *c;
     foreach (QGraphicsItem *child, childItems()) {
         // FIXME-0 don't call, if c has no children, otherwise sizes become 0
-        c = (Container*) child;
+        c = (Container*) child; // FIXME-0    why the cast here????
         if (c->contentType == Containers || c->contentType == MapObject) {
             qDebug() << " * Repositioning childItem " << child << " of type " << c->contentType;
             c->reposition();
