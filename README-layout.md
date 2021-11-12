@@ -32,6 +32,14 @@ of filtering and special cases would be required to support both the
 logical operations and also the visualization in different editors, with
 different levels of details.
 
+
+Containers
+----------
+
+- Container can either hold a MapObj or a set of other Containers
+- A container with a HeadingObj is currently parent item to the HO and also all
+  QGraphicsTextItems within the HO
+
   
 Open questions
 --------------

@@ -87,6 +87,9 @@ void Container::reposition()
 
     QRectF r = rect();
 
+    // Repositioning is done recursively. First the size sizes of subcontainers are calculated
+    // Then the subcontainers are positioned.
+    //
     // a) calc sizes of subcontainers based on their layouts
     
     if (contentType == Containers  ) {
@@ -100,6 +103,7 @@ void Container::reposition()
     } else if (contentType == MapObject) {
 
         qDebug() << " * Content type: MapObj" << contentType;
+        qDebug() << " * children: " << childItems().count();
         r.setWidth(contentObj->getBBox().width());
         r.setHeight(contentObj->getBBox().height());
         setRect(r);
@@ -113,54 +117,56 @@ void Container::reposition()
     foreach (QGraphicsItem *child, childItems()) {
         // FIXME-0 don't call, if c has no children, otherwise sizes become 0
         c = (Container*) child; // FIXME-0    why the cast here????
+        qDebug() << " * Repositioning childItem " << child << " of type " << c->contentType;
         if (c->contentType == Containers || c->contentType == MapObject) {
-            qDebug() << " * Repositioning childItem " << child << " of type " << c->contentType;
             c->reposition();
         } else
             qDebug() << " * MapObj, skipping Repositioning childItem due to type " << contentType;
 
     }
 
-    // b) align subcontainers within their parents
+    // b) Align my own containers
 
-    // c) Align my own containers
-
-    if (childItems().count() == 0) return;  // FIXME-0   never will be 0...
+    // The children Container is empty, if there are no children branches
+    // No repositioning of children required then, of course.
+    if (childItems().count() == 0) return;
 
     switch (layout) {
         case Horizontal: {
-                qreal max_h = 0;
-                qreal max_w = 0;
-                // Calc max height and width
+                qreal h_max = 0;
+                qreal w_total = 0;
+                qreal h;
+                // Calc max height and total width
                 foreach (QGraphicsItem *child, childItems()) {
                     c = (Container*) child;
-                    qreal h = c->rect().height();
-                    max_h = (max_h < h) ? h : max_h;
-                    max_w += c->rect().width();
+                    h = c->rect().height();
+                    h_max = (h_max < h) ? h : h_max;
+                    w_total += c->rect().width();
                 }
 
                 qreal x = 0;
                 // Position children
                 foreach (QGraphicsItem *child, childItems()) {
                     c = (Container*) child;
-                    c->setPos (x, (max_h - c->rect().height() ) / 2);
+                    c->setPos (x, (h_max - c->rect().height() ) / 2);
                     x += c->rect().width();
                 }
-                r.setWidth(max_w);
-                r.setHeight(max_h);
+                r.setWidth(w_total);
+                r.setHeight(h_max);
             }
             setRect(r);
             qDebug() << " * Horizontal layout - Setting rect of " << name << this << " to " << r;
             break;
         case Vertical: {
-                qreal max_h = 0;
-                qreal max_w = 0;
-                // Calc height and max width
+                qreal h_total = 0;
+                qreal w_max = 0;
+                qreal w;
+                // Calc total height and max width
                 foreach (QGraphicsItem *child, childItems()) {
                     c = (Container*) child;
-                    qreal w = c->rect().width();
-                    max_w = (max_w < w) ? w : max_w;
-                    max_h += c->rect().height();
+                    w = c->rect().width();
+                    w_max = (w_max < w) ? w : w_max;
+                    h_total += c->rect().height();
                 }
 
                 qreal y = 0;
@@ -168,14 +174,14 @@ void Container::reposition()
                 foreach (QGraphicsItem *child, childItems()) {
                     c = (Container*) child;
                     // align centered: 
-                    // c->setPos ( (max_w - c->rect().width() ) / 2, y);
+                    // c->setPos ( (w_max - c->rect().width() ) / 2, y);
 
                     // Align to left
                     c->setPos (0, y);
                     y += c->rect().height();
                 }
-                r.setWidth(max_w);
-                r.setHeight(max_h);
+                r.setWidth(w_max);
+                r.setHeight(h_total);
             }
             setRect(r);
             qDebug() << " * Vertical layout - Setting rect of " << name << this << " to " << r;
