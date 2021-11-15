@@ -3306,6 +3306,10 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int pos,
         // Remove at current position
         int n = branch->childNum();
 
+        // If branch and dst have same parent, then pos needs to be adjusted 
+        // after removing branch
+        if (branchpi == dst && pos - 1 > n ) pos--;
+
         beginRemoveRows(index(branchpi), n, n);
         branchpi->removeChild(n);
         endRemoveRows();
@@ -3318,6 +3322,7 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int pos,
             n = 0;
         else
             n = dst->getFirstBranch()->childNumber();
+        
         beginInsertRows(index(dst), n + pos, n + pos);
         dst->insertBranch(pos, branch);
         endInsertRows();
