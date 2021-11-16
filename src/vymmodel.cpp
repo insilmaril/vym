@@ -3216,10 +3216,13 @@ BranchItem *VymModel::addNewBranchInt(BranchItem *dst, int pos)
     BranchObj *newbo = newbi->createMapObj(mapEditor->getScene());
 
     // Add newbi also into Container of parent
-    parbi->getBranchObj()->addContainer(newbo); // FIXME-0 not considered yet: position!
+    parbi->getBranchObj()->addAsChildContainer(newbo->getContainer() );
 
     // Set color of heading to that of parent
     newbi->setHeadingColor(parbi->getHeadingColor());
+
+    // Update stacking order of container to match order in model
+    newbi->updateStackingOrder();
 
     reposition();
     return newbi;
@@ -3306,9 +3309,13 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int pos,
         // Remove at current position
         int n = branch->childNum();
 
+        qDebug() << "############# Relinking  n=" << n << " pos=" << pos ;
         // If branch and dst have same parent, then pos needs to be adjusted 
         // after removing branch
-        if (branchpi == dst && pos - 1 > n ) pos--;
+        if (branchpi == dst && pos - 1 > n ) {
+            qDebug() << "############# * adjust pos!";
+            pos--;
+        }
 
         beginRemoveRows(index(branchpi), n, n);
         branchpi->removeChild(n);
@@ -3322,7 +3329,7 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int pos,
             n = 0;
         else
             n = dst->getFirstBranch()->childNumber();
-        
+
         beginInsertRows(index(dst), n + pos, n + pos);
         dst->insertBranch(pos, branch);
         endInsertRows();
@@ -3337,6 +3344,10 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int pos,
         branch->updateStyles(keepFrame);
 
         emitDataChanged(branch);
+
+        // Update stacking order
+        branch->updateStackingOrder();
+
         reposition(); // both for moveUp/Down and relinking
 
         // Savestate

@@ -34,7 +34,7 @@ BranchObj::BranchObj(QGraphicsItem *parent, TreeItem *ti)
 
 BranchObj::~BranchObj()
 {
-    qDebug()<< "Destr BranchObj  of " << this;
+    //qDebug()<< "Destr BranchObj  of " << this;
 
     // If I'm animated, I need to un-animate myself first
     if (anim.isAnimated()) {
@@ -615,21 +615,20 @@ Container* BranchObj::createContainer()  // FIXME-1 all container methods should
     return branchContainer;
 }
 
-void BranchObj::repositionContainers()
+void BranchObj::addAsChildContainer(Container *c)
 {
-    qDebug() << "BO::repositionContainers  this = " << ((BranchItem*)treeItem)->getHeadingPlain() << this << "branchContainer = " << branchContainer;
-    branchContainer->reposition();
-}
-
-void BranchObj::addContainer(BranchObj *bo)
-{
-    // FIXME-0 add container of bi to childrenContainer
-    childrenContainer->addContainer(bo->getContainer());
+    c->setParentItem(childrenContainer);
 }
 
 Container* BranchObj::getContainer()
 {
     return branchContainer;
+}
+
+void BranchObj::repositionContainers()
+{
+    qDebug() << "BO::repositionContainers  this = " << ((BranchItem*)treeItem)->getHeadingPlain() << this << "branchContainer = " << branchContainer;
+    branchContainer->reposition();
 }
 
 QRectF BranchObj::getTotalBBox() { return bboxTotal; }
@@ -716,3 +715,9 @@ bool BranchObj::animate()
     }
     return false;
 }
+
+Container* BranchObj::getChildrenContainer()   // FIXME-0 this should move to somewhere else
+{
+    return childrenContainer; 
+}
+

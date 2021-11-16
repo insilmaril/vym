@@ -77,13 +77,11 @@ void Container::addContainer(Container *c)
 {
     qDebug() << "Adding container " << c->getName() << c << " to " << name << this;
     c->setParentItem(this);
-
-    // adjust dimensions of container depending on children
 }
 
 void Container::reposition()
 {
-    qDebug() << "Container::reposition of container " << name << this;
+    //qDebug() << "Container::reposition of container " << name << this;
 
     QRectF r = rect();
 
@@ -93,31 +91,31 @@ void Container::reposition()
     // a) calc sizes of subcontainers based on their layouts
     
     if (contentType == Containers  ) {
-        qDebug() << " * Content type: Container" << contentType;
+        //qDebug() << " * Content type: Container" << contentType;
         if (childItems().count() == 0) {
-            qDebug() << " * Setting r to minimal size";
+            // qDebug() << " * Setting r to minimal size";
             r.setWidth(10); // FIXME-0 Minimum size for testing only
             r.setHeight(10);
             setRect(r);
         }
     } else if (contentType == MapObject) {
 
-        qDebug() << " * Content type: MapObj" << contentType;
-        qDebug() << " * children: " << childItems().count();
+        //qDebug() << " * Content type: MapObj" << contentType;
+        //qDebug() << " * children: " << childItems().count();
         r.setWidth(contentObj->getBBox().width());
         r.setHeight(contentObj->getBBox().height());
         setRect(r);
-        qDebug() << " * Setting r=" << r;
+        //qDebug() << " * Setting r=" << r;
         return;
     } else {
-        qWarning() << " * Content type: Unknown";
+        //qWarning() << " * Content type: Unknown";
     }
 
     Container *c;
     foreach (QGraphicsItem *child, childItems()) {
         // FIXME-0 don't call, if c has no children, otherwise sizes become 0
         c = (Container*) child; // FIXME-0    why the cast here????
-        qDebug() << " * Repositioning childItem " << child << " of type " << c->contentType;
+        //qDebug() << " * Repositioning childItem " << child << " of type " << c->contentType;
         if (c->contentType == Containers || c->contentType == MapObject) {
             c->reposition();
         } else
@@ -155,7 +153,7 @@ void Container::reposition()
                 r.setHeight(h_max);
             }
             setRect(r);
-            qDebug() << " * Horizontal layout - Setting rect of " << name << this << " to " << r;
+            //qDebug() << " * Horizontal layout - Setting rect of " << name << this << " to " << r;
             break;
         case Vertical: {
                 qreal h_total = 0;
@@ -184,7 +182,7 @@ void Container::reposition()
                 r.setHeight(h_total);
             }
             setRect(r);
-            qDebug() << " * Vertical layout - Setting rect of " << name << this << " to " << r;
+            //qDebug() << " * Vertical layout - Setting rect of " << name << this << " to " << r;
             break;
         default:
             break;

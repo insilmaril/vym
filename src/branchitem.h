@@ -108,8 +108,11 @@ class BranchItem : public MapItem {
 
   private:
     Container *branchContainer;
+    Container* getBranchContainer();
+    Container* getChildrenContainer();
 
   public:
+    void updateStackingOrder();
     void unlinkBranchContainer();
 };
 

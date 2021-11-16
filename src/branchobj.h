@@ -52,9 +52,9 @@ class BranchObj : public OrnamentedObj {
     virtual void unsetAllRepositionRequests();
 
     Container* createContainer();        // Create container and sub objects
-    void repositionContainers();
-    void addContainer(BranchObj *bo);
+    void addAsChildContainer(Container *c);
     Container* getContainer();
+    void repositionContainers();
 
     virtual QRectF getTotalBBox();  // return size of BBox including children
     virtual ConvexPolygon getBoundingPolygon();
@@ -74,6 +74,8 @@ class BranchObj : public OrnamentedObj {
     Container *headingContainer;
     Container *childrenContainer;
     HeadingObj *headingObj;
+  public:
+    Container* getChildrenContainer();
 };
 
 #endif

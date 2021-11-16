@@ -42,7 +42,7 @@ BranchItem::BranchItem(TreeItem *parent)
 
 BranchItem::~BranchItem()
 {
-    qDebug() << "Destr. BranchItem: this=" << this << "  " << getHeadingPlain();
+    //qDebug() << "Destr. BranchItem: this=" << this << "  " << getHeadingPlain();
     if (mo) {
         delete mo;
         mo = NULL;
@@ -569,3 +569,30 @@ BranchObj *BranchItem::createMapObj(QGraphicsScene *scene)
 
     return newbo;
 }
+
+Container* BranchItem::getBranchContainer()
+{
+    return branchContainer;    //////FIXME-1 find right container using childItems()
+}
+
+Container* BranchItem::getChildrenContainer()
+{
+    return ((BranchObj*)mo)->getChildrenContainer();
+}
+
+void BranchItem::updateStackingOrder()
+{
+    int n = num();
+
+    // It seems the QGraphicsItem::stackBefore only works, if an item is moved up. 
+    // For moving below (or into another subtree), we have to reparent first  :-(
+
+    // For simplicity we always reparent:
+    branchContainer->setParentItem(nullptr);
+    branchContainer->setParentItem(parentBranch()->getChildrenContainer());
+        
+    if (n < parentBranch()->branchCount() - 1)
+        branchContainer->stackBefore( (parentBranch()->getBranchNum(n + 1))->getBranchContainer() );
+    return;
+}
+

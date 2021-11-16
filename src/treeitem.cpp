@@ -32,7 +32,7 @@ TreeItem::TreeItem(TreeItem *parent)
 
 TreeItem::~TreeItem()
 {
-    qDebug() << "Destr TreeItem begin: this=" << this << getHeadingPlain();
+    //qDebug() << "Destr TreeItem begin: this=" << this << getHeadingPlain();
     TreeItem *ti;
     while (!childItems.isEmpty()) {
         ti = childItems.takeFirst();
