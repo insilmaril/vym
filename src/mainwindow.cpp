@@ -6394,10 +6394,6 @@ void Main::updateActions()
                         actionGetConfluencePageName->setEnabled(true);
                     else
                         actionGetConfluencePageName->setEnabled(false);
-
-                    // FIXME-1  actions for Confluence and JIRA are currently not used
-                    // Check in attributes, if this branch is related to JIRA
-                    // Check in attributes, if this branch is related to Confluence
                 }
 
                 if (selti && selti->getVymLink().isEmpty()) {
