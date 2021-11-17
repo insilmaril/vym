@@ -7,6 +7,7 @@
 #include "xlinkobj.h"
 
 class Container;
+class BranchContainer;
 
 /*! \brief A branch visible in the map */
 
@@ -70,7 +71,7 @@ class BranchObj : public OrnamentedObj {
 
   private:
     // FIXME-0 testing
-    Container *branchContainer;
+    BranchContainer *branchContainer;
     Container *headingContainer;
     Container *childrenContainer;
     HeadingObj *headingObj;

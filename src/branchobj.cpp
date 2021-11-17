@@ -3,6 +3,7 @@
 
 #include "attributeitem.h"
 #include "branchitem.h"
+#include "branch-container.h"
 #include "container.h"
 #include "geometry.h"
 #include "mainwindow.h"
@@ -584,7 +585,7 @@ Container* BranchObj::createContainer()  // FIXME-1 all container methods should
         return nullptr;
     }
 
-    branchContainer = new Container (nullptr, treeItem);
+    branchContainer = new BranchContainer (nullptr, (BranchItem*)treeItem);
     branchContainer->setName("branch");
     branchContainer->setBrush(QColor(Qt::blue));
     branchContainer->setContentType(Container::Containers);

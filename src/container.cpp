@@ -4,28 +4,16 @@
 
 #include "branchitem.h"
 #include "mapobj.h"
-#include "treeitem.h"
 
-Container::Container(QGraphicsItem *parent, TreeItem *ti) : QGraphicsRectItem(parent)
+Container::Container(QGraphicsItem *parent) : QGraphicsRectItem(parent)
 {
-    qDebug() << "* Const Container begin this = " << this << "  branchitem = " << ti;
-    treeItem = ti;
+    //qDebug() << "* Const Container begin this = " << this << ";
     init();
 }
 
 Container::~Container()
 {
-    QString h;
-    if (treeItem) h = treeItem->getHeadingPlain();
-    qDebug() << "* Destr Container" << name << h << this;
-
-    if (treeItem)
-    {
-        // Unlink containers in my own subtree from related treeItems
-        // That results in deleting all containers in subtree first 
-        // and later deleting subtree of treeItems
-        ((BranchItem*)treeItem)->unlinkBranchContainer();
-    }
+    qDebug() << "* Destr Container" << name << this;
 }
 
 void Container::init()
@@ -69,10 +57,6 @@ void Container::setLayoutType(const LayoutType &ltype)
     layout = ltype;
 }
 
-void Container::setTreeItem(TreeItem *ti) { treeItem = ti; }
-
-TreeItem *Container::getTreeItem() const { return treeItem; }
-
 void Container::addContainer(Container *c)
 {
     qDebug() << "Adding container " << c->getName() << c << " to " << name << this;
@@ -81,10 +65,12 @@ void Container::addContainer(Container *c)
 
 void Container::reposition()
 {
+    /* FIXME-0  maybe reuse for BranchContainer
     if (treeItem)
         qDebug() << QString("Container::reposition of %1 container: %2").arg(name).arg(treeItem->getHeadingPlain());
     else
         qDebug() << QString("           reposition of %1 container").arg(name);
+    */
 
     QRectF r = rect();
 
