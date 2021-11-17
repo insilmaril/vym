@@ -77,8 +77,7 @@ BranchPropertyEditor::~BranchPropertyEditor()
 
 void BranchPropertyEditor::setItem(TreeItem *ti)
 {
-    if (!ti) return;
-
+    disconnectSignals();
     if (!ti)
         ui.tabWidget->setEnabled(false);
     else if (ti->isBranchLikeType()) {
@@ -253,6 +252,7 @@ void BranchPropertyEditor::setItem(TreeItem *ti)
     else {
         ui.tabWidget->setEnabled(false);
     }
+    connectSignals();
 }
 
 void BranchPropertyEditor::setModel(VymModel *m)
