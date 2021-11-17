@@ -81,7 +81,10 @@ void Container::addContainer(Container *c)
 
 void Container::reposition()
 {
-    //qDebug() << "Container::reposition of container " << name << this;
+    if (treeItem)
+        qDebug() << QString("Container::reposition of %1 container: %2").arg(name).arg(treeItem->getHeadingPlain());
+    else
+        qDebug() << QString("           reposition of %1 container").arg(name);
 
     QRectF r = rect();
 
@@ -94,22 +97,34 @@ void Container::reposition()
         //qDebug() << " * Content type: Container" << contentType;
         if (childItems().count() == 0) {
             // qDebug() << " * Setting r to minimal size";
-            r.setWidth(10); // FIXME-0 Minimum size for testing only
-            r.setHeight(10);
+            r.setWidth(0);
+            r.setHeight(0);
             setRect(r);
         }
     } else if (contentType == MapObject) {
 
         //qDebug() << " * Content type: MapObj" << contentType;
-        //qDebug() << " * children: " << childItems().count();
         r.setWidth(contentObj->getBBox().width());
         r.setHeight(contentObj->getBBox().height());
         setRect(r);
         //qDebug() << " * Setting r=" << r;
         return;
     } else {
-        //qWarning() << " * Content type: Unknown";
+        qWarning() << " * Content type: Unknown";
     }
+
+    // FIXME-1 testing only, rotate children
+    /*
+    Container *pc = (Container*)parentItem();
+    if (pc) {
+        TreeItem *ti = pc->getTreeItem();
+        if (ti && ti->getHeadingPlain() =="rot")
+        {
+            qDebug() << " * Setting rot";
+            setRotation(20);
+        }
+    }
+    */
 
     Container *c;
     foreach (QGraphicsItem *child, childItems()) {

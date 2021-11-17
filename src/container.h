@@ -10,8 +10,8 @@ class Container : public QGraphicsRectItem {
   public:
     enum ContentType {Undefined, MapObject, Containers};
     enum LayoutType {Horizontal, Vertical};
-    enum HorizontalAlignment {Top, Middle, Bottom};
-    enum VerticalAlignment  {Left, Center, Right};
+    enum HorizontalAlignment {Top, Middle, Bottom}; // FIXME-2 used?
+    enum VerticalAlignment  {Left, Center, Right};  // FIXME-2 used?
 
     Container (QGraphicsItem *parent = NULL, TreeItem *ti = NULL);
     virtual ~Container();
