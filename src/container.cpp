@@ -18,7 +18,8 @@ Container::~Container()
 
 void Container::init()
 {
-    contentType = Undefined;
+    type = Undefined;
+    contentType = UndefinedContent;
     contentObj = nullptr;
 
     layout = Horizontal;
@@ -44,6 +45,11 @@ void Container::setContentType(const ContentType &ctype)
 Container::ContentType Container::getContentType()
 {
     return contentType;
+}
+
+Container::ContainerType Container::containerType()
+{
+    return type;
 }
 
 void Container::setContent(MapObj *mapObj)

@@ -4,7 +4,6 @@
 
 #include "branchitem.h"
 #include "mapobj.h"
-#include "branchitem.h"
 
 BranchContainer::BranchContainer(QGraphicsItem *parent, BranchItem *bi) : Container(parent)
 {
@@ -30,6 +29,7 @@ BranchContainer::~BranchContainer()
 
 void BranchContainer::init()
 {
+    type = Container::Branch;
 }
 
 void BranchContainer::copy(Container *other)  // FIXME-0 not implemented
