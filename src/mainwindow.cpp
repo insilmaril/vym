@@ -6669,7 +6669,24 @@ void Main::testFunction1()
 {
     VymModel *m = currentModel();
     if (m) {
-        m->repeatLastCommand();
+        //m->repeatLastCommand();
+        const QClipboard *clipboard = QApplication::clipboard();
+        const QMimeData *mimeData = clipboard->mimeData();
+
+        if (mimeData->hasImage()) {
+            //setPixmap(qvariant_cast<QPixmap>(mimeData->imageData()));
+            qDebug() << "paste image...";
+        } else if (mimeData->hasHtml()) {
+            //setText(mimeData->html());
+            //setTextFormat(Qt::RichText);
+            qDebug() << "paste html...";
+        } else if (mimeData->hasText()) {
+            //setText(mimeData->text());
+            //setTextFormat(Qt::PlainText);
+            qDebug() << "paste text...";
+        } else {
+            qDebug() << "Cannot paste data";
+        }
     }
 }
 
