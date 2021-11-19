@@ -40,6 +40,16 @@ Containers
 - A container with a HeadingObj is currently parent item to the HO and also all
   QGraphicsTextItems within the HO
 
+- Containers are no longer part of a BranchObj, but become their own
+  structures. In the end they will probably replace the current MapObj and
+  inherited classes.
+
+  So far there are these container types:
+
+    - BaseContainer
+    - BranchContainer
+    - HeadingContainer (still pointing to a HeadingObj)
+
   
 Open questions
 --------------

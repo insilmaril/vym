@@ -2,41 +2,40 @@
 
 #include "heading-container.h"
 
-#include "branchitem.h"
-#include "mapobj.h"
+#include "headingobj.h" //FIXME-1 probably move content from HO here to HC later
+#include "mapobj.h"     // FIXME-1 needed?
 
-HeadingContainer::HeadingContainer(QGraphicsItem *parent, BranchItem *bi) : Container(parent)
+HeadingContainer::HeadingContainer(QGraphicsItem *parent) : Container(parent)
 {
-    qDebug() << "* Const HeadingContainer begin this = " << this << "  branchitem = " << bi;
-    branchItem = bi;
+    qDebug() << "* Const HeadingContainer begin this = " << this;
     init();
 }
 
 HeadingContainer::~HeadingContainer()
 {
-    QString h;
-    if (branchItem) h = branchItem->getHeadingPlain();
-    qDebug() << "* Destr HeadingContainer" << name << h << this;
+    //qDebug() << "* Destr HeadingContainer" << name << this;
 
-    if (branchItem)
-    {
-        // Unlink containers in my own subtree from related treeItems
-        // That results in deleting all containers in subtree first 
-        // and later deleting subtree of treeItems
-        branchItem->unlinkBranchContainer();
-    }
+    delete headingObj;
 }
 
 void HeadingContainer::init()
 {
     type = Container::Heading;
+
+    headingObj = new HeadingObj(this);
+    setText(" ");
 }
 
-void HeadingContainer::copy(Container *other)  // FIXME-0 not implemented
+void HeadingContainer::setText(const QString &s)
 {
+    // Update heading in container
+    if (s != headingObj->text())
+    {
+        headingObj->setText(s);
+
+        QRectF r = rect();
+        r.setWidth(headingObj->getBBox().width());
+        r.setHeight(headingObj->getBBox().height());
+        setRect(r);
+    }
 }
-
-void HeadingContainer::setBranchItem(BranchItem *bi) { branchItem = bi; }
-
-BranchItem *HeadingContainer::getBranchItem() const { return branchItem; }
-

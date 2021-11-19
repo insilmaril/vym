@@ -3216,7 +3216,7 @@ BranchItem *VymModel::addNewBranchInt(BranchItem *dst, int pos)
     BranchObj *newbo = newbi->createMapObj(mapEditor->getScene());
 
     // Add newbi also into Container of parent
-    parbi->getBranchObj()->addAsChildContainer(newbo->getContainer() );
+    parbi->addToChildrenContainer(newbi->getBranchContainer() );
 
     // Set color of heading to that of parent
     newbi->setHeadingColor(parbi->getHeadingColor());
@@ -4969,11 +4969,11 @@ void VymModel::reposition() // FIXME-4 VM should have no need to reposition, but
     // required to *reposition* the selection box. size is already correct:
     emitSelectionChanged();
 
-    // Reposition also containers   // FIXME-0 testing
+    // Reposition containers
     BranchItem *bi;
     for (int i = 0; i < rootItem->branchCount(); i++) {
         bi = rootItem->getBranchNum(i);
-        bi->getBranchObj()->repositionContainers();
+        bi->repositionContainers();
     }
 }
 

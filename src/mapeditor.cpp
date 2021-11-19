@@ -2175,10 +2175,8 @@ void MapEditor::updateData(const QModelIndex &sel)
         qDebug() << "  h="<<ti->getHeadingPlain();
     */
 
-    if (ti && ti->isBranchLikeType()) {
-        BranchObj *bo = (BranchObj *)(((MapItem *)ti)->getLMO());
-        bo->updateVisuals();
-    }
+    if (ti && ti->isBranchLikeType())
+        ((BranchItem*)ti)->updateVisuals();
 
     if (winter) {
         QList<QRectF> obstacles;

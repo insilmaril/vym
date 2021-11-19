@@ -3,20 +3,18 @@
 
 #include "container.h"
 
-class BranchItem;
+class HeadingObj;
 
-class HeadingContainer : public Container { //FIXME-0   branchItem really required? only to get current heading...
+class HeadingContainer : public Container {
   public:
-    HeadingContainer (QGraphicsItem *parent = NULL, BranchItem *bi = NULL);
+    HeadingContainer (QGraphicsItem *parent = NULL);
     virtual ~HeadingContainer();
     virtual void init();
-    virtual void copy(Container *);
 
-    void setBranchItem(BranchItem *);
-    BranchItem *getBranchItem() const;
+    void setText(const QString &);
 
   protected:
-    BranchItem *branchItem; //! Crossreference to "parent" BranchItem 
+    HeadingObj *headingObj; 
 };
 
 #endif

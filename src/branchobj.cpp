@@ -3,8 +3,6 @@
 
 #include "attributeitem.h"
 #include "branchitem.h"
-#include "branch-container.h"
-#include "container.h"
 #include "geometry.h"
 #include "mainwindow.h"
 #include "mapeditor.h"
@@ -350,10 +348,8 @@ void BranchObj::updateVisuals()
     if (s != heading->text())
         heading->setText(s);
 
-    // Update heading in container
-    headingObj->setText(s);
+    // Update standard flags active in TreeItemAbsage
 
-    // Update standard flags active in TreeItem
     QList<QUuid> TIactiveFlagUids = treeItem->activeFlagUids();
     standardFlagRowObj->updateActiveFlagObjs(
         TIactiveFlagUids, standardFlagsMaster, userFlagsMaster);
@@ -576,62 +572,6 @@ void BranchObj::unsetAllRepositionRequests()
         treeItem->getBranchObjNum(i)->unsetAllRepositionRequests();
 }
 
-Container* BranchObj::createContainer()  // FIXME-1 all container methods should go somewhere else, e.g. Container class
-{
-    if (!treeItem) return nullptr;
-
-    if (!scene() )  {
-        qWarning() << "BO::createContainers - no scene!"; // FIXME-1 testing
-        return nullptr;
-    }
-
-    branchContainer = new BranchContainer (nullptr, (BranchItem*)treeItem);
-    branchContainer->setName("branch");
-    branchContainer->setBrush(QColor(Qt::blue));
-    branchContainer->setContentType(Container::Containers);
-    branchContainer->setLayoutType(Container::Horizontal);
-    scene()->addItem (branchContainer);
-
-    headingContainer = new Container ();
-    headingContainer->setName("heading");
-    headingContainer->setBrush(QColor(Qt::gray));
-    scene()->addItem (headingContainer);
-    
-    headingObj = new HeadingObj(headingContainer);
-    headingContainer->setContent(headingObj);
-    qDebug() << "- Created HeadingObj: " << headingObj << " with parent " << headingObj->parentItem() << " should be container " << headingContainer;
-    qDebug() << "- headingContainer.childItems.count = " << headingContainer->childItems().count();
-
-    childrenContainer = new Container ();
-    childrenContainer->setName("children");
-    childrenContainer->setBrush(QColor(Qt::green));
-    childrenContainer->setContentType(Container::Containers);
-    childrenContainer->setLayoutType(Container::Vertical);
-    scene()->addItem (childrenContainer);
-    
-    branchContainer->addContainer(headingContainer);
-    branchContainer->addContainer(childrenContainer);
-
-    branchContainer->reposition();
-    return branchContainer;
-}
-
-void BranchObj::addAsChildContainer(Container *c)
-{
-    c->setParentItem(childrenContainer);
-}
-
-Container* BranchObj::getContainer()
-{
-    return branchContainer;
-}
-
-void BranchObj::repositionContainers()
-{
-    qDebug() << "BO::repositionContainers  this = " << ((BranchItem*)treeItem)->getHeadingPlain() << this << "branchContainer = " << branchContainer;
-    branchContainer->reposition();
-}
-
 QRectF BranchObj::getTotalBBox() { return bboxTotal; }
 
 ConvexPolygon BranchObj::getBoundingPolygon()
@@ -715,10 +655,5 @@ bool BranchObj::animate()
         return true;
     }
     return false;
-}
-
-Container* BranchObj::getChildrenContainer()   // FIXME-0 this should move to somewhere else
-{
-    return childrenContainer; 
 }
 

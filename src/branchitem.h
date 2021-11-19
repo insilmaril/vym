@@ -1,7 +1,8 @@
 #ifndef BRANCHITEM_H
 #define BRANCHITEM_H
 
-#include "container.h"
+#include "branch-container.h"
+// #include "container.h"
 #include "mapitem.h"
 #include "task.h"
 
@@ -101,19 +102,22 @@ class BranchItem : public MapItem {
     virtual void
     updateStyles(const bool &keepFrame =
                      false); //! update related fonts, parObjects, links, ...
+    virtual void updateVisuals();
     virtual BranchObj *getBranchObj();
 
     virtual BranchObj *createMapObj(
         QGraphicsScene *scene); //! Create classic object in GraphicsView
 
   private:
-    Container *branchContainer;
-    Container* getBranchContainer();
+    BranchContainer *branchContainer;
     Container* getChildrenContainer();
 
   public:
+    BranchContainer* getBranchContainer();
     void updateStackingOrder();
     void unlinkBranchContainer();
+    void addToChildrenContainer(Container *c);
+    void repositionContainers();
 };
 
 #endif

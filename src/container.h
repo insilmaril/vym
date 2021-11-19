@@ -7,7 +7,7 @@ class MapObj;
 
 class Container : public QGraphicsRectItem {
   public:
-    enum ContentType {UndefinedContent, MapObject, Containers};
+    enum ContentType {UndefinedContent, MapObject, Containers};    // FIXME-0 should be removed
     enum ContainerType {Undefined, Branch, Heading};
     enum LayoutType {Horizontal, Vertical};
     enum HorizontalAlignment {Top, Middle, Bottom}; // FIXME-2 used?
@@ -16,7 +16,6 @@ class Container : public QGraphicsRectItem {
     Container (QGraphicsItem *parent = NULL);
     virtual ~Container();
     virtual void init();
-    virtual void copy(Container *);
 
     void setContentType(const ContentType &ctype);
     ContentType getContentType();

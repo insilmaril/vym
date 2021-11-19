@@ -32,11 +32,6 @@ void Container::init()
     show();
 }
 
-void Container::copy(Container *other)  // FIXME-0 not implemented
-{
-}
-
-
 void Container::setContentType(const ContentType &ctype)
 {
     contentType = ctype;
@@ -71,12 +66,7 @@ void Container::addContainer(Container *c)
 
 void Container::reposition()
 {
-    /* FIXME-0  maybe reuse for BranchContainer
-    if (treeItem)
-        qDebug() << QString("Container::reposition of %1 container: %2").arg(name).arg(treeItem->getHeadingPlain());
-    else
-        qDebug() << QString("           reposition of %1 container").arg(name);
-    */
+    qDebug() << QString("Container::reposition of %1 container  (contentType: %2, containerType: %3").arg(name).arg(contentType).arg(type);
 
     QRectF r = rect();
 
@@ -84,25 +74,17 @@ void Container::reposition()
     // Then the subcontainers are positioned.
     //
     // a) calc sizes of subcontainers based on their layouts
-    
-    if (contentType == Containers  ) {
-        //qDebug() << " * Content type: Container" << contentType;
+    if (type == Heading) {
+        // size is already updated when heading itself changes, no need to recalc here.
+        return;
+    } else {
+        //qDebug() << " * ContainerType: not heading;
         if (childItems().count() == 0) {
             // qDebug() << " * Setting r to minimal size";
             r.setWidth(0);
             r.setHeight(0);
             setRect(r);
         }
-    } else if (contentType == MapObject) {
-
-        //qDebug() << " * Content type: MapObj" << contentType;
-        r.setWidth(contentObj->getBBox().width());
-        r.setHeight(contentObj->getBBox().height());
-        setRect(r);
-        //qDebug() << " * Setting r=" << r;
-        return;
-    } else {
-        qWarning() << " * Content type: Unknown";
     }
 
     // FIXME-1 testing only, rotate children
@@ -124,9 +106,10 @@ void Container::reposition()
         c = (Container*) child; // FIXME-0    why the cast here????
         //qDebug() << " * Repositioning childItem " << child << " of type " << c->contentType;
         if (c->contentType == Containers || c->contentType == MapObject) {
+            qDebug() << " * Repositioning with type " << contentType;
             c->reposition();
         } else
-            qDebug() << " * MapObj, skipping Repositioning childItem due to type " << contentType;
+            qDebug() << " * skipping Repositioning childItem due to type " << contentType;
 
     }
 

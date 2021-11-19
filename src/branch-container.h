@@ -8,17 +8,22 @@ class HeadingContainer;
 
 class BranchContainer : public Container {
   public:
-    BranchContainer (QGraphicsItem *parent = NULL, BranchItem *bi = NULL);
+    BranchContainer (QGraphicsScene *scene, QGraphicsItem *parent = NULL, BranchItem *bi = NULL);
     virtual ~BranchContainer();
     virtual void init();
-    virtual void copy(Container *);
 
     void setBranchItem(BranchItem *);
     BranchItem *getBranchItem() const;
 
+    void addToChildrenContainer(Container *c);
+    Container* getChildrenContainer();
+
+    void updateVisuals();
+
   protected:
     BranchItem *branchItem; //! Crossreference to "parent" BranchItem 
     HeadingContainer *headingContainer;
+    Container *childrenContainer;
 };
 
 #endif

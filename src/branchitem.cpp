@@ -527,24 +527,32 @@ void BranchItem::updateStyles(const bool &keepFrame)
     }
 }
 
+void BranchItem::updateVisuals()
+{
+    if (mo) getBranchObj()->updateVisuals();
+    branchContainer->updateVisuals();
+}
+
 BranchObj *BranchItem::getBranchObj() { return (BranchObj *)mo; }
 
 BranchObj *BranchItem::createMapObj(QGraphicsScene *scene)
 {
-    qDebug() << "BI::createMO  scene = " << scene;
     BranchObj *newbo;
 
     if (parentItem == rootItem) {
-        qDebug() << "BI::createMO  MapCenter a)";
+        // Create container
+        branchContainer = new BranchContainer(scene, nullptr, this);
+
         newbo = new BranchObj(NULL, this);
         mo = newbo;
         scene->addItem(newbo);
-        branchContainer = newbo->createContainer();
-        qDebug() << "BI::createMO  MapCenter b)";
+
     }
     else {
+        // Create container
+        branchContainer = new BranchContainer(scene, nullptr, this);
+
         newbo = new BranchObj(((MapItem *)parentItem)->getMO(), this);
-        branchContainer = newbo->createContainer();
         mo = newbo;
         // Set visibility depending on parents
         if (parentItem != rootItem &&
@@ -552,6 +560,7 @@ BranchObj *BranchItem::createMapObj(QGraphicsScene *scene)
              !((MapItem *)parentItem)->getLMO()->isVisibleObj()))
             newbo->setVisibility(false);
         if (depth() == 1) {
+            // Position new main branches on circle around center
             qreal r = 190;
             qreal a =
                 -M_PI_4 + M_PI_2 * (num()) + (M_PI_4 / 2) * (num() / 4 % 4);
@@ -570,14 +579,14 @@ BranchObj *BranchItem::createMapObj(QGraphicsScene *scene)
     return newbo;
 }
 
-Container* BranchItem::getBranchContainer()
-{
-    return branchContainer;    //////FIXME-1 find right container using childItems()
-}
-
 Container* BranchItem::getChildrenContainer()
 {
-    return ((BranchObj*)mo)->getChildrenContainer();
+    return branchContainer->getChildrenContainer();
+}
+
+BranchContainer* BranchItem::getBranchContainer()
+{
+    return branchContainer;
 }
 
 void BranchItem::updateStackingOrder()
@@ -596,3 +605,12 @@ void BranchItem::updateStackingOrder()
     return;
 }
 
+void BranchItem::addToChildrenContainer(Container *c)
+{
+    branchContainer->addToChildrenContainer(c);
+}
+
+void BranchItem::repositionContainers()
+{
+    branchContainer->reposition();
+}
