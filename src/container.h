@@ -8,7 +8,7 @@ class MapObj;
 class Container : public QGraphicsRectItem {
   public:
     enum ContentType {UndefinedContent, MapObject, Containers};    // FIXME-0 should be removed
-    enum ContainerType {Undefined, Branch, Heading};
+    enum ContainerType {Undefined, Collection, Branch, Heading};
     enum LayoutType {Horizontal, Vertical};
     enum HorizontalAlignment {Top, Middle, Bottom}; // FIXME-2 used?
     enum VerticalAlignment  {Left, Center, Right};  // FIXME-2 used?

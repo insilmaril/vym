@@ -18,7 +18,7 @@ Container::~Container()
 
 void Container::init()
 {
-    type = Undefined;
+    type = Collection;
     contentType = UndefinedContent;
     contentObj = nullptr;
 
@@ -66,7 +66,7 @@ void Container::addContainer(Container *c)
 
 void Container::reposition()
 {
-    qDebug() << QString("Container::reposition of %1 container  (contentType: %2, containerType: %3").arg(name).arg(contentType).arg(type);
+    qDebug() << QString("Container::reposition of %1 container  (content/Container: %2/%3").arg(name).arg(contentType).arg(type);
 
     QRectF r = rect();
 
@@ -102,14 +102,13 @@ void Container::reposition()
 
     Container *c;
     foreach (QGraphicsItem *child, childItems()) {
-        // FIXME-0 don't call, if c has no children, otherwise sizes become 0
-        c = (Container*) child; // FIXME-0    why the cast here????
-        //qDebug() << " * Repositioning childItem " << child << " of type " << c->contentType;
+        c = (Container*) child;
+        qDebug() << " * Repositioning childItem " << c->getName() << " content/Container " << c->contentType << "/" << c->containerType();
         if (c->contentType == Containers || c->contentType == MapObject) {
-            qDebug() << " * Repositioning with type " << contentType;
+            qDebug() << "   * Repositioning  ";
             c->reposition();
         } else
-            qDebug() << " * skipping Repositioning childItem due to type " << contentType;
+            qDebug() << "   * skipping Repos ";
 
     }
 
