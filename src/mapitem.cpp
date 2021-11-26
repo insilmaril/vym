@@ -104,8 +104,6 @@ QString MapItem::getMapAttr()
     }
     if (hideLinkUnselected)
         s += attribut("hideLink", "true");
-    else
-        s += attribut("hideLink", "false");
 
     // Rotation angle
     MapObj *mo = getMO();

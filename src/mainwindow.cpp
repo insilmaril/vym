@@ -6394,10 +6394,6 @@ void Main::updateActions()
                         actionGetConfluencePageName->setEnabled(true);
                     else
                         actionGetConfluencePageName->setEnabled(false);
-
-                    // FIXME-1  actions for Confluence and JIRA are currently not used
-                    // Check in attributes, if this branch is related to JIRA
-                    // Check in attributes, if this branch is related to Confluence
                 }
 
                 if (selti && selti->getVymLink().isEmpty()) {
@@ -6673,7 +6669,24 @@ void Main::testFunction1()
 {
     VymModel *m = currentModel();
     if (m) {
-        m->repeatLastCommand();
+        //m->repeatLastCommand();
+        const QClipboard *clipboard = QApplication::clipboard();
+        const QMimeData *mimeData = clipboard->mimeData();
+
+        if (mimeData->hasImage()) {
+            //setPixmap(qvariant_cast<QPixmap>(mimeData->imageData()));
+            qDebug() << "paste image...";
+        } else if (mimeData->hasHtml()) {
+            //setText(mimeData->html());
+            //setTextFormat(Qt::RichText);
+            qDebug() << "paste html...";
+        } else if (mimeData->hasText()) {
+            //setText(mimeData->text());
+            //setTextFormat(Qt::PlainText);
+            qDebug() << "paste text...";
+        } else {
+            qDebug() << "Cannot paste data";
+        }
     }
 }
 

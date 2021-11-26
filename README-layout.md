@@ -57,3 +57,16 @@ Open questions
 - Currently containers are part of BranchObj. Later on they should
   replace the BOs
 
+Ideas 
+-----
+
+* Add/remove containers as needed. Examples
+  - Flags, frames, etconly if set
+  - Additional info likes statistics (no. of children, ...)
+
+* Dedicated containers for links
+  - Allows more complex links, e.g. curved "bottomlines" under headings,
+    maybe curved headings later
+  - Proposition to have names on links, maybe rotated to save screen space
+
+

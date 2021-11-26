@@ -264,7 +264,6 @@ int TreeItem::num(TreeItem *item)
 void TreeItem::setType(const Type t)
 {
     type = t;
-    //itemData[1] = getTypeName();    // FIXME-1 not used so far, no 2nd column in TreeEditor
 }
 
 TreeItem::Type TreeItem::getType()
