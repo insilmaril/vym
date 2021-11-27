@@ -100,6 +100,10 @@ extern QString confluencePassword;
 extern QString jiraPassword;
 extern Switchboard switchboard;
 
+extern bool restoreMode;
+extern QStringList ignoredLockedFiles;
+extern QStringList lastSessionFiles;
+
 extern QList<Command *> modelCommands;
 extern QList<Command *> vymCommands;
 
@@ -3827,6 +3831,9 @@ File::ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode,
             statusBar()->showMessage("Loaded " + fn, statusbarTime);
         }
     }
+
+    fileSaveSession();
+
     return err;
 }
 
@@ -3867,8 +3874,6 @@ void Main::fileLoad(const LoadMode &lmode)
             fileLoad(fn, lmode, getMapType(fn));
     }
     removeProgressCounter();
-
-    fileSaveSession();
 }
 
 void Main::fileLoad()
@@ -3884,21 +3889,38 @@ void Main::fileSaveSession()
         flist.append(view(i)->getModel()->getFilePath());
 
     settings.setValue("/mainwindow/sessionFileList", flist);
+
+    // Also called by event loop regulary, but apparently not often enough
+    settings.sync();
 }
 
 void Main::fileRestoreSession()
 {
-    QStringList flist =
-        settings.value("/mainwindow/sessionFileList").toStringList();
-    QStringList::Iterator it = flist.begin();
+    restoreMode = true;
 
-    initProgressCounter(flist.count());
-    while (it != flist.end()) {
+    QStringList::Iterator it = lastSessionFiles.begin();
+
+    initProgressCounter(lastSessionFiles.count());
+    while (it != lastSessionFiles.end()) {
         FileType type = getMapType(*it);
         fileLoad(*it, NewMap, type);
         *it++;
     }
     removeProgressCounter();
+
+    // By now all files should have been loaded
+    // Reset the restore flag and display message if needed
+    if (ignoredLockedFiles.count() > 0) {
+        QString msg(
+            QObject::tr("Existing lockfiles have been ignored for the maps "
+                        "listed below. Please check, if the maps might be "
+                        "openend in another instance of vym:\n\n"));
+        QMessageBox::warning(0, QObject::tr("Warning"),
+                             msg + ignoredLockedFiles.join("\n"));
+    }
+
+    restoreMode = false;
+    ignoredLockedFiles.clear();
 }
 
 void Main::fileLoadRecent()

@@ -61,7 +61,7 @@
 
 extern bool debug;
 extern bool testmode;
-extern bool recoveryMode;
+extern bool restoreMode;
 extern QStringList ignoredLockedFiles;
 
 extern Main *mainWindow;
@@ -1059,7 +1059,7 @@ bool VymModel::tryVymLock()
             qDebug() << "VymModel::tryLock failed!";
         setReadOnly(true);
         if (vymLock.getState() == VymLock::lockedByOther) {
-            if (recoveryMode) {
+            if (restoreMode) {
                 ignoredLockedFiles << filePath;
                 return removeVymLock();
             }
