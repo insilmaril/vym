@@ -58,6 +58,11 @@ void Container::setLayoutType(const LayoutType &ltype)
     layout = ltype;
 }
 
+void Container::setHorizontalDirection(const HorizontalDirection &hdir)
+{
+    horizontalDirection = hdir;
+}
+
 void Container::addContainer(Container *c)
 {
     qDebug() << "Adding container " << c->getName() << c << " to " << name << this;
@@ -131,12 +136,20 @@ void Container::reposition()
                     w_total += c->rect().width();
                 }
 
-                qreal x = 0;
+                qreal x;
+                horizontalDirection == LeftToRight ? x = 0 : x = w_total;
+
                 // Position children
                 foreach (QGraphicsItem *child, childItems()) {
                     c = (Container*) child;
-                    c->setPos (x, (h_max - c->rect().height() ) / 2);
-                    x += c->rect().width();
+
+                    c->setPos (x - c->rect().width(), (h_max - c->rect().height() ) / 2);
+                    
+                    // Align from left to right
+                    if (horizontalDirection == LeftToRight)
+                        x += c->rect().width();
+                    else
+                        x -= c->rect().width();
                 }
                 r.setWidth(w_total);
                 r.setHeight(h_max);
@@ -160,12 +173,17 @@ void Container::reposition()
                 // Position children
                 foreach (QGraphicsItem *child, childItems()) {
                     c = (Container*) child;
-                    // align centered: 
-                    // c->setPos ( (w_max - c->rect().width() ) / 2, y);
+                    // Align centered: 
+                    //c->setPos ( (w_max - c->rect().width() ) / 2, y);
 
                     // Align to left
-                    c->setPos (0, y);
+                    //c->setPos (0, y);
+
+                    // Align to right
+                    c->setPos (w_max - c->rect().width(), y);
+
                     y += c->rect().height();
+
                 }
                 r.setWidth(w_max);
                 r.setHeight(h_total);

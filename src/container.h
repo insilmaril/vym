@@ -11,6 +11,7 @@ class Container : public QGraphicsRectItem {
     enum ContainerType {Undefined, Collection, Branch, Heading};
     enum LayoutType {Horizontal, Vertical};
     enum HorizontalAlignment {Top, Middle, Bottom}; // FIXME-2 used?
+    enum HorizontalDirection {LeftToRight, RightToLeft};
     enum VerticalAlignment  {Left, Center, Right};  // FIXME-2 used?
 
     Container (QGraphicsItem *parent = NULL);
@@ -24,6 +25,7 @@ class Container : public QGraphicsRectItem {
     ContainerType containerType();
 
     void setLayoutType(const LayoutType &ltype);
+    void setHorizontalDirection(const HorizontalDirection &hdir);
 
     void addContainer(Container *c);
 
@@ -40,6 +42,7 @@ class Container : public QGraphicsRectItem {
     QString name;
 
     LayoutType layout;
+    HorizontalDirection horizontalDirection;
 };
 
 #endif

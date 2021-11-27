@@ -37,6 +37,7 @@ void BranchContainer::init()
     setBrush(QColor(Qt::blue));
     setContentType(Container::Containers);
     setLayoutType(Container::Horizontal);
+    setHorizontalDirection(Container::RightToLeft);
 
     headingContainer = new HeadingContainer ();
     headingContainer->setName("heading");
