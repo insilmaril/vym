@@ -4952,7 +4952,7 @@ void VymModel::reposition() // FIXME-4 VM should have no need to reposition, but
     mapEditor->getTotalBBox();
 
     // required to *reposition* the selection box. size is already correct:
-    emitSelectionChanged();
+    emitSelectionChanged(); //FIXME-2 better only update selection geometry
 }
 
 bool VymModel::setMapLinkStyle(const QString &s)
