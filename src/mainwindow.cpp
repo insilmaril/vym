@@ -2492,19 +2492,6 @@ void Main::setupModeActions()
     actionListFiles.append(a);
     actionModModeXLink = a;
 
-    // FIXME-0 new, check
-    /*
-    a = new QAction(QPixmap(":/mode-xlink.png"),
-                    tr("Use modifier to draw xLinks", "Mode modifier"),
-                    actionGroupModModes);
-    a->setShortcut(Qt::SHIFT + Qt::Key_L);
-    addAction(a);
-    switchboard.addSwitch("createXLink", shortcutScope, a, tag);
-    // actionListFiles.append(a);
-    connect(a, SIGNAL(triggered()), this, SLOT(createXLink()));
-    actionCreateXLink = a;
-    */
-
     a = new QAction(
         QPixmap(":/mode-move-object.svg"),
         tr("Use modifier to move branches without linking", "Mode modifier"),
