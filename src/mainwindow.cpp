@@ -2101,7 +2101,7 @@ void Main::setupFormatActions()
     formatMenu->addAction(a);
     switchboard.addSwitch("mapFormatColor", shortcutScope, a, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(formatSelectColor()));
-    actionFormatColor = a;
+    actionFormatColor = a; // Only used in menu, not in toolbar
 
     a = new QAction(QPixmap(":/formatcolorpicker.png"),
                     tr("Pic&k color", "Edit menu"), this);
@@ -3397,12 +3397,46 @@ void Main::setupToolbars()
     referencesToolbar->addAction(actionEditVymLink);
 
     // Format and colors
-    colorsToolbar = addToolBar(tr("Colors toolbar", "Colors toolbar name"));
+    colorsToolbar = new QToolBar(tr("Colors toolbar", "Colors toolbar name"));
     colorsToolbar->setObjectName("colorsTB");
-    colorsToolbar->addAction(actionFormatColor);
+
+    actionGroupQuickColors = new QActionGroup(this);
+    actionGroupQuickColors->setExclusive(true);
+    int i = 0;
+
+    QList <QColor> colors;
+    QColor c;
+    c.setNamedColor ("#000000"); colors << c;
+    c.setNamedColor ("#ff0000"); colors << c;
+    c.setNamedColor ("#d95100"); colors << c;
+    c.setNamedColor ("#009900"); colors << c;
+    c.setNamedColor ("#00aa7f"); colors << c;
+    c.setNamedColor ("#aa00ff"); colors << c;
+    c.setNamedColor ("#c466ff"); colors << c;
+    c.setNamedColor ("#0000ff"); colors << c;
+
+    QPixmap pix(16, 16);
+    QAction *a;
+    foreach (c, colors) {
+        pix.fill(c);
+        a = new QAction(pix, tr("Select color (Press Shift for more options)") + QString("..."), actionGroupQuickColors);
+        a->setCheckable(true);
+        a->setObjectName(c.name());
+        //formatMenu->addAction(a);
+        // switchboard.addSwitch("mapFormatColor", shortcutScope, a, tag);
+        connect(a, SIGNAL(triggered()), this, SLOT(quickColor()));
+        colorsToolbar->addAction(a);
+    }
+    actionGroupQuickColors->actions().first()->setChecked(true);
+
     colorsToolbar->addAction(actionFormatPickColor);
     colorsToolbar->addAction(actionFormatColorBranch);
     colorsToolbar->addAction(actionFormatColorSubtree);
+    // Only place toolbar on very first startup
+    if (settings.value("/mainwindow/recentFileList").toStringList().isEmpty())
+        addToolBar (Qt::RightToolBarArea, colorsToolbar);
+    else
+        addToolBar (colorsToolbar);
 
     // Zoom
     zoomToolbar = addToolBar(tr("View toolbar", "View Toolbar name"));
@@ -5494,6 +5528,21 @@ void Main::updateQueries(
     */
 }
 
+void Main::quickColor()
+{
+    if (QApplication::keyboardModifiers() == Qt::ShiftModifier) {
+        QColor col = QColorDialog::getColor((currentColor), this);
+        if (!col.isValid()) return;
+
+        QPixmap pix(16, 16);
+        pix.fill(col);
+        actionFormatColor->setIcon(pix);    // Only used in menu, not in toolbar
+        actionGroupQuickColors->checkedAction()->setIcon(pix);
+        currentColor = col;
+    } else
+        setCurrentColor(QColor(sender()->objectName()));
+}
+
 void Main::formatPickColor()
 {
     VymModel *m = currentModel();
@@ -6505,7 +6554,10 @@ void Main::updateActions()
         }
 
         if (selbis.count() > 0)
+        {
             actionFormatColorBranch->setEnabled(true);
+            actionFormatColorSubtree->setEnabled(true);
+        }
     }
     else {
         // No map available

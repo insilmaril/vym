@@ -252,6 +252,7 @@ class Main : public QMainWindow {
     void editFindDuplicateURLs();
 
   public slots:
+    void quickColor();
     void formatPickColor();
     QColor getCurrentColor();
     void setCurrentColor(QColor);
@@ -533,6 +534,8 @@ class Main : public QMainWindow {
     QAction *actionSelectNothing;
     QAction *actionFind;
 
+    QActionGroup *actionGroupQuickColors;
+    QAction *actionFormatQuickColor;
     QAction *actionFormatColor;
     QAction *actionFormatPickColor;
     QAction *actionFormatColorBranch;
