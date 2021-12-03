@@ -1071,7 +1071,7 @@ ale ještě nebyla uložena. Chcete </translation>
     </message>
     <message>
         <source>Link to another vym map</source>
-        <translation type="vanished">Odkaz na jinou mapu programu VYM</translation>
+        <translation>Odkaz na jinou mapu programu VYM</translation>
     </message>
     <message>
         <source>Animation</source>
@@ -1946,7 +1946,7 @@ Chcete </translation>
     </message>
     <message>
         <source>Link to another map</source>
-        <translation>Odkaz na jinou mapu</translation>
+        <translation type="vanished">Odkaz na jinou mapu</translation>
     </message>
     <message>
         <source>Smooth pixmap transformations</source>
@@ -1967,7 +1967,7 @@ Chcete </translation>
     </message>
     <message>
         <source>Load Freemind map</source>
-        <translation>Nahrát mapu pro otevřenou mysl</translation>
+        <translation type="vanished">Nahrát mapu pro otevřenou mysl</translation>
     </message>
     <message>
         <source>Move branch up</source>
@@ -3464,6 +3464,14 @@ because file exists and cannot be changed.</source>
     </message>
     <message>
         <source>No SSL support available for this build of vym</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open Freemind map</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set as link to vym map</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
