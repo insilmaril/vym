@@ -2930,6 +2930,44 @@ Do you want to reload that map with the new file?</source>
         <comment>task related times</comment>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Name</source>
+        <comment>Branchprop window: Attribute name</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Value</source>
+        <comment>Branchprop window: Attribute value</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Type</source>
+        <comment>Branchprop window: Attribute type</comment>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ConfluenceAgent</name>
+    <message>
+        <source>Warning</source>
+        <translation type="unfinished">Προειδοποίηση</translation>
+    </message>
+    <message>
+        <source>Authentication problem when contacting Confluence</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ConfluenceUserDialog</name>
+    <message>
+        <source>Dialog</source>
+        <translation type="unfinished">Παράθυρο</translation>
+    </message>
+    <message>
+        <source>Find Confluence user</source>
+        <comment>dialog window title</comment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>CredentialsDialog</name>
@@ -3046,7 +3084,7 @@ Do you want to reload that map with the new file?</source>
     </message>
     <message>
         <source>Number sections</source>
-        <translation type="unfinished">Τομείς αριθμών</translation>
+        <translation type="obsolete">Τομείς αριθμών</translation>
     </message>
     <message>
         <source>Colored headings in text</source>
@@ -3063,6 +3101,10 @@ Do you want to reload that map with the new file?</source>
     <message>
         <source>Export</source>
         <translation type="unfinished">Εξαγωγή</translation>
+    </message>
+    <message>
+        <source>Use heading of first map center as page name</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3277,6 +3319,17 @@ want to allow this in your system!</source>
         <source>Current state</source>
         <comment>Current bar in history hwindow</comment>
         <translation>Τρέχουσα κατάσταση</translation>
+    </message>
+</context>
+<context>
+    <name>JiraAgent</name>
+    <message>
+        <source>Warning</source>
+        <translation type="unfinished">Προειδοποίηση</translation>
+    </message>
+    <message>
+        <source>Authentication problem when contacting JIRA</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4084,7 +4137,7 @@ want to allow this in your system!</source>
     <message>
         <source>Use modifier to draw xLinks</source>
         <comment>Mode modifier</comment>
-        <translation type="vanished">Χρήση μετατροπέα για σχεδιασμό xLinks</translation>
+        <translation>Χρήση μετατροπέα για σχεδιασμό xLinks</translation>
     </message>
     <message>
         <source>Note</source>
@@ -4571,7 +4624,7 @@ want to allow this in your system!</source>
     <message>
         <source>Zoom toolbar</source>
         <comment>View Toolbar name</comment>
-        <translation>Εργαλειοθήκη εστίασης</translation>
+        <translation type="vanished">Εργαλειοθήκη εστίασης</translation>
     </message>
     <message>
         <source>Editors toolbar</source>
@@ -4663,7 +4716,7 @@ exists already. Do you want to</source>
     </message>
     <message>
         <source>Bookmarks</source>
-        <translation>Σελιδοδείκτες</translation>
+        <translation type="vanished">Σελιδοδείκτες</translation>
     </message>
     <message>
         <source>Import</source>
@@ -4671,7 +4724,7 @@ exists already. Do you want to</source>
     </message>
     <message>
         <source>Load Freemind map</source>
-        <translation>Φόρτωση διαγράμματος Freemind</translation>
+        <translation type="vanished">Φόρτωση διαγράμματος Freemind</translation>
     </message>
     <message>
         <source>Export as CSV</source>
@@ -4763,7 +4816,7 @@ exists already. Do you want to</source>
     </message>
     <message>
         <source>Link to another map</source>
-        <translation>Σύνδεσμος προς άλλο διάγραμμα</translation>
+        <translation type="vanished">Σύνδεσμος προς άλλο διάγραμμα</translation>
     </message>
     <message>
         <source>Enter sleep time (number of days or date YYYY-MM-DD or DD.MM[.YYYY]</source>
@@ -4992,11 +5045,6 @@ because of existing lockfile:
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Create URL to Jira</source>
-        <comment>Edit menu</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Add image...</source>
         <comment>Edit menu</comment>
         <translation type="unfinished"></translation>
@@ -5048,31 +5096,6 @@ because of existing lockfile:
     <message>
         <source>Get page name from Confluence</source>
         <comment>Edit menu</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Use Shift modifier key to select and reorder objects</source>
-        <comment>Mode modifier</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Use Shift modifer key to pick color from another branch and apply</source>
-        <comment>Mode modifier</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Use Shift modifier key to draw xLinks</source>
-        <comment>Mode modifier</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Use Shift modifier key to move branches without linking</source>
-        <comment>Mode modifier</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Use Shift modifier key to move view without selecting</source>
-        <comment>Mode modifier</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -5215,11 +5238,6 @@ because of existing lockfile:
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>unnamed</source>
-        <comment>Name for empty and unnamed default map</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Couldn&apos;t load default map:
 
 %1
@@ -5252,6 +5270,93 @@ because file exists and cannot be changed.</source>
     <message>
         <source>Get data from JIRA for subtree</source>
         <comment>Edit menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>(experimental)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Firefox Bookmarks</source>
+        <comment>File export menu</comment>
+        <translation type="unfinished">Σελιδοδείκτες Firefox</translation>
+    </message>
+    <message>
+        <source>Move branch diagonally up</source>
+        <comment>Edit menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Move branch diagonally down</source>
+        <comment>Edit menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Connect</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Connect</source>
+        <comment>Shortcuts</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Get Confluence user data</source>
+        <comment>Connect action</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use modifier to select and reorder objects</source>
+        <comment>Mode modifier</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Format painter: pick color from another branch and apply</source>
+        <comment>Mode modifier</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use modifier to move branches without linking</source>
+        <comment>Mode modifier</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use modifier to move view without selecting</source>
+        <comment>Mode modifier</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>JIRA Credentials</source>
+        <comment>Settings action</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>View toolbar</source>
+        <comment>View Toolbar name</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Firefox Bookmarks</source>
+        <translation type="unfinished">Σελιδοδείκτες Firefox</translation>
+    </message>
+    <message>
+        <source>Import Firefox Bookmarks into new map</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No SSL support available for this build of vym</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open Freemind map</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Link to another vym map</source>
+        <translation type="unfinished">Σύνδεσμος προς άλλο διάγραμμα VYM</translation>
+    </message>
+    <message>
+        <source>Set as link to vym map</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5567,11 +5672,6 @@ and install the perl module for Bugzilla access using YaST</source>
         <translation>Η εφαρμογή %1 δεν έκλεισε κανονικα</translation>
     </message>
     <message>
-        <source>Trying to read Confluence page...</source>
-        <comment>Confluence export</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Flag: %1</source>
         <comment>Alt tag in HTML export</comment>
         <translation type="unfinished"></translation>
@@ -5608,18 +5708,12 @@ and install the perl module for Bugzilla access using YaST</source>
         <source>Couldn&apos;t find tool to unzip data. Please download and install 7z and set path in Settings menu:
  </source>
         <comment>zip tool missing on Win platform</comment>
-        <translation type="unfinished">Αδυναμία εύρεσης εφαρμογής για αποσυμπίεση δεδομένων. Παρακαλώ, κάντε λήψη και εγκαταστήστε την εφαρμογή 7z και ορίστε τη διαδρομή στο μενού των ρυθμίσεων:</translation>
+        <translation type="obsolete">Αδυναμία εύρεσης εφαρμογής για αποσυμπίεση δεδομένων. Παρακαλώ, κάντε λήψη και εγκαταστήστε την εφαρμογή 7z και ορίστε τη διαδρομή στο μενού των ρυθμίσεων:</translation>
     </message>
     <message>
         <source>Couldn&apos;t find tool to zip/unzip data. Please install on your platform and setpath in Settings menu:
  </source>
         <comment>zip tool missing on Linux/Mac platform</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Existing lockfiles have been ignored for the maps listed below. Please check, if the maps might be openend in another instance of vym.
-
-</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -5657,15 +5751,40 @@ The map could not be saved, please check if backup file is available or export a
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;h3&gt;Autosave will be disabled&lt;/h3&gt;&lt;p&gt;Please check contents of map before saving!&lt;/p&gt;</source>
+        <source>Export as Firefox bookmarks</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>JIRA client not found.</source>
+        <source>Could not export as Firefox bookmarks to %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Disabling autosave</source>
+        <source>Import Firefox bookmarks</source>
+        <comment>Import dialog</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Loading bookmarks:</source>
+        <comment>Progress dialog while importing bookmarks</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Imported %1 bookmarks</source>
+        <comment>Import dialog</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t find tool to unzip data,or your Windows version is older than Windows 10.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Existing lockfiles have been ignored for the maps listed below. Please check, if the maps might be openend in another instance of vym:
+
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>JIRA agent not setup.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5846,6 +5965,11 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <source>Show only tasks marked without any arrow-up flag</source>
+        <comment>Filters in task Editor</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show only blocker tasks</source>
         <comment>Filters in task Editor</comment>
         <translation type="unfinished"></translation>
     </message>
@@ -6145,12 +6269,7 @@ Do you want to overwrite it?</source>
     <name>UserDialog</name>
     <message>
         <source>Dialog</source>
-        <translation type="unfinished">Παράθυρο</translation>
-    </message>
-    <message>
-        <source>Find Confluence user</source>
-        <comment>dialog window title</comment>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Παράθυρο</translation>
     </message>
 </context>
 <context>
@@ -6338,7 +6457,7 @@ Do you want to reload that map with the new file?</source>
     <message>
         <source>Image</source>
         <comment>Default name for new image</comment>
-        <translation>Εικόνα</translation>
+        <translation type="vanished">Εικόνα</translation>
     </message>
     <message>
         <source>New map</source>
@@ -6444,10 +6563,6 @@ Do you want to write the map</source>
     </message>
     <message>
         <source>uncompressed, potentially overwrite existing data</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>JIRA client not found</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

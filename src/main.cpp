@@ -86,9 +86,10 @@ QString flagsPath; // Pointing to flags
 
 bool debug;                // global debugging flag
 bool testmode;             // Used to disable saving of autosave setting
-bool recoveryMode = false; // Activated via command line switch and deactivated
-                           // after initial loading of files
+bool restoreMode = false;  // During restore, existing lockfiles are ignored
+
 QStringList ignoredLockedFiles;
+QStringList lastSessionFiles;   //! Will be overwritten in setting after load, so read initially
 
 Switchboard switchboard;
 
@@ -380,6 +381,10 @@ int main(int argc, char *argv[])
     headingEditor = new HeadingEditor("headingeditor");
     branchPropertyEditor = new BranchPropertyEditor();
 
+    // Initially read filenames of last session, before settings are 
+    // overwritten during loading of maps
+    lastSessionFiles = settings.value("/mainwindow/sessionFileList", QStringList()).toStringList();
+
     Main m;
 
     // Check for zip tools
@@ -443,27 +448,11 @@ int main(int argc, char *argv[])
         switchboard
             .printASCII(); // FIXME-3 global switchboard and exit after listing
 
-    if (options.isOn("recover"))
-        recoveryMode = true;
-
     m.loadCmdLine();
 
     // Restore last session
     if (options.isOn("restore"))
         m.fileRestoreSession();
-
-    // By now all files should have been loaded
-    // Reset the restore flag and display message if needed
-    if (ignoredLockedFiles.count() > 0) {
-        QString msg(
-            QObject::tr("Existing lockfiles have been ignored for the maps "
-                        "listed below. Please check, if the maps might be "
-                        "openend in another instance of vym.\n\n"));
-        QMessageBox::warning(0, QObject::tr("Warning"),
-                             msg + ignoredLockedFiles.join("\n"));
-    }
-    recoveryMode = false;
-    ignoredLockedFiles.clear();
 
     // Load script
     if (options.isOn("load")) {

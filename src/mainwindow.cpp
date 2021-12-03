@@ -100,6 +100,10 @@ extern QString confluencePassword;
 extern QString jiraPassword;
 extern Switchboard switchboard;
 
+extern bool restoreMode;
+extern QStringList ignoredLockedFiles;
+extern QStringList lastSessionFiles;
+
 extern QList<Command *> modelCommands;
 extern QList<Command *> vymCommands;
 
@@ -272,13 +276,6 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
     addDockWidget(Qt::LeftDockWidgetArea, dw);
 
     dw = new QDockWidget();
-    dw->setWidget(branchPropertyEditor);
-    dw->setObjectName("BranchPropertyEditor");
-    dw->hide();
-    branchPropertyEditorDW = dw;
-    addDockWidget(Qt::LeftDockWidgetArea, dw);
-
-    dw = new QDockWidget();
     dw->setWidget(headingEditor);
     dw->setObjectName("HeadingEditor");
     dw->setWindowTitle(headingEditor->getEditorTitle());
@@ -311,12 +308,12 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
     dw->hide();
     addDockWidget(Qt::BottomDockWidgetArea, dw);
 
-    branchPropertyEditor = new BranchPropertyEditor();
     dw = new QDockWidget(tr("Property Editor", "PropertyEditor"));
     dw->setWidget(branchPropertyEditor);
     dw->setObjectName("PropertyEditor");
     dw->hide();
     addDockWidget(Qt::LeftDockWidgetArea, dw);
+    branchPropertyEditorDW = dw;
 
     historyWindow = new HistoryWindow();
     dw = new QDockWidget(tr("History window", "HistoryWidget"));
@@ -3827,6 +3824,9 @@ File::ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode,
             statusBar()->showMessage("Loaded " + fn, statusbarTime);
         }
     }
+
+    fileSaveSession();
+
     return err;
 }
 
@@ -3867,8 +3867,6 @@ void Main::fileLoad(const LoadMode &lmode)
             fileLoad(fn, lmode, getMapType(fn));
     }
     removeProgressCounter();
-
-    fileSaveSession();
 }
 
 void Main::fileLoad()
@@ -3884,21 +3882,38 @@ void Main::fileSaveSession()
         flist.append(view(i)->getModel()->getFilePath());
 
     settings.setValue("/mainwindow/sessionFileList", flist);
+
+    // Also called by event loop regulary, but apparently not often enough
+    settings.sync();
 }
 
 void Main::fileRestoreSession()
 {
-    QStringList flist =
-        settings.value("/mainwindow/sessionFileList").toStringList();
-    QStringList::Iterator it = flist.begin();
+    restoreMode = true;
 
-    initProgressCounter(flist.count());
-    while (it != flist.end()) {
+    QStringList::Iterator it = lastSessionFiles.begin();
+
+    initProgressCounter(lastSessionFiles.count());
+    while (it != lastSessionFiles.end()) {
         FileType type = getMapType(*it);
         fileLoad(*it, NewMap, type);
         *it++;
     }
     removeProgressCounter();
+
+    // By now all files should have been loaded
+    // Reset the restore flag and display message if needed
+    if (ignoredLockedFiles.count() > 0) {
+        QString msg(
+            QObject::tr("Existing lockfiles have been ignored for the maps "
+                        "listed below. Please check, if the maps might be "
+                        "openend in another instance of vym:\n\n"));
+        QMessageBox::warning(0, QObject::tr("Warning"),
+                             msg + ignoredLockedFiles.join("\n"));
+    }
+
+    restoreMode = false;
+    ignoredLockedFiles.clear();
 }
 
 void Main::fileLoadRecent()
@@ -4168,6 +4183,7 @@ void Main::fileImportFirefoxBookmarks()
         fd.setNameFilters(filters);
         fd.setAcceptMode(QFileDialog::AcceptOpen);
         fd.setWindowTitle(tr("Import Firefox Bookmarks into new map"));
+        fd.setLabelText( QFileDialog::Accept, tr("Import"));
 
         if (fd.exec() == QDialog::Accepted) {
             qApp->processEvents(); // close QFileDialog
@@ -4192,7 +4208,7 @@ void Main::fileImportFreemind()
     fd.setDirectory(lastMapDir);
     fd.setFileMode(QFileDialog::ExistingFiles);
     fd.setNameFilters(filters);
-    fd.setWindowTitle(vymName + " - " + tr("Load Freemind map"));
+    fd.setWindowTitle(vymName + " - " + tr("Open Freemind map"));
     fd.setAcceptMode(QFileDialog::AcceptOpen);
 
     QString fn;
@@ -4222,6 +4238,7 @@ void Main::fileImportMM()
     fd.setNameFilters(filters);
     fd.setAcceptMode(QFileDialog::AcceptOpen);
     fd.setWindowTitle(tr("Import") + " " + "Mind Manager");
+    fd.setLabelText( QFileDialog::Accept, tr("Import"));
 
     if (fd.exec() == QDialog::Accepted) {
         lastMapDir = fd.directory();
@@ -4807,9 +4824,9 @@ void Main::editVymLink()
             QStringList filters;
             filters << "VYM map (*.vym)";
             QFileDialog fd;
-            fd.setWindowTitle(vymName + " - " + tr("Link to another map"));
+            fd.setWindowTitle(vymName + " - " + tr("Link to another vym map"));
             fd.setNameFilters(filters);
-            fd.setWindowTitle(vymName + " - " + tr("Link to another map"));
+            fd.setLabelText( QFileDialog::Accept, tr("Set as link to vym map"));
             fd.setDirectory(lastMapDir);
             fd.setAcceptMode(QFileDialog::AcceptOpen);
             if (!bi->getVymLink().isEmpty())

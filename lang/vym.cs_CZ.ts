@@ -189,6 +189,44 @@
         <comment>task related times</comment>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Name</source>
+        <comment>Branchprop window: Attribute name</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Value</source>
+        <comment>Branchprop window: Attribute value</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Type</source>
+        <comment>Branchprop window: Attribute type</comment>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ConfluenceAgent</name>
+    <message>
+        <source>Warning</source>
+        <translation type="unfinished">Varování</translation>
+    </message>
+    <message>
+        <source>Authentication problem when contacting Confluence</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ConfluenceUserDialog</name>
+    <message>
+        <source>Dialog</source>
+        <translation type="unfinished">Dialog</translation>
+    </message>
+    <message>
+        <source>Find Confluence user</source>
+        <comment>dialog window title</comment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>CredentialsDialog</name>
@@ -305,7 +343,7 @@
     </message>
     <message>
         <source>Number sections</source>
-        <translation type="unfinished">Číslovat oddíly</translation>
+        <translation type="obsolete">Číslovat oddíly</translation>
     </message>
     <message>
         <source>Colored headings in text</source>
@@ -322,6 +360,10 @@
     <message>
         <source>Export</source>
         <translation type="unfinished">Exportovat</translation>
+    </message>
+    <message>
+        <source>Use heading of first map center as page name</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -562,6 +604,17 @@ ve svém systému povolit!</translation>
         <source>Current state</source>
         <comment>Current bar in history hwindow</comment>
         <translation>Nynější stav</translation>
+    </message>
+</context>
+<context>
+    <name>JiraAgent</name>
+    <message>
+        <source>Warning</source>
+        <translation type="unfinished">Varování</translation>
+    </message>
+    <message>
+        <source>Authentication problem when contacting JIRA</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1018,7 +1071,7 @@ ale ještě nebyla uložena. Chcete </translation>
     </message>
     <message>
         <source>Link to another vym map</source>
-        <translation type="vanished">Odkaz na jinou mapu programu VYM</translation>
+        <translation>Odkaz na jinou mapu programu VYM</translation>
     </message>
     <message>
         <source>Animation</source>
@@ -1133,7 +1186,7 @@ ale ještě nebyla uložena. Chcete </translation>
     <message>
         <source>Use modifier to draw xLinks</source>
         <comment>Mode modifier</comment>
-        <translation type="vanished">Použít upravovač pro založení xLinks</translation>
+        <translation>Použít upravovač pro založení xLinks</translation>
     </message>
     <message>
         <source>Get data from Novell Bugzilla</source>
@@ -1254,7 +1307,7 @@ Chcete jej přepsat?</translation>
     </message>
     <message>
         <source>Bookmarks</source>
-        <translation>Záložky</translation>
+        <translation type="vanished">Záložky</translation>
     </message>
     <message>
         <source>Open anyway</source>
@@ -1893,7 +1946,7 @@ Chcete </translation>
     </message>
     <message>
         <source>Link to another map</source>
-        <translation>Odkaz na jinou mapu</translation>
+        <translation type="vanished">Odkaz na jinou mapu</translation>
     </message>
     <message>
         <source>Smooth pixmap transformations</source>
@@ -1914,7 +1967,7 @@ Chcete </translation>
     </message>
     <message>
         <source>Load Freemind map</source>
-        <translation>Nahrát mapu pro otevřenou mysl</translation>
+        <translation type="vanished">Nahrát mapu pro otevřenou mysl</translation>
     </message>
     <message>
         <source>Move branch up</source>
@@ -2978,7 +3031,7 @@ Chcete </translation>
     <message>
         <source>Zoom toolbar</source>
         <comment>View Toolbar name</comment>
-        <translation type="unfinished">Nástrojový pruh pro prohlížení</translation>
+        <translation type="obsolete">Nástrojový pruh pro prohlížení</translation>
     </message>
     <message>
         <source>Editors toolbar</source>
@@ -3115,11 +3168,6 @@ Chcete </translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Create URL to Jira</source>
-        <comment>Edit menu</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Add image...</source>
         <comment>Edit menu</comment>
         <translation type="unfinished"></translation>
@@ -3171,31 +3219,6 @@ Chcete </translation>
     <message>
         <source>Get page name from Confluence</source>
         <comment>Edit menu</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Use Shift modifier key to select and reorder objects</source>
-        <comment>Mode modifier</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Use Shift modifer key to pick color from another branch and apply</source>
-        <comment>Mode modifier</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Use Shift modifier key to draw xLinks</source>
-        <comment>Mode modifier</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Use Shift modifier key to move branches without linking</source>
-        <comment>Mode modifier</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Use Shift modifier key to move view without selecting</source>
-        <comment>Mode modifier</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3334,11 +3357,6 @@ Chcete </translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>unnamed</source>
-        <comment>Name for empty and unnamed default map</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Couldn&apos;t load default map:
 
 %1
@@ -3371,6 +3389,89 @@ because file exists and cannot be changed.</source>
     <message>
         <source>Get data from JIRA for subtree</source>
         <comment>Edit menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>(experimental)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Firefox Bookmarks</source>
+        <comment>File export menu</comment>
+        <translation type="unfinished">Záložky Firefoxu</translation>
+    </message>
+    <message>
+        <source>Move branch diagonally up</source>
+        <comment>Edit menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Move branch diagonally down</source>
+        <comment>Edit menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Connect</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Connect</source>
+        <comment>Shortcuts</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Get Confluence user data</source>
+        <comment>Connect action</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use modifier to select and reorder objects</source>
+        <comment>Mode modifier</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Format painter: pick color from another branch and apply</source>
+        <comment>Mode modifier</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use modifier to move branches without linking</source>
+        <comment>Mode modifier</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use modifier to move view without selecting</source>
+        <comment>Mode modifier</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>JIRA Credentials</source>
+        <comment>Settings action</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>View toolbar</source>
+        <comment>View Toolbar name</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Firefox Bookmarks</source>
+        <translation type="unfinished">Záložky Firefoxu</translation>
+    </message>
+    <message>
+        <source>Import Firefox Bookmarks into new map</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No SSL support available for this build of vym</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open Freemind map</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set as link to vym map</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3763,11 +3864,6 @@ modul perlu pro přístup k Bugzille pomocí YaSTu</translation>
         <translation type="vanished">Varování: Nepodařilo se nalézt klienta pro Bugzillu</translation>
     </message>
     <message>
-        <source>Trying to read Confluence page...</source>
-        <comment>Confluence export</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Flag: %1</source>
         <comment>Alt tag in HTML export</comment>
         <translation type="unfinished"></translation>
@@ -3804,19 +3900,13 @@ modul perlu pro přístup k Bugzille pomocí YaSTu</translation>
         <source>Couldn&apos;t find tool to unzip data. Please download and install 7z and set path in Settings menu:
  </source>
         <comment>zip tool missing on Win platform</comment>
-        <translation type="unfinished">Nepodařilo se najít nástroj na rozbalení dat. Prosím, ztáhněte a nainstalujte 7z a nastavte v nabídce Nastavení cestu:
+        <translation type="obsolete">Nepodařilo se najít nástroj na rozbalení dat. Prosím, ztáhněte a nainstalujte 7z a nastavte v nabídce Nastavení cestu:
 .</translation>
     </message>
     <message>
         <source>Couldn&apos;t find tool to zip/unzip data. Please install on your platform and setpath in Settings menu:
  </source>
         <comment>zip tool missing on Linux/Mac platform</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Existing lockfiles have been ignored for the maps listed below. Please check, if the maps might be openend in another instance of vym.
-
-</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3854,15 +3944,40 @@ The map could not be saved, please check if backup file is available or export a
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;h3&gt;Autosave will be disabled&lt;/h3&gt;&lt;p&gt;Please check contents of map before saving!&lt;/p&gt;</source>
+        <source>Export as Firefox bookmarks</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>JIRA client not found.</source>
+        <source>Could not export as Firefox bookmarks to %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Disabling autosave</source>
+        <source>Import Firefox bookmarks</source>
+        <comment>Import dialog</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Loading bookmarks:</source>
+        <comment>Progress dialog while importing bookmarks</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Imported %1 bookmarks</source>
+        <comment>Import dialog</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t find tool to unzip data,or your Windows version is older than Windows 10.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Existing lockfiles have been ignored for the maps listed below. Please check, if the maps might be openend in another instance of vym:
+
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>JIRA agent not setup.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4074,6 +4189,11 @@ Chcete jej přepsat?</translation>
     </message>
     <message>
         <source>Show only tasks marked without any arrow-up flag</source>
+        <comment>Filters in task Editor</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show only blocker tasks</source>
         <comment>Filters in task Editor</comment>
         <translation type="unfinished"></translation>
     </message>
@@ -4452,12 +4572,7 @@ Chcete jej přepsat?</translation>
     <name>UserDialog</name>
     <message>
         <source>Dialog</source>
-        <translation type="unfinished">Dialog</translation>
-    </message>
-    <message>
-        <source>Find Confluence user</source>
-        <comment>dialog window title</comment>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Dialog</translation>
     </message>
 </context>
 <context>
@@ -4755,7 +4870,7 @@ se nepodařilo odstranit před uložením</translation>
     <message>
         <source>Image</source>
         <comment>Default name for new image</comment>
-        <translation>Obrázek</translation>
+        <translation type="vanished">Obrázek</translation>
     </message>
     <message>
         <source>New map</source>
@@ -4803,10 +4918,6 @@ Do you want to write the map</source>
     </message>
     <message>
         <source>uncompressed, potentially overwrite existing data</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>JIRA client not found</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
