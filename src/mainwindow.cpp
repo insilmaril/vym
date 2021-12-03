@@ -276,13 +276,6 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
     addDockWidget(Qt::LeftDockWidgetArea, dw);
 
     dw = new QDockWidget();
-    dw->setWidget(branchPropertyEditor);
-    dw->setObjectName("BranchPropertyEditor");
-    dw->hide();
-    branchPropertyEditorDW = dw;
-    addDockWidget(Qt::LeftDockWidgetArea, dw);
-
-    dw = new QDockWidget();
     dw->setWidget(headingEditor);
     dw->setObjectName("HeadingEditor");
     dw->setWindowTitle(headingEditor->getEditorTitle());
@@ -315,12 +308,12 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
     dw->hide();
     addDockWidget(Qt::BottomDockWidgetArea, dw);
 
-    branchPropertyEditor = new BranchPropertyEditor();
     dw = new QDockWidget(tr("Property Editor", "PropertyEditor"));
     dw->setWidget(branchPropertyEditor);
     dw->setObjectName("PropertyEditor");
     dw->hide();
     addDockWidget(Qt::LeftDockWidgetArea, dw);
+    branchPropertyEditorDW = dw;
 
     historyWindow = new HistoryWindow();
     dw = new QDockWidget(tr("History window", "HistoryWidget"));
