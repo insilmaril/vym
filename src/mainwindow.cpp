@@ -4211,6 +4211,7 @@ void Main::fileImportFirefoxBookmarks()
         fd.setNameFilters(filters);
         fd.setAcceptMode(QFileDialog::AcceptOpen);
         fd.setWindowTitle(tr("Import Firefox Bookmarks into new map"));
+        fd.setLabelText( QFileDialog::Accept, tr("Import"));
 
         if (fd.exec() == QDialog::Accepted) {
             qApp->processEvents(); // close QFileDialog
@@ -4235,7 +4236,7 @@ void Main::fileImportFreemind()
     fd.setDirectory(lastMapDir);
     fd.setFileMode(QFileDialog::ExistingFiles);
     fd.setNameFilters(filters);
-    fd.setWindowTitle(vymName + " - " + tr("Load Freemind map"));
+    fd.setWindowTitle(vymName + " - " + tr("Open Freemind map"));
     fd.setAcceptMode(QFileDialog::AcceptOpen);
 
     QString fn;
@@ -4265,6 +4266,7 @@ void Main::fileImportMM()
     fd.setNameFilters(filters);
     fd.setAcceptMode(QFileDialog::AcceptOpen);
     fd.setWindowTitle(tr("Import") + " " + "Mind Manager");
+    fd.setLabelText( QFileDialog::Accept, tr("Import"));
 
     if (fd.exec() == QDialog::Accepted) {
         lastMapDir = fd.directory();
@@ -4850,9 +4852,9 @@ void Main::editVymLink()
             QStringList filters;
             filters << "VYM map (*.vym)";
             QFileDialog fd;
-            fd.setWindowTitle(vymName + " - " + tr("Link to another map"));
+            fd.setWindowTitle(vymName + " - " + tr("Link to another vym map"));
             fd.setNameFilters(filters);
-            fd.setWindowTitle(vymName + " - " + tr("Link to another map"));
+            fd.setLabelText( QFileDialog::Accept, tr("Set as link to vym map"));
             fd.setDirectory(lastMapDir);
             fd.setAcceptMode(QFileDialog::AcceptOpen);
             if (!bi->getVymLink().isEmpty())

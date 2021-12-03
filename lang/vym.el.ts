@@ -4724,7 +4724,7 @@ exists already. Do you want to</source>
     </message>
     <message>
         <source>Load Freemind map</source>
-        <translation>Φόρτωση διαγράμματος Freemind</translation>
+        <translation type="vanished">Φόρτωση διαγράμματος Freemind</translation>
     </message>
     <message>
         <source>Export as CSV</source>
@@ -4816,7 +4816,7 @@ exists already. Do you want to</source>
     </message>
     <message>
         <source>Link to another map</source>
-        <translation>Σύνδεσμος προς άλλο διάγραμμα</translation>
+        <translation type="vanished">Σύνδεσμος προς άλλο διάγραμμα</translation>
     </message>
     <message>
         <source>Enter sleep time (number of days or date YYYY-MM-DD or DD.MM[.YYYY]</source>
@@ -5345,6 +5345,18 @@ because file exists and cannot be changed.</source>
     </message>
     <message>
         <source>No SSL support available for this build of vym</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open Freemind map</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Link to another vym map</source>
+        <translation type="unfinished">Σύνδεσμος προς άλλο διάγραμμα VYM</translation>
+    </message>
+    <message>
+        <source>Set as link to vym map</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

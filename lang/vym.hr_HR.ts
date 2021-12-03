@@ -879,8 +879,8 @@ Provjerite da li to stvarno
         <location filename="../src/mainwindow.cpp" line="1229"/>
         <location filename="../src/mainwindow.cpp" line="1234"/>
         <location filename="../src/mainwindow.cpp" line="2229"/>
-        <location filename="../src/mainwindow.cpp" line="4309"/>
-        <location filename="../src/mainwindow.cpp" line="4414"/>
+        <location filename="../src/mainwindow.cpp" line="4311"/>
+        <location filename="../src/mainwindow.cpp" line="4416"/>
         <source>(still experimental)</source>
         <translation>(experimentalno)</translation>
     </message>
@@ -2271,13 +2271,28 @@ because file exists and cannot be changed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="4907"/>
+        <location filename="../src/mainwindow.cpp" line="4218"/>
+        <source>Open Freemind map</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cpp" line="4834"/>
+        <source>Link to another vym map</source>
+        <translation type="unfinished">Veza na drugu vym mapu</translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cpp" line="4836"/>
+        <source>Set as link to vym map</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cpp" line="4909"/>
         <source>Enter sleep time (number of days, hours with &apos;h&apos; or date YYYY-MM-DD or DD.MM[.YYYY]</source>
         <comment>task sleep time dialog</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="5765"/>
+        <location filename="../src/mainwindow.cpp" line="5767"/>
         <source>Load vym script</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2665,7 +2680,7 @@ because file exists and cannot be changed.</source>
         <translation>(samo za čitanje)</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="5789"/>
+        <location filename="../src/mainwindow.cpp" line="5791"/>
         <source>Set vym default map to be loaded on startup</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2772,7 +2787,7 @@ već postoji. Želite li</translation>
         <location filename="../src/mainwindow.cpp" line="4058"/>
         <location filename="../src/mainwindow.cpp" line="4133"/>
         <location filename="../src/mainwindow.cpp" line="4141"/>
-        <location filename="../src/mainwindow.cpp" line="4787"/>
+        <location filename="../src/mainwindow.cpp" line="4789"/>
         <source>Critical Error</source>
         <translation>Kritična greška</translation>
     </message>
@@ -2798,77 +2813,78 @@ zbog postojeće datoteke zaključavanja:
         <translation type="vanished">Knjižne oznake</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="4246"/>
+        <location filename="../src/mainwindow.cpp" line="4193"/>
+        <location filename="../src/mainwindow.cpp" line="4247"/>
+        <location filename="../src/mainwindow.cpp" line="4248"/>
         <source>Import</source>
         <translation>Uvoz</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="4217"/>
         <source>Load Freemind map</source>
-        <translation>Učitaj Freemind mapu</translation>
+        <translation type="vanished">Učitaj Freemind mapu</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="4308"/>
+        <location filename="../src/mainwindow.cpp" line="4310"/>
         <source>Export as CSV</source>
         <translation>Izvezi kao CSV</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="4345"/>
-        <location filename="../src/mainwindow.cpp" line="4413"/>
+        <location filename="../src/mainwindow.cpp" line="4347"/>
+        <location filename="../src/mainwindow.cpp" line="4415"/>
         <source>Export to</source>
         <translation>Izvezi u</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="4098"/>
-        <location filename="../src/mainwindow.cpp" line="4365"/>
-        <location filename="../src/mainwindow.cpp" line="4566"/>
-        <location filename="../src/mainwindow.cpp" line="4926"/>
-        <location filename="../src/mainwindow.cpp" line="5890"/>
-        <location filename="../src/mainwindow.cpp" line="5928"/>
-        <location filename="../src/mainwindow.cpp" line="6800"/>
-        <location filename="../src/mainwindow.cpp" line="6991"/>
-        <location filename="../src/mainwindow.cpp" line="7164"/>
+        <location filename="../src/mainwindow.cpp" line="4367"/>
+        <location filename="../src/mainwindow.cpp" line="4568"/>
+        <location filename="../src/mainwindow.cpp" line="4928"/>
+        <location filename="../src/mainwindow.cpp" line="5892"/>
+        <location filename="../src/mainwindow.cpp" line="5930"/>
+        <location filename="../src/mainwindow.cpp" line="6802"/>
+        <location filename="../src/mainwindow.cpp" line="6993"/>
+        <location filename="../src/mainwindow.cpp" line="7166"/>
         <source>Warning</source>
         <translation>Upozorenje</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="4366"/>
+        <location filename="../src/mainwindow.cpp" line="4368"/>
         <source>Couldn&apos;t find configuration for export to LibreOffice
 </source>
         <translation>Ne mogu naći konfiguraciju za izvoz u LibreOffice
 </translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="4454"/>
+        <location filename="../src/mainwindow.cpp" line="4456"/>
         <source>The map %1 has been modified but not saved yet. Do you want to</source>
         <translation>Mapa %1 je modificirana, ali nije spremljena. Želite li</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="4460"/>
+        <location filename="../src/mainwindow.cpp" line="4462"/>
         <source>Save modified map before closing it</source>
         <translation>Spremljena izmijenjenu mapu prije zatvaranja</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="4461"/>
+        <location filename="../src/mainwindow.cpp" line="4463"/>
         <source>Discard changes</source>
         <translation>Odbaci promjene</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="4567"/>
-        <location filename="../src/mainwindow.cpp" line="6801"/>
+        <location filename="../src/mainwindow.cpp" line="4569"/>
+        <location filename="../src/mainwindow.cpp" line="6803"/>
         <source>Couldn&apos;t find a viewer to open %1.
 </source>
         <translation>Ne mogu naći program za pregledavanje %1.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="4568"/>
-        <location filename="../src/mainwindow.cpp" line="6802"/>
+        <location filename="../src/mainwindow.cpp" line="4570"/>
+        <location filename="../src/mainwindow.cpp" line="6804"/>
         <source>Please use Settings-&gt;</source>
         <translation>Molim koristite postavke-&gt;</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="4569"/>
-        <location filename="../src/mainwindow.cpp" line="5738"/>
+        <location filename="../src/mainwindow.cpp" line="4571"/>
+        <location filename="../src/mainwindow.cpp" line="5740"/>
         <source>Set application to open an URL</source>
         <translation>Postavi aplikaciju za otvaranje URLa</translation>
     </message>
@@ -2877,55 +2893,53 @@ zbog postojeće datoteke zaključavanja:
         <translation type="vanished">Ne mogu pokrenuti %1 za otvatanje nove kartice u %2.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="4632"/>
+        <location filename="../src/mainwindow.cpp" line="4634"/>
         <source>Enter URL:</source>
         <translation>Unesi URL:</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="4655"/>
+        <location filename="../src/mainwindow.cpp" line="4657"/>
         <source>HTML</source>
         <comment>Filedialog</comment>
         <translation>HTML</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="4656"/>
+        <location filename="../src/mainwindow.cpp" line="4658"/>
         <source>Text</source>
         <comment>Filedialog</comment>
         <translation>Tekst</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="4657"/>
+        <location filename="../src/mainwindow.cpp" line="4659"/>
         <source>Spreadsheet</source>
         <comment>Filedialog</comment>
         <translation>Proračunska tablica</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="4658"/>
+        <location filename="../src/mainwindow.cpp" line="4660"/>
         <source>Textdocument</source>
         <comment>Filedialog</comment>
         <translation>Tekstualnidokument</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="4659"/>
+        <location filename="../src/mainwindow.cpp" line="4661"/>
         <source>Images</source>
         <comment>Filedialog</comment>
         <translation>Slike</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="4663"/>
+        <location filename="../src/mainwindow.cpp" line="4665"/>
         <source>Set URL to a local file</source>
         <translation>Postavi URL za lokalnu datoteku</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="4788"/>
+        <location filename="../src/mainwindow.cpp" line="4790"/>
         <source>Couldn&apos;t open map %1</source>
         <translation>Ne mogu otvoriti mapu %1</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="4832"/>
-        <location filename="../src/mainwindow.cpp" line="4834"/>
         <source>Link to another map</source>
-        <translation>Veza na drugu mapu</translation>
+        <translation type="vanished">Veza na drugu mapu</translation>
     </message>
     <message>
         <source>Enter sleep time (number of days or date YYYY-MM-DD or DD.MM[.YYYY]</source>
@@ -2933,13 +2947,13 @@ zbog postojeće datoteke zaključavanja:
         <translation type="vanished">Unesi vrijeme spavanja (broj dana ili datum YYYY-MM-DD ili DD.MM[.YYYY]</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="4927"/>
+        <location filename="../src/mainwindow.cpp" line="4929"/>
         <source>Couldn&apos;t set sleep time to %1.
 </source>
         <translation>Ne mogu postaviti spavanje na %1.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="4955"/>
+        <location filename="../src/mainwindow.cpp" line="4957"/>
         <source>%1 items on map
 </source>
         <comment>Info about map</comment>
@@ -2947,31 +2961,31 @@ zbog postojeće datoteke zaključavanja:
 </translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="4976"/>
+        <location filename="../src/mainwindow.cpp" line="4978"/>
         <source>branches</source>
         <comment>Info about map</comment>
         <translation>grane</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="4979"/>
+        <location filename="../src/mainwindow.cpp" line="4981"/>
         <source>tasks total</source>
         <comment>Info about map</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="4982"/>
+        <location filename="../src/mainwindow.cpp" line="4984"/>
         <source>tasks in map</source>
         <comment>Info about map</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="4983"/>
+        <location filename="../src/mainwindow.cpp" line="4985"/>
         <source>notes</source>
         <comment>Info about map</comment>
         <translation>bilješke</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="4984"/>
+        <location filename="../src/mainwindow.cpp" line="4986"/>
         <source>images</source>
         <comment>Info about map</comment>
         <translation>slike</translation>
@@ -2982,20 +2996,20 @@ zbog postojeće datoteke zaključavanja:
         <translation type="vanished">zadatci</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="4987"/>
+        <location filename="../src/mainwindow.cpp" line="4989"/>
         <source>slides</source>
         <comment>Info about map</comment>
         <translation>slajdovi</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="4989"/>
+        <location filename="../src/mainwindow.cpp" line="4991"/>
         <source>xLinks</source>
         <comment>Info about map</comment>
         <translation>xLinkovi</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="5726"/>
-        <location filename="../src/mainwindow.cpp" line="6803"/>
+        <location filename="../src/mainwindow.cpp" line="5728"/>
+        <location filename="../src/mainwindow.cpp" line="6805"/>
         <source>Set application to open PDF files</source>
         <translation>Postavi aplikaciju za otvaranje PDF datoteka</translation>
     </message>
@@ -3008,124 +3022,124 @@ zbog postojeće datoteke zaključavanja:
         <translation type="vanished">Direktorij sa vym makroima:</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="5803"/>
+        <location filename="../src/mainwindow.cpp" line="5805"/>
         <source>Number of undo/redo levels:</source>
         <translation>Broj poništi/ponovi nivoa:</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="5807"/>
+        <location filename="../src/mainwindow.cpp" line="5809"/>
         <source>VYM -Information:</source>
         <translation>VYM-informacije:</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="5808"/>
+        <location filename="../src/mainwindow.cpp" line="5810"/>
         <source>Settings have been changed. The next map opened will have &quot;%1&quot; undo/redo levels</source>
         <translation>Postavke su se promijenile. Sljedeća otvorena mapa će imati %1 poništi/ponovi nivoa</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="5822"/>
+        <location filename="../src/mainwindow.cpp" line="5824"/>
         <source>Number of seconds before autosave:</source>
         <translation>Broj sekundi do automatskog spasa:</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="5833"/>
+        <location filename="../src/mainwindow.cpp" line="5835"/>
         <source>Set author for new maps (used in lockfile)</source>
         <translation>Postavi autora nove mape (korišteno u zaključanoj datoteci)</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="5836"/>
+        <location filename="../src/mainwindow.cpp" line="5838"/>
         <source>unknown user</source>
         <comment>default name for map author in settings</comment>
         <translation>nepoznati korisnik</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="5848"/>
+        <location filename="../src/mainwindow.cpp" line="5850"/>
         <source>Number of parents shown in find results:</source>
         <translation>Broj prikazanih roditelja u rezultatima pretrage:</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="5859"/>
+        <location filename="../src/mainwindow.cpp" line="5861"/>
         <source>Number of parents shown for a task:</source>
         <translation>Broj prikazanih roditelja za zadatak:</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="5891"/>
-        <location filename="../src/mainwindow.cpp" line="5929"/>
+        <location filename="../src/mainwindow.cpp" line="5893"/>
+        <location filename="../src/mainwindow.cpp" line="5931"/>
         <source>No SSL support available for this build of vym</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="6318"/>
+        <location filename="../src/mainwindow.cpp" line="6320"/>
         <source>History for %1</source>
         <comment>Window Caption</comment>
         <translation>Povijest za %1</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="6341"/>
+        <location filename="../src/mainwindow.cpp" line="6343"/>
         <source>Export in last used format (%1) to: %2</source>
         <comment>status tip</comment>
         <translation>Izvezi po zadnje korištenom formatu (%1)  u: %2</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="6785"/>
+        <location filename="../src/mainwindow.cpp" line="6787"/>
         <source>Critcal error</source>
         <translation>Kritična greška</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="6786"/>
+        <location filename="../src/mainwindow.cpp" line="6788"/>
         <source>Couldn&apos;t find the documentation %1 in:
 %2</source>
         <translation>Ne mogu naći dokumentaciju %1 u: %2</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="6817"/>
+        <location filename="../src/mainwindow.cpp" line="6819"/>
         <source>Load vym example map</source>
         <translation>Učitaj vym mapu primjera</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="6992"/>
+        <location filename="../src/mainwindow.cpp" line="6994"/>
         <source>Please allow vym to download release notes!</source>
         <translation>Molim da dozvolite vymu da skine bilješke izdanja!</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="7015"/>
+        <location filename="../src/mainwindow.cpp" line="7017"/>
         <source>&lt;html&gt;&lt;h3&gt;Do you allow vym to check online for updates or release notes?&lt;/h3&gt;If you allow, vym will &lt;ul&gt;&lt;li&gt;check once for release notes&lt;/li&gt;&lt;li&gt;check regulary for updates and notify you in case you should update, e.g. if there are important bug fixes available&lt;/li&gt;&lt;li&gt;receive a cookie with a random ID and send vym version and platform name and the ID  (e.g. &quot;Windows&quot; or &quot;Linux&quot;) back to me, Uwe Drechsel.&lt;p&gt;As vym developer I am motivated to see many people using vym. Of course I am curious to see, on which system vym is used. Maintaining each of the systems requires a lot of my (spare) time.&lt;/p&gt; &lt;p&gt;No other data than above will be sent, especially no private data will be collected or sent.(Check the source code, if you don&apos;t believe.)&lt;/p&gt;&lt;/li&gt;&lt;/ul&gt;If you do not allow, &lt;ul&gt;&lt;li&gt;nothing will be downloaded and especially I will &lt;b&gt;not be motivated&lt;/b&gt; to spend some more thousands of hours on developing a free software tool.&lt;/ul&gt;Please allow vym to check for updates :-)</source>
         <translation type="unfinished">&lt;html&gt;&lt;h3&gt;Da li dozvoljavate vymu da online provjerava nadogradnje ili bilješke izdanja?&lt;/h3&gt;Ako dozvoljavate, vym će&lt;ul&gt;&lt;li&gt;provjeriti jednom bilješke izdanja&lt;/li&gt;&lt;li&gt;regularno provjeravati nadogradnje i upozoriti u slučaju da je vym potrebno ažurirati radi raspoloživih važnih zakrpi&lt;/li&gt;&lt;li&gt;dobiti kolačić sa nasumičnim IDjem i poslati uz njega vym verziju i platformu (&quot;Windows&quot; ili &quot;Linux&quot;) nazad meni, Uwe Drechselu.&lt;p&gt;Kao vym programer, ja sam motiviran vidjeti što više ljudi kako koriste vym. Naravno, znatiželjan sam vidjeti na kojim sustavima se vym koristi. Održavanje svakog od sustava zahtijeva puno mog (slobodnog) vremena.&lt;/p&gt; &lt;p&gt;Ništa drugo od podataka neće biti poslano, osobito nikakvi privatni podatci neće biti skupljani ili poslani (Provjerite izvorni kod ako ne vjerujete.)&lt;/p&gt;&lt;/li&gt;&lt;/ul&gt;Ako ne dozvoljavate,&lt;ul&gt;&lt;li&gt;ništa neće biti poslano a posbno ja &lt;b&gt;neću biti motiviran&lt;/b&gt; provesti još nekoliko tisuća sati u razvijanju besplatnog softverskog alata.&lt;/ul&gt;Molim Vas dozvolite vymu da provjerava nadogradnje :-)</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="7049"/>
+        <location filename="../src/mainwindow.cpp" line="7051"/>
         <source>Allow</source>
         <translation>Dozvoli</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="7050"/>
+        <location filename="../src/mainwindow.cpp" line="7052"/>
         <source>Do not allow</source>
         <translation>Nemoj dozvoliti</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="7055"/>
+        <location filename="../src/mainwindow.cpp" line="7057"/>
         <source>Thank you for enabling downloads!</source>
         <translation>Hvala za dozvoljavanje skidanja!</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="7079"/>
+        <location filename="../src/mainwindow.cpp" line="7081"/>
         <source>Update information</source>
         <translation>Ažuriraj informacije</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="7083"/>
+        <location filename="../src/mainwindow.cpp" line="7085"/>
         <source>vym is up to date.</source>
         <comment>MainWindow</comment>
         <translation>vym je ažuran.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="7135"/>
+        <location filename="../src/mainwindow.cpp" line="7137"/>
         <source>Checking for updates...</source>
         <comment>MainWindow</comment>
         <translation>Provjeri ažuriranja...</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="7165"/>
+        <location filename="../src/mainwindow.cpp" line="7167"/>
         <source>Please allow vym to check for updates!</source>
         <translation>Molim da dozvolite vymu da provjeri ako postoje ažuriranja!</translation>
     </message>
