@@ -255,15 +255,13 @@ int main(int argc, char *argv[])
     else
         vymInstanceName = pidString;
 
-    bool debugBuild = false;
 #ifdef QT_DEBUG
     qDebug() << "QT_DEBUG is set";
-    debugBuild = true;
 #endif
 
     // Use /usr/share/vym or /usr/local/share/vym or . ?
     // First try options
-    if (options.isOn("local") || debugBuild) {
+    if (options.isOn("local")) {
         vymBaseDir.setPath(vymBaseDir.currentPath());
     }
     else
@@ -280,7 +278,7 @@ int main(int argc, char *argv[])
         vymBaseDir.cdUp();
         vymBaseDir.cd("Resources");
 #elif defined(Q_OS_WINDOWS)
-        vymBaseDir.setPath(QDir::currentPath());
+        vymBaseDir.setPath(QCoreApplication::applicationDirPath());
 #else
         vymBaseDir.setPath(VYMBASEDIR);
 #endif
