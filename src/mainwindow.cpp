@@ -1029,6 +1029,13 @@ void Main::setupAPI()
     c->addPar(Command::Int, false, "Index of map");
     vymCommands.append(c);
 
+    c = new Command("selectQuickColor", Command::Any);
+    c->addPar(Command::Int, false, "Index of quick color [0..6]");
+    vymCommands.append(c);
+
+    c = new Command("currentColor", Command::Any);
+    vymCommands.append(c);
+
     c = new Command("toggleTreeEditor", Command::Any);
     vymCommands.append(c);
 
@@ -3397,28 +3404,29 @@ void Main::setupToolbars()
     actionGroupQuickColors->setExclusive(true);
     int i = 0;
 
-    QList <QColor> colors;
     QColor c;
-    c.setNamedColor ("#000000"); colors << c;
-    c.setNamedColor ("#ff0000"); colors << c;
-    c.setNamedColor ("#d95100"); colors << c;
-    c.setNamedColor ("#009900"); colors << c;
-    c.setNamedColor ("#00aa7f"); colors << c;
-    c.setNamedColor ("#aa00ff"); colors << c;
-    c.setNamedColor ("#c466ff"); colors << c;
-    c.setNamedColor ("#0000ff"); colors << c;
+    c.setNamedColor ("#ff0000"); quickColors << c;
+    c.setNamedColor ("#d95100"); quickColors << c;
+    c.setNamedColor ("#009900"); quickColors << c;
+    c.setNamedColor ("#00aa7f"); quickColors << c;
+    c.setNamedColor ("#aa00ff"); quickColors << c;
+    c.setNamedColor ("#c466ff"); quickColors << c;
+    c.setNamedColor ("#0000ff"); quickColors << c;
+    c.setNamedColor ("#000000"); quickColors << c;
 
     QPixmap pix(16, 16);
     QAction *a;
-    foreach (c, colors) {
+    int n = 0;
+    foreach (c, quickColors) {
         pix.fill(c);
         a = new QAction(pix, tr("Select color (Press Shift for more options)") + QString("..."), actionGroupQuickColors);
         a->setCheckable(true);
-        a->setObjectName(c.name());
+        a->setData(n);
         //formatMenu->addAction(a);
         // switchboard.addSwitch("mapFormatColor", shortcutScope, a, tag);
         connect(a, SIGNAL(triggered()), this, SLOT(quickColor()));
         colorsToolbar->addAction(a);
+        n++;
     }
     actionGroupQuickColors->actions().first()->setChecked(true);
 
@@ -5523,6 +5531,14 @@ void Main::updateQueries(
     */
 }
 
+void Main::selectQuickColor(int n)
+{
+    if (n < 0 || n > 6) return;
+
+    actionGroupQuickColors->actions().at(n)->setChecked(true);
+    setCurrentColor(quickColors.at(n));
+}
+
 void Main::quickColor()
 {
     if (QApplication::keyboardModifiers() == Qt::ShiftModifier) {
@@ -5535,7 +5551,7 @@ void Main::quickColor()
         actionGroupQuickColors->checkedAction()->setIcon(pix);
         currentColor = col;
     } else
-        setCurrentColor(QColor(sender()->objectName()));
+        selectQuickColor( ((QAction*)sender())->data().toInt());
 }
 
 void Main::formatPickColor()

@@ -252,6 +252,7 @@ class Main : public QMainWindow {
     void editFindDuplicateURLs();
 
   public slots:
+    void selectQuickColor(int n);
     void quickColor();
     void formatPickColor();
     QColor getCurrentColor();
@@ -426,6 +427,8 @@ class Main : public QMainWindow {
 
     QAction *macroActions[24];
     QStringList macro;
+
+    QList <QColor> quickColors;
 
     QMenu *toolbarsMenu;
     QToolBar *fileToolbar;
