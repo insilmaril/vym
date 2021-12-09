@@ -18,6 +18,8 @@ class BranchContainer : public Container {
     void addToChildrenContainer(Container *c);
     Container* getChildrenContainer();
 
+    bool isInClickBox(const QPointF &p);
+
     void updateVisuals();
 
   protected:

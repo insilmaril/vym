@@ -497,9 +497,14 @@ TreeItem *BranchItem::findMapItem(QPointF p, TreeItem *excludeTI)
             return ii;
     }
 
-    // Search myself
+    // Search myself (legacy: old BranchObj)    // FIXME-2 obsolete later
     if (getBranchObj()->isInClickBox(p) && (this != excludeTI) &&
         getBranchObj()->isVisibleObj())
+        return this;
+
+    // Search my container
+    if (branchContainer->isInClickBox(p) && (this != excludeTI) &&
+        getBranchObj()->isVisibleObj())     // FIXME-2   replace BO by container!!
         return this;
 
     // Search attributes

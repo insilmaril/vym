@@ -69,6 +69,11 @@ Container* BranchContainer::getChildrenContainer()
     return childrenContainer;
 }
 
+bool BranchContainer::isInClickBox(const QPointF &p)
+{
+    return headingContainer->rect().contains(headingContainer->mapFromScene(p));
+}
+
 void BranchContainer::updateVisuals()
 {
     headingContainer->setText(branchItem->getHeadingText());
