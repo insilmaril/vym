@@ -38,6 +38,7 @@ void BranchContainer::init()
     setContentType(Container::Containers);
     setLayoutType(Container::Horizontal);
     setHorizontalDirection(Container::RightToLeft);
+    //setHorizontalDirection(Container::LeftToRight);
 
     headingContainer = new HeadingContainer ();
     headingContainer->setName("heading");

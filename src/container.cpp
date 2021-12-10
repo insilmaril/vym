@@ -174,10 +174,10 @@ void Container::reposition()
                 foreach (QGraphicsItem *child, childItems()) {
                     c = (Container*) child;
                     // Align centered: 
-                    //c->setPos ( (w_max - c->rect().width() ) / 2, y);
+                    // c->setPos ( (w_max - c->rect().width() ) / 2, y);
 
                     // Align to left
-                    //c->setPos (0, y);
+                    // c->setPos (0, y);
 
                     // Align to right
                     c->setPos (w_max - c->rect().width(), y);
