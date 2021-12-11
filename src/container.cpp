@@ -110,10 +110,10 @@ void Container::reposition()
         c = (Container*) child;
         qDebug() << " * Repositioning childItem " << c->getName() << " content/Container " << c->contentType << "/" << c->containerType();
         if (c->contentType == Containers || c->contentType == MapObject) {
-            qDebug() << "   * Repositioning  ";
+            qDebug() << "   * Repositioning  "; //FIXME-0 should be obsolete now
             c->reposition();
         } else
-            qDebug() << "   * skipping Repos ";
+            qDebug() << "   * skipping Repos for child " << c;
 
     }
 
@@ -143,13 +143,16 @@ void Container::reposition()
                 foreach (QGraphicsItem *child, childItems()) {
                     c = (Container*) child;
 
-                    c->setPos (x - c->rect().width(), (h_max - c->rect().height() ) / 2);
-                    
                     // Align from left to right
                     if (horizontalDirection == LeftToRight)
+                    {
+                        c->setPos (x, (h_max - c->rect().height() ) / 2);
                         x += c->rect().width();
-                    else
+                    } else
+                    {
+                        c->setPos (x - c->rect().width(), (h_max - c->rect().height() ) / 2);
                         x -= c->rect().width();
+                    }
                 }
                 r.setWidth(w_total);
                 r.setHeight(h_max);
@@ -173,14 +176,15 @@ void Container::reposition()
                 // Position children
                 foreach (QGraphicsItem *child, childItems()) {
                     c = (Container*) child;
-                    // Align centered: 
-                    // c->setPos ( (w_max - c->rect().width() ) / 2, y);
+                    if (horizontalDirection == RightToLeft)
+                        // Align to left
+                        c->setPos (0, y);
+                    else
+                        // Align to right
+                        c->setPos (w_max - c->rect().width(), y);
 
-                    // Align to left
-                    // c->setPos (0, y);
-
-                    // Align to right
-                    c->setPos (w_max - c->rect().width(), y);
+                        // Align centered (unused): 
+                        // c->setPos ( (w_max - c->rect().width() ) / 2, y);
 
                     y += c->rect().height();
 
@@ -189,7 +193,6 @@ void Container::reposition()
                 r.setHeight(h_total);
             }
             setRect(r);
-            //qDebug() << " * Vertical layout - Setting rect of " << name << this << " to " << r;
             break;
         default:
             break;
