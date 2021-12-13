@@ -19,7 +19,6 @@ Container::~Container()
 void Container::init()
 {
     type = Collection;
-    contentType = UndefinedContent;
     contentObj = nullptr;
 
     layout = Horizontal;
@@ -32,16 +31,6 @@ void Container::init()
     show();
 }
 
-void Container::setContentType(const ContentType &ctype)
-{
-    contentType = ctype;
-}
-
-Container::ContentType Container::getContentType()
-{
-    return contentType;
-}
-
 Container::ContainerType Container::containerType()
 {
     return type;
@@ -50,7 +39,6 @@ Container::ContainerType Container::containerType()
 void Container::setContent(MapObj *mapObj)
 {
     contentObj = mapObj;
-    contentType = MapObject;
 }
 
 void Container::setLayoutType(const LayoutType &ltype)
@@ -71,7 +59,7 @@ void Container::addContainer(Container *c)
 
 void Container::reposition()
 {
-    qDebug() << QString("Container::reposition of %1 container  (content/Container: %2/%3").arg(name).arg(contentType).arg(type);
+    //qDebug() << QString("Container::reposition of %1 container  (Container: %2").arg(name).arg(type);
 
     QRectF r = rect();
 
@@ -81,14 +69,16 @@ void Container::reposition()
     // a) calc sizes of subcontainers based on their layouts
     if (type == Heading) {
         // size is already updated when heading itself changes, no need to recalc here.
+        qDebug() << "repos and type is heading!!!";
         return;
     } else {
-        //qDebug() << " * ContainerType: not heading;
         if (childItems().count() == 0) {
-            // qDebug() << " * Setting r to minimal size";
+            qDebug() << " * Setting r to minimal size rect=" << rect();
+            qDebug() << " * Setting r to minimal size type=" << type << " this=" << this;
             r.setWidth(0);
             r.setHeight(0);
             setRect(r);
+            return;
         }
     }
 
@@ -108,13 +98,9 @@ void Container::reposition()
     Container *c;
     foreach (QGraphicsItem *child, childItems()) {
         c = (Container*) child;
-        qDebug() << " * Repositioning childItem " << c->getName() << " content/Container " << c->contentType << "/" << c->containerType();
-        if (c->contentType == Containers || c->contentType == MapObject) {
-            qDebug() << "   * Repositioning  "; //FIXME-0 should be obsolete now
+        if (c->type != Undefined && c->type != Heading) {
             c->reposition();
-        } else
-            qDebug() << "   * skipping Repos for child " << c;
-
+        }
     }
 
     // b) Align my own containers

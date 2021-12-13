@@ -35,7 +35,6 @@ void BranchContainer::init()
 
     setName("branch");
     setBrush(QColor(Qt::blue));
-    setContentType(Container::Containers);
     setLayoutType(Container::Horizontal);
     setHorizontalDirection(Container::RightToLeft);
     //setHorizontalDirection(Container::LeftToRight);
@@ -48,7 +47,6 @@ void BranchContainer::init()
     childrenContainer = new Container ();
     childrenContainer->setName("children");
     childrenContainer->setBrush(QColor(Qt::green));
-    childrenContainer->setContentType(Container::Containers);
     childrenContainer->setLayoutType(Container::Vertical);
     scene()->addItem (childrenContainer);
 
