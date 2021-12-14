@@ -60,19 +60,13 @@ void Container::reposition()
     // Then the subcontainers are positioned.
     //
     // a) calc sizes of subcontainers based on their layouts
-    if (type == Heading) {
-        // size is already updated when heading itself changes, no need to recalc here.
-        qDebug() << "Container::reposition and type is heading!!!";
+
+    if (childItems().count() == 0) {
+        //qDebug() << " * Setting r to minimal size rect=" << rect();
+        r.setWidth(0);
+        r.setHeight(0);
+        setRect(r);
         return;
-    } else {
-        if (childItems().count() == 0) {
-            qDebug() << " * Setting r to minimal size rect=" << rect();
-            qDebug() << " * Setting r to minimal size type=" << type << " this=" << this;
-            r.setWidth(0);
-            r.setHeight(0);
-            setRect(r);
-            return;
-        }
     }
 
     // FIXME-1 testing only, rotate children
