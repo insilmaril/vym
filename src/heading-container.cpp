@@ -26,7 +26,7 @@ void HeadingContainer::init()
     setText(" ");
 }
 
-void HeadingContainer::setText(const QString &s)
+void HeadingContainer::setText(const QString &s)  // FIXME-0 does richtext has wrong position
 {
     // Update heading in container
     if (s != headingObj->text())

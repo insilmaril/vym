@@ -19,7 +19,6 @@ Container::~Container()
 void Container::init()
 {
     type = Collection;
-    contentObj = nullptr;
 
     layout = Horizontal;
 
@@ -34,11 +33,6 @@ void Container::init()
 Container::ContainerType Container::containerType()
 {
     return type;
-}
-
-void Container::setContent(MapObj *mapObj)
-{
-    contentObj = mapObj;
 }
 
 void Container::setLayoutType(const LayoutType &ltype)

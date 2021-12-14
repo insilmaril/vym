@@ -9,15 +9,11 @@ class Container : public QGraphicsRectItem {
   public:
     enum ContainerType {Undefined, Collection, Branch, Heading};
     enum LayoutType {Horizontal, Vertical};
-    enum HorizontalAlignment {Top, Middle, Bottom}; // FIXME-2 used?
     enum HorizontalDirection {LeftToRight, RightToLeft};
-    enum VerticalAlignment  {Left, Center, Right};  // FIXME-2 used?
 
     Container (QGraphicsItem *parent = NULL);
     virtual ~Container();
     virtual void init();
-
-    void setContent(MapObj* mapObj);
 
     ContainerType containerType();
 
@@ -31,7 +27,6 @@ class Container : public QGraphicsRectItem {
   protected:
 
     ContainerType type;
-    MapObj *contentObj; //! Content object, e.g. HeadingObj or FlagRowObj
 
     QString name;
 
