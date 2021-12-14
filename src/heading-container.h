@@ -13,6 +13,8 @@ class HeadingContainer : public Container {
 
     void setText(const QString &);
 
+    virtual void reposition();
+
   protected:
     HeadingObj *headingObj; 
 };

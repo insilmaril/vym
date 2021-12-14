@@ -33,19 +33,16 @@ void BranchContainer::init()
 {
     type = Container::Branch;
 
-    setName("branch");
     setBrush(QColor(Qt::blue));
     setLayoutType(Container::Horizontal);
     setHorizontalDirection(Container::RightToLeft);
     //setHorizontalDirection(Container::LeftToRight);
 
     headingContainer = new HeadingContainer ();
-    headingContainer->setName("heading");
     headingContainer->setBrush(QColor(Qt::gray));
     scene()->addItem (headingContainer);
 
     childrenContainer = new Container ();
-    childrenContainer->setName("children");
     childrenContainer->setBrush(QColor(Qt::green));
     childrenContainer->setLayoutType(Container::Vertical);
     scene()->addItem (childrenContainer);

@@ -39,3 +39,10 @@ void HeadingContainer::setText(const QString &s)
         setRect(r);
     }
 }
+
+void HeadingContainer::reposition()
+{
+    qDebug() << "HC::reposition";
+    return;
+}
+

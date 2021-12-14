@@ -53,7 +53,6 @@ void Container::setHorizontalDirection(const HorizontalDirection &hdir)
 
 void Container::addContainer(Container *c)
 {
-    qDebug() << "Adding container " << c->getName() << c << " to " << name << this;
     c->setParentItem(this);
 }
 
@@ -69,7 +68,7 @@ void Container::reposition()
     // a) calc sizes of subcontainers based on their layouts
     if (type == Heading) {
         // size is already updated when heading itself changes, no need to recalc here.
-        qDebug() << "repos and type is heading!!!";
+        qDebug() << "Container::reposition and type is heading!!!";
         return;
     } else {
         if (childItems().count() == 0) {
@@ -98,9 +97,9 @@ void Container::reposition()
     Container *c;
     foreach (QGraphicsItem *child, childItems()) {
         c = (Container*) child;
-        if (c->type != Undefined && c->type != Heading) {
+//        if (c->type != Undefined && c->type != Heading) {
             c->reposition();
-        }
+//        }
     }
 
     // b) Align my own containers
@@ -183,14 +182,4 @@ void Container::reposition()
         default:
             break;
     }
-}
-
-void Container::setName(const QString &n) {
-    // qDebug() << "Container::setName = " <<n;    // FIXME-1 testing
-    name = n;
-}
-
-QString Container::getName() {
-    // qDebug() << "Container::getName = " << name;// FIXME-1 testing
-    return name;
 }

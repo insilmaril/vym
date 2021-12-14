@@ -26,12 +26,10 @@ class Container : public QGraphicsRectItem {
 
     void addContainer(Container *c);
 
-    void reposition();
-
-    void setName(const QString &n);
-    QString getName();
+    virtual void reposition();
 
   protected:
+
     ContainerType type;
     MapObj *contentObj; //! Content object, e.g. HeadingObj or FlagRowObj
 
