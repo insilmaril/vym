@@ -8,7 +8,7 @@
 
 BranchContainer::BranchContainer(QGraphicsScene *scene, QGraphicsItem *parent, BranchItem *bi) : Container(parent)
 {
-    qDebug() << "* Const BranchContainer begin this = " << this << "  branchitem = " << bi;
+    //qDebug() << "* Const BranchContainer begin this = " << this << "  branchitem = " << bi;
     scene->addItem(this);
     branchItem = bi;
     init();
@@ -18,7 +18,7 @@ BranchContainer::~BranchContainer()
 {
     QString h;
     if (branchItem) h = branchItem->getHeadingPlain();
-    qDebug() << "* Destr BranchContainer" << name << h << this;
+    //qDebug() << "* Destr BranchContainer" << name << h << this;
 
     if (branchItem)
     {

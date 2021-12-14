@@ -20,7 +20,7 @@ extern bool debug;
 BranchObj::BranchObj(QGraphicsItem *parent, TreeItem *ti)
     : OrnamentedObj(parent, ti)
 {
-    qDebug() << "Const BranchObj  (s,ti) this = " << this << " ti=" << ti << ti->depth();
+    //qDebug() << "Const BranchObj  (s,ti) this = " << this << " ti=" << ti << ti->depth();
     
     treeItem = ti;
     BranchItem *pi = (BranchItem *)(ti->parent());

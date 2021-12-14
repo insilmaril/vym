@@ -13,7 +13,7 @@ Container::Container(QGraphicsItem *parent) : QGraphicsRectItem(parent)
 
 Container::~Container()
 {
-    qDebug() << "* Destr Container" << name << this;
+    //qDebug() << "* Destr Container" << name << this;
 }
 
 void Container::init()

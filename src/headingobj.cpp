@@ -11,7 +11,7 @@ extern bool debug;
 /////////////////////////////////////////////////////////////////
 HeadingObj::HeadingObj(QGraphicsItem *parent) : MapObj(parent)
 {
-    qDebug() << "Const HeadingObj (s) ";
+    //qDebug() << "Const HeadingObj (s) ";
     init();
 }
 
@@ -124,13 +124,12 @@ void HeadingObj::setText(QString s)
     if (s.startsWith("<html>") ||
         s.startsWith("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" "
                      "\"http://www.w3.org/TR/REC-html40/strict.dtd\">")) {
-        QGraphicsTextItem *t = new QGraphicsTextItem();
+        QGraphicsTextItem *t = new QGraphicsTextItem(parentItem());
         t->setFont(font);
         t->setZValue(dZ_TEXT);
         t->setHtml(s);
         t->setDefaultTextColor(color);
         t->setRotation(angle);
-        scene()->addItem(t);
         textline.append(t);
     }
     else {

@@ -5,9 +5,10 @@
 #include "headingobj.h" //FIXME-1 probably move content from HO here to HC later
 #include "mapobj.h"     // FIXME-1 needed?
 
-HeadingContainer::HeadingContainer(QGraphicsItem *parent) : Container(parent)
+HeadingContainer::HeadingContainer(QGraphicsItem *parent) : Container(parent) 
+
 {
-    qDebug() << "* Const HeadingContainer begin this = " << this;
+    //qDebug() << "* Const HeadingContainer begin this = " << this;
     init();
 }
 
@@ -42,7 +43,7 @@ void HeadingContainer::setText(const QString &s)  // FIXME-0 does richtext has w
 
 void HeadingContainer::reposition()
 {
-    qDebug() << "HC::reposition";
+    //qDebug() << "HC::reposition";
     return;
 }
 
