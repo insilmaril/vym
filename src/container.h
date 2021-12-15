@@ -22,6 +22,8 @@ class Container : public QGraphicsRectItem {
 
     void addContainer(Container *c);
 
+    
+    virtual QVariant itemChange(GraphicsItemChange change, const QVariant &value);
     virtual void reposition();
 
   protected:
