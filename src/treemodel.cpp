@@ -18,7 +18,7 @@ TreeModel::TreeModel(QObject *parent) : QAbstractItemModel(parent)
 
 TreeModel::~TreeModel()
 {
-    qDebug()<<"Destr TreeModel  this="<<this;
+    //qDebug()<<"Destr TreeModel  this="<<this;
     delete rootItem;
 }
 
