@@ -70,3 +70,26 @@ Ideas
   - Proposition to have names on links, maybe rotated to save screen space
 
 
+Next steps
+----------
+
+* Position containers temporarily while moving: When an object can be
+  linked temporarily, it needs a relative position to the tmp parent.
+
+  The tmp parent container should offer
+  - a link point to draw the start of the tmp link
+  - a relPos to move the moving container
+  - information where the moved container should be moved, e.g. to the
+    left or the right of the link point ("Orientation")
+  - maybe also information about rotation of tmp child
+
+  The moved container needs to be positioned based on link point and
+  orientation from above, also considering modifier keys to link
+  above/below. The bounding rect information and also parent needs to
+  remain unchanged, to avoid flickering in the tree, but the (relative)
+  position itself needs to be adjusted => a new layout hint is required.
+
+  Maybe tmpParentBranchContainer, similar to the BranchObj::tmpPar
+  pointer
+
+
