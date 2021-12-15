@@ -211,6 +211,7 @@ class MapEditor : public QGraphicsView {
     QPointF movingVec;           // how far has Content moved
 
     QPointF movingObj_initialPointerPos;
+    QPointF movingObj_initialContainerPos;
 
     QPointF contextMenuPos; // position where context event was triggered
 
