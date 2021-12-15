@@ -1591,14 +1591,14 @@ void MapEditor::moveObject()
 
     // Check if we could link
     TreeItem *ti_found = findMapItem(p, seli);
-    BranchItem *bi_dst = NULL;
-    LinkableMapObj *lmo_dst = NULL;
+    BranchItem *bi_dst = nullptr;
+    LinkableMapObj *lmo_dst = nullptr;
     if (ti_found && ti_found != seli && ti_found->isBranchLikeType()) {
         bi_dst = (BranchItem *)ti_found;
         lmo_dst = bi_dst->getLMO();
     }
     else
-        bi_dst = NULL;
+        bi_dst = nullptr;
 
     if (lmosel) {
         if (seli->getType() == TreeItem::Image) {
