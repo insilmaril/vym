@@ -1449,7 +1449,8 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
             movingObj_offset.setY(p.y() - lmo_found->y());
             movingObj_orgPos.setX(lmo_found->x());
             movingObj_orgPos.setY(lmo_found->y());
-            movingContainer_startPos = p;
+
+            movingObj_initialPointerPos = p;
             if (ti_found->depth() > 0) {
                 lmo_found->setRelPos();
                 movingObj_orgRelPos = lmo_found->getRelPos();
@@ -1624,7 +1625,7 @@ void MapEditor::moveObject()
         }
         else if (seli->isBranchLikeType()) { // selection != a FloatObj
             BranchItem *selbi = (BranchItem*)seli;
-            selbi->getBranchContainer()->setPos(p - movingContainer_startPos);
+            selbi->getBranchContainer()->setPos(p - movingObj_initialPointerPos);
 
             if (seli->depth() == 0) {
                 // Move mapcenter
