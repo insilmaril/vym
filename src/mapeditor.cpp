@@ -1449,6 +1449,7 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
             movingObj_offset.setY(p.y() - lmo_found->y());
             movingObj_orgPos.setX(lmo_found->x());
             movingObj_orgPos.setY(lmo_found->y());
+            movingContainer_startPos = p;
             if (ti_found->depth() > 0) {
                 lmo_found->setRelPos();
                 movingObj_orgRelPos = lmo_found->getRelPos();
@@ -1622,6 +1623,9 @@ void MapEditor::moveObject()
             }
         }
         else if (seli->isBranchLikeType()) { // selection != a FloatObj
+            BranchItem *selbi = (BranchItem*)seli;
+            selbi->getBranchContainer()->setPos(p - movingContainer_startPos);
+
             if (seli->depth() == 0) {
                 // Move mapcenter
                 lmosel->move(p - movingObj_offset);
@@ -1783,111 +1787,113 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
             }
         }
 
-        if (selbi && selbi->depth() == 0) {
-            if (movingObj_orgPos != selbi->getBranchObj()->getAbsPos()) {
-                QString pold = qpointFToString(movingObj_orgPos);
-                QString pnow =
-                    qpointFToString(selbi->getBranchObj()->getAbsPos());
+        if (selbi) {
+            if ( selbi->depth() == 0) {
+                // Mapcenter was moved
+                if (movingObj_orgPos != selbi->getBranchObj()->getAbsPos()) {
+                    QString pold = qpointFToString(movingObj_orgPos);
+                    QString pnow =
+                        qpointFToString(selbi->getBranchObj()->getAbsPos());
 
-                model->saveState(selbi, "move " + pold, selbi, "move " + pnow,
-                                 QString("Move mapcenter %1 to position %2")
-                                     .arg(model->getObjectName(selbi))
-                                     .arg(pnow));
-            }
-        }
-
-        if (seli->isBranchLikeType()) //(seli->getType() == TreeItem::Branch )
-        {                             // A branch was moved
-            LinkableMapObj *lmosel = NULL;
-            lmosel = ((MapItem *)seli)->getLMO();
-
-            // save the position in case we link to mapcenter
-            QPointF savePos = QPointF(lmosel->getAbsPos());
-
-            // Reset the temporary drawn link to the original one
-            lmosel->unsetParObjTmp();
-
-            // For Redo we may need to save original selection
-            QString preSelStr = model->getSelectString(seli);
-
-            if (dsti && objectMoved && state != MovingObjectWithoutLinking) {
-                // We have a destination, relink to that
-                BranchObj *selbo = model->getSelectedBranchObj();
-
-                QString preParStr = model->getSelectString(seli->parent());
-                QString preNum = QString::number(seli->num(), 10);
-                QString preDstParStr;
-
-                if (e->modifiers() & Qt::ShiftModifier &&
-                    dsti->parent()) { // Link above dst
-                    preDstParStr = model->getSelectString(dsti->parent());
-                    model->relinkBranch((BranchItem *)seli,
-                                        (BranchItem *)dsti->parent(),
-                                        ((BranchItem *)dsti)->num(), true);
+                    model->saveState(selbi, "move " + pold, selbi, "move " + pnow,
+                                     QString("Move mapcenter %1 to position %2")
+                                         .arg(model->getObjectName(selbi))
+                                         .arg(pnow));
                 }
-                else if (e->modifiers() & Qt::ControlModifier &&
-                         dsti->parent()) {
-                    // Link below dst
-                    preDstParStr = model->getSelectString(dsti->parent());
-                    model->relinkBranch((BranchItem *)seli,
-                                        (BranchItem *)dsti->parent(),
-                                        ((BranchItem *)dsti)->num() + 1, true);
-                }
-                else { // Append to dst
-                    preDstParStr = model->getSelectString(dsti);
-                    model->relinkBranch((BranchItem *)seli, (BranchItem *)dsti,
-                                        -1, true, movingObj_orgPos);
-                    if (dsti->depth() == 0)
-                        selbo->move(savePos);
-                }
-            }
-            else {
-                // No destination, undo  temporary move
+            } else {
+                // A branch was moved
+                LinkableMapObj *lmosel = NULL;
+                lmosel = ((MapItem *)seli)->getLMO();
 
-                if (seli->depth() == 1) {
-                    // The select string might be different _after_ moving
-                    // around. Therefor reposition and then use string of old
-                    // selection, too
-                    model->reposition();
+                // save the position in case we link to mapcenter
+                QPointF savePos = QPointF(lmosel->getAbsPos());
 
-                    QPointF rp(lmosel->getRelPos());
-                    if (rp != movingObj_orgRelPos) {
-                        QString ps = qpointFToString(rp);
-                        model->saveState(
-                            model->getSelectString(lmosel),
-                            "moveRel " + qpointFToString(movingObj_orgRelPos),
-                            preSelStr, "moveRel " + ps,
-                            QString("Move %1 to relative position %2")
-                                .arg(model->getObjectName(lmosel))
-                                .arg(ps));
+                // Reset the temporary drawn link to the original one
+                lmosel->unsetParObjTmp();
+
+                // For Redo we may need to save original selection
+                QString preSelStr = model->getSelectString(seli);
+
+                if (dsti && objectMoved && state != MovingObjectWithoutLinking) {
+                    // We have a destination, relink to that
+                    BranchObj *selbo = model->getSelectedBranchObj();
+
+                    QString preParStr = model->getSelectString(seli->parent());
+                    QString preNum = QString::number(seli->num(), 10);
+                    QString preDstParStr;
+
+                    if (e->modifiers() & Qt::ShiftModifier &&
+                        dsti->parent()) { // Link above dst
+                        preDstParStr = model->getSelectString(dsti->parent());
+                        model->relinkBranch((BranchItem *)seli,
+                                            (BranchItem *)dsti->parent(),
+                                            ((BranchItem *)dsti)->num(), true);
                     }
-                }
-
-                if (selbi->parentBranch()->getChildrenLayout() ==
-                    BranchItem::FreePositioning) {
-                    lmosel->setRelPos();
-                    model->reposition();
+                    else if (e->modifiers() & Qt::ControlModifier &&
+                             dsti->parent()) {
+                        // Link below dst
+                        preDstParStr = model->getSelectString(dsti->parent());
+                        model->relinkBranch((BranchItem *)seli,
+                                            (BranchItem *)dsti->parent(),
+                                            ((BranchItem *)dsti)->num() + 1, true);
+                    }
+                    else { // Append to dst
+                        preDstParStr = model->getSelectString(dsti);
+                        model->relinkBranch((BranchItem *)seli, (BranchItem *)dsti,
+                                            -1, true, movingObj_orgPos);
+                        if (dsti->depth() == 0)
+                            selbo->move(savePos);
+                    }
                 }
                 else {
+                    // No destination, undo  temporary move
 
-                    // Draw the original link, before selection was moved around
-                    if (settings.value("/animation/use", true).toBool() &&
-                        seli->depth() > 1
-                        //		    && distance
-                        //(lmosel->getRelPos(),movingObj_orgRelPos)<3
-                    ) {
-                        lmosel->setRelPos(); // calc relPos first for starting
-                                             // point
-
-                        model->startAnimation((BranchObj *)lmosel,
-                                              lmosel->getRelPos(),
-                                              movingObj_orgRelPos);
-                    }
-                    else
+                    if (seli->depth() == 1) {
+                        // The select string might be different _after_ moving
+                        // around. Therefor reposition and then use string of old
+                        // selection, too
                         model->reposition();
+
+                        QPointF rp(lmosel->getRelPos());
+                        if (rp != movingObj_orgRelPos) {
+                            QString ps = qpointFToString(rp);
+                            model->saveState(
+                                model->getSelectString(lmosel),
+                                "moveRel " + qpointFToString(movingObj_orgRelPos),
+                                preSelStr, "moveRel " + ps,
+                                QString("Move %1 to relative position %2")
+                                    .arg(model->getObjectName(lmosel))
+                                    .arg(ps));
+                        }
+                    }
+
+                    if (selbi->parentBranch()->getChildrenLayout() ==
+                        BranchItem::FreePositioning) {
+                        lmosel->setRelPos();
+                        model->reposition();
+                    }
+                    else {
+
+                        // Draw the original link, before selection was moved around
+                        if (settings.value("/animation/use", true).toBool() &&
+                            seli->depth() > 1
+                            //		    && distance
+                            //(lmosel->getRelPos(),movingObj_orgRelPos)<3
+                        ) {
+                            lmosel->setRelPos(); // calc relPos first for starting
+                                                 // point
+
+                            model->startAnimation((BranchObj *)lmosel,
+                                                  lmosel->getRelPos(),
+                                                  movingObj_orgRelPos);
+                        }
+                        else
+                            model->reposition();
+                    }
                 }
             }
-        }
+        }   // Branch or MapCenter was moved
+
         // Finally resize scene, if needed
         scene()->update();
         movingObj = NULL;

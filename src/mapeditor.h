@@ -209,6 +209,7 @@ class MapEditor : public QGraphicsView {
     QPointF movingObj_offset;    // offset of mousepointer to object
     QPointF movingCont_start;    // inital pos of moving Content or
     QPointF movingVec;           // how far has Content moved
+    QPointF movingContainer_startPos;
 
     QPointF contextMenuPos; // position where context event was triggered
 
