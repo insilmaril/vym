@@ -1645,8 +1645,8 @@ void MapEditor::moveObject()
                         seli->getBranchObjNum(i)->setOrientation();
                     }
                 }
-            }
-            else {
+            } else {
+                // depth > 0
                 if (seli->depth() == 1) {
                     // Move mainbranch
                     if (!lmosel->hasParObjTmp())
@@ -1654,7 +1654,7 @@ void MapEditor::moveObject()
                     lmosel->setRelPos();
                 }
                 else {
-                    // d>1, move ordinary branch
+                    // depth > 1, move ordinary branch
                     if (lmosel->getOrientation() ==
                         LinkableMapObj::LeftOfCenter)
                         // Add width of bbox here, otherwise alignRelTo will
@@ -1672,16 +1672,17 @@ void MapEditor::moveObject()
                         lmosel->setRelPos();
                 }
 
-            } // depth>0
+            } // depth > 0
 
             // Maybe we can relink temporary?
             if (bi_dst && state != MovingObjectWithoutLinking) {
                 if (pointerMod == Qt::ControlModifier) {
-                    // Special case: CTRL to link below dst
-                    lmosel->setParObjTmp(lmo_dst, p, +1);
+                    // Special case: link below dst
+                    lmosel->setParObjTmp(lmo_dst, p, + 1);
                 }
                 else if (pointerMod == Qt::ShiftModifier)
-                    lmosel->setParObjTmp(lmo_dst, p, -1);
+                    // Special case: link above  dst
+                    lmosel->setParObjTmp(lmo_dst, p, - 1);
                 else
                     lmosel->setParObjTmp(lmo_dst, p, 0);
             }
