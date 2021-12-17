@@ -253,13 +253,14 @@ class Main : public QMainWindow {
 
   public slots:
     void selectQuickColor(int n);
-    void quickColor();
+    void setQuickColor(QColor col);
+    void quickColorPressed();
     void formatPickColor();
     QColor getCurrentColor();
+    int getCurrentColorIndex();
     void setCurrentColor(QColor);
 
   private slots:
-    void formatSelectColor();
     void formatColorBranch();
     void formatColorSubtree();
     void formatLinkStyleLine();
@@ -417,8 +418,6 @@ class Main : public QMainWindow {
     QList<QAction *> actionListBranches;
     QList<QAction *> actionListItems;
 
-    QColor currentColor;
-
     int xLinkMenuWidth;
 
     QMenu *recentFilesMenu;
@@ -539,7 +538,6 @@ class Main : public QMainWindow {
 
     QActionGroup *actionGroupQuickColors;
     QAction *actionFormatQuickColor;
-    QAction *actionFormatColor;
     QAction *actionFormatPickColor;
     QAction *actionFormatColorBranch;
     QAction *actionFormatColorSubtree;

@@ -158,9 +158,6 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
     // Sometimes we may need to remember old selections
     prevSelection = "";
 
-    // Default color
-    currentColor = Qt::black;
-
     // Create unique temporary directory
     bool ok;
     QString tmpVymDirPath = makeTmpDir(ok, "vym");
@@ -2094,14 +2091,7 @@ void Main::setupFormatActions()
 
     QString tag = tr("Formatting", "Shortcuts");
 
-    QAction *a;
-    QPixmap pix(16, 16);
-    pix.fill(Qt::black);
-    a = new QAction(pix, tr("Set &Color") + QString("..."), this);
-    formatMenu->addAction(a);
-    switchboard.addSwitch("mapFormatColor", shortcutScope, a, tag);
-    connect(a, SIGNAL(triggered()), this, SLOT(formatSelectColor()));
-    actionFormatColor = a; // Only used in menu, not in toolbar
+    QAction* a;
 
     a = new QAction(QPixmap(":/formatcolorpicker.png"),
                     tr("Pic&k color", "Edit menu"), this);
@@ -2190,6 +2180,7 @@ void Main::setupFormatActions()
     formatMenu->addAction(a);
     actionFormatLinkColorHint = a;
 
+    QPixmap pix(16, 16);
     pix.fill(Qt::white);
     a = new QAction(pix, tr("Set &Link Color") + "...", this);
     formatMenu->addAction(a);
@@ -3424,7 +3415,7 @@ void Main::setupToolbars()
         a->setData(n);
         //formatMenu->addAction(a);
         // switchboard.addSwitch("mapFormatColor", shortcutScope, a, tag);
-        connect(a, SIGNAL(triggered()), this, SLOT(quickColor()));
+        connect(a, SIGNAL(triggered()), this, SLOT(quickColorPressed()));
         colorsToolbar->addAction(a);
         n++;
     }
@@ -5533,64 +5524,88 @@ void Main::updateQueries(
 
 void Main::selectQuickColor(int n)
 {
-    if (n < 0 || n > 6) return;
+    if (n < 0 || n > 7) return;
 
     actionGroupQuickColors->actions().at(n)->setChecked(true);
     setCurrentColor(quickColors.at(n));
 }
 
-void Main::quickColor()
+void Main::setQuickColor(QColor col)
 {
+    int i = getCurrentColorIndex();
+    if (i < 0) return;
+
+    QPixmap pix(16, 16);
+    pix.fill(col);
+    actionGroupQuickColors->checkedAction()->setIcon(pix);
+    quickColors.replace(i, col);
+}
+
+void Main::quickColorPressed()
+{
+    int i = getCurrentColorIndex();
+
+    if (i < 0) return;
+
     if (QApplication::keyboardModifiers() == Qt::ShiftModifier) {
-        QColor col = QColorDialog::getColor((currentColor), this);
+        QColor col = getCurrentColor();
+        col = QColorDialog::getColor((col), this);
         if (!col.isValid()) return;
 
-        QPixmap pix(16, 16);
-        pix.fill(col);
-        actionFormatColor->setIcon(pix);    // Only used in menu, not in toolbar
-        actionGroupQuickColors->checkedAction()->setIcon(pix);
-        currentColor = col;
+        setQuickColor(col);
     } else
-        selectQuickColor( ((QAction*)sender())->data().toInt());
+        selectQuickColor(i);
 }
 
 void Main::formatPickColor()
 {
     VymModel *m = currentModel();
     if (m)
-        setCurrentColor(m->getCurrentHeadingColor());
+        setQuickColor( m->getCurrentHeadingColor());
 }
 
-QColor Main::getCurrentColor() { return currentColor; }
+QColor Main::getCurrentColor() 
+{ 
+    int i = getCurrentColorIndex();
+
+    if (i < 0) return QColor();
+
+    return quickColors.at(i);
+}
+
+int Main::getCurrentColorIndex()
+{
+    QAction* a = actionGroupQuickColors->checkedAction();
+
+    if (a == nullptr) return -1;
+
+    return actionGroupQuickColors->actions().indexOf(a);
+}
 
 void Main::setCurrentColor(QColor c)
 {
+    int i = getCurrentColorIndex();
+
+    if (i < 0) return;
+
     QPixmap pix(16, 16);
     pix.fill(c);
-    actionFormatColor->setIcon(pix);
-    currentColor = c;
-}
 
-void Main::formatSelectColor()
-{
-    QColor col = QColorDialog::getColor((currentColor), this);
-    if (!col.isValid())
-        return;
-    setCurrentColor(col);
+    actionGroupQuickColors->actions().at(i)->setIcon(pix);
 }
 
 void Main::formatColorBranch()
 {
     VymModel *m = currentModel();
     if (m)
-        m->colorBranch(currentColor);
+        m->colorBranch(getCurrentColor());
 }
 
 void Main::formatColorSubtree()
 {
     VymModel *m = currentModel();
     if (m)
-        m->colorSubtree(currentColor);
+        m->colorSubtree(getCurrentColor());
 }
 
 void Main::formatLinkStyleLine()
