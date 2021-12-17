@@ -2,8 +2,6 @@ cmake_minimum_required(VERSION 3.12)
 
 project(ViewYourMind)
 
-include(GNUInstallDirs)
-
 set(QtComponents
     LinguistTools
     Network
@@ -50,7 +48,11 @@ if(WIN32)
 
     #target_link_libraries(${YOUR_TARGET_HERE} ${OPENSSL_LIBRARIES})
     #target_link_libraries(project_name /path/of/libssl.so /path/of/libcrypto.so)
+
+    set(CMAKE_INSTALL_DATAROOTDIR ".")
  endif()
+
+include(GNUInstallDirs)
 
 find_package(Qt5 COMPONENTS ${QtComponents} REQUIRED)
 set(CMAKE_AUTOMOC ON)
