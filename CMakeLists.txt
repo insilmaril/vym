@@ -2,8 +2,6 @@ cmake_minimum_required(VERSION 3.12)
 
 project(ViewYourMind)
 
-include(GNUInstallDirs)
-
 set(QtComponents
     LinguistTools
     Network
@@ -50,7 +48,11 @@ if(WIN32)
 
     #target_link_libraries(${YOUR_TARGET_HERE} ${OPENSSL_LIBRARIES})
     #target_link_libraries(project_name /path/of/libssl.so /path/of/libcrypto.so)
+
+    set(CMAKE_INSTALL_DATAROOTDIR ".")
  endif()
+
+include(GNUInstallDirs)
 
 find_package(Qt5 COMPONENTS ${QtComponents} REQUIRED)
 set(CMAKE_AUTOMOC ON)
@@ -107,11 +109,11 @@ else()
     install(TARGETS vym DESTINATION bin)
 endif()
 
-install(DIRECTORY demos TYPE DATA)
-install(DIRECTORY doc TYPE DOC FILES_MATCHING PATTERN "*.pdf")
-install(FILES doc/vym.1.gz TYPE MAN)
-install(FILES README.md LICENSE.txt TYPE DOC)
-install(DIRECTORY exports flags icons macros lang scripts styles TYPE DATA)
+install(DIRECTORY demos DESTINATION ${CMAKE_INSTALL_DATAROOTDIR})
+install(DIRECTORY doc DESTINATION ${CMAKE_INSTALL_DOCDIR})
+install(FILES doc/vym.1.gz DESTINATION ${CMAKE_INSTALL_MANDIR})
+install(FILES README.md LICENSE.txt DESTINATION ${CMAKE_INSTALL_DOCDIR})
+install(DIRECTORY exports flags icons macros lang scripts styles DESTINATION ${CMAKE_INSTALL_DATAROOTDIR})
 
 if(UNIX)
     install(FILES icons/vym.png DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/48x48/apps)
