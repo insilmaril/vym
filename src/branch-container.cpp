@@ -65,6 +65,16 @@ Container* BranchContainer::getChildrenContainer()
     return childrenContainer;
 }
 
+void BranchContainer::setTmpParentBranch(BranchItem* dstBI, QPointF mousePos, int offset)
+{
+    qDebug() << "BC::setTmpParentContainer " << dstBI << mousePos << offset;
+}
+
+void BranchContainer::unsetTmpParentBranch()
+{
+    qDebug() << "BC::unsetTmpParentContainer ";
+}
+
 bool BranchContainer::isInClickBox(const QPointF &p)
 {
     return headingContainer->rect().contains(headingContainer->mapFromScene(p));

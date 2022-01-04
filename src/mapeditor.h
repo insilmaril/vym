@@ -26,6 +26,7 @@ class MapEditor : public QGraphicsView {
         EditingHeading,
         DrawingXLink,
         MovingObject,
+        MovingObjectTmpLinked,
         MovingObjectWithoutLinking,
         MovingView,
         PickingColor,

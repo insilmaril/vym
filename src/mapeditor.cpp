@@ -1546,7 +1546,9 @@ void MapEditor::mouseMoveEvent(QMouseEvent *e)
 
     // Move the selected MapObj
     if (mosel &&
-        (state == MovingObject || state == MovingObjectWithoutLinking ||
+        (state == MovingObject || 
+         state == MovingObjectTmpLinked || 
+         state == MovingObjectWithoutLinking ||
          state == DrawingXLink)) {
         int margin = 50;
 
@@ -1676,18 +1678,30 @@ void MapEditor::moveObject()
 
             // Maybe we can relink temporary?
             if (bi_dst && state != MovingObjectWithoutLinking) {
+                state = MovingObjectTmpLinked;
                 if (pointerMod == Qt::ControlModifier) {
                     // Special case: link below dst
                     lmosel->setParObjTmp(lmo_dst, p, + 1);
-                }
-                else if (pointerMod == Qt::ShiftModifier)
+                    selbi->getBranchContainer()->setTmpParentBranch(bi_dst, p, +1);
+                } else if (pointerMod == Qt::ShiftModifier) {
                     // Special case: link above  dst
                     lmosel->setParObjTmp(lmo_dst, p, - 1);
-                else
+                    selbi->getBranchContainer()->setTmpParentBranch(bi_dst, p, -1);
+                } else {
                     lmosel->setParObjTmp(lmo_dst, p, 0);
+                    selbi->getBranchContainer()->setTmpParentBranch(bi_dst, p, 0);
+                }
             }
-            else
-                lmosel->unsetParObjTmp();
+            else {
+                if (state == MovingObjectTmpLinked) {
+                    lmosel->unsetParObjTmp();
+                    selbi->getBranchContainer()->unsetTmpParentBranch();
+                    if (mainWindow->getModMode() == Main::ModModeMoveObject)
+                        state = MovingObjectWithoutLinking;
+                    else
+                        state = MovingObject;
+                }
+            }
 
             // reposition subbranch
             lmosel->reposition();
@@ -1775,7 +1789,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
     }
 
     // Have we been moving something?
-    if (seli && state == MovingObject) {
+    if (seli && (state == MovingObject || state == MovingObjectTmpLinked)) {
         panningTimer->stop();
         if (seli->getType() == TreeItem::Image) {
             FloatImageObj *fio = (FloatImageObj *)(((MapItem *)seli)->getLMO());
@@ -1809,7 +1823,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                                          .arg(pnow));
                 }
             } else {
-                // A branch was moved
+                // A branch was moved    //FIXME-2 set correct state
                 LinkableMapObj *lmosel = NULL;
                 lmosel = ((MapItem *)seli)->getLMO();
 
@@ -1818,6 +1832,8 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
 
                 // Reset the temporary drawn link to the original one
                 lmosel->unsetParObjTmp();
+                selbi->getBranchContainer()->unsetTmpParentBranch();
+                state = Neutral;
 
                 // For Redo we may need to save original selection
                 QString preSelStr = model->getSelectString(seli);
@@ -1907,7 +1923,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
         movingObj = NULL;
         objectMoved = false;
         vPan = QPoint();
-    }
+    } // MovingObject or MovingObjectTmpLinked
     else
         // maybe we moved View: set old cursor
         setCursor(Qt::ArrowCursor);
