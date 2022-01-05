@@ -89,6 +89,16 @@ void VymWrapper::selectMap(uint n)
     }
 }
 
+void VymWrapper::selectQuickColor(int n)
+{
+    mainWindow->selectQuickColor(n);
+}
+
+QString VymWrapper::currentColor()
+{
+    return mainWindow->getCurrentColor().name();
+}
+
 uint VymWrapper::currentMapID()
 {
     uint id = mainWindow->currentMapID();

@@ -158,9 +158,6 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
     // Sometimes we may need to remember old selections
     prevSelection = "";
 
-    // Default color
-    currentColor = Qt::black;
-
     // Create unique temporary directory
     bool ok;
     QString tmpVymDirPath = makeTmpDir(ok, "vym");
@@ -1027,6 +1024,13 @@ void Main::setupAPI()
 
     c = new Command("selectMap", Command::Any);
     c->addPar(Command::Int, false, "Index of map");
+    vymCommands.append(c);
+
+    c = new Command("selectQuickColor", Command::Any);
+    c->addPar(Command::Int, false, "Index of quick color [0..6]");
+    vymCommands.append(c);
+
+    c = new Command("currentColor", Command::Any);
     vymCommands.append(c);
 
     c = new Command("toggleTreeEditor", Command::Any);
@@ -2087,14 +2091,7 @@ void Main::setupFormatActions()
 
     QString tag = tr("Formatting", "Shortcuts");
 
-    QAction *a;
-    QPixmap pix(16, 16);
-    pix.fill(Qt::black);
-    a = new QAction(pix, tr("Set &Color") + QString("..."), this);
-    formatMenu->addAction(a);
-    switchboard.addSwitch("mapFormatColor", shortcutScope, a, tag);
-    connect(a, SIGNAL(triggered()), this, SLOT(formatSelectColor()));
-    actionFormatColor = a;
+    QAction* a;
 
     a = new QAction(QPixmap(":/formatcolorpicker.png"),
                     tr("Pic&k color", "Edit menu"), this);
@@ -2183,6 +2180,7 @@ void Main::setupFormatActions()
     formatMenu->addAction(a);
     actionFormatLinkColorHint = a;
 
+    QPixmap pix(16, 16);
     pix.fill(Qt::white);
     a = new QAction(pix, tr("Set &Link Color") + "...", this);
     formatMenu->addAction(a);
@@ -2484,19 +2482,6 @@ void Main::setupModeActions()
     a->setCheckable(true);
     actionListFiles.append(a);
     actionModModeXLink = a;
-
-    // FIXME-0 new, check
-    /*
-    a = new QAction(QPixmap(":/mode-xlink.png"),
-                    tr("Use modifier to draw xLinks", "Mode modifier"),
-                    actionGroupModModes);
-    a->setShortcut(Qt::SHIFT + Qt::Key_L);
-    addAction(a);
-    switchboard.addSwitch("createXLink", shortcutScope, a, tag);
-    // actionListFiles.append(a);
-    connect(a, SIGNAL(triggered()), this, SLOT(createXLink()));
-    actionCreateXLink = a;
-    */
 
     a = new QAction(
         QPixmap(":/mode-move-object.svg"),
@@ -3403,12 +3388,47 @@ void Main::setupToolbars()
     referencesToolbar->addAction(actionEditVymLink);
 
     // Format and colors
-    colorsToolbar = addToolBar(tr("Colors toolbar", "Colors toolbar name"));
+    colorsToolbar = new QToolBar(tr("Colors toolbar", "Colors toolbar name"));
     colorsToolbar->setObjectName("colorsTB");
-    colorsToolbar->addAction(actionFormatColor);
+
+    actionGroupQuickColors = new QActionGroup(this);
+    actionGroupQuickColors->setExclusive(true);
+    int i = 0;
+
+    QColor c;
+    c.setNamedColor ("#ff0000"); quickColors << c;
+    c.setNamedColor ("#d95100"); quickColors << c;
+    c.setNamedColor ("#009900"); quickColors << c;
+    c.setNamedColor ("#00aa7f"); quickColors << c;
+    c.setNamedColor ("#aa00ff"); quickColors << c;
+    c.setNamedColor ("#c466ff"); quickColors << c;
+    c.setNamedColor ("#0000ff"); quickColors << c;
+    c.setNamedColor ("#000000"); quickColors << c;
+
+    QPixmap pix(16, 16);
+    QAction *a;
+    int n = 0;
+    foreach (c, quickColors) {
+        pix.fill(c);
+        a = new QAction(pix, tr("Select color (Press Shift for more options)") + QString("..."), actionGroupQuickColors);
+        a->setCheckable(true);
+        a->setData(n);
+        //formatMenu->addAction(a);
+        // switchboard.addSwitch("mapFormatColor", shortcutScope, a, tag);
+        connect(a, SIGNAL(triggered()), this, SLOT(quickColorPressed()));
+        colorsToolbar->addAction(a);
+        n++;
+    }
+    actionGroupQuickColors->actions().first()->setChecked(true);
+
     colorsToolbar->addAction(actionFormatPickColor);
     colorsToolbar->addAction(actionFormatColorBranch);
     colorsToolbar->addAction(actionFormatColorSubtree);
+    // Only place toolbar on very first startup
+    if (settings.value("/mainwindow/recentFileList").toStringList().isEmpty())
+        addToolBar (Qt::RightToolBarArea, colorsToolbar);
+    else
+        addToolBar (colorsToolbar);
 
     // Zoom
     zoomToolbar = addToolBar(tr("View toolbar", "View Toolbar name"));
@@ -5502,43 +5522,90 @@ void Main::updateQueries(
     */
 }
 
+void Main::selectQuickColor(int n)
+{
+    if (n < 0 || n > 7) return;
+
+    actionGroupQuickColors->actions().at(n)->setChecked(true);
+    setCurrentColor(quickColors.at(n));
+}
+
+void Main::setQuickColor(QColor col)
+{
+    int i = getCurrentColorIndex();
+    if (i < 0) return;
+
+    QPixmap pix(16, 16);
+    pix.fill(col);
+    actionGroupQuickColors->checkedAction()->setIcon(pix);
+    quickColors.replace(i, col);
+}
+
+void Main::quickColorPressed()
+{
+    int i = getCurrentColorIndex();
+
+    if (i < 0) return;
+
+    if (QApplication::keyboardModifiers() == Qt::ShiftModifier) {
+        QColor col = getCurrentColor();
+        col = QColorDialog::getColor((col), this);
+        if (!col.isValid()) return;
+
+        setQuickColor(col);
+    } else
+        selectQuickColor(i);
+}
+
 void Main::formatPickColor()
 {
     VymModel *m = currentModel();
     if (m)
-        setCurrentColor(m->getCurrentHeadingColor());
+        setQuickColor( m->getCurrentHeadingColor());
 }
 
-QColor Main::getCurrentColor() { return currentColor; }
+QColor Main::getCurrentColor() 
+{ 
+    int i = getCurrentColorIndex();
+
+    if (i < 0) return QColor();
+
+    return quickColors.at(i);
+}
+
+int Main::getCurrentColorIndex()
+{
+    QAction* a = actionGroupQuickColors->checkedAction();
+
+    if (a == nullptr) return -1;
+
+    return actionGroupQuickColors->actions().indexOf(a);
+}
 
 void Main::setCurrentColor(QColor c)
 {
+    int i = getCurrentColorIndex();
+
+    if (i < 0) return;
+
     QPixmap pix(16, 16);
     pix.fill(c);
-    actionFormatColor->setIcon(pix);
-    currentColor = c;
-}
 
-void Main::formatSelectColor()
-{
-    QColor col = QColorDialog::getColor((currentColor), this);
-    if (!col.isValid())
-        return;
-    setCurrentColor(col);
+    actionGroupQuickColors->actions().at(i)->setIcon(pix);
 }
 
 void Main::formatColorBranch()
 {
     VymModel *m = currentModel();
     if (m)
-        m->colorBranch(currentColor);
+        m->colorBranch(getCurrentColor());
 }
 
 void Main::formatColorSubtree()
 {
     VymModel *m = currentModel();
     if (m)
-        m->colorSubtree(currentColor);
+        m->colorSubtree(getCurrentColor());
 }
 
 void Main::formatLinkStyleLine()
@@ -6513,7 +6580,10 @@ void Main::updateActions()
         }
 
         if (selbis.count() > 0)
+        {
             actionFormatColorBranch->setEnabled(true);
+            actionFormatColorSubtree->setEnabled(true);
+        }
     }
     else {
         // No map available
