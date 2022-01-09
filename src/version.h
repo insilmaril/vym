@@ -3,7 +3,7 @@
 
 #define __VYM_NAME "VYM"
 #define __VYM_VERSION "2.8.500"
-#define __VYM_BUILD_DATE "2022-01-04"
+#define __VYM_BUILD_DATE "2022-01-08"
 #define __VYM_CODE_QUALITY "(Experimental)"
 //#define __VYM_CODE_QUALITY "(Beta)"
 //#define __VYM_CODE_QUALITY "Production"

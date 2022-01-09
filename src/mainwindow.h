@@ -252,12 +252,15 @@ class Main : public QMainWindow {
     void editFindDuplicateURLs();
 
   public slots:
+    void selectQuickColor(int n);
+    void setQuickColor(QColor col);
+    void quickColorPressed();
     void formatPickColor();
     QColor getCurrentColor();
+    int getCurrentColorIndex();
     void setCurrentColor(QColor);
 
   private slots:
-    void formatSelectColor();
     void formatColorBranch();
     void formatColorSubtree();
     void formatLinkStyleLine();
@@ -415,8 +418,6 @@ class Main : public QMainWindow {
     QList<QAction *> actionListBranches;
     QList<QAction *> actionListItems;
 
-    QColor currentColor;
-
     int xLinkMenuWidth;
 
     QMenu *recentFilesMenu;
@@ -425,6 +426,8 @@ class Main : public QMainWindow {
 
     QAction *macroActions[24];
     QStringList macro;
+
+    QList <QColor> quickColors;
 
     QMenu *toolbarsMenu;
     QToolBar *fileToolbar;
@@ -533,7 +536,8 @@ class Main : public QMainWindow {
     QAction *actionSelectNothing;
     QAction *actionFind;
 
-    QAction *actionFormatColor;
+    QActionGroup *actionGroupQuickColors;
+    QAction *actionFormatQuickColor;
     QAction *actionFormatPickColor;
     QAction *actionFormatColorBranch;
     QAction *actionFormatColorSubtree;
