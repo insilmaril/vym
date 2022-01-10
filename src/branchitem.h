@@ -114,7 +114,7 @@ class BranchItem : public MapItem {
 
   public:
     BranchContainer* getBranchContainer();
-    void updateStackingOrder();
+    void updateContainerStackingOrder();
     void unlinkBranchContainer();
     void addToChildrenContainer(Container *c);
     void repositionContainers();

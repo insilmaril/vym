@@ -3221,8 +3221,8 @@ BranchItem *VymModel::addNewBranchInt(BranchItem *dst, int pos)
     // Set color of heading to that of parent
     newbi->setHeadingColor(parbi->getHeadingColor());
 
-    // Update stacking order of container to match order in model
-    newbi->updateStackingOrder();
+    // Update parent item and stacking order of container to match order in model
+    newbi->updateContainerStackingOrder();
 
     reposition();
     return newbi;
@@ -3343,7 +3343,7 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int pos,
         emitDataChanged(branch);
 
         // Update stacking order
-        branch->updateStackingOrder();
+        branch->updateContainerStackingOrder();
 
         reposition(); // both for moveUp/Down and relinking
 

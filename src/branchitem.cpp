@@ -594,7 +594,7 @@ BranchContainer* BranchItem::getBranchContainer()
     return branchContainer;
 }
 
-void BranchItem::updateStackingOrder()
+void BranchItem::updateContainerStackingOrder()
 {
     int n = num();
 
