@@ -37,7 +37,6 @@ class MapEditor : public QGraphicsView {
     ~MapEditor();
     VymModel *getModel();
     QGraphicsScene *getScene();
-    MapEditor::EditorState getState();
 
     // Animation of scrollbars
     Q_PROPERTY(QPointF scrollBarPos READ getScrollBarPos WRITE setScrollBarPos)
@@ -196,7 +195,12 @@ class MapEditor : public QGraphicsView {
     QCursor PickColorCursor; // cursor while picking color
     QCursor CopyCursor;      // cursor while picking color
     QCursor XLinkCursor;     // cursor while picking color
-    EditorState state;
+
+  public:
+    MapEditor::EditorState state();
+
+  private:
+    EditorState editorState;
 
     void setState(EditorState);
     bool objectMoved; // true if object was not clicked, but moved with mouse
@@ -204,6 +208,7 @@ class MapEditor : public QGraphicsView {
     // Temporary used for linkx
     Link *tmpLink;
 
+    // Temporary used for moving stuff around
     MapObj *movingObj;           // moving a MapObj
     QPointF movingObj_orgPos;    // org. pos of mouse before move
     QPointF movingObj_orgRelPos; // org. relative pos of mouse before move
@@ -213,6 +218,8 @@ class MapEditor : public QGraphicsView {
 
     QPointF movingObj_initialPointerPos;
     QPointF movingObj_initialContainerPos;
+
+    BranchContainer *movingBranchContainer;
 
     QPointF contextMenuPos; // position where context event was triggered
 

@@ -5016,7 +5016,7 @@ void Main::editMoveUp()
 {
     MapEditor *me = currentMapEditor();
     VymModel *m = currentModel();
-    if (me && m && me->getState() != MapEditor::EditingHeading)
+    if (me && m && me->state() != MapEditor::EditingHeading)
         m->moveUp();
 }
 
@@ -5024,7 +5024,7 @@ void Main::editMoveDown()
 {
     MapEditor *me = currentMapEditor();
     VymModel *m = currentModel();
-    if (me && m && me->getState() != MapEditor::EditingHeading)
+    if (me && m && me->state() != MapEditor::EditingHeading)
         m->moveDown();
 }
 
@@ -5032,7 +5032,7 @@ void Main::editMoveDownDiagonally()
 {
     MapEditor *me = currentMapEditor();
     VymModel *m = currentModel();
-    if (me && m && me->getState() != MapEditor::EditingHeading)
+    if (me && m && me->state() != MapEditor::EditingHeading)
         m->moveDownDiagonally();
 }
 
@@ -5040,7 +5040,7 @@ void Main::editMoveUpDiagonally()
 {
     MapEditor *me = currentMapEditor();
     VymModel *m = currentModel();
-    if (me && m && me->getState() != MapEditor::EditingHeading)
+    if (me && m && me->state() != MapEditor::EditingHeading)
         m->moveUpDiagonally();
 }
 
@@ -6745,7 +6745,7 @@ void Main::flagChanged()
 {
     MapEditor *me = currentMapEditor();
     VymModel *m = currentModel();
-    if (me && m && me->getState() != MapEditor::EditingHeading) {
+    if (me && m && me->state() != MapEditor::EditingHeading) {
         m->toggleFlagByUid(QUuid(sender()->objectName()),
                            actionSettingsUseFlagGroups->isChecked());
         updateActions();

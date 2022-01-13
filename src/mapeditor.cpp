@@ -938,7 +938,7 @@ BranchItem *MapEditor::getRightBranch(TreeItem *ti)
 
 void MapEditor::cursorUp()
 {
-    if (state == MapEditor::EditingHeading)
+    if (state() == MapEditor::EditingHeading)
         return;
 
     BranchItem *selbi = model->getSelectedBranch();
@@ -962,7 +962,7 @@ void MapEditor::cursorUp()
 
 void MapEditor::cursorUpToggleSelection()
 {
-    if (state == MapEditor::EditingHeading)
+    if (state() == MapEditor::EditingHeading)
         return;
 
     BranchItem *selbi = model->getSelectedBranch();
@@ -990,7 +990,7 @@ void MapEditor::cursorUpToggleSelection()
 
 void MapEditor::cursorDown()
 {
-    if (state == MapEditor::EditingHeading)
+    if (state() == MapEditor::EditingHeading)
         return;
 
     BranchItem *selbi = model->getSelectedBranch();
@@ -1015,7 +1015,7 @@ void MapEditor::cursorDown()
 
 void MapEditor::cursorDownToggleSelection()
 {
-    if (state == MapEditor::EditingHeading)
+    if (state() == MapEditor::EditingHeading)
         return;
 
     BranchItem *selbi = model->getSelectedBranch();
@@ -1084,7 +1084,7 @@ void MapEditor::cursorLast() { model->selectLastBranch(); }
 
 void MapEditor::editHeading()
 {
-    if (state == EditingHeading) {
+    if (state() == EditingHeading) {
         editHeadingFinished();
         return;
     }
@@ -1514,7 +1514,7 @@ void MapEditor::mouseMoveEvent(QMouseEvent *e)
                 .arg(qpointFToString(e->pos())));
 
     // Move sceneView
-    if (state == MovingView &&
+    if (state() == MovingView &&
         (e->buttons() == Qt::LeftButton || e->buttons() == Qt::MiddleButton)) {
         QPointF p = e->globalPos();
         movingVec.setX(-p.x() + movingObj_offset.x());
@@ -1541,15 +1541,15 @@ void MapEditor::mouseMoveEvent(QMouseEvent *e)
     // If not already happened during mousepress, we might need to switch state
     if (mainWindow->getModMode() == Main::ModModeMoveObject &&
         e->modifiers() & Qt::ShiftModifier && e->buttons() == Qt::LeftButton) {
-        state = MovingObjectWithoutLinking;
+        setState(MovingObjectWithoutLinking);
     }
 
     // Move the selected MapObj
     if (mosel &&
-        (state == MovingObject || 
-         state == MovingObjectTmpLinked || 
-         state == MovingObjectWithoutLinking ||
-         state == DrawingXLink)) {
+        (state() == MovingObject || 
+         state() == MovingObjectTmpLinked || 
+         state() == MovingObjectWithoutLinking ||
+         state() == DrawingXLink)) {
         int margin = 50;
 
         // Check if we have to scroll
@@ -1570,7 +1570,7 @@ void MapEditor::mouseMoveEvent(QMouseEvent *e)
     } // selection && moving_obj
 
     // Draw a link from one branch to another
-    if (state == DrawingLink) {
+    if (state() == DrawingLink) {
         tmpLink->setEndPoint(mapToScene(e->pos()));
         tmpLink->updateLink();
     }
@@ -1677,8 +1677,8 @@ void MapEditor::moveObject()
             } // depth > 0
 
             // Maybe we can relink temporary?
-            if (bi_dst && state != MovingObjectWithoutLinking) {
-                state = MovingObjectTmpLinked;
+            if (bi_dst && state() != MovingObjectWithoutLinking) {
+                setState(MovingObjectTmpLinked);
                 if (pointerMod == Qt::ControlModifier) {
                     // Special case: link below dst
                     lmosel->setParObjTmp(lmo_dst, p, + 1);
@@ -1693,13 +1693,13 @@ void MapEditor::moveObject()
                 }
             }
             else {
-                if (state == MovingObjectTmpLinked) {
+                if (state() == MovingObjectTmpLinked) {
                     lmosel->unsetParObjTmp();
                     selbi->getBranchContainer()->unsetTmpParentBranch();
                     if (mainWindow->getModMode() == Main::ModModeMoveObject)
-                        state = MovingObjectWithoutLinking;
+                        setState(MovingObjectWithoutLinking);
                     else
-                        state = MovingObject;
+                        setState(MovingObject);
                 }
             }
 
@@ -1747,7 +1747,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
         dsti = NULL;
 
     // Have we been picking color?
-    if (state == PickingColor) {
+    if (state() == PickingColor) {
         setCursor(Qt::ArrowCursor);
         // Check if we are over another branch
         if (dst) {
@@ -1761,7 +1761,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
     }
 
     // Have we been drawing a link?
-    if (state == DrawingLink) {
+    if (state() == DrawingLink) {
         setState(Neutral);
         // Check if we are over another branch
         if (dsti) {
@@ -1789,7 +1789,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
     }
 
     // Have we been moving something?
-    if (seli && (state == MovingObject || state == MovingObjectTmpLinked)) {
+    if (seli && (state() == MovingObject || state() == MovingObjectTmpLinked)) {
         panningTimer->stop();
         if (seli->getType() == TreeItem::Image) {
             FloatImageObj *fio = (FloatImageObj *)(((MapItem *)seli)->getLMO());
@@ -1833,12 +1833,12 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                 // Reset the temporary drawn link to the original one
                 lmosel->unsetParObjTmp();
                 selbi->getBranchContainer()->unsetTmpParentBranch();
-                state = Neutral;
+                setState(Neutral);
 
                 // For Redo we may need to save original selection
                 QString preSelStr = model->getSelectString(seli);
 
-                if (dsti && objectMoved && state != MovingObjectWithoutLinking) {
+                if (dsti && objectMoved && state() != MovingObjectWithoutLinking) {
                     // We have a destination, relink to that
                     BranchObj *selbo = model->getSelectedBranchObj();
 
@@ -1928,7 +1928,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
         // maybe we moved View: set old cursor
         setCursor(Qt::ArrowCursor);
 
-    if (state != EditingHeading)
+    if (state() != EditingHeading)
         setState(Neutral); // Continue editing after double click!
 
     QGraphicsView::mouseReleaseEvent(e);
@@ -1941,7 +1941,7 @@ void MapEditor::mouseDoubleClickEvent(QMouseEvent *e)
         TreeItem *ti = findMapItem(p, NULL);
         LinkableMapObj *lmo;
         if (ti) {
-            if (state == EditingHeading)
+            if (state() == EditingHeading)
                 editHeadingFinished();
             model->select(ti);
             BranchItem *selbi = model->getSelectedBranch();
@@ -1982,7 +1982,7 @@ void MapEditor::wheelEvent(QWheelEvent *e)
 void MapEditor::focusOutEvent(QFocusEvent *)
 {
     // qDebug()<<"ME::focusOutEvent"<<e->reason();
-    if (state == EditingHeading)
+    if (state() == EditingHeading)
         editHeadingFinished();
 }
 
@@ -2080,10 +2080,10 @@ void MapEditor::dropEvent(QDropEvent *event)
 
 void MapEditor::setState(EditorState s)
 {
-    if (state != Neutral && s != Neutral)
-        qWarning() << "MapEditor::setState  switching directly from " << state
+    if (state() != Neutral && s != Neutral)
+        qWarning() << "MapEditor::setState  switching directly from " << editorState
                    << " to " << s;
-    state = s;
+    editorState = s;
     /* if (debug)
     {
         QString s;
@@ -2113,13 +2113,17 @@ void MapEditor::setState(EditorState s)
         case DrawingLink:
             s = "DrawingLink";
             break;
+        default:
+            s = "Unknown editor state";
+            qDebug() << "MapEditor::setState" << s;
+            break;
         }
         qDebug() << "MapEditor: State " << s << " of " << model->getMapName();
     }
     */
 }
 
-MapEditor::EditorState MapEditor::getState() { return state; }
+MapEditor::EditorState MapEditor::state() { return editorState; }
 
 void MapEditor::updateSelection(QItemSelection nsel, QItemSelection dsel)
 {

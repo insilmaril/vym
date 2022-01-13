@@ -3342,7 +3342,7 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int pos,
 
         emitDataChanged(branch);
 
-        // Update stacking order
+        // Update parent item and stacking order of container
         branch->updateContainerStackingOrder();
 
         reposition(); // both for moveUp/Down and relinking
