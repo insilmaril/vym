@@ -73,23 +73,26 @@ Ideas
 Next steps
 ----------
 
-* Position containers temporarily while moving: When an object can be
-  linked temporarily, it needs a relative position to the tmp parent.
+* Moving containers around
+    - Position containers temporarily while moving: When an object can be
+      linked temporarily, it needs a relative position to the tmp parent.
 
-  The tmp parent container should offer
-  - a link point to draw the start of the tmp link
-  - a relPos to move the moving container
-  - information where the moved container should be moved, e.g. to the
-    left or the right of the link point ("Orientation")
-  - maybe also information about rotation of tmp child
+      Several selected branches can be moved (at least later), by temporary
+      adding them to the moving tmpParentContainer
 
-  The moved container needs to be positioned based on link point and
-  orientation from above, also considering modifier keys to link
-  above/below. The bounding rect information and also parent needs to
-  remain unchanged, to avoid flickering in the tree, but the (relative)
-  position itself needs to be adjusted => a new layout hint is required.
+      Target destinations then  should offer
+      - a link point to draw the start of the tmp link
+      - an abs Pos to the tmpParentContainer
+      - information where the moved container should be moved, e.g. to the
+        left or the right of the link point ("Orientation")
+      - maybe also information about rotation of tmp child
 
-  Maybe tmpParentBranchContainer, similar to the BranchObj::tmpPar
-  pointer
+      The tmpParentContainer needs to be positioned based on link point and
+      orientation from above, also considering modifier keys to link
+      above/below. The bounding rect information and also parent needs to
+      remain unchanged, to avoid flickering in the tree, but the (relative)
+      position itself needs to be adjusted => a new layout hint is required.
 
+    - Animate the back moving. Don't do this in VymModel::startAnimation,
+      but in MapEditor
 

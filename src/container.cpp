@@ -22,11 +22,6 @@ void Container::init()
 
     layout = Horizontal;
 
-    // Testing only:
-    QPointF p; // = QPointF(qrand() % 100, qrand() % 100);
-    qreal w = qrand() % 200 + 20;
-    qreal h = qrand() % 200 + 20;
-    setRect(QRectF(p.x(), p.y(), w, h));
     show();
 }
 

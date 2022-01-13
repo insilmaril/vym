@@ -65,14 +65,14 @@ Container* BranchContainer::getChildrenContainer()
     return childrenContainer;
 }
 
-void BranchContainer::setTmpParentBranch(BranchItem* dstBI, QPointF mousePos, int offset)
+void BranchContainer::setTmpParentContainer(BranchItem* dstBI, QPointF mousePos, int offset)
 {
-    qDebug() << "BC::setTmpParentContainer " << dstBI << mousePos << offset;
+    //qDebug() << "BC::setTmpParentContainer " << dstBI << mousePos << offset;
 }
 
-void BranchContainer::unsetTmpParentBranch()
+void BranchContainer::unsetTmpParentContainer()
 {
-    qDebug() << "BC::unsetTmpParentContainer ";
+    //qDebug() << "BC::unsetTmpParentContainer ";
 }
 
 bool BranchContainer::isInClickBox(const QPointF &p)

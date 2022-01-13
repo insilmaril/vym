@@ -5272,7 +5272,7 @@ void VymModel::animate()
         animationTimer->start(animationInterval);
 }
 
-void VymModel::startAnimation(BranchObj *bo, const QPointF &v)
+void VymModel::startAnimation(BranchObj *bo, const QPointF &v)  // FIXME-2 use containers and move animations to MapEditor, this is visual stuff
 {
     if (!bo)
         return;

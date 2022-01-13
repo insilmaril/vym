@@ -18,8 +18,8 @@ class BranchContainer : public Container {
     void addToChildrenContainer(Container *c);
     Container* getChildrenContainer();
 
-    void setTmpParentBranch(BranchItem* dstBI, QPointF mousePos, int offset);
-    void unsetTmpParentBranch();
+    void setTmpParentContainer(BranchItem* dstBI, QPointF mousePos, int offset);
+    void unsetTmpParentContainer();
 
     bool isInClickBox(const QPointF &p);
 

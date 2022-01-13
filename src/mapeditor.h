@@ -196,6 +196,7 @@ class MapEditor : public QGraphicsView {
     QCursor CopyCursor;      // cursor while picking color
     QCursor XLinkCursor;     // cursor while picking color
 
+    // Various states of the MapEditor
   public:
     MapEditor::EditorState state();
 
@@ -217,9 +218,12 @@ class MapEditor : public QGraphicsView {
     QPointF movingVec;           // how far has Content moved
 
     QPointF movingObj_initialPointerPos;
-    QPointF movingObj_initialContainerPos;
 
-    BranchContainer *movingBranchContainer;
+    // Moving branchContainers
+    QPointF movingObj_initialContainerPos;
+    BranchContainer *tmpParentContainer;
+    BranchItem *tmpParentBranch;
+    int tmpParentPos;       // +1: below   -1: above  0: child
 
     QPointF contextMenuPos; // position where context event was triggered
 

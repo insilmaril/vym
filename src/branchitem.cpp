@@ -584,7 +584,7 @@ BranchObj *BranchItem::createMapObj(QGraphicsScene *scene)
     return newbo;
 }
 
-Container* BranchItem::getChildrenContainer()
+Container* BranchItem::getChildrenContainer()   // FIXME-2 seems unused, remove
 {
     return branchContainer->getChildrenContainer();
 }
