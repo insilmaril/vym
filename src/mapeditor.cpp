@@ -211,16 +211,16 @@ void MapEditor::panView()
     }
 }
 
-void MapEditor::scrollTo(const QModelIndex &index)
+void MapEditor::scrollTo(const QModelIndex &index)  // FIXME-2 also use images
 {
     if (index.isValid()) {
-        LinkableMapObj *lmo = NULL;
+        BranchContainer * container = nullptr;
         TreeItem *ti = static_cast<TreeItem *>(index.internalPointer());
-        if (ti->getType() == TreeItem::Image || ti->isBranchLikeType())
-            lmo = ((MapItem *)ti)->getLMO();
-        if (lmo) {
-            QRectF r = lmo->getBBox();
-            setScrollBarPosTarget(r);
+        if ( ti->isBranchLikeType())
+            container = ((BranchItem*)ti)->getBranchContainer(); // FIXME-0 better use heading container, the BC might be too big
+        
+        if (container) {
+            setScrollBarPosTarget(container->rect());
             animateScrollBars();
         }
     }
