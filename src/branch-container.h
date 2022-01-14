@@ -18,6 +18,8 @@ class BranchContainer : public Container {
     void addToChildrenContainer(Container *c);
     Container* getChildrenContainer();
 
+    QRectF getHeadingRect();  //! Return rectangle of HeadingContainer in absolute coordinates
+
     void setTmpParentContainer(BranchItem* dstBI, QPointF mousePos, int offset);
     void unsetTmpParentContainer();
 

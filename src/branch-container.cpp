@@ -65,6 +65,12 @@ Container* BranchContainer::getChildrenContainer()
     return childrenContainer;
 }
 
+QRectF BranchContainer::getHeadingRect()
+{
+    QPointF p = headingContainer->scenePos();
+    return QRectF(p.x(), p.y(), headingContainer->rect().width(), headingContainer->rect().height());
+}
+
 void BranchContainer::setTmpParentContainer(BranchItem* dstBI, QPointF mousePos, int offset)
 {
     //qDebug() << "BC::setTmpParentContainer " << dstBI << mousePos << offset;

@@ -74,6 +74,14 @@ Next steps
 ----------
 
 * Moving containers around
+    - Todo
+        - fix update selection: when selecting in old map, scrolling to
+          target container only works partially 
+
+          maybe total bbox not correct?
+
+        - Draw select box for selected containers
+
     - Position containers temporarily while moving: When an object can be
       linked temporarily, it needs a relative position to the tmp parent.
 
