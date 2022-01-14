@@ -71,6 +71,7 @@ MapEditor::MapEditor(VymModel *vm)
 
     // Container used for temporary moving and relinking branches
     tmpParentContainer = new BranchContainer (mapScene, nullptr, nullptr);
+    tmpParentContainer->setZValue(1000);    // See also z-values in mapobj.h
     tmpParentContainer->reposition();
 
     // Shortcuts and actions
@@ -2220,13 +2221,14 @@ void MapEditor::updateSelection(QItemSelection nsel, QItemSelection dsel)
 
     // Reposition polygons
     for (int i = 0; i < itemsSelected.count(); ++i) {
-        MapObj *mo = itemsSelected.at(i)->getMO();
+        MapObj *mo = itemsSelected.at(i)->getMO();  // FIXME-2 remove MO here
         sp = selPathList.at(i);
-        sp->setPath(mo->getSelectionPath());
+        sp->setPath(itemsSelected.at(i)->getSelectionPath());
         sp->setPen(selectionColor);
         sp->setBrush(selectionColor);
-        sp->setParentItem(mo);
-        sp->setZValue(dZ_SELBOX);
+        //sp->setParentItem(mo);
+        //sp->setZValue(dZ_SELBOX);
+        sp->setZValue(1500);
 
         // Reposition also LineEdit for heading during animation
         if (lineEdit)

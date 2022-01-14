@@ -1,5 +1,6 @@
 #include "mapitem.h"
 
+#include "branchitem.h"
 #include "linkablemapobj.h"
 #include "ornamentedobj.h"
 
@@ -150,6 +151,26 @@ LinkableMapObj *MapItem::getLMO()
         return (LinkableMapObj *)mo;
     else
         return NULL;
+}
+
+QPainterPath MapItem::getSelectionPath()
+{
+    QPainterPath p;
+    QRectF r;
+    qreal d = 3; // Thickness of selection "border"
+
+    if (isBranchLikeType() )    // FIXME-2 Image type still missing!
+    {
+        r = ((BranchItem*)this)->getBranchContainer()->getHeadingRect();
+        p.moveTo(r.topLeft() + QPointF(-d, -d));
+        p.lineTo(r.topRight() + QPointF(d, -d));
+        p.lineTo(r.bottomRight() + QPointF(d, d));
+        p.lineTo(r.bottomLeft() + QPointF(-d, d));
+        p.lineTo(r.topLeft() + QPointF(-d, -d));
+    } else
+        qWarning() << "MapITem::getSelectionPath - unknown item type!";
+
+    return p;
 }
 
 void MapItem::initLMO()

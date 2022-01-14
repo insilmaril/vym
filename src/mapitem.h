@@ -67,6 +67,9 @@ class MapItem : public TreeItem {
     virtual MapObj *getMO();
     virtual LinkableMapObj *getLMO();
 
+    /*! Return path to highlight currently selected items */
+    virtual QPainterPath getSelectionPath();
+
     /*! Initialize LinkableMapObj with data in MapItem */
     virtual void initLMO();
 };

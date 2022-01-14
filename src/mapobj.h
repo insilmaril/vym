@@ -52,7 +52,6 @@ class MapObj : public XMLObj, public QGraphicsItem {
     virtual ConvexPolygon
     getBoundingPolygon();                    //! return bounding convex polygon
     virtual QPolygonF getClickPoly();        //! returns polygon to click
-    virtual QPainterPath getSelectionPath(); //! returns path for selection
     virtual bool isInClickBox(const QPointF &p); //! Checks if p is in clickBox
     virtual QSizeF getSize(); //! returns size of bounding box
 

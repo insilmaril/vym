@@ -104,3 +104,16 @@ Next steps
     - Animate the back moving. Don't do this in VymModel::startAnimation,
       but in MapEditor
 
+...
+
+* Cleanup MapObj related stuff, which has been replaced by Containers
+    - MapEditor
+        - Mouse events
+        - updateSelection
+        ...
+    - MapItem
+        - Probably pretty much useless once Containers are fully
+          implemented
+    - MapObj
+        - need at all in the end?
+        - getSelectionPath

@@ -85,19 +85,6 @@ ConvexPolygon MapObj::getBoundingPolygon()
 
 QPolygonF MapObj::getClickPoly() { return clickPoly; }
 
-QPainterPath MapObj::getSelectionPath()
-{
-    qreal d = 3; // Thickness of selection "border"
-    QPainterPath p;
-    QRectF br = clickPoly.boundingRect();
-    p.moveTo(br.topLeft() + QPointF(-d, -d));
-    p.lineTo(br.topRight() + QPointF(d, -d));
-    p.lineTo(br.bottomRight() + QPointF(d, d));
-    p.lineTo(br.bottomLeft() + QPointF(-d, d));
-    p.lineTo(br.topLeft() + QPointF(-d, -d));
-    return p;
-}
-
 bool MapObj::isInClickBox(const QPointF &p)
 {
     return clickPoly.containsPoint(p, Qt::OddEvenFill);
