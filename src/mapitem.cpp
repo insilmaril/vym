@@ -153,7 +153,7 @@ LinkableMapObj *MapItem::getLMO()
         return NULL;
 }
 
-QPainterPath MapItem::getSelectionPath()
+QPainterPath MapItem::getSelectionPath() // FIXME-3 should be in BranchContainer or ImageContainer
 {
     QPainterPath p;
     QRectF r;
@@ -169,6 +169,18 @@ QPainterPath MapItem::getSelectionPath()
         p.lineTo(r.topLeft() + QPointF(-d, -d));
     } else
         qWarning() << "MapITem::getSelectionPath - unknown item type!";
+
+    return p;
+}
+
+QPointF MapItem::getEditPosition() // FIXME-3 should be directly in BranchContainer
+{
+    QPointF p;
+
+    if (isBranchLikeType() )
+        p = ((BranchItem*)this)->getBranchContainer()->scenePos();
+    else
+        qWarning() << "MapITem::getEditPosition - unknown item type!";
 
     return p;
 }

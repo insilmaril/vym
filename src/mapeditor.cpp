@@ -1092,7 +1092,7 @@ void MapEditor::cursorFirst() { model->selectFirstBranch(); }
 
 void MapEditor::cursorLast() { model->selectLastBranch(); }
 
-void MapEditor::editHeading()
+void MapEditor::editHeading()   // FIXME-0 use Container instead of MO
 {
     if (state() == EditingHeading) {
         editHeadingFinished();
@@ -1101,7 +1101,7 @@ void MapEditor::editHeading()
 
     BranchObj *bo = model->getSelectedBranchObj();
     BranchItem *bi = model->getSelectedBranch();
-    if (bo && bo) {
+    if (bo && bo) {  // FIXME-0 WTF?
         VymText heading = bi->getHeading();
         if (heading.isRichText()) {
             mainWindow->windowShowHeadingEditor();
@@ -2232,7 +2232,7 @@ void MapEditor::updateSelection(QItemSelection nsel, QItemSelection dsel)
 
         // Reposition also LineEdit for heading during animation
         if (lineEdit)
-            lineEdit->move(mo->getAbsPos().toPoint());
+            lineEdit->move(itemsSelected.at(i)->getEditPosition().toPoint());
     }
 
     scene()->update();
