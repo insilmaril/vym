@@ -4081,7 +4081,7 @@ void VymModel::editHeading2URL()
         setURL(selti->getHeadingPlain());
 }
 
-void VymModel::getJiraData(bool subtree) // FIXME-0 update error message, check
+void VymModel::getJiraData(bool subtree) // FIXME-2 update error message, check
                                          // if jiraClientAvail is set correctly
 {
     if (!JiraAgent::available()) {
@@ -4212,7 +4212,7 @@ void VymModel::updateJiraData(QJsonObject jsobj)
 }
 
 
-void VymModel::setHeadingConfluencePageName()   // FIXME-0 always asks for Confluence credentials when adding any URL
+void VymModel::setHeadingConfluencePageName()   // FIXME-2 always asks for Confluence credentials when adding any URL
 {
     BranchItem *selbi = getSelectedBranch();
     if (selbi) {

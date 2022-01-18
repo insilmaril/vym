@@ -1101,7 +1101,7 @@ void MapEditor::editHeading()   // FIXME-0 use Container instead of MO
 
     BranchObj *bo = model->getSelectedBranchObj();
     BranchItem *bi = model->getSelectedBranch();
-    if (bo && bo) {  // FIXME-0 WTF?
+    if (bo && bo) {  // FIXME-2 WTF?
         VymText heading = bi->getHeading();
         if (heading.isRichText()) {
             mainWindow->windowShowHeadingEditor();
@@ -1646,7 +1646,8 @@ void MapEditor::moveObject()
             // The structure in VymModel remaines untouched so far!
 
             if (selbi->getBranchContainer()->parentItem() != tmpParentContainer->getChildrenContainer()) {
-                qDebug() << "adding to tmpParentContainer: " << selbi->getHeadingPlain() << selbi->getBranchContainer();
+                qDebug() << "adding to tmpParentContainer: " << selbi->getHeadingPlain() << selbi->getBranchContainer() << "current children: " << tmpParentContainer->getChildrenContainer()->childItems().count();
+                // FIXME-0 when adding to tmpParentContainer, reset the relative positions of mainbranches, so that they are *in* the tPC
                 tmpParentContainer->addToChildrenContainer(selbi->getBranchContainer());
                 tmpParentContainer->reposition();
             }
@@ -1708,7 +1709,7 @@ void MapEditor::moveObject()
                 }
                 */
 
-                // FIXME-0 tmp relinking needs to be done for whole selection
+                // FIXME-2 tmp relinking needs to be done for whole selection
                 if (pointerMod == Qt::ControlModifier) {
                     // Special case: link below dst
                     lmosel->setParObjTmp(lmo_dst, p, + 1);
@@ -1819,7 +1820,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
     }
 
     // Have we been moving something?
-    if (seli && (state() == MovingObject || state() == MovingObjectTmpLinked)) {
+    if (seli && (state() == MovingObject || state() == MovingObjectTmpLinked)) {    // FIXME-0 alternatively test, if tmpParentContainer is not empty!
         panningTimer->stop();
         if (seli->getType() == TreeItem::Image) {
             FloatImageObj *fio = (FloatImageObj *)(((MapItem *)seli)->getLMO());
@@ -1840,12 +1841,13 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
         }
 
         if (selbi) {
-            if ( selbi->depth() == 0) {
+            /*
+            if ( selbi->depth() == 0) { // FIXME-0 MC is added to tmpParentContainer, but never removed :-(
                 // Mapcenter was moved
                 if (movingObj_orgPos != selbi->getBranchObj()->getAbsPos()) {
                     QString pold = qpointFToString(movingObj_orgPos);
                     QString pnow =
-                        qpointFToString(selbi->getBranchObj()->getAbsPos());
+                        qpointFToString(selbi->getBranchObj()->getAbsPos()); // FIXME-2 same functions like  2 lines above!!!
 
                     model->saveState(selbi, "move " + pold, selbi, "move " + pnow,
                                      QString("Move mapcenter %1 to position %2")
@@ -1854,6 +1856,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                     // FIXME-0 Currently mapcenters will not be relinked! 
                 }
             } else {
+                */
                 // A branch was moved    //FIXME-2 set correct state
                 LinkableMapObj *lmosel = NULL;
                 lmosel = ((MapItem *)seli)->getLMO();
@@ -1861,9 +1864,13 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                 // save the position in case we link to mapcenter
                 QPointF savePos = QPointF(lmosel->getAbsPos());
 
+                qDebug() << "ME::release  containerPos=" << selbi->getBranchContainer()->pos();
+                QPointF tmpParentContainerPos = tmpParentContainer->pos();
+                qDebug() << "ME::release  tmpParentPos=" << tmpParentContainerPos << "scenePos: " << tmpParentContainer->scenePos();
+
                 // Reset the temporary drawn link to the original one
                 lmosel->unsetParObjTmp();
-                selbi->getBranchContainer()->unsetTmpParentContainer();
+                // FIXME-2 selbi->getBranchContainer()->unsetTmpParentContainer(tmpParentContainerPos);
                 setState(Neutral);
 
                 // For Redo we may need to save original selection
@@ -1893,6 +1900,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                                             ((BranchItem *)dsti)->num() + 1, true);
                     }
                     else { // Append to dst
+                        qDebug() << "ME::release  move to dest " << movingObj_orgPos;
                         preDstParStr = model->getSelectString(dsti);
                         model->relinkBranch((BranchItem *)seli, (BranchItem *)dsti,
                                             -1, true, movingObj_orgPos);
@@ -1904,6 +1912,9 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                     // No destination, undo  temporary move
 
                     if (seli->depth() == 1) {
+
+
+                        /* FIXME-2 old code. Logic to decide about positions should be completely within containers...
                         // The select string might be different _after_ moving
                         // around. Therefor reposition and then use string of old
                         // selection, too
@@ -1920,10 +1931,12 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                                     .arg(model->getObjectName(lmosel))
                                     .arg(ps));
                         }
+                        */
                     }
 
                     if (selbi->parentBranch()->getChildrenLayout() ==
                         BranchItem::FreePositioning) {
+                        qDebug() << "!!! ME::release  ooops, FreePositioning!!!";   // FIXME-2
                         lmosel->setRelPos();
                         model->reposition();
                     }
@@ -1937,11 +1950,16 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                             // Updating the stacking order also resets the original parents
                             foreach(QGraphicsItem *i, tmpParentContainer->getChildrenContainer()->childItems()) {
                                 BranchItem *bi = ((BranchContainer*)i)->getBranchItem();
+                                qDebug () << "ok0";
                                 bi->updateContainerStackingOrder();
-                                bi->parentBranch()->getBranchContainer()->reposition();
+                                qDebug () << "ok1";
+                                if (bi->depth() > 1) {
+                                    BranchItem *pi = bi->parentBranch();
+                                    if (pi) pi->getBranchContainer()->reposition();
+                                } 
                             }
                             // Make the tmpParentContainer invisible again (size == 0) 
-                            // and move container back to correct position 
+                            // and move container to correct position 
                             tmpParentContainer->reposition();
                         }
 
@@ -1961,7 +1979,9 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                             model->reposition();
                     }
                 }
-            }
+                /*
+            } // selbi->depth >0
+            */
         }   // Branch or MapCenter was moved
 
         // Finally resize scene, if needed

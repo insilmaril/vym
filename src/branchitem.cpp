@@ -601,9 +601,22 @@ void BranchItem::updateContainerStackingOrder()
     // It seems the QGraphicsItem::stackBefore only works, if an item is moved up. 
     // For moving below (or into another subtree), we have to reparent first  :-(
 
-    // For simplicity we always reparent:
+    // For simplicity we always reparent. The absolute position must not be changed here
+
+    QPointF p = branchContainer->scenePos();
+    qDebug() << "BI::updateStackingOrder of "  << " absPos before: " << p << getHeadingPlain();
     branchContainer->setParentItem(nullptr);
-    branchContainer->setParentItem(parentBranch()->getChildrenContainer());
+
+    BranchItem *pi = parentBranch();
+
+
+    if (pi && pi != rootItem) 
+        branchContainer->setParentItem(parentBranch()->getChildrenContainer());
+    else
+        qWarning() << "BI::updateStackingORder  pi = " << pi << "rootItem = " << rootItem; // FIXME-2 testing
+
+    branchContainer->setPos(branchContainer->sceneTransform().inverted().map(p));
+    qDebug() << "BI::updateStackingOrder of "  << " absPos after:  " << p << getHeadingPlain();
         
     if (n < parentBranch()->branchCount() - 1)
         branchContainer->stackBefore( (parentBranch()->getBranchNum(n + 1))->getBranchContainer() );

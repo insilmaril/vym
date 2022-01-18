@@ -36,7 +36,6 @@ void BranchContainer::init()
     setBrush(QColor(Qt::blue));
     setLayoutType(Container::Horizontal);
     setHorizontalDirection(Container::RightToLeft);
-    //setHorizontalDirection(Container::LeftToRight);
 
     headingContainer = new HeadingContainer ();
     headingContainer->setBrush(QColor(Qt::gray));
@@ -76,9 +75,12 @@ void BranchContainer::setTmpParentContainer(BranchItem* dstBI, QPointF mousePos,
     //qDebug() << "BC::setTmpParentContainer " << dstBI << mousePos << offset;
 }
 
-void BranchContainer::unsetTmpParentContainer()
+void BranchContainer::unsetTmpParentContainer(QPointF absPos)
 {
-    //qDebug() << "BC::unsetTmpParentContainer ";
+    qDebug() << " a) BC::unsetTmpParentContainer absPos = " << absPos << " BC=" << this;
+    qDebug() << " b) relPos before: " << pos() << "scenePos: " << scenePos();
+    setPos (absPos);   // FIXME-2 only for floating layout
+    qDebug() << " c) relPos  after: " << pos() << "scenePos: " << scenePos();
 }
 
 bool BranchContainer::isInClickBox(const QPointF &p)
@@ -91,4 +93,20 @@ void BranchContainer::updateVisuals()
     headingContainer->setText(branchItem->getHeadingText());
 }
 
+void BranchContainer::reposition()
+{
+    // FIXME-2 temporary:   Let mainbranches float. Needs to go to central Layout class later
+    if (branchItem && branchItem->depth() == 1)
+    {
+        qDebug() << "BC::reposition  d=1" << branchItem->getHeadingPlain() << this;
+        boundsType = BoundedFloat;
+    }
+    else
+    {
+        //qDebug() << "BC::reposition  d!=1" << this;
+        boundsType = Bounded;
+    }
+
+    Container::reposition();
+}
 

@@ -21,6 +21,7 @@ void Container::init()
     type = Collection;
 
     layout = Horizontal;
+    boundsType = Bounded;
 
     show();
 }
@@ -66,14 +67,19 @@ QVariant Container::itemChange(GraphicsItemChange change, const QVariant &value)
 
 void Container::reposition()
 {
-    //qDebug() << QString("Container::reposition of %1 container  (Container: %2").arg(name).arg(type);
+    //qDebug() << QString("Container::reposition of %1 container  (Container: %2)  Layout: %3").arg(name).arg(type).arg(layout) << this;
 
     QRectF r = rect();
 
-    // Repositioning is done recursively. First the size sizes of subcontainers are calculated
+    // Repositioning is done recursively: 
+    // First the size sizes of subcontainers are calculated, 
+    // Container::reposition is overloaded, so for example HeadingContainer 
+    // will return correct size
+    //
     // Then the subcontainers are positioned.
     //
-    // a) calc sizes of subcontainers based on their layouts
+    // a) calc sizes of subcontainers based on their layouts 
+    //    (overloaded, not there e.g. for HeadingContainer!)
 
     if (childItems().count() == 0) {
         //qDebug() << " * Setting r to minimal size rect=" << rect();
@@ -154,26 +160,36 @@ void Container::reposition()
                 // Calc total height and max width
                 foreach (QGraphicsItem *child, childItems()) {
                     c = (Container*) child;
-                    w = c->rect().width();
-                    w_max = (w_max < w) ? w : w_max;
-                    h_total += c->rect().height();
+                    // Only consider size, if boundsType is not FreeFloat:
+                        if (c->boundsType != FreeFloat) {
+                        w = c->rect().width();
+                        w_max = (w_max < w) ? w : w_max;
+                        h_total += c->rect().height();
+                    }
                 }
 
                 qreal y = 0;
                 // Position children
                 foreach (QGraphicsItem *child, childItems()) {
                     c = (Container*) child;
-                    if (horizontalDirection == RightToLeft)
-                        // Align to left
-                        c->setPos (0, y);
-                    else
-                        // Align to right
-                        c->setPos (w_max - c->rect().width(), y);
+                    // Only position container here, if boundsType is no *Float:
+                    if (c->boundsType == Bounded) {
+                        if (horizontalDirection == RightToLeft)
+                            // Align to left
+                            c->setPos (0, y);
+                        else
+                            // Align to right
+                            c->setPos (w_max - c->rect().width(), y);
 
-                        // Align centered (unused): 
-                        // c->setPos ( (w_max - c->rect().width() ) / 2, y);
+                            // Align centered (unused): 
+                            // c->setPos ( (w_max - c->rect().width() ) / 2, y);
 
-                    y += c->rect().height();
+                        y += c->rect().height();
+                    } else {
+                        //qDebug() << "C:reposition   pos=" << c->pos() << " c=" << c;
+                        //c->setPos (-50,-50); // FIXME-2 testing only
+                    }    
+                    
 
                 }
                 r.setWidth(w_max);

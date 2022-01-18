@@ -75,9 +75,14 @@ Next steps
 
 * Moving containers around
     - Todo
+        - ME::1650  // FIXME-0 when adding to tmpParentContainer, reset the relative positions of mainbranches, so that they are *in* the tPC
         - Position LineEdit to container instead of MapObj in
           MapEditor::editHeading
         - Fix z value of select box for selected containers
+        - absolute position for MapCenters for COntainers
+        - relative position for Mainbranches in COntainers
+          ("FramedFloat")
+        - Relative position for Images: "FreeFloat" or "FramedFloat"
 
     - Position containers temporarily while moving: When an object can be
       linked temporarily, it needs a relative position to the tmp parent.
