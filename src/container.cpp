@@ -160,7 +160,7 @@ void Container::reposition()
                 // Calc total height and max width
                 foreach (QGraphicsItem *child, childItems()) {
                     c = (Container*) child;
-                    // Only consider size, if boundsType is not FreeFloat:
+                    // Only consider size, if boundsType is Bounded or BoundedFloat:
                         if (c->boundsType != FreeFloat) {
                         w = c->rect().width();
                         w_max = (w_max < w) ? w : w_max;

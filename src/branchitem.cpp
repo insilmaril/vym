@@ -604,7 +604,6 @@ void BranchItem::updateContainerStackingOrder()
     // For simplicity we always reparent. The absolute position must not be changed here
 
     QPointF p = branchContainer->scenePos();
-    qDebug() << "BI::updateStackingOrder of "  << " absPos before: " << p << getHeadingPlain();
     branchContainer->setParentItem(nullptr);
 
     BranchItem *pi = parentBranch();
@@ -616,7 +615,6 @@ void BranchItem::updateContainerStackingOrder()
         qWarning() << "BI::updateStackingORder  pi = " << pi << "rootItem = " << rootItem; // FIXME-2 testing
 
     branchContainer->setPos(branchContainer->sceneTransform().inverted().map(p));
-    qDebug() << "BI::updateStackingOrder of "  << " absPos after:  " << p << getHeadingPlain();
         
     if (n < parentBranch()->branchCount() - 1)
         branchContainer->stackBefore( (parentBranch()->getBranchNum(n + 1))->getBranchContainer() );

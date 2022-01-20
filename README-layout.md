@@ -75,7 +75,10 @@ Next steps
 
 * Moving containers around
     - Todo
-        - ME::1650  // FIXME-0 when adding to tmpParentContainer, reset the relative positions of mainbranches, so that they are *in* the tPC
+        - ME::1650  
+          // FIXME-0 when adding to tmpParentContainer, reset the relative positions of mainbranches, so that they are *in* the tPC
+          or better: Set the layout to "Bounded" while in tPC
+         
         - Position LineEdit to container instead of MapObj in
           MapEditor::editHeading
         - Fix z value of select box for selected containers

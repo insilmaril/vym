@@ -1726,7 +1726,7 @@ void MapEditor::moveObject()
             else {
                 if (state() == MovingObjectTmpLinked) {
                     lmosel->unsetParObjTmp();
-                    selbi->getBranchContainer()->unsetTmpParentContainer();
+                    // selbi->getBranchContainer()->unsetTmpParentContainer(); //FIXME-0 needed?
                     if (mainWindow->getModMode() == Main::ModModeMoveObject)
                         setState(MovingObjectWithoutLinking);
                     else
@@ -1864,9 +1864,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                 // save the position in case we link to mapcenter
                 QPointF savePos = QPointF(lmosel->getAbsPos());
 
-                qDebug() << "ME::release  containerPos=" << selbi->getBranchContainer()->pos();
-                QPointF tmpParentContainerPos = tmpParentContainer->pos();
-                qDebug() << "ME::release  tmpParentPos=" << tmpParentContainerPos << "scenePos: " << tmpParentContainer->scenePos();
+                // FIXME-2 not used below QPointF tmpParentContainerPos = tmpParentContainer->pos();
 
                 // Reset the temporary drawn link to the original one
                 lmosel->unsetParObjTmp();
@@ -1950,9 +1948,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                             // Updating the stacking order also resets the original parents
                             foreach(QGraphicsItem *i, tmpParentContainer->getChildrenContainer()->childItems()) {
                                 BranchItem *bi = ((BranchContainer*)i)->getBranchItem();
-                                qDebug () << "ok0";
                                 bi->updateContainerStackingOrder();
-                                qDebug () << "ok1";
                                 if (bi->depth() > 1) {
                                     BranchItem *pi = bi->parentBranch();
                                     if (pi) pi->getBranchContainer()->reposition();

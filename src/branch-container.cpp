@@ -98,7 +98,7 @@ void BranchContainer::reposition()
     // FIXME-2 temporary:   Let mainbranches float. Needs to go to central Layout class later
     if (branchItem && branchItem->depth() == 1)
     {
-        qDebug() << "BC::reposition  d=1" << branchItem->getHeadingPlain() << this;
+        //qDebug() << "BC::reposition  d=1" << branchItem->getHeadingPlain() << this;
         boundsType = BoundedFloat;
     }
     else
