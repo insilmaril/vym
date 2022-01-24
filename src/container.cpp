@@ -21,7 +21,7 @@ void Container::init()
     type = Collection;
 
     layout = Horizontal;
-    boundsType = Bounded;
+    boundsType = BoundedStacked;
 
     show();
 }
@@ -39,6 +39,16 @@ void Container::setLayoutType(const LayoutType &ltype)
 void Container::setHorizontalDirection(const HorizontalDirection &hdir)
 {
     horizontalDirection = hdir;
+}
+
+void Container::setVerticalAlignment(const VerticalAlignment &a)
+{
+    verticalAlignment = a;
+}
+
+void Container::setBoundsType(const BoundsType &btype)
+{
+    boundsType = btype;
 }
 
 void Container::addContainer(Container *c)
@@ -74,7 +84,7 @@ void Container::reposition()
     // Repositioning is done recursively: 
     // First the size sizes of subcontainers are calculated, 
     // Container::reposition is overloaded, so for example HeadingContainer 
-    // will return correct size
+    // will return correct size of heading!
     //
     // Then the subcontainers are positioned.
     //
@@ -136,7 +146,7 @@ void Container::reposition()
                 foreach (QGraphicsItem *child, childItems()) {
                     c = (Container*) child;
 
-                    // Align from left to right
+                    // Order from left to right
                     if (horizontalDirection == LeftToRight)
                     {
                         c->setPos (x, (h_max - c->rect().height() ) / 2);
@@ -157,15 +167,25 @@ void Container::reposition()
                 qreal h_total = 0;
                 qreal w_max = 0;
                 qreal w;
-                // Calc total height and max width
-                foreach (QGraphicsItem *child, childItems()) {
-                    c = (Container*) child;
-                    // Only consider size, if boundsType is Bounded or BoundedFloat:
-                        if (c->boundsType != FreeFloat) {
-                        w = c->rect().width();
-                        w_max = (w_max < w) ? w : w_max;
-                        h_total += c->rect().height();
-                    }
+
+                if (boundsType == BoundedStacked) {
+                    // child is aligned further down, just go with sum and max
+                    // Calc total height and max width for stacked children
+                    foreach (QGraphicsItem *child, childItems()) {
+                        c = (Container*) child;
+                        // Consider size depending on boundsType
+                            // child is aligned further down, just go with sum and max
+                            w = c->rect().width();
+                            w_max = (w_max < w) ? w : w_max;    // FIXME-2 use max function
+                            h_total += c->rect().height();
+                        }
+                } else if (c->boundsType == BoundedFloating) {
+                        // Child is floating, but still "in" - consider corner positions
+
+                        // FIXME-0 but changing width and height 
+                        // will affect positioning further down :-(
+                        //
+                        qDebug() << "C::repos  BoundedFLoat found for this= " << this;
                 }
 
                 qreal y = 0;
@@ -173,25 +193,26 @@ void Container::reposition()
                 foreach (QGraphicsItem *child, childItems()) {
                     c = (Container*) child;
                     // Only position container here, if boundsType is no *Float:
-                    if (c->boundsType == Bounded) {
-                        if (horizontalDirection == RightToLeft)
-                            // Align to left
-                            c->setPos (0, y);
-                        else
-                            // Align to right
-                            c->setPos (w_max - c->rect().width(), y);
-
-                            // Align centered (unused): 
-                            // c->setPos ( (w_max - c->rect().width() ) / 2, y);
+                    if (c->boundsType == BoundedStacked) {
+                        switch (verticalAlignment) {
+                            case Left:
+                                c->setPos (0, y);
+                                break;
+                            case Right:
+                                c->setPos (w_max - c->rect().width(), y);
+                                break;
+                            case Centered:
+                                c->setPos ( (w_max - c->rect().width() ) / 2, y);
+                                break;
+                        }
 
                         y += c->rect().height();
                     } else {
-                        //qDebug() << "C:reposition   pos=" << c->pos() << " c=" << c;
-                        //c->setPos (-50,-50); // FIXME-2 testing only
+                        qDebug() << "C:reposition BoundsType floating!  pos=" << c->pos() << " c=" << c;
+                        c->setPos (-50,-50); // FIXME-2 testing only
                     }    
-                    
-
                 }
+
                 r.setWidth(w_max);
                 r.setHeight(h_total);
             }

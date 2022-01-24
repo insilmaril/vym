@@ -10,12 +10,13 @@ class Container : public QGraphicsRectItem {
     /*! Type of this container */
     enum ContainerType {Undefined, Collection, Branch, Heading};
 
-    /*! How should this container be considered in bounding boxes of parent? */
-    enum BoundsType {Bounded, BoundedFloat, FreeFloat};
+    /*! How are children containers and boundaries organized? */
+    enum BoundsType {BoundedStacked, BoundedFloating, FreeFloating};
 
     /*! Alignment of children containers */
     enum LayoutType {Horizontal, Vertical};
     enum HorizontalDirection {LeftToRight, RightToLeft};
+    enum VerticalAlignment {Left, Centered, Right};
 
     Container (QGraphicsItem *parent = NULL);
     virtual ~Container();
@@ -25,6 +26,8 @@ class Container : public QGraphicsRectItem {
 
     void setLayoutType(const LayoutType &ltype);
     void setHorizontalDirection(const HorizontalDirection &hdir);
+    void setVerticalAlignment(const VerticalAlignment &a);
+    void setBoundsType(const BoundsType &btype);
 
     void addContainer(Container *c);
 
@@ -41,6 +44,7 @@ class Container : public QGraphicsRectItem {
 
     LayoutType layout;
     HorizontalDirection horizontalDirection;
+    VerticalAlignment verticalAlignment;
 };
 
 #endif

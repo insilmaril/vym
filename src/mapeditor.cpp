@@ -72,6 +72,7 @@ MapEditor::MapEditor(VymModel *vm)
     // Container used for temporary moving and relinking branches
     tmpParentContainer = new BranchContainer (mapScene, nullptr, nullptr);
     tmpParentContainer->setZValue(1000);    // See also z-values in mapobj.h
+    tmpParentContainer->setBoundsType(Container::BoundedStacked);
     tmpParentContainer->reposition();
 
     // Shortcuts and actions

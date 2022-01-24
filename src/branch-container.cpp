@@ -35,7 +35,8 @@ void BranchContainer::init()
 
     setBrush(QColor(Qt::blue));
     setLayoutType(Container::Horizontal);
-    setHorizontalDirection(Container::RightToLeft);
+    //setHorizontalDirection(Container::RightToLeft);
+    setHorizontalDirection(Container::LeftToRight);
 
     headingContainer = new HeadingContainer ();
     headingContainer->setBrush(QColor(Qt::gray));
@@ -44,7 +45,12 @@ void BranchContainer::init()
     childrenContainer = new Container ();
     childrenContainer->setBrush(QColor(Qt::green));
     childrenContainer->setLayoutType(Container::Vertical);
+    childrenContainer->setVerticalAlignment(Container::Left);
     scene()->addItem (childrenContainer);
+
+    innerContainer = new Container ();
+    innerContainer->setBrush(QColor(Qt::magenta));
+    scene()->addItem (innerContainer);
 
     addContainer(headingContainer);
     addContainer(childrenContainer);
@@ -96,15 +102,16 @@ void BranchContainer::updateVisuals()
 void BranchContainer::reposition()
 {
     // FIXME-2 temporary:   Let mainbranches float. Needs to go to central Layout class later
-    if (branchItem && branchItem->depth() == 1)
+    if (branchItem && branchItem->depth() == 0)
     {
-        //qDebug() << "BC::reposition  d=1" << branchItem->getHeadingPlain() << this;
-        boundsType = BoundedFloat;
+        qDebug() << "BC::reposition  d=0" << branchItem->getHeadingPlain() << this;
+        boundsType = BoundedFloating;
     }
     else
     {
-        //qDebug() << "BC::reposition  d!=1" << this;
-        boundsType = Bounded;
+        qDebug() << "BC::reposition  d!=0" << this;
+        boundsType = BoundedStacked;
+        verticalAlignment = Left;
     }
 
     Container::reposition();
