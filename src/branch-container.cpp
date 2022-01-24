@@ -102,14 +102,14 @@ void BranchContainer::updateVisuals()
 void BranchContainer::reposition()
 {
     // FIXME-2 temporary:   Let mainbranches float. Needs to go to central Layout class later
-    if (branchItem && branchItem->depth() == 0)
+    if (branchItem && branchItem->depth() < 2)
     {
-        qDebug() << "BC::reposition  d=0" << branchItem->getHeadingPlain() << this;
+        qDebug() << "BC::reposition BoundedFloat d < 2" << branchItem->getHeadingPlain() << this;
         boundsType = BoundedFloating;
     }
     else
     {
-        qDebug() << "BC::reposition  d!=0" << this;
+        qDebug() << "BC::reposition  d > 1" << this;
         boundsType = BoundedStacked;
         verticalAlignment = Left;
     }
