@@ -38,11 +38,17 @@ void HeadingContainer::setText(const QString &s)// FIXME-2 richtext has wrong po
         r.setHeight(headingObj->getBBox().height());
     }
     setRect(r);
+
+    setName(QString("HC (%1)").arg(s));
+}
+
+QString HeadingContainer::getName() {
+    return Container::getName() + " - " + headingObj->text();
 }
 
 void HeadingContainer::reposition()
 {
-    //qDebug() << "HC::reposition";
+    qDebug() << "HC::reposition " << this;
     return;
 }
 

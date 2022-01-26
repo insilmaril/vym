@@ -12,6 +12,7 @@ class HeadingContainer : public Container {
     virtual void init();
 
     void setText(const QString &);
+    QString getName();
 
     virtual void reposition();
 

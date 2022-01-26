@@ -73,7 +73,10 @@ MapEditor::MapEditor(VymModel *vm)
     tmpParentContainer = new BranchContainer (mapScene, nullptr, nullptr);
     tmpParentContainer->setZValue(1000);    // See also z-values in mapobj.h
     tmpParentContainer->setBoundsType(Container::BoundedStacked);
+    tmpParentContainer->setName("tmpParentContainer");
+    tmpParentContainer->setType(Container::TmpParent);
     tmpParentContainer->reposition();
+    qDebug() << "ME: tmpParentContainer = " << tmpParentContainer;
 
     // Shortcuts and actions
     QAction *a;

@@ -3,18 +3,27 @@
 
 #include <QGraphicsRectItem>
 
+class BranchContainer;
 class MapObj;
 
 class Container : public QGraphicsRectItem {
+  friend class BranchContainer;
   public:
     /*! Type of this container */
-    enum ContainerType {Undefined, Collection, Branch, Heading};
+    enum ContainerType {
+        Undefined, 
+        TmpParent,
+        InnerContent,
+        Children, 
+        Branch, 
+        Heading
+    };
 
     /*! How are children containers and boundaries organized? */
     enum BoundsType {BoundedStacked, BoundedFloating, FreeFloating};
 
     /*! Alignment of children containers */
-    enum LayoutType {Horizontal, Vertical};
+    enum LayoutType {Horizontal, Vertical, BFloat};
     enum HorizontalDirection {LeftToRight, RightToLeft};
     enum VerticalAlignment {Left, Centered, Right};
 
@@ -22,8 +31,11 @@ class Container : public QGraphicsRectItem {
     virtual ~Container();
     virtual void init();
 
+    void setType(const ContainerType &t);
     ContainerType containerType();
 
+    void setName(const QString &n);
+    QString getName();
     void setLayoutType(const LayoutType &ltype);
     void setHorizontalDirection(const HorizontalDirection &hdir);
     void setVerticalAlignment(const VerticalAlignment &a);

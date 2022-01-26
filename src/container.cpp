@@ -18,7 +18,7 @@ Container::~Container()
 
 void Container::init()
 {
-    type = Collection;
+    type = Undefined;
 
     layout = Horizontal;
     boundsType = BoundedStacked;
@@ -29,6 +29,45 @@ void Container::init()
 Container::ContainerType Container::containerType()
 {
     return type;
+}
+
+void Container::setType(const Container::ContainerType &t)
+{
+    type = t;
+}
+
+void Container::setName(const QString &n)   // FIXME-3 debugging only
+{
+    name = n;
+}
+
+QString Container::getName()    // FIXME-3 debugging only
+{
+    QString t;
+    switch (type) {
+        case Undefined:
+            t = "Undefined";
+            break;
+        case TmpParent:
+            t = "TmpParent";
+            break;
+        case InnerContent:
+            t = "InnerContent";
+            break;
+        case Children:
+            t = "Children";
+            break;
+        case Branch:
+            t = "Branch";
+            break;
+        case Heading:
+            t = "Heading";
+            break;
+        default:
+            t = "Unknown";
+            break;
+    }
+    return QString("[%1]").arg(t);
 }
 
 void Container::setLayoutType(const LayoutType &ltype)
@@ -77,9 +116,9 @@ QVariant Container::itemChange(GraphicsItemChange change, const QVariant &value)
 
 void Container::reposition()
 {
-    //qDebug() << QString("Container::reposition of %1 container  (Container: %2)  Layout: %3").arg(name).arg(type).arg(layout) << this;
+    qDebug() << QString("Container::reposition of %1 container  Layout: %2").arg(getName()).arg(layout) << this;
 
-    QRectF r = rect();
+    QRectF r;
 
     // Repositioning is done recursively: 
     // First the size sizes of subcontainers are calculated, 
@@ -91,12 +130,12 @@ void Container::reposition()
     // a) calc sizes of subcontainers based on their layouts 
     //    (overloaded, not there e.g. for HeadingContainer!)
 
-    if (childItems().count() == 0) {
-        //qDebug() << " * Setting r to minimal size rect=" << rect();
+    if (childItems().count() == 0 && layout != BFloat) {   // FIXME-0 check!
+        qDebug() << " * Setting r to minimal size. r =" << rect();
         r.setWidth(0);
         r.setHeight(0);
         setRect(r);
-        return;
+        //return;
     }
 
     // FIXME-1 testing only, rotate children
@@ -124,7 +163,11 @@ void Container::reposition()
 
     // The children Container is empty, if there are no children branches
     // No repositioning of children required then, of course.
-    if (childItems().count() == 0) return;
+    if (childItems().count() == 0) 
+    {
+        qDebug() << " * no children, could return?";
+        //return;  // FIXME-0 still required to continue, if children are BoundedFloat
+    }
 
     switch (layout) {
         case Horizontal: {
@@ -168,24 +211,15 @@ void Container::reposition()
                 qreal w_max = 0;
                 qreal w;
 
-                if (boundsType == BoundedStacked) {
-                    // child is aligned further down, just go with sum and max
-                    // Calc total height and max width for stacked children
-                    foreach (QGraphicsItem *child, childItems()) {
-                        c = (Container*) child;
-                        // Consider size depending on boundsType
-                            // child is aligned further down, just go with sum and max
-                            w = c->rect().width();
-                            w_max = (w_max < w) ? w : w_max;    // FIXME-2 use max function
-                            h_total += c->rect().height();
-                        }
-                } else if (c->boundsType == BoundedFloating) {
-                        // Child is floating, but still "in" - consider corner positions
-
-                        // FIXME-0 but changing width and height 
-                        // will affect positioning further down :-(
-                        //
-                        qDebug() << "C::repos  BoundedFLoat found for this= " << this;
+                // child is aligned further down, just go with sum and max
+                // Calc total height and max width for stacked children
+                foreach (QGraphicsItem *child, childItems()) {
+                    c = (Container*) child;
+                    // Consider size depending on boundsType
+                        // child is aligned further down, just go with sum and max
+                        w = c->rect().width();
+                        w_max = (w_max < w) ? w : w_max;    // FIXME-2 use max function
+                        h_total += c->rect().height();
                 }
 
                 qreal y = 0;
@@ -193,24 +227,19 @@ void Container::reposition()
                 foreach (QGraphicsItem *child, childItems()) {
                     c = (Container*) child;
                     // Only position container here, if boundsType is no *Float:
-                    if (c->boundsType == BoundedStacked) {
-                        switch (verticalAlignment) {
-                            case Left:
-                                c->setPos (0, y);
-                                break;
-                            case Right:
-                                c->setPos (w_max - c->rect().width(), y);
-                                break;
-                            case Centered:
-                                c->setPos ( (w_max - c->rect().width() ) / 2, y);
-                                break;
-                        }
+                    switch (verticalAlignment) {
+                        case Left:
+                            c->setPos (0, y);
+                            break;
+                        case Right:
+                            c->setPos (w_max - c->rect().width(), y);
+                            break;
+                        case Centered:
+                            c->setPos ( (w_max - c->rect().width() ) / 2, y);
+                            break;
+                    }
 
-                        y += c->rect().height();
-                    } else {
-                        qDebug() << "C:reposition BoundsType floating!  pos=" << c->pos() << " c=" << c;
-                        c->setPos (-50,-50); // FIXME-2 testing only
-                    }    
+                    y += c->rect().height();
                 }
 
                 r.setWidth(w_max);
@@ -218,7 +247,30 @@ void Container::reposition()
             }
             setRect(r);
             break;
+        case BFloat: {
+                qDebug() << " * Layout BFloat begin" << getName() << "Children: " << childItems().count() << this ;
+                QPointF ct; // Content translation vector
+                qreal x_min, y_min, x_max, y_max;
+                foreach (QGraphicsItem *child, childItems()) {
+                    c = (Container*) child;
+                    qDebug() << "   - c->rect = " << c->rect();
+
+                    if (c->pos().x() < x_min ) x_min = c->pos().x();  
+                    if (c->pos().y() < y_min ) y_min = c->pos().y();  
+
+                    if (c->pos().x() + c->rect().width() > x_max)
+                        x_max = c->pos().x() + c->rect().width();
+                    if (c->pos().y() + c->rect().height() > y_max)
+                        y_max = c->pos().y() + c->rect().height();
+                }
+
+                r.setTopLeft(QPointF(x_min, y_min));
+                r.setBottomRight(QPointF(x_max, y_max));
+                qDebug() << " * Layout BFloat end r=" << r << this;
+            }
+            break;
         default:
+            qWarning() << "Container::reposition  unknown layout type!";
             break;
     }
 }
