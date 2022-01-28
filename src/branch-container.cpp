@@ -113,14 +113,18 @@ void BranchContainer::reposition()
     // FIXME-2 temporary:   Let mainbranches float. Needs to go to central Layout class later
     if (branchItem)
     {
-        bool leftOfCenter = false;
+        bool leftOfCenter;
         if (branchItem->depth() == 0)
         {
+            // MapCenter
+            //
             qDebug() << "BC::reposition d == 0 BFloatLayout! " << branchItem->getHeadingPlain() << this << "children: " << childrenContainer;
             //boundsType = BoundedFloating;
             setLayoutType(BFloat);
             childrenContainer->setLayoutType(BFloat);
         } else if (branchItem->depth() == 1) {
+            // MainBranch
+            // 
             if (pos().x() < 0) 
                 leftOfCenter = true;
             else
@@ -134,13 +138,17 @@ void BranchContainer::reposition()
             if (leftOfCenter) {
                 // Left of center
                 setHorizontalDirection(RightToLeft);
+                innerContainer->setHorizontalDirection(RightToLeft);
                 childrenContainer->setVerticalAlignment(Right);
             } else {
                 // Right of center
                 setHorizontalDirection(LeftToRight);
+                innerContainer->setHorizontalDirection(LeftToRight);
                 childrenContainer->setVerticalAlignment(Left);
             }
         } else {
+            // Branch deeper in tree
+            //
             leftOfCenter = branchItem->parentBranch()->getBranchContainer()->getHorizontalDirection();
             qDebug() << "BC::reposition d == 2  loc=" << leftOfCenter << branchItem->getHeadingPlain() << this << "children: " << childrenContainer;
             //boundsType = BoundedStacked;
