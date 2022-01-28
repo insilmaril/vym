@@ -121,7 +121,12 @@ void BranchContainer::reposition()
             setLayoutType(BFloat);
             childrenContainer->setLayoutType(BFloat);
         } else if (branchItem->depth() == 1) {
-            qDebug() << "BC::reposition d == 1 " << branchItem->getHeadingPlain() << this << "children: " << childrenContainer;
+            if (pos().x() < 0) 
+                leftOfCenter = true;
+            else
+                leftOfCenter = false;
+
+            qDebug() << "BC::reposition d == 1  loc=" << leftOfCenter << branchItem->getHeadingPlain() << this << "children: " << childrenContainer;
             //boundsType = BoundedStacked;
             setLayoutType(Container::Horizontal);
             childrenContainer->setLayoutType(Vertical);
@@ -136,7 +141,8 @@ void BranchContainer::reposition()
                 childrenContainer->setVerticalAlignment(Left);
             }
         } else {
-            qDebug() << "BC::reposition d == 2 " << branchItem->getHeadingPlain() << this << "children: " << childrenContainer;
+            leftOfCenter = branchItem->parentBranch()->getBranchContainer()->getHorizontalDirection();
+            qDebug() << "BC::reposition d == 2  loc=" << leftOfCenter << branchItem->getHeadingPlain() << this << "children: " << childrenContainer;
             //boundsType = BoundedStacked;
             setLayoutType(Container::Horizontal);
             childrenContainer->setLayoutType(Vertical);

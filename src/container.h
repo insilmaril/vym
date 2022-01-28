@@ -36,8 +36,13 @@ class Container : public QGraphicsRectItem {
 
     void setName(const QString &n);
     QString getName();
+
     void setLayoutType(const LayoutType &ltype);
+    LayoutType getLayoutType();
+
     void setHorizontalDirection(const HorizontalDirection &hdir);
+    HorizontalDirection getHorizontalDirection();
+
     void setVerticalAlignment(const VerticalAlignment &a);
     void setBoundsType(const BoundsType &btype);
 

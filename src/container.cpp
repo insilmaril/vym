@@ -75,9 +75,19 @@ void Container::setLayoutType(const LayoutType &ltype)
     layout = ltype;
 }
 
+Container::LayoutType Container::getLayoutType()
+{
+    return layout;
+}
+
 void Container::setHorizontalDirection(const HorizontalDirection &hdir)
 {
     horizontalDirection = hdir;
+}
+
+Container::HorizontalDirection Container::getHorizontalDirection()
+{
+    return horizontalDirection;
 }
 
 void Container::setVerticalAlignment(const VerticalAlignment &a)
