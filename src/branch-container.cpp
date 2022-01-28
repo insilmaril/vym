@@ -114,28 +114,44 @@ void BranchContainer::reposition()
     // FIXME-2 temporary:   Let mainbranches float. Needs to go to central Layout class later
     if (branchItem)
     {
+        bool leftOfCenter = false;
         if (branchItem->depth() == 0)
         {
-            qDebug() << "BC::reposition d < 1 BFloatLayout! " << branchItem->getHeadingPlain() << this << "children: " << childrenContainer;
+            qDebug() << "BC::reposition d == 0 BFloatLayout! " << branchItem->getHeadingPlain() << this << "children: " << childrenContainer;
             //boundsType = BoundedFloating;
-            //setLayoutType(Container::BFloat);
+            setLayoutType(BFloat);
             childrenContainer->setLayoutType(BFloat);
-        }
-        else
-        {
-            qDebug() << "BC::reposition d > 0 " << branchItem->getHeadingPlain() << this << "children: " << childrenContainer;
+        } else if (branchItem->depth() == 1) {
+            qDebug() << "BC::reposition d == 1 " << branchItem->getHeadingPlain() << this << "children: " << childrenContainer;
             //boundsType = BoundedStacked;
             setLayoutType(Container::Horizontal);
             childrenContainer->setLayoutType(Vertical);
 
-            if (true) {
+            if (leftOfCenter) {
                 // Left of center
-                setHorizontalDirection(Container::LeftToRight);
-                childrenContainer->setVerticalAlignment(Left);
+                setHorizontalDirection(RightToLeft);
+                childrenContainer->setVerticalAlignment(Right);
             } else {
                 // Right of center
-                setHorizontalDirection(Container::RightToLeft);
+                setHorizontalDirection(LeftToRight);
+                childrenContainer->setVerticalAlignment(Left);
+            }
+        } else {
+            qDebug() << "BC::reposition d == 2 " << branchItem->getHeadingPlain() << this << "children: " << childrenContainer;
+            //boundsType = BoundedStacked;
+            setLayoutType(Container::Horizontal);
+            childrenContainer->setLayoutType(Vertical);
+
+            if (leftOfCenter) {
+                // Left of center
+                //setHorizontalDirection(RightToLeft);
+                innerContainer->setHorizontalDirection(RightToLeft);
                 childrenContainer->setVerticalAlignment(Right);
+            } else {
+                // Right of center
+                //setHorizontalDirection(LeftToRight);
+                innerContainer->setHorizontalDirection(LeftToRight);
+                childrenContainer->setVerticalAlignment(Left);
             }
         }
     } //else
