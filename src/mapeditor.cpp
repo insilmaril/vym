@@ -75,6 +75,7 @@ MapEditor::MapEditor(VymModel *vm)
     tmpParentContainer->setBoundsType(Container::BoundedStacked);
     tmpParentContainer->setName("tmpParentContainer");
     tmpParentContainer->setType(Container::TmpParent);
+    tmpParentContainer->setBrush(Qt::cyan);
     tmpParentContainer->reposition();
     qDebug() << "ME: tmpParentContainer = " << tmpParentContainer;
 
