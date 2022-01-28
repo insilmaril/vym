@@ -24,7 +24,7 @@ void HeadingContainer::init()
     type = Container::Heading;
 
     headingObj = new HeadingObj(this);
-    setText("");
+    setText(" ");   // Add minimum size of a character at least for a start
 }
 
 void HeadingContainer::setText(const QString &s)// FIXME-2 richtext has wrong position
