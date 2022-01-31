@@ -57,6 +57,7 @@ class Container : public QGraphicsRectItem {
     ContainerType type;
     BoundsType boundsType;
 
+    QPointF ct;    // Translation of inner content due to floating children
     QString name;
 
     LayoutType layout;

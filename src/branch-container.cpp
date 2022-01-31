@@ -135,7 +135,7 @@ void BranchContainer::reposition()
                 leftOfCenter << getName() << this << 
                 "children: " << childrenContainer;
 
-            setLayoutType(Container::Horizontal);
+            setLayoutType(Horizontal);
             childrenContainer->setLayoutType(Vertical);
 
             if (leftOfCenter) {
@@ -158,7 +158,9 @@ void BranchContainer::reposition()
                 qDebug() << "BC::reposition d > 1  FLOATING loc" << 
                     leftOfCenter << getName() << this << 
                     "children: " << childrenContainer;
-            
+                setLayoutType(BFloat);
+                childrenContainer->setLayoutType(BFloat);
+                childrenContainer->setParentItem(this);
             } else {
                 // Normal layout
                 qDebug() << "BC::reposition d > 1  loc=" << 

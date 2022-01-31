@@ -259,7 +259,6 @@ void Container::reposition()
             break;
         case BFloat: {
                 qDebug() << " * Layout BFloat begin" << getName() << "Children: " << childItems().count() << this ;
-                QPointF ct; // Content translation vector
                 qreal x_min, y_min, x_max, y_max;
                 foreach (QGraphicsItem *child, childItems()) {
                     c = (Container*) child;
@@ -274,9 +273,15 @@ void Container::reposition()
                         y_max = c->pos().y() + c->rect().height();
                 }
 
-                r.setTopLeft(QPointF(x_min, y_min));
-                r.setBottomRight(QPointF(x_max, y_max));
-                //qDebug() << " * Layout BFloat end r=" << r << this;
+                if (x_min < 0 ) ct.setX( -x_min);
+                if (y_min < 0 ) ct.setY( -y_min);
+
+                r.setRect(0, 0, x_max - x_min, y_max - y_min);
+                //r.TopLeft(QPointF(x_min, y_min));
+                //r.setBottomRight(QPointF(x_max, y_max));
+
+                setRect(r);
+                qDebug() << " * Layout BFloat end r=" << r << " ct=" << ct;
             }
             break;
         default:
