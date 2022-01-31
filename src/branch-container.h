@@ -15,7 +15,7 @@ class BranchContainer : public Container {
     void setBranchItem(BranchItem *);
     BranchItem *getBranchItem() const;
 
-    QString getName();
+    virtual QString getName();
 
     void addToChildrenContainer(Container *c);
     Container* getChildrenContainer();

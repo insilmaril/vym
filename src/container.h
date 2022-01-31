@@ -35,7 +35,7 @@ class Container : public QGraphicsRectItem {
     ContainerType containerType();
 
     void setName(const QString &n);
-    QString getName();
+    virtual QString getName();
 
     void setLayoutType(const LayoutType &ltype);
     LayoutType getLayoutType();

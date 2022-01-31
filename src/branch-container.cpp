@@ -64,7 +64,7 @@ BranchItem *BranchContainer::getBranchItem() const { return branchItem; }
 
 QString BranchContainer::getName() {
     if (branchItem)
-        return Container::getName() + " + " + branchItem->getHeadingPlain();
+        return Container::getName() + " '" + branchItem->getHeadingPlain() + "'";
     else
         return Container::getName() + " - ?";
 }
@@ -118,8 +118,7 @@ void BranchContainer::reposition()
         {
             // MapCenter
 
-            qDebug() << "BC::reposition d == 0 BFloatLayout! " << 
-                branchItem->getHeadingPlain() << this << 
+            qDebug() << "BC::reposition d == 0 BFloatLayout! " << getName() << this << 
                 "children: " << childrenContainer;
 
             setLayoutType(BFloat);
@@ -133,7 +132,7 @@ void BranchContainer::reposition()
                 leftOfCenter = false;
 
             qDebug() << "BC::reposition d == 1  loc=" << 
-                leftOfCenter << branchItem->getHeadingPlain() << this << 
+                leftOfCenter << getName() << this << 
                 "children: " << childrenContainer;
 
             setLayoutType(Container::Horizontal);
@@ -154,22 +153,31 @@ void BranchContainer::reposition()
             // Branch deeper in tree
 
             leftOfCenter = branchItem->parentBranch()->getBranchContainer()->getHorizontalDirection();
-            qDebug() << "BC::reposition d == 2  loc=" << 
-                leftOfCenter << branchItem->getHeadingPlain() << this << 
-                "children: " << childrenContainer;
+            if (branchItem->getHeadingPlain() == "float") {
+                // Special layout: floating children 
+                qDebug() << "BC::reposition d > 1  FLOATING loc" << 
+                    leftOfCenter << getName() << this << 
+                    "children: " << childrenContainer;
             
-            setLayoutType(Container::Horizontal);
-            childrenContainer->setLayoutType(Vertical);
-
-            if (leftOfCenter) {
-                // Left of center
-                innerContainer->setHorizontalDirection(RightToLeft);
-                childrenContainer->setVerticalAlignment(Right);
             } else {
-                // Right of center
-                innerContainer->setHorizontalDirection(LeftToRight);
-                childrenContainer->setVerticalAlignment(Left);
-            }
+                // Normal layout
+                qDebug() << "BC::reposition d > 1  loc=" << 
+                    leftOfCenter << getName() << this << 
+                    "children: " << childrenContainer;
+
+                setLayoutType(Container::Horizontal);
+                childrenContainer->setLayoutType(Vertical);
+
+                if (leftOfCenter) {
+                    // Left of center
+                    innerContainer->setHorizontalDirection(RightToLeft);
+                    childrenContainer->setVerticalAlignment(Right);
+                } else {
+                    // Right of center
+                    innerContainer->setHorizontalDirection(LeftToRight);
+                    childrenContainer->setVerticalAlignment(Left);
+                }
+            }   // Normal layout
         }
     } //else
         //qDebug() << "BC::reposition  no branchItem!!!!  tmpParentContainer?  this = " << this;

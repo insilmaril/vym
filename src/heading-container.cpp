@@ -43,12 +43,12 @@ void HeadingContainer::setText(const QString &s)// FIXME-2 richtext has wrong po
 }
 
 QString HeadingContainer::getName() {
-    return Container::getName() + " - " + headingObj->text();
+    return Container::getName() + " '" + headingObj->text() + "'";
 }
 
 void HeadingContainer::reposition()
 {
-    qDebug() << "HC::reposition " << this;
+    qDebug() << "HC::reposition " + getName();
     return;
 }
 

@@ -276,7 +276,7 @@ void Container::reposition()
 
                 r.setTopLeft(QPointF(x_min, y_min));
                 r.setBottomRight(QPointF(x_max, y_max));
-                qDebug() << " * Layout BFloat end r=" << r << this;
+                //qDebug() << " * Layout BFloat end r=" << r << this;
             }
             break;
         default:
