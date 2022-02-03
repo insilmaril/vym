@@ -1651,15 +1651,18 @@ void MapEditor::moveObject()
             // The structure in VymModel remaines untouched so far!
 
             if (selbi->getBranchContainer()->parentItem() != tmpParentContainer->getChildrenContainer()) {
-                qDebug() << "adding to tmpParentContainer: " << selbi->getHeadingPlain() << selbi->getBranchContainer() << "current children: " << tmpParentContainer->getChildrenContainer()->childItems().count();
+                qDebug() << "adding to tmpParentContainer: " << selbi->getBranchContainer()->getName() << "current tPC children count: " << tmpParentContainer->getChildrenContainer()->childItems().count();
                 // FIXME-0 when adding to tmpParentContainer, reset the relative positions of mainbranches, so that they are *in* the tPC
                 tmpParentContainer->addToChildrenContainer(selbi->getBranchContainer());
                 tmpParentContainer->reposition();
             }
 
             // FIXME-1 move whole selection to tmpParentContainer, not just selbi
-            // Before doing that, remove leafe branches from selection (no method available yet)!
+            // Before doing that, remove leaf branches from selection (no method available yet)!
             tmpParentContainer->setPos(movingObj_initialContainerPos + p - movingObj_initialPointerPos);
+            BranchContainer *bc = (BranchContainer*)(tmpParentContainer->getChildrenContainer()->childItems().first());
+            qDebug() << "ME::moveObject  tPC.setPos " << tmpParentContainer->pos() <<
+                "first child: " << bc->getName() << bc->pos() << bc;
 
             if (seli->depth() == 0) {
                 // Move mapcenter
@@ -1843,7 +1846,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                     seli->parent()); // Parent of image has changed
                 model->reposition();
             }
-        }
+        } // Image moved
 
         if (selbi) {
             /*
@@ -1935,29 +1938,64 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                                     .arg(ps));
                         }
                         */
-                    }
+                    }   // Mainbranch moved, but not linked
 
                     if (selbi->parentBranch()->getChildrenLayout() ==
                         BranchItem::FreePositioning) {
-                        qDebug() << "!!! ME::release  ooops, FreePositioning!!!";   // FIXME-2
+                        qDebug() << "!!! ME::release  ooops, FreePositioning!!!";   // FIXME-2   should become obsolete
                         lmosel->setRelPos();
                         model->reposition();
                     }
                     else {
-                        // Draw the original link, before selection was moved around
+                        // Selection was moved, but not relinked
+
+                        QPointF t = p - movingObj_initialPointerPos;
 
                         if (!tmpParentContainer->getChildrenContainer()->childItems().isEmpty()) {
                             qDebug() << "ME::releaseButton  emptying tmpParentContainer. Current items: " << 
-                                tmpParentContainer->getChildrenContainer()->childItems().count();
+                                tmpParentContainer->getChildrenContainer()->childItems().count() <<
+                                " t = " << t;
                             // Empty the tmpParentContainer, which is used for moving
                             // Updating the stacking order also resets the original parents
                             foreach(QGraphicsItem *i, tmpParentContainer->getChildrenContainer()->childItems()) {
-                                BranchItem *bi = ((BranchContainer*)i)->getBranchItem();
+                                BranchContainer *bc = (BranchContainer*) i;
+                                BranchItem *bi = bc->getBranchItem();
+
+                                Container *pc = bc->parentContainer();
+                                QString pname;
+                                if (pc) 
+                                    pname = pc->getName();
+                                else
+                                    pname = "no parent";
+
+                                qDebug() << " ### a) releasing of " << bc->info() << "Parent: " << pname;
+
+                                // Relink to original parent container 
+                                // and keep (!) current absolute position
                                 bi->updateContainerStackingOrder();
+
+                                qDebug() << " ### b) releasing of " << bc->info() << "Parent: " << pname;
+
                                 if (bi->depth() > 1) {
+                                    //i->setPos(11, 13);  //FIXME-0 testing
                                     BranchItem *pi = bi->parentBranch();
-                                    if (pi) pi->getBranchContainer()->reposition();
+                                    if (pi) {
+                                        if (pi->getBranchContainer()->getLayoutType() == Container::BFloat)
+                                        {
+                                            qDebug() << "        - setPos: " << t << " for " << bc->info();
+                                            qDebug() << "        - pc: " << pi->getBranchContainer()->info();
+                                            // Relative positioning
+                                            bc->setPos(t);
+                                        }
+                                        else{
+                                            qDebug() << "        - no setPos  for " << bc->info();
+                                            qDebug() << "        - pc: " << pi->getBranchContainer()->info();
+                                        }
+
+                                        pi->getBranchContainer()->reposition();
+                                    }
                                 } 
+                                qDebug() << " ### c) releasing of " << bc->info() << "Parent: " << pname;
                             }
                             // Make the tmpParentContainer invisible again (size == 0) 
                             // and move container to correct position 

@@ -70,6 +70,15 @@ QString Container::getName()    // FIXME-3 debugging only
     return QString("[%1]").arg(t);
 }
 
+QString Container::info (const QString &prefix)
+{
+    return prefix +
+        getName() +
+        QString(" scenePos: (%1, %2)").arg(scenePos().x()).arg(scenePos().y()) + 
+        QString(" pos: (%1, %2)").arg(pos().x()).arg(pos().y()) +
+        QString(" Layout: %1").arg(layout);
+}
+
 void Container::setLayoutType(const LayoutType &ltype)
 {
     layout = ltype;
@@ -124,9 +133,13 @@ QVariant Container::itemChange(GraphicsItemChange change, const QVariant &value)
     return  QGraphicsItem::itemChange(change, value);
 }
 
+Container* Container::parentContainer() 
+{
+    return (Container*)parentItem();
+}
 void Container::reposition()
 {
-    qDebug() << QString("Container::reposition of %1 container  Layout: %2").arg(getName()).arg(layout) << this;
+    qDebug() << QString("Container::reposition of %1 container").arg(info()) << this;
 
     QRectF r;
 
@@ -161,11 +174,20 @@ void Container::reposition()
     }
     */
 
+    ct = QPointF (0, 0);
     Container *c;
     foreach (QGraphicsItem *child, childItems()) {
         c = (Container*) child;
 //        if (c->type != Undefined && c->type != Heading) {
             c->reposition();
+
+            // If child container has floating layout, consider it's translation 
+            // vector for my own children
+            if (c->getLayoutType() == BFloat)
+            {
+                qDebug() << " # Adding floating ct= " << c->ct << " of " << c->getName() << " to " << getName();
+                ct += c->ct;
+            }
 //        }
     }
 
@@ -209,6 +231,13 @@ void Container::reposition()
                         c->setPos (x - c->rect().width(), (h_max - c->rect().height() ) / 2);
                         x -= c->rect().width();
                     }
+                    /*
+                    if (c->getLayoutType () != BFloat) {
+                        qDebug() << "    - Translating by ct=" << ct;
+                        c->moveBy(ct.x(), ct.y());
+                    }
+                    qDebug() << "    - setting position:  " << c->getName() << "  pos=" << c->pos() << "  ct=" << ct;
+                    */
                 }
                 r.setWidth(w_total);
                 r.setHeight(h_max);
@@ -258,11 +287,66 @@ void Container::reposition()
             setRect(r);
             break;
         case BFloat: {
-                qDebug() << " * Layout BFloat begin" << getName() << "Children: " << childItems().count() << this ;
+                qDebug() << " * Layout BFloat begin of " << info() << "Children.count= " << childItems().count() << this ;
+
+
+                /////////////////////////////////////////////////// fix from here
+                // Calc bbox of all children to prepare calculating rect()
+
                 qreal x_min, y_min, x_max, y_max;
+
+                if (childItems().count() > 0) {
+                    int n = 0;
+
+                    c = (Container*) (childItems().at(n));
+
+                    x_min = c->pos().x();
+                    y_min = c->pos().y();
+
+                    x_max = x_min + c->rect().width();
+                    y_max = y_min + c->rect().height();
+
+                    qDebug() << "   - c: " << c->info() << 
+                        "  c->r=" << c->rect() << " n=" << n <<
+                        " ( " << x_min <<", " << y_min << ") " <<
+                        " ( " << x_max <<", " << y_max << ") " ;
+                }
+                    
+                /*
+                QPointF topLeft = c->pos();
+                QPointF bottomRight = c->pos();
+                
+                if (childItems().count() > 0) {
+                    int n = 0;
+
+                    c = (Container*) (childItems().at(n));
+                    QPointF(
+                        c->pos().x() + c->rect().width(),
+                        c->pos().y() + c->rect().height() );
+
+                    qDebug() << "   - c: " << c->getName() << 
+                        "  pos=" << c->pos() << "  r=" << c->rect() << " n=" << n;
+
+                    while (n < childItems().count() - 1) {
+                        n++;
+                        qDebug() << "   - c: " << c->getName() << 
+                            "  pos=" << c->pos() << "  r=" << c->rect() << " n=" << n;
+
+                        if (c->pos().x() < topLeft.x())  topLeft.setX(c->pos().x());
+                        if (c->pos().y() < topLeft.y())  topLeft.setY(c->pos().y());
+
+                        // FIXME-0 now expand bottomRight corner as needed
+                    }
+                }
+                */
+                /////////////////////////////////////////////////// fix to here
+
+                /*
+                qreal x_min, y_min = 0;
+                qreal x_max, y_max = 0;
                 foreach (QGraphicsItem *child, childItems()) {
                     c = (Container*) child;
-                    qDebug() << "   - c->rect = " << c->rect();
+                    qDebug() << "   - c: " << c->getName() << "  pos=" << c->pos() << "  r=" << c->rect();
 
                     if (c->pos().x() < x_min ) x_min = c->pos().x();  
                     if (c->pos().y() < y_min ) y_min = c->pos().y();  
@@ -277,15 +361,25 @@ void Container::reposition()
                 if (y_min < 0 ) ct.setY( -y_min);
 
                 r.setRect(0, 0, x_max - x_min, y_max - y_min);
-                //r.TopLeft(QPointF(x_min, y_min));
-                //r.setBottomRight(QPointF(x_max, y_max));
+                */
+
+                r.setTopLeft(QPointF(x_min, y_min));
+                r.setBottomRight(QPointF(x_max, y_max));
 
                 setRect(r);
-                qDebug() << " * Layout BFloat end r=" << r << " ct=" << ct;
+                if (r.topLeft().x() < 0) ct.setX( -r.topLeft().x());
+                if (r.topLeft().y() < 0) ct.setY( -r.topLeft().y());
+                qDebug() << " * Layout BFloat end of " << info() << " r=" << r << " ct=" << ct;
             }
             break;
         default:
             qWarning() << "Container::reposition  unknown layout type!";
             break;
+    }
+
+    if (layout != BFloat)
+    {
+        qDebug() << " # layout != BFloat for " << info() << " ct=" << ct;
+        //setPos (ct);
     }
 }

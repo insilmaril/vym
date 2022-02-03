@@ -54,8 +54,9 @@ void BranchContainer::init()
     scene()->addItem (innerContainer);
 
     addContainer(innerContainer);
+    addContainer(childrenContainer);
+    //innerContainer->addContainer(childrenContainer);            // Default, probably depends on depth
     innerContainer->addContainer(headingContainer);
-    innerContainer->addContainer(childrenContainer);            // Default, probably depends on depth
 }
 
 void BranchContainer::setBranchItem(BranchItem *bi) { branchItem = bi; }
@@ -132,11 +133,12 @@ void BranchContainer::reposition()
                 leftOfCenter = false;
 
             qDebug() << "BC::reposition d == 1  loc=" << 
-                leftOfCenter << getName() << this << 
-                "children: " << childrenContainer;
+                leftOfCenter << info() << this;
 
             setLayoutType(Horizontal);
             childrenContainer->setLayoutType(Vertical);
+
+            setPos(100,100);    // FIXME-0 testing only
 
             if (leftOfCenter) {
                 // Left of center
@@ -153,19 +155,20 @@ void BranchContainer::reposition()
             // Branch deeper in tree
 
             leftOfCenter = branchItem->parentBranch()->getBranchContainer()->getHorizontalDirection();
-            if (branchItem->getHeadingPlain() == "float") {
+            if (branchItem->getHeadingPlain().startsWith("float")) {
                 // Special layout: floating children 
-                qDebug() << "BC::reposition d > 1  FLOATING loc" << 
-                    leftOfCenter << getName() << this << 
-                    "children: " << childrenContainer;
-                setLayoutType(BFloat);
+                qDebug() << "BC::reposition d > 1  FLOATING begin loc" << 
+                    leftOfCenter << info();
+                //setLayoutType(BFloat);
                 childrenContainer->setLayoutType(BFloat);
                 childrenContainer->setParentItem(this);
             } else {
                 // Normal layout
+
+                if (branchItem->getHeadingPlain().startsWith("xx")) setPos(50,50);  // FIXME-0 testing
+
                 qDebug() << "BC::reposition d > 1  loc=" << 
-                    leftOfCenter << getName() << this << 
-                    "children: " << childrenContainer;
+                    leftOfCenter << info();
 
                 setLayoutType(Container::Horizontal);
                 childrenContainer->setLayoutType(Vertical);
@@ -185,5 +188,18 @@ void BranchContainer::reposition()
         //qDebug() << "BC::reposition  no branchItem!!!!  tmpParentContainer?  this = " << this;
 
     Container::reposition();
+
+    // Aftermath, position some containers if we have a floating layout
+    if (branchItem)
+    {
+        if (branchItem->depth() > 1 && branchItem->getHeadingPlain() == "float") {
+            qDebug() << "BC::reposition d > 1  FLOATING end   " << 
+                getName() << this << 
+                "children: " << childrenContainer << "  children->ct=" << childrenContainer->ct;
+
+            innerContainer->moveBy(childrenContainer->ct.x(), childrenContainer->ct.y());
+            childrenContainer->moveBy(childrenContainer->ct.x(), childrenContainer->ct.y());
+        }
+    }
 }
 

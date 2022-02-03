@@ -37,6 +37,8 @@ class Container : public QGraphicsRectItem {
     void setName(const QString &n);
     virtual QString getName();
 
+    virtual QString info (const QString &prefix = "");
+
     void setLayoutType(const LayoutType &ltype);
     LayoutType getLayoutType();
 
@@ -47,6 +49,7 @@ class Container : public QGraphicsRectItem {
     void setBoundsType(const BoundsType &btype);
 
     void addContainer(Container *c);
+    Container* parentContainer();
 
     
     virtual QVariant itemChange(GraphicsItemChange change, const QVariant &value);
