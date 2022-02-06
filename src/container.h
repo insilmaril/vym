@@ -46,7 +46,6 @@ class Container : public QGraphicsRectItem {
     HorizontalDirection getHorizontalDirection();
 
     void setVerticalAlignment(const VerticalAlignment &a);
-    void setBoundsType(const BoundsType &btype);
 
     void addContainer(Container *c);
     Container* parentContainer();
@@ -56,9 +55,7 @@ class Container : public QGraphicsRectItem {
     virtual void reposition();
 
   protected:
-
     ContainerType type;
-    BoundsType boundsType;
 
     QPointF ct;    // Translation of inner content due to floating children
     QString name;

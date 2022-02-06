@@ -21,7 +21,6 @@ void Container::init()
     type = Undefined;
 
     layout = Horizontal;
-    boundsType = BoundedStacked;
 
     show();
 }
@@ -102,11 +101,6 @@ Container::HorizontalDirection Container::getHorizontalDirection()
 void Container::setVerticalAlignment(const VerticalAlignment &a)
 {
     verticalAlignment = a;
-}
-
-void Container::setBoundsType(const BoundsType &btype)
-{
-    boundsType = btype;
 }
 
 void Container::addContainer(Container *c)
@@ -254,18 +248,16 @@ void Container::reposition()
                 // Calc total height and max width for stacked children
                 foreach (QGraphicsItem *child, childItems()) {
                     c = (Container*) child;
-                    // Consider size depending on boundsType
-                        // child is aligned further down, just go with sum and max
-                        w = c->rect().width();
-                        w_max = (w_max < w) ? w : w_max;    // FIXME-2 use max function
-                        h_total += c->rect().height();
+                    // child is aligned further down, just go with sum and max
+                    w = c->rect().width();
+                    w_max = (w_max < w) ? w : w_max;    // FIXME-2 use max function
+                    h_total += c->rect().height();
                 }
 
                 qreal y = 0;
                 // Position children
                 foreach (QGraphicsItem *child, childItems()) {
                     c = (Container*) child;
-                    // Only position container here, if boundsType is no *Float:
                     switch (verticalAlignment) {
                         case Left:
                             c->setPos (0, y);
