@@ -48,7 +48,7 @@ QString HeadingContainer::getName() {
 
 void HeadingContainer::reposition()
 {
-    qDebug() << "HC::reposition " + getName();
+    qDebug() << "HC::reposition " + info();
     return;
 }
 

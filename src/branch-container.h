@@ -20,6 +20,8 @@ class BranchContainer : public Container {
     void addToChildrenContainer(Container *c);
     Container* getChildrenContainer();
 
+    virtual void setLayoutType(const LayoutType &ltype);
+
     QRectF getHeadingRect();  //! Return rectangle of HeadingContainer in absolute coordinates
 
     void setTmpParentContainer(BranchItem* dstBI, QPointF mousePos, int offset);
@@ -35,6 +37,7 @@ class BranchContainer : public Container {
     BranchItem *branchItem; //! Crossreference to "parent" BranchItem 
     HeadingContainer *headingContainer;
     Container *childrenContainer;
+    Container *floatingContainer;
     Container *innerContainer;
 };
 

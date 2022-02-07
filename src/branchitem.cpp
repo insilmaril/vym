@@ -605,10 +605,12 @@ void BranchItem::updateContainerStackingOrder()
 
     QPointF p = branchContainer->scenePos();
 
+    /*
     qDebug() << "      ## BI::updateContainerStackingOrder begin  bc.scenePos=" << branchContainer->scenePos() << 
         "pos=" << branchContainer->pos();
     qDebug() << "         - bc.parent: " << branchContainer->parentContainer()->info();
     qDebug() << "         - bc.p^2   : " << branchContainer->parentContainer()->parentContainer()->info();
+    */
 
     branchContainer->setParentItem(nullptr);
 
@@ -628,11 +630,12 @@ void BranchItem::updateContainerStackingOrder()
     if (n < parentBranch()->branchCount() - 1)
         branchContainer->stackBefore( (parentBranch()->getBranchNum(n + 1))->getBranchContainer() );
 
+    /*
     qDebug() << "      ## BI::updateContainerStackingOrder end    bc.scenePos=" << branchContainer->scenePos() << 
         "pos=" << branchContainer->pos();
     qDebug() << "         - bc.parent: " << branchContainer->parentContainer()->info();
     qDebug() << "         - bc.p^2   : " << branchContainer->parentContainer()->parentContainer()->info();
-
+    */
     return;
 }
 

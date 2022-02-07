@@ -13,17 +13,15 @@ class Container : public QGraphicsRectItem {
     enum ContainerType {
         Undefined, 
         TmpParent,
+        FloatingContent,
         InnerContent,
         Children, 
         Branch, 
         Heading
     };
 
-    /*! How are children containers and boundaries organized? */
-    enum BoundsType {BoundedStacked, BoundedFloating, FreeFloating};
-
     /*! Alignment of children containers */
-    enum LayoutType {Horizontal, Vertical, BFloat};
+    enum LayoutType {Horizontal, Vertical, Floating, BFloat};
     enum HorizontalDirection {LeftToRight, RightToLeft};
     enum VerticalAlignment {Left, Centered, Right};
 
