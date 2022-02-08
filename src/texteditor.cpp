@@ -930,17 +930,18 @@ void TextEditor::toggleFonthint()
 
 void TextEditor::setRichTextMode(bool b)
 {
+    actionFormatUseFixedFont->setEnabled(false);
     if (b) {
         e->setHtml(e->toHtml());
-        actionFormatUseFixedFont->setEnabled(false);
         actionFormatRichText->setChecked(true);
     }
     else {
         // Reset also text format 
-        QTextCharFormat f;
-        f.setForeground(colorFont);
-        f.setBackground(colorFilledEditor);
-        e->setCurrentCharFormat(f);
+        QTextCharFormat textformat;
+        textformat.setForeground(colorFont);
+        textformat.setBackground(colorFilledEditor);
+        textformat.setFont(varFont);
+        e->setCurrentCharFormat(textformat);
         e->setPlainText(e->toPlainText());
         actionFormatUseFixedFont->setEnabled(true);
         actionFormatRichText->setChecked(false);
