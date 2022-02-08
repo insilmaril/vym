@@ -418,7 +418,7 @@ void TextEditor::setupEditActions()
 void TextEditor::setupFormatActions()
 {
     QString tag = tr("Texteditor", "Shortcuts");
-    QToolBar *fontHintsToolBar =
+    fontHintsToolBar =
         addToolBar(tr("Font hints", "toolbar in texteditor"));
     fontHintsToolBar->setObjectName("noteEditorFontToolBar");
     QMenu *formatMenu = menuBar()->addMenu(tr("F&ormat"));
@@ -447,7 +447,7 @@ void TextEditor::setupFormatActions()
     fontHintsToolBar->addAction(a);
     actionFormatRichText = a;
 
-    QToolBar *fontToolBar = addToolBar(tr("Fonts", "toolbar in texteditor"));
+    fontToolBar = addToolBar(tr("Fonts", "toolbar in texteditor"));
     fontToolBar->setObjectName("noteEditorFontToolBar");
 
     comboFont = new QComboBox;
@@ -472,7 +472,7 @@ void TextEditor::setupFormatActions()
 
     formatMenu->addSeparator();
 
-    QToolBar *formatToolBar = addToolBar(tr("Format", "toolbar in texteditor"));
+    formatToolBar = addToolBar(tr("Format", "toolbar in texteditor"));
     formatToolBar->setObjectName("noteEditorFormatToolBar");
 
     QPixmap pix(16, 16);
@@ -936,6 +936,11 @@ void TextEditor::setRichTextMode(bool b)
         actionFormatRichText->setChecked(true);
     }
     else {
+        // Reset also text format 
+        QTextCharFormat f;
+        f.setForeground(colorFont);
+        f.setBackground(colorFilledEditor);
+        e->setCurrentCharFormat(f);
         e->setPlainText(e->toPlainText());
         actionFormatUseFixedFont->setEnabled(true);
         actionFormatRichText->setChecked(false);
@@ -1113,6 +1118,8 @@ void TextEditor::updateActions()
     if (!actionFormatRichText->isChecked() || !b) {
         comboFont->setEnabled(false);
         comboSize->setEnabled(false);
+        fontToolBar->hide();
+        formatToolBar->hide();
         actionTextColor->setEnabled(false);
         actionTextBold->setEnabled(false);
         actionTextUnderline->setEnabled(false);
@@ -1128,6 +1135,8 @@ void TextEditor::updateActions()
     else {
         comboFont->setEnabled(true);
         comboSize->setEnabled(true);
+        fontToolBar->show();
+        formatToolBar->show();
         actionTextColor->setEnabled(true);
         actionTextBold->setEnabled(true);
         actionTextUnderline->setEnabled(true);
