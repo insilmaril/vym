@@ -1466,15 +1466,17 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
             movingObj_orgPos.setY(lmo_found->y());
 
             movingObj_initialPointerPos = p;
-            qDebug() << "ME::mousePress  movingObj_initialPointerPos = " << p;
 
-            BranchItem *selbi = model->getSelectedBranch();
             if (selbi)
-                movingObj_initialContainerPos = selbi->getBranchContainer()->scenePos();
+            {
+                BranchContainer *bc = selbi->getBranchContainer();
+                movingObj_initialContainerOffset = bc->mapFromScene(p);
+                qDebug() << "ME::mousePress  movingObj_initialPointerPos = " << movingObj_initialContainerOffset << "p=" << bc->mapFromScene(p) << "pos:" <<bc->pos();
 
-            if (ti_found->depth() > 0) {
-                lmo_found->setRelPos();
-                movingObj_orgRelPos = lmo_found->getRelPos();
+                if (ti_found->depth() > 0) {
+                    lmo_found->setRelPos();
+                    movingObj_orgRelPos = lmo_found->getRelPos();
+                }
             }
 
             if (mainWindow->getModMode() == Main::ModModeMoveObject &&
@@ -1653,8 +1655,7 @@ void MapEditor::moveObject()
 
             BranchContainer *bc = selbi->getBranchContainer();
             if (bc->parentItem() != tmpParentContainer->getChildrenContainer()) {
-                qDebug() << "adding to tmpParentContainer: " << bc->info() << "current tPC children count: " << tmpParentContainer->getChildrenContainer()->childItems().count();
-                // FIXME-0 when adding to tmpParentContainer, reset the relative positions of mainbranches, so that they are *in* the tPC
+                //qDebug() << "adding to tmpParentContainer: " << bc->info() << "current tPC children count: " << tmpParentContainer->getChildrenContainer()->childItems().count();
                 bc->setOrgPos();
                 tmpParentContainer->addToChildrenContainer(bc);
                 tmpParentContainer->reposition();   // FIXME-2 needed, if we use a Floating layout?
@@ -1666,11 +1667,9 @@ void MapEditor::moveObject()
 
             // Since moved containers are relateive to tmpParentContainer anyway, just move 
             // it to pointer position:
-            tmpParentContainer->setPos(p);
+            tmpParentContainer->setPos(p - movingObj_initialContainerOffset);
 
             BranchContainer *bc2 = (BranchContainer*)(tmpParentContainer->getChildrenContainer()->childItems().first());
-            qDebug() << "ME::moveObject  tPC.setPos " << tmpParentContainer->pos() <<
-                "first child: " << bc2->info() << bc2;
             if (bc2 != bc) qWarning() << "bc != bc2"; // FIXME-2 testing
 
             if (seli->depth() == 0) {

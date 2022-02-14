@@ -220,7 +220,7 @@ class MapEditor : public QGraphicsView {
     QPointF movingObj_initialPointerPos;
 
     // Moving branchContainers
-    QPointF movingObj_initialContainerPos;
+    QPointF movingObj_initialContainerOffset;
     BranchContainer *tmpParentContainer;
     BranchItem *tmpParentBranch;
     int tmpParentPos;       // +1: below   -1: above  0: child

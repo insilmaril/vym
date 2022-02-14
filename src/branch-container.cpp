@@ -145,7 +145,8 @@ bool BranchContainer::isInClickBox(const QPointF &p)
 
 void BranchContainer::updateVisuals()
 {
-    headingContainer->setText(branchItem->getHeadingText());
+    if (branchItem)
+        headingContainer->setText(branchItem->getHeadingText());
 }
 
 void BranchContainer::reposition()

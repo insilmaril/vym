@@ -130,12 +130,12 @@ QVariant Container::itemChange(GraphicsItemChange change, const QVariant &value)
     return  QGraphicsItem::itemChange(change, value);
 }
 
-void Container::setOrgPos()
+void Container::setOrgPos()     // FIXME-2 Only used for BranchContainer and ImageContainer
 {
     originalPos = pos();
 }
 
-QPointF Container::orgPos()
+QPointF Container::orgPos()     // Only used for BranchContainer and ImageContainer
 {
     return originalPos;
 }
