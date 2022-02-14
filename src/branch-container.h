@@ -17,7 +17,7 @@ class BranchContainer : public Container {
 
     virtual QString getName();
 
-    void addToChildrenContainer(Container *c);
+    void addToChildrenContainer(Container *c, bool keepScenePos = false);
     Container* getChildrenContainer();
 
     virtual void setLayoutType(const LayoutType &ltype);

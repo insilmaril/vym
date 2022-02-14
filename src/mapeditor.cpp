@@ -74,6 +74,7 @@ MapEditor::MapEditor(VymModel *vm)
     tmpParentContainer->setZValue(1000);    // See also z-values in mapobj.h
     tmpParentContainer->setName("tmpParentContainer");
     tmpParentContainer->setType(Container::TmpParent);
+    tmpParentContainer->setLayoutType(Container::Floating);
     tmpParentContainer->setBrush(Qt::cyan);
     tmpParentContainer->reposition();
     qDebug() << "ME: tmpParentContainer = " << tmpParentContainer;
@@ -1465,6 +1466,7 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
             movingObj_orgPos.setY(lmo_found->y());
 
             movingObj_initialPointerPos = p;
+            qDebug() << "ME::mousePress  movingObj_initialPointerPos = " << p;
 
             BranchItem *selbi = model->getSelectedBranch();
             if (selbi)
@@ -1649,19 +1651,27 @@ void MapEditor::moveObject()
             // Relink the selected containers to tmpParentContainer to move them around visually.
             // The structure in VymModel remaines untouched so far!
 
-            if (selbi->getBranchContainer()->parentItem() != tmpParentContainer->getChildrenContainer()) {
-                qDebug() << "adding to tmpParentContainer: " << selbi->getBranchContainer()->getName() << "current tPC children count: " << tmpParentContainer->getChildrenContainer()->childItems().count();
+            BranchContainer *bc = selbi->getBranchContainer();
+            if (bc->parentItem() != tmpParentContainer->getChildrenContainer()) {
+                qDebug() << "adding to tmpParentContainer: " << bc->info() << "current tPC children count: " << tmpParentContainer->getChildrenContainer()->childItems().count();
                 // FIXME-0 when adding to tmpParentContainer, reset the relative positions of mainbranches, so that they are *in* the tPC
-                tmpParentContainer->addToChildrenContainer(selbi->getBranchContainer());
-                tmpParentContainer->reposition();
+                bc->setOrgPos();
+                tmpParentContainer->addToChildrenContainer(bc);
+                tmpParentContainer->reposition();   // FIXME-2 needed, if we use a Floating layout?
             }
 
             // FIXME-1 move whole selection to tmpParentContainer, not just selbi
             // Before doing that, remove leaf branches from selection (no method available yet)!
-            tmpParentContainer->setPos(movingObj_initialContainerPos + p - movingObj_initialPointerPos);
-            BranchContainer *bc = (BranchContainer*)(tmpParentContainer->getChildrenContainer()->childItems().first());
+            // FIXME-2 tmpParentContainer->setPos(movingObj_initialContainerPos + p - movingObj_initialPointerPos);
+
+            // Since moved containers are relateive to tmpParentContainer anyway, just move 
+            // it to pointer position:
+            tmpParentContainer->setPos(p);
+
+            BranchContainer *bc2 = (BranchContainer*)(tmpParentContainer->getChildrenContainer()->childItems().first());
             qDebug() << "ME::moveObject  tPC.setPos " << tmpParentContainer->pos() <<
-                "first child: " << bc->getName() << bc->pos() << bc;
+                "first child: " << bc2->info() << bc2;
+            if (bc2 != bc) qWarning() << "bc != bc2"; // FIXME-2 testing
 
             if (seli->depth() == 0) {
                 // Move mapcenter
@@ -1979,12 +1989,12 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                                     //i->setPos(11, 13);  //FIXME-0 testing
                                     BranchItem *pi = bi->parentBranch();
                                     if (pi) {
-                                        if (pi->getBranchContainer()->getLayoutType() == Container::BFloat)
+                                        if (pi->getBranchContainer()->getChildrenContainer()->getLayoutType() == Container::Floating)
                                         {
                                             qDebug() << "        - setPos: " << t << " for " << bc->info();
                                             qDebug() << "        - pc: " << pi->getBranchContainer()->info();
                                             // Relative positioning
-                                            bc->setPos(t);
+                                            bc->setPos(bc->orgPos() + t);
                                         }
                                         else{
                                             qDebug() << "        - no setPos  for " << bc->info();
@@ -1994,7 +2004,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                                         pi->getBranchContainer()->reposition();
                                     }
                                 } 
-                                qDebug() << " ### c) releasing of " << bc->info() << "Parent: " << pname;
+                                qDebug() << " ### c) releasing of " << bc->info() << " t=" << t << "Parent: " << pname;
                             }
                             // Make the tmpParentContainer invisible again (size == 0) 
                             // and move container to correct position 

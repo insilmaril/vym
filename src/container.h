@@ -37,7 +37,7 @@ class Container : public QGraphicsRectItem {
 
     virtual QString info (const QString &prefix = "");
 
-    void setLayoutType(const LayoutType &ltype);
+    virtual void setLayoutType(const LayoutType &ltype);
     LayoutType getLayoutType();
 
     void setHorizontalDirection(const HorizontalDirection &hdir);
@@ -48,6 +48,8 @@ class Container : public QGraphicsRectItem {
     void addContainer(Container *c);
     Container* parentContainer();
 
+    void setOrgPos();
+    QPointF orgPos();
     
     virtual QVariant itemChange(GraphicsItemChange change, const QVariant &value);
     virtual void reposition();
@@ -56,6 +58,7 @@ class Container : public QGraphicsRectItem {
     ContainerType type;
 
     QPointF ct;    // Translation of inner content due to floating children
+    QPointF originalPos;
     QString name;
 
     LayoutType layout;

@@ -53,7 +53,7 @@ void BranchContainer::init()
     innerContainer->addContainer(childrenContainer);            // Default, probably depends on depth
     addContainer(innerContainer);
 
-    floatingContainer = nullptr;
+    floatingContainer = nullptr;    // FIXME-0 should no longer be used
 
 
     setBrush(Qt::NoBrush);
@@ -72,9 +72,12 @@ QString BranchContainer::getName() {
         return Container::getName() + " - ?";
 }
 
-void BranchContainer::addToChildrenContainer(Container *c)
+void BranchContainer::addToChildrenContainer(Container *c, bool keepScenePos)
 {
+    QPointF sp = c->scenePos();
     c->setParentItem(childrenContainer);
+    if (keepScenePos)
+        setPos(sceneTransform().inverted().map(sp));
 }
 
 Container* BranchContainer::getChildrenContainer()
@@ -84,10 +87,14 @@ Container* BranchContainer::getChildrenContainer()
 
 void BranchContainer::setLayoutType(const LayoutType &ltype)
 {
-    // Only setup floatingContainer if needed
+    Container::setLayoutType(ltype);
+    return;  //FIXME-0
 
     if (type != Branch) 
         qWarning() << "BranchContainer::setLayoutType (Floating) called for !Branch";
+
+
+    // Only setup floatingContainer if needed
 
     if (ltype == Floating && !floatingContainer) {
         layout = Floating;
@@ -197,7 +204,7 @@ void BranchContainer::reposition()
                 qDebug() << "BC::reposition d > 1  FLOATING begin loc" << 
                     leftOfCenter << info();
                 //setLayoutType(BFloat);
-                setLayoutType(Floating);
+                childrenContainer->setLayoutType(Floating);
             } else {
                 // Normal layout
 

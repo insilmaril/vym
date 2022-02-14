@@ -130,6 +130,16 @@ QVariant Container::itemChange(GraphicsItemChange change, const QVariant &value)
     return  QGraphicsItem::itemChange(change, value);
 }
 
+void Container::setOrgPos()
+{
+    originalPos = pos();
+}
+
+QPointF Container::orgPos()
+{
+    return originalPos;
+}
+
 Container* Container::parentContainer() 
 {
     return (Container*)parentItem();
@@ -204,36 +214,34 @@ void Container::reposition()
         case Floating: 
                 qDebug() << " * Layout Floating begin of " << info() << "Children.count= " << childItems().count() << this ;
 
-                // First child will be repositioned depending on (grand-)children of other children
-                // If there are none, proceed with a "normal" layout
-                if (childItems().count() <= 1 ) {
-                    qDebug() << "    - Only one or less children, continuing with horizontal layout";
-                    break;
-                    qDebug() << "    - THIS SHOULD NOT BE REACHED";
-                }
-
                 {
-                /////////////////////////////////////////////////// fix from here
-                // Calc bbox of all children to prepare calculating rect()
+                    /////////////////////////////////////////////////// fix from here
+                    // Calc bbox of all children to prepare calculating rect()
 
-                qreal x_min, y_min, x_max, y_max;
+                    qreal x_min, y_min, x_max, y_max;
 
-                if (childItems().count() > 0) {
-                    int n = 0;
+                    foreach (QGraphicsItem *child, childItems()) {
+                        c = (Container*) child;
 
-                    c = (Container*) (childItems().at(n));
+                        x_min = c->pos().x();
+                        y_min = c->pos().y();
 
-                    x_min = c->pos().x();
-                    y_min = c->pos().y();
+                        x_max = x_min + c->rect().width();
+                        y_max = y_min + c->rect().height();
 
-                    x_max = x_min + c->rect().width();
-                    y_max = y_min + c->rect().height();
+                        if (c->pos().x() < x_min ) x_min = c->pos().x();  
+                        if (c->pos().y() < y_min ) y_min = c->pos().y();  
 
-                    qDebug() << "   - c: " << c->info() << 
-                        "  c->r=" << c->rect() << " n=" << n <<
-                        " ( " << x_min <<", " << y_min << ") " <<
-                        " ( " << x_max <<", " << y_max << ") " ;
-                }
+                        if (c->pos().x() + c->rect().width() > x_max)
+                            x_max = c->pos().x() + c->rect().width();
+                        if (c->pos().y() + c->rect().height() > y_max)
+                            y_max = c->pos().y() + c->rect().height();
+
+                        qDebug() << "   - c: " << c->info() << 
+                            "  c->r=" << c->rect() << 
+                            " ( " << x_min <<", " << y_min << ") " <<
+                            " ( " << x_max <<", " << y_max << ") " ;
+                    }
                     
                 /*
                 QPointF topLeft = c->pos();
@@ -290,13 +298,13 @@ void Container::reposition()
                 r.setBottomRight(QPointF(x_max, y_max));
 
                 setRect(r);
-                if (r.topLeft().x() < 0) ct.setX( -r.topLeft().x());
-                if (r.topLeft().y() < 0) ct.setY( -r.topLeft().y());
-                //qDebug() << " * Layout Floating end of " << info() << " r=" << r << " ct=" << ct;
+                //if (r.topLeft().x() < 0) ct.setX( -r.topLeft().x());
+                //if (r.topLeft().y() < 0) ct.setY( -r.topLeft().y());
+                qDebug() << " * Layout Floating end of " << info() << " r=" << r << " ct=" << ct;
             }
             break;
         case Horizontal: {
-                qDebug() << " * Layout Horizontal begin of " << info() << " r=" << r << " ct=" << ct << " horDir=" << horizontalDirection;
+                //qDebug() << " * Layout Horizontal begin of " << info() << " r=" << r << " ct=" << ct << " horDir=" << horizontalDirection;
                 qreal h_max = 0;
                 qreal w_total = 0;
                 qreal h;
