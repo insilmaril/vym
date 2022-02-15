@@ -75,6 +75,7 @@ MapEditor::MapEditor(VymModel *vm)
     tmpParentContainer->setName("tmpParentContainer");
     tmpParentContainer->setType(Container::TmpParent);
     tmpParentContainer->setLayoutType(Container::Floating);
+    tmpParentContainer->getChildrenContainer()->setLayoutType(Container::Floating);
     tmpParentContainer->setBrush(Qt::cyan);
     tmpParentContainer->reposition();
     qDebug() << "ME: tmpParentContainer = " << tmpParentContainer;
@@ -1550,12 +1551,6 @@ void MapEditor::mouseMoveEvent(QMouseEvent *e)
         return;
     }
 
-    TreeItem *seli = model->getSelectedItem();
-
-    MapObj *mosel = NULL;
-    if (seli)
-        mosel = ((MapItem *)seli)->getMO();
-
     // If not already happened during mousepress, we might need to switch state
     if (mainWindow->getModMode() == Main::ModModeMoveObject &&
         e->modifiers() & Qt::ShiftModifier && e->buttons() == Qt::LeftButton) {
@@ -1563,7 +1558,7 @@ void MapEditor::mouseMoveEvent(QMouseEvent *e)
     }
 
     // Move the selected MapObj
-    if (mosel &&
+    if (model->getSelectedItems().count() > 0  &&
         (state() == MovingObject || 
          state() == MovingObjectTmpLinked || 
          state() == MovingObjectWithoutLinking ||
@@ -1596,7 +1591,7 @@ void MapEditor::mouseMoveEvent(QMouseEvent *e)
 
 void MapEditor::moveObject()
 {
-    if (!panningTimer->isActive())
+    if (!panningTimer->isActive())      // FIXME-2 why?
         panningTimer->start(50);
 
     QPointF p = mapToScene(pointerPos);
@@ -1619,6 +1614,36 @@ void MapEditor::moveObject()
     }
     else
         bi_dst = nullptr;
+
+    BranchContainer *bc;
+    foreach (TreeItem *ti, model->getSelectedItems())
+    {
+        if (ti->isBranchLikeType()) {  //////// FIXME-000 cont here, copy stuff from below
+            bc = ((BranchItem*)ti)->getBranchContainer();
+            qDebug() << "ME::moveObject " << bc->info();
+            
+            // The structure in VymModel remaines untouched so far!
+
+            if (bc->parentItem() != tmpParentContainer->getChildrenContainer()) {
+                qDebug() << "adding to tmpParentContainer: " << bc->info() << "current tPC children count: " << tmpParentContainer->getChildrenContainer()->childItems().count();
+                bc->setOrgPos();
+                tmpParentContainer->addToChildrenContainer(bc);
+                tmpParentContainer->reposition();   // FIXME-2 needed, if we use a Floating layout?
+            }
+
+            // FIXME-1 move whole selection to tmpParentContainer, not just selbi
+            // Before doing that, remove leaf branches from selection (no method available yet)!
+            // FIXME-2 tmpParentContainer->setPos(movingObj_initialContainerPos + p - movingObj_initialPointerPos);
+
+            // Since moved containers are relateive to tmpParentContainer anyway, just move 
+            // it to pointer position:
+            tmpParentContainer->setPos(p - movingObj_initialContainerOffset);
+
+            BranchContainer *bc2 = (BranchContainer*)(tmpParentContainer->getChildrenContainer()->childItems().first());
+            if (bc2 != bc) qWarning() << "bc != bc2"; // FIXME-2 testing
+        }
+
+    }
 
     if (lmosel) {
         if (seli->getType() == TreeItem::Image) {
@@ -1649,13 +1674,13 @@ void MapEditor::moveObject()
             }
         }
         else if (seli->isBranchLikeType()) { // selection != a FloatObj
+            /*
             BranchItem *selbi = (BranchItem*)seli;
             // Relink the selected containers to tmpParentContainer to move them around visually.
             // The structure in VymModel remaines untouched so far!
 
-            BranchContainer *bc = selbi->getBranchContainer();
             if (bc->parentItem() != tmpParentContainer->getChildrenContainer()) {
-                //qDebug() << "adding to tmpParentContainer: " << bc->info() << "current tPC children count: " << tmpParentContainer->getChildrenContainer()->childItems().count();
+                qDebug() << "adding to tmpParentContainer: " << bc->info() << "current tPC children count: " << tmpParentContainer->getChildrenContainer()->childItems().count();
                 bc->setOrgPos();
                 tmpParentContainer->addToChildrenContainer(bc);
                 tmpParentContainer->reposition();   // FIXME-2 needed, if we use a Floating layout?
@@ -1671,6 +1696,9 @@ void MapEditor::moveObject()
 
             BranchContainer *bc2 = (BranchContainer*)(tmpParentContainer->getChildrenContainer()->childItems().first());
             if (bc2 != bc) qWarning() << "bc != bc2"; // FIXME-2 testing
+            */
+
+            BranchItem *selbi = ((BranchItem *)seli);
 
             if (seli->depth() == 0) {
                 // Move mapcenter
@@ -1705,7 +1733,6 @@ void MapEditor::moveObject()
                         lmosel->move(p.x() - movingObj_offset.x(),
                                      p.y() - movingObj_offset.y() -
                                          lmosel->getTopPad());
-                    BranchItem *selbi = ((BranchItem *)seli);
                     if (selbi->parentBranch()->getChildrenLayout() ==
                         BranchItem::FreePositioning)
                         lmosel->setRelPos();
@@ -1771,7 +1798,7 @@ void MapEditor::moveObject()
         }
     }
     else
-        qWarning("ME::moveObject  Huh? I'm confused.");
+        qWarning("ME::moveObject  Huh? I'm confused. No LMO or XLink moved");   // FIXME-2 shouldn't happen
 
     scene()->update();
 
