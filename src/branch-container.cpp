@@ -74,10 +74,14 @@ QString BranchContainer::getName() {
 
 void BranchContainer::addToChildrenContainer(Container *c, bool keepScenePos)
 {
+    qDebug() << "BC::addToChildrenContainer a) c: " << c;
     QPointF sp = c->scenePos();
     c->setParentItem(childrenContainer);
     if (keepScenePos)
-        setPos(sceneTransform().inverted().map(sp));
+    {
+        c->setPos(sceneTransform().inverted().map(sp));
+        qDebug() << "BC::addToChildrenContainer b) c: " << c << " sp:" << sp;
+    }
 }
 
 Container* BranchContainer::getChildrenContainer()

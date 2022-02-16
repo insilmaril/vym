@@ -1615,6 +1615,10 @@ void MapEditor::moveObject()
     else
         bi_dst = nullptr;
 
+    // Since moved containers are relative to tmpParentContainer anyway, just move 
+    // it to pointer position:
+    tmpParentContainer->setPos(p - movingObj_initialContainerOffset);
+
     BranchContainer *bc;
     foreach (TreeItem *ti, model->getSelectedItems())
     {
@@ -1627,17 +1631,13 @@ void MapEditor::moveObject()
             if (bc->parentItem() != tmpParentContainer->getChildrenContainer()) {
                 qDebug() << "adding to tmpParentContainer: " << bc->info() << "current tPC children count: " << tmpParentContainer->getChildrenContainer()->childItems().count();
                 bc->setOrgPos();
-                tmpParentContainer->addToChildrenContainer(bc);
+                tmpParentContainer->addToChildrenContainer(bc, true);
                 tmpParentContainer->reposition();   // FIXME-2 needed, if we use a Floating layout?
             }
 
             // FIXME-1 move whole selection to tmpParentContainer, not just selbi
             // Before doing that, remove leaf branches from selection (no method available yet)!
             // FIXME-2 tmpParentContainer->setPos(movingObj_initialContainerPos + p - movingObj_initialPointerPos);
-
-            // Since moved containers are relateive to tmpParentContainer anyway, just move 
-            // it to pointer position:
-            tmpParentContainer->setPos(p - movingObj_initialContainerOffset);
 
             BranchContainer *bc2 = (BranchContainer*)(tmpParentContainer->getChildrenContainer()->childItems().first());
             if (bc2 != bc) qWarning() << "bc != bc2"; // FIXME-2 testing
@@ -2031,7 +2031,8 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                                     }
                                 } 
                                 qDebug() << " ### c) releasing of " << bc->info() << " t=" << t << "Parent: " << pname;
-                            }
+                            } // children of tmpParentContainer
+                            
                             // Make the tmpParentContainer invisible again (size == 0) 
                             // and move container to correct position 
                             tmpParentContainer->reposition();

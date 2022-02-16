@@ -603,7 +603,7 @@ void BranchItem::updateContainerStackingOrder()
 
     // For simplicity we always reparent. The absolute position must not be changed here
 
-    QPointF p = branchContainer->scenePos();
+    QPointF sp = branchContainer->scenePos();
 
     /*
     qDebug() << "      ## BI::updateContainerStackingOrder begin  bc.scenePos=" << branchContainer->scenePos() << 
@@ -625,7 +625,7 @@ void BranchItem::updateContainerStackingOrder()
         return;
     }
 
-    //branchContainer->setPos(branchContainer->sceneTransform().inverted().map(p));
+    //branchContainer->setPos(branchContainer->sceneTransform().inverted().map(sp));
         
     if (n < parentBranch()->branchCount() - 1)
         branchContainer->stackBefore( (parentBranch()->getBranchNum(n + 1))->getBranchContainer() );
