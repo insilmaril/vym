@@ -1869,7 +1869,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
         BranchContainer *bc;
         foreach (TreeItem *selti, model->getSelectedItems())
         {
-            if (selti->getType() == TreeItem::Image) {   // FIXME-2 images not available as containers yet
+            if (selti->getType() == TreeItem::Image) {   // FIXME-1 images not available as containers yet
                 /*
                 FloatImageObj *fio = (FloatImageObj *)(((MapItem *)seli)->getLMO());
                 if (fio) {
@@ -1899,8 +1899,6 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
 
                 // Check if we have a destination and should relink
                 if (dsti && objectMoved && state() != MovingObjectWithoutLinking) {
-                    BranchObj *selbo = model->getSelectedBranchObj(); // FIXME-2 should no longer be used
-
                     QString preParStr = model->getSelectString(seli->parent());
                     QString preNum = QString::number(seli->num(), 10);
                     QString preDstParStr;
@@ -1931,176 +1929,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                         */
                     }
                 } else { // No destination, undo  temporary move
-
-                        if (selti->depth() == 1) {
-
-
-                            /* FIXME-2 old code. Logic to decide about positions should be completely within containers...
-                            // The select string might be different _after_ moving
-                            // around. Therefor reposition and then use string of old
-                            // selection, too
-                            model->reposition();
-
-                            QPointF rp(lmosel->getRelPos());
-                            if (rp != movingObj_orgRelPos) {
-                                QString ps = qpointFToString(rp);
-                                model->saveState(
-                                    model->getSelectString(lmosel),
-                                    "moveRel " + qpointFToString(movingObj_orgRelPos),
-                                    preSelStr, "moveRel " + ps,
-                                    QString("Move %1 to relative position %2")
-                                        .arg(model->getObjectName(lmosel))
-                                        .arg(ps));
-                            }
-                            */
-                        }   // Mainbranch moved, but not linked
-
-                        // Selection was moved, but not relinked
-
-                        QPointF t = p - movingObj_initialPointerPos;
-
-                        if (!tmpParentContainer->getChildrenContainer()->childItems().isEmpty()) {
-                            qDebug() << "ME::releaseButton  emptying tmpParentContainer. Current items: " << 
-                                tmpParentContainer->getChildrenContainer()->childItems().count() <<
-                                " t = " << t;
-                            // Empty the tmpParentContainer, which is used for moving
-                            // Updating the stacking order also resets the original parents
-                            foreach(QGraphicsItem *g_item, tmpParentContainer->getChildrenContainer()->childItems()) {
-                                BranchContainer *bc = (BranchContainer*) g_item;
-                                BranchItem *bi = bc->getBranchItem();
-
-                                Container *pc = bc->parentContainer();
-                                QString pname;
-                                if (pc) 
-                                    pname = pc->getName();
-                                else
-                                    pname = "no parent";
-
-                                qDebug() << " ### a) releasing of " << bc->info() << "Parent: " << pname;
-
-                                // Relink to original parent container 
-                                // and keep (!) current absolute position
-                                bi->updateContainerStackingOrder();
-
-                                qDebug() << " ### b) releasing of " << bc->info() << "Parent: " << pname;
-
-                                if (bi->depth() > 1) {
-                                    BranchItem *pi = bi->parentBranch();
-                                    if (pi) {
-                                        if (pi->getBranchContainer()->getChildrenContainer()->getLayoutType() == Container::Floating)
-                                        {
-                                            qDebug() << "        - setPos: " << t << " for " << bc->info();
-                                            qDebug() << "        - pc: " << pi->getBranchContainer()->info();
-                                            // Relative positioning
-                                            bc->setPos(bc->orgPos() + t);
-                                        }
-                                        else{
-                                            qDebug() << "        - no setPos  for " << bc->info();
-                                            qDebug() << "        - pc: " << pi->getBranchContainer()->info();
-                                        }
-
-                                        pi->getBranchContainer()->reposition();
-                                    }
-                                } 
-                                qDebug() << " ### c) releasing of " << bc->info() << " t=" << t << "Parent: " << pname;
-                            } // children of tmpParentContainer
-                            
-                            // Make the tmpParentContainer invisible again (size == 0) 
-                            // and move container to correct position 
-                            tmpParentContainer->reposition();
-                        }
-
-                        /* FIXME-2 start animation for snapping back if not linked
-                        if (settings.value("/animation/use", true).toBool() &&
-                            seli->depth() > 1
-                            //		    && distance
-                            //(lmosel->getRelPos(),movingObj_orgRelPos)<3
-                        ) {
-                            lmosel->setRelPos(); // calc relPos first for starting
-                                                 // point
-
-                            model->startAnimation((BranchObj *)lmosel,
-                                                  lmosel->getRelPos(),
-                                                  movingObj_orgRelPos);
-                        }
-                        else
-                            model->reposition();
-                        */
-                    }   // selected item is branchLike
-            }   // Loop over selected TreeItems
-        }   // Branch or image was moved
-
-
-        if (selbi && false) {   // FIXME-0 Completely remove this part, supposed to be obsolete
-            /*
-            if ( selbi->depth() == 0) { // FIXME-0 MC is added to tmpParentContainer, but never removed :-(
-                // Mapcenter was moved
-                if (movingObj_orgPos != selbi->getBranchObj()->getAbsPos()) {
-                    QString pold = qpointFToString(movingObj_orgPos);
-                    QString pnow =
-                        qpointFToString(selbi->getBranchObj()->getAbsPos()); // FIXME-2 same functions like  2 lines above!!!
-
-                    model->saveState(selbi, "move " + pold, selbi, "move " + pnow,
-                                     QString("Move mapcenter %1 to position %2")
-                                         .arg(model->getObjectName(selbi))
-                                         .arg(pnow));
-                    // FIXME-0 Currently mapcenters will not be relinked! 
-                }
-            } else {
-                */
-                // A branch was moved    //FIXME-2 set correct state
-                LinkableMapObj *lmosel = NULL;
-                lmosel = ((MapItem *)seli)->getLMO();
-
-                // save the position in case we link to mapcenter
-                QPointF savePos = QPointF(lmosel->getAbsPos());
-
-                // Reset the temporary drawn link to the original one
-                lmosel->unsetParObjTmp();
-                
-                setState(Neutral);
-
-                // For Redo we may need to save original selection
-                QString preSelStr = model->getSelectString(seli);
-
-                // Check if we have a destination and should relink
-                if (dsti && objectMoved && state() != MovingObjectWithoutLinking) {
-                    BranchObj *selbo = model->getSelectedBranchObj();
-
-                    QString preParStr = model->getSelectString(seli->parent());
-                    QString preNum = QString::number(seli->num(), 10);
-                    QString preDstParStr;
-
-                    if (e->modifiers() & Qt::ShiftModifier &&
-                        dsti->parent()) { // Link above dst
-                        preDstParStr = model->getSelectString(dsti->parent());
-                        model->relinkBranch((BranchItem *)seli,
-                                            (BranchItem *)dsti->parent(),
-                                            ((BranchItem *)dsti)->num(), true);
-                    }
-                    else if (e->modifiers() & Qt::ControlModifier &&
-                             dsti->parent()) {
-                        // Link below dst
-                        preDstParStr = model->getSelectString(dsti->parent());
-                        model->relinkBranch((BranchItem *)seli,
-                                            (BranchItem *)dsti->parent(),
-                                            ((BranchItem *)dsti)->num() + 1, true);
-                    }
-                    else { // Append to dst
-                        qDebug() << "ME::release  move to dest " << movingObj_orgPos;
-                        preDstParStr = model->getSelectString(dsti);
-                        model->relinkBranch((BranchItem *)seli, (BranchItem *)dsti,
-                                            -1, true, movingObj_orgPos);
-                        if (dsti->depth() == 0)
-                            selbo->move(savePos);
-                    }
-                }
-                else {
-                    // No destination, undo  temporary move
-
-                    if (seli->depth() == 1) {
-
-
+                    if (selti->depth() == 1) {
                         /* FIXME-2 old code. Logic to decide about positions should be completely within containers...
                         // The select string might be different _after_ moving
                         // around. Therefor reposition and then use string of old
@@ -2121,89 +1950,82 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                         */
                     }   // Mainbranch moved, but not linked
 
-                    if (selbi->parentBranch()->getChildrenLayout() ==
-                        BranchItem::FreePositioning) {
-                        qDebug() << "!!! ME::release  ooops, FreePositioning!!!";   // FIXME-2   should become obsolete
-                        lmosel->setRelPos();
-                        model->reposition();
-                    }
-                    else {
-                        // Selection was moved, but not relinked
+                    // Selection was moved, but not relinked
 
-                        QPointF t = p - movingObj_initialPointerPos;
+                    QPointF t = p - movingObj_initialPointerPos;
 
-                        if (!tmpParentContainer->getChildrenContainer()->childItems().isEmpty()) {
-                            qDebug() << "ME::releaseButton  emptying tmpParentContainer. Current items: " << 
-                                tmpParentContainer->getChildrenContainer()->childItems().count() <<
-                                " t = " << t;
-                            // Empty the tmpParentContainer, which is used for moving
-                            // Updating the stacking order also resets the original parents
-                            foreach(QGraphicsItem *g_item, tmpParentContainer->getChildrenContainer()->childItems()) {
-                                BranchContainer *bc = (BranchContainer*) g_item;
-                                BranchItem *bi = bc->getBranchItem();
+                    if (!tmpParentContainer->getChildrenContainer()->childItems().isEmpty()) {
+                        qDebug() << "ME::releaseButton  emptying tmpParentContainer. Current items: " << 
+                            tmpParentContainer->getChildrenContainer()->childItems().count() <<
+                            " t = " << t;
+                        // Empty the tmpParentContainer, which is used for moving
+                        // Updating the stacking order also resets the original parents
+                        foreach(QGraphicsItem *g_item, tmpParentContainer->getChildrenContainer()->childItems()) {
+                            BranchContainer *bc = (BranchContainer*) g_item;
+                            BranchItem *bi = bc->getBranchItem();
 
-                                Container *pc = bc->parentContainer();
-                                QString pname;
-                                if (pc) 
-                                    pname = pc->getName();
-                                else
-                                    pname = "no parent";
+                            Container *pc = bc->parentContainer();
+                            QString pname;
+                            if (pc) 
+                                pname = pc->getName();
+                            else
+                                pname = "no parent";
 
-                                qDebug() << " ### a) releasing of " << bc->info() << "Parent: " << pname;
+                            qDebug() << " ### a) releasing of " << bc->info() << "Parent: " << pname;
 
-                                // Relink to original parent container 
-                                // and keep (!) current absolute position
-                                bi->updateContainerStackingOrder();
+                            // Relink to original parent container 
+                            // and keep (!) current absolute position
+                            bi->updateContainerStackingOrder();
 
-                                qDebug() << " ### b) releasing of " << bc->info() << "Parent: " << pname;
+                            qDebug() << " ### b) releasing of " << bc->info() << "Parent: " << pname;
 
-                                if (bi->depth() > 1) {
-                                    BranchItem *pi = bi->parentBranch();
-                                    if (pi) {
-                                        if (pi->getBranchContainer()->getChildrenContainer()->getLayoutType() == Container::Floating)
-                                        {
-                                            qDebug() << "        - setPos: " << t << " for " << bc->info();
-                                            qDebug() << "        - pc: " << pi->getBranchContainer()->info();
-                                            // Relative positioning
-                                            bc->setPos(bc->orgPos() + t);
-                                        }
-                                        else{
-                                            qDebug() << "        - no setPos  for " << bc->info();
-                                            qDebug() << "        - pc: " << pi->getBranchContainer()->info();
-                                        }
-
-                                        pi->getBranchContainer()->reposition();
+                            if (bi->depth() > 1) {
+                                BranchItem *pi = bi->parentBranch();
+                                if (pi) {
+                                    if (pi->getBranchContainer()->getChildrenContainer()->getLayoutType() == Container::Floating)
+                                    {
+                                        //qDebug() << "        - setPos: " << t << " for " << bc->info(); // FIXME-2 remove debug
+                                        //qDebug() << "        - pc: " << pi->getBranchContainer()->info();
+                                        // Relative positioning
+                                        bc->setPos(bc->orgPos() + t);
                                     }
-                                } 
-                                qDebug() << " ### c) releasing of " << bc->info() << " t=" << t << "Parent: " << pname;
-                            } // children of tmpParentContainer
-                            
-                            // Make the tmpParentContainer invisible again (size == 0) 
-                            // and move container to correct position 
-                            tmpParentContainer->reposition();
-                        }
+                                    else{
+                                        //qDebug() << "        - no setPos  for " << bc->info();    // FIXME-2 remove debug 
+                                        //qDebug() << "        - pc: " << pi->getBranchContainer()->info();
+                                    }
 
-                        if (settings.value("/animation/use", true).toBool() &&
-                            seli->depth() > 1
-                            //		    && distance
-                            //(lmosel->getRelPos(),movingObj_orgRelPos)<3
-                        ) {
-                            lmosel->setRelPos(); // calc relPos first for starting
-                                                 // point
+                                    pi->getBranchContainer()->reposition();
+                                }
+                            } 
+                            qDebug() << " ### c) releasing of " << bc->info() << " t=" << t << "Parent: " << pname;
+                        } // children of tmpParentContainer
+                        
+                        // Make the tmpParentContainer invisible again (size == 0) 
+                        // and move container to correct position 
+                        tmpParentContainer->reposition();
 
-                            model->startAnimation((BranchObj *)lmosel,
-                                                  lmosel->getRelPos(),
-                                                  movingObj_orgRelPos);
-                        }
-                        else
-                            model->reposition();
+                    }   // Empty tmpParenContainer
+
+                    /* FIXME-2 start animation for snapping back if not linked
+                    if (settings.value("/animation/use", true).toBool() &&
+                        seli->depth() > 1
+                        //		    && distance
+                        //(lmosel->getRelPos(),movingObj_orgRelPos)<3
+                    ) {
+                        lmosel->setRelPos(); // calc relPos first for starting
+                                             // point
+
+                        model->startAnimation((BranchObj *)lmosel,
+                                              lmosel->getRelPos(),
+                                              movingObj_orgRelPos);
                     }
-                }
-                /*
-            } // selbi->depth >0
-            */
-        }   // Branch or MapCenter was moved
-
+                    else
+                        model->reposition();
+                    */
+                } // No destination, undo temporary move 
+            } // selected item is branchLike 
+        } // Loop over selected TreeItems   
+        
         // Finally resize scene, if needed
         scene()->update();
         movingObj = NULL;
