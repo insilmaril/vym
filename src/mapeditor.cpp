@@ -1098,16 +1098,15 @@ void MapEditor::cursorFirst() { model->selectFirstBranch(); }
 
 void MapEditor::cursorLast() { model->selectLastBranch(); }
 
-void MapEditor::editHeading()   // FIXME-0 use Container instead of MO
+void MapEditor::editHeading()
 {
     if (state() == EditingHeading) {
         editHeadingFinished();
         return;
     }
 
-    BranchObj *bo = model->getSelectedBranchObj();
     BranchItem *bi = model->getSelectedBranch();
-    if (bo && bo) {  // FIXME-2 WTF?
+    if (bi) {
         VymText heading = bi->getHeading();
         if (heading.isRichText()) {
             mainWindow->windowShowHeadingEditor();
@@ -1121,16 +1120,18 @@ void MapEditor::editHeading()   // FIXME-0 use Container instead of MO
         lineEdit->setCursor(Qt::IBeamCursor);
         lineEdit->setCursorPosition(1);
 
+        BranchContainer *bc = bi->getBranchContainer();
+
         QPointF tl;
         QPointF br;
         qreal w = 230;
         qreal h = 30;
-        if (bo->getOrientation() != LinkableMapObj::LeftOfCenter) {
-            tl = bo->getOrnamentsBBox().topLeft();
+        if (bc->pos().x() >= 0) {
+            tl = bc->getHeadingRect().topLeft();
             br = tl + QPointF(w, h);
         }
         else {
-            br = bo->getOrnamentsBBox().bottomRight();
+            br = bc->getHeadingRect().bottomRight();
             tl = br - QPointF(w, h);
         }
         QRectF r(tl, br);
