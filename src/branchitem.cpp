@@ -584,7 +584,7 @@ BranchObj *BranchItem::createMapObj(QGraphicsScene *scene)
     return newbo;
 }
 
-Container* BranchItem::getChildrenContainer()   // FIXME-2 seems unused, remove
+Container* BranchItem::getChildrenContainer() 
 {
     return branchContainer->getChildrenContainer();
 }
@@ -606,16 +606,15 @@ void BranchItem::updateContainerStackingOrder()
     QPointF sp = branchContainer->scenePos();
 
     /*
+    */
     qDebug() << "      ## BI::updateContainerStackingOrder begin  bc.scenePos=" << branchContainer->scenePos() << 
         "pos=" << branchContainer->pos();
     qDebug() << "         - bc.parent: " << branchContainer->parentContainer()->info();
     qDebug() << "         - bc.p^2   : " << branchContainer->parentContainer()->parentContainer()->info();
-    */
 
     branchContainer->setParentItem(nullptr);
 
     BranchItem *pi = parentBranch();
-
 
     if (pi && pi != rootItem) 
         branchContainer->setParentItem(parentBranch()->getChildrenContainer());
