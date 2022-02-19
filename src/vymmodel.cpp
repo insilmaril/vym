@@ -3289,7 +3289,14 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int pos,
                             bool updateSelection, QPointF orgPos)
 {
     if (branch && dst) {
-        // Check if we relink to ourselves
+
+        // Check if we link to ourself
+        if (dst == branch) {
+            qWarning() << "VM::relinkBranch  Attempting to relink to myself: " << branch->getHeadingPlain();
+            return false;
+        }
+
+        // Check if we relink down to own children
         if (dst->isChildOf(branch))
             return false;
 
@@ -3313,6 +3320,7 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int pos,
         // after removing branch
         if (branchpi == dst && pos - 1 > n ) 
             pos--;
+
 
         beginRemoveRows(index(branchpi), n, n);
         branchpi->removeChild(n);

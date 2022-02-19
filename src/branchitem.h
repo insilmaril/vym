@@ -96,8 +96,8 @@ class BranchItem : public MapItem {
   public:
     TreeItem *findMapItem(
         QPointF p,
-        TreeItem *excludeTI); //! search map for branches or images. Ignore
-                              //! excludeTI, where search is started
+        QList <TreeItem*> excludedItems); //! search map for branches or images. Ignore
+                              //! excludeItems, where search is started or which are selected
 
     virtual void
     updateStyles(const bool &keepFrame =

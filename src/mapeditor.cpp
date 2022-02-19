@@ -701,7 +701,7 @@ void MapEditor::autoLayout()
     model->emitSelectionChanged();
 }
 
-TreeItem *MapEditor::findMapItem(QPointF p, TreeItem *exclude)  // FIXME-0 Use list of (selected) exclude items
+TreeItem *MapEditor::findMapItem(QPointF p, const QList <TreeItem*> &excludedItems) 
 {
     // Search XLinks
     Link *link;
@@ -727,7 +727,7 @@ TreeItem *MapEditor::findMapItem(QPointF p, TreeItem *exclude)  // FIXME-0 Use l
     BranchItem *bi = model->getRootItem()->getFirstBranch();
     TreeItem *found = NULL;
     while (bi) {
-        found = bi->findMapItem(p, exclude);
+        found = bi->findMapItem(p, excludedItems);
         if (found)
             return found;
         i++;
@@ -1183,7 +1183,7 @@ void MapEditor::contextMenuEvent(QContextMenuEvent *e)
     // mouseEvent, we don't need to close here.
 
     QPointF p = mapToScene(e->pos());
-    TreeItem *ti = findMapItem(p, NULL);
+    TreeItem *ti = findMapItem(p);
 
     if (ti) { // MapObj was found
         model->select(ti);
@@ -1297,7 +1297,7 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
     }
 
     QPointF p = mapToScene(e->pos());
-    TreeItem *ti_found = findMapItem(p, NULL);
+    TreeItem *ti_found = findMapItem(p);
     LinkableMapObj *lmo_found = NULL;
     if (ti_found)
         lmo_found = ((MapItem *)ti_found)->getLMO();
@@ -1606,7 +1606,7 @@ void MapEditor::moveObject()
     // reset cursor if we are moving and don't copy
 
     // Check if we could link
-    TreeItem *ti_found = findMapItem(p, seli);
+    TreeItem *ti_found = findMapItem(p, model->getSelectedItems());
     BranchItem *bi_dst = nullptr;
     LinkableMapObj *lmo_dst = nullptr;
     if (ti_found && ti_found != seli && ti_found->isBranchLikeType()) {
@@ -1812,7 +1812,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
 
     TreeItem *dsti = NULL;
     if (seli)
-        dsti = findMapItem(p, seli);
+        dsti = findMapItem(p, model->getSelectedItems());
     LinkableMapObj *dst = NULL;
     BranchItem *selbi = model->getSelectedBranch();  // FIXME-2 should no longer be needed in the end
     if (dsti && dsti->isBranchLikeType())
@@ -1870,7 +1870,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
         BranchContainer *bc;
         foreach (TreeItem *selti, model->getSelectedItems())
         {
-            if (selti->getType() == TreeItem::Image) {   // FIXME-1 images not available as containers yet
+            if (selti->getType() == TreeItem::Image) {   // FIXME-1
                 /*
                 FloatImageObj *fio = (FloatImageObj *)(((MapItem *)seli)->getLMO());
                 if (fio) {
@@ -1920,7 +1920,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                                             (BranchItem *)dsti->parent(),
                                             ((BranchItem *)dsti)->num() + 1, true);
                     } else { // Append to dst         
-                        qDebug() << "ME::release  move to dest " << movingObj_orgPos;
+                        qDebug() << "ME::release  append to dst:  begin" << bc->info();
                         preDstParStr = model->getSelectString(dsti);
                         model->relinkBranch((BranchItem *)selti, (BranchItem *)dsti,
                                             -1, true, movingObj_orgPos);    // FIXME-2 orgPos with containers?
@@ -1928,6 +1928,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                         if (dsti->depth() == 0)
                             selbo->move(savePos);   // FIXME-2 see savePos above - still needed?
                         */
+                        qDebug() << "ME::release  append to dst:  end  " << bc->info();
                     }
                 } else { // No destination, undo  temporary move
                     if (selti->depth() == 1) {
@@ -2047,7 +2048,7 @@ void MapEditor::mouseDoubleClickEvent(QMouseEvent *e)
 {
     if (e->button() == Qt::LeftButton) {
         QPointF p = mapToScene(e->pos());
-        TreeItem *ti = findMapItem(p, NULL);
+        TreeItem *ti = findMapItem(p);
         LinkableMapObj *lmo;
         if (ti) {
             if (state() == EditingHeading)

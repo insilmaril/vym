@@ -53,9 +53,6 @@ void BranchContainer::init()
     innerContainer->addContainer(childrenContainer);            // Default, probably depends on depth
     addContainer(innerContainer);
 
-    floatingContainer = nullptr;    // FIXME-0 should no longer be used
-
-
     setBrush(Qt::NoBrush);
     setLayoutType(Container::Horizontal);
     setHorizontalDirection(Container::LeftToRight);
@@ -92,35 +89,9 @@ Container* BranchContainer::getChildrenContainer()
 void BranchContainer::setLayoutType(const LayoutType &ltype)
 {
     Container::setLayoutType(ltype);
-    return;  //FIXME-0
 
     if (type != Branch) 
         qWarning() << "BranchContainer::setLayoutType (Floating) called for !Branch";
-
-
-    // Only setup floatingContainer if needed
-
-    if (ltype == Floating && !floatingContainer) {
-        layout = Floating;
-
-        floatingContainer = new Container ();
-        floatingContainer->setBrush(Qt::NoBrush);
-        floatingContainer->type = FloatingContent;
-        floatingContainer->setLayoutType(Floating);
-        scene()->addItem (floatingContainer);
-
-        addContainer(floatingContainer);
-        floatingContainer->addContainer(innerContainer);
-        floatingContainer->addContainer(childrenContainer);
-    } else if (ltype != Floating) {
-        if (floatingContainer) {
-            addContainer(innerContainer);
-            addContainer(childrenContainer);
-
-            delete floatingContainer;
-            layout = ltype;
-        }
-    }
 }
     
 QRectF BranchContainer::getHeadingRect()

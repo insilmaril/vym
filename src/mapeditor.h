@@ -128,8 +128,8 @@ class MapEditor : public QGraphicsView {
     void testFunction2(); //! just testing new stuff
 
   public:
-    TreeItem *findMapItem(QPointF p,
-                          TreeItem *exclude); //! find item in map at position
+    TreeItem *findMapItem(QPointF p, const
+                          QList <TreeItem*> &excludedItems = QList<TreeItem*>()); //! find item in map at position
                                               //! p. Ignore item exclude
     void toggleWinter();
 

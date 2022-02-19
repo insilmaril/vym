@@ -477,12 +477,12 @@ BranchItem *BranchItem::getLastSelectedBranchAlt()
     return getBranchNum(lastSelectedBranchNumAlt);
 }
 
-TreeItem *BranchItem::findMapItem(QPointF p, TreeItem *excludeTI)
+TreeItem *BranchItem::findMapItem(QPointF p, QList <TreeItem*> excludedItems)
 {
     // Search branches
     TreeItem *ti;
     for (int i = 0; i < branchCount(); ++i) {
-        ti = getBranchNum(i)->findMapItem(p, excludeTI);
+        ti = getBranchNum(i)->findMapItem(p, excludedItems);
         if (ti != NULL)
             return ti;
     }
@@ -492,30 +492,17 @@ TreeItem *BranchItem::findMapItem(QPointF p, TreeItem *excludeTI)
     for (int i = 0; i < imageCount(); ++i) {
         ii = getImageNum(i);
         MapObj *mo = ii->getMO();
-        if (mo && mo->isInClickBox(p) && (ii != excludeTI) &&
-            this != excludeTI && mo->isVisibleObj())
+        if (mo && mo->isInClickBox(p) && !excludedItems.contains(ii) 
+            //&& this != excludeTI 
+            && mo->isVisibleObj())
             return ii;
     }
 
-    // Search myself (legacy: old BranchObj)    // FIXME-2 obsolete later
-    if (getBranchObj()->isInClickBox(p) && (this != excludeTI) &&
-        getBranchObj()->isVisibleObj())
-        return this;
-
     // Search my container
-    if (branchContainer->isInClickBox(p) && (this != excludeTI) &&
+    if (branchContainer->isInClickBox(p) && !excludedItems.contains(this) &&
         getBranchObj()->isVisibleObj())     // FIXME-2   replace BO by container!!
         return this;
 
-    // Search attributes
-    AttributeItem *ai;
-    for (int i = 0; i < attributeCount(); ++i) {
-        ai = getAttributeNum(i);
-        MapObj *mo = ai->getMO();
-        if (mo && mo->isInClickBox(p) && (ai != excludeTI) &&
-            this != excludeTI && mo->isVisibleObj())
-            return ai;
-    }
     return NULL;
 }
 

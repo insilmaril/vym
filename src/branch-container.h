@@ -37,7 +37,6 @@ class BranchContainer : public Container {
     BranchItem *branchItem; //! Crossreference to "parent" BranchItem 
     HeadingContainer *headingContainer;
     Container *childrenContainer;
-    Container *floatingContainer;
     Container *innerContainer;
 };
 
