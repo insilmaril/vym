@@ -1637,7 +1637,6 @@ void MapEditor::moveObject()
 
             // FIXME-1 move whole selection to tmpParentContainer, not just selbi
             // Before doing that, remove leaf branches from selection (no method available yet)!
-            // FIXME-2 tmpParentContainer->setPos(movingObj_initialContainerPos + p - movingObj_initialPointerPos);
 
             BranchContainer *bc2 = (BranchContainer*)(tmpParentContainer->getChildrenContainer()->childItems().first());
             if (bc2 != bc) qWarning() << "bc != bc2"; // FIXME-2 testing
@@ -1645,149 +1644,7 @@ void MapEditor::moveObject()
 
     }
 
-    if (lmosel) {
-        if (seli->getType() == TreeItem::Image) {
-            FloatImageObj *fio = (FloatImageObj *)lmosel;
-            fio->moveCenter(p.x() - movingObj_offset.x(),
-                            p.y() - movingObj_offset.y());
-            fio->setRelPos();
-            fio->updateLinkGeometry(); // no need for reposition, if we update
-                                       // link here
-            model->emitSelectionChanged(); // position has changed
-
-            // Relink float to new mapcenter or branch, if shift is pressed
-            // Only relink, if selection really has a new parent
-            if (pointerMod == Qt::ShiftModifier && bi_dst &&
-                bi_dst != seli->parent()) {
-                // Also save the move which was done so far
-                QString pold = qpointFToString(movingObj_orgRelPos);
-                QString pnow = qpointFToString(fio->getRelPos());
-                model->saveState(seli, "moveRel " + pold, seli,
-                                 "moveRel " + pnow,
-                                 QString("Move %1 to relative position %2")
-                                     .arg(model->getObjectName(lmosel))
-                                     .arg(pnow));
-                model->reposition();
-
-                model->relinkImage((ImageItem *)seli, bi_dst);
-                model->select(seli);
-            }
-        }
-        else if (seli->isBranchLikeType()) { // selection != a FloatObj
-            /*
-            BranchItem *selbi = (BranchItem*)seli;
-            // Relink the selected containers to tmpParentContainer to move them around visually.
-            // The structure in VymModel remaines untouched so far!
-
-            if (bc->parentItem() != tmpParentContainer->getChildrenContainer()) {
-                qDebug() << "adding to tmpParentContainer: " << bc->info() << "current tPC children count: " << tmpParentContainer->getChildrenContainer()->childItems().count();
-                bc->setOrgPos();
-                tmpParentContainer->addToChildrenContainer(bc);
-                tmpParentContainer->reposition();   // FIXME-2 needed, if we use a Floating layout?
-            }
-
-            // FIXME-1 move whole selection to tmpParentContainer, not just selbi
-            // Before doing that, remove leaf branches from selection (no method available yet)!
-            // FIXME-2 tmpParentContainer->setPos(movingObj_initialContainerPos + p - movingObj_initialPointerPos);
-
-            // Since moved containers are relateive to tmpParentContainer anyway, just move 
-            // it to pointer position:
-            tmpParentContainer->setPos(p - movingObj_initialContainerOffset);
-
-            BranchContainer *bc2 = (BranchContainer*)(tmpParentContainer->getChildrenContainer()->childItems().first());
-            if (bc2 != bc) qWarning() << "bc != bc2"; // FIXME-2 testing
-            */
-
-            BranchItem *selbi = ((BranchItem *)seli);
-
-            if (seli->depth() == 0) {
-                // Move mapcenter
-                lmosel->move(p - movingObj_offset);
-                if (pointerMod == Qt::ShiftModifier) {
-                    // Move only mapcenter, leave its children where they are
-                    QPointF v;
-                    v = lmosel->getAbsPos();
-                    for (int i = 0; i < seli->branchCount(); ++i) {
-                        seli->getBranchObjNum(i)->setRelPos();
-                        seli->getBranchObjNum(i)->setOrientation();
-                    }
-                }
-            } else {
-                // depth > 0
-                if (seli->depth() == 1) {
-                    // Move mainbranch
-                    if (!lmosel->hasParObjTmp())
-                        lmosel->move(p - movingObj_offset);
-                    lmosel->setRelPos();
-                }
-                else {
-                    // depth > 1, move ordinary branch
-                    if (lmosel->getOrientation() ==
-                        LinkableMapObj::LeftOfCenter)
-                        // Add width of bbox here, otherwise alignRelTo will
-                        // cause jumping around
-                        lmosel->move(p.x() - movingObj_offset.x(),
-                                     p.y() - movingObj_offset.y() +
-                                         lmosel->getTopPad());
-                    else
-                        lmosel->move(p.x() - movingObj_offset.x(),
-                                     p.y() - movingObj_offset.y() -
-                                         lmosel->getTopPad());
-                    if (selbi->parentBranch()->getChildrenLayout() ==
-                        BranchItem::FreePositioning)
-                        lmosel->setRelPos();
-                }
-
-            } // depth > 0
-
-            // Maybe we can relink temporary?
-            if (bi_dst && state() != MovingObjectWithoutLinking) {
-                if (state() != MovingObjectTmpLinked)
-                    setState(MovingObjectTmpLinked);
-
-                /* FIXME-2 what was that for????
-                if (tmpParentContainer != bi_dst->getBranchContainer()) {
-                    tmpParentContainer = bi_dst->getBranchContainer();
-                    tmpParentContainer->setBranchItem(bi_dst);
-                }
-                */
-
-                // FIXME-2 tmp relinking needs to be done for whole selection
-                if (pointerMod == Qt::ControlModifier) {
-                    // Special case: link below dst
-                    lmosel->setParObjTmp(lmo_dst, p, + 1);
-                    selbi->getBranchContainer()->setTmpParentContainer(bi_dst, p, +1);
-                } else if (pointerMod == Qt::ShiftModifier) {
-                    // Special case: link above  dst
-                    lmosel->setParObjTmp(lmo_dst, p, - 1);
-                    selbi->getBranchContainer()->setTmpParentContainer(bi_dst, p, -1);
-                } else {
-                    lmosel->setParObjTmp(lmo_dst, p, 0);
-                    selbi->getBranchContainer()->setTmpParentContainer(bi_dst, p, 0);
-                }
-            }
-            else {
-                if (state() == MovingObjectTmpLinked) {
-                    lmosel->unsetParObjTmp();
-                    // selbi->getBranchContainer()->unsetTmpParentContainer(); //FIXME-0 needed?
-                    if (mainWindow->getModMode() == Main::ModModeMoveObject)
-                        setState(MovingObjectWithoutLinking);
-                    else
-                        setState(MovingObject);
-                }
-            }
-
-            // reposition subbranch
-            lmosel->reposition();
-
-            QItemSelection sel = model->getSelectionModel()->selection();
-            updateSelection(sel, sel); // position has changed
-
-            // In winter mode shake snow from heading
-            if (winter)
-                model->emitDataChanged(seli);
-        } // Moving branchLikeType
-    }     // End of lmosel != NULL
+    /* FIXME-2 check xlinks later
     else if (seli && seli->getType() == TreeItem::XLink) {
         // Move XLink control point
         MapObj *mosel = ((MapItem *)seli)->getMO();
@@ -1799,6 +1656,7 @@ void MapEditor::moveObject()
     }
     else
         qWarning("ME::moveObject  Huh? I'm confused. No LMO or XLink moved");   // FIXME-2 shouldn't happen
+    */
 
     scene()->update();
 
