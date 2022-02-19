@@ -1637,9 +1637,6 @@ void MapEditor::moveObject()
 
             // FIXME-1 move whole selection to tmpParentContainer, not just selbi
             // Before doing that, remove leaf branches from selection (no method available yet)!
-
-            BranchContainer *bc2 = (BranchContainer*)(tmpParentContainer->getChildrenContainer()->childItems().first());
-            if (bc2 != bc) qWarning() << "bc != bc2"; // FIXME-2 testing
         }
 
     }
