@@ -1597,9 +1597,6 @@ void MapEditor::moveObject()
 
     QPointF p = mapToScene(pointerPos);
     TreeItem *seli = model->getSelectedItem();
-    LinkableMapObj *lmosel = NULL;
-    if (seli)
-        lmosel = ((MapItem *)seli)->getLMO();
 
     objectMoved = true;
 
@@ -1608,10 +1605,8 @@ void MapEditor::moveObject()
     // Check if we could link
     TreeItem *ti_found = findMapItem(p, model->getSelectedItems());
     BranchItem *bi_dst = nullptr;
-    LinkableMapObj *lmo_dst = nullptr;
     if (ti_found && ti_found != seli && ti_found->isBranchLikeType()) {
         bi_dst = (BranchItem *)ti_found;
-        lmo_dst = bi_dst->getLMO();
     }
     else
         bi_dst = nullptr;
@@ -1640,6 +1635,11 @@ void MapEditor::moveObject()
         }
 
     }
+
+    // Update selection
+    QItemSelection sel = model->getSelectionModel()->selection();
+    updateSelection(sel, sel);
+
 
     /* FIXME-2 check xlinks later
     else if (seli && seli->getType() == TreeItem::XLink) {
