@@ -76,7 +76,8 @@ MapEditor::MapEditor(VymModel *vm)
     tmpParentContainer->setType(Container::TmpParent);
     tmpParentContainer->setLayoutType(Container::Floating);
     tmpParentContainer->getChildrenContainer()->setLayoutType(Container::Floating);
-    tmpParentContainer->setBrush(Qt::cyan);
+    tmpParentContainer->setBrush(Qt::NoBrush);
+    tmpParentContainer->setPen(QPen(Qt::NoPen));
     tmpParentContainer->reposition();
     qDebug() << "ME: tmpParentContainer = " << tmpParentContainer;
 
@@ -1630,10 +1631,8 @@ void MapEditor::moveObject()
                 tmpParentContainer->reposition();   // FIXME-2 needed, if we use a Floating layout?
             }
 
-            // FIXME-1 move whole selection to tmpParentContainer, not just selbi
-            // Before doing that, remove leaf branches from selection (no method available yet)!
+            // FIXME-2 when moving selection to tmpParentContainer, remove leaf branches from selection (no method available yet)!
         }
-
     }
 
     // Update selection

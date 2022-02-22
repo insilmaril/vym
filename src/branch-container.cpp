@@ -35,10 +35,12 @@ void BranchContainer::init()
 
     headingContainer = new HeadingContainer ();
     headingContainer->setBrush(Qt::NoBrush);
+    headingContainer->setPen(Qt::NoPen);
     scene()->addItem (headingContainer);
 
     childrenContainer = new Container ();
     childrenContainer->setBrush(Qt::NoBrush);
+    childrenContainer->setPen(Qt::NoPen);
     childrenContainer->setLayoutType(Container::Vertical);      // Default, usually depends on depth
     childrenContainer->setVerticalAlignment(Container::Left);   // Default, usually depends on position
     childrenContainer->type = Container::Children;
@@ -46,6 +48,7 @@ void BranchContainer::init()
 
     innerContainer = new Container ();
     innerContainer->setBrush(Qt::NoBrush);
+    innerContainer->setPen(Qt::NoPen);
     innerContainer->type = InnerContent;
     scene()->addItem (innerContainer);
 
@@ -54,6 +57,7 @@ void BranchContainer::init()
     addContainer(innerContainer);
 
     setBrush(Qt::NoBrush);
+    //setPen(Qt::NoPen);
     setLayoutType(Container::Horizontal);
     setHorizontalDirection(Container::LeftToRight);
 }
