@@ -782,7 +782,7 @@ BranchItem *MapEditor::getBranchAbove(BranchItem *selbi)
     if (selbi) {
         int dz = selbi->depth(); // original depth
         bool invert = false;
-        if (selbi->getLMO()->getOrientation() == LinkableMapObj::LeftOfCenter)
+        if (selbi->getBranchContainer()->getOrientation() == Container::LeftOfParent)
             invert = true;
 
         BranchItem *bi;
@@ -838,7 +838,7 @@ BranchItem *MapEditor::getBranchBelow(BranchItem *selbi)
         BranchItem *bi;
         int dz = selbi->depth(); // original depth
         bool invert = false;
-        if (selbi->getLMO()->getOrientation() == LinkableMapObj::LeftOfCenter)
+        if (selbi->getBranchContainer()->getOrientation() == Container::LeftOfParent)
             invert = true;
 
         // Look for branch with same parent but directly below

@@ -20,6 +20,17 @@ class Container : public QGraphicsRectItem {
         Heading
     };
 
+    /*! Orientation relative to parent container */
+    enum Orientation {
+        UndefinedOrientation,
+        LeftOfParent,
+        RightOfParent
+    };
+    enum OrientationMode {
+        Auto,
+        Manual
+    };
+
     /*! Alignment of children containers */
     enum LayoutType {Horizontal, Vertical, Floating, BFloat};
     enum HorizontalDirection {LeftToRight, RightToLeft};
@@ -37,6 +48,12 @@ class Container : public QGraphicsRectItem {
 
     virtual QString info (const QString &prefix = "");
 
+    void setOrientationMode(const OrientationMode &);
+    OrientationMode getOrientationMode();
+
+    void setOrientation(const Orientation &);
+    Orientation getOrientation();
+
     virtual void setLayoutType(const LayoutType &ltype);
     LayoutType getLayoutType();
 
@@ -44,6 +61,8 @@ class Container : public QGraphicsRectItem {
     HorizontalDirection getHorizontalDirection();
 
     void setVerticalAlignment(const VerticalAlignment &a);
+
+    bool isFloating();  //! returns true, if parent container has Floating layout
 
     void addContainer(Container *c);
     Container* parentContainer();
@@ -60,6 +79,9 @@ class Container : public QGraphicsRectItem {
     QPointF ct;    // Translation of inner content due to floating children
     QPointF originalPos;
     QString name;
+
+    OrientationMode orientationMode;
+    Orientation orientation;
 
     LayoutType layout;
     HorizontalDirection horizontalDirection;

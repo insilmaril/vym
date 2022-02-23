@@ -664,7 +664,7 @@ bool parseVYMHandler::readFrameAttr(const QXmlAttributes &a)
             return true;
         }
     }
-    return false;
+    return true;        // FIXME-2 use container instead of OrnamentedObj in readFrameAttr
 }
 
 bool parseVYMHandler::readOOAttr(const QXmlAttributes &a)

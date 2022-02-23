@@ -64,13 +64,6 @@ void BranchItem::clear()
         taskModel->deleteTask(task);
 }
 
-void BranchItem::unlinkBranchContainer()
-{
-    // Called from destructor of containers, to 
-    // avoid double deletion 
-    branchContainer = nullptr;
-}
-
 void BranchItem::copy(BranchItem *other) // TODO lacks most of data...
 {
     scrolled = other->scrolled;
@@ -121,16 +114,16 @@ QString BranchItem::saveToDir(const QString &tmpdir, const QString &prefix,
 
     // save area, if not scrolled   // not needed if HTML is rewritten...
     // also we could check if _any_ of parents is scrolled
-    QString areaAttr;
-    if (mo && parentItem->isBranchLikeType() &&
+    QString areaAttr;   // FIXME-2 will not work with rotated containers
+    if (branchContainer && parentItem->isBranchLikeType() &&
         !((BranchItem *)parentItem)->isScrolled()) {
-        qreal x = mo->getAbsPos().x();
-        qreal y = mo->getAbsPos().y();
+        qreal x = branchContainer->scenePos().x();
+        qreal y = branchContainer->scenePos().y();
         areaAttr =
             attribut("x1", QString().setNum(x - offset.x())) +
             attribut("y1", QString().setNum(y - offset.y())) +
-            attribut("x2", QString().setNum(x + mo->width() - offset.x())) +
-            attribut("y2", QString().setNum(y + mo->height() - offset.y()));
+            attribut("x2", QString().setNum(x + branchContainer->rect().width() - offset.x())) +
+            attribut("y2", QString().setNum(y + branchContainer->rect().height() - offset.y()));
     }
     else
         areaAttr = "";
@@ -141,18 +134,31 @@ QString BranchItem::saveToDir(const QString &tmpdir, const QString &prefix,
     else
         elementName = "branch";
 
-    // Free positioning of children
+    // Free positioning of children         // FIXME-2 remove BI::FreePositioning
     QString layoutAttr;
     if (childrenLayout == BranchItem::FreePositioning)
         layoutAttr += attribut("childrenFreePos", "true");
 
-    // Save rotation
+    // Save rotation                        // FIXME-2 use rotation via container layouts
+    /*
     QString rotAttr;
     if (mo && mo->getRotation() != 0)
         rotAttr = attribut("rotation", QString().setNum(mo->getRotation()));
+    */
 
-    s = beginElement(elementName + getMapAttr() + getGeneralAttr() +
-                     scrolledAttr + getIncludeImageAttr() + rotAttr +
+    // Save position
+    QString posAttr;
+    if (parentItem == rootItem || branchContainer->isFloating())
+        // Use relative coordinates
+        posAttr = attribut("relPosX", QString().setNum(branchContainer->pos().x())) +
+                  attribut("relPosY", QString().setNum(branchContainer->pos().y())); 
+    else
+        // Use absolute coordinates
+        posAttr = attribut("absPosX", QString().setNum(branchContainer->scenePos().x())) +
+                  attribut("absPosY", QString().setNum(branchContainer->scenePos().y()));
+
+    s = beginElement(elementName + posAttr + getGeneralAttr() +
+                     scrolledAttr + getIncludeImageAttr() + 
                      layoutAttr + idAttr);
     incIndent();
 
@@ -499,8 +505,8 @@ TreeItem *BranchItem::findMapItem(QPointF p, QList <TreeItem*> excludedItems)
     }
 
     // Search my container
-    if (branchContainer->isInClickBox(p) && !excludedItems.contains(this) &&
-        getBranchObj()->isVisibleObj())     // FIXME-2   replace BO by container!!
+    if (branchContainer->isInClickBox(p) && !excludedItems.contains(this) ) //   &&
+        //getBranchObj()->isVisibleObj())     // FIXME-2   Check if container is visible!!
         return this;
 
     return NULL;
@@ -527,18 +533,13 @@ void BranchItem::updateVisuals()
 
 BranchObj *BranchItem::getBranchObj() { return (BranchObj *)mo; }
 
-BranchObj *BranchItem::createMapObj(QGraphicsScene *scene)
+BranchObj *BranchItem::createMapObj(QGraphicsScene *scene)  // FIXME-0 remove
 {
     BranchObj *newbo;
 
     if (parentItem == rootItem) {
         // Create container
         branchContainer = new BranchContainer(scene, nullptr, this);
-
-        newbo = new BranchObj(NULL, this);
-        mo = newbo;
-        scene->addItem(newbo);
-
     }
     else {
         // Create container
@@ -546,22 +547,24 @@ BranchObj *BranchItem::createMapObj(QGraphicsScene *scene)
 
         newbo = new BranchObj(((MapItem *)parentItem)->getMO(), this);
         mo = newbo;
-        // Set visibility depending on parents
+        // Set visibility depending on parents  // FIXME-2
+        /*
         if (parentItem != rootItem &&
             (((BranchItem *)parentItem)->scrolled ||
              !((MapItem *)parentItem)->getLMO()->isVisibleObj()))
             newbo->setVisibility(false);
-        if (depth() == 1) {
-            // Position new main branches on circle around center
+        */
+        if (depth() == 1) {  
+            // Position new main branches on circle around center  // FIXME-2
             qreal r = 190;
             qreal a =
                 -M_PI_4 + M_PI_2 * (num()) + (M_PI_4 / 2) * (num() / 4 % 4);
             QPointF p(r * cos(a), r * sin(a));
-            newbo->setRelPos(p);
+            // newbo->setRelPos(p);
         }
     }
-    newbo->setDefAttr(BranchObj::NewBranch);
-    initLMO();
+    // FIXME-2 for new branch set default font, color, link, frame, children styles
+    // newbo->setDefAttr(BranchObj::NewBranch);
 
     if (!getHeading().isEmpty()) {
         newbo->updateVisuals();
@@ -571,14 +574,60 @@ BranchObj *BranchItem::createMapObj(QGraphicsScene *scene)
     return newbo;
 }
 
-Container* BranchItem::getChildrenContainer() 
+BranchContainer *BranchItem::createBranchContainer(QGraphicsScene *scene)
 {
-    return branchContainer->getChildrenContainer();
+    if (parentItem == rootItem) {
+        // Create container
+        branchContainer = new BranchContainer(scene, nullptr, this);
+    }
+    else {
+        // Create container
+        branchContainer = new BranchContainer(scene, nullptr, this);
+
+        // Set visibility depending on parents  // FIXME-2
+        /*
+        if (parentItem != rootItem &&
+            (((BranchItem *)parentItem)->scrolled ||
+             !((MapItem *)parentItem)->getLMO()->isVisibleObj()))
+            newbo->setVisibility(false);
+        */
+        if (depth() == 1) {  
+            // Position new main branches on circle around center  // FIXME-2
+            qreal r = 190;
+            qreal a =
+                -M_PI_4 + M_PI_2 * (num()) + (M_PI_4 / 2) * (num() / 4 % 4);
+            QPointF p(r * cos(a), r * sin(a));
+            // newbo->setRelPos(p);
+        }
+    }
+    // FIXME-2 for new branch set default font, color, link, frame, children styles
+    // newbo->setDefAttr(BranchObj::NewBranch);
+
+    if (!getHeading().isEmpty()) {  // FIXME-2 updateVisuals new container and color
+        /*
+        newbo->updateVisuals();
+        newbo->setColor(heading.getColor());
+        */
+    }
+
+    return branchContainer;
 }
 
 BranchContainer* BranchItem::getBranchContainer()
 {
     return branchContainer;
+}
+
+void BranchItem::unlinkBranchContainer()
+{
+    // Called from destructor of containers, to 
+    // avoid double deletion 
+    branchContainer = nullptr;
+}
+
+Container* BranchItem::getChildrenContainer() 
+{
+    return branchContainer->getChildrenContainer();
 }
 
 void BranchItem::updateContainerStackingOrder()

@@ -17,12 +17,8 @@ class LinkableMapObj;
 */
 
 class MapItem : public TreeItem {
-  public:
-    enum PositionMode { Unused, Absolute, Relative };
-
   protected:
     QPointF pos;
-    PositionMode posMode;
 
   public:
     MapItem(TreeItem *parent = 0);
@@ -37,11 +33,6 @@ class MapItem : public TreeItem {
 
     /*! Used to save absolute position while map is not in QGraphicsView */
     virtual void setAbsPos(const QPointF &);
-
-    /*! Tell object to use e.g. absolute positioning for mapcenter.
-    Defaulst is MapItem::Unused */
-    void setPositionMode(PositionMode mode);
-    PositionMode getPositionMode();
 
   protected:
     bool hideLinkUnselected;
@@ -72,9 +63,6 @@ class MapItem : public TreeItem {
 
     /*! Return position to edit headings in scene coordinates */
     virtual QPointF getEditPosition();
-
-    /*! Initialize LinkableMapObj with data in MapItem */
-    virtual void initLMO();
 };
 
 #endif

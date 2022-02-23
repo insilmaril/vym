@@ -19,8 +19,10 @@ Container::~Container()
 void Container::init()
 {
     type = Undefined;
-
     layout = Horizontal;
+
+    orientationMode = Auto;
+    orientation = UndefinedOrientation;
 
     show();
 }
@@ -81,6 +83,26 @@ QString Container::info (const QString &prefix)
         QString(" Layout: %1").arg(layout);
 }
 
+void Container::setOrientationMode(const OrientationMode &om)
+{
+    orientationMode = om;
+}
+
+Container::OrientationMode Container::getOrientationMode()
+{
+    return orientationMode;
+}
+
+void Container::setOrientation(const Orientation &m)
+{
+    orientation = m;
+}
+
+Container::Orientation Container::getOrientation()
+{
+    return orientation;
+}
+
 void Container::setLayoutType(const LayoutType &ltype)
 {
     layout = ltype;
@@ -104,6 +126,15 @@ Container::HorizontalDirection Container::getHorizontalDirection()
 void Container::setVerticalAlignment(const VerticalAlignment &a)
 {
     verticalAlignment = a;
+}
+
+bool Container::isFloating()
+{
+    Container *pc = parentContainer();
+    if (pc && pc->getLayoutType() == Floating)
+        return true;
+    else
+        return false;
 }
 
 void Container::addContainer(Container *c)
@@ -144,6 +175,7 @@ Container* Container::parentContainer()
 {
     return (Container*)parentItem();
 }
+
 void Container::reposition()
 {
     qDebug() << QString("Container::reposition of %1 container").arg(info()) << this;

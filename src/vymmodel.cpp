@@ -3166,11 +3166,10 @@ BranchItem *VymModel::addMapCenter(QPointF absPos)
     endInsertRows();
     emit(layoutChanged());
 
-    // Create MapObj
-    newbi->setPositionMode(MapItem::Absolute);
-    BranchObj *bo = newbi->createMapObj(mapEditor->getScene());
-    if (bo)
-        bo->move(absPos);
+    // Create BranchContainer
+    BranchContainer *bc = newbi->createBranchContainer(mapEditor->getScene());
+    if (bc)
+        bc->setPos(absPos);
 
     return newbi;
 }
@@ -3212,8 +3211,8 @@ BranchItem *VymModel::addNewBranchInt(BranchItem *dst, int pos)
     }
     emit(layoutChanged());
 
-    // Create MapObj and Container
-    BranchObj *newbo = newbi->createMapObj(mapEditor->getScene());
+    // Create Container
+    newbi->createBranchContainer(mapEditor->getScene());
 
     // Add newbi also into Container of parent
     parbi->addToChildrenContainer(newbi->getBranchContainer() );

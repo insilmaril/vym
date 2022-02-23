@@ -108,14 +108,18 @@ class BranchItem : public MapItem {
     virtual BranchObj *createMapObj(
         QGraphicsScene *scene); //! Create classic object in GraphicsView
 
+    virtual BranchContainer *createBranchContainer(
+        QGraphicsScene *scene); //! Create classic object in GraphicsView
+
+    BranchContainer* getBranchContainer();
+    void unlinkBranchContainer();
+
   private:
     BranchContainer *branchContainer;
     Container* getChildrenContainer();
 
   public:
-    BranchContainer* getBranchContainer();
     void updateContainerStackingOrder();
-    void unlinkBranchContainer();
     void addToChildrenContainer(Container *c);
     void repositionContainers();
 };

@@ -17,8 +17,7 @@ MapItem::MapItem(TreeItem *parent)
 
 void MapItem::init()
 {
-    mo = NULL;
-    posMode = Unused;
+    mo = nullptr;
     hideLinkUnselected = false;
 }
 
@@ -38,8 +37,9 @@ void MapItem::appendChild(TreeItem *item)
     }
 }
 
-void MapItem::setRelPos(const QPointF &p)
+void MapItem::setRelPos(const QPointF &p)   // FIXME-2 unused
 {
+    /*
     posMode = Relative;
     pos = p;
     LinkableMapObj *lmo = getLMO();
@@ -47,19 +47,17 @@ void MapItem::setRelPos(const QPointF &p)
         ((OrnamentedObj *)lmo)->setUseRelPos(true);
         ((OrnamentedObj *)lmo)->move2RelPos(p);
     }
+    */
 }
 
-void MapItem::setAbsPos(const QPointF &p)
+void MapItem::setAbsPos(const QPointF &p)// FIXME-2 unused
 {
-    posMode = Absolute;
+    /*
     pos = p;
     if (mo)
         mo->move(p);
+        */
 }
-
-void MapItem::setPositionMode(PositionMode mode) { posMode = mode; }
-
-MapItem::PositionMode MapItem::getPositionMode() { return posMode; }
 
 void MapItem::setHideLinkUnselected(bool b)
 {
@@ -74,16 +72,17 @@ void MapItem::setHideLinkUnselected(bool b)
 
 bool MapItem::getHideLinkUnselected() { return hideLinkUnselected; }
 
-QString MapItem::getMapAttr()
+QString MapItem::getMapAttr()   // FIXME-2 Refactor to use container layouts
 {
     QString s;
+    /*
     LinkableMapObj *lmo = getLMO();
 
     if (parentItem == rootItem)
         posMode = Absolute;
     else {
         if (type == TreeItem::Image || depth() == 1 || lmo->getUseRelPos())
-            posMode = Relative; // FiXME-2 shouldn't this be replaced by relPos?
+            posMode = Relative; // FIXME-2 shouldn't this be replaced by relPos?
         else
             posMode = Unused;
     }
@@ -113,6 +112,7 @@ QString MapItem::getMapAttr()
     if (angle != 0)
         s += attribut("rotation", QString().setNum(angle));
 
+        */
     return s;
 }
 
@@ -185,19 +185,3 @@ QPointF MapItem::getEditPosition() // FIXME-3 should be directly in BranchContai
     return p;
 }
 
-void MapItem::initLMO()
-{
-    LinkableMapObj *lmo = getLMO();
-    if (!lmo)
-        return;
-    switch (posMode) {
-    case Relative:
-        lmo->setRelPos(pos);
-        break;
-    case Absolute:
-        lmo->move(pos);
-        break;
-    default:
-        break;
-    }
-}

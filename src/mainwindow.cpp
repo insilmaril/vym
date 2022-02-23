@@ -6503,7 +6503,8 @@ void Main::updateActions()
                 if ((selbi && selbi->depth() == 0) || selbis.count() > 1)
                     actionMoveDownDiagonally->setEnabled(false);
 
-                if (selbi && selbi->getLMO()->getOrientation() == LinkableMapObj::LeftOfCenter)
+                if (true)
+                // if (selbi && selbi->getLMO()->getOrientation() == LinkableMapObj::LeftOfCenter) // FIXME-2 use container instead of LMO to get orientation
                 {
                     actionMoveDownDiagonally->setIcon(QPixmap(":down-diagonal-right.png"));
                     actionMoveUpDiagonally->setIcon(QPixmap(":up-diagonal-left.png"));

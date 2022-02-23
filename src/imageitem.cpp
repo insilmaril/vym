@@ -34,7 +34,6 @@ void ImageItem::init()
     hideLinkUnselected = true;
     originalFilename = "no original name available";
     zValue = dZ_FLOATIMG;
-    posMode = Relative;
 }
 
 void ImageItem::clear()
@@ -55,7 +54,7 @@ bool ImageItem::load(const QString &fname)
     return true;
 }
 
-FloatImageObj *ImageItem::createMapObj()
+FloatImageObj *ImageItem::createMapObj()    // FIXME-2 replace by containers
 {
     FloatImageObj *fio =
         new FloatImageObj(((MapItem *)parentItem)->getMO(), this);
@@ -63,7 +62,7 @@ FloatImageObj *ImageItem::createMapObj()
     if (((BranchItem *)parentItem)->isScrolled() ||
         !((MapItem *)parentItem)->getMO()->isVisibleObj())
         fio->setVisibility(false);
-    initLMO(); // set rel/abs position in mapitem
+    // initLMO(); // set rel/abs position in mapitem
     fio->setZValue(zValue);
     fio->setRelPos(pos);
     fio->updateVisibility();
