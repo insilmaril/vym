@@ -37,26 +37,18 @@ void MapItem::appendChild(TreeItem *item)
     }
 }
 
-void MapItem::setRelPos(const QPointF &p)   // FIXME-0 unused
+void MapItem::setRelPos(const QPointF &p)   // FIXME-2 add image containers
 {
-    /*
-    posMode = Relative;
-    pos = p;
-    LinkableMapObj *lmo = getLMO();
-    if (lmo) {
-        ((OrnamentedObj *)lmo)->setUseRelPos(true);
-        ((OrnamentedObj *)lmo)->move2RelPos(p);
-    }
-    */
+    if (isBranchLikeType()) 
+        ((BranchItem*)this)->getBranchContainer()->setPos(p);
 }
 
-void MapItem::setAbsPos(const QPointF &p)// FIXME-0 unused
+void MapItem::setAbsPos(const QPointF &p)// FIXME-2 add image containers
 {
-    /*
-    pos = p;
-    if (mo)
-        mo->move(p);
-        */
+    if (isBranchLikeType()) {
+        BranchContainer *bc = ((BranchItem*)this)->getBranchContainer();
+        bc->setPos(bc->sceneTransform().inverted().map(p));
+    }
 }
 
 void MapItem::setHideLinkUnselected(bool b)
