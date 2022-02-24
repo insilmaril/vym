@@ -148,14 +148,16 @@ QString BranchItem::saveToDir(const QString &tmpdir, const QString &prefix,
 
     // Save position
     QString posAttr;
-    if (parentItem == rootItem || branchContainer->isFloating())
-        // Use relative coordinates
-        posAttr = attribut("relPosX", QString().setNum(branchContainer->pos().x())) +
-                  attribut("relPosY", QString().setNum(branchContainer->pos().y())); 
-    else
+    if (parentItem == rootItem)
         // Use absolute coordinates
         posAttr = attribut("absPosX", QString().setNum(branchContainer->scenePos().x())) +
                   attribut("absPosY", QString().setNum(branchContainer->scenePos().y()));
+    else if ( branchContainer->isFloating())
+        // Use relative coordinates
+        posAttr = attribut("relPosX", QString().setNum(branchContainer->pos().x())) +
+                  attribut("relPosY", QString().setNum(branchContainer->pos().y())); 
+    else 
+        qDebug() << "BI::save " << branchContainer->info() <<   branchContainer->isFloating() <<  getChildrenContainer()->info();
 
     s = beginElement(elementName + posAttr + getGeneralAttr() +
                      scrolledAttr + getIncludeImageAttr() + 
@@ -497,7 +499,7 @@ TreeItem *BranchItem::findMapItem(QPointF p, QList <TreeItem*> excludedItems)
     ImageItem *ii;
     for (int i = 0; i < imageCount(); ++i) {
         ii = getImageNum(i);
-        MapObj *mo = ii->getMO();
+        MapObj *mo = ii->getMO();   // FIXME-2 search image containers instead of MO
         if (mo && mo->isInClickBox(p) && !excludedItems.contains(ii) 
             //&& this != excludeTI 
             && mo->isVisibleObj())

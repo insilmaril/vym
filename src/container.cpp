@@ -100,7 +100,14 @@ void Container::setOrientation(const Orientation &m)
 
 Container::Orientation Container::getOrientation()
 {
-    return orientation;
+    if (orientationMode == Auto)
+    {
+        if (pos().x() >= 0)
+            return RightOfParent;
+        else
+            return LeftOfParent;
+    } else 
+        return orientation;
 }
 
 void Container::setLayoutType(const LayoutType &ltype)
@@ -178,7 +185,7 @@ Container* Container::parentContainer()
 
 void Container::reposition()
 {
-    qDebug() << QString("Container::reposition of %1 container").arg(info()) << this;
+    // qDebug() << QString("Container::reposition of %1 container").arg(info()) << this;
 
     QRectF r;
 
@@ -193,7 +200,7 @@ void Container::reposition()
     //    (overloaded, not there e.g. for HeadingContainer!)
 
     if (childItems().count() == 0 && layout != BFloat) {   // FIXME-0 check!
-        qDebug() << " * Setting r to minimal size. r =" << rect();
+        // qDebug() << " * Setting r to minimal size. r =" << rect();
         r.setWidth(0);
         r.setHeight(0);
         setRect(r);

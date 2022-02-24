@@ -3284,7 +3284,7 @@ BranchItem *VymModel::addNewBranchBefore()
     return newbi;
 }
 
-bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int pos,
+bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int pos,   // FIXME-0 remove orgPos, savePos
                             bool updateSelection, QPointF orgPos)
 {
     if (branch && dst) {
@@ -3358,19 +3358,24 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int pos,
         QString postSelStr = getSelectString(branch);
         QString postNum = QString::number(branch->num(), 10);
 
+        // FIXME-0 Check concept of saving old and new position of containers when relinking
+        /*
         QPointF savePos;
         LinkableMapObj *lmosel = branch->getLMO();
         if (lmosel)
             savePos = lmosel->getAbsPos();
+        */
 
         if (!saveStateBlocked) { // Don't build strings when moving up/down
             QString undoCom =
                 "relinkTo (\"" + preParStr + "\"," + preNum + "," +
-                QString("%1,%2").arg(orgPos.x()).arg(orgPos.y()) + ")";
+                QString("%1,%2").arg(12).arg(34) + ")";
+                //QString("%1,%2").arg(orgPos.x()).arg(orgPos.y()) + ")";
 
             QString redoCom =
                 "relinkTo (\"" + getSelectString(dst) + "\"," + postNum + "," +
-                QString("%1,%2").arg(savePos.x()).arg(savePos.y()) + ")";
+                QString("%1,%2").arg(12).arg(34) + ")";
+                //QString("%1,%2").arg(savePos.x()).arg(savePos.y()) + ")";
 
             saveState(postSelStr, undoCom, preSelStr, redoCom,
                       QString("Relink %1 to %2")

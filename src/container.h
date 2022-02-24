@@ -77,7 +77,7 @@ class Container : public QGraphicsRectItem {
     ContainerType type;
 
     QPointF ct;    // Translation of inner content due to floating children
-    QPointF originalPos;
+    QPointF originalPos;    //! Save position before move for undo
     QString name;
 
     OrientationMode orientationMode;

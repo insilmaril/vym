@@ -209,25 +209,20 @@ class MapEditor : public QGraphicsView {
     // Temporary used for linkx
     Link *tmpLink;
 
-    // Temporary used for moving stuff around
-    MapObj *movingObj;           // moving a MapObj
-    QPointF movingObj_orgPos;    // org. pos of mouse before move
-    QPointF movingObj_orgRelPos; // org. relative pos of mouse before move
+    // Temporary used for moving stuff around   // FIXME-0 check what's still required
+    //MapObj *movingObj;           // moving a MapObj
+    //QPointF movingObj_orgPos;    // org. pos of mouse before move
+    //QPointF movingObj_orgRelPos; // org. relative pos of mouse before move
     QPointF movingObj_offset;    // offset of mousepointer to object
     QPointF movingCont_start;    // inital pos of moving Content or
     QPointF movingVec;           // how far has Content moved
 
+    // Moving containers
     QPointF movingObj_initialPointerPos;
-
-    // Moving branchContainers
     QPointF movingObj_initialContainerOffset;
     BranchContainer *tmpParentContainer;
-    BranchItem *tmpParentBranch;
-    int tmpParentPos;       // +1: below   -1: above  0: child
 
     QPointF contextMenuPos; // position where context event was triggered
-
-    AttributeTable *attrTable;
 
     bool printFrame;  // Print frame around map
     bool printFooter; // Print footer below map

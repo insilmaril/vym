@@ -37,7 +37,7 @@ void MapItem::appendChild(TreeItem *item)
     }
 }
 
-void MapItem::setRelPos(const QPointF &p)   // FIXME-2 unused
+void MapItem::setRelPos(const QPointF &p)   // FIXME-0 unused
 {
     /*
     posMode = Relative;
@@ -50,7 +50,7 @@ void MapItem::setRelPos(const QPointF &p)   // FIXME-2 unused
     */
 }
 
-void MapItem::setAbsPos(const QPointF &p)// FIXME-2 unused
+void MapItem::setAbsPos(const QPointF &p)// FIXME-0 unused
 {
     /*
     pos = p;
@@ -143,9 +143,9 @@ void MapItem::setRotation(const qreal &a)
         mo->setRotation(a);
 }
 
-MapObj *MapItem::getMO() { return mo; }
+MapObj *MapItem::getMO() { return mo; }   // FIXME-0 remove completely
 
-LinkableMapObj *MapItem::getLMO()
+LinkableMapObj *MapItem::getLMO()   // FIXME-0 remove completely
 {
     if (isBranchLikeType() || type == Image)
         return (LinkableMapObj *)mo;
