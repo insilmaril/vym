@@ -5236,7 +5236,7 @@ void VymModel::move(const double &x, const double &y)
     }
 }
 
-void VymModel::moveRel(const double &x, const double &y)
+void VymModel::moveRel(const double &x, const double &y)    // FIXME-2 OrnObj and LMO no longer used. Also no multiselections supported here.
 {
     MapItem *seli = (MapItem *)getSelectedItem();
     if (seli &&

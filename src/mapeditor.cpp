@@ -1818,12 +1818,12 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                             BranchContainer *bc = (BranchContainer*) g_item;
                             BranchItem *bi = bc->getBranchItem();
 
-                            Container *pc = bc->parentContainer();
+                            BranchItem *pi = bi->parentBranch();
                             QString pname;
-                            if (pc) 
-                                pname = pc->getName();
-                            else
+                            if (pi == model->getRootItem()) 
                                 pname = "no parent";
+                            else
+                                pname = pi->getHeadingPlain();
 
                             qDebug() << " ### a) releasing of " << bc->info() << "Parent: " << pname;
 
@@ -1835,22 +1835,21 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
 
                             if (bi->depth() > 1) {
                                 BranchItem *pi = bi->parentBranch();
-                                if (pi) {
-                                    if (pi->getBranchContainer()->getChildrenContainer()->getLayoutType() == Container::Floating)
-                                    {
-                                        //qDebug() << "        - setPos: " << t << " for " << bc->info(); // FIXME-2 remove debug
-                                        //qDebug() << "        - pc: " << pi->getBranchContainer()->info();
-                                        // Relative positioning
-                                        bc->setPos(bc->orgPos() + t);
-                                    }
-                                    else{
-                                        //qDebug() << "        - no setPos  for " << bc->info();    // FIXME-2 remove debug 
-                                        //qDebug() << "        - pc: " << pi->getBranchContainer()->info();
-                                    }
-
-                                    pi->getBranchContainer()->reposition();
+                                if (pi && pi->getBranchContainer()->getChildrenContainer()->getLayoutType() == Container::Floating)
+                                {
+                                    qDebug() << "        - setPos: " << t << " for " << bc->info(); // FIXME-2 remove debug
+                                    qDebug() << "        - pc: " << pi->getBranchContainer()->info();
+                                    // Relative positioning
+                                    bc->setPos(bc->orgPos() + t);
                                 }
+
+                                pi->getBranchContainer()->reposition();
                             } 
+                            else {
+                                qDebug() << "       pi.depth >1" << bc->orgPos();
+                                bc->setPos(bc->orgPos() + t);
+                            }
+                                
                             qDebug() << " ### c) releasing of " << bc->info() << " t=" << t << "Parent: " << pname;
                         } // children of tmpParentContainer
                         

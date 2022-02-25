@@ -51,7 +51,7 @@ void MapItem::setAbsPos(const QPointF &p)// FIXME-2 add image containers
     }
 }
 
-void MapItem::setHideLinkUnselected(bool b)
+void MapItem::setHideLinkUnselected(bool b) // FIXME-2 not working yet with containers
 {
     hideLinkUnselected = b;
     LinkableMapObj *lmo = getLMO();
