@@ -1819,38 +1819,19 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                             BranchItem *bi = bc->getBranchItem();
 
                             BranchItem *pi = bi->parentBranch();
-                            QString pname;
-                            if (pi == model->getRootItem()) 
-                                pname = "no parent";
-                            else
-                                pname = pi->getHeadingPlain();
 
-                            qDebug() << " ### a) releasing of " << bc->info() << "Parent: " << pname;
+                            qDebug() << " ### a) releasing of " << bc->info() << "bi->depth=" << bi->depth();
 
                             // Relink to original parent container 
                             // and keep (!) current absolute position
                             bi->updateContainerStackingOrder();
 
-                            qDebug() << " ### b) releasing of " << bc->info() << "Parent: " << pname;
-
-                            if (bi->depth() > 1) {
-                                BranchItem *pi = bi->parentBranch();
-                                if (pi && pi->getBranchContainer()->getChildrenContainer()->getLayoutType() == Container::Floating)
-                                {
-                                    qDebug() << "        - setPos: " << t << " for " << bc->info(); // FIXME-2 remove debug
-                                    qDebug() << "        - pc: " << pi->getBranchContainer()->info();
-                                    // Relative positioning
-                                    bc->setPos(bc->orgPos() + t);
-                                }
-
-                                pi->getBranchContainer()->reposition();
-                            } 
-                            else {
-                                qDebug() << "       pi.depth >1" << bc->orgPos();
+                            if (bi->depth() == 0 || (pi && pi->getBranchContainer()->getChildrenContainer()->getLayoutType() == Container::Floating))
+                            {
+                                // Relative positioning // FIXME-0 missing saveState
                                 bc->setPos(bc->orgPos() + t);
                             }
-                                
-                            qDebug() << " ### c) releasing of " << bc->info() << " t=" << t << "Parent: " << pname;
+
                         } // children of tmpParentContainer
                         
                         // Make the tmpParentContainer invisible again (size == 0) 
