@@ -602,10 +602,9 @@ void VymModelWrapper::move(qreal x, qreal y)
     ;
 }
 
-void VymModelWrapper::moveRel(qreal x, qreal y)
+void VymModelWrapper::moveRel(qreal x, qreal y) // FIXME-2 replace by setPos
 {
     model->moveRel(x, y);
-    ;
 }
 
 void VymModelWrapper::moveDown() { model->moveDown(); }
@@ -913,6 +912,11 @@ void VymModelWrapper::setNotePlainText(const QString &s)
     VymNote vn;
     vn.setPlainText(s);
     model->setNote(vn);
+}
+
+void VymModelWrapper::setPos(qreal x, qreal y)
+{
+    model->setPos(QPointF(x, y));
 }
 
 void VymModelWrapper::setFrameBorderWidth(int width)

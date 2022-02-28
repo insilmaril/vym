@@ -715,7 +715,7 @@ void Main::setupAPI()
     c->addPar(Command::Double, false, "Position y");
     modelCommands.append(c);
 
-    c = new Command("moveRel", Command::BranchOrImage);
+    c = new Command("moveRel", Command::BranchOrImage); // FIXME-2 replace by setPos
     c->addPar(Command::Double, false, "Position x");
     c->addPar(Command::Double, false, "Position y");
     modelCommands.append(c);
@@ -915,6 +915,11 @@ void Main::setupAPI()
 
     c = new Command("setNotePlainText", Command::Branch);
     c->addPar(Command::String, false, "Note of branch");
+    modelCommands.append(c);
+
+    c = new Command("setPos", Command::BranchOrImage);
+    c->addPar(Command::Double, false, "Position x");
+    c->addPar(Command::Double, false, "Position y");
     modelCommands.append(c);
 
     c = new Command("setScaleFactor", Command::Image);
@@ -6498,7 +6503,7 @@ void Main::updateActions()
                     actionMoveDown->setEnabled(false);
 
                 if ((selbi && !selbi->canMoveUp()) || selbis.count() > 1)
-                    actionMoveUpDiagonally->setEnabled(false);  // FIXME-0 add check for moveDiagonalUp
+                    actionMoveUpDiagonally->setEnabled(false);  // FIXME-2 add check for moveDiagonalUp
 
                 if ((selbi && selbi->depth() == 0) || selbis.count() > 1)
                     actionMoveDownDiagonally->setEnabled(false);

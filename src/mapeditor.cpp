@@ -1827,8 +1827,8 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
 
                             if (bi->depth() == 0 || (pi && pi->getBranchContainer()->getChildrenContainer()->getLayoutType() == Container::Floating))
                             {
-                                // Relative positioning // FIXME-0 missing saveState
-                                bc->setPos(bc->orgPos() + t);
+                                // Relative positioning
+                                model->setPos(bc->orgPos() + t, bi);
                             }
 
                         } // children of tmpParentContainer

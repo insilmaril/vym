@@ -5213,7 +5213,7 @@ void VymModel::setMapDefXLinkStyleEnd(const QString &s)
 
 QString VymModel::getMapDefXLinkStyleEnd() { return defXLinkStyleEnd; }
 
-void VymModel::move(const double &x, const double &y)
+void VymModel::move(const double &x, const double &y)   // FIXME-2 still required?
 {
     MapItem *seli = (MapItem *)getSelectedItem();
     if (seli &&
@@ -5260,6 +5260,33 @@ void VymModel::moveRel(const double &x, const double &y)    // FIXME-2 OrnObj an
             }
         }
     }
+}
+
+void VymModel::setPos(const QPointF &pos_new, TreeItem *selti)
+{
+    QList<TreeItem *> selItems;
+    if (selti) 
+        selItems.append(selti);
+    else
+        selItems = getSelectedItems();
+
+    foreach (TreeItem *ti, selItems) {
+        if (ti->isBranchLikeType() ) // FIXME-1 No images supported yet
+        {
+            BranchContainer *bc = ((BranchItem*)ti)->getBranchContainer();
+            QPointF pos_old = bc->orgPos();
+            QString pos_new_str = qpointFToString(pos_new);
+
+            saveState(ti, "setPos " + qpointFToString(pos_old),
+                      ti, "setPos " + pos_new_str,
+                      QString("Set position of %1 to %2")
+                          .arg(getObjectName(ti))
+                          .arg(pos_new_str));
+            bc->setPos(pos_new);
+        }
+    }
+    
+    emitSelectionChanged();
 }
 
 void VymModel::animate()
