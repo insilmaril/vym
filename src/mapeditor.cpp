@@ -1316,7 +1316,7 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
     QString sysFlagName;
     QUuid uid;
     /*
-    if (lmo_found) {    // FIXME-0 check for flags
+    if (lmo_found) {    // FIXME-2 check for flags
         uid = ((BranchObj *)lmo_found)->findSystemFlagUidByPos(p);
         if (!uid.isNull()) {
             Flag *flag = systemFlagsMaster->findFlagByUid(uid);
@@ -1368,12 +1368,12 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
             lastToggleDirection = toggleUndefined;
         }
     }
-    else
+    else 
         model->select(ti_found);
 
     e->accept();
 
-    // Take care of  remaining system flags _or_ modifier modes // FIXME-0
+    // Take care of  remaining system flags _or_ modifier modes // FIXME-2
     /*
     if (lmo_found) {
         if (!sysFlagName.isEmpty()) {
@@ -1722,7 +1722,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
         BranchContainer *bc;
         foreach (TreeItem *selti, model->getSelectedItems())
         {
-            if (selti->getType() == TreeItem::Image) {   // FIXME-0
+            if (selti->getType() == TreeItem::Image) {   // FIXME-2 no images movable yet
                 /*
                 FloatImageObj *fio = (FloatImageObj *)(((MapItem *)seli)->getLMO());
                 if (fio) {
@@ -1752,36 +1752,35 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
 
                 // Check if we have a destination and should relink
                 if (dsti && objectMoved && state() != MovingObjectWithoutLinking) {
-                    QString preParStr = model->getSelectString(seli->parent());
-                    QString preNum = QString::number(seli->num(), 10);
-                    QString preDstParStr;
+                    foreach(QGraphicsItem *g_item, tmpParentContainer->getChildrenContainer()->childItems()) {
+                        BranchContainer *bc = (BranchContainer*) g_item;
+                        BranchItem *bi = bc->getBranchItem();
+                        BranchItem *pi = bi->parentBranch();
 
-                    if (e->modifiers() & Qt::ShiftModifier &&
-                        dsti->parent()) { 
-                        
-                        // Link above dst
-                        preDstParStr = model->getSelectString(dsti->parent());
-                        model->relinkBranch((BranchItem *)selti,
-                                            (BranchItem *)dsti->parent(),
-                                            ((BranchItem *)dsti)->num(), true);
-                    } else if (e->modifiers() & Qt::ControlModifier &&
-                             dsti->parent()) {
-                        // Link below dst
-                        preDstParStr = model->getSelectString(dsti->parent());
-                        model->relinkBranch((BranchItem *)selti,
-                                            (BranchItem *)dsti->parent(),
-                                            ((BranchItem *)dsti)->num() + 1, true);
-                    } else { // Append to dst         
-                        qDebug() << "ME::release  append to dsti:  begin" << bc->info();
-                        preDstParStr = model->getSelectString(dsti);
-                        model->relinkBranch((BranchItem *)selti, (BranchItem *)dsti,
-                                            -1, true); //, movingObj_orgPos);    // FIXME-0 orgPos with containers?
-                        /*
-                        if (dsti->depth() == 0)
-                            selbo->move(savePos);   // FIXME-2 see savePos above - still needed?
-                        */
-                        qDebug() << "ME::release  append to dst:  end  " << bc->info();
-                    }
+                        if (e->modifiers() & Qt::ShiftModifier &&
+                            dsti->parent()) { 
+                            
+                            // Link above dst
+                            model->relinkBranch((BranchItem *)selti,
+                                                (BranchItem *)dsti->parent(),
+                                                ((BranchItem *)dsti)->num(), true);
+                        } else if (e->modifiers() & Qt::ControlModifier &&
+                                 dsti->parent()) {
+                            // Link below dst
+                            model->relinkBranch((BranchItem *)selti,
+                                                (BranchItem *)dsti->parent(),
+                                                ((BranchItem *)dsti)->num() + 1, true);
+                        } else { // Append to dst         
+                            qDebug() << "ME::release  append to dsti:  begin" << bc->info();
+                            model->relinkBranch((BranchItem *)selti, (BranchItem *)dsti,
+                                                -1, true); //, movingObj_orgPos);    // FIXME-2 orgPos with containers?
+                            /*
+                            if (dsti->depth() == 0)
+                                selbo->move(savePos);   // FIXME-2 see savePos above - still needed?
+                            */
+                            qDebug() << "ME::release  append to dst:  end  " << bc->info();
+                        }
+                    }   // Loop to relink branches
                 } else { // No destination, undo  temporary move
                     if (selti->depth() == 1) {
                         /* FIXME-2 old code. Logic to decide about positions should be completely within containers...

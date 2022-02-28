@@ -199,7 +199,7 @@ void Container::reposition()
     // a) calc sizes of subcontainers based on their layouts 
     //    (overloaded, not there e.g. for HeadingContainer!)
 
-    if (childItems().count() == 0 && layout != BFloat) {   // FIXME-0 check!
+    if (childItems().count() == 0 && layout != BFloat) {   // FIXME-0 check!  (BFloat unused...)
         // qDebug() << " * Setting r to minimal size. r =" << rect();
         r.setWidth(0);
         r.setHeight(0);
@@ -246,7 +246,7 @@ void Container::reposition()
     if (childItems().count() == 0) 
     {
         qDebug() << " * no children, could return?";
-        //return;  // FIXME-0 still required to continue, if children are BoundedFloat
+        //return;  // FIXME-2 still required to continue, if children are BoundedFloat
     }
 
     switch (layout) {
@@ -305,7 +305,7 @@ void Container::reposition()
                         if (c->pos().x() < topLeft.x())  topLeft.setX(c->pos().x());
                         if (c->pos().y() < topLeft.y())  topLeft.setY(c->pos().y());
 
-                        // FIXME-0 now expand bottomRight corner as needed
+                        // FIXME-2 now expand bottomRight corner as needed
                     }
                 }
                 */
@@ -475,7 +475,7 @@ void Container::reposition()
                         if (c->pos().x() < topLeft.x())  topLeft.setX(c->pos().x());
                         if (c->pos().y() < topLeft.y())  topLeft.setY(c->pos().y());
 
-                        // FIXME-0 now expand bottomRight corner as needed
+                        // FIXME-2 now expand bottomRight corner as needed
                     }
                 }
                 */

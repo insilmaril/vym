@@ -2,8 +2,8 @@
 
 #include "heading-container.h"
 
-#include "headingobj.h" //FIXME-1 probably move content from HO here to HC later
-#include "mapobj.h"     // FIXME-1 needed?
+#include "headingobj.h" //FIXME-2 probably move content from HO here to HC later
+#include "mapobj.h"     // FIXME-2 needed?
 
 HeadingContainer::HeadingContainer(QGraphicsItem *parent) : Container(parent) 
 

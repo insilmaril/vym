@@ -535,7 +535,7 @@ void BranchItem::updateVisuals()
 
 BranchObj *BranchItem::getBranchObj() { return (BranchObj *)mo; }
 
-BranchObj *BranchItem::createMapObj(QGraphicsScene *scene)  // FIXME-0 remove
+BranchObj *BranchItem::createMapObj(QGraphicsScene *scene)  // FIXME-2 remove finally
 {
     BranchObj *newbo;
 

@@ -162,8 +162,6 @@ void BranchContainer::reposition()
             setLayoutType(Horizontal);
             childrenContainer->setLayoutType(Vertical);
 
-            //setPos(100,100);    // FIXME-0 testing only
-
             if (leftOfCenter) {
                 // Left of center
                 setHorizontalDirection(RightToLeft);
@@ -187,9 +185,6 @@ void BranchContainer::reposition()
                 childrenContainer->setLayoutType(Floating);
             } else {
                 // Normal layout
-
-                //if (branchItem->getHeadingPlain().startsWith("xx")) setPos(50,50);  // FIXME-0 testing
-
                 qDebug() << "BC::reposition d > 1  loc=" << 
                     leftOfCenter << info();
 

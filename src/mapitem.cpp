@@ -135,9 +135,9 @@ void MapItem::setRotation(const qreal &a)
         mo->setRotation(a);
 }
 
-MapObj *MapItem::getMO() { return mo; }   // FIXME-0 remove completely
+MapObj *MapItem::getMO() { return mo; }   // FIXME-2 remove completely
 
-LinkableMapObj *MapItem::getLMO()   // FIXME-0 remove completely
+LinkableMapObj *MapItem::getLMO()   // FIXME-2 remove completely
 {
     if (isBranchLikeType() || type == Image)
         return (LinkableMapObj *)mo;
