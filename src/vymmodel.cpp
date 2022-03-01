@@ -5213,55 +5213,6 @@ void VymModel::setMapDefXLinkStyleEnd(const QString &s)
 
 QString VymModel::getMapDefXLinkStyleEnd() { return defXLinkStyleEnd; }
 
-void VymModel::move(const double &x, const double &y)   // FIXME-2 still required?
-{
-    MapItem *seli = (MapItem *)getSelectedItem();
-    if (seli &&
-        (seli->isBranchLikeType() || seli->getType() == TreeItem::Image)) {
-        LinkableMapObj *lmo = seli->getLMO();
-        if (lmo) {
-            QPointF ap(lmo->getAbsPos());
-            QPointF to(x, y);
-            if (ap != to) {
-                QString ps = qpointFToString(ap);
-                QString s = getSelectString(seli);
-                saveState(
-                    s, "move " + ps, s, "move " + qpointFToString(to),
-                    QString("Move %1 to %2").arg(getObjectName(seli)).arg(ps));
-                lmo->move(x, y);
-                reposition();
-                emitSelectionChanged();
-            }
-        }
-    }
-}
-
-void VymModel::moveRel(const double &x, const double &y)    // FIXME-2 OrnObj and LMO no longer used. Also no multiselections supported here.
-{
-    MapItem *seli = (MapItem *)getSelectedItem();
-    if (seli &&
-        (seli->isBranchLikeType() || seli->getType() == TreeItem::Image)) {
-        LinkableMapObj *lmo = seli->getLMO();
-        if (lmo) {
-            QPointF rp(lmo->getRelPos());
-            QPointF to(x, y);
-            if (rp != to) {
-                QString ps = qpointFToString(lmo->getRelPos());
-                QString s = getSelectString(seli);
-                saveState(s, "moveRel " + ps, s,
-                          "moveRel " + qpointFToString(to),
-                          QString("Move %1 to relative position %2")
-                              .arg(getObjectName(seli))
-                              .arg(ps));
-                ((OrnamentedObj *)lmo)->move2RelPos(x, y);
-                reposition();
-                lmo->updateLinkGeometry();
-                emitSelectionChanged();
-            }
-        }
-    }
-}
-
 void VymModel::setPos(const QPointF &pos_new, TreeItem *selti)
 {
     QList<TreeItem *> selItems;

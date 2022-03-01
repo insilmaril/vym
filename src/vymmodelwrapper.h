@@ -80,8 +80,6 @@ class VymModelWrapper : public VymScriptContext {
     bool isScrolled();
     void loadImage(const QString &filename);
     void loadNote(const QString &filename);
-    void move(qreal x, qreal y);
-    void moveRel(qreal x, qreal y);
     void moveDown();
     void moveUp();
     void moveSlideDown(int n);

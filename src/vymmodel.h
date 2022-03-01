@@ -690,12 +690,6 @@ class VymModel : public TreeModel {
     void setMapDefXLinkStyleEnd(const QString &s);
     QString getMapDefXLinkStyleEnd();
 
-    /*!  Move absolutly to (x,y).  */
-    void move(const double &x, const double &y);
-
-    /*!  Move relativly to (x,y).  */
-    void moveRel(const double &x, const double &y);
-
     /*!  Set position as QGraphicsItem. Only without parentItem absolute position is used */
     void setPos(const QPointF &p, TreeItem *ti = nullptr);
 

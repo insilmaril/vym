@@ -595,18 +595,6 @@ void VymModelWrapper::loadNote(const QString &filename)
     model->loadNote(
         filename); // FIXME-3 error handling missing (in vymmodel and here)
 }
-
-void VymModelWrapper::move(qreal x, qreal y)
-{
-    model->move(x, y);
-    ;
-}
-
-void VymModelWrapper::moveRel(qreal x, qreal y) // FIXME-2 replace by setPos
-{
-    model->moveRel(x, y);
-}
-
 void VymModelWrapper::moveDown() { model->moveDown(); }
 
 void VymModelWrapper::moveUp() { model->moveUp(); }

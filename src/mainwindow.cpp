@@ -715,11 +715,6 @@ void Main::setupAPI()
     c->addPar(Command::Double, false, "Position y");
     modelCommands.append(c);
 
-    c = new Command("moveRel", Command::BranchOrImage); // FIXME-2 replace by setPos
-    c->addPar(Command::Double, false, "Position x");
-    c->addPar(Command::Double, false, "Position y");
-    modelCommands.append(c);
-
     c = new Command("nop", Command::Any);
     modelCommands.append(c);
 
