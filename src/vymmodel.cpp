@@ -1326,7 +1326,7 @@ void VymModel::redo()
 
     QString errMsg;
     QString redoScript =
-        QString("model = vym.currentMap(); model.%1").arg(redoCommand);
+        QString("model = vym.currentMap();%1").arg(redoCommand);
     errMsg = QVariant(execute(redoScript)).toString();
     saveStateBlocked = saveStateBlockedOrg;
 
@@ -1376,11 +1376,11 @@ QString VymModel::lastRedoCommand()
 QVariant VymModel::repeatLastCommand()
 {
     QString command = "m = vym.currentMap();";
-    if (isUndoAvailable())
-        command += "m." +
-                   undoSet.value(
-                       QString("/history/step-%1/redoCommand").arg(curStep)) +
-                   ";";
+    QString redoCommand = undoSet.value(
+       QString("/history/step-%1/redoCommand").arg(curStep));
+    if (isUndoAvailable() && !redoCommand.startsWith("model."))
+        // Only repeat command, if not a set of commands
+        command += "m." + redoCommand + ";";
     else
         return false;
     return execute(command);
@@ -1448,7 +1448,8 @@ void VymModel::undo()
     // bool noErr;
     QString errMsg;
     QString undoScript =
-        QString("model = vym.currentMap(); model.%1").arg(undoCommand);
+        QString("model = vym.currentMap();%1").arg(undoCommand);
+    qDebug() << "VM::undo " << undoScript;
     errMsg = QVariant(execute(undoScript)).toString();
 
     undosAvail--;
@@ -1542,11 +1543,36 @@ void VymModel::saveState(const SaveMode &savemode, const QString &undoSelection,
     if (debug)
         qDebug() << "VM::saveState() for map " << mapName;
 
-    QString undoCommand = undoCom;
-    QString redoCommand = redoCom;
+    QString undoCommand;
+    QString redoCommand;
 
+    if (buildingUndoBlock)
+    {
+        // Also save select statements as part of commands
+        undoCommand = QString("model.select(\"%1\");model.%2;").arg(undoSelection).arg(undoCom);
+        redoCommand = QString("model.select(\"%1\");model.%2;").arg(redoSelection).arg(redoCom);
 
-    // Increase undo steps, but check for repeated actions
+        // Build string with all commands
+        undoBlock += undoCommand;
+        redoBlock += redoCommand;
+        if (debug) {
+            qDebug() << "VM::saveState  undoBlock = " << undoBlock;
+            qDebug() << "VM::saveState  redoBlock = " << redoBlock;
+        }
+        return;
+    }
+    
+    if (undoCom.startsWith("model.")) {
+        // Ending saveStateBlock, no "model." prefix needed for commands
+        undoCommand = undoCom;
+        redoCommand = redoCom;
+    } else {
+        // Prefix commands with "model."
+        undoCommand = QString("model.%1").arg(undoCom);
+        redoCommand = QString("model.%1").arg(redoCom);
+    }
+
+    // Increase undo steps, but check for repeated actions  // FIXME-2 currently unused
     // like editing a vymNote - then do not increase but replace last command
     /*
     QRegExp re ("parseVymText.*\\(.*vymnote");
@@ -1741,6 +1767,20 @@ void VymModel::saveStateBeforeLoad(LoadMode lmode, const QString &fname)
                                       .arg(getObjectName(selbi)));
         }
     }
+}
+
+void VymModel::saveStateBeginBlock(const QString &comment)
+{
+    buildingUndoBlock = true;
+    undoBlockComment = comment;
+    undoBlock.clear();
+    redoBlock.clear();
+}
+
+void VymModel::saveStateEndBlock()
+{
+    buildingUndoBlock = false;
+    saveState(UndoCommand, "", undoBlock, "", redoBlock, undoBlockComment, NULL);
 }
 
 QGraphicsScene *VymModel::getScene() { return mapEditor->getScene(); }

@@ -201,6 +201,11 @@ class VymModel : public TreeModel {
 
     QString histPath;       //!< Path to history file
     SimpleSettings undoSet; //!< undo/redo commands, saved in histPath
+    QString undoBlockComment;//!< Comment for a set of undo commands in history
+    QString undoBlock;      //!< undo commands in saveStateBeginBlock, including select statements
+    QString redoBlock;      //!< redo commands in saveStateBeginBlock, including select statements
+    bool buildingUndoBlock; //!< true, while a set of undo commands is built
+
     int stepsTotal;         //!< total number of steps (undos+redos)
     int curStep;            //!< Current step in history (ring buffer)
     int curClipboard;       //!< number of history step, which is the current
@@ -250,8 +255,8 @@ class VymModel : public TreeModel {
     */
     void saveState(const SaveMode &savemode, const QString &undoSelection,
                    const QString &undoCommand, const QString &redoSelection,
-                   const QString &redoCommand, const QString &comment,
-                   TreeItem *saveSelection, QString dataXML = "");
+                   const QString &redoCommand, const QString &comment = "",
+                   TreeItem *saveSelection = nullptr, QString dataXML = "");
 
     /*! Overloaded for convenience */
     void saveStateChangingPart(TreeItem *undoSelection, TreeItem *redoSelection,
@@ -264,16 +269,16 @@ class VymModel : public TreeModel {
     /*! Overloaded for convenience */
     void saveState(TreeItem *undoSelection, const QString &undoCommand,
                    TreeItem *redoSelection, const QString &redoCommand,
-                   const QString &comment);
+                   const QString &comment = "");
 
     /*! Overloaded for convenience */
     void saveState(const QString &undoSelection, const QString &undoCommand,
                    const QString &redoSelection, const QString &redoCommand,
-                   const QString &comment);
+                   const QString &comment = "");
 
     /*! Overloaded for convenience */
     void saveState(const QString &undoCommand, const QString &redoCommand,
-                   const QString &comment);
+                   const QString &comment = "");
 
     /*! Save a change in string and merge
     minor sequential  changes  */
@@ -284,6 +289,10 @@ class VymModel : public TreeModel {
     /*! Save state before loading a map */
     void saveStateBeforeLoad(LoadMode lmode, const QString &fname);
 
+    /*! Put several states into one block for a single undo step */
+    void saveStateBeginBlock(const QString &comment);
+    void saveStateEndBlock();
+    
     ////////////////////////////////////////////
     // unsorted so far
     ////////////////////////////////////////////

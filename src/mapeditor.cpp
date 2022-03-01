@@ -1804,13 +1804,16 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                     }   // Mainbranch moved, but not linked
 
                     // Selection was moved, but not relinked
-
-                    QPointF t = p - movingObj_initialPointerPos;    // FIXME-0 initialPointerPos never defined!!!
+                    QPointF t = p - movingObj_initialPointerPos;    // Defined in mousePressEvent
 
                     if (!tmpParentContainer->getChildrenContainer()->childItems().isEmpty()) {
                         qDebug() << "ME::releaseButton  emptying tmpParentContainer. Current items: " << 
                             tmpParentContainer->getChildrenContainer()->childItems().count() <<
                             " t = " << t;
+
+                        model->saveStateBeginBlock(
+                            QString("Move %1 items").arg(tmpParentContainer->getChildrenContainer()->childItems().count())
+                        );
                         // Empty the tmpParentContainer, which is used for moving
                         // Updating the stacking order also resets the original parents
                         foreach(QGraphicsItem *g_item, tmpParentContainer->getChildrenContainer()->childItems()) {
@@ -1819,19 +1822,22 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
 
                             BranchItem *pi = bi->parentBranch();
 
-                            qDebug() << " ### a) releasing of " << bc->info() << "bi->depth=" << bi->depth();
-
                             // Relink to original parent container 
                             // and keep (!) current absolute position
                             bi->updateContainerStackingOrder();
 
-                            if (bi->depth() == 0 || (pi && pi->getBranchContainer()->getChildrenContainer()->getLayoutType() == Container::Floating))
+                            if (bi->depth() == 0 || 
+                                    (pi && pi->getBranchContainer()->getChildrenContainer()->getLayoutType() == Container::Floating))
                             {
                                 // Relative positioning
+                                model->saveState(
+                                    bi, QString("setPos%1").arg(qpointFToString(bc->orgPos())),
+                                    bi, QString("setPos%1").arg(qpointFToString(bc->orgPos() + t)));
                                 model->setPos(bc->orgPos() + t, bi);
                             }
 
                         } // children of tmpParentContainer
+                        model->saveStateEndBlock();
                         
                         // Make the tmpParentContainer invisible again (size == 0) 
                         // and move container to correct position 
@@ -1839,7 +1845,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
 
                     }   // Empty tmpParenContainer
 
-                    /* FIXME-2 start animation for snapping back if not linked
+                    /* FIXME-1 start animation for snapping back if not linked
                     if (settings.value("/animation/use", true).toBool() &&
                         seli->depth() > 1
                         //		    && distance

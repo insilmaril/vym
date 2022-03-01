@@ -63,8 +63,7 @@ QString richTextToPlain(QString r, const QString &indent, const int &width)
 
 QString qpointToString(const QPoint &p)
 {
-    return "(" + QString("%1").arg(p.x()) + "," + QString("%1").arg(p.y()) +
-           ")";
+    return QString("(%1,%2)").arg(p.y()).arg(p.y());
 }
 
 QString qpointFToString(const QPointF &p)
