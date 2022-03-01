@@ -69,14 +69,12 @@ QString qpointToString(const QPoint &p)
 
 QString qpointFToString(const QPointF &p)
 {
-    return "(" + QString("%1").arg(p.x()) + "," + QString("%1").arg(p.y()) +
-           ")";
+    return QString("(%1,%2)").arg(p.x()).arg(p.y());
 }
 
 QString VectorToString(const Vector &p)
 {
-    return "(" + QString("%1").arg(p.x()) + "," + QString("%1").arg(p.y()) +
-           ")";
+    return QString("(%1,%2)").arg(p.x()).arg(p.y());
 }
 
 ostream &operator<<(ostream &stream, QPoint const &p)
