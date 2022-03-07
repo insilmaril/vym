@@ -287,17 +287,16 @@ void Container::reposition()
                         }
                     }
                     
-                r.setTopLeft(QPointF(x_min, y_min));
-                r.setBottomRight(QPointF(x_max, y_max));
+                r.setWidth(x_max - x_min);
+                r.setHeight(y_max - y_min);
 
                 setRect(r);
-                if (r.topLeft().x() < 0) ct.setX( -r.topLeft().x());
-                if (r.topLeft().y() < 0) ct.setY( -r.topLeft().y());
+                if (x_min < 0) ct.setX(x_min);
+                if (y_min < 0) ct.setY(y_min);
                 qDebug() << " * Layout Floating end of " << info() << " r=" << r << " ct=" << ct;
             }
             break;
         case Horizontal: {
-                //qDebug() << " * Layout Horizontal begin of " << info() << " r=" << r << " ct=" << ct << " horDir=" << horizontalDirection;
                 qreal h_max = 0;
                 qreal w_total = 0;
                 qreal h;
@@ -311,9 +310,9 @@ void Container::reposition()
                     if (c->layout == Floating) {
                         hasFloatingContent = true;
 
-                        // Get translation vector 
-                        if (c->ct.x() > ct.x()) ct.setX(c->ct.x());
-                        if (c->ct.y() > ct.y()) ct.setY(c->ct.y());
+                        // Consider translation vectors of children to my own ct 
+                        if (c->ct.x() < ct.x()) ct.setX(c->ct.x());
+                        if (c->ct.y() < ct.y()) ct.setY(c->ct.y());
 
                     } else {
                         h = c->rect().height();
@@ -334,20 +333,13 @@ void Container::reposition()
                         // Order from left to right
                         if (horizontalDirection == LeftToRight)
                         {
-                            c->setPos (x + c->ct.x(), (h_max - c->rect().height() ) / 2 + c->ct.y());
+                            c->setPos (x - c->ct.x(), (h_max - c->rect().height() ) / 2 - c->ct.y());
                             x += c->rect().width();
                         } else
                         {
-                            c->setPos (x - c->rect().width() + c->ct.x(), (h_max - c->rect().height() ) / 2 + c->ct.y());
+                            c->setPos (x - c->rect().width() + c->ct.x(), (h_max - c->rect().height() ) / 2 - c->ct.y());
                             x -= c->rect().width();
                         }
-                        /*
-                        if (c->getLayoutType () != BFloat) {
-                            qDebug() << "    - Translating by ct=" << ct;
-                            c->moveBy(ct.x(), ct.y());
-                        }
-                        qDebug() << "    - setting position:  " << c->getName() << "  pos=" << c->pos() << "  ct=" << ct;
-                        */
                     } // c->layout != Floating
                 }
                 r.setWidth(w_total);
@@ -398,11 +390,5 @@ void Container::reposition()
         default:
             qWarning() << "Container::reposition  unknown layout type!";
             break;
-    }
-
-    if (layout != BFloat)
-    {
-        //qDebug() << " # layout != BFloat for " << info() << " ct=" << ct;
-        //setPos (ct);
     }
 }
