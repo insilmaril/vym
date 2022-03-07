@@ -3,7 +3,8 @@
 #include "container.h"
 
 #include "branchitem.h"
-#include "mapobj.h"
+#include "mapobj.h" // FIXME-2 needed?
+#include "misc.h"   // FIXME-2 debugging only
 
 Container::Container(QGraphicsItem *parent) : QGraphicsRectItem(parent)
 {
@@ -277,65 +278,15 @@ void Container::reposition()
                             if (c->pos().y() + c->rect().height() > y_max)
                                 y_max = c->pos().y() + c->rect().height();
 
-                            qDebug() << "   - c: " << c->info() << 
-                                "  c->r=" << c->rect() << "p_min = " <<
-                                " ( " << x_min <<", " << y_min << ") " <<
-                                " p_max = " <<
-                                " ( " << x_max <<", " << y_max << ") " ;
+                            qDebug() << "   - c:" << c->info() << 
+                                "c->r=" << c->rect() << 
+                                "p_min=" <<
+                                qpointFToString(QPointF(x_min, y_min)) <<
+                                "p_max=" <<
+                                qpointFToString(QPointF(x_max, y_max));
                         }
                     }
                     
-                /*
-                QPointF topLeft = c->pos();
-                QPointF bottomRight = c->pos();
-                
-                if (childItems().count() > 0) {
-                    int n = 0;
-
-                    c = (Container*) (childItems().at(n));
-                    QPointF(
-                        c->pos().x() + c->rect().width(),
-                        c->pos().y() + c->rect().height() );
-
-                    qDebug() << "   - c: " << c->getName() << 
-                        "  pos=" << c->pos() << "  r=" << c->rect() << " n=" << n;
-
-                    while (n < childItems().count() - 1) {
-                        n++;
-                        qDebug() << "   - c: " << c->getName() << 
-                            "  pos=" << c->pos() << "  r=" << c->rect() << " n=" << n;
-
-                        if (c->pos().x() < topLeft.x())  topLeft.setX(c->pos().x());
-                        if (c->pos().y() < topLeft.y())  topLeft.setY(c->pos().y());
-
-                        // FIXME-2 now expand bottomRight corner as needed
-                    }
-                }
-                */
-                /////////////////////////////////////////////////// fix to here
-
-                /*
-                qreal x_min, y_min = 0;
-                qreal x_max, y_max = 0;
-                foreach (QGraphicsItem *child, childItems()) {
-                    c = (Container*) child;
-                    qDebug() << "   - c: " << c->getName() << "  pos=" << c->pos() << "  r=" << c->rect();
-
-                    if (c->pos().x() < x_min ) x_min = c->pos().x();  
-                    if (c->pos().y() < y_min ) y_min = c->pos().y();  
-
-                    if (c->pos().x() + c->rect().width() > x_max)
-                        x_max = c->pos().x() + c->rect().width();
-                    if (c->pos().y() + c->rect().height() > y_max)
-                        y_max = c->pos().y() + c->rect().height();
-                }
-
-                if (x_min < 0 ) ct.setX( -x_min);
-                if (y_min < 0 ) ct.setY( -y_min);
-
-                r.setRect(0, 0, x_max - x_min, y_max - y_min);
-                */
-
                 r.setTopLeft(QPointF(x_min, y_min));
                 r.setBottomRight(QPointF(x_max, y_max));
 
