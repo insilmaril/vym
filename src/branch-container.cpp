@@ -53,11 +53,10 @@ void BranchContainer::init()
     scene()->addItem (innerContainer);
 
     innerContainer->addContainer(headingContainer);
-    innerContainer->addContainer(childrenContainer);            // Default, probably depends on depth
+    innerContainer->addContainer(childrenContainer);
     addContainer(innerContainer);
 
     setBrush(Qt::NoBrush);
-    //setPen(Qt::NoPen);
     setLayoutType(Container::Horizontal);
     setHorizontalDirection(Container::LeftToRight);
 }
@@ -75,14 +74,10 @@ QString BranchContainer::getName() {
 
 void BranchContainer::addToChildrenContainer(Container *c, bool keepScenePos)
 {
-    qDebug() << "BC::addToChildrenContainer a) c: " << c;
     QPointF sp = c->scenePos();
     c->setParentItem(childrenContainer);
     if (keepScenePos)
-    {
         c->setPos(sceneTransform().inverted().map(sp));
-        qDebug() << "BC::addToChildrenContainer b) c: " << c << " sp:" << sp;
-    }
 }
 
 Container* BranchContainer::getChildrenContainer()
