@@ -35,6 +35,7 @@ class VymWrapper : public VymScriptContext {
     void clearConsole();
     bool isConfluenceAgentAvailable();
     QObject *currentMap();
+    void editHeading();
     bool loadMap(const QString &filename);
     int mapCount();
     void selectMap(uint n);

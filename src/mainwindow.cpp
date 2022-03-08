@@ -1015,6 +1015,9 @@ void Main::setupAPI()
     c = new Command("currentMapIndex", Command::Any);
     vymCommands.append(c);
 
+    c = new Command("editHeading", Command::Branch);
+    vymCommands.append(c);
+
     c = new Command("loadMap", Command::Any);
     c->addPar(Command::String, false, "Path to map");
     vymCommands.append(c);
@@ -3511,7 +3514,7 @@ VymView *Main::currentView() const
     if (tabWidget->currentWidget())
         return (VymView *)tabWidget->currentWidget();
     else
-        return NULL;
+        return nullptr;
 }
 
 VymView *Main::view(const int i) { return (VymView *)tabWidget->widget(i); }
@@ -3520,7 +3523,7 @@ MapEditor *Main::currentMapEditor() const
 {
     if (tabWidget->currentWidget())
         return currentView()->getMapEditor();
-    return NULL;
+    return nullptr;
 }
 
 uint Main::currentMapID() const
