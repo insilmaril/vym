@@ -178,6 +178,9 @@ void BranchContainer::reposition()
                     leftOfCenter << info();
                 //setLayoutType(BFloat);
                 childrenContainer->setLayoutType(Floating);
+                childrenContainer->setBrush(Qt::red);
+                innerContainer->setBrush(Qt::cyan);
+                setBrush(Qt::blue);
             } else {
                 // Normal layout
                 qDebug() << "BC::reposition d > 1  loc=" << 

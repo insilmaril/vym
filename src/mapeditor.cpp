@@ -1843,6 +1843,8 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                         // and move container to correct position 
                         tmpParentContainer->reposition();
 
+                        model->reposition();    // FIXME-2 needed? 
+
                     }   // Empty tmpParenContainer
 
                     /* FIXME-1 start animation for snapping back if not linked

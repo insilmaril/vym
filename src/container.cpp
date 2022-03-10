@@ -150,7 +150,7 @@ void Container::addContainer(Container *c)
     c->setParentItem(this);
 }
 
-QVariant Container::itemChange(GraphicsItemChange change, const QVariant &value)
+QVariant Container::itemChange(GraphicsItemChange change, const QVariant &value)    // FIXME-2 needed?
 {
     //qDebug() << "Container::itemChange of " << this << ": " << change << value;
     /*
@@ -258,62 +258,69 @@ void Container::reposition()
                     /////////////////////////////////////////////////// fix from here
                     // Calc bbox of all children to prepare calculating rect()
 
-                    qreal x_min, y_min, x_max, y_max;
+                    QPointF tl; // topLeft in scene coord
+                    QPointF br; // bottomRight in scene coord
+                    QPointF p;
                     if (childItems().count() > 0) {
+                        // Set initial minima and maxima
                         c = (Container*) childItems().first();
-                        x_min = c->pos().x();
-                        y_min = c->pos().y();
+                        tl = c->mapToScene(c->rect().topLeft());
+                        br = c->mapToScene(c->rect().bottomRight());
 
-                        x_max = x_min + c->rect().width();
-                        y_max = y_min + c->rect().height();
-
+                        // Consider other children
                         foreach (QGraphicsItem *child, childItems()) {
                             c = (Container*) child;
 
-                            if (c->pos().x() < x_min ) x_min = c->pos().x();  
-                            if (c->pos().y() < y_min ) y_min = c->pos().y();  
+                            p = c->mapToScene(c->rect().topLeft());
 
-                            if (c->pos().x() + c->rect().width() > x_max)
-                                x_max = c->pos().x() + c->rect().width();
-                            if (c->pos().y() + c->rect().height() > y_max)
-                                y_max = c->pos().y() + c->rect().height();
+                            if (p.x() < tl.x()) tl.setX(p.x());
+                            if (p.y() < tl.y()) tl.setY(p.y());
+
+                            p = c->mapToScene(c->rect().bottomRight());
+                            if (p.x() > br.x()) br.setX(p.x());
+                            if (p.y() > br.y()) br.setY(p.y());
+
 
                             qDebug() << "   - c:" << c->info() << 
                                 "c->r=" << c->rect() << 
-                                "p_min=" <<
-                                qpointFToString(QPointF(x_min, y_min)) <<
-                                "p_max=" <<
-                                qpointFToString(QPointF(x_max, y_max));
+                                "tl=" <<
+                                qpointFToString(tl) <<
+                                "br=" <<
+                                qpointFToString(br);
                         }
                     }
                     
-                r.setWidth(x_max - x_min);
-                r.setHeight(y_max - y_min);
+                r.setTopLeft(mapFromScene(tl));
+                r.setBottomRight(mapFromScene(br));
 
                 setRect(r);
-                if (x_min < 0) ct.setX(x_min);
-                if (y_min < 0) ct.setY(y_min);
                 qDebug() << " * Layout Floating end of " << info() << " r=" << r << " ct=" << ct;
             }
             break;
         case Horizontal: {
                 qreal h_max = 0;
-                qreal w_total = 0;
+                qreal w_total = 0;  // total width of non-floating children
                 qreal h;
 
                 bool hasFloatingContent = false;
                 ct = QPointF(); // Reset translation vector
+                ctr = QRectF();
+                QPointF p_float;
                 
                 // Calc max height and total width
                 foreach (QGraphicsItem *child, childItems()) {
                     c = (Container*) child;
                     if (c->layout == Floating) {
+                        if (!hasFloatingContent)
+                            // Initial assignment
+                            ctr = c->rect();
                         hasFloatingContent = true;
 
-                        // Consider translation vectors of children to my own ct 
-                        if (c->ct.x() < ct.x()) ct.setX(c->ct.x());
-                        if (c->ct.y() < ct.y()) ct.setY(c->ct.y());
-
+                        // Consider bounding boxes of floating children to my own ctr
+                        if (c->rect().left() < ctr.left()) ctr.setLeft(c->rect().left());
+                        if (c->rect().top()  < ctr.top())  ctr.setTop(c->rect().top());
+                        if (c->rect().right()  > ctr.right()) ctr.setRight(c->rect().right());
+                        if (c->rect().bottom() > ctr.bottom()) ctr.setBottom(c->rect().bottom());
                     } else {
                         h = c->rect().height();
                         h_max = (h_max < h) ? h : h_max;
@@ -323,6 +330,9 @@ void Container::reposition()
                 }
 
                 qreal x;
+                qreal x_float;  // x coord of floating content in my coord system
+                QRectF r_float; // rectangle of floating content in children coord system
+
                 horizontalDirection == LeftToRight ? x = 0 : x = w_total;
 
                 // Position children
@@ -333,17 +343,27 @@ void Container::reposition()
                         // Order from left to right
                         if (horizontalDirection == LeftToRight)
                         {
-                            c->setPos (x - c->ct.x(), (h_max - c->rect().height() ) / 2 - c->ct.y());
+                            c->setPos (x, (h_max - c->rect().height() ) / 2);
                             x += c->rect().width();
                         } else
                         {
-                            c->setPos (x - c->rect().width() + c->ct.x(), (h_max - c->rect().height() ) / 2 - c->ct.y());
+                            c->setPos (x - c->rect().width(), (h_max - c->rect().height() ) / 2);
                             x -= c->rect().width();
                         }
-                    } // c->layout != Floating
+                    } else {
+                        // c->layout == Floating: Save position and rectangle
+                        x_float = x;
+                        r_float = c->ctr;
+                    }
                 }
-                r.setWidth(w_total);
-                r.setHeight(h_max);
+                if (c->layout == Floating) {
+                    // width is what???ß FIXME-0
+                    r.setWidth(w_total + ct.x());   // FIXME-2 adding ct here: testing only
+                    r.setHeight(h_max + ct.y());
+                } else {
+                    r.setWidth(w_total);
+                    r.setHeight(h_max);
+                }
             }
             setRect(r);
             qDebug() << " * Horizontal layout - Setting rect of " << info() << " to " << r << "ctr=" << ctr;
