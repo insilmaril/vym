@@ -261,37 +261,31 @@ void Container::reposition()
                     QPointF tl; // topLeft in scene coord
                     QPointF br; // bottomRight in scene coord
                     QPointF p;
+                    QRectF rc;
                     if (childItems().count() > 0) {
                         // Set initial minima and maxima
                         c = (Container*) childItems().first();
-                        tl = c->mapToScene(c->rect().topLeft());
-                        br = c->mapToScene(c->rect().bottomRight());
+                        rc = mapRectFromItem(c, c->rect());
 
+                        tl = rc.topLeft();
+                        br = rc.bottomRight();
                         // Consider other children
                         foreach (QGraphicsItem *child, childItems()) {
                             c = (Container*) child;
-
-                            p = c->mapToScene(c->rect().topLeft());
+                            rc = mapRectFromItem(c, c->rect());
+                            p = rc.topLeft();
 
                             if (p.x() < tl.x()) tl.setX(p.x());
                             if (p.y() < tl.y()) tl.setY(p.y());
 
-                            p = c->mapToScene(c->rect().bottomRight());
+                            p = rc.bottomRight();
                             if (p.x() > br.x()) br.setX(p.x());
                             if (p.y() > br.y()) br.setY(p.y());
-
-
-                            qDebug() << "   - c:" << c->info() << 
-                                "c->r=" << c->rect() << 
-                                "tl=" <<
-                                qpointFToString(tl) <<
-                                "br=" <<
-                                qpointFToString(br);
                         }
                     }
                     
-                r.setTopLeft(mapFromScene(tl));
-                r.setBottomRight(mapFromScene(br));
+                r.setTopLeft(tl);
+                r.setBottomRight(br);
 
                 setRect(r);
                 qDebug() << " * Layout Floating end of " << info() << " r=" << r << " ct=" << ct;
