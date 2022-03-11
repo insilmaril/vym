@@ -178,7 +178,7 @@ void BranchContainer::reposition()
                     leftOfCenter << info();
                 //setLayoutType(BFloat);
                 childrenContainer->setLayoutType(Floating);
-                childrenContainer->setBrush(Qt::red);
+                //childrenContainer->setBrush(Qt::red);
                 innerContainer->setBrush(Qt::cyan);
                 setBrush(Qt::blue);
             } else {

@@ -305,10 +305,11 @@ void Container::reposition()
                 foreach (QGraphicsItem *child, childItems()) {
                     c = (Container*) child;
                     if (c->layout == Floating) {
-                        if (!hasFloatingContent)
+                        if (!hasFloatingContent) {
                             // Initial assignment
-                            ctr = c->rect();
-                        hasFloatingContent = true;
+                            ctr = mapRectFromItem(c, c->rect());
+                            hasFloatingContent = true;
+                        }
 
                         // Consider bounding boxes of floating children to my own ctr
                         if (c->rect().left() < ctr.left()) ctr.setLeft(c->rect().left());
@@ -325,7 +326,6 @@ void Container::reposition()
 
                 qreal x;
                 qreal x_float;  // x coord of floating content in my coord system
-                QRectF r_float; // rectangle of floating content in children coord system
 
                 horizontalDirection == LeftToRight ? x = 0 : x = w_total;
 
@@ -337,7 +337,7 @@ void Container::reposition()
                         // Order from left to right
                         if (horizontalDirection == LeftToRight)
                         {
-                            c->setPos (x, (h_max - c->rect().height() ) / 2);
+                            c->setPos (x +  c->ct.x(), (h_max - c->rect().height() ) / 2 + c->ct.y());
                             x += c->rect().width();
                         } else
                         {
@@ -347,20 +347,31 @@ void Container::reposition()
                     } else {
                         // c->layout == Floating: Save position and rectangle
                         x_float = x;
-                        r_float = c->ctr;
                     }
                 }
-                if (c->layout == Floating) {
-                    // width is what???ß FIXME-0
-                    r.setWidth(w_total + ct.x());   // FIXME-2 adding ct here: testing only
-                    r.setHeight(h_max + ct.y());
-                } else {
-                    r.setWidth(w_total);
-                    r.setHeight(h_max);
+
+                ct = QPointF();
+                if (hasFloatingContent) {
+                    // Calculate translation vector ct to move *parent* later on
+                    // now after regular containers have been positioned
+                    // Also enlarge bounding box to maximum of floating and regular content
+                    if (ctr.left() < 0) {
+                        ct.setX(-ctr.left());
+                        w_total += ct.x();
+                    }
+                    if (ctr.top() < 0) {
+                        ct.setY(-ctr.top());
+                        h_max += ct.y();
+                    }
+
+                    qDebug() << " ### Found Floating: ctr=" << ctr << "ct=" << ct;
                 }
-            }
+
+                r.setWidth(w_total);
+                r.setHeight(h_max);
+            } // Horizontal layout
             setRect(r);
-            qDebug() << " * Horizontal layout - Setting rect of " << info() << " to " << r << "ctr=" << ctr;
+            qDebug() << " * Horizontal layout - Setting rect of " << info() << " to " << r << "ctr=" << ctr << "ct=" << ct;
             break;
         case Vertical: {
                 qreal h_total = 0;
