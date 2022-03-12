@@ -284,7 +284,7 @@ void Container::reposition()
 
                 setRect(r);
                 setPos(QPointF(0, 0));
-                qDebug() << " * Layout Floating end of " << info() << " r=" << r << " ct=" << ct;
+                //qDebug() << " * Layout Floating end of " << info() << " r=" << r << " ct=" << ct;
             }
             break;
         case Horizontal: {
@@ -336,7 +336,7 @@ void Container::reposition()
                             //c->setPos (x +  c->ct.x(), (h_max - c->rect().height() ) / 2 + c->ct.y());
                             c->setPos (x, (h_max - c->rect().height() ) / 2);
                             x += c->rect().width();
-                            qDebug() << "     - setPos for " << c->info() << "x=" << x;
+                            //qDebug() << "     - setPos for " << c->info() << "x=" << x;
                         } else
                         {
                             c->setPos (x - c->rect().width(), (h_max - c->rect().height() ) / 2);
@@ -353,7 +353,7 @@ void Container::reposition()
                     // Calculate translation vector ct to move *parent* later on
                     // now after regular containers have been positioned
                     // Also enlarge bounding box to maximum of floating and regular content
-                    qDebug() << "   - floating content  ctr=" << ctr << "x_float=" << x_float;
+                    //qDebug() << "   - floating content  ctr=" << ctr << "x_float=" << x_float;
                     if (ctr.left() < 0) {
                         ct.setX(-ctr.left() - x_float);
                         w_total += ct.x();
@@ -367,10 +367,10 @@ void Container::reposition()
                     foreach (QGraphicsItem *child, childItems()) {
                         c = (Container*) child;
                         c->setPos(c->pos() + ct);
-                        if (c->layout == Floating) 
-                            qDebug() << " ## translated the floatin " << c->info() << " by ct=" << ct;
+                        //if (c->layout == Floating) 
+                        //    qDebug() << " ## translated the floatin " << c->info() << " by ct=" << ct;
                     }
-                    qDebug() << " ### Found Floating: ctr=" << ctr << "ct=" << ct << "x_float=" << x_float;
+                    //qDebug() << " ### Found Floating: ctr=" << ctr << "ct=" << ct << "x_float=" << x_float;
                 }
 
                 r.setWidth(w_total);
@@ -379,7 +379,7 @@ void Container::reposition()
             setRect(r);
             qDebug() << " * Layout hor end " << info() << " to " << r << "ctr=" << ctr << "ct=" << ct;
             break;
-        case Vertical: {
+        case Vertical: { // FIXME-2 consider floating children like in Horizontal
                 qreal h_total = 0;
                 qreal w_max = 0;
                 qreal w;
