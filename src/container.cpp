@@ -321,7 +321,8 @@ void Container::reposition()
                 }
 
                 qreal x;
-                qreal x_float;  // x coord of floating content in my coord system
+                qreal x_float;  // x coord of floating content in my coord system to calc bbox later
+                qreal w_last;   // last width before adding current container width to bbox later
 
                 horizontalDirection == LeftToRight ? x = 0 : x = w_total;
 
@@ -330,17 +331,18 @@ void Container::reposition()
                     c = (Container*) child;
 
                     if (c->layout != Floating) {
+                        w_last = c->rect().width();
                         // Order from left to right
                         if (horizontalDirection == LeftToRight)
                         {
                             //c->setPos (x +  c->ct.x(), (h_max - c->rect().height() ) / 2 + c->ct.y());
                             c->setPos (x, (h_max - c->rect().height() ) / 2);
-                            x += c->rect().width();
+                            x += w_last;
                             //qDebug() << "     - setPos for " << c->info() << "x=" << x;
                         } else
                         {
                             c->setPos (x - c->rect().width(), (h_max - c->rect().height() ) / 2);
-                            x -= c->rect().width();
+                            x -= w_last;
                         }
                     } else {
                         // c->layout == Floating: Save position and rectangle
@@ -362,7 +364,10 @@ void Container::reposition()
                         ct.setY(-ctr.top());
                         h_max += ct.y();
                     }
-
+                    if (ctr.right() > x_float) {
+                        w_total += ctr.right() - x_float - w_last;
+                    }
+                    
                     // Finally move containers by ct
                     foreach (QGraphicsItem *child, childItems()) {
                         c = (Container*) child;
