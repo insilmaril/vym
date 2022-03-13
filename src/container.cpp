@@ -351,7 +351,7 @@ void Container::reposition()
                         h_max = ctr.height();
                     }
 
-                    // Finally move containers by ct
+                    // Finally move containers by ct    // FIXME-0 should we move mapCenter or will this cause flickering?
                     foreach (QGraphicsItem *child, childItems()) {
                         c = (Container*) child;
                         c->setPos(c->pos() + ct);

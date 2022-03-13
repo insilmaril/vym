@@ -123,6 +123,7 @@ void BranchContainer::updateVisuals()
         headingContainer->setText(branchItem->getHeadingText());
 }
 
+// FIXME-0 BrancContainer - wrong horizontalDirection below "float" if left of center
 void BranchContainer::reposition()  // FIXME-0 Concept for floating mainbranches and orientation
 {
     if (branchItem)
