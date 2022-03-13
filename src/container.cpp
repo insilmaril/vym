@@ -347,8 +347,8 @@ void Container::reposition()
                     if (ctr.right() > x_float) {
                         w_total += ctr.right() - x_float - w_last;
                     }
-                    if (ctr.bottom() > h_max) {
-                        h_max = ctr.bottom();
+                    if (ctr.height() > h_max) {
+                        h_max = ctr.height();
                     }
 
                     // Finally move containers by ct
