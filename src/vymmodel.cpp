@@ -3324,7 +3324,7 @@ BranchItem *VymModel::addNewBranchBefore()
     return newbi;
 }
 
-bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int pos,   // FIXME-0 remove orgPos, savePos
+bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int pos,   // FIXME-1 relink: remove orgPos, savePos
                             bool updateSelection, QPointF orgPos)
 {
     if (branch && dst) {
@@ -3398,7 +3398,7 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int pos,   // F
         QString postSelStr = getSelectString(branch);
         QString postNum = QString::number(branch->num(), 10);
 
-        // FIXME-0 Check concept of saving old and new position of containers when relinking
+        // FIXME-1 relink: Check concept of saving old and new position of containers when relinking
         /*
         QPointF savePos;
         LinkableMapObj *lmosel = branch->getLMO();
@@ -5262,7 +5262,7 @@ void VymModel::setPos(const QPointF &pos_new, TreeItem *selti)
         selItems = getSelectedItems();
 
     foreach (TreeItem *ti, selItems) {
-        if (ti->isBranchLikeType() ) // FIXME-1 No images supported yet
+        if (ti->isBranchLikeType() ) // FIXME-2 No images supported yet
         {
             BranchContainer *bc = ((BranchItem*)ti)->getBranchContainer();
             QPointF pos_old = bc->orgPos();

@@ -123,9 +123,8 @@ void BranchContainer::updateVisuals()
         headingContainer->setText(branchItem->getHeadingText());
 }
 
-void BranchContainer::reposition()
+void BranchContainer::reposition()  // FIXME-0 Concept for floating mainbranches and orientation
 {
-    // FIXME-2 temporary:   Let mainbranches float. Needs to go to central Layout class later
     if (branchItem)
     {
         bool leftOfCenter;

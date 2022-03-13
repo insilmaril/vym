@@ -1273,10 +1273,10 @@ void MapEditor::keyReleaseEvent(QKeyEvent *e)
 void MapEditor::startMovingView(QMouseEvent *e)
 {
     setState(MovingView);
-    movingObj_offset = e->globalPos();  // FIXME-0 check, maybe rename variable?
-    movingCont_start =                  // FIXME-0 check, maybe rename variable?
+    movingObj_offset = e->globalPos();  // FIXME-2 check, maybe rename variable?
+    movingCont_start =                  // Used for scrollbars when moving view
         QPointF(horizontalScrollBar()->value(), verticalScrollBar()->value());
-    movingVec = QPointF(0, 0);
+    movingVec = QPointF(0, 0);          // Used for scrollbars when moving view
     setCursor(HandOpenCursor);
 }
 
@@ -1747,7 +1747,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                 
                 setState(Neutral);
                 
-                // For Redo we may need to save original selection   // FIXME-0 not working with multiple selection yet
+                // For Redo we may need to save original selection   // FIXME-2 not working with multiple selection yet?
                 QString preSelStr = model->getSelectString(selti);
 
                 // Check if we have a destination and should relink
