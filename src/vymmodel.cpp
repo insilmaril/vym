@@ -2298,7 +2298,7 @@ void VymModel::setFrameBrushColor(
 }
 
 void VymModel::setFramePadding(
-    const int &i) // FIXME-4 not saved if there is no LMO
+    const int &i)
 {
     BranchItem *bi = getSelectedBranch();
     if (bi) {
@@ -2317,7 +2317,7 @@ void VymModel::setFramePadding(
 }
 
 void VymModel::setFrameBorderWidth(
-    const int &i) // FIXME-4 not saved if there is no LMO
+    const int &i)
 {
     BranchItem *bi = getSelectedBranch();
     if (bi) {
@@ -3932,7 +3932,7 @@ void VymModel::toggleFlagByUid(
 
 void VymModel::toggleFlagByName(const QString &name, bool useGroups)
 {
-    // Toggling by name only used from vymmodelwrapper for scripting  // FIXME-4
+    // Toggling by name only used from vymmodelwrapper for scripting  // FIXME-5
     // maybe rework?
     BranchItem *bi = getSelectedBranch();
 
@@ -4217,8 +4217,10 @@ void VymModel::setHeadingConfluencePageName()   // FIXME-0 always asks for Confl
     }
 }
 
-void VymModel::setVymLink(const QString &s) // FIXME-4 fail, if s does not exist
+void VymModel::setVymLink(const QString &s)
 {
+    if (s.isEmpty()) return;
+
     BranchItem *bi = getSelectedBranch();
     if (bi) {
         saveState(
@@ -4935,8 +4937,7 @@ void VymModel::unsetContextPos()
     hasContextPos = false;
 }
 
-void VymModel::reposition() // FIXME-4 VM should have no need to reposition, but
-                            // the views...
+void VymModel::reposition()
 {
     if (repositionBlocked)
         return;
