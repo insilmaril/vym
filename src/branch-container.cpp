@@ -136,15 +136,13 @@ void BranchContainer::reposition()
             qDebug() << "BC::reposition d == 0 " << getName() << this << 
                 "children: " << childrenContainer;
 
-            //setLayoutType(BFloat);
-            //childrenContainer->setLayoutType(BFloat);
             setLayoutType(Horizontal);
-            //setHorizontalDirection(LeftToRight);
-            setHorizontalDirection(RightToLeft);
+            setHorizontalDirection(LeftToRight);
             //innerContainer->setHorizontalDirection(LeftToRight);
             innerContainer->setHorizontalDirection(RightToLeft);
-            childrenContainer->setVerticalAlignment(Left);
-            childrenContainer->setLayoutType(Vertical);
+            //childrenContainer->setVerticalAlignment(Left);
+            //childrenContainer->setLayoutType(Vertical);
+            childrenContainer->setLayoutType(Floating);
         } else if (branchItem->depth() == 1) {
             // MainBranch
 
@@ -178,7 +176,6 @@ void BranchContainer::reposition()
                 // Special layout: floating children 
                 qDebug() << "BC::reposition d > 1  FLOATING begin loc" << 
                     leftOfCenter << info();
-                //setLayoutType(BFloat);
                 childrenContainer->setLayoutType(Floating);
                 childrenContainer->setBrush(Qt::red);
                 innerContainer->setBrush(Qt::cyan);
