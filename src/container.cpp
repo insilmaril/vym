@@ -382,7 +382,6 @@ void Container::reposition()
                 r.setHeight(h_max);
             } // Horizontal layout
             setRect(r);
-            qDebug() << " * Layout hor end " << info() << " to " << r << "ctr=" << ctr << "ct=" << ct;
             break;
         case Vertical: { // FIXME-2 consider floating children like in Horizontal
                 qreal h_total = 0;

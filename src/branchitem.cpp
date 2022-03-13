@@ -156,8 +156,6 @@ QString BranchItem::saveToDir(const QString &tmpdir, const QString &prefix,
         // Use relative coordinates
         posAttr = attribut("relPosX", QString().setNum(branchContainer->pos().x())) +
                   attribut("relPosY", QString().setNum(branchContainer->pos().y())); 
-    else 
-        qDebug() << "BI::save " << branchContainer->info() <<   branchContainer->isFloating() <<  getChildrenContainer()->info();
 
     s = beginElement(elementName + posAttr + getGeneralAttr() +
                      scrolledAttr + getIncludeImageAttr() + 
@@ -643,12 +641,12 @@ void BranchItem::updateContainerStackingOrder()
 
     QPointF sp = branchContainer->scenePos();
 
-    /*
-    */
+    /* FIXME-2 debug only
     qDebug() << "      ## BI::updateContainerStackingOrder begin  bc.scenePos=" << branchContainer->scenePos() << 
         "pos=" << branchContainer->pos();
     qDebug() << "         - bc.parent: " << branchContainer->parentContainer()->info();
     qDebug() << "         - bc.p^2   : " << branchContainer->parentContainer()->parentContainer()->info();
+    */
 
     branchContainer->setParentItem(nullptr);
 

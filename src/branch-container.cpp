@@ -139,9 +139,11 @@ void BranchContainer::reposition()
             //setLayoutType(BFloat);
             //childrenContainer->setLayoutType(BFloat);
             setLayoutType(Horizontal);
-                setHorizontalDirection(LeftToRight);
-                innerContainer->setHorizontalDirection(LeftToRight);
-                childrenContainer->setVerticalAlignment(Left);
+            //setHorizontalDirection(LeftToRight);
+            setHorizontalDirection(RightToLeft);
+            //innerContainer->setHorizontalDirection(LeftToRight);
+            innerContainer->setHorizontalDirection(RightToLeft);
+            childrenContainer->setVerticalAlignment(Left);
             childrenContainer->setLayoutType(Vertical);
         } else if (branchItem->depth() == 1) {
             // MainBranch
