@@ -310,7 +310,6 @@ void Container::reposition()
                 }
 
                 qreal x;
-                qreal x_float;  // x coord of floating content in my coord system to calc bbox later
                 qreal w_last;   // last width before adding current container width to bbox later
 
                 horizontalDirection == LeftToRight ? x = 0 : x = w_total;
@@ -335,7 +334,6 @@ void Container::reposition()
                     } else {
                         // c->layout == Floating: Save position and rectangle
                         c->setPos (x, 0);
-                        x_float = x;
                     }
                 }
 
@@ -400,7 +398,7 @@ void Container::reposition()
                         w = c->rect().width();
                         w_max = (w_max < w) ? w : w_max;
                         h_total += c->rect().height();
-                        qDebug() << " - LV c: " << c->info() << "  h_total=" << h_total;
+                        qDebug() << " - VL c: " << c->info() << "  h_total=" << h_total;
                     }
                 }
 
@@ -424,7 +422,7 @@ void Container::reposition()
                                 break;
                         }
 
-                        qDebug() << " - LV Positioning c:" << c->info();
+                        qDebug() << " - VL Positioning c:" << c->info();
                         y += c->rect().height();
                     } else {
                         // c->layout == Floating  save position
@@ -436,8 +434,8 @@ void Container::reposition()
                     // Calculate translation vector ct to move *parent* later on
                     // now after regular containers have been positioned
                     // Also enlarge bounding box to maximum of floating and regular content
-                    //qDebug() << "   - floating content  ctr=" << ctr << "x_float=" << x_float;
-                    qDebug() << " # LV ctr=" << ctr << "h_total=" << h_total << "w_max=" <<w_max;
+                    //qDebug() << "   - floating content  ctr=" << ctr;
+                    qDebug() << " # VL ctr=" << ctr << "h_total=" << h_total << "w_max=" <<w_max;
                     if (ctr.left() < 0) {
                         //ct.setX(-ctr.left());
                         //w_max += ct.x();
