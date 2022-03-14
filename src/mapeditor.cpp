@@ -1619,6 +1619,8 @@ void MapEditor::moveObject()
     // Since moved containers are relative to tmpParentContainer anyway, just move 
     // it to pointer position:
     tmpParentContainer->setPos(p - movingObj_initialContainerOffset);
+    qDebug() << "ME::mouseMove  tPC->pos()=" << tmpParentContainer->pos();
+    // FIXME-0 tmpParentContainer is at (0,0) initially => flickering! 
 
     BranchContainer *bc;
     foreach (TreeItem *ti, model->getSelectedItems())
@@ -2185,7 +2187,7 @@ void MapEditor::togglePresentationMode()
 void MapEditor::setSelectionColor(QColor col)
 {
     selectionColor = col;
-    selectionColor.setAlpha(220);
+    selectionColor.setAlpha(200);
     QItemSelection sel = model->getSelectionModel()->selection();
     updateSelection(sel, sel);
 }

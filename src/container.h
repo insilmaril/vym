@@ -76,8 +76,6 @@ class Container : public QGraphicsRectItem {
   protected:
     ContainerType type;
 
-    QPointF ct;     // Translation of inner content due to floating children // FIXME-2 needed?
-    QRectF ctr;     // Translation and size of bounding content // FIXME-2 needed?
     QPointF originalPos;    //! Save position before move for undo
     QString name;
 

@@ -189,8 +189,6 @@ void Container::reposition()
     // qDebug() << QString("Container::reposition of %1 container").arg(info()) << this;
 
     QRectF r;
-    ct = QPointF (0, 0);
-    ctr = QRectF(); // FIXME-2 testing, not really needed
 
     // Repositioning is done recursively: 
     // First the size sizes of subcontainers are calculated, 
@@ -267,8 +265,8 @@ void Container::reposition()
                 r.setBottomRight(br);
 
                 setRect(r);
-                setPos(QPointF(0, 0));
-                //qDebug() << " * Layout Floating end of " << info() << " r=" << r << " ct=" << ct;
+                //setPos(QPointF(0, 0));    // FIXME-2 needed?
+                qDebug() << " * Layout Floating end of " << info() << " r=" << r;
             }
             break;
         case Horizontal: {
@@ -279,9 +277,113 @@ void Container::reposition()
                 bool hasFloatingContent = false;
                 QPointF p_float;
                 
+                QRectF c_bbox;
+                QRectF ctr;
+                bool first_iteration = true;
                 // Calc max height and total width
                 foreach (QGraphicsItem *child, childItems()) {
                     c = (Container*) child;
+                    c_bbox = mapRectFromItem(c, c->rect());
+
+                    if (first_iteration) {  // FIXME-2 not needed IMHO
+                        // Initial assignment
+                        first_iteration = false;
+                        ctr = c_bbox;
+                    }
+
+                    if (c->layout == Floating) {
+                        // Floating does not directly increase max height or sum of widths, 
+                        // but build max bbox of floating children
+                        if (!hasFloatingContent) 
+                            hasFloatingContent = true;
+
+                        // Consider bounding boxes of floating children to my own ctr
+                        if (c_bbox.left() < ctr.left()) ctr.setLeft(c_bbox.left());
+                        if (c_bbox.top()  < ctr.top())  ctr.setTop(c_bbox.top());
+                        if (c_bbox.right()  > ctr.right()) ctr.setRight(c_bbox.right());
+                        if (c_bbox.bottom() > ctr.bottom()) ctr.setBottom(c_bbox.bottom());
+                    } else {
+                        h = c_bbox.height();
+                        h_max = (h_max < h) ? h : h_max;
+                        w_total += c_bbox.width();
+                    }
+                }
+
+                qreal x;
+                qreal x_float;  // x coord of floating content in my coord system to calc bbox later
+                qreal w_last;   // last width before adding current container width to bbox later
+
+                horizontalDirection == LeftToRight ? x = 0 : x = w_total;
+
+                // Position children initially. 
+                // Floating children might be left or above of my current origin!
+                foreach (QGraphicsItem *child, childItems()) {
+                    c = (Container*) child;
+
+                    if (c->layout != Floating) {
+                        w_last = c->rect().width();
+
+                        if (horizontalDirection == LeftToRight)
+                        {
+                            c->setPos (x, (h_max - c->rect().height() ) / 2 );
+                            x += w_last;
+                        } else
+                        {
+                            c->setPos (x - c->rect().width(), (h_max - c->rect().height() ) / 2);
+                            x -= w_last;
+                        }
+                    } else {
+                        // c->layout == Floating: Save position and rectangle
+                        c->setPos (x, 0);
+                        x_float = x;
+                    }
+                }
+
+                // Set rect to the non-floating containers we have so far
+                r.setWidth(w_total);
+                r.setHeight(h_max);
+                setRect(r);
+
+                if (hasFloatingContent) {
+                    // Calculate translation vector ct to move *parent* later on
+                    // now after regular containers have been positioned
+                    // Also enlarge bounding box to maximum of floating and regular content
+                    qDebug() << "   - HL floating content r=" << r << "r.united=" << r.united(ctr);
+
+                    r = r.united(ctr);
+
+                    QPointF t; // Translation vector for all children to move topLeft cornert to origin
+
+                    if (r.topLeft().x() < 0) t.setX(-r.topLeft().x());
+                    if (r.topLeft().y() < 0) t.setY(-r.topLeft().y());
+
+                    if (t != QPointF()) {
+                        // Finally move containers by ct    // FIXME-0 should we move mapCenter or will this cause flickering?
+                        foreach (QGraphicsItem *child, childItems()) {
+                            c = (Container*) child;
+                            qDebug() << " -HL moving c: " << c->info() << " by t=" << t;
+                            c->setPos(c->pos() + t);
+                        }
+
+                        r.translate(t);
+                    }
+                }
+            } // Horizontal layout
+            setRect(r);
+            break;
+        case Vertical: {    // FIXME-2 floating content is untested
+                qreal h_total = 0;
+                qreal w_max = 0;
+                qreal w;
+
+                bool hasFloatingContent = false;
+                QPointF p_float;
+
+                QRectF ctr;
+                // Calc total height and max width
+                foreach (QGraphicsItem *child, childItems()) {
+                    c = (Container*) child;
+
                     if (c->layout == Floating) {
                         if (!hasFloatingContent) {
                             // Initial assignment
@@ -295,39 +397,38 @@ void Container::reposition()
                         if (c->rect().right()  > ctr.right()) ctr.setRight(c->rect().right());
                         if (c->rect().bottom() > ctr.bottom()) ctr.setBottom(c->rect().bottom());
                     } else {
-                        h = c->rect().height();
-                        h_max = (h_max < h) ? h : h_max;
-                        w_total += c->rect().width();
+                        w = c->rect().width();
+                        w_max = (w_max < w) ? w : w_max;
+                        h_total += c->rect().height();
+                        qDebug() << " - LV c: " << c->info() << "  h_total=" << h_total;
                     }
                 }
 
-                qreal x;
-                qreal x_float;  // x coord of floating content in my coord system to calc bbox later
-                qreal w_last;   // last width before adding current container width to bbox later
-
-                horizontalDirection == LeftToRight ? x = 0 : x = w_total;
-
+                qreal y = 0;
+                qreal y_float;  // y coord of floating content in my coord system to calc bbox later
+                qreal h_last;   // last height before adding current container width to bbox later
                 // Position children
                 foreach (QGraphicsItem *child, childItems()) {
                     c = (Container*) child;
 
                     if (c->layout != Floating) {
-                        w_last = c->rect().width();
-                        // Order from left to right
-                        if (horizontalDirection == LeftToRight)
-                        {
-                            //c->setPos (x +  c->ct.x(), (h_max - c->rect().height() ) / 2 + c->ct.y());
-                            c->setPos (x, (h_max - c->rect().height() ) / 2);
-                            x += w_last;
-                            //qDebug() << "     - setPos for " << c->info() << "x=" << x;
-                        } else
-                        {
-                            c->setPos (x - c->rect().width(), (h_max - c->rect().height() ) / 2);
-                            x -= w_last;
+                        switch (verticalAlignment) {
+                            case Left:
+                                c->setPos (0, y);
+                                break;
+                            case Right:
+                                c->setPos (w_max - c->rect().width(), y);
+                                break;
+                            case Centered:
+                                c->setPos ( (w_max - c->rect().width() ) / 2, y);
+                                break;
                         }
+
+                        qDebug() << " - LV Positioning c:" << c->info();
+                        y += c->rect().height();
                     } else {
-                        // c->layout == Floating: Save position and rectangle
-                        x_float = x;
+                        // c->layout == Floating  save position
+                        y_float = y;
                     }
                 }
 
@@ -336,70 +437,35 @@ void Container::reposition()
                     // now after regular containers have been positioned
                     // Also enlarge bounding box to maximum of floating and regular content
                     //qDebug() << "   - floating content  ctr=" << ctr << "x_float=" << x_float;
+                    qDebug() << " # LV ctr=" << ctr << "h_total=" << h_total << "w_max=" <<w_max;
                     if (ctr.left() < 0) {
-                        ct.setX(-ctr.left() - x_float);
-                        w_total += ct.x();
+                        //ct.setX(-ctr.left());
+                        //w_max += ct.x();
+                        qDebug() << "  ## left < 0";
                     }
                     if (ctr.top() < 0) {
-                        ct.setY(-ctr.top());
-                        h_max += ct.y();
+                        //ct.setY(-ctr.top() - y_float);
+                        //h_total += ct.y();
+                        qDebug() << "  ## top < 0";
                     }
-                    if (ctr.right() > x_float) {
-                        w_total += ctr.right() - x_float - w_last;
+                    if (ctr.right() > w_max) {
+                        w_max = ctr.width(); 
+                        qDebug() << "  ## right > w_max";
                     }
-                    if (ctr.height() > h_max) {
-                        h_max = ctr.height();
+                    if (ctr.height() > h_total) {
+                        h_total += ctr.height() - y_float -h_last;
                     }
 
                     // Finally move containers by ct    // FIXME-0 should we move mapCenter or will this cause flickering?
                     foreach (QGraphicsItem *child, childItems()) {
                         c = (Container*) child;
-                        c->setPos(c->pos() + ct);
+                        c->setPos(c->pos());
                     }
-                }
-
-                r.setWidth(w_total);
-                r.setHeight(h_max);
-            } // Horizontal layout
-            setRect(r);
-            break;
-        case Vertical: { // FIXME-1 consider floating children like in Horizontal
-                qreal h_total = 0;
-                qreal w_max = 0;
-                qreal w;
-
-                // child is aligned further down, just go with sum and max
-                // Calc total height and max width for stacked children
-                foreach (QGraphicsItem *child, childItems()) {
-                    c = (Container*) child;
-                    // child is aligned further down, just go with sum and max
-                    w = c->rect().width();
-                    w_max = (w_max < w) ? w : w_max;    // FIXME-2 use max function
-                    h_total += c->rect().height();
-                }
-
-                qreal y = 0;
-                // Position children
-                foreach (QGraphicsItem *child, childItems()) {
-                    c = (Container*) child;
-                    switch (verticalAlignment) {
-                        case Left:
-                            c->setPos (0, y);
-                            break;
-                        case Right:
-                            c->setPos (w_max - c->rect().width(), y);
-                            break;
-                        case Centered:
-                            c->setPos ( (w_max - c->rect().width() ) / 2, y);
-                            break;
-                    }
-
-                    y += c->rect().height();
                 }
 
                 r.setWidth(w_max);
                 r.setHeight(h_total);
-            }
+            } // Vertical layout
             setRect(r);
             break;
         default:
