@@ -283,7 +283,7 @@ void Container::reposition()
                 // Calc max height and total width
                 foreach (QGraphicsItem *child, childItems()) {
                     c = (Container*) child;
-                    c_bbox = mapRectFromItem(c, c->rect());
+                    c_bbox = c->rect();
 
                     if (first_iteration) {  // FIXME-2 not needed IMHO
                         // Initial assignment
