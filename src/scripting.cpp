@@ -64,6 +64,12 @@ QObject *VymWrapper::currentMap()
     return mainWindow->getCurrentModelWrapper();
 }
 
+void VymWrapper::editHeading()
+{
+    MapEditor *me = mainWindow->currentMapEditor();
+    if (me) me->editHeading();
+}
+
 bool VymWrapper::loadMap(const QString &filename)
 {
     bool r;

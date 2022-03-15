@@ -26,6 +26,10 @@ function macro_f1()
 function macro_f2()
 {
     colorSubtreeWithQuickColor(1);
+
+    // Or if you prefer to edit the heading of a branch using "F2"-key,
+    // you can use below instead of above:
+    // vym.editHeading();
 }
 
 // Macro F3: color subtree green

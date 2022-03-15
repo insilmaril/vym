@@ -354,6 +354,7 @@ void Container::reposition()
                     if (r.topLeft().y() < 0) t.setY(-r.topLeft().y());
 
                     if (t != QPointF()) {
+                        qDebug() << "*** Moving containers now. Parent is " << ((Container*)parentItem())->info();
                         // Finally move containers by t
                         foreach (QGraphicsItem *child, childItems()) {
                             c = (Container*) child;
