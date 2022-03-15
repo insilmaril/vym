@@ -177,9 +177,7 @@ void BranchContainer::reposition()  // FIXME-0 Concept for floating mainbranches
                 qDebug() << "BC::reposition d > 1  FLOATING begin loc" << 
                     leftOfCenter << info();
                 childrenContainer->setLayoutType(Floating);
-                childrenContainer->setBrush(Qt::red);
                 innerContainer->setBrush(Qt::cyan);
-                setBrush(Qt::blue);
             } else if (branchItem->getHeadingPlain().startsWith("vert")) {
                 qDebug() << "BC::reposition d > 1  VERTICAL begin loc" << 
                     leftOfCenter << info();
@@ -188,7 +186,6 @@ void BranchContainer::reposition()  // FIXME-0 Concept for floating mainbranches
                 innerContainer->setLayoutType(Vertical);
                 innerContainer->setVerticalAlignment(Left);
                 innerContainer->setBrush(Qt::green);
-                setBrush(Qt::darkBlue);
             } else {
                 // Normal layout
                 qDebug() << "BC::reposition d > 1  loc=" << 
