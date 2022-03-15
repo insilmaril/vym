@@ -438,7 +438,14 @@ void MapEditor::updateMatrix()
     setMatrix(zm * rm);
 }
 
-void MapEditor::minimizeView() { setSceneRect(scene()->itemsBoundingRect()); }
+void MapEditor::minimizeView() { 
+    // If we only would set scene rectangle to existing items, then 
+    // view fould "jump", when Qt automatically tries to center. 
+    // Better consider the currently visible viewport (with slight offset)
+    QRectF r = mapToScene(viewport()->geometry()).boundingRect();
+    r.translate(-2,-3);
+    setSceneRect(scene()->itemsBoundingRect().united(r)); 
+}
 
 void MapEditor::print()
 {
@@ -523,7 +530,7 @@ void MapEditor::print()
     }
 }
 
-QRectF MapEditor::getTotalBBox()
+QRectF MapEditor::getTotalBBox()    // FIXME-2 really needed? Overlaps with scene and VM...
 {
     minimizeView();
     return sceneRect();
