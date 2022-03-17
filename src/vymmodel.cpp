@@ -5016,15 +5016,15 @@ void VymModel::reposition()
     }
     mapEditor->getTotalBBox();
 
-    // required to *reposition* the selection box. size is already correct:
-    emitSelectionChanged();
-
     // Reposition containers
     BranchItem *bi;
     for (int i = 0; i < rootItem->branchCount(); i++) {
         bi = rootItem->getBranchNum(i);
         bi->repositionContainers();
     }
+
+    // required to *reposition* the selection box. size is already correct:
+    emitSelectionChanged();
 }
 
 bool VymModel::setMapLinkStyle(const QString &s)

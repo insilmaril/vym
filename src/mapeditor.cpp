@@ -1626,7 +1626,7 @@ void MapEditor::moveObject()
     // Since moved containers are relative to tmpParentContainer anyway, just move 
     // it to pointer position:
     tmpParentContainer->setPos(p - movingObj_initialContainerOffset);
-    qDebug() << "ME::mouseMove  tPC->pos()=" << tmpParentContainer->pos();
+    
     // FIXME-0 tmpParentContainer is at (0,0) initially => flickering! 
 
     BranchContainer *bc;
