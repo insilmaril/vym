@@ -186,7 +186,7 @@ Container* Container::parentContainer()
 
 void Container::reposition()
 {
-    // qDebug() << QString("Container::reposition of %1 container").arg(info()) << this;
+    qDebug() << QString("#### Reposition of %1").arg(info());
 
     QRectF r;
 
@@ -200,19 +200,6 @@ void Container::reposition()
     // a) calc sizes of subcontainers based on their layouts 
     //    (overloaded, not there e.g. for HeadingContainer!)
 
-    // FIXME-2 testing only, rotate children
-    /*         move to BranchContainer
-    Container *pc = (Container*)parentItem();
-    if (pc) {
-        TreeItem *ti = pc->getTreeItem();
-        if (ti && ti->getHeadingPlain() =="rot")
-        {
-            qDebug() << " * Setting rot";
-            setRotation(20);
-        }
-    }
-    */
-
     Container *c;
     foreach (QGraphicsItem *child, childItems()) {
         c = (Container*) child;
@@ -225,7 +212,7 @@ void Container::reposition()
     // No repositioning of children required then, of course.
     if (childItems().count() == 0) 
     {
-        qDebug() << " * no children, could return?";
+        qDebug() << " * " << getName() << " has no children, will return.";
         setRect(r);
         return;  // FIXME-2 still required to continue, if children are Floating
     }
@@ -278,6 +265,9 @@ void Container::reposition()
                 QRectF c_bbox;  // Current bbox of floating c in my own coord (usually childrenContainer)
                 QRectF bbox;    // United bboxes of all floating containers in my own coord
                 bool first_iteration = true;
+
+                qDebug() << " * HL of " << info();
+
                 // Calc max height and total width
                 foreach (QGraphicsItem *child, childItems()) {
                     c = (Container*) child;
@@ -287,9 +277,11 @@ void Container::reposition()
                     // them later, so that container is aligned with my left/top border
                     if (c->layout == Floating) c->setPos(0, 0);
 
+                    qDebug() << "   - HL Iterating " << c->info();
+
                     c_bbox = mapRectFromItem(c, c->rect());
 
-                    if (first_iteration) {  // FIXME-2 not needed IMHO
+                    if (first_iteration && c->layout == Floating) {  // FIXME-2 not needed IMHO
                         // Initial assignment
                         first_iteration = false;
                         bbox = c_bbox;
@@ -304,7 +296,7 @@ void Container::reposition()
                         // Unite bounding boxes of floating children to my own bbox in my own coord
                         bbox = bbox.united(c_bbox);
                     } else {
-                        // For width and height we can use the already mapped coordinates
+                        // For width and height we can use the already mapped dimensions
                         h = c_bbox.height();
                         h_max = (h_max < h) ? h : h_max;
                         w_total += c_bbox.width();
@@ -340,6 +332,7 @@ void Container::reposition()
                 r.setWidth(w_total);
                 r.setHeight(h_max);
                 setRect(r);
+                qDebug() << "   - pass 1 r=" << r << "bbox=" << bbox;
 
                 if (hasFloatingContent) {
                     // Calculate translation vector t to move *parent* later on
@@ -348,13 +341,13 @@ void Container::reposition()
 
                     r = r.united(bbox);
 
-                    QPointF t; // Translation vector for all children to move topLeft cornert to origin
+                    QPointF t; // Translation vector for all children to move topLeft corner to origin
 
                     if (r.topLeft().x() < 0) t.setX(-r.topLeft().x());
                     if (r.topLeft().y() < 0) t.setY(-r.topLeft().y());
 
                     if (t != QPointF()) {
-                        qDebug() << "*** Moving containers now. Parent is " << ((Container*)parentItem())->info();
+                        qDebug() << "   * Moving containers now in " << getName() << ". Parent is " << ((Container*)parentItem())->info() << " t=" << t;
                         // Finally move containers by t
                         foreach (QGraphicsItem *child, childItems()) {
                             c = (Container*) child;
@@ -365,6 +358,7 @@ void Container::reposition()
                     }
                 }
             } // Horizontal layout
+            qDebug() << "   * Final HL of " << getName() << " r=" << r;
             setRect(r);
             break;
         case Vertical: {    // FIXME-2 floating content is untested

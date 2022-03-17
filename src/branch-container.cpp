@@ -176,6 +176,9 @@ void BranchContainer::reposition()  // FIXME-0 Concept for floating mainbranches
                 // Special layout: floating children 
                 qDebug() << "BC::reposition d > 1  FLOATING begin loc" << 
                     leftOfCenter << info();
+                QColor col (Qt::red);
+                col.setAlpha(150);
+                childrenContainer->setBrush(col);
                 childrenContainer->setLayoutType(Floating);
                 innerContainer->setBrush(Qt::cyan);
             } else if (branchItem->getHeadingPlain().startsWith("vert")) {
