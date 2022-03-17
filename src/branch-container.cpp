@@ -85,6 +85,11 @@ Container* BranchContainer::getChildrenContainer()
     return childrenContainer;
 }
 
+HeadingContainer* BranchContainer::getHeadingContainer()
+{
+    return headingContainer;
+}
+
 void BranchContainer::setLayoutType(const LayoutType &ltype)
 {
     Container::setLayoutType(ltype);
@@ -120,7 +125,7 @@ bool BranchContainer::isInClickBox(const QPointF &p)
 void BranchContainer::updateVisuals()
 {
     if (branchItem)
-        headingContainer->setText(branchItem->getHeadingText());
+        headingContainer->setHeading(branchItem->getHeadingText());
 }
 
 void BranchContainer::reposition()

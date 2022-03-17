@@ -10,7 +10,9 @@
 
 class QString;
 class QGraphicsScene;
+
 class BranchObj;
+class HeadingContainer;
 class Link;
 class XLinkItem;
 

@@ -2,6 +2,7 @@
 
 #include "attributeitem.h"
 #include "branchobj.h"
+#include "heading-container.h"
 #include "task.h"
 #include "taskmodel.h"
 #include "vymmodel.h"
@@ -227,8 +228,7 @@ void BranchItem::updateVisibility()
 void BranchItem::setHeadingColor(QColor color)
 {
     TreeItem::setHeadingColor(color);
-    if (mo)
-        ((BranchObj *)mo)->setColor(color);
+    branchContainer->getHeadingContainer()->setHeadingColor(color);
 }
 
 void BranchItem::updateTaskFlag()
@@ -656,7 +656,7 @@ void BranchItem::updateContainerStackingOrder()
         branchContainer->setParentItem(parentBranch()->getChildrenContainer());
         // parentBranch()->addToChildrenContainer(branchContainer); // FIXME-2 maybe better? 
     else {
-        qWarning() << "BI::updateStackingORder  pi = " << pi << "rootItem = " << rootItem; // FIXME-2 testing
+        qWarning() << "BI::updateStackingORder  pi = " << pi << "rootItem = " << rootItem << "(moved center?)"; // FIXME-2 testing
         return;
     }
 

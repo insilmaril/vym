@@ -20,6 +20,8 @@ class BranchContainer : public Container {
     void addToChildrenContainer(Container *c, bool keepScenePos = false);
     Container* getChildrenContainer();
 
+    HeadingContainer* getHeadingContainer();
+
     virtual void setLayoutType(const LayoutType &ltype);
 
     QRectF getHeadingRect();  //! Return rectangle of HeadingContainer in absolute coordinates

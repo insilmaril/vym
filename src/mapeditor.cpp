@@ -378,6 +378,7 @@ void MapEditor::setViewCenterTarget(const QPointF &p, const qreal &zft,
                                     const qreal &at, const int duration,
                                     const QEasingCurve &easingCurve)
 {
+    qDebug() << "ME::setViewCenterTarget a)";  // FIXME-0 not working...
     viewCenterTarget = p;
     zoomFactorTarget = zft;
     angleTarget = at;
@@ -418,6 +419,7 @@ void MapEditor::setViewCenterTarget(const QPointF &p, const qreal &zft,
         zoomAnimation.setStartValue(zoomFactor);
         zoomAnimation.setEndValue(zoomFactorTarget);
         zoomAnimation.start();
+        qDebug() << "ME::setViewCenterTarget b)";  // FIXME-0 not working...
     }
     else {
         setAngle(angleTarget);

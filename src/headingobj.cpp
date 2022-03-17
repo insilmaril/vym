@@ -22,8 +22,8 @@ HeadingObj::~HeadingObj()
         delete textline.takeFirst();
 }
 
-void HeadingObj::init()
-{
+void HeadingObj::init() // FIXME-0 move data and methods to HeadingContainer
+{                       // FIXME-0 Remove HeadingObj
     textwidth = 40;
     color = QColor("black");
     font = QFont();
