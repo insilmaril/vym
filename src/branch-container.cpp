@@ -18,7 +18,7 @@ BranchContainer::~BranchContainer()
 {
     QString h;
     if (branchItem) h = branchItem->getHeadingPlain();
-    //qDebug() << "* Destr BranchContainer" << name << h << this;
+    //qDebug() << "* Destr BranchContainer" << getName() << h << this;
 
     if (branchItem)
     {
@@ -123,109 +123,83 @@ void BranchContainer::updateVisuals()
         headingContainer->setText(branchItem->getHeadingText());
 }
 
-// FIXME-0 BrancContainer - wrong horizontalDirection below "float" if left of center
-void BranchContainer::reposition()  // FIXME-0 Concept for floating mainbranches and orientation
+void BranchContainer::reposition()
 {
-    if (branchItem)
-    {
-        bool leftOfCenter;
-        if (branchItem->depth() == 0)
-        {
-            // MapCenter
+    // tmpParentContainer has no branchItem, return for now  // FIXME-2 review with xlinks later!
+    if (!branchItem) return;
 
-            qDebug() << "BC::reposition d == 0 " << getName() << this << 
-                "children: " << childrenContainer;
+    // Abreviation for depth
+    uint depth = branchItem->depth();
 
-            setLayoutType(Horizontal);
-            setHorizontalDirection(LeftToRight);
-            //innerContainer->setHorizontalDirection(LeftToRight);
-            innerContainer->setHorizontalDirection(RightToLeft);
-            //childrenContainer->setVerticalAlignment(Left);
-            //childrenContainer->setLayoutType(Vertical);
-            childrenContainer->setLayoutType(Floating);
-        } else if (branchItem->depth() == 1) {
-            // MainBranch
-
-            if (pos().x() < 0) 
-                leftOfCenter = true;
+    // Set orientation based on depth and if we are floating around
+    if (depth == 0)
+        orientation = UndefinedOrientation;
+    else {
+        if (parentContainer()->layout == Floating || parentContainer()->orientation == UndefinedOrientation) {
+            if (pos().x() > 0)
+                orientation = RightOfParent;
             else
-                leftOfCenter = false;
+                orientation = LeftOfParent;
+         } else
+            // Set same orientation as parent
+            setOrientation(parentContainer()->orientation);
+    }
 
-            qDebug() << "BC::reposition d == 1  loc=" << 
-                leftOfCenter << info() << this;
+    
+    // Settings depending on depth
+    if (branchItem->depth() == 0)
+    {
+        // MapCenter
 
-            setLayoutType(Horizontal);
-            childrenContainer->setLayoutType(Vertical);
+        // qDebug() << "BC::reposition d == 0 " << getName();
 
-            if (leftOfCenter) {
-                // Left of center
+        setLayoutType(Horizontal);
+        setHorizontalDirection(LeftToRight);
+        innerContainer->setHorizontalDirection(RightToLeft);
+        childrenContainer->setLayoutType(Floating);
+    } else {
+        // Branch or mainbranch
+        // qDebug() << "BC::reposition d > 1  orientation=" << orientation << getName();
+
+        setLayoutType(Horizontal);
+        childrenContainer->setLayoutType(Vertical);
+
+        switch (orientation) {
+            case LeftOfParent:
                 setHorizontalDirection(RightToLeft);
                 innerContainer->setHorizontalDirection(RightToLeft);
                 childrenContainer->setVerticalAlignment(Right);
-            } else {
-                // Right of center
+                break;
+            case RightOfParent:
                 setHorizontalDirection(LeftToRight);
                 innerContainer->setHorizontalDirection(LeftToRight);
                 childrenContainer->setVerticalAlignment(Left);
-            }
-        } else {
-            // Branch deeper in tree
-
-            leftOfCenter = branchItem->parentBranch()->getBranchContainer()->getHorizontalDirection(); // FIXME-2 typechange :-(
-            if (branchItem->getHeadingPlain().startsWith("float")) {
-                // Special layout: floating children 
-                qDebug() << "BC::reposition d > 1  FLOATING begin loc" << 
-                    leftOfCenter << info();
-                QColor col (Qt::red);
-                col.setAlpha(150);
-                childrenContainer->setBrush(col);
-                childrenContainer->setLayoutType(Floating);
-                innerContainer->setBrush(Qt::cyan);
-            } else if (branchItem->getHeadingPlain().startsWith("vert")) {
-                qDebug() << "BC::reposition d > 1  VERTICAL begin loc" << 
-                    leftOfCenter << info();
-                childrenContainer->setLayoutType(Vertical);
-                childrenContainer->setBrush(Qt::gray);
-                innerContainer->setLayoutType(Vertical);
-                innerContainer->setVerticalAlignment(Left);
-                innerContainer->setBrush(Qt::green);
-            } else {
-                // Normal layout
-                qDebug() << "BC::reposition d > 1  loc=" << 
-                    leftOfCenter << info();
-
-                setLayoutType(Container::Horizontal);
-                childrenContainer->setLayoutType(Vertical);
-
-                if (leftOfCenter) {
-                    // Left of center
-                    innerContainer->setHorizontalDirection(RightToLeft);
-                    childrenContainer->setVerticalAlignment(Right);
-                } else {
-                    // Right of center
-                    innerContainer->setHorizontalDirection(LeftToRight);
-                    childrenContainer->setVerticalAlignment(Left);
-                }
-            }   // Normal layout
+                break;
+            default: 
+                qWarning() << "BranchContainer::reposition unknown orientation for mainbranch";
+                break;
         }
-    } //else
-        //qDebug() << "BC::reposition  no branchItem!!!!  tmpParentContainer?  this = " << this;
+        childrenContainer->orientation = orientation;
 
-    Container::reposition();
-
-    // Aftermath, position some containers if we have a floating layout
-    /*
-    if (branchItem)
-    {
-        if (branchItem->depth() > 1 && branchItem->getHeadingPlain() == "float") {
-            qDebug() << "BC::reposition d > 1  FLOATING end   " << 
-                getName() << this << 
-                "children: " << childrenContainer << "  children->ct=" << childrenContainer->ct;
-
-            innerContainer->moveBy(childrenContainer->ct.x(), childrenContainer->ct.y());
-            childrenContainer->moveBy(childrenContainer->ct.x(), childrenContainer->ct.y());
+        if (branchItem->getHeadingPlain().startsWith("float")) {
+            // Special layout: floating children 
+            orientation = UndefinedOrientation;
+            QColor col (Qt::red);
+            col.setAlpha(150);
+            childrenContainer->setBrush(col);
+            childrenContainer->setLayoutType(Floating);
+            innerContainer->setBrush(Qt::cyan);
+        } else if (branchItem->getHeadingPlain().startsWith("vert")) {
+            qDebug() << "  ### BC::reposition d=" << depth << "  VERTICAL begin orientation" << 
+                orientation << getName();
+            childrenContainer->setLayoutType(Vertical);
+            childrenContainer->setBrush(Qt::gray);
+            innerContainer->setLayoutType(Vertical);
+            innerContainer->setVerticalAlignment(Left);
+            innerContainer->setBrush(Qt::green);
         }
     }
-    */
+
+    Container::reposition();
 }
 

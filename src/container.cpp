@@ -84,7 +84,7 @@ QString Container::info (const QString &prefix)
         QString(" Layout: %1").arg(layout);
 }
 
-void Container::setOrientationMode(const OrientationMode &om)
+void Container::setOrientationMode(const OrientationMode &om)   // FIXME-2 currently unused
 {
     orientationMode = om;
 }
@@ -101,14 +101,7 @@ void Container::setOrientation(const Orientation &m)
 
 Container::Orientation Container::getOrientation()
 {
-    if (orientationMode == Auto)
-    {
-        if (pos().x() >= 0)
-            return RightOfParent;
-        else
-            return LeftOfParent;
-    } else 
-        return orientation;
+    return orientation;
 }
 
 void Container::setLayoutType(const LayoutType &ltype)
@@ -186,7 +179,12 @@ Container* Container::parentContainer()
 
 void Container::reposition()
 {
-    qDebug() << QString("#### Reposition of %1").arg(info());
+    /*
+    qDebug() << QString("#### Reposition of %1").arg(getName()) 
+        << "Layout: " << layout 
+        << " direction: " << horizontalDirection
+        << "orientation: " << orientation;
+        */
 
     QRectF r;
 
@@ -212,9 +210,8 @@ void Container::reposition()
     // No repositioning of children required then, of course.
     if (childItems().count() == 0) 
     {
-        qDebug() << " * " << getName() << " has no children, will return.";
         setRect(r);
-        return;  // FIXME-2 still required to continue, if children are Floating
+        return;
     }
 
     switch (layout) {

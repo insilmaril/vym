@@ -79,7 +79,6 @@ MapEditor::MapEditor(VymModel *vm)
     tmpParentContainer->setBrush(Qt::NoBrush);
     tmpParentContainer->setPen(QPen(Qt::NoPen));
     tmpParentContainer->reposition();
-    qDebug() << "ME: tmpParentContainer = " << tmpParentContainer;
 
     // Shortcuts and actions
     QAction *a;
@@ -1482,7 +1481,6 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
             {
                 BranchContainer *bc = selbi->getBranchContainer();
                 movingObj_initialContainerOffset = bc->mapFromScene(p);
-                qDebug() << "ME::mousePress  movingObj_initialContainerOffset = " << movingObj_initialContainerOffset << "p=" << bc->mapFromScene(p) << "pos:" <<bc->pos();
 
                 /* FIXME-2 remove (also in header)
                 if (ti_found->depth() > 0) {
@@ -1627,8 +1625,6 @@ void MapEditor::moveObject()
     // it to pointer position:
     tmpParentContainer->setPos(p - movingObj_initialContainerOffset);
     
-    // FIXME-0 tmpParentContainer is at (0,0) initially => flickering! 
-
     BranchContainer *bc;
     foreach (TreeItem *ti, model->getSelectedItems())
     {
@@ -1638,7 +1634,6 @@ void MapEditor::moveObject()
             // The structure in VymModel remaines untouched so far!
 
             if (bc->parentItem() != tmpParentContainer->getChildrenContainer()) {
-                qDebug() << "adding to tmpParentContainer: " << bc->info() << "current tPC children count: " << tmpParentContainer->getChildrenContainer()->childItems().count();
                 bc->setOrgPos();
                 tmpParentContainer->addToChildrenContainer(bc, true);
                 tmpParentContainer->reposition();   // FIXME-2 needed, if we use a Floating layout?
@@ -1816,10 +1811,6 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                     QPointF t = p - movingObj_initialPointerPos;    // Defined in mousePressEvent
 
                     if (!tmpParentContainer->getChildrenContainer()->childItems().isEmpty()) {
-                        qDebug() << "ME::releaseButton  emptying tmpParentContainer. Current items: " << 
-                            tmpParentContainer->getChildrenContainer()->childItems().count() <<
-                            " t = " << t;
-
                         model->saveStateBeginBlock(
                             QString("Move %1 items").arg(tmpParentContainer->getChildrenContainer()->childItems().count())
                         );
