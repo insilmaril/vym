@@ -264,9 +264,6 @@ void Container::reposition()
                 
                 QRectF c_bbox;  // Current bbox of floating c in my own coord (usually childrenContainer)
                 QRectF bbox;    // United bboxes of all floating containers in my own coord
-                bool first_iteration = true;
-
-                qDebug() << " * HL of " << info();
 
                 // Calc max height and total width
                 foreach (QGraphicsItem *child, childItems()) {
@@ -277,21 +274,15 @@ void Container::reposition()
                     // them later, so that container is aligned with my left/top border
                     if (c->layout == Floating) c->setPos(0, 0);
 
-                    qDebug() << "   - HL Iterating " << c->info();
-
                     c_bbox = mapRectFromItem(c, c->rect());
-
-                    if (first_iteration && c->layout == Floating) {  // FIXME-2 not needed IMHO
-                        // Initial assignment
-                        first_iteration = false;
-                        bbox = c_bbox;
-                    }
 
                     if (c->layout == Floating) {
                         // Floating does not directly increase max height or sum of widths, 
                         // but build max bbox of floating children
-                        if (!hasFloatingContent) 
+                        if (!hasFloatingContent) {
                             hasFloatingContent = true;
+                            bbox = c_bbox;
+                        }
 
                         // Unite bounding boxes of floating children to my own bbox in my own coord
                         bbox = bbox.united(c_bbox);
@@ -332,7 +323,6 @@ void Container::reposition()
                 r.setWidth(w_total);
                 r.setHeight(h_max);
                 setRect(r);
-                qDebug() << "   - pass 1 r=" << r << "bbox=" << bbox;
 
                 if (hasFloatingContent) {
                     // Calculate translation vector t to move *parent* later on
@@ -347,7 +337,6 @@ void Container::reposition()
                     if (r.topLeft().y() < 0) t.setY(-r.topLeft().y());
 
                     if (t != QPointF()) {
-                        qDebug() << "   * Moving containers now in " << getName() << ". Parent is " << ((Container*)parentItem())->info() << " t=" << t;
                         // Finally move containers by t
                         foreach (QGraphicsItem *child, childItems()) {
                             c = (Container*) child;
@@ -358,7 +347,6 @@ void Container::reposition()
                     }
                 }
             } // Horizontal layout
-            qDebug() << "   * Final HL of " << getName() << " r=" << r;
             setRect(r);
             break;
         case Vertical: {    // FIXME-2 floating content is untested
