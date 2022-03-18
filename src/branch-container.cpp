@@ -194,7 +194,6 @@ void BranchContainer::reposition()
             childrenContainer->setBrush(col);
             childrenContainer->setLayoutType(FloatingBounded);
             innerContainer->setBrush(Qt::cyan);
-            innerContainer->setLayoutType(Vertical);
         } 
     }
 
