@@ -68,12 +68,8 @@ Next steps
 
 * Moving containers around
     - Todo
-        - Position LineEdit to container instead of MapObj in
-          MapEditor::editHeading
         - Fix z value of select box for selected containers
         - absolute position for MapCenters for COntainers
-        - relative position for Mainbranches in COntainers
-          ("FramedFloat")
         - Relative position for Images: "FreeFloat" or "FramedFloat"
 
     - Position containers temporarily while moving: When an object can be

@@ -152,7 +152,7 @@ void BranchContainer::reposition()
 
     
     // Settings depending on depth
-    if (branchItem->depth() == 0)
+    if (depth == 0)
     {
         // MapCenter
 
@@ -194,15 +194,8 @@ void BranchContainer::reposition()
             childrenContainer->setBrush(col);
             childrenContainer->setLayoutType(FloatingBounded);
             innerContainer->setBrush(Qt::cyan);
-        } else if (branchItem->getHeadingPlain().startsWith("vert")) {
-            qDebug() << "  ### BC::reposition d=" << depth << "  VERTICAL begin orientation" << 
-                orientation << getName();
-            childrenContainer->setLayoutType(Vertical);
-            childrenContainer->setBrush(Qt::gray);
             innerContainer->setLayoutType(Vertical);
-            innerContainer->setVerticalAlignment(Left);
-            innerContainer->setBrush(Qt::green);
-        }
+        } 
     }
 
     Container::reposition();
