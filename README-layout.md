@@ -12,12 +12,13 @@ The logical part is mostly about maintaining and inserting branches and images,
 while the graphical is required to maintain the visualization and
 calculation of positions and bounding boxes.
 
-I have decided to maintain both structures  indepently, which allows
+I have decided to maintain both structures indepently, which allows
 to use the QAbstractItem for the TreeEditor and general maintenance of
 the "logical" tree and at the same time use the parent-child relations
-of QGraphicsItems for the more complex layouts, like rotated elements
-and also simplified positioning algorithms, when different layout
-schemes are used.
+of QGraphicsItems for the more complex graphical layouts, like rotated
+elements and also to simplify the positioning algorithms. Actually different
+map layouts become only possible by decoupling the logical and the
+graphical representations.
 
 This approach has pros and cons, of course. For example when deleting a
 subtree, both logical and graphical structures need to be considered
@@ -36,32 +37,24 @@ different levels of details.
 Containers
 ----------
 
-- Container can either hold a MapObj or a set of other Containers
-- A container with a HeadingObj is currently parent item to the HO and also all
-  QGraphicsTextItems within the HO
+- Container either represents a graphical object, e.g. the
+  HeadingContainer is the text of a branch on the map. Or the container
+  has contains (sic!) a set of other containers
+
+- Containers containing others use ContainerLayouts and hints for
+  aligning ther subcontainers. This information is used for
+  repositioning and defined in the MapDesign
 
 - Containers are no longer part of a BranchObj, but become their own
   structures. In the end they will probably replace the current MapObj and
   inherited classes.
-
-  So far there are these container types:
-
-    - BaseContainer
-    - BranchContainer
-    - HeadingContainer (still pointing to a HeadingObj)
-
   
-Open questions
---------------
-
-- Currently containers are part of BranchObj. Later on they should
-  replace the BOs
 
 Ideas 
 -----
 
 * Add/remove containers as needed. Examples
-  - Flags, frames, etconly if set
+  - Flags, frames, etc. only if set
   - Additional info likes statistics (no. of children, ...)
 
 * Dedicated containers for links

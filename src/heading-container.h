@@ -13,7 +13,11 @@ class HeadingContainer : public Container {
     virtual ~HeadingContainer();
     virtual void init();
 
-    void setHeading(const QString &);
+  private:
+    QGraphicsTextItem *newLine(QString); // generate new textline
+
+  public:
+    void setHeading(QString);
     QString getHeading();
     void setHeadingColor(const QColor &);
     QColor getHeadingColor();
@@ -26,8 +30,6 @@ class HeadingContainer : public Container {
     virtual void reposition();
 
   protected:
-    HeadingObj *headingObj; 
-
     QString headingText;
     QList<QGraphicsTextItem *> headingLines;
     QColor headingColor;

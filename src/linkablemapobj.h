@@ -3,7 +3,7 @@
 
 #include "animpoint.h"
 #include "flagrowobj.h"
-#include "headingobj.h"
+// #include "headingobj.h"
 #include "vymnote.h"
 
 #define MAX_DEPTH 999

@@ -5006,16 +5006,6 @@ void VymModel::reposition()
     if (repositionBlocked)
         return;
 
-    BranchObj *bo;
-    for (int i = 0; i < rootItem->branchCount(); i++) {
-        bo = rootItem->getBranchObjNum(i);
-        if (bo)
-            bo->reposition(); //  for positioning heading
-        else
-            qDebug() << "VM::reposition bo=0";
-    }
-    mapEditor->getTotalBBox();
-
     // Reposition containers
     BranchItem *bi;
     for (int i = 0; i < rootItem->branchCount(); i++) {
@@ -5023,6 +5013,8 @@ void VymModel::reposition()
         bi->repositionContainers();
     }
 
+    mapEditor->getTotalBBox();  // FIXME-2 Is this already working with containers?
+    
     // required to *reposition* the selection box. size is already correct:
     emitSelectionChanged();
 }

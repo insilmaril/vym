@@ -2,7 +2,6 @@
 
 #include "heading-container.h"
 
-#include "headingobj.h" //FIXME-2 probably move content from HO here to HC later
 #include "mapobj.h"     // FIXME-2 needed?
 
 HeadingContainer::HeadingContainer(QGraphicsItem *parent) : Container(parent) 
@@ -16,25 +15,36 @@ HeadingContainer::~HeadingContainer()
 {
     //qDebug() << "* Destr HeadingContainer" << name << this;
 
-    delete headingObj;
+    while (!headingLines.isEmpty())
+        delete headingLines.takeFirst();
 }
 
 void HeadingContainer::init()
 {
     type = Container::Heading;
 
-    headingObj = new HeadingObj(this);
     setHeading("");
     headingColor = QColor(Qt::black);
 }
 
-void HeadingContainer::setHeading(const QString &s)// FIXME-2 richtext has wrong position
+QGraphicsTextItem *HeadingContainer::newLine(QString s)
 {
-    // Update heading in container  // FIXME-0 move to container here
-    if (s != headingObj->text()) headingObj->setText(s);
+    QGraphicsTextItem *t = new QGraphicsTextItem(s, this);
+    t->setFont(headingFont);
+    t->setZValue(dZ_TEXT);
+    t->setDefaultTextColor(headingColor);
+    return t;
+}
 
-    /* FIXME-0 refactor below from HO to container
-    heading = s;
+void HeadingContainer::setHeading(QString s)// FIXME-2 richtext has wrong position
+{
+    headingText = s;
+
+    // Hardcoded for now:
+    int textWidth = 40;
+
+    QGraphicsTextItem *t;
+    QRectF r;
 
     // remove old textlines and prepare generating new ones
     while (!headingLines.isEmpty())
@@ -43,13 +53,13 @@ void HeadingContainer::setHeading(const QString &s)// FIXME-2 richtext has wrong
     if (s.startsWith("<html>") ||
         s.startsWith("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" "
                      "\"http://www.w3.org/TR/REC-html40/strict.dtd\">")) {
-        QGraphicsTextItem *t = new QGraphicsTextItem(parentItem());
-        t->setFont(font);
+        t = new QGraphicsTextItem(this);
+        t->setFont(headingFont);
         t->setZValue(dZ_TEXT);
         t->setHtml(s);
-        t->setDefaultTextColor(color);
-        t->setRotation(angle);
-        headingLines.append(t);
+        t->setDefaultTextColor(headingColor);
+        headingLines.append(t);     // FIXME-0 check richText
+        r = t->boundingRect();
     }
     else {
         // prevent empty headingLines, so at least a small selection stays
@@ -61,10 +71,9 @@ void HeadingContainer::setHeading(const QString &s)// FIXME-2 richtext has wrong
         int j = 0;  // index of last ws
         int k = 0;  // index of "<br>" or similar linebreak
         int br = 0; // width of found break, e.g. for <br> it is 4
-        */
+        
         QRegExp re("<br.*/>");
         re.setMinimal(true);
-        /*
 
         // set the text and wrap lines
         while (s.length() > 0) {
@@ -78,17 +87,23 @@ void HeadingContainer::setHeading(const QString &s)// FIXME-2 richtext has wrong
                 i = s.indexOf(" ", i);
             if (i < 0 && j == 0) { // no ws found at all in s
                 // append whole s
-                headingLines.append(newLine(s));
+                t = newLine(s);
+                headingLines.append(t);
+                r = r.united(t->boundingRect());
                 s = "";
             }
             else {
                 if (i < 0 && j > 0) { // no ws found in actual search
-                    if (s.length() <= textwidth) {
-                        headingLines.append(newLine(s));
+                    if (s.length() <= textWidth) {
+                        t = newLine(s);
+                        headingLines.append(t);
+                        r = r.united(t->boundingRect());
                         s = "";
                     }
                     else {
-                        headingLines.append(newLine(s.left(j)));
+                        t = newLine(s.left(j));
+                        headingLines.append(t);
+                        r = r.united(t->boundingRect());
                         s = s.mid(j + 1, s.length());
                         j = 0;
                     }
@@ -96,10 +111,12 @@ void HeadingContainer::setHeading(const QString &s)// FIXME-2 richtext has wrong
                 else {
                     if (i >= 0 &&
                         i <= static_cast<int>(
-                                 textwidth)) { // there is a ws in textwidth
+                                 textWidth)) { // there is a ws in textWidth
                         if (br > 0) {
                             // here is a linebreak
-                            headingLines.append(newLine(s.left(i)));
+                            t = newLine(s.left(i));
+                            headingLines.append(t);
+                            r = r.united(t->boundingRect());
                             s = s.mid(i + br, s.length());
                             i = 0;
                             j = 0;
@@ -111,16 +128,20 @@ void HeadingContainer::setHeading(const QString &s)// FIXME-2 richtext has wrong
                         }
                     }
                     else {
-                        if (i > static_cast<int>(textwidth)) {
-                            if (j > 0) { // a ws out of textwidth, but we have
+                        if (i > static_cast<int>(textWidth)) {
+                            if (j > 0) { // a ws out of textWidth, but we have
                                          // also one in
-                                headingLines.append(newLine(s.left(j)));
+                                t = newLine(s.left(j));
+                                headingLines.append(t);
+                                r = r.united(t->boundingRect());
                                 s = s.mid(j + 1, s.length());
                                 i = 0;
                                 j = 0;
                             }
                             else { // a ws out of text, but none in
-                                headingLines.append(newLine(s.left(i)));
+                                t = newLine(s.left(i));
+                                headingLines.append(t);
+                                r = r.united(t->boundingRect());
                                 s = s.mid(i + 1, s.length());
                                 i = 0;
                             }
@@ -130,15 +151,17 @@ void HeadingContainer::setHeading(const QString &s)// FIXME-2 richtext has wrong
             }
         }
     } // ASCII heading with multiple lines
-    setVisibility(visible);
-    move(absPos.x(), absPos.y());
-    calcBBoxSize();
-    */
-    QRectF r = rect();
+    // setVisibility(visible); FIXME-0  no visibility yet with containers
+    // move(absPos.x(), absPos.y());
+    // calcBBoxSize();  // FIXME-2 no longer needed
+
+    // FIXME-0 adapt below to use rectangle from above    
+    /*
     if (!s.isEmpty())  {
         r.setWidth(headingObj->getBBox().width());
         r.setHeight(headingObj->getBBox().height());
     }
+    */
     setRect(r);
 
     setName(QString("HC (%1)").arg(s));
@@ -148,9 +171,14 @@ QString HeadingContainer::getHeading() { return headingText; }
 
 void HeadingContainer::setHeadingColor(const QColor &col) 
 {
-    headingObj->setColor(col);  // FIXME-1 move code from HeadingObj to HeadingContainer
-
-    headingColor = col;
+    if (headingColor != col) {
+        headingColor = col;
+        for (int i = 0; i < headingLines.size(); ++i)
+            // TextItem
+            headingLines.at(i)->setDefaultTextColor(headingColor);
+        // SimpleTextItem
+        // headingLines.at(i)->setBrush(headingColor);
+    }
 }
 
 QColor HeadingContainer::getHeadingColor() {
@@ -185,7 +213,7 @@ QColor HeadingContainer::getColor()
 }
 
 QString HeadingContainer::getName() {
-    return Container::getName() + " '" + headingObj->text() + "'";
+    return Container::getName() + " '" + headingText;
 }
 
 void HeadingContainer::reposition()

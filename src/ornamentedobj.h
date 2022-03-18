@@ -60,7 +60,7 @@ class OrnamentedObj : public LinkableMapObj {
     virtual QRectF getBBoxSystemFlagByUid(const QUuid &u);
 
   protected:
-    HeadingObj *heading;            // Heading
+    //HeadingObj *heading;            // Heading
     FlagRowObj *systemFlagRowObj;   // System Flags
     FlagRowObj *standardFlagRowObj; // Standard Flags
     FrameObj *frame;                // frame around object

@@ -14,14 +14,14 @@ extern bool debug;
 OrnamentedObj::OrnamentedObj(QGraphicsItem *parent, TreeItem *ti)
     : LinkableMapObj(parent, ti)
 {
-    // qDebug() << "Const OrnamentedObj (s,ti) ti=" << ti;
+    qDebug() << "Const OrnamentedObj (s,ti) ti=" << ti;
     treeItem = ti;
     init();
 }
 
 OrnamentedObj::~OrnamentedObj()
 {
-    delete heading;
+    //delete heading;
     delete systemFlagRowObj;
     delete standardFlagRowObj;
     delete frame;
@@ -29,9 +29,9 @@ OrnamentedObj::~OrnamentedObj()
 
 void OrnamentedObj::init()
 {
-    heading = new HeadingObj(this);
-    heading->setTreeItem(treeItem);
-    heading->move(absPos.x(), absPos.y());
+    //heading = new HeadingObj(this);
+    //heading->setTreeItem(treeItem);
+    //heading->move(absPos.x(), absPos.y());
 
     systemFlagRowObj = new FlagRowObj(this);
     standardFlagRowObj = new FlagRowObj(this);
@@ -45,8 +45,8 @@ void OrnamentedObj::init()
 void OrnamentedObj::copy(OrnamentedObj *other)
 {
     LinkableMapObj::copy(other);
-    heading->copy(other->heading);
-    setColor(other->heading->getColor());
+    //heading->copy(other->heading);
+    //setColor(other->heading->getColor());
 
     systemFlagRowObj->copy(other->systemFlagRowObj);
     standardFlagRowObj->copy(other->standardFlagRowObj);
@@ -56,18 +56,18 @@ void OrnamentedObj::copy(OrnamentedObj *other)
 
 void OrnamentedObj::setColor(QColor col)
 {
-    heading->setColor(col);
+    //->setColor(col);
     setLinkColor();
 }
 
-QColor OrnamentedObj::getColor() { return heading->getColor(); }
+QColor OrnamentedObj::getColor() { return QColor();} //heading->getColor(); }
 
-QRectF OrnamentedObj::getBBoxHeading() { return heading->getBBox(); }
+QRectF OrnamentedObj::getBBoxHeading() { return QRectF();} //heading->getBBox(); }
 
 void OrnamentedObj::setRotation(const qreal &a)
 {
     MapObj::setRotation(a);
-    heading->setRotation(a); // FIXME-4 duplicated code...
+    //->setRotation(a); // FIXME-4 duplicated code...
 }
 
 FrameObj *OrnamentedObj::getFrame() { return frame; }
@@ -156,19 +156,19 @@ void OrnamentedObj::positionContents()
     double oy = topPad + dp;
 
     // vertical align heading to bottom
-    heading->setZValue(dZ_TEXT);
-    heading->setTransformOriginPoint(
-        QPointF(ox + systemFlagRowObj->getBBox().width(),
-                oy + ornamentsBBox.height() - heading->getHeight()));
-    heading->move(ox + x + systemFlagRowObj->getBBox().width(),
-                  oy + y + ornamentsBBox.height() - heading->getHeight());
+    //->setZValue(dZ_TEXT);
+    //->setTransformOriginPoint(
+    //    QPointF(ox + systemFlagRowObj->getBBox().width(),
+    //            oy + ornamentsBBox.height() - heading->getHeight()));
+    //->move(ox + x + systemFlagRowObj->getBBox().width(),
+    //              oy + y + ornamentsBBox.height() - heading->getHeight());
     // Flags
-    systemFlagRowObj->move(ox + x, oy + y);
-    systemFlagRowObj->setZValue(dZ_ICON);
-    standardFlagRowObj->move(ox + x + heading->getWidth() +
-                                 systemFlagRowObj->getBBox().width(),
-                             oy + y);
-    standardFlagRowObj->setZValue(dZ_ICON);
+    //systemFlagRowObj->move(ox + x, oy + y);
+    //systemFlagRowObj->setZValue(dZ_ICON);
+    //standardFlagRowObj->move(ox + x + heading->getWidth() +
+    //                             systemFlagRowObj->getBBox().width(),
+    //                         oy + y);
+    //standardFlagRowObj->setZValue(dZ_ICON);
 
     ornamentsBBox.moveTopLeft(QPointF(ox + x, oy + y));
     clickPoly = QPolygonF(ornamentsBBox);
@@ -210,7 +210,7 @@ void OrnamentedObj::moveBy(double x, double y)
     frame->moveBy(x, y);
     systemFlagRowObj->moveBy(x, y);
     standardFlagRowObj->moveBy(x, y);
-    heading->moveBy(x, y);
+    //heading->moveBy(x, y);
     updateLinkGeometry();
     requestReposition();
 }

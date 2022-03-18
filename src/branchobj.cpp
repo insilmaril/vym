@@ -152,7 +152,7 @@ void BranchObj::setVisibility(bool v, int toDepth)
     BranchItem *bi = (BranchItem *)treeItem;
     if (bi->depth() <= toDepth) {
         frame->setVisibility(v);
-        heading->setVisibility(v);
+        //heading->setVisibility(v);
         systemFlagRowObj->setVisibility(v);
         standardFlagRowObj->setVisibility(v);
         LinkableMapObj::setVisibility(v);
@@ -213,7 +213,7 @@ void BranchObj::positionBBox() // FIXME-3 consider dimensions of frame
 
 void BranchObj::calcBBoxSize()
 {
-    QSizeF heading_r = heading->getSize();
+    QSizeF heading_r; // = heading->getSize();
     qreal heading_w = (qreal)heading_r.width();
     qreal heading_h = (qreal)heading_r.height();
     QSizeF sysflags_r = systemFlagRowObj->getSize();
@@ -345,8 +345,10 @@ void BranchObj::updateVisuals()
 
     // Update heading
     QString s = treeItem->getHeadingText();
+    /*
     if (s != heading->text())
         heading->setText(s);
+    */
 
     // Update standard flags active in TreeItemAbsage
 
@@ -381,7 +383,7 @@ void BranchObj::setDefAttr(BranchModification mod, bool keepFrame)
     setLinkStyle(getDefLinkStyle(treeItem->parent()));
     setLinkColor();
     font.setPointSizeF(fontsize);
-    heading->setFont(font);
+    //heading->setFont(font);
 
     if (mod == NewBranch && !keepFrame) {
         if (treeItem->depth() == 0)

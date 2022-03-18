@@ -630,8 +630,10 @@ BranchItem *TreeItem::getBranchNum(const int &n)
         return NULL;
 }
 
-BranchObj *TreeItem::getBranchObjNum(const int &n)
+BranchObj *TreeItem::getBranchObjNum(const int &n) // FIXME-2 Only called from within BranchObj => remove here
 {
+    return nullptr;
+    /*
     if (n >= 0 && n < branchCounter) {
         BranchItem *bi = getBranchNum(n);
         if (bi) {
@@ -643,6 +645,7 @@ BranchObj *TreeItem::getBranchObjNum(const int &n)
         }
     }
     return NULL;
+    */
 }
 
 ImageItem *TreeItem::getImageNum(const int &n)
