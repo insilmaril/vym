@@ -95,7 +95,7 @@ void BranchContainer::setLayoutType(const LayoutType &ltype)
     Container::setLayoutType(ltype);
 
     if (type != Branch) 
-        qWarning() << "BranchContainer::setLayoutType (Floating) called for !Branch";
+        qWarning() << "BranchContainer::setLayoutType (...) called for !Branch";
 }
     
 QRectF BranchContainer::getHeadingRect()
@@ -140,7 +140,7 @@ void BranchContainer::reposition()
     if (depth == 0)
         orientation = UndefinedOrientation;
     else {
-        if (parentContainer()->layout == Floating || parentContainer()->orientation == UndefinedOrientation) {
+        if (parentContainer()->layout == FloatingBounded || parentContainer()->orientation == UndefinedOrientation) {
             if (pos().x() > 0)
                 orientation = RightOfParent;
             else
@@ -161,7 +161,7 @@ void BranchContainer::reposition()
         setLayoutType(Horizontal);
         setHorizontalDirection(LeftToRight);
         innerContainer->setHorizontalDirection(RightToLeft);
-        childrenContainer->setLayoutType(Floating);
+        childrenContainer->setLayoutType(FloatingBounded);
     } else {
         // Branch or mainbranch
         // qDebug() << "BC::reposition d > 1  orientation=" << orientation << getName();
@@ -187,12 +187,12 @@ void BranchContainer::reposition()
         childrenContainer->orientation = orientation;
 
         if (branchItem->getHeadingPlain().startsWith("float")) {
-            // Special layout: floating children 
+            // Special layout: FloatingBounded children 
             orientation = UndefinedOrientation;
             QColor col (Qt::red);
             col.setAlpha(150);
             childrenContainer->setBrush(col);
-            childrenContainer->setLayoutType(Floating);
+            childrenContainer->setLayoutType(FloatingBounded);
             innerContainer->setBrush(Qt::cyan);
         } else if (branchItem->getHeadingPlain().startsWith("vert")) {
             qDebug() << "  ### BC::reposition d=" << depth << "  VERTICAL begin orientation" << 

@@ -32,7 +32,7 @@ class Container : public QGraphicsRectItem {
     };
 
     /*! Alignment of children containers */
-    enum LayoutType {Horizontal, Vertical, Floating, BFloat};
+    enum LayoutType {Horizontal, Vertical, FloatingBounded, FloatingFree};
     enum HorizontalDirection {LeftToRight, RightToLeft};
     enum VerticalAlignment {Left, Centered, Right};
 

@@ -74,8 +74,8 @@ MapEditor::MapEditor(VymModel *vm)
     tmpParentContainer->setZValue(1000);    // See also z-values in mapobj.h
     tmpParentContainer->setName("tmpParentContainer");
     tmpParentContainer->setType(Container::TmpParent);
-    tmpParentContainer->setLayoutType(Container::Floating);
-    tmpParentContainer->getChildrenContainer()->setLayoutType(Container::Floating);
+    tmpParentContainer->setLayoutType(Container::FloatingBounded);
+    tmpParentContainer->getChildrenContainer()->setLayoutType(Container::FloatingBounded);
     tmpParentContainer->setBrush(Qt::NoBrush);
     tmpParentContainer->setPen(QPen(Qt::NoPen));
     tmpParentContainer->reposition();
@@ -1829,7 +1829,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                             bi->updateContainerStackingOrder();
 
                             if (bi->depth() == 0 || 
-                                    (pi && pi->getBranchContainer()->getChildrenContainer()->getLayoutType() == Container::Floating))
+                                    (pi && pi->getBranchContainer()->getChildrenContainer()->getLayoutType() == Container::FloatingBounded))
                             {
                                 // Relative positioning
                                 model->saveState(

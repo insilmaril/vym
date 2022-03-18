@@ -132,7 +132,7 @@ void Container::setVerticalAlignment(const VerticalAlignment &a)
 bool Container::isFloating()
 {
     Container *pc = parentContainer();
-    if (pc && pc->getLayoutType() == Floating)
+    if (pc && pc->getLayoutType() == FloatingBounded)
         return true;
     else
         return false;
@@ -215,39 +215,30 @@ void Container::reposition()
     }
 
     switch (layout) {
-        case Floating: 
+        case FloatingBounded: 
                 {
                     // Calc bbox of all children to prepare calculating rect()
-
-                    QPointF tl; // topLeft in scene coord
-                    QPointF br; // bottomRight in scene coord
-                    QPointF p;
                     QRectF rc;
                     if (childItems().count() > 0) {
+                        bool first_iteration = true;
+
                         // Set initial minima and maxima
                         c = (Container*) childItems().first();
                         rc = mapRectFromItem(c, c->rect());
 
-                        tl = rc.topLeft();
-                        br = rc.bottomRight();
-                        // Consider other children // FIXME-2 skipt 1st one, already done above. Or use united method...
+                        // Consider other children
                         foreach (QGraphicsItem *child, childItems()) {
                             c = (Container*) child;
                             rc = mapRectFromItem(c, c->rect());
-                            p = rc.topLeft();
 
-                            if (p.x() < tl.x()) tl.setX(p.x());
-                            if (p.y() < tl.y()) tl.setY(p.y());
-
-                            p = rc.bottomRight();
-                            if (p.x() > br.x()) br.setX(p.x());
-                            if (p.y() > br.y()) br.setY(p.y());
+                            if (first_iteration) {
+                                first_iteration = false;
+                                r = rc;
+                            } else 
+                                r = r.united(rc);
                         }
                     }
                     
-                r.setTopLeft(tl);
-                r.setBottomRight(br);
-
                 setRect(r);
             }
             break;
@@ -269,11 +260,11 @@ void Container::reposition()
                     // Special case: containers with floating content always are assumed to 
                     // be at my own origin. Even if we (temporarily) move
                     // them later, so that container is aligned with my left/top border
-                    if (c->layout == Floating) c->setPos(0, 0);
+                    if (c->layout == FloatingBounded) c->setPos(0, 0);
 
                     c_bbox = mapRectFromItem(c, c->rect());
 
-                    if (c->layout == Floating) {
+                    if (c->layout == FloatingBounded) {
                         // Floating does not directly increase max height or sum of widths, 
                         // but build max bbox of floating children
                         if (!hasFloatingContent) {
@@ -300,7 +291,7 @@ void Container::reposition()
                 foreach (QGraphicsItem *child, childItems()) {
                     c = (Container*) child;
 
-                    if (c->layout != Floating) {
+                    if (c->layout != FloatingBounded) {
                         // Non-floating child, consider width and height
                         w_last = c->rect().width();
 
@@ -359,7 +350,7 @@ void Container::reposition()
                 foreach (QGraphicsItem *child, childItems()) {
                     c = (Container*) child;
 
-                    if (c->layout == Floating) {
+                    if (c->layout == FloatingBounded) {
                         if (!hasFloatingContent) {
                             // Initial assignment
                             ctr = mapRectFromItem(c, c->rect());
@@ -386,7 +377,7 @@ void Container::reposition()
                 foreach (QGraphicsItem *child, childItems()) {
                     c = (Container*) child;
 
-                    if (c->layout != Floating) {
+                    if (c->layout != FloatingBounded) {
                         switch (verticalAlignment) {
                             case Left:
                                 c->setPos (0, y);
@@ -402,7 +393,7 @@ void Container::reposition()
                         //qDebug() << " - VL Positioning c:" << c->info();
                         y += c->rect().height();
                     } else {
-                        // c->layout == Floating  save position
+                        // c->layout == FloatingBounded  save position
                         y_float = y;
                     }
                 }
