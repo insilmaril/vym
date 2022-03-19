@@ -56,13 +56,14 @@ class Container : public QGraphicsRectItem {
 
     virtual void setLayoutType(const LayoutType &ltype);
     LayoutType getLayoutType();
+    bool isFloating();          //! returns true, if parent container has Floating layout
+    bool hasFloatingLayout();   //! returns true, if this container has Floating layout
 
     void setHorizontalDirection(const HorizontalDirection &hdir);
     HorizontalDirection getHorizontalDirection();
 
     void setVerticalAlignment(const VerticalAlignment &a);
 
-    bool isFloating();  //! returns true, if parent container has Floating layout
 
     void addContainer(Container *c);
     Container* parentContainer();

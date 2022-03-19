@@ -1829,7 +1829,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                             bi->updateContainerStackingOrder();
 
                             if (bi->depth() == 0 || 
-                                    (pi && pi->getBranchContainer()->getChildrenContainer()->getLayoutType() == Container::FloatingBounded))
+                                    (pi && pi->getBranchContainer()->getChildrenContainer()->hasFloatingLayout()))
                             {
                                 // Relative positioning
                                 model->saveState(

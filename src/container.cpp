@@ -114,6 +114,22 @@ Container::LayoutType Container::getLayoutType()
     return layout;
 }
 
+bool Container::isFloating()
+{
+    Container *pc = parentContainer();
+    if (pc && pc->hasFloatingLayout())
+        return true;
+    else
+        return false;
+}
+
+bool Container::hasFloatingLayout() {
+    if (layout == FloatingBounded || layout == FloatingFree)
+        return true;
+    else
+        return false;
+}
+
 void Container::setHorizontalDirection(const HorizontalDirection &hdir)
 {
     horizontalDirection = hdir;
@@ -127,15 +143,6 @@ Container::HorizontalDirection Container::getHorizontalDirection()
 void Container::setVerticalAlignment(const VerticalAlignment &a)
 {
     verticalAlignment = a;
-}
-
-bool Container::isFloating()
-{
-    Container *pc = parentContainer();
-    if (pc && pc->getLayoutType() == FloatingBounded)
-        return true;
-    else
-        return false;
 }
 
 void Container::addContainer(Container *c)
@@ -241,6 +248,9 @@ void Container::reposition()
                     
                 setRect(r);
             }
+            break;
+        case FloatingFree: 
+            setRect(r);
             break;
         case Horizontal: {
                 qreal h_max = 0;

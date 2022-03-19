@@ -194,6 +194,14 @@ void BranchContainer::reposition()
             childrenContainer->setBrush(col);
             childrenContainer->setLayoutType(FloatingBounded);
             innerContainer->setBrush(Qt::cyan);
+        } else if (branchItem->getHeadingPlain().startsWith("free")) {
+            // Special layout: FloatingBounded children 
+            orientation = UndefinedOrientation;
+            QColor col (Qt::red);
+            col.setAlpha(120);
+            childrenContainer->setBrush(col);
+            childrenContainer->setLayoutType(FloatingFree);
+            innerContainer->setBrush(Qt::gray);
         } 
     }
 
