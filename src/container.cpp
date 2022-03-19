@@ -3,8 +3,6 @@
 #include "container.h"
 
 #include "branchitem.h"
-#include "mapobj.h" // FIXME-2 needed?
-#include "misc.h"   // FIXME-2 debugging only
 
 Container::Container(QGraphicsItem *parent) : QGraphicsRectItem(parent)
 {
@@ -14,7 +12,7 @@ Container::Container(QGraphicsItem *parent) : QGraphicsRectItem(parent)
 
 Container::~Container()
 {
-    //qDebug() << "* Destr Container" << name << this;
+    //qDebug() << "* Destr Container" << getName()<< this;
 }
 
 void Container::copy(Container *other)
@@ -24,7 +22,6 @@ void Container::copy(Container *other)
     originalPos = other->originalPos;
     name = other->name;
 
-    orientationMode = other->orientationMode;
     orientation = other->orientation;
 
     layout = other->layout;
@@ -37,7 +34,6 @@ void Container::init()
     type = Undefined;
     layout = Horizontal;
 
-    orientationMode = Auto;
     orientation = UndefinedOrientation;
 
     show();
@@ -97,16 +93,6 @@ QString Container::info (const QString &prefix)
         QString(" scenePos: (%1, %2)").arg(scenePos().x()).arg(scenePos().y()) + 
         QString(" pos: (%1, %2)").arg(pos().x()).arg(pos().y()) +
         QString(" Layout: %1").arg(layout);
-}
-
-void Container::setOrientationMode(const OrientationMode &om)   // FIXME-2 currently unused
-{
-    orientationMode = om;
-}
-
-Container::OrientationMode Container::getOrientationMode()
-{
-    return orientationMode;
 }
 
 void Container::setOrientation(const Orientation &m)

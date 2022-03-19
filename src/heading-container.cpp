@@ -2,22 +2,18 @@
 
 #include "heading-container.h"
 
-#include "mapobj.h"     // FIXME-2 needed?
-
-// FIXME-0 HeadingContainer does not work yet with multiple line headings
 HeadingContainer::HeadingContainer(QGraphicsItem *parent) : Container(parent) 
 
 {
-    //qDebug() << "* Const HeadingContainer begin this = " << this;
+    //qDebug() << "* Const HeadingContainer begin this = ";
     init();
 }
 
 HeadingContainer::~HeadingContainer()
 {
-    //qDebug() << "* Destr HeadingContainer" << name << this;
+    //qDebug() << "* Destr HeadingContainer" << getName();
 
-    while (!headingLines.isEmpty())
-        delete headingLines.takeFirst();
+    clearHeading();
 }
 
 void HeadingContainer::init()
@@ -31,12 +27,20 @@ void HeadingContainer::init()
     verticalAlignment = AlignedLeft;
 }
 
-QGraphicsTextItem *HeadingContainer::newLine(QString s)  // FIXME-0 use vertical container layout for the lines: Each line it's own container
+QGraphicsTextItem *HeadingContainer::newLine(QString s)  // FIXME-3 use vertical container layout for the lines: Each line it's own container?
 {
     QGraphicsTextItem *t = new QGraphicsTextItem(s, this);
     t->setFont(headingFont);
     t->setZValue(dZ_TEXT);
     t->setDefaultTextColor(headingColor);
+
+    headingLines.append(t);
+
+    QRectF r = rect();
+    t->setPos(0, r.height());
+    r.setHeight(r.height() + t->boundingRect().height());
+    if (r.width() < t->boundingRect().width()) r.setWidth(t->boundingRect().width());
+    setRect(r);
     return t;
 }
 
@@ -48,11 +52,9 @@ void HeadingContainer::setHeading(QString s)// FIXME-2 richtext has wrong positi
     int textWidth = 40;
 
     QGraphicsTextItem *t;
-    QRectF r;
 
     // remove old textlines and prepare generating new ones
-    while (!headingLines.isEmpty())
-        delete headingLines.takeFirst();
+    clearHeading();
 
     if (s.startsWith("<html>") ||
         s.startsWith("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" "
@@ -62,8 +64,8 @@ void HeadingContainer::setHeading(QString s)// FIXME-2 richtext has wrong positi
         t->setZValue(dZ_TEXT);
         t->setHtml(s);
         t->setDefaultTextColor(headingColor);
-        headingLines.append(t);     // FIXME-0 check richText
-        r = t->boundingRect();
+        headingLines.append(t);
+        setRect(t->boundingRect());
     }
     else {
         // prevent empty headingLines, so at least a small selection stays
@@ -92,22 +94,16 @@ void HeadingContainer::setHeading(QString s)// FIXME-2 richtext has wrong positi
             if (i < 0 && j == 0) { // no ws found at all in s
                 // append whole s
                 t = newLine(s);
-                headingLines.append(t);
-                r = r.united(t->boundingRect());
                 s = "";
             }
             else {
                 if (i < 0 && j > 0) { // no ws found in actual search
                     if (s.length() <= textWidth) {
                         t = newLine(s);
-                        headingLines.append(t);
-                        r = r.united(t->boundingRect());
                         s = "";
                     }
                     else {
                         t = newLine(s.left(j));
-                        headingLines.append(t);
-                        r = r.united(t->boundingRect());
                         s = s.mid(j + 1, s.length());
                         j = 0;
                     }
@@ -119,8 +115,6 @@ void HeadingContainer::setHeading(QString s)// FIXME-2 richtext has wrong positi
                         if (br > 0) {
                             // here is a linebreak
                             t = newLine(s.left(i));
-                            headingLines.append(t);
-                            r = r.united(t->boundingRect());
                             s = s.mid(i + br, s.length());
                             i = 0;
                             j = 0;
@@ -136,16 +130,12 @@ void HeadingContainer::setHeading(QString s)// FIXME-2 richtext has wrong positi
                             if (j > 0) { // a ws out of textWidth, but we have
                                          // also one in
                                 t = newLine(s.left(j));
-                                headingLines.append(t);
-                                r = r.united(t->boundingRect());
                                 s = s.mid(j + 1, s.length());
                                 i = 0;
                                 j = 0;
                             }
                             else { // a ws out of text, but none in
                                 t = newLine(s.left(i));
-                                headingLines.append(t);
-                                r = r.united(t->boundingRect());
                                 s = s.mid(i + 1, s.length());
                                 i = 0;
                             }
@@ -156,22 +146,18 @@ void HeadingContainer::setHeading(QString s)// FIXME-2 richtext has wrong positi
         }
     } // ASCII heading with multiple lines
     // setVisibility(visible); FIXME-0  no visibility yet with containers
-    // move(absPos.x(), absPos.y());
-    // calcBBoxSize();  // FIXME-2 no longer needed
-
-    // FIXME-0 adapt below to use rectangle from above    
-    /*
-    if (!s.isEmpty())  {
-        r.setWidth(headingObj->getBBox().width());
-        r.setHeight(headingObj->getBBox().height());
-    }
-    */
-    setRect(r);
 
     setName(QString("HC (%1)").arg(s));
 }
 
 QString HeadingContainer::getHeading() { return headingText; }
+
+void HeadingContainer::clearHeading()
+{
+    while (!headingLines.isEmpty())
+        delete headingLines.takeFirst();
+    setRect(0,0,0,0);
+}
 
 void HeadingContainer::setHeadingColor(const QColor &col) 
 {

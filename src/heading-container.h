@@ -19,6 +19,7 @@ class HeadingContainer : public Container {
   public:
     void setHeading(QString);
     QString getHeading();
+    void clearHeading();
     void setHeadingColor(const QColor &);
     QColor getHeadingColor();
     void setFont(const QFont &);
