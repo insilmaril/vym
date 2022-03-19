@@ -36,8 +36,9 @@ class Container : public QGraphicsRectItem {
     enum HorizontalDirection {LeftToRight, RightToLeft};
     enum VerticalAlignment {Left, Centered, Right};
 
-    Container (QGraphicsItem *parent = NULL);
+    Container (QGraphicsItem *parent = nullptr);
     virtual ~Container();
+    virtual void copy(Container*);
     virtual void init();
 
     void setType(const ContainerType &t);

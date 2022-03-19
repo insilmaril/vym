@@ -4,6 +4,7 @@
 
 #include "mapobj.h"     // FIXME-2 needed?
 
+// FIXME-0 HeadingContainer does not work yet with multiple line headings
 HeadingContainer::HeadingContainer(QGraphicsItem *parent) : Container(parent) 
 
 {
@@ -27,7 +28,7 @@ void HeadingContainer::init()
     headingColor = QColor(Qt::black);
 }
 
-QGraphicsTextItem *HeadingContainer::newLine(QString s)
+QGraphicsTextItem *HeadingContainer::newLine(QString s)  // FIXME-0 use vertical container layout for the lines: Each line it's own container
 {
     QGraphicsTextItem *t = new QGraphicsTextItem(s, this);
     t->setFont(headingFont);

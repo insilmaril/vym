@@ -17,6 +17,21 @@ Container::~Container()
     //qDebug() << "* Destr Container" << name << this;
 }
 
+void Container::copy(Container *other)
+{
+    type = other->type;
+
+    originalPos = other->originalPos;
+    name = other->name;
+
+    orientationMode = other->orientationMode;
+    orientation = other->orientation;
+
+    layout = other->layout;
+    horizontalDirection = other->horizontalDirection;
+    verticalAlignment = other->verticalAlignment;
+}
+
 void Container::init()
 {
     type = Undefined;

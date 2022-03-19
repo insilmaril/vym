@@ -4,9 +4,9 @@
 
 #include "branchitem.h"
 #include "heading-container.h"
-#include "mapobj.h"
+#include "mapobj.h" // FIXME-2 needed?
 
-BranchContainer::BranchContainer(QGraphicsScene *scene, QGraphicsItem *parent, BranchItem *bi) : Container(parent)
+BranchContainer::BranchContainer(QGraphicsScene *scene, QGraphicsItem *parent, BranchItem *bi) : Container(parent)  // FIXME-2 scene and addItem should not be required, only for mapCenters without parent:  setParentItem automatically sets scene!
 {
     //qDebug() << "* Const BranchContainer begin this = " << this << "  branchitem = " << bi;
     scene->addItem(this);
@@ -36,7 +36,6 @@ void BranchContainer::init()
     headingContainer = new HeadingContainer ();
     headingContainer->setBrush(Qt::NoBrush);
     headingContainer->setPen(Qt::NoPen);
-    scene()->addItem (headingContainer);
 
     childrenContainer = new Container ();
     childrenContainer->setBrush(Qt::NoBrush);
@@ -44,14 +43,13 @@ void BranchContainer::init()
     childrenContainer->setLayoutType(Container::Vertical);      // Default, usually depends on depth
     childrenContainer->setVerticalAlignment(Container::Left);   // Default, usually depends on position
     childrenContainer->type = Container::Children;
-    scene()->addItem (childrenContainer);
 
     innerContainer = new Container ();
     innerContainer->setBrush(Qt::NoBrush);
     innerContainer->setPen(Qt::NoPen);
     innerContainer->type = InnerContent;
-    scene()->addItem (innerContainer);
 
+    // Adding the containers will reparent them and thus set scene
     innerContainer->addContainer(headingContainer);
     innerContainer->addContainer(childrenContainer);
     addContainer(innerContainer);

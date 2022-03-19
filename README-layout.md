@@ -49,7 +49,11 @@ Containers
   structures. In the end they will probably replace the current MapObj and
   inherited classes.
   
-
+- Container classes (like MapObjs previously) don't follow the rule of
+  three: This works, because we
+    - are very care careful to delete containers, no containers created on
+      stack
+    -   
 Ideas 
 -----
 
@@ -116,3 +120,6 @@ Next steps
     - MapObj
         - need at all in the end?
         - getSelectionPath
+
+* Let containers inherit QGraphicsItem and use a QRectF for geometry instead of inheriting QGraphicsRectItem        
+  once drawing boxes is no longer required for debugging
