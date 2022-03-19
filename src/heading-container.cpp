@@ -26,6 +26,9 @@ void HeadingContainer::init()
 
     setHeading("");
     headingColor = QColor(Qt::black);
+
+    layout = Vertical;
+    verticalAlignment = AlignedLeft;
 }
 
 QGraphicsTextItem *HeadingContainer::newLine(QString s)  // FIXME-0 use vertical container layout for the lines: Each line it's own container

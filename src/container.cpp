@@ -406,13 +406,13 @@ void Container::reposition()
 
                     if (c->layout != FloatingBounded) {
                         switch (verticalAlignment) {
-                            case Left:
+                            case AlignedLeft:
                                 c->setPos (0, y);
                                 break;
-                            case Right:
+                            case AlignedRight:
                                 c->setPos (w_max - c->rect().width(), y);
                                 break;
-                            case Centered:
+                            case AlignedCentered:
                                 c->setPos ( (w_max - c->rect().width() ) / 2, y);
                                 break;
                         }

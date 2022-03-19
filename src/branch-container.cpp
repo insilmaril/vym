@@ -40,8 +40,8 @@ void BranchContainer::init()
     childrenContainer = new Container ();
     childrenContainer->setBrush(Qt::NoBrush);
     childrenContainer->setPen(Qt::NoPen);
-    childrenContainer->setLayoutType(Container::Vertical);      // Default, usually depends on depth
-    childrenContainer->setVerticalAlignment(Container::Left);   // Default, usually depends on position
+    childrenContainer->setLayoutType(Container::Vertical);              // Default, usually depends on depth
+    childrenContainer->setVerticalAlignment(Container::AlignedLeft);    // Default, usually depends on position
     childrenContainer->type = Container::Children;
 
     innerContainer = new Container ();
@@ -171,12 +171,12 @@ void BranchContainer::reposition()
             case LeftOfParent:
                 setHorizontalDirection(RightToLeft);
                 innerContainer->setHorizontalDirection(RightToLeft);
-                childrenContainer->setVerticalAlignment(Right);
+                childrenContainer->setVerticalAlignment(AlignedRight);
                 break;
             case RightOfParent:
                 setHorizontalDirection(LeftToRight);
                 innerContainer->setHorizontalDirection(LeftToRight);
-                childrenContainer->setVerticalAlignment(Left);
+                childrenContainer->setVerticalAlignment(AlignedLeft);
                 break;
             default: 
                 qWarning() << "BranchContainer::reposition unknown orientation for mainbranch";
