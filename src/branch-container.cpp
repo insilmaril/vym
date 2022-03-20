@@ -148,6 +148,7 @@ void BranchContainer::reposition()
             setOrientation(parentContainer()->orientation);
     }
 
+    setLayoutType(Horizontal);
     
     // Settings depending on depth
     if (depth == 0)
@@ -155,16 +156,24 @@ void BranchContainer::reposition()
         // MapCenter
 
         // qDebug() << "BC::reposition d == 0 " << getName();
-
-        setLayoutType(Horizontal);
         setHorizontalDirection(LeftToRight);
         innerContainer->setHorizontalDirection(RightToLeft);
+        innerContainer->setMovableByFloats(false);
+        setMovableByFloats(false);
         childrenContainer->setLayoutType(FloatingBounded);
+
+        //FIXME-0 add "flags" for testing (but only once)
+        if (innerContainer->childItems().count() <= 2) {
+            HeadingContainer *fc = new HeadingContainer();
+            fc->setHeading("Flags");
+            innerContainer->addContainer(fc);
+        }
+
     } else {
         // Branch or mainbranch
+        
         // qDebug() << "BC::reposition d > 1  orientation=" << orientation << getName();
-
-        setLayoutType(Horizontal);
+        innerContainer->setMovableByFloats(true);
         childrenContainer->setLayoutType(Vertical);
 
         switch (orientation) {

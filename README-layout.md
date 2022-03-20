@@ -51,9 +51,10 @@ Containers
   
 - Container classes (like MapObjs previously) don't follow the rule of
   three: This works, because we
-    - are very care careful to delete containers, no containers created on
-      stack
-    -   
+    - we only use pointers, esp. for passing to functions 
+    - are very care careful to delete containers
+    - no containers created on stack
+   
 Ideas 
 -----
 
@@ -74,7 +75,6 @@ Next steps
     - Todo
         - Fix z value of select box for selected containers
         - absolute position for MapCenters for COntainers
-        - Relative position for Images: "FreeFloat" or "FramedFloat"
 
     - Position containers temporarily while moving: When an object can be
       linked temporarily, it needs a relative position to the tmp parent.
