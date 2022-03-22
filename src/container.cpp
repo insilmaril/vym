@@ -295,22 +295,22 @@ void Container::reposition()
                         //bbox = bbox.united(c_bbox); // FIXME-2 required here still?
                     } else {
                         // FIXME-2 testing
+                        /*
                         qDebug() << " *0 this" << getName() << "-> c:" 
                             << c->getName() 
                             << "has c_bbox=" << c_bbox
                             << "c movable:" << c->movableByFloats 
                             << "bbox=" << bbox;
+                        */
 
                         if (c_bbox.topLeft().x() < 0 || c_bbox.topLeft().y() < 0)
                         {
                             // bbox = bbox.united(c_bbox); // FIXME-2 required here still?
-                            qDebug() << " *1a special case.";
                         } else {
                             // For width and height we can use the already mapped dimensions
                             h = c_bbox.height();
                             h_max = (h_max < h) ? h : h_max;
                             w_total += c_bbox.width();
-                            qDebug() << " *1b New h_max:" << h_max << "new w_total: " <<w_total;
                         }
                     }
                 }
@@ -321,11 +321,9 @@ void Container::reposition()
                 horizontalDirection == LeftToRight ? x = 0 : x = w_total;
 
                 // Position children initially.
-                qDebug() << " *2 Positioning children of " << getName();
                 foreach (QGraphicsItem *child, childItems()) {
                     c = (Container*) child;
 
-                    qDebug() << " *3 - pre:  " << c->info() << "movable:" << movableByFloats ;
                     if (c->layout != FloatingBounded) {
                         // Non-floating child, consider width and height
                         w_last = c->rect().width();
@@ -346,18 +344,14 @@ void Container::reposition()
                             x -= w_last;
                         }
                     }
-                    qDebug() << " *4 - post: " << c->info();
                 }
-                qDebug() << " *5 - final me: " << info();
 
                 // Set rect to the non-floating containers we have so far
                 r.setWidth(w_total);
                 r.setHeight(h_max);
                 setRect(r);
 
-                qDebug() << "6 Pre: " << getName() << " r:" << r << "bbox: " << bbox;
                 r = r.united(bbox);
-                qDebug() << " Post: " << getName() << " r:" << r << "bbox: " << bbox;
 
                 if (hasFloatingContent) {
                 //if (true) {
@@ -372,8 +366,6 @@ void Container::reposition()
 
                     if (r.topLeft().x() < 0) t.setX(-r.topLeft().x());
                     if (r.topLeft().y() < 0) t.setY(-r.topLeft().y());
-
-                    qDebug() << "7 - has floating content: " << getName() << " movable:" << movableByFloats << " t=" <<t;
 
                     if (t != QPointF()) {
                         if (movableByFloats) {
