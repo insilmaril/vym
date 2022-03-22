@@ -66,11 +66,18 @@ class Container : public QGraphicsRectItem {
     bool isFloating();          //! returns true, if parent container has Floating layout
     bool hasFloatingLayout();   //! returns true, if this container has Floating layout
 
+    /*! Floating content can cause translating this container, this is used
+     *  for InnerContainer. But mapCenters need to keep the position of
+     *  InnerContainer and heading, and move the parent BranchContainer
+     *  instead in opposite direction, when total bbox of
+     *  floating children changes
+     */
+    void setMovableByFloats(bool);  
+
     void setHorizontalDirection(const HorizontalDirection &hdir);
     HorizontalDirection getHorizontalDirection();
 
     void setVerticalAlignment(const VerticalAlignment &a);
-
 
     void addContainer(Container *c);
     Container* parentContainer();
@@ -90,6 +97,8 @@ class Container : public QGraphicsRectItem {
     Orientation orientation;
 
     LayoutType layout;
+    bool movableByFloats;
+
     HorizontalDirection horizontalDirection;
     VerticalAlignment verticalAlignment;
 };

@@ -25,6 +25,7 @@ void Container::copy(Container *other)
     orientation = other->orientation;
 
     layout = other->layout;
+    movableByFloats = false;
     horizontalDirection = other->horizontalDirection;
     verticalAlignment = other->verticalAlignment;
 }
@@ -90,9 +91,10 @@ QString Container::info (const QString &prefix)
 {
     return prefix +
         getName() +
+        QString(" Layout: %1").arg(layout) +
         QString(" scenePos: (%1, %2)").arg(scenePos().x()).arg(scenePos().y()) + 
         QString(" pos: (%1, %2)").arg(pos().x()).arg(pos().y()) +
-        QString(" Layout: %1").arg(layout);
+        QString(" (w,h): (%1, %2)").arg(rect().width()).arg(rect().height());
 }
 
 void Container::setOrientation(const Orientation &m)
@@ -129,6 +131,11 @@ bool Container::hasFloatingLayout() {
         return true;
     else
         return false;
+}
+
+void Container::setMovableByFloats(bool movable)
+{
+    movableByFloats = movable;
 }
 
 void Container::setHorizontalDirection(const HorizontalDirection &hdir)
@@ -274,21 +281,37 @@ void Container::reposition()
 
                     c_bbox = mapRectFromItem(c, c->rect());
 
-                    if (c->layout == FloatingBounded) {
+                    bbox = bbox.united(c_bbox); // FIXME-2 ok here?
+
+                    if (c->layout == FloatingBounded ) {
                         // Floating does not directly increase max height or sum of widths, 
                         // but build max bbox of floating children
                         if (!hasFloatingContent) {
                             hasFloatingContent = true;
-                            bbox = c_bbox;
+                            //bbox = c_bbox;
                         }
 
                         // Unite bounding boxes of floating children to my own bbox in my own coord
-                        bbox = bbox.united(c_bbox);
+                        //bbox = bbox.united(c_bbox); // FIXME-2 required here still?
                     } else {
-                        // For width and height we can use the already mapped dimensions
-                        h = c_bbox.height();
-                        h_max = (h_max < h) ? h : h_max;
-                        w_total += c_bbox.width();
+                        // FIXME-2 testing
+                        qDebug() << " *0 this" << getName() << "-> c:" 
+                            << c->getName() 
+                            << "has c_bbox=" << c_bbox
+                            << "c movable:" << c->movableByFloats 
+                            << "bbox=" << bbox;
+
+                        if (c_bbox.topLeft().x() < 0 || c_bbox.topLeft().y() < 0)
+                        {
+                            // bbox = bbox.united(c_bbox); // FIXME-2 required here still?
+                            qDebug() << " *1a special case.";
+                        } else {
+                            // For width and height we can use the already mapped dimensions
+                            h = c_bbox.height();
+                            h_max = (h_max < h) ? h : h_max;
+                            w_total += c_bbox.width();
+                            qDebug() << " *1b New h_max:" << h_max << "new w_total: " <<w_total;
+                        }
                     }
                 }
 
@@ -297,51 +320,71 @@ void Container::reposition()
 
                 horizontalDirection == LeftToRight ? x = 0 : x = w_total;
 
-                // Position children initially. 
+                // Position children initially.
+                qDebug() << " *2 Positioning children of " << getName();
                 foreach (QGraphicsItem *child, childItems()) {
                     c = (Container*) child;
 
+                    qDebug() << " *3 - pre:  " << c->info() << "movable:" << movableByFloats ;
                     if (c->layout != FloatingBounded) {
                         // Non-floating child, consider width and height
                         w_last = c->rect().width();
+                        qreal y;
+
+                        if (movableByFloats)
+                            y = (h_max - c->rect().height() ) / 2;
+                        else
+                            y = c->pos().y();
 
                         if (horizontalDirection == LeftToRight)
                         {
-                            c->setPos (x, (h_max - c->rect().height() ) / 2 );
+                            c->setPos (x, y);
                             x += w_last;
                         } else
                         {
-                            c->setPos (x - c->rect().width(), (h_max - c->rect().height() ) / 2);
+                            c->setPos (x - c->rect().width(), y);
                             x -= w_last;
                         }
                     }
+                    qDebug() << " *4 - post: " << c->info();
                 }
+                qDebug() << " *5 - final me: " << info();
 
                 // Set rect to the non-floating containers we have so far
                 r.setWidth(w_total);
                 r.setHeight(h_max);
                 setRect(r);
 
+                qDebug() << "6 Pre: " << getName() << " r:" << r << "bbox: " << bbox;
+                r = r.united(bbox);
+                qDebug() << " Post: " << getName() << " r:" << r << "bbox: " << bbox;
+
                 if (hasFloatingContent) {
+                //if (true) {
                     // Calculate translation vector t to move *parent* later on
                     // now after regular containers have been positioned
                     // Also enlarge bounding box to maximum of floating and regular content
 
-                    r = r.united(bbox);
+                    //r = r.united(bbox); // FIXME-2 already used above?
 
-                    QPointF t; // Translation vector for all children to move topLeft corner to origin
+                    // Translation vector for all children to move topLeft corner to origin
+                    QPointF t;
 
                     if (r.topLeft().x() < 0) t.setX(-r.topLeft().x());
                     if (r.topLeft().y() < 0) t.setY(-r.topLeft().y());
 
-                    if (t != QPointF()) {
-                        // Finally move containers by t
-                        foreach (QGraphicsItem *child, childItems()) {
-                            c = (Container*) child;
-                            c->setPos(c->pos() + t);
-                        }
+                    qDebug() << "7 - has floating content: " << getName() << " movable:" << movableByFloats << " t=" <<t;
 
-                        r.translate(t);
+                    if (t != QPointF()) {
+                        if (movableByFloats) {
+                            // I need to become bigger in topLeft corner to make room for floats:
+                            // Move my own children containers by t
+                            foreach (QGraphicsItem *child, childItems()) {
+                                c = (Container*) child;
+                                c->setPos(c->pos() + t);
+                            }
+                            r.translate(t);
+                        }
                     }
                 }
             } // Horizontal layout
@@ -423,7 +466,8 @@ void Container::reposition()
 
                     r = r.united(bbox);
 
-                    QPointF t; // Translation vector for all children to move topLeft corner to origin
+                    // Translation vector for all children to move topLeft corner to origin
+                    QPointF t;
 
                     if (r.topLeft().x() < 0) t.setX(-r.topLeft().x());
                     if (r.topLeft().y() < 0) t.setY(-r.topLeft().y());
@@ -433,6 +477,7 @@ void Container::reposition()
                         foreach (QGraphicsItem *child, childItems()) {
                             c = (Container*) child;
                             c->setPos(c->pos() + t);
+                            qDebug() << "VL moving " << c->getName() << " by " << t; // FIXME-2
                         }
 
                         r.translate(t);

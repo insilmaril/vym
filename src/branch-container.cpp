@@ -159,14 +159,25 @@ void BranchContainer::reposition()
         setHorizontalDirection(LeftToRight);
         innerContainer->setHorizontalDirection(RightToLeft);
         innerContainer->setMovableByFloats(false);
-        setMovableByFloats(false);
+        setMovableByFloats(false);  // FIXME-2 Needed?
         childrenContainer->setLayoutType(FloatingBounded);
 
-        //FIXME-0 add "flags" for testing (but only once)
+        //FIXME-0 add "flags" for testing (but only once!)
         if (innerContainer->childItems().count() <= 2) {
             HeadingContainer *fc = new HeadingContainer();
             fc->setHeading("Flags");
             innerContainer->addContainer(fc);
+
+            // And add origin
+            QGraphicsRectItem *x_axis = new QGraphicsRectItem(-100, 0, 200, 1 );
+            QGraphicsRectItem *y_axis = new QGraphicsRectItem(0, -100, 1, 200 );
+            x_axis->setBrush(Qt::NoBrush);
+            y_axis->setBrush(Qt::NoBrush);
+            x_axis->setPen(QColor(Qt::blue));
+            y_axis->setPen(QColor(Qt::blue));
+
+            scene()->addItem(x_axis);
+            scene()->addItem(y_axis);
         }
 
     } else {
