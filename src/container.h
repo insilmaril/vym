@@ -4,6 +4,7 @@
 #include <QGraphicsRectItem>
 
 class BranchContainer;
+class ImageContainer;
 class MapObj;
 
 #define dZ_BBOX 0 // testing
@@ -21,6 +22,7 @@ class MapObj;
 
 class Container : public QGraphicsRectItem {
   friend class BranchContainer;
+  friend class ImageContainer;
   public:
     /*! Type of this container */
     enum ContainerType {
