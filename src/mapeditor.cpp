@@ -378,7 +378,6 @@ void MapEditor::setViewCenterTarget(const QPointF &p, const qreal &zft,
                                     const qreal &at, const int duration,
                                     const QEasingCurve &easingCurve)
 {
-    qDebug() << "ME::setViewCenterTarget a)";  // FIXME-0 not working...
     viewCenterTarget = p;
     zoomFactorTarget = zft;
     angleTarget = at;
@@ -419,7 +418,6 @@ void MapEditor::setViewCenterTarget(const QPointF &p, const qreal &zft,
         zoomAnimation.setStartValue(zoomFactor);
         zoomAnimation.setEndValue(zoomFactorTarget);
         zoomAnimation.start();
-        qDebug() << "ME::setViewCenterTarget b)";  // FIXME-0 not working...
     }
     else {
         setAngle(angleTarget);
@@ -428,13 +426,12 @@ void MapEditor::setViewCenterTarget(const QPointF &p, const qreal &zft,
     }
 }
 
-void MapEditor::setViewCenterTarget()
+void MapEditor::setViewCenterTarget()// FIXME-1 add ImageItem and -Container
 {
     MapItem *selti = (MapItem *)(model->getSelectedItem());
     if (selti) {
-        LinkableMapObj *lmo = selti->getLMO();
-        if (lmo)
-            setViewCenterTarget(lmo->getBBox().center(), 1, 0);
+        if (selti->isBranchLikeType())
+            setViewCenterTarget(((BranchItem*)selti)->getBranchContainer()->rect().center(), 1, 0);
     }
 }
 
@@ -1841,7 +1838,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                         } // children of tmpParentContainer
                         model->saveStateEndBlock();
                         
-                        // Make the tmpParentContainer invisible again (size == 0) 
+                        // Make the tmpParentContainer invisible again (size == 0) // FIXME-1  not really invisible, better call setVisibility
                         // and move container to correct position 
                         tmpParentContainer->reposition();
 
