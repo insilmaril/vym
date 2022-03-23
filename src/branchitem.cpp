@@ -45,7 +45,7 @@ BranchItem::BranchItem(TreeItem *parent)
 BranchItem::~BranchItem()
 {
     //qDebug() << "Destr. BranchItem: this=" << this << "  " << getHeadingPlain();
-    if (mo) {
+    if (mo) {   // FIXME-2 remove MapObj completely...
         delete mo;
         mo = NULL;
     }
@@ -509,12 +509,6 @@ TreeItem *BranchItem::findMapItem(QPointF p, QList <TreeItem*> excludedItems)
     for (int i = 0; i < imageCount(); ++i) {
         ii = getImageNum(i);
         ic = ii->getImageContainer();
-        /*
-        MapObj *mo = ii->getMO();   // FIXME-2 search image containers instead of MO
-        if (mo && mo->isInClickBox(p) && !excludedItems.contains(ii) 
-            //&& this != excludeTI 
-            && mo->isVisibleObj())
-            */
         if (ic->mapToScene(ic->rect()).containsPoint(p, Qt::OddEvenFill)) return ii;
     }
 

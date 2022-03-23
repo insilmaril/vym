@@ -13,7 +13,7 @@ extern ulong imageLastID;
 /////////////////////////////////////////////////////////////////
 ImageContainer::ImageContainer(QGraphicsScene *scene)
 {
-    qDebug() << "Const ImageContainer ()  this=" << this;
+    //qDebug() << "Const ImageContainer ()  this=" << this;
     scene->addItem(this);
     init();
 }
@@ -85,9 +85,6 @@ void ImageContainer::copy(ImageContainer *other)
 
 void ImageContainer::init()
 {
-    qDebug() << "Const ImageContainer (scene)";
-    hide();
-
     // Assign ID
     imageLastID++;
     imageID = imageLastID;
@@ -244,8 +241,6 @@ bool ImageContainer::load(const QString &fn, bool createClone)
 
     if (fn.toLower().endsWith(".svg")) {
         svgItem = new QGraphicsSvgItem(fn, this);
-        if (scene())
-            scene()->addItem(svgItem);
 
         if (createClone) {
             imageType = ImageContainer::ClonedSVG;
@@ -264,12 +259,8 @@ bool ImageContainer::load(const QString &fn, bool createClone)
             }
 
             svgCashPath = newPath;
+            qDebug() << "IC:: ok1";
         }
-
-        // FIXME-2 testing svg...
-        qDebug() << "IC::load succes svg=" << svgItem << "scene: " << scene();
-        scene()->addItem(svgItem);
-        svgItem->show();
     } else {
         QPixmap pm;
         if (!pm.load(fn)) return false;
@@ -279,15 +270,10 @@ bool ImageContainer::load(const QString &fn, bool createClone)
         if (pixmapItem)
             qWarning() << "ImageContainer::load " << fn
                        << "pixmapIteam already exists";
-        pixmapItem = new QGraphicsPixmapItem();
+        pixmapItem = new QGraphicsPixmapItem(this);
         pixmapItem->setPixmap(pm);
         pixmapItem->setParentItem(parentItem());
         imageType = ImageContainer::Pixmap;
-
-        // FIXME-2 testing...
-        qDebug() << "IC::load succes pix=" << pixmapItem << "scene: " << scene();
-        scene()->addItem(pixmapItem);
-        pixmapItem->show();
     }
 
     updateRect();

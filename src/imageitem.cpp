@@ -25,9 +25,12 @@ ImageItem::ImageItem():MapItem(nullptr)
 ImageItem::~ImageItem()
 {
     qDebug()<<"Destr ImageItem";
-    /* FIXME-2   if (mo)
-        delete mo;
-        */
+
+    if (imageContainer) {
+        delete imageContainer;
+        imageContainer = nullptr;
+    }
+    clear();
 }
 
 void ImageItem::init()
@@ -62,8 +65,7 @@ ImageContainer *ImageItem::createImageContainer(QGraphicsScene *scene)
 
     imageContainer = new ImageContainer(scene);
     //parentBranch->getChildrenImagesContainer()->
-    // FIXME-2 removeFloatImageObj *fio = new FloatImageObj(((MapItem *)parentItem)->getMO(), this);
-    /* FIXME-0 cont here
+    /* FIXME-0 cont here, check visibility of new image
     mo = fio;
     if (((BranchItem *)parentItem)->isScrolled() ||
         !((MapItem *)parentItem)->getMO()->isVisibleObj())
