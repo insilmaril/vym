@@ -1,14 +1,9 @@
 #ifndef IMAGEITEM_H
 #define IMAGEITEM_H
 
-#include <QGraphicsSvgItem>
-#include <QList>
-#include <QPixmap>
-#include <QVariant>
-
-#include "floatimageobj.h"
-//#include "treeitem.h"
 #include "mapitem.h"
+
+class ImageContainer;
 
 bool isImage(const QString &fname);
 
@@ -24,9 +19,11 @@ class ImageItem : public MapItem {
 
   public:
     virtual bool load(const QString &fname);
-    virtual FloatImageObj *
-    createMapObj(); //! Create classic object in GraphicsView
+    ImageContainer* createImageContainer(QGraphicsScene*); //! Create container for this image
+    ImageContainer* getImageContainer(); 
+
   protected:
+    ImageContainer *imageContainer;
     QString originalFilename;
     int zValue;
 

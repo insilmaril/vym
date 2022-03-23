@@ -1,11 +1,12 @@
 #include "imageitem.h"
 
-#include "branchitem.h"
-#include "mapobj.h" // z-values
-
 #include <QDebug>
 #include <QString>
 #include <iostream>
+
+#include "branchitem.h"
+
+#include "image-container.h"
 
 bool isImage(const QString &fname)
 {
@@ -16,27 +17,29 @@ bool isImage(const QString &fname)
 
 ImageItem::ImageItem():MapItem(nullptr)
 {
-    //qDebug() << "Constr ImageItem";
+    qDebug() << "Constr ImageItem";
     init();
 }
 
 
 ImageItem::~ImageItem()
 {
-    // qDebug()<<"Destr ImageItem";
-    if (mo)
+    qDebug()<<"Destr ImageItem";
+    /* FIXME-2   if (mo)
         delete mo;
+        */
 }
 
 void ImageItem::init()
 {
+    imageContainer = nullptr;
     setType(Image);
-    hideLinkUnselected = true;
+    hideLinkUnselected = true;  // FIXME-2 needed?
     originalFilename = "no original name available";
     zValue = dZ_FLOATIMG;
 }
 
-void ImageItem::clear()
+void ImageItem::clear() // FIXME-2 check if needed
 {
     // pure virtual in parent treeitem
     // not used here currently
@@ -44,8 +47,7 @@ void ImageItem::clear()
 
 bool ImageItem::load(const QString &fname)
 {
-    FloatImageObj *fio = (FloatImageObj *)mo;
-    if (!fio->load(fname))
+    if (!imageContainer || !imageContainer->load(fname))
         return false;
 
     setOriginalFilename(fname);
@@ -54,10 +56,14 @@ bool ImageItem::load(const QString &fname)
     return true;
 }
 
-FloatImageObj *ImageItem::createMapObj()    // FIXME-2 replace by containers
+ImageContainer *ImageItem::createImageContainer(QGraphicsScene *scene)
 {
-    FloatImageObj *fio =
-        new FloatImageObj(((MapItem *)parentItem)->getMO(), this);
+    BranchItem *parentBranch = (BranchItem*)parentItem;
+
+    imageContainer = new ImageContainer(scene);
+    //parentBranch->getChildrenImagesContainer()->
+    // FIXME-2 removeFloatImageObj *fio = new FloatImageObj(((MapItem *)parentItem)->getMO(), this);
+    /* FIXME-0 cont here
     mo = fio;
     if (((BranchItem *)parentItem)->isScrolled() ||
         !((MapItem *)parentItem)->getMO()->isVisibleObj())
@@ -67,27 +73,39 @@ FloatImageObj *ImageItem::createMapObj()    // FIXME-2 replace by containers
     fio->setRelPos(pos);
     fio->updateVisibility();
     fio->setLinkColor();
-    return fio;
+    */
+    return imageContainer;
 }
 
-void ImageItem::setScaleFactor(qreal f)
+ImageContainer *ImageItem::getImageContainer()
 {
+    return imageContainer;
+}
+
+void ImageItem::setScaleFactor(qreal f) // FIXME-0 
+{
+    /*
     if (mo)
         ((FloatImageObj *)mo)->setScaleFactor(f);
+        */
 }
 
-qreal ImageItem::getScaleFactor()
+qreal ImageItem::getScaleFactor() // FIXME-0 
 {
+    /*
     if (mo)
         return ((FloatImageObj *)mo)->getScaleFactor();
+        */
     return 1;
 }
 
-void ImageItem::setZValue(int z)
+void ImageItem::setZValue(int z) // FIXME-0
 {
+    /*
     zValue = z;
     if (mo)
         ((FloatImageObj *)mo)->setZValue(z);
+        */
 }
 
 void ImageItem::setOriginalFilename(const QString &fn)
@@ -103,21 +121,29 @@ void ImageItem::setOriginalFilename(const QString &fn)
 
 QString ImageItem::getOriginalFilename() { return originalFilename; }
 
-QString ImageItem::getUniqueFilename()
+QString ImageItem::getUniqueFilename() // FIXME-0
 {
+    /*
     FloatImageObj *fio = (FloatImageObj *)mo;
     return "image-" + getUuid().toString() + fio->getExtension();
+    */
+    return QString();
 }
 
-bool ImageItem::saveImage(const QString &fn)
+bool ImageItem::saveImage(const QString &fn) // FIXME-0
 {
+    return false;
+/*
     // This is used when exporting maps or saving selection
     FloatImageObj *fio = (FloatImageObj *)mo;
     return fio->save(fn);
+    */
 }
 
-QString ImageItem::saveToDir(const QString &tmpdir, const QString &prefix)
+QString ImageItem::saveToDir(const QString &tmpdir, const QString &prefix) // FIXME-0
 {
+    return QString();
+    /*
     if (hidden)
         return "";
 
@@ -144,4 +170,5 @@ QString ImageItem::saveToDir(const QString &tmpdir, const QString &prefix)
                          getMapAttr() + getGeneralAttr() + zAttr +
                              attribut("href", QString("file:") + url) +
                              nameAttr + scaleAttr + idAttr);
+     */
 }

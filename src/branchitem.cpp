@@ -547,7 +547,7 @@ BranchObj *BranchItem::createMapObj(QGraphicsScene *scene)  // FIXME-2 remove fi
 
         newbo = new BranchObj(((MapItem *)parentItem)->getMO(), this);
         mo = newbo;
-        // Set visibility depending on parents  // FIXME-2
+        // Set visibility depending on parents
         /*
         if (parentItem != rootItem &&
             (((BranchItem *)parentItem)->scrolled ||
@@ -555,7 +555,7 @@ BranchObj *BranchItem::createMapObj(QGraphicsScene *scene)  // FIXME-2 remove fi
             newbo->setVisibility(false);
         */
         if (depth() == 1) {  
-            // Position new main branches on circle around center  // FIXME-2
+            // Position new main branches on circle around center
             qreal r = 190;
             qreal a =
                 -M_PI_4 + M_PI_2 * (num()) + (M_PI_4 / 2) * (num() / 4 % 4);
@@ -563,7 +563,7 @@ BranchObj *BranchItem::createMapObj(QGraphicsScene *scene)  // FIXME-2 remove fi
             // newbo->setRelPos(p);
         }
     }
-    // FIXME-2 for new branch set default font, color, link, frame, children styles
+    // for new branch set default font, color, link, frame, children styles
     // newbo->setDefAttr(BranchObj::NewBranch);
 
     if (!getHeading().isEmpty()) {
@@ -576,30 +576,24 @@ BranchObj *BranchItem::createMapObj(QGraphicsScene *scene)  // FIXME-2 remove fi
 
 BranchContainer *BranchItem::createBranchContainer(QGraphicsScene *scene)
 {
-    if (parentItem == rootItem) {
-        // Create container
-        branchContainer = new BranchContainer(scene, nullptr, this);
-    }
-    else {
-        // Create container
-        branchContainer = new BranchContainer(scene, nullptr, this);
+    branchContainer = new BranchContainer(scene, nullptr, this);
 
-        // Set visibility depending on parents  // FIXME-2
-        /*
-        if (parentItem != rootItem &&
-            (((BranchItem *)parentItem)->scrolled ||
-             !((MapItem *)parentItem)->getLMO()->isVisibleObj()))
-            newbo->setVisibility(false);
-        */
-        if (depth() == 1) {  
-            // Position new main branches on circle around center  // FIXME-2
-            qreal r = 190;
-            qreal a =
-                -M_PI_4 + M_PI_2 * (num()) + (M_PI_4 / 2) * (num() / 4 % 4);
-            QPointF p(r * cos(a), r * sin(a));
-            // newbo->setRelPos(p);
-        }
+    // Set visibility depending on parents  // FIXME-2
+    /*
+    if (parentItem != rootItem &&
+        (((BranchItem *)parentItem)->scrolled ||
+         !((MapItem *)parentItem)->getLMO()->isVisibleObj()))
+        newbo->setVisibility(false);
+    */
+    if (depth() == 1) {  
+        // Position new main branches on circle around center  // FIXME-2
+        qreal r = 190;
+        qreal a =
+            -M_PI_4 + M_PI_2 * (num()) + (M_PI_4 / 2) * (num() / 4 % 4);
+        QPointF p(r * cos(a), r * sin(a));
+        // newbo->setRelPos(p);
     }
+
     // FIXME-2 for new branch set default font, color, link, frame, children styles
     // newbo->setDefAttr(BranchObj::NewBranch);
 

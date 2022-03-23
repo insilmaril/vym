@@ -19,8 +19,7 @@ class ImageContainer : public Container {
   public:
     enum ImageType { Undefined, Pixmap, ModifiedPixmap, SVG, ClonedSVG };
 
-    ImageContainer();
-    ImageContainer(QGraphicsItem *parent = nullptr);
+    ImageContainer(QGraphicsScene *);
     virtual ~ImageContainer();
     virtual void copy(ImageContainer*);
     virtual void init();
@@ -31,7 +30,11 @@ class ImageContainer : public Container {
     void setWidth(qreal w);
     void setScaleFactor(qreal f);
     qreal getScaleFactor();
-    virtual QRectF boundingRect() const;
+
+  private:
+    void updateRect();
+
+  public:
     virtual void paint(QPainter *, const QStyleOptionGraphicsItem *, QWidget *);
     bool load(const QString &, bool createClone = false);
     bool save(const QString &);

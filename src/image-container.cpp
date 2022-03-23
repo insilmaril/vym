@@ -11,15 +11,10 @@ extern ulong imageLastID;
 /////////////////////////////////////////////////////////////////
 // ImageContainer
 /////////////////////////////////////////////////////////////////
-ImageContainer::ImageContainer()
+ImageContainer::ImageContainer(QGraphicsScene *scene)
 {
-    // qDebug() << "Const ImageContainer ()  this=" << this;
-    init();
-}
-
-ImageContainer::ImageContainer(QGraphicsItem *parent) : Container(parent)
-{
-    qDebug() << "Const ImageContainer  this=" << this << "  parent= " << parent ;
+    qDebug() << "Const ImageContainer ()  this=" << this;
+    scene->addItem(this);
     init();
 }
 
@@ -196,21 +191,26 @@ void ImageContainer::setScaleFactor(qreal f)
 
 qreal ImageContainer::getScaleFactor() { return scaleFactor; }
 
-QRectF ImageContainer::boundingRect() const
+void ImageContainer::updateRect()
 {
+    QRectF r;
     switch (imageType) {
     case ImageContainer::SVG:
     case ImageContainer::ClonedSVG:
-        return QRectF(0, 0, svgItem->boundingRect().width() * scaleFactor,
-                      svgItem->boundingRect().height() * scaleFactor);
+        r = QRectF(0, 0, svgItem->boundingRect().width() * scaleFactor,
+                         svgItem->boundingRect().height() * scaleFactor);
+        break;
     case ImageContainer::Pixmap:
-        return pixmapItem->boundingRect();
+        r = pixmapItem->boundingRect();
+        break;
     case ImageContainer::ModifiedPixmap:
-        return pixmapItem->boundingRect();
+        r = pixmapItem->boundingRect();
+        break;
     default:
+        qWarning() << "ImageContainer::updateRect unknown imageType";
         break;
     }
-    return QRectF();
+    setRect(r);
 }
 
 void ImageContainer::paint(QPainter *painter, const QStyleOptionGraphicsItem *sogi,
@@ -243,7 +243,7 @@ bool ImageContainer::load(const QString &fn, bool createClone)
     }
 
     if (fn.toLower().endsWith(".svg")) {
-        svgItem = new QGraphicsSvgItem(fn);
+        svgItem = new QGraphicsSvgItem(fn, this);
         if (scene())
             scene()->addItem(svgItem);
 
@@ -276,10 +276,16 @@ bool ImageContainer::load(const QString &fn, bool createClone)
             if (pixmapItem)
                 qWarning() << "ImageContainer::load " << fn
                            << "pixmapIteam already exists";
-            pixmapItem = new QGraphicsPixmapItem(this);
+            pixmapItem = new QGraphicsPixmapItem();
             pixmapItem->setPixmap(pm);
             pixmapItem->setParentItem(parentItem());
             imageType = ImageContainer::Pixmap;
+
+            // FIXME-2testing...
+            qDebug() << "IC::load succes pix=" << pixmapItem << "scene: " << scene();
+            scene()->addItem(pixmapItem);
+            pixmapItem->show();
+
 
             return true;
         }

@@ -2979,7 +2979,7 @@ ImageItem *VymModel::createImage(BranchItem *dst)
 
         // save scroll state. If scrolled, automatically select
         // new branch in order to tmp unscroll parent...
-        newii->createMapObj();
+        newii->createImageContainer(getScene());
         latestAddedItem = newii;
         reposition();
         return newii;

@@ -1,6 +1,8 @@
 #include "mapitem.h"
 
 #include "branchitem.h"
+#include "image-container.h"
+#include "imageitem.h"
 #include "linkablemapobj.h"
 #include "ornamentedobj.h"
 
@@ -154,13 +156,18 @@ QPainterPath MapItem::getSelectionPath() // FIXME-3 should be in BranchContainer
     if (isBranchLikeType() )    // FIXME-2 Image type still missing!
     {
         r = ((BranchItem*)this)->getBranchContainer()->getHeadingRect();
-        p.moveTo(r.topLeft() + QPointF(-d, -d));
-        p.lineTo(r.topRight() + QPointF(d, -d));
-        p.lineTo(r.bottomRight() + QPointF(d, d));
-        p.lineTo(r.bottomLeft() + QPointF(-d, d));
-        p.lineTo(r.topLeft() + QPointF(-d, -d));
-    } else
+    } else if (getType() == Image) {
+        r = ((ImageItem*)this)->getImageContainer()->rect();
+    } else {
         qWarning() << "MapITem::getSelectionPath - unknown item type!";
+        return p;
+    }
+
+    p.moveTo(r.topLeft() + QPointF(-d, -d));
+    p.lineTo(r.topRight() + QPointF(d, -d));
+    p.lineTo(r.bottomRight() + QPointF(d, d));
+    p.lineTo(r.bottomLeft() + QPointF(-d, d));
+    p.lineTo(r.topLeft() + QPointF(-d, -d));
 
     return p;
 }
