@@ -26,9 +26,6 @@ class BranchContainer : public Container {
 
     QRectF getHeadingRect();  //! Return rectangle of HeadingContainer in absolute coordinates
 
-    void setTmpParentContainer(BranchItem* dstBI, QPointF mousePos, int offset);
-    void unsetTmpParentContainer(QPointF absPos = QPointF());
-
     bool isInClickBox(const QPointF &p);
 
     void updateVisuals();

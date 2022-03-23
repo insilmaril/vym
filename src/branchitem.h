@@ -102,13 +102,9 @@ class BranchItem : public MapItem {
                               //! excludeItems, where search is started or which are selected
 
     virtual void
-    updateStyles(const bool &keepFrame =
+        updateStyles(const bool &keepFrame =
                      false); //! update related fonts, parObjects, links, ...
     virtual void updateVisuals();
-    virtual BranchObj *getBranchObj();
-
-    virtual BranchObj *createMapObj(
-        QGraphicsScene *scene); //! Create classic object in GraphicsView
 
     virtual BranchContainer *createBranchContainer(
         QGraphicsScene *scene); //! Create classic object in GraphicsView

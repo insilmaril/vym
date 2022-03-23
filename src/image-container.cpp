@@ -266,32 +266,32 @@ bool ImageContainer::load(const QString &fn, bool createClone)
             svgCashPath = newPath;
         }
 
-        return true;
-    }
-    else {
+        // FIXME-2 testing svg...
+        qDebug() << "IC::load succes svg=" << svgItem << "scene: " << scene();
+        scene()->addItem(svgItem);
+        svgItem->show();
+    } else {
         QPixmap pm;
-        if (pm.load(fn)) {
-            prepareGeometryChange();
+        if (!pm.load(fn)) return false;
 
-            if (pixmapItem)
-                qWarning() << "ImageContainer::load " << fn
-                           << "pixmapIteam already exists";
-            pixmapItem = new QGraphicsPixmapItem();
-            pixmapItem->setPixmap(pm);
-            pixmapItem->setParentItem(parentItem());
-            imageType = ImageContainer::Pixmap;
+        prepareGeometryChange();
 
-            // FIXME-2testing...
-            qDebug() << "IC::load succes pix=" << pixmapItem << "scene: " << scene();
-            scene()->addItem(pixmapItem);
-            pixmapItem->show();
+        if (pixmapItem)
+            qWarning() << "ImageContainer::load " << fn
+                       << "pixmapIteam already exists";
+        pixmapItem = new QGraphicsPixmapItem();
+        pixmapItem->setPixmap(pm);
+        pixmapItem->setParentItem(parentItem());
+        imageType = ImageContainer::Pixmap;
 
-
-            return true;
-        }
+        // FIXME-2 testing...
+        qDebug() << "IC::load succes pix=" << pixmapItem << "scene: " << scene();
+        scene()->addItem(pixmapItem);
+        pixmapItem->show();
     }
 
-    return false;
+    updateRect();
+    return true;
 }
 
 bool ImageContainer::save(const QString &fn)

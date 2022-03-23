@@ -2892,8 +2892,9 @@ void VymModel::moveDownDiagonally()
      }
 }
 
-void VymModel::detach()
+void VymModel::detach() // FIXME-1 rewrite to containers
 {
+    /*
     BranchItem *selbi = getSelectedBranch();
     if (selbi && selbi->depth() > 0) {
         // if no relPos have been set before, try to use current rel positions
@@ -2918,6 +2919,7 @@ void VymModel::detach()
                       oldsel, "detach ()",
                       QString("Detach %1").arg(getObjectName(selbi)));
     }
+    */
 }
 
 void VymModel::sortChildren(bool inverse)
@@ -3207,7 +3209,7 @@ BranchItem *VymModel::addMapCenter(QPointF absPos)
     emit(layoutChanged());
 
     // Create BranchContainer
-    BranchContainer *bc = newbi->createBranchContainer(mapEditor->getScene());
+    BranchContainer *bc = newbi->createBranchContainer(getScene());
     if (bc)
         bc->setPos(absPos);
 
@@ -3252,7 +3254,7 @@ BranchItem *VymModel::addNewBranchInt(BranchItem *dst, int pos)
     emit(layoutChanged());
 
     // Create Container
-    newbi->createBranchContainer(mapEditor->getScene());
+    newbi->createBranchContainer(getScene());
 
     // Add newbi also into Container of parent
     parbi->addToChildrenContainer(newbi->getBranchContainer() );

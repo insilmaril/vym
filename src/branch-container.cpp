@@ -4,7 +4,6 @@
 
 #include "branchitem.h"
 #include "heading-container.h"
-#include "mapobj.h" // FIXME-2 needed?
 
 BranchContainer::BranchContainer(QGraphicsScene *scene, QGraphicsItem *parent, BranchItem *bi) : Container(parent)  // FIXME-2 scene and addItem should not be required, only for mapCenters without parent:  setParentItem automatically sets scene!
 {
@@ -100,19 +99,6 @@ QRectF BranchContainer::getHeadingRect()
 {
     QPointF p = headingContainer->scenePos();
     return QRectF(p.x(), p.y(), headingContainer->rect().width(), headingContainer->rect().height());
-}
-
-void BranchContainer::setTmpParentContainer(BranchItem* dstBI, QPointF mousePos, int offset)
-{
-    //qDebug() << "BC::setTmpParentContainer " << dstBI << mousePos << offset;
-}
-
-void BranchContainer::unsetTmpParentContainer(QPointF absPos)
-{
-    qDebug() << " a) BC::unsetTmpParentContainer absPos = " << absPos << " BC=" << this;
-    qDebug() << " b) relPos before: " << pos() << "scenePos: " << scenePos();
-    setPos (absPos);   // FIXME-2 only for floating layout
-    qDebug() << " c) relPos  after: " << pos() << "scenePos: " << scenePos();
 }
 
 bool BranchContainer::isInClickBox(const QPointF &p)

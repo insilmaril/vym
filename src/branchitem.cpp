@@ -3,6 +3,7 @@
 #include "attributeitem.h"
 #include "branchobj.h"
 #include "heading-container.h"
+#include "image-container.h"
 #include "task.h"
 #include "taskmodel.h"
 #include "vymmodel.h"
@@ -416,8 +417,9 @@ QString BranchItem::getIncludeImageAttr()
     return a;
 }
 
-BranchItem *BranchItem::getFramedParentBranch(BranchItem *start)
+BranchItem *BranchItem::getFramedParentBranch(BranchItem *start)    // FIXME-2 Used to determine background color in taskEditor
 {
+    /*
     BranchObj *bo = getBranchObj();
     if (bo && bo->getFrameType() != FrameObj::NoFrame) {
         if (bo->getFrame()->getFrameIncludeChildren())
@@ -429,28 +431,35 @@ BranchItem *BranchItem::getFramedParentBranch(BranchItem *start)
     if (bi && bi != rootItem)
         return bi->getFramedParentBranch(start);
     else
-        return NULL;
+    */
+        return nullptr;
 }
 
-void BranchItem::setFrameIncludeChildren(bool b)
+void BranchItem::setFrameIncludeChildren(bool b) // FIXME-2 rework frames
 {
+    /*
     includeChildren = b; // FIXME-4 ugly: same information stored in FrameObj
     BranchObj *bo = getBranchObj();
     if (bo)
         bo->getFrame()->setFrameIncludeChildren(b);
+        */
 }
 
-bool BranchItem::getFrameIncludeChildren()
+bool BranchItem::getFrameIncludeChildren() // FIXME-2 rework frames
 {
+    /*
     BranchObj *bo = getBranchObj();
     if (bo)
         return bo->getFrame()->getFrameIncludeChildren();
     else
         return includeChildren;
+        */
+    return false;
 }
 
-void BranchItem::setLastSelectedBranch()
+void BranchItem::setLastSelectedBranch() // FIXME-1 rework navigating the tree
 {
+    /*
     int d = depth();
     if (d >= 0) {
         if (d == 1)
@@ -466,6 +475,7 @@ void BranchItem::setLastSelectedBranch()
         ((BranchItem *)parentItem)->lastSelectedBranchNum =
             parentItem->num(this);
     }
+    */
 }
 
 void BranchItem::setLastSelectedBranch(int i) { lastSelectedBranchNum = i; }
@@ -495,18 +505,22 @@ TreeItem *BranchItem::findMapItem(QPointF p, QList <TreeItem*> excludedItems)
 
     // Search images
     ImageItem *ii;
+    ImageContainer *ic;
     for (int i = 0; i < imageCount(); ++i) {
         ii = getImageNum(i);
+        ic = ii->getImageContainer();
+        /*
         MapObj *mo = ii->getMO();   // FIXME-2 search image containers instead of MO
         if (mo && mo->isInClickBox(p) && !excludedItems.contains(ii) 
             //&& this != excludeTI 
             && mo->isVisibleObj())
-            return ii;
+            */
+        if (ic->mapToScene(ic->rect()).containsPoint(p, Qt::OddEvenFill)) return ii;
     }
 
-    // Search my container
+    // Search my container     // FIXME-2   Check if container is visible!!
     if (branchContainer->isInClickBox(p) && !excludedItems.contains(this) ) //   &&
-        //getBranchObj()->isVisibleObj())     // FIXME-2   Check if container is visible!!
+        //getBranchObj()->isVisibleObj())
         return this;
 
     return NULL;
@@ -514,7 +528,8 @@ TreeItem *BranchItem::findMapItem(QPointF p, QList <TreeItem*> excludedItems)
 
 void BranchItem::updateStyles(const bool &keepFrame)
 {
-    // Update styles when relinking branches
+    // Update styles when relinking branches  // FIXME-1 review, maybe done with layout in reposition automatically?
+    /*
     if (mo) {
         BranchObj *bo = getBranchObj();
         if (parentItem != rootItem)
@@ -523,55 +538,12 @@ void BranchItem::updateStyles(const bool &keepFrame)
             bo->setParObj(NULL);
         bo->setDefAttr(BranchObj::MovedBranch, keepFrame);
     }
+    */
 }
 
 void BranchItem::updateVisuals()
 {
-    if (mo) getBranchObj()->updateVisuals();
     branchContainer->updateVisuals();
-}
-
-BranchObj *BranchItem::getBranchObj() { return (BranchObj *)mo; }
-
-BranchObj *BranchItem::createMapObj(QGraphicsScene *scene)  // FIXME-2 remove finally
-{
-    BranchObj *newbo;
-
-    if (parentItem == rootItem) {
-        // Create container
-        branchContainer = new BranchContainer(scene, nullptr, this);
-    }
-    else {
-        // Create container
-        branchContainer = new BranchContainer(scene, nullptr, this);
-
-        newbo = new BranchObj(((MapItem *)parentItem)->getMO(), this);
-        mo = newbo;
-        // Set visibility depending on parents
-        /*
-        if (parentItem != rootItem &&
-            (((BranchItem *)parentItem)->scrolled ||
-             !((MapItem *)parentItem)->getLMO()->isVisibleObj()))
-            newbo->setVisibility(false);
-        */
-        if (depth() == 1) {  
-            // Position new main branches on circle around center
-            qreal r = 190;
-            qreal a =
-                -M_PI_4 + M_PI_2 * (num()) + (M_PI_4 / 2) * (num() / 4 % 4);
-            QPointF p(r * cos(a), r * sin(a));
-            // newbo->setRelPos(p);
-        }
-    }
-    // for new branch set default font, color, link, frame, children styles
-    // newbo->setDefAttr(BranchObj::NewBranch);
-
-    if (!getHeading().isEmpty()) {
-        newbo->updateVisuals();
-        newbo->setColor(heading.getColor());
-    }
-
-    return newbo;
 }
 
 BranchContainer *BranchItem::createBranchContainer(QGraphicsScene *scene)

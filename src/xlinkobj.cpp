@@ -3,7 +3,6 @@
 #include "xlinkobj.h"
 
 #include "branchitem.h"
-#include "branchobj.h"
 #include "math.h" // atan
 #include "misc.h" // max
 
@@ -154,8 +153,9 @@ void XLinkObj::setSelection(int cp)
         qWarning() << "XLO::setSelection cp=" << cp;
 }
 
-void XLinkObj::updateXLink()
+void XLinkObj::updateXLink() // FIXME-2 rewrite to containers
 {
+    /*
     QPointF a, b;
     QPolygonF pa;
 
@@ -269,6 +269,7 @@ void XLinkObj::updateXLink()
         path->setZValue(dZ_XLINK);
 
     setVisibility();
+    */
 }
 
 void XLinkObj::positionBBox() {}
@@ -321,8 +322,9 @@ void XLinkObj::setVisibility(bool b)
     }
 }
 
-void XLinkObj::setVisibility()
+void XLinkObj::setVisibility() // FIXME-2 rewrite to containers
 {
+    /*
     BranchItem *beginBI = link->getBeginBranch();
     BranchObj *beginBO = NULL;
     if (beginBI)
@@ -363,10 +365,12 @@ void XLinkObj::setVisibility()
             }
         }
     }
+    */
 }
 
-void XLinkObj::initC0()
+void XLinkObj::initC0() // FIXME-2 rewrite to containers
 {
+    /*
     if (!link)
         return;
     BranchItem *beginBranch = link->getBeginBranch();
@@ -379,10 +383,12 @@ void XLinkObj::initC0()
         c0 = QPointF(d_control, 0);
     else
         c0 = QPointF(-d_control, 0);
+    */
 }
 
-void XLinkObj::initC1()
+void XLinkObj::initC1() // FIXME-2 rewrite to containers
 {
+    /*
     if (!link)
         return;
     BranchItem *endBranch = link->getEndBranch();
@@ -395,6 +401,7 @@ void XLinkObj::initC1()
         c1 = QPointF(d_control, 0);
     else
         c1 = QPointF(-d_control, 0);
+    */
 }
 
 void XLinkObj::setC0(const QPointF &p) { c0 = p; }
