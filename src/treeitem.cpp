@@ -32,12 +32,14 @@ TreeItem::TreeItem(TreeItem *parent)
 
 TreeItem::~TreeItem()
 {
-    //qDebug() << "Destr TreeItem begin: this=" << this << getHeadingPlain();
+    qDebug() << "Destr TreeItem begin: this=" << this << getHeadingPlain();
     TreeItem *ti;
     while (!childItems.isEmpty()) {
         ti = childItems.takeFirst();
+        qDebug() << "  In destr TI going to delete ti=" << ti << ti->getHeadingPlain();
         delete ti;
     }
+    qDebug() << "Destr TreeItem end: this=" << this; 
 }
 
 void TreeItem::init()

@@ -55,7 +55,7 @@ BranchItem::~BranchItem()
         // This deletes only the first container
         // All containers in children will unlink their branchContainer pointers
         delete branchContainer;
-        branchContainer = nullptr;
+        branchContainer = nullptr;      // FIXME-2 also set via BC-destr->unlinkBC in BI
     }
 
     clear();
@@ -581,7 +581,7 @@ BranchContainer* BranchItem::getBranchContainer()
 
 void BranchItem::unlinkBranchContainer()
 {
-    // Called from destructor of containers, to 
+    // Called from destructor of containers to 
     // avoid double deletion 
     branchContainer = nullptr;
 }
@@ -642,6 +642,7 @@ void BranchItem::addToBranchesContainer(BranchContainer *bc)
 
 void BranchItem::addToImagesContainer(ImageContainer *ic)
 {
+    qDebug() << "BI::add2ImgCont  this=" << this << "  ic=" << ic;
     branchContainer->addToImagesContainer(ic);
 }
 

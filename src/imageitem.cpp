@@ -5,7 +5,6 @@
 #include <iostream>
 
 #include "branchitem.h"
-
 #include "image-container.h"
 
 bool isImage(const QString &fname)
@@ -15,22 +14,23 @@ bool isImage(const QString &fname)
     return fname.contains(rx);
 }
 
-ImageItem::ImageItem():MapItem(nullptr)
+ImageItem::ImageItem():MapItem(nullptr) // FIXME-2 MapItem should no longer be needed
 {
-    qDebug() << "Constr ImageItem";
+    qDebug() << "Constr ImageItem " << this;
     init();
 }
 
 
 ImageItem::~ImageItem()
 {
-    qDebug()<<"Destr ImageItem";
+    qDebug() << "Destr ImageItem " << this << "   ic=" << imageContainer;
 
+    /*
     if (imageContainer) {
         delete imageContainer;
         imageContainer = nullptr;
     }
-    clear();
+    */
 }
 
 void ImageItem::init()
@@ -61,10 +61,9 @@ bool ImageItem::load(const QString &fname)
 
 ImageContainer *ImageItem::createImageContainer(QGraphicsScene *scene)
 {
-    BranchItem *parentBranch = (BranchItem*)parentItem;
+    //FIXME-0 BranchItem *parentBranch = (BranchItem*)parentItem;
 
     imageContainer = new ImageContainer(scene);
-    //parentBranch->getChildrenImagesContainer()->
     /* FIXME-0 cont here, check visibility of new image
     mo = fio;
     if (((BranchItem *)parentItem)->isScrolled() ||

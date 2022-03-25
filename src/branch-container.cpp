@@ -15,12 +15,11 @@ BranchContainer::BranchContainer(QGraphicsScene *scene, QGraphicsItem *parent, B
 
 BranchContainer::~BranchContainer()
 {
-    QString h;
-    if (branchItem) h = branchItem->getHeadingPlain();
-    //qDebug() << "* Destr BranchContainer" << getName() << h << this;
+    qDebug() << "* Destr BranchContainer" << getName() << this;
 
     if (branchItem)
     {
+        qDebug() << "* Destr BranchContainer b)" << getName() << "branchItem = " << branchItem;
         // Unlink containers in my own subtree from related treeItems
         // That results in deleting all containers in subtree first 
         // and later deleting subtree of treeItems
@@ -36,21 +35,19 @@ void BranchContainer::init()
     headingContainer->setBrush(Qt::NoBrush);
     headingContainer->setPen(Qt::NoPen);
 
+    imagesContainer = new Container ();
+    //imagesContainer->setBrush(Qt::NoBrush);
+    imagesContainer->setBrush(Qt::blue);    // FIXME-2 testing
+    imagesContainer->setPen(Qt::NoPen);
+    imagesContainer->setLayoutType(Container::FloatingFree);
+    imagesContainer->type = Container::ImageCollection;
+
     branchesContainer = new Container ();
     branchesContainer->setBrush(Qt::NoBrush);
     branchesContainer->setPen(Qt::NoPen);
     branchesContainer->setLayoutType(Container::Vertical);              // Default, usually depends on depth
     branchesContainer->setVerticalAlignment(Container::AlignedLeft);    // Default, usually depends on position
     branchesContainer->type = Container::BranchCollection;
-
-    /* FIXME-0
-    imagesContainer = new Container ();
-    //imagesContainer->setBrush(Qt::NoBrush);
-    imagesContainer->setBrush(Qt::blue);
-    imagesContainer->setPen(Qt::NoPen);
-    imagesContainer->setLayoutType(Container::FloatingFree);
-    imagesContainer->type = Container::ImageCollection;
-    */
 
     innerContainer = new Container ();
     innerContainer->setBrush(Qt::NoBrush);
@@ -59,8 +56,8 @@ void BranchContainer::init()
 
     // Adding the containers will reparent them and thus set scene
     innerContainer->addContainer(headingContainer);
+    innerContainer->addContainer(imagesContainer);
     innerContainer->addContainer(branchesContainer);
-    // FIXME-0 innerContainer->addContainer(imagesContainer);
     addContainer(innerContainer);
 
     setBrush(Qt::NoBrush);
@@ -89,6 +86,7 @@ void BranchContainer::addToBranchesContainer(Container *c, bool keepScenePos)
 
 void BranchContainer::addToImagesContainer(Container *c, bool keepScenePos)
 {
+    qDebug() << "BC::add2Img   this=" << this << "c=" << c;
     QPointF sp = c->scenePos();
     c->setParentItem(imagesContainer);
     if (keepScenePos)
