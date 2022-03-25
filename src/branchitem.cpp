@@ -45,7 +45,7 @@ BranchItem::BranchItem(TreeItem *parent)
 
 BranchItem::~BranchItem()
 {
-    qDebug() << "Destr. BranchItem: this=" << this << "  " << getHeadingPlain() << "branchContainer=" << branchContainer;
+    //qDebug() << "Destr. BranchItem: this=" << this << "  " << getHeadingPlain() << "branchContainer=" << branchContainer;
     if (mo) {   // FIXME-2 remove MapObj completely...
         delete mo;
         mo = NULL;

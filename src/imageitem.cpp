@@ -23,14 +23,12 @@ ImageItem::ImageItem():MapItem(nullptr) // FIXME-2 MapItem should no longer be n
 
 ImageItem::~ImageItem()
 {
-    qDebug() << "Destr ImageItem " << this;
+    // qDebug() << "Destr ImageItem " << this;
 
-    /*
-    if (imageContainer) {
-        delete imageContainer;
-        imageContainer = nullptr;
-    }
-    */
+    // The related data in imageContainer is not deleted here,
+    // but when the BranchItem is deleted, which has the imageContainer 
+    // somewhere in it's tree of containers. (Deleting of a BranchItem first 
+    // triggers deletion all its related containers)
 }
 
 void ImageItem::init()

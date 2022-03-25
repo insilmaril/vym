@@ -4,6 +4,7 @@
 #include <QIcon>
 
 #include "file.h"
+#include "imageitem.h"
 
 extern QDir cashDir;
 extern ulong imageLastID;
@@ -345,6 +346,12 @@ QIcon ImageContainer::getIcon()
     }
     return QIcon();
 }
+
+void ImageContainer::setImageItem(ImageItem* ii) {
+    imageItem = ii;
+}
+
+ImageItem* ImageContainer::getImageItem() { return imageItem;}
 
 void ImageContainer::reposition()
 {

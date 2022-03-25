@@ -7,6 +7,8 @@
 
 #include "container.h"
 
+class ImageItem;
+
 /*! \brief Base class for images in containers, which can be pixmaps or svg
  *
  * ImageContainer is used both by items part of the map "tree" in
@@ -42,6 +44,9 @@ class ImageContainer : public Container {
     ImageType getType();
     QIcon getIcon();
 
+    void setImageItem(ImageItem*);
+    ImageItem* getImageItem();
+
     void reposition();
 
   protected:
@@ -56,5 +61,7 @@ class ImageContainer : public Container {
     qreal scaleFactor;
 
     ulong imageID;
+
+    ImageItem *imageItem; // FIXME-2 only used when part of ImageItem
 };
 #endif
