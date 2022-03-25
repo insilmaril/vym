@@ -14,6 +14,7 @@ TreeModel::TreeModel(QObject *parent) : QAbstractItemModel(parent)
     rootData << "Heading";
     // rootData << "Type";
     rootItem = new BranchItem();
+    rootItem->setHeadingPlainText("rootItem");
 }
 
 TreeModel::~TreeModel()
