@@ -52,10 +52,11 @@ BranchItem::~BranchItem()
     }
 
     if (branchContainer) {
-        // This deletes only the first container
-        // All containers in children will unlink their branchContainer pointers
+        // This deletes only the first container here.
+        // All other containers deeper down in tree will unlink themselves 
+        // by calling BranchItem::unlinkContainer, which will set 
+        // the branchContainer == nullptr;
         delete branchContainer;
-        branchContainer = nullptr;      // FIXME-2 also set via BC-destr->unlinkBC in BI
     }
 
     clear();
@@ -584,6 +585,7 @@ void BranchItem::unlinkBranchContainer()
     // Called from destructor of containers to 
     // avoid double deletion 
     branchContainer = nullptr;
+    qDebug() << "BI::unlinkBC in " << this << getHeadingPlain();
 }
 
 Container* BranchItem::getBranchesContainer() 

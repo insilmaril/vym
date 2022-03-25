@@ -20,9 +20,10 @@ BranchContainer::~BranchContainer()
     if (branchItem)
     {
         qDebug() << "* Destr BranchContainer b)" << getName() << "branchItem = " << branchItem;
-        // Unlink containers in my own subtree from related treeItems
-        // That results in deleting all containers in subtree first 
-        // and later deleting subtree of treeItems
+        // Unlink all containers in my own subtree, which will be deleted
+        // when tree of QGraphicsItems is deleted.
+        // In every destructor tell the linked BranchItem to longer consider deleting containers
+        // when the BranchItem will be deleted later
         branchItem->unlinkBranchContainer();
     }
 }

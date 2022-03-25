@@ -23,7 +23,7 @@ ImageItem::ImageItem():MapItem(nullptr) // FIXME-2 MapItem should no longer be n
 
 ImageItem::~ImageItem()
 {
-    qDebug() << "Destr ImageItem " << this << "   ic=" << imageContainer;
+    qDebug() << "Destr ImageItem " << this;
 
     /*
     if (imageContainer) {
