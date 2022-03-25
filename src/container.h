@@ -30,9 +30,11 @@ class Container : public QGraphicsRectItem {
         TmpParent,
         FloatingContent,
         InnerContent,
-        Children, 
+        BranchCollection,
+        ImageCollection,
         Branch, 
-        Heading
+        Heading,
+        Image
     };
 
     /*! Orientation relative to parent container */

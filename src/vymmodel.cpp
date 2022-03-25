@@ -860,7 +860,8 @@ void VymModel::loadImage(BranchItem *dst, const QString &fn)
                               QString("Add image %1 to %2")
                                   .arg(s)
                                   .arg(getObjectName(dst)));
-                    // Find nice position for new image, take childPos
+                    // Find nice position for new image, take childPos    // FIXME-0
+                    /*
                     FloatImageObj *fio = (FloatImageObj *)(ii->getMO());
                     if (fio) {
                         LinkableMapObj *parLMO = dst->getLMO();
@@ -870,6 +871,7 @@ void VymModel::loadImage(BranchItem *dst, const QString &fn)
                             fio->setRelPos();
                         }
                     }
+                    */
 
                     // On default include image // FIXME-4 check, if we change
                     // default settings...
@@ -2964,8 +2966,6 @@ ImageItem *VymModel::createImage(BranchItem *dst)
         int n;
 
         ImageItem *newii = new ImageItem();
-        // newii->setHeading (QApplication::translate("Heading of new image in
-        // map", "new image"));
 
         emit(layoutAboutToBeChanged());
 
@@ -2979,9 +2979,8 @@ ImageItem *VymModel::createImage(BranchItem *dst)
 
         emit(layoutChanged());
 
-        // save scroll state. If scrolled, automatically select
-        // new branch in order to tmp unscroll parent...
-        newii->createImageContainer(getScene());
+        dst->addToImagesContainer(newii->createImageContainer(getScene()));
+
         latestAddedItem = newii;
         reposition();
         return newii;
@@ -3257,7 +3256,7 @@ BranchItem *VymModel::addNewBranchInt(BranchItem *dst, int pos)
     newbi->createBranchContainer(getScene());
 
     // Add newbi also into Container of parent
-    parbi->addToChildrenContainer(newbi->getBranchContainer() );
+    parbi->addToBranchesContainer(newbi->getBranchContainer() );
 
     // Set color of heading to that of parent
     newbi->setHeadingColor(parbi->getHeadingColor());

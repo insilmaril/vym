@@ -36,12 +36,21 @@ void BranchContainer::init()
     headingContainer->setBrush(Qt::NoBrush);
     headingContainer->setPen(Qt::NoPen);
 
-    childrenContainer = new Container ();
-    childrenContainer->setBrush(Qt::NoBrush);
-    childrenContainer->setPen(Qt::NoPen);
-    childrenContainer->setLayoutType(Container::Vertical);              // Default, usually depends on depth
-    childrenContainer->setVerticalAlignment(Container::AlignedLeft);    // Default, usually depends on position
-    childrenContainer->type = Container::Children;
+    branchesContainer = new Container ();
+    branchesContainer->setBrush(Qt::NoBrush);
+    branchesContainer->setPen(Qt::NoPen);
+    branchesContainer->setLayoutType(Container::Vertical);              // Default, usually depends on depth
+    branchesContainer->setVerticalAlignment(Container::AlignedLeft);    // Default, usually depends on position
+    branchesContainer->type = Container::BranchCollection;
+
+    /* FIXME-0
+    imagesContainer = new Container ();
+    //imagesContainer->setBrush(Qt::NoBrush);
+    imagesContainer->setBrush(Qt::blue);
+    imagesContainer->setPen(Qt::NoPen);
+    imagesContainer->setLayoutType(Container::FloatingFree);
+    imagesContainer->type = Container::ImageCollection;
+    */
 
     innerContainer = new Container ();
     innerContainer->setBrush(Qt::NoBrush);
@@ -50,7 +59,8 @@ void BranchContainer::init()
 
     // Adding the containers will reparent them and thus set scene
     innerContainer->addContainer(headingContainer);
-    innerContainer->addContainer(childrenContainer);
+    innerContainer->addContainer(branchesContainer);
+    // FIXME-0 innerContainer->addContainer(imagesContainer);
     addContainer(innerContainer);
 
     setBrush(Qt::NoBrush);
@@ -69,17 +79,30 @@ QString BranchContainer::getName() {
         return Container::getName() + " - ?";
 }
 
-void BranchContainer::addToChildrenContainer(Container *c, bool keepScenePos)
+void BranchContainer::addToBranchesContainer(Container *c, bool keepScenePos)
 {
     QPointF sp = c->scenePos();
-    c->setParentItem(childrenContainer);
+    c->setParentItem(branchesContainer);
     if (keepScenePos)
         c->setPos(sceneTransform().inverted().map(sp));
 }
 
-Container* BranchContainer::getChildrenContainer()
+void BranchContainer::addToImagesContainer(Container *c, bool keepScenePos)
 {
-    return childrenContainer;
+    QPointF sp = c->scenePos();
+    c->setParentItem(imagesContainer);
+    if (keepScenePos)
+        c->setPos(sceneTransform().inverted().map(sp));
+}
+
+Container* BranchContainer::getBranchesContainer()
+{
+    return branchesContainer;
+}
+
+Container* BranchContainer::getImagesContainer()
+{
+    return imagesContainer;
 }
 
 HeadingContainer* BranchContainer::getHeadingContainer()
@@ -146,7 +169,7 @@ void BranchContainer::reposition()
         innerContainer->setHorizontalDirection(RightToLeft);
         innerContainer->setMovableByFloats(false);
         setMovableByFloats(false);  // FIXME-2 Needed?
-        childrenContainer->setLayoutType(FloatingBounded);
+        branchesContainer->setLayoutType(FloatingBounded);
 
         //FIXME-0 add "flags" for testing (but only once!)
         if (innerContainer->childItems().count() <= 2) {
@@ -171,40 +194,40 @@ void BranchContainer::reposition()
         
         // qDebug() << "BC::reposition d > 1  orientation=" << orientation << getName();
         innerContainer->setMovableByFloats(true);
-        childrenContainer->setLayoutType(Vertical);
+        branchesContainer->setLayoutType(Vertical);
 
         switch (orientation) {
             case LeftOfParent:
                 setHorizontalDirection(RightToLeft);
                 innerContainer->setHorizontalDirection(RightToLeft);
-                childrenContainer->setVerticalAlignment(AlignedRight);
+                branchesContainer->setVerticalAlignment(AlignedRight);
                 break;
             case RightOfParent:
                 setHorizontalDirection(LeftToRight);
                 innerContainer->setHorizontalDirection(LeftToRight);
-                childrenContainer->setVerticalAlignment(AlignedLeft);
+                branchesContainer->setVerticalAlignment(AlignedLeft);
                 break;
             default: 
                 qWarning() << "BranchContainer::reposition unknown orientation for mainbranch";
                 break;
         }
-        childrenContainer->orientation = orientation;
+        branchesContainer->orientation = orientation;
 
         if (branchItem->getHeadingPlain().startsWith("float")) {
             // Special layout: FloatingBounded children 
             orientation = UndefinedOrientation;
             QColor col (Qt::red);
             col.setAlpha(150);
-            childrenContainer->setBrush(col);
-            childrenContainer->setLayoutType(FloatingBounded);
+            branchesContainer->setBrush(col);
+            branchesContainer->setLayoutType(FloatingBounded);
             innerContainer->setBrush(Qt::cyan);
         } else if (branchItem->getHeadingPlain().startsWith("free")) {
             // Special layout: FloatingBounded children 
             orientation = UndefinedOrientation;
             QColor col (Qt::red);
             col.setAlpha(120);
-            childrenContainer->setBrush(col);
-            childrenContainer->setLayoutType(FloatingFree);
+            branchesContainer->setBrush(col);
+            branchesContainer->setLayoutType(FloatingFree);
             innerContainer->setBrush(Qt::gray);
         } 
     }

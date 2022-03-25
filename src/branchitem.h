@@ -2,7 +2,7 @@
 #define BRANCHITEM_H
 
 #include "branch-container.h"
-// #include "container.h"
+#include "image-container.h"
 #include "mapitem.h"
 #include "task.h"
 
@@ -114,11 +114,12 @@ class BranchItem : public MapItem {
 
   private:
     BranchContainer *branchContainer;
-    Container* getChildrenContainer();
+    Container* getBranchesContainer();
 
   public:
     void updateContainerStackingOrder();
-    void addToChildrenContainer(Container *c);
+    void addToBranchesContainer(BranchContainer*);
+    void addToImagesContainer(ImageContainer*);
     void repositionContainers();
 };
 

@@ -42,6 +42,8 @@ class ImageContainer : public Container {
     ImageType getType();
     QIcon getIcon();
 
+    void reposition();
+
   protected:
     ImageContainer::ImageType imageType;
 

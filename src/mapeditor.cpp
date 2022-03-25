@@ -75,7 +75,7 @@ MapEditor::MapEditor(VymModel *vm)
     tmpParentContainer->setName("tmpParentContainer");
     tmpParentContainer->setType(Container::TmpParent);
     tmpParentContainer->setLayoutType(Container::FloatingBounded);
-    tmpParentContainer->getChildrenContainer()->setLayoutType(Container::FloatingBounded);
+    tmpParentContainer->getBranchesContainer()->setLayoutType(Container::FloatingBounded);
     tmpParentContainer->setBrush(Qt::NoBrush);
     tmpParentContainer->setPen(QPen(Qt::NoPen));
     tmpParentContainer->reposition();
@@ -1632,13 +1632,16 @@ void MapEditor::moveObject()
             
             // The structure in VymModel remaines untouched so far!
 
-            if (bc->parentItem() != tmpParentContainer->getChildrenContainer()) {
+            if (bc->parentItem() != tmpParentContainer->getBranchesContainer()) {
                 bc->setOrgPos();
-                tmpParentContainer->addToChildrenContainer(bc, true);
+                tmpParentContainer->addToBranchesContainer(bc, true);
                 tmpParentContainer->reposition();   // FIXME-2 needed, if we use a Floating layout?
             }
 
             // FIXME-2 when moving selection to tmpParentContainer, remove leaf branches from selection (no method available yet)!
+        } else if (ti->getType() == TreeItem::Image) {
+            ImageContainer *ic = ((ImageItem*)ti)->getImageContainer();
+            qDebug() << "ME::Moving image " << ic->info();
         }
     }
 
@@ -1755,7 +1758,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
 
                 // Check if we have a destination and should relink
                 if (dsti && objectMoved && state() != MovingObjectWithoutLinking) {
-                    foreach(QGraphicsItem *g_item, tmpParentContainer->getChildrenContainer()->childItems()) {
+                    foreach(QGraphicsItem *g_item, tmpParentContainer->getBranchesContainer()->childItems()) {
                         BranchContainer *bc = (BranchContainer*) g_item;
                         BranchItem *bi = bc->getBranchItem();
                         BranchItem *pi = bi->parentBranch();
@@ -1809,13 +1812,13 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                     // Selection was moved, but not relinked
                     QPointF t = p - movingObj_initialPointerPos;    // Defined in mousePressEvent
 
-                    if (!tmpParentContainer->getChildrenContainer()->childItems().isEmpty()) {
+                    if (!tmpParentContainer->getBranchesContainer()->childItems().isEmpty()) {
                         model->saveStateBeginBlock(
-                            QString("Move %1 items").arg(tmpParentContainer->getChildrenContainer()->childItems().count())
+                            QString("Move %1 items").arg(tmpParentContainer->getBranchesContainer()->childItems().count())
                         );
                         // Empty the tmpParentContainer, which is used for moving
                         // Updating the stacking order also resets the original parents
-                        foreach(QGraphicsItem *g_item, tmpParentContainer->getChildrenContainer()->childItems()) {
+                        foreach(QGraphicsItem *g_item, tmpParentContainer->getBranchesContainer()->childItems()) {
                             BranchContainer *bc = (BranchContainer*) g_item;
                             BranchItem *bi = bc->getBranchItem();
 
@@ -1826,7 +1829,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                             bi->updateContainerStackingOrder();
 
                             if (bi->depth() == 0 || 
-                                    (pi && pi->getBranchContainer()->getChildrenContainer()->hasFloatingLayout()))
+                                    (pi && pi->getBranchContainer()->getBranchesContainer()->hasFloatingLayout()))  // FIXME-0 replace by bc->isFloating()
                             {
                                 // Relative positioning
                                 model->saveState(

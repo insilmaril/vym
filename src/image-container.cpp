@@ -13,7 +13,7 @@ extern ulong imageLastID;
 /////////////////////////////////////////////////////////////////
 ImageContainer::ImageContainer(QGraphicsScene *scene)
 {
-    //qDebug() << "Const ImageContainer ()  this=" << this;
+    qDebug() << "Const ImageContainer ()  this=" << this;
     scene->addItem(this);
     init();
 }
@@ -41,6 +41,7 @@ ImageContainer::~ImageContainer()
         qDebug() << "Destr ImgObj: imageType undefined";
         break;
     }
+    qDebug() << "Destr ImageContainer  this=" << this << " finished";
 }
 
 void ImageContainer::copy(ImageContainer *other)
@@ -85,6 +86,8 @@ void ImageContainer::copy(ImageContainer *other)
 
 void ImageContainer::init()
 {
+    type = Image;
+
     // Assign ID
     imageLastID++;
     imageID = imageLastID;
@@ -259,7 +262,6 @@ bool ImageContainer::load(const QString &fn, bool createClone)
             }
 
             svgCashPath = newPath;
-            qDebug() << "IC:: ok1";
         }
     } else {
         QPixmap pm;
@@ -342,4 +344,9 @@ QIcon ImageContainer::getIcon()
         break;
     }
     return QIcon();
+}
+
+void ImageContainer::reposition()
+{
+    //qDebug() << "ImageContainer::reposition";
 }

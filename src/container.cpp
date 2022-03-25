@@ -12,7 +12,7 @@ Container::Container(QGraphicsItem *parent) : QGraphicsRectItem(parent)
 
 Container::~Container()
 {
-    //qDebug() << "* Destr Container" << getName()<< this;
+    qDebug() << "Destr Container" << info() << this;
 }
 
 void Container::copy(Container *other)
@@ -71,11 +71,17 @@ QString Container::getName()    // FIXME-4 debugging only
         case InnerContent:
             t = "InnerContent";
             break;
-        case Children:
-            t = "Children";
+        case BranchCollection:
+            t = "BranchCollection";
+            break;
+        case ImageCollection:
+            t = "ImagesCollection";
             break;
         case Branch:
             t = "Branch";
+            break;
+        case Image:
+            t = "Image";
             break;
         case Heading:
             t = "Heading";
@@ -199,7 +205,7 @@ void Container::reposition()
         << "Layout: " << layout 
         << " direction: " << horizontalDirection
         << "orientation: " << orientation;
-        */
+    */
 
     QRectF r;
 
@@ -223,7 +229,7 @@ void Container::reposition()
 
     // The children Container is empty, if there are no children branches
     // No repositioning of children required then, of course.
-    if (childItems().count() == 0) 
+    if (childItems().count() == 0)      // FIXME-2 this could go before above loop  ??!
     {
         setRect(r);
         return;

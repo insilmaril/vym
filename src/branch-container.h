@@ -17,8 +17,10 @@ class BranchContainer : public Container {
 
     virtual QString getName();
 
-    void addToChildrenContainer(Container *c, bool keepScenePos = false);
-    Container* getChildrenContainer();
+    void addToBranchesContainer(Container *c, bool keepScenePos = false);
+    void addToImagesContainer(Container *c, bool keepScenePos = false);
+    Container* getBranchesContainer();
+    Container* getImagesContainer();
 
     HeadingContainer* getHeadingContainer();
 
@@ -35,7 +37,8 @@ class BranchContainer : public Container {
   protected:
     BranchItem *branchItem; //! Crossreference to "parent" BranchItem 
     HeadingContainer *headingContainer;
-    Container *childrenContainer;
+    Container *branchesContainer;
+    Container *imagesContainer;
     Container *innerContainer;
 };
 

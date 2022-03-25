@@ -17,7 +17,7 @@ extern TaskModel *taskModel;
 BranchItem::BranchItem(TreeItem *parent)
     : MapItem(parent)
 {
-    //qDebug()<< "Constr. BranchItem this=" << this << "parent:" << parent;
+    qDebug()<< "Constr. BranchItem this=" << this << "parent:" << parent;
 
     // Set type if parent is known yet
     // if not, type is set in insertBranch or TreeItem::appendChild
@@ -39,12 +39,13 @@ BranchItem::BranchItem(TreeItem *parent)
 
     task = nullptr;
 
+
     branchContainer = nullptr;
 }
 
 BranchItem::~BranchItem()
 {
-    //qDebug() << "Destr. BranchItem: this=" << this << "  " << getHeadingPlain();
+    qDebug() << "Destr. BranchItem: this=" << this << "  " << getHeadingPlain() << "branchContainer=" << branchContainer;
     if (mo) {   // FIXME-2 remove MapObj completely...
         delete mo;
         mo = NULL;
@@ -585,9 +586,9 @@ void BranchItem::unlinkBranchContainer()
     branchContainer = nullptr;
 }
 
-Container* BranchItem::getChildrenContainer() 
+Container* BranchItem::getBranchesContainer() 
 {
-    return branchContainer->getChildrenContainer();
+    return branchContainer->getBranchesContainer();
 }
 
 void BranchItem::updateContainerStackingOrder()
@@ -613,7 +614,7 @@ void BranchItem::updateContainerStackingOrder()
     BranchItem *pi = parentBranch();
 
     if (pi && pi != rootItem) 
-        branchContainer->setParentItem(parentBranch()->getChildrenContainer());
+        branchContainer->setParentItem(parentBranch()->getBranchesContainer());
         // parentBranch()->addToChildrenContainer(branchContainer); // FIXME-2 maybe better? 
     else {
         qWarning() << "BI::updateStackingORder  pi = " << pi << "rootItem = " << rootItem << "(moved center?)"; // FIXME-2 testing
@@ -634,9 +635,14 @@ void BranchItem::updateContainerStackingOrder()
     return;
 }
 
-void BranchItem::addToChildrenContainer(Container *c)
+void BranchItem::addToBranchesContainer(BranchContainer *bc)
 {
-    branchContainer->addToChildrenContainer(c);
+    branchContainer->addToBranchesContainer(bc);
+}
+
+void BranchItem::addToImagesContainer(ImageContainer *ic)
+{
+    branchContainer->addToImagesContainer(ic);
 }
 
 void BranchItem::repositionContainers()

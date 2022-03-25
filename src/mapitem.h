@@ -21,7 +21,7 @@ class MapItem : public TreeItem {
     QPointF pos;
 
   public:
-    MapItem(TreeItem *parent = 0);
+    MapItem(TreeItem *parent = nullptr);
 
     void init();
 
