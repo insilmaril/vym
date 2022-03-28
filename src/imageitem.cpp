@@ -81,21 +81,18 @@ ImageContainer *ImageItem::getImageContainer()
     return imageContainer;
 }
 
-void ImageItem::setScaleFactor(qreal f) // FIXME-0 
+void ImageItem::setScaleFactor(qreal f)
 {
-    /*
-    if (mo)
-        ((FloatImageObj *)mo)->setScaleFactor(f);
-        */
+    if (imageContainer)
+        imageContainer->setScaleFactor(f);
 }
 
-qreal ImageItem::getScaleFactor() // FIXME-0 
+qreal ImageItem::getScaleFactor()
 {
-    /*
-    if (mo)
-        return ((FloatImageObj *)mo)->getScaleFactor();
-        */
-    return 1;
+    if (imageContainer)
+        return imageContainer->getScaleFactor();
+    else
+        return 1;
 }
 
 void ImageItem::setZValue(int z) // FIXME-0
@@ -120,29 +117,32 @@ void ImageItem::setOriginalFilename(const QString &fn)
 
 QString ImageItem::getOriginalFilename() { return originalFilename; }
 
-QString ImageItem::getUniqueFilename() // FIXME-0
+QString ImageItem::getUniqueFilename()
 {
-    /*
-    FloatImageObj *fio = (FloatImageObj *)mo;
-    return "image-" + getUuid().toString() + fio->getExtension();
-    */
-    return QString();
+    if (imageContainer)
+        return "image-" + getUuid().toString() + imageContainer->getExtension();
+    else
+        return QString();
 }
 
-bool ImageItem::saveImage(const QString &fn) // FIXME-0
+bool ImageItem::saveImage(const QString &fn)
 {
-    return false;
-/*
+    qDebug() << "II:saveImage " << fn << imageContainer;
     // This is used when exporting maps or saving selection
-    FloatImageObj *fio = (FloatImageObj *)mo;
-    return fio->save(fn);
-    */
+    if (imageContainer)
+        return imageContainer->save(fn);
+    else 
+        return false;
 }
 
-QString ImageItem::saveToDir(const QString &tmpdir, const QString &prefix) // FIXME-0
+QString ImageItem::saveToDir(const QString &tmpdir, const QString &prefix)
 {
-    return QString();
-    /*
+    qDebug() << "II:saveToDir " << tmpdir << imageContainer;
+    if (!imageContainer) {
+        qWarning() << "ImageItem::saveToDir  no imageContainer!";
+        return QString();
+    }
+
     if (hidden)
         return "";
 
@@ -152,22 +152,19 @@ QString ImageItem::saveToDir(const QString &tmpdir, const QString &prefix) // FI
     QString zAttr = attribut("zValue", QString().setNum(zValue));
     QString url;
 
-    FloatImageObj *fio = (FloatImageObj *)mo;
-
     url = "images/" + prefix + "image-" + QString().number(itemID) +
-          fio->getExtension();
+          imageContainer->getExtension();
 
     // And really save the image  (svgs will be copied from cash!)
-    fio->save(tmpdir + "/" + url);
+    imageContainer->save(tmpdir + "/" + url);
 
     QString nameAttr = attribut("originalName", originalFilename);
 
     QString scaleAttr =
-        attribut("scaleFactor", QString().setNum(fio->getScaleFactor()));
+        attribut("scaleFactor", QString().setNum(imageContainer->getScaleFactor()));
 
     return singleElement("floatimage",
                          getMapAttr() + getGeneralAttr() + zAttr +
                              attribut("href", QString("file:") + url) +
                              nameAttr + scaleAttr + idAttr);
-     */
 }
