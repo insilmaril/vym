@@ -14,7 +14,7 @@ extern ulong imageLastID;
 /////////////////////////////////////////////////////////////////
 ImageContainer::ImageContainer(QGraphicsScene *scene)
 {
-    qDebug() << "Const ImageContainer ()  this=" << this;
+    qDebug() << "Const ImageContainer ()  this=" << this << "items=" << scene->items().count();
     scene->addItem(this);
     init();
 }
@@ -22,65 +22,72 @@ ImageContainer::ImageContainer(QGraphicsScene *scene)
 ImageContainer::~ImageContainer()
 {
     qDebug() << "Destr ImageContainer  this=" << this << "  imageType = " << imageType ;
-    switch (imageType) {
-    case ImageContainer::SVG:
-    case ImageContainer::ClonedSVG:
-        if (svgItem)
-            delete (svgItem);
-        break;
-    case ImageContainer::Pixmap:
-        if (pixmapItem)
-            delete (pixmapItem);
-        break;
-    case ImageContainer::ModifiedPixmap:
-        if (pixmapItem)
-            delete (pixmapItem);
-        if (originalPixmap)
-            delete (originalPixmap);
-        break;
-    default:
-        qDebug() << "Destr ImgObj: imageType undefined";
-        break;
+    qDebug() << " - svgItem:    " << svgItem;
+    qDebug() << " - childItems: " << childItems();
+    if (svgItem && !childItems().contains(svgItem))
+        qDebug() << " - childItems does not contain svgItem: " << svgItem;
+
+    switch (imageType) {    // FIXME-0 all childItems should have myself as parent and would be deleted automatically
+        case ImageContainer::SVG:
+        case ImageContainer::ClonedSVG:
+            if (svgItem)
+                delete (svgItem);
+            break;
+        case ImageContainer::Pixmap:
+            if (pixmapItem)
+                delete (pixmapItem);
+            break;
+        case ImageContainer::ModifiedPixmap:
+            if (pixmapItem)
+                delete (pixmapItem);
+            if (originalPixmap)
+                delete (originalPixmap);
+            break;
+        default:
+            qDebug() << "Destr ImgObj: imageType undefined";
+            break;
     }
     qDebug() << "Destr ImageContainer  this=" << this << " finished";
+    qDebug() << " - childItems: " << childItems();
 }
 
 void ImageContainer::copy(ImageContainer *other)
 {
+    qDebug() << "IC::copy"; // FIXME-2 testing only
     prepareGeometryChange();
     if (imageType != ImageContainer::Undefined)
         qWarning() << "ImageContainer::copy into existing image of type "
                    << imageType;
 
     switch (other->imageType) {
-    case ImageContainer::SVG:
-    case ImageContainer::ClonedSVG:
-        if (!other->svgCashPath.isEmpty()) {
-            load(other->svgCashPath, true);
-        }
-        else
-            qWarning() << "ImgObj::copy svg: no svgCashPath available.";
+        case ImageContainer::SVG:
+        case ImageContainer::ClonedSVG:
+            if (!other->svgCashPath.isEmpty()) {
+                load(other->svgCashPath, true);
+            }
+            else
+                qWarning() << "ImgObj::copy svg: no svgCashPath available.";
 
-        svgItem->setVisible(isVisible());
-        break;
-    case ImageContainer::Pixmap:
-        pixmapItem = new QGraphicsPixmapItem();
-        pixmapItem->setPixmap(other->pixmapItem->pixmap());
-        pixmapItem->setParentItem(parentItem());
-        pixmapItem->setVisible(isVisible());
-        imageType = ImageContainer::Pixmap;
-        break;
-    case ImageContainer::ModifiedPixmap:
-        // create new pixmap?
-        pixmapItem->setPixmap(other->pixmapItem->pixmap());
-        pixmapItem->setParentItem(parentItem());
-        pixmapItem->setVisible(isVisible());
-        imageType = ImageContainer::Pixmap;
-        break;
-    default:
-        qWarning() << "ImgObj::copy other->imageType undefined";
-        return;
-        break;
+            svgItem->setVisible(isVisible());
+            break;
+        case ImageContainer::Pixmap:
+            pixmapItem = new QGraphicsPixmapItem();
+            pixmapItem->setPixmap(other->pixmapItem->pixmap());
+            pixmapItem->setParentItem(parentItem());
+            pixmapItem->setVisible(isVisible());
+            imageType = ImageContainer::Pixmap;
+            break;
+        case ImageContainer::ModifiedPixmap:
+            // create new pixmap?
+            pixmapItem->setPixmap(other->pixmapItem->pixmap());
+            pixmapItem->setParentItem(parentItem());
+            pixmapItem->setVisible(isVisible());
+            imageType = ImageContainer::Pixmap;
+            break;
+        default:
+            qWarning() << "ImgObj::copy other->imageType undefined";
+            return;
+            break;
     }
     setScaleFactor(other->scaleFactor);
 }
@@ -100,55 +107,35 @@ void ImageContainer::init()
     scaleFactor = 1;
 }
 
-void ImageContainer::setPos(const QPointF &pos)
-{
-    switch (imageType) {
-    case ImageContainer::SVG:
-    case ImageContainer::ClonedSVG:
-        svgItem->setPos(pos);
-        break;
-    case ImageContainer::Pixmap:
-        pixmapItem->setPos(pos);
-        break;
-    case ImageContainer::ModifiedPixmap:
-        pixmapItem->setPos(pos);
-        break;
-    default:
-        break;
-    }
-}
-
-void ImageContainer::setPos(const qreal &x, const qreal &y) { setPos(QPointF(x, y)); }
-
 void ImageContainer::setZValue(qreal z)
 {
     switch (imageType) {
-    case ImageContainer::SVG:
-    case ImageContainer::ClonedSVG:
-        svgItem->setZValue(z);
-        break;
-    case ImageContainer::Pixmap:
-    case ImageContainer::ModifiedPixmap:
-        pixmapItem->setZValue(z);
-        break;
-    default:
-        break;
+        case ImageContainer::SVG:
+        case ImageContainer::ClonedSVG:
+            svgItem->setZValue(z);
+            break;
+        case ImageContainer::Pixmap:
+        case ImageContainer::ModifiedPixmap:
+            pixmapItem->setZValue(z);
+            break;
+        default:
+            break;
     }
 }
 
 void ImageContainer::setVisibility(bool v)
 {
     switch (imageType) {
-    case ImageContainer::SVG:
-    case ImageContainer::ClonedSVG:
-        v ? svgItem->show() : svgItem->hide();
-        break;
-    case ImageContainer::Pixmap:
-    case ImageContainer::ModifiedPixmap:
-        v ? pixmapItem->show() : pixmapItem->hide();
-        break;
-    default:
-        break;
+        case ImageContainer::SVG:
+        case ImageContainer::ClonedSVG:
+            v ? svgItem->show() : svgItem->hide();
+            break;
+        case ImageContainer::Pixmap:
+        case ImageContainer::ModifiedPixmap:
+            v ? pixmapItem->show() : pixmapItem->hide();
+            break;
+        default:
+            break;
     }
 }
 
@@ -163,30 +150,30 @@ void ImageContainer::setWidth(qreal w)
 void ImageContainer::setScaleFactor(qreal f)
 {
     scaleFactor = f;
-    switch (imageType) {
-    case ImageContainer::SVG:
-    case ImageContainer::ClonedSVG:
-        svgItem->setScale(f);
-        break;
-    case ImageContainer::Pixmap:
-        if (f != 1) {
-            // create ModifiedPixmap
-            originalPixmap = new QPixmap(pixmapItem->pixmap());
-            imageType = ModifiedPixmap;
+        switch (imageType) {
+            case ImageContainer::SVG:
+            case ImageContainer::ClonedSVG:
+                svgItem->setScale(f);
+                break;
+            case ImageContainer::Pixmap:
+                if (f != 1) {
+                    // create ModifiedPixmap
+                    originalPixmap = new QPixmap(pixmapItem->pixmap());
+                    imageType = ModifiedPixmap;
 
-            setScaleFactor(f);
-        }
-        break;
-    case ImageContainer::ModifiedPixmap:
-        if (!originalPixmap) {
-            qWarning() << "ImageContainer::setScaleFactor   no originalPixmap!";
-            return;
-        }
-        pixmapItem->setPixmap(originalPixmap->scaled(
-            originalPixmap->width() * f, originalPixmap->height() * f));
-        break;
-    default:
-        break;
+                    setScaleFactor(f);
+                }
+                break;
+            case ImageContainer::ModifiedPixmap:
+                if (!originalPixmap) {
+                    qWarning() << "ImageContainer::setScaleFactor   no originalPixmap!";
+                    return;
+                }
+                pixmapItem->setPixmap(originalPixmap->scaled(
+                    originalPixmap->width() * f, originalPixmap->height() * f));
+                break;
+            default:
+            break;
     }
 }
 
@@ -196,46 +183,30 @@ void ImageContainer::updateRect()
 {
     QRectF r;
     switch (imageType) {
-    case ImageContainer::SVG:
-    case ImageContainer::ClonedSVG:
-        r = QRectF(0, 0, svgItem->boundingRect().width() * scaleFactor,
-                         svgItem->boundingRect().height() * scaleFactor);
-        break;
-    case ImageContainer::Pixmap:
-        r = pixmapItem->boundingRect();
-        break;
-    case ImageContainer::ModifiedPixmap:
-        r = pixmapItem->boundingRect();
-        break;
-    default:
-        qWarning() << "ImageContainer::updateRect unknown imageType";
-        break;
+        case ImageContainer::SVG:
+        case ImageContainer::ClonedSVG:
+            r = QRectF(0, 0, svgItem->boundingRect().width() * scaleFactor,
+                             svgItem->boundingRect().height() * scaleFactor);
+            break;
+        case ImageContainer::Pixmap:
+            r = pixmapItem->boundingRect();
+            break;
+        case ImageContainer::ModifiedPixmap:
+            r = pixmapItem->boundingRect();
+            break;
+        default:
+            qWarning() << "ImageContainer::updateRect unknown imageType";
+            break;
     }
+    qDebug() << "IC::updateRect  r= " << r;
     setRect(r);
-}
-
-void ImageContainer::paint(QPainter *painter, const QStyleOptionGraphicsItem *sogi,
-                     QWidget *widget)
-{
-    // Not really called, but required because paint is pure virtual in  QGraphicsItem // FIXME-2 really still needed?
-
-    switch (imageType) {
-    case ImageContainer::SVG:
-    case ImageContainer::ClonedSVG:
-        svgItem->paint(painter, sogi, widget);
-        break;
-    case ImageContainer::Pixmap:
-    case ImageContainer::ModifiedPixmap:
-        pixmapItem->paint(painter, sogi, widget);
-        break;
-    default:
-        break;
-    }
 }
 
 bool ImageContainer::load(const QString &fn, bool createClone)
 {
     // createClone == true, if called via copy()
+
+    qDebug() << "IC::load" <<fn << "createClone=" << createClone; 
 
     if (imageType != ImageContainer::Undefined) {
         qWarning() << "ImageContainer::load (" << fn
@@ -244,13 +215,34 @@ bool ImageContainer::load(const QString &fn, bool createClone)
     }
 
     if (fn.toLower().endsWith(".svg")) {
-        svgItem = new QGraphicsSvgItem(fn, this);
+        qDebug() << " - IC::load  childItems=" << childItems();
+        svgItem = new QGraphicsSvgItem(fn);
+        qDebug() << " - IC::load created svg=" << svgItem;
+        svgItem->setParentItem(this);
+        qDebug() << " - IC::load relinked  svg=" << svgItem;
+        qDebug() << " - IC::load  childItems=" << childItems();
+        qDebug() << " - IC::load  cI.first  =" << childItems().first();
+        if (childItems().first() != svgItem)
+            qDebug() << " - IC::load  childItems.first != svgItem=";
+        else
+            qDebug() << " - IC::load  childItems.first == svgItem=";
+        svgItem->setPos(-200,0);
+        qDebug() << "ok-1";
+        childItems().first()->setPos(200,0);
+        delete svgItem;
+        svgItem = nullptr;
+        svgItem = (QGraphicsSvgItem*)(childItems().first());
+        qDebug() << " - IC::load updated svg=" << svgItem;
+        //qDebug() << " - IC::load  childItems=" << childItems();
+
+        qDebug() << "ok0";
 
         if (createClone) {
             imageType = ImageContainer::ClonedSVG;
             svgCashPath = fn;
         }
         else {
+            qDebug() << "ok1";
             imageType = ImageContainer::SVG;
 
             // Copy original file to cash
@@ -263,7 +255,8 @@ bool ImageContainer::load(const QString &fn, bool createClone)
             }
 
             svgCashPath = newPath;
-        }
+            qDebug() << "ok2";
+        }   // No clone created
     } else {
         QPixmap pm;
         if (!pm.load(fn)) return false;
@@ -273,13 +266,19 @@ bool ImageContainer::load(const QString &fn, bool createClone)
         if (pixmapItem)
             qWarning() << "ImageContainer::load " << fn
                        << "pixmapIteam already exists";
+
+        imageType = ImageContainer::Pixmap;
         pixmapItem = new QGraphicsPixmapItem(this);
         pixmapItem->setPixmap(pm);
         pixmapItem->setParentItem(parentItem());
-        imageType = ImageContainer::Pixmap;
+
+        qDebug() << "IC::load created  pixmapItem=" << pixmapItem;
     }
 
-    updateRect();
+    qDebug() << "ok3";
+    //updateRect();
+    setRect(-50,-50,100,100);
+    qDebug() << "ok4";
     return true;
 }
 
@@ -333,16 +332,16 @@ ImageContainer::ImageType ImageContainer::getType() { return imageType; }
 QIcon ImageContainer::getIcon()
 {
     switch (imageType) {
-    case ImageContainer::SVG:
-    case ImageContainer::ClonedSVG:
-        return QPixmap(svgCashPath);
-        break;
-    case ImageContainer::Pixmap:
-    case ImageContainer::ModifiedPixmap:
-        return QIcon(pixmapItem->pixmap());
-        break;
-    default:
-        break;
+        case ImageContainer::SVG:
+        case ImageContainer::ClonedSVG:
+            return QPixmap(svgCashPath);
+            break;
+        case ImageContainer::Pixmap:
+        case ImageContainer::ModifiedPixmap:
+            return QIcon(pixmapItem->pixmap());
+            break;
+        default:
+            break;
     }
     return QIcon();
 }
@@ -355,5 +354,8 @@ ImageItem* ImageContainer::getImageItem() { return imageItem;}
 
 void ImageContainer::reposition()
 {
-    //qDebug() << "ImageContainer::reposition";
+    qDebug() << "ImageContainer::reposition type" << imageType;
+    if (pixmapItem) qDebug() << " - pixmapItem=" << pixmapItem;
+    if (svgItem) qDebug() << " - svgItem=" << svgItem;
+    qDebug() << " - childItems: " << childItems();
 }

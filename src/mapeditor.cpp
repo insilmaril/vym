@@ -147,6 +147,7 @@ MapEditor::MapEditor(VymModel *vm)
 
     // Selections
     selectionColor = QColor(255, 255, 0);
+    selectionColor.setAlpha(150);
 
     // Panning
     panningTimer = new QTimer(this);
@@ -1819,14 +1820,21 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
             }   // Empty tmpParenContainer
         } // Branches moved, but not relinked
 
-        // Let's see if we moved images with tmpParentContainer
+        // Let's see if we moved images with tmpParentContainer // FIXME-0 cont here
         if (objectMoved) {
             foreach(QGraphicsItem *g_item, tmpParentContainer->getImagesContainer()->childItems()) {
                 ImageContainer *ic = (ImageContainer*) g_item;
-                //ImageItem *ii = ic->getImageItem();
-                //BranchItem *pi = ii->parentBranch();
+                ImageItem *ii = ic->getImageItem();
+                qDebug() << " - moved " << ic->info() << "ii=" << ii;
+                BranchItem *pi = ii->parentBranch();
 
-                qDebug() << " - moved " << ic->info();
+                // Update parent of moved container to original imageContainer 
+                // in parent branch
+                qDebug() << "ME  1 number of objects: " << model->getScene()->items().size();
+                qDebug() << "ME  1 tPC images: " << tmpParentContainer->getImagesContainer()->childItems();
+                pi->addToImagesContainer(ic);
+                qDebug() << "ME  2 number of objects: " << model->getScene()->items().size();
+                qDebug() << "ME  2 tPC images: " << tmpParentContainer->getImagesContainer()->childItems();
 
                 // Moved Image, we need to reposition
                 /*
@@ -1845,36 +1853,6 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
             } // Image moved
         }
 
-#ifdef XYZ
-        qWarning() << "xyz should never get here!";
-        foreach (TreeItem *selti, model->getSelectedItems())
-        {
-            if (selti->getType() == TreeItem::Image) {   // FIXME-2 no images movable yet
-                if (objectMoved) {
-                    foreach(QGraphicsItem *g_item, tmpParentContainer->getBranchesContainer()->childItems()) {
-                        BranchContainer *bc = (BranchContainer*) g_item;
-                        ImageItem *ii = bc->getImageItem();
-                        BranchItem *pi = bi->parentBranch();
-
-                        // Moved Image, we need to reposition
-                        /*
-                        QString pold = qpointFToString(movingObj_orgRelPos);
-                        QString pnow = qpointFToString(fio->getRelPos());
-                        model->saveState(seli, "moveRel " + pold, seli,
-                                         "moveRel " + pnow,
-                                         QString("Move %1 to relative position %2")
-                                             .arg(model->getObjectName(seli))
-                                             .arg(pnow));
-
-                        model->emitDataChanged(
-                            seli->parent()); // Parent of image has changed
-                        model->reposition();
-                        */
-                    }
-                }
-            } // Image moved
-#endif
-        
         // Finally resize scene, if needed
         scene()->update();
         objectMoved = false;

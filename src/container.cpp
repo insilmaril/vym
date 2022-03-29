@@ -6,7 +6,7 @@
 
 Container::Container(QGraphicsItem *parent) : QGraphicsRectItem(parent)
 {
-    //qDebug() << "* Const Container begin this = " << this << ";
+    qDebug() << "* Const Container " << this;
     init();
 }
 
@@ -201,11 +201,11 @@ Container* Container::parentContainer()
 void Container::reposition()
 {
     /*
+    */
     qDebug() << QString("#### Reposition of %1").arg(getName()) 
         << "Layout: " << layout 
         << " direction: " << horizontalDirection
         << "orientation: " << orientation;
-    */
 
     QRectF r;
 

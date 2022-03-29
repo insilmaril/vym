@@ -87,7 +87,7 @@ void BranchContainer::addToBranchesContainer(Container *c, bool keepScenePos)
 
 void BranchContainer::addToImagesContainer(Container *c, bool keepScenePos)
 {
-    qDebug() << "BC::add2Img   this=" << this << "c=" << c;
+    qDebug() << "BC::add2ImagesContainer   this=" << this << "c=" << c << " imageCount=" << imagesContainer->childItems().count();
     QPointF sp = c->scenePos();
     c->setParentItem(imagesContainer);
     if (keepScenePos)
@@ -170,8 +170,8 @@ void BranchContainer::reposition()
         setMovableByFloats(false);  // FIXME-2 Needed?
         branchesContainer->setLayoutType(FloatingBounded);
 
-        //FIXME-0 add "flags" for testing (but only once!)
-        if (innerContainer->childItems().count() <= 2) {
+        //FIXME-0 add "flags" and origin for testing (but only once!)
+        if (innerContainer->childItems().count() <= 3) {
             HeadingContainer *fc = new HeadingContainer();
             fc->setHeading("Flags");
             innerContainer->addContainer(fc);

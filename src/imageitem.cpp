@@ -23,12 +23,13 @@ ImageItem::ImageItem():MapItem(nullptr) // FIXME-2 MapItem should no longer be n
 
 ImageItem::~ImageItem()
 {
-    // qDebug() << "Destr ImageItem " << this;
+    qDebug() << "Destr ImageItem " << this;
 
-    // The related data in imageContainer is not deleted here,
-    // but when the BranchItem is deleted, which has the imageContainer 
-    // somewhere in it's tree of containers. (Deleting of a BranchItem first 
-    // triggers deletion all its related containers)
+    if (imageContainer) {
+        qDebug() << " - Deleting imageContainer=" << imageContainer;
+        delete imageContainer;
+        imageContainer = nullptr;
+    }
 }
 
 void ImageItem::init()
@@ -46,32 +47,36 @@ void ImageItem::clear() // FIXME-2 check if needed
     // not used here currently
 }
 
+BranchItem *ImageItem::parentBranch() { return (BranchItem *)parentItem; }
+
+#include "vymmodel.h"     // FIXME-0 testing only
 bool ImageItem::load(const QString &fname)
 {
+    qDebug() << "II::load " << fname;
+    qDebug() << "II::load 1 number of objects " << model->getScene()->items().count();
     if (!imageContainer || !imageContainer->load(fname))
         return false;
 
     setOriginalFilename(fname);
     setHeadingPlainText(originalFilename);
 
+    qDebug() << "II::load 2 number of objects " << model->getScene()->items().count();
     return true;
 }
 
 ImageContainer *ImageItem::createImageContainer(QGraphicsScene *scene)
 {
-    //FIXME-0 BranchItem *parentBranch = (BranchItem*)parentItem;
-
+    qDebug() << "II::createImageContainer for " << this;
     imageContainer = new ImageContainer(scene);
+    imageContainer->setImageItem(this);
     /* FIXME-0 cont here, check visibility of new image
-    mo = fio;
     if (((BranchItem *)parentItem)->isScrolled() ||
         !((MapItem *)parentItem)->getMO()->isVisibleObj())
-        fio->setVisibility(false);
-    // initLMO(); // set rel/abs position in mapitem
-    fio->setZValue(zValue);
-    fio->setRelPos(pos);
-    fio->updateVisibility();
-    fio->setLinkColor();
+        imageContainer->setVisibility(false);
+    imageContainer->setZValue(zValue);
+    imageContainer->setRelPos(pos);
+    imageContainer->updateVisibility();
+    imageContainer->setLinkColor();
     */
     return imageContainer;
 }

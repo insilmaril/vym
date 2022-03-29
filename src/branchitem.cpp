@@ -17,7 +17,7 @@ extern TaskModel *taskModel;
 BranchItem::BranchItem(TreeItem *parent)
     : MapItem(parent)
 {
-    qDebug()<< "Constr. BranchItem this=" << this << "parent:" << parent;
+    //qDebug()<< "Constr. BranchItem this=" << this << "parent:" << parent;
 
     // Set type if parent is known yet
     // if not, type is set in insertBranch or TreeItem::appendChild
@@ -152,14 +152,8 @@ QString BranchItem::saveToDir(const QString &tmpdir, const QString &prefix,
 
     // Save position
     QString posAttr;
-    if (parentItem == rootItem)
-        // Use absolute coordinates
-        posAttr = attribut("absPosX", QString().setNum(branchContainer->scenePos().x())) +
-                  attribut("absPosY", QString().setNum(branchContainer->scenePos().y()));
-    else if ( branchContainer->isFloating())
-        // Use relative coordinates
-        posAttr = attribut("relPosX", QString().setNum(branchContainer->pos().x())) +
-                  attribut("relPosY", QString().setNum(branchContainer->pos().y())); 
+    posAttr = attribut("relPosX", QString().setNum(branchContainer->pos().x())) +
+              attribut("relPosY", QString().setNum(branchContainer->pos().y())); 
 
     s = beginElement(elementName + posAttr + getGeneralAttr() +
                      scrolledAttr + getIncludeImageAttr() + 
@@ -644,8 +638,13 @@ void BranchItem::addToBranchesContainer(BranchContainer *bc)
 
 void BranchItem::addToImagesContainer(ImageContainer *ic)
 {
-    qDebug() << "BI::add2ImgCont  this=" << this << "  ic=" << ic;
+    qDebug() << "BI::add2ImagesContainer  this=" << this << "  ic=" << ic << "count=" << model->getScene()->items().count();
+
+    // Keep scene position while relinking image container
+    QPointF p = ic->mapToItem(branchContainer->getImagesContainer(), ic->pos());
+
     branchContainer->addToImagesContainer(ic);
+    ic->setPos(p);
 }
 
 void BranchItem::repositionContainers()

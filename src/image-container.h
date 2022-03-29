@@ -25,8 +25,6 @@ class ImageContainer : public Container {
     virtual ~ImageContainer();
     virtual void copy(ImageContainer*);
     virtual void init();
-    void setPos(const QPointF &pos);
-    void setPos(const qreal &x, const qreal &y);
     void setZValue(qreal z);
     void setVisibility(bool);
     void setWidth(qreal w);
@@ -37,7 +35,6 @@ class ImageContainer : public Container {
     void updateRect();
 
   public:
-    virtual void paint(QPainter *, const QStyleOptionGraphicsItem *, QWidget *);
     bool load(const QString &, bool createClone = false);
     bool save(const QString &);
     QString getExtension();
