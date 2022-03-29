@@ -22,7 +22,7 @@ ImageItem::ImageItem():MapItem(nullptr) // FIXME-2 MapItem should no longer be n
 
 ImageItem::~ImageItem()
 {
-    qDebug() << "Destr ImageItem " << this;
+    qDebug() << "Destr ImageItem " << this << "  ic=" << imageContainer;
 
     if (imageContainer) {
         qDebug() << " - Deleting imageContainer=" << imageContainer;
@@ -84,6 +84,14 @@ ImageContainer *ImageItem::createImageContainer(QGraphicsScene *scene)
 ImageContainer *ImageItem::getImageContainer()
 {
     return imageContainer;
+}
+
+void ImageItem::unlinkImageContainer()
+{
+    // Called from destructor of containers to 
+    // avoid double deletion 
+    imageContainer = nullptr;
+    qDebug() << "II::unlinkIC in " << this;
 }
 
 void ImageItem::setScaleFactor(qreal f)

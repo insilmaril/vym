@@ -22,6 +22,7 @@ class ImageItem : public MapItem {
     virtual bool load(const QString &fname);
     ImageContainer* createImageContainer(QGraphicsScene*); //! Create container for this image
     ImageContainer* getImageContainer(); 
+    void unlinkImageContainer();
 
   protected:
     ImageContainer *imageContainer;

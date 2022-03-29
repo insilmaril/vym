@@ -27,6 +27,7 @@ ImageContainer::~ImageContainer()
     if (svgItem && !childItems().contains(svgItem))
         qDebug() << " - childItems does not contain svgItem: " << svgItem;
 
+    /*
     switch (imageType) {    // FIXME-0 all childItems should have myself as parent and would be deleted automatically
         case ImageContainer::SVG:
         case ImageContainer::ClonedSVG:
@@ -47,8 +48,11 @@ ImageContainer::~ImageContainer()
             qDebug() << "Destr ImgObj: imageType undefined";
             break;
     }
+    */
     qDebug() << "Destr ImageContainer  this=" << this << " finished";
     qDebug() << " - childItems: " << childItems();
+
+    imageItem->unlinkImageContainer();
 }
 
 void ImageContainer::copy(ImageContainer *other)
