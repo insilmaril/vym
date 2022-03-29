@@ -206,7 +206,7 @@ bool ImageContainer::load(const QString &fn, bool createClone)
 {
     // createClone == true, if called via copy()
 
-    qDebug() << "IC::load" <<fn << "createClone=" << createClone; 
+    qDebug() << "IC::load" <<fn << "createClone=" << createClone << "this=" << this; 
 
     if (imageType != ImageContainer::Undefined) {
         qWarning() << "ImageContainer::load (" << fn
@@ -240,8 +240,7 @@ bool ImageContainer::load(const QString &fn, bool createClone)
         if (createClone) {
             imageType = ImageContainer::ClonedSVG;
             svgCashPath = fn;
-        }
-        else {
+        } else {
             qDebug() << "ok1";
             imageType = ImageContainer::SVG;
 
@@ -258,10 +257,9 @@ bool ImageContainer::load(const QString &fn, bool createClone)
             qDebug() << "ok2";
         }   // No clone created
     } else {
+        // Not svg
         QPixmap pm;
         if (!pm.load(fn)) return false;
-
-        prepareGeometryChange();
 
         if (pixmapItem)
             qWarning() << "ImageContainer::load " << fn
@@ -270,12 +268,11 @@ bool ImageContainer::load(const QString &fn, bool createClone)
         imageType = ImageContainer::Pixmap;
         pixmapItem = new QGraphicsPixmapItem(this);
         pixmapItem->setPixmap(pm);
-        pixmapItem->setParentItem(parentItem());
 
         qDebug() << "IC::load created  pixmapItem=" << pixmapItem;
     }
 
-    qDebug() << "ok3";
+    qDebug() << "ok3 childItems=" << childItems();
     //updateRect();
     setRect(-50,-50,100,100);
     qDebug() << "ok4";

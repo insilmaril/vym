@@ -20,7 +20,6 @@ ImageItem::ImageItem():MapItem(nullptr) // FIXME-2 MapItem should no longer be n
     init();
 }
 
-
 ImageItem::~ImageItem()
 {
     qDebug() << "Destr ImageItem " << this;
@@ -54,6 +53,7 @@ bool ImageItem::load(const QString &fname)
 {
     qDebug() << "II::load " << fname;
     qDebug() << "II::load 1 number of objects " << model->getScene()->items().count();
+    qDebug() << "II::load ic=" << imageContainer;
     if (!imageContainer || !imageContainer->load(fname))
         return false;
 
