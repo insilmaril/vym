@@ -149,27 +149,21 @@ LinkableMapObj *MapItem::getLMO()   // FIXME-2 remove completely
 
 QPainterPath MapItem::getSelectionPath() // FIXME-3 should be in BranchContainer or ImageContainer
 {
-    QPainterPath p;
-    QRectF r;
-    qreal d = 3; // Thickness of selection "border"
-
-    if (isBranchLikeType() )    // FIXME-2 Image type still missing!
+    qreal d = 3;    // Margins around rectangle of item
+    QPolygonF polygon;
+    if (isBranchLikeType() )
     {
-        r = ((BranchItem*)this)->getBranchContainer()->getHeadingRect();
+        BranchContainer *bc =((BranchItem*)this)->getBranchContainer();
+        polygon = bc->mapToScene(bc->rect().marginsAdded(QMarginsF(d, d, d, d)));
     } else if (getType() == Image) {
-        r = ((ImageItem*)this)->getImageContainer()->rect();
-    } else {
+        ImageContainer *ic =((ImageItem*)this)->getImageContainer();
+        polygon = ic->mapToScene(ic->rect().marginsAdded(QMarginsF(d, d, d, d)));
+    } else 
         qWarning() << "MapITem::getSelectionPath - unknown item type!";
-        return p;
-    }
 
-    p.moveTo(r.topLeft() + QPointF(-d, -d));
-    p.lineTo(r.topRight() + QPointF(d, -d));
-    p.lineTo(r.bottomRight() + QPointF(d, d));
-    p.lineTo(r.bottomLeft() + QPointF(-d, d));
-    p.lineTo(r.topLeft() + QPointF(-d, -d));
-
-    return p;
+    QPainterPath path;
+    path.addPolygon(polygon);
+    return path;
 }
 
 QPointF MapItem::getEditPosition() // FIXME-3 should be directly in BranchContainer
