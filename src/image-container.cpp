@@ -179,9 +179,6 @@ void ImageContainer::updateRect()
 bool ImageContainer::load(const QString &fn, bool createClone)
 {
     // createClone == true, if called via copy()
-
-    qDebug() << "IC::load" <<fn << "createClone=" << createClone << "this=" << this; 
-
     if (imageType != ImageContainer::Undefined) {
         qWarning() << "ImageContainer::load (" << fn
                    << ") into existing image of type " << imageType;
@@ -189,28 +186,12 @@ bool ImageContainer::load(const QString &fn, bool createClone)
     }
 
     if (fn.toLower().endsWith(".svg")) {
-        qDebug() << " - IC::load  childItems=" << childItems();
         svgItem = new QGraphicsSvgItem(fn, this);
-        qDebug() << " - IC::load created svg=" << svgItem;
-        //svgItem->setParentItem(this);
-        qDebug() << " - IC::load relinked  svg=" << svgItem;
-        qDebug() << " - IC::load  childItems=" << childItems();
-        qDebug() << " - IC::load  cI.first  =" << childItems().first();
-        if (childItems().first() != svgItem)
-            qDebug() << " - IC::load  childItems.first != svgItem=";
-        else
-            qDebug() << " - IC::load  childItems.first == svgItem=";
-
-        svgItem->setPos(0,0);   // FIXME-2 needed?
-
-        qDebug() << " - IC::load updated svg=" << svgItem;
-        qDebug() << "ok0";
 
         if (createClone) {
             imageType = ImageContainer::ClonedSVG;
             svgCashPath = fn;
         } else {
-            qDebug() << "ok1";
             imageType = ImageContainer::SVG;
 
             // Copy original file to cash
@@ -223,7 +204,6 @@ bool ImageContainer::load(const QString &fn, bool createClone)
             }
 
             svgCashPath = newPath;
-            qDebug() << "ok2";
         }   // No clone created
         setRect(svgItem->boundingRect());
     } else {
@@ -239,13 +219,9 @@ bool ImageContainer::load(const QString &fn, bool createClone)
         pixmapItem = new QGraphicsPixmapItem(this);
         pixmapItem->setPixmap(pm);
 
-        qDebug() << "IC::load created  pixmapItem=" << pixmapItem;
         setRect(pixmapItem->boundingRect());
     }
 
-    qDebug() << "ok3 childItems=" << childItems();
-    //updateRect();
-    qDebug() << "ok4";
     return true;
 }
 
@@ -319,10 +295,6 @@ void ImageContainer::setImageItem(ImageItem* ii) {
 
 ImageItem* ImageContainer::getImageItem() { return imageItem;}
 
-void ImageContainer::reposition()
+void ImageContainer::reposition()   // FIXME-0 remove
 {
-    qDebug() << "ImageContainer::reposition type" << imageType;
-    if (pixmapItem) qDebug() << " - pixmapItem=" << pixmapItem;
-    if (svgItem) qDebug() << " - svgItem=" << svgItem;
-    qDebug() << " - childItems: " << childItems();
 }
