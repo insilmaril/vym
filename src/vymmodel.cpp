@@ -853,8 +853,10 @@ void VymModel::loadImage(BranchItem *dst, const QString &fn)
             QString s;
             for (int j = 0; j < fns.count(); j++) {
                 s = fns.at(j);
+                qDebug() << "VM::loadImg 1 " << getScene()->items().count();
                 ImageItem *ii = createImage(dst);
                 if (ii && ii->load(s)) {
+                    qDebug() << "VM::loadImg 2 " << getScene()->items().count();
                     saveState((TreeItem *)ii, "remove()", dst,
                               QString("loadImage (\"%1\")").arg(s),
                               QString("Add image %1 to %2")
@@ -873,11 +875,9 @@ void VymModel::loadImage(BranchItem *dst, const QString &fn)
                     }
                     */
 
-                    // On default include image // FIXME-4 check, if we change
-                    // default settings...
                     select(dst);
-                    setIncludeImagesHor(false);
-                    setIncludeImagesVer(true);
+                    //setIncludeImagesHor(false);   // FIXME-2 not needed
+                    //setIncludeImagesVer(true);
 
                     reposition();
                 }
