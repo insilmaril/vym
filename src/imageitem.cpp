@@ -91,7 +91,7 @@ void ImageItem::unlinkImageContainer()
     // Called from destructor of containers to 
     // avoid double deletion 
     imageContainer = nullptr;
-    qDebug() << "II::unlinkIC in " << this;
+    qDebug() << "II::unlinkBC in " << this << getHeadingPlain();
 }
 
 void ImageItem::setScaleFactor(qreal f)

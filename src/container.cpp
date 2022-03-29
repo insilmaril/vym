@@ -6,13 +6,13 @@
 
 Container::Container(QGraphicsItem *parent) : QGraphicsRectItem(parent)
 {
-    qDebug() << "* Const Container " << this;
+    //qDebug() << "* Const Container " << this;
     init();
 }
 
 Container::~Container()
 {
-    qDebug() << "Destr Container" << info() << this;
+    //qDebug() << "Destr Container" << info() << this;
 }
 
 void Container::copy(Container *other)

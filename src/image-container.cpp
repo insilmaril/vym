@@ -14,44 +14,14 @@ extern ulong imageLastID;
 /////////////////////////////////////////////////////////////////
 ImageContainer::ImageContainer(QGraphicsScene *scene)
 {
-    qDebug() << "Const ImageContainer ()  this=" << this << "items=" << scene->items().count();
-    scene->addItem(this);
+    //qDebug() << "Const ImageContainer ()  this=" << this << "items=" << scene->items().count();
+    //scene->addItem(this);
     init();
 }
 
 ImageContainer::~ImageContainer()
 {
-    qDebug() << "Destr ImageContainer  this=" << this << "  imageType = " << imageType ;
-    qDebug() << " - svgItem:    " << svgItem;
-    qDebug() << " - childItems: " << childItems();
-    if (svgItem && !childItems().contains(svgItem))
-        qDebug() << " - childItems does not contain svgItem: " << svgItem;
-
-    /*
-    switch (imageType) {    // FIXME-0 all childItems should have myself as parent and would be deleted automatically
-        case ImageContainer::SVG:
-        case ImageContainer::ClonedSVG:
-            if (svgItem)
-                delete (svgItem);
-            break;
-        case ImageContainer::Pixmap:
-            if (pixmapItem)
-                delete (pixmapItem);
-            break;
-        case ImageContainer::ModifiedPixmap:
-            if (pixmapItem)
-                delete (pixmapItem);
-            if (originalPixmap)
-                delete (originalPixmap);
-            break;
-        default:
-            qDebug() << "Destr ImgObj: imageType undefined";
-            break;
-    }
-    */
-    qDebug() << "Destr ImageContainer  this=" << this << " finished";
-    qDebug() << " - childItems: " << childItems();
-
+    //qDebug() << "Destr ImageContainer  this=" << this << "  imageType = " << imageType ;
     imageItem->unlinkImageContainer();
 }
 
@@ -220,9 +190,9 @@ bool ImageContainer::load(const QString &fn, bool createClone)
 
     if (fn.toLower().endsWith(".svg")) {
         qDebug() << " - IC::load  childItems=" << childItems();
-        svgItem = new QGraphicsSvgItem(fn);
+        svgItem = new QGraphicsSvgItem(fn, this);
         qDebug() << " - IC::load created svg=" << svgItem;
-        svgItem->setParentItem(this);
+        //svgItem->setParentItem(this);
         qDebug() << " - IC::load relinked  svg=" << svgItem;
         qDebug() << " - IC::load  childItems=" << childItems();
         qDebug() << " - IC::load  cI.first  =" << childItems().first();
@@ -230,15 +200,10 @@ bool ImageContainer::load(const QString &fn, bool createClone)
             qDebug() << " - IC::load  childItems.first != svgItem=";
         else
             qDebug() << " - IC::load  childItems.first == svgItem=";
-        svgItem->setPos(-200,0);
-        qDebug() << "ok-1";
-        childItems().first()->setPos(200,0);
-        delete svgItem;
-        svgItem = nullptr;
-        svgItem = (QGraphicsSvgItem*)(childItems().first());
-        qDebug() << " - IC::load updated svg=" << svgItem;
-        //qDebug() << " - IC::load  childItems=" << childItems();
 
+        svgItem->setPos(0,0);   // FIXME-2 needed?
+
+        qDebug() << " - IC::load updated svg=" << svgItem;
         qDebug() << "ok0";
 
         if (createClone) {
@@ -260,6 +225,7 @@ bool ImageContainer::load(const QString &fn, bool createClone)
             svgCashPath = newPath;
             qDebug() << "ok2";
         }   // No clone created
+        setRect(svgItem->boundingRect());
     } else {
         // Not svg
         QPixmap pm;
@@ -274,11 +240,11 @@ bool ImageContainer::load(const QString &fn, bool createClone)
         pixmapItem->setPixmap(pm);
 
         qDebug() << "IC::load created  pixmapItem=" << pixmapItem;
+        setRect(pixmapItem->boundingRect());
     }
 
     qDebug() << "ok3 childItems=" << childItems();
     //updateRect();
-    setRect(-50,-50,100,100);
     qDebug() << "ok4";
     return true;
 }
@@ -286,26 +252,26 @@ bool ImageContainer::load(const QString &fn, bool createClone)
 bool ImageContainer::save(const QString &fn)
 {
     switch (imageType) {
-    case ImageContainer::SVG:
-    case ImageContainer::ClonedSVG:
-        if (svgItem) {
-            QFile svgFile(svgCashPath);
-            if (!QFile(fn).exists() && !svgFile.copy(fn)) {
-                qWarning() << "ImageContainer::save  failed to copy " << svgCashPath
-                           << " to " << fn;
-                return false;
+        case ImageContainer::SVG:
+        case ImageContainer::ClonedSVG:
+            if (svgItem) {
+                QFile svgFile(svgCashPath);
+                if (!QFile(fn).exists() && !svgFile.copy(fn)) {
+                    qWarning() << "ImageContainer::save  failed to copy " << svgCashPath
+                               << " to " << fn;
+                    return false;
+                }
             }
-        }
-        return true;
-        break;
-    case ImageContainer::Pixmap:
-        return pixmapItem->pixmap().save(fn, "PNG", 100);
-        break;
-    case ImageContainer::ModifiedPixmap:
-        return originalPixmap->save(fn, "PNG", 100);
-        break;
-    default:
-        break;
+            return true;
+            break;
+        case ImageContainer::Pixmap:
+            return pixmapItem->pixmap().save(fn, "PNG", 100);
+            break;
+        case ImageContainer::ModifiedPixmap:
+            return originalPixmap->save(fn, "PNG", 100);
+            break;
+        default:
+            break;
     }
     return false;
 }
@@ -314,16 +280,16 @@ QString ImageContainer::getExtension()
 {
     QString s;
     switch (imageType) {
-    case ImageContainer::SVG:
-    case ImageContainer::ClonedSVG:
-        s = ".svg";
-        break;
-    case ImageContainer::Pixmap:
-    case ImageContainer::ModifiedPixmap:
-        s = ".png";
-        break;
-    default:
-        break;
+        case ImageContainer::SVG:
+        case ImageContainer::ClonedSVG:
+            s = ".svg";
+            break;
+        case ImageContainer::Pixmap:
+        case ImageContainer::ModifiedPixmap:
+            s = ".png";
+            break;
+        default:
+            break;
     }
     return s;
 }
