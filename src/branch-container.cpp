@@ -1,4 +1,5 @@
 #include <QDebug>
+#include <math.h>
 
 #include "branch-container.h"
 
@@ -15,11 +16,10 @@ BranchContainer::BranchContainer(QGraphicsScene *scene, QGraphicsItem *parent, B
 
 BranchContainer::~BranchContainer()
 {
-    qDebug() << "* Destr BranchContainer" << getName() << this;
+    //qDebug() << "* Destr BranchContainer" << getName() << this;
 
     if (branchItem)
     {
-        qDebug() << "* Destr BranchContainer b)" << getName() << "branchItem = " << branchItem;
         // Unlink all containers in my own subtree, which will be deleted
         // when tree of QGraphicsItems is deleted.
         // In every destructor tell the linked BranchItem to longer consider deleting containers
@@ -107,6 +107,40 @@ Container* BranchContainer::getImagesContainer()
 HeadingContainer* BranchContainer::getHeadingContainer()
 {
     return headingContainer;
+}
+
+QPointF BranchContainer::getChildrenPosHint(Container *c)
+{
+    QRectF r = headingContainer->rect();
+
+    int n = 0;
+    qreal radius;
+    if (c->type == Branch) {
+        radius = 190;
+        n = branchesContainer->childItems().count();
+    } else if (c->type == Image) {
+        radius = 100;
+        n = imagesContainer->childItems().count();
+    }
+
+    if (!parentItem() || c->type == Image) {
+        // Mapcenter, suggest to put image or mainbranch on circle around center
+        qreal a =
+            -M_PI_4 + M_PI_2 * n + (M_PI_4 / 2) * (n / 4 % 4);
+        return QPointF (radius * cos(a), radius * sin(a));
+    }
+
+    switch (orientation) {
+        case LeftOfParent:
+            return QPointF(r.left() - c->rect().width(), r.center().y());
+            break;
+        case RightOfParent:
+            return QPointF(r.right(), r.center().y());
+            break;
+        default:
+            return QPointF(r.left(), r.center().y());
+            break;
+    }
 }
 
 void BranchContainer::setLayoutType(const LayoutType &ltype)

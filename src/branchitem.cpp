@@ -547,14 +547,8 @@ BranchContainer *BranchItem::createBranchContainer(QGraphicsScene *scene)
          !((MapItem *)parentItem)->getLMO()->isVisibleObj()))
         newbo->setVisibility(false);
     */
-    if (depth() == 1) {  
-        // Position new main branches on circle around center  // FIXME-2
-        qreal r = 190;
-        qreal a =
-            -M_PI_4 + M_PI_2 * (num()) + (M_PI_4 / 2) * (num() / 4 % 4);
-        QPointF p(r * cos(a), r * sin(a));
-        // newbo->setRelPos(p);
-    }
+    if (depth() == 1) 
+        branchContainer->setPos(parentBranch()->getBranchContainer()->getChildrenPosHint(branchContainer));
 
     // FIXME-2 for new branch set default font, color, link, frame, children styles
     // newbo->setDefAttr(BranchObj::NewBranch);

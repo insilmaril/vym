@@ -66,7 +66,7 @@ bool ImageItem::load(const QString &fname)
 
 ImageContainer *ImageItem::createImageContainer(QGraphicsScene *scene)
 {
-    qDebug() << "II::createImageContainer for " << this;
+    //qDebug() << "II::createImageContainer for " << this;
     imageContainer = new ImageContainer(scene);
     imageContainer->setImageItem(this);
     /* FIXME-0 cont here, check visibility of new image
@@ -91,7 +91,6 @@ void ImageItem::unlinkImageContainer()
     // Called from destructor of containers to 
     // avoid double deletion 
     imageContainer = nullptr;
-    qDebug() << "II::unlinkBC in " << this << getHeadingPlain();
 }
 
 void ImageItem::setScaleFactor(qreal f)
@@ -150,7 +149,6 @@ bool ImageItem::saveImage(const QString &fn)
 
 QString ImageItem::saveToDir(const QString &tmpdir, const QString &prefix)
 {
-    qDebug() << "II:saveToDir " << tmpdir << imageContainer;
     if (!imageContainer) {
         qWarning() << "ImageItem::saveToDir  no imageContainer!";
         return QString();

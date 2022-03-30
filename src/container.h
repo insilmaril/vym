@@ -86,9 +86,13 @@ class Container : public QGraphicsRectItem {
     void addContainer(Container *c);
     Container* parentContainer();
 
+    /*! Save original position in current parent items coordinates before temporary relinking
+     *  to tmpParentContainer while moving around
+     */
     void setOrgPos();
     QPointF orgPos();
-    
+
+  public:
     virtual QVariant itemChange(GraphicsItemChange change, const QVariant &value);
     virtual void reposition();
 

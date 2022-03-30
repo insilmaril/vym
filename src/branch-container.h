@@ -21,8 +21,9 @@ class BranchContainer : public Container {
     void addToImagesContainer(Container *c, bool keepScenePos = false);
     Container* getBranchesContainer();
     Container* getImagesContainer();
-
     HeadingContainer* getHeadingContainer();
+
+    QPointF getChildrenPosHint(Container*);   //! Suggestion where new children could be positioned
 
     virtual void setLayoutType(const LayoutType &ltype);
 

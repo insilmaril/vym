@@ -2073,7 +2073,7 @@ void MapEditor::updateSelection(QItemSelection nsel, QItemSelection dsel)
             mi->getType() == TreeItem::XLink)
             if (!itemsSelected.contains(mi))
                 itemsSelected.append(mi);
-        lmo = mi->getLMO();
+        lmo = mi->getLMO(); // FIXME-2
         if (lmo)
             mi->getLMO()->updateVisibility();
     }
@@ -2109,7 +2109,7 @@ void MapEditor::updateSelection(QItemSelection nsel, QItemSelection dsel)
 
     // Reposition polygons
     for (int i = 0; i < itemsSelected.count(); ++i) {
-        MapObj *mo = itemsSelected.at(i)->getMO();  // FIXME-2 remove MO here
+        //MapObj *mo = itemsSelected.at(i)->getMO();  // FIXME-2 remove MO here
         sp = selPathList.at(i);
         sp->setPath(itemsSelected.at(i)->getSelectionPath());
         sp->setPen(selectionColor);

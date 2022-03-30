@@ -830,11 +830,11 @@ File::ErrorCode VymModel::save(const SaveMode &savemode)
     return err;
 }
 
-void VymModel::loadImage(BranchItem *dst, const QString &fn)
+void VymModel::loadImage(BranchItem *parentBranch, const QString &fn)
 {
-    if (!dst)
-        dst = getSelectedBranch();
-    if (dst) {
+    if (!parentBranch)
+        parentBranch = getSelectedBranch();
+    if (parentBranch) {
         QString filter = QString(tr("Images") +
                                  " (*.png *.bmp *.xbm *.jpg *.png *.xpm *.gif "
                                  "*.pnm *.svg *.svgz);;" +
@@ -853,31 +853,20 @@ void VymModel::loadImage(BranchItem *dst, const QString &fn)
             QString s;
             for (int j = 0; j < fns.count(); j++) {
                 s = fns.at(j);
-                qDebug() << "VM::loadImg 1 " << getScene()->items().count();
-                ImageItem *ii = createImage(dst);
+                ImageItem *ii = createImage(parentBranch);
                 if (ii && ii->load(s)) {
-                    qDebug() << "VM::loadImg 2 " << getScene()->items().count();
-                    saveState((TreeItem *)ii, "remove()", dst,
+                    saveState((TreeItem *)ii, "remove()", parentBranch,
                               QString("loadImage (\"%1\")").arg(s),
                               QString("Add image %1 to %2")
                                   .arg(s)
-                                  .arg(getObjectName(dst)));
-                    // Find nice position for new image, take childPos    // FIXME-0
-                    /*
-                    FloatImageObj *fio = (FloatImageObj *)(ii->getMO());
-                    if (fio) {
-                        LinkableMapObj *parLMO = dst->getLMO();
+                                  .arg(getObjectName(parentBranch)));
 
-                        if (parLMO) {
-                            fio->move(parLMO->getChildRefPos());
-                            fio->setRelPos();
-                        }
-                    }
-                    */
+                    // Find nice position for new image, take childPos
+                    ImageContainer *ic = ii->getImageContainer();
+                    QPointF pos_new = parentBranch->getBranchContainer()->getChildrenPosHint(ic);
+                    ic->setPos(pos_new);
 
-                    select(dst);
-                    //setIncludeImagesHor(false);   // FIXME-2 not needed
-                    //setIncludeImagesVer(true);
+                    select(parentBranch);
 
                     reposition();
                 }
