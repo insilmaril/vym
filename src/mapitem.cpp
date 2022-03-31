@@ -141,11 +141,11 @@ QPainterPath MapItem::getSelectionPath() // FIXME-0 should be in BranchContainer
 {
     qreal d = 3;    // Margins around rectangle of item
     QPolygonF polygon;
-    if (hasTypeBranch() )    // FIXME-0 should not be necessary when overloading
+    if (hasTypeBranch() )
     {
         HeadingContainer *hc = ((BranchItem*)this)->getBranchContainer()->getHeadingContainer();
         polygon = hc->mapToScene(hc->rect().marginsAdded(QMarginsF(d, d, d, d)));
-    } else if (getType() == Image) {
+    } else if (hasTypeImage()) {
         ImageContainer *ic =((ImageItem*)this)->getImageContainer();
         polygon = ic->mapToScene(ic->rect().marginsAdded(QMarginsF(d, d, d, d)));
     } else 

@@ -37,8 +37,7 @@ void BranchContainer::init()
     headingContainer->setPen(Qt::NoPen);
 
     imagesContainer = new Container ();
-    //imagesContainer->setBrush(Qt::NoBrush);
-    imagesContainer->setBrush(Qt::blue);    // FIXME-2 testing
+    imagesContainer->setBrush(Qt::NoBrush);
     imagesContainer->setPen(Qt::NoPen);
     imagesContainer->setLayoutType(Container::FloatingFree);
     imagesContainer->type = Container::ImageCollection;
@@ -204,22 +203,11 @@ void BranchContainer::reposition()
         setMovableByFloats(false);  // FIXME-2 Needed?
         branchesContainer->setLayoutType(FloatingBounded);
 
-        //FIXME-0 add "flags" and origin for testing (but only once!)
+        //FIXME-2 add "flags" and origin for testing (but only once!)
         if (innerContainer->childItems().count() <= 3) {
             HeadingContainer *fc = new HeadingContainer();
             fc->setHeading("Flags");
             innerContainer->addContainer(fc);
-
-            // And add origin
-            QGraphicsRectItem *x_axis = new QGraphicsRectItem(-100, 0, 200, 1 );
-            QGraphicsRectItem *y_axis = new QGraphicsRectItem(0, -100, 1, 200 );
-            x_axis->setBrush(Qt::NoBrush);
-            y_axis->setBrush(Qt::NoBrush);
-            x_axis->setPen(QColor(Qt::blue));
-            y_axis->setPen(QColor(Qt::blue));
-
-            scene()->addItem(x_axis);
-            scene()->addItem(y_axis);
         }
 
     } else {

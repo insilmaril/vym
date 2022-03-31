@@ -47,6 +47,19 @@ MapEditor::MapEditor(VymModel *vm)
     mapScene = new QGraphicsScene(NULL);
     mapScene->setBackgroundBrush(QBrush(Qt::white, Qt::SolidPattern));
 
+    if (debug) {
+        // Add origin for debugging
+        QGraphicsRectItem *x_axis = new QGraphicsRectItem(-100, 0, 200, 1 );
+        QGraphicsRectItem *y_axis = new QGraphicsRectItem(0, -100, 1, 200 );
+        x_axis->setBrush(Qt::NoBrush);
+        y_axis->setBrush(Qt::NoBrush);
+        x_axis->setPen(QColor(Qt::blue));
+        y_axis->setPen(QColor(Qt::blue));
+
+        mapScene->addItem(x_axis);
+        mapScene->addItem(y_axis);
+    }
+
     zoomFactor = zoomFactorTarget = 1;
     angle = angleTarget = 0;
 
@@ -1142,7 +1155,7 @@ void MapEditor::editHeading()
         QPointF br;
         qreal w = 230;
         qreal h = 30;
-        if (bc->pos().x() >= 0) {
+        if (bc->getOrientation() == Container::RightOfParent) {
             tl = bc->getHeadingRect().topLeft();
             br = tl + QPointF(w, h);
         }
@@ -2113,12 +2126,7 @@ void MapEditor::updateSelection(QItemSelection nsel, QItemSelection dsel)
         sp->setPen(selectionColor);
         sp->setBrush(selectionColor);
         //sp->setParentItem(mo);
-        //sp->setZValue(dZ_SELBOX);
-        sp->setZValue(1500);    //FIXME-2 check what z-value is correct
-
-        // Reposition also LineEdit for heading during animation    // FIXME-2 and with multiple selections? which one to use?
-        if (lineEdit)
-            lineEdit->move(itemsSelected.at(i)->getEditPosition().toPoint());
+        //sp->setZValue(dZ_SELBOX); // which z to use?
     }
 
     scene()->update();
