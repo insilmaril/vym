@@ -4972,10 +4972,10 @@ void VymModel::setMapAnimCurve(const QEasingCurve &c) { animCurve = c; }
 bool VymModel::centerOnID(const QString &id)
 {
     TreeItem *ti = findUuid(QUuid(id));
-    if (ti) {
-        LinkableMapObj *lmo = ((MapItem *)ti)->getLMO();    // FIXME-0 centerOnID
-        if (zoomFactor > 0 && lmo) {
-            mapEditor->setViewCenterTarget(lmo->getBBox().center(), zoomFactor,
+    if (ti && (ti->hasTypeBranch() || ti->hasTypeImage())) {
+        Container *c = ((MapItem*)ti)->getContainer();
+        if (c && zoomFactor > 0 ) {
+            mapEditor->setViewCenterTarget(c->rect().center(), zoomFactor,
                                            rotationAngle, animDuration,
                                            animCurve);
             return true;
