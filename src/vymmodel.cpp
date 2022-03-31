@@ -149,6 +149,7 @@ void VymModel::init()
     mapChanged = false;
     mapDefault = true;
     mapUnsaved = false;
+    buildingUndoBlock = false;
 
     // Selection history
     selModel = NULL;
@@ -1760,7 +1761,9 @@ void VymModel::saveStateBeforeLoad(LoadMode lmode, const QString &fname)
     }
 }
 
-void VymModel::saveStateBeginBlock(const QString &comment)
+void VymModel::saveStateBeginBlock(const QString &comment)  // FIXME-3 make blocks more intelligent:
+    // - if only used for single command, don't build block and adapt comment
+    // - add checks, that block is really ended!
 {
     buildingUndoBlock = true;
     undoBlockComment = comment;
