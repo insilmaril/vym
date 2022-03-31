@@ -817,8 +817,6 @@ class VymModel : public TreeModel {
 
   public:
     TreeItem::Type selectionType();
-    LinkableMapObj *getSelectedLMO();
-    BranchObj *getSelectedBranchObj();
     BranchItem *getSelectedBranch();
     QList<BranchItem *> getSelectedBranches();
     ImageItem *getSelectedImage();

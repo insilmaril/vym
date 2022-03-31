@@ -135,7 +135,7 @@ void VymModelWrapper::addXLink(const QString &begin, const QString &end,
     BranchItem *bbegin = (BranchItem *)(model->findBySelectString(begin));
     BranchItem *bend = (BranchItem *)(model->findBySelectString(end));
     if (bbegin && bend) {
-        if (bbegin->isBranchLikeType() && bend->isBranchLikeType()) {
+        if (bbegin->hasTypeBranch() && bend->hasTypeBranch()) {
             Link *li = new Link(model);
             li->setBeginBranch((BranchItem *)bbegin);
             li->setEndBranch((BranchItem *)bend);

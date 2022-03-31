@@ -1676,7 +1676,7 @@ void VymModel::saveStateRemovingPart(TreeItem *redoSel, const QString &comment)
     }
     QString undoSelection;
     QString redoSelection = getSelectString(redoSel);
-    if (redoSel->isBranchLikeType()) {
+    if (redoSel->hasTypeBranch()) {
         // save the selected branch of the map, Undo will insert part of map
         if (redoSel->depth() > 0)
             undoSelection = getSelectString(redoSel->parent());
@@ -2426,7 +2426,7 @@ void VymModel::setChildrenLayout(
 void VymModel::setHideLinkUnselected(bool b)
 {
     TreeItem *ti = getSelectedItem();
-    if (ti && (ti->getType() == TreeItem::Image || ti->isBranchLikeType())) {
+    if (ti && (ti->getType() == TreeItem::Image || ti->hasTypeBranch())) {
         QString u = b ? "false" : "true";
         QString r = !b ? "false" : "true";
 
@@ -2442,7 +2442,7 @@ void VymModel::setHideExport(bool b, TreeItem *ti)
 {
     if (!ti)
         ti = getSelectedItem();
-    if (ti && (ti->getType() == TreeItem::Image || ti->isBranchLikeType()) &&
+    if (ti && (ti->getType() == TreeItem::Image || ti->hasTypeBranch()) &&
         ti->hideInExport() != b) {
         ti->setHideInExport(b);
         QString u = b ? "false" : "true";
@@ -3156,7 +3156,7 @@ BranchItem *VymModel::addMapCenter(bool saveStateFlag)
             bi = rootItem->getBranchNum(i);
             bo = (BranchObj *)bi->getLMO();
             if (bo)
-                contextPos += bo->getAbsPos();
+                contextPos += bo->getAbsPos();  // FIXME-0
         }
         if (rootItem->branchCount() > 1)
             contextPos *= 1 / (qreal)(rootItem->branchCount());
@@ -3447,7 +3447,7 @@ bool VymModel::relinkImage(ImageItem *image, BranchItem *dst)
         dst->appendChild(image);
         endInsertRows();
 
-        // Set new parent also for lmo
+        // Set new parent also for lmo  // FIXME-0
         if (image->getLMO() && dst->getLMO())
             image->getLMO()->setParObj(dst->getLMO());
 
@@ -3468,7 +3468,7 @@ bool VymModel::relinkTo(const QString &dest, int num, QPointF pos)
 
     TreeItem *dst = findBySelectString(dest);
 
-    if (selti->isBranchLikeType()) {
+    if (selti->hasTypeBranch()) {
         BranchItem *selbi = (BranchItem *)selti;
         if (!dst)
             return false; // Could not find destination
@@ -3485,7 +3485,7 @@ bool VymModel::relinkTo(const QString &dest, int num, QPointF pos)
         else if (dst->getType() == TreeItem::MapCenter) {
             if (relinkBranch(selbi, (BranchItem *)dst, -1, true)) {
                 // Get coordinates of mainbranch
-                if (selbi->getLMO()) {
+                if (selbi->getLMO()) {  // FIXME-0  relinkTo
                     ((BranchObj *)selbi->getLMO())->move(pos);
                     ((BranchObj *)selbi->getLMO())->setRelPos();
                 }
@@ -3497,7 +3497,7 @@ bool VymModel::relinkTo(const QString &dest, int num, QPointF pos)
         return false; // Relinking failed
     }
     else if (selti->getType() == TreeItem::Image) {
-        if (dst->isBranchLikeType())
+        if (dst->hasTypeBranch())
             if (relinkImage(((ImageItem *)selti), (BranchItem *)dst))
                 return true;
     }
@@ -3531,7 +3531,7 @@ void VymModel::deleteSelection(bool copyToClipboard)
     foreach (uint id, selectedIDs) {
         TreeItem *ti = findID(id);
         if (ti) {
-            if (ti->isBranchLikeType()) { // Delete branch
+            if (ti->hasTypeBranch()) { // Delete branch
                 BranchItem *selbi = (BranchItem *)ti;
                 saveStateRemovingPart(
                     selbi, QString("remove %1").arg(getObjectName(selbi)));
@@ -3620,7 +3620,7 @@ void VymModel::deleteKeepChildren(bool saveStateFlag)
         }
 
         QPointF p;
-        if (selbi->getLMO())
+        if (selbi->getLMO())    // FIXME-1
             p = selbi->getLMO()->getRelPos();
         if (saveStateFlag)
             saveStateChangingPart(pi, pi, "removeKeepChildren ()",
@@ -3642,11 +3642,13 @@ void VymModel::deleteKeepChildren(bool saveStateFlag)
         reposition();
         emitDataChanged(pi);
         select(sel);
-        BranchObj *bo = getSelectedBranchObj();
+        /*
+        BranchObj *bo = getSelectedBranchObj(); // FIXME-1
         if (bo) {
             bo->move2RelPos(p);
             reposition();
         }
+        */
         saveStateBlocked = oldSaveState;
     }
 }
@@ -3962,7 +3964,7 @@ void VymModel::toggleFlagByUid(
         Flag *f;
         foreach (QString id, itemList) {
             ti = findUuid(QUuid(id));
-            if (ti && ti->isBranchLikeType()) {
+            if (ti && ti->hasTypeBranch()) {
                     bi = (BranchItem*)ti;
                 Flag *f = bi->toggleFlagByUid(uid, useGroups);
 
@@ -4968,7 +4970,7 @@ bool VymModel::centerOnID(const QString &id)
 {
     TreeItem *ti = findUuid(QUuid(id));
     if (ti) {
-        LinkableMapObj *lmo = ((MapItem *)ti)->getLMO();
+        LinkableMapObj *lmo = ((MapItem *)ti)->getLMO();    // FIXME-0 centerOnID
         if (zoomFactor > 0 && lmo) {
             mapEditor->setViewCenterTarget(lmo->getBBox().center(), zoomFactor,
                                            rotationAngle, animDuration,
@@ -5050,7 +5052,7 @@ bool VymModel::setMapLinkStyle(const QString &s)
     BranchObj *bo;
     nextBranch(cur, prev);
     while (cur) {
-        bo = (BranchObj *)(cur->getLMO());
+        bo = (BranchObj *)(cur->getLMO()); // FIXME-1
         bo->setLinkStyle(bo->getDefLinkStyle(
             cur->parent())); // FIXME-4 better emit dataCHanged and leave the
                              // changes to View
@@ -5081,7 +5083,7 @@ void VymModel::setMapDefLinkColor(QColor col)
     BranchObj *bo;
     nextBranch(cur, prev);
     while (cur) {
-        bo = (BranchObj *)(cur->getLMO());
+        bo = (BranchObj *)(cur->getLMO()); // FIXME-1
         bo->setLinkColor();
 
         for (int i = 0; i < cur->imageCount(); ++i)
@@ -5100,7 +5102,7 @@ void VymModel::setMapLinkColorHintInt()
     BranchObj *bo;
     nextBranch(cur, prev);
     while (cur) {
-        bo = (BranchObj *)(cur->getLMO());
+        bo = (BranchObj *)(cur->getLMO());  // FIXME-1
         bo->setLinkColor();
 
         for (int i = 0; i < cur->imageCount(); ++i)
@@ -5245,7 +5247,7 @@ void VymModel::setPos(const QPointF &pos_new, TreeItem *selti)
         selItems = getSelectedItems();
 
     foreach (TreeItem *ti, selItems) {
-        if (ti->isBranchLikeType() ) // FIXME-2 No images supported yet
+        if (ti->hasTypeBranch() ) // FIXME-2 No images supported yet
         {
             BranchContainer *bc = ((BranchItem*)ti)->getBranchContainer();
             QPointF pos_old = bc->orgPos();
@@ -5635,7 +5637,7 @@ void VymModel::updateSelection(QItemSelection newsel, QItemSelection dsel)
     bool do_reposition = false;
     foreach (ix, dsel.indexes()) {
         mi = static_cast<MapItem *>(ix.internalPointer());
-        if (mi->isBranchLikeType())
+        if (mi->hasTypeBranch())
             do_reposition =
                 do_reposition || ((BranchItem *)mi)->resetTmpUnscroll();
         if (mi->getType() == TreeItem::XLink) {
@@ -5653,7 +5655,7 @@ void VymModel::updateSelection(QItemSelection newsel, QItemSelection dsel)
 
     foreach (ix, newsel.indexes()) {
         mi = static_cast<MapItem *>(ix.internalPointer());
-        if (mi->isBranchLikeType()) {
+        if (mi->hasTypeBranch()) {
             bi = (BranchItem *)mi;
             if (bi->hasScrolledParent()) {
                 bi->tmpUnscroll();
@@ -5749,7 +5751,7 @@ bool VymModel::select(const QModelIndex &index)
 {
     if (index.isValid()) {
         TreeItem *ti = getItem(index);
-        if (ti->isBranchLikeType()) {
+        if (ti->hasTypeBranch()) {
             if (((BranchItem *)ti)->tmpUnscroll())
                 reposition();
         }
@@ -5842,7 +5844,7 @@ void VymModel::appendSelectionToHistory() // FIXME-4 history unable to cope with
     uint id = 0;
     TreeItem *ti = getSelectedItem();
     if (ti && !keepSelectionHistory) {
-        if (ti->isBranchLikeType())
+        if (ti->hasTypeBranch())
             ((BranchItem *)ti)->setLastSelectedBranch();
         id = ti->getID();
         selectionHistory.append(id);
@@ -5876,7 +5878,7 @@ void VymModel::emitDataChanged(TreeItem *ti)
     emitSelectionChanged();
     if (!repositionBlocked) {
         // Update taskmodel and recalc priorities there
-        if (ti->isBranchLikeType() && ((BranchItem *)ti)->getTask()) {
+        if (ti->hasTypeBranch() && ((BranchItem *)ti)->getTask()) {
             taskModel->emitDataChanged(((BranchItem *)ti)->getTask());
             taskModel->recalcPriorities();
         }
@@ -5992,28 +5994,6 @@ TreeItem::Type VymModel::selectionType()
         return ti->getType();
     else
         return TreeItem::Undefined;
-}
-
-LinkableMapObj *VymModel::getSelectedLMO()
-{
-    QModelIndexList list = selModel->selectedIndexes();
-    if (list.count() == 1) {
-        TreeItem *ti = getItem(list.first());
-        TreeItem::Type type = ti->getType();
-        if (type == TreeItem::Branch || type == TreeItem::MapCenter ||
-            type == TreeItem::Image)
-            return ((MapItem *)ti)->getLMO();
-    }
-    return NULL;
-}
-
-BranchObj *VymModel::getSelectedBranchObj() // convenience function
-{
-    TreeItem *ti = getSelectedBranch();
-    if (ti)
-        return (BranchObj *)(((MapItem *)ti)->getLMO());
-    else
-        return NULL;
 }
 
 BranchItem *VymModel::getSelectedBranch()

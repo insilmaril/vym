@@ -131,7 +131,7 @@ void TreeItem::appendChild(TreeItem *item)
         branchOffset++;
     }
 
-    if (item->isBranchLikeType()) {
+    if (item->hasTypeBranch()) {
         // branches are on bottom of list
         childItems.append(item);
         branchCounter++;
@@ -164,7 +164,7 @@ void TreeItem::removeChild(int row)
             imageCounter--;
             branchOffset--;
         }
-        if (childItems.at(row)->isBranchLikeType())
+        if (childItems.at(row)->hasTypeBranch())
             branchCounter--;
 
         childItems.removeAt(row);
@@ -274,9 +274,17 @@ TreeItem::Type TreeItem::getType()
     return type;
 }
 
-bool TreeItem::isBranchLikeType() const
+bool TreeItem::hasTypeBranch() const
 {
     if (type == Branch || type == MapCenter)
+        return true;
+    else
+        return false;
+}
+
+bool TreeItem::hasTypeImage() const
+{
+    if (type == Image)
         return true;
     else
         return false;

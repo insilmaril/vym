@@ -70,7 +70,8 @@ class TreeItem : public XMLObj {
   public:
     virtual void setType(const Type t);
     virtual Type getType();
-    virtual bool isBranchLikeType() const;
+    virtual bool hasTypeBranch() const;
+    virtual bool hasTypeImage() const;
     virtual QString getTypeName();
 
     // Accessing data

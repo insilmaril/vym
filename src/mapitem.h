@@ -5,20 +5,17 @@
 
 #include "treeitem.h"
 
-class MapObj;
+class Container;
 class LinkableMapObj;
+class MapObj;
 
-/*! /brief MapItem is used to store information of MapObj and inherited
-   classes.
-
-    This is done even while no QGraphicsView is availabe. This is useful
-    if e.g. on a small device like a cellphone the full map is not used,
-    but just a treeview instead.
+/*! /brief MapItem is used to maintain geometrical information of images and branches
+ *  resp. their containers
 */
 
 class MapItem : public TreeItem {
   protected:
-    QPointF pos;
+    QPointF pos;    // FIXME-2 should be removed and retrieved directly from container
 
   public:
     MapItem(TreeItem *parent = nullptr);
@@ -28,11 +25,11 @@ class MapItem : public TreeItem {
     /*! Overloaded from TreeItem. Used to set parObj in LinkableMapObj */
     virtual void appendChild(TreeItem *item);
 
-    /*! Used to save relative position while map is not in QGraphicsView */
-    virtual void setRelPos(const QPointF &);
+    /*! Overloaded in BranchItem and ImageItem to retrieve the related container */
+    virtual Container* getContainer();
 
-    /*! Used to save absolute position while map is not in QGraphicsView */
-    virtual void setAbsPos(const QPointF &);
+    /*! Used to save position while map is not in QGraphicsView */
+    virtual void setPos(const QPointF &);
 
   protected:
     bool hideLinkUnselected;
@@ -44,14 +41,15 @@ class MapItem : public TreeItem {
     /*! Check if link is hidden for unselected items */
     virtual bool getHideLinkUnselected();
 
-    virtual QString getMapAttr(); //! Get attributes for saving as XML
+    virtual QString getPosAttr();       //! Get position attributes shared by Images and Branches
+    virtual QString getLinkableAttr();  //! Get attributes shared by Images and Branches
 
-    virtual QRectF getBBoxURLFlag(); //! get bbox of url flag
+    virtual QRectF getBBoxURLFlag(); //! g   // FIXME-2 Refactor to use container layoutset bbox of url flag
     virtual void setRotation(const qreal &a);
 
   protected:
     MapObj *mo;
-    qreal angle;
+    qreal angle;    // FIXME-2 should be removed and retrieved directly from container
 
   public:
     /*! Returns pointer to related LinkableMapObj in QGraphicsView */

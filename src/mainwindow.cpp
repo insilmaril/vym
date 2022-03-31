@@ -5427,11 +5427,11 @@ void Main::editMoveToTarget()
             QList<TreeItem *> itemList = model->getSelectedItems();
             if (itemList.count() < 1) return;
 
-            if (dsti && dsti->isBranchLikeType() ) {
+            if (dsti && dsti->hasTypeBranch() ) {
                 BranchItem *selbi;
                 BranchItem *pi;
                 foreach (TreeItem *ti, itemList) {
-                    if (ti->isBranchLikeType() )
+                    if (ti->hasTypeBranch() )
                     {
                         selbi = (BranchItem*)ti;
                         pi = selbi->parentBranch();
@@ -6212,7 +6212,7 @@ void Main::changeSelection(VymModel *model, const QItemSelection &newsel,
 
             // Select in TaskEditor, if necessary
             Task *t = NULL;
-            if (ti->isBranchLikeType())
+            if (ti->hasTypeBranch())
                 t = ((BranchItem *)ti)->getTask();
 
             if (t)

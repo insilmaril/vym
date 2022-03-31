@@ -265,7 +265,7 @@ void LinkableMapObj::setLinkColor()
         return;
 
     if (model->getMapLinkColorHint() == HeadingColor) {
-        if (treeItem->isBranchLikeType() )
+        if (treeItem->hasTypeBranch() )
             LinkableMapObj::setLinkColor(treeItem->getHeading().getColor());
         else
             // For images use color of parent heading

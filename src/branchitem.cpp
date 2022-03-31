@@ -118,8 +118,8 @@ QString BranchItem::saveToDir(const QString &tmpdir, const QString &prefix,
 
     // save area, if not scrolled   // not needed if HTML is rewritten...
     // also we could check if _any_ of parents is scrolled
-    QString areaAttr;   // FIXME-2 will not work with rotated containers
-    if (branchContainer && parentItem->isBranchLikeType() &&
+    QString areaAttr;   // FIXME-2 will not work with rotated containers and positions of headings
+    if (branchContainer && parentItem->hasTypeBranch() &&
         !((BranchItem *)parentItem)->isScrolled()) {
         qreal x = branchContainer->scenePos().x();
         qreal y = branchContainer->scenePos().y();
@@ -138,24 +138,19 @@ QString BranchItem::saveToDir(const QString &tmpdir, const QString &prefix,
     else
         elementName = "branch";
 
-    // Free positioning of children         // FIXME-2 remove BI::FreePositioning
+    // Free positioning of children         // FIXME-2 remove BI::FreePositioning, save laouts for branchesContainer and imagesContainer instead
     QString layoutAttr;
     if (childrenLayout == BranchItem::FreePositioning)
         layoutAttr += attribut("childrenFreePos", "true");
 
-    // Save rotation                        // FIXME-2 use rotation via container layouts
-    /*
-    QString rotAttr;
-    if (mo && mo->getRotation() != 0)
-        rotAttr = attribut("rotation", QString().setNum(mo->getRotation()));
-    */
-
-    // Save position
     QString posAttr;
-    posAttr = attribut("relPosX", QString().setNum(branchContainer->pos().x())) +
-              attribut("relPosY", QString().setNum(branchContainer->pos().y())); 
+    if (parentItem == rootItem || branchContainer->isFloating())
+        posAttr = getPosAttr();
 
-    s = beginElement(elementName + posAttr + getGeneralAttr() +
+    s = beginElement(elementName + 
+            posAttr + 
+            MapItem::getLinkableAttr() +
+            TreeItem::getGeneralAttr() +
                      scrolledAttr + getIncludeImageAttr() + 
                      layoutAttr + idAttr);
     incIndent();
@@ -323,7 +318,7 @@ bool BranchItem::tmpUnscroll(BranchItem *start)
 
     // Unscroll parent (recursivly)
     BranchItem *pi = (BranchItem *)parentItem;
-    if (pi && pi->isBranchLikeType())
+    if (pi && pi->hasTypeBranch())
         result = pi->tmpUnscroll(start);
 
     // Unscroll myself
@@ -343,7 +338,7 @@ bool BranchItem::resetTmpUnscroll()
 
     // Unscroll parent (recursivly)
     BranchItem *pi = (BranchItem *)parentItem;
-    if (pi && pi->isBranchLikeType())
+    if (pi && pi->hasTypeBranch())
         result = pi->resetTmpUnscroll();
 
     // Unscroll myself
@@ -570,10 +565,11 @@ BranchContainer* BranchItem::getBranchContainer()
 
 void BranchItem::unlinkBranchContainer()
 {
+    //qDebug() << "BI::unlinkBC in " << this << getHeadingPlain();
+    
     // Called from destructor of containers to 
     // avoid double deletion 
     branchContainer = nullptr;
-    qDebug() << "BI::unlinkBC in " << this << getHeadingPlain();
 }
 
 Container* BranchItem::getBranchesContainer() 
@@ -614,7 +610,7 @@ void BranchItem::updateContainerStackingOrder()
     //branchContainer->setPos(branchContainer->sceneTransform().inverted().map(sp));
         
     if (n < parentBranch()->branchCount() - 1)
-        branchContainer->stackBefore( (parentBranch()->getBranchNum(n + 1))->getBranchContainer() );
+        branchContainer->stackBefore( (parentBranch()->getBranchNum(n + 1))->getContainer() );
 
     /*
     qDebug() << "      ## BI::updateContainerStackingOrder end    bc.scenePos=" << branchContainer->scenePos() << 

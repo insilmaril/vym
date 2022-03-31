@@ -8,7 +8,7 @@
 
 #include <QDebug>
 
-extern FlagRowMaster *systemFlagsMaster;
+extern FlagRowMaster *systemFlagsMaster;    // FIXME-2 used here?
 
 MapItem::MapItem(TreeItem *parent)
     : TreeItem(parent)
@@ -23,34 +23,38 @@ void MapItem::init()
     hideLinkUnselected = false;
 }
 
-void MapItem::appendChild(TreeItem *item)
+void MapItem::appendChild(TreeItem *item) // FIXME-2 no longer used
 {
     TreeItem::appendChild(item);
 
-    // FIXME-4 maybe access parent in MapObjs directly via treeItem
-    // and remove this here...
-
     // If lmo exists, also set parObj there
+    /*
     LinkableMapObj *lmo = getLMO();
     if (lmo) {
         LinkableMapObj *itemLMO = ((MapItem *)item)->getLMO();
         if (itemLMO)
             itemLMO->setParObj(lmo);
     }
+    */
 }
 
-void MapItem::setRelPos(const QPointF &p)   // FIXME-2 add image containers
+Container* MapItem::getContainer()
 {
-    if (isBranchLikeType()) 
+    if (hasTypeBranch())
+        return ((BranchItem*)this)->getBranchContainer();
+    else if (hasTypeImage())
+        return ((ImageItem*)this)->getImageContainer();
+
+    return nullptr;
+}
+
+void MapItem::setPos(const QPointF &p)   // FIXME-2 add image containers
+{
+    if (hasTypeBranch()) 
         ((BranchItem*)this)->getBranchContainer()->setPos(p);
-}
 
-void MapItem::setAbsPos(const QPointF &p)// FIXME-2 add image containers
-{
-    if (isBranchLikeType()) {
-        BranchContainer *bc = ((BranchItem*)this)->getBranchContainer();
-        bc->setPos(bc->sceneTransform().inverted().map(p));
-    }
+    if (hasTypeImage()) 
+        ((ImageItem*)this)->getImageContainer()->setPos(p);
 }
 
 void MapItem::setHideLinkUnselected(bool b) // FIXME-2 not working yet with containers
@@ -66,47 +70,32 @@ void MapItem::setHideLinkUnselected(bool b) // FIXME-2 not working yet with cont
 
 bool MapItem::getHideLinkUnselected() { return hideLinkUnselected; }
 
-QString MapItem::getMapAttr()   // FIXME-2 Refactor to use container layouts
+QString MapItem::getPosAttr()
 {
     QString s;
-    /*
-    LinkableMapObj *lmo = getLMO();
+    QPointF pos = getContainer()->pos();
 
-    if (parentItem == rootItem)
-        posMode = Absolute;
-    else {
-        if (type == TreeItem::Image || depth() == 1 || lmo->getUseRelPos())
-            posMode = Relative; // FIXME-2 shouldn't this be replaced by relPos?
-        else
-            posMode = Unused;
-    }
-    switch (posMode) {
-    case Relative:
-        if (lmo)
-            pos = lmo->getRelPos();
-        s = attribut("relPosX", QString().setNum(pos.x())) +
-            attribut("relPosY", QString().setNum(pos.y()));
-        break;
-    case Absolute:
-        if (mo)
-            pos = mo->getAbsPos();
-        s = attribut("absPosX", QString().setNum(pos.x())) +
-            attribut("absPosY", QString().setNum(pos.y()));
-        break;
-    default:
-        break;
-    }
+    s = attribut("posX", QString().setNum(pos.x())) +
+        attribut("posY", QString().setNum(pos.y()));
+    return s;
+}
+
+QString MapItem::getLinkableAttr()
+{
+    QString s;
+
     if (hideLinkUnselected)
         s += attribut("hideLink", "true");
 
-    // Rotation angle
-    MapObj *mo = getMO();
-    if (mo)
-        angle = mo->getRotation();
-    if (angle != 0)
-        s += attribut("rotation", QString().setNum(angle));
+    // Save rotation                        // FIXME-2 use rotation via container layouts
+    /*
+    QString rotAttr;
+    if (mo && mo->getRotation() != 0)
+        rotAttr = attribut("rotation", QString().setNum(mo->getRotation()));
+    */
+    
+    // FIXME-2 Also save scale factor?  
 
-        */
     return s;
 }
 
@@ -141,20 +130,21 @@ MapObj *MapItem::getMO() { return mo; }   // FIXME-2 remove completely
 
 LinkableMapObj *MapItem::getLMO()   // FIXME-2 remove completely
 {
-    if (isBranchLikeType() || type == Image)
+    if (hasTypeBranch() || type == Image)
         return (LinkableMapObj *)mo;
     else
-        return NULL;
+        return nullptr;
 }
 
-QPainterPath MapItem::getSelectionPath() // FIXME-3 should be in BranchContainer or ImageContainer
+#include "heading-container.h"
+QPainterPath MapItem::getSelectionPath() // FIXME-0 should be in BranchContainer or ImageContainer
 {
     qreal d = 3;    // Margins around rectangle of item
     QPolygonF polygon;
-    if (isBranchLikeType() )
+    if (hasTypeBranch() )    // FIXME-0 should not be necessary when overloading
     {
-        BranchContainer *bc =((BranchItem*)this)->getBranchContainer();
-        polygon = bc->mapToScene(bc->rect().marginsAdded(QMarginsF(d, d, d, d)));
+        HeadingContainer *hc = ((BranchItem*)this)->getBranchContainer()->getHeadingContainer();
+        polygon = hc->mapToScene(hc->rect().marginsAdded(QMarginsF(d, d, d, d)));
     } else if (getType() == Image) {
         ImageContainer *ic =((ImageItem*)this)->getImageContainer();
         polygon = ic->mapToScene(ic->rect().marginsAdded(QMarginsF(d, d, d, d)));
@@ -166,11 +156,11 @@ QPainterPath MapItem::getSelectionPath() // FIXME-3 should be in BranchContainer
     return path;
 }
 
-QPointF MapItem::getEditPosition() // FIXME-3 should be directly in BranchContainer
+QPointF MapItem::getEditPosition() // FIXME-2 should be directly in BranchContainer
 {
     QPointF p;
 
-    if (isBranchLikeType() )
+    if (hasTypeBranch() )
         p = ((BranchItem*)this)->getBranchContainer()->scenePos();
     else
         qWarning() << "MapITem::getEditPosition - unknown item type!";

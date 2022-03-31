@@ -74,7 +74,7 @@ ImageContainer *ImageItem::createImageContainer(QGraphicsScene *scene)
         !((MapItem *)parentItem)->getMO()->isVisibleObj())
         imageContainer->setVisibility(false);
     imageContainer->setZValue(zValue);
-    imageContainer->setRelPos(pos);
+    imageContainer->setPos(pos);
     imageContainer->updateVisibility();
     imageContainer->setLinkColor();
     */
@@ -175,7 +175,9 @@ QString ImageItem::saveToDir(const QString &tmpdir, const QString &prefix)
         attribut("scaleFactor", QString().setNum(imageContainer->getScaleFactor()));
 
     return singleElement("floatimage",
-                         getMapAttr() + getGeneralAttr() + zAttr +
-                             attribut("href", QString("file:") + url) +
-                             nameAttr + scaleAttr + idAttr);
+                MapItem::getPosAttr() +
+                MapItem::getLinkableAttr() +
+                TreeItem::getGeneralAttr() + zAttr +
+                attribut("href", QString("file:") + url) +
+                nameAttr + scaleAttr + idAttr);
 }

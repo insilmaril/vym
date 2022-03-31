@@ -225,7 +225,7 @@ void MapEditor::scrollTo(const QModelIndex &index)  // FIXME-2 also consider ima
         TreeItem *ti = static_cast<TreeItem *>(index.internalPointer());
         QRectF r;
         bool scroll = false;
-        if ( ti->isBranchLikeType())  {
+        if ( ti->hasTypeBranch())  {
             r = ((BranchItem*)ti)->getBranchContainer()->getHeadingRect();
             scroll = true;
         }
@@ -431,7 +431,7 @@ void MapEditor::setViewCenterTarget()// FIXME-1 add ImageItem and -Container
 {
     MapItem *selti = (MapItem *)(model->getSelectedItem());
     if (selti) {
-        if (selti->isBranchLikeType())
+        if (selti->hasTypeBranch())
             setViewCenterTarget(((BranchItem*)selti)->getBranchContainer()->rect().center(), 1, 0);
     }
 }
@@ -746,7 +746,7 @@ TreeItem *MapEditor::findMapItem(QPointF p, const QList <TreeItem*> &excludedIte
 BranchItem *MapEditor::findMapBranchItem(QPointF p, const QList <TreeItem*> &excludedItems) 
 {
     TreeItem *ti = findMapItem(p, excludedItems);
-    if (ti && ti->isBranchLikeType())
+    if (ti && ti->hasTypeBranch())
         return (BranchItem*)ti;
     else
         return nullptr;
@@ -895,7 +895,7 @@ BranchItem *MapEditor::getLeftBranch(TreeItem *ti)
     if (!ti)
         return NULL;
 
-    if (ti->isBranchLikeType()) {
+    if (ti->hasTypeBranch()) {
         BranchItem *bi = (BranchItem *)ti;
         if (bi->depth() == 0) {
             // Special case: use alternative selection index
@@ -923,7 +923,7 @@ BranchItem *MapEditor::getLeftBranch(TreeItem *ti)
             return bi->getLastSelectedBranch();
     }
 
-    if (ti->parent() && ti->parent()->isBranchLikeType())
+    if (ti->parent() && ti->parent()->hasTypeBranch())
         return (BranchItem *)(ti->parent());
     return NULL;
 }
@@ -933,7 +933,7 @@ BranchItem *MapEditor::getRightBranch(TreeItem *ti)
     if (!ti)
         return NULL;
 
-    if (ti->isBranchLikeType()) {
+    if (ti->hasTypeBranch()) {
         BranchItem *bi = (BranchItem *)ti;
         if (bi->depth() == 0) {
             // Special case: use alternative selection index
@@ -962,7 +962,7 @@ BranchItem *MapEditor::getRightBranch(TreeItem *ti)
             return (BranchItem *)bi->getLastSelectedBranch();
     }
 
-    if (ti->parent() && ti->parent()->isBranchLikeType())
+    if (ti->parent() && ti->parent()->hasTypeBranch())
         return (BranchItem *)(ti->parent());
 
     return NULL;
@@ -984,7 +984,7 @@ void MapEditor::cursorUp()
     } else {
         // Nothing selected or already multiple selections
         TreeItem *ti = model->lastToggledItem();
-        if (ti && ti->isBranchLikeType()) {
+        if (ti && ti->hasTypeBranch()) {
             bi = getBranchAbove( (BranchItem*)ti);
             if (bi) 
                 model->select(bi);
@@ -1007,7 +1007,7 @@ void MapEditor::cursorUpToggleSelection()
     } else {
         // Nothing selected or already multiple selections
         TreeItem *ti = model->lastToggledItem();
-        if (ti && ti->isBranchLikeType()) {
+        if (ti && ti->hasTypeBranch()) {
             if (lastToggleDirection == toggleUp)
                 bi = getBranchAbove( (BranchItem*)ti);
             else
@@ -1036,7 +1036,7 @@ void MapEditor::cursorDown()
     } else {
         // Nothing selected or already multiple selections
         TreeItem *ti = model->lastToggledItem();
-        if (ti && ti->isBranchLikeType()) {
+        if (ti && ti->hasTypeBranch()) {
             bi = getBranchBelow( (BranchItem*)ti);
 
             if (bi) 
@@ -1061,7 +1061,7 @@ void MapEditor::cursorDownToggleSelection()
     } else {
         // Nothing selected or already multiple selections
         TreeItem *ti = model->lastToggledItem();
-        if (ti && ti->isBranchLikeType()) {
+        if (ti && ti->hasTypeBranch()) {
             if (lastToggleDirection == toggleDown)
                 bi = getBranchBelow( (BranchItem*)ti);
             else
@@ -1316,7 +1316,7 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
 
     // Stop editing heading
     if (model->isSelectionBlocked()) {
-        if (ti_found && ti_found->isBranchLikeType() &&
+        if (ti_found && ti_found->hasTypeBranch() &&
             ti_found == model->getSelectedItem()) {
             // return event to LineEdit to allow selecting in LineEdit
             e->ignore();
@@ -1624,7 +1624,7 @@ void MapEditor::moveObject()
     // Check if we could link
     TreeItem *ti_found = findMapItem(p, model->getSelectedItems());
     BranchItem *bi_dst = nullptr;
-    if (ti_found && ti_found != seli && ti_found->isBranchLikeType()) {
+    if (ti_found && ti_found != seli && ti_found->hasTypeBranch()) {
         bi_dst = (BranchItem *)ti_found;
     }
     else
@@ -1637,7 +1637,7 @@ void MapEditor::moveObject()
     BranchContainer *bc;
     foreach (TreeItem *ti, model->getSelectedItems())
     {
-        if (ti->isBranchLikeType()) {
+        if (ti->hasTypeBranch()) {
             bc = ((BranchItem*)ti)->getBranchContainer();
             
             // The structure in VymModel remaines untouched so far!
@@ -1651,7 +1651,6 @@ void MapEditor::moveObject()
             // FIXME-2 when moving selection to tmpParentContainer, remove leaf branches from selection (no method available yet)!
         } else if (ti->getType() == TreeItem::Image) {
             ImageContainer *ic = ((ImageItem*)ti)->getImageContainer();
-            qDebug() << "ME::Moving image " << ic->info();
             if (ic->parentItem() != tmpParentContainer->getImagesContainer()) {
                 ic->setOrgPos();
                 tmpParentContainer->addToImagesContainer(ic, true);
@@ -1774,7 +1773,6 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                     if (destinationBranch->depth() == 0)
                         selbo->move(savePos);   // FIXME-2 see savePos above - still needed?
                     */
-                    qDebug() << "ME::release  append to dst:  end  " << bc->info();
                 }
             }   // Loop to relink branches
             // Destination available and movingObject
@@ -2069,7 +2067,7 @@ void MapEditor::updateSelection(QItemSelection nsel, QItemSelection dsel)
     // Add new selected objects
     foreach (QModelIndex ix, sel.indexes()) {
         MapItem *mi = static_cast<MapItem *>(ix.internalPointer());
-        if (mi->isBranchLikeType() || mi->getType() == TreeItem::Image ||
+        if (mi->hasTypeBranch() || mi->getType() == TreeItem::Image ||
             mi->getType() == TreeItem::XLink)
             if (!itemsSelected.contains(mi))
                 itemsSelected.append(mi);
@@ -2081,7 +2079,7 @@ void MapEditor::updateSelection(QItemSelection nsel, QItemSelection dsel)
     // Delete objects meanwhile removed from selection
     foreach (QModelIndex ix, dsel.indexes()) {
         MapItem *mi = static_cast<MapItem *>(ix.internalPointer());
-        if (mi->isBranchLikeType() || mi->getType() == TreeItem::Image ||
+        if (mi->hasTypeBranch() || mi->getType() == TreeItem::Image ||
             mi->getType() == TreeItem::XLink)
             if (!itemsDeselected.contains(mi))
                 itemsDeselected.append(mi);
@@ -2116,9 +2114,9 @@ void MapEditor::updateSelection(QItemSelection nsel, QItemSelection dsel)
         sp->setBrush(selectionColor);
         //sp->setParentItem(mo);
         //sp->setZValue(dZ_SELBOX);
-        sp->setZValue(1500);
+        sp->setZValue(1500);    //FIXME-2 check what z-value is correct
 
-        // Reposition also LineEdit for heading during animation
+        // Reposition also LineEdit for heading during animation    // FIXME-2 and with multiple selections? which one to use?
         if (lineEdit)
             lineEdit->move(itemsSelected.at(i)->getEditPosition().toPoint());
     }
@@ -2141,7 +2139,7 @@ void MapEditor::updateData(const QModelIndex &sel)
         qDebug() << "  h="<<ti->getHeadingPlain();
     */
 
-    if (ti && ti->isBranchLikeType())
+    if (ti && ti->hasTypeBranch())
         ((BranchItem*)ti)->updateVisuals();
 
     if (winter) {

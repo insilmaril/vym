@@ -270,7 +270,7 @@ bool parseVYMHandler::startElement(const QString &, const QString &,
             model->setHeadingPlainText("Import");
             ti = lastBranch;
         }
-        if (ti && ti->isBranchLikeType()) {
+        if (ti && ti->hasTypeBranch()) {
             lastBranch = (BranchItem *)ti;
             if (eName == "branch") {
                 state = StateBranch;
@@ -672,12 +672,22 @@ bool parseVYMHandler::readOOAttr(const QXmlAttributes &a)
     if (lastMI) {
         bool okx, oky;
         float x, y;
+        if (!a.value("posX").isEmpty()) {
+            if (!a.value("posY").isEmpty()) {
+                x = a.value("posX").toFloat(&okx);
+                y = a.value("posY").toFloat(&oky);
+                if (okx && oky)
+                    lastMI->setPos(QPointF(x, y));
+                else
+                    return false; // Couldn't read relPos
+            }
+        }
         if (!a.value("relPosX").isEmpty()) {
             if (!a.value("relPosY").isEmpty()) {
                 x = a.value("relPosX").toFloat(&okx);
                 y = a.value("relPosY").toFloat(&oky);
                 if (okx && oky)
-                    lastMI->setRelPos(QPointF(x, y));
+                    lastMI->setPos(QPointF(x, y));
                 else
                     return false; // Couldn't read relPos
             }
@@ -687,7 +697,7 @@ bool parseVYMHandler::readOOAttr(const QXmlAttributes &a)
                 x = a.value("absPosX").toFloat(&okx);
                 y = a.value("absPosY").toFloat(&oky);
                 if (okx && oky)
-                    lastMI->setAbsPos(QPointF(x, y));
+                    lastMI->setPos(QPointF(x, y));
                 else
                     return false; // Couldn't read absPos
             }
@@ -781,13 +791,23 @@ bool parseVYMHandler::readImageAttr(const QXmlAttributes &a)
         lastImage->setZValue(a.value("zPlane").toInt());
     float x, y;
     bool okx, oky;
+    if (!a.value("posX").isEmpty()) {
+        if (!a.value("posY").isEmpty()) {
+            x = a.value("posX").toFloat(&okx);
+            y = a.value("posY").toFloat(&oky);
+            if (okx && oky)
+                lastImage->setPos(QPointF(x, y));
+            else
+                return false; // Couldn't read pos
+        }
+    }
     if (!a.value("relPosX").isEmpty()) {
         if (!a.value("relPosY").isEmpty()) {
             // read relPos
             x = a.value("relPosX").toFloat(&okx);
             y = a.value("relPosY").toFloat(&oky);
             if (okx && oky)
-                lastImage->setRelPos(QPointF(x, y));
+                lastImage->setPos(QPointF(x, y));
             else
                 // Couldn't read relPos
                 return false;
@@ -837,8 +857,8 @@ bool parseVYMHandler::readXLinkAttr(const QXmlAttributes &a)
         if (!a.value("endID").isEmpty()) {
             TreeItem *beginBI = model->findBySelectString(a.value("beginID"));
             TreeItem *endBI = model->findBySelectString(a.value("endID"));
-            if (beginBI && endBI && beginBI->isBranchLikeType() &&
-                endBI->isBranchLikeType()) {
+            if (beginBI && endBI && beginBI->hasTypeBranch() &&
+                endBI->hasTypeBranch()) {
                 Link *li = new Link(model);
                 li->setBeginBranch((BranchItem *)beginBI);
                 li->setEndBranch((BranchItem *)endBI);
@@ -874,8 +894,8 @@ bool parseVYMHandler::readLinkNewAttr(const QXmlAttributes &a)
         if (!a.value("endID").isEmpty()) {
             TreeItem *beginBI = model->findBySelectString(a.value("beginID"));
             TreeItem *endBI = model->findBySelectString(a.value("endID"));
-            if (beginBI && endBI && beginBI->isBranchLikeType() &&
-                endBI->isBranchLikeType()) {
+            if (beginBI && endBI && beginBI->hasTypeBranch() &&
+                endBI->hasTypeBranch()) {
                 Link *li = new Link(model);
                 li->setBeginBranch((BranchItem *)beginBI);
                 li->setEndBranch((BranchItem *)endBI);

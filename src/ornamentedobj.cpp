@@ -187,7 +187,7 @@ void OrnamentedObj::positionContents()
     dp = frame->getXPadding();
     dp2 = dp / 2;
     frame->setZValue(dZ_FRAME_LOW);
-    if (treeItem && treeItem->isBranchLikeType() &&
+    if (treeItem && treeItem->hasTypeBranch() &&
         ((BranchItem *)treeItem)->getFrameIncludeChildren())
         frame->setRect(QRectF(bboxTotal.x() + dp2, bboxTotal.y() + dp2,
                               bboxTotal.width() - dp, bboxTotal.height() - dp));

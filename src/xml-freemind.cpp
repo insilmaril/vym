@@ -79,11 +79,11 @@ bool parseFreemindHandler::startElement(const QString &, const QString &,
         mainBranchLeft = model->createBranch(lastBranch);
         mainBranchRight = model->createBranch(lastBranch);
 
-        mainBranchLeft->setRelPos(QPointF(-200, 0));
+        mainBranchLeft->setPos(QPointF(-200, 0));
         mainBranchLeft->setHeadingPlainText(" ");
         model->emitDataChanged(mainBranchLeft);
 
-        mainBranchRight->setRelPos(QPointF(200, 0));
+        mainBranchRight->setPos(QPointF(200, 0));
         mainBranchRight->setHeadingPlainText(" ");
         model->emitDataChanged(mainBranchRight);
     }

@@ -80,7 +80,7 @@ void BranchPropertyEditor::setItem(TreeItem *ti)
     disconnectSignals();
     if (!ti)
         ui.tabWidget->setEnabled(false);
-    else if (ti->isBranchLikeType()) {
+    else if (ti->hasTypeBranch()) {
         branchItem = (BranchItem *)ti;
 
         branchObj = (BranchObj *)(branchItem->getLMO());
