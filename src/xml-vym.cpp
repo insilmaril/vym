@@ -672,6 +672,16 @@ bool parseVYMHandler::readOOAttr(const QXmlAttributes &a)
     if (lastMI) {
         bool okx, oky;
         float x, y;
+        if (!a.value("posX").isEmpty()) {   // Introduced in 2.9.501, added here for file compatibility
+            if (!a.value("posY").isEmpty()) {
+                x = a.value("posX").toFloat(&okx);
+                y = a.value("posY").toFloat(&oky);
+                if (okx && oky)
+                    lastMI->setRelPos(QPointF(x, y));
+                else
+                    return false; // Couldn't read relPos
+            }
+        }
         if (!a.value("relPosX").isEmpty()) {
             if (!a.value("relPosY").isEmpty()) {
                 x = a.value("relPosX").toFloat(&okx);
@@ -781,6 +791,16 @@ bool parseVYMHandler::readImageAttr(const QXmlAttributes &a)
         lastImage->setZValue(a.value("zPlane").toInt());
     float x, y;
     bool okx, oky;
+    if (!a.value("posX").isEmpty()) {   // Introduced in 2.9.501, added here for file compatibility
+        if (!a.value("posY").isEmpty()) {
+            x = a.value("posX").toFloat(&okx);
+            y = a.value("posY").toFloat(&oky);
+            if (okx && oky)
+                lastImage->setRelPos(QPointF(x, y));
+            else
+                return false; // Couldn't read relPos
+        }
+    }
     if (!a.value("relPosX").isEmpty()) {
         if (!a.value("relPosY").isEmpty()) {
             // read relPos
