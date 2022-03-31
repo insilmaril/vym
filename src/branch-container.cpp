@@ -86,7 +86,6 @@ void BranchContainer::addToBranchesContainer(Container *c, bool keepScenePos)
 
 void BranchContainer::addToImagesContainer(Container *c, bool keepScenePos)
 {
-    qDebug() << "BC::add2ImagesContainer   this=" << this << "c=" << c << " imageCount=" << imagesContainer->childItems().count();
     QPointF sp = c->scenePos();
     c->setParentItem(imagesContainer);
     if (keepScenePos)

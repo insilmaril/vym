@@ -211,10 +211,7 @@ class MapEditor : public QGraphicsView {
     // Temporary used for linkx
     Link *tmpLink;
 
-    // Temporary used for moving stuff around   // FIXME-0 check what's still required
-    //MapObj *movingObj;           // moving a MapObj
-    //QPointF movingObj_orgPos;    // org. pos of mouse before move
-    //QPointF movingObj_orgRelPos; // org. relative pos of mouse before move
+    // Temporary used for panning view and xlinks   // FIXME-2 check what's still required
     QPointF movingObj_offset;    // offset of mousepointer to object
     QPointF movingCont_start;    // inital pos of moving Content or
     QPointF movingVec;           // how far has Content moved

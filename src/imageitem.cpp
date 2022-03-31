@@ -16,16 +16,15 @@ bool isImage(const QString &fname)
 
 ImageItem::ImageItem():MapItem(nullptr) // FIXME-2 MapItem should no longer be needed
 {
-    qDebug() << "Constr ImageItem " << this;
+    //qDebug() << "Constr ImageItem " << this;
     init();
 }
 
 ImageItem::~ImageItem()
 {
-    qDebug() << "Destr ImageItem " << this << "  ic=" << imageContainer;
+    //qDebug() << "Destr ImageItem " << this << "  ic=" << imageContainer;
 
     if (imageContainer) {
-        qDebug() << " - Deleting imageContainer=" << imageContainer;
         delete imageContainer;
         imageContainer = nullptr;
     }
@@ -48,19 +47,13 @@ void ImageItem::clear() // FIXME-2 check if needed
 
 BranchItem *ImageItem::parentBranch() { return (BranchItem *)parentItem; }
 
-#include "vymmodel.h"     // FIXME-0 testing only
 bool ImageItem::load(const QString &fname)
 {
-    qDebug() << "II::load " << fname;
-    qDebug() << "II::load 1 number of objects " << model->getScene()->items().count();
-    qDebug() << "II::load ic=" << imageContainer;
     if (!imageContainer || !imageContainer->load(fname))
         return false;
 
     setOriginalFilename(fname);
     setHeadingPlainText(originalFilename);
-
-    qDebug() << "II::load 2 number of objects " << model->getScene()->items().count();
     return true;
 }
 
@@ -107,13 +100,9 @@ qreal ImageItem::getScaleFactor()
         return 1;
 }
 
-void ImageItem::setZValue(int z) // FIXME-0
+void ImageItem::setZValue(int z)
 {
-    /*
-    zValue = z;
-    if (mo)
-        ((FloatImageObj *)mo)->setZValue(z);
-        */
+    imageContainer->setZValue(z);
 }
 
 void ImageItem::setOriginalFilename(const QString &fn)

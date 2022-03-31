@@ -1809,8 +1809,8 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                     // and keep (!) current absolute position
                     bi->updateContainerStackingOrder();
 
-                    if (bi->depth() == 0 || 
-                            (pi && pi->getBranchContainer()->getBranchesContainer()->hasFloatingLayout()))  // FIXME-0 replace by bc->isFloating()
+                    // FLoating layout, restore the position before relinking was done
+                    if (bc->isFloating())
                     {
                         // Relative positioning
                         model->saveState(

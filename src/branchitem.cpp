@@ -599,13 +599,11 @@ void BranchItem::updateContainerStackingOrder()
 
     BranchItem *pi = parentBranch();
 
-    if (pi && pi != rootItem) 
-        branchContainer->setParentItem(parentBranch()->getBranchesContainer());
-        // parentBranch()->addToChildrenContainer(branchContainer); // FIXME-2 maybe better? 
-    else {
-        qWarning() << "BI::updateStackingORder  pi = " << pi << "rootItem = " << rootItem << "(moved center?)"; // FIXME-2 testing
+    if (pi == rootItem) 
+        // Moved center
         return;
-    }
+    else
+        branchContainer->setParentItem(parentBranch()->getBranchesContainer());
 
     //branchContainer->setPos(branchContainer->sceneTransform().inverted().map(sp));
         
@@ -628,13 +626,8 @@ void BranchItem::addToBranchesContainer(BranchContainer *bc)
 
 void BranchItem::addToImagesContainer(ImageContainer *ic)
 {
-    qDebug() << "BI::add2ImagesContainer  this=" << this << "  ic=" << ic << "count=" << model->getScene()->items().count();
-
-    // Keep scene position while relinking image container
-    QPointF p = ic->mapToItem(branchContainer->getImagesContainer(), ic->pos());
-
-    branchContainer->addToImagesContainer(ic);
-    ic->setPos(p);
+    // Keep scene position while relinking image container, so pass "true"
+    branchContainer->addToImagesContainer(ic, true);
 }
 
 void BranchItem::repositionContainers()
