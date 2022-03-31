@@ -3154,12 +3154,12 @@ BranchItem *VymModel::addMapCenter(bool saveStateFlag)
         // Useful for "brainstorming" mode...
         contextPos = QPointF();
         BranchItem *bi;
-        BranchObj *bo;
+        BranchContainer *bc;
         for (int i = 0; i < rootItem->branchCount(); ++i) {
             bi = rootItem->getBranchNum(i);
-            bo = (BranchObj *)bi->getLMO();
-            if (bo)
-                contextPos += bo->getAbsPos();  // FIXME-0
+            bc = bi->getBranchContainer();
+            if (bc)
+                contextPos += bc->pos();
         }
         if (rootItem->branchCount() > 1)
             contextPos *= 1 / (qreal)(rootItem->branchCount());
