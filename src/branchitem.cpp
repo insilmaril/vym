@@ -490,7 +490,7 @@ TreeItem *BranchItem::findMapItem(QPointF p, QList <TreeItem*> excludedItems)
     TreeItem *ti;
     for (int i = 0; i < branchCount(); ++i) {
         ti = getBranchNum(i)->findMapItem(p, excludedItems);
-        if (ti != NULL)
+        if (ti != nullptr)
             return ti;
     }
 
@@ -500,7 +500,7 @@ TreeItem *BranchItem::findMapItem(QPointF p, QList <TreeItem*> excludedItems)
     for (int i = 0; i < imageCount(); ++i) {
         ii = getImageNum(i);
         ic = ii->getImageContainer();
-        if (ic->mapToScene(ic->rect()).containsPoint(p, Qt::OddEvenFill)) return ii;
+        if (!excludedItems.contains(ii) && ic->mapToScene(ic->rect()).containsPoint(p, Qt::OddEvenFill)) return ii;
     }
 
     // Search my container     // FIXME-2   Check if container is visible!!

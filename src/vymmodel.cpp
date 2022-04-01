@@ -3450,9 +3450,8 @@ bool VymModel::relinkImage(ImageItem *image, BranchItem *dst)
         dst->appendChild(image);
         endInsertRows();
 
-        // Set new parent also for lmo  // FIXME-0
-        if (image->getLMO() && dst->getLMO())
-            image->getLMO()->setParObj(dst->getLMO());
+        // Set new parent also for lmo
+        dst->addToImagesContainer(image->getImageContainer());
 
         emit(layoutChanged());
         saveState(image, QString("relinkTo (\"%1\")").arg(oldParString), image,

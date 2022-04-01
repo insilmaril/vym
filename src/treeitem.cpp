@@ -93,6 +93,7 @@ int TreeItem::getRowNumAppend(TreeItem *item)
     case XLink:
         return xlinkOffset + xlinkCounter;
     case Image:
+        qDebug() << "TI:   imageOffset=" << imageOffset << "imgCounter="<<imageCounter;
         return imageOffset + imageCounter;
     case MapCenter:
         return branchOffset + branchCounter;

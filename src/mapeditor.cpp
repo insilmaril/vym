@@ -1628,7 +1628,7 @@ void MapEditor::moveObject()
         panningTimer->start(50);
 
     QPointF p = mapToScene(pointerPos);
-    TreeItem *seli = model->getSelectedItem();
+    TreeItem *seli = model->getSelectedItem();  // FIXME-2 used?
 
     objectMoved = true;
 
@@ -1662,9 +1662,10 @@ void MapEditor::moveObject()
             }
 
             // FIXME-2 when moving selection to tmpParentContainer, remove leaf branches from selection (no method available yet)!
-        } else if (ti->getType() == TreeItem::Image) {
+        } else if (ti->hasTypeImage()) {
             ImageContainer *ic = ((ImageItem*)ti)->getImageContainer();
             if (ic->parentItem() != tmpParentContainer->getImagesContainer()) {
+                qDebug() << "ME::adding img to tPC";
                 ic->setOrgPos();
                 tmpParentContainer->addToImagesContainer(ic, true);
                 //tmpParentContainer->reposition();   // FIXME-2 needed, if we use a Floating layout?
@@ -1699,12 +1700,12 @@ void MapEditor::moveObject()
 void MapEditor::mouseReleaseEvent(QMouseEvent *e)
 {
     QPointF p = mapToScene(e->pos());
-    TreeItem *seli = model->getSelectedItems().first(); // FIXME-2 Check: used to be only selected tiem originally
 
     BranchItem *destinationBranch;
 
-    if (seli)
-        destinationBranch = findMapBranchItem(p, model->getSelectedItems());
+    destinationBranch = findMapBranchItem(p, model->getSelectedItems());
+
+    qDebug() << "ME::release  dstBranch = " << destinationBranch << " selected: " << model->getSelectedItems();
 
     BranchItem *selbi = model->getSelectedBranch();  // FIXME-2 should no longer be needed in the end, but rather List
 
@@ -1723,6 +1724,9 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
     }
 
     // Have we been drawing a link?
+
+    TreeItem *seli = model->getSelectedItems().first(); // FIXME-2 Check: used to be only selected tiem originally
+
     if (state() == DrawingLink) {
         setState(Neutral);
         // Check if we are over another branch
@@ -1756,12 +1760,10 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
 
         // Check if we have a destination and should relink
         if (destinationBranch && objectMoved && state() != MovingObjectWithoutLinking) {
-
+            
             // Loop over branches
             foreach(QGraphicsItem *g_item, tmpParentContainer->getBranchesContainer()->childItems()) {
                 BranchContainer *bc = (BranchContainer*)g_item;
-                qDebug() << "* Releasing " << bc->info();
-
                 BranchItem *bi = bc->getBranchItem();
                 BranchItem *pi = bi->parentBranch();
 
@@ -1779,7 +1781,6 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                                         destinationBranch->parentBranch(),
                                         destinationBranch->num() + 1, true);
                 } else { // Append to dst         
-                    qDebug() << "ME::release  append to destinationBranch:  begin" << bc->info();
                     model->relinkBranch(bi, destinationBranch,
                                         -1, true); //, movingObj_orgPos);    // FIXME-2 orgPos with containers?
                     /*
@@ -1788,6 +1789,13 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                     */
                 }
             }   // Loop to relink branches
+
+            // Loop over images
+            foreach(QGraphicsItem *g_item, tmpParentContainer->getImagesContainer()->childItems()) {
+                ImageContainer *ic = (ImageContainer*)g_item;
+                ImageItem *ii = ic->getImageItem();
+                model->relinkImage(ii, destinationBranch);
+            }
             // Destination available and movingObject
         } else {
             // Branches moved, but not relinked
@@ -1822,7 +1830,6 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                 } // children of tmpParentContainer
                 model->saveStateEndBlock();
                 
-                // Make the tmpParentContainer invisible again (size == 0) // FIXME-1  not really invisible, better call setVisibility
                 // and move container to correct position 
                 tmpParentContainer->reposition();
 
@@ -1863,6 +1870,8 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                 */
             } // Image moved
         }
+
+        // Make the tmpParentContainer invisible again (size == 0) // FIXME-2  not really invisible, better call setVisibility
 
         // Finally resize scene, if needed
         scene()->update();
