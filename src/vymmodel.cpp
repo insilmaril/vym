@@ -3446,7 +3446,7 @@ bool VymModel::relinkImage(ImageItem *image, BranchItem *dst)
         // Add at dst
         QModelIndex dstix = index(dst);
         n = dst->getRowNumAppend(image);
-        beginInsertRows(dstix, n, n + 1);
+        beginInsertRows(dstix, n, n);
         dst->appendChild(image);
         endInsertRows();
 
