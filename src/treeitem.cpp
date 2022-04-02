@@ -88,19 +88,18 @@ VymModel *TreeItem::getModel() { return model; }
 int TreeItem::getRowNumAppend(TreeItem *item)
 {
     switch (item->type) {
-    case Attribute:
-        return attributeOffset + attributeCounter;
-    case XLink:
-        return xlinkOffset + xlinkCounter;
-    case Image:
-        qDebug() << "TI:   imageOffset=" << imageOffset << "imgCounter="<<imageCounter;
-        return imageOffset + imageCounter;
-    case MapCenter:
-        return branchOffset + branchCounter;
-    case Branch:
-        return branchOffset + branchCounter;
-    default:
-        return -1;
+        case Attribute:
+            return attributeOffset + attributeCounter;
+        case XLink:
+            return xlinkOffset + xlinkCounter;
+        case Image:
+            return imageOffset + imageCounter;
+        case MapCenter:
+            return branchOffset + branchCounter;
+        case Branch:
+            return branchOffset + branchCounter;
+        default:
+            return -1;
     }
 }
 
