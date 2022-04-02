@@ -47,8 +47,6 @@ class MapEditor : public QGraphicsView {
     QPropertyAnimation scrollBarPosAnimation;
     QTimer *panningTimer;
     QPointF vPan;      //! Direction of panning during moving of object
-    QPoint pointerPos; //! Pointer position in widget coordinates
-    Qt::KeyboardModifiers pointerMod; //! modifiers of move event
 
   private slots:
     void panView();
@@ -171,10 +169,10 @@ class MapEditor : public QGraphicsView {
     void contextMenuEvent(QContextMenuEvent *e);
     void keyPressEvent(QKeyEvent *);
     void keyReleaseEvent(QKeyEvent *);
-    void startMovingView(QMouseEvent *);
+    void startPanningView(QMouseEvent *);
     void mousePressEvent(QMouseEvent *);
     void mouseMoveEvent(QMouseEvent *);
-    void moveObject();
+    void moveObject(const QPointF &p_event);    // Called from mouseMoveEvent
     void mouseReleaseEvent(QMouseEvent *);
     void mouseDoubleClickEvent(QMouseEvent *);
     void wheelEvent(QWheelEvent *);
@@ -217,8 +215,8 @@ class MapEditor : public QGraphicsView {
     QPointF movingVec;           // how far has Content moved
 
     // Moving containers
-    QPointF movingObj_initialPointerPos;
-    QPointF movingObj_initialContainerOffset;
+    QPointF movingObj_initialPointerPos;        // scene coordinates when button was pressed
+    QPointF movingObj_initialContainerOffset;   // offset from above coordinates to object
     BranchContainer *tmpParentContainer;
 
     QPointF contextMenuPos; // position where context event was triggered

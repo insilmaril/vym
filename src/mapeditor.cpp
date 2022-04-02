@@ -228,7 +228,7 @@ void MapEditor::panView()
         verticalScrollBar()->setValue(verticalScrollBar()->value() + vPan.y());
 
         // Update currently moving object
-        moveObject();
+        // FIXME-0 this would require p_event, which was variable ?!?! moveObject();
     }
 }
 
@@ -1298,7 +1298,7 @@ void MapEditor::keyReleaseEvent(QKeyEvent *e)
         setCursor(Qt::ArrowCursor);
 }
 
-void MapEditor::startMovingView(QMouseEvent *e)
+void MapEditor::startPanningView(QMouseEvent *e)
 {
     setState(MovingView);
     movingObj_offset = e->globalPos();  // FIXME-2 check, maybe rename variable?
@@ -1324,8 +1324,10 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
         return;
     }
 
-    QPointF p = mapToScene(e->pos());
-    TreeItem *ti_found = findMapItem(p);
+    // Initial position of pointer in scene coordinates. See also e->globalPos (!)
+    movingObj_initialPointerPos = mapToScene(e->pos());
+
+    TreeItem *ti_found = findMapItem(movingObj_initialPointerPos);
 
     // Stop editing heading
     if (model->isSelectionBlocked()) {
@@ -1374,7 +1376,7 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
         }
 
         if (mainWindow->getModMode() == Main::ModModeMoveView) {
-            startMovingView(e);
+            startPanningView(e);
             return;
         }
     }
@@ -1479,7 +1481,7 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
         tmpLink->createMapObj();
         tmpLink->setStyleBegin("None");
         tmpLink->setStyleEnd("None");
-        tmpLink->setEndPoint(mapToScene(e->pos()));
+        tmpLink->setEndPoint(movingObj_initialPointerPos);
         tmpLink->updateLink();
         return;
     }
@@ -1495,12 +1497,10 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
             movingObj_offset.setY(p.y() - lmo_found->y());
             */
 
-            movingObj_initialPointerPos = p;
-
             if (selbi)
             {
                 BranchContainer *bc = selbi->getBranchContainer();
-                movingObj_initialContainerOffset = bc->mapFromScene(p);
+                movingObj_initialContainerOffset = bc->mapFromScene(movingObj_initialPointerPos);
             }
 
             if (mainWindow->getModMode() == Main::ModModeMoveObject &&
@@ -1540,7 +1540,7 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
             // Left Button	    move Pos of sceneView
             if (e->button() == Qt::LeftButton ||
                 e->button() == Qt::MiddleButton) {
-                startMovingView(e);
+                startPanningView(e);
                 return;
             }
         }
@@ -1549,14 +1549,16 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
 
 void MapEditor::mouseMoveEvent(QMouseEvent *e)
 {
+    QPointF p_event = mapToScene(e->pos());
+
     // Show mouse position for debugging in statusBar
     if (debug && e->modifiers() & Qt::ControlModifier)
         mainWindow->statusMessage(
-            QString("ME::mouseMoveEvent  Scene: %1  view: %2")
-                .arg(qpointFToString(mapToScene(e->pos())))
+            QString("ME::mouseMoveEvent  Scene coord: %1  viewport coord: %2")
+                .arg(qpointFToString(p_event))
                 .arg(qpointFToString(e->pos())));
 
-    // Move sceneView
+    // Pan view
     if (state() == MovingView &&
         (e->buttons() == Qt::LeftButton || e->buttons() == Qt::MiddleButton)) {
         QPointF p = e->globalPos();
@@ -1601,43 +1603,32 @@ void MapEditor::mouseMoveEvent(QMouseEvent *e)
         else if (e->x() <= width() && e->x() > width() - margin)
             vPan.setX(e->x() - width() + margin);
 
-        pointerPos = e->pos();
-        pointerMod = e->modifiers();
-        moveObject();
+        moveObject(p_event);
     } // selection && moving_obj
 
     // Draw a link from one branch to another
     if (state() == DrawingLink) {
-        tmpLink->setEndPoint(mapToScene(e->pos()));
+        tmpLink->setEndPoint(p_event);
         tmpLink->updateLink();
     }
 }
 
-void MapEditor::moveObject()
+void MapEditor::moveObject(const QPointF &p_event)
 {
     // If necessary pan the view using animation
     if (!panningTimer->isActive())
         panningTimer->start(50);
-
-    QPointF p = mapToScene(pointerPos);
-    TreeItem *seli = model->getSelectedItem();  // FIXME-2 used?
 
     objectMoved = true;
 
     // reset cursor if we are moving and don't copy
 
     // Check if we could link
-    TreeItem *ti_found = findMapItem(p, model->getSelectedItems());
-    BranchItem *bi_dst = nullptr;
-    if (ti_found && ti_found != seli && ti_found->hasTypeBranch()) {
-        bi_dst = (BranchItem *)ti_found;
-    }
-    else
-        bi_dst = nullptr;
-
+    TreeItem *ti_found = findMapItem(p_event, model->getSelectedItems());
+ 
     // Since moved containers are relative to tmpParentContainer anyway, just move 
-    // it to pointer position:
-    tmpParentContainer->setPos(p - movingObj_initialContainerOffset);
+    // tmpParentContainer to pointer position:
+    tmpParentContainer->setPos(p_event - movingObj_initialContainerOffset);
     
     BranchContainer *bc;
     foreach (TreeItem *ti, model->getSelectedItems())
@@ -1664,6 +1655,21 @@ void MapEditor::moveObject()
                 //tmpParentContainer->reposition();   // FIXME-2 needed, if we use a Floating layout?
             }
         }
+        /* FIXME-2 check xlinks later
+            // Deleted above:  TreeItem *seli = model->getSelectedItem();
+
+        else if (seli && seli->getType() == TreeItem::XLink) {
+            // Move XLink control point
+            MapObj *mosel = ((MapItem *)seli)->getMO();
+            if (mosel) {
+                mosel->move(p - movingObj_offset); // FIXME-3 Missing savestate
+                model->setChanged();
+                model->emitSelectionChanged();
+            }
+        }
+        else
+            qWarning("ME::moveObject  Huh? I'm confused. No LMO or XLink moved");   // FIXME-2 shouldn't happen
+        */
     }
 
     // Update selection
@@ -1671,19 +1677,6 @@ void MapEditor::moveObject()
     updateSelection(sel, sel);
 
 
-    /* FIXME-2 check xlinks later
-    else if (seli && seli->getType() == TreeItem::XLink) {
-        // Move XLink control point
-        MapObj *mosel = ((MapItem *)seli)->getMO();
-        if (mosel) {
-            mosel->move(p - movingObj_offset); // FIXME-3 Missing savestate
-            model->setChanged();
-            model->emitSelectionChanged();
-        }
-    }
-    else
-        qWarning("ME::moveObject  Huh? I'm confused. No LMO or XLink moved");   // FIXME-2 shouldn't happen
-    */
 
     scene()->update();
 
@@ -1837,13 +1830,9 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
 
                 // Update parent of moved container to original imageContainer 
                 // in parent branch
-                qDebug() << "ME  1 number of objects: " << model->getScene()->items().size();
-                qDebug() << "ME  1 tPC images: " << tmpParentContainer->getImagesContainer()->childItems();
                 pi->addToImagesContainer(ic);
-                qDebug() << "ME  2 number of objects: " << model->getScene()->items().size();
-                qDebug() << "ME  2 tPC images: " << tmpParentContainer->getImagesContainer()->childItems();
 
-                // Moved Image, we need to reposition
+                // Moved Image, we need to reposition   FIXME-2 really?
                 /*
                 QString pold = qpointFToString(movingObj_orgRelPos);
                 QString pnow = qpointFToString(fio->getRelPos());
