@@ -798,7 +798,7 @@ bool parseVYMHandler::readImageAttr(const QXmlAttributes &a)
             if (okx && oky)
                 lastImage->setPos(QPointF(x, y));
             else
-                return false; // Couldn't read pos
+                return false; // Couldn't read relPos
         }
     }
     if (!a.value("relPosX").isEmpty()) {

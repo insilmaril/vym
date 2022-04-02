@@ -1149,12 +1149,18 @@ void MapEditor::editHeading()
         lineEdit->setCursor(Qt::IBeamCursor);
         lineEdit->setCursorPosition(1);
 
-        BranchContainer *bc = bi->getBranchContainer();
+#if defined(Q_OS_WINDOWS)
+        QFont font = lineEdit->font();
+        font.setPointSize(font.pointSize() + 4);
+        lineEdit->setFont(font);
+#endif
 
         QPointF tl;
         QPointF br;
         qreal w = 230;
         qreal h = 30;
+
+        BranchContainer *bc = bi->getBranchContainer();
         if (bc->getOrientation() == Container::RightOfParent) {
             tl = bc->getHeadingRect().topLeft();
             br = tl + QPointF(w, h);
@@ -1184,6 +1190,11 @@ void MapEditor::editHeading()
 
 void MapEditor::editHeadingFinished()
 {
+    if (state() != EditingHeading || !lineEdit ) {
+        qWarning() << "ME::editHeadingFinished not editing heading!";
+        return;
+    }
+
     setState(Neutral);
     // lineEdit->releaseKeyboard();
     lineEdit->clearFocus();
@@ -1337,7 +1348,7 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
     }
 
     // Stop editing in LineEdit
-    editHeadingFinished();
+    if (state() == EditingHeading) editHeadingFinished();
 
     QString sysFlagName;
     QUuid uid;
