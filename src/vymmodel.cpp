@@ -5007,7 +5007,7 @@ void VymModel::reposition()
         bi->repositionContainers();
     }
 
-    mapEditor->getTotalBBox();  // FIXME-2 Is this already working with containers?
+    //FIXME-2 why is this needed:  mapEditor->getTotalBBox();  // FIXME-2 Is this already working with containers?
     
     // required to *reposition* the selection box. size is already correct:
     emitSelectionChanged();
@@ -5249,10 +5249,10 @@ void VymModel::setPos(const QPointF &pos_new, TreeItem *selti)
         selItems = getSelectedItems();
 
     foreach (TreeItem *ti, selItems) {
-        if (ti->hasTypeBranch() ) // FIXME-2 No images supported yet
+        if (ti->hasTypeBranch() || ti->hasTypeImage())
         {
-            BranchContainer *bc = ((BranchItem*)ti)->getBranchContainer();
-            QPointF pos_old = bc->orgPos();
+            Container *c = ((MapItem*)ti)->getContainer();
+            QPointF pos_old = c->orgPos();
             QString pos_new_str = qpointFToString(pos_new);
 
             saveState(ti, "setPos " + qpointFToString(pos_old),
@@ -5260,7 +5260,7 @@ void VymModel::setPos(const QPointF &pos_new, TreeItem *selti)
                       QString("Set position of %1 to %2")
                           .arg(getObjectName(ti))
                           .arg(pos_new_str));
-            bc->setPos(pos_new);
+            c->setPos(pos_new);
         }
     }
     
