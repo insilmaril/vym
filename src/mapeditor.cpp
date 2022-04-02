@@ -1329,19 +1329,15 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
 
     TreeItem *ti_found = findMapItem(movingObj_initialPointerPos);
 
-    // Stop editing heading
+    // Allow selecting text in QLineEdit if necessary
     if (model->isSelectionBlocked()) {
-        if (ti_found && ti_found->hasTypeBranch() &&
-            ti_found == model->getSelectedItem()) {
-            // return event to LineEdit to allow selecting in LineEdit
-            e->ignore();
-            QGraphicsView::mousePressEvent(e);
-            return;
-        }
-        else
-            // Stop editing in LineEdit
-            editHeadingFinished();
+        e->ignore();
+        QGraphicsView::mousePressEvent(e);
+        return;
     }
+
+    // Stop editing in LineEdit
+    editHeadingFinished();
 
     QString sysFlagName;
     QUuid uid;
@@ -1558,6 +1554,13 @@ void MapEditor::mouseMoveEvent(QMouseEvent *e)
                 .arg(qpointFToString(p_event))
                 .arg(qpointFToString(e->pos())));
 
+    // Allow selecting text in QLineEdit if necessary
+    if (model->isSelectionBlocked()) {
+        e->ignore();
+        QGraphicsView::mouseMoveEvent(e);
+        return;
+    }
+
     // Pan view
     if (state() == MovingView &&
         (e->buttons() == Qt::LeftButton || e->buttons() == Qt::MiddleButton)) {
@@ -1685,6 +1688,13 @@ void MapEditor::moveObject(const QPointF &p_event)
 
 void MapEditor::mouseReleaseEvent(QMouseEvent *e)
 {
+    // Allow selecting text in QLineEdit if necessary
+    if (model->isSelectionBlocked()) {
+        e->ignore();
+        QGraphicsView::mouseReleaseEvent(e);
+        return;
+    }
+
     QPointF p = mapToScene(e->pos());
 
     BranchItem *destinationBranch;
@@ -1868,6 +1878,13 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
 
 void MapEditor::mouseDoubleClickEvent(QMouseEvent *e)
 {
+    // Allow selecting text in QLineEdit if necessary
+    if (model->isSelectionBlocked()) {
+        e->ignore();
+        QGraphicsView::mouseDoubleClickEvent(e);
+        return;
+    }
+
     if (e->button() == Qt::LeftButton) {
         QPointF p = mapToScene(e->pos());
         TreeItem *ti = findMapItem(p);
