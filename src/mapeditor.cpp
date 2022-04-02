@@ -1151,6 +1151,11 @@ void MapEditor::editHeading()
 
 void MapEditor::editHeadingFinished()
 {
+    if (state != EditingHeading || !lineEdit ) {
+        qWarning() << "ME::editHeadingFinished not editing heading!";
+        return;
+    }
+
     setState(Neutral);
     // lineEdit->releaseKeyboard();
     lineEdit->clearFocus();
@@ -1298,19 +1303,16 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
     if (ti_found)
         lmo_found = ((MapItem *)ti_found)->getLMO();
 
-    // Stop editing heading
+
+    // Allow selecting text in QLineEdit if necessary
     if (model->isSelectionBlocked()) {
-        if (ti_found && ti_found->isBranchLikeType() &&
-            ti_found == model->getSelectedItem()) {
-            // return event to LineEdit to allow selecting in LineEdit
-            e->ignore();
-            QGraphicsView::mousePressEvent(e);
-            return;
-        }
-        else
-            // Stop editing in LineEdit
-            editHeadingFinished();
+        e->ignore();
+        QGraphicsView::mousePressEvent(e);
+        return;
     }
+
+    // Stop editing in LineEdit
+    if (state == EditingHeading) editHeadingFinished();
 
     QString sysFlagName;
     QUuid uid;
@@ -1519,6 +1521,13 @@ void MapEditor::mouseMoveEvent(QMouseEvent *e)
                 .arg(qpointFToString(mapToScene(e->pos())))
                 .arg(qpointFToString(e->pos())));
 
+    // Allow selecting text in QLineEdit if necessary
+    if (model->isSelectionBlocked()) {
+        e->ignore();
+        QGraphicsView::mouseMoveEvent(e);
+        return;
+    }
+
     // Move sceneView
     if (state == MovingView &&
         (e->buttons() == Qt::LeftButton || e->buttons() == Qt::MiddleButton)) {
@@ -1720,6 +1729,13 @@ void MapEditor::moveObject()
 
 void MapEditor::mouseReleaseEvent(QMouseEvent *e)
 {
+    // Allow selecting text in QLineEdit if necessary
+    if (model->isSelectionBlocked()) {
+        e->ignore();
+        QGraphicsView::mouseReleaseEvent(e);
+        return;
+    }
+
     QPointF p = mapToScene(e->pos());
     TreeItem *seli = model->getSelectedItem();
 
@@ -1919,6 +1935,13 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
 
 void MapEditor::mouseDoubleClickEvent(QMouseEvent *e)
 {
+    // Allow selecting text in QLineEdit if necessary
+    if (model->isSelectionBlocked()) {
+        e->ignore();
+        QGraphicsView::mouseDoubleClickEvent(e);
+        return;
+    }
+
     if (e->button() == Qt::LeftButton) {
         QPointF p = mapToScene(e->pos());
         TreeItem *ti = findMapItem(p, NULL);
