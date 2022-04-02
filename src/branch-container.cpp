@@ -81,7 +81,7 @@ void BranchContainer::addToBranchesContainer(Container *c, bool keepScenePos)
     QPointF sp = c->scenePos();
     c->setParentItem(branchesContainer);
     if (keepScenePos)
-        c->setPos(sceneTransform().inverted().map(sp));
+        c->setPos(branchesContainer->sceneTransform().inverted().map(sp));
 }
 
 void BranchContainer::addToImagesContainer(Container *c, bool keepScenePos)
@@ -89,7 +89,8 @@ void BranchContainer::addToImagesContainer(Container *c, bool keepScenePos)
     QPointF sp = c->scenePos();
     c->setParentItem(imagesContainer);
     if (keepScenePos)
-        c->setPos(sceneTransform().inverted().map(sp));
+        c->setPos(imagesContainer->sceneTransform().inverted().map(sp));
+
 }
 
 Container* BranchContainer::getBranchesContainer()
