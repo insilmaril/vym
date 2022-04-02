@@ -226,9 +226,6 @@ void MapEditor::panView()
         horizontalScrollBar()->setValue(horizontalScrollBar()->value() +
                                         vPan.x());
         verticalScrollBar()->setValue(verticalScrollBar()->value() + vPan.y());
-
-        // Update currently moving object
-        // FIXME-0 this would require p_event, which was variable ?!?! moveObject();
     }
 }
 
@@ -1863,7 +1860,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                     seli->parent()); // Parent of image has changed
                 model->reposition();
                 */
-            } // Image moved
+            } // Image moved, but not relinked
         }
 
         // Make the tmpParentContainer invisible again (size == 0) // FIXME-2  not really invisible, better call setVisibility
