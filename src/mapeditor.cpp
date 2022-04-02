@@ -1813,14 +1813,13 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                 foreach(QGraphicsItem *g_item, tmpParentContainer->getBranchesContainer()->childItems()) {
                     BranchContainer *bc = (BranchContainer*) g_item;
                     BranchItem *bi = bc->getBranchItem();
-
                     BranchItem *pi = bi->parentBranch();
 
                     // Relink to original parent container 
                     // and keep (!) current absolute position
                     bi->updateContainerStackingOrder();
 
-                    // FLoating layout, restore the position before relinking was done
+                    // Floating layout, restore the position before relinking was done
                     if (bc->isFloating())
                     {
                         // Relative positioning
@@ -1833,15 +1832,12 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                 } // children of tmpParentContainer
                 model->saveStateEndBlock();
                 
-                // and move container to correct position 
-                tmpParentContainer->reposition();
-
-                model->reposition();    // FIXME-2 needed? 
+                model->reposition();
 
             }   // Empty tmpParenContainer
         } // Branches moved, but not relinked
 
-        // Let's see if we moved images with tmpParentContainer // FIXME-0 cont here
+        // Let's see if we moved images with tmpParentContainer
         if (objectMoved) {
             foreach(QGraphicsItem *g_item, tmpParentContainer->getImagesContainer()->childItems()) {
                 ImageContainer *ic = (ImageContainer*) g_item;
