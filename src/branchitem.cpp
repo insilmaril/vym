@@ -588,13 +588,6 @@ void BranchItem::updateContainerStackingOrder()
 
     QPointF sp = branchContainer->scenePos();
 
-    /* FIXME-2 debug only
-    qDebug() << "      ## BI::updateContainerStackingOrder begin  bc.scenePos=" << branchContainer->scenePos() << 
-        "pos=" << branchContainer->pos();
-    qDebug() << "         - bc.parent: " << branchContainer->parentContainer()->info();
-    qDebug() << "         - bc.p^2   : " << branchContainer->parentContainer()->parentContainer()->info();
-    */
-
     branchContainer->setParentItem(nullptr);
 
     BranchItem *pi = parentBranch();
@@ -605,17 +598,9 @@ void BranchItem::updateContainerStackingOrder()
     else
         branchContainer->setParentItem(parentBranch()->getBranchesContainer());
 
-    //branchContainer->setPos(branchContainer->sceneTransform().inverted().map(sp));
-        
     if (n < parentBranch()->branchCount() - 1)
         branchContainer->stackBefore( (parentBranch()->getBranchNum(n + 1))->getContainer() );
 
-    /*
-    qDebug() << "      ## BI::updateContainerStackingOrder end    bc.scenePos=" << branchContainer->scenePos() << 
-        "pos=" << branchContainer->pos();
-    qDebug() << "         - bc.parent: " << branchContainer->parentContainer()->info();
-    qDebug() << "         - bc.p^2   : " << branchContainer->parentContainer()->parentContainer()->info();
-    */
     return;
 }
 
