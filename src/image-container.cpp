@@ -295,6 +295,4 @@ void ImageContainer::setImageItem(ImageItem* ii) {
 
 ImageItem* ImageContainer::getImageItem() { return imageItem;}
 
-void ImageContainer::reposition()   // FIXME-0 remove
-{
-}
+void ImageContainer::reposition() {}    // No action necessary
