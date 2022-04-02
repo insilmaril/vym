@@ -1493,8 +1493,6 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
             /* FIXME-2 remove (also in header)
             movingObj_offset.setX(p.x() - lmo_found->x());
             movingObj_offset.setY(p.y() - lmo_found->y());
-            movingObj_orgPos.setX(lmo_found->x());
-            movingObj_orgPos.setY(lmo_found->y());
             */
 
             movingObj_initialPointerPos = p;
@@ -1503,13 +1501,6 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
             {
                 BranchContainer *bc = selbi->getBranchContainer();
                 movingObj_initialContainerOffset = bc->mapFromScene(p);
-
-                /* FIXME-2 remove (also in header)
-                if (ti_found->depth() > 0) {
-                    lmo_found->setRelPos();
-                    movingObj_orgRelPos = lmo_found->getRelPos();
-                }
-                */
             }
 
             if (mainWindow->getModMode() == Main::ModModeMoveObject &&
@@ -1529,7 +1520,7 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
     else { // No lmo found, check XLinks
         if (ti_found) {
             if (ti_found->getType() == TreeItem::XLink) {
-                // FIXME-2 change to container
+                // FIXME-2 xlink not supported yet with containers
                 /*
                 XLinkObj *xlo = (XLinkObj *)((MapItem *)ti_found)->getMO();
                 if (xlo) {
@@ -1624,7 +1615,8 @@ void MapEditor::mouseMoveEvent(QMouseEvent *e)
 
 void MapEditor::moveObject()
 {
-    if (!panningTimer->isActive())      // FIXME-2 why?
+    // If necessary pan the view using animation
+    if (!panningTimer->isActive())
         panningTimer->start(50);
 
     QPointF p = mapToScene(pointerPos);
@@ -1653,19 +1645,20 @@ void MapEditor::moveObject()
         if (ti->hasTypeBranch()) {
             bc = ((BranchItem*)ti)->getBranchContainer();
             
-            // The structure in VymModel remaines untouched so far!
+            // The item structure in VymModel remaines untouched so far,
+            // only containers will be reparented temporarily!
 
+
+            // FIXME-2 when moving selection to tmpParentContainer, remove leaf branches first
+            // from selection (no method available yet)!
             if (bc->parentItem() != tmpParentContainer->getBranchesContainer()) {
                 bc->setOrgPos();
                 tmpParentContainer->addToBranchesContainer(bc, true);
                 tmpParentContainer->reposition();   // FIXME-2 needed, if we use a Floating layout?
             }
-
-            // FIXME-2 when moving selection to tmpParentContainer, remove leaf branches from selection (no method available yet)!
         } else if (ti->hasTypeImage()) {
             ImageContainer *ic = ((ImageItem*)ti)->getImageContainer();
             if (ic->parentItem() != tmpParentContainer->getImagesContainer()) {
-                qDebug() << "ME::adding img to tPC";
                 ic->setOrgPos();
                 tmpParentContainer->addToImagesContainer(ic, true);
                 //tmpParentContainer->reposition();   // FIXME-2 needed, if we use a Floating layout?
@@ -1705,10 +1698,6 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
 
     destinationBranch = findMapBranchItem(p, model->getSelectedItems());
 
-    qDebug() << "ME::release  dstBranch = " << destinationBranch << " selected: " << model->getSelectedItems();
-
-    BranchItem *selbi = model->getSelectedBranch();  // FIXME-2 should no longer be needed in the end, but rather List
-
     // Have we been picking color?
     if (state() == PickingColor) {
         setCursor(Qt::ArrowCursor);
@@ -1724,11 +1713,11 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
     }
 
     // Have we been drawing a link?
-
-    TreeItem *seli = model->getSelectedItems().first(); // FIXME-2 Check: used to be only selected tiem originally
-
     if (state() == DrawingLink) {
         setState(Neutral);
+
+        TreeItem *seli = model->getSelectedItems().first();
+
         // Check if we are over another branch
         if (destinationBranch) {
             tmpLink->setEndBranch(destinationBranch);
@@ -1755,7 +1744,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
     }
 
     // Have we been moving something?
-    if (state() == MovingObject || state() == MovingObjectTmpLinked) {    // FIXME-2 alternatively test, if tmpParentContainer is not empty!
+    if (state() == MovingObject || state() == MovingObjectTmpLinked) {
         panningTimer->stop();
 
         // Check if we have a destination and should relink

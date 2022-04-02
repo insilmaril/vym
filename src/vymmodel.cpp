@@ -3990,7 +3990,7 @@ void VymModel::toggleFlagByUid(
 
 void VymModel::toggleFlagByName(const QString &name, bool useGroups)
 {
-    // Toggling by name only used from vymmodelwrapper for scripting  // FIXME-5
+    // Toggling by name only used from vymmodelwrapper for scripting  // FIXME-X
     // maybe rework?
     BranchItem *bi = getSelectedBranch();
 
