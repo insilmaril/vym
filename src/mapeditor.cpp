@@ -1634,12 +1634,16 @@ void MapEditor::moveObject(const QPointF &p_event)
 
     // reset cursor if we are moving and don't copy
 
-    // Check if we could link
+    // Check if we could link (temporary)
     TreeItem *ti_found = findMapItem(p_event, model->getSelectedItems());
- 
-    // Since moved containers are relative to tmpParentContainer anyway, just move 
-    // tmpParentContainer to pointer position:
-    tmpParentContainer->setPos(p_event - movingObj_initialContainerOffset);
+    if (ti_found && ti_found->hasTypeBranch()) {
+        BranchContainer *pbc = ((BranchItem*)ti_found)->getBranchContainer();
+        tmpParentContainer->setPos(pbc->getChildrenPosHint(tmpParentContainer));
+    } else {
+        // Since moved containers are relative to tmpParentContainer anyway, just move 
+        // tmpParentContainer to pointer position:
+        tmpParentContainer->setPos(p_event - movingObj_initialContainerOffset);
+    }
     
     BranchContainer *bc;
     foreach (TreeItem *ti, model->getSelectedItems())
@@ -1686,8 +1690,6 @@ void MapEditor::moveObject(const QPointF &p_event)
     // Update selection
     QItemSelection sel = model->getSelectionModel()->selection();
     updateSelection(sel, sel);
-
-
 
     scene()->update();
 
@@ -1797,6 +1799,8 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                 model->relinkImage(ii, destinationBranch);
             }
             // Destination available and movingObject
+
+            model->reposition(); // FIXME-2 testing after relinking
         } else {
             // Branches moved, but not relinked
             QPointF t = p - movingObj_initialPointerPos;    // Defined in mousePressEvent

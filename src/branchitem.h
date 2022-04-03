@@ -111,10 +111,10 @@ class BranchItem : public MapItem {
 
     BranchContainer* getBranchContainer();
     void unlinkBranchContainer();
+    Container* getBranchesContainer();
 
   private:
     BranchContainer *branchContainer;
-    Container* getBranchesContainer();
 
   public:
     void updateContainerStackingOrder();

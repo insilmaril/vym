@@ -3462,18 +3462,18 @@ bool VymModel::relinkImage(ImageItem *image, BranchItem *dst)
     return false;
 }
 
-bool VymModel::relinkTo(const QString &dest, int num, QPointF pos)
+bool VymModel::relinkTo(const QString &dstString, int num, QPointF pos)
 {
     TreeItem *selti = getSelectedItem();
     if (!selti)
         return false; // Nothing selected to relink
 
-    TreeItem *dst = findBySelectString(dest);
+    TreeItem *dst = findBySelectString(dstString);
+    if (!dst)
+        return false; // Could not find destination
 
     if (selti->hasTypeBranch()) {
         BranchItem *selbi = (BranchItem *)selti;
-        if (!dst)
-            return false; // Could not find destination
 
         if (dst->getType() == TreeItem::Branch) {
             // Now try to relink to branch
@@ -3485,9 +3485,10 @@ bool VymModel::relinkTo(const QString &dest, int num, QPointF pos)
                 return false; // Relinking failed
         }
         else if (dst->getType() == TreeItem::MapCenter) {
+            qDebug() << "VM::relinkTo mapCenter";
             if (relinkBranch(selbi, (BranchItem *)dst, -1, true)) {
                 // Get coordinates of mainbranch
-                if (selbi->getLMO()) {  // FIXME-0  relinkTo
+                if (selbi->getLMO()) {  // FIXME-0  VM::relinkTo
                     ((BranchObj *)selbi->getLMO())->move(pos);
                     ((BranchObj *)selbi->getLMO())->setRelPos();
                 }
