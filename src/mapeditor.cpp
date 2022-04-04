@@ -1782,10 +1782,6 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                 } else { // Append to dst         
                     model->relinkBranch(bi, destinationBranch,
                                         -1, true); //, movingObj_orgPos);    // FIXME-2 orgPos with containers?
-                    /*
-                    if (destinationBranch->depth() == 0)
-                        selbo->move(savePos);   // FIXME-2 see savePos above - still needed?
-                    */
                 }
             }   // Loop to relink branches
 
