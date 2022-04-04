@@ -1840,31 +1840,23 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
             foreach(QGraphicsItem *g_item, tmpParentContainer->getImagesContainer()->childItems()) {
                 ImageContainer *ic = (ImageContainer*) g_item;
                 ImageItem *ii = ic->getImageItem();
-                qDebug() << " - moved " << ic->info() << "ii=" << ii;
                 BranchItem *pi = ii->parentBranch();
 
                 // Update parent of moved container to original imageContainer 
                 // in parent branch
                 pi->addToImagesContainer(ic);
 
-                // Moved Image, we need to reposition   FIXME-2 really?
-                /*
-                QString pold = qpointFToString(movingObj_orgRelPos);
-                QString pnow = qpointFToString(fio->getRelPos());
-                model->saveState(seli, "moveRel " + pold, seli,
-                                 "moveRel " + pnow,
-                                 QString("Move %1 to relative position %2")
-                                     .arg(model->getObjectName(seli))
+                QString pold = qpointFToString(ic->orgPos());
+                QString pnow = qpointFToString(ic->pos());
+                model->saveState(ii, "setPos " + pold, ii,
+                                 "setPos " + pnow,
+                                 QString("Move %1 to %2")
+                                     .arg(model->getObjectName(ii))
                                      .arg(pnow));
 
-                model->emitDataChanged(
-                    seli->parent()); // Parent of image has changed
-                model->reposition();
-                */
+                model->emitDataChanged(ii->parent()); // Parent of image has changed
             } // Image moved, but not relinked
         }
-
-        // Make the tmpParentContainer invisible again (size == 0) // FIXME-2  not really invisible, better call setVisibility
 
         // Finally resize scene, if needed
         scene()->update();

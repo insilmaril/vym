@@ -1441,7 +1441,6 @@ void VymModel::undo()
     QString errMsg;
     QString undoScript =
         QString("model = vym.currentMap();%1").arg(undoCommand);
-    qDebug() << "VM::undo " << undoScript;
     errMsg = QVariant(execute(undoScript)).toString();
 
     undosAvail--;
