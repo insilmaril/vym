@@ -3316,7 +3316,7 @@ BranchItem *VymModel::addNewBranchBefore()
     return newbi;
 }
 
-bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int pos,   // FIXME-1 relink: remove orgPos, savePos
+bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int pos,   // FIXME-0 relink: take care of positions
                             bool updateSelection, QPointF orgPos)
 {
     if (branch && dst) {

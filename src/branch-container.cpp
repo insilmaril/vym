@@ -145,11 +145,34 @@ QPointF BranchContainer::getPositionHintNewChild(Container *c)
 
 QPointF BranchContainer::getPositionHintRelink(Container *c, const QPointF &p_scene)
 {
-    QRectF r = headingContainer->rect();
-
     QPointF hint;
 
-    if (branchesContainer->hasFloatingLayout()) {
+    QRectF r = headingContainer->rect();
+
+    Container *targetContainer;
+
+    switch (c->type) {
+        case TmpParent:
+            // So far this method is only called when tmpParentContainer is temporarily relinked
+            if (((BranchContainer*)c)->getImagesContainer()->childItems().count() > 0)
+                // If there are images in tPC, just use their layout for now
+                targetContainer = imagesContainer;
+            else
+                targetContainer = branchesContainer;
+            break;
+        case Branch: 
+            targetContainer = branchesContainer;
+            break;
+        case Image:
+            targetContainer = imagesContainer;
+            break;
+        default:
+            qWarning() << "BranchContainer::getPositionHintRelink Unknown container type!";
+            return QPointF();
+    }
+
+
+    if (targetContainer->hasFloatingLayout()) {
         // Floating layout, position on circle around center of myself
         qreal radius = 50;
         QPointF center = mapToScene(r.center());
@@ -170,6 +193,7 @@ QPointF BranchContainer::getPositionHintRelink(Container *c, const QPointF &p_sc
         }
         hint = headingContainer->mapToScene(hint);
     }
+
     return hint;
 }
 
