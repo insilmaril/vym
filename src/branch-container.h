@@ -23,7 +23,11 @@ class BranchContainer : public Container {
     Container* getImagesContainer();
     HeadingContainer* getHeadingContainer();
 
-    QPointF getChildrenPosHint(Container*);   //! Suggestion where new children could be positioned
+    /*! Get suggestion where new child could be positioned in scene coord */
+    QPointF getPositionHintNewChild(Container*);
+
+    /*! Get suggestion where a relinked child could be positioned in scene coord */
+    QPointF getPositionHintRelink(Container*, const QPointF &);
 
     virtual void setLayoutType(const LayoutType &ltype);
 

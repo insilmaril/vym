@@ -864,7 +864,7 @@ void VymModel::loadImage(BranchItem *parentBranch, const QString &fn)
 
                     // Find nice position for new image, take childPos
                     ImageContainer *ic = ii->getImageContainer();
-                    QPointF pos_new = parentBranch->getBranchContainer()->getChildrenPosHint(ic);
+                    QPointF pos_new = parentBranch->getBranchContainer()->getPositionHintNewChild(ic);
                     ic->setPos(pos_new);
 
                     select(parentBranch);

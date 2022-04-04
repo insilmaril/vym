@@ -91,6 +91,7 @@ MapEditor::MapEditor(VymModel *vm)
     tmpParentContainer->getBranchesContainer()->setLayoutType(Container::FloatingBounded);
     tmpParentContainer->setBrush(Qt::NoBrush);
     tmpParentContainer->setPen(QPen(Qt::NoPen));
+    //tmpParentContainer->setPen(QPen(Qt::blue));
     tmpParentContainer->reposition();
 
     // Shortcuts and actions
@@ -1638,7 +1639,7 @@ void MapEditor::moveObject(const QPointF &p_event)
     TreeItem *ti_found = findMapItem(p_event, model->getSelectedItems());
     if (ti_found && ti_found->hasTypeBranch()) {
         BranchContainer *pbc = ((BranchItem*)ti_found)->getBranchContainer();
-        tmpParentContainer->setPos(pbc->getChildrenPosHint(tmpParentContainer));
+        tmpParentContainer->setPos(pbc->getPositionHintRelink(tmpParentContainer, p_event));
     } else {
         // Since moved containers are relative to tmpParentContainer anyway, just move 
         // tmpParentContainer to pointer position:
@@ -1648,26 +1649,22 @@ void MapEditor::moveObject(const QPointF &p_event)
     BranchContainer *bc;
     foreach (TreeItem *ti, model->getSelectedItems())
     {
+        // The item structure in VymModel remaines untouched so far,
+        // only containers will be reparented temporarily!
         if (ti->hasTypeBranch()) {
             bc = ((BranchItem*)ti)->getBranchContainer();
             
-            // The item structure in VymModel remaines untouched so far,
-            // only containers will be reparented temporarily!
-
-
-            // FIXME-2 when moving selection to tmpParentContainer, remove leaf branches first
-            // from selection (no method available yet)!
             if (bc->parentItem() != tmpParentContainer->getBranchesContainer()) {
                 bc->setOrgPos();
                 tmpParentContainer->addToBranchesContainer(bc, true);
-                tmpParentContainer->reposition();   // FIXME-2 needed, if we use a Floating layout?
+                tmpParentContainer->reposition();
             }
         } else if (ti->hasTypeImage()) {
             ImageContainer *ic = ((ImageItem*)ti)->getImageContainer();
             if (ic->parentItem() != tmpParentContainer->getImagesContainer()) {
                 ic->setOrgPos();
                 tmpParentContainer->addToImagesContainer(ic, true);
-                //tmpParentContainer->reposition();   // FIXME-2 needed, if we use a Floating layout?
+                tmpParentContainer->reposition();
             }
         }
         /* FIXME-2 check xlinks later

@@ -4,6 +4,7 @@
 #include "branch-container.h"
 
 #include "branchitem.h"
+#include "geometry.h"
 #include "heading-container.h"
 
 BranchContainer::BranchContainer(QGraphicsScene *scene, QGraphicsItem *parent, BranchItem *bi) : Container(parent)  // FIXME-2 scene and addItem should not be required, only for mapCenters without parent:  setParentItem automatically sets scene!
@@ -108,7 +109,7 @@ HeadingContainer* BranchContainer::getHeadingContainer()
     return headingContainer;
 }
 
-QPointF BranchContainer::getChildrenPosHint(Container *c)
+QPointF BranchContainer::getPositionHintNewChild(Container *c)
 {
     QRectF r = headingContainer->rect();
 
@@ -142,12 +143,42 @@ QPointF BranchContainer::getChildrenPosHint(Container *c)
     }
 }
 
+QPointF BranchContainer::getPositionHintRelink(Container *c, const QPointF &p_scene)
+{
+    QRectF r = headingContainer->rect();
+
+    QPointF hint;
+
+    if (branchesContainer->hasFloatingLayout()) {
+        // Floating layout, position on circle around center of myself
+        qreal radius = 50;
+        QPointF center = mapToScene(r.center());
+        qreal a = getAngle(p_scene - center);
+        hint = center + QPointF (radius * cos(a), - radius * sin(a));
+    } else {
+        // Regular layout
+        switch (orientation) {
+            case LeftOfParent:
+                hint = QPointF(branchesContainer->rect().left() - c->rect().width(), r.center().y());
+                break;
+            case RightOfParent:
+                hint = QPointF(r.right(), r.center().y());
+                break;
+            default:
+                hint = QPointF(r.left(), r.center().y());
+                break;
+        }
+        hint = headingContainer->mapToScene(hint);
+    }
+    return hint;
+}
+
 void BranchContainer::setLayoutType(const LayoutType &ltype)
 {
     Container::setLayoutType(ltype);
 
-    if (type != Branch) 
-        qWarning() << "BranchContainer::setLayoutType (...) called for !Branch";
+    if (type != Branch && type != TmpParent) 
+        qWarning() << "BranchContainer::setLayoutType (...) called for non-branch: " << info();
 }
     
 QRectF BranchContainer::getHeadingRect()
@@ -170,10 +201,15 @@ void BranchContainer::updateVisuals()
 void BranchContainer::reposition()
 {
     // tmpParentContainer has no branchItem, return for now  // FIXME-2 review with xlinks later!
-    if (!branchItem) return;
+    //if (!branchItem) return;
 
     // Abreviation for depth
-    uint depth = branchItem->depth();
+    uint depth;
+    if (branchItem)
+        depth = branchItem->depth();
+    else
+        // tmpParentContainer has no branchItem
+        depth = 0;  
 
     // Set orientation based on depth and if we are floating around
     if (depth == 0)
@@ -204,7 +240,7 @@ void BranchContainer::reposition()
         branchesContainer->setLayoutType(FloatingBounded);
 
         //FIXME-2 add "flags" and origin for testing (but only once!)
-        if (innerContainer->childItems().count() <= 3) {
+        if (type != TmpParent && innerContainer->childItems().count() <= 3) {
             HeadingContainer *fc = new HeadingContainer();
             fc->setHeading("Flags");
             innerContainer->addContainer(fc);
@@ -234,7 +270,7 @@ void BranchContainer::reposition()
         }
         branchesContainer->orientation = orientation;
 
-        if (branchItem->getHeadingPlain().startsWith("float")) {
+        if (branchItem && branchItem->getHeadingPlain().startsWith("float")) {
             // Special layout: FloatingBounded children 
             orientation = UndefinedOrientation;
             QColor col (Qt::red);
@@ -242,7 +278,7 @@ void BranchContainer::reposition()
             branchesContainer->setBrush(col);
             branchesContainer->setLayoutType(FloatingBounded);
             innerContainer->setBrush(Qt::cyan);
-        } else if (branchItem->getHeadingPlain().startsWith("free")) {
+        } else if (branchItem && branchItem->getHeadingPlain().startsWith("free")) {
             // Special layout: FloatingBounded children 
             orientation = UndefinedOrientation;
             QColor col (Qt::red);

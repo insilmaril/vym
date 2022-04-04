@@ -543,7 +543,7 @@ BranchContainer *BranchItem::createBranchContainer(QGraphicsScene *scene)
         newbo->setVisibility(false);
     */
     if (depth() == 1) 
-        branchContainer->setPos(parentBranch()->getBranchContainer()->getChildrenPosHint(branchContainer));
+        branchContainer->setPos(parentBranch()->getBranchContainer()->getPositionHintNewChild(branchContainer));
 
     // FIXME-2 for new branch set default font, color, link, frame, children styles
     // newbo->setDefAttr(BranchObj::NewBranch);
