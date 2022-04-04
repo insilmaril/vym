@@ -5263,6 +5263,7 @@ void VymModel::setPos(const QPointF &pos_new, TreeItem *selti)
             c->setPos(pos_new);
         }
     }
+    reposition();
     
     emitSelectionChanged();
 }

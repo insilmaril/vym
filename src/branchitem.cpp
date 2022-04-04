@@ -601,6 +601,8 @@ void BranchItem::updateContainerStackingOrder()
     if (n < parentBranch()->branchCount() - 1)
         branchContainer->stackBefore( (parentBranch()->getBranchNum(n + 1))->getContainer() );
 
+    branchContainer->setPos(branchContainer->sceneTransform().inverted().map(sp));
+
     return;
 }
 

@@ -472,11 +472,12 @@ class VymModel : public TreeModel {
     BranchItem *addNewBranch(BranchItem *bi = NULL, int pos = -2);
     BranchItem *
     addNewBranchBefore(); //!< Insert branch between selection and its parent
+
     /*! \brief Relink a branch to a new destination dst
-    Relinks branch to dst at branch position pos. There is no saveState
-    here, as for example moveUp or moving in MapEditor have
-    different needs to call saveState
-    Returns true if relinking was successful.
+        Relinks branch to dst at branch position pos. There is no saveState
+        here, as for example moveUp or moving in MapEditor have
+        different needs to call saveState
+        Returns true if relinking was successful.
     */
     bool relinkBranch(BranchItem *branch, BranchItem *dst, int pos = -1,
                       bool updateSelection = false, QPointF orgPos = QPointF());
