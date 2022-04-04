@@ -153,10 +153,10 @@ FlagObj *FlagRowObj::findFlagObjByUid(const QUuid &uid)
 
 QUuid FlagRowObj::findFlagUidByPos(const QPointF &p)
 {
-    if (!isInBox(p, clickPoly.boundingRect()))
+    if (!clickPoly.boundingRect().contains(p))
         return QUuid();
     for (int i = 0; i < flagobjs.size(); ++i)
-        if (isInBox(p, flagobjs.at(i)->getClickPoly().boundingRect()))
+        if (flagobjs.at(i)->getClickPoly().boundingRect().contains(p))
             return flagobjs.at(i)->getUuid();
     return QUuid();
 }

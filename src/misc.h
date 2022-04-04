@@ -23,7 +23,6 @@ extern ostream &operator<<(ostream &stream, QPointF const &p);
 extern ostream &operator<<(ostream &stream, QRectF const &r);
 extern ostream &operator<<(ostream &stream, Vector const &p);
 
-qreal getAngle(const QPointF &);
 qreal min(qreal, qreal);
 qreal max(qreal, qreal);
 qreal roof(qreal x);
