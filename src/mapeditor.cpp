@@ -1615,7 +1615,7 @@ void MapEditor::mouseMoveEvent(QMouseEvent *e)
         else if (e->x() <= width() && e->x() > width() - margin)
             vPan.setX(e->x() - width() + margin);
 
-        moveObject(p_event);
+        moveObject(e, p_event);
     } // selection && moving_obj
 
     // Draw a link from one branch to another
@@ -1625,7 +1625,7 @@ void MapEditor::mouseMoveEvent(QMouseEvent *e)
     }
 }
 
-void MapEditor::moveObject(const QPointF &p_event)
+void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
 {
     // If necessary pan the view using animation
     if (!panningTimer->isActive())
@@ -1639,7 +1639,15 @@ void MapEditor::moveObject(const QPointF &p_event)
     TreeItem *ti_found = findMapItem(p_event, model->getSelectedItems());
     if (ti_found && ti_found->hasTypeBranch()) {
         BranchContainer *pbc = ((BranchItem*)ti_found)->getBranchContainer();
-        tmpParentContainer->setPos(pbc->getPositionHintRelink(tmpParentContainer, p_event));
+
+        int d_pos;
+        if (e->modifiers() & Qt::ShiftModifier)
+            d_pos = 1;
+        else if (e->modifiers() & Qt::ControlModifier)
+            d_pos = -1;
+        else
+            d_pos = 0;
+        tmpParentContainer->setPos(pbc->getPositionHintRelink(tmpParentContainer, d_pos, p_event));
     } else {
         // Since moved containers are relative to tmpParentContainer anyway, just move 
         // tmpParentContainer to pointer position:

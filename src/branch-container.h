@@ -27,7 +27,7 @@ class BranchContainer : public Container {
     QPointF getPositionHintNewChild(Container*);
 
     /*! Get suggestion where a relinked child could be positioned in scene coord */
-    QPointF getPositionHintRelink(Container*, const QPointF &);
+    QPointF getPositionHintRelink(Container*, int d_pos = 0, const QPointF & p_scene = QPointF());
 
     virtual void setLayoutType(const LayoutType &ltype);
 
@@ -40,6 +40,7 @@ class BranchContainer : public Container {
     void reposition();
 
   protected:
+    static qreal linkWidth;
     BranchItem *branchItem; //! Crossreference to "parent" BranchItem 
     HeadingContainer *headingContainer;
     Container *branchesContainer;

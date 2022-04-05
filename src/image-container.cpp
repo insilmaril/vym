@@ -12,7 +12,7 @@ extern ulong imageLastID;
 /////////////////////////////////////////////////////////////////
 // ImageContainer
 /////////////////////////////////////////////////////////////////
-ImageContainer::ImageContainer(QGraphicsScene *scene)
+ImageContainer::ImageContainer(QGraphicsScene *scene)   // FIXME-2 scene should not be required here (set via setParentItem)
 {
     //qDebug() << "Const ImageContainer ()  this=" << this << "items=" << scene->items().count();
     //scene->addItem(this);

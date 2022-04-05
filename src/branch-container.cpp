@@ -7,6 +7,8 @@
 #include "geometry.h"
 #include "heading-container.h"
 
+qreal BranchContainer::linkWidth = 20;
+
 BranchContainer::BranchContainer(QGraphicsScene *scene, QGraphicsItem *parent, BranchItem *bi) : Container(parent)  // FIXME-2 scene and addItem should not be required, only for mapCenters without parent:  setParentItem automatically sets scene!
 {
     //qDebug() << "* Const BranchContainer begin this = " << this << "  branchitem = " << bi;
@@ -143,7 +145,7 @@ QPointF BranchContainer::getPositionHintNewChild(Container *c)
     }
 }
 
-QPointF BranchContainer::getPositionHintRelink(Container *c, const QPointF &p_scene)
+QPointF BranchContainer::getPositionHintRelink(Container *c, int d_pos, const QPointF &p_scene)
 {
     QPointF hint;
 
@@ -171,24 +173,27 @@ QPointF BranchContainer::getPositionHintRelink(Container *c, const QPointF &p_sc
             return QPointF();
     }
 
-
     if (targetContainer->hasFloatingLayout()) {
         // Floating layout, position on circle around center of myself
-        qreal radius = 50;
+        qreal radius = Geometry::distance(r.center(), r.topLeft()) + 20;
+
         QPointF center = mapToScene(r.center());
         qreal a = getAngle(p_scene - center);
         hint = center + QPointF (radius * cos(a), - radius * sin(a));
     } else {
         // Regular layout
+        qreal y;
+        if (d_pos == 0)
+            y =branchesContainer->rect().bottom();
+        else
+            y =branchesContainer->rect().bottom() - d_pos * c->rect().height();
+
         switch (orientation) {
             case LeftOfParent:
-                hint = QPointF(branchesContainer->rect().left() - c->rect().width(), r.center().y());
-                break;
-            case RightOfParent:
-                hint = QPointF(r.right(), r.center().y());
+                hint = QPointF(-linkWidth + branchesContainer->rect().left() - c->rect().width(), y);
                 break;
             default:
-                hint = QPointF(r.left(), r.center().y());
+                hint = QPointF( linkWidth + r.right(), y);
                 break;
         }
         hint = headingContainer->mapToScene(hint);
@@ -199,10 +204,9 @@ QPointF BranchContainer::getPositionHintRelink(Container *c, const QPointF &p_sc
 
 void BranchContainer::setLayoutType(const LayoutType &ltype)
 {
-    Container::setLayoutType(ltype);
-
     if (type != Branch && type != TmpParent) 
         qWarning() << "BranchContainer::setLayoutType (...) called for non-branch: " << info();
+    Container::setLayoutType(ltype);
 }
     
 QRectF BranchContainer::getHeadingRect()
@@ -224,9 +228,6 @@ void BranchContainer::updateVisuals()
 
 void BranchContainer::reposition()
 {
-    // tmpParentContainer has no branchItem, return for now  // FIXME-2 review with xlinks later!
-    //if (!branchItem) return;
-
     // Abreviation for depth
     uint depth;
     if (branchItem)
