@@ -7,6 +7,12 @@
 
 using namespace std;
 
+qreal Geometry::distance(const QPointF &p, const QPointF &q)
+{
+    return sqrt( (p.x() - q.x()) * (p.x() - q.x())
+               + (p.y() - q.y()) * (p.y() - q.y()) );
+}
+
 qreal getAngle(const QPointF &p)
 {
     // Calculate angle between  vector from origin to p and  x-axis
@@ -27,11 +33,6 @@ qreal getAngle(const QPointF &p)
         else
             return (qreal)(M_PI - atan((qreal)(p.y()) / (qreal)(p.x())));
     }
-}
-
-qreal Geometry::distance(const QPointF &p, const QPointF &q)
-{
-    return sqrt(p.x() * q.x() + p.y() * q.y());
 }
 
 Vector::Vector() : QPointF() {}
