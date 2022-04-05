@@ -4,6 +4,7 @@
 #include <QPolygonF>
 
 namespace Geometry {
+
 qreal distance(const QPointF &p, const QPointF &q);
 };
 
