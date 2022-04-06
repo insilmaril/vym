@@ -59,6 +59,23 @@ class MapEditor : public QGraphicsView {
     QPointF getScrollBarPos();
     void animateScrollBars();
 
+    // Animation of containers
+  private:
+    QTimer *animationTimer;
+    bool animationUse;
+    uint animationTicks;
+    uint animationInterval;
+    int timerId;                 // animation timer
+    QList<Container*> animatedContainers;
+
+  private slots:
+    void animate(); //!< Called by timer to animate stuff
+  public:
+    void startAnimation(Container *c, const QPointF &v);
+    void startAnimation(Container *c, const QPointF &start, const QPointF &dest);
+    void stopAnimation(Container *c);
+    void stopAllAnimation();
+
     // Animation of zoom
     Q_PROPERTY(qreal zoomFactor READ getZoomFactor WRITE setZoomFactor)
 

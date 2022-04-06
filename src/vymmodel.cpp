@@ -114,7 +114,6 @@ VymModel::~VymModel()
     repositionBlocked = true;
     autosaveTimer->stop();
     fileChangedTimer->stop();
-    stopAllAnimation();
 
     // qApp->processEvents();	// Update view (scene()->update() is not enough)
     // qDebug() << "Destr VymModel end   this="<<this;
@@ -180,16 +179,6 @@ void VymModel::init()
     taskAlarmTimer = new QTimer(this);
     connect(taskAlarmTimer, SIGNAL(timeout()), this, SLOT(updateTasksAlarm()));
     taskAlarmTimer->start(3000);
-
-    // animations   // FIXME-4 switch to new animation system
-    animationUse =
-        settings.value("/animation/use", false)
-            .toBool(); // FIXME-4 add options to control _what_ is animated
-    animationTicks = settings.value("/animation/ticks", 20).toInt();
-    animationInterval = settings.value("/animation/interval", 5).toInt();
-    animObjList.clear();
-    animationTimer = new QTimer(this);
-    connect(animationTimer, SIGNAL(timeout()), this, SLOT(animate()));
 
     // View - map
     defaultFont.setPointSizeF(16);
@@ -5266,78 +5255,6 @@ void VymModel::setPos(const QPointF &pos_new, TreeItem *selti)
     reposition();
     
     emitSelectionChanged();
-}
-
-void VymModel::animate()
-{
-    animationTimer->stop();
-    BranchObj *bo;
-    int i = 0;
-    while (i < animObjList.size()) {
-        bo = (BranchObj *)animObjList.at(i);
-        if (!bo->animate()) {
-            if (i >= 0) {
-                animObjList.removeAt(i);
-                i--;
-            }
-        }
-        bo->reposition();
-        i++;
-    }
-    emitSelectionChanged();
-
-    if (!animObjList.isEmpty())
-        animationTimer->start(animationInterval);
-}
-
-void VymModel::startAnimation(BranchObj *bo, const QPointF &v)  // FIXME-2 use containers and move animations to MapEditor, this is visual stuff
-{
-    if (!bo)
-        return;
-
-    if (bo->getUseRelPos())
-        startAnimation(bo, bo->getRelPos(), bo->getRelPos() + v);
-    else
-        startAnimation(bo, bo->getAbsPos(), bo->getAbsPos() + v);
-}
-
-void VymModel::startAnimation(BranchObj *bo, const QPointF &start,
-                              const QPointF &dest)
-{
-    if (start == dest)
-        return;
-    if (bo && bo->getTreeItem()->depth() >= 0) {
-        AnimPoint ap;
-        ap.setStart(start);
-        ap.setDest(dest);
-        ap.setTicks(animationTicks);
-        ap.setAnimated(true);
-        bo->setAnimation(ap);
-        if (!animObjList.contains(bo))
-            animObjList.append(bo);
-        animationTimer->setSingleShot(true);
-        animationTimer->start(animationInterval);
-    }
-}
-
-void VymModel::stopAnimation(MapObj *mo)
-{
-    int i = animObjList.indexOf(mo);
-    if (i >= 0)
-        animObjList.removeAt(i);
-}
-
-void VymModel::stopAllAnimation()
-{
-    BranchObj *bo;
-    int i = 0;
-    while (i < animObjList.size()) {
-        bo = (BranchObj *)animObjList.at(i);
-        bo->stopAnimation();
-        bo->requestReposition();
-        i++;
-    }
-    reposition();
 }
 
 void VymModel::sendSelection()

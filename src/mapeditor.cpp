@@ -180,6 +180,15 @@ MapEditor::MapEditor(VymModel *vm)
     setState(Neutral);
 
     winter = NULL;
+
+    // animations
+    animationUse = settings.value("/animation/use", false) .toBool();
+    animationTicks = settings.value("/animation/ticks", 20).toInt();
+    animationInterval = settings.value("/animation/interval", 5).toInt();
+    animatedContainers.clear();
+    animationTimer = new QTimer(this);
+    connect(animationTimer, SIGNAL(timeout()), this, SLOT(animate()));
+
 }
 
 MapEditor::~MapEditor()
@@ -190,6 +199,8 @@ MapEditor::~MapEditor()
         delete winter;
         winter = NULL;
     }
+
+    stopAllAnimation();
 }
 
 VymModel *MapEditor::getModel() { return model; }
@@ -324,6 +335,77 @@ void MapEditor::animateScrollBars()
     }
     else
         setScrollBarPos(scrollBarPosTarget);
+}
+
+void MapEditor::animate()
+{
+    animationTimer->stop();
+    Container  *c;
+    int i = 0;
+    while (i < animatedContainers.size()) {
+        /* FIXME-0 Animation
+        bo = (BranchObj *)animatedContainers.at(i);
+        if (!bo->animate()) {
+            if (i >= 0) {
+                animatedContainers.removeAt(i);
+                i--;
+            }
+        }
+        bo->reposition();
+        */
+        i++;
+    }
+    // FIXME-2 emitSelectionChanged();
+
+    if (!animatedContainers.isEmpty())
+        animationTimer->start(animationInterval);
+}
+
+void MapEditor::startAnimation(Container *c, const QPointF &v)  // FIXME-2 use containers 
+{
+    if (!c) return;
+
+    startAnimation(c, c->pos(), c->pos() + v);
+}
+
+#include "animpoint.h"  // FIXME-2 review
+void MapEditor::startAnimation(Container *c, const QPointF &start,
+                              const QPointF &dest)
+{
+    if (start == dest) return;
+
+    if (c) {
+        AnimPoint ap;
+        ap.setStart(start);
+        ap.setDest(dest);
+        ap.setTicks(animationTicks);
+        ap.setAnimated(true);
+        // FIXME-0 bo->setAnimation(ap);
+        if (!animatedContainers.contains(c))
+            animatedContainers.append(c);
+        animationTimer->setSingleShot(true);
+        animationTimer->start(animationInterval);
+    }
+}
+
+void MapEditor::stopAnimation(Container *c)
+{
+    int i = animatedContainers.indexOf(c);
+    if (i >= 0)
+        animatedContainers.removeAt(i);
+}
+
+void MapEditor::stopAllAnimation()
+{
+    Container *c;
+    int i = 0;
+    while (i < animatedContainers.size()) {
+        c = animatedContainers.at(i);
+ // FIXME-0       c->stopAnimation();
+ // FIXME-0       c->requestReposition();
+        i++;
+    }
+// FIXME- 2 reposition();
 }
 
 void MapEditor::setZoomFactorTarget(const qreal &zft)
@@ -592,8 +674,9 @@ void MapEditor::setSmoothPixmap(bool b)
     setRenderHint(QPainter::SmoothPixmapTransform, b);
 }
 
-void MapEditor::autoLayout()
+void MapEditor::autoLayout()    // FIXME-2 not ported yet to containers
 {
+    /*
     // Create list with all bounding polygons
     QList<LinkableMapObj *> mapobjects;
     QList<ConvexPolygon> polys;
@@ -694,13 +777,13 @@ void MapEditor::autoLayout()
                              << headings[i];
                 // mapobjects[i]->moveBy(v.x(),v.y() );
                 // mapobjects[i]->setRelPos();
-                model->startAnimation((BranchObj *)mapobjects[i], v);
+                startAnimation((BranchObj *)mapobjects[i], v);
                 if (debug)
                     qDebug() << i << " Weight: " << polys.at(i).weight() << " "
                              << v << " " << headings.at(i);
             }
         }
-        /*
+        / *
         model->reposition();
         orientationChanged=false;
         for (int i=0;i<polys.size();i++)
@@ -709,7 +792,7 @@ void MapEditor::autoLayout()
             orientationChanged=true;
             break;
             }
-        */
+        * /
 
         break;
 
@@ -717,6 +800,7 @@ void MapEditor::autoLayout()
     } // loop if orientation has changed
 
     model->emitSelectionChanged();
+    */
 }
 
 TreeItem *MapEditor::findMapItem(QPointF p, const QList <TreeItem*> &excludedItems) 
@@ -767,7 +851,7 @@ void MapEditor::testFunction1() {}
 
 void MapEditor::testFunction2() { autoLayout(); }
 
-void MapEditor::toggleWinter()
+void MapEditor::toggleWinter() // FIXME-2 Not working yet with containers (also shaking snow from branch!)
 {
     if (winter) {
         delete winter;
@@ -1829,6 +1913,23 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                         model->setPos(bc->orgPos() + t, bi);
                     }
 
+/////////////////////////////////////////// FIXME-0 cleanup old animation parts
+/* copied from develop
+                    // Draw the original link, before selection was moved around
+                    if (settings.value("/animation/use", true).toBool() &&
+                        seli->depth() > 1
+                        //		    && distance
+                        //(lmosel->getRelPos(),movingObj_orgRelPos)<3
+                    ) {
+                        lmosel->setRelPos(); // calc relPos first for starting
+                                             // point
+
+                        model->startAnimation((BranchObj *)lmosel,
+                                              lmosel->getRelPos(),
+                                              movingObj_orgRelPos);
+                    }
+*/
+///////////////////////////////////////////
                 } // children of tmpParentContainer
                 model->saveStateEndBlock();
                 

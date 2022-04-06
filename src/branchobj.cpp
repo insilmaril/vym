@@ -39,7 +39,7 @@ BranchObj::~BranchObj()
     if (anim.isAnimated()) {
         anim.setAnimated(false);
         VymModel *model = treeItem->getModel();
-        model->stopAnimation(this);
+        // FIXME-2 moved to MapEditor! model->stopAnimation(this);
     }
 }
 

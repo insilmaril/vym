@@ -704,26 +704,6 @@ class VymModel : public TreeModel {
     void setPos(const QPointF &p, TreeItem *ti = nullptr);
 
     ////////////////////////////////////////////
-    // Animation  **experimental**
-    ////////////////////////////////////////////
-  private:
-    QTimer *animationTimer;
-    bool animationUse;
-    uint animationTicks;
-    uint animationInterval;
-    int timerId;                 // animation timer
-    QList<MapObj *> animObjList; // list with animated objects
-
-  private slots:
-    void animate(); //!< Called by timer to animate stuff
-  public:
-    void startAnimation(BranchObj *bo, const QPointF &v);
-    void startAnimation(BranchObj *bo, const QPointF &start,
-                        const QPointF &dest);
-    void stopAnimation(MapObj *mo);
-    void stopAllAnimation();
-
-    ////////////////////////////////////////////
     // Network related
     ////////////////////////////////////////////
   public:
