@@ -1769,8 +1769,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
         if (destinationBranch && objectMoved && state() != MovingObjectWithoutLinking) {
             
             // Loop over branches
-            foreach(QGraphicsItem *g_item, tmpParentContainer->getBranchesContainer()->childItems()) {
-                BranchContainer *bc = (BranchContainer*)g_item;
+            foreach(BranchContainer *bc, tmpParentContainer->childBranches()) {
                 BranchItem *bi = bc->getBranchItem();
                 BranchItem *pi = bi->parentBranch();
 
@@ -1794,8 +1793,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
             }   // Loop to relink branches
 
             // Loop over images
-            foreach(QGraphicsItem *g_item, tmpParentContainer->getImagesContainer()->childItems()) {
-                ImageContainer *ic = (ImageContainer*)g_item;
+            foreach(ImageContainer *ic, tmpParentContainer->childImages()) {
                 ImageItem *ii = ic->getImageItem();
                 model->relinkImage(ii, destinationBranch);
             }
@@ -1806,14 +1804,14 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
             // Branches moved, but not relinked
             QPointF t = p - movingObj_initialPointerPos;    // Defined in mousePressEvent
 
-            if (!tmpParentContainer->getBranchesContainer()->childItems().isEmpty()) {
+            QList <BranchContainer*> childBranches = tmpParentContainer->childBranches();
+            if (!childBranches.isEmpty()) {
                 model->saveStateBeginBlock(
-                    QString("Move %1 items").arg(tmpParentContainer->getBranchesContainer()->childItems().count())
+                    QString("Move %1 items").arg(childBranches.count())
                 );
                 // Empty the tmpParentContainer, which is used for moving
                 // Updating the stacking order also resets the original parents
-                foreach(QGraphicsItem *g_item, tmpParentContainer->getBranchesContainer()->childItems()) {
-                    BranchContainer *bc = (BranchContainer*) g_item;
+                foreach(BranchContainer *bc, childBranches) {
                     BranchItem *bi = bc->getBranchItem();
                     BranchItem *pi = bi->parentBranch();
 
@@ -1841,8 +1839,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
 
         // Let's see if we moved images with tmpParentContainer
         if (objectMoved) {
-            foreach(QGraphicsItem *g_item, tmpParentContainer->getImagesContainer()->childItems()) {
-                ImageContainer *ic = (ImageContainer*) g_item;
+            foreach(ImageContainer *ic, tmpParentContainer->childImages()) {
                 ImageItem *ii = ic->getImageItem();
                 BranchItem *pi = ii->parentBranch();
 

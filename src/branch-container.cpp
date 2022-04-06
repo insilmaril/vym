@@ -111,6 +111,30 @@ HeadingContainer* BranchContainer::getHeadingContainer()
     return headingContainer;
 }
 
+QList <BranchContainer*> BranchContainer::childBranches()
+{
+    QList <BranchContainer*> list;
+
+    if (!branchesContainer) return list;
+
+    foreach (QGraphicsItem *g_item, branchesContainer->childItems())
+        list << (BranchContainer*)g_item;
+
+    return list;
+}
+
+QList <ImageContainer*> BranchContainer::childImages()
+{
+    QList <ImageContainer*> list;
+
+    if (!imagesContainer) return list;
+
+    foreach (QGraphicsItem *g_item, imagesContainer->childItems())
+        list << (ImageContainer*)g_item;
+
+    return list;
+}
+
 QPointF BranchContainer::getPositionHintNewChild(Container *c)
 {
     QRectF r = headingContainer->rect();
@@ -156,7 +180,7 @@ QPointF BranchContainer::getPositionHintRelink(Container *c, int d_pos, const QP
     switch (c->type) {
         case TmpParent:
             // So far this method is only called when tmpParentContainer is temporarily relinked
-            if (((BranchContainer*)c)->getImagesContainer()->childItems().count() > 0)
+            if (childImages().count() > 0)
                 // If there are images in tPC, just use their layout for now
                 targetContainer = imagesContainer;
             else

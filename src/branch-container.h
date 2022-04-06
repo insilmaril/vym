@@ -23,6 +23,10 @@ class BranchContainer : public Container {
     Container* getImagesContainer();
     HeadingContainer* getHeadingContainer();
 
+    // Convenience functions to access children
+    QList <BranchContainer*> childBranches();
+    QList <ImageContainer*> childImages();
+
     /*! Get suggestion where new child could be positioned in scene coord */
     QPointF getPositionHintNewChild(Container*);
 
