@@ -819,9 +819,7 @@ bool VymModelWrapper::selectToggle(const QString &selectString)
 
 void VymModelWrapper::setFlagByName(const QString &s)
 {
-    BranchItem *selbi = getSelectedBranch();
-    if (selbi)
-        selbi->activateStandardFlagByName(s);
+    model->setFlagByName(s);
 }
 
 void VymModelWrapper::setHeadingConfluencePageName()
@@ -1052,7 +1050,5 @@ void VymModelWrapper::unselectAll() { model->unselectAll(); }
 
 void VymModelWrapper::unsetFlagByName(const QString &s)
 {
-    BranchItem *selbi = getSelectedBranch();
-    if (selbi)
-        selbi->deactivateStandardFlagByName(s);
+    model->unsetFlagByName(s);
 }

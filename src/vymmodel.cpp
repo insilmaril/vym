@@ -3893,6 +3893,61 @@ ItemList VymModel::getTargets()
     return targets;
 }
 
+Flag* VymModel::findFlagByName(const QString &name)
+{
+    BranchItem *bi = getSelectedBranch();
+
+    if (bi) {
+        Flag *f = standardFlagsMaster->findFlagByName(name);
+        if (!f) {
+            f = userFlagsMaster->findFlagByName(name);
+            if (!f) {
+                qWarning() << "VymModel::findFlagByName failed for flag named "
+                           << name;
+                return nullptr;
+            }
+        }
+        return f;
+    }
+
+    // Nothing selected, so no flag found
+    return nullptr;
+}
+
+void VymModel::setFlagByName(const QString &name, bool useGroups)
+{
+    BranchItem *bi = getSelectedBranch();
+
+    if (bi && !bi->hasActiveFlag(name)) {
+        toggleFlagByName(name, useGroups);
+    }
+}
+
+void VymModel::unsetFlagByName(const QString &name)
+{
+    BranchItem *bi = getSelectedBranch();
+
+    if (bi && bi->hasActiveFlag(name)) {
+        toggleFlagByName(name);
+    }
+}
+
+void VymModel::toggleFlagByName(const QString &name, bool useGroups)
+{
+    BranchItem *bi = getSelectedBranch();
+
+    if (bi) {
+        Flag *f = findFlagByName(name);
+
+        if (!f) {
+            qWarning() << "VymModel::toggleFlagByName could not find flag named " << name;
+            return;
+        }
+
+        toggleFlagByUid(f->getUuid(), useGroups);
+    }
+}
+
 void VymModel::toggleFlagByUid(
     const QUuid &uid,
     bool useGroups) 
@@ -3930,43 +3985,6 @@ void VymModel::toggleFlagByUid(
     }
 }
 
-void VymModel::toggleFlagByName(const QString &name, bool useGroups)
-{
-    // Toggling by name only used from vymmodelwrapper for scripting  // FIXME-5
-    // maybe rework?
-    BranchItem *bi = getSelectedBranch();
-
-    if (bi) {
-        Flag *f = standardFlagsMaster->findFlagByName(name);
-        if (!f) {
-            f = userFlagsMaster->findFlagByName(name);
-            if (!f) {
-                qWarning() << "VymModel::toggleFlag failed for flag named "
-                           << name;
-                return;
-            }
-        }
-
-        QUuid uid = f->getUuid();
-
-        f = bi->toggleFlagByUid(uid, useGroups);
-
-        if (f) {
-            QString u = "toggleFlag";
-            QString name = f->getName();
-            saveState(bi, QString("%1 (\"%2\")").arg(u).arg(name), bi,
-                      QString("%1 (\"%2\")").arg(u).arg(name),
-                      QString("Toggling flag \"%1\" of %2")
-                          .arg(name)
-                          .arg(getObjectName(bi)));
-            emitDataChanged(bi);
-            reposition();
-        }
-        else
-            qWarning() << "VymModel::toggleFlag failed for flag named " << name
-                       << " with uid " << uid;
-    }
-}
 
 void VymModel::clearFlags()
 {

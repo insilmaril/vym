@@ -123,7 +123,8 @@ bool FlagRow::activate(const QString &name)
             action->setVisible(true);
     }
 
-    activeUids.append(flag->getUuid());
+    QUuid uid = flag->getUuid();
+    if (!activeUids.contains(uid)) activeUids.append(uid);
     return true;
 }
 
@@ -151,7 +152,6 @@ bool FlagRow::activate(const QUuid &uid)
     }
 
     activeUids.append(uid);
-
     return true;
 }
 
