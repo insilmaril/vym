@@ -1,0 +1,40 @@
+[Desktop Entry]
+Type=Application
+Exec=vym
+Name=VYM - View Your Mind
+Name[de]=VYM - View Your Mind
+Name[zh_TW]=心智檢視
+GenericName=Planning and Brainstorming Tool
+Icon=vym
+MimeType=application/x-vym;
+Comment=Planning and brainstorming
+Comment[af]=View Your Mind (Besigitig jou verstand)
+Comment[sq]=View Your Mind (Shfaq Mendjen Tënde)
+Comment[ast]=View Your Mind (Ve la to miente)
+Comment[bn]=View Your Mind (আপনার উদ্দেশ্য প্রদর্শন করুন)
+Comment[bs]=View Your Mind (Pogledajte svoje misli)
+Comment[ca@valencia]=View Your Mind (Visualitzeu la vostra ment)
+Comment[ca]=View Your Mind (Visualitzeu la vostra ment)
+Comment[zh_CN]=View Your Mind (浏览您的思维)
+Comment[da]=View Your Mind (Vis dit sind)
+Comment[et]=View Your Mind (Vaata oma mõtteid)
+Comment[fi]=View Your Mind (Näytä mielesi)
+Comment[fr]=View Your Mind (Cartographier vos idées)
+Comment[gl]=View Your Mind (Vexa a súa mente)
+Comment[ky]=View Your Mind (Акылыңды иштетип көр)
+Comment[oc]=View Your Mind (Cartografiar vòstras idèas)
+Comment[pl]=View Your Mind (Uzewnętrznia myśli)
+Comment[ro]=View Your Mind (Hărți mentale)
+Comment[ru]=View Your Mind (Просмотр ваших мыслей)
+Comment[sl]=View Your Mind (Oglejte si svoje misli)
+Comment[es]=View Your Mind (Vea su mente)
+Comment[vi]=View Your Mind (Xem tư duy của bạn)
+Comment[zh_TW]=VYM 腦力激盪工具
+
+X-AppInstall-Package=vym
+X-AppInstall-Popcon=430
+X-AppInstall-Section=universe
+X-Ubuntu-Gettext-Domain=app-install-data
+Categories=Qt;KDE;Office;
+
+
