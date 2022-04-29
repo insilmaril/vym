@@ -3962,7 +3962,7 @@ void VymModel::toggleFlagByUid(
             ti = findUuid(QUuid(id));
             if (ti && ti->isBranchLikeType()) {
                     bi = (BranchItem*)ti;
-                Flag *f = bi->toggleFlagByUid(uid, useGroups);
+                f = bi->toggleFlagByUid(uid, useGroups);
 
                 if (f) {
                     QString u = "toggleFlagByUid";
