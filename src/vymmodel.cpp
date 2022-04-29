@@ -677,9 +677,6 @@ File::ErrorCode VymModel::loadMap(QString fname, const LoadMode &lmode,
         mapEditor->setAngleTarget(rotationAngle);
     }
 
-    if (vymView)
-        vymView->readSettings();
-
     qApp->processEvents(); // Update view (scene()->update() is not enough)
     return err;
 }
