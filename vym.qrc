@@ -77,7 +77,6 @@
     <file alias="freemind/xmag.png">flags/freemind/xmag.png</file>
 
     <file alias="cursorcolorpicker.png">icons/cursors/cursorcolorpicker.png</file>
-    <file alias="cursorhandopen.png">icons/cursors/cursorhandopen.png</file>
     <file alias="cursorxlink.png">icons/cursors/cursorxlink.png</file>
 
     <file alias="configure-plus.svg">icons/configure-plus.svg</file>
