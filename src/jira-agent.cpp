@@ -158,7 +158,7 @@ void JiraAgent::continueJob()
                     QJsonDocument jsdoc = QJsonDocument (jsobj);
 
                     // Insert references to original branch and model
-                    // DIXME-0 not needed jsobj["vymModelID"] = QString::number(modelID);
+                    // FIXME-2 not needed jsobj["vymModelID"] = QString::number(modelID);
                     jsobj["vymBranchID"] = QJsonValue(branchID);
                     
                     emit (jiraTicketReady(QJsonObject(jsobj)));

@@ -6,8 +6,6 @@
 #include <QNetworkAccessManager>
 #include <QTimer>
 
-#include "vymprocess.h"
-
 class BranchItem;
 class VymModel;
 
