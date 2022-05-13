@@ -19,7 +19,6 @@
 extern Main *mainWindow;
 extern QString clipboardDir;
 extern QString clipboardFile;
-extern uint clipboardItemCount;
 extern bool debug;
 extern QPrinter *printer;
 

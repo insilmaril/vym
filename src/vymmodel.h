@@ -480,7 +480,7 @@ class VymModel : public TreeModel {
   public:
     void cleanupItems();    //!< Delete orphaned Items
     void deleteLater(uint); //!< Delete later with new beginRemoveRow
-    void deleteSelection(bool copyToClipboard = false); //!< Delete selection
+    void deleteSelection(); //!< Delete selection
     void deleteKeepChildren(
         bool saveStateFlag = true); //!< remove branch, but keep children
   public:

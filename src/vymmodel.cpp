@@ -78,7 +78,6 @@ extern Options options;
 
 extern QString clipboardDir;
 extern QString clipboardFile;
-extern uint clipboardItemCount;
 
 extern ImageIO imageIO;
 
@@ -2674,9 +2673,9 @@ void VymModel::copy()
 
     QList<TreeItem *> itemList = getSelectedItems();
 
-    clipboardItemCount = itemList.count();
+    QStringList clipboardFiles;
 
-    if (clipboardItemCount > 0) {
+    if (itemList.count() > 0) {
         uint i = 1;
         QString fn;
         foreach (TreeItem *ti, itemList) {
@@ -2686,12 +2685,18 @@ void VymModel::copy()
                      .arg(i);
             QString content = saveToDir(clipboardDir, clipboardFile,
                                         FlagRowMaster::NoFlags, QPointF(), ti);
+
             if (!saveStringToDisk(fn, content))
                 qWarning() << "ME::saveStringToDisk failed: " << fn;
-            else
+            else {
                 i++;
+                clipboardFiles.append(fn);
+            }
         }
-        clipboardItemCount = i - 1;
+        QClipboard *clipboard = QApplication::clipboard();
+        QMimeData *mimeData = new QMimeData;
+        mimeData->setData("application/x-vym", clipboardFiles.join(",").toLatin1());
+        clipboard->setMimeData(mimeData);
     }
 }
 
@@ -2701,25 +2706,42 @@ void VymModel::paste()
         return;
 
     BranchItem *selbi = getSelectedBranch();
-    if (selbi && clipboardItemCount > 0) {
-        saveStateChangingPart(selbi, selbi, QString("paste ()"),
-                              QString("Paste"));
 
-        bool zippedOrg = zipped;
-        uint i = 1;
-        QString fn;
-        while (i <= clipboardItemCount) {
-            fn = QString("%1/%2-%3.xml")
-                     .arg(clipboardDir)
-                     .arg(clipboardFile)
-                     .arg(i);
-            if (File::Success != loadMap(fn, ImportAdd, VymMap, SlideContent))
-                qWarning() << "Loading clipboard failed: " << fn;
+    if (selbi) {
+        const QClipboard *clipboard = QApplication::clipboard();
+        const QMimeData *mimeData = clipboard->mimeData();
 
-            i++;
+        if (mimeData->formats().contains("application/x-vym")) {
+            QStringList clipboardFiles = QString(mimeData->data("application/x-vym")).split(",");
+
+            saveStateChangingPart(selbi, selbi, QString("paste ()"),
+                                  QString("Paste"));
+
+            bool zippedOrg = zipped;
+            foreach(QString fn, clipboardFiles) {
+                if (File::Success != loadMap(fn, ImportAdd, VymMap, SlideContent))
+                    qWarning() << "VM::paste Loading clipboard failed: " << fn;
+            }
+            zipped = zippedOrg;
+            reposition();
+        } else if (mimeData->hasImage()) {
+            QImage image = qvariant_cast<QImage>(mimeData->imageData());
+            QString fn = clipboardDir + "/" + "image.png";
+            if (!image.save(fn))
+                qWarning() << "VM::paste  Could not save copy of image in system clipboard";
+            else
+                loadImage(selbi, fn);
+        } else if (mimeData->hasHtml()) {
+            //setText(mimeData->html());
+            //setTextFormat(Qt::RichText);
+            qDebug() << "VM::paste found html...";
+        } else if (mimeData->hasText()) {
+            //setText(mimeData->text());
+            //setTextFormat(Qt::PlainText);
+            qDebug() << "VM::paste found text...";
+        } else {
+            qWarning() << "VM::paste Cannot paste data, mimeData->formats=" << mimeData->formats();
         }
-        zipped = zippedOrg;
-        reposition();
     }
 }
 
@@ -2728,37 +2750,8 @@ void VymModel::cut()
     if (readonly)
         return;
 
-    deleteSelection(true);
-    return;
-
-    QStringList itemList = getSelectedUUIDs();
-
-    clipboardItemCount = itemList.count();
-
-    if (clipboardItemCount > 0) {
-        uint i = 0;
-        QString fn;
-        TreeItem *ti;
-        foreach (QString id, itemList) {
-            ti = findUuid(QUuid(id));
-            if (ti) {
-                fn = QString("%1/%2-%3.xml")
-                         .arg(clipboardDir)
-                         .arg(clipboardFile)
-                         .arg(i);
-                QString content = saveToDir(clipboardDir, clipboardFile,
-                                            FlagRowMaster::NoFlags, QPointF(), ti);
-                if (!saveStringToDisk(fn, content))
-                    qWarning() << "ME::saveStringToDisk failed: " << fn;
-                else {
-
-                    i++;
-                }
-            }
-        }
-        clipboardItemCount = i;
-        reposition();
-    }
+    copy();
+    deleteSelection();
 }
 
 bool VymModel::moveUp(BranchItem *bi)
@@ -3462,14 +3455,11 @@ void VymModel::deleteLater(uint id)
         deleteLaterIDs.append(id);
 }
 
-void VymModel::deleteSelection(bool copyToClipboard)
+void VymModel::deleteSelection()
 {
     QList<uint> selectedIDs = getSelectedIDs();
     unselectAll();
     QString fn;
-
-    if (copyToClipboard)
-        clipboardItemCount = 0;
 
     foreach (uint id, selectedIDs) {
         TreeItem *ti = findID(id);
@@ -3478,20 +3468,6 @@ void VymModel::deleteSelection(bool copyToClipboard)
                 BranchItem *selbi = (BranchItem *)ti;
                 saveStateRemovingPart(
                     selbi, QString("remove %1").arg(getObjectName(selbi)));
-
-                if (copyToClipboard) {
-                    fn = QString("%1/%2-%3.xml")
-                             .arg(clipboardDir)
-                             .arg(clipboardFile)
-                             .arg(clipboardItemCount + 1);
-                    QString content =
-                        saveToDir(clipboardDir, clipboardFile, FlagRowMaster::NoFlags,
-                                  QPointF(), ti);
-                    if (!saveStringToDisk(fn, content))
-                        qWarning() << "ME::saveStringToDisk failed: " << fn;
-                    else
-                        clipboardItemCount++;
-                }
 
                 BranchItem *pi = (BranchItem *)(deleteItem(selbi));
                 if (pi) {
@@ -3514,21 +3490,6 @@ void VymModel::deleteSelection(bool copyToClipboard)
                         saveStateChangingPart(
                             pi, ti, "remove ()",
                             QString("Remove %1").arg(getObjectName(ti)));
-
-                        if (copyToClipboard) {
-                            fn = QString("%1/%2-%3.xml")
-                                     .arg(clipboardDir)
-                                     .arg(clipboardFile)
-                                     .arg(clipboardItemCount + 1);
-                            QString content =
-                                saveToDir(clipboardDir, clipboardFile,
-                                          FlagRowMaster::NoFlags, QPointF(), ti);
-                            if (!saveStringToDisk(fn, content))
-                                qWarning()
-                                    << "ME::saveStringToDisk failed: " << fn;
-                            else
-                                clipboardItemCount++;
-                        }
 
                         deleteItem(ti);
                         emitDataChanged(pi);

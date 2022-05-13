@@ -72,7 +72,6 @@ QDir tmpVymDir;          // All temp files go there, created in mainwindow
 QDir cashDir;            // tmp dir with cashed svg files in tmpVymDir
 QString clipboardDir;    // Clipboard used in all mapEditors
 QString clipboardFile;   // Clipboard used in all mapEditors
-uint clipboardItemCount; // Number of items in clipboard
 
 QDir vymBaseDir; // Containing all styles, scripts, images, ...
 QDir lastImageDir;

@@ -82,7 +82,6 @@ extern QDir tmpVymDir;
 extern QDir cashDir;
 extern QString clipboardDir;
 extern QString clipboardFile;
-extern uint clipboardItemCount;
 extern int statusbarTime;
 extern FlagRowMaster *standardFlagsMaster;
 extern FlagRowMaster *userFlagsMaster;
@@ -176,7 +175,6 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
     QDir d(clipboardDir);
     d.mkdir(clipboardDir);
     makeSubDirs(clipboardDir);
-    clipboardItemCount = 0;
 
     // Create directory for cashed files, e.g. svg images
     if (!tmpVymDir.mkdir("cash")) {
@@ -6538,7 +6536,10 @@ void Main::updateActions()
                 }
 
 
-                if (clipboardItemCount > 0)
+                const QClipboard *clipboard = QApplication::clipboard();
+                const QMimeData *mimeData = clipboard->mimeData();
+                if (mimeData->formats().contains("application/x-vym") ||
+                    mimeData->hasImage())
                     actionPaste->setEnabled(true);
                 else
                     actionPaste->setEnabled(false);
@@ -6757,33 +6758,13 @@ void Main::flagChanged()
 
 void Main::testFunction1()
 {
-    VymModel *m = currentModel();
-    if (m) {
-        //m->repeatLastCommand();
-        const QClipboard *clipboard = QApplication::clipboard();
-        const QMimeData *mimeData = clipboard->mimeData();
-
-        if (mimeData->hasImage()) {
-            //setPixmap(qvariant_cast<QPixmap>(mimeData->imageData()));
-            qDebug() << "paste image...";
-        } else if (mimeData->hasHtml()) {
-            //setText(mimeData->html());
-            //setTextFormat(Qt::RichText);
-            qDebug() << "paste html...";
-        } else if (mimeData->hasText()) {
-            //setText(mimeData->text());
-            //setTextFormat(Qt::PlainText);
-            qDebug() << "paste text...";
-        } else {
-            qDebug() << "Cannot paste data";
-        }
-    }
 }
 
 void Main::testFunction2()
 {
     VymModel *m = currentModel();
     if (m) {
+        //m->repeatLastCommand();
     }
 }
 
