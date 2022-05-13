@@ -20,10 +20,10 @@ bool ConfluenceAgent::available()
 { 
     if (!QSslSocket::supportsSsl())
         return false;
-    if ( settings.value("/confluence/username", "").toString().isEmpty())
+    if ( settings.value("/atlassian/confluence/username", "").toString().isEmpty())
         return false;
 
-    if ( settings.value("/confluence/url", "").toString().isEmpty())
+    if ( settings.value("/atlassian/confluence/url", "").toString().isEmpty())
         return false;
 
     return true;
@@ -75,12 +75,12 @@ void ConfluenceAgent::init()
     QObject::connect(killTimer, SIGNAL(timeout()), this, SLOT(timeout()));
 
     apiURL = baseURL + "/rest/api";
-    baseURL = settings.value("/confluence/url", "baseURL").toString();
+    baseURL = settings.value("/atlassian/confluence/url", "baseURL").toString();
     
     // Read credentials 
     username =
-        settings.value("/confluence/username", "user_johnDoe").toString();
-    password = settings.value("/confluence/password", confluencePassword).toString();
+        settings.value("/atlassian/confluence/username", "user_johnDoe").toString();
+    password = settings.value("/atlassian/confluence/password", confluencePassword).toString();
 
     if (password.isEmpty()) {
         // Set global password

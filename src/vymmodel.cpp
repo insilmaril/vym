@@ -4182,8 +4182,8 @@ void VymModel::setHeadingConfluencePageName()   // FIXME-0 always asks for Confl
     if (selbi) {
         QString url = selbi->getURL();
         if (!url.isEmpty() && 
-                settings.contains("/confluence/url") &&
-                url.contains(settings.value("confluence/url").toString())) {
+                settings.contains("/atlassian/confluence/url") &&
+                url.contains(settings.value("/atlassian/confluence/url").toString())) {
 
             ConfluenceAgent *ca_setHeading = new ConfluenceAgent(selbi);
             ca_setHeading->setPageURL(url);

@@ -15,7 +15,7 @@ JiraSettingsDialog::JiraSettingsDialog(QWidget *parent) : QDialog(parent)
 
     ui.tableWidget->setColumnCount(3);
 
-    settings.beginGroup("jira");
+    settings.beginGroup("/atlassian/jira");
     QTableWidgetItem *newItem;
 
     QStringList headers;
@@ -46,10 +46,10 @@ JiraSettingsDialog::JiraSettingsDialog(QWidget *parent) : QDialog(parent)
     ui.tableWidget->resizeColumnsToContents();
     ui.tableWidget->horizontalHeader()->setStretchLastSection(true);
 
-    ui.userLineEdit->setText(settings.value("/jira/username", "JIRA  username")
+    ui.userLineEdit->setText(settings.value("/atlassian/jira/username", "JIRA  username")
                     .toString());
 
-    if (    settings.value("/jira/savePassword", false).toBool())
+    if (    settings.value("/atlassian/jira/savePassword", false).toBool())
         ui.savePasswordCheckBox->setCheckState(Qt::Checked);
     else
         ui.savePasswordCheckBox->setCheckState(Qt::Unchecked);
@@ -77,7 +77,7 @@ void JiraSettingsDialog::updateSettings()
 {
     settings.remove("jira");
 
-    settings.beginGroup("jira");
+    settings.beginGroup("/atlassian/jira");
     settings.beginWriteArray("servers");
     for (int i = 0; i < ui.tableWidget->rowCount(); ++i) {
         settings.setArrayIndex(i);

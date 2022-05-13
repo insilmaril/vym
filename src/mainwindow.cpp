@@ -5958,25 +5958,25 @@ bool Main::settingsConfluence()
 
     CredentialsDialog dia;
     dia.setURL(
-        settings.value("/confluence/url", "Confluence base URL").toString());
-    dia.setUser(settings.value("/confluence/username", "Confluence username")
+        settings.value("/atlassian/confluence/url", "Confluence base URL").toString());
+    dia.setUser(settings.value("/atlassian/confluence/username", "Confluence username")
                     .toString());
     dia.setSavePassword(
-        settings.value("/confluence/savePassword", false).toBool());
+        settings.value("/atlassian/confluence/savePassword", false).toBool());
     if (!confluencePassword.isEmpty())
         dia.setPassword(confluencePassword);
 
     dia.exec();
 
     if (dia.result() > 0) {
-        settings.setValue("/confluence/url", dia.getURL());
-        settings.setValue("/confluence/username", dia.getUser());
-        settings.setValue("/confluence/savePassword", dia.savePassword());
+        settings.setValue("/atlassian/confluence/url", dia.getURL());
+        settings.setValue("/atlassian/confluence/username", dia.getUser());
+        settings.setValue("/atlassian/confluence/savePassword", dia.savePassword());
         confluencePassword = dia.getPassword();
         if (dia.savePassword())
-            settings.setValue("/confluence/password", confluencePassword);
+            settings.setValue("/atlassian/confluence/password", confluencePassword);
         else
-            settings.setValue("/confluence/password", "");
+            settings.setValue("/atlassian/confluence/password", "");
 
         return true;
     }
