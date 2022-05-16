@@ -47,6 +47,7 @@
 #include "taskeditor.h"
 #include "taskmodel.h"
 #include "treeitem.h"
+#include "trello-agent.h"
 #include "vymprocess.h"
 #include "warningdialog.h"
 #include "xlinkitem.h"
@@ -4175,6 +4176,71 @@ void VymModel::updateJiraData(QJsonObject jsobj)
 
 }
 
+void VymModel::syncTrello()
+{
+    if (!TrelloAgent::available()) {
+        WarningDialog dia;
+        QString w = QObject::tr("Trello agent not setup.");
+        dia.setText(w);
+        dia.setWindowTitle( tr("Warning") + ": " + w);
+        dia.setShowAgainName("/TrelloAgent/notdefined");
+        dia.exec();
+
+        // FIXME-2 if (!mainWindow->settingsTrello()) return;
+    }
+
+    TrelloAgent *agent = new TrelloAgent;
+    agent->setJobType(TrelloAgent::GetBoardInfo);
+
+    connect(agent, &TrelloAgent::trelloBoardDataReady, this, &VymModel::receivedTrelloData);
+
+    // Start contacting JIRA in background
+    agent->startJob();
+    mainWindow->statusMessage(tr("Contacting trello...", "VymModel"));
+}
+
+void VymModel::receivedTrelloData(QJsonDocument jsdoc)
+{
+    /* Pretty print trello data
+    */
+    qDebug() << "VM::receivedTrelloData";
+    vout << jsdoc.toJson(QJsonDocument::Indented) << endl;
+
+    /*
+    QString key = jsobj["key"].toString();
+    QJsonObject fields = jsobj["fields"].toObject();
+
+    QJsonObject assigneeObj = fields["assignee"].toObject();
+    QString assignee = assigneeObj["emailAddress"].toString();
+    QJsonArray componentsArray = fields["components"].toArray();
+    QJsonObject compObj;
+    QString components;
+    for (int i = 0; i < componentsArray.size(); ++i) {
+        compObj = componentsArray[i].toObject();
+        components += compObj["name"].toString();
+    }
+
+    int branchID = jsobj["vymBranchID"].toInt();
+
+    QStringList solvedStates;
+    solvedStates << "Verification Done";
+    solvedStates << "Resolved";
+    solvedStates << "Closed";
+
+    QString keyName = key;
+    BranchItem *bi = (BranchItem*)findID(branchID);
+    if (bi) {
+        if (solvedStates.contains(status))    {
+            keyName = "(" + keyName + ")";
+            colorSubtree (Qt::blue, bi);
+        }
+
+        setHeadingPlainText(keyName + ": " + summary, bi);
+
+    }
+    */
+
+}
 
 void VymModel::setHeadingConfluencePageName()   // FIXME-0 always asks for Confluence credentials when adding any URL
 {

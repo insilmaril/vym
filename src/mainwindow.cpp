@@ -6758,6 +6758,10 @@ void Main::flagChanged()
 
 void Main::testFunction1()
 {
+    VymModel *m = currentModel();
+    if (m) {
+        m->syncTrello();
+    }
 }
 
 void Main::testFunction2()
