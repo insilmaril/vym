@@ -13,7 +13,7 @@ class TrelloAgent : public QObject {
     Q_OBJECT
 
   public:
-    enum JobType {Undefined, GetBoardInfo};
+    enum JobType {Undefined, GetMyBoards, GetBoardInfo};
 
     static bool available();
 
@@ -35,6 +35,7 @@ class TrelloAgent : public QObject {
     void trelloBoardDataReady(QJsonDocument);
 
   private:
+    void startGetMyBoardsRequest();
     void startGetBoardRequest();
 
   private slots:
@@ -45,7 +46,7 @@ class TrelloAgent : public QObject {
 #endif
 
   private:
-    // Job related 
+    // Job related
     QTimer *killTimer;
     JobType jobType;
     int jobStep;
@@ -58,6 +59,7 @@ class TrelloAgent : public QObject {
     // Settings: Credentials to access Trello
     QString apiKey;
     QString token;
+    QString auth;
 
     // Settings: Where to find trello
     QString apiURL;

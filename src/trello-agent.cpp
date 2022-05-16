@@ -60,9 +60,9 @@ void TrelloAgent::init()
     QObject::connect(killTimer, SIGNAL(timeout()), this, SLOT(timeout()));
 
     // Read credentials    
-    apiKey =
-        settings.value("/atlassian/trello/apiKey", "undefined").toString();
+    apiKey = settings.value("/atlassian/trello/apiKey", "undefined").toString();
     token = settings.value("/atlassian/trello/token", "undefined").toString();
+    auth = QString("key=%1&token=%2").arg(apiKey).arg(token);
 
     // Set API rest point
     apiURL = "https://api.trello.com/";
@@ -107,12 +107,13 @@ void TrelloAgent::continueJob()
     jobStep++;
 
     switch(jobType) {
+        case GetMyBoards:
         case GetBoardInfo:
             switch(jobStep) {
                 case 1:
                     // if (!requestedURL.toString().startsWith("http"))
                     //    requestedURL.setPath("https://" + requestedURL.path());
-                    startGetBoardRequest();
+                    startGetMyBoardsRequest();
                     break;
                 case 2: {
                     // Insert references to original branch and model
@@ -145,19 +146,33 @@ void TrelloAgent::unknownStepWarning()
         << "jobStep = " << jobStep;
 }
 
-void TrelloAgent::startGetBoardRequest()
+void TrelloAgent::startGetMyBoardsRequest()
 {
-    // //FIXME-2 boardID still hardcoded:
-    QString boardID = "627a201d7d74b04fba065a07";
-    QString auth = QString("?key=%1&token=%2").arg(apiKey).arg(token);
-    QUrl url = QUrl(apiURL + "1/boards/" + boardID + "/lists" + auth);
+    QUrl url = QUrl(apiURL + "1/members/me/boards?fields=name,url&" + auth);
 
     QNetworkRequest request = QNetworkRequest(url);
 
     if (debug)
-    {
         qDebug() << "TA::startGetBoardRequest: url = " + request.url().toString();
-    }
+
+    killTimer->start();
+
+    connect(networkManager, &QNetworkAccessManager::finished,
+        this, &TrelloAgent::dataReceived);
+
+    networkManager->get(request);
+}
+
+void TrelloAgent::startGetBoardRequest()
+{
+    // //FIXME-2 boardID still hardcoded:
+    QString boardID = "627a201d7d74b04fba065a07";
+    QUrl url = QUrl(apiURL + "1/boards/" + boardID + "/lists?" + auth);
+
+    QNetworkRequest request = QNetworkRequest(url);
+
+    if (debug)
+        qDebug() << "TA::startGetBoardRequest: url = " + request.url().toString();
 
     killTimer->start();
 
@@ -174,6 +189,7 @@ void TrelloAgent::dataReceived(QNetworkReply *reply)
     networkManager->disconnect();
 
     QString r = reply->readAll();
+    qDebug() << "r=" << r;
 
     if (reply->error()) {
         if (reply->error() == QNetworkReply::AuthenticationRequiredError)
@@ -181,7 +197,7 @@ void TrelloAgent::dataReceived(QNetworkReply *reply)
                 nullptr, tr("Warning"),
                 tr("Authentication problem when contacting trello"));
 
-        qWarning() << "TrelloAgent::ticketRReveived reply error";
+        qWarning() << "TrelloAgent::ticketReceived reply error";
         qWarning() << "Error: " << reply->error();
         vout << "reply: " << endl << r << endl;
         finishJob();

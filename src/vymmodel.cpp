@@ -4190,7 +4190,8 @@ void VymModel::syncTrello()
     }
 
     TrelloAgent *agent = new TrelloAgent;
-    agent->setJobType(TrelloAgent::GetBoardInfo);
+    agent->setJobType(TrelloAgent::GetMyBoards);
+    //agent->setJobType(TrelloAgent::GetBoardInfo);
 
     connect(agent, &TrelloAgent::trelloBoardDataReady, this, &VymModel::receivedTrelloData);
 
