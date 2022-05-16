@@ -6,6 +6,7 @@
 
 #include <QHash>
 #include <QMessageBox>
+#include <QJsonObject>
 #include <QSslSocket>
 
 extern Main *mainWindow;
@@ -108,7 +109,6 @@ void TrelloAgent::continueJob()
 
     switch(jobType) {
         case GetMyBoards:
-        case GetBoardInfo:
             switch(jobStep) {
                 case 1:
                     // if (!requestedURL.toString().startsWith("http"))
@@ -117,12 +117,45 @@ void TrelloAgent::continueJob()
                     break;
                 case 2: {
                     // Insert references to original branch and model
-                    // FIXME-2 not needed jsobj["vymModelID"] = QString::number(modelID);
                     // FIXME-0 jsobj["vymBranchID"] = QJsonValue(branchID);
                     
                     emit (trelloBoardDataReady(jsdoc));
                     finishJob();
                     }
+                    break;
+                default:
+                    unknownStepWarning();
+                    break;
+            };
+            break;
+        case GetBoardInfo:
+            switch(jobStep) {
+                case 1:
+                    startGetBoardRequest();
+                    break;
+                case 2: {
+                    // Insert references to original branch and model
+                    // FIXME-0 jsobj["vymBranchID"] = QJsonValue(branchID);
+                    emit (trelloBoardDataReady(jsdoc));
+                    finishJob();
+                    }
+                    break;
+                default:
+                    unknownStepWarning();
+                    break;
+            };
+            break;
+        case SyncBoardToBranch:
+            switch(jobStep) {
+                case 1:
+                    startGetBoardRequest();
+                    break;
+                case 2: {
+                        updateListsOnBoard();
+                    }
+                    break;
+                case 3: 
+                    finishJob();
                     break;
                 default:
                     unknownStepWarning();
@@ -228,3 +261,22 @@ void TrelloAgent::sslErrors(QNetworkReply *reply, const QList<QSslError> &errors
     qWarning() << "Errors ignored.";
 }
 #endif
+
+void TrelloAgent::updateListsOnBoard() 
+{
+    qDebug() << "TA::updateListsOnBoard";
+    vout << jsdoc.toJson(QJsonDocument::Indented) << endl;
+
+    QJsonObject jsobj;
+    int n = 0;
+
+    while (n < jsdoc.array().count()) {
+        jsobj = jsdoc.array().at(n).toObject();
+        qDebug() << " List: ";
+        qDebug() << "   - name:    " << jsobj["name"].toString();
+        qDebug() << "   - id:      " << jsobj["id"].toString();
+        qDebug() << "   - idBoard: " << jsobj["idBoard"].toString();
+        n++;
+    }
+}
+

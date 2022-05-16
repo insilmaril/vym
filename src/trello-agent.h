@@ -9,11 +9,22 @@
 class BranchItem;
 class VymModel;
 
+/* FIXME-2 not needed for now
+class TrelloBoard {
+  public:
+    TrelloBoard();  
+  private:
+    QString name;
+    QString url;
+    QString id;
+}
+*/
+
 class TrelloAgent : public QObject {
     Q_OBJECT
 
   public:
-    enum JobType {Undefined, GetMyBoards, GetBoardInfo};
+    enum JobType {Undefined, GetMyBoards, GetBoardInfo, SyncBoardToBranch};
 
     static bool available();
 
@@ -44,6 +55,7 @@ class TrelloAgent : public QObject {
 #ifndef QT_NO_SSL
     void sslErrors(QNetworkReply *, const QList<QSslError> &errors);
 #endif
+    void updateListsOnBoard();
 
   private:
     // Job related

@@ -4189,15 +4189,27 @@ void VymModel::syncTrello()
         // FIXME-2 if (!mainWindow->settingsTrello()) return;
     }
 
-    TrelloAgent *agent = new TrelloAgent;
-    agent->setJobType(TrelloAgent::GetMyBoards);
-    //agent->setJobType(TrelloAgent::GetBoardInfo);
+    BranchItem *selbi = getSelectedBranch();
 
-    connect(agent, &TrelloAgent::trelloBoardDataReady, this, &VymModel::receivedTrelloData);
+    if (selbi) {
+        // Create agent
+        TrelloAgent *agent = new TrelloAgent;
+        if (!agent->setBranch(selbi)) {
+            // Abort
+            delete agent;
+            return;
+        }
 
-    // Start contacting JIRA in background
-    agent->startJob();
-    mainWindow->statusMessage(tr("Contacting trello...", "VymModel"));
+        //agent->setJobType(TrelloAgent::GetMyBoards);
+        //agent->setJobType(TrelloAgent::GetBoardInfo);
+        agent->setJobType(TrelloAgent::SyncBoardToBranch);
+
+        connect(agent, &TrelloAgent::trelloBoardDataReady, this, &VymModel::receivedTrelloData);
+
+        // Start contacting JIRA in background
+        agent->startJob();
+        mainWindow->statusMessage(tr("Contacting trello...", "VymModel"));
+    }
 }
 
 void VymModel::receivedTrelloData(QJsonDocument jsdoc)
