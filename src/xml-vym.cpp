@@ -278,8 +278,7 @@ bool parseVYMHandler::startElement(const QString &, const QString &,
                     lastBranch = model->createBranch(lastBranch);
                     model->setLatestAddedItem(lastBranch);
                     if (insertPos >= 0)
-                        model->relinkBranch(lastBranch, (BranchItem *)ti,
-                                            insertPos);
+                        model->relinkBranch(lastBranch, (BranchItem *)ti, insertPos);
                 }
                 else
                     model->clearItem(lastBranch);
