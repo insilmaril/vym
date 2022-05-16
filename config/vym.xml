@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
+  <mime-type type="application/x-vym">
+    <comment xml:lang="en">VYM - View Your Mind files</comment>
+    <glob pattern="*.vym" />
+    <glob pattern="*.vyp" />
+    <glob pattern="*.vys" />
+  </mime-type>
+</mime-info>

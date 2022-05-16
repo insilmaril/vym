@@ -1,4 +1,4 @@
-VYM - View Your Mind (c) 2004-2021 by Uwe Drechsel
+VYM - View Your Mind (c) 2004-2022 by Uwe Drechsel
 ==================================================
 
 Documentation

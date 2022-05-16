@@ -503,7 +503,7 @@ Flag *TreeItem::toggleFlagByUid(const QUuid &uid, bool useGroups)
         }
         else {
             qWarning() << "TI::toggleFlag failed for flag " << uid;
-            return NULL;
+            return nullptr;
         }
     }
 

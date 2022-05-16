@@ -490,7 +490,7 @@ class VymModel : public TreeModel {
   public:
     void cleanupItems();    //!< Delete orphaned Items
     void deleteLater(uint); //!< Delete later with new beginRemoveRow
-    void deleteSelection(bool copyToClipboard = false); //!< Delete selection
+    void deleteSelection(); //!< Delete selection
     void deleteKeepChildren(
         bool saveStateFlag = true); //!< remove branch, but keep children
   public:
@@ -523,6 +523,11 @@ class VymModel : public TreeModel {
     ItemList getLinkedMaps();
     ItemList getTargets();
 
+  private:
+    Flag* findFlagByName(const QString &name);
+  public:
+    void setFlagByName(const QString &name, bool useGroups = true);
+    void unsetFlagByName(const QString &name);
     void toggleFlagByName(const QString &name, bool useGroups = true);
     void toggleFlagByUid(const QUuid &uid, bool useGroups = true);
     void clearFlags();

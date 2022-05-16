@@ -19,9 +19,9 @@ bool JiraAgent::available()
 {
     if (!QSslSocket::supportsSsl())
         return false;
-    if ( settings.value("/jira/username", "").toString().isEmpty())
+    if ( settings.value("/atlassian/jira/username", "").toString().isEmpty())
         return false;
-    if ( settings.value("/jira/servers/size", 0).toInt() < 1)
+    if ( settings.value("/atlassian/jira/servers/size", 0).toInt() < 1)
         return false;
 
     return true;
@@ -62,8 +62,8 @@ void JiraAgent::init()
 
     // Read credentials    
     username =
-        settings.value("/jira/username", "user_johnDoe").toString();
-    password = settings.value("/jira/password", jiraPassword).toString();
+        settings.value("/atlassian/jira/username", "user_johnDoe").toString();
+    password = settings.value("/atlassian/jira/password", jiraPassword).toString();
 
     // Set API rest point. baseURL later on depends on different JIRA system
     apiURL = "/rest/api/2";
@@ -101,7 +101,7 @@ bool JiraAgent::setTicket(const QString &id)
     ticketID = re.cap(1);
     ticketID.replace(" ", "-");
 
-    settings.beginGroup("jira");
+    settings.beginGroup("/atlassian/jira");
 
     int size = settings.beginReadArray("servers");
     for (int i = 0; i < size; ++i) {
@@ -158,7 +158,7 @@ void JiraAgent::continueJob()
                     QJsonDocument jsdoc = QJsonDocument (jsobj);
 
                     // Insert references to original branch and model
-                    // DIXME-0 not needed jsobj["vymModelID"] = QString::number(modelID);
+                    // FIXME-2 not needed jsobj["vymModelID"] = QString::number(modelID);
                     jsobj["vymBranchID"] = QJsonValue(branchID);
                     
                     emit (jiraTicketReady(QJsonObject(jsobj)));

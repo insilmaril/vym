@@ -82,7 +82,6 @@ extern QDir tmpVymDir;
 extern QDir cashDir;
 extern QString clipboardDir;
 extern QString clipboardFile;
-extern uint clipboardItemCount;
 extern int statusbarTime;
 extern FlagRowMaster *standardFlagsMaster;
 extern FlagRowMaster *userFlagsMaster;
@@ -176,7 +175,6 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
     QDir d(clipboardDir);
     d.mkdir(clipboardDir);
     makeSubDirs(clipboardDir);
-    clipboardItemCount = 0;
 
     // Create directory for cashed files, e.g. svg images
     if (!tmpVymDir.mkdir("cash")) {
@@ -5960,25 +5958,25 @@ bool Main::settingsConfluence()
 
     CredentialsDialog dia;
     dia.setURL(
-        settings.value("/confluence/url", "Confluence base URL").toString());
-    dia.setUser(settings.value("/confluence/username", "Confluence username")
+        settings.value("/atlassian/confluence/url", "Confluence base URL").toString());
+    dia.setUser(settings.value("/atlassian/confluence/username", "Confluence username")
                     .toString());
     dia.setSavePassword(
-        settings.value("/confluence/savePassword", false).toBool());
+        settings.value("/atlassian/confluence/savePassword", false).toBool());
     if (!confluencePassword.isEmpty())
         dia.setPassword(confluencePassword);
 
     dia.exec();
 
     if (dia.result() > 0) {
-        settings.setValue("/confluence/url", dia.getURL());
-        settings.setValue("/confluence/username", dia.getUser());
-        settings.setValue("/confluence/savePassword", dia.savePassword());
+        settings.setValue("/atlassian/confluence/url", dia.getURL());
+        settings.setValue("/atlassian/confluence/username", dia.getUser());
+        settings.setValue("/atlassian/confluence/savePassword", dia.savePassword());
         confluencePassword = dia.getPassword();
         if (dia.savePassword())
-            settings.setValue("/confluence/password", confluencePassword);
+            settings.setValue("/atlassian/confluence/password", confluencePassword);
         else
-            settings.setValue("/confluence/password", "");
+            settings.setValue("/atlassian/confluence/password", "");
 
         return true;
     }
@@ -6539,7 +6537,10 @@ void Main::updateActions()
                 }
 
 
-                if (clipboardItemCount > 0)
+                const QClipboard *clipboard = QApplication::clipboard();
+                const QMimeData *mimeData = clipboard->mimeData();
+                if (mimeData->formats().contains("application/x-vym") ||
+                    mimeData->hasImage())
                     actionPaste->setEnabled(true);
                 else
                     actionPaste->setEnabled(false);
@@ -6758,33 +6759,13 @@ void Main::flagChanged()
 
 void Main::testFunction1()
 {
-    VymModel *m = currentModel();
-    if (m) {
-        //m->repeatLastCommand();
-        const QClipboard *clipboard = QApplication::clipboard();
-        const QMimeData *mimeData = clipboard->mimeData();
-
-        if (mimeData->hasImage()) {
-            //setPixmap(qvariant_cast<QPixmap>(mimeData->imageData()));
-            qDebug() << "paste image...";
-        } else if (mimeData->hasHtml()) {
-            //setText(mimeData->html());
-            //setTextFormat(Qt::RichText);
-            qDebug() << "paste html...";
-        } else if (mimeData->hasText()) {
-            //setText(mimeData->text());
-            //setTextFormat(Qt::PlainText);
-            qDebug() << "paste text...";
-        } else {
-            qDebug() << "Cannot paste data";
-        }
-    }
 }
 
 void Main::testFunction2()
 {
     VymModel *m = currentModel();
     if (m) {
+        //m->repeatLastCommand();
     }
 }
 

@@ -113,7 +113,7 @@ QString ExportConfluence::getBranchText(BranchItem *current)
             url = current->getURL();
 
             if (!url.isEmpty()) {
-                if (url.contains(settings.value("/confluence/url",
+                if (url.contains(settings.value("/atlassian/confluence/url",
                        "---undefined---").toString()) && url.contains("&")) {
 
                     // Fix ampersands in URL to Confluence itself

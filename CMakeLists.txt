@@ -117,4 +117,6 @@ install(DIRECTORY exports flags icons macros lang scripts styles DESTINATION ${C
 
 if(UNIX)
     install(FILES icons/vym.png DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/48x48/apps)
+    install(FILES config/vym.xml DESTINATION ${CMAKE_INSTALL_PREFIX}/share/mime/packages)
+    install(FILES config/vym.desktop DESTINATION ${CMAKE_INSTALL_PREFIX}/share/applications)
 endif()

@@ -117,16 +117,16 @@ VymView::VymView(VymModel *m)
 
     mapEditor->setAntiAlias(mainWindow->isAliased());
     mapEditor->setSmoothPixmap(mainWindow->hasSmoothPixmapTransform());
+
+    readSettings();
 }
 
 VymView::~VymView()
 {
-    if (treeEditorIsVisible())
-        settings.setLocalValue(model->getFilePath(), "/treeeditor/visible",
-                               "true");
-    else
-        settings.setLocalValue(model->getFilePath(), "/treeeditor/visible",
-                               "false");
+    settings.setLocalValue(model->getFilePath(), "/treeeditor/visible",
+                               treeEditorIsVisible());
+    settings.setLocalValue(model->getFilePath(), "/slideeditor/visible",
+                               treeEditorIsVisible());
 }
 
 void VymView::readSettings()

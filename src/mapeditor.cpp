@@ -19,7 +19,6 @@
 extern Main *mainWindow;
 extern QString clipboardDir;
 extern QString clipboardFile;
-extern uint clipboardItemCount;
 extern bool debug;
 extern QPrinter *printer;
 
@@ -71,7 +70,7 @@ MapEditor::MapEditor(VymModel *vm)
     setStyleSheet("QGraphicsView:focus {" + editorFocusStyle + "}");
 
     // Create bitmap cursors, platform dependant
-    HandOpenCursor = QCursor(QPixmap(":/cursorhandopen.png"), 1, 1);
+    HandOpenCursor = QCursor(QPixmap(":/mode-move-view.png"), 1, 1);
     PickColorCursor = QCursor(QPixmap(":/cursorcolorpicker.png"), 5, 27);
     XLinkCursor = QCursor(QPixmap(":/cursorxlink.png"), 1, 7);
 
