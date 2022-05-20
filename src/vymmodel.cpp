@@ -3550,7 +3550,7 @@ void VymModel::deleteSelection()
     }
 }
 
-void VymModel::deleteKeepChildren(bool saveStateFlag)
+void VymModel::deleteKeepChildren(bool saveStateFlag)  // FIXME-2 still uses BO/LMO below
 // deleteKeepChildren FIXME-3+ does not work yet for mapcenters
 // deleteKeepChildren FIXME-3+ children of scrolled branch stay invisible...
 {
@@ -3569,7 +3569,7 @@ void VymModel::deleteKeepChildren(bool saveStateFlag)
         }
 
         QPointF p;
-        if (selbi->getLMO())    // FIXME-1
+        if (selbi->getLMO())    // FIXME
             p = selbi->getLMO()->getRelPos();
         if (saveStateFlag)
             saveStateChangingPart(pi, pi, "removeKeepChildren ()",
@@ -3592,7 +3592,7 @@ void VymModel::deleteKeepChildren(bool saveStateFlag)
         emitDataChanged(pi);
         select(sel);
         /*
-        BranchObj *bo = getSelectedBranchObj(); // FIXME-1
+        BranchObj *bo = getSelectedBranchObj(); // FIXME
         if (bo) {
             bo->move2RelPos(p);
             reposition();
@@ -4999,7 +4999,7 @@ void VymModel::reposition()
     emitSelectionChanged();
 }
 
-bool VymModel::setMapLinkStyle(const QString &s)
+bool VymModel::setMapLinkStyle(const QString &s) // FIXME-2 still uses BranchObj below
 {
     QString snow;
     switch (linkstyle) {
@@ -5040,7 +5040,7 @@ bool VymModel::setMapLinkStyle(const QString &s)
     BranchObj *bo;
     nextBranch(cur, prev);
     while (cur) {
-        bo = (BranchObj *)(cur->getLMO()); // FIXME-1
+        bo = (BranchObj *)(cur->getLMO()); // FIXME
         bo->setLinkStyle(bo->getDefLinkStyle(
             cur->parent())); // FIXME-4 better emit dataCHanged and leave the
                              // changes to View
@@ -5056,7 +5056,7 @@ uint VymModel::getModelID() { return modelID; }
 
 void VymModel::setView(VymView *vv) { vymView = vv; }
 
-void VymModel::setMapDefLinkColor(QColor col)
+void VymModel::setMapDefLinkColor(QColor col)  // FIXME-2 still uses BranchObj below
 {
     if (!col.isValid())
         return;
@@ -5071,7 +5071,7 @@ void VymModel::setMapDefLinkColor(QColor col)
     BranchObj *bo;
     nextBranch(cur, prev);
     while (cur) {
-        bo = (BranchObj *)(cur->getLMO()); // FIXME-1
+        bo = (BranchObj *)(cur->getLMO()); // FIXME
         bo->setLinkColor();
 
         for (int i = 0; i < cur->imageCount(); ++i)
@@ -5082,7 +5082,7 @@ void VymModel::setMapDefLinkColor(QColor col)
     updateActions();
 }
 
-void VymModel::setMapLinkColorHintInt()
+void VymModel::setMapLinkColorHintInt()  // FIXME-2 still uses BranchObj below
 {
     // called from setMapLinkColorHint(lch) or at end of parse
     BranchItem *cur = NULL;
@@ -5090,7 +5090,7 @@ void VymModel::setMapLinkColorHintInt()
     BranchObj *bo;
     nextBranch(cur, prev);
     while (cur) {
-        bo = (BranchObj *)(cur->getLMO());  // FIXME-1
+        bo = (BranchObj *)(cur->getLMO());  // FIXME
         bo->setLinkColor();
 
         for (int i = 0; i < cur->imageCount(); ++i)
