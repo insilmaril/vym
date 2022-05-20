@@ -37,13 +37,6 @@ class Container : public QGraphicsRectItem {
         Image
     };
 
-    /*! Orientation relative to parent container */
-    enum Orientation {
-        UndefinedOrientation,
-        LeftOfParent,
-        RightOfParent
-    };
-
     /*! Alignment of children containers */
     enum LayoutType {Horizontal, Vertical, FloatingBounded, FloatingFree};
     enum HorizontalDirection {LeftToRight, RightToLeft};
@@ -61,9 +54,6 @@ class Container : public QGraphicsRectItem {
     virtual QString getName();
 
     virtual QString info (const QString &prefix = "");
-
-    void setOrientation(const Orientation &);
-    Orientation getOrientation();
 
     virtual void setLayoutType(const LayoutType &ltype);
     LayoutType getLayoutType();
@@ -101,8 +91,6 @@ class Container : public QGraphicsRectItem {
 
     QPointF originalPos;    //! Save position before move for undo
     QString name;
-
-    Orientation orientation;
 
     LayoutType layout;
     bool movableByFloats;

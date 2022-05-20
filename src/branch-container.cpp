@@ -35,6 +35,8 @@ void BranchContainer::init()
 {
     type = Container::Branch;
 
+    orientation = UndefinedOrientation;
+
     headingContainer = new HeadingContainer ();
     headingContainer->setBrush(Qt::NoBrush);
     headingContainer->setPen(Qt::NoPen);
@@ -66,6 +68,27 @@ void BranchContainer::init()
     setBrush(Qt::NoBrush);
     setLayoutType(Container::Horizontal);
     setHorizontalDirection(Container::LeftToRight);
+
+    temporaryLinked = false;
+}
+
+BranchContainer* BranchContainer::parentBranchContainer()
+{
+    Container *p = parentContainer();
+    if (!p) return nullptr;;
+
+    // Some checks before the real parent can be returned
+    if (p->type != BranchCollection) return nullptr;
+
+    p = p->parentContainer();
+
+    if (p->type != InnerContent) return nullptr;
+
+    p = p->parentContainer();
+
+    if (! (p->type == Branch || p->type == TmpParent)) return nullptr;
+
+    return (BranchContainer*)p;
 }
 
 void BranchContainer::setBranchItem(BranchItem *bi) { branchItem = bi; }
@@ -77,6 +100,31 @@ QString BranchContainer::getName() {
         return Container::getName() + " '" + branchItem->getHeadingPlain() + "'";
     else
         return Container::getName() + " - ?";
+}
+
+void BranchContainer::setOrientation(const Orientation &m)
+{
+    orientation = m;
+}
+
+void BranchContainer::setOriginalOrientation()
+{
+    originalOrientation = orientation;
+}
+
+BranchContainer::Orientation BranchContainer::getOrientation()
+{
+    return orientation;
+}
+
+void BranchContainer::setTemporaryLinked(bool b)    // FIXME-0 really needed?
+{
+    temporaryLinked = b;
+}
+
+bool BranchContainer::isTemporaryLinked()
+{
+    return temporaryLinked;
 }
 
 void BranchContainer::addToBranchesContainer(Container *c, bool keepScenePos)
@@ -260,18 +308,48 @@ void BranchContainer::reposition()
         // tmpParentContainer has no branchItem
         depth = 0;  
 
-    // Set orientation based on depth and if we are floating around
-    if (depth == 0)
+    // Set orientation based on depth and if we are floating around or 
+    // in the process of being (temporary) relinked
+    BranchContainer *pbc = parentBranchContainer();
+
+    if (!pbc && type != TmpParent) {
+        // I am a (not moving) mapCenter
         orientation = UndefinedOrientation;
-    else {
-        if (parentContainer()->layout == FloatingBounded || parentContainer()->orientation == UndefinedOrientation) {
-            if (pos().x() > 0)
-                orientation = RightOfParent;
-            else
-                orientation = LeftOfParent;
-         } else
-            // Set same orientation as parent
-            setOrientation(parentContainer()->orientation);
+    } else {
+        if (type != TmpParent) {
+            // I am not the tmpParentContainer
+            if (pbc->type == TmpParent) {
+                // I am currently moved around in MapEditor
+                if (pbc->isTemporaryLinked()) {
+                    // tmpParentContainer is currently tmpLinked
+                    // use orientation from temporaryTarget, which is als in tmpParentContainer
+                    orientation = pbc->orientation;
+                } else {
+                    // tmpParentContainer moved around, but no target yet
+                    // use originalOrientation
+                    orientation = originalOrientation;
+                }
+            } else {
+                // "regular repositioning", not currently moved in MapEditor
+                if (depth == 0) 
+                    orientation = UndefinedOrientation;
+                else {
+                    if (parentBranchContainer()->orientation == UndefinedOrientation) {
+                        // Parent is tmpParentContainer or mapCenter
+                        // use relative position to determine orientation
+                        if (pos().x() > 0)
+                            orientation = RightOfParent;
+                        else
+                            orientation = LeftOfParent;
+                    } else {
+                        // Set same orientation as parent
+                        setOrientation(parentBranchContainer()->orientation);
+                    }
+                }
+            }   // regular repositioning
+        } // else:
+        // The "else" here would be that I'm the tmpParentContainer, but
+        // then my orientation is already set in MapEditor, so ignore here
     }
 
     setLayoutType(Horizontal);
@@ -297,8 +375,6 @@ void BranchContainer::reposition()
 
     } else {
         // Branch or mainbranch
-        
-        // qDebug() << "BC::reposition d > 1  orientation=" << orientation << getName();
         innerContainer->setMovableByFloats(true);
         branchesContainer->setLayoutType(Vertical);
 
@@ -317,7 +393,7 @@ void BranchContainer::reposition()
                 qWarning() << "BranchContainer::reposition unknown orientation for mainbranch";
                 break;
         }
-        branchesContainer->orientation = orientation;
+        // FIXME-2 no longer needed with orientation part of BC: branchesContainer->orientation = orientation;
 
         if (branchItem && branchItem->getHeadingPlain().startsWith("float")) {
             // Special layout: FloatingBounded children 
@@ -340,4 +416,3 @@ void BranchContainer::reposition()
 
     Container::reposition();
 }
-

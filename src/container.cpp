@@ -22,8 +22,6 @@ void Container::copy(Container *other)
     originalPos = other->originalPos;
     name = other->name;
 
-    orientation = other->orientation;
-
     layout = other->layout;
     movableByFloats = false;
     horizontalDirection = other->horizontalDirection;
@@ -34,8 +32,6 @@ void Container::init()
 {
     type = Undefined;
     layout = Horizontal;
-
-    orientation = UndefinedOrientation;
 
     show();
 }
@@ -101,16 +97,6 @@ QString Container::info (const QString &prefix)
         QString(" scenePos: (%1, %2)").arg(scenePos().x()).arg(scenePos().y()) + 
         QString(" pos: (%1, %2)").arg(pos().x()).arg(pos().y()) +
         QString(" (w,h): (%1, %2)").arg(rect().width()).arg(rect().height());
-}
-
-void Container::setOrientation(const Orientation &m)
-{
-    orientation = m;
-}
-
-Container::Orientation Container::getOrientation()
-{
-    return orientation;
 }
 
 void Container::setLayoutType(const LayoutType &ltype)

@@ -8,14 +8,33 @@ class HeadingContainer;
 
 class BranchContainer : public Container {
   public:
+    /*! Orientation relative to parent branch container */
+    enum Orientation {
+        UndefinedOrientation,
+        LeftOfParent,
+        RightOfParent
+    };
+
     BranchContainer (QGraphicsScene *scene, QGraphicsItem *parent = NULL, BranchItem *bi = NULL);
     virtual ~BranchContainer();
     virtual void init();
+
+    BranchContainer* parentBranchContainer();
 
     void setBranchItem(BranchItem *);
     BranchItem *getBranchItem() const;
 
     virtual QString getName();
+
+    void setOrientation(const Orientation &);
+    void setOriginalOrientation();
+    Orientation getOrientation();
+
+  private:
+    bool temporaryLinked;   //! True, while moved as child of tmpParentContainer and linked temporary
+  public:
+    void setTemporaryLinked(bool);
+    bool isTemporaryLinked();
 
     void addToBranchesContainer(Container *c, bool keepScenePos = false);
     void addToImagesContainer(Container *c, bool keepScenePos = false);
@@ -50,6 +69,11 @@ class BranchContainer : public Container {
     Container *branchesContainer;
     Container *imagesContainer;
     Container *innerContainer;
+
+  private:
+    Orientation orientation;
+    Orientation originalOrientation;//! Save orientation before move for undo
+
 };
 
 #endif

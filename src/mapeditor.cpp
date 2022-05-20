@@ -891,7 +891,7 @@ BranchItem *MapEditor::getBranchAbove(BranchItem *selbi)
     if (selbi) {
         int dz = selbi->depth(); // original depth
         bool invert = false;
-        if (selbi->getBranchContainer()->getOrientation() == Container::LeftOfParent)
+        if (selbi->getBranchContainer()->getOrientation() == BranchContainer::LeftOfParent)
             invert = true;
 
         BranchItem *bi;
@@ -947,7 +947,7 @@ BranchItem *MapEditor::getBranchBelow(BranchItem *selbi)
         BranchItem *bi;
         int dz = selbi->depth(); // original depth
         bool invert = false;
-        if (selbi->getBranchContainer()->getOrientation() == Container::LeftOfParent)
+        if (selbi->getBranchContainer()->getOrientation() == BranchContainer::LeftOfParent)
             invert = true;
 
         // Look for branch with same parent but directly below
@@ -1001,14 +1001,14 @@ BranchItem *MapEditor::getLeftBranch(TreeItem *ti)
                     newbi = bi->getBranchNum(i);
                     bc = newbi->getBranchContainer();
                     if (bc &&
-                        bc->getOrientation() == Container::LeftOfParent)
+                        bc->getOrientation() == BranchContainer::LeftOfParent)
                         break;
                 }
             }
             return newbi;
         }
         if (bi->getBranchContainer()->getOrientation() ==
-            Container::RightOfParent)
+            BranchContainer::RightOfParent)
             // right of center
             return (BranchItem *)(bi->parent());
         else
@@ -1039,7 +1039,7 @@ BranchItem *MapEditor::getRightBranch(TreeItem *ti)
                     newbi = bi->getBranchNum(i);
                     bc = newbi->getBranchContainer();
                     if (bc &&
-                        bc->getOrientation() == Container::RightOfParent)
+                        bc->getOrientation() == BranchContainer::RightOfParent)
                         qDebug()
                             << "BI found right: " << newbi->getHeadingPlain();
                 }
@@ -1047,7 +1047,7 @@ BranchItem *MapEditor::getRightBranch(TreeItem *ti)
             return newbi;
         }
         if (bi->getBranchContainer()->getOrientation() ==
-            Container::LeftOfParent)
+            BranchContainer::LeftOfParent)
             // left of center
             return (BranchItem *)(bi->parent());
         else
@@ -1242,7 +1242,7 @@ void MapEditor::editHeading()
         qreal h = 30;
 
         BranchContainer *bc = bi->getBranchContainer();
-        if (bc->getOrientation() == Container::RightOfParent) {
+        if (bc->getOrientation() == BranchContainer::RightOfParent) {
             tl = bc->getHeadingRect().topLeft();
             br = tl + QPointF(w, h);
         }
@@ -1525,10 +1525,10 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
                 ti_found->getType() != TreeItem::MapCenter &&
                 lmo_found->getBBox().width() > 30) {
                 if ((lmo_found->getOrientation() !=
-                         Container::RightOfParent && // FIXME-x already changed to Container here
+                         BranchContainer::RightOfParent && // FIXME-x already changed to Container here
                      p.x() < lmo_found->getBBox().left() + 10) ||
                     (lmo_found->getOrientation() !=
-                         Container::LeftOfParent && // FIXME-x already changed to Container here
+                         BranchContainer::LeftOfParent && // FIXME-x already changed to Container here
                      p.x() > lmo_found->getBBox().right() - 10)) {
                     // FIXME-4 similar code in mainwindow::updateActions
                     QMenu menu;
@@ -1719,9 +1719,23 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
     // reset cursor if we are moving and don't copy
 
     // Check if we could link (temporary)
-    TreeItem *ti_found = findMapItem(p_event, model->getSelectedItems());
-    if (ti_found && ti_found->hasTypeBranch()) {
-        BranchContainer *pbc = ((BranchItem*)ti_found)->getBranchContainer();
+    QList <TreeItem*> selectedItems = model->getSelectedItems();
+    TreeItem *targetItem = findMapItem(p_event, selectedItems);
+
+    // Check, if targetItem is a child of one of the selectedItems
+    if (targetItem) {
+        foreach (TreeItem *ti, selectedItems) {
+            if (targetItem->isChildOf(ti)) {
+                // qWarning() << "ME::moveObject " << targetItem->getHeadingPlain() << "is child of " << ti->getHeadingPlain();
+                targetItem = nullptr;
+                break;
+            }
+        }
+    }
+
+    // Set position and orientation of tmpParentContainer and check if we could link
+    if (targetItem && targetItem->hasTypeBranch()) {
+        BranchContainer *targetBranchContainer = ((BranchItem*)targetItem)->getBranchContainer();
 
         int d_pos;
         if (e->modifiers() & Qt::ShiftModifier)
@@ -1730,15 +1744,34 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
             d_pos = -1;
         else
             d_pos = 0;
-        tmpParentContainer->setPos(pbc->getPositionHintRelink(tmpParentContainer, d_pos, p_event));
+        tmpParentContainer->setPos(targetBranchContainer->getPositionHintRelink(tmpParentContainer, d_pos, p_event));
+        if (!tmpParentContainer->isTemporaryLinked()) {
+            tmpParentContainer->setTemporaryLinked(true);
+        }
+
+        // Set orientation
+        if (targetItem->depth() == 0)
+            // FIXME-0 orientation should depend on position
+            tmpParentContainer->setOrientation(BranchContainer::UndefinedOrientation);
+        else {
+            tmpParentContainer->setOrientation(targetBranchContainer->getOrientation());
+        }
+
     } else {
         // Since moved containers are relative to tmpParentContainer anyway, just move 
         // tmpParentContainer to pointer position:
         tmpParentContainer->setPos(p_event - movingObj_initialContainerOffset);
+        tmpParentContainer->setOrientation(BranchContainer::UndefinedOrientation);
+
+        if (tmpParentContainer->isTemporaryLinked()) {
+            tmpParentContainer->setTemporaryLinked(false);
+        }
     }
     
+    // Add selected branches and images temporary to tmpParentContainer,
+    // if they are not there yet:
     BranchContainer *bc;
-    foreach (TreeItem *ti, model->getSelectedItems())
+    foreach (TreeItem *ti, selectedItems)
     {
         // The item structure in VymModel remaines untouched so far,
         // only containers will be reparented temporarily!
@@ -1747,15 +1780,15 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
             
             if (bc->parentItem() != tmpParentContainer->getBranchesContainer()) {
                 bc->setOrgPos();
+                bc->setOriginalOrientation();
+                bc->setTemporaryLinked(true);
                 tmpParentContainer->addToBranchesContainer(bc, true);
-                tmpParentContainer->reposition();
             }
         } else if (ti->hasTypeImage()) {
             ImageContainer *ic = ((ImageItem*)ti)->getImageContainer();
             if (ic->parentItem() != tmpParentContainer->getImagesContainer()) {
                 ic->setOrgPos();
                 tmpParentContainer->addToImagesContainer(ic, true);
-                tmpParentContainer->reposition();
             }
         }
         /* FIXME-2 check xlinks later
@@ -1774,6 +1807,10 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
             qWarning("ME::moveObject  Huh? I'm confused. No LMO or XLink moved");   // FIXME-2 shouldn't happen
         */
     }
+
+    qDebug() << "ME::moveObject  tpC tmpLinked=" << tmpParentContainer->isTemporaryLinked() << " orientation = " << tmpParentContainer->getOrientation() << tmpParentContainer->pos();
+
+    tmpParentContainer->reposition();
 
     // Update selection
     QItemSelection sel = model->getSelectionModel()->selection();
@@ -1853,6 +1890,8 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
             
             // Loop over branches
             foreach(BranchContainer *bc, tmpParentContainer->childBranches()) {
+                bc->setTemporaryLinked(false);
+
                 BranchItem *bi = bc->getBranchItem();
                 BranchItem *pi = bi->parentBranch();
 
