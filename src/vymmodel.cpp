@@ -5915,13 +5915,12 @@ TreeItem::Type VymModel::selectionType()
 
 BranchItem *VymModel::getSelectedBranch()
 {
-    TreeItem *ti = getSelectedItem();
-    if (ti) {
-        TreeItem::Type type = ti->getType();
-        if (type == TreeItem::Branch || type == TreeItem::MapCenter)
-            return (BranchItem *)ti;
-    }
-    return NULL;
+    // Return selected branch,
+    // if several are selected, return last selected
+    QList<BranchItem *> bis;
+    if (bis.count() == 0) return nullptr;
+
+    return bis.last();
 }
 
 QList<BranchItem *> VymModel::getSelectedBranches()
