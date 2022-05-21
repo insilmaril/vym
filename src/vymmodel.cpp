@@ -5917,7 +5917,7 @@ BranchItem *VymModel::getSelectedBranch()
 {
     // Return selected branch,
     // if several are selected, return last selected
-    QList<BranchItem *> bis;
+    QList<BranchItem *> bis = getSelectedBranches();
     if (bis.count() == 0) return nullptr;
 
     return bis.last();
