@@ -90,7 +90,7 @@ MapEditor::MapEditor(VymModel *vm)
     tmpParentContainer->getBranchesContainer()->setLayoutType(Container::FloatingBounded);
     tmpParentContainer->setBrush(Qt::NoBrush);
     tmpParentContainer->setPen(QPen(Qt::NoPen));
-    //tmpParentContainer->setPen(QPen(Qt::blue));
+    tmpParentContainer->setPen(QPen(Qt::blue));
     tmpParentContainer->reposition();
 
     // Shortcuts and actions
@@ -1808,8 +1808,6 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
         */
     }
 
-    qDebug() << "ME::moveObject  tpC tmpLinked=" << tmpParentContainer->isTemporaryLinked() << " orientation = " << tmpParentContainer->getOrientation() << tmpParentContainer->pos();
-
     tmpParentContainer->reposition();
 
     // Update selection
@@ -1909,8 +1907,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                                         destinationBranch->parentBranch(),
                                         destinationBranch->num() + 1, true);
                 } else { // Append to dst         
-                    model->relinkBranch(bi, destinationBranch,
-                                        -1, true); //, movingObj_orgPos);    // FIXME-2 orgPos with containers?
+                    model->relinkBranch(bi, destinationBranch, -1, true);
                 }
             }   // Loop to relink branches
 

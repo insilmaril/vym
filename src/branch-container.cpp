@@ -217,7 +217,7 @@ QPointF BranchContainer::getPositionHintNewChild(Container *c)
     }
 }
 
-QPointF BranchContainer::getPositionHintRelink(Container *c, int d_pos, const QPointF &p_scene)
+QPointF BranchContainer::getPositionHintRelink(Container *c, int d_pos, const QPointF &p_scene) // FIXME-1 not working correctly with multiple selected branches
 {
     QPointF hint;
 
