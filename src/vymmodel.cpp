@@ -1529,8 +1529,8 @@ void VymModel::saveState(const SaveMode &savemode, const QString &undoSelection,
         redoCommand = QString("model.select(\"%1\");model.%2;").arg(redoSelection).arg(redoCom);
 
         // Build string with all commands
-        undoBlock += undoCommand;
-        redoBlock += redoCommand;
+        undoBlock = undoCommand + undoBlock;
+        redoBlock = redoBlock + redoCommand;
         if (debug) {
             qDebug() << "VM::saveState  undoBlock = " << undoBlock;
             qDebug() << "VM::saveState  redoBlock = " << redoBlock;
@@ -1622,11 +1622,9 @@ void VymModel::saveState(const SaveMode &savemode, const QString &undoSelection,
         qDebug() << "    redoSel=" << redoSelection;
         if (saveSel)
             qDebug() << "    saveSel=" << qPrintable(getSelectString(saveSel));
-        cout << "    undoCom:" << endl;
-        cout << qPrintable(undoCommand) << endl;
-        cout << "    redoCom:" << endl;
-        cout << qPrintable(redoCommand) << endl;
-        cout << "    ---------------------------" << endl;
+        cout << "    undoCom:" <<  qPrintable(undoCommand) << "\n";
+        cout << "    redoCom:" <<  qPrintable(redoCommand) << "\n";
+        cout << "    ---------------------------\n";
     }
 
     mainWindow->updateHistory(undoSet);
@@ -3374,15 +3372,8 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst, bo
             QString undoCom;
             QString redoCom;
 
-            undoCom =
-                "relinkTo (\"" + preParStr + "\"," + preNum + "," +
-                QString("%1,%2").arg(12).arg(34) + ")";
-                //QString("%1,%2").arg(orgPos.x()).arg(orgPos.y()) + ")";
-
-            redoCom =
-                "relinkTo (\"" + getSelectString(dst) + "\"," + postNum + "," +
-                QString("%1,%2").arg(12).arg(34) + ")";
-                //QString("%1,%2").arg(savePos.x()).arg(savePos.y()) + ")";
+            undoCom = "relinkTo (\"" + preParStr + "\"," + preNum + ")";
+            redoCom = "relinkTo (\"" + getSelectString(dst) + "\"," + postNum + ")";
 
             saveState(postSelStr, undoCom, preSelStr, redoCom,
                       QString("Relink %1 to %2")

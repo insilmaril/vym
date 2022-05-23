@@ -1885,6 +1885,11 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
 
         // Check if we have a destination and should relink
         if (destinationBranch && objectMoved && state() != MovingObjectWithoutLinking) {
+
+            model->saveStateBeginBlock(
+                    QString("Relink %1 objects to \"%2\"")
+                        .arg(tmpParentContainer->childBranches().count()  +tmpParentContainer->childImages().count())
+                        .arg(destinationBranch->getHeadingPlain()));
             
             // Loop over branches
             foreach(BranchContainer *bc, tmpParentContainer->childBranches()) {
@@ -1923,7 +1928,6 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                 }
 
                 // Relink
-                qDebug() << "ME relink now";
                 model->relinkBranch(bi, dst_branch, dst_num, true);
 
                 // After relinking: Save new position for redo, if required 
@@ -1946,6 +1950,8 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
             // Destination available and movingObject
 
             model->reposition(); // FIXME-2 testing after relinking
+
+            model->saveStateEndBlock();
         } else {
             // Branches moved, but not relinked
             QPointF t = p - movingObj_initialPointerPos;    // Defined in mousePressEvent
