@@ -137,7 +137,7 @@ LinkableMapObj *MapItem::getLMO()   // FIXME-2 remove completely
 }
 
 #include "heading-container.h"
-QPainterPath MapItem::getSelectionPath() // FIXME-0 should be in BranchContainer or ImageContainer
+QPainterPath MapItem::getSelectionPath() // FIXME-1 should be in BranchContainer or ImageContainer
 {
     qreal d = 3;    // Margins around rectangle of item
     QPolygonF polygon;

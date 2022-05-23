@@ -479,11 +479,11 @@ class VymModel : public TreeModel {
         different needs to call saveState
         Returns true if relinking was successful.
     */
-    bool relinkBranch(BranchItem *branch, BranchItem *dst, int pos = -1,
-                      bool updateSelection = false, QPointF orgPos = QPointF());
+    bool relinkBranch(BranchItem *branch, BranchItem *dst, int num_new = -1,
+                      bool updateSelection = false);
     bool relinkImage(ImageItem *image, BranchItem *dst);
 
-    bool relinkTo(const QString &dest, int num, QPointF pos);
+    bool relinkTo(const QString &dest, int num);
 
   private:
     bool cleaningUpLinks; //!< True while cleaning up to avoid recursion

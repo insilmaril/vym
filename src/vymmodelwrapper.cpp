@@ -630,24 +630,18 @@ void VymModelWrapper::paste() { model->paste(); }
 
 void VymModelWrapper::redo() { model->redo(); }
 
-bool VymModelWrapper::relinkTo(const QString &parent, int num, qreal x, qreal y)
+bool VymModelWrapper::relinkTo(const QString &parent, int num)
 {
     bool r;
-    r = model->relinkTo(parent, num, QPointF(x, y));
+    r = model->relinkTo(parent, num);
     if (!r)
         logError(context(), QScriptContext::UnknownError, "Could not relink");
     return setResult(r);
 }
 
-bool VymModelWrapper::relinkTo(const QString &parent, int num)
-{
-    bool r = relinkTo(parent, num, 0, 0);
-    return setResult(r);
-}
-
 bool VymModelWrapper::relinkTo(const QString &parent)
 {
-    bool r = relinkTo(parent, -1, 0, 0);
+    bool r = relinkTo(parent, -1);
     return setResult(r);
 }
 

@@ -145,7 +145,7 @@ void HeadingContainer::setHeading(QString s)// FIXME-2 richtext has wrong positi
             }
         }
     } // ASCII heading with multiple lines
-    // setVisibility(visible); FIXME-0  no visibility yet with containers
+    // setVisibility(visible); FIXME-1  no visibility yet with containers
 
     setName(QString("HC (%1)").arg(s));
 }

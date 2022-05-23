@@ -1893,22 +1893,49 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                 BranchItem *bi = bc->getBranchItem();
                 BranchItem *pi = bi->parentBranch();
 
-                if (e->modifiers() & Qt::ShiftModifier &&
-                    destinationBranch->parent()) { 
-                    
+                // Consider modifiers when relinking a branch:
+                // Default is to append to destinationBranch
+                BranchItem *dst_branch = destinationBranch;
+                int dst_num = -1;
+
+                if (e->modifiers() & Qt::ShiftModifier && destinationBranch->parent()) { 
                     // Link above dst
-                    model->relinkBranch(bi,
-                                        destinationBranch->parentBranch(),
-                                        destinationBranch->num(), true);
-                } else if (e->modifiers() & Qt::ControlModifier &&
-                         destinationBranch->parent()) {
+                    dst_branch = destinationBranch->parentBranch();
+                    dst_num = destinationBranch->num();
+                } else if (e->modifiers() & Qt::ControlModifier && destinationBranch->parent()) {
                     // Link below dst
-                    model->relinkBranch(bi,
-                                        destinationBranch->parentBranch(),
-                                        destinationBranch->num() + 1, true);
-                } else { // Append to dst         
-                    model->relinkBranch(bi, destinationBranch, -1, true);
+                    dst_branch = destinationBranch->parentBranch();
+                    dst_num = destinationBranch->num() +  1;
                 }
+
+                // Prepare relinking: Save old position for undo, if required
+                // 
+                // tmpParentContainer always has floating layout, 
+                // check original parent instead:
+                Container *originalParentContainer = bc->getBranchItem()->parentBranch()->getBranchesContainer();
+                if (originalParentContainer->hasFloatingLayout()) {
+                    model->saveState(
+                            bc->getBranchItem(), 
+                            QString("setPos %1;").arg(qpointFToString(bc->orgPos())),
+                            nullptr,
+                            "", 
+                            QString("Move %1") .arg(bc->getBranchItem()->getHeadingPlain()));
+                }
+
+                // Relink
+                qDebug() << "ME relink now";
+                model->relinkBranch(bi, dst_branch, dst_num, true);
+
+                // After relinking: Save new position for redo, if required 
+                if (dst_branch->getBranchesContainer()->hasFloatingLayout()) {
+                    model->saveState(
+                            nullptr,
+                            "", 
+                            bc->getBranchItem(), 
+                            QString("setPos %1;").arg(qpointFToString(bc->pos())),
+                            QString("Move %1") .arg(bc->getBranchItem()->getHeadingPlain()));
+                }
+
             }   // Loop to relink branches
 
             // Loop over images

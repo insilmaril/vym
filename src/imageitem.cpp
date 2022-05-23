@@ -62,7 +62,7 @@ ImageContainer *ImageItem::createImageContainer(QGraphicsScene *scene)
     //qDebug() << "II::createImageContainer for " << this;
     imageContainer = new ImageContainer(scene);
     imageContainer->setImageItem(this);
-    /* FIXME-0 cont here, check visibility of new image
+    /* FIXME-1 cont here, check visibility of new image
     if (((BranchItem *)parentItem)->isScrolled() ||
         !((MapItem *)parentItem)->getMO()->isVisibleObj())
         imageContainer->setVisibility(false);

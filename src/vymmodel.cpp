@@ -1522,7 +1522,7 @@ void VymModel::saveState(const SaveMode &savemode, const QString &undoSelection,
     QString undoCommand;
     QString redoCommand;
 
-    if (buildingUndoBlock)
+    if (buildingUndoBlock)  // FIXME-0 Review, also empty commands introduce with new relinking in MapEditor
     {
         // Also save select statements as part of commands
         undoCommand = QString("model.select(\"%1\");model.%2;").arg(undoSelection).arg(undoCom);
@@ -3295,8 +3295,7 @@ BranchItem *VymModel::addNewBranchBefore()
     return newbi;
 }
 
-bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int pos,   // FIXME-0 relink: take care of positions
-                            bool updateSelection, QPointF orgPos)
+bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst, bool updateSelection)
 {
     if (branch && dst) {
 
@@ -3316,7 +3315,7 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int pos,   // F
         // Do we need to update frame type?
         bool keepFrame = true;
 
-        // Save old position for savestate
+        // Save old selection for savestate
         QString preSelStr = getSelectString(branch);
         QString preNum = QString::number(branch->num(), 10);
         QString preParStr = getSelectString(branch->parent());
@@ -3326,18 +3325,18 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int pos,   // F
         // Remove at current position
         int n = branch->childNum();
 
-        // If branch and dst have same parent, then pos needs to be adjusted 
+        // If branch and dst have same parent, then num_dst needs to be adjusted 
         // after removing branch
-        if (branchpi == dst && pos - 1 > n ) 
-            pos--;
+        if (branchpi == dst && num_dst - 1 > n ) 
+            num_dst--;
 
 
         beginRemoveRows(index(branchpi), n, n);
         branchpi->removeChild(n);
         endRemoveRows();
 
-        if (pos < 0 || pos > dst->branchCount())
-            pos = dst->branchCount();
+        if (num_dst < 0 || num_dst > dst->branchCount())
+            num_dst = dst->branchCount();
 
         // Append as last branch to dst
         if (dst->branchCount() == 0)
@@ -3345,8 +3344,8 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int pos,   // F
         else
             n = dst->getFirstBranch()->childNumber();
 
-        beginInsertRows(index(dst), n + pos, n + pos);
-        dst->insertBranch(pos, branch);
+        beginInsertRows(index(dst), n + num_dst, n + num_dst);
+        dst->insertBranch(num_dst, branch);
         endInsertRows();
 
         // Correct type if necessesary
@@ -3370,20 +3369,17 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int pos,   // F
         QString postNum = QString::number(branch->num(), 10);
 
         // FIXME-1 relink: Check concept of saving old and new position of containers when relinking
-        /*
-        QPointF savePos;
-        LinkableMapObj *lmosel = branch->getLMO();
-        if (lmosel)
-            savePos = lmosel->getAbsPos();
-        */
 
         if (!saveStateBlocked) { // Don't build strings when moving up/down
-            QString undoCom =
+            QString undoCom;
+            QString redoCom;
+
+            undoCom =
                 "relinkTo (\"" + preParStr + "\"," + preNum + "," +
                 QString("%1,%2").arg(12).arg(34) + ")";
                 //QString("%1,%2").arg(orgPos.x()).arg(orgPos.y()) + ")";
 
-            QString redoCom =
+            redoCom =
                 "relinkTo (\"" + getSelectString(dst) + "\"," + postNum + "," +
                 QString("%1,%2").arg(12).arg(34) + ")";
                 //QString("%1,%2").arg(savePos.x()).arg(savePos.y()) + ")";
@@ -3440,7 +3436,7 @@ bool VymModel::relinkImage(ImageItem *image, BranchItem *dst)
     return false;
 }
 
-bool VymModel::relinkTo(const QString &dstString, int num, QPointF pos)
+bool VymModel::relinkTo(const QString &dstString, int num)
 {
     TreeItem *selti = getSelectedItem();
     if (!selti)
@@ -3466,10 +3462,12 @@ bool VymModel::relinkTo(const QString &dstString, int num, QPointF pos)
             qDebug() << "VM::relinkTo mapCenter";
             if (relinkBranch(selbi, (BranchItem *)dst, -1, true)) {
                 // Get coordinates of mainbranch
-                if (selbi->getLMO()) {  // FIXME-0  VM::relinkTo
+                /*
+                if (selbi->getLMO()) {  // FIXME-0  VM::relinkTo  move not necessary anymore. Also differentiationb Branch and MapCenter should not be necessary
                     ((BranchObj *)selbi->getLMO())->move(pos);
                     ((BranchObj *)selbi->getLMO())->setRelPos();
                 }
+                */
                 reposition();
                 emitSelectionChanged();
                 return true;
@@ -3580,12 +3578,12 @@ void VymModel::deleteKeepChildren(bool saveStateFlag)  // FIXME-2 still uses BO/
         unselectAll();
         bool oldSaveState = saveStateBlocked;
         saveStateBlocked = true;
-        int pos = selbi->num();
+        int num_dst = selbi->num();
         BranchItem *bi = selbi->getFirstBranch();
         while (bi) {
-            relinkBranch(bi, pi, pos, true);
+            relinkBranch(bi, pi, num_dst, true);
             bi = selbi->getFirstBranch();
-            pos++;
+            num_dst++;
         }
         deleteItem(selbi);
         reposition();

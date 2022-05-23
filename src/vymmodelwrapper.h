@@ -92,7 +92,6 @@ class VymModelWrapper : public VymScriptContext {
     bool parseVymText(const QString &text);
     void paste();
     void redo();
-    bool relinkTo(const QString &parent, int num, qreal x, qreal y);
     bool relinkTo(const QString &parent, int num);
     bool relinkTo(const QString &parent);
     void remove();

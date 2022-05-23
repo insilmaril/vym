@@ -5437,13 +5437,8 @@ void Main::editMoveToTarget()
                         // If branch below exists, select that one
                         // Makes it easier to quickly resort using the MoveTo function
                         BranchItem *below = pi->getBranchNum(selbi->num() + 1);
-                        LinkableMapObj *lmo = selbi->getLMO();
-                        QPointF orgPos;
-                        if (lmo)
-                            orgPos = lmo->getAbsPos();
 
-                        if (model->relinkBranch(selbi, (BranchItem *)dsti, -1, true,
-                                                orgPos)) {
+                        if (model->relinkBranch(selbi, (BranchItem *)dsti, -1, true)) {
                             if (below)
                                 model->select(below);
                             else if (pi)
