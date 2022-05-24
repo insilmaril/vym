@@ -90,7 +90,7 @@ MapEditor::MapEditor(VymModel *vm)
     tmpParentContainer->getBranchesContainer()->setLayoutType(Container::FloatingBounded);
     tmpParentContainer->setBrush(Qt::NoBrush);
     tmpParentContainer->setPen(QPen(Qt::NoPen));
-    tmpParentContainer->setPen(QPen(Qt::blue));
+    //tmpParentContainer->setPen(QPen(Qt::blue));   // Debugging only
     tmpParentContainer->reposition();
 
     // Shortcuts and actions
@@ -367,7 +367,7 @@ void MapEditor::startAnimation(Container *c, const QPointF &v)  // FIXME-2 use c
     startAnimation(c, c->pos(), c->pos() + v);
 }
 
-#include "animpoint.h"  // FIXME-2 review
+#include "animpoint.h"  // FIXME-2 review, move to top
 void MapEditor::startAnimation(Container *c, const QPointF &start,
                               const QPointF &dest)
 {
@@ -1973,7 +1973,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                     BranchItem *bi = bc->getBranchItem();
                     BranchItem *pi = bi->parentBranch();
 
-                    // Relink to original parent container 
+                    // Relink container to original parent container 
                     // and keep (!) current absolute position
                     bi->updateContainerStackingOrder();
 

@@ -117,7 +117,7 @@ BranchContainer::Orientation BranchContainer::getOrientation()
     return orientation;
 }
 
-void BranchContainer::setTemporaryLinked(bool b)    // FIXME-0 really needed?
+void BranchContainer::setTemporaryLinked(bool b)
 {
     temporaryLinked = b;
 }

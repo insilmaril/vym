@@ -1768,6 +1768,10 @@ void VymModel::saveStateBeginBlock(const QString &comment)  // FIXME-3 make bloc
 void VymModel::saveStateEndBlock()
 {
     buildingUndoBlock = false;
+    
+    // Drop whole block, if empty
+    if (undoBlock.isEmpty() && redoBlock.isEmpty()) return;
+
     saveState(UndoCommand, "", undoBlock, "", redoBlock, undoBlockComment, nullptr);
 }
 
@@ -3377,8 +3381,6 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst, bo
         // Savestate
         QString postSelStr = getSelectString(branch);
         QString postNum = QString::number(branch->num(), 10);
-
-        // FIXME-1 relink: Check concept of saving old and new position of containers when relinking
 
         if (!saveStateBlocked) { // Don't build strings when moving up/down
             QString undoCom;
