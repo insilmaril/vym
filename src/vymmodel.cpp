@@ -3810,13 +3810,14 @@ void VymModel::emitCollapseUnselected() { emit(collapseUnselected()); }
 
 void VymModel::toggleTarget()
 {
-    BranchItem *selbi = getSelectedBranch();
-    if (selbi) {
-        selbi->toggleTarget();
-        reposition();
-        saveState(selbi, "toggleTarget()", selbi, "toggleTarget()",
-                  "Toggle target");
+    foreach (TreeItem *ti, getSelectedItems()) {
+        if (ti->isBranchLikeType()) {
+            ((BranchItem*)ti)->toggleTarget();
+            saveState(ti, "toggleTarget()", ti, "toggleTarget()",
+                      "Toggle target");
+        }
     }
+    reposition();
 }
 
 ItemList VymModel::getLinkedMaps()

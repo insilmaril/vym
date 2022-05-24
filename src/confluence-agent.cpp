@@ -432,7 +432,7 @@ void ConfluenceAgent::startUpdatePageRequest()
     QString url = "https://" + concatenated + "@" + baseURL + apiURL + "/content" + "/" + pageID;
 
     QNetworkRequest request = QNetworkRequest(QUrl(url));
-    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json; charset=utf-8");
 
     QJsonObject payload;
     payload["id"] = pageID;
