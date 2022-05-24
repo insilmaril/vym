@@ -1883,12 +1883,14 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
     if (state() == MovingObject || state() == MovingObjectTmpLinked) {
         panningTimer->stop();
 
+        int relinkedObjectsCount = tmpParentContainer->childBranches().count()  + tmpParentContainer->childImages().count();
+
         // Check if we have a destination and should relink
         if (destinationBranch && objectMoved && state() != MovingObjectWithoutLinking) {
 
             model->saveStateBeginBlock(
                     QString("Relink %1 objects to \"%2\"")
-                        .arg(tmpParentContainer->childBranches().count()  +tmpParentContainer->childImages().count())
+                        .arg(relinkedObjectsCount)
                         .arg(destinationBranch->getHeadingPlain()));
             
             // Loop over branches
@@ -1927,11 +1929,15 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                             QString("Move %1") .arg(bc->getBranchItem()->getHeadingPlain()));
                 }
 
+                // Save current scene position for redo or if moved to floating layout
+                QPointF sp = bc->scenePos();
+
                 // Relink
                 model->relinkBranch(bi, dst_branch, dst_num, true);
 
                 // After relinking: Save new position for redo, if required 
                 if (dst_branch->getBranchesContainer()->hasFloatingLayout()) {
+                    bc->setPos(dst_branch->getBranchesContainer()->sceneTransform().inverted().map(sp));
                     model->saveState(
                             nullptr,
                             "", 

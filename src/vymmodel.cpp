@@ -1509,28 +1509,37 @@ void VymModel::saveState(const SaveMode &savemode, const QString &undoSelection,
                          const QString &redoCom, const QString &comment,
                          TreeItem *saveSel, QString dataXML)
 {
-    sendData(redoCom); // FIXME-4 testing
+    sendData(redoCom); // FIXME-3 testing
 
     // Main saveState
 
     if (saveStateBlocked)
         return;
 
-    if (debug)
+    if (debug) {
         qDebug() << "VM::saveState() for map " << mapName;
+        qDebug() << "  block:   " << buildingUndoBlock;
+        qDebug() << "  undoCom: " << undoSelection;
+        qDebug() << "  undoSel: " << undoCom;
+        qDebug() << "  redoCom: " << redoSelection;
+        qDebug() << "  redoSel: " << redoCom;
+    }
 
     QString undoCommand;
     QString redoCommand;
 
-    if (buildingUndoBlock)  // FIXME-0 Review, also empty commands introduce with new relinking in MapEditor
+    if (buildingUndoBlock)
     {
-        // Also save select statements as part of commands
-        undoCommand = QString("model.select(\"%1\");model.%2;").arg(undoSelection).arg(undoCom);
-        redoCommand = QString("model.select(\"%1\");model.%2;").arg(redoSelection).arg(redoCom);
-
         // Build string with all commands
-        undoBlock = undoCommand + undoBlock;
-        redoBlock = redoBlock + redoCommand;
+        if (!undoCom.isEmpty()) {
+            undoCommand = QString("model.select(\"%1\");model.%2;").arg(undoSelection).arg(undoCom);
+            undoBlock = undoCommand + undoBlock;
+        }
+        if (!redoCom.isEmpty()) {
+            redoCommand = QString("model.select(\"%1\");model.%2;").arg(redoSelection).arg(redoCom);
+            redoBlock = redoBlock + redoCommand;
+        }
+
         if (debug) {
             qDebug() << "VM::saveState  undoBlock = " << undoBlock;
             qDebug() << "VM::saveState  redoBlock = " << redoBlock;
@@ -1539,13 +1548,16 @@ void VymModel::saveState(const SaveMode &savemode, const QString &undoSelection,
     }
     
     if (undoCom.startsWith("model.")) {
-        // Ending saveStateBlock, no "model." prefix needed for commands
+        // After creating saveStateBlock, no "model." prefix needed for commands
         undoCommand = undoCom;
         redoCommand = redoCom;
     } else {
-        // Prefix commands with "model."
-        undoCommand = QString("model.%1").arg(undoCom);
-        redoCommand = QString("model.%1").arg(redoCom);
+        // Not part of a saveStateBlock, prefix non-empty commands with "model."
+
+        if (!undoCom.isEmpty())
+            undoCommand = QString("model.%1").arg(undoCom);
+        if (!redoCom.isEmpty())
+            redoCommand = QString("model.%1").arg(redoCom);
     }
 
     // Increase undo steps, but check for repeated actions  // FIXME-2 currently unused
@@ -1696,7 +1708,7 @@ void VymModel::saveState(const QString &undoSel, const QString &uc,
     // "Normal" savestate: save commands, selections and comment
     // so just save commands for undo and redo
     // and use current selection
-    saveState(UndoCommand, undoSel, uc, redoSel, rc, comment, NULL);
+    saveState(UndoCommand, undoSel, uc, redoSel, rc, comment, nullptr);
 }
 
 void VymModel::saveState(const QString &uc, const QString &rc,
@@ -1704,7 +1716,7 @@ void VymModel::saveState(const QString &uc, const QString &rc,
 {
     // "Normal" savestate applied to model (no selection needed):
     // save commands  and comment
-    saveState(UndoCommand, NULL, uc, NULL, rc, comment, NULL);
+    saveState(UndoCommand, nullptr, uc, nullptr, rc, comment, nullptr);
 }
 
 void VymModel::saveStateMinimal(TreeItem *undoSel, const QString &uc,
@@ -1719,7 +1731,7 @@ void VymModel::saveStateMinimal(TreeItem *undoSel, const QString &uc,
     if (undoSel)
         undoSelection = getSelectString(undoSel);
 
-    saveState(UndoCommand, undoSelection, uc, redoSelection, rc, comment, NULL);
+    saveState(UndoCommand, undoSelection, uc, redoSelection, rc, comment, nullptr);
 }
 
 void VymModel::saveStateBeforeLoad(LoadMode lmode, const QString &fname)
@@ -1756,7 +1768,7 @@ void VymModel::saveStateBeginBlock(const QString &comment)  // FIXME-3 make bloc
 void VymModel::saveStateEndBlock()
 {
     buildingUndoBlock = false;
-    saveState(UndoCommand, "", undoBlock, "", redoBlock, undoBlockComment, NULL);
+    saveState(UndoCommand, "", undoBlock, "", redoBlock, undoBlockComment, nullptr);
 }
 
 QGraphicsScene *VymModel::getScene() { return mapEditor->getScene(); }
@@ -3437,39 +3449,19 @@ bool VymModel::relinkTo(const QString &dstString, int num)
     if (!dst)
         return false; // Could not find destination
 
+    if (!dst->hasTypeBranch())
+        return false; // Relinking only allowed to branchLike destinations
+
     if (selti->hasTypeBranch()) {
         BranchItem *selbi = (BranchItem *)selti;
 
-        if (dst->getType() == TreeItem::Branch) {
-            // Now try to relink to branch
-            if (relinkBranch(selbi, (BranchItem *)dst, num, true)) {
-                emitSelectionChanged();
-                return true;
-            }
-            else
-                return false; // Relinking failed
-        }
-        else if (dst->getType() == TreeItem::MapCenter) {
-            qDebug() << "VM::relinkTo mapCenter";
-            if (relinkBranch(selbi, (BranchItem *)dst, -1, true)) {
-                // Get coordinates of mainbranch
-                /*
-                if (selbi->getLMO()) {  // FIXME-0  VM::relinkTo  move not necessary anymore. Also differentiationb Branch and MapCenter should not be necessary
-                    ((BranchObj *)selbi->getLMO())->move(pos);
-                    ((BranchObj *)selbi->getLMO())->setRelPos();
-                }
-                */
-                reposition();
-                emitSelectionChanged();
-                return true;
-            }
-        }
-        return false; // Relinking failed
-    }
-    else if (selti->getType() == TreeItem::Image) {
-        if (dst->hasTypeBranch())
-            if (relinkImage(((ImageItem *)selti), (BranchItem *)dst))
-                return true;
+        if (relinkBranch(selbi, (BranchItem *)dst, num, true)) {
+            emitSelectionChanged();
+            return true;
+        } 
+    } else if (selti->hasTypeImage()) {
+        if (relinkImage(((ImageItem *)selti), (BranchItem *)dst))
+            return true;
     }
     return false; // Relinking failed
 }
