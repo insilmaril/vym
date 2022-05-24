@@ -390,7 +390,7 @@ void BranchContainer::reposition()
                 branchesContainer->setVerticalAlignment(AlignedLeft);
                 break;
             default: 
-                qWarning() << "BranchContainer::reposition unknown orientation for mainbranch";
+                // TmpParent - orientation is set in MapEditor while moving objects
                 break;
         }
         // FIXME-2 no longer needed with orientation part of BC: branchesContainer->orientation = orientation;

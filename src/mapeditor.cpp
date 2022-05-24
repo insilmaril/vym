@@ -1965,7 +1965,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
             QList <BranchContainer*> childBranches = tmpParentContainer->childBranches();
             if (!childBranches.isEmpty()) {
                 model->saveStateBeginBlock(
-                    QString("Move %1 items").arg(childBranches.count())
+                    QString("Move %1 branch(es)").arg(childBranches.count())
                 );
                 // Empty the tmpParentContainer, which is used for moving
                 // Updating the stacking order also resets the original parents

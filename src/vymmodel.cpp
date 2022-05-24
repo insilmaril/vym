@@ -3811,7 +3811,7 @@ void VymModel::emitCollapseUnselected() { emit(collapseUnselected()); }
 void VymModel::toggleTarget()
 {
     foreach (TreeItem *ti, getSelectedItems()) {
-        if (ti->isBranchLikeType()) {
+        if (ti->hasTypeBranch()) {
             ((BranchItem*)ti)->toggleTarget();
             saveState(ti, "toggleTarget()", ti, "toggleTarget()",
                       "Toggle target");
