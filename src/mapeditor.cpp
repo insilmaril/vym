@@ -7,6 +7,7 @@
 #include <QPrinter>
 #include <QScrollBar>
 
+#include "animpoint.h"
 #include "branchitem.h"
 #include "geometry.h"
 #include "mainwindow.h"
@@ -182,7 +183,7 @@ MapEditor::MapEditor(VymModel *vm)
 
     // animations
     animationUse = settings.value("/animation/use", false) .toBool();
-    animationTicks = settings.value("/animation/ticks", 20).toInt();
+    animationTicks = settings.value("/animation/ticks", 100).toInt();
     animationInterval = settings.value("/animation/interval", 5).toInt();
     animatedContainers.clear();
     animationTimer = new QTimer(this);
@@ -339,20 +340,10 @@ void MapEditor::animateScrollBars()
 void MapEditor::animate()
 {
     animationTimer->stop();
-    Container  *c;
-    int i = 0;
-    while (i < animatedContainers.size()) {
-        /* FIXME-0 Animation
-        bo = (BranchObj *)animatedContainers.at(i);
-        if (!bo->animate()) {
-            if (i >= 0) {
-                animatedContainers.removeAt(i);
-                i--;
-            }
+    foreach (Container *c, animatedContainers) {
+        if (!c->animate()) {
+            animatedContainers.removeAll(c);
         }
-        bo->reposition();
-        */
-        i++;
     }
     // FIXME-2 emitSelectionChanged();
 
@@ -360,14 +351,13 @@ void MapEditor::animate()
         animationTimer->start(animationInterval);
 }
 
-void MapEditor::startAnimation(Container *c, const QPointF &v)  // FIXME-2 use containers 
+void MapEditor::startAnimation(Container *c, const QPointF &v)  // FIXME-2 only used in ME::autoLayout
 {
     if (!c) return;
 
     startAnimation(c, c->pos(), c->pos() + v);
 }
 
-#include "animpoint.h"  // FIXME-2 review, move to top
 void MapEditor::startAnimation(Container *c, const QPointF &start,
                               const QPointF &dest)
 {
@@ -378,8 +368,9 @@ void MapEditor::startAnimation(Container *c, const QPointF &start,
         ap.setStart(start);
         ap.setDest(dest);
         ap.setTicks(animationTicks);
+        ap.setTicks(500); // FIXME-0 testing
         ap.setAnimated(true);
-        // FIXME-0 bo->setAnimation(ap);
+        c->setAnimation(ap);
         if (!animatedContainers.contains(c))
             animatedContainers.append(c);
         animationTimer->setSingleShot(true);
@@ -400,11 +391,9 @@ void MapEditor::stopAllAnimation()
     int i = 0;
     while (i < animatedContainers.size()) {
         c = animatedContainers.at(i);
- // FIXME-0       c->stopAnimation();
- // FIXME-0       c->requestReposition();
+        c->stopAnimation();
         i++;
     }
-// FIXME- 2 reposition();
 }
 
 void MapEditor::setZoomFactorTarget(const qreal &zft)
@@ -1984,31 +1973,14 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                         model->saveState(
                             bi, QString("setPos%1").arg(qpointFToString(bc->orgPos())),
                             bi, QString("setPos%1").arg(qpointFToString(bc->orgPos() + t)));
-                        model->setPos(bc->orgPos() + t, bi);
+                    } else {
+                        // Draw the original link, before selection was moved around
+                        if (settings.value("/animation/use", true).toBool()) 
+                            startAnimation(bc, bc->pos(), bc->orgPos());
                     }
-
-/////////////////////////////////////////// FIXME-0 cleanup old animation parts
-/* copied from develop
-                    // Draw the original link, before selection was moved around
-                    if (settings.value("/animation/use", true).toBool() &&
-                        seli->depth() > 1
-                        //		    && distance
-                        //(lmosel->getRelPos(),movingObj_orgRelPos)<3
-                    ) {
-                        lmosel->setRelPos(); // calc relPos first for starting
-                                             // point
-
-                        model->startAnimation((BranchObj *)lmosel,
-                                              lmosel->getRelPos(),
-                                              movingObj_orgRelPos);
-                    }
-*/
-///////////////////////////////////////////
                 } // children of tmpParentContainer
                 model->saveStateEndBlock();
                 
-                model->reposition();
-
             }   // Empty tmpParenContainer
         } // Branches moved, but not relinked
 

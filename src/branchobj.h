@@ -1,6 +1,7 @@
 #ifndef BRANCHOBJ_H
 #define BRANCHOBJ_H
 
+#include "animpoint.h"
 #include "floatimageobj.h"
 #include "linkablemapobj.h"
 #include "ornamentedobj.h"

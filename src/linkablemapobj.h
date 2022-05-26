@@ -1,7 +1,6 @@
 #ifndef LINKABLEMAPOBJ_H
 #define LINKABLEMAPOBJ_H
 
-#include "animpoint.h"
 #include "flagrowobj.h"
 // #include "headingobj.h"
 #include "vymnote.h"

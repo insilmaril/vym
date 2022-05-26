@@ -3,6 +3,8 @@
 
 #include <QGraphicsRectItem>
 
+#include "animpoint.h"
+
 class BranchContainer;
 class ImageContainer;
 class MapObj;
@@ -82,6 +84,10 @@ class Container : public QGraphicsRectItem {
     void setOrgPos();
     QPointF orgPos();
 
+    virtual void setAnimation(const AnimPoint &ap);
+    virtual void stopAnimation();
+    virtual bool animate();
+
   public:
     virtual QVariant itemChange(GraphicsItemChange change, const QVariant &value);
     virtual void reposition();
@@ -90,6 +96,8 @@ class Container : public QGraphicsRectItem {
     ContainerType type;
 
     QPointF originalPos;    //! Save position before move for undo
+    AnimPoint animatedPos;  //! animated position to let e.g. a branch "snap back"
+
     QString name;
 
     LayoutType layout;

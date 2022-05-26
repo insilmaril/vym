@@ -150,6 +150,23 @@ void Container::addContainer(Container *c)
     c->setParentItem(this);
 }
 
+void Container::setAnimation(const AnimPoint &ap) { animatedPos = ap; }
+
+void Container::stopAnimation()
+{
+    animatedPos.stop();
+}
+
+bool Container::animate()
+{
+    animatedPos.animate();
+    if (animatedPos.isAnimated()) {
+        setPos(animatedPos);
+        return true;
+    }
+    return false;
+}
+
 QVariant Container::itemChange(GraphicsItemChange change, const QVariant &value)    // FIXME-2 needed?
 {
     //qDebug() << "Container::itemChange of " << this << ": " << change << value;
