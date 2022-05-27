@@ -345,7 +345,7 @@ void MapEditor::animate()
             animatedContainers.removeAll(c);
         }
     }
-    // FIXME-2 emitSelectionChanged();
+    model->emitSelectionChanged();
 
     if (!animatedContainers.isEmpty())
         animationTimer->start(animationInterval);
@@ -364,6 +364,7 @@ void MapEditor::startAnimation(Container *c, const QPointF &start,
     if (start == dest) return;
 
     if (c) {
+        // qDebug() << "ME::startAnimation  " << start << " -> " << dest << c->getName();
         AnimPoint ap;
         ap.setStart(start);
         ap.setDest(dest);
@@ -1797,8 +1798,6 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
         */
     }
 
-    tmpParentContainer->reposition();
-
     // Update selection
     QItemSelection sel = model->getSelectionModel()->selection();
     updateSelection(sel, sel);
@@ -1953,6 +1952,9 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
 
             QList <BranchContainer*> childBranches = tmpParentContainer->childBranches();
             if (!childBranches.isEmpty()) {
+
+                // We begin a saveStateBlock, if nothing is really moved, this
+                // block will be discarded later
                 model->saveStateBeginBlock(
                     QString("Move %1 branch(es)").arg(childBranches.count())
                 );
@@ -1960,7 +1962,6 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                 // Updating the stacking order also resets the original parents
                 foreach(BranchContainer *bc, childBranches) {
                     BranchItem *bi = bc->getBranchItem();
-                    BranchItem *pi = bi->parentBranch();
 
                     // Relink container to original parent container 
                     // and keep (!) current absolute position

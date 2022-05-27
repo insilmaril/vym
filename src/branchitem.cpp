@@ -588,6 +588,7 @@ void BranchItem::updateContainerStackingOrder()
 
     QPointF sp = branchContainer->scenePos();
 
+
     branchContainer->setParentItem(nullptr);
 
     BranchItem *pi = parentBranch();
@@ -601,7 +602,7 @@ void BranchItem::updateContainerStackingOrder()
     if (n < parentBranch()->branchCount() - 1)
         branchContainer->stackBefore( (parentBranch()->getBranchNum(n + 1))->getContainer() );
 
-    branchContainer->setPos(branchContainer->sceneTransform().inverted().map(sp));
+    branchContainer->setPos(branchContainer->parentItem()->sceneTransform().inverted().map(sp));
 
     return;
 }
