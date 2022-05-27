@@ -1472,12 +1472,16 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
     // Select the clicked object, if not moving without linking
     if (ti_found && (e->modifiers() & Qt::ShiftModifier)) {
         if (mainWindow->getModMode() == Main::ModModePoint) {
-            model->selectToggle(ti_found);
             lastToggleDirection = toggleUndefined;
+
+            model->selectToggle(ti_found);
         }
+    } else {
+        if (model->getSelectedItems().count() < 2 || !model->getSelectedItems().contains(ti_found))
+            // Only add ti_found, if we don't have multi-selection yet, which we 
+            // want to move around. In that case we would ignore the "pressed" event
+            model->select(ti_found);
     }
-    else 
-        model->select(ti_found);
 
     e->accept();
 

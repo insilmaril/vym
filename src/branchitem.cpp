@@ -577,7 +577,7 @@ Container* BranchItem::getBranchesContainer()
     return branchContainer->getBranchesContainer();
 }
 
-void BranchItem::updateContainerStackingOrder()
+void BranchItem::updateContainerStackingOrder() // FIXME-0 Qt warning "cannot stack under ... which must be sibling   - reproduce: select first upper sibling then lower and release without relinking
 {
     int n = num();
 
@@ -599,8 +599,12 @@ void BranchItem::updateContainerStackingOrder()
     else
         branchContainer->setParentItem(parentBranch()->getBranchesContainer());
 
-    if (n < parentBranch()->branchCount() - 1)
+    if (n < parentBranch()->branchCount() - 1) {
+        qDebug() << "update stacking order: n=" << n;
+        qDebug() << "  bc=" << branchContainer->getName();
+        qDebug() << "  pc=" << (parentBranch()->getBranchNum(n + 1))->getContainer()->getName();
         branchContainer->stackBefore( (parentBranch()->getBranchNum(n + 1))->getContainer() );
+    }
 
     branchContainer->setPos(branchContainer->parentItem()->sceneTransform().inverted().map(sp));
 

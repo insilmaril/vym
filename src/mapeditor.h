@@ -164,8 +164,10 @@ class MapEditor : public QGraphicsView {
     getRightBranch(TreeItem *ti); //! bet branch right of bi (in TreeView)
 
   private:
-      enum ToggleDirection {toggleUndefined, toggleUp, toggleDown};
-      ToggleDirection lastToggleDirection;
+    // Toggle objects by moving the cursor up/down with shift modifier
+    // (needs to consider the current direction of movement)
+    enum ToggleDirection {toggleUndefined, toggleUp, toggleDown};
+    ToggleDirection lastToggleDirection;
 
   public slots:
     void cursorUp();
