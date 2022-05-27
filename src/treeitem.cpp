@@ -43,7 +43,7 @@ TreeItem::~TreeItem()
 
 void TreeItem::init()
 {
-    model = NULL;
+    model = nullptr;
 
     // Assign ID
     itemLastID++;
@@ -198,7 +198,7 @@ int TreeItem::row() const
     if (parentItem)
         return parentItem->childItems.indexOf(const_cast<TreeItem *>(this));
 
-    qDebug() << "TI::row() pI=NULL this=" << this << "  ***************";
+    qDebug() << "TI::row() pI=nullptr this=" << this << "  ***************";
     return 0;
 }
 
@@ -208,7 +208,7 @@ int TreeItem::depth()
     // MapCenter d=0
     int d = -2;
     TreeItem *ti = this;
-    while (ti != NULL) {
+    while (ti != nullptr) {
         ti = ti->parent();
         d++;
     }
@@ -585,7 +585,7 @@ TreeItem *TreeItem::getChildNum(const int &n)
     if (n >= 0 && n < childItems.count())
         return childItems.at(n);
     else
-        return NULL;
+        return nullptr;
 }
 
 BranchItem *TreeItem::getFirstBranch()
@@ -593,7 +593,7 @@ BranchItem *TreeItem::getFirstBranch()
     if (branchCounter > 0)
         return getBranchNum(0);
     else
-        return NULL;
+        return nullptr;
 }
 
 BranchItem *TreeItem::getLastBranch()
@@ -601,7 +601,7 @@ BranchItem *TreeItem::getLastBranch()
     if (branchCounter > 0)
         return getBranchNum(branchCounter - 1);
     else
-        return NULL;
+        return nullptr;
 }
 
 ImageItem *TreeItem::getFirstImage()
@@ -609,7 +609,7 @@ ImageItem *TreeItem::getFirstImage()
     if (imageCounter > 0)
         return getImageNum(imageCounter - 1);
     else
-        return NULL;
+        return nullptr;
 }
 
 ImageItem *TreeItem::getLastImage()
@@ -617,18 +617,18 @@ ImageItem *TreeItem::getLastImage()
     if (imageCounter > 0)
         return getImageNum(imageCounter - 1);
     else
-        return NULL;
+        return nullptr;
 }
 
 BranchItem *TreeItem::getNextBranch(BranchItem *currentBranch)
 {
     if (!currentBranch)
-        return NULL;
+        return nullptr;
     int n = num(currentBranch) + 1;
     if (n < branchCounter)
         return getBranchNum(branchOffset + n);
     else
-        return NULL;
+        return nullptr;
 }
 
 BranchItem *TreeItem::getBranchNum(const int &n)
@@ -636,7 +636,7 @@ BranchItem *TreeItem::getBranchNum(const int &n)
     if (n >= 0 && n < branchCounter)
         return (BranchItem *)getChildNum(branchOffset + n);
     else
-        return NULL;
+        return nullptr;
 }
 
 BranchObj *TreeItem::getBranchObjNum(const int &n) // FIXME-2 Only called from within BranchObj => remove here
@@ -650,10 +650,10 @@ BranchObj *TreeItem::getBranchObjNum(const int &n) // FIXME-2 Only called from w
             if (bo)
                 return bo;
             else
-                qDebug() << "TI::getBONum bo=NULL";
+                qDebug() << "TI::getBONum bo=nullptr";
         }
     }
-    return NULL;
+    return nullptr;
     */
 }
 
@@ -662,7 +662,7 @@ ImageItem *TreeItem::getImageNum(const int &n)
     if (n >= 0 && n < imageCounter)
         return (ImageItem *)getChildNum(imageOffset + n);
     else
-        return NULL;
+        return nullptr;
 }
 
 FloatImageObj *TreeItem::getImageObjNum(const int &n)
@@ -670,7 +670,7 @@ FloatImageObj *TreeItem::getImageObjNum(const int &n)
     if (imageCounter > 0)
         return (FloatImageObj *)(getImageNum(n)->getLMO());
     else
-        return NULL;
+        return nullptr;
 }
 
 AttributeItem *TreeItem::getAttributeNum(const int &n)
@@ -678,7 +678,7 @@ AttributeItem *TreeItem::getAttributeNum(const int &n)
     if (n >= 0 && n < attributeCounter)
         return (AttributeItem *)getChildNum(attributeOffset + n);
     else
-        return NULL;
+        return nullptr;
 }
 
 AttributeItem *TreeItem::getAttributeByKey(const QString &k)
@@ -696,7 +696,7 @@ XLinkItem *TreeItem::getXLinkItemNum(const int &n)
     if (n >= 0 && n < xlinkCounter)
         return (XLinkItem *)getChildNum(xlinkOffset + n);
     else
-        return NULL;
+        return nullptr;
 }
 
 XLinkObj *TreeItem::getXLinkObjNum(const int &n)
@@ -709,7 +709,7 @@ XLinkObj *TreeItem::getXLinkObjNum(const int &n)
                 return l->getXLinkObj();
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 void TreeItem::setHideTmp(HideTmpMode mode)
