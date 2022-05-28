@@ -577,7 +577,7 @@ Container* BranchItem::getBranchesContainer()
     return branchContainer->getBranchesContainer();
 }
 
-void BranchItem::updateContainerStackingOrder() // FIXME-0 Qt warning "cannot stack under ... which must be sibling   - reproduce: select first upper sibling then lower and release without relinking
+void BranchItem::updateContainerStackingOrder()
 {
     int n = num();
 
