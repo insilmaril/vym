@@ -1985,8 +1985,10 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                     }
                 } // children of tmpParentContainer
                 model->saveStateEndBlock();
-                
+
             }   // Empty tmpParenContainer
+
+            model->reposition();
         } // Branches moved, but not relinked
 
         // Let's see if we moved images with tmpParentContainer
