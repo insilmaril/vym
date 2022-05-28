@@ -300,6 +300,8 @@ void BranchContainer::updateVisuals()
 
 void BranchContainer::reposition()
 {
+    qDebug() << "BC::reposition " << info();
+
     // Abreviation for depth
     uint depth;
     if (branchItem)

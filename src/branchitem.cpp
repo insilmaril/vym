@@ -600,7 +600,7 @@ void BranchItem::updateContainerStackingOrder() // FIXME-0 Qt warning "cannot st
         branchContainer->setParentItem(parentBranch()->getBranchesContainer());
 
     if (n < parentBranch()->branchCount() - 1) {
-        qDebug() << "update stacking order: n=" << n;
+        qDebug() << "update stacking order: n=" << n << "brCount=" << parentBranch()->branchCount() << " stack before: " << parentBranch()->getBranchNum(n+1)->getHeadingPlain();
         qDebug() << "  bc=" << branchContainer->getName();
         qDebug() << "  pc=" << (parentBranch()->getBranchNum(n + 1))->getContainer()->getName();
         branchContainer->stackBefore( (parentBranch()->getBranchNum(n + 1))->getContainer() );
