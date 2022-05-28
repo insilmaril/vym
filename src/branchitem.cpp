@@ -599,11 +599,20 @@ void BranchItem::updateContainerStackingOrder() // FIXME-0 Qt warning "cannot st
     else
         branchContainer->setParentItem(parentBranch()->getBranchesContainer());
 
-    if (n < parentBranch()->branchCount() - 1) {
-        qDebug() << "update stacking order: n=" << n << "brCount=" << parentBranch()->branchCount() << " stack before: " << parentBranch()->getBranchNum(n+1)->getHeadingPlain();
-        qDebug() << "  bc=" << branchContainer->getName();
-        qDebug() << "  pc=" << (parentBranch()->getBranchNum(n + 1))->getContainer()->getName();
-        branchContainer->stackBefore( (parentBranch()->getBranchNum(n + 1))->getContainer() );
+    while (n < parentBranch()->branchCount() - 1) {
+        // Insert container of this branch above others
+
+        // The next sibling container might currently still be temporarily 
+        // linked to tmpParentContainer, in that case it is not a sibling and 
+        // cannot be inserted using QGraphicsItem::stackBefore
+        //
+        // We try the next sibling then, if this fails, just append at the end.
+        if ( (parentBranch()->getBranchNum(n + 1))->getContainer()->parentItem() != branchContainer->getBranchesContainer() )
+            n++;
+        else {
+            branchContainer->stackBefore( (parentBranch()->getBranchNum(n + 1))->getContainer() );
+            break;
+        }
     }
 
     branchContainer->setPos(branchContainer->parentItem()->sceneTransform().inverted().map(sp));

@@ -364,7 +364,7 @@ void MapEditor::startAnimation(Container *c, const QPointF &start,
     if (start == dest) return;
 
     if (c) {
-        qDebug() << "ME::startAnimation  " << start << " -> " << dest << c->getName();
+        //qDebug() << "ME::startAnimation  " << start << " -> " << dest << c->getName();
         AnimPoint ap;
         ap.setStart(start);
         ap.setDest(dest);
