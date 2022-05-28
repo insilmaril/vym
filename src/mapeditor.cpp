@@ -1947,7 +1947,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
             }
             // Destination available and movingObject
 
-            model->reposition(); // FIXME-2 testing after relinking
+            model->reposition(); // FIXME-0 after relinking up to 3x reposition is required :-(
 
             model->saveStateEndBlock();
         } else {

@@ -2790,7 +2790,7 @@ void VymModel::cut()
     deleteSelection();
 }
 
-bool VymModel::moveUp(BranchItem *bi)
+bool VymModel::moveUp(BranchItem *bi)   // FIXME-0 does not update containers
 {
     if (readonly)
         return false;
@@ -3533,7 +3533,7 @@ void VymModel::deleteSelection()
     }
 }
 
-void VymModel::deleteKeepChildren(bool saveStateFlag)  // FIXME-2 still uses BO/LMO below
+void VymModel::deleteKeepChildren(bool saveStateFlag)  // FIXME-2 still uses BO/LMO below and causes wrong stacking order
 // deleteKeepChildren FIXME-3+ does not work yet for mapcenters
 // deleteKeepChildren FIXME-3+ children of scrolled branch stay invisible...
 {
@@ -4967,6 +4967,7 @@ void VymModel::unsetContextPos()
 
 void VymModel::reposition()
 {
+    qDebug() << "VM::reposition";
     if (repositionBlocked)
         return;
 
