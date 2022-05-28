@@ -2790,7 +2790,7 @@ void VymModel::cut()
     deleteSelection();
 }
 
-bool VymModel::moveUp(BranchItem *bi)   // FIXME-0 does not update containers
+bool VymModel::moveUp(BranchItem *bi)
 {
     if (readonly)
         return false;

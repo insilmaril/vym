@@ -591,9 +591,7 @@ void BranchItem::updateContainerStackingOrder() // FIXME-0 Qt warning "cannot st
 
     branchContainer->setParentItem(nullptr);
 
-    BranchItem *pi = parentBranch();
-
-    if (pi == rootItem) 
+    if (parentBranch() == rootItem) 
         // Moved center
         return;
     else
@@ -607,7 +605,7 @@ void BranchItem::updateContainerStackingOrder() // FIXME-0 Qt warning "cannot st
         // cannot be inserted using QGraphicsItem::stackBefore
         //
         // We try the next sibling then, if this fails, just append at the end.
-        if ( (parentBranch()->getBranchNum(n + 1))->getContainer()->parentItem() != branchContainer->getBranchesContainer() )
+        if ( (parentBranch()->getBranchNum(n + 1))->getContainer()->parentItem() != parentBranch()->getBranchesContainer() )
             n++;
         else {
             branchContainer->stackBefore( (parentBranch()->getBranchNum(n + 1))->getContainer() );
