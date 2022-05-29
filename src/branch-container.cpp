@@ -421,7 +421,14 @@ void BranchContainer::reposition()
             branchesContainer->setLayoutType(FloatingFree);
             innerContainer->setBrush(Qt::gray);
         } 
+        else { // FIXME-1 testing
+            QColor col (Qt::blue);
+            col.setAlpha(120);
+            branchesContainer->setBrush(col);
+            //innerContainer->setBrush(Qt::cyan);
+        }
     }
 
+    qDebug() << "  orientation =" << orientation << "of " << getName();
     Container::reposition();
 }

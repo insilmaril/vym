@@ -3311,6 +3311,7 @@ BranchItem *VymModel::addNewBranchBefore()
 
 bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst, bool updateSelection)
 {
+    qDebug() << "VM:relinkBranch begin";
     if (branch && dst) {
 
         // Check if we link to ourself
@@ -3376,7 +3377,9 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst, bo
         // Update parent item and stacking order of container
         branch->updateContainerStackingOrder();
 
+        qDebug() << "VM:relinkBranch pre repos";
         reposition(); // both for moveUp/Down and relinking
+        qDebug() << "VM:relinkBranch post repos";
 
         // Savestate
         QString postSelStr = getSelectString(branch);
@@ -3394,6 +3397,8 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst, bo
                           .arg(getObjectName(branch))
                           .arg(getObjectName(dst)));
         }
+
+        qDebug() << "VM:relinkBranch end";
 
         // New parent might be invisible
         branch->updateVisibility();

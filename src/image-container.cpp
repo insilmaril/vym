@@ -19,7 +19,7 @@ ImageContainer::ImageContainer(QGraphicsScene *scene)   // FIXME-2 scene should 
     init();
 }
 
-ImageContainer::~ImageContainer()
+ImageContainer::~ImageContainer()   // FIXME-1 remove imagesContainer from branch-container, if no longer needed
 {
     //qDebug() << "Destr ImageContainer  this=" << this << "  imageType = " << imageType ;
     imageItem->unlinkImageContainer();

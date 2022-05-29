@@ -28,7 +28,7 @@ void Container::copy(Container *other)
     verticalAlignment = other->verticalAlignment;
 }
 
-void Container::init()
+void Container::init()  // FIXME-0 horizontalDirection undefined, strange values
 {
     type = Undefined;
     layout = Horizontal;
@@ -204,11 +204,33 @@ QPointF Container::orgPos()     // Only used for BranchContainer and ImageContai
 void Container::reposition()
 {
     /*
-    qDebug() << QString("#### Reposition of %1").arg(getName()) 
-        << "Layout: " << layout 
-        << " direction: " << horizontalDirection
-        << "orientation: " << orientation;
     */
+    QString s_layout;
+    switch (layout) {
+        case Horizontal:
+            s_layout = "Horizontal";
+            if (horizontalDirection == LeftToRight)
+                s_layout += " LeftToRight";
+            else if (horizontalDirection == RightToLeft)
+                s_layout += " RightLeft";
+            else
+                s_layout += " huh? horiz. dir undefined...";
+            break;
+        case Vertical:
+            s_layout = "Vertical";
+            break;
+        case FloatingBounded:
+            s_layout = "FloatingBounded";
+            break;
+        case FloatingFree:
+            s_layout = "FloatingFree";
+            break;
+        default:
+            s_layout = "huh? undefined...";
+    }
+    qDebug() << QString("#### Reposition of %1").arg(getName()) 
+        << "Layout: " << s_layout;
+//        << "orientation: " << orientation;
 
     QRectF r;
 
