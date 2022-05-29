@@ -144,7 +144,9 @@ void BranchContainer::addToImagesContainer(Container *c, bool keepScenePos)
         imagesContainer->setLayoutType(Container::FloatingFree);
         imagesContainer->type = Container::ImageCollection;
         innerContainer->addContainer(imagesContainer);
-        imagesContainer->stackBefore(branchesContainer);
+
+        if (branchesContainer)
+            imagesContainer->stackBefore(branchesContainer);
     }
 
     QPointF sp = c->scenePos();
