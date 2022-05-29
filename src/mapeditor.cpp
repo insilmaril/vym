@@ -183,8 +183,8 @@ MapEditor::MapEditor(VymModel *vm)
 
     // animations
     animationUse = settings.value("/animation/use", false) .toBool();
-    animationTicks = settings.value("/animation/ticks", 100).toInt();
-    animationInterval = settings.value("/animation/interval", 5).toInt();
+    animationTicks = settings.value("/animation/snapback/ticks", 500).toInt();
+    animationInterval = settings.value("/animation/snapback/interval", 5).toInt();
     animatedContainers.clear();
     animationTimer = new QTimer(this);
     connect(animationTimer, SIGNAL(timeout()), this, SLOT(animate()));
@@ -369,7 +369,6 @@ void MapEditor::startAnimation(Container *c, const QPointF &start,
         ap.setStart(start);
         ap.setDest(dest);
         ap.setTicks(animationTicks);
-        ap.setTicks(500); // FIXME-0 testing
         ap.setAnimated(true);
         c->setAnimation(ap);
         if (!animatedContainers.contains(c))
