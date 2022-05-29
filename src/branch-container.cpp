@@ -37,15 +37,11 @@ void BranchContainer::init()
 
     orientation = UndefinedOrientation;
 
+    imagesContainer = nullptr;
+
     headingContainer = new HeadingContainer ();
     headingContainer->setBrush(Qt::NoBrush);
     headingContainer->setPen(Qt::NoPen);
-
-    imagesContainer = new Container ();
-    imagesContainer->setBrush(Qt::NoBrush);
-    imagesContainer->setPen(Qt::NoPen);
-    imagesContainer->setLayoutType(Container::FloatingFree);
-    imagesContainer->type = Container::ImageCollection;
 
     branchesContainer = new Container ();
     branchesContainer->setBrush(Qt::NoBrush);
@@ -61,7 +57,6 @@ void BranchContainer::init()
 
     // Adding the containers will reparent them and thus set scene
     innerContainer->addContainer(headingContainer);
-    innerContainer->addContainer(imagesContainer);
     innerContainer->addContainer(branchesContainer);
     addContainer(innerContainer);
 
@@ -135,18 +130,28 @@ void BranchContainer::addToBranchesContainer(Container *c, bool keepScenePos)
         c->setPos(branchesContainer->sceneTransform().inverted().map(sp));
 }
 
+Container* BranchContainer::getBranchesContainer()
+{
+    return branchesContainer;
+}
+
 void BranchContainer::addToImagesContainer(Container *c, bool keepScenePos)
 {
+    if (!imagesContainer) {
+        imagesContainer = new Container ();
+        imagesContainer->setBrush(Qt::NoBrush);
+        imagesContainer->setPen(Qt::NoPen);
+        imagesContainer->setLayoutType(Container::FloatingFree);
+        imagesContainer->type = Container::ImageCollection;
+        innerContainer->addContainer(imagesContainer);
+        imagesContainer->stackBefore(branchesContainer);
+    }
+
     QPointF sp = c->scenePos();
     c->setParentItem(imagesContainer);
     if (keepScenePos)
         c->setPos(imagesContainer->sceneTransform().inverted().map(sp));
 
-}
-
-Container* BranchContainer::getBranchesContainer()
-{
-    return branchesContainer;
 }
 
 Container* BranchContainer::getImagesContainer()

@@ -68,6 +68,25 @@ Ideas
   - Proposition to have names on links, maybe rotated to save screen space
 
 
+Bugs
+----
+
+* Move a subtree to a sibling (?), old parent has too much space,
+  sometimes needs 3 repositions until correct. :-(
+
+* Move subtree and let snapback:
+  => before animation starts, subtree is painted on final position for a
+  frame or so
+  (Maybe VM::reposition called before animation starts?)
+
+* Container with floating bounded layout
+  - Move floating container from below above parent, reposition several
+    times => container name is roughly in middle, but below is empty.
+    :-(
+
+* Position hint for relinking often way to low, not really below new
+  parent
+  
 Next steps
 ----------
 
@@ -76,12 +95,7 @@ Next steps
         - Fix z value of select box for selected containers
         - absolute position for MapCenters for COntainers
 
-    - Position containers temporarily while moving: When an object can be
-      linked temporarily, it needs a relative position to the tmp parent.
-
-      Several selected branches can be moved (at least later), by temporary
-      adding them to the moving tmpParentContainer
-
+    - moving and tmp linked:
       Target destinations then  should offer
       - a link point to draw the start of the tmp link
       - an abs Pos to the tmpParentContainer
@@ -95,24 +109,7 @@ Next steps
       remain unchanged, to avoid flickering in the tree, but the (relative)
       position itself needs to be adjusted => a new layout hint is required.
 
-    - Animate the back moving. Don't do this in VymModel::startAnimation,
-      but in MapEditor
-
-...
-
 * Cleanup MapObj related stuff, which has been replaced by Containers
-    - MapEditor
-        - Mouse events
-            - MousePress
-            - MouseMove
-            - moveObject
-                - [TODO] Update Selection boxes for multiple selected items
-            - MouseRelease
-                - [DONE] Relink branches above/below/to dst
-                - [TODO] Relink images
-                - [TODO] Animation to snapback to org pos
-        - updateSelection
-        ...
     - MapItem
         - Probably pretty much useless once Containers are fully
           implemented. Especially the getEditPosition and
