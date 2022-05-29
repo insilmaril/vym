@@ -43,13 +43,6 @@ void BranchContainer::init()
     headingContainer->setBrush(Qt::NoBrush);
     headingContainer->setPen(Qt::NoPen);
 
-    branchesContainer = new Container ();
-    branchesContainer->setBrush(Qt::NoBrush);
-    branchesContainer->setPen(Qt::NoPen);
-    branchesContainer->setLayoutType(Container::Vertical);              // Default, usually depends on depth
-    branchesContainer->setVerticalAlignment(Container::AlignedLeft);    // Default, usually depends on position
-    branchesContainer->type = Container::BranchCollection;
-
     innerContainer = new Container ();
     innerContainer->setBrush(Qt::NoBrush);
     innerContainer->setPen(Qt::NoPen);
@@ -57,7 +50,10 @@ void BranchContainer::init()
 
     // Adding the containers will reparent them and thus set scene
     innerContainer->addContainer(headingContainer);
-    innerContainer->addContainer(branchesContainer);
+
+    //branchesContainer = nullptr;
+    createBranchesContainer();  // FIXME-0  soon only create on demand
+
     addContainer(innerContainer);
 
     setBrush(Qt::NoBrush);
@@ -122,6 +118,17 @@ bool BranchContainer::isTemporaryLinked()
     return temporaryLinked;
 }
 
+void BranchContainer::createBranchesContainer()
+{
+    branchesContainer = new Container ();
+    branchesContainer->setBrush(Qt::NoBrush);
+    branchesContainer->setPen(Qt::NoPen);
+    branchesContainer->setLayoutType(Container::Vertical);              // Default, usually depends on depth
+    branchesContainer->setVerticalAlignment(Container::AlignedLeft);    // Default, usually depends on position
+    branchesContainer->type = Container::BranchCollection;
+    innerContainer->addContainer(branchesContainer);
+}
+
 void BranchContainer::addToBranchesContainer(Container *c, bool keepScenePos)
 {
     QPointF sp = c->scenePos();
@@ -135,18 +142,23 @@ Container* BranchContainer::getBranchesContainer()
     return branchesContainer;
 }
 
+void BranchContainer::createImagesContainer()
+{
+    imagesContainer = new Container ();
+    imagesContainer->setBrush(Qt::NoBrush);
+    imagesContainer->setPen(Qt::NoPen);
+    imagesContainer->setLayoutType(Container::FloatingFree);
+    imagesContainer->type = Container::ImageCollection;
+    innerContainer->addContainer(imagesContainer);
+
+    if (branchesContainer)
+        imagesContainer->stackBefore(branchesContainer);
+}
+
 void BranchContainer::addToImagesContainer(Container *c, bool keepScenePos)
 {
     if (!imagesContainer) {
-        imagesContainer = new Container ();
-        imagesContainer->setBrush(Qt::NoBrush);
-        imagesContainer->setPen(Qt::NoPen);
-        imagesContainer->setLayoutType(Container::FloatingFree);
-        imagesContainer->type = Container::ImageCollection;
-        innerContainer->addContainer(imagesContainer);
-
-        if (branchesContainer)
-            imagesContainer->stackBefore(branchesContainer);
+        createImagesContainer();
     }
 
     QPointF sp = c->scenePos();

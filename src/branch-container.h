@@ -36,8 +36,11 @@ class BranchContainer : public Container {
     void setTemporaryLinked(bool);
     bool isTemporaryLinked();
 
+    void createBranchesContainer();
     void addToBranchesContainer(Container *c, bool keepScenePos = false);
     Container* getBranchesContainer();
+
+    void createImagesContainer();
     void addToImagesContainer(Container *c, bool keepScenePos = false);
     Container* getImagesContainer();
     HeadingContainer* getHeadingContainer();
