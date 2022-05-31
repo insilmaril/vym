@@ -387,12 +387,13 @@ void BranchContainer::reposition()
         setMovableByFloats(false);  // FIXME-2 Needed?
         branchesContainer->setLayoutType(FloatingBounded);
 
-        //FIXME-2 add "flags" and origin for testing (but only once!)
+        /* //FIXME-2 add "flags" and origin for testing (but only once!)
         if (type != TmpParent && innerContainer->childItems().count() <= 3) {
             HeadingContainer *fc = new HeadingContainer();
             fc->setHeading("Flags");
             innerContainer->addContainer(fc);
         }
+        */
 
     } else {
         // Branch or mainbranch

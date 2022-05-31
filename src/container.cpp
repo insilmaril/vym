@@ -93,8 +93,8 @@ QString Container::info (const QString &prefix)
 {
     return prefix +
         getName() +
-        QString(" Layout: %1").arg(layout) +
-        QString(" scenePos: (%1, %2)").arg(scenePos().x()).arg(scenePos().y()) + 
+//        QString(" Layout: %1").arg(layout) +
+//        QString(" scenePos: (%1, %2)").arg(scenePos().x()).arg(scenePos().y()) + 
         QString(" pos: (%1, %2)").arg(pos().x()).arg(pos().y()) +
         QString(" (w,h): (%1, %2)").arg(rect().width()).arg(rect().height());
 }
@@ -248,6 +248,7 @@ void Container::reposition()
     foreach (QGraphicsItem *child, childItems()) {
         c = (Container*) child;
         c->reposition();
+        qDebug() << " - Children of " << getName() << " - after calling c::repositioning c= " << c->info();
     }
 
     // b) Align my own containers
@@ -288,9 +289,11 @@ void Container::reposition()
                 setRect(r);
             }
             break;
+
         case FloatingFree: 
             setRect(r);
             break;
+
         case Horizontal: {
                 qreal h_max = 0;
                 qreal w_total = 0;  // total width of non-floating children
@@ -312,7 +315,10 @@ void Container::reposition()
 
                     c_bbox = mapRectFromItem(c, c->rect());
 
-                    bbox = bbox.united(c_bbox); // FIXME-2 ok here?
+                    qDebug() << "   - hor a:  c: " << c->info() << "c_bbox: " << c_bbox << "bbox: " << bbox;
+                    bbox = bbox.united(c_bbox); // FIXME-0 ok here?
+
+                    qDebug() << "   - hor b:  c: " << c->info() << "c_bbox: " << c_bbox << "bbox: " << bbox;
 
                     if (c->layout == FloatingBounded ) {
                         // Floating does not directly increase max height or sum of widths, 
@@ -382,7 +388,10 @@ void Container::reposition()
                 r.setHeight(h_max);
                 setRect(r);
 
+
                 r = r.united(bbox);
+
+                qDebug() << "   - hor:  h_max: " << h_max << " bbox: " << bbox << "  r: " << r;
 
                 if (hasFloatingContent) {
                 //if (true) {
@@ -413,6 +422,7 @@ void Container::reposition()
             } // Horizontal layout
             setRect(r);
             break;
+
         case Vertical: {
                 qreal h_total = 0;
                 qreal w_max = 0;
@@ -446,6 +456,7 @@ void Container::reposition()
                         w = c->rect().width();
                         w_max = (w_max < w) ? w : w_max;
                         h_total += c->rect().height();
+                        qDebug() << "   - vert:  h_total: " << h_total << " c: " << c->getName();
                     }
                 }
 
