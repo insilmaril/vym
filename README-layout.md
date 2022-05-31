@@ -71,9 +71,6 @@ Ideas
 Bugs
 ----
 
-* Move a subtree to a sibling (?), old parent has too much space,
-  sometimes needs 3 repositions until correct. :-(
-
 * Move subtree and let snapback:
   => before animation starts, subtree is painted on final position for a
   frame or so

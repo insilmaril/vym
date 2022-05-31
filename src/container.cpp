@@ -308,10 +308,8 @@ void Container::reposition()
                 foreach (QGraphicsItem *child, childItems()) {
                     c = (Container*) child;
 
-                    // Special case: containers with floating content always are assumed to 
-                    // be at my own origin. Even if we (temporarily) move
-                    // them later, so that container is aligned with my left/top border
-                    if (c->layout == FloatingBounded) c->setPos(0, 0);
+                    // For calculation of heights, widths move everything to origin
+                    c->setPos(0, 0);
 
                     c_bbox = mapRectFromItem(c, c->rect());
 
