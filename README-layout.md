@@ -76,11 +76,6 @@ Bugs
   frame or so
   (Maybe VM::reposition called before animation starts?)
 
-* Container with floating bounded layout
-  - Move floating container from below above parent, reposition several
-    times => container name is roughly in middle, but below is empty.
-    :-(
-
 * Position hint for relinking often way to low, not really below new
   parent
   
