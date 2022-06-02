@@ -94,9 +94,9 @@ QString Container::info (const QString &prefix)
     return prefix +
         getName() +
 //        QString(" Layout: %1").arg(layout) +
-//        QString(" scenePos: (%1, %2)").arg(scenePos().x()).arg(scenePos().y()) + 
-        QString(" pos: (%1, %2)").arg(pos().x()).arg(pos().y()) +
-        QString(" (w,h): (%1, %2)").arg(rect().width()).arg(rect().height());
+        QString(" scenePos: (%1, %2)").arg(scenePos().x()).arg(scenePos().y()) + 
+        QString(" pos: (%1, %2)").arg(pos().x()).arg(pos().y());
+//        QString(" (w,h): (%1, %2)").arg(rect().width()).arg(rect().height());
 }
 
 void Container::setLayoutType(const LayoutType &ltype)
@@ -189,6 +189,19 @@ QVariant Container::itemChange(GraphicsItemChange change, const QVariant &value)
 Container* Container::parentContainer() 
 {
     return (Container*)parentItem();
+}
+
+void Container::setPos(QPointF p)
+{
+    if (animatedPos.isAnimated()) 
+        QGraphicsItem::setPos(animatedPos);
+    else
+        QGraphicsItem::setPos(p);
+}
+
+void Container::setPos(qreal x, qreal y)
+{
+    setPos(QPointF(x, y));
 }
 
 void Container::setOrgPos()     // FIXME-2 Only used for BranchContainer and ImageContainer

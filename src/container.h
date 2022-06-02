@@ -81,7 +81,11 @@ class Container : public QGraphicsRectItem {
     /*! Save original position in current parent items coordinates before temporary relinking
      *  to tmpParentContainer while moving around
      */
-    void setOrgPos();
+
+    virtual void setPos(QPointF p);         //! Set position, or animated position
+    virtual void setPos(qreal x, qreal y);  //! Overloaded for convenience
+
+    void setOrgPos();                       //! Saves current position for later restoring
     QPointF orgPos();
 
     virtual void setAnimation(const AnimPoint &ap);

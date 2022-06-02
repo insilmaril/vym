@@ -71,11 +71,6 @@ Ideas
 Bugs
 ----
 
-* Move subtree and let snapback:
-  => before animation starts, subtree is painted on final position for a
-  frame or so
-  (Maybe VM::reposition called before animation starts?)
-
 * Position hint for relinking often way to low, not really below new
   parent
   
@@ -88,11 +83,6 @@ Next steps
         - absolute position for MapCenters for COntainers
 
     - moving and tmp linked:
-      Target destinations then  should offer
-      - a link point to draw the start of the tmp link
-      - an abs Pos to the tmpParentContainer
-      - information where the moved container should be moved, e.g. to the
-        left or the right of the link point ("Orientation")
       - maybe also information about rotation of tmp child
 
       The tmpParentContainer needs to be positioned based on link point and

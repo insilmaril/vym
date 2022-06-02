@@ -38,7 +38,7 @@ bool AnimPoint::operator==(AnimPoint other)
 void AnimPoint::init()
 {
     animated = false;
-    n = 0;
+    n = 0;  // FIXME-1 why is n qreal instead of int?
     startPos = QPointF(0, 0);
     destPos = QPointF(0, 0);
     vector = QPointF(0, 0);
@@ -60,6 +60,8 @@ void AnimPoint::copy(AnimPoint other)
 void AnimPoint::setStart(const QPointF &p)
 {
     startPos = p;
+    setX(startPos.x());
+    setY(startPos.y());
     initVector();
 }
 

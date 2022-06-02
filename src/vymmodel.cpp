@@ -4984,11 +4984,6 @@ void VymModel::reposition()
         bi = rootItem->getBranchNum(i);
         bi->repositionContainers();
     }
-
-    //FIXME-2 why is this needed:  mapEditor->getTotalBBox();  // FIXME-2 Is this already working with containers?
-    
-    // required to *reposition* the selection box. size is already correct:
-    emitSelectionChanged();
 }
 
 bool VymModel::setMapLinkStyle(const QString &s) // FIXME-2 still uses BranchObj below

@@ -182,9 +182,9 @@ MapEditor::MapEditor(VymModel *vm)
     winter = NULL;
 
     // animations
-    animationUse = settings.value("/animation/use", false) .toBool();
-    animationTicks = settings.value("/animation/snapback/ticks", 500).toInt();
-    animationInterval = settings.value("/animation/snapback/interval", 5).toInt();
+    animationUse = settings.value("/animation/use", true) .toBool();
+    animationTicks = settings.value("/animation/snapback/ticks", 50).toInt();
+    animationInterval = settings.value("/animation/snapback/interval", 15).toInt();
     animatedContainers.clear();
     animationTimer = new QTimer(this);
     connect(animationTimer, SIGNAL(timeout()), this, SLOT(animate()));
@@ -364,7 +364,7 @@ void MapEditor::startAnimation(Container *c, const QPointF &start,
     if (start == dest) return;
 
     if (c) {
-        //qDebug() << "ME::startAnimation  " << start << " -> " << dest << c->getName();
+        c->setPos(start);
         AnimPoint ap;
         ap.setStart(start);
         ap.setDest(dest);
@@ -1946,7 +1946,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
             }
             // Destination available and movingObject
 
-            model->reposition(); // FIXME-0 after relinking up to 3x reposition is required :-(
+            model->reposition();
 
             model->saveStateEndBlock();
         } else {
@@ -1954,6 +1954,9 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
             QPointF t = p - movingObj_initialPointerPos;    // Defined in mousePressEvent
 
             QList <BranchContainer*> childBranches = tmpParentContainer->childBranches();
+            QList <QPointF> animationCurrentPositions;   // After reposition start animations
+            QList <BranchContainer*> animationContainers;
+
             if (!childBranches.isEmpty()) {
 
                 // We begin a saveStateBlock, if nothing is really moved, this
@@ -1963,6 +1966,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                 );
                 // Empty the tmpParentContainer, which is used for moving
                 // Updating the stacking order also resets the original parents
+
                 foreach(BranchContainer *bc, childBranches) {
                     BranchItem *bi = bc->getBranchItem();
 
@@ -1978,16 +1982,24 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                             bi, QString("setPos%1").arg(qpointFToString(bc->orgPos())),
                             bi, QString("setPos%1").arg(qpointFToString(bc->orgPos() + t)));
                     } else {
-                        // Draw the original link, before selection was moved around
-                        if (settings.value("/animation/use", true).toBool()) 
-                            startAnimation(bc, bc->pos(), bc->orgPos());
+                        animationContainers << bc;
+                        animationCurrentPositions << bc->pos();
                     }
                 } // children of tmpParentContainer
                 model->saveStateEndBlock();
 
             }   // Empty tmpParenContainer
 
+            // Repositioning now is required to calc bounding boxes
             model->reposition();
+
+            if (animationUse && animationContainers.count() > 0) {
+                int i = 0;
+                foreach(BranchContainer *bc, animationContainers) {
+                    startAnimation(bc, animationCurrentPositions.at(i), bc->orgPos());
+                    i++;
+                }
+            }
         } // Branches moved, but not relinked
 
         // Let's see if we moved images with tmpParentContainer
