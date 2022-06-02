@@ -101,14 +101,18 @@ bool JiraAgent::setTicket(const QString &id)
     ticketID = re.cap(1);
     ticketID.replace(" ", "-");
 
+    bool foundPattern = false;
+
     settings.beginGroup("/atlassian/jira");
 
+    // Try to find baseURL of server by looking through patterns in ticket IDs:
     int size = settings.beginReadArray("servers");
     for (int i = 0; i < size; ++i) {
         settings.setArrayIndex(i);
         foreach (QString p, settings.value("pattern").toString().split(",")) {
             if (ticketID.contains(p)) {
                 baseURL = settings.value("baseURL","-").toString();
+                foundPattern = true;
                 break;
             }
         }
@@ -116,7 +120,7 @@ bool JiraAgent::setTicket(const QString &id)
     settings.endArray();
     settings.endGroup();
 
-    return true;
+    return foundPattern;
 }
 
 QString JiraAgent::getURL()
@@ -160,6 +164,7 @@ void JiraAgent::continueJob()
                     // Insert references to original branch and model
                     // FIXME-2 not needed jsobj["vymModelID"] = QString::number(modelID);
                     jsobj["vymBranchID"] = QJsonValue(branchID);
+                    jsobj["vymTicketURL"] = QJsonValue(branchID);
                     
                     emit (jiraTicketReady(QJsonObject(jsobj)));
                     finishJob();

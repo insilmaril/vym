@@ -4077,13 +4077,18 @@ void VymModel::getJiraData(bool subtree) // FIXME-0 update error message, check
                 // Create agent
                 JiraAgent *agent = new JiraAgent;
                 agent->setJobType(JiraAgent::GetTicketInfo);
-                if (!agent->setBranch(cur) || !agent->setTicket(heading)) {
-                    // Abort
+                if (!agent->setBranch(cur)) {
+                    qWarning () << "Could not set branch in JiraAgent to " << cur->getHeadingPlain();
+                    delete agent;
+                    return;
+                }
+                if (!agent->setTicket(heading)) {
+                    mainWindow->statusMessage(tr("Could not find Jira ticket pattern in %1", "VymModel").arg(cur->getHeadingPlain()));
                     delete agent;
                     return;
                 }
 
-                setURL(agent->getURL(), false, cur);
+                //setURL(agent->getURL(), false, cur);
 
                 connect(agent, &JiraAgent::jiraTicketReady, this, &VymModel::updateJiraData);
 
@@ -4145,6 +4150,7 @@ void VymModel::updateJiraData(QJsonObject jsobj)
         }
 
         setHeadingPlainText(keyName + ": " + summary, bi);
+        setURL(jsobj["vymTicketURL"].toString());
 
         AttributeItem *ai;
 
@@ -4175,6 +4181,7 @@ void VymModel::updateJiraData(QJsonObject jsobj)
     vout << "    Status: " + status << endl;
     */
 
+    mainWindow->statusMessage(tr("Received Jira data.", "VymModel"));
 }
 
 void VymModel::syncTrello()
