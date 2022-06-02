@@ -1,5 +1,6 @@
 #include "trello-agent.h"
 
+#include "attributeitem.h"
 #include "branchitem.h"
 #include "mainwindow.h"
 #include "vymmodel.h"
@@ -150,9 +151,8 @@ void TrelloAgent::continueJob()
                 case 1:
                     startGetBoardRequest();
                     break;
-                case 2: {
-                        updateListsOnBoard();
-                    }
+                case 2:
+                    updateListsOfBranch();
                     break;
                 case 3: 
                     finishJob();
@@ -196,10 +196,9 @@ void TrelloAgent::startGetMyBoardsRequest()
     networkManager->get(request);
 }
 
-void TrelloAgent::startGetBoardRequest()
+void TrelloAgent::startGetBoardRequest() //FIXME-2 trello boardID still hardcoded:
 {
-    // //FIXME-2 boardID still hardcoded:
-    QString boardID = "627a201d7d74b04fba065a07";
+    boardID = "627a201d7d74b04fba065a07";
     QUrl url = QUrl(apiURL + "1/boards/" + boardID + "/lists?" + auth);
 
     QNetworkRequest request = QNetworkRequest(url);
@@ -222,7 +221,7 @@ void TrelloAgent::dataReceived(QNetworkReply *reply)
     networkManager->disconnect();
 
     QString r = reply->readAll();
-    qDebug() << "r=" << r;
+    // vout << "r=" << r << endl;
 
     if (reply->error()) {
         if (reply->error() == QNetworkReply::AuthenticationRequiredError)
@@ -262,10 +261,33 @@ void TrelloAgent::sslErrors(QNetworkReply *reply, const QList<QSslError> &errors
 }
 #endif
 
-void TrelloAgent::updateListsOnBoard() 
+void TrelloAgent::updateListsOfBranch() 
 {
     qDebug() << "TA::updateListsOnBoard";
-    vout << jsdoc.toJson(QJsonDocument::Indented) << endl;
+    //vout << jsdoc.toJson(QJsonDocument::Indented) << endl;
+
+    VymModel *model = mainWindow->getModel(modelID);
+    if (!model) {
+        qWarning() << "TrelloAgent failed to find model " << modelID;
+        finishJob();
+        return;
+    }
+
+    TreeItem *ti = model->findID(branchID);
+    if (!ti || !ti->isBranchLikeType()) {
+        qWarning() << "TrelloAgent failed to find branch" << branchID;
+        finishJob();
+        return;
+    }
+    BranchItem *bi = (BranchItem*)ti;
+
+    // Write attribute for boardID into map, if not there yet   // FIXME-0 run this check also for other requests?
+    AttributeItem *ai = bi->getAttributeByKey("Trello.boardID");
+    if (!ai) {
+        // Key does not exist, set attribute
+        ai = new AttributeItem("Trello.boardID", boardID);
+        model->setAttribute(bi, ai);
+    }
 
     QJsonObject jsobj;
     int n = 0;

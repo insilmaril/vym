@@ -3101,7 +3101,7 @@ AttributeItem *VymModel::setAttribute(BranchItem *dst, AttributeItem *ai_new)
         emitDataChanged(dst);
         return ai_new;  // FIXME-3 Check if ai is used or deleted - deep copy here?
     }
-    return NULL;
+    return nullptr;
 }
 
 BranchItem *VymModel::addMapCenter(bool saveStateFlag)

@@ -55,7 +55,7 @@ class TrelloAgent : public QObject {
 #ifndef QT_NO_SSL
     void sslErrors(QNetworkReply *, const QList<QSslError> &errors);
 #endif
-    void updateListsOnBoard();
+    void updateListsOfBranch();
 
   private:
     // Job related
@@ -79,5 +79,9 @@ class TrelloAgent : public QObject {
     // Backreferences to take action in calling model
     int branchID;
     int modelID;
+
+    // References to trello
+    QString boardID;
 };
+
 #endif
