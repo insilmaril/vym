@@ -1707,7 +1707,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
     if (!panningTimer->isActive())
         panningTimer->start(50);
 
-    objectMoved = true;
+    objectMoved = true; // FIXME-0 really required? what for?
 
     // reset cursor if we are moving and don't copy
 
@@ -2004,6 +2004,9 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
 
         // Let's see if we moved images with tmpParentContainer
         if (objectMoved) {
+            bool imagesMoved = false;
+            if (tmpParentContainer->childImages().count() > 0 ) imagesMoved = true;
+
             foreach(ImageContainer *ic, tmpParentContainer->childImages()) {
                 ImageItem *ii = ic->getImageItem();
                 BranchItem *pi = ii->parentBranch();
@@ -2020,8 +2023,12 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                                      .arg(model->getObjectName(ii))
                                      .arg(pnow));
 
-                model->emitDataChanged(ii->parent()); // Parent of image has changed
             } // Image moved, but not relinked
+
+            if (imagesMoved) {
+                model->reposition();
+                model->emitSelectionChanged();
+            }
         }
 
         // Finally resize scene, if needed

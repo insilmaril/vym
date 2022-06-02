@@ -147,7 +147,7 @@ void BranchContainer::createImagesContainer()
     imagesContainer = new Container ();
     imagesContainer->setBrush(Qt::NoBrush);
     imagesContainer->setPen(Qt::NoPen);
-    imagesContainer->setLayoutType(Container::FloatingFree);
+    imagesContainer->setLayoutType(Container::FloatingBounded);
     imagesContainer->type = Container::ImageCollection;
     innerContainer->addContainer(imagesContainer);
 
