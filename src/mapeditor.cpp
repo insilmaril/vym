@@ -1298,20 +1298,19 @@ void MapEditor::contextMenuEvent(QContextMenuEvent *e)
     if (ti) { // MapObj was found
         model->select(ti);
 
-        LinkableMapObj *lmo = NULL;
         BranchItem *selbi = model->getSelectedBranch();
-        if (ti)
-            lmo = ((MapItem *)ti)->getLMO();
 
         // Context Menu
-        if (lmo && selbi) {
+        if (selbi) {
             QString sysFlagName;
+            /* FIXME-1 context menu not work yet with task flag
             QUuid uid = ((BranchObj *)lmo)->findSystemFlagUidByPos(p);
             if (!uid.isNull()) {
                 Flag *flag = systemFlagsMaster->findFlagByUid(uid);
                 if (flag)
                     sysFlagName = flag->getName();
             }
+            */
 
             if (sysFlagName.startsWith("system-task"))
                 taskContextMenu->popup(e->globalPos());
@@ -1331,7 +1330,7 @@ void MapEditor::contextMenuEvent(QContextMenuEvent *e)
             }
         }
     }
-    else { // No MapObj found, we are on the Canvas itself
+    else { // No object or container found, we are on the Canvas itself
         // Context Menu on scene
 
         // Open context menu synchronously to position new mapcenter
