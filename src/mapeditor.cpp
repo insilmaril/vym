@@ -1706,8 +1706,6 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
     if (!panningTimer->isActive())
         panningTimer->start(50);
 
-    objectMoved = true; // FIXME-0 really required? what for?
-
     // reset cursor if we are moving and don't copy
 
     // Check if we could link (temporary)
@@ -1876,7 +1874,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
         int relinkedObjectsCount = tmpParentContainer->childBranches().count()  + tmpParentContainer->childImages().count();
 
         // Check if we have a destination and should relink
-        if (destinationBranch && objectMoved && state() != MovingObjectWithoutLinking) {
+        if (destinationBranch && state() != MovingObjectWithoutLinking) {
 
             model->saveStateBeginBlock(
                     QString("Relink %1 objects to \"%2\"")
@@ -2002,37 +2000,34 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
         } // Branches moved, but not relinked
 
         // Let's see if we moved images with tmpParentContainer
-        if (objectMoved) {
-            bool imagesMoved = false;
-            if (tmpParentContainer->childImages().count() > 0 ) imagesMoved = true;
+        bool imagesMoved = false;
+        if (tmpParentContainer->childImages().count() > 0 ) imagesMoved = true;
 
-            foreach(ImageContainer *ic, tmpParentContainer->childImages()) {
-                ImageItem *ii = ic->getImageItem();
-                BranchItem *pi = ii->parentBranch();
+        foreach(ImageContainer *ic, tmpParentContainer->childImages()) {
+            ImageItem *ii = ic->getImageItem();
+            BranchItem *pi = ii->parentBranch();
 
-                // Update parent of moved container to original imageContainer 
-                // in parent branch
-                pi->addToImagesContainer(ic);
+            // Update parent of moved container to original imageContainer 
+            // in parent branch
+            pi->addToImagesContainer(ic);
 
-                QString pold = qpointFToString(ic->orgPos());
-                QString pnow = qpointFToString(ic->pos());
-                model->saveState(ii, "setPos " + pold, ii,
-                                 "setPos " + pnow,
-                                 QString("Move %1 to %2")
-                                     .arg(model->getObjectName(ii))
-                                     .arg(pnow));
+            QString pold = qpointFToString(ic->orgPos());
+            QString pnow = qpointFToString(ic->pos());
+            model->saveState(ii, "setPos " + pold, ii,
+                             "setPos " + pnow,
+                             QString("Move %1 to %2")
+                                 .arg(model->getObjectName(ii))
+                                 .arg(pnow));
 
-            } // Image moved, but not relinked
+        } // Image moved, but not relinked
 
-            if (imagesMoved) {
-                model->reposition();
-                model->emitSelectionChanged();
-            }
+        if (imagesMoved) {
+            model->reposition();
+            model->emitSelectionChanged();
         }
 
         // Finally resize scene, if needed
         scene()->update();
-        objectMoved = false;
         vPan = QPoint();
     } // MovingObject or MovingObjectTmpLinked
     else
