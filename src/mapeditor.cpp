@@ -1724,6 +1724,8 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
     }
 
     // Set position and orientation of tmpParentContainer and check if we could link
+    BranchContainer::Orientation newOrientation;
+
     if (targetItem && targetItem->hasTypeBranch()) {
         BranchContainer *targetBranchContainer = ((BranchItem*)targetItem)->getBranchContainer();
 
@@ -1740,11 +1742,14 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
         }
 
         // Set orientation
-        if (targetItem->depth() == 0)
-            // FIXME-0 orientation should depend on position
-            tmpParentContainer->setOrientation(BranchContainer::UndefinedOrientation);
+        if (targetItem->depth() == 0) {
+            if (tmpParentContainer->pos().x() > targetBranchContainer->pos().x())
+                newOrientation = BranchContainer::RightOfParent;
+            else
+                newOrientation = BranchContainer::LeftOfParent;
+        }
         else {
-            tmpParentContainer->setOrientation(targetBranchContainer->getOrientation());
+            newOrientation = targetBranchContainer->getOrientation();
         }
 
     } else {
@@ -1753,11 +1758,36 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
         tmpParentContainer->setPos(p_event - movingObj_initialContainerOffset);
         tmpParentContainer->setOrientation(BranchContainer::UndefinedOrientation);
 
+        /* FIXME-0 orientation while moving 
+         */
+        // Try to set orientation for not relinked tmpParentContainer by checking the
+        // layout and "original" parent
+        Container *c = tmpParentContainer->getBranchesContainer();
+        if (c && !c->childItems().isEmpty()) {
+            // Consider orientation of *last* selected branch
+            BranchContainer *bc = (BranchContainer*)(c->childItems().last());
+            if (bc->isOriginalFloating())  {
+                qDebug() << "ok1 tpC=" << tmpParentContainer->pos() << " opp=" << bc->getOriginalParentPos();
+                if (tmpParentContainer->pos().x() > bc->getOriginalParentPos().x())
+                    newOrientation = BranchContainer::RightOfParent;
+                else
+                    newOrientation = BranchContainer::LeftOfParent;
+            } else {
+                qDebug() << "ok2";
+                newOrientation = bc->getOriginalOrientation();
+            }
+        }
+
         if (tmpParentContainer->isTemporaryLinked()) {
             tmpParentContainer->setTemporaryLinked(false);
         }
     }
     
+    if (newOrientation != tmpParentContainer->getOrientation()) {
+        tmpParentContainer->setOrientation(newOrientation);
+        tmpParentContainer->reposition();
+    }
+
     // Add selected branches and images temporary to tmpParentContainer,
     // if they are not there yet:
     BranchContainer *bc;
@@ -1769,7 +1799,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
             bc = ((BranchItem*)ti)->getBranchContainer();
             
             if (bc->parentItem() != tmpParentContainer->getBranchesContainer()) {
-                bc->setOrgPos();
+                bc->setOriginalPos();
                 bc->setOriginalOrientation();
                 bc->setTemporaryLinked(true);
                 tmpParentContainer->addToBranchesContainer(bc, true);
@@ -1777,7 +1807,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
         } else if (ti->hasTypeImage()) {
             ImageContainer *ic = ((ImageItem*)ti)->getImageContainer();
             if (ic->parentItem() != tmpParentContainer->getImagesContainer()) {
-                ic->setOrgPos();
+                ic->setOriginalPos();
                 tmpParentContainer->addToImagesContainer(ic, true);
             }
         }
@@ -1911,7 +1941,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                 if (originalParentContainer->hasFloatingLayout()) {
                     model->saveState(
                             bc->getBranchItem(), 
-                            QString("setPos %1;").arg(qpointFToString(bc->orgPos())),
+                            QString("setPos %1;").arg(qpointFToString(bc->getOriginalPos())),
                             nullptr,
                             "", 
                             QString("Move %1") .arg(bc->getBranchItem()->getHeadingPlain()));
@@ -1976,8 +2006,8 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                     {
                         // Relative positioning
                         model->saveState(
-                            bi, QString("setPos%1").arg(qpointFToString(bc->orgPos())),
-                            bi, QString("setPos%1").arg(qpointFToString(bc->orgPos() + t)));
+                            bi, QString("setPos%1").arg(qpointFToString(bc->getOriginalPos())),
+                            bi, QString("setPos%1").arg(qpointFToString(bc->getOriginalPos() + t)));
                     } else {
                         animationContainers << bc;
                         animationCurrentPositions << bc->pos();
@@ -1993,7 +2023,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
             if (animationUse && animationContainers.count() > 0) {
                 int i = 0;
                 foreach(BranchContainer *bc, animationContainers) {
-                    startAnimation(bc, animationCurrentPositions.at(i), bc->orgPos());
+                    startAnimation(bc, animationCurrentPositions.at(i), bc->getOriginalPos());
                     i++;
                 }
             }
@@ -2011,7 +2041,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
             // in parent branch
             pi->addToImagesContainer(ic);
 
-            QString pold = qpointFToString(ic->orgPos());
+            QString pold = qpointFToString(ic->getOriginalPos());
             QString pnow = qpointFToString(ic->pos());
             model->saveState(ii, "setPos " + pold, ii,
                              "setPos " + pnow,

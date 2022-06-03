@@ -37,6 +37,7 @@ void BranchContainer::init()
 
     orientation = UndefinedOrientation;
 
+
     imagesContainer = nullptr;
 
     headingContainer = new HeadingContainer ();
@@ -51,8 +52,8 @@ void BranchContainer::init()
     // Adding the containers will reparent them and thus set scene
     innerContainer->addContainer(headingContainer);
 
+    createBranchesContainer();  // FIXME-1  soon only create on demand
     //branchesContainer = nullptr;
-    createBranchesContainer();  // FIXME-0  soon only create on demand
 
     addContainer(innerContainer);
 
@@ -98,14 +99,26 @@ void BranchContainer::setOrientation(const Orientation &m)
     orientation = m;
 }
 
-void BranchContainer::setOriginalOrientation()
+void BranchContainer::setOriginalOrientation()  // FIXME-1 sets also original parent
 {
     originalOrientation = orientation;
+    originalFloating = isFloating();
+    if (parentItem()) originalParentPos = parentItem()->scenePos();
+}
+
+BranchContainer::Orientation BranchContainer::getOriginalOrientation()
+{
+    return originalOrientation;
 }
 
 BranchContainer::Orientation BranchContainer::getOrientation()
 {
     return orientation;
+}
+
+bool BranchContainer::isOriginalFloating()
+{
+    return originalFloating;
 }
 
 void BranchContainer::setTemporaryLinked(bool b)
@@ -116,6 +129,14 @@ void BranchContainer::setTemporaryLinked(bool b)
 bool BranchContainer::isTemporaryLinked()
 {
     return temporaryLinked;
+}
+
+int BranchContainer::branchCount()
+{
+    if (!branchesContainer)
+        return 0;
+    else
+        return branchesContainer->childItems().count();
 }
 
 void BranchContainer::createBranchesContainer()
@@ -129,7 +150,7 @@ void BranchContainer::createBranchesContainer()
     innerContainer->addContainer(branchesContainer);
 }
 
-void BranchContainer::addToBranchesContainer(Container *c, bool keepScenePos)
+void BranchContainer::addToBranchesContainer(Container *c, bool keepScenePos)   // FIXME-0 check if exists
 {
     QPointF sp = c->scenePos();
     c->setParentItem(branchesContainer);
@@ -140,6 +161,14 @@ void BranchContainer::addToBranchesContainer(Container *c, bool keepScenePos)
 Container* BranchContainer::getBranchesContainer()
 {
     return branchesContainer;
+}
+
+int BranchContainer::imageCount()
+{
+    if (!imagesContainer)
+        return 0;
+    else
+        return imagesContainer->childItems().count();
 }
 
 void BranchContainer::createImagesContainer()
@@ -236,7 +265,7 @@ QPointF BranchContainer::getPositionHintNewChild(Container *c)
     }
 }
 
-QPointF BranchContainer::getPositionHintRelink(Container *c, int d_pos, const QPointF &p_scene) // FIXME-1 not working correctly with multiple selected branches
+QPointF BranchContainer::getPositionHintRelink(Container *c, int d_pos, const QPointF &p_scene) // FIXME-0 not working correctly with multiple selected branches
 {
     QPointF hint;
 

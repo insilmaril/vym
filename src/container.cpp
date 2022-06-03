@@ -28,10 +28,11 @@ void Container::copy(Container *other)
     verticalAlignment = other->verticalAlignment;
 }
 
-void Container::init()  // FIXME-0 horizontalDirection undefined, strange values
+void Container::init()
 {
     type = Undefined;
     layout = Horizontal;
+    horizontalDirection = LeftToRight;
 
     show();
 }
@@ -204,12 +205,17 @@ void Container::setPos(qreal x, qreal y)
     setPos(QPointF(x, y));
 }
 
-void Container::setOrgPos()     // FIXME-2 Only used for BranchContainer and ImageContainer
+void Container::setOriginalPos()    // FIXME-1 Only used for BranchContainer and ImageContainer -> move to LinkableContainer
 {
     originalPos = pos();
 }
 
-QPointF Container::orgPos()     // Only used for BranchContainer and ImageContainer
+QPointF Container::getOriginalPos()
+{
+    return originalPos;
+}
+
+QPointF Container::getOriginalParentPos()  
 {
     return originalPos;
 }

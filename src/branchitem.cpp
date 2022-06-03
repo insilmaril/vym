@@ -594,7 +594,7 @@ void BranchItem::updateContainerStackingOrder()
         // Moved center
         return;
     else
-        branchContainer->setParentItem(parentBranch()->getBranchesContainer());
+        parentBranch()->addToBranchesContainer(branchContainer);
 
     while (n < parentBranch()->branchCount() - 1) {
         // Insert container of this branch above others

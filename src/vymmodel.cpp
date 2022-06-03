@@ -5225,7 +5225,7 @@ void VymModel::setPos(const QPointF &pos_new, TreeItem *selti)
         if (ti->hasTypeBranch() || ti->hasTypeImage())
         {
             Container *c = ((MapItem*)ti)->getContainer();
-            QPointF pos_old = c->orgPos();
+            QPointF pos_old = c->getOriginalPos();
             QString pos_new_str = qpointFToString(pos_new);
 
             saveState(ti, "setPos " + qpointFToString(pos_old),

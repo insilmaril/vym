@@ -28,7 +28,9 @@ class BranchContainer : public Container {
 
     void setOrientation(const Orientation &);
     void setOriginalOrientation();
+    Orientation getOriginalOrientation();
     Orientation getOrientation();
+    bool isOriginalFloating();
 
   private:
     bool temporaryLinked;   //! True, while moved as child of tmpParentContainer and linked temporary
@@ -36,13 +38,16 @@ class BranchContainer : public Container {
     void setTemporaryLinked(bool);
     bool isTemporaryLinked();
 
+    int branchCount();
     void createBranchesContainer();
     void addToBranchesContainer(Container *c, bool keepScenePos = false);
     Container* getBranchesContainer();
 
+    int imageCount();
     void createImagesContainer();
     void addToImagesContainer(Container *c, bool keepScenePos = false);
     Container* getImagesContainer();
+
     HeadingContainer* getHeadingContainer();
 
     // Convenience functions to access children
@@ -75,7 +80,9 @@ class BranchContainer : public Container {
 
   private:
     Orientation orientation;
-    Orientation originalOrientation;//! Save orientation before move for undo
+    Orientation originalOrientation;            //! Save orientation before move for undo
+    bool originalFloating;                      //! Save, if floating before linked temporary
+    QPointF originalParentPos;
 
 };
 
