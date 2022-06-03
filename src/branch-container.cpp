@@ -99,11 +99,15 @@ void BranchContainer::setOrientation(const Orientation &m)
     orientation = m;
 }
 
-void BranchContainer::setOriginalOrientation()  // FIXME-1 sets also original parent
+void BranchContainer::setOriginalOrientation()  // FIXME-1 sets also original parent, should be part of setOriginalPos, which should be in LinkableContainer
 {
     originalOrientation = orientation;
     originalFloating = isFloating();
-    if (parentItem()) originalParentPos = parentItem()->scenePos();
+    if (parentItem()) {
+        originalParentPos = parentItem()->scenePos();
+        qDebug() << "BC:setOrient of " << info();
+        qDebug() << "        parent: " << ((Container*)parentItem())->info() <<originalParentPos;
+    }
 }
 
 BranchContainer::Orientation BranchContainer::getOriginalOrientation()
@@ -114,6 +118,11 @@ BranchContainer::Orientation BranchContainer::getOriginalOrientation()
 BranchContainer::Orientation BranchContainer::getOrientation()
 {
     return orientation;
+}
+
+QPointF BranchContainer::getOriginalParentPos()
+{
+    return originalParentPos;
 }
 
 bool BranchContainer::isOriginalFloating()

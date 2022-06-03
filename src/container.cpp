@@ -215,11 +215,6 @@ QPointF Container::getOriginalPos()
     return originalPos;
 }
 
-QPointF Container::getOriginalParentPos()  
-{
-    return originalPos;
-}
-
 void Container::reposition()
 {
     /*
@@ -247,7 +242,7 @@ void Container::reposition()
         default:
             s_layout = "huh? undefined...";
     }
-    // qDebug() << QString("#### Reposition of %1").arg(getName()) << "Layout: " << s_layout;
+    qDebug() << QString("#### Reposition of %1").arg(getName()) << "Layout: " << s_layout << horizontalDirection;
 
     QRectF r;
 

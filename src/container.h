@@ -87,7 +87,6 @@ class Container : public QGraphicsRectItem {
 
     void setOriginalPos();                   //! Saves current position for later restoring
     QPointF getOriginalPos();
-    QPointF getOriginalParentPos();
 
     virtual void setAnimation(const AnimPoint &ap);
     virtual void stopAnimation();

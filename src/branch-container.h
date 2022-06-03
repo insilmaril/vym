@@ -30,6 +30,7 @@ class BranchContainer : public Container {
     void setOriginalOrientation();
     Orientation getOriginalOrientation();
     Orientation getOrientation();
+    QPointF getOriginalParentPos();
     bool isOriginalFloating();
 
   private:
