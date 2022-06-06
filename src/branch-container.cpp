@@ -416,22 +416,23 @@ void BranchContainer::reposition()
     // Settings depending on depth
     if (depth == 0)
     {
-        // MapCenter
+        // MapCenter or TmpParent
+        if (type != TmpParent) {
 
-        // qDebug() << "BC::reposition d == 0 " << getName();
-        setHorizontalDirection(LeftToRight);
-        innerContainer->setHorizontalDirection(RightToLeft);
+            setHorizontalDirection(LeftToRight);
+            innerContainer->setHorizontalDirection(RightToLeft);
+
+            /* //FIXME-2 add "flags" and origin for testing (but only once!)
+            HeadingContainer *fc = new HeadingContainer();
+            fc->setHeading("Flags");
+            innerContainer->addContainer(fc);
+            */
+        }
+
         innerContainer->setMovableByFloats(false);
         setMovableByFloats(false);  // FIXME-2 Needed?
         branchesContainer->setLayoutType(FloatingBounded);
 
-        /* //FIXME-2 add "flags" and origin for testing (but only once!)
-        if (type != TmpParent && innerContainer->childItems().count() <= 3) {
-            HeadingContainer *fc = new HeadingContainer();
-            fc->setHeading("Flags");
-            innerContainer->addContainer(fc);
-        }
-        */
 
     } else {
         // Branch or mainbranch
@@ -450,10 +451,8 @@ void BranchContainer::reposition()
                 branchesContainer->setVerticalAlignment(AlignedLeft);
                 break;
             default: 
-                // TmpParent - orientation is set in MapEditor while moving objects
                 break;
         }
-        // FIXME-2 no longer needed with orientation part of BC: branchesContainer->orientation = orientation;
 
         if (branchItem && branchItem->getHeadingPlain().startsWith("float")) {
             // Special layout: FloatingBounded children 
@@ -472,7 +471,7 @@ void BranchContainer::reposition()
             branchesContainer->setLayoutType(FloatingFree);
             innerContainer->setBrush(Qt::gray);
         } 
-        /* Testing
+        /* FIXME-2 Testing
         else {
             QColor col (Qt::blue);
             col.setAlpha(120);
