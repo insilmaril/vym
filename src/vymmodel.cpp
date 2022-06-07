@@ -4227,40 +4227,6 @@ void VymModel::receivedTrelloData(QJsonDocument jsdoc)
     qDebug() << "VM::receivedTrelloData";
     vout << jsdoc.toJson(QJsonDocument::Indented) << endl;
 
-    /*
-    QString key = jsobj["key"].toString();
-    QJsonObject fields = jsobj["fields"].toObject();
-
-    QJsonObject assigneeObj = fields["assignee"].toObject();
-    QString assignee = assigneeObj["emailAddress"].toString();
-    QJsonArray componentsArray = fields["components"].toArray();
-    QJsonObject compObj;
-    QString components;
-    for (int i = 0; i < componentsArray.size(); ++i) {
-        compObj = componentsArray[i].toObject();
-        components += compObj["name"].toString();
-    }
-
-    int branchID = jsobj["vymBranchID"].toInt();
-
-    QStringList solvedStates;
-    solvedStates << "Verification Done";
-    solvedStates << "Resolved";
-    solvedStates << "Closed";
-
-    QString keyName = key;
-    BranchItem *bi = (BranchItem*)findID(branchID);
-    if (bi) {
-        if (solvedStates.contains(status))    {
-            keyName = "(" + keyName + ")";
-            colorSubtree (Qt::blue, bi);
-        }
-
-        setHeadingPlainText(keyName + ": " + summary, bi);
-
-    }
-    */
-
 }
 
 void VymModel::setHeadingConfluencePageName()   // FIXME-0 always asks for Confluence credentials when adding any URL
