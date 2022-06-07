@@ -5629,7 +5629,7 @@ bool VymModel::selectToggle(TreeItem *ti)
 {
     if (ti) {
         selModel->select(index(ti), QItemSelectionModel::Toggle);
-        // appendSelectionToHistory();	// FIXME-4 selection history not implemented yet
+        // appendSelectionToHistory();	// FIXME-2 selection history not implemented yet
         // for multiselections
         lastToggledUuid = ti->getUuid();
         return true;

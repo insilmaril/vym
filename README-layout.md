@@ -91,6 +91,12 @@ Next steps
       remain unchanged, to avoid flickering in the tree, but the (relative)
       position itself needs to be adjusted => a new layout hint is required.
 
+    - Animate moving containers when starting to move
+
+      Containers could "gather" below the container, which is under
+      mouse pointer, when movement starts (is this the last
+      selected one?)
+
 * Cleanup MapObj related stuff, which has been replaced by Containers
     - MapItem
         - Probably pretty much useless once Containers are fully

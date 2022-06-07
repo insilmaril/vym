@@ -1723,7 +1723,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
         }
     }
 
-    // Set position of tmpParentContainer and check if we could link
+    // Check if we could link
     BranchContainer::Orientation newOrientation;
     BranchContainer *targetBranchContainer = nullptr;
 
