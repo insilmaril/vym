@@ -1574,12 +1574,7 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
         // Left Button	    Move Branches
         if (e->button() == Qt::LeftButton) {
             // No system flag clicked, take care of moving modes or simply
-            // moving
-            /* FIXME-2 remove (also in header)
-            movingObj_offset.setX(p.x() - lmo_found->x());
-            movingObj_offset.setY(p.y() - lmo_found->y());
-            */
-
+            // start moving
             if (ti_found->hasTypeBranch())
             {
                 BranchContainer *bc = ((BranchItem*)ti_found)->getBranchContainer();
@@ -1611,6 +1606,7 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
                     int i = xlo->ctrlPointInClickBox(p);
                     if (i >= 0)
                         xlo->setSelection(i);
+                    // FIXME-2 remove variable (also in header)? still used when panning!
                     movingObj_offset.setX(p.x() - xlo->x());
                     movingObj_offset.setY(p.y() - xlo->y());
                     movingObj_orgPos.setX(xlo->x());
