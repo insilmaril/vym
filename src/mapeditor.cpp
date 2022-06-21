@@ -1418,19 +1418,6 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
     // Stop editing in LineEdit
     if (state() == EditingHeading) editHeadingFinished();
 
-    QString sysFlagName;
-    QUuid uid;
-    /*
-    if (lmo_found) {    // FIXME-2 check for flags
-        uid = ((BranchObj *)lmo_found)->findSystemFlagUidByPos(p);
-        if (!uid.isNull()) {
-            Flag *flag = systemFlagsMaster->findFlagByUid(uid);
-            if (flag)
-                sysFlagName = flag->getName();
-        }
-    }
-    */
-
     /*
     qDebug() << "ME::mouse pressed\n";
     qDebug() << "   ti_found=" << ti_found;
@@ -1445,6 +1432,8 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
         startPanningView(e);    // FIXME-2 should be set in mouseMove later
         return;
     }
+
+    QString sysFlagName;    // FIXME-2 could be local to ti_found clause below?
 
     /* FIXME-2 not supported yet // XLink modifier, create new XLink
     BranchItem *selbi = model->getSelectedBranch();
@@ -1477,7 +1466,17 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
 
         }
 
-        // Check vymlink  modifier (before selecting object!)
+        /* 
+        // FIXME-2 check for flags
+        QUuid uid = ((BranchObj *)lmo_found)->findSystemFlagUidByPos(p);
+        if (!uid.isNull()) {
+            Flag *flag = systemFlagsMaster->findFlagByUid(uid);
+            if (flag)
+                sysFlagName = flag->getName();
+        }
+        */
+
+        // Check vymlink  modifier (before selecting object!)   // FIXME-2 why here and not below with other system flags?
         if (sysFlagName == "system-vymLink") {
             model->select(ti_found);
             if (e->modifiers() & Qt::ControlModifier)
