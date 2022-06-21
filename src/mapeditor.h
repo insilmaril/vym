@@ -228,10 +228,9 @@ class MapEditor : public QGraphicsView {
     // Temporary used for linkx
     Link *tmpLink;
 
-    // Temporary used for panning view and xlinks   // FIXME-2 check what's still required
-    QPointF movingObj_offset;    // offset of mousepointer to object
-    QPointF movingCont_start;    // inital pos of moving Content or
-    QPointF movingVec;           // how far has Content moved
+    // Temporary used for panning view
+    QPoint panning_initialPointerPos;           // initial pos in pointer coordinates
+    QPoint panning_initialScrollBarValues;      // inital values of scrollbars
 
     // Moving containers
     QPointF movingObj_initialScenePos;          // scene coordinates when button was pressed

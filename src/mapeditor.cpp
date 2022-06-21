@@ -1381,9 +1381,9 @@ void MapEditor::keyReleaseEvent(QKeyEvent *e)
 void MapEditor::startPanningView(QMouseEvent *e)
 {
     setState(MovingView);
-    movingObj_offset = e->globalPos();  // FIXME-2 check, maybe rename variable?
-    movingCont_start =                  // Used for scrollbars when moving view
-        QPointF(horizontalScrollBar()->value(), verticalScrollBar()->value());
+    panning_initialPointerPos = e->globalPos();
+    panning_initialScrollBarValues =                  // Used for scrollbars when moving view
+        QPoint(horizontalScrollBar()->value(), verticalScrollBar()->value());
     setCursor(HandOpenCursor);
 }
 
@@ -1606,6 +1606,7 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
                     if (i >= 0)
                         xlo->setSelection(i);
                     // FIXME-2 remove variable (also in header)? still used when panning!
+                    // Note: movingObj_offset renamed to movingObj_PointerPos and QPoint instead of QPOintF meanwhile // FIXME-4
                     movingObj_offset.setX(p.x() - xlo->x());
                     movingObj_offset.setY(p.y() - xlo->y());
                     movingObj_orgPos.setX(xlo->x());
@@ -1646,13 +1647,14 @@ void MapEditor::mouseMoveEvent(QMouseEvent *e)
     // Pan view
     if (state() == MovingView &&
         (e->buttons() == Qt::LeftButton || e->buttons() == Qt::MiddleButton)) {
-        QPointF p = e->globalPos();
-        movingVec.setX(-p.x() + movingObj_offset.x());
-        movingVec.setY(-p.y() + movingObj_offset.y());
+        QPoint p = e->globalPos();
+        QPoint v_pan;
+        v_pan.setX(-p.x() + panning_initialPointerPos.x());
+        v_pan.setY(-p.y() + panning_initialPointerPos.y());
         horizontalScrollBar()->setSliderPosition(
-            (int)(movingCont_start.x() + movingVec.x()));
+            (int)(panning_initialScrollBarValues.x() + v_pan.x()));
         verticalScrollBar()->setSliderPosition(
-            (int)(movingCont_start.y() + movingVec.y()));
+            (int)(panning_initialScrollBarValues.y() + v_pan.y()));
         // Avoid flickering
         scrollBarPosAnimation.stop();
         viewCenterAnimation.stop();
