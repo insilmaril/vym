@@ -1380,7 +1380,7 @@ void MapEditor::keyReleaseEvent(QKeyEvent *e)
 
 void MapEditor::startPanningView(QMouseEvent *e)
 {
-    setState(MovingView);
+    setState(PanningView);
     panning_initialPointerPos = e->globalPos();
     panning_initialScrollBarValues =                  // Used for scrollbars when moving view
         QPoint(horizontalScrollBar()->value(), verticalScrollBar()->value());
@@ -1438,6 +1438,30 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
     qDebug() << " flag=" << sysFlagName;
     */
 
+    // If Modifier mode "view" is set, all other clicks can be ignored, 
+    // nothing will be selected
+    if ((e->modifiers() & Qt::ShiftModifier) && 
+            mainWindow->getModMode() == Main::ModModeMoveView) {
+        startPanningView(e);    // FIXME-2 should be set in mouseMove later
+        return;
+    }
+
+    /* FIXME-2 not supported yet // XLink modifier, create new XLink
+    BranchItem *selbi = model->getSelectedBranch();
+    if (selbi && mainWindow->getModMode() == Main::ModModeXLink &&
+        (e->modifiers() & Qt::ShiftModifier)) {
+        setState(DrawingLink);
+        tmpLink = new Link(model);
+        tmpLink->setBeginBranch(selbi);
+        tmpLink->createMapObj();
+        tmpLink->setStyleBegin("None");
+        tmpLink->setStyleEnd("None");
+        tmpLink->setEndPoint(movingObj_initialScenePos);
+        tmpLink->updateLink();
+        return;
+    }
+    */
+
     if (ti_found) {
         // Check modifier key (before selecting object!)
         if (e->modifiers() & Qt::ShiftModifier) {
@@ -1476,11 +1500,7 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
                 // want to move around. In that case we would ignore the "pressed" event
                 model->select(ti_found);
         }
-    } else
-        if (mainWindow->getModMode() == Main::ModModeMoveView) {
-            startPanningView(e);
-            return;
-        }
+    }   // ti_found
 
     e->accept();
 
@@ -1552,22 +1572,6 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
     }   // system flags or modModes
     */
 
-    /* FIXME-2 not supported yet // XLink modifier, create new XLink
-    BranchItem *selbi = model->getSelectedBranch();
-    if (selbi && mainWindow->getModMode() == Main::ModModeXLink &&
-        (e->modifiers() & Qt::ShiftModifier)) {
-        setState(DrawingLink);
-        tmpLink = new Link(model);
-        tmpLink->setBeginBranch(selbi);
-        tmpLink->createMapObj();
-        tmpLink->setStyleBegin("None");
-        tmpLink->setStyleEnd("None");
-        tmpLink->setEndPoint(movingObj_initialScenePos);
-        tmpLink->updateLink();
-        return;
-    }
-    */
-
     // Start moving around
     if (ti_found) {
         // Left Button	    Move Branches
@@ -1615,7 +1619,7 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
                 */
             }
         }
-        else { // No MapObj found, we are on the scene itself
+        else { // No object found, we are on the scene itself
             // Left Button	    move Pos of sceneView
             if (e->button() == Qt::LeftButton ||
                 e->button() == Qt::MiddleButton) {
@@ -1645,7 +1649,7 @@ void MapEditor::mouseMoveEvent(QMouseEvent *e)
     }
 
     // Pan view
-    if (state() == MovingView &&
+    if (state() == PanningView &&
         (e->buttons() == Qt::LeftButton || e->buttons() == Qt::MiddleButton)) {
         QPoint p = e->globalPos();
         QPoint v_pan;
