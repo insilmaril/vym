@@ -1476,7 +1476,7 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
         }
         */
 
-        // Check vymlink  modifier (before selecting object!)   // FIXME-2 why here and not below with other system flags?
+        // Check vymlink  modifier (before selecting object!)   // FIXME-2 why here and not below with other system flags? Why before selecting?
         if (sysFlagName == "system-vymLink") {
             model->select(ti_found);
             if (e->modifiers() & Qt::ControlModifier)
@@ -1499,7 +1499,40 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
                 // want to move around. In that case we would ignore the "pressed" event
                 model->select(ti_found);
         }
-    }   // ti_found
+
+        // Left Button	    Move Branches
+        if (e->button() == Qt::LeftButton) {
+            // No system flag clicked, take care of moving modes or simply
+            // start moving
+            if (ti_found->hasTypeBranch())
+            {
+                BranchContainer *bc = ((BranchItem*)ti_found)->getBranchContainer();
+                movingObj_initialContainerOffset = bc->mapFromScene(movingObj_initialScenePos);
+            }
+
+            if (mainWindow->getModMode() == Main::ModModeMoveObject &&
+                    e->modifiers() & Qt::ShiftModifier) {
+                setState(MovingObjectWithoutLinking);
+            }
+            else
+                setState(MovingObject);
+        }
+        else
+            // Middle Button - Toggle Scroll
+            //
+            // (On Mac OS X this won't work, but we still have
+            // a button in the toolbar)
+            if (e->button() == Qt::MidButton)
+                model->toggleScroll();
+    } else { 
+        // No ti_found, we are on the scene itself
+        // Left Button	    move Pos of sceneView
+        if (e->button() == Qt::LeftButton ||
+            e->button() == Qt::MiddleButton) {
+            startPanningView(e);
+            return;
+        }
+    }
 
     e->accept();
 
@@ -1571,37 +1604,11 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
     }   // system flags or modModes
     */
 
-    // Start moving around
-    if (ti_found) {
-        // Left Button	    Move Branches
-        if (e->button() == Qt::LeftButton) {
-            // No system flag clicked, take care of moving modes or simply
-            // start moving
-            if (ti_found->hasTypeBranch())
-            {
-                BranchContainer *bc = ((BranchItem*)ti_found)->getBranchContainer();
-                movingObj_initialContainerOffset = bc->mapFromScene(movingObj_initialScenePos);
-            }
-
-            if (mainWindow->getModMode() == Main::ModModeMoveObject &&
-                e->modifiers() & Qt::ShiftModifier) {
-                setState(MovingObjectWithoutLinking);
-            }
-            else
-                setState(MovingObject);
-        }
-        else
-            // Middle Button    Toggle Scroll
-            // (On Mac OS X this won't work, but we still have
-            // a button in the toolbar)
-            if (e->button() == Qt::MidButton)
-            model->toggleScroll();
-    }
+    /*
     else { // No lmo found, check XLinks
         if (ti_found) {
             if (ti_found->getType() == TreeItem::XLink) {
                 // FIXME-2 xlink not supported yet with containers
-                /*
                 XLinkObj *xlo = (XLinkObj *)((MapItem *)ti_found)->getMO();
                 if (xlo) {
                     setState(DrawingXLink);
@@ -1615,18 +1622,10 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
                     movingObj_orgPos.setX(xlo->x());
                     movingObj_orgPos.setY(xlo->y());
                 }
-                */
-            }
-        }
-        else { // No object found, we are on the scene itself
-            // Left Button	    move Pos of sceneView
-            if (e->button() == Qt::LeftButton ||
-                e->button() == Qt::MiddleButton) {
-                startPanningView(e);
-                return;
             }
         }
     }
+    */
 }
 
 void MapEditor::mouseMoveEvent(QMouseEvent *e)
