@@ -1648,8 +1648,7 @@ void MapEditor::mouseMoveEvent(QMouseEvent *e)
     }
 
     // Pan view
-    if (state() == PanningView &&
-        (e->buttons() == Qt::LeftButton || e->buttons() == Qt::MiddleButton)) {
+    if (state() == PanningView) {
         QPoint p = e->globalPos();
         QPoint v_pan;
         v_pan.setX(-p.x() + panning_initialPointerPos.x());
@@ -1658,6 +1657,7 @@ void MapEditor::mouseMoveEvent(QMouseEvent *e)
             (int)(panning_initialScrollBarValues.x() + v_pan.x()));
         verticalScrollBar()->setSliderPosition(
             (int)(panning_initialScrollBarValues.y() + v_pan.y()));
+
         // Avoid flickering
         scrollBarPosAnimation.stop();
         viewCenterAnimation.stop();
