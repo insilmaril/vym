@@ -1439,47 +1439,49 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
     qDebug() << " flag=" << sysFlagName;
     */
 
-    // Check modifier key (before selecting object!)
-    if (ti_found && (e->modifiers() & Qt::ShiftModifier)) {
-        if (mainWindow->getModMode() == Main::ModModeColor) {
-            setState(PickingColor);
-            mainWindow->setCurrentColor(ti_found->getHeadingColor());
+    if (ti_found) {
+        // Check modifier key (before selecting object!)
+        if (e->modifiers() & Qt::ShiftModifier) {
+            if (mainWindow->getModMode() == Main::ModModeColor) {
+                setState(PickingColor);
+                mainWindow->setCurrentColor(ti_found->getHeadingColor());
+                if (e->modifiers() & Qt::ControlModifier)
+                    model->colorBranch(ti_found->getHeadingColor());
+                else
+                    model->colorSubtree(ti_found->getHeadingColor());
+                return;
+            }
+
+        }
+
+        // Check vymlink  modifier (before selecting object!)
+        if (sysFlagName == "system-vymLink") {
+            model->select(ti_found);
             if (e->modifiers() & Qt::ControlModifier)
-                model->colorBranch(ti_found->getHeadingColor());
+                mainWindow->editOpenVymLink(true);
             else
-                model->colorSubtree(ti_found->getHeadingColor());
+                mainWindow->editOpenVymLink(false);
             return;
         }
 
+        // Select the clicked object, if not moving without linking
+        if (e->modifiers() & Qt::ShiftModifier) {
+            if (mainWindow->getModMode() == Main::ModModePoint) {
+                lastToggleDirection = toggleUndefined;
+
+                model->selectToggle(ti_found);
+            }
+        } else {
+            if (model->getSelectedItems().count() < 2 || !model->getSelectedItems().contains(ti_found))
+                // Only add ti_found, if we don't have multi-selection yet, which we 
+                // want to move around. In that case we would ignore the "pressed" event
+                model->select(ti_found);
+        }
+    } else
         if (mainWindow->getModMode() == Main::ModModeMoveView) {
             startPanningView(e);
             return;
         }
-    }
-
-    // Check vymlink  modifier (before selecting object!)
-    if (ti_found && sysFlagName == "system-vymLink") {
-        model->select(ti_found);
-        if (e->modifiers() & Qt::ControlModifier)
-            mainWindow->editOpenVymLink(true);
-        else
-            mainWindow->editOpenVymLink(false);
-        return;
-    }
-
-    // Select the clicked object, if not moving without linking
-    if (ti_found && (e->modifiers() & Qt::ShiftModifier)) {
-        if (mainWindow->getModMode() == Main::ModModePoint) {
-            lastToggleDirection = toggleUndefined;
-
-            model->selectToggle(ti_found);
-        }
-    } else {
-        if (model->getSelectedItems().count() < 2 || !model->getSelectedItems().contains(ti_found))
-            // Only add ti_found, if we don't have multi-selection yet, which we 
-            // want to move around. In that case we would ignore the "pressed" event
-            model->select(ti_found);
-    }
 
     e->accept();
 
@@ -1551,7 +1553,7 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
     }   // system flags or modModes
     */
 
-    // XLink modifier, create new XLink
+    /* FIXME-2 not supported yet // XLink modifier, create new XLink
     BranchItem *selbi = model->getSelectedBranch();
     if (selbi && mainWindow->getModMode() == Main::ModModeXLink &&
         (e->modifiers() & Qt::ShiftModifier)) {
@@ -1565,6 +1567,7 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
         tmpLink->updateLink();
         return;
     }
+    */
 
     // Start moving around
     if (ti_found) {
@@ -1577,9 +1580,9 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
             movingObj_offset.setY(p.y() - lmo_found->y());
             */
 
-            if (selbi)
+            if (ti_found->hasTypeBranch())
             {
-                BranchContainer *bc = selbi->getBranchContainer();
+                BranchContainer *bc = ((BranchItem*)ti_found)->getBranchContainer();
                 movingObj_initialContainerOffset = bc->mapFromScene(movingObj_initialPointerPos);
             }
 
@@ -1814,7 +1817,6 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
             // Consider orientation of *last* selected branch
             BranchContainer *bc = (BranchContainer*)(c->childItems().last());
             if (bc->isOriginalFloating())  {
-                qDebug() << "ok1 tpC=" << tmpParentContainer->pos() << " opp=" << bc->getOriginalParentPos() << tmpParentContainer->getOrientation();
                 if (tmpParentContainer->pos().x() > bc->getOriginalParentPos().x())
                 {
                     qDebug() << "  rop";
