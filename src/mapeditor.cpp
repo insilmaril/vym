@@ -1384,7 +1384,6 @@ void MapEditor::startPanningView(QMouseEvent *e)
     movingObj_offset = e->globalPos();  // FIXME-2 check, maybe rename variable?
     movingCont_start =                  // Used for scrollbars when moving view
         QPointF(horizontalScrollBar()->value(), verticalScrollBar()->value());
-    movingVec = QPointF(0, 0);          // Used for scrollbars when moving view
     setCursor(HandOpenCursor);
 }
 
@@ -1405,9 +1404,9 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
     }
 
     // Initial position of pointer in scene coordinates. See also e->globalPos (!)
-    movingObj_initialPointerPos = mapToScene(e->pos());
+    movingObj_initialScenePos = mapToScene(e->pos());
 
-    TreeItem *ti_found = findMapItem(movingObj_initialPointerPos);
+    TreeItem *ti_found = findMapItem(movingObj_initialScenePos);
 
     // Allow selecting text in QLineEdit if necessary
     if (model->isSelectionBlocked()) {
@@ -1563,7 +1562,7 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
         tmpLink->createMapObj();
         tmpLink->setStyleBegin("None");
         tmpLink->setStyleEnd("None");
-        tmpLink->setEndPoint(movingObj_initialPointerPos);
+        tmpLink->setEndPoint(movingObj_initialScenePos);
         tmpLink->updateLink();
         return;
     }
@@ -1578,7 +1577,7 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
             if (ti_found->hasTypeBranch())
             {
                 BranchContainer *bc = ((BranchItem*)ti_found)->getBranchContainer();
-                movingObj_initialContainerOffset = bc->mapFromScene(movingObj_initialPointerPos);
+                movingObj_initialContainerOffset = bc->mapFromScene(movingObj_initialScenePos);
             }
 
             if (mainWindow->getModMode() == Main::ModModeMoveObject &&
@@ -1989,7 +1988,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
             model->saveStateEndBlock();
         } else {
             // Branches moved, but not relinked
-            QPointF t = p - movingObj_initialPointerPos;    // Defined in mousePressEvent
+            QPointF t = p - movingObj_initialScenePos;    // Defined in mousePressEvent
 
             QList <BranchContainer*> childBranches = tmpParentContainer->childBranches();
             QList <QPointF> animationCurrentPositions;   // After reposition start animations

@@ -234,7 +234,7 @@ class MapEditor : public QGraphicsView {
     QPointF movingVec;           // how far has Content moved
 
     // Moving containers
-    QPointF movingObj_initialPointerPos;        // scene coordinates when button was pressed
+    QPointF movingObj_initialScenePos;          // scene coordinates when button was pressed
     QPointF movingObj_initialContainerOffset;   // offset from above coordinates to object
     BranchContainer *tmpParentContainer;
 
