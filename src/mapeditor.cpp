@@ -1666,9 +1666,9 @@ void MapEditor::mouseMoveEvent(QMouseEvent *e)
         return;
     }
 
-    // If not already happened during mousepress, we might need to switch state
+    // After clicking object shift might have been pressed, adjust state then
     if (mainWindow->getModMode() == Main::ModModeMoveObject &&
-        e->modifiers() & Qt::ShiftModifier && e->buttons() == Qt::LeftButton) {
+            e->modifiers() & Qt::ShiftModifier && editorState == MovingObject) {
         setState(MovingObjectWithoutLinking);
     }
 
@@ -1729,7 +1729,8 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
     BranchContainer::Orientation newOrientation;
     BranchContainer *targetBranchContainer = nullptr;
 
-    if (targetItem && targetItem->hasTypeBranch()) {
+    if (targetItem && targetItem->hasTypeBranch() && 
+            !(editorState == MovingObjectWithoutLinking && (e->modifiers() & Qt::ShiftModifier))) {
         targetBranchContainer = ((BranchItem*)targetItem)->getBranchContainer();
 
         int d_pos;
