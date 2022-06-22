@@ -7,7 +7,7 @@
 
 class BranchContainer;
 class ImageContainer;
-class MapObj;
+class MapObj;   // FIXME-1 should no longer be necessary
 
 #define dZ_BBOX 0 // testing
 #define dZ_SELBOX 5
@@ -75,6 +75,9 @@ class Container : public QGraphicsRectItem {
 
     void setVerticalAlignment(const VerticalAlignment &a);
 
+    virtual bool isVisibleContainer();
+    virtual void setVisibility(bool);
+
     void addContainer(Container *c);
     Container* parentContainer();
 
@@ -98,6 +101,8 @@ class Container : public QGraphicsRectItem {
 
   protected:
     ContainerType type;
+
+    bool visible;
 
     QPointF originalPos;    //! Save position before move for undo
     AnimPoint animatedPos;  //! animated position to let e.g. a branch "snap back"

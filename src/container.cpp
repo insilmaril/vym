@@ -146,6 +146,16 @@ void Container::setVerticalAlignment(const VerticalAlignment &a)
     verticalAlignment = a;
 }
 
+bool Container::isVisibleContainer()
+{
+    return visible;
+}
+
+void Container::setVisibility(bool v)
+{
+    visible = v;
+}
+
 void Container::addContainer(Container *c)
 {
     c->setParentItem(this);
