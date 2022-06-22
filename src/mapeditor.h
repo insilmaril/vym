@@ -233,6 +233,7 @@ class MapEditor : public QGraphicsView {
     QPoint panning_initialScrollBarValues;      // inital values of scrollbars
 
     // Moving containers
+    QList <TreeItem*> movingItems;              // selected items which are currently moved
     QPointF movingObj_initialScenePos;          // scene coordinates when button was pressed
     QPointF movingObj_initialContainerOffset;   // offset from above coordinates to object
     BranchContainer *tmpParentContainer;
