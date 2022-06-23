@@ -10,11 +10,14 @@
 The links are connecting the branch and image containers in a map.
 */
 
+class BranchContainer;
+class ImageContainer;
+
 class LinkableContainer : public Container {
   public:
     /*! Various drawing styles for links */
     enum Style {
-        UndefinedStyle, //!< Undefined
+        NoLink,         //!< No visible link
         Line,           //!< Straight line
         Parabel,        //!< Parabel
         PolyLine,       //!< Polygon (thick line)
@@ -34,8 +37,7 @@ class LinkableContainer : public Container {
         HeadingColor  //!< Link uses the color of heading
     };
 
-    LinkableContainer();
-    LinkableContainer(QGraphicsItem *parent);
+    LinkableContainer(QGraphicsItem *parent = nullptr);
     virtual ~LinkableContainer();
 
   protected:
@@ -60,19 +62,22 @@ class LinkableContainer : public Container {
     /*! update parPos, childRefPos depending on pos redraw link with given style */
     virtual void updateLinkGeometry();
 
-    virtual void setDockPos() = 0; // sets childRefPos and parPos
+    virtual void setDockPos();     // sets childRefPos and parPos   // FIXME-1 pure in LMO
     QPointF getChildRefPos();      // returns pos where children dock
     QPointF getFloatRefPos();      // returns pos where floats dock
-    QPointF getParPos();           // returns pos where parents dock
+    void setParentPos(const QPointF&);// Where do upwards links start in (local coord)
+    QPointF getParentPos();
+
+    void reposition();
 
   protected:
     void parabel(QPolygonF &, qreal, qreal, qreal, qreal); // Create Parabel connecting two points
 
     QPointF childRefPos;
     QPointF floatRefPos;
-    QPointF parPos;
+    QPointF parentPos;
     bool link2ParPos; // While moving around, sometimes link to parent
-    LinkableContainer *parentContainer;    // FIXME-0 needed?
+    LinkableContainer *parentLinkableContainer;    // FIXME-0 needed?
 
     qreal linkwidth;  // width of a link
 

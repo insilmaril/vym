@@ -10,54 +10,55 @@ extern bool debug;
 // LinkableContainer
 /////////////////////////////////////////////////////////////////
 
-LinkableContainer::LinkableContainer(QGraphicsItem *parent = nullptr)
+LinkableContainer::LinkableContainer(QGraphicsItem *parent)
     : Container(parent)
 {
-    // qDebug() << "Const LinkableContainer this=" << this;
+    qDebug() << "Const LinkableContainer this=" << this;
     init();
 }
 
 LinkableContainer::~LinkableContainer()
 {
-    // qDebug()<< "Destructor LC  this="<<this<<" style="<<style<<" l="<<l<<"
-    // p="<<p<<"  segment="<<segment.count();
+    qDebug()<< "Destructor LC  this=" << this << " style=" << style << " l=" << l << " p =" << p<< "  segment=" << segment.count();
     delLink();
 }
 
 void LinkableContainer::init()
 {
-    parPos = QPointF(0, 0);
+    parentPos = QPointF(0, 0); // FIXME-2 cleanup declarations below
     childRefPos = QPointF(0, 0);
     floatRefPos = QPointF(0, 0);
     link2ParPos = false;
-    l = NULL;
-    p = NULL;
+    l = nullptr;
+    p = nullptr;
+    linkcolor = Qt::black;
     linkwidth = 20;
     thickness_start = 8;
-    style = UndefinedStyle;
+    style = NoLink;
     linkpos = Bottom;
     arcsegs = 13;
 
-    // TODO instead of linkcolor pen.color() could be used	all around
+    // FIXME-2 instead of linkcolor pen.color() could be used all around
     pen.setWidth(1);
-    pen.setColor(linkcolor);
+    //pen.setColor(linkcolor);
     pen.setCapStyle(Qt::RoundCap);
 
     useBottomline = false;
-    bottomline = NULL;
+    bottomline = nullptr;
 }
 
 void LinkableContainer::createBottomLine()
 {
-    bottomline = scene()->addLine(QLineF(1, 1, 1, 1), pen);
+    bottomline = new QGraphicsLineItem(this);
+    bottomline->setPen(pen);
     bottomline->setZValue(dZ_LINK);
 }
 
 void LinkableContainer::delLink()
 {
     if (bottomline) {
-        delete (bottomline);
-        bottomline = NULL;
+        delete bottomline;
+        bottomline = nullptr;
     }
     switch (style) {
     case Line:
@@ -87,62 +88,63 @@ void LinkableContainer::copy(LinkableContainer *other)
 
 void LinkableContainer::setLinkStyle(Style newstyle)
 {
-    // qDebug()<<"LC::setLinkStyle s="<<newstyle;	//FIXME-4 called very
-    // often?!?! qDebug()<<"LC::setLinkStyle s="<<newstyle<<" for "<<this<<"
-    // "<<treeItem->getHeading()<<"  parentContainer="<<parentContainer;
+    // qDebug() << "LC::setLinkStyle s=" << newstyle;	//FIXME-4 called very often?!?! 
+    // qDebug() << "LC::setLinkStyle s=" << newstyle << " for " << this <<"
+    // "<< treeItem->getHeading() << "  parentLinkableContainer=" << parentLinkableContainer;
+    
+    if (style == newstyle) return;
+
     delLink();
 
     style = newstyle;
 
     QGraphicsLineItem *cl;
     switch (style) {
-    case Line:
-        l = scene()->addLine(QLineF(1, 1, 1, 1), pen);
-        l->setZValue(dZ_LINK);
-        if (visible)
-            l->show();
-        else
-            l->hide();
-        createBottomLine();
-        break;
-    case Parabel:
-        for (int i = 0; i < arcsegs; i++) {
-            cl = scene()->addLine(QLineF(i * 5, 0, i * 10, 100), pen);
-            cl->setZValue(dZ_LINK);
+        case Line:
+            l = new QGraphicsLineItem(this);
+            l->setPen(pen);
+            l->setZValue(dZ_LINK);
             if (visible)
-                cl->show();
+                l->show();
             else
-                cl->hide();
-            segment.append(cl);
-        }
-        pa0.resize(arcsegs + 1);
-        createBottomLine();
-        break;
-    case PolyLine:
-        p = scene()->addPolygon(QPolygonF(), pen, linkcolor);
-        p->setZValue(dZ_LINK);
-        if (visible)
-            p->show();
-        else
-            p->hide();
-        pa0.resize(3);
-        createBottomLine();
-        break;
-    case PolyParabel:
-        p = scene()->addPolygon(QPolygonF(), pen, linkcolor);
-        p->setZValue(dZ_LINK);
-        if (visible)
-            p->show();
-        else
-            p->hide();
-        pa0.resize(arcsegs * 2 + 2);
-        pa1.resize(arcsegs + 1);
-        pa2.resize(arcsegs + 1);
-        createBottomLine();
-        break;
-    default:
-        break;
+                l->hide();
+            break;
+        case Parabel:
+            for (int i = 0; i < arcsegs; i++) {
+                cl = scene()->addLine(QLineF(i * 5, 0, i * 10, 100), pen);
+                cl->setZValue(dZ_LINK);
+                if (visible)
+                    cl->show();
+                else
+                    cl->hide();
+                segment.append(cl);
+            }
+            pa0.resize(arcsegs + 1);
+            break;
+        case PolyLine:
+            p = scene()->addPolygon(QPolygonF(), pen, linkcolor);
+            p->setZValue(dZ_LINK);
+            if (visible)
+                p->show();
+            else
+                p->hide();
+            pa0.resize(3);
+            break;
+        case PolyParabel:
+            p = scene()->addPolygon(QPolygonF(), pen, linkcolor);
+            p->setZValue(dZ_LINK);
+            if (visible)
+                p->show();
+            else
+                p->hide();
+            pa0.resize(arcsegs * 2 + 2);
+            pa1.resize(arcsegs + 1);
+            pa2.resize(arcsegs + 1);
+            break;
+        default:
+            break;
     }
+    createBottomLine();
 }
 
 LinkableContainer::Style LinkableContainer::getLinkStyle() { return style; }
@@ -266,14 +268,14 @@ void LinkableContainer::updateLinkGeometry()
     //
     // sets:
     //	childRefPos    (by calling setDockPos())
-    //	parPos	    (by calling setDockPos())
+    //	parentPos	    (by calling setDockPos())
     //  bottomlineY
     //	drawing of the link itself
 
     // updateLinkGeometry is called from move, but called from constructor we
     // don't have parents yet...
 
-    if (style == UndefinedStyle) {
+    if (style == NoLink) {
         setDockPos();
         return;
     }
@@ -289,20 +291,25 @@ void LinkableContainer::updateLinkGeometry()
     }
 
     double p2x, p2y; // Set P2 Before setting
+    /* FIXME-0 no real parents yet
     if (!link2ParPos) {
-        p2x = QPointF(parentContainer->getChildRefPos()).x(); // P1, we have to look at
-        p2y = QPointF(parentContainer->getChildRefPos()).y(); // orientation
+        p2x = QPointF(parentLinkableContainer->getChildRefPos()).x(); // P1, we have to look at
+        p2y = QPointF(parentLinkableContainer->getChildRefPos()).y(); // orientation
     }
     else {
-        p2x = QPointF(parentContainer->getParPos()).x();
-        p2y = QPointF(parentContainer->getParPos()).y();
+        p2x = QPointF(parentLinkableContainer->getParentPos()).x();
+        p2y = QPointF(parentLinkableContainer->getParentPos()).y();
     }
+    */
+
+    p2x = pos().x();
+    p2y = pos().y();
 
     //FIXME-1 no longer here: setOrientation();
     setDockPos(); // Call overloaded method
 
-    double p1x = parPos.x(); // Link is drawn from P1 to P2
-    double p1y = parPos.y();
+    double p1x = parentPos.x(); // Link is drawn from P1 to P2
+    double p1y = parentPos.y();
 
     double vx = p2x - p1x; // V=P2-P1
     double vy = p2y - p1y;
@@ -312,16 +319,15 @@ void LinkableContainer::updateLinkGeometry()
     // //FIXME-4 no longer used?
     /*
     if (treeItem->depth() < 2)
-        // z=(treeItem->depth() -2)*dZ_DEPTH + dZ_LINK;
+        // z = (treeItem->depth() -2) * dZ_DEPTH + dZ_LINK;
         z = -dZ_LINK;
     else
         z = dZ_LINK;
     */
 
-    // qDebug()<<"LC::updateGeo d="<<treeItem->depth()<<"  this="<<this<<"
-    // "<<treeItem->getHeading();
+    // qDebug() << "LC::updateGeo d=" << treeItem->depth() << "  this=" << this << << treeItem->getHeading();
 
-    // Draw the horizontal line below heading (from childRefPos to ParPos)
+    // Draw the horizontal line below heading (from childRefPos to parentPos)
     if (bottomline) {
         bottomline->setLine(QLineF(childRefPos.x(), childRefPos.y(), p1x, p1y));
         bottomline->setZValue(z);
@@ -338,55 +344,62 @@ void LinkableContainer::updateLinkGeometry()
 
     // Draw the link
     switch (style) {
-    case Line:
-        l->setLine(QLine(qRound(parPos.x()), qRound(parPos.y()), qRound(p2x),
-                         qRound(p2y)));
-        l->setZValue(z);
-        break;
-    case Parabel:
-        parabel(pa0, p1x, p1y, p2x, p2y);
-        for (int i = 0; i < segment.size(); ++i) {
-            segment.at(i)->setLine(QLineF(pa0.at(i).x(), pa0.at(i).y(),
-                                          pa0.at(i + 1).x(),
-                                          pa0.at(i + 1).y()));
-            segment.at(i)->setZValue(z);
+        case Line:
+            l->setLine(p1x, p1y, p2x, p2y);
+            l->setZValue(z);
+            l->setVisible(true); // FIXME-0 testing
+            qDebug() << "Drawing line" << l->line() << "scenePos =" << scenePos();
+            break;
+        case Parabel:
+            parabel(pa0, p1x, p1y, p2x, p2y);
+            for (int i = 0; i < segment.size(); ++i) {
+                segment.at(i)->setLine(QLineF(pa0.at(i).x(), pa0.at(i).y(),
+                                              pa0.at(i + 1).x(),
+                                              pa0.at(i + 1).y()));
+                segment.at(i)->setZValue(z);
+            }
+            break;
+        case PolyLine:
+            pa0.clear();
+            pa0 << QPointF(qRound(p2x + tp.x()), qRound(p2y + tp.y()));
+            pa0 << QPointF(qRound(p2x - tp.x()), qRound(p2y - tp.y()));
+            pa0 << QPointF(qRound(parentPos.x()), qRound(parentPos.y()));
+            p->setPolygon(QPolygonF(pa0));
+            p->setZValue(z);
+            break;
+        case PolyParabel:
+            parabel(pa1, p1x, p1y, p2x + tp.x(), p2y + tp.y());
+            parabel(pa2, p1x, p1y, p2x - tp.x(), p2y - tp.y());
+            pa0.clear();
+            for (int i = 0; i <= arcsegs; i++)
+                pa0 << QPointF(pa1.at(i));
+            for (int i = 0; i <= arcsegs; i++)
+                pa0 << QPointF(pa2.at(arcsegs - i));
+            p->setPolygon(QPolygonF(pa0));
+            p->setZValue(z);
+            break;
+        default:
+            break;
         }
-        break;
-    case PolyLine:
-        pa0.clear();
-        pa0 << QPointF(qRound(p2x + tp.x()), qRound(p2y + tp.y()));
-        pa0 << QPointF(qRound(p2x - tp.x()), qRound(p2y - tp.y()));
-        pa0 << QPointF(qRound(parPos.x()), qRound(parPos.y()));
-        p->setPolygon(QPolygonF(pa0));
-        p->setZValue(z);
-        break;
-    case PolyParabel:
-        parabel(pa1, p1x, p1y, p2x + tp.x(), p2y + tp.y());
-        parabel(pa2, p1x, p1y, p2x - tp.x(), p2y - tp.y());
-        pa0.clear();
-        for (int i = 0; i <= arcsegs; i++)
-            pa0 << QPointF(pa1.at(i));
-        for (int i = 0; i <= arcsegs; i++)
-            pa0 << QPointF(pa2.at(arcsegs - i));
-        p->setPolygon(QPolygonF(pa0));
-        p->setZValue(z);
-        break;
-    default:
-        break;
     }
-}
+
+void LinkableContainer::setDockPos() {}  // FIXME-0  needed? rework...
 
 QPointF LinkableContainer::getChildRefPos() { return childRefPos; }
 
 QPointF LinkableContainer::getFloatRefPos() { return floatRefPos; }
 
-QPointF LinkableContainer::getParPos() { return parPos; }
+void LinkableContainer::setParentPos(const QPointF& p)
+{
+    parentPos = p;
+}
+
+QPointF LinkableContainer::getParentPos() { return parentPos; }
 
 void LinkableContainer::parabel(QPolygonF &ya, qreal p1x, qreal p1y, qreal p2x,
                              qreal p2y)
-
 {
-    qreal vx = p2x - p1x; // V=P2-P1
+    qreal vx = p2x - p1x;
     qreal vy = p2y - p1y;
 
     qreal dx; // delta x during calculation of parabel
@@ -404,9 +417,16 @@ void LinkableContainer::parabel(QPolygonF &ya, qreal p1x, qreal p1y, qreal p2x,
     ya << QPointF(p1x, p1y);
     for (int i = 1; i <= arcsegs; i++) {
         pnx = p1x + dx;
-        pny = m * (pnx - parPos.x()) * (pnx - parPos.x()) + parPos.y();
+        pny = m * (pnx - parentPos.x()) * (pnx - parentPos.x()) + parentPos.y();
         ya << QPointF(pnx, pny);
         p1x = pnx;
         p1y = pny;
     }
 }
+
+void LinkableContainer::reposition()
+{
+    qDebug() << "LC::reposition " + info();
+    return;
+}
+

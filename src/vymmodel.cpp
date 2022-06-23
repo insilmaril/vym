@@ -2878,7 +2878,7 @@ void VymModel::moveDownDiagonally()
      }
 }
 
-void VymModel::detach() // FIXME-1 rewrite to containers
+void VymModel::detach() // FIXME-2 rewrite to containers
 {
     /*
     BranchItem *selbi = getSelectedBranch();

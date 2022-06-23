@@ -6,6 +6,7 @@
 #include "branchitem.h"
 #include "geometry.h"
 #include "heading-container.h"
+#include "linkable-container.h"
 
 qreal BranchContainer::linkWidth = 20;
 
@@ -44,6 +45,8 @@ void BranchContainer::init()
     headingContainer->setBrush(Qt::NoBrush);
     headingContainer->setPen(Qt::NoPen);
 
+    linkContainer = new LinkableContainer();
+
     innerContainer = new Container ();
     innerContainer->setBrush(Qt::NoBrush);
     innerContainer->setPen(Qt::NoPen);
@@ -51,6 +54,7 @@ void BranchContainer::init()
 
     // Adding the containers will reparent them and thus set scene
     innerContainer->addContainer(headingContainer);
+    innerContainer->addContainer(linkContainer);
 
     createBranchesContainer();  // FIXME-1  soon only create on demand
     //branchesContainer = nullptr;
@@ -429,6 +433,8 @@ void BranchContainer::reposition()
             */
         }
 
+        linkContainer->setLinkStyle(LinkableContainer::NoLink);
+
         innerContainer->setMovableByFloats(false);
         setMovableByFloats(false);  // FIXME-2 Needed?
         branchesContainer->setLayoutType(FloatingBounded);
@@ -436,6 +442,7 @@ void BranchContainer::reposition()
 
     } else {
         // Branch or mainbranch
+        linkContainer->setLinkStyle(LinkableContainer::Line);
         innerContainer->setMovableByFloats(true);
         branchesContainer->setLayoutType(Vertical);
 
@@ -482,4 +489,12 @@ void BranchContainer::reposition()
     }
 
     Container::reposition();
+
+    // Finally update links // FIXME-0 testing
+    if (depth > 0) {
+        linkContainer->setPos(0, 0);
+        linkContainer->setParentPos(parentBranchContainer()->scenePos() - scenePos());
+        linkContainer->setVisibility(true);
+        linkContainer->updateLinkGeometry();
+    }
 }

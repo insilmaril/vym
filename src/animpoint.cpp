@@ -38,7 +38,7 @@ bool AnimPoint::operator==(AnimPoint other)
 void AnimPoint::init()
 {
     animated = false;
-    n = 0;  // FIXME-1 why is n qreal instead of int?
+    n = 0;
     startPos = QPointF(0, 0);
     destPos = QPointF(0, 0);
     vector = QPointF(0, 0);

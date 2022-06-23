@@ -3,8 +3,11 @@
 
 #include "container.h"
 
+#include "linkable-container.h"
+
 class BranchItem;
 class HeadingContainer;
+class LinkContainer;
 
 class BranchContainer : public Container {
   public:
@@ -75,6 +78,7 @@ class BranchContainer : public Container {
     static qreal linkWidth;
     BranchItem *branchItem; //! Crossreference to "parent" BranchItem 
     HeadingContainer *headingContainer;
+    LinkableContainer *linkContainer;
     Container *branchesContainer;
     Container *imagesContainer;
     Container *innerContainer;
