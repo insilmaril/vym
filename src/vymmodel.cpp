@@ -3489,6 +3489,8 @@ void VymModel::deleteSelection()
     unselectAll();
     QString fn;
 
+    mapEditor->stopAllAnimation();
+
     foreach (uint id, selectedIDs) {
         TreeItem *ti = findID(id);
         if (ti) {
