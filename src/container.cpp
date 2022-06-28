@@ -178,6 +178,11 @@ bool Container::animate()
     return false;
 }
 
+bool Container::isAnimated()
+{
+    return animatedPos.isAnimated();
+}
+
 QVariant Container::itemChange(GraphicsItemChange change, const QVariant &value)    // FIXME-2 needed?
 {
     //qDebug() << "Container::itemChange of " << this << ": " << change << value;
@@ -252,7 +257,7 @@ void Container::reposition()
         default:
             s_layout = "huh? undefined...";
     }
-    qDebug() << QString("#### Reposition of %1").arg(getName()) << "Layout: " << s_layout << horizontalDirection;
+    //qDebug() << QString("#### Reposition of %1").arg(getName()) << "Layout: " << s_layout << horizontalDirection;
 
     QRectF r;
 

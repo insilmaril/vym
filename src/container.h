@@ -94,6 +94,7 @@ class Container : public QGraphicsRectItem {
     virtual void setAnimation(const AnimPoint &ap);
     virtual void stopAnimation();
     virtual bool animate();
+    virtual bool isAnimated();
 
   public:
     virtual QVariant itemChange(GraphicsItemChange change, const QVariant &value);

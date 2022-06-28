@@ -65,8 +65,8 @@ class LinkableContainer : public Container {
     virtual void setDockPos();     // sets childRefPos and parPos   // FIXME-1 pure in LMO
     QPointF getChildRefPos();      // returns pos where children dock
     QPointF getFloatRefPos();      // returns pos where floats dock
-    void setParentPos(const QPointF&);// Where do upwards links start in (local coord)
-    QPointF getParentPos();
+    void setLinkPosParent(const QPointF&);  // Upwards link pos, parents end (local coord)
+    QPointF getLinkPosParent();
 
     void reposition();
 
@@ -75,7 +75,7 @@ class LinkableContainer : public Container {
 
     QPointF childRefPos;
     QPointF floatRefPos;
-    QPointF parentPos;
+    QPointF linkPosParent;
     bool link2ParPos; // While moving around, sometimes link to parent
     LinkableContainer *parentLinkableContainer;    // FIXME-0 needed?
 

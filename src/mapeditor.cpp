@@ -341,7 +341,19 @@ void MapEditor::animate()
 {
     animationTimer->stop();
     foreach (Container *c, animatedContainers) {
-        if (!c->animate()) {
+        c->animate();
+
+        // Update links
+        if (c->containerType() == Container::Branch) {
+            BranchContainer *bc = (BranchContainer*)c;
+            if (bc->getBranchItem()->depth() > 0) {
+                QPointF parent_sp = bc->getBranchItem()->parentBranch()->getBranchesContainer()->scenePos();
+                bc->getLinkContainer()->setLinkPosParent(parent_sp - bc->scenePos());
+                bc->getLinkContainer()->updateLinkGeometry();
+            }
+        }
+
+        if (!c->isAnimated()) {
             animatedContainers.removeAll(c);
         }
     }
@@ -387,12 +399,12 @@ void MapEditor::stopAnimation(Container *c)
 
 void MapEditor::stopAllAnimation()
 {
+    animationTimer->stop();
+
     Container *c;
-    int i = 0;
-    while (i < animatedContainers.size()) {
-        c = animatedContainers.at(i);
+    while (!animatedContainers.isEmpty()) {
+        c = animatedContainers.takeFirst();
         c->stopAnimation();
-        i++;
     }
 }
 
@@ -1739,7 +1751,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
         targetBranchContainer = ((BranchItem*)targetItem)->getBranchContainer();
 
         int d_pos;
-        if (e->modifiers() & Qt::ShiftModifier)
+        if (e->modifiers() & Qt::ShiftModifier) // FIXME-0 should also change targetBranchContainer
             d_pos = 1;
         else if (e->modifiers() & Qt::ControlModifier)
             d_pos = -1;
@@ -1766,7 +1778,6 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
         BranchContainer *bc;
         BranchContainer *bc_first = nullptr;
         qreal h_total;
-        qDebug() << " ME: adding items.  first item: " << movingItems.first()->getHeadingPlain();
         foreach (TreeItem *ti, movingItems)
         {
             // The item structure in VymModel remaines untouched so far,
@@ -1839,21 +1850,21 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
         // layout and "original" parent
         Container *c = tmpParentContainer->getBranchesContainer();
         if (c && !c->childItems().isEmpty()) {
-            // Consider orientation of *last* selected branch
+            // Consider orientation of *last* selected branch   // FIXME-0 meanwhile use *first* branch of movingItems
             BranchContainer *bc = (BranchContainer*)(c->childItems().last());
             if (bc->isOriginalFloating())  {
                 if (tmpParentContainer->pos().x() > bc->getOriginalParentPos().x())
                 {
-                    qDebug() << "  rop";
+                    // FIXME-1 qDebug() << "  rop";
                     newOrientation = BranchContainer::RightOfParent;
                 }
                 else
                 {
-                    qDebug() << "  lop";
+                    // FIXME-1 qDebug() << "  lop";
                     newOrientation = BranchContainer::LeftOfParent;
                 }
             } else {
-                qDebug() << "ok2";
+                // FIXME-1 qDebug() << "ok2";
                 newOrientation = bc->getOriginalOrientation();
             }
         }
@@ -1868,6 +1879,27 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
     }
     */
 
+    // Update links // FIXME-0 maybe add updateLinkeGeometry also to BranchContainer class?
+    foreach (TreeItem *ti, movingItems)
+    {
+        if (ti->hasTypeBranch()) {  // FIXME-1 later it should work the same for images!
+            BranchContainer *bc = ((BranchItem*)ti)->getBranchContainer();
+            if (tmpParentContainer->isTemporaryLinked()) {
+                if (targetBranchContainer)
+                    bc->getLinkContainer()->setLinkPosParent(targetBranchContainer->scenePos() - bc->scenePos());
+                else
+                    qWarning() << "ME::moveObject temporary linked but no targetBranchContainer!";
+            } else {
+                if (bc->getBranchItem()->depth() > 0) {
+                    QPointF parent_sp = bc->getBranchItem()->parentBranch()->getBranchesContainer()->scenePos();
+                    bc->getLinkContainer()->setLinkPosParent(parent_sp - bc->scenePos());
+                }
+            }
+            bc->getLinkContainer()->updateLinkGeometry();
+        }
+    }
+            
+
     // Update selection
     QItemSelection sel = model->getSelectionModel()->selection();
     updateSelection(sel, sel);
@@ -1877,7 +1909,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
     return;
 }
 
-void MapEditor::mouseReleaseEvent(QMouseEvent *e)
+void MapEditor::mouseReleaseEvent(QMouseEvent *e)   // FIXME-1 Moving does not work for MapCenters
 {
     // Allow selecting text in QLineEdit if necessary
     if (model->isSelectionBlocked()) {

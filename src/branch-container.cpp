@@ -220,6 +220,11 @@ HeadingContainer* BranchContainer::getHeadingContainer()
     return headingContainer;
 }
 
+LinkableContainer* BranchContainer::getLinkContainer()
+{
+    return linkContainer;
+}
+
 QList <BranchContainer*> BranchContainer::childBranches()
 {
     QList <BranchContainer*> list;
@@ -278,7 +283,7 @@ QPointF BranchContainer::getPositionHintNewChild(Container *c)
     }
 }
 
-QPointF BranchContainer::getPositionHintRelink(Container *c, int d_pos, const QPointF &p_scene) // FIXME-0 not working correctly with multiple selected branches
+QPointF BranchContainer::getPositionHintRelink(Container *c, int d_pos, const QPointF &p_scene) // FIXME-1 not working correctly with multiple selected branches
 {
     QPointF hint;
 
@@ -333,6 +338,11 @@ QPointF BranchContainer::getPositionHintRelink(Container *c, int d_pos, const QP
     }
 
     return hint;
+}
+
+QPointF BranchContainer::getChildrenLinkPos()   // FIXME-0 returns upper left corner for now
+{
+    return mapToScene(QPointF(0, 0));
 }
 
 void BranchContainer::setLayoutType(const LayoutType &ltype)
@@ -493,7 +503,7 @@ void BranchContainer::reposition()
     // Finally update links // FIXME-0 testing
     if (depth > 0) {
         linkContainer->setPos(0, 0);
-        linkContainer->setParentPos(parentBranchContainer()->scenePos() - scenePos());
+        linkContainer->setLinkPosParent(parentBranchContainer()->scenePos() - scenePos());
         linkContainer->setVisibility(true);
         linkContainer->updateLinkGeometry();
     }

@@ -13,19 +13,19 @@ extern bool debug;
 LinkableContainer::LinkableContainer(QGraphicsItem *parent)
     : Container(parent)
 {
-    qDebug() << "Const LinkableContainer this=" << this;
+    //qDebug() << "Const LinkableContainer this=" << this;
     init();
 }
 
 LinkableContainer::~LinkableContainer()
 {
-    qDebug()<< "Destructor LC  this=" << this << " style=" << style << " l=" << l << " p =" << p<< "  segment=" << segment.count();
+    //qDebug()<< "Destructor LC  this=" << this << " style=" << style << " l=" << l << " p =" << p<< "  segment=" << segment.count();
     delLink();
 }
 
 void LinkableContainer::init()
 {
-    parentPos = QPointF(0, 0); // FIXME-2 cleanup declarations below
+    linkPosParent = QPointF(0, 0); // FIXME-2 cleanup declarations below
     childRefPos = QPointF(0, 0);
     floatRefPos = QPointF(0, 0);
     link2ParPos = false;
@@ -308,8 +308,8 @@ void LinkableContainer::updateLinkGeometry()
     //FIXME-1 no longer here: setOrientation();
     setDockPos(); // Call overloaded method
 
-    double p1x = parentPos.x(); // Link is drawn from P1 to P2
-    double p1y = parentPos.y();
+    double p1x = linkPosParent.x(); // Link is drawn from P1 to P2
+    double p1y = linkPosParent.y();
 
     double vx = p2x - p1x; // V=P2-P1
     double vy = p2y - p1y;
@@ -347,8 +347,7 @@ void LinkableContainer::updateLinkGeometry()
         case Line:
             l->setLine(p1x, p1y, p2x, p2y);
             l->setZValue(z);
-            l->setVisible(true); // FIXME-0 testing
-            qDebug() << "Drawing line" << l->line() << "scenePos =" << scenePos();
+            // qDebug() << "Drawing line" << l->line() << "scenePos =" << scenePos(); // FIXME-2
             break;
         case Parabel:
             parabel(pa0, p1x, p1y, p2x, p2y);
@@ -363,7 +362,7 @@ void LinkableContainer::updateLinkGeometry()
             pa0.clear();
             pa0 << QPointF(qRound(p2x + tp.x()), qRound(p2y + tp.y()));
             pa0 << QPointF(qRound(p2x - tp.x()), qRound(p2y - tp.y()));
-            pa0 << QPointF(qRound(parentPos.x()), qRound(parentPos.y()));
+            pa0 << QPointF(qRound(linkPosParent.x()), qRound(linkPosParent.y()));
             p->setPolygon(QPolygonF(pa0));
             p->setZValue(z);
             break;
@@ -389,12 +388,12 @@ QPointF LinkableContainer::getChildRefPos() { return childRefPos; }
 
 QPointF LinkableContainer::getFloatRefPos() { return floatRefPos; }
 
-void LinkableContainer::setParentPos(const QPointF& p)
+void LinkableContainer::setLinkPosParent(const QPointF& p)
 {
-    parentPos = p;
+    linkPosParent = p;
 }
 
-QPointF LinkableContainer::getParentPos() { return parentPos; }
+QPointF LinkableContainer::getLinkPosParent() { return linkPosParent; }
 
 void LinkableContainer::parabel(QPolygonF &ya, qreal p1x, qreal p1y, qreal p2x,
                              qreal p2y)
@@ -417,7 +416,7 @@ void LinkableContainer::parabel(QPolygonF &ya, qreal p1x, qreal p1y, qreal p2x,
     ya << QPointF(p1x, p1y);
     for (int i = 1; i <= arcsegs; i++) {
         pnx = p1x + dx;
-        pny = m * (pnx - parentPos.x()) * (pnx - parentPos.x()) + parentPos.y();
+        pny = m * (pnx - linkPosParent.x()) * (pnx - linkPosParent.x()) + linkPosParent.y();
         ya << QPointF(pnx, pny);
         p1x = pnx;
         p1y = pny;
@@ -426,7 +425,7 @@ void LinkableContainer::parabel(QPolygonF &ya, qreal p1x, qreal p1y, qreal p2x,
 
 void LinkableContainer::reposition()
 {
-    qDebug() << "LC::reposition " + info();
+    //qDebug() << "LC::reposition " + info();
     return;
 }
 

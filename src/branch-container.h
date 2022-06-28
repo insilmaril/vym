@@ -53,16 +53,21 @@ class BranchContainer : public Container {
     Container* getImagesContainer();
 
     HeadingContainer* getHeadingContainer();
+    LinkableContainer* getLinkContainer();
 
     // Convenience functions to access children
     QList <BranchContainer*> childBranches();
     QList <ImageContainer*> childImages();
 
-    /*! Get suggestion where new child could be positioned in scene coord */
+    /*! Get suggestion where new child could be positioned (scene coord) */
     QPointF getPositionHintNewChild(Container*);
 
-    /*! Get suggestion where a relinked child could be positioned in scene coord */
+    /*! Get suggestion where a relinked child could be positioned (scene coord) */
     QPointF getPositionHintRelink(Container*, int d_pos = 0, const QPointF & p_scene = QPointF());
+
+    /*! Get position where link to children starts (scene coord) */
+    QPointF getChildrenLinkPos();
+
 
     virtual void setLayoutType(const LayoutType &ltype);
 
@@ -87,7 +92,7 @@ class BranchContainer : public Container {
     Orientation orientation;
     Orientation originalOrientation;            //! Save orientation before move for undo
     bool originalFloating;                      //! Save, if floating before linked temporary
-    QPointF originalParentPos;
+    QPointF originalParentPos;  // FIXME-0 Currently used in ME to determine orientation during move: scene coord of orig, parent
 
 };
 
