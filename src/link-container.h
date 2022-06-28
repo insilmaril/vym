@@ -1,11 +1,11 @@
-#ifndef LINKABLE_CONTAINER_H
-#define LINKABLE_CONTAINER_H
+#ifndef LINK_CONTAINER_H
+#define LINK_CONTAINER_H
 
 #include <QPen>
 
 #include "container.h"
 
-/*! \brief This class adds links to a container
+/*! \brief This container class provides links and is used in BranchContainer and ImageContainer
 
 The links are connecting the branch and image containers in a map.
 */
@@ -13,7 +13,7 @@ The links are connecting the branch and image containers in a map.
 class BranchContainer;
 class ImageContainer;
 
-class LinkableContainer : public Container {
+class LinkContainer : public Container {
   public:
     /*! Various drawing styles for links */
     enum Style {
@@ -37,8 +37,8 @@ class LinkableContainer : public Container {
         HeadingColor  //!< Link uses the color of heading
     };
 
-    LinkableContainer(QGraphicsItem *parent = nullptr);
-    virtual ~LinkableContainer();
+    LinkContainer(QGraphicsItem *parent = nullptr);
+    virtual ~LinkContainer();
 
   protected:
     virtual void init();
@@ -46,7 +46,7 @@ class LinkableContainer : public Container {
 
   public:
     virtual void delLink();
-    virtual void copy(LinkableContainer *);
+    virtual void copy(LinkContainer *);
 
     void setLinkStyle(Style);
     Style getLinkStyle();
@@ -77,7 +77,7 @@ class LinkableContainer : public Container {
     QPointF floatRefPos;
     QPointF linkPosParent;
     bool link2ParPos; // While moving around, sometimes link to parent
-    LinkableContainer *parentLinkableContainer;    // FIXME-0 needed?
+    LinkContainer *parentLinkContainer;    // FIXME-0 needed?
 
     qreal linkwidth;  // width of a link
 

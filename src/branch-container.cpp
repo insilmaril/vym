@@ -6,7 +6,7 @@
 #include "branchitem.h"
 #include "geometry.h"
 #include "heading-container.h"
-#include "linkable-container.h"
+#include "link-container.h"
 
 qreal BranchContainer::linkWidth = 20;
 
@@ -45,7 +45,7 @@ void BranchContainer::init()
     headingContainer->setBrush(Qt::NoBrush);
     headingContainer->setPen(Qt::NoPen);
 
-    linkContainer = new LinkableContainer();
+    linkContainer = new LinkContainer();
 
     innerContainer = new Container ();
     innerContainer->setBrush(Qt::NoBrush);
@@ -103,7 +103,7 @@ void BranchContainer::setOrientation(const Orientation &m)
     orientation = m;
 }
 
-void BranchContainer::setOriginalOrientation()  // FIXME-1 sets also original parent, should be part of setOriginalPos, which should be in LinkableContainer
+void BranchContainer::setOriginalOrientation()  // FIXME-1 sets also original parent, should be part of setOriginalPos, which should be in LinkContainer
 {
     originalOrientation = orientation;
     originalFloating = isFloating();
@@ -220,7 +220,7 @@ HeadingContainer* BranchContainer::getHeadingContainer()
     return headingContainer;
 }
 
-LinkableContainer* BranchContainer::getLinkContainer()
+LinkContainer* BranchContainer::getLinkContainer()
 {
     return linkContainer;
 }
@@ -443,7 +443,7 @@ void BranchContainer::reposition()
             */
         }
 
-        linkContainer->setLinkStyle(LinkableContainer::NoLink);
+        linkContainer->setLinkStyle(LinkContainer::NoLink);
 
         innerContainer->setMovableByFloats(false);
         setMovableByFloats(false);  // FIXME-2 Needed?
@@ -452,7 +452,7 @@ void BranchContainer::reposition()
 
     } else {
         // Branch or mainbranch
-        linkContainer->setLinkStyle(LinkableContainer::Line);
+        linkContainer->setLinkStyle(LinkContainer::Line);
         innerContainer->setMovableByFloats(true);
         branchesContainer->setLayoutType(Vertical);
 

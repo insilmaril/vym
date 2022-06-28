@@ -1,29 +1,29 @@
 #include <iostream>
 #include <math.h>
 
-#include "linkable-container.h"
+#include "link-container.h"
 #include "vymmodel.h"
 
 extern bool debug;
 
 /////////////////////////////////////////////////////////////////
-// LinkableContainer
+// LinkContainer
 /////////////////////////////////////////////////////////////////
 
-LinkableContainer::LinkableContainer(QGraphicsItem *parent)
+LinkContainer::LinkContainer(QGraphicsItem *parent)
     : Container(parent)
 {
-    //qDebug() << "Const LinkableContainer this=" << this;
+    //qDebug() << "Const LinkContainer this=" << this;
     init();
 }
 
-LinkableContainer::~LinkableContainer()
+LinkContainer::~LinkContainer()
 {
     //qDebug()<< "Destructor LC  this=" << this << " style=" << style << " l=" << l << " p =" << p<< "  segment=" << segment.count();
     delLink();
 }
 
-void LinkableContainer::init()
+void LinkContainer::init()
 {
     linkPosParent = QPointF(0, 0); // FIXME-2 cleanup declarations below
     childRefPos = QPointF(0, 0);
@@ -47,14 +47,14 @@ void LinkableContainer::init()
     bottomline = nullptr;
 }
 
-void LinkableContainer::createBottomLine()
+void LinkContainer::createBottomLine()
 {
     bottomline = new QGraphicsLineItem(this);
     bottomline->setPen(pen);
     bottomline->setZValue(dZ_LINK);
 }
 
-void LinkableContainer::delLink()
+void LinkContainer::delLink()
 {
     if (bottomline) {
         delete bottomline;
@@ -79,18 +79,18 @@ void LinkableContainer::delLink()
     }
 }
 
-void LinkableContainer::copy(LinkableContainer *other)
+void LinkContainer::copy(LinkContainer *other)
 {
     Container::copy(other);
     setLinkStyle(other->style);
     setLinkColor(other->linkcolor);
 }
 
-void LinkableContainer::setLinkStyle(Style newstyle)
+void LinkContainer::setLinkStyle(Style newstyle)
 {
     // qDebug() << "LC::setLinkStyle s=" << newstyle;	//FIXME-4 called very often?!?! 
     // qDebug() << "LC::setLinkStyle s=" << newstyle << " for " << this <<"
-    // "<< treeItem->getHeading() << "  parentLinkableContainer=" << parentLinkableContainer;
+    // "<< treeItem->getHeading() << "  parentLinkContainer=" << parentLinkContainer;
     
     if (style == newstyle) return;
 
@@ -147,13 +147,13 @@ void LinkableContainer::setLinkStyle(Style newstyle)
     createBottomLine();
 }
 
-LinkableContainer::Style LinkableContainer::getLinkStyle() { return style; }
+LinkContainer::Style LinkContainer::getLinkStyle() { return style; }
 
-void LinkableContainer::setLinkPos(Position lp) { linkpos = lp; }
+void LinkContainer::setLinkPos(Position lp) { linkpos = lp; }
 
-LinkableContainer::Position LinkableContainer::getLinkPos() { return linkpos; }
+LinkContainer::Position LinkContainer::getLinkPos() { return linkpos; }
 
-void LinkableContainer::setLinkColor(QColor col)
+void LinkContainer::setLinkColor(QColor col)
 {
     linkcolor = col;
     pen.setColor(col);
@@ -180,15 +180,15 @@ void LinkableContainer::setLinkColor(QColor col)
     }
 }
 
-QColor LinkableContainer::getLinkColor() { return linkcolor; }
+QColor LinkContainer::getLinkColor() { return linkcolor; }
 
-void LinkableContainer::setVisibility(bool v)
+void LinkContainer::setVisibility(bool v)
 {
     Container::setVisibility(v);
     updateVisibility();
 }
 
-void LinkableContainer::updateVisibility()
+void LinkContainer::updateVisibility()
 {
     bool visnow = visible;
 
@@ -259,7 +259,7 @@ void LinkableContainer::updateVisibility()
     }
 }
 
-void LinkableContainer::updateLinkGeometry()
+void LinkContainer::updateLinkGeometry()
 {
     // needs:
     //	childRefPos of parent
@@ -293,12 +293,12 @@ void LinkableContainer::updateLinkGeometry()
     double p2x, p2y; // Set P2 Before setting
     /* FIXME-0 no real parents yet
     if (!link2ParPos) {
-        p2x = QPointF(parentLinkableContainer->getChildRefPos()).x(); // P1, we have to look at
-        p2y = QPointF(parentLinkableContainer->getChildRefPos()).y(); // orientation
+        p2x = QPointF(parentLinkContainer->getChildRefPos()).x(); // P1, we have to look at
+        p2y = QPointF(parentLinkContainer->getChildRefPos()).y(); // orientation
     }
     else {
-        p2x = QPointF(parentLinkableContainer->getParentPos()).x();
-        p2y = QPointF(parentLinkableContainer->getParentPos()).y();
+        p2x = QPointF(parentLinkContainer->getParentPos()).x();
+        p2y = QPointF(parentLinkContainer->getParentPos()).y();
     }
     */
 
@@ -382,20 +382,20 @@ void LinkableContainer::updateLinkGeometry()
         }
     }
 
-void LinkableContainer::setDockPos() {}  // FIXME-0  needed? rework...
+void LinkContainer::setDockPos() {}  // FIXME-0  needed? rework...
 
-QPointF LinkableContainer::getChildRefPos() { return childRefPos; }
+QPointF LinkContainer::getChildRefPos() { return childRefPos; }
 
-QPointF LinkableContainer::getFloatRefPos() { return floatRefPos; }
+QPointF LinkContainer::getFloatRefPos() { return floatRefPos; }
 
-void LinkableContainer::setLinkPosParent(const QPointF& p)
+void LinkContainer::setLinkPosParent(const QPointF& p)
 {
     linkPosParent = p;
 }
 
-QPointF LinkableContainer::getLinkPosParent() { return linkPosParent; }
+QPointF LinkContainer::getLinkPosParent() { return linkPosParent; }
 
-void LinkableContainer::parabel(QPolygonF &ya, qreal p1x, qreal p1y, qreal p2x,
+void LinkContainer::parabel(QPolygonF &ya, qreal p1x, qreal p1y, qreal p2x,
                              qreal p2y)
 {
     qreal vx = p2x - p1x;
@@ -423,7 +423,7 @@ void LinkableContainer::parabel(QPolygonF &ya, qreal p1x, qreal p1y, qreal p2x,
     }
 }
 
-void LinkableContainer::reposition()
+void LinkContainer::reposition()
 {
     //qDebug() << "LC::reposition " + info();
     return;

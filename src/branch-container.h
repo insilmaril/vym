@@ -3,7 +3,7 @@
 
 #include "container.h"
 
-#include "linkable-container.h"
+#include "link-container.h"
 
 class BranchItem;
 class HeadingContainer;
@@ -53,7 +53,7 @@ class BranchContainer : public Container {
     Container* getImagesContainer();
 
     HeadingContainer* getHeadingContainer();
-    LinkableContainer* getLinkContainer();
+    LinkContainer* getLinkContainer();
 
     // Convenience functions to access children
     QList <BranchContainer*> childBranches();
@@ -83,7 +83,7 @@ class BranchContainer : public Container {
     static qreal linkWidth;
     BranchItem *branchItem; //! Crossreference to "parent" BranchItem 
     HeadingContainer *headingContainer;
-    LinkableContainer *linkContainer;
+    LinkContainer *linkContainer;
     Container *branchesContainer;
     Container *imagesContainer;
     Container *innerContainer;
