@@ -38,7 +38,6 @@ void BranchContainer::init()
 
     orientation = UndefinedOrientation;
 
-
     imagesContainer = nullptr;
 
     headingContainer = new HeadingContainer ();
@@ -47,13 +46,22 @@ void BranchContainer::init()
 
     linkContainer = new LinkContainer();
 
+    ornamentsContainer = new Container ();
+    ornamentsContainer->setBrush(Qt::NoBrush);
+    ornamentsContainer->setPen(Qt::NoPen);
+    ornamentsContainer->type = Ornaments;
+
     innerContainer = new Container ();
     innerContainer->setBrush(Qt::NoBrush);
     innerContainer->setPen(Qt::NoPen);
     innerContainer->type = InnerContent;
 
     // Adding the containers will reparent them and thus set scene
-    innerContainer->addContainer(headingContainer);
+    // FIXME-2 ornamentsContainer->addContainer(systemFlagsContainer);
+    // FIXME-2 ornamentsContainer->addContainer(userFlagsContainer);
+    ornamentsContainer->addContainer(headingContainer);
+
+    innerContainer->addContainer(ornamentsContainer);
     innerContainer->addContainer(linkContainer);
 
     createBranchesContainer();  // FIXME-1  soon only create on demand
@@ -134,9 +142,15 @@ bool BranchContainer::isOriginalFloating()
     return originalFloating;
 }
 
-void BranchContainer::setTemporaryLinked(bool b)
+void BranchContainer::setTemporaryLinked(const QPointF &sp)
 {
-    temporaryLinked = b;
+    temporaryLinked = true;
+    upLinkBeginScenePos = sp;
+}
+
+void BranchContainer::unsetTemporaryLinked()
+{
+    temporaryLinked = false;
 }
 
 bool BranchContainer::isTemporaryLinked()
@@ -340,9 +354,33 @@ QPointF BranchContainer::getPositionHintRelink(Container *c, int d_pos, const QP
     return hint;
 }
 
-QPointF BranchContainer::getChildrenLinkPos()   // FIXME-0 returns upper left corner for now
+QPointF BranchContainer::getDownLinkScenePos()   // FIXME-0 unused for now, also depends on orientation, frame, ...
 {
-    return mapToScene(QPointF(0, 0));
+    switch (orientation) {  // FIXME-0 is orientation correct???
+        case LeftOfParent:
+            return ornamentsContainer->mapToScene(ornamentsContainer->rect().bottomLeft());
+        case RightOfParent:
+            return ornamentsContainer->mapToScene(ornamentsContainer->rect().bottomRight());
+        default:
+            return ornamentsContainer->mapToScene(ornamentsContainer->rect().bottomRight());
+    } 
+}
+
+void BranchContainer::updateUpLink()
+{
+    if (branchItem->depth() == 0) return;
+
+    if (temporaryLinked) {
+    /* FIXME-0 cont here
+        BranchItem *pbi = branchItem->parentBranch();
+        pbi 
+    */
+    } else {
+        QPointF parent_sp = branchItem->parentBranch()->getBranchContainer()->getDownLinkScenePos();
+        linkContainer->setLinkPosParent(parent_sp - scenePos());
+    }
+
+    linkContainer->updateLinkGeometry();
 }
 
 void BranchContainer::setLayoutType(const LayoutType &ltype)
@@ -505,6 +543,7 @@ void BranchContainer::reposition()
         linkContainer->setPos(0, 0);
         linkContainer->setLinkPosParent(parentBranchContainer()->scenePos() - scenePos());
         linkContainer->setVisibility(true);
-        linkContainer->updateLinkGeometry();
+        //linkContainer->updateLinkGeometry();
+        updateUpLink();
     }
 }

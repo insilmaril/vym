@@ -31,6 +31,7 @@ class Container : public QGraphicsRectItem {
         Undefined, 
         TmpParent,
         FloatingContent,
+        Ornaments,
         InnerContent,
         BranchCollection,
         ImageCollection,

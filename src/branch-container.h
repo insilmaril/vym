@@ -38,8 +38,10 @@ class BranchContainer : public Container {
 
   private:
     bool temporaryLinked;   //! True, while moved as child of tmpParentContainer and linked temporary
+    QPointF upLinkBeginScenePos;
   public:
-    void setTemporaryLinked(bool);
+    void setTemporaryLinked(const QPointF &sp);  // scene pos, where uplink starts
+    void unsetTemporaryLinked();
     bool isTemporaryLinked();
 
     int branchCount();
@@ -66,7 +68,10 @@ class BranchContainer : public Container {
     QPointF getPositionHintRelink(Container*, int d_pos = 0, const QPointF & p_scene = QPointF());
 
     /*! Get position where link to children starts (scene coord) */
-    QPointF getChildrenLinkPos();
+    QPointF getDownLinkScenePos();
+
+    /*! Update "upwards" links in LinkContainer */
+    void updateUpLink();
 
 
     virtual void setLayoutType(const LayoutType &ltype);
@@ -82,11 +87,13 @@ class BranchContainer : public Container {
   protected:
     static qreal linkWidth;
     BranchItem *branchItem; //! Crossreference to "parent" BranchItem 
-    HeadingContainer *headingContainer;
-    LinkContainer *linkContainer;
-    Container *branchesContainer;
-    Container *imagesContainer;
-    Container *innerContainer;
+    
+    HeadingContainer *headingContainer; // Heading of this branch
+    LinkContainer *linkContainer;       // uplink to parent
+    Container *branchesContainer;       // Container with children branches
+    Container *imagesContainer;         // Container with children images
+    Container *ornamentsContainer;      // Flags and heading
+    Container *innerContainer;          // Ornaments (see above) and children branches
 
   private:
     Orientation orientation;
