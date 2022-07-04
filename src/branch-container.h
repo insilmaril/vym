@@ -89,6 +89,7 @@ class BranchContainer : public Container {
     BranchItem *branchItem; //! Crossreference to "parent" BranchItem 
     
     HeadingContainer *headingContainer; // Heading of this branch
+    HeadingContainer *linkSpaceContainer; // space for downLinks
     LinkContainer *linkContainer;       // uplink to parent
     Container *branchesContainer;       // Container with children branches
     Container *imagesContainer;         // Container with children images

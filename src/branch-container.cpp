@@ -8,7 +8,7 @@
 #include "heading-container.h"
 #include "link-container.h"
 
-qreal BranchContainer::linkWidth = 20;
+qreal BranchContainer::linkWidth = 20;  // FIXME-2 testing
 
 BranchContainer::BranchContainer(QGraphicsScene *scene, QGraphicsItem *parent, BranchItem *bi) : Container(parent)  // FIXME-2 scene and addItem should not be required, only for mapCenters without parent:  setParentItem automatically sets scene!
 {
@@ -44,17 +44,18 @@ void BranchContainer::init()
     headingContainer->setBrush(Qt::NoBrush);
     headingContainer->setPen(Qt::NoPen);
 
-    linkContainer = new LinkContainer();
-
     ornamentsContainer = new Container ();
     ornamentsContainer->setBrush(Qt::NoBrush);
-    ornamentsContainer->setPen(Qt::NoPen);
+    ornamentsContainer->setPen(QPen(Qt::blue));
     ornamentsContainer->type = Ornaments;
+
+    linkContainer = new LinkContainer(ornamentsContainer);
 
     innerContainer = new Container ();
     innerContainer->setBrush(Qt::NoBrush);
-    innerContainer->setPen(Qt::NoPen);
+    //innerContainer->setPen(Qt::NoPen);
     innerContainer->type = InnerContent;
+
 
     // Adding the containers will reparent them and thus set scene
     // FIXME-2 ornamentsContainer->addContainer(systemFlagsContainer);
@@ -64,12 +65,14 @@ void BranchContainer::init()
     innerContainer->addContainer(ornamentsContainer);
     innerContainer->addContainer(linkContainer);
 
+    branchesContainer = nullptr;
+    linkSpaceContainer = nullptr;
     createBranchesContainer();  // FIXME-1  soon only create on demand
-    //branchesContainer = nullptr;
 
     addContainer(innerContainer);
 
     setBrush(Qt::NoBrush);
+    setPen(Qt::NoPen);
     setLayoutType(Container::Horizontal);
     setHorizontalDirection(Container::LeftToRight);
 
@@ -174,6 +177,14 @@ void BranchContainer::createBranchesContainer()
     branchesContainer->setLayoutType(Container::Vertical);              // Default, usually depends on depth
     branchesContainer->setVerticalAlignment(Container::AlignedLeft);    // Default, usually depends on position
     branchesContainer->type = Container::BranchCollection;
+
+    // FIXME-2 testing only
+    linkSpaceContainer = new HeadingContainer ();
+    linkSpaceContainer->setBrush(Qt::NoBrush);
+    linkSpaceContainer->setPen(Qt::NoPen);
+    linkSpaceContainer->setHeading(" - ");
+
+    innerContainer->addContainer(linkSpaceContainer);
     innerContainer->addContainer(branchesContainer);
 }
 

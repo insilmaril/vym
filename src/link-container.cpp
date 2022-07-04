@@ -303,7 +303,7 @@ void LinkContainer::updateLinkGeometry()
     */
 
     p2x = pos().x();
-    p2y = pos().y();
+    p2y = parentContainer()->rect().bottom();
 
     //FIXME-1 no longer here: setOrientation();
     setDockPos(); // Call overloaded method
