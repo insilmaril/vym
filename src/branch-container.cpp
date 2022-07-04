@@ -67,7 +67,7 @@ void BranchContainer::init()
 
     branchesContainer = nullptr;
     linkSpaceContainer = nullptr;
-    createBranchesContainer();  // FIXME-1  soon only create on demand
+    //createBranchesContainer();  // FIXME-0  soon only create on demand
 
     addContainer(innerContainer);
 
@@ -161,6 +161,11 @@ bool BranchContainer::isTemporaryLinked()
     return temporaryLinked;
 }
 
+int BranchContainer::childrenCount()
+{
+    return branchCount() + imageCount();
+}
+
 int BranchContainer::branchCount()
 {
     if (!branchesContainer)
@@ -174,8 +179,8 @@ void BranchContainer::createBranchesContainer()
     branchesContainer = new Container ();
     branchesContainer->setBrush(Qt::NoBrush);
     branchesContainer->setPen(Qt::NoPen);
-    branchesContainer->setLayoutType(Container::Vertical);              // Default, usually depends on depth
-    branchesContainer->setVerticalAlignment(Container::AlignedLeft);    // Default, usually depends on position
+    branchesContainer->setLayoutType(branchesContainerLayoutType);
+    branchesContainer->setVerticalAlignment(branchesContainerVerticalAlignment);
     branchesContainer->type = Container::BranchCollection;
 
     // FIXME-2 testing only
@@ -404,6 +409,20 @@ void BranchContainer::setLayoutType(const LayoutType &ltype)
     Container::setLayoutType(ltype);
 }
     
+void BranchContainer::setBranchesContainerLayoutType(const LayoutType &ltype)
+{
+    branchesContainerLayoutType = ltype;
+    if (branchesContainer)
+        branchesContainer->setLayoutType(branchesContainerLayoutType);
+}
+    
+void BranchContainer::setBranchesContainerVerticalAlignment(const VerticalAlignment &valign)
+{
+    branchesContainerVerticalAlignment = valign;
+    if (branchesContainer)
+        branchesContainer->setVerticalAlignment(branchesContainerVerticalAlignment);
+}
+    
 QRectF BranchContainer::getHeadingRect()
 {
     QPointF p = headingContainer->scenePos();
@@ -499,25 +518,25 @@ void BranchContainer::reposition()
 
         innerContainer->setMovableByFloats(false);
         setMovableByFloats(false);  // FIXME-2 Needed?
-        if (branchesContainer) branchesContainer->setLayoutType(FloatingBounded);
+        setBranchesContainerLayoutType(FloatingBounded);
 
 
     } else {
         // Branch or mainbranch
         linkContainer->setLinkStyle(LinkContainer::Line);
         innerContainer->setMovableByFloats(true);
-        if (branchesContainer) branchesContainer->setLayoutType(Vertical);
+        setBranchesContainerLayoutType(Vertical);
 
         switch (orientation) {
             case LeftOfParent:
                 setHorizontalDirection(RightToLeft);
                 innerContainer->setHorizontalDirection(RightToLeft);
-                if (branchesContainer) branchesContainer->setVerticalAlignment(AlignedRight);
+                setBranchesContainerVerticalAlignment(AlignedRight);
                 break;
             case RightOfParent:
                 setHorizontalDirection(LeftToRight);
                 innerContainer->setHorizontalDirection(LeftToRight);
-                if (branchesContainer) branchesContainer->setVerticalAlignment(AlignedLeft);
+                setBranchesContainerVerticalAlignment(AlignedLeft);
                 break;
             default: 
                 break;
@@ -528,20 +547,20 @@ void BranchContainer::reposition()
             orientation = UndefinedOrientation;
             QColor col (Qt::red);
             col.setAlpha(150);
-            if (branchesContainer) {
+            if (branchesContainer) {    // FIXME-2 testing
                 branchesContainer->setBrush(col);
-                branchesContainer->setLayoutType(FloatingBounded);
             }
+            setBranchesContainerLayoutType(FloatingBounded);
             innerContainer->setBrush(Qt::cyan);
         } else if (branchItem && branchItem->getHeadingPlain().startsWith("free")) {// FIXME-2 testing, needs dialog for setting
             // Special layout: FloatingBounded children 
             orientation = UndefinedOrientation;
             QColor col (Qt::red);
             col.setAlpha(120);
-            if (branchesContainer) {
+            if (branchesContainer) {    // FIXME-2 testing
                 branchesContainer->setBrush(col);
-                branchesContainer->setLayoutType(FloatingFree);
             }
+            setBranchesContainerLayoutType(FloatingFree);
             innerContainer->setBrush(Qt::gray);
         } 
         /* FIXME-2 Testing

@@ -44,6 +44,8 @@ class BranchContainer : public Container {
     void unsetTemporaryLinked();
     bool isTemporaryLinked();
 
+    int childrenCount();
+
     int branchCount();
     void createBranchesContainer();
     void addToBranchesContainer(Container *c, bool keepScenePos = false);
@@ -76,6 +78,9 @@ class BranchContainer : public Container {
 
     virtual void setLayoutType(const LayoutType &ltype);
 
+    virtual void setBranchesContainerLayoutType(const LayoutType &ltype);
+    virtual void setBranchesContainerVerticalAlignment(const VerticalAlignment &valign);
+
     QRectF getHeadingRect();  //! Return rectangle of HeadingContainer in absolute coordinates
 
     bool isInClickBox(const QPointF &p);
@@ -88,6 +93,10 @@ class BranchContainer : public Container {
     static qreal linkWidth;
     BranchItem *branchItem; //! Crossreference to "parent" BranchItem 
     
+    // Save layout and alignment of branchesContainer even before container is created on demand
+    LayoutType branchesContainerLayoutType;
+    VerticalAlignment branchesContainerVerticalAlignment;
+
     HeadingContainer *headingContainer; // Heading of this branch
     HeadingContainer *linkSpaceContainer; // space for downLinks
     LinkContainer *linkContainer;       // uplink to parent

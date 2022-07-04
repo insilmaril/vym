@@ -88,10 +88,10 @@ MapEditor::MapEditor(VymModel *vm)
     tmpParentContainer->setName("tmpParentContainer");
     tmpParentContainer->setType(Container::TmpParent);
     tmpParentContainer->setLayoutType(Container::FloatingBounded);
-    tmpParentContainer->getBranchesContainer()->setLayoutType(Container::FloatingBounded);
+    tmpParentContainer->setBranchesContainerLayoutType(Container::FloatingBounded);
     tmpParentContainer->setBrush(Qt::NoBrush);
     tmpParentContainer->setPen(QPen(Qt::NoPen));
-    //tmpParentContainer->setPen(QPen(Qt::blue));   // Debugging only
+    //tmpParentContainer->setPen(QPen(Qt::blue));   // Debugging only   // FIXME-2
     tmpParentContainer->reposition();
 
     // Shortcuts and actions
@@ -1767,7 +1767,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
         }
     }
     
-    if (movingItems.count() > 0 && (tmpParentContainer->getBranchesContainer()->childItems().count() == 0)) {
+    if (movingItems.count() > 0 && (tmpParentContainer->childrenCount() == 0)) {
         // Add selected branches and images temporary to tmpParentContainer,
         // if they are not there yet:
         BranchContainer *bc;
@@ -1780,7 +1780,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
             if (ti->hasTypeBranch()) {
                 bc = ((BranchItem*)ti)->getBranchContainer();
 
-                if (bc->parentItem() != tmpParentContainer->getBranchesContainer()) {
+                if (bc->parentItem() != tmpParentContainer->getBranchesContainer()) {   // FIXME-0 what if getBranchesContainer == nullptr ?
                     bc->setOriginalPos();
                     bc->setOriginalOrientation();
                     //FIXME-0 children of tpC are only relinked temporary, if there really is a target  bc->setTemporaryLinked(true);
