@@ -604,7 +604,7 @@ void BranchItem::updateContainerStackingOrder()
         // cannot be inserted using QGraphicsItem::stackBefore
         //
         // We try the next sibling then, if this fails, just append at the end.
-        if ( (parentBranch()->getBranchNum(n + 1))->getContainer()->parentItem() != parentBranch()->getBranchesContainer() )
+        if ( (parentBranch()->getBranchNum(n + 1))->getContainer()->parentItem() != parentBranch()->getBranchesContainer() )    // FIXME-0 what if getBranchesContainer == nullptr ?
             n++;
         else {
             branchContainer->stackBefore( (parentBranch()->getBranchNum(n + 1))->getContainer() );

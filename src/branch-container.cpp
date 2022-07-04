@@ -188,8 +188,11 @@ void BranchContainer::createBranchesContainer()
     innerContainer->addContainer(branchesContainer);
 }
 
-void BranchContainer::addToBranchesContainer(Container *c, bool keepScenePos)   // FIXME-0 check if exists
+void BranchContainer::addToBranchesContainer(Container *c, bool keepScenePos)
 {
+    if (!branchesContainer) 
+        createBranchesContainer();
+
     QPointF sp = c->scenePos();
     c->setParentItem(branchesContainer);
     if (keepScenePos)
@@ -282,10 +285,10 @@ QPointF BranchContainer::getPositionHintNewChild(Container *c)
     qreal radius;
     if (c->type == Branch) {
         radius = 190;
-        n = branchesContainer->childItems().count();
+        n = branchCount();
     } else if (c->type == Image) {
         radius = 100;
-        n = imagesContainer->childItems().count();
+        n = imageCount();
     }
 
     if (!parentItem() || c->type == Image) {
@@ -319,9 +322,9 @@ QPointF BranchContainer::getPositionHintRelink(Container *c, int d_pos, const QP
     switch (c->type) {
         case TmpParent:
             // So far this method is only called when tmpParentContainer is temporarily relinked
-            if (childImages().count() > 0)
+            if (imageCount() > 0)
                 // If there are images in tPC, just use their layout for now
-                targetContainer = imagesContainer;
+                targetContainer = imagesContainer;  // FIXME-0 imagesC and branchesC might be nullptr !!!
             else
                 targetContainer = branchesContainer;
             break;
@@ -347,9 +350,9 @@ QPointF BranchContainer::getPositionHintRelink(Container *c, int d_pos, const QP
         // Regular layout
         qreal y;
         if (d_pos == 0)
-            y =branchesContainer->rect().bottom();
+            y = branchesContainer->rect().bottom();
         else
-            y =branchesContainer->rect().bottom() - d_pos * c->rect().height();
+            y = branchesContainer->rect().bottom() - d_pos * c->rect().height();
 
         switch (orientation) {
             case LeftOfParent:
@@ -496,52 +499,56 @@ void BranchContainer::reposition()
 
         innerContainer->setMovableByFloats(false);
         setMovableByFloats(false);  // FIXME-2 Needed?
-        branchesContainer->setLayoutType(FloatingBounded);
+        if (branchesContainer) branchesContainer->setLayoutType(FloatingBounded);
 
 
     } else {
         // Branch or mainbranch
         linkContainer->setLinkStyle(LinkContainer::Line);
         innerContainer->setMovableByFloats(true);
-        branchesContainer->setLayoutType(Vertical);
+        if (branchesContainer) branchesContainer->setLayoutType(Vertical);
 
         switch (orientation) {
             case LeftOfParent:
                 setHorizontalDirection(RightToLeft);
                 innerContainer->setHorizontalDirection(RightToLeft);
-                branchesContainer->setVerticalAlignment(AlignedRight);
+                if (branchesContainer) branchesContainer->setVerticalAlignment(AlignedRight);
                 break;
             case RightOfParent:
                 setHorizontalDirection(LeftToRight);
                 innerContainer->setHorizontalDirection(LeftToRight);
-                branchesContainer->setVerticalAlignment(AlignedLeft);
+                if (branchesContainer) branchesContainer->setVerticalAlignment(AlignedLeft);
                 break;
             default: 
                 break;
         }
 
-        if (branchItem && branchItem->getHeadingPlain().startsWith("float")) {
+        if (branchItem && branchItem->getHeadingPlain().startsWith("float")) {  // FIXME-2 testing, needs dialog for setting
             // Special layout: FloatingBounded children 
             orientation = UndefinedOrientation;
             QColor col (Qt::red);
             col.setAlpha(150);
-            branchesContainer->setBrush(col);
-            branchesContainer->setLayoutType(FloatingBounded);
+            if (branchesContainer) {
+                branchesContainer->setBrush(col);
+                branchesContainer->setLayoutType(FloatingBounded);
+            }
             innerContainer->setBrush(Qt::cyan);
-        } else if (branchItem && branchItem->getHeadingPlain().startsWith("free")) {
+        } else if (branchItem && branchItem->getHeadingPlain().startsWith("free")) {// FIXME-2 testing, needs dialog for setting
             // Special layout: FloatingBounded children 
             orientation = UndefinedOrientation;
             QColor col (Qt::red);
             col.setAlpha(120);
-            branchesContainer->setBrush(col);
-            branchesContainer->setLayoutType(FloatingFree);
+            if (branchesContainer) {
+                branchesContainer->setBrush(col);
+                branchesContainer->setLayoutType(FloatingFree);
+            }
             innerContainer->setBrush(Qt::gray);
         } 
         /* FIXME-2 Testing
         else {
             QColor col (Qt::blue);
             col.setAlpha(120);
-            branchesContainer->setBrush(col);
+            if (branchesContainer) branchesContainer->setBrush(col);
             //innerContainer->setBrush(Qt::cyan);
         }
         */

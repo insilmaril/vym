@@ -34,6 +34,9 @@ void Container::init()
     layout = Horizontal;
     horizontalDirection = LeftToRight;
 
+    setPen(Qt::NoPen);
+    //setPen(QPen(Qt::red));  // FIXME-2 testing
+
     show();
 }
 
