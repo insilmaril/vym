@@ -527,15 +527,8 @@ void BranchContainer::reposition()
     {
         // MapCenter or TmpParent
         if (type != TmpParent) {
-
             setHorizontalDirection(LeftToRight);
             innerContainer->setHorizontalDirection(RightToLeft);
-
-            /* //FIXME-2 add "flags" and origin for testing (but only once!)
-            HeadingContainer *fc = new HeadingContainer();
-            fc->setHeading("Flags");
-            innerContainer->addContainer(fc);
-            */
         }
 
         linkContainer->setLinkStyle(LinkContainer::NoLink);
