@@ -26,6 +26,9 @@ void Container::copy(Container *other)
     movableByFloats = false;
     horizontalDirection = other->horizontalDirection;
     verticalAlignment = other->verticalAlignment;
+
+    setBrush(Qt::NoBrush);
+    setPen(Qt::NoPen);
 }
 
 void Container::init()

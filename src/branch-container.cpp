@@ -41,19 +41,13 @@ void BranchContainer::init()
     imagesContainer = nullptr;
 
     headingContainer = new HeadingContainer ();
-    headingContainer->setBrush(Qt::NoBrush);
-    headingContainer->setPen(Qt::NoPen);
 
     ornamentsContainer = new Container ();
-    ornamentsContainer->setBrush(Qt::NoBrush);
-    ornamentsContainer->setPen(Qt::NoPen);
     ornamentsContainer->type = Ornaments;
 
     linkContainer = new LinkContainer(ornamentsContainer);
 
     innerContainer = new Container ();
-    innerContainer->setBrush(Qt::NoBrush);
-    //innerContainer->setPen(Qt::NoPen);
     innerContainer->type = InnerContent;
 
 
@@ -70,8 +64,6 @@ void BranchContainer::init()
 
     addContainer(innerContainer);
 
-    setBrush(Qt::NoBrush);
-    setPen(Qt::NoPen);
     setLayoutType(Container::Horizontal);
     setHorizontalDirection(Container::LeftToRight);
 
@@ -176,8 +168,6 @@ int BranchContainer::branchCount()
 void BranchContainer::createBranchesContainer()
 {
     branchesContainer = new Container ();
-    branchesContainer->setBrush(Qt::NoBrush);
-    branchesContainer->setPen(Qt::NoPen);
     branchesContainer->setLayoutType(branchesContainerLayoutType);
     branchesContainer->setVerticalAlignment(branchesContainerVerticalAlignment);
     branchesContainer->type = Container::BranchCollection;
@@ -201,7 +191,7 @@ Container* BranchContainer::getBranchesContainer()
     return branchesContainer;
 }
 
-void BranchContainer::updateBranchesContainer()  // FIXME-0 cont here....
+void BranchContainer::updateBranchesContainer()
 {
     if (branchCount() == 0) {
         // no children branches, remove unused containers
@@ -227,8 +217,6 @@ void BranchContainer::updateBranchesContainer()  // FIXME-0 cont here....
             if (branchesContainerLayoutType != FloatingBounded &&
                  branchesContainerLayoutType != FloatingFree) {
                 linkSpaceContainer = new HeadingContainer ();
-                linkSpaceContainer->setBrush(Qt::NoBrush);
-                linkSpaceContainer->setPen(Qt::NoPen);
                 linkSpaceContainer->setHeading(" - ");  // FIXME-2 introduce minWIdth later
 
                 innerContainer->addContainer(linkSpaceContainer);
@@ -249,8 +237,6 @@ int BranchContainer::imageCount()
 void BranchContainer::createImagesContainer()
 {
     imagesContainer = new Container ();
-    imagesContainer->setBrush(Qt::NoBrush);
-    imagesContainer->setPen(Qt::NoPen);
     imagesContainer->setLayoutType(Container::FloatingBounded);
     imagesContainer->type = Container::ImageCollection;
     innerContainer->addContainer(imagesContainer);
@@ -531,8 +517,10 @@ void BranchContainer::reposition()
     updateBranchesContainer();
 
     // FIXME-2 for testing draw blue rectangles
-    if (type != TmpParent)
+    if (type != TmpParent) {
         ornamentsContainer->setPen(QPen(Qt::blue));
+        setPen(QPen(Qt::green));
+    }
 
     // Settings depending on depth
     if (depth == 0)
