@@ -91,7 +91,6 @@ MapEditor::MapEditor(VymModel *vm)
     tmpParentContainer->setBranchesContainerLayoutType(Container::FloatingBounded);
     tmpParentContainer->setBrush(Qt::NoBrush);
     tmpParentContainer->setPen(QPen(Qt::NoPen));
-    //tmpParentContainer->setPen(QPen(Qt::blue));   // Debugging only   // FIXME-2
     tmpParentContainer->reposition();
 
     // Shortcuts and actions
@@ -1904,7 +1903,8 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
     return;
 }
 
-void MapEditor::mouseReleaseEvent(QMouseEvent *e)   // FIXME-1 Moving does not work for MapCenters
+void MapEditor::mouseReleaseEvent(QMouseEvent *e)   // FIXME-0 Moving does not work for MapCenters
+// FIXME-0 void MapEditor::mouseReleaseEvent  releaseing images crashes
 {
     // Allow selecting text in QLineEdit if necessary
     if (model->isSelectionBlocked()) {

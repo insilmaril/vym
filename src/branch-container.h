@@ -47,9 +47,18 @@ class BranchContainer : public Container {
     int childrenCount();
 
     int branchCount();
+
+    /*! bbanchesContainer exists only, if there are children branches
+     *
+     *  branchesContainer and linkSpaceContainer are children of innerContainer.
+     *  The linkSpaceContainer is existing, only if a !Floating layout is used AND 
+     *  there is a branchesContainer 
+     */
     void createBranchesContainer();
     void addToBranchesContainer(Container *c, bool keepScenePos = false);
     Container* getBranchesContainer();
+    void updateBranchesContainer();    //! Remove unused containers and add needed ones
+
 
     int imageCount();
     void createImagesContainer();

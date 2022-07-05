@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.12)
 
 project(ViewYourMind)
 
+# Build optimized with debug info
+set(CMAKE_BUILD_TYPE RelWithDebInfo)
+
 set(QtComponents
     LinguistTools
     Network

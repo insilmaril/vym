@@ -46,7 +46,7 @@ void BranchContainer::init()
 
     ornamentsContainer = new Container ();
     ornamentsContainer->setBrush(Qt::NoBrush);
-    ornamentsContainer->setPen(QPen(Qt::blue));
+    ornamentsContainer->setPen(Qt::NoPen);
     ornamentsContainer->type = Ornaments;
 
     linkContainer = new LinkContainer(ornamentsContainer);
@@ -63,11 +63,10 @@ void BranchContainer::init()
     ornamentsContainer->addContainer(headingContainer);
 
     innerContainer->addContainer(ornamentsContainer);
-    innerContainer->addContainer(linkContainer);
 
     branchesContainer = nullptr;
     linkSpaceContainer = nullptr;
-    //createBranchesContainer();  // FIXME-0  soon only create on demand
+    //createBranchesContainer();  // FIXME-1  next step: delete empty branchesContainer
 
     addContainer(innerContainer);
 
@@ -183,13 +182,6 @@ void BranchContainer::createBranchesContainer()
     branchesContainer->setVerticalAlignment(branchesContainerVerticalAlignment);
     branchesContainer->type = Container::BranchCollection;
 
-    // FIXME-2 testing only
-    linkSpaceContainer = new HeadingContainer ();
-    linkSpaceContainer->setBrush(Qt::NoBrush);
-    linkSpaceContainer->setPen(Qt::NoPen);
-    linkSpaceContainer->setHeading(" - ");
-
-    innerContainer->addContainer(linkSpaceContainer);
     innerContainer->addContainer(branchesContainer);
 }
 
@@ -207,6 +199,43 @@ void BranchContainer::addToBranchesContainer(Container *c, bool keepScenePos)
 Container* BranchContainer::getBranchesContainer()
 {
     return branchesContainer;
+}
+
+void BranchContainer::updateBranchesContainer()  // FIXME-0 cont here....
+{
+    if (branchCount() == 0) {
+        // no children branches, remove unused containers
+        if (linkSpaceContainer) {
+            delete linkSpaceContainer;
+            linkSpaceContainer == nullptr;
+        }
+        delete branchesContainer;
+        branchesContainer == nullptr;
+    } else {
+        // Create containers (if required)
+        if (!branchesContainer) 
+            createBranchesContainer();
+
+        // Space for links depends on layout:
+        if (linkSpaceContainer) {
+            if (branchesContainerLayoutType == FloatingBounded || 
+                 branchesContainerLayoutType == FloatingFree) {
+                delete linkSpaceContainer;
+                linkSpaceContainer = nullptr;
+            }
+        } else {
+            if (branchesContainerLayoutType != FloatingBounded &&
+                 branchesContainerLayoutType != FloatingFree) {
+                linkSpaceContainer = new HeadingContainer ();
+                linkSpaceContainer->setBrush(Qt::NoBrush);
+                linkSpaceContainer->setPen(Qt::NoPen);
+                linkSpaceContainer->setHeading(" - ");  // FIXME-2 introduce minWIdth later
+
+                innerContainer->addContainer(linkSpaceContainer);
+                linkSpaceContainer->stackBefore(branchesContainer);
+            }
+        }
+    }
 }
 
 int BranchContainer::imageCount()
@@ -344,7 +373,7 @@ QPointF BranchContainer::getPositionHintRelink(Container *c, int d_pos, const QP
             return QPointF();
     }
 
-    if (targetContainer->hasFloatingLayout()) {
+    if (targetContainer->hasFloatingLayout()) { // FIXME-000 targetContainer might be nullptr!
         // Floating layout, position on circle around center of myself
         qreal radius = Geometry::distance(r.center(), r.topLeft()) + 20;
 
@@ -498,6 +527,13 @@ void BranchContainer::reposition()
 
     setLayoutType(Horizontal);
     
+    // FIXME-0 testing: update branchesContainer and linkSpaceContainer
+    updateBranchesContainer();
+
+    // FIXME-2 for testing draw blue rectangles
+    if (type != TmpParent)
+        ornamentsContainer->setPen(QPen(Qt::blue));
+
     // Settings depending on depth
     if (depth == 0)
     {
@@ -519,7 +555,6 @@ void BranchContainer::reposition()
         innerContainer->setMovableByFloats(false);
         setMovableByFloats(false);  // FIXME-2 Needed?
         setBranchesContainerLayoutType(FloatingBounded);
-
 
     } else {
         // Branch or mainbranch
