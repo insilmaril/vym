@@ -407,9 +407,6 @@ void BranchContainer::updateUpLink(const QPointF &parent_pos)
 {
     if (branchItem->depth() == 0) return;
 
-    qDebug() << "BC::uUL a) lC->pos() = " << linkContainer->pos();
-    linkContainer->setPos(0,0); // FIXME-000 testing
-
     if (temporaryLinked) {
     /* FIXME-0000 cont here for tempLinked
         BranchItem *pbi = branchItem->parentBranch();
@@ -420,7 +417,6 @@ void BranchContainer::updateUpLink(const QPointF &parent_pos)
         linkContainer->setLinkPosParent(parent_pos);
     }
 
-    qDebug() << "BC::uUL b) lC->pos() = " << linkContainer->pos();
     linkContainer->updateLinkGeometry();
 }
 
