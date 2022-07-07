@@ -600,11 +600,13 @@ void BranchContainer::reposition()
             BranchContainer *bc = (BranchContainer*) g_item;
 
             // RightOfParent
-            qDebug() << "BC::repos Line of " << bc->getBranchItem()->getHeadingPlain() << ornamentsContainer->rect().bottomRight() << this; 
+            qDebug() << "BC::repos Line of " << bc->getBranchItem()->getHeadingPlain();
             //qDebug() << "  branches: " << bc->branchesContainer->pos() << bc->branchesContainer;
-            qDebug() << "     inner: " << bc->innerContainer->pos() << bc->innerContainer;
-            qDebug() << "      orna: " << bc->ornamentsContainer->pos() << bc->ornamentsContainer;
-            qDebug() << "      link: " << bc->linkContainer->pos() << bc->linkContainer;
+            qDebug() << "      inner: " << bc->innerContainer->pos() << bc->innerContainer;
+            qDebug() << "       orna: " << bc->ornamentsContainer->pos() << bc->ornamentsContainer;
+            qDebug() << "       link: " << bc->linkContainer->pos() << bc->linkContainer;
+            qDebug() << "bottomRight: " << ornamentsContainer->rect().bottomRight();
+            qDebug() << "     mapped: " << mapToItem(bc, ornamentsContainer->rect().bottomRight());
             bc->updateUpLink(mapToItem(bc, ornamentsContainer->rect().bottomRight()));
         }
     }

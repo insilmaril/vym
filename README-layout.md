@@ -42,7 +42,7 @@ Containers
   has contains (sic!) a set of other containers
 
 - Containers containing others use ContainerLayouts and hints for
-  aligning ther subcontainers. This information is used for
+  aligning their subcontainers. This information is used for
   repositioning and defined in the MapDesign
 
 - Containers are no longer part of a BranchObj, but become their own
@@ -55,6 +55,16 @@ Containers
     - are very care careful to delete containers
     - no containers created on stack
    
+- Container layout
+    - BranchContainer
+        - InnerContainer
+            - OrnamentsContainer
+                [Later: FlagsContainer]
+                - linkContainer
+                - headingContainer
+            - [Optional: linkSpaceContainer]
+            - [Optional: branchesContainer]
+
 Ideas 
 -----
 
