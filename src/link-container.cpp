@@ -25,13 +25,15 @@ LinkContainer::~LinkContainer()
 
 void LinkContainer::init()
 {
+    type = Link;
+
     linkPosParent = QPointF(0, 0); // FIXME-2 cleanup declarations below
     childRefPos = QPointF(0, 0);
     floatRefPos = QPointF(0, 0);
     link2ParPos = false;
     l = nullptr;
     p = nullptr;
-    linkcolor = Qt::black;
+    linkcolor = Qt::red;
     linkwidth = 20;
     thickness_start = 8;
     style = NoLink;
@@ -40,7 +42,7 @@ void LinkContainer::init()
 
     // FIXME-2 instead of linkcolor pen.color() could be used all around
     pen.setWidth(1);
-    //pen.setColor(linkcolor);
+    pen.setColor(linkcolor);
     pen.setCapStyle(Qt::RoundCap);
 
     useBottomline = false;
@@ -49,6 +51,8 @@ void LinkContainer::init()
 
 void LinkContainer::createBottomLine()
 {
+    return; //FIXME-0 createBottomLine
+    qDebug() << "LC::createBottomLine";
     bottomline = new QGraphicsLineItem(this);
     bottomline->setPen(pen);
     bottomline->setZValue(dZ_LINK);
@@ -88,10 +92,6 @@ void LinkContainer::copy(LinkContainer *other)
 
 void LinkContainer::setLinkStyle(Style newstyle)
 {
-    // qDebug() << "LC::setLinkStyle s=" << newstyle;	//FIXME-4 called very often?!?! 
-    // qDebug() << "LC::setLinkStyle s=" << newstyle << " for " << this <<"
-    // "<< treeItem->getHeading() << "  parentLinkContainer=" << parentLinkContainer;
-    
     if (style == newstyle) return;
 
     delLink();
@@ -101,13 +101,14 @@ void LinkContainer::setLinkStyle(Style newstyle)
     QGraphicsLineItem *cl;
     switch (style) {
         case Line:
+            qDebug() << "LC::setLinkStyle new line  vis= "  << visible;
             l = new QGraphicsLineItem(this);
             l->setPen(pen);
-            l->setZValue(dZ_LINK);
-            if (visible)
+            //l->setZValue(dZ_LINK);
+            //if (visible)
                 l->show();
-            else
-                l->hide();
+            //else
+            //    l->hide();
             break;
         case Parabel:
             for (int i = 0; i < arcsegs; i++) {
@@ -149,9 +150,9 @@ void LinkContainer::setLinkStyle(Style newstyle)
 
 LinkContainer::Style LinkContainer::getLinkStyle() { return style; }
 
-void LinkContainer::setLinkPos(Position lp) { linkpos = lp; }
+void LinkContainer::setLinkPos(Position lp) { linkpos = lp; }   // FIXME-1 used?
 
-LinkContainer::Position LinkContainer::getLinkPos() { return linkpos; }
+LinkContainer::Position LinkContainer::getLinkPos() { return linkpos; } // FIXME-1 used?
 
 void LinkContainer::setLinkColor(QColor col)
 {
@@ -303,10 +304,10 @@ void LinkContainer::updateLinkGeometry()
     */
 
     p2x = pos().x();
-    p2y = parentContainer()->rect().bottom();
+    p2y = parentContainer()->rect().bottom();   // Parent container is ornamentsContainer
 
     //FIXME-1 no longer here: setOrientation();
-    setDockPos(); // Call overloaded method
+    //FIXME-1 still needed? setDockPos(); // Call overloaded method
 
     double p1x = linkPosParent.x(); // Link is drawn from P1 to P2
     double p1y = linkPosParent.y();
@@ -347,7 +348,9 @@ void LinkContainer::updateLinkGeometry()
         case Line:
             l->setLine(p1x, p1y, p2x, p2y);
             l->setZValue(z);
-            // qDebug() << "Drawing line" << l->line() << "scenePos =" << scenePos(); // FIXME-2
+            l->setPos(0,0);
+            setPos(0,0);
+            qDebug() << "Drawing line" << l->line() << "pos=" << pos();// << "scenePos =" << scenePos() << "parent: " << mapToScene(linkPosParent); // FIXME-2
             break;
         case Parabel:
             parabel(pa0, p1x, p1y, p2x, p2y);

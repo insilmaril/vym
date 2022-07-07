@@ -44,8 +44,10 @@ void BranchContainer::init()
 
     ornamentsContainer = new Container ();
     ornamentsContainer->type = Ornaments;
+    // FIXME-2 not available atm ornamentsContainer->setVerticalAligment(" centered ");
 
-    linkContainer = new LinkContainer(ornamentsContainer);
+    linkContainer = new LinkContainer();
+    linkContainer->setPos(0,0); // FIXME-0 testing
 
     innerContainer = new Container ();
     innerContainer->type = InnerContent;
@@ -54,6 +56,7 @@ void BranchContainer::init()
     // Adding the containers will reparent them and thus set scene
     // FIXME-2 ornamentsContainer->addContainer(systemFlagsContainer);
     // FIXME-2 ornamentsContainer->addContainer(userFlagsContainer);
+    ornamentsContainer->addContainer(linkContainer);
     ornamentsContainer->addContainer(headingContainer);
 
     innerContainer->addContainer(ornamentsContainer);
@@ -390,7 +393,7 @@ QPointF BranchContainer::getPositionHintRelink(Container *c, int d_pos, const QP
 
 QPointF BranchContainer::getDownLinkScenePos()   // FIXME-0 unused for now, also depends on orientation, frame, ...
 {
-    switch (orientation) {  // FIXME-0 is orientation correct???
+    switch (orientation) {  // FIXME-0 is orientation correct??? AND: Is this required?
         case LeftOfParent:
             return ornamentsContainer->mapToScene(ornamentsContainer->rect().bottomLeft());
         case RightOfParent:
@@ -400,20 +403,24 @@ QPointF BranchContainer::getDownLinkScenePos()   // FIXME-0 unused for now, also
     } 
 }
 
-void BranchContainer::updateUpLink()
+void BranchContainer::updateUpLink(const QPointF &parent_pos)
 {
     if (branchItem->depth() == 0) return;
 
+    qDebug() << "BC::uUL a) lC->pos() = " << linkContainer->pos();
+    linkContainer->setPos(0,0); // FIXME-000 testing
+
     if (temporaryLinked) {
-    /* FIXME-0 cont here
+    /* FIXME-0000 cont here for tempLinked
         BranchItem *pbi = branchItem->parentBranch();
         pbi 
     */
     } else {
-        QPointF parent_sp = branchItem->parentBranch()->getBranchContainer()->getDownLinkScenePos();
-        linkContainer->setLinkPosParent(parent_sp - scenePos());
+        //QPointF parent_sp = branchItem->parentBranch()->getBranchContainer()->getDownLinkScenePos();
+        linkContainer->setLinkPosParent(parent_pos);
     }
 
+    qDebug() << "BC::uUL b) lC->pos() = " << linkContainer->pos();
     linkContainer->updateLinkGeometry();
 }
 
@@ -534,7 +541,7 @@ void BranchContainer::reposition()
         linkContainer->setLinkStyle(LinkContainer::NoLink);
 
         innerContainer->setMovableByFloats(false);
-        setMovableByFloats(false);  // FIXME-2 Needed?
+        setMovableByFloats(false);
         setBranchesContainerLayoutType(FloatingBounded);
 
     } else {
@@ -591,12 +598,18 @@ void BranchContainer::reposition()
 
     Container::reposition();
 
-    // Finally update links // FIXME-0 testing
-    if (depth > 0) {
-        linkContainer->setPos(0, 0);
-        linkContainer->setLinkPosParent(parentBranchContainer()->scenePos() - scenePos());
-        linkContainer->setVisibility(true);
-        //linkContainer->updateLinkGeometry();
-        updateUpLink();
+    // Finally update links // FIXME-000 testing
+    if (branchesContainer && branchCount() > 0) {
+        foreach (QGraphicsItem *g_item, branchesContainer->childItems()) {
+            BranchContainer *bc = (BranchContainer*) g_item;
+
+            // RightOfParent
+            qDebug() << "BC::repos Line of " << bc->getBranchItem()->getHeadingPlain() << ornamentsContainer->rect().bottomRight() << this; 
+            //qDebug() << "  branches: " << bc->branchesContainer->pos() << bc->branchesContainer;
+            qDebug() << "     inner: " << bc->innerContainer->pos() << bc->innerContainer;
+            qDebug() << "      orna: " << bc->ornamentsContainer->pos() << bc->ornamentsContainer;
+            qDebug() << "      link: " << bc->linkContainer->pos() << bc->linkContainer;
+            bc->updateUpLink(mapToItem(bc, ornamentsContainer->rect().bottomRight()));
+        }
     }
 }

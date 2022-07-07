@@ -23,23 +23,27 @@ void Container::copy(Container *other)
     name = other->name;
 
     layout = other->layout;
-    movableByFloats = false;
     horizontalDirection = other->horizontalDirection;
     verticalAlignment = other->verticalAlignment;
-
-    setBrush(Qt::NoBrush);
-    setPen(Qt::NoPen);
 }
 
 void Container::init()
 {
     type = Undefined;
     layout = Horizontal;
+
+    movableByFloats = false;
+    positionFixed = false;
+
+    minimumWidth = 0;
+
     horizontalDirection = LeftToRight;
 
+    // Not visible usually
+    setBrush(Qt::NoBrush);
     setPen(Qt::NoPen);
-    //setPen(QPen(Qt::red));  // FIXME-2 testing
 
+    // But children are shown
     show();
 }
 
@@ -137,6 +141,16 @@ void Container::setMovableByFloats(bool movable)
     movableByFloats = movable;
 }
 
+void Container::setPositionFixed(bool b)
+{
+    positionFixed = b;
+}
+
+bool Container::hasPositionFixed()
+{
+    return positionFixed;
+}
+
 void Container::setHorizontalDirection(const HorizontalDirection &hdir)
 {
     horizontalDirection = hdir;
@@ -147,7 +161,7 @@ Container::HorizontalDirection Container::getHorizontalDirection()
     return horizontalDirection;
 }
 
-void Container::setVerticalAlignment(const VerticalAlignment &a)
+void Container::setVerticalAlignment(const VerticalAlignment &a)    // FIXME-0b should be named HorizontalAlignment!
 {
     verticalAlignment = a;
 }

@@ -343,9 +343,11 @@ void MapEditor::animate()
         c->animate();
 
         // Update links
+        /*
         if (c->containerType() == Container::Branch) {
-            ((BranchContainer*)c)->updateUpLink();
+            ((BranchContainer*)c)->updateUpLink();  // FIXME-0 during animation
         }
+        */
 
         if (!c->isAnimated()) {
             animatedContainers.removeAll(c);
@@ -1889,7 +1891,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
                     bc->getLinkContainer()->setLinkPosParent(parent_sp - bc->scenePos());
                 }
             }
-            bc->updateUpLink();
+            // bc->updateUpLink(); // FIXME-000 during moving
         }
     }
             

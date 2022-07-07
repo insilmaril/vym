@@ -36,6 +36,7 @@ class Container : public QGraphicsRectItem {
         BranchCollection,
         ImageCollection,
         Branch, 
+        Link,
         Heading,
         Image
     };
@@ -70,6 +71,12 @@ class Container : public QGraphicsRectItem {
      *  floating children changes
      */
     void setMovableByFloats(bool);  
+
+    void setPositionFixed(bool b);  //! Default is movable, but "overlay" containers can be fixed
+    bool hasPositionFixed();
+
+    void setMinimumWidth();         //! Minimum dimensions of container. Used for linkSpaceContainer
+    qreal getMinimumWidth();
 
     void setHorizontalDirection(const HorizontalDirection &hdir);
     HorizontalDirection getHorizontalDirection();
@@ -113,6 +120,9 @@ class Container : public QGraphicsRectItem {
 
     LayoutType layout;
     bool movableByFloats;
+
+    bool positionFixed;
+    qreal minimumWidth;
 
     HorizontalDirection horizontalDirection;
     VerticalAlignment verticalAlignment;
