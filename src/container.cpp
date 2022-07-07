@@ -355,7 +355,8 @@ void Container::reposition()
                     c = (Container*) child;
 
                     // For calculation of heights, widths move everything to origin
-                    c->setPos(0, 0);
+                    if (!positionFixed)
+                        c->setPos(0, 0);
 
                     c_bbox = mapRectFromItem(c, c->rect());
 
@@ -401,11 +402,13 @@ void Container::reposition()
 
                         if (horizontalDirection == LeftToRight)
                         {
-                            c->setPos (x, y);
+                            if (!positionFixed)
+                                c->setPos (x, y);
                             x += w_last;
                         } else
                         {
-                            c->setPos (x - c->rect().width(), y);
+                            if (!positionFixed)
+                                c->setPos (x - c->rect().width(), y);
                             x -= w_last;
                         }
                     }
@@ -492,7 +495,7 @@ void Container::reposition()
                 foreach (QGraphicsItem *child, childItems()) {
                     c = (Container*) child;
 
-                    if (c->layout != FloatingBounded) {
+                    if (c->layout != FloatingBounded && !positionFixed) {
                         switch (verticalAlignment) {
                             case AlignedLeft:
                                 c->setPos (0, y);
