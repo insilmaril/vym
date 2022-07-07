@@ -288,7 +288,14 @@ void Container::reposition()
     //
     // Then the subcontainers are positioned.
     //
-    // a) calc sizes of subcontainers based on their layouts 
+    // a) Do we have any chilrden after all?
+    if (childItems().count() == 0)
+    {
+        setRect(r);
+        return;
+    }
+
+    // b) calc sizes of subcontainers based on their layouts
     //    (overloaded, not there e.g. for HeadingContainer!)
 
     Container *c;
@@ -297,15 +304,7 @@ void Container::reposition()
         c->reposition();
     }
 
-    // b) Align my own containers
-
-    // The children Container is empty, if there are no children branches
-    // No repositioning of children required then, of course.
-    if (childItems().count() == 0)      // FIXME-2 this could go before above loop  ??!
-    {
-        setRect(r);
-        return;
-    }
+    // c) Align my own containers
 
     switch (layout) {
         case FloatingBounded: 
