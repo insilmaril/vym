@@ -24,7 +24,7 @@ void Container::copy(Container *other)
 
     layout = other->layout;
     horizontalDirection = other->horizontalDirection;
-    verticalAlignment = other->verticalAlignment;
+    horizontalAlignment = other->horizontalAlignment;
 }
 
 void Container::init()
@@ -161,9 +161,9 @@ Container::HorizontalDirection Container::getHorizontalDirection()
     return horizontalDirection;
 }
 
-void Container::setVerticalAlignment(const VerticalAlignment &a)    // FIXME-0b should be named HorizontalAlignment!
+void Container::setHorizontalAlignment(const HorizontalAlignment &a)
 {
-    verticalAlignment = a;
+    horizontalAlignment = a;
 }
 
 bool Container::isVisibleContainer()
@@ -495,7 +495,7 @@ void Container::reposition()
                     c = (Container*) child;
 
                     if (c->layout != FloatingBounded && !positionFixed) {
-                        switch (verticalAlignment) {
+                        switch (horizontalAlignment) {
                             case AlignedLeft:
                                 c->setPos (0, y);
                                 break;

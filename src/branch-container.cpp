@@ -172,7 +172,7 @@ void BranchContainer::createBranchesContainer()
 {
     branchesContainer = new Container ();
     branchesContainer->setLayoutType(branchesContainerLayoutType);
-    branchesContainer->setVerticalAlignment(branchesContainerVerticalAlignment);
+    branchesContainer->setHorizontalAlignment(branchesContainerHorizontalAlignment);
     branchesContainer->type = Container::BranchCollection;
 
     innerContainer->addContainer(branchesContainer);
@@ -436,11 +436,11 @@ void BranchContainer::setBranchesContainerLayoutType(const LayoutType &ltype)
         branchesContainer->setLayoutType(branchesContainerLayoutType);
 }
     
-void BranchContainer::setBranchesContainerVerticalAlignment(const VerticalAlignment &valign)
+void BranchContainer::setBranchesContainerHorizontalAlignment(const HorizontalAlignment &valign)
 {
-    branchesContainerVerticalAlignment = valign;
+    branchesContainerHorizontalAlignment = valign;
     if (branchesContainer)
-        branchesContainer->setVerticalAlignment(branchesContainerVerticalAlignment);
+        branchesContainer->setHorizontalAlignment(branchesContainerHorizontalAlignment);
 }
     
 QRectF BranchContainer::getHeadingRect()
@@ -552,12 +552,12 @@ void BranchContainer::reposition()
             case LeftOfParent:
                 setHorizontalDirection(RightToLeft);
                 innerContainer->setHorizontalDirection(RightToLeft);
-                setBranchesContainerVerticalAlignment(AlignedRight);
+                setBranchesContainerHorizontalAlignment(AlignedRight);
                 break;
             case RightOfParent:
                 setHorizontalDirection(LeftToRight);
                 innerContainer->setHorizontalDirection(LeftToRight);
-                setBranchesContainerVerticalAlignment(AlignedLeft);
+                setBranchesContainerHorizontalAlignment(AlignedLeft);
                 break;
             default: 
                 break;

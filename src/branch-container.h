@@ -87,7 +87,7 @@ class BranchContainer : public Container {
     virtual void setLayoutType(const LayoutType &ltype);
 
     virtual void setBranchesContainerLayoutType(const LayoutType &ltype);
-    virtual void setBranchesContainerVerticalAlignment(const VerticalAlignment &valign);
+    virtual void setBranchesContainerHorizontalAlignment(const HorizontalAlignment &valign);
 
     QRectF getHeadingRect();  //! Return rectangle of HeadingContainer in absolute coordinates
 
@@ -103,7 +103,7 @@ class BranchContainer : public Container {
     
     // Save layout and alignment of branchesContainer even before container is created on demand
     LayoutType branchesContainerLayoutType;
-    VerticalAlignment branchesContainerVerticalAlignment;
+    HorizontalAlignment branchesContainerHorizontalAlignment;
 
     HeadingContainer *headingContainer; // Heading of this branch
     HeadingContainer *linkSpaceContainer; // space for downLinks

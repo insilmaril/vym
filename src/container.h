@@ -44,7 +44,7 @@ class Container : public QGraphicsRectItem {
     /*! Alignment of children containers */
     enum LayoutType {Horizontal, Vertical, FloatingBounded, FloatingFree};
     enum HorizontalDirection {LeftToRight, RightToLeft};
-    enum VerticalAlignment {AlignedLeft, AlignedCentered, AlignedRight};
+    enum HorizontalAlignment {AlignedLeft, AlignedCentered, AlignedRight};
 
     Container (QGraphicsItem *parent = nullptr);
     virtual ~Container();
@@ -81,7 +81,7 @@ class Container : public QGraphicsRectItem {
     void setHorizontalDirection(const HorizontalDirection &hdir);
     HorizontalDirection getHorizontalDirection();
 
-    void setVerticalAlignment(const VerticalAlignment &a);
+    void setHorizontalAlignment(const HorizontalAlignment &a);
 
     virtual bool isVisibleContainer();
     virtual void setVisibility(bool);
@@ -125,7 +125,7 @@ class Container : public QGraphicsRectItem {
     qreal minimumWidth;
 
     HorizontalDirection horizontalDirection;
-    VerticalAlignment verticalAlignment;
+    HorizontalAlignment horizontalAlignment;
 };
 
 #endif
