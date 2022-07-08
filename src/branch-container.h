@@ -3,8 +3,6 @@
 
 #include "container.h"
 
-#include "link-container.h"
-
 class BranchItem;
 class HeadingContainer;
 class LinkContainer;

@@ -21,11 +21,24 @@
   </property>
   <layout class="QVBoxLayout">
    <item>
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
       <number>1</number>
      </property>
-     <widget class="QWidget" name="tab">
+     <widget class="QWidget" name="tabFrame">
       <attribute name="title">
        <string>Frame</string>
       </attribute>
@@ -256,11 +269,11 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="Layout">
+     <widget class="QWidget" name="tabLayout">
       <attribute name="title">
        <string>Layout</string>
       </attribute>
-      <layout class="QVBoxLayout">
+      <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
         <layout class="QVBoxLayout">
          <item>
@@ -287,50 +300,81 @@
         </layout>
        </item>
        <item>
-        <widget class="QLabel" name="label_2">
+        <widget class="QLabel" name="rotationHeadingLabel">
          <property name="text">
           <string>Rotation heading:</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QSlider" name="rotationHeadingSlider">
-         <property name="minimum">
-          <number>-90</number>
-         </property>
-         <property name="maximum">
-          <number>90</number>
-         </property>
-         <property name="singleStep">
-          <number>5</number>
-         </property>
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-        </widget>
+        <layout class="QHBoxLayout" name="horizontalLayout_2"/>
        </item>
        <item>
-        <widget class="QLabel" name="label_3">
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <item>
+          <widget class="QSlider" name="rotationHeadingSlider">
+           <property name="minimum">
+            <number>-90</number>
+           </property>
+           <property name="maximum">
+            <number>90</number>
+           </property>
+           <property name="singleStep">
+            <number>5</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="rotationHeadingSpinBox">
+           <property name="minimum">
+            <number>-90</number>
+           </property>
+           <property name="maximum">
+            <number>90</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QLabel" name="rotationInnerContentLabel">
          <property name="text">
           <string>Rotation inner content:</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QSlider" name="rotationInnerContentSlider">
-         <property name="minimum">
-          <number>-90</number>
-         </property>
-         <property name="maximum">
-          <number>90</number>
-         </property>
-         <property name="singleStep">
-          <number>5</number>
-         </property>
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-        </widget>
+        <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <item>
+          <widget class="QSlider" name="rotationInnerContentSlider">
+           <property name="minimum">
+            <number>-90</number>
+           </property>
+           <property name="maximum">
+            <number>90</number>
+           </property>
+           <property name="singleStep">
+            <number>5</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="rotationInnerContentSpinBox">
+           <property name="minimum">
+            <number>-90</number>
+           </property>
+           <property name="maximum">
+            <number>90</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
        <item>
         <spacer>
@@ -347,7 +391,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab_4">
+     <widget class="QWidget" name="tabTask">
       <attribute name="title">
        <string>Task</string>
       </attribute>
@@ -449,7 +493,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab_2">
+     <widget class="QWidget" name="tabLink">
       <attribute name="title">
        <string>Link</string>
       </attribute>
@@ -476,7 +520,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab_3">
+     <widget class="QWidget" name="tabAttributes">
       <attribute name="title">
        <string>Attributes</string>
       </attribute>
@@ -533,19 +577,6 @@
       </layout>
      </widget>
     </widget>
-   </item>
-   <item>
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>40</height>
-      </size>
-     </property>
-    </spacer>
    </item>
   </layout>
  </widget>

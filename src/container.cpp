@@ -353,6 +353,9 @@ void Container::reposition()
                 foreach (QGraphicsItem *child, childItems()) {
                     c = (Container*) child;
 
+                    if (c->rotation() != 0) // FIXME-2 testing
+                        qDebug() << "Rotation: a=" << c->rotation() << "bR=" << c->boundingRect() << "r=" << c->rect(); 
+
                     // For calculation of heights, widths move everything to origin
                     if (!positionFixed)
                         c->setPos(0, 0);

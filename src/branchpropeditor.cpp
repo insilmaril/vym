@@ -445,10 +445,25 @@ void BranchPropertyEditor::connectSignals()
             SLOT(incImgHorChanged(int)));
     connect(ui.childrenFreePositioning, SIGNAL(stateChanged(int)), this,
             SLOT(childrenFreePositioningChanged(int)));
-    connect(ui.rotationHeadingSlider, SIGNAL(valueChanged(int)), this,
-            SLOT(rotationHeadingChanged(int)));
+
+    connect(ui.rotationHeadingSlider, SIGNAL(valueChanged(int)),
+            this, SLOT(rotationHeadingChanged(int)));
+    //connect(ui.rotationHeadingSlider, SIGNAL(valueChanged(int)), 
+    //        ui.rotationHeadingSpinBox, SLOT(setValue(int)));
+    //connect(ui.rotationHeadingSpinBox, SLOT(valueChanged(int)),
+    //        this, SLOT(rotationHeadingChanged(int)));
+            //ui.rotationHeadingSlider, SIGNAL(setValue(int)));
+    //connect(ui.rotationHeadingSpinBox, &QSpinBox::valueChanged, 
+    //        ui.rotationHeadingSlider, &QSlider::setValue);
+            //this, &BranchPropertyEditor::rotationHeadingChanged);
+
+    // WIth lambda          // FIXME-2
+    // connect(spinbox, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), slider, &QSlider::setValue);
+
     connect(ui.rotationInnerContentSlider, SIGNAL(valueChanged(int)), this,
             SLOT(rotationInnerContentChanged(int)));
+    connect(ui.rotationInnerContentSlider, SIGNAL(valueChanged(int)),
+            ui.rotationInnerContentSpinBox, SLOT(setValue(int)));
 
     // Tasks
     connect(ui.taskPrioDelta, SIGNAL(valueChanged(int)), this,
@@ -469,7 +484,7 @@ void BranchPropertyEditor::connectSignals()
     ui.deleteAttributeButton->hide();
 }
 
-void BranchPropertyEditor::disconnectSignals()
+void BranchPropertyEditor::disconnectSignals()  // FIXME-2 why used at all??????
 {
     // Frame
     disconnect(ui.framePenColorButton, 0, 0, 0);

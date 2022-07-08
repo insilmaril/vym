@@ -10,6 +10,7 @@
 #include "animpoint.h"
 #include "branchitem.h"
 #include "geometry.h"
+#include "link-container.h"
 #include "mainwindow.h"
 #include "misc.h"
 #include "shortcuts.h"
