@@ -371,6 +371,8 @@ class VymModel : public TreeModel {
     void setIncludeImagesVer(bool);
     void setIncludeImagesHor(bool);
     void setChildrenLayout(BranchItem::LayoutHint layoutHint);
+    void setRotationHeading(const int &);
+    void setRotationInnerContent(const int &);
     void setHideLinkUnselected(bool);
 
     /*! Should object be hidden in exports (clouded)? */

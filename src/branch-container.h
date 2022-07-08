@@ -91,6 +91,12 @@ class BranchContainer : public Container {
 
     QRectF getHeadingRect();  //! Return rectangle of HeadingContainer in absolute coordinates
 
+    void setRotationHeading(const int &);
+    int getRotationHeading();
+    void setRotationInnerContent(const int &);
+    int getRotationInnerContent();
+
+
     bool isInClickBox(const QPointF &p);
 
     void updateVisuals();

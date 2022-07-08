@@ -33,6 +33,8 @@ class BranchPropertyEditor : public QDialog {
     void incImgVerChanged(int);
     void incImgHorChanged(int);
     void childrenFreePositioningChanged(int);
+    void rotationHeadingChanged(int);
+    void rotationInnerContentChanged(int);
     void taskPriorityDeltaChanged(int);
     void addAttributeClicked();
     void deleteAttributeClicked();
@@ -49,7 +51,6 @@ class BranchPropertyEditor : public QDialog {
 
     Ui::BranchPropertyEditor ui;
 
-    BranchObj *branchObj;
     BranchItem *branchItem;
     VymModel *model;
 

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>325</width>
+    <width>597</width>
     <height>376</height>
    </rect>
   </property>
@@ -23,7 +23,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>2</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
@@ -266,25 +266,71 @@
          <item>
           <widget class="QCheckBox" name="incImgHor">
            <property name="text">
-            <string>Include images horizontally</string>
+            <string>Include images horizontally (deprecated)</string>
            </property>
           </widget>
          </item>
          <item>
           <widget class="QCheckBox" name="incImgVer">
            <property name="text">
-            <string>Include images vertically</string>
+            <string>Include images vertically (deprecated)</string>
            </property>
           </widget>
          </item>
          <item>
           <widget class="QCheckBox" name="childrenFreePositioning">
            <property name="text">
-            <string>Free positioning of children (experimental!)</string>
+            <string>Free positioning of children (deprecated!)</string>
            </property>
           </widget>
          </item>
         </layout>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_2">
+         <property name="text">
+          <string>Rotation heading:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSlider" name="rotationHeadingSlider">
+         <property name="minimum">
+          <number>-90</number>
+         </property>
+         <property name="maximum">
+          <number>90</number>
+         </property>
+         <property name="singleStep">
+          <number>5</number>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_3">
+         <property name="text">
+          <string>Rotation inner content:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSlider" name="rotationInnerContentSlider">
+         <property name="minimum">
+          <number>-90</number>
+         </property>
+         <property name="maximum">
+          <number>90</number>
+         </property>
+         <property name="singleStep">
+          <number>5</number>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
        </item>
        <item>
         <spacer>

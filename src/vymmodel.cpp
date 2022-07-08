@@ -2401,6 +2401,24 @@ void VymModel::setIncludeImagesHor(bool b)
     }
 }
 
+void VymModel::setRotationHeading (const int &i) // FIXME-2 partially implemented
+{
+    BranchItem *bi = getSelectedBranch();
+    if (bi) {
+        BranchContainer *bc = bi->getBranchContainer();
+        bc->setRotationHeading(i);
+    }
+}
+
+void VymModel::setRotationInnerContent (const int &i) // FIXME-2 partially implemented
+{
+    BranchItem *bi = getSelectedBranch();
+    if (bi) {
+        BranchContainer *bc = bi->getBranchContainer();
+        bc->setRotationInnerContent(i);
+    }
+}
+
 void VymModel::setChildrenLayout(
     BranchItem::LayoutHint layoutHint) // FIXME-3 no savestate yet
 {

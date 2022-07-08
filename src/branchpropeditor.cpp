@@ -20,9 +20,8 @@ BranchPropertyEditor::BranchPropertyEditor(QWidget *parent)
 
     setWindowTitle(vymName + " - " + tr("Property Editor", "Window caption"));
 
-    branchObj = NULL;
-    branchItem = NULL;
-    model = NULL;
+    branchItem = nullptr;
+    model = nullptr;
 
     ui.tabWidget->setEnabled(false);
 
@@ -83,166 +82,170 @@ void BranchPropertyEditor::setItem(TreeItem *ti)
     else if (ti->hasTypeBranch()) {
         branchItem = (BranchItem *)ti;
 
-        branchObj = (BranchObj *)(branchItem->getLMO());
-        if (branchObj) // FIXME-4 replace by branchItem later, when Frame is
-                       // ported...
+        ui.tabWidget->setEnabled(true);
+        for (int i = 0; i < 4; ++i)
+            ui.tabWidget->setTabEnabled(i, true);
+        ui.tabWidget->setTabEnabled(4, false);
+
+        // Frame
+        /* FIXME-2 not ported yet FrameObj::FrameType t = branchObj->getFrameType();
+        if (t == FrameObj::NoFrame) // FIXME-3 Check if all below depends on
+                                    // frame type???
         {
-            ui.tabWidget->setEnabled(true);
-            for (int i = 0; i < 4; ++i)
-                ui.tabWidget->setTabEnabled(i, true);
-            ui.tabWidget->setTabEnabled(4, false);
+            ui.frameTypeCombo->setCurrentIndex(0);
+            penColor = Qt::white;
+            brushColor = Qt::white;
+            ui.colorGroupBox->setEnabled(false);
+            ui.framePaddingSpinBox->setEnabled(false);
+            ui.frameWidthSpinBox->setEnabled(false);
+            ui.framePaddingLabel->setEnabled(false);
+            ui.frameBorderLabel->setEnabled(false);
+            ui.includeChildrenCheckBox->setEnabled(false);
+            ui.includeChildrenCheckBox->setEnabled(false);
+        }
+        else {
+            penColor = branchObj->getFramePenColor();
+            brushColor = branchObj->getFrameBrushColor();
+            QPixmap pix(16, 16);
+            pix.fill(penColor);
+            ui.framePenColorButton->setIcon(pix);
+            pix.fill(brushColor);
+            ui.frameBrushColorButton->setIcon(pix);
+            ui.colorGroupBox->setEnabled(true);
+            ui.framePaddingSpinBox->setEnabled(true);
+            ui.framePaddingSpinBox->setValue(branchObj->getFramePadding());
+            ui.frameWidthSpinBox->setEnabled(true);
+            ui.frameWidthSpinBox->setValue(
+                branchObj->getFrameBorderWidth());
+            ui.framePaddingLabel->setEnabled(true);
+            ui.frameBorderLabel->setEnabled(true);
+            ui.includeChildrenCheckBox->setEnabled(true);
 
-            // Frame
-            FrameObj::FrameType t = branchObj->getFrameType();
-            if (t == FrameObj::NoFrame) // FIXME-3 Check if all below depends on
-                                        // frame type???
-            {
-                ui.frameTypeCombo->setCurrentIndex(0);
-                penColor = Qt::white;
-                brushColor = Qt::white;
-                ui.colorGroupBox->setEnabled(false);
-                ui.framePaddingSpinBox->setEnabled(false);
-                ui.frameWidthSpinBox->setEnabled(false);
-                ui.framePaddingLabel->setEnabled(false);
-                ui.frameBorderLabel->setEnabled(false);
-                ui.includeChildrenCheckBox->setEnabled(false);
-                ui.includeChildrenCheckBox->setEnabled(false);
+            switch (t) {
+            case FrameObj::Rectangle:
+                ui.frameTypeCombo->setCurrentIndex(1);
+                break;
+            case FrameObj::RoundedRectangle:
+                ui.frameTypeCombo->setCurrentIndex(2);
+                break;
+            case FrameObj::Ellipse:
+                ui.frameTypeCombo->setCurrentIndex(3);
+                break;
+            case FrameObj::Cloud:
+                ui.frameTypeCombo->setCurrentIndex(4);
+                break;
+            default:
+                break;
             }
-            else {
-                penColor = branchObj->getFramePenColor();
-                brushColor = branchObj->getFrameBrushColor();
-                QPixmap pix(16, 16);
-                pix.fill(penColor);
-                ui.framePenColorButton->setIcon(pix);
-                pix.fill(brushColor);
-                ui.frameBrushColorButton->setIcon(pix);
-                ui.colorGroupBox->setEnabled(true);
-                ui.framePaddingSpinBox->setEnabled(true);
-                ui.framePaddingSpinBox->setValue(branchObj->getFramePadding());
-                ui.frameWidthSpinBox->setEnabled(true);
-                ui.frameWidthSpinBox->setValue(
-                    branchObj->getFrameBorderWidth());
-                ui.framePaddingLabel->setEnabled(true);
-                ui.frameBorderLabel->setEnabled(true);
-                ui.includeChildrenCheckBox->setEnabled(true);
+            if (branchItem->getFrameIncludeChildren())
+                ui.includeChildrenCheckBox->setCheckState(Qt::Checked);
+            else
+                ui.includeChildrenCheckBox->setCheckState(Qt::Unchecked);
+        }
+        */
 
-                switch (t) {
-                case FrameObj::Rectangle:
-                    ui.frameTypeCombo->setCurrentIndex(1);
-                    break;
-                case FrameObj::RoundedRectangle:
-                    ui.frameTypeCombo->setCurrentIndex(2);
-                    break;
-                case FrameObj::Ellipse:
-                    ui.frameTypeCombo->setCurrentIndex(3);
-                    break;
-                case FrameObj::Cloud:
-                    ui.frameTypeCombo->setCurrentIndex(4);
-                    break;
-                default:
-                    break;
-                }
-                if (branchItem->getFrameIncludeChildren())
-                    ui.includeChildrenCheckBox->setCheckState(Qt::Checked);
-                else
-                    ui.includeChildrenCheckBox->setCheckState(Qt::Unchecked);
-            }
-            // Link
-            if (branchItem->getHideLinkUnselected())
-                ui.hideLinkIfUnselected->setCheckState(Qt::Checked);
-            else
-                ui.hideLinkIfUnselected->setCheckState(Qt::Unchecked);
+        // Link
+        if (branchItem->getHideLinkUnselected())
+            ui.hideLinkIfUnselected->setCheckState(Qt::Checked);
+        else
+            ui.hideLinkIfUnselected->setCheckState(Qt::Unchecked);
 
-            // Layout
-            if (branchItem->getIncludeImagesVer())
-                ui.incImgVer->setCheckState(Qt::Checked);
-            else
-                ui.incImgVer->setCheckState(Qt::Unchecked);
-            if (branchItem->getIncludeImagesHor())
-                ui.incImgHor->setCheckState(Qt::Checked);
-            else
-                ui.incImgHor->setCheckState(Qt::Unchecked);
-            if (branchItem->getChildrenLayout() == BranchItem::FreePositioning)
-                ui.childrenFreePositioning->setCheckState(Qt::Checked);
-            else
-                ui.childrenFreePositioning->setCheckState(Qt::Unchecked);
+        // Layout
+        if (branchItem->getIncludeImagesVer())
+            ui.incImgVer->setCheckState(Qt::Checked);
+        else
+            ui.incImgVer->setCheckState(Qt::Unchecked);
+        if (branchItem->getIncludeImagesHor())
+            ui.incImgHor->setCheckState(Qt::Checked);
+        else
+            ui.incImgHor->setCheckState(Qt::Unchecked);
+        if (branchItem->getChildrenLayout() == BranchItem::FreePositioning)
+            ui.childrenFreePositioning->setCheckState(Qt::Checked);
+        else
+            ui.childrenFreePositioning->setCheckState(Qt::Unchecked);
 
-            // Task
-            Task *task = branchItem->getTask();
-            if (task) {
-                ui.taskPrioDelta->setEnabled(true);
-                ui.taskPrioDelta->setValue(task->getPriorityDelta());
-                ui.lineEditDateCreation->setText(
-                    task->getDateCreation().toString() + " - " +
+        /*
+            ui.rotationHeadingSlider->setEnabled(false);
+            ui.rotationInnerContentSlider->setEnabled(false);
+            ui.rotationHeadingSlider->setEnabled(true);
+            ui.rotationInnerContentSlider->setEnabled(true);
+            */
+
+        // Task
+        Task *task = branchItem->getTask();
+        if (task) {
+            ui.taskPrioDelta->setEnabled(true);
+            ui.taskPrioDelta->setValue(task->getPriorityDelta());
+            ui.lineEditDateCreation->setText(
+                task->getDateCreation().toString() + " - " +
+                QString(tr("%1 days ago", "task related times"))
+                    .arg(task->getAgeCreation()));
+            QDateTime dt = task->getDateModification();
+            if (dt.isValid()) {
+                ui.lineEditDateModification->setText(
+                    dt.toString() + " - " +
                     QString(tr("%1 days ago", "task related times"))
-                        .arg(task->getAgeCreation()));
-                QDateTime dt = task->getDateModification();
-                if (dt.isValid()) {
-                    ui.lineEditDateModification->setText(
-                        dt.toString() + " - " +
-                        QString(tr("%1 days ago", "task related times"))
-                            .arg(task->getAgeModification()));
-                }
-                else {
-                    ui.lineEditDateModification->setText("");
-                }
-
-                dt = task->getSleep();
-                if (dt.isValid()) {
-                    QString s;
-                    qint64 daysSleep = task->getDaysSleep();
-                    daysSleep >= 0 ? s = QString(dt.toString() + " - " +
-                                                 tr("sleeping %1 days",
-                                                    "task related times"))
-                                             .arg(daysSleep)
-                                   : s = QString(tr("Task is awake",
-                                                    "task related times"));
-                    ui.lineEditSleep->setText(s);
-                }
-                else {
-                    ui.lineEditSleep->setText("");
-                }
+                        .arg(task->getAgeModification()));
             }
             else {
-                ui.taskPrioDelta->setEnabled(false);
-                ui.taskPrioDelta->setValue(0);
-                ui.lineEditDateCreation->setText("");
                 ui.lineEditDateModification->setText("");
+            }
+
+            dt = task->getSleep();
+            if (dt.isValid()) {
+                QString s;
+                qint64 daysSleep = task->getDaysSleep();
+                daysSleep >= 0 ? s = QString(dt.toString() + " - " +
+                                             tr("sleeping %1 days",
+                                                "task related times"))
+                                         .arg(daysSleep)
+                               : s = QString(tr("Task is awake",
+                                                "task related times"));
+                ui.lineEditSleep->setText(s);
+            }
+            else {
                 ui.lineEditSleep->setText("");
             }
-
-        // Attributes
-        attributeModel->removeRows(0, attributeModel->rowCount(), QModelIndex());
-
-        for (int i = 0; i < branchItem->attributeCount(); i++)
-        {
-            AttributeItem *ai = branchItem->getAttributeNum(i);
-            if (ai) {
-                attributeModel->insertRow (i, QModelIndex ());
-                attributeModel->setData(attributeModel->index(i, 0, QModelIndex()),
-                    ai->getKey());
-                attributeModel->setData(attributeModel->index(i, 1, QModelIndex()),
-                    ai->getValue().toString());
-                attributeModel->setData(attributeModel->index(i, 2, QModelIndex()),
-                    ai->getAttributeTypeString());
-            }
+        }
+        else {
+            ui.taskPrioDelta->setEnabled(false);
+            ui.taskPrioDelta->setValue(0);
+            ui.lineEditDateCreation->setText("");
+            ui.lineEditDateModification->setText("");
+            ui.lineEditSleep->setText("");
         }
 
-        ui.attributeTableView->resizeColumnsToContents();
+    // Attributes
+    attributeModel->removeRows(0, attributeModel->rowCount(), QModelIndex());
 
-        // Initialize Delegate
-        //attributeDelegate.setAttributeTable (mapEditor->attributeTable());
-        //ui.attributeTableView->setItemDelegate (&attributeDelegate);
-
-        } // BranchItem
+    for (int i = 0; i < branchItem->attributeCount(); i++)
+    {
+        AttributeItem *ai = branchItem->getAttributeNum(i);
+        if (ai) {
+            attributeModel->insertRow (i, QModelIndex ());
+            attributeModel->setData(attributeModel->index(i, 0, QModelIndex()),
+                ai->getKey());
+            attributeModel->setData(attributeModel->index(i, 1, QModelIndex()),
+                ai->getValue().toString());
+            attributeModel->setData(attributeModel->index(i, 2, QModelIndex()),
+                ai->getAttributeTypeString());
+        }
     }
+
+    ui.attributeTableView->resizeColumnsToContents();
+
+    // Initialize Delegate  // FIXME-2 still needed?
+    //attributeDelegate.setAttributeTable (mapEditor->attributeTable());
+    //ui.attributeTableView->setItemDelegate (&attributeDelegate);
+
+    } // BranchItem
     else if (ti->getType() == TreeItem::Image) {
         ui.tabWidget->setEnabled(true);
         for (int i = 0; i < ui.tabWidget->count(); ++i)
             ui.tabWidget->setTabEnabled(i, false);
         ui.tabWidget->setTabEnabled(3, true);
         ui.tabWidget->setCurrentIndex(3);
-    }
+    } // ImageItem
     else if (ti->getType() == TreeItem::Attribute) {
         ui.tabWidget->setEnabled(true);
         for (int i = 0; i < 3; ++i)
@@ -355,6 +358,18 @@ void BranchPropertyEditor::childrenFreePositioningChanged(int i)
     }
 }
 
+void BranchPropertyEditor::rotationHeadingChanged(int i)
+{
+    if (model)
+        model->setRotationHeading(i);
+}
+
+void BranchPropertyEditor::rotationInnerContentChanged(int i)
+{
+    if (model)
+        model->setRotationInnerContent(i);
+}
+
 void BranchPropertyEditor::taskPriorityDeltaChanged(int n)
 {
     if (model)
@@ -430,6 +445,10 @@ void BranchPropertyEditor::connectSignals()
             SLOT(incImgHorChanged(int)));
     connect(ui.childrenFreePositioning, SIGNAL(stateChanged(int)), this,
             SLOT(childrenFreePositioningChanged(int)));
+    connect(ui.rotationHeadingSlider, SIGNAL(valueChanged(int)), this,
+            SLOT(rotationHeadingChanged(int)));
+    connect(ui.rotationInnerContentSlider, SIGNAL(valueChanged(int)), this,
+            SLOT(rotationInnerContentChanged(int)));
 
     // Tasks
     connect(ui.taskPrioDelta, SIGNAL(valueChanged(int)), this,
@@ -467,6 +486,8 @@ void BranchPropertyEditor::disconnectSignals()
     disconnect(ui.incImgVer, 0, 0, 0);
     disconnect(ui.incImgHor, 0, 0, 0);
     disconnect(ui.childrenFreePositioning, 0, 0, 0);
+    disconnect(ui.rotationHeadingSlider, 0, 0, 0);
+    disconnect(ui.rotationInnerContentSlider, 0, 0, 0);
 
     // Task
     disconnect(ui.taskPrioDelta, 0, 0, 0);

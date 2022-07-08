@@ -449,6 +449,28 @@ QRectF BranchContainer::getHeadingRect()
     return QRectF(p.x(), p.y(), headingContainer->rect().width(), headingContainer->rect().height());
 }
 
+void BranchContainer::setRotationHeading(const int &a)
+{
+    headingContainer->setTransformOriginPoint(headingContainer->rect().center());
+    headingContainer->setRotation(a);
+}
+
+int BranchContainer::getRotationHeading()
+{
+    return std::round(headingContainer->rotation());
+}
+
+void BranchContainer::setRotationInnerContent(const int &a)
+{
+    innerContainer->setTransformOriginPoint(innerContainer->rect().center());
+    innerContainer->setRotation(a);
+}
+
+int BranchContainer::getRotationInnerContent()
+{
+    return std::round(innerContainer->rotation());
+}
+
 bool BranchContainer::isInClickBox(const QPointF &p)
 {
     return headingContainer->rect().contains(headingContainer->mapFromScene(p));
