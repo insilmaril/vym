@@ -24,12 +24,6 @@ class LinkContainer : public Container {
         PolyParabel     //!< Thick parabel
     };
 
-    /*! Vertical position of link in object */
-    enum Position {
-        Middle, //!< Link is drawn in the middle of object
-        Bottom  //!< Link is drawn at bottom of object
-    };
-
     /*! Hint if link should use the default link color or the color of heading
      */
     enum ColorHint {
@@ -41,49 +35,40 @@ class LinkContainer : public Container {
     virtual ~LinkContainer();
 
   protected:
-    virtual void init();
-    virtual void createBottomLine();
+    void init();
+    void createBottomLine();
+    void deleteBottomLine();
 
   public:
-    virtual void delLink();
-    virtual void copy(LinkContainer *);
+    void delLink();
+    void copy(LinkContainer *);
 
     void setLinkStyle(Style);
     Style getLinkStyle();
 
-    void setLinkPos(Position);
-    Position getLinkPos();
-
-    virtual void setLinkColor(QColor);
+    void setLinkColor(QColor);
     QColor getLinkColor();
-    virtual void setVisibility(bool);
-    virtual void updateVisibility(); //! hides/unhides link depending on selection
+    void setVisibility(bool);
+    void updateVisibility(); //! hides/unhides link depending on selection
 
     /*! update parPos, childRefPos depending on pos redraw link with given style */
-    virtual void updateLinkGeometry();
+    void updateLinkGeometry();
 
-    virtual void setDockPos();     // sets childRefPos and parPos   // FIXME-1 pure in LMO
-    QPointF getChildRefPos();      // returns pos where children dock
-    QPointF getFloatRefPos();      // returns pos where floats dock
-    void setLinkPosParent(const QPointF&);  // Upwards link pos, parents end (local coord)
-    QPointF getLinkPosParent();
+    void setUpLinkPosParent(const QPointF&);  // Upwards link pos, parents end (local coord)
+    void setUpLinkPosSelf(const QPointF&);    // Upwards own link pos (local coord)
+    void setDownLinkPos(const QPointF&);      // Upwards own link pos (local coord)
 
     void reposition();
 
   protected:
     void parabel(QPolygonF &, qreal, qreal, qreal, qreal); // Create Parabel connecting two points
 
-    QPointF childRefPos;
-    QPointF floatRefPos;
-    QPointF linkPosParent;
-    bool link2ParPos; // While moving around, sometimes link to parent
-    LinkContainer *parentLinkContainer;    // FIXME-0 needed?
-
-    qreal linkwidth;  // width of a link
+    QPointF upLinkPosParent;
+    QPointF upLinkPosSelf;
+    QPointF downLinkPos;
 
     int thickness_start; // for StylePoly*
     Style style;         // Current style
-    Position linkpos;    // Link at bottom of object or middle of height
     QColor linkcolor;    // Link color
     QPen pen;
     QGraphicsLineItem *l;               // line style
@@ -94,8 +79,6 @@ class LinkContainer : public Container {
     QPolygonF pa1; // For drawing of PolyParabel
     QPolygonF pa2; // For drawing of PolyParabel
 
-    QGraphicsLineItem *bottomline; // on bottom of BBox
-    bool useBottomline;            //! Hint if bottomline should be used
-    qreal bottomlineY;             // vertical offset of dockpos to pos
+    QGraphicsLineItem *bottomLine; // on bottom of BBox
 };
 #endif

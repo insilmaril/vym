@@ -200,10 +200,12 @@ void BranchContainer::updateBranchesContainer()
         // no children branches, remove unused containers
         if (linkSpaceContainer) {
             delete linkSpaceContainer;
-            linkSpaceContainer == nullptr;
+            linkSpaceContainer = nullptr;
         }
-        delete branchesContainer;
-        branchesContainer == nullptr;
+        if (branchesContainer) {
+            delete branchesContainer;
+            branchesContainer = nullptr;
+        }
     } else {
         // Create containers (if required)
         if (!branchesContainer) 
@@ -413,7 +415,8 @@ void BranchContainer::updateUpLink(const QPointF &parent_sp)
         pbi 
     */
     } else {
-        linkContainer->setLinkPosParent(linkContainer->sceneTransform().inverted().map(parent_sp));
+        linkContainer->setUpLinkPosParent(linkContainer->sceneTransform().inverted().map(parent_sp));
+        linkContainer->setDownLinkPos(linkContainer->sceneTransform().inverted().map(parent_sp));
     }
 
     linkContainer->updateLinkGeometry();

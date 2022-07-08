@@ -3624,15 +3624,8 @@ TreeItem *VymModel::deleteItem(TreeItem *ti)
 
         int n = ti->childNum();
         beginRemoveRows(parentIndex, n, n);
-        removeRows(n, 1, parentIndex);
+        removeRows(n, 1, parentIndex);  // Deletes object!
         endRemoveRows();
-
-        // Size of parent branch might change when deleting images
-        if (t == TreeItem::Image) {
-            BranchObj *bo = (BranchObj *)(((BranchItem *)pi)->getMO());
-            if (bo)
-                bo->calcBBoxSize();
-        }
 
         reposition();
 
@@ -3645,7 +3638,7 @@ TreeItem *VymModel::deleteItem(TreeItem *ti)
         if (pi->depth() >= 0)
             return pi;
     }
-    return NULL;
+    return nullptr;
 }
 
 void VymModel::deleteLink(Link *l)

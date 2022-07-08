@@ -1846,7 +1846,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
         // layout and "original" parent
         Container *c = tmpParentContainer->getBranchesContainer();
         if (c && !c->childItems().isEmpty()) {
-            // Consider orientation of *last* selected branch   // FIXME-0 meanwhile use *first* branch of movingItems
+            // Consider orientation of *last* selected branch   // FIXME-1 meanwhile use *first* branch of movingItems
             BranchContainer *bc = (BranchContainer*)(c->childItems().last());
             if (bc->isOriginalFloating())  {
                 if (tmpParentContainer->pos().x() > bc->getOriginalParentPos().x())
@@ -1882,13 +1882,13 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
             BranchContainer *bc = ((BranchItem*)ti)->getBranchContainer();
             if (tmpParentContainer->isTemporaryLinked()) {
                 if (targetBranchContainer)
-                    bc->getLinkContainer()->setLinkPosParent(targetBranchContainer->scenePos() - bc->scenePos());
+                    bc->getLinkContainer()->setUpLinkPosParent(targetBranchContainer->scenePos() - bc->scenePos());
                 else
                     qWarning() << "ME::moveObject temporary linked but no targetBranchContainer!";
             } else {
                 if (bc->getBranchItem()->depth() > 0) {
                     QPointF parent_sp = bc->getBranchItem()->parentBranch()->getBranchContainer()->getDownLinkScenePos();
-                    bc->getLinkContainer()->setLinkPosParent(parent_sp - bc->scenePos());
+                    bc->getLinkContainer()->setUpLinkPosParent(parent_sp - bc->scenePos());
                 }
             }
             // bc->updateUpLink(); // FIXME-000 during moving

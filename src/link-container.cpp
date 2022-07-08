@@ -27,17 +27,11 @@ void LinkContainer::init()
 {
     type = Link;
 
-    linkPosParent = QPointF(0, 0); // FIXME-2 cleanup declarations below
-    childRefPos = QPointF(0, 0);
-    floatRefPos = QPointF(0, 0);
-    link2ParPos = false;
     l = nullptr;
     p = nullptr;
     linkcolor = Qt::red;
-    linkwidth = 20;
     thickness_start = 8;
     style = NoLink;
-    linkpos = Bottom;
     arcsegs = 13;
 
     // FIXME-2 instead of linkcolor pen.color() could be used all around
@@ -45,25 +39,30 @@ void LinkContainer::init()
     pen.setColor(linkcolor);
     pen.setCapStyle(Qt::RoundCap);
 
-    useBottomline = false;
-    bottomline = nullptr;
+    bottomLine = nullptr;
 }
 
 void LinkContainer::createBottomLine()
 {
     return; //FIXME-0 createBottomLine
     qDebug() << "LC::createBottomLine";
-    bottomline = new QGraphicsLineItem(this);
-    bottomline->setPen(pen);
-    bottomline->setZValue(dZ_LINK);
+    bottomLine = new QGraphicsLineItem(this);
+    bottomLine->setPen(pen);
+    bottomLine->setZValue(dZ_LINK);
+}
+
+void LinkContainer::deleteBottomLine()
+{
+    if (bottomLine) {
+        delete bottomLine;
+        bottomLine = nullptr;
+    }
 }
 
 void LinkContainer::delLink()
 {
-    if (bottomline) {
-        delete bottomline;
-        bottomline = nullptr;
-    }
+    deleteBottomLine();
+
     switch (style) {
     case Line:
         delete (l);
@@ -149,16 +148,12 @@ void LinkContainer::setLinkStyle(Style newstyle)
 
 LinkContainer::Style LinkContainer::getLinkStyle() { return style; }
 
-void LinkContainer::setLinkPos(Position lp) { linkpos = lp; }   // FIXME-1 used?
-
-LinkContainer::Position LinkContainer::getLinkPos() { return linkpos; } // FIXME-1 used?
-
 void LinkContainer::setLinkColor(QColor col)
 {
     linkcolor = col;
     pen.setColor(col);
-    if (bottomline)
-        bottomline->setPen(pen);
+    if (bottomLine)
+        bottomLine->setPen(pen);
     switch (style) {
     case Line:
         l->setPen(pen);
@@ -200,12 +195,8 @@ void LinkContainer::updateVisibility()
     */
 
     if (visnow) {
-        if (bottomline) {
-            if (useBottomline)
-                bottomline->show();
-            else
-                bottomline->hide();
-        }
+        if (bottomLine) 
+            bottomLine->show();
 
         switch (style) {
         case Line:
@@ -234,8 +225,8 @@ void LinkContainer::updateVisibility()
         }
     }
     else {
-        if (bottomline)
-            bottomline->hide();
+        if (bottomLine)
+            bottomLine->hide();
         switch (style) {
         case Line:
             if (l)
@@ -262,56 +253,27 @@ void LinkContainer::updateVisibility()
 void LinkContainer::updateLinkGeometry()
 {
     // needs:
-    //	childRefPos of parent
+    //	upLinkPosParent
+    //	linkPosSelf
     //	orient   of parent
     //	style
     //
     // sets:
-    //	childRefPos    (by calling setDockPos())
-    //	parentPos	    (by calling setDockPos())
     //  bottomlineY
     //	drawing of the link itself
 
-    // updateLinkGeometry is called from move, but called from constructor we
-    // don't have parents yet...
-
     if (style == NoLink) {
-        setDockPos();
+        // FIXME-0 no longer used setDockPos();
         return;
     }
 
-    switch (linkpos) {
-        case Middle:
-            //FIXME-0 bottomlineY = bbox.top() + bbox.height() / 2; // draw link to middle (of frame)
-            break;
-        case Bottom:
-            // bottomlineY = bbox.bottom()-1;  // draw link to bottom of box
-            // FIXME-0 bottomlineY = bbox.bottom(); // FIXME-1 - botPad;
-            break;
-    }
+    double p1x = upLinkPosParent.x(); // Link is drawn from P1 to P2
+    double p1y = upLinkPosParent.y();
 
-    double p2x, p2y; // Set P2 Before setting
-    /* FIXME-0 no real parents yet
-    if (!link2ParPos) {
-        p2x = QPointF(parentLinkContainer->getChildRefPos()).x(); // P1, we have to look at
-        p2y = QPointF(parentLinkContainer->getChildRefPos()).y(); // orientation
-    }
-    else {
-        p2x = QPointF(parentLinkContainer->getParentPos()).x();
-        p2y = QPointF(parentLinkContainer->getParentPos()).y();
-    }
-    */
+    double p2x = upLinkPosSelf.x();
+    double p2y = upLinkPosSelf.y();
 
-    p2x = pos().x();
-    p2y = parentContainer()->rect().bottom();   // Parent container is ornamentsContainer
-
-    //FIXME-1 no longer here: setOrientation();
-    //FIXME-1 still needed? setDockPos(); // Call overloaded method
-
-    double p1x = linkPosParent.x(); // Link is drawn from P1 to P2
-    double p1y = linkPosParent.y();
-
-    double vx = p2x - p1x; // V=P2-P1
+    double vx = p2x - p1x;
     double vy = p2y - p1y;
 
     int z;
@@ -325,12 +287,10 @@ void LinkContainer::updateLinkGeometry()
         z = dZ_LINK;
     */
 
-    // qDebug() << "LC::updateGeo d=" << treeItem->depth() << "  this=" << this << << treeItem->getHeading();
-
     // Draw the horizontal line below heading (from childRefPos to parentPos)
-    if (bottomline) {
-        bottomline->setLine(QLineF(childRefPos.x(), childRefPos.y(), p1x, p1y));
-        bottomline->setZValue(z);
+    if (bottomLine) {
+        bottomLine->setLine(QLineF(p1x, p1y, p2x, p2y));
+        bottomLine->setZValue(z);
     }
 
     double a; // angle
@@ -339,8 +299,8 @@ void LinkContainer::updateLinkGeometry()
     else
         a = atan(vy / vx);
     // "turning point" for drawing polygonal links
-    QPointF tp(-qRound(sin(a) * thickness_start),
-               qRound(cos(a) * thickness_start));
+    QPointF tp(-qRound(sin(a) * thickness_start),   // FIXME-2 qround needed?
+                qRound(cos(a) * thickness_start));
 
     // Draw the link
     switch (style) {
@@ -361,9 +321,9 @@ void LinkContainer::updateLinkGeometry()
             break;
         case PolyLine:
             pa0.clear();
-            pa0 << QPointF(qRound(p2x + tp.x()), qRound(p2y + tp.y()));
-            pa0 << QPointF(qRound(p2x - tp.x()), qRound(p2y - tp.y()));
-            pa0 << QPointF(qRound(linkPosParent.x()), qRound(linkPosParent.y()));
+            pa0 << QPointF(p2x + tp.x(), p2y + tp.y());
+            pa0 << QPointF(p2x - tp.x(), p2y - tp.y());
+            pa0 << QPointF(upLinkPosParent.x(), upLinkPosParent.y());
             p->setPolygon(QPolygonF(pa0));
             p->setZValue(z);
             break;
@@ -383,21 +343,20 @@ void LinkContainer::updateLinkGeometry()
         }
     }
 
-void LinkContainer::setDockPos() {}  // FIXME-0  needed? rework...
-
-QPointF LinkContainer::getChildRefPos() { return childRefPos; }
-
-QPointF LinkContainer::getFloatRefPos() { return floatRefPos; }
-
-void LinkContainer::setLinkPosParent(const QPointF& sp)
+void LinkContainer::setUpLinkPosParent(const QPointF& p)
 {
-    // sp is the scene position where the link starts on parent side
-    // this is e.g. a lower corner of the ornamentscontainer 
-    // (depending on orientation)
-    linkPosParent = sp;
+    upLinkPosParent = p;
 }
 
-QPointF LinkContainer::getLinkPosParent() { return linkPosParent; }
+void LinkContainer::setUpLinkPosSelf(const QPointF& p)
+{
+    upLinkPosSelf = p;
+}
+
+void LinkContainer::setDownLinkPos(const QPointF& p)
+{
+    downLinkPos= p;
+}
 
 void LinkContainer::parabel(QPolygonF &ya, qreal p1x, qreal p1y, qreal p2x,
                              qreal p2y)
@@ -420,7 +379,7 @@ void LinkContainer::parabel(QPolygonF &ya, qreal p1x, qreal p1y, qreal p2x,
     ya << QPointF(p1x, p1y);
     for (int i = 1; i <= arcsegs; i++) {
         pnx = p1x + dx;
-        pny = m * (pnx - linkPosParent.x()) * (pnx - linkPosParent.x()) + linkPosParent.y();
+        pny = m * (pnx - upLinkPosParent.x()) * (pnx - upLinkPosParent.x()) + upLinkPosParent.y();
         ya << QPointF(pnx, pny);
         p1x = pnx;
         p1y = pny;
