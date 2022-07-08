@@ -403,7 +403,7 @@ QPointF BranchContainer::getDownLinkScenePos()   // FIXME-0 unused for now, also
     } 
 }
 
-void BranchContainer::updateUpLink(const QPointF &parent_pos)
+void BranchContainer::updateUpLink(const QPointF &parent_sp)
 {
     if (branchItem->depth() == 0) return;
 
@@ -413,8 +413,7 @@ void BranchContainer::updateUpLink(const QPointF &parent_pos)
         pbi 
     */
     } else {
-        //QPointF parent_sp = branchItem->parentBranch()->getBranchContainer()->getDownLinkScenePos();
-        linkContainer->setLinkPosParent(parent_pos);
+        linkContainer->setLinkPosParent(linkContainer->sceneTransform().inverted().map(parent_sp));
     }
 
     linkContainer->updateLinkGeometry();
@@ -599,15 +598,17 @@ void BranchContainer::reposition()
         foreach (QGraphicsItem *g_item, branchesContainer->childItems()) {
             BranchContainer *bc = (BranchContainer*) g_item;
 
-            // RightOfParent
-            qDebug() << "BC::repos Line of " << bc->getBranchItem()->getHeadingPlain();
-            //qDebug() << "  branches: " << bc->branchesContainer->pos() << bc->branchesContainer;
-            qDebug() << "      inner: " << bc->innerContainer->pos() << bc->innerContainer;
-            qDebug() << "       orna: " << bc->ornamentsContainer->pos() << bc->ornamentsContainer;
-            qDebug() << "       link: " << bc->linkContainer->pos() << bc->linkContainer;
-            qDebug() << "bottomRight: " << ornamentsContainer->rect().bottomRight();
-            qDebug() << "     mapped: " << mapToItem(bc, ornamentsContainer->rect().bottomRight());
-            bc->updateUpLink(mapToItem(bc, ornamentsContainer->rect().bottomRight()));
+            switch (bc->getOrientation()) {
+                case RightOfParent:
+                    bc->updateUpLink(ornamentsContainer->mapToScene(ornamentsContainer->rect().bottomRight()));
+                    break;
+                case LeftOfParent:
+                    bc->updateUpLink(ornamentsContainer->mapToScene(ornamentsContainer->rect().bottomLeft()));
+                    break;
+                default:
+                    bc->updateUpLink(ornamentsContainer->mapToScene(ornamentsContainer->rect().center()));
+                    break;
+            }
         }
     }
 }

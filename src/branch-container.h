@@ -82,7 +82,7 @@ class BranchContainer : public Container {
     QPointF getDownLinkScenePos();
 
     /*! Update "upwards" links in LinkContainer */
-    void updateUpLink(const QPointF &parent_pos);
+    void updateUpLink(const QPointF &parent_sp);
 
     virtual void setLayoutType(const LayoutType &ltype);
 

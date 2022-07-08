@@ -101,7 +101,6 @@ void LinkContainer::setLinkStyle(Style newstyle)
     QGraphicsLineItem *cl;
     switch (style) {
         case Line:
-            qDebug() << "LC::setLinkStyle new line  vis= "  << visible;
             l = new QGraphicsLineItem(this);
             l->setPen(pen);
             //l->setZValue(dZ_LINK);
@@ -350,7 +349,6 @@ void LinkContainer::updateLinkGeometry()
             l->setZValue(z);
             l->setPos(0,0);
             setPos(0,0);
-            qDebug() << "Drawing line" << l->line() << "pos=" << pos();// << "scenePos =" << scenePos() << "parent: " << mapToScene(linkPosParent); // FIXME-2
             break;
         case Parabel:
             parabel(pa0, p1x, p1y, p2x, p2y);
@@ -391,9 +389,12 @@ QPointF LinkContainer::getChildRefPos() { return childRefPos; }
 
 QPointF LinkContainer::getFloatRefPos() { return floatRefPos; }
 
-void LinkContainer::setLinkPosParent(const QPointF& p)
+void LinkContainer::setLinkPosParent(const QPointF& sp)
 {
-    linkPosParent = p;
+    // sp is the scene position where the link starts on parent side
+    // this is e.g. a lower corner of the ornamentscontainer 
+    // (depending on orientation)
+    linkPosParent = sp;
 }
 
 QPointF LinkContainer::getLinkPosParent() { return linkPosParent; }
