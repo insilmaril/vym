@@ -47,7 +47,6 @@ void BranchContainer::init()
     // FIXME-2 not available atm ornamentsContainer->setVerticalAligment(" centered ");
 
     linkContainer = new LinkContainer();
-    linkContainer->setPos(0,0); // FIXME-0 testing
 
     innerContainer = new Container ();
     innerContainer->type = InnerContent;
