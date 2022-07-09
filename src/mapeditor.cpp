@@ -343,16 +343,11 @@ void MapEditor::animate()
     foreach (Container *c, animatedContainers) {
         c->animate();
 
-        // Update links
-        /*
-        if (c->containerType() == Container::Branch) {
-            ((BranchContainer*)c)->updateUpLink();  // FIXME-0 during animation
-        }
-        */
+        if (c->containerType() == Container::Branch)
+            ((BranchContainer*)c)->updateUpLink();
 
-        if (!c->isAnimated()) {
+        if (!c->isAnimated()) 
             animatedContainers.removeAll(c);
-        }
     }
     model->emitSelectionChanged();
 
@@ -1876,23 +1871,12 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
     }
     */
 
-    // Update links // FIXME-0 maybe add updateLinkeGeometry also to BranchContainer class?
+    // Update links
     foreach (TreeItem *ti, movingItems)
     {
         if (ti->hasTypeBranch()) {  // FIXME-1 later it should work the same for images!
             BranchContainer *bc = ((BranchItem*)ti)->getBranchContainer();
-            if (tmpParentContainer->isTemporaryLinked()) {
-                if (targetBranchContainer)
-                    bc->getLinkContainer()->setUpLinkPosParent(targetBranchContainer->scenePos() - bc->scenePos());
-                else
-                    qWarning() << "ME::moveObject temporary linked but no targetBranchContainer!";
-            } else {
-                if (bc->getBranchItem()->depth() > 0) {
-                    QPointF parent_sp = bc->getBranchItem()->parentBranch()->getBranchContainer()->getDownLinkScenePos();
-                    bc->getLinkContainer()->setUpLinkPosParent(parent_sp - bc->scenePos());
-                }
-                bc->updateUpLink(QPointF(0, 0)); // FIXME-000 during moving
-            }
+            bc->updateUpLink();
         }
     }
             
@@ -1907,7 +1891,6 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
 }
 
 void MapEditor::mouseReleaseEvent(QMouseEvent *e)   // FIXME-0 Moving does not work for MapCenters
-// FIXME-0 void MapEditor::mouseReleaseEvent  releaseing images crashes
 {
     // Allow selecting text in QLineEdit if necessary
     if (model->isSelectionBlocked()) {

@@ -405,7 +405,7 @@ QPointF BranchContainer::getDownLinkScenePos()   // FIXME-0 unused for now, also
     } 
 }
 
-void BranchContainer::updateUpLink(const QPointF &parent_sp)
+void BranchContainer::updateUpLink()
 {
     if (branchItem->depth() == 0) return;
 
@@ -415,6 +415,21 @@ void BranchContainer::updateUpLink(const QPointF &parent_sp)
         pbi 
     */
     } else {
+        // Get "real" parentBranchContainer, not tmpParentContainer (!)
+        BranchContainer *pbc = branchItem->parentBranch()->getBranchContainer();
+
+        QPointF parent_sp;
+        switch (orientation) {
+            case RightOfParent:
+                parent_sp = pbc->ornamentsContainer->mapToScene(pbc->ornamentsContainer->rect().bottomRight());
+                break;
+            case LeftOfParent:
+                parent_sp = pbc->ornamentsContainer->mapToScene(pbc->ornamentsContainer->rect().bottomLeft());
+                break;
+            default:
+                parent_sp = pbc->ornamentsContainer->mapToScene(pbc->ornamentsContainer->rect().center());
+                break;
+        }
         linkContainer->setUpLinkPosParent(linkContainer->sceneTransform().inverted().map(parent_sp));
         linkContainer->setDownLinkPos(linkContainer->sceneTransform().inverted().map(parent_sp));
     }
@@ -520,7 +535,7 @@ void BranchContainer::reposition()
                 if (depth == 0) 
                     orientation = UndefinedOrientation;
                 else {
-                    if (parentBranchContainer()->orientation == UndefinedOrientation) {
+                    if (pbc->orientation == UndefinedOrientation) {
                         // Parent is tmpParentContainer or mapCenter
                         // use relative position to determine orientation
                         if (pos().x() > 0)
@@ -529,7 +544,7 @@ void BranchContainer::reposition()
                             orientation = LeftOfParent;
                     } else {
                         // Set same orientation as parent
-                        setOrientation(parentBranchContainer()->orientation);
+                        setOrientation(pbc->orientation);
                     }
                 }
             }   // regular repositioning
@@ -622,18 +637,7 @@ void BranchContainer::reposition()
     if (branchesContainer && branchCount() > 0) {
         foreach (QGraphicsItem *g_item, branchesContainer->childItems()) {
             BranchContainer *bc = (BranchContainer*) g_item;
-
-            switch (bc->getOrientation()) {
-                case RightOfParent:
-                    bc->updateUpLink(ornamentsContainer->mapToScene(ornamentsContainer->rect().bottomRight()));
-                    break;
-                case LeftOfParent:
-                    bc->updateUpLink(ornamentsContainer->mapToScene(ornamentsContainer->rect().bottomLeft()));
-                    break;
-                default:
-                    bc->updateUpLink(ornamentsContainer->mapToScene(ornamentsContainer->rect().center()));
-                    break;
-            }
+            bc->updateUpLink();
         }
     }
 }
