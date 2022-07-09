@@ -138,10 +138,9 @@ bool BranchContainer::isOriginalFloating()
     return originalFloating;
 }
 
-void BranchContainer::setTemporaryLinked(const QPointF &sp)
+void BranchContainer::setTemporaryLinked()
 {
     temporaryLinked = true;
-    upLinkBeginScenePos = sp;
 }
 
 void BranchContainer::unsetTemporaryLinked()
@@ -390,18 +389,6 @@ QPointF BranchContainer::getPositionHintRelink(Container *c, int d_pos, const QP
     }
 
     return hint;
-}
-
-QPointF BranchContainer::getDownLinkScenePos()   // FIXME-0 unused for now, also depends on orientation, frame, ...
-{
-    switch (orientation) {  // FIXME-0 is orientation correct??? AND: Is this required?
-        case LeftOfParent:
-            return ornamentsContainer->mapToScene(ornamentsContainer->rect().bottomLeft());
-        case RightOfParent:
-            return ornamentsContainer->mapToScene(ornamentsContainer->rect().bottomRight());
-        default:
-            return ornamentsContainer->mapToScene(ornamentsContainer->rect().bottomRight());
-    } 
 }
 
 void BranchContainer::updateUpLink()

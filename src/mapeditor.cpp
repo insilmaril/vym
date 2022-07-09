@@ -1750,9 +1750,8 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
         else
             d_pos = 0;
         tmpParentContainer->setPos(targetBranchContainer->getPositionHintRelink(tmpParentContainer, d_pos, p_event));
-        if (!tmpParentContainer->isTemporaryLinked()) {
-            tmpParentContainer->setTemporaryLinked(targetBranchContainer->getDownLinkScenePos());
-        }
+        if (!tmpParentContainer->isTemporaryLinked())
+            tmpParentContainer->setTemporaryLinked();
     } else {
         // Since moved containers are relative to tmpParentContainer anyway, just move 
         // tmpParentContainer to pointer position:

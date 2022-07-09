@@ -36,9 +36,9 @@ class BranchContainer : public Container {
 
   private:
     bool temporaryLinked;   //! True, while moved as child of tmpParentContainer and linked temporary
-    QPointF upLinkBeginScenePos;
+
   public:
-    void setTemporaryLinked(const QPointF &sp);  // scene pos, where uplink starts
+    void setTemporaryLinked();
     void unsetTemporaryLinked();
     bool isTemporaryLinked();
 
@@ -75,9 +75,6 @@ class BranchContainer : public Container {
 
     /*! Get suggestion where a relinked child could be positioned (scene coord) */
     QPointF getPositionHintRelink(Container*, int d_pos = 0, const QPointF & p_scene = QPointF());
-
-    /*! Get position where link to children starts (scene coord) */
-    QPointF getDownLinkScenePos();
 
     /*! Update "upwards" links in LinkContainer */
     void updateUpLink();
