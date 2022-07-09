@@ -354,7 +354,7 @@ void Container::reposition()
                     c = (Container*) child;
 
                     if (c->rotation() != 0) // FIXME-2 testing
-                        qDebug() << "Rotation: a=" << c->rotation() << "bR=" << c->boundingRect() << "r=" << c->rect(); 
+                        qDebug() << "Rotation of " << c->info() << " a=" << c->rotation() << "bR=" << c->boundingRect() << "r=" << c->rect(); 
 
                     // For calculation of heights, widths move everything to origin
                     if (!positionFixed)

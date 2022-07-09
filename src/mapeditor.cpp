@@ -1891,8 +1891,8 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
                     QPointF parent_sp = bc->getBranchItem()->parentBranch()->getBranchContainer()->getDownLinkScenePos();
                     bc->getLinkContainer()->setUpLinkPosParent(parent_sp - bc->scenePos());
                 }
+                bc->updateUpLink(QPointF(0, 0)); // FIXME-000 during moving
             }
-            // bc->updateUpLink(); // FIXME-000 during moving
         }
     }
             

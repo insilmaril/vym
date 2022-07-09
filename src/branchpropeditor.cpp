@@ -76,7 +76,7 @@ BranchPropertyEditor::~BranchPropertyEditor()
 
 void BranchPropertyEditor::setItem(TreeItem *ti)
 {
-    disconnectSignals();
+    disconnectSignals();    // FIXME-1 why complete disconnect?
     if (!ti)
         ui.tabWidget->setEnabled(false);
     else if (ti->hasTypeBranch()) {
@@ -163,6 +163,11 @@ void BranchPropertyEditor::setItem(TreeItem *ti)
             ui.childrenFreePositioning->setCheckState(Qt::Checked);
         else
             ui.childrenFreePositioning->setCheckState(Qt::Unchecked);
+
+        ui.rotationHeadingSlider->setValue(branchItem->getBranchContainer()->getRotationHeading());
+        ui.rotationInnerContentSlider->setValue(branchItem->getBranchContainer()->getRotationInnerContent());
+        ui.rotationHeadingSpinBox->setValue(branchItem->getBranchContainer()->getRotationHeading());
+        ui.rotationInnerContentSpinBox->setValue(branchItem->getBranchContainer()->getRotationInnerContent());
 
         /*
             ui.rotationHeadingSlider->setEnabled(false);
@@ -362,12 +367,18 @@ void BranchPropertyEditor::rotationHeadingChanged(int i)
 {
     if (model)
         model->setRotationHeading(i);
+
+    ui.rotationHeadingSlider->setValue(i);
+    ui.rotationHeadingSpinBox->setValue(i);
 }
 
 void BranchPropertyEditor::rotationInnerContentChanged(int i)
 {
     if (model)
         model->setRotationInnerContent(i);
+
+    ui.rotationInnerContentSlider->setValue(i);
+    ui.rotationInnerContentSpinBox->setValue(i);
 }
 
 void BranchPropertyEditor::taskPriorityDeltaChanged(int n)
@@ -448,14 +459,8 @@ void BranchPropertyEditor::connectSignals()
 
     connect(ui.rotationHeadingSlider, SIGNAL(valueChanged(int)),
             this, SLOT(rotationHeadingChanged(int)));
-    //connect(ui.rotationHeadingSlider, SIGNAL(valueChanged(int)), 
-    //        ui.rotationHeadingSpinBox, SLOT(setValue(int)));
-    //connect(ui.rotationHeadingSpinBox, SLOT(valueChanged(int)),
-    //        this, SLOT(rotationHeadingChanged(int)));
-            //ui.rotationHeadingSlider, SIGNAL(setValue(int)));
-    //connect(ui.rotationHeadingSpinBox, &QSpinBox::valueChanged, 
-    //        ui.rotationHeadingSlider, &QSlider::setValue);
-            //this, &BranchPropertyEditor::rotationHeadingChanged);
+    connect(ui.rotationHeadingSpinBox, SIGNAL(valueChanged(int)),
+            this, SLOT(rotationHeadingChanged(int)));
 
     // WIth lambda          // FIXME-2
     // connect(spinbox, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), slider, &QSlider::setValue);
@@ -484,7 +489,7 @@ void BranchPropertyEditor::connectSignals()
     ui.deleteAttributeButton->hide();
 }
 
-void BranchPropertyEditor::disconnectSignals()  // FIXME-2 why used at all??????
+void BranchPropertyEditor::disconnectSignals()
 {
     // Frame
     disconnect(ui.framePenColorButton, 0, 0, 0);
