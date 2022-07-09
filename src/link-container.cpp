@@ -263,7 +263,6 @@ void LinkContainer::updateLinkGeometry()
     //	drawing of the link itself
 
     if (style == NoLink) {
-        // FIXME-0 no longer used setDockPos();
         return;
     }
 

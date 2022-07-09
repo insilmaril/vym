@@ -178,7 +178,7 @@ void BranchContainer::createBranchesContainer()
 
 void BranchContainer::addToBranchesContainer(Container *c, bool keepScenePos)
 {
-    if (!branchesContainer) 
+    if (!branchesContainer)
         createBranchesContainer();
 
     QPointF sp = c->scenePos();
@@ -210,9 +210,8 @@ void BranchContainer::updateBranchesContainer()
             createBranchesContainer();
 
         // Space for links depends on layout:
-        if (linkSpaceContainer) {
-            if (branchesContainerLayoutType == FloatingBounded || 
-                 branchesContainerLayoutType == FloatingFree) {
+        if (linkSpaceContainer) { // FIXME-00  MC and and branches with floats should have no LSC initially
+            if (hasFloatingLayout()) {
                 delete linkSpaceContainer;
                 linkSpaceContainer = nullptr;
             }
@@ -541,7 +540,8 @@ void BranchContainer::reposition()
 
     setLayoutType(Horizontal);
     
-    // FIXME-0 testing: update branchesContainer and linkSpaceContainer
+    // Update branchesContainer and linkSpaceContainer,
+    // this even might remove these containers
     updateBranchesContainer();
 
     // FIXME-2 for testing draw blue rectangles
@@ -619,7 +619,7 @@ void BranchContainer::reposition()
 
     Container::reposition();
 
-    // Finally update links // FIXME-000 testing
+    // Finally update links
     if (branchesContainer && branchCount() > 0) {
         foreach (QGraphicsItem *g_item, branchesContainer->childItems()) {
             BranchContainer *bc = (BranchContainer*) g_item;

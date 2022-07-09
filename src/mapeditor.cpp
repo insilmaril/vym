@@ -1776,7 +1776,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
             if (ti->hasTypeBranch()) {
                 bc = ((BranchItem*)ti)->getBranchContainer();
 
-                if (bc->parentItem() != tmpParentContainer->getBranchesContainer()) {   // FIXME-0 what if getBranchesContainer == nullptr ?
+                if (tmpParentContainer->branchCount() == 0 || bc->parentItem() != tmpParentContainer->getBranchesContainer()) {
                     bc->setOriginalPos();
                     bc->setOriginalOrientation();
                     //FIXME-0 children of tpC are only relinked temporary, if there really is a target  bc->setTemporaryLinked(true);
@@ -1861,7 +1861,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
         }
     }
 
-    // Reposition if required   // FIXME-0 not required currently. Re-check when changing orientation of children containers
+    // Reposition if required   // FIXME-1 not required currently. Re-check when changing orientation of children containers
     /*
     qDebug() << "   repos  tPC: " << tmpParentContainer->getOrientation() << "  new: " << newOrientation;
     if (newOrientation != tmpParentContainer->getOrientation()) {
@@ -1879,7 +1879,6 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
         }
     }
             
-
     // Update selection
     QItemSelection sel = model->getSelectionModel()->selection();
     updateSelection(sel, sel);
@@ -1889,7 +1888,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
     return;
 }
 
-void MapEditor::mouseReleaseEvent(QMouseEvent *e)   // FIXME-0 Moving does not work for MapCenters
+void MapEditor::mouseReleaseEvent(QMouseEvent *e)
 {
     // Allow selecting text in QLineEdit if necessary
     if (model->isSelectionBlocked()) {
@@ -2036,7 +2035,6 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)   // FIXME-0 Moving does not w
             QList <BranchContainer*> animationContainers;
 
             if (!childBranches.isEmpty()) {
-
                 // We begin a saveStateBlock, if nothing is really moved, this
                 // block will be discarded later
                 model->saveStateBeginBlock(
@@ -2052,13 +2050,15 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)   // FIXME-0 Moving does not w
                     // and keep (!) current absolute position
                     bi->updateContainerStackingOrder();
 
-                    // Floating layout, restore the position before relinking was done
-                    if (bc->isFloating())
+                    // Floating layout or mapcenter moved, saveState
+                    if (bc->isFloating() || bi->depth() == 0)
                     {
                         // Relative positioning
                         model->saveState(
                             bi, QString("setPos%1").arg(qpointFToString(bc->getOriginalPos())),
                             bi, QString("setPos%1").arg(qpointFToString(bc->getOriginalPos() + t)));
+                        if (bi->depth() == 0)
+                            bc->setPos(tmpParentContainer->pos());
                     } else {
                         animationContainers << bc;
                         animationCurrentPositions << bc->pos();
@@ -2068,7 +2068,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)   // FIXME-0 Moving does not w
 
             }   // Empty tmpParenContainer
 
-            // Repositioning now is required to calc bounding boxes
+            // Repositioning is required now, bounding boxes will have changed usually
             model->reposition();
 
             if (animationUse && animationContainers.count() > 0) {
