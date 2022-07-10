@@ -52,6 +52,7 @@ class BranchContainer : public Container {
      *  The linkSpaceContainer is existing, only if a !Floating layout is used AND 
      *  there is a branchesContainer 
      */
+    bool hasFloatingBranchesLayout(); //! Checks, if children branches are or should be floating
     void createBranchesContainer();
     void addToBranchesContainer(Container *c, bool keepScenePos = false);
     Container* getBranchesContainer();

@@ -262,9 +262,8 @@ void LinkContainer::updateLinkGeometry()
     //  bottomlineY
     //	drawing of the link itself
 
-    if (style == NoLink) {
+    if (style == NoLink) 
         return;
-    }
 
     double p1x = upLinkPosParent.x(); // Link is drawn from P1 to P2
     double p1y = upLinkPosParent.y();

@@ -166,6 +166,17 @@ int BranchContainer::branchCount()
         return branchesContainer->childItems().count();
 }
 
+bool BranchContainer::hasFloatingBranchesLayout()
+{
+    if (branchesContainer)
+        return branchesContainer->hasFloatingLayout();
+
+    if (branchesContainerLayoutType == FloatingBounded || branchesContainerLayoutType == FloatingFree)
+        return true;
+    else
+        return false;
+}
+
 void BranchContainer::createBranchesContainer()
 {
     branchesContainer = new Container ();
@@ -210,16 +221,15 @@ void BranchContainer::updateBranchesContainer()
             createBranchesContainer();
 
         // Space for links depends on layout:
-        if (linkSpaceContainer) { // FIXME-00  MC and and branches with floats should have no LSC initially
-            if (hasFloatingLayout()) {
+        if (linkSpaceContainer) {
+            if (hasFloatingBranchesLayout()) {
                 delete linkSpaceContainer;
                 linkSpaceContainer = nullptr;
             }
         } else {
-            if (branchesContainerLayoutType != FloatingBounded &&
-                 branchesContainerLayoutType != FloatingFree) {
+            if (!hasFloatingBranchesLayout()) {
                 linkSpaceContainer = new HeadingContainer ();
-                linkSpaceContainer->setHeading(" - ");  // FIXME-2 introduce minWIdth later
+                linkSpaceContainer->setHeading(" - ");  // FIXME-2 introduce minWidth later in Container instead of a pseudo heading here
 
                 innerContainer->addContainer(linkSpaceContainer);
                 linkSpaceContainer->stackBefore(branchesContainer);
@@ -337,32 +347,11 @@ QPointF BranchContainer::getPositionHintRelink(Container *c, int d_pos, const QP
 {
     QPointF hint;
 
-    QRectF r = headingContainer->rect();
+    QRectF r;
 
-    Container *targetContainer;
-
-    switch (c->type) {
-        case TmpParent:
-            // So far this method is only called when tmpParentContainer is temporarily relinked
-            if (imageCount() > 0)
-                // If there are images in tPC, just use their layout for now
-                targetContainer = imagesContainer;  // FIXME-0 imagesC and branchesC might be nullptr !!!
-            else
-                targetContainer = branchesContainer;
-            break;
-        case Branch: 
-            targetContainer = branchesContainer;
-            break;
-        case Image:
-            targetContainer = imagesContainer;
-            break;
-        default:
-            qWarning() << "BranchContainer::getPositionHintRelink Unknown container type!";
-            return QPointF();
-    }
-
-    if (targetContainer->hasFloatingLayout()) { // FIXME-000 targetContainer might be nullptr!
+    if (hasFloatingBranchesLayout()) {
         // Floating layout, position on circle around center of myself
+        r = headingContainer->rect();
         qreal radius = Geometry::distance(r.center(), r.topLeft()) + 20;
 
         QPointF center = mapToScene(r.center());
@@ -370,15 +359,17 @@ QPointF BranchContainer::getPositionHintRelink(Container *c, int d_pos, const QP
         hint = center + QPointF (radius * cos(a), - radius * sin(a));
     } else {
         // Regular layout
+        if (branchesContainer)
+            r = branchesContainer->rect();  // FIXME-1 check rotation: is rect still correct or better mapped bbox/rect?
         qreal y;
         if (d_pos == 0)
-            y = branchesContainer->rect().bottom();
+            y = r.bottom();
         else
-            y = branchesContainer->rect().bottom() - d_pos * c->rect().height();
+            y = r.bottom() - d_pos * c->rect().height();
 
         switch (orientation) {
             case LeftOfParent:
-                hint = QPointF(-linkWidth + branchesContainer->rect().left() - c->rect().width(), y);
+                hint = QPointF(-linkWidth + r.left() - c->rect().width(), y);
                 break;
             default:
                 hint = QPointF( linkWidth + r.right(), y);
@@ -395,7 +386,7 @@ void BranchContainer::updateUpLink()
     if (branchItem->depth() == 0) return;
 
     if (temporaryLinked) {
-    /* FIXME-0000 cont here for tempLinked
+    /* FIXME-0000 cont here to update link for tempLinked branches
         BranchItem *pbi = branchItem->parentBranch();
         pbi 
     */
@@ -540,10 +531,6 @@ void BranchContainer::reposition()
 
     setLayoutType(Horizontal);
     
-    // Update branchesContainer and linkSpaceContainer,
-    // this even might remove these containers
-    updateBranchesContainer();
-
     // FIXME-2 for testing draw blue rectangles
     if (type != TmpParent) {
         ornamentsContainer->setPen(QPen(Qt::blue));
@@ -616,6 +603,10 @@ void BranchContainer::reposition()
         }
         */
     }
+
+    // Update branchesContainer and linkSpaceContainer,
+    // this even might remove these containers
+    updateBranchesContainer();
 
     Container::reposition();
 
