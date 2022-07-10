@@ -44,11 +44,10 @@ void LinkContainer::init()
 
 void LinkContainer::createBottomLine()
 {
-    return; //FIXME-0 createBottomLine
-    qDebug() << "LC::createBottomLine";
     bottomLine = new QGraphicsLineItem(this);
     bottomLine->setPen(pen);
     bottomLine->setZValue(dZ_LINK);
+    bottomLine->setVisible(true); // FIXME-2 testing
 }
 
 void LinkContainer::deleteBottomLine()
@@ -287,8 +286,8 @@ void LinkContainer::updateLinkGeometry()
 
     // Draw the horizontal line below heading (from childRefPos to parentPos)
     if (bottomLine) {
-        bottomLine->setLine(QLineF(p1x, p1y, p2x, p2y));
-        bottomLine->setZValue(z);
+        bottomLine->setLine(p2x,p2y, downLinkPos.x(), downLinkPos.y());
+        //bottomLine->setZValue(z);
     }
 
     double a; // angle

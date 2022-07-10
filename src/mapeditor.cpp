@@ -1780,7 +1780,6 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
                     bc->setOriginalPos();
                     bc->setOriginalOrientation();
                     tmpParentContainer->addToBranchesContainer(bc, true);
-                    bc->setTemporaryLinked();
                 }
 
                 if (!bc_first) {
@@ -1861,7 +1860,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
         }
     }
 
-    // Reposition if required   // FIXME-1 not required currently. Re-check when changing orientation of children containers
+    // Reposition if required   // FIXME-2 not required currently. Re-check when changing orientation of children containers
     /*
     qDebug() << "   repos  tPC: " << tmpParentContainer->getOrientation() << "  new: " << newOrientation;
     if (newOrientation != tmpParentContainer->getOrientation()) {
@@ -1873,8 +1872,12 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
     // Update links
     foreach (TreeItem *ti, movingItems)
     {
-        if (ti->hasTypeBranch()) {  // FIXME-1 later it should work the same for images!
+        if (ti->hasTypeBranch()) {  // FIXME-2 later it should work the same for images!
             BranchContainer *bc = ((BranchItem*)ti)->getBranchContainer();
+            if (tmpParentContainer->isTemporaryLinked())
+                bc->setTemporaryLinked();
+            else
+                bc->unsetTemporaryLinked();
             bc->updateUpLink();
         }
     }
@@ -2044,8 +2047,6 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                 // Updating the stacking order also resets the original parents
 
                 foreach(BranchContainer *bc, childBranches) {
-                    bc->unsetTemporaryLinked();
-
                     BranchItem *bi = bc->getBranchItem();
 
                     // Relink container to original parent container 
@@ -2069,9 +2070,6 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                 model->saveStateEndBlock();
 
             }   // Empty tmpParenContainer
-
-            // Repositioning is required now, bounding boxes will have changed usually
-            model->reposition();
 
             if (animationUse && animationContainers.count() > 0) {
                 int i = 0;

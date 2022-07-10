@@ -62,7 +62,6 @@ void BranchContainer::init()
 
     branchesContainer = nullptr;
     linkSpaceContainer = nullptr;
-    //createBranchesContainer();  // FIXME-1  next step: delete empty branchesContainer
 
     addContainer(innerContainer);
 
@@ -394,20 +393,29 @@ void BranchContainer::updateUpLink()
         // Get "real" parentBranchContainer, not tmpParentContainer (!)
         BranchContainer *pbc = branchItem->parentBranch()->getBranchContainer();
 
-        QPointF parent_sp;
+        QPointF upLinkParent_sp;
+        QPointF upLinkSelf;
+        QPointF downLink;
         switch (orientation) {
             case RightOfParent:
-                parent_sp = pbc->ornamentsContainer->mapToScene(pbc->ornamentsContainer->rect().bottomRight());
+                upLinkParent_sp = pbc->ornamentsContainer->mapToScene(pbc->ornamentsContainer->rect().bottomRight());
+                upLinkSelf = ornamentsContainer->rect().bottomLeft();
+                downLink = ornamentsContainer->rect().bottomRight();
                 break;
             case LeftOfParent:
-                parent_sp = pbc->ornamentsContainer->mapToScene(pbc->ornamentsContainer->rect().bottomLeft());
+                upLinkParent_sp = pbc->ornamentsContainer->mapToScene(pbc->ornamentsContainer->rect().bottomLeft());
+                upLinkSelf = ornamentsContainer->rect().bottomRight();
+                downLink = ornamentsContainer->rect().bottomLeft();
                 break;
             default:
-                parent_sp = pbc->ornamentsContainer->mapToScene(pbc->ornamentsContainer->rect().center());
+                upLinkParent_sp = pbc->ornamentsContainer->mapToScene(pbc->ornamentsContainer->rect().center());
+                upLinkSelf = ornamentsContainer->rect().center();   // FIXME-2 check...
+                downLink = ornamentsContainer->rect().center();
                 break;
         }
-        linkContainer->setUpLinkPosParent(linkContainer->sceneTransform().inverted().map(parent_sp));
-        linkContainer->setDownLinkPos(linkContainer->sceneTransform().inverted().map(parent_sp));
+        linkContainer->setUpLinkPosParent(linkContainer->sceneTransform().inverted().map(upLinkParent_sp));
+        linkContainer->setUpLinkPosSelf(upLinkSelf);
+        linkContainer->setDownLinkPos(downLink);
     }
 
     linkContainer->updateLinkGeometry();
@@ -532,6 +540,8 @@ void BranchContainer::reposition()
     setLayoutType(Horizontal);
     
     // FIXME-2 for testing draw blue rectangles
+    /*
+    */
     if (type != TmpParent) {
         ornamentsContainer->setPen(QPen(Qt::blue));
         setPen(QPen(Qt::green));
