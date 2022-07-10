@@ -1779,8 +1779,8 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
                 if (tmpParentContainer->branchCount() == 0 || bc->parentItem() != tmpParentContainer->getBranchesContainer()) {
                     bc->setOriginalPos();
                     bc->setOriginalOrientation();
-                    //FIXME-0 children of tpC are only relinked temporary, if there really is a target  bc->setTemporaryLinked(true);
                     tmpParentContainer->addToBranchesContainer(bc, true);
+                    bc->setTemporaryLinked();
                 }
 
                 if (!bc_first) {
@@ -1835,7 +1835,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
         }
     } else {
         //tmpParentContainer->setOrientation(BranchContainer::UndefinedOrientation);
-        /* FIXME-0 orientation while moving
+        /* FIXME-1 orientation while moving
          */
         // Try to set orientation for not relinked tmpParentContainer by checking the
         // layout and "original" parent
@@ -2044,6 +2044,8 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                 // Updating the stacking order also resets the original parents
 
                 foreach(BranchContainer *bc, childBranches) {
+                    bc->unsetTemporaryLinked();
+
                     BranchItem *bi = bc->getBranchItem();
 
                     // Relink container to original parent container 
