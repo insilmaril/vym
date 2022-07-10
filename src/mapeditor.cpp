@@ -1906,6 +1906,8 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
 
     destinationBranch = findMapBranchItem(p, movingItems);
 
+    bool repositionNeeded = false;
+
     // Have we been picking color?
     if (state() == PickingColor) {
         setCursor(Qt::ArrowCursor);
@@ -2038,6 +2040,8 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
             QList <BranchContainer*> animationContainers;
 
             if (!childBranches.isEmpty()) {
+                repositionNeeded = true;
+
                 // We begin a saveStateBlock, if nothing is really moved, this
                 // block will be discarded later
                 model->saveStateBeginBlock(
@@ -2081,8 +2085,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
         } // Branches moved, but not relinked
 
         // Let's see if we moved images with tmpParentContainer
-        bool imagesMoved = false;
-        if (tmpParentContainer->childImages().count() > 0 ) imagesMoved = true;
+        if (tmpParentContainer->childImages().count() > 0 ) repositionNeeded = true;
 
         foreach(ImageContainer *ic, tmpParentContainer->childImages()) {
             ImageItem *ii = ic->getImageItem();
@@ -2102,7 +2105,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
 
         } // Image moved, but not relinked
 
-        if (imagesMoved) {
+        if (repositionNeeded) {
             model->reposition();
             model->emitSelectionChanged();
         }
