@@ -28,17 +28,17 @@ class Container : public QGraphicsRectItem {
   public:
     /*! Type of this container */
     enum ContainerType {
-        Undefined, 
-        TmpParent,
-        FloatingContent,
-        Ornaments,
-        InnerContent,
-        BranchCollection,
-        ImageCollection,
         Branch, 
-        Link,
+        BranchCollection,
+        FloatingContent,
         Heading,
-        Image
+        Image,
+        ImageCollection,
+        InnerContent,
+        Link,
+        Ornaments,
+        TmpParent,
+        Undefined
     };
 
     /*! Alignment of children containers */

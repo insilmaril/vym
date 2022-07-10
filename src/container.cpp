@@ -66,32 +66,38 @@ QString Container::getName()    // FIXME-4 debugging only
 {
     QString t;
     switch (type) {
-        case Undefined:
-            t = "Undefined";
-            break;
-        case TmpParent:
-            t = "TmpParent";
-            break;
-        case FloatingContent:
-            t = "FloatingContent";
-            break;
-        case InnerContent:
-            t = "InnerContent";
+        case Branch:
+            t = "Branch";
             break;
         case BranchCollection:
             t = "BranchCollection";
             break;
-        case ImageCollection:
-            t = "ImagesCollection";
+        case FloatingContent:
+            t = "FloatingContent";
             break;
-        case Branch:
-            t = "Branch";
+        case Heading:
+            t = "Heading";
             break;
         case Image:
             t = "Image";
             break;
-        case Heading:
-            t = "Heading";
+        case ImageCollection:
+            t = "ImagesCollection";
+            break;
+        case InnerContent:
+            t = "InnerContent";
+            break;
+        case Link:
+            t = "Link";
+            break;
+        case Ornaments:
+            t = "Ornaments";
+            break;
+        case TmpParent:
+            t = "TmpParent";
+            break;
+        case Undefined:
+            t = "Undefined";
             break;
         default:
             t = "Unknown";
@@ -353,9 +359,13 @@ void Container::reposition()
                 foreach (QGraphicsItem *child, childItems()) {
                     c = (Container*) child;
 
-                    if (c->rotation() != 0) // FIXME-0 testing rotation
-                        qDebug() << "Rotation of " << c->info() << " a=" << c->rotation() << "bR=" << c->boundingRect() << "r=" << c->rect(); 
-
+                    if (c->rotation() != 0) {// FIXME-000 testing rotation
+                        qDebug() << "C::repos Rot of " << c->info() << " a=" << c->rotation() << "bR=" << c->boundingRect() << "r=" << c->rect(); 
+                        Container *p = this;
+                        qDebug() << "  p: " << p->info() << "r=" << p->rect();
+                        p = p->parentContainer();
+                        qDebug() << " pp: " << p->info() << "r=" << p->rect();
+                    }
                     // For calculation of heights, widths move everything to origin
                     if (!positionFixed)
                         c->setPos(0, 0);

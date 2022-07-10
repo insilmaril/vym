@@ -2407,6 +2407,7 @@ void VymModel::setRotationHeading (const int &i) // FIXME-2 partially implemente
     if (bi) {
         BranchContainer *bc = bi->getBranchContainer();
         bc->setRotationHeading(i);
+        reposition();
         emitSelectionChanged();
     }
 }
