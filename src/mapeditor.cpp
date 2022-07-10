@@ -45,7 +45,7 @@ MapEditor::MapEditor(VymModel *vm)
     // qDebug() << "Constructor ME " << this;
 
     QString shortcutScope = tr("Map Editor", "Shortcut scope");
-    mapScene = new QGraphicsScene(NULL);
+    mapScene = new QGraphicsScene(nullptr);
     mapScene->setBackgroundBrush(QBrush(Qt::white, Qt::SolidPattern));
 
     if (debug) {
@@ -76,7 +76,7 @@ MapEditor::MapEditor(VymModel *vm)
     PickColorCursor = QCursor(QPixmap(":/cursorcolorpicker.png"), 5, 27);
     XLinkCursor = QCursor(QPixmap(":/cursorxlink.png"), 1, 7);
 
-    editingBO = NULL;
+    editingBO = nullptr;
 
     printFrame = true;
     printFooter = true;
@@ -146,7 +146,7 @@ MapEditor::MapEditor(VymModel *vm)
     connect(a, SIGNAL(triggered()), this, SLOT(cursorLast()));
 
     // Action to embed LineEdit for heading in Scene
-    lineEdit = NULL;
+    lineEdit = nullptr;
 
     a = new QAction(tr("Edit heading", "MapEditor"), this);
     a->setShortcut(Qt::Key_Return); // Edit heading
@@ -179,7 +179,7 @@ MapEditor::MapEditor(VymModel *vm)
 
     setState(Neutral);
 
-    winter = NULL;
+    winter = nullptr;
 
     // animations
     animationUse = settings.value("/animation/use", true) .toBool();
@@ -578,7 +578,7 @@ void MapEditor::print()
         model->unselectAll();
 
         QRectF mapRect = totalBBox;
-        QGraphicsRectItem *frame = NULL;
+        QGraphicsRectItem *frame = nullptr;
 
         if (printFrame) {
             // Print frame around map
@@ -819,7 +819,7 @@ TreeItem *MapEditor::findMapItem(QPointF p, const QList <TreeItem*> &excludedIte
     // Start with mapcenter, no images allowed at rootItem
     int i = 0;
     BranchItem *bi = model->getRootItem()->getFirstBranch();
-    TreeItem *found = NULL;
+    TreeItem *found = nullptr;
     while (bi) {
         found = bi->findMapItem(p, excludedItems);
         if (found)
@@ -827,7 +827,7 @@ TreeItem *MapEditor::findMapItem(QPointF p, const QList <TreeItem*> &excludedIte
         i++;
         bi = model->getRootItem()->getBranchNum(i);
     }
-    return NULL;
+    return nullptr;
 }
 
 BranchItem *MapEditor::findMapBranchItem(QPointF p, const QList <TreeItem*> &excludedItems) 
@@ -876,7 +876,7 @@ BranchItem *MapEditor::getBranchDirectAbove(BranchItem *bi)
         if (i > 0)
             return bi->parent()->getBranchNum(i - 1);
     }
-    return NULL;
+    return nullptr;
 }
 
 BranchItem *MapEditor::getBranchAbove(BranchItem *selbi)
@@ -921,7 +921,7 @@ BranchItem *MapEditor::getBranchAbove(BranchItem *selbi)
             }
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 BranchItem *MapEditor::getBranchDirectBelow(BranchItem *bi)
@@ -931,7 +931,7 @@ BranchItem *MapEditor::getBranchDirectBelow(BranchItem *bi)
         if (i + 1 < bi->parent()->branchCount())
             return bi->parent()->getBranchNum(i + 1);
     }
-    return NULL;
+    return nullptr;
 }
 
 BranchItem *MapEditor::getBranchBelow(BranchItem *selbi)
@@ -974,13 +974,13 @@ BranchItem *MapEditor::getBranchBelow(BranchItem *selbi)
             }
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 BranchItem *MapEditor::getLeftBranch(TreeItem *ti)
 {
     if (!ti)
-        return NULL;
+        return nullptr;
 
     if (ti->hasTypeBranch()) {
         BranchItem *bi = (BranchItem *)ti;
@@ -1012,13 +1012,13 @@ BranchItem *MapEditor::getLeftBranch(TreeItem *ti)
 
     if (ti->parent() && ti->parent()->hasTypeBranch())
         return (BranchItem *)(ti->parent());
-    return NULL;
+    return nullptr;
 }
 
 BranchItem *MapEditor::getRightBranch(TreeItem *ti)
 {
     if (!ti)
-        return NULL;
+        return nullptr;
 
     if (ti->hasTypeBranch()) {
         BranchItem *bi = (BranchItem *)ti;
@@ -1052,7 +1052,7 @@ BranchItem *MapEditor::getRightBranch(TreeItem *ti)
     if (ti->parent() && ti->parent()->hasTypeBranch())
         return (BranchItem *)(ti->parent());
 
-    return NULL;
+    return nullptr;
 }
 
 void MapEditor::cursorUp()
@@ -1279,7 +1279,7 @@ void MapEditor::editHeadingFinished()
     model->setHeadingPlainText(s);
     model->setSelectionBlocked(false);
     delete (lineEdit);
-    lineEdit = NULL;
+    lineEdit = nullptr;
 
     animateScrollBars();
 
@@ -1947,7 +1947,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
             }
         }
         delete (tmpLink);
-        tmpLink = NULL;
+        tmpLink = nullptr;
         return;
     }
 
@@ -2232,7 +2232,7 @@ void MapEditor::dropEvent(QDropEvent *event)
                 url = ba2;
             }
 
-            BranchItem *bi = NULL;
+            BranchItem *bi = nullptr;
             // Workaround to avoid adding empty branches
             if (!url.isEmpty()) {
                 if (url.startsWith("file://"))
@@ -2390,7 +2390,7 @@ void MapEditor::updateData(const QModelIndex &sel)
         qDebug() << "ME::updateData";
         if (!ti)
         {
-        qDebug() << "  ti=NULL";
+        qDebug() << "  ti=nullptr";
         return;
         }
         qDebug() << "  ti="<<ti;
@@ -2403,8 +2403,8 @@ void MapEditor::updateData(const QModelIndex &sel)
     if (winter) {
         QList<QRectF> obstacles;
         BranchObj *bo;
-        BranchItem *cur = NULL;
-        BranchItem *prev = NULL;
+        BranchItem *cur = nullptr;
+        BranchItem *prev = nullptr;
         model->nextBranch(cur, prev);
         while (cur) {
             if (!cur->hasHiddenExportParent()) {
