@@ -465,10 +465,10 @@ void BranchPropertyEditor::connectSignals()
     // WIth lambda          // FIXME-2
     // connect(spinbox, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), slider, &QSlider::setValue);
 
-    connect(ui.rotationInnerContentSlider, SIGNAL(valueChanged(int)), this,
-            SLOT(rotationInnerContentChanged(int)));
-    connect(ui.rotationInnerContentSlider, SIGNAL(valueChanged(int)),
-            ui.rotationInnerContentSpinBox, SLOT(setValue(int)));
+    connect(ui.rotationInnerContentSlider, SIGNAL(valueChanged(int)), 
+            this, SLOT(rotationInnerContentChanged(int)));
+    connect(ui.rotationInnerContentSpinBox, SIGNAL(valueChanged(int)),
+            this, SLOT(rotationInnerContentChanged(int)));
 
     // Tasks
     connect(ui.taskPrioDelta, SIGNAL(valueChanged(int)), this,
@@ -507,7 +507,9 @@ void BranchPropertyEditor::disconnectSignals()
     disconnect(ui.incImgHor, 0, 0, 0);
     disconnect(ui.childrenFreePositioning, 0, 0, 0);
     disconnect(ui.rotationHeadingSlider, 0, 0, 0);
+    disconnect(ui.rotationHeadingSpinBox, 0, 0, 0);
     disconnect(ui.rotationInnerContentSlider, 0, 0, 0);
+    disconnect(ui.rotationInnerContentSpinBox, 0, 0, 0);
 
     // Task
     disconnect(ui.taskPrioDelta, 0, 0, 0);
