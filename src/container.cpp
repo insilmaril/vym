@@ -382,14 +382,15 @@ void Container::reposition()
                 foreach (QGraphicsItem *child, childItems()) {
                     c = (Container*) child;
 
-                    // For calculation of heights, widths move everything to origin // FIXME-0 why???
+                    // For calculation of heights, widths move everything to origin // FIXME-0 why??? Required for floatingBounded!
                     if (!positionFixed)
                         c->setPos(0, 0);
 
                     c_bbox = mapRectFromItem(c, c->rect());
 
                     if (c->rotation() != 0) {
-                        // Move rotated container, so that upperLeft corner is in (0,0) /7 FIXME-0 testing.works.
+                        // Move rotated container, so that upperLeft corner is in (0,0)
+                        // Required to get correct pos bbox of rotated containers.
                         c_bbox.moveTopLeft(QPointF(0,0));
                     }
 
@@ -402,23 +403,10 @@ void Container::reposition()
                             hasFloatingContent = true;
                         }
                     } else {
-                        if (c_bbox.topLeft().x() < 0 || c_bbox.topLeft().y() < 0)
-                        {
-                            // FIXME-00 Happens, if c is rotated or I am translated due to floating children (e.g. MC)
-                            // Testing, translate c_bbox so that upper left is in origin again:
-                            if (c->rotation() != 0) {
-                                //qDebug() << "  c is rotated.";
-                                //qDebug() << "  c_bbox= " << c_bbox;
-                                h = c_bbox.height();
-                                h_max = (h_max < h) ? h : h_max;
-                                w_total += c_bbox.width();
-                            }
-                        } else {
-                            // For width and height we can use the already mapped dimensions
-                            h = c_bbox.height();
-                            h_max = (h_max < h) ? h : h_max;
-                            w_total += c_bbox.width();
-                        }
+                        // For width and height we can use the already mapped dimensions
+                        h = c_bbox.height();
+                        h_max = (h_max < h) ? h : h_max;
+                        w_total += c_bbox.width();
                     }
                 }
 
