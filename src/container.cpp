@@ -395,16 +395,6 @@ void Container::reposition()
 
                     bbox = bbox.united(c_bbox);
 
-                    //if (c->rotation() != 0) {// FIXME-000 testing rotation
-                    if (c->type == Heading && c->getName().contains("xxx")) {
-                        qDebug() << "C::repos hor Rot of " << c->info() << " a=" << c->rotation();
-                        qDebug() << "   bR=" << c->boundingRect() << "r=" << c->rect() << "r_mapped=" << mapRectFromItem(c, c->rect()) << "c_bbox=" << c_bbox; 
-                        Container *p = this;
-                        qDebug() << "  p: " << p->info() << "r=" << p->rect();
-                        p = p->parentContainer();
-                        qDebug() << " pp: " << p->info() << "r=" << p->rect();
-                    }
-
                     if (c->layout == FloatingBounded ) {
                         // Floating does not directly increase max height or sum of widths, 
                         // but build max bbox of floating children
@@ -417,7 +407,7 @@ void Container::reposition()
                             // FIXME-00 Happens, if c is rotated or I am translated due to floating children (e.g. MC)
                             // Testing, translate c_bbox so that upper left is in origin again:
                             if (c->rotation() != 0) {
-                                qDebug() << "  c is rotated.";
+                                //qDebug() << "  c is rotated.";
                                 //qDebug() << "  c_bbox= " << c_bbox;
                                 h = c_bbox.height();
                                 h_max = (h_max < h) ? h : h_max;
@@ -446,14 +436,10 @@ void Container::reposition()
                         w_last = c->rect().width();
                         qreal y;
 
-                        /*  FIXME-0 not really necessary. Not using improves rotation issue
-                        */
                         if (movableByFloats)
                             y = (h_max - c->rect().height() ) / 2;
                         else
                             y = c->pos().y();
-
-                        // qDebug() << "  positioning c=" << c->getName() << "p movable=" << movableByFloats << "y=" << y;
 
                         if (horizontalDirection == LeftToRight)
                         {
@@ -461,16 +447,21 @@ void Container::reposition()
                                 if (c->rotation() == 0)
                                     c->setPos (x, y);
                                 else {
-                                    // For testing move rotated container to my origin  // FIXME-0 also requ. for RightToLeft!
-                                    qDebug() << "  moving " << c->info() << mapRectFromItem(c, c->rect());
+                                    // move rotated container to my origin
                                     c->setPos (- mapRectFromItem(c, c->rect()).topLeft());
                                 }
                             }
                             x += w_last;
                         } else
                         {
-                            if (!positionFixed)
-                                c->setPos (x - c->rect().width(), y);
+                            if (!positionFixed) {
+                                if (c->rotation() == 0)
+                                    c->setPos (x - c->rect().width(), y);
+                                else {
+                                    // move rotated container to my origin
+                                    c->setPos (- mapRectFromItem(c, c->rect()).topLeft());
+                                }
+                            }
                             x -= w_last;
                         }
                     }
@@ -481,7 +472,6 @@ void Container::reposition()
                 r.setHeight(h_max);
                 setRect(r);
 
-
                 r = r.united(bbox);
 
                 if (hasFloatingContent) {
@@ -489,8 +479,6 @@ void Container::reposition()
                     // Calculate translation vector t to move *parent* later on
                     // now after regular containers have been positioned
                     // Also enlarge bounding box to maximum of floating and regular content
-
-                    //r = r.united(bbox); // FIXME-2 already used above?
 
                     // Translation vector for all children to move topLeft corner to origin
                     QPointF t;
