@@ -112,8 +112,8 @@ void BranchContainer::setOriginalOrientation()  // FIXME-1 sets also original pa
     originalFloating = isFloating();
     if (parentItem()) {
         originalParentPos = parentItem()->scenePos();
-        qDebug() << "BC:setOrient of " << info();
-        qDebug() << "        parent: " << ((Container*)parentItem())->info() <<originalParentPos;
+        //qDebug() << "BC:setOrient of " << info();
+        //qDebug() << "        parent: " << ((Container*)parentItem())->info() <<originalParentPos;
     }
 }
 
@@ -448,10 +448,11 @@ QRectF BranchContainer::getHeadingRect()
     return QRectF(p.x(), p.y(), headingContainer->rect().width(), headingContainer->rect().height());
 }
 
-void BranchContainer::setRotationHeading(const int &a)
+void BranchContainer::setRotationHeading(const int &a)  // FIXME-0 crashing for mapcenter
 {
     headingContainer->setTransformOriginPoint(headingContainer->rect().center());
-    headingContainer->setRotation(a);
+    //headingContainer->setTransformOriginPoint(QPointF(0,0));
+    headingContainer->setRotation( 1.0 * a);
 }
 
 int BranchContainer::getRotationHeading()
