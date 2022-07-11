@@ -110,7 +110,7 @@ QString Container::info (const QString &prefix)
 {
     return prefix +
         getName() +
-//        QString(" Layout: %1").arg(layout) +
+        QString(" Layout: %1").arg(getLayoutTypeString()) +
         QString(" scenePos: (%1, %2)").arg(scenePos().x()).arg(scenePos().y()) + 
         QString(" pos: (%1, %2)").arg(pos().x()).arg(pos().y());
 //        QString(" (w,h): (%1, %2)").arg(rect().width()).arg(rect().height());
@@ -124,6 +124,29 @@ void Container::setLayoutType(const LayoutType &ltype)
 Container::LayoutType Container::getLayoutType()
 {
     return layout;
+}
+
+QString Container::getLayoutTypeString()
+{
+    QString r;
+    switch (layout) {
+        case Horizontal:
+            r = "Horizontal";
+            break;
+        case Vertical:
+            r = "Vertical";
+            break;
+        case FloatingBounded:
+            r = "FloatingBounded";
+            break;
+        case FloatingFree:
+            r = "FloatingFree";
+            break;
+        default:
+            r = "Unknown";
+            qWarning () << "Container::getLayoutTypeString unknown layout";
+    }
+    return r;
 }
 
 bool Container::isFloating()

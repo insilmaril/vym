@@ -2401,23 +2401,34 @@ void VymModel::setIncludeImagesHor(bool b)
     }
 }
 
-void VymModel::setRotationHeading (const int &i) // FIXME-2 partially implemented
+void VymModel::setRotationHeading (const int &i) // FIXME-2 no savestate
 {
     BranchItem *bi = getSelectedBranch();
     if (bi) {
         BranchContainer *bc = bi->getBranchContainer();
+	if (bc->getRotationHeading() == i) {
+	    // Updating slider also emits valueChanged for spinBox and vice versa
+	    // Go home.
+	    return;
+	}
         bc->setRotationHeading(i);
         reposition();
         emitSelectionChanged();
     }
 }
 
-void VymModel::setRotationInnerContent (const int &i) // FIXME-2 partially implemented
+void VymModel::setRotationInnerContent (const int &i) // FIXME-2 no savestate
 {
     BranchItem *bi = getSelectedBranch();
     if (bi) {
         BranchContainer *bc = bi->getBranchContainer();
+	if (bc->getRotationInnerContent() == i) {
+	    // Updating slider also emits valueChanged for spinBox and vice versa
+	    // Go home.
+	    return;
+	}
         bc->setRotationInnerContent(i);
+	reposition();
         emitSelectionChanged();
     }
 }

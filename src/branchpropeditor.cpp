@@ -363,7 +363,7 @@ void BranchPropertyEditor::childrenFreePositioningChanged(int i)
     }
 }
 
-void BranchPropertyEditor::rotationHeadingChanged(int i)
+void BranchPropertyEditor::rotationHeadingChanged(int i)    // FIXME-2 Create custom class to sync slider and spinbox and avoid double calls to models
 {
     if (model)
         model->setRotationHeading(i);
