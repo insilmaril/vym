@@ -448,10 +448,8 @@ QRectF BranchContainer::getHeadingRect()
     return QRectF(p.x(), p.y(), headingContainer->rect().width(), headingContainer->rect().height());
 }
 
-void BranchContainer::setRotationHeading(const int &a)  // FIXME-0 crashing for mapcenter
+void BranchContainer::setRotationHeading(const int &a)
 {
-    headingContainer->setTransformOriginPoint(headingContainer->rect().center());
-    //headingContainer->setTransformOriginPoint(QPointF(0,0));
     headingContainer->setRotation( 1.0 * a);
 }
 
@@ -462,7 +460,6 @@ int BranchContainer::getRotationHeading()
 
 void BranchContainer::setRotationInnerContent(const int &a)
 {
-    innerContainer->setTransformOriginPoint(innerContainer->rect().center());
     innerContainer->setRotation(a);
 }
 
@@ -540,7 +537,7 @@ void BranchContainer::reposition()
 
     setLayoutType(Horizontal);
     
-    // FIXME-2 for testing draw blue rectangles
+    // FIXME-3 for testing ornamented containers are blue and branch containers green
     /*
     */
     if (type != TmpParent) {
