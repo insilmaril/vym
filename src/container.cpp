@@ -382,7 +382,8 @@ void Container::reposition()
                 foreach (QGraphicsItem *child, childItems()) {
                     c = (Container*) child;
 
-                    // For calculation of heights, widths move everything to origin // FIXME-0 why??? Required for floatingBounded!
+                    // For floatingBounded containers and calculation of heights and widths 
+                    // we need move subcontainers to origin first
                     if (!positionFixed)
                         c->setPos(0, 0);
 
@@ -463,7 +464,6 @@ void Container::reposition()
                 r = r.united(bbox);
 
                 if (hasFloatingContent) {
-                //if (true) {
                     // Calculate translation vector t to move *parent* later on
                     // now after regular containers have been positioned
                     // Also enlarge bounding box to maximum of floating and regular content
