@@ -32,7 +32,9 @@ void Container::init()
     type = Undefined;
     layout = Horizontal;
 
-    movableByFloats = false;
+    // subcontainers usually may influence position
+    // Only mapCenters will stay where they are
+    movableByFloats = true; 
 
     minimumWidth = 0;
 
@@ -393,32 +395,32 @@ void Container::reposition()    // FIXME-0 bbox of MC not correct
                         w_last = c->rect().width();
                         qreal y = 0;
     
-                        if (movableByFloats)    // FIXME-000 why exactly this condition? 
-                                                // Affects only InnerContainers of branches with d > 0
-                        {
+                        if (movableByFloats) {
+                            // Usally c may be moved, if it has a bbox above/left of origin due to some floating containers
+                            // Exception are mapCenters, which need to "stick" to their scene position and must not be moved by
+                            // position (or bboxes) of main branches
                             y = (h_max - c->rect().height() ) / 2;  
-                            //qDebug() << "* repos of " << info() << "mov=" << movableByFloats <<"y=" << y << "for " << c->info();
-                        }
 
-                        if (horizontalDirection == LeftToRight)
-                        {
-                            if (c->rotation() == 0)
-                                c->setPos (x, y);
-                            else {
-                                // move rotated container to my origin
-                                c->setPos (- mapRectFromItem(c, c->rect()).topLeft());
+                            if (horizontalDirection == LeftToRight)
+                            {
+                                if (c->rotation() == 0)
+                                    c->setPos (x, y);
+                                else {
+                                    // move rotated container to my origin
+                                    c->setPos (- mapRectFromItem(c, c->rect()).topLeft());
+                                }
+                                x += w_last;
+                            } else
+                            {
+                                if (c->rotation() == 0)
+                                    c->setPos (x - c->rect().width(), y);
+                                else {
+                                    // move rotated container to my origin
+                                    c->setPos (- mapRectFromItem(c, c->rect()).topLeft());
+                                }
+                                x -= w_last;
                             }
-                            x += w_last;
-                        } else
-                        {
-                            if (c->rotation() == 0)
-                                c->setPos (x - c->rect().width(), y);
-                            else {
-                                // move rotated container to my origin
-                                c->setPos (- mapRectFromItem(c, c->rect()).topLeft());
-                            }
-                            x -= w_last;
-                        }
+                        } // movableByFloats
                     } // Non-floating children
                 } 
                 r = bbox;
