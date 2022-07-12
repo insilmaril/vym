@@ -391,10 +391,6 @@ void Container::reposition()    // FIXME-0 bbox of MC not correct
                 // rectangle has w_total h_max
                 bbox = bbox.united(QRectF(0, 0, w_total, h_max));
                 
-                qDebug() << "Repos of " << info();
-                qDebug() << "  w,h=" << w_total << h_max;
-                qDebug() << " bbox=" << bbox;
-
                 qreal x;
                 qreal w_last;   // last width before adding current container width to bbox later
 
@@ -409,10 +405,8 @@ void Container::reposition()    // FIXME-0 bbox of MC not correct
                         w_last = c->rect().width();
                         qreal y;
     
-                        if (movableByFloats)    // FIXME-000 why exactly?
+                        if (movableByFloats)    // FIXME-000 why exactly this condition? Only InnerContainers of branches with d>0
                             y = (h_max - c->rect().height() ) / 2;  
-                        else
-                            y = c->pos().y();
 
                         if (horizontalDirection == LeftToRight)
                         {
@@ -454,7 +448,6 @@ void Container::reposition()    // FIXME-0 bbox of MC not correct
                     if (r.topLeft().x() < 0) t.setX(-r.topLeft().x());
                     if (r.topLeft().y() < 0) t.setY(-r.topLeft().y());
 
-                    qDebug() << "  floating content and t=" << t << "c_bbox=" << c_bbox << "bbox=" << bbox << "movable:" << movableByFloats;
                     if (t != QPointF()) {
                         if (movableByFloats) {
                             // I need to become bigger in topLeft corner to make room for floats:
