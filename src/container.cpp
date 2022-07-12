@@ -405,8 +405,13 @@ void Container::reposition()    // FIXME-0 bbox of MC not correct
                         w_last = c->rect().width();
                         qreal y;
     
-                        if (movableByFloats)    // FIXME-000 why exactly this condition? Only InnerContainers of branches with d>0
+                        if (movableByFloats)    // FIXME-000 why exactly this condition? 
+                                                // Affects only InnerContainers of branches with d > 0
+                        {
                             y = (h_max - c->rect().height() ) / 2;  
+                            qDebug() << "repos of " << info() << "  setting y=" << y << "for " << c->info();
+                        } else
+                            y = c->pos().y();
 
                         if (horizontalDirection == LeftToRight)
                         {
