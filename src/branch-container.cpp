@@ -556,7 +556,7 @@ void BranchContainer::reposition()
         linkContainer->setLinkStyle(LinkContainer::NoLink);
 
         innerContainer->setMovableByFloats(false);
-        setMovableByFloats(false);
+        setMovableByFloats(false);  // FIXME-0 needed?  
         setBranchesContainerLayout(FloatingBounded);
 
     } else {
@@ -609,20 +609,28 @@ void BranchContainer::reposition()
     /*
     */
     if (type != TmpParent) {
-        ornamentsContainer->setPen(QPen(Qt::blue));
+        // BranchContainer
         setPen(QPen(Qt::green));
+
+        // OrnamentsContainer
+        ornamentsContainer->setPen(QPen(Qt::blue));
+
+        // InnerContainer
+        innerContainer->setPen(QPen(Qt::cyan));
 
         QColor col;
         if (branchesContainerLayout == FloatingBounded && depth > 0) {
-            // Special layout: FloatingBounded children
+            // Special layout: FloatingBounded
             col = QColor(Qt::gray);
             col.setAlpha(150);
             setBranchesContainerBrush(col);
         } else if (branchesContainerLayout == FloatingFree) {
+            // Special layout: FloatingFree
             col = QColor(Qt::blue);
             col.setAlpha(120);
             setBrush(col);
         } else {
+            // Don't paint other containers
             setBranchesContainerBrush(Qt::NoBrush);
             setBrush(Qt::NoBrush);
         }

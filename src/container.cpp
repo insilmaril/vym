@@ -112,8 +112,8 @@ QString Container::info (const QString &prefix)
         getName() +
         QString(" Layout: %1").arg(getLayoutString()) +
         QString(" scenePos: (%1, %2)").arg(scenePos().x()).arg(scenePos().y()) + 
-        QString(" pos: (%1, %2)").arg(pos().x()).arg(pos().y());
-//        QString(" (w,h): (%1, %2)").arg(rect().width()).arg(rect().height());
+        QString(" pos: (%1, %2)").arg(pos().x()).arg(pos().y()) + 
+        QString(" rect: (%1, %2  %3 x %4").arg(rect().x()).arg(rect().y()).arg(rect().width()).arg(rect().height());
 }
 
 void Container::setLayout(const Layout &l)
@@ -359,8 +359,9 @@ void Container::reposition()    // FIXME-0 bbox of MC not correct
 
                     // For floatingBounded containers and calculation of heights and widths 
                     // we need move subcontainers to origin first
-                    if (!positionFixed)
+                    if (!positionFixed) {
                         c->setPos(0, 0);
+                    }
 
                     c_bbox = mapRectFromItem(c, c->rect());
 
@@ -377,6 +378,7 @@ void Container::reposition()    // FIXME-0 bbox of MC not correct
                         // but build max bbox of floating children
                         if (!hasFloatingContent) {
                             hasFloatingContent = true;
+                            qDebug() << "   c is floating: " << c->info();
                         }
                     } else {
                         // For width and height we can use the already mapped dimensions
@@ -385,6 +387,10 @@ void Container::reposition()    // FIXME-0 bbox of MC not correct
                         w_total += c_bbox.width();
                     }
                 }
+
+                qDebug() << "Repos of " << info();
+                qDebug() << "  w,h=" << w_total << h_max;
+                qDebug() << " bbox=" << bbox;
 
                 qreal x;
                 qreal w_last;   // last width before adding current container width to bbox later
@@ -428,15 +434,20 @@ void Container::reposition()    // FIXME-0 bbox of MC not correct
                             }
                             x -= w_last;
                         }
-                    }
+                    } // Non-floating children
+
+                    // Set rect to the non-floating containers we have so far
+                    r.setWidth(w_total);
+                    r.setHeight(h_max);
+                    setRect(r);
+                } 
+
+                qDebug() << "  r= " << r << "bbox=" << bbox << "united:" << r.united(bbox) << "hasFloats" << hasFloatingContent;
+                if (bbox.left() < 0 || bbox.top() < 0) {
+                    qDebug() << "  bbox is off!";
+                    r = bbox;
                 }
 
-                // Set rect to the non-floating containers we have so far
-                r.setWidth(w_total);
-                r.setHeight(h_max);
-                setRect(r);
-
-                r = r.united(bbox);
 
                 if (hasFloatingContent) {
                     // Calculate translation vector t to move *parent* later on
@@ -449,6 +460,7 @@ void Container::reposition()    // FIXME-0 bbox of MC not correct
                     if (r.topLeft().x() < 0) t.setX(-r.topLeft().x());
                     if (r.topLeft().y() < 0) t.setY(-r.topLeft().y());
 
+                    qDebug() << "  floating content and t=" << t << "c_bbox=" << c_bbox << "bbox=" << bbox << "movable:" << movableByFloats;
                     if (t != QPointF()) {
                         if (movableByFloats) {
                             // I need to become bigger in topLeft corner to make room for floats:
@@ -463,6 +475,7 @@ void Container::reposition()    // FIXME-0 bbox of MC not correct
                 }
             } // Horizontal layout
             setRect(r);
+            qDebug() << "  repos final" << info() << "r=" << r << "movable=" << movableByFloats;
             break;
 
         case Vertical: {
