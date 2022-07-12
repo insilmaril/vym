@@ -579,22 +579,27 @@ Container* BranchItem::getBranchesContainer()
 
 void BranchItem::updateContainerStackingOrder()
 {
-    int n = num();
-
+    // After relinking branches (also moving up/down), the order of the 
+    // BranchContainers does not match the order of BranchItems any longer and
+    // needs to be adjusted. Or the BranchContainer has (temporarily) been linked to 
+    // a completely different parent.
+    //
     // It seems the QGraphicsItem::stackBefore only works, if an item is moved up. 
     // For moving below (or into another subtree), we have to reparent first  :-(
 
-    // For simplicity we always reparent. The absolute position must not be changed here
+    // For simplicity we always reparent. The absolute position will not be changed here
+
+    int n = num();
 
     QPointF sp = branchContainer->scenePos();
 
     branchContainer->setParentItem(nullptr);
 
     if (parentBranch() == rootItem) 
-        // Moved center
+        // I am the center
         return;
-    else
-        parentBranch()->addToBranchesContainer(branchContainer);
+
+    parentBranch()->addToBranchesContainer(branchContainer);
 
     while (n < parentBranch()->branchCount() - 1) {
         // Insert container of this branch above others
@@ -604,7 +609,7 @@ void BranchItem::updateContainerStackingOrder()
         // cannot be inserted using QGraphicsItem::stackBefore
         //
         // We try the next sibling then, if this fails, just append at the end.
-        if ( (parentBranch()->getBranchNum(n + 1))->getContainer()->parentItem() != parentBranch()->getBranchesContainer() )    // FIXME-0 what if getBranchesContainer == nullptr ?
+        if ( (parentBranch()->getBranchNum(n + 1))->getContainer()->parentItem() != parentBranch()->getBranchesContainer() )
             n++;
         else {
             branchContainer->stackBefore( (parentBranch()->getBranchNum(n + 1))->getContainer() );
