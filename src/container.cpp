@@ -420,7 +420,7 @@ void Container::reposition()
                 foreach (QGraphicsItem *child, childItems()) {
                     c = (Container*) child;
 
-                    if (c->layout != FloatingBounded) {     // FIXME-1 what about FloatingFree?
+                    if (c->layout != FloatingBounded && c->layout != FloatingFree) {
                         // Non-floating child, consider width and height
                         w_last = c->rect().width();
                         qreal y;
