@@ -947,10 +947,9 @@ bool parseVYMHandler::readSettingAttr(const QXmlAttributes &a)
     if (!a.value("key").isEmpty()) {
         lastSetting = a.value("key");
         if (!a.value("value").isEmpty())
-            // Beginning with 2.5.0 value is stored as between tags,
-            // no  longer as attribute
-            settings.setLocalValue(model->getDestPath(), a.value("key"),
-                                   a.value("value"));
+            settings.setLocalValue(
+                    model->getDestPath(), a.value("key"),
+                    a.value("value"));
         else
             return false;
     }

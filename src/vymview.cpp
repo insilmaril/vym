@@ -60,16 +60,6 @@ VymView::VymView(VymModel *m)
     connect(slideEditorDE, SIGNAL(visibilityChanged(bool)), mainWindow,
             SLOT(updateActions()));
 
-    // Create Layout
-    /*
-    QVBoxLayout* mainLayout = new QVBoxLayout (this);
-    QSplitter *splitter= new QSplitter (this);
-
-    QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    splitter->setSizePolicy(sizePolicy);
-    mainLayout->addWidget (splitter);
-    */
-
     // Connect selections
 
     // Selection in Model changed
@@ -123,21 +113,22 @@ VymView::VymView(VymModel *m)
 
 VymView::~VymView()
 {
-    settings.setLocalValue(model->getFilePath(), "/treeeditor/visible",
+    settings.setLocalValue(model->getFilePath(), "/treeEditor/visible",
                                treeEditorIsVisible());
-    settings.setLocalValue(model->getFilePath(), "/slideeditor/visible",
-                               treeEditorIsVisible());
+    settings.setLocalValue(model->getFilePath(), "/slideEditor/visible",
+                               slideEditorIsVisible());
 }
 
 void VymView::readSettings()
 {
     if (settings
-            .localValue(model->getFilePath(), "/slideeditor/visible", "false")
+            .localValue(model->getFilePath(), "/slideEditor/visible", "false")
             .toBool())
         slideEditorDE->show();
     else
         slideEditorDE->hide();
-    if (settings.localValue(model->getFilePath(), "/treeeditor/visible", "true")
+
+    if (settings.localValue(model->getFilePath(), "/treeEditor/visible", "true")
             .toBool())
         treeEditorDE->show();
     else
@@ -286,12 +277,12 @@ void VymView::toggleTreeEditor()
 {
     if (treeEditorDE->isVisible()) {
         treeEditorDE->hide();
-        settings.setLocalValue(model->getFilePath(), "/treeeditor/visible",
+        settings.setLocalValue(model->getFilePath(), "/treeEditor/visible",
                                "false");
     }
     else {
         treeEditorDE->show();
-        settings.setLocalValue(model->getFilePath(), "/treeeditor/visible",
+        settings.setLocalValue(model->getFilePath(), "/treeEditor/visible",
                                "true");
     }
     model->setChanged();
@@ -301,12 +292,12 @@ void VymView::toggleSlideEditor()
 {
     if (slideEditorDE->isVisible()) {
         slideEditorDE->hide();
-        settings.setLocalValue(model->getFilePath(), "/slideeditor/visible",
+        settings.setLocalValue(model->getFilePath(), "/slideEditor/visible",
                                "false");
     }
     else {
         slideEditorDE->show();
-        settings.setLocalValue(model->getFilePath(), "/slideeditor/visible",
+        settings.setLocalValue(model->getFilePath(), "/slideEditor/visible",
                                "true");
     }
 }

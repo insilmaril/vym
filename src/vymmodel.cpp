@@ -109,7 +109,7 @@ VymModel::VymModel()
 VymModel::~VymModel()
 {
     // out << "Destr VymModel begin this="<<this<<"  "<<mapName<<flush;
-    mapEditor = NULL;
+    mapEditor = nullptr;
     repositionBlocked = true;
     autosaveTimer->stop();
     fileChangedTimer->stop();
@@ -643,6 +643,9 @@ File::ErrorCode VymModel::loadMap(QString fname, const LoadMode &lmode,
 
                 resetHistory();
                 resetSelectionHistory();
+
+                // Set treeEditor and slideEditor visibilty per map
+                vymView->readSettings();
 
                 if (!tryVymLock() && debug)
                     qWarning() << "VM::loadMap  no lockfile created!";
