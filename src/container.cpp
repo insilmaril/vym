@@ -314,20 +314,20 @@ void Container::reposition()    // FIXME-0 bbox of MC not correct
         case FloatingBounded: 
                 {
                     // Calc bbox of all children to prepare calculating rect()
-                    QRectF rc;
+                    QRectF c_bbox;
                     if (childItems().count() > 0) {
                         bool first_iteration = true;
 
                         // Consider other children
                         foreach (QGraphicsItem *child, childItems()) {
                             c = (Container*) child;
-                            rc = mapRectFromItem(c, c->rect());
+                            c_bbox = mapRectFromItem(c, c->rect());
 
                             if (first_iteration) {
                                 first_iteration = false;
-                                r = rc;
+                                r = c_bbox;
                             } else 
-                                r = r.united(rc);
+                                r = r.united(c_bbox);
                         }
                     }
                     
