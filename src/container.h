@@ -42,7 +42,7 @@ class Container : public QGraphicsRectItem {
     };
 
     /*! Alignment of children containers */
-    enum LayoutType {Horizontal, Vertical, FloatingBounded, FloatingFree};
+    enum Layout {Horizontal, Vertical, FloatingBounded, FloatingFree};
     enum HorizontalDirection {LeftToRight, RightToLeft};
     enum HorizontalAlignment {AlignedLeft, AlignedCentered, AlignedRight};
 
@@ -59,9 +59,9 @@ class Container : public QGraphicsRectItem {
 
     virtual QString info (const QString &prefix = "");
 
-    virtual void setLayoutType(const LayoutType &ltype);
-    LayoutType getLayoutType();
-    QString getLayoutTypeString();
+    virtual void setLayout(const Layout &ltype);
+    Layout getLayout();
+    QString getLayoutString();
     bool isFloating();          //! returns true, if parent container has Floating layout
     bool hasFloatingLayout();   //! returns true, if this container has Floating layout
 
@@ -119,7 +119,7 @@ class Container : public QGraphicsRectItem {
 
     QString name;
 
-    LayoutType layout;
+    Layout layout;
     bool movableByFloats;
 
     bool positionFixed;

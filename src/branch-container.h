@@ -1,6 +1,8 @@
 #ifndef BRANCH_CONTAINER_H
 #define BRANCH_CONTAINER_H
 
+#include <QBrush>
+
 #include "container.h"
 
 class BranchItem;
@@ -80,10 +82,11 @@ class BranchContainer : public Container {
     /*! Update "upwards" links in LinkContainer */
     void updateUpLink();
 
-    virtual void setLayoutType(const LayoutType &ltype);
+    virtual void setLayout(const Layout &l);
 
-    virtual void setBranchesContainerLayoutType(const LayoutType &ltype);
+    virtual void setBranchesContainerLayout(const Layout &l);
     virtual void setBranchesContainerHorizontalAlignment(const HorizontalAlignment &valign);
+    virtual void setBranchesContainerBrush(const QBrush &b);
 
     QRectF getHeadingRect();  //! Return rectangle of HeadingContainer in absolute coordinates
 
@@ -103,9 +106,11 @@ class BranchContainer : public Container {
     static qreal linkWidth;
     BranchItem *branchItem; //! Crossreference to "parent" BranchItem 
     
-    // Save layout and alignment of branchesContainer even before container is created on demand
-    LayoutType branchesContainerLayoutType;
+    // Save layout, alignment and brush of branchesContainer 
+    // even before container is created on demand
+    Layout branchesContainerLayout;
     HorizontalAlignment branchesContainerHorizontalAlignment;
+    QBrush branchesContainerBrush;
 
     HeadingContainer *headingContainer; // Heading of this branch
     HeadingContainer *linkSpaceContainer; // space for downLinks

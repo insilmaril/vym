@@ -65,7 +65,7 @@ void BranchContainer::init()
 
     addContainer(innerContainer);
 
-    setLayoutType(Container::Horizontal);
+    setLayout(Container::Horizontal);
     setHorizontalDirection(Container::LeftToRight);
 
     temporaryLinked = false;
@@ -170,7 +170,7 @@ bool BranchContainer::hasFloatingBranchesLayout()
     if (branchesContainer)
         return branchesContainer->hasFloatingLayout();
 
-    if (branchesContainerLayoutType == FloatingBounded || branchesContainerLayoutType == FloatingFree)
+    if (branchesContainerLayout == FloatingBounded || branchesContainerLayout == FloatingFree)
         return true;
     else
         return false;
@@ -179,7 +179,7 @@ bool BranchContainer::hasFloatingBranchesLayout()
 void BranchContainer::createBranchesContainer()
 {
     branchesContainer = new Container ();
-    branchesContainer->setLayoutType(branchesContainerLayoutType);
+    branchesContainer->setLayout(branchesContainerLayout);
     branchesContainer->setHorizontalAlignment(branchesContainerHorizontalAlignment);
     branchesContainer->type = Container::BranchCollection;
 
@@ -248,7 +248,7 @@ int BranchContainer::imageCount()
 void BranchContainer::createImagesContainer()
 {
     imagesContainer = new Container ();
-    imagesContainer->setLayoutType(Container::FloatingBounded);
+    imagesContainer->setLayout(Container::FloatingBounded);
     imagesContainer->type = Container::ImageCollection;
     innerContainer->addContainer(imagesContainer);
 
@@ -421,18 +421,18 @@ void BranchContainer::updateUpLink()
     linkContainer->updateLinkGeometry();
 }
 
-void BranchContainer::setLayoutType(const LayoutType &ltype)
+void BranchContainer::setLayout(const Layout &l)
 {
     if (type != Branch && type != TmpParent) 
-        qWarning() << "BranchContainer::setLayoutType (...) called for non-branch: " << info();
-    Container::setLayoutType(ltype);
+        qWarning() << "BranchContainer::setLayout (...) called for non-branch: " << info();
+    Container::setLayout(l);
 }
     
-void BranchContainer::setBranchesContainerLayoutType(const LayoutType &ltype)
+void BranchContainer::setBranchesContainerLayout(const Layout &ltype)
 {
-    branchesContainerLayoutType = ltype;
+    branchesContainerLayout = ltype;
     if (branchesContainer)
-        branchesContainer->setLayoutType(branchesContainerLayoutType);
+        branchesContainer->setLayout(branchesContainerLayout);
 }
     
 void BranchContainer::setBranchesContainerHorizontalAlignment(const HorizontalAlignment &valign)
@@ -442,6 +442,13 @@ void BranchContainer::setBranchesContainerHorizontalAlignment(const HorizontalAl
         branchesContainer->setHorizontalAlignment(branchesContainerHorizontalAlignment);
 }
     
+void BranchContainer::setBranchesContainerBrush(const QBrush &b)
+{
+    branchesContainerBrush = b;
+    if (branchesContainer)
+        branchesContainer->setBrush(branchesContainerBrush);
+}
+
 QRectF BranchContainer::getHeadingRect()
 {
     QPointF p = headingContainer->scenePos();
@@ -535,16 +542,8 @@ void BranchContainer::reposition()
         // then my orientation is already set in MapEditor, so ignore here
     }
 
-    setLayoutType(Horizontal);
+    setLayout(Horizontal);
     
-    // FIXME-3 for testing ornamented containers are blue and branch containers green
-    /*
-    */
-    if (type != TmpParent) {
-        ornamentsContainer->setPen(QPen(Qt::blue));
-        setPen(QPen(Qt::green));
-    }
-
     // Settings depending on depth
     if (depth == 0)
     {
@@ -558,13 +557,13 @@ void BranchContainer::reposition()
 
         innerContainer->setMovableByFloats(false);
         setMovableByFloats(false);
-        setBranchesContainerLayoutType(FloatingBounded);
+        setBranchesContainerLayout(FloatingBounded);
 
     } else {
         // Branch or mainbranch
         linkContainer->setLinkStyle(LinkContainer::Line);
         innerContainer->setMovableByFloats(true);
-        setBranchesContainerLayoutType(Vertical);
+        setBranchesContainerLayout(Vertical);
 
         switch (orientation) {
             case LeftOfParent:
@@ -584,32 +583,12 @@ void BranchContainer::reposition()
         if (branchItem && branchItem->getHeadingPlain().startsWith("float")) {  // FIXME-2 testing, needs dialog for setting
             // Special layout: FloatingBounded children 
             orientation = UndefinedOrientation;
-            QColor col (Qt::red);
-            col.setAlpha(150);
-            if (branchesContainer) {    // FIXME-2 testing
-                branchesContainer->setBrush(col);
-            }
-            setBranchesContainerLayoutType(FloatingBounded);
-            innerContainer->setBrush(Qt::cyan);
+            setBranchesContainerLayout(FloatingBounded);
         } else if (branchItem && branchItem->getHeadingPlain().startsWith("free")) {// FIXME-2 testing, needs dialog for setting
-            // Special layout: FloatingBounded children 
+            // Special layout: FloatingFree children 
             orientation = UndefinedOrientation;
-            QColor col (Qt::red);
-            col.setAlpha(120);
-            if (branchesContainer) {    // FIXME-2 testing
-                branchesContainer->setBrush(col);
-            }
-            setBranchesContainerLayoutType(FloatingFree);
-            innerContainer->setBrush(Qt::gray);
+            setBranchesContainerLayout(FloatingFree);
         } 
-        /* FIXME-2 Testing
-        else {
-            QColor col (Qt::blue);
-            col.setAlpha(120);
-            if (branchesContainer) branchesContainer->setBrush(col);
-            //innerContainer->setBrush(Qt::cyan);
-        }
-        */
     }
 
     // Update branchesContainer and linkSpaceContainer,
@@ -625,4 +604,28 @@ void BranchContainer::reposition()
             bc->updateUpLink();
         }
     }
+
+    // FIXME-3 for testing we do some coloring and additional drawing
+    /*
+    */
+    if (type != TmpParent) {
+        ornamentsContainer->setPen(QPen(Qt::blue));
+        setPen(QPen(Qt::green));
+
+        QColor col;
+        if (branchesContainerLayout == FloatingBounded && depth > 0) {
+            // Special layout: FloatingBounded children
+            col = QColor(Qt::gray);
+            col.setAlpha(150);
+            setBranchesContainerBrush(col);
+        } else if (branchesContainerLayout == FloatingFree) {
+            col = QColor(Qt::blue);
+            col.setAlpha(120);
+            setBrush(col);
+        } else {
+            setBranchesContainerBrush(Qt::NoBrush);
+            setBrush(Qt::NoBrush);
+        }
+    }
+
 }

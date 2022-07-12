@@ -88,8 +88,8 @@ MapEditor::MapEditor(VymModel *vm)
     tmpParentContainer->setZValue(1000);    // See also z-values in mapobj.h
     tmpParentContainer->setName("tmpParentContainer");
     tmpParentContainer->setType(Container::TmpParent);
-    tmpParentContainer->setLayoutType(Container::FloatingBounded);
-    tmpParentContainer->setBranchesContainerLayoutType(Container::FloatingBounded);
+    tmpParentContainer->setLayout(Container::FloatingBounded);
+    tmpParentContainer->setBranchesContainerLayout(Container::FloatingBounded);
     tmpParentContainer->setBrush(Qt::NoBrush);
     tmpParentContainer->setPen(QPen(Qt::NoPen));
     tmpParentContainer->reposition();

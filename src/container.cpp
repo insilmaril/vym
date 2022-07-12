@@ -110,23 +110,23 @@ QString Container::info (const QString &prefix)
 {
     return prefix +
         getName() +
-        QString(" Layout: %1").arg(getLayoutTypeString()) +
+        QString(" Layout: %1").arg(getLayoutString()) +
         QString(" scenePos: (%1, %2)").arg(scenePos().x()).arg(scenePos().y()) + 
         QString(" pos: (%1, %2)").arg(pos().x()).arg(pos().y());
 //        QString(" (w,h): (%1, %2)").arg(rect().width()).arg(rect().height());
 }
 
-void Container::setLayoutType(const LayoutType &ltype)
+void Container::setLayout(const Layout &l)
 {
-    layout = ltype;
+    layout = l;
 }
 
-Container::LayoutType Container::getLayoutType()
+Container::Layout Container::getLayout()
 {
     return layout;
 }
 
-QString Container::getLayoutTypeString()
+QString Container::getLayoutString()
 {
     QString r;
     switch (layout) {
@@ -144,7 +144,7 @@ QString Container::getLayoutTypeString()
             break;
         default:
             r = "Unknown";
-            qWarning () << "Container::getLayoutTypeString unknown layout";
+            qWarning () << "Container::getLayoutString unknown layout";
     }
     return r;
 }
@@ -279,34 +279,9 @@ QPointF Container::getOriginalPos()
     return originalPos;
 }
 
-void Container::reposition()
+void Container::reposition()    // FIXME-0 bbox of MC not correct
 {
-    /*
-    */
-    QString s_layout;
-    switch (layout) {
-        case Horizontal:
-            s_layout = "Horizontal";
-            if (horizontalDirection == LeftToRight)
-                s_layout += " LeftToRight";
-            else if (horizontalDirection == RightToLeft)
-                s_layout += " RightLeft";
-            else
-                s_layout += " huh? horiz. dir undefined...";
-            break;
-        case Vertical:
-            s_layout = "Vertical";
-            break;
-        case FloatingBounded:
-            s_layout = "FloatingBounded";
-            break;
-        case FloatingFree:
-            s_layout = "FloatingFree";
-            break;
-        default:
-            s_layout = "huh? undefined...";
-    }
-    //qDebug() << QString("#### Reposition of %1").arg(getName()) << "Layout: " << s_layout << horizontalDirection;
+    //qDebug() << QString("#### Reposition of %1").arg(getName()) << "Layout: " << getLayoutString() << horizontalDirection;
 
     QRectF r;
 
