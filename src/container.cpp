@@ -33,7 +33,6 @@ void Container::init()
     layout = Horizontal;
 
     movableByFloats = false;
-    positionFixed = false;
 
     minimumWidth = 0;
 
@@ -168,16 +167,6 @@ bool Container::hasFloatingLayout() {
 void Container::setMovableByFloats(bool movable)
 {
     movableByFloats = movable;
-}
-
-void Container::setPositionFixed(bool b)    // FIXME-0 not used at all, not even for LinkContainer
-{
-    positionFixed = b;
-}
-
-bool Container::hasPositionFixed()
-{
-    return positionFixed;
 }
 
 void Container::setHorizontalDirection(const HorizontalDirection &hdir)
@@ -355,10 +344,9 @@ void Container::reposition()    // FIXME-0 bbox of MC not correct
 
                     // For floatingBounded containers and calculation of heights and widths 
                     // we need move subcontainers to origin first
-                    if (!positionFixed) {
-                        //if (c->pos() != QPointF(0,0)) qDebug() << "c is already away from origin: " << c->info(); // FIXME-2 testing
-                        c->setPos(0, 0);
-                    }
+
+                    //if (c->pos() != QPointF(0,0)) qDebug() << "c is already away from origin: " << c->info(); // FIXME-2 testing
+                    c->setPos(0, 0);
 
                     c_bbox = mapRectFromItem(c, c->rect());
 
@@ -414,24 +402,20 @@ void Container::reposition()    // FIXME-0 bbox of MC not correct
 
                         if (horizontalDirection == LeftToRight)
                         {
-                            if (!positionFixed) {
-                                if (c->rotation() == 0)
-                                    c->setPos (x, y);
-                                else {
-                                    // move rotated container to my origin
-                                    c->setPos (- mapRectFromItem(c, c->rect()).topLeft());
-                                }
+                            if (c->rotation() == 0)
+                                c->setPos (x, y);
+                            else {
+                                // move rotated container to my origin
+                                c->setPos (- mapRectFromItem(c, c->rect()).topLeft());
                             }
                             x += w_last;
                         } else
                         {
-                            if (!positionFixed) {
-                                if (c->rotation() == 0)
-                                    c->setPos (x - c->rect().width(), y);
-                                else {
-                                    // move rotated container to my origin
-                                    c->setPos (- mapRectFromItem(c, c->rect()).topLeft());
-                                }
+                            if (c->rotation() == 0)
+                                c->setPos (x - c->rect().width(), y);
+                            else {
+                                // move rotated container to my origin
+                                c->setPos (- mapRectFromItem(c, c->rect()).topLeft());
                             }
                             x -= w_last;
                         }
@@ -512,7 +496,7 @@ void Container::reposition()    // FIXME-0 bbox of MC not correct
                 foreach (QGraphicsItem *child, childItems()) {
                     c = (Container*) child;
 
-                    if (c->layout != FloatingBounded && !positionFixed) {
+                    if (c->layout != FloatingBounded) {
                         switch (horizontalAlignment) {
                             case AlignedLeft:
                                 c->setPos (0, y);

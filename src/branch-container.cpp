@@ -458,6 +458,7 @@ QRectF BranchContainer::getHeadingRect()
 void BranchContainer::setRotationHeading(const int &a)
 {
     headingContainer->setRotation( 1.0 * a);
+    //headingContainer->setScale(1 + a * 1.1);      // FIXME-1 what about scaling??
 }
 
 int BranchContainer::getRotationHeading()

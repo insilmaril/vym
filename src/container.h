@@ -73,9 +73,6 @@ class Container : public QGraphicsRectItem {
      */
     void setMovableByFloats(bool);  
 
-    void setPositionFixed(bool b);  //! Default is movable, but "overlay" containers can be fixed
-    bool hasPositionFixed();
-
     void setMinimumWidth();         //! Minimum dimensions of container. Used for linkSpaceContainer
     qreal getMinimumWidth();
 
@@ -122,7 +119,6 @@ class Container : public QGraphicsRectItem {
     Layout layout;
     bool movableByFloats;
 
-    bool positionFixed;
     qreal minimumWidth;
 
     HorizontalDirection horizontalDirection;
