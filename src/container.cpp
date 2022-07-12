@@ -347,14 +347,12 @@ void Container::reposition()    // FIXME-0 bbox of MC not correct
                 bool hasFloatingContent = false;
                 
                 QRectF c_bbox;  // bbox of subcontainer c in my own coord 
-                QRectF bbox;    // United bboxes of all containers in my own coord
+                QRectF bbox;    // United bboxes of all all floating and sum of regular containers in my own coord
 
                 // Calc space required
                 foreach (QGraphicsItem *child, childItems()) {
                     c = (Container*) child;
 
-                    /*
-                    */
                     // For floatingBounded containers and calculation of heights and widths 
                     // we need move subcontainers to origin first
                     if (!positionFixed) {
@@ -370,26 +368,29 @@ void Container::reposition()    // FIXME-0 bbox of MC not correct
                         c_bbox.moveTopLeft(QPointF(0,0));
                     }
 
-                    /*
-                    */
-                    bbox = bbox.united(c_bbox);
-
-                    if (c->layout == FloatingBounded ) {
-                        // Floating does not directly increase max height or sum of widths, 
+                    if (c->layout == FloatingBounded || c_bbox.x() < 0 || c_bbox.y() < 0) {
+                        // Floating subcontainers are considered for total bbox
+                        // Their heights and widths don't sum up directly
                         // but build max bbox of floating children
-                        if (!hasFloatingContent) {
-                            hasFloatingContent = true;
-                            qDebug() << "   c is floating: " << c->info();
-                        }
+                        //
+                        // Main branches are similar: They might have a topLeft corner 
+                        // above or to the left of my origin. In that case I also need to consider this
+                        // special c_bbox for my own bbox, which in turn also will be above/left of origin:
+                        bbox = bbox.united(c_bbox);
+
+                        hasFloatingContent = true;
                     } else {
                         // For width and height we can use the already mapped dimensions
                         h = c_bbox.height();
                         h_max = (h_max < h) ? h : h_max;
                         w_total += c_bbox.width();
                     }
-
                 }
 
+                // bbox so far only considers floating subcontainers. Extend by regular ones, where 
+                // rectangle has w_total h_max
+                bbox = bbox.united(QRectF(0, 0, w_total, h_max));
+                
                 qDebug() << "Repos of " << info();
                 qDebug() << "  w,h=" << w_total << h_max;
                 qDebug() << " bbox=" << bbox;
@@ -404,12 +405,12 @@ void Container::reposition()    // FIXME-0 bbox of MC not correct
                     c = (Container*) child;
 
                     if (c->layout != FloatingBounded && c->layout != FloatingFree) {
-                        // Non-floating child, consider width and height
+                        // Non-floating child, consider width and height and align horizontally
                         w_last = c->rect().width();
                         qreal y;
-
-                        if (movableByFloats)
-                            y = (h_max - c->rect().height() ) / 2;
+    
+                        if (movableByFloats)    // FIXME-000 why exactly?
+                            y = (h_max - c->rect().height() ) / 2;  
                         else
                             y = c->pos().y();
 
@@ -437,19 +438,10 @@ void Container::reposition()    // FIXME-0 bbox of MC not correct
                             x -= w_last;
                         }
                     } // Non-floating children
-
-                    // Set rect to the non-floating containers we have so far
-                    r.setWidth(w_total);
-                    r.setHeight(h_max);
-                    setRect(r);
                 } 
+                r = bbox;
 
                 qDebug() << "  r= " << r << "bbox=" << bbox << "united:" << r.united(bbox) << "hasFloats" << hasFloatingContent;
-                if (bbox.left() < 0 || bbox.top() < 0) {
-                    qDebug() << "  bbox is off!";
-                    r = bbox;
-                }
-
 
                 if (hasFloatingContent) {
                     // Calculate translation vector t to move *parent* later on
@@ -472,7 +464,7 @@ void Container::reposition()    // FIXME-0 bbox of MC not correct
                                 c->setPos(c->pos() + t);
                             }
                             r.translate(t);
-                        }
+                        } 
                     }
                 }
             } // Horizontal layout
