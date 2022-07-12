@@ -318,10 +318,6 @@ void Container::reposition()    // FIXME-0 bbox of MC not correct
                     if (childItems().count() > 0) {
                         bool first_iteration = true;
 
-                        // Set initial minima and maxima
-                        c = (Container*) childItems().first();
-                        rc = mapRectFromItem(c, c->rect());
-
                         // Consider other children
                         foreach (QGraphicsItem *child, childItems()) {
                             c = (Container*) child;
@@ -350,16 +346,19 @@ void Container::reposition()    // FIXME-0 bbox of MC not correct
 
                 bool hasFloatingContent = false;
                 
-                QRectF c_bbox;  // Current bbox of floating c in my own coord (usually childrenContainer)
-                QRectF bbox;    // United bboxes of all floating containers in my own coord
+                QRectF c_bbox;  // bbox of subcontainer c in my own coord 
+                QRectF bbox;    // United bboxes of all containers in my own coord
 
-                // Calc max height and total width
+                // Calc space required
                 foreach (QGraphicsItem *child, childItems()) {
                     c = (Container*) child;
 
+                    /*
+                    */
                     // For floatingBounded containers and calculation of heights and widths 
                     // we need move subcontainers to origin first
                     if (!positionFixed) {
+                        //if (c->pos() != QPointF(0,0)) qDebug() << "c is already away from origin: " << c->info(); // FIXME-2 testing
                         c->setPos(0, 0);
                     }
 
@@ -371,6 +370,8 @@ void Container::reposition()    // FIXME-0 bbox of MC not correct
                         c_bbox.moveTopLeft(QPointF(0,0));
                     }
 
+                    /*
+                    */
                     bbox = bbox.united(c_bbox);
 
                     if (c->layout == FloatingBounded ) {
@@ -386,6 +387,7 @@ void Container::reposition()    // FIXME-0 bbox of MC not correct
                         h_max = (h_max < h) ? h : h_max;
                         w_total += c_bbox.width();
                     }
+
                 }
 
                 qDebug() << "Repos of " << info();
