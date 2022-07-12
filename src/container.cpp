@@ -113,7 +113,7 @@ QString Container::info (const QString &prefix)
         QString(" Layout: %1").arg(getLayoutString()) +
         QString(" scenePos: (%1, %2)").arg(scenePos().x()).arg(scenePos().y()) + 
         QString(" pos: (%1, %2)").arg(pos().x()).arg(pos().y()) + 
-        QString(" rect: (%1, %2  %3 x %4").arg(rect().x()).arg(rect().y()).arg(rect().width()).arg(rect().height());
+        QString(" rect: (%1, %2  %3x%4)").arg(rect().x()).arg(rect().y()).arg(rect().width()).arg(rect().height());
 }
 
 void Container::setLayout(const Layout &l)
@@ -170,7 +170,7 @@ void Container::setMovableByFloats(bool movable)
     movableByFloats = movable;
 }
 
-void Container::setPositionFixed(bool b)
+void Container::setPositionFixed(bool b)    // FIXME-0 not used at all, not even for LinkContainer
 {
     positionFixed = b;
 }
@@ -403,15 +403,14 @@ void Container::reposition()    // FIXME-0 bbox of MC not correct
                     if (c->layout != FloatingBounded && c->layout != FloatingFree) {
                         // Non-floating child, consider width and height and align horizontally
                         w_last = c->rect().width();
-                        qreal y;
+                        qreal y = 0;
     
                         if (movableByFloats)    // FIXME-000 why exactly this condition? 
                                                 // Affects only InnerContainers of branches with d > 0
                         {
                             y = (h_max - c->rect().height() ) / 2;  
-                            qDebug() << "repos of " << info() << "  setting y=" << y << "for " << c->info();
-                        } else
-                            y = c->pos().y();
+                            //qDebug() << "* repos of " << info() << "mov=" << movableByFloats <<"y=" << y << "for " << c->info();
+                        }
 
                         if (horizontalDirection == LeftToRight)
                         {
