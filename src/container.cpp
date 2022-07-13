@@ -260,7 +260,7 @@ void Container::setPos(qreal x, qreal y)
     setPos(QPointF(x, y));
 }
 
-void Container::setOriginalPos()    // FIXME-1 Only used for BranchContainer and ImageContainer -> move to LinkableContainer
+void Container::setOriginalPos()    // FIXME-3 Only used for BranchContainer and ImageContainer -> maybe move to LinkableContainer?
 {
     originalPos = pos();
 }
@@ -270,7 +270,7 @@ QPointF Container::getOriginalPos()
     return originalPos;
 }
 
-void Container::reposition()    // FIXME-0 bbox of MC not correct
+void Container::reposition()
 {
     //qDebug() << QString("#### Reposition of %1").arg(getName()) << "Layout: " << getLayoutString() << horizontalDirection;
 
@@ -345,9 +345,8 @@ void Container::reposition()    // FIXME-0 bbox of MC not correct
                     c = (Container*) child;
 
                     // For floatingBounded containers and calculation of heights and widths 
-                    // we need move subcontainers to origin first
-
-                    //if (c->pos() != QPointF(0,0)) qDebug() << "c is already away from origin: " << c->info(); // FIXME-2 testing
+                    // we need move subcontainers to origin first, because the translation is calculated by
+                    // their bounding boxes, not position
                     c->setPos(0, 0);
 
                     c_bbox = mapRectFromItem(c, c->rect());
@@ -425,8 +424,6 @@ void Container::reposition()    // FIXME-0 bbox of MC not correct
                 } 
                 r = bbox;
 
-                qDebug() << "  r= " << r << "bbox=" << bbox << "united:" << r.united(bbox) << "hasFloats" << hasFloatingContent;
-
                 if (hasFloatingContent) {
                     // Calculate translation vector t to move *parent* later on
                     // now after regular containers have been positioned
@@ -452,7 +449,6 @@ void Container::reposition()    // FIXME-0 bbox of MC not correct
                 }
             } // Horizontal layout
             setRect(r);
-            qDebug() << "  repos final" << info() << "r=" << r << "movable=" << movableByFloats;
             break;
 
         case Vertical: {
