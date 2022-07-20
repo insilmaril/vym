@@ -1111,18 +1111,15 @@ void VymModel::autosave()
 {
     // Check if autosave is disabled due to testmode
     if (testmode)
-    {
-        qWarning()
-            << QString("VymModel::autosave disabled in testmode!  Current map: %1")
-                   .arg(filePath);
         return;
-    }
 
     // Check if autosave is disabled globally
     if (!mainWindow->useAutosave()) {
+        /*
         qWarning()
             << QString("VymModel::autosave disabled globally!  Current map: %1")
                    .arg(filePath);
+        */
         return;
     }
 
@@ -1519,6 +1516,7 @@ void VymModel::saveState(const SaveMode &savemode, const QString &undoSelection,
     if (saveStateBlocked)
         return;
 
+    /*
     if (debug) {
         qDebug() << "VM::saveState() for map " << mapName;
         qDebug() << "  block:   " << buildingUndoBlock;
@@ -1527,6 +1525,7 @@ void VymModel::saveState(const SaveMode &savemode, const QString &undoSelection,
         qDebug() << "  redoCom: " << redoSelection;
         qDebug() << "  redoSel: " << redoCom;
     }
+    */
 
     QString undoCommand;
     QString redoCommand;
@@ -1626,6 +1625,7 @@ void VymModel::saveState(const SaveMode &savemode, const QString &undoSelection,
     undoSet.setValue(QString("/history/version"), vymVersion);
     undoSet.writeSettings(histPath);
 
+    /*
     if (debug) {
         // qDebug() << "          into="<< histPath;
         qDebug() << "    stepsTotal=" << stepsTotal
@@ -1641,6 +1641,7 @@ void VymModel::saveState(const SaveMode &savemode, const QString &undoSelection,
         cout << "    redoCom:" <<  qPrintable(redoCommand) << "\n";
         cout << "    ---------------------------\n";
     }
+    */
 
     mainWindow->updateHistory(undoSet);
 
@@ -2913,34 +2914,59 @@ void VymModel::moveDownDiagonally()
      }
 }
 
-void VymModel::detach() // FIXME-2 rewrite to containers
-{
-    /*
-    BranchItem *selbi = getSelectedBranch();
-    if (selbi && selbi->depth() > 0) {
-        // if no relPos have been set before, try to use current rel positions
-        if (selbi->getLMO())
-            for (int i = 0; i < selbi->branchCount(); ++i)
-                selbi->getBranchNum(i)->getBranchObj()->setRelPos();
 
-        QString oldsel = getSelectString();
-        int n = selbi->num();
-        QPointF p;
-        BranchObj *bo = selbi->getBranchObj();
-        if (bo)
-            p = bo->getAbsPos();
-        QString parsel = getSelectString(selbi->parent());
-        if (relinkBranch(selbi, rootItem, -1, true))
+void VymModel::detach() // FIXME-0 rewrite to containers    // FIXME-1 block repositions during setPos, relink
+{
+    QList<BranchItem *> selbis = getSelectedBranches();
+    BranchContainer *bc;
+    foreach (BranchItem *selbi, selbis) {
+        QList <QPointF> positions;
+        if (selbi && selbi->depth() > 0) {
+            // create relative positions from current scenePos
+            for (int i = 0; i < selbi->branchCount(); i++)
+                //positions << selbi->getBranchNum(i)->getBranchContainer()->getRealRelPos();
+                positions << selbi->getBranchNum(i)->getBranchContainer()->getRealScenePos();
+
+            // Also save real scene position of current parent, 
+            // which will become mapcenter
+            bc = selbi->getBranchContainer();
+            positions << bc->getRealScenePos();
+            qDebug() << "*** pre selbi rsp=" << bc->getRealScenePos();
+
+            QString old_sel = getSelectString();
+            int n = selbi->num();
+            QPointF p;
+            if (bc)
+                p = bc->scenePos();
+
+            QString parent_sel = getSelectString(selbi->parent());
+            if (relinkBranch(selbi, rootItem, -1, true)) {
+                // Restore absolute positions
+                bc->setRealScenePos(positions.last());
+                reposition();
+            }
+
+            qDebug() << "*** post selbi rsp=" << bc->getRealScenePos();
+
+            for (int i = 0; i < selbi->branchCount(); i++) {
+                //selbi->getBranchNum(i)->getBranchContainer()->setRealRelPos(positions[i]);
+                selbi->getBranchNum(i)->getBranchContainer()->setRealScenePos(positions[i]);
+            }
+
+            /*
             saveState(getSelectString(selbi),
                       QString("relinkTo (\"%1\",%2,%3,%4)")
-                          .arg(parsel)
+                          .arg(parent_sel)
                           .arg(n)
                           .arg(p.x())
                           .arg(p.y()),
-                      oldsel, "detach ()",
+                      old_sel, "detach ()",
                       QString("Detach %1").arg(getObjectName(selbi)));
+              */
+        }
     }
-    */
+    reposition();
+    emitSelectionChanged();
 }
 
 void VymModel::sortChildren(bool inverse)
@@ -3371,6 +3397,7 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst, bo
 
         emit(layoutAboutToBeChanged());
         BranchItem *branchpi = (BranchItem *)branch->parent();
+
         // Remove at current position
         int n = branch->childNum();
 
@@ -3378,7 +3405,6 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst, bo
         // after removing branch
         if (branchpi == dst && num_dst - 1 > n ) 
             num_dst--;
-
 
         beginRemoveRows(index(branchpi), n, n);
         branchpi->removeChild(n);

@@ -132,6 +132,60 @@ QPointF BranchContainer::getOriginalParentPos()
     return originalParentPos;
 }
 
+void BranchContainer::setRealScenePos(const QPointF &sp)
+{
+    // Move my self in a way, that finally center of ornamentsContainer
+    // will be at scenePos sp
+    QPointF t_oc = mapFromItem(ornamentsContainer, ornamentsContainer->rect().center());
+    QPointF p_new = sp - t_oc;
+
+    if (branchItem->depth() == 0)
+        setPos(p_new);
+    else {
+        //QPointF p_new = sceneTransform().inverted().map(scenePos() + t_oc);
+        //setPos(scenePos() + t_oc);
+        QPointF q = ornamentsContainer->mapToScene(ornamentsContainer->rect().center());
+        QPointF r = sp - q;
+        qDebug() << "BC::sRSP " << info() << " o_cntr=" << q << " t_oc=" << t_oc << " r=" << r << "o=" << orientation;
+        setPos(pos() + r);
+    }
+}
+
+QPointF BranchContainer::getRealScenePos()
+{
+    QPointF t_oc = mapFromItem(ornamentsContainer, ornamentsContainer->rect().center());
+    QPointF r = ornamentsContainer->mapToScene(ornamentsContainer->rect().center());
+    qDebug() << "BC::gRSP " << info() << " o_cntr=" << r << " t_oc=" << t_oc << "o=" << orientation;
+    return r;
+}
+
+void BranchContainer::setRealRelPos(const QPointF &rp)
+{
+    BranchContainer *pc = parentBranchContainer();
+    if (!pc) return;
+
+    // Move my self in a way, that finally center of ornamentsContainer
+    // will be at relative rp
+
+    QPointF t_oc = mapFromItem(ornamentsContainer, ornamentsContainer->rect().center());
+    QPointF p_new = rp - t_oc;
+    //QPointF p_new = sceneTransform().inverted().map(scenePos() + t_oc);
+    //setPos(scenePos() + t_oc);
+    qDebug() << "BC::sRRP rp=" << rp << " t_oc=" << t_oc << "  p_new=" << p_new << "pos=" << pos() << "parent_sp=" << pc->scenePos();
+    setPos(p_new);
+}
+
+QPointF BranchContainer::getRealRelPos()
+{
+    BranchContainer *pc = parentBranchContainer();
+    if (!pc) return QPointF();
+
+    QPointF r = pc->mapFromItem(ornamentsContainer, ornamentsContainer->rect().center());
+    QPointF t = pc->mapFromItem(pc->ornamentsContainer, pc->ornamentsContainer->rect().center());
+    qDebug() << "gRRP  r=" << r << " p=" << t << "parent_sp=" << pc->scenePos() << "oc_cp=" << ornamentsContainer->scenePos();
+    return r - t;
+}
+
 bool BranchContainer::isOriginalFloating()
 {
     return originalFloating;

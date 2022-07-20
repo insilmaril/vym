@@ -839,7 +839,14 @@ BranchItem *MapEditor::findMapBranchItem(QPointF p, const QList <TreeItem*> &exc
         return nullptr;
 }
 
-void MapEditor::testFunction1() {}
+void MapEditor::testFunction1() 
+{
+    BranchItem *selbi = model->getSelectedBranch();
+    if (!selbi)
+        qWarning() << "Nothing selected";
+    else
+        qDebug() << selbi->getBranchContainer()->info();
+}
 
 void MapEditor::testFunction2() { autoLayout(); }
 
@@ -1638,7 +1645,7 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
     */
 }
 
-void MapEditor::mouseMoveEvent(QMouseEvent *e)
+void MapEditor::mouseMoveEvent(QMouseEvent *e)  // FIXME-1  Shift to only move MC or floating parent not implemented yet
 {
     QPointF p_event = mapToScene(e->pos());
 
@@ -1993,24 +2000,27 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                 // 
                 // tmpParentContainer always has floating layout, 
                 // check original parent instead:
-                Container *originalParentContainer = bc->getBranchItem()->parentBranch()->getBranchesContainer();
-                if (originalParentContainer->hasFloatingLayout()) {
-                    model->saveState(
-                            bc->getBranchItem(), 
-                            QString("setPos %1;").arg(qpointFToString(bc->getOriginalPos())),
-                            nullptr,
-                            "", 
-                            QString("Move %1") .arg(bc->getBranchItem()->getHeadingPlain()));
+                BranchItem *pbi = bc->getBranchItem()->parentBranch();
+                if (pbi) {
+                    Container *originalParentContainer = pbi->getBranchesContainer(); // FIXME-000 MC will have no parentBranch and crash
+                    if (originalParentContainer->hasFloatingLayout()) {
+                        model->saveState(
+                                bc->getBranchItem(), 
+                                QString("setPos %1;").arg(qpointFToString(bc->getOriginalPos())),
+                                nullptr,
+                                "", 
+                                QString("Move %1") .arg(bc->getBranchItem()->getHeadingPlain()));
+                    }
                 }
 
                 // Save current scene position for redo or if moved to floating layout
-                QPointF sp = bc->scenePos();
+                QPointF sp = bc->scenePos();    // FIXME-00 use realPos instead?
 
                 // Relink
                 model->relinkBranch(bi, dst_branch, dst_num, true);
 
                 // After relinking: Save new position for redo, if required 
-                if (dst_branch->getBranchesContainer()->hasFloatingLayout()) {
+                if (dst_branch->getBranchesContainer()->hasFloatingLayout()) {  
                     bc->setPos(dst_branch->getBranchesContainer()->sceneTransform().inverted().map(sp));
                     model->saveState(
                             nullptr,

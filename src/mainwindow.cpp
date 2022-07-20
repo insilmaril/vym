@@ -6754,6 +6754,9 @@ void Main::flagChanged()
 
 void Main::testFunction1()
 {
+    if (!currentMapEditor())
+        return;
+    currentMapEditor()->testFunction1();
 }
 
 void Main::testFunction2()

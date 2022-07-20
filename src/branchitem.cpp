@@ -352,8 +352,7 @@ bool BranchItem::resetTmpUnscroll()
     return result;
 }
 
-void BranchItem::sortChildren(
-    bool inverse) // FIXME-4 optimize by not using moveUp/Down
+void BranchItem::sortChildren(bool inverse) // FIXME-4 optimize by not using moveUp/Down
 {
     int childCount = branchCounter;
     int curChildIndex;
@@ -369,8 +368,7 @@ void BranchItem::sortChildren(
                     model->moveUp(curChild);
                     madeChanges = true;
                 }
-            }
-            else if (prevChild->getHeadingPlain().compare(
+            } else if (prevChild->getHeadingPlain().compare(
                          curChild->getHeadingPlain(), Qt::CaseInsensitive) >
                      0) {
                 model->moveUp(curChild);

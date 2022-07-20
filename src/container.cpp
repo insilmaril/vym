@@ -3,6 +3,7 @@
 #include "container.h"
 
 #include "branchitem.h"
+#include "misc.h"
 
 Container::Container(QGraphicsItem *parent) : QGraphicsRectItem(parent)
 {
@@ -111,10 +112,10 @@ QString Container::info (const QString &prefix)
 {
     return prefix +
         getName() +
-        QString(" Layout: %1").arg(getLayoutString()) +
-        QString(" scenePos: (%1, %2)").arg(scenePos().x()).arg(scenePos().y()) + 
-        QString(" pos: (%1, %2)").arg(pos().x()).arg(pos().y()) + 
-        QString(" rect: (%1, %2  %3x%4)").arg(rect().x()).arg(rect().y()).arg(rect().width()).arg(rect().height());
+  //      QString(" Layout: %1").arg(getLayoutString()) +
+        QString(" scenePos: %1").arg(qpointFToString(scenePos())) +
+        QString(" pos: %1").arg(qpointFToString(pos()));
+   //     QString(" rect: (%1, %2  %3x%4)").arg(rect().x()).arg(rect().y()).arg(rect().width()).arg(rect().height());
 }
 
 void Container::setLayout(const Layout &l)

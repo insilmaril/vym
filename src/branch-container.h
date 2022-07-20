@@ -34,6 +34,13 @@ class BranchContainer : public Container {
     Orientation getOriginalOrientation();
     Orientation getOrientation();
     QPointF getOriginalParentPos();
+
+    void setRealScenePos(const QPointF &);  //! Move ornaments container to scenePos
+    QPointF getRealScenePos();              //! scenePos of ornamentsContainer
+    void setRealRelPos(const QPointF &);  //! Move ornaments container to relative pos
+    QPointF getRealRelPos();              //! relPos of ornamentsContainer to parent oC
+
+
     bool isOriginalFloating();
 
   private:
@@ -44,11 +51,11 @@ class BranchContainer : public Container {
     void unsetTemporaryLinked();
     bool isTemporaryLinked();
 
-    int childrenCount();
+    int childrenCount();    //! Sum of branch and image children
 
     int branchCount();
 
-    /*! bbanchesContainer exists only, if there are children branches
+    /*! branchesContainer exists only, if there are children branches
      *
      *  branchesContainer and linkSpaceContainer are children of innerContainer.
      *  The linkSpaceContainer is existing, only if a !Floating layout is used AND 
