@@ -146,21 +146,28 @@ void BranchContainer::setRealScenePos(const QPointF &sp)
         //setPos(scenePos() + t_oc);
         QPointF q = ornamentsContainer->mapToScene(ornamentsContainer->rect().center());
         QPointF r = sp - q;
-        qDebug() << "BC::sRSP " << info() << " o_cntr=" << q << " t_oc=" << t_oc << " r=" << r << "o=" << orientation;
+        qDebug() << "BC::sRSP " << info() << 
+            " sp=" << sp << 
+            " o_cntr=" << q << 
+            " t_oc=" << t_oc << 
+            " r=" << r << 
+            "o=" << orientation;
         setPos(pos() + r);
     }
 }
 
 QPointF BranchContainer::getRealScenePos()
 {
-    QPointF t_oc = mapFromItem(ornamentsContainer, ornamentsContainer->rect().center());
     QPointF r = ornamentsContainer->mapToScene(ornamentsContainer->rect().center());
-    qDebug() << "BC::gRSP " << info() << " o_cntr=" << r << " t_oc=" << t_oc << "o=" << orientation;
+    qDebug() << "BC::gRSP " << info() << " o_cntr=" << r << "o=" << orientation ;
     return r;
 }
 
 void BranchContainer::setRealRelPos(const QPointF &rp)
 {
+    qDebug() << info() << " innr=" << innerContainer->info();
+    //<< " bC=" << branchesContainer->info();
+    /*
     BranchContainer *pc = parentBranchContainer();
     if (!pc) return;
 
@@ -173,10 +180,12 @@ void BranchContainer::setRealRelPos(const QPointF &rp)
     //setPos(scenePos() + t_oc);
     qDebug() << "BC::sRRP rp=" << rp << " t_oc=" << t_oc << "  p_new=" << p_new << "pos=" << pos() << "parent_sp=" << pc->scenePos();
     setPos(p_new);
+    */
 }
 
 QPointF BranchContainer::getRealRelPos()
 {
+    /*
     BranchContainer *pc = parentBranchContainer();
     if (!pc) return QPointF();
 
@@ -184,6 +193,7 @@ QPointF BranchContainer::getRealRelPos()
     QPointF t = pc->mapFromItem(pc->ornamentsContainer, pc->ornamentsContainer->rect().center());
     qDebug() << "gRRP  r=" << r << " p=" << t << "parent_sp=" << pc->scenePos() << "oc_cp=" << ornamentsContainer->scenePos();
     return r - t;
+    */
 }
 
 bool BranchContainer::isOriginalFloating()
@@ -688,6 +698,7 @@ void BranchContainer::reposition()
             // Don't paint other containers
             setBranchesContainerBrush(Qt::NoBrush);
             setBrush(Qt::NoBrush);
+            if (branchesContainer) branchesContainer->setPen(QColor(Qt::gray));
         }
     }
 

@@ -2924,14 +2924,16 @@ void VymModel::detach() // FIXME-0 rewrite to containers    // FIXME-1 block rep
         if (selbi && selbi->depth() > 0) {
             // create relative positions from current scenePos
             for (int i = 0; i < selbi->branchCount(); i++)
-                //positions << selbi->getBranchNum(i)->getBranchContainer()->getRealRelPos();
-                positions << selbi->getBranchNum(i)->getBranchContainer()->getRealScenePos();
+            {
+                //positions << selbi->getBranchNum(i)->getBranchContainer()->getRealScenePos();
+            }
 
             // Also save real scene position of current parent, 
             // which will become mapcenter
             bc = selbi->getBranchContainer();
-            positions << bc->getRealScenePos();
-            qDebug() << "*** pre selbi rsp=" << bc->getRealScenePos();
+            //positions << bc->getRealScenePos();
+            //qDebug() << "*** pre selbi rsp=" << bc->getRealScenePos();
+            qDebug() << "*** pre relink";
 
             QString old_sel = getSelectString();
             int n = selbi->num();
@@ -2942,15 +2944,17 @@ void VymModel::detach() // FIXME-0 rewrite to containers    // FIXME-1 block rep
             QString parent_sel = getSelectString(selbi->parent());
             if (relinkBranch(selbi, rootItem, -1, true)) {
                 // Restore absolute positions
-                bc->setRealScenePos(positions.last());
-                reposition();
+                //bc->setRealScenePos(positions.last());
+                //reposition();
             }
 
-            qDebug() << "*** post selbi rsp=" << bc->getRealScenePos();
+//            qDebug() << "*** post selbi rsp=" << bc->getRealScenePos();
+            qDebug() << "*** post relink";
 
             for (int i = 0; i < selbi->branchCount(); i++) {
                 //selbi->getBranchNum(i)->getBranchContainer()->setRealRelPos(positions[i]);
-                selbi->getBranchNum(i)->getBranchContainer()->setRealScenePos(positions[i]);
+                // Debug output, no positioning ATM:
+                selbi->getBranchNum(i)->getBranchContainer()->setRealRelPos(positions[i]);
             }
 
             /*
@@ -2965,7 +2969,7 @@ void VymModel::detach() // FIXME-0 rewrite to containers    // FIXME-1 block rep
               */
         }
     }
-    reposition();
+    //reposition();
     emitSelectionChanged();
 }
 
@@ -3429,15 +3433,54 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst, bo
             keepFrame = false;
         }
 
+        // If branch becomes mapcenter, preserve current positions and update type
+        if (branch->depth() == 0) {
+            BranchContainer *bc;
+            branch->setType(TreeItem::MapCenter);
+
+            QList <QPointF> positions;
+            for (int i = 0; i < branch->branchCount(); i++)
+            {
+                bc = branch->getBranchNum(i)->getBranchContainer();
+                positions << bc->getRealScenePos();
+                qDebug() << bc->info() << "rsp=" << positions.last() << "or=" << bc->getOrientation();
+                //positions << branch->getBranchNum(i)->getBranchContainer()->getRealScenePos();
+            }
+            bc = branch->getBranchContainer();
+            positions << bc->getRealScenePos();
+
+            // Update parent item and stacking order of container
+            branch->updateContainerStackingOrder();
+
+            // will change container layouts and possibly orientations 
+            reposition();
+
+            // Restore positions. 
+            bc->setRealScenePos(positions.last());
+
+            Container *c = bc->getBranchesContainer();
+            if (c) {
+                c->setPos(QPointF(0,0));
+                qDebug() << "bc->branchesContainer: " << c->info();
+                qDebug() << "bc->inner: "             << c->parentContainer()->info();
+                qDebug() << "bc       : "             << c->parentContainer()->parentContainer()->info();
+            }
+
+            for (int i = 0; i < branch->branchCount(); i++)
+            {
+                bc = branch->getBranchNum(i)->getBranchContainer();
+                bc->setRealScenePos(positions[i]);
+                //qDebug() << branch->getBranchNum(i)->getBranchContainer()->info();
+            }
+        }
+
         // reset parObj, fonts, frame, etc in related LMO or other view-objects
         branch->updateStyles(keepFrame);
 
         emitDataChanged(branch);
 
-        // Update parent item and stacking order of container
-        branch->updateContainerStackingOrder();
 
-        reposition(); // both for moveUp/Down and relinking
+        //FIXME-000 reposition(); // both for moveUp/Down and relinking
 
         // Savestate
         QString postSelStr = getSelectString(branch);
