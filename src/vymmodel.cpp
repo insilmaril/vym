@@ -2920,20 +2920,10 @@ void VymModel::detach() // FIXME-0 rewrite to containers    // FIXME-1 block rep
     QList<BranchItem *> selbis = getSelectedBranches();
     BranchContainer *bc;
     foreach (BranchItem *selbi, selbis) {
-        QList <QPointF> positions;
         if (selbi && selbi->depth() > 0) {
-            // create relative positions from current scenePos
-            for (int i = 0; i < selbi->branchCount(); i++)
-            {
-                //positions << selbi->getBranchNum(i)->getBranchContainer()->getRealScenePos();
-            }
-
-            // Also save real scene position of current parent, 
-            // which will become mapcenter
             bc = selbi->getBranchContainer();
             //positions << bc->getRealScenePos();
             //qDebug() << "*** pre selbi rsp=" << bc->getRealScenePos();
-            qDebug() << "*** pre relink";
 
             QString old_sel = getSelectString();
             int n = selbi->num();
@@ -2942,20 +2932,11 @@ void VymModel::detach() // FIXME-0 rewrite to containers    // FIXME-1 block rep
                 p = bc->scenePos();
 
             QString parent_sel = getSelectString(selbi->parent());
-            if (relinkBranch(selbi, rootItem, -1, true)) {
-                // Restore absolute positions
-                //bc->setRealScenePos(positions.last());
-                //reposition();
-            }
 
-//            qDebug() << "*** post selbi rsp=" << bc->getRealScenePos();
-            qDebug() << "*** post relink";
-
-            for (int i = 0; i < selbi->branchCount(); i++) {
-                //selbi->getBranchNum(i)->getBranchContainer()->setRealRelPos(positions[i]);
-                // Debug output, no positioning ATM:
-                selbi->getBranchNum(i)->getBranchContainer()->setRealRelPos(positions[i]);
-            }
+            bc->setBranchesContainerLayout(Container::FloatingBounded);// FIXME-0 hardcoded for now, could already be FloatingFree or something else
+           reposition();
+                                                            //
+            relinkBranch(selbi, rootItem, -1, true);
 
             /*
             saveState(getSelectString(selbi),
