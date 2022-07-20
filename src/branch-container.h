@@ -90,6 +90,7 @@ class BranchContainer : public Container {
     void updateUpLink();
 
     virtual void setLayout(const Layout &l);
+    virtual void switchLayout(const Layout &l);
 
     virtual void setBranchesContainerLayout(const Layout &l);
     virtual void setBranchesContainerHorizontalAlignment(const HorizontalAlignment &valign);

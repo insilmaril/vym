@@ -492,11 +492,51 @@ void BranchContainer::setLayout(const Layout &l)
     Container::setLayout(l);
 }
     
+void BranchContainer::switchLayout(const Layout &l) // FIXME-0 testing, will go to above setLayout later Also needs to be renamed to switchBranchesContainerLayout
+{
+    if (l == layout) return;
+
+    if (branchCount() == 0 || (l != FloatingFree && l != FloatingBounded )) {
+        Container::setLayout(l);
+        return;
+    }
+
+    // If we have children, we want to preserve positions 
+    // before changing layout to floating
+    qDebug() << "BC::switchLayout, preserving positions";
+    Container::setLayout(l);
+}
+
 void BranchContainer::setBranchesContainerLayout(const Layout &ltype)
 {
     branchesContainerLayout = ltype;
+
+    qDebug() << "BC::setBCLayout ltype " << ltype;
+    qDebug() <<"              BC " << info();
+
     if (branchesContainer)
+        qDebug() << "   branchesCont " << branchesContainer->info();
+
+    if (branchesContainer && branchesContainer->getLayout() != ltype) {
+        QPointF oc_pos = mapFromItem(innerContainer, ornamentsContainer->pos());
+        QPointF bcc_pos = mapFromItem(innerContainer, branchesContainer->pos()) - oc_pos;
+        qDebug() << "        oc_pos " << oc_pos;
+        qDebug() << "       bcc_pos " << bcc_pos;
+
+        QList <QPointF> positions;
+        foreach (QGraphicsItem *child, branchesContainer->childItems()) {
+            BranchContainer *bc = (BranchContainer*)child;
+            qDebug() << "           " << bc->info();
+            bc->setPos( bc->pos() + bcc_pos);
+        }
         branchesContainer->setLayout(branchesContainerLayout);
+
+        // Translate myself, so that OC will be at original position
+        //setPos(pos() + oc_pos); // FIXME-0 evtl. adapt to align right edge in case of LeftOfParent
+
+        // branchesContainer will be moved anyway later // FIXME-0 needed then?
+        branchesContainer->setPos (0, 0);
+    }
 }
     
 void BranchContainer::setBranchesContainerHorizontalAlignment(const HorizontalAlignment &valign)
@@ -628,22 +668,6 @@ void BranchContainer::reposition()
         // Branch or mainbranch
         linkContainer->setLinkStyle(LinkContainer::Line);
         innerContainer->setMovableByFloats(true);
-        setBranchesContainerLayout(Vertical);
-
-        switch (orientation) {
-            case LeftOfParent:
-                setHorizontalDirection(RightToLeft);
-                innerContainer->setHorizontalDirection(RightToLeft);
-                setBranchesContainerHorizontalAlignment(AlignedRight);
-                break;
-            case RightOfParent:
-                setHorizontalDirection(LeftToRight);
-                innerContainer->setHorizontalDirection(LeftToRight);
-                setBranchesContainerHorizontalAlignment(AlignedLeft);
-                break;
-            default: 
-                break;
-        }
 
         if (branchItem && branchItem->getHeadingPlain().startsWith("float")) {  // FIXME-2 testing, needs dialog for setting
             // Special layout: FloatingBounded children 
@@ -653,7 +677,24 @@ void BranchContainer::reposition()
             // Special layout: FloatingFree children 
             orientation = UndefinedOrientation;
             setBranchesContainerLayout(FloatingFree);
-        } 
+        } else {
+            setBranchesContainerLayout(Vertical);
+
+            switch (orientation) {
+                case LeftOfParent:
+                    setHorizontalDirection(RightToLeft);
+                    innerContainer->setHorizontalDirection(RightToLeft);
+                    setBranchesContainerHorizontalAlignment(AlignedRight);
+                    break;
+                case RightOfParent:
+                    setHorizontalDirection(LeftToRight);
+                    innerContainer->setHorizontalDirection(LeftToRight);
+                    setBranchesContainerHorizontalAlignment(AlignedLeft);
+                    break;
+                default: 
+                    break;
+            }
+        }
     }
 
     // Update branchesContainer and linkSpaceContainer,
