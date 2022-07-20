@@ -507,36 +507,32 @@ void BranchContainer::switchLayout(const Layout &l) // FIXME-0 testing, will go 
     Container::setLayout(l);
 }
 
-void BranchContainer::setBranchesContainerLayout(const Layout &ltype)
+void BranchContainer::setBranchesContainerLayout(const Layout &ltype)   // FIXME-1 No GUI and saveState yet
 {
     branchesContainerLayout = ltype;
 
     qDebug() << "BC::setBCLayout ltype " << ltype;
     qDebug() <<"              BC " << info();
 
-    if (branchesContainer)
-        qDebug() << "   branchesCont " << branchesContainer->info();
+    if (branchesContainer && branchesContainer->getLayout() != ltype) { // FIXME-0 only use this if switching to floating*
+        QPointF oc_pos = ornamentsContainer->pos();
+        QPointF bcc_pos = branchesContainer->pos() - oc_pos;
 
-    if (branchesContainer && branchesContainer->getLayout() != ltype) {
-        QPointF oc_pos = mapFromItem(innerContainer, ornamentsContainer->pos());
-        QPointF bcc_pos = mapFromItem(innerContainer, branchesContainer->pos()) - oc_pos;
-        qDebug() << "        oc_pos " << oc_pos;
-        qDebug() << "       bcc_pos " << bcc_pos;
-
-        QList <QPointF> positions;
         foreach (QGraphicsItem *child, branchesContainer->childItems()) {
             BranchContainer *bc = (BranchContainer*)child;
             qDebug() << "           " << bc->info();
             bc->setPos( bc->pos() + bcc_pos);
         }
-        branchesContainer->setLayout(branchesContainerLayout);
 
-        // Translate myself, so that OC will be at original position
-        //setPos(pos() + oc_pos); // FIXME-0 evtl. adapt to align right edge in case of LeftOfParent
+        if (ltype == FloatingFree)
+            setPos (pos() +  oc_pos);
 
         // branchesContainer will be moved anyway later // FIXME-0 needed then?
         branchesContainer->setPos (0, 0);
     }
+
+    if (branchesContainer)
+        branchesContainer->setLayout(branchesContainerLayout);
 }
     
 void BranchContainer::setBranchesContainerHorizontalAlignment(const HorizontalAlignment &valign)
