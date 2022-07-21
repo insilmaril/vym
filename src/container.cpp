@@ -271,9 +271,9 @@ QPointF Container::getOriginalPos()
     return originalPos;
 }
 
-void Container::reposition()
+void Container::reposition()    // FIXME-0 rotated mapcenters: rect of branchContainer needs to be adapted (translated) to contain the innerContainer. (Works for non-mapcenter branches)
 {
-    //qDebug() << QString("#### Reposition of %1").arg(getName()) << "Layout: " << getLayoutString() << horizontalDirection;
+    // qDebug() << QString("#### Reposition of %1").arg(getName()) << "Layout: " << getLayoutString() << horizontalDirection;
 
     QRectF r;
 
