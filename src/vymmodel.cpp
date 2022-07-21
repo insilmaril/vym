@@ -2915,15 +2915,13 @@ void VymModel::moveDownDiagonally()
 }
 
 
-void VymModel::detach() // FIXME-0 rewrite to containers    // FIXME-1 block repositions during setPos, relink
+void VymModel::detach()
 {
     QList<BranchItem *> selbis = getSelectedBranches();
     BranchContainer *bc;
     foreach (BranchItem *selbi, selbis) {
         if (selbi && selbi->depth() > 0) {
             bc = selbi->getBranchContainer();
-            //positions << bc->getRealScenePos();
-            //qDebug() << "*** pre selbi rsp=" << bc->getRealScenePos();
 
             QString old_sel = getSelectString();
             int n = selbi->num();
@@ -2934,23 +2932,11 @@ void VymModel::detach() // FIXME-0 rewrite to containers    // FIXME-1 block rep
             QString parent_sel = getSelectString(selbi->parent());
 
             bc->setBranchesContainerLayout(Container::FloatingBounded);// FIXME-0 hardcoded for now, could already be FloatingFree or something else
-           reposition();
-                                                            //
-            relinkBranch(selbi, rootItem, -1, true);
+            reposition();
 
-            /*
-            saveState(getSelectString(selbi),
-                      QString("relinkTo (\"%1\",%2,%3,%4)")
-                          .arg(parent_sel)
-                          .arg(n)
-                          .arg(p.x())
-                          .arg(p.y()),
-                      old_sel, "detach ()",
-                      QString("Detach %1").arg(getObjectName(selbi)));
-              */
+            relinkBranch(selbi, rootItem, -1, true);
         }
     }
-    //reposition();
     emitSelectionChanged();
 }
 
@@ -3424,8 +3410,6 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst, bo
             {
                 bc = branch->getBranchNum(i)->getBranchContainer();
                 positions << bc->getRealScenePos();
-                qDebug() << bc->info() << "rsp=" << positions.last() << "or=" << bc->getOrientation();
-                //positions << branch->getBranchNum(i)->getBranchContainer()->getRealScenePos();
             }
             bc = branch->getBranchContainer();
             positions << bc->getRealScenePos();
@@ -3439,19 +3423,10 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst, bo
             // Restore positions. 
             bc->setRealScenePos(positions.last());
 
-            Container *c = bc->getBranchesContainer();
-            if (c) {
-                c->setPos(QPointF(0,0));
-                qDebug() << "bc->branchesContainer: " << c->info();
-                qDebug() << "bc->inner: "             << c->parentContainer()->info();
-                qDebug() << "bc       : "             << c->parentContainer()->parentContainer()->info();
-            }
-
             for (int i = 0; i < branch->branchCount(); i++)
             {
                 bc = branch->getBranchNum(i)->getBranchContainer();
                 bc->setRealScenePos(positions[i]);
-                //qDebug() << branch->getBranchNum(i)->getBranchContainer()->info();
             }
         }
 
