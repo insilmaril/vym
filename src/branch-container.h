@@ -37,9 +37,6 @@ class BranchContainer : public Container {
 
     void setRealScenePos(const QPointF &);  //! Move ornaments container to scenePos
     QPointF getRealScenePos();              //! scenePos of ornamentsContainer
-    void setRealRelPos(const QPointF &);  //! Move ornaments container to relative pos
-    QPointF getRealRelPos();              //! relPos of ornamentsContainer to parent oC
-
 
     bool isOriginalFloating();
 
