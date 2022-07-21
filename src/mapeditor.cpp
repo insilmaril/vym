@@ -2000,11 +2000,12 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                 // 
                 // tmpParentContainer always has floating layout, 
                 // check original parent instead:
+                /*
                 BranchItem *pbi = bc->getBranchItem()->parentBranch();
                 if (pbi) {
-                    Container *originalParentContainer = pbi->getBranchesContainer(); // FIXME-000 MC will have no parentBranch and crash
+                    Container *originalParentContainer = pbi->getBranchesContainer(); // FIXME-00 MC will have no parentBranch and crash
                     if (originalParentContainer->hasFloatingLayout()) {
-                        model->saveState(
+                        model->saveState(   // FIXME-2 check if undo/redo for moving floats and MCs works correctly 
                                 bc->getBranchItem(), 
                                 QString("setPos %1;").arg(qpointFToString(bc->getOriginalPos())),
                                 nullptr,
@@ -2012,12 +2013,13 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                                 QString("Move %1") .arg(bc->getBranchItem()->getHeadingPlain()));
                     }
                 }
+                */ 
 
                 // Save current scene position for redo or if moved to floating layout
                 QPointF sp = bc->scenePos();    // FIXME-00 use realPos instead?
 
                 // Relink
-                model->relinkBranch(bi, dst_branch, dst_num, true);
+                model->relinkBranch(bi, dst_branch, dst_num, true); // FIXME-00 saving positions should be done in VymModel completely...
 
                 // After relinking: Save new position for redo, if required 
                 if (dst_branch->getBranchesContainer()->hasFloatingLayout()) {  

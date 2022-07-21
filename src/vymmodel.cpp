@@ -3341,7 +3341,7 @@ BranchItem *VymModel::addNewBranchBefore()
     return newbi;
 }
 
-bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst, bool updateSelection)
+bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst, bool updateSelection) // FIXME-000 relinking MC to MC crashes
 {
     if (branch && dst) {
 
@@ -3436,7 +3436,7 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst, bo
         emitDataChanged(branch);
 
 
-        //FIXME-000 reposition(); // both for moveUp/Down and relinking
+        reposition(); // both for moveUp/Down and relinking
 
         // Savestate
         QString postSelStr = getSelectString(branch);
