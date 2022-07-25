@@ -46,7 +46,6 @@ QGraphicsTextItem *HeadingContainer::newLine(QString s)  // FIXME-3 use vertical
 
 void HeadingContainer::setHeading(QString s)// FIXME-2 richtext has wrong position
 {
-    qDebug() << "HC::setHeading s=" << s;
     if (headingText == s) return;
 
     headingText = s;

@@ -57,6 +57,7 @@ Containers
    
 - Container layout
     - BranchContainer
+        - [Optional: FrameContainer]
         - InnerContainer
             - OrnamentsContainer
                 [Later: FlagsContainer]
@@ -71,6 +72,39 @@ Containers
 Ideas 
 -----
 
+* Introduce *reference position*, which can be used in other containers
+  to position these containers. The reference position should be center
+  of HeadingContainer
+
+* Introduce *manual positioning* and *autoPositioning*. Manual
+  positioning is used for all floating containers, incl. mapCenters and
+  MainBranches.
+
+  OTOH: If a container is in a floating layout or if it has no
+  parentItem, it uses manual positioning.
+
+* New layout type to handle floats in InnerContainer. Inner Container
+  has one of these two layouts:
+  - Horizontal (as already in use for non-floating children)
+
+  - *BoundingFloats* when branchesContainer has Floating layout
+    
+    First child is *targetContainer*, which will be ornamentsContainer,
+    second child is branchesContainer.  (LinkSpaceContainer is not used
+    then!)
+
+    By using this order, the layout of InnerContainer can be switched
+    between Horizontal and BoundingFloats.
+
+    For BoundingFloats:
+
+    bC is processed first to calc bbox of all children relative to OC
+        - depending on their rel positions
+        - ????
+    oC is positioned within BoundingFloats, so that upperleft of bbox of
+    children is again (local) origin.
+          
+    
 * Add/remove containers as needed. Examples
   - Flags, frames, etc. only if set
   - Additional info likes statistics (no. of children, ...)
@@ -83,6 +117,23 @@ Ideas
 
 Bugs
 ----
+
+* Real positions
+    - Mainbranches and branches need to keep position when detaching
+    - Branches keep position when layout changes to float
+    - Branches and parent branches (!) keep position, when switching to
+      free float
+    - keep position when relinking and relinking to rootItem (becoming
+      MC)
+
+  Ideas:
+    - Reintroduce relative coordinates for mainbranches and floating
+      branches
+
+    - Relative coordinates are "real": from center of parent Ornamented
+      Container to center of orn. container
+
+    - Mapcenters use real scene positions
 
 * Position hint for relinking often way to low, not really below new
   parent

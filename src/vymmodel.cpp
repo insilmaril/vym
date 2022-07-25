@@ -2826,7 +2826,7 @@ void VymModel::cut()
     deleteSelection();
 }
 
-bool VymModel::moveUp(BranchItem *bi)
+bool VymModel::moveUp(BranchItem *bi)   // FIXME-00 stopped working in ME (TE works!)
 {
     if (readonly)
         return false;
@@ -2915,7 +2915,7 @@ void VymModel::moveDownDiagonally()
 }
 
 
-void VymModel::detach()
+void VymModel::detach() // FIXME-0 savestate missing
 {
     QList<BranchItem *> selbis = getSelectedBranches();
     BranchContainer *bc;
@@ -2923,6 +2923,7 @@ void VymModel::detach()
         if (selbi && selbi->depth() > 0) {
             bc = selbi->getBranchContainer();
 
+            /*
             QString old_sel = getSelectString();
             int n = selbi->num();
             QPointF p;
@@ -2930,6 +2931,7 @@ void VymModel::detach()
                 p = bc->scenePos();
 
             QString parent_sel = getSelectString(selbi->parent());
+            */
 
             bc->setBranchesContainerLayout(Container::FloatingBounded);// FIXME-0 hardcoded for now, could already be FloatingFree or something else
             reposition();
@@ -3341,7 +3343,7 @@ BranchItem *VymModel::addNewBranchBefore()
     return newbi;
 }
 
-bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst, bool updateSelection) // FIXME-000 relinking MC to MC crashes
+bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst, bool updateSelection)
 {
     if (branch && dst) {
 
@@ -3358,8 +3360,8 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst, bo
         if (updateSelection)
             unselectAll();
 
-        // Do we need to update frame type?
-        bool keepFrame = true;
+        // Do we need to update frame type? 
+        bool keepFrame = true;          // FIXME-2 should go to map layout later
 
         // Save old selection for savestate
         QString preSelStr = getSelectString(branch);
@@ -3400,6 +3402,7 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst, bo
             keepFrame = false;
         }
 
+        /*
         // If branch becomes mapcenter, preserve current positions and update type
         if (branch->depth() == 0) {
             BranchContainer *bc;
@@ -3414,8 +3417,8 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst, bo
             bc = branch->getBranchContainer();
             positions << bc->getRealScenePos();
 
-            // Update parent item and stacking order of container
-            branch->updateContainerStackingOrder();
+        // Update parent item and stacking order of container
+        branch->updateContainerStackingOrder();
 
             // will change container layouts and possibly orientations 
             reposition();
@@ -3426,15 +3429,18 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst, bo
             for (int i = 0; i < branch->branchCount(); i++)
             {
                 bc = branch->getBranchNum(i)->getBranchContainer();
-                bc->setRealScenePos(positions[i]);
+                bc->setRealScenePos(positions[i]);  // FIXME-0 check if really required?
             }
         }
+        */
+
+        // Update parent item and stacking order of container
+        branch->updateContainerStackingOrder();
 
         // reset parObj, fonts, frame, etc in related LMO or other view-objects
         branch->updateStyles(keepFrame);
 
         emitDataChanged(branch);
-
 
         reposition(); // both for moveUp/Down and relinking
 

@@ -844,8 +844,14 @@ void MapEditor::testFunction1()
     BranchItem *selbi = model->getSelectedBranch();
     if (!selbi)
         qWarning() << "Nothing selected";
-    else
-        qDebug() << selbi->getBranchContainer()->info();
+    else {
+        BranchContainer *bc = selbi->getBranchContainer();
+        qDebug() << bc->info();
+        Container *c = bc->getBranchesContainer();
+        for (int i=0; i < c->childItems().count(); i++) {
+            qDebug() << "  i=" << i << ((Container*)c->childItems().at(i))->info();
+        }
+    }
 }
 
 void MapEditor::testFunction2() { autoLayout(); }

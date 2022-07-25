@@ -478,16 +478,13 @@ void BranchContainer::setBranchesContainerLayout(const Layout &ltype)   // FIXME
 {
     branchesContainerLayout = ltype;
 
-    qDebug() << "BC::setBCLayout ltype " << ltype;
-    qDebug() <<"              BC " << info();
-
     if (branchesContainer && branchesContainer->getLayout() != ltype) { // FIXME-0 only use this if switching to floating*
         QPointF oc_pos = ornamentsContainer->pos();
         QPointF bcc_pos = branchesContainer->pos() - oc_pos;
+        qDebug() << "BC::setBCLayout " << getName() << " oc_pos=" << oc_pos << "bcc_pos=" << bcc_pos;
 
         foreach (QGraphicsItem *child, branchesContainer->childItems()) {
             BranchContainer *bc = (BranchContainer*)child;
-            qDebug() << "           " << bc->info();
             bc->setPos( bc->pos() + bcc_pos);
         }
 
@@ -636,6 +633,7 @@ void BranchContainer::reposition()
             // Special layout: FloatingBounded children 
             orientation = UndefinedOrientation;
             setBranchesContainerLayout(FloatingBounded);
+            innerContainer->setLayout(BoundingFloats);
         } else if (branchItem && branchItem->getHeadingPlain().startsWith("free")) {// FIXME-2 testing, needs dialog for setting
             // Special layout: FloatingFree children 
             orientation = UndefinedOrientation;

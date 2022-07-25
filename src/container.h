@@ -42,7 +42,7 @@ class Container : public QGraphicsRectItem {
     };
 
     /*! Alignment of children containers */
-    enum Layout {Horizontal, Vertical, FloatingBounded, FloatingFree};
+    enum Layout {Horizontal, Vertical, BoundingFloats, FloatingBounded, FloatingFree};
     enum HorizontalDirection {LeftToRight, RightToLeft};
     enum HorizontalAlignment {AlignedLeft, AlignedCentered, AlignedRight};
 

@@ -138,6 +138,9 @@ QString Container::getLayoutString()
         case Vertical:
             r = "Vertical";
             break;
+        case BoundingFloats:
+            r = "BoundingFloats";
+            break;
         case FloatingBounded:
             r = "FloatingBounded";
             break;
@@ -145,7 +148,7 @@ QString Container::getLayoutString()
             r = "FloatingFree";
             break;
         default:
-            r = "Unknown";
+            r = QString("Unknown: %1").arg(layout);
             qWarning () << "Container::getLayoutString unknown layout";
     }
     return r;
@@ -303,32 +306,82 @@ void Container::reposition()    // FIXME-0 rotated mapcenters: rect of branchCon
     // c) Align my own containers
 
     switch (layout) {
+        case BoundingFloats: 
+            {
+                qDebug() << "C::repos of " << info();
+                qreal h_max = 0;
+                qreal w_total = 0;  // total width of non-floating children
+                qreal h;
+
+                QRectF oc_bbox;  // bbox of ornamentsContainer in my own coord 
+                QRectF bbox;    // United bboxes 
+
+                // BoundingFloats is special case: 
+                // Only used for innerContainer
+                // First child container is ornamentsContainer,
+                // second is branchesContainer
+
+                if (childItems().count() != 2) {
+                    qWarning() << "Container::reposition " << info();
+                    qWarning() << "Wrong number of children containers!";
+                    return;
+                }
+
+                // Calc space required
+                Container* oc = (Container*) childItems().first();
+                Container* bc = (Container*) childItems().last();
+
+                qDebug() << oc->info();
+                qDebug() << bc->info();
+
+                // bc and oc share positions, to begin calculation of bbox move both 
+                // to origin
+                //oc->setPos(0, 0);
+                //bc->setPos(0, 0);
+
+                oc_bbox = mapRectFromItem(oc, oc->rect());
+                bbox = mapRectFromItem(bc, bc->rect());
+                bbox = bbox.united(oc_bbox);
+                qDebug() << "  a) bbox = " << bbox;
+
+                // Now move the bounding box, but also oc and bc to origin
+                QPointF t = - QPointF(bbox.topLeft().x(), bbox.topLeft().y());
+                qDebug() << "        t = " << t;
+                bbox.translate(t);
+                oc->setPos(oc->pos() + t);
+                bc->setPos(bc->pos() + t);
+                qDebug() << "  b) bbox = " << bbox;
+                setRect(bbox);
+
+            } // BoundingFloats layout
+            break;
+
         case FloatingBounded: 
-                {
-                    // Calc bbox of all children to prepare calculating rect()
-                    QRectF c_bbox;
-                    if (childItems().count() > 0) {
-                        bool first_iteration = true;
+            {
+                // Calc bbox of all children to prepare calculating rect()
+                QRectF c_bbox;
+                if (childItems().count() > 0) {
+                    bool first_iteration = true;
 
-                        // Consider other children
-                        foreach (QGraphicsItem *child, childItems()) {
-                            c = (Container*) child;
-                            c_bbox = mapRectFromItem(c, c->rect());
+                    // Consider other children
+                    foreach (QGraphicsItem *child, childItems()) {
+                        c = (Container*) child;
+                        c_bbox = mapRectFromItem(c, c->rect());
 
-                            if (first_iteration) {
-                                first_iteration = false;
-                                r = c_bbox;
-                            } else 
-                                r = r.united(c_bbox);
-                        }
+                        if (first_iteration) {
+                            first_iteration = false;
+                            r = c_bbox;
+                        } else 
+                            r = r.united(c_bbox);
                     }
+                }
                     
                 setRect(r);
             }
             break;
 
         case FloatingFree: 
-            setRect(r);
+            setRect(r); // Empty rectangle
             break;
 
         case Horizontal: {
@@ -339,14 +392,16 @@ void Container::reposition()    // FIXME-0 rotated mapcenters: rect of branchCon
                 bool hasFloatingContent = false;
                 
                 QRectF c_bbox;  // bbox of subcontainer c in my own coord 
-                QRectF bbox;    // United bboxes of all all floating and sum of regular containers in my own coord
+                QRectF bbox;    // United bboxes of all all floating and sum of 
+                                // regular containers in my own coord
 
                 // Calc space required
                 foreach (QGraphicsItem *child, childItems()) {
                     c = (Container*) child;
 
-                    // For floatingBounded containers and calculation of heights and widths 
-                    // we need move subcontainers to origin first, because the translation is calculated by
+                    // For floatingBounded containers and calculation of 
+                    // heights and widths we need move subcontainers 
+                    // to origin first, because the translation is calculated by
                     // their bounding boxes, not position
                     c->setPos(0, 0);
 
@@ -364,8 +419,9 @@ void Container::reposition()    // FIXME-0 rotated mapcenters: rect of branchCon
                         // but build max bbox of floating children
                         //
                         // Main branches are similar: They might have a topLeft corner 
-                        // above or to the left of my origin. In that case I also need to consider this
-                        // special c_bbox for my own bbox, which in turn also will be above/left of origin:
+                        // above or to the left of my origin. In that case I also need to 
+                        // consider this special c_bbox for my own bbox, which in turn 
+                        // also will be above/left of origin:
                         bbox = bbox.united(c_bbox);
 
                         hasFloatingContent = true;
@@ -377,8 +433,8 @@ void Container::reposition()    // FIXME-0 rotated mapcenters: rect of branchCon
                     }
                 }
 
-                // bbox so far only considers floating subcontainers. Extend by regular ones, where 
-                // rectangle has w_total h_max
+                // bbox so far only considers floating subcontainers. Extend by 
+                // regular ones, where rectangle has w_total h_max
                 bbox = bbox.united(QRectF(0, 0, w_total, h_max));
                 
                 qreal x;
@@ -391,13 +447,16 @@ void Container::reposition()    // FIXME-0 rotated mapcenters: rect of branchCon
                     c = (Container*) child;
 
                     if (c->layout != FloatingBounded && c->layout != FloatingFree) {
-                        // Non-floating child, consider width and height and align horizontally
+                        // Non-floating child, consider width and height and 
+                        // align horizontally
                         w_last = c->rect().width();
                         qreal y = 0;
     
                         if (movableByFloats) {
-                            // Usally c may be moved, if it has a bbox above/left of origin due to some floating containers
-                            // Exception are mapCenters, which need to "stick" to their scene position and must not be moved by
+                            // Usally c may be moved, if it has a bbox above/left 
+                            // of origin due to some floating containers
+                            // Exception are mapCenters, which need to "stick" to their 
+                            // scene position and must not be moved by
                             // position (or bboxes) of main branches
                             y = (h_max - c->rect().height() ) / 2;  
 
