@@ -60,10 +60,12 @@ Containers
         - [Optional: FrameContainer]
         - InnerContainer
             - OrnamentsContainer
-                [Later: FlagsContainer]
+                [Optional/Later: systemFlagsContainer]
+                [Optional/Later: userFlagsContainer]
                 - linkContainer
                 - headingContainer
             - [Optional: linkSpaceContainer]
+            - [Optional: imagesContainer]
             - [Optional: branchesContainer]
 
 - Only Horizontal layout supports rotated subcontainers so far
@@ -90,20 +92,19 @@ Ideas
   - *BoundingFloats* when branchesContainer has Floating layout
     
     First child is *targetContainer*, which will be ornamentsContainer,
-    second child is branchesContainer.  (LinkSpaceContainer is not used
-    then!)
+    next children are (optionally) imagesContainer and branchesContainer.
+    (LinkSpaceContainer is not used with BoundingFloats!)
 
     By using this order, the layout of InnerContainer can be switched
     between Horizontal and BoundingFloats.
 
     For BoundingFloats:
 
-    bC is processed first to calc bbox of all children relative to OC
+    bC and iC are processed first to calc bbox of all children relative to OC
         - depending on their rel positions
         - ????
     oC is positioned within BoundingFloats, so that upperleft of bbox of
     children is again (local) origin.
-          
     
 * Add/remove containers as needed. Examples
   - Flags, frames, etc. only if set

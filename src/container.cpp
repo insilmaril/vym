@@ -308,49 +308,41 @@ void Container::reposition()    // FIXME-0 rotated mapcenters: rect of branchCon
     switch (layout) {
         case BoundingFloats: 
             {
-                qDebug() << "C::repos of " << info();
-                qreal h_max = 0;
-                qreal w_total = 0;  // total width of non-floating children
-                qreal h;
-
-                QRectF oc_bbox;  // bbox of ornamentsContainer in my own coord 
-                QRectF bbox;    // United bboxes 
-
                 // BoundingFloats is special case: 
                 // Only used for innerContainer
                 // First child container is ornamentsContainer,
-                // second is branchesContainer
+                // next children are imagesContainer and branchesContainer
 
-                if (childItems().count() != 2) {
+                if (childItems().count() > 3 ) {
                     qWarning() << "Container::reposition " << info();
-                    qWarning() << "Wrong number of children containers!";
+                    qWarning() << "Wrong number of children containers: "  << childItems().count();
+                    foreach (QGraphicsItem *child, childItems()) {
+                        Container *c = (Container*) child;
+                        qDebug() << "  " << c->info();
+                    }
+
                     return;
                 }
 
                 // Calc space required
-                Container* oc = (Container*) childItems().first();
-                Container* bc = (Container*) childItems().last();
+                QRectF c_bbox;  // bbox of container in my own coord 
+                QRectF bbox;    // United bboxes 
 
-                qDebug() << oc->info();
-                qDebug() << bc->info();
+                foreach (QGraphicsItem *child, childItems()) {
+                    Container *c = (Container*) child;
+                    c_bbox = mapRectFromItem(c, c->rect());
+                    bbox = bbox.united(c_bbox);
+                }
 
-                // bc and oc share positions, to begin calculation of bbox move both 
-                // to origin
-                //oc->setPos(0, 0);
-                //bc->setPos(0, 0);
-
-                oc_bbox = mapRectFromItem(oc, oc->rect());
-                bbox = mapRectFromItem(bc, bc->rect());
-                bbox = bbox.united(oc_bbox);
-                qDebug() << "  a) bbox = " << bbox;
-
-                // Now move the bounding box, but also oc and bc to origin
+                // Translate, so that total bbox and moves 
+                // to origin, along with contents
                 QPointF t = - QPointF(bbox.topLeft().x(), bbox.topLeft().y());
-                qDebug() << "        t = " << t;
                 bbox.translate(t);
-                oc->setPos(oc->pos() + t);
-                bc->setPos(bc->pos() + t);
-                qDebug() << "  b) bbox = " << bbox;
+                foreach (QGraphicsItem *child, childItems()) {
+                    Container *c = (Container*) child;
+                    c->setPos(c->pos() + t);
+                }
+
                 setRect(bbox);
 
             } // BoundingFloats layout
@@ -389,8 +381,6 @@ void Container::reposition()    // FIXME-0 rotated mapcenters: rect of branchCon
                 qreal w_total = 0;  // total width of non-floating children
                 qreal h;
 
-                bool hasFloatingContent = false;
-                
                 QRectF c_bbox;  // bbox of subcontainer c in my own coord 
                 QRectF bbox;    // United bboxes of all all floating and sum of 
                                 // regular containers in my own coord
@@ -403,7 +393,7 @@ void Container::reposition()    // FIXME-0 rotated mapcenters: rect of branchCon
                     // heights and widths we need move subcontainers 
                     // to origin first, because the translation is calculated by
                     // their bounding boxes, not position
-                    c->setPos(0, 0);
+                    c->setPos(0, 0);    // FIXME-0 needed?
 
                     c_bbox = mapRectFromItem(c, c->rect());
 
@@ -413,29 +403,15 @@ void Container::reposition()    // FIXME-0 rotated mapcenters: rect of branchCon
                         c_bbox.moveTopLeft(QPointF(0,0));
                     }
 
-                    if (c->layout == FloatingBounded || c_bbox.x() < 0 || c_bbox.y() < 0) {
-                        // Floating subcontainers are considered for total bbox
-                        // Their heights and widths don't sum up directly
-                        // but build max bbox of floating children
-                        //
-                        // Main branches are similar: They might have a topLeft corner 
-                        // above or to the left of my origin. In that case I also need to 
-                        // consider this special c_bbox for my own bbox, which in turn 
-                        // also will be above/left of origin:
-                        bbox = bbox.united(c_bbox);
-
-                        hasFloatingContent = true;
-                    } else {
-                        // For width and height we can use the already mapped dimensions
-                        h = c_bbox.height();
-                        h_max = (h_max < h) ? h : h_max;
-                        w_total += c_bbox.width();
-                    }
+                    // For width and height we can use the already mapped dimensions
+                    h = c_bbox.height();
+                    h_max = (h_max < h) ? h : h_max;
+                    w_total += c_bbox.width();
                 }
 
                 // bbox so far only considers floating subcontainers. Extend by 
                 // regular ones, where rectangle has w_total h_max
-                bbox = bbox.united(QRectF(0, 0, w_total, h_max));
+                bbox = QRectF(0, 0, w_total, h_max);
                 
                 qreal x;
                 qreal w_last;   // last width before adding current container width to bbox later
@@ -446,7 +422,8 @@ void Container::reposition()    // FIXME-0 rotated mapcenters: rect of branchCon
                 foreach (QGraphicsItem *child, childItems()) {
                     c = (Container*) child;
 
-                    if (c->layout != FloatingBounded && c->layout != FloatingFree) {
+                    //if (c->layout != FloatingFree) {
+                    if (true) {     // FIXME-0 
                         // Non-floating child, consider width and height and 
                         // align horizontally
                         w_last = c->rect().width();
@@ -484,29 +461,6 @@ void Container::reposition()    // FIXME-0 rotated mapcenters: rect of branchCon
                 } 
                 r = bbox;
 
-                if (hasFloatingContent) {
-                    // Calculate translation vector t to move *parent* later on
-                    // now after regular containers have been positioned
-                    // Also enlarge bounding box to maximum of floating and regular content
-
-                    // Translation vector for all children to move topLeft corner to origin
-                    QPointF t;
-
-                    if (r.topLeft().x() < 0) t.setX(-r.topLeft().x());
-                    if (r.topLeft().y() < 0) t.setY(-r.topLeft().y());
-
-                    if (t != QPointF()) {
-                        if (movableByFloats) {
-                            // I need to become bigger in topLeft corner to make room for floats:
-                            // Move my own children containers by t
-                            foreach (QGraphicsItem *child, childItems()) {
-                                c = (Container*) child;
-                                c->setPos(c->pos() + t);
-                            }
-                            r.translate(t);
-                        } 
-                    }
-                }
             } // Horizontal layout
             setRect(r);
             break;

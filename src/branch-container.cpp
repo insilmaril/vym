@@ -632,8 +632,9 @@ void BranchContainer::reposition()
         if (branchItem && branchItem->getHeadingPlain().startsWith("float")) {  // FIXME-2 testing, needs dialog for setting
             // Special layout: FloatingBounded children 
             orientation = UndefinedOrientation;
-            setBranchesContainerLayout(FloatingBounded);
             innerContainer->setLayout(BoundingFloats);
+            //setBranchesContainerLayout(FloatingBounded);
+            setBranchesContainerLayout(Vertical);
         } else if (branchItem && branchItem->getHeadingPlain().startsWith("free")) {// FIXME-2 testing, needs dialog for setting
             // Special layout: FloatingFree children 
             orientation = UndefinedOrientation;
