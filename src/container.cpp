@@ -417,42 +417,37 @@ void Container::reposition()    // FIXME-0 rotated mapcenters: rect of branchCon
                 foreach (QGraphicsItem *child, childItems()) {
                     c = (Container*) child;
 
-                    //if (c->layout != FloatingFree) {
-                    if (true) {     // FIXME-0 
-                        // Non-floating child, consider width and height and 
-                        // align horizontally
-                        w_last = c->rect().width();
-                        qreal y = 0;
-    
-                        if (movableByFloats) {
-                            // Usally c may be moved, if it has a bbox above/left 
-                            // of origin due to some floating containers
-                            // Exception are mapCenters, which need to "stick" to their 
-                            // scene position and must not be moved by
-                            // position (or bboxes) of main branches
-                            y = (h_max - c->rect().height() ) / 2;  
+		    // Non-floating child, consider width and height and
+		    // align horizontally
+		    w_last = c->rect().width();
+		    qreal y = 0;
 
-                            if (horizontalDirection == LeftToRight)
-                            {
-                                if (c->rotation() == 0)
-                                    c->setPos (x, y);
-                                else {
-                                    // move rotated container to my origin
-                                    c->setPos (- mapRectFromItem(c, c->rect()).topLeft());
-                                }
-                                x += w_last;
-                            } else
-                            {
-                                if (c->rotation() == 0)
-                                    c->setPos (x - c->rect().width(), y);
-                                else {
-                                    // move rotated container to my origin
-                                    c->setPos (- mapRectFromItem(c, c->rect()).topLeft());
-                                }
-                                x -= w_last;
-                            }
-                        } // movableByFloats
-                    } // Non-floating children
+		    // Usally c may be moved, if it has a bbox above/left
+		    // of origin due to some floating containers
+		    // Exception are mapCenters, which need to "stick" to their
+		    // scene position and must not be moved by
+		    // position (or bboxes) of main branches
+		    y = (h_max - c->rect().height() ) / 2;
+
+		    if (horizontalDirection == LeftToRight)
+		    {
+			if (c->rotation() == 0)
+			    c->setPos (x, y);
+			else {
+			    // move rotated container to my origin
+			    c->setPos (- mapRectFromItem(c, c->rect()).topLeft());
+			}
+			x += w_last;
+		    } else
+		    {
+			if (c->rotation() == 0)
+			    c->setPos (x - c->rect().width(), y);
+			else {
+			    // move rotated container to my origin
+			    c->setPos (- mapRectFromItem(c, c->rect()).topLeft());
+			}
+			x -= w_last;
+		    }
                 } 
                 r = bbox;
 
