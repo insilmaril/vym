@@ -389,17 +389,12 @@ void Container::reposition()    // FIXME-0 rotated mapcenters: rect of branchCon
                 foreach (QGraphicsItem *child, childItems()) {
                     c = (Container*) child;
 
-                    // For floatingBounded containers and calculation of 
-                    // heights and widths we need move subcontainers 
-                    // to origin first, because the translation is calculated by
-                    // their bounding boxes, not position
-                    c->setPos(0, 0);    // FIXME-0 needed?
-
                     c_bbox = mapRectFromItem(c, c->rect());
 
                     if (c->rotation() != 0) {
                         // Move rotated container, so that upperLeft corner is in (0,0)
                         // Required to get correct pos bbox of rotated containers.
+			c->setPos(0, 0);
                         c_bbox.moveTopLeft(QPointF(0,0));
                     }
 
