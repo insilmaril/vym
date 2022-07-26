@@ -64,10 +64,12 @@ class BranchContainer : public Container {
     Container* getBranchesContainer();
     void updateBranchesContainer();    //! Remove unused containers and add needed ones
 
+  private:
     void createOuterContainer();        //! Used if only images have FloatingBounded layout
     void deleteOuterContainer();
     void updateChildrenStructure();     //! Depending on layouts of children, rearrange structure
 
+  public:
     int imageCount();
     void createImagesContainer();
     void addToImagesContainer(Container *c, bool keepScenePos = false);

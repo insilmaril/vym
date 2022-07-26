@@ -335,18 +335,17 @@ void BranchContainer::updateChildrenStructure()
         // a) No FloatingBounded children
         deleteOuterContainer();
         innerContainer->setLayout(Horizontal);
-    } else if (branchesContainerLayout != FloatingBounded && imagesContainerLayout != FloatingBounded) {
+    } else if (branchesContainerLayout == FloatingBounded && imagesContainerLayout != FloatingBounded) {
         // b) Only branches are FloatingBounded
         deleteOuterContainer();
         innerContainer->setLayout(BoundingFloats);
-    } else if (branchesContainerLayout != FloatingBounded && imagesContainerLayout != FloatingBounded) {
+    } else if (branchesContainerLayout == FloatingBounded && imagesContainerLayout == FloatingBounded) {
         // c) images and branches are FloatingBounded
         deleteOuterContainer();
         innerContainer->setLayout(BoundingFloats);
     } else  {
         // d) Only images are FloatingBounded
         createOuterContainer();
-        innerContainer->setLayout(Horizontal);
     }
 }
 
@@ -597,7 +596,7 @@ void BranchContainer::setBranchesContainerLayout(const Layout &ltype)   // FIXME
     if (branchesContainer) { // FIXME-0 only use this if switching to floating*
         QPointF oc_pos = ornamentsContainer->pos();
         QPointF bcc_pos = branchesContainer->pos() - oc_pos;
-        qDebug() << "BC::setBCLayout " << getName() << " oc_pos=" << oc_pos << "bcc_pos=" << bcc_pos;
+        //qDebug() << "BC::setBCLayout " << getName() << " oc_pos=" << oc_pos << "bcc_pos=" << bcc_pos;
 
         foreach (QGraphicsItem *child, branchesContainer->childItems()) {
             BranchContainer *bc = (BranchContainer*)child;
@@ -739,8 +738,8 @@ void BranchContainer::reposition()
 
         innerContainer->setMovableByFloats(false);  // FIXME-0 no longer needed with BoundingFloats layout
         setMovableByFloats(false);  // FIXME-0 needed?  
+        innerContainer->setLayout(BoundingFloats);
         setBranchesContainerLayout(FloatingBounded);
-
     } else {
         // Branch or mainbranch
         linkContainer->setLinkStyle(LinkContainer::Line);
