@@ -117,7 +117,6 @@ class Container : public QGraphicsRectItem {
     QString name;
 
     Layout layout;
-    bool movableByFloats;
 
     qreal minimumWidth;
 

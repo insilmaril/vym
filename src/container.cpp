@@ -35,7 +35,6 @@ void Container::init()
 
     // subcontainers usually may influence position
     // Only mapCenters will stay where they are
-    movableByFloats = true; 
 
     minimumWidth = 0;
 
@@ -170,11 +169,6 @@ bool Container::hasFloatingLayout() {
         return false;
 }
 
-void Container::setMovableByFloats(bool movable)
-{
-    movableByFloats = movable;
-}
-
 void Container::setHorizontalDirection(const HorizontalDirection &hdir)
 {
     horizontalDirection = hdir;
@@ -274,7 +268,7 @@ QPointF Container::getOriginalPos()
     return originalPos;
 }
 
-void Container::reposition()    // FIXME-0 rotated mapcenters: rect of branchContainer needs to be adapted (translated) to contain the innerContainer. (Works for non-mapcenter branches)
+void Container::reposition()
 {
     // qDebug() << QString("#### Reposition of %1").arg(getName()) << "Layout: " << getLayoutString() << horizontalDirection;
 

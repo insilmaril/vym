@@ -588,7 +588,6 @@ void BranchContainer::setBranchesContainerLayout(const Layout &ltype)   // FIXME
 
     if (branchesContainer)
         branchesContainer->setLayout(branchesContainerLayout);
-
 }
     
 void BranchContainer::setBranchesContainerHorizontalAlignment(const HorizontalAlignment &valign)
@@ -712,14 +711,11 @@ void BranchContainer::reposition()
 
         linkContainer->setLinkStyle(LinkContainer::NoLink);
 
-        innerContainer->setMovableByFloats(false);  // FIXME-0 no longer needed with BoundingFloats layout
-        setMovableByFloats(false);  // FIXME-0 needed?  
         innerContainer->setLayout(BoundingFloats);
         setBranchesContainerLayout(FloatingBounded);
     } else {
         // Branch or mainbranch
         linkContainer->setLinkStyle(LinkContainer::Line);
-        innerContainer->setMovableByFloats(true);
 
         if (branchItem && branchItem->getHeadingPlain().startsWith("float")) {  // FIXME-2 testing, needs dialog for setting
             // Special layout: FloatingBounded children 
