@@ -364,11 +364,8 @@ void BranchContainer::createImagesContainer()
     imagesContainer->type = Container::ImageCollection;
     if (outerContainer)
         outerContainer->addContainer(imagesContainer);
-    else {
+    else 
         innerContainer->addContainer(imagesContainer);
-        if (branchesContainer)
-            imagesContainer->stackBefore(branchesContainer);  // FIXME-0 order required?
-    }
 }
 
 void BranchContainer::addToImagesContainer(Container *c, bool keepScenePos)
