@@ -562,24 +562,6 @@ void BranchContainer::setImagesContainerLayout(const Layout &ltype)   // FIXME-1
 
     imagesContainerLayout = ltype;
 
-    /*
-    if (imagesContainer && imagesContainer->getLayout() != ltype) { // FIXME-0 only use this if switching to floating*
-        QPointF oc_pos = ornamentsContainer->pos();
-        QPointF bcc_pos = imagesContainer->pos() - oc_pos;
-        qDebug() << "BC::setBCLayout " << getName() << " oc_pos=" << oc_pos << "bcc_pos=" << bcc_pos;
-
-        foreach (QGraphicsItem *child, imagesContainer->childItems()) {
-            BranchContainer *bc = (BranchContainer*)child;
-            bc->setPos( bc->pos() + bcc_pos);
-        }
-
-        if (ltype == FloatingFree)
-            setPos (pos() +  oc_pos);
-
-        // imagesContainer will be moved anyway later // FIXME-0 needed then?
-        imagesContainer->setPos (0, 0);
-    }
-*/
     if (imagesContainer)
         imagesContainer->setLayout(imagesContainerLayout);
 }
@@ -602,9 +584,6 @@ void BranchContainer::setBranchesContainerLayout(const Layout &ltype)   // FIXME
 
         if (ltype == FloatingFree)
             setPos (pos() +  oc_pos);
-
-        // branchesContainer will be moved anyway later // FIXME-0 needed then?
-        branchesContainer->setPos (0, 0);
     }
 
     if (branchesContainer)
