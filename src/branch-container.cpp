@@ -573,6 +573,7 @@ void BranchContainer::setBranchesContainerLayout(const Layout &ltype)   // FIXME
     branchesContainerLayout = ltype;
 
     if (branchesContainer) { // FIXME-0 only use this if switching to floating*
+        // Keep current positions
         QPointF oc_pos = ornamentsContainer->pos();
         QPointF bcc_pos = branchesContainer->pos() - oc_pos;
         //qDebug() << "BC::setBCLayout " << getName() << " oc_pos=" << oc_pos << "bcc_pos=" << bcc_pos;
@@ -613,7 +614,7 @@ QRectF BranchContainer::getHeadingRect()
 void BranchContainer::setRotationHeading(const int &a)
 {
     headingContainer->setRotation( 1.0 * a);
-    //headingContainer->setScale(1 + a * 1.1);      // FIXME-1 what about scaling??
+    //headingContainer->setScale(1 + a * 1.1);      // FIXME-1 what about scaling?? Which transformCenter?
 }
 
 int BranchContainer::getRotationHeading()
@@ -636,7 +637,7 @@ bool BranchContainer::isInClickBox(const QPointF &p)
     return headingContainer->rect().contains(headingContainer->mapFromScene(p));
 }
 
-void BranchContainer::updateVisuals()
+void BranchContainer::updateVisuals() // FIXME-2 missing: standardFlags, systemFlags
 {
     if (branchItem)
         headingContainer->setHeading(branchItem->getHeadingText());

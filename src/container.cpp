@@ -376,8 +376,7 @@ void Container::reposition()
                 qreal h;
 
                 QRectF c_bbox;  // bbox of subcontainer c in my own coord 
-                QRectF bbox;    // United bboxes of all all floating and sum of 
-                                // regular containers in my own coord
+                QRectF bbox;    // bbox of all children in my own coord
 
                 // Calc space required
                 foreach (QGraphicsItem *child, childItems()) {
@@ -454,95 +453,48 @@ void Container::reposition()
                 qreal w_max = 0;
                 qreal w;
 
-                bool hasFloatingContent = false;
+                QRectF c_bbox;  // bbox of subcontainer c in my own coord 
+                QRectF bbox;    // bbox of all children in my own coord
 
-                QRectF c_bbox;  // Current bbox of floating c in my own coord (usually childrenContainer)
-                QRectF bbox;    // United bboxes of all floating containers in my own coord
 
                 // Calc total height and max width
                 foreach (QGraphicsItem *child, childItems()) {
                     c = (Container*) child;
 
-                    if (c->layout == FloatingBounded) c->setPos(0, 0);
-
                     c_bbox = mapRectFromItem(c, c->rect());
 
-                    if (c->layout == FloatingBounded) {
-                        // Floating does not directly increase max height or sum of widths, 
-                        // but build max bbox of floating children
-                        if (!hasFloatingContent) {
-                            hasFloatingContent = true;
-                            bbox = c_bbox;
-                        }
-
-                        // Unite bounding boxes of floating children to my own bbox in my own coord
-                        bbox = bbox.united(c_bbox);
-                    } else {
-                        // For width and height we can use the already mapped dimensions
-                        w = c->rect().width();
-                        w_max = (w_max < w) ? w : w_max;
-                        h_total += c->rect().height();
-                    }
+		    // For width and height we can use the already mapped dimensions
+		    w = c->rect().width();
+		    w_max = (w_max < w) ? w : w_max;
+		    h_total += c->rect().height();
                 }
 
                 qreal y = 0;
-                qreal y_float;  // y coord of floating content in my coord system to calc bbox later
-                qreal h_last;   // last height before adding current container width to bbox later
+
                 // Position children initially
                 foreach (QGraphicsItem *child, childItems()) {
                     c = (Container*) child;
 
-                    if (c->layout != FloatingBounded) {
-                        switch (horizontalAlignment) {
-                            case AlignedLeft:
-                                c->setPos (0, y);
-                                break;
-                            case AlignedRight:
-                                c->setPos (w_max - c->rect().width(), y);
-                                break;
-                            case AlignedCentered:
-                                c->setPos ( (w_max - c->rect().width() ) / 2, y);
-                                break;
-                        }
+		    switch (horizontalAlignment) {
+			case AlignedLeft:
+			    c->setPos (0, y);
+			    break;
+			case AlignedRight:
+			    c->setPos (w_max - c->rect().width(), y);
+			    break;
+			case AlignedCentered:
+			    c->setPos ( (w_max - c->rect().width() ) / 2, y);
+			    break;
+		    }
 
-                        y += c->rect().height();
-                    } else {
-                        // c->layout == FloatingBounded  save position
-                        y_float = y;
-                    }
+		    y += c->rect().height();
                 }
 
                 // Set rect to the non-floating containers we have so far
                 r.setWidth(w_max);
                 r.setHeight(h_total);
                 setRect(r);
-
-                if (hasFloatingContent) {
-                    // Calculate translation vector t to move *parent* later on
-                    // now after regular containers have been positioned
-                    // Also enlarge bounding box to maximum of floating and regular content
-
-                    r = r.united(bbox);
-
-                    // Translation vector for all children to move topLeft corner to origin
-                    QPointF t;
-
-                    if (r.topLeft().x() < 0) t.setX(-r.topLeft().x());
-                    if (r.topLeft().y() < 0) t.setY(-r.topLeft().y());
-
-                    if (t != QPointF()) {
-                        // Finally move containers by t
-                        foreach (QGraphicsItem *child, childItems()) {
-                            c = (Container*) child;
-                            c->setPos(c->pos() + t);
-                        }
-
-                        r.translate(t);
-                    }
-                }
-
             } // Vertical layout
-            setRect(r);
             break;
         default:
             qWarning() << "Container::reposition  unknown layout type!";
