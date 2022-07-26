@@ -64,6 +64,9 @@ class BranchContainer : public Container {
     Container* getBranchesContainer();
     void updateBranchesContainer();    //! Remove unused containers and add needed ones
 
+    void createOuterContainer();        //! Used if only images have FloatingBounded layout
+    void deleteOuterContainer();
+    void updateChildrenStructure();     //! Depending on layouts of children, rearrange structure
 
     int imageCount();
     void createImagesContainer();
@@ -89,6 +92,8 @@ class BranchContainer : public Container {
     virtual void setLayout(const Layout &l);
     virtual void switchLayout(const Layout &l);
 
+    virtual void setImagesContainerLayout(const Layout &l);
+
     virtual void setBranchesContainerLayout(const Layout &l);
     virtual void setBranchesContainerHorizontalAlignment(const HorizontalAlignment &valign);
     virtual void setBranchesContainerBrush(const QBrush &b);
@@ -111,8 +116,9 @@ class BranchContainer : public Container {
     static qreal linkWidth;
     BranchItem *branchItem; //! Crossreference to "parent" BranchItem 
     
-    // Save layout, alignment and brush of branchesContainer 
-    // even before container is created on demand
+    // Save layout, alignment and brush of children containers 
+    // even before containers are created on demand
+    Layout imagesContainerLayout;
     Layout branchesContainerLayout;
     HorizontalAlignment branchesContainerHorizontalAlignment;
     QBrush branchesContainerBrush;
@@ -124,6 +130,7 @@ class BranchContainer : public Container {
     Container *imagesContainer;         // Container with children images
     Container *ornamentsContainer;      // Flags and heading
     Container *innerContainer;          // Ornaments (see above) and children branches
+    Container *outerContainer;          // Used only with FloatingBounded images and vertical branches
 
   private:
     Orientation orientation;

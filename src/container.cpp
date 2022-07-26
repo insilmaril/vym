@@ -309,11 +309,11 @@ void Container::reposition()    // FIXME-0 rotated mapcenters: rect of branchCon
         case BoundingFloats: 
             {
                 // BoundingFloats is special case: 
-                // Only used for innerContainer
-                // First child container is ornamentsContainer,
-                // next children are imagesContainer and branchesContainer
+                // Only used for innerContainer or outerContainer
+                // First child container is ornamentsContainer (or innerContainer),
+                // next children are imagesContainer and/or branchesContainer
 
-                if (childItems().count() > 3 ) {
+                if (childItems().count() > 4 ) {
                     qWarning() << "Container::reposition " << info();
                     qWarning() << "Wrong number of children containers: "  << childItems().count();
                     foreach (QGraphicsItem *child, childItems()) {

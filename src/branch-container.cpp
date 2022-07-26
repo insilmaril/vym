@@ -63,6 +63,8 @@ void BranchContainer::init()
     branchesContainer = nullptr;
     linkSpaceContainer = nullptr;
 
+    outerContainer = nullptr;
+
     addContainer(innerContainer);
 
     setLayout(Container::Horizontal);
@@ -268,6 +270,86 @@ void BranchContainer::updateBranchesContainer()
     }
 }
 
+void BranchContainer::createOuterContainer()
+{
+    if (!outerContainer) {
+        outerContainer = new Container (this);
+        outerContainer->setLayout(BoundingFloats);
+        outerContainer->type = InnerContent;
+        outerContainer->addContainer(innerContainer);
+        if (imagesContainer)
+            outerContainer->addContainer(imagesContainer);
+        innerContainer->setLayout(Horizontal);
+        addContainer(outerContainer);
+    }
+}
+
+void BranchContainer::deleteOuterContainer()
+{
+    if (outerContainer) {
+        addContainer(innerContainer);
+        if (imagesContainer) {
+            innerContainer->addContainer(imagesContainer);
+        }
+        delete outerContainer;
+        outerContainer = nullptr;
+    }
+}
+
+void BranchContainer::updateChildrenStructure()
+{
+    // The structure of subcontainers within a BranchContainer
+    // depends on layouts of imagesContainer and branchesContainer:
+    //
+    // Usually both iC and bC are children of innerContainer.
+    // The layout of innerContainer is either Horizontal or BoundingFloats
+    // outerContainer is only needed in corner case d)
+    //
+    // a) No FloatingBounded children
+    //    - No outerContainer
+    //    - innerContainer is Horizontal
+    //    - branchesContainer is not FloatingBounded
+    //    - imagesContainer is FloatingFree
+    //
+    // b) Only branches are FloatingBounded
+    //    - No outerContainer
+    //    - innerContainer BoundingFloats
+    //    - branchesContainer is FloatingBounded
+    //    - imagesContainer is FloatingFree
+    //
+    // c) images and branches are FloatingBounded
+    //    - No outerContainer
+    //    - innerContainer BoundingFloats
+    //    - branchesContainer is FloatingBounded
+    //    - imagesContainer is FloatingBounded
+    //
+    // d) Only images are FloatingBounded
+    //    - outerContainer contains
+    //      - innerContainer
+    //      - imagesContainer
+    //    - innerContainer is Horizontal
+    //    - branchesContainer is Vertical
+    //    - imagesContainer is FloatingBounded
+
+    if (branchesContainerLayout != FloatingBounded && imagesContainerLayout != FloatingBounded) {
+        // a) No FloatingBounded children
+        deleteOuterContainer();
+        innerContainer->setLayout(Horizontal);
+    } else if (branchesContainerLayout != FloatingBounded && imagesContainerLayout != FloatingBounded) {
+        // b) Only branches are FloatingBounded
+        deleteOuterContainer();
+        innerContainer->setLayout(BoundingFloats);
+    } else if (branchesContainerLayout != FloatingBounded && imagesContainerLayout != FloatingBounded) {
+        // c) images and branches are FloatingBounded
+        deleteOuterContainer();
+        innerContainer->setLayout(BoundingFloats);
+    } else  {
+        // d) Only images are FloatingBounded
+        createOuterContainer();
+        innerContainer->setLayout(Horizontal);
+    }
+}
+
 int BranchContainer::imageCount()
 {
     if (!imagesContainer)
@@ -279,12 +361,15 @@ int BranchContainer::imageCount()
 void BranchContainer::createImagesContainer()
 {
     imagesContainer = new Container ();
-    imagesContainer->setLayout(Container::FloatingBounded);
+    imagesContainer->setLayout(Container::FloatingFree);
     imagesContainer->type = Container::ImageCollection;
-    innerContainer->addContainer(imagesContainer);
-
-    if (branchesContainer)
-        imagesContainer->stackBefore(branchesContainer);
+    if (outerContainer)
+        outerContainer->addContainer(imagesContainer);
+    else {
+        innerContainer->addContainer(imagesContainer);
+        if (branchesContainer)
+            imagesContainer->stackBefore(branchesContainer);  // FIXME-0 order required?
+    }
 }
 
 void BranchContainer::addToImagesContainer(Container *c, bool keepScenePos)
@@ -474,11 +559,42 @@ void BranchContainer::switchLayout(const Layout &l) // FIXME-0 testing, will go 
     Container::setLayout(l);
 }
 
+void BranchContainer::setImagesContainerLayout(const Layout &ltype)   // FIXME-1 No GUI and saveState yet
+{
+    if (imagesContainerLayout == ltype)
+        return;
+
+    imagesContainerLayout = ltype;
+
+    /*
+    if (imagesContainer && imagesContainer->getLayout() != ltype) { // FIXME-0 only use this if switching to floating*
+        QPointF oc_pos = ornamentsContainer->pos();
+        QPointF bcc_pos = imagesContainer->pos() - oc_pos;
+        qDebug() << "BC::setBCLayout " << getName() << " oc_pos=" << oc_pos << "bcc_pos=" << bcc_pos;
+
+        foreach (QGraphicsItem *child, imagesContainer->childItems()) {
+            BranchContainer *bc = (BranchContainer*)child;
+            bc->setPos( bc->pos() + bcc_pos);
+        }
+
+        if (ltype == FloatingFree)
+            setPos (pos() +  oc_pos);
+
+        // imagesContainer will be moved anyway later // FIXME-0 needed then?
+        imagesContainer->setPos (0, 0);
+    }
+*/
+    if (imagesContainer)
+        imagesContainer->setLayout(imagesContainerLayout);
+}
 void BranchContainer::setBranchesContainerLayout(const Layout &ltype)   // FIXME-1 No GUI and saveState yet
 {
+    if (branchesContainerLayout == ltype)
+        return;
+
     branchesContainerLayout = ltype;
 
-    if (branchesContainer && branchesContainer->getLayout() != ltype) { // FIXME-0 only use this if switching to floating*
+    if (branchesContainer) { // FIXME-0 only use this if switching to floating*
         QPointF oc_pos = ornamentsContainer->pos();
         QPointF bcc_pos = branchesContainer->pos() - oc_pos;
         qDebug() << "BC::setBCLayout " << getName() << " oc_pos=" << oc_pos << "bcc_pos=" << bcc_pos;
@@ -497,6 +613,7 @@ void BranchContainer::setBranchesContainerLayout(const Layout &ltype)   // FIXME
 
     if (branchesContainer)
         branchesContainer->setLayout(branchesContainerLayout);
+
 }
     
 void BranchContainer::setBranchesContainerHorizontalAlignment(const HorizontalAlignment &valign)
@@ -553,7 +670,7 @@ void BranchContainer::updateVisuals()
 
 void BranchContainer::reposition()
 {
-    //qDebug() << "BC::reposition " << info();
+    // qDebug() << "BC::reposition " << info();
 
     // Abreviation for depth
     uint depth;
@@ -620,7 +737,7 @@ void BranchContainer::reposition()
 
         linkContainer->setLinkStyle(LinkContainer::NoLink);
 
-        innerContainer->setMovableByFloats(false);
+        innerContainer->setMovableByFloats(false);  // FIXME-0 no longer needed with BoundingFloats layout
         setMovableByFloats(false);  // FIXME-0 needed?  
         setBranchesContainerLayout(FloatingBounded);
 
@@ -633,12 +750,19 @@ void BranchContainer::reposition()
             // Special layout: FloatingBounded children 
             orientation = UndefinedOrientation;
             innerContainer->setLayout(BoundingFloats);
-            //setBranchesContainerLayout(FloatingBounded);
-            setBranchesContainerLayout(Vertical);
+            setBranchesContainerLayout(FloatingBounded);
         } else if (branchItem && branchItem->getHeadingPlain().startsWith("free")) {// FIXME-2 testing, needs dialog for setting
             // Special layout: FloatingFree children 
             orientation = UndefinedOrientation;
             setBranchesContainerLayout(FloatingFree);
+        } else if (branchItem && branchItem->getHeadingPlain().startsWith("img")) {// FIXME-2 testing, needs dialog for setting
+            // Special layout: FloatingBounded images, vertical branches 
+            setBranchesContainerLayout(Vertical);
+            setImagesContainerLayout(FloatingBounded);
+        } else if (branchItem && branchItem->getHeadingPlain().startsWith("all")) {// FIXME-2 testing, needs dialog for setting
+            // Special layout: FloatingBounded images, vertical branches 
+            setBranchesContainerLayout(FloatingBounded);
+            setImagesContainerLayout(FloatingBounded);
         } else {
             setBranchesContainerLayout(Vertical);
 
@@ -657,6 +781,7 @@ void BranchContainer::reposition()
                     break;
             }
         }
+        updateChildrenStructure();
     }
 
     // Update branchesContainer and linkSpaceContainer,
