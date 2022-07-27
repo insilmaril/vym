@@ -24,7 +24,12 @@ class TrelloAgent : public QObject {
     Q_OBJECT
 
   public:
-    enum JobType {Undefined, GetMyBoards, GetBoardInfo, SyncBoardToBranch};
+    enum JobType {
+        Undefined,
+        GetMyBoards,
+        GetBoardActions,
+        GetBoardLists,
+        SyncBoardToBranch};
 
     static bool available();
 
@@ -34,6 +39,7 @@ class TrelloAgent : public QObject {
     void init();
     void setJobType(JobType jt);
     bool setBranch(BranchItem *bi);
+    void setBoard(const QString &id);
 
     void startJob();
 
@@ -47,7 +53,7 @@ class TrelloAgent : public QObject {
 
   private:
     void startGetMyBoardsRequest();
-    void startGetBoardRequest();
+    void startGetBoardRequest(const QString &rq);
 
   private slots:
     void dataReceived(QNetworkReply *reply);

@@ -88,6 +88,11 @@ bool TrelloAgent::setBranch(BranchItem *bi)
     }
 }
 
+void TrelloAgent::setBoard(const QString &id)
+{
+    boardID = id;
+}
+
 void TrelloAgent::startJob()
 {
     if (jobStep > 0) {
@@ -129,10 +134,27 @@ void TrelloAgent::continueJob()
                     break;
             };
             break;
-        case GetBoardInfo:
+        case GetBoardActions:
             switch(jobStep) {
                 case 1:
-                    startGetBoardRequest();
+                    startGetBoardRequest("actions");
+                    break;
+                case 2: {
+                    // Insert references to original branch and model
+                    // FIXME-0 jsobj["vymBranchID"] = QJsonValue(branchID);
+                    emit (trelloBoardDataReady(jsdoc));
+                    finishJob();
+                    }
+                    break;
+                default:
+                    unknownStepWarning();
+                    break;
+            };
+            break;
+        case GetBoardLists:
+            switch(jobStep) {
+                case 1:
+                    startGetBoardRequest("lists");
                     break;
                 case 2: {
                     // Insert references to original branch and model
@@ -149,7 +171,7 @@ void TrelloAgent::continueJob()
         case SyncBoardToBranch:
             switch(jobStep) {
                 case 1:
-                    startGetBoardRequest();
+                    startGetBoardRequest("lists");
                     break;
                 case 2:
                     updateListsOfBranch();
@@ -186,7 +208,7 @@ void TrelloAgent::startGetMyBoardsRequest()
     QNetworkRequest request = QNetworkRequest(url);
 
     if (debug)
-        qDebug() << "TA::startGetBoardRequest: url = " + request.url().toString();
+        qDebug() << "TA::startGetMyBoardsRequest: url = " + request.url().toString();
 
     killTimer->start();
 
@@ -196,15 +218,14 @@ void TrelloAgent::startGetMyBoardsRequest()
     networkManager->get(request);
 }
 
-void TrelloAgent::startGetBoardRequest() //FIXME-2 trello boardID still hardcoded:
+void TrelloAgent::startGetBoardRequest(const QString &rq)
 {
-    boardID = "627a201d7d74b04fba065a07";
-    QUrl url = QUrl(apiURL + "1/boards/" + boardID + "/lists?" + auth);
+    QUrl url = QUrl(apiURL + "1/boards/" + boardID + "/" + rq +"?" + auth);
 
     QNetworkRequest request = QNetworkRequest(url);
 
     if (debug)
-        qDebug() << "TA::startGetBoardRequest: url = " + request.url().toString();
+        qDebug() << "TA::startBoardRequest: url = " + request.url().toString();
 
     killTimer->start();
 
@@ -264,7 +285,7 @@ void TrelloAgent::sslErrors(QNetworkReply *reply, const QList<QSslError> &errors
 void TrelloAgent::updateListsOfBranch() 
 {
     qDebug() << "TA::updateListsOnBoard";
-    //vout << jsdoc.toJson(QJsonDocument::Indented) << endl;
+    vout << jsdoc.toJson(QJsonDocument::Indented) << endl;
 
     VymModel *model = mainWindow->getModel(modelID);
     if (!model) {
