@@ -2060,20 +2060,20 @@ void VymModel::findDuplicateURLs() // FIXME-3 needs GUI
 {
     // Generate map containing _all_ URLs and branches
     QString u;
-    QMap<QString, BranchItem *> map;
+    QMultiMap<QString, BranchItem *> map;
     BranchItem *cur = NULL;
     BranchItem *prev = NULL;
     nextBranch(cur, prev);
     while (cur) {
         u = cur->getURL();
         if (!u.isEmpty())
-            map.insertMulti(u, cur);
+            map.insert(u, cur);
         nextBranch(cur, prev);
     }
 
     // Extract duplicate URLs
-    QMap<QString, BranchItem *>::const_iterator i = map.constBegin();
-    QMap<QString, BranchItem *>::const_iterator firstdup =
+    QMultiMap<QString, BranchItem *>::const_iterator i = map.constBegin();
+    QMultiMap<QString, BranchItem *>::const_iterator firstdup =
         map.constEnd(); // invalid
     while (i != map.constEnd()) {
         if (i != map.constBegin() && i.key() == firstdup.key()) {
@@ -2097,7 +2097,7 @@ bool VymModel::findAll(FindResultModel *rmodel, QString s,
 {
     rmodel->clear();
     rmodel->setSearchString(s);
-    rmodel->setSearchFlags(0); // FIXME-4 translate cs to
+    rmodel->setSearchFlags(QTextDocument::FindFlags()); // FIXME-4 translate cs to
                                // QTextDocument::FindFlag
     bool hit = false;
 
@@ -2540,7 +2540,7 @@ bool VymModel::setTaskSleep(const QString &s)
                                         d = QDateTime(
                                             QDate(list.at(3).toInt(),
                                                   list.at(2).toInt(),
-                                                  list.at(1).toInt()));
+                                                  list.at(1).toInt()).startOfDay());
                                         // d = QDate(list.at(3).toInt(),
                                         // list.at(2).toInt(),
                                         // list.at(1).toInt()).startOfDay();
@@ -2558,14 +2558,14 @@ bool VymModel::setTaskSleep(const QString &s)
                                             int year =
                                                 QDate::currentDate().year();
                                             d = QDateTime(
-                                                QDate(year, month, day));
+                                                QDate(year, month, day).startOfDay());
                                             // d = QDate(year, month,
                                             // day).startOfDay();
                                             if (QDateTime::currentDateTime()
                                                     .daysTo(d) < 0) {
                                                 year++;
                                                 d = QDateTime(
-                                                    QDate(year, month, day));
+                                                    QDate(year, month, day).startOfDay());
                                                 // d = QDate(year, month,
                                                 // day).startOfDay();
                                             }
