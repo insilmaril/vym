@@ -235,7 +235,7 @@ void JiraAgent::ticketReceived(QNetworkReply *reply)
 
         qWarning() << "JiraAgent::ticketRReveived reply error";
         qWarning() << "Error: " << reply->error();
-        vout << "reply: " << endl << r << endl;
+        vout << "reply: " << Qt::endl << r << Qt::endl;
         finishJob();
         return;
     }
