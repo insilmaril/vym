@@ -427,23 +427,20 @@ QPointF MapEditor::getViewCenter() { return viewCenter; }
 
 void MapEditor::updateMatrix()
 {
-    double a = M_PI / 180 * angle;
-    double sina = sin((double)a);
-    double cosa = cos((double)a);
-
-    QMatrix zm(zoomFactor, 0, 0, zoomFactor, 0, 0);
-    // QMatrix translationMatrix(1, 0, 0, 1, 50.0, 50.0);
-    QMatrix rm(cosa, sina, -sina, cosa, 0, 0);
-    setMatrix(zm * rm);
+    QTransform t_zoom;
+    t_zoom.scale(zoomFactor, zoomFactor);
+    QTransform t_rot;
+    t_rot.rotate(angle);
+    setTransform(t_zoom * t_rot);
 }
 
-void MapEditor::minimizeView() { 
+void MapEditor::minimizeView() {
     // If we only would set scene rectangle to existing items, then 
     // view fould "jump", when Qt automatically tries to center. 
     // Better consider the currently visible viewport (with slight offset)
     QRectF r = mapToScene(viewport()->geometry()).boundingRect();
     r.translate(-2,-3);
-    setSceneRect(scene()->itemsBoundingRect().united(r)); 
+    setSceneRect(scene()->itemsBoundingRect().united(r));
 }
 
 void MapEditor::print()
@@ -460,10 +457,10 @@ void MapEditor::print()
 
     if (totalBBox.width() > totalBBox.height())
         // recommend landscape
-        printer->setOrientation(QPrinter::Landscape);
+        printer->setPageOrientation(QPageLayout::Landscape);
     else
         // recommend portrait
-        printer->setOrientation(QPrinter::Portrait);
+        printer->setPageOrientation(QPageLayout::Portrait);
 
     QPrintDialog dialog(printer, this);
     dialog.setWindowTitle(tr("Print vym map", "MapEditor"));
@@ -1969,9 +1966,9 @@ void MapEditor::mouseDoubleClickEvent(QMouseEvent *e)
 void MapEditor::wheelEvent(QWheelEvent *e)
 {
     if (e->modifiers() & Qt::ControlModifier &&
-        e->orientation() == Qt::Vertical) {
-        QPointF p = mapToScene(e->pos());
-        if (e->delta() > 0)
+        e->angleDelta().y() != 0) {
+        QPointF p = mapToScene(e->position().toPoint());
+        if (e->angleDelta().y() > 0)
             // setZoomFactorTarget (zoomFactorTarget*1.15);
             setViewCenterTarget(p, zoomFactorTarget * 1.15, 0);
         else
