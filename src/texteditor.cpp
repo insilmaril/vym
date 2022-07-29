@@ -43,7 +43,7 @@ TextEditor::TextEditor()
 
     e = new QTextEdit(this);
     e->setFocus();
-    e->setTabStopWidth(20); // unit is pixel
+    e->setTabStopDistance(20); // unit is pixel, default would be 80
     e->setAutoFillBackground(true);
     e->installEventFilter(this);
     connect(e, SIGNAL(textChanged()), this, SLOT(editorChanged()));
@@ -787,7 +787,7 @@ void TextEditor::textSaveAs()
 {
     QString caption = tr("Export Note to single file");
     QString fn = QFileDialog::getSaveFileName(
-        this, caption, QString::null, "VYM Note (HTML) (*.html);;All files (*)",
+        this, caption, QString(), "VYM Note (HTML) (*.html);;All files (*)",
         0, QFileDialog::DontConfirmOverwrite);
 
     if (!fn.isEmpty()) {
@@ -1190,7 +1190,7 @@ void TextEditor::updateState()
 
 void TextEditor::setEmptyEditorColor()
 {
-    QColor col = QColorDialog::getColor(colorEmptyEditor, NULL);
+    QColor col = QColorDialog::getColor(colorEmptyEditor, nullptr);
     if (!col.isValid())
         return;
     colorEmptyEditor = col;
@@ -1201,7 +1201,7 @@ void TextEditor::setEmptyEditorColor()
 
 void TextEditor::setInactiveEditorColor()
 {
-    QColor col = QColorDialog::getColor(colorInactiveEditor, NULL);
+    QColor col = QColorDialog::getColor(colorInactiveEditor, nullptr);
     if (!col.isValid())
         return;
     colorInactiveEditor = col;
@@ -1212,7 +1212,7 @@ void TextEditor::setInactiveEditorColor()
 
 void TextEditor::setFilledEditorColor()
 {
-    QColor col = QColorDialog::getColor(colorFilledEditor, NULL);
+    QColor col = QColorDialog::getColor(colorFilledEditor, nullptr);
     if (!col.isValid())
         return;
     colorFilledEditor = col;
@@ -1223,7 +1223,7 @@ void TextEditor::setFilledEditorColor()
 
 void TextEditor::setFontColor()
 {
-    QColor col = QColorDialog::getColor(colorFont, NULL);
+    QColor col = QColorDialog::getColor(colorFont, nullptr);
     if (!col.isValid())
         return;
     colorFont = col;

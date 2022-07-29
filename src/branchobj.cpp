@@ -21,7 +21,7 @@ BranchObj::BranchObj(QGraphicsItem *parent, TreeItem *ti)
     : OrnamentedObj(parent, ti)
 {
     //qDebug() << "Const BranchObj  (s,ti) this = " << this << " ti=" << ti << ti->depth();
-    
+
     treeItem = ti;
     BranchItem *pi = (BranchItem *)(ti->parent());
     if (pi && pi != ti->getModel()->getRootItem())
@@ -149,6 +149,7 @@ void BranchObj::unsetParObjTmp()
 
 void BranchObj::setVisibility(bool v, int toDepth)
 {
+    /*
     BranchItem *bi = (BranchItem *)treeItem;
     if (bi->depth() <= toDepth) {
         frame->setVisibility(v);
@@ -169,16 +170,19 @@ void BranchObj::setVisibility(bool v, int toDepth)
                 treeItem->getBranchObjNum(i)->setVisibility(v, toDepth);
         }
     }
+    */
 }
 
 void BranchObj::setVisibility(bool v) { setVisibility(v, MAX_DEPTH); }
 
 void BranchObj::positionContents()
 {
+    /*
     OrnamentedObj::positionContents();
     updateLinkGeometry(); // required before positioning images
     for (int i = 0; i < treeItem->imageCount(); ++i)
         treeItem->getImageObjNum(i)->reposition();
+    */
 }
 
 void BranchObj::move(double x, double y) { OrnamentedObj::move(x, y); }
@@ -187,10 +191,12 @@ void BranchObj::move(QPointF p) { move(p.x(), p.y()); }
 
 void BranchObj::moveBy(double x, double y)
 {
+    /*
     OrnamentedObj::moveBy(x, y);
     for (int i = 0; i < treeItem->branchCount(); ++i)
         treeItem->getBranchObjNum(i)->moveBy(x, y);
     positionBBox();
+    */
 }
 
 void BranchObj::moveBy(QPointF p) { moveBy(p.x(), p.y()); }
@@ -198,6 +204,7 @@ void BranchObj::moveBy(QPointF p) { moveBy(p.x(), p.y()); }
 void BranchObj::positionBBox() // FIXME-3 consider dimensions of frame
                                // (thickness, geometry, padding...
 {
+    /*
     QPointF ap = getAbsPos();
     bbox.moveTopLeft(ap);
     positionContents(); // this positions FIOs
@@ -209,10 +216,12 @@ void BranchObj::positionBBox() // FIXME-3 consider dimensions of frame
         if (xlo)
             xlo->updateXLink();
     }
+    */
 }
 
 void BranchObj::calcBBoxSize()
 {
+    /*
     QSizeF heading_r; // = heading->getSize();
     qreal heading_w = (qreal)heading_r.width();
     qreal heading_h = (qreal)heading_r.height();
@@ -285,10 +294,12 @@ void BranchObj::calcBBoxSize()
     bbox.setSize(QSizeF(w, h));
     // if (debug) qDebug()<<"BO: calcBBox "<<treeItem->getHeading()<<"
     // bbox="<<bbox;
+    */
 }
 
 void BranchObj::setDockPos()
 {
+    /*
     floatRefPos = ornamentsBBox.center();
 
     if (treeItem->getType() == TreeItem::MapCenter) {
@@ -334,6 +345,7 @@ void BranchObj::setDockPos()
             }
         }
     }
+    */
 }
 
 void BranchObj::updateVisuals()
@@ -365,6 +377,7 @@ void BranchObj::updateVisuals()
 
 void BranchObj::setDefAttr(BranchModification mod, bool keepFrame)
 {
+    /*
     QFont font = treeItem->getModel()->getMapDefaultFont();
     qreal fontsize = font.pointSizeF();
     switch (treeItem->depth()) {
@@ -403,10 +416,12 @@ void BranchObj::setDefAttr(BranchModification mod, bool keepFrame)
             treeItem->getBranchObjNum(i)->setDefAttr(MovedBranch, keepFrame);
     }
     calcBBoxSize();
+    */
 }
 
 void BranchObj::alignRelativeTo(QPointF ref, bool alignSelf)
 {
+    /*
     // Define some heights
     qreal th = bboxTotal.height();
     qreal ch = 0; // Sum of childrens heights
@@ -436,6 +451,7 @@ void BranchObj::alignRelativeTo(QPointF ref, bool alignSelf)
         else
             useRelPos = false;
     }
+    */
 
     // TODO testing
     /*
@@ -481,6 +497,7 @@ void BranchObj::alignRelativeTo(QPointF ref, bool alignSelf)
 
     setOrientation();
 
+    /*
     // Align myself
     if (depth == 0)
         move(getAbsPos()); // Trigger update of frames etc.
@@ -542,6 +559,7 @@ void BranchObj::alignRelativeTo(QPointF ref, bool alignSelf)
                       treeItem->getBranchObjNum(i)->getTotalBBox().height());
         }
     }
+    */
 }
 
 void BranchObj::reposition()
@@ -568,9 +586,11 @@ void BranchObj::reposition()
 
 void BranchObj::unsetAllRepositionRequests()
 {
+    /*
     repositionRequest = false;
     for (int i = 0; i < treeItem->branchCount(); ++i)
-        treeItem->getBranchObjNum(i)->unsetAllRepositionRequests();
+    treeItem->getBranchObjNum(i)->unsetAllRepositionRequests();
+    */
 }
 
 QRectF BranchObj::getTotalBBox() { return bboxTotal; }
@@ -591,6 +611,7 @@ ConvexPolygon BranchObj::getBoundingPolygon()
 
 void BranchObj::calcBBoxSizeWithChildren()
 {
+    /*
     // if branch is scrolled, ignore children, but still consider floatimages
     BranchItem *bi = (BranchItem *)treeItem;
     if (bi->isScrolled()) {
@@ -632,6 +653,7 @@ void BranchObj::calcBBoxSizeWithChildren()
     // bbox already contains frame->padding()*2
     bboxTotal.setHeight(
         max(r.height() + frame->getPadding() * 2, bbox.height()));
+        */
 }
 
 void BranchObj::setAnimation(const AnimPoint &ap) { anim = ap; }

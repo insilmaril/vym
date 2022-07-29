@@ -3,7 +3,6 @@
 #include <QDebug>
 
 #include "branchitem.h"
-#include "branchobj.h"
 #include "task.h"
 #include "vymmodel.h"
 

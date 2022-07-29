@@ -1,7 +1,6 @@
 #include "branchitem.h"
 
 #include "attributeitem.h"
-#include "branchobj.h"
 #include "heading-container.h"
 #include "image-container.h"
 #include "task.h"
@@ -266,12 +265,13 @@ void BranchItem::unScroll()
         toggleScroll();
 }
 
-bool BranchItem::toggleScroll()
+bool BranchItem::toggleScroll() // FIXME-2 not ported yet
 {
     // MapCenters are not scrollable
     if (depth() == 0)
         return false;
 
+    /*
     BranchObj *bo;
     if (scrolled) {
         scrolled = false;
@@ -293,6 +293,7 @@ bool BranchItem::toggleScroll()
                     bo->setVisibility(false); // Recursively!
             }
     }
+    */
     return true;
 }
 
@@ -530,7 +531,7 @@ BranchContainer *BranchItem::createBranchContainer(QGraphicsScene *scene)
          !((MapItem *)parentItem)->getLMO()->isVisibleObj()))
         newbo->setVisibility(false);
     */
-    if (depth() == 1) 
+    if (depth() == 1)
         branchContainer->setPos(parentBranch()->getBranchContainer()->getPositionHintNewChild(branchContainer));
 
     // FIXME-2 for new branch set default font, color, link, frame, children styles
@@ -554,7 +555,7 @@ BranchContainer* BranchItem::getBranchContainer()
 void BranchItem::unlinkBranchContainer()
 {
     //qDebug() << "BI::unlinkBC in " << this << getHeadingPlain();
-    
+
     // Called from destructor of containers to 
     // avoid double deletion 
     branchContainer = nullptr;

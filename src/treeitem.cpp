@@ -3,12 +3,10 @@
 
 #include "attributeitem.h"
 #include "branchitem.h"
-#include "branchobj.h"
 #include "misc.h"
 #include "treeitem.h"
 #include "vymmodel.h"
 #include "xlinkitem.h"
-#include "xlinkobj.h"
 
 using namespace std;
 
@@ -639,36 +637,10 @@ BranchItem *TreeItem::getBranchNum(const int &n)
         return nullptr;
 }
 
-BranchObj *TreeItem::getBranchObjNum(const int &n) // FIXME-2 Only called from within BranchObj => remove here
-{
-    return nullptr;
-    /*
-    if (n >= 0 && n < branchCounter) {
-        BranchItem *bi = getBranchNum(n);
-        if (bi) {
-            BranchObj *bo = (BranchObj *)(bi->getLMO());
-            if (bo)
-                return bo;
-            else
-                qDebug() << "TI::getBONum bo=nullptr";
-        }
-    }
-    return nullptr;
-    */
-}
-
 ImageItem *TreeItem::getImageNum(const int &n)
 {
     if (n >= 0 && n < imageCounter)
         return (ImageItem *)getChildNum(imageOffset + n);
-    else
-        return nullptr;
-}
-
-FloatImageObj *TreeItem::getImageObjNum(const int &n)
-{
-    if (imageCounter > 0)
-        return (FloatImageObj *)(getImageNum(n)->getLMO());
     else
         return nullptr;
 }
@@ -697,19 +669,6 @@ XLinkItem *TreeItem::getXLinkItemNum(const int &n)
         return (XLinkItem *)getChildNum(xlinkOffset + n);
     else
         return nullptr;
-}
-
-XLinkObj *TreeItem::getXLinkObjNum(const int &n)
-{
-    if (xlinkCounter > 0) {
-        XLinkItem *xli = getXLinkItemNum(n);
-        if (xli) {
-            Link *l = xli->getLink();
-            if (l)
-                return l->getXLinkObj();
-        }
-    }
-    return nullptr;
 }
 
 void TreeItem::setHideTmp(HideTmpMode mode)

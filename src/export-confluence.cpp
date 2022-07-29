@@ -102,7 +102,7 @@ QString ExportConfluence::getBranchText(BranchItem *current)
         //     <ac:link>
         //<ri:user ri:userkey="55df23264acf166a014b54c57792009b"/>
         //</ac:link> </span>
-        
+
         // For URLs check, if there is already a Confluence user in an attribute
         QString url;
         AttributeItem *ai = current->getAttributeByKey("ConfluenceUser.userKey");
@@ -118,7 +118,7 @@ QString ExportConfluence::getBranchText(BranchItem *current)
 
                     // Fix ampersands in URL to Confluence itself
                     url = quoteMeta(url);
-                } 
+                }
 
                 s += QString("<a href=\"%1\">%2</a>")
                          .arg(url)
@@ -258,9 +258,9 @@ QString ExportConfluence::buildList(BranchItem *current)
                 visChilds++;
                 r += ind;
                 r += itemBegin;
-                    
+
                 // Check if first mapcenter is already usded for pageName
-                if ( !(bi == model->getRootItem()->getFirstBranch() && dia.mapCenterToPageName))  
+                if ( !(bi == model->getRootItem()->getFirstBranch() && dia.mapCenterToPageName))
                     r += getBranchText(bi);
 
                 if (itemBegin.startsWith("<h"))
@@ -404,13 +404,13 @@ void ExportConfluence::doExport(bool useDialog)
     QStringList args;
     exportName = (createNewPage) ? "ConfluenceNewPage" : "ConfluenceUpdatePage";
     args <<  url;
-    if (!pageName.isEmpty()) 
+    if (!pageName.isEmpty())
         args <<  pageName;
 
     result = ExportBase::Ongoing;
 
     // Prepare human readable info in tooltip of LastExport:
-    displayedDestination = QString("Page: %1 - %2").arg(pageName).arg(url); 
+    displayedDestination = QString("Page: %1 - %2").arg(pageName).arg(url);
 
     completeExport(args);
 
