@@ -70,6 +70,10 @@ void BranchContainer::init()
     setLayout(Container::Horizontal);
     setHorizontalDirection(Container::LeftToRight);
 
+    // Use layout defaults
+    imagesContainerAutoLayout = true;
+    branchesContainerAutoLayout = true;
+
     temporaryLinked = false;
 }
 
@@ -364,7 +368,7 @@ void BranchContainer::createImagesContainer()
     imagesContainer->type = Container::ImageCollection;
     if (outerContainer)
         outerContainer->addContainer(imagesContainer);
-    else 
+    else
         innerContainer->addContainer(imagesContainer);
 }
 
@@ -539,7 +543,7 @@ void BranchContainer::setLayout(const Layout &l)
         qWarning() << "BranchContainer::setLayout (...) called for non-branch: " << info();
     Container::setLayout(l);
 }
-    
+
 void BranchContainer::switchLayout(const Layout &l) // FIXME-0 testing, will go to above setLayout later Also needs to be renamed to switchBranchesContainerLayout
 {
     if (l == layout) return;
@@ -555,7 +559,7 @@ void BranchContainer::switchLayout(const Layout &l) // FIXME-0 testing, will go 
     Container::setLayout(l);
 }
 
-void BranchContainer::setImagesContainerLayout(const Layout &ltype)   // FIXME-1 No GUI and saveState yet
+void BranchContainer::setImagesContainerLayout(const Layout &ltype)   // FIXME-1 No saveState yet
 {
     if (imagesContainerLayout == ltype)
         return;
@@ -565,7 +569,13 @@ void BranchContainer::setImagesContainerLayout(const Layout &ltype)   // FIXME-1
     if (imagesContainer)
         imagesContainer->setLayout(imagesContainerLayout);
 }
-void BranchContainer::setBranchesContainerLayout(const Layout &ltype)   // FIXME-1 No GUI and saveState yet
+
+Container::Layout BranchContainer::getImagesContainerLayout()
+{
+    return imagesContainerLayout;
+}
+
+void BranchContainer::setBranchesContainerLayout(const Layout &ltype)   // FIXME-1 No saveState yet
 {
     if (branchesContainerLayout == ltype)
         return;
@@ -590,14 +600,19 @@ void BranchContainer::setBranchesContainerLayout(const Layout &ltype)   // FIXME
     if (branchesContainer)
         branchesContainer->setLayout(branchesContainerLayout);
 }
-    
+
+Container::Layout BranchContainer::getBranchesContainerLayout()
+{
+    return branchesContainerLayout;
+}
+
 void BranchContainer::setBranchesContainerHorizontalAlignment(const HorizontalAlignment &valign)
 {
     branchesContainerHorizontalAlignment = valign;
     if (branchesContainer)
         branchesContainer->setHorizontalAlignment(branchesContainerHorizontalAlignment);
 }
-    
+
 void BranchContainer::setBranchesContainerBrush(const QBrush &b)
 {
     branchesContainerBrush = b;
@@ -700,7 +715,7 @@ void BranchContainer::reposition()
     }
 
     setLayout(Horizontal);
-    
+
     // Settings depending on depth
     if (depth == 0)
     {
@@ -718,43 +733,26 @@ void BranchContainer::reposition()
         // Branch or mainbranch
         linkContainer->setLinkStyle(LinkContainer::Line);
 
-        if (branchItem && branchItem->getHeadingPlain().startsWith("float")) {  // FIXME-2 testing, needs dialog for setting
-            // Special layout: FloatingBounded children 
-            orientation = UndefinedOrientation;
-            innerContainer->setLayout(BoundingFloats);
-            setBranchesContainerLayout(FloatingBounded);
-        } else if (branchItem && branchItem->getHeadingPlain().startsWith("free")) {// FIXME-2 testing, needs dialog for setting
-            // Special layout: FloatingFree children 
-            orientation = UndefinedOrientation;
-            setBranchesContainerLayout(FloatingFree);
-        } else if (branchItem && branchItem->getHeadingPlain().startsWith("img")) {// FIXME-2 testing, needs dialog for setting
-            // Special layout: FloatingBounded images, vertical branches 
+        if (branchesContainerAutoLayout)
             setBranchesContainerLayout(Vertical);
-            setImagesContainerLayout(FloatingBounded);
-        } else if (branchItem && branchItem->getHeadingPlain().startsWith("all")) {// FIXME-2 testing, needs dialog for setting
-            // Special layout: FloatingBounded images, vertical branches 
-            setBranchesContainerLayout(FloatingBounded);
-            setImagesContainerLayout(FloatingBounded);
-        } else {
-            setBranchesContainerLayout(Vertical);
-
-            switch (orientation) {
-                case LeftOfParent:
-                    setHorizontalDirection(RightToLeft);
-                    innerContainer->setHorizontalDirection(RightToLeft);
-                    setBranchesContainerHorizontalAlignment(AlignedRight);
-                    break;
-                case RightOfParent:
-                    setHorizontalDirection(LeftToRight);
-                    innerContainer->setHorizontalDirection(LeftToRight);
-                    setBranchesContainerHorizontalAlignment(AlignedLeft);
-                    break;
-                default: 
-                    break;
-            }
+        switch (orientation) {
+            case LeftOfParent:
+                setHorizontalDirection(RightToLeft);
+                innerContainer->setHorizontalDirection(RightToLeft);
+                setBranchesContainerHorizontalAlignment(AlignedRight);
+                break;
+            case RightOfParent:
+                setHorizontalDirection(LeftToRight);
+                innerContainer->setHorizontalDirection(LeftToRight);
+                setBranchesContainerHorizontalAlignment(AlignedLeft);
+                break;
+            default:
+                break;
         }
-        updateChildrenStructure();
     }
+
+    // Depending on layouts, we might need to insert outerContainer and relink children
+    updateChildrenStructure();  // FIXME-000 Check, why images are never FloatingBounded after load
 
     // Update branchesContainer and linkSpaceContainer,
     // this even might remove these containers

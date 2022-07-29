@@ -30,9 +30,7 @@ class BranchPropertyEditor : public QDialog {
     void frameBorderWidthChanged(int);
     void frameIncludeChildrenChanged(int);
     void linkHideUnselectedChanged(int);
-    void incImgVerChanged(int);
-    void incImgHorChanged(int);
-    void childrenFreePositioningChanged(int);
+    void childrenLayoutChanged();
     void rotationHeadingChanged(int);
     void rotationInnerContentChanged(int);
     void taskPriorityDeltaChanged(int);

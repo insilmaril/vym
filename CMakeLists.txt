@@ -5,6 +5,9 @@ project(ViewYourMind)
 # Build optimized with debug info
 set(CMAKE_BUILD_TYPE RelWithDebInfo)
 
+# Ignore deprecated warning caused be Qt 15.2 LTS for now
+set(CMAKE_WARN_DEPRECATED OFF)
+
 set(QtComponents
     LinguistTools
     Network

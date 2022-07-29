@@ -30,7 +30,7 @@ void Container::copy(Container *other)
 
 void Container::init()
 {
-    type = Undefined;
+    type = UndefinedType;
     layout = Horizontal;
 
     // subcontainers usually may influence position
@@ -97,7 +97,7 @@ QString Container::getName()    // FIXME-4 debugging only
         case TmpParent:
             t = "TmpParent";
             break;
-        case Undefined:
+        case UndefinedType:
             t = "Undefined";
             break;
         default:
@@ -127,10 +127,20 @@ Container::Layout Container::getLayout()
     return layout;
 }
 
-QString Container::getLayoutString()
+Container::Layout Container::getLayoutFromString(const QString &s)
+{
+    if (s == "Horizontal") return Horizontal;
+    if (s == "Vertical") return Vertical;
+    if (s == "BoundingFloats") return BoundingFloats;
+    if (s == "FloatingBounded") return FloatingBounded;
+    if (s == "FloatingFree") return FloatingFree;
+    return UndefinedLayout;
+}
+
+QString Container::getLayoutString(const Layout &l)
 {
     QString r;
-    switch (layout) {
+    switch (l) {
         case Horizontal:
             r = "Horizontal";
             break;
@@ -147,10 +157,15 @@ QString Container::getLayoutString()
             r = "FloatingFree";
             break;
         default:
-            r = QString("Unknown: %1").arg(layout);
+            r = QString("Unknown: %1").arg(l);
             qWarning () << "Container::getLayoutString unknown layout";
     }
     return r;
+}
+
+QString Container::getLayoutString()
+{
+    return getLayoutString(layout);
 }
 
 bool Container::isFloating()

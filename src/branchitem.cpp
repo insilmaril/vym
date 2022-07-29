@@ -29,11 +29,6 @@ BranchItem::BranchItem(TreeItem *parent)
     scrolled = false;
     tmpUnscrolled = false;
 
-    includeImagesVer = false;
-    includeImagesHor = false;
-    includeChildren = false;
-    childrenLayout = BranchItem::AutoPositioning;
-
     lastSelectedBranchNum = 0;
     lastSelectedBranchNumAlt = 0;
 
@@ -139,20 +134,33 @@ QString BranchItem::saveToDir(const QString &tmpdir, const QString &prefix,
         elementName = "branch";
 
     // Free positioning of children         // FIXME-2 remove BI::FreePositioning, save laouts for branchesContainer and imagesContainer instead
-    QString layoutAttr;
-    if (childrenLayout == BranchItem::FreePositioning)
-        layoutAttr += attribut("childrenFreePos", "true");
+    QString layoutBranchesAttr;
+    QString autoLayoutBranchesAttr;
+    if (!branchContainer->branchesContainerAutoLayout)
+    {
+        // Save the manually set layout for children branches
+        layoutBranchesAttr = attribut("branchesLayout", branchContainer->getLayoutString(branchContainer->getBranchesContainerLayout()));
+    }
+
+    QString layoutImagesAttr;
+    if (!branchContainer->imagesContainerAutoLayout)
+    {
+        // Save the manually set layout for children Images
+        layoutImagesAttr = attribut("imagesLayout", branchContainer->Container::getLayoutString(branchContainer->getImagesContainerLayout()));
+    }
 
     QString posAttr;
     if (parentItem == rootItem || branchContainer->isFloating())
         posAttr = getPosAttr();
 
-    s = beginElement(elementName + 
-            posAttr + 
+    s = beginElement(elementName +
+            posAttr +
             MapItem::getLinkableAttr() +
             TreeItem::getGeneralAttr() +
-                     scrolledAttr + getIncludeImageAttr() + 
-                     layoutAttr + idAttr);
+                     scrolledAttr +
+                     layoutBranchesAttr +
+                     layoutImagesAttr +
+                     idAttr);
     incIndent();
 
     // save heading
@@ -378,32 +386,14 @@ void BranchItem::sortChildren(bool inverse) // FIXME-4 optimize by not using mov
     } while (madeChanges);
 }
 
-void BranchItem::setChildrenLayout(BranchItem::LayoutHint layoutHint)
+void BranchItem::setBranchesLayout(const QString &s)
 {
-    childrenLayout = layoutHint;
+    branchContainer->setBranchesContainerLayout(Container::getLayoutFromString(s));
 }
 
-BranchItem::LayoutHint BranchItem::getChildrenLayout()
+void BranchItem::setImagesLayout(const QString &s)
 {
-    return childrenLayout;
-}
-
-void BranchItem::setIncludeImagesVer(bool b) { includeImagesVer = b; }
-
-bool BranchItem::getIncludeImagesVer() { return includeImagesVer; }
-
-void BranchItem::setIncludeImagesHor(bool b) { includeImagesHor = b; }
-
-bool BranchItem::getIncludeImagesHor() { return includeImagesHor; }
-
-QString BranchItem::getIncludeImageAttr()
-{
-    QString a;
-    if (includeImagesVer)
-        a = attribut("incImgV", "true");
-    if (includeImagesHor)
-        a += attribut("incImgH", "true");
-    return a;
+    branchContainer->setImagesContainerLayout(Container::getLayoutFromString(s));
 }
 
 BranchItem *BranchItem::getFramedParentBranch(BranchItem *start)    // FIXME-2 Used to determine background color in taskEditor

@@ -609,21 +609,27 @@ bool parseVYMHandler::readBranchAttr(const QXmlAttributes &a)
     if (!a.value("scrolled").isEmpty())
         lastBranch->toggleScroll();
 
-    if (!a.value("incImgV").isEmpty()) {
+    if (!a.value("incImgV").isEmpty()) { // pre 2.9 feature
         if (a.value("incImgV") == "true")
-            lastBranch->setIncludeImagesVer(true);
-        else
-            lastBranch->setIncludeImagesVer(false);
+            lastBranch->setImagesLayout("FloatingBounded");
     }
-    if (!a.value("incImgH").isEmpty()) {
+    if (!a.value("incImgH").isEmpty()) {// pre 2.9 feature
         if (a.value("incImgH") == "true")
-            lastBranch->setIncludeImagesHor(true);
-        else
-            lastBranch->setIncludeImagesHor(false);
+            lastBranch->setImagesLayout("FloatingBounded");
     }
-    if (a.value("childrenFreePos") == "true")
-        lastBranch->setChildrenLayout(BranchItem::FreePositioning);
+    if (a.value("childrenFreePos") == "true")// pre 2.9 feature
+        lastBranch->setBranchesLayout("FloatingBounded");
 
+    // Container layouts
+    if (!a.value("branchesLayout").isEmpty()) {
+        lastBranch->getBranchContainer()->branchesContainerAutoLayout = false;
+        lastBranch->setBranchesLayout(a.value("branchesLayout"));
+    }
+
+    if (!a.value("imagesLayout").isEmpty()) {
+        lastBranch->setImagesLayout(a.value("imagesLayout"));
+        lastBranch->getBranchContainer()->imagesContainerAutoLayout = false;
+    }
     return true;
 }
 

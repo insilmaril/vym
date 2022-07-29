@@ -371,6 +371,8 @@ class VymModel : public TreeModel {
     void setIncludeImagesVer(bool);
     void setIncludeImagesHor(bool);
     void setChildrenLayout(BranchItem::LayoutHint layoutHint);
+    void setBranchesLayout(const QString &);
+    void setImagesLayout(const QString &);
     void setRotationHeading(const int &);
     void setRotationInnerContent(const int &);
     void setHideLinkUnselected(bool);

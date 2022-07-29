@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>617</width>
-    <height>452</height>
+    <width>404</width>
+    <height>421</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -23,7 +23,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tabFrame">
       <attribute name="title">
@@ -234,35 +234,96 @@
       <attribute name="title">
        <string>Layout</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_5">
+      <layout class="QVBoxLayout" name="verticalLayout_6">
        <item>
-        <layout class="QVBoxLayout" name="verticalLayout_2">
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
          <item>
-          <widget class="QLabel" name="branchesLayoutLabel">
-           <property name="text">
-            <string>Layout of children branches:</string>
+          <widget class="QGroupBox" name="childrenBranchesGroupBox">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
            </property>
+           <property name="title">
+            <string>Layout of  branches</string>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_5">
+            <item>
+             <layout class="QVBoxLayout" name="verticalLayout_2">
+              <item>
+               <widget class="QRadioButton" name="branchesLayoutAutoButton">
+                <property name="text">
+                 <string>Automatic</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QRadioButton" name="branchesLayoutBoundedButton">
+                <property name="text">
+                 <string>Floating bounded</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QRadioButton" name="branchesLayoutFreeButton">
+                <property name="text">
+                 <string>Floating free</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
           </widget>
          </item>
          <item>
-          <widget class="QRadioButton" name="branchesLayoutFreeButton">
-           <property name="text">
-            <string>Auto</string>
+          <widget class="QGroupBox" name="childrenImagesGroupBox">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
            </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QRadioButton" name="branchesLayoutBoundedButton">
-           <property name="text">
-            <string>Floating bounded</string>
+           <property name="title">
+            <string>Layout of  images</string>
            </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QRadioButton" name="branchesLayouAutoButton">
-           <property name="text">
-            <string>Floating free</string>
+           <property name="alignment">
+            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
            </property>
+           <property name="flat">
+            <bool>false</bool>
+           </property>
+           <property name="checkable">
+            <bool>false</bool>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_4">
+            <item>
+             <layout class="QVBoxLayout" name="verticalLayout_3">
+              <item>
+               <widget class="QRadioButton" name="imagesLayoutAutoButton">
+                <property name="text">
+                 <string>Automatic</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QRadioButton" name="imagesLayoutBoundedButton">
+                <property name="text">
+                 <string>Floating bounded</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QRadioButton" name="imagesLayoutFreeButton">
+                <property name="text">
+                 <string>Floating free</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
           </widget>
          </item>
         </layout>
@@ -336,31 +397,6 @@
            </property>
            <property name="maximum">
             <number>90</number>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QVBoxLayout" name="deprecated">
-         <item>
-          <widget class="QCheckBox" name="incImgHor">
-           <property name="text">
-            <string>Include images horizontally (deprecated)</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="incImgVer">
-           <property name="text">
-            <string>Include images vertically (deprecated)</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="childrenFreePositioning">
-           <property name="text">
-            <string>Free positioning of children (deprecated!)</string>
            </property>
           </widget>
          </item>

@@ -38,11 +38,11 @@ class Container : public QGraphicsRectItem {
         Link,
         Ornaments,
         TmpParent,
-        Undefined
+        UndefinedType
     };
 
     /*! Alignment of children containers */
-    enum Layout {Horizontal, Vertical, BoundingFloats, FloatingBounded, FloatingFree};
+    enum Layout {UndefinedLayout, Horizontal, Vertical, BoundingFloats, FloatingBounded, FloatingFree};
     enum HorizontalDirection {LeftToRight, RightToLeft};
     enum HorizontalAlignment {AlignedLeft, AlignedCentered, AlignedRight};
 
@@ -59,9 +59,13 @@ class Container : public QGraphicsRectItem {
 
     virtual QString info (const QString &prefix = "");
 
-    virtual void setLayout(const Layout &ltype);
+    void setLayout(const Layout &ltype);
+
     Layout getLayout();
+    static QString getLayoutString(const Layout &);
+    static Layout getLayoutFromString(const QString &s);
     QString getLayoutString();
+
     bool isFloating();          //! returns true, if parent container has Floating layout
     bool hasFloatingLayout();   //! returns true, if this container has Floating layout
 

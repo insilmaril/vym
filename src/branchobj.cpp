@@ -242,8 +242,8 @@ void BranchObj::calcBBoxSize()
     QPointF rp;
 
     topPad = botPad = leftPad = rightPad = 0;
-    bool incV = ((BranchItem *)treeItem)->getIncludeImagesVer();
-    bool incH = ((BranchItem *)treeItem)->getIncludeImagesHor();
+    bool incV = false; //((BranchItem *)treeItem)->getIncludeImagesVer();
+    bool incH = false; //((BranchItem *)treeItem)->getIncludeImagesHor();
     if (incH || incV) {
         FloatImageObj *fio;
         for (int i = 0; i < treeItem->imageCount(); ++i) {
@@ -418,8 +418,7 @@ void BranchObj::alignRelativeTo(QPointF ref, bool alignSelf)
     if (parObj) {
         TreeItem *pi = parObj->getTreeItem();
         depth = 1 + pi->depth();
-        layoutHint =
-            ((BranchItem *)treeItem)->parentBranch()->getChildrenLayout();
+        //layoutHint = ((BranchItem *)treeItem)->parentBranch()->getChildrenLayout();
     }
 
     // set useRelPos, depending on layout

@@ -91,14 +91,18 @@ class BranchContainer : public Container {
     /*! Update "upwards" links in LinkContainer */
     void updateUpLink();
 
-    virtual void setLayout(const Layout &l);
-    virtual void switchLayout(const Layout &l);
+    void setLayout(const Layout &l);
+    void switchLayout(const Layout &l);
 
-    virtual void setImagesContainerLayout(const Layout &l);
+    bool imagesContainerAutoLayout;
+    void setImagesContainerLayout(const Layout &l);
+    Container::Layout getImagesContainerLayout();
 
-    virtual void setBranchesContainerLayout(const Layout &l);
-    virtual void setBranchesContainerHorizontalAlignment(const HorizontalAlignment &valign);
-    virtual void setBranchesContainerBrush(const QBrush &b);
+    bool branchesContainerAutoLayout;
+    void setBranchesContainerLayout(const Layout &l);
+    Container::Layout getBranchesContainerLayout();
+    void setBranchesContainerHorizontalAlignment(const HorizontalAlignment &valign);
+    void setBranchesContainerBrush(const QBrush &b);
 
     QRectF getHeadingRect();  //! Return rectangle of HeadingContainer in absolute coordinates
 

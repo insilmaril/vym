@@ -2371,8 +2371,9 @@ void VymModel::setFrameBorderWidth(
     }
 }
 
-void VymModel::setIncludeImagesVer(bool b)
+void VymModel::setIncludeImagesVer(bool b) // FIXME-000 rewrite to new layout settings
 {
+    /*
     BranchItem *bi = getSelectedBranch();
     if (bi && b != bi->getIncludeImagesVer()) {
         QString u = b ? "false" : "true";
@@ -2386,10 +2387,12 @@ void VymModel::setIncludeImagesVer(bool b)
         emitDataChanged(bi);
         reposition();
     }
+    */
 }
 
-void VymModel::setIncludeImagesHor(bool b)
+void VymModel::setIncludeImagesHor(bool b) // FIXME-000 rewrite to new layout settings
 {
+    /*
     BranchItem *bi = getSelectedBranch();
     if (bi && b != bi->getIncludeImagesHor()) {
         QString u = b ? "false" : "true";
@@ -2403,6 +2406,7 @@ void VymModel::setIncludeImagesHor(bool b)
         emitDataChanged(bi);
         reposition();
     }
+    */
 }
 
 void VymModel::setRotationHeading (const int &i) // FIXME-2 no savestate
@@ -2437,7 +2441,7 @@ void VymModel::setRotationInnerContent (const int &i) // FIXME-2 no savestate
     }
 }
 
-void VymModel::setChildrenLayout(
+void VymModel::setChildrenLayout( // FIXME-000 rewrite to new layout settings
     BranchItem::LayoutHint layoutHint) // FIXME-3 no savestate yet
 {
     BranchItem *bi = getSelectedBranch();
@@ -2454,10 +2458,50 @@ void VymModel::setChildrenLayout(
             QString("Include images horizontally in %1").arg(getObjectName(bi))
         );
         */
-        bi->setChildrenLayout(layoutHint);
+        //bi->setChildrenLayout(layoutHint);
         emitDataChanged(bi);
         reposition();
     }
+}
+
+void VymModel::setBranchesLayout(const QString &s)  // FIXME-1 no savestate yet
+{
+    QList<BranchItem *> selbis = getSelectedBranches();
+    BranchContainer *bc;
+    foreach (BranchItem *selbi, selbis) {
+        if (selbi) {    // FIXME-0 check, if this makes sense also for mapcenters
+            bc = selbi->getBranchContainer();
+            qDebug() << "VM::setBCLayout: " << s;
+            if (s == "Auto")
+                bc->branchesContainerAutoLayout = true;
+            else if (s == "FloatingBounded" || s == "FloatingFree") {
+                bc->setBranchesContainerLayout(Container::getLayoutFromString(s));
+                bc->branchesContainerAutoLayout = false;
+            }
+        }
+        //emitDataChanged(bi);    // FIXME-0 expensive, needed?
+    }
+    reposition();
+}
+
+void VymModel::setImagesLayout(const QString &s)  // FIXME-1 no savestate yet
+{
+    QList<BranchItem *> selbis = getSelectedBranches();
+    BranchContainer *bc;
+    foreach (BranchItem *selbi, selbis) {
+        if (selbi) {    // FIXME-0 check, if this makes sense also for mapcenters
+            bc = selbi->getBranchContainer();
+            qDebug() << "VM::setBCImageLayout: " << s;
+            if (s == "Auto")
+                bc->imagesContainerAutoLayout = true;
+            else if (s == "FloatingBounded" || s == "FloatingFree") {
+                bc->setImagesContainerLayout(Container::getLayoutFromString(s));
+                bc->imagesContainerAutoLayout = false;
+            }
+        }
+        //emitDataChanged(bi);    // FIXME-0 expensive, needed?
+    }
+    reposition();
 }
 
 void VymModel::setHideLinkUnselected(bool b)

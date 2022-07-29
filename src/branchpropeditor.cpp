@@ -61,7 +61,7 @@ BranchPropertyEditor::BranchPropertyEditor(QWidget *parent)
         show();
     else
         hide();
-    
+
     connectSignals();
 }
 
@@ -76,7 +76,7 @@ BranchPropertyEditor::~BranchPropertyEditor()
 
 void BranchPropertyEditor::setItem(TreeItem *ti)
 {
-    disconnectSignals();    // FIXME-1 why complete disconnect?
+    disconnectSignals();    // FIXME-2 why complete disconnect?
     if (!ti)
         ui.tabWidget->setEnabled(false);
     else if (ti->hasTypeBranch()) {
@@ -151,6 +151,7 @@ void BranchPropertyEditor::setItem(TreeItem *ti)
             ui.hideLinkIfUnselected->setCheckState(Qt::Unchecked);
 
         // Layout
+        /* FIXME-0 Obsolete layouts
         if (branchItem->getIncludeImagesVer())
             ui.incImgVer->setCheckState(Qt::Checked);
         else
@@ -163,11 +164,33 @@ void BranchPropertyEditor::setItem(TreeItem *ti)
             ui.childrenFreePositioning->setCheckState(Qt::Checked);
         else
             ui.childrenFreePositioning->setCheckState(Qt::Unchecked);
+        */
 
-        ui.rotationHeadingSlider->setValue(branchItem->getBranchContainer()->getRotationHeading());
-        ui.rotationInnerContentSlider->setValue(branchItem->getBranchContainer()->getRotationInnerContent());
-        ui.rotationHeadingSpinBox->setValue(branchItem->getBranchContainer()->getRotationHeading());
-        ui.rotationInnerContentSpinBox->setValue(branchItem->getBranchContainer()->getRotationInnerContent());
+        BranchContainer *bc = branchItem->getBranchContainer();
+
+        if (bc->branchesContainerAutoLayout)
+            ui.branchesLayoutAutoButton->setChecked(true);
+        else {
+            if (bc->getBranchesContainerLayout() == Container::FloatingBounded)
+                ui.branchesLayoutBoundedButton->setChecked(true);
+            else if (bc->getBranchesContainerLayout() == Container::FloatingFree)
+                ui.branchesLayoutFreeButton->setChecked(true);
+            else
+                // The default Vertical falls back to Auto for now
+                ui.branchesLayoutAutoButton->setChecked(true);
+        }
+        if (bc->imagesContainerAutoLayout)
+            ui.imagesLayoutAutoButton->setChecked(true);
+        else {
+            if (bc->getImagesContainerLayout() == Container::FloatingBounded)
+                ui.imagesLayoutBoundedButton->setChecked(true);
+            else
+                ui.imagesLayoutFreeButton->setChecked(true);
+        }
+        ui.rotationHeadingSlider->setValue(bc->getRotationHeading());
+        ui.rotationInnerContentSlider->setValue(bc->getRotationInnerContent());
+        ui.rotationHeadingSpinBox->setValue(bc->getRotationHeading());
+        ui.rotationInnerContentSpinBox->setValue(bc->getRotationInnerContent());
 
         /*
             ui.rotationHeadingSlider->setEnabled(false);
@@ -341,26 +364,22 @@ void BranchPropertyEditor::linkHideUnselectedChanged(int i)
     model->setHideLinkUnselected(i);
 }
 
-void BranchPropertyEditor::incImgVerChanged(int i)
+void BranchPropertyEditor::childrenLayoutChanged()
 {
-    if (model)
-        model->setIncludeImagesVer(i);
-}
+    if (!model) return;
 
-void BranchPropertyEditor::incImgHorChanged(int i)
-{
-    if (model)
-        model->setIncludeImagesHor(i);
-}
-
-void BranchPropertyEditor::childrenFreePositioningChanged(int i)
-{
-    if (model) {
-        if (i > 0)
-            model->setChildrenLayout(BranchItem::FreePositioning);
-        else
-            model->setChildrenLayout(BranchItem::AutoPositioning);
-    }
+    if (sender() == ui.branchesLayoutAutoButton)
+        model->setBranchesLayout("Auto");
+    else if (sender() == ui.branchesLayoutBoundedButton)
+        model->setBranchesLayout("FloatingBounded");
+    else if (sender() == ui.branchesLayoutFreeButton)
+        model->setBranchesLayout("FloatingFree");
+    if (sender() == ui.imagesLayoutAutoButton)
+        model->setImagesLayout("Auto");
+    else if (sender() == ui.imagesLayoutBoundedButton)
+        model->setImagesLayout("FloatingBounded");
+    else if (sender() == ui.imagesLayoutFreeButton)
+        model->setImagesLayout("FloatingFree");
 }
 
 void BranchPropertyEditor::rotationHeadingChanged(int i)    // FIXME-2 Create custom class to sync slider and spinbox and avoid double calls to models
@@ -449,20 +468,26 @@ void BranchPropertyEditor::connectSignals()
     connect(ui.hideLinkIfUnselected, SIGNAL(stateChanged(int)), this,
             SLOT(linkHideUnselectedChanged(int)));
 
-    // Layout
-    connect(ui.incImgVer, SIGNAL(stateChanged(int)), this,
-            SLOT(incImgVerChanged(int)));
-    connect(ui.incImgHor, SIGNAL(stateChanged(int)), this,
-            SLOT(incImgHorChanged(int)));
-    connect(ui.childrenFreePositioning, SIGNAL(stateChanged(int)), this,
-            SLOT(childrenFreePositioningChanged(int)));
+    // Layout   // FIXME-000 add signals/slots for images and branches layouts
+    connect(ui.branchesLayoutAutoButton, SIGNAL(clicked()),
+            this, SLOT(childrenLayoutChanged()));
+    connect(ui.branchesLayoutBoundedButton, SIGNAL(clicked()),
+            this, SLOT(childrenLayoutChanged()));
+    connect(ui.branchesLayoutFreeButton, SIGNAL(clicked()),
+            this, SLOT(childrenLayoutChanged()));
+    connect(ui.imagesLayoutAutoButton, SIGNAL(clicked()),
+            this, SLOT(childrenLayoutChanged()));
+    connect(ui.imagesLayoutBoundedButton, SIGNAL(clicked()),
+            this, SLOT(childrenLayoutChanged()));
+    connect(ui.imagesLayoutFreeButton, SIGNAL(clicked()),
+            this, SLOT(childrenLayoutChanged()));
 
     connect(ui.rotationHeadingSlider, SIGNAL(valueChanged(int)),
             this, SLOT(rotationHeadingChanged(int)));
     connect(ui.rotationHeadingSpinBox, SIGNAL(valueChanged(int)),
             this, SLOT(rotationHeadingChanged(int)));
 
-    // WIth lambda          // FIXME-2
+    // With lambda          // FIXME-2
     // connect(spinbox, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), slider, &QSlider::setValue);
 
     connect(ui.rotationInnerContentSlider, SIGNAL(valueChanged(int)), 
@@ -503,9 +528,12 @@ void BranchPropertyEditor::disconnectSignals()
     disconnect(ui.hideLinkIfUnselected, 0, 0, 0);
 
     // Layout
-    disconnect(ui.incImgVer, 0, 0, 0);
-    disconnect(ui.incImgHor, 0, 0, 0);
-    disconnect(ui.childrenFreePositioning, 0, 0, 0);
+    disconnect(ui.branchesLayoutAutoButton, 0, 0, 0);
+    disconnect(ui.branchesLayoutBoundedButton, 0, 0, 0);
+    disconnect(ui.branchesLayoutFreeButton, 0, 0, 0);
+    disconnect(ui.imagesLayoutAutoButton, 0, 0, 0);
+    disconnect(ui.imagesLayoutBoundedButton, 0, 0, 0);
+    disconnect(ui.imagesLayoutFreeButton, 0, 0, 0);
     disconnect(ui.rotationHeadingSlider, 0, 0, 0);
     disconnect(ui.rotationHeadingSpinBox, 0, 0, 0);
     disconnect(ui.rotationInnerContentSlider, 0, 0, 0);

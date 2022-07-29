@@ -61,21 +61,10 @@ class BranchItem : public MapItem {
     virtual bool resetTmpUnscroll(); // scroll all tmp scrolled parents again
                                      // e.g. when unselecting
     virtual void sortChildren(bool inverse = false); //! Sort children
-    virtual void setChildrenLayout(BranchItem::LayoutHint layoutHint);
-    virtual BranchItem::LayoutHint getChildrenLayout();
-
-  protected:
-    bool includeImagesVer;     //! include floatimages in bbox vertically
-    bool includeImagesHor;     //! include floatimages in bbox horizontally
-    bool includeChildren;      //! include children in frame
-    LayoutHint childrenLayout; //! should children be positioned freely?
 
   public:
-    void setIncludeImagesVer(bool);
-    bool getIncludeImagesVer();
-    void setIncludeImagesHor(bool);
-    bool getIncludeImagesHor();
-    QString getIncludeImageAttr();
+    void setBranchesLayout(const QString &);
+    void setImagesLayout(const QString &);
     BranchItem *getFramedParentBranch(BranchItem *start);
     void setFrameIncludeChildren(bool);
     bool getFrameIncludeChildren();

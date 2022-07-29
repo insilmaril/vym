@@ -136,6 +136,8 @@ Bugs
 
     - Mapcenters use real scene positions
 
+    - rotate branchesContainer? Could enable interesting layouts
+
 * Position hint for relinking often way to low, not really below new
   parent
   

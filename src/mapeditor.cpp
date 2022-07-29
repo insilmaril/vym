@@ -839,7 +839,7 @@ BranchItem *MapEditor::findMapBranchItem(QPointF p, const QList <TreeItem*> &exc
         return nullptr;
 }
 
-void MapEditor::testFunction1() 
+void MapEditor::testFunction1()
 {
     BranchItem *selbi = model->getSelectedBranch();
     if (!selbi)
@@ -848,9 +848,13 @@ void MapEditor::testFunction1()
         BranchContainer *bc = selbi->getBranchContainer();
         qDebug() << bc->info();
         Container *c = bc->getBranchesContainer();
-        for (int i=0; i < c->childItems().count(); i++) {
-            qDebug() << "  i=" << i << ((Container*)c->childItems().at(i))->info();
-        }
+        if (c)
+            for (int i=0; i < c->childItems().count(); i++)
+                qDebug() << "  i=" << i << ((Container*)c->childItems().at(i))->info();
+        c = bc->getImagesContainer();
+        if (c)
+            for (int i=0; i < c->childItems().count(); i++)
+                qDebug() << "  i=" << i << ((Container*)c->childItems().at(i))->info();
     }
 }
 
