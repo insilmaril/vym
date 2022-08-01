@@ -816,16 +816,6 @@ void VymModelWrapper::setHeadingPlainText(
 
 void VymModelWrapper::setHideExport(bool b) { model->setHideExport(b); }
 
-void VymModelWrapper::setIncludeImagesHorizontally(bool b)
-{
-    model->setIncludeImagesHor(b);
-}
-
-void VymModelWrapper::setIncludeImagesVertically(bool b)
-{
-    model->setIncludeImagesVer(b);
-}
-
 void VymModelWrapper::setHideLinkUnselected(bool b)
 {
     model->setHideLinkUnselected(b);

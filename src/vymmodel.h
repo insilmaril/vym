@@ -368,9 +368,6 @@ class VymModel : public TreeModel {
     void setFrameBrushColor(const QColor &);
     void setFramePadding(const int &);
     void setFrameBorderWidth(const int &);
-    void setIncludeImagesVer(bool);
-    void setIncludeImagesHor(bool);
-    void setChildrenLayout(BranchItem::LayoutHint layoutHint);
     void setBranchesLayout(const QString &);
     void setImagesLayout(const QString &);
     void setRotationHeading(const int &);

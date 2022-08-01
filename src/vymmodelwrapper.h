@@ -117,8 +117,6 @@ class VymModelWrapper : public VymScriptContext {
     void setHeadingPlainText(const QString &s);
     void setHideExport(bool b);
     void setHideLinkUnselected(bool b);
-    void setIncludeImagesHorizontally(bool b);
-    void setIncludeImagesVertically(bool b);
     void setMapAnimCurve(int n);
     void setMapAnimDuration(int n);
     void setMapAuthor(const QString &s);

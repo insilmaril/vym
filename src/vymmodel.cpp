@@ -2236,8 +2236,9 @@ QStringList VymModel::getURLs(bool ignoreScrolled)
     return urls;
 }
 
-void VymModel::setFrameType(const FrameObj::FrameType &t)
+void VymModel::setFrameType(const FrameObj::FrameType &t)// FIXME-2 not ported yet to containers
 {
+    /*
     BranchItem *bi = getSelectedBranch();
     if (bi) {
         BranchObj *bo = (BranchObj *)(bi->getLMO());
@@ -2252,10 +2253,12 @@ void VymModel::setFrameType(const FrameObj::FrameType &t)
             bo->updateLinkGeometry();
         }
     }
+    */
 }
 
-void VymModel::setFrameType(const QString &s)
+void VymModel::setFrameType(const QString &s)// FIXME-2 not ported yet to containers
 {
+    /*
     BranchItem *bi = getSelectedBranch();
     if (bi) {
         BranchObj *bo = (BranchObj *)(bi->getLMO());
@@ -2270,9 +2273,10 @@ void VymModel::setFrameType(const QString &s)
             bo->updateLinkGeometry();
         }
     }
+    */
 }
 
-void VymModel::toggleFrameIncludeChildren()
+void VymModel::toggleFrameIncludeChildren()// FIXME-2 not ported yet to containers
 {
     BranchItem *bi = getSelectedBranch();
     if (bi) {
@@ -2281,8 +2285,9 @@ void VymModel::toggleFrameIncludeChildren()
     }
 }
 
-void VymModel::setFrameIncludeChildren(bool b)
+void VymModel::setFrameIncludeChildren(bool b)// FIXME-2 not ported yet to containers
 {
+    /*
     BranchItem *bi = getSelectedBranch();
     if (bi) {
         QString u = b ? "false" : "true";
@@ -2295,12 +2300,13 @@ void VymModel::setFrameIncludeChildren(bool b)
         emitDataChanged(bi);
         reposition();
     }
+    */
 }
 
-void VymModel::setFramePenColor(
-    const QColor &c) // FIXME-4 not saved if there is no LMO
+void VymModel::setFramePenColor(const QColor &c) // FIXME-2 not ported yet to containers
 
 {
+    /*
     BranchItem *bi = getSelectedBranch();
     if (bi) {
         BranchObj *bo = (BranchObj *)(bi->getLMO());
@@ -2313,11 +2319,13 @@ void VymModel::setFramePenColor(
             bo->setFramePenColor(c);
         }
     }
+    */
 }
 
-void VymModel::setFrameBrushColor(
+void VymModel::setFrameBrushColor(// FIXME-2 not ported yet to containers
     const QColor &c) // FIXME-4 not saved if there is no LMO
 {
+    /*
     BranchItem *bi = getSelectedBranch();
     if (bi) {
         BranchObj *bo = (BranchObj *)(bi->getLMO());
@@ -2331,11 +2339,13 @@ void VymModel::setFrameBrushColor(
             bi->setBackgroundColor(c); // FIXME-4 redundant with above
         }
     }
+    */
 }
 
-void VymModel::setFramePadding(
+void VymModel::setFramePadding(// FIXME-2 not ported yet to containers
     const int &i)
 {
+    /*
     BranchItem *bi = getSelectedBranch();
     if (bi) {
         BranchObj *bo = (BranchObj *)(bi->getLMO());
@@ -2350,11 +2360,13 @@ void VymModel::setFramePadding(
             bo->updateLinkGeometry();
         }
     }
+    */
 }
 
-void VymModel::setFrameBorderWidth(
+void VymModel::setFrameBorderWidth(// FIXME-2 not ported yet to containers
     const int &i)
 {
+    /*
     BranchItem *bi = getSelectedBranch();
     if (bi) {
         BranchObj *bo = (BranchObj *)(bi->getLMO());
@@ -2368,43 +2380,6 @@ void VymModel::setFrameBorderWidth(
             reposition();
             bo->updateLinkGeometry();
         }
-    }
-}
-
-void VymModel::setIncludeImagesVer(bool b) // FIXME-000 rewrite to new layout settings
-{
-    /*
-    BranchItem *bi = getSelectedBranch();
-    if (bi && b != bi->getIncludeImagesVer()) {
-        QString u = b ? "false" : "true";
-        QString r = !b ? "false" : "true";
-
-        saveState(
-            bi, QString("setIncludeImagesVertically (%1)").arg(u), bi,
-            QString("setIncludeImagesVertically (%1)").arg(r),
-            QString("Include images vertically in %1").arg(getObjectName(bi)));
-        bi->setIncludeImagesVer(b);
-        emitDataChanged(bi);
-        reposition();
-    }
-    */
-}
-
-void VymModel::setIncludeImagesHor(bool b) // FIXME-000 rewrite to new layout settings
-{
-    /*
-    BranchItem *bi = getSelectedBranch();
-    if (bi && b != bi->getIncludeImagesHor()) {
-        QString u = b ? "false" : "true";
-        QString r = !b ? "false" : "true";
-
-        saveState(bi, QString("setIncludeImagesHorizontally (%1)").arg(u), bi,
-                  QString("setIncludeImagesHorizontally (%1)").arg(r),
-                  QString("Include images horizontally in %1")
-                      .arg(getObjectName(bi)));
-        bi->setIncludeImagesHor(b);
-        emitDataChanged(bi);
-        reposition();
     }
     */
 }
@@ -2441,42 +2416,21 @@ void VymModel::setRotationInnerContent (const int &i) // FIXME-2 no savestate
     }
 }
 
-void VymModel::setChildrenLayout( // FIXME-000 rewrite to new layout settings
-    BranchItem::LayoutHint layoutHint) // FIXME-3 no savestate yet
-{
-    BranchItem *bi = getSelectedBranch();
-    if (bi) {
-        /*
-        QString u= b ? "false" : "true";
-        QString r=!b ? "false" : "true";
-
-        saveState(
-            bi,
-            QString("setIncludeImagesHorizontally (%1)").arg(u),
-            bi,
-            QString("setIncludeImagesHorizontally (%1)").arg(r),
-            QString("Include images horizontally in %1").arg(getObjectName(bi))
-        );
-        */
-        //bi->setChildrenLayout(layoutHint);
-        emitDataChanged(bi);
-        reposition();
-    }
-}
-
 void VymModel::setBranchesLayout(const QString &s)  // FIXME-1 no savestate yet
 {
     QList<BranchItem *> selbis = getSelectedBranches();
     BranchContainer *bc;
     foreach (BranchItem *selbi, selbis) {
-        if (selbi) {    // FIXME-0 check, if this makes sense also for mapcenters
+        if (selbi) {    // FIXME-0 think, if this makes sense also for mapcenters
             bc = selbi->getBranchContainer();
-            qDebug() << "VM::setBCLayout: " << s;
             if (s == "Auto")
                 bc->branchesContainerAutoLayout = true;
-            else if (s == "FloatingBounded" || s == "FloatingFree") {
-                bc->setBranchesContainerLayout(Container::getLayoutFromString(s));
-                bc->branchesContainerAutoLayout = false;
+            else {
+                Container::Layout layout = Container::getLayoutFromString(s);
+                if (layout != Container::UndefinedLayout) {
+                    bc->setBranchesContainerLayout(layout);
+                    bc->branchesContainerAutoLayout = false;
+                }
             }
         }
         //emitDataChanged(bi);    // FIXME-0 expensive, needed?
@@ -2489,12 +2443,11 @@ void VymModel::setImagesLayout(const QString &s)  // FIXME-1 no savestate yet
     QList<BranchItem *> selbis = getSelectedBranches();
     BranchContainer *bc;
     foreach (BranchItem *selbi, selbis) {
-        if (selbi) {    // FIXME-0 check, if this makes sense also for mapcenters
+        if (selbi) {
             bc = selbi->getBranchContainer();
-            qDebug() << "VM::setBCImageLayout: " << s;
             if (s == "Auto")
                 bc->imagesContainerAutoLayout = true;
-            else if (s == "FloatingBounded" || s == "FloatingFree") {
+            else {
                 bc->setImagesContainerLayout(Container::getLayoutFromString(s));
                 bc->imagesContainerAutoLayout = false;
             }
@@ -2977,7 +2930,7 @@ void VymModel::detach() // FIXME-0 savestate missing
             QString parent_sel = getSelectString(selbi->parent());
             */
 
-            bc->setBranchesContainerLayout(Container::FloatingBounded);// FIXME-0 hardcoded for now, could already be FloatingFree or something else
+            bc->setBranchesContainerLayout(Container::FloatingBounded);// FIXME-0 detach: hardcoded for now, could already be FloatingFree or something else
             reposition();
 
             relinkBranch(selbi, rootItem, -1, true);
@@ -5091,8 +5044,10 @@ void VymModel::reposition()
     }
 }
 
-bool VymModel::setMapLinkStyle(const QString &s) // FIXME-2 still uses BranchObj below
+bool VymModel::setMapLinkStyle(const QString &s)   // FIXME-2 not ported yet to containers
 {
+    return true;
+    /*
     QString snow;
     switch (linkstyle) {
     case LinkableMapObj::Line:
@@ -5139,6 +5094,7 @@ bool VymModel::setMapLinkStyle(const QString &s) // FIXME-2 still uses BranchObj
         nextBranch(cur, prev);
     }
     reposition();
+    */
     return true;
 }
 
@@ -5148,8 +5104,9 @@ uint VymModel::getModelID() { return modelID; }
 
 void VymModel::setView(VymView *vv) { vymView = vv; }
 
-void VymModel::setMapDefLinkColor(QColor col)  // FIXME-2 still uses BranchObj below
+void VymModel::setMapDefLinkColor(QColor col)  // FIXME-2 not ported yet to containers
 {
+    /*
     if (!col.isValid())
         return;
     saveState(
@@ -5172,10 +5129,12 @@ void VymModel::setMapDefLinkColor(QColor col)  // FIXME-2 still uses BranchObj b
         nextBranch(cur, prev);
     }
     updateActions();
+    */
 }
 
-void VymModel::setMapLinkColorHintInt()  // FIXME-2 still uses BranchObj below
+void VymModel::setMapLinkColorHintInt()  // FIXME-2 not ported yet to containers
 {
+    /*
     // called from setMapLinkColorHint(lch) or at end of parse
     BranchItem *cur = NULL;
     BranchItem *prev = NULL;
@@ -5190,6 +5149,7 @@ void VymModel::setMapLinkColorHintInt()  // FIXME-2 still uses BranchObj below
 
         nextBranch(cur, prev);
     }
+    */
 }
 
 void VymModel::setMapLinkColorHint(LinkableMapObj::ColorHint lch)
@@ -5198,8 +5158,9 @@ void VymModel::setMapLinkColorHint(LinkableMapObj::ColorHint lch)
     setMapLinkColorHintInt();
 }
 
-void VymModel::toggleMapLinkColorHint()
+void VymModel::toggleMapLinkColorHint() // FIXME-2 not ported yet to containers
 {
+    /*
     if (linkcolorhint == LinkableMapObj::HeadingColor)
         linkcolorhint = LinkableMapObj::DefaultColor;
     else
@@ -5217,6 +5178,7 @@ void VymModel::toggleMapLinkColorHint()
 
         nextBranch(cur, prev);
     }
+    */
 }
 
 void VymModel::

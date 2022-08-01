@@ -70,8 +70,8 @@ QString Container::getName()    // FIXME-4 debugging only
         case Branch:
             t = "Branch";
             break;
-        case BranchCollection:
-            t = "BranchCollection";
+        case BranchesContainer:
+            t = "BranchesContainer";
             break;
         case FloatingContent:
             t = "FloatingContent";
@@ -82,8 +82,8 @@ QString Container::getName()    // FIXME-4 debugging only
         case Image:
             t = "Image";
             break;
-        case ImageCollection:
-            t = "ImagesCollection";
+        case ImagesContainer:
+            t = "ImagesContainer";
             break;
         case InnerContent:
             t = "InnerContent";
@@ -91,8 +91,8 @@ QString Container::getName()    // FIXME-4 debugging only
         case Link:
             t = "Link";
             break;
-        case Ornaments:
-            t = "Ornaments";
+        case OrnamentsContainer:
+            t = "OrnamentsContainer";
             break;
         case TmpParent:
             t = "TmpParent";
@@ -255,14 +255,14 @@ QVariant Container::itemChange(GraphicsItemChange change, const QVariant &value)
     return  QGraphicsItem::itemChange(change, value);
 }
 
-Container* Container::parentContainer() 
+Container* Container::parentContainer()
 {
     return (Container*)parentItem();
 }
 
 void Container::setPos(QPointF p)
 {
-    if (animatedPos.isAnimated()) 
+    if (animatedPos.isAnimated())
         QGraphicsItem::setPos(animatedPos);
     else
         QGraphicsItem::setPos(p);
@@ -289,9 +289,9 @@ void Container::reposition()
 
     QRectF r;
 
-    // Repositioning is done recursively: 
-    // First the size sizes of subcontainers are calculated, 
-    // Container::reposition is overloaded, so for example HeadingContainer 
+    // Repositioning is done recursively:
+    // First the size sizes of subcontainers are calculated,
+    // Container::reposition is overloaded, so for example HeadingContainer
     // will return correct size of heading!
     //
     // Then the subcontainers are positioned.
@@ -315,9 +315,9 @@ void Container::reposition()
     // c) Align my own containers
 
     switch (layout) {
-        case BoundingFloats: 
+        case BoundingFloats:
             {
-                // BoundingFloats is special case: 
+                // BoundingFloats is special case:
                 // Only used for innerContainer or outerContainer
                 // First child container is ornamentsContainer (or innerContainer),
                 // next children are imagesContainer and/or branchesContainer
@@ -334,8 +334,8 @@ void Container::reposition()
                 }
 
                 // Calc space required
-                QRectF c_bbox;  // bbox of container in my own coord 
-                QRectF bbox;    // United bboxes 
+                QRectF c_bbox;  // bbox of container in my own coord
+                QRectF bbox;    // United bboxes
 
                 foreach (QGraphicsItem *child, childItems()) {
                     Container *c = (Container*) child;
@@ -343,7 +343,7 @@ void Container::reposition()
                     bbox = bbox.united(c_bbox);
                 }
 
-                // Translate, so that total bbox and moves 
+                // Translate, so that total bbox and moves
                 // to origin, along with contents
                 QPointF t = - QPointF(bbox.topLeft().x(), bbox.topLeft().y());
                 bbox.translate(t);
@@ -357,7 +357,7 @@ void Container::reposition()
             } // BoundingFloats layout
             break;
 
-        case FloatingBounded: 
+        case FloatingBounded:
             {
                 // Calc bbox of all children to prepare calculating rect()
                 QRectF c_bbox;
@@ -372,16 +372,16 @@ void Container::reposition()
                         if (first_iteration) {
                             first_iteration = false;
                             r = c_bbox;
-                        } else 
+                        } else
                             r = r.united(c_bbox);
                     }
                 }
-                    
+
                 setRect(r);
             }
             break;
 
-        case FloatingFree: 
+        case FloatingFree:
             setRect(r); // Empty rectangle
             break;
 
@@ -390,7 +390,7 @@ void Container::reposition()
                 qreal w_total = 0;  // total width of non-floating children
                 qreal h;
 
-                QRectF c_bbox;  // bbox of subcontainer c in my own coord 
+                QRectF c_bbox;  // bbox of subcontainer c in my own coord
                 QRectF bbox;    // bbox of all children in my own coord
 
                 // Calc space required
@@ -412,10 +412,10 @@ void Container::reposition()
                     w_total += c_bbox.width();
                 }
 
-                // bbox so far only considers floating subcontainers. Extend by 
+                // bbox so far only considers floating subcontainers. Extend by
                 // regular ones, where rectangle has w_total h_max
                 bbox = QRectF(0, 0, w_total, h_max);
-                
+
                 qreal x;
                 qreal w_last;   // last width before adding current container width to bbox later
 
@@ -456,7 +456,7 @@ void Container::reposition()
 			}
 			x -= w_last;
 		    }
-                } 
+                }
                 r = bbox;
 
             } // Horizontal layout
@@ -468,7 +468,7 @@ void Container::reposition()
                 qreal w_max = 0;
                 qreal w;
 
-                QRectF c_bbox;  // bbox of subcontainer c in my own coord 
+                QRectF c_bbox;  // bbox of subcontainer c in my own coord
                 QRectF bbox;    // bbox of all children in my own coord
 
 

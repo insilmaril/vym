@@ -18,8 +18,6 @@ class XLinkItem;
 
 class BranchItem : public MapItem {
   public:
-    enum LayoutHint { AutoPositioning, FreePositioning };
-
     BranchItem(TreeItem *parent = nullptr);
     virtual ~BranchItem();
     virtual void clear();

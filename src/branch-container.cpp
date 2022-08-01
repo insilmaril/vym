@@ -43,7 +43,7 @@ void BranchContainer::init()
     headingContainer = new HeadingContainer ();
 
     ornamentsContainer = new Container ();
-    ornamentsContainer->type = Ornaments;
+    ornamentsContainer->type = OrnamentsContainer;
     // FIXME-2 not available atm ornamentsContainer->setVerticalAligment(" centered ");
 
     linkContainer = new LinkContainer();
@@ -83,7 +83,7 @@ BranchContainer* BranchContainer::parentBranchContainer()
     if (!p) return nullptr;;
 
     // Some checks before the real parent can be returned
-    if (p->type != BranchCollection) return nullptr;
+    if (p->type != BranchesContainer) return nullptr;
 
     p = p->parentContainer();
 
@@ -218,7 +218,7 @@ void BranchContainer::createBranchesContainer()
     branchesContainer = new Container ();
     branchesContainer->setLayout(branchesContainerLayout);
     branchesContainer->setHorizontalAlignment(branchesContainerHorizontalAlignment);
-    branchesContainer->type = Container::BranchCollection;
+    branchesContainer->type = Container::BranchesContainer;
 
     innerContainer->addContainer(branchesContainer);
 }
@@ -253,7 +253,7 @@ void BranchContainer::updateBranchesContainer()
         }
     } else {
         // Create containers (if required)
-        if (!branchesContainer) 
+        if (!branchesContainer)
             createBranchesContainer();
 
         // Space for links depends on layout:
@@ -347,9 +347,37 @@ void BranchContainer::updateChildrenStructure()
         // c) images and branches are FloatingBounded
         deleteOuterContainer();
         innerContainer->setLayout(BoundingFloats);
-    } else  {
+    } else if (branchesContainerLayout != FloatingBounded && imagesContainerLayout == FloatingBounded) {
         // d) Only images are FloatingBounded
         createOuterContainer();
+    } else {
+        // e) remaining cases
+        deleteOuterContainer();
+        innerContainer->setLayout(FloatingBounded);
+    }
+}
+
+void BranchContainer::showStructure()
+{
+    qDebug() << info();
+    Container *c = getBranchesContainer();
+    if (outerContainer)
+        qDebug() << "outerContainer:" << outerContainer;
+    else
+        qDebug() << "No outerContainer.";
+
+    qDebug() << "InnerContainer: " << innerContainer->info();
+
+    if (c) {
+        qDebug() << "branchesContainer: " << c->info();
+        for (int i=0; i < c->childItems().count(); i++)
+            qDebug() << "  i=" << i << ((Container*)c->childItems().at(i))->info();
+    }
+    c = getImagesContainer();
+    if (c) {
+        qDebug() << "imagesContainer: " << c->info();
+        for (int i=0; i < c->childItems().count(); i++)
+            qDebug() << "  i=" << i << ((Container*)c->childItems().at(i))->info();
     }
 }
 
@@ -364,8 +392,8 @@ int BranchContainer::imageCount()
 void BranchContainer::createImagesContainer()
 {
     imagesContainer = new Container ();
-    imagesContainer->setLayout(Container::FloatingFree);
-    imagesContainer->type = Container::ImageCollection;
+    imagesContainer->setLayout(imagesContainerLayout);
+    imagesContainer->type = Container::ImagesContainer;
     if (outerContainer)
         outerContainer->addContainer(imagesContainer);
     else
@@ -475,7 +503,7 @@ QPointF BranchContainer::getPositionHintRelink(Container *c, int d_pos, const QP
     } else {
         // Regular layout
         if (branchesContainer)
-            r = branchesContainer->rect();  // FIXME-1 check rotation: is rect still correct or better mapped bbox/rect?
+            r = branchesContainer->rect();  // FIXME-2 check rotation: is rect still correct or better mapped bbox/rect?
         qreal y;
         if (d_pos == 0)
             y = r.bottom();
@@ -501,7 +529,7 @@ void BranchContainer::updateUpLink()
     if (branchItem->depth() == 0) return;
 
     if (temporaryLinked) {
-    /* FIXME-0000 cont here to update link for tempLinked branches
+    /* FIXME-00 cont here to update link for tempLinked branches
         BranchItem *pbi = branchItem->parentBranch();
         pbi 
     */
@@ -559,7 +587,7 @@ void BranchContainer::switchLayout(const Layout &l) // FIXME-0 testing, will go 
     Container::setLayout(l);
 }
 
-void BranchContainer::setImagesContainerLayout(const Layout &ltype)   // FIXME-1 No saveState yet
+void BranchContainer::setImagesContainerLayout(const Layout &ltype)
 {
     if (imagesContainerLayout == ltype)
         return;
@@ -575,7 +603,7 @@ Container::Layout BranchContainer::getImagesContainerLayout()
     return imagesContainerLayout;
 }
 
-void BranchContainer::setBranchesContainerLayout(const Layout &ltype)   // FIXME-1 No saveState yet
+void BranchContainer::setBranchesContainerLayout(const Layout &ltype)
 {
     if (branchesContainerLayout == ltype)
         return;
@@ -629,7 +657,7 @@ QRectF BranchContainer::getHeadingRect()
 void BranchContainer::setRotationHeading(const int &a)
 {
     headingContainer->setRotation( 1.0 * a);
-    //headingContainer->setScale(1 + a * 1.1);      // FIXME-1 what about scaling?? Which transformCenter?
+    //headingContainer->setScale(f + a * 1.1);      // FIXME-2 what about scaling?? Which transformCenter?
 }
 
 int BranchContainer::getRotationHeading()
@@ -668,7 +696,7 @@ void BranchContainer::reposition()
         depth = branchItem->depth();
     else
         // tmpParentContainer has no branchItem
-        depth = 0;  
+        depth = 0;
 
     // Set orientation based on depth and if we are floating around or 
     // in the process of being (temporary) relinked
@@ -693,7 +721,7 @@ void BranchContainer::reposition()
                 }
             } else {
                 // "regular repositioning", not currently moved in MapEditor
-                if (depth == 0) 
+                if (depth == 0)
                     orientation = UndefinedOrientation;
                 else {
                     if (pbc->orientation == UndefinedOrientation) {
@@ -728,7 +756,7 @@ void BranchContainer::reposition()
         linkContainer->setLinkStyle(LinkContainer::NoLink);
 
         innerContainer->setLayout(BoundingFloats);
-        setBranchesContainerLayout(FloatingBounded);
+        setBranchesContainerLayout(FloatingBounded);    // FIXME-2 think, if autolayout should be used for mapcenter
     } else {
         // Branch or mainbranch
         linkContainer->setLinkStyle(LinkContainer::Line);
@@ -752,7 +780,7 @@ void BranchContainer::reposition()
     }
 
     // Depending on layouts, we might need to insert outerContainer and relink children
-    updateChildrenStructure();  // FIXME-000 Check, why images are never FloatingBounded after load
+    updateChildrenStructure();
 
     // Update branchesContainer and linkSpaceContainer,
     // this even might remove these containers

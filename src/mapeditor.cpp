@@ -794,7 +794,8 @@ void MapEditor::autoLayout()    // FIXME-2 not ported yet to containers
 
 TreeItem *MapEditor::findMapItem(QPointF p, const QList <TreeItem*> &excludedItems) 
 {
-    // Search XLinks
+    // Search XLinks    // FIXME-2 not ported yet
+    /*
     Link *link;
     for (int i = 0; i < model->xlinkCount(); i++) {
         link = model->getXLinkNum(i);
@@ -811,6 +812,7 @@ TreeItem *MapEditor::findMapItem(QPointF p, const QList <TreeItem*> &excludedIte
             }
         }
     }
+    */
 
     // Search branches (and their childs, e.g. images
     // Start with mapcenter, no images allowed at rootItem
@@ -841,28 +843,15 @@ void MapEditor::testFunction1()
     BranchItem *selbi = model->getSelectedBranch();
     if (!selbi)
         qWarning() << "Nothing selected";
-    else {
-        BranchContainer *bc = selbi->getBranchContainer();
-        qDebug() << bc->info();
-        Container *c = bc->getBranchesContainer();
-        if (c) {
-            qDebug() << "imagesContainer: " << c->info();
-            for (int i=0; i < c->childItems().count(); i++)
-                qDebug() << "  i=" << i << ((Container*)c->childItems().at(i))->info();
-        }
-        c = bc->getImagesContainer();
-        if (c) {
-            qDebug() << "imagesContainer: " << c->info();
-            for (int i=0; i < c->childItems().count(); i++)
-                qDebug() << "  i=" << i << ((Container*)c->childItems().at(i))->info();
-        }
-    }
+    else
+        selbi->getBranchContainer()->showStructure();
 }
 
 void MapEditor::testFunction2() { autoLayout(); }
 
 void MapEditor::toggleWinter() // FIXME-2 Not working yet with containers (also shaking snow from branch!)
 {
+    /*
     if (winter) {
         delete winter;
         winter = NULL;
@@ -885,6 +874,7 @@ void MapEditor::toggleWinter() // FIXME-2 Not working yet with containers (also 
         }
         winter->setObstacles(obstacles);
     }
+    */
 }
 
 BranchItem *MapEditor::getBranchDirectAbove(BranchItem *bi)
@@ -2148,8 +2138,9 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
     QGraphicsView::mouseReleaseEvent(e);
 }
 
-void MapEditor::mouseDoubleClickEvent(QMouseEvent *e)
+void MapEditor::mouseDoubleClickEvent(QMouseEvent *e)   // FIXME-2 not ported yet to Containers
 {
+    /*
     // Allow selecting text in QLineEdit if necessary
     if (model->isSelectionBlocked()) {
         e->ignore();
@@ -2180,6 +2171,7 @@ void MapEditor::mouseDoubleClickEvent(QMouseEvent *e)
             editHeading();
         }
     }
+    */
 }
 
 void MapEditor::wheelEvent(QWheelEvent *e)
@@ -2426,7 +2418,8 @@ void MapEditor::updateData(const QModelIndex &sel)
     if (ti && ti->hasTypeBranch())
         ((BranchItem*)ti)->updateVisuals();
 
-    if (winter) {
+    /*
+    if (winter) { // FIXME-2 not yet ported to containers
         QList<QRectF> obstacles;
         BranchObj *bo;
         BranchItem *cur = nullptr;
@@ -2443,6 +2436,7 @@ void MapEditor::updateData(const QModelIndex &sel)
         }
         winter->setObstacles(obstacles);
     }
+    */
 }
 
 void MapEditor::togglePresentationMode()

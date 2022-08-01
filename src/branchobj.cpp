@@ -1,11 +1,8 @@
 #include <QDebug>
 
+#include "branchobj.h"
 
-#include "attributeitem.h"
-#include "branchitem.h"
 #include "geometry.h"
-#include "mainwindow.h"
-#include "mapeditor.h"
 #include "misc.h"
 
 extern FlagRowMaster *standardFlagsMaster;
@@ -23,11 +20,13 @@ BranchObj::BranchObj(QGraphicsItem *parent, TreeItem *ti)
     //qDebug() << "Const BranchObj  (s,ti) this = " << this << " ti=" << ti << ti->depth();
 
     treeItem = ti;
+    /*
     BranchItem *pi = (BranchItem *)(ti->parent());
     if (pi && pi != ti->getModel()->getRootItem())
         parObj = pi->getLMO();
     else
         parObj = NULL;
+    */
     init();
 }
 
@@ -64,6 +63,7 @@ void BranchObj::setParObjTmp(LinkableMapObj *dst, QPointF m, int off)
     // m is position of mouse pointer
     // offset 0: default 1: below dst   -1 above dst  (if possible)
 
+    /*
     BranchItem *dsti = (BranchItem *)(dst->getTreeItem());
 
     BranchItem *pi = (BranchItem *)(dsti->parent());
@@ -131,12 +131,14 @@ void BranchObj::setParObjTmp(LinkableMapObj *dst, QPointF m, int off)
             move(bodst->getChildRefPos().x() + linkwidth, y);
     }
 
+    */
     // updateLinkGeometry is called implicitly in move
     requestReposition();
 }
 
 void BranchObj::unsetParObjTmp()
 {
+    /*
     if (tmpParent) {
         tmpParent = false;
         link2ParPos = false;
@@ -145,6 +147,7 @@ void BranchObj::unsetParObjTmp()
         setLinkStyle(getDefLinkStyle(treeItem->parent()));
         updateLinkGeometry();
     }
+    */
 }
 
 void BranchObj::setVisibility(bool v, int toDepth)
@@ -350,6 +353,7 @@ void BranchObj::setDockPos()
 
 void BranchObj::updateVisuals()
 {
+    /*
     if (!treeItem) {
         qWarning("BranchObj::udpateHeading treeItem==NULL");
         return;
@@ -357,13 +361,13 @@ void BranchObj::updateVisuals()
 
     // Update heading
     QString s = treeItem->getHeadingText();
-    /*
     if (s != heading->text())
         heading->setText(s);
     */
 
     // Update standard flags active in TreeItemAbsage
 
+    /*
     QList<QUuid> TIactiveFlagUids = treeItem->activeFlagUids();
     standardFlagRowObj->updateActiveFlagObjs(
         TIactiveFlagUids, standardFlagsMaster, userFlagsMaster);
@@ -372,6 +376,7 @@ void BranchObj::updateVisuals()
     TIactiveFlagUids = treeItem->activeSystemFlagUids();
     systemFlagRowObj->updateActiveFlagObjs(TIactiveFlagUids, systemFlagsMaster);
 
+    */
     calcBBoxSize();
 }
 

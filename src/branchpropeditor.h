@@ -8,10 +8,11 @@
 #include <QtGui>
 
 // #include "attributedelegate.h"
-#include "branchobj.h"
 
 class QAbstractItemModel;
 
+class BranchItem;
+class TreeItem;
 class VymModel;
 
 class BranchPropertyEditor : public QDialog {

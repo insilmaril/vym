@@ -37,15 +37,15 @@ BranchPropertyEditor::BranchPropertyEditor(QWidget *parent)
 
     //Create Model and View to hold attributes
     attributeModel = new QStandardItemModel (1, 3, this);
-    attributeModel->setHeaderData(0, 
-            Qt::Horizontal, 
-            tr("Name","Branchprop window: Attribute name")); 
-    attributeModel->setHeaderData(1, 
+    attributeModel->setHeaderData(0,
+            Qt::Horizontal,
+            tr("Name","Branchprop window: Attribute name"));
+    attributeModel->setHeaderData(1,
             Qt::Horizontal,
             tr("Value","Branchprop window: Attribute value"));
-    attributeModel->setHeaderData(2, 
-            Qt::Horizontal, 
-            tr("Type","Branchprop window: Attribute type")); 
+    attributeModel->setHeaderData(2,
+            Qt::Horizontal,
+            tr("Type","Branchprop window: Attribute type"));
     ui.attributeTableView->setModel (attributeModel);
 
     // Load Settings
@@ -57,6 +57,9 @@ BranchPropertyEditor::BranchPropertyEditor(QWidget *parent)
              .value("/satellite/propertywindow/geometry/pos", QPoint(250, 50))
              .toPoint());
 
+    ui.tabWidget->setCurrentIndex(
+        settings.value("/satellite/propertywindow/currentIndex", 0).toInt());
+
     if (settings.value("/satellite/propertywindow/showWithMain", true).toBool())
         show();
     else
@@ -65,18 +68,19 @@ BranchPropertyEditor::BranchPropertyEditor(QWidget *parent)
     connectSignals();
 }
 
-BranchPropertyEditor::~BranchPropertyEditor()
+BranchPropertyEditor::~BranchPropertyEditor()   // FIXME-0 might crash on close
 {
     settings.setValue("/satellite/propertywindow/geometry/size", size());
     settings.setValue("/satellite/propertywindow/geometry/pos", pos());
     settings.setValue("/satellite/propertywindow/showWithMain", isVisible());
+    settings.setValue("/satellite/propertywindow/currentIndex", ui.tabWidget->currentIndex());
 
     delete (attributeModel);
 }
 
 void BranchPropertyEditor::setItem(TreeItem *ti)
 {
-    disconnectSignals();    // FIXME-2 why complete disconnect?
+    disconnectSignals();    // FIXME-2 why complete disconnect? To avoid recursive calls when (pre-)setting values?
     if (!ti)
         ui.tabWidget->setEnabled(false);
     else if (ti->hasTypeBranch()) {
@@ -151,53 +155,52 @@ void BranchPropertyEditor::setItem(TreeItem *ti)
             ui.hideLinkIfUnselected->setCheckState(Qt::Unchecked);
 
         // Layout
-        /* FIXME-0 Obsolete layouts
-        if (branchItem->getIncludeImagesVer())
-            ui.incImgVer->setCheckState(Qt::Checked);
-        else
-            ui.incImgVer->setCheckState(Qt::Unchecked);
-        if (branchItem->getIncludeImagesHor())
-            ui.incImgHor->setCheckState(Qt::Checked);
-        else
-            ui.incImgHor->setCheckState(Qt::Unchecked);
-        if (branchItem->getChildrenLayout() == BranchItem::FreePositioning)
-            ui.childrenFreePositioning->setCheckState(Qt::Checked);
-        else
-            ui.childrenFreePositioning->setCheckState(Qt::Unchecked);
-        */
-
         BranchContainer *bc = branchItem->getBranchContainer();
 
         if (bc->branchesContainerAutoLayout)
             ui.branchesLayoutAutoButton->setChecked(true);
         else {
-            if (bc->getBranchesContainerLayout() == Container::FloatingBounded)
-                ui.branchesLayoutBoundedButton->setChecked(true);
-            else if (bc->getBranchesContainerLayout() == Container::FloatingFree)
-                ui.branchesLayoutFreeButton->setChecked(true);
-            else
-                // The default Vertical falls back to Auto for now
-                ui.branchesLayoutAutoButton->setChecked(true);
+            switch (bc->getBranchesContainerLayout()) {
+                case Container::Vertical:
+                    ui.branchesLayoutVerticalButton->setChecked(true);
+                    break;
+                case Container::Horizontal:
+                    ui.branchesLayoutHorizontalButton->setChecked(true);
+                    break;
+                case Container::FloatingBounded:
+                    ui.branchesLayoutBoundedButton->setChecked(true);
+                    break;
+                case Container::FloatingFree:
+                    ui.branchesLayoutFreeButton->setChecked(true);
+                    break;
+                default:
+                    ui.branchesLayoutAutoButton->setChecked(true);
+            }
         }
         if (bc->imagesContainerAutoLayout)
             ui.imagesLayoutAutoButton->setChecked(true);
         else {
-            if (bc->getImagesContainerLayout() == Container::FloatingBounded)
-                ui.imagesLayoutBoundedButton->setChecked(true);
-            else
-                ui.imagesLayoutFreeButton->setChecked(true);
+            switch (bc->getBranchesContainerLayout()) {
+                case Container::Vertical:
+                    ui.imagesLayoutVerticalButton->setChecked(true);
+                    break;
+                case Container::Horizontal:
+                    ui.imagesLayoutHorizontalButton->setChecked(true);
+                    break;
+                case Container::FloatingBounded:
+                    ui.imagesLayoutBoundedButton->setChecked(true);
+                    break;
+                case Container::FloatingFree:
+                    ui.imagesLayoutFreeButton->setChecked(true);
+                    break;
+                default:
+                    ui.imagesLayoutAutoButton->setChecked(true);
+            }
         }
         ui.rotationHeadingSlider->setValue(bc->getRotationHeading());
         ui.rotationInnerContentSlider->setValue(bc->getRotationInnerContent());
         ui.rotationHeadingSpinBox->setValue(bc->getRotationHeading());
         ui.rotationInnerContentSpinBox->setValue(bc->getRotationInnerContent());
-
-        /*
-            ui.rotationHeadingSlider->setEnabled(false);
-            ui.rotationInnerContentSlider->setEnabled(false);
-            ui.rotationHeadingSlider->setEnabled(true);
-            ui.rotationInnerContentSlider->setEnabled(true);
-            */
 
         // Task
         Task *task = branchItem->getTask();
@@ -262,7 +265,7 @@ void BranchPropertyEditor::setItem(TreeItem *ti)
 
     ui.attributeTableView->resizeColumnsToContents();
 
-    // Initialize Delegate  // FIXME-2 still needed?
+    // Initialize Delegate  // FIXME-3 still needed?
     //attributeDelegate.setAttributeTable (mapEditor->attributeTable());
     //ui.attributeTableView->setItemDelegate (&attributeDelegate);
 
@@ -370,12 +373,20 @@ void BranchPropertyEditor::childrenLayoutChanged()
 
     if (sender() == ui.branchesLayoutAutoButton)
         model->setBranchesLayout("Auto");
+    else if (sender() == ui.branchesLayoutVerticalButton)
+        model->setBranchesLayout("Vertical");
+    else if (sender() == ui.branchesLayoutHorizontalButton)
+        model->setBranchesLayout("Horizontal");
     else if (sender() == ui.branchesLayoutBoundedButton)
         model->setBranchesLayout("FloatingBounded");
     else if (sender() == ui.branchesLayoutFreeButton)
         model->setBranchesLayout("FloatingFree");
     if (sender() == ui.imagesLayoutAutoButton)
         model->setImagesLayout("Auto");
+    else if (sender() == ui.imagesLayoutVerticalButton)
+        model->setImagesLayout("Vertical");
+    else if (sender() == ui.imagesLayoutHorizontalButton)
+        model->setImagesLayout("Horizontal");
     else if (sender() == ui.imagesLayoutBoundedButton)
         model->setImagesLayout("FloatingBounded");
     else if (sender() == ui.imagesLayoutFreeButton)
@@ -468,14 +479,22 @@ void BranchPropertyEditor::connectSignals()
     connect(ui.hideLinkIfUnselected, SIGNAL(stateChanged(int)), this,
             SLOT(linkHideUnselectedChanged(int)));
 
-    // Layout   // FIXME-000 add signals/slots for images and branches layouts
+    // Layout
     connect(ui.branchesLayoutAutoButton, SIGNAL(clicked()),
+            this, SLOT(childrenLayoutChanged()));
+    connect(ui.branchesLayoutVerticalButton, SIGNAL(clicked()),
+            this, SLOT(childrenLayoutChanged()));
+    connect(ui.branchesLayoutHorizontalButton, SIGNAL(clicked()),
             this, SLOT(childrenLayoutChanged()));
     connect(ui.branchesLayoutBoundedButton, SIGNAL(clicked()),
             this, SLOT(childrenLayoutChanged()));
     connect(ui.branchesLayoutFreeButton, SIGNAL(clicked()),
             this, SLOT(childrenLayoutChanged()));
     connect(ui.imagesLayoutAutoButton, SIGNAL(clicked()),
+            this, SLOT(childrenLayoutChanged()));
+    connect(ui.imagesLayoutVerticalButton, SIGNAL(clicked()),
+            this, SLOT(childrenLayoutChanged()));
+    connect(ui.imagesLayoutHorizontalButton, SIGNAL(clicked()),
             this, SLOT(childrenLayoutChanged()));
     connect(ui.imagesLayoutBoundedButton, SIGNAL(clicked()),
             this, SLOT(childrenLayoutChanged()));
@@ -487,10 +506,10 @@ void BranchPropertyEditor::connectSignals()
     connect(ui.rotationHeadingSpinBox, SIGNAL(valueChanged(int)),
             this, SLOT(rotationHeadingChanged(int)));
 
-    // With lambda          // FIXME-2
+    // With lambda          // FIXME-3
     // connect(spinbox, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), slider, &QSlider::setValue);
 
-    connect(ui.rotationInnerContentSlider, SIGNAL(valueChanged(int)), 
+    connect(ui.rotationInnerContentSlider, SIGNAL(valueChanged(int)),
             this, SLOT(rotationInnerContentChanged(int)));
     connect(ui.rotationInnerContentSpinBox, SIGNAL(valueChanged(int)),
             this, SLOT(rotationInnerContentChanged(int)));
@@ -529,9 +548,13 @@ void BranchPropertyEditor::disconnectSignals()
 
     // Layout
     disconnect(ui.branchesLayoutAutoButton, 0, 0, 0);
+    disconnect(ui.branchesLayoutVerticalButton, 0, 0, 0);
+    disconnect(ui.branchesLayoutHorizontalButton, 0, 0, 0);
     disconnect(ui.branchesLayoutBoundedButton, 0, 0, 0);
     disconnect(ui.branchesLayoutFreeButton, 0, 0, 0);
     disconnect(ui.imagesLayoutAutoButton, 0, 0, 0);
+    disconnect(ui.imagesLayoutVerticalButton, 0, 0, 0);
+    disconnect(ui.imagesLayoutHorizontalButton, 0, 0, 0);
     disconnect(ui.imagesLayoutBoundedButton, 0, 0, 0);
     disconnect(ui.imagesLayoutFreeButton, 0, 0, 0);
     disconnect(ui.rotationHeadingSlider, 0, 0, 0);

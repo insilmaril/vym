@@ -70,6 +70,7 @@ class BranchContainer : public Container {
     void updateChildrenStructure();     //! Depending on layouts of children, rearrange structure
 
   public:
+    void showStructure();     // Print structure for debugging
     int imageCount();
     void createImagesContainer();
     void addToImagesContainer(Container *c, bool keepScenePos = false);
@@ -121,7 +122,7 @@ class BranchContainer : public Container {
   protected:
     static qreal linkWidth;
     BranchItem *branchItem; //! Crossreference to "parent" BranchItem 
-    
+
     // Save layout, alignment and brush of children containers 
     // even before containers are created on demand
     Layout imagesContainerLayout;

@@ -28,15 +28,15 @@ class Container : public QGraphicsRectItem {
   public:
     /*! Type of this container */
     enum ContainerType {
-        Branch, 
-        BranchCollection,
+        Branch,
+        BranchesContainer,
         FloatingContent,
         Heading,
         Image,
-        ImageCollection,
+        ImagesContainer,
         InnerContent,
         Link,
-        Ornaments,
+        OrnamentsContainer,
         TmpParent,
         UndefinedType
     };
@@ -75,7 +75,7 @@ class Container : public QGraphicsRectItem {
      *  instead in opposite direction, when total bbox of
      *  floating children changes
      */
-    void setMovableByFloats(bool);  
+    void setMovableByFloats(bool);
 
     void setMinimumWidth();         //! Minimum dimensions of container. Used for linkSpaceContainer
     qreal getMinimumWidth();

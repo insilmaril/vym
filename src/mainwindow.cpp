@@ -845,16 +845,6 @@ void Main::setupAPI()
     c->addPar(Command::Bool, false, "Set if item should be visible in export");
     modelCommands.append(c);
 
-    c = new Command("setIncludeImagesHorizontally", Command::Branch);
-    c->addPar(Command::Bool, false,
-              "Set if images should be included horizontally in parent branch");
-    modelCommands.append(c);
-
-    c = new Command("setIncludeImagesVertically", Command::Branch);
-    c->addPar(Command::Bool, false,
-              "Set if images should be included vertically in parent branch");
-    modelCommands.append(c);
-
     c = new Command("setHideLinksUnselected", Command::BranchOrImage);
     c->addPar(Command::Bool, false,
               "Set if links of items should be visible for unselected items");

@@ -622,13 +622,13 @@ bool parseVYMHandler::readBranchAttr(const QXmlAttributes &a)
 
     // Container layouts
     if (!a.value("branchesLayout").isEmpty()) {
-        lastBranch->getBranchContainer()->branchesContainerAutoLayout = false;
         lastBranch->setBranchesLayout(a.value("branchesLayout"));
+        lastBranch->getBranchContainer()->branchesContainerAutoLayout = false;
     }
 
     if (!a.value("imagesLayout").isEmpty()) {
-        lastBranch->setImagesLayout(a.value("imagesLayout"));
         lastBranch->getBranchContainer()->imagesContainerAutoLayout = false;
+        lastBranch->setImagesLayout(a.value("imagesLayout"));
     }
     return true;
 }
@@ -930,6 +930,9 @@ bool parseVYMHandler::readLinkNewAttr(const QXmlAttributes &a)
                 if (!a.value("styleEnd").isEmpty())
                     li->setStyleEnd(a.value("styleEnd"));
 
+                /* FIXME-2 Xlinks not ported to containers yet
+                 * ALso: better set control points via VymModel for saveState
+
                 XLinkObj *xlo = (XLinkObj *)(li->getMO());
                 if (xlo && !a.value("c0").isEmpty()) {
                     QPointF p = point(a.value("c0"), okx);
@@ -941,6 +944,7 @@ bool parseVYMHandler::readLinkNewAttr(const QXmlAttributes &a)
                     if (okx)
                         xlo->setC1(p);
                 }
+                */
             }
         }
     }
