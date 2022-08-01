@@ -253,7 +253,7 @@ void MapEditor::scrollTo(const QModelIndex &index)  // FIXME-2 also consider ima
         }
 
         // FIXME-2 Also check for images, not just branches
-        
+
         if (scroll) {
             setScrollBarPosTarget(r);
             animateScrollBars();
@@ -346,7 +346,7 @@ void MapEditor::animate()
         if (c->containerType() == Container::Branch)
             ((BranchContainer*)c)->updateUpLink();
 
-        if (!c->isAnimated()) 
+        if (!c->isAnimated())
             animatedContainers.removeAll(c);
     }
     model->emitSelectionChanged();
@@ -537,8 +537,8 @@ void MapEditor::updateMatrix()
 }
 
 void MapEditor::minimizeView() {
-    // If we only would set scene rectangle to existing items, then 
-    // view fould "jump", when Qt automatically tries to center. 
+    // If we only would set scene rectangle to existing items, then
+    // view fould "jump", when Qt automatically tries to center.
     // Better consider the currently visible viewport (with slight offset)
     QRectF r = mapToScene(viewport()->geometry()).boundingRect();
     r.translate(-2,-3);
@@ -792,7 +792,7 @@ void MapEditor::autoLayout()    // FIXME-2 not ported yet to containers
     */
 }
 
-TreeItem *MapEditor::findMapItem(QPointF p, const QList <TreeItem*> &excludedItems) 
+TreeItem *MapEditor::findMapItem(QPointF p, const QList <TreeItem*> &excludedItems)
 {
     // Search XLinks    // FIXME-2 not ported yet
     /*
@@ -829,7 +829,7 @@ TreeItem *MapEditor::findMapItem(QPointF p, const QList <TreeItem*> &excludedIte
     return nullptr;
 }
 
-BranchItem *MapEditor::findMapBranchItem(QPointF p, const QList <TreeItem*> &excludedItems) 
+BranchItem *MapEditor::findMapBranchItem(QPointF p, const QList <TreeItem*> &excludedItems)
 {
     TreeItem *ti = findMapItem(p, excludedItems);
     if (ti && ti->hasTypeBranch())
@@ -1075,13 +1075,13 @@ void MapEditor::cursorUp()
         bi = getBranchAbove(selbi);
         if (bi) {
             model->select(bi);
-        } 
+        }
     } else {
         // Nothing selected or already multiple selections
         TreeItem *ti = model->lastToggledItem();
         if (ti && ti->hasTypeBranch()) {
             bi = getBranchAbove( (BranchItem*)ti);
-            if (bi) 
+            if (bi)
                 model->select(bi);
         }
     }
@@ -1108,7 +1108,7 @@ void MapEditor::cursorUpToggleSelection()
             else
                 bi = (BranchItem*)ti;
 
-            if (bi) 
+            if (bi)
                 model->selectToggle(bi);
         }
     }
@@ -1127,14 +1127,14 @@ void MapEditor::cursorDown()
         bi = getBranchBelow(selbi);
         if (bi) {
             model->select(bi);
-        } 
+        }
     } else {
         // Nothing selected or already multiple selections
         TreeItem *ti = model->lastToggledItem();
         if (ti && ti->hasTypeBranch()) {
             bi = getBranchBelow( (BranchItem*)ti);
 
-            if (bi) 
+            if (bi)
                 model->select(bi);
         }
     }
@@ -1152,7 +1152,7 @@ void MapEditor::cursorDownToggleSelection()
         bi = getBranchBelow(selbi);
         if (bi) {
             model->selectToggle(bi);
-        } 
+        }
     } else {
         // Nothing selected or already multiple selections
         TreeItem *ti = model->lastToggledItem();
@@ -1162,7 +1162,7 @@ void MapEditor::cursorDownToggleSelection()
             else
                 bi = (BranchItem*)ti;
 
-            if (bi) 
+            if (bi)
                 model->selectToggle(bi);
         }
     }
@@ -1437,9 +1437,9 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
     qDebug() << " flag=" << sysFlagName;
     */
 
-    // If Modifier mode "view" is set, all other clicks can be ignored, 
+    // If Modifier mode "view" is set, all other clicks can be ignored,
     // nothing will be selected
-    if ((e->modifiers() & Qt::ShiftModifier) && 
+    if ((e->modifiers() & Qt::ShiftModifier) &&
             mainWindow->getModMode() == Main::ModModeMoveView) {
         startPanningView(e);    // FIXME-2 should be set in mouseMove later
         return;
@@ -1478,7 +1478,7 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
 
         }
 
-        /* 
+        /*
         // FIXME-2 check for flags
         QUuid uid = ((BranchObj *)lmo_found)->findSystemFlagUidByPos(p);
         if (!uid.isNull()) {
@@ -1507,7 +1507,7 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
             }
         } else {
             if (model->getSelectedItems().count() < 2 || !model->getSelectedItems().contains(ti_found))
-                // Only add ti_found, if we don't have multi-selection yet, which we 
+                // Only add ti_found, if we don't have multi-selection yet, which we
                 // want to move around. In that case we would ignore the "pressed" event
                 model->select(ti_found);
         }
@@ -1542,7 +1542,7 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
             // a button in the toolbar)
             if (e->button() == Qt::MidButton)
                 model->toggleScroll();
-    } else { 
+    } else {
         // No ti_found, we are on the scene itself
         // Left Button	    move Pos of sceneView
         if (e->button() == Qt::LeftButton ||
@@ -1692,8 +1692,8 @@ void MapEditor::mouseMoveEvent(QMouseEvent *e)  // FIXME-1  Shift to only move M
 
     // Move the selected items
     if (movingItems.count() > 0  &&
-        (state() == MovingObject || 
-         state() == MovingObjectTmpLinked || 
+        (state() == MovingObject ||
+         state() == MovingObjectTmpLinked ||
          state() == MovingObjectWithoutLinking ||
          state() == DrawingXLink)) {
         int margin = 50;
@@ -1746,7 +1746,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
     BranchContainer::Orientation newOrientation;
     BranchContainer *targetBranchContainer = nullptr;
 
-    if (targetItem && targetItem->hasTypeBranch() && 
+    if (targetItem && targetItem->hasTypeBranch() &&
             !(editorState == MovingObjectWithoutLinking && (e->modifiers() & Qt::ShiftModifier))) {
         targetBranchContainer = ((BranchItem*)targetItem)->getBranchContainer();
 
@@ -1761,7 +1761,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
         if (!tmpParentContainer->isTemporaryLinked())
             tmpParentContainer->setTemporaryLinked();
     } else {
-        // Since moved containers are relative to tmpParentContainer anyway, just move 
+        // Since moved containers are relative to tmpParentContainer anyway, just move
         // tmpParentContainer to pointer position:
         tmpParentContainer->setPos(p_event - movingObj_initialContainerOffset);
 
@@ -1770,7 +1770,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
             tmpParentContainer->unsetTemporaryLinked();
         }
     }
-    
+
     if (movingItems.count() > 0 && (tmpParentContainer->childrenCount() == 0)) {
         // Add selected branches and images temporary to tmpParentContainer,
         // if they are not there yet:
@@ -1798,8 +1798,8 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
                 if (bc_first && bc_first != bc) {
                     // Animate other items to position below first one
                     startAnimation (
-                            bc, 
-                            bc->pos(), 
+                            bc,
+                            bc->pos(),
                             QPointF(bc_first->pos().x(), bc_first->pos().y() + h_total));
                     h_total += bc->rect().height();
                 }
@@ -1889,7 +1889,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
             bc->updateUpLink();
         }
     }
-            
+
     // Update selection
     QItemSelection sel = model->getSelectionModel()->selection();
     updateSelection(sel, sel);
@@ -1974,7 +1974,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                     QString("Relink %1 objects to \"%2\"")
                         .arg(relinkedObjectsCount)
                         .arg(destinationBranch->getHeadingPlain()));
-            
+
             // Loop over branches
             foreach(BranchContainer *bc, tmpParentContainer->childBranches()) {
                 bc->unsetTemporaryLinked();
@@ -1987,7 +1987,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                 BranchItem *dst_branch = destinationBranch;
                 int dst_num = -1;
 
-                if (e->modifiers() & Qt::ShiftModifier && destinationBranch->parent()) { 
+                if (e->modifiers() & Qt::ShiftModifier && destinationBranch->parent()) {
                     // Link above dst
                     dst_branch = destinationBranch->parentBranch();
                     dst_num = destinationBranch->num();
@@ -1998,23 +1998,23 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                 }
 
                 // Prepare relinking: Save old position for undo, if required
-                // 
-                // tmpParentContainer always has floating layout, 
+                //
+                // tmpParentContainer always has floating layout,
                 // check original parent instead:
                 /*
                 BranchItem *pbi = bc->getBranchItem()->parentBranch();
                 if (pbi) {
                     Container *originalParentContainer = pbi->getBranchesContainer(); // FIXME-00 MC will have no parentBranch and crash
                     if (originalParentContainer->hasFloatingLayout()) {
-                        model->saveState(   // FIXME-2 check if undo/redo for moving floats and MCs works correctly 
-                                bc->getBranchItem(), 
+                        model->saveState(   // FIXME-2 check if undo/redo for moving floats and MCs works correctly
+                                bc->getBranchItem(),
                                 QString("setPos %1;").arg(qpointFToString(bc->getOriginalPos())),
                                 nullptr,
-                                "", 
+                                "",
                                 QString("Move %1") .arg(bc->getBranchItem()->getHeadingPlain()));
                     }
                 }
-                */ 
+                */
 
                 // Save current scene position for redo or if moved to floating layout
                 QPointF sp = bc->scenePos();    // FIXME-00 use realPos instead?
@@ -2022,13 +2022,13 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                 // Relink
                 model->relinkBranch(bi, dst_branch, dst_num, true); // FIXME-00 saving positions should be done in VymModel completely...
 
-                // After relinking: Save new position for redo, if required 
-                if (dst_branch->getBranchesContainer()->hasFloatingLayout()) {  
+                // After relinking: Save new position for redo, if required
+                if (dst_branch->getBranchesContainer()->hasFloatingLayout()) {
                     bc->setPos(dst_branch->getBranchesContainer()->sceneTransform().inverted().map(sp));
                     model->saveState(
                             nullptr,
-                            "", 
-                            bc->getBranchItem(), 
+                            "",
+                            bc->getBranchItem(),
                             QString("setPos %1;").arg(qpointFToString(bc->pos())),
                             QString("Move %1") .arg(bc->getBranchItem()->getHeadingPlain()));
                 }
@@ -2066,7 +2066,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                 foreach(BranchContainer *bc, childBranches) {
                     BranchItem *bi = bc->getBranchItem();
 
-                    // Relink container to original parent container 
+                    // Relink container to original parent container
                     // and keep (!) current absolute position
                     bi->updateContainerStackingOrder();
 
@@ -2104,7 +2104,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
             ImageItem *ii = ic->getImageItem();
             BranchItem *pi = ii->parentBranch();
 
-            // Update parent of moved container to original imageContainer 
+            // Update parent of moved container to original imageContainer
             // in parent branch
             pi->addToImagesContainer(ic);
 
