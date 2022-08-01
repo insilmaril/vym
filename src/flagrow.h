@@ -8,7 +8,7 @@
 #include "flagrowmaster.h"
 #include "xmlobj.h"
 
-class FlagRow 
+class FlagRow
 {
   public:
     FlagRow ();

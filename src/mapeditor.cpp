@@ -89,7 +89,10 @@ MapEditor::MapEditor(VymModel *vm)
     tmpParentContainer->setName("tmpParentContainer");
     tmpParentContainer->setType(Container::TmpParent);
     tmpParentContainer->setLayout(Container::FloatingBounded);
+    tmpParentContainer->branchesContainerAutoLayout = false;
     tmpParentContainer->setBranchesContainerLayout(Container::FloatingBounded);
+    tmpParentContainer->imagesContainerAutoLayout = false;
+    tmpParentContainer->setImagesContainerLayout(Container::FloatingBounded);
     tmpParentContainer->setBrush(Qt::NoBrush);
     tmpParentContainer->setPen(QPen(Qt::NoPen));
     tmpParentContainer->reposition();
@@ -840,11 +843,19 @@ BranchItem *MapEditor::findMapBranchItem(QPointF p, const QList <TreeItem*> &exc
 
 void MapEditor::testFunction1()
 {
-    BranchItem *selbi = model->getSelectedBranch();
-    if (!selbi)
+    TreeItem *selti = model->getSelectedItem();
+    if (selti)
+    {
+        qDebug() << "selti=" << selti;
+        if (selti->hasTypeBranch())
+            ((BranchItem*)selti)->getBranchContainer()->showStructure();
+        else if (selti->hasTypeImage()) {
+            ImageContainer *ic = ((ImageItem*)selti)->getImageContainer();
+            qDebug() << ic->info() << ic;
+        } else
+            qDebug() << "Unknown type";
+    } else
         qWarning() << "Nothing selected";
-    else
-        selbi->getBranchContainer()->showStructure();
 }
 
 void MapEditor::testFunction2() { autoLayout(); }

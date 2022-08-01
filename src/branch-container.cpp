@@ -216,7 +216,10 @@ bool BranchContainer::hasFloatingBranchesLayout()
 void BranchContainer::createBranchesContainer()
 {
     branchesContainer = new Container ();
-    branchesContainer->setLayout(branchesContainerLayout);
+    if (branchesContainerAutoLayout)
+        branchesContainer->setLayout(getDefaultBranchesContainerLayout());
+    else
+        branchesContainer->setLayout(branchesContainerLayout);
     branchesContainer->setHorizontalAlignment(branchesContainerHorizontalAlignment);
     branchesContainer->type = Container::BranchesContainer;
 
@@ -392,7 +395,10 @@ int BranchContainer::imageCount()
 void BranchContainer::createImagesContainer()
 {
     imagesContainer = new Container ();
-    imagesContainer->setLayout(imagesContainerLayout);
+    if (imagesContainerAutoLayout)
+        imagesContainer->setLayout(getDefaultImagesContainerLayout());
+    else
+        imagesContainer->setLayout(imagesContainerLayout);
     imagesContainer->type = Container::ImagesContainer;
     if (outerContainer)
         outerContainer->addContainer(imagesContainer);
@@ -684,6 +690,22 @@ void BranchContainer::updateVisuals() // FIXME-2 missing: standardFlags, systemF
 {
     if (branchItem)
         headingContainer->setHeading(branchItem->getHeadingText());
+}
+
+Container::Layout BranchContainer::getDefaultBranchesContainerLayout()
+{
+    if (type == TmpParent)
+        return FloatingFree;
+
+    if (branchItem->depth() == 0)
+        return FloatingBounded;
+    else
+        return Vertical;
+}
+
+Container::Layout BranchContainer::getDefaultImagesContainerLayout()
+{
+    return FloatingBounded;
 }
 
 void BranchContainer::reposition()

@@ -2823,7 +2823,7 @@ void VymModel::cut()
     deleteSelection();
 }
 
-bool VymModel::moveUp(BranchItem *bi)   // FIXME-00 stopped working in ME (TE works!)
+bool VymModel::moveUp(BranchItem *bi)
 {
     if (readonly)
         return false;

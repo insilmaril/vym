@@ -12,10 +12,9 @@ extern ulong imageLastID;
 /////////////////////////////////////////////////////////////////
 // ImageContainer
 /////////////////////////////////////////////////////////////////
-ImageContainer::ImageContainer(QGraphicsScene *scene)   // FIXME-2 scene should not be required here (set via setParentItem)
+ImageContainer::ImageContainer()
 {
-    //qDebug() << "Const ImageContainer ()  this=" << this << "items=" << scene->items().count();
-    //scene->addItem(this);
+    //qDebug() << "Const ImageContainer ()  this=" << this;
     init();
 }
 
@@ -75,6 +74,8 @@ void ImageContainer::init()
     imageID = imageLastID;
 
     imageType = ImageContainer::Undefined;
+    layout =  Container::Horizontal;
+
     svgItem = nullptr;
     pixmapItem = nullptr;
     originalPixmap = nullptr;

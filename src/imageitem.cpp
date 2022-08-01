@@ -59,10 +59,10 @@ bool ImageItem::load(const QString &fname)
 
 ImageContainer *ImageItem::createImageContainer(QGraphicsScene *scene)
 {
-    //qDebug() << "II::createImageContainer for " << this;
-    imageContainer = new ImageContainer(scene);
+    imageContainer = new ImageContainer();
     imageContainer->setImageItem(this);
-    /* FIXME-1 cont here, check visibility of new image
+    qDebug() << "II::createImageContainer for " << this << "IC=" << imageContainer;
+    /* FIXME-1 check visibility of new image when creating img container
     if (((BranchItem *)parentItem)->isScrolled() ||
         !((MapItem *)parentItem)->getMO()->isVisibleObj())
         imageContainer->setVisibility(false);
@@ -132,7 +132,7 @@ bool ImageItem::saveImage(const QString &fn)
     // This is used when exporting maps or saving selection
     if (imageContainer)
         return imageContainer->save(fn);
-    else 
+    else
         return false;
 }
 

@@ -117,6 +117,9 @@ class BranchContainer : public Container {
 
     void updateVisuals();
 
+    Container::Layout getDefaultBranchesContainerLayout();
+    Container::Layout getDefaultImagesContainerLayout();
+
     void reposition();
 
   protected:

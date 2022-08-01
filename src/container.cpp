@@ -512,7 +512,7 @@ void Container::reposition()
             } // Vertical layout
             break;
         default:
-            qWarning() << "Container::reposition  unknown layout type!";
+            qWarning() << "Container::reposition  unknown layout type for container: " << info();
             break;
     }
 }

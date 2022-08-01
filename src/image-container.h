@@ -21,7 +21,7 @@ class ImageContainer : public Container {
   public:
     enum ImageType { Undefined, Pixmap, ModifiedPixmap, SVG, ClonedSVG };
 
-    ImageContainer(QGraphicsScene *);
+    ImageContainer();
     virtual ~ImageContainer();
     virtual void copy(ImageContainer*);
     virtual void init();
