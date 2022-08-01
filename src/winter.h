@@ -6,6 +6,8 @@
 #include <QRectF>
 #include <QTimer>
 
+#define Z_SNOW 2000
+
 class QGraphicsView;
 class QGraphicsScene;
 

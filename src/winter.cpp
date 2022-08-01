@@ -6,8 +6,6 @@
 #include <QPen>
 #include <QRandomGenerator>
 
-
-#include "mapobj.h"
 #include "misc.h"
 
 SnowFlake::SnowFlake(QGraphicsScene *scene, SnowType t)
