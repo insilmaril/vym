@@ -71,6 +71,8 @@ void ImageContainer::init()
 {
     type = Image;
 
+    imageItem = nullptr;
+
     // Assign ID
     imageLastID++;
     imageID = imageLastID;
